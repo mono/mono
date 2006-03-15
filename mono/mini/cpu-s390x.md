@@ -165,8 +165,8 @@ div: dest:a src1:i src2:i len:10
 div_imm: dest:i src1:i src2:i len:24
 div_un_imm: dest:i src1:i src2:i len:24
 dup:
-endfilter: len:20
-endfinally: len: 20
+endfilter: len:28
+endfinally: len:28
 endmac:
 fcall: dest:g len:26 clob:c
 fcall_membase: dest:g src1:b len:14 clob:c
@@ -371,15 +371,15 @@ leave:
 load:
 load_membase: dest:i src1:b len:26
 loadi1_membase: dest:i src1:b len:40
-loadi2_membase: dest:i src1:b len:24
+loadi2_membase: dest:i src1:b len:26
 loadi4_membase: dest:i src1:b len:26
 loadi8_membase: dest:i src1:b len:26
-loadr4_membase: dest:f src1:b len:26
-loadr8_membase: dest:f src1:b len:26
+loadr4_membase: dest:f src1:b len:28
+loadr8_membase: dest:f src1:b len:28
 loadu1_membase: dest:i src1:b len:26
 loadu2_membase: dest:i src1:b len:26
 loadu4_mem: dest:i len:8
-loadu4_membase: dest:i src1:b len:18
+loadu4_membase: dest:i src1:b len:26
 local:
 localloc: dest:i src1:i len:84
 long_add:
@@ -477,7 +477,7 @@ not: dest:i src1:i len:12
 oparglist: src1:i len:28
 op_bigmul: len:2 dest:i src1:a src2:i
 op_bigmul_un: len:2 dest:i src1:a src2:i
-op_endfilter: src1:i len:12
+op_endfilter: src1:i len:28
 op_rethrow: src1:i len:26
 or: dest:i src1:i src2:i len:8
 or_imm: dest:i src1:i len:24
@@ -527,7 +527,7 @@ sizeof:
 sqrt: dest:f src1:f len:4
 starg.s:
 starg:
-start_handler: len:18
+start_handler: len:26
 stelem.i1:
 stelem.i2:
 stelem.i4:
@@ -563,8 +563,8 @@ storei4_membase_imm: dest:b len:46
 storei4_membase_reg: dest:b src1:i len:26
 storei8_membase_imm: dest:b len:46
 storei8_membase_reg: dest:b src1:i len:26 
-storer4_membase_reg: dest:b src1:f len:22
-storer8_membase_reg: dest:b src1:f len:22
+storer4_membase_reg: dest:b src1:f len:28
+storer8_membase_reg: dest:b src1:f len:24
 stsfld:
 sub.ovf.un: len:16 dest:i src1:i src2:i 
 sub.ovf: len:28 dest:i src1:i src2:i

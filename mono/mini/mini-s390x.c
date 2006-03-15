@@ -280,7 +280,6 @@ typedef struct {
 /*                   P r o t o t y p e s                            */
 /*------------------------------------------------------------------*/
 
-static guint8 * emit_memcpy (guint8 *, int, int, int, int, int);
 static void indent (int);
 static guint8 * backUpStackPtr(MonoCompile *, guint8 *);
 static void decodeParm (MonoType *, void *, int);
@@ -297,6 +296,7 @@ static void mono_arch_break(void);
 gpointer mono_arch_get_lmf_addr (void);
 static guint8 * emit_load_volatile_registers (guint8 *, MonoCompile *);
 static CompRelation opcode_to_cond (int);
+static void catch_SIGILL(int, siginfo_t *, void *);
 
 /*========================= End of Prototypes ======================*/
 
@@ -307,6 +307,8 @@ static CompRelation opcode_to_cond (int);
 int mono_exc_esp_offset = 0;
 
 static int indent_level = 0;
+
+int has_ld = 0;
 
 static const char*const * ins_spec = s390x_cpu_desc;
 
@@ -378,56 +380,6 @@ mono_arch_fregname (int reg) {
 		return rnames [reg];
 	else
 		return "unknown";
-}
-
-/*========================= End of Function ========================*/
-
-/*------------------------------------------------------------------*/
-/*                                                                  */
-/* Name		- emit_memcpy                                       */
-/*                                                                  */
-/* Function	- Emit code to move from memory-to-memory based on  */
-/*		  the size of the variable. r0 is overwritten.      */
-/*                                                                  */
-/*------------------------------------------------------------------*/
-
-static guint8 *
-emit_memcpy (guint8 *code, int size, int dreg, int doffset, int sreg, int soffset)
-{
-	switch (size) {
-		case 4 :
-			s390_ly  (code, s390_r0, 0, sreg, soffset);
-			s390_sty (code, s390_r0, 0, dreg, doffset);
-			break;
-
-		case 3 : 
-			s390_icmy  (code, s390_r0, 14, sreg, soffset);
-			s390_stcmy (code, s390_r0, 14, dreg, doffset);
-			break;
-
-		case 2 : 
-			s390_lhy  (code, s390_r0, 0, sreg, soffset);
-			s390_sthy (code, s390_r0, 0, dreg, doffset);
-			break;
-
-		case 1 : 
-			s390_icy  (code, s390_r0, 0, sreg, soffset);
-		 	s390_stcy (code, s390_r0, 0, dreg, doffset);
-			break;
-	
-		default : 
-			while (size > 0) {
-				int len;
-
-				if (size > 256) 
-					len = 256;
-				else
-					len = size;
-				s390_mvc (code, len, dreg, doffset, sreg, soffset);
-				size -= len;
-			}
-	}
-	return code;
 }
 
 /*========================= End of Function ========================*/
@@ -729,7 +681,6 @@ enum_parmtype:
 
 /*========================= End of Function ========================*/
 
-static int lc = 0;
 /*------------------------------------------------------------------*/
 /*                                                                  */
 /* Name		- enter_method                                      */
@@ -753,12 +704,6 @@ enter_method (MonoMethod *method, RegParm *rParm, char *sp)
 	size_data sz;
 	void *curParm;
 
-
-lc++;
-if (lc > 500000) {
-fseek(stdout, 0L, SEEK_SET);
-lc = 0;
-}
 	fname = mono_method_full_name (method, TRUE);
 	indent (1);
 	printf ("ENTER: %s ", fname);
@@ -790,15 +735,14 @@ lc = 0;
 				printf ("this:[NULL], ");
 		} else {
 			if (obj) {
-//				class = obj->vtable->klass;
-//				if (class == mono_defaults.string_class) {
-//					printf ("this:[STRING:%p:%s], ", 
-//						obj, mono_string_to_utf8 ((MonoString *)obj));
-//				} else {
-//					printf ("this:%p[%s.%s], ", 
-//						obj, class->name_space, class->name);
-//				}
-printf("this:%p, ",obj);
+				class = obj->vtable->klass;
+				if (class == mono_defaults.string_class) {
+					printf ("this:[STRING:%p:%s], ", 
+						obj, mono_string_to_utf8 ((MonoString *)obj));
+				} else {
+					printf ("this:%p[%s.%s], ", 
+						obj, class->name_space, class->name);
+				}
 			} else 
 				printf ("this:NULL, ");
 		}
@@ -818,8 +762,10 @@ printf("this:%p, ",obj);
 				decodeParm(sig->params[i], sp+ainfo->offset, ainfo->size);
 				break;
 			case RegTypeStructByVal :
-				if (ainfo->reg != STK_BASE) 
-					curParm = &(rParm->gr[ainfo->reg-2]);
+				if (ainfo->reg != STK_BASE) {
+					int offset = sizeof(glong) - ainfo->size;
+					curParm = &(rParm->gr[ainfo->reg-2])+offset;
+				}
 				else
 					curParm = sp+ainfo->offset;
 
@@ -1070,6 +1016,24 @@ handle_enum:
 
 /*------------------------------------------------------------------*/
 /*                                                                  */
+/* Name		- catch_SIGILL					    */
+/*                                                                  */
+/* Function	- Catch SIGILL as a result of testing for long      */
+/*		  displacement facility.      			    */
+/*		                               			    */
+/*------------------------------------------------------------------*/
+
+void
+catch_SIGILL(int sigNo, siginfo_t *info, void *act) {
+
+	has_ld = 0;
+
+}
+
+/*========================= End of Function ========================*/
+
+/*------------------------------------------------------------------*/
+/*                                                                  */
 /* Name		- mono_arch_cpu_init                                */
 /*                                                                  */
 /* Function	- Perform CPU specific initialization to execute    */
@@ -1080,6 +1044,8 @@ handle_enum:
 void
 mono_arch_cpu_init (void)
 {
+	struct sigaction sa,
+			 *oldSa = NULL;
 	guint mode = 1;
 
 	/*--------------------------------------*/	
@@ -1087,6 +1053,26 @@ mono_arch_cpu_init (void)
 	/*--------------------------------------*/	
 	__asm__ ("SRNM\t%0\n\t"
 		: : "m" (mode));
+
+	/*--------------------------------------*/	
+	/* Determine if we have long displace-  */
+	/* ment facility on this processor	*/
+	/*--------------------------------------*/	
+	sa.sa_sigaction = catch_SIGILL;
+	sigemptyset (&sa.sa_mask);
+	sa.sa_flags = SA_SIGINFO;
+
+	sigaction (SIGILL, &sa, oldSa);
+
+	/*--------------------------------------*/
+	/* We test by executing the STY inst    */
+	/*--------------------------------------*/
+	__asm__ ("LGHI\t0,1\n\t"
+		 "LA\t1,%0\n\t"
+		 ".byte\t0xe3,0x00,0x10,0x00,0x00,0x50\n\t"
+		: "=m" (has_ld) : : "0", "1");
+
+	sigaction (SIGILL, oldSa, NULL);
 }
 
 /*========================= End of Function ========================*/
@@ -1105,7 +1091,7 @@ mono_arch_cpu_optimizazions (guint32 *exclude_mask)
 	guint32 opts = 0;
 
 	/*----------------------------------------------------------*/
-	/* no s390-specific optimizations yet 			    */
+	/* No s390-specific optimizations yet 			    */
 	/*----------------------------------------------------------*/
 	*exclude_mask = MONO_OPT_INLINE|MONO_OPT_LINEARS;
 //	*exclude_mask = MONO_OPT_INLINE;
@@ -2012,32 +1998,61 @@ mono_arch_instrument_prolog (MonoCompile *cfg, void *func, void *p,
 {
 	guchar 	*code = p;
 	int 	parmOffset, 
-	    	fpOffset;
+	    	fpOffset,
+		baseReg;
 
 	parmOffset = cfg->stack_usage - S390_TRACE_STACK_SIZE;
 	if (cfg->method->save_lmf)
 		parmOffset -= sizeof(MonoLMF);
 	fpOffset   = parmOffset + (5*sizeof(gpointer));
+	if ((!has_ld) && (fpOffset > 4096)) {
+		s390_lgr (code, s390_r12, STK_BASE);
+		baseReg = s390_r12;
+		while (fpOffset > 4096) {
+			s390_aghi (code, baseReg, 4096);
+			fpOffset   -= 4096;
+			parmOffset -= 4096;
+		}
+	} else {
+		baseReg = STK_BASE;
+	}	
 
 	s390_stmg (code, s390_r2, s390_r6, STK_BASE, parmOffset);
-	s390_stdy (code, s390_f0, 0, STK_BASE, fpOffset);
-	s390_stdy (code, s390_f2, 0, STK_BASE, fpOffset+sizeof(gdouble));
-	s390_stdy (code, s390_f4, 0, STK_BASE, fpOffset+2*sizeof(gdouble));
-	s390_stdy (code, s390_f6, 0, STK_BASE, fpOffset+3*sizeof(gdouble));
+	if (has_ld) {
+		s390_stdy (code, s390_f0, 0, STK_BASE, fpOffset);
+		s390_stdy (code, s390_f2, 0, STK_BASE, fpOffset+sizeof(gdouble));
+		s390_stdy (code, s390_f4, 0, STK_BASE, fpOffset+2*sizeof(gdouble));
+		s390_stdy (code, s390_f6, 0, STK_BASE, fpOffset+3*sizeof(gdouble));
+	} else {
+		s390_std  (code, s390_f0, 0, baseReg, fpOffset);
+		s390_std  (code, s390_f2, 0, baseReg, fpOffset+sizeof(gdouble));
+		s390_std  (code, s390_f4, 0, baseReg, fpOffset+2*sizeof(gdouble));
+		s390_std  (code, s390_f6, 0, baseReg, fpOffset+3*sizeof(gdouble));
+	}
 	s390_basr (code, s390_r13, 0);
 	s390_j    (code, 10);
 	s390_llong(code, cfg->method);
 	s390_llong(code, func);
 	s390_lg   (code, s390_r2, 0, s390_r13, 4);
-	s390_lay  (code, s390_r3, 0, STK_BASE, parmOffset);
+	if (has_ld)
+		s390_lay  (code, s390_r3, 0, STK_BASE, parmOffset);
+	else
+		s390_la   (code, s390_r3, 0, baseReg, parmOffset);
 	s390_lgr  (code, s390_r4, STK_BASE);
 	s390_aghi (code, s390_r4, cfg->stack_usage);
 	s390_lg   (code, s390_r1, 0, s390_r13, 12);
 	s390_basr (code, s390_r14, s390_r1);
-	s390_ldy  (code, s390_f6, 0, STK_BASE, fpOffset+3*sizeof(gdouble));
-	s390_ldy  (code, s390_f4, 0, STK_BASE, fpOffset+2*sizeof(gdouble));
-	s390_ldy  (code, s390_f2, 0, STK_BASE, fpOffset+sizeof(gdouble));
-	s390_ldy  (code, s390_f0, 0, STK_BASE, fpOffset);
+	if (has_ld) {
+		s390_ldy  (code, s390_f6, 0, STK_BASE, fpOffset+3*sizeof(gdouble));
+		s390_ldy  (code, s390_f4, 0, STK_BASE, fpOffset+2*sizeof(gdouble));
+		s390_ldy  (code, s390_f2, 0, STK_BASE, fpOffset+sizeof(gdouble));
+		s390_ldy  (code, s390_f0, 0, STK_BASE, fpOffset);
+	} else {
+		s390_ld   (code, s390_f6, 0, baseReg, fpOffset+3*sizeof(gdouble));
+		s390_ld   (code, s390_f4, 0, baseReg, fpOffset+2*sizeof(gdouble));
+		s390_ld   (code, s390_f2, 0, baseReg, fpOffset+sizeof(gdouble));
+		s390_ld   (code, s390_f0, 0, baseReg, fpOffset);
+	}
 	s390_lmg  (code, s390_r2, s390_r6, STK_BASE, parmOffset);
 
 	return code;
@@ -2429,28 +2444,14 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		switch (ins->opcode) {
 		case OP_STOREI1_MEMBASE_IMM: {
 			s390_lghi (code, s390_r0, ins->inst_imm);
-			if (s390_is_uimm20(ins->inst_offset))
-				s390_stcy(code, s390_r0, 0, ins->inst_destbasereg, ins->inst_offset);
-			else {
-				s390_basr (code, s390_r13, 0);
-				s390_j    (code, 6);
-				s390_llong(code, ins->inst_offset);
-				s390_lg   (code, s390_r13, 0, s390_r13, 4);
-				s390_stc  (code, s390_r0, s390_r13, ins->inst_destbasereg, 0);
-			}
+			S390_LONG (code, stcy, stc, s390_r0, 0,
+				   ins->inst_destbasereg, ins->inst_offset);
 		}
 			break;
 		case OP_STOREI2_MEMBASE_IMM: {
 			s390_lghi (code, s390_r0, ins->inst_imm);
-			if (s390_is_uimm20(ins->inst_offset)) {
-				s390_sthy (code, s390_r0, 0, ins->inst_destbasereg, ins->inst_offset);
-			} else {
-				s390_basr (code, s390_r13, 0);
-				s390_j    (code, 6);
-				s390_llong(code, ins->inst_offset);
-				s390_lg   (code, s390_r13, 0, s390_r13, 4);
-				s390_sth  (code, s390_r0, s390_r13, ins->inst_destbasereg, 0);
-			}
+			S390_LONG (code, sthy, sth, s390_r0, 0,
+				   ins->inst_destbasereg, ins->inst_offset);
 		}
 			break;
 		case OP_STOREI4_MEMBASE_IMM: {
@@ -2462,15 +2463,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				s390_llong(code, ins->inst_imm);
 				s390_lg	  (code, s390_r0, 0, s390_r13, 4);
 			}
-			if (s390_is_uimm20(ins->inst_offset)) {
-				s390_sty (code, s390_r0, 0, ins->inst_destbasereg, ins->inst_offset);
-			} else {
-				s390_basr (code, s390_r13, 0);
-				s390_j    (code, 6);
-				s390_llong(code, ins->inst_offset);
-				s390_lg   (code, s390_r13, 0, s390_r13, 4);
-				s390_st   (code, s390_r0, s390_r13, ins->inst_destbasereg, 0);
-			}
+			S390_LONG (code, sty, st, s390_r0, 0,
+				   ins->inst_destbasereg, ins->inst_offset);
 		}
 			break;
 		case OP_STORE_MEMBASE_IMM:
@@ -2483,64 +2477,29 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				s390_llong(code, ins->inst_imm);
 				s390_lg	  (code, s390_r0, 0, s390_r13, 4);
 			}
-			if (s390_is_uimm20(ins->inst_offset)) {
-				s390_stg  (code, s390_r0, 0, ins->inst_destbasereg, ins->inst_offset);
-			} else {
-				s390_basr (code, s390_r13, 0);
-				s390_j    (code, 6);
-				s390_llong(code, ins->inst_offset);
-				s390_lg   (code, s390_r13, 0, s390_r13, 4);
-				s390_stg  (code, s390_r0, s390_r13, ins->inst_destbasereg, 0);
-			}
+			S390_LONG (code, stg, stg, s390_r0, 0,
+				   ins->inst_destbasereg, ins->inst_offset);
 		}
 			break;
 		case OP_STOREI1_MEMBASE_REG: {
-			if (s390_is_uimm20(ins->inst_offset)) {
-				s390_stcy (code, ins->sreg1, 0, ins->inst_destbasereg, ins->inst_offset);
-			} else {
-				s390_basr (code, s390_r13, 0);
-				s390_j    (code, 6);
-				s390_llong(code, ins->inst_offset);
-				s390_lg   (code, s390_r13, 0, s390_r13, 4);
-				s390_stc  (code, ins->sreg1, s390_r13, ins->inst_destbasereg, 0);
-			}
+			S390_LONG (code, stcy, stc, ins->sreg1, 0,
+				   ins->inst_destbasereg, ins->inst_offset);
 		}
 			break;
 		case OP_STOREI2_MEMBASE_REG: {
-			if (s390_is_uimm20(ins->inst_offset)) {
-				s390_sthy (code, ins->sreg1, 0, ins->inst_destbasereg, ins->inst_offset);
-			} else {
-				s390_basr (code, s390_r13, 0);
-				s390_j    (code, 6);
-				s390_llong(code, ins->inst_offset);
-				s390_lg   (code, s390_r13, 0, s390_r13, 4);
-				s390_sth  (code, ins->sreg1, s390_r13, ins->inst_destbasereg, 0);
-			}
+			S390_LONG (code, sthy, sth, ins->sreg1, 0,
+				   ins->inst_destbasereg, ins->inst_offset);
 		}
 			break;
 		case OP_STOREI4_MEMBASE_REG: {
-			if (s390_is_uimm20(ins->inst_offset)) {
-				s390_sty  (code, ins->sreg1, 0, ins->inst_destbasereg, ins->inst_offset);
-			} else {
-				s390_basr (code, s390_r13, 0);
-				s390_j    (code, 6);
-				s390_llong(code, ins->inst_offset);
-				s390_lg   (code, s390_r13, 0, s390_r13, 4);
-				s390_st   (code, ins->sreg1, s390_r13, ins->inst_destbasereg, 0);
-			}
+			S390_LONG (code, sty, st, ins->sreg1, 0,
+				   ins->inst_destbasereg, ins->inst_offset);
 		}
 			break;
 		case OP_STORE_MEMBASE_REG:
 		case OP_STOREI8_MEMBASE_REG: {
-			if (s390_is_uimm20(ins->inst_offset)) {
-				s390_stg  (code, ins->sreg1, 0, ins->inst_destbasereg, ins->inst_offset);
-			} else {
-				s390_basr (code, s390_r13, 0);
-				s390_j    (code, 6);
-				s390_llong(code, ins->inst_offset);
-				s390_lg   (code, s390_r13, 0, s390_r13, 4);
-				s390_stg  (code, ins->sreg1, s390_r13, ins->inst_destbasereg, 0);
-			}
+			S390_LONG (code, stg, stg, ins->sreg1, 0,
+				   ins->inst_destbasereg, ins->inst_offset);
 		}
 			break;
 		case CEE_LDIND_I:
@@ -2565,87 +2524,38 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case OP_LOAD_MEMBASE:
 		case OP_LOADI8_MEMBASE: {
-			if (s390_is_uimm20(ins->inst_offset))
-				s390_lg   (code, ins->dreg, 0, ins->inst_basereg, ins->inst_offset);
-			else {
-				s390_basr (code, s390_r13, 0);
-				s390_j    (code, 6);
-				s390_llong(code, ins->inst_offset);
-				s390_lg   (code, s390_r13, 0, s390_r13, 4);
-				s390_lg   (code, ins->dreg, s390_r13, ins->inst_basereg, 0);
-			}
+			S390_LONG (code, lg, lg, ins->dreg, 0,
+				   ins->inst_basereg, ins->inst_offset);
 		}
 			break;
 		case OP_LOADI4_MEMBASE: {
-			if (s390_is_uimm20(ins->inst_offset))
-				s390_lgf  (code, ins->dreg, 0, ins->inst_basereg, ins->inst_offset);
-			else {
-				s390_basr (code, s390_r13, 0);
-				s390_j    (code, 6);
-				s390_llong(code, ins->inst_offset);
-				s390_lg   (code, s390_r13, 0, s390_r13, 4);
-				s390_lgf  (code, ins->dreg, s390_r13, ins->inst_basereg, 0);
-			}
+			S390_LONG (code, lgf, lgf, ins->dreg, 0,
+				   ins->inst_basereg, ins->inst_offset);
 		}
 			break;
 		case OP_LOADU4_MEMBASE: {
-			if (s390_is_uimm20(ins->inst_offset))
-				s390_llgf (code, ins->dreg, 0, ins->inst_basereg, ins->inst_offset);
-			else {
-				s390_basr (code, s390_r13, 0);
-				s390_j    (code, 6);
-				s390_llong(code, ins->inst_offset);
-				s390_lg   (code, s390_r13, 0, s390_r13, 4);
-				s390_llgf (code, ins->dreg, s390_r13, ins->inst_basereg, 0);
-			}
+			S390_LONG (code, llgf, llgf, ins->dreg, 0,
+				   ins->inst_basereg, ins->inst_offset);
 		}
 			break;
 		case OP_LOADU1_MEMBASE: {
-			if (s390_is_uimm20(ins->inst_offset))
-				s390_llgc (code, ins->dreg, 0, ins->inst_basereg, ins->inst_offset);
-			else {
-				s390_basr (code, s390_r13, 0);
-				s390_j    (code, 6);
-				s390_llong(code, ins->inst_offset);
-				s390_lg   (code, s390_r13, 0, s390_r13, 4);
-				s390_llgc (code, ins->dreg, s390_r13, ins->inst_basereg, 0);
-			}
+			S390_LONG (code, llgc, llgc, ins->dreg, 0,
+				   ins->inst_basereg, ins->inst_offset);
 		}
 			break;
 		case OP_LOADI1_MEMBASE: {
-			if (s390_is_uimm20(ins->inst_offset))
-				s390_lgb  (code, ins->dreg, 0, ins->inst_basereg, ins->inst_offset);
-			else {
-				s390_basr (code, s390_r13, 0);
-				s390_j    (code, 6);
-				s390_llong(code, ins->inst_offset);
-				s390_lg   (code, s390_r13, 0, s390_r13, 4);
-				s390_lgb  (code, ins->dreg, s390_r13, ins->inst_basereg, 0);
-			}
+			S390_LONG (code, lb, lb, ins->dreg, 0,
+				   ins->inst_basereg, ins->inst_offset);
 		}
 			break;
 		case OP_LOADU2_MEMBASE: {
-			if (s390_is_uimm20(ins->inst_offset))
-				s390_llgh (code, ins->dreg, 0, ins->inst_basereg, ins->inst_offset);
-			else {
-				s390_basr (code, s390_r13, 0);
-				s390_j    (code, 6);
-				s390_llong(code, ins->inst_offset);
-				s390_lg   (code, s390_r13, 0, s390_r13, 4);
-				s390_llgh (code, ins->dreg, s390_r13, ins->inst_basereg, 0);
-			}
+			S390_LONG (code, llgh, llgh, ins->dreg, 0,
+				   ins->inst_basereg, ins->inst_offset);
 		}
 			break;
 		case OP_LOADI2_MEMBASE: {
-			if (s390_is_uimm20(ins->inst_offset))
-				s390_lgh (code, ins->dreg, 0, ins->inst_basereg, ins->inst_offset);
-			else {
-				s390_basr (code, s390_r13, 0);
-				s390_j    (code, 6);
-				s390_llong(code, ins->inst_offset);
-				s390_lg   (code, s390_r13, 0, s390_r13, 4);
-				s390_lgh  (code, ins->dreg, s390_r13, ins->inst_basereg, 0);
-			}
+			S390_LONG (code, lgh, lgh, ins->dreg, 0,
+				   ins->inst_basereg, ins->inst_offset);
 		}
 			break;
 		case CEE_CONV_I1: {
@@ -3786,49 +3696,24 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		}
 			break;
 		case OP_START_HANDLER: {
-			if (s390_is_uimm20 (ins->inst_left->inst_offset)) {
-				s390_stg  (code, s390_r14, 0, 
-					   ins->inst_left->inst_basereg, 
-					   ins->inst_left->inst_offset);
-			} else {
-				s390_basr (code, s390_r13, 0);
-				s390_j    (code, 6);
-				s390_llong(code, ins->inst_left->inst_offset);
-				s390_lg   (code, s390_r13, 0, s390_r13, 4);
-				s390_stg  (code, s390_r14, s390_r13, 
-					   ins->inst_left->inst_basereg, 0);
-			}
+			S390_LONG (code, stg, stg, s390_r14, 0,
+				   ins->inst_left->inst_basereg,
+				   ins->inst_left->inst_offset);
 		}
 			break;
 		case OP_ENDFILTER: {
 			if (ins->sreg1 != s390_r2)
 				s390_lgr(code, s390_r2, ins->sreg1);
-			if (s390_is_uimm20 (ins->inst_left->inst_offset)) {
-				s390_lg (code, s390_r14, 0, ins->inst_left->inst_basereg,
-					 ins->inst_left->inst_offset);
-			} else {
-				s390_basr (code, s390_r13, 0);
-				s390_j    (code, 6);
-				s390_llong(code, ins->inst_left->inst_offset);
-				s390_lg   (code, s390_r13, 0, s390_r13, 4);
-				s390_lg   (code, s390_r14, s390_r13, 
-					   ins->inst_left->inst_basereg, 0);
-			}
+			S390_LONG (code, lg, lg, s390_r14, 0,
+				   ins->inst_left->inst_basereg,
+				   ins->inst_left->inst_offset);
 			s390_br  (code, s390_r14);
 		}
 			break;
 		case CEE_ENDFINALLY: {
-			if (s390_is_uimm20 (ins->inst_left->inst_offset)) {
-				s390_lg (code, s390_r14, 0, ins->inst_left->inst_basereg,
-					 ins->inst_left->inst_offset);
-			} else {
-				s390_basr (code, s390_r13, 0);
-				s390_j    (code, 6);
-				s390_llong(code, ins->inst_left->inst_offset);
-				s390_lg   (code, s390_r13, 0, s390_r13, 4);
-				s390_lg   (code, s390_r14, s390_r13, 
-					   ins->inst_left->inst_basereg, 0);
-			}
+			S390_LONG (code, lg, lg, s390_r14, 0,
+				   ins->inst_left->inst_basereg,
+				   ins->inst_left->inst_offset);
 			s390_br  (code, s390_r14);
 		}
 			break;
@@ -3977,58 +3862,29 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		}
 			break;
 		case OP_STORER8_MEMBASE_REG: {
-			if (s390_is_uimm20(ins->inst_offset)) {
-				s390_stdy (code, ins->sreg1, 0, ins->inst_destbasereg, ins->inst_offset);
-			} else {
-				s390_basr (code, s390_r13, 0);
-				s390_j	  (code, 6);
-				s390_llong(code, ins->inst_offset);
-				s390_lg   (code, s390_r13, 0, s390_r13, 4);
-				s390_std  (code, ins->sreg1, s390_r13, ins->inst_destbasereg, 0);
-			}
+			S390_LONG (code, stdy, std, ins->sreg1, 0,
+				   ins->inst_destbasereg, ins->inst_offset);
 		}
 			break;
 		case OP_LOADR8_MEMBASE: {
-			if (s390_is_uimm20(ins->inst_offset)) {
-				s390_ldy  (code, ins->dreg, 0, ins->inst_basereg, ins->inst_offset);
-			} else {
-				s390_basr (code, s390_r13, 0);
-				s390_j	  (code, 6);
-				s390_llong(code, ins->inst_offset);
-				s390_lg   (code, s390_r13, 0, s390_r13, 4);
-				s390_ld   (code, ins->dreg, s390_r13, ins->inst_basereg, 0);
-			}
+			S390_LONG (code, ldy, ld, ins->dreg, 0,
+				   ins->inst_basereg, ins->inst_offset);
 		}
 			break;
 		case OP_STORER4_MEMBASE_REG: {
-			if (s390_is_uimm20(ins->inst_offset)) {
-				s390_ledbr(code, s390_f15, ins->sreg1);
-				s390_stey (code, s390_f15, 0, ins->inst_destbasereg, ins->inst_offset);
-			} else {
-				s390_basr (code, s390_r13, 0);
-				s390_j	  (code, 6);
-				s390_llong(code, ins->inst_offset);
-				s390_lg   (code, s390_r13, 0, s390_r13, 4);
-				s390_ledbr(code, s390_f15, ins->sreg1);
-				s390_ste  (code, s390_f15, s390_r13, ins->inst_destbasereg, 0);
-			}
+			s390_ledbr (code, s390_f15, ins->sreg1);
+			S390_LONG (code, stey, ste, s390_f15, 0,
+				   ins->inst_destbasereg, ins->inst_offset);
 		}
 			break;
 		case OP_LOADR4_MEMBASE: {
-			if (s390_is_uimm20(ins->inst_offset)) {
-				s390_ldy   (code, ins->dreg, 0, ins->inst_basereg, ins->inst_offset);
-				s390_ldebr (code, ins->dreg, ins->dreg);
-			} else {
-				s390_basr (code, s390_r13, 0);
-				s390_j	  (code, 6);
-				s390_llong(code, ins->inst_offset);
-				s390_lg   (code, s390_r13, 0, s390_r13, 4);
-				s390_ldeb (code, ins->dreg, s390_r13, ins->inst_basereg, 0);
-			}
+			S390_LONG (code, ldy, ld, s390_f15, 0,
+				   ins->inst_basereg, ins->inst_offset);
+			s390_ldebr (code, ins->dreg, s390_f15);
 		}
 			break;
 		case CEE_CONV_R_UN: {
-			s390_cdfbr (code, ins->dreg, ins->sreg1);
+			s390_cdgbr (code, ins->dreg, ins->sreg1);
 			s390_ltgr  (code, ins->sreg1, ins->sreg1);
 			s390_jnl   (code, 12);
 			s390_basr  (code, s390_r13, 0);
@@ -4673,13 +4529,13 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 					g_assert_not_reached();
 				switch (ainfo->size) {
 				case 1:
-					s390_stcy (code, ainfo->reg, 0, inst->inst_basereg, inst->inst_offset);
+					s390_stc (code, ainfo->reg, 0, inst->inst_basereg, inst->inst_offset);
 					break;
 				case 2:
-					s390_sthy (code, ainfo->reg, 0, inst->inst_basereg, inst->inst_offset);
+					s390_sth (code, ainfo->reg, 0, inst->inst_basereg, inst->inst_offset);
 					break;
 				case 4: 
-					s390_sty (code, ainfo->reg, 0, inst->inst_basereg, inst->inst_offset);
+					s390_st (code, ainfo->reg, 0, inst->inst_basereg, inst->inst_offset);
 					break;
 				case 8:
 					s390_stg (code, ainfo->reg, 0, inst->inst_basereg, inst->inst_offset);
@@ -4706,18 +4562,18 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 				switch (ainfo->size) {
 					case 1:
 						if (ainfo->reg == STK_BASE)
-				                	s390_icy (code, reg, 0, s390_r13, ainfo->offset+7);
-						s390_stcy (code, reg, 0, inst->inst_basereg, doffset);
+				                	s390_ic (code, reg, 0, s390_r13, ainfo->offset+7);
+						s390_stc (code, reg, 0, inst->inst_basereg, doffset);
 						break;
 					case 2:
 						if (ainfo->reg == STK_BASE)
-				                	s390_lhy (code, reg, 0, s390_r13, ainfo->offset+6);
-						s390_sthy (code, reg, 0, inst->inst_basereg, doffset);
+				                	s390_lh (code, reg, 0, s390_r13, ainfo->offset+6);
+						s390_sth (code, reg, 0, inst->inst_basereg, doffset);
 						break;
 					case 4:
 						if (ainfo->reg == STK_BASE)
-				                	s390_ly  (code, reg, 0, s390_r13, ainfo->offset+4);
-						s390_sty (code, reg, 0, inst->inst_basereg, doffset);
+				                	s390_l  (code, reg, 0, s390_r13, ainfo->offset+4);
+						s390_st (code, reg, 0, inst->inst_basereg, doffset);
 						break;
 					case 8:
 						if (ainfo->reg == STK_BASE)
