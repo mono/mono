@@ -447,7 +447,7 @@ namespace Mono.Xml.Xsl {
 		
 		public void PushNodeset (XPathNodeIterator itr)
 		{
-			nodesetStack.Add (itr.Clone ());
+			nodesetStack.Add (itr);
 		}
 		
 		public void PopNodeset ()

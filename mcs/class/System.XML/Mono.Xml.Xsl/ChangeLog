@@ -1,3 +1,9 @@
+2006-03-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslTransformProcessor.cs : in PushNodeset() avoid Clone(). It saves
+	  extra cost, and might avoid possible bug in for-each and current()
+	  evaluation.
+
 2006-02-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ScriptCompilerInfo.cs : mbas unlike vbc references System.dll
