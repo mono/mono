@@ -1,5 +1,10 @@
 2006-03-15  Marek Safar  <marek.safar@seznam.cz>
 
+	* class.cs (FieldMember.Emit): ParentContainer is real parent for partial
+	classes.
+
+2006-03-15  Marek Safar  <marek.safar@seznam.cz>
+
 	* class.cs (Operator.Define): An error for base conversion was not
 	reported correctly.
 

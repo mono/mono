@@ -5129,7 +5129,7 @@ namespace Mono.CSharp {
 				OptAttributes.Emit ();
 			}
 
-			if (Parent.HasExplicitLayout && ((status & Status.HAS_OFFSET) == 0) && (ModFlags & Modifiers.STATIC) == 0) {
+			if (((status & Status.HAS_OFFSET) == 0) && (ModFlags & Modifiers.STATIC) == 0 && ParentContainer.HasExplicitLayout) {
 				Report.Error (625, Location, "`{0}': Instance field types marked with StructLayout(LayoutKind.Explicit) must have a FieldOffset attribute.", GetSignatureForError ());
 			}
 
