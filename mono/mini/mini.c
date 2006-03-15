@@ -3704,6 +3704,32 @@ void check_linkdemand (MonoCompile *cfg, MonoMethod *caller, MonoMethod *callee,
 	}
 }
 
+static gboolean
+can_access_internals (MonoAssembly *accessing, MonoAssembly* accessed)
+{
+	GSList *tmp;
+	if (accessing == accessed)
+		return TRUE;
+	if (!accessed || !accessing)
+		return FALSE;
+	for (tmp = accessed->friend_assembly_names; tmp; tmp = tmp->next) {
+		MonoAssemblyName *friend = tmp->data;
+		/* Be conservative with checks */
+		if (!friend->name)
+			continue;
+		if (strcmp (accessing->aname.name, friend->name))
+			continue;
+		if (friend->public_key_token [0]) {
+			if (!accessing->aname.public_key_token [0])
+				continue;
+			if (strcmp (friend->public_key_token, accessing->aname.public_key_token))
+				continue;
+		}
+		return TRUE;
+	}
+	return FALSE;
+}
+
 /* FIXME: check visibility of type, too */
 static gboolean
 can_access_member (MonoClass *access_klass, MonoClass *member_klass, int access_level)
@@ -3718,11 +3744,11 @@ can_access_member (MonoClass *access_klass, MonoClass *member_klass, int access_
 		return access_klass == member_klass;
 	case FIELD_ATTRIBUTE_FAM_AND_ASSEM:
 		if (mono_class_has_parent (access_klass, member_klass) &&
-				access_klass->image->assembly == member_klass->image->assembly)
+				can_access_internals (access_klass->image->assembly, member_klass->image->assembly))
 			return TRUE;
 		return FALSE;
 	case FIELD_ATTRIBUTE_ASSEMBLY:
-		return access_klass->image->assembly == member_klass->image->assembly;
+		return can_access_internals (access_klass->image->assembly, member_klass->image->assembly);
 	case FIELD_ATTRIBUTE_FAMILY:
 		if (mono_class_has_parent (access_klass, member_klass))
 			return TRUE;
@@ -3730,7 +3756,7 @@ can_access_member (MonoClass *access_klass, MonoClass *member_klass, int access_
 	case FIELD_ATTRIBUTE_FAM_OR_ASSEM:
 		if (mono_class_has_parent (access_klass, member_klass))
 			return TRUE;
-		return access_klass->image->assembly == member_klass->image->assembly;
+		return can_access_internals (access_klass->image->assembly, member_klass->image->assembly);
 	case FIELD_ATTRIBUTE_PUBLIC:
 		return TRUE;
 	}
@@ -3767,6 +3793,15 @@ can_access_method (MonoMethod *method, MonoMethod *called)
 			nested = nested->nested_in;
 		}
 	}
+	/* 
+	 * FIXME:
+	 * with generics calls to explicit interface implementations can be expressed
+	 * directly: the method is private, but we must allow it. This may be opening
+	 * a hole or the generics code should handle this differently.
+	 * Maybe just ensure the interface type is public.
+	 */
+	if ((called->flags & METHOD_ATTRIBUTE_VIRTUAL) && (called->flags & METHOD_ATTRIBUTE_FINAL))
+		return TRUE;
 	return can;
 }
 

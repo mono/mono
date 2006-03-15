@@ -155,6 +155,9 @@ struct MonoEdge {
 };
 
 struct MonoSpillInfo {
+#ifndef MONO_ARCH_HAS_XP_REGALLOC
+	MonoSpillInfo *next;
+#endif
 	int offset;
 };
 
@@ -653,7 +656,7 @@ typedef struct {
 	void*            reginfo;
 	void*            reginfof;
 	void*            reverse_inst_list;
-	int              reginfo_len;
+	int              reginfo_len, reginfof_len;
 	int              reverse_inst_list_len;
 
 	/* Maps vregs to their associated MonoInst's */

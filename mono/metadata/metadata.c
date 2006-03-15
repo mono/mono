@@ -1445,10 +1445,28 @@ mono_metadata_parse_type_full (MonoImage *m, MonoGenericContainer *container, Mo
 	if (mode != MONO_PARSE_PARAM && !type->num_mods) {
 		/* no need to free type here, because it is on the stack */
 		if ((type->type == MONO_TYPE_CLASS || type->type == MONO_TYPE_VALUETYPE) && !type->pinned && !type->attrs) {
-			if (type->byref)
-				return &type->data.klass->this_arg;
-			else
-				return &type->data.klass->byval_arg;
+			MonoType *ret = type->byref ? &type->data.klass->this_arg : &type->data.klass->byval_arg;
+
+			/* Consider the case:
+
+			     class Foo<T> { class Bar {} }
+			     class Test : Foo<Test>.Bar {}
+
+			   When Foo<Test> is being expanded, 'Test' isn't yet initialized.  It's actually in
+			   a really pristine state: it doesn't even know whether 'Test' is a reference or a value type.
+
+			   We ensure that the MonoClass is in a state that we can canonicalize to:
+
+			     klass->byval_arg.data.klass == klass
+			     klass->this_arg.data.klass == klass
+
+			   If we can't canonicalize 'type', it doesn't matter, since later users of 'type' will do it.
+
+			   LOCKING: even though we don't explicitly hold a lock, in the problematic case 'ret' is a field
+			            of a MonoClass which currently holds the loader lock.  'type' is local.
+			*/
+			if (ret->data.klass == type->data.klass)
+				return ret;
 		}
 		/* No need to use locking since nobody is modifying the hash table */
 		if ((cached = g_hash_table_lookup (type_cache, type)))
@@ -2915,6 +2933,7 @@ mono_backtrace (int limit)
  *
  * Returns: the number of bytes required to hold an instance of this
  * type in memory
+ * FIXME: This should really use 'guint32*' for the align parameter.
  */
 int
 mono_type_size (MonoType *t, gint *align)
@@ -3020,6 +3039,7 @@ mono_type_size (MonoType *t, gint *align)
  *
  * Returns: the number of bytes required to hold an instance of this
  * type on the runtime stack
+ * FIXME: This should really use 'guint32*' for the align parameter.
  */
 int
 mono_type_stack_size (MonoType *t, gint *align)

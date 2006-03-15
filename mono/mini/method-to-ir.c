@@ -9646,7 +9646,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - run a global->local phase after SSA ?
  * - apply the HAVE_ARRAY_ELEM_INIT optimization to ins_info
  * - merge GetGenericValueImpl optimization
- * - LAST MERGE: 57910.
+ * - LAST MERGE: 57988.
  */
 
 /*
