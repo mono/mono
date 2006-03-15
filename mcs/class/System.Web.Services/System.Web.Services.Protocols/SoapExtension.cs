@@ -202,9 +202,11 @@ namespace System.Web.Services.Protocols {
 			return newStream;
 		}
 
-		internal static void ExecuteProcessMessage(SoapExtension[] extensions, SoapMessage message, bool inverseOrder)
+		internal static void ExecuteProcessMessage(SoapExtension[] extensions, SoapMessage message, Stream stream, bool inverseOrder) 
 		{
 			if (extensions == null) return;
+
+			message.InternalStream = stream;
 
 			if (inverseOrder)
 			{

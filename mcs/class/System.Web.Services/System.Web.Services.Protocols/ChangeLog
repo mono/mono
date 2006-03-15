@@ -1,5 +1,14 @@
 2006-03-15  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
+	* SoapExtension.cs: fixed ExecuteProcessMessage signature, added 
+	stream parameter in order to update SoapMessage stream
+	* SoapMessage.cs: removed unused ctor, added internal property to
+	set SoapMessage's stream member
+	* HttpSoapWebServiceHandler.cs, SoapHttpClientProtocol.cs: updated
+	usage of ExecuteProcessMessage
+
+2006-03-15  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
 	* SoapServerMessage.cs: fixed SoapServerMessage constructors to
 	remove quotes from SoapAction http header when initializing local
 	action member

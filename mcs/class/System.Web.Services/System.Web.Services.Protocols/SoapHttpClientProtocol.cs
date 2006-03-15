@@ -211,7 +211,7 @@ namespace System.Web.Services.Protocols
 				if (extensions != null) {
 					s = SoapExtension.ExecuteChainStream (extensions, s);
 					message.SetStage (SoapMessageStage.BeforeSerialize);
-					SoapExtension.ExecuteProcessMessage (extensions, message, true);
+					SoapExtension.ExecuteProcessMessage (extensions, message, s, true);
 				}
 
 				XmlTextWriter xtw = WebServiceHelper.CreateXmlWriter (s);
@@ -220,7 +220,7 @@ namespace System.Web.Services.Protocols
 
 				if (extensions != null) {
 					message.SetStage (SoapMessageStage.AfterSerialize);
-					SoapExtension.ExecuteProcessMessage (extensions, message, true);
+					SoapExtension.ExecuteProcessMessage (extensions, message, s, true);
 				}
 
 				xtw.Flush ();
@@ -270,7 +270,7 @@ namespace System.Web.Services.Protocols
 			if (extensions != null) {
 				stream = SoapExtension.ExecuteChainStream (extensions, stream);
 				message.SetStage (SoapMessageStage.BeforeDeserialize);
-				SoapExtension.ExecuteProcessMessage (extensions, message, false);
+				SoapExtension.ExecuteProcessMessage (extensions, message, stream, false);
 			}
 			
 			// Deserialize the response
@@ -299,7 +299,7 @@ namespace System.Web.Services.Protocols
 
 			if (extensions != null) {
 				message.SetStage (SoapMessageStage.AfterDeserialize);
-				SoapExtension.ExecuteProcessMessage (extensions, message, false);
+				SoapExtension.ExecuteProcessMessage (extensions, message, stream, false);
 			}
 
 			if (message.Exception == null)

@@ -59,11 +59,6 @@ namespace System.Web.Services.Protocols {
 			headers = new SoapHeaderCollection ();
 		}
 
-		internal SoapMessage (Stream stream)
-		{
-			this.stream = stream;
-		}
-
 		internal SoapMessage (Stream stream, SoapException exception)
 		{
 			this.exception = exception;
@@ -156,6 +151,14 @@ namespace System.Web.Services.Protocols {
 		}
 #endif
  
+		internal Stream InternalStream 
+		{ 
+			// for getter use public stream property
+			set {
+				stream = value;
+			}
+		}
+
 		#endregion Properties
 
 		#region Methods

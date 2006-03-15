@@ -148,7 +148,7 @@ namespace System.Web.Services.Protocols
 
 				_extensionChainHighPrio = SoapExtension.CreateExtensionChain (_typeStubInfo.SoapExtensions[0]);
 				stream = SoapExtension.ExecuteChainStream (_extensionChainHighPrio, stream);
-				SoapExtension.ExecuteProcessMessage (_extensionChainHighPrio, message, false);
+				SoapExtension.ExecuteProcessMessage (_extensionChainHighPrio, message, stream, false);
 
 				// If the routing style is RequestElement, try to get the method name from the
 				// stream processed by the high priority extensions
@@ -194,8 +194,8 @@ namespace System.Web.Services.Protocols
 
 				stream = SoapExtension.ExecuteChainStream (_extensionChainMedPrio, stream);
 				stream = SoapExtension.ExecuteChainStream (_extensionChainLowPrio, stream);
-				SoapExtension.ExecuteProcessMessage (_extensionChainMedPrio, message, false);
-				SoapExtension.ExecuteProcessMessage (_extensionChainLowPrio, message, false);
+				SoapExtension.ExecuteProcessMessage (_extensionChainMedPrio, message, stream, false);
+				SoapExtension.ExecuteProcessMessage (_extensionChainLowPrio, message, stream, false);
 
 				// Deserialize the request
 
@@ -218,9 +218,9 @@ namespace System.Web.Services.Protocols
 				// Notify the extensions after deserialization
 
 				message.SetStage (SoapMessageStage.AfterDeserialize);
-				SoapExtension.ExecuteProcessMessage (_extensionChainHighPrio, message, false);
-				SoapExtension.ExecuteProcessMessage (_extensionChainMedPrio, message, false);
-				SoapExtension.ExecuteProcessMessage (_extensionChainLowPrio, message, false);
+				SoapExtension.ExecuteProcessMessage (_extensionChainHighPrio, message, stream, false);
+				SoapExtension.ExecuteProcessMessage (_extensionChainMedPrio, message, stream, false);
+				SoapExtension.ExecuteProcessMessage (_extensionChainLowPrio, message, stream, false);
 
 				xmlReader.Close ();
 
@@ -283,9 +283,9 @@ namespace System.Web.Services.Protocols
 					outStream = SoapExtension.ExecuteChainStream (_extensionChainLowPrio, outStream);
 	
 					message.SetStage (SoapMessageStage.BeforeSerialize);
-					SoapExtension.ExecuteProcessMessage (_extensionChainLowPrio, message, true);
-					SoapExtension.ExecuteProcessMessage (_extensionChainMedPrio, message, true);
-					SoapExtension.ExecuteProcessMessage (_extensionChainHighPrio, message, true);
+					SoapExtension.ExecuteProcessMessage (_extensionChainLowPrio, message, outStream, true);
+					SoapExtension.ExecuteProcessMessage (_extensionChainMedPrio, message, outStream, true);
+					SoapExtension.ExecuteProcessMessage (_extensionChainHighPrio, message, outStream, true);
 				}
 				
 				XmlTextWriter xtw = WebServiceHelper.CreateXmlWriter (outStream);
@@ -300,9 +300,9 @@ namespace System.Web.Services.Protocols
 				if (bufferResponse)
 				{
 					message.SetStage (SoapMessageStage.AfterSerialize);
-					SoapExtension.ExecuteProcessMessage (_extensionChainLowPrio, message, true);
-					SoapExtension.ExecuteProcessMessage (_extensionChainMedPrio, message, true);
-					SoapExtension.ExecuteProcessMessage (_extensionChainHighPrio, message, true);
+					SoapExtension.ExecuteProcessMessage (_extensionChainLowPrio, message, outStream, true);
+					SoapExtension.ExecuteProcessMessage (_extensionChainMedPrio, message, outStream, true);
+					SoapExtension.ExecuteProcessMessage (_extensionChainHighPrio, message, outStream, true);
 				}
 				
 				xtw.Flush ();
