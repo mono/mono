@@ -1,3 +1,9 @@
+2006-03-15 Neale Ferguson <neale@sinenomine.net>
+	
+	* mini-s390x.h: Correct S390_LONG macro.
+
+	* mini-s390x.c: Cleanup unused code.
+
 2006-03-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* jit-icalls.h: New file.
