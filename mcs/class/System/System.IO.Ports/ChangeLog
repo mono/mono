@@ -1,3 +1,8 @@
+2006-03-15  Miguel de Icaza  <miguel@gnome.org>
+
+	* SerialPort.cs: We will do detection of systems differently as we
+	discussed over email.  Drop malloc/free/uname calls.
+
 2006-03-15  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* SerialPort.cs: Add basic detection of serial ports and

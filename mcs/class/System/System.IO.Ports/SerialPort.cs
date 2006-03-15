@@ -37,7 +37,7 @@ namespace System.IO.Ports
 		byte [] readBuffer;
 		//byte [] writeBuffer;
 		
-		static string default_port_name;
+		static string default_port_name = "ttyS0";
 
 		public SerialPort ()
 		{
@@ -85,40 +85,8 @@ namespace System.IO.Ports
 			this.stopBits = stopBits;
 		}
 
-		[DllImport ("libc")]
-		static extern IntPtr malloc (int length);
-
-		[DllImport ("libc")]
-		static extern void free (IntPtr buffer);
-
-		[DllImport ("libc")]
-		static extern int uname (IntPtr buffer);
-		
 		string GetDefaultPortName ()
 		{
-			if (default_port_name != null)
-				return default_port_name;
-
-			int p = (int) Environment.OSVersion.Platform;
-			if (p != 4 && p != 128) // Are we on Windows platform?
-				return default_port_name = "COM1";
-
-			IntPtr buffer = malloc (1024);
-			if (uname (buffer) == -1) {
-				free (buffer);
-				throw new NotSupportedException ("Detection of default port is not supported for this platform.");
-			}
-
-			string osname = Marshal.PtrToStringAnsi (buffer);
-			free (buffer);
-			switch (osname) {
-				case "Linux":
-					default_port_name = "/dev/ttyS0";
-					break;
-				default:
-					throw new NotImplementedException ("Detection of default port is not implemented for this platform yet.");
-			}
-
 			return default_port_name;
 		}
 
