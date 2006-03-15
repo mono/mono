@@ -7078,15 +7078,6 @@ namespace Mono.CSharp {
 						"enclosing type");
 					return false;
 				}
-				
-				if (first_arg_type == TypeManager.object_type ||
-					return_type == TypeManager.object_type){
-					Report.Error (
-						-8, Location,
-						"User-defined conversion cannot convert to or from " +
-						"object type");
-					return false;
-				}
 
 				if (first_arg_type.IsInterface || return_type.IsInterface){
 					Report.Error (552, Location, "User-defined conversion `{0}' cannot convert to or from an interface type",
@@ -7094,9 +7085,8 @@ namespace Mono.CSharp {
 					return false;
 				}
 				
-				if (first_arg_type.IsSubclassOf (return_type)
-					|| return_type.IsSubclassOf (first_arg_type)){
-					if (declaring_type.IsSubclassOf (return_type)) {
+				if (first_arg_type.IsSubclassOf (return_type) || return_type.IsSubclassOf (first_arg_type)) {
+					if (declaring_type.IsSubclassOf (return_type) || declaring_type.IsSubclassOf (first_arg_type)) {
 						Report.Error (553, Location, "User-defined conversion `{0}' cannot convert to or from base class",
 							GetSignatureForError ());
 						return false;
