@@ -1612,7 +1612,7 @@ namespace Mono.CSharp {
 							if (ll >= 0)
 								right = new ULongConstant ((ulong) ll, right.Location);
 						} else {
-							e = Convert.ImplicitNumericConversion (ec, right, l);
+							e = Convert.ImplicitNumericConversion (right, l);
 							if (e != null)
 								right = e;
 						}
@@ -1629,7 +1629,7 @@ namespace Mono.CSharp {
 						if (ll > 0)
 							left = new ULongConstant ((ulong) ll, right.Location);
 					} else {
-						e = Convert.ImplicitNumericConversion (ec, left, r);
+						e = Convert.ImplicitNumericConversion (left, r);
 						if (e != null)
 							left = e;
 					}
@@ -2030,9 +2030,9 @@ namespace Mono.CSharp {
 					// Also, a standard conversion must exist from either one
 					//
 					bool left_to_right =
-						Convert.ImplicitStandardConversionExists (ec, left, r);
+						Convert.ImplicitStandardConversionExists (left, r);
 					bool right_to_left = !left_to_right &&
-						Convert.ImplicitStandardConversionExists (ec, right, l);
+						Convert.ImplicitStandardConversionExists (right, l);
 
 					if (!left_to_right && !right_to_left) {
 						Error_OperatorCannotBeApplied ();
@@ -4653,7 +4653,7 @@ namespace Mono.CSharp {
 						 ref MethodBase candidate)
 		{
 			if (!me.HasTypeArguments &&
-			    !TypeManager.InferTypeArguments (ec, arguments, ref candidate))
+			    !TypeManager.InferTypeArguments (arguments, ref candidate))
 				return false;
 
 			return IsApplicable (ec, arguments, arg_count, candidate);
@@ -4846,7 +4846,7 @@ namespace Mono.CSharp {
 					if (pd.Count != arg_count)
 						continue;
 
-					if (!TypeManager.InferTypeArguments (ec, Arguments, ref c))
+					if (!TypeManager.InferTypeArguments (Arguments, ref c))
 						continue;
 
 					VerifyArgumentsCompat (ec, Arguments, arg_count,
@@ -4872,7 +4872,7 @@ namespace Mono.CSharp {
 						if (pd.Count != arg_count)
 							continue;
 
-						if (TypeManager.InferTypeArguments (ec, Arguments, ref c))
+						if (TypeManager.InferTypeArguments (Arguments, ref c))
 							continue;
 
 						Report.Error (

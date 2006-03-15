@@ -147,7 +147,7 @@ namespace Mono.CSharp {
 			if (type == TypeManager.object_type)
 				return this;
 
-			if (!Convert.ImplicitStandardConversionExists (Convert.ConstantEC, this, type)){
+			if (!Convert.ImplicitStandardConversionExists (this, type)){
 				Error_ValueCannotBeConverted (loc, type, false);
 				return null;
 			}

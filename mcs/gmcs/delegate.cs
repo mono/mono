@@ -396,11 +396,10 @@ namespace Mono.CSharp {
 		// Returns the MethodBase for "Invoke" from a delegate type, this is used
 		// to extract the signature of a delegate.
 		//
-		public static MethodGroupExpr GetInvokeMethod (EmitContext ec, Type delegate_type,
-							       Location loc)
+		public static MethodGroupExpr GetInvokeMethod (Type container_type, Type delegate_type, Location loc)
 		{
-			Expression ml = Expression.MemberLookup (
-				ec, delegate_type, "Invoke", loc);
+			Expression ml = Expression.MemberLookup (container_type, null, delegate_type,
+				"Invoke", loc);
 
 			MethodGroupExpr mg = ml as MethodGroupExpr;
 			if (mg == null) {
@@ -415,11 +414,11 @@ namespace Mono.CSharp {
 		///  Verifies whether the method in question is compatible with the delegate
 		///  Returns the method itself if okay and null if not.
 		/// </summary>
-		public static MethodBase VerifyMethod (EmitContext ec, Type delegate_type,
+		public static MethodBase VerifyMethod (Type container_type, Type delegate_type,
 						       MethodGroupExpr old_mg, MethodBase mb,
 						       Location loc)
 		{
-			MethodGroupExpr mg = GetInvokeMethod (ec, delegate_type, loc);
+			MethodGroupExpr mg = GetInvokeMethod (container_type, delegate_type, loc);
 			if (mg == null)
 				return null;
 
@@ -430,7 +429,7 @@ namespace Mono.CSharp {
 			ParameterData invoke_pd = TypeManager.GetParameterData (invoke_mb);
 
 			if (!mg.HasTypeArguments &&
-			    !TypeManager.InferTypeArguments (ec, invoke_pd, ref mb))
+			    !TypeManager.InferTypeArguments (invoke_pd, ref mb))
 				return null;
 
 			ParameterData pd = TypeManager.GetParameterData (mb);
@@ -682,7 +681,7 @@ namespace Mono.CSharp {
 			string delegate_desc = Delegate.FullDelegateDesc (type, method, param);
 
 			if (!mg.HasTypeArguments &&
-			    !TypeManager.InferTypeArguments (ec, param, ref found_method))
+			    !TypeManager.InferTypeArguments (param, ref found_method))
 				Report.Error (411, loc, "The type arguments for " +
 					      "method `{0}' cannot be infered from " +
 					      "the usage. Try specifying the type " +
@@ -723,11 +722,21 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		public static MethodBase ImplicitStandardConversionExists (MethodGroupExpr mg, Type targetType)
+		{
+			foreach (MethodInfo mi in mg.Methods){
+				MethodBase mb = Delegate.VerifyMethod (mg.DeclaringType, targetType, mg, mi, Location.Null);
+				if (mb != null)
+					return mb;
+			}
+			return null;
+		}
+
 		protected Expression ResolveMethodGroupExpr (EmitContext ec, MethodGroupExpr mg,
 							     bool check_only)
 		{
 			foreach (MethodInfo mi in mg.Methods){
-				delegate_method  = Delegate.VerifyMethod (ec, type, mg, mi, loc);
+				delegate_method  = Delegate.VerifyMethod (ec.ContainerType, type, mg, mi, loc);
 				
 				if (delegate_method != null)
 					break;

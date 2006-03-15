@@ -442,8 +442,8 @@ namespace Mono.CSharp {
 				Type t2 = constraints.ClassConstraint;
 				TypeExpr e2 = constraints.class_constraint;
 
-				if (!Convert.ImplicitReferenceConversionExists (ec, e1, t2) &&
-				    !Convert.ImplicitReferenceConversionExists (ec, e2, t1)) {
+				if (!Convert.ImplicitReferenceConversionExists (e1, t2) &&
+				    !Convert.ImplicitReferenceConversionExists (e2, t1)) {
 					Report.Error (455, loc,
 						      "Type parameter `{0}' inherits " +
 						      "conflicting constraints `{1}' and `{2}'",
@@ -1548,7 +1548,7 @@ namespace Mono.CSharp {
 			if (TypeManager.IsBuiltinType (atype) || atype.IsValueType)
 				return true;
 
-			if (HasDefaultConstructor (ec, atype))
+			if (HasDefaultConstructor (ec.ContainerType, atype))
 				return true;
 
 			Report_SymbolRelatedToPreviousError ();
@@ -1590,14 +1590,14 @@ namespace Mono.CSharp {
 				ctype = atypes [pos];
 			}
 
-			if (Convert.ImplicitStandardConversionExists (ec, expr, ctype))
+			if (Convert.ImplicitStandardConversionExists (expr, ctype))
 				return true;
 
 			Error_TypeMustBeConvertible (expr.Type, ctype, ptype);
 			return false;
 		}
 
-		bool HasDefaultConstructor (EmitContext ec, Type atype)
+		bool HasDefaultConstructor (Type containerType, Type atype)
 		{
 			atype = TypeManager.DropGenericTypeArguments (atype);
 
@@ -1620,7 +1620,7 @@ namespace Mono.CSharp {
 			}
 
 			MethodGroupExpr mg = Expression.MemberLookup (
-				ec.ContainerType, atype, ".ctor", MemberTypes.Constructor,
+				containerType, atype, ".ctor", MemberTypes.Constructor,
 				BindingFlags.Public | BindingFlags.Instance |
 				BindingFlags.DeclaredOnly, loc)
 				as MethodGroupExpr;
@@ -2555,7 +2555,7 @@ namespace Mono.CSharp {
 		///   when resolving an Invocation or a DelegateInvocation and the user
 		///   did not explicitly specify type arguments.
 		/// </summary>
-		public static bool InferTypeArguments (EmitContext ec, ArrayList arguments,
+		public static bool InferTypeArguments (ArrayList arguments,
 						       ref MethodBase method)
 		{
 			if (!TypeManager.IsGenericMethod (method))
@@ -2609,7 +2609,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Type inference.
 		/// </summary>
-		public static bool InferTypeArguments (EmitContext ec, ParameterData apd,
+		public static bool InferTypeArguments (ParameterData apd,
 						       ref MethodBase method)
 		{
 			if (!TypeManager.IsGenericMethod (method))
