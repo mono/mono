@@ -39,12 +39,12 @@ namespace System.Windows.Forms {
 		private IList list;
 		private bool binding_suspended;
 
-		internal CurrencyManager (object data_source)
-		{			
-			if (data_source is IListSource) {
-				list = ((IListSource) data_source).GetList ();
-			} else if (data_source is IList) {
+		internal CurrencyManager (object data_source, string data_member)
+		{
+			if (data_source is IList) {
 				list = (IList) data_source;
+			} else if (data_source is IListSource) {
+				list = ((IListSource) data_source).GetList ();
 			} else {
 				throw new Exception ("Attempted to create currency manager " +
 					"from invalid type: " + data_source.GetType ());
@@ -64,7 +64,15 @@ namespace System.Windows.Forms {
 			if (table == null && data_source is DataView)
 				table = ((DataView) data_source).Table;
 
+			if (table == null) {
+				DataSet dataset = data_source as DataSet;
+				if (dataset != null) {
+					table = dataset.Tables [data_member];
+				}
+			}
+
 			if (table != null) {
+				list = new DataView (table);
 				table.Columns.CollectionChanged  += new CollectionChangeEventHandler (MetaDataChangedHandler);
 				table.ChildRelations.CollectionChanged  += new CollectionChangeEventHandler (MetaDataChangedHandler);
 				table.ParentRelations.CollectionChanged  += new CollectionChangeEventHandler (MetaDataChangedHandler);

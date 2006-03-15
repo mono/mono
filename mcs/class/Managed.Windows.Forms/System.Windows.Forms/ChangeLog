@@ -1,3 +1,14 @@
+2006-03-15  Jackson Harper  <jackson@ximian.com>
+
+	* BindingContext.cs: The currency manager needs the data member
+	name, if the member is a data set we use the name to find the
+	correct table.
+	* CurrencyManager.cs: When creating the list prefer an IList over
+	an IListSource.
+	- Attempt to create a DataTable from a DataSet (TODO: might need
+	some better error checking here, although MS doesn't seem to have much)
+	- If we have a DataTable create a view and use it as our list.
+
 2006-03-15  Mike Kestner  <mkestner@novell.com>
 
 	* ListView.cs: keep a matrix of the icon mode layout to facilitate

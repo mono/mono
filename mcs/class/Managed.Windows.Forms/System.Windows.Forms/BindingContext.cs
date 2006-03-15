@@ -116,7 +116,7 @@ namespace System.Windows.Forms {
 			if (data_source is IList || 
 				data_source is IListSource ||
 				data_source is IBindingList) {
-				CurrencyManager res = new CurrencyManager (data_source);
+				CurrencyManager res = new CurrencyManager (data_source, data_member);
 				return res;
 			}
 
