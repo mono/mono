@@ -2518,9 +2518,13 @@ namespace System.Windows.Forms
 			} else if (parent != null) {
 				if (parent.child_controls.impl_list != null) {
 					Control last_impl = (Control) parent.child_controls.impl_list [parent.child_controls.impl_list.Count - 1];
-					XplatUI.SetZOrder (this.window.Handle, last_impl.Handle, false, false);
+					if (IsHandleCreated) {
+						XplatUI.SetZOrder (this.window.Handle, last_impl.Handle, false, false);
+					}
 				} else {
-					XplatUI.SetZOrder(this.window.Handle, IntPtr.Zero, true, false);
+					if (IsHandleCreated) {
+						XplatUI.SetZOrder(this.window.Handle, IntPtr.Zero, true, false);
+					}
 				}
 			}
 
@@ -3043,7 +3047,10 @@ namespace System.Windows.Forms
 				}
 			}
 
-			XplatUI.SetZOrder(this.window.Handle, IntPtr.Zero, false, true);
+			if (IsHandleCreated) {
+				XplatUI.SetZOrder(this.window.Handle, IntPtr.Zero, false, true);
+			}
+
 			if (parent != null) {
 				parent.Refresh();
 			}
