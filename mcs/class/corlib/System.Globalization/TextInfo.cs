@@ -440,7 +440,7 @@ namespace System.Globalization {
 			return ToUpper (c);
 		}
 
-		public virtual string ToLower (string s)
+		public unsafe virtual string ToLower (string s)
 		{
 			// In ICU (3.2) there are a few cases that one single
 			// character results in multiple characters in e.g.
@@ -450,25 +450,23 @@ namespace System.Globalization {
 			// invokes ToLower(char).
 			if (s == null)
 				throw new ArgumentNullException ("string is null");
-			StringBuilder sb = null;
-			int start = 0;
 
-			for (int i = 0; i < s.Length; i++) {
-				if (s [i] != ToLower (s [i])) {
-					if (sb == null)
-						sb = new StringBuilder (s.Length);
-					sb.Append (s, start, i - start);
-					sb.Append (ToLower (s [i]));
-					start = i + 1;
+			string tmp = String.InternalAllocateStr (s.Length);
+			fixed (char* source = s, dest = tmp) {
+
+				char* destPtr = (char*)dest;
+				char* sourcePtr = (char*)source;
+
+				for (int n = 0; n < s.Length; n++) {
+					*destPtr = ToLower (*sourcePtr);
+					sourcePtr++;
+					destPtr++;
 				}
 			}
-
-			if (sb != null && start < s.Length)
-				sb.Append (s, start, s.Length - start);
-			return sb == null ? s : sb.ToString ();
+			return tmp;
 		}
 
-		public virtual string ToUpper (string s)
+		public unsafe virtual string ToUpper (string s)
 		{
 			// In ICU (3.2) there is a case that string
 			// is handled beyond per-character conversion, but
@@ -477,20 +475,20 @@ namespace System.Globalization {
 			// ToUpper() just as character conversion.
 			if (s == null)
 				throw new ArgumentNullException ("string is null");
-			StringBuilder sb = null;
-			int start = 0;
-			for (int i = 0; i < s.Length; i++) {
-				if (s [i] != ToUpper (s [i])) {
-					if (sb == null)
-						sb = new StringBuilder (s.Length);
-					sb.Append (s, start, i - start);
-					sb.Append (ToUpper (s [i]));
-					start = i + 1;
+
+			string tmp = String.InternalAllocateStr (s.Length);
+			fixed (char* source = s, dest = tmp) {
+
+				char* destPtr = (char*)dest;
+				char* sourcePtr = (char*)source;
+
+				for (int n = 0; n < s.Length; n++) {
+					*destPtr = ToUpper (*sourcePtr);
+					sourcePtr++;
+					destPtr++;
 				}
 			}
-			if (sb != null && start < s.Length)
-				sb.Append (s, start, s.Length - start);
-			return sb == null ? s : sb.ToString ();
+			return tmp;
 		}
 
 #if NET_2_0
