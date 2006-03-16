@@ -592,7 +592,7 @@ namespace Mono.CSharp {
 			if (Expr == null)
 				return null;
 
-			if (TypeManager.IsNullableType (Expr.Type))
+			if (TypeManager.IsNullableValueType (Expr.Type))
 				return new Nullable.LiftedUnaryOperator (Oper, Expr, loc).Resolve (ec);
 
 			eclass = ExprClass.Value;
@@ -899,7 +899,7 @@ namespace Mono.CSharp {
 
 			eclass = ExprClass.Value;
 
-			if (TypeManager.IsNullableType (expr.Type))
+			if (TypeManager.IsNullableValueType (expr.Type))
 				return new Nullable.LiftedUnaryMutator (mode, expr, loc).Resolve (ec);
 
 			return ResolveOperator (ec);
@@ -2466,7 +2466,9 @@ namespace Mono.CSharp {
 					return e;
 			}
 
-			if (TypeManager.IsNullableType (left.Type) || TypeManager.IsNullableType (right.Type))
+			Type ltype = left.Type, rtype = right.Type;
+			if (ltype.IsValueType && rtype.IsValueType &&
+			    (TypeManager.IsNullableType (ltype) || TypeManager.IsNullableType (rtype)))
 				return new Nullable.LiftedBinaryOperator (oper, left, right, loc).Resolve (ec);
 
 			// Comparison warnings
@@ -3349,7 +3351,7 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return null;
 
-			if (TypeManager.IsNullableType (expr.Type))
+			if (TypeManager.IsNullableValueType (expr.Type))
 				return new Nullable.LiftedConditional (expr, trueExpr, falseExpr, loc).Resolve (ec);
 			
 			if (expr.Type != TypeManager.bool_type){

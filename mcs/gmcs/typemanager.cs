@@ -1402,10 +1402,10 @@ public partial class TypeManager {
 
 			MemberList list;
 			Timer.StartTimer (TimerType.FindMembers);
-			list = tparam.FindMembers (mt, bf | BindingFlags.DeclaredOnly,
+			list = tparam.FindMembers (mt, bf & ~BindingFlags.DeclaredOnly,
 						   FilterWithClosure_delegate, name);
 			Timer.StopTimer (TimerType.FindMembers);
-			used_cache = false;
+			used_cache = true;
 			return (MemberInfo []) list;
 		}
 
@@ -1805,6 +1805,8 @@ public partial class TypeManager {
 
 	static public MethodBase TryGetBaseDefinition (MethodBase m)
 	{
+		m = DropGenericMethodArguments (m);
+
 		return (MethodBase) method_overrides [m];
 	}
 

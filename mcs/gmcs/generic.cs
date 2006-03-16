@@ -1599,13 +1599,18 @@ namespace Mono.CSharp {
 
 		bool HasDefaultConstructor (Type containerType, Type atype)
 		{
+			if (atype.IsAbstract)
+				return false;
+
+		again:
 			atype = TypeManager.DropGenericTypeArguments (atype);
-
 			if (atype is TypeBuilder) {
-				if (atype.IsAbstract)
-					return false;
-
 				TypeContainer tc = TypeManager.LookupTypeContainer (atype);
+				if (tc.InstanceConstructors == null) {
+					atype = atype.BaseType;
+					goto again;
+				}
+
 				foreach (Constructor c in tc.InstanceConstructors) {
 					if ((c.ModFlags & Modifiers.PUBLIC) == 0)
 						continue;
@@ -2640,6 +2645,14 @@ namespace Mono.CSharp {
 		public static bool IsNullableType (Type t)
 		{
 			return generic_nullable_type == DropGenericTypeArguments (t);
+		}
+
+		public static bool IsNullableValueType (Type t)
+		{
+			if (!IsNullableType (t))
+				return false;
+
+			return GetTypeArguments (t) [0].IsValueType;
 		}
 	}
 
