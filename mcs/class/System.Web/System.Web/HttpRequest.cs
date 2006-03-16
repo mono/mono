@@ -1387,6 +1387,26 @@ namespace System.Web {
 			return l.Substring (begin, end - begin);
 		}
 
+		string GetContentDispositionAttributeWithEncoding (string l, string name)
+		{
+			int idx = l.IndexOf (name + "=\"");
+			if (idx < 0)
+				return null;
+			int begin = idx + name.Length + "=\"".Length;
+			int end = l.IndexOf ('"', begin);
+			if (end < 0)
+				return null;
+			if (begin == end)
+				return "";
+
+			string temp = l.Substring (begin, end - begin);
+			byte [] source = new byte [temp.Length];
+			for (int i = temp.Length - 1; i >= 0; i--)
+				source [i] = (byte) temp [i];
+
+			return encoding.GetString (source);
+		}
+
 		bool ReadBoundary ()
 		{
 			try {
@@ -1525,7 +1545,7 @@ namespace System.Web {
 			while ((header = ReadHeaders ()) != null) {
 				if (StrUtils.StartsWith (header, "Content-Disposition:", true)) {
 					elem.Name = GetContentDispositionAttribute (header, "name");
-					elem.Filename = GetContentDispositionAttribute (header, "filename");      
+					elem.Filename = GetContentDispositionAttributeWithEncoding (header, "filename");      
 				} else if (StrUtils.StartsWith (header, "Content-Type:", true)) {
 					elem.ContentType = header.Substring ("Content-Type:".Length).Trim ();
 				}
