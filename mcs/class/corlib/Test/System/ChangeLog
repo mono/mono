@@ -1,3 +1,7 @@
+2006-03-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DoubleTest.cs : added ParseEmptyString().
+
 2006-01-31  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* StringTest.cs : Added test for bug #77412.
