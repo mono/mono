@@ -1549,6 +1549,7 @@ case "$host" in
 		arch_target=s390;
 		ACCESS_UNALIGNED="no"
 		JIT_SUPPORTED=yes
+		jit_wanted=true
 		;;
 	s390x-*-linux*)
 		TARGET=S390x;
@@ -1556,6 +1557,7 @@ case "$host" in
 		arch_target=s390x;
 		ACCESS_UNALIGNED="no"
 		JIT_SUPPORTED=yes
+		jit_wanted=true
 		;;
 esac
 
