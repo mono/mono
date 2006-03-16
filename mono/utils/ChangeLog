@@ -1,5 +1,10 @@
 2006-03-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* monobitset.c: Guard inline asm with #ifdef __GNUC__.
+
+	* monobitset.c (mono_bitset_find_first): Turn a g_return_val_if_fail
+	into an assert.
+
 	* mono-compiler.h (MONO_INTERNAL): Disable this on the VC build.
 
 2006-03-10  Zoltan Varga  <vargaz@gmail.com>
