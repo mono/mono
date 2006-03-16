@@ -130,8 +130,6 @@ REM ********************************************************
 xmltool.exe --transform nunit_transform.xslt %GH_OUTPUT_XML%
 @echo off
 
-@echo
-
 :FINALLY
 GOTO END
 

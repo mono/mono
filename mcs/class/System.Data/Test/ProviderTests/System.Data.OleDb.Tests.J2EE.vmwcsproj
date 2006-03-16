@@ -134,6 +134,18 @@
 				<File RelPath="System.Data.OleDb.jvm\OleDbTransaction\OleDbTransaction_Rollback.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.OleDb.jvm\OleDbType\OleDbType.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.OleDb.jvm\OleDbType\OleDbType_Date.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Data.SqlClient.jvm\SqlCommand\SqlCommand_ExecuteReader_.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Data.SqlClient.jvm\SqlCommand\SqlCommand_ExecuteXmlReader_.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Data.SqlClient.jvm\SqlCommand\SqlCommand_Parameters.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Data.SqlClient.jvm\SqlCommandBuilder\SqlCommandBuilder_DeriveParameters_S.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Data.SqlClient.jvm\SqlConnection\SqlConnection_BeginTransaction_S.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Data.SqlClient.jvm\SqlConnection\SqlConnection_InfoMessage.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Data.SqlClient.jvm\SqlConnection\SqlConnection_StateChange.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Data.SqlClient.jvm\SqlDataAdapter\SqlDataAdapter_RowUpdated.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Data.SqlClient.jvm\SqlDataAdapter\SqlDataAdapter_RowUpdating.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Data.SqlClient.jvm\SqlParameter\SqlParameter_ctor_SO.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Data.SqlClient.jvm\SqlParameter\SqlParameter_Direction.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Data.SqlClient.jvm\SqlParameter\SqlParameter_set_DbType_D.cs" SubType="Code" BuildAction="Compile"/>
 			</Include>
 		</Files>
 		<UserProperties jarserver="ipa" project.JDKType="1.5.0_05" REFS.JarPath.rt="..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jre5\lib\rt.jar" REFS.JarPath.system.xml="..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\System.Xml.jar" REFS.JarPath.system.data="..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\System.Data.jar" REFS.JarPath.system="..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\System.jar"/>

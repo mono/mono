@@ -1,3 +1,7 @@
+2006-03-16	Boris Kirzner <borisk@mainsfot.com>
+	* System.Data.SqlClient.jvm: added SqlClient tests for TARGET_JVM
+	* System.Data.OleDb.Tests.J2EE.vmwcsproj: added SqlClient tests for TARGET_JVM
+
 2006-03-12	Boris Kirzner <borisk@mainsfot.com>
 	* System.Data.OleDb.J2EE.sln, System.Data.OleDb.Tests.J2EE.vmwcsproj:
 	changes for automated testing for TARGET_JVM.

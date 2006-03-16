@@ -1,4 +1,7 @@
 2006-03-16 	Boris Kirzner <borisk@mainsfot.com>
+	* run-tests.test.connected.bat - fix in TARGET_JVM test script.
+
+2006-03-16 	Boris Kirzner <borisk@mainsfot.com>
 	* run-tests.test.connected.bat - fix classpath in TARGET_JVM test script.
 
 2006-03-12	Boris Kirzner <borisk@mainsfot.com>
