@@ -539,13 +539,19 @@ namespace System.Net
 			if (cnc.Data.StatusCode != 0 && cnc.Data.StatusCode != 100)
 				return;
 
-			IAsyncResult result = cnc.BeginWrite (bytes, 0, length, null, null);
+			IAsyncResult result = null;
+			if (length > 0)
+				result = cnc.BeginWrite (bytes, 0, length, null, null);
+
 			if (!initRead) {
 				initRead = true;
 				WebConnection.InitRead (cnc);
 			}
 
-			complete_request_written = cnc.EndWrite (result);
+			if (length > 0) 
+				complete_request_written = cnc.EndWrite (result);
+			else
+				complete_request_written = true;
 		}
 
 		internal void InternalClose ()
