@@ -1,3 +1,7 @@
+2006-03-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-compiler.h (MONO_INTERNAL): Disable this on the VC build.
+
 2006-03-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* monobitset.h monobitset.c: Merge lots of optimizations from the linear-il 
