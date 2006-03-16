@@ -50,6 +50,8 @@ namespace System.Windows.Forms {
 
 			public BindingManagerBase AddMember (string member)
 			{
+				if (member == null)
+					member = String.Empty;
 				BindingManagerBase res = members [member] as BindingManagerBase;
 				if (res != null)
 					return res;
