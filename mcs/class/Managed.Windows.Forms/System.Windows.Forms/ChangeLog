@@ -1,3 +1,29 @@
+2006-03-16  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* DataGrid.cs:
+	  - OnMouseDown: Switch to editing mode when clicking on the cell
+	                 even if we're clicking on the cell that's currently 
+	                 selected
+	  - ProcessGridKey: Left/Right now wrap like MS.Net does
+	  - ProcessGridKey: Tab now knows to add a new row when tab is
+	                    pressed in the cell of the last column of the 
+	                    last row
+	  - ProcessGridKey: Enter now adds another row  if pressed in the last
+	                    row and selectes the new row, same column cell
+	  - ProcessGridKey: Home/End navigate columns, not rows, like 
+	                    originally implemented
+	  - Broke ProcessKeyPreview code out into an extra Internal method
+	    so it can be called from the edit code
+	* DataGridTextBox.cs (ProcessKeyMessage):
+	  - Switched to accept Tab keypresses
+	  - Added F2 handling to allow jumping to the end of the edited cell
+	  - Added logic to allow moving caret left/right inside edited cell
+	    and making the edited cell jump when the caret hits cell borders
+	  - Tab and Enter are now passed to the datagrid after being handled
+	* TextBoxBase.cs:
+	  - Removed capture code now that Control handles it
+	  - set_SelectionStart now ensures caret is visible
+
 2006-03-16  Jackson Harper  <jackson@ximian.com>
 
 	* TrackBar.cs: Debackwards the increment/decrement for handling

@@ -447,6 +447,7 @@ namespace System.Windows.Forms {
 
 				document.CharIndexToLineTag(value, out line, out tag, out pos);
 				document.SetSelectionStart(line, pos);
+				ScrollToCaret();
 			}
 		}
 
@@ -1303,7 +1304,6 @@ namespace System.Windows.Forms {
 
 				interval = DateTime.Now - click_last;
 				document.PositionCaret(e.X + document.ViewPortX, e.Y + document.ViewPortY);
-				this.Capture = true;
 				
 				// Handle place caret/select word/select line behaviour
 				if (e.Clicks == 1) {
@@ -1382,7 +1382,6 @@ namespace System.Windows.Forms {
 		}
 
 		private void TextBoxBase_MouseUp(object sender, MouseEventArgs e) {
-			this.Capture = false;
 			if (e.Button == MouseButtons.Left) {
 				document.PositionCaret(e.X + document.ViewPortX, e.Y + document.ViewPortY);
 				if (click_mode == CaretSelection.Position) {

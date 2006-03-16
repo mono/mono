@@ -1303,7 +1303,7 @@ namespace System.Windows.Forms
 					
 				DataGridCell new_cell = new DataGridCell (testinfo.Row, testinfo.Column);
 
-				if (new_cell.Equals (current_cell) == false) {
+				if ((new_cell.Equals (current_cell) == false) || (!is_editing)) {
 					CancelEditing ();
 					SetCurrentCell (new_cell);
 					EditCell (current_cell);
@@ -1511,19 +1511,60 @@ namespace System.Windows.Forms
 				}
 				break;
 			}
-			case Keys.Tab:
+
+			case Keys.Enter: {
+				if (current_cell.RowNumber + 1 == RowsCount) {
+					DataGridCell new_cell = new DataGridCell (current_cell.RowNumber + 1, current_cell.ColumnNumber);
+
+					SetCurrentCell (new_cell);
+					EditCell (current_cell);
+				}
+				break;
+			}
+
+			case Keys.Tab: {
+				if (current_cell.ColumnNumber + 1 < CurrentTableStyle.GridColumnStyles.Count) {
+					CurrentCell = new DataGridCell (current_cell.RowNumber, current_cell.ColumnNumber + 1);
+					EditCell (current_cell);
+				} else if (current_cell.RowNumber + 1 < RowsCount) {
+					CurrentCell = new DataGridCell (current_cell.RowNumber + 1, 0);
+					EditCell (current_cell);
+				} else if ((current_cell.RowNumber + 1 == RowsCount) && (current_cell.ColumnNumber + 1 == CurrentTableStyle.GridColumnStyles.Count)) {
+					int	new_row;
+					int	new_col;
+
+					new_row = current_cell.RowNumber;
+					new_col = current_cell.ColumnNumber + 1;
+					if (new_col >= CurrentTableStyle.GridColumnStyles.Count) {
+						new_row++;
+						new_col = 0;
+					}
+					DataGridCell new_cell = new DataGridCell (new_row, new_col);
+
+					SetCurrentCell (new_cell);
+					EditCell (current_cell);
+				}
+				break;
+			}
+
 			case Keys.Right:
 			{				
 				if (current_cell.ColumnNumber + 1 < CurrentTableStyle.GridColumnStyles.Count) {
 					CurrentCell = new DataGridCell (current_cell.RowNumber, current_cell.ColumnNumber + 1);
 					EditCell (current_cell);
-				}
+				} else if (current_cell.RowNumber + 1 < RowsCount) {
+					CurrentCell = new DataGridCell (current_cell.RowNumber + 1, 0);
+					EditCell (current_cell);
+				}	
 				break;
 			}
 			case Keys.Left:
 			{
 				if (current_cell.ColumnNumber > 0) {
 					CurrentCell = new DataGridCell (current_cell.RowNumber, current_cell.ColumnNumber - 1);
+					EditCell (current_cell);
+				} else if (current_cell.RowNumber > 0) {
+					CurrentCell = new DataGridCell (current_cell.RowNumber - 1, CurrentTableStyle.GridColumnStyles.Count - 1);
 					EditCell (current_cell);
 				}
 				break;
@@ -1552,13 +1593,13 @@ namespace System.Windows.Forms
 			}
 			case Keys.Home:
 			{
-				CurrentCell = new DataGridCell (0, current_cell.ColumnNumber);
+				CurrentCell = new DataGridCell (current_cell.RowNumber, 0);
 				EditCell (current_cell);
 				break;
 			}
 			case Keys.End:
 			{
-				CurrentCell = new DataGridCell (RowsCount - 1, current_cell.ColumnNumber);
+				CurrentCell = new DataGridCell (current_cell.RowNumber, CurrentTableStyle.GridColumnStyles.Count - 1);
 				EditCell (current_cell);
 				break;
 			}
@@ -1579,14 +1620,20 @@ namespace System.Windows.Forms
 		}
 
 		// Called from DataGridTextBox
-		protected override bool ProcessKeyPreview (ref Message m)
-		{
+		internal bool ProcessKeyPreviewInternal(ref Message m) {
 			Keys key = (Keys) m.WParam.ToInt32 ();
 			KeyEventArgs ke = new KeyEventArgs (key);
 			if (ProcessGridKey (ke) == true) {
 				return true;
 			}
+			return false;
+		}
 
+		protected override bool ProcessKeyPreview (ref Message m)
+		{
+			if (ProcessKeyPreviewInternal(ref m)) {
+				return true;
+			}
 			return base.ProcessKeyPreview (ref m);
 		}
 		

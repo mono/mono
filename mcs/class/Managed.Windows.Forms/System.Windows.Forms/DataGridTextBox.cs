@@ -49,6 +49,7 @@ namespace System.Windows.Forms
 		{
 			isedit = true;
 			grid = null;
+			accepts_tab = true;
 
 			SetStyle (ControlStyles.UserPaint | ControlStyles.StandardClick | ControlStyles.StandardDoubleClick, false);
 			SetStyle (ControlStyles.FixedHeight, true);
@@ -85,33 +86,86 @@ namespace System.Windows.Forms
 		protected internal override bool ProcessKeyMessage (ref Message m)
 		{
 			Keys key = (Keys) m.WParam.ToInt32 ();
-			
-			switch (key) {
-			case Keys.Return:
-				grid.EndEdit (false);
-				return true;
-			
-			case Keys.Escape:
-				grid.EndEdit (true);
-				return true;
-				
-			case Keys.Right:
-			case Keys.Tab:
-			case Keys.Up:
-			case Keys.Down:
-			case Keys.PageUp:
-			case Keys.PageDown:
-			case Keys.Home:
-			case Keys.End:
-				grid.EndEdit (false);
-				break;
-			
-			default:
-				break;
-			}			
-			
-			isedit = false;
-			return base.ProcessKeyMessage (ref m);
+
+			// If we decide DataGrid needs to process we call grid.ProcessKeyPreviewInternal and return true
+			// If we want TextBox to handle the key , we return false;
+
+			// We only care about KEYDOWN messages
+			if (m.Msg != (int)Msg.WM_KEYDOWN) {
+				return false;
+			}
+
+			// Anything with control key pressed is for DataGrid
+			if ((Control.ModifierKeys & Keys.Control) != 0) {
+				return grid.ProcessKeyPreviewInternal(ref m);
+			}
+
+			if (isedit) {
+				switch (key) {
+					case Keys.F2: {
+						this.SelectionStart = this.Text.Length;
+						this.SelectionLength = 0;
+						return true;
+					}
+
+					case Keys.Up:
+					case Keys.Down:
+					case Keys.PageDown:
+					case Keys.PageUp: {
+						isedit = false;
+						grid.EndEdit(false);
+						grid.ProcessKeyPreviewInternal(ref m);
+						return true;
+					}
+
+					case Keys.Escape: {
+						isedit = false;
+						grid.EndEdit (true);
+						return true;
+					}
+
+					case Keys.Enter: {
+						isedit = false;
+						grid.EndEdit (false);
+						grid.ProcessKeyPreviewInternal(ref m);
+						return true;
+					}
+
+					case Keys.Left: {
+						if (base.SelectionStart == 0) {
+							isedit = false;
+							grid.EndEdit (false);
+							grid.ProcessKeyPreviewInternal(ref m);
+							return true;
+						}
+						return false;
+					}
+
+					case Keys.Right: {
+						// Arrow keys go right until we hit the end of the text
+						if ((base.SelectionStart + base.SelectionLength) == base.Text.Length) {
+							isedit = false;
+							grid.EndEdit (false);
+							grid.ProcessKeyPreviewInternal(ref m);
+							return true;
+						}
+						return false;
+					}
+
+					case Keys.Tab: {
+						isedit = false;
+						grid.EndEdit(false);
+						grid.ProcessKeyPreviewInternal(ref m);
+						return true;
+					}
+
+					default: {
+						return base.ProcessKeyMessage(ref m);
+					}
+				}
+			}
+
+			return base.ProcessKeyMessage(ref m);
 		}
 
 		public void SetDataGrid (DataGrid parentGrid)
