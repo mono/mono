@@ -254,16 +254,18 @@ namespace System.Data
 		public readonly bool IsPrimaryKey;
 		public readonly string ReferName;
 		public readonly bool IsNested;
+		public readonly bool IsConstraintOnly;
 
-		public ConstraintStructure (string tname, string [] cols, bool [] isAttr, string cname, bool isPK, string refName, bool isNested)
+		public ConstraintStructure (string tname, string [] cols, bool [] isAttr, string cname, bool isPK, string refName, bool isNested, bool isConstraintOnly)
 		{
 			TableName = tname;
 			Columns = cols;
 			IsAttribute = isAttr;
-			ConstraintName = cname;
+			ConstraintName = XmlConvert.DecodeName (cname);
 			IsPrimaryKey = isPK;
 			ReferName = refName;
 			IsNested = isNested;
+			IsConstraintOnly = isConstraintOnly;
 		}
 	}
 
@@ -581,20 +583,38 @@ el.ElementType != schemaAnyType)
 		{
 			DataTable ptab = dataset.Tables [rs.ParentTableName];
 			DataTable ctab = dataset.Tables [rs.ChildTableName];
-			DataColumn pcol = ptab.Columns [rs.ParentColumnName];
-			DataColumn ccol = ctab.Columns [rs.ChildColumnName];
 
-			if (ccol == null) {
-				ccol = new DataColumn ();
-				ccol.ColumnName = pcol.ColumnName;
-				ccol.Namespace = String.Empty; // don't copy
-				ccol.ColumnMapping = MappingType.Hidden;
-				ccol.DataType = pcol.DataType;
-				ctab.Columns.Add (ccol);
-			}
-
+			DataRelation rel ;
 			string name = rs.ExplicitName != null ? rs.ExplicitName : XmlConvert.DecodeName (ptab.TableName) + '_' + XmlConvert.DecodeName (ctab.TableName);
-			DataRelation rel = new DataRelation (name, pcol, ccol, rs.CreateConstraint);
+
+			// Annotation Relations belonging to a DataSet can contain multiple colnames
+			// in parentkey and childkey.
+			if (datasetElement != null) {
+				String[] pcolnames = rs.ParentColumnName.Split (null);
+				String[] ccolnames = rs.ChildColumnName.Split (null);
+
+				DataColumn[] pcol = new DataColumn [pcolnames.Length];
+				for (int i=0; i<pcol.Length; ++i)
+					pcol [i] = ptab.Columns [XmlConvert.DecodeName (pcolnames [i])];
+
+				DataColumn[] ccol = new DataColumn [ccolnames.Length];
+				for (int i=0; i < ccol.Length; ++i)
+					ccol [i] = ctab.Columns [XmlConvert.DecodeName (ccolnames [i])];
+
+				rel = new DataRelation (name, pcol, ccol, rs.CreateConstraint);
+			} else {
+				DataColumn pcol = ptab.Columns [XmlConvert.DecodeName (rs.ParentColumnName)];
+				DataColumn ccol = ctab.Columns [XmlConvert.DecodeName (rs.ChildColumnName)];
+				if (ccol == null) {
+					ccol = new DataColumn ();
+					ccol.ColumnName = pcol.ColumnName;
+					ccol.Namespace = String.Empty; // don't copy
+					ccol.ColumnMapping = MappingType.Hidden;
+					ccol.DataType = pcol.DataType;
+					ctab.Columns.Add (ccol);
+				}
+				rel = new DataRelation (name, pcol, ccol, rs.CreateConstraint);
+			}
 			rel.Nested = rs.IsNested;
 			if (rs.CreateConstraint)
 				rel.ParentTable.PrimaryKey = rel.ParentColumns;
@@ -939,7 +959,7 @@ el.ElementType != schemaAnyType)
 			}
 			reservedConstraints.Add (ic,
 				new ConstraintStructure (tableName, cols,
-					isAttrSpec, constraintName, isPK, null, false));
+					isAttrSpec, constraintName, isPK, null, false, false));
 		}
 
 		private void ProcessSelfIdentity (ConstraintStructure c)
@@ -998,6 +1018,7 @@ el.ElementType != schemaAnyType)
 			}
 			string constraintName = keyref.Name;
 			bool isNested = false;
+			bool isConstraintOnly = false;
 			if (keyref.UnhandledAttributes != null) {
 				foreach (XmlAttribute attr in keyref.UnhandledAttributes) {
 					if (attr.NamespaceURI != XmlConstants.MsdataNamespace)
@@ -1010,13 +1031,17 @@ el.ElementType != schemaAnyType)
 						if (attr.Value == "true")
 							isNested = true;
 						break;
+					case XmlConstants.ConstraintOnly:
+						if (attr.Value == "true")
+							isConstraintOnly = true;
+						break;
 					}
 				}
 			}
 
 			reservedConstraints.Add (keyref, new ConstraintStructure (
 				tableName, cols, isAttrSpec, constraintName,
-				false, keyref.Refer.Name, isNested));
+				false, keyref.Refer.Name, isNested, isConstraintOnly));
 		}
 
 		private void ProcessRelationIdentity (XmlSchemaElement element, ConstraintStructure c)
@@ -1047,13 +1072,16 @@ el.ElementType != schemaAnyType)
 			// generate the FK.
 			ForeignKeyConstraint fkc = new ForeignKeyConstraint(c.ConstraintName, uniq.Columns, cols);
 			dt.Constraints.Add (fkc);
-			// generate the relation.
-			DataRelation rel = new DataRelation (c.ConstraintName, uniq.Columns, cols, false);
-			rel.Nested = c.IsNested;
-			rel.SetParentKeyConstraint (uniq);
-			rel.SetChildKeyConstraint (fkc);
 
-			dataset.Relations.Add (rel);
+			if (!c.IsConstraintOnly) {
+				// generate the relation.
+				DataRelation rel = new DataRelation (c.ConstraintName, uniq.Columns, cols, false);
+				rel.Nested = c.IsNested;
+				rel.SetParentKeyConstraint (uniq);
+				rel.SetChildKeyConstraint (fkc);
+
+				dataset.Relations.Add (rel);
+			}
 		}
 
 		// get the unique constraint for the relation.
@@ -1109,9 +1137,11 @@ el.ElementType != schemaAnyType)
 			string fkn = el.GetAttribute ("childkey", XmlConstants.MsdataNamespace);
 
 			RelationStructure rel = new RelationStructure ();
-			rel.ExplicitName = name;
-			rel.ParentTableName = ptn;
-			rel.ChildTableName = ctn;
+			rel.ExplicitName = XmlConvert.DecodeName (name);
+			rel.ParentTableName = XmlConvert.DecodeName (ptn);
+			rel.ChildTableName = XmlConvert.DecodeName (ctn);
+			// ColumnNames will be decoded wherever they are used as they can
+			// contain 'space' separated list of column-names.
 			rel.ParentColumnName = pkn;
 			rel.ChildColumnName = fkn;
 			rel.IsNested = nested;

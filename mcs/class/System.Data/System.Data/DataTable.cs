@@ -96,7 +96,7 @@ namespace System.Data {
 		private ArrayList _indexes;
 		private RecordCache _recordCache;
 		private int _defaultValuesRowIndex = -1;
-		protected internal bool fInitInProgress;
+		protected internal bool initInProgress;
 
 		// If CaseSensitive property is changed once it does not anymore follow owner DataSet's 
 		// CaseSensitive property. So when you lost you virginity it's gone for ever
@@ -469,7 +469,7 @@ namespace System.Data {
 					return;
 				}
 				
-				if (fInitInProgress) {
+				if (InitInProgress) {
 					_latestPrimaryKeyCols = value;
 					return;
 				}
@@ -694,7 +694,7 @@ namespace System.Data {
 		/// </summary>
 		public virtual void BeginInit () 
 		{
-			fInitInProgress = true;
+			InitInProgress = true;
 		}
 
 		/// <summary>
@@ -891,16 +891,26 @@ namespace System.Data {
 		[MonoTODO]
 		public virtual void EndInit () 
 		{
-			fInitInProgress = false;
+			InitInProgress = false;
+			FinishInit ();
+		}
+
+		internal bool InitInProgress {
+			get { return initInProgress; }
+			set { initInProgress = value; }
+		}
+
+		internal void FinishInit ()
+		{
 			UniqueConstraint oldPK = _primaryKeyConstraint;
 			
 			// Columns shud be added 'before' the constraints
-			Columns.PostEndInit();
+			Columns.PostAddRange ();
 
 			// Add the constraints
-			_constraintCollection.PostEndInit();
+			_constraintCollection.PostAddRange ();
 			
-			// ms.net behavior : If a PrimaryKey is added thru AddRange,
+			// ms.net behavior : If a PrimaryKey (UniqueConstraint) is added thru AddRange,
 			// then it takes precedence over an direct assignment of PrimaryKey
 			if (_primaryKeyConstraint == oldPK)
 				PrimaryKey = _latestPrimaryKeyCols;
@@ -1150,6 +1160,7 @@ namespace System.Data {
 					row.AcceptChanges ();
 			}
 			else {
+				EnsureDefaultValueRowIndex();
 				int newRecord = CreateRecord(values);
 				int existingRecord = _primaryKeyConstraint.Index.Find(newRecord);
 

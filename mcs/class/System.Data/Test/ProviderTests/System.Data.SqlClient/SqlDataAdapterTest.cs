@@ -388,6 +388,51 @@ namespace MonoTests.System.Data.SqlClient
 			}
 		}
 
+		bool FillErrorContinue = false;
+		[Test]
+		public void Fill_Test_FillErrorTest ()
+		{
+			string query = "select type_bigint from numeric_family where id=1 or id=4 ";
+
+			DataSet ds = new DataSet ();
+			DataTable table = ds.Tables.Add ("test");
+			table.Columns.Add ("col", typeof (int));
+
+			adapter = new SqlDataAdapter (query, connectionString);
+			DataTableMapping mapping = adapter.TableMappings.Add ("numeric_family", "test");
+			mapping.ColumnMappings.Add ("type_bigint", "col");
+
+			int count = 0;
+			try {
+				count = adapter.Fill (ds, "numeric_family");
+				Assert.Fail ("#1 Overflow exception must be thrown");
+			}catch (OverflowException e) {
+			}
+			Assert.AreEqual (0, ds.Tables [0].Rows.Count, "#2");
+			Assert.AreEqual (0, count, "#3");
+
+			adapter.FillError += new FillErrorEventHandler (ErrorHandler);
+			FillErrorContinue = false;
+			try {
+				count = adapter.Fill (ds, "numeric_family");
+				Assert.Fail ("#4 Overflow exception must be thrown");
+			}catch (OverflowException e) {
+			}
+			Assert.AreEqual (0, ds.Tables [0].Rows.Count, "#5");
+			Assert.AreEqual (0, count, "#6");
+
+			FillErrorContinue = true;
+			count = adapter.Fill (ds, "numeric_family");
+			// 1 row shud be filled
+			Assert.AreEqual (1, ds.Tables [0].Rows.Count, "#7");
+			Assert.AreEqual (1, count, "#8");
+		}
+
+		void ErrorHandler (object sender, FillErrorEventArgs args)
+		{
+			args.Continue = FillErrorContinue;
+		}
+
 		[Test]
 		public void GetFillParametersTest ()
 		{

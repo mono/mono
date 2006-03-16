@@ -571,6 +571,7 @@ namespace Mono.Data.Tds.Protocol {
 				result[index]["ColumnName"] = columnName;
 				result[index]["ColumnSize"] = columnSize;
 				result[index]["ColumnType"] = columnType;
+				result[index]["IsAutoIncrement"] = autoIncrement;
 				result[index]["IsIdentity"] = isIdentity;
 				result[index]["IsReadOnly"] = !writable;
 				result[index]["NumericPrecision"] = precision;

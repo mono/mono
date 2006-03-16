@@ -414,13 +414,12 @@ namespace System.Data.Common {
 				dataReader.Read ();
 			}
 
+			dataTable.BeginLoadData ();
 			while (dataReader.Read () && (maxRecords == 0 || (counter - counterStart) < maxRecords)) {
 				try {
-					dataTable.BeginLoadData ();
 					dataTable.LoadDataRow (dataReader, sortedMapping, length, AcceptChangesDuringFill);
-					dataTable.EndLoadData ();
 					counter++;
-				} 
+				}
 				catch (Exception e) {
 					object[] readerArray = new object[dataReader.FieldCount];
 					object[] tableArray = new object[mapping.Length];
@@ -434,20 +433,22 @@ namespace System.Data.Common {
 					}
 					FillErrorEventArgs args = CreateFillErrorEvent (dataTable, tableArray, e);
 					OnFillError (args);
-					if(!args.Continue) {
-						return false;
-					}
+
+					// if args.Continue is not set to true or if a handler is not set, rethrow the error..
+					if(!args.Continue)
+						throw e;
 				}
 			}
+			dataTable.EndLoadData ();
 			return true;
 		}
 
 #if NET_2_0
-                /// <summary>
-                ///     Fills the given datatable using values from reader. if a value 
-                ///     for a column is  null, that will be filled with default value. 
-                /// </summary>
-                /// <returns>No. of rows affected </returns>
+		/// <summary>
+		///     Fills the given datatable using values from reader. if a value 
+		///     for a column is  null, that will be filled with default value. 
+		/// </summary>
+		/// <returns>No. of rows affected </returns>
 		internal static int FillFromReader (DataTable table,
                                                     IDataReader reader,
                                                     int start, 

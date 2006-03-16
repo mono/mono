@@ -468,9 +468,13 @@ namespace System.Data.Common
 
 				if (oldIdx < newIdx) {
 					System.Array.Copy(Array,oldIdx + 1,Array,oldIdx,newIdx - oldIdx);
+					if (Key.CompareRecords (Array [newIdx], newRecord) > 0)
+						--newIdx;
 				}
 				else if (oldIdx > newIdx){
 					System.Array.Copy(Array,newIdx,Array,newIdx + 1,oldIdx - newIdx);
+					if (Key.CompareRecords (Array [newIdx], newRecord) < 0)
+						++newIdx;
 				}
 			}			
 			Array[newIdx] = newRecord;
@@ -674,7 +678,6 @@ namespace System.Data.Common
 			_refCount--;
 		}
 
- 
 		/*
 		// Prints indexes. For debugging.
 		internal void Print ()

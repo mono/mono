@@ -1,3 +1,24 @@
+2006-03-09  Senganal T <tsenganal@novell.com>
+	
+	* Index.cs :
+		- Update () : Add the new record in the correct position
+
+2006-03-07  Senganal T <tsenganal@novell.com>
+
+	* Key.cs : 
+		Reverted the changes from the earlier patch.
+
+2006-02-22  Senganal T <tsenganal@novell.com>
+
+ 	* DbDataAdapter.cs :
+ 		- FillTable : Move BeginLoadData, EndLoadData outside the loop. Also,
+ 		move EndLoadData outsidet try,catch block. FillError is only for errors
+ 		occuring during loading the data into datatable.
+ 	* Key.cs :
+ 		- Set Default value of RowStateFilter to (CurrentRos | OriginalRows).
+ 		- ContainsVersion : If RowStateFilter is set to default value, return true
+ 		for Modified Rows as they can contain Default/Original versions.
+
 2006-02-13  Senganal T  <tsenganal@novell.com>
 
 	* DbDataAdapter.cs :

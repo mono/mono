@@ -1949,6 +1949,77 @@ namespace MonoTests_System.Data
 			Assert.AreEqual (1, table.Constraints.Count, "#1");
 		}
 
+		[Test]
+		public void LoadDataRow_ExistingData ()
+		{
+			DataSet ds = new DataSet ();
+			DataTable table = ds.Tables.Add ();
+			
+			table.Columns.Add ("col1", typeof (int));
+			table.Columns.Add ("col2", typeof (int));
+			table.PrimaryKey = new DataColumn[] {table.Columns [0]};
+
+			table.BeginLoadData ();
+			table.LoadDataRow (new object[] {1,10}, true);
+			table.LoadDataRow (new object[] {2,10}, true);
+			table.LoadDataRow (new object[] {3,10}, true);
+			table.LoadDataRow (new object[] {4,10}, true);
+			table.EndLoadData ();
+
+			Assert.AreEqual (4, table.Rows.Count, "#1");
+			Assert.AreEqual (10, table.Rows [0][1], "#2");
+			Assert.AreEqual (10, table.Rows [1][1], "#3");
+			Assert.AreEqual (10, table.Rows [2][1], "#4");
+			Assert.AreEqual (10, table.Rows [3][1], "#5");
+	
+
+			table.BeginLoadData ();
+			table.LoadDataRow (new object[] {1,100}, true);
+			table.LoadDataRow (new object[] {2,100}, true);
+			table.LoadDataRow (new object[] {3,100}, true);
+			table.LoadDataRow (new object[] {4,100}, true);
+			table.EndLoadData ();
+
+			Assert.AreEqual (4, table.Rows.Count, "#6");
+			Assert.AreEqual (100, table.Rows [0][1], "#7");
+			Assert.AreEqual (100, table.Rows [1][1], "#8");
+			Assert.AreEqual (100, table.Rows [2][1], "#7");
+			Assert.AreEqual (100, table.Rows [3][1], "#10");
+		}
+
+		[Test]
+		public void LoadDataRow_DefaultValueError ()
+		{
+			DataTable table = new DataTable ();
+			table.Columns.Add ("col1", typeof (int));
+			table.Columns.Add ("col2", typeof (int));
+			table.PrimaryKey = new DataColumn[] {table.Columns [0]};
+
+			table.BeginLoadData ();
+			// should not throw exception
+			table.LoadDataRow (new object[] {1}, true);
+			table.EndLoadData ();
+
+			Assert.AreEqual (1, table.Rows [0][0], "#1");
+			Assert.AreEqual (DBNull.Value, table.Rows [0][1], "#2");
+		}
+
+		[Test]
+		public void RejectChanges_CheckIndex ()
+		{
+			DataTable table = new DataTable ();
+			table.Columns.Add ("col1", typeof (int));
+			table.PrimaryKey = new DataColumn[] {table.Columns [0]};
+
+			table.Rows.Add (new object[] {1});
+			table.AcceptChanges ();
+
+			table.Rows [0][0] = 10;
+			table.RejectChanges ();
+
+			Assert.IsNotNull (table.Rows.Find (1));
+		}
+
 		private void OnRowDeleting_Handler(Object sender,DataRowChangeEventArgs e)
 		{
 			

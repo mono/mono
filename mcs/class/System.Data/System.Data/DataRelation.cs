@@ -62,6 +62,14 @@ namespace System.Data
 		private PropertyCollection extendedProperties;
 		private PropertyChangedEventHandler onPropertyChangingDelegate;
 
+		string _relationName;
+		string _parentTableName;
+		string _childTableName;
+		string[] _parentColumnNames;
+		string[] _childColumnNames;
+		bool _nested;
+		bool initInProgress = false;
+	
 		#region Constructors
 
 		public DataRelation (string relationName, DataColumn parentColumn, DataColumn childColumn) 
@@ -111,9 +119,50 @@ namespace System.Data
 		[Browsable (false)]
 		public DataRelation (string relationName, string parentTableName, string childTableName, string[] parentColumnNames, string[] childColumnNames, bool nested) 
 		{
-			throw new NotImplementedException ();
+			_relationName = relationName;
+			_parentTableName = parentTableName;
+			_childTableName = childTableName;
+			_parentColumnNames = parentColumnNames;
+			_childColumnNames = childColumnNames;
+			_nested = nested;
+			InitInProgress = true;
+		}
+	
+		internal bool InitInProgress {
+			get { return initInProgress; }
+			set { initInProgress = value; }
 		}
 
+		internal void FinishInit (DataSet ds)
+		{
+			if (!ds.Tables.Contains (_parentTableName) ||
+				!ds.Tables.Contains (_childTableName))
+				throw new InvalidOperationException ();
+
+			if (_parentColumnNames.Length != _childColumnNames.Length)
+				throw new InvalidOperationException ();
+
+			DataTable parent = ds.Tables [_parentTableName];
+			DataTable child = ds.Tables [_childTableName];
+
+			parentColumns = new DataColumn [_parentColumnNames.Length];
+			childColumns = new DataColumn [_childColumnNames.Length];
+
+			for (int i=0; i < _parentColumnNames.Length; ++i) {
+				if (!parent.Columns.Contains (_parentColumnNames [i]))
+					throw new InvalidOperationException ();
+				parentColumns [i] = parent.Columns [_parentColumnNames [i]];
+				if (!child.Columns.Contains (_childColumnNames [i]))
+					throw new InvalidOperationException ();
+				childColumns [i] = child.Columns [_childColumnNames [i]];
+			}
+
+			this.RelationName = _relationName;
+			this.Nested = _nested;
+			this.createConstraints = false;
+			this.extendedProperties = new PropertyCollection ();
+			InitInProgress = false;
+		}
 #if NET_2_0
 		[MonoTODO]
 		public DataRelation (string relationName, string parentTableName, string parentTableNamespace, string childTableName, string childTableNamespace, string[] parentColumnNames, string[] childColumnNames, bool nested)

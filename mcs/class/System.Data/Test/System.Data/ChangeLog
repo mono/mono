@@ -1,6 +1,47 @@
+2006-03-09  Senganal T  <tsenganal@novell.com>
+	
+	* DataRowCollectionTest2.cs :
+	* DataTableTest2.cs : 
+		- Fixed NotWorking tests.
+
+2006-03-07  Senganal T  <tsenganal@novell.com>
+
+	* DataRowCollectionTest2.cs :
+	* DataTableTest2.cs :
+		- Added failing testcases as NotWorking tests.
+
+2006-03-05  Senganal T  <tsenganal@novell.com>
+ 
+	* DataSetTest2.cs
+	* ConstraintCollectionTest2.cs
+	* DataViewTest.cs
+	* DataRelationTest.cs
+ 		Added testcases for BeginInit and EndInit methods
+
 2006-02-24  Senganal T  <tsenganal@novell.com>
 
 	* ConstraintCollectionTest2.cs : added testcase for #77630
+
+2006-02-22  Senganal T  <tsenganal@novell.com>
+
+ 	* DataRowCollectionTest2.cs : Check if index is maintained for row on calling RejectChanges. 
+ 	* DataTableTest2.cs : Check if data is loaded and merged (if key exists) correctly.
+ 	* ForeignKeyConstraintTest.cs : Check if a ParentColumn value can be modified
+ 		when the row is in 'Added' State. Also, check if child col values are
+ 		updated correctly.
+ 
+2006-02-16  Senganal T  <tsenganal@novell.com>
+
+	* DataSetTest2.cs :
+		- WriteXmlSchema_ForeignKeyConstraint : testcase for bug #77557
+		- WriteXmlSchema_RelationAnnotation :
+		- WriteXmlSchema_Relations_ForeignKeys :
+			ensure Relations and ForeignKeyConstraints are written and read correctly.
+	* DataSetReadXmlSchema.cs :
+		- ReadConstraints :
+			verify reading a foreignkeyconstraint doesent create a relation.
+		- ReadAnnotatedRelations_MultipleColumns :
+			verify multiple columns are read correctly if part of annotated relation.
 
 2006-02-11  Senganal T  <tsenganal@novell.com>
 

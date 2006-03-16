@@ -78,6 +78,8 @@ namespace System.Data
 		ArrayList globalTypeTables = new ArrayList ();
 		Hashtable additionalNamespaces = new Hashtable ();
 
+		ArrayList annotation = new ArrayList ();
+
 		public string ConstraintPrefix {
 			get { return ds.Namespace != String.Empty ? XmlConstants.TnsPrefix + ':' : String.Empty; }
 		}
@@ -213,9 +215,61 @@ namespace System.Data
 			WriteConstraints (); // DataSet constraints
 
 			w.WriteEndElement (); // element
+
+			if (annotation.Count > 0) {
+				w.WriteStartElement ("xs", "annotation", xmlnsxs);
+				w.WriteStartElement ("xs", "appinfo", xmlnsxs);
+
+				foreach (object o in annotation) {
+					if (!(o is DataRelation))
+						continue;
+					WriteDataRelationAnnotation ((DataRelation)o);	
+				}
+				w.WriteEndElement ();
+				w.WriteEndElement ();
+			}
 		}
 
-		// Relation based Constraints
+		private void WriteDataRelationAnnotation (DataRelation rel) 
+		{
+			String colnames = String.Empty;
+			w.WriteStartElement (XmlConstants.MsdataPrefix, "Relationship",
+				 XmlConstants.MsdataNamespace);
+
+			w.WriteAttributeString ("name", XmlConvert.EncodeName (rel.RelationName));
+
+			w.WriteAttributeString (
+					XmlConstants.MsdataPrefix,
+					"parent",
+					XmlConstants.MsdataNamespace,
+					XmlConvert.EncodeLocalName (rel.ParentTable.TableName));
+
+			w.WriteAttributeString (
+					XmlConstants.MsdataPrefix,
+					"child",
+					XmlConstants.MsdataNamespace,
+					XmlConvert.EncodeLocalName (rel.ChildTable.TableName));
+
+			colnames = String.Empty;
+			foreach (DataColumn col in rel.ParentColumns)
+				colnames += XmlConvert.EncodeLocalName (col.ColumnName) + " ";
+			w.WriteAttributeString (
+					XmlConstants.MsdataPrefix,
+					"parentkey",
+					XmlConstants.MsdataNamespace,
+					colnames.TrimEnd ());
+
+			colnames = String.Empty;
+			foreach (DataColumn col in rel.ChildColumns)
+				colnames += XmlConvert.EncodeLocalName (col.ColumnName) + " ";
+			w.WriteAttributeString (
+					XmlConstants.MsdataPrefix,
+					"childkey",
+					XmlConstants.MsdataNamespace,
+					colnames.TrimEnd ());
+
+			w.WriteEndElement ();
+		}
 
 		private void WriteConstraints ()
 		{
@@ -226,17 +280,30 @@ namespace System.Data
 				foreach (Constraint c in table.Constraints) {
 					UniqueConstraint u =
 						c as UniqueConstraint;
-					if (u != null)
+					if (u != null) {
 						AddUniqueConstraints (u, names);
+						continue;
+					}
+
+					ForeignKeyConstraint fk = c as ForeignKeyConstraint;
+					if (fk != null && (relations == null || !(relations.Contains (fk.ConstraintName)))) {
+						DataRelation rel = new DataRelation (fk.ConstraintName,
+										fk.RelatedColumns, fk.Columns);
+						AddForeignKeys (rel, names, true);
+						continue;
+					}
 				}
 			}
 
 			// Add all foriegn key constraints.
 			if (relations != null)
-				foreach (DataRelation rel in relations)
-					if (rel.ParentKeyConstraint != null &&
-						rel.ChildKeyConstraint != null)
-						AddForeignKeys (rel, names);
+				foreach (DataRelation rel in relations) {
+					if (rel.ParentKeyConstraint == null || rel.ChildKeyConstraint == null) {
+						annotation.Add (rel);
+						continue;
+					}
+					AddForeignKeys (rel, names,false);
+				}
 		}
 
 		// Add unique constaraints to the schema.
@@ -254,7 +321,7 @@ namespace System.Data
 			string name;
 			if (!names.Contains (uniq.ConstraintName)) {
 				name = uniq.ConstraintName;
-				w.WriteAttributeString ("name", name);
+				w.WriteAttributeString ("name", XmlConvert.EncodeName (name));
 			}
 			// otherwise generate new constraint name for the
 			// XmlSchemaUnique element.
@@ -300,7 +367,7 @@ namespace System.Data
 		}
 
 		// Add the foriegn keys to the schema.
-		private void AddForeignKeys (DataRelation rel, ArrayList names)
+		private void AddForeignKeys (DataRelation rel, ArrayList names, bool isConstraintOnly)
 		{
 			// Do nothing if it contains hidden relation
 			foreach (DataColumn col in rel.ParentColumns)
@@ -313,8 +380,20 @@ namespace System.Data
 			w.WriteStartElement ("xs", "keyref", xmlnsxs);
 			w.WriteAttributeString ("name", XmlConvert.EncodeLocalName (rel.RelationName));
 
-			ForeignKeyConstraint fkConst = rel.ChildKeyConstraint;
-			UniqueConstraint uqConst = rel.ParentKeyConstraint;
+			//ForeignKeyConstraint fkConst = rel.ChildKeyConstraint;
+			UniqueConstraint uqConst = null; 
+
+			if (isConstraintOnly) {
+				foreach (Constraint c in rel.ParentTable.Constraints) {
+					uqConst = c as UniqueConstraint;
+					if (uqConst == null)
+						continue;
+					if (uqConst.Columns == rel.ParentColumns)
+						break;
+				}
+			} 
+			else
+				uqConst = rel.ParentKeyConstraint;
 
 			string concatName = XmlConvert.EncodeLocalName (rel.ParentTable.TableName) + "_" + uqConst.ConstraintName;
 			// first try to find the concatenated name. If we didn't find it - use constraint name.
@@ -330,7 +409,12 @@ namespace System.Data
 				w.WriteEndAttribute ();
 			}
 
-			if (rel.Nested)
+			if (isConstraintOnly)
+				w.WriteAttributeString ( XmlConstants.MsdataPrefix,
+					XmlConstants.ConstraintOnly,
+					XmlConstants.MsdataNamespace,
+					"true");
+			else if (rel.Nested)
 				w.WriteAttributeString (
 					XmlConstants.MsdataPrefix,
 					XmlConstants.IsNested,

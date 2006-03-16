@@ -226,5 +226,26 @@ namespace MonoTests.System.Data
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
+
+		[Test]
+		public void GetSchemaTableTest_AutoIncrement ()
+		{
+			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			try {
+				ConnectionManager.Singleton.OpenConnection ();
+				IDbCommand cmd = conn.CreateCommand ();
+				cmd.CommandText = "create table #tmp_table (id int identity(1,1))";
+				cmd.ExecuteNonQuery ();
+				cmd.CommandText = "select * from #tmp_table";
+				using (IDataReader reader = cmd.ExecuteReader (CommandBehavior.SchemaOnly)) {
+					DataTable schemaTable = reader.GetSchemaTable ();
+					Assert.IsTrue ((bool)schemaTable.Rows [0]["IsAutoIncrement"], "#1");
+					if (schemaTable.Columns.Contains ("IsIdentity"))
+						Assert.IsTrue ((bool)schemaTable.Rows [0]["IsIdentity"], "#2");
+				}
+			} finally {
+				ConnectionManager.Singleton.CloseConnection ();
+			}
+		}
 	}
 }

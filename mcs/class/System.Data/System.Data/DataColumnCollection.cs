@@ -306,7 +306,7 @@ namespace System.Data {
 		/// <param name="columns">The array of DataColumn objects to add to the collection.</param>
 		public void AddRange(DataColumn[] columns)
 		{
-			if (parentTable.fInitInProgress){
+			if (parentTable.InitInProgress){
 				_mostRecentColumns = columns;
 				return;
 			}
@@ -314,8 +314,9 @@ namespace System.Data {
 			if (columns == null)
 				return;
 
-			foreach (DataColumn column in columns)
-			{
+			foreach (DataColumn column in columns){
+				if (column == null)
+					continue;
 				Add(column);
 			}
 		}
@@ -335,6 +336,7 @@ namespace System.Data {
 					return String.Format (" constraint {0} on the table {1}.", 
 							c.ConstraintName, parentTable);
 			
+			
 			// check if the foreign-key constraint on any table in the dataset refers to this column.
 			// though a forignkeyconstraint automatically creates a uniquecontrainton the parent 
 			// table and would fail above, but we still need to check, as it is legal to manually remove
@@ -345,6 +347,7 @@ namespace System.Data {
 						if (c is ForeignKeyConstraint && c.IsColumnContained(column))
 							return String.Format (" constraint {0} on the table {1}.", 
 									c.ConstraintName, table.TableName);
+			
 			foreach (DataColumn col in this) 
 				if (col.CompiledExpression != null && col.CompiledExpression.DependsOn (column))
 					return  col.Expression;
@@ -539,10 +542,17 @@ namespace System.Data {
 		}
 
 		// Helper AddRange() - Call this function when EndInit is called
-		internal void PostEndInit() {
-			DataColumn[] cols = _mostRecentColumns;
+		internal void PostAddRange ()
+		{
+			if (_mostRecentColumns == null)
+				return;
+
+			foreach (DataColumn column in _mostRecentColumns){
+				if (column == null)
+					continue;
+				Add (column);
+			}
 			_mostRecentColumns = null;
-			AddRange (cols);
 		}
 
 
