@@ -1,3 +1,8 @@
+
+Thu Mar 16 17:19:04 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: use the correct GetHashCode() for the moving collector.
+
 2006-03-16  Massimiliano Mantione  <massi@ximian.com>
 
         * liveness.c: Regalloc spill cost tuning.
