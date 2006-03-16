@@ -1,3 +1,7 @@
+2006-03-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DoubleTest.cs : added ParseEmptyString().
+
 2006-03-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* TypeTest.cs: Add test for #74947.

@@ -501,5 +501,12 @@ namespace MonoTests.System {
 			Assert ("parse", Double.TryParse ("0", NumberStyles.HexNumber, null, out d));
 			AssertEquals ("value", 0, d, 0);
 		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ParseEmptyString ()
+		{
+			double.Parse (String.Empty);
+		}
 	}
 }

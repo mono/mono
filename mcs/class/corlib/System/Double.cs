@@ -220,6 +220,11 @@ namespace System {
 					exc = new ArgumentNullException ("s");
 				return false;
 			}
+			if (s.Length == 0) {
+				if (!tryParse)
+					exc = new FormatException ();
+				return false;
+			}
 #if NET_2_0
 			// yes it's counter intuitive (buggy?) but even TryParse actually throws in this case
 			if ((style & NumberStyles.AllowHexSpecifier) != 0) {
