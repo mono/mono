@@ -1,3 +1,8 @@
+2006-03-16  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* SslStreamBase.cs: Safety net. Throw an exception if we're waiting 
+	for more than five (5) minutes for an async read or write to complete.
+
 2006-03-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ClientSessionCache.cs: New. Handle a client-side session cache to 

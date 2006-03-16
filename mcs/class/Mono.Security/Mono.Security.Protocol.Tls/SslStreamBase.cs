@@ -39,6 +39,8 @@ namespace Mono.Security.Protocol.Tls
 		
 		#region Fields
 
+		private const int WaitTimeOut = 5 * 60 * 1000;
+
 		internal Stream innerStream;
 		internal MemoryStream inputBuffer;
 		internal Context context;
@@ -858,8 +860,11 @@ namespace Mono.Security.Protocol.Tls
 			}
 
 			// Always wait until the read is complete
-			if (asyncResult.IsCompleted == false)
-				asyncResult.AsyncWaitHandle.WaitOne();
+			if (!asyncResult.IsCompleted)
+			{
+				if (!asyncResult.AsyncWaitHandle.WaitOne (WaitTimeOut, false))
+					throw new TlsException (AlertDescription.InternalError, "Couldn't complete EndRead");
+			}
 
 			if (internalResult.CompletedWithError)
 			{
@@ -880,8 +885,11 @@ namespace Mono.Security.Protocol.Tls
 			}
 
 
-			if (asyncResult.IsCompleted == false)
-				internalResult.AsyncWaitHandle.WaitOne();
+			if (!asyncResult.IsCompleted)
+			{
+				if (!internalResult.AsyncWaitHandle.WaitOne (WaitTimeOut, false))
+					throw new TlsException (AlertDescription.InternalError, "Couldn't complete EndWrite");
+			}
 
 			if (internalResult.CompletedWithError)
 			{
