@@ -1,6 +1,6 @@
 To run unit test the following should be prepared:
 
-1. nunit-console.exe.config should contain an ConnectionString setting, i.e.:
+1. System.Data\Test\ProviderTests\System.Data.OleDb.J2EE.config should contain an ConnectionString setting, i.e.:
 
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>

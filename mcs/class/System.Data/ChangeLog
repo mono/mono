@@ -1,3 +1,6 @@
+2006-03-16 	Boris Kirzner <borisk@mainsfot.com>
+	* run-tests.test.connected.bat - fix classpath in TARGET_JVM test script.
+
 2006-03-12	Boris Kirzner <borisk@mainsfot.com>
 	* run-tests.bat, run-tests.test.connected.bat, run-tests.test.disconnected.bat
 	added batch files for automated testing for TARGET_JVM.

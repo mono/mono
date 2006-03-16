@@ -58,6 +58,13 @@ set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%GH_HOME%\jgac\jdbc\msbase.jar
 set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%GH_HOME%\jgac\jdbc\mssqlserver.jar
 set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%GH_HOME%\jgac\jdbc\msutil.jar
 
+set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%GH_HOME%\jgac\jdbc\postgresql-8.0.309.jdbc3.jar
+
+set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%GH_HOME%\jgac\jdbc\ojdbc14.jar
+
+set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%GH_HOME%\jgac\jdbc\db2jcc.jar
+set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%GH_HOME%\jgac\jdbc\db2jcc_license_cu.jar
+
 set NUNIT_OPTIONS=/exclude=NotWorking
 
 set NET_OUTPUT_XML=%OUTPUT_FILE_PREFIX%.Net.xml
@@ -69,7 +76,7 @@ set NUNIT_CLASSPATH=%NUNIT_CLASSPATH%;%NUNIT_PATH%nunit-console\bin\Debug_Java\n
 set NUNIT_CLASSPATH=%NUNIT_CLASSPATH%;%NUNIT_PATH%nunit-console\bin\Debug_Java\nunit.core.jar
 set NUNIT_CLASSPATH=%NUNIT_CLASSPATH%;%NUNIT_PATH%nunit-console\bin\Debug_Java\nunit-console.jar
 set NUNIT_CLASSPATH=%NUNIT_CLASSPATH%;.
-set NUNIT_CLASSPATH=%NUNIT_CLASSPATH%;C:\cygwin\monobuild\mcs\class\System.Data\System.Data.OleDb.Tests.jar
+set NUNIT_CLASSPATH=%NUNIT_CLASSPATH%;System.Data.OleDb.Tests.jar
 
 set CLASSPATH="%RUNTIME_CLASSPATH%;%NUNIT_CLASSPATH%"
 
@@ -102,7 +109,7 @@ copy %APP_CONFIG_FILE% nunit-console.exe.config
 
 
 REM @echo on
-"%JAVA_HOME%\bin\java" -Xmx1024M -cp %CLASSPATH% NUnit.Console.ConsoleUi C:\cygwin\monobuild\mcs\class\System.Data\%TEST_ASSEMBLY% /fixture=%RUNNING_FIXTURE%  %NUNIT_OPTIONS% /xml=%GH_OUTPUT_XML% >>%RUNNING_FIXTURE%_run.%RUN_ID%.log.txt 2<&1
+"%JAVA_HOME%\bin\java" -Xmx1024M -cp %CLASSPATH% NUnit.Console.ConsoleUi %TEST_ASSEMBLY% /fixture=%RUNNING_FIXTURE%  %NUNIT_OPTIONS% /xml=%GH_OUTPUT_XML% >>%RUNNING_FIXTURE%_run.%RUN_ID%.log.txt 2<&1
 REM @echo off
 
 REM ********************************************************
