@@ -1,4 +1,9 @@
 
+Thu Mar 16 17:16:45 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* object.h, icall.c, monitor.c: object.GetHashCode ()
+	implementation that supports the moving garbage collector.
+
 Wed Mar 15 16:31:38 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c, threads-types.h, threads.c: implemented finalizer for
