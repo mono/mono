@@ -1,3 +1,11 @@
+2006-03-16  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Control.cs: Not sure how we could miss this so long, but it seems
+	  that MS.Net has Capture set all the way from before calling 
+	  OnMouseDown through sending the mouse events until after
+	  OnMouseUp. This will fix DataGrid's selection being set to end
+	  at the location of the MouseUp.
+
 2006-03-15  Jackson Harper  <jackson@ximian.com>
 
 	* BindingContext.cs: The currency manager needs the data member

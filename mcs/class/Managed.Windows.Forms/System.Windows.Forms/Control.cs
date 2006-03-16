@@ -3768,6 +3768,10 @@ namespace System.Windows.Forms
 					HandleClick(mouse_clicks, me);
 					OnMouseUp (me);
 
+					if (Capture) {
+						Capture = false;
+					}
+
 					if (mouse_clicks > 1) {
 						mouse_clicks = 1;
 					}
@@ -3778,6 +3782,7 @@ namespace System.Windows.Forms
 					if (CanSelect && !is_selected) {
 						Select(this);
 					}
+					Capture = true;
 					OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
 						mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
 						0));
@@ -3786,6 +3791,7 @@ namespace System.Windows.Forms
 				}
 
 				case Msg.WM_LBUTTONDBLCLK: {
+					Capture = true;
 					mouse_clicks++;
 					OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
 						mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
@@ -3804,6 +3810,9 @@ namespace System.Windows.Forms
 
 					HandleClick(mouse_clicks, me);
 					OnMouseUp (me);
+					if (Capture) {
+						Capture = false;
+					}
 					if (mouse_clicks > 1) {
 						mouse_clicks = 1;
 					}
@@ -3811,6 +3820,7 @@ namespace System.Windows.Forms
 				}
 					
 				case Msg.WM_MBUTTONDOWN: {					
+					Capture = true;
 					OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
 						mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
 						0));
@@ -3819,6 +3829,7 @@ namespace System.Windows.Forms
 				}
 
 				case Msg.WM_MBUTTONDBLCLK: {
+					Capture = true;
 					mouse_clicks++;
 					OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
 						mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
@@ -3840,6 +3851,10 @@ namespace System.Windows.Forms
 					HandleClick(mouse_clicks, me);
 					OnMouseUp (me);
 
+					if (Capture) {
+						Capture = false;
+					}
+
 					if (mouse_clicks > 1) {
 						mouse_clicks = 1;
 					}
@@ -3847,6 +3862,7 @@ namespace System.Windows.Forms
 				}
 					
 				case Msg.WM_RBUTTONDOWN: {					
+					Capture = true;
 					OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
 						mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
 						0));
@@ -3854,6 +3870,7 @@ namespace System.Windows.Forms
 				}
 
 				case Msg.WM_RBUTTONDBLCLK: {
+					Capture = true;
 					mouse_clicks++;
 					OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
 						mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
