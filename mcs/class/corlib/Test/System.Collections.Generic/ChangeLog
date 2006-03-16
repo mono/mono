@@ -1,3 +1,7 @@
+2006-03-16  Ankit Jain  <jankit@novell.com>
+
+	* ListTest.cs: Add some tests for InsertRange.
+
 2006-01-23  Raja R Harinath  <rharinath@novell.com>
 
 	* DictionaryTest.cs (IDictionary_*): Add a few tests for the
