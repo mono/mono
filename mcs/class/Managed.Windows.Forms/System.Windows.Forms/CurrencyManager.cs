@@ -64,8 +64,13 @@ namespace System.Windows.Forms {
 			if (table == null && data_source is DataView)
 				table = ((DataView) data_source).Table;
 
+			
 			if (table == null) {
 				DataSet dataset = data_source as DataSet;
+				int sp = data_member.IndexOf ('.');
+				if (sp != -1) {
+					data_member = data_member.Substring (0, sp);
+				}
 				if (dataset != null) {
 					table = dataset.Tables [data_member];
 				}

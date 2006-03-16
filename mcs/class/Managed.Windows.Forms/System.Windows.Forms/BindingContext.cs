@@ -36,6 +36,39 @@ namespace System.Windows.Forms {
 
 		private Hashtable managers;
 
+		private class DataSourceEntry {
+
+			private object source;
+			private Hashtable members;
+			// private BindingManagerBase default_manager;
+			
+			public DataSourceEntry (object source)
+			{
+				this.source = source;
+				members = new Hashtable ();
+			}
+
+			public BindingManagerBase AddMember (string member)
+			{
+				BindingManagerBase res = members [member] as BindingManagerBase;
+				if (res != null)
+					return res;
+				res = CreateBindingManager (source, member);
+				members [member] = res;
+				return res;
+			}
+
+			public void AddMember (string member, BindingManagerBase manager)
+			{
+				members [member] = manager;
+			}
+
+			public bool Contains (string member)
+			{
+				return members.Contains (member);
+			}
+		}
+
 		private class ManagerEntry {
 
 			private object source;
@@ -92,25 +125,16 @@ namespace System.Windows.Forms {
 
 		public BindingManagerBase this [object data_source, string data_member] {
 			get {
-				ManagerEntry e = CreateEntry (data_source, data_member);
-				WeakReference wref = managers [e] as WeakReference;
-
-				if (wref != null && wref.Target != null)
-					return wref.Target as BindingManagerBase;
-				BindingManagerBase res = AddManager (data_source, data_member);
-				return res;
+				DataSourceEntry ds = managers [data_source] as DataSourceEntry;
+				if (ds == null) {
+					ds = new DataSourceEntry (data_source);
+					managers [data_source] = ds;
+				}
+				return ds.AddMember (data_member);
 			}
 		}
 
-		private BindingManagerBase AddManager (object data_source, string data_member)
-		{
-			BindingManagerBase res = CreateBindingManager (data_source, data_member);
-			managers [CreateEntry (data_source, data_member)] = new WeakReference (res);
-
-			return res;
-		}
-
-		private BindingManagerBase CreateBindingManager (object data_source, 
+		private static BindingManagerBase CreateBindingManager (object data_source, 
 			string data_member)
 		{
 			if (data_source is IList || 
@@ -131,9 +155,11 @@ namespace System.Windows.Forms {
 
 		public bool Contains (object dataSource, string dataMember)
 		{
-			ManagerEntry entry = CreateEntry (dataSource, dataMember);
+			DataSourceEntry ds = managers [dataSource] as DataSourceEntry;
+			if (ds == null)
+				return false;
+			return ds.Contains (dataMember);
 
-			return managers.ContainsKey (entry);
 		}
 		#endregion	// Public Instance Methods
 
@@ -151,7 +177,12 @@ namespace System.Windows.Forms {
 				throw new ArgumentNullException ("dataSource");
 			if (listManager == null)
 				throw new ArgumentNullException ("listManager");
-			managers.Add (CreateEntry (dataSource, String.Empty), new WeakReference (listManager));
+			DataSourceEntry ds = managers [dataSource] as DataSourceEntry;
+			if (ds == null) {
+				ds = new DataSourceEntry (dataSource);
+				managers [dataSource] = ds;
+			}
+			ds.AddMember (String.Empty, listManager);
 		}
 
 		protected internal void Clear ()
@@ -180,7 +211,7 @@ namespace System.Windows.Forms {
 
 		protected virtual void RemoveCore (object dataSource)
 		{
-			managers.Remove (CreateEntry (dataSource, String.Empty));
+			managers.Remove (dataSource);
 		}
 		#endregion	// Protected Instance Methods
 

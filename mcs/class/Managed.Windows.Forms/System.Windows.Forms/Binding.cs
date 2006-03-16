@@ -35,6 +35,10 @@ namespace System.Windows.Forms {
 		private string property_name;
 		private object data_source;
 		private string data_member;
+
+		private string row_name;
+		private string col_name;
+
 		private BindingMemberInfo binding_member_info;
 		private Control control;
 
@@ -56,6 +60,12 @@ namespace System.Windows.Forms {
 			data_source = dataSource;
 			data_member = dataMember;
 			binding_member_info = new BindingMemberInfo (dataMember);
+
+			int sp = data_member.IndexOf ('.');
+			if (sp != -1) {
+				row_name = data_member.Substring (0, sp);
+				col_name = data_member.Substring (sp + 1, data_member.Length - sp - 1);
+			}
 		}
 		#endregion	// Public Constructors
 
@@ -134,6 +144,7 @@ namespace System.Windows.Forms {
 			control.Validating += new CancelEventHandler (ControlValidatingHandler);
 
 			this.control = control;
+			control.DataBindings.Add (this);
 		}
 
 		internal void Check (BindingContext binding_context)
@@ -141,8 +152,12 @@ namespace System.Windows.Forms {
 			if (control == null)
 				return;
 
-			manager = control.BindingContext [data_source];
+			string member_name = data_member;
+			if (row_name != null)
+				member_name = row_name;
+			manager = control.BindingContext [data_source, row_name];
 			manager.AddBinding (this);
+			manager.PositionChanged += new EventHandler (PositionChangedHandler);
 
 			WirePropertyValueChangedEvent ();
 
@@ -174,7 +189,11 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			if (data_member != null) {
+			if (row_name != null && col_name != null) {
+				PropertyDescriptor pd = TypeDescriptor.GetProperties (manager.Current).Find (col_name, true);
+				object pulled = pd.GetValue (manager.Current);
+				data = ParseData (pulled, pd.PropertyType);
+			} else if (data_member != null) {
 				PropertyDescriptor pd = TypeDescriptor.GetProperties (manager.Current).Find (data_member, true);
 				object pulled = pd.GetValue (manager.Current);
 				data = ParseData (pulled, pd.PropertyType);
@@ -189,7 +208,7 @@ namespace System.Windows.Forms {
 
 		internal void UpdateIsBinding ()
 		{
-			PushData ();
+			PullData ();
 		}
 
 		private void SetControlValue (object data)
@@ -199,7 +218,10 @@ namespace System.Windows.Forms {
 
 		private void SetPropertyValue (object data)
 		{
-			PropertyDescriptor pd = TypeDescriptor.GetProperties (manager.Current).Find (data_member, true);
+			string member_name = data_member;
+			if (col_name != null)
+				member_name = col_name;
+			PropertyDescriptor pd = TypeDescriptor.GetProperties (manager.Current).Find (member_name, true);
 			if (pd.IsReadOnly)
 				return;
 			pd.SetValue (manager.Current, data);
@@ -230,6 +252,11 @@ namespace System.Windows.Forms {
 		}
 
 		private void ControlValidatingHandler (object sender, CancelEventArgs e)
+		{
+			PullData ();
+		}
+
+		private void PositionChangedHandler (object sender, EventArgs e)
 		{
 			PullData ();
 		}
