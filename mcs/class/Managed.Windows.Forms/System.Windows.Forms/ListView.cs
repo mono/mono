@@ -318,7 +318,11 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public ListViewItem FocusedItem {
-			get { return focused_item; }
+			get {
+				if (focused_item == null && Focused && items.Count > 0)
+					focused_item = items [0];
+				return focused_item;
+			}
 		}
 
 		public override Color ForeColor {
@@ -1065,6 +1069,48 @@ namespace System.Windows.Forms
 			}
 		}
 
+		ListViewItem selection_start;
+
+		private void SelectItems (ArrayList sel_items)
+		{
+			SelectedItems.Clear ();
+			SelectedIndices.list.Clear ();
+			foreach (ListViewItem item in sel_items)
+				item.Selected = true;
+		}
+
+		private void UpdateMultiSelection (int index)
+		{
+			bool shift_pressed = (XplatUI.State.ModifierKeys & Keys.Shift) != 0;
+			bool ctrl_pressed = (XplatUI.State.ModifierKeys & Keys.Control) != 0;
+			ListViewItem item = items [index];
+
+			if (shift_pressed && selection_start != null) {
+				ArrayList list = new ArrayList ();
+				int start = Math.Min (selection_start.Index, index);
+				int end = Math.Max (selection_start.Index, index);
+				if (View == View.Details) {
+					for (int i = start; i <= end; i++)
+						list.Add (items [i]);
+				} else {
+					int left = Math.Min (items [start].col, items [end].col);
+					int right = Math.Max (items [start].col, items [end].col);
+					int top = Math.Min (items [start].row, items [end].row);
+					int bottom = Math.Max (items [start].row, items [end].row);
+					foreach (ListViewItem curr in items)
+						if (curr.row >= top && curr.row <= bottom && 
+						    curr.col >= left && curr.col <= right)
+							list.Add (curr);
+				}
+				SelectItems (list);
+			} else if (!ctrl_pressed) {
+				SelectedItems.Clear ();
+				SelectedIndices.list.Clear ();
+				item.Selected = true;
+				selection_start = item;
+			}
+		}
+
 		private void ListView_KeyDown (object sender, KeyEventArgs ke)
 		{			
 			if (ke.Handled || Items.Count == 0)
@@ -1091,19 +1137,20 @@ namespace System.Windows.Forms
 				break;
 
 			default:
-				if (KeySearchString (ke)) {
-					ke.Handled = true;
-				} else {
-					ke.Handled = false;
-				}
+				ke.Handled = KeySearchString (ke);
 				return;
 			}
 			
-			if (index != -1) {
+			if (index == -1)
+				return;
+
+			if (MultiSelect)
+				UpdateMultiSelection (index);
+			else
 				items [index].Selected = true;
-				SetFocusedItem (items [index]);				
-				EnsureVisible (index);
-			}
+
+			SetFocusedItem (items [index]);				
+			EnsureVisible (index);
 		}
 
 				
@@ -1177,7 +1224,10 @@ namespace System.Windows.Forms
 
 				if (clicked_item != null) {
 					bool changed = !clicked_item.Selected;
-					clicked_item.Selected = true;;
+					if (owner.MultiSelect && (XplatUI.State.ModifierKeys & Keys.Control) == 0)
+						owner.UpdateMultiSelection (clicked_item.Index);
+					else
+						clicked_item.Selected = true;
 				
 					if (changed)
 						owner.OnSelectedIndexChanged (EventArgs.Empty);
@@ -2531,8 +2581,9 @@ namespace System.Windows.Forms
 			#region Public Methods
 			public virtual void Clear ()
 			{
-				for (int i = 0; i < list.Count; i++)
-					((ListViewItem) list [i]).Selected = false;
+				ArrayList copy = (ArrayList) list.Clone ();
+				for (int i = 0; i < copy.Count; i++)
+					((ListViewItem) copy [i]).Selected = false;
 
 				list.Clear ();
 			}

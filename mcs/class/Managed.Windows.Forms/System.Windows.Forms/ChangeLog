@@ -1,3 +1,11 @@
+2006-03-16  Mike Kestner  <mkestner@novell.com>
+
+	* ListView.cs: make shift/ctrl keyboard and mouse selection 
+	consistent with the MS control. Fix a bug in
+	SelectedListViewItemCollection.Clear that was pissing me off for the
+	better part of a day because the collection was being altered
+	underneath us as we walked the list.
+
 2006-03-16  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* Control.cs: Not sure how we could miss this so long, but it seems
