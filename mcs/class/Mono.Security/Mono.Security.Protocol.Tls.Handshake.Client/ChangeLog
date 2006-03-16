@@ -1,3 +1,16 @@
+2006-03-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TlsClientHello.cs: Check to see if we already have a known session
+	(past or concurrent) with the same target host. If so the use this
+	session id to try to resume (i.e. abbreviated handshake).
+	* TlsServerFinished.cs: Don't reset the hasndshake stream here. The 
+	stream must be resetted once BOTH the client and the server are done.
+	The order of message can be different if we use an abbreviated 
+	handshake sequence which leads to an invalid handshake.
+	* TlsServerHello.cs: Add this session info to the client cache. If the
+	server sends the same session id (as we supplied) then we MUST do an 
+	abbreviated handshake.
+
 2005-11-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TlsServerCertificate.cs: Add support for Netscape Server Gated 

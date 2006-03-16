@@ -442,10 +442,10 @@ namespace Mono.Security.Protocol.Tls
 						return;
 
 					completed = true;
-					if (handle != null)
-						handle.Set ();
 					_asyncException = ex;
 					_bytesRead = bytesRead;
+					if (handle != null)
+						handle.Set ();
 				}
 				if (_userCallback != null)
 					_userCallback.BeginInvoke (this, null, null);

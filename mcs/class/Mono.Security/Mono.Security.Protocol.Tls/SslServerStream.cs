@@ -226,10 +226,18 @@ namespace Mono.Security.Protocol.Tls
 			this.protocol.SendRecord(HandshakeType.ServerHelloDone);
 
 			// Receive client response, until the Client Finished message
-			// is received
+			// is received. IE can be interrupted at this stage and never
+			// complete the handshake
+			DateTime complete = DateTime.Now.AddSeconds (10);
 			while (this.context.LastHandshakeMsg != HandshakeType.Finished)
 			{
-				this.protocol.ReceiveRecord(this.innerStream);
+				byte[] record = this.protocol.ReceiveRecord(this.innerStream);
+				if ((record == null) || (record.Length == 0))
+				{
+					throw new TlsException(
+						AlertDescription.HandshakeFailiure,
+						"The client stopped the handshake.");
+				}
 			}
 
 			if (certRequested && (this.context.ClientSettings.ClientCertificate == null))

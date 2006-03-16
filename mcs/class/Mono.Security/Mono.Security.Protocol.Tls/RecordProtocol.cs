@@ -174,14 +174,13 @@ namespace Mono.Security.Protocol.Tls
 						return;
 
 					completed = true;
+					_asyncException = ex;
+					_resultingBuffer = resultingBuffer;
 					if (handle != null)
 						handle.Set ();
 
 					if (_userCallback != null)
 						_userCallback.BeginInvoke (this, null, null);
-
-					_asyncException = ex;
-					_resultingBuffer = resultingBuffer;
 				}
 			}
 
@@ -632,9 +631,6 @@ namespace Mono.Security.Protocol.Tls
 
 			// Make the pending state to be the current state
 			this.context.IsActual = true;
-
-			// Send Finished message
-			this.SendRecord(HandshakeType.Finished);			
 		}
 
 		public IAsyncResult BeginSendRecord(HandshakeType handshakeType, AsyncCallback callback, object state)

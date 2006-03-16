@@ -72,6 +72,7 @@ namespace Mono.Security.Protocol.Tls
 		private	HandshakeState handshakeState;
 
 		// Misc
+		private bool	abbreviatedHandshake;
 		private bool	isActual;
 		private bool	connectionEnd;
 		private bool	protocolNegotiated;
@@ -107,6 +108,12 @@ namespace Mono.Security.Protocol.Tls
 		#endregion
 
 		#region Properties
+
+		public bool AbbreviatedHandshake
+		{
+			get { return abbreviatedHandshake; }
+			set { abbreviatedHandshake = value; }
+		}
 
 		public bool	ProtocolNegotiated
 		{
