@@ -342,15 +342,13 @@ namespace System.Collections.Generic {
 
 		void CheckIndex (int index)
 		{
-			if ((uint) index >= (uint) size)
+			if (index < 0 || (uint) index > (uint) size)
 				throw new ArgumentOutOfRangeException ("index");
 		}
 		
 		public void Insert (int index, T item)
 		{
-			if ((uint) index > (uint) size)
-				throw new ArgumentOutOfRangeException ("index");
-			
+			CheckIndex (index);			
 			GrowIfNeeded (1);
 			Shift (index, 1);
 			this [index] = item;

@@ -1,3 +1,7 @@
+2006-03-16  Ankit Jain  <jankit@novell.com>
+
+	* ListTest.cs: Add some tests for InsertRange.
+
 2005-12-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ListTest.cs: Added test cases for #77039 for sorting a list with

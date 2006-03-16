@@ -109,6 +109,13 @@ namespace MonoTests.System.Collections.Generic {
 			Assert.AreEqual (2, _list1 [2]);
 			Assert.AreEqual (3, _list1 [3]);
 			Assert.AreEqual (50, _list1 [4]);
+
+			newRange = new List <int> ();
+			List <int> li = new List <int> ();
+			li.Add (1);
+			newRange.InsertRange (0, li);
+			newRange.InsertRange (newRange.Count, li);
+			Assert.AreEqual (2, newRange.Count);
 		}
 
 		[Test, ExpectedException (typeof (ArgumentNullException))]
@@ -116,6 +123,12 @@ namespace MonoTests.System.Collections.Generic {
 		{
 			IEnumerable <int> n = null;
 			_list1.InsertRange (0, n);
+		}
+
+		[Test, ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void InsertRangeNegativeIndexTest ()
+		{
+			_list1.InsertRange (-1, _list1);
 		}
 
 		[Test]
