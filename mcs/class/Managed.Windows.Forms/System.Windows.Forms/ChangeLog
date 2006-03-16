@@ -1,3 +1,11 @@
+2006-03-16  Jackson Harper  <jackson@ximian.com>
+
+	* Binding.cs:
+	* InternalWindowManager.cs:
+	* MdiWindowManager.cs:
+	* X11Keyboard.cs: I really want Mike to love me again (fix
+	compiler warnings).
+
 2006-03-16  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* DataGrid.cs:

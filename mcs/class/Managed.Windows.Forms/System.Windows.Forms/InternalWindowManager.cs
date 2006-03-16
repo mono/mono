@@ -407,9 +407,6 @@ namespace System.Windows.Forms {
 			if (IsSizable) {
 				form.PointToClient (ref x, ref y);
 				y += TitleBarHeight;
-				FormPos pos = FormPosForCoords (x, y);
-
-				// SetCursorForPos (pos);
 			}
 
 			return false;
@@ -619,9 +616,8 @@ namespace System.Windows.Forms {
 			Rectangle tb = new Rectangle (BorderWidth, BorderWidth,
 					form.Width - (BorderWidth * 2), TitleBarHeight - 1);
 
-			Rectangle vis = Rectangle.Intersect (tb, pe.ClipRectangle);
-
 			// HACK: For now always draw the titlebar until we get updates better
+			// Rectangle vis = Rectangle.Intersect (tb, pe.ClipRectangle);	
 			//if (vis != Rectangle.Empty)
 				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (color), tb);
 

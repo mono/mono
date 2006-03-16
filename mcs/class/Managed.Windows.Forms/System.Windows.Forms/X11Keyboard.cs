@@ -147,7 +147,7 @@ namespace System.Windows.Forms {
 
 			AltGrMask = xevent.KeyEvent.state & (0x6000 | (int) KeyMasks.ModMasks);
 			int vkey = EventToVkey (xevent);
-			if (vkey == 0) {
+			if (vkey == 0 && ascii_chars != 0) {
 				vkey = (int) VirtualKeys.VK_NONAME;
 			}
 
@@ -428,7 +428,6 @@ namespace System.Windows.Forms {
 			e2.KeyEvent.display = display;
 			e2.KeyEvent.state = 0;
 
-			int oem_vkey = (int) VirtualKeys.VK_OEM_7;
 			for (int keyc = min_keycode; keyc <= max_keycode; keyc++) {
 				int vkey = 0;
 				int scan = 0;

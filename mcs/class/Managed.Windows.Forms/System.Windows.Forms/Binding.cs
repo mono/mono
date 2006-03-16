@@ -155,7 +155,7 @@ namespace System.Windows.Forms {
 			string member_name = data_member;
 			if (row_name != null)
 				member_name = row_name;
-			manager = control.BindingContext [data_source, row_name];
+			manager = control.BindingContext [data_source, member_name];
 			manager.AddBinding (this);
 			manager.PositionChanged += new EventHandler (PositionChangedHandler);
 

@@ -131,7 +131,6 @@ namespace System.Windows.Forms {
 
 		private void MeasureIconMenuItem (object sender, MeasureItemEventArgs me)
 		{
-			Form parent = (Form) mdi_container.Parent;
 			int size = SystemInformation.MenuHeight;
 			me.ItemHeight = size;
 			me.ItemWidth = size + 2; // some padding
