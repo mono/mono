@@ -574,9 +574,9 @@ namespace System.Windows.Forms
 				else {
 					if (ClientRectangle.Contains (point)) {
 						if (e.Y > thumb_pos.Y + thumb_pos.Height)
-							LargeIncrement ();
-						else
 							LargeDecrement ();
+						else
+							LargeIncrement ();
 
 						Invalidate (thumb_area);
 						fire_timer = true;

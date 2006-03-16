@@ -1,3 +1,10 @@
+2006-03-16  Jackson Harper  <jackson@ximian.com>
+
+	* TrackBar.cs: Debackwards the increment/decrement for handling
+	mouse clicks on the bar with vertical trackbars.
+	* ThemeWin32Classic.cs: Draw vertical trackbars with 0 at the
+	bottom to match MS.
+
 2006-03-16  Mike Kestner  <mkestner@novell.com>
 
 	* ListView.cs: make shift/ctrl keyboard and mouse selection 

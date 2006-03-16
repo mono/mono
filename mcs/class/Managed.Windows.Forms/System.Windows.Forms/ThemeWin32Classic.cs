@@ -3849,6 +3849,7 @@ namespace System.Windows.Forms
 			float pixels_betweenticks;
 			const int space_from_right = 8;
 			const int space_from_left = 8;
+			const int space_from_bottom = 11;
 			Rectangle area = tb.ClientRectangle;
 			
 			switch (tb.TickStyle) 	{
@@ -3897,19 +3898,19 @@ namespace System.Windows.Forms
 			
 			/* Convert thumb position from mouse position to value*/
 			if (mouse_value) {
-				
-				if (value_pos >= channel_startpoint.Y)
-					value_pos = (int)(((float) (value_pos - channel_startpoint.Y)) / pixels_betweenticks);
+				if (value_pos < thumb_area.Bottom)
+					value_pos = (int) ((thumb_area.Bottom - value_pos) / pixels_betweenticks);
 				else
 					value_pos = 0;			
 
 				if (value_pos + tb.Minimum > tb.Maximum)
 					value_pos = tb.Maximum - tb.Minimum;
-                                
+
 				tb.Value = value_pos + tb.Minimum;
 			}			
-			
-			thumb_pos.Y = channel_startpoint.Y + (int) (pixels_betweenticks * (float) value_pos);
+
+			// thumb_pos.Y = channel_startpoint.Y ; // + (int) (pixels_betweenticks * (float) value_pos);
+			thumb_pos.Y = thumb_area.Bottom - space_from_bottom - (int) (pixels_betweenticks * (float) value_pos);
 			
 			/* Draw thumb fixed 10x22 size */
 			thumb_pos.Width = 10;
