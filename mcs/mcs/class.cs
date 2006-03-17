@@ -4389,10 +4389,12 @@ namespace Mono.CSharp {
 			this.method = method;
 		}
 
-		public bool Define (TypeContainer container)
+		public bool Define (DeclSpace parent)
 		{
 			string name = method.MethodName.Name;
 			string method_name = name;
+
+			TypeContainer container = ((TypeContainer) parent).PartialContainer;
 
 			PendingImplementation pending = container.PendingImplementations;
 			if (pending != null){
@@ -4582,15 +4584,15 @@ namespace Mono.CSharp {
 		//
 		// Emits the code
 		// 
-		public void Emit (TypeContainer container)
+		public void Emit (DeclSpace parent)
 		{
 			EmitContext ec;
 			if ((flags & MethodAttributes.PinvokeImpl) == 0)
-				ec = method.CreateEmitContext (container, builder.GetILGenerator ());
+				ec = method.CreateEmitContext (parent, builder.GetILGenerator ());
 			else
-				ec = method.CreateEmitContext (container, null);
+				ec = method.CreateEmitContext (parent, null);
 
-			if (method.GetObsoleteAttribute () != null || container.GetObsoleteAttribute () != null)
+			if (method.GetObsoleteAttribute () != null || parent.GetObsoleteAttribute () != null)
 				ec.TestObsoleteMethodUsage = false;
 
 			method.ParameterInfo.ApplyAttributes (MethodBuilder);
@@ -4602,8 +4604,7 @@ namespace Mono.CSharp {
 
 			ToplevelBlock block = method.Block;
 			
-			SourceMethod source = SourceMethod.Create (
-				container, MethodBuilder, method.Block);
+			SourceMethod source = SourceMethod.Create (parent, MethodBuilder, method.Block);
 
 			//
 			// Handle destructors specially
@@ -5560,9 +5561,9 @@ namespace Mono.CSharp {
 			throw new NotSupportedException ();
 		}
 
-		public virtual void Emit (TypeContainer container)
+		public virtual void Emit (DeclSpace parent)
 		{
-			EmitMethod (container);
+			EmitMethod (parent);
 
 			if (declarative_security != null) {
 				foreach (DictionaryEntry de in declarative_security) {
@@ -5573,9 +5574,9 @@ namespace Mono.CSharp {
 			block = null;
 		}
 
-		protected virtual void EmitMethod (TypeContainer container)
+		protected virtual void EmitMethod (DeclSpace parent)
 		{
-			method_data.Emit (container);
+			method_data.Emit (parent);
 		}
 
 		public override bool IsClsComplianceRequired()
@@ -5647,13 +5648,13 @@ namespace Mono.CSharp {
 			{
 			}
 
-			public override MethodBuilder Define(TypeContainer container)
+			public override MethodBuilder Define (DeclSpace parent)
 			{
-				base.Define (container);
+				base.Define (parent);
 				
 				method_data = new MethodData (method, ModFlags, flags, this);
 
-				if (!method_data.Define (container))
+				if (!method_data.Define (parent))
 					return null;
 
 				return method_data.MethodBuilder;
@@ -5720,17 +5721,17 @@ namespace Mono.CSharp {
 					new Type[] { method.MemberType });
 			}
 
-			public override MethodBuilder Define (TypeContainer container)
+			public override MethodBuilder Define (DeclSpace parent)
 			{
 				DefineParameters ();
 				if (IsDummy)
 					return null;
 
-				base.Define (container);
+				base.Define (parent);
 
 				method_data = new MethodData (method, ModFlags, flags, this);
 
-				if (!method_data.Define (container))
+				if (!method_data.Define (parent))
 					return null;
 
 				return method_data.MethodBuilder;
@@ -5787,10 +5788,12 @@ namespace Mono.CSharp {
 				return method.IsClsComplianceRequired ();
 			}
 
-			public virtual MethodBuilder Define (TypeContainer container)
+			public virtual MethodBuilder Define (DeclSpace parent)
 			{
 				if (!method.CheckAbstractAndExtern (block != null))
 					return null;
+
+				TypeContainer container = ((TypeContainer) parent).PartialContainer;
 
 				//
 				// Check for custom access modifier
@@ -6443,7 +6446,7 @@ namespace Mono.CSharp {
 
 		}
 
-		public abstract class DelegateMethod: AbstractPropertyEventMethod
+		public abstract class DelegateMethod : AbstractPropertyEventMethod
 		{
 			protected readonly Event method;
 			ImplicitParameter param_attr;
@@ -6486,12 +6489,12 @@ namespace Mono.CSharp {
 				return method.IsClsComplianceRequired ();
 			}
 
-			public MethodBuilder Define (TypeContainer container)
+			public MethodBuilder Define (DeclSpace parent)
 			{
 				method_data = new MethodData (method, method.ModFlags,
 					method.flags | MethodAttributes.HideBySig | MethodAttributes.SpecialName, this);
 
-				if (!method_data.Define (container))
+				if (!method_data.Define (parent))
 					return null;
 
 				MethodBuilder mb = method_data.MethodBuilder;
@@ -6500,10 +6503,10 @@ namespace Mono.CSharp {
 			}
 
 
-			protected override void EmitMethod (TypeContainer tc)
+			protected override void EmitMethod (DeclSpace parent)
 			{
 				if (block != null) {
-					base.EmitMethod (tc);
+					base.EmitMethod (parent);
 					return;
 				}
 

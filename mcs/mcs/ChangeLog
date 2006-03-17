@@ -1,5 +1,15 @@
 2006-03-18  Raja R Harinath  <harinath@gmail.com>
 
+	* statement.cs (LocalInfo..ctor): Use DeclSpace argument instead
+	of TypeContainer.
+	(Block.AddThisVariable): Likewise.
+	* class.cs (MethodData.Define, MethodData.Emit): Likewise.
+	(AbstractPropertyEventMethod.Emit): Likewise.
+	(AbstractPropertyEventMethod.EmitMethod): Likewise.
+	(GetMethod.Define, SetMethod.Define): Likewise.
+	(PropertyMethod.Define, DelegateMethod.Define): Likewise.
+	(DelegateMethod.EmitMethod): Likewise.
+
 	Fix regression test-partial-13.cs.
 	Rationalize use of PartialContainer.  Ensure that the partial
 	class semantics can be tied to type-correctness, i.e., any
