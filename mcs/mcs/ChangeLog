@@ -1,3 +1,7 @@
+2006-03-17  Marek Safar  <marek.safar@seznam.cz>
+
+	* typemanager.cs.cs (GetInterfaces): Don't recreate 0-sized arrays.
+
 2006-03-15  Marek Safar  <marek.safar@seznam.cz>
 
 	* class.cs (FieldMember.Emit): ParentContainer is real parent for partial

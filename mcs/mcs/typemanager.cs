@@ -1770,9 +1770,9 @@ public class TypeManager {
 			else
 				base_ifaces = GetInterfaces (t.BaseType);
 			Type [] type_ifaces = (Type []) builder_to_ifaces [t];
-			if (type_ifaces == null)
+			if (type_ifaces == null || type_ifaces.Length == 0)
 				type_ifaces = Type.EmptyTypes;
-
+			
 			int base_count = base_ifaces.Length;
 			Type [] result = new Type [base_count + type_ifaces.Length];
 			base_ifaces.CopyTo (result, 0);
