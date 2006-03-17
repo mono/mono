@@ -52,12 +52,18 @@ namespace System.Drawing.Drawing2D
         
                 public Matrix (Rectangle rect , Point[] plgpts)
                 {
+			if (plgpts == null)
+				throw new ArgumentNullException ("plgpts");
+
 			Status status = GDIPlus.GdipCreateMatrix3I (rect, plgpts, out nativeMatrix);
 			GDIPlus.CheckStatus (status);
                 }
         
                 public Matrix (RectangleF rect , PointF[] pa)
                 {
+			if (pa == null)
+				throw new ArgumentNullException ("pa");
+
 			Status status = GDIPlus.GdipCreateMatrix3 (rect, pa, out nativeMatrix);
 			GDIPlus.CheckStatus (status);
                 }
@@ -170,8 +176,11 @@ namespace System.Drawing.Drawing2D
                         Multiply (matrix, MatrixOrder.Prepend);
                 }
         
-                public void Multiply (Matrix matrix, MatrixOrder order)
-                {
+		public void Multiply (Matrix matrix, MatrixOrder order)
+		{
+			if (matrix == null)
+				throw new ArgumentNullException ("matrix");
+
 			Status status = GDIPlus.GdipMultiplyMatrix (nativeMatrix, matrix.nativeMatrix, order);
 			GDIPlus.CheckStatus (status);
                 }
@@ -200,6 +209,9 @@ namespace System.Drawing.Drawing2D
         
                 public void RotateAt (float angle, PointF point, MatrixOrder order)
                 {
+			if ((order < MatrixOrder.Prepend) || (order > MatrixOrder.Append))
+				throw new ArgumentException ("order");
+
                         angle *= (float) (Math.PI / 180.0);  // degrees to radians
                         float cos = (float) Math.Cos (angle);
                         float sin = (float) Math.Sin (angle);
@@ -252,24 +264,36 @@ namespace System.Drawing.Drawing2D
         
                 public void TransformPoints (Point[] pts)
                 {
+			if (pts == null)
+				throw new ArgumentNullException ("pts");
+
 			Status status = GDIPlus.GdipTransformMatrixPointsI (nativeMatrix, pts, pts.Length);
 			GDIPlus.CheckStatus (status);
                 }
         
                 public void TransformPoints (PointF[] pts)
                 {
+			if (pts == null)
+				throw new ArgumentNullException ("pts");
+
 			Status status = GDIPlus.GdipTransformMatrixPoints (nativeMatrix, pts, pts.Length);
 			GDIPlus.CheckStatus (status);
                 }
         
                 public void TransformVectors (Point[] pts)
                 {
+			if (pts == null)
+				throw new ArgumentNullException ("pts");
+
 			Status status = GDIPlus.GdipVectorTransformMatrixPointsI (nativeMatrix, pts, pts.Length);
 			GDIPlus.CheckStatus (status);
                 }
         
                 public void TransformVectors (PointF[] pts)
                 {
+			if (pts == null)
+				throw new ArgumentNullException ("pts");
+
 			Status status = GDIPlus.GdipVectorTransformMatrixPoints (nativeMatrix, pts, pts.Length);
 			GDIPlus.CheckStatus (status);
                 }
