@@ -1,9 +1,3 @@
-2006-03-16  Sebastien Pouliot  <sebastien@ximian.com> 
- 
-	* TlsServerCertificate.cs: Relax (again) the KeyUsageExtension check
-	as it is possible that the certificate usage and the negotiated cipher
-	could be not perfectly aligned.
-
 2006-03-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TlsClientHello.cs: Check to see if we already have a known session

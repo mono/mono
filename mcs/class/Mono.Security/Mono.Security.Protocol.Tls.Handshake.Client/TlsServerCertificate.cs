@@ -110,25 +110,6 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		#region Private Methods
 
-		private bool CheckKeyUsageExtension (ExchangeAlgorithmType type, KeyUsageExtension kux)
-		{
-			switch (type) 
-			{
-				case ExchangeAlgorithmType.RsaSign:
-					// certificate and negotiated cipher may not be perfectly aligned
-					return (kux.Support (KeyUsages.digitalSignature) ||
-						kux.Support (KeyUsages.keyEncipherment));
-				case ExchangeAlgorithmType.RsaKeyX:
-					return kux.Support (KeyUsages.keyEncipherment);
-				case ExchangeAlgorithmType.DiffieHellman:
-					return kux.Support (KeyUsages.keyAgreement);
-				case ExchangeAlgorithmType.Fortezza:
-					return false; // unsupported certificate type
-			}
-			// anything else is bad
-			return false;
-		}
-
 		// Note: this method only works for RSA certificates
 		// DH certificates requires some changes - does anyone use one ?
 		private bool checkCertificateUsage (X509Certificate cert) 
@@ -139,6 +120,22 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			// we "must" accept older certificates without proofs
 			if (cert.Version < 3)
 				return true;
+
+			KeyUsages ku = KeyUsages.none;
+			switch (context.Cipher.ExchangeAlgorithmType) 
+			{
+				case ExchangeAlgorithmType.RsaSign:
+					ku = KeyUsages.digitalSignature;
+					break;
+				case ExchangeAlgorithmType.RsaKeyX:
+					ku = KeyUsages.keyEncipherment;
+					break;
+				case ExchangeAlgorithmType.DiffieHellman:
+					ku = KeyUsages.keyAgreement;
+					break;
+				case ExchangeAlgorithmType.Fortezza:
+					return false; // unsupported certificate type
+			}
 
 			KeyUsageExtension kux = null;
 			ExtendedKeyUsageExtension eku = null;
@@ -156,14 +153,14 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 				// RFC3280 states that when both KeyUsageExtension and 
 				// ExtendedKeyUsageExtension are present then BOTH should
 				// be valid
-				if (!CheckKeyUsageExtension (context.Cipher.ExchangeAlgorithmType, kux))
+				if (!kux.Support (ku))
 					return false;
 				return (eku.KeyPurpose.Contains ("1.3.6.1.5.5.7.3.1") ||
 					eku.KeyPurpose.Contains ("2.16.840.1.113730.4.1"));
 			}
 			else if (kux != null) 
 			{
-				return CheckKeyUsageExtension (context.Cipher.ExchangeAlgorithmType, kux);
+				return kux.Support (ku);
 			}
 			else if (eku != null) 
 			{
