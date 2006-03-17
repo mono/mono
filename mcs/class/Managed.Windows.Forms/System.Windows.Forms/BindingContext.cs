@@ -35,6 +35,7 @@ namespace System.Windows.Forms {
 	public class BindingContext : ICollection, IEnumerable {
 
 		private Hashtable managers;
+		private object null_data_source = new object ();
 
 		private class DataSourceEntry {
 
@@ -71,43 +72,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private class ManagerEntry {
-
-			private object source;
-			private WeakReference member_ref;
-			
-			private int member_hash;
-
-			public ManagerEntry (object source, string member)
-			{
-				this.source = source;
-				if (member == null)
-					member = String.Empty;
-				
-				member_hash = member.ToLower (CultureInfo.InvariantCulture).GetHashCode ();
-				if (member_hash == 0)
-					member_hash = 1;
-				member_ref = new WeakReference (member, false);
-			}
-
-			public override bool Equals (object b)
-			{
-				ManagerEntry o = (ManagerEntry) b;
-
-				return (o.source == source && o.member_ref.Target == member_ref.Target);
-			}
-
-			public override int GetHashCode ()
-			{
-				return member_hash * source.GetHashCode ();
-			}
-
-			public override string ToString ()
-			{
-				return source.ToString () + " + " + (member_ref.Target == null ? " -- null --" : member_ref.Target.ToString ());
-			}
-		}
-
 		public BindingContext () 
 		{
 			managers = new Hashtable ();
@@ -127,13 +91,23 @@ namespace System.Windows.Forms {
 
 		public BindingManagerBase this [object data_source, string data_member] {
 			get {
-				DataSourceEntry ds = managers [data_source] as DataSourceEntry;
-				if (ds == null) {
-					ds = new DataSourceEntry (data_source);
-					managers [data_source] = ds;
-				}
+				DataSourceEntry ds = GetEntry (data_source, data_member, true);
 				return ds.AddMember (data_member);
 			}
+		}
+
+		private DataSourceEntry GetEntry (object data_source, string data_member, bool create)
+		{
+			if (data_source == null)
+				data_source = null_data_source;
+				
+			DataSourceEntry ds = managers [data_source] as DataSourceEntry;
+			if (ds == null && create) {
+				ds = new DataSourceEntry (data_source);
+				managers [data_source] = ds;
+			}
+
+			return ds;
 		}
 
 		private static BindingManagerBase CreateBindingManager (object data_source, 
@@ -157,7 +131,7 @@ namespace System.Windows.Forms {
 
 		public bool Contains (object dataSource, string dataMember)
 		{
-			DataSourceEntry ds = managers [dataSource] as DataSourceEntry;
+			DataSourceEntry ds = GetEntry (dataSource, dataMember, false);
 			if (ds == null)
 				return false;
 			return ds.Contains (dataMember);
@@ -179,11 +153,7 @@ namespace System.Windows.Forms {
 				throw new ArgumentNullException ("dataSource");
 			if (listManager == null)
 				throw new ArgumentNullException ("listManager");
-			DataSourceEntry ds = managers [dataSource] as DataSourceEntry;
-			if (ds == null) {
-				ds = new DataSourceEntry (dataSource);
-				managers [dataSource] = ds;
-			}
+			DataSourceEntry ds = GetEntry (dataSource, String.Empty, true);
 			ds.AddMember (String.Empty, listManager);
 		}
 
@@ -253,10 +223,5 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException();
 		}
 		#endregion	// IEnumerable Interfaces
-
-		private ManagerEntry CreateEntry (object dataSource, string dataMember)
-		{
-			return new ManagerEntry (dataSource, dataMember);
-		}
 	}
 }
