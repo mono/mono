@@ -640,9 +640,9 @@ public partial class TypeManager {
 	{
 		PropertyInfo pi = mi as PropertyInfo;
 		if (pi != null) {
-			MethodBase pmi = pi.GetGetMethod ();
+			MethodBase pmi = pi.GetGetMethod (true);
 			if (pmi == null)
-				pmi = pi.GetSetMethod ();
+				pmi = pi.GetSetMethod (true);
 			if (GetParameterData (pmi).Count > 0)
 				mi = pmi;
 		}

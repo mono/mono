@@ -3164,10 +3164,10 @@ this_access
 	;
 
 base_access
-	: BASE DOT IDENTIFIER
+	: BASE DOT IDENTIFIER opt_type_argument_list
 	  {
 		LocatedToken lt = (LocatedToken) $3;
-		$$ = new BaseAccess (lt.Value, lt.Location);
+		$$ = new BaseAccess (lt.Value, (TypeArguments) $4, lt.Location);
 	  }
 	| BASE OPEN_BRACKET expression_list CLOSE_BRACKET
 	  {

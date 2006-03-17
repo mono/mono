@@ -13,7 +13,6 @@
 
 cs0229-2.cs
 cs0229.cs NO ERROR
-cs0231-2.cs
 cs0525.cs
 cs0526.cs
 cs0531.cs
@@ -25,7 +24,6 @@ cs0560.cs
 cs0567.cs
 cs0612-2.cs NO ERROR
 cs0619-42.cs
-cs0628-3.cs NO ERROR
 cs0631-2.cs
 cs0647-3.cs
 cs1035.cs
@@ -48,10 +46,9 @@ cs1667-4.cs
 cs1667-5.cs
 cs1667.cs
 cs1670-2.cs
+gcs0019-3.cs
 gcs0146.cs
 gcs0305-2.cs
 gcs0305.cs
 gcs0308.cs
-
-cs0619-18.cs
-cs0619-24.cs
+gcs0309-6.cs

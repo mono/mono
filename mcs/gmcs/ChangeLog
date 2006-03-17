@@ -1,3 +1,16 @@
+2006-02-08  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (BaseAccess): Add support for generic methods.
+
+	* ecore.cs (MethodGroupExpr.ResolveGeneric): Propagate `IsBase' to
+	the new MethodGroupExpr.
+
+2006-03-01  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #77642.
+	* typemanager.cs (GetFullNameSignature): Don't nullref on
+	protected accessors.
+
 2006-03-09  Martin Baulig  <martin@ximian.com>
 
 	* ecore.cs (FieldExpr.AddressOf): Don't emit the instance if the
