@@ -1025,8 +1025,18 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 	return call;
 }
 
+/* FIXME: Remove these later */
+#define NEW_VARLOADA(cfg,dest,var,vartype) do {	\
+        MONO_INST_NEW ((cfg), (dest), OP_LDADDR); \
+		(dest)->ssa_op = MONO_SSA_ADDRESS_TAKEN;	\
+		(dest)->inst_p0 = (var); \
+		(var)->flags |= MONO_INST_INDIRECT;	\
+		(dest)->type = STACK_MP;	\
+		(dest)->klass = (var)->klass;	\
+        (dest)->dreg = mono_alloc_dreg ((cfg), STACK_MP); \
+	} while (0)
 
-
+#define EMIT_NEW_VARLOADA(cfg,dest,var,vartype) do { NEW_VARLOADA ((cfg), (dest), (var), (vartype)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
 MonoCallInst*
 mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
@@ -1067,7 +1077,20 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 		if ((i >= sig->hasthis) && (MONO_TYPE_ISSTRUCT(t))) {
 			gint align;
 			guint32 size;
+			MonoInst *src_var = get_vreg_to_inst (cfg, in->dreg);
+			MonoInst *src;
 
+			g_assert (in->klass);
+
+			// FIXME:
+			if (in->opcode == OP_LDADDR) {
+				src_var = in->inst_p0;
+			}
+
+			// FIXME:
+			if (!src_var)
+				src_var = mono_compile_create_var_for_vreg (cfg, &in->klass->byval_arg, OP_LOCAL, in->dreg);
+				
 			if (t->type == MONO_TYPE_TYPEDBYREF) {
 				size = sizeof (MonoTypedRef);
 				align = sizeof (gpointer);
@@ -1078,21 +1101,28 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 				else
 					size = mono_type_stack_size (&in->klass->byval_arg, &align);
 
+			// FIXME: Decompose this later
 			if (size == 0) {
 			} else if (size <= 4) {
+				EMIT_NEW_VARLOADA ((cfg), (src), src_var, src_var->inst_vtype);
+
 				arg->opcode = OP_X86_PUSH_MEMBASE;
-				arg->sreg1 = in->dreg;
+				arg->sreg1 = src->dreg;
 
 				MONO_ADD_INS (cfg->cbb, arg);
 			} else if (size <= 20) {
+				EMIT_NEW_VARLOADA ((cfg), (src), src_var, src_var->inst_vtype);
+
 				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SUB_IMM, X86_ESP, X86_ESP, ALIGN_TO (size, 4));
 				if (cfg->new_ir)
-					mini_emit_memcpy2 (cfg, X86_ESP, 0, in->dreg, 0, size, 0);
+					mini_emit_memcpy2 (cfg, X86_ESP, 0, src->dreg, 0, size, 0);
 				else
-					mini_emit_memcpy (cfg, X86_ESP, 0, in->dreg, 0, size, 0);
+					mini_emit_memcpy (cfg, X86_ESP, 0, src->dreg, 0, size, 0);
 			} else {
+				EMIT_NEW_VARLOADA ((cfg), (src), src_var, src_var->inst_vtype);
+
 				arg->opcode = OP_X86_PUSH_OBJ;
-				arg->inst_basereg = in->dreg;
+				arg->inst_basereg = src->dreg;
 				arg->inst_offset = 0;
 				arg->inst_imm = size;
 					

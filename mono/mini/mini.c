@@ -1189,9 +1189,9 @@ handle_enum:
 			type = type->data.klass->enum_basetype;
 			goto handle_enum;
 		}
-		return CEE_STOBJ;
+		return OP_STOREV_MEMBASE;
 	case MONO_TYPE_TYPEDBYREF:
-		return CEE_STOBJ;
+		return OP_STOREV_MEMBASE;
 	case MONO_TYPE_GENERICINST:
 		type = &type->data.generic_class->container_class->byval_arg;
 		goto handle_enum;
@@ -1242,10 +1242,10 @@ mono_type_to_load_membase (MonoType *type)
 		return OP_LOADR8_MEMBASE;
 	case MONO_TYPE_VALUETYPE:
 	case MONO_TYPE_TYPEDBYREF:
-		return CEE_LDOBJ;
+		return OP_LOADV_MEMBASE;
 	case MONO_TYPE_GENERICINST:
 		if (mono_type_generic_inst_is_valuetype (type))
-			return CEE_LDOBJ;
+			return OP_LOADV_MEMBASE;
 		else
 			return OP_LOAD_MEMBASE;
 		break;
@@ -1984,9 +1984,8 @@ mono_add_ins_to_end (MonoBasicBlock *bb, MonoInst *inst)
 		if (MONO_IS_COND_BRANCH_OP (bb->last_ins)) {
 			/* Need to insert the ins before the compare */
 			if (bb->code == bb->last_ins) {
-				/* Only a branch, happens in long comparisons */
-				g_assert (bb->in_count == 1);
-				mono_add_ins_to_end (bb->in_bb [0], inst);
+				inst->next = bb->last_ins;
+				bb->code = inst;
 				return;
 			}
 
@@ -1995,8 +1994,14 @@ mono_add_ins_to_end (MonoBasicBlock *bb, MonoInst *inst)
 				/* Only two instructions */
 				opcode = bb->code->opcode;
 
-				inst->next = bb->code;
-				bb->code = inst;
+				if ((opcode == OP_COMPARE) || (opcode == OP_COMPARE_IMM) || (opcode == OP_ICOMPARE) || (opcode == OP_ICOMPARE_IMM) || (opcode == OP_FCOMPARE) || (opcode == OP_LCOMPARE) || (opcode == OP_LCOMPARE_IMM)) {
+					/* NEW IR */
+					inst->next = bb->code;
+					bb->code = inst;
+				} else {
+					inst->next = bb->last_ins;
+					bb->code->next = inst;
+				}
 			} else {
 				/* Find the predecessor of the compare */
 				prev = bb->code;
@@ -2004,10 +2009,15 @@ mono_add_ins_to_end (MonoBasicBlock *bb, MonoInst *inst)
 					prev = prev->next;
 				opcode = prev->next->opcode;
 
-				inst->next = prev->next;
-				prev->next = inst;
+				if ((opcode == OP_COMPARE) || (opcode == OP_COMPARE_IMM) || (opcode == OP_ICOMPARE) || (opcode == OP_ICOMPARE_IMM) || (opcode == OP_FCOMPARE) || (opcode == OP_LCOMPARE) || (opcode == OP_LCOMPARE_IMM)) {
+					/* NEW IR */
+					inst->next = prev->next;
+					prev->next = inst;
+				} else {
+					inst->next = bb->last_ins;
+					prev->next->next = inst;
+				}					
 			}
-			g_assert ((opcode == OP_COMPARE) || (opcode == OP_COMPARE_IMM) || (opcode == OP_ICOMPARE) || (opcode == OP_ICOMPARE_IMM) || (opcode == OP_FCOMPARE) || (opcode == OP_LCOMPARE) || (opcode == OP_LCOMPARE_IMM));
 		}
 		else
 			MONO_ADD_INS (bb, inst);
@@ -10746,8 +10756,12 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 
 	/*g_print ("numblocks = %d\n", cfg->num_bblocks);*/
 
-	if (cfg->new_ir)
+	if (cfg->new_ir) {
 		mono_decompose_long_opts (cfg);
+
+		/* FIXME: Do this later */
+		mono_decompose_vtype_opts (cfg);
+	}
 
 	if (cfg->new_ir)
 		/* Should be done before branch opts */
@@ -10807,9 +10821,6 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	/* after method_to_ir */
 	if (parts == 1)
 		return cfg;
-
-	if (cfg->disable_ssa)
-		printf ("A: %s\n", mono_method_full_name (cfg->method, TRUE));
 
 //#define DEBUGSSA "logic_run"
 #define DEBUGSSA_CLASS "Tests"

@@ -91,6 +91,7 @@ MINI_OP(OP_STOREI1_MEMBASE_IMM, "storei1_membase_imm", IREG, NONE, NONE)
 MINI_OP(OP_STOREI2_MEMBASE_IMM, "storei2_membase_imm", IREG, NONE, NONE)
 MINI_OP(OP_STOREI4_MEMBASE_IMM, "storei4_membase_imm", IREG, NONE, NONE)
 MINI_OP(OP_STOREI8_MEMBASE_IMM, "storei8_membase_imm", IREG, NONE, NONE)
+MINI_OP(OP_STOREV_MEMBASE,      "storev_membase", IREG, VREG, NONE)
 
 /* MONO_IS_LOAD_MEMBASE depends on the order here */
 MINI_OP(OP_LOAD_MEMBASE,	"load_membase", IREG, IREG, NONE)
@@ -103,6 +104,8 @@ MINI_OP(OP_LOADU4_MEMBASE,"loadu4_membase", IREG, IREG, NONE)
 MINI_OP(OP_LOADI8_MEMBASE,"loadi8_membase", IREG, IREG, NONE)
 MINI_OP(OP_LOADR4_MEMBASE,"loadr4_membase", FREG, IREG, NONE)
 MINI_OP(OP_LOADR8_MEMBASE,"loadr8_membase", FREG, IREG, NONE)
+MINI_OP(OP_LOADV_MEMBASE,   "loadv_membase", VREG, IREG, NONE)
+
 /* indexed loads: dreg = load at (sreg1 + sreg2)*/
 MINI_OP(OP_LOAD_MEMINDEX,  "load_memindex", NONE, NONE, NONE)
 MINI_OP(OP_LOADI1_MEMINDEX,"loadi1_memindex", NONE, NONE, NONE)
@@ -136,6 +139,9 @@ MINI_OP(OP_STORE_MEM_IMM, "store_mem_imm", NONE, NONE, NONE)
 MINI_OP(OP_MOVE,	"move", IREG, IREG, NONE)
 MINI_OP(OP_LMOVE,	"lmove", IREG, IREG, NONE)
 MINI_OP(OP_FMOVE,	"fmove", FREG, FREG, NONE)
+MINI_OP(OP_VMOVE,   "vmove", VREG, VREG, NONE)
+
+MINI_OP(OP_VZERO,   "vzero", VREG, NONE, NONE)
 
 MINI_OP(OP_ADD_IMM,    "add_imm", IREG, IREG, NONE)
 MINI_OP(OP_SUB_IMM,    "sub_imm", IREG, IREG, NONE)
