@@ -2944,7 +2944,7 @@ namespace Mono.CSharp {
 				return true;
 
 			// Is null for System.Object while compiling corlib and base interfaces
-			if (Parent.BaseCache == null) {
+			if (ParentContainer.BaseCache == null) {
 				if ((RootContext.WarningLevel >= 4) && ((ModFlags & Modifiers.NEW) != 0)) {
 					Report.Warning (109, 4, Location, "The member `{0}' does not hide an inherited member. The new keyword is not required", GetSignatureForError ());
 				}
@@ -2989,9 +2989,9 @@ namespace Mono.CSharp {
 				}
 
 				if (Name == "Equals" && Parameters.Count == 1 && ParameterTypes [0] == TypeManager.object_type)
-					Parent.Mark_HasEquals ();
+					ParentContainer.Mark_HasEquals ();
 				else if (Name == "GetHashCode" && Parameters.Empty)
-					Parent.Mark_HasGetHashCode ();
+					ParentContainer.Mark_HasGetHashCode ();
 
 				if ((ModFlags & Modifiers.OVERRIDE) != 0) {
 					ObsoleteAttribute oa = AttributeTester.GetMethodObsoleteAttribute (base_method);
@@ -3006,7 +3006,7 @@ namespace Mono.CSharp {
 				return true;
 			}
 
-			MemberInfo conflict_symbol = Parent.FindBaseMemberWithSameName (Name, !(this is Property));
+			MemberInfo conflict_symbol = ParentContainer.FindBaseMemberWithSameName (Name, !(this is Property));
 			if ((ModFlags & Modifiers.OVERRIDE) != 0) {
 				if (conflict_symbol != null) {
 					Report.SymbolRelatedToPreviousError (conflict_symbol);
@@ -3140,7 +3140,7 @@ namespace Mono.CSharp {
 
 		public bool CheckAbstractAndExtern (bool has_block)
 		{
-			if (Parent.Kind == Kind.Interface)
+			if (ParentContainer.Kind == Kind.Interface)
 				return true;
 
 			if (has_block) {
@@ -3582,7 +3582,7 @@ namespace Mono.CSharp {
 
   		protected override bool CheckForDuplications ()
    		{
-  			ArrayList ar = Parent.Methods;
+  			ArrayList ar = ParentContainer.Methods;
   			if (ar != null) {
   				int arLen = ar.Count;
    					
@@ -3593,7 +3593,7 @@ namespace Mono.CSharp {
    				}
   			}
 
-			ar = Parent.Properties;
+			ar = ParentContainer.Properties;
 			if (ar != null) {
 				for (int i = 0; i < ar.Count; ++i) {
 					PropertyBase pb = (PropertyBase) ar [i];
@@ -3602,7 +3602,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			ar = Parent.Indexers;
+			ar = ParentContainer.Indexers;
 			if (ar != null) {
 				for (int i = 0; i < ar.Count; ++i) {
 					PropertyBase pb = (PropertyBase) ar [i];
@@ -3611,7 +3611,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			ar = Parent.Events;
+			ar = ParentContainer.Events;
 			if (ar != null) {
 				for (int i = 0; i < ar.Count; ++i) {
 					Event ev = (Event) ar [i];
@@ -3726,7 +3726,7 @@ namespace Mono.CSharp {
 
 		protected override MethodInfo FindOutBaseMethod (ref Type base_ret_type)
 		{
-			MethodInfo mi = (MethodInfo) Parent.BaseCache.FindMemberToOverride (
+			MethodInfo mi = (MethodInfo) ParentContainer.BaseCache.FindMemberToOverride (
 				Parent.TypeBuilder, Name, ParameterTypes, false);
 
 			if (mi == null)
@@ -4063,7 +4063,7 @@ namespace Mono.CSharp {
 		
  		protected override bool CheckForDuplications ()
   		{
-			ArrayList ar = Parent.InstanceConstructors;
+			ArrayList ar = ParentContainer.InstanceConstructors;
 			if (ar != null) {
 				int arLen = ar.Count;
 					
@@ -4089,7 +4089,7 @@ namespace Mono.CSharp {
 			if (!CheckForDuplications ())
 				return false;
 
-			if (Parent.Kind == Kind.Struct) {
+			if (ParentContainer.Kind == Kind.Struct) {
 				if (ParameterTypes.Length == 0) {
 					Report.Error (568, Location, 
 						"Structs cannot contain explicit parameterless constructors");
@@ -4154,7 +4154,7 @@ namespace Mono.CSharp {
 			if ((ModFlags & Modifiers.UNSAFE) != 0)
 				ConstructorBuilder.InitLocals = false;
 
-			if (Parent.IsComImport) {
+			if (ParentContainer.IsComImport) {
 				if (!IsDefault ()) {
 					Report.Error (669, Location, "`{0}': A class with the ComImport attribute cannot have a user-defined constructor",
 						Parent.GetSignatureForError ());
@@ -4179,7 +4179,7 @@ namespace Mono.CSharp {
 
 			// If this is a non-static `struct' constructor and doesn't have any
 			// initializer, it must initialize all of the struct's fields.
-			if ((Parent.Kind == Kind.Struct) &&
+			if ((ParentContainer.Kind == Kind.Struct) &&
 			    ((ModFlags & Modifiers.STATIC) == 0) && (Initializer == null))
 				Block.AddThisVariable (Parent, Location);
 
@@ -4189,7 +4189,7 @@ namespace Mono.CSharp {
 			}
 
 			if ((ModFlags & Modifiers.STATIC) == 0){
-				if (Parent.Kind == Kind.Class && Initializer == null)
+				if (ParentContainer.Kind == Kind.Class && Initializer == null)
 					Initializer = new GeneratedBaseInitializer (Location);
 
 
@@ -4212,7 +4212,7 @@ namespace Mono.CSharp {
 			//
 			// Classes can have base initializers and instance field initializers.
 			//
-			if (Parent.Kind == Kind.Class){
+			if (ParentContainer.Kind == Kind.Class){
 				if ((ModFlags & Modifiers.STATIC) == 0){
 
 					//
@@ -4289,7 +4289,7 @@ namespace Mono.CSharp {
 			get {
 				CallingConventions cc = Parameters.CallingConvention;
 
-				if (Parent.Kind == Kind.Class)
+				if (ParentContainer.Kind == Kind.Class)
 					if ((ModFlags & Modifiers.STATIC) == 0)
 						cc |= CallingConventions.HasThis;
 
@@ -4753,7 +4753,7 @@ namespace Mono.CSharp {
 
 		protected virtual bool CheckBase ()
 		{
-  			if ((ModFlags & Modifiers.PROTECTED) != 0 && Parent.Kind == Kind.Struct) {
+  			if ((ModFlags & Modifiers.PROTECTED) != 0 && ParentContainer.Kind == Kind.Struct) {
   				Report.Error (666, Location, "`{0}': new protected member declared in struct", GetSignatureForError ());
   				return false;
    			}
@@ -4784,7 +4784,7 @@ namespace Mono.CSharp {
 					MethodAttributes.NewSlot |
 					MethodAttributes.Virtual;
 			} else {
-				if (!Parent.MethodModifiersValid (this))
+				if (!ParentContainer.MethodModifiersValid (this))
 					return false;
 
 				flags = Modifiers.MethodAttr (ModFlags);
@@ -4978,7 +4978,7 @@ namespace Mono.CSharp {
  			if (IsInterface)
  				return true;
  
- 			conflict_symbol = Parent.FindBaseMemberWithSameName (Name, false);
+ 			conflict_symbol = ParentContainer.FindBaseMemberWithSameName (Name, false);
  			if (conflict_symbol == null) {
  				if ((RootContext.WarningLevel >= 4) && ((ModFlags & Modifiers.NEW) != 0)) {
  					Report.Warning (109, 4, Location, "The member `{0}' does not hide an inherited member. The new keyword is not required", GetSignatureForError ());
@@ -5053,7 +5053,7 @@ namespace Mono.CSharp {
 			{
 				status |= Status.HAS_OFFSET;
 
-				if (!Parent.HasExplicitLayout) {
+				if (!ParentContainer.HasExplicitLayout) {
 					Report.Error (636, Location, "The FieldOffset attribute can only be placed on members of types marked with the StructLayout(LayoutKind.Explicit)");
 					return;
 				}
@@ -5193,7 +5193,7 @@ namespace Mono.CSharp {
 				Report.Warning (-23, 1, Location, "Only private or internal fixed sized buffers are supported by .NET 1.x");
 #endif
 
-			if (Parent.Kind != Kind.Struct) {
+			if (ParentContainer.Kind != Kind.Struct) {
 				Report.Error (1642, Location, "`{0}': Fixed size buffer fields may only be members of structs",
 					GetSignatureForError ());
 				return false;
@@ -5365,7 +5365,7 @@ namespace Mono.CSharp {
 
 			FieldAttributes fa = Modifiers.FieldAttr (ModFlags);
 
-			if (Parent.Kind == Kind.Struct && 
+			if (ParentContainer.Kind == Kind.Struct && 
 			    ((fa & FieldAttributes.Static) == 0) &&
 			    MemberType == Parent.TypeBuilder &&
 			    !TypeManager.IsBuiltinType (MemberType)){
@@ -5956,7 +5956,7 @@ namespace Mono.CSharp {
 
 		protected override bool CheckForDuplications ()
 		{
-			ArrayList ar = Parent.Indexers;
+			ArrayList ar = ParentContainer.Indexers;
 			if (ar != null) {
 				int arLen = ar.Count;
 					
@@ -5967,7 +5967,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			ar = Parent.Properties;
+			ar = ParentContainer.Properties;
 			if (ar != null) {
 				int arLen = ar.Count;
 					
@@ -5984,7 +5984,7 @@ namespace Mono.CSharp {
 		// TODO: rename to Resolve......
  		protected override MethodInfo FindOutBaseMethod (ref Type base_ret_type)
  		{
- 			PropertyInfo base_property = Parent.BaseCache.FindMemberToOverride (
+ 			PropertyInfo base_property = ParentContainer.BaseCache.FindMemberToOverride (
  				Parent.TypeBuilder, Name, ParameterTypes, true) as PropertyInfo;
   
  			if (base_property == null)
@@ -6830,8 +6830,8 @@ namespace Mono.CSharp {
 					ShortName = base_IndexerName;
 			}
 
-			if (!Parent.AddToMemberContainer (this) ||
-				!Parent.AddToMemberContainer (Get) || !Parent.AddToMemberContainer (Set))
+			if (!ParentContainer.AddToMemberContainer (this) ||
+				!ParentContainer.AddToMemberContainer (Get) || !ParentContainer.AddToMemberContainer (Set))
 				return false;
 
 			if (!CheckBase ())
@@ -6973,9 +6973,9 @@ namespace Mono.CSharp {
 			}
 		}
 		
-		protected override bool CheckForDuplications()
+		protected override bool CheckForDuplications ()
 		{
-			ArrayList ar = Parent.Operators;
+			ArrayList ar = ParentContainer.Operators;
 			if (ar != null) {
 				int arLen = ar.Count;
    					
@@ -6986,7 +6986,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			ar = Parent.Methods;
+			ar = ParentContainer.Methods;
 			if (ar != null) {
 				int arLen = ar.Count;
    					

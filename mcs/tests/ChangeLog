@@ -1,3 +1,7 @@
+2006-03-18  Raja R Harinath  <harinath@gmail.com>
+
+	* test-partial-13.cs: New test for partial classes.
+
 2006-03-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* test-496.cs,

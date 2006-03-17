@@ -1,5 +1,13 @@
 2006-03-18  Raja R Harinath  <harinath@gmail.com>
 
+	Fix regression test-partial-13.cs.
+	Rationalize use of PartialContainer.  Ensure that the partial
+	class semantics can be tied to type-correctness, i.e., any
+	violation will cause a compile error.
+	* class.cs, const.cs: Access all fields that belong to class
+	TypeContainer via ParentContainer.  Arguments of EmitContexts and
+	Resolve()-like functions still use 'Parent'.
+
 	* class.cs (SourceMethod): Use DeclSpace, not TypeContainer.
 	(*.CreateEmitContext): Change TypeContainer argument to DeclSpace.
 	(PropertyMethod.CheckModifiers): Remove unused argument.
