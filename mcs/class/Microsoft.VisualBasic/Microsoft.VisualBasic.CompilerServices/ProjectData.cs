@@ -89,7 +89,7 @@ namespace Microsoft.VisualBasic.CompilerServices
 		}
 
 		[MonoTODO]
-		protected ~ProjectData ()
+		~ProjectData ()
 		{
 		}
 	}
