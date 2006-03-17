@@ -358,6 +358,26 @@ namespace System.Windows.Forms {
 			"<>\\|"
 		};
 
+		/*** Czech keyboard layout (setxkbmap cz) */
+		private static readonly string [] main_key_CZ = new string []
+		{
+			";","+1","ì2","¹3","è4","ø5","¾6","ý7","á8","í9","é0","=%","´·",
+			"qQ","wW","eE","rR","tT","zZ","uU","iI","oO","pP","ú/",")(",
+			"aA","sS","dD","fF","gG","hH","jJ","kK","lL","ù\"","§!","¨'",
+			"yY","xX","cC","vV","bB","nN","mM",",?",".:","-_",
+			"\\"
+		};
+
+		/*** Czech keyboard layout (setxkbmap cz_qwerty) */
+		private static readonly string [] main_key_CZ_qwerty = new string []
+		{
+			";","+1","ì2","¹3","è4","ø5","¾6","ý7","á8","í9","é0","=%","´·",
+			"qQ","wW","eE","rR","tT","yY","uU","iI","oO","pP","ú/",")(",
+			"aA","sS","dD","fF","gG","hH","jJ","kK","lL","ù\"","§!","¨'",
+			"zZ","xX","cC","vV","bB","nN","mM",",?",".:","-_",
+			"\\"
+		};
+		
 		/*** Slovak and Czech (programmer's) keyboard layout (see cssk_dual(cs_sk_ucw)) */
 		private static readonly string [] main_key_SK_prog = new string []
 		{
@@ -472,6 +492,21 @@ namespace System.Windows.Forms {
 			VirtualKeys.VK_OEM_6, VirtualKeys.VK_A, VirtualKeys.VK_S, VirtualKeys.VK_D, VirtualKeys.VK_F, 
 			VirtualKeys.VK_G, VirtualKeys.VK_H, VirtualKeys.VK_J, VirtualKeys.VK_K, VirtualKeys.VK_L, 
 			VirtualKeys.VK_OEM_1, VirtualKeys.VK_OEM_7, VirtualKeys.VK_OEM_5, VirtualKeys.VK_Z, 
+			VirtualKeys.VK_X, VirtualKeys.VK_C, VirtualKeys.VK_V, VirtualKeys.VK_B, VirtualKeys.VK_N, 
+			VirtualKeys.VK_M, VirtualKeys.VK_OEM_COMMA, VirtualKeys.VK_OEM_PERIOD, VirtualKeys.VK_OEM_2, 
+			VirtualKeys.VK_OEM_102 // the 102nd key (actually to the right of l-shift)
+		};
+
+		private static readonly VirtualKeys [] main_key_vkey_qwertz = new VirtualKeys []
+		{
+			VirtualKeys.VK_OEM_3, VirtualKeys.VK_1, VirtualKeys.VK_2, VirtualKeys.VK_3, VirtualKeys.VK_4, 
+			VirtualKeys.VK_5, VirtualKeys.VK_6, VirtualKeys.VK_7, VirtualKeys.VK_8, VirtualKeys.VK_9, 
+			VirtualKeys.VK_0, VirtualKeys.VK_OEM_MINUS, VirtualKeys.VK_OEM_PLUS,
+			VirtualKeys.VK_Q, VirtualKeys.VK_W, VirtualKeys.VK_E, VirtualKeys.VK_R, VirtualKeys.VK_T, VirtualKeys.VK_Z,
+			VirtualKeys.VK_U, VirtualKeys.VK_I, VirtualKeys.VK_O, VirtualKeys.VK_P, VirtualKeys.VK_OEM_4, 
+			VirtualKeys.VK_OEM_6, VirtualKeys.VK_A, VirtualKeys.VK_S, VirtualKeys.VK_D, VirtualKeys.VK_F, 
+			VirtualKeys.VK_G, VirtualKeys.VK_H, VirtualKeys.VK_J, VirtualKeys.VK_K, VirtualKeys.VK_L, 
+			VirtualKeys.VK_OEM_1, VirtualKeys.VK_OEM_7, VirtualKeys.VK_OEM_5, VirtualKeys.VK_Y,
 			VirtualKeys.VK_X, VirtualKeys.VK_C, VirtualKeys.VK_V, VirtualKeys.VK_B, VirtualKeys.VK_N, 
 			VirtualKeys.VK_M, VirtualKeys.VK_OEM_COMMA, VirtualKeys.VK_OEM_PERIOD, VirtualKeys.VK_OEM_2, 
 			VirtualKeys.VK_OEM_102 // the 102nd key (actually to the right of l-shift)
@@ -668,8 +703,12 @@ namespace System.Windows.Forms {
 				main_key_SK, main_key_scan_qwerty, main_key_vkey_qwerty);
 		public static readonly KeyboardLayout Sk_prog = new KeyboardLayout ("Slovak and Czech keyboard layout without dead keys", 28592,
 				main_key_SK_prog, main_key_scan_qwerty, main_key_vkey_qwerty);
-		public static readonly KeyboardLayout Cz = new KeyboardLayout ("Czech keyboard layout", 28592,
+		public static readonly KeyboardLayout Cs = new KeyboardLayout ("Czech keyboard layout", 28592,
 				main_key_CS, main_key_scan_qwerty, main_key_vkey_qwerty);
+		public static readonly KeyboardLayout Cz = new KeyboardLayout ("Czech keyboard layout cz", 28592,
+				main_key_CZ, main_key_scan_qwerty, main_key_vkey_qwertz);
+		public static readonly KeyboardLayout Cz_qwerty = new KeyboardLayout ("Czech keyboard layout cz_qwerty", 28592,
+				main_key_CZ_qwerty, main_key_scan_qwerty, main_key_vkey_qwerty);
 		public static readonly KeyboardLayout LA = new KeyboardLayout ("Latin American keyboard layout", 28591,
 				main_key_LA, main_key_scan_qwerty, main_key_vkey_qwerty);
 		public static readonly KeyboardLayout LT_B = new KeyboardLayout ("Lithuanian (Baltic) keyboard layout", 28603,
@@ -684,7 +723,7 @@ namespace System.Windows.Forms {
 		{
 			US, US_phantom, US_dvorak, UK, German, German_nodead, SwissGerman, Se, No, Da, Fr, CF, Be, SF, Pt,
 			Pt_br, US_intl, Fi, Ru, Ru_phantom, Ru_koi8r, Ua, Es, It, Is, Hu, Pl, Hr, Ja_jp106, Ja_pc98x1, Sk,
-			Sk_prog, Cz, LA, LT_B, Tk, Vnc
+			Sk_prog, Cs, Cz, Cz_qwerty, LA, LT_B, Tk, Vnc
 		};
 		
 		public static KeyboardLayout [] Layouts {

@@ -1,3 +1,7 @@
+2006-03-17  Jackson Harper  <jackson@ximian.com>
+
+	* KeyboardLayouts.cs: Add the czech layouts.
+
 2006-03-16  Jackson Harper  <jackson@ximian.com>
 
 	* Control.cs: Use the viewport space when sizing not the controls
@@ -10,6 +14,8 @@
 	source, otherwise when rows are added they are added to the 'fake'
 	datasource and we will crash when trying to set the position in
 	those rows.
+	- Use Implicit scrollbars on the datagrid so they arent
+	selectable.
 	
 2006-03-16  Jackson Harper  <jackson@ximian.com>
 
