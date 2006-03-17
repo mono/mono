@@ -3366,17 +3366,16 @@ namespace Mono.CSharp {
 
 	public class SourceMethod : ISourceMethod
 	{
-		TypeContainer container;
+		DeclSpace parent;
 		MethodBase builder;
 
-		protected SourceMethod (TypeContainer container, MethodBase builder,
+		protected SourceMethod (DeclSpace parent, MethodBase builder,
 					ISourceFile file, Location start, Location end)
 		{
-			this.container = container;
+			this.parent = parent;
 			this.builder = builder;
 			
-			CodeGen.SymbolWriter.OpenMethod (
-				file, this, start.Row, start.Column, end.Row, start.Column);
+			CodeGen.SymbolWriter.OpenMethod (file, this, start.Row, start.Column, end.Row, start.Column);
 		}
 
 		public string Name {
@@ -3384,7 +3383,7 @@ namespace Mono.CSharp {
 		}
 
 		public int NamespaceID {
-			get { return container.NamespaceEntry.SymbolFileID; }
+			get { return parent.NamespaceEntry.SymbolFileID; }
 		}
 
 		public int Token {
@@ -3404,8 +3403,7 @@ namespace Mono.CSharp {
 				CodeGen.SymbolWriter.CloseMethod ();
 		}
 
-		public static SourceMethod Create (TypeContainer parent,
-						   MethodBase builder, Block block)
+		public static SourceMethod Create (DeclSpace parent, MethodBase builder, Block block)
 		{
 			if (CodeGen.SymbolWriter == null)
 				return null;
@@ -3808,12 +3806,11 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public EmitContext CreateEmitContext (TypeContainer tc, ILGenerator ig)
+		public EmitContext CreateEmitContext (DeclSpace ds, ILGenerator ig)
 		{
-			EmitContext ec = new EmitContext (this,
-				tc, Parent, Location, ig, ReturnType, ModFlags, false);
+			EmitContext ec = new EmitContext (this, ds, Parent, Location, ig, ReturnType, ModFlags, false);
 
-			ec.CurrentIterator = tc as Iterator;
+			ec.CurrentIterator = ds as Iterator;
 			if (ec.CurrentIterator != null)
 				ec.CurrentAnonymousMethod = ec.CurrentIterator.Host;
 
@@ -4320,7 +4317,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public EmitContext CreateEmitContext (TypeContainer tc, ILGenerator ig)
+		public EmitContext CreateEmitContext (DeclSpace ds, ILGenerator ig)
 		{
 			ILGenerator ig_ = ConstructorBuilder.GetILGenerator ();
 			return new EmitContext (this, Parent, Location, ig_, null, ModFlags, true);
@@ -4348,7 +4345,7 @@ namespace Mono.CSharp {
 		Attributes OptAttributes { get; }
 		ToplevelBlock Block { get; set; }
 
-		EmitContext CreateEmitContext (TypeContainer tc, ILGenerator ig);
+		EmitContext CreateEmitContext (DeclSpace ds, ILGenerator ig);
 		ObsoleteAttribute GetObsoleteAttribute ();
 		string GetSignatureForError ();
 		bool IsExcluded ();
@@ -5516,7 +5513,7 @@ namespace Mono.CSharp {
 
 		public abstract Parameters ParameterInfo { get ; }
 		public abstract Type ReturnType { get; }
-		public abstract EmitContext CreateEmitContext(TypeContainer tc, ILGenerator ig);
+		public abstract EmitContext CreateEmitContext (DeclSpace ds, ILGenerator ig);
 
 		#endregion
 
@@ -5810,7 +5807,7 @@ namespace Mono.CSharp {
 						Report.Error (442, Location, "`{0}': abstract properties cannot have private accessors", GetSignatureForError ());
 					}
 
-					CheckModifiers (container, ModFlags);
+					CheckModifiers (ModFlags);
 					ModFlags |= (method.ModFlags & (~Modifiers.Accessibility));
 					ModFlags |= Modifiers.PROPERTY_CUSTOM;
 					flags = Modifiers.MethodAttr (ModFlags);
@@ -5837,11 +5834,10 @@ namespace Mono.CSharp {
 				}
 			}
 
-			public override EmitContext CreateEmitContext (TypeContainer tc,
-								       ILGenerator ig)
+			public override EmitContext CreateEmitContext (DeclSpace ds, ILGenerator ig)
 			{
 				return new EmitContext (method,
-					tc, method.Parent, method.Location, ig, ReturnType,
+					ds, method.Parent, method.Location, ig, ReturnType,
 					method.ModFlags, false);
 			}
 
@@ -5855,7 +5851,7 @@ namespace Mono.CSharp {
 				return method.GetSignatureForError () + '.' + prefix.Substring (0, 3);
 			}
 			
-			void CheckModifiers (TypeContainer container, int modflags)
+			void CheckModifiers (int modflags)
 			{
 				int flags = 0;
 				int mflags = method.ModFlags & Modifiers.Accessibility;
@@ -6544,11 +6540,10 @@ namespace Mono.CSharp {
 				}
 			}
 
-			public override EmitContext CreateEmitContext (TypeContainer tc,
-								       ILGenerator ig)
+			public override EmitContext CreateEmitContext (DeclSpace ds, ILGenerator ig)
 			{
 				return new EmitContext (method,
-					tc, method.Parent, Location, ig, ReturnType,
+					ds, method.Parent, Location, ig, ReturnType,
 					method.ModFlags, false);
 			}
 

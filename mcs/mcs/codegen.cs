@@ -413,53 +413,38 @@ namespace Mono.CSharp {
 				ReturnType = null;
 		}
 
-		public EmitContext (IResolveContext rc, TypeContainer tc, Location l, ILGenerator ig,
+		public EmitContext (IResolveContext rc, DeclSpace ds, Location l, ILGenerator ig,
 				    Type return_type, int code_flags, bool is_constructor)
-			: this (rc, tc, tc, l, ig, return_type, code_flags, is_constructor)
+			: this (rc, ds, ds, l, ig, return_type, code_flags, is_constructor)
 		{
 		}
 
-		public EmitContext (IResolveContext rc, TypeContainer tc, Location l, ILGenerator ig,
+		public EmitContext (IResolveContext rc, DeclSpace ds, Location l, ILGenerator ig,
 				    Type return_type, int code_flags)
-			: this (rc, tc, tc, l, ig, return_type, code_flags, false)
+			: this (rc, ds, ds, l, ig, return_type, code_flags, false)
 		{
 		}
 
 		public DeclSpace DeclContainer { 
-			get { 
-				return this.declSpace;
-			}
-			set {
-				declSpace = value;
-			}
+			get { return declSpace; }
+			set { declSpace = value; }
 		}
 
 		public bool IsInObsoleteScope {
-			get {
-				return ResolveContext.IsInObsoleteScope;
-			}
+			get { return ResolveContext.IsInObsoleteScope; }
 		}
 
 		public bool IsInUnsafeScope {
-			get {
-				if (InUnsafe)
-					return true;
-
-				return ResolveContext.IsInUnsafeScope;
-			}
+			get { return InUnsafe || ResolveContext.IsInUnsafeScope; }
 		}
 
 
 		public FlowBranching CurrentBranching {
-			get {
-				return current_flow_branching;
-			}
+			get { return current_flow_branching; }
 		}
 
 		public bool HaveCaptureInfo {
-			get {
-				return capture_context != null;
-			}
+			get { return capture_context != null; }
 		}
 
 		public void EmitScopeInitFromBlock (Block b)

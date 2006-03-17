@@ -1,3 +1,11 @@
+2006-03-18  Raja R Harinath  <harinath@gmail.com>
+
+	* class.cs (SourceMethod): Use DeclSpace, not TypeContainer.
+	(*.CreateEmitContext): Change TypeContainer argument to DeclSpace.
+	(PropertyMethod.CheckModifiers): Remove unused argument.
+	* codegen.cs (EmitContext..ctor): Change TypeContainer argument to
+	DeclSpace.
+
 2006-03-17  Raja R Harinath  <harinath@gmail.com>
 
 	Make semantics of PartialContainer simpler.
