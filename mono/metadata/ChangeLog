@@ -1,4 +1,11 @@
 
+Fri Mar 17 18:06:06 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* object.h, object.c, icall.c: added functions to deal with
+	storing valuetypes that contain references in managed objects.
+	* reflection.c, string-icalls.c, threads.c, marshal.c: small
+	fixes and comments around uses of mono_array_addr ().
+
 Thu Mar 16 17:16:45 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* object.h, icall.c, monitor.c: object.GetHashCode ()
