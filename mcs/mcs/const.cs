@@ -34,7 +34,7 @@ namespace Mono.CSharp {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
-		public Const (TypeContainer parent, Expression constant_type, string name,
+		public Const (DeclSpace parent, Expression constant_type, string name,
 			      Expression expr, int mod_flags, Attributes attrs, Location loc)
 			: base (parent, constant_type, mod_flags, AllowedModifiers,
 				new MemberName (name, loc), attrs)

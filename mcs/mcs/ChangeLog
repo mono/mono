@@ -1,5 +1,10 @@
 2006-03-18  Raja R Harinath  <harinath@gmail.com>
 
+	Treat pointers to enclosing declaration space as 'DeclSpace', not
+	'TypeContainer'.
+	* class.cs, const.cs, delegate.cs, enum.cs, iterator.cs: Change
+	'TypeContainer parent' constructor argument to 'DeclSpace parent'.
+
 	* statement.cs (LocalInfo..ctor): Use DeclSpace argument instead
 	of TypeContainer.
 	(Block.AddThisVariable): Likewise.

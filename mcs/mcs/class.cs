@@ -476,7 +476,7 @@ namespace Mono.CSharp {
 		/// </remarks>
 		PendingImplementation pending;
 
-		public TypeContainer (NamespaceEntry ns, TypeContainer parent, MemberName name,
+		public TypeContainer (NamespaceEntry ns, DeclSpace parent, MemberName name,
 				      Attributes attrs, Kind kind)
 			: base (ns, parent, name, attrs)
 		{
@@ -2435,7 +2435,7 @@ namespace Mono.CSharp {
 	public abstract class ClassOrStruct : TypeContainer {
 		ListDictionary declarative_security;
 
-		public ClassOrStruct (NamespaceEntry ns, TypeContainer parent,
+		public ClassOrStruct (NamespaceEntry ns, DeclSpace parent,
 				      MemberName name, Attributes attrs, Kind kind)
 			: base (ns, parent, name, attrs, kind)
 		{
@@ -2514,7 +2514,7 @@ namespace Mono.CSharp {
 			Modifiers.STATIC |
 			Modifiers.UNSAFE;
 
-		public Class (NamespaceEntry ns, TypeContainer parent, MemberName name, int mod,
+		public Class (NamespaceEntry ns, DeclSpace parent, MemberName name, int mod,
 			      Attributes attrs)
 			: base (ns, parent, name, attrs, Kind.Class)
 		{
@@ -2737,7 +2737,7 @@ namespace Mono.CSharp {
 			Modifiers.UNSAFE    |
 			Modifiers.PRIVATE;
 
-		public Struct (NamespaceEntry ns, TypeContainer parent, MemberName name,
+		public Struct (NamespaceEntry ns, DeclSpace parent, MemberName name,
 			       int mod, Attributes attrs)
 			: base (ns, parent, name, attrs, Kind.Struct)
 		{
@@ -2822,7 +2822,7 @@ namespace Mono.CSharp {
 		 	Modifiers.UNSAFE    |
 			Modifiers.PRIVATE;
 
-		public Interface (NamespaceEntry ns, TypeContainer parent, MemberName name, int mod,
+		public Interface (NamespaceEntry ns, DeclSpace parent, MemberName name, int mod,
 				  Attributes attrs)
 			: base (ns, parent, name, attrs, Kind.Interface)
 		{
@@ -2887,7 +2887,7 @@ namespace Mono.CSharp {
 
 		static string[] attribute_targets = new string [] { "method", "return" };
 
-		public MethodCore (TypeContainer parent, Expression type, int mod,
+		public MethodCore (DeclSpace parent, Expression type, int mod,
 				   int allowed_mod, bool is_interface, MemberName name,
 				   Attributes attrs, Parameters parameters)
 			: base (parent, type, mod, allowed_mod, Modifiers.PRIVATE, name,
@@ -3457,9 +3457,9 @@ namespace Mono.CSharp {
 		//
 		// return_type can be "null" for VOID values.
 		//
-		public Method (TypeContainer ds, Expression return_type, int mod, bool is_iface,
+		public Method (DeclSpace parent, Expression return_type, int mod, bool is_iface,
 			       MemberName name, Parameters parameters, Attributes attrs)
-			: base (ds, return_type, mod,
+			: base (parent, return_type, mod,
 				is_iface ? AllowedInterfaceModifiers : AllowedModifiers,
 				is_iface, name, attrs, parameters)
 		{
@@ -4741,7 +4741,7 @@ namespace Mono.CSharp {
 		//
 		// The constructor is only exposed to our children
 		//
-		protected MemberBase (TypeContainer parent, Expression type, int mod,
+		protected MemberBase (DeclSpace parent, Expression type, int mod,
 				      int allowed_mod, int def_mod, MemberName name,
 				      Attributes attrs)
 			: base (parent, name, attrs)
@@ -4900,7 +4900,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public MemberInfo conflict_symbol;
 
-		protected FieldBase (TypeContainer parent, Expression type, int mod,
+		protected FieldBase (DeclSpace parent, Expression type, int mod,
 				     int allowed_mod, MemberName name, Attributes attrs)
 			: base (parent, type, mod, allowed_mod, Modifiers.PRIVATE,
 				name, attrs)
@@ -5040,7 +5040,7 @@ namespace Mono.CSharp {
 
 	public abstract class FieldMember : FieldBase
 	{
-		protected FieldMember (TypeContainer parent, Expression type, int mod,
+		protected FieldMember (DeclSpace parent, Expression type, int mod,
 			int allowed_mod, MemberName name, Attributes attrs)
 			: base (parent, type, mod, allowed_mod | Modifiers.ABSTRACT, name, attrs)
 		{
@@ -5177,7 +5177,7 @@ namespace Mono.CSharp {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
-		public FixedField (TypeContainer parent, Expression type, int mod, string name,
+		public FixedField (DeclSpace parent, Expression type, int mod, string name,
 			Expression size_expr, Attributes attrs, Location loc):
 			base (parent, type, mod, AllowedModifiers, new MemberName (name, loc), attrs)
 		{
@@ -5309,7 +5309,7 @@ namespace Mono.CSharp {
 		        Modifiers.UNSAFE |
 			Modifiers.READONLY;
 
-		public Field (TypeContainer parent, Expression type, int mod, string name,
+		public Field (DeclSpace parent, Expression type, int mod, string name,
 			      Attributes attrs, Location loc)
 			: base (parent, type, mod, AllowedModifiers, new MemberName (name, loc),
 				attrs)
@@ -6327,7 +6327,7 @@ namespace Mono.CSharp {
 
 		static string[] attribute_targets = new string [] { "event" }; // "property" target was disabled for 2.0 version
 
-		public EventProperty (TypeContainer parent, Expression type, int mod_flags,
+		public EventProperty (DeclSpace parent, Expression type, int mod_flags,
 				      bool is_iface, MemberName name,
 				      Attributes attrs, Accessor add, Accessor remove)
 			: base (parent, type, mod_flags, is_iface, name, attrs)
@@ -6355,7 +6355,7 @@ namespace Mono.CSharp {
 		static string[] attribute_targets = new string [] { "event", "field", "method" };
 		static string[] attribute_targets_interface = new string[] { "event", "method" };
 
-		public EventField (TypeContainer parent, Expression type, int mod_flags,
+		public EventField (DeclSpace parent, Expression type, int mod_flags,
 				   bool is_iface, MemberName name,
 				   Attributes attrs)
 			: base (parent, type, mod_flags, is_iface, name, attrs)
@@ -6591,7 +6591,7 @@ namespace Mono.CSharp {
 		public MethodBuilder AddBuilder, RemoveBuilder;
 		Parameters parameters;
 
-		protected Event (TypeContainer parent, Expression type, int mod_flags,
+		protected Event (DeclSpace parent, Expression type, int mod_flags,
 			      bool is_iface, MemberName name, Attributes attrs)
 			: base (parent, type, mod_flags,
 				is_iface ? AllowedInterfaceModifiers : AllowedModifiers,
@@ -6955,7 +6955,7 @@ namespace Mono.CSharp {
 
 		static string[] attribute_targets = new string [] { "method", "return" };
 
-		public Operator (TypeContainer parent, OpType type, Expression ret_type,
+		public Operator (DeclSpace parent, OpType type, Expression ret_type,
 				 int mod_flags, Parameters parameters,
 				 ToplevelBlock block, Attributes attrs, Location loc)
 			: base (parent, ret_type, mod_flags, AllowedModifiers, false,
