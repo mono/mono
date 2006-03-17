@@ -6,6 +6,10 @@
 	* BindingContext.cs: Cleanup to use the DataSourceEntrys instead
 	of ManagerEntrys.
 	- Handle creating BindingManagers for null data sources.
+	* DataGrid.cs: Bind the cached_currencymgr_events to the real data
+	source, otherwise when rows are added they are added to the 'fake'
+	datasource and we will crash when trying to set the position in
+	those rows.
 	
 2006-03-16  Jackson Harper  <jackson@ximian.com>
 

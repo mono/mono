@@ -703,7 +703,7 @@ namespace System.Windows.Forms
 				// If we bind real_datasource object we do not get the events from ListManger
 				// since the object is not the datasource and does not match
 				cached_currencymgr = (CurrencyManager) BindingContext [real_datasource, DataMember];
-				cached_currencymgr_events = (CurrencyManager) BindingContext [datasource, DataMember];
+				cached_currencymgr_events = (CurrencyManager) BindingContext [real_datasource, DataMember];
 				ConnectListManagerEvents ();
 				return cached_currencymgr;
 			}
