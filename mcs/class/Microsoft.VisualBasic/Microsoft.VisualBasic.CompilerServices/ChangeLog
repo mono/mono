@@ -1,3 +1,7 @@
+2006-03-17  Raja R Harinath  <rharinath@novell.com>
+
+	* ProjectData.cs (Finalize): Change into a destructor.
+
  2005-11-07 Maverson Eduardo Schulze Rosa <maverson@gmail.com>
  	* LateBinding.cs: Revised patch from Tobias Käs <tobias.kaes@gmx.de>
  	for fixes data types conversions in LateSet.

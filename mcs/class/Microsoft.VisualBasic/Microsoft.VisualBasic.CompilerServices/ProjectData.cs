@@ -89,9 +89,8 @@ namespace Microsoft.VisualBasic.CompilerServices
 		}
 
 		[MonoTODO]
-		protected static void Finalize()
+		protected ~ProjectData ()
 		{
-			throw new NotImplementedException();
 		}
 	}
 }
