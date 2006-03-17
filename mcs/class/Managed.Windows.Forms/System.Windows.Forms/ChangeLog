@@ -1,5 +1,11 @@
 2006-03-16  Jackson Harper  <jackson@ximian.com>
 
+	* Control.cs: Use the viewport space when sizing not the controls
+	client size, so things like ScrollableControl that effect the
+	viewport size (when scrollbars are added) are computed correctly.
+
+2006-03-16  Jackson Harper  <jackson@ximian.com>
+
 	* Binding.cs:
 	* InternalWindowManager.cs:
 	* MdiWindowManager.cs:

@@ -2749,7 +2749,7 @@ namespace System.Windows.Forms
 				AnchorStyles	anchor;
 				Rectangle	space;
 
-				space=this.DisplayRectangle;
+				space= DisplayRectangle;
 
 				// Deal with docking; go through in reverse, MS docs say that lowest Z-order is closest to edge
 				Control [] controls = child_controls.GetAllControls ();
@@ -2804,7 +2804,7 @@ namespace System.Windows.Forms
 					}
 				}
 
-				space=this.DisplayRectangle;
+				space=DisplayRectangle;
 
 				for (int i=0; i < controls.Length; i++) {
 					int left;
@@ -2828,30 +2828,30 @@ namespace System.Windows.Forms
 
 					if ((anchor & AnchorStyles.Left) !=0 ) {
 						if ((anchor & AnchorStyles.Right) != 0) {
-							width = client_size.Width - child.dist_right - left;
+							width = space.Width - child.dist_right - left;
 						} else {
 							; // Left anchored only, nothing to be done
 						}
 					} else if ((anchor & AnchorStyles.Right) != 0) {
-						left = client_size.Width - child.dist_right - width;
+						left = space.Width - child.dist_right - width;
 					} else {
 						// left+=diff_width/2 will introduce rounding errors (diff_width removed from svn after r51780)
 						// This calculates from scratch every time:
-						left = child.dist_left + (client_size.Width - (child.dist_left + width + child.dist_right)) / 2;
+						left = child.dist_left + (space.Width - (child.dist_left + width + child.dist_right)) / 2;
 					}
 
 					if ((anchor & AnchorStyles.Top) !=0 ) {
 						if ((anchor & AnchorStyles.Bottom) != 0) {
-							height = client_size.Height - child.dist_bottom - top;
+							height = space.Height - child.dist_bottom - top;
 						} else {
 							; // Top anchored only, nothing to be done
 						}
 					} else if ((anchor & AnchorStyles.Bottom) != 0) {
-						top = client_size.Height - child.dist_bottom - height;
+						top = space.Height - child.dist_bottom - height;
 					} else {
 						// top += diff_height/2 will introduce rounding errors (diff_height removed from after r51780)
 						// This calculates from scratch every time:
-						top = child.dist_top + (client_size.Height - (child.dist_top + height + child.dist_bottom)) / 2;
+						top = child.dist_top + (space.Height - (child.dist_top + height + child.dist_bottom)) / 2;
 					}
 					
 					// Sanity
