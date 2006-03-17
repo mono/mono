@@ -46,7 +46,7 @@ namespace System.Windows.Forms {
 		internal bool			closing;
 		FormBorderStyle			form_border_style;
 		private bool		        autoscale;
-		private bool			clientsize_set;
+		private Size			clientsize_set;
 		private Size		        autoscale_base_size;
 		private bool			allow_transparency;
 		private static Icon		default_icon;
@@ -131,6 +131,7 @@ namespace System.Windows.Forms {
 			icon = default_icon;
 			minimum_size = Size.Empty;
 			maximum_size = Size.Empty;
+			clientsize_set = Size.Empty;
 			control_box = true;
 			minimize_box = true;
 			maximize_box = true;
@@ -559,8 +560,8 @@ namespace System.Windows.Forms {
 							XplatUI.SetMenu (window.Handle, menu);
 						}
 
-						if (clientsize_set) {
-							SetClientSizeCore(client_size.Width, client_size.Height);
+						if (clientsize_set != Size.Empty) {
+							SetClientSizeCore(clientsize_set.Width, clientsize_set.Height);
 						} else {
 							UpdateBounds (bounds.X, bounds.Y, bounds.Width, bounds.Height, ClientSize.Width, ClientSize.Height - 
 								ThemeEngine.Current.CalcMenuBarSize (DeviceContext, menu, ClientSize.Width));
@@ -1572,7 +1573,7 @@ namespace System.Windows.Forms {
 			Rectangle WindowRect;
 			CreateParams cp = this.CreateParams;
 
-			clientsize_set = true;
+			clientsize_set = new Size(x, y);
 
 			if (XplatUI.CalculateWindowRect(ref ClientRect, cp.Style, cp.ExStyle, ActiveMenu, out WindowRect)) {
 				SetBoundsCore(bounds.X, bounds.Y, WindowRect.Width, WindowRect.Height, BoundsSpecified.Size);
@@ -1735,6 +1736,22 @@ namespace System.Windows.Forms {
 						args = new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
 							mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 0);
 						active_tracker.OnClick(new MouseEventArgs (args.Button, args.Clicks, Control.MousePosition.X, Control.MousePosition.Y, args.Delta));
+						return;
+					}
+					base.WndProc(ref m);
+					return;
+				}
+
+				case Msg.WM_LBUTTONUP:
+				case Msg.WM_MBUTTONUP:
+				case Msg.WM_RBUTTONUP: {
+					if (active_tracker != null) {
+						MouseEventArgs args;
+
+						args = new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
+							mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 0);
+						active_tracker.OnMouseUp(new MouseEventArgs (args.Button, args.Clicks, Control.MousePosition.X, Control.MousePosition.Y, args.Delta));
+						mouse_clicks = 1;
 						return;
 					}
 					base.WndProc(ref m);

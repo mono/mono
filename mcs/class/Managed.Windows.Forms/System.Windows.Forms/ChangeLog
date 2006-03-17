@@ -1,3 +1,13 @@
+2006-03-17  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* MenuAPI.cs: Added OnMouseUp method
+	* Form.cs:
+	  - Now remembering the requested client size, avoids size errors
+	  - WndProc: Now handling WM_xBUTTONUP and passing it to MenuTracker
+	    instead of base if the menu is active. This is required due to
+	    control now capturing and releasing on down/up and it would
+	    prematurely release our menu capture
+
 2006-03-17  Jackson Harper  <jackson@ximian.com>
 
 	* KeyboardLayouts.cs: Add the czech layouts.

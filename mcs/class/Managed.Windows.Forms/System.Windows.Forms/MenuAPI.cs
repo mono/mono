@@ -151,6 +151,11 @@ namespace System.Windows.Forms {
 				MoveSelection (item);
 		}
 
+		public void OnMouseUp (MouseEventArgs args)
+		{
+			// Doing nothing (yet)
+		}
+
 		void MoveSelection (MenuItem item)
 		{
 			if (item == null) {
