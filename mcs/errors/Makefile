@@ -68,7 +68,7 @@ endif
 run-mcs-tests: $(TEST_SUPPORT_FILES)
 
 run-mcs-tests:
-	MONO_RUNTIME='$(RUNTIME)' $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/compiler-tester.exe negative 0 $(COMPILER) known-issues-$(COMPILER_NAME) $(COMPILER_NAME).log
+	MONO_RUNTIME='$(RUNTIME)' $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/compiler-tester.exe negative $(TEST_PATTERN) $(COMPILER) known-issues-$(COMPILER_NAME) $(COMPILER_NAME).log
 
 clean-local:
 	rm -f *.exe *.dll *.log *.mdb dummy.xml *.junk
