@@ -4659,12 +4659,7 @@ TypeContainer pop_current_class ()
 	TypeContainer retval = current_class;
 
 	current_class = (TypeContainer) current_class.Parent;
-	current_container = current_class.IsPartial ? current_class.PartialContainer : current_class;
-
-	if (current_class != current_container) {
-		if (current_class.PartialContainer != current_container)
-			throw new InternalErrorException ("current_container and current_class are out of sync");
-	}
+	current_container = current_class.PartialContainer;
 
 	return retval;
 }

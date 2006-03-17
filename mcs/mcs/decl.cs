@@ -964,12 +964,6 @@ namespace Mono.CSharp {
 			TypeBuilder.SetCustomAttribute (cb);
 		}
 
-		public virtual bool IsPartial {
-			get {
-				return false;
-			}
-		}
-
 		public override string[] ValidAttributeTargets {
 			get { return attribute_targets; }
 		}
