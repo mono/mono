@@ -244,9 +244,9 @@ namespace System.Windows.Forms
 
 			CurrentTableStyle = default_style;
 
-			horiz_scrollbar = new HScrollBar ();
+			horiz_scrollbar = new ImplicitHScrollBar ();
 			horiz_scrollbar.Scroll += new ScrollEventHandler  (GridHScrolled);
-			vert_scrollbar = new VScrollBar ();
+			vert_scrollbar = new ImplicitVScrollBar ();
 			vert_scrollbar.Scroll += new ScrollEventHandler (GridVScrolled);			
 			KeyUp += new KeyEventHandler (OnKeyUpDG);			
 
