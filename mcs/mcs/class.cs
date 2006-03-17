@@ -4699,10 +4699,6 @@ namespace Mono.CSharp {
 			set { SetMemberName (new MemberName (MemberName.Left, value, Location)); }
 		}
 
-		public new TypeContainer Parent {
-			get { return (TypeContainer) base.Parent; }
-		}
-
 		public TypeContainer ParentContainer {
 			get { return ((TypeContainer) Parent).PartialContainer; }
 		}

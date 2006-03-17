@@ -1,5 +1,8 @@
 2006-03-18  Raja R Harinath  <harinath@gmail.com>
 
+	* class.cs (MemberCore.Parent): Delete.  This makes the
+	ParentContainer changes below enforceable by the compiler.
+
 	Treat pointers to enclosing declaration space as 'DeclSpace', not
 	'TypeContainer'.
 	* class.cs, const.cs, delegate.cs, enum.cs, iterator.cs: Change
