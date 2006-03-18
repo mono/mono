@@ -34,7 +34,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 	[TestFixture]
 	public class ProjectTest {
 		// Clones a project by reloading from original.Xml
-		private Project TestCloneProject (Project original)
+		private Project CloneProject (Project original)
 		{
 			Project clone;
 			
