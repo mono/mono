@@ -4913,9 +4913,6 @@ namespace Mono.CSharp {
 					conv = Convert.ImplicitConversion (ec, a_expr, parameter_type, loc);
 
 					if (conv == null) {
-						if (TypeManager.IsDelegateType (parameter_type))
-							return false;
-
 						if (!may_fail)
 							Error_InvalidArguments (loc, j, method, delegate_type, a, pd);
 						return false;

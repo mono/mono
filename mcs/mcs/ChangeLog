@@ -1,5 +1,12 @@
 2006-03-18  Marek Safar  <marek.safar@seznam.cz>
 
+	A fix for #77822.
+
+	* expression.cs (VerifyArgumentsCompat): Reverted to double error
+	reporting, it's more tricky than I thought.
+
+2006-03-18  Marek Safar  <marek.safar@seznam.cz>
+
 	A fix for #77816.
 
 	* anonymous.cs.cs (AnonymousMethod): Add host to allow access to 
