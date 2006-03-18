@@ -1,3 +1,7 @@
+2006-03-18  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Project.cs: Added new tests.
+
 2006-02-27  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* Engine.cs, Project.cs: Removed references to IEngine and IProject.

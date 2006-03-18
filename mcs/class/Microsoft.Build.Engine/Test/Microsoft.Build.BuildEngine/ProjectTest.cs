@@ -33,23 +33,69 @@ using NUnit.Framework;
 namespace MonoTests.Microsoft.Build.BuildEngine {
 	[TestFixture]
 	public class ProjectTest {
+		// Clones a project by reloading from original.Xml
+		private Project CloneProjectTest (Project original)
+		{
+			Project clone;
+			
+			clone = original.ParentEngine.CreateNewProject ();
+			clone.LoadXml (original.Xml);
+
+			return clone;
+		}
+
 		[Test]
 		public void AssignmentTest ()
 		{
 			Engine engine;
 			Project project;
 			string binPath = "binPath";
-			XmlDocument xd;
 			string documentString =
-			"<Project></Project>";
+				"<Project></Project>";
 			
 			engine = new Engine (binPath);
 			project = engine.CreateNewProject ();
-			xd = new XmlDocument ();
-			xd.LoadXml (documentString);
-			project.LoadFromXml (xd);
+			project.LoadXml (documentString);
 			
-			Assert.AreEqual (String.Empty, project.FullFileName, "FullFileName");
+			Assert.AreEqual (String.Empty, project.FullFileName, "A1");
+		}
+
+		[Test]
+		public void DefaultTargetsTest ()
+		{
+			Engine engine;
+			Project proj;
+			Project cproj;
+			string documentString =
+				"<Project DefaultTargets=\"Build;Compile\"></Project>";
+			
+			engine = new Engine ();
+			proj = engine.CreateNewProject ();
+			proj.LoadXml (documentString);
+			
+			Assert.AreEqual ("Build;Compile", proj.DefaultTargets, "A1");
+			proj.DefaultTargets = "Build";
+			Assert.AreEqual ("Build", proj.DefaultTargets, "A2");
+			cproj = CloneProject (proj);
+			Assert.AreEqual (proj.DefaultTargets, cproj.DefaultTargets, "A3");
+		}
+
+		[Test]
+		public void ListPropertiesTest ()
+		{
+			Engine engine = new Engine ();
+			Project proj = engine.CreateNewProject ();
+
+			string documentString = @"
+				<Project>
+					<PropertyGroup>
+						<Prop1>value1</Prop1>
+					</PropertyGroup>
+				</Project>
+			";
+
+			proj.LoadXml (documentString);
+			Assert.AreEqual (proj.PropertyGroups.Count, 1, "A1");
 		}
 	}
 }
