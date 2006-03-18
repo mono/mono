@@ -589,11 +589,9 @@ namespace Mono.CSharp {
 			}
 
 			if (HasArglist) {
-				if (HasArglist) {
-					if (sb.Length > 1)
-						sb.Append (", ");
-					sb.Append ("__arglist");
-				}
+				if (sb.Length > 1)
+					sb.Append (", ");
+				sb.Append ("__arglist");
 			}
 
 			sb.Append (')');

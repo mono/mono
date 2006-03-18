@@ -2489,8 +2489,14 @@ delegate_declaration
 	  SEMICOLON
 	  {
 		MemberName name = MakeName ((MemberName) $5);
+		Parameters p = (Parameters) $7;
+		if (p.HasArglist) {
+			// TODO: wrong location
+			Report.Error (1669, name.Location, "__arglist is not valid in this context");
+		}
+
 		Delegate del = new Delegate (current_namespace, current_class, (Expression) $4,
-					     (int) $2, name, (Parameters) $7, (Attributes) $1);
+					     (int) $2, name, p, (Attributes) $1);
 
 		if (RootContext.Documentation != null) {
 			del.DocComment = Lexer.consume_doc_comment ();
