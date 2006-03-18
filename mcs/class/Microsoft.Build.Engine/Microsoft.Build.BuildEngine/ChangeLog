@@ -1,3 +1,15 @@
+2006-03-18  Marek Sieradzki  <marek.sieradzki@gmail.com> 
+
+	* Engine.cs: API cleanup.
+
+2006-03-18  Crestez Leonard  <cdleonard@gmail.com>
+
+	* Project.cs: Cleaned up add.
+	* Expression.cs: Hacked to transform \ and / to path separators.
+	* BuildPropertyGroup.cs: Small cleanup.
+	* BuildTask.cs, TaskEngine.cs: Fix TaskEngine not getting a Project
+	reference.
+	
 2006-03-11  Marek Sieradzki  <marek.sieradzki@gmail.com> 
 
 	* BatchingImpl.cs: Updated with BuildTask instead of TaskElement.

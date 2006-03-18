@@ -82,7 +82,7 @@ namespace Microsoft.Build.BuildEngine {
 
 			LogTaskStarted ();
 			
-			taskEngine = new TaskEngine ();
+			taskEngine = new TaskEngine (parentTarget.Project);
 			
 			taskEngine.Prepare (InitializeTask (), this.taskElement,GetParameters (), this.Type);
 			

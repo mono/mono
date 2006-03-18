@@ -61,6 +61,8 @@ namespace Microsoft.Build.BuildEngine {
 		bool				isReset;
 		BuildItemGroupCollection	itemGroups;
 		IDictionary			importedProjects;
+		ImportCollection		imports;
+		string				initialTargets;
 		Engine				parentEngine;
 		BuildPropertyGroupCollection	propertyGroups;
 		BuildPropertyGroup		reservedProperties;
@@ -68,9 +70,10 @@ namespace Microsoft.Build.BuildEngine {
 		TaskDatabase			taskDatabase;
 		TargetCollection		targets;
 		DateTime			timeOfLastDirty;
+		UsingTaskCollection		usingTasks;
 		IList				usingTaskElements;
 		XmlDocument			xmlDocument;
-		XmlElement			xmlElement;
+		//XmlElement			xmlElement;
 
 		public Project ()
 			: this (null)
@@ -85,7 +88,7 @@ namespace Microsoft.Build.BuildEngine {
 			evaluatedItemsByName = CollectionsUtil.CreateCaseInsensitiveHashtable ();
 			evaluatedItemsByNameIgnoringCondition = CollectionsUtil.CreateCaseInsensitiveHashtable ();
 			evaluatedItemsIgnoringCondition = new BuildItemGroup (this);
-			evaluatedProperties = new BuildPropertyGroup (false, null);
+			evaluatedProperties = new BuildPropertyGroup ();
 			groups = new GroupingCollection ();
 			itemGroups = new BuildItemGroupCollection (groups);
 			propertyGroups = new BuildPropertyGroupCollection (groups);
@@ -124,6 +127,20 @@ namespace Microsoft.Build.BuildEngine {
 
 		[MonoTODO]
 		public BuildPropertyGroup AddNewPropertyGroup (bool insertAtEndOfProject)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public void AddNewUsingTaskFromAssemblyFile (string taskName,
+							     string assemblyFile)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public void AddNewUsingTaskFromAssemblyName (string taskName,
+							     string assemblyName)
 		{
 			throw new NotImplementedException ();
 		}
@@ -212,57 +229,44 @@ namespace Microsoft.Build.BuildEngine {
 			throw new NotImplementedException ();
 		}
 
+		// Does the actual loading.
+		private void DoLoad (TextReader textReader)
+		{
+			XmlReaderSettings settings = new XmlReaderSettings ();
+
+			if (SchemaFile != null) {
+				settings.Schemas.Add (null, SchemaFile);
+				settings.ValidationType = ValidationType.Schema;
+				settings.ValidationEventHandler += new ValidationEventHandler (ValidationCallBack);
+			}
+
+			XmlReader xmlReader = XmlReader.Create (textReader, settings);
+			xmlDocument.Load (xmlReader);
+			ProcessXml ();
+		}
+
 		public void Load (string projectFileName)
 		{
 			this.fullFileName = Path.GetFullPath (projectFileName);
-			XmlSchemaCollection xmlSchemaCollection = null;
-			XmlTextReader xmlTextReader = null;
-			XmlValidatingReader xmlValidatingReader = null;
-			
-			if (this.schemaFile != null) {
-				xmlSchemaCollection = new XmlSchemaCollection ();
-				xmlSchemaCollection.ValidationEventHandler += new ValidationEventHandler (ValidationCallBack);
-				xmlSchemaCollection.Add (null, this.schemaFile);
-				if (xmlSchemaCollection.Count > 0) {
-					xmlTextReader = new XmlTextReader (projectFileName);
-					xmlValidatingReader = new XmlValidatingReader (xmlTextReader);
-					xmlValidatingReader.ValidationType = ValidationType.Schema;
-					xmlValidatingReader.Schemas.Add (xmlSchemaCollection);
-					xmlValidatingReader.ValidationEventHandler += new ValidationEventHandler (ValidationCallBack);
-				}
-			} else {
-				xmlTextReader = new XmlTextReader (projectFileName);
-			}
-			if (xmlValidatingReader != null)
-				xmlDocument.Load (xmlValidatingReader);
-			else if (xmlTextReader != null)
-				xmlDocument.Load (xmlTextReader);
-			else
-				throw new Exception ();
-			xmlElement = xmlDocument.DocumentElement;
-			if (xmlElement.Name != "Project")
-				throw new InvalidProjectFileException ("Invalid root element.");
-			if (xmlElement.GetAttributeNode ("DefaultTargets") != null)
-				defaultTargets = xmlElement.GetAttribute ("DefaultTargets").Split (';');
-			else
-				defaultTargets = new string [0];
-			
-			ProcessElements (xmlElement, null);
-			
-			isDirty = false;
+			DoLoad (new StreamReader (projectFileName));
 		}
 		
 		[MonoTODO]
-		public void Load (TextWriter textWriter)
+		public void Load (TextReader textReader)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public void LoadFromXml (XmlDocument projectXml)
+		[MonoTODO]
+		public void LoadXml (string projectXml)
 		{
-			fullFileName = "";
-			xmlDocument = projectXml;
-			xmlElement = xmlDocument.DocumentElement;
+			fullFileName = String.Empty;
+			DoLoad  (new StringReader (projectXml));
+		}
+		
+		private void ProcessXml ()
+		{
+			XmlElement xmlElement = xmlDocument.DocumentElement;
 			if (xmlElement.Name != "Project")
 				throw new InvalidProjectFileException ("Invalid root element.");
 			if (xmlElement.GetAttributeNode ("DefaultTargets") != null)
@@ -288,12 +292,6 @@ namespace Microsoft.Build.BuildEngine {
 
 		[MonoTODO]
 		public void RemoveAllPropertyGroups ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public void RemoveAllPropertyGroupsByCondition (string condition)
 		{
 			throw new NotImplementedException ();
 		}
@@ -393,6 +391,14 @@ namespace Microsoft.Build.BuildEngine {
 		public void SetProjectExtensions (string id, string xmlText)
 		{
 			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public void SetProperty (string propertyName,
+					 string propertyValue)
+		{
+			SetProperty (propertyName, propertyValue, "true",
+				PropertyPosition.UseExistingOrCreateAfterLastPropertyGroup, false);
 		}
 
 		[MonoTODO]
@@ -529,7 +535,6 @@ namespace Microsoft.Build.BuildEngine {
 			
 			string importedFile;
 			Expression importedFileExpr;
-			ImportedProject ImportedProject;
 
 			importedFileExpr = new Expression (this, xmlElement.GetAttribute ("Project"));
 			importedFile = (string) importedFileExpr.ToNonArray (typeof (string));
@@ -567,8 +572,7 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			if (xmlElement == null)
 				throw new ArgumentNullException ("xmlElement");
-			BuildPropertyGroup bpg = new BuildPropertyGroup (true, this);
-			bpg.BindToXml (xmlElement);
+			BuildPropertyGroup bpg = new BuildPropertyGroup (xmlElement, this);
 			propertyGroups.Add (bpg);
 		}
 		
@@ -597,9 +601,11 @@ namespace Microsoft.Build.BuildEngine {
 		}
 
 		public string DefaultTargets {
-			get { return xmlElement.GetAttribute ("DefaultTargets"); }
+			get {
+				return xmlDocument.DocumentElement.GetAttribute ("DefaultTargets");
+			}
 			set {
-				xmlElement.SetAttribute ("DefaultTargets",value);
+				xmlDocument.DocumentElement.SetAttribute ("DefaultTargets", value);
 				defaultTargets = value.Split (';');
 			}
 		}
@@ -650,6 +656,15 @@ namespace Microsoft.Build.BuildEngine {
 		public BuildItemGroupCollection ItemGroups {
 			get { return itemGroups; }
 		}
+		
+		public ImportCollection Imports {
+			get { return imports; }
+		}
+		
+		public string InitialTargets {
+			get { return initialTargets; }
+			set { initialTargets = value; }
+		}
 
 		public Engine ParentEngine {
 			get { return parentEngine; }
@@ -670,6 +685,10 @@ namespace Microsoft.Build.BuildEngine {
 
 		public DateTime TimeOfLastDirty {
 			get { return timeOfLastDirty; }
+		}
+		
+		public UsingTaskCollection UsingTasks {
+			get { return usingTasks; }
 		}
 
 		[MonoTODO]

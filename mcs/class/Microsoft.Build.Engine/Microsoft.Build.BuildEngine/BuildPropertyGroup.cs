@@ -38,8 +38,6 @@ namespace Microsoft.Build.BuildEngine {
 	public class BuildPropertyGroup : IEnumerable {
 	
 		XmlElement		propertyGroup;
-		XmlAttribute		condition;
-		string			importedFromFilename;
 		bool			isImported;
 		GroupingCollection	parentCollection;
 		Project			parentProject;
@@ -47,21 +45,20 @@ namespace Microsoft.Build.BuildEngine {
 		IDictionary		propertiesByName;
 	
 		public BuildPropertyGroup ()
-			: this (true, null)
+			: this (null, null)
 		{
 		}
-		
-		internal BuildPropertyGroup (bool forXml, Project project)
+
+		internal BuildPropertyGroup (XmlElement xmlElement, Project project)
 		{
 			this.propertyGroup = null;
-			this.condition = null;
-			this.importedFromFilename = null;
 			this.isImported = false;
 			this.parentCollection = null;
 			this.parentProject = project;
-			if (forXml == true)
+			if (xmlElement != null) {
 				this.properties = new ArrayList ();
-			else
+				BindToXml(xmlElement);
+			} else
 				this.propertiesByName = CollectionsUtil.CreateCaseInsensitiveHashtable ();
 		}
 
@@ -183,14 +180,12 @@ namespace Microsoft.Build.BuildEngine {
 			((BuildProperty) propertiesByName [propertyName]).Value = propertyValue;
 		}
 		
-		internal void BindToXml (XmlElement propertyGroupElement)
+		private void BindToXml (XmlElement propertyGroupElement)
 		{
 			if (propertyGroupElement == null)
 				throw new ArgumentNullException ();
 			this.properties = new ArrayList ();
 			this.propertyGroup = propertyGroupElement;
-			this.condition = propertyGroupElement.GetAttributeNode ("Condition");
-			this.importedFromFilename = null;
 			this.isImported = false;
 			foreach (XmlElement xe in propertyGroupElement.ChildNodes) {
 				BuildProperty bp = AddNewProperty(xe.Name, xe.InnerText);
@@ -204,14 +199,10 @@ namespace Microsoft.Build.BuildEngine {
 		
 		public string Condition {
 			get {
-				if (condition == null)
-					return null;
-				else
-					return condition.Value;
+				return propertyGroup.GetAttribute("Condition");
 			}
 			set {
-				if (condition != null)
-					condition.Value = value;
+				propertyGroup.SetAttribute("Condition", value);
 			}
 		}
 
@@ -223,12 +214,6 @@ namespace Microsoft.Build.BuildEngine {
 					return propertiesByName.Count;
 				else
 					throw new Exception ("PropertyGroup is not initialized.");
-			}
-		}
-
-		internal string ImportedFromFilename {
-			get {
-				return importedFromFilename;
 			}
 		}
 

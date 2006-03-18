@@ -51,8 +51,9 @@ namespace Microsoft.Build.BuildEngine {
 			outputAttribute = typeof (Microsoft.Build.Framework.OutputAttribute);
 		}
 
-		public TaskEngine ()
+		public TaskEngine (Project project)
 		{
+			parentProject = project;
 		}
 		
 		public void Prepare (ITask task, XmlElement taskElement,
@@ -86,11 +87,7 @@ namespace Microsoft.Build.BuildEngine {
 		
 		public bool Execute ()
 		{
-			bool	result;
-			
-			result = task.Execute ();
-		
-			return result;
+			return task.Execute ();
 		}
 		
 		public void PublishOutput ()

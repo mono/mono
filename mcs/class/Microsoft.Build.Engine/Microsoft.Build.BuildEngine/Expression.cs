@@ -28,6 +28,7 @@
 #if NET_2_0
 
 using System;
+using System.IO;
 using System.Collections;
 using System.Text;
 using Microsoft.Build.Framework;
@@ -57,7 +58,10 @@ namespace Microsoft.Build.BuildEngine {
 			// FIXME: change StringBuilder to substrings 
 			if (source == null)
 				throw new ArgumentNullException ("source");				
-			
+
+			// FIXME: hack
+			source = source.Replace('/', Path.DirectorySeparatorChar);
+			source = source.Replace('\\', Path.DirectorySeparatorChar);
 			StringBuilder temp = new StringBuilder ();
 			CharEnumerator it = source.GetEnumerator ();
 			EvaluationState eState = EvaluationState.Out;
