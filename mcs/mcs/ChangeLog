@@ -1,3 +1,19 @@
+2006-03-18  Marek Safar  <marek.safar@seznam.cz>
+
+	A fix for #77816.
+
+	* anonymous.cs.cs (AnonymousMethod): Add host to allow access to 
+	host container.
+	(AnonymousMethod.ImplicitStandardConversionExists): New method.
+	(AnonymousMethod.Compatible): Moved parameter resolving to DoResolve.
+	Add more error reporting; Fixed issue with params.
+
+	* convert.cs (ImplicitStandardConversionExists): Returned conversion check.
+
+	* cs-parser.jay: AnonymousMethod requires host container.
+
+	* delegate.cs (NewDelegate.DoResolve): Updated after Compatible changes.
+
 2006-03-18  Raja R Harinath  <harinath@gmail.com>
 
 	* class.cs: Change 'TypeContainer ds' constructor argument to
