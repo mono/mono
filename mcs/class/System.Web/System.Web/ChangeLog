@@ -1,3 +1,8 @@
+2006-03-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplication.cs: fix upper bound when iterating through the module
+	collection.
+
 2006-03-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpRequest.cs: use the provided content encoding to decode the file

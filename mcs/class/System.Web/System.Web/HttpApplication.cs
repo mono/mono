@@ -567,7 +567,7 @@ namespace System.Web {
 		public virtual void Dispose ()
 		{
 			if (modcoll != null) {
-				for (int i = modcoll.Count; i >= 0; i--) {
+				for (int i = modcoll.Count - 1; i >= 0; i--) {
 					modcoll.Get (i).Dispose ();
 				}
 				modcoll = null;
