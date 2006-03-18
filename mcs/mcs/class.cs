@@ -4014,24 +4014,20 @@ namespace Mono.CSharp {
 		// The spec claims that static is not permitted, but
 		// my very own code has static constructors.
 		//
-		public Constructor (TypeContainer ds, string name, int mod, Parameters args,
+		public Constructor (DeclSpace parent, string name, int mod, Parameters args,
 				    ConstructorInitializer init, Location loc)
-			: base (ds, null, mod, AllowedModifiers, false, new MemberName (name, loc),
+			: base (parent, null, mod, AllowedModifiers, false, new MemberName (name, loc),
 				null, args)
 		{
 			Initializer = init;
 		}
 
 		public bool HasCompliantArgs {
-			get {
-				return has_compliant_args;
-			}
+			get { return has_compliant_args; }
 		}
 
 		public override AttributeTargets AttributeTargets {
-			get {
-				return AttributeTargets.Constructor;
-			}
+			get { return AttributeTargets.Constructor; }
 		}
 
 
@@ -4658,10 +4654,10 @@ namespace Mono.CSharp {
 	// TODO: Should derive from MethodCore
 	public class Destructor : Method {
 
-		public Destructor (TypeContainer ds, Expression return_type, int mod,
+		public Destructor (DeclSpace parent, Expression return_type, int mod,
 				   string name, Parameters parameters, Attributes attrs,
 				   Location l)
-			: base (ds, return_type, mod, false, new MemberName (name, l),
+			: base (parent, return_type, mod, false, new MemberName (name, l),
 				parameters, attrs)
 		{ }
 
@@ -5888,10 +5884,10 @@ namespace Mono.CSharp {
 
 		protected EmitContext ec;
 
-		public PropertyBase (TypeContainer ds, Expression type, int mod_flags,
+		public PropertyBase (DeclSpace parent, Expression type, int mod_flags,
 				     int allowed_mod, bool is_iface, MemberName name,
 				     Parameters parameters, Attributes attrs)
-			: base (ds, type, mod_flags, allowed_mod, is_iface, name,
+			: base (parent, type, mod_flags, allowed_mod, is_iface, name,
 				attrs, parameters)
 		{
 		}
@@ -6114,10 +6110,10 @@ namespace Mono.CSharp {
 		const int AllowedInterfaceModifiers =
 			Modifiers.NEW;
 
-		public Property (TypeContainer ds, Expression type, int mod, bool is_iface,
+		public Property (DeclSpace parent, Expression type, int mod, bool is_iface,
 				 MemberName name, Attributes attrs, Accessor get_block,
 				 Accessor set_block)
-			: base (ds, type, mod,
+			: base (parent, type, mod,
 				is_iface ? AllowedInterfaceModifiers : AllowedModifiers,
 				is_iface, name, Parameters.EmptyReadOnlyParameters, attrs)
 		{
@@ -6766,10 +6762,10 @@ namespace Mono.CSharp {
 			Modifiers.NEW;
 
 
-		public Indexer (TypeContainer ds, Expression type, MemberName name, int mod,
+		public Indexer (DeclSpace parent, Expression type, MemberName name, int mod,
 				bool is_iface, Parameters parameters, Attributes attrs,
 				Accessor get_block, Accessor set_block)
-			: base (ds, type, mod,
+			: base (parent, type, mod,
 				is_iface ? AllowedInterfaceModifiers : AllowedModifiers,
 				is_iface, name, parameters, attrs)
 		{

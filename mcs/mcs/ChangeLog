@@ -1,5 +1,9 @@
 2006-03-18  Raja R Harinath  <harinath@gmail.com>
 
+	* class.cs: Change 'TypeContainer ds' constructor argument to
+	'DeclSpace parent'.  Some classes were missed below due to
+	different naming convention.
+
 	* class.cs (MemberCore.Parent): Delete.  This makes the
 	ParentContainer changes below enforceable by the compiler.
 
