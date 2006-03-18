@@ -516,9 +516,11 @@ namespace System.Xml.Serialization {
 						break;
 
 					case SchemaTypes.Primitive:
-						selem.SchemaTypeName = new XmlQualifiedName (einfo.TypeData.XmlType, einfo.DataTypeNamespace);;
-						if (!einfo.TypeData.IsXsdType)
+						selem.SchemaTypeName = new XmlQualifiedName (einfo.TypeData.XmlType, einfo.DataTypeNamespace);
+						if (!einfo.TypeData.IsXsdType) {
+							ImportNamespace (currentSchema, einfo.MappedType.XmlTypeNamespace);
 							ExportDerivedSchema (einfo.MappedType);
+						}
 						break;
 				}
 			}
@@ -802,7 +804,8 @@ namespace System.Xml.Serialization {
 			if (schema == null)
 			{
 				schema = new XmlSchema ();
-				schema.TargetNamespace = ns;
+				if (ns != null && ns.Length > 0)
+					schema.TargetNamespace = ns;
 				if (!encodedFormat)
 					schema.ElementFormDefault = XmlSchemaForm.Qualified;
 				schemas.Add (schema);

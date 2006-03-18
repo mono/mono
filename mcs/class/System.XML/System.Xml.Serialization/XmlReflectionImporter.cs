@@ -246,11 +246,23 @@ namespace System.Xml.Serialization {
 			if (typeNamespace == null) typeNamespace = rootNamespace;
 			
 			XmlTypeMapping map;
-			if (typeData.SchemaType == SchemaTypes.XmlSerializable)
-				map = new XmlSerializableMapping (elementName, rootNamespace, typeData, defaultXmlType, typeNamespace);
-			else
-				map = new XmlTypeMapping (elementName, rootNamespace, typeData, defaultXmlType, typeNamespace);
-				
+			switch (typeData.SchemaType) {
+				case SchemaTypes.XmlSerializable:
+					map = new XmlSerializableMapping (elementName, rootNamespace, typeData, defaultXmlType, typeNamespace);
+					break;
+				case SchemaTypes.Primitive:
+					if (!typeData.IsXsdType)
+						map = new XmlTypeMapping (elementName, rootNamespace, 
+							typeData, defaultXmlType, XmlSerializer.WsdlTypesNamespace);
+					else
+						map = new XmlTypeMapping (elementName, rootNamespace, 
+							typeData, defaultXmlType, typeNamespace);
+					break;
+				default:
+					map = new XmlTypeMapping (elementName, rootNamespace, typeData, defaultXmlType, typeNamespace);
+					break;
+			}
+
 			map.IncludeInSchema = includeInSchema;
 			map.IsNullable = nullable;
 			relatedMaps.Add (map);

@@ -1983,7 +1983,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void ExportNonXsdPrimitive_Guid ()
 		{
 			XmlSchemas schemas = Export (typeof (Guid), "NSPrimGuid");
@@ -2040,7 +2039,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void ExportNonXsdPrimitive_Char ()
 		{
 			XmlSchemas schemas = Export (typeof (char), "NSPrimChar");

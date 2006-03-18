@@ -1,5 +1,9 @@
 2006-03-10  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* XmlSchemaExporterTests.cs: Enabled tests for bug #77111.
+. 
+2006-03-10  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* DeserializeTests.cs: Enabled tests for bug #77530.
 	* XmlSerializerTests.cs: Enabled tests for bug #77530. 
 

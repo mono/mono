@@ -1,5 +1,13 @@
 2006-03-10  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* XmlSchemaExporter.cs: Import namespace of schema generated for
+	non-xsd primitive. Do not set zero-length TargetNamespace to avoid
+	emitting empty targetNamespace attribute in generated schema.
+	* XmlReflectionImporter.cs: Use WSDL types namespace for non-xsd
+	primitives.
+
+2006-03-10  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* XmlTypeMapping.cs: EnumMapMember now also stores value for enums.
 	Modified EnumMapping.GetXmlName to use XmlCustomFormatter to support
 	serialization of integral value to enum constant name, and made sure
