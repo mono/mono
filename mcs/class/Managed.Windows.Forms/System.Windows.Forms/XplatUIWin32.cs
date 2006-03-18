@@ -86,6 +86,10 @@ namespace System.Windows.Forms {
 			internal int		top;
 			internal int		right;
 			internal int		bottom;
+			public override string ToString() {
+				return String.Format("RECT left={0}, top={1}, right={2}, bottom={3}, width={4}, height={5}", left, top, right, bottom, right-left, bottom-top);
+			}
+
 		}
 
 		[StructLayout(LayoutKind.Sequential)]

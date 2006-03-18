@@ -285,12 +285,30 @@ namespace System.Windows.Forms {
 				StringBuilder	sb;
 				string		x_error_text;
 				string		error;
+				string		hwnd_text;
+				string		control_text;
+				Hwnd		hwnd;
+				Control		c;
 
 				sb = new StringBuilder(160);
 				XGetErrorText(Display, ErrorCode, sb, sb.Capacity);
 				x_error_text = sb.ToString();
+				hwnd = Hwnd.ObjectFromHandle(ResourceID);
+				if (hwnd != null) {
+					hwnd_text = hwnd.ToString();
+					c = Control.FromHandle(hwnd.Handle);
+					if (c != null) {
+						control_text = c.ToString();
+					} else {
+						control_text = String.Format("<handle {0:X} non-existant>", hwnd.Handle);
+					}
+				} else {
+					hwnd_text = "<null>";
+					control_text = "<null>";
+				}
 
-				error = String.Format("\n  Error: {0}\n  Request:     {1:D} ({2})\n  Resource ID: 0x{3:x}\n  Serial:      {4}", x_error_text, RequestCode, RequestCode, ResourceID.ToInt32(), Serial);
+
+				error = String.Format("\n  Error: {0}\n  Request:     {1:D} ({2})\n  Resource ID: 0x{3:X}\n  Serial:      {4}\n  Hwnd:        {5}\n  Control:     {6}", x_error_text, RequestCode, RequestCode, ResourceID.ToInt32(), Serial, hwnd_text, control_text);
 				return error;
 			}
 		}
@@ -1368,6 +1386,37 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		private void PerformNCCalc(Hwnd hwnd) {
+			XplatUIWin32.NCCALCSIZE_PARAMS	ncp;
+			IntPtr				ptr;
+			Rectangle			rect;
+
+			rect = hwnd.DefaultClientRect;
+
+			ncp = new XplatUIWin32.NCCALCSIZE_PARAMS();
+			ptr = Marshal.AllocHGlobal(Marshal.SizeOf(ncp));
+
+			ncp.rgrc1.left = rect.Left;
+			ncp.rgrc1.top = rect.Top;
+			ncp.rgrc1.right = rect.Right;
+			ncp.rgrc1.bottom = rect.Bottom;
+
+			Marshal.StructureToPtr(ncp, ptr, true);
+			NativeWindow.WndProc(hwnd.client_window, Msg.WM_NCCALCSIZE, (IntPtr)1, ptr);
+			ncp = (XplatUIWin32.NCCALCSIZE_PARAMS)Marshal.PtrToStructure(ptr, typeof(XplatUIWin32.NCCALCSIZE_PARAMS));
+			Marshal.FreeHGlobal(ptr);
+
+			// FIXME - debug this with Menus, need to set hwnd.ClientRect
+
+			rect = new Rectangle(ncp.rgrc1.left, ncp.rgrc1.top, ncp.rgrc1.right - ncp.rgrc1.left, ncp.rgrc1.bottom - ncp.rgrc1.top);
+
+			Control c;
+			c = Control.FromHandle(hwnd.Handle);
+
+			if (hwnd.visible) {
+				XMoveResizeWindow(DisplayHandle, hwnd.client_window, rect.X, rect.Y, rect.Width, rect.Height);
+			}
+		}
 		#endregion	// Private Methods
 
 		#region	Callbacks
@@ -1983,7 +2032,7 @@ namespace System.Windows.Forms {
 			hwnd.ClientWindow = ClientWindow;
 
 			#if DriverDebug || DriverDebugCreate
-				Console.WriteLine("Created window {0:X} / {1:X} parent {2:X}", ClientWindow.ToInt32(), WholeWindow.ToInt32(), hwnd.parent != null ? hwnd.parent.Handle.ToInt32() : 0);
+				Console.WriteLine("Created window {0:X} / {1:X} parent {2:X}, Style {3}, ExStyle {4}", ClientWindow.ToInt32(), WholeWindow.ToInt32(), hwnd.parent != null ? hwnd.parent.Handle.ToInt32() : 0, (WindowStyles)cp.Style, (WindowExStyles)cp.ExStyle);
 			#endif
 				       
 			lock (XlibLock) {
@@ -2366,13 +2415,13 @@ namespace System.Windows.Forms {
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
 			if (hwnd == null) {
-				#if DriverDebug
+				#if DriverDebug || DriverDebugDestroy
 					Console.WriteLine("window {0:X} already destroyed", handle.ToInt32());
 				#endif
 				return;
 			}
 
-			#if DriverDebug
+			#if DriverDebug || DriverDebugDestroy
 				Console.WriteLine("Destroying window {0:X}", handle.ToInt32());
 			#endif
 
@@ -2977,10 +3026,6 @@ namespace System.Windows.Forms {
 
 				case XEventName.ConfigureNotify: {
 					if (!client && (xevent.ConfigureEvent.xevent == xevent.ConfigureEvent.window)) {	// Ignore events for children (SubstructureNotify) and client areas
-						XplatUIWin32.NCCALCSIZE_PARAMS	ncp;
-						IntPtr				ptr;
-						Rectangle			rect;
-
 						#if DriverDebugExtra
 							Console.WriteLine("GetMessage(): Window {0:X} ConfigureNotify x={1} y={2} width={3} height={4}", hwnd.client_window.ToInt32(), xevent.ConfigureEvent.x, xevent.ConfigureEvent.y, xevent.ConfigureEvent.width, xevent.ConfigureEvent.height);
 						#endif
@@ -2988,26 +3033,7 @@ namespace System.Windows.Forms {
 						hwnd.configure_pending = false;
 
 						// We need to adjust our client window to track the resize of whole_window
-						rect = hwnd.DefaultClientRect;
-
-						ncp = new XplatUIWin32.NCCALCSIZE_PARAMS();
-						ptr = Marshal.AllocHGlobal(Marshal.SizeOf(ncp));
-
-						ncp.rgrc1.left = rect.Left;
-						ncp.rgrc1.top = rect.Top;
-						ncp.rgrc1.right = rect.Right;
-						ncp.rgrc1.bottom = rect.Bottom;
-
-						Marshal.StructureToPtr(ncp, ptr, true);
-						NativeWindow.WndProc(hwnd.client_window, Msg.WM_NCCALCSIZE, (IntPtr)1, ptr);
-						ncp = (XplatUIWin32.NCCALCSIZE_PARAMS)Marshal.PtrToStructure(ptr, typeof(XplatUIWin32.NCCALCSIZE_PARAMS));
-						Marshal.FreeHGlobal(ptr);
-
-						// FIXME - debug this with Menus, need to set hwnd.ClientRect
-
-						rect = new Rectangle(ncp.rgrc1.left, ncp.rgrc1.top, ncp.rgrc1.right - ncp.rgrc1.left, ncp.rgrc1.bottom - ncp.rgrc1.top);
-
-						XMoveResizeWindow(DisplayHandle, hwnd.client_window, rect.X, rect.Y, rect.Width, rect.Height);
+						PerformNCCalc(hwnd);
 					} else {
 						goto ProcessNextMessage;
 					}
@@ -3517,9 +3543,6 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void RequestNCRecalc(IntPtr handle) {
-			XplatUIWin32.NCCALCSIZE_PARAMS	ncp;
-			IntPtr				ptr;
-			Rectangle			rect;
 			Hwnd				hwnd;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
@@ -3528,27 +3551,9 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-			// We need to adjust our client window to track the resize of whole_window
-			rect = hwnd.DefaultClientRect;
-
-			ncp = new XplatUIWin32.NCCALCSIZE_PARAMS();
-			ptr = Marshal.AllocHGlobal(Marshal.SizeOf(ncp));
-
-			ncp.rgrc1.left = rect.Left;
-			ncp.rgrc1.top = rect.Top;
-			ncp.rgrc1.right = rect.Right;
-			ncp.rgrc1.bottom = rect.Bottom;
-
-			Marshal.StructureToPtr(ncp, ptr, true);
-			NativeWindow.WndProc(hwnd.client_window, Msg.WM_NCCALCSIZE, (IntPtr)1, ptr);
-			ncp = (XplatUIWin32.NCCALCSIZE_PARAMS)Marshal.PtrToStructure(ptr, typeof(XplatUIWin32.NCCALCSIZE_PARAMS));
-			Marshal.FreeHGlobal(ptr);
-
-			rect = new Rectangle(ncp.rgrc1.left, ncp.rgrc1.top, ncp.rgrc1.right - ncp.rgrc1.left, ncp.rgrc1.bottom - ncp.rgrc1.top);
-
-			XMoveResizeWindow(DisplayHandle, hwnd.client_window, rect.X, rect.Y, rect.Width, rect.Height);
-
+			PerformNCCalc(hwnd);
 			SendMessage(handle, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
+			InvalidateWholeWindow(handle);
 		}
 
 		internal override void ScreenToClient(IntPtr handle, ref int x, ref int y) {
@@ -3686,10 +3691,7 @@ namespace System.Windows.Forms {
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
 			hwnd.border_style = border_style;
-
-			XMoveResizeWindow(DisplayHandle, hwnd.client_window, hwnd.ClientRect.X, hwnd.ClientRect.Y, hwnd.ClientRect.Width, hwnd.ClientRect.Height);
-
-			InvalidateWholeWindow(handle);
+			RequestNCRecalc(handle);
 		}
 
 		internal override void SetCaretPos(IntPtr handle, int x, int y) {
@@ -3785,7 +3787,7 @@ namespace System.Windows.Forms {
 			hwnd = Hwnd.ObjectFromHandle(handle);
 			hwnd.menu = menu;
 
-			// FIXME - do we need to trigger some resize?
+			RequestNCRecalc(handle);
 		}
 
 		internal override void SetModal(IntPtr handle, bool Modal) {
@@ -3872,6 +3874,8 @@ namespace System.Windows.Forms {
 							case FormWindowState.Minimized:	SetWindowState(handle, FormWindowState.Minimized); break;
 							case FormWindowState.Maximized:	SetWindowState(handle, FormWindowState.Maximized); break;
 						}
+
+						SendMessage(handle, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
 					} else {
 						XMapWindow(DisplayHandle, hwnd.whole_window);
 						XMapWindow(DisplayHandle, hwnd.client_window);
@@ -4229,6 +4233,18 @@ namespace System.Windows.Forms {
 			hwnd.expose_pending = true;
 #endif
 		}
+
+		private bool WindowIsMapped(IntPtr handle) {
+			XWindowAttributes attributes;
+
+			attributes = new XWindowAttributes();
+			XGetWindowAttributes(DisplayHandle, handle, ref attributes);
+			if (attributes.map_state == MapState.IsUnmapped) {
+				return false;
+			}
+			return true;
+		}
+
 		#endregion	// Public Static Methods
 
 		#region Events

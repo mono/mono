@@ -2345,7 +2345,7 @@ namespace System.Windows.Forms
 					create_params.ExStyle |= (int)WindowExStyles.WS_EX_ACCEPTFILES;
 				}
 
-				if (parent!=null) {
+				if ((parent!=null) && (parent.IsHandleCreated)) {
 					create_params.Parent = parent.Handle;
 				}
 
@@ -3621,12 +3621,22 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected void UpdateBounds(int x, int y, int width, int height) {
+			CreateParams	cp;
+			Rectangle	rect;
+
+			// Calculate client rectangle
+			rect = new Rectangle(0, 0, 0, 0);
+			cp = CreateParams;
+
+			XplatUI.CalculateWindowRect(ref rect, cp.Style, cp.ExStyle, cp.menu, out rect);
+			UpdateBounds(x, y, width, height, width - (rect.Right - rect.Left), height - (rect.Bottom - rect.Top));
+		}
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		protected void UpdateBounds(int x, int y, int width, int height, int clientWidth, int clientHeight) {
 			// UpdateBounds only seems to set our sizes and fire events but not update the GUI window to match
 			bool	moved	= false;
 			bool	resized	= false;
-
-			int	client_x_diff = this.bounds.Width-this.client_size.Width;
-			int	client_y_diff = this.bounds.Height-this.client_size.Height;
 
 			// Needed to generate required notifications
 			if ((this.bounds.X!=x) || (this.bounds.Y!=y)) {
@@ -3642,9 +3652,8 @@ namespace System.Windows.Forms
 			bounds.Width=width;
 			bounds.Height=height;
 
-			// Update client rectangle as well
-			client_size.Width=width-client_x_diff;
-			client_size.Height=height-client_y_diff;
+			client_size.Width=clientWidth;
+			client_size.Height=clientHeight;
 
 			if (moved) {
 				OnLocationChanged(EventArgs.Empty);
@@ -3653,14 +3662,6 @@ namespace System.Windows.Forms
 			if (resized) {
 				OnSizeChanged(EventArgs.Empty);
 			}
-		}
-
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		protected void UpdateBounds(int x, int y, int width, int height, int clientWidth, int clientHeight) {
-			UpdateBounds(x, y, width, height);
-
-			this.client_size.Width=clientWidth;
-			this.client_size.Height=clientHeight;
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]

@@ -1,3 +1,43 @@
+2006-03-17  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* CreateParams.cs: Added internal menu field
+	* Control.cs: 
+	  - Switched call order for UpdateBounds; now we always call
+	    the one that also takes ClientSize, and we're calculating the 
+	    client size via driver method in the others. The previous
+	    method of tracking client size by difference wasn't working
+	    for forms where even the starting client size wouldn't match
+	    the overall form size (due to borders) (Part of fix for #77729)
+	  - CreateParams(): Do not use parent.Handle unless the handle is
+	    already created. Causes havoc with Nexxia and throws off our
+	    creation of controls
+	* XplatUIX11.cs:
+	  - Created new PerformNCCalc method to trigger WM_NCCALCSIZE message
+	  - Switched handling of ConfigureNotify over to new PerformNCCalc 
+	    method (consolidates code)
+	  - Changed RequestNCRecalc to use new PerformNCCalc method
+	  - Added calls to RequestNCRecalc when menus and borders are changed
+	    to allow app to set NC size. (Part of fix for #77729) This matches
+	    when MS send a WM_NCRECALC on Win32 windows.
+	  - Now sending WM_WINDOWPOSCHANGED when toplevel for is made visible
+	    (Part of fix for #77729). This matches what MS does, they also
+	    send that message when the form is made visible.
+	  - XException.GetMessage: Improved usability of X errors by including
+	    a translation of the window into Hwnd and Control class
+	  - Improved debug info for window creation, reparenting and destruction
+	  - Created helper method WindowIsMapped() [Currently not used]
+	* XplatUIWin32.cs: Added ToString() debug helper to RECT structure
+	* Form.cs:
+	  - CreateParams: Now setting our menu on the new internal menu field
+	  - SetClientSizeCore: Now passing cp.menu instead of ActiveMenu to
+	    avoid calculating the same property twice
+	* Hwnd.cs:
+	  - Improved usability of ToString() for debugging purposes
+	  - GetWindowRectangle(): Now uses proper CalcMenuBarSize method to
+	    determine the height of the menu, instead of just the font. This
+	    required to also create a graphics context and to keep a bmp 
+	    around (for performance reasons)
+
 2006-03-17  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* MenuAPI.cs: Added OnMouseUp method

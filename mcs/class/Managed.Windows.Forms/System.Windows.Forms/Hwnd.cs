@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2005 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2005-2006 Novell, Inc. (http://www.novell.com)
 //
 // Authors:
 //	Peter Bartok	(pbartok@novell.com)
@@ -72,6 +72,7 @@ namespace System.Windows.Forms {
 		internal int		tool_caption_height;
 		internal bool		whacky_wm;
 		internal bool		fixed_size;
+		internal static Bitmap	bmp = new Bitmap(1, 1, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 		#endregion	// Local Variables
 
 		#region Constructors and destructors
@@ -152,7 +153,11 @@ namespace System.Windows.Forms {
 			if (menu != null) {
 				int menu_height = menu.Rect.Height;
 				if (menu_height == 0) {
-					menu_height = ThemeEngine.Current.MenuFont.Height;
+					Graphics g;
+
+					g = Graphics.FromImage(bmp);
+					menu_height = ThemeEngine.Current.CalcMenuBarSize(g, menu, client_rect.Width);
+					g.Dispose();
 				}
 
 				rect.Y -= menu_height;
@@ -562,7 +567,7 @@ namespace System.Windows.Forms {
 		}
 
 		public override string ToString() {
-			return String.Format("Hwnd, ClientWindow:0x{0:X}, WholeWindow:0x{1:X}, Handle:0x{2:X}", client_window.ToInt32(), whole_window.ToInt32(), handle.ToInt32());
+			return String.Format("Hwnd, ClientWindow:0x{0:X}, WholeWindow:0x{1:X}, Parent:[{2:X}]", client_window.ToInt32(), whole_window.ToInt32(), parent != null ? parent.ToString() : "<null>");
 		}
 
 		#endregion	// Methods

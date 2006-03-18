@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004-2005 Novell, Inc.
+// Copyright (c) 2004-2006 Novell, Inc.
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
@@ -891,6 +891,7 @@ namespace System.Windows.Forms {
 				cp.ExStyle = 0;
 				cp.Param = 0;
 				cp.Parent = IntPtr.Zero;
+				cp.menu = ActiveMenu;
 
 //				if (start_position == FormStartPosition.WindowsDefaultLocation) {
 					cp.X = unchecked((int)0x80000000);
@@ -1575,7 +1576,7 @@ namespace System.Windows.Forms {
 
 			clientsize_set = new Size(x, y);
 
-			if (XplatUI.CalculateWindowRect(ref ClientRect, cp.Style, cp.ExStyle, ActiveMenu, out WindowRect)) {
+			if (XplatUI.CalculateWindowRect(ref ClientRect, cp.Style, cp.ExStyle, cp.menu, out WindowRect)) {
 				SetBoundsCore(bounds.X, bounds.Y, WindowRect.Width, WindowRect.Height, BoundsSpecified.Size);
 			}
 		}
