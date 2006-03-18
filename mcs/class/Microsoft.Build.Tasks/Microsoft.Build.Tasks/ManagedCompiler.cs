@@ -117,7 +117,7 @@ namespace Microsoft.Build.Tasks {
 		}
 		
 		[MonoTODO]
-		protected bool ListHasNoDuplicateItems (ITaskItem itemList,
+		protected bool ListHasNoDuplicateItems (ITaskItem[] itemList,
 							string parameterName)
 		{
 			return true;
