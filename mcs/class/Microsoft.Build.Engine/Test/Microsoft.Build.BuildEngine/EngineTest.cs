@@ -32,7 +32,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 	[TestFixture]
 	public class EngineTest {
 		[Test]
-		public void AssignmentTest ()
+		public void TestAssignment ()
 		{
 			Engine engine;
 			string binPath = "binPath";

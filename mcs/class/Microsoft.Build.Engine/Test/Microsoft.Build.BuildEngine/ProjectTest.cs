@@ -34,7 +34,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 	[TestFixture]
 	public class ProjectTest {
 		// Clones a project by reloading from original.Xml
-		private Project CloneProjectTest (Project original)
+		private Project TestCloneProject (Project original)
 		{
 			Project clone;
 			
@@ -45,7 +45,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		public void AssignmentTest ()
+		public void TestAssignment ()
 		{
 			Engine engine;
 			Project project;
@@ -61,7 +61,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		public void DefaultTargetsTest ()
+		public void TestDefaultTargets ()
 		{
 			Engine engine;
 			Project proj;
@@ -81,7 +81,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		public void ListPropertiesTest ()
+		public void TestListProperties ()
 		{
 			Engine engine = new Engine ();
 			Project proj = engine.CreateNewProject ();

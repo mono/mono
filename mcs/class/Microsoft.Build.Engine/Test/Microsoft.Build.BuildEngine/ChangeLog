@@ -1,5 +1,13 @@
 2006-03-18  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
+	* InternalLoggerExceptionTest.cs, InvalidProjectFileExceptionTest.cs,
+	EngineTest.cs, ProjectTest.cs: Added new tests.
+	* BuildItemTest.cs: Added.
+	* Microsoft.Build.Engine.Test.sln, Microsoft.Build.Engine.Test.csproj:
+	Added VS 2005/SD2 solution.
+
+2006-03-18  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
 	* Project.cs: Added new tests.
 
 2006-02-27  Marek Sieradzki  <marek.sieradzki@gmail.com>

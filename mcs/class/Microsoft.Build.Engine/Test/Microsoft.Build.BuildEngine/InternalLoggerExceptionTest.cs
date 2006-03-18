@@ -33,27 +33,28 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 	[TestFixture]
 	public class InternalLoggerExceptionTest {
 		[Test]
-		public void CtorMessageTest ()
+		[ExpectedException (typeof (System.InvalidOperationException),
+		"An InternalLoggerException can only be thrown by the MSBuild engine." +
+		" The public constructors of this class cannot be used to create an instance of the exception.")]
+		public void TestCtorMessage ()
 		{
 			InternalLoggerException ile;
 			string message = "message";
 			
 			ile = new InternalLoggerException (message);
-			
-			Assert.AreEqual (message, ile.Message, "Message");
 		}
 		
 		[Test]
-		public void CtorMessageExceptionTest ()
+		[ExpectedException (typeof (System.InvalidOperationException),
+		"An InternalLoggerException can only be thrown by the MSBuild engine." +
+		" The public constructors of this class cannot be used to create an instance of the exception.")]
+		public void TestCtorMessageException ()
 		{
 			InternalLoggerException ile;
 			string message = "message";
 			Exception e = new Exception ("Inner exception message.");
 			
 			ile = new InternalLoggerException (message, e);
-			
-			Assert.AreEqual (message, ile.Message, "Message");
-			Assert.AreEqual (e, ile.InnerException, "InnerException");
 		}
 	}
 }
