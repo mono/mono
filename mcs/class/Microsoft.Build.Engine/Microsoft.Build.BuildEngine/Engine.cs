@@ -73,10 +73,38 @@ namespace Microsoft.Build.BuildEngine {
 			this.reservedProperties = new BuildPropertyGroup ();
 			this.reservedProperties.AddNewProperty ("MSBuildBinPath", binPath, false, PropertyType.Reserved);
 		}
+		
+		[MonoTODO]
+		public bool BuildProject (Project project)
+		{
+			return project.Build ();
+		}
+		
+		[MonoTODO]
+		public bool BuildProject (Project project, string targetName)
+		{
+			return BuildProject (project, new string[] { targetName}, new Hashtable (), BuildSettings.None);
+		}
+		
+		[MonoTODO]
+		public bool BuildProject (Project project, string[] targetNames)
+		{
+			return BuildProject (project, targetNames, new Hashtable (), BuildSettings.None);
+		}
 
+		[MonoTODO]
 		public bool BuildProject (Project project,
 					  string[] targetNames,
 					  IDictionary targetOutputs)
+		{
+			return BuildProject (project, targetNames, targetOutputs, BuildSettings.None);
+		}
+		
+		[MonoTODO ("use buildFlags")]
+		public bool BuildProject (Project project,
+					  string[] targetNames,
+					  IDictionary targetOutputs,
+					  BuildSettings buildFlags)
 		{
 			bool result;
 			
@@ -89,16 +117,55 @@ namespace Microsoft.Build.BuildEngine {
 			return result;
 		}
 
-		public bool BuildProjectFile (string projectFileName,
-					  string[] targetNames,
-					  BuildPropertyGroup globalPropertiesToUse,
-					  IDictionary targetOutputs)
+		[MonoTODO]
+		public bool BuildProjectFile (string projectFile)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public bool BuildProjectFile (string projectFile,
+					      string targetName)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public bool BuildProjectFile (string projectFile,
+					      string[] targetNames)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public bool BuildProjectFile (string projectFile,
+					      string[] targetNames,
+					      BuildPropertyGroup globalProperties)
+		{
+			return BuildProjectFile (projectFile, targetNames, globalProperties, new Hashtable (), BuildSettings.None);
+		}
+		
+		[MonoTODO]
+		public bool BuildProjectFile (string projectFile,
+					      string[] targetNames,
+					      BuildPropertyGroup globalProperties,
+					      IDictionary targetOutputs)
+		{
+			return BuildProjectFile (projectFile, targetNames, globalProperties, targetOutputs, BuildSettings.None);
+		}
+		
+		[MonoTODO ("use buildFlags")]
+		public bool BuildProjectFile (string projectFile,
+					      string[] targetNames,
+					      BuildPropertyGroup globalProperties,
+					      IDictionary targetOutputs,
+					      BuildSettings buildFlags)
 		{
 			bool result;
 			Project project;
 			
-			if (projects.Contains (projectFileName)) {
-				project = (Project) projects [projectFileName];
+			if (projects.Contains (projectFile)) {
+				project = (Project) projects [projectFile];
 				LogProjectStarted (project, targetNames);
 				result = project.Build (targetNames, targetOutputs);
 			}
