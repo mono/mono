@@ -347,7 +347,7 @@ namespace MonoTests.System.Data
 			TestException( new testExceptionMethodCallback(DataProvider.TryToBreakForigenConstraint),arr);			
 		}
 
-		void TestException(testExceptionMethodCallback dlg,IList exceptionList)
+		public void TestException(testExceptionMethodCallback dlg,IList exceptionList)
 		{				
 			try {
 				dlg();

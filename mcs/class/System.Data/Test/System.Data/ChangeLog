@@ -1,3 +1,9 @@
+2006-03-19	Boris Kirzner <borisk@mainsoft.com>
+	
+	* ConstraintCollectionTest2.cs, DataColumnCollectionTest.cs, 
+	DataRowCollectionTest.cs, DataTableCollectionTest.cs: ifdef code that is not 
+	supposed to work in TARGET_JVM by now.
+
 2006-03-09  Senganal T  <tsenganal@novell.com>
 	
 	* DataRowCollectionTest2.cs :

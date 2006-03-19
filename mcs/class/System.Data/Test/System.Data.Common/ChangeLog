@@ -1,3 +1,9 @@
+2006-03-19	Boris Kirzner <borisk@mainsoft.com>
+	
+	* DataColumnMappingCollectionTest.cs, DataTableMappingCollectionTest.cs,
+	DBDataPermissionAttributeTest.cs: ifdef code that is not supposed 
+	to work in TARGET_JVM by now.
+
 2006-02-18  Raja R Harinath  <harinath@gmail.com>
 
 	* DbConnectionStringBuilderTest.cs
