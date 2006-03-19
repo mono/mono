@@ -1,3 +1,12 @@
+2006-03-19  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* HtmlAnchor.cs: fixed RenderAttributes, if target attribute is empty 
+	it shouldn't be rendered
+	* HtmlForm.cs: fixed Method, default method "post" should be added if 
+	its value null or empty string
+	* HtmlInputImage.cs: fixed SetAtt, it removes attributes if it has null 
+	value, the fix is to remove attributes with empty string value too
+
 2005-12-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlTableRow.cs: Cells is virtual in latest 1.1.

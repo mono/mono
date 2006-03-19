@@ -255,7 +255,7 @@ namespace System.Web.UI.HtmlControls {
 
 		private void SetAtt (string name, string value)
 		{
-			if (value == null)
+			if ((value == null) || (value.Length == 0))
 				Attributes.Remove (name);
 			else
 				Attributes [name] = value;

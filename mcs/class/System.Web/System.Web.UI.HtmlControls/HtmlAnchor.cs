@@ -155,6 +155,11 @@ namespace System.Web.UI.HtmlControls {
 				if (hr != "")
 					HRef = ResolveUrl (hr);
 			}
+
+			string target = Attributes ["target"];
+			if ((target == null) || (target.Length == 0))
+				Attributes.Remove("target");
+
 			base.RenderAttributes (writer);
 
 			// but we never set back the href attribute after the rendering
