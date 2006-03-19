@@ -1,3 +1,6 @@
+2006-03-19 Boris Kirzner <borisk@mainsoft.com>
+	* nunit_transform.xslt: fixes to nunit results xslt transform
+
 2006-02-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* xmltool.cs : Optional 3rd. argument to --transform is now output
