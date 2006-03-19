@@ -1,3 +1,7 @@
+2006-03-19 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.Web.dll.sources: add TempFileStream.cs
+
 2006-03-15  Chris Toshok  <toshok@ximian.com>
 
 	* Makefile (RESOURCE_FILES_2): add transarent.gif.

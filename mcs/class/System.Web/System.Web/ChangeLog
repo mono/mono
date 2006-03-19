@@ -1,3 +1,12 @@
+2006-03-19 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TempFileStream.cs: a FileStream that removes the file once
+	it is disposed.
+	* HttpRequest.cs: support for writing request data to on-disk
+	files if the request is longer than the threshold specified in the
+	configuration files. In mono this will work for 1.x and 2.0, while with
+	MS this only works for 2.0.
+
 2006-03-18  Robert Jordan  <robertj@gmx.net>
 
 	* HttpCachePolicy.cs: expose the validation callbacks.

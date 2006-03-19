@@ -47,17 +47,12 @@ namespace System.Web.Configuration
 
 			config.ExecutionTimeout = AttUIntValue (section, "executionTimeout", 90);
 			config.MaxRequestLength = AttUIntValue (section, "maxRequestLength", 4096);
-			config.RequestLengthDiskThreshold = AttUIntValue (section, "requestLengthDiskThreshold", 256);
 			config.UseFullyQualifiedRedirectUrl = AttBoolValue (section, "useFullyQualifiedRedirectUrl", false);
-			config.MinFreeThreads = AttUIntValue (section, "minFresThreads", 8);
-			config.MinLocalRequestFreeThreads = AttUIntValue (section, "minLocalRequestFreeThreads", 4);
+			config.MinFreeThreads = AttUIntValue (section, "minFreeThreads", 8);
+			config.MinLocalRequestFreeThreads = AttUIntValue (section, "minFreeLocalRequestFreeThreads", 4);
 			config.AppRequestQueueLimit = AttUIntValue (section, "appRequestQueueLimit", 100);
-			config.EnableKernelOutputCache = AttBoolValue (section, "requestLengthDiskThreshold", true);
-			config.EnableVersionHeader = AttBoolValue (section, "requestLengthDiskThreshold", true);
-			config.RequireRootSaveAsPath = AttBoolValue (section, "requestLengthDiskThreshold", true);
-			config.IdleTimeout = AttUIntValue (section, "requestLengthDiskThreshold", 20);
-			config.Enable = AttBoolValue (section, "requestLengthDiskThreshold", true);
 			config.VersionHeader = AttValue (section, "versionHeader");
+			config.RequestLengthDiskThreshold = AttUIntValue (section, "requestLengthDiskThreshold", 256);
 
 			return config;
 		}
