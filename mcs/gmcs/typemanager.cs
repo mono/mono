@@ -1272,6 +1272,11 @@ public partial class TypeManager {
 	public static MemberList FindMembers (Type t, MemberTypes mt, BindingFlags bf,
 					      MemberFilter filter, object criteria)
 	{
+#if MS_COMPATIBLE
+		if (t.IsGenericType)
+			t = t.GetGenericTypeDefinition ();
+#endif
+
 		DeclSpace decl = (DeclSpace) builder_to_declspace [t];
 
 		//
@@ -1593,6 +1598,11 @@ public partial class TypeManager {
 
 			return tparam.IsSubclassOf (base_type);
 		}
+
+#if MS_COMPATIBLE
+		if (type.IsGenericType)
+			type = type.GetGenericTypeDefinition ();
+#endif
 
 		if (type.IsSubclassOf (base_type))
 			return true;
@@ -2089,10 +2099,14 @@ public partial class TypeManager {
 				base_ifaces = GetInterfaces (t.BaseType);
 			Type[] type_ifaces;
 			if (t.IsGenericType)
+#if MS_COMPATIBLE
+				type_ifaces = t.GetGenericTypeDefinition().GetInterfaces ();
+#else
 				type_ifaces = t.GetInterfaces ();
+#endif
 			else
 				type_ifaces = (Type []) builder_to_ifaces [t];
-			if (type_ifaces == null)
+			if (type_ifaces == null || type_ifaces.Length == 0)
 				type_ifaces = Type.EmptyTypes;
 
 			int base_count = base_ifaces.Length;

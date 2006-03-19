@@ -216,7 +216,7 @@ namespace Mono.CSharp {
 		// This is used if the expression should be resolved as a type or namespace name.
 		// the default implementation fails.   
 		//
-		public virtual FullNamedExpression ResolveAsTypeStep (EmitContext ec,  bool silent)
+		public virtual FullNamedExpression ResolveAsTypeStep (IResolveContext ec,  bool silent)
 		{
 			return null;
 		}
@@ -226,7 +226,7 @@ namespace Mono.CSharp {
 		// value will be returned if the expression is not a type
 		// reference
 		//
-		public virtual TypeExpr ResolveAsTypeTerminal (EmitContext ec, bool silent)
+		public virtual TypeExpr ResolveAsTypeTerminal (IResolveContext ec, bool silent)
 		{
 			int errors = Report.Errors;
 
@@ -239,7 +239,7 @@ namespace Mono.CSharp {
 			}
 
 			if (fne.eclass != ExprClass.Type) {
-				if (!silent && (errors == Report.Errors))
+				if (!silent && errors == Report.Errors)
 					fne.Error_UnexpectedKind (null, "type", loc);
 				return null;
 			}
@@ -251,9 +251,15 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			// Constrains don't need to be checked for overrides
+			GenericMethod gm = ec.DeclContainer as GenericMethod;
+			if (gm != null && (gm.ModFlags & Modifiers.OVERRIDE) != 0) {
+				te.loc = loc;
+				return te;
+			}
+
 			ConstructedType ct = te as ConstructedType;
-			if ((ct != null) && !ec.ResolvingTypeTree && !ec.ResolvingGenericMethod &&
-			    !ct.CheckConstraints (ec))
+			if ((ct != null) && !ct.CheckConstraints (ec))
 				return null;
 
 			te.loc = loc;
@@ -1933,7 +1939,7 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		FullNamedExpression ResolveNested (EmitContext ec, Type t)
+		FullNamedExpression ResolveNested (IResolveContext ec, Type t)
 		{
 			if (!t.IsGenericTypeDefinition)
 				return null;
@@ -1969,7 +1975,7 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		public override FullNamedExpression ResolveAsTypeStep (EmitContext ec, bool silent)
+		public override FullNamedExpression ResolveAsTypeStep (IResolveContext ec, bool silent)
 		{
 			FullNamedExpression fne = ec.DeclContainer.LookupGeneric (Name, loc);
 			if (fne != null)
@@ -2227,7 +2233,7 @@ namespace Mono.CSharp {
 	///   section 10.8.1 (Fully Qualified Names).
 	/// </summary>
 	public abstract class FullNamedExpression : Expression {
-		public override FullNamedExpression ResolveAsTypeStep (EmitContext ec, bool silent)
+		public override FullNamedExpression ResolveAsTypeStep (IResolveContext ec, bool silent)
 		{
 			return this;
 		}
@@ -2241,7 +2247,7 @@ namespace Mono.CSharp {
 	///   Expression that evaluates to a type
 	/// </summary>
 	public abstract class TypeExpr : FullNamedExpression {
-		override public FullNamedExpression ResolveAsTypeStep (EmitContext ec, bool silent)
+		override public FullNamedExpression ResolveAsTypeStep (IResolveContext ec, bool silent)
 		{
 			TypeExpr t = DoResolveAsTypeStep (ec);
 			if (t == null)
@@ -2299,9 +2305,9 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		protected abstract TypeExpr DoResolveAsTypeStep (EmitContext ec);
+		protected abstract TypeExpr DoResolveAsTypeStep (IResolveContext ec);
 
-		public Type ResolveType (EmitContext ec)
+		public Type ResolveType (IResolveContext ec)
 		{
 			TypeExpr t = ResolveAsTypeTerminal (ec, false);
 			if (t == null)
@@ -2350,7 +2356,7 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		protected override TypeExpr DoResolveAsTypeStep (EmitContext ec)
+		protected override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
 		{
 			return this;
 		}
@@ -2378,7 +2384,7 @@ namespace Mono.CSharp {
 		}
 
 		static readonly char [] dot_array = { '.' };
-		protected override TypeExpr DoResolveAsTypeStep (EmitContext ec)
+		protected override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
 		{
 			if (type != null)
 				return this;
@@ -2461,7 +2467,7 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		protected override TypeExpr DoResolveAsTypeStep (EmitContext ec)
+		protected override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
 		{
 			Expression expr;
 			if (name.Left != null) {
@@ -2515,7 +2521,7 @@ namespace Mono.CSharp {
 			get { return name; }
 		}
 
-		protected override TypeExpr DoResolveAsTypeStep (EmitContext ec)
+		protected override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
 		{
 			texpr = alias.ResolveAsTypeTerminal (ec, false);
 			if (texpr == null)

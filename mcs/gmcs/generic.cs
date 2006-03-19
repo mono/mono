@@ -1039,7 +1039,7 @@ namespace Mono.CSharp {
 			this.loc = loc;
 		}
 
-		protected override TypeExpr DoResolveAsTypeStep (EmitContext ec)
+		protected override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
 		{
 			type = type_parameter.Type;
 
@@ -1180,7 +1180,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Resolve the type arguments.
 		/// </summary>
-		public bool Resolve (EmitContext ec)
+		public bool Resolve (IResolveContext ec)
 		{
 			int count = args.Count;
 			bool ok = true;
@@ -1306,7 +1306,7 @@ namespace Mono.CSharp {
 			return TypeManager.CSharpName (gt);
 		}
 
-		protected override TypeExpr DoResolveAsTypeStep (EmitContext ec)
+		protected override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
 		{
 			if (!ResolveConstructedType (ec))
 				return null;
@@ -1318,7 +1318,7 @@ namespace Mono.CSharp {
 		///   Check the constraints; we're called from ResolveAsTypeTerminal()
 		///   after fully resolving the constructed type.
 		/// </summary>
-		public bool CheckConstraints (EmitContext ec)
+		public bool CheckConstraints (IResolveContext ec)
 		{
 			return ConstraintChecker.CheckConstraints (ec, gt, gen_params, atypes, loc);
 		}
@@ -1326,7 +1326,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Resolve the constructed type, but don't check the constraints.
 		/// </summary>
-		public bool ResolveConstructedType (EmitContext ec)
+		public bool ResolveConstructedType (IResolveContext ec)
 		{
 			if (type != null)
 				return true;
@@ -1355,7 +1355,7 @@ namespace Mono.CSharp {
 			return DoResolveType (ec);
 		}
 
-		bool DoResolveType (EmitContext ec)
+		bool DoResolveType (IResolveContext ec)
 		{
 			//
 			// Resolve the arguments.
@@ -1461,7 +1461,7 @@ namespace Mono.CSharp {
 		///   Check the constraints; we're called from ResolveAsTypeTerminal()
 		///   after fully resolving the constructed type.
 		/// </summary>
-		public bool CheckConstraints (EmitContext ec)
+		public bool CheckConstraints (IResolveContext ec)
 		{
 			for (int i = 0; i < gen_params.Length; i++) {
 				if (!CheckConstraints (ec, i))
@@ -1471,7 +1471,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		protected bool CheckConstraints (EmitContext ec, int index)
+		protected bool CheckConstraints (IResolveContext ec, int index)
 		{
 			Type atype = atypes [index];
 			Type ptype = gen_params [index];
@@ -1495,6 +1495,10 @@ namespace Mono.CSharp {
 					is_class = is_struct = false;
 				}
 			} else {
+#if MS_COMPATIBLE
+				is_class = false;
+				if (!atype.IsGenericType)
+#endif
 				is_class = atype.IsClass || atype.IsInterface;
 				is_struct = atype.IsValueType && !TypeManager.IsNullableType (atype);
 			}
@@ -1533,9 +1537,11 @@ namespace Mono.CSharp {
 			//
 			// Now, check the interface constraints.
 			//
-			foreach (Type it in gc.InterfaceConstraints) {
-				if (!CheckConstraint (ec, ptype, aexpr, it))
-					return false;
+			if (gc.InterfaceConstraints != null) {
+				foreach (Type it in gc.InterfaceConstraints) {
+					if (!CheckConstraint (ec, ptype, aexpr, it))
+						return false;
+				}
 			}
 
 			//
@@ -1548,7 +1554,7 @@ namespace Mono.CSharp {
 			if (TypeManager.IsBuiltinType (atype) || atype.IsValueType)
 				return true;
 
-			if (HasDefaultConstructor (ec.ContainerType, atype))
+			if (HasDefaultConstructor (ec.DeclContainer.TypeBuilder, atype))
 				return true;
 
 			Report_SymbolRelatedToPreviousError ();
@@ -1563,7 +1569,7 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		protected bool CheckConstraint (EmitContext ec, Type ptype, Expression expr,
+		protected bool CheckConstraint (IResolveContext ec, Type ptype, Expression expr,
 						Type ctype)
 		{
 			if (TypeManager.HasGenericArguments (ctype)) {
@@ -1665,7 +1671,7 @@ namespace Mono.CSharp {
 			return checker.CheckConstraints (ec);
 		}
 
-		public static bool CheckConstraints (EmitContext ec, Type gt, Type[] gen_params,
+		public static bool CheckConstraints (IResolveContext ec, Type gt, Type[] gen_params,
 						     Type[] atypes, Location loc)
 		{
 			TypeConstraintChecker checker = new TypeConstraintChecker (
@@ -1900,7 +1906,7 @@ namespace Mono.CSharp {
 			get { return underlying.ToString () + "?"; }
 		}
 
-		protected override TypeExpr DoResolveAsTypeStep (EmitContext ec)
+		protected override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
 		{
 			TypeArguments args = new TypeArguments (loc);
 			args.Add (underlying);

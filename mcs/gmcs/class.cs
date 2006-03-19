@@ -5370,6 +5370,8 @@ namespace Mono.CSharp {
 			ModFlags = Modifiers.Check (allowed_mod, mod, def_mod, Location);
 			IsExplicitImpl = (MemberName.Left != null);
 			GenericMethod = generic;
+			if (GenericMethod != null)
+				GenericMethod.ModFlags = ModFlags;
 		}
 
 		protected virtual bool CheckBase ()

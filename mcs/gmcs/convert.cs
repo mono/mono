@@ -86,6 +86,10 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			if (!gc.HasClassConstraint && !gc.HasConstructorConstraint && !gc.HasReferenceTypeConstraint &&
+				!gc.HasValueTypeConstraint)
+				return new ClassCast (expr, target_type);
+
 			// We're converting from a type parameter which is known to be a reference type.
 			Type base_type = TypeParam_EffectiveBaseType (gc);
 

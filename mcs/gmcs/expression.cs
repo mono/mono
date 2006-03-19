@@ -7231,7 +7231,7 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		public override FullNamedExpression ResolveAsTypeStep (EmitContext ec, bool silent)
+		public override FullNamedExpression ResolveAsTypeStep (IResolveContext ec, bool silent)
 		{
 			if (alias == "global")
 				return new MemberAccess (RootNamespace.Global, identifier, loc).ResolveAsTypeStep (ec, silent);
@@ -7455,12 +7455,12 @@ namespace Mono.CSharp {
 			return DoResolve (ec, right_side);
 		}
 
-		public override FullNamedExpression ResolveAsTypeStep (EmitContext ec, bool silent)
+		public override FullNamedExpression ResolveAsTypeStep (IResolveContext ec, bool silent)
 		{
 			return ResolveNamespaceOrType (ec, silent);
 		}
 
-		public FullNamedExpression ResolveNamespaceOrType (EmitContext ec, bool silent)
+		public FullNamedExpression ResolveNamespaceOrType (IResolveContext ec, bool silent)
 		{
 			FullNamedExpression new_expr = expr.ResolveAsTypeStep (ec, silent);
 
@@ -7493,11 +7493,11 @@ namespace Mono.CSharp {
 			}
 
 			Expression member_lookup = MemberLookup (
-				ec.ContainerType, expr_type, expr_type, lookup_id,
+				ec.DeclContainer.TypeBuilder, expr_type, expr_type, lookup_id,
 				MemberTypes.NestedType, BindingFlags.Public | BindingFlags.NonPublic, loc);
 			if (member_lookup == null) {
 				int errors = Report.Errors;
-				MemberLookupFailed (ec.ContainerType, expr_type, expr_type, lookup_id, null, false, loc);
+				MemberLookupFailed (ec.DeclContainer.TypeBuilder, expr_type, expr_type, lookup_id, null, false, loc);
 
 				if (!silent && errors == Report.Errors) {
 					Report.Error (426, loc, "The nested type `{0}' does not exist in the type `{1}'",
@@ -8786,7 +8786,7 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		protected override TypeExpr DoResolveAsTypeStep (EmitContext ec)
+		protected override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
 		{
 			TypeExpr lexpr = left.ResolveAsTypeTerminal (ec, false);
 			if (lexpr == null)
