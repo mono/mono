@@ -1,5 +1,13 @@
 2006-03-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (print_method_from_ip): Rename this to 
+	mono_print_method_from_ip so it gets exported.
+
+	* trace.c: Deal with strings inside StringBuilder's containing garbage
+	and fix memory leaks. Fixes #77848.
+
+2006-03-19  Zoltan Varga  <vargaz@gmail.com>
+
 	* mini.c (mini_init): Disable the setting of GC_stackbottom on ia64. Hopefully
 	fixes #77787.
 
