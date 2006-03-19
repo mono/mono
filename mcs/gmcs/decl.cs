@@ -868,13 +868,11 @@ namespace Mono.CSharp {
 		//    Resolves the expression `e' for a type, and will recursively define
 		//    types.  This should only be used for resolving base types.
 		// </summary>
-		protected TypeExpr ResolveBaseTypeExpr (Expression e, bool silent, Location loc)
+		protected TypeExpr ResolveBaseTypeExpr (Expression e)
 		{
-			TypeResolveEmitContext.loc = loc;
-			TypeResolveEmitContext.ResolvingTypeTree = true;
 			if (this is GenericMethod)
 				TypeResolveEmitContext.ContainerType = Parent.TypeBuilder;
-			return e.ResolveAsTypeTerminal (TypeResolveEmitContext, silent);
+			return e.ResolveAsTypeTerminal (TypeResolveEmitContext, false);
 		}
 		
 		public bool CheckAccessLevel (Type check_type) 

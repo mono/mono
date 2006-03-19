@@ -145,7 +145,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override bool Resolve (EmitContext ec)
+		public override bool Resolve (IResolveContext ec)
 		{
 			if (!base.Resolve (ec))
 				return false;
@@ -175,7 +175,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override bool Resolve (EmitContext ec)
+		public override bool Resolve (IResolveContext ec)
 		{
 			return true;
 		}
@@ -267,7 +267,7 @@ namespace Mono.CSharp {
 		// <summary>
 		//   Resolve is used in method definitions
 		// </summary>
-		public virtual bool Resolve (EmitContext ec)
+		public virtual bool Resolve (IResolveContext ec)
 		{
 			if (parameter_type != null)
 				return true;
@@ -520,7 +520,7 @@ namespace Mono.CSharp {
 			return GetParameterByName (name, out idx);
 		}
 		
-		public bool Resolve (EmitContext ec)
+		public bool Resolve (IResolveContext ec)
 		{
 			if (types != null)
 				return true;

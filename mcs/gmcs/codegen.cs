@@ -250,11 +250,6 @@ namespace Mono.CSharp {
 		public bool IsFieldInitializer;
 
 		/// <summary>
-		///   We are resolving a class'es base class and interfaces.
-		/// </summary>
-		public bool ResolvingTypeTree;
-
-		/// <summary>
 		///   We are resolving a generic method's return type and parameters.
 		/// </summary>
 		public bool ResolvingGenericMethod;

@@ -1010,8 +1010,7 @@ namespace Mono.CSharp {
 			int start = 0, i, j;
 
 			if (Kind == Kind.Class){
-				TypeExpr name = ResolveBaseTypeExpr (
-					(Expression) Bases [0], false, Location);
+				TypeExpr name = ResolveBaseTypeExpr ((Expression) Bases [0]);
 
 				if (name == null){
 					return null;
@@ -1028,7 +1027,7 @@ namespace Mono.CSharp {
 			TypeExpr [] ifaces = new TypeExpr [count-start];
 			
 			for (i = start, j = 0; i < count; i++, j++){
-				TypeExpr resolved = ResolveBaseTypeExpr ((Expression) Bases [i], false, Location);
+				TypeExpr resolved = ResolveBaseTypeExpr ((Expression) Bases [i]);
 				if (resolved == null) {
 					return null;
 				}
