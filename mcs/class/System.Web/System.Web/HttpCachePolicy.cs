@@ -113,6 +113,10 @@ namespace System.Web {
                         get { return expire_date; }
                 }
 
+		internal ArrayList ValidationCallbacks {
+			get { return validation_callbacks; }
+		}
+
 #endregion // Properties
 
 #region Methods

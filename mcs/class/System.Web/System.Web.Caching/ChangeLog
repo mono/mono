@@ -1,3 +1,8 @@
+2006-03-18  Robert Jordan  <robertj@gmx.net>
+
+	* OutputCacheModule.cs: invoke the validation callbacks of
+	HttpCachePolicy. Fixes bug #77825.
+
 2006-03-14  Robert Jordan  <robertj@gmx.net>
 
 	* CachedVaryBy.cs: Fixed VaryByParam="*". Replaced request.Param
