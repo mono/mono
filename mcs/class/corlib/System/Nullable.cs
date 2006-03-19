@@ -38,7 +38,7 @@ using System.Runtime.CompilerServices;
 #if NET_2_0
 namespace System {
 	public static class Nullable {
-		public static int Compare<T> (Nullable<T> left, Nullable<T> right)
+		public static int Compare<T> (Nullable<T> left, Nullable<T> right) where T: struct
 		{
 			IComparable icomparable = left.value as IComparable;
 			if (icomparable == null)
@@ -53,7 +53,7 @@ namespace System {
 			return icomparable.CompareTo (right.value);
 		}
 
-		public static bool Equals<T> (Nullable <T> value1, Nullable<T> value2)
+		public static bool Equals<T> (Nullable <T> value1, Nullable<T> value2) where T: struct
 		{
 			return value1.Equals (value2);
 		}
