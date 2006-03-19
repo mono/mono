@@ -30,6 +30,7 @@
 
 using System.IO;
 using System.Web;
+using System.Web.UI;
 using System.Web.Util;
 using System.Collections;
 
@@ -70,21 +71,55 @@ namespace System.Web.Caching {
 
 			key = varyby.CreateKey (vary_key, context);
 			c = context.Cache [key] as CachedRawResponse;
+
+			if (c == null)
+				return;
+
+			ArrayList callbacks = c.Policy.ValidationCallbacks;
+			if (callbacks != null && callbacks.Count > 0) {
+				bool isValid = true;
+				bool isIgnored = false;
+
+				foreach (Pair p in callbacks) {
+					HttpCacheValidateHandler validate = (HttpCacheValidateHandler)p.First;
+					object data = p.Second;
+					HttpValidationStatus status = HttpValidationStatus.Valid;
+
+					try {
+						validate (context, data, ref status);
+					} catch {
+						// MS.NET hides the exception
+						isValid = false;
+						break;
+					}
+
+					if (status == HttpValidationStatus.Invalid) {
+						isValid = false;
+						break;
+					} else if (status == HttpValidationStatus.IgnoreThisRequest) {
+						isIgnored = true;
+					}
+				}
+
+				if (!isValid) {
+					OnRawResponseRemoved (key, c, CacheItemRemovedReason.Removed);
+					return;
+				} else if (isIgnored) {
+					return;
+				}
+			}
 			
-			if (c != null) {
-				
-				context.Response.ClearContent ();
-				context.Response.BinaryWrite (c.GetData (), 0, c.ContentLength);
+			context.Response.ClearContent ();
+			context.Response.BinaryWrite (c.GetData (), 0, c.ContentLength);
 
-				context.Response.ClearHeaders ();
-				c.DateHeader.Value = TimeUtil.ToUtcTimeString (DateTime.Now);
-				context.Response.SetCachedHeaders (c.Headers);
+			context.Response.ClearHeaders ();
+			c.DateHeader.Value = TimeUtil.ToUtcTimeString (DateTime.Now);
+			context.Response.SetCachedHeaders (c.Headers);
 
-				context.Response.StatusCode = c.StatusCode;
-				context.Response.StatusDescription = c.StatusDescription;
+			context.Response.StatusCode = c.StatusCode;
+			context.Response.StatusDescription = c.StatusDescription;
 				
-				app.CompleteRequest ();
-			} 
+			app.CompleteRequest ();
 		}
 
 		void OnUpdateRequestCache (object o, EventArgs args)
