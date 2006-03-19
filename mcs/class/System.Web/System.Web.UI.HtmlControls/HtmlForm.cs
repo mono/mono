@@ -100,7 +100,7 @@ namespace System.Web.UI.HtmlControls
 			get {
 				string method = Attributes["method"];
 
-				if (method == null) {
+				if ((method == null) || (method.Length == 0)) {
 					return ("post");
 				}
 				
