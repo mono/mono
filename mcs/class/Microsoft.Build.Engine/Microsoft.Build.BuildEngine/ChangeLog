@@ -1,3 +1,7 @@
+2006-03-19  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* BuildPropertyGroup.cs, Expression.cs: Coding style fixed.
+
 2006-03-18  Marek Sieradzki  <marek.sieradzki@gmail.com> 
 
 	* Engine.cs: API cleanup.

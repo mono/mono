@@ -57,7 +57,7 @@ namespace Microsoft.Build.BuildEngine {
 			this.parentProject = project;
 			if (xmlElement != null) {
 				this.properties = new ArrayList ();
-				BindToXml(xmlElement);
+				BindToXml (xmlElement);
 			} else
 				this.propertiesByName = CollectionsUtil.CreateCaseInsensitiveHashtable ();
 		}
@@ -188,7 +188,7 @@ namespace Microsoft.Build.BuildEngine {
 			this.propertyGroup = propertyGroupElement;
 			this.isImported = false;
 			foreach (XmlElement xe in propertyGroupElement.ChildNodes) {
-				BuildProperty bp = AddNewProperty(xe.Name, xe.InnerText);
+				BuildProperty bp = AddNewProperty (xe.Name, xe.InnerText);
 				bp.PropertyType = PropertyType.Normal;
 				bp.BindToXml (xe);
 				Expression finalValue = new Expression (parentProject, bp.Value);
@@ -199,10 +199,10 @@ namespace Microsoft.Build.BuildEngine {
 		
 		public string Condition {
 			get {
-				return propertyGroup.GetAttribute("Condition");
+				return propertyGroup.GetAttribute ("Condition");
 			}
 			set {
-				propertyGroup.SetAttribute("Condition", value);
+				propertyGroup.SetAttribute ("Condition", value);
 			}
 		}
 

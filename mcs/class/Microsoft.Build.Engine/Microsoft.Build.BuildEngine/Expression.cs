@@ -60,8 +60,8 @@ namespace Microsoft.Build.BuildEngine {
 				throw new ArgumentNullException ("source");				
 
 			// FIXME: hack
-			source = source.Replace('/', Path.DirectorySeparatorChar);
-			source = source.Replace('\\', Path.DirectorySeparatorChar);
+			source = source.Replace ('/', Path.DirectorySeparatorChar);
+			source = source.Replace ('\\', Path.DirectorySeparatorChar);
 			StringBuilder temp = new StringBuilder ();
 			CharEnumerator it = source.GetEnumerator ();
 			EvaluationState eState = EvaluationState.Out;
