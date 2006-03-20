@@ -1,3 +1,7 @@
+2006-03-20  Raja R Harinath  <rharinath@novell.com>
+
+	* gtest-260.cs: New test based on #77852.
+
 2006-03-18  Raja R Harinath  <harinath@gmail.com>
 
 	* test-partial-13.cs: New test for partial classes.
