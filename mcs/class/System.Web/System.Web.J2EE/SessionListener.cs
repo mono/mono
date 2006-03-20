@@ -47,12 +47,14 @@ namespace System.Web.J2EE
 
 		public void sessionDestroyed(HttpSessionEvent se) 
 		{
+			object o  = se.getSession().getAttribute("GH_SESSION_STATE");
+			if (o == null)
+				return;
+			AppDomain servletDomain = (AppDomain)se.getSession().getServletContext().getAttribute(J2EEConsts.APP_DOMAIN);
+			vmw.@internal.EnvironmentUtils.setAppDomain(servletDomain);
 			try
 			{
 				bool  getHttpApplication = false;
-				object o  = se.getSession().getAttribute("GH_SESSION_STATE");
-				if (o == null)
-					return;
 				object app  = ((HttpSessionState)o).App;
 				if (app == null)
 				{
@@ -75,10 +77,16 @@ namespace System.Web.J2EE
 				if (getHttpApplication)
 					HttpApplicationFactory.Recycle((HttpApplication)app);
 			}
+#if DEBUG
 			catch (Exception e)
 			{
 				Console.WriteLine(e.Message);
 				Console.WriteLine(e.StackTrace);
+			}
+#endif
+			finally
+			{
+				vmw.@internal.EnvironmentUtils.clearAppDomain();
 			}
 		}
 	}
