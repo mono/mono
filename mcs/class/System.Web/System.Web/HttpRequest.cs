@@ -364,7 +364,8 @@ namespace System.Web {
 			}
 		}
 
-		static Stream StreamCopy (Stream stream)
+		// GetSubStream returns a 'copy' of the InputStream with Position set to 0.
+		static Stream GetSubStream (Stream stream)
 		{
 #if !TARGET_JVM
 			if (stream is IntPtrStream)
@@ -384,7 +385,7 @@ namespace System.Web {
 			throw new NotSupportedException ("The stream is " + stream.GetType ());
 		}
 
-		static void EndStreamCopy (Stream stream)
+		static void EndSubStream (Stream stream)
 		{
 			if (stream is TempFileStream) {
 				((TempFileStream) stream).RestorePosition ();
@@ -400,7 +401,7 @@ namespace System.Web {
 			if (boundary == null)
 				return;
 
-			Stream input = StreamCopy (InputStream);
+			Stream input = GetSubStream (InputStream);
 			HttpMultipart multi_part = new HttpMultipart (input, boundary, ContentEncoding);
 
 			HttpMultipart.Element e;
@@ -420,7 +421,7 @@ namespace System.Web {
 					files.AddFile (e.Name, sub);
 				}
 			}
-			EndStreamCopy (input);
+			EndSubStream (input);
 		}
 
 		//
@@ -440,7 +441,7 @@ namespace System.Web {
 		// 
 		void LoadWwwForm ()
 		{
-			Stream input = StreamCopy (InputStream);
+			Stream input = GetSubStream (InputStream);
 			StreamReader s = new StreamReader (input, ContentEncoding);
 
 			StringBuilder key = new StringBuilder ();
@@ -469,7 +470,7 @@ namespace System.Web {
 			if (c == -1)
 				AddRawKeyValue (key, value);
 
-			EndStreamCopy (input);
+			EndSubStream (input);
 		}
 		
 		bool IsContentType (string ct, bool starts_with)
@@ -1215,7 +1216,7 @@ namespace System.Web {
 
 			// More than 1 call to SaveAs works fine on MS, so we "copy" the stream
 			// to keep InputStream in its state.
-			Stream input = StreamCopy (InputStream);
+			Stream input = GetSubStream (InputStream);
 			try {
 				long len = input.Length;
 				int buf_size = (int) Math.Min ((len < 0 ? 0 : len), 8192);
@@ -1228,7 +1229,7 @@ namespace System.Web {
 			} finally {
 				output.Flush ();
 				output.Close ();
-				EndStreamCopy (input);
+				EndSubStream (input);
 			}
 		}
 
