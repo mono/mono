@@ -361,7 +361,7 @@ namespace MonoTests.System.Data.Common
 		
 		[Test]
 #if TARGET_JVM
-		[Ignore ("Not works in TARGET_JVM")]
+		[Ignore ("Does not work with TARGET_JVM")]
 #endif
 		public void ToStringTest()
 		{
