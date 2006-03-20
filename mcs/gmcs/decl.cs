@@ -847,32 +847,13 @@ namespace Mono.CSharp {
 			return Name;
 		}
 
-		EmitContext type_resolve_ec;
-		protected EmitContext TypeResolveEmitContext {
-			get {
-				if (type_resolve_ec == null) {
-					// FIXME: I think this should really be one of:
-					//
-					// a. type_resolve_ec = Parent.EmitContext;
-					// b. type_resolve_ec = new EmitContext (Parent, Parent, loc, null, null, ModFlags, false);
-					//
-					// However, if Parent == RootContext.Tree.Types, its NamespaceEntry will be null.
-					//
-					type_resolve_ec = new EmitContext (this, Parent, this, Location.Null, null, null, ModFlags, false);
-				}
-				return type_resolve_ec;
-			}
-		}
-
 		// <summary>
 		//    Resolves the expression `e' for a type, and will recursively define
 		//    types.  This should only be used for resolving base types.
 		// </summary>
 		protected TypeExpr ResolveBaseTypeExpr (Expression e)
 		{
-			if (this is GenericMethod)
-				TypeResolveEmitContext.ContainerType = Parent.TypeBuilder;
-			return e.ResolveAsTypeTerminal (TypeResolveEmitContext, false);
+			return e.ResolveAsTypeTerminal (this, false);
 		}
 		
 		public bool CheckAccessLevel (Type check_type) 

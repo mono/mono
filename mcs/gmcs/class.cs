@@ -1302,9 +1302,7 @@ namespace Mono.CSharp {
 
 
 			if (base_type != null) {
-				// FIXME: I think this should be ...ResolveType (Parent.EmitContext).
-				//        However, if Parent == RootContext.Tree.Types, its NamespaceEntry will be null.
-				FullNamedExpression fne = base_type.ResolveAsTypeStep (TypeResolveEmitContext, false);
+				FullNamedExpression fne = base_type.ResolveAsTypeStep (this, false);
 				if ((fne == null) || (fne.Type == null)) {
 					error = true;
 					return null;
@@ -1338,10 +1336,7 @@ namespace Mono.CSharp {
 
 			// add interfaces that were not added at type creation
 			if (iface_exprs != null) {
-				// FIXME: I think this should be ...ExpandInterfaces (Parent.EmitContext, ...).
-				//        However, if Parent == RootContext.Tree.Types, its NamespaceEntry will be null.
-				TypeResolveEmitContext.ContainerType = TypeBuilder;
-				ifaces = TypeManager.ExpandInterfaces (TypeResolveEmitContext, iface_exprs);
+				ifaces = TypeManager.ExpandInterfaces (this, iface_exprs);
 				if (ifaces == null) {
 					error = true;
 					return null;
@@ -1374,7 +1369,7 @@ namespace Mono.CSharp {
 		public bool ResolveType ()
 		{
 			if ((base_type != null) &&
-			    (base_type.ResolveType (TypeResolveEmitContext) == null)) {
+			    (base_type.ResolveType (this) == null)) {
 				error = true;
 				return false;
 			}
