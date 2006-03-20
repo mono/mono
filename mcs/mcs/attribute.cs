@@ -178,7 +178,7 @@ namespace Mono.CSharp {
 			if (LeftExpr == null) {
 				te = ResolveAsTypeTerminal (new SimpleName (name, Location), rc, silent);
 			} else {
-				te = ResolveAsTypeTerminal (new MemberAccess (LeftExpr, name, Location), rc, silent);
+				te = ResolveAsTypeTerminal (new MemberAccess (LeftExpr, name), rc, silent);
 			}
 
 			if (te == null)
@@ -926,7 +926,7 @@ namespace Mono.CSharp {
 			ps.AddPermission (perm);
 		}
 
-		object GetValue (object value)
+		static object GetValue (object value)
 		{
 			if (value is EnumConstant)
 				return ((EnumConstant) value).GetValue ();

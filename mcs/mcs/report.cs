@@ -668,7 +668,7 @@ namespace Mono.CSharp {
 			return result;
 		}
 
-		bool CheckWarningCode (int code, Location loc)
+		static bool CheckWarningCode (int code, Location loc)
 		{
 			if (Report.IsValidWarning (code))
 				return true;

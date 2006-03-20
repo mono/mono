@@ -71,7 +71,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		bool IsValidEnumType (Type t)
+		static bool IsValidEnumType (Type t)
 		{
 			return (t == TypeManager.int32_type || t == TypeManager.uint32_type || t == TypeManager.int64_type ||
 				t == TypeManager.byte_type || t == TypeManager.sbyte_type || t == TypeManager.short_type ||

@@ -701,7 +701,7 @@ namespace Mono.CSharp
 				return result;
 			}
 
-			protected void MergeFinally (FlowBranching branching, UsageVector f_origins,
+			protected static void MergeFinally (UsageVector f_origins,
 						     MyBitVector f_params)
 			{
 				for (UsageVector vector = f_origins; vector != null; vector = vector.Next) {
@@ -710,15 +710,15 @@ namespace Mono.CSharp
 				}
 			}
 
-			public void MergeFinally (FlowBranching branching, UsageVector f_vector,
+			public void MergeFinally (UsageVector f_vector,
 						  UsageVector f_origins)
 			{
 				if (parameters != null) {
 					if (f_vector != null) {
-						MergeFinally (branching, f_origins, f_vector.Parameters);
+						MergeFinally (f_origins, f_vector.Parameters);
 						MyBitVector.Or (ref parameters, f_vector.ParameterVector);
 					} else
-						MergeFinally (branching, f_origins, parameters);
+						MergeFinally (f_origins, parameters);
 				}
 
 				if (f_vector != null && f_vector.LocalVector != null)
@@ -1492,7 +1492,7 @@ namespace Mono.CSharp
 		{
 			UsageVector vector = Merge (catch_vectors);
 
-			vector.MergeFinally (this, finally_vector, finally_origins);
+			vector.MergeFinally (finally_vector, finally_origins);
 
 			return vector;
 		}

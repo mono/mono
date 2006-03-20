@@ -437,7 +437,7 @@ namespace Mono.CSharp {
 		///  Verifies whether the delegate in question is compatible with this one in
 		///  order to determine if instantiation from the same is possible.
 		/// </summary>
-		public static bool VerifyDelegate (EmitContext ec, Type delegate_type, Type probe_type, Location loc)
+		public static bool VerifyDelegate (EmitContext ec, Type delegate_type, Location loc)
 		{
 			Expression ml = Expression.MemberLookup (
 				ec.ContainerType, delegate_type, "Invoke", loc);
@@ -754,7 +754,7 @@ namespace Mono.CSharp {
 
 			Argument a = (Argument) Arguments [0];
 
-			if (!a.ResolveMethodGroup (ec, loc))
+			if (!a.ResolveMethodGroup (ec))
 				return null;
 			
 			Expression e = a.Expr;
@@ -766,9 +766,7 @@ namespace Mono.CSharp {
 			if (mg != null)
 				return ResolveMethodGroupExpr (ec, mg);
 
-			Type e_type = e.Type;
-
-			if (!TypeManager.IsDelegateType (e_type)) {
+			if (!TypeManager.IsDelegateType (e.Type)) {
 				Report.Error (149, loc, "Method name expected");
 				return null;
 			}
@@ -784,8 +782,8 @@ namespace Mono.CSharp {
 
 			// This is what MS' compiler reports. We could always choose
 			// to be more verbose and actually give delegate-level specifics			
-			if (!Delegate.VerifyDelegate (ec, type, e_type, loc)) {
-				Report.Error (29, loc, "Cannot implicitly convert type '" + e_type + "' " +
+			if (!Delegate.VerifyDelegate (ec, type, loc)) {
+				Report.Error (29, loc, "Cannot implicitly convert type '" + e.Type + "' " +
 					      "to type '" + type + "'");
 				return null;
 			}
