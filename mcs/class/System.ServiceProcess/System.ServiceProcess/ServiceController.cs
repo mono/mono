@@ -35,6 +35,11 @@ namespace System.ServiceProcess
 	{
 
 		[MonoTODO]
+		public ServiceController () {}
+		public ServiceController (string name) {}
+		public ServiceController (string name, string machineName) {}
+
+		[MonoTODO]
 		public ServiceControllerStatus Status {
 			get {
 				throw new NotImplementedException ();
@@ -56,6 +61,23 @@ namespace System.ServiceProcess
 		{
 			throw new NotImplementedException ();
 		}
+		
+		[MonoTODO]
+		public void Stop () {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void WaitForStatus (ServiceControllerStatus desiredStatus){
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void WaitForStatus (ServiceControllerStatus desiredStatus, TimeSpan timeout)
+		{
+			throw new NotImplementedException ();
+		}
+	
 
 	}
 }
