@@ -1,3 +1,7 @@
+2006-03-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HebrewCalrndar.cs : removed commented obsolete code.
+
 2006-03-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TextInfo.cs : (ToUpper/ToLower) use InternalAllocateStr() and
