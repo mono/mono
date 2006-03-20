@@ -1,7 +1,8 @@
 2006-03-20  Raja R Harinath  <rharinath@novell.com>
 
 	* icall.c (ves_icall_Type_GetInterfaces): Avoid using
-	'interface_id' field of open generic types.
+	'interface_id' and 'max_interface_id' fields of MonoClasses
+	representing open generic types.
 
 Fri Mar 17 18:06:06 CET 2006 Paolo Molaro <lupus@ximian.com>
 
