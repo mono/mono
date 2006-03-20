@@ -257,7 +257,6 @@ handle_enum:
 			goto handle_enum;
 		}
 		return OP_VMOVE;
-		//return CEE_STOBJ;
 	case MONO_TYPE_TYPEDBYREF:
 		return OP_VMOVE;
 	case MONO_TYPE_GENERICINST:
@@ -611,25 +610,13 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 /*
  * Variants which do an emit as well.
  */
-#define EMIT_NEW_ICONST(cfg,dest,val) do { \
-        NEW_ICONST ((cfg), (dest), (val)); \
-        MONO_ADD_INS ((cfg)->cbb, (dest)); \
-    } while (0)
+#define EMIT_NEW_ICONST(cfg,dest,val) do { NEW_ICONST ((cfg), (dest), (val)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
-#define EMIT_NEW_PCONST(cfg,dest,val) do {	\
-        NEW_PCONST ((cfg), (dest), (val)); \
-        MONO_ADD_INS ((cfg)->cbb, (dest)); \
-    } while (0)
+#define EMIT_NEW_PCONST(cfg,dest,val) do { NEW_PCONST ((cfg), (dest), (val)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
-#define EMIT_NEW_AOTCONST(cfg,dest,patch_type,cons) do { \
-        NEW_AOTCONST ((cfg), (dest), (patch_type), (cons)); \
-        MONO_ADD_INS ((cfg)->cbb, (dest)); \
-    } while (0)
+#define EMIT_NEW_AOTCONST(cfg,dest,patch_type,cons) do { NEW_AOTCONST ((cfg), (dest), (patch_type), (cons)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
-#define EMIT_NEW_AOTCONST_TOKEN(cfg,dest,patch_type,image,token,stack_type) do { \
-        NEW_AOTCONST_TOKEN ((cfg), (dest), (patch_type), (image), (token), (stack_type)); \
-        MONO_ADD_INS ((cfg)->cbb, (dest)); \
-    } while (0)
+#define EMIT_NEW_AOTCONST_TOKEN(cfg,dest,patch_type,image,token,stack_type) do { NEW_AOTCONST_TOKEN ((cfg), (dest), (patch_type), (image), (token), (stack_type)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
 #define EMIT_NEW_CLASSCONST(cfg,dest,val) EMIT_NEW_AOTCONST ((cfg), (dest), MONO_PATCH_INFO_CLASS, (val))
 
@@ -651,7 +638,11 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 
 #define EMIT_NEW_DOMAINCONST(cfg,dest) do { NEW_DOMAINCONST ((cfg), (dest)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
+#define EMIT_NEW_ARGLOAD(cfg,dest,num) do { NEW_VARLOAD ((cfg), (dest), arg_array [(num)], param_types [(num)]); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
+
 #define EMIT_NEW_TEMPLOAD(cfg,dest,num) do { NEW_TEMPLOAD ((cfg), (dest), (num)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
+
+#define EMIT_NEW_LOCLOAD(cfg,dest,num) do { NEW_LOCLOAD ((cfg), (dest), (num)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
 #define EMIT_NEW_VARLOADA(cfg,dest,var,vartype) do { NEW_VARLOADA ((cfg), (dest), (var), (vartype)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
@@ -663,6 +654,12 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 
 #define EMIT_NEW_RETLOADA(cfg,dest) do { NEW_RETLOADA ((cfg), (dest)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
+#define EMIT_NEW_TEMPSTORE(cfg,dest,num,inst) do { NEW_TEMPSTORE ((cfg), (dest), (num), (inst)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
+
+#define EMIT_NEW_LOCSTORE(cfg,dest,num,inst) do { NEW_LOCSTORE ((cfg), (dest), (num), (inst)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
+
+#define EMIT_NEW_ARGSTORE(cfg,dest,num,inst) do { NEW_ARGSTORE ((cfg), (dest), (num), (inst)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
+
 #define EMIT_NEW_DUMMY_USE(cfg,dest,var) do { NEW_DUMMY_USE ((cfg), (dest), (var)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
 #define EMIT_NEW_UNALU(cfg,dest,op,dr,sr1) do { \
@@ -673,19 +670,11 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 	    MONO_ADD_INS (cfg->cbb, (dest)); \
     } while (0)        
 
-#define EMIT_NEW_BIALU_IMM(cfg,dest,op,dr,sr,imm) do { \
-        NEW_BIALU_IMM ((cfg), (dest), (op), (dr), (sr), (imm)); \
-        MONO_ADD_INS ((cfg)->cbb, (dest)); \
-	} while (0)
+#define EMIT_NEW_BIALU_IMM(cfg,dest,op,dr,sr,imm) do { NEW_BIALU_IMM ((cfg), (dest), (op), (dr), (sr), (imm)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
-#define EMIT_NEW_LOAD_MEMBASE(cfg,dest,op,dr,base,offset) do { \
-        MONO_INST_NEW ((cfg), (dest), (op)); \
-        (dest)->dreg = (dr); \
-        (dest)->inst_basereg = (base); \
-        (dest)->inst_offset = (offset); \
-        (dest)->type = STACK_I4; \
-        MONO_ADD_INS (cfg->cbb, (dest)); \
-	} while (0)
+#define EMIT_NEW_LOAD_MEMBASE(cfg,dest,op,dr,base,offset) do { NEW_LOAD_MEMBASE ((cfg), (dest), (op), (dr), (base), (offset)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
+
+#define EMIT_NEW_STORE_MEMBASE(cfg,dest,op,base,offset,sr) do { NEW_STORE_MEMBASE ((cfg), (dest), (op), (base), (offset), (sr)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
 /*
  * Variants which do not take an dest argument, but take a dreg argument.
@@ -1884,16 +1873,9 @@ handle_stack_args (MonoCompile *cfg, MonoInst **sp, int count) {
 	locals = bb->out_stack;
 	cfg->cbb = bb;
 	for (i = 0; i < count; ++i) {
-		NEW_TEMPSTORE (cfg, inst, locals [i]->inst_c0, sp [i]);
-		if (inst->opcode == CEE_STOBJ) {
-			EMIT_NEW_TEMPLOADA (cfg, inst, locals [i]->inst_c0);
-			emit_stobj (cfg, inst, sp [i], sp [i]->cil_code, inst->klass, FALSE);
-			sp [i] = inst;
-		} else {
-			inst->cil_code = sp [i]->cil_code;
-			MONO_ADD_INS (cfg->cbb, inst);
-			sp [i] = locals [i];
-		}
+		EMIT_NEW_TEMPSTORE (cfg, inst, locals [i]->inst_c0, sp [i]);
+		inst->cil_code = sp [i]->cil_code;
+		sp [i] = locals [i];
 		if (cfg->verbose_level > 3)
 			printf ("storing %d to temp %d\n", i, (int)locals [i]->inst_c0);
 	}
@@ -1918,16 +1900,9 @@ handle_stack_args (MonoCompile *cfg, MonoInst **sp, int count) {
 			}
 			if (outb->in_stack != locals) {
 				for (i = 0; i < count; ++i) {
-					NEW_TEMPSTORE (cfg, inst, outb->in_stack [i]->inst_c0, sp [i]);
-					if (inst->opcode == CEE_STOBJ) {
-						EMIT_NEW_TEMPLOADA (cfg, inst, outb->in_stack [i]->inst_c0);
-						emit_stobj (cfg, inst, sp [i], sp [i]->cil_code, inst->klass, FALSE);
-						sp [i] = inst;
-					} else {
-						inst->cil_code = sp [i]->cil_code;
-						MONO_ADD_INS (cfg->cbb, inst);
-						sp [i] = locals [i];
-					}
+					EMIT_NEW_TEMPSTORE (cfg, inst, outb->in_stack [i]->inst_c0, sp [i]);
+					inst->cil_code = sp [i]->cil_code;
+					sp [i] = locals [i];
 					if (cfg->verbose_level > 3)
 						printf ("storing %d to temp %d\n", i, (int)outb->in_stack [i]->inst_c0);
 				}
@@ -2827,36 +2802,6 @@ emit_stobj (MonoCompile *cfg, MonoInst *dest, MonoInst *src, const unsigned char
 	}
 }
 
-/*
- * Emit code to load a valuetype to the evaluation stack and return a MonoInst
- * which can be pushed to the stack.
- */
-static MonoInst*
-emit_ldobj (MonoCompile *cfg, MonoInst *src, const unsigned char *ip, MonoClass *klass)
-{
-	MonoInst *dest, *temp;
-
-	temp = mono_compile_create_var (cfg, &klass->byval_arg, OP_LOCAL);
-	EMIT_NEW_TEMPLOADA (cfg, dest, temp->inst_c0);
-	emit_stobj (cfg, dest, src, ip, klass, FALSE);
-
-	EMIT_NEW_TEMPLOADA (cfg, dest, temp->inst_c0);
-	dest->type = STACK_VTYPE;
-	dest->klass = klass;
-	return dest;
-}
-
-static MonoInst*
-emit_ldobj_var (MonoCompile *cfg, MonoInst *var, const unsigned char*ip)
-{
-	MonoInst *src;
-
-	NEW_VARLOADA (cfg, src, var, var->inst_vtype);
-	MONO_ADD_INS (cfg->cbb, src);
-
-	return emit_ldobj (cfg, src, ip, var->klass);
-}
-
 static MonoMethod*
 get_memset_method (void)
 {
@@ -2978,7 +2923,7 @@ handle_alloc (MonoCompile *cfg, MonoClass *klass, gboolean for_box, const guchar
 static MonoInst*
 handle_box (MonoCompile *cfg, MonoInst *val, const guchar *ip, MonoClass *klass)
 {
-	MonoInst *alloc, *dest, *vstore;
+	MonoInst *alloc;
 
 	if (mono_class_is_nullable (klass)) {
 		MonoMethod* method = mono_class_get_method_from_name (klass, "Box", 1);
@@ -2987,16 +2932,7 @@ handle_box (MonoCompile *cfg, MonoInst *val, const guchar *ip, MonoClass *klass)
 
 	alloc = handle_alloc (cfg, klass, TRUE, ip);
 
-	NEW_STORE_MEMBASE (cfg, vstore, mono_type_to_store_membase (&klass->byval_arg), alloc->dreg, sizeof (MonoObject), val->dreg);
-
-	if (vstore->opcode == CEE_STOBJ) {
-		int dreg = alloc_preg (cfg);
-		NEW_BIALU_IMM (cfg, dest, OP_ADD_IMM, dreg, alloc->dreg, sizeof (MonoObject));
-		MONO_ADD_INS (cfg->cbb, dest);
-		emit_stobj (cfg, dest, val, NULL, klass, FALSE);
-	} else {
-		MONO_ADD_INS (cfg->cbb, vstore);
-	}
+	MONO_EMIT_NEW_STORE_MEMBASE (cfg, mono_type_to_store_membase (&klass->byval_arg), alloc->dreg, sizeof (MonoObject), val->dreg);
 
 	return alloc;
 }
@@ -3887,14 +3823,8 @@ mono_save_args (MonoCompile *cfg, MonoMethodSignature *sig, MonoInst **sp, MonoI
 		 */
 		temp = mono_compile_create_var (cfg, argtype, OP_LOCAL);
 		*args++ = temp;
-		NEW_TEMPSTORE (cfg, store, temp->inst_c0, *sp);
+		EMIT_NEW_TEMPSTORE (cfg, store, temp->inst_c0, *sp);
 		store->cil_code = sp [0]->cil_code;
-		if (store->opcode == CEE_STOBJ) {
-			EMIT_NEW_TEMPLOADA (cfg, store, temp->inst_c0);
-			emit_stobj (cfg, store, *sp, sp [0]->cil_code, temp->klass, FALSE);
-		} else {
-			MONO_ADD_INS (cfg->cbb, store);
-		}
 		sp++;
 	}
 }
@@ -3971,11 +3901,7 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 		cfg->cbb = ebblock;
 
 		if (rvar) {
-			NEW_TEMPLOAD (cfg, ins, rvar->inst_c0);
-			if (ins->opcode == CEE_LDOBJ)
-				g_assert_not_reached ();
-			else
-				MONO_ADD_INS (cfg->cbb, ins);
+			EMIT_NEW_TEMPLOAD (cfg, ins, rvar->inst_c0);
 			*sp++ = ins;
 		}
 		return costs + 1;
@@ -5779,11 +5705,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			for (i = 0; i < bblock->in_scount; ++i) {
 				if (cfg->verbose_level > 3)
 					printf ("loading %d from temp %d\n", i, (int)bblock->in_stack [i]->inst_c0);						
-				NEW_TEMPLOAD (cfg, ins, bblock->in_stack [i]->inst_c0);
-				if (ins->opcode == CEE_LDOBJ)
-					ins = emit_ldobj_var (cfg, bblock->in_stack [i], ip);
-				else
-					MONO_ADD_INS (cfg->cbb, ins);
+				EMIT_NEW_TEMPLOAD (cfg, ins, bblock->in_stack [i]->inst_c0);
 				*sp++ = ins;
 			}
 			g_slist_free (class_inits);
@@ -5801,11 +5723,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				for (i = 0; i < bblock->in_scount; ++i) {
 					if (cfg->verbose_level > 3)
 						printf ("loading %d from temp %d\n", i, (int)bblock->in_stack [i]->inst_c0);						
-					NEW_TEMPLOAD (cfg, ins, bblock->in_stack [i]->inst_c0);
-					if (ins->opcode == CEE_LDOBJ)
-						ins = emit_ldobj_var (cfg, bblock->in_stack [i], ip);
-					else
-						MONO_ADD_INS (cfg->cbb, ins);
+					EMIT_NEW_TEMPLOAD (cfg, ins, bblock->in_stack [i]->inst_c0);
 					*sp++ = ins;
 				}
 				g_slist_free (class_inits);
@@ -5848,16 +5766,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			CHECK_STACK_OVF (1);
 			n = (*ip)-CEE_LDARG_0;
 			CHECK_ARG (n);
-			NEW_ARGLOAD (cfg, ins, n);
+			EMIT_NEW_ARGLOAD (cfg, ins, n);
 			ins->cil_code = ip++;
-			if (ins->opcode == CEE_LDOBJ) {
-				MonoInst *src;
-
-				EMIT_NEW_ARGLOADA (cfg, src, n);
-				ins = emit_ldobj (cfg, src, ip, ins->klass);
-			}
-			else
-				MONO_ADD_INS (cfg->cbb, ins);
 			*sp++ = ins;
 			break;
 		case CEE_LDLOC_0:
@@ -5867,18 +5777,9 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			CHECK_STACK_OVF (1);
 			n = (*ip)-CEE_LDLOC_0;
 			CHECK_LOCAL (n);
-			NEW_LOCLOAD (cfg, ins, n);
+			EMIT_NEW_LOCLOAD (cfg, ins, n);
 			ins->cil_code = ip++;
-
-			if (ins->opcode == CEE_LDOBJ) {
-				MonoInst *src;
-
-				EMIT_NEW_LOCLOADA (cfg, src, n);
-				*sp++ = emit_ldobj (cfg, src, ip, ins->klass);
-			} else {
-				MONO_ADD_INS (bblock, ins);
-				*sp++ = ins;
-			}
+			*sp++ = ins;
 			break;
 		case CEE_STLOC_0:
 		case CEE_STLOC_1:
@@ -5902,14 +5803,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				 */
 				sp [0]->dreg = (cfg)->locals [n]->dreg;
 			} else {
-				NEW_LOCSTORE (cfg, ins, n, *sp);
+				EMIT_NEW_LOCSTORE (cfg, ins, n, *sp);
 				ins->cil_code = ip;
-
-				if (ins->opcode == CEE_STOBJ) {
-					EMIT_NEW_LOCLOADA (cfg, ins, n);
-					emit_stobj (cfg, ins, *sp, ip, ins->klass, FALSE);
-				} else
-					MONO_ADD_INS (bblock, ins);
 			}
 			++ip;
 			inline_costs += 1;
@@ -5920,16 +5815,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			CHECK_STACK_OVF (1);
 			n = ip [1];
 			CHECK_ARG (n);
-			NEW_ARGLOAD (cfg, ins, n);
+			EMIT_NEW_ARGLOAD (cfg, ins, n);
 			ins->cil_code = ip;
-			if (ins->opcode == CEE_LDOBJ) {
-				MonoInst *src;
-
-				EMIT_NEW_ARGLOADA (cfg, src, n);
-				ins = emit_ldobj (cfg, src, ip, ins->klass);
-			}
-			else
-				MONO_ADD_INS (cfg->cbb, ins);
 			*sp++ = ins;
 			ip += 2;
 			break;
@@ -5952,13 +5839,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			CHECK_ARG (n);
 			if (!dont_verify_stloc && target_type_is_incompatible (cfg, param_types [ip [1]], *sp))
 				UNVERIFIED;
-			NEW_ARGSTORE (cfg, ins, n, *sp);
+			EMIT_NEW_ARGSTORE (cfg, ins, n, *sp);
 			ins->cil_code = ip;
-			if (ins->opcode == CEE_STOBJ) {
-				EMIT_NEW_ARGLOADA (cfg, ins, n);
-				emit_stobj (cfg, ins, *sp, ip, ins->klass, FALSE);
-			} else
-				MONO_ADD_INS (cfg->cbb, ins);
 			ip += 2;
 			break;
 		case CEE_LDLOC_S:
@@ -5966,18 +5848,9 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			CHECK_STACK_OVF (1);
 			n = ip [1];
 			CHECK_LOCAL (n);
-			NEW_LOCLOAD (cfg, ins, n);
+			EMIT_NEW_LOCLOAD (cfg, ins, n);
 			ins->cil_code = ip;
-
-			if (ins->opcode == CEE_LDOBJ) {
-				MonoInst *src;
-
-				EMIT_NEW_LOCLOADA (cfg, src, n);
-				*sp++ = emit_ldobj (cfg, src, ip, ins->klass);
-			} else {
-				MONO_ADD_INS (cfg->cbb, ins);
-				*sp++ = ins;
-			}
+			*sp++ = ins;
 			ip += 2;
 			break;
 		case CEE_LDLOCA_S:
@@ -5996,13 +5869,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			CHECK_LOCAL (ip [1]);
 			if (!dont_verify_stloc && target_type_is_incompatible (cfg, header->locals [ip [1]], *sp))
 				UNVERIFIED;
-			NEW_LOCSTORE (cfg, ins, ip [1], *sp);
+			EMIT_NEW_LOCSTORE (cfg, ins, ip [1], *sp);
 			ins->cil_code = ip;
-			if (ins->opcode == CEE_STOBJ) {
-				EMIT_NEW_LOCLOADA (cfg, ins, ip [1]);
-				emit_stobj (cfg, ins, *sp, ip, ins->klass, FALSE);
-			} else
-				MONO_ADD_INS (bblock, ins);
 			ip += 2;
 			inline_costs += 1;
 			break;
@@ -6116,40 +5984,16 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			temp = mono_compile_create_var (cfg, type_from_stack_type (ins), OP_LOCAL);
 			temp->flags |= MONO_INST_IS_TEMP;
 			temp->cil_code = ip;
-			NEW_TEMPSTORE (cfg, store, temp->inst_c0, ins);
+			EMIT_NEW_TEMPSTORE (cfg, store, temp->inst_c0, ins);
 			store->cil_code = ip;
-			if (store->opcode == CEE_STOBJ) {
-				EMIT_NEW_TEMPLOADA (cfg, store, temp->inst_c0);
-				emit_stobj (cfg, store, sp [0], sp [0]->cil_code, store->klass, FALSE);
-			} else {
-				MONO_ADD_INS (bblock, store);
-			}
 
-			NEW_TEMPLOAD (cfg, ins, temp->inst_c0);
+			EMIT_NEW_TEMPLOAD (cfg, ins, temp->inst_c0);
 			ins->cil_code = ip;
-			if (ins->opcode == CEE_LDOBJ) {
-				MonoInst *src;
+			*sp++ = ins;
 
-				EMIT_NEW_TEMPLOADA (cfg, src, temp->inst_c0);
-				*sp++ = emit_ldobj (cfg, src, ip, ins->klass);
-			}
-			else {
-				MONO_ADD_INS (bblock, ins);
-				*sp++ = ins;
-			}
-
-			NEW_TEMPLOAD (cfg, ins, temp->inst_c0);
+			EMIT_NEW_TEMPLOAD (cfg, ins, temp->inst_c0);
 			ins->cil_code = ip;
-			if (ins->opcode == CEE_LDOBJ) {
-				MonoInst *src;
-
-				EMIT_NEW_TEMPLOADA (cfg, src, temp->inst_c0);
-				*sp++ = emit_ldobj (cfg, src, ip, ins->klass);
-			}
-			else {
-				MONO_ADD_INS (bblock, ins);
-				*sp++ = ins;
-			}
+			*sp++ = ins;
 
 			++ip;
 			inline_costs += 2;
@@ -6339,14 +6183,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				for (i = 0; i < n; ++i) {
 					/* Prevent argument from being register allocated */
 					arg_array [i]->flags |= MONO_INST_VOLATILE;
-					NEW_ARGSTORE (cfg, ins, i, sp [i]);
+					EMIT_NEW_ARGSTORE (cfg, ins, i, sp [i]);
 					ins->cil_code = ip;
-					if (ins->opcode == CEE_STOBJ) {
-						EMIT_NEW_ARGLOADA (cfg, ins, i);
-						emit_stobj (cfg, ins, sp [i], sp [i]->cil_code, ins->klass, FALSE);
-					}
-					else
-						MONO_ADD_INS (bblock, ins);
 				}
 
 				/* FIXME: */
@@ -6468,26 +6306,15 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					}
 					
 					addr = mini_emit_ldelema_ins (cfg, cmethod, sp, ip, TRUE);
-					NEW_STORE_MEMBASE (cfg, ins, mono_type_to_store_membase (fsig->params [fsig->param_count - 1]), addr->dreg, 0, sp [fsig->param_count]->dreg);
-					if (ins->opcode == CEE_STOBJ) {
-						emit_stobj (cfg, addr, sp [fsig->param_count], ip, mono_class_from_mono_type (fsig->params [fsig->param_count-1]), FALSE);
-					} else {
-						MONO_ADD_INS (bblock, ins);
-					}
-
+					MONO_EMIT_NEW_STORE_MEMBASE (cfg, mono_type_to_store_membase (fsig->params [fsig->param_count - 1]), addr->dreg, 0, sp [fsig->param_count]->dreg);
 				} else if (strcmp (cmethod->name, "Get") == 0) { /* array Get */
 					addr = mini_emit_ldelema_ins (cfg, cmethod, sp, ip, FALSE);
 
 					stack_type = type_to_stack_type (fsig->ret);
 					dreg = alloc_dreg (cfg, stack_type);
-					NEW_LOAD_MEMBASE (cfg, ins, mono_type_to_load_membase (fsig->ret), dreg, addr->dreg, 0);
+					EMIT_NEW_LOAD_MEMBASE (cfg, ins, mono_type_to_load_membase (fsig->ret), dreg, addr->dreg, 0);
 					ins->type = stack_type;
 					ins->klass = mono_class_from_mono_type (fsig->ret);
-
-					if (ins->opcode == CEE_LDOBJ)
-						ins = emit_ldobj (cfg, addr, ip, mono_class_from_mono_type (fsig->ret));
-					else
-						MONO_ADD_INS (cfg->cbb, ins);
 
 					*sp++ = ins;
 				} else if (strcmp (cmethod->name, "Address") == 0) { /* array Address */
@@ -6518,14 +6345,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					CHECK_STACK (1);
 					--sp;
 					//g_assert (returnvar != -1);
-					NEW_TEMPSTORE (cfg, store, return_var->inst_c0, *sp);
+					EMIT_NEW_TEMPSTORE (cfg, store, return_var->inst_c0, *sp);
 					store->cil_code = sp [0]->cil_code;
-					if (store->opcode == CEE_STOBJ) {
-						g_assert_not_reached ();
-						NEW_TEMPLOADA (cfg, store, return_var->inst_c0);
-						emit_stobj (cfg, store, *sp, sp [0]->cil_code, return_var->klass, FALSE);
-					} else
-						MONO_ADD_INS (bblock, store);
 				} 
 			} else {
 				if (cfg->ret) {
@@ -7091,13 +6912,9 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 			stack_type = type_to_stack_type (&klass->byval_arg);
 			dreg = alloc_dreg (cfg, stack_type);
-			NEW_LOAD_MEMBASE (cfg, ins, mono_type_to_load_membase (&klass->byval_arg), dreg, sp[0]->dreg, 0);
+			EMIT_NEW_LOAD_MEMBASE (cfg, ins, mono_type_to_load_membase (&klass->byval_arg), dreg, sp[0]->dreg, 0);
 			ins->type = stack_type;
 			ins->klass = klass;
-			if (ins->opcode == CEE_LDOBJ)
-				ins = emit_ldobj (cfg, sp [0], ip, klass);
-			else
-				MONO_ADD_INS (cfg->cbb, ins);
 			*sp++ = ins;
 
 			ip += 5;
@@ -7403,11 +7220,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 				stack_type = type_to_stack_type (&klass->byval_arg);
 				dreg = alloc_dreg (cfg, stack_type);
-				NEW_LOAD_MEMBASE (cfg, dest, mono_type_to_load_membase (&klass->byval_arg), dreg, sp[0]->dreg, 0);
-				if (dest->opcode == CEE_LDOBJ)
-					dest = emit_ldobj (cfg, sp [0], ip, klass);
-				else
-					MONO_ADD_INS (cfg->cbb, dest);
+				EMIT_NEW_LOAD_MEMBASE (cfg, dest, mono_type_to_load_membase (&klass->byval_arg), dreg, sp[0]->dreg, 0);
 				*sp++ = dest;
 			}
 
@@ -7555,18 +7368,9 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				} else {
 					MonoInst *store;
 
-					NEW_STORE_MEMBASE (cfg, store, mono_type_to_store_membase (field->type), sp [0]->dreg, foffset, sp [1]->dreg);
+					EMIT_NEW_STORE_MEMBASE (cfg, store, mono_type_to_store_membase (field->type), sp [0]->dreg, foffset, sp [1]->dreg);
 					store->flags |= ins_flag;
 					ins_flag = 0;
-					if (store->opcode == CEE_STOBJ) {
-						MonoInst *dest;
-						int dreg = alloc_preg (cfg);
-
-						EMIT_NEW_BIALU_IMM (cfg, dest, OP_PADD_IMM, dreg, sp [0]->dreg, foffset);
-						emit_stobj (cfg, dest, sp [1], ip, 
-							      mono_class_from_mono_type (field->type), FALSE);
-					} else
-						MONO_ADD_INS (bblock, store);
 				}
 				ip += 5;
 				break;
@@ -7607,22 +7411,12 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				} else {
 					MonoInst *load;
 
-					NEW_LOAD_MEMBASE (cfg, load, mono_type_to_load_membase (field->type), 0, sp [0]->dreg, foffset);
+					EMIT_NEW_LOAD_MEMBASE (cfg, load, mono_type_to_load_membase (field->type), 0, sp [0]->dreg, foffset);
 					type_to_eval_stack_type (field->type, load);
 					load->dreg = alloc_dreg (cfg, load->type);
 					load->cil_code = ip;
 					load->flags |= ins_flag;
 					ins_flag = 0;
-
-					if (load->opcode == CEE_LDOBJ) {
-						MonoInst *src;
-
-						dreg = alloc_preg (cfg);
-						EMIT_NEW_BIALU_IMM (cfg, src, OP_PADD_IMM, dreg, sp [0]->dreg, foffset);
-						load = emit_ldobj (cfg, src, ip, mono_class_from_mono_type (field->type));
-					}
-					else
-						MONO_ADD_INS (bblock, load);
 					*sp++ = load;
 				}
 			}
@@ -7710,14 +7504,9 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				CHECK_STACK (1);
 				sp--;
 
-				NEW_STORE_MEMBASE (cfg, store, mono_type_to_store_membase (field->type), ins->dreg, 0, sp [0]->dreg);
+				EMIT_NEW_STORE_MEMBASE (cfg, store, mono_type_to_store_membase (field->type), ins->dreg, 0, sp [0]->dreg);
 				store->flags |= ins_flag;
 				ins_flag = 0;
-
-				if (store->opcode == CEE_STOBJ) {
-					emit_stobj (cfg, ins, sp [0], ip, mono_class_from_mono_type (field->type), FALSE);
-				} else
-					MONO_ADD_INS (bblock, store);
 			} else {
 				gboolean is_const = FALSE;
 				MonoVTable *vtable = mono_class_vtable (cfg->domain, klass);
@@ -7794,14 +7583,9 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					CHECK_STACK_OVF (1);
 
 					dreg = alloc_dreg (cfg, type_to_stack_type (field->type));
-					NEW_LOAD_MEMBASE (cfg, load, mono_type_to_load_membase (field->type), dreg, ins->dreg, 0);
-					if (load->opcode == CEE_LDOBJ) {
-						load = emit_ldobj (cfg, ins, ip, mono_class_from_mono_type (field->type));
-					} else {
-						MONO_ADD_INS (cfg->cbb, load);
-						load->type = type_to_stack_type (field->type);
-						load->klass = mono_class_from_mono_type (field->type);
-					}
+					EMIT_NEW_LOAD_MEMBASE (cfg, load, mono_type_to_load_membase (field->type), dreg, ins->dreg, 0);
+					load->type = type_to_stack_type (field->type);
+					load->klass = mono_class_from_mono_type (field->type);
 					load->flags |= ins_flag;
 					ins_flag = 0;
 					*sp++ = load;
@@ -7822,11 +7606,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			if (!klass)
 				goto load_error;
 			/* FIXME: should check item at sp [1] is compatible with the type of the store. */
-			NEW_STORE_MEMBASE (cfg, ins, mono_type_to_store_membase (&klass->byval_arg), sp [0]->dreg, 0, sp [1]->dreg);
-			if (ins->opcode == CEE_STOBJ)
-				emit_stobj (cfg, sp [0], sp [1], ip, klass, FALSE);
-			else
-				MONO_ADD_INS (cfg->cbb, ins);
+			EMIT_NEW_STORE_MEMBASE (cfg, ins, mono_type_to_store_membase (&klass->byval_arg), sp [0]->dreg, 0, sp [1]->dreg);
 			ins_flag = 0;
 			ip += 5;
 			inline_costs += 1;
@@ -7981,16 +7761,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 			stack_type = type_to_stack_type (&klass->byval_arg);
 			dreg = alloc_dreg (cfg, stack_type);
-			NEW_LOAD_MEMBASE (cfg, ins, mono_type_to_load_membase (&klass->byval_arg), dreg, add_reg, G_STRUCT_OFFSET (MonoArray, vector));
+			EMIT_NEW_LOAD_MEMBASE (cfg, ins, mono_type_to_load_membase (&klass->byval_arg), dreg, add_reg, G_STRUCT_OFFSET (MonoArray, vector));
 			ins->type = stack_type;
-			if (ins->opcode == CEE_LDOBJ) {
-				int addr_reg = alloc_preg (cfg);
-				
-				EMIT_NEW_BIALU_IMM (cfg, ins, OP_PADD_IMM, addr_reg, add_reg, G_STRUCT_OFFSET (MonoArray, vector));
-				ins = emit_ldobj (cfg, ins, ip, klass);
-			}
-			else
-				MONO_ADD_INS (cfg->cbb, ins);
 
 			*sp++ = ins;
 			if (*ip == CEE_LDELEM_ANY)
@@ -8058,15 +7830,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_MUL_IMM, mult_reg, index_reg, size);
 				MONO_EMIT_NEW_BIALU (cfg, OP_PADD, add_reg, array_reg, mult_reg);
 
-				NEW_STORE_MEMBASE (cfg, ins, mono_type_to_store_membase (&klass->byval_arg), add_reg, G_STRUCT_OFFSET (MonoArray, vector), val_reg);
-				if (ins->opcode == CEE_STOBJ) {
-					int addr_reg = alloc_preg (cfg);
-				
-					EMIT_NEW_BIALU_IMM (cfg, ins, OP_PADD_IMM, addr_reg, add_reg, G_STRUCT_OFFSET (MonoArray, vector));
-					emit_stobj (cfg, ins, sp [2], ip, klass, FALSE);
-				}
-				else
-					MONO_ADD_INS (cfg->cbb, ins);
+				MONO_EMIT_NEW_STORE_MEMBASE (cfg, mono_type_to_store_membase (&klass->byval_arg), add_reg, G_STRUCT_OFFSET (MonoArray, vector), val_reg);
 			}
 
 			if (*ip == CEE_STELEM_ANY)
@@ -8662,16 +8426,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				CHECK_OPSIZE (4);
 				n = read16 (ip + 2);
 				CHECK_ARG (n);
-				NEW_ARGLOAD (cfg, ins, n);
+				EMIT_NEW_ARGLOAD (cfg, ins, n);
 				ins->cil_code = ip;
-				if (ins->opcode == CEE_LDOBJ) {
-					MonoInst *src;
-
-					EMIT_NEW_ARGLOADA (cfg, src, n);
-					ins = emit_ldobj (cfg, src, ip, ins->klass);
-				}
-				else
-					MONO_ADD_INS (cfg->cbb, ins);
 				*sp++ = ins;
 				ip += 4;
 				break;
@@ -8694,13 +8450,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				CHECK_ARG (n);
 				if (!dont_verify_stloc && target_type_is_incompatible (cfg, param_types [n], *sp))
 					UNVERIFIED;
-				NEW_ARGSTORE (cfg, ins, n, *sp);
+				EMIT_NEW_ARGSTORE (cfg, ins, n, *sp);
 				ins->cil_code = ip;
-				if (ins->opcode == CEE_STOBJ) {
-					EMIT_NEW_ARGLOADA (cfg, ins, n);
-					emit_stobj (cfg, ins, *sp, ip, ins->klass, FALSE);
-				} else
-					MONO_ADD_INS (bblock, ins);
 				ip += 4;
 				break;
 			case CEE_LDLOC:
@@ -8708,17 +8459,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				CHECK_OPSIZE (4);
 				n = read16 (ip + 2);
 				CHECK_LOCAL (n);
-				NEW_LOCLOAD (cfg, ins, n);
-				if (ins->opcode == CEE_LDOBJ) {
-					MonoInst *src;
-
-					EMIT_NEW_LOCLOADA (cfg, src, n);
-
-					*sp++ = emit_ldobj (cfg, src, ip, ins->klass);
-				} else {
-					MONO_ADD_INS (bblock, ins);
-					*sp++ = ins;
-				}
+				EMIT_NEW_LOCLOAD (cfg, ins, n);
+				*sp++ = ins;
 				ip += 4;
 				break;
 			case CEE_LDLOCA:
@@ -8739,13 +8481,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				CHECK_LOCAL (n);
 				if (!dont_verify_stloc && target_type_is_incompatible (cfg, header->locals [n], *sp))
 					UNVERIFIED;
-				NEW_LOCSTORE (cfg, ins, n, *sp);
+				EMIT_NEW_LOCSTORE (cfg, ins, n, *sp);
 				ins->cil_code = ip;
-				if (ins->opcode == CEE_STOBJ) {
-					EMIT_NEW_LOCLOADA (cfg, ins, n);
-					emit_stobj (cfg, ins, *sp, ip, ins->klass, FALSE);
-				} else
-					MONO_ADD_INS (bblock, ins);
 				ip += 4;
 				inline_costs += 1;
 				break;
