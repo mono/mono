@@ -9,10 +9,12 @@
 // Assembly: System.Data.OracleClient.dll
 // Namespace: System.Data.OracleClient.Oci
 //
-// Author:
+// Authors:
 //     Tim Coleman <tim@timcoleman.com>
+//     Daniel Morgan <danielmorgan@verizon.net>
 //
 // Copyright (C) Tim Coleman, 2003
+// Copyright (C) Daniel Morgan, 2005
 //
 //
 
@@ -42,6 +44,7 @@ namespace System.Data.OracleClient.Oci {
 		Clob = 0x70,
 		Blob = 0x71,
 		BFile = 0x72,
+		RSet = 0x74, // REF CURSOR
 		OciString = 0x9b,
 		OciDate = 0x9c,
 		TimeStamp = 0xbb

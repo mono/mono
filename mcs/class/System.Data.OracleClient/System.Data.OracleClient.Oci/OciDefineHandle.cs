@@ -393,6 +393,7 @@ namespace System.Data.OracleClient.Oci
 					switch (definedType) {
 					case OciDataType.Clob:
 					case OciDataType.Blob:
+					case OciDataType.TimeStamp:
 						break;
 					default:
 						Marshal.FreeHGlobal (value);

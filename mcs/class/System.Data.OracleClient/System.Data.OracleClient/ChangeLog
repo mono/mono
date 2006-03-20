@@ -1,3 +1,7 @@
+2006-02-27  Konstantin Triger <kostat@mainsoft.com>
+
+	* OracleDataAdapter.cs: Do not throw ArgumentException when null is passed.
+
 2005-11-21  Senganal T   <tsenganal@novell.com>
 
 	* OracleCommandBuilder.cs :

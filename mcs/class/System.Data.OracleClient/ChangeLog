@@ -1,3 +1,110 @@
+2006-03-13 Boris Kirzner <borisk@mainsoft.com>
+	* run-tests.bat, run-tests.test.bat: added batch files for automated testing 
+	support for TARGET_JVM.
+
+2006-03-10  Senganal T  <tsenganal@novell.com>
+
+	* System.Data.OracleClient.Oci/OciStatementHandle.cs : Get StatementType as a ushort value.
+	* System.Data.OracleClient.Oci/OciParameterDescriptor.cs : Get DataType as a ushort value.
+
+2006-01-02  Daniel Morgan <danielmorgan@verizon.net>
+
+	* System.Data.OracleClient/OracleConnection.cs: dispose of the
+	connection string and other fields
+	
+	* Test/TestOracleClient.cs: tests for Intergrated Security
+	and Persist Secuirty Info connection string parameters
+
+2006-01-01  Daniel Morgan <danielmorgan@verizon.net>
+
+	* System.Data.OracleClient/OracleConnection.cs: implement
+	support for connection parameter PERSIST SECURITY INFO and
+	correct what Clone() does
+
+2005-12-20  Daniel Morgan <danielmorgan@verizon.net>
+
+	* System.Data.OracleClient/OracleConnectionPoolManager.cs
+	* System.Data.OracleClient/OracleConnectionPool.cs
+	* System.Data.OracleClient/OracleConnection.cs
+	* System.Data.OracleClient/OciGlue.cs
+	* System.Data.OracleClient.Oci/OciEnvironmentHandle.cs
+	* System.Data.OracleClient.Oci/OciErrorHandle.cs
+	* System.Data.OracleClient.Oci/OciServiceHandle.cs
+	* System.Data.OracleClient.Oci/OciSessionHandle.cs: modified
+		- support Integrated Security which is external authentication
+		- dispose of OCI handles properly to prevent SEGSIGV during finalization
+		at application exit
+
+2005-12-19  Daniel Morgan <danielmorgan@verizon.net>
+
+	* System.Data.OracleClient/OracleConnectionPoolManager.cs
+	* System.Data.OracleClient/OracleConnectionPool.cs
+	* System.Data.OracleClient/OracleConnection.cs: for connection pooling, need to
+	dispose of any connection pools properly otherwise a SEGSIGV may happen trying
+	to detach from the server during finalization at exit of app
+	
+	* System.Data.OracleClient/OracleDataReader.cs: need to make sure statement and command
+	exists during dispose because they are set to null when closed
+
+2005-12-13  Daniel Morgan <danielmorgan@verizon.net>
+
+	* System.Data.OracleClient/OracleParameter.cs: free
+	unmanaged resources after update of values
+
+2005-12-13  Daniel Morgan <danielmorgan@verizon.net>
+
+	* System.Data.OracleClient.Oci/OciErrorHandle.cs patch
+	from  "Hubert FONGARNAND" <informatique.internet@fiducial.fr>
+	- fix error handling for non-English locales.  Bug# 76623.
+
+2005-12-13  Daniel Morgan <danielmorgan@verizon.net>
+
+	* System.Data.OracleClient/OracleParameter.cs: patch
+	from  "Hubert FONGARNAND" <informatique.internet@fiducial.fr>
+	- fix Timestamp when filling a DataSet.  Bug# 76437.
+
+2005-12-13  Daniel Morgan <danielmorgan@verizon.net>
+
+	* System.Data.OracleClient/OracleParameter.cs: patch
+	from "Hubert FONGARNAND" <informatique.internet@fiducial.fr>
+	- problems with OracleClob as input parameters 
+	  (when the input parameter is an OracleString, 
+	  mono crashes with a invalidcastexception)
+    - problems with OracleDateTime.Null, OracleString.Null 
+      as input parameters (it works with DBNull.Value, 
+      but it fails with those parameters)
+
+2005-12-11  Daniel Morgan <danielmorgan@verizon.net>
+
+	* System.Data.OracleClient/OracleCommand.cs: when
+	binding the parameters, need to pass the parameter position
+	
+	* System.Data.OracleClient/OracleDataReader.cs: null the statement handle
+	after close
+	
+	* System.Data.OracleClient/OracleParameter.cs: add support for an output
+	parameter of Cursor to return an Oracle REF CURSOR as an OracleDataReader.
+	Zsolt Petrény - Zsolt.Petreny at sensenet.hu helped contribute to this patch.
+	
+	* Test/TestOracleClient.cs: add tests for REF CURSOR
+	
+	* System.Data.OracleClient.Oci/OciHandle.cs:
+	allow setting of the handle to free the previous handle if it existed
+	
+	* System.Data.OracleClient.Oci/OciCalls.cs: add OCI Bind functions
+	to bind a parameter using its position instead of its name
+	
+	* System.Data.OracleClient.Oci/OciDataType.cs: add an OCI type of
+	RSet for a REF CUROSR
+	
+	* System.Data.OracleClient.Oci/OciDataType.cs: add RSet (REF CURSOR)
+	
+	* System.Data.OracleClient.Oci/OciParameterDescriptor.cs: flush. REF
+	is not an RSet
+	
+	* System.Data.OracleClient.Oci/OciStatementHandle.cs: set up the result set
+	for a statement handle for a REF CURSOR
+
 2005-10-16  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* OracleException.cs: Pass message to base ctor, thereby avoiding

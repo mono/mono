@@ -1,0 +1,16 @@
+2006-03-05  Konstantin Triger <kostat@mainsoft.com>
+
+	* OracleDataReader.cs, OracleConvert.cs: correct handling of Oracle specific types.
+
+2006-02-26  Konstantin Triger <kostat@mainsoft.com>
+
+	* OracleDataReader.cs: Added GetOracleXXX stubs.
+	* OracleCommand.cs: Added ExecuteOracleXXX stubs.
+
+2006-02-26  Konstantin Triger <kostat@mainsoft.com>
+
+	* Regex.cs: Added.
+
+2006-02-19  Konstantin Triger <kostat@mainsoft.com>
+
+	* OracleConnection.cs: follow JDBC provider generic adapter mechanism.

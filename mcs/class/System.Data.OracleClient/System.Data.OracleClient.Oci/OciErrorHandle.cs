@@ -17,6 +17,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace System.Data.OracleClient.Oci {
 	internal sealed class OciErrorHandle : OciHandle, IDisposable
@@ -46,31 +47,51 @@ namespace System.Data.OracleClient.Oci {
 			}
 		}
 
-		public OciErrorInfo HandleError ()
+		public static OciErrorInfo HandleError (OciHandle hand) 
 		{
 			OciErrorInfo info;
 			info.ErrorCode = 0;
 			info.ErrorMessage = String.Empty;
 
-			int errbufSize = 512;
+			int errbufSize = 4096;
 			IntPtr errbuf = Marshal.AllocHGlobal (errbufSize);
 
-			OciCalls.OCIErrorGet (this, 
-						1,
-						IntPtr.Zero,
-						out info.ErrorCode,
-						errbuf,
-						(uint) errbufSize,
-						OciHandleType.Error);
-	
-			object err = Marshal.PtrToStringAnsi (errbuf);
-			if (err != null) {
-				string errmsg = (string) err;
-				info.ErrorMessage = String.Copy (errmsg);
-				Marshal.FreeHGlobal (errbuf);
-			}
+			OciCalls.OCIErrorGet (hand, 
+				1,
+				IntPtr.Zero,
+				out info.ErrorCode,
+				errbuf,
+				(uint) errbufSize,
+				OciHandleType.Error);
+
+			byte[] bytea = new byte[errbufSize];
+			Marshal.Copy (errbuf, bytea, 0, errbufSize);
+			errbufSize = 0;
+			
+			OciHandle h = hand.Parent;
+			if (h == null)
+				h = hand;
+
+			// first call to OCICharSetToUnicode gets the size
+			OciCalls.OCICharSetToUnicode (h, null, bytea, out errbufSize);
+			StringBuilder str = new StringBuilder (errbufSize);
+			
+			// second call to OCICharSetToUnicode gets the string
+			OciCalls.OCICharSetToUnicode (h, str, bytea, out errbufSize);
+			
+			string errmsg = String.Empty;
+			if (errbufSize > 0)
+				errmsg = str.ToString ();
+			
+			info.ErrorMessage = String.Copy (errmsg);
+			Marshal.FreeHGlobal (errbuf);
 
 			return info;
+		}
+
+		public OciErrorInfo HandleError () 
+		{
+			return HandleError (this);
 		}
 
 		#endregion // Methods

@@ -29,6 +29,7 @@ namespace System.Data.OracleClient.Oci {
 		bool disposed = false;
 		string username;
 		string password;
+		OciCredentialType credentialType;
 
 		#endregion // Fields
 
@@ -48,13 +49,13 @@ namespace System.Data.OracleClient.Oci {
 			set { serviceHandle = value; }
 		}
 
-		public string Username {
+		internal string Username {
 			get { return username; }
 			set { username = value; }
 		}
 
-		public string Password {
-			get { return password; }
+		internal string Password {
+			get { return String.Empty; }
 			set { password = value; }
 		}
 
@@ -68,25 +69,27 @@ namespace System.Data.OracleClient.Oci {
 
 			int status = 0;
 
-			status = OciCalls.OCIAttrSetString (this,
-							OciHandleType.Session,
-							username,
-							(uint) username.Length,
-							OciAttributeType.Username,
-							errorHandle);
+			if (credentialType == OciCredentialType.RDBMS) {
+				status = OciCalls.OCIAttrSetString (this,
+					OciHandleType.Session,
+					username,
+					(uint) username.Length,
+					OciAttributeType.Username,
+					errorHandle);
 
-			if (status != 0) 
-				return false;
+				if (status != 0) 
+					return false;
 
-			status = OciCalls.OCIAttrSetString (this,
-							OciHandleType.Session,
-							password,
-							(uint) password.Length,
-							OciAttributeType.Password,
-							errorHandle);
+				status = OciCalls.OCIAttrSetString (this,
+					OciHandleType.Session,
+					password,
+					(uint) password.Length,
+					OciAttributeType.Password,
+					errorHandle);
 
-			if (status != 0) 
-				return false;
+				if (status != 0) 
+					return false;
+			}
 
 			status = OciCalls.OCISessionBegin (Service,
 						errorHandle,
@@ -107,13 +110,14 @@ namespace System.Data.OracleClient.Oci {
 			if (!begun)
 				return;
 			OciCalls.OCISessionEnd (Service, error, this, 0);
+			begun = false;
 		}
 
 		protected override void Dispose (bool disposing)
 		{
 			if (!disposed) {
 				try {
-					EndSession (errorHandle);
+					//EndSession (errorHandle);
 					disposed = false;
 				} finally {
 					base.Dispose (disposing);

@@ -1,3 +1,12 @@
+2006-03-13	Boris Kirzner <borisk@mainsoft.com>
+	* System.Data.OracleClient.J2EE.config: added sample app config file
+	for TARGET_JVM tests.
+
+2006-02-09  Konstantin Triger <kostat@mainsoft.com>
+
+	* Added Mainsoft OracleClient testsuite. The running instructions can be found at
+	  System.Data.OracleClient.jvm/readme.txt.
+
 2005-01-16  Daniel Morgan <danielmorgan@verizon.net>
 
 	* ChangeLog: added file for oracle tests

@@ -132,7 +132,7 @@ namespace System.Data.OracleClient.Oci {
 				throw new OracleException (info.ErrorCode, info.ErrorMessage);
 			}
 
-			if (!session.BeginSession (OciCredentialType.RDBMS, OciSessionMode.Default, ErrorHandle)) {
+			if (!session.BeginSession (conInfo.CredentialType, OciSessionMode.Default, ErrorHandle)) {
 				OciErrorInfo info = error.HandleError ();
 				Disconnect ();
 				throw new OracleException (info.ErrorCode, info.ErrorMessage);
@@ -175,16 +175,28 @@ namespace System.Data.OracleClient.Oci {
 
 		public void Disconnect() 
 		{
-			if (session != null)
+			if (session != null) {
+				session.EndSession (error);
 				session.Dispose ();
-			if (server != null)
+				session = null;
+			}
+			if (server != null) {
+				server.Detach (error);
 				server.Dispose ();
-			if (error != null)
+				server = null;
+			}
+			if (error != null) {
 				error.Dispose ();
-			if (service != null)
+				error = null;
+			}
+			if (service != null) {
 				service.Dispose ();
-			if (environment != null)
+				service = null;
+			}
+			if (environment != null) {
 				environment.Dispose ();
+				environment = null;
+			}
 		}
 
 		#endregion // Methods

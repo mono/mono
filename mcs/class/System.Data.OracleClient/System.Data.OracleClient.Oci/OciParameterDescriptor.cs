@@ -11,8 +11,10 @@
 // 
 // Author: 
 //     Tim Coleman <tim@timcoleman.com>
+//     Daniel Morgan <danielmorgan@verizon.net>
 //         
 // Copyright (C) Tim Coleman, 2003
+// Copyright (C) Daniel Morgan, 2005
 // 
 
 using System;
@@ -62,7 +64,7 @@ namespace System.Data.OracleClient.Oci {
 
 		public OciDataType GetDataType ()
 		{
-			return (OciDataType) GetAttributeInt32 (OciAttributeType.DataType, ErrorHandle);
+			return (OciDataType) GetAttributeUInt16 (OciAttributeType.DataType, ErrorHandle);
 		}
 
 		public static OracleType OciDataTypeToOracleType (OciDataType ociType) 
@@ -171,7 +173,7 @@ namespace System.Data.OracleClient.Oci {
 			case "NamedDataType":
 				return typeof (System.String);
 			case "Ref":
-				return Type.GetType ("System.Data.OracleClient.OracleDataReader");
+				return typeof (System.String);
 			case "Clob":
 				return typeof (System.String);
 			case "Blob":

@@ -198,8 +198,8 @@ namespace System.Data.OracleClient {
 
 		private void BindParameters (OciStatementHandle statement)
 		{
-			foreach (OracleParameter p in Parameters) 
-				p.Bind (statement, Connection);
+			for (int p = 0; p < Parameters.Count; p++)
+				Parameters[p].Bind (statement, Connection, (uint) p);
 		}
 
 		[MonoTODO]
@@ -251,20 +251,17 @@ namespace System.Data.OracleClient {
 			return cmd;
 		}
 
-		internal void GetOutParameters () 
+		internal void UpdateParameterValues () 
 		{
 			if (Parameters.Count > 0) {
-				foreach (OracleParameter parm in Parameters) {
-					if (parm.Direction != ParameterDirection.Input) {
-						parm.Update (this);
-					}
-				}
+				foreach (OracleParameter parm in Parameters)
+					parm.Update (this);
 			}
 		}
 
 		internal void CloseDataReader ()
 		{
-			GetOutParameters ();
+			UpdateParameterValues ();
 		
 			Connection.DataReader = null;
 			if ((behavior & CommandBehavior.CloseConnection) != 0)
@@ -299,7 +296,7 @@ namespace System.Data.OracleClient {
 			else
 				statement.ExecuteQuery (false);
 
-			GetOutParameters ();
+			UpdateParameterValues ();
 
 			int rowsAffected = statement.GetAttributeInt32 (OciAttributeType.RowCount, ErrorHandle);
 		
@@ -393,7 +390,7 @@ namespace System.Data.OracleClient {
 							break;
 						}
 					}
-					GetOutParameters ();
+					UpdateParameterValues ();
 				}
 
 				return output;
@@ -510,7 +507,7 @@ namespace System.Data.OracleClient {
 					}
 					else
 						output = DBNull.Value;
-					GetOutParameters ();
+					UpdateParameterValues ();
 				}
 			}
 			finally {

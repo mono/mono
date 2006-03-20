@@ -31,8 +31,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyProduct ("MONO CLI")]
 [assembly: AssemblyCopyright ("(c) 2002-2005 Novell, Inc and Various Authors")]
 [assembly: AssemblyTrademark ("")]
-
+#if !TARGET_JVM
 [assembly: CLSCompliant (true)]
+#endif
 [assembly: AssemblyDefaultAlias ("System.Data.OracleClient.dll")]
 [assembly: AssemblyInformationalVersion ("0.0.0.1")]
 [assembly: NeutralResourcesLanguage ("en-US")]
@@ -40,4 +41,6 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible (false)]
 
 [assembly: AssemblyDelaySign (true)]
+#if !TARGET_JVM
 [assembly: AssemblyKeyFile ("../ecma.pub")]
+#endif
