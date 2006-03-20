@@ -68,6 +68,17 @@ namespace System.ServiceProcess
 		}
 
 		[MonoTODO]
+		public void Start () 
+		{
+			throw new NotImplementedException ();
+		}
+
+		public void Start (string [] args)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
 		public void WaitForStatus (ServiceControllerStatus desiredStatus){
 			throw new NotImplementedException ();
 		}
