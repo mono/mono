@@ -68,6 +68,28 @@ namespace Mfconsulting.General.Prj2Make
 			return (prjObj);
 		}
 
+		// Character to quote
+		
+		char [] quotable = new char [] { ' ', '(', ')' };
+
+		public string Quote (string s)
+		{
+			if (s.IndexOfAny (quotable) == -1)
+				return s;
+			else {
+				StringBuilder sb = new StringBuilder ();
+				foreach (char c in s){
+					switch (c){
+					case ' ': case '(': case ')':
+						sb.Append ('\\');
+						break;
+					}
+					sb.Append (c);
+				}
+				return sb.ToString ();
+			}
+		}
+		
 		public CsprojInfo(bool isUnixMode, bool isMcsMode, string name, string guid, string csprojpath)
 		{
 			this.name = name;
@@ -190,7 +212,7 @@ namespace Mfconsulting.General.Prj2Make
 						path = path.Replace (@"\", "/");
 						if (SlnMaker.slash != "/")
 							path = path.Replace("/", SlnMaker.slash);
-						resgen += String.Format ("{0} ", path);
+						resgen += String.Format ("{0} ", Quote (path));
 						s = Path.ChangeExtension (s, ".resources");
 						relPath = Path.ChangeExtension (relPath, ".resources");
 					}
