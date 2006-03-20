@@ -1,3 +1,124 @@
+2006-03-20  Senganal T <tsenganal@novell.com>
+
+	* DataSetTest2.cs
+		- Added testcases for issues in Merge,Copy
+	* ConstraintCollectionTest2.cs
+		- Added testcases for issues in Add , IndexOf
+
+2006-03-19	Boris Kirzner <borisk@mainsoft.com>
+	
+	* ConstraintCollectionTest2.cs, DataColumnCollectionTest.cs, 
+	DataRowCollectionTest.cs, DataTableCollectionTest.cs: ifdef code that is not 
+	supposed to work in TARGET_JVM by now.
+
+2006-03-09  Senganal T  <tsenganal@novell.com>
+	
+	* DataRowCollectionTest2.cs :
+	* DataTableTest2.cs : 
+		- Fixed NotWorking tests.
+
+2006-03-07  Senganal T  <tsenganal@novell.com>
+
+	* DataRowCollectionTest2.cs :
+	* DataTableTest2.cs :
+		- Added failing testcases as NotWorking tests.
+
+2006-03-05  Senganal T  <tsenganal@novell.com>
+ 
+	* DataSetTest2.cs
+	* ConstraintCollectionTest2.cs
+	* DataViewTest.cs
+	* DataRelationTest.cs
+ 		Added testcases for BeginInit and EndInit methods
+
+2006-02-24  Senganal T  <tsenganal@novell.com>
+ 
+ 	* ConstraintCollectionTest2.cs : added testcase for #77630
+ 
+2006-02-22  Senganal T  <tsenganal@novell.com>
+
+	* DataRowCollectionTest2.cs : Check if index is maintained for row on calling RejectChanges. 
+	* DataTableTest2.cs : Check if data is loaded and merged (if key exists) correctly.
+	* ForeignKeyConstraintTest.cs : Check if a ParentColumn value can be modified
+		when the row is in 'Added' State. Also, check if child col values are
+		updated correctly.
+
+2006-02-16  Senganal T  <tsenganal@novell.com>
+
+	* DataSetTest2.cs :
+		- WriteXmlSchema_ForeignKeyConstraint : testcase for bug #77557
+		- WriteXmlSchema_RelationAnnotation :
+		- WriteXmlSchema_Relations_ForeignKeys :
+			ensure Relations and ForeignKeyConstraints are written and read correctly.
+	* DataSetReadXmlSchema.cs :
+		- ReadConstraints :
+			verify reading a foreignkeyconstraint doesent create a relation.
+		- ReadAnnotatedRelations_MultipleColumns :
+			verify multiple columns are read correctly if part of annotated relation.
+
+2006-02-11  Senganal T  <tsenganal@novell.com>
+
+	* DataTableTest.cs : Check AllowDBNull is set to false for PrimaryKey cols.
+	* DataTableTest2.cs : added testcases for bug #77404
+
+2006-02-03  Senganal T  <tsenganal@novell.com>
+
+	* DataTableCollectionTest2.cs,EvaluateExceptionTest.cs,
+	DataColumnTest.cs,DataRowViewTest.cs,DataRowCollectionTest2.cs,
+	DataTableTest2.cs,DataTableTest.cs,DataColumnCollectionTest2.cs,
+	DataColumnCollectionTest.cs,DataViewTest.cs,DataColumnTest2.cs
+		- Removed 'NotWorking' attributes for the testcases fixed
+		- Added few new testcases
+
+2006-01-17  Senganal T  <tsenganal@novell.com>
+
+	* DataRowTest2.cs : added testcase for bug #77267
+
+2006-01-16 Boris Kirzner <borisk@mainsoft.com>
+	* DataColumnCollectionTest2.cs: added test case for index update on 
+	column removal
+
+2006-01-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TypedDataSetGeneratorTest.cs : added test for bug #77248, but we
+	  cannot enable it since it depends on mcs "installed".
+
+2006-01-10 Senganal T <tsenganal@novell.com>
+	* DataViewTest2.cs 
+		- Added testcase for bug #77188
+
+2006-01-06 Senganal T <tsenganal@novell.com>
+	* DataColumnTest.cs
+	* DataColumnCollectionTest.cs
+		- Added couple of tests for Expression Columns.
+
+2006-01-03 Senganal T <tsenganal@novell.com>
+	* DataSetTypedDataSetTest.cs : corrected the path to file : TypedDataSet.xml
+	to make sure the testcases pass 
+
+2006-01-03 Senganal T <tsenganal@novell.com>
+	*DataViewTest.cs : added testcases for bug #77104
+
+2006-01-02 Boris Kirzner <borisk@mainsoft.com>
+	* DataTableCollectionTest2.cs, DataColumnTest2.cs,
+	DataViewTest2.cs, DataRowCollectionTest2.cs, DataTableTest2.cs,
+	DataRelationCollectionTest2.cs, ForeignKeyConstraintTest2.cs,
+	DataSetTest2.cs, ConstraintCollectionTest2.cs, DataRowTest2.cs,
+	DataColumnCollectionTest2.cs: new tests from Mainsoft repository.
+	* DataSetTypedDataSetTest.cs, VersionNotFoundException.cs,
+	MissingPrimaryKeyExceptionTest.cs: added files with new tests.
+	* TypedDataSet.xml - new xml file (for TypeDataSetTest.cs).
+
+2005-12-20 Senganal T <tsenganal@novell.com>
+	* DataColumnTest.cs : added testcase for #77025
+	
+2005-12-15 Konstantin Triger <kostat@mainsoft.com>
+
+	* DataTableTest.cs: added SelectRowState test.
+
+2005-12-07 Boris Kirzner <borisk@mainsoft.com>
+	* DataTableTest.cs: added ifdef for feature not supported in TARGET_JVM.
+
 2005-11-30 Konstantin Triger <kostat@mainsoft.com>
 
 	* DataColumnTest.cs: Added ExpressionSubstringlimits.

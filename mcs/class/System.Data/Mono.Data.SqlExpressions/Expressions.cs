@@ -40,6 +40,7 @@ namespace Mono.Data.SqlExpressions {
 		bool DependsOn(DataColumn other);
 
 		bool EvalBoolean (DataRow row);
+		void ResetExpression ();
 	}
 
 	internal abstract class BaseExpression : IExpression {
@@ -62,6 +63,10 @@ namespace Mono.Data.SqlExpressions {
 		public override int GetHashCode()
 		{
 			return 0;
+		}
+
+		public virtual void ResetExpression ()
+		{
 		}
 	}
 
@@ -133,6 +138,12 @@ namespace Mono.Data.SqlExpressions {
 		override public bool DependsOn(DataColumn other)
 		{
 			return expr1.DependsOn(other) || expr2.DependsOn(other);
+		}
+
+		override public void ResetExpression ()
+		{
+			expr1.ResetExpression ();
+			expr2.ResetExpression ();
 		}
 	}
 	

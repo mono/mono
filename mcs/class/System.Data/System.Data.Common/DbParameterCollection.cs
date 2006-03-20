@@ -33,6 +33,7 @@
 #if NET_2_0 || TARGET_JVM
 
 using System.Collections;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 
 namespace System.Data.Common {
@@ -49,6 +50,8 @@ namespace System.Data.Common {
 
 		#region Properties
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public abstract int Count { get; }
 
 		object IDataParameterCollection.this [string parameterName] {
@@ -61,8 +64,19 @@ namespace System.Data.Common {
 			set { this [index] = (DbParameter) value; }
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public abstract bool IsFixedSize { get; }
+
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public abstract bool IsReadOnly { get; }
+
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public abstract bool IsSynchronized { get; }
 
 		public DbParameter this [string parameterName] { 
@@ -71,16 +85,19 @@ namespace System.Data.Common {
 				return this [index];
 			}
 			set { 
-                int index = IndexOf (parameterName);
+				int index = IndexOf (parameterName);
 				this [index] = value;
 			}
 		}
 
-		public DbParameter this [[Optional] int index] { 
+		public DbParameter this [int index] { 
 			get { return GetParameter (index); }
 			set { SetParameter (index,value); }
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public abstract object SyncRoot { get; } 
 
 		#endregion // Properties
@@ -100,7 +117,10 @@ namespace System.Data.Common {
 		public abstract bool Contains (object value);
 		public abstract bool Contains (string value);
 		public abstract void CopyTo (Array ar, int index);
+
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public abstract IEnumerator GetEnumerator ();
+
 		protected abstract DbParameter GetParameter (int index);
 		public abstract int IndexOf (object value);
 		public abstract int IndexOf (string parameterName);

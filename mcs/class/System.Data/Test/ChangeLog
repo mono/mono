@@ -1,3 +1,23 @@
+2006-03-12	Boris Kirzner <borisk@mainsfot.com>
+	* System.Data.Test.sln, System.Data.Test.vmwcsproj: 
+	changes for automated testing for TARGET_JVM.
+
+2006-01-31  Senganal  <tsenganal@novell.com>
+	
+	* DataSetTest.cs : Added testcase for #77411.
+
+2006-01-02 Boris Kirzner <borisk@mainsoft.com>
+	
+	* System.Data.Test.vmwcsproj: added new tests to TARGET_JVM project file.
+
+2005-12-12 Konstantin Triger <kostat@mainsoft.com>
+
+	* System.Data.Test.vmwcsproj: add NET_1_1 define.
+
+2005-12-07 Boris Kirzner <borisk@mainsoft.com>
+	* System.Data.Test.sln, System.Data.Test.vmwcsproj: added solution and
+	project files for TARGET_JVM.
+
 2005-09-01  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* ProviderTests: Added a new framework for testing Data

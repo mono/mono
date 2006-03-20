@@ -30,12 +30,13 @@
 //
 
 using System.Data.SqlTypes;
+using System.Data.ProviderBase;
 
 using java.sql;
 
 namespace System.Data.SqlClient
 {
-    public class SqlDataReader : System.Data.Common.AbstractDataReader
+    public class SqlDataReader : AbstractDataReader
     {
 
 		#region Constructors
@@ -52,12 +53,12 @@ namespace System.Data.SqlClient
 
 		#region Methods
 
-		protected override SystemException CreateException(string message, SQLException e)
+		protected sealed override SystemException CreateException(string message, SQLException e)
 		{
 			return new SqlException(message, e, (SqlConnection)_command.Connection);		
 		}
 
-		protected override SystemException CreateException(java.io.IOException e)
+		protected sealed override SystemException CreateException(java.io.IOException e)
 		{
 			return new SqlException(e, (SqlConnection)_command.Connection);
 		}

@@ -583,6 +583,100 @@ namespace MonoTests.System.Data.SqlClient
 			}
 		}
 
+		// Test for bug #76778
+		// Test for a case, when query size is greater than the block size
+		[Test]
+		public void LongQueryTest ()
+		{
+			SqlConnection conn = new SqlConnection (
+							connectionString + ";Pooling=false");
+			using (conn) {
+				conn.Open ();
+				SqlCommand cmd = conn.CreateCommand ();
+				String value =  new String ('a', 10000);
+				cmd.CommandText = String.Format ("Select '{0}'", value); 
+				cmd.ExecuteNonQuery ();
+			}
+		}
+
+		// Test for bug #76778
+		// To make sure RPC (when implemented) works ok.. 
+		[Test]
+		public void LongStoredProcTest()
+		{
+			SqlConnection conn = new SqlConnection (
+							connectionString + ";Pooling=false");
+			using (conn) {
+				conn.Open ();
+				int size = conn.PacketSize ; 
+				SqlCommand cmd = conn.CreateCommand ();
+				// create a temp stored proc .. 
+				cmd.CommandText  = "Create Procedure #sp_tmp_long_params ";
+				cmd.CommandText += "@p1 nvarchar (4000), ";
+				cmd.CommandText += "@p2 nvarchar (4000), ";
+				cmd.CommandText += "@p3 nvarchar (4000), ";
+				cmd.CommandText += "@p4 nvarchar (4000) out ";
+				cmd.CommandText += "As ";
+				cmd.CommandText += "Begin ";
+				cmd.CommandText += "Set @p4 = N'Hello' ";
+				cmd.CommandText += "Return 2 "; 
+				cmd.CommandText += "End"; 
+				cmd.ExecuteNonQuery ();
+
+				//execute the proc 
+				cmd.CommandType = CommandType.StoredProcedure;
+				cmd.CommandText = "#sp_tmp_long_params"; 
+
+				String value =  new String ('a', 4000);
+				SqlParameter p1 = new SqlParameter ("@p1",
+							SqlDbType.NVarChar,4000);
+				p1.Value = value;
+
+				SqlParameter p2 = new SqlParameter ("@p2",
+							SqlDbType.NVarChar,4000);
+				p2.Value = value;
+
+				SqlParameter p3 = new SqlParameter ("@p3",
+							SqlDbType.NVarChar,4000);
+				p3.Value = value;
+
+				SqlParameter p4 = new SqlParameter ("@p4",
+							SqlDbType.NVarChar,4000);
+				p4.Direction = ParameterDirection.Output; 
+
+				// for now, name shud be @RETURN_VALUE  
+				// can be changed once RPC is implemented 
+				SqlParameter p5 = new SqlParameter ("@RETURN_VALUE", SqlDbType.Int);
+				p5.Direction = ParameterDirection.ReturnValue ;
+
+				cmd.Parameters.Add (p1);
+				cmd.Parameters.Add (p2);
+				cmd.Parameters.Add (p3);
+				cmd.Parameters.Add (p4);
+				cmd.Parameters.Add (p5);
+
+				cmd.ExecuteNonQuery ();
+				Assert.AreEqual ("Hello", p4.Value, "#1");
+				Assert.AreEqual (2, p5.Value, "#2");
+			}
+		}
+
+		// Test for bug #76880
+		[Test]
+		public void DateTimeParameterTest ()
+		{
+			SqlConnection conn = new SqlConnection (connectionString); 
+			using (conn) {
+				conn.Open ();
+				SqlCommand cmd = conn.CreateCommand ();
+				cmd.CommandText = "select * from datetime_family where type_datetime=@p1";
+				cmd.Parameters.Add ("@p1", SqlDbType.DateTime).Value= "10-10-2005";
+				// shudnt cause and exception
+				SqlDataReader rdr = cmd.ExecuteReader ();
+				rdr.Close ();
+			}
+		}
+
 		/**
 		 * Verifies whether an enum value is converted to a numeric value when
 		 * used as value for a numeric parameter (bug #66630)

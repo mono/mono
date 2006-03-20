@@ -37,13 +37,14 @@
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
+using System.Data.ProviderBase;
 
 namespace System.Data.OleDb
 {
 	/// <summary>
 	/// Provides a means of automatically generating single-table commands used to reconcile changes made to a DataSet with the associated database. This class cannot be inherited.
 	/// </summary>
-	public sealed class OleDbCommandBuilder : Component
+	public sealed class OleDbCommandBuilder : AbstractDbCommandBuilder
 	{
 		#region Fields
 
@@ -105,10 +106,7 @@ namespace System.Data.OleDb
 
 		public static void DeriveParameters (OleDbCommand command) 
 		{
-			if (command.Connection.State != ConnectionState.Open) {
-				throw new InvalidOperationException("DeriveParameters requires an open and available Connection. The connection's current state is Closed.");
-			}
-			command.DeriveParameters ();
+			DeriveParameters((AbstractDbCommand)command);
 		}
 
 		[MonoTODO]

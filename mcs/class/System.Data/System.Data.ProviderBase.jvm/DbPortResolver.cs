@@ -34,7 +34,7 @@ using System;
 
 using java.net;
 
-namespace System.Data.Common
+namespace System.Data.ProviderBase
 {
 	internal sealed  class DbPortResolver
 	{

@@ -40,12 +40,7 @@ using System.Data.Common;
 namespace System.Data.Common
 {
 
-        [CLSCompliant (true)]
-        public class DbConnectionStringBuilder : IDictionary, ICollection, IEnumerable,
-                IDictionary<string, object>,
-                ICollection<KeyValuePair<string, object>>,
-                IEnumerable<KeyValuePair<string, object>>,
-                ICustomTypeDescriptor
+        public class DbConnectionStringBuilder : IDictionary, ICollection, IEnumerable, ICustomTypeDescriptor
         {
                 #region Fields
                 Dictionary<string, object> _dictionary = null;
@@ -70,11 +65,17 @@ namespace System.Data.Common
                 #endregion // Constructors
 
                 #region Properties
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[DesignOnly (true)]
                 public bool BrowsableConnectionString
                 {
                         get { throw new NotImplementedException (); }
                         set { throw new NotImplementedException (); }
                 }
+
+		[RefreshProperties (RefreshProperties.All)]
                 public string ConnectionString
                 {
                         get
@@ -102,21 +103,26 @@ namespace System.Data.Common
 				}
 			}
                 }
+
+		[Browsable (false)]
                 public virtual int Count
                 {
                         get { return _dictionary.Count; }
                 }
 
+		[Browsable (false)]
                 public virtual bool IsFixedSize
                 {
                         get { return false; }
                 }
 
+		[Browsable (false)]
                 public bool IsReadOnly
                 {
                         get { throw new NotImplementedException (); }
                 }
 
+		[Browsable (false)]
                 public virtual object this [string keyword]
                 {
                         get
@@ -128,19 +134,11 @@ namespace System.Data.Common
                         }
                         set { Add (keyword, value); }
                 }
+
+		[Browsable (false)]
                 public virtual ICollection Keys
                 {
-                        get { return (ICollection) ( (IDictionary <string, object>)_dictionary).Keys; }
-                }
-
-                ICollection<string> IDictionary<string, object>.Keys
-                {
-                        get { return (ICollection<string>) ( (IDictionary<string, object>) _dictionary).Keys; }
-                }
-
-                ICollection<object> IDictionary<string, object>.Values
-                {
-                        get { return (ICollection<object>) ( (IDictionary<string, object>)_dictionary).Values; }
+                        get { return _dictionary.Keys; }
                 }
 
                 bool ICollection.IsSynchronized
@@ -159,9 +157,10 @@ namespace System.Data.Common
                         set { this [(string) keyword] = value; }
                 }
 
+		[Browsable (false)]
                 public virtual ICollection Values
                 {
-                        get { return (ICollection) ( (IDictionary<string, object>)_dictionary).Values; }
+                        get { return _dictionary.Values; }
                 }
 
                 #endregion // Properties
@@ -179,6 +178,13 @@ namespace System.Data.Common
                         }
 
                 }
+
+		[MonoTODO]
+		public static void AppendKeyValuePair(StringBuilder builder, string keyword, string value,
+						      bool useOdbcRules)
+		{
+			throw new NotImplementedException ();
+		}
 
                 public static void AppendKeyValuePair (StringBuilder builder, string keyword, string value)
                 {
@@ -222,15 +228,15 @@ namespace System.Data.Common
                         return ret;
                 }
 
+		[MonoTODO]
+		protected virtual void GetProperties(Hashtable propertyDescriptors)
+		{
+			throw new NotImplementedException ();
+		}
+
                 public virtual bool Remove (string keyword)
                 {
                         return _dictionary.Remove (keyword);
-                }
-
-                [Obsolete ("Do not use. Please use the Remove method.")]
-                public virtual void Reset (string keyword)
-                {
-                        throw new NotImplementedException ();
                 }
 
                 public virtual bool ShouldSerialize (string keyword)
@@ -238,49 +244,14 @@ namespace System.Data.Common
                         throw new NotImplementedException ();
                 }
 
-                void ICollection<KeyValuePair<string, object>>.Add (KeyValuePair<string, object> keyValuePair)
-                {
-                        Add (keyValuePair.Key, keyValuePair.Value);
-                }
-
-                bool ICollection<KeyValuePair<string, object>>.Contains (KeyValuePair<string, object> keyValuePair)
-                {
-                        return ContainsKey (keyValuePair.Key);
-                }
-
-                void ICollection<KeyValuePair<string, object>>.CopyTo (KeyValuePair<string, object> [] array, int index)
-                {
-                        if (index + Count > array.Length)
-                                throw new ArgumentException ("The destination does not have enough length!");
-                        foreach (KeyValuePair<string, object> keyValue in this) {
-                                array [index++] = keyValue;
-                        }
-                }
-
-                bool ICollection<KeyValuePair<string, object>>.Remove (KeyValuePair<string, object> keyValuePair)
-                {
-                        return Remove (keyValuePair.Key);
-                }
-
-                IEnumerator<KeyValuePair<string, object>> IEnumerable<KeyValuePair<string, object>>.GetEnumerator ()
-                {
-                        return _dictionary.GetEnumerator ();
-                }
-
                 void ICollection.CopyTo (Array array, int index)
                 {
-
-                        KeyValuePair <string, object> [] arr = null;
-                        try {
-                                arr = (KeyValuePair<string, object> []) array;
-                        } catch (InvalidCastException e) {
-                                throw new ArgumentException (
-                                                             "Target array type is not compatible with the type of items in the collection."
-                                                             );
-                        }
-                        ICollection<KeyValuePair<string, object>> ptr = (ICollection<KeyValuePair<string, object>>) this;
-                        ptr.CopyTo (arr, index);
-
+			if (array == null)
+				throw new ArgumentNullException ("array");
+			KeyValuePair<string, object> [] arr = array as KeyValuePair<string, object> [];
+			if (arr == null)
+				throw new ArgumentException ("Target array type is not compatible with the type of items in the collection");
+			((ICollection<KeyValuePair<string, object>>) _dictionary).CopyTo (arr, index);
                 }
 
                 void IDictionary.Add (object keyword, object value)

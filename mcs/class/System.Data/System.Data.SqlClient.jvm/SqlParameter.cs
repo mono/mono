@@ -199,7 +199,7 @@ namespace System.Data.SqlClient
             return clone;
 		}
 
-		internal override object ConvertValue(object value)
+		protected internal sealed override object ConvertValue(object value)
 		{
 			// can not convert null or DbNull to other types
 			if (value == null || value == DBNull.Value) {
@@ -210,7 +210,7 @@ namespace System.Data.SqlClient
 			return convertedValue;
 		}
 
-		internal override void SetParameterName(ResultSet res)
+		protected internal sealed override void SetParameterName(ResultSet res)
 		{
 			string name = res.getString("COLUMN_NAME");
 			if (name != null && name.Length > 0 && name[0] != '@')
@@ -218,21 +218,21 @@ namespace System.Data.SqlClient
 			ParameterName = name;
 		}
 
-		internal override void SetParameterDbType(ResultSet res)
+		protected internal sealed override void SetParameterDbType(ResultSet res)
 		{
 			int dataType = res.getInt("DATA_TYPE");
 			SqlDbType = SqlConvert.JdbcTypeToSqlDbType(dataType);
-			JdbcType = (DbTypes.JavaSqlTypes) dataType;
+			JdbcType = dataType;
 		}
 
-		internal override void SetSpecialFeatures(ResultSet res)
+		protected internal sealed override void SetSpecialFeatures(ResultSet res)
 		{
 			// do nothing
 		}
 
-		internal override DbTypes.JavaSqlTypes JdbcTypeFromProviderType()
+		protected internal sealed override int JdbcTypeFromProviderType()
 		{
-			return (DbTypes.JavaSqlTypes)SqlConvert.SqlDbTypeToJdbcType(SqlDbType);
+			return SqlConvert.SqlDbTypeToJdbcType(SqlDbType);
 		}
 
 		#endregion // Methods  

@@ -108,6 +108,10 @@ namespace System.Data
 			IExpression filter = base.FilterExpression;
 			return filter != null ? filter.DependsOn(other) : false;
 		}
+		
+		void IExpression.ResetExpression()
+		{
+		}
 
 		#endregion
 	}

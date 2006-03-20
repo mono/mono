@@ -1,3 +1,12 @@
+2006-02-17  Chris Toshok  <toshok@ximian.com>
+
+	* SqlNotificationRequest.cs: class is sealed, and s/id/userData
+	and s/service/options.
+
+	* SqlDataSourceEnumerator.cs: ctor is private (for use with
+	Instance property, which is currently not implemented.)  Also,
+	remove set_Instance.
+
 2005-09-02 Umadevi S <sumadevi@novell.com>
 	* Removed Files
 	SerializationHelper.cs,DataAccessKind.cs,SerializationVersion.cs,Format.cs,

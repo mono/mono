@@ -71,7 +71,9 @@ namespace System.Data.OleDb
 		
 		[DataCategory ("Data")]
 		[DefaultValue ("")]
+#if !NET_2_0
 		[DataSysDescriptionAttribute ("Information used to connect to a Data Source.")]
+#endif
 		[EditorAttribute ("Microsoft.VSDesigner.Data.ADO.Design.OleDbConnectionStringEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		[RecommendedAsConfigurableAttribute (true)]
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
@@ -85,7 +87,9 @@ namespace System.Data.OleDb
 		}
 
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+#if !NET_2_0
 		[DataSysDescriptionAttribute ("Current connection timeout value, 'Connect Timeout=X' in the ConnectionString.")]
+#endif
 		public int ConnectionTimeout {
 			get {
 				return connectionTimeout;
@@ -93,7 +97,9 @@ namespace System.Data.OleDb
 		}
 
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+#if !NET_2_0
                 [DataSysDescriptionAttribute ("Current data source catalog value, 'Initial Catalog=X' in the connection string.")]
+#endif
 		public string Database { 
 			get {
 				if (gdaConnection != IntPtr.Zero
@@ -106,7 +112,9 @@ namespace System.Data.OleDb
 		}
 
 	        [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+#if !NET_2_0
                 [DataSysDescriptionAttribute ("Current data source, 'Data Source=X' in the connection string.")]
+#endif
 	 	public string DataSource {
 			get {
 				if (gdaConnection != IntPtr.Zero
@@ -119,7 +127,9 @@ namespace System.Data.OleDb
 		}
 
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+#if !NET_2_0
                 [DataSysDescriptionAttribute ("Current OLE DB provider progid, 'Provider=X' in the connection string.")]
+#endif
 		public string Provider {
 			get {
 				if (gdaConnection != IntPtr.Zero
@@ -132,7 +142,9 @@ namespace System.Data.OleDb
 		}
 
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+#if !NET_2_0
                 [DataSysDescriptionAttribute ("Version of the product accessed by the OLE DB Provider.")]
+#endif
 		[BrowsableAttribute (false)]
 		public string ServerVersion {
 			get {
@@ -146,7 +158,9 @@ namespace System.Data.OleDb
 		}
 
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+#if !NET_2_0
                 [DataSysDescriptionAttribute ("The ConnectionState indicating whether the connection is open or closed.")]
+#endif
                 [BrowsableAttribute (false)]
 		public ConnectionState State
 		{
@@ -317,11 +331,15 @@ namespace System.Data.OleDb
 
 		#region Events and Delegates
 
+#if !NET_2_0
                 [DataSysDescription ("Event triggered when messages arrive from the DataSource.")]
+#endif
                 [DataCategory ("DataCategory_InfoMessage")]
 		public event OleDbInfoMessageEventHandler InfoMessage;
 
+#if !NET_2_0
 		[DataSysDescription ("Event triggered when the connection changes state.")]
+#endif
                 [DataCategory ("DataCategory_StateChange")]
 		public event StateChangeEventHandler StateChange;
 

@@ -86,7 +86,9 @@ namespace System.Data.OleDb
 		
 		[DefaultValue (null)]
 		[DataCategory ("Update")]
+#if !NET_2_0
 		[DataSysDescriptionAttribute ("Used during Update for deleted rows in DataSet.")]
+#endif
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		public OleDbCommand DeleteCommand {
 			get {
@@ -99,7 +101,9 @@ namespace System.Data.OleDb
 
 		[DefaultValue (null)]
 		[DataCategory ("Update")]
+#if !NET_2_0
                 [DataSysDescriptionAttribute ("Used during Update for new rows in DataSet.")]
+#endif
                 [EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		public OleDbCommand InsertCommand {
 			get {
@@ -112,7 +116,9 @@ namespace System.Data.OleDb
 
 		[DefaultValue (null)]
 		[DataCategory ("Fill")]
+#if !NET_2_0
                 [DataSysDescriptionAttribute ("Used during Fill/FillSchema.")]
+#endif
                 [EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		public OleDbCommand SelectCommand {
 			get {
@@ -125,7 +131,9 @@ namespace System.Data.OleDb
 
 		[DefaultValue (null)]
 		[DataCategory ("Update")]
+#if !NET_2_0
                 [DataSysDescriptionAttribute ("Used during Update for modified rows in DataSet.")]
+#endif
                 [EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		public OleDbCommand UpdateCommand {
 			get {
@@ -251,11 +259,15 @@ namespace System.Data.OleDb
 
 		#region Events and Delegates
 
+#if !NET_2_0
 		[DataSysDescription ("Event triggered before every DataRow during Update.")]
+#endif
                 [DataCategory ("DataCategory_Update")]
 		public event OleDbRowUpdatedEventHandler RowUpdated;
 
+#if !NET_2_0
 		[DataSysDescription ("Event triggered after every DataRow during Update.")]
+#endif
                 [DataCategory ("DataCategory_Update")]
 		public event OleDbRowUpdatingEventHandler RowUpdating;
 

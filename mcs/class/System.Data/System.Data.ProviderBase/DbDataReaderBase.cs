@@ -135,9 +135,10 @@ namespace System.Data.ProviderBase {
 			throw new NotImplementedException ();
 		}
 
-		public override void Dispose ()
+		protected override void Dispose (bool disposing)
 		{
-			Close ();
+			if (disposing)
+				Close ();
 		}
 
 		[MonoTODO]

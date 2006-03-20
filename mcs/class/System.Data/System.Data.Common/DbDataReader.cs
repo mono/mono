@@ -33,10 +33,11 @@
 #if NET_2_0 || TARGET_JVM
 
 using System.Collections;
+using System.ComponentModel;
 using System.Data;
 
 namespace System.Data.Common {
-	public abstract class DbDataReader : MarshalByRefObject, IDataReader, IDataReader2, IDataRecord, IDataRecord2, IDisposable, IEnumerable
+	public abstract class DbDataReader : MarshalByRefObject, IDataReader, IDataRecord, IDisposable, IEnumerable
 	{
 		#region Constructors
 
@@ -55,10 +56,13 @@ namespace System.Data.Common {
 		public abstract object this [int index] { get; }
 		public abstract object this [string name] { get; }
 		public abstract int RecordsAffected { get; }
-#if NET_2_0
-		public abstract int VisibleFieldCount { get; }
-#endif
 
+#if NET_2_0
+		[MonoTODO]
+		public virtual int VisibleFieldCount {
+			get { throw new NotImplementedException ();}
+		}
+#endif
 		#endregion // Properties
 
 		#region Methods
@@ -69,7 +73,9 @@ namespace System.Data.Common {
 		public abstract long GetBytes (int i, long fieldOffset, byte[] buffer, int bufferOffset, int length);
 		public abstract char GetChar (int i);
 		public abstract long GetChars (int i, long dataIndex, char[] buffer, int bufferIndex, int length);
-		public virtual void Dispose ()
+
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public void Dispose ()
 		{
 			Dispose (true);	
 		}
@@ -81,6 +87,7 @@ namespace System.Data.Common {
 		}
 #if NET_2_0
 		[MonoTODO]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public DbDataReader GetData (int i)
 		{
 			throw new NotImplementedException ();
@@ -91,7 +98,10 @@ namespace System.Data.Common {
 		public abstract DateTime GetDateTime (int i);
 		public abstract decimal GetDecimal (int i);
 		public abstract double GetDouble (int i);
+
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public abstract IEnumerator GetEnumerator ();
+
 		public abstract Type GetFieldType (int i);
 		public abstract float GetFloat (int i);
 		public abstract Guid GetGuid (int i);
@@ -103,25 +113,28 @@ namespace System.Data.Common {
 
 #if NET_2_0
 		[MonoTODO]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public virtual Type GetProviderSpecificFieldType (int i)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public virtual object GetProviderSpecificValue (int i)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public virtual int GetProviderSpecificValues (object[] values)
 		{
 			throw new NotImplementedException ();
 		}
 	
 		[MonoTODO]
-		public virtual int GetDbDataReader (int ordinal)
+		protected virtual DbDataReader GetDbDataReader (int ordinal)
 		{
 			throw new NotImplementedException ();
 		}

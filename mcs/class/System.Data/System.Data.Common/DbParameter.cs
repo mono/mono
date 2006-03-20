@@ -31,6 +31,7 @@
 //
 
 #if NET_2_0 || TARGET_JVM
+using System.ComponentModel;
 
 namespace System.Data.Common {
 	public abstract class DbParameter : MarshalByRefObject, IDbDataParameter, IDataParameter
@@ -46,25 +47,46 @@ namespace System.Data.Common {
 
 		#region Properties
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[RefreshProperties (RefreshProperties.All)]
 		public abstract DbType DbType { get; set; }
+
+		[DefaultValue (ParameterDirection.Input)]
+		[RefreshProperties (RefreshProperties.All)]
 		public abstract ParameterDirection Direction { get; set; }
+
+		[DefaultValue ("")]
 		public abstract string ParameterName { get; set; }
 		public abstract byte Precision { get; set; }
 		public abstract byte Scale { get; set; }
 		public abstract int Size { get; set; }
+
+		[DefaultValue (null)]
+		[RefreshProperties (RefreshProperties.All)]
 		public abstract object Value { get; set; }
+
+		[Browsable (false)]
+		[DesignOnly (true)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public abstract bool IsNullable { get; set; }
+
+		[DefaultValue ("")]
 		public abstract string SourceColumn { get; set; }
+
+		[RefreshProperties (RefreshProperties.All)]
+		[DefaultValue (false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		public abstract bool SourceColumnNullMapping { get; set; }
+
+		[DefaultValue (DataRowVersion.Current)]
 		public abstract DataRowVersion SourceVersion { get; set; }
 
 		#endregion // Properties
 
 		#region Methods
-
-#if NET_2_0
-		public abstract bool SourceColumnNullMapping { get; set; }
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public abstract void ResetDbType ();
-#endif
 		#endregion // Methods
 	}
 }

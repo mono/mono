@@ -4,47 +4,6 @@ namespace System.Data.Common
 {
 	internal class DbTypes
 	{
-#if TARGET_JVM
-		#region java.sql.Types constants
-
-		internal enum JavaSqlTypes {
-			ARRAY = 2003 ,
-			BIGINT = -5, 
-			BINARY = -2 ,
-			BIT = -7 ,
-			BLOB = 2004, 
-			BOOLEAN = 16, 
-			CHAR = 1, 
-			CLOB = 2005, 
-			DATALINK = 70, 
-			DATE = 91, 
-			DECIMAL = 3, 
-			DISTINCT = 2001, 
-			DOUBLE = 8, 
-			FLOAT = 6, 
-			INTEGER = 4, 
-			JAVA_OBJECT = 2000, 
-			LONGVARBINARY = -4,
-			LONGVARCHAR = -1, 
-			NULL = 0, 
-			NUMERIC = 2 ,
-			OTHER = 1111 ,
-			REAL = 7 ,
-			REF = 2006 ,
-			SMALLINT = 5,
-			STRUCT = 2002, 
-			TIME = 92, 
-			TIMESTAMP = 93, 
-			TINYINT = -6, 
-			VARBINARY = -3, 
-			VARCHAR = 12,
-//			NOTSET = int.MinValue
-		}
-
-
-		#endregion // java.sql.Types constants
-#endif
-
 		#region .Net types constants
 
 		internal static readonly Type TypeOfBoolean = typeof(Boolean);

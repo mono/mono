@@ -40,7 +40,11 @@ namespace System.Data.Common
 	/// <summary>
 	/// Represents a set of data commands and a database connection that are used to fill the DataSet and update the data source.
 	/// </summary>
-	public abstract class DataAdapter : Component, IDataAdapter
+	public
+#if !NET_2_0
+	abstract
+#endif
+	class DataAdapter : Component, IDataAdapter
 	{
 		#region Fields
 
@@ -88,7 +92,9 @@ namespace System.Data.Common
 		#region Properties
 
 		[DataCategory ("Fill")]
+#if !NET_2_0
 		[DataSysDescription ("Whether or not Fill will call DataRow.AcceptChanges.")]
+#endif
 		[DefaultValue (true)]
 		public bool AcceptChangesDuringFill {
 			get { return acceptChangesDuringFill; }
@@ -96,6 +102,7 @@ namespace System.Data.Common
 		}
 
 #if NET_2_0
+		[DefaultValue (true)]
 		public bool AcceptChangesDuringUpdate {
 			get { return acceptChangesDuringUpdate; }
 			set { acceptChangesDuringUpdate = value; }
@@ -103,7 +110,9 @@ namespace System.Data.Common
 #endif
 
 		[DataCategory ("Update")]
+#if !NET_2_0
 		[DataSysDescription ("Whether or not to continue to the next DataRow when the Update events, RowUpdating and RowUpdated, Status is UpdateStatus.ErrorsOccurred.")]
+#endif
 		[DefaultValue (false)]
 		public bool ContinueUpdateOnError {
 			get { return continueUpdateOnError; }
@@ -111,6 +120,7 @@ namespace System.Data.Common
 		}
 
 #if NET_2_0
+		[RefreshProperties (RefreshProperties.All)]
 		public LoadOption FillLoadOption {
 			get { return fillLoadOption; }
 			set { fillLoadOption = value; }
@@ -122,22 +132,35 @@ namespace System.Data.Common
 		}
 
 		[DataCategory ("Mapping")]
+#if !NET_2_0
 		[DataSysDescription ("The action taken when a table or column in the TableMappings is missing.")]
+#endif
 		[DefaultValue (MissingMappingAction.Passthrough)]
 		public MissingMappingAction MissingMappingAction {
 			get { return missingMappingAction; }
-			set { missingMappingAction = value; }
+			set {
+				if (!Enum.IsDefined (typeof (MissingMappingAction), value))
+					throw ExceptionHelper.InvalidEnumValueException ("MissingMappingAction", value);
+				missingMappingAction = value;
+			}
 		}
 
 		[DataCategory ("Mapping")]
+#if !NET_2_0
 		[DataSysDescription ("The action taken when a table or column in the DataSet is missing.")]
+#endif
 		[DefaultValue (MissingSchemaAction.Add)]
 		public MissingSchemaAction MissingSchemaAction {
 			get { return missingSchemaAction; }
-			set { missingSchemaAction = value; }
+			set { 
+				if (!Enum.IsDefined (typeof (MissingSchemaAction), value))
+					throw ExceptionHelper.InvalidEnumValueException ("MissingSchemaAction", value);
+				missingSchemaAction = value; 
+			}
 		}
 
 #if NET_2_0
+		[DefaultValue (false)]
 		public virtual bool ReturnProviderSpecificTypes {
 			get { return returnProviderSpecificTypes; }
 			set { returnProviderSpecificTypes = value; }
@@ -145,7 +168,9 @@ namespace System.Data.Common
 #endif
 
 		[DataCategory ("Mapping")]
+#if !NET_2_0
 		[DataSysDescription ("How to map source table to DataSet table.")]
+#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public DataTableMappingCollection TableMappings {
 			get { return tableMappings; }
@@ -184,9 +209,20 @@ namespace System.Data.Common
 			throw new NotImplementedException ();
 		}
 
-		public abstract int Fill (DataSet dataSet);
+		[MonoTODO]
+		protected virtual bool ShouldSerializeTableMappings ()
+		{
+			throw new NotImplementedException ();
+		}
+
 
 #if NET_2_0
+		[MonoTODO]
+		public virtual int Fill (DataSet dataSet)
+		{
+			throw new NotImplementedException ();
+		}
+
 		[MonoTODO]
 		protected virtual int Fill (DataTable dataTable, IDataReader dataReader)
 		{
@@ -206,22 +242,6 @@ namespace System.Data.Common
 		}
 
 		[MonoTODO]
-		public static int FillDataSet (IDataReader dataReader, LoadOption fillLoadOption, DataSet dataSet)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public static int FillDataTable (IDataReader dataReader, LoadOption fillLoadOption, DataTable[] dataTables)
-		{
-			throw new NotImplementedException ();
-		}
-#endif
-
-		public abstract DataTable[] FillSchema (DataSet dataSet, SchemaType schemaType);
-
-#if NET_2_0
-		[MonoTODO]
 		protected virtual DataTable FillSchema (DataTable dataTable, SchemaType schemaType, IDataReader dataReader)
 		{
 			throw new NotImplementedException ();
@@ -232,11 +252,20 @@ namespace System.Data.Common
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
-		public abstract IDataParameter[] GetFillParameters ();
+		[MonoTODO]
+		public virtual DataTable[] FillSchema (DataSet dataSet, SchemaType schemaType)
+		{
+			throw new NotImplementedException ();
+		}
 
-#if NET_2_0
+		[MonoTODO]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		public virtual IDataParameter[] GetFillParameters ()
+		{
+			throw new NotImplementedException ();
+		}
+
 		[MonoTODO]
 		protected bool HasTableMappings ()
 		{
@@ -251,31 +280,37 @@ namespace System.Data.Common
 		}
 
 		[MonoTODO]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public void ResetFillLoadOption ()
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public virtual bool ShouldSerializeAcceptChangesDuringFill ()
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public virtual bool ShouldSerializeFillLoadOption ()
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 		[MonoTODO]
-		protected virtual bool ShouldSerializeTableMappings ()
+		public virtual int Update (DataSet dataSet)
 		{
 			throw new NotImplementedException ();
 		}
-
+#else
+		public abstract int Fill (DataSet dataSet);
+		public abstract DataTable[] FillSchema (DataSet dataSet, SchemaType schemaType);
+		public abstract IDataParameter[] GetFillParameters ();
 		public abstract int Update (DataSet dataSet);
+#endif
 
 		#endregion
 		

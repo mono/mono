@@ -49,7 +49,7 @@ namespace MonoTests.System.Data
 				ConnectionManager.Singleton.OpenConnection ();
 				IDbCommand cmd = conn.CreateCommand ();
 				cmd.CommandText = "select id, fname, id + 20 as plustwenty from employee";
-				IDataReader reader = cmd.ExecuteReader (CommandBehavior.SchemaOnly);
+				IDataReader reader = cmd.ExecuteReader (CommandBehavior.SchemaOnly | CommandBehavior.KeyInfo);
 				DataTable schema = reader.GetSchemaTable ();
 				reader.Close ();
 				Assert.AreEqual (3, schema.Rows.Count, "#1");
@@ -183,7 +183,7 @@ namespace MonoTests.System.Data
 						Assert.Fail ("#2 No test data");
 					// for null value, length in bytes should return 0
 					if (reader.Read ()) 
-						Assert.AreEqual (-1, reader.GetBytes (0, 0, null, 0, 0), 
+						Assert.AreEqual (0, reader.GetBytes (0, 0, null, 0, 0), 
 								 "#3 on null value, it should return -1");
 					else
 						Assert.Fail ("#4 No test data");
@@ -221,6 +221,27 @@ namespace MonoTests.System.Data
 								 "#1 The assembled value length does not match");
 					} else
 						Assert.Fail ("#2 no test data");
+				}
+			} finally {
+				ConnectionManager.Singleton.CloseConnection ();
+			}
+		}
+
+		[Test]
+		public void GetSchemaTableTest_AutoIncrement ()
+		{
+			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			try {
+				ConnectionManager.Singleton.OpenConnection ();
+				IDbCommand cmd = conn.CreateCommand ();
+				cmd.CommandText = "create table #tmp_table (id int identity(1,1))";
+				cmd.ExecuteNonQuery ();
+				cmd.CommandText = "select * from #tmp_table";
+				using (IDataReader reader = cmd.ExecuteReader (CommandBehavior.SchemaOnly)) {
+					DataTable schemaTable = reader.GetSchemaTable ();
+					Assert.IsTrue ((bool)schemaTable.Rows [0]["IsAutoIncrement"], "#1");
+					if (schemaTable.Columns.Contains ("IsIdentity"))
+						Assert.IsTrue ((bool)schemaTable.Rows [0]["IsIdentity"], "#2");
 				}
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();

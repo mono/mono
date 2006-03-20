@@ -35,6 +35,7 @@ System.Data/DataSetTest2.cs
 System.Data/DataSetReadXmlTest.cs
 System.Data/DataSetReadXmlSchemaTest.cs
 System.Data/DataSetInferXmlSchemaTest.cs
+System.Data/DataSetTypedDataSetTest.cs
 System.Data/DataTableTest.cs
 System.Data/DataTableTest2.cs
 System.Data/DataTableLoadRowTest.cs
@@ -58,10 +59,12 @@ System.Data/ConstraintExceptionTest.cs
 System.Data/EvaluateExceptionTest.cs
 System.Data/InRowChangingEventExceptionTest.cs
 System.Data/InvalidConstraintExceptionTest.cs
+System.Data/MissingPrimaryKeyExceptionTest.cs
 System.Data/NoNullAllowedExceptionTest.cs
 System.Data/ReadOnlyExceptionTest.cs
 System.Data/SyntaxErrorExceptionTest.cs
 System.Data/RowNotInTableExceptionTest.cs
+System.Data/VersionNotFoundException.cs
 System.Data.Common/DbProviderFactoriesConfigurationHandlerTest.cs
 System.Data.Common/ConnectionStringsSectionTest.cs
 System.Data.Common/DataColumnMappingCollectionTest.cs

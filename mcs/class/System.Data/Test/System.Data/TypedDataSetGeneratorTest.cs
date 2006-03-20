@@ -30,6 +30,7 @@
 
 
 using System;
+using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Data;
 using NUnit.Framework;
@@ -41,10 +42,13 @@ namespace MonoTests.System.Data
 	public class TypedDataSetGeneratorTest : Assertion
 	{
 		private ICodeGenerator gen;
+		private ICodeCompiler compiler;
 
 		public TypedDataSetGeneratorTest ()
 		{
-			gen = new CSharpCodeProvider ().CreateGenerator ();
+			CodeDomProvider p = new CSharpCodeProvider ();
+			gen = p.CreateGenerator ();
+			compiler = p.CreateCompiler ();
 		}
 
 		[Test]
@@ -81,5 +85,19 @@ namespace MonoTests.System.Data
 			AssertEquals ("#12", "\u3042", TypedDataSetGenerator.GenerateIdName ("\u3042", gen));
 		}
 
+		[Test]
+		[Ignore ("We cannot depend on CodeCompiler since it expects mcs to exist.")]
+		public void RelationConnectsSameTable ()
+		{
+			DataSet ds = new DataSet ();
+			ds.ReadXmlSchema ("Test/System.Data/schemas/bug77248.xsd");
+			CodeNamespace cns = new CodeNamespace ();
+			TypedDataSetGenerator.Generate (ds, cns, gen);
+			CodeCompileUnit ccu = new CodeCompileUnit ();
+			ccu.Namespaces.Add (cns);
+			CompilerResults r = compiler.CompileAssemblyFromDom (
+				new CompilerParameters (), ccu);
+			AssertEquals (0, r.Errors.Count);
+		}
 	}
 }

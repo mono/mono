@@ -32,6 +32,7 @@ using System.Text;
 using System.IO;
 using System.Data;
 using MonoTests.System.Data.Utils;
+using System.Xml;
 
 namespace MonoTests_System.Data
 {
@@ -335,6 +336,61 @@ namespace MonoTests_System.Data
 
 			// GetChanges Unchanged
 			Assert.AreEqual(arrUnchanged, ds.GetChanges(DataRowState.Unchanged).Tables[0].Rows[0].ItemArray , "DS34");
+		}
+
+		[Test] public void BeginInitTest ()
+		{
+			DataSet ds = new DataSet ();
+
+			DataTable table1 = new DataTable ("table1");
+			DataTable table2 = new DataTable ("table2");
+
+			DataColumn col1 = new DataColumn ("col1", typeof (int));
+			DataColumn col2 = new DataColumn ("col2", typeof (int));
+			table1.Columns.Add (col1);
+			table2.Columns.Add (col2);
+			
+			UniqueConstraint pkey = new UniqueConstraint ("pk", new string[] {"col1"}, true);
+			ForeignKeyConstraint fkey = new ForeignKeyConstraint ("fk", "table1", new String[] {"col1"}, 
+								new String[] {"col2"}, AcceptRejectRule.Cascade,
+								Rule.Cascade, Rule.Cascade);
+			DataRelation relation = new DataRelation ("rel", "table1", "table2", new String[] {"col1"},
+								 new String[] {"col2"}, false);
+			ds.BeginInit ();
+			table1.BeginInit ();
+			table2.BeginInit ();
+
+			ds.Tables.AddRange (new DataTable[] {table1, table2});
+			ds.Relations.AddRange (new DataRelation[] {relation});
+			
+			table1.Constraints.AddRange (new Constraint[] {pkey});
+			table2.Constraints.AddRange (new Constraint[] {fkey});
+
+			// The tables/relations shud not get added to the DataSet yet
+			Assert.AreEqual (0, ds.Tables.Count, "#1");
+			Assert.AreEqual (0, ds.Relations.Count, "#2");
+			Assert.AreEqual (0, table1.Constraints.Count, "#3");
+			Assert.AreEqual (0, table2.Constraints.Count, "#4");
+			ds.EndInit ();
+
+			Assert.AreEqual (2, ds.Tables.Count, "#5");
+			Assert.AreEqual (1, ds.Relations.Count, "#6");
+			Assert.AreEqual (1, ds.Tables [0].Constraints.Count, "#7");
+			Assert.AreEqual (1, ds.Tables [1].Constraints.Count, "#8");
+
+			// Table shud still be in BeginInit .. 
+			DataColumn col3 = new DataColumn ("col2");
+			UniqueConstraint uc = new UniqueConstraint ("uc", new string[] {"col2"}, false);
+
+			table1.Columns.AddRange (new DataColumn[] {col3});
+			table1.Constraints.AddRange (new Constraint[] {uc});
+
+			Assert.AreEqual (1, table1.Columns.Count, "#9");
+			Assert.AreEqual (1, table1.Constraints.Count, "#10");
+
+			table1.EndInit ();
+			Assert.AreEqual (2, table1.Columns.Count, "#11");
+			Assert.AreEqual (2, table1.Columns.Count, "#12");
 		}
 
 		[Test] public void GetXml()
@@ -1360,6 +1416,193 @@ namespace MonoTests_System.Data
 			Assert.AreEqual("Success", "Success", "DS206");
 
 			CompareResults_2("merge 3",ds,dsTarget1);
+		}
+
+		[Test]
+		public void Merge_RelationWithoutConstraints ()
+		{
+			DataSet ds = new DataSet ();
+
+			DataTable table1 = ds.Tables.Add ("table1");
+			DataTable table2 = ds.Tables.Add ("table2");
+
+			DataColumn pcol = table1.Columns.Add ("col1", typeof (int));
+			DataColumn ccol = table2.Columns.Add ("col1", typeof (int));
+
+			DataSet ds1 = ds.Copy ();
+			DataRelation rel = ds1.Relations.Add ("rel1", ds1.Tables[0].Columns[0], 
+								ds1.Tables [1].Columns [0], false);
+
+			ds.Merge (ds1);
+			Assert.AreEqual (1, ds.Relations.Count , "#1");
+			Assert.AreEqual (0, ds.Tables [0].Constraints.Count , "#2");
+			Assert.AreEqual (0, ds.Tables [1].Constraints.Count , "#2");
+		}
+
+		[Test]
+		public void Merge_DuplicateConstraints ()
+		{
+			DataSet ds = new DataSet ();
+
+			DataTable table1 = ds.Tables.Add ("table1");
+			DataTable table2 = ds.Tables.Add ("table2");
+
+			DataColumn pcol = table1.Columns.Add ("col1", typeof (int));
+			DataColumn ccol = table2.Columns.Add ("col1", typeof (int));
+
+			DataSet ds1 = ds.Copy ();
+
+			DataRelation rel = ds.Relations.Add ("rel1", pcol, ccol);
+
+			ds1.Tables [1].Constraints.Add ("fk", ds1.Tables [0].Columns [0], ds1.Tables [1].Columns [0]);
+
+			// No Exceptions shud be thrown
+			ds.Merge (ds1);
+			Assert.AreEqual (1, table2.Constraints.Count, "#1 Constraints shudnt be duplicated");
+		}
+
+		[Test]
+		public void Merge_DuplicateConstraints_1 ()
+		{
+			DataSet ds = new DataSet ();
+
+			DataTable table1 = ds.Tables.Add ("table1");
+			DataTable table2 = ds.Tables.Add ("table2");
+
+			DataColumn pcol = table1.Columns.Add ("col1", typeof (int));
+			DataColumn ccol = table2.Columns.Add ("col1", typeof (int));
+			DataColumn pcol1 = table1.Columns.Add ("col2", typeof (int));
+			DataColumn ccol1 = table2.Columns.Add ("col2", typeof (int));
+
+			DataSet ds1 = ds.Copy ();
+
+			table2.Constraints.Add ("fk", pcol, ccol);
+			ds1.Tables [1].Constraints.Add ("fk", ds1.Tables [0].Columns ["col2"], ds1.Tables [1].Columns ["col2"]);
+
+			// No Exceptions shud be thrown
+			ds.Merge (ds1);
+			Assert.AreEqual (2, table2.Constraints.Count, "#1 fk constraint shud be merged");
+			Assert.AreEqual ("Constraint1", table2.Constraints [1].ConstraintName, "#2 constraint name shud be changed");
+		}
+
+		[Test]
+		public void CopyClone_RelationWithoutConstraints ()
+		{
+			DataSet ds = new DataSet ();
+
+			DataTable table1 = ds.Tables.Add ("table1");
+			DataTable table2 = ds.Tables.Add ("table2");
+
+			DataColumn pcol = table1.Columns.Add ("col1", typeof (int));
+			DataColumn ccol = table2.Columns.Add ("col1", typeof (int));
+
+			DataRelation rel = ds.Relations.Add ("rel1", pcol, ccol, false);
+
+			DataSet ds1 = ds.Copy ();
+			DataSet ds2 = ds.Clone ();
+			
+			Assert.AreEqual (1, ds1.Relations.Count, "#1");
+			Assert.AreEqual (1, ds2.Relations.Count, "#2");
+
+			Assert.AreEqual (0, ds1.Tables [0].Constraints.Count, "#3");
+			Assert.AreEqual (0, ds1.Tables [1].Constraints.Count, "#4");
+
+			Assert.AreEqual (0, ds2.Tables [0].Constraints.Count, "#5");
+			Assert.AreEqual (0, ds2.Tables [1].Constraints.Count, "#6");
+		}
+
+		[Test]
+		[ExpectedException (typeof (DataException))]
+		public void Merge_MissingEventHandler ()
+		{
+			DataSet ds = new DataSet ();
+			DataTable table1 = ds.Tables.Add ("table1");
+
+			DataColumn pcol = table1.Columns.Add ("col1", typeof (int));
+			DataColumn pcol1 = table1.Columns.Add ("col2", typeof (int));
+			
+			DataSet ds1 = ds.Copy ();
+			table1.PrimaryKey = new DataColumn[] {pcol};
+			ds1.Tables [0].PrimaryKey = new DataColumn[] {ds1.Tables [0].Columns [1]};
+
+			// Exception shud be raised when handler is not set for MergeFailed Event
+			ds1.Merge (ds);
+		}
+
+		[Test]
+		[ExpectedException (typeof(DataException))]
+		public void Merge_MissingColumn  ()
+		{
+			DataSet ds = new DataSet ();
+			DataTable table1 = ds.Tables.Add ("table1");
+			DataTable table2 = ds.Tables.Add ("table2");
+
+			table1.Columns.Add ("col1", typeof (int));
+			table2.Columns.Add ("col1", typeof (int));
+
+			DataSet ds1 = ds.Copy ();
+
+			ds1.Tables [0].Columns.Add ("col2");
+
+			ds.Merge (ds1, true, MissingSchemaAction.Error);
+		}
+
+		[Test]
+		public void Merge_MissingConstraint ()
+		{
+			DataSet ds = new DataSet ();
+			DataTable table1 = ds.Tables.Add ("table1");
+			DataTable table2 = ds.Tables.Add ("table2");
+			table1.Columns.Add ("col1", typeof (int));
+			table2.Columns.Add ("col1", typeof (int));
+
+			try {
+				DataSet ds1 = ds.Copy ();
+				DataSet ds2 = ds.Copy ();
+				ds2.Tables [0].Constraints.Add ("uc", ds2.Tables [0].Columns [0], false);
+				ds1.Merge (ds2, true, MissingSchemaAction.Error);
+				Assert.Fail ("#1 If uniqueconstraint is missing, exception shud be thrown");
+			}catch (DataException e) {
+			}
+
+			try {
+				DataSet ds1 = ds.Copy ();
+				DataSet ds2 = ds.Copy ();
+				ds2.Tables [0].Constraints.Add ("fk", ds2.Tables [0].Columns [0], ds2.Tables[1].Columns [0]);
+				ds1.Tables [0].Constraints.Add ("uc", ds1.Tables [0].Columns [0],false);
+				ds1.Merge (ds2, true, MissingSchemaAction.Error);
+				Assert.Fail ("#2 If foreignkeyconstraint is missing, exception shud be thrown");
+			}catch (DataException e) {
+			}
+
+			try {
+				DataSet ds1 = ds.Copy ();
+				DataSet ds2 = ds.Copy ();
+				ds2.Relations.Add ("rel", ds2.Tables [0].Columns [0], ds2.Tables[1].Columns [0], false);
+				ds1.Merge (ds2, true, MissingSchemaAction.Error);
+				Assert.Fail ("#2 If datarelation is missing, exception shud be thrown");
+			}catch (ArgumentException e) {
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (DataException))]
+		public void Merge_PrimaryKeys_IncorrectOrder ()
+		{
+			DataSet ds = new DataSet ();
+			DataTable table1 = ds.Tables.Add ("table1");
+			DataTable table2 = ds.Tables.Add ("table2");
+			DataColumn pcol = table1.Columns.Add ("col1", typeof (int));
+			DataColumn pcol1 = table1.Columns.Add ("col2", typeof (int));
+			DataColumn ccol = table2.Columns.Add ("col1", typeof (int));
+
+			DataSet ds1 = ds.Copy ();
+			table1.PrimaryKey = new DataColumn[] {pcol,pcol1};
+			ds1.Tables [0].PrimaryKey = new DataColumn [] {ds1.Tables[0].Columns [1], ds1.Tables [0].Columns [0]};
+
+			// Though the key columns are the same, if the order is incorrect
+			// Exception must be raised
+			ds1.Merge (ds);
 		}
 
 		void CompareResults_1(string Msg,DataSet ds, DataSet dsTarget)
@@ -2494,7 +2737,116 @@ namespace MonoTests_System.Data
 			// ReadXml - Table 2 row count
 			Assert.AreEqual(ds2.Tables[1].Rows.Count, ds1.Tables[1].Rows.Count , "DS344");
 		}
+		
+		[Test] public void WriteXmlSchema_ForignKeyConstraint ()
+		{
+			DataSet ds1 = new DataSet();
 
+			DataTable table1 = ds1.Tables.Add();
+			DataTable table2 = ds1.Tables.Add();
+
+			DataColumn col1_1 = table1.Columns.Add ("col1", typeof (int));
+			DataColumn col2_1 = table2.Columns.Add ("col1", typeof (int));
+
+			table2.Constraints.Add ("fk", col1_1, col2_1);
+
+			StringWriter sw = new StringWriter ();
+			ds1.WriteXmlSchema (sw);
+			String xml = sw.ToString ();
+
+			Assert.IsTrue (xml.IndexOf (@"<xs:keyref name=""fk"" refer=""Constraint1"" " +
+						@"msdata:ConstraintOnly=""true"">") != -1, "#1");
+		}
+
+		[Test] public void WriteXmlSchema_RelationAnnotation ()
+		{
+			DataSet ds1 = new DataSet();
+
+			DataTable table1 = ds1.Tables.Add();
+			DataTable table2 = ds1.Tables.Add();
+
+			DataColumn col1_1 = table1.Columns.Add ("col1", typeof (int));
+			DataColumn col2_1 = table2.Columns.Add ("col1", typeof (int));
+
+			ds1.Relations.Add ("rel", col1_1, col2_1, false);
+
+			StringWriter sw = new StringWriter ();
+			ds1.WriteXmlSchema (sw);
+			String xml = sw.ToString ();
+
+      
+			Assert.IsTrue (xml.IndexOf (@"<msdata:Relationship name=""rel"" msdata:parent=""Table1""" +
+						@" msdata:child=""Table2"" msdata:parentkey=""col1"" " + 
+						@"msdata:childkey=""col1"" />") != -1, "#1");
+		}
+
+		[Test] public void WriteXmlSchema_Relations_ForeignKeys ()
+		{
+			System.IO.MemoryStream ms = null;
+			System.IO.MemoryStream ms1 = null;
+
+			DataSet ds1 = new DataSet();
+
+			DataTable table1 = ds1.Tables.Add("Table 1");
+			DataTable table2 = ds1.Tables.Add("Table 2");
+
+			DataColumn col1_1 = table1.Columns.Add ("col 1", typeof (int));
+			DataColumn col1_2 = table1.Columns.Add ("col 2", typeof (int));
+			DataColumn col1_3 = table1.Columns.Add ("col 3", typeof (int));
+			DataColumn col1_4 = table1.Columns.Add ("col 4", typeof (int));
+			DataColumn col1_5 = table1.Columns.Add ("col 5", typeof (int));
+			DataColumn col1_6 = table1.Columns.Add ("col 6", typeof (int));
+			DataColumn col1_7 = table1.Columns.Add ("col 7", typeof (int));
+
+			DataColumn col2_1 = table2.Columns.Add ("col 1", typeof (int));
+			DataColumn col2_2 = table2.Columns.Add ("col 2", typeof (int));
+			DataColumn col2_3 = table2.Columns.Add ("col 3", typeof (int));
+			DataColumn col2_4 = table2.Columns.Add ("col 4", typeof (int));
+			DataColumn col2_5 = table2.Columns.Add ("col 5", typeof (int));
+			DataColumn col2_6 = table2.Columns.Add ("col 6", typeof (int));
+
+			ds1.Relations.Add ("rel 1", 
+				new DataColumn[] {col1_1, col1_2},
+				new DataColumn[] {col2_1, col2_2});
+			ds1.Relations.Add ("rel 2", 
+				new DataColumn[] {col1_3, col1_4}, 
+				new DataColumn[] {col2_3, col2_4},
+				false);
+			table2.Constraints.Add ("fk 1",
+				new DataColumn[] {col1_5, col1_6},
+				new DataColumn[] {col2_5, col2_6});
+
+			table1.Constraints.Add ("pk 1", col1_7, true);
+
+			ms = new System.IO.MemoryStream();
+			ds1.WriteXmlSchema (ms);
+
+			ms1 = new System.IO.MemoryStream (ms.GetBuffer());
+			DataSet ds2 = new DataSet();
+			ds2.ReadXmlSchema(ms1);
+		
+			Assert.AreEqual (2, ds2.Relations.Count, "#1");
+			Assert.AreEqual (3, ds2.Tables [0].Constraints.Count, "#2");
+			Assert.AreEqual (2, ds2.Tables [1].Constraints.Count, "#2");
+
+			Assert.IsTrue (ds2.Relations.Contains ("rel 1"), "#3");
+			Assert.IsTrue (ds2.Relations.Contains ("rel 2"), "#4");
+
+			Assert.IsTrue (ds2.Tables [0].Constraints.Contains ("pk 1"), "#5");
+			Assert.IsTrue (ds2.Tables [1].Constraints.Contains ("fk 1"), "#6");
+			Assert.IsTrue (ds2.Tables [1].Constraints.Contains ("rel 1"), "#7");
+
+			Assert.AreEqual (2, ds2.Relations ["rel 1"].ParentColumns.Length, "#8");
+			Assert.AreEqual (2, ds2.Relations ["rel 1"].ChildColumns.Length, "#9");
+
+			Assert.AreEqual (2, ds2.Relations ["rel 2"].ParentColumns.Length, "#10");
+			Assert.AreEqual (2, ds2.Relations ["rel 2"].ChildColumns.Length, "#11");
+
+			ForeignKeyConstraint fk = (ForeignKeyConstraint)ds2.Tables [1].Constraints ["fk 1"];
+			Assert.AreEqual (2, fk.RelatedColumns.Length, "#12");
+			Assert.AreEqual (2, fk.Columns.Length, "#13");
+		}
+		
 		[Test] public void RejectChanges()
 		{
 			DataSet ds1,ds2 = new DataSet();
@@ -2752,5 +3104,157 @@ namespace MonoTests_System.Data
 		}	
 #endif
 
+		///<?xml version="1.0" encoding="utf-16"?>
+		///<xs:schema id="NewDataSet" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+		///	<xs:element name="NewDataSet" msdata:IsDataSet="true">
+		///		<xs:complexType>
+		///			<xs:choice maxOccurs="unbounded">
+		///				<xs:element name="Parent">
+		///					<xs:complexType>
+		///						<xs:sequence>
+		///							<xs:element name="ParentId" type="xs:int" minOccurs="0"/>
+		///							<xs:element name="String1" type="xs:string" minOccurs="0"/>
+		///							<xs:element name="String2" type="xs:string" minOccurs="0"/>
+		///							<xs:element name="ParentDateTime" type="xs:dateTime" minOccurs="0"/>
+		///							<xs:element name="ParentDouble" type="xs:double" minOccurs="0"/>
+		///							<xs:element name="ParentBool" type="xs:boolean" minOccurs="0"/>
+		///						</xs:sequence>
+		///					</xs:complexType>
+		///				</xs:element>
+		///			</xs:choice>
+		///		</xs:complexType>
+		///	</xs:element>
+		///</xs:schema>
+		
+		[Test]
+		public void ParentDataTableSchema()
+		{
+			XmlDocument testedSchema;
+			XmlNamespaceManager testedSchemaNamepaces;
+			InitParentDataTableSchema(out testedSchema, out testedSchemaNamepaces);
+
+			TestNode("DataSet name", "/xs:schema/xs:element[@name='NewDataSet']", 1, testedSchema, testedSchemaNamepaces);
+
+			TestNode("Parent datatable name", "/xs:schema/xs:element/xs:complexType/xs:choice/xs:element[@name='Parent']", 1, testedSchema, testedSchemaNamepaces);
+
+			TestNode("ParentId column - name", "/xs:schema/xs:element/xs:complexType/xs:choice/xs:element/xs:complexType/xs:sequence/xs:element[@name='ParentId']", 1, testedSchema, testedSchemaNamepaces);
+
+			TestNode("String1 column - name",	 "/xs:schema/xs:element/xs:complexType/xs:choice/xs:element/xs:complexType/xs:sequence/xs:element[@name='String1']", 1, testedSchema, testedSchemaNamepaces);
+
+			TestNode("String2 column - name", "/xs:schema/xs:element/xs:complexType/xs:choice/xs:element/xs:complexType/xs:sequence/xs:element[@name='String1']", 1, testedSchema, testedSchemaNamepaces);
+
+			TestNode("ParentDateTime column - name", "/xs:schema/xs:element/xs:complexType/xs:choice/xs:element/xs:complexType/xs:sequence/xs:element[@name='ParentDateTime']", 1, testedSchema, testedSchemaNamepaces);
+
+			TestNode("ParentDouble column - name",	"/xs:schema/xs:element/xs:complexType/xs:choice/xs:element/xs:complexType/xs:sequence/xs:element[@name='ParentDouble']", 1, testedSchema, testedSchemaNamepaces);
+
+			TestNode("ParentBool column - name", "/xs:schema/xs:element/xs:complexType/xs:choice/xs:element/xs:complexType/xs:sequence/xs:element[@name='ParentBool']", 1, testedSchema, testedSchemaNamepaces);
+
+			TestNode("Int columns", "/xs:schema/xs:element/xs:complexType/xs:choice/xs:element/xs:complexType/xs:sequence/xs:element[@type='xs:int']", 1, testedSchema, testedSchemaNamepaces);
+
+			TestNode("string columns", "/xs:schema/xs:element/xs:complexType/xs:choice/xs:element/xs:complexType/xs:sequence/xs:element[@type='xs:string']",	2, testedSchema, testedSchemaNamepaces);
+
+			TestNode("dateTime columns", "/xs:schema/xs:element/xs:complexType/xs:choice/xs:element/xs:complexType/xs:sequence/xs:element[@type='xs:dateTime']",	1, testedSchema, testedSchemaNamepaces);
+
+			TestNode("double columns", "/xs:schema/xs:element/xs:complexType/xs:choice/xs:element/xs:complexType/xs:sequence/xs:element[@type='xs:double']",	1, testedSchema, testedSchemaNamepaces);
+
+			TestNode("boolean columns", "/xs:schema/xs:element/xs:complexType/xs:choice/xs:element/xs:complexType/xs:sequence/xs:element[@type='xs:boolean']",	1, testedSchema, testedSchemaNamepaces);
+
+			TestNode("minOccurs columns", "/xs:schema/xs:element/xs:complexType/xs:choice/xs:element/xs:complexType/xs:sequence/xs:element[@minOccurs='0']", 6, testedSchema, testedSchemaNamepaces);
+		}
+
+		private void InitParentDataTableSchema(out XmlDocument schemaDocInit, out XmlNamespaceManager namespaceManagerToInit)
+		{
+			DataSet ds = new DataSet();
+			ds.Tables.Add(DataProvider.CreateParentDataTable());
+			string strXML = ds.GetXmlSchema();
+			schemaDocInit = new XmlDocument();
+			schemaDocInit.LoadXml(strXML);
+			namespaceManagerToInit = new XmlNamespaceManager(schemaDocInit.NameTable);
+			namespaceManagerToInit.AddNamespace("xs", "http://www.w3.org/2001/XMLSchema");
+			namespaceManagerToInit.AddNamespace("msdata", "urn:schemas-microsoft-com:xml-msdata");
+		}
+
+		private void TestNode(string description, string xPath, int expectedNodesCout, XmlDocument schemaDoc, XmlNamespaceManager nm)
+		{
+			int actualNodeCount = schemaDoc.SelectNodes(xPath, nm).Count;
+			Assert.AreEqual(expectedNodesCout,actualNodeCount, "DS75" + description);
+		}
+
+		[Test]
+		public void WriteXml_Stream()
+		{
+			{
+			DataSet ds = new DataSet();
+			string input = "<a><b><c>2</c></b></a>";
+			System.IO.StringReader sr = new System.IO.StringReader(input) ;
+			System.Xml.XmlTextReader xReader = new System.Xml.XmlTextReader(sr) ;
+			ds.ReadXml (xReader);
+
+			System.Text.StringBuilder sb = new System.Text.StringBuilder();
+			System.IO.StringWriter sw = new System.IO.StringWriter(sb);
+			System.Xml.XmlTextWriter xWriter = new System.Xml.XmlTextWriter(sw);
+			ds.WriteXml(xWriter);
+			string output = sb.ToString();
+			Assert.AreEqual(input,output, "DS76");
+			}
+			{
+			DataSet ds = new DataSet();
+			string input = "<?xml version=\"1.0\" encoding=\"utf-8\" ?><a><b><c>2</c></b></a>";
+			string expectedOutput = "<a><b><c>2</c></b></a>";
+			System.IO.StringReader sr = new System.IO.StringReader(input) ;
+			System.Xml.XmlTextReader xReader = new System.Xml.XmlTextReader(sr) ;
+			ds.ReadXml (xReader);
+			
+			System.Text.StringBuilder sb = new System.Text.StringBuilder();
+			System.IO.StringWriter sw = new System.IO.StringWriter(sb);
+			System.Xml.XmlTextWriter xWriter = new System.Xml.XmlTextWriter(sw);
+			ds.WriteXml(xWriter);
+			string output = sb.ToString();
+			Assert.AreEqual(expectedOutput,output, "DS77");
+			}
+			{
+			DataSet ds = new DataSet("DSName"); 
+			System.IO.StringWriter sr = new System.IO.StringWriter();
+			ds.WriteXml(sr); 
+			Assert.AreEqual("<DSName />",sr.ToString(), "DS78");
+			}
+			{
+			DataSet ds = new DataSet();
+			DataTable dt;
+
+			//Create parent table.
+			dt = ds.Tables.Add("ParentTable");
+			dt.Columns.Add("ParentTable_Id", typeof(int));
+			dt.Columns.Add("ParentTableCol", typeof(int));
+			dt.Rows.Add(new object[] {0,1});
+
+			//Create child table.
+			dt = ds.Tables.Add("ChildTable");
+			dt.Columns.Add("ParentTable_Id", typeof(int));
+			dt.Columns.Add("ChildTableCol", typeof(string));
+			dt.Rows.Add(new object[] {0,"aa"});
+
+			//Add a relation between parent and child table.
+			ds.Relations.Add("ParentTable_ChildTable", ds.Tables["ParentTable"].Columns["ParentTable_Id"], ds.Tables["ChildTable"].Columns["ParentTable_Id"], true);
+			ds.Relations["ParentTable_ChildTable"].Nested=true;
+
+			//Reomve the Parent_Child relation.
+			dt = ds.Tables["ChildTable"];
+			dt.ParentRelations.Remove("ParentTable_ChildTable");
+
+			//Remove the constraint created automatically to enforce the "ParentTable_ChildTable" relation.
+			dt.Constraints.Remove("ParentTable_ChildTable");
+
+			//Remove the child table from the dataset.
+			ds.Tables.Remove("ChildTable");
+
+			//Get the xml representation of the dataset.
+			System.IO.StringWriter sr = new System.IO.StringWriter();
+			ds.WriteXml(sr); 
+			string xml = sr.ToString();
+
+			Assert.AreEqual(-1,xml.IndexOf("<ChildTable>"), "DS79");
+			}
+		}
 	}
 }

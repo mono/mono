@@ -35,8 +35,8 @@
 namespace System.Data.Common {
 	public enum CatalogLocation 
 	{
-		End,
-		Start
+		End = 2,
+		Start = 1
 	}
 }
 

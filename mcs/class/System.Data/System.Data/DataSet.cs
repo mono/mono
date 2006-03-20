@@ -55,7 +55,10 @@ namespace System.Data {
 	[ToolboxItem ("Microsoft.VSDesigner.Data.VS.DataSetToolboxItem, " + Consts.AssemblyMicrosoft_VSDesigner)]
 	[DefaultProperty ("DataSetName")]
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.DataSetDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
-
+#if NET_2_0
+	[XmlSchemaProvider ("GetDataSetSchema")]
+	[XmlRootAttribute ("DataSet")]
+#endif
 	[Serializable]
 	public class DataSet : MarshalByValueComponent, IListSource, 
 		ISupportInitialize, ISerializable, IXmlSerializable 
@@ -72,6 +75,7 @@ namespace System.Data {
 		private CultureInfo locale = System.Threading.Thread.CurrentThread.CurrentCulture;
 		internal XmlDataDocument _xmlDataDocument = null;
 		
+		bool initInProgress = false;
 		#region Constructors
 
 		public DataSet () : this ("NewDataSet") 
@@ -99,7 +103,9 @@ namespace System.Data {
 		#region Public Properties
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("Indicates whether comparing strings within the DataSet is case sensitive.")]
+#endif
 		[DefaultValue (false)]
 		public bool CaseSensitive {
 			get {
@@ -123,14 +129,18 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("The name of this DataSet.")]
+#endif
 		[DefaultValue ("")]
 		public string DataSetName {
 			get { return dataSetName; } 
 			set { dataSetName = value; }
 		}
 
+#if !NET_2_0
 		[DataSysDescription ("Indicates a custom \"view\" of the data contained by the DataSet. This view allows filtering, searching, and navigating through the custom data view.")]
+#endif
 		[Browsable (false)]
 		public DataViewManager DefaultViewManager {
 			get {
@@ -140,7 +150,9 @@ namespace System.Data {
 			} 
 		}
 
+#if !NET_2_0
 		[DataSysDescription ("Indicates whether constraint rules are to be followed.")]
+#endif
 		[DefaultValue (true)]
 		public bool EnforceConstraints {
 			get { return enforceConstraints; } 
@@ -151,13 +163,17 @@ namespace System.Data {
 
 		[Browsable (false)]
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("The collection that holds custom user information.")]
+#endif
 		public PropertyCollection ExtendedProperties {
 			get { return properties; }
 		}
 
 		[Browsable (false)]
+#if !NET_2_0
 		[DataSysDescription ("Indicates that the DataSet has errors.")]
+#endif
 		public bool HasErrors {
 			[MonoTODO]
 			get {
@@ -170,7 +186,9 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("Indicates a locale under which to compare strings within the DataSet.")]
+#endif
 		public CultureInfo Locale {
 			get {
 				return locale;
@@ -268,7 +286,9 @@ namespace System.Data {
 		}
 		
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("Indicates the XML uri namespace for the root element pointed at by this DataSet.")]
+#endif
 		[DefaultValue ("")]
 		public string Namespace {
 			get { return _namespace; } 
@@ -283,7 +303,9 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("Indicates the prefix of the namespace used for this DataSet.")]
+#endif
 		[DefaultValue ("")]
 		public string Prefix {
 			get { return prefix; } 
@@ -307,7 +329,9 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("The collection that holds the relations for this DatSet.")]
+#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public DataRelationCollection Relations {
 			get {
@@ -320,23 +344,27 @@ namespace System.Data {
 		public override ISite Site {
 			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return base.Site;
 			} 
 			
 			[MonoTODO]
 			set {
-				throw new NotImplementedException ();
+				base.Site = value;
 			}
 		}
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("The collection that holds the tables for this DataSet.")]
+#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public DataTableCollection Tables {
 			get { return tableCollection; }
 		}
 
 #if NET_2_0
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
 		public virtual SchemaSerializationMode SchemaSerializationMode {
 
 			get {
@@ -478,20 +506,30 @@ namespace System.Data {
 					i++;
 				}
 				
-				DataRelation cRel = new DataRelation (MyRelation.RelationName, P_DC, C_DC);
-				//cRel.ChildColumns = MyRelation.ChildColumns;
-				//cRel.ChildTable = MyRelation.ChildTable;
-				//cRel.ExtendedProperties = cRel.ExtendedProperties; 
-				//cRel.Nested = MyRelation.Nested;
-				//cRel.ParentColumns = MyRelation.ParentColumns;
-				//cRel.ParentTable = MyRelation.ParentTable;
-								
+				DataRelation cRel = new DataRelation (MyRelation.RelationName, P_DC, C_DC, false);
 				Copy.Relations.Add (cRel);
 			}
+			
+			// Foreign Key constraints are not cloned in DataTable.Clone
+			// so, these constraints should be cloned when copying the relations.
+			foreach (DataTable table in this.Tables) {
+				foreach (Constraint c in table.Constraints) {
+					if (!(c is ForeignKeyConstraint) 
+						|| Copy.Tables[table.TableName].Constraints.Contains (c.ConstraintName))
+						continue;
+					ForeignKeyConstraint fc = (ForeignKeyConstraint)c;
+					DataTable parentTable = Copy.Tables [fc.RelatedTable.TableName];
+					DataTable currTable = Copy.Tables [table.TableName];
+					DataColumn[] parentCols = new DataColumn [fc.RelatedColumns.Length];
+					DataColumn[] childCols = new DataColumn [fc.Columns.Length];
+					for (int j=0; j < parentCols.Length; ++j)
+						parentCols [j] = parentTable.Columns[fc.RelatedColumns[j].ColumnName];
+					for (int j=0; j < childCols.Length; ++j)
+						childCols [j] = currTable.Columns[fc.Columns[j].ColumnName];
+					currTable.Constraints.Add (fc.ConstraintName, parentCols, childCols);
+				}
+			}
 		}
-
-		
-
 
 		public DataSet GetChanges ()
 		{
@@ -551,13 +589,13 @@ namespace System.Data {
 
 #if NET_2_0
 		[MonoTODO]
-		public DataTableReader GetDataReader (DataTable[] dataTables)
+		public DataTableReader CreateDataReader (DataTable[] dataTables)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public DataTableReader GetDataReader ()
+		public DataTableReader CreateDataReader ()
 		{
 			throw new NotImplementedException ();
 		}
@@ -1087,7 +1125,9 @@ namespace System.Data {
 		#region Public Events
 
 		[DataCategory ("Action")]
+#if !NET_2_0
 		[DataSysDescription ("Occurs when it is not possible to merge schemas for two tables with the same name.")]
+#endif
 		public event MergeFailedEventHandler MergeFailed;
 
 		#endregion // Public Events
@@ -1106,12 +1146,30 @@ namespace System.Data {
 		#endregion IListSource methods
 		
 		#region ISupportInitialize methods
+
+		internal bool InitInProgress {
+			get { return initInProgress; }
+			set { initInProgress = value; }
+		}
+
 		public void BeginInit ()
 		{
+			InitInProgress = true;
 		}
 		
 		public void EndInit ()
 		{
+			// Finsh the init'ing the tables only after adding all the
+			// tables to the collection.
+			Tables.PostAddRange ();
+			for (int i=0; i < Tables.Count; ++i) {
+				if (!Tables [i].InitInProgress)
+					continue;
+				Tables [i].FinishInit ();
+			}
+
+			Relations.PostAddRange ();
+			InitInProgress = false;
 		}
 		#endregion
 
@@ -1208,6 +1266,8 @@ namespace System.Data {
 		{
 			if (MergeFailed != null)
 				MergeFailed (this, e);
+			else
+				throw new DataException (e.Conflict);
 		}
 
 		[MonoTODO]

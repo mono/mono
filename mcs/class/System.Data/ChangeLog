@@ -1,3 +1,41 @@
+2006-03-16 	Boris Kirzner <borisk@mainsfot.com>
+	* run-tests.test.connected.bat - fix in TARGET_JVM test script.
+
+2006-03-16 	Boris Kirzner <borisk@mainsfot.com>
+	* run-tests.test.connected.bat - fix classpath in TARGET_JVM test script.
+
+2006-03-12	Boris Kirzner <borisk@mainsfot.com>
+	* run-tests.bat, run-tests.test.connected.bat, run-tests.test.disconnected.bat
+	added batch files for automated testing for TARGET_JVM.
+
+2006-02-19  Konstantin Triger <kostat@mainsoft.com>
+
+	* TARGET_JVM: added JDBC provider generic adapter mechanism.
+
+2006-02-17  Chris Toshok  <toshok@ximian.com>
+
+	* System.Data.dll.sources: remove
+	System.Data/DataAdapterException.cs, and add
+	System.Data.Common/SupportedJoinOperators.cs.
+
+	* System.Data.dll.sources: remove
+	System.Data/AdapterMappingException.cs.
+
+	* System.Data.dll.sources: remove IDbAsyncConnection.cs,
+	IDbAsyncCommand.cs, IGetTypedData.cs, ISetTypedData.cs,
+	IDataReader2.cs, IDataSources.cs, IDbExecutionContext.cs,
+	IDataRecord2.cs, IDataUpdatableRecord.cs, and
+	DbDataUpdatableRecord.cs from the build.
+
+2006-01-02	Boris Kirzner <borisk@mainsoft.com>
+	* System.Data_test.dll.sources: added new tests.
+
+2006-01-01  Daniel Morgan <danielmorgan@verizon.net>
+
+	* System.Data.Common/DbDataAdapter.cs: fix
+	regression for NET_2_0 causing NotImplementedException.
+	Fixes bug #77105.
+
 2005-11-30  Konstantin Triger <kostat@mainsoft.com>
 
         * jay.bat: quoting passes

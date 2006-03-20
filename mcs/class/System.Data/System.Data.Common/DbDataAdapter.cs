@@ -69,20 +69,6 @@ namespace System.Data.Common {
 		#region Properties
 
 #if NET_2_0
-		[MonoTODO]
-		protected virtual IDbConnection BaseConnection {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-
-		public IDbConnection Connection { 
-			get { return BaseConnection; }
-			set { BaseConnection = value; }
-		}
-#endif
-
-
-#if NET_2_0
 		protected internal CommandBehavior FillCommandBehavior {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
@@ -92,71 +78,63 @@ namespace System.Data.Common {
 
 #if NET_2_0
 		[MonoTODO]
-		protected virtual IDbCommand this [[Optional] StatementType statementType] {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		protected virtual DbProviderFactory ProviderFactory {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
 		IDbCommand IDbDataAdapter.SelectCommand {
-			get { throw new NotImplementedException(); }
+			get { return ((IDbDataAdapter) this).SelectCommand; }
 			set { throw new NotImplementedException(); }
 		}
 
 		[MonoTODO]
 		IDbCommand IDbDataAdapter.UpdateCommand{
-			get { throw new NotImplementedException(); }
+			get { return ((IDbDataAdapter) this).UpdateCommand; }
 			set { throw new NotImplementedException(); }
 		}
 
 		[MonoTODO]
 		IDbCommand IDbDataAdapter.DeleteCommand{
-			get { throw new NotImplementedException(); }
+			get { return ((IDbDataAdapter) this).DeleteCommand; }
 			set { throw new NotImplementedException(); }
 		}
 
 		[MonoTODO]
 		IDbCommand IDbDataAdapter.InsertCommand{
-			get { throw new NotImplementedException(); }
+			get { return ((IDbDataAdapter) this).InsertCommand; }
 			set { throw new NotImplementedException(); }
 		}
 		
 		[MonoTODO]
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DbCommand SelectCommand {
-			get { throw new NotImplementedException(); }
+			get { return (DbCommand) ((IDbDataAdapter) this).SelectCommand; }
 			set { throw new NotImplementedException(); }
 		}
 
 		[MonoTODO]
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DbCommand DeleteCommand {
-			get { throw new NotImplementedException(); }
+			get { return (DbCommand) ((IDbDataAdapter) this).DeleteCommand; }
 			set { throw new NotImplementedException(); }
 		}
 
 		[MonoTODO]
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DbCommand InsertCommand {
-			get { throw new NotImplementedException(); }
+			get { return (DbCommand) ((IDbDataAdapter) this).InsertCommand; }
 			set { throw new NotImplementedException(); }
 		}
 
 		[MonoTODO]
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DbCommand UpdateCommand {
-			get { throw new NotImplementedException(); }
+			get { return (DbCommand) ((IDbDataAdapter) this).UpdateCommand; }
 			set { throw new NotImplementedException(); }
 		}
 
 		[MonoTODO]
-		public IDbTransaction Transaction {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
+		[DefaultValue (1)]
 		public int UpdateBatchSize {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
@@ -195,16 +173,40 @@ namespace System.Data.Common {
 		#region Methods
 
 #if NET_2_0
-		[MonoTODO]
-		public virtual void BeginInit ()
+		protected virtual RowUpdatedEventArgs CreateRowUpdatedEvent (DataRow dataRow, IDbCommand command,
+									     StatementType statementType,
+									     DataTableMapping tableMapping)
 		{
-			throw new NotImplementedException ();
+			return new RowUpdatedEventArgs (dataRow, command, statementType, tableMapping);
 		}
+
+		protected virtual RowUpdatingEventArgs CreateRowUpdatingEvent (DataRow dataRow, IDbCommand command,
+									       StatementType statementType,
+									       DataTableMapping tableMapping)
+		{
+			return new RowUpdatingEventArgs (dataRow, command, statementType, tableMapping);
+		}
+
+		[MonoTODO]
+		protected virtual void OnRowUpdated (RowUpdatedEventArgs value)
+		{
+		}
+
+		[MonoTODO]
+		protected virtual void OnRowUpdating (RowUpdatingEventArgs value)
+		{
+		}
+#else
+		protected abstract RowUpdatedEventArgs CreateRowUpdatedEvent (DataRow dataRow, IDbCommand command,
+									      StatementType statementType,
+									      DataTableMapping tableMapping);
+		protected abstract RowUpdatingEventArgs CreateRowUpdatingEvent (DataRow dataRow, IDbCommand command,
+										StatementType statementType,
+										DataTableMapping tableMapping);
+
+		protected abstract void OnRowUpdated (RowUpdatedEventArgs value);
+		protected abstract void OnRowUpdating (RowUpdatingEventArgs value);
 #endif
-
-		protected abstract RowUpdatedEventArgs CreateRowUpdatedEvent (DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping);
-		protected abstract RowUpdatingEventArgs CreateRowUpdatingEvent (DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping);
-
 		private FillErrorEventArgs CreateFillErrorEvent (DataTable dataTable, object[] values, Exception e)
 		{
 			FillErrorEventArgs args = new FillErrorEventArgs (dataTable, values);
@@ -236,36 +238,28 @@ namespace System.Data.Common {
 			}
 		}
 
-#if NET_2_0
-		[MonoTODO]
-		public virtual void EndInit ()
-		{
-			throw new NotImplementedException ();
-		}
-#endif
-
 		public override int Fill (DataSet dataSet)
 		{
-			return Fill (dataSet, 0, 0, DefaultSourceTableName, SelectCommand, CommandBehavior.Default);
+			return Fill (dataSet, 0, 0, DefaultSourceTableName, ((IDbDataAdapter) this).SelectCommand, CommandBehavior.Default);
 		}
 
 		public int Fill (DataTable dataTable) 
 		{
 			if (dataTable == null)
-				throw new NullReferenceException ();
+				throw new ArgumentNullException ("DataTable");
 
-			return Fill (dataTable, SelectCommand, CommandBehavior.Default);
+			return Fill (dataTable, ((IDbDataAdapter) this).SelectCommand, CommandBehavior.Default);
 		}
 
 		public int Fill (DataSet dataSet, string srcTable) 
 		{
-			return Fill (dataSet, 0, 0, srcTable, SelectCommand, CommandBehavior.Default);
+			return Fill (dataSet, 0, 0, srcTable, ((IDbDataAdapter) this).SelectCommand, CommandBehavior.Default);
 		}
 
 #if NET_2_0
 		protected override int Fill (DataTable dataTable, IDataReader dataReader) 
 #else
-			protected virtual int Fill (DataTable dataTable, IDataReader dataReader) 
+		protected virtual int Fill (DataTable dataTable, IDataReader dataReader) 
 #endif
 		{
 			if (dataReader.FieldCount == 0) {
@@ -291,6 +285,7 @@ namespace System.Data.Common {
 		protected virtual int Fill (DataTable dataTable, IDbCommand command, CommandBehavior behavior) 
 		{
 			CommandBehavior commandBehavior = behavior;
+
 			// first see that the connection is not close.
 			if (command.Connection.State == ConnectionState.Closed) 
 			{
@@ -310,7 +305,7 @@ namespace System.Data.Common {
 
 		public int Fill (DataSet dataSet, int startRecord, int maxRecords, string srcTable) 
 		{
-			return this.Fill (dataSet, startRecord, maxRecords, srcTable, SelectCommand, CommandBehavior.Default);
+			return this.Fill (dataSet, startRecord, maxRecords, srcTable, ((IDbDataAdapter) this).SelectCommand, CommandBehavior.Default);
 		}
 
 #if NET_2_0
@@ -324,15 +319,18 @@ namespace System.Data.Common {
 #if NET_2_0
 		protected override int Fill (DataSet dataSet, string srcTable, IDataReader dataReader, int startRecord, int maxRecords) 
 #else
-			protected virtual int Fill (DataSet dataSet, string srcTable, IDataReader dataReader, int startRecord, int maxRecords) 
+		protected virtual int Fill (DataSet dataSet, string srcTable, IDataReader dataReader, int startRecord, int maxRecords) 
 #endif
 		{
+			if (dataSet == null)
+				throw new ArgumentNullException ("DataSet");
+
 			if (startRecord < 0)
 				throw new ArgumentException ("The startRecord parameter was less than 0.");
 			if (maxRecords < 0)
 				throw new ArgumentException ("The maxRecords parameter was less than 0.");
 
-			DataTable dataTable;
+			DataTable dataTable = null;
 			int resultIndex = 0;
 			int count = 0;
 			
@@ -344,14 +342,16 @@ namespace System.Data.Common {
 					{
 						tableName = SetupSchema (SchemaType.Mapped, tableName);
 						if (tableName != null) {
-						
+							
 							// check if the table exists in the dataset
 							if (dataSet.Tables.Contains (tableName)) 
 								// get the table from the dataset
 								dataTable = dataSet.Tables [tableName];
 							else {
-								dataTable = new DataTable(tableName);
-								dataSet.Tables.Add (dataTable);
+								// Do not create schema if MissingSchemAction is set to Ignore
+								if (this.MissingSchemaAction == MissingSchemaAction.Ignore)
+									continue;
+								dataTable = dataSet.Tables.Add (tableName);
 							}
 	
 							if (!FillTable (dataTable, dataReader, startRecord, maxRecords, ref count)) {
@@ -378,6 +378,7 @@ namespace System.Data.Common {
 			if (MissingSchemaAction == MissingSchemaAction.AddWithKey)
 				behavior |= CommandBehavior.KeyInfo;
 			CommandBehavior commandBehavior = behavior;
+
 			if (command.Connection.State == ConnectionState.Closed) {
 				command.Connection.Open ();
 				commandBehavior |= CommandBehavior.CloseConnection;
@@ -393,7 +394,7 @@ namespace System.Data.Common {
 			int counterStart = counter;
 
 			int[] mapping = BuildSchema (dataReader, dataTable, SchemaType.Mapped);
-
+			
 			int[] sortedMapping = new int[mapping.Length];
 			int length = sortedMapping.Length;
 			for(int i=0; i < sortedMapping.Length; i++) {
@@ -407,13 +408,12 @@ namespace System.Data.Common {
 				dataReader.Read ();
 			}
 
+			dataTable.BeginLoadData ();
 			while (dataReader.Read () && (maxRecords == 0 || (counter - counterStart) < maxRecords)) {
 				try {
-					dataTable.BeginLoadData ();
 					dataTable.LoadDataRow (dataReader, sortedMapping, length, AcceptChangesDuringFill);
-					dataTable.EndLoadData ();
 					counter++;
-				} 
+				}
 				catch (Exception e) {
 					object[] readerArray = new object[dataReader.FieldCount];
 					object[] tableArray = new object[mapping.Length];
@@ -427,20 +427,22 @@ namespace System.Data.Common {
 					}
 					FillErrorEventArgs args = CreateFillErrorEvent (dataTable, tableArray, e);
 					OnFillError (args);
-					if(!args.Continue) {
-						return false;
-					}
+
+					// if args.Continue is not set to true or if a handler is not set, rethrow the error..
+					if(!args.Continue)
+						throw e;
 				}
 			}
+			dataTable.EndLoadData ();
 			return true;
 		}
 
 #if NET_2_0
-                /// <summary>
-                ///     Fills the given datatable using values from reader. if a value 
-                ///     for a column is  null, that will be filled with default value. 
-                /// </summary>
-                /// <returns>No. of rows affected </returns>
+		/// <summary>
+		///     Fills the given datatable using values from reader. if a value 
+		///     for a column is  null, that will be filled with default value. 
+		/// </summary>
+		/// <returns>No. of rows affected </returns>
 		internal static int FillFromReader (DataTable table,
                                                     IDataReader reader,
                                                     int start, 
@@ -475,22 +477,25 @@ namespace System.Data.Common {
 
 		public override DataTable[] FillSchema (DataSet dataSet, SchemaType schemaType) 
 		{
-			return FillSchema (dataSet, schemaType, SelectCommand, DefaultSourceTableName, CommandBehavior.Default);
+			return FillSchema (dataSet, schemaType, ((IDbDataAdapter) this).SelectCommand, DefaultSourceTableName, CommandBehavior.Default);
 		}
 
 		public DataTable FillSchema (DataTable dataTable, SchemaType schemaType) 
 		{
-			return FillSchema (dataTable, schemaType, SelectCommand, CommandBehavior.Default);
+			return FillSchema (dataTable, schemaType, ((IDbDataAdapter) this).SelectCommand, CommandBehavior.Default);
 		}
 
 		public DataTable[] FillSchema (DataSet dataSet, SchemaType schemaType, string srcTable) 
 		{
-			return FillSchema (dataSet, schemaType, SelectCommand, srcTable, CommandBehavior.Default);
+			return FillSchema (dataSet, schemaType, ((IDbDataAdapter) this).SelectCommand, srcTable, CommandBehavior.Default);
 		}
 
 		[MonoTODO ("Verify")]
 		protected virtual DataTable FillSchema (DataTable dataTable, SchemaType schemaType, IDbCommand command, CommandBehavior behavior) 
 		{
+			if (dataTable == null)
+				throw new ArgumentNullException ("DataTable");
+
 			behavior |= CommandBehavior.SchemaOnly | CommandBehavior.KeyInfo;
 			if (command.Connection.State == ConnectionState.Closed) {
 				command.Connection.Open ();
@@ -503,7 +508,15 @@ namespace System.Data.Common {
 				string tableName =  SetupSchema (schemaType, dataTable.TableName);
 				if (tableName != null)
 				{
-					BuildSchema (reader, dataTable, schemaType);
+					// FillSchema should add the KeyInfo unless MissingSchemaAction
+					// is set to Ignore or Error.
+					MissingSchemaAction schemaAction = MissingSchemaAction;
+					if (!(schemaAction == MissingSchemaAction.Ignore ||
+						schemaAction == MissingSchemaAction.Error))
+						schemaAction = MissingSchemaAction.AddWithKey;
+
+					BuildSchema (reader, dataTable, schemaType, schemaAction,
+						MissingMappingAction, TableMappings);
 				}
 			}
 			finally
@@ -516,6 +529,9 @@ namespace System.Data.Common {
 		[MonoTODO ("Verify")]
 		protected virtual DataTable[] FillSchema (DataSet dataSet, SchemaType schemaType, IDbCommand command, string srcTable, CommandBehavior behavior) 
 		{
+			if (dataSet == null)
+				throw new ArgumentNullException ("DataSet");
+
 			behavior |= CommandBehavior.SchemaOnly | CommandBehavior.KeyInfo;
 			if (command.Connection.State == ConnectionState.Closed) {
 				command.Connection.Open ();
@@ -529,20 +545,33 @@ namespace System.Data.Common {
 			DataTable table;
 			try
 			{
-				tableName = SetupSchema (schemaType, tableName);
-				if (tableName != null)
-				{
-					if (dataSet.Tables.Contains (tableName))
-						table = dataSet.Tables [tableName];	
-					else
+				// FillSchema should add the KeyInfo unless MissingSchemaAction
+				// is set to Ignore or Error.
+				MissingSchemaAction schemaAction = MissingSchemaAction;
+				if (!(MissingSchemaAction == MissingSchemaAction.Ignore ||
+					MissingSchemaAction == MissingSchemaAction.Error))
+					schemaAction = MissingSchemaAction.AddWithKey;
+
+				do {
+					tableName = SetupSchema (schemaType, tableName);
+					if (tableName != null)
 					{
-						table = new DataTable(tableName);
-						dataSet.Tables.Add (table);
+						if (dataSet.Tables.Contains (tableName))
+							table = dataSet.Tables [tableName];	
+						else
+						{
+							// Do not create schema if MissingSchemAction is set to Ignore
+							if (this.MissingSchemaAction == MissingSchemaAction.Ignore)
+								continue;
+							table =  dataSet.Tables.Add (tableName);
+						}
+						
+						BuildSchema (reader, table, schemaType, schemaAction,
+							MissingMappingAction, TableMappings);
+						output.Add (table);
+						tableName = String.Format ("{0}{1}", srcTable, ++index);
 					}
-					BuildSchema (reader, table, schemaType);
-					output.Add (table);
-					tableName = String.Format ("{0}{1}", srcTable, ++index);
-				}
+				}while (reader.NextResult ());
 			}
 			finally
 			{
@@ -551,20 +580,6 @@ namespace System.Data.Common {
 			return (DataTable[]) output.ToArray (typeof (DataTable));
 		}
 
-#if NET_2_0
-		[MonoTODO]
-		public DataSet GetDataSet ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public DataTable GetDataTable ()
-		{
-			throw new NotImplementedException ();
-		}
-#endif
-
 		private string SetupSchema (SchemaType schemaType, string sourceTableName)
 		{
 			DataTableMapping tableMapping = null;
@@ -572,7 +587,6 @@ namespace System.Data.Common {
 			if (schemaType == SchemaType.Mapped) 
 			{
 				tableMapping = DataTableMappingCollection.GetTableMappingBySchemaAction (TableMappings, sourceTableName, sourceTableName, MissingMappingAction);
-
 				if (tableMapping != null)
 					return tableMapping.DataSetTable;
 				return null;
@@ -625,25 +639,28 @@ namespace System.Data.Common {
 			bool createPrimaryKey = true;
 			
 			DataTable schemaTable = reader.GetSchemaTable ();
-			int colIndex;
-			DataColumn ColumnNameCol		= ((colIndex = schemaTable.Columns.IndexOf("ColumnName")) >= 0) ? schemaTable.Columns[colIndex] : null;
-			DataColumn DataTypeCol			= ((colIndex = schemaTable.Columns.IndexOf("DataType")) >= 0) ? schemaTable.Columns[colIndex] : null;
-			DataColumn IsAutoIncrementCol	= ((colIndex = schemaTable.Columns.IndexOf("IsAutoIncrement")) >= 0) ? schemaTable.Columns[colIndex] : null;
-			DataColumn AllowDBNullCol		= ((colIndex = schemaTable.Columns.IndexOf("AllowDBNull")) >= 0) ? schemaTable.Columns[colIndex] : null;
-			DataColumn IsReadOnlyCol		= ((colIndex = schemaTable.Columns.IndexOf("IsReadOnly")) >= 0) ? schemaTable.Columns[colIndex] : null;
-			DataColumn IsKeyCol				= ((colIndex = schemaTable.Columns.IndexOf("IsKey")) >= 0) ? schemaTable.Columns[colIndex] : null;
-			DataColumn IsUniqueCol			= ((colIndex = schemaTable.Columns.IndexOf("IsUnique")) >= 0) ? schemaTable.Columns[colIndex] : null;
-			DataColumn ColumnSizeCol		= ((colIndex = schemaTable.Columns.IndexOf("ColumnSize")) >= 0) ? schemaTable.Columns[colIndex] : null;
+
+			DataColumn ColumnNameCol =  schemaTable.Columns["ColumnName"];
+			DataColumn DataTypeCol = schemaTable.Columns["DataType"];
+			DataColumn IsAutoIncrementCol = schemaTable.Columns["IsAutoIncrement"];
+			DataColumn AllowDBNullCol = schemaTable.Columns["AllowDBNull"];
+			DataColumn IsReadOnlyCol = schemaTable.Columns["IsReadOnly"];
+			DataColumn IsKeyCol = schemaTable.Columns["IsKey"];
+			DataColumn IsUniqueCol = schemaTable.Columns["IsUnique"];
+			DataColumn ColumnSizeCol = schemaTable.Columns["ColumnSize"];
 
 			foreach (DataRow schemaRow in schemaTable.Rows) {
 				// generate a unique column name in the source table.
 				string sourceColumnName;
-				if (ColumnNameCol == null || schemaRow.IsNull(ColumnNameCol))
+				string realSourceColumnName ;
+				if (ColumnNameCol == null || schemaRow.IsNull(ColumnNameCol) || (string)schemaRow [ColumnNameCol] == String.Empty) {
 					sourceColumnName = DefaultSourceColumnName;
-				else 
+					realSourceColumnName = DefaultSourceColumnName + "1";
+				}
+				else {
 					sourceColumnName = (string) schemaRow [ColumnNameCol];
-
-				string realSourceColumnName = sourceColumnName;
+					realSourceColumnName = sourceColumnName;
+				}
 
 				for (int i = 1; sourceColumns.Contains (realSourceColumnName); i += 1) 
 					realSourceColumnName = String.Format ("{0}{1}", sourceColumnName, i);
@@ -652,10 +669,13 @@ namespace System.Data.Common {
 				// generate DataSetColumnName from DataTableMapping, if any
 				string dsColumnName = realSourceColumnName;
 				DataTableMapping tableMapping = null;
-				tableMapping = DataTableMappingCollection.GetTableMappingBySchemaAction (dtMapping, table.TableName, table.TableName, missingMapAction); 
-				if (tableMapping != null) 
+
+				//FIXME : The sourcetable name shud get passed as a parameter.. 
+				int index = dtMapping.IndexOfDataSetTable (table.TableName);
+				string srcTable = (index != -1 ? dtMapping[index].SourceTable : table.TableName);
+				tableMapping = DataTableMappingCollection.GetTableMappingBySchemaAction (dtMapping, srcTable, table.TableName, missingMapAction); 
+				if (tableMapping != null)
 				{
-					
 					table.TableName = tableMapping.DataSetTable;
 					// check to see if the column mapping exists
 					DataColumnMapping columnMapping = DataColumnMappingCollection.GetColumnMappingBySchemaAction(tableMapping.ColumnMappings, realSourceColumnName, missingMapAction);
@@ -683,21 +703,25 @@ namespace System.Data.Common {
 								mapping = tmp;
 							}				
 
-							object value = (AllowDBNullCol != null) ? schemaRow[AllowDBNullCol] : null;
-							bool allowDBNull = value is bool ? (bool)value : true;
-							col.AllowDBNull = allowDBNull; 
-							value = (IsKeyCol != null) ? schemaRow[IsKeyCol] : null;
-							bool isKey = value is bool ? (bool)value : false;
 
 							if (missingSchAction == MissingSchemaAction.AddWithKey) {
 	                            
+								object value = (AllowDBNullCol != null) ? schemaRow[AllowDBNullCol] : null;
+								bool allowDBNull = value is bool ? (bool)value : true;
+
+								value = (IsKeyCol != null) ? schemaRow[IsKeyCol] : null;
+								bool isKey = value is bool ? (bool)value : false;
+
 								value = (IsAutoIncrementCol != null) ? schemaRow[IsAutoIncrementCol] : null;
 								bool isAutoIncrement = value is bool ? (bool)value : false;
+
 								value = (IsReadOnlyCol != null) ? schemaRow[IsReadOnlyCol] : null;
 								bool isReadOnly = value is bool ? (bool)value : false;
+
 								value = (IsUniqueCol != null) ? schemaRow[IsUniqueCol] : null;
 								bool isUnique = value is bool ? (bool)value : false;
 								
+								col.AllowDBNull = allowDBNull;
 								// fill woth key info								
 								if (isAutoIncrement && DataColumn.CanAutoIncrement(columnType)) {
 									col.AutoIncrement = true;
@@ -719,14 +743,20 @@ namespace System.Data.Common {
 									if (!allowDBNull)
 										col.AllowDBNull = false;
 								}
-							}
+								
+								// This might not be set by all DataProviders
+								bool isHidden = false;
+								if (schemaTable.Columns.Contains ("IsHidden")) {
+									value = schemaRow["IsHidden"];
+									isHidden = ((value is bool) ? (bool)value : false);
+								}
 
-							if (isKey) {
-								primaryKey.Add (col);
-								if (allowDBNull)
-									createPrimaryKey = false;
+								if (isKey && !isHidden) {
+									primaryKey.Add (col);
+									if (allowDBNull)
+										createPrimaryKey = false;
+								}
 							}
-							
 							// add the ordinal of the column as a key and the index of the column in the datareader as a value.
 							mapping[col.Ordinal] = readerIndex++;
 						}
@@ -750,9 +780,7 @@ namespace System.Data.Common {
 						table.Constraints.Add(uConstraint);
 				}
 			}
-
 			return mapping;
-                        
                 }
 
 		[MonoTODO]
@@ -887,17 +915,17 @@ namespace System.Data.Common {
 				switch (row.RowState) {
 				case DataRowState.Added:
 					statementType = StatementType.Insert;
-					command = InsertCommand;
+					command = ((IDbDataAdapter) this).InsertCommand;
 					commandName = "Insert";
 					break;
 				case DataRowState.Deleted:
 					statementType = StatementType.Delete;
-					command = DeleteCommand;
+					command = ((IDbDataAdapter) this).DeleteCommand;
 					commandName = "Delete";
 					break;
 				case DataRowState.Modified:
 					statementType = StatementType.Update;
-					command = UpdateCommand;
+					command = ((IDbDataAdapter) this).UpdateCommand;
 					commandName = "Update";
 					break;
 				case DataRowState.Unchanged:
@@ -1101,9 +1129,6 @@ namespace System.Data.Common {
 		}
 #endif
 
-		protected abstract void OnRowUpdated (RowUpdatedEventArgs value);
-		protected abstract void OnRowUpdating (RowUpdatingEventArgs value);
-		
 		#endregion // Methods
 	}
 }

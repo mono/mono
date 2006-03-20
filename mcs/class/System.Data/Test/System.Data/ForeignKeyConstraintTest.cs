@@ -509,5 +509,22 @@ namespace MonoTests.System.Data
 				_ds.EnforceConstraints = true;
 			}
 		}
+
+		[Test]
+		public void ModifyParentKeyBeforeAcceptChanges ()
+		{
+			DataSet ds1 = new DataSet();
+			DataTable t1= ds1.Tables.Add ("t1");
+			DataTable t2= ds1.Tables.Add ("t2");
+			t1.Columns.Add ("col1", typeof (int));
+			t2.Columns.Add ("col2", typeof (int));
+			ds1.Relations.Add ("fk", t1.Columns [0], t2.Columns [0]);
+
+			t1.Rows.Add (new object[] {10});
+			t2.Rows.Add (new object [] {10});
+
+			t1.Rows [0][0]=20;
+			Assert("#1", (int)t2.Rows [0][0] == 20);
+		}
 	}
 }

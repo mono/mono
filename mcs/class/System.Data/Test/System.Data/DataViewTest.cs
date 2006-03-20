@@ -278,14 +278,43 @@ namespace MonoTests.System.Data
 			AssertEquals (s + "Third entry has wrong item", 3, dataView[2][0]);
 			AssertEquals (s + "Fourth entry has wrong item", 2, dataView[3][0]);
 
-			s = "Ascending sorting: ";
+			s = "Ascending sorting 1: ";
 			dataView.Sort = "itemId ASC";
 			AssertEquals (s + "First entry has wrong item", 0, dataView[0][0]);
 			AssertEquals (s + "Second entry has wrong item", 1, dataView[1][0]);
 			AssertEquals (s + "Third entry has wrong item", 2, dataView[2][0]);
 			AssertEquals (s + "Fourth entry has wrong item", 3, dataView[3][0]);
 
-			s = "Descending sorting: ";
+			// bug #77104 (2-5)
+			s = "Ascending sorting 2: ";
+			dataView.Sort = "itemId     ASC";
+			AssertEquals (s + "First entry has wrong item", 0, dataView[0][0]);
+			AssertEquals (s + "Second entry has wrong item", 1, dataView[1][0]);
+			AssertEquals (s + "Third entry has wrong item", 2, dataView[2][0]);
+			AssertEquals (s + "Fourth entry has wrong item", 3, dataView[3][0]);
+
+			s = "Ascending sorting 3: ";
+			dataView.Sort = "[itemId] ASC";
+			AssertEquals (s + "First entry has wrong item", 0, dataView[0][0]);
+			AssertEquals (s + "Second entry has wrong item", 1, dataView[1][0]);
+			AssertEquals (s + "Third entry has wrong item", 2, dataView[2][0]);
+			AssertEquals (s + "Fourth entry has wrong item", 3, dataView[3][0]);
+
+			s = "Ascending sorting 4: ";
+			dataView.Sort = "[itemId]       ASC";
+			AssertEquals (s + "First entry has wrong item", 0, dataView[0][0]);
+			AssertEquals (s + "Second entry has wrong item", 1, dataView[1][0]);
+			AssertEquals (s + "Third entry has wrong item", 2, dataView[2][0]);
+			AssertEquals (s + "Fourth entry has wrong item", 3, dataView[3][0]);
+
+			s = "Ascending sorting 5: ";
+			try {
+				dataView.Sort = "itemId \tASC";
+				AssertEquals (s + "Tab cannot be a separator" , true, false);
+			}catch (IndexOutOfRangeException e) {
+			}
+
+			s = "Descending sorting : ";
 			dataView.Sort = "itemId DESC";
 			AssertEquals (s + "First entry has wrong item", 3, dataView[0][0]);
 			AssertEquals (s + "Second entry has wrong item", 2, dataView[1][0]);
@@ -298,9 +327,8 @@ namespace MonoTests.System.Data
 			AssertEquals (s + "Second entry has wrong item", 0, dataView[1][0]);
 			AssertEquals (s + "Third entry has wrong item", 3, dataView[2][0]);
 			AssertEquals (s + "Fourth entry has wrong item", 2, dataView[3][0]);
-
 		}
-
+		
 		#endregion // Sort Tests
 
 		[Test]
@@ -328,10 +356,26 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[Ignore("Test code not implemented")]
 		public void BeginInit ()
 		{
-			//TODO
+			DataTable table = new DataTable ("table");
+			DataView dv = new DataView ();
+			DataColumn col1 = new DataColumn ("col1");
+			DataColumn col2 = new DataColumn ("col2");
+			
+			dv.BeginInit ();
+			table.BeginInit ();
+			table.Columns.AddRange (new DataColumn[] {col1,col2});
+
+			dv.Table = table;
+			AssertNull ("#1", dv.Table);
+			dv.EndInit ();
+
+			AssertEquals ("#2", table, dv.Table);
+			AssertEquals ("#3", 0, table.Columns.Count);
+
+			table.EndInit ();
+			AssertEquals ("#4", 2, table.Columns.Count);
 		}
 
 		[Test]
@@ -565,7 +609,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("NotWorking")]
 		public void CancelEditAndEvents ()
 		{
 			string reference = " =====ItemAdded:3 ------4 =====ItemAdded:3 =====ItemAdded:4 ------5 =====ItemAdded:4 =====ItemAdded:5 ------6 =====ItemDeleted:5 ------5 =====ItemAdded:5";

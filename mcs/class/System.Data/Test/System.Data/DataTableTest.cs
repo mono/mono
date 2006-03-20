@@ -721,6 +721,19 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+		public void SelectRowState()
+		{
+			DataTable d = new DataTable();
+			d.Columns.Add (new DataColumn ("aaa"));
+			DataRow [] rows = d.Select (null, null, DataViewRowState.Deleted);
+			AssertEquals(0, rows.Length);
+			d.Rows.Add (new object [] {"bbb"});
+			d.Rows.Add (new object [] {"bbb"});
+			rows = d.Select (null, null, DataViewRowState.Deleted);
+			AssertEquals(0, rows.Length);
+		}
+
+		[Test]
 		public void ToStringTest()
 		{
 			DataTable dt = new DataTable();
@@ -1179,7 +1192,52 @@ namespace MonoTests.System.Data
 			row ["name"] = "Abc";
 
                         // keep silent as ms.net ;-), though this is not useful.
-                        table.ImportRow (row); 
+                        table.ImportRow (row);
+
+			//if RowState is detached, then dont import the row.
+			AssertEquals ("#1", 0, table.Rows.Count);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ImportRowDeletedTest ()
+		{
+			DataTable table = new DataTable ();
+			table.Columns.Add ("col", typeof (int));
+			table.Columns.Add ("col1", typeof (int));
+
+			DataRow row = table.Rows.Add (new object[] {1,2});
+			table.PrimaryKey = new DataColumn[] {table.Columns[0]};
+			table.AcceptChanges ();
+
+			// If row is in Deleted state, then ImportRow loads the
+			// row.
+			row.Delete ();
+			table.ImportRow (row);
+			AssertEquals ("#1", 2, table.Rows.Count);
+
+			// Both the deleted rows shud be now gone
+			table.AcceptChanges ();
+			AssertEquals ("#2", 0, table.Rows.Count);
+
+			//just add another row
+			row = table.Rows.Add (new object[] {1,2});
+			// no exception shud be thrown
+			table.AcceptChanges ();
+
+			// If row is in Deleted state, then ImportRow loads the
+			// row and validate only on RejectChanges
+			row.Delete ();
+			table.ImportRow (row);
+			AssertEquals ("#3", 2, table.Rows.Count);
+			AssertEquals ("#4", DataRowState.Deleted, table.Rows[1].RowState);
+
+			//FIXME : Currenty this fails.
+			try {
+				table.RejectChanges ();
+				Fail ("#5");
+			} catch (ConstraintException e) {
+			}
 		}
 
 		[Test]
@@ -1335,7 +1393,6 @@ namespace MonoTests.System.Data
 
 		[Test]
 		[ExpectedException (typeof (DataException))]
-		[NUnit.Framework.Category ("NotWorking")]
 		public void SetPrimaryKeyAssertsNonNull ()
 		{
 			DataTable dt = new DataTable ("table");
@@ -1359,6 +1416,26 @@ namespace MonoTests.System.Data
 			dt.PrimaryKey = new DataColumn [] {dt.Columns [0]};
 			dt.Rows.Add (new object [] {1, 3});
 			dt.Rows.Add (new object [] {DBNull.Value, 3});
+		}
+
+		[Test]
+		public void PrimaryKey_CheckSetsAllowDBNull ()
+		{
+			DataTable table = new DataTable ();
+			DataColumn col1 = table.Columns.Add ("col1", typeof (int));
+			DataColumn col2 = table.Columns.Add ("col2", typeof (int));
+	
+			AssertEquals ("#1" , true, col1.AllowDBNull);
+			AssertEquals ("#2" , true, col2.AllowDBNull);
+			AssertEquals ("#3" , false, col2.Unique);
+			AssertEquals ("#4" , false, col2.Unique);
+
+			table.PrimaryKey = new DataColumn[] {col1,col2};
+			AssertEquals ("#5" , false, col1.AllowDBNull);
+			AssertEquals ("#6" , false, col2.AllowDBNull);
+			// LAMESPEC or bug ?? 
+			AssertEquals ("#7" , false, col1.Unique);
+			AssertEquals ("#8" , false, col2.Unique);
 		}
 
 		void RowChanging (object o, DataRowChangeEventArgs e)
@@ -1474,7 +1551,7 @@ namespace MonoTests.System.Data
 			int n = (int) Convert.ChangeType ("5", typeof (int));
 			Assertion.AssertEquals ("n", 5, n);
 		}
-
+#if !TARGET_JVM
 		[Test]
 		public void NFIFromBug55978 ()
 		{
@@ -1484,6 +1561,7 @@ namespace MonoTests.System.Data
 			domain.DoCallBack (new CrossAppDomainDelegate (test.Remote));
 			AppDomain.Unload (domain);
 		}
+#endif
 
 		[Test]
 		public void Bug55978 ()

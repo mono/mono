@@ -84,7 +84,9 @@ namespace System.Data.SqlClient {
 		#region Properties
 
 		[DataCategory ("Update")]
+#if !NET_2_0
 		[DataSysDescription ("Used during Update for deleted rows in DataSet.")]
+#endif
 		[DefaultValue (null)]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		public new SqlCommand DeleteCommand {
@@ -93,7 +95,9 @@ namespace System.Data.SqlClient {
 		}
 
 		[DataCategory ("Update")]
+#if !NET_2_0
 		[DataSysDescription ("Used during Update for new rows in DataSet.")]
+#endif
 		[DefaultValue (null)]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		public new SqlCommand InsertCommand {
@@ -102,7 +106,9 @@ namespace System.Data.SqlClient {
 		}
 
 		[DataCategory ("Fill")]
+#if !NET_2_0
 		[DataSysDescription ("Used during Fill/FillSchema.")]
+#endif
 		[DefaultValue (null)]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		public new SqlCommand SelectCommand {
@@ -111,7 +117,9 @@ namespace System.Data.SqlClient {
 		}
 
 		[DataCategory ("Update")]
+#if !NET_2_0
 		[DataSysDescription ("Used during Update for modified rows in DataSet.")]
+#endif
 		[DefaultValue (null)]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		public new SqlCommand UpdateCommand {
@@ -203,11 +211,15 @@ namespace System.Data.SqlClient {
 		#region Events and Delegates
 
 		[DataCategory ("Update")]
+#if !NET_2_0
 		[DataSysDescription ("Event triggered before every DataRow during Update.")]
+#endif
 		public event SqlRowUpdatedEventHandler RowUpdated;
 
 		[DataCategory ("Update")]
+#if !NET_2_0
 		[DataSysDescription ("Event triggered after every DataRow during Update.")]
+#endif
 		public event SqlRowUpdatingEventHandler RowUpdating;
 
 		#endregion // Events and Delegates

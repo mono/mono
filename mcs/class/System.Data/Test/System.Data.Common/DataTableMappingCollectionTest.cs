@@ -360,6 +360,9 @@ namespace MonoTests.System.Data.Common
 		}
 		
 		[Test]
+#if TARGET_JVM
+		[Ignore ("Does not work with TARGET_JVM")]
+#endif
 		public void ToStringTest()
 		{
 			AssertEquals("test1","System.Data.Common.DataTableMappingCollection",tableMapCollection.ToString());

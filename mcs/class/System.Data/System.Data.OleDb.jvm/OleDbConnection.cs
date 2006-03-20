@@ -34,25 +34,21 @@
 using System.Data;
 using System.Data.Common;
 using System.Collections;
+using System.Data.ProviderBase;
+using System.Globalization;
 
 using java.sql;
 
+using System.Configuration;
+using Mainsoft.Data.Configuration;
+using Mainsoft.Data.Jdbc.Providers;
+
 namespace System.Data.OleDb
 {
-	public sealed class OleDbConnection : AbstractDBConnection, System.ICloneable
-	{
+	public sealed class OleDbConnection : AbstractDBConnection {
 		#region Fields 
 
-		protected static Hashtable _skippedUserParameters = new Hashtable(new CaseInsensitiveHashCodeProvider(),new CaseInsensitiveComparer());
-
-		private static readonly object _lockObjectStringManager = new object();
-		//private static DbStringManager _stringManager = new DbStringManager("System.Data.System.Data.ProviderBase.jvm.OleDbStrings");
-
-		private static readonly string[] _resourceIgnoredKeys = new string[] {"CON_PROVIDER","CON_DATA_SOURCE","CON_DATABASE",
-																			  "CON_PASSWORD","CON_USER_ID","CON_TIMEOUT",
-																			  "CON_SERVER_NAME","CON_PORT","CON_SERVICE_NAME",
-																			  "CON_JNDI_NAME","CON_JNDI_PROVIDER","CON_JNDI_FACTORY",
-																			  "JDBC_DRIVER","JDBC_URL","DB2_CON_LOCATION" };
+		static readonly IList _providers = (IList) ConfigurationSettings.GetConfig("Mainsoft.Data.Configuration/OleDbProviders");
 
 		#endregion //Fields
 
@@ -65,141 +61,48 @@ namespace System.Data.OleDb
 		
 		#region Constructors
 
-		public OleDbConnection() : this(null)
-		{
+		public OleDbConnection() : this(null) {
 		}
 
-		public OleDbConnection(String connectionString) : base(connectionString)
-		{			
+		public OleDbConnection(String connectionString) : base(connectionString) {			
 		}
 
 		#endregion // Constructors
 
 		#region Properties
 
-		protected override string[] ResourceIgnoredKeys
-		{
-			get { return _resourceIgnoredKeys; }
-		}
-
-		public String Provider
-		{
-			get { return ConnectionStringHelper.FindValue(UserParameters,StringManager.GetStringArray("CON_PROVIDER")); }
-		}
-
-		protected override Hashtable SkippedUserParameters
-		{
-			get { return _skippedUserParameters; }
-		}
-
-		protected override string ServerName
-		{
-			get { 
-				if (ProviderType == PROVIDER_TYPE.IBMDADB2 || ProviderType == PROVIDER_TYPE.MSDAORA) {
-					string host = ConnectionStringHelper.FindValue(UserParameters,StringManager.GetStringArray("CON_SERVER_NAME"));
-
-					if (!String.Empty.Equals(host)) {
-						return host;
-					}
-
-					if (ProviderType == PROVIDER_TYPE.IBMDADB2) {
-						string location = ConnectionStringHelper.FindValue(UserParameters,StringManager.GetStringArray("DB2_CON_LOCATION"));
-
-						if (!String.Empty.Equals(location)) {
-							int semicolumnIndex = location.IndexOf(':');
-							if (semicolumnIndex != -1) {
-								return location.Substring(0,semicolumnIndex);
-							}
-							else {
-								return location;
-							}
-						}
-					}
-
-				}
-				return base.ServerName; 
-			}
-		}
-
-		protected override string CatalogName
-		{
-			get { 
-				switch (ProviderType) {
-					case PROVIDER_TYPE.IBMDADB2:
-					case PROVIDER_TYPE.MSDAORA:
-						return DataSource;
-				}
-				return base.CatalogName;
-			}
-		}
-
-		protected override string Port
-		{
+		public String Provider {
 			get {
-				string port = ConnectionStringHelper.FindValue(UserParameters, StringManager.GetStringArray("CON_PORT"));
-				switch (ProviderType) {
-					case PROVIDER_TYPE.MSDAORA :
-						if (String.Empty.Equals(port)) {
-							return StringManager.GetString("ORA_CON_PORT");
-						}
-						return port;
-					case PROVIDER_TYPE.IBMDADB2 :
-						if (String.Empty.Equals(port)) {
-							string location = ConnectionStringHelper.FindValue(UserParameters,StringManager.GetStringArray("DB2_CON_LOCATION"));
+				IDictionary conDict = ConnectionStringBuilder;
+				string provider = (string)conDict["Provider"];
+				if (provider == null || provider.Length == 0)
+					throw ExceptionHelper.OleDbNoProviderSpecified();
 
-							if (!String.Empty.Equals(location)) {
-								int semicolumnIndex = location.IndexOf(':');
-								if (semicolumnIndex != -1) {
-									return location.Substring(semicolumnIndex + 1);
-								}
-							}
-							return StringManager.GetString("DB2_CON_PORT");
-						}
-						return port;
-				}
-				return base.Port;
+				return provider;
 			}
 		}
 
-		protected override string JdbcDriverName
-		{
-			get {
-				JDBC_MODE jdbcMode = JdbcMode;
-				switch (jdbcMode) {
-					case JDBC_MODE.DATA_SOURCE_MODE :
-						return base.JdbcDriverName;
-					case JDBC_MODE.JDBC_DRIVER_MODE :
-						return ConnectionStringHelper.FindValue(UserParameters,StringManager.GetStringArray("JDBC_DRIVER"));
-					case JDBC_MODE.PROVIDER_MODE:
-						switch (ProviderType) {
-							case PROVIDER_TYPE.SQLOLEDB :
-								return StringManager.GetString("SQL_JDBC_DRIVER");
-							case PROVIDER_TYPE.MSDAORA :
-								return StringManager.GetString("ORA_JDBC_DRIVER");
-							case PROVIDER_TYPE.IBMDADB2 :
-								return StringManager.GetString("DB2_JDBC_DRIVER");
-						}
-						break;
-				};
-				return base.JdbcDriverName;
-			}
-		}
+		protected override IConnectionProvider GetConnectionProvider() {
+			IDictionary conProviderDict = ConnectionStringDictionary.Parse(ConnectionString);
+			string providerName = (string)conProviderDict["Provider"];
 
-		protected override DbStringManager StringManager
-		{
-			get {
-				object stringManager = AppDomain.CurrentDomain.GetData("System.Data.OleDbConnection.stringManager");
-				if (stringManager == null) {
-					lock(_lockObjectStringManager) {
-						stringManager = AppDomain.CurrentDomain.GetData("System.Data.OleDbConnection.stringManager");
-						if (stringManager != null)
-							return (DbStringManager)stringManager;
-						stringManager = new DbStringManager("System.Data.System.Data.ProviderBase.jvm.OleDbStrings");
-						AppDomain.CurrentDomain.SetData("System.Data.OleDbConnection.stringManager", stringManager);
+			if (providerName != null)
+			for (int i = 0; i < _providers.Count; i++) {
+				IDictionary providerInfo = (IDictionary) _providers[i];
+					
+				string curProvider = (string)providerInfo["Provider"];
+				if (String.Compare(providerName, 0, curProvider, 0, providerName.Length, true, CultureInfo.InvariantCulture) == 0) {
+					string providerType = (string) providerInfo [ConfigurationConsts.ProviderType];
+					if (providerType == null || providerType.Length == 0)
+						return new GenericProvider (providerInfo); 
+					else {
+						Type t = Type.GetType (providerType);
+						return (IConnectionProvider) Activator.CreateInstance (t , new object[] {providerInfo});
 					}
 				}
-				return (DbStringManager)stringManager;
 			}
+
+			return new GenericProvider (conProviderDict);
 		}
 
 		#endregion // Properties
@@ -229,25 +132,12 @@ namespace System.Data.OleDb
 			return CreateCommand();
 		}
 
-
-		protected internal override void CopyTo(AbstractDBConnection target)
-		{
-			base.CopyTo(target);
-		}
-
-		public object Clone()
-		{
-			OleDbConnection clone = new OleDbConnection();
-			CopyTo(clone);
-			return clone;
-		}
-
-		protected override SystemException CreateException(SQLException e)
+		protected sealed override SystemException CreateException(SQLException e)
 		{
 			return new OleDbException(e,this);		
 		}
 
-		protected override SystemException CreateException(string message)
+		protected sealed override SystemException CreateException(string message)
 		{
 			return new OleDbException(message, null, this);	
 		}
@@ -266,7 +156,7 @@ namespace System.Data.OleDb
 			schemaTable.Columns.Add("DATE_MODIFIED");
             
             
-			Connection con = JdbcConnection;
+			java.sql.Connection con = JdbcConnection;
 			String catalog = con.getCatalog();
             
 			DatabaseMetaData meta = con.getMetaData();
@@ -294,75 +184,19 @@ namespace System.Data.OleDb
 			return schemaTable;
 		}
 
-		protected internal override void ValidateConnectionString(string connectionString)
-		{
-			base.ValidateConnectionString(connectionString);
-
-			JDBC_MODE currentJdbcMode = JdbcMode;
-			
-			if (currentJdbcMode == JDBC_MODE.NONE) {
-				string provider = StringManager.GetString("CON_PROVIDER");
-
-				if (String.Empty.Equals(provider)) {
-					throw ExceptionHelper.OleDbNoProviderSpecified();
-				}
-			}
-		}
-
-		protected override string BuildJdbcUrl()
-		{
-			switch (JdbcMode) {
-				case JDBC_MODE.PROVIDER_MODE :
-				switch (ProviderType) {
-					case PROVIDER_TYPE.IBMDADB2:
-						return BuildDb2Url();
-					case PROVIDER_TYPE.MSDAORA:
-						return BuildOracleUrl();
-					case PROVIDER_TYPE.SQLOLEDB:
-						return BuildMsSqlUrl();
-				}
-				break;
-			}
-			return base.BuildJdbcUrl();
-		}
-
 		public static void ReleaseObjectPool()
 		{
 			// since we're using connection pool from app servet, this is by design
 			//throw new NotImplementedException();
 		}
 
-		internal override void OnSqlWarning(SQLWarning warning)
+		protected internal sealed override void OnSqlWarning(SQLWarning warning)
 		{
 			OleDbErrorCollection col = new OleDbErrorCollection(warning, this);
 			OnOleDbInfoMessage(new OleDbInfoMessageEventArgs(col));
 		}
 
-		internal override Connection GetConnectionFromProvider()
-		{
-			if ((ProviderType == PROVIDER_TYPE.MSDAORA) && 
-				("true").Equals(StringManager.GetString("ORA_CONNECTION_POOLING_ENABLED","false"))) {
-				ActivateJdbcDriver(JdbcDriverName);
-				return OleDbConnectionFactory.GetConnection(ProviderType,JdbcUrl,User,Password,ConnectionTimeout);
-			}
-			else {
-				return base.GetConnectionFromProvider();
-			}
-		}
-
-		private String BuildDb2Url()
-		{
-			return StringManager.GetString("DB2_JDBC_URL") //jdbc:db2://
-				+ ServerName + ":" + Port + "/" + CatalogName;
-		}
-
-		private String BuildOracleUrl()
-		{
-			return StringManager.GetString("ORA_JDBC_URL") //"jdbc:oracle:thin:@"
-				+ ServerName + ":" + Port + ":" + CatalogName;
-		}
-        
-		internal override void OnStateChanged(ConnectionState orig, ConnectionState current)
+		protected internal sealed override void OnStateChanged(ConnectionState orig, ConnectionState current)
 		{
 			if(StateChange != null) {
 				StateChange(this, new StateChangeEventArgs(orig, current));

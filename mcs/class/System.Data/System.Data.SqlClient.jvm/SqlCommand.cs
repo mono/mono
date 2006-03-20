@@ -41,7 +41,7 @@ using java.sql;
 
 namespace System.Data.SqlClient
 {
-	public class SqlCommand : AbstractDbCommand, IDbCommand, IDisposable, ICloneable
+	public class SqlCommand : AbstractDbCommand
 	{
 		#region Fields
 
@@ -92,10 +92,7 @@ namespace System.Data.SqlClient
 		public new SqlParameterCollection Parameters
 		{
 			get { 
-				if (_parameters == null) {
-					_parameters = CreateParameterCollection(this);
-				}
-				return (SqlParameterCollection)_parameters; 
+				return (SqlParameterCollection)base.Parameters; 
 			}
 		}
 
@@ -137,7 +134,7 @@ namespace System.Data.SqlClient
 			return (SqlParameter)CreateParameterInternal();
 		}
 
-		protected override void CheckParameters()
+		protected sealed override void CheckParameters()
 		{
 			// do nothing
 		}
@@ -171,29 +168,22 @@ namespace System.Data.SqlClient
 			return null; 
 		}
 
-		protected override DbParameter CreateParameterInternal()
+		protected sealed override DbParameter CreateParameterInternal()
 		{
 			return new SqlParameter();
 		}
 
-		protected override DbDataReader CreateReader()
+		protected sealed override DbDataReader CreateReader()
 		{
 			return new SqlDataReader(this);
 		}
 
-		protected override DbParameterCollection CreateParameterCollection(AbstractDbCommand parent)
+		protected sealed override DbParameterCollection CreateParameterCollection(AbstractDbCommand parent)
 		{
 			return new SqlParameterCollection((SqlCommand)parent);
 		}
 
-		public object Clone()
-		{
-			SqlCommand clone = new SqlCommand();
-			CopyTo(clone);
-			return clone;
-		}
-
-		protected override SystemException CreateException(SQLException e)
+		protected internal sealed override SystemException CreateException(SQLException e)
 		{
 			return new SqlException(e, Connection);		
 		}

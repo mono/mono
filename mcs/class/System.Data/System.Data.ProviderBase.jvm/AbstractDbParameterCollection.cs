@@ -95,7 +95,7 @@ namespace System.Data.ProviderBase
 			base.RemoveAt(parameterName);
         }
 
-		internal void OnSchemaChanging()
+		protected internal void OnSchemaChanging()
         {
             if (_parent != null) {
                 _parent.OnSchemaChanging();

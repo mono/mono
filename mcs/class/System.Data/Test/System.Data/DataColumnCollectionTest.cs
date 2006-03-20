@@ -390,6 +390,18 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+		public void Clear_ExpressionColumn ()
+		{
+			DataTable table = new DataTable ("test");
+			table.Columns.Add ("col1", typeof(int));
+			table.Columns.Add ("col2", typeof (int), "sum(col1)");
+
+			//shudnt throw an exception.
+			table.Columns.Clear ();
+			AssertEquals ("#1", 0, table.Columns.Count);
+		}
+
+		[Test]
 		public void Contains ()
 		{
 			DataTable Table = new DataTable ("test_table");
@@ -544,6 +556,23 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Remove_Dep_Rel_Col ()
+		{
+			DataSet ds = new DataSet ();
+			ds.Tables.Add ("test");
+			ds.Tables.Add ("test1");
+			ds.Tables[0].Columns.Add ("col1", typeof(int));
+			ds.Tables[1].Columns.Add ("col2", typeof(int));
+
+			ds.Relations.Add ("rel1",  ds.Tables[0].Columns[0], ds.Tables[1].Columns[0]);
+			ds.Tables[0].Columns.RemoveAt (0);
+		}	
+
+		[Test]
+#if TARGET_JVM
+		[Ignore ("Does not work with TARGET_JVM")]
+#endif
 		public void ToStringTest ()
 		{
 			DataTable Table = new DataTable ("test_table");

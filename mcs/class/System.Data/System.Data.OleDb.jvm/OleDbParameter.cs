@@ -137,7 +137,7 @@ namespace System.Data.OleDb
             }
         }
 
-		internal override bool IsSpecial {
+		protected internal sealed override bool IsSpecial {
 			get {
 				return (Direction == ParameterDirection.Output) && IsOracleRefCursor;
 			}
@@ -170,7 +170,7 @@ namespace System.Data.OleDb
             return clone;
         }
 
-		internal override object ConvertValue(object value)
+		protected internal sealed override object ConvertValue(object value)
 		{
 			// can not convert null or DbNull to other types
 			if (value == null || value == DBNull.Value) {
@@ -194,7 +194,7 @@ namespace System.Data.OleDb
 			return convertedValue;
 		}
 
-		internal override void SetParameterName(ResultSet res)
+		protected internal sealed override void SetParameterName(ResultSet res)
 		{
 			ParameterName = res.getString("COLUMN_NAME");
 
@@ -203,7 +203,7 @@ namespace System.Data.OleDb
 			}
 		}
 
-		internal override void SetParameterDbType(ResultSet res)
+		protected internal sealed override void SetParameterDbType(ResultSet res)
 		{
 			int jdbcType = res.getInt("DATA_TYPE");			
 			// FIXME : is that correct?
@@ -226,17 +226,17 @@ namespace System.Data.OleDb
 				}
 			}
 			OleDbType = OleDbConvert.JdbcTypeToOleDbType(jdbcType);
-			JdbcType = (DbTypes.JavaSqlTypes)jdbcType;
+			JdbcType = jdbcType;
 		}
 
-		internal override void SetSpecialFeatures(ResultSet res)
+		protected internal sealed override void SetSpecialFeatures(ResultSet res)
 		{
 			IsOracleRefCursor = (res.getString("TYPE_NAME") == "REF CURSOR");
 		}
 
-		internal override DbTypes.JavaSqlTypes JdbcTypeFromProviderType()
+		protected internal sealed override int JdbcTypeFromProviderType()
 		{
-			return (DbTypes.JavaSqlTypes)OleDbConvert.OleDbTypeToJdbcType(OleDbType);
+			return OleDbConvert.OleDbTypeToJdbcType(OleDbType);
 		}
 
 		#endregion // Methods

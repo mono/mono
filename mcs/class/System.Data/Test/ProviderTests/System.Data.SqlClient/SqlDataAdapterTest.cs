@@ -361,9 +361,6 @@ namespace MonoTests.System.Data.SqlClient
 			ex=null;
 			*/
 
-			// NOTE msdotnet contradicts documented behavior
-			// SystemException is expected when Dataset is invalid 
-			// but msdotnet throws ArgumentNullException
 			try {
 				adapter.Fill ( null , 0 , 0 , "numeric_family");
 				Assert.Fail ( "#7 Exception shud be thrown : Invalid Dataset");
@@ -389,6 +386,51 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.AreEqual (typeof(InvalidOperationException), e.GetType(),
 					"#10 Incorrect Exception : " + e);
 			}
+		}
+
+		bool FillErrorContinue = false;
+		[Test]
+		public void Fill_Test_FillErrorTest ()
+		{
+			string query = "select type_bigint from numeric_family where id=1 or id=4 ";
+
+			DataSet ds = new DataSet ();
+			DataTable table = ds.Tables.Add ("test");
+			table.Columns.Add ("col", typeof (int));
+
+			adapter = new SqlDataAdapter (query, connectionString);
+			DataTableMapping mapping = adapter.TableMappings.Add ("numeric_family", "test");
+			mapping.ColumnMappings.Add ("type_bigint", "col");
+
+			int count = 0;
+			try {
+				count = adapter.Fill (ds, "numeric_family");
+				Assert.Fail ("#1 Overflow exception must be thrown");
+			}catch (OverflowException e) {
+			}
+			Assert.AreEqual (0, ds.Tables [0].Rows.Count, "#2");
+			Assert.AreEqual (0, count, "#3");
+
+			adapter.FillError += new FillErrorEventHandler (ErrorHandler);
+			FillErrorContinue = false;
+			try {
+				count = adapter.Fill (ds, "numeric_family");
+				Assert.Fail ("#4 Overflow exception must be thrown");
+			}catch (OverflowException e) {
+			}
+			Assert.AreEqual (0, ds.Tables [0].Rows.Count, "#5");
+			Assert.AreEqual (0, count, "#6");
+
+			FillErrorContinue = true;
+			count = adapter.Fill (ds, "numeric_family");
+			// 1 row shud be filled
+			Assert.AreEqual (1, ds.Tables [0].Rows.Count, "#7");
+			Assert.AreEqual (1, count, "#8");
+		}
+
+		void ErrorHandler (object sender, FillErrorEventArgs args)
+		{
+			args.Continue = FillErrorContinue;
 		}
 
 		[Test]
@@ -658,6 +700,82 @@ namespace MonoTests.System.Data.SqlClient
 				DataColumn col = dataSet.Tables[0].Columns[0]; 
 				Assert.IsFalse (dataSet.Tables[0].Columns[0].AllowDBNull,"#2");
 				Assert.IsTrue (dataSet.Tables[0].Columns[1].AllowDBNull,"#3");
+			}
+		}
+
+		[Test]
+		public void Fill_CheckSchema ()
+		{
+			SqlConnection conn = new SqlConnection(connectionString);
+			using (conn) {
+				conn.Open();
+
+				IDbCommand command = conn.CreateCommand();
+
+				// Create Temp Table
+				String cmd = "Create Table #tmp_TestTable (" ;
+				cmd += "id int primary key,";
+				cmd += "field int not null)";
+				command.CommandText = cmd; 
+				command.ExecuteNonQuery();
+
+				DataSet dataSet = new DataSet();
+				string selectString = "SELECT * from #tmp_TestTable";
+				IDbDataAdapter dataAdapter = new SqlDataAdapter (
+									selectString,conn);
+				dataAdapter.Fill (dataSet);
+				Assert.IsTrue (dataSet.Tables[0].Columns[1].AllowDBNull, "#1");
+				Assert.AreEqual (0, dataSet.Tables[0].PrimaryKey.Length, "#2");
+
+				dataSet.Reset ();
+				dataAdapter.MissingSchemaAction = MissingSchemaAction.AddWithKey ;
+				dataAdapter.Fill (dataSet);
+				Assert.IsFalse (dataSet.Tables[0].Columns[1].AllowDBNull, "#3");
+				Assert.AreEqual (1, dataSet.Tables[0].PrimaryKey.Length, "#4");
+			}
+		}
+
+		[Test]
+		public void FillSchema_CheckSchema ()
+		{
+			SqlConnection conn = new SqlConnection(connectionString);
+			using (conn) {
+				conn.Open();
+
+				IDbCommand command = conn.CreateCommand();
+
+				// Create Temp Table
+				String cmd = "Create Table #tmp_TestTable (" ;
+				cmd += "id int primary key,";
+				cmd += "field int not null)";
+				command.CommandText = cmd; 
+				command.ExecuteNonQuery();
+
+				DataSet dataSet = new DataSet();
+				string selectString = "SELECT * from #tmp_TestTable";
+				IDbDataAdapter dataAdapter = new SqlDataAdapter (
+									selectString,conn);
+
+				dataAdapter.FillSchema (dataSet, SchemaType.Mapped);
+				Assert.IsFalse (dataSet.Tables[0].Columns[1].AllowDBNull, "#1");
+
+				dataSet.Reset ();
+				dataAdapter.MissingSchemaAction = MissingSchemaAction.Add;
+				dataAdapter.FillSchema (dataSet, SchemaType.Mapped);
+				Assert.IsFalse (dataSet.Tables[0].Columns[1].AllowDBNull, "#2");
+
+				dataSet.Reset ();
+				dataAdapter.MissingSchemaAction = MissingSchemaAction.Ignore;
+				dataAdapter.FillSchema (dataSet, SchemaType.Mapped);
+				Assert.AreEqual (0, dataSet.Tables.Count, "#3");
+
+				dataSet.Reset ();
+				dataAdapter.MissingSchemaAction = MissingSchemaAction.Error;
+				try {
+					dataAdapter.FillSchema (dataSet, SchemaType.Mapped);
+					Assert.Fail ("#4 Error should be thrown");
+				} catch (InvalidOperationException e) {
+				}
 			}
 		}
 	}

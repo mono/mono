@@ -138,7 +138,9 @@ namespace System.Data.SqlClient {
 		#region Properties
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("Information used to connect to a DataSource, such as 'Data Source=x;Initial Catalog=x;Integrated Security=SSPI'.")]
+#endif
 		[DefaultValue ("")]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.SQL.Design.SqlConnectionStringEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		[RecommendedAsConfigurable (true)]	
@@ -157,7 +159,9 @@ namespace System.Data.SqlClient {
 			}
 		}
 	
+#if !NET_2_0
 		[DataSysDescription ("Current connection timeout value, 'Connect Timeout=X' in the ConnectionString.")]	
+#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public 
 #if NET_2_0
@@ -168,7 +172,9 @@ namespace System.Data.SqlClient {
 			get { return connectionTimeout; }
 		}
 
+#if !NET_2_0
 		[DataSysDescription ("Current SQL Server database, 'Initial Catalog=X' in the connection string.")]
+#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public 
 #if NET_2_0
@@ -187,7 +193,9 @@ namespace System.Data.SqlClient {
 			set { dataReader = value; }
 		}
 
+#if !NET_2_0
 		[DataSysDescription ("Current SqlServer that the connection is opened to, 'Data Source=X' in the connection string. ")]
+#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public 
 #if NET_2_0
@@ -197,14 +205,22 @@ namespace System.Data.SqlClient {
 			get { return dataSource; }
 		}
 
+#if !NET_2_0
 		[DataSysDescription ("Network packet size, 'Packet Size=x' in the connection string.")]
+#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int PacketSize {
-			get { return packetSize; }
+			get {	
+				if (State == ConnectionState.Open) 
+					return ((Tds)tds).PacketSize ;
+				return packetSize; 
+			}
 		}
 
 		[Browsable (false)]
+#if !NET_2_0
 		[DataSysDescription ("Version of the SQL Server accessed by the SqlConnection.")]
+#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public 
 #if NET_2_0
@@ -220,7 +236,9 @@ namespace System.Data.SqlClient {
 		}
 
 		[Browsable (false)]
+#if !NET_2_0
 		[DataSysDescription ("The ConnectionState indicating whether the connection is open or closed.")]
+#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public 
 #if NET_2_0
@@ -239,7 +257,9 @@ namespace System.Data.SqlClient {
 			set { transaction = value; }
 		}
 
+#if !NET_2_0
 		[DataSysDescription ("Workstation Id, 'Workstation ID=x' in the connection string.")]
+#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public string WorkstationId {
 			get { return parms.Hostname; }
@@ -255,11 +275,15 @@ namespace System.Data.SqlClient {
 		#region Events
 
 		[DataCategory ("InfoMessage")]
+#if !NET_2_0
 		[DataSysDescription ("Event triggered when messages arrive from the DataSource.")]
+#endif
 		public event SqlInfoMessageEventHandler InfoMessage;
 
 		[DataCategory ("StateChange")]
+#if !NET_2_0
 		[DataSysDescription ("Event triggered when the connection changes state.")]
+#endif
 		public 
 #if NET_2_0
 		override
@@ -959,7 +983,9 @@ namespace System.Data.SqlClient {
 
                 #region Properties Net 2
 
+#if !NET_2_0
                 [DataSysDescription ("Enable Asynchronous processing, 'Asynchrouse Processing=true/false' in the ConnectionString.")]	
+#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		internal bool AsyncProcessing  {
 			get { return async; }

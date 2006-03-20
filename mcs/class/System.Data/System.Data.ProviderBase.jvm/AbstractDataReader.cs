@@ -33,12 +33,12 @@
 using System;
 using System.Data;
 using System.Collections;
-using System.Data.ProviderBase;
+using System.Data.Common;
 
 using java.io;
 using java.sql;
 
-namespace System.Data.Common
+namespace System.Data.ProviderBase
 {
 	public abstract class AbstractDataReader : DbDataReaderBase, ISafeDataRecord {
 
@@ -57,7 +57,7 @@ namespace System.Data.Common
 		[Flags]
 		private enum ReaderState { Uninitialized = 0, Empty = 1, HasRows = 2, FirstRed = 4, Eof = 8, Fetching = 16 };
 
-		internal enum SCHEMA_TABLE { ColumnName,
+		protected internal enum SCHEMA_TABLE { ColumnName,
 			ColumnOrdinal,
 			ColumnSize,
 			NumericPrecision,
@@ -200,8 +200,8 @@ namespace System.Data.Common
 							if (resultSet.next()) {
 								_readerState = (ReaderState.HasRows | ReaderState.FirstRed);
 								ResultSetMetaData rsMetaData = ResultsMetaData;
-								DbTypes.JavaSqlTypes javaSqlType = (DbTypes.JavaSqlTypes)rsMetaData.getColumnType(1);
-								if (javaSqlType == DbTypes.JavaSqlTypes.OTHER) {
+								DbConvert.JavaSqlTypes javaSqlType = (DbConvert.JavaSqlTypes)rsMetaData.getColumnType(1);
+								if (javaSqlType == DbConvert.JavaSqlTypes.OTHER) {
 									object value = GetValue(0);
 									if (value != null && value is ResultSet) {
 										_resultsMetaData = null;
@@ -439,14 +439,8 @@ namespace System.Data.Common
 			int length)
 		{
 			FillReaderCache(columnIndex);
-			byte[] byteArr = ((BytesReaderCacheContainer)ReaderCache[columnIndex]).GetBytes();
-			if (byteArr == null)
-				return 0;
-			if (buffer == null)
-				return byteArr.LongLength;
-			long actualLength = ((dataIndex + length) >= byteArr.Length) ? (byteArr.Length - dataIndex) : length;
-			Array.Copy(byteArr,dataIndex,buffer,bufferIndex,actualLength);
-			return actualLength;
+			return ((BytesReaderCacheContainer)ReaderCache[columnIndex])
+				.GetBytes(dataIndex, buffer, bufferIndex, length);
 		}
 
 		public virtual byte[] GetBytes(int columnIndex)
@@ -483,10 +477,8 @@ namespace System.Data.Common
 			int length)
 		{
 			FillReaderCache(columnIndex);
-			char[] charArr = ((CharsReaderCacheContainer)ReaderCache[columnIndex]).GetChars();
-			long actualLength = ((dataIndex + length) >= charArr.Length) ? (charArr.Length - dataIndex) : length;
-			Array.Copy(charArr,dataIndex,buffer,bufferIndex,actualLength);
-			return actualLength;
+			return ((CharsReaderCacheContainer)ReaderCache[columnIndex])
+				.GetChars(dataIndex, buffer, bufferIndex, length);
 		}
 
 		public override string GetDataTypeName(int columnIndex)
@@ -504,6 +496,11 @@ namespace System.Data.Common
 
 		public override DateTime GetDateTime(int columnIndex)
 		{
+			return GetDateTimeUnsafe(columnIndex);
+		}
+
+		DateTime GetDateTimeUnsafe(int columnIndex)
+		{
 			FillReaderCache(columnIndex);
 			return ((DateTimeReaderCacheContainer)ReaderCache[columnIndex]).GetDateTime();
 		}
@@ -511,7 +508,7 @@ namespace System.Data.Common
 		public DateTime GetDateTimeSafe(int columnIndex)
 		{
 			if (ReaderCache[columnIndex] is DateTimeReaderCacheContainer) {
-				return GetDateTime(columnIndex);
+				return GetDateTimeUnsafe(columnIndex);
 			}
 			else {
 				return Convert.ToDateTime(GetValue(columnIndex));
@@ -532,6 +529,11 @@ namespace System.Data.Common
 
 		public override decimal GetDecimal(int columnIndex)
 		{
+			return GetDecimalUnsafe(columnIndex);
+		}
+
+		decimal GetDecimalUnsafe(int columnIndex)
+		{
 			FillReaderCache(columnIndex);
 			return ((DecimalReaderCacheContainer)ReaderCache[columnIndex]).GetDecimal();
 		}
@@ -539,7 +541,7 @@ namespace System.Data.Common
 		public decimal GetDecimalSafe(int columnIndex)
 		{
 			if (ReaderCache[columnIndex] is DecimalReaderCacheContainer) {
-				return GetDecimal(columnIndex);
+				return GetDecimalUnsafe(columnIndex);
 			}
 			else {
 				return Convert.ToDecimal(GetValue(columnIndex));
@@ -548,6 +550,11 @@ namespace System.Data.Common
 
 		public override double GetDouble(int columnIndex)
 		{
+			return GetDoubleUnsafe(columnIndex);
+		}
+
+		double GetDoubleUnsafe(int columnIndex)
+		{
 			FillReaderCache(columnIndex);
 			return ((DoubleReaderCacheContainer)ReaderCache[columnIndex]).GetDouble();
 		}
@@ -555,7 +562,7 @@ namespace System.Data.Common
 		public double GetDoubleSafe(int columnIndex)
 		{
 			if (ReaderCache[columnIndex] is DoubleReaderCacheContainer) {
-				return GetDouble(columnIndex);
+				return GetDoubleUnsafe(columnIndex);
 			}
 			else {
 				return Convert.ToDouble(GetValue(columnIndex));
@@ -564,6 +571,11 @@ namespace System.Data.Common
 
 		public override float GetFloat(int columnIndex)
 		{
+			return GetFloatUnsafe(columnIndex);
+		}
+
+		float GetFloatUnsafe(int columnIndex)
+		{
 			FillReaderCache(columnIndex);
 			return ((FloatReaderCacheContainer)ReaderCache[columnIndex]).GetFloat();
 		}
@@ -571,7 +583,7 @@ namespace System.Data.Common
 		public float GetFloatSafe(int columnIndex)
 		{
 			if (ReaderCache[columnIndex] is FloatReaderCacheContainer) {
-				return GetFloat(columnIndex);
+				return GetFloatUnsafe(columnIndex);
 			}
 			else {
 				return Convert.ToSingle(GetValue(columnIndex));
@@ -580,6 +592,11 @@ namespace System.Data.Common
 
 		public override short GetInt16(int columnIndex)
 		{
+			return GetInt16Unsafe(columnIndex);
+		}
+
+		short GetInt16Unsafe(int columnIndex)
+		{
 			FillReaderCache(columnIndex);
 			return ((Int16ReaderCacheContainer)ReaderCache[columnIndex]).GetInt16();
 		}
@@ -587,7 +604,7 @@ namespace System.Data.Common
 		public short GetInt16Safe(int columnIndex)
 		{
 			if (ReaderCache[columnIndex] is Int16ReaderCacheContainer) {
-				return GetInt16(columnIndex);
+				return GetInt16Unsafe(columnIndex);
 			}
 			else {
 				return Convert.ToInt16(GetValue(columnIndex));
@@ -596,6 +613,11 @@ namespace System.Data.Common
 
 		public override int GetInt32(int columnIndex)
 		{
+			return GetInt32Unsafe(columnIndex);
+		}
+
+		int GetInt32Unsafe(int columnIndex)
+		{
 			FillReaderCache(columnIndex);
 			return ((Int32ReaderCacheContainer)ReaderCache[columnIndex]).GetInt32();
 		}
@@ -603,7 +625,7 @@ namespace System.Data.Common
 		public int GetInt32Safe(int columnIndex)
 		{
 			if (ReaderCache[columnIndex] is Int32ReaderCacheContainer) {
-				return GetInt32(columnIndex);
+				return GetInt32Unsafe(columnIndex);
 			}
 			else {
 				return Convert.ToInt32(GetValue(columnIndex));
@@ -612,6 +634,11 @@ namespace System.Data.Common
 
 		public override long GetInt64(int columnIndex)
 		{
+			return GetInt64Unsafe(columnIndex);
+		}
+
+		long GetInt64Unsafe(int columnIndex)
+		{
 			FillReaderCache(columnIndex);
 			return ((Int64ReaderCacheContainer)ReaderCache[columnIndex]).GetInt64();
 		}
@@ -619,7 +646,7 @@ namespace System.Data.Common
 		public long GetInt64Safe(int columnIndex)
 		{
 			if (ReaderCache[columnIndex] is Int64ReaderCacheContainer) {
-				return GetInt64(columnIndex);
+				return GetInt64Unsafe(columnIndex);
 			}
 			else {
 				return Convert.ToInt64(GetValue(columnIndex));
@@ -655,13 +682,18 @@ namespace System.Data.Common
 
 		public override string GetString(int columnIndex)
 		{
+			return GetStringUnsafe(columnIndex);
+		}
+
+		string GetStringUnsafe(int columnIndex)
+		{
 			FillReaderCache(columnIndex);
 			return ((StringReaderCacheContainer)ReaderCache[columnIndex]).GetString();
 		}
 
 		public string GetStringSafe(int columnIndex) {
 			if (ReaderCache[columnIndex] is StringReaderCacheContainer) {
-				return GetString(columnIndex);
+				return GetStringUnsafe(columnIndex);
 			}
 			else {
 				return Convert.ToString(GetValue(columnIndex));
@@ -694,11 +726,11 @@ namespace System.Data.Common
 				if ((Behavior & CommandBehavior.SequentialAccess) == 0) {					
 					while (_currentCacheFilledPosition < columnIndex) {
 						_currentCacheFilledPosition++;
-						readerCache[_currentCacheFilledPosition].Fetch(Results,_currentCacheFilledPosition);
+						readerCache[_currentCacheFilledPosition].Fetch(Results,_currentCacheFilledPosition, false);
 					}					
 				}
 				else {
-					readerCache[columnIndex].Fetch(Results,columnIndex);
+					readerCache[columnIndex].Fetch(Results,columnIndex, true);
 				}
 			}
 			catch(SQLException e) {
@@ -711,113 +743,99 @@ namespace System.Data.Common
 			}
 		}
 
+		protected virtual IReaderCacheContainer CreateReaderCacheContainer(int jdbcType, int columnIndex) {
+			switch ((DbConvert.JavaSqlTypes)jdbcType) {
+				case DbConvert.JavaSqlTypes.ARRAY :
+					return new ArrayReaderCacheContainer();
+				case DbConvert.JavaSqlTypes.BIGINT :
+					return new Int64ReaderCacheContainer();
+				case DbConvert.JavaSqlTypes.BINARY :
+				case DbConvert.JavaSqlTypes.VARBINARY :
+				case DbConvert.JavaSqlTypes.LONGVARBINARY :
+					return new BytesReaderCacheContainer();
+				case DbConvert.JavaSqlTypes.BIT :
+					return new BooleanReaderCacheContainer();
+				case DbConvert.JavaSqlTypes.BLOB :
+					return new BlobReaderCacheContainer();
+				case DbConvert.JavaSqlTypes.CHAR :						
+					if (String.CompareOrdinal("uniqueidentifier", ResultsMetaData.getColumnTypeName(columnIndex)) == 0) {
+						return new GuidReaderCacheContainer();
+					}
+					else {
+						return new StringReaderCacheContainer();
+					}
+				case DbConvert.JavaSqlTypes.CLOB :
+					return new ClobReaderCacheContainer();
+				case DbConvert.JavaSqlTypes.TIME :
+					return new TimeSpanReaderCacheContainer();
+				case DbConvert.JavaSqlTypes.DATE :
+					AbstractDBConnection conn = (AbstractDBConnection)((ICloneable)_command.Connection);
+					string driverName = conn.JdbcConnection.getMetaData().getDriverName();
+
+					if (driverName.StartsWith("PostgreSQL")) {
+						return new DateTimeReaderCacheContainer();
+					}
+					else
+						goto case DbConvert.JavaSqlTypes.TIMESTAMP;
+				case DbConvert.JavaSqlTypes.TIMESTAMP :				
+					return new TimestampReaderCacheContainer();
+				case DbConvert.JavaSqlTypes.DECIMAL :
+				case DbConvert.JavaSqlTypes.NUMERIC :
+					// jdbc driver for oracle identitfies both FLOAT and NUMBEr columns as 
+					// java.sql.Types.NUMERIC (2), columnTypeName NUMBER, columnClassName java.math.BigDecimal 
+					// therefore we relay on scale
+					int scale = ResultsMetaData.getScale(columnIndex);
+					if (scale == -127) {
+						// Oracle db type FLOAT
+						return new DoubleReaderCacheContainer();
+					}
+					else {
+						return new DecimalReaderCacheContainer();
+					}
+				case DbConvert.JavaSqlTypes.DOUBLE :
+				case DbConvert.JavaSqlTypes.FLOAT :
+					return new DoubleReaderCacheContainer();
+				case DbConvert.JavaSqlTypes.INTEGER :
+					return new Int32ReaderCacheContainer();
+				case DbConvert.JavaSqlTypes.LONGVARCHAR :
+				case DbConvert.JavaSqlTypes.VARCHAR :
+					return new StringReaderCacheContainer();
+				case DbConvert.JavaSqlTypes.NULL :
+					return new NullReaderCacheContainer();
+				case DbConvert.JavaSqlTypes.REAL :
+					return new FloatReaderCacheContainer();
+				case DbConvert.JavaSqlTypes.REF :
+					return new RefReaderCacheContainer();
+				case DbConvert.JavaSqlTypes.SMALLINT :
+					return new Int16ReaderCacheContainer();
+				case DbConvert.JavaSqlTypes.TINYINT :
+					return new ByteReaderCacheContainer();
+				case DbConvert.JavaSqlTypes.DISTINCT :
+				case DbConvert.JavaSqlTypes.JAVA_OBJECT :
+				case DbConvert.JavaSqlTypes.OTHER :
+				case DbConvert.JavaSqlTypes.STRUCT :
+				default :
+					return new ObjectReaderCacheContainer();
+			}
+		}
+
 		private IReaderCacheContainer[] CreateReaderCache()
 		{
 			try {
 				IReaderCacheContainer[] readerCache = new IReaderCacheContainer[FieldCount];
-				for(int i=0; i < readerCache.Length; i++) {
-					DbTypes.JavaSqlTypes javaSqlType = (DbTypes.JavaSqlTypes) ResultsMetaData.getColumnType(i + 1);
-					switch (javaSqlType) {
-						case DbTypes.JavaSqlTypes.ARRAY :
-							readerCache[i] = new ArrayReaderCacheContainer();
-							break;
-						case DbTypes.JavaSqlTypes.BIGINT :
-							readerCache[i] = new Int64ReaderCacheContainer();
-							break;
-						case DbTypes.JavaSqlTypes.BINARY :
-						case DbTypes.JavaSqlTypes.VARBINARY :
-						case DbTypes.JavaSqlTypes.LONGVARBINARY :
-							readerCache[i] = new BytesReaderCacheContainer();
-							break;
-						case DbTypes.JavaSqlTypes.BIT :
-							readerCache[i] = new BooleanReaderCacheContainer();
-							break;
-						case DbTypes.JavaSqlTypes.BLOB :
-							readerCache[i] = new BlobReaderCacheContainer();
-							break;	
-						case DbTypes.JavaSqlTypes.CHAR :						
-							if ("uniqueidentifier".Equals(ResultsMetaData.getColumnTypeName(i + 1))) {
-								readerCache[i] = new GuidReaderCacheContainer();
-							}
-							else {
-								readerCache[i] = new StringReaderCacheContainer();
-							}
-							break;
-						case DbTypes.JavaSqlTypes.CLOB :
-							readerCache[i] = new ClobReaderCacheContainer();
-							break;		
-						case DbTypes.JavaSqlTypes.TIME :
-							readerCache[i] = new TimeSpanReaderCacheContainer();
-							break;	
-						case DbTypes.JavaSqlTypes.DATE :
-							AbstractDBConnection conn = (AbstractDBConnection)((ICloneable)_command.Connection);
-							string driverName = conn.JdbcConnection.getMetaData().getDriverName();
-
-							if (driverName.StartsWith("PostgreSQL")) {
-								readerCache[i] = new DateTimeReaderCacheContainer();
-								break;
-							}
-							else
-								goto case DbTypes.JavaSqlTypes.TIMESTAMP;
-						case DbTypes.JavaSqlTypes.TIMESTAMP :				
-							readerCache[i] = new TimestampReaderCacheContainer();
-							break;		
-						case DbTypes.JavaSqlTypes.DECIMAL :
-						case DbTypes.JavaSqlTypes.NUMERIC :
-							// jdbc driver for oracle identitfies both FLOAT and NUMBEr columns as 
-							// java.sql.Types.NUMERIC (2), columnTypeName NUMBER, columnClassName java.math.BigDecimal 
-							// therefore we relay on scale
-							int scale = ResultsMetaData.getScale(i + 1);
-							if (scale == -127) {
-								// Oracle db type FLOAT
-								readerCache[i] = new DoubleReaderCacheContainer();
-							}
-							else {
-								readerCache[i] = new DecimalReaderCacheContainer();
-							}
-							break;		
-						case DbTypes.JavaSqlTypes.DOUBLE :
-						case DbTypes.JavaSqlTypes.FLOAT :
-							readerCache[i] = new DoubleReaderCacheContainer();
-							break;
-						case DbTypes.JavaSqlTypes.INTEGER :
-							readerCache[i] = new Int32ReaderCacheContainer();
-							break;
-						case DbTypes.JavaSqlTypes.LONGVARCHAR :
-						case DbTypes.JavaSqlTypes.VARCHAR :
-							readerCache[i] = new StringReaderCacheContainer();
-							break;
-						case DbTypes.JavaSqlTypes.NULL :
-							readerCache[i] = new NullReaderCacheContainer();
-							break;
-						case DbTypes.JavaSqlTypes.REAL :
-							readerCache[i] = new FloatReaderCacheContainer();
-							break;
-						case DbTypes.JavaSqlTypes.REF :
-							readerCache[i] = new RefReaderCacheContainer();
-							break;
-						case DbTypes.JavaSqlTypes.SMALLINT :
-							readerCache[i] = new Int16ReaderCacheContainer();
-							break;
-						case DbTypes.JavaSqlTypes.TINYINT :
-							readerCache[i] = new ByteReaderCacheContainer();
-							break;
-						case DbTypes.JavaSqlTypes.DISTINCT :
-						case DbTypes.JavaSqlTypes.JAVA_OBJECT :
-						case DbTypes.JavaSqlTypes.OTHER :
-						case DbTypes.JavaSqlTypes.STRUCT :
-						default :
-							readerCache[i] = new ObjectReaderCacheContainer();
-							break;
-					}
-					//				((ReaderCacheContainerBase)readerCache[i])._jdbcType = (int) javaSqlType;
-				}
+				for(int i=1; i <= readerCache.Length; i++)
+					readerCache[i-1] = CreateReaderCacheContainer(ResultsMetaData.getColumnType(i), i);
 
 				return readerCache;
 			}
 			catch(SQLException e) {
 				throw CreateException(e);
 			}
+		}
+
+		protected bool IsNumeric(int columnIndex)
+		{
+			return ReaderCache[columnIndex].IsNumeric();
 		}
 
 		public override bool IsDBNull(int columnIndex)
@@ -842,6 +860,200 @@ namespace System.Data.Common
 			throw new NotSupportedException();
 		}
 
+		protected virtual void SetSchemaType(DataRow schemaRow, ResultSetMetaData metaData, int columnIndex) {
+			DbConvert.JavaSqlTypes columnType = (DbConvert.JavaSqlTypes)metaData.getColumnType(columnIndex);
+
+			switch (columnType) {
+				case DbConvert.JavaSqlTypes.ARRAY: {
+					schemaRow [(int)SCHEMA_TABLE.ProviderType] = GetProviderType((int)columnType);
+					schemaRow [(int)SCHEMA_TABLE.DataType] = typeof (java.sql.Array);
+					schemaRow [(int)SCHEMA_TABLE.IsLong] = false;
+					break;
+				}
+				case DbConvert.JavaSqlTypes.BIGINT: {
+					schemaRow [(int)SCHEMA_TABLE.ProviderType] = GetProviderType((int)columnType);
+					schemaRow [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfInt64;
+					schemaRow [(int)SCHEMA_TABLE.IsLong] = false;
+					break;
+				}
+				case DbConvert.JavaSqlTypes.BINARY: {
+					schemaRow [(int)SCHEMA_TABLE.ProviderType] = GetProviderType((int)columnType);
+					schemaRow [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfByteArray;
+					schemaRow [(int)SCHEMA_TABLE.IsLong] = true;
+					break;
+				}
+				case DbConvert.JavaSqlTypes.BIT: {
+					schemaRow [(int)SCHEMA_TABLE.ProviderType] = GetProviderType((int)columnType);
+					schemaRow [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfBoolean;
+					schemaRow [(int)SCHEMA_TABLE.IsLong] = false;
+					break;
+				}
+				case DbConvert.JavaSqlTypes.BLOB: {
+					schemaRow [(int)SCHEMA_TABLE.ProviderType] = GetProviderType((int)columnType);
+					schemaRow [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfByteArray;
+					schemaRow [(int)SCHEMA_TABLE.IsLong] = true;
+					break;
+				}
+				case DbConvert.JavaSqlTypes.CHAR: {
+					// FIXME : specific for Microsoft SQl Server driver
+					if (metaData.getColumnTypeName(columnIndex).Equals("uniqueidentifier")) {
+						schemaRow [(int)SCHEMA_TABLE.ProviderType] = DbType.Guid;
+						schemaRow [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfGuid;
+						schemaRow [(int)SCHEMA_TABLE.IsLong] = false;
+					}
+					else {
+						schemaRow [(int)SCHEMA_TABLE.ProviderType] = GetProviderType((int)columnType);
+						schemaRow [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfString;
+						schemaRow [(int)SCHEMA_TABLE.IsLong] = false;
+					}
+					break;
+				}
+				case DbConvert.JavaSqlTypes.CLOB: {
+					schemaRow [(int)SCHEMA_TABLE.ProviderType] = GetProviderType((int)columnType);
+					schemaRow [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfString; // instead og .java.sql.Clob
+					schemaRow [(int)SCHEMA_TABLE.IsLong] = true;
+					break;
+				}
+				case DbConvert.JavaSqlTypes.DATE: {
+					schemaRow [(int)SCHEMA_TABLE.ProviderType] = GetProviderType((int)columnType);
+					schemaRow [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfDateTime;
+					schemaRow [(int)SCHEMA_TABLE.IsLong] = false;
+					break;
+				}
+					//                else if(DbConvert.JavaSqlTypes.DISTINCT)
+					//                {
+					//                    schemaRow ["ProviderType = (int)GetProviderType((int)columnType);
+					//                    schemaRow ["DataType = typeof (?);
+					//                    schemaRow ["IsLong = false;
+					//                }
+				case DbConvert.JavaSqlTypes.DOUBLE: {
+					schemaRow [(int)SCHEMA_TABLE.ProviderType] = GetProviderType((int)columnType);
+					schemaRow [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfDouble; // was typeof(float)
+					schemaRow [(int)SCHEMA_TABLE.IsLong] = false;
+					break;
+				}
+				case DbConvert.JavaSqlTypes.FLOAT: {
+					schemaRow [(int)SCHEMA_TABLE.ProviderType] = GetProviderType((int)columnType);
+					schemaRow [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfDouble;
+					schemaRow [(int)SCHEMA_TABLE.IsLong] = false;
+					break;
+				}
+				case DbConvert.JavaSqlTypes.REAL: {
+					schemaRow [(int)SCHEMA_TABLE.ProviderType] = GetProviderType((int)columnType);
+					schemaRow [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfFloat;
+					schemaRow [(int)SCHEMA_TABLE.IsLong] = false;
+					break;
+				}
+				case DbConvert.JavaSqlTypes.INTEGER: {
+					schemaRow [(int)SCHEMA_TABLE.ProviderType] = GetProviderType((int)columnType);
+					schemaRow [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfInt32;
+					schemaRow [(int)SCHEMA_TABLE.IsLong] = false;
+					break;
+				}
+				case DbConvert.JavaSqlTypes.JAVA_OBJECT: {
+					schemaRow [(int)SCHEMA_TABLE.ProviderType] = GetProviderType((int)columnType);
+					schemaRow [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfObject;
+					schemaRow [(int)SCHEMA_TABLE.IsLong] = false;
+					break;
+				}
+				case DbConvert.JavaSqlTypes.LONGVARBINARY: {
+					schemaRow [(int)SCHEMA_TABLE.ProviderType] = GetProviderType((int)columnType);
+					schemaRow [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfByteArray;
+					schemaRow [(int)SCHEMA_TABLE.IsLong] = true;
+					break;
+				}
+				case DbConvert.JavaSqlTypes.LONGVARCHAR: {
+					schemaRow [(int)SCHEMA_TABLE.ProviderType] = GetProviderType((int)columnType);
+					schemaRow [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfString;
+					schemaRow [(int)SCHEMA_TABLE.IsLong] = true;
+					break;
+				}
+				case DbConvert.JavaSqlTypes.DECIMAL:
+				case DbConvert.JavaSqlTypes.NUMERIC: {
+					int scale = ResultsMetaData.getScale(columnIndex);
+					if (scale == -127) {
+						schemaRow [(int)SCHEMA_TABLE.ProviderType] = GetProviderType((int)columnType);
+						schemaRow [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfDouble;
+						schemaRow [(int)SCHEMA_TABLE.IsLong] = false;
+					}
+					else {
+						schemaRow [(int)SCHEMA_TABLE.ProviderType] = GetProviderType((int)columnType);
+						schemaRow [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfDecimal;
+						schemaRow [(int)SCHEMA_TABLE.IsLong] = false;
+					}
+					break;
+				}
+				case DbConvert.JavaSqlTypes.REF: {
+					schemaRow [(int)SCHEMA_TABLE.ProviderType] = GetProviderType((int)columnType);
+					schemaRow [(int)SCHEMA_TABLE.DataType] = typeof (java.sql.Ref);
+					schemaRow [(int)SCHEMA_TABLE.IsLong] = true;
+					break;
+				}
+				case DbConvert.JavaSqlTypes.SMALLINT: {
+					schemaRow [(int)SCHEMA_TABLE.ProviderType] = GetProviderType((int)columnType);
+					schemaRow [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfInt16;
+					schemaRow [(int)SCHEMA_TABLE.IsLong] = false;
+					break;
+				}
+				case DbConvert.JavaSqlTypes.STRUCT: {
+					schemaRow [(int)SCHEMA_TABLE.ProviderType] = GetProviderType((int)columnType);
+					schemaRow [(int)SCHEMA_TABLE.DataType] = typeof (java.sql.Struct);
+					schemaRow [(int)SCHEMA_TABLE.IsLong] = false;
+					break;
+				}
+				case DbConvert.JavaSqlTypes.TIME: {
+					schemaRow [(int)SCHEMA_TABLE.ProviderType] = GetProviderType((int)columnType);
+					schemaRow [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfTimespan;
+					schemaRow [(int)SCHEMA_TABLE.IsLong] = false;
+					break;
+				}
+				case DbConvert.JavaSqlTypes.TIMESTAMP: {
+					schemaRow [(int)SCHEMA_TABLE.ProviderType] = GetProviderType((int)columnType);
+					schemaRow [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfDateTime;
+					schemaRow [(int)SCHEMA_TABLE.IsLong] = false;
+					break;
+				}
+				case DbConvert.JavaSqlTypes.TINYINT: {
+					schemaRow [(int)SCHEMA_TABLE.ProviderType] = GetProviderType((int)columnType);
+					schemaRow [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfByte;
+					schemaRow [(int)SCHEMA_TABLE.IsLong] = false;
+					break;
+				}
+				case DbConvert.JavaSqlTypes.VARBINARY: {
+					schemaRow [(int)SCHEMA_TABLE.ProviderType] = GetProviderType((int)columnType);
+					schemaRow [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfByteArray;
+					schemaRow [(int)SCHEMA_TABLE.IsLong] = true;
+					break;
+				}
+				case DbConvert.JavaSqlTypes.VARCHAR: {
+					// FIXME : specific for Microsoft SQl Server driver
+					if (metaData.getColumnTypeName(columnIndex).Equals("sql_variant")) {
+						schemaRow [(int)SCHEMA_TABLE.ProviderType] = DbType.Object;
+						schemaRow [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfObject;
+						schemaRow [(int)SCHEMA_TABLE.IsLong] = false;
+					}
+					else {
+						schemaRow [(int)SCHEMA_TABLE.ProviderType] = GetProviderType((int)columnType);
+						schemaRow [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfString;// (char[]);
+						schemaRow [(int)SCHEMA_TABLE.IsLong] = false;//true;
+					}
+					break;
+				}
+					//			else if(columnType == -8 && metaData.getColumnTypeName(columnIndex).Equals("ROWID")) {
+					//				// FIXME : specific for Oracle JDBC driver : OracleTypes.ROWID
+					//				schemaRow [(int)SCHEMA_TABLE.ProviderType] = DbType.String;
+					//				schemaRow [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfString;
+					//				schemaRow [(int)SCHEMA_TABLE.IsLong] = false;
+					//			}
+				default: {
+					schemaRow [(int)SCHEMA_TABLE.ProviderType] = DbType.Object;
+					schemaRow [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfObject;
+					schemaRow [(int)SCHEMA_TABLE.IsLong] = true;
+					break;
+				}
+			}
+		}
+
 		public override DataTable GetSchemaTable()
 		{
 			if (SchemaTable.Rows != null && SchemaTable.Rows.Count > 0) {
@@ -851,7 +1063,7 @@ namespace System.Data.Common
 			ResultSetMetaData metaData;			
 			if (Behavior == CommandBehavior.SchemaOnly) {
 				try {
-					metaData = ((PreparedStatement)_command.JdbcStatement).getMetaData();
+					metaData = ((PreparedStatement)_command.Statement).getMetaData();
 				}
 				catch(SQLException e) {
 					throw CreateException("CommandBehaviour.SchemaOnly is not supported by the JDBC driver.",e);
@@ -957,173 +1169,8 @@ namespace System.Data.Common
 					row [(int)SCHEMA_TABLE.IsHidden] = false;
 					row [(int)SCHEMA_TABLE.IsReadOnly] = metaData.isReadOnly(i);
 
-					int columnType = metaData.getColumnType(i);
-					string columnTypeName = metaData.getColumnTypeName(i);
-					if(columnType == Types.ARRAY) {
-						row [(int)SCHEMA_TABLE.ProviderType] = GetProviderType(columnType);
-						row [(int)SCHEMA_TABLE.DataType] = typeof (java.sql.Array);
-						row [(int)SCHEMA_TABLE.IsLong] = false;
-					}
-					else if(columnType == Types.BIGINT) {
-						row [(int)SCHEMA_TABLE.ProviderType] = GetProviderType(columnType);
-						row [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfInt64;
-						row [(int)SCHEMA_TABLE.IsLong] = false;
-					}
-					else if(columnType == Types.BINARY) {
-						row [(int)SCHEMA_TABLE.ProviderType] = GetProviderType(columnType);
-						row [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfByteArray;
-						row [(int)SCHEMA_TABLE.IsLong] = true;
-					}
-					else if(columnType == Types.BIT) {
-						row [(int)SCHEMA_TABLE.ProviderType] = GetProviderType(columnType);
-						row [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfBoolean;
-						row [(int)SCHEMA_TABLE.IsLong] = false;
-					}
-					else if(columnType == Types.BLOB) {
-						row [(int)SCHEMA_TABLE.ProviderType] = GetProviderType(columnType);
-						row [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfByteArray;
-						row [(int)SCHEMA_TABLE.IsLong] = true;
-					}
-					else if(columnType == Types.CHAR) {
-						// FIXME : specific for Microsoft SQl Server driver
-						if (columnTypeName.Equals("uniqueidentifier")) {
-							row [(int)SCHEMA_TABLE.ProviderType] = DbType.Guid;
-							row [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfGuid;
-							row [(int)SCHEMA_TABLE.IsLong] = false;
-						}
-						else {
-							row [(int)SCHEMA_TABLE.ProviderType] = GetProviderType(columnType);
-							row [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfString;
-							row [(int)SCHEMA_TABLE.IsLong] = false;
-						}
-					}
-					else if(columnType == Types.CLOB) {
-						row [(int)SCHEMA_TABLE.ProviderType] = GetProviderType(columnType);
-						row [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfString; // instead og .java.sql.Clob
-						row [(int)SCHEMA_TABLE.IsLong] = true;
-					}
-					else if(columnType == Types.DATE) {
-						row [(int)SCHEMA_TABLE.ProviderType] = GetProviderType(columnType);
-						row [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfDateTime;
-						row [(int)SCHEMA_TABLE.IsLong] = false;
-					}
-					else if(columnType == Types.DECIMAL) {
-						row [(int)SCHEMA_TABLE.ProviderType] = GetProviderType(columnType);
-						row [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfDecimal;
-						row [(int)SCHEMA_TABLE.IsLong] = false;
-					}
-						//                else if(columnType == Types.DISTINCT)
-						//                {
-						//                    row ["ProviderType = (int)GetProviderType(columnType);
-						//                    row ["DataType = typeof (?);
-						//                    row ["IsLong = false;
-						//                }
-					else if(columnType == Types.DOUBLE) {
-						row [(int)SCHEMA_TABLE.ProviderType] = GetProviderType(columnType);
-						row [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfDouble; // was typeof(float)
-						row [(int)SCHEMA_TABLE.IsLong] = false;
-					}
-					else if(columnType == Types.FLOAT) {
-						row [(int)SCHEMA_TABLE.ProviderType] = GetProviderType(columnType);
-						row [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfDouble;
-						row [(int)SCHEMA_TABLE.IsLong] = false;
-					}
-					else if(columnType == Types.REAL) {
-						row [(int)SCHEMA_TABLE.ProviderType] = GetProviderType(columnType);
-						row [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfFloat;
-						row [(int)SCHEMA_TABLE.IsLong] = false;
-					}
-					else if(columnType == Types.INTEGER) {
-						row [(int)SCHEMA_TABLE.ProviderType] = GetProviderType(columnType);
-						row [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfInt32;
-						row [(int)SCHEMA_TABLE.IsLong] = false;
-					}
-					else if(columnType == Types.JAVA_OBJECT) {
-						row [(int)SCHEMA_TABLE.ProviderType] = GetProviderType(columnType);
-						row [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfObject;
-						row [(int)SCHEMA_TABLE.IsLong] = false;
-					}
-					else if(columnType == Types.LONGVARBINARY) {
-						row [(int)SCHEMA_TABLE.ProviderType] = GetProviderType(columnType);
-						row [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfByteArray;
-						row [(int)SCHEMA_TABLE.IsLong] = true;
-					}
-					else if(columnType == Types.LONGVARCHAR) {
-						row [(int)SCHEMA_TABLE.ProviderType] = GetProviderType(columnType);
-						row [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfString;
-						row [(int)SCHEMA_TABLE.IsLong] = true;
-					}
-					else if(columnType == Types.NUMERIC) {
-						// see explanation in CreateReaderCache
-						if (metaData.getScale(i) == -127) {
-							row [(int)SCHEMA_TABLE.ProviderType] = GetProviderType(Types.DOUBLE);
-							row [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfDouble;
-						}
-						else {
-							row [(int)SCHEMA_TABLE.ProviderType] = GetProviderType(columnType);
-							row [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfDecimal;
-						}
-						row [(int)SCHEMA_TABLE.IsLong] = false;
-					}
-					else if(columnType == Types.REF) {
-						row [(int)SCHEMA_TABLE.ProviderType] = GetProviderType(columnType);
-						row [(int)SCHEMA_TABLE.DataType] = typeof (java.sql.Ref);
-						row [(int)SCHEMA_TABLE.IsLong] = true;
-					}
-					else if(columnType == Types.SMALLINT) {
-						row [(int)SCHEMA_TABLE.ProviderType] = GetProviderType(columnType);
-						row [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfInt16;
-						row [(int)SCHEMA_TABLE.IsLong] = false;
-					}
-					else if(columnType == Types.STRUCT) {
-						row [(int)SCHEMA_TABLE.ProviderType] = GetProviderType(columnType);
-						row [(int)SCHEMA_TABLE.DataType] = typeof (java.sql.Struct);
-						row [(int)SCHEMA_TABLE.IsLong] = false;
-					}
-					else if(columnType == Types.TIME) {
-						row [(int)SCHEMA_TABLE.ProviderType] = GetProviderType(columnType);
-						row [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfTimespan;
-						row [(int)SCHEMA_TABLE.IsLong] = false;
-					}
-					else if(columnType == Types.TIMESTAMP) {
-						row [(int)SCHEMA_TABLE.ProviderType] = GetProviderType(columnType);
-						row [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfDateTime;
-						row [(int)SCHEMA_TABLE.IsLong] = false;
-					}
-					else if(columnType == Types.TINYINT) {
-						row [(int)SCHEMA_TABLE.ProviderType] = GetProviderType(columnType);
-						row [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfByte;
-						row [(int)SCHEMA_TABLE.IsLong] = false;
-					}
-					else if(columnType == Types.VARBINARY) {
-						row [(int)SCHEMA_TABLE.ProviderType] = GetProviderType(columnType);
-						row [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfByteArray;
-						row [(int)SCHEMA_TABLE.IsLong] = true;
-					}
-					else if(columnType == Types.VARCHAR) {
-						// FIXME : specific for Microsoft SQl Server driver
-						if (columnTypeName.Equals("sql_variant")) {
-							row [(int)SCHEMA_TABLE.ProviderType] = DbType.Object;
-							row [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfObject;
-							row [(int)SCHEMA_TABLE.IsLong] = false;
-						}
-						else {
-							row [(int)SCHEMA_TABLE.ProviderType] = GetProviderType(columnType);
-							row [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfString;// (char[]);
-							row [(int)SCHEMA_TABLE.IsLong] = false;//true;
-						}
-					}
-					else if(columnType == -8 && columnTypeName.Equals("ROWID")) {
-						// FIXME : specific for Oracle JDBC driver : OracleTypes.ROWID
-						row [(int)SCHEMA_TABLE.ProviderType] = DbType.String;
-						row [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfString;
-						row [(int)SCHEMA_TABLE.IsLong] = false;
-					}
-					else {
-						row [(int)SCHEMA_TABLE.ProviderType] = DbType.Object;
-						row [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfObject;
-						row [(int)SCHEMA_TABLE.IsLong] = true;
-					}
+					SetSchemaType(row, metaData, i);
+
 					SchemaTable.Rows.Add (row);
 				}
 			}

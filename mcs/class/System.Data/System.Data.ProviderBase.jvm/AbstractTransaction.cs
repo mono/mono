@@ -29,8 +29,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Data.Common;
 
-namespace System.Data.Common
+namespace System.Data.ProviderBase
 {
 
     using java.sql;

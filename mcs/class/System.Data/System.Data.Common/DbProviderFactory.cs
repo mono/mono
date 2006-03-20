@@ -46,7 +46,7 @@ namespace System.Data.Common {
 		}
 
 		[MonoTODO]
-		protected DbProviderFactory (DbProviderSupportedClasses supportedClasses)
+		internal DbProviderFactory (DbProviderSupportedClasses supportedClasses)
 		{
 		}
 
@@ -75,12 +75,6 @@ namespace System.Data.Common {
 		}
 
 		[MonoTODO]
-		protected virtual DbCommandSet CreateCommandSet ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
 		public virtual DbConnection CreateConnection ()
 		{
 			throw new NotImplementedException ();
@@ -94,12 +88,6 @@ namespace System.Data.Common {
 
 		[MonoTODO]
 		public virtual DbDataSourceEnumerator CreateDataSourceEnumerator ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public virtual DbTable CreateDbTable ()
 		{
 			throw new NotImplementedException ();
 		}

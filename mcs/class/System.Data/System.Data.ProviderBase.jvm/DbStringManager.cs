@@ -33,7 +33,7 @@
 using System.Resources;
 using System.Reflection;
 
-namespace System.Data.Common
+namespace System.Data.ProviderBase
 {
 	public class DbStringManager
 	{

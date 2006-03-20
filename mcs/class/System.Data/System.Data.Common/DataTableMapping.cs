@@ -73,13 +73,17 @@ namespace System.Data.Common {
 
 		#region Properties
 
+#if !NET_2_0
 		[DataSysDescription ("Individual columns mappings when this table mapping is matched.")]
+#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public DataColumnMappingCollection ColumnMappings {
 			get { return columnMappings; }
 		}
 
+#if !NET_2_0
 		[DataSysDescription ("DataTable.TableName")]
+#endif
 		[DefaultValue ("")]
 		public string DataSetTable {
 			get { return dataSetTable; } 
@@ -90,7 +94,9 @@ namespace System.Data.Common {
 			get { return ColumnMappings; }
 		}
 	
+#if !NET_2_0
 		[DataSysDescription ("The DataTableMapping source table name. This name is case sensitive.")]
+#endif
 		[DefaultValue ("")]
 		public string SourceTable {
 			get { return sourceTable; }

@@ -44,7 +44,7 @@ using java.sql;
 
 namespace System.Data.OleDb
 {
-	public sealed class OleDbCommand : AbstractDbCommand, IDbCommand, ICloneable
+	public sealed class OleDbCommand : AbstractDbCommand
 	{
 
 		#region Fields
@@ -126,10 +126,7 @@ namespace System.Data.OleDb
 		public new OleDbParameterCollection Parameters
 		{
 			get { 
-				if (_parameters == null) {
-					_parameters = CreateParameterCollection(this);
-				}
-				return (OleDbParameterCollection)_parameters; 
+				return (OleDbParameterCollection)base.Parameters; 
 			}
 		}
 
@@ -139,7 +136,7 @@ namespace System.Data.OleDb
 			set { base.Transaction = (DbTransaction)value; }
 		}
 
-		internal override ResultSet CurrentResultSet
+		protected internal sealed override ResultSet CurrentResultSet
 		{
 			get { 
 				try {
@@ -151,7 +148,7 @@ namespace System.Data.OleDb
 					return CurrentRefCursor;
 				}
 				catch(SQLException e) {
-					throw new Exception(e.Message, e);
+					throw CreateException(e);
 				}
 			}
 		}
@@ -163,7 +160,7 @@ namespace System.Data.OleDb
 					NextRefCursor();
 				}
 				if (_currentRefCursor == null && _currentParameterIndex < InternalParameters.Count) {
-					_currentRefCursor = (ResultSet)((CallableStatement)_statement).getObject(_currentParameterIndex + 1);
+					_currentRefCursor = (ResultSet)((CallableStatement)Statement).getObject(_currentParameterIndex + 1);
 				}
 				return _currentRefCursor;
 			}
@@ -188,7 +185,7 @@ namespace System.Data.OleDb
 			return (OleDbParameter)CreateParameterInternal();
 		} 
 
-		protected override void CheckParameters()
+		protected sealed override void CheckParameters()
 		{
 			for(int i = 0; i < Parameters.Count; i++) {
 				OleDbParameter parameter = (OleDbParameter)Parameters[i];
@@ -204,20 +201,20 @@ namespace System.Data.OleDb
 			}
 		}
 
-		protected override DbParameter CreateParameterInternal()
+		protected sealed override DbParameter CreateParameterInternal()
 		{
 			return new OleDbParameter();
 		}
 
-		protected override DbParameterCollection CreateParameterCollection(AbstractDbCommand parent)
+		protected sealed override DbParameterCollection CreateParameterCollection(AbstractDbCommand parent)
 		{
 			return new OleDbParameterCollection((OleDbCommand)parent);
 		}
 
-		public object Clone()
-		{
-			OleDbCommand clone = new OleDbCommand();
-			CopyTo(clone);
+		public override object Clone() {
+			OleDbCommand clone = (OleDbCommand)base.Clone();
+			clone._currentParameterIndex = 0;
+			clone._currentRefCursor = null;
 			return clone;
 		}
 
@@ -229,7 +226,7 @@ namespace System.Data.OleDb
 
 		protected override void BindOutputParameter(AbstractDbParameter parameter, int parameterIndex)
 		{
-			CallableStatement callableStatement = ((CallableStatement)_statement);
+			CallableStatement callableStatement = ((CallableStatement)Statement);
 			if (((OleDbParameter)parameter).IsOracleRefCursor) {
 				callableStatement.registerOutParameter(++parameterIndex, _oracleRefCursor);
 			}
@@ -243,7 +240,7 @@ namespace System.Data.OleDb
 			return ((OleDbParameter)parameter).IsOracleRefCursor;
 		}
 
-		internal override bool NextResultSet()
+		protected internal override bool NextResultSet()
 		{
 			try { 
 				bool hasMoreResults = base.NextResultSet();
@@ -272,12 +269,12 @@ namespace System.Data.OleDb
 			return false;
 		}
 
-		protected override DbDataReader CreateReader()
+		protected sealed override DbDataReader CreateReader()
 		{
 			return new OleDbDataReader(this);
 		}
 
-		protected override SystemException CreateException(SQLException e)
+		protected internal sealed override SystemException CreateException(SQLException e)
 		{
 			return new OleDbException(e,Connection);		
 		}

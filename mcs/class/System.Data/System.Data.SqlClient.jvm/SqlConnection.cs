@@ -32,30 +32,38 @@
 using System.Data;
 using System.Data.Common;
 using System.Collections;
+using System.Data.ProviderBase;
 
 using java.sql;
 
+using System.Configuration;
+using Mainsoft.Data.Configuration;
+using Mainsoft.Data.Jdbc.Providers;
+
 namespace System.Data.SqlClient
 {
-	public class SqlConnection : AbstractDBConnection, IDbConnection, System.ICloneable
+	public class SqlConnection : AbstractDBConnection
 	{
 		#region Fields
 
 		private const int DEFAULT_PACKET_SIZE = 8192;
 
-		protected static Hashtable _skippedUserParameters = new Hashtable(new CaseInsensitiveHashCodeProvider(),new CaseInsensitiveComparer());
-
-		private static readonly object _lockObjectStringManager = new object();
-		//private static DbStringManager _stringManager = new DbStringManager("System.Data.System.Data.ProviderBase.jvm.SqlClientStrings");
-
-		private static readonly string[] _resourceIgnoredKeys = new string[] {"CON_DATA_SOURCE","CON_DATABASE",
-																			  "CON_PASSWORD","CON_USER_ID","CON_TIMEOUT",
-																			  "CON_JNDI_NAME","CON_JNDI_PROVIDER","CON_JNDI_FACTORY",
-																			  "CON_WORKSTATION_ID","CON_PACKET_SIZE"};
+		static readonly IConnectionProvider _connectionProvider;
 
 		#endregion // Fields
 
 		#region Constructors
+
+		static SqlConnection() {
+			IDictionary providerInfo = (IDictionary)((IList) ConfigurationSettings.GetConfig("Mainsoft.Data.Configuration/SqlClientProvider"))[0];
+			string providerType = (string) providerInfo [ConfigurationConsts.ProviderType];
+			if (providerType == null || providerType.Length == 0)
+				_connectionProvider = new GenericProvider (providerInfo); 
+			else {
+				Type t = Type.GetType (providerType);
+				_connectionProvider = (IConnectionProvider) Activator.CreateInstance (t , new object[] {providerInfo});
+			}
+		}
 
 		public SqlConnection() : this(null)
 		{
@@ -83,30 +91,14 @@ namespace System.Data.SqlClient
 
 		public string WorkstationId
 		{
-			get { return ConnectionStringHelper.FindValue(UserParameters,StringManager.GetStringArray("CON_WORKSTATION_ID")); }
-		}
-
-		protected override string JdbcDriverName
-		{
-			get { return StringManager.GetString("JDBC_DRIVER"); }
-		}
-
-		protected internal override JDBC_MODE JdbcMode
-		{
-			get {
-				string[] conJndiNameStr = StringManager.GetStringArray("CON_JNDI_NAME");
-				if (!String.Empty.Equals(ConnectionStringHelper.FindValue(UserParameters,conJndiNameStr))) {
-					return JDBC_MODE.DATA_SOURCE_MODE;
-				}
-				return JDBC_MODE.PROVIDER_MODE; 
-			}
+			get { return (string)ConnectionStringBuilder["workstation id"]; }
 		}
 
 		public int PacketSize
 		{
 			get { 
-				string packetSize = ConnectionStringHelper.FindValue(UserParameters,StringManager.GetStringArray("CON_PACKET_SIZE"));				
-				if (String.Empty.Equals(packetSize)) {
+				string packetSize = (string)ConnectionStringBuilder["Packet Size"];
+				if (packetSize == null || packetSize.Length == 0) {
 					return DEFAULT_PACKET_SIZE;
 				}				
 				try {
@@ -121,54 +113,13 @@ namespace System.Data.SqlClient
 			}
 		}
 
-		protected override string[] ResourceIgnoredKeys
-		{
-			get { return _resourceIgnoredKeys; }
-		}
-
-		protected override Hashtable SkippedUserParameters
-		{
-			get { return _skippedUserParameters; }
-		}
-
-		protected override PROVIDER_TYPE ProviderType
-		{
-			get {
-				if (JdbcMode != JDBC_MODE.PROVIDER_MODE) {
-					return PROVIDER_TYPE.NONE;
-				}
-				return PROVIDER_TYPE.SQLOLEDB;
-			}
-		}
-
-		protected override DbStringManager StringManager
-		{
-			get {
-				const string stringManagerName = "System.Data.OleDbConnection.stringManager";
-				object stringManager = AppDomain.CurrentDomain.GetData(stringManagerName);
-				if (stringManager == null) {
-					lock(_lockObjectStringManager) {
-						stringManager = AppDomain.CurrentDomain.GetData(stringManagerName);
-						if (stringManager != null)
-							return (DbStringManager)stringManager;
-						stringManager = new DbStringManager("System.Data.System.Data.ProviderBase.jvm.SqlClientStrings");
-						AppDomain.CurrentDomain.SetData(stringManagerName, stringManager);
-					}
-				}
-				return (DbStringManager)stringManager;
-			}
+		protected override IConnectionProvider GetConnectionProvider() {
+			return _connectionProvider;
 		}
 
 		#endregion // Properties
 
 		#region Methods
-
-		protected internal override void ValidateConnectionString(string connectionString)
-		{
-			base.ValidateConnectionString(connectionString);
-
-			// FIXME : validate packet size
-		}
 
 		protected override DbTransaction BeginDbTransaction(IsolationLevel isolationLevel) {
 			return BeginTransaction(isolationLevel);
@@ -203,30 +154,18 @@ namespace System.Data.SqlClient
 			return CreateCommand();
 		}
 
-		internal override void OnSqlWarning(SQLWarning warning)
+		protected internal sealed override void OnSqlWarning(SQLWarning warning)
 		{
 			SqlErrorCollection col = new SqlErrorCollection(warning, this);
 			OnSqlInfoMessage(new SqlInfoMessageEventArgs(col));
 		}
 
-		protected internal override void CopyTo(AbstractDBConnection target)
-		{
-			base.CopyTo(target);
-		}
-
-		public object Clone()
-		{
-			SqlConnection clone = new SqlConnection();
-			CopyTo(clone);
-			return clone;
-		}
-
-		protected override SystemException CreateException(SQLException e)
+		protected sealed override SystemException CreateException(SQLException e)
 		{
 			return new SqlException(e, this);		
 		}
 
-		protected override SystemException CreateException(string message)
+		protected sealed override SystemException CreateException(string message)
 		{
 			return new SqlException(message, null, this);		
 		}
@@ -238,7 +177,7 @@ namespace System.Data.SqlClient
 			}
 		}
 
-		internal override void OnStateChanged(ConnectionState orig, ConnectionState current)
+		protected internal sealed override void OnStateChanged(ConnectionState orig, ConnectionState current)
 		{
 			if(StateChange != null) {
 				StateChange(this, new StateChangeEventArgs(orig, current));
@@ -253,15 +192,6 @@ namespace System.Data.SqlClient
 			if(current != orig) {
 				OnStateChanged(orig, current);
 			}
-		}
-
-		protected override string BuildJdbcUrl()
-		{
-			switch (JdbcMode) {
-				case JDBC_MODE.PROVIDER_MODE :
-					return BuildMsSqlUrl();
-			}
-			return base.BuildJdbcUrl();
 		}
 
 		#endregion // Methods

@@ -49,6 +49,7 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Xml;
 using System.Xml.Schema;
+using System.Text.RegularExpressions;
 using Mono.Data.SqlExpressions;
 
 namespace System.Data {
@@ -95,7 +96,7 @@ namespace System.Data {
 		private ArrayList _indexes;
 		private RecordCache _recordCache;
 		private int _defaultValuesRowIndex = -1;
-		protected internal bool fInitInProgress;
+		protected internal bool initInProgress;
 
 		// If CaseSensitive property is changed once it does not anymore follow owner DataSet's 
 		// CaseSensitive property. So when you lost you virginity it's gone for ever
@@ -103,7 +104,13 @@ namespace System.Data {
 		
 		private PropertyDescriptorCollection _propertyDescriptorsCache;
 		static DataColumn[] _emptyColumnArray = new DataColumn[0];
+
+		// Regex to parse the Sort string.
+		static Regex SortRegex = new Regex ( @"^((\[(?<ColName>.+)\])|(?<ColName>\S+))([ ]+(?<Order>ASC|DESC))?$",
+							RegexOptions.IgnoreCase|RegexOptions.ExplicitCapture);
 		
+
+		DataColumn[] _latestPrimaryKeyCols;
 		#endregion //Fields
 		
 		/// <summary>
@@ -180,7 +187,9 @@ namespace System.Data {
 		/// <summary>
 		/// Indicates whether string comparisons within the table are case-sensitive.
 		/// </summary>
+#if !NET_2_0
 		[DataSysDescription ("Indicates whether comparing strings within the table is case sensitive.")]	
+#endif
 		public bool CaseSensitive {
 			get { 
 				if (_virginCaseSensitive && dataSet != null)
@@ -242,7 +251,9 @@ namespace System.Data {
 		/// Gets the collection of child relations for this DataTable.
 		/// </summary>
 		[Browsable (false)]
+#if !NET_2_0
 		[DataSysDescription ("Returns the child relations for this table.")]
+#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DataRelationCollection ChildRelations {
 			get {
@@ -254,7 +265,9 @@ namespace System.Data {
 		/// Gets the collection of columns that belong to this table.
 		/// </summary>
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("The collection that holds the columns for this table.")]
+#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public DataColumnCollection Columns {
 			get { return _columnCollection; }
@@ -264,7 +277,9 @@ namespace System.Data {
 		/// Gets the collection of constraints maintained by this table.
 		/// </summary>
 		[DataCategory ("Data")]	
+#if !NET_2_0
 		[DataSysDescription ("The collection that holds the constraints for this table.")]
+#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public ConstraintCollection Constraints {
 			get { return _constraintCollection; }
@@ -274,7 +289,9 @@ namespace System.Data {
 		/// Gets the DataSet that this table belongs to.
 		/// </summary>
 		[Browsable (false)]
+#if !NET_2_0
 		[DataSysDescription ("Indicates the DataSet to which this table belongs.")]
+#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DataSet DataSet {
 			get { return dataSet; }
@@ -288,7 +305,9 @@ namespace System.Data {
 		/// </summary>
 		[MonoTODO]	
 		[Browsable (false)]
+#if !NET_2_0
 		[DataSysDescription ("This is the default DataView for the table.")]
+#endif
 		public DataView DefaultView {
 			get {
 				if (_defaultView == null) {
@@ -311,7 +330,9 @@ namespace System.Data {
 		/// a value used to represent this table in the user interface.
 		/// </summary>
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("The expression used to compute the data-bound value of this row.")]	
+#endif
 		[DefaultValue ("")]
 		public string DisplayExpression {
 			get { return _displayExpression == null ? "" : _displayExpression; }
@@ -323,7 +344,9 @@ namespace System.Data {
 		/// </summary>
 		[Browsable (false)]
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("The collection that holds custom user information.")]
+#endif
 		public PropertyCollection ExtendedProperties {
 			get { return _extendedProperties; }
 		}
@@ -334,7 +357,9 @@ namespace System.Data {
 		/// which the table belongs.
 		/// </summary>
 		[Browsable (false)]
+#if !NET_2_0
 		[DataSysDescription ("Returns whether the table has errors.")]
+#endif
 		public bool HasErrors {
 			get { 
 				// we can not use the _hasError flag because we do not know when to turn it off!
@@ -351,7 +376,9 @@ namespace System.Data {
 		/// Gets or sets the locale information used to 
 		/// compare strings within the table.
 		/// </summary>
+#if !NET_2_0
 		[DataSysDescription ("Indicates a locale under which to compare strings within the table.")]
+#endif
 		public CultureInfo Locale {
 			get { 
 				// if the locale is null, we check for the DataSet locale
@@ -377,7 +404,9 @@ namespace System.Data {
 		/// Gets or sets the initial starting size for this table.
 		/// </summary>
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("Indicates an initial starting size for this table.")]
+#endif
 		[DefaultValue (50)]
 		public int MinimumCapacity {
 			get { return _minimumCapacity; }
@@ -389,7 +418,9 @@ namespace System.Data {
 		/// of the data stored in the DataTable.
 		/// </summary>
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("Indicates the XML uri namespace for the elements contained in this table.")]
+#endif
 		public string Namespace {
 			get
 			{
@@ -411,7 +442,9 @@ namespace System.Data {
 		/// this DataTable.
 		/// </summary>
 		[Browsable (false)]
+#if !NET_2_0
 		[DataSysDescription ("Returns the parent relations for this table.")]
+#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DataRelationCollection ParentRelations {
 			get {	
@@ -424,7 +457,9 @@ namespace System.Data {
 		///  of the data stored in the DataTable.
 		/// </summary>
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("Indicates the Prefix of the namespace used for this table in XML representation.")]
+#endif
 		[DefaultValue ("")]
 		public string Prefix {
 			get { return _prefix == null ? "" : _prefix; }
@@ -443,7 +478,9 @@ namespace System.Data {
 		/// primary keys for the data table.
 		/// </summary>
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("Indicates the column(s) that represent the primary key for this table.")]
+#endif
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.PrimaryKeyEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		[TypeConverterAttribute ("System.Data.PrimaryKeyTypeConverter, " + Consts.AssemblySystem_Data)]
 		public DataColumn[] PrimaryKey {
@@ -454,42 +491,54 @@ namespace System.Data {
 				return _primaryKeyConstraint.Columns;
 			}
 			set {
-				UniqueConstraint oldPKConstraint = _primaryKeyConstraint;
-				
-				// first check if value is the same as current PK.
-				if (oldPKConstraint != null && DataColumn.AreColumnSetsTheSame(value, oldPKConstraint.Columns))
+				if (value == null || value.Length == 0) {
+					if (_primaryKeyConstraint != null) {
+						Constraints.Remove(_primaryKeyConstraint);
+						_primaryKeyConstraint = null;
+					}
 					return;
-
-				// remove PK Constraint
-				if(oldPKConstraint != null) {
-					_primaryKeyConstraint = null;
-					Constraints.Remove(oldPKConstraint);
 				}
 				
-				if (value != null) {
-					//Does constraint exist for these columns
-					UniqueConstraint uc = UniqueConstraint.GetUniqueConstraintForColumnSet(this.Constraints, (DataColumn[]) value);
-				
-					//if constraint doesn't exist for columns
-					//create new unique primary key constraint
-					if (null == uc) {
-						foreach (DataColumn Col in (DataColumn[]) value) {
-							if (Col.Table == null)
-								break;
+				if (InitInProgress) {
+					_latestPrimaryKeyCols = value;
+					return;
+				}
 
-							if (Columns.IndexOf (Col) < 0)
-								throw new ArgumentException ("PrimaryKey columns do not belong to this table.");
-						}
-						// create constraint with primary key indication set to false
-						// to avoid recursion
-						uc = new UniqueConstraint( (DataColumn[]) value, false);		
-						Constraints.Add (uc);
+				// first check if value is the same as current PK.
+				if (_primaryKeyConstraint!= null && DataColumn.AreColumnSetsTheSame(value, _primaryKeyConstraint.Columns))
+					return;
+
+				//Does constraint exist for these columns
+				UniqueConstraint uc = UniqueConstraint.GetUniqueConstraintForColumnSet(this.Constraints, (DataColumn[]) value);
+
+				//if constraint doesn't exist for columns
+				//create new unique primary key constraint
+				if (null == uc) {
+					foreach (DataColumn Col in (DataColumn[]) value) {
+						if (Col.Table == null)
+							break;
+
+						if (Columns.IndexOf (Col) < 0)
+							throw new ArgumentException ("PrimaryKey columns do not belong to this table.");
 					}
+					// create constraint with primary key indication set to false
+					// to avoid recursion
+					uc = new UniqueConstraint( (DataColumn[]) value, false);		
+					Constraints.Add (uc);
+				}
 
-					//set the constraint as the new primary key
-						UniqueConstraint.SetAsPrimaryKey(this.Constraints, uc);
-					_primaryKeyConstraint = uc;
-				}				
+				//Remove the existing primary key
+				if (_primaryKeyConstraint != null) {
+					Constraints.Remove(_primaryKeyConstraint);
+					_primaryKeyConstraint = null;
+				}
+				
+				//set the constraint as the new primary key
+				UniqueConstraint.SetAsPrimaryKey(this.Constraints, uc);
+				_primaryKeyConstraint = uc;
+
+				for (int j=0; j < uc.Columns.Length; ++j)
+					uc.Columns[j].AllowDBNull = false;
 			}
 		}
 
@@ -503,7 +552,9 @@ namespace System.Data {
 		/// Gets the collection of_rows that belong to this table.
 		/// </summary>
 		[Browsable (false)]
+#if !NET_2_0
 		[DataSysDescription ("Indicates the collection that holds the rows of data for this table.")]	
+#endif
 		public DataRowCollection Rows {
 			get { return _rows; }
 		}
@@ -523,7 +574,9 @@ namespace System.Data {
 		/// Gets or sets the name of the the DataTable.
 		/// </summary>
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("Indicates the name used to look up this table in the Tables collection of a DataSet.")]
+#endif
 		[DefaultValue ("")]	
 		[RefreshProperties (RefreshProperties.All)]
 		public string TableName {
@@ -675,7 +728,7 @@ namespace System.Data {
 		/// </summary>
 		public virtual void BeginInit () 
 		{
-			fInitInProgress = true;
+			InitInProgress = true;
 		}
 
 		/// <summary>
@@ -872,10 +925,29 @@ namespace System.Data {
 		[MonoTODO]
 		public virtual void EndInit () 
 		{
-			fInitInProgress = false;
+			InitInProgress = false;
+			FinishInit ();
+		}
+
+		internal bool InitInProgress {
+			get { return initInProgress; }
+			set { initInProgress = value; }
+		}
+
+		internal void FinishInit ()
+		{
+			UniqueConstraint oldPK = _primaryKeyConstraint;
+			
+			// Columns shud be added 'before' the constraints
+			Columns.PostAddRange ();
+
 			// Add the constraints
-			_constraintCollection.PostEndInit();
-			Columns.PostEndInit();
+			_constraintCollection.PostAddRange ();
+			
+			// ms.net behavior : If a PrimaryKey (UniqueConstraint) is added thru AddRange,
+			// then it takes precedence over an direct assignment of PrimaryKey
+			if (_primaryKeyConstraint == oldPK)
+				PrimaryKey = _latestPrimaryKeyCols;
 		}
 
 		/// <summary>
@@ -1001,6 +1073,9 @@ namespace System.Data {
 		/// </summary>
 		public void ImportRow (DataRow row) 
 		{
+			if (row.RowState == DataRowState.Detached)
+				return;
+
 			DataRow newRow = NewNotInitializedRow();
 
 			int original = -1;
@@ -1019,11 +1094,15 @@ namespace System.Data {
 					RecordCache.CopyRecord(row.Table,current,newRow.Current);
 				}
 			}
+			
+			//Import the row only if RowState is not detached
+			//Validation for Deleted Rows happens during Accept/RejectChanges
+			if (row.RowState != DataRowState.Deleted)
+				newRow.Validate();
+			else
+				AddRowToIndexes (newRow);
+			Rows.AddInternal(newRow);
 
-			newRow.Validate();
-
-			Rows.AddInternal(newRow);		
-	
 			if (row.HasErrors) {
 				row.CopyErrors(newRow);
 			}
@@ -1115,6 +1194,7 @@ namespace System.Data {
 					row.AcceptChanges ();
 			}
 			else {
+				EnsureDefaultValueRowIndex();
 				int newRecord = CreateRecord(values);
 				int existingRecord = _primaryKeyConstraint.Index.Find(newRecord);
 
@@ -1583,6 +1663,16 @@ namespace System.Data {
 			}
 		}
 
+		internal void DropReferencedIndexes (DataColumn column)
+		{
+			if (_indexes != null)
+				for (int i = _indexes.Count - 1; i >= 0; i--) { 
+					Index indx = (Index)_indexes [i];
+					if (indx.Key.DependsOn (column))
+						_indexes.Remove (indx);
+				}
+		}
+
 		internal void AddRowToIndexes (DataRow row) {
 			if (_indexes != null) {
 				foreach (Index indx in _indexes) {
@@ -1763,8 +1853,8 @@ namespace System.Data {
 		/// <summary>
 		/// Notifies the DataTable that a DataColumn is being removed.
 		/// </summary>
-		[MonoTODO]
 		protected internal virtual void OnRemoveColumn (DataColumn column) {
+			DropReferencedIndexes (column);
 		}
 
 
@@ -1810,7 +1900,9 @@ namespace System.Data {
 		/// the specified DataColumn in a DataRow.
 		/// </summary>
 		[DataCategory ("Data")]	
+#if !NET_2_0
 		[DataSysDescription ("Occurs when a value has been changed for this column.")]
+#endif
 		public event DataColumnChangeEventHandler ColumnChanged;
 
 		/// <summary>
@@ -1818,35 +1910,45 @@ namespace System.Data {
 		/// DataColumn in a DataRow.
 		/// </summary>
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("Occurs when a value has been submitted for this column.  The user can modify the proposed value and should throw an exception to cancel the edit.")]
+#endif
 		public event DataColumnChangeEventHandler ColumnChanging;
 
 		/// <summary>
 		/// Occurs after a DataRow has been changed successfully.
 		/// </summary>
 		[DataCategory ("Data")]	
+#if !NET_2_0
 		[DataSysDescription ("Occurs after a row in the table has been successfully edited.")]
+#endif
 		public event DataRowChangeEventHandler RowChanged;
 
 		/// <summary>
 		/// Occurs when a DataRow is changing.
 		/// </summary>
 		[DataCategory ("Data")]	
+#if !NET_2_0
 		[DataSysDescription ("Occurs when the row is being changed so that the event handler can modify or cancel the change. The user can modify values in the row and should throw an  exception to cancel the edit.")]
+#endif
 		public event DataRowChangeEventHandler RowChanging;
 
 		/// <summary>
 		/// Occurs after a row in the table has been deleted.
 		/// </summary>
 		[DataCategory ("Data")]	
+#if !NET_2_0
 		[DataSysDescription ("Occurs after a row in the table has been successfully deleted.")] 
+#endif
 		public event DataRowChangeEventHandler RowDeleted;
 
 		/// <summary>
 		/// Occurs before a row in the table is about to be deleted.
 		/// </summary>
 		[DataCategory ("Data")]	
+#if !NET_2_0
 		[DataSysDescription ("Occurs when a row in the table marked for deletion.  Throw an exception to cancel the deletion.")]
+#endif
 		public event DataRowChangeEventHandler RowDeleting;
 
 #if NET_2_0
@@ -1854,7 +1956,9 @@ namespace System.Data {
 		/// Occurs after the Clear method is called on the datatable.
 		/// </summary>
 		[DataCategory ("Data")]	
+#if !NET_2_0
 		[DataSysDescription ("Occurs when the rows in a table is cleared . Throw an exception to cancel the deletion.")]
+#endif
 		public event DataTableClearEventHandler TableCleared;
 #endif // NET_2_0
 
@@ -1891,54 +1995,13 @@ namespace System.Data {
 			
 				for (int c = 0; c < columnExpression.Length; c++) {
 					string rawColumnName = columnExpression[c].Trim ();
-					string[] columnSortInfo;
-					
-					if (rawColumnName.StartsWith ("[") && (rawColumnName.IndexOf ("]") > 0)) {
-						// Column name is "escaped" a la "[Name with spaces]", so we can't
-						// split at spaces. We just split it manually. 
-						int i = rawColumnName.LastIndexOf ("]"); 
 
-						if (i + 1 < rawColumnName.Length) {
-							// The "]" is not the last character which means we also have
-							// an optional sort order... we extract that one and trim it.
-							columnSortInfo = new String[2];
-							columnSortInfo[1] = rawColumnName.Substring (i + 1,
-								rawColumnName.Length - i - 1).Trim ();
-						} else {
-							// The "]" is the last character, we don't have a sort order
-							columnSortInfo = new String[1];
-						}
-
-						// Get everything between leading "[" and the LAST "]", no trimming !
-						columnSortInfo[0] = rawColumnName.Substring (1, i - 1);
-					} else {
-						// No column name "escaping", just split at spaces and trim just to
-						// be sure. 
-						columnSortInfo = rawColumnName.Split (new char[1] {' '});
-
-						// Fix entries (trim strings)
-						for (int i = 0; i < columnSortInfo.Length; i++) {
-							columnSortInfo[i] = columnSortInfo[i].Trim ();
-						}
-					}
-				
-					string columnName = columnSortInfo[0];
-					string sortOrder = "ASC";
-					if (columnSortInfo.Length > 1) 
-						sortOrder = columnSortInfo[1].ToUpper (table.Locale);
-					
-					ListSortDirection sortDirection = ListSortDirection.Ascending;
-					switch (sortOrder) {
-					case "ASC":
-						sortDirection = ListSortDirection.Ascending;
-						break;
-					case "DESC":
-						sortDirection = ListSortDirection.Descending;
-						break;
-					default:
+					Match match = SortRegex.Match (rawColumnName);
+					CaptureCollection cc = match.Groups["ColName"].Captures ;
+					if (cc.Count == 0)
 						throw new IndexOutOfRangeException ("Could not find column: " + rawColumnName);
-					}
 
+					string columnName = cc[0].Value;
 					DataColumn dc = table.Columns[columnName];
 					if (dc == null){
 						try {
@@ -1947,9 +2010,13 @@ namespace System.Data {
 							throw new IndexOutOfRangeException("Cannot find column " + columnName);
 						}
 					}
-
 					columns.Add (dc);
-					sorts.Add(sortDirection);
+
+					cc = match.Groups["Order"].Captures;
+					if (cc.Count == 0 || String.Compare (cc[0].Value, "ASC", true) == 0)
+						sorts.Add(ListSortDirection.Ascending);
+					else
+						sorts.Add (ListSortDirection.Descending);
 				}
 
 				sortColumns = (DataColumn[]) columns.ToArray (typeof (DataColumn));

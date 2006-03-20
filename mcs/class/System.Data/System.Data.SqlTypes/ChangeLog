@@ -1,3 +1,20 @@
+2006-02-17  Chris Toshok  <toshok@ximian.com>
+
+	* StorageState.cs: correct namespace, and remove "Delayed"
+	element.
+
+2006-02-03  Senganal T <tseganal@novell.com>
+
+	* SqlString.cs : 
+		- GetUnicodeBytes()
+		- GetNonUnicodeBytes() 
+		- Constructor 
+			Use Encoding class to convert between byte[] and string
+
+2006-01-27  Senganal T <tsenganal@novell.com>
+
+	* SqlDateTime : Corrected the MaxValue for SqlDateTime
+	
 2005-09-15  Raja R Harinath  <rharinath@novell.com>
 
 	* SqlString.cs (MoneyFormat): Move to SqlMoney.cs.

@@ -85,13 +85,11 @@ namespace System.Data.SqlClient {
 		public SqlCommand (string commandText) 
 			: this (commandText, null, null)
 		{
-			commandText = commandText;
 		}
 
 		public SqlCommand (string commandText, SqlConnection connection) 
 			: this (commandText, connection, null)
 		{
-			Connection = connection;
 		}
 
 		public SqlCommand (string commandText, SqlConnection connection, SqlTransaction transaction) 
@@ -129,7 +127,9 @@ namespace System.Data.SqlClient {
 		}
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("Command text to execute.")]
+#endif
 		[DefaultValue ("")]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.SQL.Design.SqlCommandTextEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		[RefreshProperties (RefreshProperties.All)]
@@ -146,7 +146,9 @@ namespace System.Data.SqlClient {
 			}
 		}
 
+#if !NET_2_0
 		[DataSysDescription ("Time to wait for command to execute.")]
+#endif
 		[DefaultValue (30)]
 		public 
 #if NET_2_0
@@ -155,14 +157,16 @@ namespace System.Data.SqlClient {
                 int CommandTimeout {
 			get { return commandTimeout;  }
 			set { 
-				if (commandTimeout < 0)
+				if (value < 0)
 					throw new ArgumentException ("The property value assigned is less than 0.");
 				commandTimeout = value; 
 			}
 		}
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("How to interpret the CommandText.")]
+#endif
 		[DefaultValue (CommandType.Text)]
 		[RefreshProperties (RefreshProperties.All)]
 		public 
@@ -174,13 +178,18 @@ namespace System.Data.SqlClient {
 			set { 
 				if (value == CommandType.TableDirect)
 					throw new ArgumentException ("CommandType.TableDirect is not supported by the Mono SqlClient Data Provider.");
+
+				if (!Enum.IsDefined (typeof (CommandType), value))
+					throw ExceptionHelper.InvalidEnumValueException ("CommandType", value);
 				commandType = value; 
 			}
 		}
 
 		[DataCategory ("Behavior")]
 		[DefaultValue (null)]
+#if !NET_2_0
 		[DataSysDescription ("Connection used by the command.")]
+#endif
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DbConnectionEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]		
                 public 
 #if NET_2_0
@@ -209,7 +218,9 @@ namespace System.Data.SqlClient {
 		}
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("The parameters collection.")]
+#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public 
 #if NET_2_0
@@ -246,7 +257,9 @@ namespace System.Data.SqlClient {
 		}
 
 		[Browsable (false)]
+#if !NET_2_0
 		[DataSysDescription ("The transaction used by the command.")]
+#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new SqlTransaction Transaction {
 			get { return transaction; }
@@ -254,7 +267,9 @@ namespace System.Data.SqlClient {
 		}	
 
 		[DataCategory ("Behavior")]
+#if !NET_2_0
 		[DataSysDescription ("When used by a DataAdapter.Update, how command results are applied to the current DataRow.")]
+#endif
 		[DefaultValue (UpdateRowSource.Both)]
 		public 
 #if NET_2_0
@@ -262,7 +277,11 @@ namespace System.Data.SqlClient {
 #endif // NET_2_0
                 UpdateRowSource UpdatedRowSource	{
 			get { return updatedRowSource; }
-			set { updatedRowSource = value; }
+			set { 
+				if (!Enum.IsDefined (typeof (UpdateRowSource), value))
+					throw ExceptionHelper.InvalidEnumValueException ("UpdateRowSource", value);
+				updatedRowSource = value;
+			}
 		}
 
 		#endregion // Fields
@@ -286,6 +305,10 @@ namespace System.Data.SqlClient {
 
 			if ((behavior & CommandBehavior.CloseConnection) != 0)
 				Connection.Close ();
+
+			// Reset the behavior
+			behavior = CommandBehavior.Default;
+			Tds.SequentialAccess = false;
 		}
 
 		public new SqlParameter CreateParameter () 
@@ -390,6 +413,8 @@ namespace System.Data.SqlClient {
 			ValidateCommand ("ExecuteReader");
 			try {
                                 this.behavior = behavior;
+				if ((behavior & CommandBehavior.SequentialAccess) != 0)
+					Tds.SequentialAccess = true;
 				Execute (behavior, true);
                                 Connection.DataReader = new SqlDataReader (this);
 			}
@@ -497,8 +522,18 @@ namespace System.Data.SqlClient {
                 void Prepare ()
 		{
 			ValidateCommand ("Prepare");
-			if (CommandType == CommandType.Text) 
-				preparedStatement = Connection.Tds.Prepare (CommandText, Parameters.MetaParameters);
+
+			if (CommandType == CommandType.StoredProcedure)
+				return;
+
+			try {
+				foreach (SqlParameter param in Parameters)
+					param.CheckIfInitialized ();
+			}catch (Exception e) {
+				throw new InvalidOperationException ("SqlCommand.Prepare requires " + e.Message);
+			}
+
+			preparedStatement = Connection.Tds.Prepare (CommandText, Parameters.MetaParameters);
 		}
 
 		public 

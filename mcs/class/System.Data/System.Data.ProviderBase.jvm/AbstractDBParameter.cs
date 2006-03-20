@@ -45,7 +45,7 @@ namespace System.Data.ProviderBase
 		protected byte _precision;
 		protected byte _scale;
 		protected DataRowVersion _sourceVersion;
-		private DbTypes.JavaSqlTypes _jdbcType;
+		private int _jdbcType;
 		protected bool _isDbTypeSet = false;
 		protected bool _isJdbcTypeSet = false;
 		object _convertedValue;
@@ -81,7 +81,7 @@ namespace System.Data.ProviderBase
 			set { _sourceVersion = value; }
 		}
 
-		internal DbTypes.JavaSqlTypes JdbcType
+		protected internal int JdbcType
 		{
 			get { 
 				if (!_isJdbcTypeSet) {
@@ -95,7 +95,7 @@ namespace System.Data.ProviderBase
 			}
 		}
 		
-		internal bool IsJdbcTypeSet
+		protected internal bool IsJdbcTypeSet
 		{
 			get { 
 				return _isJdbcTypeSet; 
@@ -111,7 +111,7 @@ namespace System.Data.ProviderBase
 			get { return _isDbTypeSet; }
 		}
 
-		internal virtual bool IsSpecial {
+		protected internal virtual bool IsSpecial {
 			get {
 				return false;
 			}
@@ -150,21 +150,33 @@ namespace System.Data.ProviderBase
 			}
 		}
 
+		//DbParameter overrides
+
+		public override bool SourceColumnNullMapping {
+			get {
+				throw new NotImplementedException();
+			}
+			set {
+				throw new NotImplementedException();
+			}
+		}
+
+
 		#endregion // Properties
 
 		#region Methods
 
-		internal abstract void SetParameterName(ResultSet res);
+		protected internal abstract void SetParameterName(ResultSet res);
 
-		internal abstract void SetParameterDbType(ResultSet res);
+		protected internal abstract void SetParameterDbType(ResultSet res);
 
-		internal abstract void SetSpecialFeatures(ResultSet res);
+		protected internal abstract void SetSpecialFeatures(ResultSet res);
 		
 		public abstract object Clone();
 
-		internal abstract DbTypes.JavaSqlTypes JdbcTypeFromProviderType();
+		protected internal abstract int JdbcTypeFromProviderType();
 
-		internal abstract object ConvertValue(object value);
+		protected internal abstract object ConvertValue(object value);
 
 		internal void SetParameterPrecisionAndScale(ResultSet res)
 		{
@@ -200,6 +212,12 @@ namespace System.Data.ProviderBase
 			t._scale = _scale;
 			t._sourceVersion = _sourceVersion;
 			t._jdbcType = _jdbcType;
+		}
+
+		//DbParameter overrides
+
+		public override void ResetDbType() {
+			throw new NotImplementedException();
 		}
 
 		#endregion // Methods

@@ -94,6 +94,7 @@ internal class XmlConstants
 	public const string Locale = "Locale";
 	public const string Ordinal = "Ordinal";
 	public const string IsNested = "IsNested";
+	public const string ConstraintOnly = "ConstraintOnly";
 	public const string RelationName = "RelationName";
 	public const string ConstraintName = "ConstraintName";
 	public const string PrimaryKey = "PrimaryKey";

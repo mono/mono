@@ -31,8 +31,8 @@ LIB_MCS_FLAGS +=	\
 	$(OTHER_LIB_MCS_FLAGS)			\
 	$(RESX_RES:%=/res:%)
 
-OLEDBSTRINGS = System.Data.ProviderBase.jvm/System.Data.ProviderBase.jvm.OleDbStrings.resources
-SQLCLIENTSTRINGS = System.Data.ProviderBase.jvm/System.Data.ProviderBase.jvm.SqlClientStrings.resources
+OLEDBSTRINGS = System.Data.ProviderBase.jvm/System.Data.System.Data.ProviderBase.jvm.OleDbStrings.resources
+SQLCLIENTSTRINGS = System.Data.ProviderBase.jvm/System.Data.System.Data.ProviderBase.jvm.SqlClientStrings.resources
 SQLCOMMAND = System.Data.SqlClient.jvm/System.Data.SqlClient.SqlCommand.resources
 SQLCONNECTION = System.Data.SqlClient.jvm/System.Data.SqlClient.SqlConnection.resources
 

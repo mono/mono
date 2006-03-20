@@ -38,7 +38,6 @@ namespace MonoTests_System.Data
 	[TestFixture] public class EvaluateExceptionTest
 	{
 		[Test]
-		[Category("NotWorking")]
 		public void Generate()
 		{
 			Exception tmpEx = new Exception() ;

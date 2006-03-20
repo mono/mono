@@ -46,7 +46,7 @@ using java.util.regex;
 
 namespace System.Data.ProviderBase
 {
-	public abstract class AbstractDbCommand : DbCommandBase
+	public abstract class AbstractDbCommand : DbCommandBase, ICloneable
 	{
 		#region ProcedureColumnCache
 
@@ -101,12 +101,12 @@ namespace System.Data.ProviderBase
 
 		#region Fields
 
-		protected DbParameterCollection _parameters;
-		protected java.sql.Statement _statement;
-		protected AbstractDBConnection _connection;
-		protected AbstractTransaction _transaction;
+		private DbParameterCollection _parameters;
+		private java.sql.Statement _statement;
+		private AbstractDBConnection _connection;
+		private AbstractTransaction _transaction;
 		private bool _isCommandPrepared;
-		protected CommandBehavior _behavior;
+		private CommandBehavior _behavior;
 		private ArrayList _internalParameters;
 		string _javaCommandText;
 		private int _recordsAffected;
@@ -116,7 +116,7 @@ namespace System.Data.ProviderBase
 		private bool _hasResultSet;
 		private bool _explicitPrepare;
 
-		internal static ProcedureColumnCache _procedureColumnCache = new ProcedureColumnCache();
+		static ProcedureColumnCache _procedureColumnCache = new ProcedureColumnCache();
 
 		#endregion // Fields
 
@@ -230,7 +230,7 @@ namespace System.Data.ProviderBase
 
 		// AbstractDbCommand acts as IEnumerator over JDBC statement
 		// AbstractDbCommand.CurrentResultSet corresponds to IEnumerator.Current
-		internal virtual ResultSet CurrentResultSet
+		protected internal virtual ResultSet CurrentResultSet
 		{
 			get { 
 				try {
@@ -245,7 +245,7 @@ namespace System.Data.ProviderBase
 			}
 		}
 
-		internal java.sql.Statement JdbcStatement
+		protected internal java.sql.Statement Statement
 		{
 			get { return _statement; }
 		}
@@ -275,25 +275,7 @@ namespace System.Data.ProviderBase
 
 		protected abstract DbParameterCollection CreateParameterCollection(AbstractDbCommand parent);
 
-		protected abstract SystemException CreateException(SQLException e);
-
-		protected internal void CopyTo(AbstractDbCommand target)
-		{
-			target._behavior = _behavior;
-			target.CommandText = CommandText;
-			target.CommandTimeout = CommandTimeout;
-			target.CommandType = CommandType;
-			target._connection = _connection;
-			target._transaction = _transaction;
-			target.UpdatedRowSource = UpdatedRowSource;
-
-			if (Parameters != null && Parameters.Count > 0) {
-				target._parameters = CreateParameterCollection(target);
-				for(int i=0 ; i < Parameters.Count; i++) {
-					target.Parameters.Add(((AbstractDbParameter)Parameters[i]).Clone());
-				}
-			}
-		}
+		protected internal abstract SystemException CreateException(SQLException e);
 
 		public override void Cancel()
 		{
@@ -313,25 +295,12 @@ namespace System.Data.ProviderBase
 			return false;
 		}
 
-		protected override DbParameter CreateDbParameter()
+		protected sealed override DbParameter CreateDbParameter()
 		{
 			return CreateParameterInternal();
 		}
 
-		internal void DeriveParameters ()
-		{
-			if(CommandType != CommandType.StoredProcedure) {
-				throw ExceptionHelper.DeriveParametersNotSupported(this.GetType(),CommandType);
-			}
-
-			ArrayList parameters = DeriveParameters(CommandText, true);
-			Parameters.Clear();
-			foreach (AbstractDbParameter param in parameters) {
-				Parameters.Add(param.Clone());
-			}
-		}
-
-		protected ArrayList DeriveParameters(string procedureName, bool throwIfNotExist)
+		internal ArrayList DeriveParameters(string procedureName, bool throwIfNotExist)
 		{
 			try {
 				ArrayList col = _procedureColumnCache.GetProcedureColumns((AbstractDBConnection)Connection, procedureName, this);
@@ -954,13 +923,13 @@ namespace System.Data.ProviderBase
 			parameterIndex++; 
 			PreparedStatement preparedStatement = ((PreparedStatement)_statement);
 
-			switch (parameter.JdbcType) {
-				case DbTypes.JavaSqlTypes.DATALINK:
-				case DbTypes.JavaSqlTypes.DISTINCT:
-				case DbTypes.JavaSqlTypes.JAVA_OBJECT:
-				case DbTypes.JavaSqlTypes.OTHER:
-				case DbTypes.JavaSqlTypes.REF:
-				case DbTypes.JavaSqlTypes.STRUCT: {
+			switch ((DbConvert.JavaSqlTypes)parameter.JdbcType) {
+				case DbConvert.JavaSqlTypes.DATALINK:
+				case DbConvert.JavaSqlTypes.DISTINCT:
+				case DbConvert.JavaSqlTypes.JAVA_OBJECT:
+				case DbConvert.JavaSqlTypes.OTHER:
+				case DbConvert.JavaSqlTypes.REF:
+				case DbConvert.JavaSqlTypes.STRUCT: {
 					preparedStatement.setObject(parameterIndex, value, (int)parameter.JdbcType);
 					return;
 				}
@@ -995,21 +964,21 @@ namespace System.Data.ProviderBase
 				preparedStatement.setString(parameterIndex, ((char)value).ToString());
 			}
 			else if (value is DateTime) {
-				switch (parameter.JdbcType) {
+				switch ((DbConvert.JavaSqlTypes)parameter.JdbcType) {
 					default:
-					case DbTypes.JavaSqlTypes.TIMESTAMP:
+					case DbConvert.JavaSqlTypes.TIMESTAMP:
 						preparedStatement.setTimestamp(parameterIndex,DbConvert.ClrTicksToJavaTimestamp(((DateTime)value).Ticks));
 						break;
-					case DbTypes.JavaSqlTypes.TIME:
+					case DbConvert.JavaSqlTypes.TIME:
 						preparedStatement.setTime(parameterIndex,DbConvert.ClrTicksToJavaTime(((DateTime)value).Ticks));
 						break;
-					case DbTypes.JavaSqlTypes.DATE:
+					case DbConvert.JavaSqlTypes.DATE:
 						preparedStatement.setDate(parameterIndex,DbConvert.ClrTicksToJavaDate(((DateTime)value).Ticks));
 						break;
 				}
 			}
 			else if (value is TimeSpan) {
-				if (parameter.JdbcType == DbTypes.JavaSqlTypes.TIMESTAMP)
+				if (parameter.JdbcType == (int)DbConvert.JavaSqlTypes.TIMESTAMP)
 					preparedStatement.setTimestamp(parameterIndex,DbConvert.ClrTicksToJavaTimestamp(((TimeSpan)value).Ticks));
 				else
 					preparedStatement.setTime(parameterIndex,DbConvert.ClrTicksToJavaTime(((TimeSpan)value).Ticks));
@@ -1027,7 +996,13 @@ namespace System.Data.ProviderBase
 				preparedStatement.setInt(parameterIndex, (int)value);
 			}
 			else if (value is string) {
-				preparedStatement.setString(parameterIndex, (string)value);
+				if (preparedStatement is Mainsoft.Data.Jdbc.Providers.IPreparedStatement &&
+					(DbConvert.JavaSqlTypes)parameter.JdbcType == DbConvert.JavaSqlTypes.CHAR) {
+					((Mainsoft.Data.Jdbc.Providers.IPreparedStatement)preparedStatement)
+						.setChar(parameterIndex, (string)value);
+				}
+				else
+					preparedStatement.setString(parameterIndex, (string)value);
 			}
 			else if (value is Guid) {
 				preparedStatement.setString(parameterIndex, value.ToString());
@@ -1094,7 +1069,7 @@ namespace System.Data.ProviderBase
 //				// suppress error : ms driver for sql server does not implement getParameterMetaData
 //				// suppress exception : ms driver for sql server does not implement getParameterMetaData
 //			}
-			DbTypes.JavaSqlTypes javaSqlType = (DbTypes.JavaSqlTypes)((AbstractDbParameter)parameter).JdbcType;
+			DbConvert.JavaSqlTypes javaSqlType = (DbConvert.JavaSqlTypes)((AbstractDbParameter)parameter).JdbcType;
 			try {
 				parameter.Value = DbConvert.JavaResultSetToClrWrapper(callableStatement,index,javaSqlType,parameter.Size,parameterMetadataWrapper);
 			}
@@ -1105,7 +1080,7 @@ namespace System.Data.ProviderBase
 
 		// AbstractDbCommand acts as IEnumerator over JDBC statement
 		// AbstractDbCommand.NextResultSet corresponds to IEnumerator.MoveNext
-		internal virtual bool NextResultSet()
+		protected internal virtual bool NextResultSet()
 		{
 			if (!_hasResultSet)
 				return false;
@@ -1196,5 +1171,30 @@ namespace System.Data.ProviderBase
 		}
 
 		#endregion // Methods
+
+		#region ICloneable Members
+
+		public virtual object Clone() {
+			AbstractDbCommand target = (AbstractDbCommand)MemberwiseClone();
+			target._statement = null;
+			target._isCommandPrepared = false;
+			target._internalParameters = null;
+			target._javaCommandText = null;
+			target._recordsAffected = -1;
+			target._currentResultSet = null;
+			target._currentReader = null;
+			target._nullParametersInPrepare = false;
+			target._hasResultSet = false;
+			target._explicitPrepare = false;
+			if (Parameters != null && Parameters.Count > 0) {
+				target._parameters = CreateParameterCollection(target);
+				for(int i=0 ; i < Parameters.Count; i++) {
+					target.Parameters.Add(((AbstractDbParameter)Parameters[i]).Clone());
+				}
+			}
+			return target;
+		}
+
+		#endregion
 	}
 }

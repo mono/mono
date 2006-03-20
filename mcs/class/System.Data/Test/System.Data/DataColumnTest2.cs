@@ -29,6 +29,7 @@
 using NUnit.Framework;
 using System;
 using System.Data;
+using MonoTests.System.Data.Utils;
 
 namespace MonoTests.System.Data
 {
@@ -487,6 +488,267 @@ namespace MonoTests.System.Data
 			//Checking Get
 			// Ordinal Get
 			Assert.AreEqual((int)3 , dc.Ordinal , "DC54");
+		}
+
+		[Test]
+		public void Expression()
+		{
+			DataColumn dc;
+			string sExpression = "Tax * 0.59";
+			dc = new DataColumn("ColName",typeof(string));
+
+			Assert.AreEqual(string.Empty, dc.Expression, "dce#1");
+
+			dc.Expression = sExpression;
+
+			Assert.AreEqual(sExpression,dc.Expression, "dce#2");				
+		}
+
+		[Test]
+		public void Expression_Exceptions()
+		{
+			DataTable dt = DataProvider.CreateParentDataTable();
+			try
+			{
+				dt.Columns[0].Unique=true;
+				dt.Columns[0].Expression = "sum(" + dt.Columns[0].ColumnName + ")";
+				Assert.Fail("dccee#1: Expression failed to throw ArgmentException");
+			}
+			catch (ArgumentException) {}
+			catch (AssertionException exc) {throw  exc;}
+			catch (Exception exc)
+			{
+				Assert.Fail("dccee#2: Expression. Wrong exception type. Got:" + exc);
+			}	
+
+			try
+			{
+				DataTable dt1 = DataProvider.CreateParentDataTable();
+				dt1.Columns[0].AutoIncrement=true;
+				dt1.Columns[0].Expression = "sum(" + dt1.Columns[0].ColumnName + ")";
+				Assert.Fail("dccee#3: Expression failed to throw ArgmentException");
+			}
+			catch (ArgumentException) {}
+			catch (AssertionException exc) {throw  exc;}
+			catch (Exception exc)
+			{
+				Assert.Fail("dccee#4: Expression. Wrong exception type. Got:" + exc);
+			}
+
+			try
+			{
+				DataTable dt1 = DataProvider.CreateParentDataTable();
+				dt1.Constraints.Add(new UniqueConstraint(dt1.Columns[0],false));
+				dt1.Columns[0].Expression = "count(" + dt1.Columns[0].ColumnName + ")";
+				Assert.Fail("dccee#5: Expression failed to throw ArgmentException");
+			}
+			catch (ArgumentException) {}
+			catch (AssertionException exc) {throw  exc;}
+			catch (Exception exc)
+			{
+				Assert.Fail("dccee#6: Expression. Wrong exception type. Got:" + exc);
+			}
+
+			try
+			{
+				DataTable dt1 = DataProvider.CreateParentDataTable();
+			
+				dt1.Columns[0].Expression = "CONVERT(" + dt1.Columns[1].ColumnName + ",'System.Int32')";
+				Assert.Fail("dccee#7: Expression failed to throw FormatException");
+			}
+			catch (FormatException) {}
+			catch (AssertionException exc) {throw  exc;}
+			catch (Exception exc)
+			{
+				Assert.Fail("dccee#8: Expression. Wrong exception type. Got:" + exc);
+			}
+
+			try
+			{
+				DataTable dt1 = DataProvider.CreateParentDataTable();
+			
+				dt1.Columns[0].Expression = "CONVERT(" + dt1.Columns[0].ColumnName + ",'System.DateTime')";
+				Assert.Fail("dccee#9: Expression failed to throw ArgmentException");
+			}
+			catch (ArgumentException) {}
+			catch (AssertionException exc) {throw  exc;}
+			catch (Exception exc)
+			{
+				Assert.Fail("dccee#10: Expression. Wrong exception type. Got:" + exc);
+			}
+
+
+			try
+			{
+				DataTable dt1 = DataProvider.CreateParentDataTable();
+			
+				dt1.Columns[1].Expression = "CONVERT(" + dt1.Columns[0].ColumnName + ",'System.DateTime')";
+				Assert.Fail("dccee#11: Expression failed to throw InvalidCastException");
+			}
+			catch (InvalidCastException) {}
+			catch (AssertionException exc) {throw  exc;}
+			catch (Exception exc)
+			{
+				Assert.Fail("dccee#12: Expression. Wrong exception type. Got:" + exc);
+			}
+
+			try
+			{
+				DataTable dt1 = DataProvider.CreateParentDataTable();
+			
+				dt1.Columns[1].Expression = "SUBSTRING(" + dt1.Columns[2].ColumnName + ",60000000000,2)";
+				Assert.Fail("dccee#13: Expression failed to throw OverflowException");
+			}
+			catch (OverflowException) {}
+			catch (AssertionException exc) {throw  exc;}
+			catch (Exception exc)
+			{
+				Assert.Fail("dccee#14: Expression. Wrong exception type. Got:" + exc);
+			}
+		}
+
+		[Test]
+		public void Expression_Simple()
+		{
+			DataTable dt = DataProvider.CreateParentDataTable();
+			//Simple expression --> not aggregate
+			DataColumn dc = new DataColumn("expr",Type.GetType("System.Decimal"));
+			dt.Columns.Add(dc);
+			dt.Columns["expr"].Expression = dt.Columns[0].ColumnName + "*0.52 +" + dt.Columns[0].ColumnName; 
+
+			//Check the values
+			//double temp;
+			string temp;
+			string str;
+
+			foreach(DataRow dr in dt.Rows) {
+				str = ( ((int)dr[0])*0.52 + ((int)dr[0])).ToString();
+				if (str.Length > 3)
+					temp = str.Substring(0,4);
+				else
+					temp = str;
+				//Due to bug in GH 4.56 sometimes looks like : 4.56000000000000005
+
+				//temp = Convert.ToDouble(str);
+
+				if (dr["expr"].ToString().Length >3)
+					str = dr["expr"].ToString().Substring(0,4);
+				else
+					str = dr["expr"].ToString();
+
+				if (str == "7.60")
+					str = "7.6";
+
+				Assert.AreEqual(temp,str, "dcse#1");
+				//Compare(Convert.ToDouble(dr["expr"]), temp);
+			}
+		}
+
+		[Test]
+		public void Expression_Aggregate()
+		{
+			DataTable dt = DataProvider.CreateParentDataTable();
+			//Simple expression -->  aggregate
+			DataColumn dc = new DataColumn("expr",Type.GetType("System.Decimal"));
+			dt.Columns.Add(dc);
+			dt.Columns["expr"].Expression = "sum(" + dt.Columns[0].ColumnName + ") + count(" + dt.Columns[0].ColumnName + ")" ; 
+			dt.Columns["expr"].Expression+= " + avg(" + dt.Columns[0].ColumnName + ") + Min(" + dt.Columns[0].ColumnName + ")" ; 
+
+
+			//Check the values
+			double temp;
+			string str;
+
+			double sum = Convert.ToDouble(dt.Compute("sum(" + dt.Columns[0].ColumnName + ")",string.Empty));
+			double count = Convert.ToDouble(dt.Compute("count(" + dt.Columns[0].ColumnName + ")",string.Empty));
+			double avg = Convert.ToDouble(dt.Compute("avg(" + dt.Columns[0].ColumnName + ")",string.Empty));
+			double min = Convert.ToDouble(dt.Compute("min(" + dt.Columns[0].ColumnName + ")",string.Empty));
+
+			str = (sum+count+avg+min).ToString();
+			foreach(DataRow dr in dt.Rows)
+			{
+				if (str.Length > 3)
+				{
+					temp = Convert.ToDouble(str.Substring(0,4));
+				}
+				else
+				{
+					temp = Convert.ToDouble(str);
+				}
+				
+				Assert.AreEqual(temp, Convert.ToDouble(dr["expr"]), "dcea#1");
+			}
+		}
+
+		[Test]
+		public void Expression_AggregateRelation()
+		{
+			DataTable parent = DataProvider.CreateParentDataTable();
+			DataTable child  = DataProvider.CreateChildDataTable();
+			DataSet ds = new DataSet();
+			ds.Tables.Add(parent);
+			ds.Tables.Add(child);
+			
+			ds.Relations.Add("Relation1",parent.Columns[0],child.Columns[0],false);
+
+			//Create the computed columns 
+
+			DataColumn dcComputedParent = new DataColumn("computedParent",Type.GetType("System.Double"));
+			parent.Columns.Add(dcComputedParent);
+			dcComputedParent.Expression = "sum(child(Relation1)." + child.Columns[1].ColumnName + ")";
+
+			double preCalculatedExpression;
+
+			foreach (DataRow dr in parent.Rows)
+			{
+				object o = child.Compute("sum(" + child.Columns[1].ColumnName + ")",
+					parent.Columns[0].ColumnName + "=" + dr[0]);
+				if (o == DBNull.Value)
+				{
+					Assert.AreEqual(dr["computedParent"],o,"dcear#1");
+				}
+				else
+				{
+					preCalculatedExpression = Convert.ToDouble(o);
+					Assert.AreEqual(dr["computedParent"],preCalculatedExpression,"dcear#2");
+				}
+			}
+
+			DataColumn dcComputedChild = new DataColumn("computedChild",Type.GetType("System.Double"));
+			child.Columns.Add(dcComputedChild);
+			dcComputedChild.Expression = "Parent." + parent.Columns[0].ColumnName;
+
+			int index=0;
+			double val;
+			foreach (DataRow dr in child.Rows)
+			{
+				val = Convert.ToDouble(dr.GetParentRow("Relation1")[0]);
+				Assert.AreEqual(dr["computedChild"],val,"dcear#3");
+				index++;				
+			}
+		}
+
+		public void Expression_IIF()
+		{
+			DataTable dt = DataProvider.CreateParentDataTable();
+			DataColumn dcComputedParent = new DataColumn("computedCol",Type.GetType("System.Double"));
+			dcComputedParent.DefaultValue=25.5;
+			dt.Columns.Add(dcComputedParent);
+			dcComputedParent.Expression = "IIF(" + dt.Columns[0].ColumnName + ">3" + ",1,2)"; 
+
+			double val;
+			foreach (DataRow dr in dt.Rows)
+			{
+				val = (int)dr[0] >3 ? 1:2;
+				Assert.AreEqual(val,dr["computedCol"],"dceiif#1");				
+			}
+			//Now reset the expression and check that the column got his deafult value
+
+			dcComputedParent.Expression = null;
+			foreach (DataRow dr in dt.Rows)
+			{
+				Assert.AreEqual(25.5,dr["computedCol"],"dceiif#2");
+			}
 		}
 	}
 }

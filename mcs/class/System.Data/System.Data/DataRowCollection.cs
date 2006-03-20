@@ -43,10 +43,19 @@ namespace System.Data
 	/// <summary>
 	/// Collection of DataRows in a DataTable
 	/// </summary>
+
+#if !NET_2_0
 	[Serializable]
-	public class DataRowCollection : InternalDataCollectionBase 
+#endif
+	public
+#if NET_2_0
+	sealed
+#endif
+	class DataRowCollection : InternalDataCollectionBase 
 	{
 		private DataTable table;
+		
+		internal event ListChangedEventHandler ListChanged;
 
 		/// <summary>
 		/// Internal constructor used to build a DataRowCollection.
@@ -114,11 +123,13 @@ namespace System.Data
 		/// Creates a row using specified values and adds it to the DataRowCollection.
 		/// </summary>
 #if NET_2_0
-		public virtual DataRow Add (params object[] values) 
+		public DataRow Add (params object[] values) 
 #else
 		public virtual DataRow Add (object[] values) 
 #endif
 		{
+			if (values == null)
+				throw new NullReferenceException ();
 			DataRow row = table.NewNotInitializedRow();
 			int newRecord = table.CreateRecord(values);
 			row.ImportRecord(newRecord);
@@ -159,6 +170,7 @@ namespace System.Data
                                 this.table.DeleteRowFromIndexes (this [i]);
 
 			List.Clear ();
+			OnListChanged (this, new ListChangedEventArgs (ListChangedType.Reset, -1, -1));
 		}
 
 		/// <summary>
@@ -334,6 +346,12 @@ namespace System.Data
 		public void RemoveAt (int index) 
 		{			
 			Remove(this[index]);
+		}
+
+		private void OnListChanged (object sender, ListChangedEventArgs args)
+		{
+			if (ListChanged != null)
+				ListChanged (sender, args);
 		}
 	}
 }

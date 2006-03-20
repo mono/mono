@@ -182,7 +182,7 @@ ArithExpr
 
 Value
 	: LiteralValue
-	| ColumnValue
+	| SingleColumnValue
 	;
 
 LiteralValue
@@ -197,12 +197,25 @@ BoolLiteral
 	| FALSE	{ $$ = new Literal (false); }
 	;
 
-ColumnValue
+SingleColumnValue
+	: LocalColumnValue
+	| ParentColumnValue
+	;	
+
+MultiColumnValue
+	: LocalColumnValue
+	| ChildColumnValue
+	;
+
+LocalColumnValue
 	: ColumnName
 	{
 		$$ = new ColumnReference ((string)$1);
 	}
-	| PARENT DOT ColumnName
+	;
+
+ParentColumnValue
+	: PARENT DOT ColumnName
 	{
 		$$ = new ColumnReference (ReferencedTable.Parent, null, (string)$3);
 	}
@@ -210,7 +223,10 @@ ColumnValue
 	{
 		$$ = new ColumnReference (ReferencedTable.Parent, (string)$3, (string)$6);
 	}
-	| CHILD DOT ColumnName
+	;
+
+ChildColumnValue
+	: CHILD DOT ColumnName
 	{
 		$$ = new ColumnReference (ReferencedTable.Child, null, (string)$3);
 	}
@@ -232,7 +248,7 @@ Function
 	;
 
 AggFunction
-	: AggFunctionName PAROPEN ColumnValue PARCLOSE
+	: AggFunctionName PAROPEN MultiColumnValue PARCLOSE
 	{
 		$$ = new Aggregation (cacheAggregationResults, aggregationRows, (AggregationFunction)$1, (ColumnReference)$3);
 	}
@@ -259,7 +275,7 @@ CalcFunction
 		long arg2 = (long) $7;
 		$$ = new SubstringFunction ((IExpression)$3, Convert.ToInt32(arg1), Convert.ToInt32(arg2));
 	}
-	| ISNULL PAROPEN ColumnValue COMMA Expr PARCLOSE
+	| ISNULL PAROPEN SingleColumnValue COMMA Expr PARCLOSE
 	{
 		$$ = new IsNullFunction ((IExpression)$3, (IExpression)$5);
 	}
@@ -283,11 +299,11 @@ TypeSpecifier
 	;
 
 IsPredicate
-	: ColumnValue IS NULL
+	: SingleColumnValue IS NULL
 	{
 		$$ = new Comparison (Operation.EQ, (IExpression)$1, new Literal (null));
 	}
-	| ColumnValue IS NOT NULL
+	| SingleColumnValue IS NOT NULL
 	{
 		$$ = new Comparison (Operation.NE, (IExpression)$1, new Literal (null));
 	}
@@ -305,11 +321,11 @@ LikePredicate
 	;
 
 InPredicate
-	: ColumnValue IN InPredicateValue
+	: SingleColumnValue IN InPredicateValue
 	{
 		$$ = new In ((IExpression)$1, (IList)$3);
 	}
-	| ColumnValue NOT IN InPredicateValue
+	| SingleColumnValue NOT IN InPredicateValue
 	{
 		$$ = new Negation (new In ((IExpression)$1, (IList)$4));
 	}

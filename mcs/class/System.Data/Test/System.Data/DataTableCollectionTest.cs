@@ -348,6 +348,9 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Ignore ("Does not work with TARGET_JVM")]
+#endif
 		public void ToStringTest()
 		{
 			DataTableCollection tbcol = _dataset[0].Tables;

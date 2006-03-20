@@ -33,7 +33,7 @@
 #if NET_2_0
 
 namespace System.Data {
-	public class StatementCompletedEventArgs : EventArgs
+	public sealed class StatementCompletedEventArgs : EventArgs
 	{
 		#region Fields
 

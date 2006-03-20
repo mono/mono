@@ -112,7 +112,9 @@ namespace MonoTests.System.Data
 			AssertEquals ("test#01", 1, Rows.Count);
 			AssertEquals ("test#02", false, Rows.IsReadOnly);
 			AssertEquals ("test#03", false, Rows.IsSynchronized);
+#if !TARGET_JVM
 			AssertEquals ("test#04", "System.Data.DataRowCollection", Rows.ToString ());
+#endif
 			
 			string [] cols = new string [2];
 			cols [0] = "first";
@@ -124,7 +126,9 @@ namespace MonoTests.System.Data
 			Rows.Add (cols);
 			
 			AssertEquals ("test#05", 3, Rows.Count);
+#if !TARGET_JVM
 			AssertEquals ("test#06", "System.Data.DataRow",  Rows [0].ToString ());
+#endif
 			AssertEquals ("test#07", DBNull.Value, Rows [0] [0]);
 			AssertEquals ("test#08", DBNull.Value, Rows [0] [1]);
 			AssertEquals ("test#09", "first", Rows [1] [0]);

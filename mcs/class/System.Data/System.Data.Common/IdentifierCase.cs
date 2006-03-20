@@ -35,9 +35,9 @@
 namespace System.Data.Common {
 	public enum IdentifierCase 
 	{
-		Insensitive,
-		Sensitive,
-		Unknown
+		Insensitive = 1,
+		Sensitive = 2,
+		Unknown = 0
 	}
 }
 

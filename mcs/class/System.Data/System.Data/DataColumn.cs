@@ -68,6 +68,8 @@ namespace System.Data {
 
 		//used for FK Constraint Cascading rules
 		internal event DelegateColumnValueChange ColumnValueChanging;
+
+		internal event PropertyChangedEventHandler PropertyChanged;
 		#endregion //Events
 		
 		#region Fields
@@ -156,7 +158,9 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("Indicates whether null values are allowed in this column.")]
+#endif
 		[DefaultValue (true)]
 		public bool AllowDBNull
 		{
@@ -208,7 +212,9 @@ namespace System.Data {
 		///		when added to the columns collection, is equal to the default value.
 		///	</remarks>
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("Indicates whether the column automatically increments itself for new rows added to the table.  The type of this column must be Int16, Int32, or Int64.")]
+#endif
 		[DefaultValue (false)]
 		[RefreshProperties (RefreshProperties.All)]
 		public bool AutoIncrement
@@ -248,7 +254,9 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("Indicates the starting value for an AutoIncrement column.")]
+#endif
 		[DefaultValue (0)]
 		public long AutoIncrementSeed
 		{
@@ -262,7 +270,9 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("Indicates the increment used by an AutoIncrement column.")]
+#endif
 		[DefaultValue (1)]
 		public long AutoIncrementStep
 		{
@@ -307,7 +317,9 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("Indicates the default user-interface caption for this column.")]
+#endif
 		public string Caption 
 		{
 			get {
@@ -323,7 +335,10 @@ namespace System.Data {
 				_caption = value;
 			}
 		}
+
+#if !NET_2_0
 		[DataSysDescription ("Indicates how this column persists in XML: as an attribute, element, simple content node, or nothing.")]
+#endif
 		[DefaultValue (MappingType.Element)]
 		public virtual MappingType ColumnMapping
 		{
@@ -336,7 +351,9 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("Indicates the name used to look up this column in the Columns collection of a DataTable.")]
+#endif
 		[RefreshProperties (RefreshProperties.All)]
 		[DefaultValue ("")]
 		public string ColumnName
@@ -376,7 +393,9 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("Indicates the type of data stored in this column.")]
+#endif
 		[DefaultValue (typeof (string))]
 		[RefreshProperties (RefreshProperties.All)]
 		[TypeConverterAttribute (typeof (ColumnTypeConverter))] 
@@ -426,7 +445,9 @@ namespace System.Data {
 		/// <exception cref="System.InvalidCastException"></exception>
 		/// <exception cref="System.ArgumentException"></exception>
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("Indicates the default column value used when adding new rows to the table.")]
+#endif
 		[TypeConverterAttribute (typeof (System.Data.DefaultValueTypeConverter))]
 		public object DefaultValue
 		{
@@ -470,7 +491,9 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("Indicates the value that this column computes for each row based on other columns instead of taking user input.")]
+#endif
 		[DefaultValue ("")]
 		[RefreshProperties (RefreshProperties.All)]
 		public string Expression
@@ -504,16 +527,19 @@ namespace System.Data {
 					{
 						if (compiledExpression.DependsOn(this))
 							throw new ArgumentException("Cannot set Expression property due to circular reference in the expression.");
+						// Check if expression is ok 
+						if (Table.Rows.Count == 0)
+							compiledExpression.Eval (Table.NewRow());
+						else
+							compiledExpression.Eval (Table.Rows[0]);
 					}
-					
 					ReadOnly = true;
 					_compiledExpression = compiledExpression;
 				}
 				else
 				{
 					_compiledExpression = null;
-					if (Table != null)
-					{
+					if (Table != null) {
 						int defaultValuesRowIndex = Table.DefaultValuesRowIndex;
 						if ( defaultValuesRowIndex != -1) 
 							DataContainer.FillValues(defaultValuesRowIndex);
@@ -529,7 +555,9 @@ namespace System.Data {
 
 		[Browsable (false)]
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("The collection that holds custom user information.")]
+#endif
 		public PropertyCollection ExtendedProperties
 		{
 			get {
@@ -538,7 +566,9 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("Indicates the maximum length of the value this column allows. ")]
+#endif
 		[DefaultValue (-1)]
 		public int MaxLength
 		{
@@ -556,7 +586,9 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("Indicates the XML uri for elements or attributes stored in this column.")]
+#endif
 		public string Namespace
 		{
 			get {
@@ -578,7 +610,9 @@ namespace System.Data {
 		//Need a good way to set the Ordinal when the column is added to a columnCollection.
 		[Browsable (false)]
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("Indicates the index of this column in the Columns collection.")]
+#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int Ordinal
 		{
@@ -594,7 +628,9 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("Indicates the Prefix used for this DataColumn in xml representation.")]
+#endif
 		[DefaultValue ("")]
 		public string Prefix
 		{
@@ -609,7 +645,9 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("Indicates whether this column allows changes once a row has been added to the table.")]
+#endif
 		[DefaultValue (false)]
 		public bool ReadOnly
 		{
@@ -623,7 +661,9 @@ namespace System.Data {
 
 		[Browsable (false)]
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("Returns the DataTable to which this column belongs.")]
+#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]	
 		public DataTable Table
 		{
@@ -633,7 +673,9 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("Indicates whether this column should restrict its values in the rows of the table to be unique.")]
+#endif
 		[DefaultValue (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
                 public bool Unique 
@@ -677,7 +719,6 @@ namespace System.Data {
 									{
 										cc.Remove(c);
 									}
-									
 								}
 							}
 						}
@@ -772,13 +813,15 @@ namespace System.Data {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		protected internal virtual void 
 		OnPropertyChanging (PropertyChangedEventArgs pcevent) {
+			if (PropertyChanged != null)
+				PropertyChanged (this, pcevent);
 		}
 
-		[MonoTODO]
 		protected internal void RaisePropertyChanging(string name) {
+			PropertyChangedEventArgs e = new PropertyChangedEventArgs (name);
+			OnPropertyChanging (e);
 		}
 
 		/// <summary>
@@ -891,9 +934,14 @@ namespace System.Data {
                                         return rel;
                         return null;
                 }
-                
-
+               
+		internal void ResetColumnInfo ()
+		{
+			_ordinal = -1;
+			_table = null;
+			if (_compiledExpression != null)
+				_compiledExpression.ResetExpression ();
+		}
 		#endregion // Methods
-
 	}
 }

@@ -197,6 +197,64 @@ namespace MonoTests.System.Data
 
 		}
 
+		[Test] public void IndexOf_SameColumns ()
+		{
+			DataSet ds = new DataSet ();
+			DataTable table1 = ds.Tables.Add ("table1");
+			DataTable table2 = ds.Tables.Add ("table2");
+			DataColumn pcol = table1.Columns.Add ("col1");
+			DataColumn ccol = table2.Columns.Add ("col1");
+	
+			ds.Relations.Add ("fk_rel", pcol, ccol); 
+
+			ForeignKeyConstraint fk = new ForeignKeyConstraint ("fk", pcol, ccol);
+			Assert.AreEqual (-1, ds.Tables [1].Constraints.IndexOf (fk), "#1");
+		}
+		
+		[Test]
+		public void Add_RelationFirst_ConstraintNext()
+		{
+			DataSet ds = new DataSet ();
+			DataTable table1 = ds.Tables.Add ("table1");
+			DataTable table2 = ds.Tables.Add ("table2");
+			DataColumn pcol = table1.Columns.Add ("col1");
+			DataColumn ccol = table2.Columns.Add ("col1");
+	
+			ds.Relations.Add ("fk_rel", pcol, ccol); 
+
+			try {
+				table2.Constraints.Add ("fk_cons", pcol, ccol);
+				Assert.Fail ("#1 Cannot add duplicate fk constraint");
+			}catch (DataException e) {
+			}
+
+			try {
+				table1.Constraints.Add ("pk_cons", pcol, false);
+				Assert.Fail ("#2 Cannot add duplicate unique constraint");
+			}catch (DataException e) {
+			}
+		}
+
+		[Test]
+		public void Add_ConstraintFirst_RelationNext ()
+		{
+			DataSet ds = new DataSet ();
+			DataTable table1 = ds.Tables.Add ("table1");
+			DataTable table2 = ds.Tables.Add ("table2");
+			DataColumn pcol = table1.Columns.Add ("col1");
+			DataColumn ccol = table2.Columns.Add ("col1");
+	
+			table2.Constraints.Add ("fk_cons", pcol, ccol);
+
+			// Should not throw DataException 
+			ds.Relations.Add ("fk_rel", pcol, ccol);
+
+			Assert.AreEqual (1, table2.Constraints.Count, "#1 duplicate constraint shudnt be added");
+			Assert.AreEqual (1, table1.Constraints.Count, "#2 duplicate constraint shudnt be added");
+			Assert.AreEqual ("fk_cons", table2.Constraints [0].ConstraintName, "#3 shouldnt be overwritten");
+			Assert.AreEqual ("Constraint1", table1.Constraints [0].ConstraintName, "#4 shouldnt be overwritten");
+		}
+
 		[Test] public void IsReadOnly()
 		{
 			DataTable dt = DataProvider.CreateUniqueConstraint();
@@ -276,5 +334,268 @@ namespace MonoTests.System.Data
 		{
 			CollectionChangedFlag = true;
 		}
+
+		[Test]
+		public void Remove_Constraint ()
+		{
+			DataTable table1 = new DataTable ("table1");
+			DataTable table2 = new DataTable ("table2");
+
+			DataColumn col1 = table1.Columns.Add ("col1", typeof (int));
+			DataColumn col2 = table1.Columns.Add ("col2", typeof (int));
+			DataColumn col3 = table2.Columns.Add ("col1", typeof (int));
+
+			Constraint c1 = table1.Constraints.Add ("unique1", col1, false);
+			Constraint c2 = table1.Constraints.Add ("unique2", col2, false);
+			Constraint c3 = table2.Constraints.Add ("fk", col1, col3);
+
+			table1.Constraints.Remove (c1);
+			table1.Constraints.Remove (c2);
+			table2.Constraints.Remove (c3);
+
+			Assert.AreEqual (0, table1.Constraints.Count, "#1");
+			Assert.AreEqual (0, table2.Constraints.Count, "#2");
+
+			DataSet ds = new DataSet ();
+			ds.Tables.Add (table1);
+			ds.Tables.Add (table2);
+
+			c1 = table1.Constraints.Add ("unique1", col1, false);
+			c2 = table1.Constraints.Add ("unique2", col2, false);
+			c3 = table2.Constraints.Add ("fk", col1, col3);
+
+			try {
+				table1.Constraints.Remove (c1);
+				Assert.Fail ("#3");
+			} catch (ArgumentException) {
+			}
+
+			Assert.AreEqual (2, table1.Constraints.Count, "#4");
+
+			table1.Constraints.Remove (c2);
+			Assert.AreEqual (1, table1.Constraints.Count, "#5");
+
+			table2.Constraints.Remove (c3);
+			Assert.AreEqual (1, table1.Constraints.Count, "#6");
+			Assert.AreEqual (0, table2.Constraints.Count, "#7");
+
+			table1.Constraints.Remove (c1);
+			Assert.AreEqual (0, table1.Constraints.Count, "#8");
+		}
+
+		public delegate void  testExceptionMethodCallback();
+
+		[Test]
+		public void Add_Constraint()
+		{
+			DataTable dt = DataProvider.CreateUniqueConstraint();
+			Assert.AreEqual(1,dt.Constraints.Count,"ccac#1"); 
+			Assert.AreEqual("Constraint1",dt.Constraints[0].ConstraintName,"ccac#2");			
+
+			DataSet ds = DataProvider.CreateForigenConstraint();
+			Assert.AreEqual(1,ds.Tables[1].Constraints.Count,"ccac#3");
+			Assert.AreEqual(1,ds.Tables[0].Constraints.Count,"ccac#4");
+
+			ArrayList arr = new ArrayList(1);
+			arr.Add(new ConstraintException()); 
+			TestException( new testExceptionMethodCallback(DataProvider.TryToBreakUniqueConstraint),arr);
+
+			arr = new ArrayList(1);
+			arr.Add(new InvalidConstraintException()); 
+			TestException( new testExceptionMethodCallback(DataProvider.TryToBreakForigenConstraint),arr);			
+		}
+
+		public void TestException(testExceptionMethodCallback dlg,IList exceptionList)
+		{				
+			try {
+				dlg();
+				Assert.Fail("ccac#A", ((Exception)exceptionList[0]).ToString()); 
+			}
+			catch(Exception ex) {					
+				foreach(Exception expectedEx in exceptionList)
+					if ( (expectedEx.GetType()) == (ex.GetType()) )
+						return;				
+				Assert.Fail("ccac#B");
+			}		
+		}
+
+		[Test]
+		public void Add_SDB1()
+		{
+			DataTable dt = DataProvider.CreateParentDataTable();
+			dt.Constraints.Add("UniqueConstraint",dt.Columns["ParentId"],true);
+			Assert.AreEqual(1,dt.Constraints.Count,1); 
+			Assert.AreEqual("UniqueConstraint",dt.Constraints[0].ConstraintName,"CN34");			
+		}
+		
+		[Test]
+		public void Add_SDB2()
+		{
+			DataTable dt = DataProvider.CreateParentDataTable();
+			dt.Constraints.Add("UniqueConstraint",dt.Columns["ParentId"],false);
+			Assert.AreEqual(1,dt.Constraints.Count,"CN34"); 
+			Assert.AreEqual("UniqueConstraint",dt.Constraints[0].ConstraintName,"CN35");			
+		}
+		
+		[Test]
+		public void Add_SDB3()
+		{
+			DataTable dt = DataProvider.CreateParentDataTable();
+			dt.Constraints.Add("UniqueConstraint",dt.Columns["ParentId"],true);
+			//Break the constraint
+
+			ArrayList arr = new ArrayList(1);
+			arr.Add(new ConstraintException()); 
+			TestException( new testExceptionMethodCallback(DataProvider.TryToBreakUniqueConstraint),arr);
+
+		}
+		
+		[Test]
+		[ExpectedException(typeof(ConstraintException))]
+		public void Add_SDB4()
+		{
+			DataTable dt = DataProvider.CreateParentDataTable();
+			dt.Constraints.Add("UniqueConstraint",dt.Columns["ParentId"],false);
+			//Break the constraint --> but we shouldn't get the excption --> wrong assumpation
+			//TODO:check the right thing
+			DataProvider.TryToBreakUniqueConstraint();
+			Assert.AreEqual(2,dt.Select("ParentId=1").Length,"CN36");
+		}
+
+		[Test]
+		public void Add_Constraint_Column_Column()
+		{
+			DataTable parent = DataProvider.CreateParentDataTable();
+			DataTable child = DataProvider.CreateChildDataTable();
+	 
+			child.Constraints.Add("ForigenConstraint",parent.Columns[0],child.Columns[0]);
+
+			Assert.AreEqual(1,parent.Constraints.Count,"ccaccc#1"); 
+			Assert.AreEqual(1,child.Constraints.Count,"ccaccc#2"); 
+			Assert.AreEqual("ForigenConstraint",child.Constraints[0].ConstraintName,"ccaccc#3");
+
+			parent = DataProvider.CreateParentDataTable();
+			child = DataProvider.CreateChildDataTable();
+	 
+			child.Constraints.Add("ForigenConstraint",parent.Columns[0],child.Columns[0]);
+
+			ArrayList arr = new ArrayList(1);
+			arr.Add(new InvalidConstraintException()); 
+			TestException( new testExceptionMethodCallback(DataProvider.TryToBreakForigenConstraint),arr);
+
+			Assert.AreEqual(1,parent.Constraints.Count,"ccaccc#4"); 
+			Assert.AreEqual(1,child.Constraints.Count,"ccaccc#5"); 
+		}
+
+		[Test]
+		public void AddRange_C1()
+		{
+			DataTable dt = new DataTable();
+			dt.Constraints.AddRange(null);
+			Assert.AreEqual(0,dt.Constraints.Count,"ccarc#1");
+		}
+
+		[Test]
+		public void AddRange_C2()
+		{
+			DataSet ds = new DataSet();
+			ds.Tables.Add(DataProvider.CreateParentDataTable());
+			ds.Tables.Add(DataProvider.CreateChildDataTable());
+			ds.Tables[1].Constraints.AddRange(GetConstraintArray(ds)); //Cuz foreign key belongs to child table
+			Assert.AreEqual(2,ds.Tables[1].Constraints.Count,"ccarc#2");
+			Assert.AreEqual(1,ds.Tables[0].Constraints.Count,"ccarc#3");
+		}
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void AddRange_C3()
+		{
+			DataSet ds = new DataSet();
+			ds.Tables.Add(DataProvider.CreateParentDataTable());
+			ds.Tables.Add(DataProvider.CreateChildDataTable());
+			Constraint badConstraint = new UniqueConstraint(ds.Tables[0].Columns[0]);
+
+			ds.Tables[1].Constraints.AddRange(new Constraint[] {badConstraint}); //Cuz foreign key belongs to child table			
+		}
+		
+		[Test]
+		public void AddRange_C4()
+		{
+			ArrayList arr = new ArrayList(1);
+			arr.Add(new ArgumentException());
+			TestException(new testExceptionMethodCallback(AddRange_C3),arr);
+		}
+
+		private Constraint[] GetConstraintArray(DataSet ds)
+		{
+			DataTable parent = ds.Tables[0]; 
+			DataTable child =  ds.Tables[1]; 
+			Constraint[] constArray = new Constraint[2];
+
+			//Create unique 
+			constArray[0] = new UniqueConstraint("Unique1",child.Columns["ChildDouble"]);
+			//Create foreign 
+			constArray[1] = new ForeignKeyConstraint(parent.Columns[0],child.Columns[1]);
+
+			return constArray;
+		}
+
+		[Test]
+		public void Item()
+		{
+			DataTable dt = DataProvider.CreateUniqueConstraint();
+			dt.Constraints[0].ConstraintName = "constraint1";
+			Assert.AreEqual("constraint1",dt.Constraints[0].ConstraintName,"cci#1");
+			Assert.AreEqual("constraint1",dt.Constraints["constraint1"].ConstraintName,"cci#2");
+
+			ArrayList arr = new ArrayList(1);
+			arr.Add(new IndexOutOfRangeException()); 
+			TestException(new testExceptionMethodCallback(Item2),arr);
+		}
+
+		private void Item2()
+		{
+			DataTable dt = DataProvider.CreateUniqueConstraint();
+			dt.Constraints[1].ConstraintName = "error";
+		}
+
+		private bool collectionChanged=false;
+
+		[Test]
+		public void RemoveAt_Integer()
+		{
+			DataTable dt = DataProvider.CreateUniqueConstraint();
+			dt.Constraints.RemoveAt(0);
+			Assert.AreEqual(0,dt.Constraints.Count,"ccrai#1");
+
+			dt = DataProvider.CreateUniqueConstraint();
+			Constraint con = new UniqueConstraint(dt.Columns["String1"],false);
+			dt.Constraints[0].ConstraintName = "constraint1";
+			con.ConstraintName="constraint2";
+			dt.Constraints.Add(con);
+			dt.Constraints.RemoveAt(0);
+			Assert.AreEqual(1,dt.Constraints.Count,"ccrai#2");
+			Assert.AreEqual("constraint2",dt.Constraints[0].ConstraintName,"ccrai#3");
+
+			dt = DataProvider.CreateUniqueConstraint();
+			dt.Constraints.CollectionChanged+=new CollectionChangeEventHandler(Constraints_CollectionChanged);
+			dt.Constraints.RemoveAt(0);
+			Assert.AreEqual(true,collectionChanged,"ccrai#4"); //Checking that event has raised
+
+			ArrayList arr = new ArrayList(1);
+			arr.Add(new IndexOutOfRangeException());
+			TestException(new testExceptionMethodCallback(RemoveAt_I),arr);
+		}
+
+		private void Constraints_CollectionChanged(object sender, CollectionChangeEventArgs e)
+		{
+			collectionChanged = true;
+		}
+
+		private void RemoveAt_I()
+		{
+			DataTable dt = DataProvider.CreateUniqueConstraint();
+			dt.Constraints.RemoveAt(2);
+		}
+
 	}
 }

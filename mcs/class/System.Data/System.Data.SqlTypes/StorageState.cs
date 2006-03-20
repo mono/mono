@@ -29,11 +29,10 @@
    
 #if NET_2_0
 
-namespace System.Data.Sql {
+namespace System.Data.SqlTypes {
 	public enum StorageState
 	{
 		Buffer = 0,
-		Delayed = 3,
 		Stream = 1,
 		UnmanagedBuffer = 2
 	}

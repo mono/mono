@@ -42,7 +42,9 @@ namespace System.Data {
 	[Editor ("Microsoft.VSDesigner.Data.Design.ForeignKeyConstraintEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
 		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	[DefaultProperty ("ConstraintName")]
+#if !NET_2_0
 	[Serializable]
+#endif
 	public class ForeignKeyConstraint : Constraint 
 	{
 		private UniqueConstraint _parentUniqueConstraint;
@@ -53,12 +55,12 @@ namespace System.Data {
 		private Rule _deleteRule = Rule.Cascade;
 		private Rule _updateRule = Rule.Cascade;
 		private AcceptRejectRule _acceptRejectRule = AcceptRejectRule.None;
-	    private string _parentTableName;
-        private string _childTableName;
+		private string _parentTableName;
+		private string _childTableName;
+
 		//FIXME: remove those; and use only DataColumns[]
-        private string [] _parentColumnNames;
-        private string [] _childColumnNames;
-        private bool _dataColsNotValidated = false;
+		private string [] _parentColumnNames;
+		private string [] _childColumnNames;
 			
 		#region Constructors
 
@@ -92,76 +94,72 @@ namespace System.Data {
 		{
 			_foreignKeyConstraint(constraintName, parentColumns, childColumns);
 		}
-		
+
 		//special case
 		[Browsable (false)]
 		public ForeignKeyConstraint(string constraintName, string parentTableName, string[] parentColumnNames, string[] childColumnNames, AcceptRejectRule acceptRejectRule, Rule deleteRule, Rule updateRule) 
 		{
-			_dataColsNotValidated = true;
-            base.ConstraintName = constraintName;
-                                                                                        
-            // "parentTableName" is searched in the "DataSet" to which the "DataTable"
-            // from which AddRange() is called
-            // childTable is the "DataTable" which calls AddRange()
-                                                                                        
-            // Keep reference to parentTableName to resolve later
-            _parentTableName = parentTableName;
-                                                                                        
-            // Keep reference to parentColumnNames to resolve later
-            _parentColumnNames = parentColumnNames;
-                                                                                        
-            // Keep reference to childColumnNames to resolve later
-            _childColumnNames = childColumnNames;
-                                                                                        
-            _acceptRejectRule = acceptRejectRule;
-            _deleteRule = deleteRule;
-            _updateRule = updateRule;
+			InitInProgress = true;
+			base.ConstraintName = constraintName;
 
+			// "parentTableName" is searched in the "DataSet" to which the "DataTable"
+			// from which AddRange() is called
+			// childTable is the "DataTable" which calls AddRange()
+
+			// Keep reference to parentTableName to resolve later
+			_parentTableName = parentTableName;
+
+			// Keep reference to parentColumnNames to resolve later
+			_parentColumnNames = parentColumnNames;
+
+			// Keep reference to childColumnNames to resolve later
+			_childColumnNames = childColumnNames;
+
+			_acceptRejectRule = acceptRejectRule;
+			_deleteRule = deleteRule;
+			_updateRule = updateRule;
 		}
 
-		internal void postAddRange (DataTable childTable)
-        {
-            // LAMESPEC - Does not say that this is mandatory
-            // Check whether childTable belongs to a DataSet
-            if (childTable.DataSet == null)
-                    throw new InvalidConstraintException ("ChildTable : " + childTable.TableName + " does not belong to any DataSet");
-            DataSet dataSet = childTable.DataSet;
-            _childTableName = childTable.TableName;
-            // Search for the parentTable in the childTable's DataSet
-            if (!dataSet.Tables.Contains (_parentTableName))
-                    throw new InvalidConstraintException ("Table : " + _parentTableName + "does not exist in DataSet : " + dataSet);
-                                                                                        
-            // Keep reference to parentTable
-            DataTable parentTable = dataSet.Tables [_parentTableName];
-                                                                                        
-            int i = 0, j = 0;
-                                                                                        
-            // LAMESPEC - Does not say which Exception is thrown
-            if (_parentColumnNames.Length < 0 || _childColumnNames.Length < 0)
-                    throw new InvalidConstraintException ("Neither parent nor child columns can be zero length");
-            // LAMESPEC - Does not say which Exception is thrown
-            if (_parentColumnNames.Length != _childColumnNames.Length)
-			        throw new InvalidConstraintException ("Both parent and child columns must be of same length");                                                                                                    
-            DataColumn []parentColumns = new DataColumn [_parentColumnNames.Length];
-            DataColumn []childColumns = new DataColumn [_childColumnNames.Length];
-                                                                                        
-            // Search for the parentColumns in parentTable
-            foreach (string parentCol in _parentColumnNames){
-                    if (!parentTable.Columns.Contains (parentCol))
-                            throw new InvalidConstraintException ("Table : " + _parentTableName + "does not contain the column :" + parentCol);
-                    parentColumns [i++] = parentTable. Columns [parentCol];
-            }
-            // Search for the childColumns in childTable
-            foreach (string childCol in _childColumnNames){
-                    if (!childTable.Columns.Contains (childCol))
-                            throw new InvalidConstraintException ("Table : " + _childTableName + "does not contain the column : " + childCol);
-                    childColumns [j++] = childTable.Columns [childCol];
-            }
-            _validateColumns (parentColumns, childColumns);
-            _parentColumns = parentColumns;
-            _childColumns = childColumns;
+		internal override void FinishInit (DataTable childTable)
+		{
+			if (childTable.DataSet == null)
+				throw new InvalidConstraintException ("ChildTable : " + childTable.TableName + " does not belong to any DataSet");
+
+			DataSet dataSet = childTable.DataSet;
+			_childTableName = childTable.TableName;
+
+			if (!dataSet.Tables.Contains (_parentTableName))
+				throw new InvalidConstraintException ("Table : " + _parentTableName + "does not exist in DataSet : " + dataSet);
+
+			DataTable parentTable = dataSet.Tables [_parentTableName];
+
+			int i = 0, j = 0;
+
+			if (_parentColumnNames.Length < 0 || _childColumnNames.Length < 0)
+				throw new InvalidConstraintException ("Neither parent nor child columns can be zero length");
+
+			if (_parentColumnNames.Length != _childColumnNames.Length)
+				throw new InvalidConstraintException ("Both parent and child columns must be of same length");                                                                                                    
+			DataColumn[] parentColumns = new DataColumn [_parentColumnNames.Length];
+			DataColumn[] childColumns = new DataColumn [_childColumnNames.Length];
+
+			foreach (string parentCol in _parentColumnNames){
+				if (!parentTable.Columns.Contains (parentCol))
+					throw new InvalidConstraintException ("Table : " + _parentTableName + "does not contain the column :" + parentCol);
+				parentColumns [i++] = parentTable. Columns [parentCol];
+			}
+
+			foreach (string childCol in _childColumnNames){
+				if (!childTable.Columns.Contains (childCol))
+					throw new InvalidConstraintException ("Table : " + _childTableName + "does not contain the column : " + childCol);
+				childColumns [j++] = childTable.Columns [childCol];
+			}
+			_validateColumns (parentColumns, childColumns);
+			_parentColumns = parentColumns;
+			_childColumns = childColumns;
+			InitInProgress = false;
 		}
-			
+
 #if NET_2_0
 		[MonoTODO]
 		public ForeignKeyConstraint (string constraintName, string parentTableName, string parentTableNamespace, string[] parentColumnNames, string[] childColumnNames, AcceptRejectRule acceptRejectRule, Rule deleteRule, Rule updateRule)
@@ -185,16 +183,16 @@ namespace System.Data {
 			_childColumns = childColumns;
 		}
 
-		#endregion // Constructors
+#endregion // Constructors
 
-		#region Helpers
+#region Helpers
 
 		private void _validateColumns(DataColumn[] parentColumns, DataColumn[] childColumns)
 		{
 			//not null
 			if (null == parentColumns || null == childColumns) 
 				throw new ArgumentNullException();
-			
+
 			//at least one element in each array
 			if (parentColumns.Length < 1 || childColumns.Length < 1)
 				throw new ArgumentException("Neither ParentColumns or ChildColumns can't be" +
@@ -270,22 +268,6 @@ namespace System.Data {
 			
 		}
 		
-
-
-		private void _validateRemoveParentConstraint(ConstraintCollection sender, 
-				Constraint constraint, ref bool cancel, ref string failReason)
-		{
-#if !NET_1_1
-			//if we hold a reference to the parent then cancel it
-			if (constraint == _parentUniqueConstraint) 
-			{
-				cancel = true;
-				failReason = "Cannot remove UniqueConstraint because the"
-					+ " ForeignKeyConstraint " + this.ConstraintName + " exists.";
-			}
-#endif
-		}
-		
 		//Checks to see if a related unique constraint exists
 		//if it doesn't then a unique constraint is created.
 		//if a unique constraint can't be created an exception will be thrown
@@ -310,11 +292,7 @@ namespace System.Data {
 
 			//keep reference
 			_parentUniqueConstraint = uc;
-			//parentColumns [0].Table.Constraints.Add (uc);
-			//if this unique constraint is attempted to be removed before us
-			//we can fail the validation
-			//collection.ValidateRemoveConstraint += new DelegateValidateRemoveConstraint(
-			//		_validateRemoveParentConstraint);
+			_parentUniqueConstraint.ChildConstraint = this;
 		}
 		
 		
@@ -323,7 +301,9 @@ namespace System.Data {
 		#region Properties
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("For accept and reject changes, indicates what kind of cascading should take place across this relation.")]
+#endif
 		[DefaultValue (AcceptRejectRule.None)]
 		public virtual AcceptRejectRule AcceptRejectRule {
 			get { return _acceptRejectRule; }
@@ -331,14 +311,18 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("Indicates the child columns of this constraint.")]
+#endif
 		[ReadOnly (true)]
 		public virtual DataColumn[] Columns {
 			get { return _childColumns; }
 		}
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("For deletions, indicates what kind of cascading should take place across this relation.")]
+#endif
 		[DefaultValue (Rule.Cascade)]
 		public virtual Rule DeleteRule {
 			get { return _deleteRule; }
@@ -346,7 +330,9 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("For updates, indicates what kind of cascading should take place across this relation.")]
+#endif
 		[DefaultValue (Rule.Cascade)]
 		public virtual Rule UpdateRule {
 			get { return _updateRule; }
@@ -354,14 +340,18 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]	
+#if !NET_2_0
 		[DataSysDescription ("Indicates the parent columns of this constraint.")]
+#endif
 		[ReadOnly (true)]
 		public virtual DataColumn[] RelatedColumns {
 			get { return _parentColumns; }
 		}
 
 		[DataCategory ("Data")]	
+#if !NET_2_0
 		[DataSysDescription ("Indicates the child table of this constraint.")]
+#endif
 		[ReadOnly (true)]
 		public virtual DataTable RelatedTable {
 			get {
@@ -374,7 +364,9 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]
+#if !NET_2_0
 		[DataSysDescription ("Indicates the table of this constraint.")]
+#endif
 		[ReadOnly (true)]
 		public override DataTable Table {
 			get {
@@ -386,13 +378,9 @@ namespace System.Data {
 			}
 		}
 
-		internal bool DataColsNotValidated
-		{
-            get { 
-				return (_dataColsNotValidated); 
-			}
-        }
-
+		internal UniqueConstraint ParentConstraint {
+			get { return _parentUniqueConstraint; }
+		}
 
 		#endregion // Properties
 
@@ -459,8 +447,6 @@ namespace System.Data {
 			//we must have a unique constraint on the parent
 			_ensureUniqueConstraintExists(collection, _parentColumns);
 			
-			//Make sure we can create this thing
-			//AssertConstraint(); 
 			if ( (Table.DataSet != null && Table.DataSet.EnforceConstraints)
 			     || (Table.DataSet == null && Table.EnforceConstraints)) {
 				if (IsConstraintViolated())
@@ -474,6 +460,7 @@ namespace System.Data {
 		internal override void RemoveFromConstraintCollectionCleanup( 
 				ConstraintCollection collection)
 		{
+			_parentUniqueConstraint.ChildConstraint = null;
 			Index = null;
 		}
 		

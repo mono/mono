@@ -88,7 +88,7 @@ namespace MonoTests.System.Data
 		public void GetUpdateCommandTest ()
 		{
 			IDbConnection conn = ConnectionManager.Singleton.Connection;
-			using (conn) {
+			try {
 				string selectQuery = "select id, fname, id+1 as next_id from employee where id = 1";
 				SqlDataAdapter da = new SqlDataAdapter (selectQuery, (SqlConnection) conn);
 				DataSet ds = new DataSet ();
@@ -97,12 +97,42 @@ namespace MonoTests.System.Data
 
 				SqlCommandBuilder cb = new SqlCommandBuilder (da);
 				SqlCommand cmd = cb.GetUpdateCommand ();
-				Assert.AreEqual ("UPDATE employee SET id = @p1, fname = @p2 WHERE ((id = @p3) AND ((@p4 = 1 AND age IS NULL) OR (fname = @p5)))",
+				Assert.AreEqual ("UPDATE employee SET id = @p1, fname = @p2 WHERE ((id = @p3) AND ((@p4 = 1 AND fname IS NULL) OR (fname = @p5)))",
 						cmd.CommandText, "#2");
 				Assert.AreEqual (5, cmd.Parameters.Count, "#3");
+			} finally {
+				ConnectionManager.Singleton.CloseConnection ();
 			}
+
 		}
 
+		[Test]
+		public void GetUpdateCommandTest_CheckNonUpdatableColumns ()
+		{
+			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			try {
+				ConnectionManager.Singleton.OpenConnection ();
+				IDbCommand cmd = conn.CreateCommand ();
+				cmd.CommandText = "create table #tmp_table (id int primary key , counter int identity(1,1), value varchar(10))";
+				cmd.ExecuteNonQuery ();
+
+				string selectQuery = "select id, counter, value, id+1 as next_id from #tmp_table";
+				SqlDataAdapter da = new SqlDataAdapter (selectQuery, (SqlConnection) conn);
+				DataSet ds = new DataSet ();
+				da.Fill (ds);
+				Assert.AreEqual (1, ds.Tables.Count, "#1"); 
+				Assert.AreEqual (4, ds.Tables [0].Columns.Count, "#2");
+
+				SqlCommandBuilder cb = new SqlCommandBuilder (da);
+				SqlCommand updateCmd = cb.GetUpdateCommand ();
+				Assert.AreEqual ("UPDATE #tmp_table SET id = @p1, value = @p2 WHERE ((id = @p3) AND ((@p4 = 1 AND " +
+							"counter IS NULL) OR (counter = @p5)) AND ((@p6 = 1 AND value IS NULL) OR (value = @p7)))",
+						updateCmd.CommandText, "#3");
+				Assert.AreEqual (7, updateCmd.Parameters.Count, "#3");
+			} finally {
+				ConnectionManager.Singleton.CloseConnection ();
+			}
+		}
 		[Test]
 		[ExpectedException (typeof (DBConcurrencyException))]
 		public void GetUpdateCommandDBConcurrencyExceptionTest ()
@@ -178,6 +208,32 @@ namespace MonoTests.System.Data
 
 		// FIXME:  Add tests for examining RowError
 		// FIXME: Add test for ContinueUpdateOnError property
+		
+		[Test]
+		public void CheckParameters_BuiltCommand ()
+		{
+			using (IDbConnection conn = ConnectionManager.Singleton.Connection) {
+				SqlDataAdapter adapter = new SqlDataAdapter ("select id,type_varchar from string_family", (SqlConnection)conn);
+				SqlCommandBuilder cb = new SqlCommandBuilder(adapter);
+				DataSet ds = new DataSet ();
+				adapter.Fill(ds);
 
+				Assert.AreEqual (2, cb.GetInsertCommand().Parameters.Count, "#1");
+
+				DataRow row_rsInput = ds.Tables[0].NewRow();
+				row_rsInput["id"] = 100;
+				row_rsInput["type_varchar"] = "ttt";
+				ds.Tables[0].Rows.Add(row_rsInput);
+
+				Assert.AreEqual (2, cb.GetInsertCommand().Parameters.Count, "#2");
+
+				row_rsInput = ds.Tables[0].NewRow();
+				row_rsInput["id"] = 101;
+				row_rsInput["type_varchar"] = "ttt";
+				ds.Tables[0].Rows.Add(row_rsInput);
+
+				Assert.AreEqual (2, cb.GetInsertCommand().Parameters.Count, "#3");
+			}
+		}
 	}
 }
