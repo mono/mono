@@ -1,3 +1,10 @@
+2006-03-20  Senganal T <tsenganal@novell.com>
+
+	* DataSetTest2.cs
+		- Added testcases for issues in Merge,Copy
+	* ConstraintCollectionTest2.cs
+		- Added testcases for issues in Add , IndexOf
+
 2006-03-19	Boris Kirzner <borisk@mainsoft.com>
 	
 	* ConstraintCollectionTest2.cs, DataColumnCollectionTest.cs, 

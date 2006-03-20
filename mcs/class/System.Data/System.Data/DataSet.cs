@@ -506,7 +506,7 @@ namespace System.Data {
 					i++;
 				}
 				
-				DataRelation cRel = new DataRelation (MyRelation.RelationName, P_DC, C_DC);
+				DataRelation cRel = new DataRelation (MyRelation.RelationName, P_DC, C_DC, false);
 				Copy.Relations.Add (cRel);
 			}
 			
@@ -1266,6 +1266,8 @@ namespace System.Data {
 		{
 			if (MergeFailed != null)
 				MergeFailed (this, e);
+			else
+				throw new DataException (e.Conflict);
 		}
 
 		[MonoTODO]

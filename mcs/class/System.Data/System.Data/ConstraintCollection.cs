@@ -172,6 +172,14 @@ namespace System.Data {
 			if (null != constraint.ConstraintCollection) 
 				throw new ArgumentException("Constraint already belongs to another collection.");
 
+			//check if a constraint already exists for the datacolums
+			foreach (Constraint c in this) {
+				if (!c.Equals (constraint))
+					continue;
+				throw new DataException ("Constraint matches contraint named '" + c.ConstraintName
+							+ "' already in collection"); 
+			}
+
 			//check for duplicate name
 			if (_isDuplicateConstraintName(constraint.ConstraintName,null)  )
 				throw new DuplicateNameException("Constraint name already exists.");
@@ -329,7 +337,13 @@ namespace System.Data {
 
 		public int IndexOf(Constraint constraint) 
 		{
-			return List.IndexOf(constraint);
+			int index = 0;
+			foreach (Constraint c in this) {
+				if (c == constraint)
+					return index;
+				index++;
+			}
+			return -1;
 		}
 
 		public

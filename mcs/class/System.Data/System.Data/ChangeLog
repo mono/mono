@@ -1,3 +1,26 @@
+2006-03-20  Senganal T  <tsenganal@novell.com>
+
+	* DataSet.cs :
+		- CopyRelations () : When copying the relation, do not add constraints
+		automatically for the relation.
+		- OnMergeFailed () : If merge fails and no handler is set for the MergeFailedEvent,
+		then throw DataException 
+	* ConstraintCollection.cs :
+		- Add () : Check if a constraint already exists on the Columns that are being 
+		constrained.
+		- IndexOf () : Do not check for equivalent constraints, check for the exact instance.
+	* MergeManager.cs (): 
+		-  AdjustSchema () : 
+			- Handle the MissingSchemaAction.Error case, 
+			- Do not create constraints when mergin the DataRelation
+			- Follow the semantics for schema merge/validation  when constraints are already present
+			in the target DataSet.
+		- AdjustPrimaryKeys () :
+			- Code cleanup
+			- Verify Order of Columns in the PrimaryKey when merging.
+		- ResolveColumns : Changed the arument to DataSet. Simplifies code elsewhere.
+		- CompareColumnArrays, CompareColumnArrays : Helper funtions.
+		
 2006-03-09  Senganal T  <tsenganal@novell.com>
 
 	* DataRow.cs :

@@ -197,6 +197,64 @@ namespace MonoTests.System.Data
 
 		}
 
+		[Test] public void IndexOf_SameColumns ()
+		{
+			DataSet ds = new DataSet ();
+			DataTable table1 = ds.Tables.Add ("table1");
+			DataTable table2 = ds.Tables.Add ("table2");
+			DataColumn pcol = table1.Columns.Add ("col1");
+			DataColumn ccol = table2.Columns.Add ("col1");
+	
+			ds.Relations.Add ("fk_rel", pcol, ccol); 
+
+			ForeignKeyConstraint fk = new ForeignKeyConstraint ("fk", pcol, ccol);
+			Assert.AreEqual (-1, ds.Tables [1].Constraints.IndexOf (fk), "#1");
+		}
+		
+		[Test]
+		public void Add_RelationFirst_ConstraintNext()
+		{
+			DataSet ds = new DataSet ();
+			DataTable table1 = ds.Tables.Add ("table1");
+			DataTable table2 = ds.Tables.Add ("table2");
+			DataColumn pcol = table1.Columns.Add ("col1");
+			DataColumn ccol = table2.Columns.Add ("col1");
+	
+			ds.Relations.Add ("fk_rel", pcol, ccol); 
+
+			try {
+				table2.Constraints.Add ("fk_cons", pcol, ccol);
+				Assert.Fail ("#1 Cannot add duplicate fk constraint");
+			}catch (DataException e) {
+			}
+
+			try {
+				table1.Constraints.Add ("pk_cons", pcol, false);
+				Assert.Fail ("#2 Cannot add duplicate unique constraint");
+			}catch (DataException e) {
+			}
+		}
+
+		[Test]
+		public void Add_ConstraintFirst_RelationNext ()
+		{
+			DataSet ds = new DataSet ();
+			DataTable table1 = ds.Tables.Add ("table1");
+			DataTable table2 = ds.Tables.Add ("table2");
+			DataColumn pcol = table1.Columns.Add ("col1");
+			DataColumn ccol = table2.Columns.Add ("col1");
+	
+			table2.Constraints.Add ("fk_cons", pcol, ccol);
+
+			// Should not throw DataException 
+			ds.Relations.Add ("fk_rel", pcol, ccol);
+
+			Assert.AreEqual (1, table2.Constraints.Count, "#1 duplicate constraint shudnt be added");
+			Assert.AreEqual (1, table1.Constraints.Count, "#2 duplicate constraint shudnt be added");
+			Assert.AreEqual ("fk_cons", table2.Constraints [0].ConstraintName, "#3 shouldnt be overwritten");
+			Assert.AreEqual ("Constraint1", table1.Constraints [0].ConstraintName, "#4 shouldnt be overwritten");
+		}
+
 		[Test] public void IsReadOnly()
 		{
 			DataTable dt = DataProvider.CreateUniqueConstraint();

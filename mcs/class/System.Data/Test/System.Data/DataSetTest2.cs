@@ -1418,6 +1418,193 @@ namespace MonoTests_System.Data
 			CompareResults_2("merge 3",ds,dsTarget1);
 		}
 
+		[Test]
+		public void Merge_RelationWithoutConstraints ()
+		{
+			DataSet ds = new DataSet ();
+
+			DataTable table1 = ds.Tables.Add ("table1");
+			DataTable table2 = ds.Tables.Add ("table2");
+
+			DataColumn pcol = table1.Columns.Add ("col1", typeof (int));
+			DataColumn ccol = table2.Columns.Add ("col1", typeof (int));
+
+			DataSet ds1 = ds.Copy ();
+			DataRelation rel = ds1.Relations.Add ("rel1", ds1.Tables[0].Columns[0], 
+								ds1.Tables [1].Columns [0], false);
+
+			ds.Merge (ds1);
+			Assert.AreEqual (1, ds.Relations.Count , "#1");
+			Assert.AreEqual (0, ds.Tables [0].Constraints.Count , "#2");
+			Assert.AreEqual (0, ds.Tables [1].Constraints.Count , "#2");
+		}
+
+		[Test]
+		public void Merge_DuplicateConstraints ()
+		{
+			DataSet ds = new DataSet ();
+
+			DataTable table1 = ds.Tables.Add ("table1");
+			DataTable table2 = ds.Tables.Add ("table2");
+
+			DataColumn pcol = table1.Columns.Add ("col1", typeof (int));
+			DataColumn ccol = table2.Columns.Add ("col1", typeof (int));
+
+			DataSet ds1 = ds.Copy ();
+
+			DataRelation rel = ds.Relations.Add ("rel1", pcol, ccol);
+
+			ds1.Tables [1].Constraints.Add ("fk", ds1.Tables [0].Columns [0], ds1.Tables [1].Columns [0]);
+
+			// No Exceptions shud be thrown
+			ds.Merge (ds1);
+			Assert.AreEqual (1, table2.Constraints.Count, "#1 Constraints shudnt be duplicated");
+		}
+
+		[Test]
+		public void Merge_DuplicateConstraints_1 ()
+		{
+			DataSet ds = new DataSet ();
+
+			DataTable table1 = ds.Tables.Add ("table1");
+			DataTable table2 = ds.Tables.Add ("table2");
+
+			DataColumn pcol = table1.Columns.Add ("col1", typeof (int));
+			DataColumn ccol = table2.Columns.Add ("col1", typeof (int));
+			DataColumn pcol1 = table1.Columns.Add ("col2", typeof (int));
+			DataColumn ccol1 = table2.Columns.Add ("col2", typeof (int));
+
+			DataSet ds1 = ds.Copy ();
+
+			table2.Constraints.Add ("fk", pcol, ccol);
+			ds1.Tables [1].Constraints.Add ("fk", ds1.Tables [0].Columns ["col2"], ds1.Tables [1].Columns ["col2"]);
+
+			// No Exceptions shud be thrown
+			ds.Merge (ds1);
+			Assert.AreEqual (2, table2.Constraints.Count, "#1 fk constraint shud be merged");
+			Assert.AreEqual ("Constraint1", table2.Constraints [1].ConstraintName, "#2 constraint name shud be changed");
+		}
+
+		[Test]
+		public void CopyClone_RelationWithoutConstraints ()
+		{
+			DataSet ds = new DataSet ();
+
+			DataTable table1 = ds.Tables.Add ("table1");
+			DataTable table2 = ds.Tables.Add ("table2");
+
+			DataColumn pcol = table1.Columns.Add ("col1", typeof (int));
+			DataColumn ccol = table2.Columns.Add ("col1", typeof (int));
+
+			DataRelation rel = ds.Relations.Add ("rel1", pcol, ccol, false);
+
+			DataSet ds1 = ds.Copy ();
+			DataSet ds2 = ds.Clone ();
+			
+			Assert.AreEqual (1, ds1.Relations.Count, "#1");
+			Assert.AreEqual (1, ds2.Relations.Count, "#2");
+
+			Assert.AreEqual (0, ds1.Tables [0].Constraints.Count, "#3");
+			Assert.AreEqual (0, ds1.Tables [1].Constraints.Count, "#4");
+
+			Assert.AreEqual (0, ds2.Tables [0].Constraints.Count, "#5");
+			Assert.AreEqual (0, ds2.Tables [1].Constraints.Count, "#6");
+		}
+
+		[Test]
+		[ExpectedException (typeof (DataException))]
+		public void Merge_MissingEventHandler ()
+		{
+			DataSet ds = new DataSet ();
+			DataTable table1 = ds.Tables.Add ("table1");
+
+			DataColumn pcol = table1.Columns.Add ("col1", typeof (int));
+			DataColumn pcol1 = table1.Columns.Add ("col2", typeof (int));
+			
+			DataSet ds1 = ds.Copy ();
+			table1.PrimaryKey = new DataColumn[] {pcol};
+			ds1.Tables [0].PrimaryKey = new DataColumn[] {ds1.Tables [0].Columns [1]};
+
+			// Exception shud be raised when handler is not set for MergeFailed Event
+			ds1.Merge (ds);
+		}
+
+		[Test]
+		[ExpectedException (typeof(DataException))]
+		public void Merge_MissingColumn  ()
+		{
+			DataSet ds = new DataSet ();
+			DataTable table1 = ds.Tables.Add ("table1");
+			DataTable table2 = ds.Tables.Add ("table2");
+
+			table1.Columns.Add ("col1", typeof (int));
+			table2.Columns.Add ("col1", typeof (int));
+
+			DataSet ds1 = ds.Copy ();
+
+			ds1.Tables [0].Columns.Add ("col2");
+
+			ds.Merge (ds1, true, MissingSchemaAction.Error);
+		}
+
+		[Test]
+		public void Merge_MissingConstraint ()
+		{
+			DataSet ds = new DataSet ();
+			DataTable table1 = ds.Tables.Add ("table1");
+			DataTable table2 = ds.Tables.Add ("table2");
+			table1.Columns.Add ("col1", typeof (int));
+			table2.Columns.Add ("col1", typeof (int));
+
+			try {
+				DataSet ds1 = ds.Copy ();
+				DataSet ds2 = ds.Copy ();
+				ds2.Tables [0].Constraints.Add ("uc", ds2.Tables [0].Columns [0], false);
+				ds1.Merge (ds2, true, MissingSchemaAction.Error);
+				Assert.Fail ("#1 If uniqueconstraint is missing, exception shud be thrown");
+			}catch (DataException e) {
+			}
+
+			try {
+				DataSet ds1 = ds.Copy ();
+				DataSet ds2 = ds.Copy ();
+				ds2.Tables [0].Constraints.Add ("fk", ds2.Tables [0].Columns [0], ds2.Tables[1].Columns [0]);
+				ds1.Tables [0].Constraints.Add ("uc", ds1.Tables [0].Columns [0],false);
+				ds1.Merge (ds2, true, MissingSchemaAction.Error);
+				Assert.Fail ("#2 If foreignkeyconstraint is missing, exception shud be thrown");
+			}catch (DataException e) {
+			}
+
+			try {
+				DataSet ds1 = ds.Copy ();
+				DataSet ds2 = ds.Copy ();
+				ds2.Relations.Add ("rel", ds2.Tables [0].Columns [0], ds2.Tables[1].Columns [0], false);
+				ds1.Merge (ds2, true, MissingSchemaAction.Error);
+				Assert.Fail ("#2 If datarelation is missing, exception shud be thrown");
+			}catch (ArgumentException e) {
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (DataException))]
+		public void Merge_PrimaryKeys_IncorrectOrder ()
+		{
+			DataSet ds = new DataSet ();
+			DataTable table1 = ds.Tables.Add ("table1");
+			DataTable table2 = ds.Tables.Add ("table2");
+			DataColumn pcol = table1.Columns.Add ("col1", typeof (int));
+			DataColumn pcol1 = table1.Columns.Add ("col2", typeof (int));
+			DataColumn ccol = table2.Columns.Add ("col1", typeof (int));
+
+			DataSet ds1 = ds.Copy ();
+			table1.PrimaryKey = new DataColumn[] {pcol,pcol1};
+			ds1.Tables [0].PrimaryKey = new DataColumn [] {ds1.Tables[0].Columns [1], ds1.Tables [0].Columns [0]};
+
+			// Though the key columns are the same, if the order is incorrect
+			// Exception must be raised
+			ds1.Merge (ds);
+		}
+
 		void CompareResults_1(string Msg,DataSet ds, DataSet dsTarget)
 		{
 			// check Parent Primary key length
