@@ -171,7 +171,7 @@ namespace Mono.CSharp {
 		///   Resolve the constraints - but only resolve things into Expression's, not
 		///   into actual types.
 		/// </summary>
-		public bool Resolve (EmitContext ec)
+		public bool Resolve (IResolveContext ec)
 		{
 			if (resolved)
 				return true;
@@ -630,7 +630,7 @@ namespace Mono.CSharp {
 		public bool Resolve (DeclSpace ds)
 		{
 			if (constraints != null) {
-				if (!constraints.Resolve (ds.EmitContext)) {
+				if (!constraints.Resolve (ds)) {
 					constraints = null;
 					return false;
 				}
@@ -1489,6 +1489,8 @@ namespace Mono.CSharp {
 			if (atype.IsGenericParameter) {
 				GenericConstraints agc = TypeManager.GetTypeParameterConstraints (atype);
 				if (agc != null) {
+					if (agc is Constraints)
+						((Constraints) agc).Resolve (ec);
 					is_class = agc.HasReferenceTypeConstraint;
 					is_struct = agc.HasValueTypeConstraint;
 				} else {

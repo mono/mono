@@ -1,3 +1,11 @@
+2006-03-20  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #77852
+	* generic.cs (Constraints.Resolve): Change argument to IResolveContext.
+	(TypeParameter.Resolve): Update to change.
+	(ConstraintChecker.CheckConstraints): Resolve type-argument
+	constraints before use.
+
 2006-03-16  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs
