@@ -1,3 +1,8 @@
+2006-03-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequest.cs:
+	(CheckString): style and don't index the string twice per iteration.
+
 2006-03-19 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TempFileStream.cs: a FileStream that removes the file once
