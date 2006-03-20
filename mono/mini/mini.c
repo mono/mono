@@ -10759,13 +10759,9 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	if (cfg->new_ir) {
 		mono_decompose_long_opts (cfg);
 
-		/* FIXME: Do this later */
-		mono_decompose_vtype_opts (cfg);
-	}
-
-	if (cfg->new_ir)
 		/* Should be done before branch opts */
 		mono_local_cprop2 (cfg);
+	}
 
 	if (cfg->opt & MONO_OPT_BRANCH)
 		optimize_branches (cfg);
@@ -10815,8 +10811,10 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 		/* This must be done _before_ global reg alloc and _after_ decompose */
 		mono_handle_global_vregs (cfg);
 		mono_local_deadce_alt (cfg);
-	}
 
+		// FIXME: Do this after SSA
+		mono_decompose_vtype_opts (cfg);
+	}
 
 	/* after method_to_ir */
 	if (parts == 1)

@@ -5857,6 +5857,29 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			CHECK_OPSIZE (2);
 			CHECK_STACK_OVF (1);
 			CHECK_LOCAL (ip [1]);
+
+			/*
+			 * ldloca inhibits many optimizations so try to get rid of it in common
+			 * cases.
+			 * FIXME: do this in LDLOCA as well.
+			 */
+			/* FIXME: Finish this */
+#if 0
+			/* FIXME: Check for out of range ip */
+			if ((ip [2] == CEE_PREFIX1) && (ip [3] == CEE_INITOBJ) && ip_in_bb (cfg, bblock, ip + 3)) {
+				MonoClass *klass = cfg->locals [ip [1]]->klass;
+				if (MONO_TYPE_IS_REFERENCE (&klass->byval_arg)) {
+					/* FIXME: */
+					g_assert_not_reached ();
+				} else {
+					MONO_EMIT_NEW_VZERO (cfg, cfg->locals [ip [1]]->dreg, klass);
+				}
+				ip += 2 + 6;
+				inline_costs += 1;
+				break;
+			}
+#endif
+
 			EMIT_NEW_LOCLOADA (cfg, ins, ip [1]);
 			ins->cil_code = ip;
 			*sp++ = ins;
@@ -9436,6 +9459,16 @@ mono_spill_global_vars (MonoCompile *cfg)
 				ins->opcode = OP_ADD_IMM;
 				ins->sreg1 = var->inst_basereg;
 				ins->inst_imm = var->inst_offset;
+
+#if defined(__i386__)
+				if ((ins->sreg1 == X86_EBP) && (ins->dreg != X86_EBP)) {
+					/* LEA is ADD but without the sreg1==dreg restriction */
+					/* FIXME: amd64 and generalize this */
+					/* FIXME: Why does this lead to code growth in mcs ? */
+					ins->opcode = OP_X86_LEA_MEMBASE;
+					ins->inst_basereg = ins->sreg1;
+				}
+#endif
 
 				spec = ins_info [ins->opcode - OP_START - 1];
 			}
