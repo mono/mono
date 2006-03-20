@@ -1,3 +1,10 @@
+
+Wed Mar 15 16:35:49 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* Thread.cs: updates for LocalDataStoreSlot: we use an array as
+	storage for the slots now so that LocalDataStoreSlot objects an be
+	garbage collected if the user doesn't keep a reference to them.
+
 2006-02-09  Miguel de Icaza  <miguel@novell.com>
 
 	* Monitor.cs: Patch from Thong Nguyen, Wait methods should allow a

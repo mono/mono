@@ -37,13 +37,59 @@ namespace System
 {
 	public sealed class LocalDataStoreSlot
 	{
-		internal LocalDataStoreSlot ()
+		internal int slot;
+		internal bool thread_local; // false for context-local
+
+		static object lock_obj = new object ();
+		static bool[] slot_bitmap_thread;
+		static bool[] slot_bitmap_context;
+
+		internal LocalDataStoreSlot (bool in_thread)
 		{
+			thread_local = in_thread;
+			lock (lock_obj) {
+				int i;
+				bool[] slot_bitmap;
+				if (in_thread)
+					slot_bitmap = slot_bitmap_thread;
+				else
+					slot_bitmap = slot_bitmap_context;
+				if (slot_bitmap != null) {
+					for (i = 0; i < slot_bitmap.Length; ++i) {
+						if (!slot_bitmap [i]) {
+							slot = i;
+							slot_bitmap [i] = true;
+							return;
+						}
+					}
+					bool[] new_bitmap = new bool [i + 2];
+					slot_bitmap.CopyTo (new_bitmap, 0);
+					slot_bitmap = new_bitmap;
+				} else {
+					slot_bitmap = new bool [2];
+					i = 0;
+				}
+				slot_bitmap [i] = true;
+				slot = i;
+				if (in_thread)
+					slot_bitmap_thread = slot_bitmap;
+				else
+					slot_bitmap_context = slot_bitmap;
+			}
 		}
 
-		[MonoTODO("Spec: Finalize locks the data store manager before marking the data slot as unoccupied")]
-		~LocalDataStoreSlot()
+		~LocalDataStoreSlot ()
 		{
+			/* first remove all the values from the slots and
+			 * then free the slot itself for reuse.
+			 */
+			System.Threading.Thread.FreeLocalSlotValues (slot, thread_local);
+			lock (lock_obj) {
+				if (thread_local)
+					slot_bitmap_thread [slot] = false;
+				else
+					slot_bitmap_context [slot] = false;
+			}
 		}
 	}
 }

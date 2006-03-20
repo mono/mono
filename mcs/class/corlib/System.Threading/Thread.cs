@@ -105,8 +105,9 @@ namespace System.Threading {
 		private IntPtr unused7;
 		#endregion
 
+		// the name of local_slots is important as it's used by the runtime.
 		[ThreadStatic] 
-		static Hashtable slothash;
+		static object[] local_slots;
 
 		// can be both a ThreadSart and a ParameterizedThreadStart
 		private MulticastDelegate threadstart;
@@ -171,56 +172,64 @@ namespace System.Threading {
 			}
 		}
 		
-		public static LocalDataStoreSlot AllocateNamedDataSlot(string name) {
+		public static LocalDataStoreSlot AllocateNamedDataSlot (string name) {
 			lock (datastore_lock) {
 				if (datastorehash == null)
 					InitDataStoreHash ();
-				LocalDataStoreSlot slot = (LocalDataStoreSlot)datastorehash[name];
-				if(slot!=null) {
+				LocalDataStoreSlot slot = (LocalDataStoreSlot)datastorehash [name];
+				if (slot != null) {
 					// This exception isnt documented (of
 					// course) but .net throws it
 					throw new ArgumentException("Named data slot already added");
 				}
 			
-				slot = new LocalDataStoreSlot();
+				slot = AllocateDataSlot ();
 
-				datastorehash.Add(name, slot);
+				datastorehash.Add (name, slot);
 
-				return(slot);
+				return slot;
 			}
 		}
 
-		public static void FreeNamedDataSlot(string name) {
+		public static void FreeNamedDataSlot (string name) {
 			lock (datastore_lock) {
 				if (datastorehash == null)
 					InitDataStoreHash ();
-				LocalDataStoreSlot slot=(LocalDataStoreSlot)datastorehash[name];
+				LocalDataStoreSlot slot = (LocalDataStoreSlot)datastorehash [name];
 
-				if(slot!=null) {
-					datastorehash.Remove(slot);
+				if (slot != null) {
+					datastorehash.Remove (slot);
 				}
 			}
 		}
 
-		private static Hashtable SlotHash {
-			get {
-				if (slothash == null)
-					slothash = new Hashtable ();
-				return slothash;
+		public static LocalDataStoreSlot AllocateDataSlot () {
+			return new LocalDataStoreSlot (true);
+		}
+
+		public static object GetData (LocalDataStoreSlot slot) {
+			object[] slots = local_slots;
+			if (slot == null)
+				throw new ArgumentNullException ("slot");
+			if (slots != null && slot.slot < slots.Length)
+				return slots [slot.slot];
+			return null;
+		}
+
+		public static void SetData (LocalDataStoreSlot slot, object data) {
+			object[] slots = local_slots;
+			if (slot == null)
+				throw new ArgumentNullException ("slot");
+			if (slots == null) {
+				slots = new object [slot.slot + 2];
+				local_slots = slots;
+			} else if (slot.slot >= slots.Length) {
+				object[] nslots = new object [slot.slot + 2];
+				slots.CopyTo (nslots, 0);
+				slots = nslots;
+				local_slots = slots;
 			}
-		}
-
-		public static LocalDataStoreSlot AllocateDataSlot() {
-			return new LocalDataStoreSlot();
-		}
-
-		public static object GetData(LocalDataStoreSlot slot) {
-			return SlotHash [slot];
-		}
-
-		public static void SetData(LocalDataStoreSlot slot,
-					   object data) {
-			SlotHash [slot] = data;
+			slots [slot.slot] = data;
 		}
 
 		public static AppDomain GetDomain() {
@@ -229,6 +238,9 @@ namespace System.Threading {
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static int GetDomainID();
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal extern static void FreeLocalSlotValues (int slot, bool thread_local);
 
 		public static LocalDataStoreSlot GetNamedDataSlot(string name) {
 			lock (datastore_lock) {
