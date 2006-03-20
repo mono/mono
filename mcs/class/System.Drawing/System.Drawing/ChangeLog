@@ -1,3 +1,9 @@
+2006-03-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Brush.cs: Allow Dispose to free the unmanaged memory for the brush
+	in every case. This has been known (in the past) to cause crashes
+	in Cairo. If still true then we need to find out why!
+
 2006-03-09  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* gdipFunctions.cs: Removed XCloseDisplay call from Gdi+ shutdown,

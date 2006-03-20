@@ -100,7 +100,9 @@ namespace System.Drawing
 
 		protected virtual void Dispose (bool disposing)
 		{
-			if ((GDIPlus.Display != IntPtr.Zero) && (nativeObject != IntPtr.Zero)) {
+			// NOTE: this has been known to fail in the past (cairo)
+			// but it's the only way to reclaim brush related memory
+			if (nativeObject != IntPtr.Zero) {
 				GDIPlus.GdipDeleteBrush (nativeObject);
 				nativeObject = IntPtr.Zero;
 			}			
