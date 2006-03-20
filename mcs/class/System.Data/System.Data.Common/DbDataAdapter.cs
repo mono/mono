@@ -1090,6 +1090,10 @@ namespace System.Data.Common {
 					case UpdateStatus.SkipAllRemainingRows:
 						return updateCount;
 					}
+#if NET_2_0
+					if (!AcceptChangesDuringUpdate)
+						continue;
+#endif
 					row.AcceptChanges ();
 				} catch(Exception e) {
 					row.RowError = e.Message;
