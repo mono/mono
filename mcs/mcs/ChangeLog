@@ -1,5 +1,10 @@
 2006-03-20  Marek Safar  <marek.safar@seznam.cz>
 
+	* expression.cs (StringConcat.Append): Issue a warning when empty string
+	is going to append.
+
+2006-03-20  Marek Safar  <marek.safar@seznam.cz>
+
 	* assign.cs (CompoundAssign.ResolveSource): Removed.
 
 	* attribute.cs (ResolvePossibleAttributeType): Updated after MemberAccess

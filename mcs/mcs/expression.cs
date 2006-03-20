@@ -2925,11 +2925,17 @@ namespace Mono.CSharp {
 			//
 			// Constant folding
 			//
-			if (operand is StringConstant && operands.Count != 0) {
-				StringConstant last_operand = operands [operands.Count - 1] as StringConstant;
-				if (last_operand != null) {
-					operands [operands.Count - 1] = new StringConstant (last_operand.Value + ((StringConstant) operand).Value, last_operand.Location);
-					return;
+			StringConstant sc = operand as StringConstant;
+			if (sc != null) {
+				if (sc.Value.Length == 0)
+					Report.Warning (-300, 3, Location, "Appending an empty string has no effect. Did you intend to append a space string?");
+
+				if (operands.Count != 0) {
+					StringConstant last_operand = operands [operands.Count - 1] as StringConstant;
+					if (last_operand != null) {
+						operands [operands.Count - 1] = new StringConstant (last_operand.Value + ((StringConstant) operand).Value, last_operand.Location);
+						return;
+					}
 				}
 			}
 			
