@@ -1,4 +1,8 @@
 
+Mon Mar 20 18:56:21 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* include/gc.h: enable pthread redirection on darwin, too.
+
 Thu Feb 9 16:20:55 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* os_dep.c, include/private/gcconfig.h, darwin_stop_world.c:
