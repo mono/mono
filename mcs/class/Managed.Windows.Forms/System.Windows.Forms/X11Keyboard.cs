@@ -583,7 +583,6 @@ namespace System.Windows.Forms {
 					}
 				}
 
-				Console.WriteLine ("{0}:  {1}", current.Name, score);
 				if ((score > max_score) || ((score == max_score) && (seq > max_seq))) {
 					// best match so far
 					layout = current;
