@@ -235,6 +235,7 @@ namespace System.Drawing
 				DrawImage (bmp, 0, 0);
 				bmp.Dispose ();
 				GDIPlus.XDestroyImage (image);
+				GDIPlus.XFree (vPtr);
 				return;
 			}			
 

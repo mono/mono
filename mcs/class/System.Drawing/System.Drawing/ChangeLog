@@ -1,3 +1,9 @@
+2006-03-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* gdipFunctions.cs: Import XFree (from libX11) so we can free the 
+	memory we allocate.
+	* Graphics.cs: Free the memory we get from XGetVisualInfo.
+
 2006-03-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Brush.cs: Allow Dispose to free the unmanaged memory for the brush

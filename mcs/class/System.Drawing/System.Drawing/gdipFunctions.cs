@@ -1441,7 +1441,9 @@ namespace System.Drawing
 
 		[DllImport ("libX11", EntryPoint="XVisualIDFromVisual")]
 		internal extern static int XVisualIDFromVisual(IntPtr visual);
-	
+
+		[DllImport ("libX11", EntryPoint="XFree")]
+		internal extern static void XFree (IntPtr data);	
 		
 		// FontCollection
 		[DllImport ("gdiplus.dll")]
