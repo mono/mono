@@ -23,7 +23,7 @@ class Bug
     
     public static void Main ()
     {
-        const object o = 1;       
+        const object o = null;       
     }
 
 }
