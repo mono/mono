@@ -1490,19 +1490,6 @@ peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
 
 	while (ins) {
 		switch (ins->opcode) {
-		case OP_MUL_IMM: 
-		case OP_IMUL_IMM: 
-			/* remove unnecessary multiplication with 1 */
-			if (ins->inst_imm == 1) {
-				if (ins->dreg != ins->sreg1) {
-					ins->opcode = OP_MOVE;
-				} else {
-					last_ins->next = ins->next;
-					ins = ins->next;
-					continue;
-				}
-			}
-			break;
 		case OP_IADD_IMM:
 		case OP_ADD_IMM:
 			if (ins->sreg1 == X86_EBP) {

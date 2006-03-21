@@ -10037,7 +10037,9 @@ mono_local_cprop2 (MonoCompile *cfg)
 					/* Constant propagation */
 #if SIZEOF_VOID_P == 8
 					/* FIXME: Make is_inst_imm a macro */
-					else if ((((def->opcode == OP_ICONST) || (def->opcode == OP_I8CONST)) && mono_arch_is_inst_imm (def->inst_c0)) || (def->opcode == OP_R8CONST))
+					/* FIXME: Make is_inst_imm take an opcode argument */
+					/* is_inst_imm is only needed for binops */
+					else if ((((def->opcode == OP_ICONST) || (def->opcode == OP_I8CONST)) && (((srcindex == 0) && (ins->sreg2 == -1)) || mono_arch_is_inst_imm (def->inst_c0))) || (def->opcode == OP_R8CONST))
 #else
 					else if (def->opcode == OP_ICONST)
 #endif
@@ -10057,7 +10059,7 @@ mono_local_cprop2 (MonoCompile *cfg)
 						}
 
 						opcode2 = mono_op_to_op_imm (ins->opcode);
-						if ((opcode2 != -1) && ((srcindex == 1) || (ins->sreg2 == -1))) {
+						if ((opcode2 != -1) && mono_arch_is_inst_imm (def->inst_c0) && ((srcindex == 1) || (ins->sreg2 == -1))) {
 							ins->opcode = opcode2;
 							ins->inst_imm = def->inst_c0;
 							if (srcindex == 0)
@@ -10075,7 +10077,7 @@ mono_local_cprop2 (MonoCompile *cfg)
 						else {
 							/* Special cases */
 							opcode2 = mono_load_membase_to_load_mem (ins->opcode);
-							if ((srcindex == 0) && (opcode2 != -1)) {
+							if ((srcindex == 0) && (opcode2 != -1) && mono_arch_is_inst_imm (def->inst_c0)) {
 								ins->opcode = opcode2;
 								ins->inst_imm = def->inst_c0 + ins->inst_offset;
 								ins->sreg1 = -1;
@@ -10120,7 +10122,8 @@ mono_local_cprop2 (MonoCompile *cfg)
 			case OP_LMUL_IMM:
 #endif
 				if (ins->inst_imm == 0) {
-					ins->opcode = OP_NOP;
+					ins->opcode = (ins->opcode == OP_IMUL_IMM) ? OP_ICONST : OP_I8CONST;
+					ins->inst_c0 = 0;
 					ins->sreg1 = -1;
 				} else if (ins->inst_imm == 1) {
 					ins->opcode = OP_MOVE;

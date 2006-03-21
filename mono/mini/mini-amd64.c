@@ -2846,6 +2846,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case OP_LOAD_MEM:
 		case OP_LOADI8_MEM:
+			// FIXME: Decompose this earlier
 			if (amd64_is_imm32 (ins->inst_imm))
 				amd64_mov_reg_mem (code, ins->dreg, ins->inst_imm, sizeof (gpointer));
 			else {
@@ -2858,6 +2859,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			amd64_movsxd_reg_membase (code, ins->dreg, ins->dreg, 0);
 			break;
 		case OP_LOADU4_MEM:
+			// FIXME: Decompose this earlier
 			if (cfg->new_ir) {
 				if (amd64_is_imm32 (ins->inst_imm))
 					amd64_mov_reg_mem (code, ins->dreg, ins->inst_imm, 4);

@@ -432,6 +432,12 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
         (dest)->type = STACK_I4; \
 	} while (0)
 
+#define NEW_UNALU(cfg,dest,op,dr,sr1) do { \
+        MONO_INST_NEW ((cfg), (dest), (op)); \
+        (dest)->dreg = dr; \
+        (dest)->sreg1 = sr1; \
+    } while (0)        
+
 #define NEW_BIALU_IMM(cfg,dest,op,dr,sr,imm) do { \
         MONO_INST_NEW ((cfg), (dest), (op)); \
         (dest)->dreg = dr; \
@@ -607,6 +613,22 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 		(dest)->klass = (dest)->inst_i0->klass;	\
 	} while (0)
 
+/* Variants which take a type argument and handle vtypes as well */
+#define NEW_LOAD_MEMBASE_TYPE(cfg,dest,ltype,base,offset) do { \
+	    NEW_LOAD_MEMBASE ((cfg), (dest), mono_type_to_load_membase ((ltype)), 0, (base), (offset)); \
+	    type_to_eval_stack_type ((ltype), (dest)); \
+	    (dest)->dreg = alloc_dreg ((cfg), (dest)->type); \
+    } while (0)
+
+#define NEW_STORE_MEMBASE_TYPE(cfg,dest,ltype,base,offset,sr) do { \
+        MONO_INST_NEW ((cfg), (dest), mono_type_to_store_membase ((ltype))); \
+        (dest)->sreg1 = sr; \
+        (dest)->inst_destbasereg = base; \
+        (dest)->inst_offset = offset; \
+	    type_to_eval_stack_type ((ltype), (dest)); \
+        (dest)->klass = mono_class_from_mono_type (ltype); \
+	} while (0)
+
 /*
  * Variants which do an emit as well.
  */
@@ -662,19 +684,17 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 
 #define EMIT_NEW_DUMMY_USE(cfg,dest,var) do { NEW_DUMMY_USE ((cfg), (dest), (var)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
-#define EMIT_NEW_UNALU(cfg,dest,op,dr,sr1) do { \
-        MONO_INST_NEW ((cfg), (dest), (op)); \
-        (dest)->opcode = op; \
-        (dest)->dreg = dr; \
-        (dest)->sreg1 = sr1; \
-	    MONO_ADD_INS (cfg->cbb, (dest)); \
-    } while (0)        
+#define EMIT_NEW_UNALU(cfg,dest,op,dr,sr1) do { NEW_UNALU ((cfg), (dest), (op), (dr), (sr1)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
 #define EMIT_NEW_BIALU_IMM(cfg,dest,op,dr,sr,imm) do { NEW_BIALU_IMM ((cfg), (dest), (op), (dr), (sr), (imm)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
 #define EMIT_NEW_LOAD_MEMBASE(cfg,dest,op,dr,base,offset) do { NEW_LOAD_MEMBASE ((cfg), (dest), (op), (dr), (base), (offset)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
 #define EMIT_NEW_STORE_MEMBASE(cfg,dest,op,base,offset,sr) do { NEW_STORE_MEMBASE ((cfg), (dest), (op), (base), (offset), (sr)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
+
+#define EMIT_NEW_LOAD_MEMBASE_TYPE(cfg,dest,ltype,base,offset) do { NEW_LOAD_MEMBASE_TYPE ((cfg), (dest), (ltype), (base), (offset)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
+
+#define EMIT_NEW_STORE_MEMBASE_TYPE(cfg,dest,ltype,base,offset,sr) do { NEW_STORE_MEMBASE_TYPE ((cfg), (dest), (ltype), (base), (offset), (sr)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
 /*
  * Variants which do not take an dest argument, but take a dreg argument.
@@ -1680,7 +1700,7 @@ type_from_stack_type (MonoInst *ins) {
 	return NULL;
 }
 
-static int
+static G_GNUC_UNUSED int
 type_to_stack_type (MonoType *t)
 {
 	switch (mono_type_get_underlying_type (t)->type) {
@@ -2938,9 +2958,7 @@ handle_box (MonoCompile *cfg, MonoInst *val, const guchar *ip, MonoClass *klass)
 
 	alloc = handle_alloc (cfg, klass, TRUE, ip);
 
-	EMIT_NEW_STORE_MEMBASE (cfg, ins, mono_type_to_store_membase (&klass->byval_arg), alloc->dreg, sizeof (MonoObject), val->dreg);
-	if (ins->opcode == OP_STOREV_MEMBASE)
-		ins->klass = klass;
+	EMIT_NEW_STORE_MEMBASE_TYPE (cfg, ins, &klass->byval_arg, alloc->dreg, sizeof (MonoObject), val->dreg);
 
 	return alloc;
 }
@@ -6160,12 +6178,17 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				 * We have the `constrained.' prefix opcode.
 				 */
 				if (constrained_call->valuetype && !cmethod->klass->valuetype) {
+					int dreg;
+
 					/*
 					 * The type parameter is instantiated as a valuetype,
 					 * but that type doesn't override the method we're
 					 * calling, so we need to box `this'.
 					 */
-					sp [0] = handle_box (cfg, sp [0], ip, constrained_call);
+					dreg = alloc_dreg (cfg, STACK_VTYPE);
+					EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOADV_MEMBASE, dreg, sp [0]->dreg, 0);
+					ins->klass = constrained_call;
+					sp [0] = handle_box (cfg, ins, ip, constrained_call);
 				} else if (!constrained_call->valuetype) {
 					int dreg = alloc_preg (cfg);
 
@@ -6332,7 +6355,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 	      				
 			if (array_rank) {
 				MonoInst *addr;
-				int stack_type;
 
 				if (strcmp (cmethod->name, "Set") == 0) { /* array Set */ 
 					if (sp [fsig->param_count]->type == STACK_OBJ) {
@@ -6345,15 +6367,11 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					}
 					
 					addr = mini_emit_ldelema_ins (cfg, cmethod, sp, ip, TRUE);
-					MONO_EMIT_NEW_STORE_MEMBASE (cfg, mono_type_to_store_membase (fsig->params [fsig->param_count - 1]), addr->dreg, 0, sp [fsig->param_count]->dreg);
+					EMIT_NEW_STORE_MEMBASE_TYPE (cfg, ins, fsig->params [fsig->param_count - 1], addr->dreg, 0, sp [fsig->param_count]->dreg);
 				} else if (strcmp (cmethod->name, "Get") == 0) { /* array Get */
 					addr = mini_emit_ldelema_ins (cfg, cmethod, sp, ip, FALSE);
 
-					stack_type = type_to_stack_type (fsig->ret);
-					dreg = alloc_dreg (cfg, stack_type);
-					EMIT_NEW_LOAD_MEMBASE (cfg, ins, mono_type_to_load_membase (fsig->ret), dreg, addr->dreg, 0);
-					ins->type = stack_type;
-					ins->klass = mono_class_from_mono_type (fsig->ret);
+					EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, ins, fsig->ret, addr->dreg, 0);
 
 					*sp++ = ins;
 				} else if (strcmp (cmethod->name, "Address") == 0) { /* array Address */
@@ -6899,8 +6917,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 		case CEE_LDOBJ: {
 			int loc_index = -1;
 			int stloc_len = 0;
-			int stack_type;
-			int dreg;
 
 			CHECK_OPSIZE (5);
 			CHECK_STACK (1);
@@ -6937,11 +6953,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				break;
 			}
 
-			stack_type = type_to_stack_type (&klass->byval_arg);
-			dreg = alloc_dreg (cfg, stack_type);
-			EMIT_NEW_LOAD_MEMBASE (cfg, ins, mono_type_to_load_membase (&klass->byval_arg), dreg, sp[0]->dreg, 0);
-			ins->type = stack_type;
-			ins->klass = klass;
+			EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, ins, &klass->byval_arg, sp[0]->dreg, 0);
 			*sp++ = ins;
 
 			ip += 5;
@@ -7240,20 +7252,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			ip += 5;
 
 			/* LDOBJ */
-			{
-				MonoInst *dest;
-				int stack_type;
-				int dreg;
-
-				stack_type = type_to_stack_type (&klass->byval_arg);
-				dreg = alloc_dreg (cfg, stack_type);
-				EMIT_NEW_LOAD_MEMBASE (cfg, dest, mono_type_to_load_membase (&klass->byval_arg), dreg, sp[0]->dreg, 0);
-				if (dest->opcode == OP_LOADV_MEMBASE) {
-					dest->type = STACK_VTYPE;
-					dest->klass = klass;
-				}
-				*sp++ = dest;
-			}
+			EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, ins, &klass->byval_arg, sp [0]->dreg, 0);
+			*sp++ = ins;
 
 			inline_costs += 2;
 			break;
@@ -7399,9 +7399,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				} else {
 					MonoInst *store;
 
-					EMIT_NEW_STORE_MEMBASE (cfg, store, mono_type_to_store_membase (field->type), sp [0]->dreg, foffset, sp [1]->dreg);
-					if (store->opcode == OP_STOREV_MEMBASE)
-						store->klass = mono_class_from_mono_type (field->type);
+					EMIT_NEW_STORE_MEMBASE_TYPE (cfg, store, field->type, sp [0]->dreg, foffset, sp [1]->dreg);
 						
 					store->flags |= ins_flag;
 					ins_flag = 0;
@@ -7445,10 +7443,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				} else {
 					MonoInst *load;
 
-					EMIT_NEW_LOAD_MEMBASE (cfg, load, mono_type_to_load_membase (field->type), 0, sp [0]->dreg, foffset);
-					type_to_eval_stack_type (field->type, load);
-					load->dreg = alloc_dreg (cfg, load->type);
-					load->cil_code = ip;
+					EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, load, field->type, sp [0]->dreg, foffset);
 					load->flags |= ins_flag;
 					ins_flag = 0;
 					*sp++ = load;
@@ -7538,7 +7533,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				CHECK_STACK (1);
 				sp--;
 
-				EMIT_NEW_STORE_MEMBASE (cfg, store, mono_type_to_store_membase (field->type), ins->dreg, 0, sp [0]->dreg);
+				EMIT_NEW_STORE_MEMBASE_TYPE (cfg, store, field->type, ins->dreg, 0, sp [0]->dreg);
 				store->flags |= ins_flag;
 				ins_flag = 0;
 			} else {
@@ -7612,14 +7607,10 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 				if (!is_const) {
 					MonoInst *load;
-					int dreg;
 
 					CHECK_STACK_OVF (1);
 
-					dreg = alloc_dreg (cfg, type_to_stack_type (field->type));
-					EMIT_NEW_LOAD_MEMBASE (cfg, load, mono_type_to_load_membase (field->type), dreg, ins->dreg, 0);
-					load->type = type_to_stack_type (field->type);
-					load->klass = mono_class_from_mono_type (field->type);
+					EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, load, field->type, ins->dreg, 0);
 					load->flags |= ins_flag;
 					ins_flag = 0;
 					*sp++ = load;
@@ -7640,7 +7631,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			if (!klass)
 				goto load_error;
 			/* FIXME: should check item at sp [1] is compatible with the type of the store. */
-			EMIT_NEW_STORE_MEMBASE (cfg, ins, mono_type_to_store_membase (&klass->byval_arg), sp [0]->dreg, 0, sp [1]->dreg);
+			EMIT_NEW_STORE_MEMBASE_TYPE (cfg, ins, &klass->byval_arg, sp [0]->dreg, 0, sp [1]->dreg);
 			ins_flag = 0;
 			ip += 5;
 			inline_costs += 1;
@@ -7759,8 +7750,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 		case CEE_LDELEM_R4:
 		case CEE_LDELEM_R8:
 		case CEE_LDELEM_REF: {
-			guint32 size, stack_type;
-			int mult_reg, add_reg, array_reg, index_reg, dreg;
+			guint32 size;
+			int mult_reg, add_reg, array_reg, index_reg;
 
 			/* FIXME: Add back the LDELEMA(reg,OP_ICONST) optimization */
 			/* FIXME: Add arch specific optimizations */
@@ -7793,11 +7784,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_MUL_IMM, mult_reg, index_reg, size);
 			MONO_EMIT_NEW_BIALU (cfg, OP_PADD, add_reg, array_reg, mult_reg);
 
-			stack_type = type_to_stack_type (&klass->byval_arg);
-			dreg = alloc_dreg (cfg, stack_type);
-			EMIT_NEW_LOAD_MEMBASE (cfg, ins, mono_type_to_load_membase (&klass->byval_arg), dreg, add_reg, G_STRUCT_OFFSET (MonoArray, vector));
-			ins->type = stack_type;
-
+			EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, ins, &klass->byval_arg, add_reg, G_STRUCT_OFFSET (MonoArray, vector));
 			*sp++ = ins;
 			if (*ip == CEE_LDELEM_ANY)
 				ip += 5;
@@ -7864,7 +7851,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_MUL_IMM, mult_reg, index_reg, size);
 				MONO_EMIT_NEW_BIALU (cfg, OP_PADD, add_reg, array_reg, mult_reg);
 
-				MONO_EMIT_NEW_STORE_MEMBASE (cfg, mono_type_to_store_membase (&klass->byval_arg), add_reg, G_STRUCT_OFFSET (MonoArray, vector), val_reg);
+				EMIT_NEW_STORE_MEMBASE_TYPE (cfg, ins, &klass->byval_arg, add_reg, G_STRUCT_OFFSET (MonoArray, vector), val_reg);
 			}
 
 			if (*ip == CEE_STELEM_ANY)
@@ -9729,6 +9716,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   accessing vtype fields and passing/receiving them in calls.
  * - in the managed->native wrappers, place a pop before the call to interrupt_checkpoint
  * - bench.exe hangs on x86 when ssa is enabled
+ * - get rid of I8CONST on 64 bit platforms
  * - LAST MERGE: 57988.
  */
 

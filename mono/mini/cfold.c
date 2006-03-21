@@ -459,8 +459,12 @@ mono_constant_fold_ins2 (MonoInst *ins, MonoInst *arg1, MonoInst *arg2)
 		}
 		break;
 	case OP_MOVE:
+#if SIZEOF_VOID_P == 8
+		if ((arg1->opcode == OP_ICONST) || (arg1->opcode == OP_I8CONST)) {
+#else
 		if (arg1->opcode == OP_ICONST) {
-			ins->opcode = OP_ICONST;
+#endif
+			ins->opcode = arg1->opcode;
 			ins->sreg1 = ins->sreg2 = -1;
 			ins->inst_c0 = arg1->inst_c0;
 		}
