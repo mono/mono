@@ -4,6 +4,7 @@
  *
  * Copyright (c) 2001, 2002  Southern Storm Software, Pty Ltd
  * Copyright (C) 2003, 2004 Novell, Inc.
+ * Copyright (C) 2006 Kornél Pál <http://www.kornelpal.hu/>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the "Software"),
@@ -92,7 +93,6 @@ public class UnicodeEncoding : Encoding
 		return count * 2;
 	}
 
-	// Convenience wrappers for "GetByteCount".
 	public override int GetByteCount (String s)
 	{
 		if (s == null) {
@@ -101,9 +101,22 @@ public class UnicodeEncoding : Encoding
 		return s.Length * 2;
 	}
 
+#if NET_2_0
+	[CLSCompliantAttribute (false)]
+	public unsafe override int GetByteCount (char* chars, int count)
+	{
+		if (chars == null)
+			throw new ArgumentNullException ("chars");
+		if (count < 0)
+			throw new ArgumentOutOfRangeException ("count");
+
+		return count * 2;
+	}
+#endif
+
 	// Get the bytes that result from encoding a character buffer.
-	public override int GetBytes (char[] chars, int charIndex, int charCount,
-								 byte[] bytes, int byteIndex)
+	public unsafe override int GetBytes (char [] chars, int charIndex, int charCount,
+										byte [] bytes, int byteIndex)
 	{
 		if (chars == null) {
 			throw new ArgumentNullException ("chars");
@@ -120,30 +133,39 @@ public class UnicodeEncoding : Encoding
 		if (byteIndex < 0 || byteIndex > bytes.Length) {
 			throw new ArgumentOutOfRangeException ("byteIndex", _("ArgRange_Array"));
 		}
-		if ((bytes.Length - byteIndex) < (charCount * 2)) {
-			throw new ArgumentException (_("Arg_InsufficientSpace"));
-		}
-		int posn = byteIndex;
-		char ch;
-		if (bigEndian) {
-			while (charCount-- > 0) {
-				ch = chars[charIndex++];
-				bytes[posn++] = (byte)(ch >> 8);
-				bytes[posn++] = (byte)ch;
-			}
-		} else {
-			while (charCount-- > 0) {
-				ch = chars[charIndex++];
-				bytes[posn++] = (byte)ch;
-				bytes[posn++] = (byte)(ch >> 8);
-			}
-		}
-		return posn - byteIndex;
+
+		if (charCount == 0)
+			return 0;
+
+		int byteCount = bytes.Length - byteIndex;
+		if (bytes.Length == 0)
+			bytes = new byte [1];
+
+		fixed (char* charPtr = chars)
+			fixed (byte* bytePtr = bytes)
+				return GetBytesInternal (charPtr + charIndex, charCount, bytePtr + byteIndex, byteCount);
 	}
 
-	// Convenience wrappers for "GetBytes".
-	public override int GetBytes (String s, int charIndex, int charCount,
-								 byte[] bytes, int byteIndex)
+#if !NET_2_0
+	public unsafe override byte [] GetBytes (String s)
+	{
+		if (s == null)
+			throw new ArgumentNullException ("s");
+
+		int byteCount = GetByteCount (s);
+		byte [] bytes = new byte [byteCount];
+
+		if (byteCount != 0)
+			fixed (char* charPtr = s)
+				fixed (byte* bytePtr = bytes)
+					GetBytesInternal (charPtr, s.Length, bytePtr, byteCount);
+
+		return bytes;
+	}
+#endif
+
+	public unsafe override int GetBytes (String s, int charIndex, int charCount,
+										byte [] bytes, int byteIndex)
 	{
 		if (s == null) {
 			throw new ArgumentNullException ("s");
@@ -160,25 +182,44 @@ public class UnicodeEncoding : Encoding
 		if (byteIndex < 0 || byteIndex > bytes.Length) {
 			throw new ArgumentOutOfRangeException ("byteIndex", _("ArgRange_Array"));
 		}
-		if ((bytes.Length - byteIndex) < (charCount * 2)) {
+
+		int byteCount = bytes.Length - byteIndex;
+		if (bytes.Length == 0)
+			bytes = new byte [1];
+
+		fixed (char* charPtr = s)
+			fixed (byte* bytePtr = bytes)
+				return GetBytesInternal (charPtr + charIndex, charCount, bytePtr + byteIndex, byteCount);
+	}
+
+#if NET_2_0
+	[CLSCompliantAttribute (false)]
+	public unsafe override int GetBytes (char* chars, int charCount,
+										byte* bytes, int byteCount)
+	{
+		if (bytes == null)
+			throw new ArgumentNullException ("bytes");
+		if (chars == null)
+			throw new ArgumentNullException ("chars");
+		if (charCount < 0)
+			throw new ArgumentOutOfRangeException ("charCount");
+		if (byteCount < 0)
+			throw new ArgumentOutOfRangeException ("byteCount");
+
+		return GetBytesInternal (chars, charCount, bytes, byteCount);
+	}
+#endif
+
+	private unsafe int GetBytesInternal (char* chars, int charCount,
+										byte* bytes, int byteCount)
+	{
+		int count = charCount * 2;
+
+		if (byteCount < count)
 			throw new ArgumentException (_("Arg_InsufficientSpace"));
-		}
-		int posn = byteIndex;
-		char ch;
-		if (bigEndian) {
-			while (charCount-- > 0) {
-				ch = s[charIndex++];
-				bytes[posn++] = (byte)(ch >> 8);
-				bytes[posn++] = (byte)ch;
-			}
-		} else {
-			while (charCount-- > 0) {
-				ch = s[charIndex++];
-				bytes[posn++] = (byte)ch;
-				bytes[posn++] = (byte)(ch >> 8);
-			}
-		}
-		return posn - byteIndex;
+
+		CopyChars ((byte*) chars, bytes, count, bigEndian);
+		return count;
 	}
 
 	// Get the number of characters needed to decode a byte buffer.
@@ -196,9 +237,22 @@ public class UnicodeEncoding : Encoding
 		return count / 2;
 	}
 
+#if NET_2_0
+	[CLSCompliantAttribute (false)]
+	public unsafe override int GetCharCount (byte* bytes, int count)
+	{
+		if (bytes == null)
+			throw new ArgumentNullException ("bytes");
+		if (count < 0)
+			throw new ArgumentOutOfRangeException ("count");
+
+		return count / 2;
+	}
+#endif
+
 	// Get the characters that result from decoding a byte buffer.
-	public override int GetChars (byte[] bytes, int byteIndex, int byteCount,
-								 char[] chars, int charIndex)
+	public unsafe override int GetChars (byte [] bytes, int byteIndex, int byteCount,
+										char [] chars, int charIndex)
 	{
 		if (bytes == null) {
 			throw new ArgumentNullException ("bytes");
@@ -216,45 +270,61 @@ public class UnicodeEncoding : Encoding
 			throw new ArgumentOutOfRangeException ("charIndex", _("ArgRange_Array"));
 		}
 
-		// Determine the byte order in the incoming buffer.
+		if (byteCount == 0)
+			return 0;
+
+		int charCount = chars.Length - charIndex;
+		if (chars.Length == 0)
+			chars = new char [1];
+
+		fixed (byte* bytePtr = bytes)
+			fixed (char* charPtr = chars)
+				return GetCharsInternal (bytePtr + byteIndex, byteCount, charPtr + charIndex, charCount);
+}
+
+#if NET_2_0
+	[CLSCompliantAttribute (false)]
+	public unsafe override int GetChars (byte* bytes, int byteCount,
+										char* chars, int charCount)
+	{
+		if (bytes == null)
+			throw new ArgumentNullException ("bytes");
+		if (chars == null)
+			throw new ArgumentNullException ("chars");
+		if (charCount < 0)
+			throw new ArgumentOutOfRangeException ("charCount");
+		if (byteCount < 0)
+			throw new ArgumentOutOfRangeException ("byteCount");
+
+		return GetCharsInternal (bytes, byteCount, chars, charCount);
+	}
+#endif
+
+	private unsafe int GetCharsInternal (byte* bytes, int byteCount,
+										char* chars, int charCount)
+	{
+		int count = byteCount / 2;
 		bool isBigEndian;
-		if (byteCount >= 2) {
-			if (bytes[byteIndex] == (byte)0xFE && bytes[byteIndex + 1] == (byte)0xFF) {
+
+		// Determine the byte order in the incoming buffer.
+		if (byteCount >= 2)
+		{
+			if (bytes [0] == (byte) 0xFE && bytes [1] == (byte) 0xFF)
 				isBigEndian = true;
-			} else if (bytes[byteIndex] == (byte)0xFF && bytes[byteIndex + 1] == (byte)0xFE) {
+			else if (bytes [0] == (byte) 0xFF && bytes [1] == (byte) 0xFE)
 				isBigEndian = false;
-			} else {
+			else
 				isBigEndian = bigEndian;
-			}
 		} else {
 			isBigEndian = bigEndian;
 		}
 
 		// Validate that we have sufficient space in "chars".
-		if ((chars.Length - charIndex) < (byteCount / 2)) {
+		if (charCount < count)
 			throw new ArgumentException (_("Arg_InsufficientSpace"));
-		}
 
-		// Convert the characters.
-		int posn = charIndex;
-		if (isBigEndian) {
-			while (byteCount >= 2) {
-				chars[posn++] =
-					((char)((((int)(bytes[byteIndex])) << 8) |
-							 ((int)(bytes[byteIndex + 1]))));
-				byteIndex += 2;
-				byteCount -= 2;
-			}
-		} else {
-			while (byteCount >= 2) {
-				chars[posn++] =
-					((char)((((int)(bytes[byteIndex + 1])) << 8) |
-							 ((int)(bytes[byteIndex]))));
-				byteIndex += 2;
-				byteCount -= 2;
-			}
-		}
-		return posn - charIndex;
+		CopyChars (bytes, (byte*) chars, byteCount, isBigEndian);
+		return count;
 	}
 
 	// Get the maximum number of bytes needed to encode a
@@ -321,6 +391,119 @@ public class UnicodeEncoding : Encoding
 		return base.GetHashCode ();
 	}
 
+	private unsafe static void CopyChars (byte* src, byte* dest, int count, bool bigEndian)
+	{
+		if (BitConverter.IsLittleEndian != bigEndian) {
+			string.memcpy (dest, src, count & unchecked ((int) 0xFFFFFFFE));
+			return;
+		}
+
+		switch (count) {
+		case 0:
+			return;
+		case 1:
+			return;
+		case 2:
+			goto Count2;
+		case 3:
+			goto Count2;
+		case 4:
+			goto Count4;
+		case 5:
+			goto Count4;
+		case 6:
+			goto Count4;
+		case 7:
+			goto Count4;
+		case 8:
+			goto Count8;
+		case 9:
+			goto Count8;
+		case 10:
+			goto Count8;
+		case 11:
+			goto Count8;
+		case 12:
+			goto Count8;
+		case 13:
+			goto Count8;
+		case 14:
+			goto Count8;
+		case 15:
+			goto Count8;
+		}
+
+		do {
+			dest [0] = src [1];
+			dest [1] = src [0];
+			dest [2] = src [3];
+			dest [3] = src [2];
+			dest [4] = src [5];
+			dest [5] = src [4];
+			dest [6] = src [7];
+			dest [7] = src [6];
+			dest [8] = src [9];
+			dest [9] = src [8];
+			dest [10] = src [11];
+			dest [11] = src [10];
+			dest [12] = src [13];
+			dest [13] = src [12];
+			dest [14] = src [15];
+			dest [15] = src [14];
+			dest += 16;
+			src += 16;
+			count -= 16;
+		} while ((count & unchecked ((int) 0xFFFFFFF0)) != 0);
+
+		switch (count) {
+		case 0:
+			return;
+		case 1:
+			return;
+		case 2:
+			goto Count2;
+		case 3:
+			goto Count2;
+		case 4:
+			goto Count4;
+		case 5:
+			goto Count4;
+		case 6:
+			goto Count4;
+		case 7:
+			goto Count4;
+		}
+
+		Count8:;
+		dest [0] = src [1];
+		dest [1] = src [0];
+		dest [2] = src [3];
+		dest [3] = src [2];
+		dest [4] = src [5];
+		dest [5] = src [4];
+		dest [6] = src [7];
+		dest [7] = src [6];
+		dest += 8;
+		src += 8;
+
+		if ((count & 4) == 0)
+			goto TestCount2;
+		Count4:;
+		dest [0] = src [1];
+		dest [1] = src [0];
+		dest [2] = src [3];
+		dest [3] = src [2];
+		dest += 4;
+		src += 4;
+
+		TestCount2:;
+		if ((count & 2) == 0)
+			return;
+		Count2:;
+		dest [0] = src [1];
+		dest [1] = src [0];
+	}
+
 	// Unicode decoder implementation.
 	private sealed class UnicodeDecoder : Decoder
 	{
@@ -353,9 +536,9 @@ public class UnicodeEncoding : Encoding
 			}
 		}
 		
-		public override int GetChars (byte[] bytes, int byteIndex,
-									 int byteCount, char[] chars,
-									 int charIndex)
+		public unsafe override int GetChars (byte [] bytes, int byteIndex,
+											int byteCount, char [] chars,
+											int charIndex)
 		{
 			if (bytes == null) {
 				throw new ArgumentNullException ("bytes");
@@ -373,66 +556,45 @@ public class UnicodeEncoding : Encoding
 				throw new ArgumentOutOfRangeException ("charIndex", _("ArgRange_Array"));
 			}
 
-			// Convert the characters.
-			int posn = charIndex;
+			if (byteCount == 0)
+				return 0;
+
 			bool isBigEndian = bigEndian;
 			int leftOver = leftOverByte;
-			int length = chars.Length;
-			char ch;
-			while (byteCount > 0) {
-				if (leftOver != -1) {
-					if (isBigEndian) {
-						ch = ((char)((leftOver << 8) | ((int)(bytes[byteIndex]))));
-					} else {
-						ch = ((char)(leftOver |
-							    	 (((int)(bytes[byteIndex])) << 8)));
-					}
-					leftOver = -1;
-					++byteIndex;
-					--byteCount;
-				} else if (byteCount > 1) {
-					if (isBigEndian) {
-						ch = ((char)((((int)(bytes[byteIndex])) << 8) |
-									  ((int)(bytes[byteIndex + 1]))));
-					} else {
-						ch = ((char)((((int)(bytes[byteIndex + 1])) << 8) |
-								      ((int)(bytes[byteIndex]))));
-					}
-					byteIndex += 2;
-					byteCount -= 2;
-				} else {
-					leftOver = (int)(bytes[byteIndex]);
-					break;
-				}
+			int count;
 
-				if (posn < length) {
-					chars[posn++] = ch;
-				} else {
-					throw new ArgumentException (_("Arg_InsufficientSpace"));
-				}
+			if (leftOver != -1)
+				count = (byteCount + 1) / 2;
+			else
+				count = byteCount / 2;
+
+			if (chars.Length - charIndex < count)
+				throw new ArgumentException (_("Arg_InsufficientSpace"));
+
+			if (leftOver != -1) {
+				if (isBigEndian)
+					chars [charIndex] = unchecked ((char) ((leftOver << 8) | (int) bytes [byteIndex]));
+				else
+					chars [charIndex] = unchecked ((char) (((int) bytes [byteIndex] << 8) | leftOver));
+				charIndex++;
+				byteIndex++;
+				byteCount--;
 			}
-			leftOverByte = leftOver;
-			bigEndian = isBigEndian;
 
-			// Finished - return the converted length.
-			return posn - charIndex;
+			if ((byteCount & unchecked ((int) 0xFFFFFFFE)) != 0)
+				fixed (byte* bytePtr = bytes)
+					fixed (char* charPtr = chars)
+						CopyChars (bytePtr + byteIndex, (byte*) (charPtr + charIndex), byteCount, isBigEndian);
+
+			if ((byteCount & 1) == 0)
+				leftOverByte = -1;
+			else
+				leftOverByte = bytes [byteCount + byteIndex - 1];
+
+			return count;
 		}
 
 	} // class UnicodeDecoder
-	
-#if NET_2_0
-	[CLSCompliantAttribute(false)]
-	public unsafe override int GetByteCount (char *chars, int count)
-	{
-		return count * 2;
-	}
-#else
-	public override byte [] GetBytes (String s)
-	{
-		return base.GetBytes (s);
-	}
-#endif
-	
 
 }; // class UnicodeEncoding
 

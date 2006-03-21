@@ -1,3 +1,8 @@
+2006-03-21  Kornél Pál  <kornelpal@gmail.com>
+
+	* UnicodeEncoding.cs: Use unsafe code for copying characters to speed
+	  up conversion.
+
 2006-03-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* Encoding.cs: Add stub for net 2.0 GetEncodings () method.

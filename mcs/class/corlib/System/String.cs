@@ -1837,7 +1837,7 @@ namespace System
 			}
 		}
 
-		internal static unsafe void memcpy4 (byte *dest, byte *src, int size) {
+		static unsafe void memcpy4 (byte *dest, byte *src, int size) {
 			/*while (size >= 32) {
 				// using long is better than int and slower than double
 				// FIXME: enable this only on correct alignment or on platforms
@@ -1915,7 +1915,8 @@ namespace System
 			if (size > 0)
 				((byte*)dest) [0] = ((byte*)src) [0];
 		}
-		static unsafe void memcpy (byte *dest, byte *src, int size) {
+
+		internal static unsafe void memcpy (byte *dest, byte *src, int size) {
 			// FIXME: if pointers are not aligned, try to align them
 			// so a faster routine can be used. Handle the case where
 			// the pointers can't be reduced to have the same alignment
