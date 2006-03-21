@@ -2,6 +2,7 @@
 Mon Mar 20 18:56:21 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* include/gc.h: enable pthread redirection on darwin, too.
+	* include/gc_pthread_redirects.h: completed from Bryan Berg.
 
 Thu Feb 9 16:20:55 CET 2006 Paolo Molaro <lupus@ximian.com>
 
