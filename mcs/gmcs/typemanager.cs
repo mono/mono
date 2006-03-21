@@ -2379,6 +2379,67 @@ public partial class TypeManager {
 		return (LocalBuilder) declare_local_method.Invoke (ig, new object [] { t, true });
 	}
 
+	private static bool IsSignatureEqual (Type a, Type b)
+	{
+		///
+		/// Consider the following example (bug #77674):
+		///
+		///     public abstract class A
+		///     {
+		///        public abstract T Foo<T> ();
+		///     }
+		///
+		///     public abstract class B : A
+		///     {
+		///        public override U Foo<T> ()
+		///        { return default (U); }
+		///     }
+		///
+		/// Here, `T' and `U' are method type parameters from different methods
+		/// (A.Foo and B.Foo), so both `==' and Equals() will fail.
+		///
+		/// However, since we're determining whether B.Foo() overrides A.Foo(),
+		/// we need to do a signature based comparision and consider them equal.
+
+		if (a == b)
+			return true;
+
+		if (a.IsGenericParameter && b.IsGenericParameter &&
+		    (a.DeclaringMethod != null) && (b.DeclaringMethod != null)) {
+			return a.GenericParameterPosition == b.GenericParameterPosition;
+		}
+
+		if (a.IsArray && b.IsArray) {
+			if (a.GetArrayRank () != b.GetArrayRank ())
+				return false;
+
+			return IsSignatureEqual (a.GetElementType (), b.GetElementType ());
+		}
+
+		if (a.IsByRef && b.IsByRef)
+			return IsSignatureEqual (a.GetElementType (), b.GetElementType ());
+
+		if (a.IsGenericType && b.IsGenericType) {
+			if (a.GetGenericTypeDefinition () != b.GetGenericTypeDefinition ())
+				return false;
+
+			Type[] aargs = a.GetGenericArguments ();
+			Type[] bargs = b.GetGenericArguments ();
+
+			if (aargs.Length != bargs.Length)
+				return false;
+
+			for (int i = 0; i < aargs.Length; i++) {
+				if (!IsSignatureEqual (aargs [i], bargs [i]))
+					return false;
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
 	//
 	// Returns whether the array of memberinfos contains the given method
 	//
@@ -2391,7 +2452,8 @@ public partial class TypeManager {
 				continue;
 
                         if (method is MethodInfo && new_method is MethodInfo)
-                                if (((MethodInfo) method).ReturnType != ((MethodInfo) new_method).ReturnType)
+                                if (!IsSignatureEqual (((MethodInfo) method).ReturnType,
+						       ((MethodInfo) new_method).ReturnType))
                                         continue;
 
                         
@@ -2403,7 +2465,7 @@ public partial class TypeManager {
 				continue;
 			
 			for (i = 0; i < old_count; i++){
-				if (old_args [i] != new_args [i])
+				if (!IsSignatureEqual (old_args [i], new_args [i]))
 					break;
 			}
 			if (i != old_count)

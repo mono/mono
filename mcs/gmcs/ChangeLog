@@ -1,5 +1,11 @@
 2006-02-08  Martin Baulig  <martin@ximian.com>
 
+	* typemanager.cs (TypeManager.ArrayContainsMethod): Use a new
+	private IsSignatureEqual() to compare types; see the comment in
+	that method; fixes #77674.
+
+2006-02-08  Martin Baulig  <martin@ximian.com>
+
 	* expression.cs (BaseAccess): Add support for generic methods.
 
 	* ecore.cs (MethodGroupExpr.ResolveGeneric): Propagate `IsBase' to
