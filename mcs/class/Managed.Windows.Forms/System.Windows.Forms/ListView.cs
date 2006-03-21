@@ -1280,12 +1280,12 @@ namespace System.Windows.Forms
 					if (rect.Contains (pt)) {
 						switch (owner.activation) {
 						case ItemActivation.OneClick:
-							owner.ItemActivate (this, EventArgs.Empty);
+							owner.OnItemActivate (EventArgs.Empty);
 							break;
 
 						case ItemActivation.TwoClick:
 							if (last_clicked_item == clicked_item) {
-								owner.ItemActivate (this, EventArgs.Empty);
+								owner.OnItemActivate (EventArgs.Empty);
 								last_clicked_item = null;
 							} else
 								last_clicked_item = clicked_item;
