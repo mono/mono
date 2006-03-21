@@ -56,6 +56,10 @@ typedef void	    (*MonoMainThreadFunc)    (gpointer user_data);
 #define mono_object_class(obj) (((MonoObject*)(obj))->vtable->klass)
 #define mono_object_domain(obj) (((MonoObject*)(obj))->vtable->domain)
 
+#define MONO_OBJECT_SETREF(obj,fieldname,value) do {	\
+		(obj)->fieldname = (value);	\
+	} while (0)
+
 #define mono_array_length(array) ((array)->max_length)
 #define mono_array_addr(array,type,index) ((type*)(gpointer) mono_array_addr_with_size (array, sizeof (type), index))
 #define mono_array_addr_with_size(array,size,index) ( ((char*)(array)->vector) + (size) * (index) )
@@ -69,6 +73,10 @@ typedef void	    (*MonoMainThreadFunc)    (gpointer user_data);
 	do {	\
 		gpointer *__p = (gpointer *) mono_array_addr ((array), gpointer, (index));	\
 		*__p = (value);	\
+	} while (0)
+#define mono_array_memcpy_refs(dest,destidx,src,srcidx,count)	\
+	do {	\
+		memmove (mono_array_addr ((dest), gpointer, (destidx)), mono_array_addr ((src), gpointer, (srcidx)), (count) * sizeof (gpointer));	\
 	} while (0)
 
 #define mono_string_chars(s) ((gunichar2*)(s)->chars)
@@ -142,8 +150,17 @@ mono_string_equal           (MonoString *s1, MonoString *s2);
 guint
 mono_string_hash            (MonoString *s);
 
+int
+mono_object_hash            (MonoObject* obj);
+
 MonoObject *
 mono_value_box		    (MonoDomain *domain, MonoClass *klass, gpointer val);
+
+void
+mono_value_copy             (gpointer dest, gpointer src, MonoClass *klass);
+
+void
+mono_value_copy_array       (MonoArray *dest, int dest_idx, gpointer src, int count);
 
 MonoDomain*
 mono_object_get_domain      (MonoObject *obj);

@@ -3768,8 +3768,8 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			type_from_op (ins, NULL, NULL);
 
 			return ins;
+#if !defined(MONO_ARCH_EMULATE_MUL_DIV) && !defined(HAVE_MOVING_COLLECTOR)
 		} else if (strcmp (cmethod->name, "InternalGetHashCode") == 0) {
-#ifndef MONO_ARCH_EMULATE_MUL_DIV
 			int dreg = alloc_ireg (cfg);
 			int t1 = alloc_ireg (cfg);
 	
@@ -4153,7 +4153,7 @@ can_access_internals (MonoAssembly *accessing, MonoAssembly* accessed)
 		if (friend->public_key_token [0]) {
 			if (!accessing->aname.public_key_token [0])
 				continue;
-			if (strcmp (friend->public_key_token, accessing->aname.public_key_token))
+			if (strcmp ((char*)friend->public_key_token, (char*)accessing->aname.public_key_token))
 				continue;
 		}
 		return TRUE;
@@ -9705,7 +9705,6 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - figure out how to handle decomposed branches during optimizations, ie.
  *   compare+branch, op_jump_table+op_br etc.
  * - run a global->local phase after SSA ?
- * - on x86/amd64, make greater use of lea (== add but dreg!=sreg1)
  * - promote RuntimeXHandles to vregs
  * - apply the HAVE_ARRAY_ELEM_INIT optimization to ins_info
  * - merge GetGenericValueImpl optimization
@@ -9717,7 +9716,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - in the managed->native wrappers, place a pop before the call to interrupt_checkpoint
  * - bench.exe hangs on x86 when ssa is enabled
  * - get rid of I8CONST on 64 bit platforms
- * - LAST MERGE: 57988.
+ * - LAST MERGE: 58239.
  */
 
 /*

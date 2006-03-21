@@ -164,6 +164,20 @@ mono_create_ftnptr (MonoDomain *domain, gpointer addr)
 #endif
 }
 
+typedef struct {
+	void *ip;
+	MonoMethod *method;
+} FindTrampUserData;
+
+static void
+find_tramp (gpointer key, gpointer value, gpointer user_data)
+{
+	FindTrampUserData *ud = (FindTrampUserData*)user_data;
+
+	if (value == ud->ip)
+		ud->method = (MonoMethod*)key;
+}
+
 /* debug function */
 G_GNUC_UNUSED static char*
 get_method_from_ip (void *ip)
@@ -173,10 +187,23 @@ get_method_from_ip (void *ip)
 	char *source;
 	char *res;
 	MonoDomain *domain = mono_domain_get ();
+	FindTrampUserData user_data;
 	
 	ji = mono_jit_info_table_find (domain, ip);
 	if (!ji) {
-		return NULL;
+		user_data.ip = ip;
+		user_data.method = NULL;
+		mono_domain_lock (domain);
+		g_hash_table_foreach (domain->jit_trampoline_hash, find_tramp, &user_data);
+		mono_domain_unlock (domain);
+		if (user_data.method) {
+			char *mname = mono_method_full_name (user_data.method, TRUE);
+			res = g_strdup_printf ("<%p - JIT trampoline for %s>", ip, mname);
+			g_free (mname);
+			return res;
+		}
+		else
+			return NULL;
 	}
 	method = mono_method_full_name (ji->method, TRUE);
 	source = mono_debug_source_location_from_address (ji->method, (guint32)((guint8*)ip - (guint8*)ji->code_start), NULL, domain);
@@ -196,17 +223,29 @@ mono_pmip (void *ip)
 }
 
 /* debug function */
-G_GNUC_UNUSED static void
-print_method_from_ip (void *ip)
+void
+mono_print_method_from_ip (void *ip)
 {
 	MonoJitInfo *ji;
 	char *method;
 	char *source;
 	MonoDomain *domain = mono_domain_get ();
+	FindTrampUserData user_data;
 	
 	ji = mono_jit_info_table_find (domain, ip);
 	if (!ji) {
-		g_print ("No method at %p\n", ip);
+		user_data.ip = ip;
+		user_data.method = NULL;
+		mono_domain_lock (domain);
+		g_hash_table_foreach (domain->jit_trampoline_hash, find_tramp, &user_data);
+		mono_domain_unlock (domain);
+		if (user_data.method) {
+			char *mname = mono_method_full_name (user_data.method, TRUE);
+			printf ("IP %p is a JIT trampoline for %s\n", ip, mname);
+			g_free (mname);
+		}
+		else
+			g_print ("No method at %p\n", ip);
 		return;
 	}
 	method = mono_method_full_name (ji->method, TRUE);
@@ -219,12 +258,6 @@ print_method_from_ip (void *ip)
 
 	g_free (source);
 	g_free (method);
-}
-
-G_GNUC_UNUSED void
-mono_print_method_from_ip (void *ip)
-{
-	print_method_from_ip (ip);
 }
 	
 /* 
@@ -3325,10 +3358,9 @@ mini_get_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSigna
  			MONO_INST_NEW (cfg, ins, OP_GETTYPE);
 			ins->inst_i0 = args [0];
 			return ins;
-		} else if (strcmp (cmethod->name, "InternalGetHashCode") == 0) {
-#ifdef MONO_ARCH_EMULATE_MUL_DIV
 		/* The OP_GETHASHCODE rule depends on OP_MUL */
-#else
+#if !defined(MONO_ARCH_EMULATE_MUL_DIV) && !defined(HAVE_MOVING_COLLECTOR)
+		} else if (strcmp (cmethod->name, "InternalGetHashCode") == 0) {
  			MONO_INST_NEW (cfg, ins, OP_GETHASHCODE);
 			ins->inst_i0 = args [0];
 			return ins;
@@ -3732,7 +3764,7 @@ can_access_internals (MonoAssembly *accessing, MonoAssembly* accessed)
 		if (friend->public_key_token [0]) {
 			if (!accessing->aname.public_key_token [0])
 				continue;
-			if (strcmp (friend->public_key_token, accessing->aname.public_key_token))
+			if (strcmp ((char*)friend->public_key_token, (char*)accessing->aname.public_key_token))
 				continue;
 		}
 		return TRUE;
@@ -11884,7 +11916,12 @@ mini_init (const char *filename)
 	if (getenv ("MONO_DEBUG") != NULL)
 		mini_parse_debug_options ();
 
-	/* we used to do this only when running on valgrind,
+	/*
+	 * Handle the case when we are called from a thread different from the main thread,
+	 * confusing libgc.
+	 * FIXME: Move this to libgc where it belongs.
+	 *
+	 * we used to do this only when running on valgrind,
 	 * but it happens also in other setups.
 	 */
 #if defined(HAVE_BOEHM_GC)
@@ -11896,7 +11933,14 @@ mini_init (const char *filename)
 		pthread_getattr_np (pthread_self (), &attr);
 		pthread_attr_getstack (&attr, &sstart, &size);
 		/*g_print ("stackbottom pth is: %p\n", (char*)sstart + size);*/
+#ifdef __ia64__
+		/*
+		 * The calculation above doesn't seem to work on ia64, also we need to set
+		 * GC_register_stackbottom as well, but don't know how.
+		 */
+#else
 		GC_stackbottom = (char*)sstart + size;
+#endif
 	}
 #elif defined(HAVE_PTHREAD_GET_STACKSIZE_NP) && defined(HAVE_PTHREAD_GET_STACKADDR_NP)
 		GC_stackbottom = (char*)pthread_get_stackaddr_np (pthread_self ());

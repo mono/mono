@@ -380,7 +380,7 @@ void mono_thread_create (MonoDomain *domain, gpointer func, gpointer arg)
 	thread->handle=thread_handle;
 	thread->tid=tid;
 
-	thread->synch_lock=mono_object_new (domain, mono_defaults.object_class);
+	MONO_OBJECT_SETREF (thread, synch_lock, mono_object_new (domain, mono_defaults.object_class));
 						  
 	handle_store(thread);
 
@@ -424,7 +424,7 @@ mono_thread_attach (MonoDomain *domain)
 
 	thread->handle=thread_handle;
 	thread->tid=tid;
-	thread->synch_lock=mono_object_new (domain, mono_defaults.object_class);
+	MONO_OBJECT_SETREF (thread, synch_lock, mono_object_new (domain, mono_defaults.object_class));
 
 	THREAD_DEBUG (g_message ("%s: Attached thread ID %"G_GSIZE_FORMAT" (handle %p)", __func__, tid, thread_handle));
 
@@ -503,7 +503,7 @@ HANDLE ves_icall_System_Threading_Thread_Thread_internal(MonoThread *this,
 		/* This is freed in start_wrapper */
 		start_info = g_new0 (struct StartInfo, 1);
 		start_info->func = start_func;
-		start_info->start_arg = this->start_obj;
+		start_info->start_arg = this->start_obj; /* FIXME: GC object stored in unmanaged memory */
 		start_info->delegate = start;
 		start_info->obj = this;
 		start_info->domain = mono_domain_get ();
@@ -682,9 +682,9 @@ ves_icall_System_Threading_Thread_GetSerializedCurrentCulture (MonoThread *this)
 	if (this->serialized_culture_info) {
 		res = mono_array_new (mono_domain_get (), mono_defaults.byte_class, this->serialized_culture_info_len);
 		memcpy (mono_array_addr (res, guint8, 0), this->serialized_culture_info, this->serialized_culture_info_len);
-	}
-	else
+	} else {
 		res = NULL;
+	}
 	mono_monitor_exit (this->synch_lock);
 
 	return res;
@@ -758,9 +758,9 @@ ves_icall_System_Threading_Thread_GetSerializedCurrentUICulture (MonoThread *thi
 	if (this->serialized_ui_culture_info) {
 		res = mono_array_new (mono_domain_get (), mono_defaults.byte_class, this->serialized_ui_culture_info_len);
 		memcpy (mono_array_addr (res, guint8, 0), this->serialized_ui_culture_info, this->serialized_ui_culture_info_len);
-	}
-	else
+	} else {
 		res = NULL;
+	}
 	mono_monitor_exit (this->synch_lock);
 
 	return res;
@@ -1554,7 +1554,7 @@ ves_icall_System_Threading_Thread_Abort (MonoThread *thread, MonoObject *state)
 	}
 
 	thread->state |= ThreadState_AbortRequested;
-	thread->abort_state = state;
+	MONO_OBJECT_SETREF (thread, abort_state, state);
 	thread->abort_exc = NULL;
 
 	mono_monitor_exit (thread->synch_lock);
@@ -2580,6 +2580,70 @@ mono_get_special_static_data (guint32 offset)
 	}
 }
 
+static MonoClassField *local_slots = NULL;
+
+typedef struct {
+	/* local tls data to get locals_slot from a thread */
+	guint32 offset;
+	int idx;
+	/* index in the locals_slot array */
+	int slot;
+} LocalSlotID;
+
+static void
+clear_local_slot (gpointer key, gpointer value, gpointer user_data)
+{
+	LocalSlotID *sid = user_data;
+	MonoThread *thread = (MonoThread*)value;
+	MonoArray *slots_array;
+	/*
+	 * the static field is stored at: ((char*) thread->static_data [idx]) + (offset & 0xffffff);
+	 * it is for the right domain, so we need to check if it is allocated an initialized
+	 * for the current thread.
+	 */
+	/*g_print ("handling thread %p\n", thread);*/
+	if (!thread->static_data || !thread->static_data [sid->idx])
+		return;
+	slots_array = *(MonoArray **)(((char*) thread->static_data [sid->idx]) + (sid->offset & 0xffffff));
+	if (!slots_array || sid->slot >= mono_array_length (slots_array))
+		return;
+	mono_array_set (slots_array, MonoObject*, sid->slot, NULL);
+}
+
+void
+mono_thread_free_local_slot_values (int slot, MonoBoolean thread_local)
+{
+	MonoDomain *domain;
+	LocalSlotID sid;
+	sid.slot = slot;
+	if (thread_local) {
+		void *addr = NULL;
+		if (!local_slots) {
+			local_slots = mono_class_get_field_from_name (mono_defaults.thread_class, "local_slots");
+			if (!local_slots) {
+				g_warning ("local_slots field not found in Thread class");
+				return;
+			}
+		}
+		domain = mono_domain_get ();
+		mono_domain_lock (domain);
+		if (domain->special_static_fields)
+			addr = g_hash_table_lookup (domain->special_static_fields, local_slots);
+		mono_domain_unlock (domain);
+		if (!addr)
+			return;
+		/*g_print ("freeing slot %d at %p\n", slot, addr);*/
+		sid.offset = GPOINTER_TO_UINT (addr);
+		sid.offset &= 0x7fffffff;
+		sid.idx = (sid.offset >> 24) - 1;
+		mono_threads_lock ();
+		mono_g_hash_table_foreach (threads, clear_local_slot, &sid);
+		mono_threads_unlock ();
+	} else {
+		/* FIXME: clear the slot for MonoAppContexts, too */
+	}
+}
+
 static void gc_stop_world (gpointer key, gpointer value, gpointer user)
 {
 	MonoThread *thread=(MonoThread *)value;
@@ -2662,7 +2726,7 @@ static MonoException* mono_thread_execute_interruption (MonoThread *thread)
 
 	if ((thread->state & ThreadState_AbortRequested) != 0) {
 		if (thread->abort_exc == NULL)
-			thread->abort_exc = mono_get_exception_thread_abort ();
+			MONO_OBJECT_SETREF (thread, abort_exc, mono_get_exception_thread_abort ());
 		mono_monitor_exit (thread->synch_lock);
 		return thread->abort_exc;
 	}

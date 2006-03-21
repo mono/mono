@@ -578,10 +578,6 @@ ves_icall_System_Array_FastCopy (MonoArray *source, int source_idx, MonoArray* d
 		(source_idx + length > mono_array_length (source)))
 		return FALSE;
 
-	element_size = mono_array_element_size (source->obj.vtable->klass);
-	dest_addr = mono_array_addr_with_size (dest, element_size, dest_idx);
-	source_addr = mono_array_addr_with_size (source, element_size, source_idx);
-
 	src_class = source->obj.vtable->klass->element_class;
 	dest_class = dest->obj.vtable->klass->element_class;
 
@@ -591,6 +587,7 @@ ves_icall_System_Array_FastCopy (MonoArray *source, int source_idx, MonoArray* d
 
 	/* Case1: object[] -> valuetype[] (ArrayList::ToArray) */
 	if (src_class == mono_defaults.object_class && dest_class->valuetype) {
+		int has_refs = dest_class->has_references;
 		for (i = source_idx; i < source_idx + length; ++i) {
 			MonoObject *elem = mono_array_get (source, MonoObject*, i);
 			if (elem && !mono_object_isinst (elem, dest_class))
@@ -598,11 +595,14 @@ ves_icall_System_Array_FastCopy (MonoArray *source, int source_idx, MonoArray* d
 		}
 
 		element_size = mono_array_element_size (dest->obj.vtable->klass);
+		memset (mono_array_addr_with_size (dest, element_size, dest_idx), 0, element_size * length);
 		for (i = 0; i < length; ++i) {
 			MonoObject *elem = mono_array_get (source, MonoObject*, source_idx + i);
 			void *addr = mono_array_addr_with_size (dest, element_size, dest_idx + i);
 			if (!elem)
-				memset (addr, 0, element_size);
+				continue;
+			if (has_refs)
+				mono_value_copy (addr, (char *)elem + sizeof (MonoObject), dest_class);
 			else
 				memcpy (addr, (char *)elem + sizeof (MonoObject), element_size);
 		}
@@ -627,7 +627,18 @@ ves_icall_System_Array_FastCopy (MonoArray *source, int source_idx, MonoArray* d
 			return FALSE;
 	}
 
-	memmove (dest_addr, source_addr, element_size * length);
+	if (dest_class->valuetype) {
+		element_size = mono_array_element_size (source->obj.vtable->klass);
+		source_addr = mono_array_addr_with_size (source, element_size, source_idx);
+		if (dest_class->has_references) {
+			mono_value_copy_array (dest, dest_idx, source_addr, length);
+		} else {
+			dest_addr = mono_array_addr_with_size (dest, element_size, dest_idx);
+			memmove (dest_addr, source_addr, element_size * length);
+		}
+	} else {
+		mono_array_memcpy_refs (dest, dest_idx, source, source_idx, length);
+	}
 
 	return TRUE;
 }
@@ -780,7 +791,7 @@ ves_icall_System_ValueType_InternalGetHashCode (MonoObject *this, MonoArray **fi
 	klass = mono_object_class (this);
 
 	if (mono_class_num_fields (klass) == 0)
-		return ves_icall_System_Object_GetHashCode (this);
+		return mono_object_hash (this);
 
 	/*
 	 * Compute the starting value of the hashcode for fields of primitive
@@ -814,11 +825,13 @@ ves_icall_System_ValueType_InternalGetHashCode (MonoObject *this, MonoArray **fi
 	}
 
 	if (values) {
+		int i;
 		*fields = mono_array_new (mono_domain_get (), mono_defaults.object_class, count);
-		memcpy (mono_array_addr (*fields, MonoObject*, 0), values, count * sizeof (MonoObject*));
-	}
-	else
+		for (i = 0; i < count; ++i)
+			mono_array_setref (*fields, i, values [i]);
+	} else {
 		*fields = NULL;
+	}
 	return result;
 }
 
@@ -889,13 +902,14 @@ ves_icall_System_ValueType_Equals (MonoObject *this, MonoObject *that, MonoArray
 	}
 
 	if (values) {
+		int i;
 		*fields = mono_array_new (mono_domain_get (), mono_defaults.object_class, count);
-		memcpy (mono_array_addr (*fields, MonoObject*, 0), values, count * sizeof (MonoObject*));
-
+		for (i = 0; i < count; ++i)
+			mono_array_setref (*fields, i, values [i]);
 		return FALSE;
-	}
-	else
+	} else {
 		return TRUE;
+	}
 }
 
 static MonoReflectionType *
@@ -1648,8 +1662,15 @@ ves_icall_Type_GetInterfaces (MonoReflectionType* type)
 	MonoClass *class = mono_class_from_mono_type (type->type);
 	MonoClass *parent;
 	MonoBitSet *slots;
+	MonoGenericContext *context = NULL;
 
 	MONO_ARCH_SAVE_REGS;
+
+	/* open generic-instance classes can share their interface_id */
+	if (class->generic_class && class->generic_class->inst->is_open) {
+		context = class->generic_class->context;
+		class = class->generic_class->container_class;
+	}
 
 	mono_class_setup_vtable (class);
 
@@ -1686,8 +1707,11 @@ ves_icall_Type_GetInterfaces (MonoReflectionType* type)
 	intf = mono_array_new (domain, mono_defaults.monotype_class, ifaces->len);
 	for (i = 0; i < ifaces->len; ++i) {
 		MonoClass *ic = g_ptr_array_index (ifaces, i);
+		MonoType *ret = &ic->byval_arg;
+		if (context && ic->generic_class && ic->generic_class->inst->is_open)
+			ret = mono_class_inflate_generic_type (ret, context);
 		
-		mono_array_setref (intf, i, mono_type_get_object (domain, &ic->byval_arg));
+		mono_array_setref (intf, i, mono_type_get_object (domain, ret));
 	}
 	g_ptr_array_free (ifaces, TRUE);
 
@@ -2488,8 +2512,8 @@ ves_icall_MonoMethod_GetDllImportAttribute (MonoMethod *method)
 	
 	attr = (MonoReflectionDllImportAttribute*)mono_object_new (domain, DllImportAttributeClass);
 
-	attr->dll = mono_string_new (domain, scope);
-	attr->entry_point = mono_string_new (domain, import);
+	MONO_OBJECT_SETREF (attr, dll, mono_string_new (domain, scope));
+	MONO_OBJECT_SETREF (attr, entry_point, mono_string_new (domain, import));
 	attr->call_conv = (flags & 0x700) >> 8;
 	attr->charset = ((flags & 0x6) >> 1) + 1;
 	if (attr->charset == 1)
@@ -3858,7 +3882,7 @@ ves_icall_System_Reflection_Assembly_GetReferencedAssemblies (MonoReflectionAsse
 		aname = (MonoReflectionAssemblyName *) mono_object_new (
 			domain, System_Reflection_AssemblyName);
 
-		aname->name = mono_string_new (domain, mono_metadata_string_heap (image, cols [MONO_ASSEMBLYREF_NAME]));
+		MONO_OBJECT_SETREF (aname, name, mono_string_new (domain, mono_metadata_string_heap (image, cols [MONO_ASSEMBLYREF_NAME])));
 
 		aname->major = cols [MONO_ASSEMBLYREF_MAJOR_VERSION];
 		aname->minor = cols [MONO_ASSEMBLYREF_MINOR_VERSION];
@@ -3867,12 +3891,12 @@ ves_icall_System_Reflection_Assembly_GetReferencedAssemblies (MonoReflectionAsse
 		aname->flags = cols [MONO_ASSEMBLYREF_FLAGS];
 		aname->versioncompat = 1; /* SameMachine (default) */
 		aname->hashalg = ASSEMBLY_HASH_SHA1; /* SHA1 (default) */
-		aname->version = create_version (domain, aname->major, aname->minor, aname->build, aname->revision);
+		MONO_OBJECT_SETREF (aname, version, create_version (domain, aname->major, aname->minor, aname->build, aname->revision));
 
 		if (create_culture) {
 			gpointer args [1];
 			args [0] = mono_string_new (domain, mono_metadata_string_heap (image, cols [MONO_ASSEMBLYREF_CULTURE]));
-			aname->cultureInfo = mono_runtime_invoke (create_culture, NULL, args, NULL);
+			MONO_OBJECT_SETREF (aname, cultureInfo, mono_runtime_invoke (create_culture, NULL, args, NULL));
 		}
 		
 		if (cols [MONO_ASSEMBLYREF_PUBLIC_KEY]) {
@@ -3882,10 +3906,10 @@ ves_icall_System_Reflection_Assembly_GetReferencedAssemblies (MonoReflectionAsse
 			if ((cols [MONO_ASSEMBLYREF_FLAGS] & ASSEMBLYREF_FULL_PUBLIC_KEY_FLAG)) {
 				/* public key token isn't copied - the class library will 
 		   		automatically generate it from the public key if required */
-				aname->publicKey = mono_array_new (domain, mono_defaults.byte_class, pkey_len);
+				MONO_OBJECT_SETREF (aname, publicKey, mono_array_new (domain, mono_defaults.byte_class, pkey_len));
 				memcpy (mono_array_addr (aname->publicKey, guint8, 0), pkey_ptr, pkey_len);
 			} else {
-				aname->keyToken = mono_array_new (domain, mono_defaults.byte_class, pkey_len);
+				MONO_OBJECT_SETREF (aname, keyToken, mono_array_new (domain, mono_defaults.byte_class, pkey_len));
 				memcpy (mono_array_addr (aname->keyToken, guint8, 0), pkey_ptr, pkey_len);
 			}
 		}
@@ -4023,7 +4047,7 @@ ves_icall_System_Reflection_Assembly_GetManifestResourceInfoInternal (MonoReflec
 			table = &assembly->assembly->image->tables [MONO_TABLE_FILE];
 			mono_metadata_decode_row (table, i - 1, file_cols, MONO_FILE_SIZE);
 			val = mono_metadata_string_heap (assembly->assembly->image, file_cols [MONO_FILE_NAME]);
-			info->filename = mono_string_new (mono_object_domain (assembly), val);
+			MONO_OBJECT_SETREF (info, filename, mono_string_new (mono_object_domain (assembly), val));
 			if (file_cols [MONO_FILE_FLAGS] && FILE_CONTAINS_NO_METADATA)
 				info->location = 0;
 			else
@@ -4039,7 +4063,7 @@ ves_icall_System_Reflection_Assembly_GetManifestResourceInfoInternal (MonoReflec
 				g_free (msg);
 				mono_raise_exception (ex);
 			}
-			info->assembly = mono_assembly_get_object (mono_domain_get (), assembly->assembly->image->references [i - 1]);
+			MONO_OBJECT_SETREF (info, assembly, mono_assembly_get_object (mono_domain_get (), assembly->assembly->image->references [i - 1]));
 
 			/* Obtain info recursively */
 			ves_icall_System_Reflection_Assembly_GetManifestResourceInfoInternal (info->assembly, name, info);
@@ -4269,18 +4293,18 @@ fill_reflection_assembly_name (MonoDomain *domain, MonoReflectionAssemblyName *a
 
 	MONO_ARCH_SAVE_REGS;
 
-	aname->name = mono_string_new (domain, name->name);
+	MONO_OBJECT_SETREF (aname, name, mono_string_new (domain, name->name));
 	aname->major = name->major;
 	aname->minor = name->minor;
 	aname->build = name->build;
 	aname->revision = name->revision;
 	aname->hashalg = name->hash_alg;
 	if (by_default_version)
-		aname->version = create_version (domain, name->major, name->minor, name->build, name->revision);
+		MONO_OBJECT_SETREF (aname, version, create_version (domain, name->major, name->minor, name->build, name->revision));
 	
 	codebase = g_filename_to_uri (absolute, NULL, NULL);
 	if (codebase) {
-		aname->codebase = mono_string_new (domain, codebase);
+		MONO_OBJECT_SETREF (aname, codebase, mono_string_new (domain, codebase));
 		g_free (codebase);
 	}
 
@@ -4293,14 +4317,14 @@ fill_reflection_assembly_name (MonoDomain *domain, MonoReflectionAssemblyName *a
 
 	if (name->culture) {
 		args [0] = mono_string_new (domain, name->culture);
-		aname->cultureInfo = mono_runtime_invoke (create_culture, NULL, args, NULL);
+		MONO_OBJECT_SETREF (aname, cultureInfo, mono_runtime_invoke (create_culture, NULL, args, NULL));
 	}
 
 	if (name->public_key) {
 		pkey_ptr = (char*)name->public_key;
 		pkey_len = mono_metadata_decode_blob_size (pkey_ptr, &pkey_ptr);
 
-		aname->publicKey = mono_array_new (domain, mono_defaults.byte_class, pkey_len);
+		MONO_OBJECT_SETREF (aname, publicKey, mono_array_new (domain, mono_defaults.byte_class, pkey_len));
 		memcpy (mono_array_addr (aname->publicKey, guint8, 0), pkey_ptr, pkey_len);
 	}
 
@@ -4309,7 +4333,7 @@ fill_reflection_assembly_name (MonoDomain *domain, MonoReflectionAssemblyName *a
 		int i, j;
 		char *p;
 
-		aname->keyToken = mono_array_new (domain, mono_defaults.byte_class, 8);
+		MONO_OBJECT_SETREF (aname, keyToken, mono_array_new (domain, mono_defaults.byte_class, 8));
 		p = mono_array_addr (aname->keyToken, char, 0);
 
 		for (i = 0, j = 0; i < 8; i++) {
@@ -4463,12 +4487,8 @@ ves_icall_System_Reflection_Assembly_GetTypes (MonoReflectionAssembly *assembly,
 					len2 = mono_array_length (append);
 					new = mono_array_new (domain, mono_defaults.monotype_class, len1 + len2);
 					if (res)
-						memcpy (mono_array_addr (new, MonoReflectionType*, 0),
-								mono_array_addr (res, MonoReflectionType*, 0),
-								len1 * sizeof (MonoReflectionType*));
-					memcpy (mono_array_addr (new, MonoReflectionType*, len1),
-							mono_array_addr (append, MonoReflectionType*, 0),
-							len2 * sizeof (MonoReflectionType*));
+						mono_array_memcpy_refs (new, 0, res, 0, len1);
+					mono_array_memcpy_refs (new, len1, append, 0, len2);
 					res = new;
 				}
 			}
@@ -4497,12 +4517,8 @@ ves_icall_System_Reflection_Assembly_GetTypes (MonoReflectionAssembly *assembly,
 					len2 = mono_array_length (append);
 					new = mono_array_new (domain, mono_defaults.monotype_class, len1 + len2);
 					if (res)
-						memcpy (mono_array_addr (new, MonoReflectionType*, 0),
-								mono_array_addr (res, MonoReflectionType*, 0),
-								len1 * sizeof (MonoReflectionType*));
-					memcpy (mono_array_addr (new, MonoReflectionType*, len1),
-							mono_array_addr (append, MonoReflectionType*, 0),
-							len2 * sizeof (MonoReflectionType*));
+						mono_array_memcpy_refs (new, 0, res, 0, len1);
+					mono_array_memcpy_refs (new, len1, append, 0, len2);
 					res = new;
 				}
 			}
@@ -4529,12 +4545,8 @@ ves_icall_System_Reflection_Assembly_GetTypes (MonoReflectionAssembly *assembly,
 					len1 = mono_array_length (res);
 					len2 = mono_array_length (res2);
 					res3 = mono_array_new (domain, mono_defaults.monotype_class, len1 + len2);
-					memcpy (mono_array_addr (res3, MonoReflectionType*, 0),
-							mono_array_addr (res, MonoReflectionType*, 0),
-							len1 * sizeof (MonoReflectionType*));
-					memcpy (mono_array_addr (res3, MonoReflectionType*, len1),
-							mono_array_addr (res2, MonoReflectionType*, 0),
-							len2 * sizeof (MonoReflectionType*));
+					mono_array_memcpy_refs (res3, 0, res, 0, len1);
+					mono_array_memcpy_refs (res3, len1, res2, 0, len2);
 					res = res3;
 				}
 			}
@@ -5378,7 +5390,7 @@ ves_icall_Remoting_RealProxy_GetTransparentProxy (MonoObject *this, MonoString *
 	res = mono_object_new (domain, mono_defaults.transparent_proxy_class);
 	tp = (MonoTransparentProxy*) res;
 	
-	tp->rp = rp;
+	MONO_OBJECT_SETREF (tp, rp, rp);
 	type = ((MonoReflectionType *)rp->class_to_proxy)->type;
 	klass = mono_class_from_mono_type (type);
 
@@ -6782,7 +6794,7 @@ static const IcallEntry socketex_icalls [] = {
 
 static const IcallEntry object_icalls [] = {
 	{"GetType", ves_icall_System_Object_GetType},
-	{"InternalGetHashCode", ves_icall_System_Object_GetHashCode},
+	{"InternalGetHashCode", mono_object_hash},
 	{"MemberwiseClone", ves_icall_System_Object_MemberwiseClone},
 	{"obj_address", ves_icall_System_Object_obj_address}
 };
@@ -7015,6 +7027,7 @@ static const IcallEntry thread_icalls [] = {
 	{"Abort_internal(object)", ves_icall_System_Threading_Thread_Abort},
 	{"ClrState", ves_icall_System_Threading_Thread_ClrState},
 	{"CurrentThread_internal", mono_thread_current},
+	{"FreeLocalSlotValues", mono_thread_free_local_slot_values},
 	{"GetCachedCurrentCulture", ves_icall_System_Threading_Thread_GetCachedCurrentCulture},
 	{"GetCachedCurrentUICulture", ves_icall_System_Threading_Thread_GetCachedCurrentUICulture},
 	{"GetDomainID", ves_icall_System_Threading_Thread_GetDomainID},

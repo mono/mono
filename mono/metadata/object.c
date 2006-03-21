@@ -2084,10 +2084,10 @@ mono_runtime_exec_main (MonoMethod *method, MonoArray *args, MonoObject **exc)
 
 		assembly = method->klass->image->assembly;
 		domain->entry_assembly = assembly;
-		domain->setup->application_base = mono_string_new (domain, assembly->basedir);
+		MONO_OBJECT_SETREF (domain->setup, application_base, mono_string_new (domain, assembly->basedir));
 
 		str = g_strconcat (assembly->image->name, ".config", NULL);
-		domain->setup->configuration_file = mono_string_new (domain, str);
+		MONO_OBJECT_SETREF (domain->setup, configuration_file, mono_string_new (domain, str));
 		g_free (str);
 	}
 
@@ -2951,6 +2951,41 @@ mono_value_box (MonoDomain *domain, MonoClass *class, gpointer value)
 	return res;
 }
 
+/*
+ * mono_value_copy:
+ * @dest: destination pointer
+ * @src: source pointer
+ * @klass: a valuetype class
+ *
+ * Copy a valuetype from @src to @dest. This function must be used
+ * when @klass contains references fields.
+ */
+void
+mono_value_copy (gpointer dest, gpointer src, MonoClass *klass)
+{
+	int size = mono_class_value_size (klass, NULL);
+	memcpy (dest, src, size);
+}
+
+/*
+ * mono_value_copy_array:
+ * @dest: destination array
+ * @dest_idx: index in the @dest array
+ * @src: source pointer
+ * @count: number of items
+ *
+ * Copy @count valuetype items from @src to @dest. This function must be used
+ * when @klass contains references fields.
+ * Overlap is handled.
+ */
+void
+mono_value_copy_array (MonoArray *dest, int dest_idx, gpointer src, int count)
+{
+	int size = mono_array_element_size (dest->obj.vtable->klass);
+	char *d = mono_array_addr_with_size (dest, size, dest_idx);
+	memmove (d, src, size * count);
+}
+
 /**
  * mono_object_get_domain:
  * @obj: object to query
@@ -3365,7 +3400,7 @@ mono_raise_exception (MonoException *ex)
 	 */
 
 	if (((MonoObject*)ex)->vtable->klass == mono_defaults.threadabortexception_class)
-		mono_thread_current ()->abort_exc = ex;
+		MONO_OBJECT_SETREF (mono_thread_current (), abort_exc, ex);
 	
 	ex_handler (ex);
 }
@@ -3408,14 +3443,14 @@ mono_async_result_new (MonoDomain *domain, HANDLE handle, MonoObject *state, gpo
 
 	/* we must capture the execution context from the original thread */
 	if (method) {
-		res->execution_context = mono_runtime_invoke (method, NULL, NULL, NULL);
+		MONO_OBJECT_SETREF (res, execution_context, mono_runtime_invoke (method, NULL, NULL, NULL));
 		/* note: result may be null if the flow is suppressed */
 	}
 
 	res->data = data;
-	res->async_state = state;
+	MONO_OBJECT_SETREF (res, async_state, state);
 	if (handle != NULL)
-		res->handle = (MonoObject *) mono_wait_handle_new (domain, handle);
+		MONO_OBJECT_SETREF (res, handle, (MonoObject *) mono_wait_handle_new (domain, handle));
 
 	res->sync_completed = FALSE;
 	res->completed = FALSE;
@@ -3435,16 +3470,16 @@ mono_message_init (MonoDomain *domain,
 	char **names;
 	guint8 arg_type;
 
-	this->method = method;
+	MONO_OBJECT_SETREF (this, method, method);
 
-	this->args = mono_array_new (domain, mono_defaults.object_class, sig->param_count);
-	this->arg_types = mono_array_new (domain, mono_defaults.byte_class, sig->param_count);
+	MONO_OBJECT_SETREF (this, args, mono_array_new (domain, mono_defaults.object_class, sig->param_count));
+	MONO_OBJECT_SETREF (this, arg_types, mono_array_new (domain, mono_defaults.byte_class, sig->param_count));
 	this->async_result = NULL;
 	this->call_type = CallType_Sync;
 
 	names = g_new (char *, sig->param_count);
 	mono_method_get_param_names (method->method, (const char **) names);
-	this->names = mono_array_new (domain, mono_defaults.string_class, sig->param_count);
+	MONO_OBJECT_SETREF (this, names, mono_array_new (domain, mono_defaults.string_class, sig->param_count));
 	
 	for (i = 0; i < sig->param_count; i++) {
 		 name = mono_string_new (domain, names [i]);
@@ -3538,6 +3573,7 @@ mono_message_invoke (MonoObject *target, MonoMethodMessage *msg,
 			outarg_count++;
 	}
 
+	/* FIXME: GC ensure we insert a write barrier for out_args, maybe in the caller? */
 	*out_args = mono_array_new (domain, mono_defaults.object_class, outarg_count);
 	*exc = NULL;
 
@@ -3623,18 +3659,18 @@ mono_delegate_ctor (MonoObject *this, MonoObject *target, gpointer addr)
 
 	if ((ji = mono_jit_info_table_find (domain, mono_get_addr_from_ftnptr (addr)))) {
 		method = ji->method;
-		delegate->method_info = mono_method_get_object (domain, method, NULL);
+		MONO_OBJECT_SETREF (delegate, method_info, mono_method_get_object (domain, method, NULL));
 	}
 
 	if (target && target->vtable->klass == mono_defaults.transparent_proxy_class) {
 		g_assert (method);
 		method = mono_marshal_get_remoting_invoke (method);
 		delegate->method_ptr = mono_compile_method (method);
-		delegate->target = target;
+		MONO_OBJECT_SETREF (delegate, target, target);
 	} else if (mono_method_signature (method)->hasthis && method->klass->valuetype) {
 		method = mono_marshal_get_unbox_wrapper (method);
 		delegate->method_ptr = mono_compile_method (method);
-		delegate->target = target;
+		MONO_OBJECT_SETREF (delegate, target, target);
 	} else {
 		if (method) {
 			/* 
@@ -3645,7 +3681,7 @@ mono_delegate_ctor (MonoObject *this, MonoObject *target, gpointer addr)
 			addr = arch_create_delegate_trampoline (method, addr);
 		}
 		delegate->method_ptr = addr;
-		delegate->target = target;
+		MONO_OBJECT_SETREF (delegate, target, target);
 	}
 }
 
@@ -3830,7 +3866,7 @@ mono_load_remote_field (MonoObject *this, MonoClass *klass, MonoClassField *fiel
 	if (mono_array_length (out_args) == 0)
 		return NULL;
 
-	*res = mono_array_get (out_args, MonoObject *, 0);
+	*res = mono_array_get (out_args, MonoObject *, 0); /* FIXME: GC write abrrier for res */
 
 	if (field_class->valuetype) {
 		return ((char *)*res) + sizeof (MonoObject);

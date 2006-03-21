@@ -1,3 +1,41 @@
+
+Tue Mar 21 17:19:37 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* class.c, image.c, metadata-internals.h: implemented new mechanism to
+	allocate interface ID to save memory and allow better ID reuse on
+	appdomain unload. setup_generic_vtable () removal from Martin.
+
+Tue Mar 21 15:54:30 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* object.h, appdomain.c, domain.c, exception.c, icall.c,
+	locales.c, marshal.c, object.c, reflection.c, threadpool.c,
+	threads.c: introduced MONO_OBJECT_SETREF() macro to be able to insert
+	write barriers for reference stores with managed objects accessed with
+	C structures in the runtime and in embedding programs.
+
+2006-03-20  Raja R Harinath  <rharinath@novell.com>
+
+	* icall.c (ves_icall_Type_GetInterfaces): Avoid using
+	'interface_id' and 'max_interface_id' fields of MonoClasses
+	representing open generic types.
+
+Fri Mar 17 18:06:06 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* object.h, object.c, icall.c: added functions to deal with
+	storing valuetypes that contain references in managed objects.
+	* reflection.c, string-icalls.c, threads.c, marshal.c: small
+	fixes and comments around uses of mono_array_addr ().
+
+Thu Mar 16 17:16:45 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* object.h, icall.c, monitor.c: object.GetHashCode ()
+	implementation that supports the moving garbage collector.
+
+Wed Mar 15 16:31:38 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c, threads-types.h, threads.c: implemented finalizer for
+	LocalDataStoreSlot.
+
 2006-03-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* metadata.c (mono_type_size): Add a fixme.

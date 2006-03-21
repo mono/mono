@@ -1,3 +1,78 @@
+Tue Mar 21 15:59:57 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* declsec.c, mini-exceptions.c: use write barrier to set reference
+	fields of managed objects.
+
+2006-03-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_print_method_from_ip): Recognize JIT trampolines as well.
+	(can_access_internals): Fix a warning.
+
+	* mini.c (print_method_from_ip): Rename this to 
+	mono_print_method_from_ip so it gets exported.
+
+	* trace.c: Deal with strings inside StringBuilder's containing garbage
+	and fix memory leaks. Fixes #77848.
+
+2006-03-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_init): Disable the setting of GC_stackbottom on ia64. Hopefully
+	fixes #77787.
+
+2006-03-16 Neale Ferguson <neale@sinenomine.net>
+	
+	* mini-s390.c: Remove OP_X86_TEST_NULL.
+
+Thu Mar 16 17:19:04 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: use the correct GetHashCode() for the moving collector.
+
+2006-03-16  Massimiliano Mantione  <massi@ximian.com>
+
+        * liveness.c: Regalloc spill cost tuning.
+
+2006-03-15 Neale Ferguson <neale@sinenomine.net>
+	
+	* mini-s390x.h: Correct S390_LONG macro.
+
+	* mini-s390x.c: Cleanup unused code.
+
+2006-03-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* jit-icalls.h: New file.
+
+	* Makefile.am mini.c jit-icalls.c: Use a proper include file for the jit
+	icalls and include that instead of including jit-icalls.c.
+
+	* mini-ppc.c (mono_arch_output_basic_block): Remove references to
+	OP_X86 opcodes.
+
+Tue Mar 14 20:23:53 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: when checking for member accessibility, also check for
+	friend assemblies and for explicit interface implementations.
+
+2006-03-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-codegen.c (mono_local_regalloc): Remove incorrect g_free () calls.
+
+	* cpu-arm.md cpu-g4.md: Remove x86_ opcodes.
+
+	* mini-x86.h (MONO_ARCH_INST_FIXED_REG): Reorganize the comparisons so
+	common cases are done first.	
+
+	* mini-ops.h: Only define platform specific opcodes on the given platform.
+
+	* mini.h regalloc.h mini-codegen.c: Merge optimizations from the linear-il
+	branch.
+	
+2006-03-14  Martin Baulig  <martin@ximian.com>
+
+	Revert Paolo's change from r57348:
+
+	* mini.h: don't use gboolean for bitfields.
+	* mini.c: verifier changes for fields and methods accessibility.
+
 2006-03-13  Neale Ferguson <neale@sinenomine.net>
 
 	* mini-s390.h: Fix calls to mono_call_inst_add_outarg_reg.

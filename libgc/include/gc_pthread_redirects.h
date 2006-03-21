@@ -46,7 +46,7 @@
 #endif /* SOLARIS_THREADS || SOLARIS_PTHREADS */
 
 
-#if !defined(GC_USE_LD_WRAP) && defined(GC_PTHREADS) && !defined(GC_SOLARIS_PTHREADS)
+#if !defined(GC_USE_LD_WRAP) && (defined(GC_PTHREADS) || defined(GC_DARWIN_THREADS) || defined(GC_MACOSX_THREADS)) && !defined(GC_SOLARIS_PTHREADS)
 /* We treat these similarly. */
 # include <pthread.h>
 # include <signal.h>

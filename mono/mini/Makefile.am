@@ -171,11 +171,11 @@ ia64_sources = \
 	mini-trampolines.c
 
 common_sources = \
+	mini.h		\
 	mini.c		\
 	method-to-ir.c \
 	jit-icalls.h \
 	jit-icalls.c \
-	mini.h		\
 	trace.c		\
 	trace.h		\
 	mini-ops.h	\
@@ -435,7 +435,7 @@ BUILT_SOURCES= inssel.c inssel.h $(arch_built)
 endif
 
 CLEANFILES= $(BUILT_SOURCES) *.exe *.dll
-EXTRA_DIST = $(common_BURGSRC) cprop.c TestDriver.cs ldscript ldscript.mono
+EXTRA_DIST = $(common_BURGSRC) cprop.c TestDriver.cs ldscript ldscript.mono \
 	$(test_sources) $(test_sources2) \
 	inssel-long.brg inssel-long32.brg \
 	$(x86_sources) inssel-x86.brg cpu-pentium.md \

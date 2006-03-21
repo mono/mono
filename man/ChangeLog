@@ -1,3 +1,8 @@
+2006-03-15  Miguel de Icaza  <miguel@novell.com>
+
+	* mono.1: Document MONO_XEXCEPTIONS and MONO_XSYNC, create new
+	section, sort the previous enviornment section.
+
 2006-03-06  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* mono.1: Updated MONO_XMLSERIALIZER_THS option information.
