@@ -739,6 +739,11 @@ namespace System.Drawing
 		[DllImport("gdiplus.dll")]                   
 		internal static extern Status GdipFlush(IntPtr graphics, FlushIntention intention);
 
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipAddString (IntPtr graphics, string s, int len, IntPtr font, int style, float size, ref RectangleF layout, IntPtr format);
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipAddStringI (IntPtr graphics, string s, int len, IntPtr font, int style, float size, ref Rectangle layout, IntPtr format);
+
 				
 		// Pen functions
 		[DllImport("gdiplus.dll")]

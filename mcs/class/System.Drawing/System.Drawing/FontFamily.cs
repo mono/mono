@@ -37,9 +37,9 @@ namespace System.Drawing {
 	public sealed class FontFamily : MarshalByRefObject, IDisposable 
 	{
 		
-		static private FontFamily genericMonospace = null;
-		static private FontFamily genericSansSerif = null;
-		static private FontFamily genericSerif = null;
+		static private FontFamily genericMonospace;
+		static private FontFamily genericSansSerif;
+		static private FontFamily genericSerif;
 		private string name;
 		internal IntPtr nativeFontFamily = IntPtr.Zero;
 				

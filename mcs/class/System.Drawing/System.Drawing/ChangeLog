@@ -1,3 +1,9 @@
+2006-03-21  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* Brush.cs: Remove unused code.
+	* FontFamily.cs: Remove warnings from build.
+	* gdipFunctions.cs: Add missing p/invoke calls for GdipAddString[I].
+
 2006-03-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* gdipFunctions.cs: Import XFree (from libX11) so we can free the 
