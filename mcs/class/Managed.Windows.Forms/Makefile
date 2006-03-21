@@ -16,7 +16,8 @@ LIB_MCS_FLAGS = /unsafe \
 RESX_RESOURCES = \
 	resources/System.Windows.Forms.resources \
 	resources/System.Windows.Forms.en.resources \
-	resources/System.Windows.Forms.de.resources
+	resources/System.Windows.Forms.de.resources \
+	resources/keyboards.resources
 
 CUR_RESOURCES = \
 	resources/SplitterNS.cur \
