@@ -1,3 +1,9 @@
+2006-03-21  Jackson Harper  <jackson@ximian.com>
+
+	* X11Keyboard.cs: improved layout detection. Move the nonchar
+	tables into this file.
+	* KeyboardLayouts.cs: Move the tables into resource files.
+
 2006-03-21  Mike Kestner  <mkestner@novell.com>
 
 	* ListView.cs: use OnItemActivated to raise events. Fixes #77834.

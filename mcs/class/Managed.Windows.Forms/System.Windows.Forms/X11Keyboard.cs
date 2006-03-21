@@ -33,6 +33,7 @@
 using System;
 using System.Collections;
 using System.Text;
+using System.Globalization;
 using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
@@ -48,7 +49,7 @@ namespace System.Windows.Forms {
 		private int [] keyc2scan = new int [256];
 		private byte [] key_state_table = new byte [256];
 		private bool num_state, cap_state;
-		private KeyboardLayout layout = KeyboardLayouts.Layouts [0];
+		private KeyboardLayout layout;
 
 		// TODO
 		private int NumLockMask;
@@ -59,8 +60,11 @@ namespace System.Windows.Forms {
 			this.display = display;
 			lookup_buffer = new StringBuilder (24);
 
-			DetectLayout ();
-			CreateConversionArray (layout);
+			KeyboardLayouts layouts = new KeyboardLayouts ();
+			layout = layouts.Layouts [0];
+			DetectLayout (layouts);
+			CreateConversionArray (layouts, layout);
+
 			if (!XSupportsLocale ()) {
 				Console.Error.WriteLine ("X does not support your locale");
 			}
@@ -278,7 +282,7 @@ namespace System.Windows.Forms {
 				if (dead_char != 0) {
 					byte [] bytes = new byte [1];
 					bytes [0] = (byte) dead_char;
-					Encoding encoding = Encoding.GetEncoding (layout.CodePage);
+					Encoding encoding = Encoding.GetEncoding (new CultureInfo (layout.Lcid).TextInfo.ANSICodePage);
 					buffer = new string (encoding.GetChars (bytes));
 					res = -1;
 				}
@@ -413,16 +417,16 @@ namespace System.Windows.Forms {
 					&& ((e.KeyEvent.state & NumLockMask) !=0)) {
 				// Only the Keypad keys 0-9 and . send different keysyms
 				// depending on the NumLock state
-				return KeyboardLayouts.nonchar_key_vkey [keysym & 0xFF];
+				return nonchar_key_vkey [keysym & 0xFF];
 			}
 
 			return keyc2vkey [e.KeyEvent.keycode];
 		}
 
-		public void CreateConversionArray (KeyboardLayout layout)
+		public void CreateConversionArray (KeyboardLayouts layouts, KeyboardLayout layout)
 		{
 			XEvent e2 = new XEvent ();
-			int keysym = 0;
+			uint keysym = 0;
 			int [] ckey = new int [] { 0, 0, 0, 0 };
 
 			e2.KeyEvent.display = display;
@@ -438,11 +442,11 @@ namespace System.Windows.Forms {
 				IntPtr status;
 				LookupString (ref e2, 0, out t, out status);
 
-				keysym = (int) t;
+				keysym = (uint) t;
 				if (keysym != 0) {
 					if ((keysym >> 8) == 0xFF) {
-						vkey = KeyboardLayouts.nonchar_key_vkey [keysym & 0xFF];
-						scan = KeyboardLayouts.nonchar_key_scan [keysym & 0xFF];
+						vkey = nonchar_key_vkey [keysym & 0xFF];
+						scan = nonchar_key_scan [keysym & 0xFF];
 						// Set extended bit
 						if ((scan & 0x100) != 0)
 							vkey |= 0x100;
@@ -453,21 +457,21 @@ namespace System.Windows.Forms {
 						// Search layout dependent scancodes
 						int maxlen = 0;
 						int maxval = -1;;
-						int ok;
 						
 						for (int i = 0; i < syms; i++) {
-							keysym = (int) XKeycodeToKeysym (display, keyc, i);
+							keysym = XKeycodeToKeysym (display, keyc, i);
 							if ((keysym < 0x800) && (keysym != ' '))
-								ckey [i] = keysym & 0xFF;
+								ckey [i] = (sbyte) (keysym & 0xFF);
 							else
-								ckey [i] = MapDeadKeySym (keysym);
+								ckey [i] = (sbyte) MapDeadKeySym ((int) keysym);
 						}
 						
-						for (int keyn = 0; keyn < layout.Key.Length; keyn++) {
-							int i = 0;
-							int ml = (layout.Key [keyn].Length > 4 ? 4 : layout.Key [keyn].Length);
-							for (ok = layout.Key [keyn][i]; (ok != 0) && (i < ml); i++) {
-								if (layout.Key [keyn][i] != ckey [i])
+						for (int keyn = 0; keyn < layout.Keys.Length; keyn++) {
+							int ml = Math.Min (layout.Keys [keyn].Length, 4);
+							int ok = -1;
+							for (int i = 0; (ok != 0) && (i < ml); i++) {
+								sbyte ck = (sbyte) layout.Keys [keyn][i];
+								if (ck != ckey [i])
 									ok = 0;
 								if ((ok != 0) || (i > maxlen)) {
 									maxlen = i;
@@ -478,76 +482,12 @@ namespace System.Windows.Forms {
 							}
 						}
 						if (maxval >= 0) {
-							scan = layout.Scan [maxval];
-							vkey = (int) layout.VKey [maxval];
+							/// XXX
+							scan = layouts.scan_table [(int) layout.ScanIndex][maxval];
+							vkey = layouts.vkey_table [(int) layout.VKeyIndex][maxval];
 						}
 						
 					}
-
-#if NO
-					for (int i = 0; (i < keysyms_per_keycode) && (vkey == 0); i++) {
-						keysym = (int) XLookupKeysym (ref e2, i);
-						if ((keysym >= (int) VirtualKeys.VK_0 && keysym <= (int) VirtualKeys.VK_9) ||
-								(keysym >= (int) VirtualKeys.VK_A && keysym <= (int) VirtualKeys.VK_Z)) {
-							vkey = keysym;
-						}
-					}
-
-					for (int i = 0; (i < keysyms_per_keycode) && (vkey == 0); i++) {
-						keysym = (int) XLookupKeysym (ref e2, i);
-						switch ((char) keysym) {
-						case ';':
-							vkey = (int) VirtualKeys.VK_OEM_1;
-							break;
-						case '/':
-							vkey = (int) VirtualKeys.VK_OEM_2;
-							break;
-						case '`':
-							vkey = (int) VirtualKeys.VK_OEM_3;
-							break;
-						case '[':
-							vkey = (int) VirtualKeys.VK_OEM_4;
-							break;
-						case '\\':
-							vkey = (int) VirtualKeys.VK_OEM_5;
-							break;
-						case ']':
-							vkey = (int) VirtualKeys.VK_OEM_6;
-							break;
-						case '\'':
-							vkey = (int) VirtualKeys.VK_OEM_7;
-							break;
-						case ',':
-							vkey = (int) VirtualKeys.VK_OEM_COMMA;
-							break;
-						case '.':
-							vkey = (int) VirtualKeys.VK_OEM_PERIOD;
-							break;
-						case '-':
-							vkey = (int) VirtualKeys.VK_OEM_MINUS;
-							break;
-						case '+':
-							vkey = (int) VirtualKeys.VK_OEM_PLUS;
-							break;
-
-						}
-					}
-
-					if (vkey == 0) {
-						switch (++oem_vkey) {
-						case 0xc1:
-							oem_vkey = 0xDB;
-							break;
-						case 0xE5:
-							oem_vkey = 0xE9;
-							break;
-						case 0xF6:
-							oem_vkey = 0xF5;
-							break;
-						}
-						vkey = oem_vkey;
-					}
-#endif	
 				}
 				keyc2vkey [e2.KeyEvent.keycode] = vkey;
 				keyc2scan [e2.KeyEvent.keycode] = scan;
@@ -556,7 +496,7 @@ namespace System.Windows.Forms {
 			
 		}
 
-		public void DetectLayout ()
+		public void DetectLayout (KeyboardLayouts layouts)
 		{
 			XDisplayKeycodes (display, out min_keycode, out max_keycode);
 			IntPtr ksp = XGetKeyboardMapping (display, (byte) min_keycode,
@@ -594,52 +534,56 @@ namespace System.Windows.Forms {
 			int max_score = 0;
 			int max_seq = 0;
 			
-			foreach (KeyboardLayout current in KeyboardLayouts.Layouts) {
+			foreach (KeyboardLayout current in layouts.Layouts) {
 				int ok = 0;
 				int score = 0;
 				int match = 0;
+				int mismatch = 0;
 				int seq = 0;
 				int pkey = -1;
 				int key = min_keycode;
+				int i;
 
 				for (int keyc = min_keycode; keyc <= max_keycode; keyc++) {
-					for (int i = 0; i < syms; i++) {
-						int keysym = (int) XKeycodeToKeysym (display, keyc, i);
+					for (i = 0; i < syms; i++) {
+						uint keysym = XKeycodeToKeysym (display, keyc, i);
 						
-						if ((keysym != 0xFF1B) && (keysym < 0x800) && (keysym != ' ')) {
-							ckey [i] = keysym & 0xFF;
+						if ((keysym < 0x800) && (keysym != ' ')) {
+							ckey [i] = (sbyte) (keysym & 0xFF);
 						} else {
-							ckey [i] = MapDeadKeySym (keysym);
+							ckey [i] = (sbyte) MapDeadKeySym ((int) keysym);
 						}
 					}
 					if (ckey [0] != 0) {
-
-						for (key = 0; key < current.Key.Length; key++) {
-							ok = 0;
-							int ml = (current.Key [key].Length > syms ? syms : current.Key [key].Length);
-							for (int i = 0; (ok >= 0) && (i < ml); i++) {
-								if (ckey [i] != 0 && current.Key [key][i] == (char) ckey [i]) {
+						for (key = 0; key < current.Keys.Length; key++) {
+							int ml = Math.Min (syms, current.Keys [key].Length);
+							for (ok = 0, i = 0; (ok >= 0) && (i < ml); i++) {
+								sbyte ck = (sbyte) current.Keys [key][i];
+								if (ck != 0 && ck == ckey[i])
 									ok++;
-								}
-								if (ckey [i] != 0 && current.Key [key][i] != (char) ckey [i])
+								if (ck != 0 && ck != ckey[i])
 									ok = -1;
 							}
-							if (ok >= 0) {
+							if (ok > 0) {
 								score += ok;
 								break;
 							}
 						}
 						if (ok > 0) {
 							match++;
+							/* and how much the keycode order matches */
 							if (key > pkey)
 								seq++;
 							pkey = key;
 						} else {
+							/* print spaces instead of \0's */
+							mismatch++;
 							score -= syms;
 						}
 					}
 				}
 
+				Console.WriteLine ("{0}:  {1}", current.Name, score);
 				if ((score > max_score) || ((score == max_score) && (seq > max_seq))) {
 					// best match so far
 					layout = current;
@@ -650,9 +594,9 @@ namespace System.Windows.Forms {
 
 			if (layout != null)  {
                                 this.layout = layout;
-				Console.WriteLine (Locale.GetText("Keyboard") + ": " + layout.Comment);
+				Console.WriteLine (Locale.GetText("Keyboard") + ": " + layout.Name);
 			} else {
-				Console.WriteLine (Locale.GetText("Keyboard layout not recognized, using default layout: " + this.layout.Comment));
+				Console.WriteLine (Locale.GetText("Keyboard layout not recognized, using default layout: " + this.layout.Name));
 			}
 		}
 
@@ -780,10 +724,7 @@ namespace System.Windows.Forms {
 		private static extern void XDisplayKeycodes (IntPtr display, out int min, out int max);
 
 		[DllImport ("libX11", EntryPoint="XKeycodeToKeysym")]
-		private static extern IntPtr XKeycodeToKeysymX11(IntPtr display, int keycode, int index);
-		private static XKeySym XKeycodeToKeysym(IntPtr display, int keycode, int index) {
-			return (XKeySym)XKeycodeToKeysymX11(display, keycode, index).ToInt32();
-		}
+		private static extern uint XKeycodeToKeysym (IntPtr display, int keycode, int index);
 
 		[DllImport ("libX11")]
 		private static extern int XKeysymToKeycode (IntPtr display, IntPtr keysym);
@@ -796,7 +737,102 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11")]
 		internal extern static int XFreeModifiermap (IntPtr modmap);
-		
+
+
+		public readonly static int [] nonchar_key_vkey = new int []
+		{
+			/* unused */
+			0, 0, 0, 0, 0, 0, 0, 0,					    /* FF00 */
+			/* special keys */
+			(int) VirtualKeys.VK_BACK, (int) VirtualKeys.VK_TAB, 0, (int) VirtualKeys.VK_CLEAR, 0, (int) VirtualKeys.VK_RETURN, 0, 0,	    /* FF08 */
+			0, 0, 0, (int) VirtualKeys.VK_PAUSE, (int) VirtualKeys.VK_SCROLL, 0, 0, 0,			     /* FF10 */
+			0, 0, 0, (int) VirtualKeys.VK_ESCAPE, 0, 0, 0, 0,			      /* FF18 */
+			/* unused */
+			0, 0, 0, 0, 0, 0, 0, 0,					    /* FF20 */
+			0, 0, 0, 0, 0, 0, 0, 0,					    /* FF28 */
+			0, 0, 0, 0, 0, 0, 0, 0,					    /* FF30 */
+			0, 0, 0, 0, 0, 0, 0, 0,					    /* FF38 */
+			0, 0, 0, 0, 0, 0, 0, 0,					    /* FF40 */
+			0, 0, 0, 0, 0, 0, 0, 0,					    /* FF48 */
+			/* cursor keys */
+			(int) VirtualKeys.VK_HOME, (int) VirtualKeys.VK_LEFT, (int) VirtualKeys.VK_UP, (int) VirtualKeys.VK_RIGHT,			    /* FF50 */
+			(int) VirtualKeys.VK_DOWN, (int) VirtualKeys.VK_PRIOR, (int) VirtualKeys.VK_NEXT, (int) VirtualKeys.VK_END,
+			0, 0, 0, 0, 0, 0, 0, 0,					    /* FF58 */
+			/* misc keys */
+			(int) VirtualKeys.VK_SELECT, (int) VirtualKeys.VK_SNAPSHOT, (int) VirtualKeys.VK_EXECUTE, (int) VirtualKeys.VK_INSERT, 0, 0, 0, 0,  /* FF60 */
+			(int) VirtualKeys.VK_CANCEL, (int) VirtualKeys.VK_HELP, (int) VirtualKeys.VK_CANCEL, (int) VirtualKeys.VK_CANCEL, 0, 0, 0, 0,	    /* FF68 */
+			0, 0, 0, 0, 0, 0, 0, 0,					    /* FF70 */
+			/* keypad keys */
+			0, 0, 0, 0, 0, 0, 0, (int) VirtualKeys.VK_NUMLOCK,			      /* FF78 */
+			0, 0, 0, 0, 0, 0, 0, 0,					    /* FF80 */
+			0, 0, 0, 0, 0, (int) VirtualKeys.VK_RETURN, 0, 0,			      /* FF88 */
+			0, 0, 0, 0, 0, (int) VirtualKeys.VK_HOME, (int) VirtualKeys.VK_LEFT, (int) VirtualKeys.VK_UP,			  /* FF90 */
+			(int) VirtualKeys.VK_RIGHT, (int) VirtualKeys.VK_DOWN, (int) VirtualKeys.VK_PRIOR, (int) VirtualKeys.VK_NEXT,			    /* FF98 */
+			(int) VirtualKeys.VK_END, 0, (int) VirtualKeys.VK_INSERT, (int) VirtualKeys.VK_DELETE,
+			0, 0, 0, 0, 0, 0, 0, 0,					    /* FFA0 */
+			0, 0, (int) VirtualKeys.VK_MULTIPLY, (int) VirtualKeys.VK_ADD,					/* FFA8 */
+			(int) VirtualKeys.VK_SEPARATOR, (int) VirtualKeys.VK_SUBTRACT, (int) VirtualKeys.VK_DECIMAL, (int) VirtualKeys.VK_DIVIDE,
+			(int) VirtualKeys.VK_NUMPAD0, (int) VirtualKeys.VK_NUMPAD1, (int) VirtualKeys.VK_NUMPAD2, (int) VirtualKeys.VK_NUMPAD3,		    /* FFB0 */
+			(int) VirtualKeys.VK_NUMPAD4, (int) VirtualKeys.VK_NUMPAD5, (int) VirtualKeys.VK_NUMPAD6, (int) VirtualKeys.VK_NUMPAD7,
+			(int) VirtualKeys.VK_NUMPAD8, (int) VirtualKeys.VK_NUMPAD9, 0, 0, 0, 0,				/* FFB8 */
+			/* function keys */
+			(int) VirtualKeys.VK_F1, (int) VirtualKeys.VK_F2,
+			(int) VirtualKeys.VK_F3, (int) VirtualKeys.VK_F4, (int) VirtualKeys.VK_F5, (int) VirtualKeys.VK_F6, (int) VirtualKeys.VK_F7, (int) VirtualKeys.VK_F8, (int) VirtualKeys.VK_F9, (int) VirtualKeys.VK_F10,    /* FFC0 */
+			(int) VirtualKeys.VK_F11, (int) VirtualKeys.VK_F12, (int) VirtualKeys.VK_F13, (int) VirtualKeys.VK_F14, (int) VirtualKeys.VK_F15, (int) VirtualKeys.VK_F16, 0, 0,	/* FFC8 */
+			0, 0, 0, 0, 0, 0, 0, 0,					    /* FFD0 */
+			0, 0, 0, 0, 0, 0, 0, 0,					    /* FFD8 */
+			/* modifier keys */
+			0, (int) VirtualKeys.VK_SHIFT, (int) VirtualKeys.VK_SHIFT, (int) VirtualKeys.VK_CONTROL,			  /* FFE0 */
+			(int) VirtualKeys.VK_CONTROL, (int) VirtualKeys.VK_CAPITAL, 0, (int) VirtualKeys.VK_MENU,
+			(int) VirtualKeys.VK_MENU, (int) VirtualKeys.VK_MENU, (int) VirtualKeys.VK_MENU, 0, 0, 0, 0, 0,			  /* FFE8 */
+			0, 0, 0, 0, 0, 0, 0, 0,					    /* FFF0 */
+			0, 0, 0, 0, 0, 0, 0, (int) VirtualKeys.VK_DELETE			      /* FFF8 */
+		};
+
+		public static readonly int [] nonchar_key_scan = new int []
+		{
+			/* unused */
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,		     /* FF00 */
+			/* special keys */
+			0x0E, 0x0F, 0x00, /*?*/ 0, 0x00, 0x1C, 0x00, 0x00,	     /* FF08 */
+			0x00, 0x00, 0x00, 0x45, 0x46, 0x00, 0x00, 0x00,		     /* FF10 */
+			0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00,		     /* FF18 */
+			/* unused */
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,		     /* FF20 */
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,		     /* FF28 */
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,		     /* FF30 */
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,		     /* FF38 */
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,		     /* FF40 */
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,		     /* FF48 */
+			/* cursor keys */
+			0x147, 0x14B, 0x148, 0x14D, 0x150, 0x149, 0x151, 0x14F,	     /* FF50 */
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,		     /* FF58 */
+			/* misc keys */
+			/*?*/ 0, 0x137, /*?*/ 0, 0x152, 0x00, 0x00, 0x00, 0x00,	     /* FF60 */
+			/*?*/ 0, /*?*/ 0, 0x38, 0x146, 0x00, 0x00, 0x00, 0x00,	     /* FF68 */
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,		     /* FF70 */
+			/* keypad keys */
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x138, 0x145,	     /* FF78 */
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,		     /* FF80 */
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x11C, 0x00, 0x00,	     /* FF88 */
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x47, 0x4B, 0x48,		     /* FF90 */
+			0x4D, 0x50, 0x49, 0x51, 0x4F, 0x4C, 0x52, 0x53,		     /* FF98 */
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,		     /* FFA0 */
+			0x00, 0x00, 0x37, 0x4E, /*?*/ 0, 0x4A, 0x53, 0x135,	     /* FFA8 */
+			0x52, 0x4F, 0x50, 0x51, 0x4B, 0x4C, 0x4D, 0x47,		     /* FFB0 */
+			0x48, 0x49, 0x00, 0x00, 0x00, 0x00,			     /* FFB8 */
+			/* function keys */
+			0x3B, 0x3C,
+			0x3D, 0x3E, 0x3F, 0x40, 0x41, 0x42, 0x43, 0x44,		     /* FFC0 */
+			0x57, 0x58, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,		     /* FFC8 */
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,		     /* FFD0 */
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,		     /* FFD8 */
+			/* modifier keys */
+			0x00, 0x2A, 0x36, 0x1D, 0x11D, 0x3A, 0x00, 0x38,	     /* FFE0 */
+			0x138, 0x38, 0x138, 0x00, 0x00, 0x00, 0x00, 0x00,	     /* FFE8 */
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,		     /* FFF0 */
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x153		     /* FFF8 */
+		};
 	}
 
 }
