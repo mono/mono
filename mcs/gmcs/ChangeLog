@@ -1,3 +1,9 @@
+2006-03-21  Martin Baulig  <martin@ximian.com>
+
+	Fix #77583.
+	* generic.cs (TypeManager.InferType): If `pt' is a generic
+	parameter, don't check whether `pt == at'.
+
 2006-03-20  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #77852
