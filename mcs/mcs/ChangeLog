@@ -1,5 +1,9 @@
 2006-03-21  Marek Safar  <marek.safar@seznam.cz>
 
+	* expression.cs (StringConcat.Append): Reverted back to no warning state.
+
+2006-03-21  Marek Safar  <marek.safar@seznam.cz>
+
 	* const.cs (Error_ConstantCanBeInitializedWithNullOnly): Share a message.
 
 	* statement.cs (Block.ResolveMeta): Look for wrong object constants in
