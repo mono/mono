@@ -47,11 +47,15 @@ using System.Text;
 //   string[] available = Mime.AvailableMimeTypes;
 
 // TODO:
-// - optimize
+// - optimize even more :)
 // - async callback ?!?
 // - freedesktop org file extensions can have regular expressions also, resolve them too
 // - sort match collections by magic priority ( higher = first ) ?
-// - buffer is currently hard coded to size 8192, value should be determined by MimeGenerated
+
+// internal test:
+// looking up the mime types 20 times for 2757 files in /usr/lib without caching (mime_file_cache)
+// old version: Time: 00:00:32.3791220
+// new version: Time: 00:00:16.9991810
 
 namespace System.Windows.Forms
 {
@@ -64,7 +68,7 @@ namespace System.Windows.Forms
 		
 		private FileStream file_stream;
 		
-		private byte[] buffer = new byte[ 8192 ];
+		private byte[] buffer = null;
 		
 		private const string octet_stream = "application/octet-stream";
 		private const string text_plain = "text/plain";
@@ -72,15 +76,17 @@ namespace System.Windows.Forms
 		
 		private StringDictionary mime_file_cache = new StringDictionary();
 		
-		private const int mime_file_cache_max_size = 5000;
+		private const int mime_file_cache_max_size = 3000;
 		
 		private string search_string;
 		
 		private static object lock_object = new Object();
 		
-		private int platform = (int) Environment.OSVersion.Platform;
+//		private int platform = (int) Environment.OSVersion.Platform;
 		
 		private bool is_zero_file = false;
+		
+		private int bytes_read = 0;
 		
 		public static NameValueCollection Aliases;
 		public static NameValueCollection SubClasses;
@@ -105,7 +111,11 @@ namespace System.Windows.Forms
 			MatchesBelow80 = new ArrayList ();
 			
 			FDOMimeConfigReader fmcr = new FDOMimeConfigReader ();
-			fmcr.Init ();
+			int buffer_length = fmcr.Init ();
+			
+			if (buffer_length != -1) {
+				buffer = new byte[ buffer_length ];
+			}
 		}
 		
 		public static string GetMimeTypeForFile( string filename )
@@ -162,13 +172,13 @@ namespace System.Windows.Forms
 			
 //			if ( !CheckForInode( ) )
 //			{
-				global_result = octet_stream;
-				
-				GoByFileName( );
+			global_result = octet_stream;
+			
+			GoByFileName( );
 //			}
 			
-			if ( !mime_file_cache.ContainsKey( current_file_name ) )
-				mime_file_cache.Add( current_file_name, global_result );
+//			if ( !mime_file_cache.ContainsKey( current_file_name ) )
+			mime_file_cache.Add( current_file_name, global_result );
 			
 			// not tested
 			if ( mime_file_cache.Count > mime_file_cache_max_size )
@@ -287,7 +297,6 @@ namespace System.Windows.Forms
 			if ( !OpenFile( ) )
 			{
 				// couldn't open the file, check globals only
-				
 				CheckGlobalPatterns( );
 				
 				return;
@@ -334,9 +343,75 @@ namespace System.Windows.Forms
 			return false;
 		}
 		
+		// this little helper method gives us a real speed improvement
+		private bool FastEndsWidth(string input, string value)
+		{
+			if (value.Length > input.Length)
+				return false;
+			
+			int z = input.Length - 1;
+			
+			for (int i = value.Length - 1; i > -1; i--) {
+				if (value[i] != input[z])
+					return false;
+				
+				z--;
+			}
+			
+			return true;
+		}
+		
+		private bool FastStartsWith(string input, string value)
+		{
+			if (value.Length > input.Length)
+				return false;
+			
+			for (int i = 0; i < value.Length; i++)
+				if (value[i] != input[i])
+					return false;
+			
+			return true;
+		}
+		
+		// start always with index = 0
+		private int FastIndexOf(string input, char value)
+		{
+			if (input.Length == 0)
+				return -1;
+			
+			for (int i = 0; i < input.Length; i++)
+				if (input[i] == value)
+					return i;
+			
+			return -1;
+		}
+		
+		private int FastIndexOf(string input, string value)
+		{
+			if (input.Length == 0)
+				return -1;
+			
+			for (int i = 0; i < input.Length - value.Length; i++) {
+				if (input[i] == value[0]) {
+					int counter = 0;
+					for (int z = 1; z < value.Length; z++) {
+						if (input[i+z] != value[z])
+							break;
+						
+						counter++;
+					}
+					if (counter == value.Length -1) {
+						return i;
+					}
+				}
+			}
+			
+			return -1;
+		}
+		
 		private void CheckGlobalResult( )
 		{
-			int comma_index = global_result.IndexOf( "," );
+			int comma_index = FastIndexOf(global_result, ',');
 			
 			if ( comma_index != -1 )
 			{
@@ -347,19 +422,18 @@ namespace System.Windows.Forms
 		private bool CheckGlobalPatterns( )
 		{
 			string filename = Path.GetFileName( current_file_name );
-			string filename_lower = filename.ToLower( );
 			
 			// first check for literals
 			for ( int i = 0; i < GlobalLiterals.Count; i++ )
 			{
-				string key = GlobalLiterals.GetKey( i );
+				string key = GlobalLiterals.GetKey(i);
 				
 				// no regex char
-				if ( key.IndexOf( '[' ) == -1 )
+				if ( FastIndexOf(key, '[' ) == -1 )
 				{
-					if (filename.IndexOf(key) != -1)
+					if (FastIndexOf(filename, key) != -1)
 					{
-						global_result = GlobalLiterals[ i ];
+						global_result = GlobalLiterals[i];
 						CheckGlobalResult( );
 						return true;
 					}
@@ -375,15 +449,14 @@ namespace System.Windows.Forms
 				}
 			}
 			
-			if ( filename.IndexOf( '.' ) != -1 )
+			if ( FastIndexOf(filename, '.' ) != -1 )
 			{
 				// check for double extension like .tar.gz
-				
 				for ( int i = 0; i < GlobalPatternsLong.Count; i++ )
 				{
 					string key = GlobalPatternsLong.GetKey( i );
 					
-					if ( filename.EndsWith( key ) )
+					if (FastEndsWidth (filename, key))
 					{
 						global_result = GlobalPatternsLong[ i ];
 						CheckGlobalResult( );
@@ -391,7 +464,7 @@ namespace System.Windows.Forms
 					}
 					else
 					{
-						if ( filename_lower.EndsWith( key ) )
+						if ( FastEndsWidth (filename.ToLower( ), key ) )
 						{
 							global_result = GlobalPatternsLong[ i ];
 							CheckGlobalResult( );
@@ -401,7 +474,6 @@ namespace System.Windows.Forms
 				}
 				
 				// check normal extensions...
-				
 				string extension = Path.GetExtension( current_file_name );
 				
 				if ( extension.Length != 0 )
@@ -414,9 +486,7 @@ namespace System.Windows.Forms
 						return true;
 					}
 					
-					string extension_lower = extension.ToLower( );
-					
-					global_result = GlobalPatternsShort[ extension_lower ];
+					global_result = GlobalPatternsShort[ extension.ToLower( ) ];
 					
 					if ( global_result != null )
 					{
@@ -427,14 +497,13 @@ namespace System.Windows.Forms
 			}
 			
 			// finally check if a prefix or suffix matches
-			
 			for ( int i = 0; i < GlobalSufPref.Count; i++ )
 			{
 				string key = GlobalSufPref.GetKey( i );
 				
-				if ( key.StartsWith( "*" ) )
+				if ( key[0] == '*' )
 				{
-					if ( filename.EndsWith( key.Replace( "*", "" ) ) )
+					if (FastEndsWidth(filename, key.Replace( "*", "" )))
 					{
 						global_result = GlobalSufPref[ i ];
 						CheckGlobalResult( );
@@ -443,7 +512,7 @@ namespace System.Windows.Forms
 				}
 				else
 				{
-					if ( filename.StartsWith( key.Replace( "*", "" ) ) )
+					if ( FastStartsWith(filename, key.Replace( "*", "" ) ) )
 					{
 						global_result = GlobalSufPref[ i ];
 						CheckGlobalResult( );
@@ -499,16 +568,18 @@ namespace System.Windows.Forms
 		
 		private bool TestMatchlet( Matchlet matchlet )
 		{
-			bool found = false;
-			
 			//  using a simple brute force search algorithm
-			// compare each (masked) value from the buffer with the (masked) value from the match
-			// TODO:
-			// - to find some more speed, maybe we should use unsafe code
-			// - check if buffer[0] and buffer[lastmatchbyte] match ByteValue[0] and ByteValue[lastmatchbyte] in a match
+			// compare each (masked) value from the buffer with the (masked) value from the matchlet
+			
+			// no need to check if the offset + the bytevalue length exceed the # bytes read
+			if (matchlet.Offset + matchlet.ByteValue.Length > bytes_read)
+				return false;
 			
 			for ( int offset_counter = 0; offset_counter < matchlet.OffsetLength; offset_counter++ )
 			{
+				if (matchlet.Offset + offset_counter + matchlet.ByteValue.Length > bytes_read)
+					return false;
+				
 				if ( matchlet.Mask == null )
 				{
 					if ( buffer[ matchlet.Offset + offset_counter ] == matchlet.ByteValue[ 0 ] )
@@ -527,32 +598,31 @@ namespace System.Windows.Forms
 								return true;
 						}
 						
-						for ( int i = 1; i < matchlet.ByteValue.Length; i++ )
-						{
-							if ( buffer[ matchlet.Offset + offset_counter + i ] != matchlet.ByteValue[ i ] )
-							{
-								found = false;
-								break;
-							}
+						int minus = 0;
+						// check if the last matchlet byte value is the same as the byte value in the buffer...
+						if (matchlet.ByteValue.Length > 2) {
+							if (buffer[ matchlet.Offset + offset_counter + matchlet.ByteValue.Length - 1 ] != matchlet.ByteValue[ matchlet.ByteValue.Length - 1 ])
+								return false;
 							
-							found = true;
+							minus = 1;
 						}
 						
-						if ( found )
+						for ( int i = 1; i < matchlet.ByteValue.Length - minus; i++ )
 						{
-							found = false;
-							
-							if ( matchlet.Matchlets.Count > 0 )
-							{
-								foreach ( Matchlet sub_matchlets in matchlet.Matchlets )
-								{
-									if ( TestMatchlet( sub_matchlets ) )
-										return true;
-								}
-							}
-							else
-								return true;
+							if ( buffer[ matchlet.Offset + offset_counter + i ] != matchlet.ByteValue[ i ] )
+								return false;
 						}
+						
+						if ( matchlet.Matchlets.Count > 0 )
+						{
+							foreach ( Matchlet sub_matchlets in matchlet.Matchlets )
+							{
+								if ( TestMatchlet( sub_matchlets ) )
+									return true;
+							}
+						}
+						else
+							return true;
 					}
 				}
 				else // with mask ( it's the same as above, only AND the byte with the corresponding mask byte
@@ -574,46 +644,45 @@ namespace System.Windows.Forms
 								return true;
 						}
 						
-						for ( int i = 1; i < matchlet.ByteValue.Length; i++ )
+						int minus = 0;
+						// check if the last matchlet byte value is the same as the byte value in the buffer...
+						if (matchlet.ByteValue.Length > 2) {
+							
+							if ((buffer[ matchlet.Offset + offset_counter + matchlet.ByteValue.Length - 1 ] & matchlet.Mask[ matchlet.ByteValue.Length - 1 ])
+							    != (matchlet.ByteValue[ matchlet.ByteValue.Length - 1 ] & matchlet.Mask[ matchlet.ByteValue.Length - 1 ]))
+								return false;
+							
+							minus = 1;
+						}
+						
+						for ( int i = 1; i < matchlet.ByteValue.Length - minus; i++ )
 						{
 							if ( ( buffer[ matchlet.Offset + offset_counter + i ]  & matchlet.Mask[ i ] ) !=
 							    ( matchlet.ByteValue[ i ] & matchlet.Mask[ i ] ) )
-							{
-								found = false;
-								break;
-							}
-							
-							found = true;
+								return false;
 						}
 						
-						if ( found )
+						if ( matchlet.Matchlets.Count > 0 )
 						{
-							found = false;
-							
-							if ( matchlet.Matchlets.Count > 0 )
+							foreach ( Matchlet sub_matchlets in matchlet.Matchlets )
 							{
-								foreach ( Matchlet sub_matchlets in matchlet.Matchlets )
-								{
-									if ( TestMatchlet( sub_matchlets ) )
-										return true;
-								}
+								if ( TestMatchlet( sub_matchlets ) )
+									return true;
 							}
-							else
-								return true;
 						}
+						else
+							return true;
 					}
 				}
 			}
 			
-			return found;
+			return false;
 		}
 		
 		private bool OpenFile( )
 		{
 			try
 			{
-				System.Array.Clear( buffer, 0, buffer.Length );
-				
 				file_stream = new FileStream( current_file_name, FileMode.Open, FileAccess.Read ); // FileShare ??? use BinaryReader ???
 				
 				if ( file_stream.Length == 0 )
@@ -623,7 +692,12 @@ namespace System.Windows.Forms
 				}
 				else
 				{
-					file_stream.Read( buffer, 0, buffer.Length );
+					bytes_read = file_stream.Read( buffer, 0, buffer.Length );
+					
+					// do not clear the whole buffer everytime; clear only what's needed
+					if (bytes_read < buffer.Length) {
+						System.Array.Clear( buffer, bytes_read, buffer.Length - bytes_read );
+					}
 				}
 				
 				file_stream.Close( );
@@ -685,12 +759,14 @@ namespace System.Windows.Forms
 		StringCollection shared_mime_paths = new StringCollection ();
 		BinaryReader br;
 		
-		public void Init ()
+		int max_offset_and_range = 0;
+		
+		public int Init ()
 		{
 			CheckFDOMimePaths ();
 			
 			if (!fdo_mime_available)
-				return;
+				return -1;
 			
 			ReadMagicData ();
 			
@@ -702,6 +778,8 @@ namespace System.Windows.Forms
 			
 			shared_mime_paths = null;
 			br = null;
+			
+			return max_offset_and_range;
 		}
 		
 		private void CheckFDOMimePaths ()
@@ -886,6 +964,8 @@ namespace System.Windows.Forms
 							matchlets [indent - 1].Matchlets.Add (matchlets [indent]);
 						}
 						
+						if (max_offset_and_range < matchlets [indent].Offset + matchlets [indent].OffsetLength + matchlets [indent].ByteValue.Length + 1)
+							max_offset_and_range = matchlets [indent].Offset + matchlets [indent].OffsetLength + matchlets [indent].ByteValue.Length  + 1;
 						
 						// if '[' move to next mime type
 						if (br.PeekChar () == '[')
