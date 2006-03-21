@@ -1,4 +1,10 @@
 
+Tue Mar 21 17:19:37 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* class.c, image.c, metadata-internals.h: implemented new mechanism to
+	allocate interface ID to save memory and allow better ID reuse on
+	appdomain unload. setup_generic_vtable () removal from Martin.
+
 Tue Mar 21 15:54:30 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* object.h, appdomain.c, domain.c, exception.c, icall.c,
