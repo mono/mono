@@ -530,6 +530,16 @@ public class CalendarTest : TestCase {
 		}
 	}
 
+	[Test] // wrt bug #76252.
+	public void HebrewCalendarGetDaysInMonth ()
+	{
+		HebrewCalendar c = new HebrewCalendar ();
+		int year = c.GetYear (new DateTime (2005, 9, 1));
+		AssertEquals (5765, year);
+		int days = c.GetDaysInMonth (year, 13, 1);
+		AssertEquals (29, days);
+	}
+
 	/* UK TODO: breaks with current DateTime implementation.
 	 * I've a newer one that works, but that requires to much changes.
 	 * for now.

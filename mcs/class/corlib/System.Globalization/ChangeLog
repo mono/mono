@@ -1,3 +1,8 @@
+2006-03-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HebrewCalrndar.cs : simply use CCHebrewCalendar.last_day_of_month().
+	  Patch by Yaacov Akiba Slama. Fixed bug #76252.
+
 2006-03-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HebrewCalrndar.cs : removed commented obsolete code.
