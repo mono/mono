@@ -1,5 +1,5 @@
 //
-// System.Data.OleDb.OleDbConnection
+// Mainsoft.Data.Jdbc.Providers
 //
 // Authors:
 //	Konstantin Triger <kostat@mainsoft.com>
@@ -852,5 +852,679 @@ namespace Mainsoft.Data.Jdbc.Providers {
 
 	}
 
+	public class ResultSet : java.sql.ResultSet	{
+		readonly java.sql.ResultSet _resultSet;
+
+		public ResultSet (java.sql.ResultSet resultSet) {
+			_resultSet = resultSet;
+		}
+
+		protected java.sql.ResultSet Wrapped {
+			get { return _resultSet; }
+		}
+
+		#region ResultSet Members
+
+		public virtual java.io.InputStream getBinaryStream(int arg_0) {
+			return Wrapped.getBinaryStream (arg_0);			
+		}
+
+		public virtual java.io.InputStream getBinaryStream(string arg_0) {
+			return Wrapped.getBinaryStream (arg_0);
+		}
+
+		public virtual void updateTime(int arg_0, java.sql.Time arg_1) {
+			Wrapped.updateTime (arg_0, arg_1);
+		}
+
+		public virtual void updateTime(string arg_0, java.sql.Time arg_1) {
+			Wrapped.updateTime (arg_0, arg_1);
+		}
+
+		public virtual bool next() {
+			return Wrapped.next ();
+		}
+
+		public virtual int getInt(int arg_0) {
+			return Wrapped.getInt (arg_0);
+		}
+
+		public virtual int getInt(string arg_0) {
+			return Wrapped.getInt (arg_0);
+		}
+
+		public virtual java.io.InputStream getUnicodeStream(int arg_0) {
+			return Wrapped.getUnicodeStream (arg_0);
+		}
+
+		public virtual java.io.InputStream getUnicodeStream(string arg_0) {
+			return Wrapped.getUnicodeStream (arg_0);
+		}
+
+		public virtual bool isAfterLast() {
+			return Wrapped.isAfterLast ();
+		}
+
+		public virtual bool isLast() {
+			return Wrapped.isLast ();
+		}
+
+		public virtual bool isFirst() {
+			return Wrapped.isFirst ();
+		}
+
+		public virtual void updateRow() {
+			Wrapped.updateRow ();
+		}
+
+		public virtual java.net.URL getURL(int arg_0) {
+			return Wrapped.getURL (arg_0);			
+		}
+
+		public virtual java.net.URL getURL(string arg_0) {
+			return Wrapped.getURL (arg_0);			
+		}
+
+		public virtual bool rowDeleted() {
+			return Wrapped.rowDeleted ();
+		}
+
+		public virtual void updateFloat(int arg_0, float arg_1) {
+			Wrapped.updateFloat (arg_0, arg_1);
+		}
+
+		public virtual void updateFloat(string arg_0, float arg_1) {
+			Wrapped.updateFloat (arg_0, arg_1);
+		}
+
+		public virtual object getObject(int arg_0) {
+			return Wrapped.getObject (arg_0);
+		}
+
+		public virtual object getObject(string arg_0) {
+			return Wrapped.getObject (arg_0);
+		}
+
+		public virtual object getObject(int arg_0, java.util.Map arg_1) {
+			return Wrapped.getObject (arg_0, arg_1);
+		}
+
+		public virtual object getObject(string arg_0, java.util.Map arg_1) {
+			return Wrapped.getObject (arg_0, arg_1);
+		}
+
+		public virtual sbyte[] getBytes(int arg_0) {
+			return Wrapped.getBytes (arg_0);
+		}
+
+		public virtual sbyte[] getBytes(string arg_0) {
+			return Wrapped.getBytes (arg_0);
+		}
+
+		public virtual void moveToCurrentRow() {
+			Wrapped.moveToCurrentRow ();
+		}
+
+		public virtual sbyte getByte(int arg_0) {
+			return Wrapped.getByte (arg_0);
+		}
+
+		public virtual sbyte getByte(string arg_0) {
+			return Wrapped.getByte (arg_0);
+		}
+
+		public virtual void updateCharacterStream(int arg_0, java.io.Reader arg_1, int arg_2) {
+			Wrapped.updateCharacterStream (arg_0, arg_1, arg_2);
+		}
+
+		public virtual void updateCharacterStream(string arg_0, java.io.Reader arg_1, int arg_2) {
+			Wrapped.updateCharacterStream (arg_0, arg_1, arg_2);
+		}
+
+		public virtual void insertRow() {
+			Wrapped.insertRow ();
+		}
+
+		public virtual void updateBoolean(int arg_0, bool arg_1) {
+			Wrapped.updateBoolean (arg_0, arg_1);
+		}
+
+		public virtual void updateBoolean(string arg_0, bool arg_1) {
+			Wrapped.updateBoolean (arg_0, arg_1);
+		}
+
+		public virtual bool relative(int arg_0) {
+			return Wrapped.relative (arg_0);
+		}
+
+		public virtual java.sql.Timestamp getTimestamp(int arg_0) {
+			return Wrapped.getTimestamp (arg_0);
+		}
+
+		public virtual java.sql.Timestamp getTimestamp(string arg_0) {
+			return Wrapped.getTimestamp (arg_0);
+		}
+
+		public virtual java.sql.Timestamp getTimestamp(int arg_0, java.util.Calendar arg_1) {
+			return Wrapped.getTimestamp (arg_0, arg_1);
+		}
+
+		public virtual java.sql.Timestamp getTimestamp(string arg_0, java.util.Calendar arg_1) {
+			return Wrapped.getTimestamp (arg_0, arg_1);
+		}
+
+		public virtual void updateBigDecimal(int arg_0, java.math.BigDecimal arg_1) {
+			Wrapped.updateBigDecimal (arg_0, arg_1);
+		}
+
+		public virtual void updateBigDecimal(string arg_0, java.math.BigDecimal arg_1) {
+			Wrapped.updateBigDecimal (arg_0, arg_1);
+		}
+
+		public virtual void updateBinaryStream(int arg_0, java.io.InputStream arg_1, int arg_2) {
+			Wrapped.updateBinaryStream (arg_0, arg_1, arg_2);
+		}
+
+		public virtual void updateBinaryStream(string arg_0, java.io.InputStream arg_1, int arg_2) {
+			Wrapped.updateBinaryStream (arg_0, arg_1, arg_2);
+		}
+
+		public virtual void updateByte(int arg_0, sbyte arg_1) {
+			Wrapped.updateByte (arg_0, arg_1);
+		}
+
+		public virtual void updateByte(string arg_0, sbyte arg_1) {
+			Wrapped.updateByte (arg_0, arg_1);
+		}
+
+		public virtual bool isBeforeFirst() {
+			return Wrapped.isBeforeFirst ();
+		}
+
+		public virtual bool first() {
+			return Wrapped.first ();
+		}
+
+		public virtual java.math.BigDecimal getBigDecimal(int arg_0, int arg_1) {
+			return Wrapped.getBigDecimal (arg_0, arg_1);
+		}
+
+		public virtual java.math.BigDecimal getBigDecimal(string arg_0, int arg_1) {
+			return Wrapped.getBigDecimal (arg_0, arg_1);
+		}
+
+		public virtual java.math.BigDecimal getBigDecimal(int arg_0) {
+			return Wrapped.getBigDecimal (arg_0);
+		}
+
+		public virtual java.math.BigDecimal getBigDecimal(string arg_0) {
+			return Wrapped.getBigDecimal (arg_0);
+		}
+
+		public virtual int getFetchSize() {
+			return Wrapped.getFetchSize ();
+		}
+
+		public virtual string getString(int arg_0) {
+			return Wrapped.getString (arg_0);
+		}
+
+		public virtual string getString(string arg_0) {
+			return Wrapped.getString (arg_0);
+		}
+
+		public virtual bool absolute(int arg_0) {
+			return Wrapped.absolute (arg_0);
+		}
+
+		public virtual bool last() {
+			return Wrapped.last ();
+		}
+
+		public virtual int getFetchDirection() {
+			return Wrapped.getFetchDirection ();
+		}
+
+		public virtual java.sql.Time getTime(int arg_0) {
+			return Wrapped.getTime (arg_0);
+		}
+
+		public virtual java.sql.Time getTime(string arg_0) {
+			return Wrapped.getTime (arg_0);
+		}
+
+		public virtual java.sql.Time getTime(int arg_0, java.util.Calendar arg_1) {
+			return Wrapped.getTime (arg_0, arg_1);
+		}
+
+		public virtual java.sql.Time getTime(string arg_0, java.util.Calendar arg_1) {
+			return Wrapped.getTime (arg_0, arg_1);
+		}
+
+		public virtual void close() {
+			Wrapped.close ();
+		}
+
+		public virtual void deleteRow() {
+			Wrapped.deleteRow ();
+		}
+
+		public virtual void updateObject(int arg_0, object arg_1, int arg_2) {
+			Wrapped.updateObject (arg_0, arg_1, arg_2);
+		}
+
+		public virtual void updateObject(int arg_0, object arg_1) {
+			Wrapped.updateObject (arg_0, arg_1);
+		}
+
+		public virtual void updateObject(string arg_0, object arg_1, int arg_2) {
+			Wrapped.updateObject (arg_0, arg_1, arg_2);
+		}
+
+		public virtual void updateObject(string arg_0, object arg_1) {
+			Wrapped.updateObject (arg_0, arg_1);
+		}
+
+		public virtual void updateString(int arg_0, string arg_1) {
+			Wrapped.updateString (arg_0, arg_1);
+		}
+
+		public virtual void updateString(string arg_0, string arg_1) {
+			Wrapped.updateString (arg_0, arg_1);
+		}
+
+		public virtual java.sql.Date getDate(int arg_0) {
+			return Wrapped.getDate (arg_0);
+		}
+
+		public virtual java.sql.Date getDate(string arg_0) {
+			return Wrapped.getDate (arg_0);
+		}
+
+		public virtual java.sql.Date getDate(int arg_0, java.util.Calendar arg_1) {
+			return Wrapped.getDate (arg_0, arg_1);
+		}
+
+		public virtual java.sql.Date getDate(string arg_0, java.util.Calendar arg_1) {
+			return Wrapped.getDate (arg_0, arg_1);
+		}
+
+		public virtual java.sql.Clob getClob(int arg_0) {
+			return Wrapped.getClob (arg_0);
+		}
+
+		public virtual java.sql.Clob getClob(string arg_0) {
+			return Wrapped.getClob (arg_0);
+		}
+
+		public virtual void moveToInsertRow() {
+			Wrapped.moveToInsertRow ();
+		}
+
+		public virtual void updateAsciiStream(int arg_0, java.io.InputStream arg_1, int arg_2) {
+			Wrapped.updateAsciiStream (arg_0, arg_1, arg_2);
+		}
+
+		public virtual void updateAsciiStream(string arg_0, java.io.InputStream arg_1, int arg_2) {
+			Wrapped.updateAsciiStream (arg_0, arg_1, arg_2);
+		}
+
+		public virtual void updateRef(int arg_0, java.sql.Ref arg_1) {
+			Wrapped.updateRef (arg_0, arg_1);
+		}
+
+		public virtual void updateRef(string arg_0, java.sql.Ref arg_1) {
+			Wrapped.updateRef (arg_0, arg_1);
+		}
+
+		public virtual int findColumn(string arg_0) {
+			return Wrapped.findColumn (arg_0);
+		}
+
+		public virtual bool rowInserted() {
+			return Wrapped.rowInserted ();
+		}
+
+		public virtual void updateBlob(int arg_0, java.sql.Blob arg_1) {
+			Wrapped.updateBlob (arg_0, arg_1);
+		}
+
+		public virtual void updateBlob(string arg_0, java.sql.Blob arg_1) {
+			Wrapped.updateBlob (arg_0, arg_1);
+		}
+
+		public virtual java.sql.Array getArray(int arg_0) {
+			return Wrapped.getArray (arg_0);
+		}
+
+		public virtual java.sql.Array getArray(string arg_0) {
+			return Wrapped.getArray (arg_0);
+		}
+
+		public virtual void updateDouble(int arg_0, double arg_1) {
+			Wrapped.updateDouble (arg_0, arg_1);
+		}
+
+		public virtual void updateDouble(string arg_0, double arg_1)
+		{
+			Wrapped.updateDouble (arg_0, arg_1);
+		}
+
+		public virtual void updateInt(int arg_0, int arg_1) {
+			Wrapped.updateInt (arg_0, arg_1);
+		}
+
+		public virtual void updateInt(string arg_0, int arg_1) {
+			Wrapped.updateInt (arg_0, arg_1);
+		}
+
+		public virtual long getLong(int arg_0) {
+			return Wrapped.getLong (arg_0);
+		}
+
+		public virtual long getLong(string arg_0) {
+			return Wrapped.getLong (arg_0);
+		}
+
+		public virtual void updateDate(int arg_0, java.sql.Date arg_1) {
+			Wrapped.updateDate (arg_0, arg_1);
+		}
+
+		public virtual void updateDate(string arg_0, java.sql.Date arg_1) {
+			Wrapped.updateDate (arg_0, arg_1);
+		}
+
+		public virtual void beforeFirst() {
+			Wrapped.beforeFirst ();
+		}
+
+		public virtual bool wasNull() {
+			return Wrapped.wasNull ();
+		}
+
+		public virtual void updateClob(int arg_0, java.sql.Clob arg_1) {
+			Wrapped.updateClob (arg_0, arg_1);
+		}
+
+		public virtual void updateClob(string arg_0, java.sql.Clob arg_1) {
+			Wrapped.updateClob (arg_0, arg_1);
+		}
+
+		public virtual java.sql.Statement getStatement() {
+			return Wrapped.getStatement ();
+		}
+
+		public virtual void setFetchDirection(int arg_0) {
+			Wrapped.setFetchDirection (arg_0);
+		}
+
+		public virtual void cancelRowUpdates() {
+			Wrapped.cancelRowUpdates ();
+		}
+
+		public virtual double getDouble(int arg_0) {
+			return Wrapped.getDouble (arg_0);
+		}
+
+		public virtual double getDouble(string arg_0) {
+			return Wrapped.getDouble (arg_0);
+		}
+
+		public virtual void updateBytes(int arg_0, sbyte[] arg_1) {
+			Wrapped.updateBytes (arg_0, arg_1);
+		}
+
+		public virtual void updateBytes(string arg_0, sbyte[] arg_1) {
+			Wrapped.updateBytes (arg_0, arg_1);
+		}
+
+		public virtual bool previous() {
+			return Wrapped.previous ();
+		}
+
+		public virtual float getFloat(int arg_0) {
+			return Wrapped.getFloat (arg_0);
+		}
+
+		public virtual float getFloat(string arg_0) {
+			return Wrapped.getFloat (arg_0);
+		}
+
+		public virtual java.io.InputStream getAsciiStream(int arg_0) {
+			return Wrapped.getAsciiStream (arg_0);
+		}
+
+		public virtual java.io.InputStream getAsciiStream(string arg_0) {
+			return Wrapped.getAsciiStream (arg_0);
+		}
+
+		public virtual short getShort(int arg_0) {
+			return Wrapped.getShort (arg_0);
+		}
+
+		public virtual short getShort(string arg_0) {
+			return Wrapped.getShort (arg_0);
+		}
+
+		public virtual java.io.Reader getCharacterStream(int arg_0) {
+			return Wrapped.getCharacterStream (arg_0);
+		}
+
+		public virtual java.io.Reader getCharacterStream(string arg_0) {
+			return Wrapped.getCharacterStream (arg_0);
+		}
+
+		public virtual int getConcurrency() {
+			return Wrapped.getConcurrency ();
+		}
+
+		public virtual java.sql.ResultSetMetaData getMetaData() {
+			return Wrapped.getMetaData ();
+		}
+
+		public virtual bool getBoolean(int arg_0) {
+			return Wrapped.getBoolean (arg_0);
+		}
+
+		public virtual bool getBoolean(string arg_0) {
+			return Wrapped.getBoolean (arg_0);
+		}
+
+		public virtual void updateNull(int arg_0) {
+			Wrapped.updateNull (arg_0);
+		}
+
+		public virtual void updateNull(string arg_0) {
+			Wrapped.updateNull (arg_0);
+		}
+
+		public void updateArray(int arg_0, java.sql.Array arg_1) {
+			Wrapped.updateArray (arg_0, arg_1);
+		}
+
+		public void updateArray(string arg_0, java.sql.Array arg_1) {
+			Wrapped.updateArray (arg_0, arg_1);
+		}
+
+		public virtual void updateLong(int arg_0, long arg_1) {
+			Wrapped.updateLong (arg_0, arg_1);
+		}
+
+		public virtual void updateLong(string arg_0, long arg_1) {
+			Wrapped.updateLong (arg_0, arg_1);
+		}
+
+		public virtual java.sql.SQLWarning getWarnings() {
+			return Wrapped.getWarnings ();
+			
+		}
+
+		public virtual java.sql.Ref getRef(int arg_0) {
+			return Wrapped.getRef (arg_0);
+		}
+
+		public virtual java.sql.Ref getRef(string arg_0) {
+			return Wrapped.getRef (arg_0);
+		}
+
+		public virtual void updateTimestamp(int arg_0, java.sql.Timestamp arg_1) {
+			Wrapped.updateTimestamp (arg_0, arg_1);
+		}
+
+		public virtual void updateTimestamp(string arg_0, java.sql.Timestamp arg_1) {
+			Wrapped.updateTimestamp (arg_0, arg_1);
+		}
+
+		public virtual bool rowUpdated() {
+			return Wrapped.rowUpdated ();
+		}
+
+		public virtual string getCursorName() {
+			return Wrapped.getCursorName ();
+		}
+
+		public virtual java.sql.Blob getBlob(int arg_0) {
+			return Wrapped.getBlob (arg_0);
+		}
+
+		public virtual java.sql.Blob getBlob(string arg_0) {
+			return Wrapped.getBlob (arg_0);
+		}
+
+		public virtual void afterLast() {
+			Wrapped.afterLast ();
+		}
+
+		public virtual int getRow() {
+			return Wrapped.getRow ();
+		}
+
+		public virtual void refreshRow() {
+			Wrapped.refreshRow ();
+		}
+
+		public virtual void updateShort(int arg_0, short arg_1) {
+			Wrapped.updateShort (arg_0, arg_1);
+		}
+
+		public virtual void updateShort(string arg_0, short arg_1) {
+			Wrapped.updateShort (arg_0, arg_1);
+		}
+
+		public virtual int getType() {
+			return Wrapped.getType ();
+		}
+
+		public virtual void clearWarnings() {
+			Wrapped.clearWarnings ();
+		}
+
+		public virtual void setFetchSize(int arg_0) {
+			Wrapped.setFetchSize (arg_0);
+		}
+
+		#endregion
+	}
+
+	public class ResultSetMetaData : java.sql.ResultSetMetaData
+	{
+		readonly java.sql.ResultSetMetaData _resultSetMetaData;
+
+		public ResultSetMetaData (java.sql.ResultSetMetaData resultSetMetaData) {
+			_resultSetMetaData = resultSetMetaData;
+		}
+
+		protected java.sql.ResultSetMetaData Wrapped {
+			get { return _resultSetMetaData; }
+		}
+
+		#region ResultSetMetaData Members
+
+		public virtual int getColumnCount() {
+			return Wrapped.getColumnCount ();
+		}
+
+		public virtual bool isReadOnly(int arg_0) {
+			return Wrapped.isReadOnly (arg_0);
+		}
+
+		public virtual string getSchemaName(int arg_0) {
+			return Wrapped.getSchemaName (arg_0);
+		}
+
+		public virtual int getColumnDisplaySize(int arg_0) {
+			return Wrapped.getColumnDisplaySize (arg_0);
+		}
+
+		public virtual int getColumnType(int arg_0) {
+			return Wrapped.getColumnType (arg_0);
+		}
+
+		public virtual bool isSigned(int arg_0) {
+			return Wrapped.isSigned (arg_0);
+		}
+
+		public virtual int getScale(int arg_0) {
+			return Wrapped.getScale (arg_0);
+		}
+
+		public virtual int getPrecision(int arg_0) {
+			return Wrapped.getPrecision (arg_0);
+		}
+
+		public virtual bool isCaseSensitive(int arg_0) {
+			return Wrapped.isCaseSensitive (arg_0);
+		}
+
+		public virtual string getTableName(int arg_0) {
+			return Wrapped.getTableName (arg_0);
+		}
+
+		public virtual string getColumnName(int arg_0) {
+			return Wrapped.getColumnName (arg_0);
+		}
+
+		public virtual bool isDefinitelyWritable(int arg_0) {
+			return Wrapped.isDefinitelyWritable (arg_0);
+		}
+
+		public virtual bool isSearchable(int arg_0) {
+			return Wrapped.isSearchable (arg_0);
+		}
+
+		public virtual string getCatalogName(int arg_0) {
+			return Wrapped.getCatalogName (arg_0);
+		}
+
+		public virtual string getColumnTypeName(int arg_0) {
+			return Wrapped.getColumnTypeName (arg_0);
+		}
+
+		public virtual int isNullable(int arg_0) {
+			return Wrapped.isNullable (arg_0);
+		}
+
+		public virtual string getColumnClassName(int arg_0) {
+			return Wrapped.getColumnClassName (arg_0);
+		}
+
+		public virtual string getColumnLabel(int arg_0) {
+			return Wrapped.getColumnLabel (arg_0);
+		}
+
+		public virtual bool isAutoIncrement(int arg_0) {
+			return Wrapped.isAutoIncrement (arg_0);
+		}
+
+		public virtual bool isCurrency(int arg_0) {
+			return Wrapped.isCurrency (arg_0);
+		}
+
+		public virtual bool isWritable(int arg_0) {
+			return Wrapped.isWritable (arg_0);
+		}
+
+		#endregion 
+	}
 
 }
