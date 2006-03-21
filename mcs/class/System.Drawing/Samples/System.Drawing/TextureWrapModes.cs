@@ -108,7 +108,7 @@ namespace MonoSamples.System.Drawing
 			// sufficient to hold all the test results.
 			// TextureWrapModes (imgName, width, height, top, spacing)
 
-			TextureWrapModes twm = new TextureWrapModes ("horse.png", 650,
+			TextureWrapModes twm = new TextureWrapModes ("horse.bmp", 650,
 									1850, 0, 50);
  			
  			// Draw different wrapmodes
