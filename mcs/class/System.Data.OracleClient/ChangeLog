@@ -1,3 +1,7 @@
+2006-03-21	Boris Kirzner <borisk@mainsoft.com>
+	* Mainsoft.Data.Jdbc.Providers.jvm: added TARGET_JVM directory
+	* System.Data.OracleClient.vmwcsproj: added OracleProvider.cs
+
 2006-03-13 Boris Kirzner <borisk@mainsoft.com>
 	* run-tests.bat, run-tests.test.bat: added batch files for automated testing 
 	support for TARGET_JVM.
