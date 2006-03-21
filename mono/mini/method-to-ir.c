@@ -1713,6 +1713,12 @@ type_to_stack_type (MonoType *t)
 	case MONO_TYPE_VALUETYPE:
 	case MONO_TYPE_TYPEDBYREF:
 		return STACK_VTYPE;
+	case MONO_TYPE_GENERICINST:
+		if (mono_type_generic_inst_is_valuetype (t))
+			return STACK_VTYPE;
+		else
+			return STACK_OBJ;
+		break;
 	default:
 		g_assert_not_reached ();
 	}
@@ -2923,7 +2929,7 @@ handle_alloc (MonoCompile *cfg, MonoClass *klass, gboolean for_box, const guchar
 static MonoInst*
 handle_box (MonoCompile *cfg, MonoInst *val, const guchar *ip, MonoClass *klass)
 {
-	MonoInst *alloc;
+	MonoInst *alloc, *ins;
 
 	if (mono_class_is_nullable (klass)) {
 		MonoMethod* method = mono_class_get_method_from_name (klass, "Box", 1);
@@ -2932,7 +2938,9 @@ handle_box (MonoCompile *cfg, MonoInst *val, const guchar *ip, MonoClass *klass)
 
 	alloc = handle_alloc (cfg, klass, TRUE, ip);
 
-	MONO_EMIT_NEW_STORE_MEMBASE (cfg, mono_type_to_store_membase (&klass->byval_arg), alloc->dreg, sizeof (MonoObject), val->dreg);
+	EMIT_NEW_STORE_MEMBASE (cfg, ins, mono_type_to_store_membase (&klass->byval_arg), alloc->dreg, sizeof (MonoObject), val->dreg);
+	if (ins->opcode == OP_STOREV_MEMBASE)
+		ins->klass = klass;
 
 	return alloc;
 }
@@ -6138,10 +6146,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 			}
 
-			if (cmethod && cmethod->klass->generic_container) {
-				// G_BREAKPOINT ();
+			if (cmethod && cmethod->klass->generic_container)
 				UNVERIFIED;
-			}
 
 			CHECK_STACK (n);
 
@@ -6177,7 +6183,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			}
 
 			if (*ip != CEE_CALLI && check_call_signature (cfg, fsig, sp)) {
-				// G_BREAKPOINT ();
 				UNVERIFIED;
 			}
 
@@ -7243,6 +7248,10 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				stack_type = type_to_stack_type (&klass->byval_arg);
 				dreg = alloc_dreg (cfg, stack_type);
 				EMIT_NEW_LOAD_MEMBASE (cfg, dest, mono_type_to_load_membase (&klass->byval_arg), dreg, sp[0]->dreg, 0);
+				if (dest->opcode == OP_LOADV_MEMBASE) {
+					dest->type = STACK_VTYPE;
+					dest->klass = klass;
+				}
 				*sp++ = dest;
 			}
 
@@ -7391,6 +7400,9 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					MonoInst *store;
 
 					EMIT_NEW_STORE_MEMBASE (cfg, store, mono_type_to_store_membase (field->type), sp [0]->dreg, foffset, sp [1]->dreg);
+					if (store->opcode == OP_STOREV_MEMBASE)
+						store->klass = mono_class_from_mono_type (field->type);
+						
 					store->flags |= ins_flag;
 					ins_flag = 0;
 				}
@@ -9292,6 +9304,8 @@ mono_handle_global_vregs (MonoCompile *cfg)
 							case 'f':
 								mono_compile_create_var_for_vreg (cfg, &mono_defaults.double_class->byval_arg, OP_LOCAL, vreg);
 								break;
+							case 'v':
+								break;
 							default:
 								g_assert_not_reached ();
 							}
@@ -9714,7 +9728,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - the vtype optimizations are blocked by the LDADDR opcodes generated for 
  *   accessing vtype fields and passing/receiving them in calls.
  * - in the managed->native wrappers, place a pop before the call to interrupt_checkpoint
- * - port the lea optimization to amd64
+ * - bench.exe hangs on x86 when ssa is enabled
  * - LAST MERGE: 57988.
  */
 

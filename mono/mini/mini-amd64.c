@@ -1433,6 +1433,19 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 	return call;
 }
 
+/* FIXME: Remove these later */
+#define NEW_VARLOADA(cfg,dest,var,vartype) do {	\
+        MONO_INST_NEW ((cfg), (dest), OP_LDADDR); \
+		(dest)->ssa_op = MONO_SSA_ADDRESS_TAKEN;	\
+		(dest)->inst_p0 = (var); \
+		(var)->flags |= MONO_INST_INDIRECT;	\
+		(dest)->type = STACK_MP;	\
+		(dest)->klass = (var)->klass;	\
+        (dest)->dreg = mono_alloc_dreg ((cfg), STACK_MP); \
+	} while (0)
+
+#define EMIT_NEW_VARLOADA(cfg,dest,var,vartype) do { NEW_VARLOADA ((cfg), (dest), (var), (vartype)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
+
 MonoCallInst*
 mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 	MonoInst *arg, *in;
@@ -1460,6 +1473,8 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 		arg->sreg1 = in->dreg;
 
 		if ((i >= sig->hasthis) && (MONO_TYPE_ISSTRUCT(sig->params [i - sig->hasthis]))) {
+			MonoInst *src_var = get_vreg_to_inst (cfg, in->dreg);
+			MonoInst *src;
 			guint32 align;
 			guint32 size;
 
@@ -1479,16 +1494,25 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 					 */
 					size = mono_class_value_size (in->klass, &align);
 				}
+
+			g_assert (in->klass);
+
+			// FIXME:
+			if (!src_var)
+				src_var = mono_compile_create_var_for_vreg (cfg, &in->klass->byval_arg, OP_LOCAL, in->dreg);
+
 			if (ainfo->storage == ArgValuetypeInReg) {
 				MonoInst *load, *arg;
 				int part;
+
+				EMIT_NEW_VARLOADA ((cfg), (src), src_var, src_var->inst_vtype);
 
 				for (part = 0; part < 2; ++part) {
 					if (ainfo->pair_storage [part] == ArgNone)
 						continue;
 
 					MONO_INST_NEW (cfg, load, arg_storage_to_load_membase (ainfo->pair_storage [part]));
-					load->inst_basereg = in->dreg;
+					load->inst_basereg = src->dreg;
 					load->inst_offset = part * sizeof (gpointer);
 
 					switch (ainfo->pair_storage [part]) {
@@ -1509,19 +1533,22 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 				}
 			}
 			else {
+				if (size > 0)
+					EMIT_NEW_VARLOADA ((cfg), (src), src_var, src_var->inst_vtype);
+
 				if (size == 0) {
 				} else if (size == 8) {
 					/* Can't use this for < 8 since it does an 8 byte memory load */
 					arg->opcode = OP_X86_PUSH_MEMBASE;
-					arg->inst_basereg = in->dreg;
+					arg->inst_basereg = src->dreg;
 					arg->inst_offset = 0;
 					MONO_ADD_INS (cfg->cbb, arg);
 				} else if (size <= 40) {
 					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SUB_IMM, X86_ESP, X86_ESP, ALIGN_TO (size, 8));
-					mini_emit_memcpy2 (cfg, X86_ESP, 0, in->dreg, 0, size, 0);
+					mini_emit_memcpy2 (cfg, X86_ESP, 0, src->dreg, 0, size, 0);
 				} else {
 					arg->opcode = OP_X86_PUSH_OBJ;
-					arg->inst_basereg = in->dreg;
+					arg->inst_basereg = src->dreg;
 					arg->inst_offset = 0;
 					arg->inst_imm = size;
 					MONO_ADD_INS (cfg->cbb, arg);
@@ -1791,10 +1818,13 @@ store_membase_imm_to_store_membase_reg (int opcode)
 
 #define INST_IGNORES_CFLAGS(opcode) (!(((opcode) == OP_ADC) || ((opcode) == OP_ADC_IMM) || ((opcode) == OP_IADC) || ((opcode) == OP_IADC_IMM) || ((opcode) == OP_SBB) || ((opcode) == OP_SBB_IMM) || ((opcode) == OP_ISBB) || ((opcode) == OP_ISBB_IMM)))
 
-//#define INST_IGNORES_CFLAGS(ins) (((ins)->opcode == CEE_BR) || ((ins)->opcode == OP_BR) || ((ins)->opcode == OP_STORE_MEMBASE_IMM) || ((ins)->opcode == OP_STOREI8_MEMBASE_REG) || ((ins)->opcode == OP_MOVE) || ((ins)->opcode == OP_ICONST) || ((ins)->opcode == OP_I8CONST) || ((ins)->opcode == OP_LOAD_MEMBASE))
-
+/*
+ * peephole_pass_1:
+ *
+ *   Perform peephole opts which should/can be performed before local regalloc
+ */
 static void
-peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
+peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
 {
 	MonoInst *ins, *last_ins = NULL;
 	ins = bb->code;
@@ -1802,45 +1832,15 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 	while (ins) {
 
 		switch (ins->opcode) {
-		case OP_ICONST:
-		case OP_I8CONST:
-			/* reg = 0 -> XOR (reg, reg) */
-			/* XOR sets cflags on x86, so we cant do it always */
-			if (ins->inst_c0 == 0 && (!ins->next || (ins->next && INST_IGNORES_CFLAGS (ins->next->opcode)))) {
-				MonoInst *ins2;
-
-				ins->opcode = cfg->new_ir ? OP_LXOR : CEE_XOR;
-				ins->sreg1 = ins->dreg;
-				ins->sreg2 = ins->dreg;
-
+		case OP_ADD_IMM:
+		case OP_IADD_IMM:
+			if ((ins->sreg1 < MONO_MAX_IREGS) && (ins->dreg >= MONO_MAX_IREGS)) {
 				/* 
-				 * Replace STORE_MEMBASE_IMM 0 with STORE_MEMBASE_REG since 
-				 * the latter has length 2-3 instead of 6 (reverse constant
-				 * propagation). These instruction sequences are very common
-				 * in the initlocals bblock.
+				 * X86_LEA is like ADD, but doesn't have the
+				 * sreg1==dreg restriction.
 				 */
-				for (ins2 = ins->next; ins2; ins2 = ins2->next) {
-					if (((ins2->opcode == OP_STORE_MEMBASE_IMM) || (ins2->opcode == OP_STOREI4_MEMBASE_IMM) || (ins2->opcode == OP_STOREI8_MEMBASE_IMM)) && (ins2->inst_imm == 0)) {
-						ins2->opcode = store_membase_imm_to_store_membase_reg (ins2->opcode);
-						ins2->sreg1 = ins->dreg;
-					} else if ((ins2->opcode == OP_STOREI1_MEMBASE_IMM) || (ins2->opcode == OP_STOREI2_MEMBASE_IMM)) {
-						/* Continue */
-					} else {
-						break;
-					}
-				}
-			}
-			break;
-		case OP_MUL_IMM: 
-			/* remove unnecessary multiplication with 1 */
-			if (ins->inst_imm == 1) {
-				if (ins->dreg != ins->sreg1) {
-					ins->opcode = OP_MOVE;
-				} else {
-					last_ins->next = ins->next;
-					ins = ins->next;
-					continue;
-				}
+				ins->opcode = OP_X86_LEA_MEMBASE;
+				ins->inst_basereg = ins->sreg1;
 			}
 			break;
 		case OP_COMPARE_IMM:
@@ -1876,6 +1876,226 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 					if (!ins->inst_imm)
 						ins->opcode = OP_X86_TEST_NULL;
 				}
+
+			break;
+		case OP_LOAD_MEMBASE:
+		case OP_LOADI4_MEMBASE:
+			/* 
+			 * Note: if reg1 = reg2 the load op is removed
+			 *
+			 * OP_STORE_MEMBASE_REG reg1, offset(basereg) 
+			 * OP_LOAD_MEMBASE offset(basereg), reg2
+			 * -->
+			 * OP_STORE_MEMBASE_REG reg1, offset(basereg)
+			 * OP_MOVE reg1, reg2
+			 */
+			if (last_ins && (last_ins->opcode == OP_STOREI4_MEMBASE_REG 
+					 || last_ins->opcode == OP_STORE_MEMBASE_REG) &&
+			    ins->inst_basereg == last_ins->inst_destbasereg &&
+			    ins->inst_offset == last_ins->inst_offset) {
+				if (ins->dreg == last_ins->sreg1) {
+					last_ins->next = ins->next;				
+					ins = ins->next;				
+					continue;
+				} else {
+					//static int c = 0; printf ("MATCHX %s %d\n", cfg->method->name,c++);
+					ins->opcode = OP_MOVE;
+					ins->sreg1 = last_ins->sreg1;
+				}
+
+			/* 
+			 * Note: reg1 must be different from the basereg in the second load
+			 * Note: if reg1 = reg2 is equal then second load is removed
+			 *
+			 * OP_LOAD_MEMBASE offset(basereg), reg1
+			 * OP_LOAD_MEMBASE offset(basereg), reg2
+			 * -->
+			 * OP_LOAD_MEMBASE offset(basereg), reg1
+			 * OP_MOVE reg1, reg2
+			 */
+			} if (last_ins && (last_ins->opcode == OP_LOADI4_MEMBASE
+					   || last_ins->opcode == OP_LOAD_MEMBASE) &&
+			      ins->inst_basereg != last_ins->dreg &&
+			      ins->inst_basereg == last_ins->inst_basereg &&
+			      ins->inst_offset == last_ins->inst_offset) {
+
+				if (ins->dreg == last_ins->dreg) {
+					last_ins->next = ins->next;				
+					ins = ins->next;				
+					continue;
+				} else {
+					ins->opcode = OP_MOVE;
+					ins->sreg1 = last_ins->dreg;
+				}
+
+				//g_assert_not_reached ();
+
+#if 0
+			/* 
+			 * OP_STORE_MEMBASE_IMM imm, offset(basereg) 
+			 * OP_LOAD_MEMBASE offset(basereg), reg
+			 * -->
+			 * OP_STORE_MEMBASE_IMM imm, offset(basereg) 
+			 * OP_ICONST reg, imm
+			 */
+			} else if (last_ins && (last_ins->opcode == OP_STOREI4_MEMBASE_IMM
+						|| last_ins->opcode == OP_STORE_MEMBASE_IMM) &&
+				   ins->inst_basereg == last_ins->inst_destbasereg &&
+				   ins->inst_offset == last_ins->inst_offset) {
+				//static int c = 0; printf ("MATCHX %s %d\n", cfg->method->name,c++);
+				ins->opcode = OP_ICONST;
+				ins->inst_c0 = last_ins->inst_imm;
+				g_assert_not_reached (); // check this rule
+#endif
+			}
+			break;
+		case OP_LOADU1_MEMBASE:
+		case OP_LOADI1_MEMBASE:
+			/* 
+			 * Note: if reg1 = reg2 the load op is removed
+			 *
+			 * OP_STORE_MEMBASE_REG reg1, offset(basereg) 
+			 * OP_LOAD_MEMBASE offset(basereg), reg2
+			 * -->
+			 * OP_STORE_MEMBASE_REG reg1, offset(basereg)
+			 * OP_MOVE reg1, reg2
+			 */
+			if (last_ins && (last_ins->opcode == OP_STOREI1_MEMBASE_REG) &&
+					ins->inst_basereg == last_ins->inst_destbasereg &&
+					ins->inst_offset == last_ins->inst_offset) {
+				if (ins->dreg == last_ins->sreg1) {
+					last_ins->next = ins->next;				
+					ins = ins->next;				
+					continue;
+				} else {
+					//static int c = 0; printf ("MATCHX %s %d\n", cfg->method->name,c++);
+					ins->opcode = OP_MOVE;
+					ins->sreg1 = last_ins->sreg1;
+				}
+			}
+			break;
+		case OP_LOADU2_MEMBASE:
+		case OP_LOADI2_MEMBASE:
+			/* 
+			 * Note: if reg1 = reg2 the load op is removed
+			 *
+			 * OP_STORE_MEMBASE_REG reg1, offset(basereg) 
+			 * OP_LOAD_MEMBASE offset(basereg), reg2
+			 * -->
+			 * OP_STORE_MEMBASE_REG reg1, offset(basereg)
+			 * OP_MOVE reg1, reg2
+			 */
+			if (last_ins && (last_ins->opcode == OP_STOREI2_MEMBASE_REG) &&
+					ins->inst_basereg == last_ins->inst_destbasereg &&
+					ins->inst_offset == last_ins->inst_offset) {
+				if (ins->dreg == last_ins->sreg1) {
+					last_ins->next = ins->next;				
+					ins = ins->next;				
+					continue;
+				} else {
+					//static int c = 0; printf ("MATCHX %s %d\n", cfg->method->name,c++);
+					ins->opcode = OP_MOVE;
+					ins->sreg1 = last_ins->sreg1;
+				}
+			}
+			break;
+		case CEE_CONV_I4:
+		case CEE_CONV_U4:
+		case OP_MOVE:
+			/*
+			 * Removes:
+			 *
+			 * OP_MOVE reg, reg 
+			 */
+			if (ins->dreg == ins->sreg1) {
+				if (last_ins)
+					last_ins->next = ins->next;				
+				ins = ins->next;
+				continue;
+			}
+			/* 
+			 * Removes:
+			 *
+			 * OP_MOVE sreg, dreg 
+			 * OP_MOVE dreg, sreg
+			 */
+			if (last_ins && last_ins->opcode == OP_MOVE &&
+			    ins->sreg1 == last_ins->dreg &&
+			    ins->dreg == last_ins->sreg1) {
+				last_ins->next = ins->next;				
+				ins = ins->next;				
+				continue;
+			}
+			break;
+		}
+		last_ins = ins;
+		ins = ins->next;
+	}
+	bb->last_ins = last_ins;
+}
+
+static void
+peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
+{
+	MonoInst *ins, *last_ins = NULL;
+	ins = bb->code;
+
+	while (ins) {
+
+		switch (ins->opcode) {
+		case OP_ICONST:
+		case OP_I8CONST:
+			/* reg = 0 -> XOR (reg, reg) */
+			/* XOR sets cflags on x86, so we cant do it always */
+			if (ins->inst_c0 == 0 && (!ins->next || (ins->next && INST_IGNORES_CFLAGS (ins->next->opcode)))) {
+				MonoInst *ins2;
+
+				ins->opcode = cfg->new_ir ? OP_LXOR : CEE_XOR;
+				ins->sreg1 = ins->dreg;
+				ins->sreg2 = ins->dreg;
+
+				/* 
+				 * Replace STORE_MEMBASE_IMM 0 with STORE_MEMBASE_REG since 
+				 * the latter has length 2-3 instead of 6 (reverse constant
+				 * propagation). These instruction sequences are very common
+				 * in the initlocals bblock.
+				 */
+				for (ins2 = ins->next; ins2; ins2 = ins2->next) {
+					if (((ins2->opcode == OP_STORE_MEMBASE_IMM) || (ins2->opcode == OP_STOREI4_MEMBASE_IMM) || (ins2->opcode == OP_STOREI8_MEMBASE_IMM) || (ins2->opcode == OP_STORE_MEMBASE_IMM)) && (ins2->inst_imm == 0)) {
+						ins2->opcode = store_membase_imm_to_store_membase_reg (ins2->opcode);
+						ins2->sreg1 = ins->dreg;
+					} else if ((ins2->opcode == OP_STOREI1_MEMBASE_IMM) || (ins2->opcode == OP_STOREI2_MEMBASE_IMM) || (ins2->opcode == OP_STOREI8_MEMBASE_REG) || (ins2->opcode == OP_STORE_MEMBASE_REG)) {
+						/* Continue */
+					} else if (((ins2->opcode == OP_ICONST) || (ins2->opcode == OP_I8CONST)) && (ins2->dreg == ins->dreg) && (ins2->inst_c0 == 0)) {
+						ins2->opcode = OP_NOP;
+						ins2->dreg = ins2->sreg1 = -1;
+						/* Continue */
+					} else {
+						break;
+					}
+				}
+			}
+			break;
+		case OP_AMD64_ICOMPARE_MEMBASE_IMM:
+			/* 
+			 * OP_STORE_MEMBASE_REG reg, offset(basereg)
+			 * OP_X86_COMPARE_MEMBASE_IMM offset(basereg), imm
+			 * -->
+			 * OP_STORE_MEMBASE_REG reg, offset(basereg)
+			 * OP_COMPARE_IMM reg, imm
+			 *
+			 * Note: if imm = 0 then OP_COMPARE_IMM replaced with OP_X86_TEST_NULL
+			 */
+			if (last_ins && (last_ins->opcode == OP_STOREI4_MEMBASE_REG) &&
+			    ins->inst_basereg == last_ins->inst_destbasereg &&
+			    ins->inst_offset == last_ins->inst_offset) {
+				ins->opcode = OP_ICOMPARE_IMM;
+				ins->sreg1 = last_ins->sreg1;
+
+				/* check if we can remove cmp reg,0 with test null */
+				if (!ins->inst_imm)
+					ins->opcode = OP_X86_TEST_NULL;
+			}
 
 			break;
 		case OP_LOAD_MEMBASE:
@@ -2207,6 +2427,9 @@ mono_arch_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		return;
 
 	mono_arch_lowering_pass (cfg, bb);
+
+	if (cfg->opt & MONO_OPT_PEEPHOLE)
+		peephole_pass_1 (cfg, bb);
 
 	mono_local_regalloc (cfg, bb);
 }
