@@ -1,0 +1,5 @@
+2006-03-11  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* CommandLineBuilderTest.cs: Added.
+	* TaskItemTest.cs: Added new test.
+
