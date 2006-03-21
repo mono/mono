@@ -1,3 +1,8 @@
+2006-03-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FileStream.cs: Seek() should flush the buffer, if any. Fixes bug
+	#77863.
+
 2006-02-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* Stream.cs FileStream.cs: Add new 2.0 Dispose () method and protected

@@ -681,14 +681,6 @@ namespace System.IO
 				throw new IOException("Can't seek back over pre-existing data in append mode");
 			}
 
-			if (buf_length > 0) {
-				if (pos >= buf_start &&
-					pos <= buf_start + buf_length) {
-					buf_offset = (int) (pos - buf_start);
-					return pos;
-				}
-			}
-
 			FlushBuffer ();
 
 			MonoIOError error;
