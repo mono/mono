@@ -1,3 +1,22 @@
+2006-03-16  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs
+	(ConstraintChecker.HasDefaultConstructor): If we're a TypeBuilder
+	and don't have any instance constructors, also lookup in the base class.
+	(TypeManager.IsNullableValueType): New public method.
+
+	* typemanager.cs (TypeManager.MemberLookup_FindMembers): Clear the
+	`BindingFlags.DeclaredOnly' flag and set `used_cache'.
+	(TypeManager.TryGetBaseDefinition): Use DropGenericMethodArguments().
+
+	* expression.cs (Unary.DoResolve): Use TypeManager.IsNullableValueType()
+	instead of just TypeManager.IsNullableType() to determine whether
+	a lifted operator exists.
+	(UnaryMutator.DoResolve): Likewise.
+	(Conditional.DoResolve): Likewise.
+	(Binary.DoResolve): A lifted operator only exists if both operands
+	are valuetypes and at least one of them is a nullable type.
+
 2006-02-08  Martin Baulig  <martin@ximian.com>
 
 	* typemanager.cs (TypeManager.ArrayContainsMethod): Use a new
