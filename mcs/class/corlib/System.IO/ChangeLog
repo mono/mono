@@ -1,3 +1,8 @@
+2006-03-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FileStream.cs: Seek() should flush the buffer, if any. Fixes bug
+	#77863.
+
 2006-03-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* Stream.cs: Add 2.0 members to Stream.cs (CanTimeout,
