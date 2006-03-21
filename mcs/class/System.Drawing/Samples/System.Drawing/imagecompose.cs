@@ -46,7 +46,10 @@ public class SampleComposeImages
 		foreach(ImageCodecInfo ice in ImageCodecInfo.GetImageEncoders())		
 			if(ice.MimeType=="image/tiff")		
 				info = ice;		
-		
+		if (info == null) {
+			Console.WriteLine ("Couldn't get codec for image/tiff");
+			return;
+		}
 		//use the save encoder		
 		Encoder enc = Encoder.SaveFlag;	
 		EncoderParameters ep=new EncoderParameters(1);		
