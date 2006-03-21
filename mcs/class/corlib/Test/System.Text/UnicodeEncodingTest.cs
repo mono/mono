@@ -164,6 +164,24 @@ namespace MonoTests.System.Text
                         Assertion.AssertEquals ("UTF #1", 100, UnicodeEnc.GetMaxByteCount(50));
 #endif
                 }
+
+		[Test]
+		public void ZeroLengthArrays ()
+		{
+			UnicodeEncoding encoding = new UnicodeEncoding ();
+			encoding.GetCharCount (new byte [0]);
+			encoding.GetChars (new byte [0]);
+			encoding.GetCharCount (new byte [0], 0, 0);
+			encoding.GetChars (new byte [0], 0, 0);
+			encoding.GetChars (new byte [0], 0, 0, new char [0], 0);
+			encoding.GetByteCount (new char [0]);
+			encoding.GetBytes (new char [0]);
+			encoding.GetByteCount (new char [0], 0, 0);
+			encoding.GetBytes (new char [0], 0, 0);
+			encoding.GetBytes (new char [0], 0, 0, new byte [0], 0);
+			encoding.GetByteCount ("");
+			encoding.GetBytes ("");
+		}
         }
 }
 
