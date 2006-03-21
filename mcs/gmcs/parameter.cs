@@ -407,11 +407,13 @@ namespace Mono.CSharp {
 
 		public virtual void ApplyAttributes (MethodBuilder mb, ConstructorBuilder cb, int index)
 		{
+			// TODO: It should use mb.DefineGenericParameters
+#if !MS_COMPATIBLE
 			if (mb == null)
 				builder = cb.DefineParameter (index, Attributes, Name);
 			else 
 				builder = mb.DefineParameter (index, Attributes, Name);
-		
+#endif
 			if (OptAttributes != null)
 				OptAttributes.Emit ();
 		}

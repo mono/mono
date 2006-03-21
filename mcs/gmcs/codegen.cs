@@ -250,11 +250,6 @@ namespace Mono.CSharp {
 		public bool IsFieldInitializer;
 
 		/// <summary>
-		///   We are resolving a generic method's return type and parameters.
-		/// </summary>
-		public bool ResolvingGenericMethod;
-
-		/// <summary>
 		///   The value that is allowed to be returned or NULL if there is no
 		///   return type.
 		/// </summary>

@@ -1480,6 +1480,10 @@ public partial class TypeManager {
 		if (builder_to_declspace [t] is Enum)
 			return true;
 
+#if MS_COMPATIBLE
+		if (t.IsGenericParameter)
+			return false;
+#endif
 		return t.IsEnum;
 	}
 

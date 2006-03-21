@@ -406,10 +406,6 @@ namespace Mono.CSharp {
 			VerifyClsCompliance (Parent);
 		}
 
-		public virtual EmitContext EmitContext {
-			get { return Parent.EmitContext; }
-		}
-
 		public virtual bool IsUsed {
 			get { return (caching_flags & Flags.IsUsed) != 0; }
 		}
@@ -681,10 +677,6 @@ namespace Mono.CSharp {
 		// The emit context for toplevel objects.
 		protected EmitContext ec;
 		
-		public override EmitContext EmitContext {
-			get { return ec; }
-		}
-
 		//
 		// Whether we are Generic
 		//

@@ -3404,10 +3404,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override EmitContext EmitContext {
-			get { return ds.EmitContext; }
-		}
-		
 		public ToplevelBlock Block {
 			get {
 				return block;
@@ -3692,20 +3688,11 @@ namespace Mono.CSharp {
 
 		protected bool DoDefineParameters ()
 		{
-			EmitContext ec = ds.EmitContext;
-			if (ec == null)
-				throw new InternalErrorException ("DoDefineParameters invoked too early");
-
-			bool old_unsafe = ec.InUnsafe;
-			ec.InUnsafe = IsInUnsafeScope;
-			ec.ResolvingGenericMethod = GenericMethod != null;
+			IResolveContext rc = GenericMethod == null ? this : (IResolveContext)ds;
 
 			// Check if arguments were correct
-			if (!Parameters.Resolve (ec))
+			if (!Parameters.Resolve (rc))
 				return false;
-
-			ec.ResolvingGenericMethod = false;
-			ec.InUnsafe = old_unsafe;
 
 			return CheckParameters (ParameterTypes);
 		}
@@ -5320,13 +5307,8 @@ namespace Mono.CSharp {
 		public Type MemberType {
 			get {
 				if (member_type == null && Type != null) {
-					EmitContext ec = ds.EmitContext;
-					bool old_unsafe = ec.InUnsafe;
-					ec.InUnsafe = IsInUnsafeScope;
-					ec.ResolvingGenericMethod = GenericMethod != null;
-					Type = Type.ResolveAsTypeTerminal (ec, false);
-					ec.ResolvingGenericMethod = false;
-					ec.InUnsafe = old_unsafe;
+					IResolveContext rc = GenericMethod == null ? this : (IResolveContext)ds;
+					Type = Type.ResolveAsTypeTerminal (rc, false);
 					if (Type != null) {
 						member_type = Type.Type;
 					}
@@ -5386,10 +5368,6 @@ namespace Mono.CSharp {
 
 		protected virtual bool DoDefineBase ()
 		{
-			EmitContext ec = Parent.EmitContext;
-			if (ec == null)
-				throw new InternalErrorException ("MemberBase.DoDefine called too early");
-
 			if (Name == null)
 				throw new InternalErrorException ();
 
@@ -5412,11 +5390,11 @@ namespace Mono.CSharp {
 
 			if (IsExplicitImpl) {
 				Expression expr = MemberName.Left.GetTypeExpression ();
-				TypeExpr iface_texpr = expr.ResolveAsTypeTerminal (ec, false);
+				TypeExpr iface_texpr = expr.ResolveAsTypeTerminal (this, false);
 				if (iface_texpr == null)
 					return false;
 
-				InterfaceType = iface_texpr.ResolveType (ec);
+				InterfaceType = iface_texpr.ResolveType (this);
 
 				if (!InterfaceType.IsInterface) {
 					Report.Error (538, Location, "'{0}' in explicit interface declaration is not an interface", TypeManager.CSharpName (InterfaceType));
@@ -5434,10 +5412,6 @@ namespace Mono.CSharp {
 
 		protected virtual bool DoDefine ()
 		{
-			EmitContext ec = ds.EmitContext;
-			if (ec == null)
-				throw new InternalErrorException ("MemberBase.DoDefine called too early");
-
 			if (MemberType == null)
 				return false;
 
@@ -5485,11 +5459,11 @@ namespace Mono.CSharp {
 
 			if (IsExplicitImpl) {
 				Expression expr = MemberName.Left.GetTypeExpression ();
-				TypeExpr texpr = expr.ResolveAsTypeTerminal (ec, false);
+				TypeExpr texpr = expr.ResolveAsTypeTerminal (this, false);
 				if (texpr == null)
 					return false;
 
-				InterfaceType = texpr.ResolveType (ec);
+				InterfaceType = texpr.ResolveType (this);
 
 				if (!InterfaceType.IsInterface) {
 					Report.Error (538, Location, "`{0}' in explicit interface declaration is not an interface", TypeManager.CSharpName (InterfaceType));
@@ -5583,7 +5557,7 @@ namespace Mono.CSharp {
 		public void EmitInitializer (EmitContext ec)
 		{
 			// Replace DeclSpace because of partial classes
-			ec.DeclContainer = EmitContext.DeclContainer;
+			ec.DeclContainer = DeclContainer;
 
 			ec.IsFieldInitializer = true;
 			initializer = initializer.Resolve (ec);
@@ -5724,10 +5698,6 @@ namespace Mono.CSharp {
 
 		public override bool Define()
 		{
-			EmitContext ec = Parent.EmitContext;
-			if (ec == null)
-				throw new InternalErrorException ("FieldMember.Define called too early");
-
 			if (MemberType == null || Type == null)
 				return false;
 			
@@ -5862,7 +5832,8 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			Constant c = size_expr.ResolveAsConstant (Parent.EmitContext, this);
+			EmitContext ec = new EmitContext (this, Parent, Location, null, null, ModFlags);
+			Constant c = size_expr.ResolveAsConstant (ec, this);
 			if (c == null)
 				return false;
 
@@ -6380,9 +6351,6 @@ namespace Mono.CSharp {
 
 			public override MethodBuilder Define (TypeContainer container)
 			{
-				if (container.EmitContext == null)
-					throw new InternalErrorException ("SetMethod.Define called too early");
-
 				DefineParameters ();
 				if (IsDummy)
 					return null;
@@ -7299,9 +7267,6 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			EmitContext ec = Parent.EmitContext;
-			if (ec == null)
-				throw new InternalErrorException ("Event.Define called too early?");
 			Parameter [] parms = new Parameter [1];
 			parms [0] = new Parameter (MemberType, "value", Parameter.Modifier.NONE, null, Location);
 			parameters = new Parameters (parms);

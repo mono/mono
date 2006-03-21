@@ -460,7 +460,7 @@ namespace Mono.CSharp {
 
 				DeclSpace root = RootContext.Tree.Types;
 				root.NamespaceEntry = NamespaceEntry;
-				FullNamedExpression fne = Expr.ResolveAsTypeStep (root.EmitContext, false);
+				FullNamedExpression fne = Expr.ResolveAsTypeStep (root, false);
 				root.NamespaceEntry = null;
 
 				if (fne == null) {
@@ -519,7 +519,7 @@ namespace Mono.CSharp {
 			{
 				DeclSpace root = RootContext.Tree.Types;
 				root.NamespaceEntry = NamespaceEntry;
-				resolved = Alias.ResolveAsTypeStep (root.EmitContext, false);
+				resolved = Alias.ResolveAsTypeStep (root, false);
 				root.NamespaceEntry = null;
 
 				if (resolved == null)
