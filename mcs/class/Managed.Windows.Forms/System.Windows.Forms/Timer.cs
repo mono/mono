@@ -59,6 +59,8 @@ namespace System.Windows.Forms {
 				if (value != enabled) {
 					enabled = value;
 					if (value) {
+						// Use AddTicks so we get some rounding
+						expires = DateTime.Now.AddMilliseconds (interval > Minimum ? interval : Minimum);
 						XplatUI.SetTimer (this);
 					} else {
 						XplatUI.KillTimer (this);

@@ -77,9 +77,8 @@ namespace System.Windows.Forms {
 
 		#region Constructor & Destructor
 		static XplatUI() {
-			Console.WriteLine("Mono System.Windows.Forms Assembly [Revision: 57713; built: 2006/03/09 03:26:24]");
+			Console.WriteLine("Mono System.Windows.Forms Assembly [$auto_build_revision$]");
 
-			// Don't forget to throw the mac in here somewhere, too
 			default_class_name="SWFClass";
 
 			// check for Unix platforms - see FAQ for more details
@@ -205,6 +204,18 @@ namespace System.Windows.Forms {
 		static public bool MouseButtonsSwapped {
 			get {
 				return driver.MouseButtonsSwapped;
+			}
+		}
+
+		static public Size MouseHoverSize {
+			get {
+				return driver.MouseHoverSize;
+			}
+		}
+
+		static public int MouseHoverTime {
+			get {
+				return driver.MouseHoverTime;
 			}
 		}
 
@@ -599,6 +610,13 @@ namespace System.Windows.Forms {
 				Console.WriteLine("RequestNCRecalc({0}): Called", Window(handle));
 			#endif
 			driver.RequestNCRecalc(handle);
+		}
+
+		internal static void ResetMouseHover(IntPtr handle) {
+			#if DriverDebug
+				Console.WriteLine("ResetMouseHover({0}): Called", Window(handle));
+			#endif
+			driver.ResetMouseHover(handle);
 		}
 
 		internal static void ScreenToClient(IntPtr handle, ref int x, ref int y) {

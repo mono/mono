@@ -265,6 +265,20 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		public static Size MouseHoverSize {
+			get {
+				return XplatUI.MouseHoverSize;
+			}
+		}
+
+		public static int MouseHoverTime {
+			get {
+				return XplatUI.MouseHoverTime;
+			}
+		}
+#endif
+
 		public static bool MousePresent {
 			get {
 				return true;

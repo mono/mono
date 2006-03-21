@@ -99,7 +99,10 @@ namespace System.Windows.Forms {
 		}
 
 		internal enum SPIAction {
-			SPI_GETWORKAREA		= 0x0030
+			SPI_GETWORKAREA		= 0x0030,
+			SPI_GETMOUSEHOVERWIDTH	= 0x0062,
+			SPI_GETMOUSEHOVERHEIGHT	= 0x0064,
+			SPI_GETMOUSEHOVERTIME	= 0x0066,
 		}
 
 		internal enum WindowPlacementFlags {
@@ -869,6 +872,27 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal override Size MouseHoverSize {
+			get {
+				int	width = 4;
+				int	height = 4;
+
+				Win32SystemParametersInfo(SPIAction.SPI_GETMOUSEHOVERWIDTH, 0, ref width, 0);
+				Win32SystemParametersInfo(SPIAction.SPI_GETMOUSEHOVERWIDTH, 0, ref height, 0);
+				return new Size(width, height);
+			}
+		}
+
+		internal override int MouseHoverTime {
+			get {
+				int time = 500;
+
+				Win32SystemParametersInfo(SPIAction.SPI_GETMOUSEHOVERTIME, 0, ref time, 0);
+				return time;
+			}
+		}
+
+
 		internal override bool DropTarget {
 			get {
 				return false;
@@ -1321,6 +1345,17 @@ namespace System.Windows.Forms {
 		internal override void RequestNCRecalc(IntPtr handle) {
 			Win32SetWindowPos(handle, IntPtr.Zero, 0, 0, 0, 0, SetWindowPosFlags.SWP_FRAMECHANGED | SetWindowPosFlags.SWP_NOOWNERZORDER | SetWindowPosFlags.SWP_NOSIZE | SetWindowPosFlags.SWP_NOMOVE);
 		}
+
+		internal override void ResetMouseHover(IntPtr handle) {
+			TRACKMOUSEEVENT	tme;
+
+			tme = new TRACKMOUSEEVENT();
+			tme.size = Marshal.SizeOf(tme);
+			tme.hWnd = handle;
+			tme.dwFlags = TMEFlags.TME_LEAVE | TMEFlags.TME_HOVER;
+			Win32TrackMouseEvent(ref tme);
+		}
+
 
 		internal override bool GetMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax) {
 			return GetMessage(ref msg, hWnd, wFilterMin, wFilterMax, true);
@@ -2484,6 +2519,12 @@ namespace System.Windows.Forms {
 
 		[DllImport ("user32.dll", EntryPoint="SystemParametersInfoW", CharSet=CharSet.Unicode, CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32SystemParametersInfo(SPIAction uiAction, uint uiParam, ref RECT rect, uint fWinIni);
+
+		[DllImport ("user32.dll", EntryPoint="SystemParametersInfoW", CharSet=CharSet.Unicode, CallingConvention=CallingConvention.StdCall)]
+		private extern static bool Win32SystemParametersInfo(SPIAction uiAction, uint uiParam, ref uint value, uint fWinIni);
+
+		[DllImport ("user32.dll", EntryPoint="SystemParametersInfoW", CharSet=CharSet.Unicode, CallingConvention=CallingConvention.StdCall)]
+		private extern static bool Win32SystemParametersInfo(SPIAction uiAction, uint uiParam, ref int value, uint fWinIni);
 
 		[DllImport ("user32.dll", EntryPoint="OpenClipboard", CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32OpenClipboard(IntPtr hwnd);

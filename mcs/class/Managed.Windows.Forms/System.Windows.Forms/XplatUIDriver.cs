@@ -68,6 +68,18 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal virtual Size MouseHoverSize {
+			get {
+				return new Size (1, 1);
+			}
+		}
+
+		internal virtual int MouseHoverTime {
+			get {
+				return 500;
+			}
+		}
+
 		internal virtual Point MousePosition {
 			get {
 				return Point.Empty;
@@ -234,6 +246,7 @@ namespace System.Windows.Forms {
 		internal abstract void EndLoop(Thread thread);
 
 		internal abstract void RequestNCRecalc(IntPtr hwnd);
+		internal abstract void ResetMouseHover(IntPtr hwnd);
 
 		// System information
 		internal abstract int KeyboardSpeed { get; } 

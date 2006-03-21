@@ -1,3 +1,14 @@
+2006-03-21  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* XplatUI.cs, XplatUIDriver.cs, XplatUIX11.cs, XplatUIWin32.cs, 
+	  XplatUIOSX.cs: 
+	  - Added ResetMouseHover method to allow controls to retrigger
+	    hovering if they need it more than once
+	  - Implemented MouseHoverTime and MouseHoverSize properties
+	* Timer.cs: Start() must reset the interval
+	* SystemInformation.cs: Added 2.0 MouseHoverTime and MouseHoverSize
+	  properties
+
 2006-03-21  Jackson Harper  <jackson@ximian.com>
 
 	* X11Keyboard.cs: improved layout detection. Move the nonchar

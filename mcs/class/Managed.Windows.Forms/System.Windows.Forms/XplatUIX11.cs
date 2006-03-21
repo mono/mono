@@ -394,7 +394,8 @@ namespace System.Windows.Forms {
 				HoverState.Timer = new Timer();
 				HoverState.Timer.Enabled = false;
 				HoverState.Timer.Interval = HoverState.Interval;
-				HoverState.Timer.Tick +=new EventHandler(MouseHover);
+				HoverState.Timer.Tick += new EventHandler(MouseHover);
+				HoverState.Size = new Size(4, 4);
 				HoverState.X = -1;
 				HoverState.Y = -1;
 
@@ -1421,25 +1422,22 @@ namespace System.Windows.Forms {
 
 		#region	Callbacks
 		private void MouseHover(object sender, EventArgs e) {
-			if ((HoverState.X == MousePosition.X) && (HoverState.Y == MousePosition.Y)) {
-				XEvent xevent;
+			XEvent xevent;
+			HoverState.Timer.Enabled = false;
 
-				HoverState.Timer.Enabled = false;
+			if (HoverState.Window != IntPtr.Zero) {
+				xevent = new XEvent ();
 
-				if (HoverState.Window != IntPtr.Zero) {
-					xevent = new XEvent ();
+				xevent.type = XEventName.ClientMessage;
+				xevent.ClientMessageEvent.display = DisplayHandle;
+				xevent.ClientMessageEvent.window = HoverState.Window;
+				xevent.ClientMessageEvent.message_type = HoverState.Atom;
+				xevent.ClientMessageEvent.format = 32;
+				xevent.ClientMessageEvent.ptr1 = (IntPtr) (HoverState.Y << 16 | HoverState.X);
 
-					xevent.type = XEventName.ClientMessage;
-					xevent.ClientMessageEvent.display = DisplayHandle;
-					xevent.ClientMessageEvent.window = HoverState.Window;
-					xevent.ClientMessageEvent.message_type = HoverState.Atom;
-					xevent.ClientMessageEvent.format = 32;
-					xevent.ClientMessageEvent.ptr1 = (IntPtr) (HoverState.Y << 16 | HoverState.X);
+				MessageQueue.EnqueueLocked (xevent);
 
-					MessageQueue.EnqueueLocked (xevent);
-
-					WakeupMain ();
-				}
+				WakeupMain ();
 			}
 		}
 
@@ -1682,6 +1680,20 @@ namespace System.Windows.Forms {
 				return false;	// FIXME - how to detect?
 			}
 		} 
+
+		internal override Size MouseHoverSize {
+			get {
+				return new Size (1, 1);
+			}
+		}
+
+		internal override int MouseHoverTime {
+			get {
+				return HoverState.Interval;
+			}
+		}
+
+
 
 		internal override  bool MouseWheelPresent {
 			get {
@@ -2907,8 +2919,19 @@ namespace System.Windows.Forms {
 							msg.lParam = (IntPtr)(MousePosition.Y << 16 | MousePosition.X);
 						}
 
-						HoverState.X = MousePosition.X = xevent.MotionEvent.x;
-						HoverState.Y = MousePosition.Y = xevent.MotionEvent.y;
+						MousePosition.X = xevent.MotionEvent.x;
+						MousePosition.Y = xevent.MotionEvent.y;
+
+						if ((HoverState.Timer.Enabled) &&
+						    (((MousePosition.X + HoverState.Size.Width) < HoverState.X) ||
+						    ((MousePosition.X - HoverState.Size.Width) > HoverState.X) ||
+						    ((MousePosition.Y + HoverState.Size.Height) < HoverState.Y) ||
+						    ((MousePosition.Y - HoverState.Size.Height) > HoverState.Y))) {
+							HoverState.Timer.Stop();
+							HoverState.Timer.Start();
+							HoverState.X = MousePosition.X;
+							HoverState.Y = MousePosition.Y;
+						}
 
 						break;
 					} else {
@@ -2953,6 +2976,8 @@ namespace System.Windows.Forms {
 						goto ProcessNextMessage;
 					}
 					msg.message = Msg.WM_MOUSE_ENTER;
+					HoverState.X = xevent.CrossingEvent.x;
+					HoverState.Y = xevent.CrossingEvent.y;
 					HoverState.Timer.Enabled = true;
 					HoverState.Window = xevent.CrossingEvent.window;
 					break;
@@ -3555,6 +3580,21 @@ namespace System.Windows.Forms {
 			SendMessage(handle, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
 			InvalidateWholeWindow(handle);
 		}
+
+		internal override void ResetMouseHover(IntPtr handle) {
+			Hwnd	hwnd;
+
+			hwnd = Hwnd.ObjectFromHandle(handle);
+			if (hwnd == null) {
+				return;
+			}
+
+			HoverState.Timer.Enabled = true;
+			HoverState.X = MousePosition.X;
+			HoverState.Y = MousePosition.Y;
+			HoverState.Window = handle;
+		}
+
 
 		internal override void ScreenToClient(IntPtr handle, ref int x, ref int y) {
 			int	dest_x_return;
