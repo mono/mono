@@ -1,3 +1,7 @@
+2006-03-21  Jackson Harper  <jackson@ximian.com>
+
+	* System.Windows.Forms.dll.resources: Add the keyboard resources.
+
 2006-03-13  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* System.Windows.Forms.dll.sources: Added ProgressBarStyle.cs
