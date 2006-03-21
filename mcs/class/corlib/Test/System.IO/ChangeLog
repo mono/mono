@@ -1,3 +1,7 @@
+2006-03-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FileStreamTest.cs: new test from bug #77863.
+
 2006-01-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DirectoryInfoTest.cs : don't expect "/" as a top directory on

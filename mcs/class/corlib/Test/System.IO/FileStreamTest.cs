@@ -1147,6 +1147,30 @@ namespace MonoTests.System.IO
 				File.Delete (fn);
 			}
 		}
+
+		[Test]
+		public void LengthAfterWrite ()
+		{
+			string path = TempFolder + DSC + "oneofthefilescreated.txt";
+			FileStream fs = null;
+			DeleteFile (path);
+			try {
+				fs = new FileStream (path, FileMode.CreateNew);
+				fs.WriteByte (Convert.ToByte ('A'));
+				byte [] buffer = Encoding.ASCII.GetBytes (" is a first character.");
+				fs.Write (buffer, 0, buffer.Length);
+				fs.Seek (0, SeekOrigin.Begin);
+				char a = Convert.ToChar (fs.ReadByte ());
+				Assert.AreEqual ('A', a, "#A1");
+				Assert.AreEqual (23, fs.Length, "#A2");
+				int nread = fs.Read (buffer, 0, 5);
+				Assert.AreEqual (5, nread, "#A3");
+			} finally {
+				if (fs != null)
+					fs.Close ();
+				DeleteFile (path);
+			}
+		}
         }
 }
 
