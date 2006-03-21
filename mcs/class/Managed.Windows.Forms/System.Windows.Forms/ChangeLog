@@ -135,6 +135,21 @@
 
 2006-03-15  Jackson Harper  <jackson@ximian.com>
 
+	* BindingContext.cs: Check the binding after its added so that it
+	  can initialize the binding managers and hookup to events.
+	* Binding.cs: Data members seem to sometimes include rows/cols in
+	  the format Row.Column we now take this into account.
+	  - Hookup to the position changed event so we can update the
+	  control when the position has changed in the data set.
+	* CurrencyManager.cs: Take into account the row/col naming
+	  convention when creating dataset tables.
+	* BindingContext.cs: Using a newer better way of storing
+	  datasource/datamember pairs.  Hopefully this better matches MS for
+          looking up binding managers.
+
+
+2006-03-15  Jackson Harper  <jackson@ximian.com>
+
 	* BindingContext.cs: The currency manager needs the data member
 	name, if the member is a data set we use the name to find the
 	correct table.
