@@ -30,7 +30,7 @@ namespace Mono.CSharp {
 			return "";
 		}
 
-		internal static void OnMethodGenerateDocComment (MethodCore mc, DeclSpace ds, XmlElement el)
+		internal static void OnMethodGenerateDocComment (MethodCore mc, XmlElement el)
 		{
 		}
 
