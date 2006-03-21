@@ -1,3 +1,10 @@
+2006-03-21  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* HttpRequest.cs: fixed Request.Url returns URL where path info 
+	were appeared twice.
+	* ServerVariablesCollection.cs: fixed "URL" variable, it should not
+	return path info
+
 2006-03-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpRequest.cs:

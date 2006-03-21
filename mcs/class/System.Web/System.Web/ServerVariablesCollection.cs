@@ -185,7 +185,7 @@ namespace System.Web
 				Add("SERVER_PORT_SECURE", "0");
 			Add("SERVER_PROTOCOL", wr.GetHttpVersion());
 			Add("SERVER_SOFTWARE", wr.GetServerVariable("SERVER_SOFTWARE"));
-			Add ("URL", request.Url.AbsolutePath);
+			Add ("URL", request.FilePath);
 
 			AddHeaderVariables (wr);
 
