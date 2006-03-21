@@ -2347,23 +2347,13 @@ namespace Mono.CSharp {
 
 		static bool InferType (Type pt, Type at, Type[] infered)
 		{
-			if (pt == at)
-				return true;
-
 			if (pt.IsGenericParameter) {
 				if (pt.DeclaringMethod == null)
-					return false;
+					return pt == at;
 
 				int pos = pt.GenericParameterPosition;
 
 				if (infered [pos] == null) {
-					Type check = at;
-					while (check.IsArray)
-						check = check.GetElementType ();
-
-					if (pt == check)
-						return false;
-
 					infered [pos] = at;
 					return true;
 				}
