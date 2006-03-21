@@ -1,3 +1,9 @@
+
+Tue Mar 21 15:59:57 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* declsec.c, mini-exceptions.c: use write barrier to set reference
+	fields of managed objects.
+
 2006-03-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mono_print_method_from_ip): Recognize JIT trampolines as well.
