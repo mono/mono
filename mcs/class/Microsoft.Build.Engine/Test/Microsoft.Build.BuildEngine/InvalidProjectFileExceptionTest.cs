@@ -63,15 +63,16 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			ipfe = new InvalidProjectFileException (projectFile, lineNumber, columnNumber, endLineNumber, endColumnNumber,
 				message, errorSubcategory, errorCode, helpKeyword);
 			
-			Assert.AreEqual (projectFile, ipfe.ProjectFile, "ProjectFile");
-			Assert.AreEqual (lineNumber, ipfe.LineNumber, "LineNumber");
-			Assert.AreEqual (columnNumber, ipfe.ColumnNumber, "ColumnNumber");
-			Assert.AreEqual (endLineNumber, ipfe.EndLineNumber, "EndLineNumber");
-			Assert.AreEqual (endColumnNumber, ipfe.EndColumnNumber, "EndColumnNumber");
-			Assert.AreEqual (message, ipfe.Message, "Message");
-			Assert.AreEqual (errorSubcategory, ipfe.ErrorSubcategory, "ErrorSubcategory");
-			Assert.AreEqual (errorCode, ipfe.ErrorCode, "ErrorCode");
-			Assert.AreEqual (helpKeyword, ipfe.HelpKeyword, "HelpKeyword");
+			Assert.AreEqual (projectFile, ipfe.ProjectFile, "A1");
+			Assert.AreEqual (lineNumber, ipfe.LineNumber, "A2");
+			Assert.AreEqual (columnNumber, ipfe.ColumnNumber, "A3");
+			Assert.AreEqual (endLineNumber, ipfe.EndLineNumber, "A4");
+			Assert.AreEqual (endColumnNumber, ipfe.EndColumnNumber, "A5");
+			Assert.AreEqual (message, ipfe.BaseMessage, "A6");
+			Assert.AreEqual (message + "  " + projectFile, ipfe.Message, "A7");
+			Assert.AreEqual (errorSubcategory, ipfe.ErrorSubcategory, "A8");
+			Assert.AreEqual (errorCode, ipfe.ErrorCode, "A9");
+			Assert.AreEqual (helpKeyword, ipfe.HelpKeyword, "A10");
 		}
 		
 		[Test]
@@ -87,6 +88,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		[Test]
 		public void TestCtorNode ()
 		{
+			// FIXME: we need to load xml file to load something with non-empty XmlElement.BaseUri
 			/*
 			XmlDocument xd = new XmlDocument ();
 			
@@ -99,10 +101,10 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			
 			ipfe = new InvalidProjectFileException (null, message, errorSubcategory, errorCode, helpKeyword);
 			
-			Assert.AreEqual (message, ipfe.Message, "Message");
-			Assert.AreEqual (errorSubcategory, ipfe.ErrorSubcategory, "ErrorSubcategory");
-			Assert.AreEqual (errorCode, ipfe.ErrorCode, "ErrorCode");
-			Assert.AreEqual (helpKeyword, ipfe.HelpKeyword, "HelpKeyword");
+			Assert.AreEqual (message, ipfe.BaseMessage, "A1");
+			Assert.AreEqual (errorSubcategory, ipfe.ErrorSubcategory, "A2");
+			Assert.AreEqual (errorCode, ipfe.ErrorCode, "A3");
+			Assert.AreEqual (helpKeyword, ipfe.HelpKeyword, "A4");
 			*/
 		}
 	}

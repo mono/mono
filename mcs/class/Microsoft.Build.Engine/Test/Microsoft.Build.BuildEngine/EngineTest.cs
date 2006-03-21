@@ -25,21 +25,73 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using System;
 using Microsoft.Build.BuildEngine;
 using NUnit.Framework;
 
 namespace MonoTests.Microsoft.Build.BuildEngine {
 	[TestFixture]
 	public class EngineTest {
-		[Test]
-		public void TestAssignment ()
+
+		Engine engine;
+		string binPath;
+
+		[SetUp]
+		public void SetUp ()
 		{
-			Engine engine;
-			string binPath = "binPath";
-			
+		    binPath = "binPath";
+		}
+
+		[Test]
+		public void TestCtor ()
+		{
 			engine = new Engine (binPath);
-			
-			Assert.AreEqual (binPath, engine.BinPath, "BinPath");
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException),
+		@"Before a project can be instantiated, Engine.BinPath must be set to the location on disk where MSBuild is installed. " +
+		"This is used to evaluate $(MSBuildBinPath).")]
+		public void TestNewProject ()
+		{
+			engine = new Engine ();
+
+			engine.CreateNewProject ();
+		}
+
+		[Test]
+		public void TestBinPath ()
+		{
+			engine = new Engine (binPath);
+
+			Assert.AreEqual (binPath, engine.BinPath, "A1");
+		}
+
+		[Test]
+		public void TestBuildEnabled ()
+		{
+			engine = new Engine (binPath);
+
+			Assert.AreEqual (true, engine.BuildEnabled, "A1");
+		}
+
+		[Test]
+		public void TestOnlyLogCriticalEvents ()
+		{
+			engine = new Engine (binPath);
+
+			Assert.AreEqual (false, engine.OnlyLogCriticalEvents, "A1");
+		}
+
+		[Test]
+		public void TestGlobalProperties ()
+		{
+			engine = new Engine (binPath);
+
+			Assert.IsNotNull (engine.GlobalProperties, "A1");
+			Assert.AreEqual (0, engine.GlobalProperties.Count, "A2");
+			Assert.AreEqual (String.Empty, engine.GlobalProperties.Condition, "A3");
+			Assert.IsFalse (engine.GlobalProperties.IsImported, "A4");
 		}
 	}
 }

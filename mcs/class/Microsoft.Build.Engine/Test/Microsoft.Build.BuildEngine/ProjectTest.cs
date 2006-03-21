@@ -33,6 +33,15 @@ using NUnit.Framework;
 namespace MonoTests.Microsoft.Build.BuildEngine {
 	[TestFixture]
 	public class ProjectTest {
+
+        string binPath;
+
+        [SetUp]
+        public void SetUp ()
+        {
+            binPath = "binPath";
+        }
+
 		// Clones a project by reloading from original.Xml
 		private Project CloneProject (Project original)
 		{
@@ -45,19 +54,21 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+        [ExpectedException (typeof (InvalidProjectFileException),
+        @"The default XML namespace of the project must be the MSBuild XML namespace." + 
+        " If the project is authored in the MSBuild 2003 format, please add " +
+        "xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\" to the <Project> element. " +
+        "If the project has been authored in the old 1.0 or 1.2 format, please convert it to MSBuild 2003 format.  ")]
 		public void TestAssignment ()
 		{
 			Engine engine;
 			Project project;
-			string binPath = "binPath";
 			string documentString =
 				"<Project></Project>";
 			
 			engine = new Engine (binPath);
 			project = engine.CreateNewProject ();
 			project.LoadXml (documentString);
-			
-			Assert.AreEqual (String.Empty, project.FullFileName, "A1");
 		}
 
 		[Test]
@@ -66,14 +77,16 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Engine engine;
 			Project proj;
 			Project cproj;
-			string documentString =
-				"<Project DefaultTargets=\"Build;Compile\"></Project>";
+			string documentString = @"
+                <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" DefaultTargets=""Build;Compile"">
+                </Project>
+            ";
 			
-			engine = new Engine ();
+			engine = new Engine (binPath);
 			proj = engine.CreateNewProject ();
 			proj.LoadXml (documentString);
 			
-			Assert.AreEqual ("Build;Compile", proj.DefaultTargets, "A1");
+			Assert.AreEqual ("Build; Compile", proj.DefaultTargets, "A1");
 			proj.DefaultTargets = "Build";
 			Assert.AreEqual ("Build", proj.DefaultTargets, "A2");
 			cproj = CloneProject (proj);
@@ -83,11 +96,11 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		[Test]
 		public void TestListProperties ()
 		{
-			Engine engine = new Engine ();
+			Engine engine = new Engine (binPath);
 			Project proj = engine.CreateNewProject ();
 
 			string documentString = @"
-				<Project>
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<PropertyGroup>
 						<Prop1>value1</Prop1>
 					</PropertyGroup>
