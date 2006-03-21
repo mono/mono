@@ -542,7 +542,7 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 		(dest)->klass = var->klass;	\
 		(dest)->sreg1 = var->dreg;   \
         (dest)->dreg = alloc_dreg ((cfg), (dest)->type); \
-        if ((dest)->opcode == OP_VMOVE) { /* FIXME: */ if (!get_vreg_to_inst (cfg, (dest)->dreg)) mono_compile_create_var_for_vreg ((cfg), (vartype), OP_LOCAL, (dest)->dreg); } \
+        if ((dest)->opcode == OP_VMOVE) (dest)->klass = mono_class_from_mono_type ((vartype)); \
 	} while (0)
 
 #define NEW_VARLOADA(cfg,dest,var,vartype) do {	\
@@ -562,7 +562,7 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 		(dest)->klass = (var)->klass;	\
         (dest)->sreg1 = (inst)->dreg; \
 		(dest)->dreg = (var)->dreg;   \
-        if ((dest)->opcode == OP_VMOVE) { /* FIXME: */ if (!get_vreg_to_inst (cfg, (dest)->sreg1)) mono_compile_create_var_for_vreg ((cfg), (vartype), OP_LOCAL, (dest)->sreg1); } \
+        if ((dest)->opcode == OP_VMOVE) (dest)->klass = mono_class_from_mono_type ((vartype)); \
 	} while (0)
 
 #define NEW_TEMPLOAD(cfg,dest,num) NEW_VARLOAD ((cfg), (dest), (cfg)->varinfo [(num)], (cfg)->varinfo [(num)]->inst_vtype)
@@ -5207,8 +5207,13 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 				src_var = get_vreg_to_inst (cfg, ins->sreg1);
 				dest_var = get_vreg_to_inst (cfg, ins->dreg);
 
-				// FIXME:
-				g_assert (src_var && dest_var);
+				g_assert (ins->klass);
+
+				if (!src_var)
+					src_var = mono_compile_create_var_for_vreg (cfg, &ins->klass->byval_arg, OP_LOCAL, ins->dreg);
+
+				if (!dest_var)
+					dest_var = mono_compile_create_var_for_vreg (cfg, &ins->klass->byval_arg, OP_LOCAL, ins->dreg);
 
 				// FIXME:
 				if (src_var->unused)
@@ -5223,7 +5228,10 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 			case OP_VZERO: {
 				dest_var = get_vreg_to_inst (cfg, ins->dreg);
 
-				g_assert (dest_var);
+				g_assert (ins->klass);
+
+				if (!dest_var)
+					dest_var = mono_compile_create_var_for_vreg (cfg, &ins->klass->byval_arg, OP_LOCAL, ins->dreg);
 
 				EMIT_NEW_VARLOADA (cfg, dest, dest_var, dest_var->inst_vtype);
 				handle_initobj (cfg, dest, NULL, dest_var->klass, NULL, NULL);
@@ -5232,7 +5240,10 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 			case OP_STOREV_MEMBASE: {
 				src_var = get_vreg_to_inst (cfg, ins->sreg1);
 
-				g_assert (src_var);
+				if (!src_var) {
+					g_assert (ins->klass);
+					src_var = mono_compile_create_var_for_vreg (cfg, &ins->klass->byval_arg, OP_LOCAL, ins->sreg1);
+				}
 
 				EMIT_NEW_VARLOADA ((cfg), (src), src_var, src_var->inst_vtype);
 
@@ -6378,25 +6389,13 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					g_assert (!return_var);
 					CHECK_STACK (1);
 					--sp;
-					MONO_INST_NEW (cfg, ins, OP_NOP);
-					ins->opcode = mono_type_to_stind (ret_type);
-					if (ins->opcode == CEE_STOBJ) {
-						MonoInst *src_var = get_vreg_to_inst (cfg, (*sp)->dreg);
-						MonoInst *src;
+					if (mono_type_to_stind (ret_type) == CEE_STOBJ) {
+						MonoInst *ret_addr;
 
-						// FIXME: Make this use VMOVE too
-						if (!src_var)
-							src_var = mono_compile_create_var_for_vreg (cfg, ret_type, OP_LOCAL, (*sp)->dreg);
+						EMIT_NEW_RETLOADA (cfg, ret_addr);
 
-						EMIT_NEW_VARLOADA ((cfg), (src), src_var, src_var->inst_vtype);
-
-						EMIT_NEW_RETLOADA (cfg, ins);
-						
-						/* 
-						 * cfg->ret is a scalar variable, so can't use its 
-						 * class field.
-						 */
-						emit_stobj (cfg, ins, src, ip, mono_class_from_mono_type (ret_type), FALSE);
+						EMIT_NEW_STORE_MEMBASE (cfg, ins, OP_STOREV_MEMBASE, ret_addr->dreg, 0, (*sp)->dreg);
+						ins->klass = mono_class_from_mono_type (ret_type);
 					} else {
 						mono_arch_emit_setret (cfg, method, *sp);
 					}
@@ -6926,8 +6925,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			if ((loc_index != -1) && ip_in_bb (cfg, bblock, ip + 5)) {
 				CHECK_LOCAL (loc_index);
 
-				EMIT_NEW_LOCLOADA (cfg, ins, loc_index);
-				emit_stobj (cfg, ins, *sp, ip, klass, FALSE);
+				EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOADV_MEMBASE, cfg->locals [loc_index]->dreg, sp [0]->dreg, 0);
+				ins->klass = klass;
 				ip += 5;
 				ip += stloc_len;
 				break;
@@ -8791,10 +8790,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			} else if ((t == MONO_TYPE_VALUETYPE) || (t == MONO_TYPE_TYPEDBYREF) ||
 +				   ((t == MONO_TYPE_GENERICINST) && mono_type_generic_inst_is_valuetype (ptype))) {
 				MONO_EMIT_NEW_VZERO (cfg, dreg, mono_class_from_mono_type (ptype));
-				/*
-				EMIT_NEW_LOCLOADA (cfg, ins, i);
-				handle_initobj (cfg, ins, NULL, mono_class_from_mono_type (ptype), NULL, NULL);
-				*/
 			} else {
 				MONO_EMIT_NEW_PCONST (cfg, dreg, NULL);
 			}
@@ -9460,16 +9455,6 @@ mono_spill_global_vars (MonoCompile *cfg)
 				ins->sreg1 = var->inst_basereg;
 				ins->inst_imm = var->inst_offset;
 
-#if defined(__i386__)
-				if ((ins->sreg1 == X86_EBP) && (ins->dreg != X86_EBP)) {
-					/* LEA is ADD but without the sreg1==dreg restriction */
-					/* FIXME: amd64 and generalize this */
-					/* FIXME: Why does this lead to code growth in mcs ? */
-					ins->opcode = OP_X86_LEA_MEMBASE;
-					ins->inst_basereg = ins->sreg1;
-				}
-#endif
-
 				spec = ins_info [ins->opcode - OP_START - 1];
 			}
 
@@ -9726,8 +9711,10 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - vtype cleanups:
  *   - add a NEW_VARLOADA_VREG macro
  *   - refactor the replacemenent code from the decompose_x_opts () functions
- *   - get rid of the if (opcode == LDOBJ/STOBJ) stuff
+ * - the vtype optimizations are blocked by the LDADDR opcodes generated for 
+ *   accessing vtype fields and passing/receiving them in calls.
  * - in the managed->native wrappers, place a pop before the call to interrupt_checkpoint
+ * - port the lea optimization to amd64
  * - LAST MERGE: 57988.
  */
 

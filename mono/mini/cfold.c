@@ -465,6 +465,12 @@ mono_constant_fold_ins2 (MonoInst *ins, MonoInst *arg1, MonoInst *arg2)
 			ins->inst_c0 = arg1->inst_c0;
 		}
 		break;
+	case OP_VMOVE:
+		if (arg1->opcode == OP_VZERO) {
+			ins->opcode = OP_VZERO;
+			ins->sreg1 = -1;
+		}
+		break;
 	case OP_COMPARE:
 	case OP_ICOMPARE:
 	case OP_COMPARE_IMM:
@@ -706,6 +712,13 @@ mono_constant_fold_new (MonoCompile *cfg, MonoInst *ins, MonoInst *arg1, MonoIns
 	case OP_MOVE:
 		if (arg1->opcode == OP_ICONST) {
 			NEW_ICONST (cfg, dest, arg1->inst_c0);
+		}
+		break;
+	case OP_VMOVE:
+		if (arg1->opcode == OP_VZERO) {
+			NEW_ICONST (cfg, dest, 0);
+			dest->opcode = OP_VZERO;
+			dest->sreg1 = -1;
 		}
 		break;
 	case OP_COMPARE:

@@ -1083,11 +1083,6 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 			g_assert (in->klass);
 
 			// FIXME:
-			if (in->opcode == OP_LDADDR) {
-				src_var = in->inst_p0;
-			}
-
-			// FIXME:
 			if (!src_var)
 				src_var = mono_compile_create_var_for_vreg (cfg, &in->klass->byval_arg, OP_LOCAL, in->dreg);
 				
@@ -1482,46 +1477,19 @@ emit_call (MonoCompile *cfg, guint8 *code, guint32 patch_type, gconstpointer dat
 #define INST_IGNORES_CFLAGS(opcode) (((opcode) == CEE_BR) || ((opcode) == OP_BR) || ((opcode) == OP_STORE_MEMBASE_IMM) || ((opcode) == OP_STOREI4_MEMBASE_IMM) || ((opcode) == OP_STOREI4_MEMBASE_REG) || ((opcode) == OP_STOREI1_MEMBASE_REG) || ((opcode) == OP_STOREI1_MEMBASE_IMM) || ((opcode) == OP_STOREI2_MEMBASE_REG) || ((opcode) == OP_STOREI2_MEMBASE_IMM) || ((opcode) == OP_IXOR) || ((opcode) == OP_MOVE) || ((opcode) == OP_ICONST) || ((opcode) == OP_IADD) || ((opcode) == OP_X86_PUSH) || ((opcode) == OP_X86_PUSH_IMM) || ((opcode) == OP_X86_PUSH_MEMBASE) || ((opcode) == OP_COMPARE_IMM) || ((opcode) == OP_ICOMPARE_IMM) || ((opcode) == OP_LOAD_MEMBASE) || ((opcode) == OP_LOADI4_MEMBASE))
 */
 
+/*
+ * peephole_pass_1:
+ *
+ *   Perform peephole opts which should/can be performed before local regalloc
+ */
 static void
-peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
+peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
 {
 	MonoInst *ins, *last_ins = NULL;
 	ins = bb->code;
 
 	while (ins) {
-
 		switch (ins->opcode) {
-		case OP_ICONST:
-			/* reg = 0 -> XOR (reg, reg) */
-			/* XOR sets cflags on x86, so we cant do it always */
-			if (ins->inst_c0 == 0 && (!ins->next || (ins->next && INST_IGNORES_CFLAGS (ins->next->opcode)))) {
-				MonoInst *ins2;
-
-				ins->opcode = OP_IXOR;
-				ins->sreg1 = ins->dreg;
-				ins->sreg2 = ins->dreg;
-
-				/* 
-				 * Convert succeeding STORE_MEMBASE_IMM 0 ins to STORE_MEMBASE_REG 
-				 * since it takes 3 bytes instead of 7.
-				 */
-				for (ins2 = ins->next; ins2; ins2 = ins2->next) {
-					if ((ins2->opcode == OP_STORE_MEMBASE_IMM) && (ins2->inst_imm == 0)) {
-						ins2->opcode = OP_STORE_MEMBASE_REG;
-						ins2->sreg1 = ins->dreg;
-					}
-					else if ((ins2->opcode == OP_STOREI4_MEMBASE_IMM) && (ins2->inst_imm == 0)) {
-						ins2->opcode = OP_STOREI4_MEMBASE_REG;
-						ins2->sreg1 = ins->dreg;
-					}
-					else if ((ins2->opcode == OP_STOREI1_MEMBASE_IMM) || (ins2->opcode == OP_STOREI2_MEMBASE_IMM)) {
-						/* Continue iteration */
-					}
-					else
-						break;
-				}
-			}
-			break;
 		case OP_MUL_IMM: 
 		case OP_IMUL_IMM: 
 			/* remove unnecessary multiplication with 1 */
@@ -1537,7 +1505,14 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case OP_IADD_IMM:
 		case OP_ADD_IMM:
-			if ((ins->inst_imm == 1) && (ins->dreg == ins->sreg1))
+			if (ins->sreg1 == X86_EBP) {
+				/* 
+				 * X86_LEA is like ADD, but doesn't have the
+				 * sreg1==dreg restriction.
+				 */
+				ins->opcode = OP_X86_LEA_MEMBASE;
+				ins->inst_basereg = ins->sreg1;
+			} else if ((ins->inst_imm == 1) && (ins->dreg == ins->sreg1))
 				ins->opcode = OP_X86_INC_REG;
 			break;
 		case OP_ISUB_IMM:
@@ -1726,6 +1701,227 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 	bb->last_ins = last_ins;
 }
 
+static void
+peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
+{
+	MonoInst *ins, *last_ins = NULL;
+	ins = bb->code;
+
+	while (ins) {
+
+		switch (ins->opcode) {
+		case OP_ICONST:
+			/* reg = 0 -> XOR (reg, reg) */
+			/* XOR sets cflags on x86, so we cant do it always */
+			if (ins->inst_c0 == 0 && (!ins->next || (ins->next && INST_IGNORES_CFLAGS (ins->next->opcode)))) {
+				MonoInst *ins2;
+
+				ins->opcode = OP_IXOR;
+				ins->sreg1 = ins->dreg;
+				ins->sreg2 = ins->dreg;
+
+				/* 
+				 * Convert succeeding STORE_MEMBASE_IMM 0 ins to STORE_MEMBASE_REG 
+				 * since it takes 3 bytes instead of 7.
+				 */
+				for (ins2 = ins->next; ins2; ins2 = ins2->next) {
+					if ((ins2->opcode == OP_STORE_MEMBASE_IMM) && (ins2->inst_imm == 0)) {
+						ins2->opcode = OP_STORE_MEMBASE_REG;
+						ins2->sreg1 = ins->dreg;
+					}
+					else if ((ins2->opcode == OP_STOREI4_MEMBASE_IMM) && (ins2->inst_imm == 0)) {
+						ins2->opcode = OP_STOREI4_MEMBASE_REG;
+						ins2->sreg1 = ins->dreg;
+					}
+					else if ((ins2->opcode == OP_STOREI1_MEMBASE_IMM) || (ins2->opcode == OP_STOREI2_MEMBASE_IMM)) {
+						/* Continue iteration */
+					}
+					else
+						break;
+				}
+			}
+			break;
+		case OP_IADD_IMM:
+		case OP_ADD_IMM:
+			if ((ins->inst_imm == 1) && (ins->dreg == ins->sreg1))
+				ins->opcode = OP_X86_INC_REG;
+			break;
+		case OP_ISUB_IMM:
+		case OP_SUB_IMM:
+			if ((ins->inst_imm == 1) && (ins->dreg == ins->sreg1))
+				ins->opcode = OP_X86_DEC_REG;
+			break;
+		case OP_X86_COMPARE_MEMBASE_IMM:
+			/* 
+			 * OP_STORE_MEMBASE_REG reg, offset(basereg)
+			 * OP_X86_COMPARE_MEMBASE_IMM offset(basereg), imm
+			 * -->
+			 * OP_STORE_MEMBASE_REG reg, offset(basereg)
+			 * OP_COMPARE_IMM reg, imm
+			 *
+			 * Note: if imm = 0 then OP_COMPARE_IMM replaced with OP_X86_TEST_NULL
+			 */
+			if (last_ins && (last_ins->opcode == OP_STOREI4_MEMBASE_REG) &&
+			    ins->inst_basereg == last_ins->inst_destbasereg &&
+			    ins->inst_offset == last_ins->inst_offset) {
+					ins->opcode = OP_COMPARE_IMM;
+					ins->sreg1 = last_ins->sreg1;
+
+					/* check if we can remove cmp reg,0 with test null */
+					if (!ins->inst_imm)
+						ins->opcode = OP_X86_TEST_NULL;
+				}
+
+			break;
+		case OP_LOAD_MEMBASE:
+		case OP_LOADI4_MEMBASE:
+			/* 
+			 * Note: if reg1 = reg2 the load op is removed
+			 *
+			 * OP_STORE_MEMBASE_REG reg1, offset(basereg) 
+			 * OP_LOAD_MEMBASE offset(basereg), reg2
+			 * -->
+			 * OP_STORE_MEMBASE_REG reg1, offset(basereg)
+			 * OP_MOVE reg1, reg2
+			 */
+			if (last_ins && (last_ins->opcode == OP_STOREI4_MEMBASE_REG 
+					 || last_ins->opcode == OP_STORE_MEMBASE_REG) &&
+			    ins->inst_basereg == last_ins->inst_destbasereg &&
+			    ins->inst_offset == last_ins->inst_offset) {
+				if (ins->dreg == last_ins->sreg1) {
+					last_ins->next = ins->next;				
+					ins = ins->next;				
+					continue;
+				} else {
+					//static int c = 0; printf ("MATCHX %s %d\n", cfg->method->name,c++);
+					ins->opcode = OP_MOVE;
+					ins->sreg1 = last_ins->sreg1;
+				}
+
+			/* 
+			 * Note: reg1 must be different from the basereg in the second load
+			 * Note: if reg1 = reg2 is equal then second load is removed
+			 *
+			 * OP_LOAD_MEMBASE offset(basereg), reg1
+			 * OP_LOAD_MEMBASE offset(basereg), reg2
+			 * -->
+			 * OP_LOAD_MEMBASE offset(basereg), reg1
+			 * OP_MOVE reg1, reg2
+			 */
+			} if (last_ins && (last_ins->opcode == OP_LOADI4_MEMBASE
+					   || last_ins->opcode == OP_LOAD_MEMBASE) &&
+			      ins->inst_basereg != last_ins->dreg &&
+			      ins->inst_basereg == last_ins->inst_basereg &&
+			      ins->inst_offset == last_ins->inst_offset) {
+
+				if (ins->dreg == last_ins->dreg) {
+					last_ins->next = ins->next;				
+					ins = ins->next;				
+					continue;
+				} else {
+					ins->opcode = OP_MOVE;
+					ins->sreg1 = last_ins->dreg;
+				}
+
+				//g_assert_not_reached ();
+
+#if 0
+			/* 
+			 * OP_STORE_MEMBASE_IMM imm, offset(basereg) 
+			 * OP_LOAD_MEMBASE offset(basereg), reg
+			 * -->
+			 * OP_STORE_MEMBASE_IMM imm, offset(basereg) 
+			 * OP_ICONST reg, imm
+			 */
+			} else if (last_ins && (last_ins->opcode == OP_STOREI4_MEMBASE_IMM
+						|| last_ins->opcode == OP_STORE_MEMBASE_IMM) &&
+				   ins->inst_basereg == last_ins->inst_destbasereg &&
+				   ins->inst_offset == last_ins->inst_offset) {
+				//static int c = 0; printf ("MATCHX %s %d\n", cfg->method->name,c++);
+				ins->opcode = OP_ICONST;
+				ins->inst_c0 = last_ins->inst_imm;
+				g_assert_not_reached (); // check this rule
+#endif
+			}
+			break;
+		case OP_LOADU1_MEMBASE:
+		case OP_LOADI1_MEMBASE:
+			/* 
+			 * OP_STORE_MEMBASE_REG reg1, offset(basereg) 
+			 * OP_LOAD_MEMBASE offset(basereg), reg2
+			 * -->
+			 * OP_STORE_MEMBASE_REG reg1, offset(basereg)
+			 * CONV_I2/U2 reg1, reg2
+			 */
+			if (last_ins && X86_IS_BYTE_REG (last_ins->sreg1) &&
+				(last_ins->opcode == OP_STOREI1_MEMBASE_REG) &&
+					ins->inst_basereg == last_ins->inst_destbasereg &&
+					ins->inst_offset == last_ins->inst_offset) {
+				ins->opcode = (ins->opcode == OP_LOADI1_MEMBASE) ? CEE_CONV_I1 : CEE_CONV_U1;
+				ins->sreg1 = last_ins->sreg1;
+			}
+			break;
+		case OP_LOADU2_MEMBASE:
+		case OP_LOADI2_MEMBASE:
+			/* 
+			 * OP_STORE_MEMBASE_REG reg1, offset(basereg) 
+			 * OP_LOAD_MEMBASE offset(basereg), reg2
+			 * -->
+			 * OP_STORE_MEMBASE_REG reg1, offset(basereg)
+			 * CONV_I2/U2 reg1, reg2
+			 */
+			if (last_ins && (last_ins->opcode == OP_STOREI2_MEMBASE_REG) &&
+					ins->inst_basereg == last_ins->inst_destbasereg &&
+					ins->inst_offset == last_ins->inst_offset) {
+				ins->opcode = (ins->opcode == OP_LOADI2_MEMBASE) ? CEE_CONV_I2 : CEE_CONV_U2;
+				ins->sreg1 = last_ins->sreg1;
+			}
+			break;
+		case CEE_CONV_I4:
+		case CEE_CONV_U4:
+		case OP_ICONV_TO_I4:
+		case OP_MOVE:
+			/*
+			 * Removes:
+			 *
+			 * OP_MOVE reg, reg 
+			 */
+			if (ins->dreg == ins->sreg1) {
+				if (last_ins)
+					last_ins->next = ins->next;				
+				ins = ins->next;
+				continue;
+			}
+			/* 
+			 * Removes:
+			 *
+			 * OP_MOVE sreg, dreg 
+			 * OP_MOVE dreg, sreg
+			 */
+			if (last_ins && last_ins->opcode == OP_MOVE &&
+			    ins->sreg1 == last_ins->dreg &&
+			    ins->dreg == last_ins->sreg1) {
+				last_ins->next = ins->next;				
+				ins = ins->next;				
+				continue;
+			}
+			break;
+		case OP_X86_PUSH_MEMBASE:
+			if (last_ins && (last_ins->opcode == OP_STOREI4_MEMBASE_REG ||
+				         last_ins->opcode == OP_STORE_MEMBASE_REG) &&
+			    ins->inst_basereg == last_ins->inst_destbasereg &&
+			    ins->inst_offset == last_ins->inst_offset) {
+				    ins->opcode = OP_X86_PUSH;
+				    ins->sreg1 = last_ins->sreg1;
+			}
+			break;
+		}
+		last_ins = ins;
+		ins = ins->next;
+	}
+	bb->last_ins = last_ins;
+}
+
 static const int 
 branch_cc_table [] = {
 	X86_CC_EQ, X86_CC_GE, X86_CC_GT, X86_CC_LE, X86_CC_LT,
@@ -1739,6 +1935,9 @@ static const char*const * ins_spec = pentium_desc;
 void
 mono_arch_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 {
+	if (cfg->opt & MONO_OPT_PEEPHOLE)
+		peephole_pass_1 (cfg, bb);
+
 	mono_local_regalloc (cfg, bb);
 }
 
