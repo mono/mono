@@ -35,38 +35,65 @@ namespace Microsoft.Build.BuildEngine {
 	public class BuildProperty {
 	
 		XmlElement	propertyElement;
-		XmlAttribute	condition;
 		string		finalValue;
 		bool		isImported;
 		string		value;
 		string		name;
+		Project		parentProject;
 		PropertyType	propertyType;
+
+		internal bool FromXml {
+			get {
+				return propertyElement != null;
+			}
+		}
 	
 		private BuildProperty ()
 		{
 		}
 
-		public BuildProperty (string propertyName,
-				string propertyValue)
+		public BuildProperty (string propertyName, string propertyValue):
+			this(propertyName, propertyValue, PropertyType.Global)
+		{
+		}
+
+		internal BuildProperty (string propertyName,
+				string propertyValue, PropertyType propertyType)
 		{
 			this.name = propertyName;
 			this.value = propertyValue;
+			this.finalValue = propertyValue;
+			this.propertyType = propertyType;
 			this.isImported = false;
 		}
 
+		internal BuildProperty (Project parentProject, XmlElement propertyElement)
+		{
+			if (propertyElement == null)
+				throw new ArgumentNullException ("propertyElement");
+
+			this.propertyElement = propertyElement;
+			this.propertyType = PropertyType.Normal;
+			this.parentProject = parentProject;
+			this.name = propertyElement.Name;
+			this.value = propertyElement.InnerText;
+			this.isImported = false;
+		}
+
+		[MonoTODO]
 		public BuildProperty Clone (bool deepClone)
 		{
-			BuildProperty bp;
-			
-			bp = new BuildProperty ();
-			bp.condition = this.condition;
-			bp.finalValue = this.finalValue;
-			bp.name = this.name;
-			bp.propertyElement = this.propertyElement;
-			bp.propertyType = this.propertyType;
-			bp.value = this.value;
-			
-			return bp;
+			return (BuildProperty) this.MemberwiseClone ();
+		}
+
+		// Evaluate the property.
+		internal void Evaluate()
+		{
+			if (FromXml) {
+				Expression exp = new Expression (parentProject, Value);
+				finalValue = (string) exp.ToNonArray (typeof (string));
+				parentProject.EvaluatedProperties.AddProperty (this);
+			}
 		}
 
 		public static implicit operator string (BuildProperty propertyToCast)
@@ -84,39 +111,17 @@ namespace Microsoft.Build.BuildEngine {
 				return Value;
 		}
 
-		
-		internal void BindToXml (XmlElement propertyElement)
-		{
-			if (propertyElement == null)
-				throw new ArgumentNullException ("propertyElement");
-			this.propertyElement = propertyElement;
-			this.condition = propertyElement.GetAttributeNode ("Condition");
-			this.name = propertyElement.Name;
-			this.value = propertyElement.InnerText;
-		}
-		
 		public string Condition {
-			get {
-				if (condition == null)
-					return null;
-				else
-					return condition.Value;
-			}
-			set {
-				if (condition != null)
-					condition.Value = value;
-			}
+			get { return propertyElement.GetAttribute ("Condition"); }
+			set { propertyElement.SetAttribute ("Condition", value); }
 		}
 
 		public string FinalValue {
 			get {
-				if (finalValue == null) {
+				if (finalValue == null)
 					return this.@value;
-				} else
+				else
 					return finalValue;
-			}
-			internal set {
-				finalValue = value;
 			}
 		}
 		
@@ -125,9 +130,7 @@ namespace Microsoft.Build.BuildEngine {
 		}
 
 		public string Name {
-			get {
-				return name;
-			}
+			get { return name; }
 		}
 
 		public string Value {
@@ -135,19 +138,23 @@ namespace Microsoft.Build.BuildEngine {
 				return value;
 			}
 			set {
+				if (FromXml) {
+					propertyElement.InnerText = value;
+				}
 				this.@value = value;
 			}
 		}
 
 		internal PropertyType PropertyType {
-			get { return propertyType; }
-			set { propertyType = value; }
+			get {
+				return propertyType;
+			}
 		}
 	}
 
 	internal enum PropertyType {
 		Reserved,
-		CommandLine,
+		Global,
 		Normal,
 		Environment
 	}

@@ -44,40 +44,31 @@ namespace Microsoft.Build.BuildEngine {
 		string		name;
 		Project		project;
 		XmlElement	targetElement;
-		//ArrayList	taskElements;
 		ArrayList	onErrorElements;
 		
 		ArrayList	buildTasks;
 		
-		internal Target (Project project, string name)
+		internal Target (XmlElement targetElement, Project project)
 		{
 			if (project == null)
 				throw new ArgumentNullException ("project");
-			
-			if (name == null)
-				throw new ArgumentNullException ("name");
-			
-			this.buildState = BuildState.NotStarted;
-			this.project = project;
-			this.engine = project.ParentEngine;
-			this.name = name;
-			this.isImported = false;;
-			//this.taskElements = new ArrayList ();
-			this.onErrorElements  = new ArrayList ();
-			
-			this.buildTasks = new ArrayList ();
-		}
-		
-		internal void BindToXml (XmlElement targetElement)
-		{
 			if (targetElement == null)
 				throw new ArgumentNullException ("targetElement");
-			
+
 			this.targetElement = targetElement;
-			// FIXME: check if Target element is valid
+			this.name = targetElement.GetAttribute ("Name");
 			this.condition = targetElement.GetAttributeNode ("Condition");
 			this.dependsOnTargets = targetElement.GetAttributeNode ("DependsOnTargets");
+
+			this.project = project;
+			this.engine = project.ParentEngine;
+			this.isImported = false;;
+
+			this.onErrorElements  = new ArrayList ();
+			this.buildState = BuildState.NotStarted;
+			this.buildTasks = new ArrayList ();
 			this.batchingImpl = new BatchingImpl (project, this.targetElement);
+
 			foreach (XmlNode xn in targetElement.ChildNodes) {
 				if (xn is XmlElement) {
 					XmlElement xe = (XmlElement) xn;
@@ -85,11 +76,7 @@ namespace Microsoft.Build.BuildEngine {
 						onErrorElements.Add (xe);
 						continue;
 					}
-					//TaskElement te = new TaskElement ();
-					//te.BindToXml (xe, this);
-					BuildTask bt = new BuildTask (xe, this);
-					//taskElements.Add (te);
-					buildTasks.Add (bt);
+					buildTasks.Add (new BuildTask (xe, this));
 				}
 			}
 		}
@@ -180,13 +167,11 @@ namespace Microsoft.Build.BuildEngine {
 			tfea = new TargetFinishedEventArgs ("Target " + name + " finished.", null, name, projectFile, null, succeeded);
 			engine.EventSource.FireTargetFinished (this, tfea);
 		}
-		
+	
+		[MonoTODO]
 		public BuildTask AddNewTask (string taskName)
 		{
-			//TaskElement te = new TaskElement ();
-			//taskElements.Add (te);
-			//return te;
-			return new BuildTask (null, this);
+			throw new NotImplementedException ();
 		}
 
 		public IEnumerator GetEnumerator ()

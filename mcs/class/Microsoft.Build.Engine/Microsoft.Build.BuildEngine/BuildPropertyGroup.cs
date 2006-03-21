@@ -43,6 +43,12 @@ namespace Microsoft.Build.BuildEngine {
 		Project			parentProject;
 		IList			properties;
 		IDictionary		propertiesByName;
+
+		internal bool FromXml {
+			get {
+				return propertyGroup != null;
+			}
+		}
 	
 		public BuildPropertyGroup ()
 			: this (null, null)
@@ -51,13 +57,18 @@ namespace Microsoft.Build.BuildEngine {
 
 		internal BuildPropertyGroup (XmlElement xmlElement, Project project)
 		{
-			this.propertyGroup = null;
 			this.isImported = false;
 			this.parentCollection = null;
 			this.parentProject = project;
-			if (xmlElement != null) {
+			this.isImported = false;
+			this.propertyGroup = xmlElement;
+
+			if (FromXml) {
 				this.properties = new ArrayList ();
-				BindToXml (xmlElement);
+				foreach (XmlElement xe in propertyGroup.ChildNodes) {
+					BuildProperty bp = new BuildProperty (parentProject, xe);
+					AddProperty (bp);
+				} 
 			} else
 				this.propertiesByName = CollectionsUtil.CreateCaseInsensitiveHashtable ();
 		}
@@ -72,50 +83,41 @@ namespace Microsoft.Build.BuildEngine {
 						     string propertyValue,
 						     bool treatPropertyValueAsLiteral)
 		{
-			return AddNewProperty (propertyName, propertyValue, treatPropertyValueAsLiteral,
-				PropertyType.Normal);
+			BuildProperty prop;
+
+			if (FromXml) {
+				XmlElement xe;
+				
+				xe = propertyGroup.OwnerDocument.CreateElement (propertyName);
+				propertyGroup.AppendChild (xe);
+				if (treatPropertyValueAsLiteral) {
+					xe.InnerText = Utilities.Escape (propertyValue);
+				} else {
+					xe.InnerText = propertyValue;
+				}
+				prop = new BuildProperty (parentProject, xe);
+			} else {
+				prop = new BuildProperty (propertyName, propertyValue);
+			}
+			AddProperty (prop);
+			return prop;
 		}
-		
-		// FIXME: use treatPropertyValueAsLiteral
-		internal BuildProperty AddNewProperty (string propertyName,
-						       string propertyValue,
-						       bool treatPropertyValueAsLiteral,
-						       PropertyType propertyType)
+
+		internal void AddProperty (BuildProperty property)
 		{
-			BuildProperty added, existing;
-			
-			added = new BuildProperty (propertyName, propertyValue);
-			added.PropertyType = propertyType;
-			if (properties != null) {
-				properties.Add (added);
-			} else if (propertiesByName != null) {
-				if (propertiesByName.Contains (propertyName) == true) {
-					existing = (BuildProperty) propertiesByName [added.Name];
-					if (added.PropertyType <= existing.PropertyType) {
-						propertiesByName.Remove (added.Name);
-						propertiesByName.Add (added.Name, added);
+			if (FromXml) {
+				properties.Add (property);
+			} else {
+				if (propertiesByName.Contains (property.Name) == true) {
+					BuildProperty existing = (BuildProperty) propertiesByName [property.Name];
+					if (property.PropertyType <= existing.PropertyType) {
+						propertiesByName.Remove (property.Name);
+						propertiesByName.Add (property.Name, property);
 					}
 				} else {
-					propertiesByName.Add (added.Name, added);
+					propertiesByName.Add (property.Name, property);
 				}
-			} else
-				throw new Exception ("PropertyGroup is not initialized.");
-			return added;
-		}
-		
-		internal void AddFromExistingProperty (BuildProperty buildProperty)
-		{
-			BuildProperty added, existing;
-			
-			added = buildProperty.Clone (false);
-			if (propertiesByName.Contains (added.Name) == true) {
-				existing = (BuildProperty) propertiesByName [added.Name];
-				if (added.PropertyType <= existing.PropertyType) {
-					propertiesByName.Remove (added.Name);
-					propertiesByName.Add (added.Name, added);
-				}
-			} else
-				propertiesByName.Add (added.Name, added);
+			}
 		}
 		
 		public void Clear ()
@@ -127,15 +129,6 @@ namespace Microsoft.Build.BuildEngine {
 			return null;
 		}
 
-		// FIXME: what it is doing?
-		internal void Evaluate (BuildPropertyGroup evaluatedPropertyBag,
-					       bool ignoreCondition,
-					       bool honorCondition,
-					       Hashtable conditionedPropertiesTable,
-					       ProcessingPass pass)
-		{
-		}
-		
 		public IEnumerator GetEnumerator ()
 		{
 			if (properties != null)
@@ -180,21 +173,14 @@ namespace Microsoft.Build.BuildEngine {
 			((BuildProperty) propertiesByName [propertyName]).Value = propertyValue;
 		}
 		
-		private void BindToXml (XmlElement propertyGroupElement)
+		internal void Evaluate ()
 		{
-			if (propertyGroupElement == null)
-				throw new ArgumentNullException ();
-			this.properties = new ArrayList ();
-			this.propertyGroup = propertyGroupElement;
-			this.isImported = false;
-			foreach (XmlElement xe in propertyGroupElement.ChildNodes) {
-				BuildProperty bp = AddNewProperty (xe.Name, xe.InnerText);
-				bp.PropertyType = PropertyType.Normal;
-				bp.BindToXml (xe);
-				Expression finalValue = new Expression (parentProject, bp.Value);
-				bp.FinalValue = (string) finalValue.ToNonArray (typeof (string));
-				parentProject.EvaluatedProperties.AddFromExistingProperty (bp);
-			} 
+			if (!FromXml) {
+				throw new InvalidOperationException ();
+			}
+			foreach (BuildProperty bp in properties) {
+				bp.Evaluate ();
+			}
 		}
 		
 		public string Condition {

@@ -113,8 +113,8 @@ namespace Microsoft.Build.BuildEngine {
 			} else {
 				WriteLine ("Build failed.");
 			}
-			if (performanceSummary == true)
-				;
+			if (performanceSummary == true) {
+			}
 			if (showSummary == true){
 				TimeSpan timeElapsed = args.Timestamp - buildStart;
 				WriteLine (String.Format ("\t {0} Warning(s)", warningCount));

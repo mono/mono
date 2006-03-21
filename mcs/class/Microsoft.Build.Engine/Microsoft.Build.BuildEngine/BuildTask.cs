@@ -38,10 +38,7 @@ using Microsoft.Build.Utilities;
 namespace Microsoft.Build.BuildEngine {
 	public class BuildTask {
 	
-		XmlAttribute		condition;
-		XmlAttribute		continueOnError;
 		ITaskHost		hostObject;
-		string			name;
 		Target			parentTarget;
 		XmlElement		taskElement;
 		Type			type;
@@ -49,17 +46,13 @@ namespace Microsoft.Build.BuildEngine {
 		// FIXME: implement
 		internal BuildTask (XmlElement taskElement, Target parentTarget)
 		{
-			//if (taskElement == null)
-			//	throw new ArgumentNullException ("taskElement");
+			if (taskElement == null)
+				throw new ArgumentNullException ("taskElement");
 			if (parentTarget == null)
 				throw new ArgumentNullException ("parentTarget");
-			if (taskElement != null) {
-				this.taskElement =  taskElement;
-				this.parentTarget = parentTarget;
-				this.condition = taskElement.GetAttributeNode ("Condition");
-				this.continueOnError = taskElement.GetAttributeNode ("ContinueOnError");
-				this.name  = taskElement.Name;
-			}
+
+			this.taskElement =  taskElement;
+			this.parentTarget = parentTarget;
 		}
 		
 		[MonoTODO]
@@ -178,20 +171,26 @@ namespace Microsoft.Build.BuildEngine {
 		
 		[MonoTODO]
 		public string Condition {
-			get { return condition.Value; }
-			set { condition.Value = value; }
+			get {
+				return taskElement.GetAttribute ("Condition");
+			}
+			set {
+				taskElement.SetAttribute ("Condition", value);
+			}
 		}
 
 		[MonoTODO]
 		public bool ContinueOnError {
 			get {
-				if (continueOnError == null)
+				string str = taskElement.GetAttribute ("ContinueOnError");
+				if (str == String.Empty) {
 					return false;
-				else
-					return Boolean.Parse (continueOnError.Value);
+				} else {
+					return Boolean.Parse (str);
+				}
 			}
 			set {
-				continueOnError.Value = value.ToString ();
+				taskElement.SetAttribute ("ContinueOnError", value.ToString ());
 			}
 		}
 		
@@ -201,9 +200,8 @@ namespace Microsoft.Build.BuildEngine {
 			set { hostObject = value; }
 		}
 		
-		[MonoTODO]
 		public string Name {
-			get { return name; }
+			get { return taskElement.Name; }
 		}
 		
 		internal Target ParentTarget {
@@ -218,7 +216,7 @@ namespace Microsoft.Build.BuildEngine {
 		
 		[MonoTODO]
 		public Type Type {
-			get { return parentTarget.Project.TaskDatabase.GetTypeFromClassName (name); }
+			get { return parentTarget.Project.TaskDatabase.GetTypeFromClassName (Name); }
 		}
 		
 	}

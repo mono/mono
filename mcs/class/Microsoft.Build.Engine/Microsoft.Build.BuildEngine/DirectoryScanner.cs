@@ -67,8 +67,10 @@ namespace Microsoft.Build.BuildEngine {
 					ProcessExclude (si, excludedItems);
 				}
 			}
-			foreach (string si in splittedInclude) {
-				ProcessInclude (si, excludedItems, includedItems);
+			if (includes != String.Empty) {
+				foreach (string si in splittedInclude) {
+					ProcessInclude (si, excludedItems, includedItems);
+				}
 			}
 
 			matchedFilenames = (string[])includedItems.ToArray (typeof (string));
@@ -78,7 +80,7 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			string[] separatedPath;
 			FileInfo[] fileInfo;
-			
+
 			if (name.IndexOf ('?') == -1 && name.IndexOf ('*') == -1) {
 				if (!excludedItems.Contains (Path.GetFullPath(name)))
 					includedItems.Add (name);

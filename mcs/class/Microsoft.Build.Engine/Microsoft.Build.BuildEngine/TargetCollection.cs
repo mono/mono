@@ -42,15 +42,17 @@ namespace Microsoft.Build.BuildEngine {
 			this.targetsByName = new Hashtable ();
 			this.parentProject = project;
 		}
-	
+
+		// This must create a new xml element and stuff.
+		[MonoTODO]
 		public Target AddNewTarget (string targetName)
 		{
-			Target t;
-			
-			t = new Target (parentProject, targetName);
-			targetsByName.Add (targetName, t);
-			
-			return t;
+			throw new NotImplementedException ();
+		}
+
+		internal void AddTarget (Target target)
+		{
+			targetsByName.Add (target.Name, target);
 		}
 
 		public void CopyTo (Array array, int index)

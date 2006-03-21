@@ -71,7 +71,6 @@ namespace Microsoft.Build.BuildEngine {
 		TargetCollection		targets;
 		DateTime			timeOfLastDirty;
 		UsingTaskCollection		usingTasks;
-		IList				usingTaskElements;
 		XmlDocument			xmlDocument;
 		//XmlElement			xmlElement;
 
@@ -84,16 +83,15 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			parentEngine  = engine;
 			xmlDocument = new XmlDocument ();
-			evaluatedItems = new BuildItemGroup (this);
+			evaluatedItems = new BuildItemGroup (null, this);
+			evaluatedItemsIgnoringCondition = new BuildItemGroup (null, this);
 			evaluatedItemsByName = CollectionsUtil.CreateCaseInsensitiveHashtable ();
 			evaluatedItemsByNameIgnoringCondition = CollectionsUtil.CreateCaseInsensitiveHashtable ();
-			evaluatedItemsIgnoringCondition = new BuildItemGroup (this);
 			evaluatedProperties = new BuildPropertyGroup ();
 			groups = new GroupingCollection ();
 			itemGroups = new BuildItemGroupCollection (groups);
 			propertyGroups = new BuildPropertyGroupCollection (groups);
 			targets = new TargetCollection (this);
-			usingTaskElements = new ArrayList ();
 			taskDatabase = new TaskDatabase ();
 		}
 
@@ -220,7 +218,7 @@ namespace Microsoft.Build.BuildEngine {
 
 		public string GetEvaluatedProperty (string propertyName)
 		{
-			return evaluatedProperties [propertyName];
+			return (string) evaluatedProperties [propertyName];
 		}
 
 		[MonoTODO]
@@ -254,16 +252,16 @@ namespace Microsoft.Build.BuildEngine {
 		[MonoTODO]
 		public void Load (TextReader textReader)
 		{
-			throw new NotImplementedException ();
+			fullFileName = String.Empty;
+			DoLoad (textReader);
 		}
 
-		[MonoTODO]
 		public void LoadXml (string projectXml)
 		{
 			fullFileName = String.Empty;
-			DoLoad  (new StringReader (projectXml));
+			DoLoad (new StringReader (projectXml));
 		}
-		
+
 		private void ProcessXml ()
 		{
 			XmlElement xmlElement = xmlDocument.DocumentElement;
@@ -485,8 +483,8 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			if (xmlElement == null)
 				throw new ArgumentNullException ("xmlElement");
-			Target target = targets.AddNewTarget (xmlElement.GetAttribute ("Name"));
-			target.BindToXml (xmlElement);
+			Target target = new Target (xmlElement, this);
+			targets.AddTarget (target);
 			if (importedProject == null) {
 				target.IsImported = false;
 				if (firstTargetName == null)
@@ -497,35 +495,10 @@ namespace Microsoft.Build.BuildEngine {
 		
 		private void AddUsingTask (XmlElement xmlElement, ImportedProject importedProject)
 		{
-			if (xmlElement == null)
-				throw new ArgumentNullException ("xmlElement");
-				
-			if (xmlElement.GetAttribute ("TaskName") == String.Empty)
-				throw new InvalidProjectFileException ("TaskName attribute must be specified.");
-
-			usingTaskElements.Add (xmlElement);
-
-			AssemblyLoadInfo loadInfo = null;
-			string filename = null;
-			string name = null;
-			string taskName = xmlElement.GetAttribute ("TaskName");
+			UsingTask usingTask;
 			
-			if (xmlElement.GetAttribute ("AssemblyName") != String.Empty) {
-				name  = xmlElement.GetAttribute ("AssemblyName");
-				loadInfo  = new AssemblyLoadInfo (name, taskName);
-				taskDatabase.RegisterTask (taskName, loadInfo);
-			} else if (xmlElement.GetAttribute ("AssemblyFile") != String.Empty) {
-				filename = xmlElement.GetAttribute ("AssemblyFile");
-				if (Path.IsPathRooted (filename) == false) {
-					if (importedProject == null)
-						filename = Path.Combine (Path.GetDirectoryName (fullFileName), filename);
-					else
-						filename = Path.Combine (Path.GetDirectoryName (importedProject.FullFileName), filename);
-				}
-				loadInfo  = new AssemblyLoadInfo (LoadInfoType.AssemblyFilename, filename, null, null, null, null, taskName);
-				taskDatabase.RegisterTask (taskName, loadInfo);
-			} else
-				throw new InvalidProjectFileException ("AssemblyName or AssemblyFile attribute must be specified.");
+			usingTask = new UsingTask (xmlElement, this, importedProject);
+			usingTask.Evaluate ();
 		}
 		
 		private void AddImport (XmlElement xmlElement, ImportedProject importingProject)
@@ -563,9 +536,9 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			if (xmlElement == null)
 				throw new ArgumentNullException ("xmlElement");
-			BuildItemGroup big = new BuildItemGroup (this);
-			big.BindToXml (xmlElement);
+			BuildItemGroup big = new BuildItemGroup (xmlElement, this);
 			itemGroups.Add (big);
+			big.Evaluate();
 		}
 		
 		private void AddPropertyGroup (XmlElement xmlElement)
@@ -574,6 +547,7 @@ namespace Microsoft.Build.BuildEngine {
 				throw new ArgumentNullException ("xmlElement");
 			BuildPropertyGroup bpg = new BuildPropertyGroup (xmlElement, this);
 			propertyGroups.Add (bpg);
+			bpg.Evaluate();
 		}
 		
 		private void AddChoose (XmlElement xmlElement)
@@ -640,7 +614,7 @@ namespace Microsoft.Build.BuildEngine {
 			set {
 				globalProperties = value;
 				foreach (BuildProperty bp in globalProperties)
-					evaluatedProperties.AddFromExistingProperty (bp);
+					evaluatedProperties.AddProperty (bp);
 			}
 		}
 
@@ -704,7 +678,7 @@ namespace Microsoft.Build.BuildEngine {
 			set {
 				environmentProperties = value;
 				foreach (BuildProperty bp in environmentProperties)
-					evaluatedProperties.AddFromExistingProperty (bp);
+					evaluatedProperties.AddProperty (bp);
 			}
 		}
 		
@@ -712,7 +686,7 @@ namespace Microsoft.Build.BuildEngine {
 			set {
 				reservedProperties = value;
 				foreach (BuildProperty bp in reservedProperties)
-					evaluatedProperties.AddFromExistingProperty (bp);
+					evaluatedProperties.AddProperty (bp);
 			}
 		}
 	}

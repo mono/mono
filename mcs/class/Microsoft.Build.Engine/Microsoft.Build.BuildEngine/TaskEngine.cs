@@ -158,7 +158,7 @@ namespace Microsoft.Build.BuildEngine {
 					      string propertyName)
 		{
 			BuildProperty bp = CollectProperty (propertyInfo, o, propertyName);
-			parentProject.EvaluatedProperties.AddFromExistingProperty (bp);
+			parentProject.EvaluatedProperties.AddProperty (bp);
 		}
 		
 		private BuildProperty CollectProperty (PropertyInfo propertyInfo, object o, string name)

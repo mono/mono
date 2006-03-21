@@ -43,17 +43,38 @@ namespace Microsoft.Build.BuildEngine {
 		GroupingCollection	parentCollection;
 		Project			parentProject;
 		XmlElement		itemGroupElement;
-		
+
 		public BuildItemGroup ()
-			: this (null)
+			: this (null, null)
 		{
 		}
 		
-		internal BuildItemGroup (Project project)
+		internal BuildItemGroup (XmlElement xmlElement, Project project)
 		{
+			this.itemGroupElement = xmlElement;
 			this.buildItems = new ArrayList ();
 			this.isImported = false;
 			this.parentProject = project;
+			
+			if (FromXml == false)
+				return;
+			
+			this.condition = xmlElement.GetAttributeNode ("Condition");
+			foreach (XmlNode xn in xmlElement.ChildNodes) {
+				if (xn is XmlElement == false)
+					return;
+					
+				XmlElement xe = (XmlElement) xn;
+				BuildItem bi = new BuildItem (xe, this);
+				buildItems.Add (bi);
+			}
+		}
+
+		internal void Evaluate ()
+		{
+			foreach (BuildItem bi in buildItems) {
+				bi.Evaluate ();
+			}
 		}
 
 		public BuildItem AddNewItem (string itemName,
@@ -73,13 +94,6 @@ namespace Microsoft.Build.BuildEngine {
 			return bi;
 		}
 		
-		internal BuildItem AddFromParentItem (BuildItem bi)
-		{
-			BuildItem buildItem = new BuildItem (bi);
-			buildItems.Add (buildItem);
-			return buildItem;
-		}
-		
 		internal void AddItem (BuildItem buildItem)
 		{
 			buildItems.Add (buildItem);
@@ -92,12 +106,14 @@ namespace Microsoft.Build.BuildEngine {
 			buildItems.Add (buildItem);
 		}
 
+		[MonoTODO]
 		public void Clear ()
 		{
 			//FIXME: should this remove all build items?
 			buildItems = new ArrayList ();
 		}
 
+		[MonoTODO]
 		public BuildItemGroup Clone (bool deepClone)
 		{
 			BuildItemGroup big = new BuildItemGroup ();
@@ -105,24 +121,18 @@ namespace Microsoft.Build.BuildEngine {
 			return big;
 		}
 
-		internal void Evaluate (BuildPropertyGroup parentPropertyBag,
-					       bool ignoreCondition,
-					       bool honorCondition,
-					       Hashtable conditionedPropertiesTable,
-					       ProcessingPass pass)
-		{
-		}
-
 		public IEnumerator GetEnumerator ()
 		{
 			return buildItems.GetEnumerator ();
 		}
 
+		[MonoTODO]
 		public void RemoveItem (BuildItem itemToRemove)
 		{
 			buildItems.Remove (itemToRemove);
 		}
 
+		[MonoTODO]
 		public void RemoveItemAt (int index)
 		{
 			buildItems.RemoveAt (index);
@@ -134,22 +144,6 @@ namespace Microsoft.Build.BuildEngine {
 			array = new BuildItem [Count];
 			buildItems.CopyTo (array,0);
 			return array;
-		}
-		
-		internal void BindToXml (XmlElement xmlElement)
-		{
-			if (xmlElement == null)
-				throw new ArgumentNullException ("xmlElement");
-			this.condition = xmlElement.GetAttributeNode ("Condition");
-			this.itemGroupElement = xmlElement;
-			foreach (XmlNode xn in xmlElement.ChildNodes) {
-				if (xn is XmlElement) {
-					XmlElement xe = (XmlElement) xn;
-					BuildItem bi = new BuildItem (xe.Name, this);
-					bi.BindToXml (xe);
-					buildItems.Add (bi);
-				}
-			}
 		}
 		
 		internal string ToString (Expression transform, string separator)
@@ -211,6 +205,12 @@ namespace Microsoft.Build.BuildEngine {
 		
 		internal Project Project {
 			get { return parentProject; }
+		}
+
+		internal bool FromXml {
+			get {
+				return itemGroupElement != null;
+			}
 		}
 	}
 }

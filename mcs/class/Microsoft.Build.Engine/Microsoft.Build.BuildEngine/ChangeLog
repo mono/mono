@@ -1,3 +1,13 @@
+2006-03-21  Crestez Leonard  <cdleonard@gmail.com>
+
+	* Target.cs, TaskEngine.cs, BuildItemGroup.cs, BuildItem.cs,
+	BuildPropertyGroup.cs, TargetCollection.cs, BuildProperty.cs,
+	Engine.cs, Project.cs, BuildTask.cs, UsingTask.cs: Separate xml
+	binding and evaluation, merge xml binding in constructors.
+	* DirectoryScanner.cs: Includes CAN be empty.
+	* BuildChoose.cs, ItemReference.cs, ChangeType.cs: Newline at EOF.
+	* ConsoleLogger.cs: Fix compilation warning.
+
 2006-03-19  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* BuildPropertyGroup.cs, Expression.cs: Coding style fixed.

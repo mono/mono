@@ -39,20 +39,24 @@ using Microsoft.Build.Utilities;
 namespace Microsoft.Build.BuildEngine {
 	public class BuildItem {
 
-		BuildItemGroup	childs;
+		XmlElement	itemElement;
 		XmlAttribute	condition;
 		XmlAttribute	exclude;
+		XmlAttribute	include;
 		string		evaluatedItemSpec;
 		Hashtable	evaluatedMetadata;
 		string		finalItemSpec;
-		XmlAttribute	include;
 		bool		isImported;
-		XmlElement	itemElement;
 		string		name;
-		BuildItem	parentItem;
 		BuildItemGroup	parentItemGroup;
 		string		recursiveDir;
 		Hashtable	unevaluatedMetadata;
+
+		internal bool FromXml {
+			get {
+				return itemElement != null;
+			}
+		}
 	
 		private BuildItem ()
 		{
@@ -61,7 +65,6 @@ namespace Microsoft.Build.BuildEngine {
 		public BuildItem (string itemName, ITaskItem taskItem)
 			: this (itemName, taskItem.ItemSpec)
 		{
-			this.name = itemName;
 		}
 
 		public BuildItem (string itemName, string itemInclude)
@@ -74,20 +77,19 @@ namespace Microsoft.Build.BuildEngine {
 			this.evaluatedMetadata = CollectionsUtil.CreateCaseInsensitiveHashtable ();
 		}
 		
-		internal BuildItem (string name, BuildItemGroup parentItemGroup)
+		internal BuildItem (XmlElement itemElement, BuildItemGroup parentItemGroup)
 		{
 			this.isImported = false;
 			this.unevaluatedMetadata = CollectionsUtil.CreateCaseInsensitiveHashtable ();
 			this.evaluatedMetadata = CollectionsUtil.CreateCaseInsensitiveHashtable ();
-			this.name = name;
 			this.parentItemGroup = parentItemGroup;
+			BindToXml (itemElement);
 		}
 		
-		internal BuildItem (BuildItem parent)
+		private BuildItem (BuildItem parent)
 		{
 			this.isImported = parent.isImported;
 			this.name = parent.name;
-			this.parentItem = parent;
 			this.parentItemGroup = parent.parentItemGroup;
 			this.unevaluatedMetadata = (Hashtable) parent.unevaluatedMetadata.Clone ();
 			this.evaluatedMetadata = (Hashtable) parent.evaluatedMetadata.Clone ();
@@ -114,7 +116,7 @@ namespace Microsoft.Build.BuildEngine {
 		[MonoTODO]
 		public BuildItem Clone ()
 		{
-			return null;
+			return (BuildItem) this.MemberwiseClone ();
 		}
 
 		public string GetEvaluatedMetadata (string metadataName)
@@ -200,15 +202,12 @@ namespace Microsoft.Build.BuildEngine {
 			evaluatedMetadata.Add (metadataName, (string) finalValue.ToNonArray (typeof (string)));
 		}
 		
-		internal void BindToXml (XmlElement xmlElement)
+		private void BindToXml (XmlElement xmlElement)
 		{
-			DirectoryScanner directoryScanner;
-			Expression includeExpr, excludeExpr;
-			string includes, excludes;
-			
 			if (xmlElement == null)
 				throw new ArgumentNullException ("xmlElement");
 			this.itemElement = xmlElement;
+			this.name = xmlElement.Name;
 			this.condition = xmlElement.GetAttributeNode ("Condition");
 			this.exclude = xmlElement.GetAttributeNode ("Exclude");
 			this.include = xmlElement.GetAttributeNode ("Include"); 
@@ -217,13 +216,20 @@ namespace Microsoft.Build.BuildEngine {
 			foreach (XmlElement xe in xmlElement.ChildNodes) {
 				this.SetMetadata (xe.Name, xe.InnerText);
 			}
-			
+		}
+
+		internal void Evaluate()
+		{
+			DirectoryScanner directoryScanner;
+			Expression includeExpr, excludeExpr;
+			string includes, excludes;
+
 			includeExpr = new Expression (parentItemGroup.Project, Include);
 			excludeExpr = new Expression (parentItemGroup.Project, Exclude);
 			
 			includes = (string) includeExpr.ToNonArray (typeof (string));
 			excludes = (string) excludeExpr.ToNonArray (typeof (string));
-			
+
 			this.evaluatedItemSpec = includes;
 			this.finalItemSpec = includes;
 			
@@ -231,27 +237,28 @@ namespace Microsoft.Build.BuildEngine {
 			
 			directoryScanner.Includes = includes;
 			directoryScanner.Excludes = excludes;
-			directoryScanner.BaseDirectory = new DirectoryInfo (Path.GetDirectoryName (parentItemGroup.Project.FullFileName));
+			if (parentItemGroup.Project.FullFileName != String.Empty) {
+				directoryScanner.BaseDirectory = new DirectoryInfo (Path.GetDirectoryName (parentItemGroup.Project.FullFileName));
+			} else {
+				directoryScanner.BaseDirectory = new DirectoryInfo (Directory.GetCurrentDirectory ());
+			}
 			
 			directoryScanner.Scan ();
 			
 			foreach (string matchedFile in directoryScanner.MatchedFilenames) {
-				AddChildItem (matchedFile);
+				AddEvaluatedItem (matchedFile);
 			}
 		}
 		
-		private void AddChildItem (string itemSpec)
+		private void AddEvaluatedItem (string itemSpec)
 		{
 			Project project = this.parentItemGroup.Project;
 			
-			if (this.childs == null)
-				childs = new BuildItemGroup (project);
-			BuildItem bi = childs.AddFromParentItem (this);
+			BuildItem bi = new BuildItem (this);
 			bi.finalItemSpec = itemSpec;
-			bi.evaluatedItemSpec = itemSpec;
 			project.EvaluatedItems.AddItem (bi);
 			if (project.EvaluatedItemsByName.Contains (bi.name) == false) {
-				BuildItemGroup big = new BuildItemGroup (project);
+				BuildItemGroup big = new BuildItemGroup (null, project);
 				project.EvaluatedItemsByName.Add (bi.name, big);
 				big.AddItem (bi);
 			} else {
@@ -295,63 +302,31 @@ namespace Microsoft.Build.BuildEngine {
 		}
 
 		public string Condition {
-			get {
-				if (condition == null)
-					return null;
-				else
-					return condition.Value;
-			}
-			set {
-				if (condition != null)
-					condition.Value = value;
-			}
+			get { return itemElement.GetAttribute ("Condition"); }
+			set { itemElement.SetAttribute ("Condition", value); }
 		}
 
 		public string Exclude {
-			get {
-				if (exclude == null)
-					return String.Empty;
-				else
-					return exclude.Value;
-			}
-			set {
-				if (exclude != null)
-					exclude.Value = value;
-			}
+			get { return itemElement.GetAttribute ("Exclude"); }
+			set { itemElement.SetAttribute ("Exclude", value); }
 		}
 
 		public string FinalItemSpec {
-			get {
-				return finalItemSpec;
-			}
+			get { return finalItemSpec; }
 		}
 
 		public string Include {
-			get {
-				if (include == null)
-					return String.Empty;
-				else
-					return include.Value;
-			}
-			set {
-				if (include != null)
-					include.Value = value;
-			}
+			get { return itemElement.GetAttribute ("Include"); }
+			set { itemElement.SetAttribute ("Include", value); }
 		}
 
 		public bool IsImported {
-			get {
-				return isImported;
-			}
+			get { return isImported; }
 		}
 
 		public string Name {
-			get {
-				return name;
-			}
-			set {
-				name = value;
-			}
+			get { return name; }
+			set { name = value; }
 		}
 	}
 }

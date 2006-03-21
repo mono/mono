@@ -71,7 +71,7 @@ namespace Microsoft.Build.BuildEngine {
 			this.buildStarted = false;
 			this.LoadEnvironmentProperties ();
 			this.reservedProperties = new BuildPropertyGroup ();
-			this.reservedProperties.AddNewProperty ("MSBuildBinPath", binPath, false, PropertyType.Reserved);
+			this.reservedProperties.AddProperty (new BuildProperty ("MSBuildBinPath", binPath, PropertyType.Reserved));
 		}
 		
 		[MonoTODO]
@@ -189,7 +189,7 @@ namespace Microsoft.Build.BuildEngine {
 			if (globalProperties != null) {
 				BuildPropertyGroup bpg = new BuildPropertyGroup ();
 				foreach (BuildProperty bp in globalProperties)
-					bpg.AddNewProperty (bp.Name, bp.Value, false, PropertyType.CommandLine);
+					bpg.AddProperty (bp.Clone (false));
 				p.GlobalProperties = bpg;
 			}
 			return p;
@@ -233,8 +233,9 @@ namespace Microsoft.Build.BuildEngine {
 			environmentProperties = new BuildPropertyGroup ();
 			IDictionary environment = Environment.GetEnvironmentVariables ();
 			foreach (DictionaryEntry de in environment) {
-				environmentProperties.AddNewProperty ((string) de.Key, (string) de.Value, false,
-					PropertyType.Environment);
+				BuildProperty bp;
+				bp = new BuildProperty ((string) de.Key, (string) de.Value, PropertyType.Environment);
+				environmentProperties.AddProperty (bp);
 			}
 		}
 		
