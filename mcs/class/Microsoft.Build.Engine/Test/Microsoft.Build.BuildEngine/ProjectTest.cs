@@ -34,13 +34,13 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 	[TestFixture]
 	public class ProjectTest {
 
-        string binPath;
+	string binPath;
 
-        [SetUp]
-        public void SetUp ()
-        {
-            binPath = "binPath";
-        }
+	[SetUp]
+	public void SetUp ()
+	{
+		binPath = "binPath";
+	}
 
 		// Clones a project by reloading from original.Xml
 		private Project CloneProject (Project original)
@@ -54,11 +54,11 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-        [ExpectedException (typeof (InvalidProjectFileException),
-        @"The default XML namespace of the project must be the MSBuild XML namespace." + 
-        " If the project is authored in the MSBuild 2003 format, please add " +
-        "xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\" to the <Project> element. " +
-        "If the project has been authored in the old 1.0 or 1.2 format, please convert it to MSBuild 2003 format.  ")]
+		[ExpectedException (typeof (InvalidProjectFileException),
+		@"The default XML namespace of the project must be the MSBuild XML namespace." + 
+	        " If the project is authored in the MSBuild 2003 format, please add " +
+		"xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\" to the <Project> element. " +
+		"If the project has been authored in the old 1.0 or 1.2 format, please convert it to MSBuild 2003 format.  ")]
 		public void TestAssignment ()
 		{
 			Engine engine;

@@ -38,10 +38,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		" The public constructors of this class cannot be used to create an instance of the exception.")]
 		public void TestCtorMessage ()
 		{
-			InternalLoggerException ile;
 			string message = "message";
 			
-			ile = new InternalLoggerException (message);
+			new InternalLoggerException (message);
 		}
 		
 		[Test]
@@ -50,11 +49,10 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		" The public constructors of this class cannot be used to create an instance of the exception.")]
 		public void TestCtorMessageException ()
 		{
-			InternalLoggerException ile;
 			string message = "message";
 			Exception e = new Exception ("Inner exception message.");
 			
-			ile = new InternalLoggerException (message, e);
+			new InternalLoggerException (message, e);
 		}
 	}
 }

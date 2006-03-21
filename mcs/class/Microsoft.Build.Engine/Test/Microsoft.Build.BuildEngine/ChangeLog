@@ -1,3 +1,9 @@
+2006-03-21  Crestez Leonard  <cdleonard@gmail.com>
+
+	* InternalLoggerExceptionTest.cs, InvalidProjectFileExceptionTest.cs:
+	Got rid of compilation warnings.
+	* ProjectTest.cs: Added new tests.
+
 2006-03-21  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* InvalidProjectFileExceptionTest.cs, EngineTest.cs, ProjectTest.cs:

@@ -78,11 +78,10 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		[Test]
 		public void TestCtorMessageException ()
 		{
-			InvalidProjectFileException ipfe;
 			string message = "message";
 			Exception e = new Exception ("Exception message");
 			
-			ipfe = new InvalidProjectFileException (message, e);
+			new InvalidProjectFileException (message, e);
 		}
 		
 		[Test]
