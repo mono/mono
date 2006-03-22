@@ -6,6 +6,8 @@
 	set the Value property so that ValueChanged gets raised. A
 	possible optimization here would be to make an internal SetValue
 	that doesn't invalidate immediately.
+	* ToolTip.cs: Tooltips get added to their container (when
+	supplied) so they get disposed when the container is disposed.
 
 2006-03-22  Peter Dennis Bartok  <pbartok@novell.com> 
 

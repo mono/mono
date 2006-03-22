@@ -168,7 +168,7 @@ namespace System.Windows.Forms {
 		}
 
 		public ToolTip(System.ComponentModel.IContainer cont) : this() {
-			// Dunno why I'd need the container
+			cont.Add (this);
 		}
 
 		~ToolTip() {
