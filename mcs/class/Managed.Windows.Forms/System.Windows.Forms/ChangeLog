@@ -2,6 +2,10 @@
 
 	* XplatUIX11.cs: Don't handle configurenotifys if PostQuitState is
 	true.
+	* ScrollBar.cs: When doing increments and decrements we need to
+	set the Value property so that ValueChanged gets raised. A
+	possible optimization here would be to make an internal SetValue
+	that doesn't invalidate immediately.
 
 2006-03-22  Peter Dennis Bartok  <pbartok@novell.com> 
 

@@ -571,16 +571,14 @@ namespace System.Windows.Forms
     		{			
 			ScrollEventArgs event_args;
     			int pos = position + large_change;
-    			
+
     			event_args = new ScrollEventArgs (ScrollEventType.LargeIncrement, pos);
     			OnScroll (event_args);    			
-			pos = event_args.NewValue;    			
-			
-			event_args = new ScrollEventArgs (ScrollEventType.EndScroll, pos);
-			OnScroll (event_args);		
-    			pos = event_args.NewValue;    			
+			Value = event_args.NewValue;    			
 
-			UpdatePos (pos, true);
+			event_args = new ScrollEventArgs (ScrollEventType.EndScroll, Value);
+			OnScroll (event_args);		
+    			Value = event_args.NewValue;
     		}
 
     		private void LargeDecrement ()
@@ -590,14 +588,11 @@ namespace System.Windows.Forms
     			
     			event_args = new ScrollEventArgs (ScrollEventType.LargeDecrement, pos);
     			OnScroll (event_args);
-    			pos = event_args.NewValue;    			
+    			Value = event_args.NewValue;    			
 			
-			event_args = new ScrollEventArgs (ScrollEventType.EndScroll, pos);
+			event_args = new ScrollEventArgs (ScrollEventType.EndScroll, Value);
 			OnScroll (event_args);
-    			pos = event_args.NewValue;
-    			
-
-			UpdatePos (pos, true);
+    			Value = event_args.NewValue;
     		}    		
     		
     		private void OnResizeSB (Object o, EventArgs e)
@@ -1038,13 +1033,11 @@ namespace System.Windows.Forms
     			
     			event_args = new ScrollEventArgs (ScrollEventType.SmallIncrement, pos);
     			OnScroll (event_args);    			
-    			pos = event_args.NewValue;    			
+    			Value = event_args.NewValue;    			
 			
-			event_args = new ScrollEventArgs (ScrollEventType.EndScroll, pos);
+			event_args = new ScrollEventArgs (ScrollEventType.EndScroll, Value);
 			OnScroll (event_args);			
-			pos = event_args.NewValue;    			
-
-			UpdatePos (pos, true);
+			Value = event_args.NewValue;    			
     		}
 
     		private void SmallDecrement ()
@@ -1054,13 +1047,11 @@ namespace System.Windows.Forms
     			
     			event_args = new ScrollEventArgs (ScrollEventType.SmallDecrement, pos);
     			OnScroll (event_args);
-    			pos = event_args.NewValue;
+    			Value = event_args.NewValue;
     						
-			event_args = new ScrollEventArgs (ScrollEventType.EndScroll, pos);
+			event_args = new ScrollEventArgs (ScrollEventType.EndScroll, Value);
 			OnScroll (event_args);			
-			pos = event_args.NewValue;    			
-
-			UpdatePos (pos, true);
+			Value = event_args.NewValue;
     		}
     		
     		private void SetHoldButtonClickTimer ()
