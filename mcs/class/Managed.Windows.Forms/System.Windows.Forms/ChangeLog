@@ -1,5 +1,26 @@
 2006-03-21  Mike Kestner  <mkestner@novell.com>
 
+	* ThemeWin32Classic.cs: major refactoring of the ToolBar rendering
+	methods. Removed a ton of redundant code.  Still not really happy with
+	the border rendering, but I think that's mainly because of the
+	ControlDarkDark being black instead of a dark grey. Depending on how 
+	close we want to be, we might want to revisit those color choices.
+	Among the new features added during the refactor were DropDownArrow
+	pressed rendering, Disabled image rendering.  Proper flat appearance
+	boundary rendering.  Removed the Divider and Wrapping dividers since I
+	can't figure out any combination of themes and conditions to make the
+	MS control draw a horizontal line on a toolbar despite what the
+	Divider property docs indicate.
+	* ToolBar.cs: rewrite the layout engine. Fixes numerous flicker
+	conditions and incorrect layout.  Updated to coding standard.
+	* ToolBarButton.cs: refactored layout and positioning code from
+	ToolBar to here.  Invalidate wherever possible instead of forcing
+	redraws of the whole toolbar. 
+	(Known remaining issues: explicit ButtonSize smaller than provided
+	images.)
+
+2006-03-21  Mike Kestner  <mkestner@novell.com>
+
 	* ContextMenu.cs (Show): use the position parameter instead of just
 	showing at the MousePosition.
 

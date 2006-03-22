@@ -1,4 +1,3 @@
-//
 // System.Windows.Forms.ToolBar.cs
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -22,11 +21,12 @@
 //
 // Author:
 //	Ravindra (rkumar@novell.com)
+//	Mike Kestner <mkestner@novell.com>
 //
 // TODO:
 //   - Tooltip
 //
-// Copyright (C) Novell, Inc. 2004 (http://www.novell.com)
+// Copyright (C) 2004-2006  Novell, Inc. (http://www.novell.com)
 //
 
 
@@ -47,20 +47,8 @@ namespace System.Windows.Forms
 	public class ToolBar : Control
 	{
 		#region Instance Variables
-		internal ToolBarAppearance	appearance;
-		internal bool			autosize;
-		internal ToolBarButtonCollection buttons;
-		internal Size			buttonSize;
-		internal bool			divider;
-		internal bool			dropDownArrows;
-		internal ImageList		imageList;
-		internal ImeMode		imeMode;
-		internal bool			showToolTips;
-		internal ToolBarTextAlign	textAlignment;
-		internal bool			wrappable;        // flag to make the toolbar wrappable
-		internal bool			redraw;           // flag to force redrawing the control
-		private bool			size_specified;   // flag to know if button size is fixed.
-		internal ToolBarButton		currentButton; // the highlighted button
+		bool size_specified = false;
+		ToolBarButton current_button;
 		#endregion Instance Variables
 
 		#region Events
@@ -120,27 +108,15 @@ namespace System.Windows.Forms
 		#region Constructor
 		public ToolBar ()
 		{
-			appearance = ToolBarAppearance.Normal;
-			autosize = true;
 			background_color = ThemeEngine.Current.DefaultControlBackColor;
-			border_style = BorderStyle.None;
-			buttons = new ToolBarButtonCollection (this);
-			buttonSize = Size.Empty;
-			divider = true;
-			dropDownArrows = false;
 			foreground_color = ThemeEngine.Current.DefaultControlForeColor;
-			showToolTips = false;
-			textAlignment = ToolBarTextAlign.Underneath;
-			wrappable = true;
+			buttons = new ToolBarButtonCollection (this);
 			dock_style = DockStyle.Top;
-			redraw = true;
-			size_specified = false;
 			
-			// event handlers
-			this.MouseDown += new MouseEventHandler (ToolBar_MouseDown);
-			this.MouseLeave += new EventHandler (ToolBar_MouseLeave);
-			this.MouseMove += new MouseEventHandler (ToolBar_MouseMove);
-			this.MouseUp += new MouseEventHandler (ToolBar_MouseUp);
+			MouseDown += new MouseEventHandler (ToolBar_MouseDown);
+			MouseLeave += new EventHandler (ToolBar_MouseLeave);
+			MouseMove += new MouseEventHandler (ToolBar_MouseMove);
+			MouseUp += new MouseEventHandler (ToolBar_MouseUp);
 			Paint += new PaintEventHandler (ToolBar_Paint);
 
 			SetStyle (ControlStyles.UserPaint, false);
@@ -163,6 +139,8 @@ namespace System.Windows.Forms
 		}
 		#endregion
 
+		ToolBarAppearance appearance = ToolBarAppearance.Normal;
+
 		#region Public Properties
 		[DefaultValue (ToolBarAppearance.Normal)]
 		[Localizable (true)]
@@ -176,6 +154,8 @@ namespace System.Windows.Forms
 				Redraw (false);
 			}
 		}
+
+		bool autosize = true;
 
 		[DefaultValue (true)]
 		[Localizable (true)]
@@ -225,6 +205,8 @@ namespace System.Windows.Forms
 			set { InternalBorderStyle = value; }
 		}
 
+		ToolBarButtonCollection buttons;
+
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[Localizable (true)]
 		[MergableProperty (false)]
@@ -232,27 +214,31 @@ namespace System.Windows.Forms
 			get { return buttons; }
 		}
 
+		Size button_size;
+
 		[Localizable (true)]
 		[RefreshProperties (RefreshProperties.All)]
 		public Size ButtonSize {
 			get {
-				if (buttonSize.IsEmpty) {
+				if (button_size.IsEmpty) {
 					if (buttons.Count == 0)
 						return new Size (39, 36);
 					else
 						return CalcButtonSize ();
 				}
-				return buttonSize;
+				return button_size;
 			}
 			set {
-				if (buttonSize.Width == value.Width && buttonSize.Height == value.Height)
+				size_specified = true;
+				if (button_size == value)
 					return;
 
-					buttonSize = value;
-					size_specified = true;
-					Redraw (true);
+				button_size = value;
+				Redraw (true);
 			}
 		}
+
+		bool divider = true;
 
 		[DefaultValue (true)]
 		public bool Divider {
@@ -273,15 +259,17 @@ namespace System.Windows.Forms
 			set { base.Dock = value; } 
 		}
 
+		bool drop_down_arrows = false;
+
 		[DefaultValue (false)]
 		[Localizable (true)]
 		public bool DropDownArrows {
-			get { return dropDownArrows; }
+			get { return drop_down_arrows; }
 			set {
-				if (value == dropDownArrows)
+				if (value == drop_down_arrows)
 					return;
 
-				dropDownArrows = value;
+				drop_down_arrows = value;
 				Redraw (true);
 			}
 		}
@@ -300,10 +288,12 @@ namespace System.Windows.Forms
 			}
 		}
 
+		ImageList image_list;
+
 		[DefaultValue (null)]
 		public ImageList ImageList {
-			get { return imageList; }
-			set { imageList = value; }
+			get { return image_list; }
+			set { image_list = value; }
 		}
 
 		[Browsable (false)]
@@ -311,22 +301,24 @@ namespace System.Windows.Forms
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public Size ImageSize {
 			get {
-				if (imageList == null)
+				if (ImageList == null)
 					return Size.Empty;
 
-				return imageList.ImageSize;
+				return ImageList.ImageSize;
 			}
 		}
+
+		ImeMode ime_mode;
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new ImeMode ImeMode {
-			get { return imeMode; }
+			get { return ime_mode; }
 			set {
-				if (value == imeMode)
+				if (value == ime_mode)
 					return;
 
-				imeMode = value;
+				ime_mode = value;
 				OnImeModeChanged (EventArgs.Empty);
 			}
 		}
@@ -344,11 +336,13 @@ namespace System.Windows.Forms
 			}
 		}
 
+		bool show_tooltips = false;
+
 		[DefaultValue (false)]
 		[Localizable (true)]
 		public bool ShowToolTips {
-			get { return showToolTips; }
-			set { showToolTips = value; }
+			get { return show_tooltips; }
+			set { show_tooltips = value; }
 		}
 
 		[DefaultValue (false)]
@@ -373,18 +367,22 @@ namespace System.Windows.Forms
 			}
 		}
 
+		ToolBarTextAlign text_alignment = ToolBarTextAlign.Underneath;
+
 		[DefaultValue (ToolBarTextAlign.Underneath)]
 		[Localizable (true)]
 		public ToolBarTextAlign TextAlign {
-			get { return textAlignment; }
+			get { return text_alignment; }
 			set {
-				if (value == textAlignment)
+				if (value == text_alignment)
 					return;
 
-				textAlignment = value;
+				text_alignment = value;
 				Redraw (true);
 			}
 		}
+
+		bool wrappable = true;
 
 		[DefaultValue (true)]
 		[Localizable (true)]
@@ -413,40 +411,6 @@ namespace System.Windows.Forms
 		}
 		#endregion Public Methods
 
-		#region Internal Methods
-		internal Rectangle GetChildBounds (ToolBarButton button)
-		{
-			if (button.Style == ToolBarButtonStyle.Separator)
-				return new Rectangle (button.Location.X, button.Location.Y, 
-						      ThemeEngine.Current.ToolBarSeparatorWidth, this.ButtonSize.Height);
-
-			if (size_specified)
-				return new Rectangle (button.Location, this.ButtonSize);
-
-			SizeF sz = this.DeviceContext.MeasureString (button.Text, this.Font);
-			Size size = new Size ((int) Math.Ceiling (sz.Width), (int) Math.Ceiling (sz.Height));
-
-			if (imageList != null) {
-				// adjustment for the image grip 
-				int imgWidth = this.ImageSize.Width + 2 * ThemeEngine.Current.ToolBarImageGripWidth; 
-				int imgHeight = this.ImageSize.Height + 2 * ThemeEngine.Current.ToolBarImageGripWidth; 
-
-				if (textAlignment == ToolBarTextAlign.Right) {
-					size.Width =  imgWidth + size.Width;
-					size.Height = (size.Height > imgHeight) ? size.Height : imgHeight;
-				}
-				else {
-					size.Height = imgHeight + size.Height;
-					size.Width = (size.Width > imgWidth) ? size.Width : imgWidth;
-				}
-			}
-			if (button.Style == ToolBarButtonStyle.DropDownButton && this.dropDownArrows)
-				size.Width += ThemeEngine.Current.ToolBarDropDownWidth;
-
-			return new Rectangle (button.Location, size);
-		}
-		#endregion Internal Methods
-
 		#region Protected Methods
 		protected override void CreateHandle ()
 		{
@@ -456,7 +420,7 @@ namespace System.Windows.Forms
 		protected override void Dispose (bool disposing)
 		{
 			if (disposing)
-				imageList = null;
+				ImageList = null;
 
 			base.Dispose (disposing);
 		}
@@ -476,24 +440,21 @@ namespace System.Windows.Forms
 
 			if (ButtonClick != null)
 				ButtonClick (this, e);
-			else
-				return;
 		}
 
 		protected virtual void OnButtonDropDown (ToolBarButtonClickEventArgs e) 
 		{
-			// Reset the flag set on DropDown
-			e.Button.dd_pressed = false;
-
 			if (ButtonDropDown != null)
 				ButtonDropDown (this, e);
 
 			if (e.Button.DropDownMenu == null)
 				return;
 
-			Point loc = new Point (e.Button.Location.X + 1,
-					       e.Button.Rectangle.Bottom + 2);
+			Point loc = new Point (e.Button.Rectangle.X + 1, e.Button.Rectangle.Bottom + 1);
 			((ContextMenu) e.Button.DropDownMenu).Show (this, loc);
+
+			e.Button.dd_pressed = false;
+			Invalidate (e.Button.Rectangle);
 		}
 
 		protected override void OnFontChanged (EventArgs e)
@@ -511,7 +472,7 @@ namespace System.Windows.Forms
 		{
 			base.OnResize (e);
 
-			if (this.Width <= 0 || this.Height <= 0 || this.Visible == false)
+			if (Width <= 0 || Height <= 0 || !Visible)
 				return;
 
 			Redraw (true);
@@ -532,34 +493,31 @@ namespace System.Windows.Forms
 		#region Private Methods
 		private void ToolBar_MouseDown (object sender, MouseEventArgs me)
 		{
-			if (! this.Enabled) return;
+			if (!Enabled) 
+				return;
 
-			Point hit = new Point (me.X, me.Y);
-			this.Capture = true;
+			Point loc = new Point (me.X, me.Y);
 
 			// draw the pushed button
 			foreach (ToolBarButton button in buttons) {
-				if (button.Enabled && button.Rectangle.Contains (hit)) {
+				if (button.Enabled && button.Rectangle.Contains (loc)) {
 					// Mark the DropDown rect as pressed.
 					// We don't redraw the dropdown rect.
 					if (button.Style == ToolBarButtonStyle.DropDownButton) {
-						Rectangle ddRect = Rectangle.Empty;
 						Rectangle rect = button.Rectangle;
-						ddRect.Height = rect.Height;
-						ddRect.Width = ThemeEngine.Current.ToolBarDropDownWidth;
-						ddRect.X = rect.X + rect.Width - ddRect.Width;
-						ddRect.Y = rect.Y;
-						if (ddRect.Contains (hit)) {
-							button.dd_pressed = true;
+						rect.Width = ThemeEngine.Current.ToolBarDropDownWidth;
+						rect.X = button.Rectangle.Right - rect.Width;
+						if (rect.Contains (loc)) {
+							if (button.DropDownMenu != null) {
+								button.dd_pressed = true;
+								Invalidate (rect);
+							}
 							break;
 						}
 					}
-					// If it is not dropdown then we treat it as a normal
-					// button press.
 					button.pressed = true;
 					button.inside = true;
 					Invalidate (button.Rectangle);
-					Redraw (false);
 					break;
 				}
 			}
@@ -567,66 +525,61 @@ namespace System.Windows.Forms
 
 		private void ToolBar_MouseUp (object sender, MouseEventArgs me)
 		{
-			if (! this.Enabled) return;
+			if (!Enabled) 
+				return;
 
-			Point hit = new Point (me.X, me.Y);
-			this.Capture = false;
+			Point loc = new Point (me.X, me.Y);
 
 			// draw the normal button
 			foreach (ToolBarButton button in buttons) {
-				if (button.Enabled && button.Rectangle.Contains (hit)) {
+				if (button.Enabled && button.Rectangle.Contains (loc)) {
 					if (button.Style == ToolBarButtonStyle.DropDownButton) {
-						Rectangle ddRect = Rectangle.Empty;
-						Rectangle rect = button.Rectangle;
-						ddRect.Height = rect.Height;
+						Rectangle ddRect = button.Rectangle;
 						ddRect.Width = ThemeEngine.Current.ToolBarDropDownWidth;
-						ddRect.X = rect.X + rect.Width - ddRect.Width;
-						ddRect.Y = rect.Y;
-						// Fire a ButtonDropDown event
-						if (ddRect.Contains (hit)) {
+						ddRect.X = button.Rectangle.Right - ddRect.Width;
+						if (ddRect.Contains (loc)) {
 							if (button.dd_pressed)
-								this.OnButtonDropDown (new ToolBarButtonClickEventArgs (button));
+								OnButtonDropDown (new ToolBarButtonClickEventArgs (button));
 							continue;
 						}
 					}
 					// Fire a ButtonClick
 					if (button.pressed)
-						this.OnButtonClick (new ToolBarButtonClickEventArgs (button));
-				}
-				// Clear the button press flags, if any
-				else if (button.pressed) {
+						OnButtonClick (new ToolBarButtonClickEventArgs (button));
+				} else if (button.pressed) {
 					button.pressed = false;
 					Invalidate (button.Rectangle);
-					Redraw (false);
 				}
 			}
 		}
 
 		private void ToolBar_MouseLeave (object sender, EventArgs e)
 		{
-			if (! this.Enabled || appearance != ToolBarAppearance.Flat) return;
+			if (!Enabled || appearance != ToolBarAppearance.Flat || current_button == null) 
+				return;
 
-			if (currentButton != null && currentButton.Hilight) {
-				currentButton.Hilight = false;
-				Invalidate (currentButton.Rectangle);
+			if (current_button.Hilight) {
+				current_button.Hilight = false;
+				Invalidate (current_button.Rectangle);
 				Redraw (false);
 			}
-			currentButton = null;
+			current_button = null;
 		}
 
 		private void ToolBar_MouseMove (object sender, MouseEventArgs me)
 		{
-			if (! this.Enabled) return;
+			if (!Enabled) 
+				return;
 
-			Point hit = new Point (me.X, me.Y);
+			Point loc = new Point (me.X, me.Y);
 
 			if (this.Capture) {
 				// If the button was pressed and we leave, release the 
 				// button press and vice versa
 				foreach (ToolBarButton button in buttons) {
 					if (button.pressed &&
-					    (button.inside != button.Rectangle.Contains (hit))) {
-						button.inside = button.Rectangle.Contains (hit);
+					    (button.inside != button.Rectangle.Contains (loc))) {
+						button.inside = button.Rectangle.Contains (loc);
 						button.Hilight = false;
 						Invalidate (button.Rectangle);
 						Redraw (false);
@@ -636,21 +589,21 @@ namespace System.Windows.Forms
 			}
 			// following is only for flat style toolbar
 			else if (appearance == ToolBarAppearance.Flat) {
-				if (currentButton != null && currentButton.Rectangle.Contains (hit)) {
-					if (currentButton.Hilight || currentButton.Pushed)
+				if (current_button != null && current_button.Rectangle.Contains (loc)) {
+					if (current_button.Hilight || current_button.Pushed)
 						return;
-					currentButton.Hilight = true;
-					Invalidate (currentButton.Rectangle);
+					current_button.Hilight = true;
+					Invalidate (current_button.Rectangle);
 					Redraw (false);
 				}
 				else {
 					foreach (ToolBarButton button in buttons) {
-						if (button.Rectangle.Contains (hit) && button.Enabled) {
-							currentButton = button;
-							if (currentButton.Hilight || currentButton.Pushed)
+						if (button.Rectangle.Contains (loc) && button.Enabled) {
+							current_button = button;
+							if (current_button.Hilight || current_button.Pushed)
 								continue;
-							currentButton.Hilight = true;
-							Invalidate (currentButton.Rectangle);
+							current_button.Hilight = true;
+							Invalidate (current_button.Rectangle);
 							Redraw (false);
 						}
 						else if (button.Hilight) {
@@ -670,11 +623,9 @@ namespace System.Windows.Forms
 
 		internal void Redraw (bool recalculate)
 		{
-			// if (recalculate) {
-			CalcToolBar ();
-				// }
+			if (recalculate)
+				Layout ();
 
-			redraw = true;
 			Refresh ();
 		}
 
@@ -689,12 +640,12 @@ namespace System.Windows.Forms
 			SizeF sz = this.DeviceContext.MeasureString (longestText, this.Font);
 			Size size = new Size ((int) Math.Ceiling (sz.Width), (int) Math.Ceiling (sz.Height));
 
-			if (imageList != null) {
+			if (ImageList != null) {
 				// adjustment for the image grip 
 				int imgWidth = this.ImageSize.Width + 2 * ThemeEngine.Current.ToolBarImageGripWidth; 
 				int imgHeight = this.ImageSize.Height + 2 * ThemeEngine.Current.ToolBarImageGripWidth;
 
-				if (textAlignment == ToolBarTextAlign.Right) {
+				if (text_alignment == ToolBarTextAlign.Right) {
 					size.Width = imgWidth + size.Width;
 					size.Height = (size.Height > imgHeight) ? size.Height : imgHeight;
 				}
@@ -706,115 +657,61 @@ namespace System.Windows.Forms
 			return size;
 		}
 
-		/* Checks for the separators and sets the location of a button and its wrapper flag */
-		private void CalcToolBar ()
+		void Layout ()
 		{
-			int wd = this.Width;             // the amount of space we have for rest of the buttons
-			int ht = this.ButtonSize.Height; // all buttons are displayed with the same height
-			Point loc;                       // the location to place the next button, leave the space for border
-			loc = new Point (ThemeEngine.Current.ToolBarGripWidth, ThemeEngine.Current.ToolBarGripWidth);
+			Theme theme = ThemeEngine.Current;
+			int ht = ButtonSize.Height + theme.ToolBarGripWidth;
+			int x = theme.ToolBarGripWidth;
+			int y = theme.ToolBarGripWidth;
 
-			// clear all the wrappers if toolbar is not wrappable
-			if (! wrappable && ! autosize) {
-				if (this.Height != this.DefaultSize.Height)
-					this.Height = this.DefaultSize.Height;
-				foreach (ToolBarButton button in buttons) {
-					button.Location = loc;
-					button.Wrapper = false;
-					loc.X = loc.X + button.Rectangle.Width;
-				}
-			}
-			else if (! wrappable) { // autosizeable
-				if (ht != this.Height)
-					this.Height = ht;
-				foreach (ToolBarButton button in buttons) {
-					button.Location = loc;
-					button.Wrapper = false;
-					loc.X = loc.X + button.Rectangle.Width;
-				}
-			}
-			else { // wrappable
-				bool seenSeparator = false;
-				int separatorIndex = -1;
-				ToolBarButton button;
+			if (Wrappable) {
+				int separator_index = -1;
 
 				for (int i = 0; i < buttons.Count; i++) {
-					button = buttons [i];
-					if (button.Visible) {
-						if (button.Style == ToolBarButtonStyle.Separator) {
-							wd -= ThemeEngine.Current.ToolBarSeparatorWidth;
-							if (wd > 0) {
-								button.Wrapper = false; // clear the old flag in case it was set
-								button.Location = loc;
-								loc.X = loc.X + ThemeEngine.Current.ToolBarSeparatorWidth;
-							}
-							else {
-								button.Wrapper = true;
-								button.Location = loc;
-								loc.X = ThemeEngine.Current.ToolBarGripWidth;
-								wd = this.Width;
-								// we need space to draw horizontal separator
-								loc.Y = loc.Y + ThemeEngine.Current.ToolBarSeparatorWidth + ht; 
-							}
-							seenSeparator = true;
-							separatorIndex = i;
-						}
-						else {
-							Rectangle rect = button.Rectangle;
-							wd -= rect.Width;
-							if (wd > 0) {
-								button.Wrapper = false;
-								button.Location = loc;
-								loc.X = loc.X + rect.Width;
-							}
-							else if (seenSeparator) { 
-								// wrap at the separator and reassign the locations
-								i = separatorIndex; // for loop is going to increment it
-								buttons [separatorIndex].Wrapper = true;
-								seenSeparator = false;
-								separatorIndex = -1;
-								loc.X = ThemeEngine.Current.ToolBarGripWidth;
-								// we need space to draw horizontal separator
-								loc.Y = loc.Y + ht + ThemeEngine.Current.ToolBarSeparatorWidth; 
-								wd = this.Width;
-								continue;
-							}
-							else {
-								button.Wrapper = true;
-								wd = this.Width;
-								loc.X = 0;
-								loc.Y += ht;
-								button.Location = loc;
-								loc.X = loc.X + rect.Width;
-							}
-						}
-					}
-					else // don't consider invisible buttons
+					ToolBarButton button = buttons [i];
+
+					if (!button.Visible)
 						continue;
+
+					if (size_specified)
+						button.Layout (ButtonSize);
+					else
+						button.Layout ();
+
+					bool is_separator = button.Style == ToolBarButtonStyle.Separator;
+
+					if (x + button.Rectangle.Width < Width || is_separator) {
+						button.Location = new Point (x, y);
+						x += button.Rectangle.Width;
+						if (is_separator)
+							separator_index = i;
+					} else if (separator_index > 0) { 
+						i = separator_index;
+						separator_index = -1;
+						x = theme.ToolBarGripWidth;
+						y += ht; 
+					} else {
+						x = theme.ToolBarGripWidth;
+						y += ht; 
+						button.Location = new Point (x, y);
+						x += button.Rectangle.Width;
+					}
 				}
-				/* adjust the control height, if we are autosizeable */
-				if (autosize) // wrappable
-					if (this.Height != (loc.Y + ht + ThemeEngine.Current.ToolBarGripWidth))
-						this.Height = loc.Y + ht + ThemeEngine.Current.ToolBarGripWidth;
-			}
-		}
-
-		private void DumpToolBar (string msg)
-		{
-			Console.WriteLine (msg);
-			Console.WriteLine ("ToolBar: name: " + this.Text);
-			Console.WriteLine ("ToolBar: wd, ht: " + this.Size);
-			Console.WriteLine ("ToolBar: img size: " + this.ImageSize);
-			Console.WriteLine ("ToolBar: button sz: " + this.buttonSize);
-			Console.WriteLine ("ToolBar: textalignment: "+ this.TextAlign);
-			Console.WriteLine ("ToolBar: appearance: "+ this.Appearance);
-			Console.WriteLine ("ToolBar: wrappable: "+ this.Wrappable);
-			Console.WriteLine ("ToolBar: buttons count: " + this.Buttons.Count);
-
-			int i= 0;	
-			foreach (ToolBarButton b in buttons) {
-				Console.WriteLine ("ToolBar: button [{0}]:",i++);
-				b.Dump ();
+				if (AutoSize)
+					Height = y + ht;
+			} else {
+				if (AutoSize)
+					Height = ht;
+				else
+					Height = DefaultSize.Height;
+				foreach (ToolBarButton button in buttons) {
+					if (size_specified)
+						button.Layout (ButtonSize);
+					else
+						button.Layout ();
+					button.Location = new Point (x, y);
+					x += button.Rectangle.Width;
+				}
 			}
 		}
  		#endregion Private Methods
@@ -823,7 +720,7 @@ namespace System.Windows.Forms
 		public class ToolBarButtonCollection : IList, ICollection, IEnumerable
 		{
 			#region instance variables
-			private ArrayList buttonsList;
+			private ArrayList list;
 			private ToolBar owner;
 			#endregion
 
@@ -831,39 +728,39 @@ namespace System.Windows.Forms
 			public ToolBarButtonCollection (ToolBar owner)
 			{
 				this.owner = owner;
-				this.buttonsList = new ArrayList ();
+				list = new ArrayList ();
 			}
 			#endregion
 
 			#region properties
 			[Browsable (false)]
 			public virtual int Count {
-				get { return buttonsList.Count; }
+				get { return list.Count; }
 			}
 
 			public virtual bool IsReadOnly {
-				get { return buttonsList.IsReadOnly; }
+				get { return list.IsReadOnly; }
 			}
 
 			public virtual ToolBarButton this [int index] {
-				get { return (ToolBarButton) buttonsList [index]; }
+				get { return (ToolBarButton) list [index]; }
 				set {
 					value.SetParent (owner);
-					buttonsList [index] = value;
+					list [index] = value;
 					owner.Redraw (true);
 				}
 			}
 
 			bool ICollection.IsSynchronized {
-				get { return buttonsList.IsSynchronized; }
+				get { return list.IsSynchronized; }
 			}
 
 			object ICollection.SyncRoot {
-				get { return buttonsList.SyncRoot; }
+				get { return list.SyncRoot; }
 			}
 
 			bool IList.IsFixedSize {
-				get { return buttonsList.IsFixedSize; }
+				get { return list.IsFixedSize; }
 			}
 
 			object IList.this [int index] {
@@ -887,7 +784,7 @@ namespace System.Windows.Forms
 			{
 				int result;
 				button.SetParent (owner);
-				result = buttonsList.Add (button);
+				result = list.Add (button);
 				owner.Redraw (true);
 				return result;
 			}
@@ -900,23 +797,23 @@ namespace System.Windows.Forms
 
 			public virtual void Clear ()
 			{
-				buttonsList.Clear ();
+				list.Clear ();
 				owner.Redraw (false);
 			}
 
 			public bool Contains (ToolBarButton button)
 			{
-				return buttonsList.Contains (button);
+				return list.Contains (button);
 			}
 
 			public virtual IEnumerator GetEnumerator ()
 			{
-				return buttonsList.GetEnumerator ();
+				return list.GetEnumerator ();
 			}
 
 			void ICollection.CopyTo (Array dest, int index)
 			{
-				buttonsList.CopyTo (dest, index);
+				list.CopyTo (dest, index);
 			}
 
 			int IList.Add (object button)
@@ -966,24 +863,24 @@ namespace System.Windows.Forms
 
 			public int IndexOf (ToolBarButton button)
 			{
-				return buttonsList.IndexOf (button);
+				return list.IndexOf (button);
 			}
 
 			public void Insert (int index, ToolBarButton button)
 			{
-				buttonsList.Insert (index, button);
+				list.Insert (index, button);
 				owner.Redraw (true);
 			}
 
 			public void Remove (ToolBarButton button)
 			{
-				buttonsList.Remove (button);
+				list.Remove (button);
 				owner.Redraw (true);
 			}
 
 			public virtual void RemoveAt (int index)
 			{
-				buttonsList.RemoveAt (index);
+				list.RemoveAt (index);
 				owner.Redraw (true);
 			}
 			#endregion methods
