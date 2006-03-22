@@ -67,6 +67,11 @@ namespace System.Data.Common
 			missingMappingAction = MissingMappingAction.Passthrough;
 			missingSchemaAction = MissingSchemaAction.Add;
 			tableMappings = new DataTableMappingCollection ();
+#if NET_2_0
+			acceptChangesDuringUpdate = true;
+			fillLoadOption = LoadOption.OverwriteChanges;
+			returnProviderSpecificTypes = false;
+#endif 
 		}
 
 		protected DataAdapter (DataAdapter adapter)
@@ -75,12 +80,15 @@ namespace System.Data.Common
 			ContinueUpdateOnError = adapter.ContinueUpdateOnError;
 			MissingMappingAction = adapter.MissingMappingAction;
 			MissingSchemaAction = adapter.MissingSchemaAction;
-			if (adapter.tableMappings == null || adapter.TableMappings.Count <= 0) {
-				return;
-			}
-			foreach (ICloneable cloneable in adapter.TableMappings) {
-				TableMappings.Add (cloneable.Clone ());
-			}
+
+			if (adapter.tableMappings != null)
+				foreach (ICloneable cloneable in adapter.TableMappings)
+					TableMappings.Add (cloneable.Clone ());
+#if NET_2_0
+			acceptChangesDuringUpdate = adapter.AcceptChangesDuringUpdate;
+			fillLoadOption = adapter.FillLoadOption;
+			returnProviderSpecificTypes = adapter.ReturnProviderSpecificTypes;
+#endif 
 		}
 
 		#endregion
