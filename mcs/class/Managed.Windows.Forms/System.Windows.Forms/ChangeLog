@@ -8,6 +8,9 @@
 	that doesn't invalidate immediately.
 	* ToolTip.cs: Tooltips get added to their container (when
 	supplied) so they get disposed when the container is disposed.
+	* Form.cs: Don't set topmost when setting the owner if the handles
+	haven't been created yet.  The topmost set will happen when the
+	handles are created.
 
 2006-03-22  Peter Dennis Bartok  <pbartok@novell.com> 
 

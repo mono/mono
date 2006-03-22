@@ -701,10 +701,12 @@ namespace System.Windows.Forms {
 					}
 					owner = value;
 					owner.AddOwnedForm(this);
-					if (owner != null) {
-						XplatUI.SetTopmost(this.window.Handle, owner.window.Handle, true);
-					} else {
-						XplatUI.SetTopmost(this.window.Handle, IntPtr.Zero, false);
+					if (IsHandleCreated) {
+						if (owner != null && owner.IsHandleCreated) {
+							XplatUI.SetTopmost(this.window.Handle, owner.window.Handle, true);
+						} else {
+							XplatUI.SetTopmost(this.window.Handle, IntPtr.Zero, false);
+						}
 					}
 				}
 			}
