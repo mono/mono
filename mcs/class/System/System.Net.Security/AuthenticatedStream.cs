@@ -46,7 +46,7 @@ namespace System.Net.Security
 
 		#region Constructors
 
-		public AuthenticatedStream (Stream innerStream, bool leaveInnerStreamOpen)
+		protected AuthenticatedStream (Stream innerStream, bool leaveInnerStreamOpen)
 		{
 			this.innerStream = innerStream;
 			this.leaveStreamOpen = leaveInnerStreamOpen;
@@ -66,15 +66,23 @@ namespace System.Net.Security
 		public abstract bool IsServer { get; }
 		public abstract bool IsSigned { get; }
 
+		public bool LeaveInnerStreamOpen {
+			get {
+				return leaveStreamOpen;
+			}
+		}
+		
 		#endregion // Properties
 
 		#region Methods
 
-		public override void Close ()
+		protected override void Dispose (bool disposing)
 		{
-			if (leaveStreamOpen)
-				return;
-			innerStream.Close ();
+			if (disposing && innerStream != null){
+				if (!leaveStreamOpen)
+					innerStream.Close ();
+				innerStream = null;
+			}
 		}
 
 		#endregion // Methods

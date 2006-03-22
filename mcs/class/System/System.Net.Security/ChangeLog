@@ -1,3 +1,11 @@
+2006-03-21  Miguel de Icaza  <miguel@novell.com>
+
+	* AuthenticatedStream.cs: Implement Dispose method, remove Close
+	method, the Close to fix the API.
+
+	* NegotiateStream.cs: Implement Dispose method as well, kill
+	Close, rename the various methods to the new ones.
+
 2006-03-11  Miguel de Icaza  <miguel@novell.com>
 
 	* AuthenticatedStream.cs: Fixed normative parameter names (yes, we

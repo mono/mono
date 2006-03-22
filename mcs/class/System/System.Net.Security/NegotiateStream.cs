@@ -141,19 +141,19 @@ namespace System.Net.Security
 		#region Methods
 
 		[MonoTODO]
-		public virtual IAsyncResult BeginClientAuthenticate (AsyncCallback callback, object asyncState)
+		public virtual IAsyncResult BeginAuthenticateAsClient (AsyncCallback callback, object asyncState)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual IAsyncResult BeginClientAuthenticate (NetworkCredential credential, string targetName, AsyncCallback asyncCallback, object asyncState)
+		public virtual IAsyncResult BeginAuthenticateAsClient (NetworkCredential credential, string targetName, AsyncCallback asyncCallback, object asyncState)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual IAsyncResult BeginClientAuthenticate (NetworkCredential credential, string targetName, ProtectionLevel requiredProtectionLevel, TokenImpersonationLevel allowedImpersonationLevel, AsyncCallback asyncCallback, object asyncState)
+		public virtual IAsyncResult BeginAuthenticateAsClient (NetworkCredential credential, string targetName, ProtectionLevel requiredProtectionLevel, TokenImpersonationLevel allowedImpersonationLevel, AsyncCallback asyncCallback, object asyncState)
 		{
 			throw new NotImplementedException ();
 		}
@@ -165,13 +165,13 @@ namespace System.Net.Security
 		}
 
 		[MonoTODO]
-		public virtual IAsyncResult BeginServerAuthenticate (AsyncCallback callback, object asyncState)
+		public virtual IAsyncResult BeginAuthenticateAsServer (AsyncCallback callback, object asyncState)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual IAsyncResult BeginServerAuthenticate (NetworkCredential credential, ProtectionLevel requiredProtectionLevel, TokenImpersonationLevel requiredImpersonationLevel, AsyncCallback asyncCallback, object asyncState)
+		public virtual IAsyncResult BeginAuthenticateAsServer (NetworkCredential credential, ProtectionLevel requiredProtectionLevel, TokenImpersonationLevel requiredImpersonationLevel, AsyncCallback asyncCallback, object asyncState)
 		{
 			throw new NotImplementedException ();
 		}
@@ -183,27 +183,41 @@ namespace System.Net.Security
 		}
 
 		[MonoTODO]
-		public virtual void ClientAuthenticate ()
+		public virtual void AuthenticateAsClient ()
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual void ClientAuthenticate (NetworkCredential credential, string targetName)
+		public virtual void AuthenticateAsClient (NetworkCredential credential, string targetName)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual void ClientAuthenticate (NetworkCredential credential, string targetName, ProtectionLevel requiredProtectionLevel, TokenImpersonationLevel requiredImpersonationLevel)
+		public virtual void AuthenticateAsClient (NetworkCredential credential, string targetName, ProtectionLevel requiredProtectionLevel, TokenImpersonationLevel requiredImpersonationLevel)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public override void Close ()
+		public virtual void AuthenticateAsServer ()
 		{
-			InnerStream.Close ();
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public virtual void AuthenticateAsServer (NetworkCredential credential, ProtectionLevel requiredProtectionLevel, TokenImpersonationLevel requiredImpersonationLevel)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		protected override void Dispose (bool disposing)
+		{
+			if (disposing){
+				// TODO
+			}
 		}
 
 		[MonoTODO]
@@ -244,18 +258,6 @@ namespace System.Net.Security
 
 		[MonoTODO]
 		public override long Seek (long offset, SeekOrigin origin)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public virtual void ServerAuthenticate ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public virtual void ServerAuthenticate (NetworkCredential credential, ProtectionLevel requiredProtectionLevel, TokenImpersonationLevel requiredImpersonationLevel)
 		{
 			throw new NotImplementedException ();
 		}
