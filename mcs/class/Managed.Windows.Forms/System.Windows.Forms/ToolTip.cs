@@ -285,7 +285,7 @@ namespace System.Windows.Forms {
 
 		public void SetToolTip(Control control, string caption) {
 			tooltip_strings[control] = caption;
-			
+
 			// no need for duplicates
 			if (!controls.Contains(control)) {
 				control.MouseEnter += new EventHandler(control_MouseEnter);
@@ -348,7 +348,7 @@ namespace System.Windows.Forms {
 			}
 
 			text = (string)tooltip_strings[sender];
-			if (text != null) {
+			if (text != null && text.Length > 0) {
 				Size size;
 
 				size = ThemeEngine.Current.ToolTipSize(tooltip_window, text);

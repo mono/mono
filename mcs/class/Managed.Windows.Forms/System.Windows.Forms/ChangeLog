@@ -8,6 +8,9 @@
 	that doesn't invalidate immediately.
 	* ToolTip.cs: Tooltips get added to their container (when
 	supplied) so they get disposed when the container is disposed.
+	- Don't create tooltips for String.Empty. This prevents all these
+	little 2-3 pixel windows from showing up when running nunit-gui
+	and driving me mad.
 	* Form.cs: Don't set topmost when setting the owner if the handles
 	haven't been created yet.  The topmost set will happen when the
 	handles are created.
