@@ -1,3 +1,10 @@
+2006-03-22  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* XplatUIX11.cs:
+	  - DeriveWindowStyles: Fixed typo in borderstyle generation (#77828)
+	  - SetVisible: Sending WINDOWPOSCHANGED for all controls when made 
+	    visible (to allow them to recalculate their sizes)
+
 2006-03-21  Mike Kestner  <mkestner@novell.com>
 
 	* ThemeWin32Classic.cs: major refactoring of the ToolBar rendering

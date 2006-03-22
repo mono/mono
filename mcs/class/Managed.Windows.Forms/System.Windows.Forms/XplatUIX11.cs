@@ -586,7 +586,7 @@ namespace System.Windows.Forms {
 			tool_caption_height = 19;
 
 			if ((Style & (int) WindowStyles.WS_CHILD) != 0) {
-				if ((Style & (int) WindowStyles.WS_BORDER) == 0) {
+				if ((Style & (int) WindowStyles.WS_BORDER) != 0) {
 					border_style = FormBorderStyle.None;
 				} else if ((ExStyle & (int) WindowExStyles.WS_EX_CLIENTEDGE) != 0) {
 					border_style = FormBorderStyle.Fixed3D;
@@ -3915,11 +3915,11 @@ namespace System.Windows.Forms {
 							case FormWindowState.Maximized:	SetWindowState(handle, FormWindowState.Maximized); break;
 						}
 
-						SendMessage(handle, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
 					} else {
 						XMapWindow(DisplayHandle, hwnd.whole_window);
 						XMapWindow(DisplayHandle, hwnd.client_window);
 					}
+					SendMessage(handle, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
 				} else {
 					XUnmapWindow(DisplayHandle, hwnd.whole_window);
 				}
