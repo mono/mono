@@ -1233,21 +1233,9 @@ namespace Mono.CSharp {
 			TypeManager.AddUserType (this);
 
 			if (Parts != null) {
-				ec = null;
 				foreach (ClassPart part in Parts) {
 					part.TypeBuilder = TypeBuilder;
-					part.ec = new EmitContext (this, part, Mono.CSharp.Location.Null, null, null, ModFlags);
-					part.ec.ContainerType = TypeBuilder;
 				}
-			} else {
-				//
-				// Normally, we create the EmitContext here.
-				// The only exception is if we're an Iterator - in this case,
-				// we already have the `ec', so we don't want to create a new one.
-				//
-				if (ec == null)
-					ec = new EmitContext (this, this, Mono.CSharp.Location.Null, null, null, ModFlags);
-				ec.ContainerType = TypeBuilder;
 			}
 
 			if (IsGeneric) {
@@ -1394,7 +1382,7 @@ namespace Mono.CSharp {
 				}
 
 				foreach (TypeParameter type_param in TypeParameters) {
-					if (!type_param.DefineType (ec)) {
+					if (!type_param.DefineType (this)) {
 						error = true;
 						return false;
 					}
@@ -1405,19 +1393,19 @@ namespace Mono.CSharp {
 			}
 
 			foreach (TypeParameter type_param in TypeParameters)
-				if (!type_param.CheckDependencies (ec)) {
+				if (!type_param.CheckDependencies ()) {
 					error = true;
 					return false;
 				}
 
 			if (current_type != null) {
-				current_type = current_type.ResolveAsTypeTerminal (ec, false);
+				current_type = current_type.ResolveAsTypeTerminal (this, false);
 				if (current_type == null) {
 					error = true;
 					return false;
 				}
 
-				CurrentType = current_type.ResolveType (ec);
+				CurrentType = current_type.ResolveType (this);
 			}
 
 			return true;
@@ -1521,14 +1509,14 @@ namespace Mono.CSharp {
 			if (iface_exprs != null) {
 				foreach (TypeExpr iface in iface_exprs) {
 					ConstructedType ct = iface as ConstructedType;
-					if ((ct != null) && !ct.CheckConstraints (ec))
+					if ((ct != null) && !ct.CheckConstraints (this))
 						return false;
 				}
 			}
 
 			if (base_type != null) {
 				ConstructedType ct = base_type as ConstructedType;
-				if ((ct != null) && !ct.CheckConstraints (ec))
+				if ((ct != null) && !ct.CheckConstraints (this))
 					return false;
 			}
 
@@ -1601,8 +1589,6 @@ namespace Mono.CSharp {
 
 			if (CurrentType != null) {
 				GenericType = CurrentType;
-
-				ec.ContainerType = GenericType;
 			}
 
 
@@ -2415,7 +2401,6 @@ namespace Mono.CSharp {
 			indexers = null;
 			operators = null;
 			iterators = null;
-			ec = null;
 			default_constructor = null;
 			default_static_constructor = null;
 			type_bases = null;
@@ -2942,7 +2927,7 @@ namespace Mono.CSharp {
 				if (new_constraints == null)
 					continue;
 
-				if (!current_params [i].UpdateConstraints (ec, new_constraints)) {
+				if (!current_params [i].UpdateConstraints (this, new_constraints)) {
 					Report.Error (265, Location, "Partial declarations of `{0}' have " +
 						      "inconsistent constraints for type parameter `{1}'.",
 						      MemberName.GetTypeName (), current_params [i].Name);
@@ -2956,7 +2941,7 @@ namespace Mono.CSharp {
 			}
 
 			foreach (TypeParameter type_param in PartialContainer.TypeParameters) {
-				if (!type_param.DefineType (ec))
+				if (!type_param.DefineType (this))
 					return false;
 			}
 

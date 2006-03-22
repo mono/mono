@@ -156,6 +156,7 @@ namespace Mono.CSharp {
 		Expression generic_enumerator_type;
 		Expression generic_enumerable_type;
 		TypeArguments generic_args;
+		EmitContext ec;
 
 		protected enum State {
 			Uninitialized	= -2,

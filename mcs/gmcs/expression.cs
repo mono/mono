@@ -7460,9 +7460,9 @@ namespace Mono.CSharp {
 			return ResolveNamespaceOrType (ec, silent);
 		}
 
-		public FullNamedExpression ResolveNamespaceOrType (IResolveContext ec, bool silent)
+		public FullNamedExpression ResolveNamespaceOrType (IResolveContext rc, bool silent)
 		{
-			FullNamedExpression new_expr = expr.ResolveAsTypeStep (ec, silent);
+			FullNamedExpression new_expr = expr.ResolveAsTypeStep (rc, silent);
 
 			if (new_expr == null)
 				return null;
@@ -7471,20 +7471,20 @@ namespace Mono.CSharp {
 
 			if (new_expr is Namespace) {
 				Namespace ns = (Namespace) new_expr;
-				FullNamedExpression retval = ns.Lookup (ec.DeclContainer, lookup_id, loc);
+				FullNamedExpression retval = ns.Lookup (rc.DeclContainer, lookup_id, loc);
 				if ((retval != null) && (args != null))
-					retval = new ConstructedType (retval, args, loc).ResolveAsTypeStep (ec, false);
+					retval = new ConstructedType (retval, args, loc).ResolveAsTypeStep (rc, false);
 				if (!silent && retval == null)
 					Report.Error (234, loc, "The type or namespace name `{0}' does not exist in the namespace `{1}'. Are you missing an assembly reference?",
 						Identifier, ns.FullName);
 				return retval;
 			}
 
-			TypeExpr tnew_expr = new_expr.ResolveAsTypeTerminal (ec, false);
+			TypeExpr tnew_expr = new_expr.ResolveAsTypeTerminal (rc, false);
 			if (tnew_expr == null)
 				return null;
 
-			Type expr_type = tnew_expr.ResolveType (ec);
+			Type expr_type = tnew_expr.ResolveType (rc);
 
 			if (expr_type.IsPointer){
 				Error (23, "The `.' operator can not be applied to pointer operands (" +
@@ -7493,11 +7493,11 @@ namespace Mono.CSharp {
 			}
 
 			Expression member_lookup = MemberLookup (
-				ec.DeclContainer.TypeBuilder, expr_type, expr_type, lookup_id,
+				rc.DeclContainer.TypeBuilder, expr_type, expr_type, lookup_id,
 				MemberTypes.NestedType, BindingFlags.Public | BindingFlags.NonPublic, loc);
 			if (member_lookup == null) {
 				int errors = Report.Errors;
-				MemberLookupFailed (ec.DeclContainer.TypeBuilder, expr_type, expr_type, lookup_id, null, false, loc);
+				MemberLookupFailed (rc.DeclContainer.TypeBuilder, expr_type, expr_type, lookup_id, null, false, loc);
 
 				if (!silent && errors == Report.Errors) {
 					Report.Error (426, loc, "The nested type `{0}' does not exist in the type `{1}'",
@@ -7507,11 +7507,11 @@ namespace Mono.CSharp {
 			}
 
 			if (!(member_lookup is TypeExpr)) {
-				new_expr.Error_UnexpectedKind (ec.DeclContainer, "type", loc);
+				new_expr.Error_UnexpectedKind (rc.DeclContainer, "type", loc);
 				return null;
 			}
 
-			TypeExpr texpr = member_lookup.ResolveAsTypeTerminal (ec, false);
+			TypeExpr texpr = member_lookup.ResolveAsTypeTerminal (rc, false);
 			if (texpr == null)
 				return null;
 
@@ -7531,7 +7531,7 @@ namespace Mono.CSharp {
 
 			if (the_args != null) {
 				ConstructedType ctype = new ConstructedType (texpr.Type, the_args, loc);
-				return ctype.ResolveAsTypeStep (ec, false);
+				return ctype.ResolveAsTypeStep (rc, false);
 			}
 
 			return texpr;

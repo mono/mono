@@ -674,9 +674,6 @@ namespace Mono.CSharp {
 		readonly int count_type_params;
 		readonly int count_current_type_params;
 
-		// The emit context for toplevel objects.
-		protected EmitContext ec;
-		
 		//
 		// Whether we are Generic
 		//

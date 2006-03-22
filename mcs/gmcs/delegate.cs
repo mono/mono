@@ -78,8 +78,6 @@ namespace Mono.CSharp {
 			if (TypeBuilder != null)
 				return TypeBuilder;
 
-			ec = new EmitContext (this, this, this, Location, null, null, ModFlags, false);
-
 			if (IsGeneric) {
 				foreach (TypeParameter type_param in TypeParameters)
 					if (!type_param.Resolve (this))
@@ -89,7 +87,7 @@ namespace Mono.CSharp {
 			if (TypeManager.multicast_delegate_type == null && !RootContext.StdLib) {
 				Namespace system = RootNamespace.Global.GetNamespace ("System", true);
 				TypeExpr expr = system.Lookup (this, "MulticastDelegate", Location) as TypeExpr;
-				TypeManager.multicast_delegate_type = expr.ResolveType (ec);
+				TypeManager.multicast_delegate_type = expr.ResolveType (this);
 			}
 
 			if (TypeManager.multicast_delegate_type == null)
@@ -135,7 +133,7 @@ namespace Mono.CSharp {
 
 				Expression current = new SimpleName (
 					MemberName.Basename, TypeParameters, Location);
-				current = current.ResolveAsTypeTerminal (ec, false);
+				current = current.ResolveAsTypeTerminal (this, false);
 				if (current == null)
 					return null;
 
@@ -152,11 +150,8 @@ namespace Mono.CSharp {
 
 			if (IsGeneric) {
 				foreach (TypeParameter type_param in TypeParameters)
-					type_param.DefineType (ec);
+					type_param.DefineType (this);
 			}
-
-			if (ec == null)
-				throw new InternalErrorException ("Define called before DefineType?");
 
 			// FIXME: POSSIBLY make this static, as it is always constant
 			//
@@ -195,7 +190,7 @@ namespace Mono.CSharp {
 			// First, call the `out of band' special method for
 			// defining recursively any types we need:
 			
-			if (!Parameters.Resolve (ec))
+			if (!Parameters.Resolve (this))
 				return false;
 
 			//
@@ -213,7 +208,7 @@ namespace Mono.CSharp {
 				}
 			}
 			
-			ReturnType = ReturnType.ResolveAsTypeTerminal (ec, false);
+			ReturnType = ReturnType.ResolveAsTypeTerminal (this, false);
 			if (ReturnType == null)
 				return false;
                         
@@ -302,7 +297,7 @@ namespace Mono.CSharp {
 								   Parameter.Modifier.NONE, null, Location);
 
 			Parameters async_parameters = new Parameters (async_params);
-			async_parameters.Resolve (ec);
+			async_parameters.Resolve (this);
 			async_parameters.ApplyAttributes (BeginInvokeBuilder);
 
 			TypeManager.RegisterMethod (BeginInvokeBuilder, async_parameters);
@@ -345,7 +340,7 @@ namespace Mono.CSharp {
 			}
 
 			Parameters end_parameters = new Parameters (end_params);
-			end_parameters.Resolve (ec);
+			end_parameters.Resolve (this);
 
 			TypeManager.RegisterMethod (EndInvokeBuilder, end_parameters);
 

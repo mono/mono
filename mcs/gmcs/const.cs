@@ -135,6 +135,7 @@ namespace Mono.CSharp {
 			}
 
 			in_transit = true;
+			// TODO: IResolveContext here
 			EmitContext ec = new EmitContext (this, Parent, Location, null, MemberType, ModFlags);
 			value = initializer.ResolveAsConstant (ec, this);
 			in_transit = false;

@@ -368,7 +368,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Resolve the constraints into actual types.
 		/// </summary>
-		public bool ResolveTypes (EmitContext ec)
+		public bool ResolveTypes (IResolveContext ec)
 		{
 			if (resolved_types)
 				return true;
@@ -412,17 +412,17 @@ namespace Mono.CSharp {
 		///      where T : class
 		///      where U : T, struct
 		/// </summary>
-		public bool CheckDependencies (EmitContext ec)
+		public bool CheckDependencies ()
 		{
 			foreach (TypeParameterExpr expr in type_param_constraints) {
-				if (!CheckDependencies (expr.TypeParameter, ec))
+				if (!CheckDependencies (expr.TypeParameter))
 					return false;
 			}
 
 			return true;
 		}
 
-		bool CheckDependencies (TypeParameter tparam, EmitContext ec)
+		bool CheckDependencies (TypeParameter tparam)
 		{
 			Constraints constraints = tparam.Constraints;
 			if (constraints == null)
@@ -456,7 +456,7 @@ namespace Mono.CSharp {
 				return true;
 
 			foreach (TypeParameterExpr expr in constraints.type_param_constraints) {
-				if (!CheckDependencies (expr.TypeParameter, ec))
+				if (!CheckDependencies (expr.TypeParameter))
 					return false;
 			}
 
@@ -507,7 +507,7 @@ namespace Mono.CSharp {
 		///   method.  To do that, we're called on each of the implementing method's
 		///   type parameters.
 		/// </summary>
-		public bool CheckInterfaceMethod (EmitContext ec, GenericConstraints gc)
+		public bool CheckInterfaceMethod (GenericConstraints gc)
 		{
 			if (gc.Attributes != attrs)
 				return false;
@@ -649,7 +649,7 @@ namespace Mono.CSharp {
 		///   Note that we may have circular dependencies on type parameters - this
 		///   is why Resolve() and ResolveType() are separate.
 		/// </summary>
-		public bool ResolveType (EmitContext ec)
+		public bool ResolveType (IResolveContext ec)
 		{
 			if (constraints != null) {
 				if (!constraints.ResolveTypes (ec)) {
@@ -666,7 +666,7 @@ namespace Mono.CSharp {
 		///   process.  We're called after everything is fully resolved and actually
 		///   register the constraints with SRE and the TypeManager.
 		/// </summary>
-		public bool DefineType (EmitContext ec)
+		public bool DefineType (IResolveContext ec)
 		{
 			return DefineType (ec, null, null, false);
 		}
@@ -679,7 +679,7 @@ namespace Mono.CSharp {
 		///   The `builder', `implementing' and `is_override' arguments are only
 		///   applicable to method type parameters.
 		/// </summary>
-		public bool DefineType (EmitContext ec, MethodBuilder builder,
+		public bool DefineType (IResolveContext ec, MethodBuilder builder,
 					MethodInfo implementing, bool is_override)
 		{
 			if (!ResolveType (ec))
@@ -710,7 +710,7 @@ namespace Mono.CSharp {
 				if (constraints != null) {
 					if (temp_gc == null)
 						ok = false;
-					else if (!constraints.CheckInterfaceMethod (ec, gc))
+					else if (!constraints.CheckInterfaceMethod (gc))
 						ok = false;
 				} else {
 					if (!is_override && (temp_gc != null))
@@ -764,10 +764,10 @@ namespace Mono.CSharp {
 		///      where T : class
 		///      where U : T, struct
 		/// </summary>
-		public bool CheckDependencies (EmitContext ec)
+		public bool CheckDependencies ()
 		{
 			if (constraints != null)
-				return constraints.CheckDependencies (ec);
+				return constraints.CheckDependencies ();
 
 			return true;
 		}
@@ -780,7 +780,7 @@ namespace Mono.CSharp {
 		///   check that they're the same.
 		///   con
 		/// </summary>
-		public bool UpdateConstraints (EmitContext ec, Constraints new_constraints)
+		public bool UpdateConstraints (IResolveContext ec, Constraints new_constraints)
 		{
 			if (type == null)
 				throw new InvalidOperationException ();
@@ -796,7 +796,7 @@ namespace Mono.CSharp {
 			if (!new_constraints.ResolveTypes (ec))
 				return false;
 
-			return constraints.CheckInterfaceMethod (ec, new_constraints);
+			return constraints.CheckInterfaceMethod (new_constraints);
 		}
 
 		public void EmitAttributes ()
@@ -1750,8 +1750,6 @@ namespace Mono.CSharp {
 
 		public override bool Define ()
 		{
-			ec = new EmitContext (this, this, this, Location, null, null, ModFlags, false);
-
 			for (int i = 0; i < TypeParameters.Length; i++)
 				if (!TypeParameters [i].Resolve (this))
 					return false;
@@ -1778,7 +1776,7 @@ namespace Mono.CSharp {
 				return false;
 
 			for (int i = 0; i < TypeParameters.Length; i++) {
-				if (!TypeParameters [i].ResolveType (ec))
+				if (!TypeParameters [i].ResolveType (this))
 					return false;
 			}
 
