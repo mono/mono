@@ -1,4 +1,9 @@
 
+Wed Mar 22 18:25:18 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: fixed issue with mismatch when an icall is registered
+	with multiple names but same address.
+
 Tue Mar 21 15:59:57 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* declsec.c, mini-exceptions.c: use write barrier to set reference
