@@ -1,3 +1,9 @@
+2006-03-22  Marek Safar  <marek.safar@seznam.cz>
+
+	* assign.cs, class.cs, codegen.cs, convert.cs, decl.cs, ecore.cs,
+	expression.cs, typemanager.cs: Minor changes from gmcs to make merging
+	easier.
+
 2006-03-22  Raja R Harinath  <rharinath@novell.com>
 
 	Support ParameterDefaultValueAttribute in gmcs.  Also applied to

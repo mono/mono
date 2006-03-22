@@ -2172,7 +2172,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public abstract TypeExpr DoResolveAsTypeStep (IResolveContext ec);
+		protected abstract TypeExpr DoResolveAsTypeStep (IResolveContext ec);
 
 		public abstract string Name {
 			get;
@@ -2209,7 +2209,7 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		public override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
+		protected override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
 		{
 			return this;
 		}
@@ -2252,7 +2252,7 @@ namespace Mono.CSharp {
 		}
 
 		static readonly char [] dot_array = { '.' };
-		public override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
+		protected override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
 		{
 			// If name is of the form `N.I', first lookup `N', then search a member `I' in it.
 			string rest = null;
@@ -2337,7 +2337,7 @@ namespace Mono.CSharp {
 			get { return texpr.FullName; }
 		}
 
-		public override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
+		protected override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
 		{
 			return texpr;
 		}
@@ -2952,15 +2952,13 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			bool is_volatile = false;
 
-			if (FieldInfo is FieldBuilder){
-				FieldBase f = TypeManager.GetField (FieldInfo);
-				if (f != null){
-					if ((f.ModFlags & Modifiers.VOLATILE) != 0)
-						is_volatile = true;
-					
-					f.SetMemberIsUsed ();
-				}
-			} 
+			FieldBase f = TypeManager.GetField (FieldInfo);
+			if (f != null){
+				if ((f.ModFlags & Modifiers.VOLATILE) != 0)
+					is_volatile = true;
+
+				f.SetMemberIsUsed ();
+			}
 			
 			if (FieldInfo.IsStatic){
 				if (is_volatile)

@@ -625,9 +625,11 @@ namespace Mono.CSharp {
 					"The namespace `{0}' already contains a definition for `{1}'",
 					((DeclSpace)symbol).NamespaceEntry.GetSignatureForError (), symbol.MemberName.Name);
 			} else {
-				Report.Error (102, symbol.Location, "The type `{0}' already contains a definition for `{1}'",
-					GetSignatureForError (), symbol.MemberName.Name);
+				Report.Error (102, symbol.Location,
+					      "The type `{0}' already contains a definition for `{1}'",
+					      GetSignatureForError (), symbol.MemberName.Name);
 			}
+
 			return false;
 		}
 
@@ -779,7 +781,7 @@ namespace Mono.CSharp {
 		// Access level of a type.
 		const int X = 1;
 		enum AccessLevel { // Each column represents `is this scope larger or equal to Blah scope'
-		                            // Public    Assembly   Protected
+			// Public    Assembly   Protected
 			Protected           = (0 << 0) | (0 << 1) | (X << 2),
 			Public              = (X << 0) | (X << 1) | (X << 2),
 			Private             = (0 << 0) | (0 << 1) | (0 << 2),
@@ -813,8 +815,7 @@ namespace Mono.CSharp {
 				AccessLevel myAccess = GetAccessLevelFromModifiers (ModFlags);
 				if (!IsTopLevel && (Parent != null))
 					return myAccess & Parent.EffectiveAccessLevel;
-				else
-					return myAccess;
+				return myAccess;
 			}
 		}
 
@@ -822,7 +823,7 @@ namespace Mono.CSharp {
 		static AccessLevel TypeEffectiveAccessLevel (Type t)
 		{
 			if (t.IsPublic)
-				return AccessLevel.Public;		
+				return AccessLevel.Public;
 			if (t.IsNestedPrivate)
 				return AccessLevel.Private;
 			if (t.IsNotPublic)

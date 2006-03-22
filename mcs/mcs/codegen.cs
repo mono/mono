@@ -1300,15 +1300,6 @@ namespace Mono.CSharp {
 					Report.RuntimeMissingSupport (Location.Null, "assembly permission setting");
 				}
 			}
-
-#if NET_2_0
-			if (!OptAttributes.Contains (TypeManager.runtime_compatibility_attr_type, null)) {
-				ConstructorInfo ci = TypeManager.runtime_compatibility_attr_type.GetConstructor (Type.EmptyTypes);
-				PropertyInfo pi = TypeManager.runtime_compatibility_attr_type.GetProperty ("WrapNonExceptionThrows");
-				Builder.SetCustomAttribute (new CustomAttributeBuilder (ci, new object [0], 
-					new PropertyInfo [] { pi }, new object[] { true } ));
-			}
-#endif
 		}
 
 		public override string[] ValidAttributeTargets {

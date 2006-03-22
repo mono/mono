@@ -889,7 +889,7 @@ namespace Mono.CSharp {
 				return delegates;
 			}
 		}
-
+		
 		protected override TypeAttributes TypeAttr {
 			get {
 				return Modifiers.TypeAttr (ModFlags, this) | base.TypeAttr;
@@ -4385,13 +4385,13 @@ namespace Mono.CSharp {
 					if (implementing == null){
 						if (member is PropertyBase) {
 							Report.Error (550, method.Location, "`{0}' is an accessor not found in interface member `{1}{2}'",
-								method.GetSignatureForError (), TypeManager.CSharpName (member.InterfaceType),
-								member.GetSignatureForError ().Substring (member.GetSignatureForError ().LastIndexOf ('.')));
+								      method.GetSignatureForError (), TypeManager.CSharpName (member.InterfaceType),
+								      member.GetSignatureForError ().Substring (member.GetSignatureForError ().LastIndexOf ('.')));
 
 						} else {
 							Report.Error (539, method.Location,
-								"`{0}.{1}' in explicit interface declaration is not a member of interface",
-								TypeManager.CSharpName (member.InterfaceType), member.ShortName);
+								      "`{0}.{1}' in explicit interface declaration is not a member of interface",
+								      TypeManager.CSharpName (member.InterfaceType), member.ShortName);
 						}
 						return false;
 					}
@@ -4736,7 +4736,6 @@ namespace Mono.CSharp {
    			}
   			return true;
 	}
-
 
 		protected virtual bool DoDefine ()
 		{
@@ -6007,7 +6006,7 @@ namespace Mono.CSharp {
 			// Get the less restrictive access
 			//
 			return get_accessor_access > set_accessor_access ? get_accessor : set_accessor;
-  		}
+		}
 
 		public override void Emit ()
 		{
@@ -6453,7 +6452,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			public override bool IsClsComplianceRequired()
+			public override bool IsClsComplianceRequired ()
 			{
 				return method.IsClsComplianceRequired ();
 			}
@@ -6597,8 +6596,8 @@ namespace Mono.CSharp {
 
 			if (!DoDefine ())
 				return false;
-			
-			if (!MemberType.IsSubclassOf (TypeManager.delegate_type)) {
+
+			if (!TypeManager.IsDelegateType (MemberType)) {
 				Report.Error (66, Location, "`{0}': event must be of a delegate type", GetSignatureForError ());
 				return false;
 			}

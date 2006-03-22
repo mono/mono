@@ -373,7 +373,6 @@ namespace Mono.CSharp {
 				type = target_type;
 			eclass = ExprClass.Value;
 
-
 			if (target is EventExpr) {
 				EventInfo ei = ((EventExpr) target).EventInfo;
 
@@ -480,7 +479,6 @@ namespace Mono.CSharp {
 			}
 
 			source = Convert.ImplicitConversionRequired (ec, source, target_type, loc);
-			
 			if (source == null)
 				return null;
 

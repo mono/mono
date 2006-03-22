@@ -990,7 +990,6 @@ namespace Mono.CSharp {
 			this.is_expr = is_expr;
 			((IAssignMethod) expr).EmitAssign (ec, this, is_expr && (mode == Mode.PreIncrement || mode == Mode.PreDecrement), true);
 		}
-		
 
 		public override void Emit (EmitContext ec)
 		{
@@ -1187,7 +1186,7 @@ namespace Mono.CSharp {
 			}
 
 			return this;
-		}				
+		}
 	}
 
 	/// <summary>
@@ -2029,7 +2028,7 @@ namespace Mono.CSharp {
 			// +, -, *, /, %, &, |, ^, ==, !=, <, >, <=, >=
 			//
 			if (oper == Operator.Addition || oper == Operator.Subtraction) {
-				if (l.IsSubclassOf (TypeManager.delegate_type)){
+				if (TypeManager.IsDelegateType (l)){
 					if (((right.eclass == ExprClass.MethodGroup) ||
 					     (r == TypeManager.anonymous_method_type))){
 						if ((RootContext.Version != LanguageVersion.ISO_1)){
@@ -2040,15 +2039,15 @@ namespace Mono.CSharp {
 							r = right.Type;
 						}
 					}
-					
-					if (r.IsSubclassOf (TypeManager.delegate_type)){
+				
+					if (TypeManager.IsDelegateType (r)){
 						MethodInfo method;
 						ArrayList args = new ArrayList (2);
-						
+					
 						args = new ArrayList (2);
 						args.Add (new Argument (left, Argument.AType.Expression));
 						args.Add (new Argument (right, Argument.AType.Expression));
-						
+					
 						if (oper == Operator.Addition)
 							method = TypeManager.delegate_combine_delegate_delegate;
 						else
@@ -2058,11 +2057,11 @@ namespace Mono.CSharp {
 							Error_OperatorCannotBeApplied ();
 							return null;
 						}
-						
+
 						return new BinaryDelegate (l, method, args);
 					}
 				}
-				
+
 				//
 				// Pointer arithmetic:
 				//
@@ -3471,7 +3470,7 @@ namespace Mono.CSharp {
 				if (variable_info != null)
 					variable_info.SetAssigned (ec);
 			}
-			
+		
 			Expression e = Block.GetConstantExpression (Name);
 			if (e != null) {
 				local_info.Used = true;
@@ -3698,7 +3697,7 @@ namespace Mono.CSharp {
 				ec.CurrentBranching.SetAssigned (vi);
 		}
 
-		public void SetFieldAssigned (EmitContext ec, string field_name)	
+		public void SetFieldAssigned (EmitContext ec, string field_name)
 		{
 			if (is_out && ec.DoFlowAnalysis)
 				ec.CurrentBranching.SetFieldAssigned (vi, field_name);
@@ -4240,9 +4239,9 @@ namespace Mono.CSharp {
                 ///   and the current best match
 		/// </summary>
 		/// <remarks>
-		///    Returns an integer indicating :
+		///    Returns a boolean indicating :
 		///     false if candidate ain't better
-		///     true if candidate is better than the current best match
+		///     true  if candidate is better than the current best match
 		/// </remarks>
 		static bool BetterFunction (EmitContext ec, ArrayList args, int argument_count,
 					    MethodBase candidate, bool candidate_params,
@@ -4538,7 +4537,7 @@ namespace Mono.CSharp {
 		static internal bool IsAncestralType (Type first_type, Type second_type)
 		{
 			return first_type != second_type &&
-				(second_type.IsSubclassOf (first_type) ||
+				(TypeManager.IsSubclassOf (second_type, first_type) ||
 				 TypeManager.ImplementsInterface (second_type, first_type));
 		}
 		
@@ -4559,7 +4558,7 @@ namespace Mono.CSharp {
 		///
 		/// </summary>
 		public static MethodBase OverloadResolve (EmitContext ec, MethodGroupExpr me,
-							  ArrayList Arguments, bool may_fail, 
+							  ArrayList Arguments, bool may_fail,
 							  Location loc)
 		{
 			MethodBase method = null;
@@ -4825,11 +4824,13 @@ namespace Mono.CSharp {
                                                     method_params, null, may_fail, loc))
 				return null;
 
-			if (method != null) {
-				IMethodData data = TypeManager.GetMethod (method);
-				if (data != null)
-					data.SetMemberIsUsed ();
-			}
+			if (method == null)
+				return null;
+
+			IMethodData data = TypeManager.GetMethod (method);
+			if (data != null)
+				data.SetMemberIsUsed ();
+
 			return method;
 		}
 
@@ -5286,7 +5287,6 @@ namespace Mono.CSharp {
 				if (oa != null)
 					AttributeTester.Report_ObsoleteMessage (oa, TypeManager.CSharpSignature (method), loc);
 
-
 				oa = AttributeTester.GetObsoleteAttribute (method.DeclaringType);
 				if (oa != null) {
 					AttributeTester.Report_ObsoleteMessage (oa, method.DeclaringType.FullName, loc);
@@ -5305,13 +5305,16 @@ namespace Mono.CSharp {
 				this_call = instance_expr is This;
 				if (decl_type.IsValueType || (!this_call && instance_expr.Type.IsValueType))
 					struct_call = true;
-				
+
+				//
+				// If this is ourselves, push "this"
+				//
 				if (!omit_args) {
 					Type t = null;
 					//
 					// Push the instance expression
 					//
-					if (instance_expr.Type.IsValueType) {
+					if (TypeManager.IsValueType (instance_expr.Type)) {
 						//
 						// Special case: calls to a function declared in a 
 						// reference-type with a value-type argument need
@@ -5767,7 +5770,7 @@ namespace Mono.CSharp {
 		//
 		bool DoEmit (EmitContext ec, bool need_value_on_stack)
 		{
-			bool is_value_type = type.IsValueType;
+			bool is_value_type = TypeManager.IsValueType (type);
 			ILGenerator ig = ec.ig;
 
 			if (is_value_type){
@@ -8371,7 +8374,7 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		public override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
+		protected override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
 		{
 			TypeExpr lexpr = left.ResolveAsTypeTerminal (ec, false);
 			if (lexpr == null)

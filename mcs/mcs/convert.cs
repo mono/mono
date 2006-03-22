@@ -1637,7 +1637,7 @@ namespace Mono.CSharp {
 			// From System delegate to any delegate-type
 			//
 			if (source_type == TypeManager.delegate_type &&
-			    target_type.IsSubclassOf (TypeManager.delegate_type))
+			    TypeManager.IsDelegateType (target_type))
 				return new ClassCast (source, target_type);
 
 			//

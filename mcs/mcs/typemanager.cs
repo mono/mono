@@ -1749,7 +1749,6 @@ public class TypeManager {
 	/// </summary>
 	public static Type [] GetInterfaces (Type t)
 	{
-		
 		Type [] cached = iface_cache [t] as Type [];
 		if (cached != null)
 			return cached;
@@ -2453,9 +2452,9 @@ public class TypeManager {
 			return (MemberInfo []) first_members_list;
 		}
 
-		if (method_list != null && method_list.Count > 0)
+		if (method_list != null && method_list.Count > 0) {
                         return (MemberInfo []) method_list.ToArray (typeof (MemberInfo));
-                
+                }
 		//
 		// This happens if we already used the cache in the first iteration, in this case
 		// the cache already looked in all interfaces.
