@@ -1,3 +1,8 @@
+2006-03-22  Jackson Harper  <jackson@ximian.com>
+
+	* XplatUIX11.cs: Don't handle configurenotifys if PostQuitState is
+	true.
+
 2006-03-22  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* XplatUIX11.cs:
@@ -31,6 +36,7 @@
 	* ContextMenu.cs (Show): use the position parameter instead of just
 	showing at the MousePosition.
 
+>>>>>>> .r58288
 2006-03-21  Jackson Harper  <jackson@ximian.com>
 
 	* TabControl.cs: Remove the call to ProcessKeyEventArgs and let

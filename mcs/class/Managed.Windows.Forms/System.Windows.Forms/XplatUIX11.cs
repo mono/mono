@@ -3050,7 +3050,7 @@ namespace System.Windows.Forms {
 				}
 
 				case XEventName.ConfigureNotify: {
-					if (!client && (xevent.ConfigureEvent.xevent == xevent.ConfigureEvent.window)) {	// Ignore events for children (SubstructureNotify) and client areas
+					if (PostQuitState || !client && (xevent.ConfigureEvent.xevent == xevent.ConfigureEvent.window)) {	// Ignore events for children (SubstructureNotify) and client areas
 						#if DriverDebugExtra
 							Console.WriteLine("GetMessage(): Window {0:X} ConfigureNotify x={1} y={2} width={3} height={4}", hwnd.client_window.ToInt32(), xevent.ConfigureEvent.x, xevent.ConfigureEvent.y, xevent.ConfigureEvent.width, xevent.ConfigureEvent.height);
 						#endif
