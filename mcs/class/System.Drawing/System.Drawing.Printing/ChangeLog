@@ -1,3 +1,9 @@
+2006-03-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PrintingServicesUnix.cs: cupsGetPrinters(char***) requires to free 
+	each individual string and (finally) the list. Note that this call is
+	deprecated.
+
 2006-03-13  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* PrintingServicesUnix.cs: Handle not having a printer

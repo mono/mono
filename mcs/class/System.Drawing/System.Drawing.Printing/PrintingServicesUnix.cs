@@ -164,12 +164,14 @@ namespace System.Drawing.Printing
 				string str;
 				PrinterSettings.StringCollection col = new PrinterSettings.StringCollection (new string[] {});
 
+				/* FIXME: call is deprecated */
 				n_printers = cupsGetPrinters (ref printers);
 
 				ptr_printers = printers;
 				for (int i = 0; i < n_printers; i++) {
 					ptr_printer = (IntPtr) Marshal.ReadInt32 (ptr_printers);
 					str = Marshal.PtrToStringAnsi (ptr_printer);
+					Marshal.FreeHGlobal (ptr_printer);
 					ptr_printers = new IntPtr (ptr_printers.ToInt64 () + 4);
 					col.Add (str);
 				}
