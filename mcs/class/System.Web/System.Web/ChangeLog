@@ -1,3 +1,7 @@
+2006-03-22  Robert Jordan  <robertj@gmx.net>
+
+	* HttpCachePolicy.cs: fix the Cache-control header. Fixes bug #77826.
+
 2006-03-18  Robert Jordan  <robertj@gmx.net>
 
 	* HttpCachePolicy.cs: expose the validation callbacks.
