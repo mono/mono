@@ -1159,6 +1159,7 @@ namespace System.Windows.Forms
 			ListView owner;
 			ListViewItem clicked_item;
 			ListViewItem last_clicked_item;
+			bool hover_processed = false;
 
 			public ItemControl (ListView owner)
 			{
@@ -1167,6 +1168,7 @@ namespace System.Windows.Forms
 				KeyDown += new KeyEventHandler (ItemsKeyDown);
 				KeyUp += new KeyEventHandler (ItemsKeyUp);
 				MouseDown += new MouseEventHandler(ItemsMouseDown);
+				MouseMove += new MouseEventHandler(ItemsMouseMove);
 				MouseHover += new EventHandler(ItemsMouseHover);
 				MouseUp += new MouseEventHandler(ItemsMouseUp);
 				Paint += new PaintEventHandler (ItemsPaint);
@@ -1247,11 +1249,27 @@ namespace System.Windows.Forms
 				}
 			}
 
+			private void ItemsMouseMove (object sender, MouseEventArgs me)
+			{
+				if (owner.HoverSelection && hover_processed) {
+
+					Point pt = PointToClient (Control.MousePosition);
+					ListViewItem item = owner.GetItemAt (pt.X, pt.Y);
+					if (item == null || item.Selected)
+				       		return;
+
+					hover_processed = false;
+					XplatUI.ResetMouseHover (Handle);
+				}
+			}
+
+
 			private void ItemsMouseHover (object sender, EventArgs e)
 			{
-				if (Capture || !owner.hover_selection)
+				if (Capture || !owner.HoverSelection)
 					return;
 
+				hover_processed = true;
 				Point pt = PointToClient (Control.MousePosition);
 				ListViewItem item = owner.GetItemAt (pt.X, pt.Y);
 

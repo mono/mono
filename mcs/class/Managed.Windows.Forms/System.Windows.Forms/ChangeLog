@@ -1,5 +1,10 @@
 2006-03-22  Mike Kestner  <mkestner@novell.com>
 
+	* ListView.cs: hook into Peter's new ResetMouseHover capability to fix
+	HoverSelection.  Fixes #77836.
+
+2006-03-22  Mike Kestner  <mkestner@novell.com>
+
 	* FileDialog.cs: bugfixes for the toolbar.  Use PushButtons instead of
 	ToggleButtons.  (De)Sensitize the Back button around a stack count of
 	1, not 0.  Update ButtonSize based on a pixel count of the win32
