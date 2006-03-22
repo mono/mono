@@ -175,14 +175,14 @@ namespace System.Windows.Forms {
 								     upToolBarButton,
 								     newdirToolBarButton,
 								     menueToolBarButton});
-			smallButtonToolBar.ButtonSize = new Size (21, 16); // 21, 16
+			smallButtonToolBar.ButtonSize = new Size (24, 24); // 21, 16
 			smallButtonToolBar.Divider = false;
 			smallButtonToolBar.Dock = DockStyle.None;
 			smallButtonToolBar.DropDownArrows = true;
 			smallButtonToolBar.ImageList = imageListTopToolbar;
-			smallButtonToolBar.Location = new Point (372, 8);
+			smallButtonToolBar.Location = new Point (372, 6);
 			smallButtonToolBar.ShowToolTips = true;
-			smallButtonToolBar.Size = new Size (110, 20);
+			smallButtonToolBar.Size = new Size (140, 28);
 			smallButtonToolBar.TabIndex = 2;
 			smallButtonToolBar.TextAlign = ToolBarTextAlign.Right;
 			
@@ -238,15 +238,15 @@ namespace System.Windows.Forms {
 			// backToolBarButton
 			backToolBarButton.ImageIndex = 0;
 			backToolBarButton.Enabled = false;
-			backToolBarButton.Style = ToolBarButtonStyle.ToggleButton;
+			backToolBarButton.Style = ToolBarButtonStyle.PushButton;
 			
 			// upToolBarButton
 			upToolBarButton.ImageIndex = 1;
-			upToolBarButton.Style = ToolBarButtonStyle.ToggleButton;
+			upToolBarButton.Style = ToolBarButtonStyle.PushButton;
 			
 			// newdirToolBarButton
 			newdirToolBarButton.ImageIndex = 2;
-			newdirToolBarButton.Style = ToolBarButtonStyle.ToggleButton;
+			newdirToolBarButton.Style = ToolBarButtonStyle.PushButton;
 			
 			// menueToolBarButton
 			menueToolBarButton.ImageIndex = 3;
@@ -1087,7 +1087,7 @@ namespace System.Windows.Forms {
 		private void PushDirectory (object directoryInfo_or_string)
 		{
 			directoryStack.Push (directoryInfo_or_string);
-			backToolBarButton.Enabled = true;
+			backToolBarButton.Enabled = (directoryStack.Count > 1);
 		}
 		
 		private void PopDirectory ()
@@ -1113,8 +1113,7 @@ namespace System.Windows.Forms {
 				current_special_case = directoryInfo_or_string as string;
 			}
 			
-			if (directoryStack.Count == 0)
-				backToolBarButton.Enabled = false;
+			backToolBarButton.Enabled = (directoryStack.Count > 1);
 			
 			dirComboBox.CurrentPath = currentDirectoryName_or_special_case;
 			

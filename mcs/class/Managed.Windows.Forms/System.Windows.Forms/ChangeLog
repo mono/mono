@@ -1,3 +1,10 @@
+2006-03-22  Mike Kestner  <mkestner@novell.com>
+
+	* FileDialog.cs: bugfixes for the toolbar.  Use PushButtons instead of
+	ToggleButtons.  (De)Sensitize the Back button around a stack count of
+	1, not 0.  Update ButtonSize based on a pixel count of the win32
+	control.  Adjust the toolbar size/location for new button size.
+
 2006-03-22  Jackson Harper  <jackson@ximian.com>
 
 	* XplatUIX11.cs: Don't handle configurenotifys if PostQuitState is
