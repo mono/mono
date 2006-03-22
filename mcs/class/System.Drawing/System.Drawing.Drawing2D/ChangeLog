@@ -1,3 +1,10 @@
+2006-03-22  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* GraphicsPath.cs: Call [libgdiplus|GDI+] for AddString (even if it 
+	is not yet implemented in libgdiplus).
+	* LinearGradientBrush.cs: Update the rectangle when using the internal
+	ctor. Fix a few missing validations.
+
 2006-03-17  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* Matrix.cs: Add missing checks to methods (and fix unit tests).

@@ -610,30 +610,50 @@ namespace System.Drawing.Drawing2D
                         GDIPlus.CheckStatus (status);                      	
                 }
                 
-                [MonoTODO]
-                public void AddString (string s, FontFamily family, int style,  float emSize,  Point origin,   StringFormat format)
-                {
-                	throw new NotImplementedException ();
-                }  	
-                
-                [MonoTODO]
-  		public void AddString (string s,  FontFamily family,  int style,  float emSize,  PointF origin,   StringFormat format)
+		[MonoTODO ("GdipAddStringI isn't implemented in libgdiplus")]
+		public void AddString (string s, FontFamily family, int style, float emSize, Point origin, StringFormat format)
+		{
+			Rectangle layout;
+			layout.X = origin.X;
+			layout.Y = origin.Y;
+			AddString (s, family, style, emSize, layout, format);
+		}
+
+		[MonoTODO ("GdipAddString isn't implemented in libgdiplus")]
+		public void AddString (string s, FontFamily family, int style, float emSize, PointF origin, StringFormat format)
   		{
-                	throw new NotImplementedException ();
-                }  	
-  		
-  		[MonoTODO]
-  		public void AddString (string s, FontFamily family, int style, float emSize,  Rectangle layoutRect, StringFormat format)
-  		{
-                	throw new NotImplementedException ();
-                }  	
-  		
-  		[MonoTODO]
-  		public void AddString (string s, FontFamily family, int style, float emSize,  RectangleF layoutRect,   StringFormat format)
-  		{
-                	throw new NotImplementedException ();
-                }  	
-                
+			RectangleF layout;
+			layout.X = origin.X;
+			layout.Y = origin.Y;
+			AddString (s, family, style, emSize, layout, format);
+                }
+
+		[MonoTODO ("GdipAddStringI isn't implemented in libgdiplus")]
+		public void AddString (string s, FontFamily family, int style, float emSize, Rectangle layoutRect, StringFormat format)
+		{
+			if (s == null)
+				throw new ArgumentNullException ("s");
+
+			IntPtr ffamily = (family == null) ? IntPtr.Zero : family.NativeObject;
+			IntPtr sformat = (format == null) ? IntPtr.Zero : format.NativeObject;
+
+			Status status = GDIPlus.GdipAddStringI (nativePath, s, s.Length, ffamily, style, emSize, ref layoutRect, sformat);
+			GDIPlus.CheckStatus (status);
+		}
+
+		[MonoTODO ("GdipAddString isn't implemented in libgdiplus")]
+  		public void AddString (string s, FontFamily family, int style, float emSize, RectangleF layoutRect, StringFormat format)
+		{
+			if (s == null)
+				throw new ArgumentNullException ("s");
+
+			IntPtr ffamily = (family == null) ? IntPtr.Zero : family.NativeObject;
+			IntPtr sformat = (format == null) ? IntPtr.Zero : format.NativeObject;
+
+			Status status = GDIPlus.GdipAddString (nativePath, s, s.Length, ffamily, style, emSize, ref layoutRect, sformat);
+			GDIPlus.CheckStatus (status);
+		}
+
 		public void ClearMarkers()               
 		{
                 	Status s = GDIPlus.GdipClearPathMarkers (nativePath);

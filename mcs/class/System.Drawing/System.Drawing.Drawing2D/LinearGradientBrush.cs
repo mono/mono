@@ -6,8 +6,7 @@
 //   Ravindra (rkumar@novell.com)
 //
 // Copyright (C) 2002/3 Ximian, Inc. http://www.ximian.com
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,19 +28,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Drawing;
+using System.ComponentModel;
 
-namespace System.Drawing.Drawing2D
-{
-	/// <summary>
-	/// Summary description for LinearGradientBrush.
-	/// </summary>
+namespace System.Drawing.Drawing2D {
+
 	public sealed class LinearGradientBrush : Brush
 	{
 		RectangleF rectangle;
 		
 		internal LinearGradientBrush (IntPtr native) : base (native)
 		{
+			Status status = GDIPlus.GdipGetLineRect (native, out rectangle);
+			GDIPlus.CheckStatus (status);
 		}
 
 		public LinearGradientBrush (Point point1, Point point2, Color color1, Color color2)
@@ -236,6 +234,9 @@ namespace System.Drawing.Drawing2D
 				return matrix;
 			}
 			set {
+				if (value == null)
+					throw new ArgumentNullException ("Transform");
+
 				Status status = GDIPlus.GdipSetLineTransform (nativeObject, value.nativeMatrix);
 				GDIPlus.CheckStatus (status);
 			}
@@ -250,6 +251,10 @@ namespace System.Drawing.Drawing2D
 				return wrapMode;
 			}
 			set {
+				// note: Clamp isn't valid (context wise) but it is checked in libgdiplus
+				if ((value < WrapMode.Tile) || (value > WrapMode.Clamp))
+					throw new InvalidEnumArgumentException ("WrapMode");
+
 				Status status = GDIPlus.GdipSetLineWrapMode (nativeObject, value);
 				GDIPlus.CheckStatus (status);
 			}
@@ -264,6 +269,9 @@ namespace System.Drawing.Drawing2D
 
 		public void MultiplyTransform (Matrix matrix, MatrixOrder order)
 		{
+			if (matrix == null)
+				throw new ArgumentNullException ("matrix");
+
 			Status status = GDIPlus.GdipMultiplyLineTransform (nativeObject, matrix.nativeMatrix, order);
 			GDIPlus.CheckStatus (status);
 		}
@@ -341,8 +349,7 @@ namespace System.Drawing.Drawing2D
 			Status status = GDIPlus.GdipCloneBrush (nativeObject, out clonePtr);
 			GDIPlus.CheckStatus (status);
 
-			LinearGradientBrush clone = new LinearGradientBrush (clonePtr);
-			return clone;
+			return new LinearGradientBrush (clonePtr);
 		}
 	}
 }
