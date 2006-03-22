@@ -2824,11 +2824,11 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public class NullableLiteral : Expression, IMemoryLocation {
+		public class NullableLiteral : NullLiteral, IMemoryLocation {
 			public NullableLiteral (Type target_type, Location loc)
+				: base (loc)
 			{
 				this.type = target_type;
-				this.loc = loc;
 
 				eclass = ExprClass.Value;
 			}

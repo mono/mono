@@ -1,3 +1,12 @@
+2006-03-22  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs
+	(Nullable.NullableLiteral): Derive from `NullLiteral'.
+
+	* convert.cs
+	(Convert.TypeParameter_to_Null): Create a `Nullable.NullableLiteral'
+	instead of the normal `NullLiteral'.
+
 2006-03-21  Martin Baulig  <martin@ximian.com>
 
 	Fix #77583.

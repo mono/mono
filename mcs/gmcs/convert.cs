@@ -29,8 +29,7 @@ namespace Mono.CSharp {
 		//
 		public static EmitContext ConstantEC = null;
 		
-		static Expression TypeParameter_to_Null (Constant expr, Type target_type,
-							 Location loc)
+		static Expression TypeParameter_to_Null (Type target_type, Location loc)
 		{
 			if (!TypeParameter_to_Null (target_type)) {
 				Report.Error (403, loc, "Cannot convert null to the type " +
@@ -40,6 +39,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			Constant expr = new Nullable.NullableLiteral (target_type, loc);
 			return new NullCast (expr, target_type);
 		}
 
@@ -1206,7 +1206,7 @@ namespace Mono.CSharp {
 
 			if (expr is NullLiteral) {
 				if (target_type.IsGenericParameter)
-					return TypeParameter_to_Null ((Constant) expr, target_type, loc);
+					return TypeParameter_to_Null (target_type, loc);
 
 				if (TypeManager.IsNullableType (target_type))
 					return new Nullable.NullableLiteral (target_type, loc);
