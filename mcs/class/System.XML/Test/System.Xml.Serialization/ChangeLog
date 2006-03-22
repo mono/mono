@@ -1,3 +1,10 @@
+2006-03-22  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XmlReflectionImporterTests.cs: Added ImportTypeMapping tests for 
+	void and null type argument. Improved WrongChoices test to make sure
+	the exception(s) we throw match those of MSFT. Added test for bug
+	#77591.
+
 2006-03-10  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XmlSchemaExporterTests.cs: Enabled tests for bug #77111.

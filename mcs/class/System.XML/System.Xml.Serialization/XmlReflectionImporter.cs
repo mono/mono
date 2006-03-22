@@ -168,30 +168,34 @@ namespace System.Xml.Serialization {
 				throw new ArgumentNullException ("type");
 
 			if (type == typeof (void))
-				throw new InvalidOperationException ("Type " + type.Name + " may not be serialized.");
+				throw new NotSupportedException ("The type " + type.FullName + " may not be serialized.");
 
 			if (defaultNamespace == null) defaultNamespace = initialDefaultNamespace;
 			if (defaultNamespace == null) defaultNamespace = string.Empty;
 
-			XmlTypeMapping map;
+			try {
+				XmlTypeMapping map;
 
-			switch (TypeTranslator.GetTypeData(type).SchemaType)
-			{
-				case SchemaTypes.Class: map = ImportClassMapping (type, root, defaultNamespace); break;
-				case SchemaTypes.Array: map = ImportListMapping (type, root, defaultNamespace, null, 0); break;
-				case SchemaTypes.XmlNode: map = ImportXmlNodeMapping (type, root, defaultNamespace); break;
-				case SchemaTypes.Primitive: map = ImportPrimitiveMapping (type, root, defaultNamespace); break;
-				case SchemaTypes.Enum: map = ImportEnumMapping (type, root, defaultNamespace); break;
-				case SchemaTypes.XmlSerializable: map = ImportXmlSerializableMapping (type, root, defaultNamespace); break;
-				default: throw new NotSupportedException ("Type " + type.FullName + " not supported for XML stialization");
+				switch (TypeTranslator.GetTypeData (type).SchemaType) {
+					case SchemaTypes.Class: map = ImportClassMapping (type, root, defaultNamespace); break;
+					case SchemaTypes.Array: map = ImportListMapping (type, root, defaultNamespace, null, 0); break;
+					case SchemaTypes.XmlNode: map = ImportXmlNodeMapping (type, root, defaultNamespace); break;
+					case SchemaTypes.Primitive: map = ImportPrimitiveMapping (type, root, defaultNamespace); break;
+					case SchemaTypes.Enum: map = ImportEnumMapping (type, root, defaultNamespace); break;
+					case SchemaTypes.XmlSerializable: map = ImportXmlSerializableMapping (type, root, defaultNamespace); break;
+					default: throw new NotSupportedException ("Type " + type.FullName + " not supported for XML stialization");
+				}
+
+				map.RelatedMaps = relatedMaps;
+				map.Format = SerializationFormat.Literal;
+				Type[] extraTypes = includedTypes != null ? (Type[]) includedTypes.ToArray (typeof (Type)) : null;
+				map.Source = new XmlTypeSerializationSource (type, root, attributeOverrides, defaultNamespace, extraTypes);
+				if (allowPrivateTypes) map.Source.CanBeGenerated = false;
+				return map;
+			} catch (InvalidOperationException ex) {
+				throw new InvalidOperationException (string.Format (CultureInfo.InvariantCulture,
+					"There was an error reflecting type '{0}'.", type.FullName), ex);
 			}
-
-			map.RelatedMaps = relatedMaps;
-			map.Format = SerializationFormat.Literal;
-			Type[] extraTypes = includedTypes != null ? (Type[])includedTypes.ToArray(typeof(Type)) : null;
-			map.Source = new XmlTypeSerializationSource (type, root, attributeOverrides, defaultNamespace, extraTypes);
-			if (allowPrivateTypes) map.Source.CanBeGenerated = false;
-			return map;
 		}
 
 		XmlTypeMapping CreateTypeMapping (TypeData typeData, XmlRootAttribute root, string defaultXmlType, string defaultNamespace)
@@ -288,26 +292,26 @@ namespace System.Xml.Serialization {
 			ClassMap classMap = new ClassMap ();
 			map.ObjectMap = classMap;
 
-//			try
-//			{
-				ICollection members = GetReflectionMembers (type);
-				foreach (XmlReflectionMember rmember in members)
-				{
-					string ns = map.XmlTypeNamespace;
-					if (rmember.XmlAttributes.XmlIgnore) continue;
-					if (rmember.DeclaringType != null && rmember.DeclaringType != type) {
-						XmlTypeMapping bmap = ImportClassMapping (rmember.DeclaringType, root, defaultNamespace);
-						ns = bmap.XmlTypeNamespace;
-					}
-					
+			ICollection members = GetReflectionMembers (type);
+			foreach (XmlReflectionMember rmember in members)
+			{
+				string ns = map.XmlTypeNamespace;
+				if (rmember.XmlAttributes.XmlIgnore) continue;
+				if (rmember.DeclaringType != null && rmember.DeclaringType != type) {
+					XmlTypeMapping bmap = ImportClassMapping (rmember.DeclaringType, root, defaultNamespace);
+					ns = bmap.XmlTypeNamespace;
+				}
+
+				try {
 					XmlTypeMapMember mem = CreateMapMember (type, rmember, ns);
 					mem.CheckOptionalValueType (type);
 					classMap.AddMember (mem);
+				} catch (InvalidOperationException ex) {
+					throw new InvalidOperationException (string.Format (
+						CultureInfo.InvariantCulture, "There was an error" +
+						" reflecting field '{0}'.", rmember.MemberName), ex);
 				}
-//			}
-//			catch (Exception ex) {
-//				throw helper.CreateError (map, ex.Message);
-//			}
+			}
 
 			// Import extra classes
 
@@ -927,7 +931,12 @@ namespace System.Xml.Serialization {
 
 				if (choiceEnumMap != null) {
 					string cname = choiceEnumMap.GetEnumName (choiceEnumType.FullName, elem.ElementName);
-					if (cname == null) throw new InvalidOperationException ("The '" + choiceEnumType + "' enumeration does not have a value for the element '" + elem.ElementName + "'");
+					if (cname == null)
+						throw new InvalidOperationException (string.Format (
+							CultureInfo.InvariantCulture, "Type {0} is missing"
+							+ " enumeration value '{1}' for element '{1} from"
+							+ " namespace '{2}'.", choiceEnumType, elem.ElementName,
+							elem.Namespace));
 					elem.ChoiceValue = Enum.Parse (choiceEnumType, cname);
 				}
 					
@@ -967,7 +976,13 @@ namespace System.Xml.Serialization {
 			if (atts.XmlText != null)
 			{
 				member.IsXmlTextCollector = true;
-				if (atts.XmlText.Type != null) defaultType = atts.XmlText.Type;
+				if (atts.XmlText.Type != null) {
+					TypeData td = TypeTranslator.GetTypeData (defaultType);
+					if ((td.SchemaType == SchemaTypes.Primitive || td.SchemaType == SchemaTypes.Enum) && atts.XmlText.Type != defaultType) {
+						throw new InvalidOperationException ("The type for XmlText may not be specified for primitive types.");
+					}
+					defaultType = atts.XmlText.Type;
+				}
 				if (defaultType == typeof(XmlNode)) defaultType = typeof(XmlText);	// Nodes must be text nodes
 
 				XmlTypeMapElementInfo elem = new XmlTypeMapElementInfo (member, TypeTranslator.GetTypeData(defaultType, atts.XmlText.DataType));

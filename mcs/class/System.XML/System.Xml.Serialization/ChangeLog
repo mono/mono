@@ -1,3 +1,17 @@
+2006-03-22  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XmlReflectionImporter.cs: Throw NotSupportException instead of
+	InvalidOperationException (IOE) if void is specified as type in
+	ImportTypeMapping. To match MS.NET, surround importing of type in 
+	try/catch block, and wrap any IOE in another IOE adding information 
+	on the type that was being reflected. In CreateTypeMapping, surround
+	creating of map member in try/catch block, and wrap any IOE in another
+	IOE adding information on the member that was being reflected. 
+	Modified exception message for missing enumeration value to match
+	MS.NET. In ImportTextElementInfo, throw IOE if Type is set in 
+	XmlTextAttribute, and it differs from type of reflected member when
+	schema type of member is primitive or enum. Fixed bug #77591.
+
 2006-03-10  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XmlSchemaExporter.cs: Import namespace of schema generated for

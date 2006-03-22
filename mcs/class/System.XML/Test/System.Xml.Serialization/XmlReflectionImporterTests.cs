@@ -1237,13 +1237,111 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException))] 
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TypeMapping_Null ()
+		{
+			Map ((Type) null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void TypeMapping_Void ()
+		{
+			Map (typeof (void));
+		}
+
+		[Test]
 		public void TypeMapping_WrongChoices ()
 		{
-			// Type MonoTests.System.Xml.TestClasses.ItemChoiceType is missing 
-			// enumeration value 'StrangeOne' for element 'StrangeOne' from
-			// namespace ''.
-			Map (typeof (WrongChoices));
+			try {
+				Map (typeof (WrongChoices));
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				// There was an error reflecting type 'MonoTests.System.Xml.TestClasses.WrongChoices'
+				Assert.IsNotNull (ex.Message, "#2");
+				Assert.IsTrue (ex.Message.IndexOf ("'" + typeof (WrongChoices).FullName + "'") != -1, "#3");
+				Assert.IsNotNull (ex.InnerException, "#4");
+
+				// There was an error reflecting field 'MyChoice'
+				Assert.IsNotNull (ex.InnerException.Message, "#5");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'MyChoice'") != -1, "#6");
+				Assert.IsNotNull (ex.InnerException.InnerException, "#7");
+
+				// Type MonoTests.System.Xml.TestClasses.ItemChoiceType is missing 
+				// enumeration value 'StrangeOne' for element 'StrangeOne' from
+				// namespace ''.
+				Assert.IsNotNull (ex.InnerException.InnerException.Message, "#8");
+				Assert.IsTrue (ex.InnerException.InnerException.Message.IndexOf (typeof (ItemChoiceType).FullName) != -1, "#9");
+				Assert.IsTrue (ex.InnerException.InnerException.Message.IndexOf ("'StrangeOne'") != -1, "#10");
+				Assert.IsTrue (ex.InnerException.InnerException.Message.IndexOf ("''") != -1, "#11");
+			}
+		}
+
+		[Test] // bug #77591
+		public void TypeMapping_XmlText_PrimitiveTypes ()
+		{
+			XmlAttributeOverrides overrides = null;
+			XmlAttributes attrs = null;
+
+			overrides = new XmlAttributeOverrides ();
+			attrs = new  XmlAttributes ();
+			attrs.XmlText = new XmlTextAttribute (typeof (int));
+			overrides.Add (typeof (Field), "Modifiers", attrs);
+
+			try {
+				Map (typeof (Field), overrides);
+				Assert.Fail ("#A1");
+			} catch (InvalidOperationException ex) {
+				// There was an error reflecting type 'MonoTests.System.Xml.TestClasses.Field'
+				Assert.IsNotNull (ex.Message, "#A2");
+				Assert.IsTrue (ex.Message.IndexOf ("'" + typeof (Field).FullName + "'") != -1, "#A3");
+				Assert.IsNotNull (ex.InnerException, "#A4");
+
+				// There was an error reflecting field 'Modifiers'
+				Assert.IsNotNull (ex.InnerException.Message, "#A5");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'Modifiers'") != -1, "#A6");
+				Assert.IsNotNull (ex.InnerException.InnerException, "#A7");
+
+				// The type for XmlText may not be specified for primitive types
+				Assert.IsNotNull (ex.InnerException.InnerException.Message, "#A8");
+				Assert.IsTrue (ex.InnerException.InnerException.Message.IndexOf ("XmlText") != -1, "#A9");
+			}
+
+			overrides = new XmlAttributeOverrides ();
+			attrs = new XmlAttributes ();
+			attrs.XmlText = new XmlTextAttribute (typeof (int));
+			overrides.Add (typeof (Field), "Street", attrs);
+
+			try {
+				Map (typeof (Field), overrides);
+				Assert.Fail ("#B1");
+			} catch (InvalidOperationException ex) {
+				// There was an error reflecting type 'MonoTests.System.Xml.TestClasses.Field'
+				Assert.IsNotNull (ex.Message, "#B2");
+				Assert.IsTrue (ex.Message.IndexOf ("'" + typeof (Field).FullName + "'") != -1, "#B3");
+				Assert.IsNotNull (ex.InnerException, "#B4");
+
+				// There was an error reflecting field 'Street'
+				Assert.IsNotNull (ex.InnerException.Message, "#B5");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'Street'") != -1, "#B6");
+				Assert.IsNotNull (ex.InnerException.InnerException, "#B7");
+
+				// The type for XmlText may not be specified for primitive types
+				Assert.IsNotNull (ex.InnerException.InnerException.Message, "#B8");
+				Assert.IsTrue (ex.InnerException.InnerException.Message.IndexOf ("XmlText") != -1, "#B9");
+			}
+
+			overrides = new XmlAttributeOverrides ();
+			attrs = new XmlAttributes ();
+			attrs.XmlText = new XmlTextAttribute (typeof (MapModifiers));
+			overrides.Add (typeof (Field), "Modifiers", attrs);
+			Map (typeof (Field), overrides);
+
+			overrides = new XmlAttributeOverrides ();
+			attrs = new XmlAttributes ();
+			attrs.XmlText = new XmlTextAttribute (typeof (string));
+			overrides.Add (typeof (Field), "Street", attrs);
+			Map (typeof (Field), overrides);
 		}
 
 		[Test]
