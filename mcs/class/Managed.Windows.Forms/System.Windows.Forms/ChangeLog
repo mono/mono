@@ -1,5 +1,12 @@
 2006-03-22  Mike Kestner  <mkestner@novell.com>
 
+	* Theme.cs: add Color param to CPDrawMenuGlyph.
+	* ThemeWin32Classic.cs: do color specific menu glyph rendering so that
+	checks and radio marks and arrows are visible on highlighted items.
+	* ControlPaint.cs: update to use new Theme signature.
+
+2006-03-22  Mike Kestner  <mkestner@novell.com>
+
 	* MenuAPI.cs: only process Enter and arrow keypresses if the tracker
 	is active. Fixes #77870.
 

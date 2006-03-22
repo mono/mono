@@ -1894,6 +1894,24 @@ namespace System.Windows.Forms
 			}				
 		}		
 		
+		Bitmap CreateGlyphBitmap (Size size, MenuGlyph glyph, Color color)
+		{
+			Color bg_color;
+			if (color.R == 0 && color.G == 0 && color.B == 0)
+				bg_color = Color.White;
+			else
+				bg_color = Color.Black;
+			Console.WriteLine (color + " " + bg_color);
+			Bitmap	bmp = new Bitmap (size.Width, size.Height);
+			Graphics gr = Graphics.FromImage (bmp);
+			Rectangle rect = new Rectangle (Point.Empty, size);
+			gr.FillRectangle (ResPool.GetSolidBrush (bg_color), rect);
+			CPDrawMenuGlyph (gr, rect, glyph, color);
+			bmp.MakeTransparent (bg_color);
+			gr.Dispose ();
+			return bmp;
+		}
+
 		public override void DrawMenuItem (MenuItem item, DrawItemEventArgs e)
 		{
 			StringFormat string_format;
@@ -1974,11 +1992,7 @@ namespace System.Windows.Forms
 
 				int cx = MenuCheckSize.Width;
 				int cy = MenuCheckSize.Height;
-				Bitmap	bmp = new Bitmap (cx, cy);
-				Graphics gr = Graphics.FromImage (bmp);
-				Rectangle rect_arrow = new Rectangle (0, 0, cx, cy);
-				ControlPaint.DrawMenuGlyph (gr, rect_arrow, MenuGlyph.Arrow);
-				bmp.MakeTransparent ();
+				Bitmap	bmp = CreateGlyphBitmap (new Size (cx, cy), MenuGlyph.Arrow, color_text);
 				
 				if (item.Enabled) {
 					e.Graphics.DrawImage (bmp, e.Bounds.X + e.Bounds.Width - cx,
@@ -1988,7 +2002,6 @@ namespace System.Windows.Forms
 						e.Bounds.Y + ((e.Bounds.Height - cy) /2),  color_back);
 				}
  
-				gr.Dispose ();
 				bmp.Dispose ();
 			}
 
@@ -1998,19 +2011,10 @@ namespace System.Windows.Forms
 				Rectangle area = e.Bounds;
 				int cx = MenuCheckSize.Width;
 				int cy = MenuCheckSize.Height;
-				Bitmap	bmp = new Bitmap (cx, cy);
-				Graphics gr = Graphics.FromImage (bmp);
-				Rectangle rect_arrow = new Rectangle (0, 0, cx, cy);
+				Bitmap	bmp = CreateGlyphBitmap (new Size (cx, cy), item.RadioCheck ? MenuGlyph.Bullet : MenuGlyph.Checkmark, color_text);
 
-				if (item.RadioCheck)
-					ControlPaint.DrawMenuGlyph (gr, rect_arrow, MenuGlyph.Bullet);
-				else
-					ControlPaint.DrawMenuGlyph (gr, rect_arrow, MenuGlyph.Checkmark);
-
-				bmp.MakeTransparent ();
 				e.Graphics.DrawImage (bmp, area.X, e.Bounds.Y + ((e.Bounds.Height - cy) / 2));
 
-				gr.Dispose ();
 				bmp.Dispose ();
 			}			
 		}		
@@ -4760,12 +4764,11 @@ namespace System.Windows.Forms
 		}
 
 
-		public override void CPDrawMenuGlyph (Graphics graphics, Rectangle rectangle, MenuGlyph glyph) {
+		public override void CPDrawMenuGlyph (Graphics graphics, Rectangle rectangle, MenuGlyph glyph, Color color) {
 			Rectangle	rect;
 			int			lineWidth;
 
-			// MS draws always the background white
-			graphics.FillRectangle(ResPool.GetSolidBrush (Color.White), rectangle);
+			Brush brush = ResPool.GetSolidBrush (color);
 
 			switch(glyph) {
 			case MenuGlyph.Arrow: {
@@ -4793,7 +4796,7 @@ namespace System.Windows.Forms
 				arrow[1]=P2;
 				arrow[2]=P3;
 
-				graphics.FillPolygon(SystemBrushes.ControlText, arrow, FillMode.Winding);
+				graphics.FillPolygon(brush, arrow, FillMode.Winding);
 
 				return;
 			}
@@ -4803,13 +4806,14 @@ namespace System.Windows.Forms
 				lineWidth=Math.Max(2, rectangle.Width/3);
 				rect=new Rectangle(rectangle.X+lineWidth, rectangle.Y+lineWidth, rectangle.Width-lineWidth*2, rectangle.Height-lineWidth*2);
 				
-				graphics.FillEllipse(ResPool.GetSolidBrush (ColorControlText), rect);
+				graphics.FillEllipse(brush, rect);
 				
 				return;
 			}
 
 			case MenuGlyph.Checkmark: {
 				int			Scale;
+				Pen pen = ResPool.GetPen (color);
 
 				lineWidth=Math.Max(2, rectangle.Width/6);
 				Scale=Math.Max(1, rectangle.Width/12);
@@ -4817,8 +4821,8 @@ namespace System.Windows.Forms
 				rect=new Rectangle(rectangle.X+lineWidth, rectangle.Y+lineWidth, rectangle.Width-lineWidth*2, rectangle.Height-lineWidth*2);
 
 				for (int i=0; i<lineWidth; i++) {
-					graphics.DrawLine(SystemPens.MenuText, rect.Left+lineWidth/2, rect.Top+lineWidth+i, rect.Left+lineWidth/2+2*Scale, rect.Top+lineWidth+2*Scale+i);
-					graphics.DrawLine(SystemPens.MenuText, rect.Left+lineWidth/2+2*Scale, rect.Top+lineWidth+2*Scale+i, rect.Left+lineWidth/2+6*Scale, rect.Top+lineWidth-2*Scale+i);
+					graphics.DrawLine(pen, rect.Left+lineWidth/2, rect.Top+lineWidth+i, rect.Left+lineWidth/2+2*Scale, rect.Top+lineWidth+2*Scale+i);
+					graphics.DrawLine(pen, rect.Left+lineWidth/2+2*Scale, rect.Top+lineWidth+2*Scale+i, rect.Left+lineWidth/2+6*Scale, rect.Top+lineWidth-2*Scale+i);
 				}
 				return;
 			}

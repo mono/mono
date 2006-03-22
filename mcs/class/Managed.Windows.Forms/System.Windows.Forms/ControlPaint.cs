@@ -374,7 +374,7 @@ namespace System.Windows.Forms {
 
 		public static void DrawMenuGlyph(Graphics graphics, Rectangle rectangle, MenuGlyph glyph) {
 
-			ThemeEngine.Current.CPDrawMenuGlyph (graphics, rectangle, glyph);
+			ThemeEngine.Current.CPDrawMenuGlyph (graphics, rectangle, glyph, ThemeEngine.Current.ColorMenuText);
 		}
 
 		public static void DrawMenuGlyph(Graphics graphics, int x, int y, int width, int height, MenuGlyph glyph) {

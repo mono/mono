@@ -835,7 +835,7 @@ namespace System.Windows.Forms
 		public abstract void CPDrawGrid (Graphics graphics, Rectangle area, Size pixelsBetweenDots, Color backColor);
 		public abstract void CPDrawImageDisabled (Graphics graphics, Image image, int x, int y, Color background);
 		public abstract void CPDrawLockedFrame (Graphics graphics, Rectangle rectangle, bool primary);
-		public abstract void CPDrawMenuGlyph (Graphics graphics, Rectangle rectangle, MenuGlyph glyph);
+		public abstract void CPDrawMenuGlyph (Graphics graphics, Rectangle rectangle, MenuGlyph glyph, Color color);
 		public abstract void CPDrawRadioButton (Graphics graphics, Rectangle rectangle, ButtonState state);
 		public abstract void CPDrawReversibleFrame (Rectangle rectangle, Color backColor, FrameStyle style);
 		public abstract void CPDrawReversibleLine (Point start, Point end, Color backColor);
