@@ -310,7 +310,12 @@ namespace System.Web.UI.WebControls {
 				object o = ViewState ["RepeatColumns"];
 				return (o == null) ? 0 : (int) o;
 			}
-			set { ViewState ["RepeatColumns"] = value; }
+			set { 
+				if (value < 0)
+					throw new ArgumentOutOfRangeException ("value", "RepeatColumns value has to be 0 for 'not set' or > 0.");
+				
+				ViewState ["RepeatColumns"] = value; 
+			}
 		}
 
 #if ONLY_1_1
@@ -771,7 +776,7 @@ namespace System.Web.UI.WebControls {
 				case ListItemType.AlternatingItem:
 					if (alt == null) {
 						if (alternatingItemStyle != null) {
-							alt = new Style ();
+							alt = new TableItemStyle ();
 							alt.CopyFrom (itemStyle);
 							alt.CopyFrom (alternatingItemStyle);
 						} else {
@@ -783,8 +788,13 @@ namespace System.Web.UI.WebControls {
 					ApplyControlStyle (item, alt);
 					break;
 				case ListItemType.EditItem:
-					item.MergeStyle (editItemStyle);
-					ApplyControlStyle (item, editItemStyle);
+					if (editItemStyle != null) {
+						item.MergeStyle (editItemStyle);
+						ApplyControlStyle (item, editItemStyle);
+					} else {
+						item.MergeStyle (itemStyle);
+						ApplyControlStyle (item, itemStyle);
+					}
 					break;
 				case ListItemType.Footer:
 					if (!ShowFooter) {
@@ -816,7 +826,14 @@ namespace System.Web.UI.WebControls {
 					}
 					break;
 				case ListItemType.Separator:
-					ApplyControlStyle (item, separatorStyle);
+					if (separatorStyle != null) {
+						item.MergeStyle(separatorStyle);
+						ApplyControlStyle (item, separatorStyle);
+					}
+					else {
+						item.MergeStyle (itemStyle);
+						ApplyControlStyle (item, itemStyle);
+					}
 					break;
 				}
 			}
@@ -829,6 +846,9 @@ namespace System.Web.UI.WebControls {
 #endif		
 		override void RenderContents (HtmlTextWriter writer)
 		{
+			if (Items.Count == 0)
+				return;			
+
 			RepeatInfo ri = new RepeatInfo ();
 			ri.RepeatColumns = RepeatColumns;
 			ri.RepeatDirection = RepeatDirection;
