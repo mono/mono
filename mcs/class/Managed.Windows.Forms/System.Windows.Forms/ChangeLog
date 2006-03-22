@@ -1,5 +1,10 @@
 2006-03-22  Mike Kestner  <mkestner@novell.com>
 
+	* FileDialog.cs: make the DropDownMenu on the toolbar display
+	RadioChecks since they are mutually exclusive and that's what MS does.
+
+2006-03-22  Mike Kestner  <mkestner@novell.com>
+
 	* Theme.cs: add Color param to CPDrawMenuGlyph.
 	* ThemeWin32Classic.cs: do color specific menu glyph rendering so that
 	checks and radio marks and arrows are visible on highlighted items.

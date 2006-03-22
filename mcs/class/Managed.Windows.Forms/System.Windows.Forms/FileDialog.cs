@@ -252,16 +252,21 @@ namespace System.Windows.Forms {
 			
 			// menueToolBarButtonContextMenu
 			MenuItem mi = new MenuItem ("Small Icon", new EventHandler (OnClickMenuToolBarContextMenu));
+			mi.RadioCheck = true;
 			menueToolBarButtonContextMenu.MenuItems.Add (mi);
 			mi = new MenuItem ("Tiles", new EventHandler (OnClickMenuToolBarContextMenu));
+			mi.RadioCheck = true;
 			menueToolBarButtonContextMenu.MenuItems.Add (mi);
 			mi = new MenuItem ("Large Icon", new EventHandler (OnClickMenuToolBarContextMenu));
+			mi.RadioCheck = true;
 			menueToolBarButtonContextMenu.MenuItems.Add (mi);
 			mi = new MenuItem ("List", new EventHandler (OnClickMenuToolBarContextMenu));
+			mi.RadioCheck = true;
 			mi.Checked = true;
 			previousCheckedMenuItem = mi;
 			menueToolBarButtonContextMenu.MenuItems.Add (mi);
 			mi = new MenuItem ("Details", new EventHandler (OnClickMenuToolBarContextMenu));
+			mi.RadioCheck = true;
 			menueToolBarButtonContextMenu.MenuItems.Add (mi);
 			
 			// contextMenu
