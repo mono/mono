@@ -398,6 +398,23 @@ namespace MonoTests.System.Data
 			Assert.AreEqual(true,  dc.Unique, "DC45");
 		}
 
+		[Test] public void Unique_PrimaryKey()
+		{
+			DataTable table = new DataTable ("Table1");
+			DataColumn col = table.Columns.Add ("col1");
+			table.PrimaryKey = new DataColumn [] {col};
+		
+			Assert.IsTrue (col.Unique, "#1");
+
+			try {
+				col.Unique = false;
+				Assert.Fail ("#2 cannot remove uniqueness of a primarykey");
+			} catch (ArgumentException e) {
+			}
+
+			Assert.IsTrue (col.Unique, "#3");
+		}
+
 		[Test] public void ctor()
 		{
 			DataColumn dc;

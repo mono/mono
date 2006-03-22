@@ -330,6 +330,11 @@ namespace System.Data {
 
 		#region Methods
 
+		internal void SetIsPrimaryKey (bool value)
+		{
+			_isPrimaryKey = value;
+		}
+
 		public override bool Equals(object key2) {
 
 			UniqueConstraint cst = key2 as UniqueConstraint;
@@ -401,6 +406,9 @@ namespace System.Data {
 		internal override void RemoveFromConstraintCollectionCleanup( 
 				ConstraintCollection collection)
 		{
+			if (Columns.Length == 1)
+				Columns [0].Unique = false;
+
 			_belongsToCollection = false;
 			Index index = Index;
 			Index = null;
@@ -466,7 +474,7 @@ namespace System.Data {
 		}
 
 		internal override bool CanRemoveFromCollection(ConstraintCollection col, bool shouldThrow){
-			if (Equals(col.Table.PrimaryKey)){
+			if (IsPrimaryKey) {
 				if (shouldThrow)
 					throw new ArgumentException("Cannot remove unique constraint since it's the primary key of a table.");
 

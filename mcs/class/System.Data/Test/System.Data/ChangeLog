@@ -1,3 +1,12 @@
+2006-03-22  Senganal T <tsenganal@novell.com>
+
+	* DataColumnTest2.cs :
+	* ConstraintCollectionTest2.cs :
+		- Ensure Constraints are correctly added/removed when Unique
+		property is modified.
+		- Ensure PrimaryKeyConstraint cannot be removed using Remove ()
+		- Ensure DataColumn's Unique Propery is modifed when adding/removing constraint 
+
 2006-03-20  Senganal T <tsenganal@novell.com>
 
 	* DataSetTest2.cs

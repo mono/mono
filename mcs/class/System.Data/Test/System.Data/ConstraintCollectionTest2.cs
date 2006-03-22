@@ -282,6 +282,29 @@ namespace MonoTests.System.Data
 			Assert.AreEqual(0, dt.Constraints.Count, "CN27");
 		}
 
+		[Test] public void Remove_CheckUnique ()
+		{
+			DataTable table = new DataTable ();
+			DataColumn col1 = table.Columns.Add ("col1");
+			DataColumn col2 = table.Columns.Add ("col2");
+
+			Assert.IsFalse (col1.Unique, "#1");
+
+			Constraint uc = table.Constraints.Add ("", col1, false);
+			Assert.IsTrue (col1.Unique, "#2 col shud be set to unique");
+
+			table.Constraints.Remove (uc);
+			Assert.IsFalse (col1.Unique, "#3 col should no longer be unique");
+
+			table.PrimaryKey = new DataColumn[] {col2};
+
+			try {
+				table.Constraints.Remove (table.Constraints [0]);
+				Assert.Fail ("#4 Cannot Remove PrimaryKey");
+			} catch (ArgumentException) {
+			}
+		}
+
 		[Test] public void Remove_ByNameSimple()
 		{
 			DataTable dt = DataProvider.CreateUniqueConstraint();

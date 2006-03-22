@@ -1,3 +1,18 @@
+2006-03-22  Senganal T  <tsenganal@novell.com>
+
+	* DataTable.cs :
+		- PrimaryKey : Set the IsPrimaryKey attribute before Removing from collection.
+		- RemoveUniqueConstraints : Removed. dead code.
+	* DataColumn.cs :
+		- Unique : 
+			- If adding/removing constraint fails, retain Unique value
+			- Remove redundant code
+	* UniqueConstraint.cs :
+		- SetIsPrimaryKey : Added. Sets the value of IsPrimaryKey.
+		- RemoveFromConstraintCollectionCleanup : If constraint is on a single column, then
+		set Unique for that column to false.
+		- CanRemoveFromCollection : Do not remove constraint, if its a PrimaryKey
+
 2006-03-20  Senganal T  <tsenganal@novell.com>
 
 	* DataSet.cs :

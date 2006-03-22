@@ -493,6 +493,7 @@ namespace System.Data {
 			set {
 				if (value == null || value.Length == 0) {
 					if (_primaryKeyConstraint != null) {
+						_primaryKeyConstraint.SetIsPrimaryKey (false);
 						Constraints.Remove(_primaryKeyConstraint);
 						_primaryKeyConstraint = null;
 					}
@@ -529,14 +530,15 @@ namespace System.Data {
 
 				//Remove the existing primary key
 				if (_primaryKeyConstraint != null) {
-					Constraints.Remove(_primaryKeyConstraint);
+					_primaryKeyConstraint.SetIsPrimaryKey (false);
+					Constraints.Remove (_primaryKeyConstraint);
 					_primaryKeyConstraint = null;
 				}
-				
-				//set the constraint as the new primary key
-				UniqueConstraint.SetAsPrimaryKey(this.Constraints, uc);
-				_primaryKeyConstraint = uc;
 
+				//set the constraint as the new primary key
+				UniqueConstraint.SetAsPrimaryKey (Constraints, uc);
+				_primaryKeyConstraint = uc;
+				
 				for (int j=0; j < uc.Columns.Length; ++j)
 					uc.Columns[j].AllowDBNull = false;
 			}
@@ -1963,22 +1965,6 @@ namespace System.Data {
 #endif // NET_2_0
 
 		#endregion // Events
-
-		/// <summary>
-		///  Removes all UniqueConstraints
-		/// </summary>
-		private void RemoveUniqueConstraints () 
-		{
-			foreach (Constraint Cons in Constraints) {
-				
-				if (Cons is UniqueConstraint) {
-					Constraints.Remove (Cons);
-					break;
-				}
-			}
-			
-			UniqueConstraint.SetAsPrimaryKey(this.Constraints, null);
-		}
 
 		internal static DataColumn[] ParseSortString (DataTable table, string sort, out ListSortDirection[] sortDirections, bool rejectNoResult)
 		{

@@ -684,46 +684,32 @@ namespace System.Data {
 				return _unique;
 			}
 			set {
-				//NOTE: In .NET 1.1 the Unique property
-                                //is left unchanged when it is added
-                                //to a UniqueConstraint
 
-				if(_unique != value)
-				{
-					_unique = value;
+				if (_unique == value)
+					return;
 
-					if( value )
-					{
+				// Set the property value, so that when adding/removing the constraint
+				// we dont run into recursive issues.
+				_unique = value;
+
+				if (_table == null)
+					return;
+
+				try {
+					if (value) {
 						if (Expression != null && Expression != String.Empty)
 							throw new ArgumentException("Cannot change Unique property for the expression column.");
-						if( _table != null )
-						{
-							UniqueConstraint uc = new UniqueConstraint(this);
-							_table.Constraints.Add(uc);
-						}
-					}
-					else
-					{
-						if( _table != null )
-						{
-							ConstraintCollection cc = _table.Constraints;
-							//foreach (Constraint c in cc) 
-							for (int i = 0; i < cc.Count; i++)
-							{
-								Constraint c = cc[i];
-								if (c is UniqueConstraint)
-								{
-									DataColumn[] cols = ((UniqueConstraint)c).Columns;
-									
-									if (cols.Length == 1 && cols[0] == this)
-									{
-										cc.Remove(c);
-									}
-								}
-							}
-						}
-					}
 
+						_table.Constraints.Add(null, this, false);
+					} else {
+
+						UniqueConstraint uc = UniqueConstraint.GetUniqueConstraintForColumnSet (_table.Constraints,
+												new DataColumn[] {this});
+						_table.Constraints.Remove (uc);
+					}
+				} catch (Exception e) {
+					_unique = !value;
+					throw e;
 				}
 			}
 		}
