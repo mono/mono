@@ -30,6 +30,7 @@
 
 #if NET_2_0
 
+using System.Collections.Specialized;
 using System.Security.Permissions;
 using System.Security.Principal;
 
@@ -40,15 +41,17 @@ namespace System.Web.Security {
 	public sealed class RolePrincipal : IPrincipal {
 
 		private IIdentity identity;
-		private string providerName;
 		private bool listChanged;
-		private bool listCached;
-		
+		string[] cachedArray;
+		private HybridDictionary cachedRoles;
+		private RoleProvider provider;
+
 		public RolePrincipal (IIdentity identity)
 		{
 			if (identity == null)
 				throw new ArgumentNullException ("identity");
 			this.identity = identity;
+			this.provider = Roles.Provider;
 		}
 
 		[MonoTODO]
@@ -58,14 +61,13 @@ namespace System.Web.Security {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public RolePrincipal (string providerName, IIdentity identity)
 			: this (identity)
 		{
 			if (providerName == null)
 				throw new ArgumentNullException ("providerName");
 
-			throw new NotImplementedException ();
+			this.provider = Roles.Providers[providerName];
 		}
 
 		[MonoTODO]
@@ -75,20 +77,35 @@ namespace System.Web.Security {
 			if (providerName == null)
 				throw new ArgumentNullException ("providerName");
 
+			this.provider = Roles.Providers[providerName];
+
 			throw new NotImplementedException ();
 		}
-		
-		
-		[MonoTODO]
+
 		public string [] GetRoles ()
 		{
-			throw new NotImplementedException ();
+			if (!identity.IsAuthenticated)
+				return new string[0];
+
+			if (cachedRoles == null) {
+				cachedArray = provider.GetRolesForUser (identity.Name);
+				cachedRoles = new HybridDictionary (true);
+
+				foreach (string r in cachedArray)
+					cachedRoles.Add(r, r);
+			}
+
+			return cachedArray;
 		}
 		
-		[MonoTODO]
 		public bool IsInRole (string role)
 		{
-			throw new NotImplementedException ();
+			if (!identity.IsAuthenticated)
+				return false;
+
+			GetRoles ();
+
+			return cachedRoles[role] != null;
 		}
 		
 		[MonoTODO]
@@ -121,7 +138,7 @@ namespace System.Web.Security {
 		}
 		
 		public bool IsRoleListCached {
-			get { return listCached; }
+			get { return cachedRoles != null; }
 		}
 		
 		[MonoTODO]
@@ -130,18 +147,18 @@ namespace System.Web.Security {
 		}
 		
 		public string ProviderName {
-			get { return providerName; }
+			get { return provider.Name; }
 		}
 		
-		[MonoTODO]
 		public int Version {
-			get { throw new NotImplementedException (); }
+			get { return 1; }
 		}
 
 		public void SetDirty ()
 		{
 			listChanged = true;
-			listCached = false;
+			cachedRoles = null;
+			cachedArray = null;
 		}
 	}
 }

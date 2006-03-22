@@ -29,7 +29,10 @@
 
 using System.Security.Permissions;
 using System.Security.Principal;
+using System.Threading;
 
+// more info on the workings of this class can be found in Shackow, p. 55
+//
 namespace System.Web.Security
 {
 	// CAS - no InheritanceDemand here as the class is sealed
@@ -62,8 +65,10 @@ namespace System.Web.Security
 			if (context.User == null && Authenticate != null)
 				Authenticate (this, new DefaultAuthenticationEventArgs (context));
 
-			if (context.User == null)
+			if (context.User == null) {
 				context.User = new GenericPrincipal (defaultIdentity, new string [0]);
+				Thread.CurrentPrincipal = context.User;
+			}
 		}
 	}
 }

@@ -1,3 +1,13 @@
+2006-03-22  Chris Toshok  <toshok@ximian.com>
+
+	* RoleManagerModule.cs: implement using info in Shackow's book.
+
+	* RolePrincipal.cs: flesh this out a bit more.
+
+	* DefaultAuthenticationModule.cs (OnDefaultAuthentication):
+	according to Shackow's book, this sets Thread.CurrentPrincipal as
+	well as HttpContext.Current.User.
+
 2006-02-28  Chris Toshok  <toshok@ximian.com>
 
 	* FormsAuthentication.cs: corcompare work.
