@@ -1,3 +1,8 @@
+2006-03-22  Mike Kestner  <mkestner@novell.com>
+
+	* MenuAPI.cs: only process Enter and arrow keypresses if the tracker
+	is active. Fixes #77870.
+
 2006-03-22  Alexander Olk  <alex.olk@googlemail.com>
 
 	* FileDialog.cs: Corrected TabIndex order and set fileNameComboBox

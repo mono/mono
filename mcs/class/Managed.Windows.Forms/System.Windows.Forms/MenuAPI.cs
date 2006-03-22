@@ -625,6 +625,8 @@ namespace System.Windows.Forms {
 				return ProcessMnemonic (msg, keyData);
 			else if ((Msg)msg.Msg == Msg.WM_SYSKEYUP || keynav_state == KeyNavState.Idle)
 				return false;
+			else if (!active)
+				return false;
 
 			switch (keyData) {
 			case Keys.Up:
