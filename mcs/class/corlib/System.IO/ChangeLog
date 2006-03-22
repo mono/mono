@@ -1,3 +1,7 @@
+2006-03-21  Miguel de Icaza  <miguel@novell.com>
+
+	* Stream.cs: In 2.0 make Close call Dispose(true).
+
 2006-03-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FileStream.cs: Seek() should flush the buffer, if any. Fixes bug

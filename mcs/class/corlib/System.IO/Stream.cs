@@ -83,24 +83,25 @@ namespace System.IO
 		}
 
 
-		public virtual void Close ()
-		{
-		}
-
-		void IDisposable.Dispose ()
-		{
-			Close ();
-		}
-
 #if NET_2_0
+		// 2.0 version of Dispose.
 		public void Dispose ()
 		{
-			Dispose (true);
+			Close ();
 		}
 
+		// 2.0 version of Dispose.
 		protected virtual void Dispose (bool disposing)
 		{
-			Close ();
+			// nothing.
+		}
+
+		//
+		// 2.0 version of Close (): calls Dispose (true)
+		//
+		public virtual void Close ()
+		{
+			Dispose (true);
 		}
 
 		public virtual int ReadTimeout {
@@ -120,7 +121,18 @@ namespace System.IO
 				throw new InvalidOperationException ("Timeouts are not supported on this stream.");
 			}
 		}
+#else
+		// 1.1 version of Close
+		public virtual void Close ()
+		{
+			// nothing
+		}
+
 #endif
+		void IDisposable.Dispose ()
+		{
+			Close ();
+		}
 
 		protected virtual WaitHandle CreateWaitHandle()
 		{
