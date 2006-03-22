@@ -1,3 +1,8 @@
+2006-03-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* icall.c: CodeBase returns '/' instead of '\\' on windows. Fixes
+	bug #77877.
+
 2006-03-22  Martin Baulig  <martin@ximian.com>
 
 	* reflection.c (fieldbuilder_to_mono_class_field): Don't store the
