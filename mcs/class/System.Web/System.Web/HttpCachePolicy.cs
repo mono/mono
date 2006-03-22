@@ -317,26 +317,41 @@ namespace System.Web {
 
 		internal void SetHeaders (HttpResponse response, ArrayList headers)
 		{
-			string cc, expires;
-			if (Cacheability > HttpCacheability.NoCache) {
-				string c = Cacheability.ToString ().ToLower (CultureInfo.InvariantCulture);
-				
-				if (MaxAge.TotalSeconds != 0)
-					cc = String.Format ("{0}, max-age={1}", c, (long) MaxAge.TotalSeconds);
-				else
-					cc = c;
-				
-				expires = TimeUtil.ToUtcTimeString (expire_date);
-				headers.Add (new UnknownResponseHeader ("Expires", expires));
-			} else {
+			bool noCache = false;
+			string cc = null;
+
+			switch (Cacheability) {
+			case HttpCacheability.Public:
+				cc = "public";
+				break;
+
+			case HttpCacheability.Private:
+			case HttpCacheability.ServerAndPrivate:
+				cc = "private";
+				break;
+
+			case HttpCacheability.NoCache:
+			case HttpCacheability.ServerAndNoCache:
+			default:
+				noCache = true;
 				cc = "no-cache";
+				break;
+			}
+
+			if (noCache) {
 				response.CacheControl = cc;
 				if (!allow_response_in_browser_history) {
-					expires = "-1";
-					headers.Add (new UnknownResponseHeader ("Expires", expires));
+					headers.Add (new UnknownResponseHeader ("Expires", "-1"));
+					headers.Add (new UnknownResponseHeader ("Pragma", "no-cache"));
 				}
+			} else {
+				if (MaxAge.TotalSeconds != 0)
+					cc = String.Format ("{0}, max-age={1}", cc, (long) MaxAge.TotalSeconds);
+
+				string expires = TimeUtil.ToUtcTimeString (expire_date);
+				headers.Add (new UnknownResponseHeader ("Expires", expires));
 			}
-			
+
 			headers.Add (new UnknownResponseHeader ("Cache-Control", cc));
 						
 			if (etag != null)
