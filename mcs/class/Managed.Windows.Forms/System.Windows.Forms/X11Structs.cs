@@ -1433,9 +1433,9 @@ namespace System.Windows.Forms {
 		internal IntPtr	Window;				// Last window we entered; used to generate WM_MOUSEHOVER (handle is X11 handle)
 		internal int	X;				// Last MouseMove X coordinate; used to generate WM_MOUSEHOVER
 		internal int	Y;				// Last MouseMove Y coordinate; used to generate WM_MOUSEHOVER
+		internal Size	Size;				// Size of the rectangle the mouse has to stay in to generate hover
 		internal int	Interval;			// in milliseconds, how long to hold before hover is generated
 		internal IntPtr	Atom;				// X Atom
-		internal Size   Size;
 	}
 
 	internal struct ClickStruct {
