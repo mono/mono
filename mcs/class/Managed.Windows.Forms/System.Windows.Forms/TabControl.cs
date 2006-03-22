@@ -460,8 +460,6 @@ namespace System.Windows.Forms {
 
 		protected override bool ProcessKeyPreview (ref Message m)
 		{
-			if (ProcessKeyEventArgs (ref m))
-				return true;
 			return base.ProcessKeyPreview (ref m);
 		}
 
