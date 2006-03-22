@@ -37,7 +37,7 @@ namespace System.Windows.Forms {
 		#region Local Variables
 		private bool allowFullOpen = true;
 		private bool anyColor = false;
-		private Color color = Color.Black;
+		private Color color;
 		private int[] customColors = null;
 		private bool fullOpen = false;
 		private bool showHelp = false;
@@ -283,27 +283,11 @@ namespace System.Windows.Forms {
 			
 			form.ResumeLayout (false);
 			
-			brightnessControl.ColorToShow = selectedColorPanel.BackColor;
-			
-			redTextBox.Text = selectedColorPanel.BackColor.R.ToString ();
-			greenTextBox.Text = selectedColorPanel.BackColor.G.ToString ();
-			blueTextBox.Text = selectedColorPanel.BackColor.B.ToString ();
-			
-			HSB hsb = HSB.RGB2HSB (selectedColorPanel.BackColor);
-			hueTextBox.Text = hsb.hue.ToString ();
-			satTextBox.Text = hsb.sat.ToString ();
-			briTextBox.Text = hsb.bri.ToString ();
-			
-			if (!allowFullOpen)
-				defineColoursButton.Enabled = false;
-			
-			if (fullOpen)
-				DoButtonDefineColours ();
+			Color = Color.Black;
 			
 			defineColoursButton.Click += new EventHandler (OnClickButtonDefineColours);
 			addColoursButton.Click += new EventHandler (OnClickButtonAddColours);
-			if (showHelp)
-				helpButton.Click += new EventHandler (OnClickHelpButton);
+			helpButton.Click += new EventHandler (OnClickHelpButton);
 			cancelButton.Click += new EventHandler (OnClickCancelButton);
 			okButton.Click += new EventHandler (OnClickOkButton);
 			
@@ -323,7 +307,11 @@ namespace System.Windows.Forms {
 			}
 			
 			set {
-				color = value;
+				if (color != value) {
+					color = value;
+					
+					baseColorControl.SetColor (color);
+				}
 			}
 		}
 		
@@ -334,7 +322,14 @@ namespace System.Windows.Forms {
 			}
 			
 			set {
-				allowFullOpen = value;
+				if (allowFullOpen != value) {
+					allowFullOpen = value;
+					
+					if (!allowFullOpen)
+						defineColoursButton.Enabled = false;
+					else
+						defineColoursButton.Enabled = true;
+				}
 			}
 		}
 		
@@ -359,7 +354,22 @@ namespace System.Windows.Forms {
 			}
 			
 			set {
-				fullOpen = value;
+				if (fullOpen != value) {
+					fullOpen = value;
+					
+					if (fullOpen && allowFullOpen) {
+						defineColoursButton.Enabled = false;
+						
+						colorMatrixControl.ColorToShow = baseColorControl.ColorToShow;
+						
+						form.Size = new Size (448, 332);
+					} else {
+						if (allowFullOpen)
+							defineColoursButton.Enabled = true;
+						
+						form.Size = new Size (221, 332); // 300
+					}
+				}
 			}
 		}
 		
@@ -371,7 +381,11 @@ namespace System.Windows.Forms {
 			}
 			
 			set {
-				customColors = value;
+				if (allowFullOpen) {
+					customColors = value;
+					
+					baseColorControl.SetCustomColors ();
+				}
 			}
 		}
 		
@@ -382,11 +396,13 @@ namespace System.Windows.Forms {
 			}
 			
 			set {
-				showHelp = value;
-				if (showHelp)
-					helpButton.Show ();
-				else
-					helpButton.Hide ();
+				if (showHelp != value) {
+					showHelp = value;
+					if (showHelp)
+						helpButton.Show ();
+					else
+						helpButton.Hide ();
+				}
 			}
 		}
 		
@@ -405,12 +421,12 @@ namespace System.Windows.Forms {
 		#region Public Instance Methods
 		public override void Reset ()
 		{
-			allowFullOpen = true;
+			AllowFullOpen = true;
 			anyColor = false;
-			color = Color.Black;
-			customColors = null;
-			fullOpen = false;
-			showHelp = false;
+			Color = Color.Black;
+			CustomColors = null;
+			FullOpen = false;
+			ShowHelp = false;
 			solidColorOnly = false;
 		}
 		
@@ -442,9 +458,6 @@ namespace System.Windows.Forms {
 			// currently needed, otherwise there are a lot of drawing artefacts/transparent controls if the same dialog gets opened again
 			form.Refresh ();
 			
-			if (customColors != null)
-				baseColorControl.SetCustomColors ();
-			
 			return true;
 		}
 		#endregion	// Protected Instance Methods
@@ -460,25 +473,20 @@ namespace System.Windows.Forms {
 			form.DialogResult = DialogResult.OK;
 		}
 		
-		void OnClickButtonDefineColours (object sender, EventArgs e)
-		{
-			DoButtonDefineColours ();
-		}
-		
-		void DoButtonDefineColours ()
-		{
-			defineColoursButton.Enabled = false;
-			
-			fullOpen = true;
-			
-			colorMatrixControl.ColorToShow = baseColorControl.ColorToShow;
-			
-			form.ClientSize = new Size (448, 332);
-		}
-		
 		void OnClickButtonAddColours (object sender, EventArgs e)
 		{
 			baseColorControl.SetUserColor (selectedColorPanel.BackColor);
+		}
+		
+		void OnClickButtonDefineColours (object sender, EventArgs e)
+		{
+			if (allowFullOpen) {
+				defineColoursButton.Enabled = false;
+				
+				colorMatrixControl.ColorToShow = baseColorControl.ColorToShow;
+				
+				form.Size = new Size (448, 332);
+			}
 		}
 		
 		// FIXME: Is this correct ?
@@ -598,32 +606,31 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		private void UpdateControls (Color acolor)
+		internal void UpdateControls (Color acolor)
 		{
-			color = acolor;
 			selectedColorPanel.BackColor = acolor;
 			colorMatrixControl.ColorToShow = acolor;
 			brightnessControl.ColorToShow = acolor;
 			triangleControl.ColorToShow = acolor;
 		}
 		
-		private void UpdateRGBTextBoxes (Color color)
+		internal void UpdateRGBTextBoxes (Color acolor)
 		{
-			redTextBox.Text = color.R.ToString ();
-			greenTextBox.Text = color.G.ToString ();
-			blueTextBox.Text = color.B.ToString ();
+			redTextBox.Text = acolor.R.ToString ();
+			greenTextBox.Text = acolor.G.ToString ();
+			blueTextBox.Text = acolor.B.ToString ();
 		}
 		
-		private void UpdateHSBTextBoxes (Color color)
+		internal void UpdateHSBTextBoxes (Color acolor)
 		{
-			HSB hsb = HSB.RGB2HSB (color);
+			HSB hsb = HSB.RGB2HSB (acolor);
 			
 			hueTextBox.Text = hsb.hue.ToString ();
 			satTextBox.Text = hsb.sat.ToString ();
 			briTextBox.Text = hsb.bri.ToString ();
 		}
 		
-		private void UpdateFromHSBTextBoxes ()
+		internal void UpdateFromHSBTextBoxes ()
 		{
 			Color col = HSB.HSB2RGB (System.Convert.ToInt32 (hueTextBox.Text),
 						 System.Convert.ToInt32 (satTextBox.Text),
@@ -633,7 +640,7 @@ namespace System.Windows.Forms {
 			UpdateRGBTextBoxes (col);
 		}
 		
-		private void UpdateFromRGBTextBoxes ()
+		internal void UpdateFromRGBTextBoxes ()
 		{
 			Color col = Color.FromArgb (System.Convert.ToInt32 (redTextBox.Text),
 						    System.Convert.ToInt32 (greenTextBox.Text),
@@ -707,8 +714,8 @@ namespace System.Windows.Forms {
 						d2 = (L <= 0.5f) ? L * (1.0f + S) : L + S - (L * S);
 						d1 = 2.0f * L - d2;
 						
-						float[] d3 = new float    [] { H + 1.0f / 3.0f , H, H - 1.0f / 3.0f };
-						float[] rgb = new float    [] { 0,0,0 };
+						float[] d3 = new float [] { H + 1.0f / 3.0f , H, H - 1.0f / 3.0f };
+						float[] rgb = new float [] { 0,0,0 };
 						
 						for (int i = 0; i < 3; i++) {
 							if (d3 [i] < 0)
@@ -784,7 +791,7 @@ namespace System.Windows.Forms {
 		
 		internal class BaseColorControl : Control {
 			internal class SmallColorControl : Control {
-				private Color color;
+				private Color internalcolor;
 				
 				private bool isSelected = false;
 				
@@ -792,7 +799,7 @@ namespace System.Windows.Forms {
 				{
 					SuspendLayout ();
 					
-					this.color = color;
+					this.internalcolor = color;
 					
 					Size = new Size (25, 23);
 					
@@ -811,14 +818,14 @@ namespace System.Windows.Forms {
 					}
 				}
 				
-				public Color Color {
+				public Color InternalColor {
 					set {
-						color = value;
+						internalcolor = value;
 						Invalidate ();
 					}
 					
 					get {
-						return color;
+						return internalcolor;
 					}
 				}
 				
@@ -826,9 +833,9 @@ namespace System.Windows.Forms {
 				{
 					base.OnPaint (pe);
 					
-					pe.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), 0, 0, 26, 23);
+//					pe.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), 0, 0, 26, 23);
 					
-					pe.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (color),
+					pe.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (internalcolor),
 								   new Rectangle (4, 4, 17, 15));
 					
 					DrawBorder (pe.Graphics, new Rectangle (4, 4, 17, 15));
@@ -1302,22 +1309,16 @@ namespace System.Windows.Forms {
 				Size = new Size (212, 238);
 				
 				ResumeLayout (false);
-				
-				selectedSmallColorControl = smallColorControl [46];  // default, Black
-				selectedSmallColorControl.IsSelected = true;
-				
-				CheckIfColorIsInPanel ();
 			}
 			
-			private void CheckIfColorIsInPanel ()
+			private void CheckIfColorIsInPanel (Color color)
 			{
-				if (colorDialog.Color != Color.Black) {
-					// check if we have a panel with a BackColor = ColorDialog.Color...
-					for (int i = 0; i < smallColorControl.Length; i++) {
-						if (smallColorControl [i].BackColor == colorDialog.Color) {
-							selectedSmallColorControl = smallColorControl [i];
-							break;
-						}
+				// check if we have a panel with a BackColor = color...
+				for (int i = 0; i < smallColorControl.Length; i++) {
+					if (smallColorControl [i].InternalColor == color) {
+						selectedSmallColorControl = smallColorControl [i];
+						selectedSmallColorControl.IsSelected = true;
+						break;
 					}
 				}
 			}
@@ -1330,22 +1331,37 @@ namespace System.Windows.Forms {
 				
 				selectedSmallColorControl = (SmallColorControl)sender;
 				
-				TriangleControl.CurrentBrightness = HSB.Brightness (selectedSmallColorControl.Color);
+				TriangleControl.CurrentBrightness = HSB.Brightness (selectedSmallColorControl.InternalColor);
 				
-				colorDialog.UpdateControls (selectedSmallColorControl.Color);
-				colorDialog.UpdateRGBTextBoxes (selectedSmallColorControl.Color);
-				colorDialog.UpdateHSBTextBoxes (selectedSmallColorControl.Color);
+				colorDialog.UpdateControls (selectedSmallColorControl.InternalColor);
+				colorDialog.UpdateRGBTextBoxes (selectedSmallColorControl.InternalColor);
+				colorDialog.UpdateHSBTextBoxes (selectedSmallColorControl.InternalColor);
 			}
 			
 			public Color ColorToShow {
 				get {
-					return selectedSmallColorControl.Color;
+					return selectedSmallColorControl.InternalColor;
 				}
+			}
+			
+			
+			public void SetColor (Color acolor)
+			{
+				if (selectedSmallColorControl != null)
+					selectedSmallColorControl.IsSelected = false;
+				
+				CheckIfColorIsInPanel (acolor);
+				
+				TriangleControl.CurrentBrightness = HSB.Brightness (acolor);
+				
+				colorDialog.UpdateControls (acolor);
+				colorDialog.UpdateRGBTextBoxes (acolor);
+				colorDialog.UpdateHSBTextBoxes (acolor);
 			}
 			
 			public void SetUserColor (Color col)
 			{
-				userSmallColorControl [currentlyUsedUserSmallColorControl].Color = col;
+				userSmallColorControl [currentlyUsedUserSmallColorControl].InternalColor = col;
 				
 				// check if this.customColors already exists
 				if (customColors == null) {
@@ -1370,8 +1386,14 @@ namespace System.Windows.Forms {
 			{
 				int[] customColors = colorDialog.CustomColors;
 				
-				for (int i = 0; i < customColors.Length; i++) {
-					userSmallColorControl [i].Color = Color.FromArgb (customColors [i]);
+				if (customColors != null) {
+					for (int i = 0; i < customColors.Length; i++) {
+						userSmallColorControl [i].InternalColor = Color.FromArgb (customColors [i]);
+					}
+				} else {
+					for (int i = 0; i < userSmallColorControl.Length; i++) {
+						userSmallColorControl [i].InternalColor = Color.White;
+					}
 				}
 			}
 		}
@@ -1380,19 +1402,19 @@ namespace System.Windows.Forms {
 			internal class DrawingBitmap {
 				private Bitmap bitmap;
 				
-				public DrawingBitmap ()
+				public DrawingBitmap (Size size)
 				{
-					bitmap = new Bitmap (180, 191);
+					bitmap = new Bitmap (size.Width, size.Height);
 					
-					float hueadd = 241.0f / 178.0f;
-					float satsub = 241.0f / 189.0f;
+					float hueadd = 241.0f / (size.Width - 1);
+					float satsub = 241.0f / (size.Height - 1);
 					float satpos = 240.0f;
 					
 					// paint the matrix to the bitmap
-					for (int height = 0; height < 191; height++) {
+					for (int height = 0; height < size.Height; height++) {
 						float huepos = 0.0f;
 						
-						for (int width = 0; width < 180; width++) {
+						for (int width = 0; width < size.Width; width++) {
 							HSB hsb = new HSB ();
 							
 							hsb.hue = (int)huepos;
@@ -1466,7 +1488,7 @@ namespace System.Windows.Forms {
 				}
 			}
 			
-			private DrawingBitmap drawingBitmap = new DrawingBitmap( );
+			private DrawingBitmap drawingBitmap = null;
 			
 			private CrossCursor crossCursor = new CrossCursor();
 			
@@ -1479,8 +1501,8 @@ namespace System.Windows.Forms {
 			private int currentXPos;
 			private int currentYPos;
 			
-			private const float xstep = 240.0f/178.0f;
-			private const float ystep = 240.0f/189.0f;
+			private float xstep;
+			private float ystep;
 			
 			private ColorDialog colorDialog;
 			
@@ -1495,10 +1517,11 @@ namespace System.Windows.Forms {
 				Size = new Size (179, 190);
 				TabIndex = 0;
 				TabStop = false;
-				//BackColor = SystemColors.Control;
-				Size = new Size (179, 190);
 				
 				ResumeLayout (false);
+				
+				xstep = 241.0f / (ClientSize.Width - 1);
+				ystep = 241.0f / (ClientSize.Height - 1);
 				
 				SetStyle (ControlStyles.DoubleBuffer, true);
 				SetStyle (ControlStyles.AllPaintingInWmPaint, true);
@@ -1507,6 +1530,9 @@ namespace System.Windows.Forms {
 			
 			protected override void OnPaint (PaintEventArgs e)
 			{
+				if (drawingBitmap == null)
+					drawingBitmap = new DrawingBitmap (ClientSize);
+				
 				Draw (e);
 				
 				base.OnPaint (e);
@@ -1514,7 +1540,7 @@ namespace System.Windows.Forms {
 			
 			private void Draw (PaintEventArgs e)
 			{
-				e.Graphics.DrawImage (drawingBitmap.Bitmap, 0, 0);
+				e.Graphics.DrawImage (drawingBitmap.Bitmap, ClientRectangle.X, ClientRectangle.Y);
 				
 				// drawCross is false if the mouse gets moved...
 				if (drawCross) {
@@ -1541,7 +1567,7 @@ namespace System.Windows.Forms {
 			protected override void OnMouseMove (MouseEventArgs e)
 			{
 				if (mouseButtonDown)
-					if ((e.X < 178 && e.X >= 0) && (e.Y < 189 && e.Y >= 0)) {
+					if ((e.X < ClientSize.Width && e.X >= 0) && (e.Y < ClientSize.Height && e.Y >= 0)) {
 						currentXPos = e.X;
 						currentYPos = e.Y;
 						UpdateControls ();
@@ -1560,12 +1586,19 @@ namespace System.Windows.Forms {
 			
 			public Color ColorToShow {
 				set {
-					color = value;
+					ComputePos (value);
+				}
+			}
+			
+			private void ComputePos (Color acolor)
+			{
+				if (acolor != color) {
+					color = acolor;
 					
 					HSB hsb = HSB.RGB2HSB (color);
 					
 					currentXPos = (int)((float)hsb.hue / xstep);
-					currentYPos = 189 - (int)((float)hsb.sat / ystep);
+					currentYPos = ClientSize.Height - 1 - (int)((float)hsb.sat / ystep);
 					
 					if (currentXPos < 0)
 						currentXPos = 0;
@@ -1574,8 +1607,6 @@ namespace System.Windows.Forms {
 					
 					Invalidate ();
 					Update ();
-					
-					UpdateControls ();
 				}
 			}
 			
@@ -1597,7 +1628,6 @@ namespace System.Windows.Forms {
 				
 				// update saturation text box
 				int satvalue = (240 - ((int)((float)currentYPos * ystep)));
-				satvalue = satvalue == 240 ? 239 : satvalue;
 				colorDialog.satTextBox.Text = satvalue.ToString ();
 				
 				// update hue text box
@@ -1652,13 +1682,11 @@ namespace System.Windows.Forms {
 			
 			private DrawingBitmap bitmap;
 			
-			private Color color;
+			private ColorDialog colorDialog = null;
 			
-			private ColorDialog colorDialog;
-			
-			public BrightnessControl (ColorDialog colorDialogPanel)
+			public BrightnessControl (ColorDialog colorDialog)
 			{
-				this.colorDialog = colorDialogPanel;
+				this.colorDialog = colorDialog;
 				
 				bitmap = new DrawingBitmap ();
 				
@@ -1670,6 +1698,7 @@ namespace System.Windows.Forms {
 				TabIndex = 0;
 				TabStop = false;
 				Size = new Size (14, 190);
+				
 				ResumeLayout (false);
 				
 				SetStyle (ControlStyles.DoubleBuffer, true);
@@ -1837,6 +1866,7 @@ namespace System.Windows.Forms {
 					currentTrianglePosition = 186 - (int)tmp + 9;
 					
 					colorDialog.briTextBox.Text = TrianglePosition.ToString ();
+					
 					colorDialog.UpdateFromHSBTextBoxes ();
 					
 					Invalidate ();
@@ -1846,8 +1876,20 @@ namespace System.Windows.Forms {
 			
 			public Color ColorToShow {
 				set {
-					TrianglePosition = HSB.Brightness (value);
+					SetColor (value);
 				}
+			}
+			
+			public void SetColor (Color color)
+			{
+				int pos_raw = HSB.Brightness (color);
+				
+				float tmp = (float)pos_raw / briStep;
+				currentTrianglePosition = 186 - (int)tmp + 9;
+				
+				colorDialog.briTextBox.Text = TrianglePosition.ToString ();
+				
+				Invalidate ();
 			}
 		}
 		#endregion

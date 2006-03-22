@@ -1,3 +1,11 @@
+2006-03-22  Alexander Olk  <alex.olk@googlemail.com>
+
+	* ColorDialog.cs: 
+	  - Corrected behaviour of Color, AllowFullOpen, FullOpen,
+	    CustomColors and ShowHelp properties
+	  - Some internal rewrites to get better results when using the
+	    ColorMatrix
+
 2006-03-22  Mike Kestner  <mkestner@novell.com>
 
 	* ListView.cs: hook into Peter's new ResetMouseHover capability to fix
