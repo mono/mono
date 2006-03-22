@@ -701,7 +701,7 @@ namespace System.Windows.Forms {
 		StaticGravity	= 10
 	}
 
-	internal enum XKeySym {
+	internal enum XKeySym : uint {
 		XK_BackSpace	= 0xFF08,
 		XK_Tab		= 0xFF09,
 		XK_Clear	= 0xFF0B,
@@ -1435,6 +1435,7 @@ namespace System.Windows.Forms {
 		internal int	Y;				// Last MouseMove Y coordinate; used to generate WM_MOUSEHOVER
 		internal int	Interval;			// in milliseconds, how long to hold before hover is generated
 		internal IntPtr	Atom;				// X Atom
+		internal Size   Size;
 	}
 
 	internal struct ClickStruct {

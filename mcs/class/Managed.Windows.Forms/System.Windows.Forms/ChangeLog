@@ -2,6 +2,8 @@
 
 	* DataGrid.cs: Create columns when the binding context has been
 	changed.
+	* X11Structs.cs: Keysyms are uints.
+	- Add size to fix build.
 
 2006-03-21  Peter Dennis Bartok  <pbartok@novell.com> 
 
