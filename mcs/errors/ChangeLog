@@ -1,3 +1,8 @@
+2006-03-22  Raja R Harinath  <rharinath@novell.com>
+
+	* gcs1908.cs, gcs1908-2.cs, gcs1908-3.cs, gcs1908-4.cs: New tests
+	for DefaultParameterValueAttribute.
+
 2006-03-01  Raja R Harinath  <rharinath@novell.com>
 
 	* cs1540-8.cs: New test from #77627.

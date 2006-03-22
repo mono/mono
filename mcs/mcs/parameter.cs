@@ -254,6 +254,18 @@ namespace Mono.CSharp {
 				Report.Warning (3022, 1, a.Location, "CLSCompliant attribute has no meaning when applied to parameters. Try putting it on the method instead");
 			}
 
+			// TypeManager.default_parameter_value_attribute_type is null if !NET_2_0
+			if (a.Type == TypeManager.default_parameter_value_attribute_type) {
+				object val = a.GetParameterDefaultValue ();
+				if (parameter_type == TypeManager.object_type ||
+				    (val == null && !TypeManager.IsValueType (parameter_type)) ||
+				    (val != null && TypeManager.TypeToCoreType (val.GetType ()) == parameter_type))
+					builder.SetConstant (val);
+				else
+					Report.Error (1908, a.Location, "The type of the default value should match the type of the parameter");
+				return;
+			}
+
 			base.ApplyAttributeBuilder (a, cb);
 		}
 

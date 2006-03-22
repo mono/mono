@@ -1149,6 +1149,11 @@ namespace Mono.CSharp {
 			return (LayoutKind)pos_values [0];
 		}
 
+		public object GetParameterDefaultValue ()
+		{
+			return pos_values [0];
+		}
+
 		/// <summary>
 		/// Emit attribute for Attributable symbol
 		/// </summary>

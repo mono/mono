@@ -1,3 +1,12 @@
+2006-03-22  Raja R Harinath  <rharinath@novell.com>
+
+	Support ParameterDefaultValueAttribute in gmcs.  Also applied to
+	mcs to keep code differences small.
+	* attribute.cs (Attribute.GetParameterDefaultValue): New.
+	* typemanager.cs (parameter_default_value_attribute_type): New.
+	* parameter.cs (Parameter.ApplyAttributeBuilder): Use them.  Add
+	CS1908 check.
+
 2006-03-21  Marek Safar  <marek.safar@seznam.cz>
 
 	* expression.cs (StringConcat.Append): Reverted back to no warning state.

@@ -1073,6 +1073,11 @@ namespace Mono.CSharp {
 			return base.GetHashCode ();
 		}
 
+		public object GetParameterDefaultValue ()
+		{
+			return pos_values [0];
+		}
+
 		/// <summary>
 		/// Emit attribute for Attributable symbol
 		/// </summary>

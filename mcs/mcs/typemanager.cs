@@ -90,6 +90,8 @@ public class TypeManager {
 	static public Type conditional_attribute_type;
 	static public Type in_attribute_type;
 	static public Type out_attribute_type;
+	static public Type default_parameter_value_attribute_type;
+
 	static public Type anonymous_method_type;
 	static public Type cls_compliant_attribute_type;
 	static public Type typed_reference_type;
@@ -840,6 +842,9 @@ public class TypeManager {
 		param_array_type     = CoreLookupType ("System", "ParamArrayAttribute");
 		in_attribute_type    = CoreLookupType ("System.Runtime.InteropServices", "InAttribute");
 		out_attribute_type   = CoreLookupType ("System.Runtime.InteropServices", "OutAttribute");
+#if NET_2_0
+		default_parameter_value_attribute_type = CoreLookupType ("System.Runtime.InteropServices", "DefaultParameterValueAttribute");
+#endif
 		typed_reference_type = CoreLookupType ("System", "TypedReference");
 		arg_iterator_type    = CoreLookupType ("System", "ArgIterator");
 		mbr_type             = CoreLookupType ("System", "MarshalByRefObject");
