@@ -1,3 +1,8 @@
+2006-03-22  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* serial.c: Add get_signal_code, get_signal, and set_signal
+	functions to access serial signals. Also add a MonoSerialSignal
+	enum, which is a copy of System.IO.Ports.SerialSignal.
 
 Thu Mar 16 17:27:46 CET 2006 Paolo Molaro <lupus@ximian.com>
 

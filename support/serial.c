@@ -10,6 +10,7 @@
 #include <fcntl.h>
 #include <string.h>
 #include <sys/poll.h>
+#include <sys/ioctl.h>
 
 #include <glib.h>
 
@@ -37,6 +38,15 @@ typedef enum {
 	Two = 2,
 	OnePointFive = 3
 } MonoStopBits;
+
+/* This is a copy of System.IO.Ports.SerialSignal */
+typedef enum {
+	Cd = 0, /* Carrier detect */
+	Cts = 1, /* Clear to send */
+	Dsr = 2, /* Data set ready */
+	Dtr = 3, /* Data terminal ready */
+	Rts = 4  /* Request to send */
+} MonoSerialSignal;
 
 int
 open_serial (char* devfile)
@@ -223,6 +233,62 @@ set_attributes (int fd, int baud_rate, MonoParity parity, int dataBits, MonoStop
 		return FALSE;
 
 	return TRUE;
+}
+
+static gint32
+get_signal_code (MonoSerialSignal signal)
+{
+	switch (signal) {
+		case Cd:
+			return TIOCM_CAR;
+		case Cts:
+			return TIOCM_CTS;
+		case Dsr:
+			return TIOCM_DSR;
+		case Dtr:
+			return TIOCM_DTR;
+		case Rts:
+			return TIOCM_RTS;
+	}
+
+	/* Not reached */
+	return 0;
+}
+
+gint32
+get_signal (int fd, MonoSerialSignal signal)
+{
+	int signals, expected;
+
+	expected = get_signal_code (signal);
+	if (ioctl (fd, TIOCMGET, &signals) == -1)
+		return -1;
+	
+	return (expected & signals) != 0;
+}
+
+gint32
+set_signal (int fd, MonoSerialSignal signal, gboolean value)
+{
+	int signals, expected, activated;
+
+	expected = get_signal_code (signal);
+	if (ioctl (fd, TIOCMGET, &signals) == -1)
+		return -1;
+	
+	activated = (signals & expected) != 0;
+	if (activated == value) /* Already set */
+		return 1;
+	
+	if (value)
+		signals |= expected;
+	else
+		signals &= ~expected;
+	
+	if (ioctl (fd, TIOCMSET, &signals) == -1)
+		return -1;
+	
+	return 1;
 }
 
 /*
