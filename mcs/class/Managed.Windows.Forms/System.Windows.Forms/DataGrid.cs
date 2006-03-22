@@ -1194,6 +1194,9 @@ namespace System.Windows.Forms
 		protected override void OnBindingContextChanged( EventArgs e)
 		{
 			base.OnBindingContextChanged (e);
+
+			current_style.CreateColumnsForTable (false);
+			CalcAreasAndInvalidate ();
 		}
 
 		protected virtual void OnBorderStyleChanged (EventArgs e)
