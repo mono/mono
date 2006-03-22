@@ -843,7 +843,7 @@ namespace System.Web {
 
 #if NET_2_0
 			if (PostAuthenticateRequest != null)
-				foreach (bool stop in RunHooks (AuthenticateRequest))
+				foreach (bool stop in RunHooks (PostAuthenticateRequest))
 					yield return stop;
 #endif
 			if (AuthorizeRequest != null)
