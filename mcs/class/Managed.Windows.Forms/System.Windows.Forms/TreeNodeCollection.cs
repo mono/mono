@@ -161,6 +161,8 @@ namespace System.Windows.Forms {
 			TreeView tree_view = null;
 			if (owner != null) {
 				tree_view = owner.TreeView;
+				if (owner.IsRoot)
+					tree_view.top_node = null;
 				if (tree_view != null)
 					tree_view.UpdateBelow (owner);
 			}

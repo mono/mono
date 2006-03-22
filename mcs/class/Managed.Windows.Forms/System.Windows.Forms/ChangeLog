@@ -2,6 +2,8 @@
 
 	* TabControl.cs: Remove the call to ProcessKeyEventArgs and let
 	control handle this.
+	* TreeNodeCollection.cs: If we are clearing the root node we need
+	to reset top_node so calcs can still happen.
 
 2006-03-21  Jackson Harper  <jackson@ximian.com>
 
