@@ -108,7 +108,7 @@ namespace System.Windows.Forms
 		#region OwnerDraw Support
 		public  override void DrawOwnerDrawBackground (DrawItemEventArgs e)
 		{
-			if (e.State == DrawItemState.Selected) {
+			if ((e.State & DrawItemState.Selected) == DrawItemState.Selected) {
 				e.Graphics.FillRectangle (SystemBrushes.Highlight, e.Bounds);
 				return;
 			}
@@ -1394,7 +1394,7 @@ namespace System.Windows.Forms
 				back_color = e.BackColor;
 				fore_color = e.ForeColor;
 			}
-			
+
 			e.Graphics.FillRectangle (ResPool.GetSolidBrush
 				(back_color), e.Bounds);
 

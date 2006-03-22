@@ -4,7 +4,9 @@
 	control handle this.
 	* TreeNodeCollection.cs: If we are clearing the root node we need
 	to reset top_node so calcs can still happen.
-
+	* ThemeWin32Classic.cs: This is a Flags so we need to check
+	properly.
+	
 2006-03-21  Jackson Harper  <jackson@ximian.com>
 
 	* DataGrid.cs: Create columns when the binding context has been
