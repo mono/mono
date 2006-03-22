@@ -156,7 +156,6 @@ namespace System.Windows.Forms {
 			searchSaveLabel.FlatStyle = FlatStyle.System;
 			searchSaveLabel.Location = new Point (7, 8);
 			searchSaveLabel.Size = new Size (72, 21);
-			searchSaveLabel.TabIndex = 0;
 			searchSaveLabel.TextAlign = ContentAlignment.MiddleRight;
 			
 			// dirComboBox
@@ -164,7 +163,7 @@ namespace System.Windows.Forms {
 			dirComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
 			dirComboBox.Location = new Point (99, 8);
 			dirComboBox.Size = new Size (260, 21);
-			dirComboBox.TabIndex = 1;
+			dirComboBox.TabIndex = 0;
 			
 			// smallButtonToolBar
 			smallButtonToolBar.Anchor = ((AnchorStyles)((AnchorStyles.Top | AnchorStyles.Right)));
@@ -183,13 +182,13 @@ namespace System.Windows.Forms {
 			smallButtonToolBar.Location = new Point (372, 6);
 			smallButtonToolBar.ShowToolTips = true;
 			smallButtonToolBar.Size = new Size (140, 28);
-			smallButtonToolBar.TabIndex = 2;
+			smallButtonToolBar.TabIndex = 1;
 			smallButtonToolBar.TextAlign = ToolBarTextAlign.Right;
 			
 			// buttonPanel
 			popupButtonPanel.Dock = DockStyle.None;
 			popupButtonPanel.Location = new Point (7, 37);
-			popupButtonPanel.TabIndex = 3;
+			popupButtonPanel.TabIndex = 2;
 			
 			// mwfFileView
 			mwfFileView.Anchor = ((AnchorStyles)((((AnchorStyles.Top | AnchorStyles.Bottom) | AnchorStyles.Left) | AnchorStyles.Right)));
@@ -201,7 +200,7 @@ namespace System.Windows.Forms {
 			mwfFileView.Columns.Add (" Last Access", 150, HorizontalAlignment.Left);
 			mwfFileView.AllowColumnReorder = true;
 			mwfFileView.MultiSelect = false;
-			mwfFileView.TabIndex = 4;
+			mwfFileView.TabIndex = 3;
 			mwfFileView.FilterIndex = FilterIndex;
 			
 			// fileNameLabel
@@ -209,7 +208,6 @@ namespace System.Windows.Forms {
 			fileNameLabel.FlatStyle = FlatStyle.System;
 			fileNameLabel.Location = new Point (102, 330);
 			fileNameLabel.Size = new Size (70, 21);
-			fileNameLabel.TabIndex = 5;
 			fileNameLabel.Text = "Filename:";
 			fileNameLabel.TextAlign = ContentAlignment.MiddleLeft;
 			
@@ -217,7 +215,7 @@ namespace System.Windows.Forms {
 			fileNameComboBox.Anchor = ((AnchorStyles)(((AnchorStyles.Bottom | AnchorStyles.Left) | AnchorStyles.Right)));
 			fileNameComboBox.Location = new Point (195, 330);
 			fileNameComboBox.Size = new Size (245, 21);
-			fileNameComboBox.TabIndex = 6;
+			fileNameComboBox.TabIndex = 4;
 			fileNameComboBox.Items.Add (" ");
 			
 			// fileTypeLabel
@@ -225,7 +223,6 @@ namespace System.Windows.Forms {
 			fileTypeLabel.FlatStyle = FlatStyle.System;
 			fileTypeLabel.Location = new Point (102, 356);
 			fileTypeLabel.Size = new Size (70, 21);
-			fileTypeLabel.TabIndex = 7;
 			fileTypeLabel.Text = "Filetype:";
 			fileTypeLabel.TextAlign = ContentAlignment.MiddleLeft;
 			
@@ -233,7 +230,7 @@ namespace System.Windows.Forms {
 			fileTypeComboBox.Anchor = ((AnchorStyles)(((AnchorStyles.Bottom | AnchorStyles.Left) | AnchorStyles.Right)));
 			fileTypeComboBox.Location = new Point (195, 356);
 			fileTypeComboBox.Size = new Size (245, 21);
-			fileTypeComboBox.TabIndex = 8;
+			fileTypeComboBox.TabIndex = 5;
 			
 			// backToolBarButton
 			backToolBarButton.ImageIndex = 0;
@@ -278,7 +275,7 @@ namespace System.Windows.Forms {
 			openSaveButton.FlatStyle = FlatStyle.System;
 			openSaveButton.Location = new Point (475, 330);
 			openSaveButton.Size = new Size (72, 21);
-			openSaveButton.TabIndex = 9;
+			openSaveButton.TabIndex = 7;
 			openSaveButton.FlatStyle = FlatStyle.System;
 			
 			// cancelButton
@@ -286,7 +283,7 @@ namespace System.Windows.Forms {
 			cancelButton.FlatStyle = FlatStyle.System;
 			cancelButton.Location = new Point (475, 356);
 			cancelButton.Size = new Size (72, 21);
-			cancelButton.TabIndex = 10;
+			cancelButton.TabIndex = 8;
 			cancelButton.Text = "Cancel";
 			cancelButton.FlatStyle = FlatStyle.System;
 			
@@ -295,7 +292,7 @@ namespace System.Windows.Forms {
 			helpButton.FlatStyle = FlatStyle.System;
 			helpButton.Location = new Point (475, 350);
 			helpButton.Size = new Size (72, 21);
-			helpButton.TabIndex = 11;
+			helpButton.TabIndex = 9;
 			helpButton.Text = "Help";
 			helpButton.FlatStyle = FlatStyle.System;
 			
@@ -304,8 +301,8 @@ namespace System.Windows.Forms {
 			readonlyCheckBox.Text = "Open Readonly";
 			readonlyCheckBox.Location = new Point (195, 350);
 			readonlyCheckBox.Size = new Size (245, 21);
+			readonlyCheckBox.TabIndex = 6;
 			readonlyCheckBox.FlatStyle = FlatStyle.System;
-			readonlyCheckBox.TabIndex = 12;
 			
 			form.ContextMenu = contextMenu;
 			
@@ -620,6 +617,9 @@ namespace System.Windows.Forms {
 		protected  override bool RunDialog (IntPtr hWndOwner)
 		{
 			form.Refresh ();
+			
+			fileNameComboBox.Select ();
+			
 			return true;
 		}
 		

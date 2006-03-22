@@ -1,5 +1,10 @@
 2006-03-22  Alexander Olk  <alex.olk@googlemail.com>
 
+	* FileDialog.cs: Corrected TabIndex order and set fileNameComboBox
+	  to be focused/selected after startup
+
+2006-03-22  Alexander Olk  <alex.olk@googlemail.com>
+
 	* ColorDialog.cs: 
 	  - Corrected behaviour of Color, AllowFullOpen, FullOpen,
 	    CustomColors and ShowHelp properties
