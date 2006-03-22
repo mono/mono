@@ -40,6 +40,10 @@ using System.Runtime.InteropServices;
 using System.Globalization;
 using Microsoft.VisualBasic.CompilerServices;
 
+#if ONLY_1_1
+using DefaultParameterValueAttribute = Microsoft.VisualBasic.CompilerServices.__DefaultParameterValueAttribute;
+#endif
+
 namespace Microsoft.VisualBasic
 {
 	[StandardModule] 
@@ -230,7 +234,7 @@ namespace Microsoft.VisualBasic
 		}
 
 		public static System.Int32 UBound (System.Array Array, 
-						   [Optional, __DefaultArgumentValue(1)] 
+						   [Optional, DefaultParameterValue(1)] 
 						   System.Int32 Rank) 
 		{ 
 			Exception e;
@@ -254,7 +258,7 @@ namespace Microsoft.VisualBasic
 		}
 
 		public static System.Int32 LBound (System.Array Array, 
-						   [Optional, __DefaultArgumentValue(1)] 
+						   [Optional, DefaultParameterValue(1)] 
 						   System.Int32 Rank) 
 		{ 
 			Exception e;

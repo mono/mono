@@ -35,6 +35,10 @@ using System;
 using System.Runtime.InteropServices;
 using Microsoft.VisualBasic.CompilerServices;
 
+#if ONLY_1_1
+using DefaultParameterValueAttribute = Microsoft.VisualBasic.CompilerServices.__DefaultParameterValueAttribute;
+#endif
+
 namespace Microsoft.VisualBasic
 {
 	[StandardModule] 
@@ -45,7 +49,7 @@ namespace Microsoft.VisualBasic
 		// Properties
 		// Methods
 		public static double DDB (double Cost, double Salvage, double Life, double Period, 
-					  [Optional, __DefaultArgumentValue(2)] double Factor)
+					  [Optional, DefaultParameterValue(2.0)] double Factor)
 		{ 
 			// LAMESPEC: MSDN says Life and Factor only throws exception if < 0, but Implementation throws exception if <= 0
 			if (Cost < 0
@@ -60,8 +64,8 @@ namespace Microsoft.VisualBasic
 		}
 		
 		public static double FV (double Rate, double NPer, double Pmt, 
-					 [Optional, __DefaultArgumentValue(0)] double PV, 
-					 [Optional, __DefaultArgumentValue(0)] DueDate Due)
+					 [Optional, DefaultParameterValue(0.0)] double PV, 
+					 [Optional, __DefaultParameterValue(0)] DueDate Due)
 		{ 
 			Pmt = -Pmt;
 			PV = -PV;
@@ -80,8 +84,8 @@ namespace Microsoft.VisualBasic
 		}
 		
 		public static double IPmt (double Rate, double Per, double NPer, double PV, 
-					   [Optional, __DefaultArgumentValue(0)] double FV, 
-					   [Optional, __DefaultArgumentValue(0)] DueDate Due)
+					   [Optional, DefaultParameterValue(0.0)] double FV, 
+					   [Optional, __DefaultParameterValue(0)] DueDate Due)
 		{ 
 			double totalFutureVal;
 			double totalPaymentValue;
@@ -103,7 +107,7 @@ namespace Microsoft.VisualBasic
 			return (totalFutureVal * Rate);
 		}
 		
-		public static double IRR (ref double[] ValueArray, [Optional, __DefaultArgumentValue(0.1)] double Guess) 
+		public static double IRR (ref double[] ValueArray, [Optional, DefaultParameterValue(0.1)] double Guess) 
 		{ 
 			double origPV, updatedPV, updateGuess, tmp;
 			double rateDiff = 0.0;
@@ -206,8 +210,8 @@ namespace Microsoft.VisualBasic
 		}
 		
 		public static double NPer (double Rate, double Pmt, double PV, 
-					   [Optional, __DefaultArgumentValue(0)] double FV, 
-					   [Optional, __DefaultArgumentValue(0)] DueDate Due)
+					   [Optional, DefaultParameterValue(0.0)] double FV, 
+					   [Optional, __DefaultParameterValue(0)] DueDate Due)
 		{ 
 			double totalIncomeFromFlow, sumOfPvAndPayment, currentValueOfPvAndPayment;
 			if (Rate == 0 && Pmt == 0)
@@ -260,8 +264,8 @@ namespace Microsoft.VisualBasic
 		}
 		
 		public static double Pmt (double Rate, double NPer, double PV, 
-					  [Optional, __DefaultArgumentValue(0)] double FV, 
-					  [Optional, __DefaultArgumentValue(0)] DueDate Due)
+					  [Optional, DefaultParameterValue(0.0)] double FV, 
+					  [Optional, __DefaultParameterValue(0)] DueDate Due)
 		{ 
 			PV = -PV;
 			FV = -FV;
@@ -288,8 +292,8 @@ namespace Microsoft.VisualBasic
 		}
 		
 		public static double PPmt (double Rate, double Per, double NPer, double PV, 
-					   [Optional, __DefaultArgumentValue(0)] double FV, 
-					   [Optional, __DefaultArgumentValue(0)] DueDate Due)
+					   [Optional, DefaultParameterValue(0.0)] double FV, 
+					   [Optional, __DefaultParameterValue(0)] DueDate Due)
 		{ 
 			if ((Per <= 0) || (Per >= (NPer + 1)))
 				throw new ArgumentException(Utils.GetResourceString ("PPMT_PerGT0AndLTNPer", "Per"));
@@ -299,8 +303,8 @@ namespace Microsoft.VisualBasic
 		}
 		
 		public static double PV (double Rate, double NPer, double Pmt, 
-					 [Optional, __DefaultArgumentValue(0)] double FV, 
-					 [Optional, __DefaultArgumentValue(0)] DueDate Due)
+					 [Optional, DefaultParameterValue(0.0)] double FV, 
+					 [Optional, __DefaultParameterValue(0)] DueDate Due)
 		{ 
 			Pmt = -Pmt;
 			FV = -FV;
@@ -317,9 +321,9 @@ namespace Microsoft.VisualBasic
 		}
 		
 		public static double Rate (double NPer, double Pmt, double PV, 
-					   [Optional, __DefaultArgumentValue(0)] double FV, 
-					   [Optional, __DefaultArgumentValue(0)] DueDate Due, 
-					   [Optional, __DefaultArgumentValue(0.1)] double Guess)
+					   [Optional, DefaultParameterValue(0.0)] double FV, 
+					   [Optional, __DefaultParameterValue(0)] DueDate Due, 
+					   [Optional, DefaultParameterValue(0.1)] double Guess)
 		{ 
 			double updatedGuess, tmp, origFv, updatedFv;
 			double rateDiff = 0.0;

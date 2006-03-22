@@ -1,3 +1,9 @@
+2006-03-22  Raja R Harinath  <rharinath@novell.com>
+
+	* DefaultParameterValueAttribute.cs: Rename from
+	DefaultArgumentValueAttribute to reflect similarity to .NET2.0
+	attribute with same function.
+
 2006-03-17  Raja R Harinath  <rharinath@novell.com>
 
 	* ProjectData.cs (Finalize): Change into a destructor.

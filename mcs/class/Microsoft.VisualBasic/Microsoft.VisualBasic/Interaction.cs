@@ -40,6 +40,10 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Microsoft.VisualBasic.CompilerServices;
 
+#if ONLY_1_1
+using DefaultParameterValueAttribute = Microsoft.VisualBasic.CompilerServices.__DefaultParameterValueAttribute;
+#endif
+
 //using Windows.Drawing;
 //using System.Windows.Forms;
 
@@ -55,11 +59,11 @@ namespace Microsoft.VisualBasic {
 		// Properties
 		// Methods
 		//[MonoTODO]
-		public static System.Int32 Shell (System.String Pathname, 
-						  [Optional, __DefaultArgumentValue(2)] AppWinStyle Style, 
-						  [Optional, __DefaultArgumentValue(false)] System.Boolean Wait, 
-						  [Optional, __DefaultArgumentValue(-1)] System.Int32 Timeout)
-		{ 
+		public static int Shell (string Pathname, 
+					 [Optional, __DefaultParameterValue(2)] AppWinStyle Style, 
+					 [Optional, DefaultParameterValue(false)] bool Wait, 
+					 [Optional, DefaultParameterValue(-1)] int Timeout)
+		{
 			Process prcs = new Process();
 
 			ProcessWindowStyle PWinStyle = 0;
@@ -123,10 +127,10 @@ namespace Microsoft.VisualBasic {
 			
 		[MonoTODO]
 		public static System.String InputBox (System.String Prompt, 
-						      [Optional, __DefaultArgumentValue("")] System.String Title, 
-						      [Optional, __DefaultArgumentValue("")] System.String DefaultResponse, 
-						      [Optional, __DefaultArgumentValue(-1)] System.Int32 XPos, 
-						      [Optional, __DefaultArgumentValue(-1)] System.Int32 YPos)
+						      [Optional, DefaultParameterValue("")] System.String Title, 
+						      [Optional, DefaultParameterValue("")] System.String DefaultResponse, 
+						      [Optional, DefaultParameterValue(-1)] System.Int32 XPos, 
+						      [Optional, DefaultParameterValue(-1)] System.Int32 YPos)
 		{ 
 			throw new NotImplementedException ();
 		}
@@ -217,8 +221,8 @@ namespace Microsoft.VisualBasic {
 			
 		[MonoTODO]
 		public static void DeleteSetting (System.String AppName, 
-						  [Optional, __DefaultArgumentValue(null)] System.String Section, 
-						  [Optional, __DefaultArgumentValue(null)] System.String Key)
+						  [Optional, DefaultParameterValue(null)] System.String Section, 
+						  [Optional, DefaultParameterValue(null)] System.String Key)
 		{ 
 			throw new NotImplementedException ();
 		}
@@ -233,7 +237,7 @@ namespace Microsoft.VisualBasic {
 		public static System.String GetSetting (System.String AppName, 
 							System.String Section, 
 							System.String Key, 
-							[Optional, __DefaultArgumentValue("")] System.String Default)
+							[Optional, DefaultParameterValue("")] System.String Default)
 		{ 
 			throw new NotImplementedException ();
 		}
@@ -246,14 +250,14 @@ namespace Microsoft.VisualBasic {
 			
 		[MonoTODO]
 		public static System.Object CreateObject (System.String ProgId, 
-							  [Optional, __DefaultArgumentValue("")] System.String ServerName)
+							  [Optional, DefaultParameterValue("")] System.String ServerName)
 		{ 
 			throw new NotImplementedException ();
 		}
 			
 		[MonoTODO]
-		public static System.Object GetObject ([Optional, __DefaultArgumentValue(null)] System.String PathName, 
-						       [Optional, __DefaultArgumentValue(null)] System.String Class)
+		public static System.Object GetObject ([Optional, DefaultParameterValue(null)] System.String PathName, 
+						       [Optional, DefaultParameterValue(null)] System.String Class)
 		{ 
 			throw new NotImplementedException ();
 		}
@@ -375,9 +379,9 @@ namespace Microsoft.VisualBasic {
 		}
 
 		[MonoTODO]
-		public static MsgBoxResult MsgBox (System.Object Prompt, 
-						   [Optional, __DefaultArgumentValue(0)]MsgBoxStyle Buttons, 
-						   [Optional, __DefaultArgumentValue(null)] System.Object Title)
+		public static MsgBoxResult MsgBox (object Prompt, 
+						   [Optional, __DefaultParameterValue(0)]MsgBoxStyle Buttons, 
+						   [Optional, DefaultParameterValue(null)] object Title)
 		{ 
 			throw new NotImplementedException ();
 			/*	//MessageButtons msgBoxButtons = 0;

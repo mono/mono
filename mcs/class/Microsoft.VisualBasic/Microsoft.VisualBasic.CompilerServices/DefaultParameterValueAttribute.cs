@@ -1,5 +1,5 @@
 //
-// Microsoft.VisualBasic.CompilerServices.__DefaultArgumentValueAttribute.cs
+// Microsoft.VisualBasic.CompilerServices.DefaultParameterValueAttribute.cs
 //
 // Authors:
 //   Jambunathan K (kjambunathan@novell.com)
@@ -38,28 +38,28 @@ namespace Microsoft.VisualBasic.CompilerServices
 	// method parameter.
 
 	// This internal attribute:
-	// Microsoft.VisualBasic.CompilerServices.__DefaultArgumentValueAttribute
+	// Microsoft.VisualBasic.CompilerServices.__DefaultParameterValueAttribute
 	// is used to associate a default argument value with a method
 	// parameter. 
 
 	// The compiled Microsoft.VisualBasic.dll assembly is then
 	// post-processed through a "disassemble-fixup-assemble cycle"
-	// which strips off the "__DefaultArgumentValue" custom
+	// which strips off the "__DefaultParameterValue" custom
 	// attribute from the method parameter and replaces it with
 	// the suitable CIL parameter flags and constants.
 
 	[AttributeUsage(AttributeTargets.Parameter)]
-	internal sealed class __DefaultArgumentValueAttribute : Attribute
+	internal sealed class __DefaultParameterValueAttribute : Attribute
 	{
-		public __DefaultArgumentValueAttribute (bool value)   {}
-		public __DefaultArgumentValueAttribute (char value)   {}
-		public __DefaultArgumentValueAttribute (byte value)   {}
-		public __DefaultArgumentValueAttribute (short value)  {}
-		public __DefaultArgumentValueAttribute (int value)    {}
-		public __DefaultArgumentValueAttribute (long value)   {}
-		public __DefaultArgumentValueAttribute (float value)  {}
-		public __DefaultArgumentValueAttribute (double value) {}
-		public __DefaultArgumentValueAttribute (string value) {}
-		public __DefaultArgumentValueAttribute (object value) {}
+		public __DefaultParameterValueAttribute (bool value)   {}
+		public __DefaultParameterValueAttribute (char value)   {}
+		public __DefaultParameterValueAttribute (byte value)   {}
+		public __DefaultParameterValueAttribute (short value)  {}
+		public __DefaultParameterValueAttribute (int value)    {}
+		public __DefaultParameterValueAttribute (long value)   {}
+		public __DefaultParameterValueAttribute (float value)  {}
+		public __DefaultParameterValueAttribute (double value) {}
+		public __DefaultParameterValueAttribute (string value) {}
+		public __DefaultParameterValueAttribute (object value) {}
 	}
 }

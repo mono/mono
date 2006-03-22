@@ -1,3 +1,8 @@
+2006-03-22  Raja R Harinath  <rharinath@novell.com>
+
+	* Microsoft.VisualBasic.dll.sources, fixup/fixup.pl:
+	Update to rename of attribute.
+
 2005-11-21  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (bootstrap_profile): New.  Defines the bootstrap

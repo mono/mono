@@ -37,6 +37,9 @@ using System.Runtime.InteropServices;
 using System.ComponentModel;
 using System.Globalization;
 using Microsoft.VisualBasic.CompilerServices;
+#if ONLY_1_1
+using DefaultParameterValueAttribute = Microsoft.VisualBasic.CompilerServices.__DefaultParameterValueAttribute;
+#endif
 
 namespace Microsoft.VisualBasic 
 {
@@ -213,9 +216,9 @@ namespace Microsoft.VisualBasic
 		
 		public static long DateDiff (DateInterval Interval, 
 			System.DateTime Date1, System.DateTime Date2, 
-			[Optional, __DefaultArgumentValue((int)FirstDayOfWeek.Sunday)] 
+			[Optional, __DefaultParameterValue((int)FirstDayOfWeek.Sunday)]
 			FirstDayOfWeek StartOfWeek, 
-			[Optional, __DefaultArgumentValue((int)FirstWeekOfYear.Jan1)] 
+			[Optional, __DefaultParameterValue((int)FirstWeekOfYear.Jan1)]
 			FirstWeekOfYear StartOfYear) 
 		{
 			
@@ -305,9 +308,9 @@ namespace Microsoft.VisualBasic
 		(
 			Microsoft.VisualBasic.DateInterval Interval, 
 			System.DateTime DateValue, 
-			[Optional, __DefaultArgumentValue((int)FirstDayOfWeek.Sunday)] 
+			[Optional, __DefaultParameterValue((int)FirstDayOfWeek.Sunday)] 
 			FirstDayOfWeek StartOfWeek, 
-			[Optional, __DefaultArgumentValue((int)FirstWeekOfYear.Jan1)] 
+			[Optional, __DefaultParameterValue((int)FirstWeekOfYear.Jan1)] 
 			FirstWeekOfYear StartOfYear) {
 		
 			CalendarWeekRule WeekRule = CalendarWeekRule.FirstDay;
@@ -385,9 +388,9 @@ namespace Microsoft.VisualBasic
 
 		public static System.Int64 DateDiff (string Interval, 
 			System.Object Date1, System.Object Date2, 
-			[Optional, __DefaultArgumentValue((int)FirstDayOfWeek.Sunday)]
+			[Optional, __DefaultParameterValue((int)FirstDayOfWeek.Sunday)]
 			FirstDayOfWeek StartOfWeek, 
-			[Optional, __DefaultArgumentValue((int)FirstWeekOfYear.Jan1)] 
+			[Optional, __DefaultParameterValue((int)FirstWeekOfYear.Jan1)] 
 			FirstWeekOfYear StartOfYear) 
 		{
 			if (Date1 == null) {
@@ -410,9 +413,9 @@ namespace Microsoft.VisualBasic
 
 		public static System.Int32 DatePart (string Interval, 
 			System.Object DateValue, 
-			[Optional, __DefaultArgumentValue((int)FirstDayOfWeek.Sunday)] 
+			[Optional, __DefaultParameterValue((int)FirstDayOfWeek.Sunday)] 
 			FirstDayOfWeek StartOfWeek, 
-			[Optional, __DefaultArgumentValue((int)FirstWeekOfYear.Jan1)] 
+			[Optional, __DefaultParameterValue((int)FirstWeekOfYear.Jan1)] 
 			FirstWeekOfYear StartOfYear) 
 		{
 			if (DateValue == null) {
@@ -548,14 +551,14 @@ namespace Microsoft.VisualBasic
 		}
 
 		public static int Weekday (System.DateTime DateValue, 
-			[Optional, __DefaultArgumentValue((int)FirstDayOfWeek.Sunday)] 
+			[Optional, __DefaultParameterValue((int)FirstDayOfWeek.Sunday)] 
 			FirstDayOfWeek StartOfWeek) 
 		{ 
 			return DatePart(DateInterval.Weekday, DateValue, StartOfWeek, FirstWeekOfYear.System);
 		}
 
 		public static System.String MonthName (int Month, 
-			[Optional, __DefaultArgumentValue(false)] bool Abbreviate) 
+			[Optional, DefaultParameterValue(false)] bool Abbreviate) 
 		{ 
 			if (Month < 1 || Month > 13) {
 				throw new ArgumentException();
@@ -569,8 +572,8 @@ namespace Microsoft.VisualBasic
 		}
 		
 		public static System.String WeekdayName (int Weekday, 
-			[Optional, __DefaultArgumentValue(false)] System.Boolean Abbreviate, 
-			[Optional, __DefaultArgumentValue((int)FirstDayOfWeek.System)] 
+			[Optional, DefaultParameterValue(false)] System.Boolean Abbreviate, 
+			[Optional, __DefaultParameterValue((int)FirstDayOfWeek.System)] 
 			FirstDayOfWeek FirstDayOfWeekValue) 
 		{ 
 			if (Weekday < 1 || Weekday > 7) {

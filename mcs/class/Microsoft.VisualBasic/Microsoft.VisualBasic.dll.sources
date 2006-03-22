@@ -72,4 +72,4 @@ Microsoft.VisualBasic.CompilerServices/StringType.cs
 Microsoft.VisualBasic.CompilerServices/Utils.cs
 Microsoft.VisualBasic.CompilerServices/VBBinder.cs
 Microsoft.VisualBasic.CompilerServices/VBErrors.cs
-Microsoft.VisualBasic.CompilerServices/DefaultArgumentValueAttribute.cs
+Microsoft.VisualBasic.CompilerServices/DefaultParameterValueAttribute.cs

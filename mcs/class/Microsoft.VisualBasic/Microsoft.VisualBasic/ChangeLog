@@ -1,3 +1,15 @@
+2006-03-22  Raja R Harinath  <rharinath@novell.com>
+
+	* Collection.cs (DefaultParameterValueAttribute) [ONLY_1_1]:
+	Alias to __DefaultParameterValueAttribute.
+	(*): Change __DefaultArgumentValue to DefaultParameterValue or
+	__DefaultParameterValue as appropriate.  The '__' variant is used
+	if the type of the default value doesn't match the parameter type,
+	which is probably an enum type.
+	* DateAndTime.cs, ErrObject.cs, FileSystem.cs: Likewise.
+	* Financial.cs, Information.cs, Interaction.cs: Likewise.
+	* Strings.cs: Likewise.
+
 2005-10-27  Alexandre Rocha Lima e Marcondes  <alexandre@psl-pr.softwarelivre.org>
 	* FileSystem.cs : ChdDrive throws InvalidOperationException on Unix platforms.
 	

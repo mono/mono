@@ -49,6 +49,10 @@ using System.Globalization;
 using System.Runtime.InteropServices;
 using Microsoft.VisualBasic.CompilerServices;
 
+#if ONLY_1_1
+using DefaultParameterValueAttribute = Microsoft.VisualBasic.CompilerServices.__DefaultParameterValueAttribute;
+#endif
+
 namespace Microsoft.VisualBasic
 {
 	[StandardModule] 
@@ -140,9 +144,9 @@ namespace Microsoft.VisualBasic
 
 		public static string[] Filter(object[] Source, 
 					      string Match, 
-					      [Optional, __DefaultArgumentValue(true)] 
+					      [Optional, DefaultParameterValue(true)] 
 					      bool Include,
-					      [Optional, __DefaultArgumentValue((int)CompareMethod.Binary), OptionCompare] 
+					      [Optional, __DefaultParameterValue((int)CompareMethod.Binary), OptionCompare] 
 					      CompareMethod Compare)
 		{
 			if (Source == null)
@@ -160,9 +164,9 @@ namespace Microsoft.VisualBasic
 
 		public static string[] Filter(string[] Source, 
 					      string Match, 
-					      [Optional, __DefaultArgumentValue(true)] 
+					      [Optional, DefaultParameterValue(true)] 
 					      bool Include,
-					      [Optional, __DefaultArgumentValue((int)CompareMethod.Binary)] 
+					      [Optional, __DefaultParameterValue((int)CompareMethod.Binary)] 
 					      CompareMethod Compare)
 		{
 			if (Source == null)
@@ -225,7 +229,7 @@ namespace Microsoft.VisualBasic
 		}
 
 		public static string Format(object expression, 
-					    [Optional, __DefaultArgumentValue("")]string style)
+					    [Optional, DefaultParameterValue("")]string style)
 		{
 			string returnstr=null;
 			string expstring=expression.GetType().ToString();
@@ -362,13 +366,13 @@ namespace Microsoft.VisualBasic
 		}
 
 		public static string FormatCurrency(object Expression, 
-						    [Optional, __DefaultArgumentValue(-1)] 
+						    [Optional, DefaultParameterValue(-1)] 
 						    int NumDigitsAfterDecimal, 
-						    [Optional, __DefaultArgumentValue((int)TriState.UseDefault)] 
+						    [Optional, __DefaultParameterValue((int)TriState.UseDefault)] 
 						    TriState IncludeLeadingDigit, 
-						    [Optional, __DefaultArgumentValue((int)TriState.UseDefault)] 
+						    [Optional, __DefaultParameterValue((int)TriState.UseDefault)] 
 						    TriState UseParensForNegativeNumbers, 
-						    [Optional, __DefaultArgumentValue((int)TriState.UseDefault)] 
+						    [Optional, __DefaultParameterValue((int)TriState.UseDefault)] 
 						    TriState GroupDigits)
 		{
 			if (NumDigitsAfterDecimal > 99 || NumDigitsAfterDecimal < -1 )
@@ -425,7 +429,7 @@ namespace Microsoft.VisualBasic
 		}
 
 		public static string FormatDateTime(DateTime Expression, 
-						    [Optional, __DefaultArgumentValue((int)DateFormat.GeneralDate)] 
+						    [Optional, __DefaultParameterValue((int)DateFormat.GeneralDate)] 
 						    DateFormat NamedFormat)
 		{
 			switch(NamedFormat) {
@@ -445,13 +449,13 @@ namespace Microsoft.VisualBasic
 		}
 
 		public static string FormatNumber(object Expression, 
-						  [Optional, __DefaultArgumentValue(-1)] 
+						  [Optional, DefaultParameterValue(-1)] 
 						  int NumDigitsAfterDecimal, 
-						  [Optional, __DefaultArgumentValue((int)TriState.UseDefault)] 
+						  [Optional, __DefaultParameterValue((int)TriState.UseDefault)] 
 						  TriState IncludeLeadingDigit, 
-						  [Optional, __DefaultArgumentValue((int)TriState.UseDefault)] 
+						  [Optional, __DefaultParameterValue((int)TriState.UseDefault)] 
 						  TriState UseParensForNegativeNumbers, 
-						  [Optional, __DefaultArgumentValue((int)TriState.UseDefault)] 
+						  [Optional, __DefaultParameterValue((int)TriState.UseDefault)] 
 						  TriState GroupDigits)
 		{
 			if (NumDigitsAfterDecimal > 99 || NumDigitsAfterDecimal < -1 )
@@ -529,13 +533,13 @@ namespace Microsoft.VisualBasic
 		}
 
 		public static string FormatPercent(object Expression, 
-						   [Optional, __DefaultArgumentValue(-1)] 
+						   [Optional, DefaultParameterValue(-1)] 
 						   int NumDigitsAfterDecimal, 
-						   [Optional, __DefaultArgumentValue((int)TriState.UseDefault)] 
+						   [Optional, __DefaultParameterValue((int)TriState.UseDefault)] 
 						   TriState IncludeLeadingDigit, 
-						   [Optional, __DefaultArgumentValue((int)TriState.UseDefault)] 
+						   [Optional, __DefaultParameterValue((int)TriState.UseDefault)] 
 						   TriState UseParensForNegativeNumbers, 
-						   [Optional, __DefaultArgumentValue((int)TriState.UseDefault)] 
+						   [Optional, __DefaultParameterValue((int)TriState.UseDefault)] 
 						   TriState GroupDigits)
 		{
 			if (NumDigitsAfterDecimal > 99 || NumDigitsAfterDecimal < -1 )
@@ -626,7 +630,7 @@ namespace Microsoft.VisualBasic
 
 		public static int InStr(string String1, 
 					string String2, 
-					[Optional, __DefaultArgumentValue((int)CompareMethod.Binary), OptionCompare] 
+					[Optional, __DefaultParameterValue((int)CompareMethod.Binary), OptionCompare] 
 					CompareMethod Compare)
 		{
 			return InStr(1, String1, String2, Compare);
@@ -635,7 +639,7 @@ namespace Microsoft.VisualBasic
 		public static int InStr(int Start, 
 					string String1, 
 					string String2, 
-					[Optional, __DefaultArgumentValue((int)CompareMethod.Binary), OptionCompare] 
+					[Optional, __DefaultParameterValue((int)CompareMethod.Binary), OptionCompare] 
 					CompareMethod Compare)
 		{
 			if (Start < 1)
@@ -667,9 +671,9 @@ namespace Microsoft.VisualBasic
 
 		public static int InStrRev(string StringCheck, 
 					   string StringMatch, 
-					   [Optional, __DefaultArgumentValue(-1)] 
+					   [Optional, DefaultParameterValue(-1)] 
 					   int Start,
-					   [Optional, __DefaultArgumentValue((int)CompareMethod.Binary), OptionCompare] 
+					   [Optional, __DefaultParameterValue((int)CompareMethod.Binary), OptionCompare] 
 					   CompareMethod Compare)
 		{
 			if ((Start == 0) || (Start < -1))
@@ -698,7 +702,7 @@ namespace Microsoft.VisualBasic
 		}
 
 		public static string Join(string[] SourceArray, 
-					  [Optional, __DefaultArgumentValue(" ")] 
+					  [Optional, DefaultParameterValue(" ")] 
 					  string Delimiter)
 		{
 			if (SourceArray == null)
@@ -710,7 +714,7 @@ namespace Microsoft.VisualBasic
 		}
 
 		public static string Join(object[] SourceArray, 
-					  [Optional, __DefaultArgumentValue(" ")] 
+					  [Optional, DefaultParameterValue(" ")] 
 					  string Delimiter)
 		{
 			try 
@@ -938,11 +942,11 @@ namespace Microsoft.VisualBasic
 		public static string Replace(string Expression, 
 					     string Find, 
 					     string Replacement, 
-					     [Optional, __DefaultArgumentValue(1)] 
+					     [Optional, DefaultParameterValue(1)] 
 					     int Start,
-					     [Optional, __DefaultArgumentValue(-1)] 
+					     [Optional, DefaultParameterValue(-1)] 
 					     int Count,
-					     [Optional, __DefaultArgumentValue((int)CompareMethod.Binary), OptionCompare] 
+					     [Optional, __DefaultParameterValue((int)CompareMethod.Binary), OptionCompare] 
 					     CompareMethod Compare)
 		{
 
@@ -999,11 +1003,11 @@ namespace Microsoft.VisualBasic
 		}
 
 		public static string[] Split(string Expression, 
-					     [Optional, __DefaultArgumentValue(" ")] 
+					     [Optional, DefaultParameterValue(" ")] 
 					     string Delimiter,
-					     [Optional, __DefaultArgumentValue(-1)] 
+					     [Optional, DefaultParameterValue(-1)] 
 					     int Limit,
-					     [Optional, __DefaultArgumentValue((int)CompareMethod.Binary), OptionCompare] 
+					     [Optional, __DefaultParameterValue((int)CompareMethod.Binary), OptionCompare] 
 					     CompareMethod Compare)
 		{
 			if (Expression == null)
@@ -1057,7 +1061,7 @@ namespace Microsoft.VisualBasic
 
 		public static int StrComp(string String1, 
 					  string String2,
-					  [Optional, __DefaultArgumentValue((int)CompareMethod.Binary), OptionCompare] 
+					  [Optional, __DefaultParameterValue((int)CompareMethod.Binary), OptionCompare] 
 					  CompareMethod Compare)
 		{
 			if (String1 == null)
@@ -1079,7 +1083,7 @@ namespace Microsoft.VisualBasic
 
 		public static string StrConv (string str, 
 					      VbStrConv Conversion, 
-					      [Optional, __DefaultArgumentValue(0)]
+					      [Optional, DefaultParameterValue(0)]
 					      int LocaleID)
 		{
 			if (str == null)

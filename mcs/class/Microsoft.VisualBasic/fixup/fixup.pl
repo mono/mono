@@ -55,7 +55,7 @@ while (<>) {
 	}
 	last if !/.custom/;
 	
-	if (/\.custom instance void\s+(?:class\s+)?Microsoft\.VisualBasic\.CompilerServices\.__DefaultArgumentValueAttribute.*\.ctor\s*\(([^)]*)\)\s*=\s*\(\s*01\s+00\s+([^)]*)\s+00\s+00\s*\)/) {
+	if (/\.custom instance void\s+(?:class\s+)?Microsoft\.VisualBasic\.CompilerServices\.__DefaultParameterValueAttribute.*\.ctor\s*\(([^)]*)\)\s*=\s*\(\s*01\s+00\s+([^)]*)\s+00\s+00\s*\)/) {
     	    my @str = split (/ /, $2);
 	    if ($1 =~ /string/) {
 		# FIXME: Assumes length < 0x80.

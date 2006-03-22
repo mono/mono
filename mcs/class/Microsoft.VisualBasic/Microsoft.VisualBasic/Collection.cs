@@ -33,8 +33,9 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections;
 using System.ComponentModel;
-using Microsoft.VisualBasic.CompilerServices;
-
+#if ONLY_1_1
+using DefaultParameterValueAttribute = Microsoft.VisualBasic.CompilerServices.__DefaultParameterValueAttribute;
+#endif
 
 namespace Microsoft.VisualBasic {
 	sealed public class Collection : ICollection, IList {
@@ -338,9 +339,9 @@ namespace Microsoft.VisualBasic {
 		}
 
 		public void Add (System.Object Item, 
-			[Optional, __DefaultArgumentValue(null)] String Key, 
-			[Optional, __DefaultArgumentValue(null)] System.Object Before, 
-			[Optional, __DefaultArgumentValue(null)] System.Object After)
+			[Optional, DefaultParameterValue(null)] String Key, 
+			[Optional, DefaultParameterValue(null)] System.Object Before, 
+			[Optional, DefaultParameterValue(null)] System.Object After)
 		{
 			int Position = int.MinValue;
 			

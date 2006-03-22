@@ -38,6 +38,11 @@ using System.Runtime.InteropServices;
 using Microsoft.VisualBasic.CompilerServices;
 using System.Diagnostics;
 
+#if ONLY_1_1
+using DefaultParameterValueAttribute = Microsoft.VisualBasic.CompilerServices.__DefaultParameterValueAttribute;
+#endif
+
+
 namespace Microsoft.VisualBasic 
 {
 	sealed public class ErrObject {
@@ -241,10 +246,10 @@ namespace Microsoft.VisualBasic
 
 		[MonoTODO]
 		public void Raise (System.Int32 Number, 
-				   [Optional, __DefaultArgumentValue(null)] System.Object Source, 
-				   [Optional, __DefaultArgumentValue(null)] System.Object Description, 
-				   [Optional, __DefaultArgumentValue(null)] System.Object HelpFile, 
-				   [Optional, __DefaultArgumentValue(null)] System.Object HelpContext) 
+				   [Optional, DefaultParameterValue(null)] System.Object Source, 
+				   [Optional, DefaultParameterValue(null)] System.Object Description, 
+				   [Optional, DefaultParameterValue(null)] System.Object HelpFile, 
+				   [Optional, DefaultParameterValue(null)] System.Object HelpContext) 
 		{ 
 			Exception e;
 			
