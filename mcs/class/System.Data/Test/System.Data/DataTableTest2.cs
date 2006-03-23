@@ -422,6 +422,25 @@ namespace MonoTests_System.Data
 			}
 		}
 
+		[Test]
+		public void EndLoadData_MergeDuplcateValues ()
+		{
+			DataTable table = new DataTable ();
+			table.Columns.Add ("col1", typeof (int));
+			table.Columns.Add ("col2", typeof (int));
+
+			table.PrimaryKey = new DataColumn[] {table.Columns [0]};
+
+			table.BeginLoadData ();
+			table.LoadDataRow (new object[] {1 , 1}, false);
+			table.LoadDataRow (new object[] {1 , 10}, false);
+			table.LoadDataRow (new object[] {1 , 100}, false);
+			table.EndLoadData ();
+
+			Assert.AreEqual (1, table.Rows.Count, "#1");
+			Assert.AreEqual (100, table.Rows [0][1], "#2");
+		}
+
 		[Test] public void GetChanges()
 		{
 			DataTable dt1,dt2 = DataProvider.CreateParentDataTable();

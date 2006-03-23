@@ -225,7 +225,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("NotWorking")]
 		public void FindByKey_DuringDataLoad ()
 		{
 			DataTable table = new DataTable ();

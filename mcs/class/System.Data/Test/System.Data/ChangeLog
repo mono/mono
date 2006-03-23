@@ -1,3 +1,10 @@
+2006-03-23  Senganal T <tsenganal@novell.com>
+
+	* DataTableTest2.cs :
+		- Ensure duplicate rows are merged when using LoadDataRow
+	* DataRowCollectionTest2.cs :
+		- Ensure row can be searched using Find (), when added using LoadDataRow
+
 2006-03-22  Senganal T <tsenganal@novell.com>
 
 	* DataColumnTest2.cs :

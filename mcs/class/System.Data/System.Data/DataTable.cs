@@ -1203,6 +1203,7 @@ namespace System.Data {
 				if (existingRecord < 0) {
 					row = NewRowFromBuilder (RowBuilder);
 					row.Proposed = newRecord;
+					AddRowToIndexes (row);
 					Rows.AddInternal(row);
 				}
 				else {
@@ -1210,7 +1211,6 @@ namespace System.Data {
 					row.BeginEdit();
 					row.ImportRecord(newRecord);
 					row.EndEdit();
-					
 				}
 				
 				if (fAcceptChanges)

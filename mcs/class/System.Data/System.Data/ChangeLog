@@ -1,3 +1,8 @@
+2006-03-23  Senganal T  <tsenganal@novell.com>
+
+	* DataTable.cs : 
+		- LoadDataRow : Add the row to the indexes, when loading a new row.
+
 2006-03-22  Senganal T  <tsenganal@novell.com>
 
 	* DataTable.cs :
