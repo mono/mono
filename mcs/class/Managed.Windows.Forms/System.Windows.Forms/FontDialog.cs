@@ -706,6 +706,8 @@ namespace System.Windows.Forms
 				
 				UpdateFontSizeListBox ();
 				
+				UpdateExamplePanel ();
+				
 				form.Select(fontTextBox);
 				
 				internal_change = false;

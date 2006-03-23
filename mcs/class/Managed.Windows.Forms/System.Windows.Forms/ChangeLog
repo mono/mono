@@ -1,5 +1,10 @@
 2006-03-23  Alexander Olk  <alex.olk@googlemail.com>
 
+	* FontDialog.cs: Update the example panel if the selected index of
+	  the fontListBox changes.
+
+2006-03-23  Alexander Olk  <alex.olk@googlemail.com>
+
 	* FileDialog.cs: Make FileDialog remember which directory it was in
 	  last in the same execution.
 
