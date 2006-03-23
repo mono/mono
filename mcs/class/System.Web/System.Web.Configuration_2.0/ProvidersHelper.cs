@@ -27,12 +27,13 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
-using System.Configuration;
-
 #if NET_2_0
 
+using System;
+using System.Configuration;
 using System.Configuration.Provider;
+using System.Data.Common;
+using System.Data.SqlClient;
 
 namespace System.Web.Configuration {
 
@@ -61,6 +62,22 @@ namespace System.Web.Configuration {
 
 			foreach (ProviderSettings settings in configProviders)
 				providers.Add (InstantiateProvider (settings, providerType));
+		}
+
+		internal static DbProviderFactory GetDbProviderFactory (string providerName)
+		{
+			DbProviderFactory f = null;
+
+			if (providerName != null && providerName != "") {
+				try {
+					f = DbProviderFactories.GetFactory(providerName);
+				}
+				catch (Exception e) { Console.WriteLine (e); /* nada */ }
+				if (f != null)
+					return f;
+			}
+
+			return SqlClientFactory.Instance;
 		}
 	}
 
