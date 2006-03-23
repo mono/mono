@@ -641,7 +641,7 @@ attribute
 				      "'<' unexpected: attributes cannot be generic");
 		}
 
-		ArrayList arguments = (ArrayList) $2;
+		object [] arguments = (object []) $2;
 		MemberName left = mname.Left;
 		string identifier = mname.Name;
 
@@ -675,29 +675,18 @@ attribute_arguments
 		if ($1 == null)
 			$$ = null;
 		else {
-			ArrayList args = new ArrayList (4);
-			args.Add ($1);
-		
-			$$ = args;
+			$$ = new object [] { $1, null };
 		}
 	  }
-        | positional_argument_list COMMA named_argument_list
+    | positional_argument_list COMMA named_argument_list
 	  {
-		ArrayList args = new ArrayList (4);
-		args.Add ($1);
-		args.Add ($3);
-
-		$$ = args;
+		$$ = new object[] { $1, $3 };
 	  }
-        | named_argument_list
+    | named_argument_list
 	  {
-		ArrayList args = new ArrayList (4);
-		args.Add (null);
-		args.Add ($1);
-		
-		$$ = args;
+		$$ = new object [] { null, $1 };
 	  }
-        ;
+    ;
 
 
 opt_positional_argument_list

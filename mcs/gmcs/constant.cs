@@ -39,6 +39,12 @@ namespace Mono.CSharp {
 			return this.GetType ().Name + " (" + AsString () + ")";
 		}
 
+		public override bool GetAttributableValue (out object value)
+		{
+			value = GetTypedValue ();
+			return true;
+		}
+
 		/// <summary>
 		///  This is used to obtain the actual value of the literal
 		///  cast into an object.
@@ -233,6 +239,10 @@ namespace Mono.CSharp {
 				throw new OverflowException ();
 		}
 
+		/// <summary>
+		/// Maybe ConvertTo name is better. It tries to convert `this' constant to target_type.
+		/// It throws OverflowException 
+		/// </summary>
 		public abstract Constant Reduce (EmitContext ec, Type target_type);
 
 		/// <summary>
@@ -244,11 +254,9 @@ namespace Mono.CSharp {
 				return  TryReduce (ec, target_type);
 			}
 			catch (OverflowException) {
-				if (ec.ConstantCheckState) {
-					Report.Error (221, loc, "Constant value `{0}' cannot be converted to a `{1}' (use `unchecked' syntax to override)",
-						GetValue ().ToString (), TypeManager.CSharpName (target_type));
-				}
-				return null;
+				Report.Error (221, loc, "Constant value `{0}' cannot be converted to a `{1}' (use `unchecked' syntax to override)",
+					GetValue ().ToString (), TypeManager.CSharpName (target_type));
+				throw;
 			}
 		}
 

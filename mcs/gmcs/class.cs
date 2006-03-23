@@ -4357,7 +4357,7 @@ namespace Mono.CSharp {
 			if ((RootContext.WarningLevel >= 4) && ((Parent.ModFlags & Modifiers.SEALED) != 0 && (ModFlags & Modifiers.PROTECTED) != 0)) {
 				Report.Warning (628, 4, Location, "`{0}': new protected member declared in sealed class", GetSignatureForError ());
 			}
-			
+
 			return true;
 		}
 		
@@ -4414,7 +4414,7 @@ namespace Mono.CSharp {
 				}
 				ConstructorBuilder.SetImplementationFlags (MethodImplAttributes.InternalCall);
 			}
-			
+
 			TypeManager.AddMethod (ConstructorBuilder, this);
 
 			return true;
@@ -6525,6 +6525,7 @@ namespace Mono.CSharp {
 			if (!Set.IsDummy)
 				PropertyBuilder.SetSetMethod (SetBuilder);
 
+			TypeManager.RegisterProperty (PropertyBuilder, this);
 			return true;
 		}
 	}

@@ -243,7 +243,9 @@ public partial class TypeManager {
 	public static Hashtable AllClsTopLevelTypes;
 
 	static Hashtable fieldbuilders_to_fields;
+	static Hashtable propertybuilder_to_property;
 	static Hashtable fields;
+	static Hashtable events;
 
 	static PtrHashtable assembly_internals_vis_attrs;
 
@@ -266,8 +268,8 @@ public partial class TypeManager {
 		fieldbuilders_to_fields = null;
 		events = null;
 		priv_fields_events = null;
-
 		type_hash = null;
+		propertybuilder_to_property = null;
 
 		assembly_internals_vis_attrs = null;
 		
@@ -365,6 +367,7 @@ public partial class TypeManager {
 		builder_to_ifaces = new PtrHashtable ();
 		
 		fieldbuilders_to_fields = new Hashtable ();
+		propertybuilder_to_property = new Hashtable ();
 		fields = new Hashtable ();
 		type_hash = new DoubleHash ();
 
@@ -1874,6 +1877,16 @@ public partial class TypeManager {
 		return (IConstant)fields [fb];
 	}
 
+	public static void RegisterProperty (PropertyInfo pi, PropertyBase pb)
+	{
+		propertybuilder_to_property.Add (pi, pb);
+	}
+
+	public static PropertyBase GetProperty (PropertyInfo pi)
+	{
+		return (PropertyBase)propertybuilder_to_property [pi];
+	}
+
 	static public bool RegisterFieldBase (FieldBuilder fb, FieldBase f)
 	{
 		if (fieldbuilders_to_fields.Contains (fb))
@@ -1894,8 +1907,6 @@ public partial class TypeManager {
 		return (FieldBase) fieldbuilders_to_fields [fb];
 	}
 	
-	static Hashtable events;
-
 	static public void RegisterEvent (MyEventBuilder eb, MethodBase add, MethodBase remove)
 	{
 		if (events == null)

@@ -83,7 +83,8 @@ namespace Mono.CSharp {
 		public readonly Expression LeftExpr;
 		public readonly string Identifier;
 
-		public readonly ArrayList Arguments;
+		readonly ArrayList PosArguments;
+		readonly ArrayList NamedArguments;
 
 		public readonly Location Location;
 
@@ -93,8 +94,9 @@ namespace Mono.CSharp {
 		readonly bool nameEscaped;
 		Attributable owner;
 
-		static AttributeUsageAttribute DefaultUsageAttribute = new AttributeUsageAttribute (AttributeTargets.All);
+		static readonly AttributeUsageAttribute DefaultUsageAttribute = new AttributeUsageAttribute (AttributeTargets.All);
 		static Assembly orig_sec_assembly;
+		public static readonly object[] EmptyObject = new object [0];
 
 		// non-null if named args present after Resolve () is called
 		PropertyInfo [] prop_info_arr;
@@ -104,13 +106,19 @@ namespace Mono.CSharp {
 		object [] pos_values;
 
 		static PtrHashtable usage_attr_cache = new PtrHashtable ();
+
+		// Cache for parameter-less attributes
+		static PtrHashtable att_cache = new PtrHashtable ();
 		
-		public Attribute (string target, Expression left_expr, string identifier, ArrayList args, Location loc, bool nameEscaped)
+		public Attribute (string target, Expression left_expr, string identifier, object[] args, Location loc, bool nameEscaped)
 		{
 			LeftExpr = left_expr;
 			Identifier = identifier;
 			Name = LeftExpr == null ? identifier : LeftExpr + "." + identifier;
-			Arguments = args;
+			if (args != null) {
+				PosArguments = (ArrayList)args [0];
+				NamedArguments = (ArrayList)args [1];				
+			}
 			Location = loc;
 			ExplicitTarget = target;
 			this.nameEscaped = nameEscaped;
@@ -135,16 +143,11 @@ namespace Mono.CSharp {
 				      "attribute parameter type", name);
 		}
 
-		static void Error_AttributeArgumentNotValid (string extra, Location loc)
+		public static void Error_AttributeArgumentNotValid (Location loc)
 		{
 			Report.Error (182, loc,
 				      "An attribute argument must be a constant expression, typeof " +
-				      "expression or array creation expression" + extra);
-		}
-
-		static void Error_AttributeArgumentNotValid (Location loc)
-		{
-			Error_AttributeArgumentNotValid ("", loc);
+				      "expression or array creation expression");
 		}
 		
 		static void Error_TypeParameterInAttribute (Location loc)
@@ -266,41 +269,6 @@ namespace Mono.CSharp {
 			return LeftExpr == null ? Identifier : LeftExpr.GetSignatureForError () + "." + Identifier;
 		}
 
-		//
-		// Given an expression, if the expression is a valid attribute-argument-expression
-		// returns an object that can be used to encode it, or null on failure.
-		//
-		public static bool GetAttributeArgumentExpression (Expression e, Location loc, Type arg_type, out object result)
-		{
-			Constant constant = e as Constant;
-			if (constant != null) {
-				constant = constant.ToType (arg_type, loc);
-				if (constant == null) {
-					result = null;
-					return false;
-				}
-				result = constant.GetTypedValue ();
-				return true;
-			} else if (e is TypeOf) {
-				result = ((TypeOf) e).TypeArg;
-				return true;
-			} else if (e is ArrayCreation){
-				result =  ((ArrayCreation) e).EncodeAsAttribute ();
-				if (result != null)
-					return true;
-			} else if (e is EmptyCast) {
-				Expression child = ((EmptyCast)e).Child;
-				return GetAttributeArgumentExpression (child, loc, child.Type, out result);
-			} else if (e is As) {
-				As as_e = (As) e;
-				return GetAttributeArgumentExpression (as_e.Expr, loc, as_e.ProbeType.Type, out result);
-			}
-
-			result = null;
-			Error_AttributeArgumentNotValid (loc);
-			return false;
-		}
-
 		bool IsValidArgumentType (Type t)
 		{
 			if (t.IsArray)
@@ -312,9 +280,6 @@ namespace Mono.CSharp {
 				t == TypeManager.object_type ||
 				t == TypeManager.type_type;
 		}
-
-		// Cache for parameter-less attributes
-		static PtrHashtable att_cache = new PtrHashtable ();
 
 		public CustomAttributeBuilder Resolve ()
 		{
@@ -339,7 +304,7 @@ namespace Mono.CSharp {
 				AttributeTester.Report_ObsoleteMessage (obsolete_attr, TypeManager.CSharpName (Type), Location);
 			}
 
-			if (Arguments == null) {
+			if (PosArguments == null && NamedArguments == null) {
 				object o = att_cache [Type];
 				if (o != null) {
 					resolve_error = false;
@@ -347,7 +312,10 @@ namespace Mono.CSharp {
 				}
 			}
 
-			ConstructorInfo ctor = ResolveArguments ();
+			EmitContext ec = new EmitContext (owner.ResolveContext, owner.ResolveContext.DeclContainer, owner.ResolveContext.DeclContainer,
+				Location, null, null, owner.ResolveContext.DeclContainer.ModFlags, false);
+
+			ConstructorInfo ctor = ResolveConstructor (ec);
 			if (ctor == null) {
 				if (Type is TypeBuilder && 
 				    TypeManager.LookupDeclSpace (Type).MemberCache == null)
@@ -360,242 +328,72 @@ namespace Mono.CSharp {
 			CustomAttributeBuilder cb;
 
 			try {
-				if (prop_info_arr != null || field_info_arr != null) {
-					cb = new CustomAttributeBuilder (
-						ctor, pos_values,
-						prop_info_arr, prop_values_arr,
-						field_info_arr, field_values_arr);
-				} else {
-					cb = new CustomAttributeBuilder (
-						ctor, pos_values);
+				if (NamedArguments == null) {
+					cb = new CustomAttributeBuilder (ctor, pos_values);
 
 					if (pos_values.Length == 0)
 						att_cache.Add (Type, cb);
+
+					resolve_error = false;
+					return cb;
 				}
+
+				if (!ResolveNamedArguments (ec)) {
+					return null;
+				}
+
+				cb = new CustomAttributeBuilder (ctor, pos_values,
+						prop_info_arr, prop_values_arr,
+						field_info_arr, field_values_arr);
+
+				resolve_error = false;
+				return cb;
 			}
 			catch (Exception) {
 				Error_AttributeArgumentNotValid (Location);
 				return null;
 			}
-
-			resolve_error = false;
-			return cb;
 		}
 
-		protected virtual ConstructorInfo ResolveArguments ()
+		protected virtual ConstructorInfo ResolveConstructor (EmitContext ec)
 		{
-			// Now we extract the positional and named arguments
-			
-			ArrayList pos_args = null;
-			ArrayList named_args = null;
-			int pos_arg_count = 0;
-			int named_arg_count = 0;
-			
-			if (Arguments != null) {
-				pos_args = (ArrayList) Arguments [0];
-				if (pos_args != null)
-					pos_arg_count = pos_args.Count;
-				if (Arguments.Count > 1) {
-					named_args = (ArrayList) Arguments [1];
-					named_arg_count = named_args.Count;
-				}
-			}
+			if (PosArguments != null) {
+				for (int i = 0; i < PosArguments.Count; i++) {
+					Argument a = (Argument) PosArguments [i];
 
-			pos_values = new object [pos_arg_count];
-
-			//
-			// First process positional arguments 
-			//
-
-			EmitContext ec = new EmitContext (owner.ResolveContext, owner.ResolveContext.DeclContainer, owner.ResolveContext.DeclContainer,
-					Location, null, null, owner.ResolveContext.DeclContainer.ModFlags, false);
-
-			int i;
-			for (i = 0; i < pos_arg_count; i++) {
-				Argument a = (Argument) pos_args [i];
-				Expression e;
-
-				if (!a.Resolve (ec, Location))
-					return null;
-
-				e = a.Expr;
-
-				object val;
-				if (!GetAttributeArgumentExpression (e, Location, a.Type, out val))
-					return null;
-
-				pos_values [i] = val;
-
-				if (i == 0 && Type == TypeManager.attribute_usage_type && (int)val == 0) {
-					Report.Error (591, Location, "Invalid value for argument to 'System.AttributeUsage' attribute");
-					return null;
-				}
-			}
-
-			//
-			// Now process named arguments
-			//
-
-			ArrayList field_infos = null;
-			ArrayList prop_infos  = null;
-			ArrayList field_values = null;
-			ArrayList prop_values = null;
-			Hashtable seen_names = null;
-
-			if (named_arg_count > 0) {
-				field_infos = new ArrayList (4);
-				prop_infos  = new ArrayList (4);
-				field_values = new ArrayList (4);
-				prop_values = new ArrayList (4);
-
-				seen_names = new Hashtable(4);
-			}
-			
-			for (i = 0; i < named_arg_count; i++) {
-				DictionaryEntry de = (DictionaryEntry) named_args [i];
-				string member_name = (string) de.Key;
-				Argument a  = (Argument) de.Value;
-				Expression e;
-
-				if (seen_names.Contains(member_name)) {
-					Report.Error(643, Location, "'" + member_name + "' duplicate named attribute argument");
-					return null;
-				}				
-				seen_names.Add(member_name, 1);
-				
-				if (!a.Resolve (ec, Location))
-					return null;
-
-				Expression member = Expression.MemberLookup (
-					ec.ContainerType, Type, member_name,
-					MemberTypes.Field | MemberTypes.Property,
-					BindingFlags.Public | BindingFlags.Instance,
-					Location);
-
-				if (member == null) {
-					member = Expression.MemberLookup (ec.ContainerType, Type, member_name,
-						MemberTypes.Field | MemberTypes.Property, BindingFlags.NonPublic | BindingFlags.Instance,
-						Location);
-
-					if (member != null) {
-						Expression.ErrorIsInaccesible (Location, member.GetSignatureForError ());
+					if (!a.Resolve (ec, Location))
 						return null;
-					}
-				}
-
-				if (member == null){
-					Report.Error (117, Location, "`{0}' does not contain a definition for `{1}'",
-						      TypeManager.CSharpName (Type), member_name);
-					return null;
-				}
-				
-				if (!(member is PropertyExpr || member is FieldExpr)) {
-					Error_InvalidNamedArgument (member_name);
-					return null;
-				}
-
-				e = a.Expr;
-				if (e is TypeParameterExpr){
-					Error_TypeParameterInAttribute (Location);
-					return null;
-				}
-					
-				if (member is PropertyExpr) {
-					PropertyExpr pe = (PropertyExpr) member;
-					PropertyInfo pi = pe.PropertyInfo;
-
-					if (!pi.CanWrite || !pi.CanRead) {
-						Report.SymbolRelatedToPreviousError (pi);
-						Error_InvalidNamedArgument (member_name);
-						return null;
-					}
-
-					if (!IsValidArgumentType (pi.PropertyType)) {
-						Report.SymbolRelatedToPreviousError (pi);
-						Error_InvalidNamedAgrumentType (member_name);
-						return null;
-					}
-
-					object value;
-					if (!GetAttributeArgumentExpression (e, Location, pi.PropertyType, out value))
-						return null;
-
-					prop_values.Add (value);
-					prop_infos.Add (pi);
-					
-				} else if (member is FieldExpr) {
-					FieldExpr fe = (FieldExpr) member;
-					FieldInfo fi = fe.FieldInfo;
-
-					if (fi.IsInitOnly) {
-						Error_InvalidNamedArgument (member_name);
-						return null;
-					}
-
-					if (!IsValidArgumentType (fi.FieldType)) {
-						Report.SymbolRelatedToPreviousError (fi);
-						Error_InvalidNamedAgrumentType (member_name);
-						return null;
-					}
-
- 					object value;
- 					if (!GetAttributeArgumentExpression (e, Location, fi.FieldType, out value))
-  						return null;
-
- 					field_values.Add (value);  					
-					field_infos.Add (fi);
 				}
 			}
 
 			Expression mg = Expression.MemberLookup (ec.ContainerType,
 				Type, ".ctor", MemberTypes.Constructor,
 				BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly,
-                                Location);
-
-			if (mg == null) {
-				// FIXME: Punt the issue for now.
-				if (Type is TypeBuilder)
-					return null;
-				throw new InternalErrorException ("Type " + Type + " doesn't have constructors");
-			}
+				Location);
 
 			MethodBase constructor = Invocation.OverloadResolve (
-				ec, (MethodGroupExpr) mg, pos_args, false, Location);
+				ec, (MethodGroupExpr) mg, PosArguments, false, Location);
 
-			if (constructor == null) {
+			if (constructor == null)
 				return null;
+
+			ObsoleteAttribute oa = AttributeTester.GetMethodObsoleteAttribute (constructor);
+			if (oa != null && !owner.ResolveContext.IsInObsoleteScope) {
+				AttributeTester.Report_ObsoleteMessage (oa, mg.GetSignatureForError (), mg.Location);
 			}
 
-
-			// Here we do the checks which should be done by corlib or by runtime.
-			// However Zoltan doesn't like it and every Mono compiler has to do it again.
-			
-			if (Type == TypeManager.guid_attr_type) {
-				try {
-					new Guid ((string)pos_values [0]);
-				}
-				catch (Exception e) {
-					Error_AttributeEmitError (e.Message);
-					return null;
-				}
+			if (PosArguments == null) {
+				pos_values = EmptyObject;
+				return (ConstructorInfo)constructor;
 			}
-
-			if (Type == TypeManager.methodimpl_attr_type &&
-				pos_values.Length == 1 && ((Argument)pos_args [0]).Type == TypeManager.short_type &&
-				!System.Enum.IsDefined (typeof (MethodImplOptions), pos_values [0])) {
-					Error_AttributeEmitError ("Incorrect argument value.");
-				return null;
-			}
-
-			//
-			// Now we perform some checks on the positional args as they
-			// cannot be null for a constructor which expects a parameter
-			// of type object
-			//
 
 			ParameterData pd = TypeManager.GetParameterData (constructor);
 
+			int pos_arg_count = PosArguments.Count;
 			int last_real_param = pd.Count;
+
+			pos_values = new object [pos_arg_count];
+
 			if (pd.HasParams) {
 				// When the params is not filled we need to put one
 				if (last_real_param > pos_arg_count) {
@@ -608,21 +406,15 @@ namespace Mono.CSharp {
 			}
 
 			for (int j = 0; j < pos_arg_count; ++j) {
-				Argument a = (Argument) pos_args [j];
-				
-				if (a.Expr is NullLiteral && pd.ParameterType (j) == TypeManager.object_type) {
-					Error_AttributeArgumentNotValid (Location);
-					return null;
-				}
+				Argument a = (Argument) PosArguments [j];
 
-				object value = pos_values [j];
-				if (value != null && a.Type != value.GetType () && TypeManager.IsPrimitiveType (a.Type)) {
+				if (!a.Expr.GetAttributableValue (out pos_values [j]))
+					return null;
+				
+				if (TypeManager.IsPrimitiveType (a.Type) && a.Type != pos_values [j].GetType ()) {
 					bool fail;
-					pos_values [j] = TypeManager.ChangeType (value, a.Type, out fail);
-					if (fail) {
-						// TODO: Can failed ?
-						throw new NotImplementedException ();
-					}
+					// This can happen only for constants in same range
+					pos_values [j] = TypeManager.ChangeType (pos_values [j], a.Type, out fail);
 				}
 
 				if (j < last_real_param)
@@ -646,20 +438,172 @@ namespace Mono.CSharp {
 				pos_values = new_pos_values;
 			}
 
-			if (named_arg_count > 0) {
-				prop_info_arr = new PropertyInfo [prop_infos.Count];
-				field_info_arr = new FieldInfo [field_infos.Count];
-				field_values_arr = new object [field_values.Count];
-				prop_values_arr = new object [prop_values.Count];
-
-				field_infos.CopyTo  (field_info_arr, 0);
-				field_values.CopyTo (field_values_arr, 0);
-
-				prop_values.CopyTo  (prop_values_arr, 0);
-				prop_infos.CopyTo   (prop_info_arr, 0);
+			// Here we do the checks which should be done by corlib or by runtime.
+			// However Zoltan doesn't like it and every Mono compiler has to do it again.
+			
+			if (Type == TypeManager.guid_attr_type) {
+				try {
+					new Guid ((string)pos_values [0]);
+				}
+				catch (Exception e) {
+					Error_AttributeEmitError (e.Message);
+					return null;
+				}
 			}
 
-			return (ConstructorInfo) constructor;
+			if (Type == TypeManager.attribute_usage_type && (int)pos_values [0] == 0) {
+				Report.Error (591, Location, "Invalid value for argument to 'System.AttributeUsage' attribute");
+				return null;
+			}
+
+			if (Type == TypeManager.methodimpl_attr_type && pos_values.Length == 1 &&
+				pd.ParameterType (0) == TypeManager.short_type &&
+				!System.Enum.IsDefined (typeof (MethodImplOptions), pos_values [0].ToString ())) {
+				Error_AttributeEmitError ("Incorrect argument value.");
+				return null;
+			}
+
+			return (ConstructorInfo)constructor;
+		}
+
+		protected virtual bool ResolveNamedArguments (EmitContext ec)
+		{
+			int named_arg_count = NamedArguments.Count;
+
+			ArrayList field_infos = new ArrayList (named_arg_count);
+			ArrayList prop_infos  = new ArrayList (named_arg_count);
+			ArrayList field_values = new ArrayList (named_arg_count);
+			ArrayList prop_values = new ArrayList (named_arg_count);
+
+			ArrayList seen_names = new ArrayList(named_arg_count);
+			
+			foreach (DictionaryEntry de in NamedArguments) {
+				string member_name = (string) de.Key;
+
+				if (seen_names.Contains(member_name)) {
+					Report.Error(643, Location, "'" + member_name + "' duplicate named attribute argument");
+					return false;
+				}				
+				seen_names.Add(member_name);
+
+				Argument a = (Argument) de.Value;
+				if (!a.Resolve (ec, Location))
+					return false;
+
+				Expression member = Expression.MemberLookup (
+					ec.ContainerType, Type, member_name,
+					MemberTypes.Field | MemberTypes.Property,
+					BindingFlags.Public | BindingFlags.Instance,
+					Location);
+
+				if (member == null) {
+					member = Expression.MemberLookup (ec.ContainerType, Type, member_name,
+						MemberTypes.Field | MemberTypes.Property, BindingFlags.NonPublic | BindingFlags.Instance,
+						Location);
+
+					if (member != null) {
+						Expression.ErrorIsInaccesible (Location, member.GetSignatureForError ());
+						return false;
+					}
+				}
+
+				if (member == null){
+					Report.Error (117, Location, "`{0}' does not contain a definition for `{1}'",
+						      TypeManager.CSharpName (Type), member_name);
+					return false;
+				}
+				
+				if (!(member is PropertyExpr || member is FieldExpr)) {
+					Error_InvalidNamedArgument (member_name);
+					return false;
+				}
+
+				if (a.Expr is TypeParameterExpr){
+					Error_TypeParameterInAttribute (Location);
+					return false;
+				}
+
+				ObsoleteAttribute obsolete_attr;
+
+				if (member is PropertyExpr) {
+					PropertyInfo pi = ((PropertyExpr) member).PropertyInfo;
+
+					if (!pi.CanWrite || !pi.CanRead) {
+						Report.SymbolRelatedToPreviousError (pi);
+						Error_InvalidNamedArgument (member_name);
+						return false;
+					}
+
+					if (!IsValidArgumentType (pi.PropertyType)) {
+						Report.SymbolRelatedToPreviousError (pi);
+						Error_InvalidNamedAgrumentType (member_name);
+						return false;
+					}
+
+					Expression e = Convert.ImplicitConversionRequired (ec, a.Expr, pi.PropertyType, a.Expr.Location);
+					if (e == null)
+						return false;
+
+					object value;
+					if (!e.GetAttributableValue (out value))
+						return false;
+
+					PropertyBase pb = TypeManager.GetProperty (pi);
+					if (pb != null)
+						obsolete_attr = pb.GetObsoleteAttribute ();
+					else
+						obsolete_attr = AttributeTester.GetMemberObsoleteAttribute (pi);
+
+					prop_values.Add (value);
+					prop_infos.Add (pi);
+					
+				} else {
+					FieldInfo fi = ((FieldExpr) member).FieldInfo;
+
+					if (fi.IsInitOnly) {
+						Error_InvalidNamedArgument (member_name);
+						return false;
+					}
+
+					if (!IsValidArgumentType (fi.FieldType)) {
+						Report.SymbolRelatedToPreviousError (fi);
+						Error_InvalidNamedAgrumentType (member_name);
+						return false;
+					}
+					Expression e = Convert.ImplicitConversionRequired (ec, a.Expr, fi.FieldType, a.Expr.Location);
+					if (e == null)
+						return false;
+
+ 					object value;
+					if (!e.GetAttributableValue (out value))
+						return false;
+
+					FieldBase fb = TypeManager.GetField (fi);
+					if (fb != null)
+						obsolete_attr = fb.GetObsoleteAttribute ();
+					else
+						obsolete_attr = AttributeTester.GetMemberObsoleteAttribute (fi);
+
+ 					field_values.Add (value);  					
+					field_infos.Add (fi);
+				}
+
+				if (obsolete_attr != null && !owner.ResolveContext.IsInObsoleteScope)
+					AttributeTester.Report_ObsoleteMessage (obsolete_attr, member.GetSignatureForError (), member.Location);
+			}
+
+			prop_info_arr = new PropertyInfo [prop_infos.Count];
+			field_info_arr = new FieldInfo [field_infos.Count];
+			field_values_arr = new object [field_values.Count];
+			prop_values_arr = new object [prop_values.Count];
+
+			field_infos.CopyTo  (field_info_arr, 0);
+			field_values.CopyTo (field_values_arr, 0);
+
+			prop_values.CopyTo  (prop_values_arr, 0);
+			prop_infos.CopyTo   (prop_info_arr, 0);
+
+			return true;
 		}
 
 		/// <summary>
@@ -1214,12 +1158,8 @@ namespace Mono.CSharp {
 
 			// Here we are testing attribute arguments for array usage (error 3016)
 			if (owner.IsClsComplianceRequired ()) {
-				if (Arguments == null)
-					return;
-
-				ArrayList pos_args = (ArrayList) Arguments [0];
-				if (pos_args != null) {
-					foreach (Argument arg in pos_args) { 
+				if (PosArguments != null) {
+					foreach (Argument arg in PosArguments) { 
 						// Type is undefined (was error 246)
 						if (arg.Type == null)
 							return;
@@ -1231,11 +1171,10 @@ namespace Mono.CSharp {
 					}
 				}
 			
-				if (Arguments.Count < 2)
+				if (NamedArguments == null)
 					return;
 			
-				ArrayList named_args = (ArrayList) Arguments [1];
-				foreach (DictionaryEntry de in named_args) {
+				foreach (DictionaryEntry de in NamedArguments) {
 					Argument arg  = (Argument) de.Value;
 
 					// Type is undefined (was error 246)
@@ -1367,15 +1306,10 @@ namespace Mono.CSharp {
 
 		private Expression GetValue () 
 		{
-			if ((Arguments == null) || (Arguments.Count < 1))
+			if (PosArguments == null || PosArguments.Count < 1)
 				return null;
-			ArrayList al = (ArrayList) Arguments [0];
-			if ((al == null) || (al.Count < 1))
-				return null;
-			Argument arg = (Argument) al [0];
-			if ((arg == null) || (arg.Expr == null))
-				return null;
-			return arg.Expr;
+
+			return ((Argument) PosArguments [0]).Expr;
 		}
 
 		public string GetString () 
@@ -1405,7 +1339,7 @@ namespace Mono.CSharp {
 		public readonly NamespaceEntry ns;
 
 		public GlobalAttribute (NamespaceEntry ns, string target, 
-					Expression left_expr, string identifier, ArrayList args, Location loc, bool nameEscaped):
+					Expression left_expr, string identifier, object[] args, Location loc, bool nameEscaped):
 			base (target, left_expr, identifier, args, loc, nameEscaped)
 		{
 			this.ns = ns;
@@ -1454,11 +1388,22 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected override ConstructorInfo ResolveArguments ()
+		protected override ConstructorInfo ResolveConstructor (EmitContext ec)
 		{
 			try {
 				Enter ();
-				return base.ResolveArguments ();
+				return base.ResolveConstructor (ec);
+			}
+			finally {
+				Leave ();
+			}
+		}
+
+		protected override bool ResolveNamedArguments (EmitContext ec)
+		{
+			try {
+				Enter ();
+				return base.ResolveNamedArguments (ec);
 			}
 			finally {
 				Leave ();
