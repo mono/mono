@@ -72,6 +72,17 @@ namespace System.Web.Security {
 
 		public override void AddUsersToRoles (string [] usernames, string [] rolenames)
 		{
+			string commandText = @"
+INSERT INTO dbo.aspnet_UsersInRoles (UserId, RoleId)
+     SELECT dbo.aspnet_Users.UserId, dbo.aspnet_Roles.RoleId 
+       FROM dbo.aspnet_Users, dbo.aspnet_Roles, dbo.aspnet_Applications
+      WHERE dbo.aspnet_Users.ApplicationId = dbo.aspnet_Applications.ApplicationId
+        AND dbo.aspnet_Roles.ApplicationId = dbo.aspnet_Applications.ApplicationId
+        AND dbo.aspnet_Applications.LoweredApplicationName = @LoweredApplicationName
+        AND dbo.aspnet_Users.LoweredUserName = @LoweredUserName
+        AND dbo.aspnet_Roles.LoweredRoleName = @LoweredRoleName
+";
+
 			Hashtable h;
 
 			h = new Hashtable();
@@ -114,16 +125,7 @@ namespace System.Web.Security {
 						/* add the user/role combination to dbo.aspnet_UsersInRoles */
 						DbCommand command = factory.CreateCommand ();
 						command.Transaction = trans;
-						command.CommandText = @"
-INSERT INTO dbo.aspnet_UsersInRoles (UserId, RoleId)
-     SELECT dbo.aspnet_Users.UserId, dbo.aspnet_Roles.RoleId 
-       FROM dbo.aspnet_Users, dbo.aspnet_Roles, dbo.aspnet_Applications
-      WHERE dbo.aspnet_Users.ApplicationId = dbo.aspnet_Applications.ApplicationId
-        AND dbo.aspnet_Roles.ApplicationId = dbo.aspnet_Applications.ApplicationId
-        AND dbo.aspnet_Applications.LoweredApplicationName = @LoweredApplicationName
-        AND dbo.aspnet_Users.LoweredUserName = @LoweredUserName
-        AND dbo.aspnet_Roles.LoweredRoleName = @LoweredRoleName
-";
+						command.CommandText = commandText;
 						command.Connection = connection;
 						command.CommandType = CommandType.Text;
 						AddParameter (command, "LoweredRoleName", loweredRoleName);
@@ -185,6 +187,7 @@ INSERT INTO dbo.aspnet_Roles
 				connection.Close ();
 		}
 		
+		[MonoTODO]
 		public override bool DeleteRole (string rolename, bool throwOnPopulatedRole)
 		{
 			if (rolename == null)
@@ -220,6 +223,7 @@ SELECT COUNT(*)
 					throw new ProviderException (String.Format ("The role '{0}' has users in it and can't be deleted", rolename));
 			}
 			else {
+				/* XXX are we really supposed to delete all the user/role associations in this case? */
 				command = factory.CreateCommand ();
 				command.CommandText = @"
 DELETE dbo.aspnet_UsersInRoles FROM dbo.aspnet_UsersInRoles, dbo.aspnet_Roles, dbo.aspnet_Applications
@@ -300,10 +304,10 @@ SELECT dbo.aspnet_Users.UserName
 		public override string [] GetAllRoles ()
 		{
 			string commandText = @"
-SELECT aspnet_Roles.RoleName
-  FROM aspnet_Roles, aspnet_Applications
- WHERE aspnet_Roles.ApplicationId = aspnet_Applications.ApplicationId
-   AND aspnet_Applications.LoweredApplicationName = @LoweredApplicationName
+SELECT dbo.aspnet_Roles.RoleName
+  FROM dbo.aspnet_Roles, dbo.aspnet_Applications
+ WHERE dbo.aspnet_Roles.ApplicationId = dbo.aspnet_Applications.ApplicationId
+   AND dbo.aspnet_Applications.LoweredApplicationName = @LoweredApplicationName
 ";
 			InitConnection();
 			bool closed = connection.State == ConnectionState.Closed;
@@ -465,6 +469,17 @@ SELECT COUNT(*)
 		
 		public override void RemoveUsersFromRoles (string [] usernames, string [] rolenames)
 		{
+			string commandText = @"
+DELETE dbo.aspnet_UsersInRoles 
+  FROM dbo.aspnet_UsersInRoles, dbo.aspnet_Users, dbo.aspnet_Roles, dbo.aspnet_Applications
+ WHERE dbo.aspnet_UsersInRoles.UserId = dbo.aspnet_Users.UserId
+   AND dbo.aspnet_UsersInRoles.RoleId = dbo.aspnet_Roles.RoleId
+   AND dbo.aspnet_Roles.ApplicationId = dbo.aspnet_Applications.ApplicationId
+   AND dbo.aspnet_Users.ApplicationId = dbo.aspnet_Applications.ApplicationId
+   AND dbo.aspnet_Users.LoweredUserName = @LoweredUserName
+   AND dbo.aspnet_Roles.LoweredRoleName = @LoweredRoleName
+   AND dbo.aspnet_Applications.LoweredApplicationName = @LoweredApplicationName";
+
 			Hashtable h;
 
 			h = new Hashtable();
@@ -506,17 +521,7 @@ SELECT COUNT(*)
 
 						DbCommand command = factory.CreateCommand ();
 						command.Transaction = trans;
-						command.CommandText = @"
-DELETE dbo.aspnet_UsersInRoles 
-  FROM dbo.aspnet_UsersInRoles, dbo.aspnet_Users, dbo.aspnet_Roles, dbo.aspnet_Applications
- WHERE dbo.aspnet_UsersInRoles.UserId = dbo.aspnet_Users.UserId
-   AND dbo.aspnet_UsersInRoles.RoleId = dbo.aspnet_Roles.RoleId
-   AND dbo.aspnet_Roles.ApplicationId = dbo.aspnet_Applications.ApplicationId
-   AND dbo.aspnet_Users.ApplicationId = dbo.aspnet_Applications.ApplicationId
-   AND dbo.aspnet_Users.LoweredUserName = @LoweredUserName
-   AND dbo.aspnet_Roles.LoweredRoleName = @LoweredRoleName
-   AND dbo.aspnet_Applications.LoweredApplicationName = @LoweredApplicationName";
-
+						command.CommandText = commandText;
 						command.Connection = connection;
 						command.CommandType = CommandType.Text;
 						AddParameter (command, "LoweredUserName", loweredUserName);
