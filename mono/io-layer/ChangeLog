@@ -1,3 +1,316 @@
+2006-03-15  Dick Porter  <dick@ximian.com>
+
+	* events.c: 
+	* io.c: 
+	* mutexes.c: 
+	* processes.c: 
+	* semaphores.c: 
+	* sockets.c: 
+	* threads.c: Explicitly initialise the handle ops struct
+
+2006-03-14  Dick Porter  <dick@ximian.com>
+
+	* handles-private.h: 
+	* wapi-private.h: 
+	* wait.c: 
+	* handles.c: Add a 'prewait' stage to the handle waiting, to give
+	waiting threads a chance to check for bogus states before
+	blocking.
+
+	* mutexes.c (namedmutex_prewait): Use the prewait stage to check
+	for named mutexes that have been abandoned in a locked state (eg
+	if a process exited abnormally while owning the mutex) and
+	override it if needed.
+
+2006-03-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* wait.c: speed up WaitFor* when the timeout is 0.
+
+2006-03-03  Dick Porter  <dick@ximian.com>
+
+	* processes.c (ShellExecuteEx): Cope when some of the parameters
+	are NULL.
+
+2006-02-27  Dick Porter  <dick@ximian.com>
+
+	* mutexes.c: 
+	* mono-mutex.c: 
+	* threads.c: Comparing pthread_t with == is not portable, so use
+	pthread_equal().
+
+Thu Feb 23 18:47:20 GMT 2006 Paolo Molaro <lupus@ximian.com>
+
+	* *.h, *.h: patch from Dick to make Linuxthreads systems work again.
+
+2006-02-22  Dick Porter  <dick@ximian.com>
+
+	* thread-private.h: 
+	* threads.c: There's no need to use the timed-thread support code
+	any more, as we aren't using the timed join.  This greatly
+	simplifies thread setup, and fixes a memory leak (bug 77521).
+
+	Don't bother to store thread IDs in a hash table, use TLS instead.
+	The one case that needs to look up the handle of a different
+	thread (OpenThread()) can do the extra work itself.  Fixes bug
+	77536.
+
+	* handles.c (_wapi_search_handle): Add a reference when returning
+	a private handle (shared handles are already reffed.)
+	
+2006-02-17  Dick Porter  <dick@ximian.com>
+
+	* handles-private.h: 
+	* handles.c: Check handle values passed to array lookups.  Fixes
+	bug 77572.
+
+2006-02-09  Dick Porter  <dick@ximian.com>
+
+	* threads.c: Cope with the problems caused by attaching already
+	existing threads - they don't get the infrastructure to clean up
+	after themselves, especially the ID to handle hash.  This fixes
+	bug 77468.
+
+2006-02-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* shared.c: use MONO_SHARED_HOSTNAME as a substitute for gethostname()
+	when creating the shared files in the .wapi directory. Fixes bug #77371.
+
+2006-02-02  Martin Baulig  <martin@ximian.com>
+
+	* threads.c: Removed the `WITH_INCLUDED_LIBGC' section; it has
+	never been used so far.	
+
+	* timed-thread.h (TimedThread): Removed the `stack_ptr' field; it
+	has only been used by the removed code.
+
+2006-01-03  Neale Ferguson <neale@sinenomine.net>
+
+	* atomic.h: Correct s390x definitions and eliminate compiler warnings.
+
+2006-01-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* io.c: Patch _wapi_stat_to_file_attributes against bug #76966, where
+	sockets could be considered as directory.
+
+2005-12-23  Dick Porter  <dick@ximian.com>
+
+
+	* semaphores.h: 
+	* semaphores.c: Implement OpenSemaphore
+
+	* mutexes.c: 
+	* mutexes.h: Implement OpenMutex
+
+	* wapi-private.h: 
+	* handles.c: 
+	* events.c: 
+	* events.h: 
+	* event-private.h: Implement named events.  Implement OpenEvent.
+
+2005-12-15  Dick Porter  <dick@ximian.com>
+
+	* processes.c (CreateProcess): The pipe-based cross-process
+	exclusion technique was trying to write NULL buffers when appname
+	was NULL (eg when coming from ShellExecuteEx,) which usually
+	succeeded even though EFAULT was returned - but sometimes it
+	failed.  This meant that the child process could block forever on
+	the pipe read.  Replace it with the simpler shared handle
+	semaphore protection used everywhere else.  This showed up with
+	the test case in bug 76684.
+
+Tue Dec 13 11:41:49 GMT 2005 Paolo Molaro <lupus@ximian.com>
+
+	* shared.c: fallback to private mmap when shared mmap doesn't work
+	(like on jffs).
+
+2005-12-06  Dick Porter  <dick@ximian.com>
+
+	* wapi-private.h: 
+	* handles.c: 
+	* semaphore-private.h: 
+	* semaphores.c: Implement named semaphores
+
+2005-11-24  Dick Porter  <dick@ximian.com>
+
+	* processes.c (GetProcessId): Implement GetProcessId()
+
+2005-11-17  Dick Porter  <dick@ximian.com>
+
+	* processes.h: 
+	* processes.c: Implement ShellExecuteEx as a wrapper around
+	CreateProcess.
+
+2005-11-11  Dick Porter  <dick@ximian.com>
+
+	* threads.c: Give mutex abandoning its own exported function, so
+	it can be called when the runtime is cleaning up.
+
+	* handles.c (_wapi_search_handle_namespace): Do a handle
+	collection befre starting to check namespace strings, so that any
+	stale cruft gets removed.
+
+2005-11-11  Dick Porter  <dick@ximian.com>
+
+	* threads.c: Move thread handles back into the shared space.
+
+	* handles.c (_wapi_handle_unref): Add support for shared handles
+	with close() handlers
+
+2005-11-04  Dick Porter  <dick@ximian.com>
+
+	* sockets.c (ioctlsocket): Use select instead of if to avoid a
+	type promotion problem on 64bit freebsd.  Based on patch by Lou
+	Kamenov <kamenovl@gmail.com>, fixes bug 76447.
+
+2005-11-04  Dick Porter  <dick@ximian.com>
+
+	* io.c (file_write): Only do the file locking if
+	MONO_STRICT_IO_EMULATION is set.
+
+2005-10-21  Dick Porter  <dick@ximian.com>
+
+	* processes.c: 
+	* handles.c (_wapi_lookup_handle): Cope when the shared part of a
+	handle has been deleted.
+	(_wapi_handle_unref): And when the deleted shared part is pointed
+	to as a handle is deleted
+
+2005-10-20  Dick Porter  <dick@ximian.com>
+
+	* processes.c (process_set_current): If the expected process
+	handle slot doesn't contain the correct pid, create a new handle.
+
+	* handles.c (_wapi_search_handle): When the search doesn't find
+	anything, return failure instead of the last handle we looked at.
+	(_wapi_handle_ref, _wapi_handle_unref): Don't try to ref or unref
+	unused handles (makes tracking refcounting bugs easier.)
+
+2005-10-19  Dick Porter  <dick@ximian.com>
+
+	* handles.c:
+	* handles-private.h:
+	* wapi-private.h: 
+	* processes.c: 
+	* mutexes.c:
+	* collection.c (_wapi_handle_collect): Remove the shared handle
+	indirection layer, and use locking instead.  Delete other
+	complexity that is no longer needed.  Refcount shared handles and
+	delete them when needed, but keep the timestamps so that orphaned
+	handles will be cleaned up eventually.
+
+	* shared.c (_wapi_shm_file): Add processor, OS and struct size
+	info to the shared file names, to cope with dual-boot and 32/64bit
+	size issues.  Fixes bug 75839.
+
+	* wait.c (WaitForMultipleObjectsEx): No need to distinguish
+	between shared handles and private, as the wait functions cope
+	with both together now.
+
+2005-10-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* io.c: removed NO_SIGPIPE macro.
+	* sockets.c: no need for MSG_NOSIGNAL or ignoring SIGPIPE.
+
+2005-10-11  Dick Porter  <dick@ximian.com>
+
+	* sockets.c (_wapi_getsockopt): Translate SO_ERROR results into
+	w32 error codes.
+
+	* error.c (errno_to_WSA): Don't return a bogus error if someone
+	asks to translate errno 0.
+
+2005-10-11  Dick Porter  <dick@ximian.com>
+
+	* handles.c: Fix several race conditions
+
+2005-10-11 Miguel de Icaza <miguel@novell.com>
+
+	* io.c: no need to block SIGPIPE anymore, as it is ignored.
+
+2005-10-05  Dick Porter  <dick@ximian.com>
+
+	* threads.c (_wapi_thread_own_mutex, _wapi_thread_disown_mutex):
+	Keep a reference to mutexes owned by threads, so they won't be
+	destroyed prematurely.  Fixes dotmsnclient crash.
+
+2005-09-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* io.c: Apply patch from #76192 (Can't write files past 2gb on AMD64 
+	(x86_64)) for Brion on IRC (Dick approved it).
+
+2005-09-23  Dick Porter  <dick@ximian.com>
+
+	* processes.c: Don't wait for processes that have already been
+	signalled; also fix typo.
+
+	* handles.c: Improve locking inside new handle and handle
+	searching functions.
+
+2005-09-20  Dick Porter  <dick@ximian.com>
+
+	* collection.c: 
+	* processes.c: Periodically waitpid for known process IDs.  Fixes
+	bug 74870.
+
+2005-09-15 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* io.c:
+	(CreateFile): if the file is a named pipe, treat the handle as a pipe,
+	not as a file. Fixes bug #76075.
+
+2005-08-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* atomic.h: Add support for intel icc.
+
+2005-08-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* io-layer.h: Include winbase.h not WinBase.h.
+
+2005-08-19  Dick Porter  <dick@ximian.com>
+
+	* threads.c, threads.h, thread-private.h: Use a gsize to store the
+	thread ID, so it can hold a 64 bit value if needed.
+
+2005-07-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* error.c: map ENOENT to WSAECONNREFUSED. It might happen when
+	connecting to unix sockets. Closes bug #75632.
+
+2005-07-05  Dick Porter  <dick@ximian.com>
+
+	* io.c: Make sure SIGPIPE is ignored when calling write(2).
+	Prevents the runtime exiting when writing to a closed pipe,
+	fixing bug 75468.
+
+2005-06-30  Dick Porter  <dick@ximian.com>
+
+	* shared.c (_wapi_shm_semaphores_init): Add some helpful error
+	messages when semget () fails due to lack of resources.
+
+2005-06-21  Dick Porter  <dick@ximian.com>
+
+	* mutex-private.h:
+	* thread-private.h:
+	* mutexes.c: 
+	* threads.c: Keep a list of owned mutexes in each thread handle,
+	so that it is easier to abandon them when the thread exits.
+	Removes a bottleneck when multiple threads are finishing in
+	parallel.
+
+2005-06-12 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* io.c: (GetLogicalDrives) when a bogus line is read, don't leak memory.
+	When the buffer has not enough space, close the file before returning.
+
+2005-06-09  Duncan Mak  <duncan@novell.com>
+
+	* *.h: Added G_BEGIN_DECLS and G_END_DECLS where appropriate to
+	all public headers. Fixes #74919.
+
+2005-05-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* atomic.h: Add IA64 atomic ops.
+
 2005-05-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* processes.c: make ExitCode be valid even if the user didn't call

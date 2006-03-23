@@ -60,6 +60,8 @@ struct _WapiHandleOps _wapi_file_ops = {
 	NULL,			/* signal */
 	NULL,			/* own */
 	NULL,			/* is_owned */
+	NULL,			/* special_wait */
+	NULL			/* prewait */
 };
 
 void _wapi_file_details (gpointer handle_info)
@@ -94,6 +96,8 @@ struct _WapiHandleOps _wapi_console_ops = {
 	NULL,			/* signal */
 	NULL,			/* own */
 	NULL,			/* is_owned */
+	NULL,			/* special_wait */
+	NULL			/* prewait */
 };
 
 void _wapi_console_details (gpointer handle_info)
@@ -108,6 +112,8 @@ struct _WapiHandleOps _wapi_find_ops = {
 	NULL,			/* signal */
 	NULL,			/* own */
 	NULL,			/* is_owned */
+	NULL,			/* special_wait */
+	NULL			/* prewait */
 };
 
 static void pipe_close (gpointer handle, gpointer data);
@@ -125,6 +131,8 @@ struct _WapiHandleOps _wapi_pipe_ops = {
 	NULL,			/* signal */
 	NULL,			/* own */
 	NULL,			/* is_owned */
+	NULL,			/* special_wait */
+	NULL			/* prewait */
 };
 
 void _wapi_pipe_details (gpointer handle_info)
@@ -193,8 +201,8 @@ static const struct {
 	 NULL, NULL, NULL, NULL, NULL, NULL},
 };
 
-
 static mono_once_t io_ops_once=MONO_ONCE_INIT;
+static gboolean lock_while_writing = FALSE;
 
 static void io_ops_init (void)
 {
@@ -202,6 +210,10 @@ static void io_ops_init (void)
 /* 					    WAPI_HANDLE_CAP_WAIT); */
 /* 	_wapi_handle_register_capabilities (WAPI_HANDLE_CONSOLE, */
 /* 					    WAPI_HANDLE_CAP_WAIT); */
+
+	if (g_getenv ("MONO_STRICT_IO_EMULATION") != NULL) {
+		lock_while_writing = TRUE;
+	}
 }
 
 /* Some utility functions.
@@ -212,6 +224,10 @@ static guint32 _wapi_stat_to_file_attributes (struct stat *buf)
 	guint32 attrs = 0;
 
 	/* FIXME: this could definitely be better */
+
+	/* Sockets (0140000) != Directory (040000) + Regular file (0100000) */
+	if (S_ISSOCK (buf->st_mode))
+		buf->st_mode &= ~S_IFSOCK; /* don't consider socket protection */
 
 	if (S_ISDIR (buf->st_mode))
 		attrs |= FILE_ATTRIBUTE_DIRECTORY;
@@ -342,30 +358,36 @@ static gboolean file_write(gpointer handle, gconstpointer buffer,
 		return(FALSE);
 	}
 	
-	/* Need to lock the region we're about to write to, because we
-	 * only do advisory locking on POSIX systems
-	 */
-	current_pos = lseek (fd, (off_t)0, SEEK_CUR);
-	if (current_pos == -1) {
+	if (lock_while_writing) {
+		/* Need to lock the region we're about to write to,
+		 * because we only do advisory locking on POSIX
+		 * systems
+		 */
+		current_pos = lseek (fd, (off_t)0, SEEK_CUR);
+		if (current_pos == -1) {
 #ifdef DEBUG
-		g_message ("%s: handle %p lseek failed: %s", __func__, handle,
-			   strerror (errno));
+			g_message ("%s: handle %p lseek failed: %s", __func__,
+				   handle, strerror (errno));
 #endif
-		_wapi_set_last_error_from_errno ();
-		return(FALSE);
-	}
+			_wapi_set_last_error_from_errno ();
+			return(FALSE);
+		}
 		
-	if (_wapi_lock_file_region (fd, current_pos, numbytes) == FALSE) {
-		/* The error has already been set */
-		return(FALSE);
+		if (_wapi_lock_file_region (fd, current_pos,
+					    numbytes) == FALSE) {
+			/* The error has already been set */
+			return(FALSE);
+		}
 	}
 		
 	do {
 		ret = write (fd, buffer, numbytes);
 	} while (ret == -1 && errno == EINTR &&
 		 !_wapi_thread_cur_apc_pending());
-
-	_wapi_unlock_file_region (fd, current_pos, numbytes);
+	
+	if (lock_while_writing) {
+		_wapi_unlock_file_region (fd, current_pos, numbytes);
+	}
 
 	if (ret == -1) {
 		if (errno == EINTR) {
@@ -484,7 +506,7 @@ static guint32 file_seek(gpointer handle, gint32 movedistance,
 			  offset, movedistance);
 #endif
 	} else {
-		offset=((gint64) *highmovedistance << 32) | (unsigned long)movedistance;
+		offset=((gint64) *highmovedistance << 32) | (guint32)movedistance;
 		
 #ifdef DEBUG
 		g_message("%s: setting offset to %lld 0x%llx (high %d 0x%x, low %d 0x%x)", __func__, offset, offset, *highmovedistance, *highmovedistance, movedistance, movedistance);
@@ -610,8 +632,8 @@ static gboolean file_setendoffile(gpointer handle)
 		 * drop this write.
 		 */
 		do {
-			ret=write(fd, "", 1);
-		} while (ret==-1 && errno==EINTR &&
+			ret = write (fd, "", 1);
+		} while (ret == -1 && errno == EINTR &&
 			 !_wapi_thread_cur_apc_pending());
 
 		if(ret==-1) {
@@ -1017,8 +1039,9 @@ static gboolean console_write(gpointer handle, gconstpointer buffer,
 	}
 	
 	do {
-		ret=write(fd, buffer, numbytes);
-	} while (ret==-1 && errno==EINTR && !_wapi_thread_cur_apc_pending());
+		ret = write(fd, buffer, numbytes);
+	} while (ret == -1 && errno == EINTR &&
+		 !_wapi_thread_cur_apc_pending());
 
 	if (ret == -1) {
 		if (errno == EINTR) {
@@ -1163,8 +1186,9 @@ static gboolean pipe_write(gpointer handle, gconstpointer buffer,
 #endif
 
 	do {
-		ret=write(fd, buffer, numbytes);
-	} while (ret==-1 && errno==EINTR && !_wapi_thread_cur_apc_pending());
+		ret = write (fd, buffer, numbytes);
+	} while (ret == -1 && errno == EINTR &&
+		 !_wapi_thread_cur_apc_pending());
 
 	if (ret == -1) {
 		if (errno == EINTR) {
@@ -1413,6 +1437,7 @@ gpointer CreateFile(const gunichar2 *name, guint32 fileaccess,
 	mode_t perms=0644;
 	gchar *filename;
 	int fd, ret;
+	int handle_type;
 	struct stat statbuf;
 	
 	mono_once (&io_ops_once, io_ops_init);
@@ -1525,8 +1550,12 @@ gpointer CreateFile(const gunichar2 *name, guint32 fileaccess,
 	file_handle.fileaccess=fileaccess;
 	file_handle.sharemode=sharemode;
 	file_handle.attrs=attrs;
-	
-	handle = _wapi_handle_new_fd (WAPI_HANDLE_FILE, fd, &file_handle);
+
+#ifndef S_ISFIFO
+#define S_ISFIFO(m) ((m & S_IFIFO) != 0)
+#endif
+	handle_type = (S_ISFIFO (statbuf.st_mode)) ? WAPI_HANDLE_PIPE : WAPI_HANDLE_FILE;
+	handle = _wapi_handle_new_fd (handle_type, fd, &file_handle);
 	if (handle == _WAPI_HANDLE_INVALID) {
 		g_warning ("%s: error creating file handle", __func__);
 		g_free (filename);
@@ -3444,12 +3473,15 @@ GetLogicalDriveStrings (guint32 len, gunichar2 *buf)
 			continue;
 
 		splitted = g_strsplit (buffer, " ", 0);
-		if (!*splitted || !*(splitted + 1))
+		if (!*splitted || !*(splitted + 1)) {
+			g_strfreev (splitted);
 			continue;
+		}
 
 		dir = g_utf8_to_utf16 (*(splitted + 1), -1, &length, NULL, NULL);
 		g_strfreev (splitted);
 		if (total + length + 1 > len) {
+			fclose (fp);
 			return len * 2; /* guess */
 		}
 

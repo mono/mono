@@ -47,6 +47,8 @@ struct _WapiHandleOps _wapi_socket_ops = {
 	NULL,			/* signal */
 	NULL,			/* own */
 	NULL,			/* is_owned */
+	NULL,			/* special_wait */
+	NULL			/* prewait */
 };
 
 static mono_once_t socket_ops_once=MONO_ONCE_INIT;
@@ -429,6 +431,13 @@ int _wapi_getsockopt(guint32 fd, int level, int optname, void *optval,
 		*((int *) optval)  = tv.tv_sec * 1000 + tv.tv_usec;
 		*optlen = sizeof (int);
 	}
+
+	if (optname == SO_ERROR) {
+		if (*((int *)optval) != 0) {
+			*((int *) optval) = errno_to_WSA (*((int *)optval),
+							  __func__);
+		}
+	}
 	
 	return(ret);
 }
@@ -472,9 +481,6 @@ int _wapi_recv(guint32 fd, void *buf, size_t len, int recv_flags)
 int _wapi_recvfrom(guint32 fd, void *buf, size_t len, int recv_flags,
 		   struct sockaddr *from, socklen_t *fromlen)
 {
-#ifndef HAVE_MSG_NOSIGNAL
-	void (*old_sigpipe)(int);	// old SIGPIPE handler
-#endif
 	gpointer handle = GUINT_TO_POINTER (fd);
 	int ret;
 	
@@ -488,20 +494,10 @@ int _wapi_recvfrom(guint32 fd, void *buf, size_t len, int recv_flags,
 		return(SOCKET_ERROR);
 	}
 	
-#ifdef HAVE_MSG_NOSIGNAL
-	do {
-		ret = recvfrom (fd, buf, len, recv_flags | MSG_NOSIGNAL, from,
-				fromlen);
-	} while (ret == -1 && errno == EINTR &&
-		 !_wapi_thread_cur_apc_pending ());
-#else
-	old_sigpipe = signal (SIGPIPE, SIG_IGN);
 	do {
 		ret = recvfrom (fd, buf, len, recv_flags, from, fromlen);
 	} while (ret == -1 && errno == EINTR &&
 		 !_wapi_thread_cur_apc_pending ());
-	signal (SIGPIPE, old_sigpipe);
-#endif
 
 	if (ret == -1) {
 		gint errnum = errno;
@@ -519,9 +515,6 @@ int _wapi_recvfrom(guint32 fd, void *buf, size_t len, int recv_flags,
 
 int _wapi_send(guint32 fd, const void *msg, size_t len, int send_flags)
 {
-#ifndef HAVE_MSG_NOSIGNAL
-	void (*old_sigpipe)(int);	// old SIGPIPE handler
-#endif
 	gpointer handle = GUINT_TO_POINTER (fd);
 	int ret;
 	
@@ -535,19 +528,11 @@ int _wapi_send(guint32 fd, const void *msg, size_t len, int send_flags)
 		return(SOCKET_ERROR);
 	}
 
-#ifdef HAVE_MSG_NOSIGNAL
-	do {
-		ret = send (fd, msg, len, send_flags | MSG_NOSIGNAL);
-	} while (ret == -1 && errno == EINTR &&
-		 !_wapi_thread_cur_apc_pending ());
-#else
-	old_sigpipe = signal (SIGPIPE, SIG_IGN);
 	do {
 		ret = send (fd, msg, len, send_flags);
 	} while (ret == -1 && errno == EINTR &&
 		 !_wapi_thread_cur_apc_pending ());
-	signal (SIGPIPE, old_sigpipe);
-#endif
+
 	if (ret == -1) {
 		gint errnum = errno;
 #ifdef DEBUG
@@ -565,9 +550,6 @@ int _wapi_send(guint32 fd, const void *msg, size_t len, int send_flags)
 int _wapi_sendto(guint32 fd, const void *msg, size_t len, int send_flags,
 		 const struct sockaddr *to, socklen_t tolen)
 {
-#ifndef HAVE_MSG_NOSIGNAL
-	void (*old_sigpipe)(int);	// old SIGPIPE handler
-#endif
 	gpointer handle = GUINT_TO_POINTER (fd);
 	int ret;
 	
@@ -581,20 +563,11 @@ int _wapi_sendto(guint32 fd, const void *msg, size_t len, int send_flags,
 		return(SOCKET_ERROR);
 	}
 	
-#ifdef HAVE_MSG_NOSIGNAL
-	do {
-		ret = sendto (fd, msg, len, send_flags | MSG_NOSIGNAL, to,
-			      tolen);
-	} while (ret == -1 && errno == EINTR &&
-		 !_wapi_thread_cur_apc_pending ());
-#else
-	old_sigpipe = signal (SIGPIPE, SIG_IGN);
 	do {
 		ret = sendto (fd, msg, len, send_flags, to, tolen);
 	} while (ret == -1 && errno == EINTR &&
 		 !_wapi_thread_cur_apc_pending ());
-	signal (SIGPIPE, old_sigpipe);
-#endif
+
 	if (ret == -1) {
 		gint errnum = errno;
 #ifdef DEBUG
@@ -846,35 +819,33 @@ int ioctlsocket(guint32 fd, gint32 command, gpointer arg)
 		return(SOCKET_ERROR);
 	}
 
-	if (command != FIONBIO &&
-	    command != FIONREAD &&
-	    command != SIOCATMARK) {
-		/* Not listed in the MSDN specs, but ioctl(2) returns
-		 * this if command is invalid
-		 */
-		WSASetLastError (WSAEINVAL);
-		return(SOCKET_ERROR);
+	switch(command){
+		case FIONBIO:
+#ifdef O_NONBLOCK
+			/* This works better than ioctl(...FIONBIO...) 
+			 * on Linux (it causes connect to return
+			 * EINPROGRESS, but the ioctl doesn't seem to)
+			 */
+			ret = fcntl(fd, F_GETFL, 0);
+			if (ret != -1) {
+				if (*(gboolean *)arg) {
+					ret |= O_NONBLOCK;
+				} else {
+					ret &= ~O_NONBLOCK;
+				}
+				ret = fcntl(fd, F_SETFL, ret);
+			}
+			break;
+#endif /* O_NONBLOCK */
+		case FIONREAD:
+		case SIOCATMARK:
+			ret = ioctl (fd, command, arg);
+			break;
+		default:
+			WSASetLastError (WSAEINVAL);
+			return(SOCKET_ERROR);
 	}
 
-#ifdef O_NONBLOCK
-	/* This works better than ioctl(...FIONBIO...) on Linux (it causes
-	 * connect to return EINPROGRESS, but the ioctl doesn't seem to)
-	 */
-	if (command == FIONBIO) {
-		ret = fcntl (fd, F_GETFL, 0);
-		if (ret != -1) {
-			if (*(gboolean *)arg) {
-				ret |= O_NONBLOCK;
-			} else {
-				ret &= ~O_NONBLOCK;
-			}
-			ret = fcntl (fd, F_SETFL, ret);
-		}
-	} else
-#endif /* O_NONBLOCK */
-	{
-		ret = ioctl (fd, command, arg);
-	}
 	if (ret == -1) {
 		gint errnum = errno;
 #ifdef DEBUG

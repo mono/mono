@@ -20,6 +20,7 @@
 #include <string.h>
 #include <sys/ipc.h>
 #include <sys/sem.h>
+#include <sys/utsname.h>
 
 #include <mono/io-layer/wapi.h>
 #include <mono/io-layer/wapi-private.h>
@@ -33,19 +34,42 @@ static guchar *_wapi_shm_file (_wapi_shm_t type)
 	static guchar file[_POSIX_PATH_MAX];
 	guchar *name = NULL, *filename, *dir, *wapi_dir;
 	gchar machine_name[256];
+	gchar *fake_name;
+	struct utsname ubuf;
+	int ret;
+	int len;
+	
+	ret = uname (&ubuf);
+	if (ret == -1) {
+		ubuf.machine[0] = '\0';
+		ubuf.sysname[0] = '\0';
+	}
 
-	if (gethostname(machine_name, sizeof(machine_name)) != 0)
-		machine_name[0] = '\0';
+	fake_name = g_getenv ("MONO_SHARED_HOSTNAME");
+	if (fake_name == NULL) {
+		if (gethostname(machine_name, sizeof(machine_name)) != 0)
+			machine_name[0] = '\0';
+	} else {
+		len = MIN (strlen (fake_name), sizeof (machine_name) - 1);
+		strncpy (machine_name, fake_name, len);
+		machine_name [len] = '\0';
+	}
 	
 	switch (type) {
 	case WAPI_SHM_DATA:
-		name = g_strdup_printf ("shared_data-%s-%d-%d",
-					machine_name, _WAPI_HANDLE_VERSION, 0);
+		name = g_strdup_printf ("shared_data-%s-%s-%s-%d-%d-%d",
+					machine_name, ubuf.sysname,
+					ubuf.machine,
+					(int) sizeof(struct _WapiHandleShared),
+					_WAPI_HANDLE_VERSION, 0);
 		break;
 		
 	case WAPI_SHM_FILESHARE:
-		name = g_strdup_printf ("shared_fileshare-%s-%d-%d",
-					machine_name, _WAPI_HANDLE_VERSION, 0);
+		name = g_strdup_printf ("shared_fileshare-%s-%s-%s-%d-%d-%d",
+					machine_name, ubuf.sysname,
+					ubuf.machine,
+					(int) sizeof(struct _WapiFileShare),
+					_WAPI_HANDLE_VERSION, 0);
 		break;
 	}
 
@@ -220,10 +244,13 @@ gpointer _wapi_shm_attach (_wapi_shm_t type)
 	shm_seg = mmap (NULL, statbuf.st_size, PROT_READ|PROT_WRITE,
 			MAP_SHARED, fd, 0);
 	if (shm_seg == MAP_FAILED) {
-		g_critical ("%s: mmap error: %s", __func__,
-			    g_strerror (errno));
-		close (fd);
-		return(NULL);
+		shm_seg = mmap (NULL, statbuf.st_size, PROT_READ|PROT_WRITE,
+			MAP_PRIVATE, fd, 0);
+		if (shm_seg == MAP_FAILED) {
+			g_critical ("%s: mmap error: %s", __func__, g_strerror (errno));
+			close (fd);
+			return(NULL);
+		}
 	}
 		
 	close (fd);
@@ -269,7 +296,12 @@ again:
 		 */
 		while ((_wapi_sem_id = semget (key, _WAPI_SHARED_SEM_COUNT,
 					       IPC_CREAT | IPC_EXCL | 0600)) == -1) {
-			if (errno != EEXIST) {
+			if (errno == ENOMEM) {
+				g_critical ("%s: semget error: %s", __func__,
+					    g_strerror (errno));
+			} else if (errno == ENOSPC) {
+				g_critical ("%s: semget error: %s.  Try deleting some semaphores with ipcs and ipcrm", __func__, g_strerror (errno));
+			} else if (errno != EEXIST) {
 				if (retries > 3)
 					g_warning ("%s: semget error: %s key 0x%x - trying again", __func__,
 							g_strerror (errno), key);

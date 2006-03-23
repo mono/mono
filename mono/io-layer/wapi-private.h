@@ -24,7 +24,7 @@
 /* Increment this whenever an incompatible change is made to the
  * shared handle structure.
  */
-#define _WAPI_HANDLE_VERSION 7
+#define _WAPI_HANDLE_VERSION 10
 
 typedef enum {
 	WAPI_HANDLE_UNUSED=0,
@@ -39,20 +39,27 @@ typedef enum {
 	WAPI_HANDLE_PROCESS,
 	WAPI_HANDLE_PIPE,
 	WAPI_HANDLE_NAMEDMUTEX,
+	WAPI_HANDLE_NAMEDSEM,
+	WAPI_HANDLE_NAMEDEVENT,
 	WAPI_HANDLE_COUNT
 } WapiHandleType;
 
 extern const char *_wapi_handle_typename[];
 
 #define _WAPI_SHARED_HANDLE(type) (type == WAPI_HANDLE_PROCESS || \
-				   type == WAPI_HANDLE_NAMEDMUTEX)
+				   type == WAPI_HANDLE_THREAD || \
+				   type == WAPI_HANDLE_NAMEDMUTEX || \
+				   type == WAPI_HANDLE_NAMEDSEM || \
+				   type == WAPI_HANDLE_NAMEDEVENT)
 
 #define _WAPI_FD_HANDLE(type) (type == WAPI_HANDLE_FILE || \
 			       type == WAPI_HANDLE_CONSOLE || \
 			       type == WAPI_HANDLE_SOCKET || \
 			       type == WAPI_HANDLE_PIPE)
 
-#define _WAPI_SHARED_NAMESPACE(type) (type == WAPI_HANDLE_NAMEDMUTEX)
+#define _WAPI_SHARED_NAMESPACE(type) (type == WAPI_HANDLE_NAMEDMUTEX || \
+				      type == WAPI_HANDLE_NAMEDSEM || \
+				      type == WAPI_HANDLE_NAMEDEVENT)
 
 typedef struct 
 {
@@ -91,6 +98,12 @@ struct _WapiHandleOps
 	 * Returns the WaitForSingleObject return code.
 	 */
 	guint32 (*special_wait)(gpointer handle, guint32 timeout);
+
+	/* Called by WaitForSingleObject and WaitForMultipleObjects,
+	 * if the handle in question needs some preprocessing before the
+	 * signal wait.
+	 */
+	void (*prewait)(gpointer handle);
 };
 
 #include <mono/io-layer/event-private.h>
@@ -110,7 +123,6 @@ struct _WapiHandle_shared_ref
 };
 
 #define _WAPI_HANDLE_INITIAL_COUNT 4096
-#define _WAPI_HEADROOM 16
 
 struct _WapiHandleUnshared
 {
@@ -129,50 +141,37 @@ struct _WapiHandleUnshared
 		struct _WapiHandle_sem sem;
 		struct _WapiHandle_socket sock;
 		struct _WapiHandle_shared_ref shared;
-
-		/* Move thread data into the private set, while
-		 * problems with cleaning up shared handles are fixed
-		 */
-		struct _WapiHandle_thread thread;
 	} u;
-};
-
-struct _WapiHandleSharedMetadata
-{
-	volatile guint32 offset;
-	guint32 timestamp;
-	volatile gboolean signalled;
 };
 
 struct _WapiHandleShared
 {
 	WapiHandleType type;
-	gboolean stale;
+	guint32 timestamp;
+	guint32 handle_refs;
+	volatile gboolean signalled;
 	
 	union
 	{
-		/* Leave this one while the thread is in the private
-		 * set, so the shared space doesn't change size
-		 */
 		struct _WapiHandle_thread thread;
 		struct _WapiHandle_process process;
 		struct _WapiHandle_namedmutex namedmutex;
+		struct _WapiHandle_namedsem namedsem;
+		struct _WapiHandle_namedevent namedevent;
 	} u;
 };
 
 #define _WAPI_SHARED_SEM_NAMESPACE 0
-#define _WAPI_SHARED_SEM_COLLECTION 1
-#define _WAPI_SHARED_SEM_SHARE 2
-#define _WAPI_SHARED_SEM_HANDLE 3
+/*#define _WAPI_SHARED_SEM_COLLECTION 1*/
+#define _WAPI_SHARED_SEM_FILESHARE 2
+#define _WAPI_SHARED_SEM_SHARED_HANDLES 3
 #define _WAPI_SHARED_SEM_COUNT 8	/* Leave some future expansion space */
 
 struct _WapiHandleSharedLayout
 {
-	volatile guint32 signal_count;
 	volatile guint32 collection_count;
 	volatile key_t sem_key;
 	
-	struct _WapiHandleSharedMetadata metadata[_WAPI_HANDLE_INITIAL_COUNT];
 	struct _WapiHandleShared handles[_WAPI_HANDLE_INITIAL_COUNT];
 };
 

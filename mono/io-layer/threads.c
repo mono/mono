@@ -4,13 +4,14 @@
  * Author:
  *	Dick Porter (dick@ximian.com)
  *
- * (C) 2002 Ximian, Inc.
+ * (C) 2002-2006 Ximian, Inc.
  */
 
 #include <config.h>
 #include <stdio.h>
 #include <glib.h>
 #include <string.h>
+#include <mono/os/gc_wrapper.h>
 #include <pthread.h>
 #include <signal.h>
 #include <sched.h>
@@ -21,7 +22,6 @@
 
 #include <mono/io-layer/wapi.h>
 #include <mono/io-layer/wapi-private.h>
-#include <mono/io-layer/timed-thread.h>
 #include <mono/io-layer/handles-private.h>
 #include <mono/io-layer/misc-private.h>
 #include <mono/io-layer/mono-mutex.h>
@@ -41,82 +41,33 @@
  * would have to set the data in the new thread, which is more hassle
  */
 static mono_once_t thread_hash_once = MONO_ONCE_INIT;
-static mono_mutex_t thread_hash_mutex = MONO_MUTEX_INITIALIZER;
-static GHashTable *thread_hash=NULL;
-
-static void thread_close (gpointer handle, gpointer data);
-static gboolean thread_own (gpointer handle);
+static pthread_key_t thread_hash_key;
 
 struct _WapiHandleOps _wapi_thread_ops = {
-	thread_close,			/* close */
+	NULL,				/* close */
 	NULL,				/* signal */
-	thread_own,			/* own */
+	NULL,				/* own */
 	NULL,				/* is_owned */
+	NULL,				/* special_wait */
+	NULL				/* prewait */
 };
 
 static mono_once_t thread_ops_once=MONO_ONCE_INIT;
-
-#ifdef WITH_INCLUDED_LIBGC
-static void gc_init (void);
-#endif
 
 static void thread_ops_init (void)
 {
 	_wapi_handle_register_capabilities (WAPI_HANDLE_THREAD,
 					    WAPI_HANDLE_CAP_WAIT);
-
-#ifdef WITH_INCLUDED_LIBGC
-	gc_init ();
-#endif
 }
 
-static void thread_close (gpointer handle, gpointer data)
-{
-	struct _WapiHandle_thread *thread_handle = (struct _WapiHandle_thread *)data;
-
-#ifdef DEBUG
-	g_message ("%s: closing thread handle %p", __func__, handle);
-#endif
-
-	g_ptr_array_free (thread_handle->owned_mutexes, TRUE);
-}
-
-static gboolean thread_own (gpointer handle)
+/* Called by thread_exit(), but maybe by mono_thread_manage() too */
+void _wapi_thread_abandon_mutexes (gpointer handle)
 {
 	struct _WapiHandle_thread *thread_handle;
 	gboolean ok;
-	
-#ifdef DEBUG
-	g_message ("%s: owning thread handle %p", __func__, handle);
-#endif
-
-	ok = _wapi_lookup_handle (handle, WAPI_HANDLE_THREAD,
-				  (gpointer *)&thread_handle);
-	if (ok == FALSE) {
-		g_warning ("%s: error looking up thread handle %p", __func__,
-			   handle);
-		return(FALSE);
-	}
-	
-	if (thread_handle->joined == FALSE) {
-		_wapi_timed_thread_join (thread_handle->thread, NULL, NULL);
-		thread_handle->joined = TRUE;
-	}
-
-	return(TRUE);
-}
-
-static void thread_exit(guint32 exitstatus, gpointer handle)
-{
-	struct _WapiHandle_thread *thread_handle;
-	gboolean ok;
-	int thr_ret;
 	int i;
-	
-	pthread_cleanup_push ((void(*)(void *))_wapi_handle_unlock_handle,
-			      handle);
-	thr_ret = _wapi_handle_lock_handle (handle);
-	g_assert (thr_ret == 0);
+	pid_t pid = _wapi_getpid ();
+	pthread_t tid = pthread_self ();
 	
 	ok = _wapi_lookup_handle (handle, WAPI_HANDLE_THREAD,
 				  (gpointer *)&thread_handle);
@@ -126,8 +77,45 @@ static void thread_exit(guint32 exitstatus, gpointer handle)
 		return;
 	}
 	
+	if (thread_handle->owner_pid != pid ||
+	    !pthread_equal (thread_handle->id, tid)) {
+		return;
+	}
+	
 	for (i = 0; i < thread_handle->owned_mutexes->len; i++) {
-		_wapi_mutex_abandon (g_ptr_array_index (thread_handle->owned_mutexes, i), getpid (), thread_handle->thread->id);
+		gpointer mutex = g_ptr_array_index (thread_handle->owned_mutexes, i);
+		
+		_wapi_mutex_abandon (mutex, pid, tid);
+		_wapi_thread_disown_mutex (mutex);
+	}
+}
+
+/* Called by the thread creation code as a thread is finishing up, and
+ * by ExitThread()
+*/
+static void thread_exit (guint32 exitstatus, gpointer handle) G_GNUC_NORETURN;
+static void thread_exit (guint32 exitstatus, gpointer handle)
+{
+	struct _WapiHandle_thread *thread_handle;
+	gboolean ok;
+	int thr_ret;
+	
+	_wapi_thread_abandon_mutexes (handle);
+	
+	thr_ret = _wapi_handle_lock_shared_handles ();
+	g_assert (thr_ret == 0);
+	
+	ok = _wapi_lookup_handle (handle, WAPI_HANDLE_THREAD,
+				  (gpointer *)&thread_handle);
+	if (ok == FALSE) {
+		g_warning ("%s: error looking up thread handle %p", __func__,
+			   handle);
+		/* exit the calling thread anyway, even though we
+		 * can't record the exit status and clean up the
+		 * private bits of handle data
+		 */
+		_wapi_handle_unlock_shared_handles ();
+		pthread_exit (NULL);
 	}
 
 #ifdef DEBUG
@@ -137,37 +125,81 @@ static void thread_exit(guint32 exitstatus, gpointer handle)
 	
 	thread_handle->exitstatus = exitstatus;
 	thread_handle->state = THREAD_STATE_EXITED;
+	MONO_SEM_DESTROY (&thread_handle->suspend_sem);
+	g_ptr_array_free (thread_handle->owned_mutexes, TRUE);
 
-	_wapi_handle_set_signal_state (handle, TRUE, TRUE);
+	_wapi_shared_handle_set_signal_state (handle, TRUE);
 
-	thr_ret = _wapi_handle_unlock_handle (handle);
-	g_assert (thr_ret == 0);
-	pthread_cleanup_pop (0);
+	_wapi_handle_unlock_shared_handles ();
 	
 #ifdef DEBUG
 	g_message("%s: Recording thread handle %p id %ld status as %d",
-		  __func__, handle, thread_handle->thread->id, exitstatus);
+		  __func__, handle, thread_handle->id, exitstatus);
 #endif
-
-	/* Remove this thread from the hash */
-	pthread_cleanup_push ((void(*)(void *))mono_mutex_unlock_in_cleanup,
-			      (void *)&thread_hash_mutex);
-	thr_ret = mono_mutex_lock(&thread_hash_mutex);
-	g_assert (thr_ret == 0);
-	
-	g_hash_table_remove (thread_hash, GUINT_TO_POINTER (thread_handle->thread->id));
-
-	thr_ret = mono_mutex_unlock(&thread_hash_mutex);
-	g_assert (thr_ret == 0);
-	pthread_cleanup_pop (0);
 
 	/* The thread is no longer active, so unref it */
 	_wapi_handle_unref (handle);
+
+	/* Call pthread_exit() to call destructors and really exit the
+	 * thread
+	 */
+	pthread_exit (NULL);
 }
 
 static void thread_hash_init(void)
 {
-	thread_hash = g_hash_table_new (NULL, NULL);
+	int thr_ret;
+	
+	thr_ret = pthread_key_create (&thread_hash_key, NULL);
+	g_assert (thr_ret == 0);
+}
+
+static void _wapi_thread_suspend (struct _WapiHandle_thread *thread)
+{
+	g_assert (thread->owner_pid == _wapi_getpid ());
+	g_assert (pthread_equal (thread->id, pthread_self ()));
+	
+	while (MONO_SEM_WAIT (&thread->suspend_sem) != 0 &&
+	       errno == EINTR);
+}
+
+static void _wapi_thread_resume (struct _WapiHandle_thread *thread)
+{
+	if (thread->owner_pid != _wapi_getpid ()) {
+		return;
+	}
+	
+	MONO_SEM_POST (&thread->suspend_sem);
+}
+
+static void *thread_start_routine (gpointer args) G_GNUC_NORETURN;
+static void *thread_start_routine (gpointer args)
+{
+	struct _WapiHandle_thread *thread = (struct _WapiHandle_thread *)args;
+	int thr_ret;
+	
+	thr_ret = pthread_detach (pthread_self ());
+	g_assert (thr_ret == 0);
+
+	thr_ret = pthread_setspecific (thread_hash_key,
+				       (void *)thread->handle);
+	g_assert (thr_ret == 0);
+
+	thread->id = pthread_self();
+
+	if (thread->create_flags & CREATE_SUSPENDED) {
+		_wapi_thread_suspend (thread);
+	}
+	
+	thread_exit (thread->start_routine (thread->start_arg),
+		     thread->handle);
+
+#ifndef __GNUC__
+	/* Even though we tell gcc that this function doesn't return,
+	 * other compilers won't see that.
+	 */
+	return(NULL);
+#endif
 }
 
 /**
@@ -180,7 +212,9 @@ static void thread_hash_init(void)
  * @create: If 0, the new thread is ready to run immediately.  If
  * %CREATE_SUSPENDED, the new thread will be in the suspended state,
  * requiring a ResumeThread() call to continue running.
- * @tid: If non-NULL, the ID of the new thread is stored here.
+ * @tid: If non-NULL, the ID of the new thread is stored here.  NB
+ * this is defined as a DWORD (ie 32bit) in the MS API, but we need to
+ * cope with 64 bit IDs for s390x and amd64.
  *
  * Creates a new threading handle.
  *
@@ -188,7 +222,7 @@ static void thread_hash_init(void)
  */
 gpointer CreateThread(WapiSecurityAttributes *security G_GNUC_UNUSED, guint32 stacksize,
 		      WapiThreadStart start, gpointer param, guint32 create,
-		      guint32 *tid) 
+		      gsize *tid) 
 {
 	struct _WapiHandle_thread thread_handle = {0}, *thread_handle_p;
 	pthread_attr_t attr;
@@ -207,8 +241,11 @@ gpointer CreateThread(WapiSecurityAttributes *security G_GNUC_UNUSED, guint32 st
 	}
 
 	thread_handle.state = THREAD_STATE_START;
-	thread_handle.owner_pid = getpid ();
+	thread_handle.owner_pid = _wapi_getpid ();
 	thread_handle.owned_mutexes = g_ptr_array_new ();
+	thread_handle.create_flags = create;
+	thread_handle.start_routine = start;
+	thread_handle.start_arg = param;
 	
 	handle = _wapi_handle_new (WAPI_HANDLE_THREAD, &thread_handle);
 	if (handle == _WAPI_HANDLE_INVALID) {
@@ -218,9 +255,7 @@ gpointer CreateThread(WapiSecurityAttributes *security G_GNUC_UNUSED, guint32 st
 		return (NULL);
 	}
 
-	pthread_cleanup_push ((void(*)(void *))_wapi_handle_unlock_handle,
-			      handle);
-	thr_ret = _wapi_handle_lock_handle (handle);
+	thr_ret = _wapi_handle_lock_shared_handles ();
 	g_assert (thr_ret == 0);
 	
 	ok = _wapi_lookup_handle (handle, WAPI_HANDLE_THREAD,
@@ -237,14 +272,6 @@ gpointer CreateThread(WapiSecurityAttributes *security G_GNUC_UNUSED, guint32 st
 	 * the handle to store thread exit information
 	 */
 	_wapi_handle_ref (handle);
-	
-	/* Lock around the thread create, so that the new thread cant
-	 * race us to look up the thread handle in GetCurrentThread()
-	 */
-	pthread_cleanup_push ((void(*)(void *))mono_mutex_unlock_in_cleanup,
-			      (void *)&thread_hash_mutex);
-	thr_ret = mono_mutex_lock(&thread_hash_mutex);
-	g_assert (thr_ret == 0);
 	
 	/* Set a 2M stack size.  This is the default on Linux, but BSD
 	 * needs it.  (The original bug report from Martin Dvorak <md@9ll.cz>
@@ -276,9 +303,11 @@ gpointer CreateThread(WapiSecurityAttributes *security G_GNUC_UNUSED, guint32 st
 	g_assert (thr_ret == 0);
 #endif
 
-	ret = _wapi_timed_thread_create (&thread_handle_p->thread, &attr,
-					 create, start, thread_exit, param,
-					 handle);
+	MONO_SEM_INIT (&thread_handle_p->suspend_sem, 0);
+	thread_handle_p->handle = handle;
+	
+	ret = pthread_create (&thread_handle_p->id, &attr,
+			      thread_start_routine, (void *)thread_handle_p);
 	if (ret != 0) {
 #ifdef DEBUG
 		g_message ("%s: Thread create error: %s", __func__,
@@ -288,40 +317,32 @@ gpointer CreateThread(WapiSecurityAttributes *security G_GNUC_UNUSED, guint32 st
 		/* Two, because of the reference we took above */
 		unrefs = 2;
 		
-		goto thread_hash_cleanup;
+		goto cleanup;
 	}
 	ct_ret = handle;
 	
-	g_hash_table_insert (thread_hash,
-			     GUINT_TO_POINTER (thread_handle_p->thread->id),
-			     handle);
-	
 #ifdef DEBUG
-	g_message("%s: Started thread handle %p thread %p ID %ld", __func__,
-		  handle, thread_handle_p->thread,
-		  thread_handle_p->thread->id);
+	g_message("%s: Started thread handle %p ID %ld", __func__, handle,
+		  thread_handle_p->id);
 #endif
 	
 	if (tid != NULL) {
 #ifdef PTHREAD_POINTER_ID
-		*tid = GPOINTER_TO_UINT (thread_handle_p->thread->id);
+		/* Don't use GPOINTER_TO_UINT here, it can't cope with
+		 * sizeof(void *) > sizeof(uint) when a cast to uint
+		 * would overflow
+		 */
+		*tid = (gsize)(thread_handle_p->id);
 #else
-		*tid = thread_handle_p->thread->id;
+		*tid = thread_handle_p->id;
 #endif
 	}
 
-thread_hash_cleanup:
-	thr_ret = mono_mutex_unlock (&thread_hash_mutex);
-	g_assert (thr_ret == 0);
-	pthread_cleanup_pop (0);
-
 cleanup:
-	thr_ret = _wapi_handle_unlock_handle (handle);
-	g_assert (thr_ret == 0);
-	pthread_cleanup_pop (0);
+	_wapi_handle_unlock_shared_handles ();
 	
-	/* Must not call _wapi_handle_unref() with the handle already
-	 * locked
+	/* Must not call _wapi_handle_unref() with the shared handles
+	 * already locked
 	 */
 	for (i = 0; i < unrefs; i++) {
 		_wapi_handle_unref (handle);
@@ -330,26 +351,90 @@ cleanup:
 	return(ct_ret);
 }
 
-gpointer _wapi_thread_handle_from_id (guint32 tid)
+/* The only time this function is called when tid != pthread_self ()
+ * is from OpenThread (), so we can fast-path most cases by just
+ * looking up the handle in TLS.  OpenThread () must cope with a NULL
+ * return and do a handle search in that case.
+ */
+static gpointer _wapi_thread_handle_from_id (pthread_t tid)
 {
-	gpointer ret=NULL;
-	int thr_ret;
+	gpointer ret;
 
-	pthread_cleanup_push ((void(*)(void *))mono_mutex_unlock_in_cleanup,
-			      (void *)&thread_hash_mutex);
-	thr_ret = mono_mutex_lock(&thread_hash_mutex);
-	g_assert (thr_ret == 0);
+	if (pthread_equal (tid, pthread_self ()) &&
+	    (ret = pthread_getspecific (thread_hash_key)) != NULL) {
+		/* We know the handle */
+
+#ifdef DEBUG
+		g_message ("%s: Returning %p for self thread %ld from TLS",
+			   __func__, ret, tid);
+#endif
+		
+		return(ret);
+	}
 	
-	ret = g_hash_table_lookup (thread_hash, GUINT_TO_POINTER (tid));
+#ifdef DEBUG
+	g_message ("%s: Returning NULL for unknown or non-self thread %ld",
+		   __func__, tid);
+#endif
+		
 
-	thr_ret = mono_mutex_unlock(&thread_hash_mutex);
-	g_assert (thr_ret == 0);
-	pthread_cleanup_pop (0);
-
-	return(ret);
+	return(NULL);
 }
 
-gpointer OpenThread (guint32 access G_GNUC_UNUSED, gboolean inherit G_GNUC_UNUSED, guint32 tid)
+static gboolean find_thread_by_id (gpointer handle, gpointer user_data)
+{
+	pthread_t tid = (pthread_t)user_data;
+	struct _WapiHandle_thread *thread_handle;
+	gboolean ok;
+	
+	/* Ignore threads that have already exited (ie they are signalled) */
+	if (_wapi_handle_issignalled (handle) == FALSE) {
+		ok = _wapi_lookup_handle (handle, WAPI_HANDLE_THREAD,
+					  (gpointer *)&thread_handle);
+		if (ok == FALSE) {
+			/* It's possible that the handle has vanished
+			 * during the _wapi_search_handle before it
+			 * gets here, so don't spam the console with
+			 * warnings.
+			 */
+			return(FALSE);
+		}
+		
+#ifdef DEBUG
+		g_message ("%s: looking at thread %ld from process %d", __func__, thread_handle->id, thread_handle->owner_pid);
+#endif
+
+		if (thread_handle->owner_pid != _wapi_getpid ()) {
+			/* Not sure if ms has this limitation with
+			 * OpenThread(), but pthreads IDs are not
+			 * unique across processes
+			 */
+#ifdef DEBUG
+			g_message ("%s: not this process", __func__);
+#endif
+			return(FALSE);
+		}
+		
+		if (pthread_equal (thread_handle->id, tid)) {
+#ifdef DEBUG
+			g_message ("%s: found the thread we are looking for",
+				   __func__);
+#endif
+			return(TRUE);
+		}
+	}
+	
+#ifdef DEBUG
+	g_message ("%s: not found %ld, returning FALSE", __func__, tid);
+#endif
+	
+	return(FALSE);
+}
+
+/* NB tid is 32bit in MS API, but we need 64bit on amd64 and s390x
+ * (and probably others)
+ */
+gpointer OpenThread (guint32 access G_GNUC_UNUSED, gboolean inherit G_GNUC_UNUSED, gsize tid)
 {
 	gpointer ret=NULL;
 	
@@ -357,11 +442,17 @@ gpointer OpenThread (guint32 access G_GNUC_UNUSED, gboolean inherit G_GNUC_UNUSE
 	mono_once (&thread_ops_once, thread_ops_init);
 	
 #ifdef DEBUG
-	g_message ("%s: looking up thread %d", __func__, tid);
+	g_message ("%s: looking up thread %"G_GSIZE_FORMAT, __func__, tid);
 #endif
 
-	ret = _wapi_thread_handle_from_id (tid);
-	if(ret!=NULL) {
+	ret = _wapi_thread_handle_from_id ((pthread_t)tid);
+	if (ret == NULL) {
+		/* We need to search for this thread */
+		ret = _wapi_search_handle (WAPI_HANDLE_THREAD, find_thread_by_id, (gpointer)tid, NULL);
+	} else {
+		/* if _wapi_search_handle() returns a found handle, it
+		 * refs it itself
+		 */
 		_wapi_handle_ref (ret);
 	}
 	
@@ -383,7 +474,7 @@ gpointer OpenThread (guint32 access G_GNUC_UNUSED, gboolean inherit G_GNUC_UNUSE
  */
 void ExitThread(guint32 exitcode)
 {
-	_wapi_timed_thread_exit(exitcode);
+	thread_exit(exitcode, GetCurrentThread ());
 }
 
 /**
@@ -411,7 +502,7 @@ gboolean GetExitCodeThread(gpointer handle, guint32 *exitcode)
 	
 #ifdef DEBUG
 	g_message ("%s: Finding exit status for thread handle %p id %ld",
-		   __func__, handle, thread_handle->thread->id);
+		   __func__, handle, thread_handle->id);
 #endif
 
 	if (exitcode == NULL) {
@@ -442,34 +533,38 @@ gboolean GetExitCodeThread(gpointer handle, guint32 *exitcode)
  * Looks up the thread ID of the current thread.  This ID can be
  * passed to OpenThread() to create a new handle on this thread.
  *
- * Return value: the thread ID.
+ * Return value: the thread ID.  NB this is defined as DWORD (ie 32
+ * bit) in the MS API, but we need to cope with 64 bit IDs for s390x
+ * and amd64.  This doesn't really break the API, it just embraces and
+ * extends it on 64bit platforms :)
  */
-guint32 GetCurrentThreadId(void)
+gsize GetCurrentThreadId(void)
 {
 	pthread_t tid = pthread_self();
 	
 #ifdef PTHREAD_POINTER_ID
-	return(GPOINTER_TO_UINT(tid));
+	/* Don't use GPOINTER_TO_UINT here, it can't cope with
+	 * sizeof(void *) > sizeof(uint) when a cast to uint would
+	 * overflow
+	 */
+	return((gsize)tid);
 #else
 	return(tid);
 #endif
 }
 
-static gpointer thread_attach(guint32 *tid)
+static gpointer thread_attach(gsize *tid)
 {
 	struct _WapiHandle_thread thread_handle = {0}, *thread_handle_p;
 	gpointer handle;
 	gboolean ok;
-	int ret;
 	int thr_ret;
-	int i, unrefs = 0;
-	gpointer ta_ret = NULL;
 	
 	mono_once (&thread_hash_once, thread_hash_init);
 	mono_once (&thread_ops_once, thread_ops_init);
 
 	thread_handle.state = THREAD_STATE_START;
-	thread_handle.owner_pid = getpid ();
+	thread_handle.owner_pid = _wapi_getpid ();
 	thread_handle.owned_mutexes = g_ptr_array_new ();
 
 	handle = _wapi_handle_new (WAPI_HANDLE_THREAD, &thread_handle);
@@ -480,9 +575,7 @@ static gpointer thread_attach(guint32 *tid)
 		return (NULL);
 	}
 
-	pthread_cleanup_push ((void(*)(void *))_wapi_handle_unlock_handle,
-			      handle);
-	thr_ret = _wapi_handle_lock_handle (handle);
+	thr_ret = _wapi_handle_lock_shared_handles ();
 	g_assert (thr_ret == 0);
 	
 	ok = _wapi_lookup_handle (handle, WAPI_HANDLE_THREAD,
@@ -499,66 +592,38 @@ static gpointer thread_attach(guint32 *tid)
 	 * the handle to store thread exit information
 	 */
 	_wapi_handle_ref (handle);
-	
-	/* Lock around the thread create, so that the new thread cant
-	 * race us to look up the thread handle in GetCurrentThread()
+
+	/* suspend_sem is not used for attached threads, but
+	 * thread_exit() might try to destroy it
 	 */
-	pthread_cleanup_push ((void(*)(void *))mono_mutex_unlock_in_cleanup,
-			      (void *)&thread_hash_mutex);
-	thr_ret = mono_mutex_lock(&thread_hash_mutex);
+	MONO_SEM_INIT (&thread_handle_p->suspend_sem, 0);
+	thread_handle_p->handle = handle;
+	thread_handle_p->id = pthread_self ();
+
+	thr_ret = pthread_setspecific (thread_hash_key, (void *)handle);
 	g_assert (thr_ret == 0);
-
-	ret = _wapi_timed_thread_attach (&thread_handle_p->thread, thread_exit,
-					 handle);
-	if (ret != 0) {
-#ifdef DEBUG
-		g_message ("%s: Thread attach error: %s", __func__,
-			   strerror(ret));
-#endif
-
-		/* Two, because of the reference we took above */
-		unrefs = 2;
-		
-		goto thread_hash_cleanup;
-	}
-	ta_ret = handle;
 	
-	g_hash_table_insert (thread_hash,
-			     GUINT_TO_POINTER (thread_handle_p->thread->id),
-			     handle);
-
 #ifdef DEBUG
-	g_message("%s: Attached thread handle %p thread %p ID %ld", __func__,
-		  handle, thread_handle_p->thread,
-		  thread_handle_p->thread->id);
+	g_message("%s: Attached thread handle %p ID %ld", __func__, handle,
+		  thread_handle_p->id);
 #endif
 
 	if (tid != NULL) {
 #ifdef PTHREAD_POINTER_ID
-		*tid = GPOINTER_TO_UINT(thread_handle_p->thread->id);
+		/* Don't use GPOINTER_TO_UINT here, it can't cope with
+		 * sizeof(void *) > sizeof(uint) when a cast to uint
+		 * would overflow
+		 */
+		*tid = (gsize)(thread_handle_p->id);
 #else
-		*tid = thread_handle_p->thread->id;
+		*tid = thread_handle_p->id;
 #endif
 	}
 
-thread_hash_cleanup:
-	thr_ret = mono_mutex_unlock (&thread_hash_mutex);
-	g_assert (thr_ret == 0);
-	pthread_cleanup_pop (0);
-
 cleanup:
-	thr_ret = _wapi_handle_unlock_handle (handle);
-	g_assert (thr_ret == 0);
-	pthread_cleanup_pop (0);
+	_wapi_handle_unlock_shared_handles ();
 	
-	/* Must not call _wapi_handle_unref() with the handle already
-	 * locked
-	 */
-	for (i = 0; i < unrefs; i++) {
-		_wapi_handle_unref (handle);
-	}
-	
-	return(ta_ret);
+	return(handle);
 }
 
 /**
@@ -575,14 +640,11 @@ cleanup:
 gpointer GetCurrentThread(void)
 {
 	gpointer ret=NULL;
-	guint32 tid;
 	
 	mono_once(&thread_hash_once, thread_hash_init);
 	mono_once (&thread_ops_once, thread_ops_init);
 	
-	tid=GetCurrentThreadId();
-	
-	ret = _wapi_thread_handle_from_id (tid);
+	ret = _wapi_thread_handle_from_id (pthread_self ());
 	if (!ret) {
 		ret = thread_attach (NULL);
 	}
@@ -612,24 +674,13 @@ guint32 ResumeThread(gpointer handle)
 		
 		return (0xFFFFFFFF);
 	}
-	
-	if (thread_handle->thread == NULL) {
-		return(0xFFFFFFFF);
-	}
 
-#ifdef WITH_INCLUDED_LIBGC
-	if (thread_handle->thread->suspend_count <= 1)
-		_wapi_timed_thread_resume (thread_handle->thread);
-	
-	return (--thread_handle->thread->suspend_count));
-#else
 	/* This is still a kludge that only copes with starting a
 	 * thread that was suspended on create, so don't bother with
 	 * the suspend count crap yet
 	 */
-	_wapi_timed_thread_resume (thread_handle->thread);
+	_wapi_thread_resume (thread_handle);
 	return(0xFFFFFFFF);
-#endif
 }
 
 /**
@@ -643,41 +694,7 @@ guint32 ResumeThread(gpointer handle)
  */
 guint32 SuspendThread(gpointer handle)
 {
-#ifdef WITH_INCLUDED_LIBGC
-	struct _WapiHandle_thread *thread_handle;
-	gpointer current;
-	gboolean ok;
-
-	current = GetCurrentThread ();
-	ok = _wapi_lookup_handle (handle, WAPI_HANDLE_THREAD,
-				  (gpointer *)&thread_handle);
-	if (ok == FALSE) {
-		g_warning ("%s: error looking up thread handle %p", __func__,
-			   handle);
-		return (0xFFFFFFFF);
-	}
-	
-	if (thread_handle->thread == NULL) {
-		return(0xFFFFFFFF);
-	}
-
-	if (!thread_handle->thread->suspend_count) {
-		if (handle == current)
-			_wapi_timed_thread_suspend (thread_handle->thread);
-		else {
-			pthread_kill (thread_handle->thread->id, SIGPWR);
-			while (MONO_SEM_WAIT (&thread_handle->thread->suspended_sem) != 0) {
-				if (errno != EINTR) {
-					return(0xFFFFFFFF);
-				}
-			}
-		}
-	}
-
-	return (thread_handle->thread->suspend_count++);
-#else
 	return(0xFFFFFFFF);
-#endif
 }
 
 /*
@@ -919,47 +936,95 @@ void Sleep(guint32 ms)
 	SleepEx(ms, FALSE);
 }
 
-guint32 QueueUserAPC (WapiApcProc apc_callback, gpointer handle, 
-					gpointer param)
-{
-	struct _WapiHandle_thread *thread_handle;
-	gboolean ok;
-	
-	ok = _wapi_lookup_handle (handle, WAPI_HANDLE_THREAD,
-				  (gpointer *)&thread_handle);
-	if (ok == FALSE) {
-		g_warning ("%s: error looking up thread handle %p", __func__,
-			   handle);
-		return (0);
-	}
-	
-	_wapi_timed_thread_queue_apc (thread_handle->thread, apc_callback,
-				      param);
-	return(1);
-}
-
 gboolean _wapi_thread_cur_apc_pending (void)
 {
 	return(_wapi_thread_apc_pending (GetCurrentThread ()));
 }
 
+static void _wapi_thread_queue_apc (struct _WapiHandle_thread *thread,
+				    guint32 (*apc_callback)(gpointer),
+				    gpointer param)
+{
+	ApcInfo *apc;
+	int thr_ret;
+	
+	if (thread->owner_pid != _wapi_getpid ()) {
+		return;
+	}
+
+	apc = (ApcInfo *)g_new (ApcInfo, 1);
+	apc->callback = apc_callback;
+	apc->param = param;
+	
+	thr_ret = _wapi_handle_lock_shared_handles ();
+	g_assert (thr_ret == 0);
+	
+	thread->apc_queue = g_slist_append (thread->apc_queue, apc);
+	
+	_wapi_handle_unlock_shared_handles ();
+}
+
 gboolean _wapi_thread_apc_pending (gpointer handle)
 {
-	struct _WapiHandle_thread *thread_handle;
+	struct _WapiHandle_thread *thread;
 	gboolean ok;
 	
 	ok = _wapi_lookup_handle (handle, WAPI_HANDLE_THREAD,
-				  (gpointer *)&thread_handle);
+				  (gpointer *)&thread);
 	if (ok == FALSE) {
 		g_warning ("%s: error looking up thread handle %p", __func__,
 			   handle);
 		return (FALSE);
 	}
 	
-	return(_wapi_timed_thread_apc_pending (thread_handle->thread));
+	if (thread->owner_pid != _wapi_getpid ()) {
+		return(FALSE);
+	}
+	
+	return(thread->apc_queue != NULL);
 }
 
 gboolean _wapi_thread_dispatch_apc_queue (gpointer handle)
+{
+	struct _WapiHandle_thread *thread;
+	gboolean ok;
+	ApcInfo *apc;
+	GSList *list;
+	int thr_ret;
+	
+	ok = _wapi_lookup_handle (handle, WAPI_HANDLE_THREAD,
+				  (gpointer *)&thread);
+	if (ok == FALSE) {
+		g_warning ("%s: error looking up thread handle %p", __func__,
+			   handle);
+		return (FALSE);
+	}
+	
+	if (thread->owner_pid != _wapi_getpid ()) {
+		return(FALSE);
+	}
+	
+	thr_ret = _wapi_handle_lock_shared_handles ();
+	g_assert (thr_ret == 0);
+	
+	list = thread->apc_queue;
+	thread->apc_queue = NULL;
+	
+	_wapi_handle_unlock_shared_handles ();
+	
+	while (list != NULL) {
+		apc = (ApcInfo *)list->data;
+		apc->callback (apc->param);
+		g_free (apc);
+		list = g_slist_next (list);
+	}
+	g_slist_free (list);
+	
+	return(TRUE);
+}
+
+guint32 QueueUserAPC (WapiApcProc apc_callback, gpointer handle, 
+		      gpointer param)
 {
 	struct _WapiHandle_thread *thread_handle;
 	gboolean ok;
@@ -972,17 +1037,17 @@ gboolean _wapi_thread_dispatch_apc_queue (gpointer handle)
 		return (0);
 	}
 	
-	_wapi_timed_thread_dispatch_apc_queue (thread_handle->thread);
+	_wapi_thread_queue_apc (thread_handle, apc_callback, param);
 	return(1);
 }
 
-void _wapi_thread_own_mutex (pthread_t tid, gpointer mutex)
+void _wapi_thread_own_mutex (gpointer mutex)
 {
 	struct _WapiHandle_thread *thread_handle;
 	gboolean ok;
 	gpointer thread;
-
-	thread = _wapi_thread_handle_from_id (tid);
+	
+	thread = _wapi_thread_handle_from_id (pthread_self ());
 	if (thread == NULL) {
 		g_warning ("%s: error looking up thread by ID", __func__);
 		return;
@@ -996,16 +1061,18 @@ void _wapi_thread_own_mutex (pthread_t tid, gpointer mutex)
 		return;
 	}
 
+	_wapi_handle_ref (mutex);
+	
 	g_ptr_array_add (thread_handle->owned_mutexes, mutex);
 }
 
-void _wapi_thread_disown_mutex (pthread_t tid, gpointer mutex)
+void _wapi_thread_disown_mutex (gpointer mutex)
 {
 	struct _WapiHandle_thread *thread_handle;
 	gboolean ok;
 	gpointer thread;
 
-	thread = _wapi_thread_handle_from_id (tid);
+	thread = _wapi_thread_handle_from_id (pthread_self ());
 	if (thread == NULL) {
 		g_warning ("%s: error looking up thread by ID", __func__);
 		return;
@@ -1019,58 +1086,7 @@ void _wapi_thread_disown_mutex (pthread_t tid, gpointer mutex)
 		return;
 	}
 
+	_wapi_handle_unref (mutex);
+	
 	g_ptr_array_remove (thread_handle->owned_mutexes, mutex);
 }
-
-
-
-#ifdef WITH_INCLUDED_LIBGC
-
-static void GC_suspend_handler (int sig)
-{
-	struct _WapiHandle_thread *thread_handle;
-	gpointer handle;
-	gboolean ok;
-
-	handle = GetCurrentThread ();
-	ok = _wapi_lookup_handle (handle, WAPI_HANDLE_THREAD,
-				  (gpointer *)&thread_handle);
-	if (ok == FALSE) {
-		g_warning ("%s: error looking up thread handle %p", __func__,
-			   handle);
-		return;
-	}
-	
-	thread_handle->thread->stack_ptr = &ok;
-	MONO_SEM_POST (&thread_handle->thread->suspended_sem);
-
-	_wapi_timed_thread_suspend (thread_handle->thread);
-
-	thread_handle->thread->stack_ptr = NULL;
-}
-
-static void gc_init (void)
-{
-	struct sigaction act;
-
-	act.sa_handler = GC_suspend_handler;
-	g_assert (sigaction (SIGPWR, &act, NULL) == 0);
-}
-
-void mono_wapi_push_thread_stack (gpointer handle, gpointer stack_ptr)
-{
-	struct _WapiHandle_thread *thread_handle;
-	gboolean ok;
-	
-	ok = _wapi_lookup_handle (handle, WAPI_HANDLE_THREAD,
-				  (gpointer *)&thread_handle);
-	if (ok == FALSE) {
-		g_warning ("%s: error looking up thread handle %p", __func__,
-			   handle);
-		return;
-	}
-	
-	GC_push_all_stack (thread_handle->thread->stack_ptr, stack_ptr);
-}
-
-#endif /* WITH_INCLUDED_LIBGC */
