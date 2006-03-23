@@ -1,3 +1,10 @@
+2006-03-23  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* FontCollection.cs (Dispose): When on Linux/Unix, call 
+	  GdipDeletePrivateFontCollection to free up the font collection (even
+	  though it's not private, we'd be leaking otherwise. Don't try this
+	  with Microsoft's GDI+ on Win32, though.)
+
 2006-03-23  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* FontCollection.cs (get_Families): Now letting the runtime do the

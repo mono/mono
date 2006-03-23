@@ -74,6 +74,10 @@ namespace System.Drawing.Text {
 		{
 			if (nativeFontCollection!=IntPtr.Zero){
 				GDIPlus.GdipDeletePrivateFontCollection (ref nativeFontCollection);							
+
+				// This must be zeroed out, otherwise our base will also call
+				// the GDI+ delete method on unix platforms. We're keeping the
+				// base.Dispose() call in case other cleanup ever gets added there
 				nativeFontCollection = IntPtr.Zero;
 			}
 			

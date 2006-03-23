@@ -56,6 +56,14 @@ namespace System.Drawing.Text {
 
 		protected virtual void Dispose (bool disposing)
 		{		
+			OperatingSystem osInfo = Environment.OSVersion;
+
+			if (nativeFontCollection != IntPtr.Zero) {
+				if ((int) osInfo.Platform == 128 || (int) osInfo.Platform == 4) {
+					GDIPlus.GdipDeletePrivateFontCollection (ref nativeFontCollection);
+					nativeFontCollection = IntPtr.Zero;
+				}       
+			}
 		}
 
 		// properties
