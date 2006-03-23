@@ -942,6 +942,9 @@ namespace System.Web.UI.WebControls {
 			pds.PageSize = PageSize;
 			pds.VirtualCount = VirtualItemCount;
 
+			if ((pds.IsPagingEnabled) && (pds.PageCount < pds.CurrentPageIndex))
+				throw new HttpException ("Invalid DataGrid PageIndex");
+				
 			CreateRenderColumns (paged_data_source, useDataSource);
 			if (useDataSource) {
 				if (DataSource != null)
@@ -1062,7 +1065,7 @@ namespace System.Web.UI.WebControls {
 				case ListItemType.AlternatingItem:
 					if (alt == null) {
 						if (alt_item_style != null) {
-							alt = new Style ();
+							alt = new TableItemStyle ();
 							alt.CopyFrom (item_style);
 							alt.CopyFrom (alt_item_style);
 						} else {

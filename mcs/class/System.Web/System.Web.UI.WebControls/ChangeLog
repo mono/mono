@@ -1,3 +1,9 @@
+2006-03-23  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* DataGrid.cs: fixed CreateControlHierarchy, added CurrentPageIndex
+	validation
+	in PrepareControlHierarchy fixed style applying to AlternatingItem
+
 2006-03-22  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* DataList.cs: fixed RepeatColumns property, added value validation
