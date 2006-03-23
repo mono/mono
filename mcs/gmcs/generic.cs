@@ -785,10 +785,7 @@ namespace Mono.CSharp {
 			if (type == null)
 				throw new InvalidOperationException ();
 
-			if (constraints == null) {
-				new_constraints = constraints;
-				return true;
-			} else if (new_constraints == null)
+			if (new_constraints == null)
 				return true;
 
 			if (!new_constraints.Resolve (ec))
@@ -796,7 +793,11 @@ namespace Mono.CSharp {
 			if (!new_constraints.ResolveTypes (ec))
 				return false;
 
-			return constraints.CheckInterfaceMethod (new_constraints);
+			if (constraints != null) 
+				return constraints.CheckInterfaceMethod (new_constraints);
+
+			constraints = new_constraints;
+			return true;
 		}
 
 		public void EmitAttributes ()
