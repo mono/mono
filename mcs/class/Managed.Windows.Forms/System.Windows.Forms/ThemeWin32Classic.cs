@@ -1901,7 +1901,6 @@ namespace System.Windows.Forms
 				bg_color = Color.White;
 			else
 				bg_color = Color.Black;
-			Console.WriteLine (color + " " + bg_color);
 			Bitmap	bmp = new Bitmap (size.Width, size.Height);
 			Graphics gr = Graphics.FromImage (bmp);
 			Rectangle rect = new Rectangle (Point.Empty, size);
