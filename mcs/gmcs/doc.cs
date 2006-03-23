@@ -62,15 +62,6 @@ namespace Mono.CSharp {
 				foreach (TypeContainer tc in t.Types)
 					tc.GenerateDocComment (t);
 
-			if (t.Parts != null) {
-				IDictionary comments = RootContext.Documentation.PartialComments;
-				foreach (ClassPart cp in t.Parts) {
-					if (cp.DocComment == null)
-						continue;
-					comments [cp] = cp;
-				}
-			}
-
 			if (t.Enums != null)
 				foreach (Enum en in t.Enums)
 					en.GenerateDocComment (t);
@@ -996,13 +987,6 @@ namespace Mono.CSharp {
 		public Hashtable StoredDocuments = new Hashtable ();
 
 		//
-		// Stores comments on partial types (should handle uniquely).
-		// Keys are PartialContainers, values are comment strings
-		// (didn't use StringBuilder; usually we have just 2 or more).
-		//
-		public IDictionary PartialComments = new ListDictionary ();
-
-		//
 		// Outputs XML documentation comment from tokenized comments.
 		//
 		public bool OutputDocComment (string asmfilename)
@@ -1050,15 +1034,6 @@ namespace Mono.CSharp {
 				foreach (TypeContainer tc in root.Types)
 					DocUtil.GenerateTypeDocComment (tc, null);
 
-			if (root.Parts != null) {
-				IDictionary comments = PartialComments;
-				foreach (ClassPart cp in root.Parts) {
-					if (cp.DocComment == null)
-						continue;
-					comments [cp] = cp;
-				}
-			}
-
 			if (root.Delegates != null)
 				foreach (Delegate d in root.Delegates) 
 					DocUtil.GenerateDocComment (d, null);
@@ -1067,16 +1042,6 @@ namespace Mono.CSharp {
 				foreach (Enum e in root.Enums)
 					e.GenerateDocComment (null);
 
-			IDictionary table = new ListDictionary ();
-			foreach (ClassPart cp in PartialComments.Keys) {
-				// FIXME: IDictionary does not guarantee that the keys will be
-				//        accessed in the order they were added.
-				table [cp.PartialContainer] += cp.DocComment;
-			}
-			foreach (PartialContainer pc in table.Keys) {
-				pc.DocComment = table [pc] as string;
-				DocUtil.GenerateDocComment (pc, null);
-			}
 		}
 	}
 }

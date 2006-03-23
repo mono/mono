@@ -1,3 +1,7 @@
+2006-03-23  Raja R Harinath  <rharinath@novell.com>
+
+	* NativeConvert.generated.cs: Update after merge.
+
 2006-02-25  Marek Safar  <marek.safar@seznam.cz>
 
 	* NativeConvert.generated.cs: Guarded CLSCompliant attribute by NET_2_0

@@ -542,7 +542,7 @@ namespace Mono.CSharp {
 			return new Parameters (fixed_params, parameters.HasArglist);
 		}
 
-		protected override TypeExpr [] GetClassBases (out TypeExpr base_class)
+		public override TypeExpr [] GetClassBases (out TypeExpr base_class)
 		{
 			iterator_type_expr = InflateType (original_iterator_type);
 

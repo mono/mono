@@ -1,4 +1,53 @@
 2006-03-23  Raja R Harinath  <rharinath@novell.com>
+2006-02-25  Marek Safar  <marek.safar@seznam.cz>
+
+	New partial class implementation.
+	A fix for #77027, #77029, #77403
+
+	* attribute.cs (Attributable): Made attributes protected.
+
+	* class.cs (TypeContainer): Add PartialContainer and partial_parts as
+	the replacements of ClassPart and PartialContainer.
+	(TypeContainer.AddClassOrStruct): Call RecordDecl here.
+	(TypeContainer.AddInterface): Ditto.
+	(TypeContainer.AddPartial): The main method for partial classes. It checks
+	for errors and merges ModFlags and attributes. At the end class is added to
+	partial_parts list.
+	(TYpeContainer.DefineDefaultConstructor): Checks whether default ctor is
+	required here.
+	(TypeContainer.GetClsCompliantAttributeValue): Cope with partial class too.
+	(TypeContainer.GetNormalPartialBases): Resolves base classes and interfaces
+	from the rest of partial classes.
+	(TypeContainer.GetClassBases): Simplified.
+	(TypeContainer.DefineTypeBuilder): New method, mostly extracted from
+	DefineType.
+	(TypeContainer.DefineDefaultConstructor): Is used by derived classes.
+	(TypeContainer.HasExplicitLayout): Uses Flags now.
+	(PartialContainer): Removed.
+	(ClassOrStruct.AddToContainer): Moved enclosing member name check here.
+	(StaticClass): Was merged with Class.
+	(Class.GetClassBases): class and static class bases are verified here.
+	(Class.TypeAttr): Added static attributes when class is static.
+	(Struct.RegisterFieldForInitialization): Moved from TypeContainer.
+	(MemberBase): In some cases we need to call parent container for partial
+	class. It should be eliminated but it's not easy now.
+
+	* cs-parser.jay: Replaced all PartialContainer with AddPartial.
+
+	* decls.cs (MemberCore.DocComment): Introduced new property as is used by
+	partial classed to accumulate class comments.
+	(MemberCore.GetClsCompliantAttributeValue): Moved from TypeContainer.
+
+	* doc.cs (GenerateTypeDocComment): Partial classes clean up.
+
+	* driver.cs (MainDriver): Tree.GetDecl was removed.
+
+	* modifiers.cs (Modifiers): Add partial modifier.
+
+	* tree.cs (Tree.decl): Removed.
+	(RootTypes): Started to use this class more often for root types
+	specializations.
+
 
 	* generic.cs (TypeParameter.UpdateConstraints): Update
 	'constraints' if null.

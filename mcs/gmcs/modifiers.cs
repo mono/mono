@@ -28,6 +28,7 @@ namespace Mono.CSharp {
 		public const int TOP       = 0x2000;
 
 		public const int PROPERTY_CUSTOM = 0x4000; // Custom property modifier
+		public const int PARTIAL   = 0x20000;
 
 		//
 		// We use this internally to flag that the method contains an iterator

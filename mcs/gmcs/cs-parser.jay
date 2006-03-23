@@ -794,21 +794,15 @@ struct_declaration
 	  member_name
 	  { 
 		MemberName name = MakeName ((MemberName) $6);
+		current_class = new Struct (
+			current_namespace, current_class, name, (int) $2,
+			(Attributes) $1);
+
 		if ($3 != null) {
-			ClassPart part = PartialContainer.CreatePart (
-				current_namespace, current_class, name, (int) $2,
-				(Attributes) $1, Kind.Struct, (Location) $3);
-
-			current_container = part.PartialContainer;
-			current_class = part;
+			current_container = current_container.AddPartial (current_class);
 		} else {
-			current_class = new Struct (
-				current_namespace, current_class, name, (int) $2,
-				(Attributes) $1);
-
 			current_container.AddClassOrStruct (current_class);
 			current_container = current_class;
-			RootContext.Tree.RecordDecl (current_namespace.NS, name, current_class);
 		}
 	  }
 	  opt_class_base
@@ -822,7 +816,7 @@ struct_declaration
 		current_class.SetParameterInfo ((ArrayList) $9);
 
 		if (RootContext.Documentation != null)
-			current_class.DocComment = Lexer.consume_doc_comment ();
+			current_container.DocComment = Lexer.consume_doc_comment ();
 	  }
 	  struct_body
 	  {
@@ -1544,21 +1538,15 @@ interface_declaration
 	  {
 		MemberName name = MakeName ((MemberName) $6);
 
+		current_class = new Interface (
+			current_namespace, current_class, name, (int) $2,
+			(Attributes) $1);
+
 		if ($3 != null) {
-			ClassPart part = PartialContainer.CreatePart (
-				current_namespace, current_class, name, (int) $2,
-				(Attributes) $1, Kind.Interface, (Location) $3);
-
-			current_container = part.PartialContainer;
-			current_class = part;
+			current_container = current_container.AddPartial (current_class);
 		} else {
-			current_class = new Interface (
-				current_namespace, current_class, name, (int) $2,
-				(Attributes) $1);
-
 			current_container.AddInterface (current_class);
 			current_container = current_class;
-			RootContext.Tree.RecordDecl (current_namespace.NS, name, current_class);
 		}
 	  }
 	  opt_class_base
@@ -1572,7 +1560,7 @@ interface_declaration
 		current_class.SetParameterInfo ((ArrayList) $9);
 
 		if (RootContext.Documentation != null) {
-			current_class.DocComment = Lexer.consume_doc_comment ();
+			current_container.DocComment = Lexer.consume_doc_comment ();
 			Lexer.doc_state = XmlCommentState.Allowed;
 		}
 	  }
@@ -3842,27 +3830,15 @@ class_declaration
 		MemberName name = MakeName ((MemberName) $6);
 		int mod_flags = (int) $2;
 
+		current_class = new Class (
+			current_namespace, current_class, name,
+			mod_flags, (Attributes) $1);
+
 		if ($3 != null) {
-			ClassPart part = PartialContainer.CreatePart (
-				current_namespace, current_class, name, mod_flags,
-				(Attributes) $1, Kind.Class, (Location) $3);
-
-			current_container = part.PartialContainer;
-			current_class = part;
+			current_container = current_container.AddPartial (current_class);
 		} else {
-			if ((mod_flags & Modifiers.STATIC) != 0) {
-				current_class = new StaticClass (
-					current_namespace, current_class, name,
-					mod_flags, (Attributes) $1);
-			} else {
-				current_class = new Class (
-					current_namespace, current_class, name,
-					mod_flags, (Attributes) $1);
-			}
-
 			current_container.AddClassOrStruct (current_class);
 			current_container = current_class;
-			RootContext.Tree.RecordDecl (current_namespace.NS, name, current_class);
 		}
 	  }
 	  opt_class_base
@@ -3882,7 +3858,7 @@ class_declaration
 		current_class.SetParameterInfo ((ArrayList) $9);
 
 		if (RootContext.Documentation != null) {
-			current_class.DocComment = Lexer.consume_doc_comment ();
+			current_container.DocComment = Lexer.consume_doc_comment ();
 			Lexer.doc_state = XmlCommentState.Allowed;
 		}
 	  }
@@ -5081,13 +5057,12 @@ TypeContainer pop_current_class ()
 	TypeContainer retval = current_class;
 
 	current_class = (TypeContainer) current_class.Parent;
-	current_container = (TypeContainer) current_container.Parent;
+	current_container = current_class.IsPartial ? current_class.PartialContainer : current_class;
 
 	if (current_class != current_container) {
-		if (((ClassPart) current_class).PartialContainer != current_container)
+		if (current_class.PartialContainer != current_container)
 			throw new InternalErrorException ("current_container and current_class are out of sync");
-	} else if (current_container is ClassPart)
-		current_container = ((ClassPart) current_class).PartialContainer;
+	}
 
 	return retval;
 }

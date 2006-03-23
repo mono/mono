@@ -33,23 +33,13 @@ namespace Mono.CSharp
 	public class Tree {
 		TypeContainer root_types;
 
-		// <summary>
-		//   Keeps track of all the types definied (classes, structs, ifaces, enums)
-		// </summary>
-		Hashtable decls;
-		
 		public Tree ()
 		{
 			root_types = new RootTypes ();
-
-			decls = new Hashtable ();
 		}
 
 		public void RecordDecl (Namespace ns, MemberName name, DeclSpace ds)
 		{
-			// This is recorded for tracking inner partial classes only
-			decls [name] = ds;
-
 			if (ds.Parent == root_types)
 				ns.AddDeclSpace (name.Basename, ds);
 		}
@@ -60,15 +50,6 @@ namespace Mono.CSharp
                 public TypeContainer Types {
                         get { return root_types; }
                 }
-
-		public DeclSpace GetDecl (MemberName name)
-		{
-			return (DeclSpace) decls [name];
-		}
-
-		public Hashtable AllDecls {
-			get { return decls; }
-		}
 	}
 
 	public sealed class RootTypes : TypeContainer
@@ -76,16 +57,17 @@ namespace Mono.CSharp
 		public RootTypes ()
 			: base (null, null, MemberName.Null, null, Kind.Root)
 		{
-		}
-
-		public override PendingImplementation GetPendingImplementations ()
-		{
-			throw new InvalidOperationException ();
+			types = new ArrayList ();
 		}
 
 		public override bool IsClsComplianceRequired ()
 		{
 			return true;
+		}
+
+		public override bool GetClsCompliantAttributeValue ()
+		{
+			return CodeGen.Assembly.IsClsCompliant;
 		}
 
 		public override string GetSignatureForError ()
@@ -97,5 +79,11 @@ namespace Mono.CSharp
 		{
 			return AddToContainer (ds, ds.Name);
 		}
+
+		public override TypeContainer AddPartial (TypeContainer nextPart)
+		{
+			return AddPartial (nextPart, nextPart.Name);
+		}
+
 	}
 }
