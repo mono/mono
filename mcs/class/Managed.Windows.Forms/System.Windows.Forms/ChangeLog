@@ -1,3 +1,8 @@
+2006-03-23  Alexander Olk  <alex.olk@googlemail.com>
+
+	* FileDialog.cs: Make FileDialog remember which directory it was in
+	  last in the same execution.
+
 2006-03-22  Mike Kestner  <mkestner@novell.com>
 
 	* FileDialog.cs: make the DropDownMenu on the toolbar display

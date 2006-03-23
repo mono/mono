@@ -116,6 +116,9 @@ namespace System.Windows.Forms {
 		
 		internal FileFilter fileFilter;
 		
+		private string last_dir_when_opened_or_saved = "";
+		private string start_dir;
+		
 		internal FileDialog ()
 		{
 			fileTypeComboBox = new ComboBox ();
@@ -355,7 +358,7 @@ namespace System.Windows.Forms {
 			
 			readonlyCheckBox.CheckedChanged += new EventHandler (OnCheckCheckChanged);
 			
-			ChangeDirectory (null, currentDirectoryName);
+			start_dir = currentDirectoryName;
 		}
 		
 		[DefaultValue(true)]
@@ -496,6 +499,7 @@ namespace System.Windows.Forms {
 			set {
 				if (Directory.Exists (value)) {
 					initialDirectory = value;
+					start_dir = value;
 					
 					ChangeDirectory (null, initialDirectory);
 				}
@@ -622,6 +626,11 @@ namespace System.Windows.Forms {
 		protected  override bool RunDialog (IntPtr hWndOwner)
 		{
 			form.Refresh ();
+			
+			if (last_dir_when_opened_or_saved != String.Empty)
+				ChangeDirectory (null, last_dir_when_opened_or_saved);
+			else
+				ChangeDirectory (null, start_dir);
 			
 			fileNameComboBox.Select ();
 			
@@ -877,6 +886,11 @@ namespace System.Windows.Forms {
 			if (restoreDirectory)
 				currentDirectoryName = restoreDirectoryString;
 			
+			if (current_special_case != String.Empty)
+				last_dir_when_opened_or_saved = current_special_case;
+			else
+				last_dir_when_opened_or_saved = currentDirectoryName;
+			
 			CancelEventArgs cancelEventArgs = new CancelEventArgs ();
 			
 			cancelEventArgs.Cancel = false;
@@ -1077,6 +1091,8 @@ namespace System.Windows.Forms {
 				
 			} else {
 				currentDirectoryName = path_or_special_case;
+				
+				current_special_case = "";
 				
 				currentDirectoryInfo = new DirectoryInfo (path_or_special_case);
 				
