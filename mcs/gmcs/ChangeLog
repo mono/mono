@@ -1,4 +1,8 @@
-2006-03-23  Raja R Harinath  <rharinath@novell.com>
+2006-02-25  Marek Safar  <marek.safar@seznam.cz>
+
+	* delegate.cs (DelegateCreation.ResolveMethodGroupExpr): Don't report
+	error multiple times.
+
 2006-02-25  Marek Safar  <marek.safar@seznam.cz>
 
 	New partial class implementation.
@@ -48,6 +52,7 @@
 	(RootTypes): Started to use this class more often for root types
 	specializations.
 
+2006-03-23  Raja R Harinath  <rharinath@novell.com>
 
 	* generic.cs (TypeParameter.UpdateConstraints): Update
 	'constraints' if null.

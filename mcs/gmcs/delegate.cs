@@ -762,12 +762,16 @@ namespace Mono.CSharp {
 			IMethodData md = TypeManager.GetMethod (delegate_method);
 			if (md == null) {
 				if (System.Attribute.GetCustomAttribute (delegate_method, TypeManager.conditional_attribute_type) != null) {
+					Report.SymbolRelatedToPreviousError (delegate_method);
 					Report.Error (1618, loc, "Cannot create delegate with `{0}' because it has a Conditional attribute", TypeManager.CSharpSignature (delegate_method));
+					return null;
 				}
 			} else {
 				md.SetMemberIsUsed ();
 				if (md.OptAttributes != null && md.OptAttributes.Search (TypeManager.conditional_attribute_type) != null) {
+					Report.SymbolRelatedToPreviousError (delegate_method);
 					Report.Error (1618, loc, "Cannot create delegate with `{0}' because it has a Conditional attribute", TypeManager.CSharpSignature (delegate_method));
+					return null;
 				}
 			}
 			
