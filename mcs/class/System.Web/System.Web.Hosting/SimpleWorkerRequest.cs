@@ -3,10 +3,11 @@
 //
 // Author:
 //	Miguel de Icaza (miguel@novell.com)
+//	Gonzalo Paniagua Javier (gonzalo@novell.com)
 //
 
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005,2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -71,6 +72,7 @@ namespace System.Web.Hosting {
 			app_virtual_dir = HttpRuntime.AppDomainAppVirtualPath;
 			app_physical_dir = HttpRuntime.AppDomainAppPath;
 			hosted = true;
+			InitializePaths ();
 		}
 
 		//
@@ -86,9 +88,20 @@ namespace System.Web.Hosting {
 			this.output = output;
 			app_virtual_dir = appVirtualDir;
 			app_physical_dir = appPhysicalDir;
+			InitializePaths ();
 		}
-		
-		
+
+		void InitializePaths ()
+		{
+			int idx = page.IndexOf ('/');
+			if (idx >= 0) {
+				path_info = page.Substring (idx);
+				page = page.Substring (0, idx);
+			} else {
+				path_info = "";
+			}
+		}
+
 		public override string MachineConfigPath {
 			get {
 				if (hosted) {
@@ -143,7 +156,11 @@ namespace System.Web.Hosting {
 
 		public override string GetFilePath ()
 		{
-			return Path.Combine (app_virtual_dir, page);
+			string result = UrlUtils.Combine (app_virtual_dir, page);
+			if (result == "") 
+				return app_virtual_dir == "/" ? app_virtual_dir : app_virtual_dir + "/"; 
+
+			return result;
 		}
 
 		public override string GetFilePathTranslated ()
@@ -155,7 +172,7 @@ namespace System.Web.Hosting {
 			else
 				local_page = page;
 			
-			string path = Path.Combine (app_physical_dir, local_page);
+			string path = UrlUtils.Combine (app_physical_dir, local_page);
 			if (SecurityManager.SecurityEnabled && (path != null) && (path.Length > 0)) {
 				new FileIOPermission (FileIOPermissionAccess.PathDiscovery, path).Demand (); 
 			}
@@ -184,14 +201,6 @@ namespace System.Web.Hosting {
 
 		public override string GetPathInfo ()
 		{
-			if (path_info == null) {
-				int idx = page.IndexOf ('/');
-				if (idx >= 0) {
-					path_info = page.Substring (idx);
-				} else {
-					path_info = "";
-				}
-			}
 			return path_info;
 		}
 
@@ -204,8 +213,12 @@ namespace System.Web.Hosting {
 		{
 			if (raw_url == null){
 				string q = ((query == null || query == "") ? "" : "?" + query);
-				
-				raw_url = Path.Combine (app_virtual_dir, page) + q;
+				raw_url = UrlUtils.Combine (app_virtual_dir, page);
+				if (path_info != "") {
+					raw_url += "/" + path_info + q;
+				} else {
+					raw_url += q;
+				}
 			}
 			return raw_url;
 		}
@@ -228,8 +241,9 @@ namespace System.Web.Hosting {
 		public override string GetUriPath ()
 		{
 			if (app_virtual_dir == "/")
-				return app_virtual_dir +  page;
-			return app_virtual_dir + "/" + page;
+				return app_virtual_dir +  page + path_info;
+
+			return app_virtual_dir + "/" + page + path_info;
 		}
 
 		public override IntPtr GetUserToken ()
