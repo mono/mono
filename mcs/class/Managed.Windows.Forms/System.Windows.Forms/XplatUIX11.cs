@@ -586,10 +586,10 @@ namespace System.Windows.Forms {
 			tool_caption_height = 19;
 
 			if ((Style & (int) WindowStyles.WS_CHILD) != 0) {
-				if ((Style & (int) WindowStyles.WS_BORDER) != 0) {
-					border_style = FormBorderStyle.None;
-				} else if ((ExStyle & (int) WindowExStyles.WS_EX_CLIENTEDGE) != 0) {
+				if ((ExStyle & (int) WindowExStyles.WS_EX_CLIENTEDGE) != 0) {
 					border_style = FormBorderStyle.Fixed3D;
+				} else if ((Style & (int) WindowStyles.WS_BORDER) == 0) {
+					border_style = FormBorderStyle.None;
 				} else {
 					border_style = FormBorderStyle.FixedSingle;
 				}

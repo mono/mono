@@ -1,3 +1,9 @@
+2006-03-23  Mike Kestner  <mkestner@novell.com>
+
+	* XplatUIX11.cs: rework the fix for #77828 by changing the order of
+	the if and else if and reverting back to the original == check on the
+	None conditional.
+
 2006-03-23  Alexander Olk  <alex.olk@googlemail.com>
 
 	* FontDialog.cs: Update the example panel if the selected index of
