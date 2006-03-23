@@ -1,3 +1,11 @@
+2006-03-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* xmltool.cs :
+	  Added --validate-dtd (explicit DTD validation)
+	  --transform should use TextWriter output directly so that it can
+	  handle html output.
+	  IndexOutOfRange fix for --prettyprint args.
+
 2006-03-19 Boris Kirzner <borisk@mainsoft.com>
 	* nunit_transform.xslt: fixes to nunit results xslt transform
 

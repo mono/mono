@@ -41,6 +41,7 @@ options:
 	--validate-rnc relax-ng-compact-grammar-file [instances]
 	--validate-nvdl nvdl-script-xml [instances]
 	--validate-xsd xml-schema [instances]
+	--validate-dtd instances
 	--transform stylesheet instance-xml [output-xml]
 	--prettyprint [source] [result]
 
@@ -78,6 +79,9 @@ environment variable that affects on the behavior:
 #endif
 			case "--validate-xsd":
 				ValidateXsd (args);
+				return;
+			case "--validate-dtd":
+				ValidateDtd (args);
 				return;
 			case "--transform":
 				Transform (args);
@@ -169,28 +173,40 @@ environment variable that affects on the behavior:
 			}
 		}
 
+		static void ValidateDtd (string [] args)
+		{
+			for (int i = 1; i < args.Length; i++) {
+				XmlValidatingReader xvr = new XmlValidatingReader (
+					new XmlTextReader (args [i]));
+				xvr.ValidationType = ValidationType.DTD;
+				xvr.EntityHandling = EntityHandling.ExpandEntities;
+				while (!xvr.EOF)
+					xvr.Read ();
+				xvr.Close ();
+			}
+		}
+
 		static void Transform (string [] args)
 		{
 			XslTransform t = new XslTransform ();
 			t.Load (args [1]);
 			TextWriter output = args.Length > 3 ?
 				File.CreateText (args [3]) : Console.Out;
-			XmlTextWriter xw = new XmlTextWriter (output);
-			t.Transform (new XPathDocument (args [2], XmlSpace.Preserve), null, xw, null);
-			xw.Close ();
+			t.Transform (new XPathDocument (args [2], XmlSpace.Preserve), null, output, null);
+			output.Close ();
 		}
 
 		static void PrettyPrint (string [] args)
 		{
 			XmlTextReader r = null;
-			if (args.Length > 0)
+			if (args.Length > 1)
 				r = new XmlTextReader (args [1]);
 			else
 				r = new XmlTextReader (Console.In);
 			r.WhitespaceHandling = WhitespaceHandling.Significant;
 			XmlTextWriter w = null;
-			if (args.Length > 1)
-				w = new XmlTextWriter (args [2], Encoding.UTF8);
+			if (args.Length > 2)
+				w = new XmlTextWriter (args [1], Encoding.UTF8);
 			else
 				w = new XmlTextWriter (Console.Out);
 			w.Formatting = Formatting.Indented;
