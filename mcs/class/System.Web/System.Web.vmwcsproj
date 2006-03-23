@@ -95,6 +95,7 @@
 				<File RelPath="System.Web\SiteMapResolveEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\StaticFileHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\StaticSiteMapProvider.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web\TempFileStream.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\TimeoutManager.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\TraceContext.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\TraceData.cs" SubType="Code" BuildAction="Compile"/>
