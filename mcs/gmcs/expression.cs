@@ -1184,6 +1184,9 @@ namespace Mono.CSharp {
 					action = Action.AlwaysFalse;
 				else
 					action = Action.Probe;
+			} else if (etype.ContainsGenericParameters || probe_type.ContainsGenericParameters) {
+				expr = new BoxedCast (expr, etype);
+				action = Action.Probe;
 			} else {
 				action = Action.AlwaysFalse;
 				warning_never_matches = true;
@@ -1284,6 +1287,12 @@ namespace Mono.CSharp {
 				if (etype.IsGenericParameter)
 					expr = new BoxedCast (expr, etype);
 
+				do_isinst = true;
+				return this;
+			}
+
+			if (etype.ContainsGenericParameters || type.ContainsGenericParameters) {
+				expr = new BoxedCast (expr, etype);
 				do_isinst = true;
 				return this;
 			}
