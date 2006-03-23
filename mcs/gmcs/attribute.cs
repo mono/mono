@@ -371,6 +371,9 @@ namespace Mono.CSharp {
 				BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly,
 				Location);
 
+			if (mg == null)
+				return null;
+
 			MethodBase constructor = Invocation.OverloadResolve (
 				ec, (MethodGroupExpr) mg, PosArguments, false, Location);
 
