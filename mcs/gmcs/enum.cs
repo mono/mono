@@ -186,13 +186,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected override bool VerifyClsCompliance(DeclSpace ds)
-		{
-			// Because parent is TypeContainer and we have only DeclSpace parent.
-			// Parameter replacing is required
-			return base.VerifyClsCompliance (parent_enum);
-		}
-
 		public override string DocCommentHeader {
 			get { return "F:"; }
 		}
@@ -355,9 +348,9 @@ namespace Mono.CSharp {
 			}
   		}
 
-		protected override bool VerifyClsCompliance (DeclSpace ds)
+		protected override bool VerifyClsCompliance ()
 		{
-			if (!base.VerifyClsCompliance (ds))
+			if (!base.VerifyClsCompliance ())
 				return false;
 
 			VerifyClsName ();

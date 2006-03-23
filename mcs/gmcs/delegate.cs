@@ -373,9 +373,9 @@ namespace Mono.CSharp {
 		}
 
 		//TODO: duplicate
-		protected override bool VerifyClsCompliance (DeclSpace ds)
+		protected override bool VerifyClsCompliance ()
 		{
-			if (!base.VerifyClsCompliance (ds)) {
+			if (!base.VerifyClsCompliance ()) {
 				return false;
 			}
 

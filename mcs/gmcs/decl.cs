@@ -403,7 +403,7 @@ namespace Mono.CSharp {
 			if (!RootContext.VerifyClsCompliance)
 				return;
 
-			VerifyClsCompliance (Parent);
+			VerifyClsCompliance ();
 		}
 
 		public virtual bool IsUsed {
@@ -479,7 +479,7 @@ namespace Mono.CSharp {
 			if ((caching_flags & Flags.ClsCompliance_Undetected) == 0)
 				return (caching_flags & Flags.ClsCompliant) != 0;
 
-			if (GetClsCompliantAttributeValue (Parent) && IsExposedFromAssembly (Parent)) {
+			if (GetClsCompliantAttributeValue () && IsExposedFromAssembly ()) {
 				caching_flags &= ~Flags.ClsCompliance_Undetected;
 				caching_flags |= Flags.ClsCompliant;
 				return true;
@@ -492,12 +492,12 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Returns true when MemberCore is exposed from assembly.
 		/// </summary>
-		public bool IsExposedFromAssembly (DeclSpace ds)
+		public bool IsExposedFromAssembly ()
 		{
 			if ((ModFlags & (Modifiers.PUBLIC | Modifiers.PROTECTED)) == 0)
 				return false;
 			
-			DeclSpace parentContainer = ds;
+			DeclSpace parentContainer = Parent;
 			while (parentContainer != null && parentContainer.ModFlags != 0) {
 				if ((parentContainer.ModFlags & (Modifiers.PUBLIC | Modifiers.PROTECTED)) == 0)
 					return false;
@@ -509,7 +509,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Resolve CLSCompliantAttribute value or gets cached value.
 		/// </summary>
-		bool GetClsCompliantAttributeValue (DeclSpace ds)
+		bool GetClsCompliantAttributeValue ()
 		{
 			if (OptAttributes != null) {
 				Attribute cls_attribute = OptAttributes.Search (
@@ -519,7 +519,7 @@ namespace Mono.CSharp {
 					return cls_attribute.GetClsCompliantAttributeValue ();
 				}
 			}
-			return ds.GetClsCompliantAttributeValue ();
+			return Parent.GetClsCompliantAttributeValue ();
 		}
 
 		/// <summary>
@@ -545,11 +545,11 @@ namespace Mono.CSharp {
 		/// CLS-Compliant which means that CLS-Compliant tests are not necessary. A descendants override it
 		/// and add their extra verifications.
 		/// </summary>
-		protected virtual bool VerifyClsCompliance (DeclSpace ds)
+		protected virtual bool VerifyClsCompliance ()
 		{
 			if (!IsClsComplianceRequired ()) {
 				if (HasClsCompliantAttribute && RootContext.WarningLevel >= 2) {
-					if (!IsExposedFromAssembly (ds))
+					if (!IsExposedFromAssembly ())
 						Report.Warning (3019, 2, Location, "CLS compliance checking will not be performed on `{0}' because it is not visible from outside this assembly", GetSignatureForError ());
 					if (!CodeGen.Assembly.IsClsCompliant)
 						Report.Warning (3021, 2, Location, "`{0}' does not need a CLSCompliant attribute because the assembly is not marked as CLS-compliant", GetSignatureForError ());
@@ -1334,9 +1334,9 @@ namespace Mono.CSharp {
 			get { return attribute_targets; }
 		}
 
-		protected override bool VerifyClsCompliance (DeclSpace ds)
+		protected override bool VerifyClsCompliance ()
 		{
-			if (!base.VerifyClsCompliance (ds)) {
+			if (!base.VerifyClsCompliance ()) {
 				return false;
 			}
 

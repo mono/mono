@@ -260,6 +260,9 @@ namespace Mono.CSharp {
 
 		public string GetSignatureForError ()
 		{
+			if (Type != null)
+				return TypeManager.CSharpName (Type);
+
 			return LeftExpr == null ? Identifier : LeftExpr.GetSignatureForError () + "." + Identifier;
 		}
 
@@ -1154,10 +1157,24 @@ namespace Mono.CSharp {
 			return pos_values [0];
 		}
 
+		public override bool Equals (object obj)
+		{
+			Attribute a = obj as Attribute;
+			if (a == null)
+				return false;
+
+			return Type == a.Type && Target == a.Target;
+		}
+
+		public override int GetHashCode ()
+		{
+			return base.GetHashCode ();
+		}
+
 		/// <summary>
 		/// Emit attribute for Attributable symbol
 		/// </summary>
-		public void Emit (ListDictionary emitted_attr)
+		public void Emit (ListDictionary allEmitted)
 		{
 			CustomAttributeBuilder cb = Resolve ();
 			if (cb == null)
@@ -1165,7 +1182,7 @@ namespace Mono.CSharp {
 
 			AttributeUsageAttribute usage_attr = GetAttributeUsage ();
 			if ((usage_attr.ValidOn & Target) == 0) {
-				Report.Error (592, Location, "Attribute `{0}' is not valid on this declaration type. " +
+				Report.Error (592, Location, "The attribute `{0}' is not valid on this declaration type. " +
 					      "It is valid on `{1}' declarations only",
 					GetSignatureForError (), GetValidTargets ());
 				return;
@@ -1179,16 +1196,17 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (!usage_attr.AllowMultiple) {
-				ArrayList emitted_targets = (ArrayList)emitted_attr [Type];
-				if (emitted_targets == null) {
-					emitted_targets = new ArrayList ();
-					emitted_attr.Add (Type, emitted_targets);
-				} else if (emitted_targets.Contains (Target)) {
-					Report.Error (579, Location, "Duplicate `{0}' attribute", GetSignatureForError ());
-					return;
+			if (!usage_attr.AllowMultiple && allEmitted != null) {
+				if (allEmitted.Contains (this)) {
+					ArrayList a = allEmitted [this] as ArrayList;
+					if (a == null) {
+						a = new ArrayList (2);
+						allEmitted [this] = a;
+					}
+					a.Add (this);
+				} else {
+					allEmitted.Add (this, null);
 				}
-				emitted_targets.Add (Target);
 			}
 
 			if (!RootContext.VerifyClsCompliance)
@@ -1516,10 +1534,24 @@ namespace Mono.CSharp {
 		{
 			CheckTargets ();
 
-			ListDictionary ld = new ListDictionary ();
+			ListDictionary ld = Attrs.Count > 1 ? new ListDictionary () : null;
 
 			foreach (Attribute a in Attrs)
 				a.Emit (ld);
+
+			if (ld == null || ld.Count == 0)
+				return;
+
+			foreach (DictionaryEntry d in ld) {
+				if (d.Value == null)
+					continue;
+
+				foreach (Attribute collision in (ArrayList)d.Value)
+					Report.SymbolRelatedToPreviousError (collision.Location, "");
+
+				Attribute a = (Attribute)d.Key;
+				Report.Error (579, a.Location, "The attribute `{0}' cannot be applied multiple times", a.GetSignatureForError ());
+			}
 		}
 
 		public bool Contains (Type t)
@@ -1877,6 +1909,8 @@ namespace Mono.CSharp {
 			TypeContainer tc = TypeManager.LookupInterface (type);
 			if (tc == null) {
 				object[] o = type.GetCustomAttributes (TypeManager.coclass_attr_type, false);
+				if (o.Length < 1)
+					return null;
 				return ((System.Runtime.InteropServices.CoClassAttribute)o[0]).CoClass;
 			}
 
