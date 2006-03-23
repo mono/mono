@@ -1,5 +1,11 @@
 2006-03-23  Martin Baulig  <martin@ximian.com>
 
+	* convert.cs
+	(Convert.ExplicitTypeParameterConversion): New method; implement
+	explicit type parameter conversions.
+
+2006-03-23  Martin Baulig  <martin@ximian.com>
+
 	* convert.cs (Convert.ImplicitTypeParameterConversion): Do not
 	blindly allow all conversions if we do not have any constraints.
 

@@ -116,6 +116,52 @@ namespace Mono.CSharp {
 			return null;
 		}
 
+		static bool ExplicitTypeParameterConversionExists (Type source_type, Type target_type)
+		{
+			if (target_type.IsInterface)
+				return true;
+
+			if (source_type.IsGenericParameter) {
+				GenericConstraints gc = TypeManager.GetTypeParameterConstraints (target_type);
+				if (gc == null)
+					return false;
+
+				foreach (Type iface in gc.InterfaceConstraints) {
+					if (!iface.IsGenericParameter)
+						continue;
+
+					if (TypeManager.IsSubclassOf (source_type, iface))
+						return true;
+				}
+			}
+
+			return false;
+		}
+
+		static Expression ExplicitTypeParameterConversion (Expression source, Type target_type)
+		{
+			Type source_type = source.Type;
+
+			if (target_type.IsInterface)
+				return new ClassCast (source, target_type);
+
+			if (source_type.IsGenericParameter) {
+				GenericConstraints gc = TypeManager.GetTypeParameterConstraints (target_type);
+				if (gc == null)
+					return null;
+
+				foreach (Type iface in gc.InterfaceConstraints) {
+					if (!iface.IsGenericParameter)
+						continue;
+
+					if (TypeManager.IsSubclassOf (source_type, iface))
+						return new ClassCast (source, target_type);
+				}
+			}
+
+			return null;
+		}
+
 		static EmptyExpression MyEmptyExpr;
 		static public Expression ImplicitReferenceConversion (Expression expr, Type target_type)
 		{
@@ -1613,7 +1659,7 @@ namespace Mono.CSharp {
 			// From generic parameter to any type
 			//
 			if (source_type.IsGenericParameter)
-				return true;
+				return ExplicitTypeParameterConversionExists (source_type, target_type);
 
 			//
 			// From object to a generic parameter
@@ -1718,6 +1764,13 @@ namespace Mono.CSharp {
 			//
 			if (source_type == TypeManager.object_type && target_is_type_param)
 				return new UnboxCast (source, target_type);
+
+			//
+			// Explicit type parameter conversion.
+			//
+
+			if (source_type.IsGenericParameter)
+				return ExplicitTypeParameterConversion (source, target_type);
 
 			//
 			// From object to any reference type
