@@ -91,7 +91,7 @@ namespace System.Web.Configuration {
 			set { base[percentagePhysicalMemoryUsedLimitProp] = value; }
 		}
 
-		[LongValidator (MinValue = 0, MaxValue = Int64.MaxValue)]
+		[LongValidator (MinValue = (long) 0, MaxValue = Int64.MaxValue)]
 		[ConfigurationProperty ("privateBytesLimit", DefaultValue = "0")]
 		public long PrivateBytesLimit {
 			get { return (long) base [privateBytesLimitProp];}
