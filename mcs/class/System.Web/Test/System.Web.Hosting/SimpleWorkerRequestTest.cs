@@ -207,8 +207,10 @@ namespace MonoTests.System.Web.Hosting {
 				// \windows\microsoft.net\framework\v1.1.4322
 				//
 				Assert.AreEqual (true, swr.MachineInstallDirectory != null, "T15");
-				
-				Assert.AreEqual (Path.Combine (cwd, "file.aspx"), swr.GetFilePathTranslated (), "T16");
+
+				// Disabled T16. It throws a nullref on MS
+				//      Assert.AreEqual (Path.Combine (cwd, "file.aspx"), swr.GetFilePathTranslated (), "T16");
+				//
 				Assert.AreEqual ("", swr.GetServerVariable ("AUTH_TYPE"), "T18");
 				Assert.AreEqual ("", swr.GetServerVariable ("AUTH_USER"), "T19");
 				Assert.AreEqual ("", swr.GetServerVariable ("REMOTE_USER"), "T20");
@@ -313,11 +315,23 @@ namespace MonoTests.System.Web.Hosting {
 		// This tests the constructor when the target application domain is created with
 		// CreateApplicationHost
 		//
-		[Test] public void ConstructorTest_CreateApplicationHost ()
+		[Test]
+		public void ConstructorTest_CreateApplicationHost ()
 		{
 			// Does not work without a NRE, need to call CreateApplicationHost.
 			// = new SimpleWorkerRequest ("pageVirtualPath", "querystring", sw);
 			// Assert.AreEqual ("querystring", swr.GetQueryString ());
+		}
+
+		[Test]
+		public void PathInfos ()
+		{
+			SimpleWorkerRequest wr = new SimpleWorkerRequest ("/appDir", "", "page.aspx/pathinfo", "", null);
+			HttpContext c = new HttpContext (wr);
+			Assert.AreEqual ("http://127.0.0.1/appDir/page.aspx/pathinfo", c.Request.Url.AbsoluteUri);
+			Assert.AreEqual ("/appDir/page.aspx", c.Request.FilePath);
+			Assert.AreEqual ("/appDir/page.aspx/pathinfo", c.Request.Path);
+			Assert.AreEqual ("/pathinfo", c.Request.PathInfo);
 		}
 	}
 }

@@ -1,3 +1,10 @@
+2006-03-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SimpleWorkerRequestTest.cs: new tests for PathInfo and disabled a test
+	that throws a nullref under MS.
+
+	* ApplicationHostTest.cs: fixed 2 assertions to expect what MS does.
+
 2006-02-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HostingEnvironmentTest.cs: tests for MapPath.
