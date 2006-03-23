@@ -61,7 +61,7 @@ namespace System.Web {
 		string charset;
 		bool charset_set;
 		CachedRawResponse cached_response;
-		string user_cache_control;
+		string user_cache_control = "private";
 		string redirect_location;
 		
 		//
@@ -610,8 +610,6 @@ namespace System.Web {
 			//
 			if (cache_policy != null)
 				cache_policy.SetHeaders (this, headers);
-			else if (user_cache_control != null)
-				write_headers.Add (new UnknownResponseHeader ("Cache-Control", user_cache_control));
 			else
 				write_headers.Add (new UnknownResponseHeader ("Cache-Control", CacheControl));
 			
@@ -961,34 +959,25 @@ namespace System.Web {
 		//
 		public string CacheControl {
 			set {
-				if (String.Compare (value, "public", true, CultureInfo.InvariantCulture) == 0)
-					Cache.SetCacheability (HttpCacheability.Public);
-				else if (String.Compare (value, "private", true, CultureInfo.InvariantCulture) == 0)
-					Cache.SetCacheability (HttpCacheability.Private);
-				else if (String.Compare (value, "no-cache", true, CultureInfo.InvariantCulture) == 0)
+				if (value == null || value == "") {
 					Cache.SetCacheability (HttpCacheability.NoCache);
-				else
+					user_cache_control = null;
+				} else if (String.Compare (value, "public", true, CultureInfo.InvariantCulture) == 0) {
+					Cache.SetCacheability (HttpCacheability.Public);
+					user_cache_control = "public";
+				} else if (String.Compare (value, "private", true, CultureInfo.InvariantCulture) == 0) {
+					Cache.SetCacheability (HttpCacheability.Private);
+					user_cache_control = "private";
+				} else if (String.Compare (value, "no-cache", true, CultureInfo.InvariantCulture) == 0) {
+					Cache.SetCacheability (HttpCacheability.NoCache);
+					user_cache_control = "no-cache";
+				} else
 					throw new ArgumentException ("CacheControl property only allows `public', " +
 								     "`private' or no-cache, for different uses, use " +
 								     "Response.AppendHeader");
-				user_cache_control = null;
 			}
 
-			get {
-				switch (Cache.Cacheability) {
-				case (HttpCacheability)0:
-				case HttpCacheability.NoCache:
-					return "no-cache";
-				case HttpCacheability.Private: 
-				case HttpCacheability.Server:
-				case HttpCacheability.ServerAndPrivate:
-					return "private";
-				case HttpCacheability.Public:
-					return "public";
-				default:
-					throw new Exception ("Unknown internal state: " + Cache.Cacheability);
-				}
-			}
+			get { return (user_cache_control != null) ? user_cache_control : "private"; }
 		}
 #endregion
 

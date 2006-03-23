@@ -1034,7 +1034,6 @@ namespace System.Web {
 				
 				if (cached_url == null) {
 					UriBuilder builder = new UriBuilder (uri_builder.Uri);
-					builder.Path += path_info;
 					cached_url = builder.Uri;
 				}
 				return cached_url;
@@ -1386,7 +1385,7 @@ namespace System.Web {
 			for (int idx = 1; idx < len; idx++) {
 				char next = val [idx];
 				if (current == '<' || current == '\xff1c') {
-					if (next == '!'
+					if (next == '!' || next < ' '
 					    || (next >= 'a' && next <= 'z')
 					    || (next >= 'A' && next <= 'Z'))
 						return true;
