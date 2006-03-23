@@ -160,7 +160,7 @@ namespace System.Data.OleDb
 			String catalog = con.getCatalog();
             
 			DatabaseMetaData meta = con.getMetaData();
-			ResultSet schemaRes = meta.getSchemas();
+			java.sql.ResultSet schemaRes = meta.getSchemas();
 			System.Collections.ArrayList schemas = new System.Collections.ArrayList();
 			while(schemaRes.next()) {
 				schemas.Add(schemaRes.getString(1));
@@ -168,7 +168,7 @@ namespace System.Data.OleDb
 			schemaRes.close();
 
 			for(int i = 0; i < schemas.Count; i++) {
-				ResultSet tableRes = meta.getTables(catalog, schemas[i].ToString(), null, null);
+				java.sql.ResultSet tableRes = meta.getTables(catalog, schemas[i].ToString(), null, null);
 				while(tableRes.next()) {
 					DataRow row = schemaTable.NewRow();
 					row["TABLE_CATALOG"] = catalog;

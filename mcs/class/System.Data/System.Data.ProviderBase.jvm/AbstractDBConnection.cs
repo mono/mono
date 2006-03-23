@@ -563,7 +563,7 @@ namespace System.Data.ProviderBase
 			ArrayList col = new ArrayList();
 			try {
 				ObjectNameResolver[] nameResolvers = SyntaxPatterns;
-				ResultSet res = null;
+				java.sql.ResultSet res = null;
 				string catalog = null;
 				string schema = null;
 				string spname = null;

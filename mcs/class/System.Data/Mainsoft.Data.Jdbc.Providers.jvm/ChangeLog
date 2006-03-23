@@ -1,3 +1,8 @@
+2006-03-21	Boris Kirzner <borisk@miansoft.com>
+	* wrappers.cs: added ResultSet and ResultSetMetaData wrappers.
+	* OleDbOracleProvider.cs: fix OleDbOracleProvider ResultSet 
+	and ResultSetMetaData wrappers and method overrides.
+
 2006-03-05  Konstantin Triger <kostat@mainsoft.com>
 
 	* IProvider.cs: add PreparedStatement extension interface.
