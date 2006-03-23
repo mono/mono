@@ -337,6 +337,12 @@ namespace MonoTests.System.Web {
 			
 			c.Response.CacheControl = "no-cache";
 			Assert.AreEqual ("no-cache", c.Response.CacheControl, "D4");
+
+			c.Response.CacheControl = null;
+			Assert.AreEqual ("private", c.Response.CacheControl, "D5");
+
+			c.Response.CacheControl = "";
+			Assert.AreEqual ("private", c.Response.CacheControl, "D6");
 		}
 		
 		//[Test][ExpectedException (typeof (HttpException))]
