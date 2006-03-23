@@ -121,7 +121,7 @@ namespace Mono.CSharp {
 			if (target_type.IsInterface)
 				return true;
 
-			if (source_type.IsGenericParameter) {
+			if (target_type.IsGenericParameter) {
 				GenericConstraints gc = TypeManager.GetTypeParameterConstraints (target_type);
 				if (gc == null)
 					return false;
@@ -145,7 +145,7 @@ namespace Mono.CSharp {
 			if (target_type.IsInterface)
 				return new ClassCast (source, target_type);
 
-			if (source_type.IsGenericParameter) {
+			if (target_type.IsGenericParameter) {
 				GenericConstraints gc = TypeManager.GetTypeParameterConstraints (target_type);
 				if (gc == null)
 					return null;
