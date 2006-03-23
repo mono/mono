@@ -1513,7 +1513,6 @@ namespace System.Windows.Forms
 			dc.DrawLine (pen, target_x, 0, target_x, col.Rect.Height);
 		}
 
-		// draws the ListViewItem of the given index
 		protected virtual void DrawListViewItem (Graphics dc, ListView control, ListViewItem item)
 		{				
 			int col_offset;
@@ -1611,10 +1610,7 @@ namespace System.Windows.Forms
 			if (item.Selected) {
 				if (control.View == View.Details) {
 					if (control.FullRowSelect) {
-						// fill the entire rect excluding the checkbox						
-						full_rect.Location = item.GetBounds (ItemBoundsPortion.Label).Location;
-						dc.FillRectangle (this.ResPool.GetSolidBrush
-								  (this.ColorHighlight), full_rect);
+						dc.FillRectangle (ResPool.GetSolidBrush (ColorHighlight), text_rect);
 					}
 					else {
 						Size text_size = Size.Ceiling (dc.MeasureString (item.Text,
@@ -1665,55 +1661,56 @@ namespace System.Windows.Forms
 						subItem = subItems [index];
 						col = control.Columns [index];
 						format.Alignment = col.Format.Alignment;
-						sub_item_rect.X = col.Rect.Left + 3;
-						sub_item_rect.Width = col.Wd - 6;
-						sub_item_rect.X -= control.h_marker;
+						sub_item_rect.X = col.Rect.X - control.h_marker;
+						sub_item_rect.Width = col.Wd;
+						Rectangle sub_item_text_rect = sub_item_rect;
+						sub_item_text_rect.X += 3;
+						sub_item_text_rect.Width -= 6;
 
 						SolidBrush sub_item_back_br = null;
 						SolidBrush sub_item_fore_br = null;
 						Font sub_item_font = null;
 
 						if (item.UseItemStyleForSubItems) {
-							sub_item_back_br = this.ResPool.GetSolidBrush
-								(item.BackColor);
-							sub_item_fore_br = this.ResPool.GetSolidBrush
-								(item.ForeColor);
+							sub_item_back_br = ResPool.GetSolidBrush (item.BackColor);
+							sub_item_fore_br = ResPool.GetSolidBrush (item.ForeColor);
 							sub_item_font = item.Font;
-						}
-						else {
-							sub_item_back_br = this.ResPool.GetSolidBrush
-								(subItem.BackColor);
-							sub_item_fore_br = this.ResPool.GetSolidBrush
-								(subItem.ForeColor);
+						} else {
+							sub_item_back_br = ResPool.GetSolidBrush (subItem.BackColor);
+							sub_item_fore_br = ResPool.GetSolidBrush (subItem.ForeColor);
 							sub_item_font = subItem.Font;
 						}
 
-						// In case of fullrowselect, background is filled
-						// for the entire rect above
 						if (item.Selected && control.FullRowSelect) {
+							dc.FillRectangle (ResPool.GetSolidBrush (ColorHighlight), sub_item_rect);
 							if (subItem.Text != null && subItem.Text.Length > 0)
 								dc.DrawString (subItem.Text, sub_item_font,
 									       this.ResPool.GetSolidBrush
 									       (this.ColorHighlightText),
-									       sub_item_rect, format);
-						}
-						else {
+									       sub_item_text_rect, format);
+						} else {
 							dc.FillRectangle (sub_item_back_br, sub_item_rect);
 							if (subItem.Text != null && subItem.Text.Length > 0)
 								dc.DrawString (subItem.Text, sub_item_font,
 									       sub_item_fore_br,
-									       sub_item_rect, format);
+									       sub_item_text_rect, format);
 						}
-						sub_item_rect.X += col.Wd;
 					}
 				}
 			}
 			
 			if (item.Focused) {				
+				Rectangle focus_rect = text_rect;
+				if (control.FullRowSelect && control.View == View.Details) {
+					int width = 0;
+					foreach (ColumnHeader col in control.Columns)
+						width += col.Width;
+					focus_rect = new Rectangle (0, full_rect.Y, width, full_rect.Height);
+				}
 				if (item.Selected)
-					CPDrawFocusRectangle (dc, text_rect, ColorHighlightText, ColorHighlight);
+					CPDrawFocusRectangle (dc, focus_rect, ColorHighlightText, ColorHighlight);
 				else
-					CPDrawFocusRectangle (dc, text_rect, control.ForeColor, control.BackColor);
+					CPDrawFocusRectangle (dc, focus_rect, control.ForeColor, control.BackColor);
 			}
 
 			format.Dispose ();

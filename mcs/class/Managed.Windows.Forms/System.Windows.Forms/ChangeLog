@@ -1,5 +1,10 @@
 2006-03-23  Mike Kestner  <mkestner@novell.com>
 
+	* ThemeWin32Classic.cs: fix FullRowSelect selection background and
+	focus rectangle drawing. Fixes #77835.
+
+2006-03-23  Mike Kestner  <mkestner@novell.com>
+
 	* XplatUIX11.cs: rework the fix for #77828 by changing the order of
 	the if and else if and reverting back to the original == check on the
 	None conditional.
