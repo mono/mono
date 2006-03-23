@@ -1,3 +1,8 @@
+2006-03-23  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTDValidatingReader.cs : avoid NullReferenceException. Input
+	  XmlReader might not be IHasXmlParserContext.
+
 2006-03-08  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlReader.cs: ReadContentAsXXX() just stops at start element,

@@ -97,7 +97,7 @@ namespace Mono.Xml
 		{
 			IHasXmlParserContext container = reader as IHasXmlParserContext;
 			this.reader = new EntityResolvingXmlReader (reader,
-				container.ParserContext);
+				container != null ? container.ParserContext : null);
 			this.sourceTextReader = reader as XmlTextReader;
 			elementStack = new Stack ();
 			automataStack = new Stack ();
