@@ -70,17 +70,7 @@ namespace System.Web.Mail
 			// access to properties and to add some functionality
 			MailMessageWrapper messageWrapper = new MailMessageWrapper( message );
 			
-#if TARGET_JVM
-			string currentSmtpServer = smtpServer;
-			if (currentSmtpServer == "localhost")
-			{
-				java.net.InetAddress address = java.net.InetAddress.getLocalHost();
-				currentSmtpServer = address.getHostAddress();
-			}
-			SmtpClient smtp = new SmtpClient (currentSmtpServer);
-#else
 			SmtpClient smtp = new SmtpClient (smtpServer);
-#endif
 			
 			smtp.Send (messageWrapper);
 		       

@@ -1,5 +1,9 @@
 2006-03-23  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
+	* SmtpMail.cs: removed TARGET_JVM part from Send method.
+
+2006-03-23  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
 	* MailMessageWrapper.cs: fixed Fields property, casting to string
 	changed to ToString method call.
 
