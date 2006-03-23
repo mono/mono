@@ -1,3 +1,9 @@
+2006-03-23  Atsushi Enomoto <atsushi@ximian.com>
+
+	* NvdlXsdSupport.cs : seems like "XmlReaderSettings.ValidationType =
+	  ValidationType.Auto" does not automatically start xsd validation,
+	  so set the property explicitly as ValidationType.Schema.
+
 2006-03-03  Atsushi Enomoto <atsushi@ximian.com>
 
 	* NvdlXsdSupport.cs : oops, XmlSchemaValidationFlags.

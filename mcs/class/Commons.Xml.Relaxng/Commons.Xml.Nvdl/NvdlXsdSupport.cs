@@ -43,7 +43,7 @@ namespace Commons.Xml.Nvdl
 		{
 #if NET_2_0
 			XmlReaderSettings s = new XmlReaderSettings ();
-			s.ValidationType = ValidationType.Auto;
+			s.ValidationType = ValidationType.Schema;
 			// do not allow inline schema and schemaLocation.
 			s.ValidationFlags = XmlSchemaValidationFlags.ProcessIdentityConstraints;
 			s.XmlResolver = resolver;
