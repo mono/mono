@@ -4,9 +4,10 @@
 // Authors:
 //	Ben Maurer (bmaurer@users.sourceforge.net)
 //	Sebastien Pouliot  <sebastien@ximian.com>
+//	Chris Toshok  <toshok@ximian.com>
 //
 // (C) 2003 Ben Maurer
-// Copyright (c) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (c) 2005,2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,33 +32,22 @@
 #if NET_2_0
 
 using System.Configuration.Provider;
+using System.Web.Configuration;
 
 namespace System.Web.Security {
 
-	[MonoTODO ("read infos from web.config")]
 	public static class Roles {
 
-		private static RoleProvider provider;
-		private static bool cookie_cache_roles;
-		private static string cookie_name;
-		private static string cookie_path;
 		private static CookieProtection cookie_protection;
-		private static bool cookie_ssl;
-		private static bool cookie_sliding;
-		private static int cookie_timeout;
-		private static bool cookie_persistent;
-		private static string domain;
-		private static int max_cached_result;
+		private static RoleManagerSection config;
+		static RoleProviderCollection providersCollection;
 
 		static Roles ()
 		{
 			// default values (when not supplied in web.config)
-			cookie_name = ".ASPXROLES";
-			cookie_path = "/";
 			cookie_protection = CookieProtection.All;
-			cookie_sliding = true;
-			cookie_timeout = 30;
-			max_cached_result = 25;
+
+			config = (RoleManagerSection)WebConfigurationManager.GetSection ("system.web/roleManager");
 		}
 
 
@@ -177,71 +167,70 @@ namespace System.Web.Security {
 		}
 		
 		public static bool CacheRolesInCookie {
-			get { return cookie_cache_roles; }
+			get { return config.CacheRolesInCookie; }
 		}
 		
 		public static string CookieName {
-			get { return cookie_name; }
+			get { return config.CookieName; }
 		}
 		
 		public static string CookiePath {
-			get { return cookie_path; }
+			get { return config.CookiePath; }
 		}
 		
+		[MonoTODO ("read infos from web.config")]
 		public static CookieProtection CookieProtectionValue {
 			get { return cookie_protection; }
 		}
 		
 		public static bool CookieRequireSSL {
-			get { return cookie_ssl; }
+			get { return config.CookieRequireSSL; }
 		}
 		
 		public static bool CookieSlidingExpiration {
-			get { return cookie_sliding; }
+			get { return config.CookieSlidingExpiration; }
 		}
 		
 		public static int CookieTimeout {
-			get { return cookie_timeout; }
+			get { return (int)config.CookieTimeout.TotalMinutes; }
 		}
 
 		public static bool CreatePersistentCookie {
-			get { return cookie_persistent; }
+			get { return config.CreatePersistentCookie; }
 		}
 
 		public static string Domain {
-			get { return domain; }
+			get { return config.Domain; }
 		}
 
 		public static bool Enabled {
-			get { return (provider != null); }
+			get { return config.Enabled; }
 		}
 
 		public static int MaxCachedResults {
-			get { return max_cached_result; }
+			get { return config.MaxCachedResults; }
 		}
 		
-		[MonoTODO]
 		public static RoleProvider Provider {
-			get {
-				CheckProvider ();
-				throw new NotImplementedException ();
-			}
+			get { return Providers[config.DefaultProvider]; }
 		}
 		
-		[MonoTODO]
 		public static RoleProviderCollection Providers {
 			get {
-				CheckProvider ();
-				throw new NotImplementedException ();
+				CheckEnabled ();
+				if (providersCollection == null) {
+					providersCollection = new RoleProviderCollection ();
+					ProvidersHelper.InstantiateProviders (config.Providers, providersCollection, typeof (RoleProvider));
+				}
+				return providersCollection;
 			}
 		}
 
 		// private stuff
-
-		private static void CheckProvider ()
+		private static void CheckEnabled ()
 		{
 			if (!Enabled)
-				throw new ProviderException ();
+				throw new ProviderException ("This feature is not enabled.  To enable it, add <roleManager enabled=\"true\"> to your configuration file.");
 		}
 	}
 }

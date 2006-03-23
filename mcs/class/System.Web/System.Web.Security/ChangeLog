@@ -1,5 +1,13 @@
 2006-03-23  Chris Toshok  <toshok@ximian.com>
 
+	* Roles.cs: make this 2.0 configuration aware.
+
+	* SqlRoleProvider.cs: flesh out all the operations.  the only
+	things that need dealing with are the Initialize method's handling
+	of a few parameters, and the ApplicationName property.
+
+2006-03-23  Chris Toshok  <toshok@ximian.com>
+
 	* DefaultAuthenticationModule.cs (OnDefaultAuthentication): always
 	set Thread.CurrentPrincipal, not just if we set it to the
 	GenericPrincipal.

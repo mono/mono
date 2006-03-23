@@ -3,9 +3,10 @@
 //
 // Authors:
 //	Ben Maurer (bmaurer@users.sourceforge.net)
+//	Chris Toshok (toshok@ximian.com)
 //
 // (C) 2003 Ben Maurer
-// Copyright (c) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (c) 2005,2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,82 +30,556 @@
 
 #if NET_2_0
 
+using System.Collections;
 using System.Collections.Specialized;
+using System.Data;
+using System.Data.Common;
+using System.Configuration;
+using System.Configuration.Provider;
+using System.Web.Configuration;
 
 namespace System.Web.Security {
 
 	public class SqlRoleProvider: RoleProvider {
-		
-		[MonoTODO]
+
+		string applicationName;
+		string loweredApplicationName;
+		int commandTimeout;
+		ConnectionStringSettings connectionString;
+		string providerName;
+
+		DbProviderFactory factory;
+		DbConnection connection;
+
+		void InitConnection ()
+		{
+			if (factory == null)
+				factory = ProvidersHelper.GetDbProviderFactory (connectionString.ProviderName);
+                        if (connection == null) {
+				connection = factory.CreateConnection();
+				connection.ConnectionString = connectionString.ConnectionString;
+			}
+		}
+
+		void AddParameter (DbCommand command, string parameterName, string parameterValue)
+		{
+			DbParameter dbp = command.CreateParameter ();
+			dbp.ParameterName = parameterName;
+			dbp.Value = parameterValue;
+			dbp.Direction = ParameterDirection.Input;
+			command.Parameters.Add (dbp);
+		}
+
 		public override void AddUsersToRoles (string [] usernames, string [] rolenames)
 		{
-			throw new NotImplementedException ();
+			Hashtable h;
+
+			h = new Hashtable();
+			foreach (string u in usernames) {
+				if (u == null)
+					throw new ArgumentNullException ("null element in usernames array");
+				if (h.ContainsKey (u))
+					throw new ArgumentException ("duplicate element in usernames array");
+				if (u.Length == 0 || u.Length > 256 || u.IndexOf (",") != -1)
+					throw new ArgumentException ("element in usernames array in illegal format");
+				h.Add (u, u);
+			}
+
+			h = new Hashtable();
+			foreach (string r in usernames) {
+				if (r == null)
+					throw new ArgumentNullException ("null element in usernames array");
+				if (h.ContainsKey (r))
+					throw new ArgumentException ("duplicate element in usernames array");
+				if (r.Length == 0 || r.Length > 256 || r.IndexOf (",") != -1)
+					throw new ArgumentException ("element in usernames array in illegal format");
+				h.Add (r, r);
+			}
+
+			InitConnection();
+
+			bool closed = connection.State == ConnectionState.Closed;
+			if (closed)
+				connection.Open();
+
+			DbTransaction trans = connection.BeginTransaction ();
+
+			try {
+				foreach (string username in usernames) {
+					string loweredUserName = username.ToLower();
+
+					foreach (string rolename in rolenames) {
+						string loweredRoleName = rolename.ToLower();
+
+						/* add the user/role combination to dbo.aspnet_UsersInRoles */
+						DbCommand command = factory.CreateCommand ();
+						command.Transaction = trans;
+						command.CommandText = @"
+INSERT INTO dbo.aspnet_UsersInRoles (UserId, RoleId)
+     SELECT dbo.aspnet_Users.UserId, dbo.aspnet_Roles.RoleId 
+       FROM dbo.aspnet_Users, dbo.aspnet_Roles, dbo.aspnet_Applications
+      WHERE dbo.aspnet_Users.ApplicationId = dbo.aspnet_Applications.ApplicationId
+        AND dbo.aspnet_Roles.ApplicationId = dbo.aspnet_Applications.ApplicationId
+        AND dbo.aspnet_Applications.LoweredApplicationName = @LoweredApplicationName
+        AND dbo.aspnet_Users.LoweredUserName = @LoweredUserName
+        AND dbo.aspnet_Roles.LoweredRoleName = @LoweredRoleName
+";
+						command.Connection = connection;
+						command.CommandType = CommandType.Text;
+						AddParameter (command, "LoweredRoleName", loweredRoleName);
+						AddParameter (command, "LoweredUserName", loweredUserName);
+						AddParameter (command, "LoweredApplicationName", loweredApplicationName);
+
+						if (command.ExecuteNonQuery() != 1)
+							throw new ProviderException ("failed to create new user/role association.");
+					}
+				}
+				
+				trans.Commit ();
+			}
+			catch (Exception e) {
+				trans.Rollback ();
+				if (e is ProviderException)
+					throw e;
+				else
+					throw new ProviderException ("", e);
+			}
+			finally {
+				if (closed)
+					connection.Close ();
+			}
 		}
 		
-		[MonoTODO]
 		public override void CreateRole (string rolename)
 		{
-			throw new NotImplementedException ();
+			string commandText = @"
+INSERT INTO dbo.aspnet_Roles 
+            (ApplicationId, RoleName, LoweredRoleName)
+     VALUES ((SELECT ApplicationId FROM dbo.aspnet_Applications WHERE LoweredApplicationName = @LoweredApplicationName), @RoleName, @LoweredRoleName)
+";
+			if (rolename == null)
+				throw new ArgumentNullException ("rolename");
+
+			if (rolename.Length == 0 || rolename.Length > 256 || rolename.IndexOf (",") != -1)
+				throw new ArgumentException ("rolename is in invalid format");
+
+			InitConnection();
+			bool closed = connection.State == ConnectionState.Closed;
+			if (closed)
+				connection.Open();
+
+			string loweredRoleName = rolename.ToLower ();
+
+			DbCommand command = factory.CreateCommand ();
+			command.CommandText = commandText;
+			command.Connection = connection;
+			command.CommandType = CommandType.Text;
+			AddParameter (command, "LoweredApplicationName", loweredApplicationName);
+			AddParameter (command, "RoleName", rolename);
+			AddParameter (command, "LoweredRoleName", loweredRoleName);
+
+			if (command.ExecuteNonQuery() != 1)
+				throw new ProviderException ("failed to create new role.");
+
+			if (closed)
+				connection.Close ();
 		}
 		
-		[MonoTODO]
 		public override bool DeleteRole (string rolename, bool throwOnPopulatedRole)
 		{
-			throw new NotImplementedException ();
+			if (rolename == null)
+				throw new ArgumentNullException ("rolename");
+
+			if (rolename.Length == 0 || rolename.Length > 256 || rolename.IndexOf (",") != -1)
+				throw new ArgumentException ("rolename is in invalid format");
+
+			InitConnection();
+			bool closed = connection.State == ConnectionState.Closed;
+			if (closed)
+				connection.Open();
+
+			string loweredRoleName = rolename.ToLower ();
+
+			DbCommand command;
+			if (throwOnPopulatedRole) {
+				command = factory.CreateCommand ();
+				command.CommandText = @"
+SELECT COUNT(*) 
+  FROM dbo.aspnet_UsersInRoles, dbo.aspnet_Roles, dbo.aspnet_Users, dbo.aspnet_Applications
+ WHERE dbo.aspnet_Roles.ApplicationId = dbo.aspnet_Applications.ApplicationId
+   AND dbo.aspnet_UsersInRoles.RoleId = dbo.aspnet_Roles.RoleId
+   AND dbo.aspnet_Applications.LoweredApplicationName = @LoweredApplicationName
+   AND dbo.aspnet_Roles.LoweredRoleName = @LoweredRoleName";
+				command.Connection = connection;
+				command.CommandType = CommandType.Text;
+				AddParameter (command, "LoweredApplicationName", loweredApplicationName);
+				AddParameter (command, "LoweredRoleName", loweredRoleName);
+
+				int count = (int)command.ExecuteScalar ();
+				if (count != 0)
+					throw new ProviderException (String.Format ("The role '{0}' has users in it and can't be deleted", rolename));
+			}
+			else {
+				command = factory.CreateCommand ();
+				command.CommandText = @"
+DELETE dbo.aspnet_UsersInRoles FROM dbo.aspnet_UsersInRoles, dbo.aspnet_Roles, dbo.aspnet_Applications
+ WHERE dbo.aspnet_UsersInRoles.RoleId = dbo.aspnet_Roles.RoleId
+   AND dbo.aspnet_Roles.ApplicationId = dbo.aspnet_Applications.ApplicationId
+   AND dbo.aspnet_Roles.LoweredRoleName = @LoweredRoleName
+   AND dbo.aspnet_Applications.LoweredApplicationName = @LoweredApplicationName";
+				command.Connection = connection;
+				command.CommandType = CommandType.Text;
+				AddParameter (command, "LoweredRoleName", loweredRoleName);
+				AddParameter (command, "LoweredApplicationName", loweredApplicationName);
+
+				command.ExecuteNonQuery ();
+			}
+
+			command = factory.CreateCommand ();
+			command.CommandText = @"
+DELETE dbo.aspnet_Roles FROM dbo.aspnet_Roles, dbo.aspnet_Applications
+ WHERE dbo.aspnet_Roles.ApplicationId = dbo.aspnet_Applications.ApplicationId
+   AND dbo.aspnet_Applications.LoweredApplicationName = @LoweredApplicationName
+   AND dbo.aspnet_Roles.LoweredRoleName = @LoweredRoleName";
+			command.Connection = connection;
+			command.CommandType = CommandType.Text;
+			AddParameter (command, "LoweredApplicationName", loweredApplicationName);
+			AddParameter (command, "LoweredRoleName", loweredRoleName);
+
+			bool rv = command.ExecuteNonQuery() == 1;
+
+			if (closed)
+				connection.Close ();
+
+			return rv;
 		}
 		
-		[MonoTODO]
 		public override string[] FindUsersInRole (string roleName, string usernameToMatch)
 		{
-			throw new NotImplementedException ();
+			string commandTextFormat = @"
+SELECT dbo.aspnet_Users.UserName
+  FROM dbo.aspnet_Users, dbo.aspnet_Roles, dbo.aspnet_UsersInRoles, dbo.aspnet_Applications
+ WHERE dbo.aspnet_Roles.ApplicationId = dbo.aspnet_Applications.ApplicationId
+   AND dbo.aspnet_Users.ApplicationId = dbo.aspnet_Applications.ApplicationId
+   AND dbo.aspnet_UsersInRoles.UserId = dbo.aspnet_Users.UserId
+   AND dbo.aspnet_UsersInRoles.RoleId = dbo.aspnet_Roles.RoleId
+   AND dbo.aspnet_Roles.LoweredRoleName = @LoweredRoleName
+   AND dbo.aspnet_Applications.LoweredApplicationName = @LoweredApplicationName
+   AND dbo.aspnet_Users.UserName {0} @UsernameToMatch
+";
+			if (roleName == null)
+				throw new ArgumentNullException ("roleName");
+			if (usernameToMatch == null)
+				throw new ArgumentNullException ("usernameToMatch");
+
+			if (roleName.Length == 0 || roleName.Length > 256 || roleName.IndexOf (",") != -1)
+				throw new ArgumentException ("roleName is in invalid format");
+			if (usernameToMatch.Length == 0 || usernameToMatch.Length > 256)
+				throw new ArgumentException ("usernameToMatch is in invalid format");
+
+			InitConnection();
+
+			bool useLike = usernameToMatch.IndexOf ("%") != -1;
+			DbCommand command = factory.CreateCommand ();
+			command.CommandText = String.Format(commandTextFormat, useLike ? "LIKE" : "=");
+			command.Connection = connection;
+			command.CommandType = CommandType.Text;
+			AddParameter (command, "LoweredApplicationName", loweredApplicationName);
+			AddParameter (command, "LoweredRoleName", roleName.ToLower());
+			AddParameter (command, "UsernameToMatch", usernameToMatch);
+
+			DbDataReader reader = command.ExecuteReader ();
+			ArrayList userList = new ArrayList();
+			while (reader.Read())
+				userList.Add (reader.GetString(0));
+			reader.Close();
+
+			return (string[])userList.ToArray(typeof (string));
 		}
-		
-		[MonoTODO]
+
 		public override string [] GetAllRoles ()
 		{
-			throw new NotImplementedException ();
+			string commandText = @"
+SELECT aspnet_Roles.RoleName
+  FROM aspnet_Roles, aspnet_Applications
+ WHERE aspnet_Roles.ApplicationId = aspnet_Applications.ApplicationId
+   AND aspnet_Applications.LoweredApplicationName = @LoweredApplicationName
+";
+			InitConnection();
+			bool closed = connection.State == ConnectionState.Closed;
+			if (closed)
+				connection.Open();
+
+			DbCommand command = factory.CreateCommand ();
+			command.CommandText = commandText;
+			command.Connection = connection;
+			command.CommandType = CommandType.Text;
+			AddParameter (command, "LoweredApplicationName", loweredApplicationName);
+
+			DbDataReader reader = command.ExecuteReader ();
+			ArrayList roleList = new ArrayList();
+			while (reader.Read())
+				roleList.Add (reader.GetString(0));
+			reader.Close();
+
+			if (closed)
+				connection.Close ();
+
+			return (string[])roleList.ToArray(typeof (string));
 		}
 		
-		[MonoTODO]
 		public override string [] GetRolesForUser (string username)
 		{
-			throw new NotImplementedException ();
+			string commandText = @"
+SELECT dbo.aspnet_Roles.RoleName
+  FROM dbo.aspnet_Roles, dbo.aspnet_UsersInRoles, dbo.aspnet_Users, dbo.aspnet_Applications
+WHERE dbo.aspnet_Roles.RoleId = dbo.aspnet_UsersInRoles.RoleId
+  AND dbo.aspnet_Roles.ApplicationId = dbo.aspnet_Applications.ApplicationId
+  AND dbo.aspnet_UsersInRoles.UserId = dbo.aspnet_Users.UserId
+  AND dbo.aspnet_Users.LoweredUserName = @LoweredUserName
+  AND dbo.aspnet_Users.ApplicationId = dbo.aspnet_Applications.ApplicationId
+  AND dbo.aspnet_Applications.LoweredApplicationName = @LoweredApplicationName
+";
+
+			InitConnection();
+			bool closed = connection.State == ConnectionState.Closed;
+			if (closed)
+				connection.Open();
+
+			DbCommand command = factory.CreateCommand ();
+			command.CommandText = commandText;
+			command.Connection = connection;
+			command.CommandType = CommandType.Text;
+			AddParameter (command, "LoweredUserName", username.ToLower());
+			AddParameter (command, "LoweredApplicationName", loweredApplicationName);
+
+			DbDataReader reader = command.ExecuteReader ();
+			ArrayList roleList = new ArrayList();
+			while (reader.Read())
+				roleList.Add (reader.GetString(0));
+			reader.Close();
+
+			if (closed)
+				connection.Close ();
+
+			return (string[])roleList.ToArray(typeof (string));
 		}
 		
-		[MonoTODO]
 		public override string [] GetUsersInRole (string rolename)
 		{
-			throw new NotImplementedException ();
+			string commandText = @"
+SELECT dbo.aspnet_Users.UserName
+  FROM dbo.aspnet_Roles, dbo.aspnet_UsersInRoles, dbo.aspnet_Users, dbo.aspnet_Applications
+WHERE dbo.aspnet_Roles.RoleId = dbo.aspnet_UsersInRoles.RoleId
+  AND dbo.aspnet_Roles.ApplicationId = dbo.aspnet_Applications.ApplicationId
+  AND dbo.aspnet_UsersInRoles.UserId = dbo.aspnet_Users.UserId
+  AND dbo.aspnet_Roles.LoweredRoleName = @LoweredRoleName
+  AND dbo.aspnet_Users.ApplicationId = dbo.aspnet_Applications.ApplicationId
+  AND dbo.aspnet_Applications.LoweredApplicationName = @LoweredApplicationName
+";
+
+			InitConnection();
+			bool closed = connection.State == ConnectionState.Closed;
+			if (closed)
+				connection.Open();
+
+			DbCommand command = factory.CreateCommand ();
+			command.CommandText = commandText;
+			command.Connection = connection;
+			command.CommandType = CommandType.Text;
+			AddParameter (command, "LoweredRoleName", rolename.ToLower());
+			AddParameter (command, "LoweredApplicationName", loweredApplicationName);
+
+			DbDataReader reader = command.ExecuteReader ();
+			ArrayList userList = new ArrayList();
+			while (reader.Read())
+				userList.Add (reader.GetString(0));
+			reader.Close();
+
+			if (closed)
+				connection.Close ();
+
+			return (string[])userList.ToArray(typeof (string));
 		}
 		
 		[MonoTODO]
 		public override void Initialize (string name, NameValueCollection config)
 		{
-			throw new NotImplementedException ();
+			if (config == null)
+				throw new ArgumentNullException ("config");
+
+			base.Initialize (name, config);
+
+#if false
+			ApplicationName = config["applicationName"];
+#else
+			ApplicationName = "/";
+#endif
+			string connectionStringName = config["connectionStringName"];
+			string commandTimeout = config["commandTimeout"];
+
+			if (applicationName.Length > 256)
+				throw new ProviderException ("The ApplicationName attribute must be 256 characters long or less.");
+			if (connectionStringName == null || connectionStringName.Length == 0)
+				throw new ProviderException ("The ConnectionStringName attribute must be present and non-zero length.");
+
+			// XXX check connectionStringName and commandTimeout
+
+			connectionString = WebConfigurationManager.ConnectionStrings[connectionStringName];
 		}
 		
-		[MonoTODO]
 		public override bool IsUserInRole (string username, string rolename)
 		{
-			throw new NotImplementedException ();
+			string commandText = @"
+SELECT COUNT(*)
+  FROM dbo.aspnet_Users, dbo.aspnet_UsersInRoles, dbo.aspnet_Roles, dbo.aspnet_Applications
+ WHERE dbo.aspnet_Roles.ApplicationId = dbo.aspnet_Applications.ApplicationId
+   AND dbo.aspnet_Users.ApplicationId = dbo.aspnet_Applications.ApplicationId
+   AND dbo.aspnet_UsersInRoles.RoleId = dbo.aspnet_Roles.RoleId
+   AND dbo.aspnet_UsersInRoles.UserId = dbo.aspnet_Users.UserId
+   AND dbo.aspnet_Applications.LoweredApplicationName = @LoweredApplicationName
+   AND dbo.aspnet_Roles.LoweredRoleName = @LoweredRoleName
+   AND dbo.aspnet_Users.LoweredUserName = @LoweredUserName
+";
+
+			InitConnection();
+			bool closed = connection.State == ConnectionState.Closed;
+			if (closed)
+				connection.Open();
+
+			DbCommand command = factory.CreateCommand ();
+			command.CommandText = commandText;
+			command.Connection = connection;
+			command.CommandType = CommandType.Text;
+			AddParameter (command, "LoweredRoleName", rolename.ToLower());
+			AddParameter (command, "LoweredUserName", username.ToLower());
+			AddParameter (command, "LoweredApplicationName", loweredApplicationName);
+
+			bool rv = ((int)command.ExecuteScalar ()) != 0;
+
+			if (closed)
+				connection.Close ();
+
+			return rv;
 		}
 		
-		[MonoTODO]
 		public override void RemoveUsersFromRoles (string [] usernames, string [] rolenames)
 		{
-			throw new NotImplementedException ();
+			Hashtable h;
+
+			h = new Hashtable();
+			foreach (string u in usernames) {
+				if (u == null)
+					throw new ArgumentNullException ("null element in usernames array");
+				if (h.ContainsKey (u))
+					throw new ArgumentException ("duplicate element in usernames array");
+				if (u.Length == 0 || u.Length > 256 || u.IndexOf (",") != -1)
+					throw new ArgumentException ("element in usernames array in illegal format");
+				h.Add (u, u);
+			}
+
+			h = new Hashtable();
+			foreach (string r in usernames) {
+				if (r == null)
+					throw new ArgumentNullException ("null element in usernames array");
+				if (h.ContainsKey (r))
+					throw new ArgumentException ("duplicate element in usernames array");
+				if (r.Length == 0 || r.Length > 256 || r.IndexOf (",") != -1)
+					throw new ArgumentException ("element in usernames array in illegal format");
+				h.Add (r, r);
+			}
+
+			InitConnection();
+
+			bool closed = connection.State == ConnectionState.Closed;
+			if (closed)
+				connection.Open();
+
+			DbTransaction trans = connection.BeginTransaction ();
+
+			try {
+				foreach (string username in usernames) {
+					string loweredUserName = username.ToLower();
+
+					foreach (string rolename in rolenames) {
+						string loweredRoleName = rolename.ToLower();
+
+						DbCommand command = factory.CreateCommand ();
+						command.Transaction = trans;
+						command.CommandText = @"
+DELETE dbo.aspnet_UsersInRoles 
+  FROM dbo.aspnet_UsersInRoles, dbo.aspnet_Users, dbo.aspnet_Roles, dbo.aspnet_Applications
+ WHERE dbo.aspnet_UsersInRoles.UserId = dbo.aspnet_Users.UserId
+   AND dbo.aspnet_UsersInRoles.RoleId = dbo.aspnet_Roles.RoleId
+   AND dbo.aspnet_Roles.ApplicationId = dbo.aspnet_Applications.ApplicationId
+   AND dbo.aspnet_Users.ApplicationId = dbo.aspnet_Applications.ApplicationId
+   AND dbo.aspnet_Users.LoweredUserName = @LoweredUserName
+   AND dbo.aspnet_Roles.LoweredRoleName = @LoweredRoleName
+   AND dbo.aspnet_Applications.LoweredApplicationName = @LoweredApplicationName";
+
+						command.Connection = connection;
+						command.CommandType = CommandType.Text;
+						AddParameter (command, "LoweredUserName", loweredUserName);
+						AddParameter (command, "LoweredRoleName", loweredRoleName);
+						AddParameter (command, "LoweredApplicationName", loweredApplicationName);
+
+						if (command.ExecuteNonQuery() != 1)
+							throw new ProviderException (String.Format ("failed to remove users from role '{0}'.", rolename));
+					}
+				}
+				
+				trans.Commit ();
+			}
+			catch (Exception e) {
+				trans.Rollback ();
+				if (e is ProviderException)
+					throw e;
+				else
+					throw new ProviderException ("", e);
+			}
+			finally {
+				if (closed)
+					connection.Close ();
+			}
 		}
 		
-		[MonoTODO]
 		public override bool RoleExists (string rolename)
 		{
-			throw new NotImplementedException ();
+			string commandText = @"
+SELECT COUNT(*)
+  FROM dbo.aspnet_Roles, dbo.aspnet_Applications
+ WHERE dbo.aspnet_Roles.ApplicationId = dbo.aspnet_Applications.ApplicationId
+   AND dbo.aspnet_Applications.LoweredApplicationName = @LoweredApplicationName
+   AND dbo.aspnet_Roles.LoweredRoleName = @LoweredRoleName
+";
+
+			InitConnection();
+			bool closed = connection.State == ConnectionState.Closed;
+			if (closed)
+				connection.Open();
+
+			DbCommand command = factory.CreateCommand ();
+			command.CommandText = commandText;
+			command.Connection = connection;
+			command.CommandType = CommandType.Text;
+			AddParameter (command, "LoweredApplicationName", loweredApplicationName);
+			AddParameter (command, "LoweredRoleName", rolename.ToLower());
+
+			bool rv = ((int)command.ExecuteScalar ()) != 0;
+
+			if (closed)
+				connection.Close ();
+
+			return rv;
 		}
 		
 		[MonoTODO]
 		public override string ApplicationName {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return applicationName; }
+			set {
+				applicationName = value;
+				loweredApplicationName = applicationName.ToLower();
+			}
 		}
 	}
 }
