@@ -159,10 +159,6 @@ namespace System.Web.Configuration
 			get { throw new NotImplementedException (); }
 		}
 
-		public virtual string Item {
-			get { throw new NotImplementedException (); }
-		}
-
 		public Version JScriptVersion {
 			get { throw new NotImplementedException (); }
 		}
