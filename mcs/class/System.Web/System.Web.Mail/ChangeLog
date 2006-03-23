@@ -1,3 +1,8 @@
+2006-03-23  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* MailMessageWrapper.cs: fixed Fields property, casting to string
+	changed to ToString method call.
+
 2006-01-08  Konstantin Triger <kostat@mainsoft.com>
 
 	* SmtpClient.cs, SmtpMail.cs, MailMessage.cs, MailMessageWrapper.cs,

@@ -240,7 +240,7 @@ namespace System.Web.Mail {
 					MailHeader bodyHeaders = new MailHeader();
 					// Add Fields to MailHeader Object
 					foreach( string key in message.Fields.Keys )
-						bodyHeaders.Data[ key ] = (string)this.message.Fields[ key ];
+						bodyHeaders.Data[ key ] = this.message.Fields[ key ].ToString();
 
 					return bodyHeaders;
 			}
