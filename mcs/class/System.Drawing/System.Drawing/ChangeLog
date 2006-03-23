@@ -1,3 +1,14 @@
+2006-03-23  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* gdipFunctions.cs: 
+	  - GdipGetFontCollectionFamilyList: No need for complicated 
+	    GlobalAlloc stuff, .Net marshals the IntPtr[] array just fine
+	  - GdipDeletePrivateFontCollection: We need to pass a ref to the
+	    structure. This was causing nasty crashes.
+	  - GdipGetFamilyName: Switched to use StringBuilder instead of
+	    manual marshalling
+	* FontFamily.cs: Simplified the refreshName method, less error-prone now
+
 2006-03-21  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* Brush.cs: Remove unused code.

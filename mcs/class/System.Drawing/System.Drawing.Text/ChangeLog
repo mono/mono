@@ -1,3 +1,12 @@
+2006-03-23  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* FontCollection.cs (get_Families): Now letting the runtime do the
+	  marshalling work for us. Easier to maintain and cleaner code.
+	* PrivateFontCollection.cs:
+	  - AddFontFile: Fixed weird english in error message
+	  - Dispose: Need to pass ref to the native object, we were crashing
+	    badly
+
 2006-02-09  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* ChangeLog: Created, contents from deleted 'changelog' file

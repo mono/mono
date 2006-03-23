@@ -3,11 +3,11 @@
 //
 // (C) 2002 Ximian, Inc.  http://www.ximian.com
 // Author: Everaldo Canuto everaldo.canuto@bol.com.br
-//			Sanjay Gupta (gsanjay@novell.com)
+//		Sanjay Gupta (gsanjay@novell.com)
+//		Peter Dennis Bartok (pbartok@novell.com)
 //
-
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004 - 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -66,19 +66,19 @@ namespace System.Drawing.Text {
 				int returned;
 				Status status;
 				FontFamily[] families;
+				IntPtr[] result;
 				
 				status = GDIPlus.GdipGetFontCollectionFamilyCount (nativeFontCollection, out found);
 				GDIPlus.CheckStatus (status);
 				
-				IntPtr dest = Marshal.AllocHGlobal (IntPtr.Size * found);           
-               
-				status = GDIPlus.GdipGetFontCollectionFamilyList(nativeFontCollection, found, dest, out returned);
+				result = new IntPtr[found];
+				status = GDIPlus.GdipGetFontCollectionFamilyList(nativeFontCollection, found, result, out returned);
 				   
 				families = new FontFamily [returned];
-				for ( int i = 0; i < returned ; i++)
-					families[i] = new FontFamily(Marshal.ReadIntPtr (dest, i * IntPtr.Size));
+				for ( int i = 0; i < returned ; i++) {
+					families[i] = new FontFamily(result[i]);
+				}
            
-				Marshal.FreeHGlobal (dest);           
 				return families;               
 			}
 		}

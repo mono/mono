@@ -6,8 +6,9 @@
 //	Jordi Mas i Hernandez (jordi@ximian.com)
 //	Sanjay Gupta (gsanjay@novell.com)
 //	Ravindra (rkumar@novell.com)
+//	Peter Dennis Bartok (pbartok@novell.com)
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004 - 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -1455,7 +1456,7 @@ namespace System.Drawing
 		internal static extern Status GdipGetFontCollectionFamilyCount (IntPtr collection, out int found);
 		
 		[DllImport ("gdiplus.dll")]
-		internal static extern Status GdipGetFontCollectionFamilyList (IntPtr collection, int getCount, IntPtr dest, out int retCount);
+		internal static extern Status GdipGetFontCollectionFamilyList (IntPtr collection, int getCount, IntPtr[] dest, out int retCount);
 		//internal static extern Status GdipGetFontCollectionFamilyList( IntPtr collection, int getCount, [Out] FontFamily [] familyList, out int retCount );
 		
 		[DllImport ("gdiplus.dll")]
@@ -1465,7 +1466,7 @@ namespace System.Drawing
 		internal static extern Status GdipNewPrivateFontCollection (out IntPtr collection);
 		
 		[DllImport ("gdiplus.dll")]
-		internal static extern Status GdipDeletePrivateFontCollection (IntPtr collection);
+		internal static extern Status GdipDeletePrivateFontCollection (ref IntPtr collection);
 		
 		[DllImport ("gdiplus.dll", CharSet=CharSet.Auto)]
 		internal static extern Status GdipPrivateAddFontFile (IntPtr collection,
@@ -1479,8 +1480,8 @@ namespace System.Drawing
 		internal static extern Status GdipCreateFontFamilyFromName (
                         [MarshalAs(UnmanagedType.LPWStr)] string fName, IntPtr collection, out IntPtr fontFamily);
 
-		[DllImport ("gdiplus.dll")]
-		internal static extern Status GdipGetFamilyName(IntPtr family, IntPtr fName, int language);
+		[DllImport ("gdiplus.dll", CharSet=CharSet.Unicode)]
+		internal static extern Status GdipGetFamilyName(IntPtr family, StringBuilder name, int language);
 
 		[DllImport ("gdiplus.dll")]
 		internal static extern Status GdipGetGenericFontFamilySansSerif (out IntPtr fontFamily);

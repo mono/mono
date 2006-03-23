@@ -4,10 +4,10 @@
 // (C) 2002 Ximian, Inc.  http://www.ximian.com
 // Author: Everaldo Canuto everaldo.canuto@bol.com.br
 //		Sanjay Gupta (gsanjay@novell.com)
+//		Peter Dennis Bartok (pbartok@novell.com)
 //
-
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004 - 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -57,7 +57,7 @@ namespace System.Drawing.Text {
 				throw new Exception ("Value cannot be null, Parameter name : filename");
 			bool exists = File.Exists(filename);
 			if (!exists)
-				throw new Exception ("The path is not of a legal form");
+				throw new Exception ("The specified file does not exist");
 
 			Status status = GDIPlus.GdipPrivateAddFontFile (nativeFontCollection, filename);
 			GDIPlus.CheckStatus (status);			
@@ -72,8 +72,8 @@ namespace System.Drawing.Text {
 		// methods	
 		protected override void Dispose(bool disposing)
 		{
-			if (nativeFontCollection!=IntPtr.Zero){				
-				GDIPlus.GdipDeletePrivateFontCollection (nativeFontCollection);							
+			if (nativeFontCollection!=IntPtr.Zero){
+				GDIPlus.GdipDeletePrivateFontCollection (ref nativeFontCollection);							
 				nativeFontCollection = IntPtr.Zero;
 			}
 			

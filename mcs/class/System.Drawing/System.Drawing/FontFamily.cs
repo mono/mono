@@ -4,9 +4,10 @@
 // Author:
 //   Dennis Hayes (dennish@Raytek.com)
 //   Alexandre Pigolkine (pigolkine@gmx.de)
+//   Peter Dennis Bartok (pbartok@novell.com)
 //
 // Copyright (C) 2002/2004 Ximian, Inc http://www.ximian.com
-// Copyright (C) 2004, 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004 - 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -51,21 +52,15 @@ namespace System.Drawing {
 		
 		internal void refreshName()
 		{
+			StringBuilder sb;
+
 			if (nativeFontFamily == IntPtr.Zero)
 				return;
 
-			int language = 0;			
-			IntPtr buffer = IntPtr.Zero;
-			try {
-				buffer = Marshal.AllocHGlobal(GDIPlus.FACESIZE * UnicodeEncoding.CharSize);
-				Status status = GDIPlus.GdipGetFamilyName (nativeFontFamily, buffer, language);
-				GDIPlus.CheckStatus (status);
-				name = Marshal.PtrToStringUni(buffer);
-			}
-			finally {
-				if (buffer != IntPtr.Zero)
-					Marshal.FreeHGlobal (buffer);
-			}
+			sb = new StringBuilder(GDIPlus.FACESIZE);
+			Status status = GDIPlus.GdipGetFamilyName (nativeFontFamily, sb, 0);
+			GDIPlus.CheckStatus (status);
+			name = sb.ToString();
 		}
 		
 		//Need to come back here, is Arial the right thing to do
