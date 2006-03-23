@@ -65,10 +65,10 @@ namespace System.Web.Security
 			if (context.User == null && Authenticate != null)
 				Authenticate (this, new DefaultAuthenticationEventArgs (context));
 
-			if (context.User == null) {
+			if (context.User == null)
 				context.User = new GenericPrincipal (defaultIdentity, new string [0]);
-				Thread.CurrentPrincipal = context.User;
-			}
+
+			Thread.CurrentPrincipal = context.User;
 		}
 	}
 }

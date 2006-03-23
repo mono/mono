@@ -1,3 +1,9 @@
+2006-03-23  Chris Toshok  <toshok@ximian.com>
+
+	* DefaultAuthenticationModule.cs (OnDefaultAuthentication): always
+	set Thread.CurrentPrincipal, not just if we set it to the
+	GenericPrincipal.
+
 2006-03-22  Chris Toshok  <toshok@ximian.com>
 
 	* RoleManagerModule.cs: implement using info in Shackow's book.
