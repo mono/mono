@@ -400,7 +400,8 @@ namespace System.Xml
 		{
 			XmlValidatingReader xvr = null;
 			switch (settings.ValidationType) {
-			case ValidationType.None:
+			// Auto and XDR are obsoleted in 2.0 and therefore ignored.
+			default:
 				return reader;
 			case ValidationType.DTD:
 				xvr = new XmlValidatingReader (reader);
@@ -411,13 +412,6 @@ namespace System.Xml
 //				xvr = new XmlValidatingReader (reader);
 //				xvr.ValidationType = ValidationType.Schema;
 				return new XmlSchemaValidatingReader (reader, settings);
-			case ValidationType.Auto:
-				xvr = new XmlValidatingReader (reader);
-				xvr.ValidationType = ValidationType.DTD;
-				reader = xvr;
-				goto case ValidationType.Schema;
-			case ValidationType.XDR:
-				throw new NotSupportedException ();
 			}
 			if (xvr != null)
 				xvr.SetSchemas (settings.Schemas);

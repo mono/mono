@@ -1,3 +1,9 @@
+2006-03-23  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlReader.cs : in XmlReader.Create() ValidationType Auto and XDR
+	  are simply ignored (it was found on running NvdlValidatingReader
+	  under MS.NET 2.0).
+
 2006-01-25  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlConvert.cs : ToString(TimeSpan) should return valid duration
