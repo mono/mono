@@ -465,7 +465,7 @@ namespace Mono.CSharp {
 			if (obsolete_attr == null)
 				return;
 
-			if (GetObsoleteAttribute () != null || Parent.GetObsoleteAttribute () != null)
+			if (IsInObsoleteScope)
 				return;
 
 			AttributeTester.Report_ObsoleteMessage (obsolete_attr, TypeManager.CSharpName (type.Type), type.Location);
