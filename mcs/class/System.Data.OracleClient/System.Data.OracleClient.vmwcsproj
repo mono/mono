@@ -18,6 +18,7 @@
 				<File RelPath="Assembly\Consts.cs.in" Link="..\..\build\common\Consts.cs.in" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Assembly\Locale.cs" Link="..\..\build\common\Locale.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Assembly\MonoTODOAttribute.cs" Link="..\..\build\common\MonoTODOAttribute.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Mainsoft.Data.Jdbc.Providers.jvm\OracleProvider.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.OracleClient\OracleBoolean.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.OracleClient\OracleDataAdapter.cs" SubType="Component" BuildAction="Compile"/>
 				<File RelPath="System.Data.OracleClient\OracleDateTime.cs" SubType="Code" BuildAction="Compile"/>
