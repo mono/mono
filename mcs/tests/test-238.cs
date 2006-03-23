@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics;
 
 class TestClass {
-        [Conditional ("UNDEFINED CONDITION")]
+        [Conditional ("UNDEFINED_CONDITION")]
         static void ConditionalMethod ()
         {
             Environment.Exit (1);

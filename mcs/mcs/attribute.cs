@@ -425,8 +425,16 @@ namespace Mono.CSharp {
 			}
 
 			if (Type == TypeManager.attribute_usage_type && (int)pos_values [0] == 0) {
-				Report.Error (591, Location, "Invalid value for argument to 'System.AttributeUsage' attribute");
+				Report.Error (591, Location, "Invalid value for argument to `System.AttributeUsage' attribute");
 				return null;
+			}
+
+			if (Type == TypeManager.indexer_name_type || Type == TypeManager.conditional_attribute_type) {
+				if (!Tokenizer.IsValidIdentifier ((string)pos_values [0])) {
+					Report.Error (633, ((Argument)PosArguments[0]).Expr.Location,
+						"The argument to the `{0}' attribute must be a valid identifier", GetSignatureForError ());
+					return null;
+				}
 			}
 
 			if (Type == TypeManager.methodimpl_attr_type && pos_values.Length == 1 &&

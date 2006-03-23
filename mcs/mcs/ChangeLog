@@ -1,3 +1,10 @@
+2006-03-23  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs (Attribute.ResolveConstructor): Check for an invalid
+	attribute arguments here.
+
+	* class.cs (Indexer.Define): The check was moved to attribute class.
+
 2006-03-22  Marek Safar  <marek.safar@seznam.cz>
 
 	* assign.cs, class.cs, codegen.cs, convert.cs, decl.cs, ecore.cs,

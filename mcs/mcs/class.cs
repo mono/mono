@@ -3828,6 +3828,9 @@ namespace Mono.CSharp {
 
 				foreach (Attribute a in attrs) {
 					string condition = a.GetConditionalAttributeValue ();
+					if (condition == null)
+						return false;
+
 					if (RootContext.AllDefines.Contains (condition))
 						return false;
 				}
@@ -6772,7 +6775,11 @@ namespace Mono.CSharp {
 					// Remove the attribute from the list because it is not emitted
 					OptAttributes.Attrs.Remove (indexer_attr);
 
-					ShortName = indexer_attr.GetIndexerAttributeValue ();
+					string name = indexer_attr.GetIndexerAttributeValue ();
+					if (name == null)
+						return false;
+
+					ShortName = name;
 
 					if (IsExplicitImpl) {
 						Report.Error (415, indexer_attr.Location,
@@ -6784,12 +6791,6 @@ namespace Mono.CSharp {
 					if ((ModFlags & Modifiers.OVERRIDE) != 0) {
 						Report.Error (609, indexer_attr.Location,
 							      "Cannot set the `IndexerName' attribute on an indexer marked override");
-						return false;
-					}
-
-					if (!Tokenizer.IsValidIdentifier (ShortName)) {
-						Report.Error (633, indexer_attr.Location,
-							      "The argument to the `IndexerName' attribute must be a valid identifier");
 						return false;
 					}
 				}

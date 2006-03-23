@@ -1,4 +1,4 @@
-// cs0633.cs: The argument to the `IndexerName' attribute must be a valid identifier
+// cs0633.cs: The argument to the `System.Runtime.CompilerServices.IndexerNameAttribute' attribute must be a valid identifier
 // Line: 5
 
 public class MonthDays {
