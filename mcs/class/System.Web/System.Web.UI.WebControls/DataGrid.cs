@@ -1053,6 +1053,10 @@ namespace System.Web.UI.WebControls {
 			rt.CopyBaseAttributes (this);
 			rt.ApplyStyle (ControlStyle);
 
+			rt.Caption = Caption;
+			rt.CaptionAlign = CaptionAlign;
+			rt.Enabled = Enabled;
+
 			bool top_pager = true;
 			Style alt = null;
 			foreach (DataGridItem item in rt.Rows) {

@@ -1,5 +1,9 @@
 2006-03-23  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
+	* DataGrid.cs, DataList.cs, RepeatInfo.cs: added accessablity features
+
+2006-03-23  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
 	* DataGrid.cs: fixed CreateControlHierarchy, added CurrentPageIndex
 	validation
 	in PrepareControlHierarchy fixed style applying to AlternatingItem

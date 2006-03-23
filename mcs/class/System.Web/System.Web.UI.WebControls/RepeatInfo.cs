@@ -29,6 +29,7 @@
 //#define DEBUG_REPEAT_INFO
 
 using System.Diagnostics;
+using System.ComponentModel;
 using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
@@ -82,6 +83,16 @@ namespace System.Web.UI.WebControls {
 			
 			if (! oti)
 				RenderBeginTag (w, controlStyle, baseControl);
+
+			if (UseAccessibleHeader) {
+				if (CaptionAlign != TableCaptionAlign.NotSet)
+					w.AddAttribute (HtmlTextWriterAttribute.Align, CaptionAlign.ToString());
+
+				w.RenderBeginTag (HtmlTextWriterTag.Caption);
+				w.Write (Caption);
+				w.RenderEndTag ();
+
+			}
 
 			// Render the header
 			if (user.HasHeader) {
@@ -240,6 +251,16 @@ namespace System.Web.UI.WebControls {
 #endif
 
 			RenderBeginTag (w, controlStyle, baseControl);
+			
+			if (UseAccessibleHeader) {
+				if (CaptionAlign != TableCaptionAlign.NotSet)
+					w.AddAttribute (HtmlTextWriterAttribute.Align, CaptionAlign.ToString());
+
+				w.RenderBeginTag (HtmlTextWriterTag.Caption);
+				w.Write (Caption);
+				w.RenderEndTag ();
+
+			}
 			
 			// Render the header
 			if (user.HasHeader) {
@@ -442,5 +463,33 @@ namespace System.Web.UI.WebControls {
 			if (HttpContext.Current != null)
 				HttpContext.Current.Trace.Write (s);
 		}
+
+		private string caption = "";
+		private TableCaptionAlign captionAlign = TableCaptionAlign.NotSet; 
+		private  bool useAccessibleHeader = false; 
+
+		[WebSysDescription ("")]
+		[WebCategory ("Accessibility")]
+		public string Caption {
+			get {return caption;}
+			set { caption = value; }
+		}
+
+		[WebSysDescription ("")]
+		[DefaultValue (TableCaptionAlign.NotSet)]
+		[WebCategory ("Accessibility")]
+		public TableCaptionAlign CaptionAlign {
+			get {return captionAlign;}
+			set { captionAlign = value; }
+		}
+
+		[WebSysDescription ("")]
+		[DefaultValue (false)]
+		[WebCategory ("Accessibility")]
+		public bool UseAccessibleHeader {
+			get {return useAccessibleHeader;}
+			set { useAccessibleHeader = value; }		
+		}
+
 	}
 }

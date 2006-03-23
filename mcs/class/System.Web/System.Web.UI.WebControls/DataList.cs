@@ -853,6 +853,9 @@ namespace System.Web.UI.WebControls {
 			ri.RepeatColumns = RepeatColumns;
 			ri.RepeatDirection = RepeatDirection;
 			ri.RepeatLayout = RepeatLayout;
+			ri.CaptionAlign = CaptionAlign;
+			ri.Caption = Caption;
+			ri.UseAccessibleHeader = UseAccessibleHeader;
 /*
 // debugging stuff that I prefer to keep for a while
 Console.WriteLine ("RepeatColumns {0}", ri.RepeatColumns);
