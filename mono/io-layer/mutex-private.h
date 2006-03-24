@@ -30,12 +30,11 @@ struct _WapiHandle_mutex
 struct _WapiHandle_namedmutex 
 {
 	WapiSharedNamespace sharedns;
-	guint32 is_owned;
 	pid_t pid;
 	pthread_t tid;
 	guint32 recursion;
 };
 
-extern void _wapi_mutex_check_abandoned (pid_t pid, pthread_t tid);
+extern void _wapi_mutex_abandon (gpointer data, pid_t pid, pthread_t tid);
 
 #endif /* _WAPI_MUTEX_PRIVATE_H_ */

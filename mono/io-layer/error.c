@@ -70,6 +70,7 @@ errno_to_WSA (guint32 code, const gchar *function_name)
 	gchar *msg;
 
 	switch (code) {
+	case 0: result = ERROR_SUCCESS; break;
 	case EACCES: result = WSAEACCES; break;
 	case EADDRINUSE: result = WSAEADDRINUSE; break;
 	case EAFNOSUPPORT: result = WSAEAFNOSUPPORT; break;
@@ -116,6 +117,8 @@ errno_to_WSA (guint32 code, const gchar *function_name)
 	case ETIMEDOUT: result = WSAENETDOWN; break;
 	case EWOULDBLOCK: result = WSAEWOULDBLOCK; break;
 	case EADDRNOTAVAIL: result = WSAEADDRNOTAVAIL; break;
+	/* This might happen with unix sockets */
+	case ENOENT: result = WSAECONNREFUSED; break;
 	default:
 		sys_error = strerror (code);
 		msg = g_locale_to_utf8 (sys_error, strlen (sys_error), NULL, NULL, NULL);
@@ -207,8 +210,12 @@ _wapi_get_win32_file_error (gint err)
 		ret = ERROR_IO_PENDING;		/* best match I could find */
 		break;
 		
+	case EPIPE:
+		ret = ERROR_WRITE_FAULT;
+		break;
+		
 	default:
-		g_message ("Unknown errno: %s\n", strerror (err));
+		g_message ("Unknown errno: %s\n", g_strerror (err));
 		ret = ERROR_GEN_FAILURE;
 		break;
 	}

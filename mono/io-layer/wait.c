@@ -104,6 +104,8 @@ guint32 WaitForSingleObjectEx(gpointer handle, guint32 timeout,
 		return(WAIT_FAILED);
 	}
 
+	_wapi_handle_ops_prewait (handle);
+	
 	if (_wapi_handle_test_capabilities (handle, WAPI_HANDLE_CAP_SPECIAL_WAIT) == TRUE) {
 #ifdef DEBUG
 		g_message ("%s: handle %p has special wait", __func__, handle);
@@ -157,6 +159,10 @@ guint32 WaitForSingleObjectEx(gpointer handle, guint32 timeout,
 		goto done;
 	}
 
+	if (timeout == 0) {
+		ret = WAIT_TIMEOUT;
+		goto done;
+	}
 	/* Have to wait for it */
 	if (timeout != INFINITE) {
 		_wapi_calc_timeout (&abstime, timeout);
@@ -165,6 +171,8 @@ guint32 WaitForSingleObjectEx(gpointer handle, guint32 timeout,
 	do {
 		/* Check before waiting on the condition, just in case
 		 */
+		_wapi_handle_ops_prewait (handle);
+
 		if (own_if_signalled (handle)) {
 #ifdef DEBUG
 			g_message ("%s: handle %p signalled", __func__,
@@ -290,6 +298,8 @@ guint32 SignalObjectAndWait(gpointer signal_handle, gpointer wait,
 		return(WAIT_FAILED);
 	}
 
+	_wapi_handle_ops_prewait (wait);
+	
 	if (_wapi_handle_test_capabilities (wait, WAPI_HANDLE_CAP_SPECIAL_WAIT) == TRUE) {
 		g_warning ("%s: handle %p has special wait, implement me!!",
 			   __func__, wait);
@@ -342,6 +352,8 @@ guint32 SignalObjectAndWait(gpointer signal_handle, gpointer wait,
 	do {
 		/* Check before waiting on the condition, just in case
 		 */
+		_wapi_handle_ops_prewait (wait);
+	
 		if (own_if_signalled (wait)) {
 #ifdef DEBUG
 			g_message ("%s: handle %p signalled", __func__, wait);
@@ -494,7 +506,6 @@ guint32 WaitForMultipleObjectsEx(guint32 numobjects, gpointer *handles,
 {
 	GHashTable *dups;
 	gboolean duplicate = FALSE, bogustype = FALSE, done;
-	gboolean shared_wait = FALSE;
 	guint32 count, lowest;
 	struct timespec abstime;
 	guint i;
@@ -537,11 +548,8 @@ guint32 WaitForMultipleObjectsEx(guint32 numobjects, gpointer *handles,
 			bogustype = TRUE;
 		}
 
-		if (_WAPI_SHARED_HANDLE (_wapi_handle_type (handles[i]))) {
-			shared_wait = TRUE;
-		}
-
 		g_hash_table_insert (dups, handles[i], handles[i]);
+		_wapi_handle_ops_prewait (handles[i]);
 	}
 	g_hash_table_destroy (dups);
 
@@ -566,6 +574,9 @@ guint32 WaitForMultipleObjectsEx(guint32 numobjects, gpointer *handles,
 		return(WAIT_OBJECT_0+lowest);
 	}
 	
+	if (timeout == 0) {
+		return WAIT_TIMEOUT;
+	}
 	/* Have to wait for some or all handles to become signalled
 	 */
 
@@ -579,10 +590,12 @@ guint32 WaitForMultipleObjectsEx(guint32 numobjects, gpointer *handles,
 	}
 	
 	while(1) {
-		/* Prod all special-wait handles that aren't already
-		 * signalled
+		/* Prod all handles with prewait methods and
+		 * special-wait handles that aren't already signalled
 		 */
 		for (i = 0; i < numobjects; i++) {
+			_wapi_handle_ops_prewait (handles[i]);
+		
 			if (_wapi_handle_test_capabilities (handles[i], WAPI_HANDLE_CAP_SPECIAL_WAIT) == TRUE && _wapi_handle_issignalled (handles[i]) == FALSE) {
 				_wapi_handle_ops_special_wait (handles[i], 0);
 			}
@@ -604,18 +617,10 @@ guint32 WaitForMultipleObjectsEx(guint32 numobjects, gpointer *handles,
 		thr_ret = _wapi_handle_lock_signal_mutex ();
 		g_assert (thr_ret == 0);
 		
-		if (shared_wait == TRUE) {
-			if (timeout == INFINITE) {
-				ret = _wapi_handle_wait_signal_poll_share ();
-			} else {
-				ret = _wapi_handle_timedwait_signal_poll_share (&abstime);
-			}
+		if (timeout == INFINITE) {
+			ret = _wapi_handle_wait_signal ();
 		} else {
-			if (timeout == INFINITE) {
-				ret = _wapi_handle_wait_signal ();
-			} else {
-				ret = _wapi_handle_timedwait_signal (&abstime);
-			}
+			ret = _wapi_handle_timedwait_signal (&abstime);
 		}
 
 #ifdef DEBUG
