@@ -1,3 +1,7 @@
+2006-03-24  Dick Porter  <dick@ximian.com>
+  
+	* file-io.c (get_file_attributes): More stat macro breakage.
+	Fixes bug 77759.
 
 2006-03-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
