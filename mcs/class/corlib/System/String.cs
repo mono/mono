@@ -1722,10 +1722,12 @@ namespace System
 			return new CharEnumerator (this);
 		}
 
+#if NET_2_0
 		IEnumerator<char> IEnumerable<char>.GetEnumerator ()
 		{
 			return GetEnumerator ();
 		}
+#endif
 
 		IEnumerator IEnumerable.GetEnumerator ()
 		{

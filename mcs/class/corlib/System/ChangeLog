@@ -1,5 +1,9 @@
 2006-03-23  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* String.cs : oops, NET_2_0.
+
+2006-03-23  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* String.cs : added new IndexOf() and LastIndexOf() overloads, and
 	  IEnumerable<char>.GetEnumerator().
 
