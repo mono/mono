@@ -1,3 +1,9 @@
+
+Fri Mar 24 15:26:00 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* profiler.c: added the file=filename option in the default profiler
+	to output the profile data to filename.
+
 2006-03-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* icall.c: CodeBase returns '/' instead of '\\' on windows. Fixes
