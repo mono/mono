@@ -36,6 +36,7 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 
 #if NET_2_0
+using System.Collections.Generic;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 #endif
@@ -45,7 +46,7 @@ namespace System
 	[Serializable]
 #if NET_2_0
 	[ComVisible (true)]
-	public sealed class String : IConvertible, ICloneable, IEnumerable, IComparable, IComparable<String>, IEquatable <String>
+	public sealed class String : IConvertible, ICloneable, IEnumerable, IComparable, IComparable<String>, IEquatable <String>, IEnumerable<char>
 #else
 	public sealed class String : IConvertible, ICloneable, IEnumerable, IComparable
 #endif
@@ -688,6 +689,66 @@ namespace System
 
 			return InternalIndexOfAny (anyOf, startIndex, count);
 		}
+
+#if NET_2_0
+		public int IndexOf (string value, StringComparison comparison)
+		{
+			return IndexOf (value, 0, value.Length, comparison);
+		}
+
+		public int IndexOf (string value, int startIndex, StringComparison comparison)
+		{
+			return IndexOf (value, startIndex, value.Length - startIndex, comparison);
+		}
+
+		public int IndexOf (string value, int startIndex, int count, StringComparison comparison)
+		{
+			switch (comparison) {
+			case StringComparison.CurrentCulture:
+				return CultureInfo.CurrentCulture.CompareInfo.IndexOf (this, value, startIndex, count, CompareOptions.None);
+			case StringComparison.CurrentCultureIgnoreCase:
+				return CultureInfo.CurrentCulture.CompareInfo.IndexOf (this, value, startIndex, count, CompareOptions.IgnoreCase);
+			case StringComparison.InvariantCulture:
+				return CultureInfo.InvariantCulture.CompareInfo.IndexOf (this, value, startIndex, count, CompareOptions.None);
+			case StringComparison.InvariantCultureIgnoreCase:
+				return CultureInfo.InvariantCulture.CompareInfo.IndexOf (this, value, startIndex, count, CompareOptions.IgnoreCase);
+			case StringComparison.Ordinal:
+				return CultureInfo.InvariantCulture.CompareInfo.IndexOf (this, value, startIndex, count, CompareOptions.Ordinal);
+			case StringComparison.OrdinalIgnoreCase:
+				return CultureInfo.InvariantCulture.CompareInfo.IndexOf (this, value, startIndex, count, CompareOptions.OrdinalIgnoreCase);
+			}
+			throw new SystemException ("INTERNAL ERROR: should not reach here ...");
+		}
+
+		public int LastIndexOf (string value, StringComparison comparison)
+		{
+			return LastIndexOf (value, value.Length - 1, value.Length, comparison);
+		}
+
+		public int LastIndexOf (string value, int startIndex, StringComparison comparison)
+		{
+			return LastIndexOf (value, startIndex, startIndex + 1, comparison);
+		}
+
+		public int LastIndexOf (string value, int startIndex, int count, StringComparison comparison)
+		{
+			switch (comparison) {
+			case StringComparison.CurrentCulture:
+				return CultureInfo.CurrentCulture.CompareInfo.LastIndexOf (this, value, startIndex, count, CompareOptions.None);
+			case StringComparison.CurrentCultureIgnoreCase:
+				return CultureInfo.CurrentCulture.CompareInfo.LastIndexOf (this, value, startIndex, count, CompareOptions.IgnoreCase);
+			case StringComparison.InvariantCulture:
+				return CultureInfo.InvariantCulture.CompareInfo.LastIndexOf (this, value, startIndex, count, CompareOptions.None);
+			case StringComparison.InvariantCultureIgnoreCase:
+				return CultureInfo.InvariantCulture.CompareInfo.LastIndexOf (this, value, startIndex, count, CompareOptions.IgnoreCase);
+			case StringComparison.Ordinal:
+				return CultureInfo.InvariantCulture.CompareInfo.LastIndexOf (this, value, startIndex, count, CompareOptions.Ordinal);
+			case StringComparison.OrdinalIgnoreCase:
+				return CultureInfo.InvariantCulture.CompareInfo.LastIndexOf (this, value, startIndex, count, CompareOptions.OrdinalIgnoreCase);
+			}
+			throw new SystemException ("INTERNAL ERROR: should not reach here ...");
+		}
+#endif
 
 		public int IndexOf (char value)
 		{
@@ -1659,6 +1720,11 @@ namespace System
 		public CharEnumerator GetEnumerator ()
 		{
 			return new CharEnumerator (this);
+		}
+
+		IEnumerator<char> IEnumerable<char>.GetEnumerator ()
+		{
+			return GetEnumerator ();
 		}
 
 		IEnumerator IEnumerable.GetEnumerator ()

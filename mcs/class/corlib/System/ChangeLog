@@ -1,3 +1,8 @@
+2006-03-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* String.cs : added new IndexOf() and LastIndexOf() overloads, and
+	  IEnumerable<char>.GetEnumerator().
+
 2006-03-21  Kornél Pál  <kornelpal@gmail.com>
 
 	* String.cs: Make memcpy4 private as it is a helper method.
