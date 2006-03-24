@@ -849,16 +849,20 @@ namespace System.Windows.Forms
 
 		Size LargeIconItemSize {
 			get {
-				int w = Math.Max (text_size.Width, 2 + CheckBoxSize.Width + LargeImageList.ImageSize.Width);
-				int h = text_size.Height + 2 + Math.Max (CheckBoxSize.Height, LargeImageList.ImageSize.Height);
+				int image_w = LargeImageList == null ? 12 : LargeImageList.ImageSize.Width;
+				int image_h = LargeImageList == null ? 2 : LargeImageList.ImageSize.Height;
+				int w = CheckBoxSize.Width + 2 + Math.Max (text_size.Width, image_w);
+				int h = text_size.Height + 2 + Math.Max (CheckBoxSize.Height, image_h);
 				return new Size (w, h);
 			}
 		}
 
 		Size SmallIconItemSize {
 			get {
-				int w = text_size.Width + 2 + CheckBoxSize.Width + SmallImageList.ImageSize.Width;
-				int h = Math.Max (text_size.Height, Math.Max (CheckBoxSize.Height, SmallImageList.ImageSize.Height));
+				int image_w = SmallImageList == null ? 0 : SmallImageList.ImageSize.Width;
+				int image_h = SmallImageList == null ? 0 : SmallImageList.ImageSize.Height;
+				int w = text_size.Width + 2 + CheckBoxSize.Width + image_w;
+				int h = Math.Max (text_size.Height, Math.Max (CheckBoxSize.Height, image_h));
 				return new Size (w, h);
 			}
 		}

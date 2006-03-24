@@ -1,5 +1,14 @@
 2006-03-24  Mike Kestner  <mkestner@novell.com>
 
+	* ListView.cs: Handle (Large|Small)ImageList == null more robustly.
+	* ListView.Item.cs: fix layout issues with null image lists and images
+	smaller than checkbox size.
+	* ThemeWin32Classic.cs: Draw a 12 pixel line in ListView LargeIcon
+	mode like MS does.  It's weird, but consistent.  ;-)
+	Fixes #77890.
+
+2006-03-24  Mike Kestner  <mkestner@novell.com>
+
 	* ListView.cs: Scroll wheel support for the item control.  Fixes
 	#77839.
 

@@ -21,9 +21,7 @@
 //
 // Author:
 //      Ravindra (rkumar@novell.com)
-//
-// Todo:
-//     - Drawing of focus rectangle
+//      Mike Kestner <mkestner@novell.com>
 
 
 
@@ -530,7 +528,7 @@ namespace System.Windows.Forms
 				}
 
 				label_rect.Height = icon_rect.Height = item_ht;
-				checkbox_rect.Y = icon_rect.Height - checkbox_rect.Height - 1;
+				checkbox_rect.Y = item_rect.Height - checkbox_rect.Height;
 
 				label_rect.X = icon_rect.Right + 1;
 
@@ -554,23 +552,29 @@ namespace System.Windows.Forms
 			case View.LargeIcon:
 				label_rect = icon_rect = Rectangle.Empty;
 
-				if (owner.LargeImageList != null) {
+				if (owner.LargeImageList == null) {
+					icon_rect.Size = new Size (12, 2);
+				} else {
 					icon_rect.Width = owner.LargeImageList.ImageSize.Width;
 					icon_rect.Height = owner.LargeImageList.ImageSize.Height;
 				}
 
-				checkbox_rect.Y = icon_rect.Height - checkbox_rect.Height - 1;
+				if (checkbox_rect.Height > icon_rect.Height)
+					icon_rect.Y = checkbox_rect.Height - icon_rect.Height;
+				else
+					checkbox_rect.Y = icon_rect.Height - checkbox_rect.Height;
 
-				if (text_size.Width <= (checkbox_rect.Width + icon_rect.Width)) {
+
+				if (text_size.Width <= icon_rect.Width) {
 			 		icon_rect.X = checkbox_rect.Width + 1;
 					label_rect.X = icon_rect.X + (icon_rect.Width - text_size.Width) / 2;
-					label_rect.Y = Math.Max (checkbox_rect.Bottom, icon_rect.Bottom) + 2;
+					label_rect.Y = icon_rect.Bottom + 2;
 					label_rect.Size = text_size;
 				} else {
 					int centerX = text_size.Width / 2;
-					icon_rect.X = centerX - icon_rect.Width / 2;
-					checkbox_rect.X = (icon_rect.X - checkbox_rect.Width);
-					label_rect.Y = Math.Max (checkbox_rect.Bottom, icon_rect.Bottom) + 2;
+					icon_rect.X = checkbox_rect.Width + 1 + centerX - icon_rect.Width / 2;
+					label_rect.X = checkbox_rect.Width + 1;
+					label_rect.Y = icon_rect.Bottom + 2;
 					label_rect.Size = text_size;
 				}
 
@@ -591,7 +595,7 @@ namespace System.Windows.Forms
 					icon_rect.Height = owner.SmallImageList.ImageSize.Height;
 				}
 
-				checkbox_rect.Y = icon_rect.Height - checkbox_rect.Height + 1;
+				checkbox_rect.Y = item_ht - checkbox_rect.Height;
 				label_rect.X = icon_rect.Right + 1;
 				label_rect.Width = text_size.Width;
 				label_rect.Height = icon_rect.Height = item_ht;

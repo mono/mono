@@ -1523,8 +1523,8 @@ namespace System.Windows.Forms
 			
 			Rectangle rect_checkrect = item.CheckRectReal;
 			rect_checkrect.X += col_offset;
-			Rectangle rect_iconrect = item.GetBounds (ItemBoundsPortion.Icon);
-			rect_iconrect.X += col_offset;
+			Rectangle icon_rect = item.GetBounds (ItemBoundsPortion.Icon);
+			icon_rect.X += col_offset;
 			Rectangle full_rect = item.GetBounds (ItemBoundsPortion.Entire);
 			full_rect.X += col_offset;
 			Rectangle text_rect = item.GetBounds (ItemBoundsPortion.Label);			
@@ -1576,20 +1576,16 @@ namespace System.Windows.Forms
 				}
 			}
 
-			// Item is drawn as a special case, as it is not just text
 			if (control.View == View.LargeIcon) {
-				if (item.ImageIndex > -1 &&
-				    control.LargeImageList != null &&
-				    item.ImageIndex < control.LargeImageList.Images.Count)
-					control.LargeImageList.Draw (dc, rect_iconrect.Location,
-								     item.ImageIndex);
-			}
-			else {
-				if (item.ImageIndex > -1 &&
-				    control.SmallImageList != null &&
+				if (control.LargeImageList == null) {
+					Pen pen = new Pen (ColorWindowText, 2);
+					dc.DrawLine (pen, icon_rect.Left, icon_rect.Y, icon_rect.Left + 11, icon_rect.Y);
+				} else if (item.ImageIndex > -1 && item.ImageIndex < control.LargeImageList.Images.Count)
+					control.LargeImageList.Draw (dc, icon_rect.Location, item.ImageIndex);
+			} else {
+				if (item.ImageIndex > -1 && control.SmallImageList != null &&
 				    item.ImageIndex < control.SmallImageList.Images.Count)
-					control.SmallImageList.Draw (dc, rect_iconrect.Location,
-								     item.ImageIndex);
+					control.SmallImageList.Draw (dc, icon_rect.Location, item.ImageIndex);
 			}
 
 			// draw the item text			
