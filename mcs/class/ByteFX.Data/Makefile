@@ -8,7 +8,7 @@ OTHER_RES = \
 	mysqlclient/Designers/dataadapter.bmp
 
 LIBRARY = ByteFX.Data.dll
-LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll /r:System.Xml.dll \
+LIB_MCS_FLAGS = /codepage:28591 /r:$(corlib) /r:System.dll /r:System.Xml.dll \
 	/r:System.Data.dll /r:ICSharpCode.SharpZipLib.dll \
 	/r:System.Design.dll /r:System.Drawing.dll /r:System.Windows.Forms.dll \
 	/r:Mono.Posix.dll \
