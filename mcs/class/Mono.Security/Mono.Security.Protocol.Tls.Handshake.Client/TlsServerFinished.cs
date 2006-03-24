@@ -46,9 +46,6 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		{
 			base.Update();
 
-			// Reset Hahdshake messages information
-			this.Context.HandshakeMessages.Reset();
-
 			// Hahdshake is finished
 			this.Context.HandshakeState = HandshakeState.Finished;
 		}

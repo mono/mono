@@ -252,59 +252,102 @@ namespace Mono.Security.Protocol.Tls
 			}
 		}
 
+		private void SafeReceiveRecord (Stream s)
+		{
+			byte[] record = this.protocol.ReceiveRecord (s);
+			if ((record == null) || (record.Length == 0)) {
+				throw new TlsException (
+					AlertDescription.HandshakeFailiure,
+					"The server stopped the handshake.");
+			}
+		}
+
 		internal override void OnNegotiateHandshakeCallback(IAsyncResult asyncResult)
 		{
 			this.protocol.EndSendRecord(asyncResult);
 
 			// Read server response
-			while (this.context.LastHandshakeMsg != HandshakeType.ServerHelloDone)
+			while (this.context.LastHandshakeMsg != HandshakeType.ServerHelloDone) 
 			{
 				// Read next record
-				this.protocol.ReceiveRecord(this.innerStream);
+				SafeReceiveRecord (this.innerStream);
+
+				// special case for abbreviated handshake where no ServerHelloDone is sent from the server
+				if (this.context.AbbreviatedHandshake && (this.context.LastHandshakeMsg == HandshakeType.ServerHello))
+					break;
 			}
 
-			// Send client certificate if requested
-			// even if the server ask for it it _may_ still be optional
-			bool clientCertificate = this.context.ServerSettings.CertificateRequest;
-
-			// NOTE: sadly SSL3 and TLS1 differs in how they handle this and
-			// the current design doesn't allow a very cute way to handle 
-			// SSL3 alert warning for NoCertificate (41).
-			if (this.context.SecurityProtocol == SecurityProtocolType.Ssl3)
+			// the handshake is much easier if we can reuse a preivous session settings
+			if (this.context.AbbreviatedHandshake) 
 			{
-				clientCertificate = ((this.context.ClientSettings.Certificates != null) &&
-					(this.context.ClientSettings.Certificates.Count > 0));
-				// this works well with OpenSSL (but only for SSL3)
-			}
+				ClientSessionCache.SetContextFromCache (this.context);
+				this.context.Cipher.ComputeKeys ();
+				this.context.Cipher.InitializeCipher ();
 
-			if (clientCertificate)
+				// Send Cipher Spec protocol
+				this.protocol.SendChangeCipherSpec ();
+
+				// Read record until server finished is received
+				while (this.context.HandshakeState != HandshakeState.Finished) 
+				{
+					// If all goes well this will process messages:
+					// 		Change Cipher Spec
+					//		Server finished
+					SafeReceiveRecord (this.innerStream);
+				}
+
+				// Send Finished message
+				this.protocol.SendRecord (HandshakeType.Finished);
+			}
+			else
 			{
-				this.protocol.SendRecord(HandshakeType.Certificate);
+				// Send client certificate if requested
+				// even if the server ask for it it _may_ still be optional
+				bool clientCertificate = this.context.ServerSettings.CertificateRequest;
+
+				// NOTE: sadly SSL3 and TLS1 differs in how they handle this and
+				// the current design doesn't allow a very cute way to handle 
+				// SSL3 alert warning for NoCertificate (41).
+				if (this.context.SecurityProtocol == SecurityProtocolType.Ssl3)
+				{
+					clientCertificate = ((this.context.ClientSettings.Certificates != null) &&
+						(this.context.ClientSettings.Certificates.Count > 0));
+					// this works well with OpenSSL (but only for SSL3)
+				}
+
+				if (clientCertificate)
+				{
+					this.protocol.SendRecord(HandshakeType.Certificate);
+				}
+
+				// Send Client Key Exchange
+				this.protocol.SendRecord(HandshakeType.ClientKeyExchange);
+
+				// Now initialize session cipher with the generated keys
+				this.context.Cipher.InitializeCipher();
+
+				// Send certificate verify if requested (optional)
+				if (clientCertificate && (this.context.ClientSettings.ClientCertificate != null))
+				{
+					this.protocol.SendRecord(HandshakeType.CertificateVerify);
+				}
+
+				// Send Cipher Spec protocol
+				this.protocol.SendChangeCipherSpec ();
+				// Send Finished message
+				this.protocol.SendRecord (HandshakeType.Finished);			
+
+				// Read record until server finished is received
+				while (this.context.HandshakeState != HandshakeState.Finished) {
+					// If all goes well this will process messages:
+					// 		Change Cipher Spec
+					//		Server finished
+					SafeReceiveRecord (this.innerStream);
+				}
 			}
 
-			// Send Client Key Exchange
-			this.protocol.SendRecord(HandshakeType.ClientKeyExchange);
-
-			// Now initialize session cipher with the generated keys
-			this.context.Cipher.InitializeCipher();
-
-			// Send certificate verify if requested (optional)
-			if (clientCertificate && (this.context.ClientSettings.ClientCertificate != null))
-			{
-				this.protocol.SendRecord(HandshakeType.CertificateVerify);
-			}
-
-			// Send Cipher Spec protocol
-			this.protocol.SendChangeCipherSpec();
-
-			// Read record until server finished is received
-			while (this.context.HandshakeState != HandshakeState.Finished)
-			{
-				// If all goes well this will process messages:
-				// 		Change Cipher Spec
-				//		Server finished
-				this.protocol.ReceiveRecord(this.innerStream);
-			}
+			// Reset Handshake messages information
+			this.context.HandshakeMessages.Reset ();
 
 			// Clear Key Info
 			this.context.ClearKeyInfo();

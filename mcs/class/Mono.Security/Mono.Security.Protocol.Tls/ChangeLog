@@ -1,3 +1,35 @@
+2006-03-16  Sebastien Pouliot  <sebastien@ximian.com>
+ 
+	* CipherSuiteFactory.cs: Fix bad key exchange values for non-export
+	cihpers. Most certificates have "too much" usages by default so this
+	was hidden from view.
+	* SslStreamBase.cs: Safety net. Throw an exception if we're waiting 
+	for more than five (5) minutes for an async read or write to complete.
+
+2006-03-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ClientSessionCache.cs: New. Handle a client-side session cache to 
+	enable the use of abbreviated handshake whenever possible. This will
+	reduce the number of negotiation (a very CPU intensive process) done
+	with the same host.
+	* Context.cs: Add a property for AbbreviatedHandshake.
+	* RecordProtocol.cs: Don't send Finished record from ChangeCipherSpec
+	as this won't work if the message flow change.
+	* SslClientStream.cs: Line endings.
+	* SslServerStream.cs: Throw an exception if ReceiveRecord return null
+	or an empty buffer (i.e. communication ended with client). Fix #76254.
+	* SslStreamBase.cs: Re-add synchronous implementations for Read and 
+	Write.
+	* TlsCipherSuite.cs: Update the client-side session cache with the 
+	mastersecret.
+	* TlsStream.cs: Avoid possible buffer underun reading bytes (found by
+	Gonzalo).
+
+2006-03-08  Sebastien Pouliot  <sebastien@ximian.com>
+  
+       * SslStreamBase.cs: Re-implemented the synchronous versions of Read
+       and Write methods so they don't use the async code.
+
 2006-03-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SslStreamBase.cs: avoid creating the ManualResetEvent whenever

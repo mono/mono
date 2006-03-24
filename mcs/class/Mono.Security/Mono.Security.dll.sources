@@ -78,6 +78,7 @@
 ./Mono.Security.Protocol.Tls/CipherSuiteFactory.cs
 ./Mono.Security.Protocol.Tls/ClientContext.cs
 ./Mono.Security.Protocol.Tls/ClientRecordProtocol.cs
+./Mono.Security.Protocol.Tls/ClientSessionCache.cs
 ./Mono.Security.Protocol.Tls/ContentType.cs
 ./Mono.Security.Protocol.Tls/Context.cs
 ./Mono.Security.Protocol.Tls/DebugHelper.cs
