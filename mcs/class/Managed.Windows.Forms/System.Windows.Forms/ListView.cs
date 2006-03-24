@@ -713,6 +713,25 @@ namespace System.Windows.Forms
 			text_size.Height += 2;
 		}
 
+		private void Scroll (ScrollBar scrollbar, int delta)
+		{
+			if (delta == 0 || !scrollbar.Visible)
+				return;
+
+			int max;
+			if (scrollbar == h_scroll)
+				max = h_scroll.Maximum - item_control.Width;
+			else
+				max = v_scroll.Maximum - item_control.Height;
+
+			int val = scrollbar.Value + delta;
+			if (val > max)
+				val = max;
+			else if (val < scrollbar.Minimum)
+				val = scrollbar.Minimum;
+			scrollbar.Value = val;
+		}
+
 		private void CalculateScrollBars ()
 		{
 			Rectangle client_area = ClientRectangle;
@@ -1171,6 +1190,7 @@ namespace System.Windows.Forms
 				MouseMove += new MouseEventHandler(ItemsMouseMove);
 				MouseHover += new EventHandler(ItemsMouseHover);
 				MouseUp += new MouseEventHandler(ItemsMouseUp);
+				MouseWheel += new MouseEventHandler(ItemsMouseWheel);
 				Paint += new PaintEventHandler (ItemsPaint);
 			}
 
@@ -1316,6 +1336,30 @@ namespace System.Windows.Forms
 				}
 
 				clicked_item = null;
+			}
+
+			private void ItemsMouseWheel (object sender, MouseEventArgs me)
+			{
+				if (owner.Items.Count == 0)
+					return;
+
+				int lines = me.Delta / 120;
+
+				if (lines == 0)
+					return;
+
+				switch (owner.View) {
+				case View.Details:
+				case View.SmallIcon:
+					owner.Scroll (owner.v_scroll, -owner.Items [0].Bounds.Height * SystemInformation.MouseWheelScrollLines * lines);
+					break;
+				case View.LargeIcon:
+					owner.Scroll (owner.v_scroll, -(owner.Items [0].Bounds.Height + ThemeEngine.Current.ListViewVerticalSpacing)  * lines);
+					break;
+				case View.List:
+					owner.Scroll (owner.h_scroll, -owner.Items [0].Bounds.Width * lines);
+					break;
+				}
 			}
 
 			private void ItemsPaint (object sender, PaintEventArgs pe)

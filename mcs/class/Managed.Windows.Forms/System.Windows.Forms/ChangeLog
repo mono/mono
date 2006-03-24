@@ -1,3 +1,8 @@
+2006-03-24  Mike Kestner  <mkestner@novell.com>
+
+	* ListView.cs: Scroll wheel support for the item control.  Fixes
+	#77839.
+
 2006-03-23  Jackson Harper  <jackson@ximian.com>
 
 	* ScrollableControl.cs: Special case negative sized areas, not
