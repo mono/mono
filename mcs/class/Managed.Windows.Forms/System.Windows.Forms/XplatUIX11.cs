@@ -1039,6 +1039,8 @@ namespace System.Windows.Forms {
 				timeout = Timer.Minimum;
 			}
 
+			if (timeout > 1000)
+				timeout = 1000;
 			return timeout;
 		}
 

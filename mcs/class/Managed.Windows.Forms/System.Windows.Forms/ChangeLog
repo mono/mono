@@ -1,3 +1,9 @@
+2006-03-24  Jackson Harper  <jackson@ximian.com>
+
+	* XplatUIX11.cs: Give a max idle time of one second, this matches
+	MS and forces an Idle event every second when there are no other
+	events in the queue.
+
 2006-03-24  Mike Kestner  <mkestner@novell.com>
 
 	* ListView.cs: Handle (Large|Small)ImageList == null more robustly.
