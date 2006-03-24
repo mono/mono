@@ -1,3 +1,11 @@
+2006-03-22  Dick Porter  <dick@ximian.com>
+
+	* handles.c:
+	* wapi-private.h:
+	* shared.h:
+	* shared.c: Delete the semaphores and shared files when the last
+	process has finished with them
+
 2006-03-15  Dick Porter  <dick@ximian.com>
 
 	* events.c: 
