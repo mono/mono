@@ -3,6 +3,10 @@
 	* file-io.c (get_file_attributes): More stat macro breakage.
 	Fixes bug 77759.
 
+2006-03-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* assembly.c: publickeytoken is case insensitive. Fixes bug #77898.
+
 2006-03-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* icall.c: CodeBase returns '/' instead of '\\' on windows. Fixes
