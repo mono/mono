@@ -605,6 +605,7 @@ System.Web.UI/StateBag.cs
 System.Web.UI/StateItem.cs
 System.Web.UI/StateManagedCollection.cs
 System.Web.UI/StaticPartialCachingControl.cs
+System.Web.UI/StringPropertyBuilder.cs
 System.Web.UI/SupportsEventValidationAttribute.cs
 System.Web.UI/TagPrefixAttribute.cs
 System.Web.UI/TemplateBuilder.cs

@@ -1,3 +1,7 @@
+2006-03-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.Web.dll.sources: add StringPropertyBuilder.
+
 2006-03-23  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* System.Web.vmwcsproj: grasshopper project file fix,

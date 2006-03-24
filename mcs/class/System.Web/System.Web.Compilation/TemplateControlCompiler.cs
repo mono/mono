@@ -981,6 +981,19 @@ namespace System.Web.Compilation
 						continue;
 					}
 
+					if (b is StringPropertyBuilder) {
+						StringPropertyBuilder pb = (StringPropertyBuilder) b;
+						string str = (pb.Children.Count > 0) ? (string) pb.Children [0] : null;
+						if (str != null) {
+							CodeMemberMethod method = builder.method;
+							CodeAssignStatement assign = new CodeAssignStatement ();
+							assign.Left = new CodePropertyReferenceExpression (ctrlVar, pb.PropertyName);
+							assign.Right = new CodePrimitiveExpression (str);
+							method.Statements.Add (assign);
+						}
+						continue;
+					}
+
 #if NET_2_0
 					if (b is ContentBuilderInternal) {
 						ContentBuilderInternal cb = (ContentBuilderInternal) b;

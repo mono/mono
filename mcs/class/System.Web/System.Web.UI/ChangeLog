@@ -1,3 +1,10 @@
+2006-03-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ControlBuilder.cs: when creating a default property builder, handle
+	strings specially.
+
+	* StringPropertyBuilder.cs: new builder used in TextBox 2.0.
+
 2006-03-15  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* ControlCollection.cs: fixed CopyTo method, fixes bug when if target 

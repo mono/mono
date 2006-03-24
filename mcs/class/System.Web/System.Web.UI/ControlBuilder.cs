@@ -351,6 +351,8 @@ namespace System.Web.UI {
 				builder = new CollectionBuilder ();
 			} else if (typeof (ITemplate).IsAssignableFrom (propType)) {
 				builder = new TemplateBuilder (prop);
+			} else if (typeof (string) == propType) {
+				builder = new StringPropertyBuilder (prop.Name);
 			} else {
 				builder = CreateBuilderFromType (parser, parentBuilder, propType, prop.Name,
 								 null, atts, line, fileName);
