@@ -27,11 +27,13 @@ namespace System.Text
 {
 
 using System;
+using System.Runtime.InteropServices;
 
 [Serializable]
 [MonoTODO ("Fix serialization compatibility with MS.NET")]
 #if NET_2_0
 [MonoTODO ("EncoderFallback is not handled")]
+[ComVisible (true)]
 #endif
 public class UTF8Encoding : Encoding
 {
@@ -180,6 +182,7 @@ public class UTF8Encoding : Encoding
 		return InternalGetByteCount (chars, index, count, ref dummy, true);
 	}
 
+#if !NET_2_0
 	// Convenience wrappers for "GetByteCount".
 	public override int GetByteCount (String s)
 	{
@@ -195,6 +198,21 @@ public class UTF8Encoding : Encoding
 			}
 		}
 	}
+#endif
+
+#if NET_2_0
+	[CLSCompliant (false)]
+	[ComVisible (false)]
+	public unsafe override int GetByteCount (char* chars, int count)
+	{
+		if (chars == null)
+			throw new ArgumentNullException ("chars");
+		if (count == 0)
+			return 0;
+		char dummy = '\0';
+		return InternalGetByteCount (chars, count, ref dummy, true);
+	}
+#endif
 
 	#endregion
 
@@ -437,17 +455,42 @@ Char.IsLetterOrDigit (pair);
 		}
 	}
 
+#if NET_2_0
+	[CLSCompliant (false)]
+	[ComVisible (false)]
+	public unsafe override int GetBytes (char* chars, int charCount, byte* bytes, int byteCount)
+	{
+		if (chars == null)
+			throw new ArgumentNullException ("chars");
+		if (charCount < 0)
+			throw new IndexOutOfRangeException ("charCount");
+		if (bytes == null)
+			throw new ArgumentNullException ("bytes");
+		if (byteCount < 0)
+			throw new IndexOutOfRangeException ("charCount");
+
+		if (charCount == 0)
+			return 0;
+
+		char dummy = '\0';
+		if (byteCount == 0)
+			return InternalGetBytes (chars, charCount, null, 0, ref dummy, true);
+		else
+			return InternalGetBytes (chars, charCount, bytes, byteCount, ref dummy, true);
+	}
+#endif
+
 	#endregion
 
 	// Internal version of "GetCharCount" which can handle a rolling
 	// state between multiple calls to this method.
 #if NET_2_0
-	private static int InternalGetCharCount (
+	private unsafe static int InternalGetCharCount (
 		byte[] bytes, int index, int count, uint leftOverBits,
 		uint leftOverCount, object provider,
-		ref DecoderFallbackBuffer fallbackBuffer, bool flush)
+		ref DecoderFallbackBuffer fallbackBuffer, ref byte [] bufferArg, bool flush)
 #else
-	private static int InternalGetCharCount (
+	private unsafe static int InternalGetCharCount (
 		byte[] bytes, int index, int count, uint leftOverBits,
 		uint leftOverCount, bool throwOnInvalid, bool flush)
 #endif
@@ -462,6 +505,31 @@ Char.IsLetterOrDigit (pair);
 		if (count < 0 || count > (bytes.Length - index)) {
 			throw new ArgumentOutOfRangeException ("count", _("ArgRange_Array"));
 		}
+
+		if (count == 0)
+			return 0;
+		fixed (byte *bptr = bytes)
+#if NET_2_0
+			return InternalGetCharCount (bptr + index, count,
+				leftOverBits, leftOverCount, provider, ref fallbackBuffer, ref bufferArg, flush);
+#else
+			return InternalGetCharCount (bptr + index, count,
+				leftOverBits, leftOverCount, throwOnInvalid, flush);
+#endif
+	}
+
+#if NET_2_0
+	private unsafe static int InternalGetCharCount (
+		byte* bytes, int count, uint leftOverBits,
+		uint leftOverCount, object provider,
+		ref DecoderFallbackBuffer fallbackBuffer, ref byte [] bufferArg, bool flush)
+#else
+	private unsafe static int InternalGetCharCount (
+		byte* bytes, int count, uint leftOverBits,
+		uint leftOverCount, bool throwOnInvalid, bool flush)
+#endif
+	{
+		int index = 0;
 
 		int length = 0;
 
@@ -516,7 +584,7 @@ Char.IsLetterOrDigit (pair);
 				} else {
 					// Invalid UTF-8 start character.
 #if NET_2_0
-					length += Fallback (provider, ref fallbackBuffer, bytes, index - 1);
+					length += Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, index - 1);
 #else
 					if (throwOnInvalid)
 						throw new ArgumentException (_("Arg_InvalidUTF8"), "bytes");
@@ -550,7 +618,7 @@ Char.IsLetterOrDigit (pair);
 							}
 							if (overlong) {
 #if NET_2_0
-								length += Fallback (provider, ref fallbackBuffer, bytes, index - 1);
+								length += Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, index - 1);
 #else
 								if (throwOnInvalid)
 									throw new ArgumentException (_("Overlong"), leftBits.ToString ());
@@ -562,7 +630,7 @@ Char.IsLetterOrDigit (pair);
 							length += 2;
 						} else {
 #if NET_2_0
-							length += Fallback (provider, ref fallbackBuffer, bytes, index - 1);
+							length += Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, index - 1);
 #else
 							if (throwOnInvalid)
 								throw new ArgumentException (_("Arg_InvalidUTF8"), "bytes");
@@ -573,7 +641,7 @@ Char.IsLetterOrDigit (pair);
 				} else {
 					// Invalid UTF-8 sequence: clear and restart.
 #if NET_2_0
-					length += Fallback (provider, ref fallbackBuffer, bytes, index - 1);
+					length += Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, index - 1);
 #else
 					if (throwOnInvalid)
 						throw new ArgumentException (_("Arg_InvalidUTF8"), "bytes");
@@ -588,7 +656,7 @@ Char.IsLetterOrDigit (pair);
 			// We had left-over bytes that didn't make up
 			// a complete UTF-8 character sequence.
 #if NET_2_0
-			length += Fallback (provider, ref fallbackBuffer, bytes, index);
+			length += Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, index);
 #else
 			if (throwOnInvalid)
 				throw new ArgumentException (_("Arg_InvalidUTF8"), "bytes");
@@ -601,7 +669,7 @@ Char.IsLetterOrDigit (pair);
 
 #if NET_2_0
 	// for GetCharCount()
-	static int Fallback (object provider, ref DecoderFallbackBuffer buffer, byte [] bytes, int index)
+	static unsafe int Fallback (object provider, ref DecoderFallbackBuffer buffer, ref byte [] bufferArg, byte* bytes, int index)
 	{
 		if (buffer == null) {
 			DecoderFallback fb = provider as DecoderFallback;
@@ -610,13 +678,16 @@ Char.IsLetterOrDigit (pair);
 			else
 				buffer = ((Decoder) provider).FallbackBuffer;
 		}
-		buffer.Fallback (bytes, index);
+		if (bufferArg == null)
+			bufferArg = new byte [1];
+		bufferArg [0] = bytes [index];
+		buffer.Fallback (bufferArg, 0);
 		return buffer.Remaining;
 	}
 
 	// for GetChars()
-	static void Fallback (object provider, ref DecoderFallbackBuffer buffer, byte [] bytes, int byteIndex,
-		char [] chars, ref int charIndex)
+	static unsafe void Fallback (object provider, ref DecoderFallbackBuffer buffer, ref byte [] bufferArg, byte* bytes, int byteIndex,
+		char* chars, ref int charIndex)
 	{
 		if (buffer == null) {
 			DecoderFallback fb = provider as DecoderFallback;
@@ -625,7 +696,10 @@ Char.IsLetterOrDigit (pair);
 			else
 				buffer = ((Decoder) provider).FallbackBuffer;
 		}
-		buffer.Fallback (bytes, byteIndex);
+		if (bufferArg == null)
+			bufferArg = new byte [1];
+		bufferArg [0] = bytes [byteIndex];
+		buffer.Fallback (bufferArg, 0);
 		while (buffer.Remaining > 0)
 			chars [charIndex++] = buffer.GetNextChar ();
 	}
@@ -636,21 +710,33 @@ Char.IsLetterOrDigit (pair);
 	{
 #if NET_2_0
 		DecoderFallbackBuffer buf = null;
-		return InternalGetCharCount (bytes, index, count, 0, 0, DecoderFallback, ref buf, true);
+		byte [] bufferArg = null;
+		return InternalGetCharCount (bytes, index, count, 0, 0, DecoderFallback, ref buf, ref bufferArg, true);
 #else
 		return InternalGetCharCount (bytes, index, count, 0, 0, throwOnInvalid, true);
 #endif
 	}
 
+#if NET_2_0
+	[CLSCompliant (false)]
+	[ComVisible (false)]
+	public unsafe override int GetCharCount (byte* bytes, int count)
+	{
+		DecoderFallbackBuffer buf = null;
+		byte [] bufferArg = null;
+		return InternalGetCharCount (bytes, count, 0, 0, DecoderFallback, ref buf, ref bufferArg, true);
+	}
+#endif
+
 	// Get the characters that result from decoding a byte buffer.
 #if NET_2_0
-	private static int InternalGetChars (
+	private unsafe static int InternalGetChars (
 		byte[] bytes, int byteIndex, int byteCount, char[] chars,
 		int charIndex, ref uint leftOverBits, ref uint leftOverCount,
 		object provider,
-		ref DecoderFallbackBuffer fallbackBuffer, bool flush)
+		ref DecoderFallbackBuffer fallbackBuffer, ref byte [] bufferArg, bool flush)
 #else
-	private static int InternalGetChars (
+	private unsafe static int InternalGetChars (
 		byte[] bytes, int byteIndex, int byteCount, char[] chars,
 		int charIndex, ref uint leftOverBits, ref uint leftOverCount,
 		bool throwOnInvalid, bool flush)
@@ -676,6 +762,38 @@ Char.IsLetterOrDigit (pair);
 		if (charIndex == chars.Length)
 			return 0;
 
+		fixed (char* cptr = chars) {
+#if NET_2_0
+			if (byteCount == 0 || byteIndex == bytes.Length)
+				return InternalGetChars (null, 0, cptr + charIndex, chars.Length - charIndex, ref leftOverBits, ref leftOverCount, provider, ref fallbackBuffer, ref bufferArg, flush);
+			// otherwise...
+			fixed (byte* bptr = bytes)
+				return InternalGetChars (bptr + byteIndex, byteCount, cptr + charIndex, chars.Length - charIndex, ref leftOverBits, ref leftOverCount, provider, ref fallbackBuffer, ref bufferArg, flush);
+#else
+			if (byteCount == 0 || byteIndex == bytes.Length)
+				return InternalGetChars (null, 0, cptr + charIndex, chars.Length - charIndex, ref leftOverBits, ref leftOverCount, throwOnInvalid, flush);
+			// otherwise...
+			fixed (byte* bptr = bytes)
+				return InternalGetChars (bptr + byteIndex, byteCount, cptr + charIndex, chars.Length - charIndex, ref leftOverBits, ref leftOverCount, throwOnInvalid, flush);
+#endif
+		}
+	}
+
+#if NET_2_0
+	private unsafe static int InternalGetChars (
+		byte* bytes, int byteCount, char* chars, int charCount,
+		ref uint leftOverBits, ref uint leftOverCount,
+		object provider,
+		ref DecoderFallbackBuffer fallbackBuffer, ref byte [] bufferArg, bool flush)
+#else
+	private unsafe static int InternalGetChars (
+		byte* bytes, int byteCount, char* chars, int charCount,
+		ref uint leftOverBits, ref uint leftOverCount,
+		bool throwOnInvalid, bool flush)
+#endif
+	{
+		int charIndex = 0, byteIndex = 0;
+		int length = charCount;
 		int posn = charIndex;
 
 		if (leftOverCount == 0) {
@@ -690,15 +808,11 @@ Char.IsLetterOrDigit (pair);
 
 		// Convert the bytes into the output buffer.
 		uint ch;
-		int length = chars.Length;
 		uint leftBits = leftOverBits;
 		uint leftSoFar = (leftOverCount & (uint)0x0F);
 		uint leftSize = ((leftOverCount >> 4) & (uint)0x0F);
 
 		int byteEnd = byteIndex + byteCount;
-		if (byteEnd < 0 || byteEnd > bytes.Length)
-			throw new SystemException (String.Format ("INTERNAL ERROR: should not happen: {0} {1} {2}", byteIndex, byteCount, byteEnd));
-
 		for(; byteIndex < byteEnd; byteIndex++) {
 			// Fetch the next character from the byte buffer.
 			ch = (uint)(bytes[byteIndex]);
@@ -738,7 +852,7 @@ Char.IsLetterOrDigit (pair);
 				} else {
 					// Invalid UTF-8 start character.
 #if NET_2_0
-					Fallback (provider, ref fallbackBuffer, bytes, byteIndex, chars, ref posn);
+					Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, byteIndex, chars, ref posn);
 #else
 					if (throwOnInvalid)
 						throw new ArgumentException (_("Arg_InvalidUTF8"), "bytes");
@@ -772,7 +886,7 @@ Char.IsLetterOrDigit (pair);
 							}
 							if (overlong) {
 #if NET_2_0
-								Fallback (provider, ref fallbackBuffer, bytes, byteIndex, chars, ref posn);
+								Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, byteIndex, chars, ref posn);
 #else
 								if (throwOnInvalid)
 									throw new ArgumentException (_("Overlong"), leftBits.ToString ());
@@ -781,7 +895,7 @@ Char.IsLetterOrDigit (pair);
 							else if ((leftBits & 0xF800) == 0xD800) {
 								// UTF-8 doesn't use surrogate characters
 #if NET_2_0
-								Fallback (provider, ref fallbackBuffer, bytes, byteIndex, chars, ref posn);
+								Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, byteIndex, chars, ref posn);
 #else
 								if (throwOnInvalid)
 									throw new ArgumentException (_("Arg_InvalidUTF8"), "bytes");
@@ -806,7 +920,7 @@ Char.IsLetterOrDigit (pair);
 								(char)((leftBits & (uint)0x3FF) + (uint)0xDC00);
 						} else {
 #if NET_2_0
-							Fallback (provider, ref fallbackBuffer, bytes, byteIndex, chars, ref posn);
+							Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, byteIndex, chars, ref posn);
 #else
 							if (throwOnInvalid)
 								throw new ArgumentException (_("Arg_InvalidUTF8"), "bytes");
@@ -817,7 +931,7 @@ Char.IsLetterOrDigit (pair);
 				} else {
 					// Invalid UTF-8 sequence: clear and restart.
 #if NET_2_0
-					Fallback (provider, ref fallbackBuffer, bytes, byteIndex, chars, ref posn);
+					Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, byteIndex, chars, ref posn);
 #else
 					if (throwOnInvalid)
 						throw new ArgumentException (_("Arg_InvalidUTF8"), "bytes");
@@ -831,7 +945,7 @@ Char.IsLetterOrDigit (pair);
 			// We had left-over bytes that didn't make up
 			// a complete UTF-8 character sequence.
 #if NET_2_0
-			Fallback (provider, ref fallbackBuffer, bytes, byteIndex, chars, ref posn);
+			Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, byteIndex, chars, ref posn);
 #else
 			if (throwOnInvalid)
 				throw new ArgumentException (_("Arg_InvalidUTF8"), "bytes");
@@ -852,13 +966,28 @@ Char.IsLetterOrDigit (pair);
 		uint leftOverCount = 0;
 #if NET_2_0
 		DecoderFallbackBuffer buf = null;
+		byte [] bufferArg = null;
 		return InternalGetChars (bytes, byteIndex, byteCount, chars, 
-				charIndex, ref leftOverBits, ref leftOverCount, DecoderFallback, ref buf, true);
+				charIndex, ref leftOverBits, ref leftOverCount, DecoderFallback, ref buf, ref bufferArg, true);
 #else
 		return InternalGetChars (bytes, byteIndex, byteCount, chars, 
 				charIndex, ref leftOverBits, ref leftOverCount, throwOnInvalid, true);
 #endif
 	}
+
+#if NET_2_0
+	[CLSCompliant (false)]
+	[ComVisible (false)]
+	public unsafe override int GetChars (byte* bytes, int byteCount, char* chars, int charCount)
+	{
+		DecoderFallbackBuffer buf = null;
+		byte [] bufferArg = null;
+		uint leftOverBits = 0;
+		uint leftOverCount = 0;
+		return InternalGetChars (bytes, byteCount, chars, 
+				charCount, ref leftOverBits, ref leftOverCount, DecoderFallback, ref buf, ref bufferArg, true);
+	}
+#endif
 
 	// Get the maximum number of bytes needed to encode a
 	// specified number of characters.
@@ -935,7 +1064,24 @@ Char.IsLetterOrDigit (pair);
 	{
 		return base.GetHashCode ();
 	}
-	
+
+#if NET_2_0
+	[MonoTODO]
+	public override int GetByteCount (string s)
+	{
+		// hmm, does this override make any sense?
+		return base.GetByteCount (s);
+	}
+
+	[MonoTODO]
+	public override string GetString (byte [] bytes, int index, int count)
+	{
+		// hmm, does this override make any sense?
+		return base.GetString (bytes, index, count);
+	}
+#endif
+
+#if !NET_2_0
 	public override byte [] GetBytes (String s)
 	{
 		if (s == null)
@@ -946,6 +1092,7 @@ Char.IsLetterOrDigit (pair);
 		GetBytes (s, 0, s.Length, bytes, 0);
 		return bytes;
 	}
+#endif
 
 	// UTF-8 decoder implementation.
 	[Serializable]
@@ -978,8 +1125,9 @@ Char.IsLetterOrDigit (pair);
 		{
 #if NET_2_0
 			DecoderFallbackBuffer buf = null;
+			byte [] bufferArg = null;
 			return InternalGetCharCount (bytes, index, count,
-				leftOverBits, leftOverCount, this, ref buf, false);
+				leftOverBits, leftOverCount, this, ref buf, ref bufferArg, false);
 #else
 			return InternalGetCharCount (bytes, index, count,
 					leftOverBits, leftOverCount, throwOnInvalid, false);
@@ -990,8 +1138,9 @@ Char.IsLetterOrDigit (pair);
 		{
 #if NET_2_0
 			DecoderFallbackBuffer buf = null;
+			byte [] bufferArg = null;
 			return InternalGetChars (bytes, byteIndex, byteCount,
-				chars, charIndex, ref leftOverBits, ref leftOverCount, this, ref buf, false);
+				chars, charIndex, ref leftOverBits, ref leftOverCount, this, ref buf, ref bufferArg, false);
 #else
 			return InternalGetChars (bytes, byteIndex, byteCount,
 				chars, charIndex, ref leftOverBits, ref leftOverCount, throwOnInvalid, false);
