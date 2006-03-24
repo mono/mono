@@ -10046,16 +10046,7 @@ mono_local_cprop2 (MonoCompile *cfg)
 					/* Enabling this for floats trips up the fp stack */
 					if ((def->opcode == OP_MOVE) && (!defs [def->sreg1] || (def_index [def->sreg1] < def_index [sreg]))) {
 						int vreg = def->sreg1;
-#if 0
-						{
-							static int count = 0;
-							count ++;
-							if (count == atoi (getenv ("COUNT2")))
-								printf ("FOO\n");
-							if (count > atoi (getenv ("COUNT2")))
-								vreg = sreg;
-						}
-#endif
+
 						//printf ("CCOPY: R%d -> R%d\n", sreg, vreg);
 						if (srcindex == 0)
 							ins->sreg1 = vreg;

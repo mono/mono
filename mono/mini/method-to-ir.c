@@ -8941,6 +8941,8 @@ mono_op_to_op_imm (int opcode)
 		return OP_COMPARE_IMM;
 	case OP_ICOMPARE:
 		return OP_ICOMPARE_IMM;
+	case OP_LCOMPARE:
+		return OP_LCOMPARE_IMM;
 
 	case OP_STORE_MEMBASE_REG:
 		return OP_STORE_MEMBASE_IMM;
@@ -9716,6 +9718,12 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - in the managed->native wrappers, place a pop before the call to interrupt_checkpoint
  * - bench.exe hangs on x86 when ssa is enabled
  * - get rid of I8CONST on 64 bit platforms
+ * - dealing with the increase in code size due to branches created during opcode
+ *   decomposition:
+ *   - use extended basic blocks
+ *     - all parts of the JIT
+ *     - handle_global_vregs () && local regalloc
+ *   - avoid introducing global vregs during decomposition, like 'vtable' in isinst
  * - LAST MERGE: 58239.
  */
 

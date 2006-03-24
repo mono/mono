@@ -2076,6 +2076,14 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 				}
 			}
 			break;
+		case OP_IADD_IMM:
+			if ((ins->inst_imm == 1) && (ins->dreg == ins->sreg1))
+				ins->opcode = OP_X86_INC_REG;
+			break;
+		case OP_ISUB_IMM:
+			if ((ins->inst_imm == 1) && (ins->dreg == ins->sreg1))
+				ins->opcode = OP_X86_DEC_REG;
+			break;
 		case OP_AMD64_ICOMPARE_MEMBASE_IMM:
 			/* 
 			 * OP_STORE_MEMBASE_REG reg, offset(basereg)
