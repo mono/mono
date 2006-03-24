@@ -1,3 +1,11 @@
+2006-03-24  Chris Toshok  <toshok@ximian.com>
+
+	* CompilerInfo.cs (Init): make this internal as well, so
+	CodeDomConfigurationHandler can call it.
+
+	* CodeDomConfigurationHandler.cs (ReadCompilers): we need to call
+	CompilerInfo.Init after setting CompilerInfo.TypeName.
+
 2006-03-11  Miguel de Icaza  <miguel@novell.com>
 
 	* CodeDomConfigurationHandler.cs: Comment out unused methods. 

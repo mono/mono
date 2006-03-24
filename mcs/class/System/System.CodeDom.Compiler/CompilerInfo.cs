@@ -50,7 +50,7 @@ namespace System.CodeDom.Compiler {
 		{
 		}
 
-		void Init ()
+		internal void Init ()
 		{
 			if (inited)
 				return;
