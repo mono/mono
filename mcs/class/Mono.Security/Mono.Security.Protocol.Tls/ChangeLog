@@ -1,3 +1,87 @@
+2006-03-16  Sebastien Pouliot  <sebastien@ximian.com>
+ 
+	* CipherSuiteFactory.cs: Fix bad key exchange values for non-export
+	cihpers. Most certificates have "too much" usages by default so this
+	was hidden from view.
+	* SslStreamBase.cs: Safety net. Throw an exception if we're waiting 
+	for more than five (5) minutes for an async read or write to complete.
+
+2006-03-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ClientSessionCache.cs: New. Handle a client-side session cache to 
+	enable the use of abbreviated handshake whenever possible. This will
+	reduce the number of negotiation (a very CPU intensive process) done
+	with the same host.
+	* Context.cs: Add a property for AbbreviatedHandshake.
+	* RecordProtocol.cs: Don't send Finished record from ChangeCipherSpec
+	as this won't work if the message flow change.
+	* SslClientStream.cs: Line endings.
+	* SslServerStream.cs: Throw an exception if ReceiveRecord return null
+	or an empty buffer (i.e. communication ended with client). Fix #76254.
+	* SslStreamBase.cs: Re-add synchronous implementations for Read and 
+	Write.
+	* TlsCipherSuite.cs: Update the client-side session cache with the 
+	mastersecret.
+	* TlsStream.cs: Avoid possible buffer underun reading bytes (found by
+	Gonzalo).
+
+2006-03-08  Sebastien Pouliot  <sebastien@ximian.com>
+  
+       * SslStreamBase.cs: Re-implemented the synchronous versions of Read
+       and Write methods so they don't use the async code.
+
+2006-03-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SslStreamBase.cs: avoid creating the ManualResetEvent whenever
+	possible. Don't lock on an instance of an object that the user can get.
+
+2006-03-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* RecordProtocol.cs: avoid creating the ManualResetEvent whenever
+	possible. Don't lock on an instance of an object that the user can get.
+
+2006-03-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RecordProtocol.cs: Fix possible endless loop (#77663). Remove hack
+	for an old, fixed, MCS bug (#67711).
+
+2005-10-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ClientRecordProtocol.cs: Update HandshakeMessages after each 
+	message. Fix bug #76258.
+	* RecordProtocol.cs: Remove writing into the HandshakeMessages stream
+	at this stage. We may need the data before that. Fix bug #76258.
+	* ServerRecordProtocol.cs: Update HandshakeMessages after each 
+	message. Fix bug #76258.
+	* SslServerStream.cs: Changed check for the presence of client 
+	certificates during handshake.
+
+2005-09-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SslStreamBase.cs, ServerRecordProtocol.cs, SslClientStream.cs,
+	ClientRecordProtocol.cs, RecordProtocol.cs, SslServerStream.cs:
+	Re-written async support for Ssl[Client|Server]Stream from JD Conley
+	<jd.conley@coversant.net> with minor changes. Fix bug #75687 (and a 
+	lot of other known problems).
+
+2005-07-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ServerContext.cs: Build the list of trusted certificates from all
+	the trusted root for the current user and the local machine.
+	* SslServerStream.cs: Add support for client certificate (and the 
+	callback for optional mutual authentication with SSL3).
+
+2005-06-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SslClientStream.cs: Removed failsafe timeout of 5 minutes as some
+	protocols can go idle for longer than this.
+
+2005-06-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SslClientStream.cs: Add support for _optional_ mutual authentication.
+	SSL3 and TLS1 deals differently with this. SSL3 tested with OpenSSL,
+	TSL1 tested with OpenSSL and LDAPS/AD.
+
 2005-06-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Alert.cs: Add NoCertificate (41) which _should_ be used in SSL3

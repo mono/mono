@@ -23,6 +23,7 @@
 //
 
 using System;
+using System.Collections;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
@@ -80,7 +81,14 @@ namespace Mono.Security.Protocol.Tls
 			this.ServerSettings.CertificateTypes[0] = ClientCertificateType.RSA;
 
 			// Add certificate authorities
-			this.ServerSettings.DistinguisedNames = new string[0];
+			MonoX509.X509CertificateCollection trusted = MonoX509.X509StoreManager.TrustedRootCertificates;
+			string[] list = new string [trusted.Count];
+			int i = 0;
+			foreach (MonoX509.X509Certificate root in trusted)
+			{
+				list [i++] = root.IssuerName;
+			}
+			this.ServerSettings.DistinguisedNames = list;
 		}
 
 		#endregion

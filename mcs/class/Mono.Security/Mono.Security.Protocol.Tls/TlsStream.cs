@@ -143,7 +143,8 @@ namespace Mono.Security.Protocol.Tls
 		public byte[] ReadBytes(int count)
 		{
 			byte[] bytes = new byte[count];
-			this.Read(bytes, 0, count);
+			if (this.Read(bytes, 0, count) != count)
+				throw new TlsException ("buffer underrun");
 
 			return bytes;
 		}

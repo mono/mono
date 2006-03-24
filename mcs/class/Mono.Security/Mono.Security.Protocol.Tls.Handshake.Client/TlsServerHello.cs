@@ -93,12 +93,18 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			
 			// Read random  - Unix time + Random bytes
 			this.random	= this.ReadBytes(32);
-						
+
 			// Read Session id
-			int length = (int)ReadByte();
+			int length = (int) ReadByte ();
 			if (length > 0)
 			{
 				this.sessionId = this.ReadBytes(length);
+				ClientSessionCache.Add (this.Context.ClientSettings.TargetHost, this.sessionId);
+				this.Context.AbbreviatedHandshake = CompareSessionId (this.sessionId, this.Context.SessionId);
+			} 
+			else
+			{
+				this.Context.AbbreviatedHandshake = false;
 			}
 
 			// Read cipher suite
@@ -117,6 +123,22 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		#endregion
 
 		#region Private Methods
+
+		private bool CompareSessionId (byte[] id1, byte[] id2)
+		{
+			// in our case both null can't exist (or be valid)
+			if ((id1 == null) || (id2 == null))
+				return false;
+
+			if (id1.Length != id2.Length)
+				return false;
+
+			for (int i = 0; i < id1.Length; i++) {
+				if (id1 [i] != id2 [i])
+					return false;
+			}
+			return true;
+		}
 
 		private void processProtocol(short protocol)
 		{

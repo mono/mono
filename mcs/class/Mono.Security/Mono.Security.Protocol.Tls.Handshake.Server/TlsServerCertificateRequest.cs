@@ -25,6 +25,7 @@
 using System;
 using System.Text;
 using Mono.Security;
+using Mono.Security.X509;
 
 namespace Mono.Security.Protocol.Tls.Handshake.Server
 {
@@ -72,11 +73,22 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 			 * attributeValue ANY }
 			 */
 
-			this.Write(Convert.ToInt16(context.ServerSettings.DistinguisedNames.Length));
-			
-			for (int i = 0; i < context.ServerSettings.DistinguisedNames.Length; i++)
+			if (context.ServerSettings.DistinguisedNames.Length > 0)
 			{
-#warning "Write certificate authorities list"
+				TlsStream list = new TlsStream ();
+				// this is the worst formating ever :-|
+				foreach (string dn in context.ServerSettings.DistinguisedNames)
+				{
+					byte[] name = X501.FromString (dn).GetBytes ();
+					list.Write ((short)name.Length);
+					list.Write (name);
+				}
+				this.Write ((short)list.Length);
+				this.Write (list.ToArray ());
+			}
+			else
+			{
+				this.Write ((short)0);
 			}
 		}
 

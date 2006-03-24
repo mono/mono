@@ -27,6 +27,7 @@ using System.Collections;
 using System.IO;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading;
 
 using Mono.Security.Protocol.Tls.Handshake;
 
@@ -64,15 +65,238 @@ namespace Mono.Security.Protocol.Tls
 
 		#region Abstract Methods
 
-		public abstract void SendRecord(HandshakeType type);
+		public virtual void SendRecord(HandshakeType type)
+		{
+
+			IAsyncResult ar = this.BeginSendRecord(type, null, null);
+
+			this.EndSendRecord(ar);
+
+		}
+
 		protected abstract void ProcessHandshakeMessage(TlsStream handMsg);
 		protected abstract void ProcessChangeCipherSpec();
+
+		public virtual HandshakeMessage GetMessage(HandshakeType type)
+		{
+			throw new NotSupportedException();
+		}
+
+		#endregion
+
+		#region Receive Record Async Result
+		private class ReceiveRecordAsyncResult : IAsyncResult
+		{
+			private object locker = new object ();
+			private AsyncCallback _userCallback;
+			private object _userState;
+			private Exception _asyncException;
+			private ManualResetEvent handle;
+			private byte[] _resultingBuffer;
+			private Stream _record;
+			private bool completed;
+
+			private byte[] _initialBuffer;
+
+			public ReceiveRecordAsyncResult(AsyncCallback userCallback, object userState, byte[] initialBuffer, Stream record)
+			{
+				_userCallback = userCallback;
+				_userState = userState;
+				_initialBuffer = initialBuffer;
+				_record = record;
+			}
+
+			public Stream Record
+			{
+				get { return _record; }
+			}
+
+			public byte[] ResultingBuffer
+			{
+				get { return _resultingBuffer; }
+			}
+
+			public byte[] InitialBuffer
+			{
+				get { return _initialBuffer; }
+			}
+
+			public object AsyncState
+			{
+				get { return _userState; }
+			}
+
+			public Exception AsyncException
+			{
+				get { return _asyncException; }
+			}
+
+			public bool CompletedWithError
+			{
+				get {
+					if (!IsCompleted)
+						return false; // Perhaps throw InvalidOperationExcetion?
+
+					return null != _asyncException;
+				}
+			}
+
+			public WaitHandle AsyncWaitHandle
+			{
+				get {
+					lock (locker) {
+						if (handle == null)
+							handle = new ManualResetEvent (completed);
+					}
+					return handle;
+				}
 				
+			}
+
+			public bool CompletedSynchronously
+			{
+				get { return false; }
+			}
+
+			public bool IsCompleted
+			{
+				get {
+					lock (locker) {
+						return completed;
+					}
+				}
+			}
+
+			private void SetComplete(Exception ex, byte[] resultingBuffer)
+			{
+				lock (locker) {
+					if (completed)
+						return;
+
+					completed = true;
+					_asyncException = ex;
+					_resultingBuffer = resultingBuffer;
+					if (handle != null)
+						handle.Set ();
+
+					if (_userCallback != null)
+						_userCallback.BeginInvoke (this, null, null);
+				}
+			}
+
+			public void SetComplete(Exception ex)
+			{
+				SetComplete(ex, null);
+			}
+
+			public void SetComplete(byte[] resultingBuffer)
+			{
+				SetComplete(null, resultingBuffer);
+			}
+
+			public void SetComplete()
+			{
+				SetComplete(null, null);
+			}
+		}
+		#endregion
+
+		#region Receive Record Async Result
+		private class SendRecordAsyncResult : IAsyncResult
+		{
+			private object locker = new object ();
+			private AsyncCallback _userCallback;
+			private object _userState;
+			private Exception _asyncException;
+			private ManualResetEvent handle;
+			private HandshakeMessage _message;
+			private bool completed;
+
+			public SendRecordAsyncResult(AsyncCallback userCallback, object userState, HandshakeMessage message)
+			{
+				_userCallback = userCallback;
+				_userState = userState;
+				_message = message;
+			}
+
+			public HandshakeMessage Message
+			{
+				get { return _message; }
+			}
+
+			public object AsyncState
+			{
+				get { return _userState; }
+			}
+
+			public Exception AsyncException
+			{
+				get { return _asyncException; }
+			}
+
+			public bool CompletedWithError
+			{
+				get {
+					if (!IsCompleted)
+						return false; // Perhaps throw InvalidOperationExcetion?
+
+					return null != _asyncException;
+				}
+			}
+
+			public WaitHandle AsyncWaitHandle
+			{
+				get {
+					lock (locker) {
+						if (handle == null)
+							handle = new ManualResetEvent (completed);
+					}
+					return handle;
+				}
+				
+			}
+
+			public bool CompletedSynchronously
+			{
+				get { return false; }
+			}
+
+			public bool IsCompleted
+			{
+				get {
+					lock (locker) {
+						return completed;
+					}
+				}
+			}
+
+			public void SetComplete(Exception ex)
+			{
+				lock (locker) {
+					if (completed)
+						return;
+
+					completed = true;
+					if (handle != null)
+						handle.Set ();
+
+					if (_userCallback != null)
+						_userCallback.BeginInvoke (this, null, null);
+
+					_asyncException = ex;
+				}
+			}
+
+			public void SetComplete()
+			{
+				SetComplete(null);
+			}
+		}
 		#endregion
 
 		#region Reveive Record Methods
 
-		public byte[] ReceiveRecord(Stream record)
+		public IAsyncResult BeginReceiveRecord(Stream record, AsyncCallback callback, object state)
 		{
 			if (this.context.ConnectionEnd)
 			{
@@ -81,85 +305,130 @@ namespace Mono.Security.Protocol.Tls
 					"The session is finished and it's no longer valid.");
 			}
 
-			// Try to read the Record Content Type
-			int type = record.ReadByte ();
-			if (type == -1)
-			{
-				return null;
-			}
+			byte[] recordTypeBuffer = new byte[1];
 
-			// Set last handshake message received to None
-			this.context.LastHandshakeMsg = HandshakeType.ClientHello;
+			ReceiveRecordAsyncResult internalResult = new ReceiveRecordAsyncResult(callback, state, recordTypeBuffer, record);
 
-			ContentType	contentType	= (ContentType)type;
-			byte[] buffer = this.ReadRecordBuffer(type, record);
-			if (buffer == null)
-			{
-				// record incomplete (at the moment)
-				return null;
-			}
+			record.BeginRead(internalResult.InitialBuffer, 0, internalResult.InitialBuffer.Length, new AsyncCallback(InternalReceiveRecordCallback), internalResult);
 
-			// Decrypt message contents if needed
-			if (contentType == ContentType.Alert && buffer.Length == 2)
+			return internalResult;
+		}
+
+		private void InternalReceiveRecordCallback(IAsyncResult asyncResult)
+		{
+			ReceiveRecordAsyncResult internalResult = asyncResult.AsyncState as ReceiveRecordAsyncResult;
+			Stream record = internalResult.Record;
+
+			try
 			{
-			}
-			else
-			{
-				if (this.context.IsActual && contentType != ContentType.ChangeCipherSpec)
+				
+				int bytesRead = internalResult.Record.EndRead(asyncResult);
+
+				//We're at the end of the stream. Time to bail.
+				if (bytesRead == 0)
 				{
-					buffer = this.decryptRecordFragment(contentType, buffer);
-					DebugHelper.WriteLine("Decrypted record data", buffer);
+					internalResult.SetComplete((byte[])null);
+					return;
 				}
-			}
 
-			// Process record
-			switch (contentType)
-			{
-				case ContentType.Alert:
-					this.ProcessAlert((AlertLevel)buffer [0], (AlertDescription)buffer [1]);
-					if (record.CanSeek) 
+				// Try to read the Record Content Type
+				int type = internalResult.InitialBuffer[0];
+
+				// Set last handshake message received to None
+				this.context.LastHandshakeMsg = HandshakeType.ClientHello;
+
+				ContentType	contentType	= (ContentType)type;
+				byte[] buffer = this.ReadRecordBuffer(type, record);
+				if (buffer == null)
+				{
+					// record incomplete (at the moment)
+					internalResult.SetComplete((byte[])null);
+					return;
+				}
+
+				// Decrypt message contents if needed
+				if (contentType == ContentType.Alert && buffer.Length == 2)
+				{
+				}
+				else
+				{
+					if (this.context.IsActual && contentType != ContentType.ChangeCipherSpec)
 					{
-						// don't reprocess that memory block
-						record.SetLength (0); 
+						buffer = this.decryptRecordFragment(contentType, buffer);
+						DebugHelper.WriteLine("Decrypted record data", buffer);
 					}
-					buffer = null;
-					break;
+				}
 
-				case ContentType.ChangeCipherSpec:
-					this.ProcessChangeCipherSpec();
-					break;
+				// Process record
+				switch (contentType)
+				{
+					case ContentType.Alert:
+						this.ProcessAlert((AlertLevel)buffer [0], (AlertDescription)buffer [1]);
+						if (record.CanSeek) 
+						{
+							// don't reprocess that memory block
+							record.SetLength (0); 
+						}
+						buffer = null;
+						break;
 
-				case ContentType.ApplicationData:
-					break;
+					case ContentType.ChangeCipherSpec:
+						this.ProcessChangeCipherSpec();
+						break;
 
-				case ContentType.Handshake:
-					TlsStream message = new TlsStream (buffer);
-					while (!message.EOF)
-					{
-						this.ProcessHandshakeMessage(message);
-					}
+					case ContentType.ApplicationData:
+						break;
 
-					// Update handshakes of current messages
-					this.context.HandshakeMessages.Write(buffer);
-					break;
+					case ContentType.Handshake:
+						TlsStream message = new TlsStream (buffer);
+						while (!message.EOF)
+						{
+							this.ProcessHandshakeMessage(message);
+						}
+						break;
 
-// FIXME / MCS bug - http://bugzilla.ximian.com/show_bug.cgi?id=67711
-//				case (ContentType)0x80:
-//					this.context.HandshakeMessages.Write (result);
-//					break;
+					case (ContentType)0x80:
+						this.context.HandshakeMessages.Write (buffer);
+						break;
 
-				default:
-					if (contentType != (ContentType)0x80)
-					{
+					default:
 						throw new TlsException(
 							AlertDescription.UnexpectedMessage,
 							"Unknown record received from server.");
-					}
-					this.context.HandshakeMessages.Write (buffer);
-					break;
+						break;
+				}
+
+				internalResult.SetComplete(buffer);
+			}
+			catch (Exception ex)
+			{
+				internalResult.SetComplete(ex);
 			}
 
-			return buffer;
+		}
+
+		public byte[] EndReceiveRecord(IAsyncResult asyncResult)
+		{
+			ReceiveRecordAsyncResult internalResult = asyncResult as ReceiveRecordAsyncResult;
+
+			if (null == internalResult)
+				throw new ArgumentException("Either the provided async result is null or was not created by this RecordProtocol.");
+
+			if (!internalResult.IsCompleted)
+				internalResult.AsyncWaitHandle.WaitOne();
+
+			if (internalResult.CompletedWithError)
+				throw internalResult.AsyncException;
+			else
+				return internalResult.ResultingBuffer;
+		}
+
+		public byte[] ReceiveRecord(Stream record)
+		{
+
+			IAsyncResult ar = this.BeginReceiveRecord(record, null, null);
+			return this.EndReceiveRecord(ar);
+
 		}
 
 		private byte[] ReadRecordBuffer (int contentType, Stream record)
@@ -256,11 +525,19 @@ namespace Mono.Security.Protocol.Tls
 			}
 			
 			// Read Record data
-			int		received	= 0;
+			int	totalReceived = 0;
 			byte[]	buffer		= new byte[length];
-			while (received != length)
+			while (totalReceived != length)
 			{
-				received += record.Read(buffer, received, buffer.Length - received);
+				int justReceived = record.Read(buffer, totalReceived, buffer.Length - totalReceived);
+
+				//Make sure we get some data so we don't end up in an infinite loop here before shutdown.
+				if (0 == justReceived)
+				{
+					throw new TlsException(AlertDescription.CloseNotify, "Received 0 bytes from stream. It must be closed.");
+				}
+
+				totalReceived += justReceived;
 			}
 
 			// Check that the message has a valid protocol version
@@ -354,12 +631,46 @@ namespace Mono.Security.Protocol.Tls
 
 			// Make the pending state to be the current state
 			this.context.IsActual = true;
-
-			// Send Finished message
-			this.SendRecord(HandshakeType.Finished);			
 		}
 
-		public void SendRecord(ContentType contentType, byte[] recordData)
+		public IAsyncResult BeginSendRecord(HandshakeType handshakeType, AsyncCallback callback, object state)
+		{
+			HandshakeMessage msg = this.GetMessage(handshakeType);
+
+			msg.Process();
+
+			DebugHelper.WriteLine(">>>> Write handshake record ({0}|{1})", context.Protocol, msg.ContentType);
+
+			SendRecordAsyncResult internalResult = new SendRecordAsyncResult(callback, state, msg);
+
+			this.BeginSendRecord(msg.ContentType, msg.EncodeMessage(), new AsyncCallback(InternalSendRecordCallback), internalResult);
+
+			return internalResult;
+		}
+
+		private void InternalSendRecordCallback(IAsyncResult ar)
+		{
+			SendRecordAsyncResult internalResult = ar.AsyncState as SendRecordAsyncResult;
+			
+			try
+			{
+				this.EndSendRecord(ar);
+
+				// Update session
+				internalResult.Message.Update();
+
+				// Reset message contents
+				internalResult.Message.Reset();
+
+				internalResult.SetComplete();
+			}
+			catch (Exception ex)
+			{
+				internalResult.SetComplete(ex);
+			}
+		}
+
+		public IAsyncResult BeginSendRecord(ContentType contentType, byte[] recordData, AsyncCallback callback, object state)
 		{
 			if (this.context.ConnectionEnd)
 			{
@@ -370,7 +681,30 @@ namespace Mono.Security.Protocol.Tls
 
 			byte[] record = this.EncodeRecord(contentType, recordData);
 
-			this.innerStream.Write(record, 0, record.Length);
+			return this.innerStream.BeginWrite(record, 0, record.Length, callback, state);
+		}
+
+		public void EndSendRecord(IAsyncResult asyncResult)
+		{
+			if (asyncResult is SendRecordAsyncResult)
+			{
+				SendRecordAsyncResult internalResult = asyncResult as SendRecordAsyncResult;
+				if (!internalResult.IsCompleted)
+					internalResult.AsyncWaitHandle.WaitOne();
+				if (internalResult.CompletedWithError)
+					throw internalResult.AsyncException;
+			}
+			else
+			{
+				this.innerStream.EndWrite(asyncResult);
+			}
+		}
+
+		public void SendRecord(ContentType contentType, byte[] recordData)
+		{
+			IAsyncResult ar = this.BeginSendRecord(contentType, recordData, null, null);
+
+			this.EndSendRecord(ar);
 		}
 
 		public byte[] EncodeRecord(ContentType contentType, byte[] recordData)
@@ -404,13 +738,13 @@ namespace Mono.Security.Protocol.Tls
 				short	fragmentLength = 0;
 				byte[]	fragment;
 
-				if ((count - position) > Context.MAX_FRAGMENT_SIZE)
+				if ((count + offset - position) > Context.MAX_FRAGMENT_SIZE)
 				{
 					fragmentLength = Context.MAX_FRAGMENT_SIZE;
 				}
 				else
 				{
-					fragmentLength = (short)(count - position);
+					fragmentLength = (short)(count + offset - position);
 				}
 
 				// Fill the fragment data

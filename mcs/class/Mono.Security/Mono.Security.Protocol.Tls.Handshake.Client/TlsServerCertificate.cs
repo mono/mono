@@ -153,8 +153,10 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 				// RFC3280 states that when both KeyUsageExtension and 
 				// ExtendedKeyUsageExtension are present then BOTH should
 				// be valid
-				return (kux.Support (ku) &&
-					eku.KeyPurpose.Contains ("1.3.6.1.5.5.7.3.1"));
+				if (!kux.Support (ku))
+					return false;
+				return (eku.KeyPurpose.Contains ("1.3.6.1.5.5.7.3.1") ||
+					eku.KeyPurpose.Contains ("2.16.840.1.113730.4.1"));
 			}
 			else if (kux != null) 
 			{
@@ -162,8 +164,10 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			}
 			else if (eku != null) 
 			{
-				// Server Authentication (1.3.6.1.5.5.7.3.1)
-				return eku.KeyPurpose.Contains ("1.3.6.1.5.5.7.3.1");
+				// Server Authentication (1.3.6.1.5.5.7.3.1) or
+				// Netscape Server Gated Crypto (2.16.840.1.113730.4)
+				return (eku.KeyPurpose.Contains ("1.3.6.1.5.5.7.3.1") ||
+					eku.KeyPurpose.Contains ("2.16.840.1.113730.4.1"));
 			}
 
 			// last chance - try with older (deprecated) Netscape extensions
