@@ -557,7 +557,7 @@ namespace System.Windows.Forms {
 				prev_right_edge = right_edge;
 				prev_bottom_edge = bottom_edge;
 
-				if ((force_hscroll_visible || canvas.Width > right_edge) && client.Width != 0) {
+				if ((force_hscroll_visible || canvas.Width > right_edge) && client.Width > 0) {
 					hscroll_visible = true;
 					bottom_edge = client.Height - SystemInformation.HorizontalScrollBarHeight;
 				} else {
@@ -565,7 +565,7 @@ namespace System.Windows.Forms {
 					bottom_edge = client.Height;
 				}
 
-				if ((force_vscroll_visible || canvas.Height > bottom_edge) && client.Height != 0) {
+				if ((force_vscroll_visible || canvas.Height > bottom_edge) && client.Height > 0) {
 					vscroll_visible = true;
 					right_edge = client.Width - SystemInformation.VerticalScrollBarWidth;
 				} else {

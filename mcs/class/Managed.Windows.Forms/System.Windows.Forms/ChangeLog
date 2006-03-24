@@ -1,3 +1,8 @@
+2006-03-23  Jackson Harper  <jackson@ximian.com>
+
+	* ScrollableControl.cs: Special case negative sized areas, not
+	zero.
+
 2006-03-23  Mike Kestner  <mkestner@novell.com>
 
 	* ThemeWin32Classic.cs: fix FullRowSelect selection background and
