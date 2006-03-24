@@ -72,6 +72,7 @@ namespace System.Windows.Forms {
 		internal Size			calendar_spacing;
 		internal int			divider_line_offset;
 		internal DateTime		clicked_date;
+		internal Rectangle 		clicked_rect;
 		internal bool			is_date_clicked;
 		internal bool			is_previous_clicked;
 		internal bool			is_next_clicked;
@@ -501,9 +502,12 @@ namespace System.Windows.Forms {
 							diff_end = old_range.Start;
 						}
 					}
-					
-					// invalidate the region required
-					this.InvalidateDateRange (new SelectionRange (diff_start, diff_end));
+
+
+					// invalidate the region required	
+					SelectionRange new_range = new SelectionRange (diff_start, diff_end);
+					if (new_range.End != old_range.End || new_range.Start != old_range.Start)
+						this.InvalidateDateRange (new_range);
 					// raise date changed event
 					this.OnDateChanged (new DateRangeEventArgs (SelectionStart, SelectionEnd));
 				}
@@ -1136,6 +1140,7 @@ namespace System.Windows.Forms {
 						new Point (day_rect.X, day_rect.Bottom),
 						new Size (day_rect.Width, Math.Max(calendars[i].Bottom - day_rect.Bottom, 0)));
 					if (date_grid.Contains (point)) {
+						clicked_rect = date_grid;
 						// okay so it's inside the grid, get the offset
 						Point offset = new Point (point.X - date_grid.X, point.Y - date_grid.Y);
 						int row = offset.Y / date_cell_size.Height;
@@ -1605,6 +1610,8 @@ namespace System.Windows.Forms {
 					hti.HitArea == HitArea.NextMonthDate ||
 					hti.HitArea == HitArea.Date)
 				{
+					Rectangle prev_rect = clicked_rect;
+					DateTime prev_clicked = clicked_date;
 					DoDateMouseDown (hti);
 					if (owner == null) {
 						click_state [0] = true;
@@ -1612,6 +1619,11 @@ namespace System.Windows.Forms {
 						click_state [0] = false;
 						click_state [1] = false;
 						click_state [2] = false;
+					}
+
+					if (prev_clicked != clicked_date) {
+						Rectangle invalid = Rectangle.Union (prev_rect, clicked_rect);
+						Invalidate (invalid);
 					}
 				}
 				
@@ -1839,10 +1851,11 @@ namespace System.Windows.Forms {
 				this.Paint (sender, pe);
 			}
 		}
-		
+
 		// returns the region of the control that needs to be redrawn 
 		private void InvalidateDateRange (SelectionRange range) {
 			SelectionRange bounds = this.GetDisplayRange (false);
+
 			if (range.End < bounds.Start || range.Start > bounds.End) {
 				// don't invalidate anything, as the modified date range
 				// is outside the visible bounds of this control

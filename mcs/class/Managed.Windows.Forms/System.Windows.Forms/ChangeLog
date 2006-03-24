@@ -2,6 +2,11 @@
 
 	* ScrollableControl.cs: Special case negative sized areas, not
 	zero.
+	* MonthCalendar.cs: Save the rect of the clicked date so we can
+	use it for invalidation.
+	- Try to cut down on the number of invalidates
+	- Invalidate the rect the mouse is over and was over when moving
+	the mouse, so we get the focus box following the cursor.
 
 2006-03-23  Mike Kestner  <mkestner@novell.com>
 
