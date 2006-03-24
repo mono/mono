@@ -1034,25 +1034,16 @@ namespace Mono.CSharp {
 		// Captured fields are only recorded on the topmost CaptureContext, because that
 		// one is the one linked to the owner of instance fields
 		//
-		public void AddField (EmitContext ec, AnonymousContainer am, FieldExpr fe)
+		public void AddField (FieldExpr fe)
 		{
 			if (fe.FieldInfo.IsStatic)
 				throw new Exception ("Attempt to register a static field as a captured field");
-			CaptureContext parent = ParentCaptureContext;
-			if (parent != null) {
-				parent.AddField (ec, am, fe);
-				return;
-			}
-
-			if (topmost == null){
-				//
-				// Create one ScopeInfo, if there are none.
-				//
-				topmost = new ScopeInfo (this, toplevel_owner);
-				scopes [toplevel_owner.ID] = topmost;
-			}
 			
-			AdjustMethodScope (am, topmost);
+			CaptureContext parent = ParentCaptureContext;
+			if (parent != null)
+				parent.AddField (fe);
+			else
+				captured_fields [fe] = fe;
 		}
 
 		public void CaptureThis ()

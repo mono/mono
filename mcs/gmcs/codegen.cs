@@ -519,7 +519,7 @@ namespace Mono.CSharp {
 		//
 		public void CaptureField (FieldExpr fe)
 		{
-			capture_context.AddField (this, CurrentAnonymousMethod, fe);
+			capture_context.AddField (fe);
 		}
 
 		//

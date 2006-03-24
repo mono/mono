@@ -1,9 +1,3 @@
-2005-07-27  Martin Baulig  <martin@ximian.com>
- 
-	* anonymous.cs (CaptureContext.AddField): Added
-	`AnonymousContainer am' argument; compute its toplevel scope if
-	it's not already computed.  Fixes #75649.
-	
 2005-06-10  Duncan Mak  <duncan@novell.com>
 
 	* cs-tokenizer.cs (process_directives): New flag for controlling
