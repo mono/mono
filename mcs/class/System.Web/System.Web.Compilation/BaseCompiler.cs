@@ -337,8 +337,15 @@ namespace System.Web.Compilation
 #if NET_2_0
 			CompilationSection config = (CompilationSection) WebConfigurationManager.GetSection ("system.web/compilation");
 			Compiler comp = config.Compilers[lang];
-			Type t = Type.GetType (comp.Type, true);
-			provider = Activator.CreateInstance (t) as CodeDomProvider;
+			if (comp == null) {
+				CompilerInfo info = CodeDomProvider.GetCompilerInfo (lang);
+				if (info != null)
+					provider = info.CreateProvider ();
+			}
+			else {
+				Type t = Type.GetType (comp.Type, true);
+				provider = Activator.CreateInstance (t) as CodeDomProvider;
+			}
 
 			string compilerOptions = comp.CompilerOptions;
 			int warningLevel = comp.WarningLevel;

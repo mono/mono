@@ -1,3 +1,9 @@
+2006-03-24  Chris Toshok  <toshok@ximian.com>
+
+	* BaseCompiler.cs (GetCompiledType): fall back to CodeDomProvider
+	if system.web/compilation doesn't list a compiler for our
+	language.
+
 2006-03-13  Chris Toshok  <toshok@ximian.com>
 
 	* TemplateControlCompiler.cs (InitMethod): when generating the
