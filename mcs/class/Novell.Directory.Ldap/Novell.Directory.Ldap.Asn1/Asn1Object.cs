@@ -35,7 +35,6 @@ namespace Novell.Directory.Ldap.Asn1
 {
 	
 	/// <summary> This is the base class for all other Asn1 types.</summary>
-	[CLSCompliantAttribute(true)]
 	[Serializable]
 	public abstract class Asn1Object : System.Runtime.Serialization.ISerializable
 	{
