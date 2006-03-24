@@ -3611,6 +3611,28 @@ mini_emit_ldelema_1_ins (MonoCompile *cfg, MonoClass *klass, MonoInst *arr, Mono
 	}
 #endif		
 
+#ifdef __x86_64__
+	if (size == 1 || size == 2 || size == 4 || size == 8) {
+		static const int fast_log2 [] = { 1, 0, 1, -1, 2, -1, -1, -1, 3 };
+		int index2_reg;
+
+		/* The array reg is 64 bits but the index reg is only 32 */
+		index2_reg = alloc_preg (cfg);
+		MONO_EMIT_NEW_UNALU (cfg, OP_SEXT_I4, index2_reg, index_reg);
+
+		MONO_INST_NEW (cfg, ins, OP_X86_LEA);
+		ins->dreg = add_reg;
+		ins->sreg1 = array_reg;
+		ins->sreg2 = index2_reg;
+		ins->inst_imm = G_STRUCT_OFFSET (MonoArray, vector);
+		ins->unused = fast_log2 [size];
+		ins->type = STACK_PTR;
+		MONO_ADD_INS (cfg->cbb, ins);
+
+		return ins;
+	}
+#endif		
+
 	MONO_EMIT_NEW_BIALU_IMM (cfg, OP_MUL_IMM, mult_reg, index_reg, size);
 	MONO_EMIT_NEW_BIALU (cfg, OP_PADD, add_reg, array_reg, mult_reg);
 	NEW_BIALU_IMM (cfg, ins, OP_PADD_IMM, add_reg, add_reg, G_STRUCT_OFFSET (MonoArray, vector));
@@ -9724,6 +9746,8 @@ mono_spill_global_vars (MonoCompile *cfg)
  *     - all parts of the JIT
  *     - handle_global_vregs () && local regalloc
  *   - avoid introducing global vregs during decomposition, like 'vtable' in isinst
+ * - call cctors outside the JIT, to make -v output more readable and JIT timings more
+ *   meaningful.
  * - LAST MERGE: 58239.
  */
 
