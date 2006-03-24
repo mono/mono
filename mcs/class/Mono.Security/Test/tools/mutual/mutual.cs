@@ -49,7 +49,8 @@ class TestSslClientStream {
  		ssl.PrivateKeyCertSelectionDelegate += new PrivateKeySelectionCallback (PrivateKeySelection);
 	
 		StreamWriter sw = new StreamWriter (ssl, System.Text.Encoding.ASCII);
-		sw.WriteLine ("Hello");
+		sw.WriteLine ("GET /clientcert.aspx{0}", Environment.NewLine);
+		sw.Flush ();
 
 		StreamReader sr = new StreamReader (ssl);
 		Console.WriteLine (sr.ReadToEnd ());

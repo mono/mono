@@ -207,7 +207,7 @@ public class TlsTest {
 		ssl.ServerCertValidationDelegate += new CertificateValidationCallback (CertificateValidation);
 
 		StreamWriter sw = new StreamWriter (ssl);
-		sw.WriteLine ("GET {0}{1}", uri.AbsolutePath, Environment.NewLine);
+		sw.WriteLine ("GET {0} HTTP/1.0{1}", uri.AbsolutePath, Environment.NewLine);
 		sw.Flush ();
 
 		StreamReader sr = new StreamReader (ssl, Encoding.UTF8);
