@@ -165,16 +165,15 @@ namespace System.Web.Configuration
 			else {
 				
 				int i;
-				if (locationSubPath == null) {
+				if (locationSubPath == null)
 					configPath = fullPath;
-					i = fullPath.LastIndexOf ("/");
-				} else {
+				else
 					configPath = locationSubPath;
-					if (locationSubPath != "/")
-						i = locationSubPath.LastIndexOf ('/');
-					else
-						i = -1;
-				}
+
+				if (configPath == "/")
+					i = -1;
+				else
+					i = configPath.LastIndexOf ("/");
 				
 				if (i != -1) {
 					locationConfigPath = configPath.Substring (i+1);

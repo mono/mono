@@ -1,3 +1,9 @@
+2006-03-24  Chris Toshok  <toshok@ximian.com>
+
+	* WebConfigurationHost.cs: fix bug where OpenWebConfiguration
+	("/") would result in 2 configurations for that toplevel path to
+	be opened.
+
 2006-03-08  Chris Toshok  <toshok@ximian.com>
 
 	* ProvidersHelper.cs: implement this static class properly.
