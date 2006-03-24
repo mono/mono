@@ -1,3 +1,8 @@
+2006-03-24  Martin Baulig  <martin@ximian.com>
+
+	* class.c (mono_class_setup_fields): Added support for generic
+	instances; fixes #77580.
+
 2006-03-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* assembly.c: publickeytoken is case insensitive. Fixes bug #77898.
