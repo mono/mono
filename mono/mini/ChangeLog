@@ -1,4 +1,8 @@
 
+Fri Mar 24 20:07:19 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* debug-debugger.c: make it compile without the Boehm GC.
+
 Wed Mar 22 18:25:18 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: fixed issue with mismatch when an icall is registered
