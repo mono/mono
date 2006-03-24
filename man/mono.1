@@ -277,8 +277,11 @@ is a profiler-specific string of options for the profiler itself.
 .Sp
 The default profiler accepts the following options 'alloc' to profile
 memory consumption by the application; 'time' to profile the time
-spent on each routine and 'stat' to perform sample statistical
-profiling.  If no options are provided the default is 'alloc,time'.
+spent on each routine; 'jit' to collect time spent JIT-compiling methods
+and 'stat' to perform sample statistical profiling.
+If no options are provided the default is 'alloc,time,jit'. By default the
+profile data is printed to stdout: to change this, use the 'file=filename'
+option to output the data to filename.
 .Sp
 For example:
 .nf
@@ -292,11 +295,16 @@ and allocation profiling.
 .Sp
 .nf
 
-	mono --profile=default:stat,alloc program.exe
+	mono --profile=default:stat,alloc,file=prof.out program.exe
 
 .fi
 Will do  sample statistical profiling and allocation profiling on
-program.exe.
+program.exe. The profile data is put in prof.out.
+.Sp
+Note that the statistical profiler has a very low overhead and should
+be the preferred profiler to use (for better output use the full path
+to the mono binary when running and make sure you have installed the
+addr2line utility that comes from the binutils package).
 .SH PROFILERS
 There are a number of external profilers that have been developed for
 Mono, we will update this section to contain the profilers.
