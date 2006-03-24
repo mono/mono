@@ -1278,11 +1278,25 @@ namespace System.Web {
 		
 		static bool CheckString (string val)
 		{
-			foreach (char c in val) {
-				if (c == '<' || c == '>' || c == '\xff1c' || c == '\xff1e')
+			int len = val.Length;
+			if (len < 2)
+				return false;
+
+			char current = val [0];
+			for (int idx = 1; idx < len; idx++) {
+				char next = val [idx];
+				if (current == '<' || current == '\xff1c') {
+					if (next == '!' || next < ' '
+					    || (next >= 'a' && next <= 'z')
+					    || (next >= 'A' && next <= 'Z'))
+						return true;
+				} else if (current == '&' && next == '#') {
 					return true;
+				}
+
+				current = next;
 			}
-		
+
 			return false;
 		}
 
