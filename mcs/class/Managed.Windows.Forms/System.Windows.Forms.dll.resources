@@ -1,0 +1,10 @@
+-resource:resources/System.Windows.Forms.resources
+-resource:resources/System.Windows.Forms.en.resources
+-resource:resources/System.Windows.Forms.de.resources
+-resource:resources/SplitterNS.cur,System.Windows.Forms.SplitterNS.cur
+-resource:resources/SplitterWE.cur,System.Windows.Forms.SplitterWE.cur
+-resource:resources/DnDNo.cur,System.Windows.Forms.DnDNo.cur
+-resource:resources/DnDCopy.cur,System.Windows.Forms.DnDCopy.cur
+-resource:resources/DnDLink.cur,System.Windows.Forms.DnDLink.cur
+-resource:resources/DnDMove.cur,System.Windows.Forms.DnDMove.cur
+-resource:resources/keyboards.resources

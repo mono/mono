@@ -1,0 +1,378 @@
+2006-02-29  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* TestFont.cs: LOGFONT must be CharSet=Auto to make sure we have
+	  the appropriate size on each system
+
+2006-01-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RegionNonRectTest.cs: Updated comments on a test that fails on both
+	1.x and 2.0 MS runtime.
+	* TestFont.cs: Converted tests to NUnit 2.2 and added descriptions to
+	each asserts.
+
+2006-01-26 Boris Kirzner <borisk@mainsoft.com>
+	* ColorConverter.cs, TestBitmap.cs, TestIcon.cs, TestIconConverter.cs,
+	TestImageConverter.cs, TestPointConverter.cs, TestRectangleConverter.cs,
+	TestRegion.cs, TestSizeConverter.cs, TestStringFormat.cs: 
+	added #ifdef for TARGET_JVM.
+
+2006-01-23 Boris Kirzner <borisk@mainsoft.com>
+	* TestBitmap.cs, TestFont.cs: #ifdef fot TARGET_JVM.	
+
+2006-01-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RegionDataTest.cs: New. Unit tests for RegionData.
+	* RegionNonRectTest.cs: New. Unit tests for non-rectangular regions.
+	* TestRegion.cs: Added new test cases for empty region and IsInfinite
+	behaviour with multiple rectangles / path-rectangle regions.
+
+2006-01-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestRegion.cs: Mark a test case as NotWorking as it caused a 
+	regression in SWF.
+
+2006-01-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RegionCas.cs: New. CAS unit tests for Region.
+	* TestRegion.cs: Added test cases to check for expected exceptions.
+
+2005-12-05  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* TestFont.cs: Added test for LogFont conversion
+
+2005-12-05 Jordi Mas i Hernandez <jordimash@gmail.com>
+
+	* TestPoint.cs: Test new methods for .Net 2.0
+	* TestPointF.cs Test new methods for .Net 2.0
+	* ColorConverter.cs: Fixes for .Net 2.0
+	* TestSizeF.cs: Test new methods for .Net 2.0
+	* TestSize.cs: Test new methods for .Net 2.0
+
+2005-12-02  Jonathan Gilbert  <logic@deltaq.org>
+
+	* TestBitmap.cs (LockUnlockBitmap): Added test for the copying back
+	  of bitmap data in Bitmap.UnlockBits for non-readonly ImageLockMode
+	  values.
+
+2005-11-17  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* ColorConverter.cs: added testcases for ConvertFrom and 
+	three digit notaion color.
+
+2005-10-23  Jonathan Gilbert  <logic@deltaq.org>
+
+	* TestBitmap.cs (Rotate1bit4bit): Added test for rotation & flipping
+	  of indexed (1- and 4-bit) Bitmaps.
+	* 1bit.png, 4bit.png: Added to 'bitmaps' subdirectory.
+
+2005-09-19  Miguel de Icaza  <miguel@novell.com>
+
+	* TestGraphics.cs (LoadIndexed): Add test for the indexed bug.
+
+2005-09-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* BitmapCas.cs: New. CAS unit tests for Bitmap.
+	* GraphicsCas.cs: New. CAS unit tests for Graphics.
+	* ColorConverter.cs, ColorTranslator.cs, TestBrushes.cs, TestBitmap.cs
+	TestColor.cs, TestFont.cs, TestIcon.cs, TestIconConverter.cs,
+	TestImage.cs, TestImageConverter.cs, TestImageFormatConverter.cs,
+	TestPens.cs, TestPoint.cs, TestPointF.cs, TestPointConverter.cs,
+	TestRectangle.cs, TestRectangleF.cs, TestRectangleConverter.cs,
+	TestRegion.cs, TestSizeConverter.cs, TestSize.cs, TestSizeF.cs,
+	TestStringFormat.cs, TestSystemBrushes.cs, TestSystemPens.cs: Deny 
+	UnmanagedCode permission to all tests. This shows (when executed under
+	MS runtime) that S.D API is safe and doesn't requires high privileges
+	to run - even if we know that, deep down, this calls into GDI+.
+
+2005-09-14 Jordi Mas i Hernandez <jordi@ximan.com>
+
+	* TestGraphics.cs: Adds default properties, properties set/get and save
+	and restore status test
+
+2005-09-13 Jordi Mas i Hernandez <jordi@ximan.com>
+
+	* TestGraphics.cs: resets graphics object status before every SetClip test
+
+2005-09-12 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* TestImageConverter.cs: Re-enabled GetProperties test.
+	* TestPointConverter.cs: same.
+	* TestRectangleConverter.cs: same.
+	* TestSizeConverter.cs: same.
+
+2005-09-06 Jordi Mas i Hernandez <jordi@ximan.com>
+
+	* TestImagge.cs: File not found exception, related to fix r49744
+	* TestBimap.cs: File not found exception, related to fix r49744
+
+2005-09-06 Jordi Mas i Hernandez <jordi@ximan.com>
+
+	* TestGraphics.cs: New test case, only clipping for now
+
+2005-08-26 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* TestPointConverter.cs: Use Assert class instead of deriving from
+	deprecated Assertion class. Tests now pass on both Mono and MS.NET.
+	* TestRectangleConverter.cs: same.
+	* TestSizeConverter.cs: same.
+
+2005-08-26 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* ColorConverter.cs: Add hex string tests. Fixed tests to pass on
+	MS.NET.
+
+2005-08-23 Jordi Mas i Hernandez <jordi@ximan.com>
+
+	* TestPens.cs: Add test for Equals method
+	* TestBrushes.cs: Add test for Equals method
+
+2005-08-19 Jordi Mas i Hernandez <jordi@ximan.com>
+
+	* TestPointConverter.cs: Fixes and changes to make the test locale unsensitive
+	* TestRectangleConverter.cs: Fixes and changes to make the test locale unsensitive
+	* TestSizeConverter.cs:  Fixes and changes to make the test locale unsensitive
+	* ColorConverter.cs: Fixes and changes to make the test locale unsensitive
+
+2005-08-17 Jordi Mas i Hernandez <jordi@ximan.com>
+
+	* TestRegion.cs: Adds many new cases for the new region implementation
+
+2005-08-16  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ColorConverter.cs: Mono now also throws ArgumentException when
+	color value is not between 0 and 255.
+	* TestColor.cs: Added tests for invalid color values.
+	* TestRectangleConverter.cs: Fixed tests for conversion to/from 
+	string. Added tests that verify results using specific cultures.
+
+2005-08-14  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ColorConverter.cs: Merged tests from TestColorConverter.cs. Fixed
+	tests using current culture.
+	* TestColorConverter.cs: Merged tests with ColorConverter.cs and 
+	removed.
+
+2005-08-14  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TestColor.cs: Added test for ToString() on uninitialized color.
+	* TestColorConverter.cs: Added tests for ColorConverter.
+
+2005-08-10 Jordi Mas i Hernandez <jordi@ximan.com>
+
+	* TestRegion.cs: new cases for Combine and Intersect
+
+2005-08-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* TestRectangle.cs: Add new test.
+
+2005-08-09  Andrew Skiba  <andrews@mainsoft.com>
+
+	* ColorConverter.cs, ColorTranslator.cs: added
+	* TestPointConverter.cs, TestRectangleConverter.cs, TestSizeConverter.cs: new
+	tests for convert to/from string
+
+2005-08-07  Andrew Skiba  <andrews@mainsoft.com>
+
+	* Color.cs: many new testcases added
+
+2005-08-07  Andrew Skiba  <andrews@mainsoft.com>
+
+	* Size.cs, SizeF.cs: GetHashCode and ToString tests
+
+2005-08-07  Andrew Skiba  <andrews@mainsoft.com>
+
+	* TestRectangle.cs, TestRectangleF.cs: add new testcases
+
+2005-08-07  Andrew Skiba  <andrews@mainsoft.com>
+
+	* TestPoint.cs: GetHashCode and ToString tests added
+	* TestPointF.cs: GetHashCode and ToString tests added, Addition and Substraction
+	tests improved
+
+2005-08-07  Andrew Skiba  <andrews@mainsoft.com>
+
+	* TestPens.cs, TestSystemBrushes.cs, TestSystemPens.cs: don't rethrow exceptions, keep
+	the original stack trace.
+
+2005-07-27  Andrew Skiba  <andrews@mainsoft.com>
+
+	* TestColor.cs: added tests for equality operators, IsEmpty property and fixed GetHBS
+	tests to use tolerance.
+
+2005-05-10 Juraj Skripsky <juraj@hotfeet.ch>
+
+	* TestColor.cs: Added tests for GetHue, GetBrightness
+	and GetSaturation.
+
+2005-02-24 Jordi Mas i Hernandez <jordi@ximan.com>
+	* TestRegion.cs: added new IsVisible cases
+
+2004-06-22  Sanjay Gupta <gsanjay@novell.com>
+
+	* TestIconConverter.cs, TestImageConverter.cs: Commented out some tests.
+
+2004-06-17  Ravindra <rkumar@novell.com>
+
+	* graphicsUi.cs: Formatted and moved to
+	Samples/System.Drawing directory.
+	* image1.cs: Formatted and renamed to bmpsave.cs. Moved to
+	Samples/System.Drawing directory.
+	* hering.cs: Formatted and moved to Samples/General directory.
+	* BmpPaint.cs: Ficed, formatted and moved to 
+	Samples/System.Drawing directory.
+	* font1.cs: Formatted and renamed to font.cs. Moved to
+	Samples/System.Drawing directory.
+
+2004-06-10  Sanjay Gupta <gsanjay@novell.com>
+
+	* TestBitmap.cs: Corrected issues from my previous checkin.
+
+2004-06-10  Sanjay Gupta <gsanjay@novell.com>
+
+	* TestImageFormatConverter.cs, TestStringFormat.cs: Removed 
+	dependency on obsolete class, Assertion from NUnit.
+
+2004-06-09  Sanjay Gupta <gsanjay@novell.com>
+
+	* TestImageConverter.cs: Removed dependency on obsolete class, 
+	Assertion from NUnit.
+
+2004-06-09  Sanjay Gupta <gsanjay@novell.com>
+
+	* TestBitmap.cs, TestIcon.cs, TestIconConverter.cs: Removed
+	dependency on obsolete class, Assertion from NUnit.
+
+2004-05-27  Ravindra <rkumar@novell.com>
+
+	* TestRectangleConverter.cs: Ignored the test that is failing
+	because of bug #58435.
+	* TestPointConverter.cs: Same.
+	* TestSizeConverter.cs: Same.
+	* TestImageConverter.cs: Same.
+
+2004-05-26 Sanjay Gupta <gsanjay@novell.com>
+
+	* TestImageFormatConverter.cs: Minor modification. Removed duplicate 
+	assertion numbers. 
+
+2004-05-26 Ravindra <rkumar@novell.com>
+
+	* TestColor.cs: Added a test for testing ARGB values for all
+	the static color properties.
+
+2004-05-20 Sanjay Gupta <gsanjay@novell.com>
+	
+	* TestIcon.cs: Added.
+	* bitmaps/smiley.ico: Added.
+
+2004-05-18 Sanjay Gupta <gsanjay@novell.com>
+	
+	* TestImageFormatConverter.cs: Fixed issues with test case.
+
+2004-05-18 Sanjay Gupta <gsanjay@novell.com>
+	
+	* TestImageConverter.cs: Fixed issues with test case.
+
+2004-05-18 Sanjay Gupta <gsanjay@novell.com>
+	
+	* TestIconConverter.cs: Fixed issues with test case.
+
+2004-05-18 Ravindra <rkumar@novell.com>
+
+	* TestHatchBrush.cs: Removed. Now, we have a better test for HatchBrush
+	this under Test/System.Drawing.Drawing2D directory.
+
+2004-05-17 Sanjay Gupta <gsanjay@novell.com>
+                                                                                                         
+        * TestIconConverter.cs: Added.
+        * bitmaps/VisualPng.ico: Added
+        * bitmaps/VisualPng1.ico: Added
+
+2004-05-14 Sanjay Gupta <gsanjay@novell.com>
+
+        * TestBitmap.cs: Modified method signature to static to be used in other file.
+        * TestImageConverter.cs: Added.
+        * TestImageFormatConverter.cs: Added
+
+2004-05-12 Jordi Mas <jordi@ximan.com>
+	* TestBitmap.cs: added lockbitmap tests
+
+2004-05-07 Jordi Mas <jordi@ximan.com>
+	* TestBitmap.cs: added rotation tests
+
+2004-04-23  Ravindra <rkumar@novell.com>
+
+	* TestSystemPens.cs: Removed some unused exception variables.
+	* TestRectangleConverter.cs: Removed culture dependent tests.
+	* TestPointConverter.cs: Removed culture dependent tests.
+	* TestSizeConverter.cs: Removed culture dependent tests.
+	(These tests were not right because a constant culture specific string
+	was being parsed by using current culture of the thread. It resulted in
+	test failures when cultures do not match.)
+
+2004-04-22  Ravindra <rkumar@novell.com>
+
+	* TestPointConverter.cs: Added.
+	* TestSizeConverter.cs: Added.
+
+2004-04-22  Ravindra <rkumar@novell.com>
+
+	* TestRectangleConverter.cs: Added.
+
+2004-04-21  Ravindra <rkumar@novell.com>
+
+	* TestPens.cs: Added.
+
+2004-04-21  Ravindra <rkumar@novell.com>
+
+	* TestBrushes.cs: Added.
+
+2004-04-16  Ravindra <rkumar@novell.com>
+
+	* TestSystemPens.cs: Added.
+
+2004-03-13  Ravindra <rkumar@novell.com>
+
+	* TestSystemBrushes.cs: Added test fail conditions.
+
+2004-03-12  Ravindra <rkumar@novell.com>
+
+	* TestSystemBrushes.cs: Added.
+
+2004-03-17  Ravindra <rkumar@novell.com>
+	* TestHatchBrush.cs: Added.
+
+2004-01-26  Ravindra <rkumar@novell.com>
+	* TestPointF.cs: Added.
+	* TestSize.cs: Added.
+	* TestSizeF: Added.
+
+2004-01-16  Ravindra <rkumar@novell.com>
+	* BmpPaint.cs   did not run on .NET.
+	Modified to make it run on .NET. Specs say
+	"Do not save an image to the same stream
+	that was used to construct the image."
+
+2003-07-30  Alexandre Pigolkine <pigolkine@gmx.de>
+	* BmpPaint.cs 	modified
+
+2003-06-28  Alexandre Pigolkine <pigolkine@gmx.de>
+	* hering.cs 	save as Jpeg also
+
+2003-06-22  Alexandre Pigolkine <pigolkine@gmx.de>
+	* font1.cs added
+
+2003-06-17  Alexandre Pigolkine <pigolkine@gmx.de>
+	* hering.cs 	added
+	
+2003-06-15  Alexandre Pigolkine <pigolkine@gmx.de>
+	* BmpPaint.cs 	ImageFormat specified for Save()
+	* image1.cs		added
+
+2003-06-06  Alexandre Pigolkine <pigolkine@gmx.de>
+	* BmpPaint.cs 	added
+
+2001-10-31  Mike Kestner <mkestner@speakeasy.net>
+
+	* TestPoint.cs : Tests I've had in my node forever.
+
