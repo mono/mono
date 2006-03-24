@@ -326,6 +326,7 @@ namespace System.Web.Compilation
 			return AppDomain.CurrentDomain.SetupInformation.DynamicBase;
 		}
 
+		[MonoTODO ("find out how to extract the warningLevel and compilerOptions in the <system.codedom> case")]
 		public virtual Type GetCompiledType () 
 		{
 			Type type = CachingCompiler.GetTypeFromCache (parser.InputFile);
@@ -337,18 +338,28 @@ namespace System.Web.Compilation
 #if NET_2_0
 			CompilationSection config = (CompilationSection) WebConfigurationManager.GetSection ("system.web/compilation");
 			Compiler comp = config.Compilers[lang];
+
+			string compilerOptions = "";
+			int warningLevel = 0;
+
 			if (comp == null) {
 				CompilerInfo info = CodeDomProvider.GetCompilerInfo (lang);
-				if (info != null)
+				if (info != null && info.IsCodeDomProviderTypeValid)
 					provider = info.CreateProvider ();
+
+				// XXX there's no way to get
+				// warningLevel or compilerOptions out
+				// of the provider.. they're in the
+				// configuration section, though.
 			}
 			else {
 				Type t = Type.GetType (comp.Type, true);
 				provider = Activator.CreateInstance (t) as CodeDomProvider;
+
+				compilerOptions = comp.CompilerOptions;
+				warningLevel = comp.WarningLevel;
 			}
 
-			string compilerOptions = comp.CompilerOptions;
-			int warningLevel = comp.WarningLevel;
 #else
 			CompilationConfiguration config;
 
