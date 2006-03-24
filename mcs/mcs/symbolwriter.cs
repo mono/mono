@@ -62,9 +62,7 @@ namespace Mono.CSharp {
 			sighelper.AddArgument (builder.LocalType);
 			byte[] signature = sighelper.GetSignature ();
 
-			int index = MonoDebuggerSupport.GetLocalIndex (builder);
-
-			DefineLocalVariable (index, name, signature);
+			DefineLocalVariable (name, signature);
 		}
 
 		public int OpenScope (ILGenerator ig)
