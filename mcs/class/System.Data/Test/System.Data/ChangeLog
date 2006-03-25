@@ -1,3 +1,7 @@
+2006-03-25  Senganal T <tsenganal@novell.com>
+	
+	* DataTableTest.cs :  Fixed NotWorkingTest
+
 2006-03-23  Senganal T <tsenganal@novell.com>
 
 	* DataTableTest2.cs :

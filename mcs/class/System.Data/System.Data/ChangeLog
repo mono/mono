@@ -1,3 +1,10 @@
+2006-03-25  Senganal T  <tsenganal@novell.com>
+
+	* DataRow.cs : 
+		- RejectChanges : When row is in Deleted state, add the row back to
+		Indexes and Validate the row.
+
+
 2006-03-23  Senganal T  <tsenganal@novell.com>
 
 	* DataTable.cs : 

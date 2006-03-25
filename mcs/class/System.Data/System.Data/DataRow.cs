@@ -1339,7 +1339,8 @@ namespace System.Data {
 			case DataRowState.Deleted:
 				CheckChildRows (DataRowAction.Rollback);
 				Current = Original;
-				Table.AddRowToIndexes (this);
+				// Add row to index and validate if the constraints are satisfied
+				this.Validate ();
 				break;
 			}
 		}

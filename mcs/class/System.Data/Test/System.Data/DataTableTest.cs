@@ -1199,7 +1199,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ImportRowDeletedTest ()
 		{
 			DataTable table = new DataTable ();
@@ -1232,7 +1231,6 @@ namespace MonoTests.System.Data
 			AssertEquals ("#3", 2, table.Rows.Count);
 			AssertEquals ("#4", DataRowState.Deleted, table.Rows[1].RowState);
 
-			//FIXME : Currenty this fails.
 			try {
 				table.RejectChanges ();
 				Fail ("#5");
