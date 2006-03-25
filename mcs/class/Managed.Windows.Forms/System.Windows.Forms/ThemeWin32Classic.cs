@@ -24,6 +24,7 @@
 //	Peter Bartok, pbartok@novell.com
 //	John BouAntoun, jba-mono@optusnet.com.au
 //	Marek Safar, marek.safar@seznam.cz
+//	Alexander Olk, alex.olk@googlemail.com
 //
 
 
@@ -288,9 +289,12 @@ namespace System.Windows.Forms
 				dc.DrawString(button.text, button.Font, ResPool.GetSolidBrush (button.ForeColor), text_rect, button.text_format);
 			} else {
 				if (button.FlatStyle == FlatStyle.Flat || button.FlatStyle == FlatStyle.Popup) {
-					dc.DrawString(button.text, button.Font, ResPool.GetSolidBrush (ControlPaint.DarkDark (this.ColorControl)), text_rect, button.text_format);
+					dc.DrawString(button.text, button.Font, ResPool.GetSolidBrush (ColorGrayText), text_rect, button.text_format);
 				} else {
-					CPDrawStringDisabled(dc, button.text, button.Font, ColorControlText, text_rect, button.text_format);
+					Rectangle rect_white = new Rectangle (text_rect.X + 1, text_rect.Y + 1, text_rect.Width, text_rect.Height);
+					
+					dc.DrawString(button.text, button.Font, ResPool.GetSolidBrush (ColorControlLightLight), rect_white, button.text_format);
+					dc.DrawString(button.text, button.Font, ResPool.GetSolidBrush (ColorGrayText), text_rect, button.text_format);
 				}
 			}
 		}
@@ -335,7 +339,7 @@ namespace System.Windows.Forms
 				} else {
 					// popup has a ButtonColorText forecolor, not a button.ForeCOlor
 					if (button.FlatStyle == FlatStyle.Popup) {
-						rect_fore_color = this.ColorControlText;
+						rect_fore_color = ColorGrayText;
 					}
 					
 					// fill then draw outer rect
@@ -363,7 +367,7 @@ namespace System.Windows.Forms
 				bool draw_popup_checked = false;
 				
 				if (button.FlatStyle == FlatStyle.Popup) {
-					rect_fore_color = this.ColorControlText;
+					rect_fore_color = ColorGrayText;
 				
 					// see if we should draw a disabled checked popup button
 					draw_popup_checked = ((checkbox != null && checkbox.Checked) ||
@@ -776,7 +780,7 @@ namespace System.Windows.Forms
 		#region ComboBox
 		
 		// Drawing
-		
+		// TODO: get rid of that and use BorderStyle Fixed3D
 		public override void DrawComboBoxEditDecorations (Graphics dc, ComboBox ctrl, Rectangle cl)
 		{				
 			dc.DrawLine (ResPool.GetPen (ColorControlDark), cl.X, cl.Y, cl.X + cl.Width, cl.Y); //top 
@@ -785,8 +789,8 @@ namespace System.Windows.Forms
 			dc.DrawLine (ResPool.GetPen (ColorControlLight), cl.X, cl.Y + cl.Height - 1, cl.X + cl.Width, cl.Y + cl.Height - 1);
 			dc.DrawLine (ResPool.GetPen (ColorControlDark), cl.X, cl.Y, cl.X, cl.Y + cl.Height); //left
 			dc.DrawLine (ResPool.GetPen (ColorControlDarkDark), cl.X + 1, cl.Y + 1, cl.X + 1, cl.Y + cl.Height - 2); 
-			dc.DrawLine (ResPool.GetPen (ColorControl), cl.X + cl.Width - 2, cl.Y, cl.X + cl.Width - 2, cl.Y + cl.Height); //right
-			dc.DrawLine (ResPool.GetPen (ColorControlLight), cl.X + cl.Width - 1, cl.Y + 1 , cl.X + cl.Width - 1, cl.Y + cl.Height - 1);				
+			dc.DrawLine (ResPool.GetPen (ColorControl), cl.X + cl.Width - 1, cl.Y, cl.X + cl.Width - 1, cl.Y + cl.Height); //right
+			dc.DrawLine (ResPool.GetPen (ColorControlLight), cl.X + cl.Width - 2, cl.Y + 1 , cl.X + cl.Width - 2, cl.Y + cl.Height - 1);				
 		}		
 		
 		// Sizing				
@@ -4243,114 +4247,78 @@ namespace System.Windows.Forms
 			CPDrawBorder3D(graphics, rectangle, style, sides, ColorControl);
 		}
 
-		private void CPDrawBorder3D (Graphics graphics, Rectangle rectangle, Border3DStyle style, Border3DSide sides, Color control_color) {
+		private void CPDrawBorder3D (Graphics graphics, Rectangle rectangle, Border3DStyle style, Border3DSide sides, Color control_color)
+		{
 			Pen		penTopLeft;
 			Pen		penTopLeftInner;
 			Pen		penBottomRight;
 			Pen		penBottomRightInner;
-			Rectangle	rect= new Rectangle(rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
-			bool		doInner = false;
-
-			if ((style & Border3DStyle.Adjust)!=0) {
-				rect.Y-=2;
-				rect.X-=2;
-				rect.Width+=4;
-				rect.Height+=4;
+			Rectangle	rect= new Rectangle (rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
+			
+			if ((style & Border3DStyle.Adjust) != 0) {
+				rect.Y -= 2;
+				rect.X -= 2;
+				rect.Width += 4;
+				rect.Height += 4;
 			}
-
-			/* default to flat */
-			penTopLeft=ResPool.GetPen(ControlPaint.Dark(control_color));
-			penTopLeftInner=ResPool.GetPen(ControlPaint.Dark(control_color));
-			penBottomRight=ResPool.GetPen(ControlPaint.Dark(control_color));
-			penBottomRightInner=ResPool.GetPen(ControlPaint.Dark(control_color));
-
-			if ((style & Border3DStyle.RaisedOuter)!=0) {
-				penTopLeft=ResPool.GetPen(ControlPaint.LightLight(control_color));
-				penBottomRight=ResPool.GetPen(ControlPaint.DarkDark(control_color));
-				if ((style & (Border3DStyle.RaisedInner | Border3DStyle.SunkenInner))!=0) {
-					doInner=true;
-				}
-			} else if ((style & Border3DStyle.SunkenOuter)!=0) {
-				penTopLeft=ResPool.GetPen(ControlPaint.DarkDark(control_color));
-				penBottomRight=ResPool.GetPen(ControlPaint.LightLight(control_color));
-				if ((style & (Border3DStyle.RaisedInner | Border3DStyle.SunkenInner))!=0) {
-					doInner=true;
-				}
+			
+			penTopLeft = penTopLeftInner = penBottomRight = penBottomRightInner = ResPool.GetPen (control_color);
+			
+			if (style == Border3DStyle.Raised) {
+				penTopLeftInner = ResPool.GetPen (ControlPaint.LightLight (control_color));
+				penBottomRight = ResPool.GetPen (ControlPaint.DarkDark (control_color));
+				penBottomRightInner = ResPool.GetPen (ColorInactiveCaption);
+			} else if (style == Border3DStyle.Sunken) {
+				penTopLeft = ResPool.GetPen (ColorInactiveCaption);
+				penTopLeftInner = ResPool.GetPen (ControlPaint.DarkDark (control_color));
+				penBottomRight = ResPool.GetPen (ControlPaint.LightLight (control_color));
+			} else if (style == Border3DStyle.Etched) {
+				penTopLeft = ResPool.GetPen (ColorInactiveCaption);
+				penTopLeftInner = ResPool.GetPen (ControlPaint.LightLight (control_color));
+				penBottomRight = ResPool.GetPen (ControlPaint.LightLight (control_color));
+				penBottomRightInner = ResPool.GetPen (ColorInactiveCaption);
+			} else if (style == Border3DStyle.RaisedOuter) {
+				penBottomRight = ResPool.GetPen (ControlPaint.DarkDark (control_color));
+			} else if (style == Border3DStyle.SunkenOuter) {
+				penTopLeft = ResPool.GetPen (ColorInactiveCaption);
+				penBottomRight = ResPool.GetPen (ControlPaint.LightLight (control_color));
+			} else if (style == Border3DStyle.RaisedInner) {
+				penTopLeft = ResPool.GetPen (ControlPaint.LightLight (control_color));
+				penBottomRight = ResPool.GetPen (ColorInactiveCaption);
+			} else if (style == Border3DStyle.SunkenInner) {
+				penTopLeft = ResPool.GetPen (ControlPaint.DarkDark (control_color));
+			} else if (style == Border3DStyle.Flat) {
+				penTopLeft = ResPool.GetPen (ColorInactiveCaption);
+				penBottomRight = ResPool.GetPen (ColorInactiveCaption);
+			} else if (style == Border3DStyle.Bump) {
+				penTopLeftInner = ResPool.GetPen (ControlPaint.DarkDark (control_color));
+				penBottomRight = ResPool.GetPen (ControlPaint.DarkDark (control_color));
 			}
-
-			if ((style & Border3DStyle.RaisedInner)!=0) {
-				if (doInner) {
-					penTopLeftInner=ResPool.GetPen(control_color);
-					penBottomRightInner=ResPool.GetPen(ControlPaint.Dark(control_color));
-				} else {
-					penTopLeft=ResPool.GetPen(ControlPaint.LightLight(control_color));
-					penBottomRight=ResPool.GetPen(ControlPaint.DarkDark(control_color));
-				}
-			} else if ((style & Border3DStyle.SunkenInner)!=0) {
-				if (doInner) {
-					penTopLeftInner=ResPool.GetPen(ControlPaint.Dark(control_color));
-					penBottomRightInner=ResPool.GetPen(control_color);
-				} else {
-					penTopLeft=ResPool.GetPen(ControlPaint.DarkDark(control_color));
-					penBottomRight=ResPool.GetPen(ControlPaint.LightLight(control_color));
-				}
+			
+			if ((sides & Border3DSide.Middle) != 0) {
+				graphics.FillRectangle (ResPool.GetSolidBrush (control_color), rect);
 			}
-
-			if ((sides & Border3DSide.Middle)!=0) {
-				graphics.FillRectangle(ResPool.GetSolidBrush(control_color), rect);
+			
+			if ((sides & Border3DSide.Left) != 0) {
+				graphics.DrawLine (penTopLeft, rect.Left, rect.Bottom - 2, rect.Left, rect.Top);
+				graphics.DrawLine (penTopLeftInner, rect.Left + 1, rect.Bottom - 2, rect.Left + 1, rect.Top);
 			}
-
-			if ((sides & Border3DSide.Left)!=0) {
-				graphics.DrawLine(penTopLeft, rect.Left, rect.Bottom-2, rect.Left, rect.Top);
-				if (doInner) {
-					graphics.DrawLine(penTopLeftInner, rect.Left+1, rect.Bottom-2, rect.Left+1, rect.Top);
-				}
+			
+			if ((sides & Border3DSide.Top) != 0) {
+				graphics.DrawLine (penTopLeft, rect.Left, rect.Top, rect.Right - 2, rect.Top);
+				graphics.DrawLine (penTopLeftInner, rect.Left + 1, rect.Top + 1, rect.Right - 3, rect.Top + 1);
 			}
-
-			if ((sides & Border3DSide.Top)!=0) {
-				graphics.DrawLine(penTopLeft, rect.Left, rect.Top, rect.Right-2, rect.Top);
-
-				if (doInner) {
-					if ((sides & Border3DSide.Left)!=0) {
-						graphics.DrawLine(penTopLeftInner, rect.Left+1, rect.Top+1, rect.Right-3, rect.Top+1);
-					} else {
-						graphics.DrawLine(penTopLeftInner, rect.Left, rect.Top+1, rect.Right-3, rect.Top+1);
-					}
-				}
+			
+			if ((sides & Border3DSide.Right) != 0) {
+				graphics.DrawLine (penBottomRight, rect.Right - 1, rect.Top, rect.Right - 1, rect.Bottom - 1);
+				graphics.DrawLine (penBottomRightInner, rect.Right - 2, rect.Top + 1, rect.Right - 2, rect.Bottom - 2);
 			}
-
-			if ((sides & Border3DSide.Right)!=0) {
-				graphics.DrawLine(penBottomRight, rect.Right-1, rect.Top, rect.Right-1, rect.Bottom-1);
-
-				if (doInner) {
-					if ((sides & Border3DSide.Top)!=0) {
-						graphics.DrawLine(penBottomRightInner, rect.Right-2, rect.Top+1, rect.Right-2, rect.Bottom-2);
-					} else {
-						graphics.DrawLine(penBottomRightInner, rect.Right-2, rect.Top, rect.Right-2, rect.Bottom-2);
-					}
-				}
+			
+			if ((sides & Border3DSide.Bottom) != 0) {
+				graphics.DrawLine (penBottomRight, rect.Left, rect.Bottom - 1, rect.Right - 1, rect.Bottom - 1);
+				graphics.DrawLine (penBottomRightInner, rect.Left + 1, rect.Bottom - 2, rect.Right - 2, rect.Bottom - 2);
 			}
-
-			if ((sides & Border3DSide.Bottom)!=0) {
-				int	left=rect.Left;
-
-				if ((sides & Border3DSide.Left)!=0) {
-					left+=1;
-				}
-
-				graphics.DrawLine(penBottomRight, rect.Left, rect.Bottom-1, rect.Right-1, rect.Bottom-1);
-
-				if (doInner) {
-					if ((sides & Border3DSide.Right)!=0) {
-						graphics.DrawLine(penBottomRightInner, left, rect.Bottom-2, rect.Right-2, rect.Bottom-2);
-					} else {
-						graphics.DrawLine(penBottomRightInner, left, rect.Bottom-2, rect.Right-2, rect.Bottom-2);
-					}
-				}
-			}
-
 		}
-
 
 		public override void CPDrawButton (Graphics graphics, Rectangle rectangle, ButtonState state) {
 			DrawFrameControlStates	dfcs=DrawFrameControlStates.ButtonPush;
@@ -4938,7 +4906,7 @@ namespace System.Windows.Forms
 
 		public override void CPDrawSizeGrip (Graphics dc, Color backColor, Rectangle bounds) {
 			
-			Point pt = new Point (bounds.Right - 2, bounds.Bottom - 2);
+			Point pt = new Point (bounds.Right - 2, bounds.Bottom - 1);
 
 			Pen pen = ResPool.GetPen (ColorControlDark);
 			
@@ -4956,6 +4924,8 @@ namespace System.Windows.Forms
 			dc.DrawLine (pen, pt.X - 12, pt.Y, pt.X, pt.Y - 12);
 			dc.DrawLine (pen, pt.X - 8, pt.Y, pt.X, pt.Y - 8);
 			dc.DrawLine (pen, pt.X - 4, pt.Y, pt.X, pt.Y - 4);
+			
+			dc.DrawLine (ResPool.GetPen (ColorControl), pt.X - 12, pt.Y, pt.X, pt.Y);
 		}
 
 
@@ -5290,12 +5260,8 @@ namespace System.Windows.Forms
 						graphics.DrawRectangle (ResPool.GetPen (ControlPaint.Dark (ColorControl)), trace_rectangle);
 					} else if ((State & DrawFrameControlStates.Flat)!=0) {
 						ControlPaint.DrawBorder(graphics, rectangle, ColorControlDark, ButtonBorderStyle.Solid);
-					} else if ((State & DrawFrameControlStates.Inactive)!=0) {
-						/* Same as normal, it would seem */
-						CPDrawBorder3D(graphics, rectangle, Border3DStyle.Raised, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom, ColorControl);
-					} else {
-						CPDrawBorder3D(graphics, rectangle, Border3DStyle.Raised, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom, ColorControl);
-					}
+					} else 
+						CPDrawBorder3D(graphics, rectangle, Border3DStyle.Raised, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom, ColorControl);					
 				} else if ((State & DrawFrameControlStates.ButtonRadio)!=0) {
 					Pen			penFatDark	= new Pen(ColorControlDark, 1);
 					Pen			penFatLight	= new Pen(ColorControlLightLight, 1);

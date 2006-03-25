@@ -1,5 +1,17 @@
 2006-03-25  Alexander Olk  <alex.olk@googlemail.com>
 
+	* ThemeWin32Classic.cs:
+	  - Rewrote the totally broken CPDrawBorder3D method. That was
+	    one of the main problems for the terrific ThemeWin32Classic
+	    look
+	  - Updated and corrected Button drawing
+	  - Correct the dimensions of the SizeGrip to match ms ones
+	  - Removed a small drawing glitch in DrawComboBoxEditDecorations
+	* XplatUIX11.cs: Draw borders with BorderStyle = Fixed3D with
+	  Border3DStyle.Sunken to match ms.
+
+2006-03-25  Alexander Olk  <alex.olk@googlemail.com>
+
 	* ThemeWin32Classic.cs:	First small part of the "de-uglify
 	  ThemeWin32Classic" effort, SizeGrip
 

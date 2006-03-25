@@ -3117,7 +3117,7 @@ namespace System.Windows.Forms {
 								Graphics g;
 
 								g = Graphics.FromHwnd(hwnd.whole_window);
-								ControlPaint.DrawBorder3D(g, new Rectangle(0, 0, hwnd.Width, hwnd.Height));
+								ControlPaint.DrawBorder3D(g, new Rectangle(0, 0, hwnd.Width, hwnd.Height), Border3DStyle.Sunken);
 								g.Dispose();
 								break;
 							}
@@ -3461,7 +3461,7 @@ namespace System.Windows.Forms {
 				Caret.Paused = true;
 				HideCaret();
 			}
-
+			
 			if (client) {
 				hwnd.client_dc = Graphics.FromHwnd (hwnd.client_window);
 				hwnd.client_dc.SetClip(hwnd.invalid);
