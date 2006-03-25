@@ -129,6 +129,7 @@ namespace System.Web.Configuration {
 
 			string basePath = GetBasePath (path);
 			_Configuration conf;
+
 			
 			lock (configurations) {
 				conf = (_Configuration) configurations [basePath];
@@ -271,7 +272,7 @@ namespace System.Web.Configuration {
 
 #region stuff copied from WebConfigurationSettings
 #if TARGET_J2EE
-		static private IConfigurationSystem oldConfig {
+		static internal IConfigurationSystem oldConfig {
 			get {
 				return (IConfigurationSystem)AppDomain.CurrentDomain.GetData("WebConfigurationManager.oldConfig");
 			}
@@ -289,13 +290,14 @@ namespace System.Web.Configuration {
 			}
 		}
 #else
+		static internal IConfigurationSystem oldConfig;
 		static Web20DefaultConfig config;
 		static IInternalConfigSystem configSystem;
 #endif
 		const BindingFlags privStatic = BindingFlags.NonPublic | BindingFlags.Static;
 		static readonly object lockobj = new object ();
 
-		public static void Init ()
+		internal static void Init ()
 		{
 			lock (lockobj) {
 				if (config != null)
@@ -312,7 +314,7 @@ namespace System.Web.Configuration {
 						throw new ConfigurationException ("Cannot find method CCS");
 
 					object [] args = new object [] {settings};
-					changeConfig.Invoke (null, args);
+					oldConfig = (IConfigurationSystem)changeConfig.Invoke (null, args);
 					config = settings;
 
 					config.Init ();
@@ -368,7 +370,23 @@ namespace System.Web.Configuration {
 
 		public object GetConfig (string sectionName)
 		{
-			return WebConfigurationManager.GetWebApplicationSection (sectionName);
+			object o = WebConfigurationManager.GetWebApplicationSection (sectionName);
+
+			if (o == null || o is IgnoreSection) {
+				/* this can happen when the section
+				 * handler doesn't subclass from
+				 * ConfigurationSection.  let's be
+				 * nice and try to load it using the
+				 * 1.x style routines in case there's
+				 * a 1.x section handler registered
+				 * for it.
+				 */
+				object o1 = WebConfigurationManager.oldConfig.GetConfig (sectionName);
+				if (o1 != null)
+					return o1;
+			}
+
+			return o;
 		}
 
 		public void Init ()

@@ -1,5 +1,11 @@
 2006-03-24  Chris Toshok  <toshok@ximian.com>
 
+	* WebConfigurationManager.cs (GetConfig): add a fallback case for
+	configuration sections that don't subclass from
+	ConfigurationSection.
+
+2006-03-24  Chris Toshok  <toshok@ximian.com>
+
 	* WebConfigurationHost.cs: fix bug where OpenWebConfiguration
 	("/") would result in 2 configurations for that toplevel path to
 	be opened.
