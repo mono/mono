@@ -48,7 +48,7 @@
 #include <mono/metadata/marshal.h>
 #include <mono/metadata/tabledefs.h>
 #include <mono/arch/s390/s390-codegen.h>
-
+#include <mono/metadata/debug-helpers.h>
 #include "mini.h"
 #include "mini-s390.h"
 
