@@ -64,6 +64,74 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
+		[Category ("NotWorking")]
+		public void ImportTypeMapping_XsdPrimitive_AnyURI ()
+		{
+			string schemaFragment = "<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
+				"<xs:schema xmlns:tns=\"NSAnyURI\" elementFormDefault=\"qualified\" targetNamespace=\"NSAnyURI\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">" +
+				"  <xs:element name=\"anyURI\" type=\"xs:anyURI\" />" +
+				"</xs:schema>";
+
+			XmlSchemas schemas = new XmlSchemas ();
+			schemas.Add (XmlSchema.Read (new StringReader (schemaFragment), null));
+
+			ArrayList qnames = GetXmlQualifiedNames (schemas);
+			Assert.AreEqual (1, qnames.Count, "#1");
+
+			XmlQualifiedName qname = (XmlQualifiedName) qnames[0];
+
+			Assert.AreEqual ("anyURI", qname.Name, "#2");
+			Assert.AreEqual ("NSAnyURI", qname.Namespace, "#3");
+
+			XmlSchemaImporter importer = new XmlSchemaImporter (schemas);
+			XmlTypeMapping map = importer.ImportTypeMapping ((XmlQualifiedName) qnames[0]);
+
+			Assert.IsNotNull (map, "#4");
+			Assert.AreEqual ("anyURI", map.ElementName, "#5");
+			Assert.AreEqual ("NSAnyURI", map.Namespace, "#6");
+			Assert.AreEqual ("System.String", map.TypeFullName, "#7");
+			Assert.AreEqual ("String", map.TypeName, "#8");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ImportTypeMapping_XsdPrimitive_Base64 ()
+		{
+			string schemaFragment = "<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
+				"<xs:schema xmlns:tns=\"NSBase64\" elementFormDefault=\"qualified\" targetNamespace=\"NSBase64\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">" +
+				"  <xs:element name=\"base64\" type=\"xs:base64\" />" +
+				"</xs:schema>";
+
+			XmlSchemas schemas = new XmlSchemas ();
+			schemas.Add (XmlSchema.Read (new StringReader (schemaFragment), null));
+			XmlSchemaImporter importer = new XmlSchemaImporter (schemas);
+			XmlTypeMapping map = importer.ImportTypeMapping (new XmlQualifiedName ("base64", "NSBase64"));
+
+			Assert.IsNotNull (map, "#1");
+			Assert.AreEqual ("base64", map.ElementName, "#2");
+			Assert.AreEqual ("NSBase64", map.Namespace, "#3");
+			Assert.AreEqual ("System.String", map.TypeFullName, "#4");
+			Assert.AreEqual ("String", map.TypeName, "#5");
+		}
+
+		[Test]
+		public void ImportTypeMapping_XsdPrimitive_Base64Binary ()
+		{
+			XmlSchemas schemas = ExportType (typeof (byte[]));
+			ArrayList qnames = GetXmlQualifiedNames (schemas);
+			Assert.AreEqual (1, qnames.Count, "#1");
+
+			XmlSchemaImporter importer = new XmlSchemaImporter (schemas);
+			XmlTypeMapping map = importer.ImportTypeMapping ((XmlQualifiedName) qnames[0]);
+
+			Assert.IsNotNull (map, "#2");
+			Assert.AreEqual ("base64Binary", map.ElementName, "#3");
+			Assert.AreEqual ("NSByte[]", map.Namespace, "#4");
+			Assert.AreEqual ("System.Byte[]", map.TypeFullName, "#5");
+			Assert.AreEqual ("Byte[]", map.TypeName, "#6");
+		}
+
+		[Test]
 		public void ImportTypeMapping_XsdPrimitive_Boolean ()
 		{
 			XmlSchemas schemas = ExportType (typeof (bool));
@@ -81,9 +149,9 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		public void ImportTypeMapping_XsdPrimitive_Short ()
+		public void ImportTypeMapping_XsdPrimitive_Byte ()
 		{
-			XmlSchemas schemas = ExportType (typeof (short));
+			XmlSchemas schemas = ExportType (typeof (sbyte));
 			ArrayList qnames = GetXmlQualifiedNames (schemas);
 			Assert.AreEqual (1, qnames.Count, "#1");
 
@@ -91,129 +159,73 @@ namespace MonoTests.System.XmlSerialization
 			XmlTypeMapping map = importer.ImportTypeMapping ((XmlQualifiedName) qnames[0]);
 
 			Assert.IsNotNull (map, "#2");
-			Assert.AreEqual ("short", map.ElementName, "#3");
-			Assert.AreEqual ("NSInt16", map.Namespace, "#4");
-			Assert.AreEqual ("System.Int16", map.TypeFullName, "#5");
-			Assert.AreEqual ("Int16", map.TypeName, "#6");
+			Assert.AreEqual ("byte", map.ElementName, "#3");
+			Assert.AreEqual ("NSSByte", map.Namespace, "#4");
+			Assert.AreEqual ("System.SByte", map.TypeFullName, "#5");
+			Assert.AreEqual ("SByte", map.TypeName, "#6");
 		}
 
 		[Test]
-		public void ImportTypeMapping_XsdPrimitive_UnsignedShort ()
+		[Category ("NotWorking")]
+		public void ImportTypeMapping_XsdPrimitive_Char ()
 		{
-			XmlSchemas schemas = ExportType (typeof (ushort));
-			ArrayList qnames = GetXmlQualifiedNames (schemas);
-			Assert.AreEqual (1, qnames.Count, "#1");
+			string schemaFragment = "<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
+				"<xs:schema xmlns:tns=\"NSChar\" elementFormDefault=\"qualified\" targetNamespace=\"NSChar\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">" +
+				"  <xs:element name=\"char\" type=\"xs:char\" />" +
+				"</xs:schema>";
 
+			XmlSchemas schemas = new XmlSchemas ();
+			schemas.Add (XmlSchema.Read (new StringReader (schemaFragment), null));
 			XmlSchemaImporter importer = new XmlSchemaImporter (schemas);
-			XmlTypeMapping map = importer.ImportTypeMapping ((XmlQualifiedName) qnames[0]);
+			XmlTypeMapping map = importer.ImportTypeMapping (new XmlQualifiedName ("char", "NSChar"));
 
-			Assert.IsNotNull (map, "#2");
-			Assert.AreEqual ("unsignedShort", map.ElementName, "#3");
-			Assert.AreEqual ("NSUInt16", map.Namespace, "#4");
-			Assert.AreEqual ("System.UInt16", map.TypeFullName, "#5");
-			Assert.AreEqual ("UInt16", map.TypeName, "#6");
+			Assert.IsNotNull (map, "#A1");
+			Assert.AreEqual ("char", map.ElementName, "#A2");
+			Assert.AreEqual ("NSChar", map.Namespace, "#A3");
+			Assert.AreEqual ("System.String", map.TypeFullName, "#A4");
+			Assert.AreEqual ("String", map.TypeName, "#A5");
+
+#if ONLY_1_1
+			schemas = ExportType (typeof (char));
+			importer = new XmlSchemaImporter (schemas);
+			map = importer.ImportTypeMapping (new XmlQualifiedName ("char", "NSChar"));
+
+			Assert.IsNotNull (map, "#B1");
+			Assert.AreEqual ("char", map.ElementName, "#B2");
+			Assert.AreEqual ("NSChar", map.Namespace, "#B3");
+			Assert.AreEqual ("System.Char", map.TypeFullName, "#B4");
+			Assert.AreEqual ("Char", map.TypeName, "#B5");
+#endif
 		}
 
 		[Test]
-		public void ImportTypeMapping_XsdPrimitive_Int ()
+		[Category ("NotWorking")]
+		public void ImportTypeMapping_XsdPrimitive_Date ()
 		{
-			XmlSchemas schemas = ExportType (typeof (int));
+			string schemaFragment = "<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
+				"<xs:schema xmlns:tns=\"NSDate\" elementFormDefault=\"qualified\" targetNamespace=\"NSDate\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">" +
+				"  <xs:element name=\"date\" type=\"xs:date\" />" +
+				"</xs:schema>";
+
+			XmlSchemas schemas = new XmlSchemas ();
+			schemas.Add (XmlSchema.Read (new StringReader (schemaFragment), null));
+
 			ArrayList qnames = GetXmlQualifiedNames (schemas);
 			Assert.AreEqual (1, qnames.Count, "#1");
+
+			XmlQualifiedName qname = (XmlQualifiedName) qnames[0];
+
+			Assert.AreEqual ("date", qname.Name, "#2");
+			Assert.AreEqual ("NSDate", qname.Namespace, "#3");
 
 			XmlSchemaImporter importer = new XmlSchemaImporter (schemas);
 			XmlTypeMapping map = importer.ImportTypeMapping ((XmlQualifiedName) qnames[0]);
 
-			Assert.IsNotNull (map, "#2");
-			Assert.AreEqual ("int", map.ElementName, "#3");
-			Assert.AreEqual ("NSInt32", map.Namespace, "#4");
-			Assert.AreEqual ("System.Int32", map.TypeFullName, "#5");
-			Assert.AreEqual ("Int32", map.TypeName, "#6");
-		}
-
-		[Test]
-		public void ImportTypeMapping_XsdPrimitive_UnsignedInt ()
-		{
-			XmlSchemas schemas = ExportType (typeof (uint));
-			ArrayList qnames = GetXmlQualifiedNames (schemas);
-			Assert.AreEqual (1, qnames.Count, "#1");
-
-			XmlSchemaImporter importer = new XmlSchemaImporter (schemas);
-			XmlTypeMapping map = importer.ImportTypeMapping ((XmlQualifiedName) qnames[0]);
-
-			Assert.IsNotNull (map, "#2");
-			Assert.AreEqual ("unsignedInt", map.ElementName, "#3");
-			Assert.AreEqual ("NSUInt32", map.Namespace, "#4");
-			Assert.AreEqual ("System.UInt32", map.TypeFullName, "#5");
-			Assert.AreEqual ("UInt32", map.TypeName, "#6");
-		}
-
-		[Test]
-		public void ImportTypeMapping_XsdPrimitive_Long ()
-		{
-			XmlSchemas schemas = ExportType (typeof (long));
-			ArrayList qnames = GetXmlQualifiedNames (schemas);
-			Assert.AreEqual (1, qnames.Count, "#1");
-
-			XmlSchemaImporter importer = new XmlSchemaImporter (schemas);
-			XmlTypeMapping map = importer.ImportTypeMapping ((XmlQualifiedName) qnames[0]);
-
-			Assert.IsNotNull (map, "#2");
-			Assert.AreEqual ("long", map.ElementName, "#3");
-			Assert.AreEqual ("NSInt64", map.Namespace, "#4");
-			Assert.AreEqual ("System.Int64", map.TypeFullName, "#5");
-			Assert.AreEqual ("Int64", map.TypeName, "#6");
-		}
-
-		[Test]
-		public void ImportTypeMapping_XsdPrimitive_UnsignedLong ()
-		{
-			XmlSchemas schemas = ExportType (typeof (ulong));
-			ArrayList qnames = GetXmlQualifiedNames (schemas);
-			Assert.AreEqual (1, qnames.Count, "#1");
-
-			XmlSchemaImporter importer = new XmlSchemaImporter (schemas);
-			XmlTypeMapping map = importer.ImportTypeMapping ((XmlQualifiedName) qnames[0]);
-
-			Assert.IsNotNull (map, "#2");
-			Assert.AreEqual ("unsignedLong", map.ElementName, "#3");
-			Assert.AreEqual ("NSUInt64", map.Namespace, "#4");
-			Assert.AreEqual ("System.UInt64", map.TypeFullName, "#5");
-			Assert.AreEqual ("UInt64", map.TypeName, "#6");
-		}
-
-		[Test]
-		public void ImportTypeMapping_XsdPrimitive_Float ()
-		{
-			XmlSchemas schemas = ExportType (typeof (float));
-			ArrayList qnames = GetXmlQualifiedNames (schemas);
-			Assert.AreEqual (1, qnames.Count, "#1");
-
-			XmlSchemaImporter importer = new XmlSchemaImporter (schemas);
-			XmlTypeMapping map = importer.ImportTypeMapping ((XmlQualifiedName) qnames[0]);
-
-			Assert.IsNotNull (map, "#2");
-			Assert.AreEqual ("float", map.ElementName, "#3");
-			Assert.AreEqual ("NSSingle", map.Namespace, "#4");
-			Assert.AreEqual ("System.Single", map.TypeFullName, "#5");
-			Assert.AreEqual ("Single", map.TypeName, "#6");
-		}
-
-		[Test]
-		public void ImportTypeMapping_XsdPrimitive_Double ()
-		{
-			XmlSchemas schemas = ExportType (typeof (double));
-			ArrayList qnames = GetXmlQualifiedNames (schemas);
-			Assert.AreEqual (1, qnames.Count, "#1");
-
-			XmlSchemaImporter importer = new XmlSchemaImporter (schemas);
-			XmlTypeMapping map = importer.ImportTypeMapping ((XmlQualifiedName) qnames[0]);
-
-			Assert.IsNotNull (map, "#2");
-			Assert.AreEqual ("double", map.ElementName, "#3");
-			Assert.AreEqual ("NSDouble", map.Namespace, "#4");
-			Assert.AreEqual ("System.Double", map.TypeFullName, "#5");
-			Assert.AreEqual ("Double", map.TypeName, "#6");
+			Assert.IsNotNull (map, "#4");
+			Assert.AreEqual ("date", map.ElementName, "#5");
+			Assert.AreEqual ("NSDate", map.Namespace, "#6");
+			Assert.AreEqual ("System.DateTime", map.TypeFullName, "#7");
+			Assert.AreEqual ("DateTime", map.TypeName, "#8");
 		}
 
 		[Test]
@@ -251,9 +263,9 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		public void ImportTypeMapping_XsdPrimitive_QName ()
+		public void ImportTypeMapping_XsdPrimitive_Double ()
 		{
-			XmlSchemas schemas = ExportType (typeof (XmlQualifiedName));
+			XmlSchemas schemas = ExportType (typeof (double));
 			ArrayList qnames = GetXmlQualifiedNames (schemas);
 			Assert.AreEqual (1, qnames.Count, "#1");
 
@@ -261,96 +273,10 @@ namespace MonoTests.System.XmlSerialization
 			XmlTypeMapping map = importer.ImportTypeMapping ((XmlQualifiedName) qnames[0]);
 
 			Assert.IsNotNull (map, "#2");
-			Assert.AreEqual ("QName", map.ElementName, "#3");
-			Assert.AreEqual ("NSXmlQualifiedName", map.Namespace, "#4");
-			Assert.AreEqual ("System.Xml.XmlQualifiedName", map.TypeFullName, "#5");
-			Assert.AreEqual ("XmlQualifiedName", map.TypeName, "#6");
-		}
-
-		[Test]
-		public void ImportTypeMapping_XsdPrimitive_String ()
-		{
-			XmlSchemas schemas = ExportType (typeof (string));
-			ArrayList qnames = GetXmlQualifiedNames (schemas);
-			Assert.AreEqual (1, qnames.Count, "#1");
-
-			XmlSchemaImporter importer = new XmlSchemaImporter (schemas);
-			XmlTypeMapping map = importer.ImportTypeMapping ((XmlQualifiedName) qnames[0]);
-
-			Assert.IsNotNull (map, "#2");
-			Assert.AreEqual ("string", map.ElementName, "#3");
-			Assert.AreEqual ("NSString", map.Namespace, "#4");
-			Assert.AreEqual ("System.String", map.TypeFullName, "#5");
-			Assert.AreEqual ("String", map.TypeName, "#6");
-		}
-
-		[Test]
-		[Category ("NotWorking")]
-		[ExpectedException (typeof (XmlSchemaException))] // Type 'http://microsoft.com/wsdl/types/:guid' is not declared
-		public void ImportTypeMapping_XsdPrimitive_Guid ()
-		{
-			XmlSchemas schemas = ExportType (typeof (Guid));
-			GetXmlQualifiedNames (schemas);
-		}
-
-		[Test]
-		public void ImportTypeMapping_XsdPrimitive_UnsignedByte ()
-		{
-			XmlSchemas schemas = ExportType (typeof (byte));
-			ArrayList qnames = GetXmlQualifiedNames (schemas);
-			Assert.AreEqual (1, qnames.Count, "#1");
-
-			XmlSchemaImporter importer = new XmlSchemaImporter (schemas);
-			XmlTypeMapping map = importer.ImportTypeMapping ((XmlQualifiedName) qnames[0]);
-
-			Assert.IsNotNull (map, "#2");
-			Assert.AreEqual ("unsignedByte", map.ElementName, "#3");
-			Assert.AreEqual ("NSByte", map.Namespace, "#4");
-			Assert.AreEqual ("System.Byte", map.TypeFullName, "#5");
-			Assert.AreEqual ("Byte", map.TypeName, "#6");
-		}
-
-		[Test]
-		public void ImportTypeMapping_XsdPrimitive_Byte ()
-		{
-			XmlSchemas schemas = ExportType (typeof (sbyte));
-			ArrayList qnames = GetXmlQualifiedNames (schemas);
-			Assert.AreEqual (1, qnames.Count, "#1");
-
-			XmlSchemaImporter importer = new XmlSchemaImporter (schemas);
-			XmlTypeMapping map = importer.ImportTypeMapping ((XmlQualifiedName) qnames[0]);
-
-			Assert.IsNotNull (map, "#2");
-			Assert.AreEqual ("byte", map.ElementName, "#3");
-			Assert.AreEqual ("NSSByte", map.Namespace, "#4");
-			Assert.AreEqual ("System.SByte", map.TypeFullName, "#5");
-			Assert.AreEqual ("SByte", map.TypeName, "#6");
-		}
-
-		[Test]
-		[Category ("NotWorking")]
-		[ExpectedException (typeof (XmlSchemaException))] // Type 'http://microsoft.com/wsdl/types/:char' is not declared
-		public void ImportTypeMapping_XsdPrimitive_Char ()
-		{
-			XmlSchemas schemas = ExportType (typeof (char));
-			GetXmlQualifiedNames (schemas);
-		}
-
-		[Test]
-		public void ImportTypeMapping_XsdPrimitive_Base64Binary ()
-		{
-			XmlSchemas schemas = ExportType (typeof (byte[]));
-			ArrayList qnames = GetXmlQualifiedNames (schemas);
-			Assert.AreEqual (1, qnames.Count, "#1");
-
-			XmlSchemaImporter importer = new XmlSchemaImporter (schemas);
-			XmlTypeMapping map = importer.ImportTypeMapping ((XmlQualifiedName) qnames[0]);
-
-			Assert.IsNotNull (map, "#2");
-			Assert.AreEqual ("base64Binary", map.ElementName, "#3");
-			Assert.AreEqual ("NSByte[]", map.Namespace, "#4");
-			Assert.AreEqual ("System.Byte[]", map.TypeFullName, "#5");
-			Assert.AreEqual ("Byte[]", map.TypeName, "#6");
+			Assert.AreEqual ("double", map.ElementName, "#3");
+			Assert.AreEqual ("NSDouble", map.Namespace, "#4");
+			Assert.AreEqual ("System.Double", map.TypeFullName, "#5");
+			Assert.AreEqual ("Double", map.TypeName, "#6");
 		}
 
 		[Test]
@@ -385,11 +311,11 @@ namespace MonoTests.System.XmlSerialization
 
 		[Test]
 		[Category ("NotWorking")]
-		public void ImportTypeMapping_XsdPrimitive_Date ()
+		public void ImportTypeMapping_XsdPrimitive_ENTITIES ()
 		{
 			string schemaFragment = "<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
-				"<xs:schema xmlns:tns=\"NSDate\" elementFormDefault=\"qualified\" targetNamespace=\"NSDate\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">" +
-				"  <xs:element name=\"date\" type=\"xs:date\" />" +
+				"<xs:schema xmlns:tns=\"NSENTITIES\" elementFormDefault=\"qualified\" targetNamespace=\"NSENTITIES\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">" +
+				"  <xs:element name=\"ENTITIES\" type=\"xs:ENTITIES\" />" +
 				"</xs:schema>";
 
 			XmlSchemas schemas = new XmlSchemas ();
@@ -400,19 +326,558 @@ namespace MonoTests.System.XmlSerialization
 
 			XmlQualifiedName qname = (XmlQualifiedName) qnames[0];
 
-			Assert.AreEqual ("date", qname.Name, "#2");
-			Assert.AreEqual ("NSDate", qname.Namespace, "#3");
+			Assert.AreEqual ("ENTITIES", qname.Name, "#2");
+			Assert.AreEqual ("NSENTITIES", qname.Namespace, "#3");
 
 			XmlSchemaImporter importer = new XmlSchemaImporter (schemas);
 			XmlTypeMapping map = importer.ImportTypeMapping ((XmlQualifiedName) qnames[0]);
 
 			Assert.IsNotNull (map, "#4");
-			Assert.AreEqual ("date", map.ElementName, "#5");
-			Assert.AreEqual ("NSDate", map.Namespace, "#6");
+			Assert.AreEqual ("ENTITIES", map.ElementName, "#5");
+			Assert.AreEqual ("NSENTITIES", map.Namespace, "#6");
+			Assert.AreEqual ("System.String", map.TypeFullName, "#7");
+			Assert.AreEqual ("String", map.TypeName, "#8");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ImportTypeMapping_XsdPrimitive_ENTITY ()
+		{
+			string schemaFragment = "<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
+				"<xs:schema xmlns:tns=\"NSENTITY\" elementFormDefault=\"qualified\" targetNamespace=\"NSENTITY\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">" +
+				"  <xs:element name=\"ENTITY\" type=\"xs:ENTITY\" />" +
+				"</xs:schema>";
+
+			XmlSchemas schemas = new XmlSchemas ();
+			schemas.Add (XmlSchema.Read (new StringReader (schemaFragment), null));
+
+			ArrayList qnames = GetXmlQualifiedNames (schemas);
+			Assert.AreEqual (1, qnames.Count, "#1");
+
+			XmlQualifiedName qname = (XmlQualifiedName) qnames[0];
+
+			Assert.AreEqual ("ENTITY", qname.Name, "#2");
+			Assert.AreEqual ("NSENTITY", qname.Namespace, "#3");
+
+			XmlSchemaImporter importer = new XmlSchemaImporter (schemas);
+			XmlTypeMapping map = importer.ImportTypeMapping ((XmlQualifiedName) qnames[0]);
+
+			Assert.IsNotNull (map, "#4");
+			Assert.AreEqual ("ENTITY", map.ElementName, "#5");
+			Assert.AreEqual ("NSENTITY", map.Namespace, "#6");
+			Assert.AreEqual ("System.String", map.TypeFullName, "#7");
+			Assert.AreEqual ("String", map.TypeName, "#8");
+		}
+
+		[Test]
+		public void ImportTypeMapping_XsdPrimitive_Float ()
+		{
+			XmlSchemas schemas = ExportType (typeof (float));
+			ArrayList qnames = GetXmlQualifiedNames (schemas);
+			Assert.AreEqual (1, qnames.Count, "#1");
+
+			XmlSchemaImporter importer = new XmlSchemaImporter (schemas);
+			XmlTypeMapping map = importer.ImportTypeMapping ((XmlQualifiedName) qnames[0]);
+
+			Assert.IsNotNull (map, "#2");
+			Assert.AreEqual ("float", map.ElementName, "#3");
+			Assert.AreEqual ("NSSingle", map.Namespace, "#4");
+			Assert.AreEqual ("System.Single", map.TypeFullName, "#5");
+			Assert.AreEqual ("Single", map.TypeName, "#6");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ImportTypeMapping_XsdPrimitive_GDay ()
+		{
+			string schemaFragment = "<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
+				"<xs:schema xmlns:tns=\"NSGDay\" elementFormDefault=\"qualified\" targetNamespace=\"NSGDay\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">" +
+				"  <xs:element name=\"gDay\" type=\"xs:gDay\" />" +
+				"</xs:schema>";
+
+			XmlSchemas schemas = new XmlSchemas ();
+			schemas.Add (XmlSchema.Read (new StringReader (schemaFragment), null));
+
+			ArrayList qnames = GetXmlQualifiedNames (schemas);
+			Assert.AreEqual (1, qnames.Count, "#1");
+
+			XmlQualifiedName qname = (XmlQualifiedName) qnames[0];
+
+			Assert.AreEqual ("gDay", qname.Name, "#2");
+			Assert.AreEqual ("NSGDay", qname.Namespace, "#3");
+
+			XmlSchemaImporter importer = new XmlSchemaImporter (schemas);
+			XmlTypeMapping map = importer.ImportTypeMapping ((XmlQualifiedName) qnames[0]);
+
+			Assert.IsNotNull (map, "#4");
+			Assert.AreEqual ("gDay", map.ElementName, "#5");
+			Assert.AreEqual ("NSGDay", map.Namespace, "#6");
+			Assert.AreEqual ("System.String", map.TypeFullName, "#7");
+			Assert.AreEqual ("String", map.TypeName, "#8");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ImportTypeMapping_XsdPrimitive_GMonthDay ()
+		{
+			string schemaFragment = "<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
+				"<xs:schema xmlns:tns=\"NSGMonthDay\" elementFormDefault=\"qualified\" targetNamespace=\"NSGMonthDay\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">" +
+				"  <xs:element name=\"gMonthDay\" type=\"xs:gMonthDay\" />" +
+				"</xs:schema>";
+
+			XmlSchemas schemas = new XmlSchemas ();
+			schemas.Add (XmlSchema.Read (new StringReader (schemaFragment), null));
+
+			ArrayList qnames = GetXmlQualifiedNames (schemas);
+			Assert.AreEqual (1, qnames.Count, "#1");
+
+			XmlQualifiedName qname = (XmlQualifiedName) qnames[0];
+
+			Assert.AreEqual ("gMonthDay", qname.Name, "#2");
+			Assert.AreEqual ("NSGMonthDay", qname.Namespace, "#3");
+
+			XmlSchemaImporter importer = new XmlSchemaImporter (schemas);
+			XmlTypeMapping map = importer.ImportTypeMapping ((XmlQualifiedName) qnames[0]);
+
+			Assert.IsNotNull (map, "#4");
+			Assert.AreEqual ("gMonthDay", map.ElementName, "#5");
+			Assert.AreEqual ("NSGMonthDay", map.Namespace, "#6");
+			Assert.AreEqual ("System.String", map.TypeFullName, "#7");
+			Assert.AreEqual ("String", map.TypeName, "#8");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ImportTypeMapping_XsdPrimitive_Guid ()
+		{
+			string schemaFragment = "<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
+				"<xs:schema xmlns:tns=\"NSGuid\" elementFormDefault=\"qualified\" targetNamespace=\"NSGuid\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">" +
+				"  <xs:element name=\"guid\" type=\"xs:guid\" />" +
+				"</xs:schema>";
+
+			XmlSchemas schemas = new XmlSchemas ();
+			schemas.Add (XmlSchema.Read (new StringReader (schemaFragment), null));
+			XmlSchemaImporter importer = new XmlSchemaImporter (schemas);
+			XmlTypeMapping map = importer.ImportTypeMapping (new XmlQualifiedName ("guid", "NSGuid"));
+
+			Assert.IsNotNull (map, "#A1");
+			Assert.AreEqual ("guid", map.ElementName, "#A2");
+			Assert.AreEqual ("NSGuid", map.Namespace, "#A3");
+			Assert.AreEqual ("System.String", map.TypeFullName, "#A4");
+			Assert.AreEqual ("String", map.TypeName, "#A5");
+
+#if ONLY_1_1
+			schemas = ExportType (typeof (Guid));
+			importer = new XmlSchemaImporter (schemas);
+			map = importer.ImportTypeMapping (new XmlQualifiedName ("guid", "NSGuid"));
+
+			Assert.IsNotNull (map, "#B1");
+			Assert.AreEqual ("guid", map.ElementName, "#B2");
+			Assert.AreEqual ("NSGuid", map.Namespace, "#B3");
+			Assert.AreEqual ("System.Guid", map.TypeFullName, "#B4");
+			Assert.AreEqual ("Guid", map.TypeName, "#B5");
+#endif
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ImportTypeMapping_XsdPrimitive_GYear ()
+		{
+			string schemaFragment = "<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
+				"<xs:schema xmlns:tns=\"NSGYear\" elementFormDefault=\"qualified\" targetNamespace=\"NSGYear\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">" +
+				"  <xs:element name=\"gYear\" type=\"xs:gYear\" />" +
+				"</xs:schema>";
+
+			XmlSchemas schemas = new XmlSchemas ();
+			schemas.Add (XmlSchema.Read (new StringReader (schemaFragment), null));
+
+			ArrayList qnames = GetXmlQualifiedNames (schemas);
+			Assert.AreEqual (1, qnames.Count, "#1");
+
+			XmlQualifiedName qname = (XmlQualifiedName) qnames[0];
+
+			Assert.AreEqual ("gYear", qname.Name, "#2");
+			Assert.AreEqual ("NSGYear", qname.Namespace, "#3");
+
+			XmlSchemaImporter importer = new XmlSchemaImporter (schemas);
+			XmlTypeMapping map = importer.ImportTypeMapping ((XmlQualifiedName) qnames[0]);
+
+			Assert.IsNotNull (map, "#4");
+			Assert.AreEqual ("gYear", map.ElementName, "#5");
+			Assert.AreEqual ("NSGYear", map.Namespace, "#6");
+			Assert.AreEqual ("System.String", map.TypeFullName, "#7");
+			Assert.AreEqual ("String", map.TypeName, "#8");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ImportTypeMapping_XsdPrimitive_GYearMonth ()
+		{
+			string schemaFragment = "<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
+				"<xs:schema xmlns:tns=\"NSGYearMonth\" elementFormDefault=\"qualified\" targetNamespace=\"NSGYearMonth\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">" +
+				"  <xs:element name=\"gYearMonth\" type=\"xs:gYearMonth\" />" +
+				"</xs:schema>";
+
+			XmlSchemas schemas = new XmlSchemas ();
+			schemas.Add (XmlSchema.Read (new StringReader (schemaFragment), null));
+
+			ArrayList qnames = GetXmlQualifiedNames (schemas);
+			Assert.AreEqual (1, qnames.Count, "#1");
+
+			XmlQualifiedName qname = (XmlQualifiedName) qnames[0];
+
+			Assert.AreEqual ("gYearMonth", qname.Name, "#2");
+			Assert.AreEqual ("NSGYearMonth", qname.Namespace, "#3");
+
+			XmlSchemaImporter importer = new XmlSchemaImporter (schemas);
+			XmlTypeMapping map = importer.ImportTypeMapping ((XmlQualifiedName) qnames[0]);
+
+			Assert.IsNotNull (map, "#4");
+			Assert.AreEqual ("gYearMonth", map.ElementName, "#5");
+			Assert.AreEqual ("NSGYearMonth", map.Namespace, "#6");
+			Assert.AreEqual ("System.String", map.TypeFullName, "#7");
+			Assert.AreEqual ("String", map.TypeName, "#8");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ImportTypeMapping_XsdPrimitive_HexBinary ()
+		{
+			string schemaFragment = "<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
+				"<xs:schema xmlns:tns=\"NSHexBinary\" elementFormDefault=\"qualified\" targetNamespace=\"NSHexBinary\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">" +
+				"  <xs:element name=\"hexBinary\" type=\"xs:hexBinary\" />" +
+				"</xs:schema>";
+
+			XmlSchemas schemas = new XmlSchemas ();
+			schemas.Add (XmlSchema.Read (new StringReader (schemaFragment), null));
+
+			ArrayList qnames = GetXmlQualifiedNames (schemas);
+			Assert.AreEqual (1, qnames.Count, "#1");
+
+			XmlQualifiedName qname = (XmlQualifiedName) qnames[0];
+
+			Assert.AreEqual ("hexBinary", qname.Name, "#2");
+			Assert.AreEqual ("NSHexBinary", qname.Namespace, "#3");
+
+			XmlSchemaImporter importer = new XmlSchemaImporter (schemas);
+			XmlTypeMapping map = importer.ImportTypeMapping ((XmlQualifiedName) qnames[0]);
+
+			Assert.IsNotNull (map, "#4");
+			Assert.AreEqual ("hexBinary", map.ElementName, "#5");
+			Assert.AreEqual ("NSHexBinary", map.Namespace, "#6");
+			Assert.AreEqual ("System.Byte[]", map.TypeFullName, "#7");
+			Assert.AreEqual ("Byte[]", map.TypeName, "#8");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ImportTypeMapping_XsdPrimitive_IDREFS ()
+		{
+			string schemaFragment = "<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
+				"<xs:schema xmlns:tns=\"NSIDREFS\" elementFormDefault=\"qualified\" targetNamespace=\"NSIDREFS\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">" +
+				"  <xs:element name=\"IDREFS\" type=\"xs:IDREFS\" />" +
+				"</xs:schema>";
+
+			XmlSchemas schemas = new XmlSchemas ();
+			schemas.Add (XmlSchema.Read (new StringReader (schemaFragment), null));
+
+			ArrayList qnames = GetXmlQualifiedNames (schemas);
+			Assert.AreEqual (1, qnames.Count, "#1");
+
+			XmlQualifiedName qname = (XmlQualifiedName) qnames[0];
+
+			Assert.AreEqual ("IDREFS", qname.Name, "#2");
+			Assert.AreEqual ("NSIDREFS", qname.Namespace, "#3");
+
+			XmlSchemaImporter importer = new XmlSchemaImporter (schemas);
+			XmlTypeMapping map = importer.ImportTypeMapping ((XmlQualifiedName) qnames[0]);
+
+			Assert.IsNotNull (map, "#4");
+			Assert.AreEqual ("IDREFS", map.ElementName, "#5");
+			Assert.AreEqual ("NSIDREFS", map.Namespace, "#6");
+			Assert.AreEqual ("System.String", map.TypeFullName, "#7");
+			Assert.AreEqual ("String", map.TypeName, "#8");
+		}
+
+		[Test]
+		public void ImportTypeMapping_XsdPrimitive_Int ()
+		{
+			XmlSchemas schemas = ExportType (typeof (int));
+			ArrayList qnames = GetXmlQualifiedNames (schemas);
+			Assert.AreEqual (1, qnames.Count, "#1");
+
+			XmlSchemaImporter importer = new XmlSchemaImporter (schemas);
+			XmlTypeMapping map = importer.ImportTypeMapping ((XmlQualifiedName) qnames[0]);
+
+			Assert.IsNotNull (map, "#2");
+			Assert.AreEqual ("int", map.ElementName, "#3");
+			Assert.AreEqual ("NSInt32", map.Namespace, "#4");
+			Assert.AreEqual ("System.Int32", map.TypeFullName, "#5");
+			Assert.AreEqual ("Int32", map.TypeName, "#6");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ImportTypeMapping_XsdPrimitive_Integer ()
+		{
+			string schemaFragment = "<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
+				"<xs:schema xmlns:tns=\"NSInteger\" elementFormDefault=\"qualified\" targetNamespace=\"NSInteger\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">" +
+				"  <xs:element name=\"integer\" type=\"xs:integer\" />" +
+				"</xs:schema>";
+
+			XmlSchemas schemas = new XmlSchemas ();
+			schemas.Add (XmlSchema.Read (new StringReader (schemaFragment), null));
+
+			ArrayList qnames = GetXmlQualifiedNames (schemas);
+			Assert.AreEqual (1, qnames.Count, "#1");
+
+			XmlQualifiedName qname = (XmlQualifiedName) qnames[0];
+
+			Assert.AreEqual ("integer", qname.Name, "#2");
+			Assert.AreEqual ("NSInteger", qname.Namespace, "#3");
+
+			XmlSchemaImporter importer = new XmlSchemaImporter (schemas);
+			XmlTypeMapping map = importer.ImportTypeMapping ((XmlQualifiedName) qnames[0]);
+
+			Assert.IsNotNull (map, "#4");
+			Assert.AreEqual ("integer", map.ElementName, "#5");
+			Assert.AreEqual ("NSInteger", map.Namespace, "#6");
+			Assert.AreEqual ("System.String", map.TypeFullName, "#7");
+			Assert.AreEqual ("String", map.TypeName, "#8");
+		}
+
+		[Test]
+		public void ImportTypeMapping_XsdPrimitive_Long ()
+		{
+			XmlSchemas schemas = ExportType (typeof (long));
+			ArrayList qnames = GetXmlQualifiedNames (schemas);
+			Assert.AreEqual (1, qnames.Count, "#1");
+
+			XmlSchemaImporter importer = new XmlSchemaImporter (schemas);
+			XmlTypeMapping map = importer.ImportTypeMapping ((XmlQualifiedName) qnames[0]);
+
+			Assert.IsNotNull (map, "#2");
+			Assert.AreEqual ("long", map.ElementName, "#3");
+			Assert.AreEqual ("NSInt64", map.Namespace, "#4");
+			Assert.AreEqual ("System.Int64", map.TypeFullName, "#5");
+			Assert.AreEqual ("Int64", map.TypeName, "#6");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ImportTypeMapping_XsdPrimitive_Month ()
+		{
+			string schemaFragment = "<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
+				"<xs:schema xmlns:tns=\"NSMonth\" elementFormDefault=\"qualified\" targetNamespace=\"NSMonth\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">" +
+				"  <xs:element name=\"month\" type=\"xs:month\" />" +
+				"</xs:schema>";
+
+			XmlSchemas schemas = new XmlSchemas ();
+			schemas.Add (XmlSchema.Read (new StringReader (schemaFragment), null));
+
+			XmlSchemaImporter importer = new XmlSchemaImporter (schemas);
+			XmlTypeMapping map = importer.ImportTypeMapping (new XmlQualifiedName ("month", "NSMonth"));
+
+			Assert.IsNotNull (map, "#4");
+			Assert.AreEqual ("month", map.ElementName, "#5");
+			Assert.AreEqual ("NSMonth", map.Namespace, "#6");
+			Assert.AreEqual ("System.String", map.TypeFullName, "#7");
+			Assert.AreEqual ("String", map.TypeName, "#8");
+		}
+
+		[Test]
+		public void ImportTypeMapping_XsdPrimitive_QName ()
+		{
+			XmlSchemas schemas = ExportType (typeof (XmlQualifiedName));
+			ArrayList qnames = GetXmlQualifiedNames (schemas);
+			Assert.AreEqual (1, qnames.Count, "#1");
+
+			XmlSchemaImporter importer = new XmlSchemaImporter (schemas);
+			XmlTypeMapping map = importer.ImportTypeMapping ((XmlQualifiedName) qnames[0]);
+
+			Assert.IsNotNull (map, "#2");
+			Assert.AreEqual ("QName", map.ElementName, "#3");
+			Assert.AreEqual ("NSXmlQualifiedName", map.Namespace, "#4");
+			Assert.AreEqual ("System.Xml.XmlQualifiedName", map.TypeFullName, "#5");
+			Assert.AreEqual ("XmlQualifiedName", map.TypeName, "#6");
+		}
+
+		[Test]
+		public void ImportTypeMapping_XsdPrimitive_Short ()
+		{
+			XmlSchemas schemas = ExportType (typeof (short));
+			ArrayList qnames = GetXmlQualifiedNames (schemas);
+			Assert.AreEqual (1, qnames.Count, "#1");
+
+			XmlSchemaImporter importer = new XmlSchemaImporter (schemas);
+			XmlTypeMapping map = importer.ImportTypeMapping ((XmlQualifiedName) qnames[0]);
+
+			Assert.IsNotNull (map, "#2");
+			Assert.AreEqual ("short", map.ElementName, "#3");
+			Assert.AreEqual ("NSInt16", map.Namespace, "#4");
+			Assert.AreEqual ("System.Int16", map.TypeFullName, "#5");
+			Assert.AreEqual ("Int16", map.TypeName, "#6");
+		}
+
+		[Test]
+		public void ImportTypeMapping_XsdPrimitive_String ()
+		{
+			XmlSchemas schemas = ExportType (typeof (string));
+			ArrayList qnames = GetXmlQualifiedNames (schemas);
+			Assert.AreEqual (1, qnames.Count, "#1");
+
+			XmlSchemaImporter importer = new XmlSchemaImporter (schemas);
+			XmlTypeMapping map = importer.ImportTypeMapping ((XmlQualifiedName) qnames[0]);
+
+			Assert.IsNotNull (map, "#2");
+			Assert.AreEqual ("string", map.ElementName, "#3");
+			Assert.AreEqual ("NSString", map.Namespace, "#4");
+			Assert.AreEqual ("System.String", map.TypeFullName, "#5");
+			Assert.AreEqual ("String", map.TypeName, "#6");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ImportTypeMapping_XsdPrimitive_Time ()
+		{
+			string schemaFragment = "<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
+				"<xs:schema xmlns:tns=\"NSTime\" elementFormDefault=\"qualified\" targetNamespace=\"NSTime\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">" +
+				"  <xs:element name=\"time\" type=\"xs:time\" />" +
+				"</xs:schema>";
+
+			XmlSchemas schemas = new XmlSchemas ();
+			schemas.Add (XmlSchema.Read (new StringReader (schemaFragment), null));
+
+			ArrayList qnames = GetXmlQualifiedNames (schemas);
+			Assert.AreEqual (1, qnames.Count, "#1");
+
+			XmlQualifiedName qname = (XmlQualifiedName) qnames[0];
+
+			Assert.AreEqual ("time", qname.Name, "#2");
+			Assert.AreEqual ("NSTime", qname.Namespace, "#3");
+
+			XmlSchemaImporter importer = new XmlSchemaImporter (schemas);
+			XmlTypeMapping map = importer.ImportTypeMapping ((XmlQualifiedName) qnames[0]);
+
+			Assert.IsNotNull (map, "#4");
+			Assert.AreEqual ("time", map.ElementName, "#5");
+			Assert.AreEqual ("NSTime", map.Namespace, "#6");
 			Assert.AreEqual ("System.DateTime", map.TypeFullName, "#7");
 			Assert.AreEqual ("DateTime", map.TypeName, "#8");
 		}
-		
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ImportTypeMapping_XsdPrimitive_TimeInstant ()
+		{
+			string schemaFragment = "<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
+				"<xs:schema xmlns:tns=\"NSTimeInstant\" elementFormDefault=\"qualified\" targetNamespace=\"NSTimeInstant\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">" +
+				"  <xs:element name=\"timeInstant\" type=\"xs:timeInstant\" />" +
+				"</xs:schema>";
+
+			XmlSchemas schemas = new XmlSchemas ();
+			schemas.Add (XmlSchema.Read (new StringReader (schemaFragment), null));
+
+			XmlSchemaImporter importer = new XmlSchemaImporter (schemas);
+			XmlTypeMapping map = importer.ImportTypeMapping (new XmlQualifiedName ("timeInstant", "NSTimeInstant"));
+
+			Assert.IsNotNull (map, "#4");
+			Assert.AreEqual ("timeInstant", map.ElementName, "#5");
+			Assert.AreEqual ("NSTimeInstant", map.Namespace, "#6");
+			Assert.AreEqual ("System.String", map.TypeFullName, "#7");
+			Assert.AreEqual ("String", map.TypeName, "#8");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ImportTypeMapping_XsdPrimitive_TimePeriod ()
+		{
+			string schemaFragment = "<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
+				"<xs:schema xmlns:tns=\"NSTimePeriod\" elementFormDefault=\"qualified\" targetNamespace=\"NSTimePeriod\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">" +
+				"  <xs:element name=\"timePeriod\" type=\"xs:timePeriod\" />" +
+				"</xs:schema>";
+
+			XmlSchemas schemas = new XmlSchemas ();
+			schemas.Add (XmlSchema.Read (new StringReader (schemaFragment), null));
+
+			XmlSchemaImporter importer = new XmlSchemaImporter (schemas);
+			XmlTypeMapping map = importer.ImportTypeMapping (new XmlQualifiedName ("timePeriod", "NSTimePeriod"));
+
+			Assert.IsNotNull (map, "#4");
+			Assert.AreEqual ("timePeriod", map.ElementName, "#5");
+			Assert.AreEqual ("NSTimePeriod", map.Namespace, "#6");
+			Assert.AreEqual ("System.String", map.TypeFullName, "#7");
+			Assert.AreEqual ("String", map.TypeName, "#8");
+		}
+
+		[Test]
+		public void ImportTypeMapping_XsdPrimitive_UnsignedByte ()
+		{
+			XmlSchemas schemas = ExportType (typeof (byte));
+			ArrayList qnames = GetXmlQualifiedNames (schemas);
+			Assert.AreEqual (1, qnames.Count, "#1");
+
+			XmlSchemaImporter importer = new XmlSchemaImporter (schemas);
+			XmlTypeMapping map = importer.ImportTypeMapping ((XmlQualifiedName) qnames[0]);
+
+			Assert.IsNotNull (map, "#2");
+			Assert.AreEqual ("unsignedByte", map.ElementName, "#3");
+			Assert.AreEqual ("NSByte", map.Namespace, "#4");
+			Assert.AreEqual ("System.Byte", map.TypeFullName, "#5");
+			Assert.AreEqual ("Byte", map.TypeName, "#6");
+		}
+
+		[Test]
+		public void ImportTypeMapping_XsdPrimitive_UnsignedInt ()
+		{
+			XmlSchemas schemas = ExportType (typeof (uint));
+			ArrayList qnames = GetXmlQualifiedNames (schemas);
+			Assert.AreEqual (1, qnames.Count, "#1");
+
+			XmlSchemaImporter importer = new XmlSchemaImporter (schemas);
+			XmlTypeMapping map = importer.ImportTypeMapping ((XmlQualifiedName) qnames[0]);
+
+			Assert.IsNotNull (map, "#2");
+			Assert.AreEqual ("unsignedInt", map.ElementName, "#3");
+			Assert.AreEqual ("NSUInt32", map.Namespace, "#4");
+			Assert.AreEqual ("System.UInt32", map.TypeFullName, "#5");
+			Assert.AreEqual ("UInt32", map.TypeName, "#6");
+		}
+
+		[Test]
+		public void ImportTypeMapping_XsdPrimitive_UnsignedLong ()
+		{
+			XmlSchemas schemas = ExportType (typeof (ulong));
+			ArrayList qnames = GetXmlQualifiedNames (schemas);
+			Assert.AreEqual (1, qnames.Count, "#1");
+
+			XmlSchemaImporter importer = new XmlSchemaImporter (schemas);
+			XmlTypeMapping map = importer.ImportTypeMapping ((XmlQualifiedName) qnames[0]);
+
+			Assert.IsNotNull (map, "#2");
+			Assert.AreEqual ("unsignedLong", map.ElementName, "#3");
+			Assert.AreEqual ("NSUInt64", map.Namespace, "#4");
+			Assert.AreEqual ("System.UInt64", map.TypeFullName, "#5");
+			Assert.AreEqual ("UInt64", map.TypeName, "#6");
+		}
+
+		[Test]
+		public void ImportTypeMapping_XsdPrimitive_UnsignedShort ()
+		{
+			XmlSchemas schemas = ExportType (typeof (ushort));
+			ArrayList qnames = GetXmlQualifiedNames (schemas);
+			Assert.AreEqual (1, qnames.Count, "#1");
+
+			XmlSchemaImporter importer = new XmlSchemaImporter (schemas);
+			XmlTypeMapping map = importer.ImportTypeMapping ((XmlQualifiedName) qnames[0]);
+
+			Assert.IsNotNull (map, "#2");
+			Assert.AreEqual ("unsignedShort", map.ElementName, "#3");
+			Assert.AreEqual ("NSUInt16", map.Namespace, "#4");
+			Assert.AreEqual ("System.UInt16", map.TypeFullName, "#5");
+			Assert.AreEqual ("UInt16", map.TypeName, "#6");
+		}
+
 		[Test]
 		public void ImportTypeMapping_EnumSimpleContent ()
 		{
