@@ -1,3 +1,12 @@
+2006-03-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RegionDataTest.cs: Add test cases for GetRegionData when a region is
+	path-based (using bitmaps in libgdiplus) and for regions that had a 
+	binary operations applied (i.e. using a path tree in libgdiplus).
+	* RegionNonRectTest.cs: Add test cases for GetRegionScans and all
+	binary operators (Union, Intersection, Complement, Exclude and Xor)
+	on path based regions (using bitmaps in libgdiplus).
+
 2006-02-29  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* TestFont.cs: LOGFONT must be CharSet=Auto to make sure we have

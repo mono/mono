@@ -41,12 +41,20 @@ namespace MonoTests.System.Drawing {
 
 		private Bitmap bitmap;
 		private Graphics graphic;
+		private GraphicsPath sp1;
+		private GraphicsPath sp2;
 
 		[TestFixtureSetUp]
 		public void FixtureSetUp ()
 		{
 			bitmap = new Bitmap (10, 10);
 			graphic = Graphics.FromImage (bitmap);
+
+			sp1 = new GraphicsPath ();
+			sp1.AddPolygon (new Point[4] { new Point (0, 0), new Point (3, 0), new Point (3, 3), new Point (0, 3) });
+
+			sp2 = new GraphicsPath ();
+			sp2.AddPolygon (new Point[4] { new Point (2, 2), new Point (5, 2), new Point (5, 5), new Point (2, 5) });
 		}
 
 		[Test]
@@ -92,6 +100,35 @@ namespace MonoTests.System.Drawing {
 			GraphicsPath path = new GraphicsPath ();
 			path.AddCurve (new Point[2] { new Point (1, 1), new Point (2, 2) });
 			Region r = new Region (path);
+			RegionData data = r.GetRegionData ();
+			Assert.IsNotNull (data.Data, "Data");
+			Region region = new Region (data);
+			Assert.IsTrue (r.GetBounds (graphic).Equals (region.GetBounds (graphic)), "Bounds");
+		}
+
+		[Test]
+		public void CombinedPathRegion ()
+		{
+			// note: seems identical to PathRegion but it test another code path inside libgdiplus
+			Region r = new Region (sp1);
+			r.Xor (sp2);
+			RegionData data = r.GetRegionData ();
+			Assert.IsNotNull (data.Data, "Data");
+			Region region = new Region (data);
+			Assert.IsTrue (r.GetBounds (graphic).Equals (region.GetBounds (graphic)), "Bounds");
+		}
+
+		[Test]
+		public void MultiCombinedPathRegion ()
+		{
+			// note: seems identical to PathRegion but it test another code path inside libgdiplus
+			Region r1 = new Region (sp1);
+			r1.Xor (sp2);
+			Region r2 = new Region (sp2);
+			r2.Complement (sp1);
+
+			Region r = r1.Clone ();
+			r.Union (r2);
 			RegionData data = r.GetRegionData ();
 			Assert.IsNotNull (data.Data, "Data");
 			Region region = new Region (data);
