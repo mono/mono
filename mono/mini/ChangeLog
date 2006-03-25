@@ -1,3 +1,7 @@
+2006-03-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* exceptions-sparc.c: Applied patch from David S. Miller  <davem@sunset.davemloft.net>: Implement correct support for sparc/linux.
+
 2006-03-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (print_method_from_ip): Rename this to 
