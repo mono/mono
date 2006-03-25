@@ -1,3 +1,10 @@
+2006-03-25  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs (Constructor.Emit): Don't crash when struct ctor is
+	InternalCall.
+	(Constructor.ApplyAttributeBuilder): Transform MethodImplAttribute to be
+	compatible with MS runtime.
+
 2006-03-23  Marek Safar  <marek.safar@seznam.cz>
 
 	* attribute.cs (Attribute.ResolveConstructor): Check for an invalid

@@ -4039,6 +4039,11 @@ namespace Mono.CSharp {
 				return;
 			}
 
+			if (a.Type == TypeManager.methodimpl_attr_type &&
+				(a.GetMethodImplOptions () & MethodImplOptions.InternalCall) != 0) {
+				ConstructorBuilder.SetImplementationFlags (MethodImplAttributes.InternalCall | MethodImplAttributes.Runtime);
+			}
+
 			ConstructorBuilder.SetCustomAttribute (cb);
 		}
 		
@@ -4156,13 +4161,13 @@ namespace Mono.CSharp {
 		{
 			EmitContext ec = CreateEmitContext (null, null);
 
+			if (block != null) {
 			// If this is a non-static `struct' constructor and doesn't have any
 			// initializer, it must initialize all of the struct's fields.
 			if ((ParentContainer.Kind == Kind.Struct) &&
 			    ((ModFlags & Modifiers.STATIC) == 0) && (Initializer == null))
-				Block.AddThisVariable (Parent, Location);
+					block.AddThisVariable (Parent, Location);
 
-			if (block != null) {
 				if (!block.ResolveMeta (ec, ParameterInfo))
 					block = null;
 			}
