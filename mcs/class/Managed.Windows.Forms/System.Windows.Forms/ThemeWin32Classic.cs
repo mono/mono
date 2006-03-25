@@ -2598,7 +2598,7 @@ namespace System.Windows.Forms
 			int		increment;
 			int		barpos_pixels;
 			
-			block_width = ((client_area.Height) * 2 ) / 3;
+			block_width = (client_area.Height * 2 ) / 3;
 			barpos_pixels = ((ctrl.Value - ctrl.Minimum) * client_area.Width) / (ctrl.Maximum - ctrl.Minimum);
 			increment = block_width + space_betweenblocks;
 
@@ -4937,19 +4937,25 @@ namespace System.Windows.Forms
 
 
 		public override void CPDrawSizeGrip (Graphics dc, Color backColor, Rectangle bounds) {
-			Point pt = new Point (bounds.Right - 2, bounds.Bottom - 1);
+			
+			Point pt = new Point (bounds.Right - 2, bounds.Bottom - 2);
 
-			dc.DrawLine (ResPool.GetPen (ColorControl), pt.X - 12, pt.Y, pt.X, pt.Y);
-			dc.DrawLine (ResPool.GetPen (ColorControl), pt.X, pt.Y, pt.X, pt.Y - 13);
-
-			// diagonals
-			for (int i = 0; i < 11; i += 4) {
-				dc.DrawLine (ResPool.GetPen (ColorControlDark), pt.X - i, pt.Y, pt.X + 1, pt.Y - i - 2);
-				dc.DrawLine (ResPool.GetPen (ColorControlDark), pt.X - i - 1, pt.Y, pt.X + 1, pt.Y - i - 2);
-			}
-
-			for (int i = 3; i < 13; i += 4)
-				dc.DrawLine (ResPool.GetPen (ColorControlLight), pt.X - i, pt.Y, pt.X + 1, pt.Y - i - 1);
+			Pen pen = ResPool.GetPen (ColorControlDark);
+			
+			dc.DrawLine (pen, pt.X - 11, pt.Y, pt.X, pt.Y - 11);
+			dc.DrawLine (pen, pt.X - 10, pt.Y, pt.X, pt.Y - 10);
+			
+			dc.DrawLine (pen, pt.X - 7, pt.Y, pt.X, pt.Y - 7);
+			dc.DrawLine (pen, pt.X - 6, pt.Y, pt.X, pt.Y - 6);
+			
+			dc.DrawLine (pen, pt.X - 3, pt.Y, pt.X, pt.Y - 3);
+			dc.DrawLine (pen, pt.X - 2, pt.Y, pt.X, pt.Y - 2);
+			
+			pen = ResPool.GetPen (ColorControlLight);
+			
+			dc.DrawLine (pen, pt.X - 12, pt.Y, pt.X, pt.Y - 12);
+			dc.DrawLine (pen, pt.X - 8, pt.Y, pt.X, pt.Y - 8);
+			dc.DrawLine (pen, pt.X - 4, pt.Y, pt.X, pt.Y - 4);
 		}
 
 
