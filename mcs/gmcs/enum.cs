@@ -248,7 +248,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			TypeExpr ute = ResolveBaseTypeExpr (BaseType);
+			TypeExpr ute = BaseType.ResolveAsTypeTerminal (this, false);
 			UnderlyingType = ute.Type;
 
 			if (UnderlyingType != TypeManager.int32_type &&

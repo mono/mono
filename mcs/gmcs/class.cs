@@ -1014,7 +1014,7 @@ namespace Mono.CSharp {
 			int start = 0, i, j;
 
 			if (Kind == Kind.Class){
-				TypeExpr name = ResolveBaseTypeExpr ((Expression) Bases [0]);
+				TypeExpr name = ((Expression) Bases [0]).ResolveAsBaseTerminal (this, false);
 
 				if (name == null){
 					return null;
@@ -1031,7 +1031,7 @@ namespace Mono.CSharp {
 			TypeExpr [] ifaces = new TypeExpr [count-start];
 			
 			for (i = start, j = 0; i < count; i++, j++){
-				TypeExpr resolved = ResolveBaseTypeExpr ((Expression) Bases [i]);
+				TypeExpr resolved = ((Expression) Bases [i]).ResolveAsTypeTerminal (this, false);
 				if (resolved == null) {
 					return null;
 				}
@@ -1236,10 +1236,6 @@ namespace Mono.CSharp {
 				RootContext.RegisterOrder (this); 
 
 			if (base_type != null) {
-				base_type = base_type.ResolveAsTypeTerminal (this, false);
-				if (base_type == null)
-					return false;
-
 				if (IsGeneric && TypeManager.IsAttributeType (base_type.Type)) {
 					Report.Error (698, base_type.Location,
 						      "A generic type cannot derive from `{0}' " +
@@ -1249,7 +1245,11 @@ namespace Mono.CSharp {
 				}
 
 				TypeBuilder.SetParent (base_type.Type);
-				CheckObsoleteType (base_type);
+
+				ObsoleteAttribute obsolete_attr = AttributeTester.GetObsoleteAttribute (base_type.Type);
+				if (obsolete_attr != null && !IsInObsoleteScope) {
+					AttributeTester.Report_ObsoleteMessage (obsolete_attr, base_type.GetSignatureForError (), Location);
+				}
 			}
 
 			if (!CheckRecursiveDefinition (this)) {
@@ -1258,7 +1258,7 @@ namespace Mono.CSharp {
 
 			// add interfaces that were not added at type creation
 			if (iface_exprs != null) {
-				ifaces = TypeManager.ExpandInterfaces (this, iface_exprs);
+				ifaces = TypeManager.ExpandInterfaces (iface_exprs);
 				if (ifaces == null) {
 					return false;
 				}
@@ -1353,7 +1353,7 @@ namespace Mono.CSharp {
 		public bool ResolveType ()
 		{
 			if ((base_type != null) &&
-			    (base_type.ResolveType (this) == null)) {
+			    (base_type.ResolveAsTypeTerminal (this, false) == null)) {
 				error = true;
 				return false;
 			}
@@ -1404,7 +1404,7 @@ namespace Mono.CSharp {
 					return false;
 				}
 
-				CurrentType = current_type.ResolveType (this);
+				CurrentType = current_type.Type;
 			}
 
 			return true;
@@ -5121,7 +5121,7 @@ namespace Mono.CSharp {
 				if (iface_texpr == null)
 					return false;
 
-				InterfaceType = iface_texpr.ResolveType (this);
+				InterfaceType = iface_texpr.Type;
 
 				if (!InterfaceType.IsInterface) {
 					Report.Error (538, Location, "'{0}' in explicit interface declaration is not an interface", TypeManager.CSharpName (InterfaceType));
@@ -5141,8 +5141,6 @@ namespace Mono.CSharp {
 		{
 			if (MemberType == null)
 				return false;
-
-			CheckObsoleteType (Type);
 
 			if ((Parent.ModFlags & Modifiers.SEALED) != 0 && 
 				(ModFlags & (Modifiers.VIRTUAL|Modifiers.ABSTRACT)) != 0) {
@@ -5190,7 +5188,7 @@ namespace Mono.CSharp {
 				if (texpr == null)
 					return false;
 
-				InterfaceType = texpr.ResolveType (this);
+				InterfaceType = texpr.Type;
 
 				if (!InterfaceType.IsInterface) {
 					Report.Error (538, Location, "`{0}' in explicit interface declaration is not an interface", TypeManager.CSharpName (InterfaceType));
@@ -5427,8 +5425,6 @@ namespace Mono.CSharp {
 			if (MemberType == null || Type == null)
 				return false;
 			
-			CheckObsoleteType (Type);
-
 			if (MemberType == TypeManager.void_type) {
 				Report.Error (1547, Location, "Keyword 'void' cannot be used in this context");
 				return false;

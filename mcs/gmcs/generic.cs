@@ -390,13 +390,17 @@ namespace Mono.CSharp {
 					return false;
 			}
 
-			foreach (TypeExpr iface_constraint in iface_constraints) {
-				if (iface_constraint.ResolveType (ec) == null)
+			for (int i = 0; i < iface_constraints.Count; ++i) {
+				TypeExpr iface_constraint = (TypeExpr) iface_constraints [i];
+				iface_constraint = iface_constraint.ResolveAsTypeTerminal (ec, false);
+				if (iface_constraint == null)
 					return false;
+				iface_constraints [i] = iface_constraint;
 			}
 
 			if (class_constraint != null) {
-				if (class_constraint.ResolveType (ec) == null)
+				class_constraint = class_constraint.ResolveAsTypeTerminal (ec, false);
+				if (class_constraint == null)
 					return false;
 			}
 
@@ -594,6 +598,11 @@ namespace Mono.CSharp {
 			get {
 				return type;
 			}
+		}
+
+		// FIXME: This should be removed once we fix the handling of RootContext.Tree.Types
+		public override DeclSpace DeclContainer {
+			get { return DeclSpace; }
 		}
 
 		/// <summary>

@@ -2035,16 +2035,12 @@ public partial class TypeManager {
 	///   This expands in context like: IA; IB : IA; IC : IA, IB; the interface "IC" to
 	///   be IA, IB, IC.
 	/// </remarks>
-	public static Type[] ExpandInterfaces (IResolveContext ec, TypeExpr [] base_interfaces)
+	public static Type[] ExpandInterfaces (TypeExpr [] base_interfaces)
 	{
 		ArrayList new_ifaces = new ArrayList ();
 
 		foreach (TypeExpr iface in base_interfaces){
-			TypeExpr texpr = iface.ResolveAsTypeTerminal (ec, false);
-			if (texpr == null)
-				return null;
-
-			Type itype = texpr.ResolveType (ec);
+			Type itype = iface.Type;
 
 			if (new_ifaces.Contains (itype))
 				continue;

@@ -466,18 +466,6 @@ namespace Mono.CSharp {
 			AttributeTester.Report_ObsoleteMessage (oa, GetSignatureForError (), loc);
 		}
 
-		protected void CheckObsoleteType (Expression type)
-		{
-			ObsoleteAttribute obsolete_attr = AttributeTester.GetObsoleteAttribute (type.Type);
-			if (obsolete_attr == null)
-				return;
-
-			if (IsInObsoleteScope)
-				return;
-
-			AttributeTester.Report_ObsoleteMessage (obsolete_attr, TypeManager.CSharpName (type.Type), type.Location);
-		}
-
 		/// <summary>
 		/// Analyze whether CLS-Compliant verification must be execute for this MemberCore.
 		/// </summary>
@@ -842,15 +830,6 @@ namespace Mono.CSharp {
 			}
 			// Parent.GetSignatureForError
 			return Name;
-		}
-
-		// <summary>
-		//    Resolves the expression `e' for a type, and will recursively define
-		//    types.  This should only be used for resolving base types.
-		// </summary>
-		protected TypeExpr ResolveBaseTypeExpr (Expression e)
-		{
-			return e.ResolveAsTypeTerminal (this, false);
 		}
 		
 		public bool CheckAccessLevel (Type check_type) 

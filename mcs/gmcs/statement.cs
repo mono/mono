@@ -1051,7 +1051,7 @@ namespace Mono.CSharp {
 				if (texpr == null)
 					return false;
 				
-				VariableType = texpr.ResolveType (ec);
+				VariableType = texpr.Type;
 			}
 
 			if (VariableType == TypeManager.void_type) {
@@ -3365,7 +3365,7 @@ namespace Mono.CSharp {
 			if (texpr == null)
 				return false;
 
-			expr_type = texpr.ResolveType (ec);
+			expr_type = texpr.Type;
 
 			data = new Emitter [declarators.Count];
 
@@ -3590,7 +3590,7 @@ namespace Mono.CSharp {
 					if (te == null)
 						return false;
 
-					type = te.ResolveType (ec);
+					type = te.Type;
 
 					if (type != TypeManager.exception_type && !type.IsSubclassOf (TypeManager.exception_type)){
 						Error (155, "The type caught or thrown must be derived from System.Exception");
@@ -3829,7 +3829,7 @@ namespace Mono.CSharp {
 			if (texpr == null)
 				return false;
 
-			expr_type = texpr.ResolveType (ec);
+			expr_type = texpr.Type;
 
 			//
 			// The type must be an IDisposable or an implicit conversion
