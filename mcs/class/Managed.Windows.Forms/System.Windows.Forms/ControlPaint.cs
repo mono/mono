@@ -262,7 +262,17 @@ namespace System.Windows.Forms {
 		}
 
 		public static void DrawBorder(Graphics graphics, Rectangle bounds, Color color, ButtonBorderStyle style) {
-			DrawBorder(graphics, bounds, color, 1, style, color, 1, style, color, 1, style, color, 1, style);
+			int line_width_top_left = 1;
+			int line_width_bottom_right = 1;
+			
+			if (style == ButtonBorderStyle.Inset)
+				line_width_top_left = 2;
+			if (style == ButtonBorderStyle.Outset) {
+				line_width_bottom_right = 2;
+				line_width_top_left = 2;
+			}
+			
+			DrawBorder(graphics, bounds, color, line_width_top_left, style, color, line_width_top_left, style, color, line_width_bottom_right, style, color, line_width_bottom_right, style);
 		}
 
 		public static void DrawBorder( Graphics graphics, Rectangle bounds, Color leftColor, int leftWidth,

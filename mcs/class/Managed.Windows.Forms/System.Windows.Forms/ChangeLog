@@ -1,5 +1,10 @@
 2006-03-25  Alexander Olk  <alex.olk@googlemail.com>
 
+	* ControlPaint.cs: Corrected line widths in DrawBorder for
+	  ButtonBorderStyle Inset and Outset
+
+2006-03-25  Alexander Olk  <alex.olk@googlemail.com>
+
 	* ThemeWin32Classic.cs:
 	  - Rewrote the totally broken CPDrawBorder3D method. That was
 	    one of the main problems for the terrific ThemeWin32Classic
