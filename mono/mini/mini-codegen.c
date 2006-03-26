@@ -244,7 +244,7 @@ resize_spill_info (MonoCompile *cfg, gboolean fp)
  * spill variable if necessary. 
  */
 static inline int
-mono_spillvar_offset (MonoCompile *cfg, int spillvar)
+mono_spillvar_offset (MonoCompile *cfg, int spillvar, gboolean fp)
 {
 	MonoSpillInfo *info;
 
@@ -256,11 +256,24 @@ mono_spillvar_offset (MonoCompile *cfg, int spillvar)
 	info = &cfg->spill_info [spillvar];
 	if (info->offset == -1) {
 		if (cfg->flags & MONO_CFG_HAS_SPILLUP) {
-			info->offset = cfg->stack_offset;
-			cfg->stack_offset += sizeof (gpointer);
+			if (fp) {
+				cfg->stack_offset += 7;
+				cfg->stack_offset &= ~7;
+				info->offset = cfg->stack_offset;
+				cfg->stack_offset += sizeof (double);
+			} else {
+				info->offset = cfg->stack_offset;
+				cfg->stack_offset += sizeof (gpointer);
+			}
 		} else {
-			cfg->stack_offset += sizeof (gpointer);
-			info->offset = - cfg->stack_offset;
+			if (fp) {
+				// FIXME: Align
+				cfg->stack_offset += sizeof (double);
+				info->offset = - cfg->stack_offset;
+			} else {
+				cfg->stack_offset += sizeof (gpointer);
+				info->offset = - cfg->stack_offset;
+			}
 		}
 	}
 
@@ -691,7 +704,7 @@ get_register_force_spilling (MonoCompile *cfg, InstList *item, MonoInst *ins, in
 		MONO_INST_NEW (cfg, load, OP_LOAD_MEMBASE);
 	load->dreg = sel;
 	load->inst_basereg = cfg->frame_reg;
-	load->inst_offset = mono_spillvar_offset (cfg, spill);
+	load->inst_offset = mono_spillvar_offset (cfg, spill, fp);
 	insert_after_ins (ins, item, load);
 	DEBUG (printf ("SPILLED LOAD (%d at 0x%08lx(%%ebp)) R%d (freed %s)\n", spill, (long)load->inst_offset, i, mono_regname_full (sel, fp)));
 	if (fp)
@@ -782,7 +795,7 @@ get_register_spilling (MonoCompile *cfg, InstList *item, MonoInst *ins, regmask_
 	MONO_INST_NEW (cfg, load, fp ? OP_LOADR8_MEMBASE : OP_LOAD_MEMBASE);
 	load->dreg = sel;
 	load->inst_basereg = cfg->frame_reg;
-	load->inst_offset = mono_spillvar_offset (cfg, spill);
+	load->inst_offset = mono_spillvar_offset (cfg, spill, fp);
 	insert_after_ins (ins, item, load);
 	DEBUG (printf ("\tSPILLED LOAD (%d at 0x%08lx(%%ebp)) R%d (freed %s)\n", spill, (long)load->inst_offset, i, mono_regname_full (sel, fp)));
 	if (fp)
@@ -852,7 +865,7 @@ create_spilled_store (MonoCompile *cfg, int spill, int reg, int prev_reg, MonoIn
 	MONO_INST_NEW (cfg, store, fp ? OP_STORER8_MEMBASE_REG : OP_STORE_MEMBASE_REG);
 	store->sreg1 = reg;
 	store->inst_destbasereg = cfg->frame_reg;
-	store->inst_offset = mono_spillvar_offset (cfg, spill);
+	store->inst_offset = mono_spillvar_offset (cfg, spill, fp);
 	if (ins) {
 		store->next = ins->next;
 		ins->next = store;

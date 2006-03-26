@@ -619,6 +619,7 @@ MINI_OP(OP_X86_ADD_MEMBASE,        "x86_add_membase", NONE, IREG, IREG)
 MINI_OP(OP_X86_SUB_MEMBASE,        "x86_sub_membase", NONE, IREG, IREG)
 MINI_OP(OP_X86_MUL_MEMBASE,        "x86_mul_membase", NONE, IREG, IREG)
 MINI_OP(OP_X86_SHRD,               "x86_shrd", IREG, IREG, IREG)
+MINI_OP(OP_X86_FXCH,               "x86_fxch", NONE, NONE, NONE)
 #endif
 
 #if defined(__x86_64__)

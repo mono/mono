@@ -65,7 +65,26 @@ mono_arch_regname (int reg) {
 
 const char*
 mono_arch_fregname (int reg) {
-	return "unknown";
+	switch (reg) {
+	case 0:
+		return "%fr0";
+	case 1:
+		return "%fr1";
+	case 2:
+		return "%fr2";
+	case 3:
+		return "%fr3";
+	case 4:
+		return "%fr4";
+	case 5:
+		return "%fr5";
+	case 6:
+		return "%fr6";
+	case 7:
+		return "%fr7";
+	default:
+		return "unknown";
+	}
 }
 
 typedef enum {
@@ -3387,6 +3406,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_X86_FPOP:
 			x86_fstp (code, 0);
 			break;		
+		case OP_X86_FXCH:
+			x86_fxch (code, ins->inst_imm);
+			break;
 		case OP_FREM: {
 			guint8 *l1, *l2;
 
@@ -3660,15 +3682,26 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			EMIT_COND_BRANCH (ins, X86_CC_NE, FALSE);
 			break;
 		case CEE_CKFINITE:
-		case OP_CKFINITE:
+		case OP_CKFINITE: {
+			guchar *br1;
+
 			x86_push_reg (code, X86_EAX);
 			x86_fxam (code);
 			x86_fnstsw (code);
 			x86_alu_reg_imm (code, X86_AND, X86_EAX, 0x4100);
 			x86_alu_reg_imm (code, X86_CMP, X86_EAX, X86_FP_C0);
 			x86_pop_reg (code, X86_EAX);
+
+			/* Have to clean up the fp stack before throwing the exception */
+			br1 = code;
+			x86_branch8 (code, X86_CC_NE, 0, FALSE);
+
+			x86_fstp (code, 0);			
 			EMIT_COND_SYSTEM_EXCEPTION (X86_CC_EQ, FALSE, "ArithmeticException");
+
+			x86_patch (br1, code);
 			break;
+		}
 		case OP_TLS_GET: {
 			code = emit_tls_get (code, ins->dreg, ins->inst_offset);
 			break;

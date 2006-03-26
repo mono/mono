@@ -170,8 +170,8 @@ endfinally: len:16
 op_endfilter: src1:a len:16
 op_endfinally: len:16
 
-ckfinite: dest:f src1:f len:22
-op_ckfinite: dest:f src1:f len:22
+ckfinite: dest:f src1:f len:32
+op_ckfinite: dest:f src1:f len:32
 
 mul.ovf: dest:i src1:i src2:i clob:1 len:9
 mul.ovf.un: dest:i src1:i src2:i len:16
@@ -380,6 +380,7 @@ aot_const: dest:i len:5
 op_jump_table: dest:i len:5
 load_gotaddr: dest:i len:64
 got_entry: dest:i src1:b len:7
+
 x86_test_null: src1:i len:2
 x86_compare_membase_reg: src1:b src2:i len:6
 x86_compare_membase_imm: src1:b len:11
@@ -418,6 +419,7 @@ x86_setne_membase: src1:b len:7
 x86_add_membase: dest:i src1:i src2:b clob:1 len:11
 x86_sub_membase: dest:i src1:i src2:b clob:1 len:11
 x86_mul_membase: dest:i src1:i src2:b clob:1 len:13
+x86_fxch: len:2
 
 adc: dest:i src1:i src2:i len:2 clob:1
 addcc: dest:i src1:i src2:i len:2 clob:1
