@@ -1,5 +1,16 @@
 2006-03-26  Marek Safar  <marek.safar@seznam.cz>
 
+	* constant.cs (Constant.Reduce): Replaced EmitContext with single bool
+	for easier reuse. Updated all overrides.
+	(IntegralConstant): New base class for all integral constants.
+	(IntegralConstant.Error_ValueCannotBeConverted): When assigned value if out
+	of the constant range, report custom error.
+	(UIntConstant.Reduce): Fixed uint conversion.
+
+	* ecore.cs, literal.cs: Reduce updates.
+
+2006-03-26  Marek Safar  <marek.safar@seznam.cz>
+
 	A fix for #75813.
 
 	* class.cs (Constructor.Define): Removed extra if for default ctors.

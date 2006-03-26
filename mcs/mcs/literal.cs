@@ -114,7 +114,7 @@ namespace Mono.CSharp {
 			return base.ToType (type, loc);
 		}
 
-		public override Constant Reduce(EmitContext ec, Type target_type)
+		public override Constant Reduce(bool inCheckedContext, Type target_type)
 		{
 			if (!TypeManager.IsValueType (target_type))
 				return new NullCast (this, target_type);

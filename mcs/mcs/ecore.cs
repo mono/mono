@@ -1326,10 +1326,10 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override Constant Reduce (EmitContext ec, Type target_type)
+		public override Constant Reduce (bool inCheckedContext, Type target_type)
 		{
 			if (type == target_type)
-				return child.Reduce (ec, target_type);
+				return child.Reduce (inCheckedContext, target_type);
 
 			return null;
 		}
@@ -1446,12 +1446,12 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override Constant Reduce(EmitContext ec, Type target_type)
+		public override Constant Reduce(bool inCheckedContext, Type target_type)
 		{
 			if (Child.Type == target_type)
 				return Child;
 
-			return Child.Reduce (ec, target_type);
+			return Child.Reduce (inCheckedContext, target_type);
 		}
 
 		public override Constant ToType (Type type, Location loc)
