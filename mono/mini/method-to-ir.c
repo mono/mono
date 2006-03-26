@@ -9738,7 +9738,6 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - the vtype optimizations are blocked by the LDADDR opcodes generated for 
  *   accessing vtype fields and passing/receiving them in calls.
  * - in the managed->native wrappers, place a pop before the call to interrupt_checkpoint
- * - bench.exe hangs on x86 when ssa is enabled
  * - get rid of I8CONST on 64 bit platforms
  * - dealing with the increase in code size due to branches created during opcode
  *   decomposition:
@@ -9748,6 +9747,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   - avoid introducing global vregs during decomposition, like 'vtable' in isinst
  * - call cctors outside the JIT, to make -v output more readable and JIT timings more
  *   meaningful.
+ * - check for fp stack leakage in other opcodes too. (-> 'exceptions' optimization)
  * - LAST MERGE: 58239.
  */
 

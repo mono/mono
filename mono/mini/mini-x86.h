@@ -69,7 +69,7 @@ LONG CALLBACK seh_handler(EXCEPTION_POINTERS* ep);
 #define MONO_ARCH_SIGNAL_STACK_SIZE (64 * 1024)
 
 #define MONO_MAX_IREGS 8
-#define MONO_MAX_FREGS 6
+#define MONO_MAX_FREGS 8
 
 /* Parameters used by the register allocator */
 #define MONO_ARCH_HAS_XP_LOCAL_REGALLOC

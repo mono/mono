@@ -280,73 +280,6 @@ mono_spillvar_offset (MonoCompile *cfg, int spillvar, gboolean fp)
 	return info->offset;
 }
 
-#if MONO_ARCH_USE_FPSTACK
-
-/*
- * returns the offset used by spillvar. It allocates a new
- * spill float variable if necessary. 
- * (same as mono_spillvar_offset but for float)
- */
-static inline int
-mono_spillvar_offset_float (MonoCompile *cfg, int spillvar)
-{
-	MonoSpillInfo *info;
-
-	if (G_UNLIKELY (spillvar >= cfg->spill_info_float_len)) {
-		resize_spill_info (cfg, TRUE);
-		g_assert (spillvar < cfg->spill_info_float_len);
-	}
-
-	info = &cfg->spill_info_float [spillvar];
-	if (info->offset == -1) {
-		if (cfg->flags & MONO_CFG_HAS_SPILLUP) {
-			cfg->stack_offset += 7;
-			cfg->stack_offset &= ~7;
-			info->offset = cfg->stack_offset;
-			cfg->stack_offset += sizeof (double);
-		} else {
-			/* FIXME: align */
-			cfg->stack_offset += sizeof (double);
-			info->offset = - cfg->stack_offset;
-		}
-	}
-
-	return info->offset;
-}
-
-/*
- * Creates a store for spilled floating point items
- */
-static MonoInst*
-create_spilled_store_float (MonoCompile *cfg, int spill, int reg, MonoInst *ins)
-{
-	MonoInst *store;
-	MONO_INST_NEW (cfg, store, OP_STORER8_MEMBASE_REG);
-	store->sreg1 = reg;
-	store->inst_destbasereg = cfg->frame_reg;
-	store->inst_offset = mono_spillvar_offset_float (cfg, spill);
-
-	DEBUG (printf ("SPILLED FLOAT STORE (%d at 0x%08lx(%%sp)) (from %d)\n", spill, (long)store->inst_offset, reg));
-	return store;
-}
-
-/*
- * Creates a load for spilled floating point items 
- */
-static MonoInst*
-create_spilled_load_float (MonoCompile *cfg, int spill, int reg, MonoInst *ins)
-{
-	MonoInst *load;
-	MONO_INST_NEW (cfg, load, OP_LOADR8_SPILL_MEMBASE);
-	load->dreg = reg;
-	load->inst_basereg = cfg->frame_reg;
-	load->inst_offset = mono_spillvar_offset_float (cfg, spill);
-
-	DEBUG (printf ("SPILLED FLOAT LOAD (%d at 0x%08lx(%%sp)) (from %d)\n", spill, (long)load->inst_offset, reg));
-	return load;
-}
-
-#endif /* MONO_ARCH_USE_FPSTACK */
 
 #define regmask(reg) (((regmask_t)1) << (reg))
 
@@ -390,9 +323,6 @@ typedef struct {
 	/* Not (yet) used */
 	//int last_use;
 	//int prev_use;
-#if MONO_ARCH_USE_FPSTACK
-	int flags;		/* used to track fp spill/load */
-#endif
 	regmask_t preferred_mask; /* the hreg where the register should be allocated, or 0 */
 } RegTrack;
 
@@ -975,7 +905,9 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 	int fspill = 0;
 	guint8 *inst_list, *mem;
 #if MONO_ARCH_USE_FPSTACK
-	gboolean need_fpstack = (use_fpstack && cfg->next_vfreg > MONO_MAX_FREGS);
+	gboolean has_fp = TRUE;
+	int fpstack [8];
+	int sp = 0;
 #endif
 
 	if (!bb->code)
@@ -986,9 +918,6 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 	mono_regstate2_assign (rs, cfg->new_ir);
 	rs->ifree_mask = MONO_ARCH_CALLEE_REGS;
 	rs->ffree_mask = MONO_ARCH_CALLEE_FREGS;
-
-	if (use_fpstack)
-		rs->ffree_mask = 0xff & ~(regmask (MONO_ARCH_FPSTACK_SIZE));
 
 	max = rs->next_vireg;
 	ins_count = 0;
@@ -1098,48 +1027,9 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		
 		DEBUG (mono_print_ins_index (i, ins));
 
-		/*
-		 * TRACK FP STACK
-		 */
-#if MONO_ARCH_USE_FPSTACK
-		if (need_fpstack) {
-			GList *spill;
-
-			if (spec [MONO_INST_SRC1] == 'f') {
-				spill = g_list_first (fspill_list);
-				if (spill && fpcount < MONO_ARCH_FPSTACK_SIZE) {
-					reginfof [ins->sreg1].flags |= MONO_FP_NEEDS_LOAD;
-					fspill_list = g_list_remove (fspill_list, spill->data);
-				} else
-					fpcount--;
-			}
-
-			if (spec [MONO_INST_SRC2] == 'f') {
-				spill = g_list_first (fspill_list);
-				if (spill) {
-					reginfof [ins->sreg2].flags |= MONO_FP_NEEDS_LOAD;
-					fspill_list = g_list_remove (fspill_list, spill->data);
-					if (fpcount >= MONO_ARCH_FPSTACK_SIZE) {
-						fspill++;
-						fspill_list = g_list_prepend (fspill_list, GINT_TO_POINTER(fspill));
-						reginfof [ins->sreg2].flags |= MONO_FP_NEEDS_LOAD_SPILL;
-					}
-				} else
-					fpcount--;
-			}
-
-			if (dreg_is_fp (spec)) {
-				if (use_fpstack && (spec [MONO_INST_CLOB] != 'm')) {
-					if (fpcount >= MONO_ARCH_FPSTACK_SIZE) {
-						reginfof [ins->dreg].flags |= MONO_FP_NEEDS_SPILL;
-						fspill++;
-						fspill_list = g_list_prepend (fspill_list, GINT_TO_POINTER(fspill));
-						fpcount--;
-					}
-					fpcount++;
-				}
-			}
-		}
+#ifdef MONO_ARCH_USE_FPSTACK
+		if (sreg1_is_fp (spec) || sreg2_is_fp (spec) || dreg_is_fp (spec))
+			has_fp = TRUE;
 #endif
 
 		if (spec [MONO_INST_SRC1]) {
@@ -1170,6 +1060,8 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		}
 		if (spec [MONO_INST_SRC2]) {
 			fp = sreg2_is_fp (spec);
+			if (fp)
+				has_fp = TRUE;
 			if (fp && !reginfof)
 				reginfof = g_malloc0 (sizeof (RegTrack) * rs->next_vfreg);
 			reginfo2 = fp ? reginfof : reginfo;
@@ -1198,6 +1090,8 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			int dest_dreg;
 
 			fp = dreg_is_fp (spec);
+			if (fp)
+				has_fp = TRUE;
 			if (fp && !reginfof)
 				reginfof = g_malloc0 (sizeof (RegTrack) * rs->next_vfreg);
 			reginfod = fp ? reginfof : reginfo;
@@ -1255,7 +1149,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 
 			list = call->out_freg_args;
-			if (!use_fpstack && list) {
+			if (list) {
 				while (list) {
 					guint32 regpair;
 					int reg, hreg;
@@ -1325,76 +1219,6 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		dreg_fixed_mask = MONO_ARCH_INST_FIXED_MASK (spec [MONO_INST_DEST]);
 #else
 		sreg1_fixed_mask = sreg2_fixed_mask = dreg_fixed_mask = 0;
-#endif
-
-		/*
-		 * TRACK FP STACK
-		 */
-#if MONO_ARCH_USE_FPSTACK
-		if (need_fpstack && (spec [MONO_INST_CLOB] != 'm')) {
-			if (dreg_is_fp (spec)) {
-				if (reginfof [ins->dreg].flags & MONO_FP_NEEDS_SPILL) {
-					GList *spill_node;
-					MonoInst *store;
-					spill_node = g_list_first (fspill_list);
-					g_assert (spill_node);
-
-					store = create_spilled_store_float (cfg, GPOINTER_TO_INT (spill_node->data), ins->dreg, ins);
-					insert_before_ins (ins, tmp, store);
-					fspill_list = g_list_remove (fspill_list, spill_node->data);
-					fspill--;
-				}
-			}
-
-			if (spec [MONO_INST_SRC1] == 'f') {
-				if (reginfof [ins->sreg1].flags & MONO_FP_NEEDS_LOAD) {
-					MonoInst *load;
-					MonoInst *store = NULL;
-
-					if (reginfof [ins->sreg1].flags & MONO_FP_NEEDS_LOAD_SPILL) {
-						GList *spill_node;
-						spill_node = g_list_first (fspill_list);
-						g_assert (spill_node);
-
-						store = create_spilled_store_float (cfg, GPOINTER_TO_INT (spill_node->data), ins->sreg1, ins);		
-						fspill_list = g_list_remove (fspill_list, spill_node->data);
-					}
-
-					fspill++;
-					fspill_list = g_list_prepend (fspill_list, GINT_TO_POINTER(fspill));
-					load = create_spilled_load_float (cfg, fspill, ins->sreg1, ins);
-					insert_before_ins (ins, tmp, load);
-					if (store) 
-						insert_before_ins (load, tmp, store);
-				}
-			}
-
-			if (spec [MONO_INST_SRC2] == 'f') {
-				if (reginfof [ins->sreg2].flags & MONO_FP_NEEDS_LOAD) {
-					MonoInst *load;
-					MonoInst *store = NULL;
-
-					if (reginfof [ins->sreg2].flags & MONO_FP_NEEDS_LOAD_SPILL) {
-						GList *spill_node;
-
-						spill_node = g_list_first (fspill_list);
-						g_assert (spill_node);
-						if (spec [MONO_INST_SRC1] == 'f' && (reginfof [ins->sreg2].flags & MONO_FP_NEEDS_LOAD_SPILL))
-							spill_node = g_list_next (spill_node);
-	
-						store = create_spilled_store_float (cfg, GPOINTER_TO_INT (spill_node->data), ins->sreg2, ins);
-						fspill_list = g_list_remove (fspill_list, spill_node->data);
-					}
-				
-					fspill++;
-					fspill_list = g_list_prepend (fspill_list, GINT_TO_POINTER(fspill));
-					load = create_spilled_load_float (cfg, fspill, ins->sreg2, ins);
-					insert_before_ins (ins, tmp, load);
-					if (store) 
-						insert_before_ins (load, tmp, store);
-				}
-			}
-		}
 #endif
 
 		/*
@@ -1473,7 +1297,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		 * TRACK DREG
 		 */
 		fp = dreg_is_fp (spec);
-		if (spec [MONO_INST_DEST] && (!fp || (fp && !use_fpstack)) && is_soft_reg (ins->dreg, fp)) {
+		if (spec [MONO_INST_DEST] && is_soft_reg (ins->dreg, fp)) {
 			prev_dreg = ins->dreg;
 		}
 
@@ -1536,7 +1360,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 				dreg_mask &= dreg_fixed_mask;
 		}
 
-		if ((!fp || (fp && !use_fpstack)) && (is_soft_reg (ins->dreg, fp))) {
+		if (is_soft_reg (ins->dreg, fp)) {
 			if (dest_dreg != -1)
 				dreg_mask = (regmask (dest_dreg));
 
@@ -1604,7 +1428,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 		}
 
-		if ((!fp || (fp && !use_fpstack)) && prev_dreg >= 0 && is_soft_reg (prev_dreg, fp) && (fp ? reginfof : reginfo) [prev_dreg].born_in >= i) {
+		if (prev_dreg >= 0 && is_soft_reg (prev_dreg, fp) && (fp ? reginfof : reginfo) [prev_dreg].born_in >= i) {
 			/* 
 			 * In theory, we could free up the hreg even if the vreg is alive,
 			 * but branches inside bblocks force us to assign the same hreg
@@ -1735,7 +1559,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 
 			list = call->out_freg_args;
-			if (list && !use_fpstack) {
+			if (list) {
 				while (list) {
 					guint32 regpair;
 					int reg, hreg;
@@ -1757,7 +1581,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		 * TRACK SREG1
 		 */
 		fp = sreg1_is_fp (spec);
-		if ((!fp || (fp && !use_fpstack))) {
+		if (1) {
 			if (MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_DEST]) && (spec [MONO_INST_CLOB] == '1')) {
 				g_assert (is_soft_reg (ins->sreg1, fp));
 
@@ -1904,7 +1728,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		}
 
 		/* Handle dreg==sreg1 */
-		if (((dreg_is_fp (spec) && spec [MONO_INST_SRC1] == 'f' && !use_fpstack) || spec [MONO_INST_CLOB] == '1') && ins->dreg != ins->sreg1) {
+		if (((dreg_is_fp (spec) && spec [MONO_INST_SRC1] == 'f') || spec [MONO_INST_CLOB] == '1') && ins->dreg != ins->sreg1) {
 			MonoInst *sreg2_copy = NULL;
 			MonoInst *copy;
 			gboolean fp = (spec [MONO_INST_SRC1] == 'f');
@@ -1963,7 +1787,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		fp = sreg2_is_fp (spec);
 		if (MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_SRC2]))
 			g_assert_not_reached ();
-		if ((!fp || (fp && !use_fpstack)) && (is_soft_reg (ins->sreg2, fp))) {
+		if (is_soft_reg (ins->sreg2, fp)) {
 			val = rassign (cfg, ins->sreg2, fp);
 
 			if (val < 0) {
@@ -1994,11 +1818,153 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		}*/
 	
 		DEBUG (mono_print_ins_index (i, ins));
+
 		/* this may result from a insert_before call */
 		if (!tmp->next)
 			bb->code = tmp->data;
 		tmp = tmp->next;
 	}
+
+	// FIXME: Set MAX_FREGS to 8
+	// FIXME: Optimize generated code
+#ifdef MONO_ARCH_USE_FPSTACK
+	/*
+	 * Make a forward pass over the code, simulating the fp stack, making sure the
+	 * arguments required by the fp opcodes are at the top of the stack.
+	 */
+	if (has_fp) {
+		MonoInst *prev = NULL;
+		MonoInst *fxch;
+		int tmp;
+
+		for (ins = bb->code; ins; ins = ins->next) {
+			spec = ins_spec [ins->opcode];
+
+			DEBUG (printf ("processing:"));
+			DEBUG (mono_print_ins_index (0, ins));
+
+			if (ins->opcode == OP_FMOVE) {
+				/* Do it by renaming the source to the destination on the stack */
+				// FIXME: Is this correct ?
+				for (i = 0; i < sp; ++i)
+					if (fpstack [i] == ins->sreg1)
+						fpstack [i] = ins->dreg;
+				prev = ins;
+				continue;
+			}
+
+			if (sreg1_is_fp (spec) && sreg2_is_fp (spec) && (fpstack [sp - 2] != ins->sreg1)) {
+				/* Arg1 must be in %st(1) */
+				g_assert (prev);
+
+				i = 0;
+				while ((i < sp) && (fpstack [i] != ins->sreg1))
+					i ++;
+				g_assert (i < sp);
+
+				if (sp - 1 - i > 0) {
+					/* First move it to %st(0) */
+					DEBUG (printf ("\tswap %%st(0) and %%st(%d)\n", sp - 1 - i));
+						
+					MONO_INST_NEW (cfg, fxch, OP_X86_FXCH);
+					fxch->inst_imm = sp - 1 - i;
+
+					prev->next = fxch;
+					fxch->next = ins;
+					prev = fxch;
+
+					tmp = fpstack [sp - 1];
+					fpstack [sp - 1] = fpstack [i];
+					fpstack [i] = tmp;
+				}
+					
+				/* Then move it to %st(1) */
+				DEBUG (printf ("\tswap %%st(0) and %%st(1)\n"));
+				
+				MONO_INST_NEW (cfg, fxch, OP_X86_FXCH);
+				fxch->inst_imm = 1;
+
+				prev->next = fxch;
+				fxch->next = ins;
+				prev = fxch;
+
+				tmp = fpstack [sp - 1];
+				fpstack [sp - 1] = fpstack [sp - 2];
+				fpstack [sp - 2] = tmp;
+			}
+
+			if (sreg2_is_fp (spec)) {
+				g_assert (sp > 0);
+
+				if (fpstack [sp - 1] != ins->sreg2) {
+					g_assert (prev);
+
+					i = 0;
+					while ((i < sp) && (fpstack [i] != ins->sreg2))
+						i ++;
+					g_assert (i < sp);
+
+					DEBUG (printf ("\tswap %%st(0) and %%st(%d)\n", sp - 1 - i));
+
+					MONO_INST_NEW (cfg, fxch, OP_X86_FXCH);
+					fxch->inst_imm = sp - 1 - i;
+
+					prev->next = fxch;
+					fxch->next = ins;
+					prev = fxch;
+
+					tmp = fpstack [sp - 1];
+					fpstack [sp - 1] = fpstack [i];
+					fpstack [i] = tmp;
+				}
+
+				sp --;
+			}
+
+			if (sreg1_is_fp (spec)) {
+				g_assert (sp > 0);
+
+				if (fpstack [sp - 1] != ins->sreg1) {
+					g_assert (prev);
+
+					i = 0;
+					while ((i < sp) && (fpstack [i] != ins->sreg1))
+						i ++;
+					g_assert (i < sp);
+
+					DEBUG (printf ("\tswap %%st(0) and %%st(%d)\n", sp - 1 - i));
+
+					MONO_INST_NEW (cfg, fxch, OP_X86_FXCH);
+					fxch->inst_imm = sp - 1 - i;
+
+					prev->next = fxch;
+					fxch->next = ins;
+					prev = fxch;
+
+					tmp = fpstack [sp - 1];
+					fpstack [sp - 1] = fpstack [i];
+					fpstack [i] = tmp;
+				}
+
+				sp --;
+			}
+
+			if (dreg_is_fp (spec)) {
+				g_assert (sp < 8);
+				fpstack [sp ++] = ins->dreg;
+			}
+
+			if (G_UNLIKELY (cfg->verbose_level >= 2)) {
+				printf ("\t[");
+				for (i = 0; i < sp; ++i)
+					printf ("%s%%fr%d", (i > 0) ? ", " : "", fpstack [i]);
+				printf ("]\n");
+			}
+
+			prev = ins;
+		}
+	}
+#endif
 
 	if (reginfo != reginfof)
 		g_free (reginfof);
