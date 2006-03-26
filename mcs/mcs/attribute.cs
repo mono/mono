@@ -322,7 +322,7 @@ namespace Mono.CSharp {
 				resolve_error = false;
 				return cb;
 			}
-			catch (Exception) {
+			catch (Exception e) {
 				Error_AttributeArgumentNotValid (Location);
 				return null;
 			}
@@ -384,15 +384,9 @@ namespace Mono.CSharp {
 			for (int j = 0; j < pos_arg_count; ++j) {
 				Argument a = (Argument) PosArguments [j];
 
-				if (!a.Expr.GetAttributableValue (out pos_values [j]))
+				if (!a.Expr.GetAttributableValue (a.Type, out pos_values [j]))
 					return null;
 				
-				if (TypeManager.IsPrimitiveType (a.Type) && a.Type != pos_values [j].GetType ()) {
-					bool fail;
-					// This can happen only for constants in same range
-					pos_values [j] = TypeManager.ChangeType (pos_values [j], a.Type, out fail);
-				}
-
 				if (j < last_real_param)
 					continue;
 				
@@ -519,12 +513,8 @@ namespace Mono.CSharp {
 						return false;
 					}
 
-					Expression e = Convert.ImplicitConversionRequired (ec, a.Expr, pi.PropertyType, a.Expr.Location);
-					if (e == null)
-						return false;
-
 					object value;
-					if (!e.GetAttributableValue (out value))
+					if (!a.Expr.GetAttributableValue (pi.PropertyType, out value))
 						return false;
 
 					PropertyBase pb = TypeManager.GetProperty (pi);
@@ -550,12 +540,8 @@ namespace Mono.CSharp {
 						return false;
 					}
 
-					Expression e = Convert.ImplicitConversionRequired (ec, a.Expr, fi.FieldType, a.Expr.Location);
-					if (e == null)
-						return false;
-
  					object value;
-					if (!e.GetAttributableValue (out value))
+					if (!a.Expr.GetAttributableValue (fi.FieldType, out value))
 						return false;
 
 					FieldBase fb = TypeManager.GetField (fi);

@@ -137,7 +137,7 @@ namespace Mono.CSharp {
 		// Not nice but we have broken hierarchy
 		public virtual void CheckMarshallByRefAccess (Type container) {}
 
-		public virtual bool GetAttributableValue (out object value)
+		public virtual bool GetAttributableValue (Type valueType, out object value)
 		{
 			Attribute.Error_AttributeArgumentNotValid (loc);
 			value = null;
@@ -1173,9 +1173,9 @@ namespace Mono.CSharp {
 			child.Emit (ec);
 		}
 
-		public override bool GetAttributableValue (out object value)
+		public override bool GetAttributableValue (Type valueType, out object value)
 		{
-			return child.GetAttributableValue (out value);
+			return child.GetAttributableValue (valueType, out value);
 		}
 
 	}
@@ -1362,6 +1362,12 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			Child.Emit (ec);
+		}
+
+		public override bool GetAttributableValue (Type valueType, out object value)
+		{
+			value = GetTypedValue ();
+			return true;
 		}
 
 		public override string GetSignatureForError()

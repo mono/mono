@@ -1,3 +1,25 @@
+2006-03-26  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs (Attribute.ResolveConstructor): Conversion was moved to
+	GetAttributableValue.
+
+	* constant.cs (Constant.GetAttributableValue): Does implicit conversion
+	when required.
+
+	* convert.cs (ImplicitConversionRequired): Error message moved to
+	DoubleLiteral.
+
+	* ecore.cs (Expression.GetAttributableValue): Add type parameter for
+	automatic implicit conversion of an output value.
+	(EnumConstant.GetAttributableValue): Don't reduce the enum constants.
+
+	* expression.cs (ArrayCreation.GetAttributableValue): Add element type
+	conversion.
+	(TypeOf.GetAttributableValue): Add extra handling for object type.
+
+	* literal.cs (DoubleLiteral.Error_ValueCannotBeConverted): Doubles can have
+	special error message.
+
 2006-03-25  Marek Safar  <marek.safar@seznam.cz>
 
 	* class.cs (Constructor.Emit): Don't crash when struct ctor is

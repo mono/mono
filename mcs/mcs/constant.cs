@@ -39,9 +39,15 @@ namespace Mono.CSharp {
 			return this.GetType ().Name + " (" + AsString () + ")";
 		}
 
-		public override bool GetAttributableValue (out object value)
+		public override bool GetAttributableValue (Type valueType, out object value)
 		{
-			value = GetTypedValue ();
+			Constant c = ToType (valueType, loc);
+			if (c == null) {
+				value = null;
+				return false;
+			}
+
+			value = c.GetTypedValue ();
 			return true;
 		}
 

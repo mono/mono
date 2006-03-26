@@ -21,7 +21,22 @@ public class SimpleAttribute : Attribute {
                         secret = value;
                 }
         }
-        
+		
+	public long LongValue {
+		get {
+			return 0;
+		}
+		set { }
+	}
+	
+	public long[] ArrayValue {
+		get {
+			return new long[0];
+		}
+		set { }
+	}
+	
+	public object D;
 }
 
 [Simple ("Interface test")]
@@ -31,7 +46,10 @@ public interface IFoo {
 }
 
 [Simple ("Dummy", MyNamedArg = "Dude!")]
-[Simple ("Vids", MyNamedArg = "Raj", AnotherArg = "Foo")]	
+[Simple ("Vids", MyNamedArg = "Raj", AnotherArg = "Foo")]
+[Simple ("Trip", LongValue=0)]
+[Simple ("Fourth", ArrayValue=new long[] { 0 })]
+//[Simple ("Fifth", D=new double[] { -1 })] // runtime bug #77916
 public class Blah {
 
         public static int Main ()
@@ -40,5 +58,3 @@ public class Blah {
                 return 0;
         }
 }
-
-	
