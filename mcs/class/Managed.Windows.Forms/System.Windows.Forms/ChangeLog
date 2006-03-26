@@ -1,5 +1,14 @@
 2006-03-25  Alexander Olk  <alex.olk@googlemail.com>
 
+	* ThemeWin32Classic.cs:
+	  - GroupBox: Inserted a little gap between the text and the lines
+	    on the right side
+	  - Made the code in CPDrawBorder3D more readable
+	  - Corrected the drawing location of the up and down arrows in 
+	    CPDrawScrollButton
+
+2006-03-25  Alexander Olk  <alex.olk@googlemail.com>
+
 	* ControlPaint.cs: Corrected line widths in DrawBorder for
 	  ButtonBorderStyle Inset and Outset
 

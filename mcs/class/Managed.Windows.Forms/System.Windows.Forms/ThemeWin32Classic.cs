@@ -1267,7 +1267,7 @@ namespace System.Windows.Forms
 			text_format.HotkeyPrefix = HotkeyPrefix.Show;
 
 			size = dc.MeasureString (box.Text, box.Font);
-			width = (int) size.Width;
+			width = ((int) size.Width) + 7;
 			
 			if (width > box.Width - 16)
 				width = box.Width - 16;
@@ -4264,35 +4264,43 @@ namespace System.Windows.Forms
 			
 			penTopLeft = penTopLeftInner = penBottomRight = penBottomRightInner = ResPool.GetPen (control_color);
 			
-			if (style == Border3DStyle.Raised) {
+			switch (style) {
+			case Border3DStyle.Raised:
 				penTopLeftInner = ResPool.GetPen (ControlPaint.LightLight (control_color));
 				penBottomRight = ResPool.GetPen (ControlPaint.DarkDark (control_color));
 				penBottomRightInner = ResPool.GetPen (ColorInactiveCaption);
-			} else if (style == Border3DStyle.Sunken) {
+				break;
+			case Border3DStyle.Sunken:
 				penTopLeft = ResPool.GetPen (ColorInactiveCaption);
 				penTopLeftInner = ResPool.GetPen (ControlPaint.DarkDark (control_color));
 				penBottomRight = ResPool.GetPen (ControlPaint.LightLight (control_color));
-			} else if (style == Border3DStyle.Etched) {
-				penTopLeft = ResPool.GetPen (ColorInactiveCaption);
-				penTopLeftInner = ResPool.GetPen (ControlPaint.LightLight (control_color));
-				penBottomRight = ResPool.GetPen (ControlPaint.LightLight (control_color));
-				penBottomRightInner = ResPool.GetPen (ColorInactiveCaption);
-			} else if (style == Border3DStyle.RaisedOuter) {
+				break;
+			case Border3DStyle.Etched:
+				penTopLeft = penBottomRightInner = ResPool.GetPen (ColorInactiveCaption);
+				penTopLeftInner = penBottomRight = ResPool.GetPen (ControlPaint.LightLight (control_color));
+				break;
+			case Border3DStyle.RaisedOuter:
 				penBottomRight = ResPool.GetPen (ControlPaint.DarkDark (control_color));
-			} else if (style == Border3DStyle.SunkenOuter) {
+				break;
+			case Border3DStyle.SunkenOuter:
 				penTopLeft = ResPool.GetPen (ColorInactiveCaption);
 				penBottomRight = ResPool.GetPen (ControlPaint.LightLight (control_color));
-			} else if (style == Border3DStyle.RaisedInner) {
+				break;
+			case Border3DStyle.RaisedInner:
 				penTopLeft = ResPool.GetPen (ControlPaint.LightLight (control_color));
 				penBottomRight = ResPool.GetPen (ColorInactiveCaption);
-			} else if (style == Border3DStyle.SunkenInner) {
+				break;
+			case Border3DStyle.SunkenInner:
 				penTopLeft = ResPool.GetPen (ControlPaint.DarkDark (control_color));
-			} else if (style == Border3DStyle.Flat) {
-				penTopLeft = ResPool.GetPen (ColorInactiveCaption);
-				penBottomRight = ResPool.GetPen (ColorInactiveCaption);
-			} else if (style == Border3DStyle.Bump) {
-				penTopLeftInner = ResPool.GetPen (ControlPaint.DarkDark (control_color));
-				penBottomRight = ResPool.GetPen (ControlPaint.DarkDark (control_color));
+				break;
+			case Border3DStyle.Flat:
+				penTopLeft = penBottomRight = ResPool.GetPen (ColorInactiveCaption);
+				break;
+			case Border3DStyle.Bump:
+				penTopLeftInner = penBottomRight = ResPool.GetPen (ControlPaint.DarkDark (control_color));
+				break;
+			default:
+				break;
 			}
 			
 			if ((sides & Border3DSide.Middle) != 0) {
@@ -4827,8 +4835,21 @@ namespace System.Windows.Forms
 		public override void CPDrawScrollButton (Graphics dc, Rectangle area, ScrollButton type, ButtonState state) {
 			DrawScrollButtonPrimitive (dc, area, state);
 
+			int arrow_y_pos_diff = 3;
+			
+			switch (type) {
+			case ScrollButton.Up:
+				arrow_y_pos_diff = 2;
+				break;
+			case ScrollButton.Down:
+				arrow_y_pos_diff = 4;
+				break;
+			default:
+				break;
+			}
+			
 			// A lot of the following is adapted from the rewind project
-			Rectangle rect = new Rectangle (area.X - 3, area.Y - 3,
+			Rectangle rect = new Rectangle (area.X - 3, area.Y - arrow_y_pos_diff,
 					area.Width + 6, area.Height + 6);
 			int small_diam = rect.Width > rect.Height ? rect.Height : rect.Width;
 			if (rect.Width < rect.Height) {
@@ -4874,6 +4895,15 @@ namespace System.Windows.Forms
 				arrow [1].Y = arrow [2].Y + tri;
 				arrow [0].X = arrow [1].X = arrow [2].X + tri;
 				break;
+				// Left and Right are not drawn correctly because of libgdiplus problems
+				// once that is solved change it to the code below to match ms
+//			case ScrollButton.Left:
+//				arrow [2].X = rect.Right - (687 * small_diam / 1000 + 1);
+//				arrow [2].Y = (rect.Top + 470 * small_diam / 1000 + 2) - 1;
+//				arrow [1].Y = arrow [2].Y + tri;
+//				arrow [0].Y = arrow [2].Y - tri + 1;
+//				arrow [0].X = arrow [1].X = arrow [2].X + tri;
+//				break;
 			case ScrollButton.Right:
 				arrow [2].X = rect.Left + 687 * small_diam / 1000 + 1;
 				arrow [2].Y = rect.Top + 470 * small_diam / 1000 + 2;
