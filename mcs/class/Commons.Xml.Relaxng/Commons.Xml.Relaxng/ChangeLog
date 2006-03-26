@@ -1,3 +1,11 @@
+2006-03-27  Atsushi Enomoto <atsushi@ximian.com>
+
+	Patch by Alexandre Alapetite (http://alexandre.alapetite.net/cv/)
+	* RelaxngPattern.cs : RelaxngInclude.Read() could be NRE when
+	  there is an error in XmlTextReader .ctor().
+	* RelaxngValidatingReader.cs : If the input XmlReader is already 
+	  positioned on the first node to validate, skip Read() here.
+
 2006-02-02  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RelaxngValidatingReader.cs : removed extra tables.

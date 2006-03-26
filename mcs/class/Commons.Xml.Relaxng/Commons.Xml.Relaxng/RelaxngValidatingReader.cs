@@ -3,6 +3,7 @@
 //
 // Author:
 //	Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+//	Alexandre Alapetite <http://alexandre.alapetite.net/cv/>
 //
 // 2003 Atsushi Enomoto. "No rights reserved."
 //
@@ -74,6 +75,7 @@ namespace Commons.Xml.Relaxng
 		string cachedValue;
 		int startElementDepth = -1;
 		bool inContent;
+		bool firstRead = true;
 
 		internal string CurrentStateXml {
 			get { return RdpUtil.DebugRdpPattern (vState, new Hashtable ()); }
@@ -363,7 +365,19 @@ namespace Commons.Xml.Relaxng
 		{
 			PrepareState ();
 
-			bool ret = reader.Read ();
+			// If the input XmlReader is already positioned on
+			// the first node to validate, skip Read() here
+			// (idea by Alex).
+			bool ret;
+			if (firstRead) {
+				firstRead = false;
+				if (reader.ReadState == ReadState.Initial)
+					ret = reader.Read ();
+				else
+					ret = !((reader.ReadState == ReadState.Closed) || (reader.ReadState == ReadState.EndOfFile));
+			}
+			else
+				ret = reader.Read ();
 
 			// Process pending text node validation if required.
 			if (cachedValue != null)
