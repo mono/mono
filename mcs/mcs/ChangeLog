@@ -1,5 +1,9 @@
 2006-03-26  Marek Safar  <marek.safar@seznam.cz>
 
+	* cs-tokenizer.cs (adjust_real): Uses float.Parse for float literals.
+
+2006-03-26  Marek Safar  <marek.safar@seznam.cz>
+
 	* constant.cs (Constant.Reduce): Replaced EmitContext with single bool
 	for easier reuse. Updated all overrides.
 	(IntegralConstant): New base class for all integral constants.
