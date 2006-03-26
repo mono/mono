@@ -9748,6 +9748,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - call cctors outside the JIT, to make -v output more readable and JIT timings more
  *   meaningful.
  * - check for fp stack leakage in other opcodes too. (-> 'exceptions' optimization)
+ * - slowdown of SciMark with the new JIT
  * - LAST MERGE: 58239.
  */
 

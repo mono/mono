@@ -657,14 +657,6 @@ stmt: CEE_POP (freg) "0" {
 
 # override the rules in inssel-float.brg that work for machines with FP registers 
 
-freg: OP_FCONV_TO_R8 (freg) "0" {
-	/* nothing to do */
-}
-
-freg: OP_FCONV_TO_R4 (freg) "0" {
-	/* fixme: nothing to do ??*/
-}
-
 reg: CEE_ADD(reg, CEE_LDIND_I4 (base)) {
 	MonoInst *base = state->right->left->tree;
 
