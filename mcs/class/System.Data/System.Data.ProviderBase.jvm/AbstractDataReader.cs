@@ -757,6 +757,7 @@ namespace System.Data.ProviderBase
 					return new BooleanReaderCacheContainer();
 				case DbConvert.JavaSqlTypes.BLOB :
 					return new BlobReaderCacheContainer();
+				case DbConvert.JavaSqlTypes.VARCHAR:
 				case DbConvert.JavaSqlTypes.CHAR :						
 					if (String.CompareOrdinal("uniqueidentifier", ResultsMetaData.getColumnTypeName(columnIndex)) == 0) {
 						return new GuidReaderCacheContainer();
@@ -798,7 +799,6 @@ namespace System.Data.ProviderBase
 				case DbConvert.JavaSqlTypes.INTEGER :
 					return new Int32ReaderCacheContainer();
 				case DbConvert.JavaSqlTypes.LONGVARCHAR :
-				case DbConvert.JavaSqlTypes.VARCHAR :
 					return new StringReaderCacheContainer();
 				case DbConvert.JavaSqlTypes.NULL :
 					return new NullReaderCacheContainer();
@@ -894,11 +894,18 @@ namespace System.Data.ProviderBase
 					schemaRow [(int)SCHEMA_TABLE.IsLong] = true;
 					break;
 				}
+				case DbConvert.JavaSqlTypes.VARCHAR:
 				case DbConvert.JavaSqlTypes.CHAR: {
 					// FIXME : specific for Microsoft SQl Server driver
-					if (metaData.getColumnTypeName(columnIndex).Equals("uniqueidentifier")) {
+					if (String.CompareOrdinal(metaData.getColumnTypeName(columnIndex), "uniqueidentifier") == 0) {
 						schemaRow [(int)SCHEMA_TABLE.ProviderType] = DbType.Guid;
 						schemaRow [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfGuid;
+						schemaRow [(int)SCHEMA_TABLE.IsLong] = false;
+					}
+					else
+					if (String.CompareOrdinal(metaData.getColumnTypeName(columnIndex), "sql_variant") == 0) {
+						schemaRow [(int)SCHEMA_TABLE.ProviderType] = DbType.Object;
+						schemaRow [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfObject;
 						schemaRow [(int)SCHEMA_TABLE.IsLong] = false;
 					}
 					else {
@@ -1025,26 +1032,6 @@ namespace System.Data.ProviderBase
 					schemaRow [(int)SCHEMA_TABLE.IsLong] = true;
 					break;
 				}
-				case DbConvert.JavaSqlTypes.VARCHAR: {
-					// FIXME : specific for Microsoft SQl Server driver
-					if (metaData.getColumnTypeName(columnIndex).Equals("sql_variant")) {
-						schemaRow [(int)SCHEMA_TABLE.ProviderType] = DbType.Object;
-						schemaRow [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfObject;
-						schemaRow [(int)SCHEMA_TABLE.IsLong] = false;
-					}
-					else {
-						schemaRow [(int)SCHEMA_TABLE.ProviderType] = GetProviderType((int)columnType);
-						schemaRow [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfString;// (char[]);
-						schemaRow [(int)SCHEMA_TABLE.IsLong] = false;//true;
-					}
-					break;
-				}
-					//			else if(columnType == -8 && metaData.getColumnTypeName(columnIndex).Equals("ROWID")) {
-					//				// FIXME : specific for Oracle JDBC driver : OracleTypes.ROWID
-					//				schemaRow [(int)SCHEMA_TABLE.ProviderType] = DbType.String;
-					//				schemaRow [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfString;
-					//				schemaRow [(int)SCHEMA_TABLE.IsLong] = false;
-					//			}
 				default: {
 					schemaRow [(int)SCHEMA_TABLE.ProviderType] = DbType.Object;
 					schemaRow [(int)SCHEMA_TABLE.DataType] = DbTypes.TypeOfObject;
