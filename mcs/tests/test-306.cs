@@ -4,7 +4,7 @@ using C = A.D;
 
 class A
 {
-	class D : Exception { }
+	protected internal class D : Exception { }
 
 	public class B
 	{

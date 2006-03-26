@@ -1,4 +1,4 @@
-// Compiler options: support-353.cs -out:test-353.exe
+// Compiler options: support-353.cs
 
 using System;
  

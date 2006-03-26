@@ -1,4 +1,4 @@
-// Compiler options: -doc:xml-035.xml -warn:4 -warnaserror -r:System.Data
+// Compiler options: -doc:xml-035.xml -warn:4 -warnaserror -r:System.Data.dll
 using System;
 using System.Data;
 using System.Xml;

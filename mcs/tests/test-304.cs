@@ -6,7 +6,7 @@ using C = A.D;
 
 class A
 {
-	class D { }
+	internal class D { }
 	public class B
 	{
 		class C { }

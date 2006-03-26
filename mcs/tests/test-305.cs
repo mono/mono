@@ -8,7 +8,7 @@ using S = A.T;
 class A
 {
 	[StructLayout (LayoutKind.Sequential)]
-	struct T { int x; }
+	public struct T { int x; }
 
 	public class B
 	{

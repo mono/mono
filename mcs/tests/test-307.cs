@@ -2,9 +2,9 @@ using System;
 
 using C = A.D;
 
-class A
+public class A
 {
-	class D : IDisposable 
+	public class D : IDisposable 
 	{
 		void IDisposable.Dispose () { throw new Exception ("'using' and 'new' didn't resolve C as A+B+C"); }
 	}
