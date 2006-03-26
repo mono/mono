@@ -1,5 +1,12 @@
 2006-03-26  Marek Safar  <marek.safar@seznam.cz>
 
+	A fix for #75813.
+
+	* class.cs (Constructor.Define): Removed extra if for default ctors.
+	A patch from Atsushi Enomoto.
+
+2006-03-26  Marek Safar  <marek.safar@seznam.cz>
+
 	* attribute.cs (Attribute.ResolveConstructor): Conversion was moved to
 	GetAttributableValue.
 

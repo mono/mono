@@ -4120,8 +4120,6 @@ namespace Mono.CSharp {
 						ca |= MethodAttributes.Family;
 				} else if ((ModFlags & Modifiers.INTERNAL) != 0)
 					ca |= MethodAttributes.Assembly;
-				else if (IsDefault ())
-					ca |= MethodAttributes.Public;
 				else
 					ca |= MethodAttributes.Private;
 			}
