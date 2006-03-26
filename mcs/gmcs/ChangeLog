@@ -1,3 +1,7 @@
+2006-03-26  Marek Safar  <marek.safar@seznam.cz>
+
+	* rootcontext.cs (ResolveCore): Removed System.INullableValue.
+
 2006-03-23  Martin Baulig  <martin@ximian.com>
 
 	* expression.cs (Is.DoResolve, As.DoResolve): Perform a dynamic
