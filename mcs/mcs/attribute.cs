@@ -322,7 +322,7 @@ namespace Mono.CSharp {
 				resolve_error = false;
 				return cb;
 			}
-			catch (Exception e) {
+			catch (Exception) {
 				Error_AttributeArgumentNotValid (Location);
 				return null;
 			}
