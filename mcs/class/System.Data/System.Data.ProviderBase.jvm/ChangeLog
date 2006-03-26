@@ -1,3 +1,7 @@
+2006-03-26  Konstantin Triger <kostat@mainsoft.com>
+
+	* AbstractDataReader.cs: check for SQLServer uniqueidentifier type for VARCHAR.
+
 2006-03-21	Boris Kirzner <borisk@mainsoft.com>
 	* AbstractDBConnection.cs: resolve abguity.
 
