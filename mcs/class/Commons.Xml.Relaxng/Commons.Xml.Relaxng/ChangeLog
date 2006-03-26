@@ -1,3 +1,9 @@
+2006-03-27  Atsushi Enomoto <atsushi@ximian.com>
+
+	Patch by Alexandre Alapetite (http://alexandre.alapetite.net/cv/)
+	* RelaxngPattern.cs : RelaxngInclude.Read() could be NRE when
+	  there is an error in XmlTextReader .ctor().
+
 2006-01-05  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RelaxngValidatingReader.cs :

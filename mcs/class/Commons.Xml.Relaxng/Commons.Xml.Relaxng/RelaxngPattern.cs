@@ -326,7 +326,8 @@ namespace Commons.Xml.Relaxng
 				r.MoveToContent ();
 				g = r.ReadPattern () as RelaxngGrammar;
 			} finally {
-				xtr.Close ();
+				if (xtr != null)
+					xtr.Close ();
 			}
 			if (g == null)
 				throw new RelaxngException (this, "Included syntax must start with \"grammar\" element.");
