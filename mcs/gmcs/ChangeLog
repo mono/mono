@@ -14,12 +14,8 @@
 	(DelegateCreation.ImplicitStandardConversionExists): New method for just
 	conversion test.
 	
-	*ecore.cs (Expression.MemberLookup): Don't ask for emitcontext when it's
+	* ecore.cs (Expression.MemberLookup): Don't ask for emitcontext when it's
 	not needed.
-
-	* assign.cs, constant.cs, convert.cs, delegate.cs, expression.cs:
-	Updated after another emitcontext usage was clean up. It should help us to
-	synchronize with gmcs easier.
 
 2006-03-04  Marek Safar  <marek.safar@seznam.cz>
 
