@@ -1,3 +1,8 @@
+2006-03-27  Robert Jordan  <robertj@gmx.net>
+
+	* CachingCompiler.cs:  change the compilation locking scheme
+	from "one mcs per process" to "one mcs per file".
+
 2006-03-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System.Web.Compilation/TemplateControlCompiler.cs: handle the new

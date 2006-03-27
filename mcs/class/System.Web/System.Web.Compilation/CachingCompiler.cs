@@ -34,6 +34,7 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.IO;
 using System.Reflection;
+using System.Threading;
 using System.Web.UI;
 using System.Web.Caching;
 using System.Web.Configuration;
@@ -43,7 +44,7 @@ namespace System.Web.Compilation
 	class CachingCompiler
 	{
 		static string dynamicBase = AppDomain.CurrentDomain.SetupInformation.DynamicBase;
-		static object compilationLock = new object ();
+		static Hashtable compilationTickets = new Hashtable ();
 		const string cachePrefix = "@@Assembly";
 		const string cacheTypePrefix = "@@@Type";
 
@@ -77,7 +78,15 @@ namespace System.Web.Compilation
 			if (results != null)
 				return results;
 
-			lock (compilationLock) {
+			object ticket;
+			bool acquired = AcquireCompilationTicket (key, out ticket);
+
+			try {
+				Monitor.Enter (ticket);
+
+				if (!acquired)
+					Monitor.Wait (ticket);
+
 				results = (CompilerResults) cache [key];
 #if NET_2_0
 				if (!compiler.IsRebuildingPartial)
@@ -89,6 +98,12 @@ namespace System.Web.Compilation
 				results = comp.CompileAssemblyFromDom (compiler.CompilerParameters, compiler.Unit);
 				string [] deps = (string []) compiler.Parser.Dependencies.ToArray (typeof (string));
 				cache.InsertPrivate (key, results, new CacheDependency (deps));
+
+				Monitor.PulseAll (ticket);
+			} finally {
+				Monitor.Exit (ticket);
+				if (acquired)
+					ReleaseCompilationTicket (key);
 			}
 
 			return results;
@@ -102,7 +117,15 @@ namespace System.Web.Compilation
 			if (results != null)
 				return results;
 
-			lock (compilationLock) {
+			object ticket;
+			bool acquired = AcquireCompilationTicket (key, out ticket);
+
+			try {
+				Monitor.Enter (ticket);
+
+				if (!acquired)
+					Monitor.Wait (ticket);
+
 				results = (CompilerResults) cache [key];
 				if (results != null)
 					return results;
@@ -113,6 +136,12 @@ namespace System.Web.Compilation
 				results = compiler.Compiler.CompileAssemblyFromFile (options, compiler.InputFile);
 				string [] deps = (string []) parser.Dependencies.ToArray (typeof (string));
 				cache.InsertPrivate (key, results, new CacheDependency (deps));
+
+				Monitor.PulseAll (ticket);
+			} finally {
+				Monitor.Exit (ticket);
+				if (acquired)
+					ReleaseCompilationTicket (key);
 			}
 
 			return results;
@@ -141,7 +170,15 @@ namespace System.Web.Compilation
 			if (!Directory.Exists (dynamicBase))
 				Directory.CreateDirectory (dynamicBase);
 
-			lock (compilationLock) {
+			object ticket;
+			bool acquired = AcquireCompilationTicket (cachePrefix + key, out ticket);
+
+			try {
+				Monitor.Enter (ticket);
+
+				if (!acquired)
+					Monitor.Wait (ticket);
+
 				results = (CompilerResults) cache [cachePrefix + key];
 				if (results != null)
 					return results;
@@ -175,6 +212,12 @@ namespace System.Web.Compilation
 
 				string [] deps = (string []) realdeps.ToArray (typeof (string));
 				cache.InsertPrivate (cachePrefix + key, results, new CacheDependency (deps));
+
+				Monitor.PulseAll (ticket);
+			} finally {
+				Monitor.Exit (ticket);
+				if (acquired)
+					ReleaseCompilationTicket (cachePrefix + key);
 			}
 
 			return results;
@@ -198,6 +241,26 @@ namespace System.Web.Compilation
 			Type type = assembly.GetType (typename, true);
 			InsertType (type, file);
 			return type;
+		}
+
+		static bool AcquireCompilationTicket (string key, out object ticket)
+		{
+			lock (compilationTickets.SyncRoot) {
+				ticket = compilationTickets [key];
+				if (ticket == null) {
+					ticket = new object ();
+					compilationTickets [key] = ticket;
+					return true;
+				}
+			}
+			return false;
+		}
+
+		static void ReleaseCompilationTicket (string key)
+		{
+			lock (compilationTickets.SyncRoot) {
+				compilationTickets.Remove (key);
+			}
 		}
 	}
 }
