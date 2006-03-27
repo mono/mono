@@ -1,3 +1,18 @@
+2006-03-04  Marek Safar  <marek.safar@seznam.cz>
+
+	A fix for #77353.
+
+	* class.cs (SetMethod.DefineParameters): Uses new parameters type ctor.
+	(Event.Define): ditto
+	(SetIndexerMethod.DefineParameters): Uses Parameters.MergeGenerated.
+
+	* delegate.cs (Delegate.Define): Uses Parameters.MergeGenerated.
+	Removed redundant code and set NewSlot for Invoke method too.
+
+	* parameter.cs (Parameters.ctor): Add custom, type ctor.
+	(Parameters.MergeGenerated): New method. Use this method when you merge
+	compiler generated argument with user arguments.
+
 2006-03-03  Marek Safar  <marek.safar@seznam.cz>
 
 	* attribute.cs (ResolveAsTypeTerminal): Removed.

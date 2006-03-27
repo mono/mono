@@ -145,9 +145,6 @@ namespace Mono.CSharp {
 
  		public override bool Define ()
 		{
-			MethodAttributes mattr;
-			int i;
-
 			if (IsGeneric) {
 				foreach (TypeParameter type_param in TypeParameters)
 					type_param.DefineType (this);
@@ -159,10 +156,10 @@ namespace Mono.CSharp {
 			const_arg_types [0] = TypeManager.object_type;
 			const_arg_types [1] = TypeManager.intptr_type;
 
-			mattr = MethodAttributes.RTSpecialName | MethodAttributes.SpecialName |
+			const MethodAttributes ctor_mattr = MethodAttributes.RTSpecialName | MethodAttributes.SpecialName |
 				MethodAttributes.HideBySig | MethodAttributes.Public;
 
-			ConstructorBuilder = TypeBuilder.DefineConstructor (mattr,
+			ConstructorBuilder = TypeBuilder.DefineConstructor (ctor_mattr,
 									    CallingConventions.Standard,
 									    const_arg_types);
 
@@ -211,11 +208,9 @@ namespace Mono.CSharp {
 			ReturnType = ReturnType.ResolveAsTypeTerminal (this, false);
 			if (ReturnType == null)
 				return false;
-                        
-			ret_type = ReturnType.Type;
-			if (ret_type == null)
-				return false;
 
+			ret_type = ReturnType.Type;
+            
 			if (!Parent.AsAccessible (ret_type, ModFlags)) {
 				Report.Error (58, Location,
 					      "Inconsistent accessibility: return type `" +
@@ -236,22 +231,13 @@ namespace Mono.CSharp {
 			
   			CallingConventions cc = Parameters.CallingConvention;
 
- 			mattr = MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.Virtual;
+ 			const MethodAttributes mattr = MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.Virtual | MethodAttributes.NewSlot;
 
  			InvokeBuilder = TypeBuilder.DefineMethod ("Invoke", 
  								  mattr,		     
  								  cc,
  								  ret_type,		     
  								  Parameters.Types);
-
-			//
-			// Define parameters, and count out/ref parameters
-			//
-			int out_params = 0;
-			foreach (Parameter p in Parameters.FixedParameters) {
-				if ((p.ModFlags & Parameter.Modifier.ISBYREF) != 0)
-					out_params++;
-			}
 			
 			InvokeBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
 
@@ -260,86 +246,64 @@ namespace Mono.CSharp {
 			//
 			// BeginInvoke
 			//
-			int params_num = Parameters.Count;
-			Type [] async_param_types = new Type [params_num + 2];
-
-			Parameters.Types.CopyTo (async_param_types, 0);
-
-			async_param_types [params_num] = TypeManager.asynccallback_type;
-			async_param_types [params_num + 1] = TypeManager.object_type;
-
-			mattr = MethodAttributes.Public | MethodAttributes.HideBySig |
-				MethodAttributes.Virtual | MethodAttributes.NewSlot;
+			
+			Parameters async_parameters = Parameters.MergeGenerated (Parameters, 
+				new Parameter (TypeManager.asynccallback_type, "callback", Parameter.Modifier.NONE, null, Location),
+				new Parameter (TypeManager.object_type, "object", Parameter.Modifier.NONE, null, Location));
 			
 			BeginInvokeBuilder = TypeBuilder.DefineMethod ("BeginInvoke",
-								       mattr,
-								       cc,
-								       TypeManager.iasyncresult_type,
-								       async_param_types);
+				mattr, cc, TypeManager.iasyncresult_type, async_parameters.Types);
 
-			i = Parameters.Count;
-			Parameters.ApplyAttributes (BeginInvokeBuilder);
-			BeginInvokeBuilder.DefineParameter (i + 1, ParameterAttributes.None, "callback");
-			BeginInvokeBuilder.DefineParameter (i + 2, ParameterAttributes.None, "object");
-			
 			BeginInvokeBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
-
-			Parameter [] async_params = new Parameter [params_num + 2];
-			Parameters.FixedParameters.CopyTo (async_params, 0);
-			
-			async_params [params_num] = new Parameter (
-				TypeManager.asynccallback_type, "callback",
-								   Parameter.Modifier.NONE, null, Location);
-			async_params [params_num + 1] = new Parameter (
-				TypeManager.object_type, "object",
-								   Parameter.Modifier.NONE, null, Location);
-
-			Parameters async_parameters = new Parameters (async_params);
-			async_parameters.Resolve (this);
 			async_parameters.ApplyAttributes (BeginInvokeBuilder);
-
 			TypeManager.RegisterMethod (BeginInvokeBuilder, async_parameters);
 
 			//
 			// EndInvoke is a bit more interesting, all the parameters labeled as
 			// out or ref have to be duplicated here.
 			//
-			
-			Type [] end_param_types = new Type [out_params + 1];
-			Parameter [] end_params = new Parameter [out_params + 1];
-			int param = 0; 
-			if (out_params > 0){
-				int top = Parameters.FixedParameters.Length;
-				for (i = 0; i < top; i++){
+
+			//
+			// Define parameters, and count out/ref parameters
+			//
+			Parameters end_parameters;
+			int out_params = 0;
+
+			foreach (Parameter p in Parameters.FixedParameters) {
+				if ((p.ModFlags & Parameter.Modifier.ISBYREF) != 0)
+					++out_params;
+			}
+
+			if (out_params > 0) {
+				Type [] end_param_types = new Type [out_params];
+				Parameter [] end_params = new Parameter [out_params ];
+
+				int param = 0; 
+				for (int i = 0; i < Parameters.FixedParameters.Length; ++i) {
 					Parameter p = Parameters.FixedParameters [i];
 					if ((p.ModFlags & Parameter.Modifier.ISBYREF) == 0)
 						continue;
 
-					end_param_types [param] = Parameters.Types [i];
+					end_param_types [param] = p.ExternalType();
 					end_params [param] = p;
-					param++;
+					++param;
 				}
+				end_parameters = new Parameters (end_params, end_param_types);
 			}
-			end_param_types [out_params] = TypeManager.iasyncresult_type;
-			end_params [out_params] = new Parameter (TypeManager.system_iasyncresult_expr, "result", Parameter.Modifier.NONE, null, Location);
+			else {
+				end_parameters = Parameters.EmptyReadOnlyParameters;
+			}
 
+			end_parameters = Parameters.MergeGenerated (end_parameters,
+				new Parameter (TypeManager.iasyncresult_type, "result", Parameter.Modifier.NONE, null, Location));
+			
 			//
 			// Create method, define parameters, register parameters with type system
 			//
-			EndInvokeBuilder = TypeBuilder.DefineMethod ("EndInvoke", mattr, cc, ret_type, end_param_types);
+			EndInvokeBuilder = TypeBuilder.DefineMethod ("EndInvoke", mattr, cc, ret_type, end_parameters.Types);
 			EndInvokeBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
 
-			//
-			// EndInvoke: Label the parameters
-			//
-			EndInvokeBuilder.DefineParameter (out_params + 1, ParameterAttributes.None, "result");
-			for (i = 0; i < end_params.Length-1; i++){
-				EndInvokeBuilder.DefineParameter (i + 1, end_params [i].Attributes, end_params [i].Name);
-			}
-
-			Parameters end_parameters = new Parameters (end_params);
-			end_parameters.Resolve (this);
-
+			end_parameters.ApplyAttributes (EndInvokeBuilder);
 			TypeManager.RegisterMethod (EndInvokeBuilder, end_parameters);
 
 			return true;
