@@ -3647,7 +3647,7 @@ namespace System.Windows.Forms
 				if (button.Pushed || button.Pressed)
 					style = Border3DStyle.SunkenOuter;
 				else if (button.Hilight)
-					style = Border3DStyle.RaisedOuter;
+					style = Border3DStyle.RaisedInner;
 				else
 					return;
 
