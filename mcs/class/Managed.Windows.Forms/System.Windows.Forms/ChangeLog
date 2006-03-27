@@ -1,3 +1,7 @@
+2006-03-27  Alexander Olk  <alex.olk@googlemail.com>
+
+	* ThemeWin32Classic.cs: Rewrote Button drawing code to match ms.
+
 2006-03-25  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ThemeWin32Classic.cs:

@@ -134,7 +134,7 @@ namespace System.Windows.Forms
 				ButtonBase_DrawImage(button, dc);
 			
 			// Draw the focus rectangle
-			if (button.has_focus)
+			if ((button.has_focus || button.paint_as_acceptbutton) && button.is_enabled)
 				ButtonBase_DrawFocus(button, dc);
 			
 			// Now the text
@@ -142,32 +142,83 @@ namespace System.Windows.Forms
 				ButtonBase_DrawText(button, dc);
 		}
 
-		protected virtual void ButtonBase_DrawButton(ButtonBase button, Graphics dc)
+		protected virtual void ButtonBase_DrawButton (ButtonBase button, Graphics dc)
 		{
-			Rectangle buttonRectangle;
 			Rectangle borderRectangle;
 			
-			dc.FillRectangle(ResPool.GetSolidBrush (button.BackColor), button.ClientRectangle);
+			dc.FillRectangle (ResPool.GetSolidBrush (button.BackColor), button.ClientRectangle);
 			
-			// set up the button rectangle
-			buttonRectangle = button.ClientRectangle;
-			if (button.has_focus || button.paint_as_acceptbutton) {
+			if ((button.has_focus || button.paint_as_acceptbutton) && button.is_enabled) {
 				// shrink the rectangle for the normal button drawing inside the focus rectangle
-				borderRectangle = Rectangle.Inflate(buttonRectangle, -1, -1);
+				borderRectangle = Rectangle.Inflate (button.ClientRectangle, -1, -1);
 			} else {
-				borderRectangle = buttonRectangle;
+				borderRectangle = button.ClientRectangle;
 			}
-
-			if (button.FlatStyle == FlatStyle.Flat || button.FlatStyle == FlatStyle.Popup) {
-				DrawFlatStyleButton (dc, borderRectangle, button);
-			} else {
-				CPDrawButton(dc, borderRectangle, button.ButtonState);
-				if (button.has_focus || button.paint_as_acceptbutton) {
-					dc.DrawRectangle(ResPool.GetPen(button.ForeColor), borderRectangle);
+			
+			if (button.FlatStyle == FlatStyle.Popup) {
+				if (!button.is_pressed && !button.is_entered)
+					Internal_DrawButton (dc, borderRectangle, 1, button.BackColor);
+				else if (!button.is_pressed && button.is_entered)
+					Internal_DrawButton (dc, borderRectangle, 2, button.BackColor);
+				else if (button.is_pressed)
+					Internal_DrawButton (dc, borderRectangle, 1, button.BackColor);
+			} else if (button.FlatStyle == FlatStyle.Flat) {
+				if (button.is_entered && !button.is_pressed)
+					dc.FillRectangle (ResPool.GetSolidBrush (ControlPaint.Dark (button.BackColor)), borderRectangle);
+				else if (button.is_pressed) {
+					dc.FillRectangle (ResPool.GetSolidBrush (ControlPaint.Light (button.BackColor)), borderRectangle);
+					
+					dc.DrawRectangle (ResPool.GetPen (ControlPaint.Dark (button.BackColor)), borderRectangle.X + 4, borderRectangle.Y + 4,
+							  borderRectangle.Width - 9, borderRectangle.Height - 9);
 				}
+				
+				Internal_DrawButton (dc, borderRectangle, 3, button.BackColor);
+			} else {
+				if (!button.is_pressed || !button.is_enabled)
+					Internal_DrawButton (dc, borderRectangle, 0, button.BackColor);
+				else
+					Internal_DrawButton (dc, borderRectangle, 1, button.BackColor);
 			}
 		}
-
+		
+		private void Internal_DrawButton (Graphics dc, Rectangle rect, int state, Color color) // color = button.BackColor
+		{
+			switch (state) {
+			case 0: // normal or normal disabled button
+				Pen pen = ResPool.GetPen (ControlPaint.Light (color));
+				dc.DrawLine (pen, rect.X, rect.Y, rect.X, rect.Bottom - 2);
+				dc.DrawLine (pen, rect.X + 1, rect.Y, rect.Right - 2, rect.Y);
+				
+				pen = ResPool.GetPen (ControlPaint.Dark (color));
+				dc.DrawLine (pen, rect.X + 1, rect.Bottom - 2, rect.Right - 2, rect.Bottom - 2);
+				dc.DrawLine (pen, rect.Right - 2, rect.Y + 1, rect.Right - 2, rect.Bottom - 3);
+				
+				pen = ResPool.GetPen (ControlPaint.DarkDark (color));
+				dc.DrawLine (pen, rect.X, rect.Bottom - 1, rect.Right - 1, rect.Bottom - 1);
+				dc.DrawLine (pen, rect.Right - 1, rect.Y, rect.Right - 1, rect.Bottom - 2);
+				break;
+			case 1: // popup button normal (or pressed normal or popup button)
+				pen = ResPool.GetPen (ControlPaint.Dark (color));
+				dc.DrawRectangle (pen, new Rectangle (rect.X, rect.Y, rect.Width - 1, rect.Height - 1));
+				break;
+			case 2: // popup button poped up
+				pen = ResPool.GetPen (ControlPaint.Light (color));
+				dc.DrawLine (pen, rect.X, rect.Y, rect.X, rect.Bottom - 2);
+				dc.DrawLine (pen, rect.X + 1, rect.Y, rect.Right - 2, rect.Y);
+				
+				pen = ResPool.GetPen (ControlPaint.Dark (color));
+				dc.DrawLine (pen, rect.X, rect.Bottom - 1, rect.Right - 1, rect.Bottom - 1);
+				dc.DrawLine (pen, rect.Right - 1, rect.Y, rect.Right - 1, rect.Bottom - 2);
+				break;
+			case 3: // flat button not entered
+				pen = ResPool.GetPen (ControlPaint.DarkDark (color));
+				dc.DrawRectangle (pen, new Rectangle (rect.X, rect.Y, rect.Width - 1, rect.Height - 1));
+				break;
+			default:
+				break;
+			}
+		}
+		
 		protected virtual void ButtonBase_DrawImage(ButtonBase button, Graphics dc)
 		{
 			// Need to draw a picture
@@ -266,13 +317,14 @@ namespace System.Windows.Forms
 		
 		protected virtual void ButtonBase_DrawFocus(ButtonBase button, Graphics dc)
 		{
-			if (button.FlatStyle == FlatStyle.Flat || button.FlatStyle == FlatStyle.Popup) {
-				DrawFlatStyleFocusRectangle (dc, button.ClientRectangle, button, button.ForeColor, button.BackColor);
-			} else { 
-				Rectangle rect = button.ClientRectangle;
-				rect.Inflate (-4, -4);
-				CPDrawFocusRectangle(dc, rect, button.ForeColor, button.BackColor);
-			}
+			Color focus_color = button.ForeColor;
+			
+			if (button.FlatStyle == FlatStyle.Popup)
+				if (!button.is_pressed)
+					focus_color = ControlPaint.Dark(button.BackColor);
+			
+			dc.DrawRectangle (ResPool.GetPen (focus_color), new Rectangle (button.ClientRectangle.X, button.ClientRectangle.Y, 
+										       button.ClientRectangle.Width - 1, button.ClientRectangle.Height - 1));
 		}
 		
 		protected virtual void ButtonBase_DrawText(ButtonBase button, Graphics dc)
