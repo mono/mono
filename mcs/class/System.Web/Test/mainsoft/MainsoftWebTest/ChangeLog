@@ -1,3 +1,12 @@
+2006-03-27  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* test_catalog.xml: fixed not working tests
+	* almost_config.xml: fixed almost for not a bug
+	* reference/HyperLinkColumn_DataTextField.aspx.xml,
+	reference/HyperLinkColumn_DataNavigateUrlField.aspx.xml: removed refs
+	of removed tests
+	* reference/WebControl_CopyBaseAttributes_W.aspx.xml: same
+
 2006-02-23  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* test_catalog.xml: fixed not working tests

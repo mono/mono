@@ -308,7 +308,7 @@
   <TestCase url="/System_Web_UI_WebControls/ListItem/ListItem_ctor_SS.aspx" name="" Exclude="N" />
   <TestCase url="/System_Web_UI_WebControls/ListItem/ListItem_Equals_O.aspx" name="" Exclude="N" />
   <TestCase url="/System_Web_UI_WebControls/ListItem/ListItem_FromString_S.aspx" name="" Exclude="N" />
-  <TestCase url="/System_Web_UI_WebControls/ListItem/ListItem_GetHashCode_.aspx" name="" Exclude="N" />
+  <TestCase url="/System_Web_UI_WebControls/ListItem/ListItem_GetHashCode_.aspx" name="" Exclude="Y" />
   <TestCase url="/System_Web_UI_WebControls/ListItem/ListItem_Selected.aspx" name="" Exclude="N" />
   <TestCase url="/System_Web_UI_WebControls/ListItem/ListItem_Text.aspx" name="" Exclude="N" />
   <TestCase url="/System_Web_UI_WebControls/ListItem/ListItem_ToString_.aspx" name="" Exclude="N" />

@@ -1,0 +1,4 @@
+2006-03-27  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* WebControl_CopyBaseAttributes_W.aspx.cs: removed tests that
+	causes differences but decided to be not a bug

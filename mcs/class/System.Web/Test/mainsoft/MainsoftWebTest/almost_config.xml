@@ -8,7 +8,7 @@
 		<th id="" visible="" name=""/>
 		<tr id="" visible="" name=""/>
 		<table id="" visible="" name=""/>
-		<img id="" visible="" name=""/>
+		<img id="" visible="" name="" disabled=""/>
 		<a id="" visible="" name=""/>
 		<select id="" visible="" name=""/>
 		<textarea id="" visible="" name=""/>
@@ -16,6 +16,9 @@
 		<p visible=""/>
 		<form visible=""/>
 		<label for=""/>
+		<select language="" onchange=""/>
+		<input language="" onchange=""/>
+		<table bordercolor=""/>
 	</IgnoreList>
 
 	<!--delete Java Script attribute value-->

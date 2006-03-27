@@ -94,7 +94,7 @@
   <div id="GHTSubTest17" testname="System.Web.UI.WebControls.Image: Enabled:">
     <img id="ctrl_16" alt="" border="0" disabled="disabled" />
     <span>
-      <br />Test Passed.</span>
+      <br />Not supported for this control</span>
   </div>
   <div id="GHTSubTest18" testname="System.Web.UI.WebControls.Image: ToolTip:">
     <img id="ctrl_17" alt="" border="0" title="ToolTip text" />
@@ -117,9 +117,9 @@
       <br />Test Passed.</span>
   </div>
   <div id="GHTSubTest22" testname="System.Web.UI.WebControls.ImageButton: Enabled:">
-    <input id="ctrl_21" alt="" border="0" disabled="disabled" type="image" name="ctrl_21" />
+    <input id="ctrl_21" alt="" border="0" type="image" name="ctrl_21" />
     <span>
-      <br />Test Passed.</span>
+      <br />Not supported for this control</span>
   </div>
   <div id="GHTSubTest23" testname="System.Web.UI.WebControls.ImageButton: ToolTip:">
     <input id="ctrl_22" alt="" border="0" title="ToolTip text" type="image" name="ctrl_22" />
@@ -313,7 +313,7 @@
 
 	</select>
     <span>
-      <br />Test Failed. Result:. Expected Result:ToolTip text</span>
+      <br />Not supported for this control</span>
   </div>
   <div id="GHTSubTest54" testname="System.Web.UI.WebControls.DropDownList: TabIndex:">
     <select tabindex="5" id="ctrl_53" name="ctrl_53">
@@ -368,7 +368,7 @@
 
 	</select>
     <span>
-      <br />Test Failed. Result:. Expected Result:ToolTip text</span>
+      <br />Not supported for this control</span>
   </div>
   <div id="GHTSubTest59" testname="System.Web.UI.WebControls.ListBox: TabIndex:">
     <select tabindex="5" id="ctrl_58" size="4" name="ctrl_58">

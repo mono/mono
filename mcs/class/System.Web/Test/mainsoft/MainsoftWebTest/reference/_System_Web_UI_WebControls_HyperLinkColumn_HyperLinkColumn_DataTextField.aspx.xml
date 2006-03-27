@@ -136,21 +136,6 @@
     <span>
       <br />Company</span>
   </div>
-  <div id="Ghtsubtest2" style="height:120px;width:553px">
-    <table border="1" cellspacing="0" style="border-collapse:collapse" rules="all" id="DataGrid2">
-      <tr>
-        <td>&amp;nbsp;</td>
-      </tr>
-      <tr>
-        <td>
-          <a>
-          </a>
-        </td>
-      </tr>
-    </table>
-    <span>
-      <br />Test passed. Expected exception was caught.</span>
-  </div>
   <div id="Ghtsubtest3" style="height:120px;width:553px">
     <table border="1" cellspacing="0" style="border-collapse:collapse" rules="all" id="DataGrid3">
       <tr>

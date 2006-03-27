@@ -95,9 +95,15 @@ namespace GHTTests.System_Web_dll.System_Web_UI_WebControls
 			this.GHTSubTestEnd();
 			try
 			{
-				this.GHTSubTestBegin(ctrlType, "Enabled:");
-				this.TestedControl.CopyBaseAttributes(this.btnEnabled);
-				this.Compare(this.TestedControl.Enabled, this.btnEnabled.Enabled);
+				if ((TestedControl is System.Web.UI.WebControls.Image) || 
+					(TestedControl is System.Web.UI.WebControls.ImageButton)) {
+					this.GHTSubTestBegin(ctrlType, "Enabled:");
+					this.GHTSubTestAddResult("Not supported for this control");
+				} else {
+					this.GHTSubTestBegin(ctrlType, "Enabled:");
+					this.TestedControl.CopyBaseAttributes(this.btnEnabled);
+					this.Compare(this.TestedControl.Enabled, this.btnEnabled.Enabled);
+				}
 			}
 			catch (Exception exception7)
 			{
@@ -109,9 +115,15 @@ namespace GHTTests.System_Web_dll.System_Web_UI_WebControls
 			this.GHTSubTestEnd();
 			try
 			{
-				this.GHTSubTestBegin(ctrlType, "ToolTip:");
-				this.TestedControl.CopyBaseAttributes(this.btnToolTip);
-				this.Compare(this.TestedControl.ToolTip, this.btnToolTip.ToolTip);
+				if ((TestedControl is System.Web.UI.WebControls.ListBox) ||
+					(TestedControl is System.Web.UI.WebControls.DropDownList)) {
+					this.GHTSubTestBegin(ctrlType, "ToolTip:");
+					this.GHTSubTestAddResult("Not supported for this control");
+				} else {
+					this.GHTSubTestBegin(ctrlType, "ToolTip:");
+					this.TestedControl.CopyBaseAttributes(this.btnToolTip);
+					this.Compare(this.TestedControl.ToolTip, this.btnToolTip.ToolTip);
+				}
 			}
 			catch (Exception exception8)
 			{

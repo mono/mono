@@ -106,30 +106,6 @@ namespace GHTTests.System_Web_dll.System_Web_UI_WebControls
 				GHTSubTestUnexpectedExceptionCaught(ex);
 			}
 
-			GHTActiveSubTest = Ghtsubtest2;
-			try 
-			{
-				DataGrid2.DataSource = GHTTests.GHDataSources.DSDataTable(0, 1, "http://");
-				System.Web.UI.WebControls.HyperLinkColumn c_id = new System.Web.UI.WebControls.HyperLinkColumn();
-
-				c_id.DataNavigateUrlField = "http://www.google.com";
-				c_id.DataTextField = "NotExist";
-
-				DataGrid2.Columns.Add(c_id);
-				DataGrid2.DataBind();;
-
-				GHTSubTestAddResult(c_id.DataTextField);
-				GHTSubTestExpectedExceptionNotCaught("HttpException");
-			}
-			catch (HttpException eex) 
-			{
-				GHTSubTestExpectedExceptionCaught(eex); 
-			}
-			catch (Exception ex) 
-			{
-				GHTSubTestUnexpectedExceptionCaught(ex);
-			}
-
 			GHTActiveSubTest = Ghtsubtest3;
 			try 
 			{

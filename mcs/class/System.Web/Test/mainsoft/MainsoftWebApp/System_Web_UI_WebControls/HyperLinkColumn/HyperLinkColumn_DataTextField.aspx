@@ -26,9 +26,6 @@
 			<cc1:ghtsubtest id="GHTSubTest1" runat="server" Height="120px" Width="553px">
 				<asp:DataGrid id="DataGrid1" runat="server" AutoGenerateColumns="False"></asp:DataGrid>
 			</cc1:ghtsubtest>
-			<cc1:ghtsubtest id="Ghtsubtest2" runat="server" Height="120px" Width="553px">
-				<asp:DataGrid id="DataGrid2" runat="server" AutoGenerateColumns="False"></asp:DataGrid>
-			</cc1:ghtsubtest>
 			<cc1:ghtsubtest id="Ghtsubtest3" runat="server" Height="120px" Width="553px">
 				<asp:DataGrid id="DataGrid3" runat="server" AutoGenerateColumns="False">
 					<Columns>
