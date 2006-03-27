@@ -1,3 +1,8 @@
+2006-03-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* IPAddressTest.cs : added some tests for TryParse() and IPv6 related
+	  properties.
+
 2006-02-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* FtpWebRequestTest.cs: Add a small check for Method.

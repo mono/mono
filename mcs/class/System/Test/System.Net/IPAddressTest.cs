@@ -218,6 +218,7 @@ public class IPAddressTest
 	}
 
 	[Test]
+	[Category ("NotDotNet")] // #5 fails
 	public void ParseOkV4 ()
 	{
 		for(int i=0; i<ipv4ParseOk.Length / 2; i++) {
@@ -350,6 +351,58 @@ public class IPAddressTest
 	public void FromBytes2 ()
 	{
 		new IPAddress (new byte [4], 0);
+	}
+#endif
+
+
+#if NET_2_0
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void TryParseArgumentNull ()
+	{
+		IPAddress i;
+		IPAddress.TryParse (null, out i);
+	}
+
+	[Test]
+	public void TryParse ()
+	{
+		IPAddress i;
+		Assert.IsTrue (IPAddress.TryParse ("0.0.0.0", out i), "#1");
+		Assert.IsTrue (IPAddress.TryParse ("127.0.0.1", out i), "#2");
+		Assert.IsFalse (IPAddress.TryParse ("www.mono-project.com", out i), "#3");
+		Assert.IsTrue (IPAddress.TryParse ("0001:0002:0003:0004:0005:0006:0007:0008", out i), "#4");
+		Assert.IsTrue (IPAddress.TryParse ("1:2:3:4:5:6:7:8", out i), "#5");
+		Assert.IsTrue (IPAddress.TryParse ("1::8", out i), "#6");
+		Assert.IsTrue (IPAddress.TryParse ("1::3:4:5:6:7:8", out i), "#7");
+		Assert.IsFalse (IPAddress.TryParse ("1::2:3:4:5::6:7:8", out i), "#8"); // :: ::
+		Assert.IsFalse (IPAddress.TryParse ("1::2:3:4:5:6:7:8", out i), "#9");
+		Assert.IsFalse (IPAddress.TryParse ("1;2:3:4:5:6:7:8", out i), "#10"); // ;
+		Assert.IsFalse (IPAddress.TryParse ("1:2:3:4:5:6:7:8/10", out i), "#11"); // subnet
+	}
+
+	[Test]
+	public void IsIPv6LinkLocal ()
+	{
+		Assert.IsTrue (IPAddress.Parse ("FE80::1").IsIPv6LinkLocal, "#1");
+		Assert.IsTrue (IPAddress.Parse ("FE81::1").IsIPv6LinkLocal, "#2");
+		Assert.IsFalse (IPAddress.Parse ("FD81::1").IsIPv6LinkLocal, "#3");
+	}
+
+	[Test]
+	public void IsIPv6SiteLocal ()
+	{
+		Assert.IsTrue (IPAddress.Parse ("FEC0::1").IsIPv6SiteLocal, "#1");
+		Assert.IsTrue (IPAddress.Parse ("FEC1::1").IsIPv6SiteLocal, "#2");
+		Assert.IsFalse (IPAddress.Parse ("FE81::1").IsIPv6SiteLocal, "#3");
+	}
+
+	[Test]
+	public void IsIPv6Multicast ()
+	{
+		Assert.IsTrue (IPAddress.Parse ("FF00::1").IsIPv6Multicast, "#1");
+		Assert.IsTrue (IPAddress.Parse ("FF01::1").IsIPv6Multicast, "#2");
+		Assert.IsFalse (IPAddress.Parse ("FE00::1").IsIPv6Multicast, "#3");
 	}
 #endif
 }

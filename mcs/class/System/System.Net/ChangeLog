@@ -1,3 +1,7 @@
+2006-03-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* IPAddress.cs : added NET_2_0 TryParse() and IPv6 related properties.
+
 2006-03-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConnectionStream.cs: avoid Begin/EndWrite when the body length is

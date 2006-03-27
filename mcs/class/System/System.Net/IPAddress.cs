@@ -183,19 +183,28 @@ namespace System.Net {
 		public static IPAddress Parse (string ip)
 		{
 			IPAddress ret;
+			if (TryParse (ip, out ret))
+				return ret;
+			throw new FormatException("An invalid IP address was specified.");
+		}
 
+#if NET_2_0
+		public
+#endif
+		static bool TryParse (string ip, out IPAddress address)
+		{
 			if (ip == null)
 				throw new ArgumentNullException ("Value cannot be null.");
 				
 #if NET_1_1
-			if( (ret = ParseIPV4(ip)) == null)
-				if( (ret = ParseIPV6(ip)) == null)
-					throw new FormatException("An invalid IP address was specified.");
+			if( (address = ParseIPV4(ip)) == null)
+				if( (address = ParseIPV6(ip)) == null)
+					return false;
 #else
-			if( (ret = ParseIPV4(ip)) == null)
-					throw new FormatException("An invalid IP address was specified.");
+			if( (address = ParseIPV4(ip)) == null)
+					return false;
 #endif
-			return ret;
+			return true;
 		}
 
 		private static IPAddress ParseIPV4 (string ip)
@@ -285,7 +294,21 @@ namespace System.Net {
 		internal long InternalIPv4Address {
 			get { return m_Address; }
 		}
-		
+
+#if NET_2_0
+		public bool IsIPv6LinkLocal {
+			get { return m_Family != AddressFamily.InterNetwork && (m_Numbers [0] &= 0xFE80) != 0; }
+		}
+
+		public bool IsIPv6SiteLocal {
+			get { return m_Family != AddressFamily.InterNetwork && (m_Numbers [0] &= 0xFEC0) != 0; }
+		}
+
+		public bool IsIPv6Multicast {
+			get { return m_Family != AddressFamily.InterNetwork && (m_Numbers [0] & 0xFF00) != 0; }
+		}
+#endif
+
 #if NET_1_1
 		public long ScopeId {
 			get {
