@@ -1,3 +1,9 @@
+2006-03-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TimeSpanTest.cs : updated tests to not fail under run-test-ondotnet
+	  on 2.0 profile. Thus marked them as NotWorking (since they are
+	  regarded as working).
+
 2006-03-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DoubleTest.cs : added ParseEmptyString().

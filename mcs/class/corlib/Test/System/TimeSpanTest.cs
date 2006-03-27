@@ -54,6 +54,10 @@ public class TimeSpanTest : Assertion {
 	}
 
 	[Test]
+#if NET_2_0
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	[Category ("NotWorking")]
+#endif
 	public void TemporaryOverflow () 
 	{
 		// calculating part of this results in overflow (days)
@@ -69,6 +73,10 @@ public class TimeSpanTest : Assertion {
 	}
 
 	[Test]
+#if NET_2_0
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	[Category ("NotWorking")]
+#endif
 	public void NoOverflowInHoursMinsSecondsMS () 
 	{
 		TimeSpan ts = new TimeSpan (0, Int32.MaxValue, Int32.MaxValue, Int32.MaxValue, Int32.MaxValue);
@@ -113,6 +121,10 @@ public class TimeSpanTest : Assertion {
 	}
 
 	[Test]
+#if NET_2_0
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	[Category ("NotWorking")]
+#endif
 	public void MaxHours () 
 	{
 		// LAMESPEC: the highest hours are "special"
@@ -134,6 +146,10 @@ public class TimeSpanTest : Assertion {
 	}
 
 	[Test]
+#if NET_2_0
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	[Category ("NotWorking")]
+#endif
 	public void MaxHours_BreakPoint () 
 	{
 		TimeSpan ts = new TimeSpan (0, Int32.MaxValue - 596523, 0, 0, 0);
@@ -164,8 +180,20 @@ public class TimeSpanTest : Assertion {
 	}
 
 	[Test]
+#if NET_2_0
+	[Category ("NotWorking")]
+#endif
 	public void MinHours () 
 	{
+#if NET_2_0
+		TimeSpan ts = new TimeSpan (0, -256204778, 0, 0, 0);
+		AssertEquals ("Days", -10675199, ts.Days);
+		AssertEquals ("Hours", -2, ts.Hours);
+		AssertEquals ("Minutes", 0, ts.Minutes);
+		AssertEquals ("Seconds", 0, ts.Seconds);
+		AssertEquals ("Milliseconds", 0, ts.Milliseconds);
+		AssertEquals ("Ticks", -9223372008000000000, ts.Ticks);
+#else
 		// LAMESPEC: the lowest hours are "special"
 		TimeSpan ts = new TimeSpan (0, Int32.MinValue, 0, 0, 0);
 		AssertEquals ("Min-Days", 0, ts.Days);
@@ -182,9 +210,14 @@ public class TimeSpanTest : Assertion {
 		AssertEquals ("Seconds", 0, ts.Seconds);
 		AssertEquals ("Milliseconds", 0, ts.Milliseconds);
 		AssertEquals ("Ticks", 21474828000000000, ts.Ticks);
+#endif
 	}
 
 	[Test]
+#if NET_2_0
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	[Category ("NotWorking")]
+#endif
 	public void MinHours_BreakPoint () 
 	{
 		TimeSpan ts = new TimeSpan (0, -2146887124, 0, 0, 0);
@@ -215,10 +248,23 @@ public class TimeSpanTest : Assertion {
 	}
 
 	[Test]
+#if NET_2_0
+	[Category ("NotWorking")]
+#endif
 	public void MaxMinutes () 
 	{
+		TimeSpan ts;
+#if NET_2_0
+		ts = new TimeSpan (0, 0, 256204778, 0, 0);
+		AssertEquals ("Max-Days", 177919, ts.Days);
+		AssertEquals ("Max-Hours", 23, ts.Hours);
+		AssertEquals ("Max-Minutes", 38, ts.Minutes);
+		AssertEquals ("Max-Seconds", 0, ts.Seconds);
+		AssertEquals ("Max-Milliseconds", 0, ts.Milliseconds);
+		AssertEquals ("Max-Ticks", 153722866800000000, ts.Ticks);
+#else
 		// LAMESPEC: the highest minutes are "special"
-		TimeSpan ts = new TimeSpan (0, 0, Int32.MaxValue, 0, 0);
+		ts = new TimeSpan (0, 0, Int32.MaxValue, 0, 0);
 		AssertEquals ("Max-Days", 0, ts.Days);
 		AssertEquals ("Max-Hours", 0, ts.Hours);
 		AssertEquals ("Max-Minutes", -1, ts.Minutes);
@@ -233,9 +279,14 @@ public class TimeSpanTest : Assertion {
 		AssertEquals ("Seconds", 0, ts.Seconds);
 		AssertEquals ("Milliseconds", 0, ts.Milliseconds);
 		AssertEquals ("Ticks", -21474836400000000, ts.Ticks);
+#endif
 	}
 
 	[Test]
+#if NET_2_0
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	[Category ("NotWorking")]
+#endif
 	public void MaxMinutes_BreakPoint () 
 	{
 		TimeSpan ts = new TimeSpan (0, Int32.MaxValue - 35791394, 0, 0, 0);
@@ -266,10 +317,23 @@ public class TimeSpanTest : Assertion {
 	}
 
 	[Test]
+#if NET_2_0
+	[Category ("NotWorking")]
+#endif
 	public void MinMinutes () 
 	{
+		TimeSpan ts;
+#if NET_2_0
+		ts = new TimeSpan (0, 0, Int32.MinValue, 0, 0);
+		AssertEquals ("Days", -1491308, ts.Days);
+		AssertEquals ("Hours", -2, ts.Hours);
+		AssertEquals ("Minutes", -8, ts.Minutes);
+		AssertEquals ("Seconds", 0, ts.Seconds);
+		AssertEquals ("Milliseconds", 0, ts.Milliseconds);
+		AssertEquals ("Ticks", -1288490188800000000, ts.Ticks);
+#else
 		// LAMESPEC: the highest minutes are "special"
-		TimeSpan ts = new TimeSpan (0, 0, Int32.MinValue, 0, 0);
+		ts = new TimeSpan (0, 0, Int32.MinValue, 0, 0);
 		AssertEquals ("Min-Days", 0, ts.Days);
 		AssertEquals ("Min-Hours", 0, ts.Hours);
 		AssertEquals ("Min-Minutes", 0, ts.Minutes);
@@ -284,11 +348,24 @@ public class TimeSpanTest : Assertion {
 		AssertEquals ("Seconds", 0, ts.Seconds);
 		AssertEquals ("Milliseconds", 0, ts.Milliseconds);
 		AssertEquals ("Ticks", 21474836400000000, ts.Ticks);
+#endif
 	}
 
 	[Test]
+#if NET_2_0
+	[Category ("NotWorking")]
+#endif
 	public void MinMinutes_BreakPoint () 
 	{
+#if NET_2_0
+		TimeSpan ts = new TimeSpan (0, 0, -2111692253, 0, 0);
+		AssertEquals ("Days", -1466452, ts.Days);
+		AssertEquals ("Hours", -22, ts.Hours);
+		AssertEquals ("Minutes", -53, ts.Minutes);
+		AssertEquals ("Seconds", -0, ts.Seconds);
+		AssertEquals ("Milliseconds", 0, ts.Milliseconds);
+		AssertEquals ("Ticks", -1267015351800000000, ts.Ticks);
+#else
 		TimeSpan ts = new TimeSpan (0, 0, -2111692253, 0, 0);
 		AssertEquals ("Days", -24855, ts.Days);
 		AssertEquals ("Hours", -3, ts.Hours);
@@ -296,6 +373,7 @@ public class TimeSpanTest : Assertion {
 		AssertEquals ("Seconds", -16, ts.Seconds);
 		AssertEquals ("Milliseconds", 0, ts.Milliseconds);
 		AssertEquals ("Ticks", -21474835960000000, ts.Ticks);
+#endif
 	}
 
 	[Test]
