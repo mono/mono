@@ -1,0 +1,19 @@
+2006-02-10  Ankit Jain  <jankit@novell.com>
+
+	* err-global.il, err-global2.il: New. Tests for refs to non-existant
+	global method/field.
+
+2006-02-02  Ankit Jain  <jankit@novell.com>
+
+	* err-invalid-array-bounds.il: New. Test for 'lower bound <= upper bound'
+
+2006-01-23  Ankit Jain  <jankit@novell.com>
+
+	* err-*.il, test-perm_fail*.il: Move negative tests from tests/ to here.
+
+2004-06-10  Jackson Harper  <jackson@ximian.com>
+
+	* errors: This directory will contain assembly files that should
+	not compile.
+	* bad_bytearray.il: A bad bytearray in a .data line. Should give a
+	syntax error.
