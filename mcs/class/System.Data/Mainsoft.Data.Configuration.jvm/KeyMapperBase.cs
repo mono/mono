@@ -58,39 +58,6 @@ namespace Mainsoft.Data.Configuration
 
 		#endregion // Constructors
 
-		#region Properties
-
-		public object this [object key]
-		{
-			get { 
-
-				if (!(key is String))
-					throw new ArgumentException("key is not string");
-
-				string skey = (string)key;
-
-				skey = GetConnectionStringKey(skey);
-				if (skey == null)
-					return null;
-
-				return _dictionary[skey];
-			}
-
-			set {
-				if (!(key is String))
-					throw new ArgumentException("key is not string");
-
-				string skey = (string)key;
-
-				skey = GetConnectionStringKey(skey);
-				if (skey == null)
-					skey = (string)key;
-
-				_dictionary[skey] = value;
-			}
-		}
-		#endregion // Properties
-
 		#region Methods
 
 		public string GetConnectionStringKey (string key)
@@ -221,49 +188,78 @@ namespace Mainsoft.Data.Configuration
 
 		#region IDictionary Members
 
-		public bool IsFixedSize
+		public virtual bool IsFixedSize
 		{
 			get { return _dictionary.IsFixedSize; }
 		}
 
-		public bool IsReadOnly
+		public virtual bool IsReadOnly
 		{
 			get { return _dictionary.IsReadOnly; }
 		}
 
-		public ICollection Keys
+		public virtual ICollection Keys
 		{
 			get { 
 				return _dictionary.Keys; 
 			}
 		}
 
-		public ICollection Values
+		public virtual object this [object key] {
+			get { 
+
+				if (!(key is String))
+					throw new ArgumentException("key is not string");
+
+				string skey = (string)key;
+
+				skey = GetConnectionStringKey(skey);
+				if (skey == null)
+					return null;
+
+				return _dictionary[skey];
+			}
+
+			set {
+				if (!(key is String))
+					throw new ArgumentException("key is not string");
+
+				string skey = (string)key;
+
+				skey = GetConnectionStringKey(skey);
+				if (skey == null)
+					skey = (string)key;
+
+				_dictionary[skey] = value;
+			}
+		}
+
+		public virtual ICollection Values
 		{
 			get { return _dictionary.Values; }
 		}
 
-		public void Add (object key, object value)
+		public virtual void Add (object key, object value)
 		{
 			_dictionary.Add ((string)key, (string)value);
 		}
 
-		public void Clear ()
+		public virtual void Clear ()
 		{
 			_dictionary.Clear ();
 		}
 
-		public bool Contains (object key)
+		public virtual bool Contains (object key)
 		{
 			return _dictionary.Contains (key);
 		}
 
-		public IDictionaryEnumerator GetEnumerator ()
+		public virtual IDictionaryEnumerator GetEnumerator ()
 		{
 			return _dictionary.GetEnumerator ();
 		}
 
-		public void Remove (object key)
+		public virtual void Remove (object key)
 		{
 			_dictionary.Remove ((string)key);
 		}
@@ -274,29 +270,29 @@ namespace Mainsoft.Data.Configuration
 
 		IEnumerator IEnumerable.GetEnumerator () 
 		{
-			return _dictionary.GetEnumerator ();
+			return this.GetEnumerator();
 		}
 
 		#endregion // IEnumerable Members
 
 		#region ICollection Members
 
-		public bool IsSynchronized 
+		public virtual bool IsSynchronized 
 		{
 			get { return ((ICollection)_dictionary).IsSynchronized; }
 		}
 
-		public int Count 
+		public virtual int Count 
 		{
 			get { return _dictionary.Count;	}
 		}
 
-		public void CopyTo (Array array, int index) 
+		public virtual void CopyTo (Array array, int index) 
 		{
 			_dictionary.CopyTo (array, index);
 		}
 
-		public object SyncRoot 
+		public virtual object SyncRoot 
 		{
 			get {return ((ICollection)_dictionary).SyncRoot; }
 		}

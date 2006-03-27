@@ -39,6 +39,8 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using Mainsoft.Data.Configuration;
 
+using System.Globalization;
+
 using java.sql;
 using javax.sql;
 using javax.naming;
@@ -92,28 +94,48 @@ namespace Mainsoft.Data.Jdbc.Providers
 
 					java.util.Properties properties = new java.util.Properties ();
 
-					string user = (string)_keyMapper ["user"];
-					if (user != null) {
-						_excludedKeys.Add ("user");
-						properties.put ("user", user);
-					}
-
-					// TBD : what happens if password is not specified (should use empty pwd?)
-					string password = (string)_keyMapper ["password"];
-					if (password != null) {
-						_excludedKeys.Add ("password"); 
-						properties.put ("password", password);
-					}
-
 					if (_provider._excludedKeys != null)
 						_excludedKeys.AddRange(_provider._excludedKeys);
 
-					for (int i = 0; i < _excludedKeys.Count; i++)
-						_excludedKeys[i] = _keyMapper.GetConnectionStringKey((string)_excludedKeys[i]);
+					foreach(string key in _provider._keyMapping.Keys) {
+						object value = _keyMapper [key];
+						if (value == null)
+							continue;
+						bool contains = false;
+						for (int i = 0; i < _excludedKeys.Count; i++) {
+							if (String.Compare((string)_excludedKeys[i], key,
+								true, CultureInfo.InvariantCulture) == 0) {
+								contains = true;
+								break;
+							}
+						}
+						if (!contains) {
+							properties.put (key, value);
+							_excludedKeys.Add(key);
+						}
+					}
 
-					foreach(string key in _keyMapper.Keys)
-						if (!_excludedKeys.Contains (key))
-							properties.put (key, _keyMapper [key]);
+					for (int i = 0; i < _excludedKeys.Count; i++) {
+						string value = _keyMapper.GetConnectionStringKey((string)_excludedKeys[i]);
+						if (value != null)
+							_excludedKeys[i] = value;
+					}
+
+					foreach(string key in _keyMapper.Keys) {
+						object value = _keyMapper [key];
+						if (value == null)
+							continue;
+						bool contains = false;
+						for (int i = 0; i < _excludedKeys.Count; i++) {
+							if (String.Compare((string)_excludedKeys[i], key,
+								true, CultureInfo.InvariantCulture) == 0) {
+								contains = true;
+								break;
+							}
+						}
+						if (!contains)
+							properties.put (key, value);
+					}
 
 					ActivateJdbcDriver ();
 

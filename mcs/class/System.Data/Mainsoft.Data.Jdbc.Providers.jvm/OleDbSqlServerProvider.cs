@@ -39,7 +39,7 @@ using java.net;
 
 namespace Mainsoft.Data.Jdbc.Providers
 {
-	public class OleDbSqlServerProvider : GenericProvider
+	public class OleDbSqlServerProvider2000 : GenericProvider
 	{
 		#region Consts
 
