@@ -1,3 +1,7 @@
+2006-03-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpUtilityTest.cs: test from bug #77931.
+
 2005-12-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpRequestTest.cs: ignore test.
