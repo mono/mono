@@ -45,9 +45,7 @@ namespace System.Data {
 	/// </summary>
 	[Editor ("Microsoft.VSDesigner.Data.Design.DataViewSettingsCollectionEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
 		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-#if !NET_2_0
 	[Serializable]
-#endif
 	public class DataViewSettingCollection : ICollection, IEnumerable 
 	{
 		#region Fields

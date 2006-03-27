@@ -42,17 +42,12 @@ using System.Data.Common;
 using System.Collections;
 using System.Globalization;
 using System.Xml;
-#if NET_2_0
-using System.ComponentModel;
-#endif
 
 namespace System.Data {
 	/// <summary>
 	/// Represents a row of data in a DataTable.
 	/// </summary>
-#if !NET_2_0
 	[Serializable]
-#endif
 	public class DataRow
 	{
 		#region Fields
@@ -185,6 +180,7 @@ namespace System.Data {
 				}
 				
 				CheckValue (value, column);
+
 				bool orginalEditing = Proposed >= 0;
 				if (!orginalEditing) {
 					BeginEdit ();
@@ -250,6 +246,9 @@ namespace System.Data {
 			get {
 				if (columnIndex < 0 || columnIndex > _table.Columns.Count)
 					throw new IndexOutOfRangeException ();
+				// Accessing deleted rows
+				if (!_inExpressionEvaluation && RowState == DataRowState.Deleted && version != DataRowVersion.Original)
+					throw new DeletedRowInaccessibleException ("Deleted row information cannot be accessed through the row.");
 				
 				DataColumn column = _table.Columns[columnIndex];
 				int recordIndex = IndexFromVersion(version);
@@ -263,6 +262,9 @@ namespace System.Data {
 					return column[recordIndex];
 				}
 
+				if (RowState == DataRowState.Detached && version == DataRowVersion.Default && Proposed < 0)
+					throw new RowNotInTableException("This row has been removed from a table and does not have any data.  BeginEdit() will allow creation of new data in this row.");
+				
 				return column[recordIndex];
 			}
 		}
@@ -272,26 +274,17 @@ namespace System.Data {
 		/// </summary>
 		public object[] ItemArray {
 			get { 
+				// row not in table
+				if (RowState == DataRowState.Detached)
+					throw new RowNotInTableException("This row has been removed from a table and does not have any data.  BeginEdit() will allow creation of new data in this row.");
 				// Accessing deleted rows
 				if (RowState == DataRowState.Deleted)
 					throw new DeletedRowInaccessibleException ("Deleted row information cannot be accessed through the row.");
-
-				int index = 0;
-				if (RowState == DataRowState.Detached)
-					// Check if datarow is removed from the table.
-					if (Proposed < 0)
-						throw new RowNotInTableException(
-								"This row has been removed from a table and does not have any data."
-								+"  BeginEdit() will allow creation of new data in this row.");	
-					else
-						index = Proposed;
-				else
-					index = Current;
 				
 				object[] items = new object[_table.Columns.Count];
-
-				foreach(DataColumn column in _table.Columns)
-					items[column.Ordinal] = column[index];
+				foreach(DataColumn column in _table.Columns) {
+					items[column.Ordinal] = column[Current];
+				}
 				return items;
 			}
 			set {
@@ -329,15 +322,23 @@ namespace System.Data {
 		public DataRowState RowState {
 			get { 
 				//return rowState; 
-				if ((Original == -1) && (Current == -1))
-					return DataRowState.Detached;
-				if (Original == Current)
-					return DataRowState.Unchanged;
-				if (Original == -1)
-					return DataRowState.Added;
-				if (Current == -1)
-					return DataRowState.Deleted;
-				return DataRowState.Modified;
+				  if ((Original == -1) && (Current == -1))
+					{
+						return DataRowState.Detached;
+					}
+					if (Original == Current)
+					{
+						return DataRowState.Unchanged;
+					}
+					if (Original == -1)
+					{
+						return DataRowState.Added;
+					}
+					if (Current == -1)
+					{
+						return DataRowState.Deleted;
+					}
+					return DataRowState.Modified;
 			}
 		}
 
@@ -591,9 +592,14 @@ namespace System.Data {
 					return;
 			case DataRowState.Added:
 			case DataRowState.Modified:
-                                if (Original >= 0)
+					int original = Original;
+					DataRowState oldState = RowState;
+                                if (Original >= 0) {
                                         Table.RecordCache.DisposeRecord(Original);
+                                }
                                 Original = Current;
+					foreach (Index index in Table.Indexes)
+						index.Update(this, original, DataRowVersion.Original, oldState);
 				break;
 			case DataRowState.Deleted:
 				Table.DeleteRowFromIndexes(this);
@@ -610,9 +616,6 @@ namespace System.Data {
 		/// <summary>
 		/// Begins an edit operation on a DataRow object.
 		/// </summary>
-#if NET_2_0
-		[EditorBrowsable (EditorBrowsableState.Advanced)]
-#endif
 		public void BeginEdit () 
 		{
 			if (_inChangingEvent)
@@ -633,9 +636,6 @@ namespace System.Data {
 		/// <summary>
 		/// Cancels the current edit on the row.
 		/// </summary>
-#if NET_2_0
-		[EditorBrowsable (EditorBrowsableState.Advanced)]
-#endif
 		public void CancelEdit () 
 		{
 			 if (_inChangingEvent) {
@@ -649,7 +649,7 @@ namespace System.Data {
 				Proposed = -1;
 
 				foreach(Index index in Table.Indexes)
-					index.Update(this,oldRecord, DataRowVersion.Proposed, oldState);
+					index.Update(this,oldRecord, DataRowVersion.Proposed, oldState);					
 			}
 		}
 
@@ -690,8 +690,9 @@ namespace System.Data {
 			if (Current >= 0) {
 				int current = Current;
 				DataRowState oldState = RowState;
-				if (Current != Original)
+				if (Current != Original) {
 					_table.RecordCache.DisposeRecord(Current);
+				}
 				Current = -1;
 				foreach(Index index in Table.Indexes)
 					index.Update(this, current, DataRowVersion.Current, oldState);
@@ -763,7 +764,7 @@ namespace System.Data {
 								// change only the values in the key columns
 								// set the childcolumn value to the new parent row value
 									for (int k = 0; k < fkc.Columns.Length; k++)
-										if (!fkc.RelatedColumns [k].DataContainer [Current].Equals (fkc.RelatedColumns [k].DataContainer [Proposed]))
+										if (!fkc.RelatedColumns [k].DataContainer [Original].Equals (fkc.RelatedColumns [k].DataContainer [Proposed]))
 											childRows[j][fkc.Columns[k]] = this[fkc.RelatedColumns[k], DataRowVersion.Proposed];
 
 									break;
@@ -772,6 +773,7 @@ namespace System.Data {
 								case DataRowAction.Rollback: {
 									if (childRows[j].RowState != DataRowState.Unchanged)
 										childRows[j].RejectChanges ();
+
 									break;
 								}
 							}
@@ -828,9 +830,6 @@ namespace System.Data {
 		/// <summary>
 		/// Ends the edit occurring on the row.
 		/// </summary>
-#if NET_2_0
-		[EditorBrowsable (EditorBrowsableState.Advanced)]
-#endif
 		public void EndEdit () 
 		{
 			if (_inChangingEvent)
@@ -859,13 +858,11 @@ namespace System.Data {
 				Current = Proposed;
 				Proposed = -1;
 
-				//FIXME : ideally  indexes shouldnt be maintained during dataload.But this needs to
-				//be implemented at multiple places.For now, just maintain the index.
-				//if (!Table._duringDataLoad) {
+				if (!Table._duringDataLoad) {
 					foreach(Index index in Table.Indexes) {
 						index.Update(this,oldRecord, DataRowVersion.Current, oldState);
 					}
-				//}
+				}
 
 				try {
 					AssertConstraints();
@@ -883,11 +880,11 @@ namespace System.Data {
 				catch {
 					int proposed = Proposed >= 0 ? Proposed : Current;
 					Current = oldRecord;
-					//if (!Table._duringDataLoad) {
+					if (!Table._duringDataLoad) {
 						foreach(Index index in Table.Indexes) {
 							index.Update(this,proposed, DataRowVersion.Current, RowState);
 						}
-					//}
+					}
 					throw;
 				}
 
@@ -1317,30 +1314,46 @@ namespace System.Data {
 				throw new RowNotInTableException("This row has been removed from a table and does not have any data.  BeginEdit() will allow creation of new data in this row.");
 			// If original is null, then nothing has happened since AcceptChanges
 			// was last called.  We have no "original" to go back to.
-			
-			_table.ChangedDataRow (this, DataRowAction.Rollback);
-			CancelEdit ();
+			if (HasVersion(DataRowVersion.Original)) {
+				if (Current >= 0 && Current != Original) {
+					Table.RecordCache.DisposeRecord(Current);
+				}
+				CheckChildRows(DataRowAction.Rollback);
 
-			//TODO : Need to Verify the constraints.. 
-			switch (RowState) {
-			case DataRowState.Added:
-				_table.DeleteRowFromIndexes (this);
-				_table.Rows.RemoveInternal (this);
-				DetachRow ();
-				break;
-			case DataRowState.Modified:
-				int current = Current;
-				Table.RecordCache.DisposeRecord (Current);
-				CheckChildRows (DataRowAction.Rollback);
-				Current = Original;
-				foreach (Index index in Table.Indexes)
-					index.Update(this, current, DataRowVersion.Current, DataRowState.Modified);
-				break;
-			case DataRowState.Deleted:
-				CheckChildRows (DataRowAction.Rollback);
-				Current = Original;
-				Table.AddRowToIndexes (this);
-				break;
+				if (Current != Original) {
+					Table.DeleteRowFromIndexes(this);
+					Current = Original;
+				}
+			       
+				_table.ChangedDataRow (this, DataRowAction.Rollback);
+				CancelEdit ();
+				switch (RowState)
+				{
+					case DataRowState.Added:
+						_table.DeleteRowFromIndexes (this);
+						_table.Rows.RemoveInternal (this);
+						break;
+					case DataRowState.Modified:
+					case DataRowState.Deleted:
+						Table.AddRowToIndexes(this);
+						AssertConstraints();
+						break;
+				} 
+				
+			} 			
+			else {
+				// If rows are just loaded via Xml the original values are null.
+				// So in this case we have to remove all columns.
+				// FIXME: I'm not realy sure, does this break something else, but
+				// if so: FIXME ;)
+				
+				if ((RowState & DataRowState.Added) > 0)
+				{
+					_table.DeleteRowFromIndexes (this);
+					_table.Rows.RemoveInternal (this);
+					// if row was in Added state we move it to Detached.
+					DetachRow();
+				}
 			}
 		}
 
@@ -1633,6 +1646,7 @@ namespace System.Data {
 				
 			if (Table.DataSet != null && !Table.DataSet.EnforceConstraints)
 				return;
+
 			foreach(DataColumn column in Table.Columns) {
 				if (!column.AllowDBNull && IsNull(column)) {
 					throw new NoNullAllowedException(_nullConstraintMessage);

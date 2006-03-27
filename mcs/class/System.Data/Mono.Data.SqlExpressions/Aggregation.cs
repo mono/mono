@@ -46,9 +46,7 @@ namespace Mono.Data.SqlExpressions {
 		AggregationFunction function;
 		int count;
 		IConvertible result;
-		DataRowChangeEventHandler RowChangeHandler;
-		DataTable table ;
-
+	
 		public Aggregation (bool cacheResults, DataRow[] rows, AggregationFunction function, ColumnReference column)
 		{
 			this.cacheResults = cacheResults;
@@ -56,8 +54,6 @@ namespace Mono.Data.SqlExpressions {
 			this.column = column;
 			this.function = function;
 			this.result = null;
-			if (cacheResults)
-				RowChangeHandler = new DataRowChangeEventHandler (InvalidateCache);
 		}
 
 		public override bool Equals(object obj)
@@ -95,13 +91,12 @@ namespace Mono.Data.SqlExpressions {
 			
 			return hashCode;
 		}
-		
 	
 		public override object Eval (DataRow row)
 		{
 			//TODO: implement a better caching strategy and a mechanism for cache invalidation.
 			//for now only aggregation over the table owning 'row' (e.g. 'sum(parts)'
-			//in constrast to 'sum(child.parts)') is cached.
+			//in constrast to 'sum(parent.parts)' and 'sum(child.parts)') is cached.
 			if (cacheResults && result != null && column.ReferencedTable == ReferencedTable.Self)
 				return result;
 				
@@ -121,7 +116,7 @@ namespace Mono.Data.SqlExpressions {
 				count++;
 				Aggregate ((IConvertible)val);
 			}
-
+			
 			switch (function) {
 			case AggregationFunction.StDev:
 			case AggregationFunction.Var:
@@ -129,7 +124,7 @@ namespace Mono.Data.SqlExpressions {
 				break;
 					
 			case AggregationFunction.Avg:
-				result = ((count == 0) ? DBNull.Value : Numeric.Divide (result, count));
+				result = Numeric.Divide (result, count);
 				break;
 			
 			case AggregationFunction.Count:
@@ -139,12 +134,7 @@ namespace Mono.Data.SqlExpressions {
 			
 			if (result == null)
 				result = DBNull.Value;
-			
-			if (cacheResults && column.ReferencedTable == ReferencedTable.Self) 
-			{
-				table = row.Table;
-				row.Table.RowChanged += RowChangeHandler;
-			}	
+				
 			return result;
 		}
 
@@ -175,9 +165,6 @@ namespace Mono.Data.SqlExpressions {
 		
 		private IConvertible CalcStatisticalFunction (object[] values)
 		{
-			if (count < 2)
-				return DBNull.Value;
-
 			double average = (double)Convert.ChangeType(result, TypeCode.Double) / count;
 			double res = 0.0;
 						
@@ -192,20 +179,8 @@ namespace Mono.Data.SqlExpressions {
 			
 			if (function == AggregationFunction.StDev)
 				res = System.Math.Sqrt (res);
-
+			
 			return res;
-		}
-
-		public override void ResetExpression ()
-		{
-			if (table != null)
-				InvalidateCache (table, null);
-		}
-
-		private void InvalidateCache (Object sender, DataRowChangeEventArgs args)
-		{
-			result = null; 
-			((DataTable)sender).RowChanged -= RowChangeHandler;
 		}
 	}
 }

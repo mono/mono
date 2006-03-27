@@ -135,6 +135,10 @@ namespace System.Data {
                         get { return 0; }
                 }
                 
+                public override int VisibleFieldCount {
+                        get { return CurrentTable.Columns.Count; }
+                }
+
                 #endregion // Properties
 
                 #region Methods
@@ -166,10 +170,9 @@ namespace System.Data {
                         _closed = true;
                 }
                 
-                protected override void Dispose (bool disposing)
+                public override void Dispose ()
                 {
-                        if (disposing)
-				Close ();
+                        Close ();
                 }
                 
                 public override bool GetBoolean (int i)

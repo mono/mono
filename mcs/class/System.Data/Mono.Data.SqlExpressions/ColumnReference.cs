@@ -33,7 +33,6 @@
 using System;
 using System.Collections;
 using System.Data;
-using System.ComponentModel;
 
 namespace Mono.Data.SqlExpressions {
 	internal enum ReferencedTable {
@@ -45,8 +44,6 @@ namespace Mono.Data.SqlExpressions {
 	internal class ColumnReference : BaseExpression {
 		ReferencedTable refTable;
 		string relationName, columnName;
-		DataColumn _cachedColumn;
-		DataRelation _cachedRelation;
 
 		public ColumnReference (string columnName) : this (ReferencedTable.Self, null, columnName) {}
 
@@ -91,61 +88,30 @@ namespace Mono.Data.SqlExpressions {
 			get { return refTable; }
 		}
 
-		private DataRelation GetRelation (DataRow row)
+		protected DataRelation GetRelation (DataRow row)
 		{
-			if (_cachedRelation == null) {
-				DataTable table = row.Table;
-				DataRelationCollection relations;
-				if (relationName != null) {
-					relations = table.DataSet.Relations;
-					_cachedRelation = relations [relations.IndexOf (relationName)];
-				}
-				else {
-					if (refTable == ReferencedTable.Parent)
-						relations = table.ParentRelations;
-					else
-						relations = table.ChildRelations;
-						
-					if (relations.Count > 1)
-						throw new EvaluateException (String.Format (
-							"The table [{0}] is involved in more than one relation." +
-							"You must explicitly mention a relation name.",
-							table.TableName));
-					else
-						_cachedRelation = relations [0];
-				}
-				_cachedRelation.DataSet.Relations.CollectionChanged += new CollectionChangeEventHandler (OnRelationRemoved);
+			DataRelationCollection relations;
+			if (relationName != null) {
+				relations = row.Table.DataSet.Relations;
+				return relations[relations.IndexOf(relationName)];
 			}
-			return _cachedRelation;
-		}
 
-		private DataColumn GetColumn (DataRow row)
-		{
-			if (_cachedColumn == null) {
-				DataTable table = row.Table;
-				switch (refTable) {
-					case ReferencedTable.Parent:
-						table = GetRelation (row).ParentTable;
-						break;
-					case ReferencedTable.Child:
-						table = GetRelation (row).ChildTable;
-						break;
-				}
-				_cachedColumn = table.Columns [columnName];
-				if (_cachedColumn == null)
-					throw new EvaluateException (String.Format ("Cannot find column [{0}].", columnName));
-
-				_cachedColumn.PropertyChanged += new PropertyChangedEventHandler (OnColumnPropertyChanged);
-				_cachedColumn.Table.Columns.CollectionChanged += new CollectionChangeEventHandler (OnColumnRemoved);
-			}
-			return _cachedColumn;
+			if (refTable == ReferencedTable.Parent)
+				relations = row.Table.ParentRelations;
+			else
+				relations = row.Table.ChildRelations;
+				
+			if (relations.Count > 1)
+				throw new EvaluateException (String.Format (
+					"The table [{0}] is involved in more than one relation." +
+					"You must explicitly mention a relation name.",
+					row.Table.TableName));
+			else
+				return relations[0];
 		}
 
 		public DataRow GetReferencedRow (DataRow row)
 		{
-			// Verify the column reference is valid 
-			GetColumn (row);
-
 			switch (refTable) {
 			case ReferencedTable.Self:
 			default:
@@ -161,9 +127,6 @@ namespace Mono.Data.SqlExpressions {
 		
 		public DataRow[] GetReferencedRows (DataRow row)
 		{
-			// Verify the column reference is valid 
-			GetColumn (row);
-
 			switch (refTable) {
 			case ReferencedTable.Self:
 			default:
@@ -183,7 +146,7 @@ namespace Mono.Data.SqlExpressions {
 		{
 			object[] values = new object [rows.Length];
 			for (int i = 0; i < rows.Length; i++)
-				values [i] = Unify (rows [i][GetColumn (rows [i])]);
+				values [i] = Unify (rows [i][columnName]);
 				
 			return values;
 		}
@@ -213,7 +176,7 @@ namespace Mono.Data.SqlExpressions {
 			object val;
 			try {
 				referencedRow._inExpressionEvaluation = true;
-				val = referencedRow [GetColumn (row)];
+				val = referencedRow [columnName];
 				referencedRow._inExpressionEvaluation = false;
 			} catch (IndexOutOfRangeException) {
 				throw new EvaluateException (String.Format ("Cannot find column [{0}].", columnName));
@@ -224,68 +187,6 @@ namespace Mono.Data.SqlExpressions {
 		override public bool DependsOn(DataColumn other)
 		{
 			return refTable == ReferencedTable.Self && columnName == other.ColumnName;
-		}
-
-		private void DropCached (DataColumnCollection columnCollection, DataRelationCollection relationCollection)
-		{
-			if (_cachedColumn != null) {
-				// unregister column listener
-				_cachedColumn.PropertyChanged -= new PropertyChangedEventHandler (OnColumnPropertyChanged);
-
-				// unregister column collection listener
-				if (columnCollection != null)	
-					columnCollection.CollectionChanged -= new CollectionChangeEventHandler (OnColumnRemoved);
-				else if (_cachedColumn.Table != null)
-					_cachedColumn.Table.Columns.CollectionChanged -= new CollectionChangeEventHandler (OnColumnRemoved);
-				
-				_cachedColumn = null;
-			}
-
-			if (_cachedRelation != null) {
-				// unregister relation collection listener
-				if (relationCollection != null)				
-					relationCollection.CollectionChanged -= new CollectionChangeEventHandler (OnRelationRemoved);
-				else if (_cachedRelation.DataSet != null)
-					_cachedRelation.DataSet.Relations.CollectionChanged -= new CollectionChangeEventHandler (OnRelationRemoved);
-
-				_cachedRelation = null;
-			}			
-		}
-
-		private void OnColumnPropertyChanged (object sender, PropertyChangedEventArgs args)
-		{
-			if (!(sender is DataColumn))
-				return;
-			
-			DataColumn dc = (DataColumn) sender;
-			if ((dc == _cachedColumn) && args.PropertyName == "ColumnName")
-				DropCached (null, null);
-		}
-
-		private void OnColumnRemoved (object sender, CollectionChangeEventArgs args)
-		{
-			if (!(args.Element is DataColumnCollection))
-				return;
-
-			if (args.Action != CollectionChangeAction.Remove)
-				return;
-
-			DataColumnCollection columnCollection = (DataColumnCollection) args.Element;
-			if (_cachedColumn != null && columnCollection != null && (columnCollection.IndexOf (_cachedColumn)) == -1)
-				DropCached (columnCollection, null);
-		}
-
-		private void OnRelationRemoved (object sender, CollectionChangeEventArgs args)
-		{
-			if (!(args.Element is DataRelationCollection))
-				return;
-
-			if (args.Action != CollectionChangeAction.Remove)
-				return;			
-
-			DataRelationCollection relationCollection = (DataRelationCollection) args.Element;
-			if (_cachedRelation != null && relationCollection != null && (relationCollection.IndexOf (_cachedRelation)) == -1)
-				DropCached (null, relationCollection);
 		}
 	}
 }

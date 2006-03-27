@@ -148,11 +148,6 @@ namespace Mono.Data.SqlExpressions {
 		{
 			object val = expr.Eval (row);
 			
-			// TMPFIX :Eval shud never really return a null.. DBNull.Value but not null
-			// needs to be done for all expressions .. for now ,just check for null
-			if (val == null)
-				return DBNull.Value;
-
 			if (val == DBNull.Value || val.GetType () == targetType)
 				return val;
 

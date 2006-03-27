@@ -33,11 +33,7 @@
 //
 
 namespace System.Data.Common {
-	public
-#if !NET_2_0
-	abstract
-#endif
-	class RowUpdatingEventArgs : EventArgs
+	public abstract class RowUpdatingEventArgs : EventArgs
 	{
 		#region Fields
 
@@ -53,12 +49,7 @@ namespace System.Data.Common {
 
 		#region Constructors
 
-#if NET_2_0
-		public
-#else
-		protected
-#endif
-		RowUpdatingEventArgs (DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping) 
+		protected RowUpdatingEventArgs (DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping) 
 		{
 			this.dataRow = dataRow;
 			this.command = command;

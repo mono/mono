@@ -35,22 +35,15 @@
 //
 
 using System;
-using System.Text;
 using System.Collections;
 using System.ComponentModel;
 
 namespace System.Data {
 	[Editor ("Microsoft.VSDesigner.Data.Design.ColumnsCollectionEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
 		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-#if !NET_2_0
 	[Serializable]
-#endif
 	[DefaultEvent ("CollectionChanged")]
-	public
-#if NET_2_0
-	sealed
-#endif
-	class DataColumnCollection : InternalDataCollectionBase
+	public class DataColumnCollection : InternalDataCollectionBase
 	{
 		//This hashtable maps between column name to DataColumn object.
 		private Hashtable columnFromName = new Hashtable();
@@ -73,11 +66,7 @@ namespace System.Data {
 		/// <summary>
 		/// Gets the DataColumn from the collection at the specified index.
 		/// </summary>
-		public
-#if !NET_2_0
-		virtual
-#endif
-		DataColumn this[int index]
+		public virtual DataColumn this[int index]
 		{
 			get
 			{
@@ -91,11 +80,7 @@ namespace System.Data {
 		/// <summary>
 		/// Gets the DataColumn from the collection with the specified name.
 		/// </summary>
-		public
-#if !NET_2_0
-		virtual
-#endif
-		DataColumn this[string name]
+		public virtual DataColumn this[string name]
 		{
 			get
 			{
@@ -146,11 +131,7 @@ namespace System.Data {
 		/// Creates and adds a DataColumn object to the DataColumnCollection.
 		/// </summary>
 		/// <returns></returns>
-		public
-#if !NET_2_0
-		virtual
-#endif
-		DataColumn Add()
+		public virtual DataColumn Add()
 		{
 			string defaultName = GetNextDefaultColumnName ();
 			DataColumn column = new DataColumn (defaultName);
@@ -238,13 +219,6 @@ namespace System.Data {
 			RegisterName(column.ColumnName, column);
 			int ordinal = base.List.Add(column);
 			column.SetOrdinal (ordinal);
-		
-			// Check if the Column Expression is ok	
-			if (column.CompiledExpression != null)
-				if (parentTable.Rows.Count == 0)
-					column.CompiledExpression.Eval (parentTable.NewRow());
-				else
-					column.CompiledExpression.Eval (parentTable.Rows[0]);
 
 			// if table already has rows we need to allocate space 
 			// in the column data container 
@@ -269,11 +243,7 @@ namespace System.Data {
 		/// </summary>
 		/// <param name="columnName">The name of the column.</param>
 		/// <returns>The newly created DataColumn.</returns>
-		public
-#if !NET_2_0
-		virtual
-#endif
-		DataColumn Add(string columnName)
+		public virtual DataColumn Add(string columnName)
 		{
 			if (columnName == null || columnName == String.Empty)
 			{
@@ -291,11 +261,7 @@ namespace System.Data {
 		/// <param name="columnName">The ColumnName to use when cretaing the column.</param>
 		/// <param name="type">The DataType of the new column.</param>
 		/// <returns>The newly created DataColumn.</returns>
-		public
-#if !NET_2_0
-		virtual
-#endif
-		DataColumn Add(string columnName, Type type)
+		public virtual DataColumn Add(string columnName, Type type)
 		{
 			if (columnName == null || columnName == "")
 			{
@@ -314,11 +280,7 @@ namespace System.Data {
 		/// <param name="type">The DataType of the new column.</param>
 		/// <param name="expression">The expression to assign to the Expression property.</param>
 		/// <returns>The newly created DataColumn.</returns>
-		public
-#if !NET_2_0
-		virtual
-#endif
-		DataColumn Add(string columnName, Type type, string expression)
+		public virtual DataColumn Add(string columnName, Type type, string expression)
 		{
 			if (columnName == null || columnName == "")
 			{
@@ -336,7 +298,7 @@ namespace System.Data {
 		/// <param name="columns">The array of DataColumn objects to add to the collection.</param>
 		public void AddRange(DataColumn[] columns)
 		{
-			if (parentTable.InitInProgress){
+			if (parentTable.fInitInProgress){
 				_mostRecentColumns = columns;
 				return;
 			}
@@ -344,44 +306,10 @@ namespace System.Data {
 			if (columns == null)
 				return;
 
-			foreach (DataColumn column in columns){
-				if (column == null)
-					continue;
+			foreach (DataColumn column in columns)
+			{
 				Add(column);
 			}
-		}
-
-		private string GetColumnDependency (DataColumn column)
-		{
-
-			foreach (DataRelation rel in parentTable.ParentRelations)
-				if (Array.IndexOf (rel.ChildColumns, column) != -1)
-					return String.Format (" child key for relationship {0}.", rel.RelationName);
-			foreach (DataRelation rel in parentTable.ChildRelations)
-				if (Array.IndexOf (rel.ParentColumns, column) != -1)
-					return String.Format (" parent key for relationship {0}.", rel.RelationName);
-
-			foreach (Constraint c in parentTable.Constraints) 
-				if (c.IsColumnContained (column))
-					return String.Format (" constraint {0} on the table {1}.", 
-							c.ConstraintName, parentTable);
-			
-			
-			// check if the foreign-key constraint on any table in the dataset refers to this column.
-			// though a forignkeyconstraint automatically creates a uniquecontrainton the parent 
-			// table and would fail above, but we still need to check, as it is legal to manually remove
-			// the constraint on the parent table.
-			if (parentTable.DataSet != null)
-				foreach (DataTable table in parentTable.DataSet.Tables)
-					foreach (Constraint c in table.Constraints)
-						if (c is ForeignKeyConstraint && c.IsColumnContained(column))
-							return String.Format (" constraint {0} on the table {1}.", 
-									c.ConstraintName, table.TableName);
-			
-			foreach (DataColumn col in this) 
-				if (col.CompiledExpression != null && col.CompiledExpression.DependsOn (column))
-					return  col.Expression;
-			return String.Empty;
 		}
 
 		/// <summary>
@@ -391,8 +319,108 @@ namespace System.Data {
 		/// <returns>true if the column can be removed; otherwise, false.</returns>
 		public bool CanRemove(DataColumn column)
 		{
-			if (column == null || column.Table != parentTable || GetColumnDependency(column) != String.Empty) 
+						
+			//Check that the column does not have a null reference.
+			if (column == null) 
+			{
+                return false;
+			}
+
+			
+			//Check that the column is part of this collection.
+			if (parentTable != column.Table) 
+			{
 				return false;
+			}
+
+			parentTable.OnRemoveColumn(column);
+
+			UniqueConstraint primaryKey = parentTable.PrimaryKeyConstraint;
+			if (primaryKey != null && primaryKey.IsColumnContained(column))
+				return false;
+			
+			//Check if this column is part of a relationship. (this could probably be written better)
+			foreach (DataRelation childRelation in parentTable.ChildRelations)
+			{
+				foreach (DataColumn childColumn in childRelation.ChildColumns) 
+				{
+					if (childColumn == column) 
+					{
+						return false;
+					}
+				}
+
+				foreach (DataColumn parentColumn in childRelation.ParentColumns) 
+				{
+					if (parentColumn == column) 
+					{
+						return false;
+					}
+				}
+			}
+
+			//Check if this column is part of a relationship. (this could probably be written better)
+			foreach (DataRelation parentRelation in parentTable.ParentRelations) 
+			{
+				foreach (DataColumn childColumn in parentRelation.ChildColumns) 
+				{
+					if (childColumn == column) 
+					{
+						return false;
+					}
+				}
+
+				foreach (DataColumn parentColumn in parentRelation.ParentColumns) 
+				{
+					if (parentColumn == column) 
+					{
+						return false;
+					}
+				}
+			}
+
+			//TODO: check constraints
+			for (int i = 0; i < parentTable.Constraints.Count; i++) {
+				if (parentTable.Constraints[i].IsColumnContained(column))
+					return false;
+			}
+
+			if (parentTable.DataSet != null) {
+				//FIXME: check whether some parent key in ForeignConstriants contains
+				// the column
+			}
+
+			
+			//Check if another column's expression depends on this column.
+			
+			foreach (DataColumn dataColumn in List) 
+			{
+				if (dataColumn.CompiledExpression != null && 
+						dataColumn.CompiledExpression.DependsOn(column)) 
+				{
+					return false;
+				}
+			}
+            // check for part of pk
+            UniqueConstraint uc = UniqueConstraint.GetPrimaryKeyConstraint (parentTable.Constraints);
+            if (uc != null && uc.IsColumnContained(column)) {
+               return false;
+			}
+            // check for part of fk
+            DataSet ds = parentTable.DataSet;            
+            if (ds != null) {
+                foreach (DataTable t in ds.Tables) {
+                    if (t == parentTable)
+                        continue;
+                    foreach (Constraint c in t.Constraints) {
+                        if (! (c is ForeignKeyConstraint))
+                            continue;
+                        ForeignKeyConstraint fk = (ForeignKeyConstraint) c;
+                        if (fk.IsColumnContained(column))
+                                return false;                        
+                    }                        
+                }                                        
+            }                    
 			return true;
 		}
 
@@ -403,39 +431,51 @@ namespace System.Data {
 		{
 			CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Refresh, this);
 
-			// its not necessary to check if each column in the collection can removed.
-			// Can simply check, if there are any constraints/relations related to the table,
-			// in which case, throw an exception.
-			// Also, shudnt check for expression columns since all the columns in the table
-			// are being removed.
-			if (parentTable.Constraints.Count != 0 || 
-			    parentTable.ParentRelations.Count != 0 ||
-			    parentTable.ChildRelations.Count != 0)
-				foreach (DataColumn col in this) {
-					string s = GetColumnDependency (col);
-					if (s != String.Empty)
-						throw new ArgumentException (
-								"Cannot remove this column, because it is part of the"+ s);
+			// FIXME: Hmm... This loop could look little nicer :)
+			foreach (DataColumn Col in List) {
+				foreach (DataRelation Rel in Col.Table.ParentRelations) {
+					foreach (DataColumn Col2 in Rel.ParentColumns) {
+						if (Object.ReferenceEquals (Col, Col2))
+							throw new ArgumentException ("Cannot remove this column, because " + 
+										     "it is part of the parent key for relationship " + 
+										     Rel.RelationName + ".");
+					}
+					foreach (DataColumn Col2 in Rel.ChildColumns) {
+						if (Object.ReferenceEquals (Col, Col2))
+							throw new ArgumentException ("Cannot remove this column, because " + 
+										     "it is part of the parent key for relationship " + 
+										     Rel.RelationName + ".");
+
+					}
 				}
 
-			if (parentTable.DataSet != null)
-				foreach (DataTable table in parentTable.DataSet.Tables)
-					foreach (Constraint c in table.Constraints) {
-						if (!(c is ForeignKeyConstraint) ||
-						    ((ForeignKeyConstraint)c).RelatedTable != parentTable)
-							continue;
-						throw new ArgumentException (String.Format ("Cannot remove this column, " +
-									"because it is part of the constraint {0} on " +
-									"the table {1}", c.ConstraintName, table.TableName));
+				foreach (DataRelation Rel in Col.Table.ChildRelations) {
+					foreach (DataColumn Col2 in Rel.ParentColumns) {
+						if (Object.ReferenceEquals (Col, Col2))
+							throw new ArgumentException ("Cannot remove this column, because " + 
+										     "it is part of the parent key for relationship " + 
+										     Rel.RelationName + ".");
 					}
-			
-			foreach (DataColumn col in this)
-				col.ResetColumnInfo ();
+					foreach (DataColumn Col2 in Rel.ChildColumns) {
+						if (Object.ReferenceEquals (Col, Col2))
+							throw new ArgumentException ("Cannot remove this column, because " + 
+										     "it is part of the parent key for relationship " + 
+										     Rel.RelationName + ".");
+					}
+				}
+			}
+
+            // whether all columns can be removed
+            foreach (DataColumn col in this) {
+                if (!CanRemove (col))
+                    throw new ArgumentException ("Cannot remove column {0}", col.ColumnName);
+            }
 
 			columnFromName.Clear();
 			autoIncrement.Clear();
 			base.List.Clear();
 			OnCollectionChanged(e);
+
 		}
 
 		/// <summary>
@@ -456,14 +496,8 @@ namespace System.Data {
 		/// </summary>
 		/// <param name="column">The name of the column to return.</param>
 		/// <returns>The index of the column specified by column if it is found; otherwise, -1.</returns>
-		public
-#if !NET_2_0
-		virtual
-#endif
-		int IndexOf(DataColumn column)
+		public virtual int IndexOf(DataColumn column)
 		{
-			if (column == null)
-				return -1;
 			return base.List.IndexOf(column);
 		}
 
@@ -474,8 +508,6 @@ namespace System.Data {
 		/// <returns>The zero-based index of the column with the specified name, or -1 if the column doesn't exist in the collection.</returns>
 		public int IndexOf(string columnName)
 		{
-			if (columnName == null)
-				return -1;
 			DataColumn dc = columnFromName[columnName] as DataColumn;
 				
 			if (dc != null)
@@ -488,11 +520,7 @@ namespace System.Data {
 		/// Raises the OnCollectionChanged event.
 		/// </summary>
 		/// <param name="ccevent">A CollectionChangeEventArgs that contains the event data.</param>
-		protected
-#if !NET_2_0
-		virtual
-#endif
-		void OnCollectionChanged(CollectionChangeEventArgs ccevent)
+		protected virtual void OnCollectionChanged(CollectionChangeEventArgs ccevent)
 		{
 			parentTable.ResetPropertyDescriptorsCache();
 			if (CollectionChanged != null) 
@@ -505,11 +533,7 @@ namespace System.Data {
 		/// Raises the OnCollectionChanging event.
 		/// </summary>
 		/// <param name="ccevent">A CollectionChangeEventArgs that contains the event data.</param>
-		protected internal
-#if !NET_2_0
-		virtual
-#endif
-		void OnCollectionChanging(CollectionChangeEventArgs ccevent)
+		protected internal virtual void OnCollectionChanging(CollectionChangeEventArgs ccevent)
 		{
 			if (CollectionChanged != null) 
 			{
@@ -530,23 +554,19 @@ namespace System.Data {
 
 			if (!Contains(column.ColumnName))
 				throw new ArgumentException ("Cannot remove a column that doesn't belong to this table.");
-
-			string dependency = GetColumnDependency (column);
-			if (dependency != String.Empty)
-				throw new ArgumentException ("Cannot remove this column, because it is part of " + dependency);
-
+			//TODO: can remove first with exceptions
+			//and OnChanging Event
 			CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Remove, this);
 			
 			int ordinal = column.Ordinal;
 			UnregisterName(column.ColumnName);
 			base.List.Remove(column);
 			
-			// Reset column info
-			column.ResetColumnInfo ();
-	
 			//Update the ordinals
 			for( int i = ordinal ; i < this.Count ; i ++ )
+			{
 				this[i].SetOrdinal( i );
+			}
 
 			if (parentTable != null)
 				parentTable.OnRemoveColumn(column);
@@ -555,6 +575,7 @@ namespace System.Data {
 				autoIncrement.Remove(column);
 
 			OnCollectionChanged(e);
+			return;
 		}
 
 		/// <summary>
@@ -584,17 +605,10 @@ namespace System.Data {
 		}
 
 		// Helper AddRange() - Call this function when EndInit is called
-		internal void PostAddRange ()
-		{
-			if (_mostRecentColumns == null)
-				return;
-
-			foreach (DataColumn column in _mostRecentColumns){
-				if (column == null)
-					continue;
-				Add (column);
-			}
+		internal void PostEndInit() {
+			DataColumn[] cols = _mostRecentColumns;
 			_mostRecentColumns = null;
+			AddRange (cols);
 		}
 
 

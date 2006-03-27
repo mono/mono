@@ -47,9 +47,7 @@ namespace System.Data {
 		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	[DefaultEvent ("CollectionChanged")]
 	[DefaultProperty ("Table")]
-#if !NET_2_0
 	[Serializable]
-#endif
 	public abstract class DataRelationCollection : InternalDataCollectionBase
 	{
 		/// <summary>
@@ -58,7 +56,6 @@ namespace System.Data {
 		internal class DataSetRelationCollection : DataRelationCollection
 		{
 			private DataSet dataSet;
-			DataRelation[] mostRecentRelations;
 			
 			/// <summary>
 			/// Initializes a new instance of the DataSetRelationCollection class.
@@ -88,6 +85,11 @@ namespace System.Data {
 				relation.ChildTable.ParentRelations.Add (relation);                
 				relation.SetDataSet (dataSet);
 				relation.UpdateConstraints ();
+            }
+
+			public override void AddRange (DataRelation[] relations)
+			{
+				base.AddRange (relations);
 			}
 
 			protected override void RemoveCore (DataRelation relation)
@@ -98,38 +100,6 @@ namespace System.Data {
 				relation.ChildTable.ParentRelations.Remove (relation);
 				relation.SetParentKeyConstraint (null);
 				relation.SetChildKeyConstraint (null);
-			}
-
-			public override void AddRange (DataRelation[] relations)
-			{
-				if (relations == null)
-					return;
-
-				if (dataSet != null && dataSet.InitInProgress){
-					mostRecentRelations = relations;
-					return; 
-				}
-
-				foreach (DataRelation rel in relations){
-					if (rel == null)
-						continue;
-					Add (rel);
-				}
-			}
-
-			internal override void PostAddRange ()
-			{
-				if (mostRecentRelations == null)
-					return;
-
-				foreach (DataRelation rel in mostRecentRelations){
-					if (rel == null)
-						continue;
-					if (rel.InitInProgress)
-						rel.FinishInit (dataSet);
-					Add (rel);
-				}
-				mostRecentRelations = null;
 			}
 
 			protected override ArrayList List {
@@ -470,13 +440,7 @@ namespace System.Data {
 		{
 			if (relations == null)
 				return;
-
-			foreach (DataRelation relation in relations)
-				Add (relation);
-		}
-
-		internal virtual void PostAddRange ()
-		{
+			foreach (DataRelation relation in relations) Add(relation);
 		}
 
 		public virtual bool CanRemove(DataRelation relation)

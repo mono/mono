@@ -47,19 +47,18 @@ namespace System.Data {
 	/// </summary>
 	[DefaultEvent ("CollectionChanged")]
 	[EditorAttribute("Microsoft.VSDesigner.Data.Design.ConstraintsCollectionEditor, "+Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+Consts.AssemblySystem_Drawing )]
-#if !NET_2_0
 	[Serializable]
-#endif
-	public
-#if NET_2_0
-	sealed
-#endif
-	class ConstraintCollection : InternalDataCollectionBase 
+	public class ConstraintCollection : InternalDataCollectionBase 
 	{
 		//private bool beginInit = false;
 		
 		public event CollectionChangeEventHandler CollectionChanged;
 		private DataTable table;
+		
+		// Call this to set the "table" property of the UniqueConstraint class
+                // intialized with UniqueConstraint( string, string[], bool );
+                // And also validate that the named columns exist in the "table"
+                private delegate void PostAddRange( DataTable table );
 		
 		// Keep reference to most recent constraints passed to AddRange()
                 // so that they can be added when EndInit() is called.
@@ -77,11 +76,7 @@ namespace System.Data {
 			}
 		}
 
-		public
-#if !NET_2_0
-		virtual
-#endif
-		Constraint this[string name] {
+		public virtual Constraint this[string name] {
 			get {
 				//If the name is not found we just return null
 				int index = IndexOf(name); //case insensitive
@@ -90,11 +85,7 @@ namespace System.Data {
 			}
 		}
 		
-		public
-#if !NET_2_0
-		virtual
-#endif
-		Constraint this[int index] {
+		public virtual Constraint this[int index] {
 			get {
 				if (index < 0 || index >= List.Count)
 					throw new IndexOutOfRangeException();
@@ -161,71 +152,79 @@ namespace System.Data {
 		{		
 			//not null
 			if (null == constraint) throw new ArgumentNullException("Can not add null.");
-
-			if (constraint.InitInProgress)
-				throw new ArgumentException ("Hmm .. Failed to Add to collection");
-
+			
 			//check constraint membership 
 			//can't already exist in this collection or any other
 			if (this == constraint.ConstraintCollection) 
 				throw new ArgumentException("Constraint already belongs to this collection.");
 			if (null != constraint.ConstraintCollection) 
 				throw new ArgumentException("Constraint already belongs to another collection.");
-
-			//check if a constraint already exists for the datacolums
-			foreach (Constraint c in this) {
-				if (!c.Equals (constraint))
-					continue;
-				throw new DataException ("Constraint matches contraint named '" + c.ConstraintName
-							+ "' already in collection"); 
-			}
-
+			
 			//check for duplicate name
 			if (_isDuplicateConstraintName(constraint.ConstraintName,null)  )
 				throw new DuplicateNameException("Constraint name already exists.");
+	
+			// Check whether Constraint is UniqueConstraint and initailized with the special
+            // constructor - UniqueConstraint( string, string[], bool );
+            // If yes, It must be added via AddRange() only
+            // Environment.StackTrace can help us 
+			// FIXME: Is a different mechanism to do this?
+            if (constraint is UniqueConstraint){
+                if ((constraint as UniqueConstraint).DataColsNotValidated == true){
+                    if ( Environment.StackTrace.IndexOf( "AddRange" ) == -1 ){
+                        throw new ArgumentException(" Some DataColumns are invalid - They may not belong to the table associated with this Constraint Collection" );
+                    }
+                }
+            }
+
+			if (constraint is ForeignKeyConstraint){
+                if ((constraint as ForeignKeyConstraint).DataColsNotValidated == true){
+                    if ( Environment.StackTrace.IndexOf( "AddRange" ) == -1 ){
+                        throw new ArgumentException(" Some DataColumns are invalid - They may not belong to the table associated with this Constraint Collection" );
+                    }
+                }
+            }
 
 			//Allow constraint to run validation rules and setup 
-			constraint.AddToConstraintCollectionSetup(this); //may throw if it can't setup
+			constraint.AddToConstraintCollectionSetup(this); //may throw if it can't setup			
+
+			//Run Constraint to check existing data in table
+			// this is redundant, since AddToConstraintCollectionSetup 
+			// calls AssertConstraint right before this call
+			//constraint.AssertConstraint();
 
 			//if name is null or empty give it a name
 			if (constraint.ConstraintName == null || 
-					constraint.ConstraintName == "" ) 
+				constraint.ConstraintName == "" ) 
 			{ 
 				constraint.ConstraintName = _createNewConstraintName();
 			}
 
 			//Add event handler for ConstraintName change
 			constraint.BeforeConstraintNameChange += new DelegateConstraintNameChange(
-					_handleBeforeConstraintNameChange);
-
+				_handleBeforeConstraintNameChange);
+			
 			constraint.ConstraintCollection = this;
 			List.Add(constraint);
 
-			if (constraint is UniqueConstraint && ((UniqueConstraint)constraint).IsPrimaryKey)
+			if (constraint is UniqueConstraint && ((UniqueConstraint)constraint).IsPrimaryKey) { 
 				table.PrimaryKey = ((UniqueConstraint)constraint).Columns;
+			}
 
 			OnCollectionChanged( new CollectionChangeEventArgs( CollectionChangeAction.Add, this) );
 		}
 
-		public
-#if !NET_2_0
-		virtual
-#endif
-		Constraint Add(string name, DataColumn column, bool primaryKey) 
+		public virtual Constraint Add(string name, DataColumn column, bool primaryKey) 
 		{
 
 			UniqueConstraint uc = new UniqueConstraint(name, column, primaryKey);
 			Add(uc);
-
+			 
 			return uc;
 		}
 
-		public
-#if !NET_2_0
-		virtual
-#endif
-		Constraint Add(string name, DataColumn primaryKeyColumn,
-				DataColumn foreignKeyColumn) 
+		public virtual Constraint Add(string name, DataColumn primaryKeyColumn,
+			DataColumn foreignKeyColumn) 
 		{
 			ForeignKeyConstraint fc = new ForeignKeyConstraint(name, primaryKeyColumn, 
 					foreignKeyColumn);
@@ -234,11 +233,7 @@ namespace System.Data {
 			return fc;
 		}
 
-		public
-#if !NET_2_0
-		virtual
-#endif
-		Constraint Add(string name, DataColumn[] columns, bool primaryKey) 
+		public virtual Constraint Add(string name, DataColumn[] columns, bool primaryKey) 
 		{
 			UniqueConstraint uc = new UniqueConstraint(name, columns, primaryKey);
 			Add(uc);
@@ -246,11 +241,7 @@ namespace System.Data {
 			return uc;
 		}
 
-		public
-#if !NET_2_0
-		virtual
-#endif
-		Constraint Add(string name, DataColumn[] primaryKeyColumns,
+		public virtual Constraint Add(string name, DataColumn[] primaryKeyColumns,
 			DataColumn[] foreignKeyColumns) 
 		{
 			ForeignKeyConstraint fc = new ForeignKeyConstraint(name, primaryKeyColumns, 
@@ -260,46 +251,52 @@ namespace System.Data {
 			return fc;
 		}
 
-		public void AddRange(Constraint[] constraints) 
-		{
-			//When AddRange() occurs after BeginInit,
-			//it does not add any elements to the collection until EndInit is called.
-			if (Table.InitInProgress) {
-				// Keep reference so that they can be added when EndInit() is called.
-				_mostRecentConstraints = constraints;
-				return;
-			}
-			
-			if (constraints == null)
-				return;
+		public void AddRange(Constraint[] constraints) {
 
-			for (int i=0; i < constraints.Length; ++i) {
-				if (constraints [i] == null)
-					continue;
-				Add (constraints [i]);
-			}
+			//When AddRange() occurs after BeginInit,
+            //it does not add any elements to the collection until EndInit is called.
+			if (this.table.fInitInProgress) {
+				// Keep reference so that they can be added when EndInit() is called.
+                    _mostRecentConstraints = constraints;
+                    return;
+            }
+
+			if ( (constraints == null) || (constraints.Length == 0))
+					return;
+
+            // Check whether the constraint is UniqueConstraint
+            // And whether it was initialized with the special ctor
+            // i.e UniqueConstraint( string, string[], bool );
+            for (int i = 0; i < constraints.Length; i++){
+                if (constraints[i] is UniqueConstraint){
+                    if (( constraints[i] as UniqueConstraint).DataColsNotValidated == true){
+                            PostAddRange _postAddRange= new PostAddRange ((constraints[i] as UniqueConstraint).PostAddRange);
+                            // UniqueConstraint.PostAddRange() validates whether all named
+                            // columns exist in the table associated with this instance of
+                            // ConstraintCollection.
+                            _postAddRange (this.table);                                                                                    
+                    }
+                }
+				else if (constraints [i] is ForeignKeyConstraint){
+                        if (( constraints [i] as ForeignKeyConstraint).DataColsNotValidated == true){
+                            (constraints [i] as ForeignKeyConstraint).postAddRange (this.table);
+                        }
+					}
+                }
+                        
+                foreach (Constraint constraint in constraints)
+                        Add (constraint);
+
 		}
 
 		// Helper AddRange() - Call this function when EndInit is called
-		// keeps track of the Constraints most recently added and adds them
-		// to the collection
-		internal void PostAddRange ()
-		{
-			if (_mostRecentConstraints == null)
-				return;
-
-			// Check whether the constraint is Initialized
-			// If not, initialize before adding to collection
-			for (int i = 0; i < _mostRecentConstraints.Length; i++) {
-				Constraint c = _mostRecentConstraints [i];
-				if (c == null) 
-					continue;
-				if (c.InitInProgress)
-					c.FinishInit (Table);
-				Add (c);
-			}
+        internal void PostEndInit()
+        {
+			Constraint[] constraints = _mostRecentConstraints;
 			_mostRecentConstraints = null;
-		}
+			AddRange (constraints);
+        }
+
 
 		public bool CanRemove(Constraint constraint) 
 		{
@@ -337,20 +334,10 @@ namespace System.Data {
 
 		public int IndexOf(Constraint constraint) 
 		{
-			int index = 0;
-			foreach (Constraint c in this) {
-				if (c == constraint)
-					return index;
-				index++;
-			}
-			return -1;
+			return List.IndexOf(constraint);
 		}
 
-		public
-#if !NET_2_0
-		virtual
-#endif
-		int IndexOf(string constraintName) 
+		public virtual int IndexOf(string constraintName) 
 		{
 			//LAMESPEC: Spec doesn't say case insensitive
 			//it should to be consistant with the other 
@@ -410,11 +397,7 @@ namespace System.Data {
 			}
 		}
 
-		protected
-#if !NET_2_0
-		virtual
-#endif
-		void OnCollectionChanged( CollectionChangeEventArgs ccevent) 
+		protected virtual void OnCollectionChanged( CollectionChangeEventArgs ccevent) 
 		{
 			if (null != CollectionChanged)
 			{

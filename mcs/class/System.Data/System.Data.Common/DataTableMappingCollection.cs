@@ -63,18 +63,14 @@ namespace System.Data.Common {
 		#region Properties
 
 		[Browsable (false)]
-#if !NET_2_0
 		[DataSysDescription ("The number of items in the collection")]
-#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int Count {
 			get { return mappings.Count; }
 		}
 
 		[Browsable (false)]
-#if !NET_2_0
 		[DataSysDescription ("The specified DataTableMapping object")]
-#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DataTableMapping this [int index] {
 			get { return (DataTableMapping)(mappings[index]); }
@@ -87,9 +83,7 @@ namespace System.Data.Common {
 		}
 
 		[Browsable (false)]
-#if !NET_2_0
 		[DataSysDescription ("The specified DataTableMapping object")]
-#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DataTableMapping this [string sourceTable] {
 			get { return (DataTableMapping) sourceTables[sourceTable]; }

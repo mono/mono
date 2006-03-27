@@ -35,11 +35,7 @@
 using System.Data;
 
 namespace System.Data.Common {
-	public
-#if !NET_2_0
-	abstract
-#endif
-	class RowUpdatedEventArgs : EventArgs
+	public abstract class RowUpdatedEventArgs : EventArgs
 	{
 		#region Fields
 
@@ -56,12 +52,7 @@ namespace System.Data.Common {
 		#region Constructors
 
 		[MonoTODO]
-#if NET_2_0
-		public
-#else
-		protected
-#endif
-		RowUpdatedEventArgs (DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping) 
+		protected RowUpdatedEventArgs (DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping) 
 		{
 			this.dataRow = dataRow;
 			this.command = command;

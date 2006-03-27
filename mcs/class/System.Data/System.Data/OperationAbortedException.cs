@@ -36,8 +36,7 @@ using System.Globalization;
 using System.Runtime.Serialization;
 
 namespace System.Data {
-	[Serializable]
-	public sealed class OperationAbortedException : SystemException
+	public class OperationAbortedException : SystemException
 	{
 		#region Constructors
 

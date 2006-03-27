@@ -33,7 +33,7 @@
 #if NET_2_0
 
 namespace System.Data.Common {
-	public static class SchemaTableColumn 
+	public sealed class SchemaTableColumn 
 	{
 		#region Fields
 			public static readonly string AllowDBNull = "AllowDBNull";
@@ -49,7 +49,6 @@ namespace System.Data.Common {
 			public static readonly string IsKey = "IsKey";
 			public static readonly string IsLong = "IsLong";
 			public static readonly string IsUnique = "IsUnique";
-			public static readonly string NonVersionedProviderType = "NonVersionedProviderType";
 			public static readonly string NumericPrecision = "NumericPrecision";
 			public static readonly string NumericScale = "NumericScale";
 			public static readonly string ProviderType = "ProviderType";

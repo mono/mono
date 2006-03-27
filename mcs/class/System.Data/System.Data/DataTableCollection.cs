@@ -45,17 +45,11 @@ namespace System.Data {
 		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	[DefaultEvent ("CollectionChanged")]
 	[ListBindable (false)]
-#if !NET_2_0
 	[Serializable]
-#endif
-	public
-#if NET_2_0
-	sealed
-#endif
-	class DataTableCollection : InternalDataCollectionBase
+	public class DataTableCollection : InternalDataCollectionBase
 	{
 		DataSet dataSet;
-		DataTable[] mostRecentTables;
+		
 		#region Constructors 
 
 		internal DataTableCollection (DataSet dataSet)
@@ -98,22 +92,14 @@ namespace System.Data {
 	
 		#region Methods	
 
-		public
-#if !NET_2_0
-		virtual
-#endif
-		DataTable Add () 
+		public virtual DataTable Add () 
 		{
 			DataTable Table = new DataTable ();
 			Add (Table);
 			return Table;
 		}
 
-		public
-#if !NET_2_0
-		virtual
-#endif
-		void Add (DataTable table) 
+		public virtual void Add (DataTable table) 
 		{
 			OnCollectionChanging (new CollectionChangeEventArgs (CollectionChangeAction.Add, table));
 			// check if the reference is a null reference
@@ -123,11 +109,7 @@ namespace System.Data {
 			// check if the list already contains this tabe.
 			if(List.Contains(table))
 				throw new ArgumentException("DataTable already belongs to this DataSet.");
-           		
-			// check if table is part of another DataSet 
-			if (table.DataSet != null && table.DataSet != this.dataSet)
-				throw new ArgumentException ("DataTable already belongs to another DataSet");
-
+            
 			// if the table name is null or empty string.
 			// give her a name. 
 			if (table.TableName == null || table.TableName == string.Empty)
@@ -143,17 +125,13 @@ namespace System.Data {
 				if(table.TableName == this[tmp].TableName)
 					throw new DuplicateNameException("A DataTable named '" + table.TableName + "' already belongs to this DataSet.");
 			}
-
+	
 			List.Add (table);
 			table.dataSet = dataSet;
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, table));
 		}
 
-		public
-#if !NET_2_0
-		virtual
-#endif
-		DataTable Add (string name) 
+		public virtual DataTable Add (string name) 
 		{
 			DataTable table = new DataTable (name);
 			this.Add (table);
@@ -161,7 +139,7 @@ namespace System.Data {
 		}
 
 #if NET_2_0
-		public DataTable Add (string name, string tbNamespace)
+		public virtual DataTable Add (string name, string tbNamespace)
 		{
 			DataTable table = new DataTable (name, tbNamespace);
 			this.Add (table);
@@ -169,34 +147,15 @@ namespace System.Data {
 		}
 #endif
 
-		public void AddRange (DataTable[] tables)
-		{
-			if (dataSet != null && dataSet.InitInProgress) {
-				mostRecentTables = tables;
-				return;
-			}
-
+		public void AddRange (DataTable[] tables) {
 			if (tables == null)
 				return;
 
-			foreach (DataTable table in tables) {
-				if (table == null)
-					continue;
-				Add (table);
+			for (int i = 0; i < tables.Length; i++){
+				DataTable table = tables[i];
+				if (table != null)
+					this.Add (table);
 			}
-		}
-
-		internal void PostAddRange ()
-		{
-			if (mostRecentTables == null)
-				return;
-
-			foreach (DataTable table in mostRecentTables){
-				if (table == null)
-					continue;
-				Add (table);
-			}
-			mostRecentTables = null;
 		}
 
 		public bool CanRemove (DataTable table) 
@@ -214,20 +173,12 @@ namespace System.Data {
 			return (-1 != IndexOf (name, false));
 		}
 
-		public
-#if !NET_2_0
-		virtual
-#endif
-		int IndexOf (DataTable table) 
+		public virtual int IndexOf (DataTable table) 
 		{
 			return List.IndexOf (table);
 		}
 
-		public
-#if !NET_2_0
-		virtual
-#endif
-		int IndexOf (string name) 
+		public virtual int IndexOf (string name) 
 		{
 			return IndexOf (name, false);
 		}
@@ -245,8 +196,6 @@ namespace System.Data {
 
 		public void Remove (string name) 
 		{
-			if ( IndexOf (name, false) == -1)
-				throw new ArgumentException ("Table " + name + " does not belong to this DataSet"); 
 			Remove (this [name]);
 		}
 
@@ -259,21 +208,13 @@ namespace System.Data {
 
 		#region Protected methods
 
-		protected internal
-#if !NET_2_0
-		virtual
-#endif
-		void OnCollectionChanging (CollectionChangeEventArgs Args)
+		protected internal virtual void OnCollectionChanging (CollectionChangeEventArgs Args)
 		{
 			if (CollectionChanging != null)
 				CollectionChanging (this, Args);
 		}
 
-		protected
-#if !NET_2_0
-		virtual
-#endif
-		void OnCollectionChanged (CollectionChangeEventArgs Args)
+		protected virtual void OnCollectionChanged (CollectionChangeEventArgs Args)
 		{
 			if (CollectionChanged != null)
 				CollectionChanged (this, Args);

@@ -1018,25 +1018,8 @@ namespace System.Data
 			CodeMemberMethod m = new CodeMemberMethod ();
 			m.Name = "InitializeFields";
 			m.Attributes = MemberAttributes.Assembly;
-
-			string colRef;
-			foreach (DataColumn col in dt.Columns) {
-				colRef = String.Format("__column{0}", opts.TableColName (col.ColumnName, gen));
-
-				m.Statements.Add (Let (FieldRef (colRef), IndexerRef (PropRef ("Columns"), Const (col.ColumnName))));
-				if (!col.AllowDBNull)
-					m.Statements.Add (Let (FieldRef (PropRef (colRef), "AllowDBNull"), Const (col.AllowDBNull)));
-				if (col.DefaultValue != null && col.DefaultValue.GetType() != typeof(System.DBNull))
-					m.Statements.Add (Let (FieldRef (PropRef (colRef), "DefaultValue"), Const (col.DefaultValue)));
-				if (col.AutoIncrement)
-					m.Statements.Add (Let (FieldRef (PropRef (colRef), "AutoIncrement"), Const (col.AutoIncrement)));
-				if (col.AutoIncrementSeed != 0)
-					m.Statements.Add (Let (FieldRef (PropRef (colRef), "AutoIncrementSeed"), Const (col.AutoIncrementSeed)));
-				if (col.AutoIncrementStep != 1)
-					m.Statements.Add (Let (FieldRef (PropRef (colRef), "AutoIncrementStep"), Const (col.AutoIncrementStep)));
-				if (col.ReadOnly)
-					m.Statements.Add (Let (FieldRef (PropRef (colRef), "ReadOnly"), Const (col.ReadOnly)));
-			}
+			foreach (DataColumn col in dt.Columns)
+				m.Statements.Add (Let (FieldRef ("__column" + opts.TableColName (col.ColumnName, gen)), IndexerRef (PropRef ("Columns"), Const (col.ColumnName))));
 			return m;
 		}
 
@@ -1367,8 +1350,7 @@ namespace System.Data
 		private CodeMemberProperty CreateRowParentRowProperty (DataTable dt, DataRelation rel)
 		{
 			CodeMemberProperty p = new CodeMemberProperty ();
-			p.Name = opts.TableMemberName (rel.ParentTable.TableName, gen) + "Row" +
-				(rel.ParentTable.TableName == rel.ChildTable.TableName ? "Parent" : String.Empty);
+			p.Name = opts.TableMemberName (rel.ParentTable.TableName, gen) + "Row";
 			p.Attributes = MemberAttributes.Public;
 			p.Type = TypeRef (opts.RowName (rel.ParentTable.TableName, gen));
 			p.GetStatements.Add (Return (Cast (p.Type, MethodInvoke (
