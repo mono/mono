@@ -1,3 +1,9 @@
+2006-03-27  Konstantin Triger <kostat@mainsoft.com>
+
+	* OleDbSqlServerProvider.cs: rename OleDbSqlServerProvider class to OleDbSqlServerProvider2000
+		as it works with MS JDBC driver for SQLServer2000.
+	* GenericProvider.cs: ensure all the key-values are correctly passed to DriverManager
+
 2006-03-21	Boris Kirzner <borisk@miansoft.com>
 	* wrappers.cs: added ResultSet and ResultSetMetaData wrappers.
 	* OleDbOracleProvider.cs: fix OleDbOracleProvider ResultSet 
