@@ -151,7 +151,7 @@ namespace System.Data.ProviderBase
 		public override int ConnectionTimeout
 		{
 			get {
-				string timeoutStr = (string)ConnectionStringBuilder["TIMEOUT"];
+				string timeoutStr = (string)ConnectionStringBuilder["loginTimeout"];
 				if (timeoutStr != null && timeoutStr.Length > 0) {
 					try {
 						return Convert.ToInt32(timeoutStr);
@@ -173,7 +173,7 @@ namespace System.Data.ProviderBase
 				if ((State & ConnectionState.Open) != 0)
 					return JdbcConnection.getCatalog();
 
-				return (string)ConnectionStringBuilder["CATALOG"];
+				return (string)ConnectionStringBuilder["DATABASE"];
 			}
 		}
 
