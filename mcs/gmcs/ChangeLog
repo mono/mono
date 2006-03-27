@@ -1,3 +1,23 @@
+2006-03-17  Marek Safar  <marek.safar@seznam.cz>
+
+	* typemanager.cs.cs (GetInterfaces): Don't recreate 0-sized arrays.
+
+2006-03-15  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs (FieldMember.Emit): ParentContainer is real parent for partial
+	classes.
+
+2006-03-15  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs (Operator.Define): An error for base conversion was not
+	reported correctly.
+
+2006-03-13  Marek Safar  <marek.safar@seznam.cz>
+
+	A fix for #77593, #77574.
+
+	* class.cs (MethodCore.CheckBase): Another if for operator.
+
 2006-03-18  Marek Safar  <marek.safar@seznam.cz>
 
 	A fix for #77822.

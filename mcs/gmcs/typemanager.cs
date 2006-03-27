@@ -2134,7 +2134,7 @@ public partial class TypeManager {
 			return result;
 		} else if (t is GenericTypeParameterBuilder){
 			Type[] type_ifaces = (Type []) builder_to_ifaces [t];
-			if (type_ifaces == null)
+			if (type_ifaces == null || type_ifaces.Length == 0)
 				type_ifaces = Type.EmptyTypes;
 
 			iface_cache [t] = type_ifaces;
