@@ -1,6 +1,6 @@
 // This is used to debug an ordering dependent bug.
 //
-// Compiler options: support-389.cs
+// Compiler options: support-389.cs -out:test-389.exe
 
 using System;
 using System.Collections;
