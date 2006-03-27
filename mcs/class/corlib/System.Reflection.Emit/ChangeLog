@@ -1,3 +1,7 @@
+2006-03-27  Marek Safar  <marek.safar@seznam.cz>
+
+	* ILGenerator.cs: Tune up label defaults, switched to double resizing.
+
 2006-03-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* AssemblyBuilder.cs (AddTypeForwarder): New internal method for

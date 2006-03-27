@@ -222,8 +222,8 @@ namespace System.Reflection.Emit {
 		private Stack open_blocks;
 		private TokenGenerator token_gen;
 		
-		const int defaultFixupSize = 8;
-		const int defaultLabelsSize = 8;
+		const int defaultFixupSize = 4;
+		const int defaultLabelsSize = 4;
 		ArrayList sequencePointLists;
 		SequencePointList currentSequence;
 
@@ -231,12 +231,8 @@ namespace System.Reflection.Emit {
 		{
 			if (size < 0)
 				size = 128;
-			code_len = 0;
 			code = new byte [size];
-			cur_stack = max_stack = 0;
-			num_fixups = num_labels = 0;
 			token_fixups = new ILTokenInfo [8];
-			num_token_fixups = 0;
 			module = m;
 			open_blocks = new Stack ();
 			this.token_gen = token_gen;
@@ -572,7 +568,7 @@ namespace System.Reflection.Emit {
 			if (fixups == null)
 				fixups = new LabelFixup [defaultFixupSize]; 
 			else if (num_fixups >= fixups.Length) {
-				LabelFixup[] newf = new LabelFixup [fixups.Length + 16];
+				LabelFixup[] newf = new LabelFixup [fixups.Length * 2];
 				System.Array.Copy (fixups, newf, fixups.Length);
 				fixups = newf;
 			}
@@ -599,7 +595,7 @@ namespace System.Reflection.Emit {
 			if (fixups == null)
 				fixups = new LabelFixup [defaultFixupSize + count]; 
 			else if (num_fixups + count >= fixups.Length) {
-				LabelFixup[] newf = new LabelFixup [fixups.Length + count + 16];
+				LabelFixup[] newf = new LabelFixup [count + fixups.Length * 2];
 				System.Array.Copy (fixups, newf, fixups.Length);
 				fixups = newf;
 			}
