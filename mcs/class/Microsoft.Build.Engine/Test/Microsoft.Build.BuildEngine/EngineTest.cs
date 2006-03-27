@@ -83,15 +83,52 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.AreEqual (false, engine.OnlyLogCriticalEvents, "A1");
 		}
 
+		private static string GetPropValue (BuildPropertyGroup bpg, string name)
+		{
+			foreach (BuildProperty bp in bpg) {
+				if (bp.Name == name) {
+					return bp.FinalValue;
+				}
+			}
+			return String.Empty;
+		}
+
 		[Test]
 		public void TestGlobalProperties ()
 		{
 			engine = new Engine (binPath);
+			Project project;
 
 			Assert.IsNotNull (engine.GlobalProperties, "A1");
 			Assert.AreEqual (0, engine.GlobalProperties.Count, "A2");
 			Assert.AreEqual (String.Empty, engine.GlobalProperties.Condition, "A3");
 			Assert.IsFalse (engine.GlobalProperties.IsImported, "A4");
+			
+			engine.GlobalProperties.SetProperty ("GlobalA", "value1");
+			Assert.AreEqual (1, engine.GlobalProperties.Count, "A5");
+			engine.GlobalProperties.SetProperty ("GlobalB", "value1");
+			Assert.AreEqual (2, engine.GlobalProperties.Count, "A6");
+			engine.GlobalProperties.SetProperty ("GlobalA", "value2");
+			Assert.AreEqual (2, engine.GlobalProperties.Count, "A7");
+
+			project = engine.CreateNewProject ();
+			Assert.AreEqual (2, project.GlobalProperties.Count, "A8");
+			project.GlobalProperties.SetProperty ("GlobalC", "value3");
+			Assert.AreEqual (3, project.GlobalProperties.Count, "A9");
+			Assert.AreEqual (2, engine.GlobalProperties.Count, "A10");
+
+			project.GlobalProperties.SetProperty ("GlobalA", "value3");
+			Assert.AreEqual ("value2", GetPropValue(engine.GlobalProperties, "GlobalA"), "A11");
+			engine.GlobalProperties.SetProperty ("GlobalB", "value3");
+			Assert.AreEqual ("value1", GetPropValue(project.GlobalProperties, "GlobalB"), "A12");
+
+			engine.GlobalProperties.SetProperty ("GlobalC", "value4");
+			engine.GlobalProperties.SetProperty ("GlobalD", "value5");
+			Assert.AreEqual (4, engine.GlobalProperties.Count, "A13");
+			Assert.AreEqual (3, project.GlobalProperties.Count, "A14");
+
+			project = new Project (engine);
+			Assert.AreEqual (4, project.GlobalProperties.Count, "A15");
 		}
 	}
 }

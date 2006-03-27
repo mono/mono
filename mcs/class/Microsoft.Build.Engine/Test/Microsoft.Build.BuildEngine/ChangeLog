@@ -1,3 +1,7 @@
+2006-03-27  Crestez Leonard  <cdleonard@gmail.com>
+
+	* ProjectTest.cs, EngineTest.cs: Added new tests.
+
 2006-03-23  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* Microsoft.Build.Engine.Test.csproj: Updated.
