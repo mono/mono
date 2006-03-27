@@ -52,12 +52,12 @@ namespace Mono.Security.Protocol.Tls
 			CipherSuiteCollection scs = new CipherSuiteCollection(SecurityProtocolType.Tls);
 
 			// Supported ciphers
-			scs.Add((0x00 << 0x08) | 0x35, "TLS_RSA_WITH_AES_256_CBC_SHA", CipherAlgorithmType.Rijndael, HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaSign, false, true, 32, 32, 256, 16, 16);
-			scs.Add((0x00 << 0x08) | 0x2F, "TLS_RSA_WITH_AES_128_CBC_SHA", CipherAlgorithmType.Rijndael, HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaSign, false, true, 16, 16, 128, 16, 16);
-			scs.Add((0x00 << 0x08) | 0x0A, "TLS_RSA_WITH_3DES_EDE_CBC_SHA", CipherAlgorithmType.TripleDes, HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaSign, false, true, 24, 24, 168, 8, 8);
-			scs.Add((0x00 << 0x08) | 0x05, "TLS_RSA_WITH_RC4_128_SHA", CipherAlgorithmType.Rc4, HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaSign, false, false, 16, 16, 128, 0, 0);
-			scs.Add((0x00 << 0x08) | 0x04, "TLS_RSA_WITH_RC4_128_MD5", CipherAlgorithmType.Rc4, HashAlgorithmType.Md5, ExchangeAlgorithmType.RsaSign, false, false, 16, 16, 128, 0, 0);
-			scs.Add((0x00 << 0x08) | 0x09, "TLS_RSA_WITH_DES_CBC_SHA", CipherAlgorithmType.Des, HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaSign, false, true, 8, 8, 56, 8, 8);
+			scs.Add((0x00 << 0x08) | 0x35, "TLS_RSA_WITH_AES_256_CBC_SHA", CipherAlgorithmType.Rijndael, HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaKeyX, false, true, 32, 32, 256, 16, 16);
+			scs.Add((0x00 << 0x08) | 0x2F, "TLS_RSA_WITH_AES_128_CBC_SHA", CipherAlgorithmType.Rijndael, HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaKeyX, false, true, 16, 16, 128, 16, 16);
+			scs.Add((0x00 << 0x08) | 0x0A, "TLS_RSA_WITH_3DES_EDE_CBC_SHA", CipherAlgorithmType.TripleDes, HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaKeyX, false, true, 24, 24, 168, 8, 8);
+			scs.Add((0x00 << 0x08) | 0x05, "TLS_RSA_WITH_RC4_128_SHA", CipherAlgorithmType.Rc4, HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaKeyX, false, false, 16, 16, 128, 0, 0);
+			scs.Add((0x00 << 0x08) | 0x04, "TLS_RSA_WITH_RC4_128_MD5", CipherAlgorithmType.Rc4, HashAlgorithmType.Md5, ExchangeAlgorithmType.RsaKeyX, false, false, 16, 16, 128, 0, 0);
+			scs.Add((0x00 << 0x08) | 0x09, "TLS_RSA_WITH_DES_CBC_SHA", CipherAlgorithmType.Des, HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaKeyX, false, true, 8, 8, 56, 8, 8);
 			
 			// Supported exportable ciphers
 			scs.Add((0x00 << 0x08) | 0x03, "TLS_RSA_EXPORT_WITH_RC4_40_MD5", CipherAlgorithmType.Rc4, HashAlgorithmType.Md5, ExchangeAlgorithmType.RsaKeyX, true, false, 5, 16, 40, 0, 0);
@@ -131,11 +131,11 @@ namespace Mono.Security.Protocol.Tls
 			CipherSuiteCollection scs = new CipherSuiteCollection(SecurityProtocolType.Ssl3);
 
 			// Supported ciphers
-			scs.Add((0x00 << 0x08) | 0x35, "SSL_RSA_WITH_AES_256_CBC_SHA", CipherAlgorithmType.Rijndael, HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaSign, false, true, 32, 32, 256, 16, 16);
-			scs.Add((0x00 << 0x08) | 0x0A, "SSL_RSA_WITH_3DES_EDE_CBC_SHA", CipherAlgorithmType.TripleDes, HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaSign, false, true, 24, 24, 168, 8, 8);
-			scs.Add((0x00 << 0x08) | 0x05, "SSL_RSA_WITH_RC4_128_SHA", CipherAlgorithmType.Rc4, HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaSign, false, false, 16, 16, 128, 0, 0);
-			scs.Add((0x00 << 0x08) | 0x04, "SSL_RSA_WITH_RC4_128_MD5", CipherAlgorithmType.Rc4, HashAlgorithmType.Md5, ExchangeAlgorithmType.RsaSign, false, false, 16, 16, 128, 0, 0);
-			scs.Add((0x00 << 0x08) | 0x09, "SSL_RSA_WITH_DES_CBC_SHA", CipherAlgorithmType.Des, HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaSign, false, true, 8, 8, 56, 8, 8);
+			scs.Add((0x00 << 0x08) | 0x35, "SSL_RSA_WITH_AES_256_CBC_SHA", CipherAlgorithmType.Rijndael, HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaKeyX, false, true, 32, 32, 256, 16, 16);
+			scs.Add((0x00 << 0x08) | 0x0A, "SSL_RSA_WITH_3DES_EDE_CBC_SHA", CipherAlgorithmType.TripleDes, HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaKeyX, false, true, 24, 24, 168, 8, 8);
+			scs.Add((0x00 << 0x08) | 0x05, "SSL_RSA_WITH_RC4_128_SHA", CipherAlgorithmType.Rc4, HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaKeyX, false, false, 16, 16, 128, 0, 0);
+			scs.Add((0x00 << 0x08) | 0x04, "SSL_RSA_WITH_RC4_128_MD5", CipherAlgorithmType.Rc4, HashAlgorithmType.Md5, ExchangeAlgorithmType.RsaKeyX, false, false, 16, 16, 128, 0, 0);
+			scs.Add((0x00 << 0x08) | 0x09, "SSL_RSA_WITH_DES_CBC_SHA", CipherAlgorithmType.Des, HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaKeyX, false, true, 8, 8, 56, 8, 8);
 
 			// Supported exportable ciphers
 			scs.Add((0x00 << 0x08) | 0x03, "SSL_RSA_EXPORT_WITH_RC4_40_MD5", CipherAlgorithmType.Rc4, HashAlgorithmType.Md5, ExchangeAlgorithmType.RsaKeyX, true, false, 5, 16, 40, 0, 0);

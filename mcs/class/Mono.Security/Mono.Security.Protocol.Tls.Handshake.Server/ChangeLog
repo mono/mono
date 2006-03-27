@@ -1,3 +1,12 @@
+2005-07-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TlsClientCertificate.cs: Fix decoding (extra length) and for null
+	 (no certificates). Add basic client certificate validations before
+	calling the callback (which can override the default decision).
+	* TlsClientCertificateVerify.cs: Fix signature verification (the first
+	two bytes are the length of the signature).
+	* TlsServerCertificateRequest.cs: Sent the list of trusted root DNs.
+
 2004-11-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TlsClientFinished.cs: ProcessAsTls1 - get out of the loop if PRF are

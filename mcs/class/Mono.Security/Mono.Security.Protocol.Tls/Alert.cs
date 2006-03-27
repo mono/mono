@@ -23,7 +23,6 @@
 //
 
 using System;
-using Mono.Security.Protocol.Tls;
 
 namespace Mono.Security.Protocol.Tls
 {
@@ -46,6 +45,7 @@ namespace Mono.Security.Protocol.Tls
 		RecordOverflow			= 22,
 		DecompressionFailiure	= 30,
 		HandshakeFailiure		= 40,
+		NoCertificate			= 41,	// should be used in SSL3
 		BadCertificate			= 42,
 		UnsupportedCertificate	= 43,
 		CertificateRevoked		= 44,

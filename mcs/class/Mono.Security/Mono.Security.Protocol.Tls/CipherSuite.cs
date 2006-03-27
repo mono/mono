@@ -179,9 +179,9 @@ namespace Mono.Security.Protocol.Tls
 			get { return this.expandedKeyMaterialSize; }
 		}
 
-		public byte	EffectiveKeyBits
+		public short	EffectiveKeyBits
 		{
-			get { return this.EffectiveKeyBits; }
+			get { return this.effectiveKeyBits; }
 		}
 		
 		public byte IvSize
@@ -213,7 +213,7 @@ namespace Mono.Security.Protocol.Tls
 			short code, string name, CipherAlgorithmType cipherAlgorithmType, 
 			HashAlgorithmType hashAlgorithmType, ExchangeAlgorithmType exchangeAlgorithmType,
 			bool exportable, bool blockMode, byte keyMaterialSize, 
-			byte expandedKeyMaterialSize, short effectiveKeyBytes, 
+			byte expandedKeyMaterialSize, short effectiveKeyBits, 
 			byte ivSize, byte blockSize)
 		{
 			this.code					= code;

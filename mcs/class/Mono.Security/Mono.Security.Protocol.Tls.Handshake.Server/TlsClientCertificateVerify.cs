@@ -45,8 +45,9 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 
 		protected override void ProcessAsSsl3()
 		{
-			ServerContext	context		= (ServerContext)this.Context;
-			byte[]			signature	= this.ReadBytes((int)this.Length);
+			ServerContext context = (ServerContext)this.Context;
+			int length = this.ReadInt16 ();
+			byte[] signature = this.ReadBytes (length);
 
 			// Verify signature
 			SslHandshakeHash hash = new SslHandshakeHash(context.MasterSecret);			
@@ -57,14 +58,15 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 
 			if (!hash.VerifySignature(context.ClientSettings.CertificateRSA, signature))
 			{
-				throw new TlsException(AlertDescription.HandshakeFailiure, "Handshake Failiure.");
+				throw new TlsException(AlertDescription.HandshakeFailiure, "Handshake Failure.");
 			}
 		}
 
 		protected override void ProcessAsTls1()
 		{
-			ServerContext	context		= (ServerContext)this.Context;
-			byte[]			signature	= this.ReadBytes((int)this.Length);			
+			ServerContext context = (ServerContext)this.Context;
+			int length = this.ReadInt16 ();
+			byte[] signature = this.ReadBytes (length);
 
 			// Verify signature
 			MD5SHA1 hash = new MD5SHA1();
@@ -75,9 +77,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 
 			if (!hash.VerifySignature(context.ClientSettings.CertificateRSA, signature))
 			{
-				throw new TlsException(
-					AlertDescription.HandshakeFailiure,
-					"Handshake Failiure.");
+				throw new TlsException (AlertDescription.HandshakeFailiure, "Handshake Failure.");
 			}
 		}
 

@@ -82,7 +82,8 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			this.Write(this.random);
 
 			// Session id
-			// Send the session ID empty
+			// Check if we have a cache session we could reuse
+			this.Context.SessionId = ClientSessionCache.FromHost (this.Context.ClientSettings.TargetHost);
 			if (this.Context.SessionId != null)
 			{
 				this.Write((byte)this.Context.SessionId.Length);
