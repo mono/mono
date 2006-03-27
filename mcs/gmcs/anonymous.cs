@@ -551,7 +551,7 @@ namespace Mono.CSharp {
 			if ((am.method.ModFlags & Modifiers.STATIC) == 0)
 				delegate_instance_expression = new AnonymousInstance (am);
 			
-			Expression ml = Expression.MemberLookup (ec, type, ".ctor", loc);
+			Expression ml = Expression.MemberLookup (ec.ContainerType, type, ".ctor", loc);
 			constructor_method = ((MethodGroupExpr) ml).Methods [0];
 			delegate_method = am.GetMethodBuilder ();
 			base.Emit (ec);

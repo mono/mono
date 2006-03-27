@@ -19,16 +19,7 @@ namespace Mono.CSharp {
 	// A container class for all the conversion operations
 	//
 	public class Convert {
-		//
-		// This is used to prettify the code: a null argument is allowed
-		// for ImplicitStandardConversion as long as it is known that
-		// no anonymous method will play a role.
-		//
-		// FIXME: renamed from `const' to `static' to allow bootstraping from older
-		// versions of the compiler that could not cope with this construct.
-		//
-		public static EmitContext ConstantEC = null;
-		
+	
 		static Expression TypeParameter_to_Null (Type target_type, Location loc)
 		{
 			if (!TypeParameter_to_Null (target_type)) {
@@ -620,12 +611,7 @@ namespace Mono.CSharp {
 			if (ImplicitStandardConversionExists (expr, target_type))
 				return true;
 
-			Expression dummy = ImplicitUserConversion (ec, expr, target_type, Location.Null);
-
-			if (dummy != null)
-				return true;
-
-			return false;
+			return ImplicitUserConversion (ec, expr, target_type, Location.Null) != null;
 		}
 
 		public static bool ImplicitUserConversionExists (EmitContext ec, Type source, Type target)
@@ -1270,7 +1256,7 @@ namespace Mono.CSharp {
 					MethodGroupExpr mg = expr as MethodGroupExpr;
 					if (mg != null)
 						return ImplicitDelegateCreation.Create (
-							ec, mg, target_type, false, loc);
+							ec, mg, target_type, loc);
 				}
 			}
 

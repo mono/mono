@@ -448,7 +448,7 @@ namespace Mono.CSharp {
 				arg_count = args.Count;
 
 			Expression ml = Expression.MemberLookup (
-				ec, delegate_type, "Invoke", loc);
+				ec.ContainerType, delegate_type, "Invoke", loc);
 
 			MethodGroupExpr me = ml as MethodGroupExpr;
 			if (me == null) {
@@ -488,7 +488,7 @@ namespace Mono.CSharp {
 		public static bool VerifyDelegate (EmitContext ec, Type delegate_type, Type probe_type, Location loc)
 		{
 			Expression ml = Expression.MemberLookup (
-				ec, delegate_type, "Invoke", loc);
+				ec.ContainerType, delegate_type, "Invoke", loc);
 			
 			if (!(ml is MethodGroupExpr)) {
 				Report.Error (-100, loc, "Internal error: could not find Invoke method!");
@@ -499,7 +499,7 @@ namespace Mono.CSharp {
 			ParameterData pd = TypeManager.GetParameterData (mb);
 
 			Expression probe_ml = Expression.MemberLookup (
-				ec, delegate_type, "Invoke", loc);
+				ec.ContainerType, delegate_type, "Invoke", loc);
 			
 			if (!(probe_ml is MethodGroupExpr)) {
 				Report.Error (-100, loc, "Internal error: could not find Invoke method!");
@@ -617,7 +617,7 @@ namespace Mono.CSharp {
 		protected MethodGroupExpr method_group;
 		protected Expression delegate_instance_expression;
 
-		public DelegateCreation () {}
+		protected DelegateCreation () {}
 
 		public static void Error_NoMatchingMethodForDelegate (EmitContext ec, MethodGroupExpr mg, Type type, Location loc)
 		{
@@ -668,7 +668,7 @@ namespace Mono.CSharp {
 		protected bool ResolveConstructorMethod (EmitContext ec)
 		{
 			Expression ml = Expression.MemberLookup (
-				ec, type, ".ctor", loc);
+				ec.ContainerType, type, ".ctor", loc);
 
 			if (!(ml is MethodGroupExpr)) {
 				Report.Error (-100, loc, "Internal error: Could not find delegate constructor!");
@@ -689,19 +689,12 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		protected Expression ResolveMethodGroupExpr (EmitContext ec, MethodGroupExpr mg,
-							     bool check_only)
+		protected Expression ResolveMethodGroupExpr (EmitContext ec, MethodGroupExpr mg)
 		{
-			foreach (MethodInfo mi in mg.Methods){
-				delegate_method  = Delegate.VerifyMethod (ec.ContainerType, type, mg, mi, loc);
-				
-				if (delegate_method != null)
-					break;
-			}
-			
+			delegate_method = ImplicitStandardConversionExists (mg, type);
+
 			if (delegate_method == null) {
-				if (!check_only)
-					Error_NoMatchingMethodForDelegate (ec, mg, type, loc);
+				Error_NoMatchingMethodForDelegate (ec, mg, type, loc);
 				return null;
 			}
 			
@@ -776,13 +769,13 @@ namespace Mono.CSharp {
 		}
 
 		static public Expression Create (EmitContext ec, MethodGroupExpr mge,
-						 Type target_type, bool check_only, Location loc)
+						 Type target_type, Location loc)
 		{
 			ImplicitDelegateCreation d = new ImplicitDelegateCreation (target_type, loc);
-			if (d.ResolveConstructorMethod (ec))
-				return d.ResolveMethodGroupExpr (ec, mge, check_only);
-			else
+			if (!d.ResolveConstructorMethod (ec))
 				return null;
+
+			return d.ResolveMethodGroupExpr (ec, mge);
 		}
 	}
 	
@@ -825,7 +818,7 @@ namespace Mono.CSharp {
 
 			MethodGroupExpr mg = e as MethodGroupExpr;
 			if (mg != null)
-				return ResolveMethodGroupExpr (ec, mg, false);
+				return ResolveMethodGroupExpr (ec, mg);
 
 			Type e_type = e.Type;
 
@@ -914,7 +907,7 @@ namespace Mono.CSharp {
 			if (!Delegate.VerifyApplicability (ec, del_type, Arguments, loc))
 				return null;
 
-			Expression lookup = Expression.MemberLookup (ec, del_type, "Invoke", loc);
+			Expression lookup = Expression.MemberLookup (ec.ContainerType, del_type, "Invoke", loc);
 			if (!(lookup is MethodGroupExpr)) {
 				Report.Error (-100, loc, "Internal error: could not find Invoke method!");
 				return null;
