@@ -1,3 +1,9 @@
+
+Mon Mar 27 11:15:00 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c, class-internals.h, domain.c: fixed handling of types
+	used as values for objects in custom attributes (bug #77915):
+
 2006-03-24  Martin Baulig  <martin@ximian.com>
 
 	* class.c (mono_class_setup_fields): Added support for generic
