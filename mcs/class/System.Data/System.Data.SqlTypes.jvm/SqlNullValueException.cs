@@ -27,41 +27,35 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+using System.Runtime.Serialization;
 
 namespace System.Data.SqlTypes
 {
-
-    /**
-     * The exception that is thrown for errors in an arithmetic, casting, or conversion operation
-     *
-     * @author  Pavel Sandler
-     * @version 1.0, 01/01/03
-     */
-
-    /*
-    * CURRENT LIMITATIONS
-    * 1. Constructor(SerializationInfo info, StreamingContext context) is not supported
-    * 2. Method "void GetObjectData(...,...)" is not supported from ISerializable
-    */
-
 	[Serializable]
     public class SqlNullValueException : System.Data.SqlTypes.SqlTypeException
     {
-        /**
-                                            * Initializes a new instance of the <code>SqlNullValueException</code> class.
-                                            */
         public SqlNullValueException() : base("Data is Null. This method or property cannot be called on Null values.")
         {
         }
 
-        /**
-         * Initializes a new instance of the <code>SqlNullValueException</code> class
-         * with a specified error message.
-         *
-         * @param message The message that describes the error.
-         */
         public SqlNullValueException(String message): base(message)
         {
+			_message = message;
+        }
+
+		public SqlNullValueException (SerializationInfo info, StreamingContext context) 
+			: this () {
+			_message = (string) info.GetString ("SqlNullValueExceptionMessage");
+		}
+
+		public SqlNullValueException(String message, Exception innerException): base(message, innerException)
+        {
+			_message = message;
+        }
+
+		public override void GetObjectData (SerializationInfo si, StreamingContext context)
+        {                                             
+            si.AddValue ("SqlNullValueExceptionMessage", Message);                
         }
     }
 }

@@ -29,33 +29,41 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+using System.Runtime.Serialization;
+
 namespace System.Data.SqlTypes
 {
-
-
-    /**
-     * The base exception class for the System.Data.SqlTypes .
-     */
-
-    /*
-    * CURRENT LIMITATIONS
-    * 1. Constructor(SerializationInfo info, StreamingContext context) is not supported
-    * 2. Method "void GetObjectData(...,...)" is not supported from ISerializable
-    */
-
-    using System;
-
 	[Serializable]
     public class SqlTypeException : SystemException
     {
-        /**
-         * Initializes a new instance of the <code>SqlTypeException</code> class
-         * with a specified error message.
-         *
-         * @param message The message that describes the error.
-         */
+		protected string _message;
+
+		public SqlTypeException() : this("System error.")
+        {
+        }
+
         public SqlTypeException(String message) : base(message)
         {
+			_message = message;
+        }
+
+		public SqlTypeException (SerializationInfo info, StreamingContext context) {
+			_message = (string) info.GetString ("SqlTypeExceptionMessage");
+		}
+
+		public SqlTypeException(String message, Exception innerException) : base(message, innerException)
+        {
+			_message = message;
+        }
+
+		public override string Message {
+			get { return _message; }
+		}
+
+		public override void GetObjectData (SerializationInfo si, StreamingContext context)
+        {                                             
+            si.AddValue ("SqlTypeExceptionMessage", Message);                
         }
     }
 }
