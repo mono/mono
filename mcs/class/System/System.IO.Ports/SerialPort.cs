@@ -3,12 +3,13 @@
 #if NET_2_0
 
 using System;
+using System.ComponentModel;
 using System.Text;
 using System.Runtime.InteropServices;
 
 namespace System.IO.Ports
 {
-	public class SerialPort /* : Component */
+	public class SerialPort : Component
 	{
 		public const int InfiniteTimeout = -1;
 		const int DefaultReadBufferSize = 4096;
@@ -36,6 +37,9 @@ namespace System.IO.Ports
 		int writeBufferLength;
 		byte [] readBuffer;
 		//byte [] writeBuffer;
+		object error_received = new object ();
+		object data_received = new object ();
+		object pin_changed = new object ();
 		
 		static string default_port_name = "ttyS0";
 
@@ -555,12 +559,48 @@ namespace System.IO.Ports
 				throw new InvalidOperationException ("Specified port is not open.");
 		}
 
+		internal void OnErrorReceived (SerialErrorReceivedEventArgs args)
+		{
+			SerialErrorReceivedEventHandler handler =
+				(SerialErrorReceivedEventHandler) Events [error_received];
+
+			if (handler != null)
+				handler (this, args);
+		}
+
+		internal void OnDataReceived (SerialDataReceivedEventArgs args)
+		{
+			SerialDataReceivedEventHandler handler =
+				(SerialDataReceivedEventHandler) Events [data_received];
+
+			if (handler != null)
+				handler (this, args);
+		}
+		
+		internal void OnDataReceived (SerialPinChangedEventArgs args)
+		{
+			SerialPinChangedEventHandler handler =
+				(SerialPinChangedEventHandler) Events [pin_changed];
+
+			if (handler != null)
+				handler (this, args);
+		}
+
 		// events
-#pragma warning disable 67
-		public event SerialErrorReceivedEventHandler ErrorReceived;
-		public event SerialPinChangedEventHandler PinChanged;
-		public event SerialDataReceivedEventHandler DataReceived;
-#pragma warning restore
+		public event SerialErrorReceivedEventHandler ErrorReceived {
+			add { Events.AddHandler (error_received, value); }
+			remove { Events.RemoveHandler (error_received, value); }
+		}
+		
+		public event SerialPinChangedEventHandler PinChanged {
+			add { Events.AddHandler (pin_changed, value); }
+			remove { Events.RemoveHandler (pin_changed, value); }
+		}
+		
+		public event SerialDataReceivedEventHandler DataReceived {
+			add { Events.AddHandler (data_received, value); }
+			remove { Events.RemoveHandler (data_received, value); }
+		}
 	}
 
 	public delegate void SerialDataReceivedEventHandler (object sender, SerialDataReceivedEventArgs e);
