@@ -372,15 +372,16 @@ mono_constant_fold_ins2 (MonoInst *ins, MonoInst *arg1, MonoInst *arg2)
 				ins->opcode = OP_ICONST;
 				ins->sreg1 = ins->sreg2 = -1;
 			}
-			else {
-				/* 
-				 * This is commutative so swap the arguments, allowing the _imm variant
-				 * to be used.
-				 */
+		} else if (arg1->opcode == OP_ICONST) {
+			/* 
+			 * This is commutative so swap the arguments, allowing the _imm variant
+			 * to be used later.
+			 */
+			if (mono_op_to_op_imm (ins->opcode) != -1) {
 				ins->opcode = mono_op_to_op_imm (ins->opcode);
 				ins->sreg1 = ins->sreg2;
 				ins->sreg2 = -1;
-				ins->inst_c0 = arg2->inst_c0;
+				ins->inst_imm = arg1->inst_c0;
 			}
 		}
 		break;

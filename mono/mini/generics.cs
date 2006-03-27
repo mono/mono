@@ -1,12 +1,15 @@
 using System;
+using System.Collections.Generic;
 
 class Tests {
 
 	struct TestStruct {
 		public int i;
+		public int j;
 
-		public TestStruct (int i) {
+		public TestStruct (int i, int j) {
 			this.i = i;
+			this.j = j;
 		}
 	}
 
@@ -43,7 +46,7 @@ class Tests {
 
 	public static int test_1_nullable_unbox_vtype ()
 	{
-		return Unbox<TestStruct?> (new TestStruct (1)).Value.i;
+		return Unbox<TestStruct?> (new TestStruct (1, 2)).Value.i;
 	}
 
 	public static int test_1_nullable_unbox_null_vtype ()
@@ -53,7 +56,7 @@ class Tests {
 
 	public static int test_1_nullable_box_vtype ()
 	{
-		return ((TestStruct)(Box<TestStruct?> (new TestStruct (1)))).i;
+		return ((TestStruct)(Box<TestStruct?> (new TestStruct (1, 2)))).i;
 	}
 
 	public static int test_1_nullable_box_null_vtype ()
@@ -63,7 +66,7 @@ class Tests {
 
 	public static int test_1_isinst_nullable_vtype ()
 	{
-		object o = new TestStruct (1);
+		object o = new TestStruct (1, 2);
 		return (o is TestStruct?) ? 1 : 0;
 	}
 
@@ -124,7 +127,7 @@ class Tests {
 	public static int test_5_ldelem_stelem_generics () {
 		GenericClass<TestStruct> t = new GenericClass<TestStruct> ();
 
-		TestStruct s = new TestStruct (5);
+		TestStruct s = new TestStruct (5, 5);
 		return t.ldelem_stelem (s).i;
 	}
 
@@ -156,6 +159,42 @@ class Tests {
 		return 0;
 	}
 
+	public static int test_0_generic_get_value_optimization_int () {
+		int[] x = new int[] {100, 200};
+
+		if (GenericClass<int>.Z (x, 0) != 100)
+			return 2;
+
+		if (GenericClass<int>.Z (x, 1) != 200)
+			return 3;
+
+		return 0;
+	}
+
+	public static int test_0_generic_get_value_optimization_vtype () {
+		TestStruct[] arr = new TestStruct[] { new TestStruct (100, 200), new TestStruct (300, 400) };
+		IEnumerator<TestStruct> enumerator = GenericClass<TestStruct>.Y (arr);
+		TestStruct s;
+		int sum = 0;
+		while (enumerator.MoveNext ()) {
+			s = enumerator.Current;
+			sum += s.i + s.j;
+		}
+
+		if (sum != 1000)
+			return 1;
+
+		s = GenericClass<TestStruct>.Z (arr, 0);
+		if (s.i != 100 || s.j != 200)
+			return 2;
+
+		s = GenericClass<TestStruct>.Z (arr, 1);
+		if (s.i != 300 || s.j != 400)
+			return 3;
+
+		return 0;
+	}
+
 	static bool IsNull<T> (T t)
 	{
 		if (t == null)
@@ -172,8 +211,9 @@ class Tests {
 	static T Unbox <T> (object o) {
 		return (T) o;
 	}
+}
 
-	class GenericClass <T> {
+class GenericClass <T> {
 		public T ldobj_stobj (ref T t1, ref T t2) {
 			t1 = t2;
 			T t = t1;
@@ -191,5 +231,15 @@ class Tests {
 		public String toString (T t) {
 			return t.ToString ();
 		}
+
+		public static IEnumerator<T> Y (IEnumerable <T> x)
+		{
+			return x.GetEnumerator ();
+		}
+
+		public static T Z (IList<T> x, int index)
+		{
+			return x [index];
+		}
 	}
-}
+

@@ -10099,6 +10099,18 @@ mono_local_cprop2 (MonoCompile *cfg)
 						}
 						else {
 							/* Special cases */
+#if defined(__i386__) || defined(__x86__64)
+							if ((ins->opcode == OP_X86_LEA) && (srcindex == 1)) {
+#if SIZEOF_VOID_P == 8
+								/* FIXME: Use OP_PADD_IMM when the new JIT is done */
+								ins->opcode = OP_LADD_IMM;
+#else
+								ins->opcode = OP_ADD_IMM;
+#endif
+								ins->inst_imm += def->inst_c0 << ins->unused;
+								ins->sreg2 = -1;
+							}
+#endif
 							opcode2 = mono_load_membase_to_load_mem (ins->opcode);
 							if ((srcindex == 0) && (opcode2 != -1) && mono_arch_is_inst_imm (def->inst_c0)) {
 								ins->opcode = opcode2;
@@ -10752,7 +10764,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	mono_compile_create_vars (cfg);
 
 	if (cfg->new_ir) {
-		cfg->opt &= MONO_OPT_PEEPHOLE | MONO_OPT_INTRINS | MONO_OPT_LOOP | MONO_OPT_EXCEPTION | MONO_OPT_AOT | MONO_OPT_BRANCH | MONO_OPT_LINEARS | MONO_OPT_INLINE | MONO_OPT_SHARED | MONO_OPT_AOT | MONO_OPT_TAILC | MONO_OPT_SSA | MONO_OPT_DEADCE | MONO_OPT_CONSPROP;
+		cfg->opt &= MONO_OPT_PEEPHOLE | MONO_OPT_INTRINS | MONO_OPT_LOOP | MONO_OPT_EXCEPTION | MONO_OPT_AOT | MONO_OPT_BRANCH | MONO_OPT_LINEARS | MONO_OPT_INLINE | MONO_OPT_SHARED | MONO_OPT_AOT | MONO_OPT_TAILC | MONO_OPT_SSA | MONO_OPT_DEADCE | MONO_OPT_CONSPROP | MONO_OPT_CMOV | MONO_OPT_FCMOV;
 
 		i = mono_method_to_ir2 (cfg, method, NULL, NULL, NULL, NULL, NULL, 0, FALSE);
 	}

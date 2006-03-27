@@ -1511,7 +1511,7 @@ peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
 		switch (ins->opcode) {
 		case OP_IADD_IMM:
 		case OP_ADD_IMM:
-			if (ins->sreg1 == X86_EBP) {
+			if ((ins->sreg1 < MONO_MAX_IREGS) && (ins->dreg >= MONO_MAX_IREGS)) {
 				/* 
 				 * X86_LEA is like ADD, but doesn't have the
 				 * sreg1==dreg restriction.
@@ -4363,7 +4363,7 @@ mono_arch_flush_register_windows (void)
 gboolean 
 mono_arch_is_inst_imm (gint64 imm)
 {
-	return (((glong)(imm) >= -(1<<16) && (glong)(imm) <= ((1<<16)-1)));
+	return TRUE;
 }
 
 /*
