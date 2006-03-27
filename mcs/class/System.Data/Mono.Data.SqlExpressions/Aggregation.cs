@@ -75,6 +75,7 @@ namespace Mono.Data.SqlExpressions {
 			if (!other.column.Equals (column))
 				return false;		
 
+			if (other.rows != null && rows != null) {
 			if (other.rows.Length != rows.Length)
 				return false;
 
@@ -82,6 +83,10 @@ namespace Mono.Data.SqlExpressions {
 				if (other.rows [i] != rows [i])
 					return false;
 
+			}
+			else if (!(other.rows == null && rows == null))
+				return false;
+		
 			return true;
 		}
 

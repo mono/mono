@@ -1,3 +1,6 @@
+2006-03-27	Boris Kirzner <borisk@mainsoft.com>
+	* Aggregation.cs: fix possible NullReferenceException.
+
 2006-02-03  Senganal T  <tsenganal@novell.com>
 	
 	* ColumnReference.cs : 
