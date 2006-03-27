@@ -131,6 +131,13 @@ namespace MonoTests.System.Web {
 			Assert.AreEqual ("%7f", HttpUtility.UrlEncodeUnicode ("" + (char) 127), "#4");
 			Assert.AreEqual ("%u0080", HttpUtility.UrlEncodeUnicode ("" + (char) 128), "#5");
 		}
+
+		[Test]
+		public void UrlDecodeNoThrow ()
+		{
+			string str = "../../&amp;param2=%CURRREV%";
+			Assert.AreEqual (str, HttpUtility.UrlDecode (str), "#1");
+		}
 	}
 }
 

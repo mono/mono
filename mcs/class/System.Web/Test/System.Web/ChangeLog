@@ -1,3 +1,7 @@
+2006-03-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpUtilityTest.cs: test from bug #77931.
+
 2006-03-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpResponseTest.cs: added tests for CacheControl that set it to null
