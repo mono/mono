@@ -369,7 +369,18 @@ namespace System.Web {
 		{
 			return e.GetChars (b.GetBuffer (), 0, (int) b.Length);
 		}
-		
+
+		static bool TryParseHexa (string str, out uint result)
+		{
+			result = 0;
+			try {
+				result = UInt32.Parse (str, NumberStyles.HexNumber, CultureInfo.InvariantCulture);
+				return true;
+			} catch {
+				return false;
+			}
+		}
+
 		public static string UrlDecode (string s, Encoding e)
 		{
 			if (null == s) 
@@ -383,8 +394,8 @@ namespace System.Web {
 	
 			StringBuilder output = new StringBuilder ();
 			long len = s.Length;
-			NumberStyles hexa = NumberStyles.HexNumber;
 			MemoryStream bytes = new MemoryStream ();
+			uint xchar;
 	
 			for (int i = 0; i < len; i++) {
 				if (s [i] == '%' && i + 2 < len) {
@@ -393,11 +404,18 @@ namespace System.Web {
 							output.Append (GetChars (bytes, e));
 							bytes.SetLength (0);
 						}
-						output.Append ((char) Int32.Parse (s.Substring (i + 2, 4), hexa));
-						i += 5;
-					} else {
-						bytes.WriteByte ((byte) Int32.Parse (s.Substring (i + 1, 2), hexa));
+
+						if (TryParseHexa (s.Substring (i + 2, 4), out xchar)) {
+							output.Append ((char) xchar);
+							i += 5;
+						} else {
+							output.Append ('%');
+						}
+					} else if (TryParseHexa (s.Substring (i + 1, 2), out xchar)) {
+						bytes.WriteByte ((byte) xchar);
 						i += 2;
+					} else {
+						output.Append ('%');
 					}
 					continue;
 				}
