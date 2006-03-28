@@ -86,7 +86,7 @@ namespace Mono.CSharp {
 
 		protected void EnsureNamespace (string dotted_name)
 		{
-			if (dotted_name != null && dotted_name != "" && ! IsNamespace (dotted_name))
+			if (dotted_name != null && dotted_name.Length != 0 && ! IsNamespace (dotted_name))
 				GetNamespace (dotted_name, true);
 		}
 
@@ -281,9 +281,8 @@ namespace Mono.CSharp {
 				throw new InternalErrorException ("Namespace has a null fullname");
 
 			if (parent != null && parent.MemberName != MemberName.Null)
-				MemberName = new MemberName (
-					parent.MemberName, name, parent.MemberName.Location);
-			else if (name == "")
+				MemberName = new MemberName (parent.MemberName, name, parent.MemberName.Location);
+			else if (name.Length == 0)
 				MemberName = MemberName.Null;
 			else
 				MemberName = new MemberName (name, Location.Null);
@@ -357,7 +356,7 @@ namespace Mono.CSharp {
 					t = tdecl.TypeBuilder;
 				}
 			}
-			string lookup = t != null ? t.FullName : (fullname == "" ? name : fullname + "." + name);
+			string lookup = t != null ? t.FullName : (fullname.Length == 0 ? name : fullname + "." + name);
 			Type rt = root.LookupTypeReflection (lookup, loc);
 			if (t == null)
 				t = rt;
@@ -546,7 +545,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public NamespaceEntry (NamespaceEntry parent, SourceFile file, string name, Location loc)
+		public NamespaceEntry (NamespaceEntry parent, SourceFile file, string name)
 		{
 			this.parent = parent;
 			this.file = file;

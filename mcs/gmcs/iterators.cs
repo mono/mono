@@ -824,7 +824,7 @@ namespace Mono.CSharp {
 
 			Expression ce = new MemberAccess (
 				new SimpleName ("System.Threading.Interlocked", Location),
-				"CompareExchange", Location);
+				"CompareExchange");
 
 			Expression pc = new FieldExpression (this, pc_field);
 			Expression before = new IntLiteral ((int) State.Running, Location);

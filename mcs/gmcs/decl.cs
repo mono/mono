@@ -216,7 +216,7 @@ namespace Mono.CSharp {
 			}
 
 			Expression lexpr = Left.GetTypeExpression ();
-			return new MemberAccess (lexpr, Name, TypeArguments, Location);
+			return new MemberAccess (lexpr, Name, TypeArguments);
 		}
 
 		public MemberName Clone ()
@@ -582,7 +582,7 @@ namespace Mono.CSharp {
 		// Raised (and passed an XmlElement that contains the comment)
 		// when GenerateDocComment is writing documentation expectedly.
 		//
-		internal virtual void OnGenerateDocComment (DeclSpace ds, XmlElement intermediateNode)
+		internal virtual void OnGenerateDocComment (XmlElement intermediateNode)
 		{
 		}
 
@@ -1592,7 +1592,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Bootstrap this member cache by doing a deep-copy of our base.
 		/// </summary>
-		Hashtable SetupCache (MemberCache base_class)
+		static Hashtable SetupCache (MemberCache base_class)
 		{
 			Hashtable hash = new Hashtable ();
 
@@ -2270,7 +2270,9 @@ namespace Mono.CSharp {
  		/// <summary>
  		/// Cls compliance check whether methods or constructors parameters differing only in ref or out, or in array rank
  		/// </summary>
- 		public void VerifyClsParameterConflict (ArrayList al, MethodCore method, MemberInfo this_builder)
+ 		/// 
+		// TODO: refactor as method is always 'this'
+ 		public static void VerifyClsParameterConflict (ArrayList al, MethodCore method, MemberInfo this_builder)
  		{
  			EntryType tested_type = (method is Constructor ? EntryType.Constructor : EntryType.Method) | EntryType.Public;
  

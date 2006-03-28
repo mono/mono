@@ -1169,7 +1169,7 @@ namespace Mono.CSharp {
 							}
 							else {
 								string value = a.GetString ();
-								if (value != String.Empty)
+								if (value.Length != 0)
 									RootContext.StrongNameKeyFile = value;
 							}
 							break;
@@ -1183,7 +1183,7 @@ namespace Mono.CSharp {
 							}
 							else {
 								string value = a.GetString ();
-								if (value != String.Empty)
+								if (value.Length != 0)
 									RootContext.StrongNameKeyContainer = value;
 							}
 							break;

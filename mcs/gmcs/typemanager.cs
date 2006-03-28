@@ -2562,11 +2562,6 @@ public partial class TypeManager {
 	// uses NonPublic for both protected and private), we need to distinguish.
 	//
 
-	static internal bool FilterNone (MemberInfo m, object filter_criteria)
-	{
-		return true;
-	}
-
 	internal class Closure {
 		internal bool     private_ok;
 

@@ -1,3 +1,60 @@
+2006-03-20  Marek Safar  <marek.safar@seznam.cz>
+
+	* assign.cs (CompoundAssign.ResolveSource): Removed.
+
+	* attribute.cs (ResolvePossibleAttributeType): Updated after MemberAccess
+	clean up.
+
+	* class.cs (TypeContainer.FindMethods): Removed.
+	(TypeContainer.CheckMemberUsage): Made static.
+
+	* codegen.cs (GetAssemblyName): Uses Length for empty string test.
+
+	* constant.cs (CheckRange): Removed unused type argument.
+	(CheckUnsigned): Removed unused type argument.
+
+	* cs-parser.jay: Updated after MemberAccess clean up.
+	Uses Length for empty string test.
+
+	* cs-tokenizer.cs: Uses Length for empty string test.
+	(IsCastToken): Made static.
+	(is_hex): Made static.
+	(real_type_suffix): Made static.
+
+	* decl.cs (SetupCache): Made static.
+	(OnGenerateDocComment): Removed unused ds argument.
+
+	* delegate.cs (VerifyDelegate): Removed unused argument.
+
+	* doc.cs: Uses Length for empty string test.
+
+	* driver.cs: Uses Length for empty string test.
+
+	* enum.cs (IsValidEnumType): Made static
+
+	* expression.cs (EnumLiftUp): Removed unused argument.
+	(ResolveMethodGroup): Ditto.
+	(BetterConversion): Ditto.
+	(GetVarargsTypes): Ditto.
+	(UpdateIndices): Ditto.
+	(ValidateInitializers): Ditto.
+	(MemberAccess.ctor): Ditto.
+	(GetIndexersForType): Ditto.
+
+	* flowanalysis.cs: (MergeFinally): Removed unused argument.
+
+	* iterators.cs: Updated after MemberAccess clean up.
+
+	* location.cs: Uses Length for empty string test.
+
+	* namespace.cs: Uses Length for empty string test.
+
+	 * report.cs (CheckWarningCode): Made static.
+
+	* statement.cs (LabeledStatement): Removed unused argument.
+
+	* typemanager.cs (FilterNone): Removed.
+
 2006-03-18  Marek Safar  <marek.safar@seznam.cz>
 
 	* codegen.cs (EmitContext.TestObsoleteMethodUsage): Removed as it become

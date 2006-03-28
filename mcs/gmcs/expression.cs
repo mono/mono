@@ -1563,7 +1563,7 @@ namespace Mono.CSharp {
 				+ "'");
 		}
 
-		bool IsOfType (EmitContext ec, Type l, Type r, Type t, bool check_user_conversions)
+		static bool IsOfType (EmitContext ec, Type l, Type r, Type t, bool check_user_conversions)
 		{
 			if ((l == t) || (r == t))
 				return true;
@@ -2366,7 +2366,7 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		Constant EnumLiftUp (EmitContext ec, Constant left, Constant right)
+		Constant EnumLiftUp (Constant left, Constant right)
 		{
 			switch (oper) {
 				case Operator.BitwiseOr:
@@ -2443,11 +2443,11 @@ namespace Mono.CSharp {
 
 			// The conversion rules are ignored in enum context but why
 			if (!ec.InEnumContext && lc != null && rc != null && (TypeManager.IsEnumType (left.Type) || TypeManager.IsEnumType (right.Type))) {
-				left = lc = EnumLiftUp (ec, lc, rc);
+				left = lc = EnumLiftUp (lc, rc);
 				if (lc == null)
 					return null;
 
-				right = rc = EnumLiftUp (ec, rc, lc);
+				right = rc = EnumLiftUp (rc, lc);
 				if (rc == null)
 					return null;
 			}
@@ -4074,7 +4074,7 @@ namespace Mono.CSharp {
 				TypeManager.CSharpName (a.Expr.Type);
 		}
 
-		public bool ResolveMethodGroup (EmitContext ec, Location loc)
+		public bool ResolveMethodGroup (EmitContext ec)
 		{
 			SimpleName sn = Expr as SimpleName;
 			if (sn != null)
@@ -4227,7 +4227,7 @@ namespace Mono.CSharp {
 		///              q    if a->q is better,
 		///              null if neither is better
 		/// </summary>
-		static Type BetterConversion (EmitContext ec, Argument a, Type p, Type q, Location loc)
+		static Type BetterConversion (EmitContext ec, Argument a, Type p, Type q)
 		{
 			Type argument_type = TypeManager.TypeToCoreType (a.Type);
 			Expression argument_expr = a.Expr;
@@ -4370,7 +4370,7 @@ namespace Mono.CSharp {
 		/// </remarks>
 		static bool BetterFunction (EmitContext ec, ArrayList args, int argument_count,
 					    MethodBase candidate, bool candidate_params,
-					    MethodBase best, bool best_params, Location loc)
+					    MethodBase best, bool best_params)
 		{
 			ParameterData candidate_pd = TypeManager.GetParameterData (candidate);
 			ParameterData best_pd = TypeManager.GetParameterData (best);
@@ -4395,7 +4395,7 @@ namespace Mono.CSharp {
 					continue;
 
 				same = false;
-				Type better = BetterConversion (ec, a, ct, bt, loc);
+				Type better = BetterConversion (ec, a, ct, bt);
 
 				// for each argument, the conversion to 'ct' should be no worse than 
 				// the conversion to 'bt'.
@@ -4989,7 +4989,7 @@ namespace Mono.CSharp {
 
 				if (BetterFunction (ec, Arguments, arg_count, 
 						    candidate, cand_params,
-						    method, method_params, loc)) {
+						    method, method_params)) {
 					method = candidate;
 					method_params = cand_params;
 				}
@@ -5008,8 +5008,7 @@ namespace Mono.CSharp {
                                 bool cand_params = candidate_to_form != null && candidate_to_form.Contains (candidate);
 				if (!BetterFunction (ec, Arguments, arg_count,
 						     method, method_params,
-						     candidate, cand_params,
-						     loc)) {
+						     candidate, cand_params)) {
 					Report.SymbolRelatedToPreviousError (candidate);
 					ambiguous = candidate;
 				}
@@ -5419,8 +5418,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		static Type[] GetVarargsTypes (EmitContext ec, MethodBase mb,
-					       ArrayList arguments)
+		static Type[] GetVarargsTypes (MethodBase mb, ArrayList arguments)
 		{
 			ParameterData pd = TypeManager.GetParameterData (mb);
 
@@ -5609,7 +5607,7 @@ namespace Mono.CSharp {
 				call_op = OpCodes.Callvirt;
 
 			if ((method.CallingConvention & CallingConventions.VarArgs) != 0) {
-				Type[] varargs_types = GetVarargsTypes (ec, method, Arguments);
+				Type[] varargs_types = GetVarargsTypes (method, Arguments);
 				ig.EmitCall (call_op, (MethodInfo) method, varargs_types);
 				return;
 			}
@@ -6314,7 +6312,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 		
-		public void UpdateIndices (EmitContext ec)
+		public void UpdateIndices ()
 		{
 			int i = 0;
 			for (ArrayList probe = initializers; probe != null;) {
@@ -6337,7 +6335,7 @@ namespace Mono.CSharp {
 
 		}
 		
-		public bool ValidateInitializers (EmitContext ec, Type array_type)
+		public bool ValidateInitializers (EmitContext ec)
 		{
 			if (initializers == null) {
 				return !expect_initializers;
@@ -6361,7 +6359,7 @@ namespace Mono.CSharp {
 				if (!CheckIndices (ec, initializers, 0, false))
 					return false;
 				
-				UpdateIndices (ec);
+				UpdateIndices ();
 				
 				if (arguments.Count != dimensions) {
 					Error_IncorrectArrayInitializer ();
@@ -6417,7 +6415,7 @@ namespace Mono.CSharp {
 			// First step is to validate the initializers and fill
 			// in any missing bits
 			//
-			if (!ValidateInitializers (ec, type))
+			if (!ValidateInitializers (ec))
 				return null;
 
 			if (arguments == null)
@@ -7024,19 +7022,13 @@ namespace Mono.CSharp {
 			this.loc = loc;
 		}
 
-		public bool ResolveBase (EmitContext ec)
+		public override Expression DoResolve (EmitContext ec)
 		{
 			eclass = ExprClass.Variable;
 			type = TypeManager.runtime_argument_handle_type;
-			return true;
-		}
 
-		public override Expression DoResolve (EmitContext ec)
-		{
-			if (!ResolveBase (ec))
-				return null;
-
-			if (ec.IsFieldInitializer || !ec.CurrentBlock.Toplevel.HasVarargs) {
+			if (ec.IsFieldInitializer || !ec.CurrentBlock.Toplevel.HasVarargs) 
+			{
 				Error (190, "The __arglist construct is valid only within " +
 				       "a variable argument method.");
 				return null;
@@ -7260,7 +7252,7 @@ namespace Mono.CSharp {
 		public override FullNamedExpression ResolveAsTypeStep (IResolveContext ec, bool silent)
 		{
 			if (alias == "global")
-				return new MemberAccess (RootNamespace.Global, identifier, loc).ResolveAsTypeStep (ec, silent);
+				return new MemberAccess (RootNamespace.Global, identifier).ResolveAsTypeStep (ec, silent);
 
 			int errors = Report.Errors;
 			FullNamedExpression fne = ec.DeclContainer.NamespaceEntry.LookupAlias (alias);
@@ -7274,7 +7266,7 @@ namespace Mono.CSharp {
 					Report.Error (431, loc, "`{0}' cannot be used with '::' since it denotes a type", alias);
 				return null;
 			}
-			return new MemberAccess (fne, identifier, loc).ResolveAsTypeStep (ec, silent);
+			return new MemberAccess (fne, identifier).ResolveAsTypeStep (ec, silent);
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -7292,7 +7284,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			Expression retval = new MemberAccess (fne, identifier, loc).DoResolve (ec);
+			Expression retval = new MemberAccess (fne, identifier).DoResolve (ec);
 			if (retval == null)
 				return null;
 
@@ -7334,17 +7326,15 @@ namespace Mono.CSharp {
 		Expression expr;
 		TypeArguments args;
 		
-		// TODO: Location can be removed
-		public MemberAccess (Expression expr, string id, Location l)
+		public MemberAccess (Expression expr, string id)
 		{
 			this.expr = expr;
 			Identifier = id;
 			loc = expr.Location;
 		}
 
-		public MemberAccess (Expression expr, string id, TypeArguments args,
-				     Location l)
-			: this (expr, id, l)
+		public MemberAccess (Expression expr, string id, TypeArguments args)
+			: this (expr, id)
 		{
 			this.args = args;
 		}
@@ -8254,7 +8244,7 @@ namespace Mono.CSharp {
 				BindingFlags.DeclaredOnly, p_name, null);
 		}
 		
-		static public Indexers GetIndexersForType (Type caller_type, Type lookup_type, Location loc) 
+		static public Indexers GetIndexersForType (Type caller_type, Type lookup_type) 
 		{
 			Indexers ix = empty;
 
@@ -8345,7 +8335,7 @@ namespace Mono.CSharp {
 			bool found_any = false, found_any_getters = false;
 			Type lookup_type = indexer_type;
 
-			Indexers ilist = Indexers.GetIndexersForType (current_type, lookup_type, loc);
+			Indexers ilist = Indexers.GetIndexersForType (current_type, lookup_type);
 			if (ilist.Properties != null) {
 				found_any = true;
 				foreach (Indexers.Indexer ix in ilist.Properties) {
@@ -8419,7 +8409,7 @@ namespace Mono.CSharp {
 
 			bool found_any = false, found_any_setters = false;
 
-			Indexers ilist = Indexers.GetIndexersForType (current_type, indexer_type, loc);
+			Indexers ilist = Indexers.GetIndexersForType (current_type, indexer_type);
 			if (ilist.Properties != null) {
 				found_any = true;
 				foreach (Indexers.Indexer ix in ilist.Properties) {

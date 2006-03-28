@@ -676,7 +676,7 @@ namespace Mono.CSharp {
 
 		FlowBranching.UsageVector vectors;
 		
-		public LabeledStatement (string label_name, Location l)
+		public LabeledStatement (Location l)
 		{
 			this.loc = l;
 		}
@@ -4394,13 +4394,13 @@ namespace Mono.CSharp {
 						if (!FetchGetCurrent (ec, return_type))
 							get_current = new PropertyExpr (
 								ec.ContainerType, TypeManager.ienumerator_getcurrent, loc);
-						if (!FetchMoveNext (ec, return_type))
+						if (!FetchMoveNext (return_type))
 							move_next = TypeManager.bool_movenext_void;
 						return true;
 					}
 
 					if (return_type.IsInterface ||
-					    !FetchMoveNext (ec, return_type) ||
+					    !FetchMoveNext (return_type) ||
 					    !FetchGetCurrent (ec, return_type)) {
 						enumerator_type = return_type;
 						move_next = TypeManager.bool_movenext_void;
@@ -4414,7 +4414,7 @@ namespace Mono.CSharp {
 					// find if they support the GetEnumerator pattern.
 					//
 
-					if (TypeManager.HasElementType (return_type) || !FetchMoveNext (ec, return_type) || !FetchGetCurrent (ec, return_type)) {
+					if (TypeManager.HasElementType (return_type) || !FetchMoveNext (return_type) || !FetchGetCurrent (ec, return_type)) {
 						Report.Error (202, loc, "foreach statement requires that the return type `{0}' of `{1}' must have a suitable public MoveNext method and public Current property",
 							TypeManager.CSharpName (return_type), TypeManager.CSharpSignature (mi));
 						return false;
@@ -4432,7 +4432,7 @@ namespace Mono.CSharp {
 			//
 			// Retrieves a `public bool MoveNext ()' method from the Type `t'
 			//
-			bool FetchMoveNext (EmitContext ec, Type t)
+			bool FetchMoveNext (Type t)
 			{
 				MemberList move_next_list;
 

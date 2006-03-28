@@ -2497,7 +2497,7 @@ namespace Mono.CSharp {
 			Expression expr;
 			if (name.Left != null) {
 				Expression lexpr = name.Left.GetTypeExpression ();
-				expr = new MemberAccess (lexpr, name.Basename, loc);
+				expr = new MemberAccess (lexpr, name.Basename);
 			} else {
 				expr = new SimpleName (name.Basename, loc);
 			}

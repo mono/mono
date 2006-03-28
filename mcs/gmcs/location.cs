@@ -162,7 +162,7 @@ namespace Mono.CSharp {
 		// </remarks>
 		static public SourceFile LookupFile (string name)
 		{
-			string path = name == "" ? "" : Path.GetFullPath (name);
+			string path = name.Length == 0 ? "" : Path.GetFullPath (name);
 
 			if (!source_files.Contains (path)) {
 				if (source_count >= (1 << checkpoint_bits))
@@ -178,7 +178,7 @@ namespace Mono.CSharp {
 			return (SourceFile) source_list [index - 1];
 		}
 
-		static public void Push (SourceFile file, int line)
+		static public void Push (SourceFile file)
 		{
 			current_source = file.Index;
 			// File is always pushed before being changed.

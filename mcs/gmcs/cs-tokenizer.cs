@@ -478,7 +478,7 @@ namespace Mono.CSharp
 			// FIXME: This could be `Location.Push' but we have to
 			// find out why the MS compiler allows this
 			//
-			Mono.CSharp.Location.Push (file, 0);
+			Mono.CSharp.Location.Push (file);
 		}
 
 		static bool is_identifier_start_character (char c)
@@ -894,12 +894,12 @@ namespace Mono.CSharp
 			return seen_digits;
 		}
 
-		bool is_hex (int e)
+		static bool is_hex (int e)
 		{
 			return (e >= '0' && e <= '9') || (e >= 'A' && e <= 'F') || (e >= 'a' && e <= 'f');
 		}
 				
-		int real_type_suffix (int c)
+		static int real_type_suffix (int c)
 		{
 			int t;
 
@@ -1357,7 +1357,7 @@ namespace Mono.CSharp
 			return val;
 		}
 
-		bool IsCastToken (int token)
+		static bool IsCastToken (int token)
 		{
 			switch (token) {
 			case Token.BANG:
@@ -1478,13 +1478,13 @@ namespace Mono.CSharp
 		//
 		bool PreProcessLine (string arg)
 		{
-			if (arg == "")
+			if (arg.Length == 0)
 				return false;
 
 			if (arg == "default"){
 				ref_line = line;
 				ref_name = file_name;
-				Location.Push (ref_name, line);
+				Location.Push (ref_name);
 				return true;
 			} else if (arg == "hidden"){
 				//
@@ -1506,7 +1506,7 @@ namespace Mono.CSharp
 					ref_name = Location.LookupFile (name);
 					file_name.HasLineDirective = true;
 					ref_name.HasLineDirective = true;
-					Location.Push (ref_name, ref_line);
+					Location.Push (ref_name);
 				} else {
 					ref_line = System.Int32.Parse (arg);
 				}
@@ -1522,7 +1522,7 @@ namespace Mono.CSharp
 		//
 		void PreProcessDefinition (bool is_define, string arg)
 		{
-			if (arg == "" || arg == "true" || arg == "false"){
+			if (arg.Length == 0 || arg == "true" || arg == "false"){
 				Report.Error (1001, Location, "Missing identifer to pre-processor directive");
 				return;
 			}
@@ -1847,7 +1847,7 @@ namespace Mono.CSharp
 				goto case "endif";
 				
 			case "if":
-				if (arg == ""){
+				if (arg.Length == 0){
 					Error_InvalidDirective ();
 					return true;
 				}

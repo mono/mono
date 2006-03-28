@@ -149,7 +149,7 @@ namespace Mono.CSharp {
 
 				XmlElement el = n as XmlElement;
 				if (el != null) {
-					mc.OnGenerateDocComment (ds, el);
+					mc.OnGenerateDocComment (el);
 
 					// FIXME: it could be done with XmlReader
 					XmlNodeList nl = n.SelectNodes (".//include");
@@ -200,7 +200,7 @@ namespace Mono.CSharp {
 				el.ParentNode.InsertBefore (el.OwnerDocument.CreateComment (" Include tag is invalid "), el);
 				keepIncludeNode = true;
 			}
-			else if (path == "") {
+			else if (path.Length == 0) {
 				Report.Warning (1590, 1, mc.Location, "Invalid XML `include' element. Missing `path' attribute");
 				el.ParentNode.InsertBefore (el.OwnerDocument.CreateComment (" Include tag is invalid "), el);
 				keepIncludeNode = true;
@@ -358,7 +358,7 @@ namespace Mono.CSharp {
 			if (ml == null)
 				return empty_member_infos;
 
-			return FilterOverridenMembersOut (type, (MemberInfo []) ml);
+			return FilterOverridenMembersOut ((MemberInfo []) ml);
 		}
 
 		static bool IsOverride (PropertyInfo deriv_prop, PropertyInfo base_prop)
@@ -386,7 +386,7 @@ namespace Mono.CSharp {
 		}
 
 		private static MemberInfo [] FilterOverridenMembersOut (
-			Type type, MemberInfo [] ml)
+			MemberInfo [] ml)
 		{
 			if (ml == null)
 				return empty_member_infos;
@@ -481,7 +481,7 @@ namespace Mono.CSharp {
 					type, MemberTypes.All,
 					BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance,
 					memberName, null);
-				mis = FilterOverridenMembersOut (type, mis);
+				mis = FilterOverridenMembersOut (mis);
 				if (mis == null || mis.Length == 0)
 					return null;
 				if (warn419 && IsAmbiguous (mis))
@@ -897,13 +897,13 @@ namespace Mono.CSharp {
 		// that means removal of DOM use.
 		//
 		internal static void OnMethodGenerateDocComment (
-			MethodCore mc, DeclSpace ds, XmlElement el)
+			MethodCore mc, XmlElement el)
 		{
 			Hashtable paramTags = new Hashtable ();
 			foreach (XmlElement pelem in el.SelectNodes ("param")) {
 				int i;
 				string xname = pelem.GetAttribute ("name");
-				if (xname == "")
+				if (xname.Length == 0)
 					continue; // really? but MS looks doing so
 				if (xname != "" && mc.Parameters.GetParameterByName (xname, out i) == null)
 					Report.Warning (1572, 2, mc.Location, "XML comment on `{0}' has a param tag for `{1}', but there is no parameter by that name",

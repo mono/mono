@@ -400,7 +400,7 @@ namespace_declaration
 			syntax_error (lexer.Location, "namespace name expected");
 
 		current_namespace = new NamespaceEntry (
-			current_namespace, file, name.GetName (), name.Location);
+			current_namespace, file, name.GetName ());
 	  } 
 	  namespace_body opt_semicolon
 	  { 
@@ -2985,14 +2985,12 @@ member_access
 	: primary_expression DOT IDENTIFIER opt_type_argument_list
 	  {
 		LocatedToken lt = (LocatedToken) $3;
-		$$ = new MemberAccess ((Expression) $1, lt.Value,
-				       (TypeArguments) $4, lt.Location);
+		$$ = new MemberAccess ((Expression) $1, lt.Value, (TypeArguments) $4);
 	  }
 	| predefined_type DOT IDENTIFIER opt_type_argument_list
 	  {
 		LocatedToken lt = (LocatedToken) $3;
-		$$ = new MemberAccess ((Expression) $1, lt.Value,
-				       (TypeArguments) $4, lt.Location);
+		$$ = new MemberAccess ((Expression) $1, lt.Value, (TypeArguments) $4);
 	  }
 	;
 
@@ -3381,7 +3379,7 @@ pointer_member_access
 		LocatedToken lt = (LocatedToken) $3;
 
 		deref = new Unary (Unary.Operator.Indirection, (Expression) $1, lt.Location);
-		$$ = new MemberAccess (deref, lt.Value, lt.Location);
+		$$ = new MemberAccess (deref, lt.Value);
 	  }
 	;
 
@@ -4076,7 +4074,7 @@ labeled_statement
 	: IDENTIFIER COLON 
 	  {
 		LocatedToken lt = (LocatedToken) $1;
-		LabeledStatement labeled = new LabeledStatement (lt.Value, lt.Location);
+		LabeledStatement labeled = new LabeledStatement (lt.Location);
 
 		if (current_block.AddLabel (lt.Value, labeled, lt.Location))
 			current_block.AddStatement (labeled);
@@ -5066,8 +5064,8 @@ MakeName (MemberName class_name)
 {
 	Namespace ns = current_namespace.NS;
 
-	if (current_container.Name == ""){
-		if (ns.Name != "")
+	if (current_container.Name.Length == 0){
+		if (ns.Name.Length != 0)
 			return new MemberName (ns.MemberName, class_name);
 		else
 			return class_name;
@@ -5231,7 +5229,7 @@ public Tokenizer Lexer {
 
 public CSharpParser (SeekableStreamReader reader, SourceFile file, ArrayList defines)
 {
-	current_namespace = new NamespaceEntry (null, file, null, Location.Null);
+	current_namespace = new NamespaceEntry (null, file, null);
 	this.name = file.Name;
 	this.file = file;
 	current_container = RootContext.Tree.Types;
@@ -5268,7 +5266,7 @@ public void parse ()
 	RootContext.Tree.Types.NamespaceEntry = null;
 }
 
-void CheckToken (int error, int yyToken, string msg, Location loc)
+static void CheckToken (int error, int yyToken, string msg, Location loc)
 {
 	if (yyToken >= Token.FIRST_KEYWORD && yyToken <= Token.LAST_KEYWORD)
 		Report.Error (error, loc, "{0}: `{1}' is a keyword", msg, yyNames [yyToken].ToLower ());

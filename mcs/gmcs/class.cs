@@ -2097,16 +2097,6 @@ namespace Mono.CSharp {
 				return new MemberList (t.FindMembers (mt, bf, filter, criteria));
 		}
 
-		//
-		// FindMethods will look for methods not only in the type `t', but in
-		// any interfaces implemented by the type.
-		//
-		public static MethodInfo [] FindMethods (Type t, BindingFlags bf,
-							 MemberFilter filter, object criteria)
-		{
-			return null;
-		}
-
 		/// <summary>
 		///   Emits the values for the constants
 		/// </summary>
@@ -2118,7 +2108,7 @@ namespace Mono.CSharp {
 			return;
 		}
 
-		void CheckMemberUsage (MemberCoreArrayList al, string member_type)
+		static void CheckMemberUsage (MemberCoreArrayList al, string member_type)
 		{
 			if (al == null)
 				return;
@@ -3560,9 +3550,9 @@ namespace Mono.CSharp {
 		// FIXME: with a few effort, it could be done with XmlReader,
 		// that means removal of DOM use.
 		//
-		internal override void OnGenerateDocComment (DeclSpace ds, XmlElement el)
+		internal override void OnGenerateDocComment (XmlElement el)
 		{
-			DocUtil.OnMethodGenerateDocComment (this, ds, el);
+			DocUtil.OnMethodGenerateDocComment (this, el);
 		}
 
 		//
@@ -3983,7 +3973,7 @@ namespace Mono.CSharp {
 			if (ParameterInfo.Count > 0) {
 				ArrayList al = (ArrayList)ParentContainer.MemberCache.Members [Name];
 				if (al.Count > 1)
-					ParentContainer.MemberCache.VerifyClsParameterConflict (al, this, MethodBuilder);
+					MemberCache.VerifyClsParameterConflict (al, this, MethodBuilder);
 			}
 
 			return true;
@@ -4495,7 +4485,7 @@ namespace Mono.CSharp {
  			if (ParameterInfo.Count > 0) {
  				ArrayList al = (ArrayList)Parent.MemberCache.Members [".ctor"];
  				if (al.Count > 3)
- 					Parent.MemberCache.VerifyClsParameterConflict (al, this, ConstructorBuilder);
+ 					MemberCache.VerifyClsParameterConflict (al, this, ConstructorBuilder);
  
 				if (Parent.TypeBuilder.IsSubclassOf (TypeManager.attribute_type)) {
 					foreach (Type param in ParameterTypes) {

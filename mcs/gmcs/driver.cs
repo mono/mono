@@ -987,7 +987,7 @@ namespace Mono.CSharp
 				return true;
 
 			case "/out":
-				if (value == ""){
+				if (value.Length == 0){
 					Usage ();
 					Environment.Exit (1);
 				}
@@ -1013,7 +1013,7 @@ namespace Mono.CSharp
 			case "/define": {
 				string [] defs;
 
-				if (value == ""){
+				if (value.Length == 0){
 					Usage ();
 					Environment.Exit (1);
 				}
@@ -1035,7 +1035,7 @@ namespace Mono.CSharp
 			case "/pkg": {
 				string packages;
 
-				if (value == ""){
+				if (value.Length == 0){
 					Usage ();
 					Environment.Exit (1);
 				}
@@ -1108,7 +1108,7 @@ namespace Mono.CSharp
 				return true;
 				
 			case "/recurse":
-				if (value == ""){
+				if (value.Length == 0){
 					Report.Error (5, "-recurse requires an argument");
 					Environment.Exit (1);
 				}
@@ -1117,7 +1117,7 @@ namespace Mono.CSharp
 
 			case "/r":
 			case "/reference": {
-				if (value == ""){
+				if (value.Length == 0){
 					Report.Error (5, "-reference requires an argument");
 					Environment.Exit (1);
 				}
@@ -1138,7 +1138,7 @@ namespace Mono.CSharp
 				return true;
 			}
 			case "/addmodule": {
-				if (value == ""){
+				if (value.Length == 0){
 					Report.Error (5, arg + " requires an argument");
 					Environment.Exit (1);
 				}
@@ -1150,7 +1150,7 @@ namespace Mono.CSharp
 				return true;
 			}
 			case "/win32res": {
-				if (value == "") {
+				if (value.Length == 0) {
 					Report.Error (5, arg + " requires an argument");
 					Environment.Exit (1);
 				}
@@ -1159,7 +1159,7 @@ namespace Mono.CSharp
 				return true;
 			}
 			case "/win32icon": {
-				if (value == "") {
+				if (value.Length == 0) {
 					Report.Error (5, arg + " requires an argument");
 					Environment.Exit (1);
 				}
@@ -1168,7 +1168,7 @@ namespace Mono.CSharp
 				return true;
 			}
 			case "/doc": {
-				if (value == ""){
+				if (value.Length == 0){
 					Report.Error (2006, arg + " requires an argument");
 					Environment.Exit (1);
 				}
@@ -1178,7 +1178,7 @@ namespace Mono.CSharp
 			case "/lib": {
 				string [] libdirs;
 				
-				if (value == ""){
+				if (value.Length == 0){
 					Report.Error (5, "/lib requires an argument");
 					Environment.Exit (1);
 				}
@@ -1240,7 +1240,7 @@ namespace Mono.CSharp
 			case "/nowarn": {
 				string [] warns;
 
-				if (value == ""){
+				if (value.Length == 0){
 					Report.Error (5, "/nowarn requires an argument");
 					Environment.Exit (1);
 				}
@@ -1282,7 +1282,7 @@ namespace Mono.CSharp
 
 			case "/main":
 			case "/m":
-				if (value == ""){
+				if (value.Length == 0){
 					Report.Error (5, arg + " requires an argument");					
 					Environment.Exit (1);
 				}
@@ -1467,7 +1467,7 @@ namespace Mono.CSharp
 
 			for (i = 0; i < args.Length; i++){
 				string arg = args [i];
-				if (arg == "")
+				if (arg.Length == 0)
 					continue;
 
 				if (arg.StartsWith ("@")){

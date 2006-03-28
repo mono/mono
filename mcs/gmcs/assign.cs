@@ -604,11 +604,6 @@ namespace Mono.CSharp {
 			return new CompoundAssign (this, loc);
 		}
 
-		public Expression ResolveSource (EmitContext ec)
-		{
-			return original_source.Resolve (ec);
-		}
-
 		public override Expression DoResolve (EmitContext ec)
 		{
 			original_source = original_source.Resolve (ec);
