@@ -1,3 +1,7 @@
+2006-03-28  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* UsingTask.cs: Formatting changes.
+
 2006-03-27  Crestez Leonard  <cdleonard@gmail.com>
 
 	* ImportCollection.cs, UsingTaskCollection.cs: Cleaned up, switched
