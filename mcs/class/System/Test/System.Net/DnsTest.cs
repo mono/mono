@@ -161,7 +161,16 @@ public class DnsTest : Assertion {
                 SubTestResolve(site1Dot);
                 SubTestResolve(site2Dot);
         }
-        
+
+#if NET_2_0
+        [Test]
+        public void GetHostEntry ()
+        {
+                Dns.GetHostEntry (site1Name); // hostname
+                Dns.GetHostEntry (site1Dot); // IP address
+        }
+#endif
+
         private void SubTestValidIPHostEntry(IPHostEntry h) {
                 AssertNotNull ("HostName not null", h.HostName);
                 AssertNotNull ("AddressList not null", h.AddressList);

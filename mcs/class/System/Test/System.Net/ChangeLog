@@ -1,5 +1,9 @@
 2006-03-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DnsTest.cs : added test for GetHostEntry.
+
+2006-03-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* IPAddressTest.cs : actually #11 in TryParse() is not working.
 	  added more tests on IsIPv6Blah properties.
 

@@ -1,5 +1,9 @@
 2006-03-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Dns.cs : filled missing NET_2_0 members.
+
+2006-03-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* IPAddress.cs : ugh, I was testing with run-test-ondotnet, not
 	  run-test. Those IPv6 properties needed to be reimplemented.
 
