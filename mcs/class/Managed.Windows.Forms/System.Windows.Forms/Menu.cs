@@ -284,11 +284,15 @@ namespace System.Windows.Forms
 
 			#region Public Properties
 
-			public virtual int Count {
+			int ICollection.Count {
 				get { return items.Count;}
 			}
 
-			public virtual bool IsReadOnly {
+			internal int Count {
+				get { return items.Count; }
+			}
+
+			bool IList.IsReadOnly {
 				get { return false;}
 			}
 
@@ -436,12 +440,12 @@ namespace System.Windows.Forms
 				return items.Contains (value);
 			}
 
-			public virtual void CopyTo (Array dest, int index)
+			void ICollection.CopyTo (Array dest, int index)
 			{
 				items.CopyTo (dest, index);
 			}
 
-			public virtual IEnumerator GetEnumerator ()
+			IEnumerator IEnumerable.GetEnumerator ()
 			{
 				return items.GetEnumerator ();
 			}
