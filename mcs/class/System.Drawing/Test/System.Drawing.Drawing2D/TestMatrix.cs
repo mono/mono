@@ -331,7 +331,33 @@ namespace MonoTests.System.Drawing.Drawing2D
 			AssertEquals ("V#5", 1, matrix.Elements[4]);
 			AssertEquals ("V#6", -2, matrix.Elements[5]);			
 		}
-		
+
+		[Test]
+		public void Invert_Translation ()
+		{
+			Matrix matrix = new Matrix (1, 0, 0, 1, 8, 8);
+			matrix.Invert ();
+
+			float[] elements = matrix.Elements;
+			AssertEquals ("#1", 1, elements[0]);
+			AssertEquals ("#2", 0, elements[1]);
+			AssertEquals ("#3", 0, elements[2]);
+			AssertEquals ("#4", 1, elements[3]);
+			AssertEquals ("#5", -8, elements[4]);
+			AssertEquals ("#6", -8, elements[5]);
+		}
+
+		[Test]
+		public void Invert_Identity ()
+		{
+			Matrix matrix = new Matrix ();
+			Assert ("IsIdentity", matrix.IsIdentity);
+			Assert ("IsInvertible", matrix.IsInvertible);
+			matrix.Invert ();
+			Assert ("IsIdentity-2", matrix.IsIdentity);
+			Assert ("IsInvertible-2", matrix.IsInvertible);
+		}
+
 		[Test]
 		public void Scale ()
 		{
@@ -343,7 +369,16 @@ namespace MonoTests.System.Drawing.Drawing2D
 			AssertEquals ("S#3", 120, matrix.Elements[2]);
 			AssertEquals ("S#4", 160, matrix.Elements[3]);
 			AssertEquals ("S#5", 50, matrix.Elements[4]);
-			AssertEquals ("S#6", 60, matrix.Elements[5]);			
+			AssertEquals ("S#6", 60, matrix.Elements[5]);
+
+			matrix.Scale (0.5f, 0.25f);
+
+			AssertEquals ("SB#1", 10, matrix.Elements[0]);
+			AssertEquals ("SB#2", 20, matrix.Elements[1]);
+			AssertEquals ("SB#3", 30, matrix.Elements[2]);
+			AssertEquals ("SB#4", 40, matrix.Elements[3]);
+			AssertEquals ("SB#5", 50, matrix.Elements[4]);
+			AssertEquals ("SB#6", 60, matrix.Elements[5]);
 		}
 
 		[Test]

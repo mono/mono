@@ -1,3 +1,7 @@
+2006-03-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestMatrix.cs: Added new test cases.
+
 2006-03-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* LinearGradientBrushTest.cs: New. Some unit tests (moslty failing).
