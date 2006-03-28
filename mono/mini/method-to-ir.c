@@ -482,7 +482,6 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 #define NEW_VARLOAD(cfg,dest,var,vartype) do { \
         MONO_INST_NEW ((cfg), (dest), OP_MOVE); \
 		(dest)->opcode = mono_type_to_regmove ((vartype));  \
-		(dest)->ssa_op = MONO_SSA_LOAD;	\
 		type_to_eval_stack_type ((vartype), (dest));	\
 		(dest)->klass = var->klass;	\
 		(dest)->sreg1 = var->dreg;   \
@@ -492,7 +491,6 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 
 #define NEW_VARLOADA(cfg,dest,var,vartype) do {	\
         MONO_INST_NEW ((cfg), (dest), OP_LDADDR); \
-		(dest)->ssa_op = MONO_SSA_ADDRESS_TAKEN;	\
 		(dest)->inst_p0 = (var); \
 		(var)->flags |= MONO_INST_INDIRECT;	\
 		(dest)->type = STACK_MP;	\
@@ -503,7 +501,6 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 #define NEW_VARSTORE(cfg,dest,var,vartype,inst) do {	\
         MONO_INST_NEW ((cfg), (dest), OP_MOVE); \
 		(dest)->opcode = mono_type_to_regmove ((vartype));    \
-		(dest)->ssa_op = MONO_SSA_STORE;	\
 		(dest)->klass = (var)->klass;	\
         (dest)->sreg1 = (inst)->dreg; \
 		(dest)->dreg = (var)->dreg;   \
@@ -529,7 +526,6 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 			NEW_VARLOADA ((cfg), (dest), (cfg)->ret, (cfg)->ret->inst_vtype); \
         } else { \
             MONO_INST_NEW ((cfg), (dest), OP_MOVE); \
-		    (dest)->ssa_op = MONO_SSA_LOAD;	\
             (dest)->type = STACK_MP; \
 		    (dest)->klass = cfg->ret->klass;	\
 		    (dest)->sreg1 = cfg->ret->dreg;   \
@@ -540,6 +536,14 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 #define NEW_ARGLOADA(cfg,dest,num) NEW_VARLOADA ((cfg), (dest), arg_array [(num)], param_types [(num)])
 
 #define NEW_ARGSTORE(cfg,dest,num,inst) NEW_VARSTORE ((cfg), (dest), arg_array [(num)], param_types [(num)], (inst))
+
+/* Promote the vreg to a variable so its address can be taken */
+#define NEW_VARLOADA_VREG(cfg,dest,vreg,ltype) do { \
+        MonoInst *var = get_vreg_to_inst ((cfg), (vreg)); \
+        if (!var) \
+		    var = mono_compile_create_var_for_vreg ((cfg), (ltype), OP_LOCAL, (vreg)); \
+        NEW_VARLOADA ((cfg), (dest), (var), (ltype)); \
+    } while (0)
 
 #define NEW_DUMMY_USE(cfg,dest,var) do { \
         MONO_INST_NEW ((cfg), (dest), OP_DUMMY_USE); \
@@ -620,6 +624,8 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 #define EMIT_NEW_LOCSTORE(cfg,dest,num,inst) do { NEW_LOCSTORE ((cfg), (dest), (num), (inst)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
 #define EMIT_NEW_ARGSTORE(cfg,dest,num,inst) do { NEW_ARGSTORE ((cfg), (dest), (num), (inst)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
+
+#define EMIT_NEW_VARLOADA_VREG(cfg,dest,vreg,ltype) do { NEW_VARLOADA_VREG ((cfg), (dest), (vreg), (ltype)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
 #define EMIT_NEW_DUMMY_USE(cfg,dest,var) do { NEW_DUMMY_USE ((cfg), (dest), (var)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
@@ -1467,6 +1473,23 @@ type_from_op (MonoInst *ins, MonoInst *src1, MonoInst *src2) {
 		ins->type = STACK_I4;
 		ins->opcode += ovf2ops_op_map [src1->type];
 		return;
+	case CEE_CONV_U:
+		ins->type = STACK_PTR;
+		switch (src1->type) {
+		case STACK_I4:
+			ins->opcode = OP_ICONV_TO_U;
+		case STACK_PTR:
+		case STACK_MP:
+			ins->opcode = OP_MOVE;
+			break;
+		case STACK_I8:
+			ins->opcode = OP_LCONV_TO_U;
+			break;
+		case STACK_R8:
+			ins->opcode = OP_FCONV_TO_U;
+			break;
+		}
+		return;
 	case CEE_CONV_I8:
 	case CEE_CONV_U8:
 		ins->type = STACK_I8;
@@ -1496,7 +1519,6 @@ type_from_op (MonoInst *ins, MonoInst *src1, MonoInst *src2) {
 		ins->opcode += ovfops_op_map [src1->type];
 		break;
 	case CEE_CONV_I:
-	case CEE_CONV_U:
 	case CEE_CONV_OVF_I:
 	case CEE_CONV_OVF_U:
 		ins->type = STACK_PTR;
@@ -4509,6 +4531,27 @@ decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 	}
 }
 
+static int lbr_decomp [][2] = {
+	{0, 0}, /* BEQ */
+	{OP_IBGT, OP_IBGE_UN}, /* BGE */
+	{OP_IBGT, OP_IBGT_UN}, /* BGT */
+	{OP_IBLT, OP_IBLE_UN}, /* BLE */
+	{OP_IBLT, OP_IBLT_UN}, /* BLT */
+	{0, 0}, /* BNE_UN */
+	{OP_IBGT_UN, OP_IBGE_UN}, /* BGE_UN */
+	{OP_IBGT_UN, OP_IBGT_UN}, /* BGT_UN */
+	{OP_IBLT_UN, OP_IBLE_UN}, /* BLE_UN */
+	{OP_IBLT_UN, OP_IBLT_UN}, /* BLT_UN */
+};
+
+static int lcset_decomp [][2] = {
+	{0, 0}, /* CEQ */
+	{OP_IBLT, OP_IBLE_UN}, /* CGT */
+	{OP_IBLT_UN, OP_IBLE_UN}, /* CGT_UN */
+	{OP_IBGT, OP_IBGE_UN}, /* CLT */
+	{OP_IBGT_UN, OP_IBGE_UN}, /* CLT_UN */
+};
+
 /**
  * decompose_long_opts:
  *
@@ -4882,76 +4925,21 @@ mono_decompose_long_opts (MonoCompile *cfg)
 					next->opcode = OP_NOP;
 					break;
 				}
-				case OP_LBLT:
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBLT, next->inst_true_bb);
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, next->inst_false_bb);
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
-					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBLT_UN, next->inst_true_bb, next->inst_false_bb);
-					next->opcode = OP_NOP;
-					break;
-				case OP_LBGT:
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGT, next->inst_true_bb);
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, next->inst_false_bb);
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
-					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBGT_UN, next->inst_true_bb, next->inst_false_bb);
-					next->opcode = OP_NOP;
-					break;
 				case OP_LBGE:
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGT, next->inst_true_bb);
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, next->inst_false_bb);
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
-					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBGE_UN, next->inst_true_bb, next->inst_false_bb);
-					next->opcode = OP_NOP;
-					break;
+				case OP_LBGT:
 				case OP_LBLE:
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBLT, next->inst_true_bb);
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, next->inst_false_bb);
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
-					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBLE_UN, next->inst_true_bb, next->inst_false_bb);
-					next->opcode = OP_NOP;
-					break;
-				case OP_LBLT_UN:
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBLT_UN, next->inst_true_bb);
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, next->inst_false_bb);
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
-					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBLT_UN, next->inst_true_bb, next->inst_false_bb);
-					next->opcode = OP_NOP;
-					break;
-				case OP_LBGT_UN:
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGT_UN, next->inst_true_bb);
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, next->inst_false_bb);
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
-					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBGT_UN, next->inst_true_bb, next->inst_false_bb);
-					next->opcode = OP_NOP;
-					break;
+				case OP_LBLT:
 				case OP_LBGE_UN:
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGT_UN, next->inst_true_bb);
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, next->inst_false_bb);
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
-					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBGE_UN, next->inst_true_bb, next->inst_false_bb);
-					next->opcode = OP_NOP;
-					break;
+				case OP_LBGT_UN:
 				case OP_LBLE_UN:
+				case OP_LBLT_UN:
+					/* Convert into three comparisons + branches */
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBLT_UN, next->inst_true_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, lbr_decomp [next->opcode - OP_LBEQ][0], next->inst_true_bb);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
 					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, next->inst_false_bb);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
-					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, OP_IBLE_UN, next->inst_true_bb, next->inst_false_bb);
+					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, lbr_decomp [next->opcode - OP_LBEQ][1], next->inst_true_bb, next->inst_false_bb);
 					next->opcode = OP_NOP;
 					break;
 				case OP_LCEQ: {
@@ -4969,63 +4957,9 @@ mono_decompose_long_opts (MonoCompile *cfg)
 					next->opcode = OP_NOP;
 					break;
 				}
-				case OP_LCLT: {
-					MonoBasicBlock *set_to_0, *set_to_1;
-	
-					NEW_BBLOCK (cfg, set_to_0);
-					NEW_BBLOCK (cfg, set_to_1);
-
-					MONO_EMIT_NEW_ICONST (cfg, next->dreg, 0);
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGT, set_to_0);
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, set_to_1);
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGE_UN, set_to_0);
-					MONO_START_BB (cfg, set_to_1);
-					MONO_EMIT_NEW_ICONST (cfg, next->dreg, 1);
-					MONO_START_BB (cfg, set_to_0);
-					next->opcode = OP_NOP;
-					break;	
-				}
-				case OP_LCLT_UN: {
-					MonoBasicBlock *set_to_0, *set_to_1;
-	
-					NEW_BBLOCK (cfg, set_to_0);
-					NEW_BBLOCK (cfg, set_to_1);
-
-					MONO_EMIT_NEW_ICONST (cfg, next->dreg, 0);
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGT_UN, set_to_0);
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, set_to_1);
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGE_UN, set_to_0);
-					MONO_START_BB (cfg, set_to_1);
-					MONO_EMIT_NEW_ICONST (cfg, next->dreg, 1);
-					MONO_START_BB (cfg, set_to_0);
-					next->opcode = OP_NOP;
-					break;	
-				}
-				case OP_LCGT: {
-					MonoBasicBlock *set_to_0, *set_to_1;
-	
-				    NEW_BBLOCK (cfg, set_to_0);
-					NEW_BBLOCK (cfg, set_to_1);
-
-					MONO_EMIT_NEW_ICONST (cfg, next->dreg, 0);
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg2 + 2, tree->sreg1 + 2);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGT, set_to_0);
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, set_to_1);
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg2 + 1, tree->sreg1 + 1);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGE_UN, set_to_0);
-					MONO_START_BB (cfg, set_to_1);
-					MONO_EMIT_NEW_ICONST (cfg, next->dreg, 1);
-					MONO_START_BB (cfg, set_to_0);
-					next->opcode = OP_NOP;
-					break;
-				}
+				case OP_LCLT:
+				case OP_LCLT_UN:
+				case OP_LCGT:
 				case OP_LCGT_UN: {
 					MonoBasicBlock *set_to_0, *set_to_1;
 	
@@ -5033,22 +4967,111 @@ mono_decompose_long_opts (MonoCompile *cfg)
 					NEW_BBLOCK (cfg, set_to_1);
 
 					MONO_EMIT_NEW_ICONST (cfg, next->dreg, 0);
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg2 + 2, tree->sreg1 + 2);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGT_UN, set_to_0);
+					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, lcset_decomp [next->opcode - OP_LCEQ][0], set_to_0);
 					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 2, tree->sreg2 + 2);
 					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, set_to_1);
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg2 + 1, tree->sreg1 + 1);
-					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGE_UN, set_to_0);
+					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, tree->sreg1 + 1, tree->sreg2 + 1);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, lcset_decomp [next->opcode - OP_LCEQ][1], set_to_0);
 					MONO_START_BB (cfg, set_to_1);
 					MONO_EMIT_NEW_ICONST (cfg, next->dreg, 1);
 					MONO_START_BB (cfg, set_to_0);
 					next->opcode = OP_NOP;
-					break;
+					break;	
 				}
 				default:
 					g_assert_not_reached ();
 				}
+				break;
 			}
+
+			/* Not yet used, since lcompare is decomposed before local cprop */
+			case OP_LCOMPARE_IMM: {
+				MonoInst *next = tree->next;
+				guint32 low_imm = tree->inst_ls_word;
+				guint32 high_imm = tree->inst_ms_word;
+				int low_reg = tree->sreg1 + 1;
+				int high_reg = tree->sreg1 + 2;
+
+				g_assert (next);
+
+				switch (next->opcode) {
+				case OP_LBEQ:
+				case OP_LBNE_UN: {
+					int d1, d2;
+
+					/* Branchless version based on gcc code */
+					d1 = alloc_ireg (cfg);
+					d2 = alloc_ireg (cfg);
+					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_IXOR_IMM, d1, low_reg, low_imm);
+					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_IXOR_IMM, d2, high_reg, high_imm);
+					MONO_EMIT_NEW_BIALU (cfg, OP_IOR, d1, d1, d2);
+					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ICOMPARE_IMM, -1, d1, 0);
+					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, next->opcode == OP_LBEQ ? OP_IBEQ : OP_IBNE_UN, next->inst_true_bb, next->inst_false_bb);
+					next->opcode = OP_NOP;
+					break;
+				}
+
+				case OP_LBGE:
+				case OP_LBGT:
+				case OP_LBLE:
+				case OP_LBLT:
+				case OP_LBGE_UN:
+				case OP_LBGT_UN:
+				case OP_LBLE_UN:
+				case OP_LBLT_UN:
+					/* Convert into three comparisons + branches */
+					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, high_reg, high_imm);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, lbr_decomp [next->opcode - OP_LBEQ][0], next->inst_true_bb);
+					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, high_reg, high_imm);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, next->inst_false_bb);
+					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, low_reg, low_imm);
+					MONO_EMIT_NEW_BRANCH_BLOCK2 (cfg, lbr_decomp [next->opcode - OP_LBEQ][1], next->inst_true_bb, next->inst_false_bb);
+					next->opcode = OP_NOP;
+					break;
+				case OP_LCEQ: {
+					int d1, d2;
+	
+					/* Branchless version based on gcc code */
+					d1 = alloc_ireg (cfg);
+					d2 = alloc_ireg (cfg);
+					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_IXOR_IMM, d1, low_reg, low_imm);
+					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_IXOR_IMM, d2, high_reg, high_imm);
+					MONO_EMIT_NEW_BIALU (cfg, OP_IOR, d1, d1, d2);
+
+					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ICOMPARE_IMM, -1, d1, 0);
+					MONO_EMIT_NEW_UNALU (cfg, OP_ICEQ, next->dreg, -1);
+					next->opcode = OP_NOP;
+					break;
+				}
+				case OP_LCLT:
+				case OP_LCLT_UN:
+				case OP_LCGT:
+				case OP_LCGT_UN: {
+					MonoBasicBlock *set_to_0, *set_to_1;
+	
+					NEW_BBLOCK (cfg, set_to_0);
+					NEW_BBLOCK (cfg, set_to_1);
+
+					MONO_EMIT_NEW_ICONST (cfg, next->dreg, 0);
+					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, high_reg, high_imm);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, lcset_decomp [next->opcode - OP_LCEQ][0], set_to_0);
+					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, high_reg, high_imm);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, set_to_1);
+					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, low_reg, low_imm);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, lcset_decomp [next->opcode - OP_LCEQ][1], set_to_0);
+					MONO_START_BB (cfg, set_to_1);
+					MONO_EMIT_NEW_ICONST (cfg, next->dreg, 1);
+					MONO_START_BB (cfg, set_to_0);
+					next->opcode = OP_NOP;
+					break;	
+				}
+				default:
+					g_assert_not_reached ();
+				}
+				break;
+			}
+
 			default:
 				break;
 			}
@@ -5143,18 +5166,12 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 				emit_stobj (cfg, dest, src, 0, src_var->klass, src_var->unused);
 				break;
 			}
-			case OP_VZERO: {
-				dest_var = get_vreg_to_inst (cfg, ins->dreg);
-
+			case OP_VZERO:
 				g_assert (ins->klass);
 
-				if (!dest_var)
-					dest_var = mono_compile_create_var_for_vreg (cfg, &ins->klass->byval_arg, OP_LOCAL, ins->dreg);
-
-				EMIT_NEW_VARLOADA (cfg, dest, dest_var, dest_var->inst_vtype);
-				handle_initobj (cfg, dest, NULL, dest_var->klass, NULL, NULL);
+				EMIT_NEW_VARLOADA_VREG (cfg, dest, ins->dreg, &ins->klass->byval_arg);
+				handle_initobj (cfg, dest, NULL, ins->klass, NULL, NULL);
 				break;
-			}
 			case OP_STOREV_MEMBASE: {
 				src_var = get_vreg_to_inst (cfg, ins->sreg1);
 
@@ -5163,7 +5180,7 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 					src_var = mono_compile_create_var_for_vreg (cfg, &ins->klass->byval_arg, OP_LOCAL, ins->sreg1);
 				}
 
-				EMIT_NEW_VARLOADA ((cfg), (src), src_var, src_var->inst_vtype);
+				EMIT_NEW_VARLOADA_VREG ((cfg), (src), ins->sreg1, &ins->klass->byval_arg);
 
 				dreg = alloc_preg (cfg);
 				EMIT_NEW_BIALU_IMM (cfg, dest, OP_ADD_IMM, dreg, ins->inst_destbasereg, ins->inst_offset);
@@ -9506,9 +9523,15 @@ mono_spill_global_vars (MonoCompile *cfg)
  *     - all parts of the JIT
  *     - handle_global_vregs () && local regalloc
  *   - avoid introducing global vregs during decomposition, like 'vtable' in isinst
+ * - sources of increase in code size:
+ *   - vtypes
+ *   - long compares
+ *   - isinst and castclass
  * - call cctors outside the JIT, to make -v output more readable and JIT timings more
  *   meaningful.
  * - check for fp stack leakage in other opcodes too. (-> 'exceptions' optimization)
+ * - add all micro optimizations from the old JIT
+ * - put tree optimizations into the deadce pass
  * - LAST MERGE: 58239.
  */
 

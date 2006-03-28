@@ -254,6 +254,7 @@ MINI_OP(OP_LCONV_TO_OVF_U4,"long_conv_to_ovf_u4", LREG, LREG, NONE)
 MINI_OP(OP_LCONV_TO_OVF_I8,"long_conv_to_ovf_i8", LREG, LREG, NONE)
 MINI_OP(OP_LCONV_TO_OVF_U8,"long_conv_to_ovf_u8", LREG, LREG, NONE)
 
+/* mono_decompose_long_opts () depends on the order here */
 MINI_OP(OP_LCEQ,   "long_ceq", LREG, NONE, NONE)
 MINI_OP(OP_LCGT,   "long_cgt", LREG, NONE, NONE)
 MINI_OP(OP_LCGT_UN,"long_cgt_un", LREG, NONE, NONE)
@@ -273,6 +274,7 @@ MINI_OP(OP_LSHL_IMM,    "long_shl_imm", LREG, LREG, NONE)
 MINI_OP(OP_LSHR_IMM,    "long_shr_imm", LREG, LREG, NONE)
 MINI_OP(OP_LSHR_UN_IMM, "long_shr_un_imm", LREG, LREG, NONE)
 
+/* mono_decompose_long_opts () depends on the order here */
 MINI_OP(OP_LBEQ,    "long_beq", NONE, NONE, NONE)
 MINI_OP(OP_LBGE,    "long_bge", NONE, NONE, NONE)
 MINI_OP(OP_LBGT,    "long_bgt", NONE, NONE, NONE)

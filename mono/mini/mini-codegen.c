@@ -988,8 +988,12 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 		}
 	}
-	else
+	else {
+		for (ins = bb->code; ins; ins = ins->next)
+			ins_count ++;
+
 		memset (reginfo, 0, max * sizeof (RegTrack));
+	}
 
 	/* Initialized on demand */
 	if (cfg->new_ir)

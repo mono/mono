@@ -2068,6 +2068,14 @@ mono_add_ins_to_end (MonoBasicBlock *bb, MonoInst *inst)
 void
 mono_replace_ins (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, MonoInst **prev, MonoBasicBlock *first_bb, MonoBasicBlock *last_bb)
 {
+	MonoInst *next = ins->next;
+
+	if (next && next->opcode == OP_NOP) {
+		/* Avoid NOPs following branches */
+		ins->next = next->next;
+		next = next->next;
+	}
+
 	if (first_bb == last_bb) {
 		int i;
 
@@ -2090,18 +2098,13 @@ mono_replace_ins (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, MonoInst 
 			bb->code = first_bb->code;
 
 		/* Tail */
-		cfg->cbb->last_ins->next = ins->next;
-		if (ins->next == NULL)
-			bb->last_ins = cfg->cbb->last_ins;
-		*prev = cfg->cbb->last_ins;
+		last_bb->last_ins->next = next;
+		if (next == NULL)
+			bb->last_ins = last_bb->last_ins;
+		*prev = last_bb->last_ins;
 	} else {
 		int i, count;
-		MonoInst *next = ins->next;
 		MonoBasicBlock **tmp_bblocks, *tmp;
-
-		if (next && next->opcode == OP_NOP)
-			/* Avoid NOPs following branches */
-			next = next->next;
 
 		/* Multiple BBs */
 
@@ -2114,22 +2117,22 @@ mono_replace_ins (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, MonoInst 
 		bb->last_ins = ins;
 
 		/* Merge the second part of the original bb into the last bb */
-		if (cfg->cbb->last_ins)
-			cfg->cbb->last_ins->next = next;
+		if (last_bb->last_ins)
+			last_bb->last_ins->next = next;
 		else {
 			MonoInst *last;
 
-			cfg->cbb->code = next;
+			last_bb->code = next;
 
 			if (next) {
 				for (last = next; last->next != NULL; last = last->next)
 					;
-				cfg->cbb->last_ins = last;
+				last_bb->last_ins = last;
 			}
 		}
 
 		for (i = 0; i < bb->out_count; ++i)
-			link_bblock (cfg, cfg->cbb, bb->out_bb [i]);
+			link_bblock (cfg, last_bb, bb->out_bb [i]);
 
 		/* Merge the first (dummy) bb to the original bb */
 		if (*prev)
@@ -2156,7 +2159,7 @@ mono_replace_ins (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, MonoInst 
 
 			mono_unlink_bblock (cfg, first_bb, out_bb);
 		}
-		cfg->cbb->next_bb = bb->next_bb;
+		last_bb->next_bb = bb->next_bb;
 		bb->next_bb = first_bb->next_bb;
 
 		*prev = NULL;
@@ -10168,13 +10171,13 @@ mono_local_cprop2 (MonoCompile *cfg)
 				}
 
 				/* Constant propagation */
-#if SIZEOF_VOID_P == 8
 				/* FIXME: Make is_inst_imm a macro */
 				/* FIXME: Make is_inst_imm take an opcode argument */
 				/* is_inst_imm is only needed for binops */
-				else if ((((def->opcode == OP_ICONST) || (def->opcode == OP_I8CONST)) && (((srcindex == 0) && (ins->sreg2 == -1)) || mono_arch_is_inst_imm (def->inst_c0))) || (def->opcode == OP_R8CONST))
+#if SIZEOF_VOID_P == 8
+				if ((((def->opcode == OP_ICONST) || (def->opcode == OP_I8CONST)) && (((srcindex == 0) && (ins->sreg2 == -1)) || mono_arch_is_inst_imm (def->inst_c0))) || (def->opcode == OP_R8CONST))
 #else
-				else if (def->opcode == OP_ICONST)
+				if (def->opcode == OP_ICONST)
 #endif
 				{
 					guint32 opcode2;
@@ -10229,7 +10232,7 @@ mono_local_cprop2 (MonoCompile *cfg)
 						}
 					}
 				}
-				else if ((def->opcode == OP_ADD_IMM) && (def->sreg1 == cfg->frame_reg) && MONO_IS_LOAD_MEMBASE (ins)) {
+				else if ((def->opcode == OP_ADD_IMM) && (def->sreg1 == cfg->frame_reg) && (MONO_IS_LOAD_MEMBASE (ins) || (ins->opcode == OP_X86_PUSH_MEMBASE))) {
 					/* ADD_IM is created by spill_global_vars */
 					/* cfg->frame_reg is assumed to remain constant */
 					ins->inst_basereg = def->sreg1;
