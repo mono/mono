@@ -1,3 +1,8 @@
+2006-03-28  Marek Safar  <marek.safar@seznam.cz>
+
+	* ILGenerator.cs: Delayed the exception stack creation. It saves ~1.5 MB
+	for corlib compilation.
+
 2006-03-27  Marek Safar  <marek.safar@seznam.cz>
 
 	* ILGenerator.cs: Tune up label defaults, switched to double resizing.

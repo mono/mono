@@ -224,6 +224,8 @@ namespace System.Reflection.Emit {
 		
 		const int defaultFixupSize = 4;
 		const int defaultLabelsSize = 4;
+		const int defaultExceptionStackSize = 2;
+		
 		ArrayList sequencePointLists;
 		SequencePointList currentSequence;
 
@@ -234,7 +236,6 @@ namespace System.Reflection.Emit {
 			code = new byte [size];
 			token_fixups = new ILTokenInfo [8];
 			module = m;
-			open_blocks = new Stack ();
 			this.token_gen = token_gen;
 		}
 		
@@ -354,6 +355,9 @@ namespace System.Reflection.Emit {
 
 		public virtual void BeginCatchBlock (Type exceptionType)
 		{
+			if (open_blocks == null)
+				open_blocks = new Stack (defaultExceptionStackSize);
+
 			if (open_blocks.Count <= 0)
 				throw new NotSupportedException ("Not in an exception block");
 
@@ -376,6 +380,9 @@ namespace System.Reflection.Emit {
 
 		public virtual void BeginExceptFilterBlock ()
 		{
+			if (open_blocks == null)
+				open_blocks = new Stack (defaultExceptionStackSize);
+			
 			if (open_blocks.Count <= 0)
 				throw new NotSupportedException ("Not in an exception block");
 			InternalEndClause ();
@@ -386,6 +393,8 @@ namespace System.Reflection.Emit {
 		public virtual Label BeginExceptionBlock ()
 		{
 			//System.Console.WriteLine ("Begin Block");
+			if (open_blocks == null)
+				open_blocks = new Stack (defaultExceptionStackSize);
 			
 			if (ex_handlers != null) {
 				cur_block = ex_handlers.Length;
@@ -403,6 +412,9 @@ namespace System.Reflection.Emit {
 
 		public virtual void BeginFaultBlock()
 		{
+			if (open_blocks == null)
+				open_blocks = new Stack (defaultExceptionStackSize);
+			
 			if (open_blocks.Count <= 0)
 				throw new NotSupportedException ("Not in an exception block");
 			InternalEndClause ();
@@ -412,6 +424,9 @@ namespace System.Reflection.Emit {
 		
 		public virtual void BeginFinallyBlock()
 		{
+			if (open_blocks == null)
+				open_blocks = new Stack (defaultExceptionStackSize);
+			
 			if (open_blocks.Count <= 0)
 				throw new NotSupportedException ("Not in an exception block");
 			InternalEndClause ();
@@ -841,6 +856,9 @@ namespace System.Reflection.Emit {
 
 		public virtual void EndExceptionBlock ()
 		{
+			if (open_blocks == null)
+				open_blocks = new Stack (defaultExceptionStackSize);
+			
 			if (open_blocks.Count <= 0)
 				throw new NotSupportedException ("Not in an exception block");
 			InternalEndClause ();
