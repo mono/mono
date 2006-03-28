@@ -51,11 +51,11 @@ namespace System.Windows.Forms {
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		public virtual int Count {
+		public int Count {
 			get { return count; }
 		}
 
-		public virtual bool IsReadOnly {
+		public bool IsReadOnly {
 			get { return false; }
 		}
 
@@ -173,12 +173,12 @@ namespace System.Windows.Forms {
 			return (Array.BinarySearch (nodes, node) > 0);
 		}
 
-		public virtual void CopyTo (Array dest, int index)
+		public void CopyTo (Array dest, int index)
 		{
 			nodes.CopyTo (dest, index);
 		}
 
-		public virtual IEnumerator GetEnumerator ()
+		public IEnumerator GetEnumerator ()
 		{
 			return new TreeNodeEnumerator (this);
 		}

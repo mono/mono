@@ -1090,11 +1090,11 @@ namespace System.Windows.Forms {
 			}
 
 			[Browsable(false)]
-			public virtual int Count {
+			public int Count {
 				get { return owner.Controls.Count; }
 			}
 
-			public virtual bool IsReadOnly {
+			public bool IsReadOnly {
 				get { return false; }
 			}
 
@@ -1154,7 +1154,7 @@ namespace System.Windows.Forms {
 				return owner.Controls.Contains (page);
 			}
 
-			public virtual IEnumerator GetEnumerator ()
+			public IEnumerator GetEnumerator ()
 			{
 				return owner.Controls.GetEnumerator ();
 			}
@@ -1169,7 +1169,7 @@ namespace System.Windows.Forms {
 				owner.Controls.Remove (page);
 			}
 
-			public virtual void RemoveAt (int index)
+			public void RemoveAt (int index)
 			{
 				owner.Controls.RemoveAt (index);
 			}

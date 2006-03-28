@@ -361,7 +361,7 @@ namespace System.Windows.Forms
 
 		#region Public Methods
 
-		public virtual void BeginInit ()		
+		public void BeginInit ()		
 		{
 
 		}
@@ -372,7 +372,7 @@ namespace System.Windows.Forms
 		}
 
 
-		public virtual void EndInit ()		
+		public void EndInit ()		
 		{
 
 		}

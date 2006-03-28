@@ -466,7 +466,7 @@ namespace System.Windows.Forms {
 			#region Public Instance Properties
 			[Browsable(false)]
 			[EditorBrowsable(EditorBrowsableState.Never)]
-			public virtual int Count {
+			public int Count {
 				get {
 					if (panels == null)
 						return 0;
@@ -474,7 +474,7 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			public virtual bool IsReadOnly {
+			public bool IsReadOnly {
 				get { return false; }
 			}
 
@@ -530,7 +530,7 @@ namespace System.Windows.Forms {
 				return panels.Contains (panel);
 			}
 
-			public virtual IEnumerator GetEnumerator () {
+			public IEnumerator GetEnumerator () {
 				return panels.GetEnumerator ();
 			}
 

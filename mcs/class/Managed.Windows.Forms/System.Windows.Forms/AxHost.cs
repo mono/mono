@@ -432,7 +432,7 @@ namespace System.Windows.Forms {
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		public virtual void EndInit() {
+		public void EndInit() {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 

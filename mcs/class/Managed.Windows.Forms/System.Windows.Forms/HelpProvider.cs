@@ -120,7 +120,7 @@ namespace System.Windows.Forms {
 		#endregion	// Public Instance Properties
 
 		#region Public Instance Methods
-		public bool CanExtend(object extendee) {
+		public virtual bool CanExtend(object extendee) {
 			if (!(extendee is Control)) {
 				return false;
 			}

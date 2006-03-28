@@ -1890,11 +1890,11 @@ namespace System.Windows.Forms
 			}
 
 			#region Public Properties
-			public virtual int Count {
+			public int Count {
 				get { return object_items.Count; }
 			}
 
-			public virtual bool IsReadOnly {
+			public bool IsReadOnly {
 				get { return false; }
 			}
 
@@ -1993,7 +1993,7 @@ namespace System.Windows.Forms
 				listbox_items.Clear ();				
 				owner.UpdateItemInfo (UpdateOperation.AllItems, 0, 0);
 			}
-			public virtual bool Contains (object obj)
+			public bool Contains (object obj)
 			{
 				return object_items.Contains (obj);
 			}
@@ -2008,7 +2008,7 @@ namespace System.Windows.Forms
 				object_items.CopyTo (dest, index);
 			}
 
-			public virtual IEnumerator GetEnumerator ()
+			public IEnumerator GetEnumerator ()
 			{
 				return object_items.GetEnumerator ();
 			}
@@ -2018,12 +2018,12 @@ namespace System.Windows.Forms
 				return Add (item);
 			}
 
-			public virtual int IndexOf (object value)
+			public int IndexOf (object value)
 			{
 				return object_items.IndexOf (value);
 			}
 
-			public virtual void Insert (int index,  object item)
+			public void Insert (int index,  object item)
 			{
 				if (index < 0 || index > Count)
 					throw new ArgumentOutOfRangeException ("Index of out range");
@@ -2051,12 +2051,12 @@ namespace System.Windows.Forms
 				owner.EndUpdate ();	// Calls UpdateItemInfo
 			}
 
-			public virtual void Remove (object value)
+			public void Remove (object value)
 			{				
 				RemoveAt (IndexOf (value));				
 			}
 
-			public virtual void RemoveAt (int index)
+			public void RemoveAt (int index)
 			{
 				if (index < 0 || index >= Count)
 					throw new ArgumentOutOfRangeException ("Index of out range");
@@ -2122,11 +2122,11 @@ namespace System.Windows.Forms
 
 			#region Public Properties
 			[Browsable (false)]
-			public virtual int Count {
+			public int Count {
 				get { return indices.Count; }
 			}
 
-			public virtual bool IsReadOnly {
+			public bool IsReadOnly {
 				get { return true; }
 			}
 
@@ -2159,12 +2159,12 @@ namespace System.Windows.Forms
 				return indices.Contains (selectedIndex);
 			}
 
-			public virtual void CopyTo (Array dest, int index)
+			public void CopyTo (Array dest, int index)
 			{
 				indices.CopyTo (dest, index);
 			}
 
-			public virtual IEnumerator GetEnumerator ()
+			public IEnumerator GetEnumerator ()
 			{
 				return indices.GetEnumerator ();
 			}
@@ -2261,17 +2261,17 @@ namespace System.Windows.Forms
 			}
 
 			#region Public Properties
-			public virtual int Count {
+			public int Count {
 				get { return object_items.Count; }
 			}
 
-			public virtual bool IsReadOnly {
+			public bool IsReadOnly {
 				get { return true; }
 			}
 
 			[Browsable(false)]
 			[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-			public virtual object this [int index] {
+			public object this [int index] {
 				get {
 					if (index < 0 || index >= Count)
 						throw new ArgumentOutOfRangeException ("Index of out range");
@@ -2301,12 +2301,12 @@ namespace System.Windows.Forms
 			#endregion Public Properties
 
 			#region Public Methods
-			public virtual bool Contains (object selectedObject)
+			public bool Contains (object selectedObject)
 			{
 				return object_items.Contains (selectedObject);
 			}
 
-			public virtual void CopyTo (Array dest, int index)
+			public void CopyTo (Array dest, int index)
 			{
 				object_items.CopyTo (dest, index);
 			}
@@ -2346,7 +2346,7 @@ namespace System.Windows.Forms
 				return object_items.IndexOf (item);
 			}
 
-			public virtual IEnumerator GetEnumerator ()
+			public IEnumerator GetEnumerator ()
 			{
 				return object_items.GetEnumerator ();
 			}

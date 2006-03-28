@@ -1245,11 +1245,11 @@ namespace System.Windows.Forms
 			}
 
 			#region Public Properties
-			public virtual int Count {
+			public int Count {
 				get { return object_items.Count; }
 			}
 
-			public virtual bool IsReadOnly {
+			public bool IsReadOnly {
 				get { return false; }
 			}
 
@@ -1318,7 +1318,7 @@ namespace System.Windows.Forms
 				owner.UpdatedItems ();
 			}
 
-			public virtual void Clear ()
+			public void Clear ()
 			{
 				owner.selected_index = -1;
 				object_items.Clear ();
@@ -1327,7 +1327,7 @@ namespace System.Windows.Forms
 				owner.Refresh ();
 			}
 			
-			public virtual bool Contains (object obj)
+			public bool Contains (object obj)
 			{
 				return object_items.Contains (obj);
 			}
@@ -1342,7 +1342,7 @@ namespace System.Windows.Forms
 				object_items.CopyTo (dest, index);
 			}
 
-			public virtual IEnumerator GetEnumerator ()
+			public IEnumerator GetEnumerator ()
 			{
 				return object_items.GetEnumerator ();
 			}
@@ -1352,12 +1352,12 @@ namespace System.Windows.Forms
 				return Add (item);
 			}
 
-			public virtual int IndexOf (object value)
+			public int IndexOf (object value)
 			{
 				return object_items.IndexOf (value);
 			}
 
-			public virtual void Insert (int index,  object item)
+			public void Insert (int index,  object item)
 			{
 				if (index < 0 || index > Count)
 					throw new ArgumentOutOfRangeException ("Index of out range");					
@@ -1389,7 +1389,7 @@ namespace System.Windows.Forms
 				owner.EndUpdate ();	// Calls UpdatedItems
 			}
 
-			public virtual void Remove (object value)
+			public void Remove (object value)
 			{				
 				if (IndexOf (value) == owner.SelectedIndex)
 					owner.SelectedItem = null;
@@ -1398,7 +1398,7 @@ namespace System.Windows.Forms
 				
 			}
 
-			public virtual void RemoveAt (int index)
+			public void RemoveAt (int index)
 			{
 				if (index < 0 || index >= Count)
 					throw new ArgumentOutOfRangeException ("Index of out range");

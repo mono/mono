@@ -734,11 +734,11 @@ namespace System.Windows.Forms
 
 			#region properties
 			[Browsable (false)]
-			public virtual int Count {
+			public int Count {
 				get { return list.Count; }
 			}
 
-			public virtual bool IsReadOnly {
+			public bool IsReadOnly {
 				get { return list.IsReadOnly; }
 			}
 
@@ -795,7 +795,7 @@ namespace System.Windows.Forms
 					Add (button);
 			}
 
-			public virtual void Clear ()
+			public void Clear ()
 			{
 				list.Clear ();
 				owner.Redraw (false);
@@ -806,7 +806,7 @@ namespace System.Windows.Forms
 				return list.Contains (button);
 			}
 
-			public virtual IEnumerator GetEnumerator ()
+			public IEnumerator GetEnumerator ()
 			{
 				return list.GetEnumerator ();
 			}
@@ -878,7 +878,7 @@ namespace System.Windows.Forms
 				owner.Redraw (true);
 			}
 
-			public virtual void RemoveAt (int index)
+			public void RemoveAt (int index)
 			{
 				list.RemoveAt (index);
 				owner.Redraw (true);

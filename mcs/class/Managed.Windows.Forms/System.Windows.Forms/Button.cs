@@ -51,7 +51,7 @@ namespace System.Windows.Forms {
 
 		#region Public Instance Properties
 		[DefaultValue(DialogResult.None)]
-		public DialogResult DialogResult {		// IButtonControl
+		public virtual DialogResult DialogResult {		// IButtonControl
 			get {
 				return dialog_result;
 			}

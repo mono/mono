@@ -195,12 +195,12 @@ namespace System.Windows.Forms {
 		{
 		}
 
-		public virtual void BeginInit ()
+		public void BeginInit ()
 		{
 			initializing = true;
 		}
 
-		public virtual void EndInit ()
+		public void EndInit ()
 		{
 			if (!initializing || twidth == -1)
 				return;
