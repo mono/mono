@@ -1,3 +1,8 @@
+2006-03-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* IPAddressTest.cs : actually #11 in TryParse() is not working.
+	  added more tests on IsIPv6Blah properties.
+
 2006-03-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* IPAddressTest.cs : added some tests for TryParse() and IPv6 related

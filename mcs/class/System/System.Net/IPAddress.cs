@@ -297,15 +297,28 @@ namespace System.Net {
 
 #if NET_2_0
 		public bool IsIPv6LinkLocal {
-			get { return m_Family != AddressFamily.InterNetwork && (m_Numbers [0] &= 0xFE80) != 0; }
+			get {
+				if (m_Family == AddressFamily.InterNetwork)
+					return false;
+				int v = NetworkToHostOrder ((short) m_Numbers [0]) & 0xFFF0;
+				return 0xFE80 <= v && v < 0xFEC0;
+			}
 		}
 
 		public bool IsIPv6SiteLocal {
-			get { return m_Family != AddressFamily.InterNetwork && (m_Numbers [0] &= 0xFEC0) != 0; }
+			get {
+				if (m_Family == AddressFamily.InterNetwork)
+					return false;
+				int v = NetworkToHostOrder ((short) m_Numbers [0]) & 0xFFF0;
+				return 0xFEC0 <= v && v < 0xFF00;
+			}
 		}
 
 		public bool IsIPv6Multicast {
-			get { return m_Family != AddressFamily.InterNetwork && (m_Numbers [0] & 0xFF00) != 0; }
+			get {
+				return m_Family != AddressFamily.InterNetwork &&
+					((ushort) NetworkToHostOrder ((short) m_Numbers [0]) & 0xFF00) == 0xFF00;
+			}
 		}
 #endif
 
