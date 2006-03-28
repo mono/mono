@@ -1,5 +1,16 @@
 2006-03-18  Marek Safar  <marek.safar@seznam.cz>
 
+	* codegen.cs (EmitContext.TestObsoleteMethodUsage): Removed as it become
+	obsolete.
+
+	* class.cs: Updated.
+
+2006-03-18  Marek Safar  <marek.safar@seznam.cz>
+
+	* cs-parser.jay.cs: __arglist is not allowed for delegates.
+
+2006-03-18  Marek Safar  <marek.safar@seznam.cz>
+
 	A fix for #77816.
 
 	* anonymous.cs.cs (AnonymousMethod): Add host to allow access to 

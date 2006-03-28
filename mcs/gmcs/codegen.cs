@@ -352,12 +352,6 @@ namespace Mono.CSharp {
 		/// </summary>
 		public CaptureContext capture_context;
 
-		/// <summary>
-		/// Trace when method is called and is obsolete then this member suppress message
-		/// when call is inside next [Obsolete] method or type.
-		/// </summary>
-		public bool TestObsoleteMethodUsage = true;
-
 		public readonly IResolveContext ResolveContext;
 
 		/// <summary>

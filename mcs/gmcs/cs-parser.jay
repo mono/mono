@@ -2638,8 +2638,14 @@ delegate_declaration
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  {
 		MemberName name = MakeName ((MemberName) $6);
+		Parameters p = (Parameters) $8;
+		if (p.HasArglist) {
+			// TODO: wrong location
+			Report.Error (1669, name.Location, "__arglist is not valid in this context");
+		}
+
 		Delegate del = new Delegate (current_namespace, current_class, (Expression) $5,
-					     (int) $2, name, (Parameters) $8, (Attributes) $1);
+					     (int) $2, name, p, (Attributes) $1);
 
 		if (RootContext.Documentation != null) {
 			del.DocComment = Lexer.consume_doc_comment ();
