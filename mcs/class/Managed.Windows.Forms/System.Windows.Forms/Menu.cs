@@ -288,12 +288,16 @@ namespace System.Windows.Forms
 				get { return items.Count;}
 			}
 
-			internal int Count {
+			public int Count {
 				get { return items.Count; }
 			}
 
 			bool IList.IsReadOnly {
 				get { return false;}
+			}
+
+			public bool IsReadOnly {
+				get { return false; }
 			}
 
 			bool ICollection.IsSynchronized {
@@ -445,7 +449,17 @@ namespace System.Windows.Forms
 				items.CopyTo (dest, index);
 			}
 
+			public void CopyTo (Array dest, int index)
+			{
+				items.CopyTo (dest, index);
+			}
+
 			IEnumerator IEnumerable.GetEnumerator ()
+			{
+				return items.GetEnumerator ();
+			}
+
+			public IEnumerator GetEnumerator ()
 			{
 				return items.GetEnumerator ();
 			}
