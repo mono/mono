@@ -1,5 +1,10 @@
 2006-03-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Array.cs : oops, the last change caused regression. The array must
+	  be transparent to ReadOnlyCollection, not create another list.
+
+2006-03-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Array.cs : AsReadOnly<T>() in RTM returns ReadOnlyCollection<T>.
 	  Thus removed ReadOnlyArray<T> and ReadOnlyArrayEnumerator<T>.
 	  In 2.0 some members became non-virtual.
