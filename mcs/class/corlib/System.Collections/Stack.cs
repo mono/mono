@@ -43,11 +43,14 @@ namespace System.Collections {
 		// properties
 		private object[] contents;
 		private int current = -1;
-		private int count = 0;
+		private int count;
 		private int capacity;
-		private int modCount = 0;
+		private int modCount;
+			
+		const int default_capacity = 16;
 
-		private void Resize(int ncapacity) {
+		private void Resize(int ncapacity)
+		{
 			
 			ncapacity = Math.Max (ncapacity, 16);
 			object[] ncontents = new object[ncapacity];
@@ -58,7 +61,11 @@ namespace System.Collections {
 			contents = ncontents;
 		}
 
-		public Stack () : this (16) {}
+		public Stack ()
+		{
+			contents = new object[default_capacity];
+			capacity = default_capacity;
+		}
 
 		public Stack(ICollection col) : this (col == null ? 16 : col.Count) {
 			if (col == null)
@@ -71,11 +78,12 @@ namespace System.Collections {
 				Push (o);
 		}
 
-		public Stack (int initialCapacity) {
+		public Stack (int initialCapacity)
+		{
 			if (initialCapacity < 0)
 				throw new ArgumentOutOfRangeException ("initialCapacity");
 			
-			capacity = Math.Max (initialCapacity, 16);
+			capacity = initialCapacity;
 			contents = new object[capacity];
 		}
 

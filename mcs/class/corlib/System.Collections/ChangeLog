@@ -1,3 +1,6 @@
+2006-03-28  Marek Safar  <marek.safar@seznam.cz>
+
+	* Stack.cs: Changed ctor to allocate only requested memory.
 
 Tue Feb 28 14:16:25 CET 2006 Paolo Molaro <lupus@ximian.com>
 
