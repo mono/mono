@@ -885,13 +885,13 @@ namespace System.Windows.Forms
 			Rectangle area = ClientRectangle;
 
 			if (left_aligned) {
-				rows = (int) Math.Floor ((double)area.Height / (double)(sz.Height + y_spacing));
-				if (rows == 0)
+				rows = (int) Math.Floor ((double)(area.Height - h_scroll.Height + y_spacing) / (double)(sz.Height + y_spacing));
+				if (rows <= 0)
 					rows = 1;
 				cols = (int) Math.Ceiling ((double)items.Count / (double)rows);
 			} else {
-				cols = (int) Math.Floor ((double)area.Width / (double)(sz.Width + x_spacing));
-				if (cols == 0)
+				cols = (int) Math.Floor ((double)(area.Width - v_scroll.Width + x_spacing) / (double)(sz.Width + x_spacing));
+				if (cols <= 0)
 					cols = 1;
 				rows = (int) Math.Ceiling ((double)items.Count / (double)cols);
 			}
@@ -1855,11 +1855,11 @@ namespace System.Windows.Forms
 
 			#region Public Properties
 			[Browsable (false)]
-			int ICollection.Count {
+			public int Count {
 				get { return list.Count; }
 			}
 
-			bool IList.IsReadOnly {
+			public bool IsReadOnly {
 				get { return true; }
 			}
 
@@ -1895,7 +1895,7 @@ namespace System.Windows.Forms
 				return list.Contains (checkedIndex);
 			}
 
-			IEnumerator IEnumerable.GetEnumerator ()
+			public IEnumerator GetEnumerator ()
 			{
 				return list.GetEnumerator ();
 			}
@@ -2003,7 +2003,7 @@ namespace System.Windows.Forms
 				return list.Contains (item);
 			}
 
-			void ICollection.CopyTo (Array dest, int index)
+			public void CopyTo (Array dest, int index)
 			{
 				list.CopyTo (dest, index);
 			}
@@ -2148,7 +2148,7 @@ namespace System.Windows.Forms
 				return list.GetEnumerator ();
 			}
 
-			public void CopyTo (Array dest, int index)
+			void ICollection.CopyTo (Array dest, int index)
 			{
 				list.CopyTo (dest, index);
 			}

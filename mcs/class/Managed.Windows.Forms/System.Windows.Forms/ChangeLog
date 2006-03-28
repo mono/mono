@@ -1,5 +1,10 @@
 2006-03-28  Mike Kestner  <mkestner@novell.com>
 
+	* ListView.cs: fix Icon layout to plan for scrollbar widths when
+	calculating col/row counts.
+
+2006-03-28  Mike Kestner  <mkestner@novell.com>
+
 	* ColumnHeader.cs:
 	* ListView.cs:
 	* ListViewItem.cs:
