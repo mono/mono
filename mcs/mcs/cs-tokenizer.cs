@@ -1648,7 +1648,7 @@ namespace Mono.CSharp
 				}
 				bool taking = false;
 				if (ifstack == null)
-					ifstack = new Stack ();
+					ifstack = new Stack (2);
 
 				if (ifstack.Count == 0){
 					taking = true;

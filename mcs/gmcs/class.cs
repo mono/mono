@@ -3938,6 +3938,8 @@ namespace Mono.CSharp {
 				}
 			}
 
+			MethodBody mmb = MethodBuilder.GetMethodBody ();
+
 			Block = null;
 			MethodData = null;
 		}

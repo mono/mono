@@ -3109,6 +3109,9 @@ pointer_member_access
 anonymous_method_expression
 	: DELEGATE opt_anonymous_method_signature
 	  {
+		if (oob_stack == null)
+			oob_stack = new Stack (6);
+
 		oob_stack.Push (current_local_parameters);
 		current_local_parameters = (Parameters)$2;
 
@@ -3896,6 +3899,8 @@ if_statement
 switch_statement
 	: SWITCH OPEN_PARENS
 	  { 
+		if (switch_stack == null)
+			switch_stack = new Stack (2);
 		switch_stack.Push (current_block);
 	  }
 	  expression CLOSE_PARENS 
@@ -4851,8 +4856,6 @@ public CSharpParser (SeekableStreamReader reader, SourceFile file, ArrayList def
 	// TODO: Make RootContext.Tree.Types a PartialContainer.
 	current_class = current_container;
 	current_container.NamespaceEntry = current_namespace;
-	oob_stack = new Stack ();
-	switch_stack = new Stack ();
 
 	lexer = new Tokenizer (reader, file, defines);
 }
