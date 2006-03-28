@@ -828,7 +828,8 @@ namespace Mono.CSharp {
 				if (!TypeManager.IsDelegateType (target_type))
 					return false;
 
-				return true;
+				AnonymousMethod am = (AnonymousMethod) expr;
+				return am.ImplicitStandardConversionExists (target_type);
 			}
 
 			return false;
@@ -1310,7 +1311,7 @@ namespace Mono.CSharp {
 				AnonymousMethod am = (AnonymousMethod) expr;
 				int errors = Report.Errors;
 
-				Expression conv = am.Compatible (ec, target_type, false);
+				Expression conv = am.Compatible (ec, target_type);
 				if (conv != null)
 					return conv;
 				

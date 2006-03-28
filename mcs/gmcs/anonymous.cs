@@ -47,7 +47,6 @@ namespace Mono.CSharp {
 		
 		// The emit context for the anonymous method
 		public EmitContext aec;
-		public Parameters amp;
 		public string[] TypeParameters;
 		public Type[] TypeArguments;
 		protected bool unreachable;
@@ -213,10 +212,13 @@ namespace Mono.CSharp {
 
 	public class AnonymousMethod : AnonymousContainer
 	{
-		public AnonymousMethod (Parameters parameters, ToplevelBlock container,
+		TypeContainer host;
+
+		public AnonymousMethod (TypeContainer host, Parameters parameters, ToplevelBlock container,
 					ToplevelBlock block, Location l)
 			: base (parameters, container, block, l)
 		{
+			this.host = host;
 		}
 
 		public override Iterator Iterator {
@@ -298,18 +300,37 @@ namespace Mono.CSharp {
 
 			return res;
 		}
-		
+
 		void Error_ParameterMismatch (Type t)
 		{
 			Report.Error (1661, loc, "Anonymous method could not be converted to delegate `" +
 				      "{0}' since there is a parameter mismatch", TypeManager.CSharpName (t));
-	}
+		}
+
+		public bool ImplicitStandardConversionExists (Type delegate_type)
+		{
+			if (Parameters == null)
+				return true;
+
+			MethodGroupExpr invoke_mg = Delegate.GetInvokeMethod (host.TypeBuilder, delegate_type, loc);
+			invoke_mb = (MethodInfo) invoke_mg.Methods [0];
+			ParameterData invoke_pd = TypeManager.GetParameterData (invoke_mb);
+
+			if (Parameters.Count != invoke_pd.Count)
+				return false;
+
+			for (int i = 0; i < Parameters.Count; ++i) {
+				if (invoke_pd.ParameterType (i) != Parameters.ParameterType (i))
+					return false;
+			}
+			return true;
+		}
 
 		//
 		// Returns true if this anonymous method can be implicitly
 		// converted to the delegate type `delegate_type'
 		//
-		public Expression Compatible (EmitContext ec, Type delegate_type, bool probe)
+		public Expression Compatible (EmitContext ec, Type delegate_type)
 		{
 			//
 			// At this point its the first time we know the return type that is 
@@ -333,66 +354,51 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (Parameters == null){				
+			if (Parameters == null) {
 				//
 				// We provide a set of inaccessible parameters
 				//
 				Parameter [] fixedpars = new Parameter [invoke_pd.Count];
-				
+								
 				for (int i = 0; i < invoke_pd.Count; i++){
 					fixedpars [i] = new Parameter (
 						invoke_pd.ParameterType (i),
 						"+" + i, invoke_pd.ParameterModifier (i), null, loc);
 				}
-				
+								
 				Parameters = new Parameters (fixedpars);
-			}
-			
-			//
-			// First, parameter types of `delegate_type' must be compatible
-			// with the anonymous method.
-			//
-			if (!Parameters.Resolve (ec))
-				return null;
-
-			amp = Parameters;
-			
-			if (amp.Count != invoke_pd.Count){
-				if (!probe){
+			} else {
+				if (Parameters.Count != invoke_pd.Count) {
+					Report.SymbolRelatedToPreviousError (delegate_type);
 					Report.Error (1593, loc, "Delegate `{0}' does not take `{1}' arguments",
-						TypeManager.CSharpName (delegate_type), amp.Count.ToString ());
+						TypeManager.CSharpName (delegate_type), Parameters.Count.ToString ());
 					Error_ParameterMismatch (delegate_type);
+					return null;
 				}
-				return null;
-			}
-			
-			for (int i = 0; i < amp.Count; i++){
-				Parameter.Modifier amp_mod = amp.ParameterModifier (i);
 
-				if (!probe) {
-					if (amp_mod != invoke_pd.ParameterModifier (i)){
-						Report.Error (1676, loc, "Parameter `{0}' must be declared with the `{1}' keyword",
-							(i+1).ToString (), Parameter.GetModifierSignature (invoke_pd.ParameterModifier (i)));
+				for (int i = 0; i < Parameters.Count; ++i) {
+					Parameter.Modifier p_mod = invoke_pd.ParameterModifier (i);
+					if (Parameters.ParameterModifier (i) != p_mod && p_mod != Parameter.Modifier.PARAMS) {
+						if (p_mod == Parameter.Modifier.NONE)
+							Report.Error (1677, loc, "Parameter `{0}' should not be declared with the `{1}' keyword",
+								(i + 1).ToString (), Parameter.GetModifierSignature (Parameters.ParameterModifier (i)));
+						else
+							Report.Error (1676, loc, "Parameter `{0}' must be declared with the `{1}' keyword",
+								(i+1).ToString (), Parameter.GetModifierSignature (p_mod));
 						Error_ParameterMismatch (delegate_type);
 						return null;
 					}
-				
-					if (amp.ParameterType (i) != invoke_pd.ParameterType (i)){
+
+					if (invoke_pd.ParameterType (i) != Parameters.ParameterType (i)) {
 						Report.Error (1678, loc, "Parameter `{0}' is declared as type `{1}' but should be `{2}'",
 							(i+1).ToString (),
-							TypeManager.CSharpName (amp.ParameterType (i)),
+							TypeManager.CSharpName (Parameters.ParameterType (i)),
 							TypeManager.CSharpName (invoke_pd.ParameterType (i)));
 						Error_ParameterMismatch (delegate_type);
 						return null;
 					}
 				}
 			}
-
-			//
-			// If we are only probing, return ourselves
-			//
-			if (probe)
-				return this;
 			
 			//
 			// Second: the return type of the delegate must be compatible with 
@@ -404,7 +410,6 @@ namespace Mono.CSharp {
 			//MethodBuilder builder = method_data.MethodBuilder;
 			//ILGenerator ig = builder.GetILGenerator ();
 
-			
 			aec = new EmitContext (ec.ResolveContext,
 				ec.TypeContainer, ec.DeclContainer, loc, null,
 				invoke_mb.ReturnType,
@@ -417,11 +422,21 @@ namespace Mono.CSharp {
 			ContainerAnonymousMethod = ec.CurrentAnonymousMethod;
 			ContainingBlock = ec.CurrentBlock;
 
-			if (aec.ResolveTopBlock (ec, Block, amp, null, out unreachable))
+			if (aec.ResolveTopBlock (ec, Block, Parameters, null, out unreachable))
 				return new AnonymousDelegate (this, delegate_type, loc).Resolve (ec);
 
 			return null;
 		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			if (Parameters != null && !Parameters.Resolve (ec)) {
+				return null;
+			}
+
+			return base.DoResolve (ec);
+		}
+
 
 		public override string ExprClassName {
 			get {

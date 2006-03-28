@@ -3402,7 +3402,7 @@ anonymous_method_expression
 			ToplevelBlock anon_block = (ToplevelBlock) $4;
 
 			anon_block.Parent = current_block;
-			$$ = new AnonymousMethod ((Parameters) $2, (ToplevelBlock) top_current_block, 
+			$$ = new AnonymousMethod (current_container, (Parameters) $2, (ToplevelBlock) top_current_block, 
 				anon_block, loc);
 		}
 			current_local_parameters = (Parameters) oob_stack.Pop ();
