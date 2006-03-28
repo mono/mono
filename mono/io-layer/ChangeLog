@@ -1,3 +1,10 @@
+2006-03-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* atomic.h atomic.c: Applied patch from David S. Miller 
+	<davem@davemloft.net>: Reimplement Interlocked* primitives on sparc 
+	using CAS/CASx when __GNUC__, else we will fall back to the generic 
+	pthread version.
+
 2006-03-27  Dick Porter  <dick@ximian.com>
 
 	* shared.c (_wapi_shm_file_open): Break out of a loop if the
