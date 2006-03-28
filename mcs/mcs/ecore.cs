@@ -433,17 +433,6 @@ namespace Mono.CSharp {
 			if (c != null)
 				return c;
 
-			EmptyCast empty = e as EmptyCast;
-			if (empty != null) {
-				c = empty.Child as Constant;
-				if (c != null) {
-					// TODO: not sure about this maybe there is easier way how to use EmptyCast
-					if (e.Type.IsEnum)
-						c.Type = e.Type;
-
-					return c;
-				}
-			}
 			Const.Error_ExpressionMustBeConstant (loc, mc.GetSignatureForError ());
 			return null;
 		}
@@ -1145,12 +1134,6 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class EmptyCast : Expression {
 		protected readonly Expression child;
-
-		public Expression Child {
-			get {
-				return child;
-			}
-		}		
 
 		public EmptyCast (Expression child, Type return_type)
 		{

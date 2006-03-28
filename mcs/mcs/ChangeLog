@@ -1,5 +1,10 @@
 2006-03-27  Marek Safar  <marek.safar@seznam.cz>
 
+	* ecore.cs (Expression.ResolveAsConstant): Clean up, enum constants should
+	be now EnumConstants only.
+
+2006-03-27  Marek Safar  <marek.safar@seznam.cz>
+
 	* attribute.cs, driver.cs: Reset more caches.
 
 2006-03-26  Marek Safar  <marek.safar@seznam.cz>
