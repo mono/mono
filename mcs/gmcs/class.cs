@@ -474,7 +474,7 @@ namespace Mono.CSharp {
 		/// </remarks>
 		PendingImplementation pending;
 
-		public TypeContainer (NamespaceEntry ns, TypeContainer parent, MemberName name,
+		public TypeContainer (NamespaceEntry ns, DeclSpace parent, MemberName name,
 				      Attributes attrs, Kind kind)
 			: base (ns, parent, name, attrs)
 		{
@@ -2615,7 +2615,7 @@ namespace Mono.CSharp {
 	public abstract class ClassOrStruct : TypeContainer {
 		ListDictionary declarative_security;
 
-		public ClassOrStruct (NamespaceEntry ns, TypeContainer parent,
+		public ClassOrStruct (NamespaceEntry ns, DeclSpace parent,
 				      MemberName name, Attributes attrs, Kind kind)
 			: base (ns, parent, name, attrs, kind)
 		{
@@ -2700,7 +2700,7 @@ namespace Mono.CSharp {
 			Modifiers.STATIC |
 			Modifiers.UNSAFE;
 
-		public Class (NamespaceEntry ns, TypeContainer parent, MemberName name, int mod,
+		public Class (NamespaceEntry ns, DeclSpace parent, MemberName name, int mod,
 			      Attributes attrs)
 			: base (ns, parent, name, attrs, Kind.Class)
 		{
@@ -2931,7 +2931,7 @@ namespace Mono.CSharp {
 			Modifiers.UNSAFE    |
 			Modifiers.PRIVATE;
 
-		public Struct (NamespaceEntry ns, TypeContainer parent, MemberName name,
+		public Struct (NamespaceEntry ns, DeclSpace parent, MemberName name,
 			       int mod, Attributes attrs)
 			: base (ns, parent, name, attrs, Kind.Struct)
 		{
@@ -3016,7 +3016,7 @@ namespace Mono.CSharp {
 		 	Modifiers.UNSAFE    |
 			Modifiers.PRIVATE;
 
-		public Interface (NamespaceEntry ns, TypeContainer parent, MemberName name, int mod,
+		public Interface (NamespaceEntry ns, DeclSpace parent, MemberName name, int mod,
 				  Attributes attrs)
 			: base (ns, parent, name, attrs, Kind.Interface)
 		{
@@ -3081,7 +3081,7 @@ namespace Mono.CSharp {
 
 		static string[] attribute_targets = new string [] { "method", "return" };
 
-		public MethodCore (TypeContainer parent, GenericMethod generic,
+		public MethodCore (DeclSpace parent, GenericMethod generic,
 				   Expression type, int mod, int allowed_mod, bool is_iface,
 				   MemberName name, Attributes attrs, Parameters parameters)
 			: base (parent, generic, type, mod, allowed_mod, Modifiers.PRIVATE,
@@ -3138,7 +3138,7 @@ namespace Mono.CSharp {
 				return true;
 
 			// Is null for System.Object while compiling corlib and base interfaces
-			if (Parent.BaseCache == null) {
+			if (ParentContainer.BaseCache == null) {
 				if ((RootContext.WarningLevel >= 4) && ((ModFlags & Modifiers.NEW) != 0)) {
 					Report.Warning (109, 4, Location, "The member `{0}' does not hide an inherited member. The new keyword is not required", GetSignatureForError ());
 				}
@@ -3183,9 +3183,9 @@ namespace Mono.CSharp {
 				}
 
 				if (Name == "Equals" && Parameters.Count == 1 && ParameterTypes [0] == TypeManager.object_type)
-					Parent.Mark_HasEquals ();
+					ParentContainer.Mark_HasEquals ();
 				else if (Name == "GetHashCode" && Parameters.Empty)
-					Parent.Mark_HasGetHashCode ();
+					ParentContainer.Mark_HasGetHashCode ();
 
 				if ((ModFlags & Modifiers.OVERRIDE) != 0) {
 					ObsoleteAttribute oa = AttributeTester.GetMethodObsoleteAttribute (base_method);
@@ -3200,7 +3200,7 @@ namespace Mono.CSharp {
 				return true;
 			}
 
-			MemberInfo conflict_symbol = Parent.FindBaseMemberWithSameName (Name, !(this is Property));
+			MemberInfo conflict_symbol = ParentContainer.FindBaseMemberWithSameName (Name, !(this is Property));
 			if ((ModFlags & Modifiers.OVERRIDE) != 0) {
 				if (conflict_symbol != null) {
 					Report.SymbolRelatedToPreviousError (conflict_symbol);
@@ -3334,7 +3334,7 @@ namespace Mono.CSharp {
 
 		public bool CheckAbstractAndExtern (bool has_block)
 		{
-			if (Parent.Kind == Kind.Interface)
+			if (ParentContainer.Kind == Kind.Interface)
 				return true;
 
 			if (has_block) {
@@ -3576,17 +3576,16 @@ namespace Mono.CSharp {
 
 	public class SourceMethod : ISourceMethod
 	{
-		TypeContainer container;
+		DeclSpace parent;
 		MethodBase builder;
 
-		protected SourceMethod (TypeContainer container, MethodBase builder,
+		protected SourceMethod (DeclSpace parent, MethodBase builder,
 					ISourceFile file, Location start, Location end)
 		{
-			this.container = container;
+			this.parent = parent;
 			this.builder = builder;
 			
-			CodeGen.SymbolWriter.OpenMethod (
-				file, this, start.Row, start.Column, end.Row, start.Column);
+			CodeGen.SymbolWriter.OpenMethod (file, this, start.Row, start.Column, end.Row, start.Column);
 		}
 
 		public string Name {
@@ -3594,7 +3593,7 @@ namespace Mono.CSharp {
 		}
 
 		public int NamespaceID {
-			get { return container.NamespaceEntry.SymbolFileID; }
+			get { return parent.NamespaceEntry.SymbolFileID; }
 		}
 
 		public int Token {
@@ -3614,8 +3613,7 @@ namespace Mono.CSharp {
 				CodeGen.SymbolWriter.CloseMethod ();
 		}
 
-		public static SourceMethod Create (TypeContainer parent,
-						   MethodBase builder, Block block)
+		public static SourceMethod Create (DeclSpace parent, MethodBase builder, Block block)
 		{
 			if (CodeGen.SymbolWriter == null)
 				return null;
@@ -3669,7 +3667,7 @@ namespace Mono.CSharp {
 		//
 		// return_type can be "null" for VOID values.
 		//
-		public Method (TypeContainer parent, GenericMethod generic,
+		public Method (DeclSpace parent, GenericMethod generic,
 			       Expression return_type, int mod, bool is_iface,
 			       MemberName name, Parameters parameters, Attributes attrs)
 			: base (parent, generic, return_type, mod,
@@ -3795,8 +3793,8 @@ namespace Mono.CSharp {
 
   		protected override bool CheckForDuplications ()
 		{
-			ArrayList ar = Parent.Methods;
-  			if (ar != null) {
+			ArrayList ar = ParentContainer.Methods;
+			if (ar != null) {
   				int arLen = ar.Count;
    					
   				for (int i = 0; i < arLen; i++) {
@@ -3806,7 +3804,7 @@ namespace Mono.CSharp {
    				}
   			}
 
-			ar = Parent.Properties;
+			ar = ParentContainer.Properties;
 			if (ar != null) {
 				for (int i = 0; i < ar.Count; ++i) {
 					PropertyBase pb = (PropertyBase) ar [i];
@@ -3815,7 +3813,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			ar = Parent.Indexers;
+			ar = ParentContainer.Indexers;
 			if (ar != null) {
 				for (int i = 0; i < ar.Count; ++i) {
 					PropertyBase pb = (PropertyBase) ar [i];
@@ -3824,7 +3822,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			ar = Parent.Events;
+			ar = ParentContainer.Events;
 			if (ar != null) {
 				for (int i = 0; i < ar.Count; ++i) {
 					Event ev = (Event) ar [i];
@@ -3961,7 +3959,7 @@ namespace Mono.CSharp {
 
 		protected override MethodInfo FindOutBaseMethod (ref Type base_ret_type)
 		{
-			MethodInfo mi = (MethodInfo) Parent.BaseCache.FindMemberToOverride (
+			MethodInfo mi = (MethodInfo) ParentContainer.BaseCache.FindMemberToOverride (
 				Parent.TypeBuilder, Name, ParameterTypes, GenericMethod, false);
 
 			if (mi == null)
@@ -4041,10 +4039,10 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public EmitContext CreateEmitContext (TypeContainer tc, ILGenerator ig)
+		public EmitContext CreateEmitContext (DeclSpace tc, ILGenerator ig)
 		{
 			EmitContext ec = new EmitContext (this,
-				tc, ds, Location, ig, ReturnType, ModFlags, false);
+				tc, this.ds, Location, ig, ReturnType, ModFlags, false);
 
 			Iterator iterator = tc as Iterator;
 			if (iterator != null)
@@ -4256,24 +4254,20 @@ namespace Mono.CSharp {
 		// The spec claims that static is not permitted, but
 		// my very own code has static constructors.
 		//
-		public Constructor (TypeContainer ds, string name, int mod, Parameters args,
+		public Constructor (DeclSpace parent, string name, int mod, Parameters args,
 				    ConstructorInitializer init, Location loc)
-			: base (ds, null, null, mod, AllowedModifiers, false,
+			: base (parent, null, null, mod, AllowedModifiers, false,
 				new MemberName (name, loc), null, args)
 		{
 			Initializer = init;
 		}
 
 		public bool HasCompliantArgs {
-			get {
-				return has_compliant_args;
-			}
+			get { return has_compliant_args; }
 		}
 
 		public override AttributeTargets AttributeTargets {
-			get {
-				return AttributeTargets.Constructor;
-			}
+			get { return AttributeTargets.Constructor; }
 		}
 
 
@@ -4305,7 +4299,7 @@ namespace Mono.CSharp {
 
  		protected override bool CheckForDuplications ()
 		{
-			ArrayList ar = Parent.InstanceConstructors;
+			ArrayList ar = ParentContainer.InstanceConstructors;
 			if (ar != null) {
 				int arLen = ar.Count;
 					
@@ -4331,7 +4325,7 @@ namespace Mono.CSharp {
 			if (!CheckForDuplications ())
 				return false;
 
-			if (Parent.Kind == Kind.Struct) {
+			if (ParentContainer.Kind == Kind.Struct) {
 				if (ParameterTypes.Length == 0) {
 					Report.Error (568, Location, 
 						"Structs cannot contain explicit parameterless constructors");
@@ -4396,7 +4390,7 @@ namespace Mono.CSharp {
 			if ((ModFlags & Modifiers.UNSAFE) != 0)
 				ConstructorBuilder.InitLocals = false;
 
-			if (Parent.IsComImport) {
+			if (ParentContainer.IsComImport) {
 				if (!IsDefault ()) {
 					Report.Error (669, Location, "`{0}': A class with the ComImport attribute cannot have a user-defined constructor",
 						Parent.GetSignatureForError ());
@@ -4421,7 +4415,7 @@ namespace Mono.CSharp {
 
 			// If this is a non-static `struct' constructor and doesn't have any
 			// initializer, it must initialize all of the struct's fields.
-			if ((Parent.Kind == Kind.Struct) &&
+			if ((ParentContainer.Kind == Kind.Struct) &&
 			    ((ModFlags & Modifiers.STATIC) == 0) && (Initializer == null))
 				Block.AddThisVariable (Parent, Location);
 
@@ -4431,7 +4425,7 @@ namespace Mono.CSharp {
 			}
 
 			if ((ModFlags & Modifiers.STATIC) == 0){
-				if (Parent.Kind == Kind.Class && Initializer == null)
+				if (ParentContainer.Kind == Kind.Class && Initializer == null)
 					Initializer = new GeneratedBaseInitializer (Location);
 
 
@@ -4454,7 +4448,7 @@ namespace Mono.CSharp {
 			//
 			// Classes can have base initializers and instance field initializers.
 			//
-			if (Parent.Kind == Kind.Class){
+			if (ParentContainer.Kind == Kind.Class){
 				if ((ModFlags & Modifiers.STATIC) == 0){
 
 					//
@@ -4531,7 +4525,7 @@ namespace Mono.CSharp {
 			get {
 				CallingConventions cc = Parameters.CallingConvention;
 
-				if (Parent.Kind == Kind.Class)
+				if (ParentContainer.Kind == Kind.Class)
 					if ((ModFlags & Modifiers.STATIC) == 0)
 						cc |= CallingConventions.HasThis;
 
@@ -4559,7 +4553,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public EmitContext CreateEmitContext (TypeContainer tc, ILGenerator ig)
+		public EmitContext CreateEmitContext (DeclSpace ds, ILGenerator ig)
 		{
 			ILGenerator ig_ = ConstructorBuilder.GetILGenerator ();
 			return new EmitContext (this, Parent, Location, ig_, null, ModFlags, true);
@@ -4594,7 +4588,7 @@ namespace Mono.CSharp {
 		Attributes OptAttributes { get; }
 		ToplevelBlock Block { get; set; }
 
-		EmitContext CreateEmitContext (TypeContainer tc, ILGenerator ig);
+		EmitContext CreateEmitContext (DeclSpace ds, ILGenerator ig);
 		ObsoleteAttribute GetObsoleteAttribute ();
 		string GetSignatureForError ();
 		bool IsExcluded ();
@@ -4659,10 +4653,12 @@ namespace Mono.CSharp {
 			this.parent_method = parent_method;
 		}
 
-		public bool Define (TypeContainer container)
+		public bool Define (DeclSpace parent)
 		{
 			string name = method.MethodName.Basename;
 			string method_name = method.MethodName.FullName;
+
+			TypeContainer container = ((TypeContainer) parent).PartialContainer;
 
 			PendingImplementation pending = container.PendingImplementations;
 			if (pending != null){
@@ -4880,15 +4876,15 @@ namespace Mono.CSharp {
 		//
 		// Emits the code
 		// 
-		public void Emit (TypeContainer container)
+		public void Emit (DeclSpace parent)
 		{
 			EmitContext ec;
 			if ((flags & MethodAttributes.PinvokeImpl) == 0)
-				ec = method.CreateEmitContext (container, builder.GetILGenerator ());
+				ec = method.CreateEmitContext (parent, builder.GetILGenerator ());
 			else
-				ec = method.CreateEmitContext (container, null);
+				ec = method.CreateEmitContext (parent, null);
 
-			if (method.GetObsoleteAttribute () != null || container.GetObsoleteAttribute () != null)
+			if (method.GetObsoleteAttribute () != null || parent.GetObsoleteAttribute () != null)
 				ec.TestObsoleteMethodUsage = false;
 
 			method.ParameterInfo.ApplyAttributes (MethodBuilder);
@@ -4903,8 +4899,7 @@ namespace Mono.CSharp {
 
 			ToplevelBlock block = method.Block;
 			
-			SourceMethod source = SourceMethod.Create (
-				container, MethodBuilder, method.Block);
+			SourceMethod source = SourceMethod.Create (parent, MethodBuilder, method.Block);
 
 			//
 			// Handle destructors specially
@@ -4958,10 +4953,10 @@ namespace Mono.CSharp {
 	// TODO: Should derive from MethodCore
 	public class Destructor : Method {
 
-		public Destructor (TypeContainer ds, Expression return_type, int mod,
+		public Destructor (DeclSpace parent, Expression return_type, int mod,
 				   string name, Parameters parameters, Attributes attrs,
 				   Location l)
-			: base (ds, null, return_type, mod, false, new MemberName (name, l),
+			: base (parent, null, return_type, mod, false, new MemberName (name, l),
 				parameters, attrs)
 		{ }
 
@@ -4999,10 +4994,6 @@ namespace Mono.CSharp {
 		public string ShortName {
 			get { return MemberName.Name; }
 			set { SetMemberName (new MemberName (MemberName.Left, value, Location)); }
-		}
-
-		public new TypeContainer Parent {
-			get { return (TypeContainer) base.Parent; }
 		}
 
 		public TypeContainer ParentContainer {
@@ -5044,7 +5035,7 @@ namespace Mono.CSharp {
 		//
 		// The constructor is only exposed to our children
 		//
-		protected MemberBase (TypeContainer parent, GenericMethod generic,
+		protected MemberBase (DeclSpace parent, GenericMethod generic,
 				      Expression type, int mod, int allowed_mod, int def_mod,
 				      MemberName name, Attributes attrs)
 			: base (parent, name, attrs)
@@ -5061,7 +5052,7 @@ namespace Mono.CSharp {
 
 		protected virtual bool CheckBase ()
 		{
-  			if ((ModFlags & Modifiers.PROTECTED) != 0 && Parent.Kind == Kind.Struct) {
+  			if ((ModFlags & Modifiers.PROTECTED) != 0 && ParentContainer.Kind == Kind.Struct) {
   				Report.Error (666, Location, "`{0}': new protected member declared in struct", GetSignatureForError ());
   				return false;
    			}
@@ -5091,7 +5082,7 @@ namespace Mono.CSharp {
 					MethodAttributes.NewSlot |
 					MethodAttributes.Virtual;
 			} else {
-				if (!Parent.MethodModifiersValid (this))
+				if (!ParentContainer.MethodModifiersValid (this))
 					return false;
 
 				flags = Modifiers.MethodAttr (ModFlags);
@@ -5230,7 +5221,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public MemberInfo conflict_symbol;
 
-		protected FieldBase (TypeContainer parent, Expression type, int mod,
+		protected FieldBase (DeclSpace parent, Expression type, int mod,
 				     int allowed_mod, MemberName name, Attributes attrs)
 			: base (parent, null, type, mod, allowed_mod, Modifiers.PRIVATE,
 				name, attrs)
@@ -5308,7 +5299,7 @@ namespace Mono.CSharp {
  			if (IsInterface)
  				return true;
 
- 			conflict_symbol = Parent.FindBaseMemberWithSameName (Name, false);
+ 			conflict_symbol = ParentContainer.FindBaseMemberWithSameName (Name, false);
  			if (conflict_symbol == null) {
  				if ((RootContext.WarningLevel >= 4) && ((ModFlags & Modifiers.NEW) != 0)) {
  					Report.Warning (109, 4, Location, "The member `{0}' does not hide an inherited member. The new keyword is not required", GetSignatureForError ());
@@ -5369,7 +5360,7 @@ namespace Mono.CSharp {
 
 	public abstract class FieldMember : FieldBase
 	{
-		protected FieldMember (TypeContainer parent, Expression type, int mod,
+		protected FieldMember (DeclSpace parent, Expression type, int mod,
 			int allowed_mod, MemberName name, Attributes attrs)
 			: base (parent, type, mod, allowed_mod | Modifiers.ABSTRACT, name, attrs)
 		{
@@ -5383,7 +5374,7 @@ namespace Mono.CSharp {
 			{
 				status |= Status.HAS_OFFSET;
 
-				if (!Parent.HasExplicitLayout) {
+				if (!ParentContainer.HasExplicitLayout) {
 					Report.Error (636, Location, "The FieldOffset attribute can only be placed on members of types marked with the StructLayout(LayoutKind.Explicit)");
 					return;
 				}
@@ -5504,7 +5495,7 @@ namespace Mono.CSharp {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
-		public FixedField (TypeContainer parent, Expression type, int mod, string name,
+		public FixedField (DeclSpace parent, Expression type, int mod, string name,
 			Expression size_expr, Attributes attrs, Location loc):
 			base (parent, type, mod, AllowedModifiers, new MemberName (name, loc), attrs)
 		{
@@ -5521,7 +5512,7 @@ namespace Mono.CSharp {
 				Report.Warning (-23, 1, Location, "Only private or internal fixed sized buffers are supported by .NET 1.x");
 #endif
 
-			if (Parent.Kind != Kind.Struct) {
+			if (ParentContainer.Kind != Kind.Struct) {
 				Report.Error (1642, Location, "`{0}': Fixed size buffer fields may only be members of structs",
 					GetSignatureForError ());
 				return false;
@@ -5634,7 +5625,7 @@ namespace Mono.CSharp {
 		        Modifiers.UNSAFE |
 			Modifiers.READONLY;
 
-		public Field (TypeContainer parent, Expression type, int mod, string name,
+		public Field (DeclSpace parent, Expression type, int mod, string name,
 			      Attributes attrs, Location loc)
 			: base (parent, type, mod, AllowedModifiers, new MemberName (name, loc),
 				attrs)
@@ -5691,7 +5682,7 @@ namespace Mono.CSharp {
 
 			FieldAttributes fa = Modifiers.FieldAttr (ModFlags);
 
-			if (Parent.Kind == Kind.Struct && 
+			if (ParentContainer.Kind == Kind.Struct && 
 			    ((fa & FieldAttributes.Static) == 0) &&
 			    MemberType == Parent.TypeBuilder &&
 			    !TypeManager.IsBuiltinType (MemberType)){
@@ -5845,7 +5836,7 @@ namespace Mono.CSharp {
 
 		public abstract Parameters ParameterInfo { get ; }
 		public abstract Type ReturnType { get; }
-		public abstract EmitContext CreateEmitContext(TypeContainer tc, ILGenerator ig);
+		public abstract EmitContext CreateEmitContext (DeclSpace ds, ILGenerator ig);
 
 		#endregion
 
@@ -5892,9 +5883,9 @@ namespace Mono.CSharp {
 			throw new NotSupportedException ();
 		}
 
-		public virtual void Emit (TypeContainer container)
+		public virtual void Emit (DeclSpace parent)
 		{
-			EmitMethod (container);
+			EmitMethod (parent);
 
 			if (declarative_security != null) {
 				foreach (DictionaryEntry de in declarative_security) {
@@ -5905,9 +5896,9 @@ namespace Mono.CSharp {
 			block = null;
 		}
 
-		protected virtual void EmitMethod (TypeContainer container)
+		protected virtual void EmitMethod (DeclSpace parent)
 		{
-			method_data.Emit (container);
+			method_data.Emit (parent);
 		}
 
 		public override bool IsClsComplianceRequired()
@@ -5979,13 +5970,13 @@ namespace Mono.CSharp {
 			{
 			}
 
-			public override MethodBuilder Define(TypeContainer container)
+			public override MethodBuilder Define (DeclSpace parent)
 			{
-				base.Define (container);
+				base.Define (parent);
 				
 				method_data = new MethodData (method, ModFlags, flags, this);
 
-				if (!method_data.Define (container))
+				if (!method_data.Define (parent))
 					return null;
 
 				return method_data.MethodBuilder;
@@ -6052,17 +6043,17 @@ namespace Mono.CSharp {
 					new Type[] { method.MemberType });
 			}
 
-			public override MethodBuilder Define (TypeContainer container)
+			public override MethodBuilder Define (DeclSpace parent)
 			{
 				DefineParameters ();
 				if (IsDummy)
 					return null;
 
-				base.Define (container);
+				base.Define (parent);
 
 				method_data = new MethodData (method, ModFlags, flags, this);
 
-				if (!method_data.Define (container))
+				if (!method_data.Define (parent))
 					return null;
 
 				return method_data.MethodBuilder;
@@ -6119,10 +6110,12 @@ namespace Mono.CSharp {
 				return method.IsClsComplianceRequired ();
 			}
 
-			public virtual MethodBuilder Define (TypeContainer container)
+			public virtual MethodBuilder Define (DeclSpace parent)
 			{
 				if (!method.CheckAbstractAndExtern (block != null))
 					return null;
+
+				TypeContainer container = ((TypeContainer) parent).PartialContainer;
 
 				//
 				// Check for custom access modifier
@@ -6139,7 +6132,7 @@ namespace Mono.CSharp {
 						Report.Error (442, Location, "`{0}': abstract properties cannot have private accessors", GetSignatureForError ());
 					}
 
-					CheckModifiers (container, ModFlags);
+					CheckModifiers (ModFlags);
 					ModFlags |= (method.ModFlags & (~Modifiers.Accessibility));
 					ModFlags |= Modifiers.PROPERTY_CUSTOM;
 					flags = Modifiers.MethodAttr (ModFlags);
@@ -6166,11 +6159,10 @@ namespace Mono.CSharp {
 				}
 			}
 
-			public override EmitContext CreateEmitContext (TypeContainer tc,
-								       ILGenerator ig)
+			public override EmitContext CreateEmitContext (DeclSpace ds, ILGenerator ig)
 			{
 				return new EmitContext (method,
-					tc, method.ds, method.Location, ig, ReturnType,
+					ds, method.ds, method.Location, ig, ReturnType,
 					method.ModFlags, false);
 			}
 
@@ -6184,7 +6176,7 @@ namespace Mono.CSharp {
 				return method.GetSignatureForError () + '.' + prefix.Substring (0, 3);
   			}
 
-			void CheckModifiers (TypeContainer container, int modflags)
+			void CheckModifiers (int modflags)
 			{
 				int flags = 0;
 				int mflags = method.ModFlags & Modifiers.Accessibility;
@@ -6221,7 +6213,7 @@ namespace Mono.CSharp {
 
 		protected EmitContext ec;
 
-		public PropertyBase (TypeContainer parent, Expression type, int mod_flags,
+		public PropertyBase (DeclSpace parent, Expression type, int mod_flags,
 				     int allowed_mod, bool is_iface, MemberName name,
 				     Parameters parameters, Attributes attrs)
 			: base (parent, null, type, mod_flags, allowed_mod, is_iface, name,
@@ -6289,7 +6281,7 @@ namespace Mono.CSharp {
 
 		protected override bool CheckForDuplications ()
 		{
-			ArrayList ar = Parent.Indexers;
+			ArrayList ar = ParentContainer.Indexers;
 			if (ar != null) {
 				int arLen = ar.Count;
 					
@@ -6300,7 +6292,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			ar = Parent.Properties;
+			ar = ParentContainer.Properties;
 			if (ar != null) {
 				int arLen = ar.Count;
 					
@@ -6317,7 +6309,7 @@ namespace Mono.CSharp {
 		// TODO: rename to Resolve......
  		protected override MethodInfo FindOutBaseMethod (ref Type base_ret_type)
  		{
- 			PropertyInfo base_property = Parent.BaseCache.FindMemberToOverride (
+ 			PropertyInfo base_property = ParentContainer.BaseCache.FindMemberToOverride (
  				Parent.TypeBuilder, Name, ParameterTypes, null, true) as PropertyInfo;
 
  			if (base_property == null)
@@ -6448,10 +6440,10 @@ namespace Mono.CSharp {
 		const int AllowedInterfaceModifiers =
 			Modifiers.NEW;
 
-		public Property (TypeContainer ds, Expression type, int mod, bool is_iface,
+		public Property (DeclSpace parent, Expression type, int mod, bool is_iface,
 				 MemberName name, Attributes attrs, Accessor get_block,
 				 Accessor set_block)
-			: base (ds, type, mod,
+			: base (parent, type, mod,
 				is_iface ? AllowedInterfaceModifiers : AllowedModifiers,
 				is_iface, name, Parameters.EmptyReadOnlyParameters, attrs)
 		{
@@ -6660,7 +6652,7 @@ namespace Mono.CSharp {
 
 		static string[] attribute_targets = new string [] { "event" }; // "property" target was disabled for 2.0 version
 
-		public EventProperty (TypeContainer parent, Expression type, int mod_flags,
+		public EventProperty (DeclSpace parent, Expression type, int mod_flags,
 				      bool is_iface, MemberName name,
 				      Attributes attrs, Accessor add, Accessor remove)
 			: base (parent, type, mod_flags, is_iface, name, attrs)
@@ -6688,7 +6680,7 @@ namespace Mono.CSharp {
 		static string[] attribute_targets = new string [] { "event", "field", "method" };
 		static string[] attribute_targets_interface = new string[] { "event", "method" };
 
-		public EventField (TypeContainer parent, Expression type, int mod_flags,
+		public EventField (DeclSpace parent, Expression type, int mod_flags,
 				   bool is_iface, MemberName name,
 				   Attributes attrs)
 			: base (parent, type, mod_flags, is_iface, name, attrs)
@@ -6779,7 +6771,7 @@ namespace Mono.CSharp {
 
 		}
 
-		public abstract class DelegateMethod: AbstractPropertyEventMethod
+		public abstract class DelegateMethod : AbstractPropertyEventMethod
 		{
 			protected readonly Event method;
 			ImplicitParameter param_attr;
@@ -6822,12 +6814,12 @@ namespace Mono.CSharp {
 				return method.IsClsComplianceRequired ();
 			}
 
-			public MethodBuilder Define (TypeContainer container)
+			public MethodBuilder Define (DeclSpace parent)
 			{
 				method_data = new MethodData (method, method.ModFlags,
 					method.flags | MethodAttributes.HideBySig | MethodAttributes.SpecialName, this);
 
-				if (!method_data.Define (container))
+				if (!method_data.Define (parent))
 					return null;
 
 				MethodBuilder mb = method_data.MethodBuilder;
@@ -6836,10 +6828,10 @@ namespace Mono.CSharp {
 			}
 
 
-			protected override void EmitMethod (TypeContainer tc)
+			protected override void EmitMethod (DeclSpace parent)
 			{
 				if (block != null) {
-					base.EmitMethod (tc);
+					base.EmitMethod (parent);
 					return;
 				}
 
@@ -6876,11 +6868,10 @@ namespace Mono.CSharp {
 				}
 			}
 
-			public override EmitContext CreateEmitContext (TypeContainer tc,
-								       ILGenerator ig)
+			public override EmitContext CreateEmitContext (DeclSpace ds, ILGenerator ig)
 			{
 				return new EmitContext (
-					tc, method.Parent, Location, ig, ReturnType,
+					ds, method.Parent, Location, ig, ReturnType,
 					method.ModFlags, false);
 			}
 
@@ -6925,7 +6916,7 @@ namespace Mono.CSharp {
 		public MethodBuilder AddBuilder, RemoveBuilder;
 		Parameters parameters;
 
-		protected Event (TypeContainer parent, Expression type, int mod_flags,
+		protected Event (DeclSpace parent, Expression type, int mod_flags,
 			      bool is_iface, MemberName name, Attributes attrs)
 			: base (parent, type, mod_flags,
 				is_iface ? AllowedInterfaceModifiers : AllowedModifiers,
@@ -7109,7 +7100,7 @@ namespace Mono.CSharp {
 		//
 		// Are we implementing an interface ?
 		//
-		public Indexer (TypeContainer parent, Expression type, MemberName name, int mod,
+		public Indexer (DeclSpace parent, Expression type, MemberName name, int mod,
 				bool is_iface, Parameters parameters, Attributes attrs,
 				Accessor get_block, Accessor set_block)
 			: base (parent, type, mod,
@@ -7175,8 +7166,8 @@ namespace Mono.CSharp {
 					ShortName = base_IndexerName;
 			}
 
-			if (!Parent.AddToMemberContainer (this) ||
-				!Parent.AddToMemberContainer (Get) || !Parent.AddToMemberContainer (Set))
+			if (!ParentContainer.AddToMemberContainer (this) ||
+				!ParentContainer.AddToMemberContainer (Get) || !ParentContainer.AddToMemberContainer (Set))
 				return false;
 
 			if (!CheckBase ())
@@ -7308,7 +7299,7 @@ namespace Mono.CSharp {
 
 		static string[] attribute_targets = new string [] { "method", "return" };
 
-		public Operator (TypeContainer parent, OpType type, Expression ret_type,
+		public Operator (DeclSpace parent, OpType type, Expression ret_type,
 				 int mod_flags, Parameters parameters,
 				 ToplevelBlock block, Attributes attrs, Location loc)
 			: base (parent, null, ret_type, mod_flags, AllowedModifiers, false,
@@ -7329,9 +7320,9 @@ namespace Mono.CSharp {
 			}
 		}
 		
-		protected override bool CheckForDuplications()
+		protected override bool CheckForDuplications ()
 		{
-			ArrayList ar = Parent.Operators;
+			ArrayList ar = ParentContainer.Operators;
 			if (ar != null) {
 				int arLen = ar.Count;
 
@@ -7342,7 +7333,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			ar = Parent.Methods;
+			ar = ParentContainer.Methods;
 			if (ar != null) {
 				int arLen = ar.Count;
 

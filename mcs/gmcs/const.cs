@@ -34,7 +34,7 @@ namespace Mono.CSharp {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
-		public Const (TypeContainer parent, Expression constant_type, string name,
+		public Const (DeclSpace parent, Expression constant_type, string name,
 			      Expression expr, int mod_flags, Attributes attrs, Location loc)
 			: base (parent, constant_type, mod_flags, AllowedModifiers,
 				new MemberName (name, loc), attrs)
@@ -48,7 +48,7 @@ namespace Mono.CSharp {
 			// Constant.Define can be called when the parent type hasn't yet been populated
 			// and it's base types need not have been populated.  So, we defer this check
 			// to the second time Define () is called on this member.
-			if (Parent.BaseCache == null)
+			if (ParentContainer.BaseCache == null)
 				return true;
 			return base.CheckBase ();
 		}
@@ -73,7 +73,7 @@ namespace Mono.CSharp {
 			// Decimals cannot be emitted into the constant blob.  So, convert to 'readonly'.
 			if (ttype == TypeManager.decimal_type) {
 				field_attr |= FieldAttributes.InitOnly;
-				Parent.RegisterFieldForInitialization (this);
+				ParentContainer.RegisterFieldForInitialization (this);
 			}
 			else {
 				field_attr |= FieldAttributes.Literal;

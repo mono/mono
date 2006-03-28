@@ -1745,7 +1745,7 @@ namespace Mono.CSharp {
 		Expression return_type;
 		Parameters parameters;
 
-		public GenericMethod (NamespaceEntry ns, TypeContainer parent, MemberName name,
+		public GenericMethod (NamespaceEntry ns, DeclSpace parent, MemberName name,
 				      Expression return_type, Parameters parameters)
 			: base (ns, parent, name, null)
 		{

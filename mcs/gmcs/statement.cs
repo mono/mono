@@ -1018,9 +1018,9 @@ namespace Mono.CSharp {
 			Location = l;
 		}
 
-		public LocalInfo (TypeContainer tc, Block block, Location l)
+		public LocalInfo (DeclSpace ds, Block block, Location l)
 		{
-			VariableType = tc.TypeBuilder;
+			VariableType = ds.TypeBuilder;
 			Block = block;
 			Location = l;
 		}
@@ -2248,10 +2248,10 @@ namespace Mono.CSharp {
 		//   analysis code to ensure that it's been fully initialized before control
 		//   leaves the constructor.
 		// </summary>
-		public LocalInfo AddThisVariable (TypeContainer tc, Location l)
+		public LocalInfo AddThisVariable (DeclSpace ds, Location l)
 		{
 			if (this_variable == null) {
-				this_variable = new LocalInfo (tc, this, l);
+				this_variable = new LocalInfo (ds, this, l);
 				this_variable.Used = true;
 				this_variable.IsThis = true;
 

@@ -356,16 +356,16 @@ namespace Mono.CSharp {
 		//
 		// Our constructor
 		//
-		public Iterator (IMethodData m_container, TypeContainer container, GenericMethod generic,
+		public Iterator (IMethodData m_container, DeclSpace parent, GenericMethod generic,
 				 int modifiers)
-			: base (container.NamespaceEntry, container,
+			: base (parent.NamespaceEntry, parent,
 				MakeProxyName (m_container.MethodName.Name, generic, m_container.Location),
 				(modifiers & Modifiers.UNSAFE) | Modifiers.PRIVATE, null)
 		{
 			this.orig_method = m_container;
 
 			this.generic_method = generic;
-			this.container = container;
+			this.container = ((TypeContainer) parent).PartialContainer;
 			this.original_parameters = m_container.ParameterInfo;
 			this.original_block = orig_method.Block;
 			this.block = new ToplevelBlock (orig_method.Block, parameters, orig_method.Location);
