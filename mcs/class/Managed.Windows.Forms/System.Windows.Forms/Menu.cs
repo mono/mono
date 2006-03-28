@@ -284,16 +284,8 @@ namespace System.Windows.Forms
 
 			#region Public Properties
 
-			int ICollection.Count {
-				get { return items.Count;}
-			}
-
 			public int Count {
-				get { return items.Count; }
-			}
-
-			bool IList.IsReadOnly {
-				get { return false;}
+				get { return items.Count;}
 			}
 
 			public bool IsReadOnly {
@@ -444,19 +436,9 @@ namespace System.Windows.Forms
 				return items.Contains (value);
 			}
 
-			void ICollection.CopyTo (Array dest, int index)
-			{
-				items.CopyTo (dest, index);
-			}
-
 			public void CopyTo (Array dest, int index)
 			{
 				items.CopyTo (dest, index);
-			}
-
-			IEnumerator IEnumerable.GetEnumerator ()
-			{
-				return items.GetEnumerator ();
 			}
 
 			public IEnumerator GetEnumerator ()

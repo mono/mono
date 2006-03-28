@@ -179,7 +179,7 @@ namespace System.Windows.Forms
 		#endregion // Public Instance Properties
 
 		#region Public Methods
-		object ICloneable.Clone ()
+		public object Clone ()
 		{
 			ColumnHeader columnHeader = new ColumnHeader ();
 			columnHeader.text = text;

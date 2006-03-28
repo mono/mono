@@ -731,15 +731,11 @@ namespace System.Windows.Forms
 
 			#region Public Properties
 			[Browsable (false)]
-			int ICollection.Count {
+			public int Count {
 				get { return list.Count; }
 			}
 
-			internal int Count {
-				get { return list.Count; }
-			}
-
-			bool IList.IsReadOnly {
+			public bool IsReadOnly {
 				get { return false; }
 			}
 
@@ -819,7 +815,7 @@ namespace System.Windows.Forms
 					this.Add (item, foreColor, backColor, font);
 			}
 
-			void IList.Clear ()
+			public void Clear ()
 			{
 				list.Clear ();
 			}
@@ -829,7 +825,7 @@ namespace System.Windows.Forms
 				return list.Contains (item);
 			}
 
-			IEnumerator IEnumerable.GetEnumerator ()
+			public IEnumerator GetEnumerator ()
 			{
 				return list.GetEnumerator ();
 			}
@@ -902,7 +898,7 @@ namespace System.Windows.Forms
 				list.Remove (item);
 			}
 
-			void IList.RemoveAt (int index)
+			public void RemoveAt (int index)
 			{
 				list.RemoveAt (index);
 			}
