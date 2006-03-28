@@ -39,7 +39,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		[SetUp]
 		public void SetUp ()
 		{
-		    binPath = "binPath";
+			binPath = "binPath";
 		}
 
 		[Test]
@@ -129,6 +129,16 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
 			project = new Project (engine);
 			Assert.AreEqual (4, project.GlobalProperties.Count, "A15");
+		}
+
+		[Test]
+		public void TestGlobalEngine ()
+		{
+			engine = new Engine ();
+			Assert.IsFalse (engine == Engine.GlobalEngine, "1");
+			Assert.IsNotNull (Engine.GlobalEngine, "2");
+			engine = Engine.GlobalEngine;
+			Assert.AreSame (engine, Engine.GlobalEngine, "3");
 		}
 	}
 }

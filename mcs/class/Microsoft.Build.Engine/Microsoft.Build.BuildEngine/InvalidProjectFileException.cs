@@ -35,7 +35,6 @@ namespace Microsoft.Build.BuildEngine {
 	[Serializable]
 	public sealed class InvalidProjectFileException : Exception {
 		
-		string	baseMessage;
 		int	columnNumber;
 		int	endColumnNumber;
 		string	errorCode;
@@ -43,19 +42,16 @@ namespace Microsoft.Build.BuildEngine {
 		string	helpKeyword;
 		int	lineNumber;
 		int	endLineNumber;
-		string	message;
 		string	projectFile;
 		
 		public InvalidProjectFileException ()
 			: base ("Invalid project file exception has occured")
 		{
-			this.message = "Invalid project file exception has occured";
 		}
 
 		public InvalidProjectFileException (string message)
 			: base (message)
 		{
-			this.message = message;
 		}
 
 		public InvalidProjectFileException (string projectFile,
@@ -74,7 +70,6 @@ namespace Microsoft.Build.BuildEngine {
 			this.columnNumber = columnNumber;
 			this.endLineNumber = endLineNumber;
 			this.endColumnNumber = endColumnNumber;
-			this.message = message;
 			this.errorSubcategory = errorSubcategory;
 			this.errorCode = errorCode;
 			this.helpKeyword = helpKeyword;
@@ -86,6 +81,8 @@ namespace Microsoft.Build.BuildEngine {
 		{
 		}
 
+		// FIXME: set line/column numbers?
+		[MonoTODO]
 		public InvalidProjectFileException (XmlNode xmlNode,
 						    string message,
 						    string errorSubcategory,
@@ -93,17 +90,28 @@ namespace Microsoft.Build.BuildEngine {
 						    string helpKeyword)
 			: base (message)
 		{
-			this.message = message;
 			this.errorSubcategory = errorSubcategory;
 			this.errorCode = errorCode;
 			this.helpKeyword = helpKeyword;
+		}
+
+		protected InvalidProjectFileException (SerializationInfo info, StreamingContext context)
+			: base (info, context)
+		{
+			this.columnNumber = info.GetInt32 ("ColumnNumber");
+			this.endColumnNumber = info.GetInt32 ("EndColumnNumber");
+			this.errorCode = info.GetString ("ErrorCode");
+			this.errorSubcategory = info.GetString ("ErrorSubcategory");
+			this.helpKeyword = info.GetString ("HelpKeyword");
+			this.lineNumber = info.GetInt32 ("LineNumber");
+			this.endLineNumber = info.GetInt32 ("EndLineNumber");
+			this.projectFile = info.GetString ("ProjectFile");
 		}
 
 		public override void GetObjectData (SerializationInfo info,
 						    StreamingContext context)
 		{
 			base.GetObjectData (info, context);
-			info.AddValue ("BaseMessage", baseMessage);
 			info.AddValue ("ColumnNumber", columnNumber);
 			info.AddValue ("EndColumnNumber", endColumnNumber);
 			info.AddValue ("ErrorCode", errorCode);
@@ -116,7 +124,7 @@ namespace Microsoft.Build.BuildEngine {
 
 		public string BaseMessage {
 			get {
-				return baseMessage;
+				return base.Message;
 			}
 		}
 
@@ -164,7 +172,11 @@ namespace Microsoft.Build.BuildEngine {
 
 		public override string Message {
 			get {
-				return base.Message;
+				if (projectFile == null || projectFile == "") {
+					return BaseMessage;
+				} else {
+					return BaseMessage + "  " + ProjectFile;
+				}
 			}
 		}
 

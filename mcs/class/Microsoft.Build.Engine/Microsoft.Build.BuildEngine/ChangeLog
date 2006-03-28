@@ -1,3 +1,10 @@
+2006-03-29  Crestez Leonard  <cdleonard@gmail.com>
+	
+	* InternalLoggerException.cs, InvalidProjectFileException.cs: Fixed
+	to pass tests. Wrote serialization constructor.
+	* Engine.cs, Project.cs: Global engine and project unloading, test and
+	formatting fixes.
+
 2006-03-28  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* UsingTask.cs: Formatting changes.

@@ -44,7 +44,6 @@ namespace Microsoft.Build.BuildEngine {
 		bool			onlyLogCriticalEvents;
 		IDictionary		projects;
 
-		// FIXME
 		static Engine		globalEngine;
 		static Version		version;
 
@@ -173,14 +172,60 @@ namespace Microsoft.Build.BuildEngine {
 			return result;
 		}
 
+		internal void CheckBinPath ()
+		{
+			if (BinPath == null) {
+				throw new InvalidOperationException("Before a project can be instantiated, " +
+					"Engine.BinPath must be set to the location on disk where MSBuild " + 
+					"is installed. This is used to evaluate $(MSBuildBinPath).");
+			}
+		}
+
 		public Project CreateNewProject ()
 		{
+			CheckBinPath ();
 			return new Project (this);
 		}
 
 		public Project GetLoadedProject (string projectFullFileName)
 		{
+			if (projectFullFileName == null) {
+				throw new ArgumentNullException ("projectFullFileName");
+			}
 			return (Project) projects [projectFullFileName];
+		}
+
+		internal void RemoveLoadedProject (Project p)
+		{
+			if (p.FullFileName != "") {
+				projects.Remove (p.FullFileName);
+			}
+		}
+
+		internal void AddLoadedProject (Project p)
+		{
+			if (p.FullFileName != "") {
+				projects.Add (p.FullFileName, p);
+			}
+		}
+	
+		public void UnloadProject (Project project)
+		{
+			if (project.ParentEngine != this) {
+				throw new InvalidOperationException("This project is not loaded in this engine");
+			}
+			project.CheckUnloaded ();
+			if (project.FullFileName != "") {
+				projects.Remove (project.FullFileName);
+			}
+			project.Unload ();
+		}
+
+		public void UnloadAllProjects ()
+		{
+			foreach (DictionaryEntry e in projects) {
+				UnloadProject ((Project) e.Value);
+			}
 		}
 
 		public void RegisterLogger (ILogger logger)
@@ -191,16 +236,6 @@ namespace Microsoft.Build.BuildEngine {
 			loggers.Add (logger);
 		}
 		
-		[MonoTODO]
-		public void UnloadAllProjects ()
-		{
-		}
-		
-		[MonoTODO]
-		public void UnloadProject (Project project)
-		{
-		}
-
 		public void UnregisterAllLoggers ()
 		{
 			// FIXME: check if build succeeded
@@ -262,7 +297,12 @@ namespace Microsoft.Build.BuildEngine {
 		}
 
 		public static Engine GlobalEngine {
-			get { return globalEngine; }
+			get {
+				if (globalEngine == null) {
+					globalEngine = new Engine ();
+				}
+				return globalEngine;
+			}
 		}
 
 		public BuildPropertyGroup GlobalProperties {

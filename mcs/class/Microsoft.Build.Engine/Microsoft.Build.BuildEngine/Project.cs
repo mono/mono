@@ -44,7 +44,6 @@ namespace Microsoft.Build.BuildEngine {
 		bool				buildEnabled;
 		IDictionary			conditionedProperties;
 		string[]			defaultTargets;
-		IList				directlyImportedProjects;
 		Encoding			encoding;
 		BuildPropertyGroup		environmentProperties;
 		BuildItemGroup			evaluatedItems;
@@ -58,21 +57,18 @@ namespace Microsoft.Build.BuildEngine {
 		GroupingCollection		groups;
 		bool				isDirty;
 		bool				isValidated;
-		bool				isReset;
 		BuildItemGroupCollection	itemGroups;
-		IDictionary			importedProjects;
 		ImportCollection		imports;
 		string				initialTargets;
 		Engine				parentEngine;
 		BuildPropertyGroupCollection	propertyGroups;
-		BuildPropertyGroup		reservedProperties;
 		string				schemaFile;
 		TaskDatabase			taskDatabase;
 		TargetCollection		targets;
 		DateTime			timeOfLastDirty;
 		UsingTaskCollection		usingTasks;
 		XmlDocument			xmlDocument;
-		//XmlElement			xmlElement;
+		bool				unloaded;
 
 		public Project ()
 			: this (Engine.GlobalEngine)
@@ -91,6 +87,7 @@ namespace Microsoft.Build.BuildEngine {
 			targets = new TargetCollection (this);
 			taskDatabase = new TaskDatabase ();
 			globalProperties = new BuildPropertyGroup ();
+			fullFileName = String.Empty;
 
 			foreach (BuildProperty bp in parentEngine.GlobalProperties) {
 				GlobalProperties.AddProperty (bp.Clone (true));
@@ -183,6 +180,7 @@ namespace Microsoft.Build.BuildEngine {
 				   BuildSettings buildFlags)
 		
 		{
+			CheckUnloaded ();
 			if (targetNames.Length == 0) {
 				if (defaultTargets.Length != 0) {
 					targetNames = defaultTargets;
@@ -235,6 +233,8 @@ namespace Microsoft.Build.BuildEngine {
 		// Does the actual loading.
 		private void DoLoad (TextReader textReader)
 		{
+			ParentEngine.RemoveLoadedProject (this);
+
 			XmlReaderSettings settings = new XmlReaderSettings ();
 
 			if (SchemaFile != null) {
@@ -245,7 +245,16 @@ namespace Microsoft.Build.BuildEngine {
 
 			XmlReader xmlReader = XmlReader.Create (textReader, settings);
 			xmlDocument.Load (xmlReader);
+
+			if (xmlDocument.DocumentElement.GetAttribute("xmlns") != "http://schemas.microsoft.com/developer/msbuild/2003") {
+				throw new InvalidProjectFileException(
+					@"The default XML namespace of the project must be the MSBuild XML namespace." + 
+					" If the project is authored in the MSBuild 2003 format, please add " +
+					"xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\" to the <Project> element. " +
+					"If the project has been authored in the old 1.0 or 1.2 format, please convert it to MSBuild 2003 format.  ");
+			}
 			ProcessXml ();
+			ParentEngine.AddLoadedProject (this);
 		}
 
 		public void Load (string projectFileName)
@@ -267,6 +276,18 @@ namespace Microsoft.Build.BuildEngine {
 			DoLoad (new StringReader (projectXml));
 		}
 
+		internal void Unload ()
+		{
+			unloaded = true;
+		}
+
+		internal void CheckUnloaded ()
+		{
+			if (unloaded) {
+				throw new InvalidOperationException("This project object is no longer valid.");
+			}
+		}
+
 		private void ProcessXml ()
 		{
 			XmlElement xmlElement = xmlDocument.DocumentElement;
@@ -280,7 +301,7 @@ namespace Microsoft.Build.BuildEngine {
 			ProcessElements (xmlElement, null);
 			
 			isDirty = false;
-			Evaluate();
+			Evaluate ();
 		}
 
 		private void InitializeProperties ()
@@ -559,7 +580,7 @@ namespace Microsoft.Build.BuildEngine {
 				throw new ArgumentNullException ("xmlElement");
 			BuildItemGroup big = new BuildItemGroup (xmlElement, this);
 			ItemGroups.Add (big);
-			big.Evaluate();
+			big.Evaluate ();
 		}
 		
 		private void AddPropertyGroup (XmlElement xmlElement)
@@ -568,7 +589,7 @@ namespace Microsoft.Build.BuildEngine {
 				throw new ArgumentNullException ("xmlElement");
 			BuildPropertyGroup bpg = new BuildPropertyGroup (xmlElement, this);
 			PropertyGroups.Add (bpg);
-			bpg.Evaluate();
+			bpg.Evaluate ();
 		}
 		
 		private void AddChoose (XmlElement xmlElement)

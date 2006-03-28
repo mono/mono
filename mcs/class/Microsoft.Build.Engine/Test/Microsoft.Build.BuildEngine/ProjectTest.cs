@@ -84,13 +84,14 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			
 			engine = new Engine (binPath);
 			proj = engine.CreateNewProject ();
+			Assert.AreEqual (String.Empty, proj.FullFileName, "A1");
+
 			proj.LoadXml (documentString);
-			
-			Assert.AreEqual ("Build; Compile", proj.DefaultTargets, "A1");
+			Assert.AreEqual (String.Empty, proj.FullFileName, "A2");
 			proj.DefaultTargets = "Build";
-			Assert.AreEqual ("Build", proj.DefaultTargets, "A2");
+			Assert.AreEqual ("Build", proj.DefaultTargets, "A3");
 			cproj = CloneProject (proj);
-			Assert.AreEqual (proj.DefaultTargets, cproj.DefaultTargets, "A3");
+			Assert.AreEqual (proj.DefaultTargets, cproj.DefaultTargets, "A4");
 		}
 
 		[Test]
@@ -135,11 +136,11 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		[Test]
 		public void TestItems ()
 		{
-			Engine engine = new Engine ();
+			Engine engine = new Engine (binPath);
 			Project proj = engine.CreateNewProject ();
 
 			string documentString = @"
-				<Project>
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<ItemGroup>
 						<Item0 Include=""A"" />
 						<Item1 Include=""A;B;C"" />

@@ -40,19 +40,29 @@ namespace Microsoft.Build.BuildEngine {
 		string		helpKeyword;
 		
 		public InternalLoggerException ()
-			: base ("Internal logger exception has occured.")
 		{
+			throw new System.InvalidOperationException(
+				"An InternalLoggerException can only be thrown by the MSBuild engine. " +
+				"The public constructors of this class cannot be used to create an " +
+				"instance of the exception.");
 		}
 
 		public InternalLoggerException (string message)
-			: base (message)
+			: this ()
 		{
 		}
 
-		public InternalLoggerException (string message,
-						Exception innerException)
-			: base (message, innerException)
+		public InternalLoggerException (string message,	Exception innerException)
+			: this ()
 		{
+		}
+
+		protected InternalLoggerException (SerializationInfo info, StreamingContext context)
+			: base (info, context)
+		{
+			buildEventArgs = (BuildEventArgs) info.GetValue("BuildEventArgs", typeof(BuildEventArgs));
+			errorCode = info.GetString("ErrorCode");
+			helpKeyword = info.GetString("HelpKeywordPrefix");
 		}
 
 		public override void GetObjectData (SerializationInfo info,
