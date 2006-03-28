@@ -71,9 +71,8 @@
 #define MONO_IS_COND_BRANCH_OP(ins) (((ins)->opcode >= CEE_BEQ && (ins)->opcode <= CEE_BLT_UN) || ((ins)->opcode >= OP_LBEQ && (ins)->opcode <= OP_LBLT_UN) || ((ins)->opcode >= OP_FBEQ && (ins)->opcode <= OP_FBLT_UN) || ((ins)->opcode >= OP_IBEQ && (ins)->opcode <= OP_IBLT_UN))
 #define MONO_IS_COND_BRANCH_NOFP(ins) (MONO_IS_COND_BRANCH_OP(ins) && (ins)->inst_left->inst_left->type != STACK_R8)
 
-/* FIXME: What is this ? */
-#define MONO_CHECK_THIS(ins) FALSE
-//#define MONO_CHECK_THIS(ins) (mono_method_signature (cfg->method)->hasthis && (ins)->ssa_op == MONO_SSA_LOAD && (ins)->inst_left->inst_c0 == 0)
+/* Determine whenever 'ins' represents a load of the 'this' argument */
+#define MONO_CHECK_THIS(ins) (mono_method_signature (cfg->method)->hasthis && ((ins)->opcode == OP_MOVE) && ((ins)->sreg1 == cfg->args [0]->dreg))
 
 #define NOT_IMPLEMENTED g_assert_not_reached ()
 
@@ -210,71 +209,11 @@ mono_alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 }
 
 static guint
-mono_type_to_regstore (MonoType *type)
+mono_type_to_regmove (MonoType *type)
 {
 	if (type->byref)
 		return OP_MOVE;
 
-	/* FIXME: Handle truncation */
-handle_enum:
-	switch (type->type) {
-	case MONO_TYPE_I1:
-	case MONO_TYPE_U1:
-	case MONO_TYPE_BOOLEAN:
-		return OP_MOVE;
-	case MONO_TYPE_I2:
-	case MONO_TYPE_U2:
-	case MONO_TYPE_CHAR:
-		return OP_MOVE;
-	case MONO_TYPE_I4:
-	case MONO_TYPE_U4:
-		return OP_MOVE;
-	case MONO_TYPE_I:
-	case MONO_TYPE_U:
-	case MONO_TYPE_PTR:
-	case MONO_TYPE_FNPTR:
-		return OP_MOVE;
-	case MONO_TYPE_CLASS:
-	case MONO_TYPE_STRING:
-	case MONO_TYPE_OBJECT:
-	case MONO_TYPE_SZARRAY:
-	case MONO_TYPE_ARRAY:    
-		return OP_MOVE;
-	case MONO_TYPE_I8:
-	case MONO_TYPE_U8:
-#if SIZEOF_VOID_P == 8
-		return OP_MOVE;
-#else
-		return OP_LMOVE;
-#endif
-	case MONO_TYPE_R4:
-		return OP_FMOVE;
-	case MONO_TYPE_R8:
-		return OP_FMOVE;
-	case MONO_TYPE_VALUETYPE:
-		if (type->data.klass->enumtype) {
-			type = type->data.klass->enum_basetype;
-			goto handle_enum;
-		}
-		return OP_VMOVE;
-	case MONO_TYPE_TYPEDBYREF:
-		return OP_VMOVE;
-	case MONO_TYPE_GENERICINST:
-		type = &type->data.generic_class->container_class->byval_arg;
-		goto handle_enum;
-	default:
-		g_error ("unknown type 0x%02x in type_to_regstore", type->type);
-	}
-	return -1;
-}
-
-static guint
-mono_type_to_regload (MonoType *type)
-{
-	if (type->byref)
-		return OP_MOVE;
-
-	/* FIXME: Handle widening */
 handle_enum:
 	switch (type->type) {
 	case MONO_TYPE_I1:
@@ -542,7 +481,7 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 
 #define NEW_VARLOAD(cfg,dest,var,vartype) do { \
         MONO_INST_NEW ((cfg), (dest), OP_MOVE); \
-		(dest)->opcode = mono_type_to_regload ((vartype));  \
+		(dest)->opcode = mono_type_to_regmove ((vartype));  \
 		(dest)->ssa_op = MONO_SSA_LOAD;	\
 		type_to_eval_stack_type ((vartype), (dest));	\
 		(dest)->klass = var->klass;	\
@@ -563,7 +502,7 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 
 #define NEW_VARSTORE(cfg,dest,var,vartype,inst) do {	\
         MONO_INST_NEW ((cfg), (dest), OP_MOVE); \
-		(dest)->opcode = mono_type_to_regstore ((vartype));    \
+		(dest)->opcode = mono_type_to_regmove ((vartype));    \
 		(dest)->ssa_op = MONO_SSA_STORE;	\
 		(dest)->klass = (var)->klass;	\
         (dest)->sreg1 = (inst)->dreg; \
@@ -877,12 +816,24 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 	    (cfg)->cbb = (bblock); \
     } while (0)
 
+#if defined(__i386__) || defined(__x86__64)
+#define MONO_EMIT_BOUNDS_CHECK(cfg, array_reg, array_type, array_length_field, index_reg) do { \
+            MonoInst *ins; \
+            MONO_INST_NEW ((cfg), ins, OP_X86_COMPARE_MEMBASE_REG); \
+            ins->inst_basereg = array_reg; \
+            ins->inst_offset = G_STRUCT_OFFSET (array_type, array_length_field); \
+            ins->sreg2 = index_reg; \
+            MONO_ADD_INS ((cfg)->cbb, ins); \
+			MONO_EMIT_NEW_COND_EXC (cfg, LE_UN, "IndexOutOfRangeException"); \
+	} while (0)
+#else
 #define MONO_EMIT_BOUNDS_CHECK(cfg, array_reg, array_type, array_length_field, index_reg) do { \
 			int _length_reg = alloc_ireg (cfg); \
 			MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADI4_MEMBASE, _length_reg, array_reg, G_STRUCT_OFFSET (array_type, array_length_field)); \
 			MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, _length_reg, index_reg); \
 			MONO_EMIT_NEW_COND_EXC (cfg, LE_UN, "IndexOutOfRangeException"); \
 	} while (0)
+#endif
 
 #define ADD_BINOP(op) do {	\
 		MONO_INST_NEW (cfg, ins, (op));	\
@@ -3845,6 +3796,15 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			MONO_ADD_INS (cfg->cbb, ins);
 			return ins;
 		}
+	} else if (mini_class_is_system_array (cmethod->klass) &&
+			strcmp (cmethod->name, "GetGenericValueImpl") == 0) {
+		MonoInst *addr, *store, *load;
+		MonoClass *eklass = mono_class_from_mono_type (fsig->params [1]);
+
+		addr = mini_emit_ldelema_1_ins (cfg, eklass, args [0], args [1]);
+		EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, load, &eklass->byval_arg, addr->dreg, 0);
+		EMIT_NEW_STORE_MEMBASE_TYPE (cfg, store, &eklass->byval_arg, args [2]->dreg, 0, load->dreg);
+		return store;
 	}
 
 	return mono_arch_emit_inst_for_method (cfg, cmethod, fsig, args);
@@ -3886,7 +3846,7 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 	MonoBasicBlock *ebblock, *sbblock;
 	int i, costs;
 	MonoMethod *prev_inlined_method;
-	MonoInst **prev_locals;
+	MonoInst **prev_locals, **prev_args;
 	guint prev_real_offset;
 	GHashTable *prev_cbb_hash;
 	MonoBasicBlock *prev_cbb;
@@ -3909,6 +3869,8 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 	cfg->locals = mono_mempool_alloc0 (cfg->mempool, cheader->num_locals * sizeof (MonoInst*));	
 	for (i = 0; i < cheader->num_locals; ++i)
 		cfg->locals [i] = mono_compile_create_var (cfg, cheader->locals [i], OP_LOCAL);
+
+	prev_args = cfg->args;
 	
 	/* allocate start and end blocks */
 	/* This is needed so if the inline is aborted, we can clean up */
@@ -3931,6 +3893,7 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 	cfg->real_offset = prev_real_offset;
 	cfg->cbb_hash = prev_cbb_hash;
 	cfg->locals = prev_locals;
+	cfg->args = prev_args;
 
 	if ((costs >= 0 && costs < 60) || inline_allways) {
 		if (cfg->verbose_level > 2)
@@ -5093,100 +5056,7 @@ mono_decompose_long_opts (MonoCompile *cfg)
 			if (cfg->cbb->code || (cfg->cbb != first_bb)) {
 				/* Replace the original instruction with the new code sequence */
 
-				if (cfg->cbb == first_bb) {
-					int i;
-
-					/* 
-					 * Only one replacement bb, merge the code into
-					 * the current bb.
-					 */
-
-					/* Delete links between the first_bb and its successors */
-					for (i = 0; i < first_bb->out_count; ++i) {
-						MonoBasicBlock *out_bb = first_bb->out_bb [i];
-
-						mono_unlink_bblock (cfg, first_bb, out_bb);
-					}
-
-					/* Head */
-					if (prev)
-						prev->next = first_bb->code;
-					else
-						bb->code = first_bb->code;
-
-					/* Tail */
-					cfg->cbb->last_ins->next = tree->next;
-					if (tree->next == NULL)
-						bb->last_ins = cfg->cbb->last_ins;
-					prev = cfg->cbb->last_ins;
-				}
-				else {
-					int i, count;
-					MonoInst *next = tree->next;
-					MonoBasicBlock **tmp_bblocks, *tmp;
-
-					if (next && next->opcode == OP_NOP)
-						/* Avoid NOPs following branches */
-						next = next->next;
-
-					/* Multiple BBs */
-
-					/* Set region */
-					for (tmp = first_bb; tmp; tmp = tmp->next_bb)
-						tmp->region = bb->region;
-
-					/* Split the original bb */
-					tree->next = NULL;
-					bb->last_ins = tree;
-
-					/* Merge the second part of the original bb into the last bb */
-					if (cfg->cbb->last_ins)
-						cfg->cbb->last_ins->next = next;
-					else {
-						MonoInst *last;
-
-						cfg->cbb->code = next;
-
-						if (next) {
-							for (last = next; last->next != NULL; last = last->next)
-								;
-							cfg->cbb->last_ins = last;
-						}
-					}
-
-					for (i = 0; i < bb->out_count; ++i)
-						link_bblock (cfg, cfg->cbb, bb->out_bb [i]);
-
-					/* Merge the first (dummy) bb to the original bb */
-					if (prev)
-						prev->next = first_bb->code;
-					else
-						bb->code = first_bb->code;
-					bb->last_ins = first_bb->last_ins;
-
-					/* Delete the links between the original bb and its successors */
-					tmp_bblocks = bb->out_bb;
-					count = bb->out_count;
-					for (i = 0; i < count; ++i)
-						mono_unlink_bblock (cfg, bb, tmp_bblocks [i]);
-
-					/* Add links between the original bb and the first_bb's successors */
-					for (i = 0; i < first_bb->out_count; ++i) {
-						MonoBasicBlock *out_bb = first_bb->out_bb [i];
-
-						link_bblock (cfg, bb, out_bb);
-					}
-					/* Delete links between the first_bb and its successors */
-					for (i = 0; i < bb->out_count; ++i) {
-						MonoBasicBlock *out_bb = bb->out_bb [i];
-
-						mono_unlink_bblock (cfg, first_bb, out_bb);
-					}
-					cfg->cbb->next_bb = bb->next_bb;
-					bb->next_bb = first_bb->next_bb;
-
-					prev = NULL;
-				}
+				mono_replace_ins (cfg, bb, tree, &prev, first_bb, cfg->cbb);
 
 				first_bb->code = first_bb->last_ins = NULL;
 				first_bb->in_count = first_bb->out_count = 0;
@@ -5323,101 +5193,7 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 			if (cfg->cbb->code || (cfg->cbb != first_bb)) {
 				/* Replace the original instruction with the new code sequence */
 
-				if (cfg->cbb == first_bb) {
-					int i;
-
-					/* 
-					 * Only one replacement bb, merge the code into
-					 * the current bb.
-					 */
-
-					/* Delete links between the first_bb and its successors */
-					for (i = 0; i < first_bb->out_count; ++i) {
-						MonoBasicBlock *out_bb = first_bb->out_bb [i];
-
-						mono_unlink_bblock (cfg, first_bb, out_bb);
-					}
-
-					/* Head */
-					if (prev)
-						prev->next = first_bb->code;
-					else
-						bb->code = first_bb->code;
-
-					/* Tail */
-					cfg->cbb->last_ins->next = ins->next;
-					if (ins->next == NULL)
-						bb->last_ins = cfg->cbb->last_ins;
-					prev = cfg->cbb->last_ins;
-				}
-				else {
-					int i, count;
-					MonoInst *next = ins->next;
-					MonoBasicBlock **tmp_bblocks, *tmp;
-
-					if (next && next->opcode == OP_NOP)
-						/* Avoid NOPs following branches */
-						next = next->next;
-
-					/* Multiple BBs */
-
-					/* Set region */
-					for (tmp = first_bb; tmp; tmp = tmp->next_bb)
-						tmp->region = bb->region;
-
-					/* Split the original bb */
-					ins->next = NULL;
-					bb->last_ins = ins;
-
-					/* Merge the second part of the original bb into the last bb */
-					if (cfg->cbb->last_ins)
-						cfg->cbb->last_ins->next = next;
-					else {
-						MonoInst *last;
-
-						cfg->cbb->code = next;
-
-						if (next) {
-							for (last = next; last->next != NULL; last = last->next)
-								;
-							cfg->cbb->last_ins = last;
-						}
-					}
-
-					for (i = 0; i < bb->out_count; ++i)
-						link_bblock (cfg, cfg->cbb, bb->out_bb [i]);
-
-					/* Merge the first (dummy) bb to the original bb */
-					if (prev)
-						prev->next = first_bb->code;
-					else
-						bb->code = first_bb->code;
-					bb->last_ins = first_bb->last_ins;
-
-					/* Delete the links between the original bb and its successors */
-					tmp_bblocks = bb->out_bb;
-					count = bb->out_count;
-					for (i = 0; i < count; ++i)
-						mono_unlink_bblock (cfg, bb, tmp_bblocks [i]);
-
-					/* Add links between the original bb and the first_bb's successors */
-					for (i = 0; i < first_bb->out_count; ++i) {
-						MonoBasicBlock *out_bb = first_bb->out_bb [i];
-
-						link_bblock (cfg, bb, out_bb);
-					}
-					/* Delete links between the first_bb and its successors */
-					for (i = 0; i < bb->out_count; ++i) {
-						MonoBasicBlock *out_bb = bb->out_bb [i];
-
-						mono_unlink_bblock (cfg, first_bb, out_bb);
-					}
-					cfg->cbb->next_bb = bb->next_bb;
-					bb->next_bb = first_bb->next_bb;
-
-					prev = NULL;
-				}
-
+				mono_replace_ins (cfg, bb, ins, &prev, first_bb, cfg->cbb);
 				first_bb->code = first_bb->last_ins = NULL;
 				first_bb->in_count = first_bb->out_count = 0;
 				cfg->cbb = first_bb;
@@ -5853,7 +5629,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			if (!dont_verify_stloc && target_type_is_incompatible (cfg, header->locals [n], *sp))
 				UNVERIFIED;
 
-			opcode = mono_type_to_regstore (header->locals [n]);
+			opcode = mono_type_to_regmove (header->locals [n]);
 			if ((opcode == OP_MOVE) && ((sp [0]->opcode == OP_ICONST) || (sp [0]->opcode == OP_I8CONST))) {
 				/* Optimize reg-reg moves away */
 				/* 
@@ -6968,14 +6744,14 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			if ((loc_index != -1) && ip_in_bb (cfg, bblock, ip + 5)) {
 				CHECK_LOCAL (loc_index);
 
-				EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOADV_MEMBASE, cfg->locals [loc_index]->dreg, sp [0]->dreg, 0);
-				ins->klass = klass;
+				EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, ins, &klass->byval_arg, sp [0]->dreg, 0);
+				ins->dreg = cfg->locals [loc_index]->dreg;
 				ip += 5;
 				ip += stloc_len;
 				break;
 			}
 
-			EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, ins, &klass->byval_arg, sp[0]->dreg, 0);
+			EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, ins, &klass->byval_arg, sp [0]->dreg, 0);
 			*sp++ = ins;
 
 			ip += 5;
@@ -7345,7 +7121,11 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				goto load_error;
 
 			if (mono_class_is_nullable (klass)) {
-				ins = handle_unbox_nullable (cfg, *sp, ip, klass);
+				MonoInst *val;
+
+				val = handle_unbox_nullable (cfg, *sp, ip, klass);
+				EMIT_NEW_VARLOADA (cfg, ins, val, &val->klass->byval_arg);
+
 				*sp++= ins;
 			} else {
 				ins = handle_unbox (cfg, klass, sp, ip);
@@ -7772,11 +7552,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 		case CEE_LDELEM_R4:
 		case CEE_LDELEM_R8:
 		case CEE_LDELEM_REF: {
-			guint32 size;
-			int mult_reg, add_reg, array_reg, index_reg;
-
-			/* FIXME: Add back the LDELEMA(reg,OP_ICONST) optimization */
-			/* FIXME: Add arch specific optimizations */
+			MonoInst *addr;
 
 			CHECK_STACK (2);
 			sp -= 2;
@@ -7795,18 +7571,17 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			if (sp [0]->type != STACK_OBJ)
 				UNVERIFIED;
 
-			size = mono_class_array_element_size (klass);
+			if (sp [1]->opcode == OP_ICONST) {
+				int array_reg = sp [0]->dreg;
+				int index_reg = sp [1]->dreg;
+				int offset = (mono_class_array_element_size (klass) * sp [1]->inst_c0) + G_STRUCT_OFFSET (MonoArray, vector);
 
-			mult_reg = alloc_preg (cfg);
-			add_reg = alloc_preg (cfg);
-			array_reg = sp [0]->dreg;
-			index_reg = sp [1]->dreg;
-
-			MONO_EMIT_BOUNDS_CHECK (cfg, array_reg, MonoArray, max_length, index_reg);
-			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_MUL_IMM, mult_reg, index_reg, size);
-			MONO_EMIT_NEW_BIALU (cfg, OP_PADD, add_reg, array_reg, mult_reg);
-
-			EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, ins, &klass->byval_arg, add_reg, G_STRUCT_OFFSET (MonoArray, vector));
+				MONO_EMIT_BOUNDS_CHECK (cfg, array_reg, MonoArray, max_length, index_reg);
+				EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, ins, &klass->byval_arg, array_reg, offset);
+			} else {
+				addr = mini_emit_ldelema_1_ins (cfg, klass, sp [0], sp [1]);
+				EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, ins, &klass->byval_arg, addr->dreg, 0);
+			}
 			*sp++ = ins;
 			if (*ip == CEE_LDELEM_ANY)
 				ip += 5;
@@ -7823,8 +7598,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 		case CEE_STELEM_R8:
 		case CEE_STELEM_REF:
 		case CEE_STELEM_ANY: {
-			guint32 size;
-			int mult_reg, add_reg, array_reg, index_reg, val_reg;
+			MonoInst *addr;
 
 			CHECK_STACK (3);
 			sp -= 3;
@@ -7858,22 +7632,17 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				
 				mono_emit_method_call (cfg, helper, mono_method_signature (helper), iargs, ip, NULL);
 			} else {
-				size = mono_class_array_element_size (klass);
+				if (sp [1]->opcode == OP_ICONST) {
+					int array_reg = sp [0]->dreg;
+					int index_reg = sp [1]->dreg;
+					int offset = (mono_class_array_element_size (klass) * sp [1]->inst_c0) + G_STRUCT_OFFSET (MonoArray, vector);
 
-				/* FIXME: Add back the LDELEMA(reg,OP_ICONST) optimization */
-				/* FIXME: Add arch specific optimizations */
-
-				mult_reg = alloc_preg (cfg);
-				add_reg = alloc_preg (cfg);
-				array_reg = sp [0]->dreg;
-				index_reg = sp [1]->dreg;
-				val_reg = sp [2]->dreg;
-
-				MONO_EMIT_BOUNDS_CHECK (cfg, array_reg, MonoArray, max_length, index_reg);
-				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_MUL_IMM, mult_reg, index_reg, size);
-				MONO_EMIT_NEW_BIALU (cfg, OP_PADD, add_reg, array_reg, mult_reg);
-
-				EMIT_NEW_STORE_MEMBASE_TYPE (cfg, ins, &klass->byval_arg, add_reg, G_STRUCT_OFFSET (MonoArray, vector), val_reg);
+					MONO_EMIT_BOUNDS_CHECK (cfg, array_reg, MonoArray, max_length, index_reg);
+					EMIT_NEW_STORE_MEMBASE_TYPE (cfg, ins, &klass->byval_arg, array_reg, offset, sp [2]->dreg);
+				} else {
+					addr = mini_emit_ldelema_1_ins (cfg, klass, sp [0], sp [1]);
+					EMIT_NEW_STORE_MEMBASE_TYPE (cfg, ins, &klass->byval_arg, addr->dreg, 0, sp [2]->dreg);
+				}
 			}
 
 			if (*ip == CEE_STELEM_ANY)
@@ -8728,7 +8497,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			}
 			case CEE_REFANYTYPE: {
 				MonoInst *src_var, *src;
-				int dreg = alloc_preg (cfg);
 
 				CHECK_STACK (1);
 				--sp;
@@ -8738,9 +8506,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				if (!src_var)
 					src_var = mono_compile_create_var_for_vreg (cfg, &mono_defaults.typed_reference_class->byval_arg, OP_LOCAL, sp [0]->dreg);
 				EMIT_NEW_VARLOADA (cfg, src, src_var, src_var->inst_vtype);
-				EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOADV_MEMBASE, dreg, src->dreg, G_STRUCT_OFFSET (MonoTypedRef, type));
-				ins->type = STACK_VTYPE;
-				ins->klass = mono_defaults.typehandle_class;
+				EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, ins, &mono_defaults.typed_reference_class->byval_arg, src->dreg, G_STRUCT_OFFSET (MonoTypedRef, type));
 				*sp++ = ins;
 				ip += 2;
 				break;
@@ -8976,6 +8742,8 @@ mono_op_to_op_imm (int opcode)
 		return OP_STOREI4_MEMBASE_IMM;
 	case OP_X86_PUSH:
 		return OP_X86_PUSH_IMM;
+	case OP_X86_COMPARE_MEMBASE_REG:
+		return OP_X86_COMPARE_MEMBASE_IMM;
 
 	case OP_VOIDCALL_REG:
 		return OP_VOIDCALL;
@@ -9658,10 +9426,8 @@ mono_spill_global_vars (MonoCompile *cfg)
 
 /**
  * FIXME:
- * - use NEW/EMIT macros correctly
  * - use 'iadd' instead of 'int_add'
  * - handling ovf opcodes: decompose in method_to_ir.
- * - unify to_regstore/to_regload as to_regmove
  * - unify iregs/fregs
  *   -> partly done, the missing parts are:
  *   - a more complete unification would involve unifying the hregs as well, so
@@ -9670,13 +9436,10 @@ mono_spill_global_vars (MonoCompile *cfg)
  *     be modified. Also, on ia64 for example, niregs + nfregs > 256 -> bitmasks
  *     wouldn't work any more.
  * - use sext/zext opcodes instead of shifts
- * - simplify the emitting of calls
  * - add OP_ICALL
  * - get rid of TEMPLOADs if possible and use vregs instead
  * - clean up/automatize setting of ins->cil_code
  * - clean up usage of OP_P/OP_ opcodes
- * - cleanup calls. especially the spill stuff
- * - handle the emit ins + need it/its dreg pattern
  * - cleanup usage of DUMMY_USE
  * - cleanup the setting of ins->type for MonoInst's which are pushed on the 
  *   stack
@@ -9690,7 +9453,6 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   - most back ends unify fp compare+branch, fp compare+ceq
  * - integrate handle_stack_args into inline_method
  * - use sreg2 for destbasereg since it is not really a dreg
- * - cleanup creation of branches+bblocks in opcode decomposition
  * - get rid of the empty bblocks created by MONO_EMIT_NEW_BRACH_BLOCK2
  * - Things to backport to the old JIT:
  *   - op_atomic_exchange fix for amd64
@@ -9731,10 +9493,8 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - run a global->local phase after SSA ?
  * - promote RuntimeXHandles to vregs
  * - apply the HAVE_ARRAY_ELEM_INIT optimization to ins_info
- * - merge GetGenericValueImpl optimization
  * - vtype cleanups:
  *   - add a NEW_VARLOADA_VREG macro
- *   - refactor the replacemenent code from the decompose_x_opts () functions
  * - the vtype optimizations are blocked by the LDADDR opcodes generated for 
  *   accessing vtype fields and passing/receiving them in calls.
  * - in the managed->native wrappers, place a pop before the call to interrupt_checkpoint
@@ -9748,7 +9508,6 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - call cctors outside the JIT, to make -v output more readable and JIT timings more
  *   meaningful.
  * - check for fp stack leakage in other opcodes too. (-> 'exceptions' optimization)
- * - slowdown of SciMark with the new JIT
  * - LAST MERGE: 58239.
  */
 

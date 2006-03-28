@@ -2058,6 +2058,111 @@ mono_add_ins_to_end (MonoBasicBlock *bb, MonoInst *inst)
 	}
 }
 
+/**
+ * mono_replace_ins:
+ *
+ *   Replace INS with its decomposition which is stored in a series of bblocks starting
+ * at FIRST_BB and ending at LAST_BB. On enter, PREV points to the predecessor of INS. 
+ * On return, it will be set to the last ins of the decomposition.
+ */
+void
+mono_replace_ins (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, MonoInst **prev, MonoBasicBlock *first_bb, MonoBasicBlock *last_bb)
+{
+	if (first_bb == last_bb) {
+		int i;
+
+		/* 
+		 * Only one replacement bb, merge the code into
+		 * the current bb.
+		 */
+
+		/* Delete links between the first_bb and its successors */
+		for (i = 0; i < first_bb->out_count; ++i) {
+			MonoBasicBlock *out_bb = first_bb->out_bb [i];
+
+			mono_unlink_bblock (cfg, first_bb, out_bb);
+		}
+
+		/* Head */
+		if (*prev)
+			(*prev)->next = first_bb->code;
+		else
+			bb->code = first_bb->code;
+
+		/* Tail */
+		cfg->cbb->last_ins->next = ins->next;
+		if (ins->next == NULL)
+			bb->last_ins = cfg->cbb->last_ins;
+		*prev = cfg->cbb->last_ins;
+	} else {
+		int i, count;
+		MonoInst *next = ins->next;
+		MonoBasicBlock **tmp_bblocks, *tmp;
+
+		if (next && next->opcode == OP_NOP)
+			/* Avoid NOPs following branches */
+			next = next->next;
+
+		/* Multiple BBs */
+
+		/* Set region */
+		for (tmp = first_bb; tmp; tmp = tmp->next_bb)
+			tmp->region = bb->region;
+
+		/* Split the original bb */
+		ins->next = NULL;
+		bb->last_ins = ins;
+
+		/* Merge the second part of the original bb into the last bb */
+		if (cfg->cbb->last_ins)
+			cfg->cbb->last_ins->next = next;
+		else {
+			MonoInst *last;
+
+			cfg->cbb->code = next;
+
+			if (next) {
+				for (last = next; last->next != NULL; last = last->next)
+					;
+				cfg->cbb->last_ins = last;
+			}
+		}
+
+		for (i = 0; i < bb->out_count; ++i)
+			link_bblock (cfg, cfg->cbb, bb->out_bb [i]);
+
+		/* Merge the first (dummy) bb to the original bb */
+		if (*prev)
+			(*prev)->next = first_bb->code;
+		else
+			bb->code = first_bb->code;
+		bb->last_ins = first_bb->last_ins;
+
+		/* Delete the links between the original bb and its successors */
+		tmp_bblocks = bb->out_bb;
+		count = bb->out_count;
+		for (i = 0; i < count; ++i)
+			mono_unlink_bblock (cfg, bb, tmp_bblocks [i]);
+
+		/* Add links between the original bb and the first_bb's successors */
+		for (i = 0; i < first_bb->out_count; ++i) {
+			MonoBasicBlock *out_bb = first_bb->out_bb [i];
+
+			link_bblock (cfg, bb, out_bb);
+		}
+		/* Delete links between the first_bb and its successors */
+		for (i = 0; i < bb->out_count; ++i) {
+			MonoBasicBlock *out_bb = bb->out_bb [i];
+
+			mono_unlink_bblock (cfg, first_bb, out_bb);
+		}
+		cfg->cbb->next_bb = bb->next_bb;
+		bb->next_bb = first_bb->next_bb;
+
+		*prev = NULL;
+	}
+}
+
 void
 mono_add_varcopy_to_end (MonoCompile *cfg, MonoBasicBlock *bb, int src, int dest)
 {
