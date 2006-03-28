@@ -137,11 +137,11 @@ namespace System.Collections.ObjectModel
 			list.RemoveAt (index);
 		}
 
-		public virtual int Count {
+		public int Count {
 			get { return list.Count; }
 		}
 
-		public virtual T this [int index] {
+		public T this [int index] {
 			get { return list [index]; }
 			set { SetItem (index, value); }
 		}

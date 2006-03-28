@@ -1,3 +1,7 @@
+2006-03-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Collection.cs : Count and Item are not virtual.
+
 2006-01-24  Raja R Harinath  <rharinath@novell.com>
 
 	* ReadOnlyCollection.cs (Items): Return underlying list.
