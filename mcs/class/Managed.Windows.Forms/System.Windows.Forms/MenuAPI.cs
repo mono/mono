@@ -119,7 +119,7 @@ namespace System.Windows.Forms {
 		{
 			MenuItem item = GetItemAtXY (args.X, args.Y);
 
-			if (item == null || (active && (item.Parent is MainMenu))) {
+			if (item == null || (active && item.IsPopup && (item.Parent is MainMenu))) {
 				Deactivate ();
 				return;
 			}
