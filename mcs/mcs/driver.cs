@@ -1972,6 +1972,8 @@ namespace Mono.CSharp
 			RootNamespace.Reset ();
 			NamespaceEntry.Reset ();
 			CodeGen.Reset ();
+			Attribute.Reset ();
+			AttributeTester.Reset ();
 		}
 	}
 }

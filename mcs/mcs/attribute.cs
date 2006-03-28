@@ -105,10 +105,9 @@ namespace Mono.CSharp {
 		object [] prop_values_arr;
 		object [] pos_values;
 
-		static PtrHashtable usage_attr_cache = new PtrHashtable ();
-
+		static PtrHashtable usage_attr_cache;
 		// Cache for parameter-less attributes
-		static PtrHashtable att_cache = new PtrHashtable ();
+		static PtrHashtable att_cache;
 		
 		public Attribute (string target, Expression left_expr, string identifier, object[] args, Location loc, bool nameEscaped)
 		{
@@ -122,6 +121,17 @@ namespace Mono.CSharp {
 			Location = loc;
 			ExplicitTarget = target;
 			this.nameEscaped = nameEscaped;
+		}
+
+		static Attribute ()
+		{
+			Reset ();
+		}
+
+		public static void Reset ()
+		{
+			usage_attr_cache = new PtrHashtable ();
+			att_cache = new PtrHashtable ();
 		}
 
 		public void AttachTo (Attributable owner)
@@ -1458,20 +1468,36 @@ namespace Mono.CSharp {
 	/// </summary>
 	sealed class AttributeTester
 	{
-		static PtrHashtable analyzed_types = new PtrHashtable ();
-		static PtrHashtable analyzed_types_obsolete = new PtrHashtable ();
-		static PtrHashtable analyzed_member_obsolete = new PtrHashtable ();
-		static PtrHashtable analyzed_method_excluded = new PtrHashtable ();
+		static PtrHashtable analyzed_types;
+		static PtrHashtable analyzed_types_obsolete;
+		static PtrHashtable analyzed_member_obsolete;
+		static PtrHashtable analyzed_method_excluded;
 
 #if NET_2_0
-		static PtrHashtable fixed_buffer_cache = new PtrHashtable ();
+		static PtrHashtable fixed_buffer_cache;
 #endif
 
 		static object TRUE = new object ();
 		static object FALSE = new object ();
 
+		static AttributeTester ()
+		{
+			Reset ();
+		}
+
 		private AttributeTester ()
 		{
+		}
+
+		public static void Reset ()
+		{
+			analyzed_types = new PtrHashtable ();
+			analyzed_types_obsolete = new PtrHashtable ();
+			analyzed_member_obsolete = new PtrHashtable ();
+			analyzed_method_excluded = new PtrHashtable ();
+#if NET_2_0
+			fixed_buffer_cache = new PtrHashtable ();
+#endif
 		}
 
 		public enum Result {

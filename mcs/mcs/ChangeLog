@@ -1,3 +1,7 @@
+2006-03-27  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs, driver.cs: Reset more caches.
+
 2006-03-26  Marek Safar  <marek.safar@seznam.cz>
 
 	* cs-tokenizer.cs (adjust_real): Uses float.Parse for float literals.
