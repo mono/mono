@@ -1,3 +1,9 @@
+2006-03-28  Mike Kestner  <mkestner@novell.com>
+
+	* MainMenu.cs: 
+	* Menu.cs:
+	add a few missing methods from the class status output.
+
 2006-03-28  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ControlPaint.cs: Fixed ControlPaint.Light method. Results are now

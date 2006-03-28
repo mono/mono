@@ -163,6 +163,11 @@ namespace System.Windows.Forms
 				menu_items.Add (menuSrc.MenuItems [i].CloneMenu ());
 		}
 
+		protected virtual IntPtr CreateMenuHandle ()
+		{
+			return IntPtr.Zero;
+		}
+
 		protected override void Dispose (bool disposing)
 		{		
 			if (disposing) {
@@ -250,7 +255,7 @@ namespace System.Windows.Forms
 			}		
 		}
 
-		internal bool ProcessCmdKey (ref Message msg, Keys keyData)
+		protected internal virtual bool ProcessCmdKey (ref Message msg, Keys keyData)
 		{
 			if (tracker == null)
 				return false;

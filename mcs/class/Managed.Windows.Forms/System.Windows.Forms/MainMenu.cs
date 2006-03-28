@@ -65,6 +65,11 @@ namespace System.Windows.Forms
 			return new_menu;
 		}
 		
+		protected override IntPtr CreateMenuHandle ()
+		{			
+			return IntPtr.Zero;
+		}
+
 		protected override void Dispose (bool disposing)
 		{			
 			base.Dispose (disposing);			
