@@ -1,3 +1,7 @@
+2006-03-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestGraphics.cs: Add new test cases for clipping.
+
 2006-03-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RegionDataTest.cs: Add test cases for GetRegionData when a region is

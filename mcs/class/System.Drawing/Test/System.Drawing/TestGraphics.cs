@@ -1,11 +1,11 @@
 //
 // Graphics class testing unit
 //
-// Author:
+// Authors:
 //   Jordi Mas, jordi@ximian.com
+//   Sebastien Pouliot  <sebastien@ximian.com>
 //
-//
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,8 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
-
 using NUnit.Framework;
 using System;
 using System.Drawing;
@@ -43,15 +41,6 @@ namespace MonoTests.System.Drawing
 	public class GraphicsTest : Assertion
 	{
 		private RectangleF[] rects;
-
-		[TearDown]
-		public void TearDown () {}
-
-		[SetUp]
-		public void SetUp ()
-		{
-
-		}
 
 		[Test]
 		public void DefaultProperties ()
@@ -117,6 +106,17 @@ namespace MonoTests.System.Drawing
 			AssertEquals ("Clip3", 40, rects[0].Y);
 			AssertEquals ("Clip4", 210, rects[0].Width);
 			AssertEquals ("Clip5", 220, rects[0].Height);
+		}
+
+		[Test]
+		public void Clip_NotAReference ()
+		{
+			Bitmap bmp = new Bitmap (200, 200);
+			Graphics g = Graphics.FromImage (bmp);
+			Assert ("IsInfinite", g.Clip.IsInfinite (g));
+			g.Clip.IsEmpty (g);
+			Assert ("!IsEmpty", !g.Clip.IsEmpty (g));
+			Assert ("IsInfinite-2", g.Clip.IsInfinite (g));
 		}
 
 		[Test]
@@ -304,7 +304,242 @@ namespace MonoTests.System.Drawing
 		public void FromImage ()
 		{
 			Graphics g = Graphics.FromImage (null);
-		}		
+		}
+
+		private Graphics Get (int w, int h)
+		{
+			Bitmap bitmap = new Bitmap (w, h);
+			Graphics g = Graphics.FromImage (bitmap);
+			g.Clip = new Region (new Rectangle (0, 0, w, h));
+			return g;
+		}
+
+		private void Compare (string msg, RectangleF b1, RectangleF b2)
+		{
+			AssertEquals (msg + ".compare.X", b1.X, b2.X);
+			AssertEquals (msg + ".compare.Y", b1.Y, b2.Y);
+			AssertEquals (msg + ".compare.Width", b1.Width, b2.Width);
+			AssertEquals (msg + ".compare.Height", b1.Height, b2.Height);
+		}
+
+		[Test]
+		public void Clip_GetBounds ()
+		{
+			Graphics g = Get (16, 16);
+			RectangleF bounds = g.Clip.GetBounds (g);
+			AssertEquals ("X", 0, bounds.X);
+			AssertEquals ("Y", 0, bounds.Y);
+			AssertEquals ("Width", 16, bounds.Width);
+			AssertEquals ("Height", 16, bounds.Height);
+			Assert ("Identity", g.Transform.IsIdentity);
+			g.Dispose ();
+		}
+
+		[Test]
+		public void Clip_TranslateTransform ()
+		{
+			Graphics g = Get (16, 16);
+			g.TranslateTransform (12.22f, 10.10f);
+			RectangleF bounds = g.Clip.GetBounds (g);
+			Compare ("translate", bounds, g.ClipBounds);
+			AssertEquals ("translate.X", -12.22, bounds.X);
+			AssertEquals ("translate.Y", -10.10, bounds.Y);
+			AssertEquals ("translate.Width", 16, bounds.Width);
+			AssertEquals ("translate.Height", 16, bounds.Height);
+			float[] elements = g.Transform.Elements;
+			AssertEquals ("translate.0", 1, elements[0]);
+			AssertEquals ("translate.1", 0, elements[1]);
+			AssertEquals ("translate.2", 0, elements[2]);
+			AssertEquals ("translate.3", 1, elements[3]);
+			AssertEquals ("translate.4", 12.22, elements[4]);
+			AssertEquals ("translate.5", 10.10, elements[5]);
+
+			g.ResetTransform ();
+			bounds = g.Clip.GetBounds (g);
+			Compare ("reset", bounds, g.ClipBounds);
+			AssertEquals ("reset.X", 0, bounds.X);
+			AssertEquals ("reset.Y", 0, bounds.Y);
+			AssertEquals ("reset.Width", 16, bounds.Width);
+			AssertEquals ("reset.Height", 16, bounds.Height);
+			Assert ("Identity", g.Transform.IsIdentity);
+			g.Dispose ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Transform_NonInvertibleMatrix ()
+		{
+			Matrix matrix = new Matrix (123, 24, 82, 16, 47, 30);
+			Assert ("IsInvertible", !matrix.IsInvertible);
+			Graphics g = Get (16, 16);
+			g.Transform = matrix;
+		}
+
+		private void CheckBounds (string msg, RectangleF bounds, float x, float y, float w, float h)
+		{
+			AssertEquals (msg + ".X", x, bounds.X, 0.1);
+			AssertEquals (msg + ".Y", y, bounds.Y, 0.1);
+			AssertEquals (msg + ".Width", w, bounds.Width, 0.1);
+			AssertEquals (msg + ".Height", h, bounds.Height, 0.1);
+		}
+
+		[Test]
+		public void ClipBounds ()
+		{
+			Graphics g = Get (16, 16);
+			CheckBounds ("graphics.ClipBounds", g.ClipBounds, 0, 0, 16, 16);
+			CheckBounds ("graphics.Clip.GetBounds", g.Clip.GetBounds (g), 0, 0, 16, 16);
+
+			g.Clip = new Region (new Rectangle (0, 0, 8, 8));
+			CheckBounds ("clip.ClipBounds", g.ClipBounds, 0, 0, 8, 8);
+			CheckBounds ("clip.Clip.GetBounds", g.Clip.GetBounds (g), 0, 0, 8, 8);
+		}
+
+		[Test]
+		public void ClipBounds_Rotate ()
+		{
+			Graphics g = Get (16, 16);
+			g.Clip = new Region (new Rectangle (0, 0, 8, 8));
+			g.RotateTransform (90);
+			CheckBounds ("rotate.ClipBounds", g.ClipBounds, 0, -8, 8, 8);
+			CheckBounds ("rotate.Clip.GetBounds", g.Clip.GetBounds (g), 0, -8, 8, 8);
+
+			g.Transform = new Matrix ();
+			CheckBounds ("identity.ClipBounds", g.Clip.GetBounds (g), 0, 0, 8, 8);
+			CheckBounds ("identity.Clip.GetBounds", g.Clip.GetBounds (g), 0, 0, 8, 8);
+		}
+
+		[Test]
+		public void ClipBounds_Scale ()
+		{
+			RectangleF clip = new Rectangle (0, 0, 8, 8);
+			Graphics g = Get (16, 16);
+			g.Clip = new Region (clip);
+			g.ScaleTransform (0.25f, 0.5f);
+			CheckBounds ("scale.ClipBounds", g.ClipBounds, 0, 0, 32, 16);
+			CheckBounds ("scale.Clip.GetBounds", g.Clip.GetBounds (g), 0, 0, 32, 16);
+
+			g.SetClip (clip);
+			CheckBounds ("setclip.ClipBounds", g.ClipBounds, 0, 0, 8, 8);
+			CheckBounds ("setclip.Clip.GetBounds", g.Clip.GetBounds (g), 0, 0, 8, 8);
+		}
+
+		[Test]
+		public void ClipBounds_Translate ()
+		{
+			Graphics g = Get (16, 16);
+			g.Clip = new Region (new Rectangle (0, 0, 8, 8));
+			Region clone = g.Clip.Clone ();
+			g.TranslateTransform (8, 8);
+			CheckBounds ("translate.ClipBounds", g.ClipBounds, -8, -8, 8, 8);
+			CheckBounds ("translate.Clip.GetBounds", g.Clip.GetBounds (g), -8, -8, 8, 8);
+
+			g.SetClip (clone, CombineMode.Replace);
+			CheckBounds ("setclip.ClipBounds", g.Clip.GetBounds (g), 0, 0, 8, 8);
+			CheckBounds ("setclip.Clip.GetBounds", g.Clip.GetBounds (g), 0, 0, 8, 8);
+		}
+
+		[Test]
+		public void ClipBounds_Transform_Translation ()
+		{
+			Graphics g = Get (16, 16);
+			g.Clip = new Region (new Rectangle (0, 0, 8, 8));
+			g.Transform = new Matrix (1, 0, 0, 1, 8, 8);
+			CheckBounds ("transform.ClipBounds", g.ClipBounds, -8, -8, 8, 8);
+			CheckBounds ("transform.Clip.GetBounds", g.Clip.GetBounds (g), -8, -8, 8, 8);
+
+			g.ResetTransform ();
+			CheckBounds ("reset.ClipBounds", g.ClipBounds, 0, 0, 8, 8);
+			CheckBounds ("reset.Clip.GetBounds", g.Clip.GetBounds (g), 0, 0, 8, 8);
+		}
+
+		[Test]
+		public void ClipBounds_Transform_Scale ()
+		{
+			Graphics g = Get (16, 16);
+			g.Clip = new Region (new Rectangle (0, 0, 8, 8));
+			g.Transform = new Matrix (0.5f, 0, 0, 0.25f, 0, 0);
+			CheckBounds ("scale.ClipBounds", g.ClipBounds, 0, 0, 16, 32);
+			CheckBounds ("scale.Clip.GetBounds", g.Clip.GetBounds (g), 0, 0, 16, 32);
+
+			g.ResetClip ();
+			// see next test for ClipBounds
+			CheckBounds ("resetclip.Clip.GetBounds", g.Clip.GetBounds (g), -4194304, -4194304, 8388608, 8388608);
+			Assert ("IsInfinite", g.Clip.IsInfinite (g));
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ClipBounds_Transform_Scale_Strange ()
+		{
+			Graphics g = Get (16, 16);
+			g.Clip = new Region (new Rectangle (0, 0, 8, 8));
+			g.Transform = new Matrix (0.5f, 0, 0, 0.25f, 0, 0);
+			CheckBounds ("scale.ClipBounds", g.ClipBounds, 0, 0, 16, 32);
+			CheckBounds ("scale.Clip.GetBounds", g.Clip.GetBounds (g), 0, 0, 16, 32);
+
+			g.ResetClip ();
+			// note: strange case where g.ClipBounds and g.Clip.GetBounds are different
+			CheckBounds ("resetclip.ClipBounds", g.ClipBounds, -8388608, -16777216, 16777216, 33554432);
+		}
+
+		[Test]
+		public void ClipBounds_Multiply ()
+		{
+			Graphics g = Get (16, 16);
+			g.Clip = new Region (new Rectangle (0, 0, 8, 8));
+			g.Transform = new Matrix (1, 0, 0, 1, 8, 8);
+			g.MultiplyTransform (g.Transform);
+			CheckBounds ("multiply.ClipBounds", g.ClipBounds, -16, -16, 8, 8);
+			CheckBounds ("multiply.Clip.GetBounds", g.Clip.GetBounds (g), -16, -16, 8, 8);
+
+			g.ResetTransform ();
+			CheckBounds ("reset.ClipBounds", g.ClipBounds, 0, 0, 8, 8);
+			CheckBounds ("reset.Clip.GetBounds", g.Clip.GetBounds (g), 0, 0, 8, 8);
+		}
+
+		[Test]
+		public void ClipBounds_Cumulative_Effects ()
+		{
+			Graphics g = Get (16, 16);
+			CheckBounds ("graphics.ClipBounds", g.ClipBounds, 0, 0, 16, 16);
+			CheckBounds ("graphics.Clip.GetBounds", g.Clip.GetBounds (g), 0, 0, 16, 16);
+
+			g.Clip = new Region (new Rectangle (0, 0, 8, 8));
+			CheckBounds ("clip.ClipBounds", g.ClipBounds, 0, 0, 8, 8);
+			CheckBounds ("clip.Clip.GetBounds", g.Clip.GetBounds (g), 0, 0, 8, 8);
+
+			g.RotateTransform (90);
+			CheckBounds ("rotate.ClipBounds", g.ClipBounds, 0, -8, 8, 8);
+			CheckBounds ("rotate.Clip.GetBounds", g.Clip.GetBounds (g), 0, -8, 8, 8);
+
+			g.ScaleTransform (0.25f, 0.5f);
+			CheckBounds ("scale.ClipBounds", g.ClipBounds, 0, -16, 32, 16);
+			CheckBounds ("scale.Clip.GetBounds", g.Clip.GetBounds (g), 0, -16, 32, 16);
+
+			g.TranslateTransform (8, 8);
+			CheckBounds ("translate.ClipBounds", g.ClipBounds, -8, -24, 32, 16);
+			CheckBounds ("translate.Clip.GetBounds", g.Clip.GetBounds (g), -8, -24, 32, 16);
+			
+			g.MultiplyTransform (g.Transform);
+			CheckBounds ("multiply.ClipBounds", g.ClipBounds, -104, -56, 64, 64);
+			CheckBounds ("multiply.Clip.GetBounds", g.Clip.GetBounds (g), -104, -56, 64, 64);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ScaleTransform_X0 ()
+		{
+			Graphics g = Get (16, 16);
+			g.ScaleTransform (0, 1);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ScaleTransform_Y0 ()
+		{
+			Graphics g = Get (16, 16);
+			g.ScaleTransform (1, 0);
+		}
 	}
 }
-
