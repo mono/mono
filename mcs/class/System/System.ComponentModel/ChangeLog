@@ -1,3 +1,8 @@
+2006-03-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ProgressChangedEventHandler.cs ProgressChangedEventArgs.cs :
+	  added 2.0 types.
+
 2006-02-26  Pedro Martinez Julia  <pedromj@gmail.com>
 
 	* HandledEventHandler.cs: Resolving a "Replaced" SVN flag.

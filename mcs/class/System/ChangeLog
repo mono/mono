@@ -1,3 +1,9 @@
+2006-03-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.dll.sources : added ProgressChangedEvent[Args|Handler] in
+	  System.ComponentModel, and several WebClient event args in
+	  System.Net.
+
 2006-03-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* System.dll.sources: Added System.ComponentModel.Design.Serialization/

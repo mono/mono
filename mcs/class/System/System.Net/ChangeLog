@@ -1,5 +1,27 @@
 2006-03-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DownloadDataCompletedEventArgs.cs
+	  DownloadDataCompletedEventHandler.cs
+	  DownloadProgressChangedEventArgs.cs
+	  DownloadProgressChangedEventHandler.cs
+	  DownloadStringCompletedEventArgs.cs
+	  OpenReadCompletedEventArgs.cs
+	  OpenReadCompletedEventHandler.cs
+	  OpenWriteCompletedEventArgs.cs
+	  OpenWriteCompletedEventHandler.cs
+	  UploadDataCompletedEventArgs.cs
+	  UploadDataCompletedEventHandler.cs
+	  UploadFileCompletedEventArgs.cs
+	  UploadFileCompletedEventHandler.cs
+	  UploadProgressChangedEventArgs.cs
+	  UploadProgressChangedEventHandler.cs
+	  UploadStringCompletedEventArgs.cs
+	  UploadStringCompletedEventHandler.cs
+	  UploadValuesCompletedEventArgs.cs
+	  UploadValuesCompletedEventHandler.cs : added 2.0 types.
+
+2006-03-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Dns.cs : filled missing NET_2_0 members.
 
 2006-03-28  Atsushi Enomoto  <atsushi@ximian.com>
