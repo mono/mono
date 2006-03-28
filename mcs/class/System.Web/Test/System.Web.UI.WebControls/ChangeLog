@@ -1,3 +1,7 @@
+2006-03-28  Alexandre Miguel Pedro Gomes  <alexmipego@gmail.com>
+ 
+ 	* FontInfoTest.cs: Implemented ShouldSerializeNames tests
+
 2006-03-06  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* CalendarTest.cs: refactoring, inline delegates replaced with

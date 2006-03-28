@@ -392,10 +392,9 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		[MonoTODO]
 		public bool ShouldSerializeNames() 
 		{
-			throw new NotImplementedException("Microsoft Internal, not sure what to do");
+			return (Names.Length != 0);
 		}
 
 		public override string ToString() 

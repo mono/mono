@@ -63,6 +63,18 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
+		public void ShouldSerializeNames ()
+		{
+			Style style = new Style ();
+			FontInfo fontInfo = style.Font;
+			Assert.IsFalse (fontInfo.ShouldSerializeNames ());
+			fontInfo.Name = "Verdana";
+			Assert.IsTrue (fontInfo.ShouldSerializeNames ());
+			fontInfo.Name = String.Empty;
+			Assert.IsFalse (fontInfo.ShouldSerializeNames ());
+		}
+
+		[Test]
 		public void Style_Merge ()
 		{
 		}
