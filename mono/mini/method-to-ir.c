@@ -9112,6 +9112,7 @@ mono_handle_global_vregs (MonoCompile *cfg)
 		case STACK_OBJ:
 		case STACK_PTR:
 		case STACK_MP:
+		case STACK_VTYPE:
 #if SIZEOF_VOID_P == 8
 		case STACK_I8:
 #endif

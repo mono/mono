@@ -10121,7 +10121,7 @@ mono_local_cprop2 (MonoCompile *cfg)
 				MonoInst *var = ins->inst_p0;
 
 				if (!MONO_TYPE_ISSTRUCT (var->inst_vtype))
-					return;
+					break;
 			}
 
 			if (MONO_IS_STORE_MEMBASE (ins)) {
@@ -10140,96 +10140,100 @@ mono_local_cprop2 (MonoCompile *cfg)
 			}
 
 			for (srcindex = 0; srcindex < 2; ++srcindex) {
+				MonoInst *def;
+
 				regtype = srcindex == 0 ? spec [MONO_INST_SRC1] : spec [MONO_INST_SRC2];
 				sreg = srcindex == 0 ? ins->sreg1 : ins->sreg2;
 
 				/* FIXME: Add support for floats/longs */
-				if ((regtype != ' ') && (sreg != -1) && defs [sreg]) {
-					MonoInst *def = defs [sreg];
+				if ((regtype == ' ') || (sreg == -1) || (!defs [sreg]))
+					continue;
 
-					/* Copy propagation */
-					/* Enabling this for floats trips up the fp stack */
-					if ((def->opcode == OP_MOVE) && (!defs [def->sreg1] || (def_index [def->sreg1] < def_index [sreg]))) {
-						int vreg = def->sreg1;
+				def = defs [sreg];
 
-						//printf ("CCOPY: R%d -> R%d\n", sreg, vreg);
+				/* Copy propagation */
+				/* Enabling this for floats trips up the fp stack */
+				if ((def->opcode == OP_MOVE) && (!defs [def->sreg1] || (def_index [def->sreg1] < def_index [sreg]))) {
+					int vreg = def->sreg1;
+
+					//printf ("CCOPY: R%d -> R%d\n", sreg, vreg);
+					if (srcindex == 0)
+						ins->sreg1 = vreg;
+					else
+						ins->sreg2 = vreg;
+
+					/* Allow further iterations */
+					srcindex = -1;
+					continue;
+				}
+
+				/* Constant propagation */
+#if SIZEOF_VOID_P == 8
+				/* FIXME: Make is_inst_imm a macro */
+				/* FIXME: Make is_inst_imm take an opcode argument */
+				/* is_inst_imm is only needed for binops */
+				else if ((((def->opcode == OP_ICONST) || (def->opcode == OP_I8CONST)) && (((srcindex == 0) && (ins->sreg2 == -1)) || mono_arch_is_inst_imm (def->inst_c0))) || (def->opcode == OP_R8CONST))
+#else
+				else if (def->opcode == OP_ICONST)
+#endif
+				{
+					guint32 opcode2;
+
+					/* srcindex == 1 -> binop, ins->sreg2 == -1 -> unop */
+					if ((srcindex == 1) && (ins->sreg1 != -1) && defs [ins->sreg1] && (defs [ins->sreg1]->opcode == OP_ICONST) && defs [ins->sreg2]) {
+						/* Both arguments are constants, perform cfold */
+						mono_constant_fold_ins2 (ins, defs [ins->sreg1], defs [ins->sreg2]);
+					} else if ((srcindex == 0) && (ins->sreg2 != -1) && defs [ins->sreg2]) {
+						/* Arg 1 is constant, swap arguments if possible */
+						mono_constant_fold_ins2 (ins, defs [ins->sreg1], defs [ins->sreg2]);						
+					} else if ((srcindex == 0) && (ins->sreg2 == -1)) {
+						/* Constant unop, perform cfold */
+						mono_constant_fold_ins2 (ins, defs [ins->sreg1], NULL);
+					}
+
+					opcode2 = mono_op_to_op_imm (ins->opcode);
+					if ((opcode2 != -1) && mono_arch_is_inst_imm (def->inst_c0) && ((srcindex == 1) || (ins->sreg2 == -1))) {
+						ins->opcode = opcode2;
+						ins->inst_imm = def->inst_c0;
 						if (srcindex == 0)
-							ins->sreg1 = vreg;
+							ins->sreg1 = -1;
 						else
-							ins->sreg2 = vreg;
+							ins->sreg2 = -1;
+
+						if ((opcode2 == OP_VOIDCALL) || (opcode2 == OP_CALL) || (opcode2 == OP_LCALL) || (opcode2 == OP_FCALL))
+							((MonoCallInst*)ins)->fptr = (gpointer)ins->inst_imm;
 
 						/* Allow further iterations */
 						srcindex = -1;
 						continue;
 					}
-					/* Constant propagation */
-#if SIZEOF_VOID_P == 8
-					/* FIXME: Make is_inst_imm a macro */
-					/* FIXME: Make is_inst_imm take an opcode argument */
-					/* is_inst_imm is only needed for binops */
-					else if ((((def->opcode == OP_ICONST) || (def->opcode == OP_I8CONST)) && (((srcindex == 0) && (ins->sreg2 == -1)) || mono_arch_is_inst_imm (def->inst_c0))) || (def->opcode == OP_R8CONST))
-#else
-					else if (def->opcode == OP_ICONST)
-#endif
-					{
-						guint32 opcode2;
-
-						/* srcindex == 1 -> binop, ins->sreg2 == -1 -> unop */
-						if ((srcindex == 1) && (ins->sreg1 != -1) && defs [ins->sreg1] && (defs [ins->sreg1]->opcode == OP_ICONST) && defs [ins->sreg2]) {
-							/* Both arguments are constants, perform cfold */
-							mono_constant_fold_ins2 (ins, defs [ins->sreg1], defs [ins->sreg2]);
-						} else if ((srcindex == 0) && (ins->sreg2 != -1) && defs [ins->sreg2]) {
-							/* Arg 1 is constant, swap arguments if possible */
-							mono_constant_fold_ins2 (ins, defs [ins->sreg1], defs [ins->sreg2]);						
-						} else if ((srcindex == 0) && (ins->sreg2 == -1)) {
-							/* Constant unop, perform cfold */
-							mono_constant_fold_ins2 (ins, defs [ins->sreg1], NULL);
-						}
-
-						opcode2 = mono_op_to_op_imm (ins->opcode);
-						if ((opcode2 != -1) && mono_arch_is_inst_imm (def->inst_c0) && ((srcindex == 1) || (ins->sreg2 == -1))) {
-							ins->opcode = opcode2;
-							ins->inst_imm = def->inst_c0;
-							if (srcindex == 0)
-								ins->sreg1 = -1;
-							else
-								ins->sreg2 = -1;
-
-							if ((opcode2 == OP_VOIDCALL) || (opcode2 == OP_CALL) || (opcode2 == OP_LCALL) || (opcode2 == OP_FCALL))
-								((MonoCallInst*)ins)->fptr = (gpointer)ins->inst_imm;
-
-							/* Allow further iterations */
-							srcindex = -1;
-							continue;
-						}
-						else {
-							/* Special cases */
+					else {
+						/* Special cases */
 #if defined(__i386__) || defined(__x86__64)
-							if ((ins->opcode == OP_X86_LEA) && (srcindex == 1)) {
+						if ((ins->opcode == OP_X86_LEA) && (srcindex == 1)) {
 #if SIZEOF_VOID_P == 8
-								/* FIXME: Use OP_PADD_IMM when the new JIT is done */
-								ins->opcode = OP_LADD_IMM;
+							/* FIXME: Use OP_PADD_IMM when the new JIT is done */
+							ins->opcode = OP_LADD_IMM;
 #else
-								ins->opcode = OP_ADD_IMM;
+							ins->opcode = OP_ADD_IMM;
 #endif
-								ins->inst_imm += def->inst_c0 << ins->unused;
-								ins->sreg2 = -1;
-							}
+							ins->inst_imm += def->inst_c0 << ins->unused;
+							ins->sreg2 = -1;
+						}
 #endif
-							opcode2 = mono_load_membase_to_load_mem (ins->opcode);
-							if ((srcindex == 0) && (opcode2 != -1) && mono_arch_is_inst_imm (def->inst_c0)) {
-								ins->opcode = opcode2;
-								ins->inst_imm = def->inst_c0 + ins->inst_offset;
-								ins->sreg1 = -1;
-							}
+						opcode2 = mono_load_membase_to_load_mem (ins->opcode);
+						if ((srcindex == 0) && (opcode2 != -1) && mono_arch_is_inst_imm (def->inst_c0)) {
+							ins->opcode = opcode2;
+							ins->inst_imm = def->inst_c0 + ins->inst_offset;
+							ins->sreg1 = -1;
 						}
 					}
-					else if ((def->opcode == OP_ADD_IMM) && (def->sreg1 == cfg->frame_reg) && MONO_IS_LOAD_MEMBASE (ins)) {
-						/* ADD_IM is created by spill_global_vars */
-						/* cfg->frame_reg is assumed to remain constant */
-						ins->inst_basereg = def->sreg1;
-						ins->inst_offset += def->inst_imm;
-					}
+				}
+				else if ((def->opcode == OP_ADD_IMM) && (def->sreg1 == cfg->frame_reg) && MONO_IS_LOAD_MEMBASE (ins)) {
+					/* ADD_IM is created by spill_global_vars */
+					/* cfg->frame_reg is assumed to remain constant */
+					ins->inst_basereg = def->sreg1;
+					ins->inst_offset += def->inst_imm;
 				}
 			}
 
@@ -10333,132 +10337,8 @@ mono_local_cprop2 (MonoCompile *cfg)
  *
  *   Get rid of the dead assignments to local vregs left by the copyprop pass.
  */
-static G_GNUC_UNUSED void
-mono_local_deadce (MonoCompile *cfg)
-{
-	MonoBasicBlock *bb;
-	MonoInst *ins, *prev;
-	MonoBitSet *used;
-
-	/* FIXME: speed this up */
-
-	used = mono_bitset_new (cfg->next_vireg, 0);
-
-	/* First pass: collect liveness info */
-	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
-		/* Manually init the defs entries used by the bblock */
-		for (ins = bb->code; ins; ins = ins->next) {
-			const char *spec = ins_info [ins->opcode - OP_START - 1];
-
-			if (spec [MONO_INST_DEST] != ' ') {
-				mono_bitset_clear_fast (used, ins->dreg);
-#if SIZEOF_VOID_P == 4
-				/* Regpairs */
-				mono_bitset_clear_fast (used, ins->dreg + 1);
-#endif
-			}
-			if (spec [MONO_INST_SRC1] != ' ') {
-				mono_bitset_clear_fast (used, ins->sreg1);
-#if SIZEOF_VOID_P == 4
-				mono_bitset_clear_fast (used, ins->sreg1 + 1);
-#endif
-			}
-			if (spec [MONO_INST_SRC2] != ' ') {
-				mono_bitset_clear_fast (used, ins->sreg2);
-#if SIZEOF_VOID_P == 4
-				mono_bitset_clear_fast (used, ins->sreg2 + 1);
-#endif
-			}
-		}
-
-		for (ins = bb->code; ins; ins = ins->next) {
-			const char *spec = ins_info [ins->opcode - OP_START - 1];
-
-			if (ins->opcode == OP_NOP)
-				continue;
-
-			g_assert (ins->opcode > MONO_CEE_LAST);
-
-			/* FIXME: Optimize this */
-			if (ins->opcode == OP_LDADDR) {
-				MonoInst *var = ins->inst_p0;
-
-				if (!MONO_TYPE_ISSTRUCT (var->inst_vtype))
-					return;
-			}
-
-			if (spec [MONO_INST_SRC1] != ' ')
-				mono_bitset_set_fast (used, ins->sreg1);
-			if (spec [MONO_INST_SRC2] != ' ')
-				mono_bitset_set_fast (used, ins->sreg2);
-			if (MONO_IS_STORE_MEMBASE (ins))
-				mono_bitset_set_fast (used, ins->dreg);
-
-#ifdef __x86_64__
-			/* FIXME: Optimize this and clean it up */
-			if (((ins->opcode >= OP_VOIDCALL) && (ins->opcode <= OP_VOIDCALL_MEMBASE)) ||
-				((ins->opcode >= OP_FCALL) && (ins->opcode <= OP_FCALL_MEMBASE)) ||
-				((ins->opcode >= OP_LCALL) && (ins->opcode <= OP_LCALL_MEMBASE)) ||
-				((ins->opcode >= OP_VCALL) && (ins->opcode <= OP_VCALL_MEMBASE)) ||
-				((ins->opcode >= OP_CALL) && (ins->opcode <= OP_CALL_MEMBASE))) {
-				MonoCallInst *call = (MonoCallInst*)ins;
-				GSList *l;
-
-				for (l = call->out_ireg_args; l; l = l->next) {
-					guint32 regpair, reg;
-
-					regpair = (guint32)(gssize)(l->data);
-					reg = regpair & 0xffffff;
-					
-					mono_bitset_set_fast (used, reg);
-				}
-			}
-#endif
-		}
-
-		if (ins && ins->opcode == OP_LDADDR)
-			continue;
-
-		/* Second pass: deadce */
-		prev = NULL;
-		for (ins = bb->code; ins; ins = ins->next) {
-			const char *spec = ins_info [ins->opcode - OP_START - 1];
-
-			if ((spec [MONO_INST_DEST] == 'i') && (ins->dreg >= MONO_MAX_IREGS) && !mono_bitset_test_fast (used, ins->dreg) && !get_vreg_to_inst (cfg, ins->dreg)) {
-				/* FIXME: Add more instructions */
-				/* OP_ADD_IMM is generated by spill_global_vars */
-				if ((ins->opcode == OP_MOVE) || (ins->opcode == OP_ICONST) || (ins->opcode == OP_I8CONST) || (ins->opcode == OP_ADD_IMM)) {
-					//printf ("DEADCE: "); mono_print_ins (ins);
-					/* 
-					 * Get rid of the instruction entirely so later passed 
-					 * won't have to deal with it.
-					 */
-					if (prev)
-						prev->next = ins->next;
-					else
-						bb->code = ins->next;
-					if (bb->last_ins == ins)
-						bb->last_ins = prev;
-
-					/* Don't change prev */
-					continue;
-				}
-			}
-
-			prev = ins;
-		}
-	}
-
-	mono_bitset_free (used);
-}
-
-/**
- * mono_local_deadce_alt:
- *
- *   Alternative version using a reverse pass.
- */
 static void
-mono_local_deadce_alt (MonoCompile *cfg)
+mono_local_deadce (MonoCompile *cfg)
 {
 	MonoBasicBlock *bb;
 	MonoInst *ins;
@@ -10531,7 +10411,7 @@ mono_local_deadce_alt (MonoCompile *cfg)
 				MonoInst *var = ins->inst_p0;
 
 				if (!MONO_TYPE_ISSTRUCT (var->inst_vtype))
-					return;
+					break;
 			}
 
 			if ((ins->opcode == OP_MOVE) && get_vreg_to_inst (cfg, ins->dreg)) {
@@ -10953,7 +10833,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	if (cfg->new_ir) {
 		/* This must be done _before_ global reg alloc and _after_ decompose */
 		mono_handle_global_vregs (cfg);
-		mono_local_deadce_alt (cfg);
+		mono_local_deadce (cfg);
 
 		// FIXME: Do this after SSA
 		mono_decompose_vtype_opts (cfg);
@@ -11032,7 +10912,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 			mono_ssa_remove2 (cfg);
 			mono_local_cprop2 (cfg);
 			mono_handle_global_vregs (cfg);
-			mono_local_deadce_alt (cfg);
+			mono_local_deadce (cfg);
 		}
 		else
 			mono_ssa_remove (cfg);
@@ -11120,7 +11000,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 
 		/* To optimize code created by spill_global_vars */
 		mono_local_cprop2 (cfg);
-		mono_local_deadce_alt (cfg);
+		mono_local_deadce (cfg);
 
 		/* Add branches between non-consecutive bblocks */
 		for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {

@@ -905,7 +905,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 	int fspill = 0;
 	guint8 *inst_list, *mem;
 #if MONO_ARCH_USE_FPSTACK
-	gboolean has_fp = TRUE;
+	gboolean has_fp = FALSE;
 	int fpstack [8];
 	int sp = 0;
 #endif
