@@ -59,7 +59,7 @@ namespace Commons.Xml.Relaxng
 		// fields
 		Stack nsStack = new Stack ();
 		Stack datatypeLibraryStack = new Stack ();
-		XmlResolver resolver = new XmlUrlResolver ();
+		XmlResolver resolver;
 //		ArrayList annotationNamespaces = new ArrayList ();
 
 		// ctor
@@ -69,9 +69,15 @@ namespace Commons.Xml.Relaxng
 		}
 
 		public RelaxngReader (XmlReader reader, string ns)
+			: this (reader, ns, new XmlUrlResolver ())
+		{
+		}
+
+		public RelaxngReader (XmlReader reader, string ns, XmlResolver resolver)
 //			: base (grammarForRelaxng == null ? reader : new RelaxngValidatingReader (reader, grammarForRelaxng))
 			: base (reader)
 		{
+			this.resolver = resolver;
 			if (Reader.ReadState == ReadState.Initial)
 				Read ();
 			MoveToContent ();

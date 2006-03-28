@@ -53,7 +53,12 @@ namespace Commons.Xml.Relaxng
 		}
 
 		public RelaxngException (RelaxngElementBase source, string message)
-			: base (message + String.Format (" {0} ({1}, {2})", source.BaseUri, source.LineNumber, source.LinePosition))
+			: this (source, message, null)
+		{
+		}
+
+		public RelaxngException (RelaxngElementBase source, string message, Exception innerException)
+			: base (message + String.Format (" {0} ({1}, {2})", source.BaseUri, source.LineNumber, source.LinePosition), innerException)
 		{
 		}
 	}

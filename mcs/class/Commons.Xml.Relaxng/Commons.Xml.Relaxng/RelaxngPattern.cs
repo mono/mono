@@ -325,6 +325,8 @@ namespace Commons.Xml.Relaxng
 				RelaxngReader r = new RelaxngReader (xtr, ns);
 				r.MoveToContent ();
 				g = r.ReadPattern () as RelaxngGrammar;
+			} catch (Exception ex) { // umm, bad catch though :-(
+				throw new RelaxngException (this, String.Format("Could not include grammar {0}: {1}", uri.AbsoluteUri, ex.Message), ex);
 			} finally {
 				if (xtr != null)
 					xtr.Close ();
@@ -455,7 +457,12 @@ namespace Commons.Xml.Relaxng
 
 		public static RelaxngPattern Read (XmlReader xmlReader, RelaxngDatatypeProvider provider)
 		{
-			RelaxngReader r = new RelaxngReader (xmlReader, null);
+			return Read (xmlReader, provider, new XmlUrlResolver ());
+		}
+		
+		public static RelaxngPattern Read (XmlReader xmlReader, RelaxngDatatypeProvider provider, XmlResolver xmlResolver)
+		{
+			RelaxngReader r = new RelaxngReader (xmlReader, null, xmlResolver);
 			if (r.ReadState == ReadState.Initial)
 				r.Read ();
 			r.MoveToContent ();

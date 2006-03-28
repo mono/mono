@@ -1,3 +1,16 @@
+2006-03-28  Atsushi Enomoto <atsushi@ximian.com>
+
+	Based on the patch by Alexandre Alapetite:
+	* RelaxngException.cs : added another constructor that takes
+	  pattern, string and innerException.
+	* RelaxngReader.cs
+	  RelaxngPattern.cs :
+	  - wrap xml resolution error in RelaxngInclude.Read(). This change
+	    is argurable but might be convenient for certain users.
+	  - Added another constructor to RelaxngReader, and another overload
+	    for RelaxngPattern.Read(), otherwise RelaxngPattern.Read() can
+	    never use different XmlResolvers.
+
 2006-03-27  Atsushi Enomoto <atsushi@ximian.com>
 
 	Patch by Alexandre Alapetite (http://alexandre.alapetite.net/cv/)
