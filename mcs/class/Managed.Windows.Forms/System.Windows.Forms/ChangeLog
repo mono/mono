@@ -1,3 +1,7 @@
+2006-03-28  Mike Kestner  <mkestner@novell.com>
+
+	* MenuAPI.cs: Deactivate on MainMenu item click. Fixes #77917.
+
 2006-03-27  Mike Kestner  <mkestner@novell.com>
 
 	* ThemeWin32Classic.cs: Switch flat toolbars to use RaisedInner for
