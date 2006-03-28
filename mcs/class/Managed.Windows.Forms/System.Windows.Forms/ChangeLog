@@ -1,5 +1,14 @@
 2006-03-28  Mike Kestner  <mkestner@novell.com>
 
+	* ColumnHeader.cs:
+	* ListView.cs:
+	* ListViewItem.cs:
+	* Menu.cs: 
+	switch to explicit interface method implementation for some methods
+	corcompare identifies as inconsistent with MS.
+
+2006-03-28  Mike Kestner  <mkestner@novell.com>
+
 	* MainMenu.cs: 
 	* Menu.cs:
 	add a few missing methods from the class status output.

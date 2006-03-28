@@ -731,11 +731,15 @@ namespace System.Windows.Forms
 
 			#region Public Properties
 			[Browsable (false)]
-			public virtual int Count {
+			int ICollection.Count {
 				get { return list.Count; }
 			}
 
-			public virtual bool IsReadOnly {
+			internal int Count {
+				get { return list.Count; }
+			}
+
+			bool IList.IsReadOnly {
 				get { return false; }
 			}
 
@@ -795,14 +799,14 @@ namespace System.Windows.Forms
 
 			public void AddRange (ListViewSubItem [] items)
 			{
-				this.Clear ();
+				list.Clear ();
 				foreach (ListViewSubItem item in items)
 					this.Add (item);
 			}
 
 			public void AddRange (string [] items)
 			{
-				this.Clear ();
+				list.Clear ();
 				foreach (string item in items)
 					this.Add (item);
 			}
@@ -810,12 +814,12 @@ namespace System.Windows.Forms
 			public void AddRange (string [] items, Color foreColor,
 					      Color backColor, Font font)
 			{
-				this.Clear ();
+				list.Clear ();
 				foreach (string item in items)
 					this.Add (item, foreColor, backColor, font);
 			}
 
-			public virtual void Clear ()
+			void IList.Clear ()
 			{
 				list.Clear ();
 			}
@@ -825,7 +829,7 @@ namespace System.Windows.Forms
 				return list.Contains (item);
 			}
 
-			public virtual IEnumerator GetEnumerator ()
+			IEnumerator IEnumerable.GetEnumerator ()
 			{
 				return list.GetEnumerator ();
 			}
@@ -898,7 +902,7 @@ namespace System.Windows.Forms
 				list.Remove (item);
 			}
 
-			public virtual void RemoveAt (int index)
+			void IList.RemoveAt (int index)
 			{
 				list.RemoveAt (index);
 			}

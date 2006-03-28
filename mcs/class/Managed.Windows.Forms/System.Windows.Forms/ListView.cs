@@ -1718,7 +1718,7 @@ namespace System.Windows.Forms
 					Capture = true;
 					if (owner.AllowColumnReorder) {
 						drag_x = me.X;
-						drag_column = (ColumnHeader) clicked_column.Clone ();
+						drag_column = (ColumnHeader) (clicked_column as ICloneable).Clone ();
 						drag_column.column_rect = clicked_column.Rect;
 						drag_to_index = GetReorderedIndex (clicked_column);
 					}
@@ -1855,11 +1855,11 @@ namespace System.Windows.Forms
 
 			#region Public Properties
 			[Browsable (false)]
-			public virtual int Count {
+			int ICollection.Count {
 				get { return list.Count; }
 			}
 
-			public virtual bool IsReadOnly {
+			bool IList.IsReadOnly {
 				get { return true; }
 			}
 
@@ -1895,7 +1895,7 @@ namespace System.Windows.Forms
 				return list.Contains (checkedIndex);
 			}
 
-			public virtual IEnumerator GetEnumerator ()
+			IEnumerator IEnumerable.GetEnumerator ()
 			{
 				return list.GetEnumerator ();
 			}
@@ -1963,11 +1963,11 @@ namespace System.Windows.Forms
 
 			#region Public Properties
 			[Browsable (false)]
-			public virtual int Count {
+			int ICollection.Count {
 				get { return list.Count; }
 			}
 
-			public virtual bool IsReadOnly {
+			bool IList.IsReadOnly {
 				get { return true; }
 			}
 
@@ -2003,12 +2003,12 @@ namespace System.Windows.Forms
 				return list.Contains (item);
 			}
 
-			public virtual void CopyTo (Array dest, int index)
+			void ICollection.CopyTo (Array dest, int index)
 			{
 				list.CopyTo (dest, index);
 			}
 
-			public virtual IEnumerator GetEnumerator ()
+			IEnumerator IEnumerable.GetEnumerator ()
 			{
 				return list.GetEnumerator ();
 			}
@@ -2071,11 +2071,15 @@ namespace System.Windows.Forms
 
 			#region Public Properties
 			[Browsable (false)]
-			public virtual int Count {
+			int ICollection.Count {
 				get { return list.Count; }
 			}
 
-			public virtual bool IsReadOnly {
+			internal int Count {
+				get { return list.Count; }
+			}
+
+			bool IList.IsReadOnly {
 				get { return false; }
 			}
 
@@ -2143,7 +2147,7 @@ namespace System.Windows.Forms
 				return list.Contains (value);
 			}
 
-			public virtual IEnumerator GetEnumerator ()
+			IEnumerator IEnumerable.GetEnumerator ()
 			{
 				return list.GetEnumerator ();
 			}
@@ -2257,11 +2261,15 @@ namespace System.Windows.Forms
 
 			#region Public Properties
 			[Browsable (false)]
-			public virtual int Count {
+			int ICollection.Count {
 				get { return list.Count; }
 			}
 
-			public virtual bool IsReadOnly {
+			internal int Count {
+				get { return list.Count; }
+			}
+
+			bool IList.IsReadOnly {
 				get { return false; }
 			}
 
@@ -2374,12 +2382,12 @@ namespace System.Windows.Forms
 				return list.Contains (item);
 			}
 
-			public virtual void CopyTo (Array dest, int index)
+			void ICollection.CopyTo (Array dest, int index)
 			{
 				list.CopyTo (dest, index);
 			}
 
-			public virtual IEnumerator GetEnumerator ()
+			IEnumerator IEnumerable.GetEnumerator ()
 			{
 				return list.GetEnumerator ();
 			}
@@ -2502,11 +2510,15 @@ namespace System.Windows.Forms
 
 			#region Public Properties
 			[Browsable (false)]
-			public virtual int Count {
+			int ICollection.Count {
 				get { return list.Count; }
 			}
 
-			public virtual bool IsReadOnly {
+			internal int Count {
+				get { return list.Count; }
+			}
+
+			bool IList.IsReadOnly {
 				get { return true; }
 			}
 
@@ -2542,12 +2554,12 @@ namespace System.Windows.Forms
 				return list.Contains (selectedIndex);
 			}
 
-			public virtual void CopyTo (Array dest, int index)
+			void ICollection.CopyTo (Array dest, int index)
 			{
 				list.CopyTo (dest, index);
 			}
 
-			public virtual IEnumerator GetEnumerator ()
+			IEnumerator IEnumerable.GetEnumerator ()
 			{
 				return list.GetEnumerator ();
 			}
@@ -2610,11 +2622,15 @@ namespace System.Windows.Forms
 
 			#region Public Properties
 			[Browsable (false)]
-			public virtual int Count {
+			int ICollection.Count {
 				get { return list.Count; }
 			}
 
-			public virtual bool IsReadOnly {
+			internal int Count {
+				get { return list.Count; }
+			}
+
+			bool IList.IsReadOnly {
 				get { return true; }
 			}
 
@@ -2645,7 +2661,12 @@ namespace System.Windows.Forms
 			#endregion	// Public Properties
 
 			#region Public Methods
-			public virtual void Clear ()
+			void IList.Clear ()
+			{
+				Clear ();
+			}
+
+			internal void Clear ()
 			{
 				ArrayList copy = (ArrayList) list.Clone ();
 				for (int i = 0; i < copy.Count; i++)
@@ -2653,18 +2674,17 @@ namespace System.Windows.Forms
 
 				list.Clear ();
 			}
-
 			public bool Contains (ListViewItem item)
 			{
 				return list.Contains (item);
 			}
 
-			public virtual void CopyTo (Array dest, int index)
+			void ICollection.CopyTo (Array dest, int index)
 			{
 				list.CopyTo (dest, index);
 			}
 
-			public virtual IEnumerator GetEnumerator ()
+			IEnumerator IEnumerable.GetEnumerator ()
 			{
 				return list.GetEnumerator ();
 			}
