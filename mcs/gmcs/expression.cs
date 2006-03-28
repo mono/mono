@@ -1299,9 +1299,9 @@ namespace Mono.CSharp {
 			return null;
 		}
 	
-		public override bool GetAttributableValue (out object value)
+		public override bool GetAttributableValue (Type valueType, out object value)
 		{
-			return expr.GetAttributableValue (out value);
+			return expr.GetAttributableValue (valueType, out value);
 		}
 	}
 	
@@ -6837,11 +6837,11 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override bool GetAttributableValue (out object value)
+		public override bool GetAttributableValue (Type valueType, out object value)
 		{
 			if (!is_one_dimensional){
 //				Report.Error (-211, Location, "attribute can not encode multi-dimensional arrays");
-				return base.GetAttributableValue (out value);
+				return base.GetAttributableValue (null, out value);
 			}
 
 			if (array_data == null) {
@@ -6851,13 +6851,13 @@ namespace Mono.CSharp {
 					return true;
 				}
 //				Report.Error (-212, Location, "array should be initialized when passing it to an attribute");
-				return base.GetAttributableValue (out value);
+				return base.GetAttributableValue (null, out value);
 			}
 			
 			object [] ret = new object [array_data.Count];
 			for (int i = 0; i < ret.Length; ++i)
 			{
-				if (!((Expression)array_data [i]).GetAttributableValue (out ret [i])) {
+				if (!((Expression)array_data [i]).GetAttributableValue (array_element_type, out ret [i])) {
 					value = null;
 					return false;
 				}
@@ -7162,8 +7162,12 @@ namespace Mono.CSharp {
 			ec.ig.Emit (OpCodes.Call, TypeManager.system_type_get_type_from_handle);
 		}
 
-		public override bool GetAttributableValue (out object value)
+		public override bool GetAttributableValue (Type valueType, out object value)
 		{
+			if (valueType == TypeManager.object_type) {
+				value = (object)typearg;
+				return true;
+			}
 			value = typearg;
 			return true;
 		}

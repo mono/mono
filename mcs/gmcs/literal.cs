@@ -114,7 +114,7 @@ namespace Mono.CSharp {
 			return base.ToType (type, loc);
 		}
 
-		public override Constant Reduce(EmitContext ec, Type target_type)
+		public override Constant Reduce(bool inCheckedContext, Type target_type)
 		{
 			if (!TypeManager.IsValueType (target_type))
 				return new NullCast (this, target_type);
@@ -245,6 +245,28 @@ namespace Mono.CSharp {
 			type = TypeManager.double_type;
 
 			return this;
+		}
+
+		public override void Error_ValueCannotBeConverted (Location loc, Type target, bool expl)
+		{
+			if (target == TypeManager.float_type) {
+				Error_664 (loc, "float", "f");
+				return;
+			}
+
+			if (target == TypeManager.decimal_type) {
+				Error_664 (loc, "decimal", "m");
+				return;
+			}
+
+			base.Error_ValueCannotBeConverted (loc, target, expl);
+		}
+
+		static void Error_664 (Location loc, string type, string suffix)
+		{
+			Report.Error (664, loc,
+				"Literal of type double cannot be implicitly converted to type `{0}'. Add suffix `{1}' to create a literal of this type",
+				type, suffix);
 		}
 	}
 

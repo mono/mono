@@ -4062,6 +4062,9 @@ namespace Mono.CSharp {
 
 				foreach (Attribute a in attrs) {
 					string condition = a.GetConditionalAttributeValue ();
+					if (condition == null)
+						return false;
+
 					if (RootContext.AllDefines.Contains (condition))
 						return false;
 				}
@@ -4276,6 +4279,11 @@ namespace Mono.CSharp {
 				return;
 			}
 
+			if (a.Type == TypeManager.methodimpl_attr_type &&
+				(a.GetMethodImplOptions () & MethodImplOptions.InternalCall) != 0) {
+				ConstructorBuilder.SetImplementationFlags (MethodImplAttributes.InternalCall | MethodImplAttributes.Runtime);
+			}
+
 			ConstructorBuilder.SetCustomAttribute (cb);
 		}
 
@@ -4352,8 +4360,6 @@ namespace Mono.CSharp {
 						ca |= MethodAttributes.Family;
 				} else if ((ModFlags & Modifiers.INTERNAL) != 0)
 					ca |= MethodAttributes.Assembly;
-				else if (IsDefault ())
-					ca |= MethodAttributes.Public;
 				else
 					ca |= MethodAttributes.Private;
 			}
@@ -4393,13 +4399,13 @@ namespace Mono.CSharp {
 		{
 			EmitContext ec = CreateEmitContext (null, null);
 
+			if (block != null) {
 			// If this is a non-static `struct' constructor and doesn't have any
 			// initializer, it must initialize all of the struct's fields.
 			if ((ParentContainer.Kind == Kind.Struct) &&
 			    ((ModFlags & Modifiers.STATIC) == 0) && (Initializer == null))
-				Block.AddThisVariable (Parent, Location);
+					block.AddThisVariable (Parent, Location);
 
-			if (block != null) {
 				if (!block.ResolveMeta (ec, ParameterInfo))
 					block = null;
 			}
@@ -7114,7 +7120,11 @@ namespace Mono.CSharp {
 					// Remove the attribute from the list because it is not emitted
 					OptAttributes.Attrs.Remove (indexer_attr);
 
-					ShortName = indexer_attr.GetIndexerAttributeValue ();
+					string name = indexer_attr.GetIndexerAttributeValue ();
+					if (name == null)
+						return false;
+
+					ShortName = name;
 
 					if (IsExplicitImpl) {
 						Report.Error (415, indexer_attr.Location,
@@ -7126,12 +7136,6 @@ namespace Mono.CSharp {
 					if ((ModFlags & Modifiers.OVERRIDE) != 0) {
 						Report.Error (609, indexer_attr.Location,
 							      "Cannot set the `IndexerName' attribute on an indexer marked override");
-						return false;
-					}
-
-					if (!Tokenizer.IsValidIdentifier (ShortName)) {
-						Report.Error (633, indexer_attr.Location,
-							      "The argument to the `IndexerName' attribute must be a valid identifier");
 						return false;
 					}
 				}

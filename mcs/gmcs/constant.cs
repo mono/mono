@@ -39,9 +39,15 @@ namespace Mono.CSharp {
 			return this.GetType ().Name + " (" + AsString () + ")";
 		}
 
-		public override bool GetAttributableValue (out object value)
+		public override bool GetAttributableValue (Type valueType, out object value)
 		{
-			value = GetTypedValue ();
+			Constant c = ToType (valueType, loc);
+			if (c == null) {
+				value = null;
+				return false;
+			}
+
+			value = c.GetTypedValue ();
 			return true;
 		}
 
@@ -212,27 +218,27 @@ namespace Mono.CSharp {
 			return retval;
 		}
 
-		protected static void CheckRange (EmitContext ec, ulong value, ulong max)
+		protected static void CheckRange (bool inCheckedContext, ulong value, ulong max)
 		{
-			if (!ec.ConstantCheckState)
+			if (!inCheckedContext)
 				return;
 
 			if (value > max)
 				throw new OverflowException ();
 		}
 
-		protected static void CheckRange (EmitContext ec, double value, long min, long max)
+		protected static void CheckRange (bool inCheckedContext, double value, long min, long max)
 		{
-			if (!ec.ConstantCheckState)
+			if (!inCheckedContext)
 				return;
 
 			if (((value < min) || (value > max)))
 				throw new OverflowException ();
 		}
 
-		protected static void CheckUnsigned (EmitContext ec, long value)
+		protected static void CheckUnsigned (bool inCheckedContext, long value)
 		{
-			if (!ec.ConstantCheckState)
+			if (!inCheckedContext)
 				return;
 
 			if (value < 0)
@@ -243,7 +249,7 @@ namespace Mono.CSharp {
 		/// Maybe ConvertTo name is better. It tries to convert `this' constant to target_type.
 		/// It throws OverflowException 
 		/// </summary>
-		public abstract Constant Reduce (EmitContext ec, Type target_type);
+		public abstract Constant Reduce (bool inCheckedContext, Type target_type);
 
 		/// <summary>
 		///   Attempts to do a compile-time folding of a constant cast.
@@ -273,7 +279,7 @@ namespace Mono.CSharp {
 				return new EnumConstant (c, target_type);
 			}
 
-			return Reduce (ec, target_type);
+			return Reduce (ec.ConstantCheckState, target_type);
 		}
 
 
@@ -330,6 +336,26 @@ namespace Mono.CSharp {
 			get { return false; }
 		}
 	}
+
+	public abstract class IntegralConstant : Constant {
+		protected IntegralConstant (Location loc) :
+			base (loc)
+		{
+		}
+
+		public override void Error_ValueCannotBeConverted (Location loc, Type target, bool expl)
+		{
+			try {
+				Reduce (true, target);
+				base.Error_ValueCannotBeConverted (loc, target, expl);
+			}
+			catch 
+			{
+				Report.Error (31, loc, "Constant value `{0}' cannot be converted to a `{1}'",
+					GetValue ().ToString (), TypeManager.CSharpName (target));
+			}
+		}
+	}
 	
 	public class BoolConstant : Constant {
 		public readonly bool Value;
@@ -383,14 +409,14 @@ namespace Mono.CSharp {
 			get { return Value == false; }
 		}
 
-		public override Constant Reduce (EmitContext ec, Type target_type)
+		public override Constant Reduce (bool inCheckedContext, Type target_type)
 		{
 			return null;
 		}
 
 	}
 
-	public class ByteConstant : Constant {
+	public class ByteConstant : IntegralConstant {
 		public readonly byte Value;
 
 		public ByteConstant (byte v, Location loc):
@@ -467,10 +493,10 @@ namespace Mono.CSharp {
 			get { return Value == 0; }
 		}
 
-		public override Constant Reduce (EmitContext ec, Type target_type)
+		public override Constant Reduce (bool inCheckedContext, Type target_type)
 		{
 			if (target_type == TypeManager.sbyte_type) {
-				CheckRange (ec, Value, SByte.MinValue, SByte.MaxValue);
+				CheckRange (inCheckedContext, Value, SByte.MinValue, SByte.MaxValue);
 				return new SByteConstant ((sbyte) Value, Location);
 			}
 			if (target_type == TypeManager.short_type)
@@ -605,18 +631,18 @@ namespace Mono.CSharp {
 			get { return Value == '\0'; }
 		}
 
-		public override Constant Reduce (EmitContext ec, Type target_type)
+		public override Constant Reduce (bool inCheckedContext, Type target_type)
 		{
 			if (target_type == TypeManager.byte_type) {
-				CheckRange (ec, Value, Byte.MinValue, Byte.MaxValue);
+				CheckRange (inCheckedContext, Value, Byte.MinValue, Byte.MaxValue);
 				return new ByteConstant ((byte) Value, Location);
 			}
 			if (target_type == TypeManager.sbyte_type) {
-				CheckRange (ec, Value, SByte.MinValue, SByte.MaxValue);
+				CheckRange (inCheckedContext, Value, SByte.MinValue, SByte.MaxValue);
 				return new SByteConstant ((sbyte) Value, Location);
 			}
 			if (target_type == TypeManager.short_type) {
-				CheckRange (ec, Value, Int16.MinValue, Int16.MaxValue);
+				CheckRange (inCheckedContext, Value, Int16.MinValue, Int16.MaxValue);
 				return new ShortConstant ((short) Value, Location);
 			}
 			if (target_type == TypeManager.int32_type)
@@ -639,7 +665,7 @@ namespace Mono.CSharp {
 
 	}
 
-	public class SByteConstant : Constant {
+	public class SByteConstant : IntegralConstant {
 		public readonly sbyte Value;
 
 		public SByteConstant (sbyte v, Location loc):
@@ -719,26 +745,26 @@ namespace Mono.CSharp {
 			get { return Value == 0; }
 		}
 
-		public override Constant Reduce (EmitContext ec, Type target_type)
+		public override Constant Reduce (bool inCheckedContext, Type target_type)
 		{
 			if (target_type == TypeManager.byte_type) {
-				CheckUnsigned (ec, Value);
+				CheckUnsigned (inCheckedContext, Value);
 				return new ByteConstant ((byte) Value, Location);
 			}
 			if (target_type == TypeManager.short_type)
 				return new ShortConstant ((short) Value, Location);
 			if (target_type == TypeManager.ushort_type) {
-				CheckUnsigned (ec, Value);
+				CheckUnsigned (inCheckedContext, Value);
 				return new UShortConstant ((ushort) Value, Location);
 			} if (target_type == TypeManager.int32_type)
 				  return new IntConstant ((int) Value, Location);
 			if (target_type == TypeManager.uint32_type) {
-				CheckUnsigned (ec, Value);
+				CheckUnsigned (inCheckedContext, Value);
 				return new UIntConstant ((uint) Value, Location);
 			} if (target_type == TypeManager.int64_type)
 				  return new LongConstant ((long) Value, Location);
 			if (target_type == TypeManager.uint64_type) {
-				CheckUnsigned (ec, Value);
+				CheckUnsigned (inCheckedContext, Value);
 				return new ULongConstant ((ulong) Value, Location);
 			}
 			if (target_type == TypeManager.float_type)
@@ -746,7 +772,7 @@ namespace Mono.CSharp {
 			if (target_type == TypeManager.double_type)
 				return new DoubleConstant ((double) Value, Location);
 			if (target_type == TypeManager.char_type) {
-				CheckUnsigned (ec, Value);
+				CheckUnsigned (inCheckedContext, Value);
 				return new CharConstant ((char) Value, Location);
 			}
 			if (target_type == TypeManager.decimal_type)
@@ -757,7 +783,7 @@ namespace Mono.CSharp {
 
 	}
 
-	public class ShortConstant : Constant {
+	public class ShortConstant : IntegralConstant {
 		public readonly short Value;
 
 		public ShortConstant (short v, Location loc):
@@ -834,30 +860,30 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override Constant Reduce (EmitContext ec, Type target_type)
+		public override Constant Reduce (bool inCheckedContext, Type target_type)
 		{
 			if (target_type == TypeManager.byte_type) {
-				CheckRange (ec, Value, Byte.MinValue, Byte.MaxValue);
+				CheckRange (inCheckedContext, Value, Byte.MinValue, Byte.MaxValue);
 				return new ByteConstant ((byte) Value, Location);
 			}
 			if (target_type == TypeManager.sbyte_type) {
-				CheckRange (ec, Value, SByte.MinValue, SByte.MaxValue);
+				CheckRange (inCheckedContext, Value, SByte.MinValue, SByte.MaxValue);
 				return new SByteConstant ((sbyte) Value, Location);
 			}
 			if (target_type == TypeManager.ushort_type) {
-				CheckUnsigned (ec, Value);
+				CheckUnsigned (inCheckedContext, Value);
 				return new UShortConstant ((ushort) Value, Location);
 			}
 			if (target_type == TypeManager.int32_type)
 				return new IntConstant ((int) Value, Location);
 			if (target_type == TypeManager.uint32_type) {
-				CheckUnsigned (ec, Value);
+				CheckUnsigned (inCheckedContext, Value);
 				return new UIntConstant ((uint) Value, Location);
 			}
 			if (target_type == TypeManager.int64_type)
 				return new LongConstant ((long) Value, Location);
 			if (target_type == TypeManager.uint64_type) {
-				CheckUnsigned (ec, Value);
+				CheckUnsigned (inCheckedContext, Value);
 				return new ULongConstant ((ulong) Value, Location);
 			}
 			if (target_type == TypeManager.float_type)
@@ -865,7 +891,7 @@ namespace Mono.CSharp {
 			if (target_type == TypeManager.double_type)
 				return new DoubleConstant ((double) Value, Location);
 			if (target_type == TypeManager.char_type) {
-				CheckRange (ec, Value, Char.MinValue, Char.MaxValue);
+				CheckRange (inCheckedContext, Value, Char.MinValue, Char.MaxValue);
 				return new CharConstant ((char) Value, Location);
 			}
 			if (target_type == TypeManager.decimal_type)
@@ -876,7 +902,7 @@ namespace Mono.CSharp {
 
 	}
 
-	public class UShortConstant : Constant {
+	public class UShortConstant : IntegralConstant {
 		public readonly ushort Value;
 
 		public UShortConstant (ushort v, Location loc):
@@ -953,18 +979,18 @@ namespace Mono.CSharp {
 			get { return Value == 0; }
 		}
 
-		public override Constant Reduce (EmitContext ec, Type target_type)
+		public override Constant Reduce (bool inCheckedContext, Type target_type)
 		{
 			if (target_type == TypeManager.byte_type) {
-				CheckRange (ec, Value, Byte.MinValue, Byte.MaxValue);
+				CheckRange (inCheckedContext, Value, Byte.MinValue, Byte.MaxValue);
 				return new ByteConstant ((byte) Value, Location);
 			}
 			if (target_type == TypeManager.sbyte_type) {
-				CheckRange (ec, Value, SByte.MinValue, SByte.MaxValue);
+				CheckRange (inCheckedContext, Value, SByte.MinValue, SByte.MaxValue);
 				return new SByteConstant ((sbyte) Value, Location);
 			}
 			if (target_type == TypeManager.short_type) {
-				CheckRange (ec, Value, Int16.MinValue, Int16.MaxValue);
+				CheckRange (inCheckedContext, Value, Int16.MinValue, Int16.MaxValue);
 				return new ShortConstant ((short) Value, Location);
 			}
 			if (target_type == TypeManager.int32_type)
@@ -980,7 +1006,7 @@ namespace Mono.CSharp {
 			if (target_type == TypeManager.double_type)
 				return new DoubleConstant ((double) Value, Location);
 			if (target_type == TypeManager.char_type) {
-				CheckRange (ec, Value, Char.MinValue, Char.MaxValue);
+				CheckRange (inCheckedContext, Value, Char.MinValue, Char.MaxValue);
 				return new CharConstant ((char) Value, Location);
 			}
 			if (target_type == TypeManager.decimal_type)
@@ -990,7 +1016,7 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class IntConstant : Constant {
+	public class IntConstant : IntegralConstant {
 		public readonly int Value;
 
 		public IntConstant (int v, Location loc):
@@ -1130,32 +1156,32 @@ namespace Mono.CSharp {
 			get { return Value == 0; }
 		}
 
-		public override Constant Reduce (EmitContext ec, Type target_type)
+		public override Constant Reduce (bool inCheckedContext, Type target_type)
 		{
 			if (target_type == TypeManager.byte_type) {
-				CheckRange (ec, Value, Byte.MinValue, Byte.MaxValue);
+				CheckRange (inCheckedContext, Value, Byte.MinValue, Byte.MaxValue);
 				return new ByteConstant ((byte) Value, Location);
 			}
 			if (target_type == TypeManager.sbyte_type) {
-				CheckRange (ec, Value, SByte.MinValue, SByte.MaxValue);
+				CheckRange (inCheckedContext, Value, SByte.MinValue, SByte.MaxValue);
 				return new SByteConstant ((sbyte) Value, Location);
 			}
 			if (target_type == TypeManager.short_type) {
-				CheckRange (ec, Value, Int16.MinValue, Int16.MaxValue);
+				CheckRange (inCheckedContext, Value, Int16.MinValue, Int16.MaxValue);
 				return new ShortConstant ((short) Value, Location);
 			}
 			if (target_type == TypeManager.ushort_type) {
-				CheckRange (ec, Value, UInt16.MinValue, UInt16.MaxValue);
+				CheckRange (inCheckedContext, Value, UInt16.MinValue, UInt16.MaxValue);
 				return new UShortConstant ((ushort) Value, Location);
 			}
 			if (target_type == TypeManager.uint32_type) {
-				CheckRange (ec, Value, Int32.MinValue, Int32.MaxValue);
+				CheckRange (inCheckedContext, Value, UInt32.MinValue, UInt32.MaxValue);
 				return new UIntConstant ((uint) Value, Location);
 			}
 			if (target_type == TypeManager.int64_type)
 				return new LongConstant ((long) Value, Location);
 			if (target_type == TypeManager.uint64_type) {
-				CheckUnsigned (ec, Value);
+				CheckUnsigned (inCheckedContext, Value);
 				return new ULongConstant ((ulong) Value, Location);
 			}
 			if (target_type == TypeManager.float_type)
@@ -1163,7 +1189,7 @@ namespace Mono.CSharp {
 			if (target_type == TypeManager.double_type)
 				return new DoubleConstant ((double) Value, Location);
 			if (target_type == TypeManager.char_type) {
-				CheckRange (ec, Value, Char.MinValue, Char.MaxValue);
+				CheckRange (inCheckedContext, Value, Char.MinValue, Char.MaxValue);
 				return new CharConstant ((char) Value, Location);
 			}
 			if (target_type == TypeManager.decimal_type)
@@ -1173,7 +1199,7 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class UIntConstant : Constant {
+	public class UIntConstant : IntegralConstant {
 		public readonly uint Value;
 
 		public UIntConstant (uint v, Location loc):
@@ -1250,26 +1276,26 @@ namespace Mono.CSharp {
 			get { return Value == 0; }
 		}
 
-		public override Constant Reduce (EmitContext ec, Type target_type)
+		public override Constant Reduce (bool inCheckedContext, Type target_type)
 		{
 			if (target_type == TypeManager.byte_type) {
-				CheckRange (ec, Value, Char.MinValue, Char.MaxValue);
+				CheckRange (inCheckedContext, Value, Char.MinValue, Char.MaxValue);
 				return new ByteConstant ((byte) Value, Location);
 			}
 			if (target_type == TypeManager.sbyte_type) {
-				CheckRange (ec, Value, SByte.MinValue, SByte.MaxValue);
+				CheckRange (inCheckedContext, Value, SByte.MinValue, SByte.MaxValue);
 				return new SByteConstant ((sbyte) Value, Location);
 			}
 			if (target_type == TypeManager.short_type) {
-				CheckRange (ec, Value, Int16.MinValue, Int16.MaxValue);
+				CheckRange (inCheckedContext, Value, Int16.MinValue, Int16.MaxValue);
 				return new ShortConstant ((short) Value, Location);
 			}
 			if (target_type == TypeManager.ushort_type) {
-				CheckRange (ec, Value, UInt16.MinValue, UInt16.MaxValue);
+				CheckRange (inCheckedContext, Value, UInt16.MinValue, UInt16.MaxValue);
 				return new UShortConstant ((ushort) Value, Location);
 			}
 			if (target_type == TypeManager.int32_type) {
-				CheckRange (ec, Value, Int32.MinValue, Int32.MaxValue);
+				CheckRange (inCheckedContext, Value, Int32.MinValue, Int32.MaxValue);
 				return new IntConstant ((int) Value, Location);
 			}
 			if (target_type == TypeManager.int64_type)
@@ -1281,7 +1307,7 @@ namespace Mono.CSharp {
 			if (target_type == TypeManager.double_type)
 				return new DoubleConstant ((double) Value, Location);
 			if (target_type == TypeManager.char_type) {
-				CheckRange (ec, Value, Char.MinValue, Char.MaxValue);
+				CheckRange (inCheckedContext, Value, Char.MinValue, Char.MaxValue);
 				return new CharConstant ((char) Value, Location);
 			}
 			if (target_type == TypeManager.decimal_type)
@@ -1292,7 +1318,7 @@ namespace Mono.CSharp {
 
 	}
 
-	public class LongConstant : Constant {
+	public class LongConstant : IntegralConstant {
 		public readonly long Value;
 
 		public LongConstant (long v, Location loc):
@@ -1384,34 +1410,34 @@ namespace Mono.CSharp {
 			get { return Value == 0; }
 		}
 
-		public override Constant Reduce (EmitContext ec, Type target_type)
+		public override Constant Reduce (bool inCheckedContext, Type target_type)
 		{
 			if (target_type == TypeManager.byte_type) {
-				CheckRange (ec, Value, Byte.MinValue, Byte.MaxValue);
+				CheckRange (inCheckedContext, Value, Byte.MinValue, Byte.MaxValue);
 				return new ByteConstant ((byte) Value, Location);
 			}
 			if (target_type == TypeManager.sbyte_type) {
-				CheckRange (ec, Value, SByte.MinValue, SByte.MaxValue);
+				CheckRange (inCheckedContext, Value, SByte.MinValue, SByte.MaxValue);
 				return new SByteConstant ((sbyte) Value, Location);
 			}
 			if (target_type == TypeManager.short_type) {
-				CheckRange (ec, Value, Int16.MinValue, Int16.MaxValue);
+				CheckRange (inCheckedContext, Value, Int16.MinValue, Int16.MaxValue);
 				return new ShortConstant ((short) Value, Location);
 			}
 			if (target_type == TypeManager.ushort_type) {
-				CheckRange (ec, Value, UInt16.MinValue, UInt16.MaxValue);
+				CheckRange (inCheckedContext, Value, UInt16.MinValue, UInt16.MaxValue);
 				return new UShortConstant ((ushort) Value, Location);
 			}
 			if (target_type == TypeManager.int32_type) {
-				CheckRange (ec, Value, Int32.MinValue, Int32.MaxValue);
+				CheckRange (inCheckedContext, Value, Int32.MinValue, Int32.MaxValue);
 				return new IntConstant ((int) Value, Location);
 			}
 			if (target_type == TypeManager.uint32_type) {
-				CheckRange (ec, Value, UInt32.MinValue, UInt32.MaxValue);
+				CheckRange (inCheckedContext, Value, UInt32.MinValue, UInt32.MaxValue);
 				return new UIntConstant ((uint) Value, Location);
 			}
 			if (target_type == TypeManager.uint64_type) {
-				CheckUnsigned (ec, Value);
+				CheckUnsigned (inCheckedContext, Value);
 				return new ULongConstant ((ulong) Value, Location);
 			}
 			if (target_type == TypeManager.float_type)
@@ -1419,7 +1445,7 @@ namespace Mono.CSharp {
 			if (target_type == TypeManager.double_type)
 				return new DoubleConstant ((double) Value, Location);
 			if (target_type == TypeManager.char_type) {
-				CheckRange (ec, Value, Char.MinValue, Char.MaxValue);
+				CheckRange (inCheckedContext, Value, Char.MinValue, Char.MaxValue);
 				return new CharConstant ((char) Value, Location);
 			}
 			if (target_type == TypeManager.decimal_type)
@@ -1430,7 +1456,7 @@ namespace Mono.CSharp {
 
 	}
 
-	public class ULongConstant : Constant {
+	public class ULongConstant : IntegralConstant {
 		public readonly ulong Value;
 
 		public ULongConstant (ulong v, Location loc):
@@ -1509,34 +1535,34 @@ namespace Mono.CSharp {
 			get { return Value == 0; }
 		}
 
-		public override Constant Reduce (EmitContext ec, Type target_type)
+		public override Constant Reduce (bool inCheckedContext, Type target_type)
 		{
 			if (target_type == TypeManager.byte_type) {
-				CheckRange (ec, Value, Byte.MaxValue);
+				CheckRange (inCheckedContext, Value, Byte.MaxValue);
 				return new ByteConstant ((byte) Value, Location);
 			}
 			if (target_type == TypeManager.sbyte_type) {
-				CheckRange (ec, Value, (ulong) SByte.MaxValue);
+				CheckRange (inCheckedContext, Value, (ulong) SByte.MaxValue);
 				return new SByteConstant ((sbyte) Value, Location);
 			}
 			if (target_type == TypeManager.short_type) {
-				CheckRange (ec, Value, (ulong) Int16.MaxValue);
+				CheckRange (inCheckedContext, Value, (ulong) Int16.MaxValue);
 				return new ShortConstant ((short) Value, Location);
 			}
 			if (target_type == TypeManager.ushort_type) {
-				CheckRange (ec, Value, UInt16.MaxValue);
+				CheckRange (inCheckedContext, Value, UInt16.MaxValue);
 				return new UShortConstant ((ushort) Value, Location);
 			}
 			if (target_type == TypeManager.int32_type) {
-				CheckRange (ec, Value, Int32.MaxValue);
+				CheckRange (inCheckedContext, Value, Int32.MaxValue);
 				return new IntConstant ((int) Value, Location);
 			}
 			if (target_type == TypeManager.uint32_type) {
-				CheckRange (ec, Value, UInt32.MaxValue);
+				CheckRange (inCheckedContext, Value, UInt32.MaxValue);
 				return new UIntConstant ((uint) Value, Location);
 			}
 			if (target_type == TypeManager.int64_type) {
-				CheckRange (ec, Value, (ulong) Int64.MaxValue);
+				CheckRange (inCheckedContext, Value, (ulong) Int64.MaxValue);
 				return new LongConstant ((long) Value, Location);
 			}
 			if (target_type == TypeManager.float_type)
@@ -1544,7 +1570,7 @@ namespace Mono.CSharp {
 			if (target_type == TypeManager.double_type)
 				return new DoubleConstant ((double) Value, Location);
 			if (target_type == TypeManager.char_type) {
-				CheckRange (ec, Value, Char.MaxValue);
+				CheckRange (inCheckedContext, Value, Char.MaxValue);
 				return new CharConstant ((char) Value, Location);
 			}
 			if (target_type == TypeManager.decimal_type)
@@ -1623,7 +1649,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override Constant Reduce (EmitContext ec, Type target_type)
+		public override Constant Reduce (bool inCheckedContext, Type target_type)
 		{
 			if (target_type == TypeManager.byte_type)
 				return new ByteConstant ((byte) Value, Location);
@@ -1726,14 +1752,14 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override Constant Reduce (EmitContext ec, Type target_type)
+		public override Constant Reduce (bool inCheckedContext, Type target_type)
 		{
 			if (target_type == TypeManager.byte_type) {
-				CheckRange (ec, Value, Byte.MinValue, Byte.MaxValue);
+				CheckRange (inCheckedContext, Value, Byte.MinValue, Byte.MaxValue);
 				return new ByteConstant ((byte) Value, Location);
 			}
 			if (target_type == TypeManager.sbyte_type) {
-				CheckRange (ec, Value, SByte.MinValue, SByte.MaxValue);
+				CheckRange (inCheckedContext, Value, SByte.MinValue, SByte.MaxValue);
 				return new SByteConstant ((sbyte) Value, Location);
 			}
 			if (target_type == TypeManager.short_type)
@@ -1751,7 +1777,7 @@ namespace Mono.CSharp {
 			if (target_type == TypeManager.float_type)
 				return new FloatConstant ((float) Value, Location);
 			if (target_type == TypeManager.char_type) {
-				CheckRange (ec, Value, char.MinValue, char.MaxValue);
+				CheckRange (inCheckedContext, Value, char.MinValue, char.MaxValue);
 				return new CharConstant ((char) Value, Location);
 			}
 			if (target_type == TypeManager.decimal_type)
@@ -1833,7 +1859,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override Constant Reduce (EmitContext ec, Type target_type)
+		public override Constant Reduce (bool inCheckedContext, Type target_type)
 		{
 			if (target_type == TypeManager.sbyte_type)
 				return new SByteConstant ((sbyte)Value, loc);
@@ -1910,7 +1936,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override Constant Reduce (EmitContext ec, Type target_type)
+		public override Constant Reduce (bool inCheckedContext, Type target_type)
 		{
 			return null;
 		}

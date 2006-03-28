@@ -10,7 +10,5 @@ test-anon-27.cs
 test-xml-027.cs
 test-465.cs IGNORE	# need to fix the path separator to work both on Unix and Windows
 test-476.cs
-test-498.cs
-test-39.cs
 
 gtest-230.cs

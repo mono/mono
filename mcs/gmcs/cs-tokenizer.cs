@@ -1056,7 +1056,7 @@ namespace Mono.CSharp
 				break;
 			case Token.LITERAL_FLOAT:
 				try {
-					val = (float) System.Double.Parse (s, styles, csharp_format_info);
+					val = float.Parse (s, styles, csharp_format_info);
 				} catch (OverflowException) {
 					val = 0.0f;     
 					Report.Error (594, Location, error_details, "float");

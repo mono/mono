@@ -1398,34 +1398,12 @@ namespace Mono.CSharp {
 		static public Expression ImplicitConversionRequired (EmitContext ec, Expression source,
 								     Type target_type, Location loc)
 		{
-			Expression e;
-
-			int errors = Report.Errors;
-			e = ImplicitConversion (ec, source, target_type, loc);
-			if (Report.Errors > errors)
-				return null;
+			Expression e = ImplicitConversion (ec, source, target_type, loc);
 			if (e != null)
 				return e;
 
-			if (source is DoubleLiteral) {
-				if (target_type == TypeManager.float_type) {
-					Error_664 (loc, "float", "f");
-					return null;
-				}
-				if (target_type == TypeManager.decimal_type) {
-					Error_664 (loc, "decimal", "m");
-					return null;
-				}
-			}
-
 			source.Error_ValueCannotBeConverted (loc, target_type, false);
 			return null;
-		}
-
-		static void Error_664 (Location loc, string type, string suffix) {
-			Report.Error (664, loc,
-				"Literal of type double cannot be implicitly converted to type `{0}'. Add suffix `{1}' to create a literal of this type",
-				type, suffix);
 		}
 
 		/// <summary>

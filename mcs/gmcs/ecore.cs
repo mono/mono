@@ -137,7 +137,7 @@ namespace Mono.CSharp {
 		// Not nice but we have broken hierarchy
 		public virtual void CheckMarshallByRefAccess (Type container) {}
 
-		public virtual bool GetAttributableValue (out object value)
+		public virtual bool GetAttributableValue (Type valueType, out object value)
 		{
 			Attribute.Error_AttributeArgumentNotValid (loc);
 			value = null;
@@ -442,17 +442,6 @@ namespace Mono.CSharp {
 			if (c != null)
 				return c;
 
-			EmptyCast empty = e as EmptyCast;
-			if (empty != null) {
-				c = empty.Child as Constant;
-				if (c != null) {
-					// TODO: not sure about this maybe there is easier way how to use EmptyCast
-					if (e.Type.IsEnum)
-						c.Type = e.Type;
-
-					return c;
-				}
-			}
 			Const.Error_ExpressionMustBeConstant (loc, mc.GetSignatureForError ());
 			return null;
 		}
@@ -1173,12 +1162,6 @@ namespace Mono.CSharp {
 	public class EmptyCast : Expression {
 		protected readonly Expression child;
 
-		public Expression Child {
-			get {
-				return child;
-			}
-		}		
-
 		public EmptyCast (Expression child, Type return_type)
 		{
 			eclass = child.eclass;
@@ -1200,9 +1183,9 @@ namespace Mono.CSharp {
 			child.Emit (ec);
 		}
 
-		public override bool GetAttributableValue (out object value)
+		public override bool GetAttributableValue (Type valueType, out object value)
 		{
-			return child.GetAttributableValue (out value);
+			return child.GetAttributableValue (valueType, out value);
 		}
 
 	}
@@ -1353,10 +1336,10 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override Constant Reduce (EmitContext ec, Type target_type)
+		public override Constant Reduce (bool inCheckedContext, Type target_type)
 		{
 			if (type == target_type)
-				return child.Reduce (ec, target_type);
+				return child.Reduce (inCheckedContext, target_type);
 
 			return null;
 		}
@@ -1389,6 +1372,12 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			Child.Emit (ec);
+		}
+
+		public override bool GetAttributableValue (Type valueType, out object value)
+		{
+			value = GetTypedValue ();
+			return true;
 		}
 
 		public override string GetSignatureForError()
@@ -1467,12 +1456,12 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override Constant Reduce(EmitContext ec, Type target_type)
+		public override Constant Reduce(bool inCheckedContext, Type target_type)
 		{
 			if (Child.Type == target_type)
 				return Child;
 
-			return Child.Reduce (ec, target_type);
+			return Child.Reduce (inCheckedContext, target_type);
 		}
 
 		public override Constant ToType (Type type, Location loc)

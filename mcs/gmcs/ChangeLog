@@ -1,3 +1,70 @@
+2006-03-27  Marek Safar  <marek.safar@seznam.cz>
+
+	* ecore.cs (Expression.ResolveAsConstant): Clean up, enum constants should
+	be now EnumConstants only.
+
+2006-03-27  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs, driver.cs: Reset more caches.
+
+2006-03-26  Marek Safar  <marek.safar@seznam.cz>
+
+	* cs-tokenizer.cs (adjust_real): Uses float.Parse for float literals.
+
+2006-03-26  Marek Safar  <marek.safar@seznam.cz>
+
+	* constant.cs (Constant.Reduce): Replaced EmitContext with single bool
+	for easier reuse. Updated all overrides.
+	(IntegralConstant): New base class for all integral constants.
+	(IntegralConstant.Error_ValueCannotBeConverted): When assigned value if out
+	of the constant range, report custom error.
+	(UIntConstant.Reduce): Fixed uint conversion.
+
+	* ecore.cs, literal.cs: Reduce updates.
+
+2006-03-26  Marek Safar  <marek.safar@seznam.cz>
+
+	A fix for #75813.
+
+	* class.cs (Constructor.Define): Removed extra if for default ctors.
+	A patch from Atsushi Enomoto.
+
+2006-03-26  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs (Attribute.ResolveConstructor): Conversion was moved to
+	GetAttributableValue.
+
+	* constant.cs (Constant.GetAttributableValue): Does implicit conversion
+	when required.
+
+	* convert.cs (ImplicitConversionRequired): Error message moved to
+	DoubleLiteral.
+
+	* ecore.cs (Expression.GetAttributableValue): Add type parameter for
+	automatic implicit conversion of an output value.
+	(EnumConstant.GetAttributableValue): Don't reduce the enum constants.
+
+	* expression.cs (ArrayCreation.GetAttributableValue): Add element type
+	conversion.
+	(TypeOf.GetAttributableValue): Add extra handling for object type.
+
+	* literal.cs (DoubleLiteral.Error_ValueCannotBeConverted): Doubles can have
+	special error message.
+
+2006-03-25  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs (Constructor.Emit): Don't crash when struct ctor is
+	InternalCall.
+	(Constructor.ApplyAttributeBuilder): Transform MethodImplAttribute to be
+	compatible with MS runtime.
+
+2006-03-23  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs (Attribute.ResolveConstructor): Check for an invalid
+	attribute arguments here.
+
+	* class.cs (Indexer.Define): The check was moved to attribute class.
+
 2006-03-21  Marek Safar  <marek.safar@seznam.cz>
 
 	* expression.cs (StringConcat.Append): Reverted back to no warning state.
