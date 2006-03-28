@@ -1,7 +1,11 @@
+2006-03-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Panel.cs: render the image url inside 'url()'. Fixes bug #77811.
+
 2006-03-28  Alexandre Miguel Pedro Gomes  <alexmipego@gmail.com>
- 
- 	* FontInfo.cs: Implemented ShouldSerializeNames
- 
+
+	* FontInfo.cs: Implemented ShouldSerializeNames
+
 2006-03-23  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* DataGrid.cs, DataList.cs, RepeatInfo.cs: added accessablity features
