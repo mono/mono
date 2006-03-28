@@ -49,9 +49,9 @@ namespace Microsoft.Build.BuildEngine {
 			this.usingTaskElement = usingTaskElement;
 			
 			if (project == null)
-				throw new ArgumentNullException("project");
+				throw new ArgumentNullException ("project");
 			if (usingTaskElement == null)
-				throw new ArgumentNullException("usingTaskElement");
+				throw new ArgumentNullException ("usingTaskElement");
 			if (AssemblyName == String.Empty && AssemblyFile == String.Empty)
 				throw new InvalidProjectFileException ("AssemblyName or AssemblyFile attribute must be specified.");
 			if (TaskName == String.Empty)
@@ -69,9 +69,9 @@ namespace Microsoft.Build.BuildEngine {
 				if (Path.IsPathRooted (filename) == false) {
 					string ffn;
 					if (importedProject != null) {
-						ffn = Path.GetDirectoryName(importedProject.FullFileName);
+						ffn = Path.GetDirectoryName (importedProject.FullFileName);
 					} else {
-						ffn = Path.GetDirectoryName(project.FullFileName);
+						ffn = Path.GetDirectoryName (project.FullFileName);
 					}
 					filename = Path.Combine (ffn, filename);
 				}
@@ -87,19 +87,19 @@ namespace Microsoft.Build.BuildEngine {
 		}
 		
 		public string AssemblyFile {
-			get { return usingTaskElement.GetAttribute("AssemblyFile"); }
+			get { return usingTaskElement.GetAttribute ("AssemblyFile"); }
 		}
 		
 		public string AssemblyName {
-			get { return usingTaskElement.GetAttribute("AssemblyName"); }
+			get { return usingTaskElement.GetAttribute ("AssemblyName"); }
 		}
 		
 		public string Condition {
-			get { return usingTaskElement.GetAttribute("Condition"); }
+			get { return usingTaskElement.GetAttribute ("Condition"); }
 		}
 		
 		public string TaskName {
-			get { return usingTaskElement.GetAttribute("TaskName"); }
+			get { return usingTaskElement.GetAttribute ("TaskName"); }
 		}
 	}
 }

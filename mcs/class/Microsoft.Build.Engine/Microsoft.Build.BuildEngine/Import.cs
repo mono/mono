@@ -28,33 +28,62 @@
 #if NET_2_0
 
 using System;
+using System.IO;
 using System.Xml;
 
 namespace Microsoft.Build.BuildEngine {
 	public class Import {
-	
-		XmlAttribute	condition;
-		string		evaluatedProjectPath;
 		XmlElement	importElement;
-		bool		isImported;
-		XmlAttribute	projectPath;
-		
+		Project		project;
+		ImportedProject originalProject;
+		string		evaluatedProjectPath;
 	
-		internal Import (XmlElement importElement, bool isImported)
+		internal Import (XmlElement importElement, Project project, ImportedProject originalProject)
 		{
 			if (importElement == null)
 				throw new ArgumentNullException ("importElement");
+			if (project == null)
+				throw new ArgumentNullException ("project");
 		
+			this.project = project;
 			this.importElement = importElement;
-			this.isImported = isImported;
-			this.condition = importElement.GetAttributeNode ("Condition");
-			this.projectPath = importElement.GetAttributeNode ("ProjectPath");
-			// FIXME: evaluate this
-			this.evaluatedProjectPath = projectPath.Value;
+			this.originalProject = originalProject;
+
+			if (ProjectPath == String.Empty)
+				throw new InvalidProjectFileException ("Project attribute must be specified.");
+		}
+
+		internal void Evaluate ()
+		{
+			string file;
+			Expression exp;
+
+			exp = new Expression (project, ProjectPath);
+			file = evaluatedProjectPath = (string) exp.ToNonArray (typeof (string));
+
+			if (Path.IsPathRooted (EvaluatedProjectPath) == false) {
+				string dir;
+				if (originalProject == null)
+					dir = Path.GetDirectoryName (project.FullFileName);
+				else
+					dir = Path.GetDirectoryName (originalProject.FullFileName);
+				file = Path.Combine (dir, EvaluatedProjectPath);
+			}
+
+			// FIXME: loggers anybody?
+			if (!File.Exists (file)) {
+				Console.WriteLine ("Imported file {0} doesn't exist.", file);
+				return;
+			}
+			
+			ImportedProject importedProject = new ImportedProject ();
+			importedProject.Load (file);
+			// FIXME: UGLY HACK
+			project.ProcessElements (importedProject.XmlDocument.DocumentElement, importedProject);
 		}
 		
 		public string Condition {
-			get { return condition.Value; }
+			get { return importElement.GetAttribute ("Condition"); }
 		}
 		
 		public string EvaluatedProjectPath {
@@ -62,11 +91,11 @@ namespace Microsoft.Build.BuildEngine {
 		}
 		
 		public bool IsImported {
-			get { return isImported; }
+			get { return originalProject != null; }
 		}
 		
 		public string ProjectPath {
-			get { return evaluatedProjectPath; }
+			get { return importElement.GetAttribute ("Project"); }
 		}
 	}
 }

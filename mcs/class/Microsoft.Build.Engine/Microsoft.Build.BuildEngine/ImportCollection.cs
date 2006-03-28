@@ -35,13 +35,13 @@ using System.Xml;
 namespace Microsoft.Build.BuildEngine {
 	public class ImportCollection : ICollection, IEnumerable {
 		
-		IDictionary	imports;
+		IList		imports;
 		Project		parentProject;
 		
 		internal ImportCollection (Project parentProject)
 		{
 			this.parentProject = parentProject;
-			this.imports = new Hashtable ();
+			this.imports = new ArrayList ();
 		}
 		
 		internal void Add (Import import)
@@ -49,10 +49,10 @@ namespace Microsoft.Build.BuildEngine {
 			if (import == null)
 				throw new ArgumentNullException ("import");
 			
-			if (imports.Contains (import.EvaluatedProjectPath))
+			if (imports.Contains (import))
 				throw new InvalidOperationException ("Import already added.");
 			
-			imports.Add (import.EvaluatedProjectPath, import);
+			imports.Add (import);
 		}
 		
 		[MonoTODO]
@@ -77,10 +77,6 @@ namespace Microsoft.Build.BuildEngine {
 		
 		public bool IsSynchronized  {
 			get { return false; }
-		}
-		
-		internal Import this [string index] {
-			get { return (Import) imports [index]; }
 		}
 		
 		public object SyncRoot {

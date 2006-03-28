@@ -53,7 +53,7 @@ namespace Microsoft.Build.BuildEngine {
 		}
 
 		public BuildProperty (string propertyName, string propertyValue):
-			this(propertyName, propertyValue, PropertyType.Global)
+			this (propertyName, propertyValue, PropertyType.Normal)
 		{
 		}
 
@@ -86,8 +86,7 @@ namespace Microsoft.Build.BuildEngine {
 			return (BuildProperty) this.MemberwiseClone ();
 		}
 
-		// Evaluate the property.
-		internal void Evaluate()
+		internal void Evaluate ()
 		{
 			if (FromXml) {
 				Expression exp = new Expression (parentProject, Value);
@@ -96,7 +95,7 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 
-		public static implicit operator string (BuildProperty propertyToCast)
+		public static explicit operator string (BuildProperty propertyToCast)
 		{
 			if (propertyToCast == null)
 				throw new ArgumentNullException ("propertyToCast");
@@ -138,10 +137,12 @@ namespace Microsoft.Build.BuildEngine {
 				return value;
 			}
 			set {
+				this.@value = value;
 				if (FromXml) {
 					propertyElement.InnerText = value;
+				} else {
+					finalValue = value;
 				}
-				this.@value = value;
 			}
 		}
 

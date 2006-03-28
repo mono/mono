@@ -75,7 +75,7 @@ namespace Microsoft.Build.BuildEngine {
 		//XmlElement			xmlElement;
 
 		public Project ()
-			: this (null)
+			: this (Engine.GlobalEngine)
 		{
 		}
 
@@ -83,16 +83,21 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			parentEngine  = engine;
 			xmlDocument = new XmlDocument ();
-			evaluatedItems = new BuildItemGroup (null, this);
-			evaluatedItemsIgnoringCondition = new BuildItemGroup (null, this);
-			evaluatedItemsByName = CollectionsUtil.CreateCaseInsensitiveHashtable ();
-			evaluatedItemsByNameIgnoringCondition = CollectionsUtil.CreateCaseInsensitiveHashtable ();
-			evaluatedProperties = new BuildPropertyGroup ();
 			groups = new GroupingCollection ();
+			imports = new ImportCollection (this);
+			usingTasks = new UsingTaskCollection (this);
 			itemGroups = new BuildItemGroupCollection (groups);
 			propertyGroups = new BuildPropertyGroupCollection (groups);
 			targets = new TargetCollection (this);
 			taskDatabase = new TaskDatabase ();
+			globalProperties = new BuildPropertyGroup ();
+
+			foreach (BuildProperty bp in parentEngine.GlobalProperties) {
+				GlobalProperties.AddProperty (bp.Clone (true));
+			}
+
+			// You can evaluate an empty project.
+			Evaluate ();
 		}
 
 		[MonoTODO]
@@ -275,6 +280,45 @@ namespace Microsoft.Build.BuildEngine {
 			ProcessElements (xmlElement, null);
 			
 			isDirty = false;
+			Evaluate();
+		}
+
+		private void InitializeProperties ()
+		{
+			BuildProperty bp;
+
+			foreach (BuildProperty gp in GlobalProperties) {
+				bp = new BuildProperty (gp.Name, gp.Value, PropertyType.Global);
+				EvaluatedProperties.AddProperty (bp);
+			}
+			
+			foreach (DictionaryEntry de in Environment.GetEnvironmentVariables ()) {
+				bp = new BuildProperty ((string) de.Key, (string) de.Value, PropertyType.Environment);
+				EvaluatedProperties.AddProperty (bp);
+			}
+
+			bp = new BuildProperty ("MSBuildBinPath", parentEngine.BinPath, PropertyType.Reserved);
+			EvaluatedProperties.AddProperty (bp);
+		}
+
+		internal void Evaluate ()
+		{
+			evaluatedItems = new BuildItemGroup (null, this);
+			evaluatedItemsIgnoringCondition = new BuildItemGroup (null, this);
+			evaluatedItemsByName = CollectionsUtil.CreateCaseInsensitiveHashtable ();
+			evaluatedItemsByNameIgnoringCondition = CollectionsUtil.CreateCaseInsensitiveHashtable ();
+			evaluatedProperties = new BuildPropertyGroup ();
+
+			InitializeProperties ();
+
+			foreach (BuildPropertyGroup bpg in PropertyGroups)
+				bpg.Evaluate ();
+			foreach (Import import in Imports)
+				import.Evaluate ();
+			foreach (BuildItemGroup big in ItemGroups)
+				big.Evaluate ();
+			foreach (UsingTask usingTask in UsingTasks)
+				usingTask.Evaluate ();
 		}
 
 		public void MarkProjectAsDirty ()
@@ -428,7 +472,7 @@ namespace Microsoft.Build.BuildEngine {
 			throw new NotImplementedException ();
 		}
 
-		private void ProcessElements (XmlElement rootElement, ImportedProject ip)
+		internal void ProcessElements (XmlElement rootElement, ImportedProject ip)
 		{
 			foreach (XmlNode xn in rootElement.ChildNodes) {
 				if (xn is XmlElement) {
@@ -496,40 +540,17 @@ namespace Microsoft.Build.BuildEngine {
 		private void AddUsingTask (XmlElement xmlElement, ImportedProject importedProject)
 		{
 			UsingTask usingTask;
-			
+
 			usingTask = new UsingTask (xmlElement, this, importedProject);
-			usingTask.Evaluate ();
+			UsingTasks.Add (usingTask);
 		}
 		
 		private void AddImport (XmlElement xmlElement, ImportedProject importingProject)
 		{
-			if (xmlElement == null)
-				throw new ArgumentNullException ("xmlElement");
+			Import import;
 			
-			string importedFile;
-			Expression importedFileExpr;
-
-			importedFileExpr = new Expression (this, xmlElement.GetAttribute ("Project"));
-			importedFile = (string) importedFileExpr.ToNonArray (typeof (string));
-			
-			if (importedFile == String.Empty)
-				throw new InvalidProjectFileException ("Project attribute must be specified.");
-			
-			if (Path.IsPathRooted (importedFile) == false) {
-				if (importingProject == null)
-					importedFile = Path.Combine (Path.GetDirectoryName (fullFileName), importedFile);
-				else
-					importedFile = Path.Combine (Path.GetDirectoryName (importingProject.FullFileName), importedFile);
-			}
-			
-			ImportedProject importedProject = new ImportedProject ();
-			try {
-				importedProject.Load (importedFile);
-				ProcessElements (importedProject.XmlDocument.DocumentElement, importedProject);
-			}
-			catch (Exception ex) {
-				Console.WriteLine (ex);
-			}
+			import = new Import (xmlElement, this, importingProject);
+			Imports.Add (import);
 		}
 		
 		private void AddItemGroup (XmlElement xmlElement)
@@ -537,7 +558,7 @@ namespace Microsoft.Build.BuildEngine {
 			if (xmlElement == null)
 				throw new ArgumentNullException ("xmlElement");
 			BuildItemGroup big = new BuildItemGroup (xmlElement, this);
-			itemGroups.Add (big);
+			ItemGroups.Add (big);
 			big.Evaluate();
 		}
 		
@@ -546,7 +567,7 @@ namespace Microsoft.Build.BuildEngine {
 			if (xmlElement == null)
 				throw new ArgumentNullException ("xmlElement");
 			BuildPropertyGroup bpg = new BuildPropertyGroup (xmlElement, this);
-			propertyGroups.Add (bpg);
+			PropertyGroups.Add (bpg);
 			bpg.Evaluate();
 		}
 		
@@ -612,9 +633,13 @@ namespace Microsoft.Build.BuildEngine {
 		public BuildPropertyGroup GlobalProperties {
 			get { return globalProperties; }
 			set {
+				if (value == null) {
+					throw new ArgumentNullException ("value");
+				}
+				if (value.FromXml) {
+					throw new InvalidOperationException ("Can't do that.");
+				}
 				globalProperties = value;
-				foreach (BuildProperty bp in globalProperties)
-					evaluatedProperties.AddProperty (bp);
 			}
 		}
 
@@ -672,22 +697,6 @@ namespace Microsoft.Build.BuildEngine {
 		
 		internal TaskDatabase TaskDatabase {
 			get { return taskDatabase; }
-		}
-		
-		internal BuildPropertyGroup EnvironmentProperties {
-			set {
-				environmentProperties = value;
-				foreach (BuildProperty bp in environmentProperties)
-					evaluatedProperties.AddProperty (bp);
-			}
-		}
-		
-		internal BuildPropertyGroup ReservedProperties {
-			set {
-				reservedProperties = value;
-				foreach (BuildProperty bp in reservedProperties)
-					evaluatedProperties.AddProperty (bp);
-			}
 		}
 	}
 }

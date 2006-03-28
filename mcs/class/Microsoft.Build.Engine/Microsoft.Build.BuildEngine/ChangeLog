@@ -1,3 +1,13 @@
+2006-03-27  Crestez Leonard  <cdleonard@gmail.com>
+
+	* ImportCollection.cs, UsingTaskCollection.cs: Cleaned up, switched
+	to lists instead of hashtables.
+	* Import.cs: Cleaned up, moved importing from Project.cs
+	* BuildProperty.cs, BuildPropertyGroup.cs: Minor fixes.
+	* Engine.cs: Cleaned up properties.
+	* Project.cs: Moved importing to Import.cs, cleaned up properties,
+	Separated evaluation and loading.
+	
 2006-03-21  Crestez Leonard  <cdleonard@gmail.com>
 
 	* Target.cs, TaskEngine.cs, BuildItemGroup.cs, BuildItem.cs,

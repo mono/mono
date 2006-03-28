@@ -36,7 +36,6 @@ namespace Microsoft.Build.BuildEngine {
 		
 		string			binPath;
 		bool			buildEnabled;
-		BuildPropertyGroup	environmentProperties;
 		EventSource		eventSource;
 		bool			buildStarted;
 		BuildPropertyGroup	globalProperties;
@@ -44,15 +43,14 @@ namespace Microsoft.Build.BuildEngine {
 		IList			loggers;
 		bool			onlyLogCriticalEvents;
 		IDictionary		projects;
-		BuildPropertyGroup	reservedProperties;
 
-		// FIXME: GlobalEngine static property uses this but what about GlobalEngineAccessor?
+		// FIXME
 		static Engine		globalEngine;
 		static Version		version;
 
 		static Engine ()
 		{
-			version = new Version("0.1");
+			version = new Version ("0.1");
 		}
 		
 		public Engine ()
@@ -69,9 +67,7 @@ namespace Microsoft.Build.BuildEngine {
 			this.eventSource = new EventSource ();
 			this.loggers = new ArrayList ();
 			this.buildStarted = false;
-			this.LoadEnvironmentProperties ();
-			this.reservedProperties = new BuildPropertyGroup ();
-			this.reservedProperties.AddProperty (new BuildProperty ("MSBuildBinPath", binPath, PropertyType.Reserved));
+			this.globalProperties = new BuildPropertyGroup ();
 		}
 		
 		[MonoTODO]
@@ -179,20 +175,7 @@ namespace Microsoft.Build.BuildEngine {
 
 		public Project CreateNewProject ()
 		{
-			if (buildStarted == false) {
-				LogBuildStarted ();
-				buildStarted = true;
-			}
-			Project p = new Project (this);
-			p.EnvironmentProperties = this.environmentProperties;
-			p.ReservedProperties = this.reservedProperties;
-			if (globalProperties != null) {
-				BuildPropertyGroup bpg = new BuildPropertyGroup ();
-				foreach (BuildProperty bp in globalProperties)
-					bpg.AddProperty (bp.Clone (false));
-				p.GlobalProperties = bpg;
-			}
-			return p;
+			return new Project (this);
 		}
 
 		public Project GetLoadedProject (string projectFullFileName)
@@ -226,17 +209,6 @@ namespace Microsoft.Build.BuildEngine {
 				i.Shutdown ();
 			}
 			loggers.Clear ();
-		}
-		
-		private void LoadEnvironmentProperties ()
-		{
-			environmentProperties = new BuildPropertyGroup ();
-			IDictionary environment = Environment.GetEnvironmentVariables ();
-			foreach (DictionaryEntry de in environment) {
-				BuildProperty bp;
-				bp = new BuildProperty ((string) de.Key, (string) de.Value, PropertyType.Environment);
-				environmentProperties.AddProperty (bp);
-			}
 		}
 		
 		private void LogProjectStarted (Project project, string[] targetNames)

@@ -185,9 +185,13 @@ namespace Microsoft.Build.BuildEngine {
 		
 		public string Condition {
 			get {
+				if (!FromXml)
+					return String.Empty;
 				return propertyGroup.GetAttribute ("Condition");
 			}
 			set {
+				if (!FromXml)
+					throw new InvalidOperationException ("Can only set condition on xml elements.");
 				propertyGroup.SetAttribute ("Condition", value);
 			}
 		}

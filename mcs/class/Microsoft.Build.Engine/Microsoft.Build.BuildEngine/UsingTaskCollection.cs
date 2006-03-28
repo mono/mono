@@ -35,11 +35,12 @@ namespace Microsoft.Build.BuildEngine {
 	public class UsingTaskCollection : ICollection, IEnumerable {
 	
 		Project		parentProject;
-		IDictionary	usingTasks;
+		IList		usingTasks;
 		
 		internal UsingTaskCollection (Project parentProject)
 		{
 			this.parentProject = parentProject;
+			usingTasks = new ArrayList ();
 		}
 		
 		internal void Add (UsingTask usingTask)
@@ -47,10 +48,10 @@ namespace Microsoft.Build.BuildEngine {
 			if (usingTask == null)
 				throw new ArgumentNullException ("usingTask");
 			
-			if (usingTasks.Contains (usingTask.TaskName))
+			if (usingTasks.Contains (usingTask))
 				throw new InvalidOperationException ("Task already registered.");
 			
-			usingTasks.Add (usingTask.TaskName, usingTask);
+			usingTasks.Add (usingTask);
 		}
 		
 		[MonoTODO]
@@ -75,10 +76,6 @@ namespace Microsoft.Build.BuildEngine {
 		
 		public bool IsSynchronized {
 			get { return false; }
-		}
-		
-		internal UsingTask this [int index] {
-			get { return (UsingTask) usingTasks [index]; }
 		}
 		
 		public object SyncRoot {
