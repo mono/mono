@@ -1,3 +1,7 @@
+2006-03-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Panel.cs: render the image url inside 'url()'. Fixes bug #77811.
+
 2006-03-15 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CompareValidator.cs: when searching for the control to compare, use

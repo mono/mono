@@ -52,8 +52,11 @@ namespace System.Web.UI.WebControls {
 		{
 			base.AddAttributesToRender (w);
 			
-			if (BackImageUrl != "")
-				w.AddStyleAttribute (HtmlTextWriterStyle.BackgroundImage, BackImageUrl);
+			string image = BackImageUrl;
+			if (image != "") {
+				image = String.Format ("url({0})", image);
+				w.AddStyleAttribute (HtmlTextWriterStyle.BackgroundImage, image);
+			}
 
 			if (!Wrap) {
 #if NET_2_0
