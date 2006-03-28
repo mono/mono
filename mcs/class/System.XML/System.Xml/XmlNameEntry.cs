@@ -53,6 +53,8 @@ namespace System.Xml
 		public string NS;
 		public int Hash;
 
+		string prefixed_name_cache;
+
 		public override bool Equals (object other)
 		{
 			XmlNameEntry e = other as XmlNameEntry;
@@ -65,6 +67,14 @@ namespace System.Xml
 		public override int GetHashCode ()
 		{
 			return Hash;
+		}
+
+		public string GetPrefixedName (XmlNameEntryCache owner)
+		{
+			if (prefixed_name_cache == null)
+				prefixed_name_cache =
+					owner.GetAtomizedPrefixedName (Prefix, LocalName);
+			return prefixed_name_cache;
 		}
 	}
 }

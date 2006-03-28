@@ -156,9 +156,7 @@ namespace System.Xml
 		}
 
 		public override string Name {
-			get { 
-				return name.Prefix != String.Empty ? OwnerDocument.NameTable.Add (name.Prefix + ":" + name.LocalName) : name.LocalName;
-			}
+			get { return name.GetPrefixedName (OwnerDocument.NameCache); }
 		}
 
 		public override string NamespaceURI {

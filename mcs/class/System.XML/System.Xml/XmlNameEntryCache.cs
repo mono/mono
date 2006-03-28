@@ -38,10 +38,27 @@ namespace System.Xml
 		Hashtable table = new Hashtable ();
 		XmlNameTable nameTable;
 		XmlNameEntry dummy = new XmlNameEntry (String.Empty, String.Empty, String.Empty);
+		char [] cacheBuffer;
 
 		public XmlNameEntryCache (XmlNameTable nameTable)
 		{
 			this.nameTable = nameTable;
+		}
+
+		public string GetAtomizedPrefixedName (string prefix, string local)
+		{
+			if (prefix == null || prefix.Length == 0)
+				return local;
+
+			if (cacheBuffer == null)
+				cacheBuffer = new char [20];
+			else if (cacheBuffer.Length < prefix.Length + local.Length + 1)
+				cacheBuffer = new char [Math.Max (
+					prefix.Length + local.Length + 1,
+					cacheBuffer.Length << 1)];
+			prefix.CopyTo (0, cacheBuffer, 0, prefix.Length);				cacheBuffer [prefix.Length] = ':';
+			local.CopyTo (0, cacheBuffer, prefix.Length + 1, local.Length);
+			return nameTable.Add (cacheBuffer, 0, prefix.Length + local.Length + 1);
 		}
 
 		public XmlNameEntry Add (string prefix, string local, string ns,

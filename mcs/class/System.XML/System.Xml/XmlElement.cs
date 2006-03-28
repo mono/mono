@@ -178,12 +178,7 @@ namespace System.Xml
 		}
 
 		public override string Name {
-			get {
-				if (name.Prefix == String.Empty || name.Prefix == null)
-					return name.LocalName;
-				else
-					return OwnerDocument.NameTable.Add (name.Prefix + ":" + name.LocalName);
-			}
+			get { return name.GetPrefixedName (OwnerDocument.NameCache); }
 		}
 
 		public override string NamespaceURI {

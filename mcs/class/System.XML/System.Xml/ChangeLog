@@ -1,3 +1,10 @@
+2006-03-28  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlNameEntry.cs XmlNameEntryCache.cs :
+	  Added atomization support for prefixed names.
+	  Inspired by Joshua Tauberer's patch.
+	* XmlElement.cs XmlAttribute.cs : use above.
+
 2006-03-23  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlReader.cs : in XmlReader.Create() ValidationType Auto and XDR
