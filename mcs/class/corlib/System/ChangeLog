@@ -1,3 +1,9 @@
+2006-03-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Array.cs : AsReadOnly<T>() in RTM returns ReadOnlyCollection<T>.
+	  Thus removed ReadOnlyArray<T> and ReadOnlyArrayEnumerator<T>.
+	  In 2.0 some members became non-virtual.
+
 2006-03-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* String.cs : oops, NET_2_0.

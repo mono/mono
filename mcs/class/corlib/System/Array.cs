@@ -36,6 +36,7 @@ using System.Runtime.InteropServices;
 
 #if NET_2_0
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Runtime.ConstrainedExecution;
 #endif
 
@@ -211,31 +212,51 @@ namespace System
 			}
 		}
 
-		public virtual bool IsSynchronized {
+		public
+#if !NET_2_0
+		virtual
+#endif
+		bool IsSynchronized {
 			get {
 				return false;
 			}
 		}
 
-		public virtual object SyncRoot {
+		public
+#if !NET_2_0
+		virtual
+#endif
+		object SyncRoot {
 			get {
 				return this;
 			}
 		}
 
-		public virtual bool IsFixedSize {
+		public
+#if !NET_2_0
+		virtual
+#endif
+		bool IsFixedSize {
 			get {
 				return true;
 			}
 		}
 
-		public virtual bool IsReadOnly {
+		public
+#if !NET_2_0
+		virtual
+#endif
+		bool IsReadOnly {
 			get {
 				return false;
 			}
 		}
 
-		public virtual IEnumerator GetEnumerator ()
+		public
+#if !NET_2_0
+		virtual
+#endif
+		IEnumerator GetEnumerator ()
 		{
 			return new SimpleEnumerator (this);
 		}
@@ -669,7 +690,11 @@ namespace System
 		static extern void ClearInternal (Array a, int index, int count);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public virtual extern object Clone ();
+		public
+#if !NET_2_0
+		virtual
+#endif
+		extern object Clone ();
 
 #if NET_2_0
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
@@ -1534,7 +1559,11 @@ namespace System
 		}
 #endif
 		
-		public virtual void CopyTo (Array array, int index)
+		public
+#if !NET_2_0
+		virtual
+#endif
+		void CopyTo (Array array, int index)
 		{
 			if (array == null)
 				throw new ArgumentNullException ("array");
@@ -1556,7 +1585,11 @@ namespace System
 
 #if NET_1_1
 		[ComVisible (false)]
-		public virtual void CopyTo (Array array, long index)
+		public
+#if !NET_2_0
+		virtual
+#endif
+		void CopyTo (Array array, long index)
 		{
 			if (index < 0 || index > Int32.MaxValue)
 				throw new ArgumentOutOfRangeException ("index", Locale.GetText (
@@ -1908,11 +1941,11 @@ namespace System
 			return false;
 		}
 
-		public static IList<T> AsReadOnly<T> (T[] array)
+		public static ReadOnlyCollection<T> AsReadOnly<T> (T[] array)
 		{
 			if (array == null)
 				throw new ArgumentNullException ("array");
-			return new ReadOnlyArray<T> (array);
+			return new ReadOnlyCollection<T> (new List<T> (array));
 		}
 
 		public static T Find<T> (T [] array, Predicate<T> match)
@@ -2140,136 +2173,6 @@ namespace System
 		}
 #endif
 	}
-
-#if NET_2_0
-
-	internal struct ReadOnlyArrayEnumerator <T> : IEnumerator <T> {
-		const int NOT_STARTED = -2;
-			
-		// this MUST be -1, because we depend on it in move next.
-		// we just decr the size, so, 0 - 1 == FINISHED
-		const int FINISHED = -1;
-			
-		ReadOnlyArray <T> array;
-		int idx;
-			
-		internal ReadOnlyArrayEnumerator (ReadOnlyArray<T> array)
-		{
-			this.array = array;
-			idx = NOT_STARTED;
-		}
-			
-		public void Dispose ()
-		{
-			idx = NOT_STARTED;
-		}
-			
-		public bool MoveNext ()
-		{
-			if (idx == NOT_STARTED)
-				idx = array.Count;
-				
-			return idx != FINISHED && -- idx != FINISHED;
-		}
-			
-		public T Current {
-			get {
-				if (idx < 0)
-					throw new InvalidOperationException ();
-					
-				return array [array.Count - 1 - idx];
-			}
-		}
-
-		void IEnumerator.Reset ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		object IEnumerator.Current {
-			get {
-				return Current;
-			}
-		}
-	}
-
-	internal class ReadOnlyArray <T> : ICollection <T>, IList <T>, IEnumerable <T>
-	{
-		T[] arr;
-
-		internal ReadOnlyArray (T[] array) {
-			arr = array;
-		}
-
-		// ICollection<T> interface
-		public int Count {
-			get {
-				return arr.Length;
-			}
-		}
-
-		public bool IsReadOnly {
-			get {
-				return true;
-			}
-		}
-
-		public void Add (T item) {
-			throw new NotSupportedException ("Collection is read-only");
-		}
-
-		public bool Remove (T item) {
-			throw new NotSupportedException ("Collection is read-only");
-		}
-
-		public void Clear () {
-			throw new NotSupportedException ("Collection is read-only");
-		}
-
-		public void CopyTo (T[] array, int index) {
-			arr.CopyTo (array, index);
-		}
-
-		public bool Contains (T item) {
-			return Array.IndexOf <T> (arr, item) != -1;
-		}
-
-		// IList<T> interface
-		public T this [int index] {
-			get {
-				if (unchecked ((uint) index) >= unchecked ((uint) arr.Length))
-					throw new ArgumentOutOfRangeException ("index");
-				return arr [index];
-			} 
-			set {
-				if (unchecked ((uint) index) >= unchecked ((uint) arr.Length))
-					throw new ArgumentOutOfRangeException ("index");
-				arr [index] = value;
-			}
-		}
-
-		public void Insert (int index, T item) {
-			throw new NotSupportedException ("Collection is read-only");
-		}
-
-		public void RemoveAt (int index) {
-			throw new NotSupportedException ("Collection is read-only");
-		}
-
-		public int IndexOf (T item) {
-			return Array.IndexOf <T> (arr, item);
-		}
-
-		// IEnumerable<T> interface
-		public IEnumerator<T> GetEnumerator () {
-			return new ReadOnlyArrayEnumerator <T> (this);
-		}
-
-		IEnumerator IEnumerable.GetEnumerator () {
-			return new ReadOnlyArrayEnumerator <T> (this);
-		}
-	}
-#endif
 
 #if BOOTSTRAP_WITH_OLDLIB
 	/* delegate used to swap array elements, keep defined outside Array */
