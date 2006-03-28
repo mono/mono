@@ -1756,6 +1756,11 @@ namespace Mono.CSharp {
 					if (e == null)
 						continue;
 
+					if (!variable_type.IsValueType && variable_type != TypeManager.string_type && !ce.IsDefaultValue) {
+						Const.Error_ConstantCanBeInitializedWithNullOnly (vi.Location, vi.Name);
+						continue;
+					}
+
 					constants.Add (name, e);
 				}
 			}

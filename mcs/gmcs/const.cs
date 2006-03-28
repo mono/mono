@@ -119,6 +119,12 @@ namespace Mono.CSharp {
 				mc.GetSignatureForError ());
 		}
 
+		public static void Error_ConstantCanBeInitializedWithNullOnly (Location loc, string name)
+		{
+			Report.Error (134, loc, "`{0}': the constant of reference type other than string can only be initialized with null",
+				name);
+		}
+
 		#region IConstant Members
 
 		public bool ResolveValue ()
@@ -148,8 +154,7 @@ namespace Mono.CSharp {
 				return false;
 
 			if (!MemberType.IsValueType && MemberType != TypeManager.string_type && !value.IsDefaultValue) {
-				Report.Error (134, Location, "`{0}': A const of reference other than string can only be initialized with null",
-					GetSignatureForError ());
+				Error_ConstantCanBeInitializedWithNullOnly (Location, GetSignatureForError ());
 				return false;
 			}
 
