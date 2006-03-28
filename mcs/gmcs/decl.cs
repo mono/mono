@@ -1114,12 +1114,6 @@ namespace Mono.CSharp {
 			TypeBuilder.SetCustomAttribute (cb);
 		}
 
-		public virtual bool IsPartial {
-			get {
-				return false;
-			}
-		}
-
 		//
 		// Extensions for generics
 		//
@@ -1269,12 +1263,15 @@ namespace Mono.CSharp {
 			if (!IsGeneric)
 				return null;
 
-			TypeParameter [] current_params = IsPartial ? ((TypeContainer) this).PartialContainer.CurrentTypeParameters : CurrentTypeParameters;
-			foreach (TypeParameter type_param in current_params) {
-				if (type_param.Name != name)
-					continue;
+			TypeParameter [] current_params;
+			if (this is TypeContainer)
+				current_params = ((TypeContainer) this).PartialContainer.CurrentTypeParameters;
+			else
+				current_params = CurrentTypeParameters;
 
-				return new TypeParameterExpr (type_param, loc);
+			foreach (TypeParameter type_param in current_params) {
+				if (type_param.Name == name)
+					return new TypeParameterExpr (type_param, loc);
 			}
 
 			if (Parent != null)

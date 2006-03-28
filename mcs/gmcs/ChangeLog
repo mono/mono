@@ -1,3 +1,17 @@
+2006-03-28  Raja R Harinath  <rharinath@novell.com>
+
+	* decl.cs (DeclSpace.LookupGeneric): Update to changes.
+
+2006-03-17  Raja R Harinath  <harinath@gmail.com>
+
+	Make semantics of PartialContainer simpler.
+	* decl.cs (DeclSpace.IsPartial): Remove.
+	* class.cs (TypeContainer.IsPartial): Likewise.
+	(TypeContainer..ctor): Set PartialContainer to point to self.
+	(TypeContainer.GetClsCompliantAttributeValue): Don't use IsPartial.
+	(TypeContainer.FindNestedType): Likewise.
+	(MemberCore.ParentContainer): Simplify.  Remove deprecation.
+
 2006-03-17  Marek Safar  <marek.safar@seznam.cz>
 
 	* typemanager.cs.cs (GetInterfaces): Don't recreate 0-sized arrays.

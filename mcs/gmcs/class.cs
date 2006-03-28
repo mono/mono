@@ -482,6 +482,7 @@ namespace Mono.CSharp {
 				throw new InternalErrorException ("A nested type should be in the same NamespaceEntry as its enclosing class");
 
 			this.Kind = kind;
+			this.PartialContainer = this;
 		}
 
 		public bool AddToMemberContainer (MemberCore symbol)
@@ -986,19 +987,13 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public PendingImplementation PendingImplementations
-		{
-			get {
-				return pending;
-			}
+		public PendingImplementation PendingImplementations {
+			get { return pending; }
 		}
 
 		public override bool GetClsCompliantAttributeValue ()
 		{
-			if ((caching_flags & Flags.HasCompliantAttribute_Undetected) == 0)
-				return (caching_flags & Flags.ClsCompliantAttributeTrue) != 0;
-
-			if (IsPartial)
+			if (PartialContainer != this)
 				return PartialContainer.GetClsCompliantAttributeValue ();
 
 			return base.GetClsCompliantAttributeValue ();
@@ -1309,7 +1304,7 @@ namespace Mono.CSharp {
 		Constraints [] constraints;
 		public override void SetParameterInfo (ArrayList constraints_list)
 		{
-			if (!IsPartial) {
+			if (PartialContainer == this) {
 				base.SetParameterInfo (constraints_list);
 				return;
 			}
@@ -1361,7 +1356,7 @@ namespace Mono.CSharp {
 			if (!IsGeneric)
 				return true;
 
-			if (IsPartial)
+			if (PartialContainer != this)
 				throw new InternalErrorException ();
 
 			TypeExpr current_type = null;
@@ -1500,12 +1495,6 @@ namespace Mono.CSharp {
 			members_defined = true;
 
 			return members_defined_ok;
-		}
-
-		public override bool IsPartial {
-			get {
-				return PartialContainer != null;
-			}
 		}
 
 		public virtual void DefineDefaultConstructor ()
@@ -1714,9 +1703,9 @@ namespace Mono.CSharp {
 
 		public override Type FindNestedType (string name)
 		{
-			if (IsPartial) {
+			if (PartialContainer != this)
 				return PartialContainer.FindNestedType (name);
-			}
+
 			ArrayList [] lists = { types, enums, delegates, interfaces };
 
 			for (int j = 0; j < lists.Length; ++j) {
@@ -5016,16 +5005,8 @@ namespace Mono.CSharp {
 			get { return (TypeContainer) base.Parent; }
 		}
 
-		/// <summary>
-		/// Use this for access to parent container from partial classes (not master partial).
-		/// This should be used rarely as all members are hosted in master partial class.
-		/// Also with some effort this should be eliminated (not easy now).
-		/// </summary>
 		public TypeContainer ParentContainer {
-			get {
-				return base.Parent.IsPartial ?
-					Parent.PartialContainer : Parent;
-			}
+			get { return ((TypeContainer) Parent).PartialContainer; }
 		}
 
 		//
