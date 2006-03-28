@@ -211,9 +211,9 @@ namespace System.Windows.Forms {
 			
 			int H, I, S;
 
-			ControlPaint.Color2HBS(baseColor, out H, out I, out S);			
-			int PreIntensity = Math.Min (255, I + (int) (I * 0.5f));
-			int NewIntensity =  Math.Min (255, PreIntensity + (int) (PreIntensity * per));
+			ControlPaint.Color2HBS(baseColor, out H, out I, out S);
+			int NewIntensity =  Math.Min (255, I + (int)((255 - I) * 0.5f * per));
+			
 			return ControlPaint.HBS2Color(H, NewIntensity, S);			
 		}
 

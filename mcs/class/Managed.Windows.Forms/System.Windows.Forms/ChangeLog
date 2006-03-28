@@ -1,3 +1,8 @@
+2006-03-28  Alexander Olk  <alex.olk@googlemail.com>
+
+	* ControlPaint.cs: Fixed ControlPaint.Light method. Results are now
+	  correct.
+
 2006-03-28  Mike Kestner  <mkestner@novell.com>
 
 	* MenuAPI.cs: Deactivate on MainMenu item click. Fixes #77917.
