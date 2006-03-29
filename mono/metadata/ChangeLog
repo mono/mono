@@ -1,4 +1,11 @@
 
+Wed Mar 29 18:24:42 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* threads.c, object-internals.h, verify.c: changed the culture caching
+	code to use a normal MonoArray for storage so the GC can keep track of
+	them easily. Fixed bits of the cache logic, too and simplified the
+	code.
+
 Wed Mar 29 17:18:16 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
 	* gc-internal.h, null-gc.c, boehm-gc.c, gc.c: enable the finalizer
