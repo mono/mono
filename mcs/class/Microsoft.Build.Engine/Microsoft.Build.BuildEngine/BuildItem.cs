@@ -163,7 +163,7 @@ namespace Microsoft.Build.BuildEngine {
 			evaluatedMetadata.Add (metadataName, (string) finalValue.ToNonArray (typeof (string)));
 		}
 		
-		private void BindToXmle (XmlElement xmlElement)
+		private void BindToXml (XmlElement xmlElement)
 		{
 			if (xmlElement == null)
 				throw new ArgumentNullException ("xmlElement");
