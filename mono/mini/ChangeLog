@@ -1,3 +1,8 @@
+
+Wed Mar 29 17:16:57 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* driver.c: print the GC name supplied by configure.
+
 2006-03-29  Massimiliano Mantione  <massi@ximian.com>
 
         * local-propagation.c: Added tree mover, and moved here all the
