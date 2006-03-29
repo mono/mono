@@ -1,3 +1,9 @@
+2006-03-29  Robert Jordan  <robertj@gmx.net>
+ 
+	* DataGrid.cs: if custom paging is enabled the persisted item count
+	must be the count of the rendered items, otherwise paging from the
+	last to a previous page won't work correctly. Fixes bug #77556.
+ 
 2006-03-29  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* RepeatInfo.cs: fixed RenderBeginTag to set enabled value of table
