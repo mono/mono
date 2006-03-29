@@ -246,8 +246,8 @@ namespace Microsoft.Build.BuildEngine {
 			XmlReader xmlReader = XmlReader.Create (textReader, settings);
 			xmlDocument.Load (xmlReader);
 
-			if (xmlDocument.DocumentElement.GetAttribute("xmlns") != "http://schemas.microsoft.com/developer/msbuild/2003") {
-				throw new InvalidProjectFileException(
+			if (xmlDocument.DocumentElement.GetAttribute ("xmlns") != "http://schemas.microsoft.com/developer/msbuild/2003") {
+				throw new InvalidProjectFileException (
 					@"The default XML namespace of the project must be the MSBuild XML namespace." + 
 					" If the project is authored in the MSBuild 2003 format, please add " +
 					"xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\" to the <Project> element. " +

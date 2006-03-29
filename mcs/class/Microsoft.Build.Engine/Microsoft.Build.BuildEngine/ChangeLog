@@ -1,3 +1,8 @@
+2006-03-29  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* InternalLoggerException.cs, InvalidProjectFileException.cs,
+	Engine.cs, Project.cs: Coding style fixes.
+
 2006-03-29  Crestez Leonard  <cdleonard@gmail.com>
 	
 	* InternalLoggerException.cs, InvalidProjectFileException.cs: Fixed

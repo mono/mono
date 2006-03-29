@@ -95,7 +95,8 @@ namespace Microsoft.Build.BuildEngine {
 			this.helpKeyword = helpKeyword;
 		}
 
-		protected InvalidProjectFileException (SerializationInfo info, StreamingContext context)
+		// FIXME: private temporarily
+		private InvalidProjectFileException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 			this.columnNumber = info.GetInt32 ("ColumnNumber");
@@ -172,7 +173,7 @@ namespace Microsoft.Build.BuildEngine {
 
 		public override string Message {
 			get {
-				if (projectFile == null || projectFile == "") {
+				if (projectFile == null || projectFile == String.Empty) {
 					return BaseMessage;
 				} else {
 					return BaseMessage + "  " + ProjectFile;

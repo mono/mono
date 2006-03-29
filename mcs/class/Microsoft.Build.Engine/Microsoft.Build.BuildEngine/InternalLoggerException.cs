@@ -41,7 +41,7 @@ namespace Microsoft.Build.BuildEngine {
 		
 		public InternalLoggerException ()
 		{
-			throw new System.InvalidOperationException(
+			throw new System.InvalidOperationException (
 				"An InternalLoggerException can only be thrown by the MSBuild engine. " +
 				"The public constructors of this class cannot be used to create an " +
 				"instance of the exception.");
@@ -57,12 +57,13 @@ namespace Microsoft.Build.BuildEngine {
 		{
 		}
 
-		protected InternalLoggerException (SerializationInfo info, StreamingContext context)
+		// FIXME: I made it private temporarily, later we can change it to internal (but not protected)
+		private InternalLoggerException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
-			buildEventArgs = (BuildEventArgs) info.GetValue("BuildEventArgs", typeof(BuildEventArgs));
-			errorCode = info.GetString("ErrorCode");
-			helpKeyword = info.GetString("HelpKeywordPrefix");
+			buildEventArgs = (BuildEventArgs) info.GetValue ("BuildEventArgs", typeof (BuildEventArgs));
+			errorCode = info.GetString ("ErrorCode");
+			helpKeyword = info.GetString ("HelpKeywordPrefix");
 		}
 
 		public override void GetObjectData (SerializationInfo info,

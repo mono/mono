@@ -62,6 +62,7 @@ namespace Microsoft.Build.BuildEngine {
 		public Engine (string binPath)
 		{
 			this.binPath = binPath;
+			this.buildEnabled = true;
 			this.projects = new Hashtable ();
 			this.eventSource = new EventSource ();
 			this.loggers = new ArrayList ();
@@ -172,10 +173,10 @@ namespace Microsoft.Build.BuildEngine {
 			return result;
 		}
 
-		internal void CheckBinPath ()
+		private void CheckBinPath ()
 		{
 			if (BinPath == null) {
-				throw new InvalidOperationException("Before a project can be instantiated, " +
+				throw new InvalidOperationException ("Before a project can be instantiated, " +
 					"Engine.BinPath must be set to the location on disk where MSBuild " + 
 					"is installed. This is used to evaluate $(MSBuildBinPath).");
 			}
@@ -189,45 +190,44 @@ namespace Microsoft.Build.BuildEngine {
 
 		public Project GetLoadedProject (string projectFullFileName)
 		{
-			if (projectFullFileName == null) {
+			if (projectFullFileName == null)
 				throw new ArgumentNullException ("projectFullFileName");
-			}
+			
 			return (Project) projects [projectFullFileName];
 		}
 
 		internal void RemoveLoadedProject (Project p)
 		{
-			if (p.FullFileName != "") {
+			if (p.FullFileName != String.Empty)
 				projects.Remove (p.FullFileName);
-			}
 		}
 
 		internal void AddLoadedProject (Project p)
 		{
-			if (p.FullFileName != "") {
+			if (p.FullFileName != String.Empty)
 				projects.Add (p.FullFileName, p);
-			}
 		}
 	
 		public void UnloadProject (Project project)
 		{
-			if (project.ParentEngine != this) {
-				throw new InvalidOperationException("This project is not loaded in this engine");
-			}
+			if (project.ParentEngine != this)
+				throw new InvalidOperationException ("This project is not loaded in this engine");
+			
 			project.CheckUnloaded ();
-			if (project.FullFileName != "") {
+			
+			if (project.FullFileName != String.Empty)
 				projects.Remove (project.FullFileName);
-			}
+			
 			project.Unload ();
 		}
 
 		public void UnloadAllProjects ()
 		{
-			foreach (DictionaryEntry e in projects) {
+			foreach (DictionaryEntry e in projects)
 				UnloadProject ((Project) e.Value);
-			}
 		}
 
+		[MonoTODO]
 		public void RegisterLogger (ILogger logger)
 		{
 			if (logger == null)
@@ -236,6 +236,7 @@ namespace Microsoft.Build.BuildEngine {
 			loggers.Add (logger);
 		}
 		
+		[MonoTODO]
 		public void UnregisterAllLoggers ()
 		{
 			// FIXME: check if build succeeded
@@ -298,9 +299,8 @@ namespace Microsoft.Build.BuildEngine {
 
 		public static Engine GlobalEngine {
 			get {
-				if (globalEngine == null) {
+				if (globalEngine == null)
 					globalEngine = new Engine ();
-				}
 				return globalEngine;
 			}
 		}
