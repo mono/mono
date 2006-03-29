@@ -47,9 +47,9 @@ namespace Microsoft.Build.Utilities
 			reservedMetadataNames = new string [] {
 				"FullPath", "RootDir", "Filename", "Extension", "RelativeDir", "Directory",
 				"RecursiveDir", "Identity", "ModifiedTime", "CreatedTime", "AccessedTime"};
-			reservedMetadataHash = new Hashtable (ReservedMetadataNameCount);
+			reservedMetadataHash = CollectionsUtil.CreateCaseInsensitiveHashtable (ReservedMetadataNameCount);
 			foreach (string s in reservedMetadataNames) {
-				reservedMetadataHash.Add (s.ToLower (), null);
+				reservedMetadataHash.Add (s, null);
 			}
 		}
 		
@@ -61,30 +61,30 @@ namespace Microsoft.Build.Utilities
 
 		public TaskItem (ITaskItem sourceItem)
 		{
-			if (sourceItem == null) {
+			if (sourceItem == null)
 				throw new ArgumentNullException ("sourceItem");
-			}
+			
 			this.itemSpec = sourceItem.ItemSpec;
 			this.metadata = sourceItem.CloneCustomMetadata ();
 		}
 
 		public TaskItem (string itemSpec)
 		{
-			if (itemSpec == null) {
+			if (itemSpec == null)
 				throw new ArgumentNullException ("itemSpec");
-			}
+			
 			this.ItemSpec = itemSpec;
 			this.metadata = CollectionsUtil.CreateCaseInsensitiveHashtable ();
 		}
 
 		public TaskItem (string itemSpec, IDictionary itemMetadata)
 		{
-			if (itemSpec == null) {
+			if (itemSpec == null)
 				throw new ArgumentNullException ("itemSpec");
-			}
-			if (itemMetadata == null) {
+			
+			if (itemMetadata == null)
 				throw new ArgumentNullException ("itemMetadata");
-			}
+			
 			this.itemSpec = itemSpec;
 			this.metadata = CollectionsUtil.CreateCaseInsensitiveHashtable (itemMetadata);
 		}

@@ -1,4 +1,8 @@
-2006-03-11  Crestez Leonard  <cdleonard@gmail.com>
+2006-03-29  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* TaskItem.cs: Coding style changes.
+
+2006-03-29  Crestez Leonard  <cdleonard@gmail.com>
 
 	* TaskItem.cs: Cleaned up.
 
