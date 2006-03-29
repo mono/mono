@@ -102,7 +102,7 @@ namespace Microsoft.Build.BuildEngine {
 		internal void AddItem (string name, ITaskItem taskItem)
 		{
 			BuildItem buildItem;
-			buildItem = new BuildItem (name, taskItem, this);
+			buildItem = new BuildItem (name, taskItem);
 			buildItems.Add (buildItem);
 		}
 

@@ -60,28 +60,53 @@ namespace MonoTests.Microsoft.Build.Utilities {
 			
 			foreach (string s in reference) {
 				if (comparedHash.ContainsKey (s) == false) {
-					Console.Error.WriteLine ("{0} not found", s);
+					// Console.Error.WriteLine ("{0} not found", s);
 					return false;
 				}
 			}
 			
 			return true;
 		}
-		
+
 		[Test]
 		public void TestSetMetadata ()
 		{
 			item = new TaskItem ("itemSpec");
-			item.SetMetadata ("Metadata", "Value");
+			item.SetMetadata ("Metadata", "Value1");
+			item.SetMetadata ("Metadata", "Value2");
 			Assert.AreEqual (item.MetadataCount, 12, "MetadataCount");
+			Assert.AreEqual ("Value2", item.GetMetadata ("Metadata"));
 		}
-		
+
 		[Test]
 		public void TestGetMetadata ()
 		{
 			item = new TaskItem ("itemSpec");
 			item.SetMetadata ("Metadata", "Value");
-			Assert.AreEqual (item.GetMetadata ("Metadata"), "Value", "Metadata value");
+			Assert.AreEqual ("Value", item.GetMetadata ("Metadata"), "A1");
+			Assert.AreEqual (String.Empty, item.GetMetadata ("lala"), "A2");
+			Assert.AreEqual ("itemSpec", item.GetMetadata ("iDentity"), "A3");
+			Assert.AreEqual ("", item.GetMetadata ("extension"), "A4");
+			Assert.AreEqual ("", item.GetMetadata ("ModifiedTime"), "A5");
+			Assert.AreEqual ("", item.GetMetadata ("CreatedTime"), "A6");
+			Assert.AreEqual ("", item.GetMetadata ("ModifiedTime"), "A7");
+			Assert.AreEqual ("", item.GetMetadata ("AccessedTime"), "A8");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TestSetReservedMetadata ()
+		{
+			item = new TaskItem ("lalala");
+			item.SetMetadata ("Identity", "some value");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TestRemoveReservedMetadata ()
+		{
+			item = new TaskItem ("lalala");
+			item.RemoveMetadata ("EXTension");
 		}
 		
 		[Test]
@@ -89,9 +114,14 @@ namespace MonoTests.Microsoft.Build.Utilities {
 		{
 			item1 = new TaskItem ("itemSpec");
 			item2 = new TaskItem ("itemSpec");
-			item1.SetMetadata ("1","2");
+			item1.SetMetadata ("A", "1");
+			item1.SetMetadata ("B", "1");
+			item1.SetMetadata ("C", "1");
+			item2.SetMetadata ("B", "2");
 			item1.CopyMetadataTo (item2);
-			Assert.AreEqual (item2.GetMetadata ("1"), item1.GetMetadata ("1"),"Metadata in items");
+			Assert.AreEqual ("1", item2.GetMetadata ("A"), "1");
+			Assert.AreEqual ("2", item2.GetMetadata ("B"), "2");
+			Assert.AreEqual ("1", item2.GetMetadata ("C"), "3");
 		}
 		
 		[Test]
@@ -100,6 +130,39 @@ namespace MonoTests.Microsoft.Build.Utilities {
 			item = new TaskItem ("itemSpec");
 
 			Assert.IsTrue (CompareStringCollections (item.MetadataNames, metadataNames));
-		}	
+		}
+
+		public void TestCloneCustomMetadata ()
+		{
+			item = new TaskItem ();
+			item.SetMetadata ("AAA", "111");
+			item.SetMetadata ("aaa", "222");
+			item.SetMetadata ("BBB", "111");
+
+			string[] metakeys = new string [] {"aaa", "BBB"};
+			IDictionary meta = item.CloneCustomMetadata ();
+			Assert.IsTrue (CompareStringCollections (meta.Keys, metakeys), "A1");
+			metakeys[0] = "aAa";
+			Assert.IsFalse (CompareStringCollections (meta.Keys, metakeys), "A2");
+			Assert.AreEqual ("222", meta["aaa"], "A3");
+			Assert.AreEqual ("222", meta["AAA"], "A4");
+			Assert.AreEqual ("222", meta["aAa"], "A5");
+			Assert.AreEqual ("111", meta["BbB"], "A5");
+		}
+
+		[Test]
+		public void TestCopyConstructor ()
+		{
+			item1 = new TaskItem ("itemSpec");
+			item1.SetMetadata ("meta1", "val1");
+			item2 = new TaskItem (item1);
+			Assert.AreEqual (item1.GetMetadata ("meta1"), item2.GetMetadata ("meta1"), "A1");
+			item1.SetMetadata ("meta1", "val2");
+			Assert.AreEqual ("val2", item1.GetMetadata ("meta1"), "A2");
+			Assert.AreEqual ("val1", item2.GetMetadata ("meta1"), "A3");
+			item2.SetMetadata ("meta1", "val3");
+			Assert.AreEqual ("val2", item1.GetMetadata ("meta1"), "A4");
+			Assert.AreEqual ("val3", item2.GetMetadata ("meta1"), "A5");
+		}
 	}
 }

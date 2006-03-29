@@ -5,6 +5,10 @@
 
 2006-03-29  Crestez Leonard  <cdleonard@gmail.com>
 	
+	* BuildItem.cs, BuildItemGroup.cs: Cleaned up build items.
+
+2006-03-29  Crestez Leonard  <cdleonard@gmail.com>
+	
 	* InternalLoggerException.cs, InvalidProjectFileException.cs: Fixed
 	to pass tests. Wrote serialization constructor.
 	* Engine.cs, Project.cs: Global engine and project unloading, test and

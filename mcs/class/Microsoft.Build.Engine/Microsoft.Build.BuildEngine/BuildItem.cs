@@ -40,17 +40,13 @@ namespace Microsoft.Build.BuildEngine {
 	public class BuildItem {
 
 		XmlElement	itemElement;
-		XmlAttribute	condition;
-		XmlAttribute	exclude;
-		XmlAttribute	include;
-		string		evaluatedItemSpec;
-		Hashtable	evaluatedMetadata;
 		string		finalItemSpec;
 		bool		isImported;
 		string		name;
 		BuildItemGroup	parentItemGroup;
 		string		recursiveDir;
-		Hashtable	unevaluatedMetadata;
+		IDictionary	evaluatedMetadata;
+		IDictionary	unevaluatedMetadata;
 
 		internal bool FromXml {
 			get {
@@ -63,16 +59,17 @@ namespace Microsoft.Build.BuildEngine {
 		}
 		
 		public BuildItem (string itemName, ITaskItem taskItem)
-			: this (itemName, taskItem.ItemSpec)
 		{
+			this.name = itemName;
+			this.finalItemSpec = taskItem.ItemSpec;
+			this.evaluatedMetadata = (Hashtable) taskItem.CloneCustomMetadata ();
+			this.unevaluatedMetadata = (Hashtable) taskItem.CloneCustomMetadata ();
 		}
 
 		public BuildItem (string itemName, string itemInclude)
 		{
 			this.name = itemName;
 			this.finalItemSpec = itemInclude;
-			this.evaluatedItemSpec = itemInclude;
-			this.isImported = false;
 			this.unevaluatedMetadata = CollectionsUtil.CreateCaseInsensitiveHashtable ();
 			this.evaluatedMetadata = CollectionsUtil.CreateCaseInsensitiveHashtable ();
 		}
@@ -91,20 +88,8 @@ namespace Microsoft.Build.BuildEngine {
 			this.isImported = parent.isImported;
 			this.name = parent.name;
 			this.parentItemGroup = parent.parentItemGroup;
-			this.unevaluatedMetadata = (Hashtable) parent.unevaluatedMetadata.Clone ();
-			this.evaluatedMetadata = (Hashtable) parent.evaluatedMetadata.Clone ();
-			this.include = parent.include;
-			this.exclude = parent.exclude;
-		}
-		
-		internal BuildItem (string name, ITaskItem item,
-				    BuildItemGroup parentItemGroup)
-		{
-			this.isImported = false;
-			this.name = name;
-			this.finalItemSpec = item.ItemSpec;
-			this.evaluatedMetadata = (Hashtable) item.CloneCustomMetadata ();
-			this.unevaluatedMetadata = (Hashtable) item.CloneCustomMetadata ();
+			this.unevaluatedMetadata = CollectionsUtil.CreateCaseInsensitiveHashtable (parent.unevaluatedMetadata);
+			this.evaluatedMetadata = CollectionsUtil.CreateCaseInsensitiveHashtable (parent.evaluatedMetadata);
 		}
 		
 		public void CopyCustomMetadataTo (BuildItem destinationItem)
@@ -124,53 +109,19 @@ namespace Microsoft.Build.BuildEngine {
 			if (evaluatedMetadata.Contains (metadataName))
 				return (string) evaluatedMetadata [metadataName];
 			else
-				return null;
+				return String.Empty;
 		}
 
 		public string GetMetadata (string metadataName)
 		{
-			if (evaluatedMetadata.Contains (metadataName) == true)
+			if (TaskItem.IsReservedMetadataName (metadataName))
+				return TaskItem.GetReservedMetadata (FinalItemSpec, metadataName);
+			else if (evaluatedMetadata.Contains (metadataName) == true)
 				return (string) evaluatedMetadata [metadataName];
 			else
-				return CheckBuiltinMetadata (metadataName);
+				return String.Empty;
 		}
 		
-		private string CheckBuiltinMetadata (string metadataName)
-		{
-			switch (metadataName.ToLower ()) {
-			case "fullpath":
-				return Path.GetFullPath (finalItemSpec);
-			case "rootdir":
-				return "/";
-			case "filename":
-				return Path.GetFileNameWithoutExtension (finalItemSpec);
-			case "extension":
-				return Path.GetExtension (finalItemSpec);
-			case "relativedir":
-				return Path.GetDirectoryName (finalItemSpec);
-			case "directory":
-				return Path.GetDirectoryName (Path.GetFullPath (finalItemSpec));
-			case "recursivedir":
-				return recursiveDir;
-			case "identity":
-				return Path.Combine (Path.GetDirectoryName (finalItemSpec), Path.GetFileName (finalItemSpec));
-			case "modifiedtime":
-				if (File.Exists (finalItemSpec))
-					return File.GetLastWriteTime (finalItemSpec).ToString ();
-				return String.Empty;
-			case "createdtime":
-				if (File.Exists (finalItemSpec))
-					return File.GetCreationTime (finalItemSpec).ToString ();
-				return String.Empty;
-			case "accessedtime":
-				if (File.Exists (finalItemSpec))
-					return File.GetLastAccessTime (finalItemSpec).ToString ();
-				return String.Empty;
-			default:
-				return String.Empty;
-			}
-		}
-
 		public bool HasMetadata (string metadataName)
 		{
 			return evaluatedMetadata.Contains (metadataName);
@@ -178,6 +129,10 @@ namespace Microsoft.Build.BuildEngine {
 
 		public void RemoveMetadata (string metadataName)
 		{
+			if (metadataName == null)
+				throw new ArgumentNullException ("metadataName");
+			if (TaskItem.IsReservedMetadataName (metadataName))
+				throw new ArgumentException ("Can't remove reserved metadata.");
 			if (evaluatedMetadata.Contains (metadataName))
 				evaluatedMetadata.Remove (metadataName);
 			if (unevaluatedMetadata.Contains (metadataName))
@@ -196,29 +151,32 @@ namespace Microsoft.Build.BuildEngine {
 					 string metadataValue,
 					 bool treatMetadataValueAsLiteral)
 		{
+			if (metadataName == null)
+				throw new ArgumentNullException ("metadataName");
+			if (metadataValue == null)
+				throw new ArgumentNullException ("metadataValue");
+			if (TaskItem.IsReservedMetadataName (metadataName))
+				throw new ArgumentException ("Can't modify reserved metadata.");
 			RemoveMetadata (metadataName);
 			unevaluatedMetadata.Add (metadataName, metadataValue);
 			Expression finalValue = new Expression (parentItemGroup.Project, metadataValue);
 			evaluatedMetadata.Add (metadataName, (string) finalValue.ToNonArray (typeof (string)));
 		}
 		
-		private void BindToXml (XmlElement xmlElement)
+		private void BindToXmle (XmlElement xmlElement)
 		{
 			if (xmlElement == null)
 				throw new ArgumentNullException ("xmlElement");
 			this.itemElement = xmlElement;
 			this.name = xmlElement.Name;
-			this.condition = xmlElement.GetAttributeNode ("Condition");
-			this.exclude = xmlElement.GetAttributeNode ("Exclude");
-			this.include = xmlElement.GetAttributeNode ("Include"); 
-			if (include == null)
+			if (Include == String.Empty)
 				throw new InvalidProjectFileException ("Item must have Include attribute.");
 			foreach (XmlElement xe in xmlElement.ChildNodes) {
 				this.SetMetadata (xe.Name, xe.InnerText);
 			}
 		}
 
-		internal void Evaluate()
+		internal void Evaluate ()
 		{
 			DirectoryScanner directoryScanner;
 			Expression includeExpr, excludeExpr;
@@ -230,7 +188,6 @@ namespace Microsoft.Build.BuildEngine {
 			includes = (string) includeExpr.ToNonArray (typeof (string));
 			excludes = (string) excludeExpr.ToNonArray (typeof (string));
 
-			this.evaluatedItemSpec = includes;
 			this.finalItemSpec = includes;
 			
 			directoryScanner = new DirectoryScanner ();
@@ -274,7 +231,7 @@ namespace Microsoft.Build.BuildEngine {
 		internal ITaskItem ToITaskItem (Expression transform)
 		{
 			TaskItem taskItem;
-			taskItem = new TaskItem (GetItemSpecFromTransform (transform), (IDictionary) evaluatedMetadata.Clone ());
+			taskItem = new TaskItem (GetItemSpecFromTransform (transform), evaluatedMetadata);
 			return taskItem;
 		}
 

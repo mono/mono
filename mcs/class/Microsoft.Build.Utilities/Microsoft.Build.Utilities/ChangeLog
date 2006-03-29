@@ -1,3 +1,7 @@
+2006-03-11  Crestez Leonard  <cdleonard@gmail.com>
+
+	* TaskItem.cs: Cleaned up.
+
 2006-03-11  Marek Sieradzki  <marek.sieradzki@gmail.com> 
 
 	* CommandLineBuilder.cs: Corrected exceptions throwing.
