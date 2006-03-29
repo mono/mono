@@ -1,3 +1,14 @@
+2006-03-29  Massimiliano Mantione  <massi@ximian.com>
+
+        * local-propagation.c: Added tree mover, and moved here all the
+	local propagation code from mini.c
+        * mini.c: Added support for treeprop, and moved all the	local
+	propagation code to local-propagation.c
+        * mini.h: Added support for treeprop
+        * driver.c: Added support for treeprop, enabled consprop, copyprop,
+	treeprop, inline and deadce by default
+        * Makefile.am: Added local-propagation.c
+
 2006-03-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* exceptions-sparc.c: Applied patch from David S. Miller  <davem@sunset.davemloft.net>: Implement correct support for sparc/linux.
