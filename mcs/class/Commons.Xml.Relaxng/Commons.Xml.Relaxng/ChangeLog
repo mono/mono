@@ -1,3 +1,9 @@
+2006-03-29  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RelaxngDatatype.cs : Compare() should not be just a stupid object
+	  comparison, but should rather be type-dependent equality.
+	  Thanks to Alexandre.
+
 2006-03-28  Atsushi Enomoto <atsushi@ximian.com>
 
 	Based on the patch by Alexandre Alapetite:
