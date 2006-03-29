@@ -142,7 +142,7 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			BuildItem[] array;
 			array = new BuildItem [Count];
-			buildItems.CopyTo (array,0);
+			buildItems.CopyTo (array, 0);
 			return array;
 		}
 		
@@ -152,7 +152,7 @@ namespace Microsoft.Build.BuildEngine {
 			int i = 0;
 			foreach (BuildItem bi in  buildItems)
 				items [i++] = bi.ToString (transform);
-			return String.Join (separator,items);
+			return String.Join (separator, items);
 		}
 		
 		internal ITaskItem[] ToITaskItemArray (Expression transform)
@@ -192,7 +192,7 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 
-		public BuildItem this[int index] {
+		public BuildItem this [int index] {
 			get {
 				return (BuildItem) buildItems [index];
 			}

@@ -48,12 +48,6 @@ namespace Microsoft.Build.BuildEngine {
 		IDictionary	evaluatedMetadata;
 		IDictionary	unevaluatedMetadata;
 
-		internal bool FromXml {
-			get {
-				return itemElement != null;
-			}
-		}
-	
 		private BuildItem ()
 		{
 		}
@@ -131,10 +125,13 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			if (metadataName == null)
 				throw new ArgumentNullException ("metadataName");
+			
 			if (TaskItem.IsReservedMetadataName (metadataName))
 				throw new ArgumentException ("Can't remove reserved metadata.");
+			
 			if (evaluatedMetadata.Contains (metadataName))
 				evaluatedMetadata.Remove (metadataName);
+			
 			if (unevaluatedMetadata.Contains (metadataName))
 				unevaluatedMetadata.Remove (metadataName);
 		}
@@ -153,10 +150,13 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			if (metadataName == null)
 				throw new ArgumentNullException ("metadataName");
+			
 			if (metadataValue == null)
 				throw new ArgumentNullException ("metadataValue");
+			
 			if (TaskItem.IsReservedMetadataName (metadataName))
 				throw new ArgumentException ("Can't modify reserved metadata.");
+			
 			RemoveMetadata (metadataName);
 			unevaluatedMetadata.Add (metadataName, metadataValue);
 			Expression finalValue = new Expression (parentItemGroup.Project, metadataValue);
@@ -167,10 +167,13 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			if (xmlElement == null)
 				throw new ArgumentNullException ("xmlElement");
+			
 			this.itemElement = xmlElement;
 			this.name = xmlElement.Name;
+			
 			if (Include == String.Empty)
 				throw new InvalidProjectFileException ("Item must have Include attribute.");
+			
 			foreach (XmlElement xe in xmlElement.ChildNodes) {
 				this.SetMetadata (xe.Name, xe.InnerText);
 			}
@@ -284,6 +287,12 @@ namespace Microsoft.Build.BuildEngine {
 		public string Name {
 			get { return name; }
 			set { name = value; }
+		}
+		
+		internal bool FromXml {
+			get {
+				return itemElement != null;
+			}
 		}
 	}
 }

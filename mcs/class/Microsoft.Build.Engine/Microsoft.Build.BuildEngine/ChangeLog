@@ -1,3 +1,7 @@
+2006-03-29  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* BuildItem.cs, BuildItemGroup.cs: Coding style fixes.
+
 2006-03-29  Crestez Leonard  <cdleonard@gmail.com>
 	
 	* BuildItem.cs: Fix typo?
