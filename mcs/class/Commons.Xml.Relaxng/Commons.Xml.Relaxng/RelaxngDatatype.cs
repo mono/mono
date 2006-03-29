@@ -42,7 +42,7 @@ namespace Commons.Xml.Relaxng
 
 		public virtual bool Compare (object o1, object o2)
 		{
-			return (o1 == o2);
+			return o1 != null ? o1.Equals (o2) : o2 == null;
 		}
 
 		public virtual bool CompareString (string s1, string s2, XmlReader reader)
