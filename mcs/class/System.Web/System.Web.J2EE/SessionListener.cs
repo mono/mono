@@ -54,28 +54,7 @@ namespace System.Web.J2EE
 			vmw.@internal.EnvironmentUtils.setAppDomain(servletDomain);
 			try
 			{
-				bool  getHttpApplication = false;
-				object app  = ((HttpSessionState)o).App;
-				if (app == null)
-				{
-					app = HttpApplicationFactory.GetApplication(null);
-					if (app == null)
-						return;
-					getHttpApplication = true;
-				}
-				if (method == null && firstTime)
-				{
-					firstTime = false;
-					Type appType = app.GetType();
-					method = appType.GetMethod("Session_End",BindingFlags.Instance|BindingFlags.NonPublic|BindingFlags.Public);
-					if (method == null)
-						return;
-				}
-				else if (method == null)
-					return;
-				method.Invoke(app, new object[]{app,EventArgs.Empty});
-				if (getHttpApplication)
-					HttpApplicationFactory.Recycle((HttpApplication)app);
+				HttpApplicationFactory.InvokeSessionEnd(o);
 			}
 #if DEBUG
 			catch (Exception e)

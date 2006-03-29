@@ -1,3 +1,7 @@
+2006-03-29  Konstantin Triger <kostat@mainsoft.com>
+
+	* SessionListener.cs: Use standard mechanism for session_end handling.
+
 2006-03-20  Konstantin Triger <kostat@mainsoft.com>
 
 	* SessionListener.cs: Associate the AppDoamin with current thread.
