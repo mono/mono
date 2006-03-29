@@ -1,3 +1,9 @@
+2006-03-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GraphicsPathTest.cs: Add test cases for every Add* method to check 
+	their (different) behaviour wrt starting and closing figures in the
+	path they are added.
+
 2006-03-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestMatrix.cs: Added new test cases.

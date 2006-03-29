@@ -1110,6 +1110,13 @@ namespace MonoTests.System.Drawing.Drawing2D {
 			new GraphicsPath ().Transform (null);
 		}
 
+		[Test]
+		public void Transform_Empty ()
+		{
+			// no points in path and no exception
+			new GraphicsPath ().Transform (new Matrix ());
+		}
+
 		private void ComparePaths (GraphicsPath expected, GraphicsPath actual)
 		{
 			Assert.AreEqual (expected.PointCount, actual.PointCount, "PointCount");
@@ -1287,6 +1294,264 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		public void CloseAllFigures_EmptyPath ()
 		{
 			new GraphicsPath ().CloseAllFigures ();
+		}
+
+		[Test]
+		public void StartClose_AddArc ()
+		{
+			GraphicsPath path = new GraphicsPath ();
+			path.AddLine (1, 1, 2, 2);
+			path.AddArc (10, 10, 100, 100, 90, 180);
+			path.AddLine (10, 10, 20, 20);
+			byte[] types = path.PathTypes;
+			// check first types
+			Assert.AreEqual (0, types[0], "start/Line");
+			Assert.AreEqual (1, types[2], "start/Arc");
+			// check last types
+			Assert.AreEqual (3, types[path.PointCount - 3], "end/Arc");
+			Assert.AreEqual (1, types[path.PointCount - 1], "end/Line");
+		}
+
+		[Test]
+		public void StartClose_AddBezier ()
+		{
+			GraphicsPath path = new GraphicsPath ();
+			path.AddLine (1, 1, 2, 2);
+			path.AddBezier (10, 10, 100, 100, 20, 20, 200, 200);
+			path.AddLine (10, 10, 20, 20);
+			byte[] types = path.PathTypes;
+			// check first types
+			Assert.AreEqual (0, types[0], "start/Line");
+			Assert.AreEqual (1, types[2], "start/Bezier");
+			// check last types
+			Assert.AreEqual (3, types[path.PointCount - 3], "end/Bezier");
+			Assert.AreEqual (1, types[path.PointCount - 1], "end/Line");
+		}
+
+		[Test]
+		public void StartClose_AddBeziers ()
+		{
+			GraphicsPath path = new GraphicsPath ();
+			path.AddLine (1, 1, 2, 2);
+			path.AddBeziers (new Point[7] { new Point (10, 10), 
+				new Point (20, 10), new Point (20, 20), new Point (30, 20),
+				new Point (40, 40), new Point (50, 40), new Point (50, 50)
+			});
+			path.AddLine (10, 10, 20, 20);
+			byte[] types = path.PathTypes;
+			// check first types
+			Assert.AreEqual (0, types[0], "start/Line");
+			Assert.AreEqual (1, types[2], "start/Bezier");
+			// check last types
+			Assert.AreEqual (3, types[path.PointCount - 3], "end/Bezier");
+			Assert.AreEqual (1, types[path.PointCount - 1], "end/Line");
+		}
+
+		[Test]
+		public void StartClose_AddClosedCurve ()
+		{
+			GraphicsPath path = new GraphicsPath ();
+			path.AddLine (1, 1, 2, 2);
+			path.AddClosedCurve (new Point[3] { new Point (1, 1), new Point (2, 2), new Point (3, 3) });
+			path.AddLine (10, 10, 20, 20);
+			byte[] types = path.PathTypes;
+			// check first types
+			Assert.AreEqual (0, types[0], "start/Line");
+			Assert.AreEqual (0, types[2], "start/ClosedCurve");
+			// check last types
+			Assert.AreEqual (131, types[path.PointCount - 3], "end/ClosedCurve");
+			Assert.AreEqual (0, types[path.PointCount - 2], "start/Line3");
+			Assert.AreEqual (1, types[path.PointCount - 1], "end/Line3");
+		}
+
+		[Test]
+		public void StartClose_AddCurve ()
+		{
+			GraphicsPath path = new GraphicsPath ();
+			path.AddLine (1, 1, 2, 2);
+			path.AddCurve (new Point[3] { new Point (1, 1), new Point (2, 2), new Point (3, 3) });
+			path.AddLine (10, 10, 20, 20);
+			byte[] types = path.PathTypes;
+			// check first types
+			Assert.AreEqual (0, types[0], "start/Line");
+			Assert.AreEqual (1, types[2], "start/Curve");
+			// check last types
+			Assert.AreEqual (3, types[path.PointCount - 3], "end/Curve");
+			Assert.AreEqual (1, types[path.PointCount - 1], "end/Line");
+		}
+
+		[Test]
+		public void StartClose_AddEllipse ()
+		{
+			GraphicsPath path = new GraphicsPath ();
+			path.AddLine (1, 1, 2, 2);
+			path.AddEllipse (10, 10, 100, 100);
+			path.AddLine (10, 10, 20, 20);
+			byte[] types = path.PathTypes;
+			// check first types
+			Assert.AreEqual (0, types[0], "start/Line");
+			Assert.AreEqual (0, types[2], "start/Ellipse");
+			// check last types
+			Assert.AreEqual (131, types[path.PointCount - 3], "end/Ellipse");
+			Assert.AreEqual (0, types[path.PointCount - 2], "start/Line3");
+			Assert.AreEqual (1, types[path.PointCount - 1], "end/Line3");
+		}
+
+		[Test]
+		public void StartClose_AddLine ()
+		{
+			GraphicsPath path = new GraphicsPath ();
+			path.AddLine (1, 1, 2, 2);
+			path.AddLine (5, 5, 10, 10);
+			path.AddLine (10, 10, 20, 20);
+			byte[] types = path.PathTypes;
+			// check first types
+			Assert.AreEqual (0, types[0], "start/Line");
+			Assert.AreEqual (1, types[2], "start/Line2");
+			// check last types
+			Assert.AreEqual (1, types[path.PointCount - 3], "end/Line2");
+			Assert.AreEqual (1, types[path.PointCount - 1], "end/Line");
+		}
+
+		[Test]
+		public void StartClose_AddLines ()
+		{
+			GraphicsPath path = new GraphicsPath ();
+			path.AddLine (1, 1, 2, 2);
+			path.AddLines (new Point[4] { new Point (10, 10), new Point (20, 10), new Point (20, 20), new Point (30, 20) });
+			path.AddLine (10, 10, 20, 20);
+			byte[] types = path.PathTypes;
+			// check first types
+			Assert.AreEqual (0, types[0], "start/Line");
+			Assert.AreEqual (1, types[2], "start/Lines");
+			// check last types
+			Assert.AreEqual (1, types[path.PointCount - 3], "end/Lines");
+			Assert.AreEqual (1, types[path.PointCount - 1], "end/Line");
+		}
+
+		[Test]
+		public void StartClose_AddPath_Connect ()
+		{
+			GraphicsPath inner = new GraphicsPath ();
+			inner.AddArc (10, 10, 100, 100, 90, 180);
+			GraphicsPath path = new GraphicsPath ();
+			path.AddLine (1, 1, 2, 2);
+			path.AddPath (inner, true);
+			path.AddLine (10, 10, 20, 20);
+			byte[] types = path.PathTypes;
+			// check first types
+			Assert.AreEqual (0, types[0], "start/Line");
+			Assert.AreEqual (1, types[2], "start/Path");
+			// check last types
+			Assert.AreEqual (3, types[path.PointCount - 3], "end/Path");
+			Assert.AreEqual (1, types[path.PointCount - 1], "end/Line");
+		}
+
+		[Test]
+		public void StartClose_AddPath_NoConnect ()
+		{
+			GraphicsPath inner = new GraphicsPath ();
+			inner.AddArc (10, 10, 100, 100, 90, 180);
+			GraphicsPath path = new GraphicsPath ();
+			path.AddLine (1, 1, 2, 2);
+			path.AddPath (inner, false);
+			path.AddLine (10, 10, 20, 20);
+			byte[] types = path.PathTypes;
+			// check first types
+			Assert.AreEqual (0, types[0], "start/Line");
+			Assert.AreEqual (0, types[2], "start/Path");
+			// check last types
+			Assert.AreEqual (3, types[path.PointCount - 3], "end/Path");
+			Assert.AreEqual (1, types[path.PointCount - 1], "end/Line");
+		}
+
+		[Test]
+		public void StartClose_AddPie ()
+		{
+			GraphicsPath path = new GraphicsPath ();
+			path.AddLine (1, 1, 2, 2);
+			path.AddPie (10, 10, 10, 10, 90, 180);
+			path.AddLine (10, 10, 20, 20);
+			byte[] types = path.PathTypes;
+			// check first types
+			Assert.AreEqual (0, types[0], "start/Line");
+			Assert.AreEqual (0, types[2], "start/Pie");
+			// check last types
+			// libgdiplus draws pie by ending with a line (not a curve) section
+			Assert.IsTrue ((types[path.PointCount - 3] & 128) == 128, "end/Pie");
+			Assert.AreEqual (0, types[path.PointCount - 2], "start/Line2");
+			Assert.AreEqual (1, types[path.PointCount - 1], "end/Line2");
+		}
+
+		[Test]
+		public void StartClose_AddPolygon ()
+		{
+			GraphicsPath path = new GraphicsPath ();
+			path.AddLine (1, 1, 2, 2);
+			path.AddPolygon (new Point[3] { new Point (1, 1), new Point (2, 2), new Point (3, 3) });
+			path.AddLine (10, 10, 20, 20);
+			byte[] types = path.PathTypes;
+			// check first types
+			Assert.AreEqual (0, types[0], "start/Line");
+			Assert.AreEqual (0, types[2], "start/Polygon");
+			// check last types
+			Assert.AreEqual (129, types[path.PointCount - 3], "end/Polygon");
+			Assert.AreEqual (0, types[path.PointCount - 2], "start/Line2");
+			Assert.AreEqual (1, types[path.PointCount - 1], "end/Line2");
+		}
+
+		[Test]
+		public void StartClose_AddRectangle ()
+		{
+			GraphicsPath path = new GraphicsPath ();
+			path.AddLine (1, 1, 2, 2);
+			path.AddRectangle (new RectangleF (10, 10, 20, 20));
+			path.AddLine (10, 10, 20, 20);
+			byte[] types = path.PathTypes;
+			// check first types
+			Assert.AreEqual (0, types[0], "start/Line");
+			Assert.AreEqual (0, types[2], "start/Rectangle");
+			// check last types
+			Assert.AreEqual (129, types[path.PointCount - 3], "end/Rectangle");
+			Assert.AreEqual (0, types[path.PointCount - 2], "start/Line2");
+			Assert.AreEqual (1, types[path.PointCount - 1], "end/Line2");
+		}
+
+		[Test]
+		public void StartClose_AddRectangles ()
+		{
+			GraphicsPath path = new GraphicsPath ();
+			path.AddLine (1, 1, 2, 2);
+			path.AddRectangles (new RectangleF[2] {
+				new RectangleF (10, 10, 20, 20),
+				new RectangleF (20, 20, 10, 10) });
+			path.AddLine (10, 10, 20, 20);
+			byte[] types = path.PathTypes;
+			// check first types
+			Assert.AreEqual (0, types[0], "start/Line");
+			Assert.AreEqual (0, types[2], "start/Rectangles");
+			// check last types
+			Assert.AreEqual (129, types[path.PointCount - 3], "end/Rectangles");
+			Assert.AreEqual (0, types[path.PointCount - 2], "start/Line2");
+			Assert.AreEqual (1, types[path.PointCount - 1], "end/Line2");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void StartClose_AddString ()
+		{
+			GraphicsPath path = new GraphicsPath ();
+			path.AddLine (1, 1, 2, 2);
+			path.AddString ("mono", FontFamily.GenericMonospace, 0, 10, new Point (20,20), StringFormat.GenericDefault);
+			path.AddLine (10, 10, 20, 20);
+			byte[] types = path.PathTypes;
+			// check first types
+			Assert.AreEqual (0, types[0], "start/Line");
+			Assert.AreEqual (0, types[2], "start/String");
+			// check last types
+			Assert.AreEqual (163, types[path.PointCount - 3], "end/String");
+			Assert.AreEqual (1, types[path.PointCount - 2], "start/Line2");
+			Assert.AreEqual (1, types[path.PointCount - 1], "end/Line2");
 		}
 	}
 }
