@@ -1,3 +1,8 @@
+2006-03-29  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* PrintPreviewDialog.cs: Implemented missing methods and events; still
+	  missing proper dialog setup in the constructor
+
 2006-03-29  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* ProgressBar.cs: Added 2.0 Style property that apps seem to use
