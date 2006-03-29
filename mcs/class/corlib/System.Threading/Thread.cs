@@ -56,9 +56,10 @@ namespace System.Threading {
 		int lock_thread_id;
 		// stores a thread handle
 		private IntPtr system_thread_handle;
-		
-		private IntPtr culture_info;
-		private IntPtr ui_culture_info;
+
+		/* Note this is an opaque object (an array), not a CultureInfo */
+		private object cached_culture_info;
+		private IntPtr unused0;
 		private bool threadpool_thread;
 		/* accessed only from unmanaged code */
 		private IntPtr name;
