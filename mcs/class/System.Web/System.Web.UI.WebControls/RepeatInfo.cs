@@ -400,6 +400,7 @@ namespace System.Web.UI.WebControls {
 			c.ID = wc.ClientID;
 			c.CopyBaseAttributes (wc);
 			c.ApplyStyle (s);
+			c.Enabled = wc.Enabled;
 			c.RenderBeginTag (w);
 		}
 		
