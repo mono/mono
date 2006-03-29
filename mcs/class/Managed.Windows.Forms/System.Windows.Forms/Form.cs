@@ -572,6 +572,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public MainMenu MergedMenu {
 			get {
 				if (!IsMdiChild || window_manager == null)

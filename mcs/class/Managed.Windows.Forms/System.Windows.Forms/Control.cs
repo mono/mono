@@ -584,12 +584,6 @@ namespace System.Windows.Forms
 				}
 			}
 
-			bool IList.IsReadOnly {
-				get {
-					return list.IsReadOnly;
-				}
-			}
-
 			bool ICollection.IsSynchronized {
 				get {
 					return list.IsSynchronized;
@@ -646,12 +640,6 @@ namespace System.Windows.Forms
 				}
 				all_controls = null;
 				list.Remove(value);
-			}
-
-			void ICollection.CopyTo(Array array, int index) {
-				if (list.Count>0) {
-					list.CopyTo(array, index);
-				}
 			}
 
 			Object ICloneable.Clone() {

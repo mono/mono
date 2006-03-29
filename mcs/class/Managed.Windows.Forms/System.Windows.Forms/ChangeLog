@@ -1,3 +1,8 @@
+2006-03-29  Mike Kestner  <mkestner@novell.com>
+
+	* *.cs: fix remaining corcompare issues for 1.1 API with the exception
+	of PrintPreviewDialog and RichTextBox.
+
 2006-03-29  Alexander Olk  <alex.olk@googlemail.com>
 
 	* Theme.cs: Added a little helper to SystemResPool to get the Dark,

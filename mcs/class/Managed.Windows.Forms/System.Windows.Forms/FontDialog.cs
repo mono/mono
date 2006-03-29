@@ -595,6 +595,9 @@ namespace System.Windows.Forms
 		#endregion	// Public Instance Properties
 		
 		#region Protected Instance Properties
+		protected int Options {
+			get { return 0; }
+		}
 		#endregion	// Protected Instance Properties
 		
 		#region Public Instance Methods
@@ -638,6 +641,11 @@ namespace System.Windows.Forms
 		#endregion	// Public Instance Methods
 		
 		#region Protected Instance Methods
+		protected override IntPtr HookProc (IntPtr hWnd, int msg, IntPtr wparam, IntPtr lparam)
+		{
+			return base.HookProc (hWnd, msg, wparam, lparam);
+		}
+
 		[MonoTODO]
 		protected override bool RunDialog( IntPtr hwndOwner )
 		{

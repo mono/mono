@@ -2374,7 +2374,7 @@ namespace System.Windows.Forms
 				return list.Contains (item);
 			}
 
-			void ICollection.CopyTo (Array dest, int index)
+			public void CopyTo (Array dest, int index)
 			{
 				list.CopyTo (dest, index);
 			}

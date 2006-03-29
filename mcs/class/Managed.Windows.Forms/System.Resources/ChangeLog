@@ -1,3 +1,7 @@
+2006-03-29  Mike Kestner  <mkestner@novell.com>
+
+	* ResXResourceWriter.cs: Make Dispose() virtual.
+
 2006-01-14  Robert Jordan  <robertj@gmx.net>
 
 	* ResXResourceReader.cs: Fix for bug #77253. Thanks to Marek Habersack

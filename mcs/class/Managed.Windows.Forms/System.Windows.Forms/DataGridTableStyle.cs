@@ -569,7 +569,7 @@ namespace System.Windows.Forms
 		#region Public Instance Methods
 
 		[MonoTODO]
-		public virtual bool BeginEdit (DataGridColumnStyle gridColumn,  int rowNumber)
+		public bool BeginEdit (DataGridColumnStyle gridColumn,  int rowNumber)
 		{
 			throw new NotImplementedException ();
 		}
@@ -609,7 +609,7 @@ namespace System.Windows.Forms
 		}
 
 		[MonoTODO]
-		public virtual bool EndEdit ( DataGridColumnStyle gridColumn,  int rowNumber,  bool shouldAbort)
+		public bool EndEdit ( DataGridColumnStyle gridColumn,  int rowNumber,  bool shouldAbort)
 		{
 			throw new NotImplementedException ();
 		}

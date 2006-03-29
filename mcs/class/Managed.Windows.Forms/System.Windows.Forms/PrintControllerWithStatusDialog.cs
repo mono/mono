@@ -85,7 +85,7 @@ namespace System.Windows.Forms
 		#endregion	// Protected Instance Methods
 
 		#region Internal Class
-		public class PrintingDialog : Form {
+		class PrintingDialog : Form {
 			private Button buttonCancel;
 			private Label label;
 

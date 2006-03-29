@@ -994,12 +994,12 @@ namespace System.Windows.Forms
 		#region Public Instance Methods
 
 		[MonoTODO]
-		public virtual bool BeginEdit (DataGridColumnStyle gridColumn, int rowNumber)
+		public bool BeginEdit (DataGridColumnStyle gridColumn, int rowNumber)
 		{
 			return false;
 		}
 
-		public virtual void BeginInit ()
+		public void BeginInit ()
 		{
 			begininit = true;
 		}
@@ -1056,7 +1056,7 @@ namespace System.Windows.Forms
 			base.Dispose (disposing);
 		}
 
-		public virtual bool EndEdit (DataGridColumnStyle gridColumn, int rowNumber, bool shouldAbort)
+		public bool EndEdit (DataGridColumnStyle gridColumn, int rowNumber, bool shouldAbort)
 		{						
 			if (is_adding == true) {				
 				if (shouldAbort) {
@@ -1080,7 +1080,7 @@ namespace System.Windows.Forms
 			return true;
 		}
 
-		public virtual void EndInit ()
+		public void EndInit ()
 		{
 			begininit = false;
 		}

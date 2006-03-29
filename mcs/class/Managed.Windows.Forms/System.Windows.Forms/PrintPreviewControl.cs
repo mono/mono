@@ -74,7 +74,7 @@ namespace System.Windows.Forms {
 			get { return document; }
 			set { document = value; }
 		}
-		[DefaultValue(0)]
+		[DefaultValue(1)]
 		public int Rows {
 			get { return rows; }
 			set { rows = value; }
@@ -85,6 +85,10 @@ namespace System.Windows.Forms {
 			set { startPage = value; }
 		}
 
+		[Bindable(false)]
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public override string Text {
 			get {
 				return base.Text;
@@ -99,7 +103,7 @@ namespace System.Windows.Forms {
 			get { return useAntiAlias; }
 			set { useAntiAlias = value; }
 		}
-		[DefaultValue(1.0)]
+
 		public double Zoom {
 			get { return zoom; }
 			set { zoom = value; }
@@ -154,6 +158,8 @@ namespace System.Windows.Forms {
 
 		public event EventHandler StartPageChanged;
 
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new event EventHandler TextChanged;
 	}
 }

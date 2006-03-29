@@ -578,11 +578,6 @@ namespace System.Windows.Forms
 				get { return true; }
 			}
 
-			object IList.this[int index] {
-				get { return object_items[index]; }
-				set { throw new NotSupportedException (); }
-			}
-
 			#endregion Public Properties
 
 			#region Public Methods
@@ -606,11 +601,6 @@ namespace System.Windows.Forms
 				throw new NotSupportedException ();
 			}
 
-			bool IList.Contains (object selectedIndex)
-			{
-				throw new NotImplementedException ();
-			}
-				
 			void IList.Insert (int index, object value)
 			{
 				throw new NotSupportedException ();

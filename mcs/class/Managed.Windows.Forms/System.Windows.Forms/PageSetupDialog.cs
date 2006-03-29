@@ -35,6 +35,7 @@ using System.Reflection;
 
 namespace System.Windows.Forms {
 
+	[DefaultProperty("Document")]
 	public sealed class PageSetupDialog : CommonDialog {
 		#region Local variables
 		private PrintDocument document;
@@ -83,26 +84,31 @@ namespace System.Windows.Forms {
 		#endregion // Public Instance Methods
 
 		#region Public Instance Properties
+		[DefaultValue(true)]
 		public bool AllowMargins {
 			get { return allow_margins; }
 			set { allow_margins = value; }
 		}
 
+		[DefaultValue(true)]
 		public bool AllowOrientation {
 			get { return allow_orientation; }
 			set { allow_orientation = value; }
 		}
 
+		[DefaultValue(true)]
 		public bool AllowPaper {
 			get { return allow_paper; }
 			set { allow_paper = value; }
 		}
 
+		[DefaultValue(true)]
 		public bool AllowPrinter {
 			get { return allow_printer; }
 			set { allow_printer = value; }
 		}
 
+		[DefaultValue(null)]
 		public PrintDocument Document {
 			get { return document; }
 			set { document = value; }
@@ -113,21 +119,29 @@ namespace System.Windows.Forms {
 			set { min_margins = value; }
 		}
 
+		[Browsable(false)]
+		[DefaultValue(null)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public PageSettings PageSettings {
 			get { return page_settings; }
 			set { page_settings = value; }
 		}
 
+		[Browsable(false)]
+		[DefaultValue(null)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public PrinterSettings PrinterSettings {
 			get { return printer_settings; }
 			set { printer_settings = value; }
 		}
 
+		[DefaultValue(false)]
 		public bool ShowHelp {
 			get { return show_help; }
 			set { show_help = value; }
 		}
 
+		[DefaultValue(true)]
 		public bool ShowNetwork {
 			get { return show_network; }
 			set { show_network = value; }
