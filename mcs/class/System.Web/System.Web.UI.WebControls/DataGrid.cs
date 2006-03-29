@@ -981,7 +981,7 @@ namespace System.Web.UI.WebControls {
 			if (pds.IsPagingEnabled) {
 				CreateItem (-1, -1, ListItemType.Pager, false, null, paged_data_source);
 				if (useDataSource)
-					ViewState ["Items"] = pds.DataSourceCount;
+					ViewState ["Items"] = pds.IsCustomPagingEnabled ? index : pds.DataSourceCount;
 			} else if (useDataSource) {
 				ViewState ["Items"] = index;
 			}
