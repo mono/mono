@@ -58,7 +58,7 @@ namespace Mainsoft.Data.Jdbc.Providers
 
 		#region Constructors
 
-		public OleDbSqlServerProvider (IDictionary providerInfo) : base (providerInfo)
+		public OleDbSqlServerProvider2000 (IDictionary providerInfo) : base (providerInfo)
 		{
 		}
 
