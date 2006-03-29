@@ -54,7 +54,6 @@ public sealed class HttpSessionState : ICollection, IEnumerable, java.io.Externa
 	private bool _isReadonly;
 	internal bool _abandoned;
 
-	private object _app;
 	private bool _needSessionPersistence = false;
 
 	internal HttpSessionState (string id,
@@ -75,7 +74,6 @@ public sealed class HttpSessionState : ICollection, IEnumerable, java.io.Externa
 		_mode = mode;
 		_isReadonly = isReadonly;
 
-		_app = HttpContext.Current.ApplicationInstance;
 		_needSessionPersistence = false;
 		javax.servlet.ServletConfig config = (javax.servlet.ServletConfig)AppDomain.CurrentDomain.GetData(J2EEConsts.SERVLET_CONFIG);
 		string sessionPersistance = config.getInitParameter(J2EEConsts.Enable_Session_Persistency);
@@ -159,15 +157,6 @@ public sealed class HttpSessionState : ICollection, IEnumerable, java.io.Externa
 			else 
 				_mode = SessionStateMode.SQLServer;
 			_isReadonly = br.ReadBoolean();
-			//	_app = HttpContext.Current.ApplicationInstance;
-		}
-	}
-
-	internal object App
-	{
-		get
-		{
-			return _app;
 		}
 	}
 
@@ -308,8 +297,7 @@ public sealed class HttpSessionState : ICollection, IEnumerable, java.io.Externa
 		ServletWorkerRequest worker = (ServletWorkerRequest)HttpContext.Current.Request.WorkerRequest;
 //		worker.Servlet.getServletContext().removeAttribute("GH_SESSION_STATE");
 		javax.servlet.http.HttpSession javaSession = worker.ServletRequest.getSession(false);
-		if (_app == null)
-			_app = HttpContext.Current.ApplicationInstance;
+
 		if (javaSession != null)
 		{
 			javaSession.setAttribute("GH_SESSION_STATE",this);	
