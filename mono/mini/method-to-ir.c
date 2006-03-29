@@ -550,12 +550,6 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 		(dest)->sreg1 = var->dreg; \
     } while (0)
 
-#define NEW_DUMMY_STORE(cfg,dest,num) do { \
-        MONO_INST_NEW ((cfg), (dest), OP_DUMMY_STORE); \
-		(dest)->inst_i0 = (cfg)->varinfo [(num)];	\
-		(dest)->klass = (dest)->inst_i0->klass;	\
-	} while (0)
-
 /* Variants which take a type argument and handle vtypes as well */
 #define NEW_LOAD_MEMBASE_TYPE(cfg,dest,ltype,base,offset) do { \
 	    NEW_LOAD_MEMBASE ((cfg), (dest), mono_type_to_load_membase ((ltype)), 0, (base), (offset)); \
@@ -2503,22 +2497,26 @@ mono_emit_call_args (MonoCompile *cfg, MonoMethodSignature *sig,
 
 	if (MONO_TYPE_ISSTRUCT (sig->ret)) {
 		MonoInst *temp = mono_compile_create_var (cfg, sig->ret, OP_LOCAL);
-		MonoInst *loada, *dummy_store;
+		MonoInst *loada;
 
-		temp->flags |= MONO_INST_IS_TEMP;
-
-		/* 
-		 * Emit a dummy store to the local holding the result so the
-		 * liveness info remains correct.
-		 */
-		NEW_DUMMY_STORE (cfg, dummy_store, temp->inst_c0);
-		MONO_ADD_INS (cfg->cbb, dummy_store);
-
-		/* FIXME: What is this ? */
-		/* we use this to allocate native sized structs */
 		temp->unused = sig->pinvoke;
 
-		EMIT_NEW_TEMPLOADA (cfg, loada, temp->inst_c0);
+		/*
+		 * We use a new opcode OP_OUTARG_VTRETADDR instead of LDADDR for emitting the
+		 * address of return value to increase optimization opportunities.
+		 * Before vtype decomposition, the dreg of the call ins itself represents the
+		 * fact the call modifies the return value. After decomposition, the call will
+		 * be transformed into one of the OP_VOIDCALL opcodes, and the VTRETADDR opcode
+		 * will be transformed into an LDADDR.
+		 */
+		MONO_INST_NEW (cfg, loada, OP_OUTARG_VTRETADDR);
+		loada->dreg = alloc_preg (cfg);
+		loada->inst_p0 = temp;
+		/* We reference the call too since call->dreg could change during optimization */
+		loada->inst_p1 = call;
+		MONO_ADD_INS (cfg->cbb, loada);
+
+		call->inst.dreg = temp->dreg;
 
 		call->vret_var = loada;
 	} else if (!MONO_TYPE_IS_VOID (sig->ret))
@@ -2527,23 +2525,6 @@ mono_emit_call_args (MonoCompile *cfg, MonoMethodSignature *sig,
 	call = mono_arch_call_opcode2 (cfg, call, virtual);
 	
 	return call;
-}
-
-/**
- * mono_emit_call_result:
- *
- *   Return an ins representing the result of a call.
- */
-static MonoInst*
-mono_emit_call_result (MonoCompile *cfg, MonoCallInst *call)
-{
-	if (MONO_TYPE_ISSTRUCT (call->signature->ret)) {
-		MonoInst *loada = call->vret_var;
-
-		return loada->inst_p0;
-	}
-	else
-		return (MonoInst*)call;
 }
 
 inline static MonoInst*
@@ -2555,7 +2536,7 @@ mono_emit_calli (MonoCompile *cfg, MonoMethodSignature *sig, MonoInst **args, Mo
 
 	MONO_ADD_INS (cfg->cbb, (MonoInst*)call);
 
-	return mono_emit_call_result (cfg, call);
+	return (MonoInst*)call;
 }
 
 static MonoInst*
@@ -2614,7 +2595,7 @@ mono_emit_method_call_full (MonoCompile *cfg, MonoMethod *method, MonoMethodSign
 
 			MONO_ADD_INS (cfg->cbb, (MonoInst*)call);
 
-			return mono_emit_call_result (cfg, call);
+			return (MonoInst*)call;
 		}
 
 		call->inst.opcode = callvirt_to_call_membase (call->inst.opcode);
@@ -2643,7 +2624,7 @@ mono_emit_method_call_full (MonoCompile *cfg, MonoMethod *method, MonoMethodSign
 
 	MONO_ADD_INS (cfg->cbb, (MonoInst*)call);
 
-	return mono_emit_call_result (cfg, call);
+	return (MonoInst*)call;
 }
 
 static MonoInst*
@@ -2669,7 +2650,7 @@ mono_emit_native_call (MonoCompile *cfg, gconstpointer func, MonoMethodSignature
 	/* The backends will need the got var */
 	mono_get_got_var (cfg);
 
-	return mono_emit_call_result (cfg, call);
+	return (MonoInst*)call;
 }
 
 inline static MonoInst*
@@ -5108,12 +5089,14 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 	MonoBasicBlock *bb, *first_bb;
 
 	/**
+	 * Using OP_V opcodes and decomposing them later have two main benefits:
+	 * - it simplifies method_to_ir () since there is no need to special-case vtypes
+	 *   everywhere.
+	 * - it gets rid of the LDADDR opcodes generated when vtype operations are decomposed,
+	 *   enabling optimizations to work on vtypes too.
 	 * Unlike decompose_long_opts, this pass does not alter the CFG of the method so it 
 	 * can be executed anytime. It should be executed as late as possible so vtype
 	 * opcodes can be optimized by the other passes.
-	 */
-
-	/**
 	 * The pinvoke wrappers need to manipulate vtypes in their unmanaged representation.
 	 * This is indicated by setting the 'unused' field of the MonoInst for the var to 1.
 	 * This is done on demand, ie. by the LDNATIVEOBJ opcode, and propagated by this pass 
@@ -5121,8 +5104,8 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 	 */
 
 	/* 
-	 * FIXME: Since vregs has no associated type information, we currently allocate a
-	 * var for each vtype vreg to hold it.
+	 * Vregs have no associated type information, so we store the type of the vregs
+	 * in ins->klass.
 	 */
 
 	/**
@@ -5136,94 +5119,134 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 		MonoInst *ins;
 		MonoInst *prev = NULL;
 		MonoInst *src_var, *dest_var, *src, *dest;
+		gboolean restart;
 		int dreg;
 
 		if (cfg->verbose_level > 1) mono_print_bb (bb, "BEFORE LOWER-VTYPE-OPTS ");
 
 		cfg->cbb->code = cfg->cbb->last_ins = NULL;
+		restart = TRUE;
 
-		for (ins = bb->code; ins; ins = ins->next) {
-			switch (ins->opcode) {
-			case OP_VMOVE: {
-				src_var = get_vreg_to_inst (cfg, ins->sreg1);
-				dest_var = get_vreg_to_inst (cfg, ins->dreg);
+		while (restart) {
+			restart = FALSE;
 
-				g_assert (ins->klass);
+			for (ins = bb->code; ins; ins = ins->next) {
+				switch (ins->opcode) {
+				case OP_VMOVE: {
+					src_var = get_vreg_to_inst (cfg, ins->sreg1);
+					dest_var = get_vreg_to_inst (cfg, ins->dreg);
 
-				if (!src_var)
-					src_var = mono_compile_create_var_for_vreg (cfg, &ins->klass->byval_arg, OP_LOCAL, ins->dreg);
-
-				if (!dest_var)
-					dest_var = mono_compile_create_var_for_vreg (cfg, &ins->klass->byval_arg, OP_LOCAL, ins->dreg);
-
-				// FIXME:
-				if (src_var->unused)
-					dest_var->unused = 1;
-
-				EMIT_NEW_VARLOADA ((cfg), (src), src_var, src_var->inst_vtype);
-				EMIT_NEW_VARLOADA ((cfg), (dest), dest_var, dest_var->inst_vtype);
-
-				emit_stobj (cfg, dest, src, 0, src_var->klass, src_var->unused);
-				break;
-			}
-			case OP_VZERO:
-				g_assert (ins->klass);
-
-				EMIT_NEW_VARLOADA_VREG (cfg, dest, ins->dreg, &ins->klass->byval_arg);
-				handle_initobj (cfg, dest, NULL, ins->klass, NULL, NULL);
-				break;
-			case OP_STOREV_MEMBASE: {
-				src_var = get_vreg_to_inst (cfg, ins->sreg1);
-
-				if (!src_var) {
 					g_assert (ins->klass);
-					src_var = mono_compile_create_var_for_vreg (cfg, &ins->klass->byval_arg, OP_LOCAL, ins->sreg1);
+
+					if (!src_var)
+						src_var = mono_compile_create_var_for_vreg (cfg, &ins->klass->byval_arg, OP_LOCAL, ins->dreg);
+
+					if (!dest_var)
+						dest_var = mono_compile_create_var_for_vreg (cfg, &ins->klass->byval_arg, OP_LOCAL, ins->dreg);
+
+					// FIXME:
+					if (src_var->unused)
+						dest_var->unused = 1;
+
+					EMIT_NEW_VARLOADA ((cfg), (src), src_var, src_var->inst_vtype);
+					EMIT_NEW_VARLOADA ((cfg), (dest), dest_var, dest_var->inst_vtype);
+
+					emit_stobj (cfg, dest, src, 0, src_var->klass, src_var->unused);
+					break;
+				}
+				case OP_VZERO:
+					g_assert (ins->klass);
+
+					EMIT_NEW_VARLOADA_VREG (cfg, dest, ins->dreg, &ins->klass->byval_arg);
+					handle_initobj (cfg, dest, NULL, ins->klass, NULL, NULL);
+					break;
+				case OP_STOREV_MEMBASE: {
+					src_var = get_vreg_to_inst (cfg, ins->sreg1);
+
+					if (!src_var) {
+						g_assert (ins->klass);
+						src_var = mono_compile_create_var_for_vreg (cfg, &ins->klass->byval_arg, OP_LOCAL, ins->sreg1);
+					}
+
+					EMIT_NEW_VARLOADA_VREG ((cfg), (src), ins->sreg1, &ins->klass->byval_arg);
+
+					dreg = alloc_preg (cfg);
+					EMIT_NEW_BIALU_IMM (cfg, dest, OP_ADD_IMM, dreg, ins->inst_destbasereg, ins->inst_offset);
+					emit_stobj (cfg, dest, src, NULL, src_var->klass, src_var->unused);
+					break;
+				}
+				case OP_LOADV_MEMBASE: {
+					g_assert (ins->klass);
+
+					dest_var = get_vreg_to_inst (cfg, ins->dreg);
+					// FIXME:
+					if (!dest_var)
+						dest_var = mono_compile_create_var_for_vreg (cfg, &ins->klass->byval_arg, OP_LOCAL, ins->dreg);
+
+					dreg = alloc_preg (cfg);
+					EMIT_NEW_BIALU_IMM (cfg, src, OP_ADD_IMM, dreg, ins->inst_basereg, ins->inst_offset);
+					EMIT_NEW_VARLOADA (cfg, dest, dest_var, dest_var->inst_vtype);
+					emit_stobj (cfg, dest, src, NULL, dest_var->klass, dest_var->unused);
+					break;
+				}
+				case OP_OUTARG_VT: {
+					g_assert (ins->klass);
+
+					mono_arch_emit_outarg_vt (cfg, ins);
+
+					/* This might be decomposed into other vtype opcodes */
+					restart = TRUE;
+					break;
+				}
+				case OP_OUTARG_VTRETADDR: {
+					MonoCallInst *call = (MonoCallInst*)ins->inst_p1;
+
+					src_var = get_vreg_to_inst (cfg, call->inst.dreg);
+					if (!src_var)
+						src_var = mono_compile_create_var_for_vreg (cfg, call->signature->ret, OP_LOCAL, call->inst.dreg);
+					// FIXME: src_var->unused ?
+
+					EMIT_NEW_VARLOADA (cfg, src, src_var, src_var->inst_vtype);
+					src->dreg = ins->dreg;
+					break;
+				}
+				case OP_VCALL:
+					ins->opcode = OP_VOIDCALL;
+					ins->dreg = -1;
+					break;
+				case OP_VCALLVIRT:
+					ins->opcode = OP_VOIDCALLVIRT;
+					ins->dreg = -1;
+					break;
+				case OP_VCALL_REG:
+					ins->opcode = OP_VOIDCALL_REG;
+					ins->dreg = -1;
+					break;
+				case OP_VCALL_MEMBASE:
+					ins->opcode = OP_VOIDCALL_MEMBASE;
+					ins->dreg = -1;
+					break;
+				default:
+					break;
 				}
 
-				EMIT_NEW_VARLOADA_VREG ((cfg), (src), ins->sreg1, &ins->klass->byval_arg);
+				g_assert (cfg->cbb == first_bb);
 
-				dreg = alloc_preg (cfg);
-				EMIT_NEW_BIALU_IMM (cfg, dest, OP_ADD_IMM, dreg, ins->inst_destbasereg, ins->inst_offset);
-				emit_stobj (cfg, dest, src, NULL, src_var->klass, src_var->unused);
-				break;
+				if (cfg->cbb->code || (cfg->cbb != first_bb)) {
+					/* Replace the original instruction with the new code sequence */
+
+					mono_replace_ins (cfg, bb, ins, &prev, first_bb, cfg->cbb);
+					first_bb->code = first_bb->last_ins = NULL;
+					first_bb->in_count = first_bb->out_count = 0;
+					cfg->cbb = first_bb;
+				}
+				else
+					prev = ins;
 			}
-			case OP_LOADV_MEMBASE: {
-				g_assert (ins->klass);
-
-				dest_var = get_vreg_to_inst (cfg, ins->dreg);
-				// FIXME:
-				if (!dest_var)
-					dest_var = mono_compile_create_var_for_vreg (cfg, &ins->klass->byval_arg, OP_LOCAL, ins->dreg);
-
-				dreg = alloc_preg (cfg);
-				EMIT_NEW_BIALU_IMM (cfg, src, OP_ADD_IMM, dreg, ins->inst_basereg, ins->inst_offset);
-				EMIT_NEW_VARLOADA (cfg, dest, dest_var, dest_var->inst_vtype);
-				emit_stobj (cfg, dest, src, NULL, dest_var->klass, dest_var->unused);
-				break;
-			}
-			default:
-				break;
-			}
-
-			g_assert (cfg->cbb == first_bb);
-
-			if (cfg->cbb->code || (cfg->cbb != first_bb)) {
-				/* Replace the original instruction with the new code sequence */
-
-				mono_replace_ins (cfg, bb, ins, &prev, first_bb, cfg->cbb);
-				first_bb->code = first_bb->last_ins = NULL;
-				first_bb->in_count = first_bb->out_count = 0;
-				cfg->cbb = first_bb;
-			}
-			else
-				prev = ins;
 		}
-	}
 
-	/*
-	for (bb = cfg->bb_entry; bb; bb = bb->next_bb)
-		mono_print_bb (bb, "AFTER LOWER-VTYPE-OPTS");
-	*/
+		if (cfg->verbose_level > 1) mono_print_bb (bb, "AFTER LOWER-VTYPE-OPTS ");
+	}
 }
 
 #define UNVERIFIED do { G_BREAKPOINT (); } while (0)
@@ -5857,7 +5880,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			ins = *sp;
 
 			temp = mono_compile_create_var (cfg, type_from_stack_type (ins), OP_LOCAL);
-			temp->flags |= MONO_INST_IS_TEMP;
 			temp->cil_code = ip;
 			EMIT_NEW_TEMPSTORE (cfg, store, temp->inst_c0, ins);
 			store->cil_code = ip;
@@ -7141,7 +7163,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				MonoInst *val;
 
 				val = handle_unbox_nullable (cfg, *sp, ip, klass);
-				EMIT_NEW_VARLOADA (cfg, ins, val, &val->klass->byval_arg);
+				EMIT_NEW_VARLOADA (cfg, ins, get_vreg_to_inst (cfg, val->dreg), &val->klass->byval_arg);
 
 				*sp++= ins;
 			} else {
@@ -9527,6 +9549,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   - vtypes
  *   - long compares
  *   - isinst and castclass
+ *   - lvregs not allocated to global registers even if used multiple times
  * - call cctors outside the JIT, to make -v output more readable and JIT timings more
  *   meaningful.
  * - check for fp stack leakage in other opcodes too. (-> 'exceptions' optimization)

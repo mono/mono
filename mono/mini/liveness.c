@@ -305,6 +305,20 @@ analyze_liveness_bb (MonoCompile *cfg, MonoBasicBlock *bb)
 		if (ins->opcode == OP_NOP)
 			continue;
 
+		if (ins->opcode == OP_LDADDR) {
+			MonoInst *var = ins->inst_p0;
+			int idx = var->inst_c0;
+			MonoMethodVar *vi = MONO_VARINFO (cfg, idx);
+
+#ifdef DEBUG_LIVENESS
+			printf ("\tGEN: R%d(%d)\n", var->dreg, idx);
+#endif
+			update_live_range (cfg, idx, dfn, inst_num); 
+			if (!mono_bitset_test (bb->kill_set, idx))
+				mono_bitset_set_fast (bb->gen_set, idx);
+			vi->spill_costs += 1 + (bb->nesting * 2);
+		}				
+
 		if (MONO_IS_STORE_MEMBASE (ins))
 			store = TRUE;
 		else if (MONO_IS_STORE_MEMINDEX (ins))

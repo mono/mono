@@ -1096,15 +1096,9 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 		if ((i >= sig->hasthis) && (MONO_TYPE_ISSTRUCT(t))) {
 			gint align;
 			guint32 size;
-			MonoInst *src_var = get_vreg_to_inst (cfg, in->dreg);
-			MonoInst *src;
 
 			g_assert (in->klass);
 
-			// FIXME:
-			if (!src_var)
-				src_var = mono_compile_create_var_for_vreg (cfg, &in->klass->byval_arg, OP_LOCAL, in->dreg);
-				
 			if (t->type == MONO_TYPE_TYPEDBYREF) {
 				size = sizeof (MonoTypedRef);
 				align = sizeof (gpointer);
@@ -1115,31 +1109,12 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 				else
 					size = mono_type_stack_size (&in->klass->byval_arg, &align);
 
-			// FIXME: Decompose this later
-			if (size == 0) {
-			} else if (size <= 4) {
-				EMIT_NEW_VARLOADA ((cfg), (src), src_var, src_var->inst_vtype);
+			if (size > 0) {
+				arg->opcode = OP_OUTARG_VT;
+				arg->sreg1 = in->dreg;
+				arg->klass = in->klass;
+				arg->unused = size;
 
-				arg->opcode = OP_X86_PUSH_MEMBASE;
-				arg->sreg1 = src->dreg;
-
-				MONO_ADD_INS (cfg->cbb, arg);
-			} else if (size <= 20) {
-				EMIT_NEW_VARLOADA ((cfg), (src), src_var, src_var->inst_vtype);
-
-				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SUB_IMM, X86_ESP, X86_ESP, ALIGN_TO (size, 4));
-				if (cfg->new_ir)
-					mini_emit_memcpy2 (cfg, X86_ESP, 0, src->dreg, 0, size, 0);
-				else
-					mini_emit_memcpy (cfg, X86_ESP, 0, src->dreg, 0, size, 0);
-			} else {
-				EMIT_NEW_VARLOADA ((cfg), (src), src_var, src_var->inst_vtype);
-
-				arg->opcode = OP_X86_PUSH_OBJ;
-				arg->inst_basereg = src->dreg;
-				arg->inst_offset = 0;
-				arg->inst_imm = size;
-					
 				MONO_ADD_INS (cfg->cbb, arg);
 			}
 		}
@@ -1257,6 +1232,41 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 	call->stack_usage = cinfo->stack_usage;
 
 	return call;
+}
+
+void
+mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins)
+{
+	MonoInst *src_var = get_vreg_to_inst (cfg, ins->sreg1);
+	MonoInst *src;
+	MonoInst *arg;
+	int size = ins->unused;
+
+	g_assert (ins->klass);
+
+	if (!src_var)
+		src_var = mono_compile_create_var_for_vreg (cfg, &ins->klass->byval_arg, OP_LOCAL, ins->sreg1);
+
+	EMIT_NEW_VARLOADA ((cfg), (src), src_var, src_var->inst_vtype);
+
+	MONO_INST_NEW (cfg, arg, OP_NOP);
+
+	if (size <= 4) {
+		arg->opcode = OP_X86_PUSH_MEMBASE;
+		arg->sreg1 = src->dreg;
+
+		MONO_ADD_INS (cfg->cbb, arg);
+	} else if (size <= 20) {	
+		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SUB_IMM, X86_ESP, X86_ESP, ALIGN_TO (size, 4));
+		mini_emit_memcpy2 (cfg, X86_ESP, 0, src->dreg, 0, size, 0);
+	} else {
+		arg->opcode = OP_X86_PUSH_OBJ;
+		arg->inst_basereg = src->dreg;
+		arg->inst_offset = 0;
+		arg->inst_imm = size;
+					
+		MONO_ADD_INS (cfg->cbb, arg);
+	}
 }
 
 void

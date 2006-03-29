@@ -371,6 +371,7 @@ mono_print_ins_index (int i, MonoInst *ins)
 			break;
 		}
 		case OP_LDADDR:
+		case OP_OUTARG_VTRETADDR:
 			printf (" R%d", ((MonoInst*)ins->inst_p0)->dreg);
 			break;
 		default:
