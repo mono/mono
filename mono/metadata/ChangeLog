@@ -1,3 +1,10 @@
+2006-03-29  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #75172
+	* icall.c (ves_icall_Type_GetMethodsByName): Don't use vtable_size
+	for interface classes.  Use 'num_methods' instead.
+	(ves_icall_Type_GetPropertiesByName): Likewise.  Setup vtable
+	before using '->vtable_size' field.
 
 Wed Mar 29 12:53:28 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
