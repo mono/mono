@@ -303,7 +303,7 @@ namespace System.Windows.Forms {
 		#region Public Instance Properties
 		public Color Color {
 			get {
-				return color;
+				return selectedColorPanel.BackColor;
 			}
 			
 			set {

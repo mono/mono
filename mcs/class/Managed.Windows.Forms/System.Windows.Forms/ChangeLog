@@ -1,3 +1,7 @@
+2006-03-29  Alexander Olk  <alex.olk@googlemail.com>
+
+	* ColorDialog.cs: Return selected color. Fixes bug #77940.
+
 2006-03-28  Mike Kestner  <mkestner@novell.com>
 
 	* ListView.cs: fix Icon layout to plan for scrollbar widths when
