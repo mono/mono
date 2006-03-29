@@ -1,4 +1,9 @@
 
+Wed Mar 29 20:51:14 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* driver.c, wapihandles.c, Makefile.am: integrate the io-layer utils
+	from handles/.
+
 Wed Mar 29 17:16:57 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
 	* driver.c: print the GC name supplied by configure.
