@@ -1,4 +1,9 @@
 
+Wed Mar 29 12:53:28 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* domain.c, object.c, domain-internals.h: proxy_vtable_hash
+	doesn't contain managed pointers, so use a normal hashtable.
+
 Mon Mar 27 11:15:00 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c, class-internals.h, domain.c: fixed handling of types
