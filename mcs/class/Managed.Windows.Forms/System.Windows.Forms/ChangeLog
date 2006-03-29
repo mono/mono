@@ -1,5 +1,15 @@
 2006-03-29  Alexander Olk  <alex.olk@googlemail.com>
 
+	* Theme.cs: Added a little helper to SystemResPool to get the Dark,
+	  DarkDark, Light and LightLight colors for a specific color
+	* ThemeWin32Classic.cs:
+	  - Use Button drawing code to draw RadioButtons and CheckBoxes with
+	    Appearance = Button 
+	  - Make use of the new ResPool helper CPColor
+	  - Draw ProgressBar and StatusBar with correct 3D borders
+
+2006-03-29  Alexander Olk  <alex.olk@googlemail.com>
+
 	* ColorDialog.cs: Return selected color. Fixes bug #77940.
 
 2006-03-28  Mike Kestner  <mkestner@novell.com>

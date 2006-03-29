@@ -47,6 +47,13 @@ namespace System.Windows.Forms
 		NormalFolder
 	}
 	
+	internal struct CPColor {
+		internal Color Dark;
+		internal Color DarkDark;
+		internal Color Light;
+		internal Color LightLight;
+	}
+	
 	// Implements a pool of system resources	
 	internal class SystemResPool
 	{
@@ -54,6 +61,7 @@ namespace System.Windows.Forms
 		private Hashtable solidbrushes = new Hashtable ();
 		private Hashtable hatchbrushes = new Hashtable ();
 		private Hashtable uiImages = new Hashtable();
+		private Hashtable cpcolors = new Hashtable ();
 		
 		public SystemResPool () {}
 		
@@ -111,6 +119,25 @@ namespace System.Windows.Forms
 			Image image = uiImages [hash] as Image;
 			
 			return image;
+		}
+		
+		public CPColor GetCPColor (Color color)
+		{
+			object tmp = cpcolors [color];
+			
+			if (tmp == null) {
+				CPColor cpcolor = new CPColor ();
+				cpcolor.Dark = ControlPaint.Dark (color);
+				cpcolor.DarkDark = ControlPaint.DarkDark (color);
+				cpcolor.Light = ControlPaint.Light (color);
+				cpcolor.LightLight = ControlPaint.LightLight (color);
+				
+				cpcolors.Add (color, cpcolor);
+				
+				return cpcolor;
+			}
+			
+			return (CPColor)tmp;
 		}
 	}
 
