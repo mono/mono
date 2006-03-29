@@ -49,6 +49,8 @@ namespace Mono.Tools.LocaleBuilder {
                 private Hashtable currency_types;
                 private Hashtable regions;
 
+		private XPathDocument lcids_doc;
+
 		// The lang is the language that display names will be displayed in
 		public string Lang {
 			get {
@@ -75,6 +77,8 @@ namespace Mono.Tools.LocaleBuilder {
 
 		public void Run ()
 		{
+			lcids_doc = GetXPathDocument ("lcids.xml");
+
 			Regex locales_regex = null;
 			if (Locales != null)
 				locales_regex = new Regex (Locales);
@@ -269,9 +273,15 @@ namespace Mono.Tools.LocaleBuilder {
 
 		private XPathDocument GetXPathDocument (string path)
 		{
-			XmlTextReader xtr = new XmlTextReader (path);
-			xtr.XmlResolver = null;
-			return new XPathDocument (xtr);
+			XmlTextReader xtr = null;
+			try {
+				xtr = new XmlTextReader (path);
+				xtr.XmlResolver = null;
+				return new XPathDocument (xtr);
+			} finally {
+				if (xtr != null)
+					xtr.Close ();
+			}
 		}
 
 		private string GetShortName (string lang)
@@ -336,8 +346,8 @@ namespace Mono.Tools.LocaleBuilder {
                         if (ci == null)
                                 return;
 
-                        if (langs [ci.Language] == null) {
-                                if (!ParseLang (ci.Language)) // If we can't parse the lang we cant have the locale
+                        if (langs [GetLanguageFixed (ci)] == null) {
+                                if (!ParseLang (GetLanguageFixed (ci))) // If we can't parse the lang we cant have the locale
                                         return;
                         }
 
@@ -346,7 +356,10 @@ namespace Mono.Tools.LocaleBuilder {
 
 		private CultureInfoEntry LookupCulture (string locale)
 		{
-                        XPathDocument doc = GetXPathDocument (Path.Combine ("locales", locale + ".xml"));
+			string path = Path.Combine ("locales", locale + ".xml");
+			if (!File.Exists (path))
+				return null;
+                        XPathDocument doc = GetXPathDocument (path);
                         XPathNavigator nav = doc.CreateNavigator ();
 			CultureInfoEntry ci = new CultureInfoEntry ();
 			string supp;
@@ -378,11 +391,11 @@ namespace Mono.Tools.LocaleBuilder {
                         nav = doc.CreateNavigator ();
                         Lookup (nav, ci);
 
-			doc = GetXPathDocument (Path.Combine ("langs", GetShortName (ci.Language) + ".xml"));
+			doc = GetXPathDocument (Path.Combine ("langs", GetShortName (GetLanguageFixed (ci)) + ".xml"));
 			nav = doc.CreateNavigator ();
 			Lookup (nav, ci);
 
-			supp = Path.Combine ("supp", ci.Language + ".xml");
+			supp = Path.Combine ("supp", GetLanguageFixed (ci) + ".xml");
 			if (File.Exists (supp)) {
 				doc = GetXPathDocument (supp);
 				nav = doc.CreateNavigator ();
@@ -409,6 +422,15 @@ namespace Mono.Tools.LocaleBuilder {
 			LookupNumberInfo (nav, ci);
 		}
 
+		private string GetLanguageFixed (CultureInfoEntry ci)
+		{
+			// This is a hack, but without it nb-NO won't work.
+			if (ci.Territory == "NO" && ci.Language == "nb")
+				return "no";
+			else
+				return ci.Language;
+		}
+
 		private void LookupNames (CultureInfoEntry ci)
 		{
 			XPathDocument doc = GetXPathDocument (Path.Combine ("langs", GetShortName (Lang) + ".xml"));
@@ -427,7 +449,11 @@ namespace Mono.Tools.LocaleBuilder {
 			if (ci.Language == Lang) {
 				ci.NativeName = ci.DisplayName;
 			} else {
-				doc = GetXPathDocument (Path.Combine ("langs", GetShortName (ci.Language) + ".xml"));
+				// FIXME: We use ci.Language here.
+				// This is nothing more than hack for nb-NO 
+				// where Parent of nb-NO is nn (not nb).
+				string lang = ci.Language;
+				doc = GetXPathDocument (Path.Combine ("langs", GetShortName (lang) + ".xml"));
 				nav = doc.CreateNavigator ();
 				ci.NativeName = LookupFullName (ci, nav);
 			}
@@ -925,12 +951,11 @@ namespace Mono.Tools.LocaleBuilder {
 
 		private bool LookupLcids (CultureInfoEntry ci, bool lang)
 		{
-			XPathDocument doc = GetXPathDocument ("lcids.xml");
-			XPathNavigator nav = doc.CreateNavigator ();
+			XPathNavigator nav = lcids_doc.CreateNavigator ();
 			string name = ci.Name;
 			// Language name does not always consist of locale name.
 			// (for zh-* it must be either zh-CHS or zh-CHT)
-			string langName = ci.Language;
+			string langName = GetLanguageFixed (ci);
 
 //                        if (ci.Territory != null)
 //                                name += "-" + ci.Territory;
@@ -943,8 +968,8 @@ namespace Mono.Tools.LocaleBuilder {
 
                                 if (ci.Territory != null) {
                                         file = Path.Combine ("locales", ci.Language + "_" + ci.Territory + ".xml");
-                                        File.Delete (file);
                                         Console.WriteLine ("deleting file:  " + file);
+                                        File.Delete (file);
                                 }
 
 				return false;
@@ -977,6 +1002,9 @@ namespace Mono.Tools.LocaleBuilder {
 			string pre = "ldml/localeDisplayNames/";
 			string ret;
 
+			// FIXME: We use ci.Language here.
+			// This is nothing more than hack for nb-NO 
+			// where Parent of nb-NO is nn (not nb).
 			ret = (string) nav.Evaluate ("string("+
 					pre + "languages/language[@type='" + GetShortName (ci.Language) + "'])");
 
