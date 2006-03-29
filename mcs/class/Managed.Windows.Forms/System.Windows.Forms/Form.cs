@@ -1174,10 +1174,11 @@ namespace System.Windows.Forms {
 		#endregion	// Public Instance Methods
 
 		#region Protected Instance Methods
-		[MonoTODO("Finish when MDI is more complete")]
 		protected void ActivateMdiChild(Form form) {
+			if (!IsMdiContainer)
+				return;
+			mdi_container.ActivateChild (form);
 			OnMdiChildActivate(EventArgs.Empty);
-			throw new NotImplementedException();
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
