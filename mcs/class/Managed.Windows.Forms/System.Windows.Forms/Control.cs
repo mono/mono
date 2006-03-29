@@ -122,6 +122,7 @@ namespace System.Windows.Forms
 
 #if NET_2_0
 		internal bool			use_compatible_text_rendering;
+		static internal bool		verify_thread_handle;
 		private Padding			padding;
 #endif
 
@@ -679,6 +680,7 @@ namespace System.Windows.Forms
 			dist_bottom = 0;
 
 #if NET_2_0
+			verify_thread_handle = false;
 			use_compatible_text_rendering = Application.use_compatible_text_rendering;
 			padding = new Padding(0);
 #endif
@@ -1299,10 +1301,12 @@ namespace System.Windows.Forms
 		[MonoTODO]
 		public static bool CheckForIllegalCrossThreadCalls 
 		{
-			set {
-			}
 			get {
-				return false;
+				return verify_thread_handle;
+			}
+
+			set {
+				verify_thread_handle = value;
 			}
 		}
 #endif
@@ -1847,6 +1851,13 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public IntPtr Handle {							// IWin32Window
 			get {
+#if NET_2_0
+				if (verify_thread_handle) {
+					if (this.InvokeRequired) {
+						throw new InvalidOperationException("Cross-thread access of handle detected. Handle access only valid on thread that created the control");
+					}
+				}
+#endif
 				if (!IsHandleCreated) {
 					CreateHandle();
 				}
@@ -2938,9 +2949,8 @@ namespace System.Windows.Forms
 		}
 
 	        [EditorBrowsable(EditorBrowsableState.Never)]
-		[MonoTODO]
 		public void ResetBindings() {
-			// Do something
+			data_bindings.Clear();
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Never)]

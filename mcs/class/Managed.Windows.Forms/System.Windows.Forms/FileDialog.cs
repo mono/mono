@@ -622,7 +622,6 @@ namespace System.Windows.Forms {
 				fo (this, e);
 		}
 		
-		[MonoTODO]
 		protected  override bool RunDialog (IntPtr hWndOwner)
 		{
 			form.Refresh ();

@@ -219,7 +219,6 @@ namespace System.Windows.Forms {
 			PullData ();
 		}
 
-		[MonoTODO ("This is just a guess, as I can't figure out how to test this method")]
 		protected void CheckEmpty ()
 		{
 			if (list == null || list.Count < 1)

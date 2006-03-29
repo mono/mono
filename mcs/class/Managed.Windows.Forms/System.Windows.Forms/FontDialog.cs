@@ -601,7 +601,6 @@ namespace System.Windows.Forms
 		#endregion	// Protected Instance Properties
 		
 		#region Public Instance Methods
-		[MonoTODO]
 		public override void Reset( )
 		{
 			color = Color.Black;
@@ -646,7 +645,6 @@ namespace System.Windows.Forms
 			return base.HookProc (hWnd, msg, wparam, lparam);
 		}
 
-		[MonoTODO]
 		protected override bool RunDialog( IntPtr hwndOwner )
 		{
 			form.Refresh();

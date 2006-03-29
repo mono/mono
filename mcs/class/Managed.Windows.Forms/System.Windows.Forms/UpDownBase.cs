@@ -576,9 +576,7 @@ namespace System.Windows.Forms
 			base.Dispose (disposing);
 		}
 
-		[MonoTODO]
 		protected virtual void OnChanged(object source, EventArgs e) {
-			// FIXME
 		}
 
 		protected override void OnFontChanged(EventArgs e) {

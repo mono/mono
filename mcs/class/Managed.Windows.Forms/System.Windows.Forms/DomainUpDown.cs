@@ -40,7 +40,6 @@ namespace System.Windows.Forms
 {
 	[DefaultProperty("Items")]
 	[DefaultEvent("SelectedItemChanged")]
-	[MonoTODO("Figure out what to do with the DomainItemAccessibleObject and DomainUpDownAccessibleObject classes")]
 	public class DomainUpDown : UpDownBase {
 		#region Local Variables
 		private DomainUpDownItemCollection	items;

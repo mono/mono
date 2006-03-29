@@ -100,7 +100,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO("Make the FillRectangle use a global brush instead of creating one every time")]
 		internal void Redraw() {
 			Refresh ();
 		}

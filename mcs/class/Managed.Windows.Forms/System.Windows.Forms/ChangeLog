@@ -1,3 +1,24 @@
+2006-03-29  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* ProgressBar.cs: Added 2.0 Style property that apps seem to use
+	* Control.cs:
+	  - Implemented CheckForIllegalCrossThreadCalls, removed TODO
+	  - Fixed ResetBindings and removed TODO
+	  - Added check for cross-thread calls to get_Handle()
+	* FontDialog.cs: Removed TODOs that seemed implemented
+	* UpDownBase.cs: Removed unneeded TODO and Fixme
+	* MessageBox.cs: Implemented support for Default button and removed TODO
+	* FileDialog.cs: Removed obsolete TODO
+	* DomainUpDown.cs: Removed obsolete TODO
+	* ButtonBase.cs: Removed obsolete TODO
+	* XplatUIWin32.cs: Removed obsolete TODO
+	* Form.cs:
+	  - Removed obsolete TODO
+	  - Calling CheckAcceptButton when the acceptbutton is changed to allow
+	    internal status updates
+	  - Making sure the active control is selected when the control is created
+	* CurrencyManager.cs: Removed obsolete TODO
+
 2006-03-29  Mike Kestner  <mkestner@novell.com>
 
 	* *.cs: fix remaining corcompare issues for 1.1 API with the exception

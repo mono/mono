@@ -186,6 +186,7 @@ namespace System.Windows.Forms {
 
 			set {
 				accept_button = value;
+				CheckAcceptButton();
 			}
 		}
 
@@ -492,7 +493,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO("Finish setter")]
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public Form MdiParent {
@@ -1322,6 +1322,8 @@ namespace System.Windows.Forms {
 				}
 
 				this.is_visible = visible;
+			} else {
+				Select(ActiveControl);
 			}
 
 			if (menu != null) {

@@ -17,10 +17,11 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (C) 2004-2005 Novell, Inc.
+// Copyright (C) 2004-2006 Novell, Inc.
 //
 // Authors:
 //		Jordi Mas i Hernandez	jordi@ximian.com
+//		Peter Dennis Bartok	pbartok@novell.com
 //
 //
 
@@ -39,8 +40,11 @@ namespace System.Windows.Forms
 		private int maximum;
 		private int minimum;
 		internal int step;
-		internal int val;		
+		internal int val;
 		internal Rectangle client_area = new Rectangle ();
+#if NET_2_0
+		internal ProgressBarStyle style;
+#endif		
 		#endregion	// Local Variables
 
 		#region events
@@ -284,6 +288,19 @@ namespace System.Windows.Forms
 				Refresh ();
 			}
 		}
+
+#if NET_2_0
+		[MonoTODO("Implement")]
+		public ProgressBarStyle Style {
+			get {
+				return style;
+			}
+
+			set {
+				style = value;
+			}
+		}
+#endif
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]

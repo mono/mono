@@ -47,7 +47,7 @@ namespace System.Windows.Forms
 		private class MessageBoxForm : Form
 		{
 			#region MessageBoxFrom Local Variables
-			internal static string	Yes;
+			//internal static string	Yes;
 			internal const int	space_border	= 10;
 			string			msgbox_text;
 			bool			size_known	= false;
@@ -55,8 +55,10 @@ namespace System.Windows.Forms
 			Image			icon_image;
 			Point			textleft_up;
 			MessageBoxButtons	msgbox_buttons;
+			MessageBoxDefaultButton	msgbox_default;
 			bool			buttons_placed	= false;
 			int			button_left;
+			Button[]		buttons = new Button[3];
 			#endregion	// MessageBoxFrom Local Variables
 
 			#region MessageBoxForm Constructors
@@ -92,17 +94,17 @@ namespace System.Windows.Forms
 
 				msgbox_text = text;
 				msgbox_buttons = buttons;
+				msgbox_default = MessageBoxDefaultButton.Button1;
+
 				this.Text = caption;
 				this.Paint += new PaintEventHandler (MessageBoxForm_Paint);
 			}
 
-			[MonoTODO]
 			public MessageBoxForm (IWin32Window owner, string text, string caption,
 					MessageBoxButtons buttons, MessageBoxIcon icon,
 					MessageBoxDefaultButton defaultButton, MessageBoxOptions options) : this (owner, text, caption, buttons, icon)
 			{
-				// Still needs to implement defaultButton and options
-
+				msgbox_default = defaultButton;
 			}
 			#endregion	// MessageBoxForm Constructors
 
@@ -219,6 +221,29 @@ namespace System.Windows.Forms
 				button_left = (this.ClientSize.Width / 2) - (tb_width / 2) + 5;
 				AddButtons ();
 				size_known = true;
+
+				// Still needs to implement defaultButton and options
+				switch(msgbox_default) {
+					case MessageBoxDefaultButton.Button1: {
+						AcceptButton = this.buttons[0];
+						break;
+					}
+
+					case MessageBoxDefaultButton.Button2: {
+						if (this.buttons[1] != null) {
+							AcceptButton = this.buttons[1];
+						}
+						break;
+					}
+
+					case MessageBoxDefaultButton.Button3: {
+						if (this.buttons[2] != null) {
+							AcceptButton = this.buttons[2];
+						}
+						break;
+					}
+				}
+
 			}
 			#endregion	// MessageBoxForm Methods
 
@@ -228,39 +253,39 @@ namespace System.Windows.Forms
 				if (!buttons_placed) {
 					switch (msgbox_buttons) {
 						case MessageBoxButtons.OK: {
-							AddOkButton (0 + button_left);
+							buttons[0] = AddOkButton (0 + button_left);
 							break;
 						}
 
 						case MessageBoxButtons.OKCancel: {
-							AddOkButton (0 + button_left);
-							AddCancelButton (110 + button_left);
+							buttons[0] = AddOkButton (0 + button_left);
+							buttons[1] = AddCancelButton (110 + button_left);
 							break;
 						}
 
 						case MessageBoxButtons.AbortRetryIgnore: {
-							AddAbortButton (0 + button_left);
-							AddRetryButton (110 + button_left);
-							AddIgnoreButton (220 + button_left);
+							buttons[0] = AddAbortButton (0 + button_left);
+							buttons[1] = AddRetryButton (110 + button_left);
+							buttons[2] = AddIgnoreButton (220 + button_left);
 							break;
 						}
 
 						case MessageBoxButtons.YesNoCancel: {
-							AddYesButton (0 + button_left);
-							AddNoButton (110 + button_left);
-							AddCancelButton (220 + button_left);
+							buttons[0] = AddYesButton (0 + button_left);
+							buttons[1] = AddNoButton (110 + button_left);
+							buttons[2] = AddCancelButton (220 + button_left);
 							break;
 						}
 
 						case MessageBoxButtons.YesNo: {
-							AddYesButton (0 + button_left);
-							AddNoButton (110 + button_left);
+							buttons[0] = AddYesButton (0 + button_left);
+							buttons[1] = AddNoButton (110 + button_left);
 							break;
 						}
 
 						case MessageBoxButtons.RetryCancel: {
-							AddRetryButton (0 + button_left);
-							AddCancelButton (110 + button_left);
+							buttons[0] = AddRetryButton (0 + button_left);
+							buttons[1] = AddCancelButton (110 + button_left);
 							break;
 						}
 					}
@@ -268,7 +293,7 @@ namespace System.Windows.Forms
 				}
 			}
 
-			private void AddOkButton (int left)
+			private Button AddOkButton (int left)
 			{
 				Button bok = new Button ();
 				bok.Text = Locale.GetText("OK");
@@ -279,9 +304,11 @@ namespace System.Windows.Forms
 				bok.Click += new EventHandler (OkClick);
 				AcceptButton = bok;
 				this.Controls.Add (bok);
+
+				return bok;
 			}
 
-			private void AddCancelButton (int left)
+			private Button AddCancelButton (int left)
 			{
 				Button bcan = new Button ();
 				bcan.Text = Locale.GetText("Cancel");
@@ -292,9 +319,11 @@ namespace System.Windows.Forms
 				bcan.Click += new EventHandler (CancelClick);
 				CancelButton = bcan;
 				this.Controls.Add (bcan);
+
+				return bcan;
 			}
 
-			private void AddAbortButton (int left)
+			private Button AddAbortButton (int left)
 			{
 				Button babort = new Button ();
 				babort.Text = Locale.GetText("Abort");
@@ -305,9 +334,11 @@ namespace System.Windows.Forms
 				babort.Click += new EventHandler (AbortClick);
 				CancelButton = babort;
 				this.Controls.Add (babort);
+
+				return babort;
 			}
 
-			private void AddRetryButton(int left)
+			private Button AddRetryButton(int left)
 			{
 				Button bretry = new Button ();
 				bretry.Text = Locale.GetText("Retry");
@@ -318,9 +349,11 @@ namespace System.Windows.Forms
 				bretry.Click += new EventHandler (RetryClick);
 				AcceptButton = bretry;
 				this.Controls.Add (bretry);
+
+				return bretry;
 			}
 
-			private void AddIgnoreButton (int left)
+			private Button AddIgnoreButton (int left)
 			{
 				Button bignore = new Button ();
 				bignore.Text = Locale.GetText("Ignore");
@@ -330,9 +363,11 @@ namespace System.Windows.Forms
 				bignore.Left = left;
 				bignore.Click += new EventHandler (IgnoreClick);
 				this.Controls.Add (bignore);
+
+				return bignore;
 			}
 
-			private void AddYesButton (int left)
+			private Button AddYesButton (int left)
 			{
 				Button byes = new Button ();
 				byes.Text = Locale.GetText("Yes");
@@ -343,9 +378,11 @@ namespace System.Windows.Forms
 				byes.Click += new EventHandler (YesClick);
 				AcceptButton = byes;
 				this.Controls.Add (byes);
+
+				return byes;
 			}
 
-			private void AddNoButton (int left)
+			private Button AddNoButton (int left)
 			{
 				Button bno = new Button ();
 				bno.Text = Locale.GetText("No");
@@ -356,6 +393,8 @@ namespace System.Windows.Forms
 				bno.Click += new EventHandler (NoClick);
 				CancelButton = bno;
 				this.Controls.Add (bno);
+
+				return bno;
 			}
 			#endregion
 

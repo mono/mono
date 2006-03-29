@@ -1199,7 +1199,6 @@ namespace System.Windows.Forms {
 			Win32UpdateWindow(handle);
 		}
 
-		[MonoTODO("FIXME - Add support for internal table of windows/DCs for cleanup; handle client=false to draw in NC area")]
 		internal override PaintEventArgs PaintEventStart(IntPtr handle, bool client) {
 			IntPtr		hdc;
 			PAINTSTRUCT	ps;
