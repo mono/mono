@@ -43,11 +43,10 @@ namespace System.Web.Security {
 	public class SqlRoleProvider: RoleProvider {
 
 		string applicationName;
-		string loweredApplicationName;
 		int commandTimeout;
-		ConnectionStringSettings connectionString;
 		string providerName;
 
+		ConnectionStringSettings connectionString;
 		DbProviderFactory factory;
 		DbConnection connection;
 
@@ -78,9 +77,9 @@ INSERT INTO dbo.aspnet_UsersInRoles (UserId, RoleId)
        FROM dbo.aspnet_Users, dbo.aspnet_Roles, dbo.aspnet_Applications
       WHERE dbo.aspnet_Users.ApplicationId = dbo.aspnet_Applications.ApplicationId
         AND dbo.aspnet_Roles.ApplicationId = dbo.aspnet_Applications.ApplicationId
-        AND dbo.aspnet_Applications.LoweredApplicationName = @LoweredApplicationName
-        AND dbo.aspnet_Users.LoweredUserName = @LoweredUserName
-        AND dbo.aspnet_Roles.LoweredRoleName = @LoweredRoleName
+        AND dbo.aspnet_Applications.LoweredApplicationName = LOWER(@ApplicationName)
+        AND dbo.aspnet_Users.LoweredUserName = LOWER(@UserName)
+        AND dbo.aspnet_Roles.LoweredRoleName = LOWER(@RoleName)
 ";
 
 			Hashtable h;
@@ -117,10 +116,8 @@ INSERT INTO dbo.aspnet_UsersInRoles (UserId, RoleId)
 
 			try {
 				foreach (string username in usernames) {
-					string loweredUserName = username.ToLower();
 
 					foreach (string rolename in rolenames) {
-						string loweredRoleName = rolename.ToLower();
 
 						/* add the user/role combination to dbo.aspnet_UsersInRoles */
 						DbCommand command = factory.CreateCommand ();
@@ -128,9 +125,9 @@ INSERT INTO dbo.aspnet_UsersInRoles (UserId, RoleId)
 						command.CommandText = commandText;
 						command.Connection = connection;
 						command.CommandType = CommandType.Text;
-						AddParameter (command, "LoweredRoleName", loweredRoleName);
-						AddParameter (command, "LoweredUserName", loweredUserName);
-						AddParameter (command, "LoweredApplicationName", loweredApplicationName);
+						AddParameter (command, "RoleName", rolename);
+						AddParameter (command, "UserName", username);
+						AddParameter (command, "ApplicationName", ApplicationName);
 
 						if (command.ExecuteNonQuery() != 1)
 							throw new ProviderException ("failed to create new user/role association.");
@@ -157,7 +154,7 @@ INSERT INTO dbo.aspnet_UsersInRoles (UserId, RoleId)
 			string commandText = @"
 INSERT INTO dbo.aspnet_Roles 
             (ApplicationId, RoleName, LoweredRoleName)
-     VALUES ((SELECT ApplicationId FROM dbo.aspnet_Applications WHERE LoweredApplicationName = @LoweredApplicationName), @RoleName, @LoweredRoleName)
+     VALUES ((SELECT ApplicationId FROM dbo.aspnet_Applications WHERE LoweredApplicationName = LOWER(@ApplicationName)), @RoleName, LOWER(@RoleName))
 ";
 			if (rolename == null)
 				throw new ArgumentNullException ("rolename");
@@ -170,15 +167,12 @@ INSERT INTO dbo.aspnet_Roles
 			if (closed)
 				connection.Open();
 
-			string loweredRoleName = rolename.ToLower ();
-
 			DbCommand command = factory.CreateCommand ();
 			command.CommandText = commandText;
 			command.Connection = connection;
 			command.CommandType = CommandType.Text;
-			AddParameter (command, "LoweredApplicationName", loweredApplicationName);
+			AddParameter (command, "ApplicationName", ApplicationName);
 			AddParameter (command, "RoleName", rolename);
-			AddParameter (command, "LoweredRoleName", loweredRoleName);
 
 			if (command.ExecuteNonQuery() != 1)
 				throw new ProviderException ("failed to create new role.");
@@ -201,8 +195,6 @@ INSERT INTO dbo.aspnet_Roles
 			if (closed)
 				connection.Open();
 
-			string loweredRoleName = rolename.ToLower ();
-
 			DbCommand command;
 			if (throwOnPopulatedRole) {
 				command = factory.CreateCommand ();
@@ -211,12 +203,12 @@ SELECT COUNT(*)
   FROM dbo.aspnet_UsersInRoles, dbo.aspnet_Roles, dbo.aspnet_Users, dbo.aspnet_Applications
  WHERE dbo.aspnet_Roles.ApplicationId = dbo.aspnet_Applications.ApplicationId
    AND dbo.aspnet_UsersInRoles.RoleId = dbo.aspnet_Roles.RoleId
-   AND dbo.aspnet_Applications.LoweredApplicationName = @LoweredApplicationName
-   AND dbo.aspnet_Roles.LoweredRoleName = @LoweredRoleName";
+   AND dbo.aspnet_Applications.LoweredApplicationName = LOWER(@ApplicationName)
+   AND dbo.aspnet_Roles.LoweredRoleName = LOWER(@RoleName)";
 				command.Connection = connection;
 				command.CommandType = CommandType.Text;
-				AddParameter (command, "LoweredApplicationName", loweredApplicationName);
-				AddParameter (command, "LoweredRoleName", loweredRoleName);
+				AddParameter (command, "ApplicationName", ApplicationName);
+				AddParameter (command, "RoleName", rolename);
 
 				int count = (int)command.ExecuteScalar ();
 				if (count != 0)
@@ -229,12 +221,12 @@ SELECT COUNT(*)
 DELETE dbo.aspnet_UsersInRoles FROM dbo.aspnet_UsersInRoles, dbo.aspnet_Roles, dbo.aspnet_Applications
  WHERE dbo.aspnet_UsersInRoles.RoleId = dbo.aspnet_Roles.RoleId
    AND dbo.aspnet_Roles.ApplicationId = dbo.aspnet_Applications.ApplicationId
-   AND dbo.aspnet_Roles.LoweredRoleName = @LoweredRoleName
-   AND dbo.aspnet_Applications.LoweredApplicationName = @LoweredApplicationName";
+   AND dbo.aspnet_Roles.LoweredRoleName = LOWER(@RoleName)
+   AND dbo.aspnet_Applications.LoweredApplicationName = LOWER(@ApplicationName)";
 				command.Connection = connection;
 				command.CommandType = CommandType.Text;
-				AddParameter (command, "LoweredRoleName", loweredRoleName);
-				AddParameter (command, "LoweredApplicationName", loweredApplicationName);
+				AddParameter (command, "RoleName", rolename);
+				AddParameter (command, "ApplicationName", ApplicationName);
 
 				command.ExecuteNonQuery ();
 			}
@@ -243,12 +235,12 @@ DELETE dbo.aspnet_UsersInRoles FROM dbo.aspnet_UsersInRoles, dbo.aspnet_Roles, d
 			command.CommandText = @"
 DELETE dbo.aspnet_Roles FROM dbo.aspnet_Roles, dbo.aspnet_Applications
  WHERE dbo.aspnet_Roles.ApplicationId = dbo.aspnet_Applications.ApplicationId
-   AND dbo.aspnet_Applications.LoweredApplicationName = @LoweredApplicationName
-   AND dbo.aspnet_Roles.LoweredRoleName = @LoweredRoleName";
+   AND dbo.aspnet_Applications.LoweredApplicationName = LOWER(@ApplicationName)
+   AND dbo.aspnet_Roles.LoweredRoleName = LOWER(@RoleName)";
 			command.Connection = connection;
 			command.CommandType = CommandType.Text;
-			AddParameter (command, "LoweredApplicationName", loweredApplicationName);
-			AddParameter (command, "LoweredRoleName", loweredRoleName);
+			AddParameter (command, "ApplicationName", ApplicationName);
+			AddParameter (command, "RoleName", rolename);
 
 			bool rv = command.ExecuteNonQuery() == 1;
 
@@ -267,8 +259,8 @@ SELECT dbo.aspnet_Users.UserName
    AND dbo.aspnet_Users.ApplicationId = dbo.aspnet_Applications.ApplicationId
    AND dbo.aspnet_UsersInRoles.UserId = dbo.aspnet_Users.UserId
    AND dbo.aspnet_UsersInRoles.RoleId = dbo.aspnet_Roles.RoleId
-   AND dbo.aspnet_Roles.LoweredRoleName = @LoweredRoleName
-   AND dbo.aspnet_Applications.LoweredApplicationName = @LoweredApplicationName
+   AND dbo.aspnet_Roles.LoweredRoleName = LOWER(@RoleName)
+   AND dbo.aspnet_Applications.LoweredApplicationName = LOWER(@ApplicationName)
    AND dbo.aspnet_Users.UserName {0} @UsernameToMatch
 ";
 			if (roleName == null)
@@ -288,8 +280,8 @@ SELECT dbo.aspnet_Users.UserName
 			command.CommandText = String.Format(commandTextFormat, useLike ? "LIKE" : "=");
 			command.Connection = connection;
 			command.CommandType = CommandType.Text;
-			AddParameter (command, "LoweredApplicationName", loweredApplicationName);
-			AddParameter (command, "LoweredRoleName", roleName.ToLower());
+			AddParameter (command, "ApplicationName", ApplicationName);
+			AddParameter (command, "RoleName", roleName);
 			AddParameter (command, "UsernameToMatch", usernameToMatch);
 
 			DbDataReader reader = command.ExecuteReader ();
@@ -307,7 +299,7 @@ SELECT dbo.aspnet_Users.UserName
 SELECT dbo.aspnet_Roles.RoleName
   FROM dbo.aspnet_Roles, dbo.aspnet_Applications
  WHERE dbo.aspnet_Roles.ApplicationId = dbo.aspnet_Applications.ApplicationId
-   AND dbo.aspnet_Applications.LoweredApplicationName = @LoweredApplicationName
+   AND dbo.aspnet_Applications.LoweredApplicationName = LOWER(@ApplicationName)
 ";
 			InitConnection();
 			bool closed = connection.State == ConnectionState.Closed;
@@ -318,7 +310,7 @@ SELECT dbo.aspnet_Roles.RoleName
 			command.CommandText = commandText;
 			command.Connection = connection;
 			command.CommandType = CommandType.Text;
-			AddParameter (command, "LoweredApplicationName", loweredApplicationName);
+			AddParameter (command, "ApplicationName", ApplicationName);
 
 			DbDataReader reader = command.ExecuteReader ();
 			ArrayList roleList = new ArrayList();
@@ -340,9 +332,9 @@ SELECT dbo.aspnet_Roles.RoleName
 WHERE dbo.aspnet_Roles.RoleId = dbo.aspnet_UsersInRoles.RoleId
   AND dbo.aspnet_Roles.ApplicationId = dbo.aspnet_Applications.ApplicationId
   AND dbo.aspnet_UsersInRoles.UserId = dbo.aspnet_Users.UserId
-  AND dbo.aspnet_Users.LoweredUserName = @LoweredUserName
+  AND dbo.aspnet_Users.LoweredUserName = LOWER(@UserName)
   AND dbo.aspnet_Users.ApplicationId = dbo.aspnet_Applications.ApplicationId
-  AND dbo.aspnet_Applications.LoweredApplicationName = @LoweredApplicationName
+  AND dbo.aspnet_Applications.LoweredApplicationName = LOWER(@ApplicationName)
 ";
 
 			InitConnection();
@@ -354,8 +346,8 @@ WHERE dbo.aspnet_Roles.RoleId = dbo.aspnet_UsersInRoles.RoleId
 			command.CommandText = commandText;
 			command.Connection = connection;
 			command.CommandType = CommandType.Text;
-			AddParameter (command, "LoweredUserName", username.ToLower());
-			AddParameter (command, "LoweredApplicationName", loweredApplicationName);
+			AddParameter (command, "UserName", username);
+			AddParameter (command, "ApplicationName", ApplicationName);
 
 			DbDataReader reader = command.ExecuteReader ();
 			ArrayList roleList = new ArrayList();
@@ -377,9 +369,9 @@ SELECT dbo.aspnet_Users.UserName
 WHERE dbo.aspnet_Roles.RoleId = dbo.aspnet_UsersInRoles.RoleId
   AND dbo.aspnet_Roles.ApplicationId = dbo.aspnet_Applications.ApplicationId
   AND dbo.aspnet_UsersInRoles.UserId = dbo.aspnet_Users.UserId
-  AND dbo.aspnet_Roles.LoweredRoleName = @LoweredRoleName
+  AND dbo.aspnet_Roles.LoweredRoleName = LOWER(@RoleName)
   AND dbo.aspnet_Users.ApplicationId = dbo.aspnet_Applications.ApplicationId
-  AND dbo.aspnet_Applications.LoweredApplicationName = @LoweredApplicationName
+  AND dbo.aspnet_Applications.LoweredApplicationName = LOWER(@ApplicationName)
 ";
 
 			InitConnection();
@@ -391,8 +383,8 @@ WHERE dbo.aspnet_Roles.RoleId = dbo.aspnet_UsersInRoles.RoleId
 			command.CommandText = commandText;
 			command.Connection = connection;
 			command.CommandType = CommandType.Text;
-			AddParameter (command, "LoweredRoleName", rolename.ToLower());
-			AddParameter (command, "LoweredApplicationName", loweredApplicationName);
+			AddParameter (command, "RoleName", rolename);
+			AddParameter (command, "ApplicationName", ApplicationName);
 
 			DbDataReader reader = command.ExecuteReader ();
 			ArrayList userList = new ArrayList();
@@ -441,9 +433,9 @@ SELECT COUNT(*)
    AND dbo.aspnet_Users.ApplicationId = dbo.aspnet_Applications.ApplicationId
    AND dbo.aspnet_UsersInRoles.RoleId = dbo.aspnet_Roles.RoleId
    AND dbo.aspnet_UsersInRoles.UserId = dbo.aspnet_Users.UserId
-   AND dbo.aspnet_Applications.LoweredApplicationName = @LoweredApplicationName
-   AND dbo.aspnet_Roles.LoweredRoleName = @LoweredRoleName
-   AND dbo.aspnet_Users.LoweredUserName = @LoweredUserName
+   AND dbo.aspnet_Applications.LoweredApplicationName = LOWER(@ApplicationName)
+   AND dbo.aspnet_Roles.LoweredRoleName = LOWER(@RoleName)
+   AND dbo.aspnet_Users.LoweredUserName = LOWER(@UserName)
 ";
 
 			InitConnection();
@@ -455,9 +447,9 @@ SELECT COUNT(*)
 			command.CommandText = commandText;
 			command.Connection = connection;
 			command.CommandType = CommandType.Text;
-			AddParameter (command, "LoweredRoleName", rolename.ToLower());
-			AddParameter (command, "LoweredUserName", username.ToLower());
-			AddParameter (command, "LoweredApplicationName", loweredApplicationName);
+			AddParameter (command, "RoleName", rolename);
+			AddParameter (command, "UserName", username);
+			AddParameter (command, "ApplicationName", ApplicationName);
 
 			bool rv = ((int)command.ExecuteScalar ()) != 0;
 
@@ -476,9 +468,9 @@ DELETE dbo.aspnet_UsersInRoles
    AND dbo.aspnet_UsersInRoles.RoleId = dbo.aspnet_Roles.RoleId
    AND dbo.aspnet_Roles.ApplicationId = dbo.aspnet_Applications.ApplicationId
    AND dbo.aspnet_Users.ApplicationId = dbo.aspnet_Applications.ApplicationId
-   AND dbo.aspnet_Users.LoweredUserName = @LoweredUserName
-   AND dbo.aspnet_Roles.LoweredRoleName = @LoweredRoleName
-   AND dbo.aspnet_Applications.LoweredApplicationName = @LoweredApplicationName";
+   AND dbo.aspnet_Users.LoweredUserName = LOWER(@UserName)
+   AND dbo.aspnet_Roles.LoweredRoleName = LOWER(@RoleName)
+   AND dbo.aspnet_Applications.LoweredApplicationName = LOWER(@ApplicationName)";
 
 			Hashtable h;
 
@@ -514,19 +506,15 @@ DELETE dbo.aspnet_UsersInRoles
 
 			try {
 				foreach (string username in usernames) {
-					string loweredUserName = username.ToLower();
-
 					foreach (string rolename in rolenames) {
-						string loweredRoleName = rolename.ToLower();
-
 						DbCommand command = factory.CreateCommand ();
 						command.Transaction = trans;
 						command.CommandText = commandText;
 						command.Connection = connection;
 						command.CommandType = CommandType.Text;
-						AddParameter (command, "LoweredUserName", loweredUserName);
-						AddParameter (command, "LoweredRoleName", loweredRoleName);
-						AddParameter (command, "LoweredApplicationName", loweredApplicationName);
+						AddParameter (command, "UserName", username);
+						AddParameter (command, "RoleName", rolename);
+						AddParameter (command, "ApplicationName", ApplicationName);
 
 						if (command.ExecuteNonQuery() != 1)
 							throw new ProviderException (String.Format ("failed to remove users from role '{0}'.", rolename));
@@ -554,8 +542,8 @@ DELETE dbo.aspnet_UsersInRoles
 SELECT COUNT(*)
   FROM dbo.aspnet_Roles, dbo.aspnet_Applications
  WHERE dbo.aspnet_Roles.ApplicationId = dbo.aspnet_Applications.ApplicationId
-   AND dbo.aspnet_Applications.LoweredApplicationName = @LoweredApplicationName
-   AND dbo.aspnet_Roles.LoweredRoleName = @LoweredRoleName
+   AND dbo.aspnet_Applications.LoweredApplicationName = LOWER(@ApplicationName)
+   AND dbo.aspnet_Roles.LoweredRoleName = LOWER(@RoleName)
 ";
 
 			InitConnection();
@@ -567,8 +555,8 @@ SELECT COUNT(*)
 			command.CommandText = commandText;
 			command.Connection = connection;
 			command.CommandType = CommandType.Text;
-			AddParameter (command, "LoweredApplicationName", loweredApplicationName);
-			AddParameter (command, "LoweredRoleName", rolename.ToLower());
+			AddParameter (command, "ApplicationName", ApplicationName);
+			AddParameter (command, "RoleName", rolename);
 
 			bool rv = ((int)command.ExecuteScalar ()) != 0;
 
@@ -583,7 +571,6 @@ SELECT COUNT(*)
 			get { return applicationName; }
 			set {
 				applicationName = value;
-				loweredApplicationName = applicationName.ToLower();
 			}
 		}
 	}

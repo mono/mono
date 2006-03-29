@@ -1,3 +1,7 @@
+2006-03-29  Chris Toshok  <toshok@ximian.com>
+
+	* SqlRoleProvider.cs: do the LOWER's in SQL, not in C#.
+
 2006-03-23  Chris Toshok  <toshok@ximian.com>
 
 	* Roles.cs: make this 2.0 configuration aware.
