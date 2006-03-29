@@ -1814,6 +1814,7 @@ namespace System.Windows.Forms
 				return DefaultFont;
 			}
 
+			[param:MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Font))]
 			set {
 				if (font != null && font.Equals (value)) {
 					return;

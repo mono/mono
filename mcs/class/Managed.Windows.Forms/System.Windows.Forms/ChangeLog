@@ -5,6 +5,7 @@
 	  - Implemented CheckForIllegalCrossThreadCalls, removed TODO
 	  - Fixed ResetBindings and removed TODO
 	  - Added check for cross-thread calls to get_Handle()
+	  - Added Marshaller attribute for set_Font to satisfy class status
 	* FontDialog.cs: Removed TODOs that seemed implemented
 	* UpDownBase.cs: Removed unneeded TODO and Fixme
 	* MessageBox.cs: Implemented support for Default button and removed TODO
