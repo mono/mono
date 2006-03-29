@@ -249,6 +249,13 @@ compiled.  This is used for testing the code generator performance.
 Displays information about the work done by the runtime during the
 execution of an application. 
 .TP
+.I "--wapi=hps|semdel"
+Perform mainatinance of the process shared data.
+.Sp
+semdel will delete the global semaphore.
+.Sp
+hps will list the currently used handles.
+.TP
 .I "-v", "--verbose"
 Increases the verbosity level, each time it is listed, increases the
 verbosity level to include more information (including, for example, 
