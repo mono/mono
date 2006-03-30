@@ -40,6 +40,9 @@ namespace System.ComponentModel
 		
 		public AsyncCompletedEventArgs (Exception error, bool cancelled, object userState)
 		{
+			_error = error;
+			_cancelled = cancelled;
+			_userState = userState;
 		}
 		
 		protected void RaiseExceptionIfNecessary()

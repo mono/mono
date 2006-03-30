@@ -1,3 +1,7 @@
+2006-03-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AsyncCompletedEventArgs.cs : constructor did not initialize fields.
+
 2006-03-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ProgressChangedEventHandler.cs ProgressChangedEventArgs.cs :
