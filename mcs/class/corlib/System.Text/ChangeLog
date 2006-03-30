@@ -1,5 +1,10 @@
 2006-03-30  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Encoder.cs, Decoder.cs : implemented Convert(). Also added argument
+	  check in some methods.
+
+2006-03-30  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ASCIIEncoding.cs : added overriden methods in NET_2_0 (maybe
 	  there are optimizations, but for now we need something just works).
 

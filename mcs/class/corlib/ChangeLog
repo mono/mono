@@ -1,3 +1,7 @@
+2006-03-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* corlib_test.dll.sources: added EncoderTest.cs and DecoderTest.cs.
+
 2006-02-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* corlib.dll.sources: Removed DecimalFormatter.cs.

@@ -1,3 +1,7 @@
+2006-03-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* EncoderTest.cs, DecoderTest.cs : new tests, for Convert().
+
 2006-02-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* UTF8EncodingTest.cs : test for bug #77550.

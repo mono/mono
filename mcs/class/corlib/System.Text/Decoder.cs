@@ -76,6 +76,11 @@ public abstract class Decoder
 	[CLSCompliant (false)]
 	public unsafe virtual int GetCharCount (byte* bytes, int count, bool flush)
 	{
+		if (bytes == null)
+			throw new ArgumentNullException ("bytes");
+		if (count < 0)
+			throw new ArgumentOutOfRangeException ("count");
+
 		byte [] barr = new byte [count];
 		Marshal.Copy ((IntPtr) bytes, barr, 0, count);
 		return GetCharCount (barr, 0, count, flush);
@@ -85,6 +90,9 @@ public abstract class Decoder
 		byte[] bytes, int byteIndex, int byteCount,
 		char[] chars, int charIndex, bool flush)
 	{
+		CheckArguments (bytes, byteIndex, byteCount);
+		CheckArguments (chars, charIndex);
+
 		if (flush)
 			Reset ();
 		return GetChars (bytes, byteIndex, byteCount, chars, charIndex);
@@ -94,6 +102,8 @@ public abstract class Decoder
 	public unsafe virtual int GetChars (byte* bytes, int byteCount,
 		char* chars, int charCount, bool flush)
 	{
+		CheckArguments (chars, charCount, bytes, byteCount);
+
 		char [] carr = new char [charCount];
 		Marshal.Copy ((IntPtr) chars, carr, 0, charCount);
 		byte [] barr = new byte [byteCount];
@@ -105,6 +115,78 @@ public abstract class Decoder
 	{
 		if (fallback_buffer != null)
 			fallback_buffer.Reset ();
+	}
+
+	[CLSCompliant (false)]
+	public unsafe virtual void Convert (
+		byte* bytes, int byteCount,
+		char* chars, int charCount, bool flush,
+		out int bytesUsed, out int charsUsed, out bool completed)
+	{
+		CheckArguments (chars, charCount, bytes, byteCount);
+
+		bytesUsed = byteCount;
+		while (true) {
+			charsUsed = GetCharCount (bytes, bytesUsed, flush);
+			if (charsUsed <= charCount)
+				break;
+			flush = false;
+			bytesUsed >>= 1;
+		}
+		completed = bytesUsed == byteCount;
+		charsUsed = GetChars (bytes, bytesUsed, chars, charCount, flush);
+	}
+
+	public virtual void Convert (
+		byte [] bytes, int byteIndex, int byteCount,
+		char [] chars, int charIndex, int charCount, bool flush,
+		out int bytesUsed, out int charsUsed, out bool completed)
+	{
+		CheckArguments (bytes, byteIndex, byteCount);
+		CheckArguments (chars, charIndex);
+		if (charCount < 0 || chars.Length < charIndex + charCount)
+			throw new ArgumentOutOfRangeException ("charCount");
+
+		bytesUsed = byteCount;
+		while (true) {
+			charsUsed = GetCharCount (bytes, byteIndex, bytesUsed, flush);
+			if (charsUsed <= charCount)
+				break;
+			flush = false;
+			bytesUsed >>= 1;
+		}
+		completed = bytesUsed == byteCount;
+		charsUsed = GetChars (bytes, byteIndex, bytesUsed, chars, charIndex, flush);
+	}
+
+	void CheckArguments (char [] chars, int charIndex)
+	{
+		if (chars == null)
+			throw new ArgumentNullException ("chars");
+		if (charIndex < 0 || chars.Length <= charIndex)
+			throw new ArgumentOutOfRangeException ("charIndex");
+	}
+
+	void CheckArguments (byte [] bytes, int byteIndex, int byteCount)
+	{
+		if (bytes == null)
+			throw new ArgumentNullException ("bytes");
+		if (byteIndex < 0 || bytes.Length <= byteIndex)
+			throw new ArgumentOutOfRangeException ("byteIndex");
+		if (byteCount < 0 || bytes.Length < byteIndex + byteCount)
+			throw new ArgumentOutOfRangeException ("byteCount");
+	}
+
+	unsafe void CheckArguments (char* chars, int charCount, byte* bytes, int byteCount)
+	{
+		if (chars == null)
+			throw new ArgumentNullException ("chars");
+		if (bytes == null)
+			throw new ArgumentNullException ("bytes");
+		if (charCount < 0)
+			throw new ArgumentOutOfRangeException ("charCount");
+		if (byteCount < 0)
+			throw new ArgumentOutOfRangeException ("byteCount");
 	}
 #endif
 
