@@ -2,6 +2,7 @@
 
 	* RegexBugs.cs (HangingHyphens): New tests from #77626, and
 	related bugs found by inspection.
+	(HangingHyphens1): New testcase for exceptions in character ranges.
 
 2005-11-21  Sebastien Pouliot  <sebastien@ximian.com> 
 

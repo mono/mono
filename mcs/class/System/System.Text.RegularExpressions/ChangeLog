@@ -4,7 +4,7 @@
 	* parser.cs (Parser.ParseCharacterClass): Don't automatically
 	assume there's a range when we see '-'.  Ensure that we have seen
 	at least one other character, and that we aren't already parsing a
-	range.
+	range.  Handle some more errors.
 
 2005-12-19  Kornél Pál  <kornelpal@hotmail.com>
 

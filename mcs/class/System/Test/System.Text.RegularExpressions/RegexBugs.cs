@@ -312,7 +312,15 @@ namespace MonoTests.System.Text.RegularExpressions
 
 			Assert ("#06", Regex.IsMatch ("abcxyz-", @"[a-c-x-z]{7}"));
 			Assert ("#06b", !Regex.IsMatch ("defghijklmnopqrstuvw", @"[a-c-x-z]"));
+
+			Assert ("#07", Regex.IsMatch (" \tz-", @"[\s-z]{4}"));
+			Assert ("#07b", !Regex.IsMatch ("abcdefghijklmnopqrstuvwxy", @"[\s-z]"));
+		}
+
+		[Test, ExpectedException (typeof (ArgumentException))]
+		public void HangingHyphen1 ()
+		{
+			bool b = Regex.IsMatch ("foobar", @"[a-\s]");
 		}
 	}
 }
-

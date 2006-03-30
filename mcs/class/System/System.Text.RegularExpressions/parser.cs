@@ -666,62 +666,49 @@ namespace System.Text.RegularExpressions.Syntax {
 
 				if (c == '\\') {
 					c = ParseEscape ();
-					if (c < 0) {
-						// didn't recognize escape
+					if (c >= 0)
+						goto char_recognized;
 
-						c = pattern[ptr ++];
-						switch (c) {
-						case 'b': c = '\b'; break;
+					// didn't recognize escape
+					c = pattern [ptr ++];
+					switch (c) {
+					case 'b':
+						c = '\b';
+						goto char_recognized;
 
-						case 'd':
-							cls.AddCategory (ecma ? Category.EcmaDigit : Category.Digit, false);
-							last = -1;
-							continue;
-							
-						case 'w':
-							cls.AddCategory (ecma ? Category.EcmaWord : Category.Word, false);
-							last = -1;
-							continue;
-							
-						case 's':
-							cls.AddCategory (ecma ? Category.EcmaWhiteSpace : Category.WhiteSpace, false);
-							last = -1;
-							continue;
-							
-						case 'p':
-							cls.AddCategory (ParseUnicodeCategory (), false);	// ignore ecma
-							last = -1;
-							continue;
-							
-						case 'D':
-							cls.AddCategory (ecma ? Category.EcmaDigit : Category.Digit, true);
-							last = -1;
-							continue;
-							
-						case 'W':
-							cls.AddCategory (ecma ? Category.EcmaWord : Category.Word, true);
-							last = -1;
-							continue;
-							
-						case 'S':
-							cls.AddCategory (ecma ? Category.EcmaWhiteSpace : Category.WhiteSpace, true);
-							last = -1;
-							continue;
-							
-						case 'P':
-							cls.AddCategory (ParseUnicodeCategory (), true);
-							last = -1;
-							continue;
+					case 'd': case 'D':
+						cls.AddCategory (ecma ? Category.EcmaDigit : Category.Digit, c == 'D');
+						break;
+						
+					case 'w': case 'W':
+						cls.AddCategory (ecma ? Category.EcmaWord : Category.Word, c == 'W');
+						break;
+						
+					case 's': case 'S':
+						cls.AddCategory (ecma ? Category.EcmaWhiteSpace : Category.WhiteSpace, c == 'S');
+						break;
+						
+					case 'p': case 'P':
+						cls.AddCategory (ParseUnicodeCategory (), c == 'P');	// ignore ecma
+						break;
 
-						default: break;		// add escaped character
-						}
+					default:		// add escaped character
+						goto char_recognized;
 					}
+
+					// if the pattern looks like [a-\s] ...
+					if (range)
+						throw NewParseException ("character range cannot have category \\" + c);
+
+					last = -1;
+					continue;
 				}
 
+			char_recognized:
 				if (range) {
 					// if 'range' is true, we know that 'last >= 0'
 					if (c < last)
-						throw NewParseException ("[x-y] range in reverse order.");
+						throw NewParseException ("[" + last + "-" + c + "] range in reverse order.");
 					cls.AddRange ((char)last, (char)c);
 					last = -1;
 					range = false;
