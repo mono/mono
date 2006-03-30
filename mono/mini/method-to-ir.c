@@ -9494,7 +9494,6 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - allow SSA with other types as well
  * - allow SSA with local vregs
  * - some tests no longer work with COUNT=0
- * - add code to only use -v -v -v -v for a specific method
  * - add is_global_vreg () macro
  * - cleanup the code replacement in decompose_long_opts ()
  * - try a coalescing phase after liveness analysis
