@@ -65,7 +65,7 @@ namespace System.Web {
 		static HttpApplicationFactory theFactory = new HttpApplicationFactory();
 #endif
 
-		static MethodInfo session_end;
+		MethodInfo session_end;
 		bool needs_init = true;
 		bool app_start_needed = true;
 		Type app_type;
@@ -251,8 +251,8 @@ namespace System.Web {
 				object methodData = possibleEvents [usualName];
 				if (methodData != null && eventName == "End" && moduleName == "Session") {
 					lock (factory) {
-						if (session_end == null)
-							session_end = (MethodInfo) methodData;
+						if (factory.session_end == null)
+							factory.session_end = (MethodInfo) methodData;
 					}
 					continue;
 				}
@@ -290,7 +290,7 @@ namespace System.Web {
 			MethodInfo method = null;
 			HttpApplication app = null;
 			lock (factory.available_for_end) {
-				method = session_end;
+				method = factory.session_end;
 				if (method == null)
 					return;
 
