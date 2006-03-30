@@ -1,3 +1,8 @@
+2006-03-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestGraphics.cs: Added new test cases translating matrix with 
+	different MatrixOrder and for multiplying a non-invertible matrix.
+
 2006-03-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestGraphics.cs: Add new test cases for clipping.

@@ -375,6 +375,17 @@ namespace MonoTests.System.Drawing
 			g.Transform = matrix;
 		}
 
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Multiply_NonInvertibleMatrix ()
+		{
+			Matrix matrix = new Matrix (123, 24, 82, 16, 47, 30);
+			Assert ("IsInvertible", !matrix.IsInvertible);
+			Graphics g = Get (16, 16);
+			g.MultiplyTransform (matrix);
+		}
+
 		private void CheckBounds (string msg, RectangleF bounds, float x, float y, float w, float h)
 		{
 			AssertEquals (msg + ".X", x, bounds.X, 0.1);
@@ -540,6 +551,41 @@ namespace MonoTests.System.Drawing
 		{
 			Graphics g = Get (16, 16);
 			g.ScaleTransform (1, 0);
+		}
+
+		[Test]
+		public void TranslateTransform_Order ()
+		{
+			Graphics g = Get (16, 16);
+			g.Transform = new Matrix (1, 2, 3, 4, 5, 6);
+			g.TranslateTransform (3, -3);
+			float[] elements = g.Transform.Elements;
+			AssertEquals ("default.0", 1, elements[0]);
+			AssertEquals ("default.1", 2, elements[1]);
+			AssertEquals ("default.2", 3, elements[2]);
+			AssertEquals ("default.3", 4, elements[3]);
+			AssertEquals ("default.4", -1, elements[4]);
+			AssertEquals ("default.5", 0, elements[5]);
+
+			g.Transform = new Matrix (1, 2, 3, 4, 5, 6);
+			g.TranslateTransform (3, -3, MatrixOrder.Prepend);
+			elements = g.Transform.Elements;
+			AssertEquals ("prepend.0", 1, elements[0]);
+			AssertEquals ("prepend.1", 2, elements[1]);
+			AssertEquals ("prepend.2", 3, elements[2]);
+			AssertEquals ("prepend.3", 4, elements[3]);
+			AssertEquals ("prepend.4", -1, elements[4]);
+			AssertEquals ("prepend.5", 0, elements[5]);
+
+			g.Transform = new Matrix (1, 2, 3, 4, 5, 6);
+			g.TranslateTransform (3, -3, MatrixOrder.Append);
+			elements = g.Transform.Elements;
+			AssertEquals ("append.0", 1, elements[0]);
+			AssertEquals ("append.1", 2, elements[1]);
+			AssertEquals ("append.2", 3, elements[2]);
+			AssertEquals ("append.3", 4, elements[3]);
+			AssertEquals ("append.4", 8, elements[4]);
+			AssertEquals ("append.5", 3, elements[5]);
 		}
 	}
 }
