@@ -1983,15 +1983,15 @@ namespace System.Windows.Forms
 
 			rect.Height = menu.Height;
 			dc.FillRectangle (ResPool.GetSolidBrush(ColorMenu), rect);
-						
+			
 			for (int i = 0; i < menu.MenuItems.Count; i++) {
 				MenuItem item = menu.MenuItems [i];
 				Rectangle item_rect = item.bounds;
 				item_rect.X += rect.X;
 				item_rect.Y += rect.Y;
 				item.MenuHeight = menu.Height;
-				item.PerformDrawItem (new DrawItemEventArgs (dc, MenuFont, item_rect, i, item.Status));			
-			}				
+				item.PerformDrawItem (new DrawItemEventArgs (dc, MenuFont, item_rect, i, item.Status));	
+			}	
 		}		
 		
 		Bitmap CreateGlyphBitmap (Size size, MenuGlyph glyph, Color color)
@@ -2015,7 +2015,7 @@ namespace System.Windows.Forms
 		{
 			StringFormat string_format;
 			Rectangle rect_text = e.Bounds;
-
+			
 			if (item.Visible == false)
 				return;
 
@@ -2053,7 +2053,7 @@ namespace System.Windows.Forms
 			Color color_text;
 			Color color_back;
 			
-			if ((e.State & DrawItemState.Selected) == DrawItemState.Selected) {
+			if ((e.State & DrawItemState.Selected) == DrawItemState.Selected && !item.MenuBar) {
 				color_text = ColorHighlightText;
 				color_back = ColorHighlight;
 			} else {
@@ -2065,13 +2065,14 @@ namespace System.Windows.Forms
 			Rectangle rect_back = e.Bounds;
 			rect_back.X++;
 			rect_back.Width -=2;
-			e.Graphics.FillRectangle (ResPool.GetSolidBrush (color_back), rect_back);
+			if (!item.MenuBar)
+				e.Graphics.FillRectangle (ResPool.GetSolidBrush (color_back), rect_back);
 			
 			if (item.Enabled) {
 				e.Graphics.DrawString (item.Text, e.Font,
 					ResPool.GetSolidBrush (color_text),
 					rect_text, string_format);
-
+				
 				if (!item.MenuBar && item.Shortcut != Shortcut.None && item.ShowShortcut) {
 					string str = item.GetShortCutText ();
 					Rectangle rect = rect_text;
@@ -2080,6 +2081,17 @@ namespace System.Windows.Forms
 
 					e.Graphics.DrawString (str, e.Font, ResPool.GetSolidBrush (color_text),
 						rect, string_format_menu_shortcut);
+				}
+				
+				if (item.MenuBar) {
+					Border3DStyle border_style = Border3DStyle.Adjust;
+					if ((item.Status & DrawItemState.HotLight) != 0)
+						border_style = Border3DStyle.RaisedInner;
+					else if ((item.Status & DrawItemState.Selected) != 0)
+						border_style = Border3DStyle.SunkenOuter;
+					
+					if (border_style != Border3DStyle.Adjust)
+						CPDrawBorder3D(e.Graphics, rect_back, border_style,  Border3DSide.Left | Border3DSide.Right | Border3DSide.Top | Border3DSide.Bottom, ColorMenu);
 				}
 			} else {
 				ControlPaint.DrawStringDisabled (e.Graphics, item.Text, e.Font, 
