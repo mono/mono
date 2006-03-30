@@ -363,7 +363,20 @@ public class ASCIIEncoding : Encoding
 		}
 	}
 #endif
-	
+
+#if NET_2_0
+	[MonoTODO ("we have simple override to match method signature.")]
+	public override Decoder GetDecoder ()
+	{
+		return base.GetDecoder ();
+	}
+
+	[MonoTODO ("we have simple override to match method signature.")]
+	public override Encoder GetEncoder ()
+	{
+		return base.GetEncoder ();
+	}
+#endif
 }; // class ASCIIEncoding
 
 }; // namespace System.Text
