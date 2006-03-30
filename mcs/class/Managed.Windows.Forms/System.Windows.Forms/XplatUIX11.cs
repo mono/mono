@@ -3471,8 +3471,13 @@ namespace System.Windows.Forms {
 				return paint_event;
 			} else {
 				hwnd.non_client_dc = Graphics.FromHwnd (hwnd.whole_window);
-				hwnd.non_client_dc.SetClip (hwnd.nc_invalid);
-				paint_event = new PaintEventArgs(hwnd.non_client_dc, hwnd.nc_invalid);
+
+				if (!hwnd.nc_invalid.IsEmpty) {
+					hwnd.non_client_dc.SetClip (hwnd.nc_invalid);
+					paint_event = new PaintEventArgs(hwnd.non_client_dc, hwnd.nc_invalid);
+				} else {
+					paint_event = new PaintEventArgs(hwnd.non_client_dc, new Rectangle(0, 0, hwnd.width, hwnd.height));
+				}
 				hwnd.nc_expose_pending = false;
 
 				return paint_event;
