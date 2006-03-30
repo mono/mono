@@ -633,15 +633,13 @@ namespace System.Text.RegularExpressions.Syntax {
 		}
 
 		private Expression ParseCharacterClass (RegexOptions options) {
-			bool negate, ecma;
+			bool negate = false;
 			if (pattern[ptr] == '^') {
 				negate = true;
 				++ ptr;
 			}
-			else
-				negate = false;
 			
-			ecma = IsECMAScript (options);
+			bool ecma = IsECMAScript (options);
 			CharacterClass cls = new CharacterClass (negate, IsIgnoreCase (options));
 
 			if (pattern[ptr] == ']') {
@@ -660,8 +658,8 @@ namespace System.Text.RegularExpressions.Syntax {
 					closed = true;
 					break;
 				}
-				
-				if (c == '-') {
+
+				if (c == '-' && last >= 0 && !range) {
 					range = true;
 					continue;
 				}
@@ -721,22 +719,17 @@ namespace System.Text.RegularExpressions.Syntax {
 				}
 
 				if (range) {
+					// if 'range' is true, we know that 'last >= 0'
 					if (c < last)
 						throw NewParseException ("[x-y] range in reverse order.");
-
-					if (last >= 0) {
-						cls.AddRange ((char)last, (char)c);
-						last = -1;
-					} else {
-						cls.AddCharacter ('-');
-						cls.AddCharacter ((char)c);
-						last = c;
-					}
+					cls.AddRange ((char)last, (char)c);
+					last = -1;
 					range = false;
-				} else {
-					cls.AddCharacter ((char)c);
-					last = c;
+					continue;
 				}
+
+				cls.AddCharacter ((char)c);
+				last = c;
 			}
 
 			if (!closed)

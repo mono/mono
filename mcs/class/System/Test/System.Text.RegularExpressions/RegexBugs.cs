@@ -298,10 +298,20 @@ namespace MonoTests.System.Text.RegularExpressions
 		}
 
 		[Test]
-		public void HangingHyphens () // bug 77626
+		public void HangingHyphens ()
 		{
-			Assert ("#01", Regex.IsMatch("mT1[", @"m[0-9A-Za-z_-]+\["));
-			Assert ("#02", Regex.IsMatch("mT1[", @"m[-0-9A-Za-z_]+\["));
+			// bug 77626
+			Assert ("#01", Regex.IsMatch ("mT1[", @"m[0-9A-Za-z_-]+\["));
+			Assert ("#02", Regex.IsMatch ("mT1[", @"m[-0-9A-Za-z_]+\["));
+
+			Assert ("#03", Regex.IsMatch ("-a;", @"[--a]{3}"));
+			Assert ("#04", Regex.IsMatch ("-&,", @"[&--]{3}"));
+
+			Assert ("#05", Regex.IsMatch ("abcz-", @"[a-c-z]{5}"));
+			Assert ("#05b", !Regex.IsMatch ("defghijklmnopqrstuvwxy", @"[a-c-z]"));
+
+			Assert ("#06", Regex.IsMatch ("abcxyz-", @"[a-c-x-z]{7}"));
+			Assert ("#06b", !Regex.IsMatch ("defghijklmnopqrstuvw", @"[a-c-x-z]"));
 		}
 	}
 }

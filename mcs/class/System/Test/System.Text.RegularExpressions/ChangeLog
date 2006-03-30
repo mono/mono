@@ -1,6 +1,7 @@
 2006-03-30  Raja R Harinath  <harinath@gmail.com>
 
-	* RegexBugs.cs (HangingHyphens): New test from #77626.
+	* RegexBugs.cs (HangingHyphens): New tests from #77626, and
+	related bugs found by inspection.
 
 2005-11-21  Sebastien Pouliot  <sebastien@ximian.com> 
 
