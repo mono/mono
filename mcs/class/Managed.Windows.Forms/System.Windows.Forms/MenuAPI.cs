@@ -128,6 +128,8 @@ namespace System.Windows.Forms {
 			if (item.IsPopup) {
 				active = true;
 				grab_control.ActiveTracker = this;
+				if (item.Parent is MainMenu)
+					(item.Parent as MainMenu).Draw ();
 			} else if (item.Parent is MainMenu)
 				active = false;
 			else
@@ -211,7 +213,7 @@ namespace System.Windows.Forms {
 			if (item == null)
 				return;				
 			
-			item.Status = item.Status &~ DrawItemState.Selected;
+			item.Selected = false;
 
 			if (item.IsPopup)
 				HideSubPopups (item);
@@ -231,7 +233,7 @@ namespace System.Windows.Forms {
 				DeselectItem (prev_item);
 				if (CurrentMenu != menu)
 					CurrentMenu = menu;
-				item.Status |= DrawItemState.Selected;			
+				item.Selected = true;
 				if (menu is MainMenu)
 					(menu as MainMenu).Draw ();
 				else

@@ -62,7 +62,6 @@ namespace System.Windows.Forms
 		private int xtab;
 		private int menuheight;
 		private bool menubar;
-		private DrawItemState status;
 		private MenuMerge mergetype;
 		internal Rectangle bounds;
 		
@@ -124,7 +123,6 @@ namespace System.Windows.Forms
 			showshortcut = true;
 			visible = true;
 			ownerdraw = false;
-			status = DrawItemState.None;
 			menubar = false;
 			menuheight = 0;
 			xtab = 0;
@@ -348,14 +346,31 @@ namespace System.Windows.Forms
 			set { menuheight = value; }
 		}	
 
+		bool selected;
+		internal bool Selected {
+			get { return selected; }
+			set { selected = value; }
+		}
+
 		internal bool Separator {
 			get { return separator; }
 			set { separator = value; }
 		}
 		
 		internal DrawItemState Status {
-			get { return status; }
-			set { status = value; }
+			get {
+				DrawItemState status = DrawItemState.None;
+				MenuTracker tracker = Parent.Tracker;
+				if (Selected)
+					status |= (tracker.active ? DrawItemState.Selected : DrawItemState.HotLight);
+				if (!Enabled)
+					status |= DrawItemState.Grayed | DrawItemState.Disabled;
+				if (Checked)
+					status |= DrawItemState.Checked;
+				if (!tracker.Navigating)
+					status |= DrawItemState.NoAccelerator;
+				return status;
+			}
 		}
 		
 		internal new int Width {

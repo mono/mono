@@ -113,7 +113,7 @@ namespace System.Windows.Forms
 		internal MenuItem SelectedItem  {
 			get {
 				foreach (MenuItem item in MenuItems)
-					if ((item.Status & DrawItemState.Selected) == DrawItemState.Selected)
+					if (item.Selected)
 						return item;
 
 				return null;

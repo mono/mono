@@ -1,5 +1,14 @@
 2006-03-30  Mike Kestner  <mkestner@novell.com>
 
+	* Menu.cs (SelectedItem): use new MenuItem.Selected prop.
+	* MenuAPI.cs: use new MenuItem.Selected prop. redraw MainMenu when we
+	go active to account for HotLight to Selected transition.
+	* MenuItem.cs: add internal Selected prop. Fill out the Status
+	property by calculating it from item info. Add HotLight,
+	NoAccelerator, Checked, Grayed, and Disabled flags where appropriate.
+
+2006-03-30  Mike Kestner  <mkestner@novell.com>
+
 	* MenuItem.cs: only emit DrawItem and MeasureItem for OwnerDraw.
 
 2006-03-29  Peter Dennis Bartok  <pbartok@novell.com> 
