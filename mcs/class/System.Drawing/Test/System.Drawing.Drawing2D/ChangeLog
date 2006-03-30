@@ -1,3 +1,9 @@
+2006-03-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* LinearGradientBrushTest.cs: Added a bunch of test cases to check
+	for the "initial" matrix of the brush (which we don't set).
+	* TestMatrix.cs: Added test cases about matrix identity precision.
+
 2006-03-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GraphicsPathTest.cs: Add test cases for every Add* method to check 

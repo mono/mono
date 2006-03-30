@@ -131,11 +131,37 @@ namespace MonoTests.System.Drawing.Drawing2D
 		[Test]
 		public void IsIdentity ()
 		{
+			Matrix identity = new Matrix ();
 			Matrix matrix = new Matrix (123, 24, 82, 16, 47, 30);
-			AssertEquals ("N#1", false, matrix.IsIdentity);
+			AssertEquals ("N#1-identity", false, matrix.IsIdentity);
+			Assert ("N#1-equals", !identity.Equals (matrix));
 			
 			matrix = new Matrix (1, 0, 0, 1, 0, 0);
-			AssertEquals ("N#2", true, matrix.IsIdentity);			
+			AssertEquals ("N#2-identity", true, matrix.IsIdentity);
+			Assert ("N#2-equals", identity.Equals (matrix));
+
+			// so what's the required precision ?
+
+			matrix = new Matrix (1.1f, 0.1f, -0.1f, 0.9f, 0, 0);
+			Assert ("N#3-identity", !matrix.IsIdentity);
+			Assert ("N#3-equals", !identity.Equals (matrix));
+
+			matrix = new Matrix (1.01f, 0.01f, -0.01f, 0.99f, 0, 0);
+			Assert ("N#4-identity", !matrix.IsIdentity);
+			Assert ("N#4-equals", !identity.Equals (matrix));
+
+			matrix = new Matrix (1.001f, 0.001f, -0.001f, 0.999f, 0, 0);
+			Assert ("N#5-identity", !matrix.IsIdentity);
+			Assert ("N#5-equals", !identity.Equals (matrix));
+
+			matrix = new Matrix (1.0001f, 0.0001f, -0.0001f, 0.9999f, 0, 0);
+			Assert ("N#6-identity", matrix.IsIdentity);
+			// note: NOT equal
+			Assert ("N#6-equals", !identity.Equals (matrix));
+
+			matrix = new Matrix (1.0009f, 0.0009f, -0.0009f, 0.99995f, 0, 0);
+			Assert ("N#7-identity", !matrix.IsIdentity);
+			Assert ("N#7-equals", !identity.Equals (matrix));
 		}
 		
 		[Test]
@@ -212,6 +238,55 @@ namespace MonoTests.System.Drawing.Drawing2D
 			AssertEquals ("H#4", -40, matrix.Elements[3]);
 			AssertEquals ("H#5", 50, matrix.Elements[4]);
 			AssertEquals ("H#6", 60, matrix.Elements[5]);
+		}
+
+		[Test]
+		public void Rotate_45_135 ()
+		{
+			Matrix matrix = new Matrix ();
+			Assert ("original.IsIdentity", matrix.IsIdentity);
+
+			matrix.Rotate (45);
+			Assert ("+45.!IsIdentity", !matrix.IsIdentity);
+			float[] elements = matrix.Elements;
+			AssertEquals ("45#1", 0.7071068, elements[0]);
+			AssertEquals ("45#2", 0.7071068, elements[1]);
+			AssertEquals ("45#3", -0.7071068, elements[2]);
+			AssertEquals ("45#4", 0.7071068, elements[3]);
+			AssertEquals ("45#5", 0, elements[4]);
+			AssertEquals ("45#6", 0, elements[5]);
+
+			matrix.Rotate (135);
+			Assert ("+135.!IsIdentity", !matrix.IsIdentity);
+			elements = matrix.Elements;
+			AssertEquals ("180#1", -1, elements[0], 0.0001);
+			AssertEquals ("180#2", 0, elements[1], 0.0001);
+			AssertEquals ("180#3", 0, elements[2], 0.0001);
+			AssertEquals ("180#4", -1, elements[3], 0.0001);
+			AssertEquals ("180#5", 0, elements[4]);
+			AssertEquals ("180#6", 0, elements[5]);
+		}
+
+		[Test]
+		public void Rotate_90_270_Matrix ()
+		{
+			Matrix matrix = new Matrix ();
+			Assert ("original.IsIdentity", matrix.IsIdentity);
+
+			matrix.Rotate (90);
+			Assert ("+90.!IsIdentity", !matrix.IsIdentity);
+			float[] elements = matrix.Elements;
+			AssertEquals ("90#1", 0, elements[0], 0.0001);
+			AssertEquals ("90#2", 1, elements[1], 0.0001);
+			AssertEquals ("90#3", -1, elements[2], 0.0001);
+			AssertEquals ("90#4", 0, elements[3], 0.0001);
+			AssertEquals ("90#5", 0, elements[4]);
+			AssertEquals ("90#6", 0, elements[5]);
+
+			matrix.Rotate (270);
+			// this isn't a perfect 1, 0, 0, 1, 0, 0 matrix - but close enough
+			Assert ("360.IsIdentity", matrix.IsIdentity);
+			Assert ("360.Equals", !new Matrix ().Equals (matrix));
 		}
 
 		[Test]
