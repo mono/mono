@@ -136,7 +136,6 @@
 				<File RelPath="System.Data\ReadOnlyException.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\RelatedDataView.cs" SubType="Component" BuildAction="Compile"/>
 				<File RelPath="System.Data\RelationshipConverter.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Data\Res.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\ResDescriptionAttribute.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\ResultSetOptions.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\ResultSetSensitivity.cs" SubType="Code" BuildAction="Compile"/>
