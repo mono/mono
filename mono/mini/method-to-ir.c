@@ -64,6 +64,9 @@
 
 #include "aliasing.h"
 
+#define BRANCH_COST 100
+#define INLINE_LENGTH_LIMIT 20
+
 /* 
  * this is used to determine when some branch optimizations are possible: we exclude FP compares
  * because they have weird semantics with NaNs.
@@ -3507,7 +3510,7 @@ mono_method_check_inlining (MonoCompile *cfg, MonoMethod *method)
 		if (header->code_size < atoi (getenv ("MONO_INLINELIMIT"))) {
 			return TRUE;
 		}
-	} else if (header->code_size < 20)
+	} else if (header->code_size < INLINE_LENGTH_LIMIT)
 		return TRUE;
 
 	return FALSE;
@@ -3912,7 +3915,22 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 		prev_cbb->next_bb = sbblock;
 		link_bblock (cfg, prev_cbb, sbblock);
 
-		cfg->cbb = ebblock;
+		/* 
+		 * Get rid of the begin and end bblocks if possible to aid local
+		 * optimizations.
+		 */
+		mono_merge_basic_blocks (prev_cbb, sbblock);
+
+		if ((prev_cbb->out_count == 1) && (prev_cbb->out_bb [0]->in_count == 1) && (prev_cbb->out_bb [0] != ebblock))
+			mono_merge_basic_blocks (prev_cbb, prev_cbb->out_bb [0]);
+
+		if ((ebblock->in_count == 1) && ebblock->in_bb [0]->out_count == 1) {
+			MonoBasicBlock *prev = ebblock->in_bb [0];
+			mono_merge_basic_blocks (prev, ebblock);
+			cfg->cbb = prev;
+		} else {
+			cfg->cbb = ebblock;
+		}
 
 		if (rvar) {
 			EMIT_NEW_TEMPLOAD (cfg, ins, rvar->inst_c0);
@@ -6286,7 +6304,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			}
 			MONO_ADD_INS (bblock, ins);
 			start_new_bblock = 1;
-			inline_costs += 10;
+			inline_costs += BRANCH_COST;
 			break;
 		case CEE_BEQ_S:
 		case CEE_BGE_S:
@@ -6308,7 +6326,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			ADD_BINCOND (NULL);
 
 			sp = stack_start;
-			inline_costs += 10;
+			inline_costs += BRANCH_COST;
 			break;
 		case CEE_BR:
 			CHECK_OPSIZE (5);
@@ -6329,7 +6347,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			MONO_ADD_INS (bblock, ins);
 
 			start_new_bblock = 1;
-			inline_costs += 10;
+			inline_costs += BRANCH_COST;
 			break;
 		case CEE_BRFALSE_S:
 		case CEE_BRTRUE_S:
@@ -6393,7 +6411,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			start_new_bblock = 2;
 
 			sp = stack_start;
-			inline_costs += 10;
+			inline_costs += BRANCH_COST;
 			break;
 		}
 		case CEE_BEQ:
@@ -6416,7 +6434,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			ADD_BINCOND (NULL);
 
 			sp = stack_start;
-			inline_costs += 10;
+			inline_costs += BRANCH_COST;
 			break;
 		case CEE_SWITCH: {
 			MonoInst *src1;
@@ -6493,7 +6511,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			MONO_EMIT_NEW_LOAD_MEMBASE (cfg, target_reg, sum_reg, 0);
 			MONO_EMIT_NEW_UNALU (cfg, OP_BR_REG, -1, target_reg);
 			start_new_bblock = 1;
-			inline_costs += 20;
+			inline_costs += (BRANCH_COST * 2);
 			break;
 		}
 		case CEE_LDIND_I1:
@@ -8665,6 +8683,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 		return -1;
 	}
 
+	if (cfg->verbose_level > 1) mono_print_code (cfg, "AFTER METHOD-TO-IR");
+
 	return inline_costs;
 
  inline_failure:
@@ -9491,9 +9511,8 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - optimize the loading of the interruption flag in the managed->native wrappers
  * - avoid special handling of OP_NOP in passes
  * - move code inserting instructions into one function/macro.
- * - allow SSA with other types as well
- * - allow SSA with local vregs
- * - some tests no longer work with COUNT=0
+ * - some tests no longer work with COUNT=0 
+ *   -> COUNT=0 ./mono -O=peephole,branch,inline,consprop,copyprop,deadce,linears,intrins,loop,abcrem,ssapre,exception basic-calls.exe
  * - add is_global_vreg () macro
  * - cleanup the code replacement in decompose_long_opts ()
  * - try a coalescing phase after liveness analysis
@@ -9525,7 +9544,9 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - check for fp stack leakage in other opcodes too. (-> 'exceptions' optimization)
  * - add all micro optimizations from the old JIT
  * - put tree optimizations into the deadce pass
- * - LAST MERGE: 58239.
+ * - run optimize_branches () before local_cprop2 () to get rid of small bblocks
+ *   created during inlining -> or dont create the bblocks in the first place.
+ * - LAST MERGE: 58789.
  */
 
 /*

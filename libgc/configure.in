@@ -77,7 +77,7 @@ case "$THREADS" in
     THREADS=posix
     THREADDLLIBS=-lpthread
     case "$host" in
-     x86-*-linux* | ia64-*-linux* | i386-*-linux* | i486-*-linux* | i586-*-linux* | i686-*-linux* | x86_64-*-linux* | alpha-*-linux* | s390*-*-linux* | powerpc-*-linux*)
+     x86-*-linux* | ia64-*-linux* | i386-*-linux* | i486-*-linux* | i586-*-linux* | i686-*-linux* | x86_64-*-linux* | alpha-*-linux* | s390*-*-linux* | sparc*-*-linux* | powerpc-*-linux*)
 	AC_DEFINE(GC_LINUX_THREADS)
 	AC_DEFINE(_REENTRANT)
         if test "${enable_parallel_mark}" = yes; then

@@ -81,7 +81,7 @@ noinst_PROGRAMS = genmdesc
 endif
 
 mono_SOURCES = \
-	$(common_sources) $(amd64_sources) $(mono_debugger_sources) main.c inssel.c inssel.h
+	$(common_sources) $(x86_sources) $(mono_debugger_sources) main.c inssel.c inssel.h
 
 if STATIC_MONO
 # Link libmono into mono statically
@@ -194,6 +194,7 @@ common_sources = \
 	ssapre.h	\
 	aliasing.c	\
 	aliasing.h	\
+	local-propagation.c	\
 	ssapre-cee-ops.h \
 	ssapre-mini-ops.h \
 	driver.c	\
@@ -204,6 +205,7 @@ common_sources = \
 	mini-exceptions.c	\
 	declsec.c	\
 	declsec.h	\
+	wapihandles.c	\
 	branch-opts.c
 
 test_sources = 		\

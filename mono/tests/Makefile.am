@@ -119,6 +119,7 @@ TEST_CS_SRC=			\
 	iface2.cs		\
 	iface3.cs		\
 	iface4.cs		\
+	iface-large.cs		\
 	virtual-method.cs	\
 	intptrcast.cs		\
 	indexer.cs		\
@@ -161,6 +162,7 @@ TEST_CS_SRC=			\
 	inctest.cs		\
 	bound.cs		\
 	array-invoke.cs		\
+	test-arr.cs		\
 	decimal.cs		\
 	decimal-array.cs	\
 	marshal.cs		\

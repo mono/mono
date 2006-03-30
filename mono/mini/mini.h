@@ -550,7 +550,8 @@ enum {
 	MONO_OPT_ABCREM   = 1 << 18,
 	MONO_OPT_SSAPRE   = 1 << 19,
 	MONO_OPT_EXCEPTION= 1 << 20,
-	MONO_OPT_SSA      = 1 << 21
+	MONO_OPT_SSA      = 1 << 21,
+	MONO_OPT_TREEPROP = 1 << 22
 };
 
 /* Bit-fields in the MonoBasicBlock.region */
@@ -926,13 +927,14 @@ guint32   mono_alloc_freg                   (MonoCompile *cfg);
 guint32   mono_alloc_preg                   (MonoCompile *cfg);
 guint32   mono_alloc_dreg                   (MonoCompile *cfg, MonoStackType stack_type);
 void      mono_unlink_bblock                (MonoCompile *cfg, MonoBasicBlock *from, MonoBasicBlock* to);
+void      mono_merge_basic_blocks           (MonoBasicBlock *bb, MonoBasicBlock *bbn);
 void      mono_blockset_print               (MonoCompile *cfg, MonoBitSet *set, const char *name, guint idom);
 void      mono_print_tree                   (MonoInst *tree);
 void      mono_print_tree_nl                (MonoInst *tree);
 void      mono_print_ins_index              (int i, MonoInst *ins);
 void      mono_print_ins                    (MonoInst *ins);
 void      mono_print_bb                     (MonoBasicBlock *bb, const char *msg);
-void      mono_print_code                   (MonoCompile *cfg);
+void      mono_print_code                   (MonoCompile *cfg, const char *msg);
 void      mono_print_method_from_ip         (void *ip);
 char     *mono_pmip                         (void *ip);
 void      mono_select_instructions          (MonoCompile *cfg);
@@ -960,6 +962,8 @@ void      mono_create_jump_table            (MonoCompile *cfg, MonoInst *label, 
 int       mono_compile_assembly             (MonoAssembly *ass, guint32 opts, const char *aot_options);
 MonoCompile *mini_method_compile            (MonoMethod *method, guint32 opts, MonoDomain *domain, gboolean run_cctors, gboolean compile_aot, int parts);
 void      mono_destroy_compile              (MonoCompile *cfg);
+MonoJitICallInfo *mono_find_jit_opcode_emulation (int opcode);
+
 
 void      mono_aot_init                     (void);
 MonoJitInfo*  mono_aot_get_method           (MonoDomain *domain,
@@ -1160,6 +1164,8 @@ extern void
 mono_perform_abc_removal (MonoCompile *cfg);
 extern void
 mono_perform_ssapre (MonoCompile *cfg);
+extern void
+mono_local_cprop (MonoCompile *cfg);
 
 /* CAS - stack walk */
 MonoSecurityFrame* ves_icall_System_Security_SecurityFrame_GetSecurityFrame (gint32 skip);

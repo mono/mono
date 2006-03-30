@@ -1,3 +1,17 @@
+2006-03-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* langs/nb.xml
+	  locales/nb_NO.xml : imported from CLDR 1.3 data. (I know I'm
+	  directly adding them here, since there seems no simple way to
+	  add them as data in "supp" dir).
+	* Driver.cs :
+	  Reuse XPathDocument for lcids.xml.
+	  For "nb-NO" we need tricky code since its parent culture is "no"
+	  (not "nb"), while some properties seems based on "nb".
+
+	  Maybe we need some fundamental fixes to consider lcids.xml for
+	  parent-child relationship, but right now, it's mostly fruitless.
+
 2005-08-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Driver.cs : add primary date/time pattern strings as the first

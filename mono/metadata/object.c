@@ -750,11 +750,12 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class)
 		vt->gc_descr = class->gc_descr;
 
 	if (class->class_size) {
-		if (class->has_static_refs)
+		if (class->has_static_refs) {
 			vt->data = mono_gc_alloc_fixed (class->class_size, NULL);
-		else
+			mono_domain_add_class_static_data (domain, class, vt->data, NULL);
+		} else {
 			vt->data = mono_mempool_alloc0 (domain->mp, class->class_size);
-		mono_g_hash_table_insert (domain->static_data_hash, class, vt->data);
+		}
 		mono_stats.class_static_data_size += class->class_size;
 	}
 
@@ -823,8 +824,6 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class)
 	/* FIXME: class_vtable_hash is basically obsolete now: remove as soon
 	 * as we change the code in appdomain.c to invalidate vtables by
 	 * looking at the possible MonoClasses created for the domain.
-	 * Or we can reuse static_data_hash, by using vtable as a key
-	 * and always inserting into that hash.
 	 */
 	g_hash_table_insert (domain->class_vtable_hash, class, vt);
 	/* class->runtime_info is protected by the loader lock, both when
@@ -1118,7 +1117,7 @@ mono_remote_class (MonoDomain *domain, MonoString *class_name, MonoClass *proxy_
 	key = create_remote_class_key (NULL, proxy_class);
 	
 	mono_domain_lock (domain);
-	rc = mono_g_hash_table_lookup (domain->proxy_vtable_hash, key);
+	rc = g_hash_table_lookup (domain->proxy_vtable_hash, key);
 
 	if (rc) {
 		g_free (key);
@@ -1141,7 +1140,7 @@ mono_remote_class (MonoDomain *domain, MonoString *class_name, MonoClass *proxy_
 	rc->xdomain_vtable = NULL;
 	rc->proxy_class_name = mono_string_to_utf8 (class_name);
 
-	mono_g_hash_table_insert (domain->proxy_vtable_hash, key, rc);
+	g_hash_table_insert (domain->proxy_vtable_hash, key, rc);
 
 	mono_domain_unlock (domain);
 	return rc;
@@ -1158,7 +1157,7 @@ clone_remote_class (MonoDomain *domain, MonoRemoteClass* remote_class, MonoClass
 	gpointer* key;
 	
 	key = create_remote_class_key (remote_class, extra_class);
-	rc = mono_g_hash_table_lookup (domain->proxy_vtable_hash, key);
+	rc = g_hash_table_lookup (domain->proxy_vtable_hash, key);
 	if (rc != NULL) {
 		g_free (key);
 		return rc;
@@ -1192,7 +1191,7 @@ clone_remote_class (MonoDomain *domain, MonoRemoteClass* remote_class, MonoClass
 	rc->xdomain_vtable = NULL;
 	rc->proxy_class_name = remote_class->proxy_class_name;
 
-	mono_g_hash_table_insert (domain->proxy_vtable_hash, key, rc);
+	g_hash_table_insert (domain->proxy_vtable_hash, key, rc);
 
 	return rc;
 }

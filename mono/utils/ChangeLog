@@ -1,4 +1,8 @@
 
+Wed Mar 29 16:39:14 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mono-counters.c: initialize the next pointer.
+
 Mon Mar 20 14:50:35 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* monobitset.c, monobitset.h: added mono_bitset_find_first_unset ().

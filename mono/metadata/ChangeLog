@@ -1,3 +1,70 @@
+2006-03-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* culture-info-table.h : regenerated.
+
+Wed Mar 29 18:24:42 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* threads.c, object-internals.h, verify.c: changed the culture caching
+	code to use a normal MonoArray for storage so the GC can keep track of
+	them easily. Fixed bits of the cache logic, too and simplified the
+	code.
+
+Wed Mar 29 17:18:16 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* gc-internal.h, null-gc.c, boehm-gc.c, gc.c: enable the finalizer
+	thread for non-Boehm GCs.
+
+Wed Mar 29 17:10:05 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* domain.c, object.c, domain-internals.h: reduce the amount of memory
+	needed to keep track of the data for static fields.
+
+2006-03-29  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #75172
+	* icall.c (ves_icall_Type_GetMethodsByName): Don't use vtable_size
+	for interface classes.  Use 'num_methods' instead.
+	(ves_icall_Type_GetPropertiesByName): Likewise.  Setup vtable
+	before using '->vtable_size' field.
+
+Wed Mar 29 12:53:28 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* domain.c, object.c, domain-internals.h: proxy_vtable_hash
+	doesn't contain managed pointers, so use a normal hashtable.
+
+Mon Mar 27 11:15:00 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c, class-internals.h, domain.c: fixed handling of types
+	used as values for objects in custom attributes (bug #77915):
+
+2006-03-24  Martin Baulig  <martin@ximian.com>
+
+	* class.c (mono_class_setup_fields): Added support for generic
+	instances; fixes #77580.
+
+2006-03-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* assembly.c: publickeytoken is case insensitive. Fixes bug #77898.
+
+2006-03-24  Dick Porter  <dick@ximian.com>
+
+	* file-io.c (get_file_attributes): More stat macro breakage.
+	Fixes bug 77759.
+
+Fri Mar 24 15:26:00 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* profiler.c: added the file=filename option in the default profiler
+	to output the profile data to filename.
+
+2006-03-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* icall.c: CodeBase returns '/' instead of '\\' on windows. Fixes
+	bug #77877.
+
+2006-03-22  Martin Baulig  <martin@ximian.com>
+
+	* reflection.c (fieldbuilder_to_mono_class_field): Don't store the
+	allocated `MonoClassField *' in `fb->handle'.
 
 Tue Mar 21 17:19:37 CET 2006 Paolo Molaro <lupus@ximian.com>
 

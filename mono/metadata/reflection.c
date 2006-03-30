@@ -7775,7 +7775,7 @@ handle_type:
 		
 		klass = mono_object_class (arg);
 
-		if (mono_object_isinst (arg, mono_defaults.monotype_class)) {
+		if (mono_object_isinst (arg, mono_defaults.systemtype_class)) {
 			*p++ = 0x50;
 			goto handle_type;
 		} else if (klass->enumtype) {
@@ -8520,9 +8520,6 @@ fieldbuilder_to_mono_class_field (MonoClass *klass, MonoReflectionFieldBuilder* 
 	const char *p, *p2;
 	guint32 len, idx;
 
-	if (fb->handle)
-		return fb->handle;
-
 	field = g_new0 (MonoClassField, 1);
 
 	field->name = mono_string_to_utf8 (fb->name);
@@ -8538,7 +8535,6 @@ fieldbuilder_to_mono_class_field (MonoClass *klass, MonoReflectionFieldBuilder* 
 	if (fb->offset != -1)
 		field->offset = fb->offset;
 	field->parent = klass;
-	fb->handle = field;
 	mono_save_custom_attrs (klass->image, field, fb->cattrs);
 
 	if (fb->def_value) {

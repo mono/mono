@@ -51,6 +51,9 @@ static FILE *mini_stats_fd = NULL;
 
 static void mini_usage (void);
 
+extern int mini_wapi_hps (int argc, char **argv);
+extern int mini_wapi_semdel (int argc, char **argv);
+
 /* This turns off command line globbing under win32 */
 #ifdef PLATFORM_WIN32
 int _CRT_glob = 0;
@@ -88,12 +91,18 @@ opt_names [] = {
 	{"abcrem",     "Array bound checks removal"},	
 	{"ssapre",     "SSA based Partial Redundancy Elimination"},
 	{"exception",  "Optimize exception catch blocks"},
-	{"ssa",        "Build and use SSA form"}
+	{"ssa",        "Use plain SSA form"},
+	{"treeprop",   "Tree propagation"}
 };
 
 #define DEFAULT_OPTIMIZATIONS (	\
 	MONO_OPT_PEEPHOLE |	\
 	MONO_OPT_CFOLD |	\
+	MONO_OPT_INLINE |	\
+	MONO_OPT_CONSPROP |	\
+	MONO_OPT_COPYPROP |	\
+	MONO_OPT_TREEPROP |	\
+	MONO_OPT_DEADCE |	\
 	MONO_OPT_BRANCH |	\
 	MONO_OPT_LINEARS |	\
 	MONO_OPT_INTRINS |  \
@@ -242,6 +251,7 @@ opt_sets [] = {
        MONO_OPT_BRANCH | MONO_OPT_PEEPHOLE | MONO_OPT_LINEARS | MONO_OPT_COPYPROP | MONO_OPT_CONSPROP | MONO_OPT_DEADCE | MONO_OPT_LOOP | MONO_OPT_INLINE | MONO_OPT_INTRINS | MONO_OPT_EXCEPTION | MONO_OPT_ABCREM,
        MONO_OPT_BRANCH | MONO_OPT_PEEPHOLE | MONO_OPT_LINEARS | MONO_OPT_COPYPROP | MONO_OPT_CONSPROP | MONO_OPT_DEADCE | MONO_OPT_LOOP | MONO_OPT_INLINE | MONO_OPT_INTRINS | MONO_OPT_EXCEPTION | MONO_OPT_ABCREM | MONO_OPT_SSAPRE,
        MONO_OPT_BRANCH | MONO_OPT_PEEPHOLE | MONO_OPT_LINEARS | MONO_OPT_COPYPROP | MONO_OPT_CONSPROP | MONO_OPT_DEADCE | MONO_OPT_LOOP | MONO_OPT_INLINE | MONO_OPT_INTRINS | MONO_OPT_ABCREM,
+       MONO_OPT_BRANCH | MONO_OPT_PEEPHOLE | MONO_OPT_LINEARS | MONO_OPT_COPYPROP | MONO_OPT_CONSPROP | MONO_OPT_DEADCE | MONO_OPT_LOOP | MONO_OPT_INLINE | MONO_OPT_INTRINS | MONO_OPT_TREEPROP,
        MONO_OPT_BRANCH | MONO_OPT_PEEPHOLE | MONO_OPT_LINEARS | MONO_OPT_COPYPROP | MONO_OPT_CONSPROP | MONO_OPT_DEADCE | MONO_OPT_LOOP | MONO_OPT_INLINE | MONO_OPT_INTRINS | MONO_OPT_SSAPRE,
        MONO_OPT_BRANCH | MONO_OPT_PEEPHOLE | MONO_OPT_LINEARS | MONO_OPT_COPYPROP | MONO_OPT_CONSPROP | MONO_OPT_DEADCE | MONO_OPT_LOOP | MONO_OPT_INLINE | MONO_OPT_INTRINS | MONO_OPT_ABCREM | MONO_OPT_SHARED
 };
@@ -556,6 +566,7 @@ mini_usage_jitdeveloper (void)
 		 "    --regression           Runs the regression test contained in the assembly\n"
 		 "    --statfile FILE        Sets the stat file to FILE\n"
 		 "    --stats                Print statistics about the JIT operations\n"
+		 "    --wapi=hps|semdel      IO-layer maintenance\n"
 		 "\n"
 		 "Other options:\n" 
 		 "    --graph[=TYPE] METHOD  Draws a graph of the specified method:\n");
@@ -623,19 +634,7 @@ static const char info[] =
 #else
 	"\tTLS:           normal\n"
 #endif /* HAVE_KW_THREAD */
-#ifdef HAVE_BOEHM_GC
-#ifdef USE_INCLUDED_LIBGC
-	"\tGC:            Included Boehm (with typed GC)\n"
-#else
-#if HAVE_GC_GCJ_MALLOC
-	"\tGC:            System Boehm (with typed GC)\n"
-#else
-	"\tGC:            System Boehm (no typed GC available)\n"
-#endif
-#endif
-#else
-	"\tGC:            none\n"
-#endif /* HAVE_BOEHM_GC */
+	"\tGC:            " USED_GC_NAME "\n"
 #ifdef MONO_ARCH_SIGSEGV_ON_ALTSTACK
     "\tSIGSEGV:       altstack\n"
 #else
@@ -820,6 +819,15 @@ mono_main (int argc, char* argv[])
 			/* Put server-specific optimizations here */
 		} else if (strcmp (argv [i], "--inside-mdb") == 0) {
 			action = DO_DEBUGGER;
+		} else if (strncmp (argv [i], "--wapi=", 7) == 0) {
+			if (strcmp (argv [i] + 7, "hps") == 0) {
+				return mini_wapi_hps (argc - i, argv + i);
+			} else if (strcmp (argv [i] + 7, "semdel") == 0) {
+				return mini_wapi_semdel (argc - i, argv + i);
+			} else {
+				fprintf (stderr, "Invalid --wapi suboption: '%s'\n", argv [i]);
+				return 1;
+			}
 		} else {
 			fprintf (stderr, "Unknown command line option: '%s'\n", argv [i]);
 			return 1;

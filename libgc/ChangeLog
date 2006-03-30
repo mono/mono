@@ -1,3 +1,6 @@
+2006-03-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* configure.in: Applied patch from David S. Miller <davem@davemloft.net>: Fix support for sparc/linux.
 
 Mon Mar 20 18:56:21 CET 2006 Paolo Molaro <lupus@ximian.com>
 

@@ -2101,9 +2101,7 @@ mono_perform_ssapre (MonoCompile *cfg) {
 		printf ("SSAPRE STARTS PROCESSING METHOD %s\n", mono_method_full_name (cfg->method, TRUE));
 	}
 	if (area.cfg->verbose_level >= DUMP_LEVEL) {
-		printf ("BEFORE SSAPRE START\n");
-		mono_print_code (area.cfg);
-		printf ("BEFORE SSAPRE END\n");
+		mono_print_code (area.cfg, "BEFORE SSAPRE");
 	}
 	
 	area.first_in_queue = NULL;
@@ -2143,9 +2141,7 @@ mono_perform_ssapre (MonoCompile *cfg) {
 	}
 	
 	if (area.cfg->verbose_level >= DUMP_LEVEL) {
-		printf ("AFTER SSAPRE START\n");
-		mono_print_code (area.cfg);
-		printf ("AFTER SSAPRE END\n");
+		mono_print_code (area.cfg, "AFTER SSAPRE");
 	}
 	if (area.cfg->verbose_level >= TRACE_LEVEL) {
 		printf ("SSAPRE ENDS PROCESSING METHOD %s\n", mono_method_full_name (cfg->method, TRUE));
