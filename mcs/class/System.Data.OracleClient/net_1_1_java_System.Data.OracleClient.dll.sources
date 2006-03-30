@@ -1,4 +1,5 @@
 #include System.Data.OracleClient.dll.sources
+Mainsoft.Data.Jdbc.Providers.jvm/OracleProvider.cs
 System.Data.OracleClient.jvm/ExceptionHelper.cs
 System.Data.OracleClient.jvm/OracleBFile.cs
 System.Data.OracleClient.jvm/OracleBinary.cs
