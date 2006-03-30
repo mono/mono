@@ -8779,10 +8779,13 @@ mono_op_to_op_imm (int opcode)
 		return OP_STOREI2_MEMBASE_IMM;
 	case OP_STOREI4_MEMBASE_REG:
 		return OP_STOREI4_MEMBASE_IMM;
+
+#if defined(__i386__) || defined (__x86_64__)
 	case OP_X86_PUSH:
 		return OP_X86_PUSH_IMM;
 	case OP_X86_COMPARE_MEMBASE_REG:
 		return OP_X86_COMPARE_MEMBASE_IMM;
+#endif
 
 	case OP_VOIDCALL_REG:
 		return OP_VOIDCALL;
@@ -8882,37 +8885,7 @@ mono_load_membase_to_load_mem (int opcode)
 static inline int
 op_to_op_dest_membase (int opcode)
 {
-#ifdef __i386__
-	switch (opcode) {
-	case OP_IADD:
-		return OP_X86_ADD_MEMBASE_REG;
-	case OP_ISUB:
-		return OP_X86_SUB_MEMBASE_REG;
-	case OP_IAND:
-		return OP_X86_AND_MEMBASE_REG;
-	case OP_IOR:
-		return OP_X86_OR_MEMBASE_REG;
-	case OP_IXOR:
-		return OP_X86_XOR_MEMBASE_REG;
-	case OP_ADD_IMM:
-	case OP_IADD_IMM:
-		return OP_X86_ADD_MEMBASE_IMM;
-	case OP_SUB_IMM:
-	case OP_ISUB_IMM:
-		return OP_X86_SUB_MEMBASE_IMM;
-	case OP_AND_IMM:
-	case OP_IAND_IMM:
-		return OP_X86_AND_MEMBASE_IMM;
-	case OP_OR_IMM:
-	case OP_IOR_IMM:
-		return OP_X86_OR_MEMBASE_IMM;
-	case OP_XOR_IMM:
-	case OP_IXOR_IMM:
-		return OP_X86_XOR_MEMBASE_IMM;
-	}
-#endif
-
-#ifdef __x86_64__
+#if defined(__i386__) || defined(__x86_64__)
 	switch (opcode) {
 	case OP_IADD:
 		return OP_X86_ADD_MEMBASE_REG;
@@ -9509,8 +9482,6 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   like inline_method.
  * - remove inlining restrictions
  * - remove mono_save_args.
- * - spill_global_vars does not play nicely with the fp stack (loads are inserted at
- *   the wrong place).
  * - get rid of redundant loads and stores inserted by spill_global_vars.
  * - add 'introduce a new optimization to simplify some range checks'
  * - fix LNEG and enable cfold of INEG

@@ -131,6 +131,23 @@ remove_bb_from_phis (MonoCompile *cfg, MonoBasicBlock *bb, MonoBasicBlock *targe
 	}
 }
 
+static inline int
+op_phi_to_move (int opcode)
+{
+	switch (opcode) {
+	case OP_PHI:
+		return OP_MOVE;
+	case OP_FPHI:
+		return OP_FMOVE;
+	case OP_VPHI:
+		return OP_VMOVE;
+	default:
+		g_assert_not_reached ();
+	}
+
+	return -1;
+}
+
 static inline void
 record_use (MonoCompile *cfg, MonoInst *var, MonoBasicBlock *bb, MonoInst *ins)
 {
@@ -531,7 +548,9 @@ mono_ssa_compute2 (MonoCompile *cfg)
 				ins->opcode = OP_FPHI;
 				break;
 			case STACK_VTYPE:
-				g_assert_not_reached ();
+				ins->opcode = OP_VPHI;
+				ins->klass = var->klass;
+				break;
 			}
 
 			ins->inst_phi_args =  mono_mempool_alloc0 (cfg->mempool, sizeof (int) * (cfg->bblocks [idx]->in_count + 1));
@@ -621,7 +640,9 @@ mono_ssa_remove2 (MonoCompile *cfg)
 						break;
 
 				if ((bb->in_count > 1) && (j == bb->in_count)) {
-					ins->opcode = ins->opcode == OP_FPHI ? OP_FMOVE : OP_MOVE;
+					ins->opcode = op_phi_to_move (ins->opcode);
+					if (ins->opcode == OP_VMOVE)
+						g_assert (ins->klass);
 					ins->sreg1 = first;
 				} else {
 					for (j = 0; j < bb->in_count; j++) {
@@ -631,7 +652,11 @@ mono_ssa_remove2 (MonoCompile *cfg)
 						if (cfg->verbose_level >= 4)
 							printf ("\tADD R%d <- R%d in BB%d\n", var->dreg, sreg, pred->block_num);
 						if (var->dreg != sreg) {
-							MONO_INST_NEW (cfg, move, (ins->opcode == OP_FPHI) ? OP_FMOVE : OP_MOVE);
+							MONO_INST_NEW (cfg, move, op_phi_to_move (ins->opcode));
+							if (move->opcode == OP_VMOVE) {
+								g_assert (ins->klass);
+								move->klass = ins->klass;
+							}
 							move->dreg = var->dreg;
 							move->sreg1 = sreg;
 							mono_add_ins_to_end (pred, move);
@@ -1335,19 +1360,14 @@ mono_ssa_deadce2 (MonoCompile *cfg)
 		if (info->def && (!info->uses || ((info->uses->next == NULL) && (((MonoVarUsageInfo*)info->uses->data)->inst == info->def)))) {
 			MonoInst *def = info->def;
 
-			/* FIXME: Add more opcodes */
-#ifdef __i386__
 			/* Eliminating FMOVE could screw up the fp stack */
-			if (def->opcode == OP_MOVE) {
-#else
-			if (MONO_IS_MOVE (def)) {
-#endif
+			if (MONO_IS_MOVE (def) && (!MONO_ARCH_USE_FPSTACK || (def->opcode != OP_FMOVE))) {
 				MonoInst *src_var = get_vreg_to_inst (cfg, def->sreg1);
 				if (src_var && !(src_var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT)))
 					add_to_dce_worklist (cfg, info, cfg->vars [src_var->inst_c0], &work_list);
 				def->opcode = OP_NOP;
 				def->dreg = def->sreg1 = def->sreg2 = -1;
-			} else if ((def->opcode == OP_ICONST) || (def->opcode == OP_I8CONST)) {
+			} else if ((def->opcode == OP_ICONST) || (def->opcode == OP_I8CONST) || (def->opcode == OP_VZERO)) {
 				def->opcode = OP_NOP;
 				def->dreg = def->sreg1 = def->sreg2 = -1;
 			} else if (MONO_IS_PHI (def)) {
