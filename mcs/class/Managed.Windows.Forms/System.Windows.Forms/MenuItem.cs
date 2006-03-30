@@ -443,11 +443,12 @@ namespace System.Windows.Forms
 
 		protected virtual void OnDrawItem (DrawItemEventArgs e)
 		{
-			if (DrawItem != null) {
-				DrawItem (this, e);
+			if (OwnerDraw) {
+				if (DrawItem != null)
+					DrawItem (this, e);
 				return;
 			}
-			
+
 			ThemeEngine.Current.DrawMenuItem (this, e);	
 		}
 
@@ -459,7 +460,7 @@ namespace System.Windows.Forms
 
 		protected virtual void OnMeasureItem (MeasureItemEventArgs e)
 		{
-			if (MeasureItem != null)
+			if (OwnerDraw && MeasureItem != null)
 				MeasureItem (this, e);
 		}
 
