@@ -93,14 +93,14 @@ namespace System.Net {
 			return c.BeginInvoke (hostName, requestCallback, stateObject);
 		}
 
-		public static IAsyncResult BeginGetHostEntry (string hostName,
+		public static IAsyncResult BeginGetHostEntry (string hostNameOrAddress,
 			AsyncCallback requestCallback, object stateObject)
 		{
-			if (hostName == null)
-				throw new ArgumentNullException ("hostName");
+			if (hostNameOrAddress == null)
+				throw new ArgumentNullException ("hostNameOrAddress");
 
 			GetHostEntryNameCallback c = new GetHostEntryNameCallback (GetHostEntry);
-			return c.BeginInvoke (hostName, requestCallback, stateObject);
+			return c.BeginInvoke (hostNameOrAddress, requestCallback, stateObject);
 		}
 
 		public static IAsyncResult BeginGetHostEntry (IPAddress hostAddress,
