@@ -1,3 +1,7 @@
+2006-03-30  Raja R Harinath  <harinath@gmail.com>
+
+	* RegexBugs.cs (HangingHyphens): New test from #77626.
+
 2005-11-21  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* CaptureCas.cs: New. CAS tests.

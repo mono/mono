@@ -1,3 +1,9 @@
+2006-03-30  Raja R Harinath  <harinath@gmail.com>
+
+	Fix #77626
+	* parser.cs (Parser.ParseCharacterClass): Set 'last' when we find
+	that a '-' doesn't signify a range.
+
 2005-12-19  Kornél Pál  <kornelpal@hotmail.com>
 
 	* Regex.cs: Added support for regular expressions compiled to

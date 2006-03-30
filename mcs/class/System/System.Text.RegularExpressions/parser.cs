@@ -724,17 +724,16 @@ namespace System.Text.RegularExpressions.Syntax {
 					if (c < last)
 						throw NewParseException ("[x-y] range in reverse order.");
 
-					if (last >=0 )
+					if (last >= 0) {
 						cls.AddRange ((char)last, (char)c);
-					else {
-						cls.AddCharacter ((char)c);
+						last = -1;
+					} else {
 						cls.AddCharacter ('-');
+						cls.AddCharacter ((char)c);
+						last = c;
 					}
-
 					range = false;
-					last = -1;
-				}
-				else {
+				} else {
 					cls.AddCharacter ((char)c);
 					last = c;
 				}

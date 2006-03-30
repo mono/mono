@@ -296,6 +296,13 @@ namespace MonoTests.System.Text.RegularExpressions
 			AssertEquals ("#07", "", mTime.Groups["second"].Value);
 			AssertEquals ("#08", "pm", mTime.Groups["ampm"].Value);
 		}
+
+		[Test]
+		public void HangingHyphens () // bug 77626
+		{
+			Assert ("#01", Regex.IsMatch("mT1[", @"m[0-9A-Za-z_-]+\["));
+			Assert ("#02", Regex.IsMatch("mT1[", @"m[-0-9A-Za-z_]+\["));
+		}
 	}
 }
 
