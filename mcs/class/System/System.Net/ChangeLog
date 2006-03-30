@@ -1,5 +1,9 @@
 2006-03-30  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DownloadStringCompletedEventHandler.cs : missing delegate.
+
+2006-03-30  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Dns.cs : minor argument renaming.
 
 2006-03-28  Atsushi Enomoto  <atsushi@ximian.com>
