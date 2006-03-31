@@ -1,3 +1,8 @@
+2006-03-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* inssel-x86.brg mini-codegen.c mini.c: Merge some changes/fixes from linear-il
+	branch.
+
 2006-03-31  Massimiliano Mantione  <massi@ximian.com>
 
         * local-propagation.c: Added comments to structs and removed
