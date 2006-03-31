@@ -9118,6 +9118,7 @@ mono_handle_global_vregs (MonoCompile *cfg)
 								mono_compile_create_var_for_vreg (cfg, &mono_defaults.double_class->byval_arg, OP_LOCAL, vreg);
 								break;
 							case 'v':
+								mono_compile_create_var_for_vreg (cfg, &ins->klass->byval_arg, OP_LOCAL, vreg);
 								break;
 							default:
 								g_assert_not_reached ();
