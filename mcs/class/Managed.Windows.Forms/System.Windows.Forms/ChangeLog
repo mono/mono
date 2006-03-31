@@ -1,3 +1,7 @@
+2006-03-31  Jackson Harper  <jackson@ximian.com>
+
+	* ScrollableControl.cs: Dont recalc if we are not visible.
+
 2006-03-31  Mike Kestner  <mkestner@novell.com>
 
 	* Control.cs (SetVisibleCore): move the CreateControl call up ahead of

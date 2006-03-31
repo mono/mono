@@ -538,7 +538,7 @@ namespace System.Windows.Forms {
 
 		private void Recalculate (object sender, EventArgs e)
 		{
-			if (!this.auto_scroll && !force_hscroll_visible && !force_vscroll_visible) {
+			if (!Visible || !this.auto_scroll && !force_hscroll_visible && !force_vscroll_visible) {
 				return;
 			}
 
