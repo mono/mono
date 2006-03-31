@@ -143,6 +143,7 @@ namespace System.Drawing.Drawing2D {
 			}
 		}
 
+		[MonoTODO ("Not used inside libgdiplus")]
 		public bool GammaCorrection {
 			get {
 				bool gammaCorrection;
