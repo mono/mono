@@ -2392,8 +2392,12 @@ namespace System.Windows.Forms {
 			switch ((Msg)msg.Msg) {
 				case Msg.WM_SETCURSOR: {
 					Hwnd	hwnd;
-					// Pass to parent window first
+
 					hwnd = Hwnd.GetObjectFromWindow(msg.HWnd);
+					if (hwnd == null)
+						break; // not sure how this happens, but it does
+
+					// Pass to parent window first
 					while ((hwnd.parent != null) && (msg.Result == IntPtr.Zero)) {
 						hwnd = hwnd.parent;
 						NativeWindow.WndProc(hwnd.Handle, Msg.WM_SETCURSOR, msg.HWnd, msg.LParam);
