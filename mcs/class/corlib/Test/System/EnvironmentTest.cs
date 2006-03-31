@@ -157,6 +157,51 @@ namespace MonoTests.System {
 		{
 			Environment.SetEnvironmentVariable ("MONO", "GO", (EnvironmentVariableTarget)Int32.MinValue);
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void SetEnvironmentVariable_NameNull ()
+		{
+			Environment.SetEnvironmentVariable (null, "A");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void SetEnvironmentVariable_NameEmpty ()
+		{
+			Environment.SetEnvironmentVariable ("", "A");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void SetEnvironmentVariable_NameZeroChar ()
+		{
+			Environment.SetEnvironmentVariable ("\0", "A");
+		}
+
+		[Test]
+		public void SetEnvironmentVariable ()
+		{
+			// Test set
+			Environment.SetEnvironmentVariable ("A1", "B1");
+			Environment.SetEnvironmentVariable ("A2", "B2");
+			Environment.SetEnvironmentVariable ("A3", "B3");
+			Assert.AreEqual (Environment.GetEnvironmentVariable ("A1"), "B1");
+			Assert.AreEqual (Environment.GetEnvironmentVariable ("A2"), "B2");
+			Assert.AreEqual (Environment.GetEnvironmentVariable ("A3"), "B3");
+
+			// Test update
+			Environment.SetEnvironmentVariable ("A3", "B4");
+			Assert.AreEqual (Environment.GetEnvironmentVariable ("A3"), "B4");
+
+			// Test delete
+			Environment.SetEnvironmentVariable ("A1", null);
+			Assert.AreEqual (Environment.GetEnvironmentVariables ()["A1"], null);
+			Environment.SetEnvironmentVariable ("A2", "");
+			Assert.AreEqual (Environment.GetEnvironmentVariables ()["A2"], null);
+			Environment.SetEnvironmentVariable ("A3", "\0");
+			Assert.AreEqual (Environment.GetEnvironmentVariables ()["A3"], null);
+		}
 #endif
 	}
 }

@@ -1,3 +1,7 @@
+2006-03-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* EnvironmentTest.cs: Add tests for SetEnvironmentVariable.
+
 2006-03-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TimeSpanTest.cs : updated tests to not fail under run-test-ondotnet
