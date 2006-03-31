@@ -2582,7 +2582,10 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void GetCursorInfo(IntPtr cursor, out int width, out int height, out int hotspot_x, out int hotspot_y) {
-			throw new NotImplementedException ();
+			width = 20;
+			height = 20;
+			hotspot_x = 0;
+			hotspot_y = 0;
 		}
 
 		internal override void GetDisplaySize(out Size size) {

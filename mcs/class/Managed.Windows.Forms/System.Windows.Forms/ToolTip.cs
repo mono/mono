@@ -48,15 +48,14 @@ namespace System.Windows.Forms {
 		internal ArrayList	controls;
 		internal Control	active_control;			// Control for which the tooltip is currently displayed
 		internal Control	last_control;			// last control the mouse was in
-		internal Size		display_size;			// Size of the screen
 		internal Timer		timer;				// Used for the various intervals
 		#endregion	// Local variables
 
 		#region ToolTipWindow Class
 		internal class ToolTipWindow : Control {
 			#region ToolTipWindow Class Local Variables
-			internal StringFormat	string_format;
-			internal ToolTip	owner;
+			internal StringFormat string_format;
+			ToolTip	owner;
 			#endregion	// ToolTipWindow Class Local Variables
 
 			#region ToolTipWindow Class Constructor
@@ -141,12 +140,39 @@ namespace System.Windows.Forms {
 				}
 			}
 			#endregion	// ToolTipWindow Class Protected Instance Methods
+
+			public void Present (Control control, string text)
+			{
+				if (IsDisposed)
+					return;
+
+				Size display_size;
+				XplatUI.GetDisplaySize (out display_size);
+
+				Size size = ThemeEngine.Current.ToolTipSize (this, text);
+				Width = size.Width;
+				Height = size.Height;
+				Text = text;
+
+				int cursor_w, cursor_h, hot_x, hot_y;
+				XplatUI.GetCursorInfo (control.Cursor.Handle, out cursor_w, out cursor_h, out hot_x, out hot_y);
+				Point loc = Control.MousePosition;
+				loc.Y += (cursor_h - hot_y);
+
+				if ((loc.X + Width) > display_size.Width)
+					loc.X = display_size.Width - Width;
+
+				if ((loc.Y + Height) > display_size.Height)
+					loc.Y = Control.MousePosition.Y - Height - hot_y;
+				
+				Location = loc;
+				Visible = true;
+			}
 		}
 		#endregion	// ToolTipWindow Class
 
 		#region Public Constructors & Destructors
 		public ToolTip() {
-			XplatUI.GetDisplaySize(out display_size);
 
 			// Defaults from MS
 			is_active = true;
@@ -326,15 +352,23 @@ namespace System.Windows.Forms {
 		}
 		#endregion	// Protected Instance Methods
 
+		enum TipState {
+			Initial,
+			Show,
+			Down
+		}
+
+		TipState state = TipState.Initial;
+
 		#region Private Methods
-		private void control_MouseEnter(object sender, EventArgs e) {
-			string	text;
-			
+		private void control_MouseEnter(object sender, EventArgs e) 
+		{
 			last_control = (Control)sender;
 
 			// Whatever we're displaying right now, we don't want it anymore
 			tooltip_window.Visible = false;
 			timer.Stop();
+			state = TipState.Initial;
 
 			// if we're in the same control as before (how'd that happen?) or if we're not active, leave
 			if (!is_active || (active_control == (Control)sender)) {
@@ -347,31 +381,9 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			text = (string)tooltip_strings[sender];
+			string text = (string)tooltip_strings[sender];
 			if (text != null && text.Length > 0) {
-				Size size;
 
-				size = ThemeEngine.Current.ToolTipSize(tooltip_window, text);
-				tooltip_window.Width = size.Width;
-				tooltip_window.Height = size.Height;
-				tooltip_window.Text = text;
-
-				// FIXME - this needs to be improved; the tooltip will show up under the mouse, which is annoying; use cursor size once implemented
-
-				if ((Control.MousePosition.X+1+tooltip_window.Width) < display_size.Width) {
-					tooltip_window.Left = Control.MousePosition.X+1;
-				} else {
-					tooltip_window.Left = display_size.Width-tooltip_window.Width;
-				}
-
-				if ((Control.MousePosition.Y+tooltip_window.Height)<display_size.Height) {
-					tooltip_window.Top = Control.MousePosition.Y;
-				} else {
-					tooltip_window.Top = Control.MousePosition.Y-tooltip_window.Height;
-				}
-
-				// Since we get the mouse enter before the mouse leave, active_control will still be non-null if we were in a 
-				// tooltip'd control; should prolly check on X11 too, and make sure that driver behaves the same way
 				if (active_control == null) {
 					timer.Interval = initial_delay;
 				} else {
@@ -379,29 +391,28 @@ namespace System.Windows.Forms {
 				}
 
 				active_control = (Control)sender;
-
-				// We're all set, lets wake the timer (which will then make us visible)
-				timer.Enabled = true;
+				timer.Start ();
 			}
 		}
 
 		private void timer_Tick(object sender, EventArgs e) {
-			// Show our pretty selves
 			timer.Stop();
 
-			// FIXME - Should not need this check../
-			if (tooltip_window.IsDisposed) {
-				return;
-			}
-
-			if (!tooltip_window.Visible) {
-				// The initial_delay timer kicked in
-				tooltip_window.Visible = true;
+			switch (state) {
+			case TipState.Initial:
+				tooltip_window.Present (active_control, (string)tooltip_strings[active_control]);
+				state = TipState.Show;
 				timer.Interval = autopop_delay;
 				timer.Start();
-			} else {
-				// The autopop_delay timer happened
+				break;
+
+			case TipState.Show:
 				tooltip_window.Visible = false;
+				state = TipState.Down;
+				break;
+
+			default:
+				throw new Exception ("Timer shouldn't be running in state: " + state);
 			}
 		}
 
@@ -430,7 +441,6 @@ namespace System.Windows.Forms {
 		}
 
 		private void control_MouseLeave(object sender, EventArgs e) {
-			// In case the timer is still running, stop it
 			timer.Stop();
 
 			if (!MouseInControl(tooltip_window) && !MouseInControl(active_control)) {
@@ -443,10 +453,10 @@ namespace System.Windows.Forms {
 		}
 
 		private void control_MouseMove(object sender, MouseEventArgs e) {
-			// Restart the interval, the mouse moved
-			timer.Stop();
-			timer.Start();
-
+			if (state != TipState.Down) {
+				timer.Stop();
+				timer.Start();
+			}
 		}
 		#endregion	// Private Methods
 	}

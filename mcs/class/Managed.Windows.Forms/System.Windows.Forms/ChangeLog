@@ -1,3 +1,15 @@
+2006-03-31  Mike Kestner  <mkestner@novell.com>
+
+	* ThemeWin32Classic.cs: add some horizontal padding space for the tip
+	text.
+	* ToolTip.cs: Position the tooltip based on where the cursor is at
+	popup time, not at MouseEnter time.  Add a Down state so that we don't
+	redisplay tips without a Leave. Use faked XplatUI.GetCursorInfo for
+	positioning offset. Lookup DisplaySize at positioning time, since it
+	can theoretically change during invocation.
+	* XplatUIWin32.cs: fake GetCursorInfo until pdb can do it properly.
+	* XplatUIX11.cs: fake GetCursorInfo until pdb can do it properly.
+
 2006-03-31  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ThemeWin32Classic.cs: Use CPDrawBorder3D to draw a GroupBox.

@@ -3831,7 +3831,7 @@ namespace System.Windows.Forms
 			SizeF	sizef;
 
 			sizef = tt.DeviceContext.MeasureString(text, tt.Font);
-			return new Size((int)sizef.Width+2, (int)sizef.Height+3);		// Need space for the border
+			return new Size((int)sizef.Width+8, (int)sizef.Height+3);	// Need space for the border
 		}
 		#endregion	// ToolTip
 
