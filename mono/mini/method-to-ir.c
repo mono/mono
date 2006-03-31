@@ -4530,6 +4530,7 @@ decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 	}
 }
 
+#if SIZEOF_VOID_P == 4
 static int lbr_decomp [][2] = {
 	{0, 0}, /* BEQ */
 	{OP_IBGT, OP_IBGE_UN}, /* BGE */
@@ -4550,6 +4551,7 @@ static int lcset_decomp [][2] = {
 	{OP_IBGT, OP_IBGE_UN}, /* CLT */
 	{OP_IBGT_UN, OP_IBGE_UN}, /* CLT_UN */
 };
+#endif
 
 /**
  * decompose_long_opts:
@@ -9546,6 +9548,8 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - put tree optimizations into the deadce pass
  * - run optimize_branches () before local_cprop2 () to get rid of small bblocks
  *   created during inlining -> or dont create the bblocks in the first place.
+ * - transform VCALL's to something other than VOIDCALL since they might need custom
+ *   handling like on amd64.
  * - LAST MERGE: 58789.
  */
 

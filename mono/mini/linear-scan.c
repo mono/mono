@@ -200,7 +200,7 @@ mono_linear_scan (MonoCompile *cfg, GList *vars, GList *regs, regmask_t *used_ma
 				cfg->varinfo [vmv->idx]->dreg = vmv->reg;
 			} else {
 				if (cfg->verbose_level > 2)
-					printf ("COSTLY: %s R%d C%d C%d %s\n", mono_method_full_name (cfg->method, TRUE), vmv->idx, vmv->spill_costs, mono_arch_regalloc_cost (cfg, vmv), mono_arch_regname (vmv->reg));
+					printf ("COSTLY: R%d C%d C%d %s\n", vmv->idx, vmv->spill_costs, mono_arch_regalloc_cost (cfg, vmv), mono_arch_regname (vmv->reg));
 				vmv->reg = -1;
 			}
 		}

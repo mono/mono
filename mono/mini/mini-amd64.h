@@ -244,6 +244,9 @@ typedef struct {
 #define MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE 1
 #define MONO_ARCH_HAVE_CREATE_VARS 1
 
+/* Used for optimization, not complete */
+#define MONO_ARCH_IS_OP_MEMBASE(opcode) ((opcode) == OP_X86_PUSH_MEMBASE)
+
 gboolean
 mono_amd64_is_sse2 (void);
 

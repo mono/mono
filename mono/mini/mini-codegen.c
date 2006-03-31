@@ -1032,7 +1032,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		
 		DEBUG (mono_print_ins_index (i, ins));
 
-#ifdef MONO_ARCH_USE_FPSTACK
+#if MONO_ARCH_USE_FPSTACK
 		if (sreg1_is_fp (spec) || sreg2_is_fp (spec) || dreg_is_fp (spec))
 			has_fp = TRUE;
 #endif
@@ -1065,8 +1065,6 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		}
 		if (spec [MONO_INST_SRC2]) {
 			fp = sreg2_is_fp (spec);
-			if (fp)
-				has_fp = TRUE;
 			if (fp && !reginfof)
 				reginfof = g_malloc0 (sizeof (RegTrack) * rs->next_vfreg);
 			reginfo2 = fp ? reginfof : reginfo;
@@ -1095,8 +1093,6 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			int dest_dreg;
 
 			fp = dreg_is_fp (spec);
-			if (fp)
-				has_fp = TRUE;
 			if (fp && !reginfof)
 				reginfof = g_malloc0 (sizeof (RegTrack) * rs->next_vfreg);
 			reginfod = fp ? reginfof : reginfo;
@@ -1838,7 +1834,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 
 	// FIXME: Set MAX_FREGS to 8
 	// FIXME: Optimize generated code
-#ifdef MONO_ARCH_USE_FPSTACK
+#if MONO_ARCH_USE_FPSTACK
 	/*
 	 * Make a forward pass over the code, simulating the fp stack, making sure the
 	 * arguments required by the fp opcodes are at the top of the stack.
