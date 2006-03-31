@@ -2,6 +2,8 @@
 
 	* XplatUIX11.cs: Somehow we get SETCURSORS for bad windows
 	sometimes.
+	* UpDownBase.cs: Don't CreateGraphics manually, use a
+	Refresh. Ideally we would invalidate the correct areas here.
 
 2006-03-31  Peter Dennis Bartok  <pbartok@novell.com> 
 

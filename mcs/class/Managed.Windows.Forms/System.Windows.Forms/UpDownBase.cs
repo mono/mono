@@ -159,9 +159,7 @@ namespace System.Windows.Forms
 				repeat_counter = 0;
 				repeat_delay = InitialRepeatDelay;
 
-				using (Graphics g = CreateGraphics()) {
-					redraw(g);
-				}
+				Refresh ();
 			}
 
 			protected override void OnMouseMove(MouseEventArgs e) {
@@ -197,9 +195,7 @@ namespace System.Windows.Forms
 					else
 						tmrRepeat.Enabled = false;
 
-					using (Graphics g = CreateGraphics()) {
-						redraw(g);
-					}
+					Refresh ();
 				}
 			}
 
@@ -207,9 +203,7 @@ namespace System.Windows.Forms
 				mouse_pressed = 0;
 				Capture = false;
 
-				using (Graphics g = CreateGraphics()) {
-					redraw(g);
-				}
+				Refresh ();
 			}
 
 			protected override void OnMouseWheel(MouseEventArgs e) {
