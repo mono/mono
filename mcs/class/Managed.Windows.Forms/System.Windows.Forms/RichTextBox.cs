@@ -398,6 +398,32 @@ namespace System.Windows.Forms {
 		}
 
 		[Browsable(false)]
+		[DefaultValue(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[MonoTODO]
+		public bool SelectionBullet {
+			get {
+				return false;
+			}
+
+			set {
+			}
+		}
+
+		[Browsable(false)]
+		[DefaultValue(0)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[MonoTODO]
+		public int SelectionCharOffset {
+			get {
+				return 0;
+			}
+
+			set {
+			}
+		}
+
+		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public Color SelectionColor {
 			get {
@@ -507,6 +533,32 @@ namespace System.Windows.Forms {
 		}
 
 		[Browsable(false)]
+		[DefaultValue(0)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[MonoTODO]
+		public int SelectionHangingIndent {
+			get {
+				return 0;
+			}
+
+			set {
+			}
+		}
+
+		[Browsable(false)]
+		[DefaultValue(0)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[MonoTODO]
+		public int SelectionIndent {
+			get {
+				return 0;
+			}
+
+			set {
+			}
+		}
+
+		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public override int SelectionLength {
 			get {
@@ -515,6 +567,44 @@ namespace System.Windows.Forms {
 
 			set {
 				base.SelectionLength = value;
+			}
+		}
+
+		[Browsable(false)]
+		[DefaultValue(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[MonoTODO]
+		public bool SelectionProtected {
+			get {
+				return false;
+			}
+
+			set {
+			}
+		}
+
+		[Browsable(false)]
+		[DefaultValue(0)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[MonoTODO]
+		public int SelectionRightIndent {
+			get {
+				return 0;
+			}
+
+			set {
+			}
+		}
+
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[MonoTODO]
+		public int[] SelectionTabs {
+			get {
+				return new int[0];
+			}
+
+			set {
 			}
 		}
 
@@ -532,6 +622,17 @@ namespace System.Windows.Forms {
 				}
 
 				return RichTextBoxSelectionTypes.Text;
+			}
+		}
+
+		[DefaultValue(false)]
+		[MonoTODO]
+		public bool ShowSelectionMargin {
+			get {
+				return false;
+			}
+
+			set {
 			}
 		}
 
