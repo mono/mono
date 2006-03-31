@@ -1067,6 +1067,26 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		private void MapWindow(Hwnd hwnd, WindowType windows) {
+			hwnd.mapped = true;
+			if ((windows & WindowType.Whole) != 0) {
+				XMapWindow(DisplayHandle, hwnd.whole_window);
+			}
+			if ((windows & WindowType.Client) != 0) {
+				XMapWindow(DisplayHandle, hwnd.client_window);
+			}
+		}
+
+		private void UnmapWindow(Hwnd hwnd, WindowType windows) {
+			hwnd.mapped = false;
+			if ((windows & WindowType.Whole) != 0) {
+				XUnmapWindow(DisplayHandle, hwnd.whole_window);
+			}
+			if ((windows & WindowType.Client) != 0) {
+				XUnmapWindow(DisplayHandle, hwnd.client_window);
+			}
+		}
+
 		private void UpdateMessageQueue () {
 			DateTime	now;
 			int		pending;
@@ -1244,6 +1264,26 @@ namespace System.Windows.Forms {
 						break;
 					}
 
+					case XEventName.MapNotify: {
+						Hwnd hwnd;
+
+						hwnd = Hwnd.GetObjectFromWindow(xevent.MapEvent.window);
+						if ((hwnd != null) && (hwnd.client_window == xevent.MapEvent.window)) {
+							hwnd.mapped = true;
+						}
+						break;
+					}
+
+					case XEventName.UnmapNotify: {
+						Hwnd hwnd;
+
+						hwnd = Hwnd.GetObjectFromWindow(xevent.MapEvent.window);
+						if ((hwnd != null) && (hwnd.client_window == xevent.MapEvent.window)) {
+							hwnd.mapped = false;
+						}
+						break;
+					}
+
 					case XEventName.KeyPress:
 					case XEventName.KeyRelease:
 					case XEventName.ButtonPress:
@@ -1367,7 +1407,7 @@ namespace System.Windows.Forms {
 			return 0;
 		}
 
-		private void DestroyChildWindow(Control c) {
+		private void SendWMDestroyMessages(Control c) {
 			Hwnd		hwnd;
 			int		i;
 			Control[]	controls;
@@ -1375,16 +1415,23 @@ namespace System.Windows.Forms {
 			if (c != null) {
 				controls = c.child_controls.GetAllControls ();
 
+				#if DriverDebugDestroy
+					Console.WriteLine("Destroying {0} [Child of {1}]", XplatUI.Window(controls[i].Handle), XplatUI.Window(controls[i].parent.Handle));
+				#endif
+
+				if (c.IsHandleCreated) {
+					hwnd = Hwnd.ObjectFromHandle(c.Handle);
+					SendMessage(c.Handle, Msg.WM_DESTROY, IntPtr.Zero, IntPtr.Zero);
+				}
+
 				for (i = 0; i < controls.Length; i++) {
+					SendWMDestroyMessages(controls[i]);
 					if (controls[i].IsHandleCreated) {
 						hwnd = Hwnd.ObjectFromHandle(controls[i].Handle);
-						#if DriverDebugDestroy
-							Console.WriteLine("Destroying {0} [Child of {1}]", XplatUI.Window(controls[i].Handle), XplatUI.Window(controls[i].parent.Handle));
-						#endif
-						SendMessage(controls[i].Handle, Msg.WM_DESTROY, IntPtr.Zero, IntPtr.Zero);
-						hwnd.Dispose();
+						if (hwnd != null) {
+							hwnd.Dispose();
+						}
 					}
-					DestroyChildWindow(controls[i]);
 				}
 			}
 		}
@@ -1425,6 +1472,7 @@ namespace System.Windows.Forms {
 		#region	Callbacks
 		private void MouseHover(object sender, EventArgs e) {
 			XEvent xevent;
+
 			HoverState.Timer.Enabled = false;
 
 			if (HoverState.Window != IntPtr.Zero) {
@@ -1782,7 +1830,6 @@ namespace System.Windows.Forms {
 
 
 		internal override void CaretVisible(IntPtr handle, bool visible) {
-			// Visible is cumulative; two hides require two shows before the caret is visible again
 			if (Caret.Hwnd == handle) {
 				if (visible) {
 					if (!Caret.Visible) {
@@ -2054,14 +2101,13 @@ namespace System.Windows.Forms {
 				XSelectInput(DisplayHandle, hwnd.client_window, new IntPtr ((int)SelectInputMask));
 
 				if ((cp.Style & (int)WindowStyles.WS_VISIBLE) != 0) {
-					XMapWindow(DisplayHandle, hwnd.whole_window);
-					XMapWindow(DisplayHandle, hwnd.client_window);
+					MapWindow(hwnd, WindowType.Both);
 					hwnd.visible = true;
 				}
 			}
 
 			if ((cp.ExStyle & (int) WindowExStyles.WS_EX_TOPMOST) != 0) {
-				Console.WriteLine ("Setting transient:  " + XSetTransientForHint (DisplayHandle, hwnd.whole_window, RootWindow));
+				XSetTransientForHint (DisplayHandle, hwnd.whole_window, RootWindow);
 			}
 
 			SetWMStyles(hwnd, cp);
@@ -2417,6 +2463,19 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		private void DestroyCaretInternal() {
+			if (Caret.Visible == true) {
+				Caret.Timer.Stop();
+			}
+			if (Caret.gc != IntPtr.Zero) {
+				XFreeGC(DisplayHandle, Caret.gc);
+				Caret.gc = IntPtr.Zero;
+			}
+			Caret.Hwnd = IntPtr.Zero;
+			Caret.Visible = false;
+			Caret.On = false;
+		}
+
 		internal override void DestroyCursor(IntPtr cursor) {
 			lock (XlibLock) {
 				XFreeCursor(DisplayHandle, cursor);
@@ -2444,11 +2503,8 @@ namespace System.Windows.Forms {
 				DestroyCaret(handle);
 			}
 
-			// Send destroy message
-			SendMessage(handle, Msg.WM_DESTROY, IntPtr.Zero, IntPtr.Zero);
 
-			// Mark our children as gone as well
-			DestroyChildWindow(Control.ControlNativeWindow.ControlFromHandle(handle));
+			SendWMDestroyMessages(Control.ControlNativeWindow.ControlFromHandle(hwnd.Handle));
 
 			lock (XlibLock) {
 				if (hwnd.client_window != IntPtr.Zero) {
@@ -3101,10 +3157,14 @@ namespace System.Windows.Forms {
 				}
 
 				case XEventName.Expose: {
-					if (PostQuitState) {
+					if (PostQuitState || !hwnd.Mapped) {
+						if (client) {
+							hwnd.expose_pending = false;
+						} else {
+							hwnd.nc_expose_pending = false;
+						}
 						goto ProcessNextMessage;
 					}
-
 
 					if (client) {
 						if (!hwnd.expose_pending) {
@@ -3169,6 +3229,9 @@ namespace System.Windows.Forms {
 
 					// We may get multiple for the same window, act only one the first (when Hwnd still knows about it)
 					if ((hwnd != null) && (hwnd.client_window == xevent.DestroyWindowEvent.window)) {
+						if (Caret.Window == hwnd.client_window) {
+							DestroyCaretInternal();
+						}
 						msg.hwnd = hwnd.client_window;
 						msg.message=Msg.WM_DESTROY;
 						hwnd.Dispose();
@@ -3467,7 +3530,7 @@ namespace System.Windows.Forms {
 			
 			if (client) {
 				hwnd.client_dc = Graphics.FromHwnd (hwnd.client_window);
-				hwnd.client_dc.SetClip(hwnd.invalid);
+				//hwnd.client_dc.SetClip(hwnd.invalid);
 				paint_event = new PaintEventArgs(hwnd.client_dc, hwnd.invalid);
 				hwnd.expose_pending = false;
 
@@ -3917,8 +3980,7 @@ namespace System.Windows.Forms {
 
 						s = ((Form)Control.FromHandle(handle)).WindowState;
 
-						XMapWindow(DisplayHandle, hwnd.whole_window);
-						XMapWindow(DisplayHandle, hwnd.client_window);
+						MapWindow(hwnd, WindowType.Both);
 
 						switch(s) {
 							case FormWindowState.Minimized:	SetWindowState(handle, FormWindowState.Minimized); break;
@@ -3926,12 +3988,11 @@ namespace System.Windows.Forms {
 						}
 
 					} else {
-						XMapWindow(DisplayHandle, hwnd.whole_window);
-						XMapWindow(DisplayHandle, hwnd.client_window);
+						MapWindow(hwnd, WindowType.Both);
 					}
 					SendMessage(handle, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
 				} else {
-					XUnmapWindow(DisplayHandle, hwnd.whole_window);
+					UnmapWindow(hwnd, WindowType.Whole);
 				}
 			}
 			return true;
@@ -3986,19 +4047,14 @@ namespace System.Windows.Forms {
 			// X requires a sanity check for width & height; otherwise it dies
 			if (hwnd.zero_sized && width > 0 && height > 0) {
 				if (hwnd.visible) {
-					XMapWindow(DisplayHandle, hwnd.whole_window);
+					MapWindow(hwnd, WindowType.Whole);
 				}
 				hwnd.zero_sized = false;
 			}
 
-			if (width < 1) {
+			if ((width < 1) || (height < 1)) {
 				hwnd.zero_sized = true;
-				XUnmapWindow(DisplayHandle, hwnd.whole_window);
-			}
-
-			if (height < 1) {
-				hwnd.zero_sized = true;
-				XUnmapWindow(DisplayHandle, hwnd.whole_window);
+				UnmapWindow(hwnd, WindowType.Whole);
 			}
 
 			client_rect = Hwnd.GetClientRectangle(hwnd.border_style, hwnd.menu, hwnd.title_style, hwnd.caption_height, hwnd.tool_caption_height, width, height);
@@ -4048,8 +4104,7 @@ namespace System.Windows.Forms {
 				case FormWindowState.Normal: {
 					lock (XlibLock) {
 						if (current_state == FormWindowState.Minimized) {
-							XMapWindow(DisplayHandle, hwnd.whole_window);
-							XMapWindow(DisplayHandle, hwnd.client_window);
+							MapWindow(hwnd, WindowType.Both);
 						} else if (current_state == FormWindowState.Maximized) {
 							SendNetWMMessage(hwnd.whole_window, NetAtoms[(int)NA._NET_WM_STATE], (IntPtr)2 /* toggle */, NetAtoms[(int)NA._NET_WM_STATE_MAXIMIZED_HORZ], NetAtoms[(int)NA._NET_WM_STATE_MAXIMIZED_VERT]);
 						}
@@ -4071,8 +4126,7 @@ namespace System.Windows.Forms {
 				case FormWindowState.Maximized: {
 					lock (XlibLock) {
 						if (current_state == FormWindowState.Minimized) {
-							XMapWindow(DisplayHandle, hwnd.whole_window);
-							XMapWindow(DisplayHandle, hwnd.client_window);
+							MapWindow(hwnd, WindowType.Both);
 						}
 
 						SendNetWMMessage(hwnd.whole_window, NetAtoms[(int)NA._NET_WM_STATE], (IntPtr)1 /* Add */, NetAtoms[(int)NA._NET_WM_STATE_MAXIMIZED_HORZ], NetAtoms[(int)NA._NET_WM_STATE_MAXIMIZED_VERT]);
@@ -4170,8 +4224,7 @@ namespace System.Windows.Forms {
 					Console.WriteLine("Adding Systray Whole:{0:X}, Client:{1:X}", hwnd.whole_window.ToInt32(), hwnd.client_window.ToInt32());
 				#endif
 
-				XUnmapWindow(DisplayHandle, hwnd.whole_window);
-				XUnmapWindow(DisplayHandle, hwnd.client_window);
+				UnmapWindow(hwnd, WindowType.Whole);
 
 				// Oh boy.
 				XDestroyWindow(DisplayHandle, hwnd.client_window);
@@ -4239,7 +4292,7 @@ namespace System.Windows.Forms {
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
-			XUnmapWindow(DisplayHandle, hwnd.whole_window);
+			UnmapWindow(hwnd, WindowType.Whole);
 			SetParent(hwnd.whole_window, FosterParent);
 
 			// The caller can now re-dock it later...

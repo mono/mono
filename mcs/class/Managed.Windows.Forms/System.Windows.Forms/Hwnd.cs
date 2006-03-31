@@ -54,6 +54,7 @@ namespace System.Windows.Forms {
 		internal bool		allow_drop;
 		internal Hwnd		parent;
 		internal bool		visible;
+		internal bool		mapped;
 		internal uint		opacity;
 		internal bool		enabled;
 		internal bool		zero_sized;
@@ -421,6 +422,24 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		public bool Mapped {
+			get {
+				if (!mapped) {
+					return false;
+				}
+
+				if (parent != null) {
+					return parent.mapped;
+				}
+
+				return true;
+			}
+
+			set {
+				mapped = value;
+			}
+		}
+
 		public int CaptionHeight {
 			get { return caption_height; }
 			set { caption_height = value; }
@@ -567,7 +586,7 @@ namespace System.Windows.Forms {
 		}
 
 		public override string ToString() {
-			return String.Format("Hwnd, ClientWindow:0x{0:X}, WholeWindow:0x{1:X}, Parent:[{2:X}]", client_window.ToInt32(), whole_window.ToInt32(), parent != null ? parent.ToString() : "<null>");
+			return String.Format("Hwnd, Mapped:{3} ClientWindow:0x{0:X}, WholeWindow:0x{1:X}, Parent:[{2:X}]", client_window.ToInt32(), whole_window.ToInt32(), parent != null ? parent.ToString() : "<null>", Mapped);
 		}
 
 		#endregion	// Methods

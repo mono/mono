@@ -1,3 +1,24 @@
+2006-03-31  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* XplatUIX11.cs: 
+	  - We now track the mapping state of windows. If a window (or 
+	    one of it's parents) is not mapped we no longer permit
+	    WM_PAINT messages to be generated since we'd otherwise get 
+	    lots of BadMatch X errors. Jackson did all the work figuring
+	    out the problem.
+	  - Destroying the caret if the window it's contained in is 
+	    destroyed. Can't use regular DestroyCaret method since it
+	    might fall into a drawing function (trying to remove the
+	    caret) and with that generate new BadMatch errors. Again,
+	    Jackson tracked this down.
+	  - Changed DestroyChildWindows to SendWMDestroyMessages, we now
+	    make sure we send the messages to all windows. (The old code
+	    would send the WM_DESTROY to the window, and then all child
+	    windows would be 'gone' because the WM_DESTROY handle lookup
+	    would no longer find the destroyed window)
+	* Hwnd.cs: Added Mapping property to track mapping state of hwnd
+	* X11Structs.cs: Added WindowType enum for MapWindow/UnmapWindow
+
 2006-03-31  Jackson Harper  <jackson@ximian.com>
 
 	* ScrollableControl.cs: Dont recalc if we are not visible.
@@ -103,7 +124,6 @@
 	  - Making sure the active control is selected when the control is created
 	* CurrencyManager.cs: Removed obsolete TODO
 
->>>>>>> .r58862
 2006-03-29  Mike Kestner  <mkestner@novell.com>
 
 	* *.cs: fix remaining corcompare issues for 1.1 API with the exception
@@ -335,7 +355,6 @@
 	* ContextMenu.cs (Show): use the position parameter instead of just
 	showing at the MousePosition.
 
->>>>>>> .r58288
 2006-03-21  Jackson Harper  <jackson@ximian.com>
 
 	* TabControl.cs: Remove the call to ProcessKeyEventArgs and let

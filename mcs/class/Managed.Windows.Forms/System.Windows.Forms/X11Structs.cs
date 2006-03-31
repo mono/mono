@@ -1599,4 +1599,12 @@ namespace System.Windows.Forms {
 		XIMStatusNothing	= 0x0400,
 		XIMStatusNone		= 0x0800,
 	}
+
+	[Flags]
+	internal enum WindowType {
+		Client			= 1,
+		Whole			= 2,
+		Both			= 3
+	}
+
 }
