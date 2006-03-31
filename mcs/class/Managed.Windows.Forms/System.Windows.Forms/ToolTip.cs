@@ -400,6 +400,8 @@ namespace System.Windows.Forms {
 
 			switch (state) {
 			case TipState.Initial:
+				if (active_control == null)
+					return;
 				tooltip_window.Present (active_control, (string)tooltip_strings[active_control]);
 				state = TipState.Show;
 				timer.Interval = autopop_delay;

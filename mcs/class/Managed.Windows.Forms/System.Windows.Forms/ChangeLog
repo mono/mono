@@ -1,5 +1,11 @@
 2006-03-31  Mike Kestner  <mkestner@novell.com>
 
+	* MenuAPI.cs: setup menu.tracker for popup/context menus.
+	* ToolTip.cs: guard against timer expirations with no active control.
+	Not sure why it happened.
+
+2006-03-31  Mike Kestner  <mkestner@novell.com>
+
 	* ThemeWin32Classic.cs: add some horizontal padding space for the tip
 	text.
 	* ToolTip.cs: Position the tooltip based on where the cursor is at

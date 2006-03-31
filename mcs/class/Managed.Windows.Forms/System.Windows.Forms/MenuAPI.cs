@@ -183,6 +183,7 @@ namespace System.Windows.Forms {
 			menu.Wnd = new PopUpWindow (menu);
 			MenuTracker tracker = new MenuTracker (menu);
 			tracker.active = true;
+			menu.tracker = tracker;
 
 			menu.Wnd.Location =  menu.Wnd.PointToClient (pnt);
 
