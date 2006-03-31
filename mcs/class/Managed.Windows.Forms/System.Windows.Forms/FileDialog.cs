@@ -1321,11 +1321,12 @@ namespace System.Windows.Forms {
 				private Image image = null;
 				private PopupButtonState popupButtonState = PopupButtonState.Normal;
 				private StringFormat text_format = new StringFormat();
+				private Rectangle text_rect = Rectangle.Empty;
 				
 				public PopupButton ()
 				{
 					text_format.Alignment = StringAlignment.Center;
-					text_format.LineAlignment = StringAlignment.Far;
+					text_format.LineAlignment = StringAlignment.Near;
 					
 					SetStyle (ControlStyles.DoubleBuffer, true);
 					SetStyle (ControlStyles.AllPaintingInWmPaint, true);
@@ -1375,7 +1376,8 @@ namespace System.Windows.Forms {
 					}
 					
 					if (Text != String.Empty) {
-						Rectangle text_rect = Rectangle.Inflate (ClientRectangle, -4, 0);
+						if (text_rect == Rectangle.Empty)
+							text_rect = new Rectangle (0, Height - 30, Width, Height - 30); 
 						
 						gr.DrawString (Text, Font, ThemeEngine.Current.ResPool.GetSolidBrush (ForeColor), text_rect, text_format);
 					}
@@ -1449,43 +1451,43 @@ namespace System.Windows.Forms {
 				mycomputerButton = new PopupButton ();
 				networkButton = new PopupButton ();
 				
-				recentlyusedButton.Size = new Size (82, 64);
-				recentlyusedButton.Image = ThemeEngine.Current.Images (UIIcon.PlacesRecentDocuments, 38);
+				recentlyusedButton.Size = new Size (81, 64);
+				recentlyusedButton.Image = ThemeEngine.Current.Images (UIIcon.PlacesRecentDocuments, 30);
 				recentlyusedButton.BackColor = BackColor;
 				recentlyusedButton.ForeColor = Color.White;
-				recentlyusedButton.Location = new Point (2, 2);
+				recentlyusedButton.Location = new Point (0, 0);
 				recentlyusedButton.Text = "Recently\nused";
 				recentlyusedButton.Click += new EventHandler (OnClickButton);
 				
-				desktopButton.Image = ThemeEngine.Current.Images (UIIcon.PlacesDesktop, 38);
+				desktopButton.Image = ThemeEngine.Current.Images (UIIcon.PlacesDesktop, 30);
 				desktopButton.BackColor = BackColor;
 				desktopButton.ForeColor = Color.White;
-				desktopButton.Size = new Size (82, 64);
-				desktopButton.Location = new Point (2, 66);
+				desktopButton.Size = new Size (81, 64);
+				desktopButton.Location = new Point (0, 64);
 				desktopButton.Text = "Desktop";
 				desktopButton.Click += new EventHandler (OnClickButton);
 				
-				personalButton.Image = ThemeEngine.Current.Images (UIIcon.PlacesPersonal, 38);
+				personalButton.Image = ThemeEngine.Current.Images (UIIcon.PlacesPersonal, 30);
 				personalButton.BackColor = BackColor;
 				personalButton.ForeColor = Color.White;
-				personalButton.Size = new Size (82, 64);
-				personalButton.Location = new Point (2, 130);
+				personalButton.Size = new Size (81, 64);
+				personalButton.Location = new Point (0, 128);
 				personalButton.Text = "Personal";
 				personalButton.Click += new EventHandler (OnClickButton);
 				
-				mycomputerButton.Image = ThemeEngine.Current.Images (UIIcon.PlacesMyComputer, 38);
+				mycomputerButton.Image = ThemeEngine.Current.Images (UIIcon.PlacesMyComputer, 30);
 				mycomputerButton.BackColor = BackColor;
 				mycomputerButton.ForeColor = Color.White;
-				mycomputerButton.Size = new Size (82, 64);
-				mycomputerButton.Location = new Point (2, 194);
+				mycomputerButton.Size = new Size (81, 64);
+				mycomputerButton.Location = new Point (0, 192);
 				mycomputerButton.Text = "My Computer";
 				mycomputerButton.Click += new EventHandler (OnClickButton);
 				
-				networkButton.Image = ThemeEngine.Current.Images (UIIcon.PlacesMyNetwork, 38);
+				networkButton.Image = ThemeEngine.Current.Images (UIIcon.PlacesMyNetwork, 30);
 				networkButton.BackColor = BackColor;
 				networkButton.ForeColor = Color.White;
-				networkButton.Size = new Size (82, 64);
-				networkButton.Location = new Point (2, 258);
+				networkButton.Size = new Size (81, 64);
+				networkButton.Location = new Point (0, 256);
 				networkButton.Text = "My Network";
 				networkButton.Click += new EventHandler (OnClickButton);
 				

@@ -1,5 +1,10 @@
 2006-03-30  Alexander Olk  <alex.olk@googlemail.com>
 
+	* FileDialog.cs: Visual enhancement for the popup buttons in 
+	  PopupButtonPanel
+
+2006-03-30  Alexander Olk  <alex.olk@googlemail.com>
+
 	* ColorDialog.cs, FontDialog.cs: Make use of the updated 3D border
 	  code
 
