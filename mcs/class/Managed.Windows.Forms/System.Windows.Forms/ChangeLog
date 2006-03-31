@@ -2,7 +2,7 @@
 
 	* XplatUIX11.cs: Only send mouseleave for our client windows, not
 	  for the whole window (otherwise we get WM_MOUSE_LEAVE twice for
-	  a window
+	  a window)
 
 2006-03-30  Alexander Olk  <alex.olk@googlemail.com>
 
