@@ -1,3 +1,9 @@
+2006-03-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_System_Environment_InternalSetEnvironmentVariable): New icall.
+
+	* icall.c: Fix some warnings.
+
 2006-03-29  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* culture-info-table.h : regenerated.
