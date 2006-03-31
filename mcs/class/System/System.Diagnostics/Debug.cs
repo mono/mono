@@ -213,6 +213,20 @@ namespace System.Diagnostics {
 		{
 			TraceImpl.WriteLineIf (condition, message, category);
 		}
+
+#if NET_2_0
+		[Conditional("DEBUG")]
+		public static void Print (string message)
+		{
+			TraceImpl.WriteLine (message);
+		}
+
+		[Conditional("DEBUG")]
+		public static void Print (string format, params Object[] args)
+		{
+			TraceImpl.WriteLine (String.Format (format, args));
+		}
+#endif
 	}
 }
 
