@@ -115,37 +115,31 @@ namespace System.Windows.Forms {
 			hueTextBox.Location = new Point (324, 203);
 			hueTextBox.Size = new Size (27, 21);
 			hueTextBox.TabIndex = 11;
-			hueTextBox.TextAlign = HorizontalAlignment.Right;
 			hueTextBox.MaxLength = 3;
 			// satTextBox
 			satTextBox.Location = new Point (324, 225);
 			satTextBox.Size = new Size (27, 21);
 			satTextBox.TabIndex = 15;
-			satTextBox.TextAlign = HorizontalAlignment.Right;
 			satTextBox.MaxLength = 3;
 			// greenTextBox
 			greenTextBox.Location = new Point (404, 225);
 			greenTextBox.Size = new Size (27, 21);
 			greenTextBox.TabIndex = 18;
-			greenTextBox.TextAlign = HorizontalAlignment.Right;
 			greenTextBox.MaxLength = 3;
 			// briTextBox
 			briTextBox.Location = new Point (324, 247);
 			briTextBox.Size = new Size (27, 21);
 			briTextBox.TabIndex = 16;
-			briTextBox.TextAlign = HorizontalAlignment.Right;
 			briTextBox.MaxLength = 3;
 			// blueTextBox
 			blueTextBox.Location = new Point (404, 247);
 			blueTextBox.Size = new Size (27, 21);
 			blueTextBox.TabIndex = 19;
-			blueTextBox.TextAlign = HorizontalAlignment.Right;
 			blueTextBox.MaxLength = 3;
 			// redTextBox
 			redTextBox.Location = new Point (404, 203);
 			redTextBox.Size = new Size (27, 21);
 			redTextBox.TabIndex = 17;
-			redTextBox.TextAlign = HorizontalAlignment.Right;
 			redTextBox.MaxLength = 3;
 			
 			// redLabel
@@ -498,18 +492,21 @@ namespace System.Windows.Forms {
 		// not working 100 %, S.W.F.TextBox isn't finished yet
 		void OnKeyPressTextBoxes (object sender, KeyPressEventArgs e)
 		{
-			// accept only '0', '1', ... , '9'
-			// 48 = '0', 57 = '9'
-			if (e.KeyChar < (char)48 || e.KeyChar > (char)57)
+			if (Char.IsLetter (e.KeyChar) || Char.IsWhiteSpace (e.KeyChar) || Char.IsPunctuation (e.KeyChar)) {
 				e.Handled = true;
+				return; 
+			}
 			
 			TextChangedTextBoxes (sender);
 		}
 		
 		// not working 100 %, S.W.F.TextBox isn't finished yet
+		// setting TextBox.Maxlength gives us weird results
 		void TextChangedTextBoxes (object sender)
 		{
-			if (((TextBox)sender).Text.Length == 0)
+			TextBox tmp_box = sender as TextBox;
+			
+			if (tmp_box.Text.Length == 0)
 				return;
 			
 			int val;
@@ -833,12 +830,10 @@ namespace System.Windows.Forms {
 				{
 					base.OnPaint (pe);
 					
-//					pe.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), 0, 0, 26, 23);
-					
 					pe.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (internalcolor),
 								   new Rectangle (4, 4, 17, 15));
 					
-					DrawBorder (pe.Graphics, new Rectangle (4, 4, 17, 15));
+					ControlPaint.DrawBorder3D (pe.Graphics, 3, 3, 19, 17, Border3DStyle.Sunken);
 					
 					if (isSelected) {
 						pe.Graphics.DrawRectangle (ThemeEngine.Current.ResPool.GetPen (Color.Black),
@@ -866,13 +861,6 @@ namespace System.Windows.Forms {
 					Invalidate ();
 					
 					base.OnLostFocus (e);
-				}
-				
-				private void DrawBorder (Graphics dc, Rectangle rect)
-				{
-					Pen pen = ThemeEngine.Current.ResPool.GetPen (Color.Black);
-					dc.DrawLine (pen, rect.X, rect.Y, rect.X, rect.Bottom - 1);
-					dc.DrawLine (pen, rect.X + 1, rect.Y, rect.Right - 1, rect.Y);
 				}
 			}
 			
@@ -913,7 +901,7 @@ namespace System.Windows.Forms {
 				userSmallColorControl [15] = new SmallColorControl (Color.White);
 				
 				smallColorControl = new SmallColorControl [48];
-				smallColorControl [0] = new SmallColorControl (Color.FromArgb (((Byte)(255)), ((Byte)(128)), ((Byte)(138))));
+				smallColorControl [0] = new SmallColorControl (Color.FromArgb (((Byte)(255)), ((Byte)(128)), ((Byte)(128))));
 				smallColorControl [1] = new SmallColorControl (Color.FromArgb (((Byte)(128)), ((Byte)(128)), ((Byte)(64))));
 				smallColorControl [2] = new SmallColorControl (Color.Gray);
 				smallColorControl [3] = new SmallColorControl (Color.FromArgb (((Byte)(128)), ((Byte)(0)), ((Byte)(255))));

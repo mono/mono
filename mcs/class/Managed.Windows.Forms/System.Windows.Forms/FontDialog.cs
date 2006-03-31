@@ -260,6 +260,7 @@ namespace System.Windows.Forms
 			examplePanel.Location = new Point( 8, 20 );
 			examplePanel.TabIndex = 0;
 			examplePanel.Size = new Size( 156, 40 );
+			examplePanel.BorderStyle = BorderStyle.Fixed3D;
 			
 			form.AcceptButton = okButton;
 			
@@ -680,8 +681,6 @@ namespace System.Windows.Forms
 			SolidBrush brush = ThemeEngine.Current.ResPool.GetSolidBrush( color );
 			
 			e.Graphics.FillRectangle( ThemeEngine.Current.ResPool.GetSolidBrush( SystemColors.Control ), 0, 0, 156, 40 );
-			
-			ControlPaint.DrawBorder3D(e.Graphics, e.ClipRectangle, Border3DStyle.SunkenInner);
 			
 			string text = "AaBbYyZz";
 			
