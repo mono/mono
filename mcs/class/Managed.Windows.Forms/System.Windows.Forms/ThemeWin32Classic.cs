@@ -1350,22 +1350,9 @@ namespace System.Windows.Forms
 			SizeF		size;
 			int		width;
 			int		y;
-			Rectangle	rect;
 
-			rect = box.ClientRectangle;
-
-			// Needed once the Dark/Light code below is enabled again
-			//Color disabled = ColorGrayText;
+			dc.FillRectangle (ResPool.GetSolidBrush (box.BackColor), box.ClientRectangle);
 			
-			Pen pen_light = ResPool.GetPen (Color.FromArgb (255,255,255,255));
-			Pen pen_dark = ResPool.GetPen (Color.FromArgb (255, 128, 128,128));
-			
-			// TODO: When the Light and Dark methods work this code should be activate it
-			//Pen pen_light = new Pen (ControlPaint.Light (disabled, 1));
-			//Pen pen_dark = new Pen (ControlPaint.Dark (disabled, 0));
-
-			dc.FillRectangle (ResPool.GetSolidBrush (box.BackColor), rect);
-
 			text_format = new StringFormat();
 			text_format.HotkeyPrefix = HotkeyPrefix.Show;
 
@@ -1378,28 +1365,22 @@ namespace System.Windows.Forms
 			y = box.Font.Height / 2;
 			
 			/* Draw group box*/
-			dc.DrawLine (pen_dark, 0, y, 8, y); // top 
-			dc.DrawLine (pen_light, 0, y + 1, 8, y + 1);			
-			dc.DrawLine (pen_dark, 8 + width, y, box.Width, y);			
-			dc.DrawLine (pen_light, 8 + width, y + 1, box.Width, y + 1);
-			
-			dc.DrawLine (pen_dark, 0, y + 1, 0, box.Height); // left
-			dc.DrawLine (pen_light, 1, y + 1, 1, box.Height);			
-			
-			dc.DrawLine (pen_dark, 0, box.Height - 2, box.Width,  box.Height - 2); // bottom
-			dc.DrawLine (pen_light, 0, box.Height - 1, box.Width,  box.Height - 1);
-			
-			dc.DrawLine (pen_dark, box.Width - 2, y,  box.Width - 2, box.Height - 2); // right
-			dc.DrawLine (pen_light, box.Width - 1, y, box.Width - 1, box.Height - 2);
-			
+			CPDrawBorder3D (dc, new Rectangle (0, y, box.Width, box.Height - y), Border3DStyle.Etched, Border3DSide.Left | Border3DSide.Right | Border3DSide.Top | Border3DSide.Bottom, box.BackColor);
 			
 			/* Text */
-			if (box.Enabled) {
-				dc.DrawString (box.Text, box.Font, ResPool.GetSolidBrush (box.ForeColor), 10, 0, text_format);
-			} else {
-				CPDrawStringDisabled (dc, box.Text, box.Font, box.ForeColor, 
-					new RectangleF (10, 0, width,  box.Font.Height), text_format);
+			if (box.Text.Length != 0) {
+				Pen pen = ResPool.GetPen (box.BackColor);
+				dc.DrawLine (pen, 9, y, 8 + width, y);
+				dc.DrawLine (pen, 9, y + 1, 8 + width, y + 1);
+				
+				if (box.Enabled) {
+					dc.DrawString (box.Text, box.Font, ResPool.GetSolidBrush (box.ForeColor), 10, 0, text_format);
+				} else {
+					CPDrawStringDisabled (dc, box.Text, box.Font, box.ForeColor, 
+							      new RectangleF (10, 0, width,  box.Font.Height), text_format);
+				}
 			}
+			
 			text_format.Dispose ();	
 		}
 

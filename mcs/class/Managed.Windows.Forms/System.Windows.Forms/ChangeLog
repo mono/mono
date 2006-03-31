@@ -1,15 +1,20 @@
+2006-03-31  Alexander Olk  <alex.olk@googlemail.com>
+
+	* ThemeWin32Classic.cs: Use CPDrawBorder3D to draw a GroupBox.
+	  Fixes behaviour when the Text property of the box is String.Empty
+
 2006-03-31  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* XplatUIX11.cs: Only send mouseleave for our client windows, not
 	  for the whole window (otherwise we get WM_MOUSE_LEAVE twice for
 	  a window)
 
-2006-03-30  Alexander Olk  <alex.olk@googlemail.com>
+2006-03-31  Alexander Olk  <alex.olk@googlemail.com>
 
 	* FileDialog.cs: Visual enhancement for the popup buttons in 
 	  PopupButtonPanel
 
-2006-03-30  Alexander Olk  <alex.olk@googlemail.com>
+2006-03-31  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ColorDialog.cs, FontDialog.cs: Make use of the updated 3D border
 	  code
