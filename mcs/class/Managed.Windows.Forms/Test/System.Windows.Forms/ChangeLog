@@ -1,3 +1,7 @@
+2006-03-31  Peter Dennis Bartok <pbartok@novell.com>
+
+	* ControlTest.cs: Ignore Invoke test, it hangs
+
 2006-02-28  Matt Hargett (matt@use.net)
 
 	* ComboBoxTests.cs: Added

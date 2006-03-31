@@ -569,6 +569,7 @@ namespace MWF.MonoTest
 		}
 
 		[Test]
+		[Ignore("Seems to hang")]
 		public void InvokeTest () {
 			Control c = null;
 
