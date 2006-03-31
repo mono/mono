@@ -552,10 +552,18 @@ namespace System {
 			}
 		}
 
-		[MonoTODO]
 		[EnvironmentPermission (SecurityAction.Demand, Unrestricted=true)]
 		public static void SetEnvironmentVariable (string variable, string value)
 		{
+			if (variable == null)
+				throw new ArgumentNullException ("variable");
+			if (variable == String.Empty)
+				throw new ArgumentException ("String cannot be of zero length.", "variable");
+			if (variable.IndexOf ('=') != -1)
+				throw new ArgumentException ("Environment variable name cannot contain an equal character.", "variable");
+			if (variable [0] == '\0')
+				throw new ArgumentException ("The first char in the string is the null character.", "variable");
+
 			InternalSetEnvironmentVariable (variable, value);
 		}
 
@@ -578,11 +586,8 @@ namespace System {
 			}
 		}
 
-		// FIXME: to be changed as an icall when implemented
-		internal static void InternalSetEnvironmentVariable (string variable, string value)
-		{
-			throw new NotImplementedException ();
-		}
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern void InternalSetEnvironmentVariable (string variable, string value);
 
 		[MonoTODO]
 		public static int ProcessorCount {
