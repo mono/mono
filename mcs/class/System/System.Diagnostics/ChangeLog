@@ -1,3 +1,7 @@
+2006-03-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* Debug.cs: Add net 2.0 Print methods.
+
 2006-03-03  Dick Porter  <dick@ximian.com>
 
 	* Process.cs: Close redirected pipes on errors.  Fixes bug 77514.
