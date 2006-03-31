@@ -570,7 +570,7 @@ namespace System.Windows.Forms
 		private void LargeIncrement ()
     		{			
 			ScrollEventArgs event_args;
-    			int pos = position + large_change;
+    			int pos = Math.Min (Maximum, position + large_change);
 
     			event_args = new ScrollEventArgs (ScrollEventType.LargeIncrement, pos);
     			OnScroll (event_args);    			
@@ -584,7 +584,7 @@ namespace System.Windows.Forms
     		private void LargeDecrement ()
     		{			
 			ScrollEventArgs event_args;
-    			int pos = position - large_change;
+    			int pos = Math.Max (Minimum, position - large_change);
     			
     			event_args = new ScrollEventArgs (ScrollEventType.LargeDecrement, pos);
     			OnScroll (event_args);
@@ -1029,7 +1029,7 @@ namespace System.Windows.Forms
     		private void SmallIncrement ()
     		{
     			ScrollEventArgs event_args;
-    			int pos = position + small_change;
+    			int pos = Math.Min (Maximum, position + small_change);
     			
     			event_args = new ScrollEventArgs (ScrollEventType.SmallIncrement, pos);
     			OnScroll (event_args);    			
@@ -1043,8 +1043,8 @@ namespace System.Windows.Forms
     		private void SmallDecrement ()
     		{			
 			ScrollEventArgs event_args;
-    			int pos = position - small_change;
-    			
+    			int pos = Math.Max (Minimum, position - small_change);
+
     			event_args = new ScrollEventArgs (ScrollEventType.SmallDecrement, pos);
     			OnScroll (event_args);
     			Value = event_args.NewValue;

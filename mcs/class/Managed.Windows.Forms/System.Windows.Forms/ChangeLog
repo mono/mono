@@ -1,3 +1,7 @@
+2006-03-31  Jackson Harper  <jackson@ximian.com>
+
+	* ScrollBar.cs: Cap values when incrementing/decrementing.
+
 2006-03-31  Mike Kestner  <mkestner@novell.com>
 
 	* MenuAPI.cs: setup menu.tracker for popup/context menus.
@@ -59,6 +63,10 @@
 
 	* MenuItem.cs: only emit DrawItem and MeasureItem for OwnerDraw.
 
+2006-03-29  Jackson Harper  <jackson@ximian.com>
+
+	* Form.cs: Implement TODO.
+
 2006-03-29  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* PrintPreviewDialog.cs: Implemented missing methods and events; still
@@ -86,6 +94,7 @@
 	  - Making sure the active control is selected when the control is created
 	* CurrencyManager.cs: Removed obsolete TODO
 
+>>>>>>> .r58862
 2006-03-29  Mike Kestner  <mkestner@novell.com>
 
 	* *.cs: fix remaining corcompare issues for 1.1 API with the exception
