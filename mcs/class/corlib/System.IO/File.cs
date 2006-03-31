@@ -36,6 +36,7 @@
 //
 
 using System;
+using System.Text;
 
 namespace System.IO
 {
@@ -434,6 +435,30 @@ namespace System.IO
 				s.Read (result, 0, (int) size);
 
 				return result;
+			}
+		}
+
+		public static string ReadAllText (string path)
+		{
+			return ReadAllText (path, Encoding.UTF8Unmarked);
+		}
+
+		public static string ReadAllText (string path, Encoding enc)
+		{
+			using (StreamReader sr = new StreamReader (path, enc)) {
+				return sr.ReadToEnd ();
+			}
+		}
+
+		public static void WriteAllText (string path, string contents)
+		{
+			WriteAllText (path, contents, Encoding.UTF8Unmarked);
+		}
+
+		public static void WriteAllText (string path, string contents, Encoding enc)
+		{
+			using (StreamWriter sw = new StreamWriter (path, false, enc)) {
+				sw.Write (contents);
 			}
 		}
 #endif
