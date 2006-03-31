@@ -2146,11 +2146,6 @@ constructor_declaration
 						"`{0}': static constructor cannot have an explicit `this' or `base' constructor call",
 						c.GetSignatureForError ());
 				}
-	
-				if (!c.Parameters.Empty){
-					Report.Error (132, c.Location,
-						"`{0}': The static constructor must be parameterless", c.GetSignatureForError ());
-				}
 			} else {
 				c.ModFlags = Modifiers.Check (Constructor.AllowedModifiers, (int) $2, Modifiers.PRIVATE, c.Location);
 			}

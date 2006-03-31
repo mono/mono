@@ -1,3 +1,26 @@
+2006-03-31  Marek Safar  <marek.safar@seznam.cz>
+
+	* assign.cs (LocalTemporary): Don't require ILGenerator in the resolve
+	phase.
+
+	* anonymous.cs, assign.cs, ecore.cs, expression.cs: Updated after
+	LocalTemporary change.
+
+	* class.cs (ClassOrStruct.DefineDefaultConstructor): Moved from
+	TypeContainer.
+	(ClassOrStruct.DefineFieldInitializers): Implemented static field
+	initializers optimization.
+	(ClassOrStruct.TypeAttr): Moved from modifiers.
+	(Constructor.CheckBase): Don't crash when static ctor has parameters.
+	(FieldBase.ResolveInitializer): Resolves initializer.
+	(FieldBase.HasDefaultInitializer): New property.
+
+	* cs-parser.jay: Removed message.
+
+	* expression.cs (CompilerGeneratedThis): New specialization.
+
+	* modifiers.cs (TypeAttr): Moved to ClassOrStruct.TypeAttr
+
 2006-03-28  Marek Safar  <marek.safar@seznam.cz>
 
 	* cs-parser.jay, cs-tokenizer.cs: On demand Stack allocation.

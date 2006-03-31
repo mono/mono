@@ -1882,7 +1882,7 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			if (type.IsGenericParameter || TypeManager.IsValueType (type)) {
-				LocalTemporary temp_storage = new LocalTemporary (ec, type);
+				LocalTemporary temp_storage = new LocalTemporary (type);
 
 				temp_storage.AddressOf (ec, AddressOp.LoadStore);
 				ec.ig.Emit (OpCodes.Initobj, type);
@@ -2706,7 +2706,7 @@ namespace Mono.CSharp {
 				if (expr == null)
 					return null;
 
-				temp = new LocalTemporary (ec, expr.Type);
+				temp = new LocalTemporary (expr.Type);
 
 				info = new NullableInfo (expr.Type);
 				type = info.UnderlyingType;
@@ -2848,7 +2848,7 @@ namespace Mono.CSharp {
 
 			public override void Emit (EmitContext ec)
 			{
-				LocalTemporary value_target = new LocalTemporary (ec, type);
+				LocalTemporary value_target = new LocalTemporary (type);
 
 				value_target.AddressOf (ec, AddressOp.Store);
 				ec.ig.Emit (OpCodes.Initobj, type);
@@ -2857,7 +2857,7 @@ namespace Mono.CSharp {
 
 			public void AddressOf (EmitContext ec, AddressOp Mode)
 			{
-				LocalTemporary value_target = new LocalTemporary (ec, type);
+				LocalTemporary value_target = new LocalTemporary (type);
 					
 				value_target.AddressOf (ec, AddressOp.Store);
 				ec.ig.Emit (OpCodes.Initobj, type);

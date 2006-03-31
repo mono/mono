@@ -1321,7 +1321,7 @@ namespace Mono.CSharp {
 
 			if (leave_copy){
 				ec.ig.Emit (OpCodes.Dup);
-				temp = new LocalTemporary (ec, par_info.FieldBuilder.FieldType);
+				temp = new LocalTemporary (par_info.FieldBuilder.FieldType);
 				temp.Store (ec);
 			}
 		}
@@ -1346,7 +1346,7 @@ namespace Mono.CSharp {
 			source.Emit (ec);
 			if (leave_copy){
 				ig.Emit (OpCodes.Dup);
-				temp = new LocalTemporary (ec, par_info.FieldBuilder.FieldType);
+				temp = new LocalTemporary (par_info.FieldBuilder.FieldType);
 				temp.Store (ec);
 			}
 			ig.Emit (OpCodes.Stfld, par_info.FieldBuilder);

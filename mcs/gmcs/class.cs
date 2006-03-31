@@ -430,8 +430,8 @@ namespace Mono.CSharp {
 		//
 		// Pointers to the default constructor and the default static constructor
 		//
-		Constructor default_constructor;
-		Constructor default_static_constructor;
+		protected Constructor default_constructor;
+		protected Constructor default_static_constructor;
 
 		//
 		// Points to the first non-static field added to the container.
@@ -644,7 +644,7 @@ namespace Mono.CSharp {
 
 				default_static_constructor = c;
 			} else {
-				if (c.IsDefault ()){
+				if (c.Parameters.Empty){
 					if (default_constructor != null) {
 						Report.SymbolRelatedToPreviousError (default_constructor);
 						Report.Error (111, c.Location, Error111, c.GetSignatureForError ());
@@ -889,7 +889,7 @@ namespace Mono.CSharp {
 		
 		protected override TypeAttributes TypeAttr {
 			get {
-				return Modifiers.TypeAttr (ModFlags, this) | base.TypeAttr;
+				return Modifiers.TypeAttr (ModFlags, IsTopLevel) | base.TypeAttr;
 			}
 		}
 
@@ -945,36 +945,6 @@ namespace Mono.CSharp {
 			return true;
 		}
 		
-		//
-		// Defines the default constructors
-		//
-		protected void DefineDefaultConstructor (bool is_static)
-		{
-			// The default instance constructor is public
-			// If the class is abstract, the default constructor is protected
-			// The default static constructor is private
-
-			int mods;
-			if (is_static) {
-				if (initialized_static_fields == null || default_static_constructor != null)
-					return;
-				mods = Modifiers.STATIC | Modifiers.PRIVATE;
-			} else {
-				if (instance_constructors != null)
-					return;
-
-				mods = ((ModFlags & Modifiers.ABSTRACT) != 0) ? Modifiers.PROTECTED : Modifiers.PUBLIC;
-			}
-
-			Constructor c = new Constructor (this, MemberName.Name, mods,
-					     Parameters.EmptyReadOnlyParameters,
-					     new GeneratedBaseInitializer (Location),
-					     Location);
-			
-			AddConstructor (c);
-			c.Block = new ToplevelBlock (null, Location);
-		}
-
 		public override string DocComment {
 			get {
 				return comment;
@@ -1497,10 +1467,6 @@ namespace Mono.CSharp {
 			return members_defined_ok;
 		}
 
-		public virtual void DefineDefaultConstructor ()
-		{
-		}
-
 		protected virtual bool DoDefineMembers ()
 		{
 			if (iface_exprs != null) {
@@ -1534,8 +1500,6 @@ namespace Mono.CSharp {
 			DefineContainerMembers (constants);
 			DefineContainerMembers (fields);
 
-			DefineDefaultConstructor ();
-
 			if (Kind == Kind.Struct || Kind == Kind.Class) {
 				pending = PendingImplementation.GetPendingImplementations (this);
 			}
@@ -1544,9 +1508,6 @@ namespace Mono.CSharp {
 			// Constructors are not in the defined_names array
 			//
 			DefineContainerMembers (instance_constructors);
-
-			if (default_static_constructor != null)
-				default_static_constructor.Define ();
 
 			DefineContainerMembers (properties);
 			DefineContainerMembers (events);
@@ -2433,12 +2394,6 @@ namespace Mono.CSharp {
 			return ok;
 		}
 
-		public bool UserDefinedStaticConstructor {
-			get {
-				return default_static_constructor != null;
-			}
-		}
-
 		public Constructor DefaultStaticConstructor {
 			get { return default_static_constructor; }
 		}
@@ -2630,11 +2585,6 @@ namespace Mono.CSharp {
 			return base.AddToContainer (symbol, name);
 		}
 
-		public override void DefineDefaultConstructor ()
-		{
-			DefineDefaultConstructor (true);
-		}
-
 		public override void VerifyMembers ()
 		{
 			base.VerifyMembers ();
@@ -2664,7 +2614,86 @@ namespace Mono.CSharp {
 			base.ApplyAttributeBuilder (a, cb);
 		}
 
-		public override void Emit()
+		/// <summary>
+		/// Defines the default constructors 
+		/// </summary>
+		protected void DefineDefaultConstructor (bool is_static)
+		{
+			// The default instance constructor is public
+			// If the class is abstract, the default constructor is protected
+			// The default static constructor is private
+
+			int mods;
+			if (is_static) {
+				mods = Modifiers.STATIC | Modifiers.PRIVATE;
+			} else {
+				mods = ((ModFlags & Modifiers.ABSTRACT) != 0) ? Modifiers.PROTECTED : Modifiers.PUBLIC;
+			}
+
+			Constructor c = new Constructor (this, MemberName.Name, mods,
+				Parameters.EmptyReadOnlyParameters,
+				new GeneratedBaseInitializer (Location),
+				Location);
+			
+			AddConstructor (c);
+			c.Block = new ToplevelBlock (null, Location);
+		}
+
+		void DefineFieldInitializers ()
+		{
+			if (initialized_fields != null) {
+				for (int i = 0; i < initialized_fields.Count; ++i) {
+					FieldBase fb = (FieldBase)initialized_fields[i];
+					fb.ResolveInitializer ();
+					if (fb.HasDefaultInitializer && RootContext.Optimize) {
+						// Field is re-initialized to its default value => removed
+						initialized_fields.RemoveAt (i);
+						--i;
+					}
+				}
+			}
+
+			if (initialized_static_fields != null) {
+				bool has_complex_initializer = false;
+
+				foreach (FieldBase fb in initialized_static_fields) {
+					if (fb.ResolveInitializer () is Constant)
+						continue;
+
+					has_complex_initializer = true;
+				}
+
+				// Need special check to not optimize code like this
+				// static int a = b = 5;
+				// static int b = 0;
+				if (!has_complex_initializer && RootContext.Optimize) {
+					for (int i = 0; i < initialized_static_fields.Count; ++i) {
+						FieldBase fb = (FieldBase)initialized_static_fields[i];
+						if (fb.HasDefaultInitializer) {
+							initialized_static_fields.RemoveAt (i);
+							--i;
+						}
+					}
+				}
+
+				if (default_static_constructor == null && initialized_static_fields.Count > 0) {
+					DefineDefaultConstructor (true);
+				}
+			}
+
+		}
+
+		public override bool Define ()
+		{
+			DefineFieldInitializers ();
+
+			if (default_static_constructor != null)
+				default_static_constructor.Define ();
+
+			return base.Define ();
+		}
+
+		public override void Emit ()
 		{
 			base.Emit ();
 
@@ -2672,6 +2701,15 @@ namespace Mono.CSharp {
 				foreach (DictionaryEntry de in declarative_security) {
 					TypeBuilder.AddDeclarativeSecurity ((SecurityAction)de.Key, (PermissionSet)de.Value);
 				}
+			}
+		}
+
+		protected override TypeAttributes TypeAttr {
+			get {
+				if (default_static_constructor == null)
+					return base.TypeAttr | TypeAttributes.BeforeFieldInit;
+
+				return base.TypeAttr;
 			}
 		}
 	}
@@ -2774,14 +2812,6 @@ namespace Mono.CSharp {
 			base.DefineContainerMembers (list);
 		}
 
-		public override void DefineDefaultConstructor ()
-		{
-			if (!IsStatic)
-				DefineDefaultConstructor (false);
-
-			base.DefineDefaultConstructor ();
-		}
-
 		public override TypeBuilder DefineType ()
 		{
 			if ((ModFlags & Modifiers.ABSTRACT) == Modifiers.ABSTRACT && (ModFlags & (Modifiers.SEALED | Modifiers.STATIC)) != 0) {
@@ -2796,6 +2826,14 @@ namespace Mono.CSharp {
 
 			return base.DefineType ();
 	}
+
+		protected override bool DoDefineMembers ()
+		{
+			if (InstanceConstructors == null && !IsStatic)
+				DefineDefaultConstructor (false);
+
+			return base.DoDefineMembers ();
+		}
 
 		public override TypeExpr[] GetClassBases (out TypeExpr base_class)
 		{
@@ -4304,13 +4342,20 @@ namespace Mono.CSharp {
 			
 		protected override bool CheckBase ()
 		{
+			if ((ModFlags & Modifiers.STATIC) != 0) {
+				if (!Parameters.Empty) {
+					Report.Error (132, Location, "`{0}': The static constructor must be parameterless",
+						GetSignatureForError ());
+					return false;
+				}
+
+				// the rest can be ignored
+				return true;
+			}
+
 			// Check whether arguments were correct.
 			if (!DoDefineParameters ())
 				return false;
-			
-			// TODO: skip the rest for generated ctor
-			if ((ModFlags & Modifiers.STATIC) != 0)
-				return true;
 			
 			if (!CheckForDuplications ())
 				return false;
@@ -4400,10 +4445,10 @@ namespace Mono.CSharp {
 			EmitContext ec = CreateEmitContext (null, null);
 
 			if (block != null) {
-			// If this is a non-static `struct' constructor and doesn't have any
-			// initializer, it must initialize all of the struct's fields.
-			if ((ParentContainer.Kind == Kind.Struct) &&
-			    ((ModFlags & Modifiers.STATIC) == 0) && (Initializer == null))
+				// If this is a non-static `struct' constructor and doesn't have any
+				// initializer, it must initialize all of the struct's fields.
+				if ((ParentContainer.Kind == Kind.Struct) &&
+					((ModFlags & Modifiers.STATIC) == 0) && (Initializer == null))
 					block.AddThisVariable (Parent, Location);
 
 				if (!block.ResolveMeta (ec, ParameterInfo))
@@ -5191,6 +5236,7 @@ namespace Mono.CSharp {
 		public FieldBuilder  FieldBuilder;
 		public Status status;
 		protected Expression initializer;
+		ExpressionStatement initializerStatement;
 
 		[Flags]
 		public enum Status : byte {
@@ -5237,40 +5283,7 @@ namespace Mono.CSharp {
 
 		public void EmitInitializer (EmitContext ec)
 		{
-			// Replace DeclSpace because of partial classes
-			ec.DeclContainer = DeclContainer;
-
-			ec.IsFieldInitializer = true;
-			initializer = initializer.Resolve (ec);
-			ec.IsFieldInitializer = false;
-			if (initializer == null)
-				return;
-			FieldExpr fe = new FieldExpr (FieldBuilder, Location, true);
-			if ((ModFlags & Modifiers.STATIC) == 0)
-				fe.InstanceExpression = new This (Location).Resolve (ec);
-
-			ExpressionStatement a = new Assign (fe, initializer, Location);
-
-			a = a.ResolveStatement (ec);
-			if (a == null)
-				return;
-
-			Constant c = initializer as Constant;
-			if (c != null && CanElideInitializer (c))
-				return;
-
-			a.EmitStatement (ec);
-		}
-
-		bool CanElideInitializer (Constant c)
-		{
-			if (MemberType == c.Type)
-				return c.IsDefaultValue;
-
-			if (c.Type == TypeManager.null_type)
-				return true;
-
-			return false;
+			initializerStatement.EmitStatement (ec);
 		}
 
  		protected override bool CheckBase ()
@@ -5317,7 +5330,45 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override string[] ValidAttributeTargets {
+		public Expression ResolveInitializer ()
+		{
+			// TODO: again it's too heavy-weight
+			EmitContext ec = new EmitContext (this, Parent, Location, null, null, ModFlags);
+			ec.IsFieldInitializer = true;
+			initializer = initializer.Resolve (ec);
+			if (initializer == null)
+				return null;
+
+			FieldExpr fe = new FieldExpr (FieldBuilder, Location, true);
+			if ((ModFlags & Modifiers.STATIC) == 0) 
+			{
+				fe.InstanceExpression = CompilerGeneratedThis.Instance;
+			}
+
+			initializerStatement = new Assign (fe, initializer, Location).ResolveStatement (ec);
+			return initializer;
+		}
+
+		public bool HasDefaultInitializer
+		{
+			get
+			{
+				Constant c = initializer as Constant;
+				if (c == null)
+					return false;
+
+				if (MemberType == c.Type)
+					return c.IsDefaultValue;
+
+				if (c.Type == TypeManager.null_type)
+					return true;
+
+				return false;
+			}
+		}
+
+		public override string[] ValidAttributeTargets 
+		{
 			get {
 				return attribute_targets;
 			}

@@ -693,7 +693,7 @@ namespace Mono.CSharp {
 			Emit (ec);
 			if (leave_copy) {
 				ec.ig.Emit (OpCodes.Dup);
-				temporary = new LocalTemporary (ec, expr.Type);
+				temporary = new LocalTemporary (expr.Type);
 				temporary.Store (ec);
 			}
 		}
@@ -710,7 +710,7 @@ namespace Mono.CSharp {
 			source.Emit (ec);
 			if (leave_copy) {
 				ec.ig.Emit (OpCodes.Dup);
-				temporary = new LocalTemporary (ec, expr.Type);
+				temporary = new LocalTemporary (expr.Type);
 				temporary.Store (ec);
 			}
 			
@@ -3117,7 +3117,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			left_temp = new LocalTemporary (ec, type);
+			left_temp = new LocalTemporary (type);
 
 			ArrayList arguments = new ArrayList ();
 			arguments.Add (new Argument (left_temp, Argument.AType.Expression));
@@ -3559,7 +3559,7 @@ namespace Mono.CSharp {
 			if (leave_copy){
 				ec.ig.Emit (OpCodes.Dup);
 				if (local_info.FieldBuilder != null){
-					temp = new LocalTemporary (ec, Type);
+					temp = new LocalTemporary (Type);
 					temp.Store (ec);
 				}
 			}
@@ -3592,7 +3592,7 @@ namespace Mono.CSharp {
 				source.Emit (ec);
 				if (leave_copy){
 					ig.Emit (OpCodes.Dup);
-					temp = new LocalTemporary (ec, Type);
+					temp = new LocalTemporary (Type);
 					temp.Store (ec);
 				}
 				ig.Emit (OpCodes.Stfld, local_info.FieldBuilder);
@@ -3855,7 +3855,7 @@ namespace Mono.CSharp {
 				ec.ig.Emit (OpCodes.Dup);
 				
 				if (is_ref) {
-					temp = new LocalTemporary (ec, type);
+					temp = new LocalTemporary (type);
 					temp.Store (ec);
 				}
 			}
@@ -3887,7 +3887,7 @@ namespace Mono.CSharp {
 			
 			if (is_ref) {
 				if (leave_copy) {
-					temp = new LocalTemporary (ec, type);
+					temp = new LocalTemporary (type);
 					temp.Store (ec);
 				}
 				
@@ -5166,7 +5166,7 @@ namespace Mono.CSharp {
 				a.Emit (ec);
 				if (dup_args) {
 					ec.ig.Emit (OpCodes.Dup);
-					(temps [i] = new LocalTemporary (ec, a.Type)).Store (ec);
+					(temps [i] = new LocalTemporary (a.Type)).Store (ec);
 				}
 			}
 			
@@ -5331,7 +5331,7 @@ namespace Mono.CSharp {
 								((IMemoryLocation)instance_expr).
 									AddressOf (ec, AddressOp.LoadStore);
 							} else {
-								LocalTemporary temp = new LocalTemporary (ec, instance_expr.Type);
+								LocalTemporary temp = new LocalTemporary (instance_expr.Type);
 								instance_expr.Emit (ec);
 								temp.Store (ec);
 								temp.AddressOf (ec, AddressOp.Load);
@@ -5353,7 +5353,7 @@ namespace Mono.CSharp {
 					if (dup_args) {
 						ig.Emit (OpCodes.Dup);
 						if (Arguments != null && Arguments.Count != 0) {
-							this_arg = new LocalTemporary (ec, t);
+							this_arg = new LocalTemporary (t);
 							this_arg.Store (ec);
 						}
 					}
@@ -5780,7 +5780,7 @@ namespace Mono.CSharp {
 				// We need to create a new LocalTemporary each time since
 				// you can't share LocalBuilders among ILGeneators.
 				if (!value_target_set)
-					value_target = new LocalTemporary (ec, type);
+					value_target = new LocalTemporary (type);
 
 				ml = (IMemoryLocation) value_target;
 				ml.AddressOf (ec, AddressOp.Store);
@@ -5829,7 +5829,7 @@ namespace Mono.CSharp {
 			}
 
 			if (!value_target_set)
-				value_target = new LocalTemporary (ec, type);
+				value_target = new LocalTemporary (type);
 					
 			IMemoryLocation ml = (IMemoryLocation) value_target;
 			ml.AddressOf (ec, AddressOp.Store);
@@ -6570,6 +6570,23 @@ namespace Mono.CSharp {
 		}
 	}
 	
+	public sealed class CompilerGeneratedThis : This
+	{
+		public static This Instance = new CompilerGeneratedThis ();
+
+		private CompilerGeneratedThis ()
+			: base (Location.Null)
+		{
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			eclass = ExprClass.Variable;
+			type = ec.ContainerType;
+			return this;
+		}
+	}
+	
 	/// <summary>
 	///   Represents the `this' construct
 	/// </summary>
@@ -6669,7 +6686,7 @@ namespace Mono.CSharp {
 				
 				LocalTemporary t = null;
 				if (leave_copy) {
-					t = new LocalTemporary (ec, type);
+					t = new LocalTemporary (type);
 					ec.ig.Emit (OpCodes.Dup);
 					t.Store (ec);
 				}
@@ -7677,7 +7694,7 @@ namespace Mono.CSharp {
 			
 			if (leave_copy) {
 				ec.ig.Emit (OpCodes.Dup);
-				temp = new LocalTemporary (ec, this.type);
+				temp = new LocalTemporary (this.type);
 				temp.Store (ec);
 			}
 		}
@@ -7700,7 +7717,7 @@ namespace Mono.CSharp {
 				source.Emit (ec);
 				if (leave_copy) {
 					ec.ig.Emit (OpCodes.Dup);
-					temp = new LocalTemporary (ec, this.type);
+					temp = new LocalTemporary (this.type);
 					temp.Store (ec);
 				}
 				StoreFromPtr (ec.ig, t);
@@ -7727,7 +7744,7 @@ namespace Mono.CSharp {
 				source.Emit (ec);
 				if (leave_copy) {
 					ec.ig.Emit (OpCodes.Dup);
-					temp = new LocalTemporary (ec, this.type);
+					temp = new LocalTemporary (this.type);
 					temp.Store (ec);
 				}
 				
@@ -7744,7 +7761,7 @@ namespace Mono.CSharp {
 				source.Emit (ec);
 				if (leave_copy) {
 					ec.ig.Emit (OpCodes.Dup);
-					temp = new LocalTemporary (ec, this.type);
+					temp = new LocalTemporary (this.type);
 					temp.Store (ec);
 				}
 				
@@ -8075,7 +8092,7 @@ namespace Mono.CSharp {
 			Invocation.EmitCall (ec, is_base_indexer, false, instance_expr, get, arguments, loc, prepared, false);
 			if (leave_copy) {
 				ec.ig.Emit (OpCodes.Dup);
-				temp = new LocalTemporary (ec, Type);
+				temp = new LocalTemporary (Type);
 				temp.Store (ec);
 			}
 		}
@@ -8094,11 +8111,11 @@ namespace Mono.CSharp {
 				source.Emit (ec);
 				if (leave_copy) {
 					ec.ig.Emit (OpCodes.Dup);
-					temp = new LocalTemporary (ec, Type);
+					temp = new LocalTemporary (Type);
 					temp.Store (ec);
 				}
 			} else if (leave_copy) {
-				temp = new LocalTemporary (ec, Type);
+				temp = new LocalTemporary (Type);
 				source.Emit (ec);
 				temp.Store (ec);
 				a.Expr = temp;

@@ -179,14 +179,12 @@ namespace Mono.CSharp {
 		LocalBuilder builder;
 		bool is_address;
 		
-		public LocalTemporary (EmitContext ec, Type t) : this (ec, t, false) {}
+		public LocalTemporary (Type t) : this (t, false) {}
 			
-		public LocalTemporary (EmitContext ec, Type t, bool is_address) 
+		public LocalTemporary (Type t, bool is_address) 
 		{
 			type = t;
 			eclass = ExprClass.Value;
-			loc = Location.Null;
-			builder = ec.GetTemporaryLocal (is_address ? TypeManager.GetReferenceType (t): t);
 			this.is_address = is_address;
 		}
 
@@ -225,11 +223,17 @@ namespace Mono.CSharp {
 		public void Store (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
+			if (builder == null)
+				builder = ec.GetTemporaryLocal (is_address ? TypeManager.GetReferenceType (type): type);
+
 			ig.Emit (OpCodes.Stloc, builder);
 		}
 
 		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
+			if (builder == null)
+				builder = ec.GetTemporaryLocal (is_address ? TypeManager.GetReferenceType (type): type);
+
 			// if is_address, than this is just the address anyways,
 			// so we just return this.
 			ILGenerator ig = ec.ig;
@@ -336,9 +340,9 @@ namespace Mono.CSharp {
 
 				if (embedded == null) {
 					if (this is CompoundAssign)
-						real_temp = temp = new LocalTemporary (ec, target.Type);
+						real_temp = temp = new LocalTemporary (target.Type);
 					else
-						real_temp = temp = new LocalTemporary (ec, source.Type);
+						real_temp = temp = new LocalTemporary (source.Type);
 				} else
 					temp = embedded.temp;
 
@@ -489,7 +493,7 @@ namespace Mono.CSharp {
 			// type and store it in a new temporary local.
 			if (is_embedded || embedded != null) {
 				type = target_type;
-				temp = new LocalTemporary (ec, type);
+				temp = new LocalTemporary (type);
 				must_free_temp = true;
 			}
 			

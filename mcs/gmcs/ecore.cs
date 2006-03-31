@@ -2651,7 +2651,7 @@ namespace Mono.CSharp {
 
 			if (left is TypeExpr) {
 				if (!IsStatic) {
-					SimpleName.Error_ObjectRefRequired (ec, loc, Name);
+					SimpleName.Error_ObjectRefRequired (ec, loc, GetSignatureForError ());
 					return null;
 				}
 
@@ -2685,7 +2685,7 @@ namespace Mono.CSharp {
 				if (InstanceExpression is IMemoryLocation) {
 					((IMemoryLocation) InstanceExpression).AddressOf (ec, AddressOp.LoadStore);
 				} else {
-					LocalTemporary t = new LocalTemporary (ec, InstanceExpression.Type);
+					LocalTemporary t = new LocalTemporary (InstanceExpression.Type);
 					InstanceExpression.Emit (ec);
 					t.Store (ec);
 					t.AddressOf (ec, AddressOp.Store);
@@ -3180,8 +3180,11 @@ namespace Mono.CSharp {
 				return this;
 
 			//
-			// InitOnly fields can only be assigned in constructors
+			// InitOnly fields can only be assigned in constructors or initializers
 			//
+
+			if (ec.IsFieldInitializer)
+				return this;
 
 			if (ec.IsConstructor){
 				if (IsStatic && !ec.IsStatic)
@@ -3279,7 +3282,7 @@ namespace Mono.CSharp {
 			if (leave_copy) {
 				ec.ig.Emit (OpCodes.Dup);
 				if (!FieldInfo.IsStatic) {
-					temp = new LocalTemporary (ec, this.Type);
+					temp = new LocalTemporary (this.Type);
 					temp.Store (ec);
 				}
 			}
@@ -3304,7 +3307,7 @@ namespace Mono.CSharp {
 			if (leave_copy) {
 				ec.ig.Emit (OpCodes.Dup);
 				if (!FieldInfo.IsStatic) {
-					temp = new LocalTemporary (ec, this.Type);
+					temp = new LocalTemporary (this.Type);
 					temp.Store (ec);
 				}
 			}
@@ -3741,7 +3744,7 @@ namespace Mono.CSharp {
 			if (leave_copy) {
 				ec.ig.Emit (OpCodes.Dup);
 				if (!is_static) {
-					temp = new LocalTemporary (ec, this.Type);
+					temp = new LocalTemporary (this.Type);
 					temp.Store (ec);
 				}
 			}
@@ -3761,14 +3764,14 @@ namespace Mono.CSharp {
 				if (leave_copy) {
 					ec.ig.Emit (OpCodes.Dup);
 					if (!is_static) {
-						temp = new LocalTemporary (ec, this.Type);
+						temp = new LocalTemporary (this.Type);
 						temp.Store (ec);
 					}
 				}
 			} else if (leave_copy) {
 				source.Emit (ec);
 				if (!is_static) {
-					temp = new LocalTemporary (ec, this.Type);
+					temp = new LocalTemporary (this.Type);
 					temp.Store (ec);
 				}
 				my_source = temp;

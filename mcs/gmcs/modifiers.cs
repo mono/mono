@@ -128,19 +128,6 @@ namespace Mono.CSharp {
 
 			return t;
 		}
-		
-		public static TypeAttributes TypeAttr (int mod_flags, TypeContainer caller)
-		{
-			TypeAttributes t = TypeAttr (mod_flags, caller.IsTopLevel);
-
-			// If we do not have static constructors, static methods
-			// can be invoked without initializing the type.
-			if (!caller.UserDefinedStaticConstructor &&
-			    (caller.Kind != Kind.Interface))
-				t |= TypeAttributes.BeforeFieldInit;
-				
-			return t;
-		}
 
 		public static FieldAttributes FieldAttr (int mod_flags)
 		{
