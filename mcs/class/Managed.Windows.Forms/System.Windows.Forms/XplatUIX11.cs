@@ -2989,7 +2989,7 @@ namespace System.Windows.Forms {
 					if (!hwnd.Enabled) {
 						goto ProcessNextMessage;
 					}
-					if (xevent.CrossingEvent.mode != NotifyMode.NotifyNormal) {
+					if ((xevent.CrossingEvent.mode != NotifyMode.NotifyNormal) || (xevent.CrossingEvent.window != hwnd.client_window)) {
 						goto ProcessNextMessage;
 					}
 					msg.message=Msg.WM_MOUSE_LEAVE;
