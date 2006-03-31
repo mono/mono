@@ -3567,6 +3567,10 @@ namespace System.Windows.Forms
 			if (value!=is_visible) {
 				is_visible=value;
 
+				if (is_visible && !is_created) {
+					CreateControl();
+				}
+
 				if (IsHandleCreated) {
 					XplatUI.SetVisible(Handle, value);
 					// Explicitly move Toplevel windows to where we want them;
@@ -3574,10 +3578,6 @@ namespace System.Windows.Forms
 					if (is_visible && (this is Form)) {
 						XplatUI.SetWindowPos(window.Handle, bounds.X, bounds.Y, bounds.Width, bounds.Height);
 					}
-				}
-
-				if (is_visible && !is_created) {
-					CreateControl();
 				}
 
 				OnVisibleChanged(EventArgs.Empty);
