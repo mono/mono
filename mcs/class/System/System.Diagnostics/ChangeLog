@@ -1,3 +1,7 @@
+2006-04-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* Stopwatch.cs: New file.
+
 2006-03-31  Zoltan Varga  <vargaz@gmail.com>
 
 	* Debug.cs: Add net 2.0 Print methods.
