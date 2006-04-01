@@ -17,6 +17,13 @@
    obj:/usr/local/bin/mono
 }
 {
+   mono - Use of uninitialized value of size 8
+   Memcheck:Value8
+   fun:GC_*
+   fun:*
+   obj:/usr/local/bin/mono
+}
+{
    mono - Use of uninitialized value of size 1
    Memcheck:Value1
    fun:GC_*
