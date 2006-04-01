@@ -2580,14 +2580,15 @@ namespace Mono.CSharp {
 			}
 			else if (k is ulong)
 			{
-				if ((ulong) k < (1L<<32))
+				ulong ul = (ulong) k;
+				if (ul < (1L<<32))
 				{
-					IntConstant.EmitInt (ig, (int) (long) k);
+					IntConstant.EmitInt (ig, unchecked ((int) ul));
 					ig.Emit (OpCodes.Conv_U8);
 				}
 				else
 				{
-					LongConstant.EmitLong (ig, unchecked ((long) (ulong) k));
+					LongConstant.EmitLong (ig, unchecked ((long) ul));
 				}
 			}
 			else if (k is char)
