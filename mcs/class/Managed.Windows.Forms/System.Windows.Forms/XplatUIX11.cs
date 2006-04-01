@@ -3534,7 +3534,7 @@ namespace System.Windows.Forms {
 			
 			if (client) {
 				hwnd.client_dc = Graphics.FromHwnd (hwnd.client_window);
-				//hwnd.client_dc.SetClip(hwnd.invalid);
+				hwnd.client_dc.SetClip(hwnd.invalid);
 				paint_event = new PaintEventArgs(hwnd.client_dc, hwnd.invalid);
 				hwnd.expose_pending = false;
 
