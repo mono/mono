@@ -1,3 +1,12 @@
+2006-04-01  Marek Safar  <marek.safar@seznam.cz>
+
+	A fix for #77966.
+
+	* class.cs (TypeContainer.AddPartial): Don't report an error when modifier
+	was not specified.
+
+	* modifiers.cs: Add DEFAULT_ACCESS_MODIFER.
+
 2006-03-31  Marek Safar  <marek.safar@seznam.cz>
 
 	* assign.cs (LocalTemporary): Don't require ILGenerator in the resolve

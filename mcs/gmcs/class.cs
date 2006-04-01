@@ -562,7 +562,9 @@ namespace Mono.CSharp {
 				return tc;
 			}
 
-			if ((tc.ModFlags & Modifiers.Accessibility) != (nextPart.ModFlags & Modifiers.Accessibility)) {
+			if ((tc.ModFlags & Modifiers.Accessibility) != (nextPart.ModFlags & Modifiers.Accessibility) &&
+				((tc.ModFlags & Modifiers.DEFAULT_ACCESS_MODIFER) == 0 &&
+				 (nextPart.ModFlags & Modifiers.DEFAULT_ACCESS_MODIFER) == 0)) {
 				Report.SymbolRelatedToPreviousError (tc);
 				Report.Error (262, nextPart.Location,
 					"Partial declarations of `{0}' have conflicting accessibility modifiers",

@@ -24,6 +24,13 @@ namespace Test2
 	{ }
 }
 
+public partial class ReflectedType { }
+partial class ReflectedType { }
+
+partial class D { }
+public partial class D { }
+partial class D { }
+
 class X
 {
 	static void Main ()

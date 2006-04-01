@@ -29,6 +29,7 @@ namespace Mono.CSharp {
 
 		public const int PROPERTY_CUSTOM = 0x4000; // Custom property modifier
 		public const int PARTIAL   = 0x20000;
+		public const int DEFAULT_ACCESS_MODIFER = 0x40000;
 
 		//
 		// We use this internally to flag that the method contains an iterator
@@ -217,6 +218,8 @@ namespace Mono.CSharp {
 				//
 				if ((mod & Accessibility) == 0){
 					mod |= def_access;
+					if (def_access != 0)
+						mod |= DEFAULT_ACCESS_MODIFER;
 					return mod;
 				}
 
