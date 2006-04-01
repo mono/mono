@@ -1,5 +1,9 @@
 2006-04-01  Raja R Harinath  <rharinath@novell.com>
 
+	Fix #77929
+	* typemanager.cs (IsNestedChildOf): Drop generic arguments before
+	testing.
+
 	Fix #77958
 	* statement.cs (Switch.EmitObjectInteger) [ulong]: Remove bad cast.
 

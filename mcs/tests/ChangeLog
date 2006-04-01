@@ -1,8 +1,8 @@
 2006-04-01  Raja R Harinath  <rharinath@novell.com>
 
-	* test-499.cs: New test from #77958.
+	* gtest-266.cs: New test from #77929.
 
-2006-04-01  Raja R Harinath  <rharinath@novell.com>
+	* test-499.cs: New test from #77958.
 
 	* gtest-265.cs, gtest-265-lib.cs: New test from #77954.
 

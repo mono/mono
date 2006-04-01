@@ -1679,6 +1679,9 @@ public partial class TypeManager {
 	//
 	public static bool IsNestedChildOf (Type type, Type parent)
 	{
+		type = DropGenericTypeArguments (type);
+		parent = DropGenericTypeArguments (parent);
+
 		if (IsEqual (type, parent))
 			return false;
 
