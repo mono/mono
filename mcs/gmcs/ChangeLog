@@ -1,5 +1,11 @@
 2006-04-01  Raja R Harinath  <rharinath@novell.com>
 
+	Fix #77962
+	* report.cs (SymbolRelatedToPreviousError): Drop generic type
+	arguments before checking whether a type is reflected or not.
+
+2006-04-01  Raja R Harinath  <rharinath@novell.com>
+
 	Fix #77954.
 	* expression.cs (Invocation.IsApplicable): Ensure a generic method
 	definition doesn't take part in overload resolution.

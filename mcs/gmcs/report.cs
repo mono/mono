@@ -310,9 +310,10 @@ namespace Mono.CSharp {
 
 		static public void SymbolRelatedToPreviousError (MemberInfo mi)
 		{
-			TypeContainer temp_ds = TypeManager.LookupGenericTypeContainer (mi.DeclaringType);
+			Type dt = TypeManager.DropGenericTypeArguments (mi.DeclaringType);
+			TypeContainer temp_ds = TypeManager.LookupGenericTypeContainer (dt);
 			if (temp_ds == null) {
-				SymbolRelatedToPreviousError (mi.DeclaringType.Assembly.Location, TypeManager.GetFullNameSignature (mi));
+				SymbolRelatedToPreviousError (dt.Assembly.Location, TypeManager.GetFullNameSignature (mi));
 			} else {
 				MethodBase mb = mi as MethodBase;
 				if (mb != null) {
