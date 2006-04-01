@@ -1,3 +1,7 @@
+2006-04-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* System.dll.sources: Added System.Diagnostics/Stopwatch.cs.
+
 2006-01-02  Chris Toshok  <toshok@ximian.com>
 
 	* Makefile: use an external alias (PrebuiltSystem) when building
