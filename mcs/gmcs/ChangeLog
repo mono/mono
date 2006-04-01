@@ -1,3 +1,13 @@
+2006-04-01  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #77954.
+	* expression.cs (Invocation.IsApplicable): Ensure a generic method
+	definition doesn't take part in overload resolution.
+	(Invocation.IsParamsMethodApplicable): Likewise.
+	(Invocation.OverloadResolve): When replacing a reflected override
+	method with its base definition, ensure that type arguments are
+	applied.
+
 2006-04-01  Marek Safar  <marek.safar@seznam.cz>
 
 	A fix for #77966.

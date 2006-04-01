@@ -2591,8 +2591,10 @@ namespace Mono.CSharp {
 					break;
 				}
 			}
+
+			// If none of the method parameters mention a generic parameter, we can't infer the generic parameters
 			if (!is_open)
-				return true;
+				return !TypeManager.IsGenericMethodDefinition (method);
 
 			Type[] infered_types = new Type [method_args.Length];
 

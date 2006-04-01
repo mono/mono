@@ -4600,6 +4600,9 @@ namespace Mono.CSharp {
 			    !TypeManager.InferParamsTypeArguments (ec, arguments, ref candidate))
 				return false;
 
+			if (TypeManager.IsGenericMethodDefinition (candidate))
+				throw new InternalErrorException ("a generic method definition took part in overload resolution");
+
 			return IsParamsMethodApplicable (
 				ec, arguments, arg_count, candidate, do_varargs);
 		}
@@ -4698,6 +4701,9 @@ namespace Mono.CSharp {
 			if (!me.HasTypeArguments &&
 			    !TypeManager.InferTypeArguments (arguments, ref candidate))
 				return false;
+
+			if (TypeManager.IsGenericMethodDefinition (candidate))
+				throw new InternalErrorException ("a generic method definition took part in overload resolution");
 
 			return IsApplicable (ec, arguments, arg_count, candidate);
 		}
@@ -4814,11 +4820,17 @@ namespace Mono.CSharp {
 				int j = 0;
 				for (int i = 0; i < methods.Length; ++i) {
 					MethodBase m = methods [i];
+					Type [] gen_args = m.IsGenericMethod && !m.IsGenericMethodDefinition ? m.GetGenericArguments () : null;
 					if (TypeManager.IsOverride (m)) {
 						if (candidate_overrides == null)
 							candidate_overrides = new ArrayList ();
 						candidate_overrides.Add (m);
 						m = TypeManager.TryGetBaseDefinition (m);
+						if (m != null && gen_args != null) {
+							if (!m.IsGenericMethodDefinition)
+								throw new InternalErrorException ("GetBaseDefinition didn't return a GenericMethodDefinition");
+							m = ((MethodInfo) m).MakeGenericMethod (gen_args);
+						}
 					}
 					if (m != null)
 						methods [j++] = m;
@@ -4890,6 +4902,9 @@ namespace Mono.CSharp {
 						continue;
 
 					if (!TypeManager.InferTypeArguments (Arguments, ref c))
+						continue;
+
+					if (TypeManager.IsGenericMethodDefinition (c))
 						continue;
 
 					VerifyArgumentsCompat (ec, Arguments, arg_count,

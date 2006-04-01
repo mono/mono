@@ -1,3 +1,7 @@
+2006-04-01  Raja R Harinath  <rharinath@novell.com>
+
+	* gtest-265.cs, gtest-265-lib.cs: New test from #77954.
+
 2006-03-22  Raja R Harinath  <rharinath@novell.com>
 
 	* gtest-262.cs: New test for DefaultParameterValueAttribute.
