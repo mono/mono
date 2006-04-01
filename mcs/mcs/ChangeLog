@@ -1,3 +1,8 @@
+2006-04-01  Marek Safar  <marek.safar@seznam.cz>
+
+	* assign.cs (Assign.DoResolve): Assignment to same variable can occur
+	in an embedded statement too.
+
 2006-04-01  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #77958
