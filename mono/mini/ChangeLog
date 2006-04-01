@@ -1,3 +1,9 @@
+2006-04-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (optimize_branches): Remove the "optimizations" in
+	the cbranch1/cbranch2 -> branch cases which were causing several
+	problems in the past. Fixes #77986.
+
 2006-03-31  Chris Toshok  <toshok@ximian.com>
 
 	* driver.c (DEFAULT_OPTIMIZATIONS): back out the new set of
