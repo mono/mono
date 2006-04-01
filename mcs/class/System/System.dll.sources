@@ -445,6 +445,7 @@ System.Diagnostics/ProcessThreadCollection.cs
 System.Diagnostics/ProcessThread.cs
 System.Diagnostics/ProcessWindowStyle.cs
 System.Diagnostics/Switch.cs
+System.Diagnostics/Stopwatch.cs
 System.Diagnostics/TextWriterTraceListener.cs
 System.Diagnostics/ThreadPriorityLevel.cs
 System.Diagnostics/ThreadState.cs
