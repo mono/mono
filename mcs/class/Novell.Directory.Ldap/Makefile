@@ -20,11 +20,6 @@ RESX_RES = \
 	${RESCODEMESS} \
 	${EXCEPTMESS}
 
-LIB_MCS_FLAGS +=	\
-	-r:rt.dll	\
-	-r:J2SE.Helpers.dll \
-	$(RESX_RES:%=/res:%)
-
 else
 LIB_MCS_FLAGS = \
 	/nowarn:649 /nowarn:169 /nowarn:219 /nowarn:168 \
