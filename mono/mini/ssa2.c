@@ -365,7 +365,7 @@ mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, gbool
 				stack_history_len ++;
 
 				if (originals_used [idx]) {
-					new_var = mono_compile_create_var (cfg, var->inst_vtype,  var->opcode);
+					new_var = mono_compile_create_var (cfg, var->inst_vtype, OP_LOCAL);
 					new_var->flags = var->flags;
 
 					if (cfg->verbose_level >= 4)

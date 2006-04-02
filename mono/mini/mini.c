@@ -806,6 +806,7 @@ mono_unlink_bblock (MonoCompile *cfg, MonoBasicBlock *from, MonoBasicBlock* to)
 			if (from->out_bb [i] != to)
 				newa [pos ++] = from->out_bb [i];
 		}
+		g_assert (pos == from->out_count - 1);
 		from->out_count--;
 		from->out_bb = newa;
 	}
@@ -824,6 +825,7 @@ mono_unlink_bblock (MonoCompile *cfg, MonoBasicBlock *from, MonoBasicBlock* to)
 			if (to->in_bb [i] != from)
 				newa [pos ++] = to->in_bb [i];
 		}
+		g_assert (pos == to->in_count - 1);
 		to->in_count--;
 		to->in_bb = newa;
 	}
@@ -8838,39 +8840,6 @@ replace_in_block (MonoBasicBlock *bb, MonoBasicBlock *orig, MonoBasicBlock *repl
 	}
 }
 
-static void 
-replace_or_add_in_block (MonoCompile *cfg, MonoBasicBlock *bb, MonoBasicBlock *orig, MonoBasicBlock *repl)
-{
-	gboolean found = FALSE;
-	int i;
-
-	for (i = 0; i < bb->in_count; i++) {
-		MonoBasicBlock *ib = bb->in_bb [i];
-		if (ib == orig) {
-			if (!repl) {
-				if (bb->in_count > 1) {
-					bb->in_bb [i] = bb->in_bb [bb->in_count - 1];
-				}
-				bb->in_count--;
-			} else {
-				bb->in_bb [i] = repl;
-			}
-			found = TRUE;
-		}
-	}
-	
-	if (! found) {
-		MonoBasicBlock **new_in_bb = mono_mempool_alloc (cfg->mempool, sizeof (MonoBasicBlock*) * (bb->in_count + 1));
-		for (i = 0; i < bb->in_count; i++) {
-			new_in_bb [i] = bb->in_bb [i];
-		}
-		new_in_bb [i] = repl;
-		bb->in_count++;
-		bb->in_bb = new_in_bb;
-	}
-}
-
-
 static void
 replace_out_block_in_code (MonoBasicBlock *bb, MonoBasicBlock *orig, MonoBasicBlock *repl) {
 	MonoInst *inst;
@@ -8999,15 +8968,12 @@ remove_block_if_useless (MonoCompile *cfg, MonoBasicBlock *bb, MonoBasicBlock *p
 			printf ("remove_block_if_useless removed BB%d\n", bb->block_num);
 		}
 		
-		for (i = 0; i < bb->in_count; i++) {
-			MonoBasicBlock *in_bb = bb->in_bb [i];
-			replace_out_block (in_bb, bb, target_bb);
+		/* unlink_bblock () modifies the bb->in_bb array so can't use a for loop here */
+		while (bb->in_count) {
+			MonoBasicBlock *in_bb = bb->in_bb [0];
+			mono_unlink_bblock (cfg, in_bb, bb);
+			link_bblock (cfg, in_bb, target_bb);
 			replace_out_block_in_code (in_bb, bb, target_bb);
-			if (bb->in_count == 1) {
-				replace_in_block (target_bb, bb, in_bb);
-			} else {
-				replace_or_add_in_block (cfg, target_bb, bb, in_bb);
-			}
 		}
 
 		mono_unlink_bblock (cfg, bb, target_bb);
@@ -9386,8 +9352,7 @@ optimize_branches (MonoCompile *cfg)
 						 */
 						bb->last_ins->opcode = cfg->new_ir ? OP_BR : CEE_BR;
 						bb->last_ins->inst_target_bb = taken_branch_target;
-						replace_out_block (bb, untaken_branch_target, NULL);
-						replace_in_block (untaken_branch_target, bb, NULL);
+						mono_unlink_bblock (cfg, bb, untaken_branch_target);
 						changed = TRUE;
 						continue;
 					}
@@ -9399,12 +9364,18 @@ optimize_branches (MonoCompile *cfg)
 								 bb->block_num, bbn->block_num, bbn->code->inst_target_bb->block_num, 
 								 bbn->code->opcode);
 
+						/* 
+						 * Unlink, then relink bblocks to avoid various
+						 * tricky situations when the two targets of the branch
+						 * are equal, or will become equal after the change.
+						 */
+						mono_unlink_bblock (cfg, bb, bb->last_ins->inst_true_bb);
+						mono_unlink_bblock (cfg, bb, bb->last_ins->inst_false_bb);
+
 						bb->last_ins->inst_true_bb = bbn->code->inst_target_bb;
 
-						replace_in_block (bbn, bb, NULL);
-						replace_out_block (bb, bbn, bbn->code->inst_target_bb);
-
-						link_bblock (cfg, bb, bbn->code->inst_target_bb);
+						link_bblock (cfg, bb, bb->last_ins->inst_true_bb);
+						link_bblock (cfg, bb, bb->last_ins->inst_false_bb);
 						
 						changed = TRUE;
 						continue;
@@ -9418,12 +9389,13 @@ optimize_branches (MonoCompile *cfg)
 								 bb->block_num, bbn->block_num, bbn->code->inst_target_bb->block_num, 
 								 bbn->code->opcode);
 
+						mono_unlink_bblock (cfg, bb, bb->last_ins->inst_true_bb);
+						mono_unlink_bblock (cfg, bb, bb->last_ins->inst_false_bb);
+
 						bb->last_ins->inst_false_bb = bbn->code->inst_target_bb;
 
-						replace_in_block (bbn, bb, NULL);
-						replace_out_block (bb, bbn, bbn->code->inst_target_bb);
-
-						link_bblock (cfg, bb, bbn->code->inst_target_bb);
+						link_bblock (cfg, bb, bb->last_ins->inst_true_bb);
+						link_bblock (cfg, bb, bb->last_ins->inst_false_bb);
 
 						changed = TRUE;
 						continue;
@@ -10344,7 +10316,7 @@ remove_critical_edges (MonoCompile *cfg) {
 	if (cfg->verbose_level > 3) {
 		for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
 			int i;
-			printf ("remove_critical_edges %s, BEFORE BB%d (in:", mono_method_full_name (cfg->method, TRUE), bb->block_num);
+			printf ("remove_critical_edges, BEFORE BB%d (in:", bb->block_num);
 			for (i = 0; i < bb->in_count; i++) {
 				printf (" %d", bb->in_bb [i]->block_num);
 			}
@@ -10412,7 +10384,7 @@ remove_critical_edges (MonoCompile *cfg) {
 							previous_bb = new_bb_after_entry;
 							
 							if (cfg->verbose_level > 2) {
-								printf ("remove_critical_edges %s, added helper BB%d jumping to BB%d\n", mono_method_full_name (cfg->method, TRUE), new_bb_after_entry->block_num, bb->block_num);
+								printf ("remove_critical_edges, added helper BB%d jumping to BB%d\n", new_bb_after_entry->block_num, bb->block_num);
 							}
 						}
 					}
@@ -10436,7 +10408,7 @@ remove_critical_edges (MonoCompile *cfg) {
 					replace_in_block (bb, in_bb, new_bb);
 					
 					if (cfg->verbose_level > 2) {
-						printf ("remove_critical_edges %s, removed critical edge from BB%d to BB%d (added BB%d)\n", mono_method_full_name (cfg->method, TRUE), in_bb->block_num, bb->block_num, new_bb->block_num);
+						printf ("remove_critical_edges, removed critical edge from BB%d to BB%d (added BB%d)\n", in_bb->block_num, bb->block_num, new_bb->block_num);
 					}
 				}
 			}
@@ -10446,7 +10418,7 @@ remove_critical_edges (MonoCompile *cfg) {
 	if (cfg->verbose_level > 3) {
 		for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
 			int i;
-			printf ("remove_critical_edges %s, AFTER BB%d (in:", mono_method_full_name (cfg->method, TRUE), bb->block_num);
+			printf ("remove_critical_edges, AFTER BB%d (in:", bb->block_num);
 			for (i = 0; i < bb->in_count; i++) {
 				printf (" %d", bb->in_bb [i]->block_num);
 			}
