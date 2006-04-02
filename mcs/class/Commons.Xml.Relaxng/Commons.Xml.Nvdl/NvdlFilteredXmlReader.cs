@@ -28,7 +28,7 @@ namespace Commons.Xml.Nvdl
 		}
 	}
 #else
-	internal class NvdlFilteredXmlReader : XmlReader
+	internal class NvdlFilteredXmlReader : XmlReader, IXmlLineInfo
 	{
 		int placeHolderDepth = -1;
 		XmlNodeType nextPlaceHolder;
@@ -37,6 +37,7 @@ namespace Commons.Xml.Nvdl
 		Stack placeHolderDepthStack;
 		NvdlValidateInterp validate;
 		XmlReader reader;
+		IXmlLineInfo reader_as_line_info;
 
 		AttributeInfo [] attributes = new AttributeInfo [10];
 		int attributeCount;
@@ -54,7 +55,21 @@ namespace Commons.Xml.Nvdl
 			NvdlValidateInterp validate)
 		{
 			this.reader = reader;
+			reader_as_line_info = reader as IXmlLineInfo;
 			this.validate = validate;
+		}
+
+		public bool HasLineInfo ()
+		{
+			return reader_as_line_info != null ? reader_as_line_info.HasLineInfo () : false;
+		}
+
+		public int LineNumber {
+			get { return reader_as_line_info != null ? reader_as_line_info.LineNumber : 0; }
+		}
+
+		public int LinePosition {
+			get { return reader_as_line_info != null ? reader_as_line_info.LinePosition : 0; }
 		}
 
 		public void AttachPlaceholder ()

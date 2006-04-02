@@ -482,6 +482,7 @@ NvdlDebug.Writer.WriteLine (": : : : Unwrapping Whitespace ");
 	internal class NvdlValidateInterp : NvdlInterpretation
 	{
 		NvdlFilteredXmlReader reader; // s
+		SimpleValidate validate;
 		XmlReader validator;
 
 		public NvdlValidateInterp (NvdlDispatcher dispatcher,
@@ -491,6 +492,7 @@ NvdlDebug.Writer.WriteLine (": : : : Unwrapping Whitespace ");
 		{
 NvdlDebug.Writer.WriteLine ("++++++ new validate " + validate.Location);
 			this.reader = new NvdlFilteredXmlReader (dispatcher.Reader, this);
+			this.validate = validate;
 			validator = validate.CreateValidator (this.reader);
 
 			dispatcher.Validator.OnMessage (validate.Messages);
@@ -535,25 +537,35 @@ NvdlDebug.Writer.WriteLine ("++++++ new validate " + validate.Location);
 		public override void ValidateStartElement ()
 		{
 NvdlDebug.Writer.WriteLine ("###### interp.ValidateStartElement : " + Action.Location);
-			validator.Read ();
+			ReadValidator ();
 		}
 
 		public override void ValidateEndElement ()
 		{
 NvdlDebug.Writer.WriteLine ("###### interp.ValidateEndElement : " + Action.Location);
-			validator.Read ();
+			ReadValidator ();
 		}
 
 		public override void ValidateText ()
 		{
 NvdlDebug.Writer.WriteLine ("###### interp.ValidateText : " + Action.Location);
-			validator.Read ();
+			ReadValidator ();
 		}
 
 		public override void ValidateWhitespace ()
 		{
 NvdlDebug.Writer.WriteLine ("###### interp.Whitespace : " + Action.Location);
-			validator.Read ();
+			ReadValidator ();
+		}
+
+		void ReadValidator ()
+		{
+			try {
+				validator.Read ();
+			} catch (Exception ex) {
+				if (!validate.Generator.HandleError (ex, validator, validate.Location))
+					throw;
+			}
 		}
 	}
 }

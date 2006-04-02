@@ -64,5 +64,12 @@ namespace Commons.Xml.Nvdl
 		{
 			return false;
 		}
+
+		public override bool HandleError (Exception ex, XmlReader reader, string nvdlLocation)
+		{
+			if (ex is XmlSchemaException)
+				throw new NvdlInstanceValidationException (String.Format ("XML schema validation error occured as a part of NVDL validation."), ex, this, nvdlLocation);
+			return false;
+		}
 	}
 }

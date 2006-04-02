@@ -61,5 +61,29 @@ namespace Commons.Xml.Nvdl
 		{
 		}
 	}
+
+	public class NvdlInstanceValidationException : NvdlException
+	{
+		public NvdlInstanceValidationException (string message,
+			NvdlValidatorGenerator generator,
+			string nvdlLocation)
+			: this (message, null, generator, nvdlLocation)
+		{
+		}
+
+		public NvdlInstanceValidationException (string message, Exception inner,
+			NvdlValidatorGenerator generator,
+			string nvdlLocation)
+			: base (FormatMessageWithDefinition (message, nvdlLocation), inner)
+		{
+		}
+
+		// assuming that wrapped exception message usually 
+		// contains the actual instance location info.
+		static string FormatMessageWithDefinition (string message, string nvdlLocation)
+		{
+			return String.Format ("{0}. Related NVDL script: {1}", message, nvdlLocation);
+		}
+	}
 }
 

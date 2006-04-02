@@ -8,8 +8,16 @@ namespace Commons.Xml.Nvdl
 {
 	public class NvdlValidationProvider
 	{
+		NvdlValidate validate;
+		string schema_type;
+		NvdlConfig config;
+
 		public virtual NvdlValidatorGenerator CreateGenerator (NvdlValidate validate, string schemaType, NvdlConfig config)
 		{
+			this.validate = validate;
+			this.schema_type = schemaType;
+			this.config = config;
+
 			XmlReader schema = null;
 			// FIXME: we need a bit more strict check.
 			if (schemaType.Length < 5 ||
@@ -40,6 +48,18 @@ namespace Commons.Xml.Nvdl
 				return null;
 
 			return CreateGenerator (schema, config);
+		}
+
+		public NvdlValidate ValidateAction {
+			get { return validate; }
+		}
+
+		public NvdlConfig Config {
+			get { return config; }
+		}
+
+		public string SchemaType {
+			get { return schema_type; }
 		}
 
 		public virtual NvdlValidatorGenerator CreateGenerator (XmlReader schema, NvdlConfig config)
@@ -92,5 +112,10 @@ namespace Commons.Xml.Nvdl
 		}
 
 		public abstract bool AddOption (string name, string arg);
+
+		public virtual bool HandleError (Exception ex, XmlReader reader, string nvdlLocation)
+		{
+			return false;
+		}
 	}
 }

@@ -1,3 +1,19 @@
+2006-04-03  Atsushi Enomoto <atsushi@ximian.com>
+
+	due to the request by Brian Rasumussen to report NVDL error details:
+	* NvdlFilteredXmlReader.cs : make it as IXmlLineInfo.
+	* NvdlValidationGenerator.cs :
+	  (NvdlValidationProvider) made validate, schemaType and config as
+	  publicly accessible.
+	  (NvdlValidatorGenerator) added new HandleError() method that can
+	  override error handling.
+	* NvdlValidator.cs : use it.
+	* NvdlException.cs : added new type NvdlInstanceValidationException
+	  that is used to "wrap" actual validation errors to provide
+	  NVDL script location information.
+	* NvdlRelaxngSupport.cs, NvdlXsdSupport.cs :
+	  use those new HandleError() and NvdlInstanceValidationException.
+
 2006-03-23  Atsushi Enomoto <atsushi@ximian.com>
 
 	* NvdlXsdSupport.cs : seems like "XmlReaderSettings.ValidationType =
