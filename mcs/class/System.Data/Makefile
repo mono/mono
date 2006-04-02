@@ -28,19 +28,8 @@ OTHER_RES = $(RESOURCE_FILES)
 LIB_MCS_FLAGS +=	\
 	-r:rt.dll				\
 	-r:J2SE.Helpers.dll			\
-	$(OTHER_LIB_MCS_FLAGS)			\
-	$(RESX_RES:%=/res:%)
+	$(OTHER_LIB_MCS_FLAGS)
 
-OLEDBSTRINGS = System.Data.ProviderBase.jvm/System.Data.System.Data.ProviderBase.jvm.OleDbStrings.resources
-SQLCLIENTSTRINGS = System.Data.ProviderBase.jvm/System.Data.System.Data.ProviderBase.jvm.SqlClientStrings.resources
-SQLCOMMAND = System.Data.SqlClient.jvm/System.Data.SqlClient.SqlCommand.resources
-SQLCONNECTION = System.Data.SqlClient.jvm/System.Data.SqlClient.SqlConnection.resources
-
-RESX_RES = \
-	$(OLEDBSTRINGS)	\
-	$(SQLCLIENTSTRINGS)	\
-	$(SQLCOMMAND)	\
-	$(SQLCONNECTION)
 else
 LIB_MCS_FLAGS += \
 	-r:System.EnterpriseServices.dll 	\
@@ -69,15 +58,6 @@ Mono.Data.SqlExpressions/Parser.cs: Mono.Data.SqlExpressions/Parser.jay $(topdir
 
 include ../../build/library.make
 
-$(the_lib) : $(OLEDBSTRINGS) $(SQLCLIENTSTRINGS) $(SQLCOMMAND) $(SQLCONNECTION)
-$(OLEDBSTRINGS) : System.Data.ProviderBase.jvm/OleDbStrings.resx
-	$(RESGEN) $< $@
-$(SQLCLIENTSTRINGS) : System.Data.ProviderBase.jvm/SqlClientStrings.resx
-	$(RESGEN) $< $@
-$(SQLCOMMAND) : System.Data.SqlClient.jvm/SqlCommand.resx
-	$(RESGEN) $< $@
-$(SQLCONNECTION) : System.Data.SqlClient.jvm/SqlConnection.resx
-	$(RESGEN) $< $@
 ifeq (net_2_0, $(PROFILE))
 $(test_lib): $(test_lib).config
 
