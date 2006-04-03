@@ -1,4 +1,8 @@
 2006-04-03  Andrew Skiba <andrews@mainsoft.com>
+	
+	* xslt.vmwcsproj, xslt.sln: use project reference for nunit
+
+2006-04-03  Andrew Skiba <andrews@mainsoft.com>
 
 	* xslt.vmwcsproj : refer nunit from mono tree
 

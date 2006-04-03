@@ -40,20 +40,28 @@ set CLASSPATH="%RUNTIME_CLASSPATH%;%NUNIT_CLASSPATH%"
 
 set W3C_DIR=Test\System.Xml\W3C\
 
-REM ********************************************************
-@echo Building GH solution...
-REM ********************************************************
-
 pushd %W3C_DIR%
-devenv W3c.sln /%BUILD_OPTION% Debug_Java >>build.log.txt 2<&1
-
-IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
 
 REM ********************************************************
 @echo Building NUnit solution...
 REM ********************************************************
 
-devenv %NUNIT_PATH%nunit.java.sln /%BUILD_OPTION% Debug_Java >>%build.log.txt 2<&1
+devenv %NUNIT_PATH%nunit.java.sln /%BUILD_OPTION% Debug_Java >build.log.txt 2<&1
+IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
+
+REM ********************************************************
+@echo Build XmlTool
+REM ********************************************************
+set XML_TOOL_PATH=..\..\..\..\..\tools\mono-xmltool
+devenv %XML_TOOL_PATH%\XmlTool.sln /%BUILD_OPTION% Debug_Java >>build.log.txt 2<&1
+IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
+copy %XML_TOOL_PATH%\bin\Debug_Java\xmltool.exe ..\..\..
+copy %XML_TOOL_PATH%\nunit_transform.xslt ..\..\..
+
+REM ********************************************************
+@echo Building GH solution...
+REM ********************************************************
+devenv W3c.sln /%BUILD_OPTION% Debug_Java >>build.log.txt 2<&1
 IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
 
 REM ********************************************************
@@ -81,17 +89,6 @@ popd
 copy %W3C_DIR%\%GH_OUTPUT_XML% .
 
 REM ********************************************************
-@echo Build XmlTool
-REM ********************************************************
-set XML_TOOL_PATH=..\..\tools\mono-xmltool
-devenv %XML_TOOL_PATH%\XmlTool.sln /%BUILD_OPTION% Debug_Java >>build.log.txt 2<&1
-
-IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
-
-copy %XML_TOOL_PATH%\bin\Debug_Java\xmltool.exe .
-copy %XML_TOOL_PATH%\nunit_transform.xslt .
-
-REM ********************************************************
 @echo Analyze and print results
 REM ********************************************************
 @echo on
@@ -106,10 +103,12 @@ GOTO END
 GOTO END
 
 :BUILD_EXCEPTION
+popd
 @echo Error in building solutions. See build.log.txt for details...
 GOTO END
 
 :RUN_EXCEPTION
+popd
 @echo Error in running fixture. See run.log.txt for details...
 GOTO END
 

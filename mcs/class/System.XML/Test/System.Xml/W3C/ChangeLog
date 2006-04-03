@@ -1,5 +1,9 @@
 2006-04-03  Andrew Skiba  <andrews@mainsoft.com>
 
+	* W3C.vmwcsproj, W3C.sln: use project reference for nunit
+
+2006-04-03  Andrew Skiba  <andrews@mainsoft.com>
+
 	* W3C.vmwcsproj : use nunit from mono tree
 
 2005-10-23  Andrew Skiba  <andrews@mainsoft.com>
