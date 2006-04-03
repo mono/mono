@@ -1,3 +1,8 @@
+2006-04-03  Chris Toshok  <toshok@ximian.com>
+
+	* HttpWebResponse.cs (ContentEncoding): return "" if the header
+	isn't present.
+
 2006-03-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConnectionStream.cs: avoid Begin/EndWrite when the body length is

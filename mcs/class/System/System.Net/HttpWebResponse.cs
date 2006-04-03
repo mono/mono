@@ -118,7 +118,8 @@ namespace System.Net
 		public string ContentEncoding {
 			get { 
 				CheckDisposed ();
-				return webHeaders ["Content-Encoding"];
+				string h = webHeaders ["Content-Encoding"];
+				return h != null ? h : "";
 			}
 		}
 		

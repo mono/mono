@@ -125,6 +125,28 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+		public void Missing_ContentEncoding ()
+		{
+			ServicePointManager.CertificatePolicy = new AcceptAllPolicy ();
+			try {
+				BadChunkedServer server = new BadChunkedServer ();
+				server.Start ();
+
+				string url = String.Format ("http://{0}:{1}/nothing.html", server.IPAddress, server.Port);
+				HttpWebRequest request = (HttpWebRequest) WebRequest.Create (url);
+				request.Method = "GET";
+				HttpWebResponse resp = (HttpWebResponse) request.GetResponse ();
+				Assert.AreEqual ("", resp.ContentEncoding);
+				resp.Close ();
+				server.Stop ();
+				if (server.Error != null)
+					throw server.Error;
+			} finally {
+				ServicePointManager.CertificatePolicy = null;
+			}
+		}
+
+		[Test]
 		public void BadServer_ChunkedClose ()
 		{
 			// The server will send a chunked response without a 'last-chunked' mark
