@@ -42,6 +42,15 @@ namespace System.Xml
 		int lineNumber;
 		int linePosition;
 		string sourceUri;
+		string res;
+		string [] messages;
+
+		#endregion
+
+		#region consts
+
+		private const string Xml_DefaultException = "Xml_DefaultException";
+		private  const string Xml_UserException = "Xml_UserException";
 
 		#endregion
 
@@ -50,11 +59,15 @@ namespace System.Xml
 		public XmlException () 
 			: base ()
 		{
+			this.res = Xml_DefaultException;
+			this.messages = new string [1];
 		}
 
 		public XmlException (string message, Exception innerException) 
 			: base (message, innerException)
 		{
+			this.res = Xml_UserException;
+			this.messages = new string [] {message};
 		}
 
 		protected XmlException (SerializationInfo info, StreamingContext context)
@@ -62,12 +75,18 @@ namespace System.Xml
 		{
 			this.lineNumber = info.GetInt32 ("lineNumber");
 			this.linePosition = info.GetInt32 ("linePosition");
+			this.res = info.GetString ("res");
+			this.messages = (string []) info.GetValue ("args", typeof(string []));
+#if NET_2_0
 			this.sourceUri = info.GetString ("sourceUri");
+#endif
 		}
 
 		public XmlException (string message)
 			: base (message)
 		{
+			this.res = Xml_UserException;
+			this.messages = new string [] {message};
 		}
 
 		internal XmlException (IXmlLineInfo li,
@@ -81,7 +100,7 @@ namespace System.Xml
 			Exception innerException,
 			string sourceUri,
 			string message)
-			: base (message, innerException)
+			: this (message, innerException)
 		{
 			if (li != null) {
 				this.lineNumber = li.LineNumber;
@@ -91,7 +110,7 @@ namespace System.Xml
 		}
 
 		public XmlException (string message, Exception innerException, int lineNumber, int linePosition)
-			: base (message, innerException)
+			: this (message, innerException)
 		{
 			this.lineNumber = lineNumber;
 			this.linePosition = linePosition;
@@ -135,7 +154,11 @@ namespace System.Xml
 			base.GetObjectData (info, context);
 			info.AddValue ("lineNumber", lineNumber);
 			info.AddValue ("linePosition", linePosition);
+			info.AddValue ("res", res);
+			info.AddValue ("args", messages);
+#if NET_2_0
 			info.AddValue ("sourceUri", sourceUri);
+#endif
 		}
 
 		#endregion

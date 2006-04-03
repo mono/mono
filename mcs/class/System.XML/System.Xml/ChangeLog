@@ -1,3 +1,6 @@
+2006-04-03	Boris Kirzner <borisk@mainsoft.com>
+	* XmlException.cs: fix .net soap serialization compatibility.
+
 2006-03-28  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlNameEntry.cs XmlNameEntryCache.cs :
