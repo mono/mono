@@ -210,7 +210,7 @@ t  							yyLex.value());
 .        }
 .        int yyV = yyTop + 1-yyLen[yyN];
 t        if (debug != null)
-t          debug.reduce(yyState, yyStates[yyV-1], yyN, yyRule[yyN], yyLen[yyN]);
+t          debug.reduce(yyState, yyStates[yyV-1], yyN, YYRules.getRule (yyN), yyLen[yyN]);
 .        yyVal = yyDefault(yyV > yyTop ? null : yyVals[yyV]);
 .        switch (yyN) {
 

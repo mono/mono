@@ -1,3 +1,8 @@
+2006-04-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* output.c skeleton skeleton.cs: Initialize the jay debug tables
+	lazily. Fixes #77946.
+
 2006-03-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* reader.c (copy_action): Applied patch from Axel T Schreiner (ats@cs.rit.edu).

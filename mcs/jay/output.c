@@ -854,6 +854,9 @@ output_debug()
     printf("  protected static %s int yyFinal = %d;\n", csharp ? "" : "final", final_state);
 
       ++outline;
+	  printf ("%s // Put this array into a separate class so it is only initialized if debugging is actually used\n", prefix);
+	  printf ("%s // Use MarshalByRefObject to disable inlining\n", prefix);
+	  printf("%s class YYRules %s {\n", prefix, csharp ? ": MarshalByRefObject" : "");
       printf("%s  public static %s string [] yyRule = {\n", prefix, csharp ? "" : "final");
       for (i = 2; i < nrules; ++i)
       {
@@ -905,6 +908,10 @@ output_debug()
       }
       ++ outline;
       printf("%s  };\n", prefix);
+	  printf ("%s public static string getRule (int index) {\n", prefix);
+	  printf ("%s    return yyRule [index];\n", prefix);
+	  printf ("%s }\n", prefix);
+	  printf ("%s}\n", prefix);
 
     max = 0;
     for (i = 2; i < ntokens; ++i)
