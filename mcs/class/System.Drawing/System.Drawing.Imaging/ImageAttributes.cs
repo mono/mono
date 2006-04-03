@@ -178,12 +178,7 @@ namespace System.Drawing.Imaging
 		//Sets the color keys for all GDI+ objects
 		public void SetColorKey(Color colorLow, Color colorHigh)
 		{
-						
-			Status status = GDIPlus.GdipSetImageAttributesColorKeys(nativeImageAttr,
-            				ColorAdjustType.Default, true,  colorLow.ToArgb(), colorHigh.ToArgb());
-
-			if (status != Status.Ok)
-				throw new Exception ("Error calling GDIPlus.GdipSetImageAttributesColorKeys:" +status);
+			SetColorKey (colorLow, colorHigh, ColorAdjustType.Default);
 		}
 
 		public void SetColorMatrix(ColorMatrix colorMatrix) 
