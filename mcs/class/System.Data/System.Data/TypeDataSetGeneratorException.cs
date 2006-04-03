@@ -43,12 +43,12 @@ namespace System.Data {
 
 		#region Constructors
 		public TypedDataSetGeneratorException ()
-			: base (Locale.GetText ("There is a name conflict"))
+			: base (Locale.GetText ("System error."))
 		{
 		}
 
 		public TypedDataSetGeneratorException (ArrayList list)
-			: base (Locale.GetText ("There is a name conflict"))
+			: base (Locale.GetText ("System error."))
 		{
 			errorList = list;
 		}
@@ -56,6 +56,11 @@ namespace System.Data {
 		protected TypedDataSetGeneratorException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
+			int count = info.GetInt32 ("KEY_ARRAYCOUNT");
+			errorList = new ArrayList (count);
+
+			for (int i=0; i < count; i++)
+				errorList.Add (info.GetString("KEY_ARRAYVALUES" + i));
 		}
 
 		#endregion //Constructors	
@@ -73,11 +78,14 @@ namespace System.Data {
                                                                                                     
                 public override void GetObjectData (SerializationInfo si, StreamingContext context)
                 {
-                        if (si == null)
-                                throw new ArgumentNullException ("si");
+            base.GetObjectData (si, context);
+                                                
+			int count = (errorList != null) ? ErrorList.Count : 0;
+            si.AddValue ("KEY_ARRAYCOUNT", count);
+
+			for (int i=0; i < count; i++)
+				si.AddValue("KEY_ARRAYVALUES" + i, ErrorList [i]);
                                                                                                     
-                        si.AddValue ("ErrorList", errorList);
-                        base.GetObjectData (si, context);
                 }
                                                                                                     
                 #endregion // Methods
