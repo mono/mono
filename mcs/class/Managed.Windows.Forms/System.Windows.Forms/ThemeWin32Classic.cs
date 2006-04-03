@@ -619,7 +619,6 @@ namespace System.Windows.Forms
 				state |= ButtonState.Pushed;				
 			}
 			
-			// FIXME: can be removed when other themes are updated ->
 			// finally make sure the pushed and inavtive states are rendered
 			if (!checkbox.Enabled) {
 				state |= ButtonState.Inactive;
@@ -627,7 +626,6 @@ namespace System.Windows.Forms
 			else if (checkbox.is_pressed) {
 				state |= ButtonState.Pushed;
 			}
-			// <- until here
 			
 			// Start drawing
 			
@@ -654,7 +652,7 @@ namespace System.Windows.Forms
 				if (checkbox.FlatStyle == FlatStyle.Flat || checkbox.FlatStyle == FlatStyle.Popup) {
 					DrawFlatStyleCheckBox (dc, checkbox_rectangle, checkbox);
 				} else {
-					DrawNormalCheckBox (dc, checkbox_rectangle, checkbox);
+					CPDrawCheckBox (dc, checkbox_rectangle, state);
 				}
 			}
 		}
@@ -668,48 +666,6 @@ namespace System.Windows.Forms
 		protected virtual void CheckBox_DrawFocus( CheckBox checkbox, Graphics dc, Rectangle text_rectangle )
 		{
 			// do nothing here. maybe an other theme needs it
-		}
-		
-		protected virtual void DrawNormalCheckBox (Graphics graphics, Rectangle rectangle, CheckBox checkbox)
-		{
-			Pen			pen;
-			int			lineWidth;
-			Rectangle	rect;
-			int			Scale;
-			
-			/* Goes first, affects the background */
-			if (checkbox.is_pressed || !checkbox.is_enabled) {
-				graphics.FillRectangle(SystemBrushes.Control, rectangle);
-			} else {
-				graphics.FillRectangle(SystemBrushes.Window, rectangle);
-			}
-			
-			/* Draw the sunken frame */
-			if (checkbox.FlatStyle == FlatStyle.Flat) {
-				ControlPaint.DrawBorder(graphics, rectangle, ColorControlDark, ButtonBorderStyle.Solid);
-			} else {
-				CPDrawBorder3D(graphics, rectangle, Border3DStyle.Sunken, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom, ColorControl);
-			}
-			
-			/* Make sure we've got at least a line width of 1 */
-			lineWidth=Math.Max(3, rectangle.Width/6);
-			Scale=Math.Max(1, rectangle.Width/12);
-			
-			// define a rectangle inside the border area
-			rect=new Rectangle(rectangle.X+2, rectangle.Y+2, rectangle.Width-4, rectangle.Height-4);
-			if (!checkbox.is_enabled) {
-				pen=SystemPens.ControlDark;
-			} else {
-				pen=SystemPens.ControlText;
-			}
-			
-			if (checkbox.Checked) {
-				/* Need to draw a check-mark */
-				for (int i=0; i<lineWidth; i++) {
-					graphics.DrawLine(pen, rect.Left+lineWidth/2, rect.Top+lineWidth+i, rect.Left+lineWidth/2+2*Scale, rect.Top+lineWidth+2*Scale+i);
-					graphics.DrawLine(pen, rect.Left+lineWidth/2+2*Scale, rect.Top+lineWidth+2*Scale+i, rect.Left+lineWidth/2+6*Scale, rect.Top+lineWidth-2*Scale+i);
-				}
-			}
 		}
 		
 		// renders a checkBox with the Flat and Popup FlatStyle
@@ -1376,6 +1332,8 @@ namespace System.Windows.Forms
 				if (box.Enabled) {
 					dc.DrawString (box.Text, box.Font, ResPool.GetSolidBrush (box.ForeColor), 10, 0, text_format);
 				} else {
+					dc.DrawString (box.Text, box.Font, ResPool.GetSolidBrush (ColorControlLightLight), 
+						       new RectangleF (11, 1, width,  box.Font.Height), text_format);
 					CPDrawStringDisabled (dc, box.Text, box.Font, box.ForeColor, 
 							      new RectangleF (10, 0, width,  box.Font.Height), text_format);
 				}
@@ -2731,7 +2689,7 @@ namespace System.Windows.Forms
 			Rectangle 	client_rectangle;
 			Rectangle	text_rectangle;
 			Rectangle 	radiobutton_rectangle;
-			int		radiobutton_size = 12;
+			int		radiobutton_size = 13;
 			int 	radiobutton_space = 4;
 
 			client_rectangle = radio_button.ClientRectangle;
@@ -2875,7 +2833,6 @@ namespace System.Windows.Forms
 				}
 			}
 
-			// FIXME: can be removed if themes are updated ->
 			ButtonState state = ButtonState.Normal;
 			if (radio_button.FlatStyle == FlatStyle.Flat) {
 				state |= ButtonState.Flat;
@@ -2884,7 +2841,6 @@ namespace System.Windows.Forms
 			if (radio_button.Checked) {
 				state |= ButtonState.Checked;
 			}
-			// <- until here
 
 			// Start drawing
 			RadioButton_DrawButton(radio_button, dc, state, radiobutton_rectangle);
@@ -2908,9 +2864,10 @@ namespace System.Windows.Forms
 			} else {
 				// establish if we are rendering a flat style of some sort
 				if (radio_button.FlatStyle == FlatStyle.Flat || radio_button.FlatStyle == FlatStyle.Popup) {
+					// FIXME: update DrawFlatStyleRadioButton code
 					DrawFlatStyleRadioButton (dc, radiobutton_rectangle, radio_button);
 				} else {
-					DrawNormalRadioButton (dc, radiobutton_rectangle, radio_button);
+					CPDrawRadioButton(dc, radiobutton_rectangle, state);
 				}
 			}
 		}
@@ -2924,37 +2881,6 @@ namespace System.Windows.Forms
 		protected virtual void RadioButton_DrawFocus(RadioButton radio_button, Graphics dc, Rectangle text_rectangle)
 		{
 			// do nothing here. maybe an other theme needs it
-		}
-		
-		protected virtual void DrawNormalRadioButton (Graphics graphics, Rectangle rectangle, RadioButton radio_button)
-		{
-			Pen			penFatDark	= new Pen(ColorControlDark, 1);
-			Pen			penFatLight	= new Pen(ColorControlLightLight, 1);
-			int			lineWidth;
-			
-			graphics.FillPie (ResPool.GetSolidBrush (this.ColorWindow), rectangle.X + 1, rectangle.Y + 1, rectangle.Width - 2, rectangle.Height - 2, 0, 359);
-			
-			graphics.DrawArc(penFatDark, rectangle.X+1, rectangle.Y+1, rectangle.Width-2, rectangle.Height-2, 135, 180);
-			graphics.DrawArc(penFatLight, rectangle.X+1, rectangle.Y+1, rectangle.Width-2, rectangle.Height-2, 315, 180);
-			
-			graphics.DrawArc(SystemPens.ControlDark, rectangle, 135, 180);
-			graphics.DrawArc(SystemPens.ControlLightLight, rectangle, 315, 180);
-			
-			if (radio_button.Checked) {
-				lineWidth=Math.Max(1, Math.Min(rectangle.Width, rectangle.Height)/3);
-				
-				SolidBrush	buttonBrush;
-				
-				if (!radio_button.is_enabled) {
-					buttonBrush=(SolidBrush)SystemBrushes.ControlDark;
-				} else {
-					buttonBrush=(SolidBrush)SystemBrushes.ControlText;
-				}
-				graphics.FillPie(buttonBrush, rectangle.X+lineWidth, rectangle.Y+lineWidth, rectangle.Width-lineWidth*2, rectangle.Height-lineWidth*2, 0, 359);
-			}
-			
-			penFatDark.Dispose();
-			penFatLight.Dispose();
 		}
 		
 		// renders a radio button with the Flat and Popup FlatStyle
@@ -4293,51 +4219,6 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region ControlPaint
-		private enum DrawFrameControlStates {
-			ButtonCheck		= 0x0000,
-			ButtonRadioImage	= 0x0001,
-			ButtonRadioMask		= 0x0002,
-			ButtonRadio		= 0x0004,
-			Button3State		= 0x0008,
-			ButtonPush		= 0x0010,
-
-			CaptionClose		= 0x0000,
-			CaptionMin		= 0x0001,
-			CaptionMax		= 0x0002,
-			CaptionRestore		= 0x0004,
-			CaptionHelp		= 0x0008,
-
-			MenuArrow		= 0x0000,
-			MenuCheck		= 0x0001,
-			MenuBullet		= 0x0002,
-			MenuArrowRight		= 0x0004,
-
-			ScrollUp		= 0x0000,
-			ScrollDown		= 0x0001,
-			ScrollLeft		= 0x0002,
-			ScrollRight		= 0x0003,
-			ScrollComboBox		= 0x0005,
-			ScrollSizeGrip		= 0x0008,
-			ScrollSizeGripRight	= 0x0010,
-
-			Inactive		= 0x0100,
-			Pushed			= 0x0200,
-			Checked			= 0x0400,
-			Transparent		= 0x0800,
-			Hot			= 0x1000,
-			AdjustRect		= 0x2000,
-			Flat			= 0x4000,
-			Mono			= 0x8000
-
-		}
-
-		private enum DrawFrameControlTypes {
-			Caption	= 1,
-			Menu	= 2,
-			Scroll	= 3,
-			Button	= 4
-		}
-
 		public override void CPDrawBorder (Graphics graphics, Rectangle bounds, Color leftColor, int leftWidth,
 			ButtonBorderStyle leftStyle, Color topColor, int topWidth, ButtonBorderStyle topStyle,
 			Color rightColor, int rightWidth, ButtonBorderStyle rightStyle, Color bottomColor,
@@ -4435,25 +4316,62 @@ namespace System.Windows.Forms
 			}
 		}
 
-		public override void CPDrawButton (Graphics graphics, Rectangle rectangle, ButtonState state) {
-			DrawFrameControlStates	dfcs=DrawFrameControlStates.ButtonPush;
-
-			if ((state & ButtonState.Pushed)!=0) {
-				dfcs |= DrawFrameControlStates.Pushed;
+		public override void CPDrawButton (Graphics dc, Rectangle rectangle, ButtonState state)
+		{
+			CPColor cpcolor = ResPool.GetCPColor (ColorControl);
+			
+			// sadly enough, the rectangle gets always filled with a hatchbrush
+			dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (ColorControl.R + 3, ColorControl.G, ColorControl.B), ColorControl), new Rectangle (rectangle.X + 1, rectangle.Y + 1, rectangle.Width - 2, rectangle.Height - 2));
+			
+			if ((state & ButtonState.All) == ButtonState.All || ((state & ButtonState.Checked) == ButtonState.Checked && (state & ButtonState.Flat) == ButtonState.Flat)) {
+				dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, cpcolor.Light, ColorControl), new Rectangle (rectangle.X + 2, rectangle.Y + 2, rectangle.Width - 4, rectangle.Height - 4));
+				
+				dc.DrawRectangle (ResPool.GetPen (cpcolor.Dark), rectangle.X, rectangle.Y, rectangle.Width - 1, rectangle.Height - 1);
+			} else
+			if ((state & ButtonState.Flat) == ButtonState.Flat) {
+				dc.DrawRectangle (ResPool.GetPen (cpcolor.Dark), rectangle.X, rectangle.Y, rectangle.Width - 1, rectangle.Height - 1);
+			} else
+			if ((state & ButtonState.Checked) == ButtonState.Checked) {
+				dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, cpcolor.Light, ColorControl), new Rectangle (rectangle.X + 2, rectangle.Y + 2, rectangle.Width - 4, rectangle.Height - 4));
+				
+				Pen pen = ResPool.GetPen (cpcolor.DarkDark);
+				dc.DrawLine (pen, rectangle.X, rectangle.Y, rectangle.X, rectangle.Bottom - 2);
+				dc.DrawLine (pen, rectangle.X + 1, rectangle.Y, rectangle.Right - 2, rectangle.Y);
+				
+				pen = ResPool.GetPen (cpcolor.Dark);
+				dc.DrawLine (pen, rectangle.X + 1, rectangle.Y + 1, rectangle.X + 1, rectangle.Bottom - 3);
+				dc.DrawLine (pen, rectangle.X + 2, rectangle.Y + 1, rectangle.Right - 3, rectangle.Y + 1);
+				
+				pen = ResPool.GetPen (cpcolor.Light);
+				dc.DrawLine (pen, rectangle.X, rectangle.Bottom - 1, rectangle.Right - 2, rectangle.Bottom - 1);
+				dc.DrawLine (pen, rectangle.Right - 1, rectangle.Y, rectangle.Right - 1, rectangle.Bottom - 1);
+			} else
+			if (((state & ButtonState.Pushed) == ButtonState.Pushed) && ((state & ButtonState.Normal) == ButtonState.Normal)) {
+				Pen pen = ResPool.GetPen (cpcolor.DarkDark);
+				dc.DrawLine (pen, rectangle.X, rectangle.Y, rectangle.X, rectangle.Bottom - 2);
+				dc.DrawLine (pen, rectangle.X + 1, rectangle.Y, rectangle.Right - 2, rectangle.Y);
+				
+				pen = ResPool.GetPen (cpcolor.Dark);
+				dc.DrawLine (pen, rectangle.X + 1, rectangle.Y + 1, rectangle.X + 1, rectangle.Bottom - 3);
+				dc.DrawLine (pen, rectangle.X + 2, rectangle.Y + 1, rectangle.Right - 3, rectangle.Y + 1);
+				
+				pen = ResPool.GetPen (cpcolor.Light);
+				dc.DrawLine (pen, rectangle.X, rectangle.Bottom - 1, rectangle.Right - 2, rectangle.Bottom - 1);
+				dc.DrawLine (pen, rectangle.Right - 1, rectangle.Y, rectangle.Right - 1, rectangle.Bottom - 1);
+			} else
+			if (((state & ButtonState.Inactive) == ButtonState.Inactive) || ((state & ButtonState.Normal) == ButtonState.Normal)) {
+				Pen pen = ResPool.GetPen (cpcolor.Light);
+				dc.DrawLine (pen, rectangle.X, rectangle.Y, rectangle.Right - 2, rectangle.Y);
+				dc.DrawLine (pen, rectangle.X, rectangle.Y, rectangle.X, rectangle.Bottom - 2);
+				
+				pen = ResPool.GetPen (cpcolor.Dark);
+				dc.DrawLine (pen, rectangle.X + 1, rectangle.Bottom - 2, rectangle.Right - 2, rectangle.Bottom - 2);
+				dc.DrawLine (pen, rectangle.Right - 2, rectangle.Y + 1, rectangle.Right - 2, rectangle.Bottom - 3);
+				
+				pen = ResPool.GetPen (cpcolor.DarkDark);
+				dc.DrawLine (pen, rectangle.X, rectangle.Bottom - 1, rectangle.Right - 1, rectangle.Bottom - 1);
+				dc.DrawLine (pen, rectangle.Right - 1, rectangle.Y, rectangle.Right - 1, rectangle.Bottom - 2);
 			}
-
-			if ((state & ButtonState.Checked)!=0) {
-				dfcs |= DrawFrameControlStates.Checked;
-			}
-
-			if ((state & ButtonState.Flat)!=0) {
-				dfcs |= DrawFrameControlStates.Flat;
-			}
-
-			if ((state & ButtonState.Inactive)!=0) {
-				dfcs |= DrawFrameControlStates.Inactive;
-			}
-			DrawFrameControl(graphics, rectangle, DrawFrameControlTypes.Button, dfcs);
 		}
 
 
@@ -4514,28 +4432,100 @@ namespace System.Windows.Forms
 			}
 		}
 
-
-		public override void CPDrawCheckBox (Graphics graphics, Rectangle rectangle, ButtonState state) {
-			DrawFrameControlStates	dfcs=DrawFrameControlStates.ButtonCheck;
-
-			if ((state & ButtonState.Pushed)!=0) {
-				dfcs |= DrawFrameControlStates.Pushed;
+		public override void CPDrawCheckBox (Graphics dc, Rectangle rectangle, ButtonState state)
+		{
+			CPColor cpcolor = ResPool.GetCPColor (ColorControl);
+			
+			Color check_color = Color.Black;
+			
+			Rectangle cb_rect = new Rectangle (rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
+			
+			if ((state & ButtonState.All) == ButtonState.All) {
+				cb_rect.Width -= 2;
+				cb_rect.Height -= 2;
+				
+				dc.FillRectangle (ResPool.GetSolidBrush (ColorControl), cb_rect.X, cb_rect.Y, cb_rect.Width - 1, cb_rect.Height - 1);
+				dc.DrawRectangle (ResPool.GetPen (cpcolor.Dark), cb_rect.X, cb_rect.Y, cb_rect.Width - 1, cb_rect.Height - 1);
+				
+				check_color = cpcolor.Dark;
+			} else
+			if ((state & ButtonState.Flat) == ButtonState.Flat) {
+				cb_rect.Width -= 2;
+				cb_rect.Height -= 2;
+				
+				dc.FillRectangle (ResPool.GetSolidBrush (cpcolor.Light), cb_rect.X, cb_rect.Y, cb_rect.Width - 1, cb_rect.Height - 1);
+				dc.DrawRectangle (ResPool.GetPen (cpcolor.Dark), cb_rect.X, cb_rect.Y, cb_rect.Width - 1, cb_rect.Height - 1);
+			} else {
+				cb_rect.Width -= 1;
+				cb_rect.Height -= 1;
+				
+				int check_box_visible_size = (cb_rect.Height > cb_rect.Width) ? cb_rect.Width : cb_rect.Height;
+				
+				int x_pos = Math.Max (0, cb_rect.X + (cb_rect.Width / 2) - check_box_visible_size / 2);
+				int y_pos = Math.Max (0, cb_rect.Y + (cb_rect.Height / 2) - check_box_visible_size / 2);
+				
+				Rectangle rect = new Rectangle (x_pos, y_pos, check_box_visible_size, check_box_visible_size);
+				
+				if (((state & ButtonState.Pushed) == ButtonState.Pushed) || ((state & ButtonState.Inactive) == ButtonState.Inactive)) {
+					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (ColorControl.R + 3, ColorControl.G, ColorControl.B), ColorControl), rect.X + 2, rect.Y + 2, rect.Width - 3, rect.Height - 3);
+				} else
+					dc.FillRectangle (ResPool.GetSolidBrush (cpcolor.LightLight), rect.X + 2, rect.Y + 2, rect.Width - 3, rect.Height - 3);
+				
+				Pen pen = ResPool.GetPen (cpcolor.Dark);
+				dc.DrawLine (pen, rect.X, rect.Y, rect.X, rect.Bottom - 1);
+				dc.DrawLine (pen, rect.X + 1, rect.Y, rect.Right - 1, rect.Y);
+				
+				pen = ResPool.GetPen (cpcolor.DarkDark);
+				dc.DrawLine (pen, rect.X + 1, rect.Y + 1, rect.X + 1, rect.Bottom - 2);
+				dc.DrawLine (pen, rect.X + 2, rect.Y + 1, rect.Right - 2, rect.Y + 1);
+				
+				pen = ResPool.GetPen (cpcolor.Light);
+				dc.DrawLine (pen, rect.Right, rect.Y, rect.Right, rect.Bottom);
+				dc.DrawLine (pen, rect.X, rect.Bottom, rect.Right, rect.Bottom);
+				
+				// oh boy, matching ms is like fighting against windmills
+				using (Pen h_pen = new Pen (ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (ColorControl.R + 3, ColorControl.G, ColorControl.B), ColorControl))) {
+					dc.DrawLine (h_pen, rect.X + 1, rect.Bottom - 1, rect.Right - 1, rect.Bottom - 1);
+					dc.DrawLine (h_pen, rect.Right - 1, rect.Y + 1, rect.Right - 1, rect.Bottom - 1);
+				}
 			}
-
-			if ((state & ButtonState.Checked)!=0) {
-				dfcs |= DrawFrameControlStates.Checked;
+			
+			if ((state & ButtonState.Checked) == ButtonState.Checked) {
+				int check_size = (cb_rect.Height > cb_rect.Width) ? cb_rect.Width / 2: cb_rect.Height / 2;
+				
+				if (check_size < 7) {
+					int lineWidth = Math.Max (3, check_size / 3);
+					int Scale = Math.Max (1, check_size / 9);
+					
+					Rectangle rect = new Rectangle (cb_rect.X + (cb_rect.Width / 2) - (check_size / 2) - 1, cb_rect.Y + (cb_rect.Height / 2) - (check_size / 2) - 1, 
+									check_size, check_size);
+					Pen pen = ResPool.GetPen (check_color);
+					
+					for (int i = 0; i < lineWidth; i++) {
+						dc.DrawLine (pen, rect.Left + lineWidth / 2, rect.Top + lineWidth + i, rect.Left + lineWidth / 2 + 2 * Scale, rect.Top + lineWidth + 2 * Scale + i);
+						dc.DrawLine (pen, rect.Left + lineWidth / 2 + 2 * Scale, rect.Top + lineWidth + 2 * Scale + i, rect.Left + lineWidth / 2 + 6 * Scale, rect.Top + lineWidth - 2 * Scale + i);
+					}
+				} else {
+					int lineWidth = Math.Max (3, check_size / 3) + 1;
+					
+					int x_half = cb_rect.Width / 2;
+					int y_half = cb_rect.Height / 2;
+					
+					Rectangle rect = new Rectangle (cb_rect.X + x_half - (check_size / 2) - 1, cb_rect.Y + y_half - (check_size / 2), 
+									check_size, check_size);
+					
+					Pen pen = ResPool.GetPen (check_color);
+					
+					int gradient_left = check_size / 3;
+					int gradient_right = check_size - gradient_left - 1;
+					
+					
+					for (int i = 0; i < lineWidth; i++) {
+						dc.DrawLine (pen, rect.X, rect.Bottom - 1 - gradient_left - i, rect.X + gradient_left, rect.Bottom - 1 - i);
+						dc.DrawLine (pen, rect.X + gradient_left, rect.Bottom - 1 - i, rect.Right - 1, rect.Bottom - i  - 1 - gradient_right);
+					}
+				}
 			}
-
-			if ((state & ButtonState.Flat)!=0) {
-				dfcs |= DrawFrameControlStates.Flat;
-			}
-
-			if ((state & ButtonState.Inactive)!=0) {
-				dfcs |= DrawFrameControlStates.Inactive;
-			}
-
-			DrawFrameControl(graphics, rectangle, DrawFrameControlTypes.Button, dfcs);
-
 		}
 
 		public override void CPDrawComboButton (Graphics graphics, Rectangle rectangle, ButtonState state) {
@@ -4905,29 +4895,82 @@ namespace System.Windows.Forms
 
 		}
 
-		public override void CPDrawRadioButton (Graphics graphics, Rectangle rectangle, ButtonState state) {
-			DrawFrameControlStates	dfcs=DrawFrameControlStates.ButtonRadio;
-
-			if ((state & ButtonState.Pushed)!=0) {
-				dfcs |= DrawFrameControlStates.Pushed;
-			}
-
-			if ((state & ButtonState.Checked)!=0) {
-				dfcs |= DrawFrameControlStates.Checked;
-			}
-
-			if ((state & ButtonState.Flat)!=0) {
-				dfcs |= DrawFrameControlStates.Flat;
-			}
-
-			if ((state & ButtonState.Inactive)!=0) {
-				dfcs |= DrawFrameControlStates.Inactive;
+		public override void CPDrawRadioButton (Graphics dc, Rectangle rectangle, ButtonState state)
+		{
+			CPColor cpcolor = ResPool.GetCPColor (ColorControl);
+			
+			Color dot_color = Color.Black;
+			
+			Color top_left_outer = Color.Black;
+			Color top_left_inner = Color.Black;
+			Color bottom_right_outer = Color.Black;
+			Color bottom_right_inner = Color.Black;
+			
+			int ellipse_diameter = (rectangle.Width > rectangle.Height) ? (int)(rectangle.Height  * 0.9f) : (int)(rectangle.Width * 0.9f);
+			int radius = ellipse_diameter / 2;
+			
+			Rectangle rb_rect = new Rectangle (rectangle.X + (rectangle.Width / 2) - radius, rectangle.Y + (rectangle.Height / 2) - radius, ellipse_diameter, ellipse_diameter);
+			
+			Brush brush = null;
+			
+			if ((state & ButtonState.All) == ButtonState.All) {
+				brush = ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (ColorControl.R + 3, ColorControl.G, ColorControl.B), ColorControl);
+				dot_color = cpcolor.Dark;
+			} else
+			if ((state & ButtonState.Flat) == ButtonState.Flat) {
+				if (((state & ButtonState.Inactive) == ButtonState.Inactive) || ((state & ButtonState.Pushed) == ButtonState.Pushed))
+					brush = ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (ColorControl.R + 3, ColorControl.G, ColorControl.B), ColorControl);
+				else
+					brush = ResPool.GetSolidBrush (cpcolor.LightLight);
+			} else {
+				if (((state & ButtonState.Inactive) == ButtonState.Inactive) || ((state & ButtonState.Pushed) == ButtonState.Pushed))
+					brush = ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (ColorControl.R + 3, ColorControl.G, ColorControl.B), ColorControl);
+				else
+					brush = ResPool.GetSolidBrush (cpcolor.LightLight);
+				
+				top_left_outer = cpcolor.Dark;
+				top_left_inner = cpcolor.DarkDark;
+				bottom_right_outer = cpcolor.Light;
+				bottom_right_inner = Color.Transparent;
 			}
 			
-			DrawFrameControl(graphics, rectangle, DrawFrameControlTypes.Button, dfcs);
-
+			dc.FillEllipse (brush, rb_rect.X + 1, rb_rect.Y + 1, ellipse_diameter - 1, ellipse_diameter - 1);
+			
+			int line_width = Math.Max (1, (int)(ellipse_diameter * 0.08f));
+			
+			using (Pen pen = new Pen (top_left_outer,  line_width))
+				dc.DrawArc (pen, rb_rect, 135.0f, 180.0f);
+			using (Pen pen = new Pen (top_left_inner, line_width))
+				dc.DrawArc (pen, Rectangle.Inflate (rb_rect, -line_width, -line_width), 135.0f, 180.0f);
+			using (Pen pen = new Pen (bottom_right_outer, line_width))
+				dc.DrawArc (pen, rb_rect, 315.0f, 180.0f);
+			
+			if (bottom_right_inner != Color.Transparent)
+				using (Pen pen = new Pen (bottom_right_inner, line_width))
+					dc.DrawArc (pen, Rectangle.Inflate (rb_rect, -line_width, -line_width), 315.0f, 180.0f);
+			else
+				using (Pen h_pen = new Pen (ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (ColorControl.R + 3, ColorControl.G, ColorControl.B), ColorControl), line_width)) {
+					dc.DrawArc (h_pen, Rectangle.Inflate (rb_rect, -line_width, -line_width), 315.0f, 180.0f);
+				}
+			
+			if ((state & ButtonState.Checked) == ButtonState.Checked) {
+				int inflate = line_width * 4;
+				Rectangle tmp = Rectangle.Inflate (rb_rect, -inflate, -inflate);
+				if (rectangle.Height >  13) {
+					tmp.X += 1;
+					tmp.Y += 1;
+					tmp.Height -= 1;
+					dc.FillEllipse (ResPool.GetSolidBrush (dot_color), tmp);
+				} else {
+					Pen pen = ResPool.GetPen (dot_color);
+					dc.DrawLine (pen, tmp.X, tmp.Y + (tmp.Height / 2), tmp.Right, tmp.Y + (tmp.Height / 2));
+					dc.DrawLine (pen, tmp.X, tmp.Y + (tmp.Height / 2) + 1, tmp.Right, tmp.Y + (tmp.Height / 2) + 1);
+					
+					dc.DrawLine (pen, tmp.X + (tmp.Width / 2), tmp.Y, tmp.X + (tmp.Width / 2), tmp.Bottom);
+					dc.DrawLine (pen, tmp.X + (tmp.Width / 2) + 1, tmp.Y, tmp.X + (tmp.Width / 2) + 1, tmp.Bottom);
+				}
+			}
 		}
-
 
 		public override void CPDrawReversibleFrame (Rectangle rectangle, Color backColor, FrameStyle style) {
 
@@ -5375,121 +5418,6 @@ namespace System.Windows.Forms
 				return;
 			}
 
-			}
-		}
-
-		[MonoTODO("Finish drawing code for Caption, Menu and Scroll")]
-		private void DrawFrameControl(Graphics graphics, Rectangle rectangle, DrawFrameControlTypes Type, DrawFrameControlStates State) {
-			// make a rectange to trace around border of the button
-			Rectangle trace_rectangle = new Rectangle(rectangle.X, rectangle.Y, Math.Max (rectangle.Width-1, 0), Math.Max (rectangle.Height-1, 0));
-			switch(Type) {
-			case DrawFrameControlTypes.Button: {
-
-				if ((State & DrawFrameControlStates.ButtonPush)!=0) {
-// JBA 31 oct 2004 - I don't think that button style should be rendered like this
-//					/* Goes first, affects the background */
-//					if ((State & DrawFrameControlStates.Checked)!=0) {
-//						HatchBrush	hatchBrush=new HatchBrush(HatchStyle.Percent50, ColorControlLightLight, ColorControlLight);
-//						graphics.FillRectangle(hatchBrush,rectangle);
-//						hatchBrush.Dispose();
-//					}
-
-					if ((State & DrawFrameControlStates.Pushed)!=0 || (State & DrawFrameControlStates.Checked)!=0) {
-						graphics.DrawRectangle (ResPool.GetPen (ControlPaint.Dark (ColorControl)), trace_rectangle);
-					} else if ((State & DrawFrameControlStates.Flat)!=0) {
-						ControlPaint.DrawBorder(graphics, rectangle, ColorControlDark, ButtonBorderStyle.Solid);
-					} else 
-						CPDrawBorder3D(graphics, rectangle, Border3DStyle.Raised, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom, ColorControl);					
-				} else if ((State & DrawFrameControlStates.ButtonRadio)!=0) {
-					Pen			penFatDark	= new Pen(ColorControlDark, 1);
-					Pen			penFatLight	= new Pen(ColorControlLightLight, 1);
-					int			lineWidth;
-
-					graphics.FillPie (ResPool.GetSolidBrush (this.ColorWindow), rectangle.X + 1, rectangle.Y + 1, rectangle.Width - 2, rectangle.Height - 2, 0, 359);
-
-					graphics.DrawArc(penFatDark, rectangle.X+1, rectangle.Y+1, rectangle.Width-2, rectangle.Height-2, 135, 180);
-					graphics.DrawArc(penFatLight, rectangle.X+1, rectangle.Y+1, rectangle.Width-2, rectangle.Height-2, 315, 180);
-
-					graphics.DrawArc(SystemPens.ControlDark, rectangle, 135, 180);
-					graphics.DrawArc(SystemPens.ControlLightLight, rectangle, 315, 180);
-
-					lineWidth=Math.Max(1, Math.Min(rectangle.Width, rectangle.Height)/3);
-
-					if ((State & DrawFrameControlStates.Checked)!=0) {
-						SolidBrush	buttonBrush;
-
-						if ((State & DrawFrameControlStates.Inactive)!=0) {
-							buttonBrush=(SolidBrush)SystemBrushes.ControlDark;
-						} else {
-							buttonBrush=(SolidBrush)SystemBrushes.ControlText;
-						}
-						graphics.FillPie(buttonBrush, rectangle.X+lineWidth, rectangle.Y+lineWidth, rectangle.Width-lineWidth*2, rectangle.Height-lineWidth*2, 0, 359);
-					}
-					penFatDark.Dispose();
-					penFatLight.Dispose();
-				} else if ((State & DrawFrameControlStates.ButtonRadioImage)!=0) {
-					throw new NotImplementedException () ;
-				} else if ((State & DrawFrameControlStates.ButtonRadioMask)!=0) {
-					throw new NotImplementedException ();
-				} else {	/* Must be Checkbox */
-					Pen			pen;
-					int			lineWidth;
-					Rectangle	rect;
-					int			Scale;
-
-					/* Goes first, affects the background */
-					if ((State & DrawFrameControlStates.Pushed)!=0 ||
-						(State & DrawFrameControlStates.Inactive)!=0) {
-						graphics.FillRectangle(SystemBrushes.Control, rectangle);
-					} else {
-						graphics.FillRectangle(SystemBrushes.Window, rectangle);
-					}
-
-					/* Draw the sunken frame */
-					if ((State & DrawFrameControlStates.Flat)!=0) {
-						ControlPaint.DrawBorder(graphics, rectangle, ColorControlDark, ButtonBorderStyle.Solid);
-					} else {
-						CPDrawBorder3D(graphics, rectangle, Border3DStyle.Sunken, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom, ColorControl);
-					}
-
-					/* Make sure we've got at least a line width of 1 */
-					lineWidth=Math.Max(3, rectangle.Width/6);
-					Scale=Math.Max(1, rectangle.Width/12);
-
-					// define a rectangle inside the border area
-					rect=new Rectangle(rectangle.X+2, rectangle.Y+2, rectangle.Width-4, rectangle.Height-4);
-					if ((State & DrawFrameControlStates.Inactive)!=0) {
-						pen=SystemPens.ControlDark;
-					} else {
-						pen=SystemPens.ControlText;
-					}
-
-					if ((State & DrawFrameControlStates.Checked)!=0) {
-						/* Need to draw a check-mark */
-						for (int i=0; i<lineWidth; i++) {
-							graphics.DrawLine(pen, rect.Left+lineWidth/2, rect.Top+lineWidth+i, rect.Left+lineWidth/2+2*Scale, rect.Top+lineWidth+2*Scale+i);
-							graphics.DrawLine(pen, rect.Left+lineWidth/2+2*Scale, rect.Top+lineWidth+2*Scale+i, rect.Left+lineWidth/2+6*Scale, rect.Top+lineWidth-2*Scale+i);
-						}
-
-					}
-				}
-				return;
-			}
-
-			case DrawFrameControlTypes.Caption: {
-				// FIXME:
-				break;
-			}
-
-			case DrawFrameControlTypes.Menu: {
-				// FIXME:
-				break;
-			}
-
-			case DrawFrameControlTypes.Scroll: {
-				// FIXME:
-				break;
-			}
 			}
 		}
 

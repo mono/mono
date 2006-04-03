@@ -1,3 +1,14 @@
+2006-04-03  Alexander Olk  <alex.olk@googlemail.com>
+
+	* ThemeWin32Classic.cs:
+	  - Removed all the DrawFrameControl stuff; CPDrawButton,
+	    CPDrawCheckBox and CPDrawRadioButton are now handled directly
+	    inside the methods
+	  - Updated and corrected the drawing code of CPDrawButton,
+	    CPDrawCheckBox and CPDrawRadioButton to better match ms
+	  - Updated theme checkbox and radiobutton code to use the CP*
+	    methods
+
 2006-03-31  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* XplatUIX11.cs: Enable clipping again now that the libgdiplus
