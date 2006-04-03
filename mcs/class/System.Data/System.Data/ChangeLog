@@ -1,3 +1,6 @@
+2006-03-04	Boris Kirzner <borisk@mainsoft.com>
+	* TypeDataSetGeneratorException.cs: fix .Net Soap serialization compatibility.
+
 2006-03-25  Senganal T  <tsenganal@novell.com>
 
 	* DataRow.cs : 
