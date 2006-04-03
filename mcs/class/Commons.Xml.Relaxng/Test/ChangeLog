@@ -1,3 +1,8 @@
+2006-04-04  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RncTests.cs : added surrogate test and foreign-elements/attributes
+	  ambiguity test.
+
 2006-01-04  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RelaxngValidatingReaderTests.cs : regressions mentioned in the

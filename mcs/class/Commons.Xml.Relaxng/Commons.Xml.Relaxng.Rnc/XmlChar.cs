@@ -31,11 +31,6 @@
 
 namespace System.Xml
 {
-	// Now, "XmlChar" and "XmlConstructs" are made as equivalent, so
-	// I dicided to rename XmlConstruts class as "XmlChar" and use it
-	// for default build.
-	// However, this class will be used for the future compact framework 
-	// (XmlConstruts class uses not a little memory).
 	internal class XmlChar
 	{
 		public static readonly char [] WhitespaceChars = new char [] {' ', '\n', '\t', '\r'};
@@ -53,16 +48,22 @@ namespace System.Xml
 			return true;
 		}
 
+		public static int IndexOfNonWhitespace (string str)
+		{
+			for (int i = 0; i < str.Length; i++)
+				if (!IsWhitespace (str [i])) return i;
+			return -1;
+		}
+
 		public static bool IsFirstNameChar (int ch)
 		{
-			bool result = false;
-
-			if (ch >= 0 && ch <= 0xFFFF)
-			{
-				result = (nameBitmap[(firstNamePages[ch >> 8] << 3) + ((ch & 0xFF) >> 5)] & (1 << (ch & 0x1F))) != 0;
+			if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')) {
+				return true;
+			} else if ((uint) ch <= 0xFFFF) {
+				return (nameBitmap[(firstNamePages[ch >> 8] << 3) + ((ch & 0xFF) >> 5)] & (1 << (ch & 0x1F))) != 0;
 			}
 
-			return result;
+			return false;
 		}
 
 		public static bool IsValid (int ch)
@@ -94,16 +95,50 @@ namespace System.Xml
 				return true;
 		}
 
+		public static int IndexOfInvalid (string s, bool allowSurrogate)
+		{
+			for (int i = 0; i < s.Length; i++)
+				if (IsInvalid (s [i])) {
+					if (!allowSurrogate ||
+					    i + 1 == s.Length ||
+					    s [i] < '\uD800' ||
+					    s [i] >= '\uDC00' ||
+					    s [i + 1] < '\uDC00' ||
+					    s [i + 1] >= '\uE000')
+						return i;
+					i++;
+				}
+			return -1;
+		}
+
+		public static int IndexOfInvalid (char [] s, int start, int length, bool allowSurrogate)
+		{
+			int end = start + length;
+			if (s.Length < end)
+				throw new ArgumentOutOfRangeException ("length");
+			for (int i = start; i < end; i++)
+				if (IsInvalid (s [i])) {
+					if (!allowSurrogate ||
+					    i + 1 == end ||
+					    s [i] < '\uD800' ||
+					    s [i] >= '\uDC00' ||
+					    s [i + 1] < '\uDC00' ||
+					    s [i + 1] >= '\uE000')
+						return i;
+					i++;
+				}
+			return -1;
+		}
+
 		public static bool IsNameChar (int ch)
 		{
-			bool result = false;
-
-			if (ch >= 0 && ch <= 0xFFFF)
-			{
-				result = (nameBitmap[(namePages[ch >> 8] << 3) + ((ch & 0xFF) >> 5)] & (1 << (ch & 0x1F))) != 0;
+			if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')) {
+				return true;
+			} else if ((uint) ch <= 0xFFFF) {
+				return (nameBitmap[(namePages[ch >> 8] << 3) + ((ch & 0xFF) >> 5)] & (1 << (ch & 0x1F))) != 0;
+			} else {
+				return false;
 			}
-
-			return result;
 		}
 
 		public static bool IsNCNameChar (int ch)

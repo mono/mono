@@ -1,3 +1,17 @@
+2006-04-04  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlChar.cs : copied newer one from System.Xml.
+	* RncParser.jay,
+	  RncTokenizer.cs :
+	  - QuotedIdentifier is now returned as a single token (whitespaces
+	    are not allowed between \ and keyword). \\ is simple an error.
+	  - handle surrogate characters correctly.
+	  - ForeignElementNotKeyword (in includes) is disabled until the
+	    ambiguity is solved.
+	  - Annotations are now handled without ambiguity.
+	  - removed some lines that are already commented out.
+	  Thanks to Alexandre for the report.
+
 2005-12-16  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RncWriter.cs : it needs another namespace resolver for datatypes.

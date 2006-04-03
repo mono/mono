@@ -9,6 +9,7 @@
 
 using System;
 using System.IO;
+using System.Text;
 using System.Xml;
 using Commons.Xml.Relaxng;
 using Commons.Xml.Relaxng.Rnc;
@@ -19,14 +20,48 @@ namespace MonoTests.Commons.Xml.Relaxng
 	[TestFixture]
 	public class RncTests
 	{
+		void Compile (string file)
+		{
+			using (StreamReader sr = new StreamReader (file)) {
+				Compile (sr);
+			}
+		}
+
+		void Compile (TextReader reader)
+		{
+			RncParser parser = new RncParser (new NameTable ());
+			RelaxngPattern g = parser.Parse (reader);
+			g.Compile ();
+		}
+
 		[Test]
 		public void TestRelaxngRnc ()
 		{
-			RncParser parser = new RncParser (new NameTable ());
-			using (StreamReader sr = new StreamReader ("Test/XmlFiles/relaxng.rnc")) {
-				RelaxngPattern g = parser.Parse (sr);
-				g.Compile ();
-			}
+			Compile ("Test/XmlFiles/relaxng.rnc");
+		}
+
+		[Test]
+		// Make sure that it is not rejected by ambiguity between
+		// foreign attribute and foreign element.
+		public void Annotations ()
+		{
+			string rnc = @"
+namespace s = ""urn:foo""
+mine =
+  [
+    s:foo []
+    s:foo = ""value""
+  ]
+  element foo { empty }
+
+start = mine";
+			Compile (new StringReader (rnc));
+		}
+
+		[Test]
+		public void SurrogateLiteral ()
+		{
+			Compile (new StringReader ("element foo { \"\\x{10FFFF}\" }"));
 		}
 	}
 }

@@ -262,7 +262,12 @@ namespace Commons.Xml.Relaxng.Rnc
 				Array.Copy (nameBuffer, arr, index);
 				nameBuffer = arr;
 			}
-			nameBuffer [index++] = (char) c;
+			if (c > 0x10000) {
+				AppendNameChar ((c - 0x10000) / 0x400 + 0xD800, ref index);
+				AppendNameChar ((c - 0x10000) % 0x400 + 0xDC00, ref index);
+			}
+			else
+				nameBuffer [index++] = (char) c;
 		}
 
 		private string ReadTripleQuoted (char quoteChar)
@@ -395,7 +400,7 @@ namespace Commons.Xml.Relaxng.Rnc
 				return Token.Asterisk;
 			case '\\':
 				if (backslashed)
-					return Token.BackSlash;
+					return Token.ERROR;
 				return ParseToken (true);
 			case '+':
 				return Token.Plus;
@@ -409,11 +414,9 @@ namespace Commons.Xml.Relaxng.Rnc
 				peekChar = '>';
 				goto default;
 			case '#':
-				// NOTE: This interpretation is expanded against the spec
-//				if (ReadChar () != '#')
-//					throw new RelaxngException ("Invalid character after '#'.");
-				tokenValue = ReadLine ();
+//				tokenValue = ReadLine ();
 //				return Token.Documentation;
+				ReadLine ();
 				return ParseToken (false);
 			case '\'':
 			case '\"':
@@ -427,6 +430,9 @@ namespace Commons.Xml.Relaxng.Rnc
 					} // else '' or ""
 					name = String.Empty;
 				}
+				int invidx = XmlChar.IndexOfInvalid (name, true) ;
+				if (invidx >= 0)
+					throw new RelaxngException (String.Format ("Invalid XML character in compact syntax literal segment at {0:X}", (int) name [invidx]));
 				tokenValue = name;
 				return Token.LiteralSegment;
 			default:
@@ -447,7 +453,7 @@ namespace Commons.Xml.Relaxng.Rnc
 				}
 				tokenValue = name;
 				if (backslashed)
-					return Token.NCName;
+					return Token.QuotedIdentifier;
 				switch (name) {
 				case "attribute":
 					isElement = false;

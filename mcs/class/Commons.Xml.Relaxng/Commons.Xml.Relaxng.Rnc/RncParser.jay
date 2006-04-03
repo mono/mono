@@ -189,7 +189,6 @@ namespace Commons.Xml.Relaxng.Rnc
 %token Bar "|"
 %token Question "?"
 %token Asterisk "*"
-%token BackSlash "\\"
 %token Plus "+"
 %token Minus "-"
 %token OrEquals "|="
@@ -198,6 +197,7 @@ namespace Commons.Xml.Relaxng.Rnc
 
 %token LiteralSegment
 %token NCName
+%token QuotedIdentifier
 
 %token Documentation
 
@@ -213,14 +213,6 @@ namespace Commons.Xml.Relaxng.Rnc
 
 
 TopLevel /* returns RelaxngPattern */
-	/* TODO: here Annotations is not specified in the spec!! */
-	: Annotations TopLevelAfterAnnotations 
-	{
-		$$ = (RelaxngPattern) $2;
-	}
-	;
-
-TopLevelAfterAnnotations /* returns RelaxngPattern */
 	: Preamble TopLevelBody
 	{
 		$$ = (RelaxngPattern) $2;
@@ -336,7 +328,7 @@ Grammar /* returns RelaxngGrammarContentList */
 	}
 	;
 
-Member /* returns nullable IGrammarContent (RelaxngDiv, RelaxngInclude, RelaxngStart, RelaxngDiv) */
+Member /* returns nullable IGrammarContent (RelaxngDiv, RelaxngInclude, RelaxngStart, RelaxngDefine) */
 	: AnnotatedComponent
 	{
 		$$ = (IGrammarContent) $1;
@@ -636,24 +628,18 @@ RepeatedPrimary /* returns RelaxngPattern */
 	: AnnotatedPrimary Asterisk
 	{
 		RelaxngZeroOrMore zom = new RelaxngZeroOrMore ();
-//		foreach (RelaxngPattern p in (ICollection) $1)
-//			zom.Patterns.Add (p);
 		zom.Patterns.Add ((RelaxngPattern) $1);
 		$$ = zom;
 	}
 	| AnnotatedPrimary Plus
 	{
 		RelaxngOneOrMore oom = new RelaxngOneOrMore ();
-//		foreach (RelaxngPattern p in (ICollection) $1)
-//			oom.Patterns.Add (p);
 		oom.Patterns.Add ((RelaxngPattern) $1);
 		$$ = oom;
 	}
 	| AnnotatedPrimary Question
 	{
 		RelaxngOptional opt = new RelaxngOptional ();
-//		foreach (RelaxngPattern p in (ICollection) $1)
-//			opt.Patterns.Add (p);
 		opt.Patterns.Add ((RelaxngPattern) $1);
 		$$ = opt;
 	}
@@ -825,13 +811,6 @@ DatatypeName
 	: CName
 	{
 		string cname = (string) $1;
-	/*
-		int colonAt = cname.IndexOf (':');
-		string local = cname.Substring (colonAt + 1);
-		string prefix = cname.Substring (0, colonAt);
-		string ns = dtnsmgr.LookupNamespace (prefix);
-		$$ = new XmlQualifiedName (local, ns);
-	*/
 		$$ = SplitQName (dtnsmgr, cname);
 	}
 	| KeywordString
@@ -989,8 +968,6 @@ SimpleNameClass /* returns RelaxngNameClass */
 	| CName
 	{
 		string cname = (string) $1;
-//		int colonAt = cname.IndexOf (':');
-//		XmlQualifiedName qname = new XmlQualifiedName (cname.Substring (colonAt + 1), nsmgr.LookupNamespace (cname.Substring (0, colonAt - 1)));
 		XmlQualifiedName qname = SplitQName (nsmgr, cname);
 		RelaxngName name = new RelaxngName ();
 		name.LocalName = qname.Name;
@@ -1027,42 +1004,33 @@ Annotations /* returns null */
 	{
 		$$ = null;
 	}
-	| Documentations OpenCurly AnnotationAttributes AnnotationElements CloseCurly
+	| Documentations OpenBracket AnnotationContentInAnnotations CloseBracket
 	{
 		$$ = null;
 	}
 	;
 
-AnnotationAttributes /* returns null */
-	: /* empty */
-	{
-		$$ = null;
-	}
-	| ForeignAttributeName Equal Literal AnnotationAttributes
-	{
-		// Constraint: duplicate attributes
-
-		// FIXME: do something
-		$$ = null;
-	}
+// This one is extra to the original syntax rule. Also it and following 
+// annotation related rules are modified to work fine without ambiguity.
+// FIXME: it should reject attributes after elements...
+AnnotationContentInAnnotations
+	: // empty
+	| PrefixedName Equal Literal AnnotationContentInAnnotations
+	| PrefixedName AnnotationAttributesContent AnnotationContentInAnnotations
+	| IdentifierOrKeyword AnnotationAttributesContent AnnotationContentInAnnotations
+	;
+// ... but something like this one should be used instead.
+AttributableAnnotations
+	: // empty
+	| AttributableAnnotations PrefixedName Equal Literal NonAttributableAnnotations
 	;
 
-ForeignAttributeName /* returns XmlQualifiedName */
-	: PrefixedName
-	{
-		// Constraint: xmlns namespace URI
-		// Constraint: unqualified name
-		// Constraint: RELAX NG namespace URI
-
-		// do nothing
-//		$$ = $1;
-	}
+NonAttributableAnnotations
+	: // empty
+	| PrefixedName AnnotationAttributesContent 
+	| NonAttributableAnnotations IdentifierOrKeyword AnnotationAttributesContent
 	;
 
-AnnotationElements
-	: /* empty */
-	| AnnotationElement AnnotationElements
-	;
 
 AnnotationElement
 	: ForeignElementName AnnotationAttributesContent
@@ -1074,40 +1042,40 @@ AnnotationElement
 	;
 
 ForeignElementName
-	: /*IdentifierOrKeyword
+	: IdentifierOrKeyword
 	{
 		$$ = new XmlQualifiedName ((string) $1, String.Empty);
 	}
-	|*/ PrefixedName
-	{
+	| PrefixedName
 		// Constraint: RELAX NG namespace URI
-		$$ = $1;
-	}
 	;
 
-AnnotationElementNotKeyword /* returns null */
-	: ForeignElementNameNotKeyword AnnotationAttributesContent
+// FIXME: due to syntax ambiguity it cannot be included in the creation rules.
+AnnotationElementNotKeyword /* null */
+	: ERROR
+	;
+
+/*
+AnnotationElementNotKeyword // null
+	: ForeignElementNameNotKeyword AnnotationAttributeContent
 	{
 		// do nothing
 		$$ = $1;
 	}
 	;
 
-ForeignElementNameNotKeyword  /* returns XmlQualifiedName */
-/* FIXME: unprefixed Identifier causes conflict */
-	: /*Identifier
+ForeignElementNameNotKeyword // QName
+	: Identifier
 	{
 		$$ = new XmlQualifiedName ((string) $1, String.Empty);
 	}
-*/
-/* FIXME: prefixed name causes conflict */
-	| /*PrefixedName
+	| PrefixedName
 	{
 		// Constraint: RELAX NG namespace URI
 		$$ = (XmlQualifiedName) $1;
 	}
-	*/
 	;
+*/
 
 AnnotationAttributesContent /* returns null */
 	: OpenBracket NestedAnnotationAttributes AnnotationContent CloseBracket
@@ -1247,9 +1215,9 @@ Identifier /* returns string */
 	{
 		$$ = (string) $1;
 	}
-	| BackSlash NCName
+	| QuotedIdentifier
 	{
-		$$ = (string) $2;
+		$$ = (string) $1;
 	}
 	;
 
