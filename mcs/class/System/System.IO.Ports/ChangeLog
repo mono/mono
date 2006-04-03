@@ -1,3 +1,11 @@
+2006-04-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* SerialPort.cs:
+	* SerialPortStream.cs: Remove the buffers from the SerialPort
+	class, and take them to SerialPortStream. We need them for
+	storing the internal read (pass the buffer sizes to SerialPortStream
+	ctor by now, and use those numbers when we support them).
+	
 2006-03-27  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* SerialPort.cs: Inherit from Component, and use protected

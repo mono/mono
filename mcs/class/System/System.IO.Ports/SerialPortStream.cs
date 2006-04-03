@@ -33,7 +33,8 @@ namespace System.IO.Ports
 		static extern int open_serial (string portName);
 
 		public SerialPortStream (string portName, int baudRate, int dataBits, Parity par, StopBits stopBits,
-				bool dtrEnable, bool rtsEnable, Handshake handsh, int readTimeout, int writeTimeout)
+				bool dtrEnable, bool rtsEnable, Handshake handsh, int readTimeout, int writeTimeout,
+				int readBufferSize, int writeBufferSize)
 		{
 			fd = open_serial (portName);
 			if (fd == -1)

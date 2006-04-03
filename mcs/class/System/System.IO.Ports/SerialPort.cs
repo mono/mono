@@ -32,11 +32,6 @@ namespace System.IO.Ports
 		int    writeTimeout = InfiniteTimeout;
 		int readBufferSize = DefaultReadBufferSize;
 		int writeBufferSize = DefaultWriteBufferSize;
-		int readBufferOffset;
-		int readBufferLength;
-		int writeBufferLength;
-		byte [] readBuffer;
-		//byte [] writeBuffer;
 		object error_received = new object ();
 		object data_received = new object ();
 		object pin_changed = new object ();
@@ -134,14 +129,14 @@ namespace System.IO.Ports
 		public int BytesToRead {
 			get {
 				CheckOpen ();
-				return readBufferLength + stream.BytesToRead;
+				return stream.BytesToRead;
 			}
 		}
 
 		public int BytesToWrite {
 			get {
 				CheckOpen ();
-				return writeBufferLength + stream.BytesToWrite;
+				return stream.BytesToWrite;
 			}
 		}
 
@@ -388,8 +383,6 @@ namespace System.IO.Ports
 				stream.Close ();
 			
 			stream = null;
-			readBuffer = null;
-			//writeBuffer = null;
 		}
 
 		public void DiscardInBuffer ()
@@ -419,11 +412,8 @@ namespace System.IO.Ports
 				throw new InvalidOperationException ("Port is already open");
 			
 			stream = new SerialPortStream (portName, baudRate, dataBits, parity, stopBits, dtr_enable,
-					rts_enable, handshake, readTimeout, writeTimeout);
+					rts_enable, handshake, readTimeout, writeTimeout, readBufferSize, writeBufferSize);
 			isOpen = true;
-			
-			readBuffer = new byte [readBufferSize];
-			//writeBuffer = new byte [writeBufferSize];
 		}
 
 		public int Read (byte[] buffer, int offset, int count)
@@ -438,22 +428,7 @@ namespace System.IO.Ports
 			if (count > buffer.Length - offset)
 				throw new ArgumentException ("count > buffer.Length - offset");
 			
-			if (readBufferLength <= 0) {
-				readBufferOffset = 0;
-				readBufferLength = stream.Read (readBuffer, 0, readBuffer.Length);
-			}
-			
-			if (readBufferLength == 0)
-				return 0; // No bytes left
-			
-			if (count > readBufferLength)
-				count = readBufferLength; // Update count if needed
-
-			Buffer.BlockCopy (readBuffer, readBufferOffset, buffer, offset, count);
-			readBufferOffset += count;
-			readBufferLength -= count;
-
-			return count;
+			return stream.Read (buffer, offset, count);
 		}
 
 		public int Read (char[] buffer, int offset, int count)
@@ -469,7 +444,7 @@ namespace System.IO.Ports
 				throw new ArgumentException ("count > buffer.Length - offset");
 
 			byte [] bytes = encoding.GetBytes (buffer, offset, count);
-			return Read (bytes, 0, bytes.Length);
+			return stream.Read (bytes, 0, bytes.Length);
 		}
 
 		public int ReadByte ()
