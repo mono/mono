@@ -1,3 +1,9 @@
+2006-04-04  Atsushi Enomoto <atsushi@ximian.com>
+
+	* atom.rnc : new file for RNC parser test (It is from
+	http://atompub.org/2005/08/17/atom.rnc i.e.
+	http://www.ietf.org/rfc/rfc4287.txt).
+
 2004-03-17  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* Added relaxng.rng and relaxng.rnc.

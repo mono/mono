@@ -1,5 +1,10 @@
 2006-04-04  Atsushi Enomoto <atsushi@ximian.com>
 
+	* RncParser.jay : handle "nested" annotations as well. This fixes
+	  atom.rnc parsing.
+
+2006-04-04  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlChar.cs : copied newer one from System.Xml.
 	* RncParser.jay,
 	  RncTokenizer.cs :

@@ -1,5 +1,9 @@
 2006-04-04  Atsushi Enomoto <atsushi@ximian.com>
 
+	* RncTests.cs : added atom.rnc parsing test.
+
+2006-04-04  Atsushi Enomoto <atsushi@ximian.com>
+
 	* RncTests.cs : added surrogate test and foreign-elements/attributes
 	  ambiguity test.
 

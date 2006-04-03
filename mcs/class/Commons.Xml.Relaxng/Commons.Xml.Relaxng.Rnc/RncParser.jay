@@ -1078,10 +1078,21 @@ ForeignElementNameNotKeyword // QName
 */
 
 AnnotationAttributesContent /* returns null */
-	: OpenBracket NestedAnnotationAttributes AnnotationContent CloseBracket
+	: OpenBracket NestedAnnotationContents CloseBracket
 	{
 		$$ = null;
 	}
+	;
+
+// ditto (see also AnnotationContentInAnnotations)
+NestedAnnotationContents
+	: /* empty */
+	| PrefixedName Equal Literal NestedAnnotationContents
+	| IdentifierOrKeyword Equal Literal NestedAnnotationContents
+	| PrefixedName AnnotationAttributesContent NestedAnnotationContents
+	| IdentifierOrKeyword AnnotationAttributesContent NestedAnnotationContents
+	| Literal
+	| Literal NestedAnnotationContents
 	;
 
 NestedAnnotationAttributes /* returns null */

@@ -41,6 +41,12 @@ namespace MonoTests.Commons.Xml.Relaxng
 		}
 
 		[Test]
+		public void TestAtomRnc ()
+		{
+			Compile ("Test/XmlFiles/atom.rnc");
+		}
+
+		[Test]
 		// Make sure that it is not rejected by ambiguity between
 		// foreign attribute and foreign element.
 		public void Annotations ()
