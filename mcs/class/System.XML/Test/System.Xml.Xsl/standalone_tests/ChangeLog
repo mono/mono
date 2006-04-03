@@ -1,3 +1,7 @@
+2006-04-03  Andrew Skiba <andrews@mainsoft.com>
+
+	* xslt.vmwcsproj : refer nunit from mono tree
+
 2005-11-23  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* ignore.lst: adeed Keys__91835, idkey_idkey18, idkey_idkey50

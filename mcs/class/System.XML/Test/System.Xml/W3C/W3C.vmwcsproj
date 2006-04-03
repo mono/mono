@@ -7,12 +7,10 @@
 			</Settings>
 			<References>
 				<Reference Name="System" AssemblyName="System" HintPath="..\..\..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.dll"/>
-				<Reference Name="System.Data" AssemblyName="System.Data" HintPath="..\..\..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Data.dll"/>
 				<Reference Name="System.Xml" AssemblyName="System.Xml" HintPath="..\..\..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Xml.dll"/>
 				<Reference Name="rt" AssemblyName="rt" HintPath="..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\j2sdk1.4\rt.dll" Private="False"/>
-				<Reference Name="nunit.core" AssemblyName="nunit.core" HintPath="..\..\..\..\..\..\..\..\views\DevQA\studio\GH\DevQA\tests\utils\nunit\nunit-2.2.0\nunit-console\bin\Debug_Java\nunit.core.dll" Private="True"/>
-				<Reference Name="nunit.framework" AssemblyName="nunit.framework" HintPath="..\..\..\..\..\..\..\..\views\DevQA\studio\GH\DevQA\tests\utils\nunit\nunit-2.2.0\nunit-console\bin\Debug_Java\nunit.framework.dll" Private="True"/>
-				<Reference Name="nunit.util" AssemblyName="nunit.util" HintPath="..\..\..\..\..\..\..\..\views\DevQA\studio\GH\DevQA\tests\utils\nunit\nunit-2.2.0\nunit-console\bin\Debug_Java\nunit.util.dll" Private="True"/>
+				<Reference Name="nunit.framework" AssemblyName="nunit.framework" HintPath="..\..\..\..\..\nunit20\framework\bin\Debug_Java\nunit.framework.dll" Private="True"/>
+				<Reference Name="nunit.core" AssemblyName="nunit.core" HintPath="..\..\..\..\..\nunit20\core\bin\Debug_Java\nunit.core.dll" Private="True"/>
 			</References>
 		</Build>
 		<Files>
