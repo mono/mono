@@ -221,11 +221,10 @@ namespace System.Web.UI
                 }
 
 #if NET_2_0
+		[MonoTODO ("revisit once we have a real design strategy")]
 		protected internal bool DesignMode 
 		{
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return false; }
 		}
 #endif		
 
