@@ -69,6 +69,7 @@
 				<File RelPath="Mono.Xml.Xsl\XslFunctions.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Mono.Xml.Xsl\XslKey.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Mono.Xml.Xsl\XslOutput.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Mono.Xml.Xsl\XslSortEvaluator.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Mono.Xml.Xsl\XslStylesheet.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Mono.Xml.Xsl\XsltCompiledContext.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Mono.Xml.Xsl\XslTemplate.cs" SubType="Code" BuildAction="Compile"/>
@@ -103,9 +104,11 @@
 				<File RelPath="System.Xml\DTDAutomata.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\DTDObjectModel.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\DTDReader.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Xml\DTDValidatingReader.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Xml\DTDValidatingReader2.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\EntityHandling.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Xml\EntityResolvingXmlReader.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\Formatting.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Xml\IHasXmlChildNode.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\IHasXmlNode.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\IXmlLineInfo.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\IXmlNamespaceResolver.cs" SubType="Code" BuildAction="Compile"/>
@@ -136,6 +139,7 @@
 				<File RelPath="System.Xml\XmlException.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\XmlImplementation.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\XmlInputStream.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Xml\XmlIteratorNodeList.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\XmlLinkedNode.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\XmlNamedNodeMap.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\XmlNameEntry.cs" SubType="Code" BuildAction="Compile"/>
