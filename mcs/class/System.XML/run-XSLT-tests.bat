@@ -55,6 +55,9 @@ REM ********************************************************
 set XML_TOOL_PATH=..\..\..\..\..\tools\mono-xmltool
 devenv %XML_TOOL_PATH%\XmlTool.sln /%BUILD_OPTION% Debug_Java >>build.log.txt 2<&1
 IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
+copy %XML_TOOL_PATH%\bin\Debug_Java\xmltool.exe ..\..\..
+copy %XML_TOOL_PATH%\nunit_transform.xslt ..\..\..
+
 
 REM ********************************************************
 @echo Building GH solution...
@@ -92,9 +95,6 @@ REM ********************************************************
 popd
 
 copy %XSLT_DIR%\%GH_OUTPUT_XML% .
-
-copy %XML_TOOL_PATH%\bin\Debug_Java\xmltool.exe .
-copy %XML_TOOL_PATH%\nunit_transform.xslt .
 
 REM ********************************************************
 @echo Analyze and print results
