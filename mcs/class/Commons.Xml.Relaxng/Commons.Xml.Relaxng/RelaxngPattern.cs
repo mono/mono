@@ -468,6 +468,7 @@ namespace Commons.Xml.Relaxng
 			r.MoveToContent ();
 			RelaxngPattern p = r.ReadPattern ();
 			p.DataProvider = provider;
+			p.XmlResolver = xmlResolver;
 			return p;
 		}
 
