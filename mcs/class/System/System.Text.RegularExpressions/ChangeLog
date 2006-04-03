@@ -1,3 +1,8 @@
+2006-04-03  Raja R Harinath  <rharinath@novell.com>
+
+	* interpreter.cs (Eval) [Until, lazy]: Avoid extra evaluation on a
+	degenerate match.
+
 2006-03-30  Raja R Harinath  <harinath@gmail.com>
 
 	Fix #77626

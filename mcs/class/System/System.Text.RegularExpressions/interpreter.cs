@@ -457,7 +457,7 @@ namespace System.Text.RegularExpressions {
 						++ current.Count;
 						current.Start = ptr;
 						deep = current;
-						if (!Eval (Mode.Match, ref ptr, repeat.Expression)) {
+						if (!Eval (Mode.Match, ref ptr, current.Expression)) {
 							current.Start = start;
 							current.Count = start_count;
 							goto Fail;
@@ -466,7 +466,6 @@ namespace System.Text.RegularExpressions {
 							goto Pass;
 					}
 
-					DegenerateMatch:
 					if (ptr == current.Start) {
 						// degenerate match ... match tail or fail
 						this.repeat = current.Previous;
@@ -501,9 +500,10 @@ namespace System.Text.RegularExpressions {
 							}
 							if (deep != current)	// recursive mode
 								goto Pass;
-							// Degenerate match: no point retrying current.Expression if tail match fails
+							// Degenerate match: ptr has not moved since the last (failed) tail match.
+							// So, next and subsequent tail matches will fail.
 							if (ptr == current.Start)
-								goto DegenerateMatch;
+								goto Fail;
 						}
 					} else {
 						int stack_size = stack.Count;
