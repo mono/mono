@@ -1,3 +1,8 @@
+2006-04-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ImageListStreamer.cs: implemented serialization/deserialization
+	of the images.
+
 2006-04-03  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ThemeWin32Classic.cs:
@@ -94,6 +99,7 @@
 	* ColorDialog.cs, FontDialog.cs: Make use of the updated 3D border
 	  code
 
+>>>>>>> .r58969
 2006-03-30  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ThemeWin32Classic.cs: Updated MainMenu drawing of selected and

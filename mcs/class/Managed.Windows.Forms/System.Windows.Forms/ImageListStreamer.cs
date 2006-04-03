@@ -17,10 +17,11 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2002-2005 Novell, Inc.
+// Copyright (c) 2002-2006 Novell, Inc.
 //
 // Authors:
 //	Jackson Harper (jackson@ximian.com)
+//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // Based on work done by:
 //   Dennis Hayes (dennish@Raytek.com)
@@ -35,131 +36,152 @@ using System.Runtime.InteropServices;
 
 
 namespace System.Windows.Forms {
-
 	[Serializable]
 	public sealed class ImageListStreamer : ISerializable {
+		readonly ImageList.ImageCollection imageCollection;
+		Image [] images;
+		Size image_size;
+		Color back_color;
 
-		private static byte [] signature = new byte [] {77 , 83 , 70 , 116};
-
-		private readonly ImageList.ImageCollection imageCollection;
-		private Image [] images;
-		private Size image_size;
-		private Color back_color;
-
-		internal ImageListStreamer (ImageList.ImageCollection imageCollection) {
+		internal ImageListStreamer (ImageList.ImageCollection imageCollection)
+		{
 			this.imageCollection = imageCollection;
 		}
-		
-		private ImageListStreamer (SerializationInfo info, StreamingContext context) {
 
-			byte [] data = (byte [])info.GetValue ("Data", typeof (byte []));
-			if (data == null || data.Length <= signature.Length)
+		static int GetInt (Stream st)
+		{
+			byte [] bytes = new byte [4];
+			st.Read (bytes, 0, 4);
+			return (bytes [0] + (bytes [1] << 8) + (bytes [2] << 16) + (bytes [3] << 24));
+		}
+
+		private ImageListStreamer (SerializationInfo info, StreamingContext context)
+		{
+			byte [] data = (byte []) info.GetValue ("Data", typeof (byte []));
+			if (data == null || data.Length <= 4) { // 4 is the signature
 				return;
-			// check the signature ( 'MSFt' )
-			if (data [0] != signature [0] || data [1] != signature [1] ||
-					data [2] != signature [2] ||  data [3] != signature [3])
-				return;
-
-			// calulate size of array needed for decomressed data
-			int i = 0;
-			int real_byte_count = 0;
-			for (i = signature.Length; i < data.Length; i += 2)
-				real_byte_count += data [i];
-
-			if (real_byte_count == 0)
-				return;
-			
-			int j = 0;
-			byte [] decompressed = new byte [real_byte_count];
-
-			for (i = signature.Length; i < data.Length; i += 2) {
-				for (int k = 0; k < data [i]; k++)
-					decompressed [j++] = data [i + 1];
 			}
 
-			MemoryStream stream = new MemoryStream (decompressed);
-			BinaryReader reader = new BinaryReader (stream);
+			// check the signature ( 'MSFt' )
+			if (data [0] != 77 || data [1] != 83 || data [2] != 70 || data [3] != 116) {
+				return;
+			}
 
+			MemoryStream decoded = GetDecodedStream (data, 4, data.Length - 4);
+			//WriteToFile (new MemoryStream (decoded.GetBuffer (), 0, (int) decoded.Length));
+			decoded.Position = 4; // jumps over 'magic' and 'version', which are 16-bits each
+
+			BinaryReader reader = new BinaryReader (decoded);
+			ushort nimages = reader.ReadUInt16 ();
+			ushort max_image = reader.ReadUInt16 ();	// cMaxImage
+			ushort grow = reader.ReadUInt16 (); // cGrow
+			ushort cx = reader.ReadUInt16 ();
+			ushort cy = reader.ReadUInt16 ();
+			uint bkcolor = reader.ReadUInt32 ();
+			back_color = Color.FromArgb ((int) bkcolor);
+			reader.ReadUInt16 ();	// flags
+
+			short [] ovls = new short [4];
+			for (int i = 0; i < 4; i++) {
+				ovls[i] = reader.ReadInt16 ();
+			}
+
+			decoded.Position = 28;
+			if (decoded.ReadByte () != 'B') {
+				return;
+				/*
+				Console.WriteLine ("FALLO en 1 {0}", decoded.Position - 1);
+				WriteToFile (new MemoryStream (data));
+				WriteToFile (decoded);
+				throw new Exception ();
+				*/
+			}
+
+			if (decoded.ReadByte () != 'M') {
+				return;
+				/*
+				Console.WriteLine ("FALLO en 2 {0}", decoded.Position - 2);
+				WriteToFile (new MemoryStream (data));
+				WriteToFile (decoded);
+				throw new Exception ();
+				*/
+			}
+	
+			int bmp_offset = 28;
+			int bmp_size = GetInt (decoded);
+			MemoryStream bmpms = new MemoryStream (decoded.GetBuffer (), bmp_offset, (int) decoded.Length - bmp_offset + 1);
+			Bitmap bmp = null;
 			try {
-				// read image list header
-				reader.ReadUInt16 ();	// usMagic
-				reader.ReadUInt16 ();	// usVersion
-				ushort cCurImage = reader.ReadUInt16 ();
-				reader.ReadUInt16 ();	// cMaxImage
-				reader.ReadUInt16 ();	// cGrow
-				ushort cx	 = reader.ReadUInt16 ();
-				ushort cy	 = reader.ReadUInt16 ();
-				uint   bkcolor	 = reader.ReadUInt32 ();
-				reader.ReadUInt16 ();	// flags
-
-				short [] ovls = new short [4];
-				for (i = 0; i < ovls.Length; i++) {
-					ovls[i] = reader.ReadInt16 ();
-				}
-
-				image_size = new Size (cx, cy);
-				back_color = Color.FromArgb ((int) bkcolor);
-						
-				MemoryStream start = new MemoryStream (decompressed,
-						(int) stream.Position,
-						(int) stream.Length - (int) stream.Position,
-						false);
-
-				Image image = Image.FromStream (start);
-
-				// Holy calamity. This is what happens on MS
-				// if the background colour is 0xFFFFFFFF (CLR_NONE)
-				// the mask is set to the color at pixel 0, 0
-				Bitmap bmp = image as Bitmap;
-				if (bkcolor == 0xFFFFFFFF && bmp != null)
-					back_color = bmp.GetPixel (0, 0);
-
-				int step = image.Width / cx;
-				images = new Image [cCurImage];
-
-				Rectangle dest_rect = new Rectangle (0, 0, cx, cy);
-				for (int r = 0 ; r < cCurImage ; r++) {
-					Rectangle area = new Rectangle (
-						(r % step) * cx,
-						(r / step) * cy,
-						cx, cy);
-					Bitmap b = new Bitmap (cx, cy);
-					using (Graphics g = Graphics.FromImage (b)) {
-						g.DrawImage (image, dest_rect, area, 
-								GraphicsUnit.Pixel);
-					}
-					b.MakeTransparent (back_color);
-					images [r] = b;
-				}
-
+				bmp = new Bitmap (bmpms);
 			} catch (Exception e) {
+				throw;
+				/*
+				WriteToFile (new MemoryStream (data));
+				WriteToFile (decoded);
+				MemoryStream kk = new MemoryStream (decoded.GetBuffer (), bmp_offset, (int) decoded.Length - bmp_offset + 1);
+				WriteToFile (kk);
+				throw;
+				*/
+			}
 
+			// the mask is set to the color at pixel 0, 0
+			//TODO: do not keep back_color when got from pixel (0,0)?
+			// do this per image?
+			if (bkcolor == 0xFFFFFFFF) 
+				back_color = bmp.GetPixel (0, 0);
+
+
+			images = new Image [nimages];
+			int w = cx;
+			int h = cy;
+			image_size = new Size (cx, cy);
+			Rectangle dest_rect = new Rectangle (0, 0, w, h);
+			for (int r = 0 ; r < nimages ; r++) {
+				int col = r % grow;
+				int row = r / grow;
+				Rectangle area = new Rectangle (col * w, row * h, w, h);
+				Bitmap b = new Bitmap (w, h);
+				using (Graphics g = Graphics.FromImage (b)) {
+					g.DrawImage (bmp, dest_rect, area, GraphicsUnit.Pixel);
+				}
+				b.MakeTransparent (back_color);
+				images [r] = b;
 			}
 		}
 
-		[MonoTODO ("RLE is broken")]
+		/*
+		static void WriteToFile (MemoryStream st)
+		{
+			st.Position = 0;
+			FileStream fs = File.OpenWrite (Path.GetTempFileName ());
+			Console.WriteLine ("Writing to {0}", fs.Name);
+			st.WriteTo (fs);
+			fs.Close ();
+		}
+		*/
+
+		static byte [] header = new byte []{ 77, 83, 70, 116, 73, 76, 3, 0 };
 		public void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			MemoryStream stream = new MemoryStream ();
 			BinaryWriter writer = new BinaryWriter (stream);
+			writer.Write (header);
 
-			writer.Write (signature);
-			writer.Write (GetStreamData ());
-			
-			info.AddValue ("Data", stream.ToArray (), typeof (byte []));
-		}
-
-		[MonoTODO ("Images should be written to the stream")]
-		private byte [] GetStreamData ()
-		{
-			MemoryStream stream = new MemoryStream ();
-			BinaryWriter writer = new BinaryWriter (stream);
 			Image [] images = (imageCollection != null) ? imageCollection.ToArray () : this.images;
-
 			int cols = 4;
 			int rows = images.Length / cols;
 			if (images.Length % cols > 0)
 				++rows;
+
+			writer.Write ((ushort) images.Length);
+			writer.Write ((ushort) images.Length);
+			writer.Write ((ushort) 0x4);
+			writer.Write ((ushort) (images [0].Width));
+			writer.Write ((ushort) (images [0].Height));
+			writer.Write (0xFFFFFFFF); //BackColor.ToArgb ()); //FIXME: should set the right one here.
+			writer.Write ((ushort) 0x1009);
+			for (int i = 0; i < 4; i++)
+				writer.Write ((short) -1);
 
 			Bitmap main = new Bitmap (cols * ImageSize.Width, rows * ImageSize.Height);
 			using (Graphics g = Graphics.FromImage (main)) {
@@ -170,40 +192,69 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			writer.Write ((ushort) (('L' << 8) | 'I'));    // magic
-			writer.Write ((ushort) 0x101);		       // version
-			writer.Write ((ushort) images.Length);
-			writer.Write ((ushort) images.Length);
-			writer.Write ((ushort) (rows * cols));
-			writer.Write ((ushort) 0x4);			// grow....not sure this should be hard coded
-			writer.Write ((ushort) image_size.Width);
-			writer.Write ((ushort) image_size.Height);
-			writer.Write (BackColor.ToArgb ());
-			writer.Write ((ushort) 0x1009);		       // flags
+			MemoryStream tmp = new MemoryStream ();
+			main.Save (tmp, ImageFormat.Bmp);
+			tmp.WriteTo (stream);
 
-			for (int i = 0; i < 4; i++)
-				writer.Write ((short) -1);  // ovls
-
-			return RLEncodeData (stream.ToArray ());
+			stream = GetRLEStream (stream, 4);
+			info.AddValue ("Data", stream.ToArray (), typeof (byte []));
 		}
 
-		// TODO: This is broken
-		private byte [] RLEncodeData (byte [] data)
+		static MemoryStream GetDecodedStream (byte [] bytes, int offset, int size)
 		{
-			MemoryStream stream = new MemoryStream ();
-			BinaryWriter writer = new BinaryWriter (stream);
+			byte [] buffer = new byte [512];
+			int position = 0;
+			int count, data;
+			MemoryStream result = new MemoryStream ();
+			int stop = offset + size;
+			while (offset + 1 < stop) {
+				count = (int) bytes [offset++];
+				data = (int) bytes [offset++];
+				if ((512 - count) < position) {
+					result.Write (buffer, 0, position);
+					position = 0;
+				}
 
-			for (int i = 0; i < data.Length; i += 2) {
-				int seq = 0;
-				byte item  = data [i];
-				while (data [i++] == item && i < data.Length)
-					seq++;
-				writer.Write ((byte) seq);
-				writer.Write (item);
+				for (int i = 0; i < count; i++)
+					buffer [position++] = (byte) data;
 			}
 
-			return stream.ToArray ();
+			if (position > 0)
+				result.Write (buffer, 0, position);
 
+			result.Position = 0;
+			return result;
+		}
+
+		//TODO: OptimizeMe
+		static MemoryStream GetRLEStream (MemoryStream input, int start)
+		{
+			MemoryStream result = new MemoryStream ();
+			byte [] ibuffer = input.GetBuffer ();
+			result.Write (ibuffer, 0, start);
+			input.Position = start;
+
+			int prev = -1;
+			int count = 0;
+			int current;
+			while ((current = input.ReadByte ()) != -1) {
+				if (prev != current || count == 255) {
+					if (prev != -1) {
+						result.WriteByte ((byte) count);
+						result.WriteByte ((byte) prev);
+					}
+					prev = current;
+					count = 0;
+				}
+				count++;
+			}
+
+			if (current != -1) {
+				result.WriteByte ((byte) count);
+				result.WriteByte ((byte) current);
+			}
+
+			return result;
 		}
 
 		internal Image [] Images {
