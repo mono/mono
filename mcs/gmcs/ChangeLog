@@ -1,3 +1,8 @@
+2006-04-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* report.cs (Warning, Error): Add 0-, 1-, and 2- argument specializations.
+	From #77961.
+
 2006-04-01  Marek Safar  <marek.safar@seznam.cz>
 
 	* assign.cs (Assign.DoResolve): Assignment to same variable can occur

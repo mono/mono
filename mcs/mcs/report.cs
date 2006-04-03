@@ -73,19 +73,19 @@ namespace Mono.CSharp {
 		// IF YOU ADD A NEW WARNING YOU HAVE TO ADD ITS ID HERE
 		//
 		public static readonly int[] AllWarnings = new int[] {
-																 28, 67, 78,
-																 105, 108, 109, 114, 162, 164, 168, 169, 183, 184, 197,
-																 219, 251, 252, 253, 282,
-																 419, 420, 429, 436, 440, 465,
-																 612, 618, 626, 628, 642, 649, 652, 658, 659, 660, 661, 665, 672,
-																 1030, 1058,
-																 1522, 1570, 1571, 1572, 1573, 1574, 1580, 1581, 1584, 1587, 1589, 1590, 1591, 1592,
-																 1616, 1633, 1634, 1635, 1691, 1692,
-																 1717, 1718,
-																 1901,
-																 2002, 2023,
-																 3005, 3012, 3019, 3021, 3022, 3023, 3026, 3027
-															 };
+			28, 67, 78,
+			105, 108, 109, 114, 162, 164, 168, 169, 183, 184, 197,
+			219, 251, 252, 253, 282,
+			419, 420, 429, 436, 440, 465,
+			612, 618, 626, 628, 642, 649, 652, 658, 659, 660, 661, 665, 672,
+			1030, 1058,
+			1522, 1570, 1571, 1572, 1573, 1574, 1580, 1581, 1584, 1587, 1589, 1590, 1591, 1592,
+			1616, 1633, 1634, 1635, 1691, 1692,
+			1717, 1718,
+			1901,
+			2002, 2023,
+			3005, 3012, 3019, 3021, 3022, 3023, 3026, 3027
+		};
 
 		static Report ()
 		{
@@ -145,11 +145,7 @@ namespace Mono.CSharp {
 
 			public virtual void Print (int code, Location location, string text)
 			{
-				if (location.IsNull) {
-					Print (code, "", text);
-					return;
-				}
-				Print (code, location.ToString (), text);
+				Print (code, location.IsNull ? "" : location.ToString (), text);
 			}
 		}
 
@@ -363,10 +359,43 @@ namespace Mono.CSharp {
 			return regions;
 		}
 
+		static public void Warning (int code, int level, Location loc, string message)
+		{
+			WarningMessage w = new WarningMessage (level);
+			w.Print (code, loc, message);
+		}
+
+		static public void Warning (int code, int level, Location loc, string format, string arg)
+		{
+			WarningMessage w = new WarningMessage (level);
+			w.Print (code, loc, String.Format (format, arg));
+		}
+
+		static public void Warning (int code, int level, Location loc, string format, string arg1, string arg2)
+		{
+			WarningMessage w = new WarningMessage (level);
+			w.Print (code, loc, String.Format (format, arg1, arg2));
+		}
+
 		static public void Warning (int code, int level, Location loc, string format, params string[] args)
 		{
 			WarningMessage w = new WarningMessage (level);
 			w.Print (code, loc, String.Format (format, args));
+		}
+
+		static public void Warning (int code, int level, string message)
+		{
+			Warning (code, level, Location.Null, message);
+		}
+
+		static public void Warning (int code, int level, string format, string arg)
+		{
+			Warning (code, level, Location.Null, format, arg);
+		}
+
+		static public void Warning (int code, int level, string format, string arg1, string arg2)
+		{
+			Warning (code, level, Location.Null, format, arg1, arg2);
 		}
 
 		static public void Warning (int code, int level, string format, params string[] args)
@@ -374,9 +403,19 @@ namespace Mono.CSharp {
 			Warning (code, level, Location.Null, String.Format (format, args));
 		}
 
-		static public void Error (int code, string format, params string[] args)
+		static public void Error (int code, Location loc, string error)
 		{
-			Error (code, Location.Null, String.Format (format, args));
+			new ErrorMessage ().Print (code, loc, error);
+		}
+
+		static public void Error (int code, Location loc, string format, string arg)
+		{
+			new ErrorMessage ().Print (code, loc, String.Format (format, arg));
+		}
+
+		static public void Error (int code, Location loc, string format, string arg1, string arg2)
+		{
+			new ErrorMessage ().Print (code, loc, String.Format (format, arg1, arg2));
 		}
 
 		static public void Error (int code, Location loc, string format, params string[] args)
@@ -384,9 +423,24 @@ namespace Mono.CSharp {
 			Error (code, loc, String.Format (format, args));
 		}
 
-		static void Error (int code, Location loc, string error)
+		static public void Error (int code, string error)
 		{
-			new ErrorMessage ().Print (code, loc, error);
+			Error (code, Location.Null, error);
+		}
+
+		static public void Error (int code, string format, string arg)
+		{
+			Error (code, Location.Null, format, arg);
+		}
+
+		static public void Error (int code, string format, string arg1, string arg2)
+		{
+			Error (code, Location.Null, format, arg1, arg2);
+		}
+
+		static public void Error (int code, string format, params string[] args)
+		{
+			Error (code, Location.Null, String.Format (format, args));
 		}
 
 		static public void SetIgnoreWarning (int code)
