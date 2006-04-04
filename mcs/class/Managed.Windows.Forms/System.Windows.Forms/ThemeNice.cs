@@ -211,8 +211,6 @@ namespace System.Windows.Forms
 		
 		#region ComboBox
 		
-		// Drawing
-		
 		public override void DrawComboBoxEditDecorations( Graphics dc, ComboBox ctrl, Rectangle cl )
 		{
 			if ( !ctrl.Focused )
@@ -1036,6 +1034,47 @@ namespace System.Windows.Forms
 				graphics.DrawLine (penBottomRight, rect.Left, rect.Bottom - 1, rect.Right - 1, rect.Bottom - 1);
 				graphics.DrawLine (penBottomRightInner, rect.Left + 1, rect.Bottom - 2, rect.Right - 2, rect.Bottom - 2);
 			}
+		}
+		
+		public override void CPDrawButton (Graphics dc, Rectangle rectangle, ButtonState state)
+		{
+			dc.FillRectangle (ResPool.GetSolidBrush (NiceBackColor), rectangle.X + 1, rectangle.Y + 1, rectangle.Width - 2, rectangle.Height - 2);
+			
+			Color first_color = Color.White;
+			Color second_color = NormalColor;
+			
+			if ((state & ButtonState.Flat) == ButtonState.Flat) {
+				first_color = NormalColor;
+				second_color = Color.White;
+			} else
+			if (((state & ButtonState.Flat) == ButtonState.Flat) &&
+			    (((state & ButtonState.Checked) == ButtonState.Checked) || ((state & ButtonState.Pushed) == ButtonState.Pushed))) {
+				first_color = PressedColor;
+				second_color = Color.White;
+			} else
+			if (((state & ButtonState.Checked) == ButtonState.Checked) || ((state & ButtonState.Pushed) == ButtonState.Pushed)) {
+				second_color = PressedColor;
+			}
+			
+			Rectangle lgbRectangle = Rectangle.Inflate (rectangle, -1, -1);
+			
+			using (LinearGradientBrush lgbr = new LinearGradientBrush (new Point (rectangle.X, rectangle.Y), new Point (rectangle.X, rectangle.Bottom - 1), first_color, second_color))
+				dc.FillRectangle (lgbr, lgbRectangle);
+			
+			Point[] points = new Point [] {
+				new Point (rectangle.X + 2, rectangle.Y),
+				new Point (rectangle.Right - 3, rectangle.Y),
+				new Point (rectangle.Right - 1, rectangle.Y + 2),
+				new Point (rectangle.Right - 1, rectangle.Bottom - 3),
+				new Point (rectangle.Right - 3, rectangle.Bottom - 1),
+				new Point (rectangle.X + 2, rectangle.Bottom - 1),
+				new Point (rectangle.X, rectangle.Bottom - 3),
+				new Point (rectangle.X, rectangle.Y + 2),
+				new Point (rectangle.X + 2, rectangle.Y)
+			};
+			
+			Pen pen = ResPool.GetPen (BorderColor);
+			dc.DrawLines (pen, points);
 		}
 		
 		public override void CPDrawComboButton( Graphics dc, Rectangle rectangle, ButtonState state )

@@ -1,5 +1,9 @@
 2006-04-04  Alexander Olk  <alex.olk@googlemail.com>
 
+	* ThemeNice.cs: Added CPDrawButton
+
+2006-04-04  Alexander Olk  <alex.olk@googlemail.com>
+
 	* ThemeNice.cs: Changed the color for focused buttons and activated
 	  the arrows for small scroll buttons.
 
