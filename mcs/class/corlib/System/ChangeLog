@@ -1,3 +1,10 @@
+2006-04-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Array.cs :
+	  added some more [ReliabilityContract].
+	  removed some [CLSCompliant].
+	  renamed generic method parameter names.
+
 2006-03-31  Zoltan Varga  <vargaz@gmail.com>
 
 	* Environment.cs (SetEnvironmentVariable): Implement.

@@ -1320,7 +1320,7 @@ namespace System
 		}
 	
 #if NET_2_0
-		[CLSCompliant (false)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public static void Sort<T> (T [] array)
 		{
 			if (array == null)
@@ -1329,16 +1329,16 @@ namespace System
 			Sort<T, T> (array, null, 0, array.Length, null);
 		}
 
-		[CLSCompliant (false)]
-		public static void Sort<K, V> (K [] keys, V [] items)
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
+		public static void Sort<TKey, TValue> (TKey [] keys, TValue [] items)
 		{
 			if (keys == null)
 				throw new ArgumentNullException ("keys");
 			
-			Sort<K, V> (keys, items, 0, keys.Length, null);
+			Sort<TKey, TValue> (keys, items, 0, keys.Length, null);
 		}
 
-		[CLSCompliant (false)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public static void Sort<T> (T [] array, IComparer<T> comparer)
 		{
 			if (array == null)
@@ -1347,16 +1347,16 @@ namespace System
 			Sort<T, T> (array, null, 0, array.Length, comparer);
 		}
 
-		[CLSCompliant (false)]
-		public static void Sort<K, V> (K [] keys, V [] items, IComparer<K> comparer)
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
+		public static void Sort<TKey, TValue> (TKey [] keys, TValue [] items, IComparer<TKey> comparer)
 		{
 			if (keys == null)
 				throw new ArgumentNullException ("keys");
 			
-			Sort<K, V> (keys, items, 0, keys.Length, comparer);
+			Sort<TKey, TValue> (keys, items, 0, keys.Length, comparer);
 		}
 
-		[CLSCompliant (false)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public static void Sort<T> (T [] array, int index, int length)
 		{
 			if (array == null)
@@ -1365,13 +1365,13 @@ namespace System
 			Sort<T, T> (array, null, index, length, null);
 		}
 
-		[CLSCompliant (false)]
-		public static void Sort<K, V> (K [] keys, V [] items, int index, int length)
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
+		public static void Sort<TKey, TValue> (TKey [] keys, TValue [] items, int index, int length)
 		{
-			Sort<K, V> (keys, items, index, length, null);
+			Sort<TKey, TValue> (keys, items, index, length, null);
 		}
 
-		[CLSCompliant (false)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public static void Sort<T> (T [] array, int index, int length, IComparer<T> comparer)
 		{
 			if (array == null)
@@ -1380,8 +1380,8 @@ namespace System
 			Sort<T, T> (array, null, index, length, comparer);
 		}
 
-		[CLSCompliant (false)]
-		public static void Sort<K, V> (K [] keys, V [] items, int index, int length, IComparer<K> comparer)
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
+		public static void Sort<TKey, TValue> (TKey [] keys, TValue [] items, int index, int length, IComparer<TKey> comparer)
 		{
 			if (keys == null)
 				throw new ArgumentNullException ("keys");
@@ -1407,7 +1407,7 @@ namespace System
 				if (items == null)
 					iswapper = null;
 				else 
-					iswapper = get_swapper<V> (items);
+					iswapper = get_swapper<TValue> (items);
 				if (keys is double[]) {
 					combsort (keys as double[], index, length, iswapper);
 					return;
@@ -1428,14 +1428,13 @@ namespace System
 			try {
 				int low0 = index;
 				int high0 = index + length - 1;
-				qsort<K, V> (keys, items, low0, high0, comparer);
+				qsort<TKey, TValue> (keys, items, low0, high0, comparer);
 			}
 			catch (Exception e) {
 				throw new InvalidOperationException (Locale.GetText ("The comparer threw an exception."), e);
 			}
 		}
 
-		[CLSCompliant (false)]
 		public static void Sort<T> (T [] array, Comparison<T> comparison)
 		{
 			if (array == null)
@@ -1651,6 +1650,7 @@ namespace System
 		}
 
 #if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public static void Resize<T> (ref T [] array, int newSize)
 		{
 			Resize<T> (ref array, array == null ? 0 : array.Length, newSize);
@@ -1798,6 +1798,7 @@ namespace System
 			return BinarySearch<T> (array, 0, array.Length, value, comparer);
 		}
 		
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public static int BinarySearch<T> (T [] array, int offset, int length, T value)
 		{
 			return BinarySearch<T> (array, offset, length, value, null);
