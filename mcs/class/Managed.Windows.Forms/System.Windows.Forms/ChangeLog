@@ -1,5 +1,10 @@
 2006-04-04  Alexander Olk  <alex.olk@googlemail.com>
 
+	* ThemeNice.cs: Changed the color for focused buttons and activated
+	  the arrows for small scroll buttons.
+
+2006-04-04  Alexander Olk  <alex.olk@googlemail.com>
+
 	* ThemeWin32Classic.cs: Removed DrawFlatStyleButton, not needed
 	  anymore. Changed some method modifiers to protected (virtual)
 	* ThemeClearlooks.cs: Updated to reflect the ThemeWin32Classic

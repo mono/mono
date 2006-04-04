@@ -47,6 +47,7 @@ namespace System.Windows.Forms
 		static readonly Color MouseOverColor = Color.DarkGray;
 		static readonly Color PressedColor = Color.Gray;
 		static readonly Color FocusColor = Color.FromArgb( System.Convert.ToInt32( "0xff00c0ff", 16 ) );
+		static readonly Color FocusColorLight = Color.FromArgb(250, 253, 255);
 		static readonly Color LightColor = Color.LightGray;
 		static readonly Color BorderColor = MouseOverColor;
 		static readonly Color NiceBackColor  = Color.FromArgb( System.Convert.ToInt32( "0xffefebe7", 16 ) );
@@ -111,8 +112,8 @@ namespace System.Windows.Forms
 				check_or_radio_checked = ((RadioButton)button).Checked;
 			}
 			
-			if (button.has_focus && !check_or_radio)
-				first_color = Color.LightYellow;
+			if (button.has_focus && !check_or_radio && button.is_enabled)
+				first_color = FocusColorLight;
 			
 			if (button.is_enabled) {
 				if (button.FlatStyle == FlatStyle.Popup) {
@@ -1164,9 +1165,6 @@ namespace System.Windows.Forms
 			
 			DrawScrollButtonPrimitive( dc, area, state, scroll_button_type );
 			
-			if ( area.Width < 12 || area.Height < 12 ) /* Cannot see a thing at smaller sizes */
-				return;
-			
 			Pen pen = null;
 			
 			if ( enabled )
@@ -1184,46 +1182,52 @@ namespace System.Windows.Forms
 			if ( ( state & ButtonState.Pushed ) != 0 )
 				shift = 1;
 			
-			Point[]	arrow = new Point[ 3 ];
+			int min_3 = 3;
+			int min_2 = 2;
+			if ( area.Width < 12 || area.Height < 12 ) {
+				min_3 = 2;
+				min_2 = 1;
+			}
 			
-			switch ( scroll_button_type )
-			{
-				case ScrollButton.Down:
-					centerY += shift;
-					arrow[ 0 ] = new Point( centerX - 3, centerY - 2 );
-					arrow[ 1 ] = new Point( centerX, centerY + 2 );
-					arrow[ 2 ] = new Point( centerX + 3, centerY - 2 );
-					break;
-				case ScrollButton.Up:
-					centerY -= shift;
-					arrow[ 0 ] = new Point( centerX - 3, centerY + 2 );
-					arrow[ 1 ] = new Point( centerX, centerY - 2 );
-					arrow[ 2 ] = new Point( centerX + 3, centerY + 2 );
-					break;
-				case ScrollButton.Left:
-					centerX -= shift;
-					arrow[ 0 ] = new Point( centerX + 2, centerY - 3 );
-					arrow[ 1 ] = new Point( centerX - 2, centerY );
-					arrow[ 2 ] = new Point( centerX + 2, centerY + 3 );
-					break;
-				case ScrollButton.Right:
-					centerX += shift;
-					arrow[ 0 ] = new Point( centerX - 2, centerY - 3 );
-					arrow[ 1 ] = new Point( centerX + 2, centerY );
-					arrow[ 2 ] = new Point( centerX - 2, centerY + 3 );
-					break;
-				default:
-					break;
+			Point[]	arrow = new Point [3];
+			
+			switch (scroll_button_type) {
+			case ScrollButton.Down:
+				centerY += shift;
+				arrow [0] = new Point (centerX - min_3, centerY - min_2);
+				arrow [1] = new Point (centerX, centerY + min_2);
+				arrow [2] = new Point (centerX + min_3, centerY - min_2);
+				break;
+			case ScrollButton.Up:
+				centerY -= shift;
+				arrow [0] = new Point (centerX - min_3, centerY + min_2);
+				arrow [1] = new Point (centerX, centerY - min_2);
+				arrow [2] = new Point (centerX + min_3, centerY + min_2);
+				break;
+			case ScrollButton.Left:
+				centerX -= shift;
+				arrow [0] = new Point (centerX + min_2, centerY - min_3);
+				arrow [1] = new Point (centerX - min_2, centerY);
+				arrow [2] = new Point (centerX + min_2, centerY + min_3);
+				break;
+			case ScrollButton.Right:
+				centerX += shift;
+				arrow [0] = new Point (centerX - min_2, centerY - min_3);
+				arrow [1] = new Point (centerX + min_2, centerY);
+				arrow [2] = new Point (centerX - min_2, centerY + min_3);
+				break;
+			default:
+				break;
 			}
 
 			SmoothingMode old_smoothing_mode = dc.SmoothingMode;
 			dc.SmoothingMode = SmoothingMode.AntiAlias;
 			
-			dc.DrawLines( pen, arrow );
+			dc.DrawLines (pen, arrow);
 			
 			dc.SmoothingMode = old_smoothing_mode;
 			
-			pen.Dispose( );
+			pen.Dispose ();
 		}
 		
 		public override void CPDrawSizeGrip( Graphics dc, Color backColor, Rectangle bounds )
