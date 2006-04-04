@@ -1,5 +1,11 @@
 2006-04-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* loader.c (mono_free_method): No longer free the method header for non-dynamic
+	methods as it is allocated from the mempool.
+
+	* metadata.c (mono_metadata_parse_mh_full): Allocate method headers from the
+	image mempool.
+
 	* metadata-internals.h: Add comments describing the reference counting scheme
 	used for MonoImage and MonoAssembly.
 
