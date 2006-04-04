@@ -54,6 +54,18 @@ namespace System.Collections.Specialized {
 				get { return offset; }
 			}
 #if NET_2_0
+			public static bool operator == (Section v1, Section v2)
+			{
+				return v1.mask == v2.mask &&
+				       v1.offset == v2.offset;
+			}
+
+			public static bool operator != (Section v1, Section v2)
+			{
+				return v1.mask != v2.mask &&
+				       v1.offset != v2.offset;
+			}
+
 			public bool Equals (Section obj)
 			{
 				return this.mask == obj.mask &&
@@ -190,18 +202,6 @@ namespace System.Collections.Specialized {
 
 			return bits == ((BitVector32) o).bits;
 		}
-
-#if NET_2_0
-		public static bool operator == (BitVector32 v1, BitVector32 v2)
-		{
-			return v1.bits == v2.bits;
-		}
-
-		public static bool operator != (BitVector32 v1, BitVector32 v2)
-		{
-			return v1.bits != v2.bits;
-		}
-#endif
 
 		public override int GetHashCode ()
 		{
