@@ -320,6 +320,18 @@ namespace Mono.CSharp {
 
 		public abstract Constant Increment ();
 		
+		/// <summary>
+		/// Need to pass type as the constant can require a boxing
+		/// and in such case no optimization is possible
+		/// </summary>
+		public bool IsDefaultInitializer (Type type)
+		{
+			if (type == Type)
+				return IsDefaultValue;
+
+			return Type == TypeManager.null_type;
+		}
+
 		public abstract bool IsDefaultValue {
 			get;
 		}

@@ -5026,13 +5026,7 @@ namespace Mono.CSharp {
 				if (c == null)
 					return false;
 
-				if (MemberType == c.Type)
-					return c.IsDefaultValue;
-
-				if (c.Type == TypeManager.null_type)
-					return true;
-
-				return false;
+				return c.IsDefaultInitializer (MemberType);
 			}
 		}
 

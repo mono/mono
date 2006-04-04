@@ -1,3 +1,17 @@
+2006-04-04  Marek Safar  <marek.safar@seznam.cz>
+
+	* constant.cs (Constant.IsDefaultInitializer): New method.
+
+	* class.cs: Updated.
+
+	* expression.cs (ArrayCreation.CheckIndices): Add an optimization to don't
+	re-initialize default values. It saves KBs almost for every assembly.
+	Thanks Zoltan for the idea.
+	(ArrayCreation.ResolveInitializers): Renamed from ValidateInitializers.
+	(ArrayCreation.DoResolve): Resolve only once.
+	(ArrayCreation.Emit): Emit static initializer only when it is faster.
+	(ArrayCreation.GetAttributableValue): Cope with optimized values.
+
 2006-04-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* report.cs (Warning, Error): Add 0-, 1-, and 2- argument specializations.

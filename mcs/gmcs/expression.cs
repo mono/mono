@@ -6190,15 +6190,10 @@ namespace Mono.CSharp {
 
 		ArrayList array_data;
 
-		Hashtable bounds;
+		IDictionary bounds;
 
-		//
-		// The number of array initializers that we can handle
-		// via the InitializeArray method - through EmitStaticInitializers
-		//
-		int num_automatic_initializers;
-
-		const int max_automatic_initializers = 6;
+		// The number of constants in array initializers
+		int const_initializers_count;
 		
 		public ArrayCreation (Expression requested_base_type, ArrayList exprs, string rank, ArrayList initializers, Location l)
 		{
@@ -6248,7 +6243,7 @@ namespace Mono.CSharp {
 			Error (178, "Invalid rank specifier: expected `,' or `]'");
 		}
 		
-		public bool CheckIndices (EmitContext ec, ArrayList probe, int idx, bool specified_dims)
+		bool CheckIndices (EmitContext ec, ArrayList probe, int idx, bool specified_dims)
 		{
 			if (specified_dims) { 
 				Argument a = (Argument) arguments [idx];
@@ -6290,7 +6285,7 @@ namespace Mono.CSharp {
 						Error_IncorrectArrayInitializer ();
 						return false;
 					}
-					if (specified_dims && (idx + 1 >= arguments.Count)){
+					if (idx + 1 >= dimensions){
 						Error (623, "Array initializers can only be used in a variable or field initializer. Try using a new expression instead");
 						return false;
 					}
@@ -6306,12 +6301,8 @@ namespace Mono.CSharp {
 					
 					Expression tmp = (Expression) o;
 					tmp = tmp.Resolve (ec);
-					probe [i] = tmp;
 					if (tmp == null)
 						return false;
-
-					// Console.WriteLine ("I got: " + tmp);
-					// Handle initialization from vars, fields etc.
 
 					Expression conv = Convert.ImplicitConversionRequired (
 						ec, tmp, underlying_type, loc);
@@ -6319,18 +6310,21 @@ namespace Mono.CSharp {
 					if (conv == null) 
 						return false;
 
-					if (conv is StringConstant || conv is DecimalConstant || conv is NullCast) {
-						// These are subclasses of Constant that can appear as elements of an
-						// array that cannot be statically initialized (with num_automatic_initializers
-						// > max_automatic_initializers), so num_automatic_initializers should be left as zero.
-						array_data.Add (conv);
-					} else if (conv is Constant) {
-						// These are the types of Constant that can appear in arrays that can be
-						// statically allocated.
-						array_data.Add (conv);
-						num_automatic_initializers++;
-					} else
-						array_data.Add (conv);
+					// Initializers with the default values can be ignored
+					Constant c = tmp as Constant;
+					if (c != null) {
+						if (c.IsDefaultInitializer (array_element_type)) {
+							conv = null;
+						}
+						else {
+							++const_initializers_count;
+						}
+					} else {
+						// Used to invalidate static initializer
+						const_initializers_count = int.MinValue;
+					}
+					
+					array_data.Add (conv);
 				}
 			}
 
@@ -6354,13 +6348,13 @@ namespace Mono.CSharp {
 					arguments.Add (new Argument (e, Argument.AType.Expression));
 
 					bounds [i++] = probe.Count;
-					probe = null;
+					return;
 				}
 			}
 
 		}
 		
-		public bool ValidateInitializers (EmitContext ec)
+		bool ResolveInitializers (EmitContext ec)
 		{
 			if (initializers == null) {
 				return !expect_initializers;
@@ -6374,25 +6368,24 @@ namespace Mono.CSharp {
 			// will need to store them in the byte blob later
 			//
 			array_data = new ArrayList ();
-			bounds = new Hashtable ();
+			bounds = new System.Collections.Specialized.HybridDictionary ();
 			
-			if (arguments != null) {
+			if (arguments != null)
 				return CheckIndices (ec, initializers, 0, true);
-			} else {
-				arguments = new ArrayList ();
 
-				if (!CheckIndices (ec, initializers, 0, false))
-					return false;
-				
-				UpdateIndices ();
-				
-				if (arguments.Count != dimensions) {
-					Error_IncorrectArrayInitializer ();
-					return false;
-				}
+			arguments = new ArrayList ();
 
-				return true;
+			if (!CheckIndices (ec, initializers, 0, false))
+				return false;
+				
+			UpdateIndices ();
+				
+			if (arguments.Count != dimensions) {
+				Error_IncorrectArrayInitializer ();
+				return false;
 			}
+
+			return true;
 		}
 
 		//
@@ -6431,18 +6424,26 @@ namespace Mono.CSharp {
 		
 		public override Expression DoResolve (EmitContext ec)
 		{
-			int arg_count;
+			if (type != null)
+				return this;
 
 			if (!LookupType (ec))
 				return null;
 			
+			array_element_type = TypeManager.GetElementType (type);
+			if (array_element_type.IsAbstract && array_element_type.IsSealed) {
+				Report.Error (719, loc, "`{0}': array elements cannot be of static type", TypeManager.CSharpName (array_element_type));
+				return null;
+			}
+
 			//
 			// First step is to validate the initializers and fill
 			// in any missing bits
 			//
-			if (!ValidateInitializers (ec))
+			if (!ResolveInitializers (ec))
 				return null;
 
+			int arg_count;
 			if (arguments == null)
 				arg_count = 0;
 			else {
@@ -6459,13 +6460,6 @@ namespace Mono.CSharp {
 				}
 			}
 			
-			array_element_type = TypeManager.GetElementType (type);
-
-			if (array_element_type.IsAbstract && array_element_type.IsSealed) {
-				Report.Error (719, loc, "`{0}': array elements cannot be of static type", TypeManager.CSharpName (array_element_type));
-				return null;
-			}
-
 			if (arg_count == 1) {
 				is_one_dimensional = true;
 				eclass = ExprClass.Value;
@@ -6532,7 +6526,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public static byte [] MakeByteBlob (ArrayList array_data, Type underlying_type, Location loc)
+		byte [] MakeByteBlob ()
 		{
 			int factor;
 			byte [] data;
@@ -6548,7 +6542,7 @@ namespace Mono.CSharp {
 
 			data = new byte [(count * factor + 4) & ~3];
 			int idx = 0;
-			
+
 			for (int i = 0; i < count; ++i) {
 				object v = array_data [i];
 
@@ -6687,7 +6681,7 @@ namespace Mono.CSharp {
 			FieldBuilder fb;
 			ILGenerator ig = ec.ig;
 			
-			byte [] data = MakeByteBlob (array_data, underlying_type, loc);
+			byte [] data = MakeByteBlob ();
 
 			fb = RootContext.MakeStaticData (data);
 
@@ -6708,90 +6702,69 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			int dims = bounds.Count;
 			int [] current_pos = new int [dims];
-			int top = array_data.Count;
 
 			MethodInfo set = null;
 
 			if (dims != 1){
-				Type [] args;
-				ModuleBuilder mb = null;
-				mb = CodeGen.Module.Builder;
-				args = new Type [dims + 1];
+				Type [] args = new Type [dims + 1];
 
-				int j;
-				for (j = 0; j < dims; j++)
+				for (int j = 0; j < dims; j++)
 					args [j] = TypeManager.int32_type;
-
-				args [j] = array_element_type;
+				args [dims] = array_element_type;
 				
-				set = mb.GetArrayMethod (
+				set = CodeGen.Module.Builder.GetArrayMethod (
 					type, "Set",
 					CallingConventions.HasThis | CallingConventions.Standard,
 					TypeManager.void_type, args);
 			}
-			
-			for (int i = 0; i < top; i++){
 
-				Expression e = null;
+			for (int i = 0; i < array_data.Count; i++){
 
-				if (array_data [i] is Expression)
-					e = (Expression) array_data [i];
+				Expression e = (Expression)array_data [i];
 
 				if (e != null) {
+					Type etype = e.Type;
+
+					ig.Emit (OpCodes.Dup);
+
+					for (int idx = 0; idx < dims; idx++) 
+						IntConstant.EmitInt (ig, current_pos [idx]);
+
 					//
-					// Basically we do this for string literals and
-					// other non-literal expressions
+					// If we are dealing with a struct, get the
+					// address of it, so we can store it.
 					//
-					if (e is EnumConstant){
-						e = ((EnumConstant) e).Child;
-					}
-					
-					if (e is StringConstant || e is DecimalConstant || !(e is Constant) ||
-					    num_automatic_initializers <= max_automatic_initializers) {
-						Type etype = e.Type;
+					if ((dims == 1) && 
+						TypeManager.IsValueType (etype) &&
+						(!TypeManager.IsBuiltinOrEnum (etype) ||
+						etype == TypeManager.decimal_type)) {
+						if (e is New){
+							New n = (New) e;
 
-						ig.Emit (OpCodes.Dup);
-
-						for (int idx = 0; idx < dims; idx++) 
-							IntConstant.EmitInt (ig, current_pos [idx]);
-
-						//
-						// If we are dealing with a struct, get the
-						// address of it, so we can store it.
-						//
-						if ((dims == 1) && 
-						    TypeManager.IsValueType (etype) &&
-						    (!TypeManager.IsBuiltinOrEnum (etype) ||
-						     etype == TypeManager.decimal_type)) {
-							if (e is New){
-								New n = (New) e;
-
-								//
-								// Let new know that we are providing
-								// the address where to store the results
-								//
-								n.DisableTemporaryValueType ();
-							}
-
-							ig.Emit (OpCodes.Ldelema, etype);
+							//
+							// Let new know that we are providing
+							// the address where to store the results
+							//
+							n.DisableTemporaryValueType ();
 						}
 
-						e.Emit (ec);
-
-						if (dims == 1) {
-							bool is_stobj, has_type_arg;
-							OpCode op = ArrayAccess.GetStoreOpcode (
-								etype, out is_stobj,
-								out has_type_arg);
-							if (is_stobj)
-								ig.Emit (OpCodes.Stobj, etype);
-							else if (has_type_arg)
-								ig.Emit (op, etype);
-							else
-								ig.Emit (op);
-						} else 
-                                                        ig.Emit (OpCodes.Call, set);
+						ig.Emit (OpCodes.Ldelema, etype);
 					}
+
+					e.Emit (ec);
+
+					if (dims == 1) {
+						bool is_stobj, has_type_arg;
+						OpCode op = ArrayAccess.GetStoreOpcode (etype, out is_stobj, out has_type_arg);
+						if (is_stobj)
+							ig.Emit (OpCodes.Stobj, etype);
+						else if (has_type_arg)
+							ig.Emit (op, etype);
+						else
+							ig.Emit (op);
+					} else 
+						ig.Emit (OpCodes.Call, set);
+
 				}
 				
 				//
@@ -6835,21 +6808,20 @@ namespace Mono.CSharp {
 					ig.Emit (OpCodes.Newobj, (MethodInfo) new_method);
 			}
 			
-			if (initializers != null){
-				//
-				// FIXME: Set this variable correctly.
-				// 
-				bool dynamic_initializers = true;
+			if (initializers == null)
+				return;
 
-				// This will never be true for array types that cannot be statically
-				// initialized. num_automatic_initializers will always be zero.  See
-				// CheckIndices.
-				if (num_automatic_initializers > max_automatic_initializers)
-					EmitStaticInitializers (ec);
-				
-				if (dynamic_initializers)
-					EmitDynamicInitializers (ec);
+			// This is a treshold for static initializers
+			// I tried to make more accurate but it seems to me that Array.Initialize is
+			// always slower (managed -> unmanaged switch?)
+			const int max_automatic_initializers = 200;
+
+			if (const_initializers_count > max_automatic_initializers && TypeManager.IsPrimitiveType (array_element_type)) {
+				EmitStaticInitializers (ec);
+				return;
 			}
+				
+			EmitDynamicInitializers (ec);
 		}
 
 		public override bool GetAttributableValue (Type valueType, out object value)
@@ -6872,7 +6844,11 @@ namespace Mono.CSharp {
 			object [] ret = new object [array_data.Count];
 			for (int i = 0; i < ret.Length; ++i)
 			{
-				if (!((Expression)array_data [i]).GetAttributableValue (array_element_type, out ret [i])) {
+				Expression e = (Expression)array_data [i];
+				if (e == null) // Is null when initializer is optimized out
+					e = (Expression)initializers [i];
+
+				if (!e.GetAttributableValue (array_element_type, out ret [i])) {
 					value = null;
 					return false;
 				}
