@@ -93,80 +93,93 @@ namespace System.Windows.Forms
 		#endregion	// Internal Methods
 		
 		#region ButtonBase
-		protected override void ButtonBase_DrawButton( ButtonBase button, Graphics dc )
+		protected override void ButtonBase_DrawButton (ButtonBase button, Graphics dc)
 		{
+			bool check_or_radio = false;
+			bool check_or_radio_checked = false;
+			
+			Color use_color = NormalColor;
+			Color first_color = Color.White;
+			
+			dc.FillRectangle (ResPool.GetSolidBrush (button.BackColor), button.ClientRectangle);
+			
+			if (button is CheckBox) {
+				check_or_radio = true;
+				check_or_radio_checked = ((CheckBox)button).Checked;
+			} else if (button is RadioButton) {
+				check_or_radio = true;
+				check_or_radio_checked = ((RadioButton)button).Checked;
+			}
+			
+			if (button.has_focus && !check_or_radio)
+				first_color = Color.LightYellow;
+			
+			if (button.is_enabled) {
+				if (button.FlatStyle == FlatStyle.Popup) {
+					if (!button.is_pressed && button.is_entered && !check_or_radio_checked)
+						use_color = MouseOverColor;
+					else if (button.is_pressed || check_or_radio_checked)
+						use_color = PressedColor;
+				} else if (button.FlatStyle == FlatStyle.Flat) {
+					if (button.is_entered && !button.is_pressed && !check_or_radio_checked)
+						use_color = MouseOverColor;
+					else if (button.is_pressed || check_or_radio_checked) {
+						use_color = PressedColor;
+					}
+				} else {
+					if (!button.is_pressed && button.is_entered && !check_or_radio_checked)
+						use_color = MouseOverColor;
+					else
+					if (button.is_pressed || check_or_radio_checked)
+						use_color = PressedColor;
+				}
+			}
+			
 			Rectangle buttonRectangle;
 			
 			int width = button.ClientSize.Width;
 			int height = button.ClientSize.Height;
 			
-			dc.FillRectangle( ResPool.GetSolidBrush( button.BackColor ), button.ClientRectangle );
-			
 			// set up the button rectangle
 			buttonRectangle = button.ClientRectangle;
 			
-			Color use_color;
-			Color first_color = button.has_focus ? Color.LightYellow : Color.White;
-			
-			if ( ( ( button is CheckBox ) && ( ( (CheckBox)button ).check_state == CheckState.Checked ) ) ||
-			    ( ( button is RadioButton ) && ( ( (RadioButton)button ).check_state == CheckState.Checked ) ) )
-			{
-				use_color = PressedColor;
-			}
-			else
-			if ( !button.is_enabled )
-			{
-				use_color = NormalColor;
-				button.is_entered = false;
-			}
-			else
-			if ( !button.is_entered )
-			{
-				use_color = NormalColor;
-			}
-			else
-			{
-				if ( !button.is_pressed )
-					use_color = MouseOverColor;
-				else
-					use_color = PressedColor;
-			}
-			
 			// Fill button with a nice linear gradient brush
-			Rectangle lgbRectangle = Rectangle.Inflate( buttonRectangle, -1, -1 );
+			Rectangle lgbRectangle = Rectangle.Inflate (buttonRectangle, -1, -1);
 			
-			if ( button.flat_style != FlatStyle.Popup || ( ( button.flat_style == FlatStyle.Popup ) && button.is_entered ) )
-			{
+			if (button.flat_style != FlatStyle.Popup || ((button.flat_style == FlatStyle.Popup) && button.is_entered)) {
 				LinearGradientBrush lgbr;
-				if ( button.flat_style == FlatStyle.Flat )
-					lgbr = new LinearGradientBrush( new Point( 0, 0 ), new Point( 0, height - 1 ), use_color, first_color );
+				if (button.flat_style == FlatStyle.Flat)
+					lgbr = new LinearGradientBrush (new Point (0, 0), new Point (0, height - 1), use_color, first_color);
 				else
-					lgbr = new LinearGradientBrush( new Point( 0, 0 ), new Point( 0, height - 1 ), first_color, use_color );
-				dc.FillRectangle( lgbr, lgbRectangle );
-				lgbr.Dispose( );
+					lgbr = new LinearGradientBrush (new Point (0, 0), new Point (0, height - 1), first_color, use_color);
+				dc.FillRectangle (lgbr, lgbRectangle);
+				lgbr.Dispose ();
 				
-				if ( button.has_focus )
+				if (button.has_focus && !check_or_radio)
 					return; 
 				
-				Point[] points = new Point[] {
-					new Point( 2, 0 ),
-					new Point( width - 3, 0 ),
-					new Point( width - 1, 2 ),
-					new Point( width - 1, height - 3 ),
-					new Point( width - 3, height - 1 ),
-					new Point( 2, height - 1 ),
-					new Point( 0, height - 3 ),
-					new Point( 0, 2 ),
-					new Point( 2, 0 )
+				Point[] points = new Point [] {
+					new Point (2, 0),
+					new Point (width - 3, 0),
+					new Point (width - 1, 2),
+					new Point (width - 1, height - 3),
+					new Point (width - 3, height - 1),
+					new Point (2, height - 1),
+					new Point (0, height - 3),
+					new Point (0, 2),
+					new Point (2, 0)
 				};
-			
-				Pen pen = ResPool.GetPen( BorderColor );
-				dc.DrawLines( pen, points );
+				
+				Pen pen = ResPool.GetPen (BorderColor);
+				dc.DrawLines (pen, points);
 			}
 		}
 		
 		protected override void ButtonBase_DrawFocus( ButtonBase button, Graphics dc )
 		{
+			if ((button is RadioButton) || (button is CheckBox))
+				return; 
+			
 			int width = button.ClientSize.Width;
 			int height = button.ClientSize.Height;
 			
@@ -194,30 +207,6 @@ namespace System.Windows.Forms
 			}
 		}
 		#endregion	// ButtonBase
-		
-		#region CheckBox
-		protected override void CheckBox_DrawCheckBox( Graphics dc, CheckBox checkbox, ButtonState state, Rectangle checkbox_rectangle )
-		{
-			dc.FillRectangle( ResPool.GetSolidBrush( checkbox.BackColor ), checkbox.ClientRectangle );
-			// render as per normal button
-			if ( checkbox.appearance == Appearance.Button )
-			{
-				DrawButtonBase( dc, checkbox.ClientRectangle, checkbox );
-			}
-			else
-			{
-				// establish if we are rendering a flat style of some sort
-				if ( checkbox.FlatStyle == FlatStyle.Flat || checkbox.FlatStyle == FlatStyle.Popup )
-				{
-					DrawFlatStyleCheckBox( dc, checkbox_rectangle, checkbox );
-				}
-				else
-				{
-					ControlPaint.DrawCheckBox( dc, checkbox_rectangle, state );
-				}
-			}
-		}
-		#endregion	// CheckBox
 		
 		#region ComboBox
 		
@@ -263,159 +252,136 @@ namespace System.Windows.Forms
 		#endregion ComboBox
 		
 		#region Menus
-		public override void DrawMenuItem( MenuItem item, DrawItemEventArgs e )
+		public override void DrawMenuBar (Graphics dc, Menu menu, Rectangle rect)
+		{
+			if (menu.Height == 0)
+				CalcMenuBarSize (dc, menu, rect.Width);
+			
+			bool keynav = (menu as MainMenu).tracker.Navigating;
+			HotkeyPrefix hp = always_draw_hotkeys || keynav ? HotkeyPrefix.Show : HotkeyPrefix.Hide;
+			string_format_menu_menubar_text.HotkeyPrefix = hp;
+			string_format_menu_text.HotkeyPrefix = hp;
+			
+			rect.Height = menu.Height;
+			dc.FillRectangle (ResPool.GetSolidBrush (NiceBackColor), rect);
+			
+			for (int i = 0; i < menu.MenuItems.Count; i++) {
+				MenuItem item = menu.MenuItems [i];
+				Rectangle item_rect = item.bounds;
+				item_rect.X += rect.X;
+				item_rect.Y += rect.Y;
+				item.MenuHeight = menu.Height;
+				item.PerformDrawItem (new DrawItemEventArgs (dc, MenuFont, item_rect, i, item.Status));	
+			}	
+		}
+		
+		public override void DrawMenuItem (MenuItem item, DrawItemEventArgs e)
 		{
 			StringFormat string_format;
 			Rectangle rect_text = e.Bounds;
 			
-			if ( item.Visible == false )
+			if (item.Visible == false)
 				return;
 			
-			if ( item.MenuBar )
-			{
+			if (item.MenuBar)
 				string_format = string_format_menu_menubar_text;
-			}
 			else
-			{
 				string_format = string_format_menu_text;
-			}
 			
-			if ( item.Separator )
-			{
-				e.Graphics.DrawLine( ResPool.GetPen( BorderColor ),
-						    e.Bounds.X, e.Bounds.Y, e.Bounds.X + e.Bounds.Width, e.Bounds.Y );
+			if (item.Separator == true) {
+				e.Graphics.DrawLine (ResPool.GetPen (ColorControlDark),
+						     e.Bounds.X, e.Bounds.Y, e.Bounds.X + e.Bounds.Width, e.Bounds.Y);
 				
-				e.Graphics.DrawLine( ResPool.GetPen( Color.White ),
-						    e.Bounds.X + 1, e.Bounds.Y + 1, e.Bounds.X + e.Bounds.Width, e.Bounds.Y + 1 );
+				e.Graphics.DrawLine (ResPool.GetPen (ColorControlLight),
+						     e.Bounds.X, e.Bounds.Y + 1, e.Bounds.X + e.Bounds.Width, e.Bounds.Y + 1);
 				
 				return;
 			}
 			
-			if ( !item.MenuBar )
+			if (!item.MenuBar)
 				rect_text.X += MenuCheckSize.Width;
 			
-			if ( item.BarBreak )
-			{ /* Draw vertical break bar*/
+			if (item.BarBreak) { /* Draw vertical break bar*/
 				Rectangle rect = e.Bounds;
 				rect.Y++;
 	        		rect.Width = 3;
 	        		rect.Height = item.MenuHeight - 6;
 				
-				e.Graphics.DrawLine( ResPool.GetPen( LightColor ),
-						    rect.X, rect.Y , rect.X, rect.Y + rect.Height );
+				e.Graphics.DrawLine (ResPool.GetPen (ColorControlDark),
+						     rect.X, rect.Y , rect.X, rect.Y + rect.Height);
 				
-				e.Graphics.DrawLine( ResPool.GetPen( ColorControlLight ),
-						    rect.X + 1, rect.Y , rect.X + 1, rect.Y + rect.Height );
-			}
+				e.Graphics.DrawLine (ResPool.GetPen (ColorControlLight),
+						     rect.X + 1, rect.Y , rect.X +1, rect.Y + rect.Height);
+			}			
 			
 			Color color_text = ColorMenuText;
-			Color color_back;
+			Color color_back = NiceBackColor;
 			
 			/* Draw background */
 			Rectangle rect_back = e.Bounds;
 			rect_back.X++;
-			rect_back.Width -= 2;
+			rect_back.Width -=2;
 			
-			if ( ( e.State & DrawItemState.Selected ) == DrawItemState.Selected )
-			{
-				color_text = ColorMenuText;
-				color_back = NormalColor;
-				
-				using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( rect_back.X, rect_back.Y ), new Point( rect_back.Right, rect_back.Y ), Color.White, NormalColor ) )//NormalColor, Color.White ) )
-				{
-					e.Graphics.FillRectangle( lgbr, rect_back );
-				}
-				
-				rect_back.Height--;
-				e.Graphics.DrawRectangle( ResPool.GetPen( BorderColor ), rect_back );
-			}
-			else
-			{
-				color_text = ColorMenuText;
-				color_back = NiceBackColor;
-				
-				e.Graphics.FillRectangle( ResPool.GetSolidBrush( NiceBackColor ), rect_back );
+			if (((e.State & DrawItemState.Selected) == DrawItemState.Selected) || ((e.State & DrawItemState.HotLight) == DrawItemState.HotLight)) {
+					using (LinearGradientBrush lgbr = new LinearGradientBrush (new Point (rect_back.X, rect_back.Y), new Point (rect_back.Right, rect_back.Y), Color.White, NormalColor))//NormalColor, Color.White ) )
+						e.Graphics.FillRectangle (lgbr, rect_back);
+					
+					e.Graphics.DrawRectangle (ResPool.GetPen (BorderColor), rect_back.X, rect_back.Y, rect_back.Width, rect_back.Height - 1);
+			} else {
+				e.Graphics.FillRectangle (ResPool.GetSolidBrush (NiceBackColor), rect_back);
 			}
 			
-			if ( item.Enabled )
-			{
-				e.Graphics.DrawString( item.Text, e.Font,
-						      ResPool.GetSolidBrush( color_text ),
-						      rect_text, string_format );
+			if (item.Enabled) {
+				e.Graphics.DrawString (item.Text, e.Font,
+						       ResPool.GetSolidBrush (color_text),
+						       rect_text, string_format);
 				
-				if ( !item.MenuBar && item.Shortcut != Shortcut.None && item.ShowShortcut )
-				{
-					string str = item.GetShortCutText( );
+				if (!item.MenuBar && item.Shortcut != Shortcut.None && item.ShowShortcut) {
+					string str = item.GetShortCutText ();
 					Rectangle rect = rect_text;
 					rect.X = item.XTab;
 					rect.Width -= item.XTab;
 					
-					e.Graphics.DrawString( str, e.Font, ResPool.GetSolidBrush( color_text ),
-							      rect, string_format_menu_shortcut );
+					e.Graphics.DrawString (str, e.Font, ResPool.GetSolidBrush (color_text),
+							       rect, string_format_menu_shortcut);
 				}
-			}
-			else
-			{
-				ControlPaint.DrawStringDisabled( e.Graphics, item.Text, e.Font,
-								Color.Black, rect_text, string_format );
+				
+			} else {
+				ControlPaint.DrawStringDisabled (e.Graphics, item.Text, e.Font, 
+								 Color.Black, rect_text, string_format);
 			}
 			
 			/* Draw arrow */
-			if ( item.MenuBar == false && item.IsPopup )
-			{
+			if (item.MenuBar == false && item.IsPopup || item.MdiList) {
+				
 				int cx = MenuCheckSize.Width;
 				int cy = MenuCheckSize.Height;
-				using ( Bitmap	bmp = new Bitmap( cx, cy ) )
-				{
-					using ( Graphics dc = Graphics.FromImage( bmp ) )
-					{
-						SmoothingMode old_smoothing_mode = dc.SmoothingMode;
-						dc.SmoothingMode = SmoothingMode.AntiAlias;
-						
-						Rectangle rect_arrow = new Rectangle( 0, 0, cx, cy );
-						ControlPaint.DrawMenuGlyph( dc, rect_arrow, MenuGlyph.Arrow );
-						bmp.MakeTransparent( );
-						
-						if ( item.Enabled )
-						{
-							e.Graphics.DrawImage( bmp, e.Bounds.X + e.Bounds.Width - cx,
-									     e.Bounds.Y + ( ( e.Bounds.Height - cy ) / 2 ) );
-						}
-						else
-						{
-							ControlPaint.DrawImageDisabled( e.Graphics, bmp, e.Bounds.X + e.Bounds.Width - cx,
-										       e.Bounds.Y + ( ( e.Bounds.Height - cy ) / 2 ),  color_back );
-						}
-						
-						dc.SmoothingMode = old_smoothing_mode;
-					}
+				Bitmap	bmp = CreateGlyphBitmap (new Size (cx, cy), MenuGlyph.Arrow, color_text);
+				
+				if (item.Enabled) {
+					e.Graphics.DrawImage (bmp, e.Bounds.X + e.Bounds.Width - cx,
+							      e.Bounds.Y + ((e.Bounds.Height - cy) /2));
+				} else {
+					ControlPaint.DrawImageDisabled (e.Graphics, bmp, e.Bounds.X + e.Bounds.Width - cx,
+									e.Bounds.Y + ((e.Bounds.Height - cy) /2),  color_back);
 				}
+				
+				bmp.Dispose ();
 			}
 			
 			/* Draw checked or radio */
-			if ( item.MenuBar == false && item.Checked )
-			{
+			if (item.MenuBar == false && item.Checked) {
 				
 				Rectangle area = e.Bounds;
 				int cx = MenuCheckSize.Width;
 				int cy = MenuCheckSize.Height;
-				using ( Bitmap bmp = new Bitmap( cx, cy ) )
-				{
-					using ( Graphics gr = Graphics.FromImage( bmp ) )
-					{
-						Rectangle rect_arrow = new Rectangle( 0, 0, cx, cy );
-						
-						if ( item.RadioCheck )
-							ControlPaint.DrawMenuGlyph( gr, rect_arrow, MenuGlyph.Bullet );
-						else
-							ControlPaint.DrawMenuGlyph( gr, rect_arrow, MenuGlyph.Checkmark );
-						
-						bmp.MakeTransparent( );
-						e.Graphics.DrawImage( bmp, area.X, e.Bounds.Y + ( ( e.Bounds.Height - cy ) / 2 ) );
-					}
-				}
-			}
-		}
+				Bitmap	bmp = CreateGlyphBitmap (new Size (cx, cy), item.RadioCheck ? MenuGlyph.Bullet : MenuGlyph.Checkmark, color_text);
+				
+				e.Graphics.DrawImage (bmp, area.X, e.Bounds.Y + ((e.Bounds.Height - cy) / 2));
+				
+				bmp.Dispose ();
+			}			
+		}			
 		
 		public override void DrawPopupMenu (Graphics dc, Menu menu, Rectangle cliparea, Rectangle rect)
 		{
@@ -471,7 +437,7 @@ namespace System.Windows.Forms
 			}
 			
 			// Draw bar
-			using ( LinearGradientBrush lgbr = new LinearGradientBrush( bar.Location, new Point( bar.X, bar.Bottom ), Color.White, FocusColor ) )
+			using ( LinearGradientBrush lgbr = new LinearGradientBrush( bar.Location, new Point( bar.X, bar.Bottom ), Color.White, PressedColor ) )
 			{
 				dc.FillRectangle( lgbr, bar );
 			}
@@ -483,28 +449,6 @@ namespace System.Windows.Forms
 		#endregion	// ProgressBar
 		
 		#region RadioButton
-		protected override void RadioButton_DrawButton( RadioButton radio_button, Graphics dc, ButtonState state, Rectangle radiobutton_rectangle )
-		{
-			SolidBrush sb = new SolidBrush( radio_button.BackColor );
-			dc.FillRectangle( sb, radio_button.ClientRectangle );
-			sb.Dispose( );
-			
-			if (radio_button.appearance==Appearance.Button) {
-				if (radio_button.FlatStyle == FlatStyle.Flat || radio_button.FlatStyle == FlatStyle.Popup) {
-					DrawFlatStyleButton(dc, radio_button.ClientRectangle, radio_button);
-				} else {
-					DrawButtonBase( dc, radio_button.ClientRectangle, radio_button );
-				}
-			} else {
-				// establish if we are rendering a flat style of some sort
-				if ( radio_button.FlatStyle == FlatStyle.Flat || radio_button.FlatStyle == FlatStyle.Popup ) {
-					DrawFlatStyleRadioButton (dc, radiobutton_rectangle, radio_button);
-				} else {
-					ControlPaint.DrawRadioButton( dc, radiobutton_rectangle, state );
-				}
-			}
-		}
-		
 		protected override void RadioButton_DrawFocus(RadioButton radio_button, Graphics dc, Rectangle text_rectangle)
 		{
 			if (radio_button.Focused && radio_button.appearance != Appearance.Button) 
@@ -1004,7 +948,94 @@ namespace System.Windows.Forms
 			}
 			
 			return res;
-		}		
+		}
+		
+//		public override void CPDrawBorder3D (Graphics graphics, Rectangle rectangle, Border3DStyle style, Border3DSide sides) {
+//			CPDrawBorder3D(graphics, rectangle, style, sides, ColorControl);
+//		}
+		
+		protected override void CPDrawBorder3D (Graphics graphics, Rectangle rectangle, Border3DStyle style, Border3DSide sides, Color control_color)
+		{
+			Pen		penTopLeft;
+			Pen		penTopLeftInner;
+			Pen		penBottomRight;
+			Pen		penBottomRightInner;
+			Rectangle	rect= new Rectangle (rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
+			
+			if ((style & Border3DStyle.Adjust) != 0) {
+				rect.Y -= 2;
+				rect.X -= 2;
+				rect.Width += 4;
+				rect.Height += 4;
+			}
+			
+			penTopLeft = penTopLeftInner = penBottomRight = penBottomRightInner = ResPool.GetPen (control_color);
+			
+			CPColor cpcolor = ResPool.GetCPColor (control_color);
+			
+			switch (style) {
+			case Border3DStyle.Raised:
+				penTopLeftInner = ResPool.GetPen (cpcolor.LightLight);
+				penBottomRight = ResPool.GetPen (cpcolor.Dark);
+				penBottomRightInner = ResPool.GetPen (BorderColor);
+				break;
+			case Border3DStyle.Sunken:
+				penTopLeft = ResPool.GetPen (BorderColor);
+				penTopLeftInner = ResPool.GetPen (cpcolor.Dark);
+				penBottomRight = ResPool.GetPen (cpcolor.LightLight);
+				break;
+			case Border3DStyle.Etched:
+				penTopLeft = penBottomRightInner = ResPool.GetPen (BorderColor);
+				penTopLeftInner = penBottomRight = ResPool.GetPen (cpcolor.LightLight);
+				break;
+			case Border3DStyle.RaisedOuter:
+				penBottomRight = ResPool.GetPen (cpcolor.Dark);
+				break;
+			case Border3DStyle.SunkenOuter:
+				penTopLeft = ResPool.GetPen (BorderColor);
+				penBottomRight = ResPool.GetPen (cpcolor.LightLight);
+				break;
+			case Border3DStyle.RaisedInner:
+				penTopLeft = ResPool.GetPen (cpcolor.LightLight);
+				penBottomRight = ResPool.GetPen (BorderColor);
+				break;
+			case Border3DStyle.SunkenInner:
+				penTopLeft = ResPool.GetPen (cpcolor.Dark);
+				break;
+			case Border3DStyle.Flat:
+				penTopLeft = penBottomRight = ResPool.GetPen (BorderColor);
+				break;
+			case Border3DStyle.Bump:
+				penTopLeftInner = penBottomRight = ResPool.GetPen (cpcolor.Dark);
+				break;
+			default:
+				break;
+			}
+			
+			if ((sides & Border3DSide.Middle) != 0) {
+				graphics.FillRectangle (ResPool.GetSolidBrush (control_color), rect);
+			}
+			
+			if ((sides & Border3DSide.Left) != 0) {
+				graphics.DrawLine (penTopLeft, rect.Left, rect.Bottom - 2, rect.Left, rect.Top);
+				graphics.DrawLine (penTopLeftInner, rect.Left + 1, rect.Bottom - 2, rect.Left + 1, rect.Top);
+			}
+			
+			if ((sides & Border3DSide.Top) != 0) {
+				graphics.DrawLine (penTopLeft, rect.Left, rect.Top, rect.Right - 2, rect.Top);
+				graphics.DrawLine (penTopLeftInner, rect.Left + 1, rect.Top + 1, rect.Right - 3, rect.Top + 1);
+			}
+			
+			if ((sides & Border3DSide.Right) != 0) {
+				graphics.DrawLine (penBottomRight, rect.Right - 1, rect.Top, rect.Right - 1, rect.Bottom - 1);
+				graphics.DrawLine (penBottomRightInner, rect.Right - 2, rect.Top + 1, rect.Right - 2, rect.Bottom - 2);
+			}
+			
+			if ((sides & Border3DSide.Bottom) != 0) {
+				graphics.DrawLine (penBottomRight, rect.Left, rect.Bottom - 1, rect.Right - 1, rect.Bottom - 1);
+				graphics.DrawLine (penBottomRightInner, rect.Left + 1, rect.Bottom - 2, rect.Right - 2, rect.Bottom - 2);
+			}
+		}
 		
 		public override void CPDrawComboButton( Graphics dc, Rectangle rectangle, ButtonState state )
 		{

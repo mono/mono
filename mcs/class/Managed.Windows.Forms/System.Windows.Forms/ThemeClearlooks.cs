@@ -434,23 +434,6 @@ namespace System.Windows.Forms {
 		}
 		#endregion	// ButtonBase
 		
-		#region CheckBox
-		protected override void CheckBox_DrawCheckBox( Graphics dc, CheckBox checkbox, ButtonState state, Rectangle checkbox_rectangle ) {
-			dc.FillRectangle( ResPool.GetSolidBrush( checkbox.BackColor ), checkbox.ClientRectangle );
-			// render as per normal button
-			if ( checkbox.appearance == Appearance.Button ) {
-				DrawButtonBase( dc, checkbox.ClientRectangle, checkbox );
-			} else {
-				// establish if we are rendering a flat style of some sort
-				if ( checkbox.FlatStyle == FlatStyle.Flat || checkbox.FlatStyle == FlatStyle.Popup ) {
-					DrawFlatStyleCheckBox( dc, checkbox_rectangle, checkbox );
-				} else {
-					ControlPaint.DrawCheckBox( dc, checkbox_rectangle, state );
-				}
-			}
-		}
-		#endregion	// CheckBox
-		
 		#region ComboBox
 		
 		// Drawing
@@ -771,27 +754,6 @@ namespace System.Windows.Forms {
 		#endregion	// ProgressBar
 		
 		#region RadioButton
-		protected override void RadioButton_DrawButton( RadioButton radio_button, Graphics dc, ButtonState state, Rectangle radiobutton_rectangle ) {
-			SolidBrush sb = new SolidBrush( radio_button.BackColor );
-			dc.FillRectangle( sb, radio_button.ClientRectangle );
-			sb.Dispose( );
-			
-			if ( radio_button.appearance == Appearance.Button ) {
-				if ( radio_button.FlatStyle == FlatStyle.Flat || radio_button.FlatStyle == FlatStyle.Popup ) {
-					DrawFlatStyleButton( dc, radio_button.ClientRectangle, radio_button );
-				} else {
-					DrawButtonBase( dc, radio_button.ClientRectangle, radio_button );
-				}
-			} else {
-				// establish if we are rendering a flat style of some sort
-				if ( radio_button.FlatStyle == FlatStyle.Flat || radio_button.FlatStyle == FlatStyle.Popup ) {
-					DrawFlatStyleRadioButton( dc, radiobutton_rectangle, radio_button );
-				} else {
-					ControlPaint.DrawRadioButton( dc, radiobutton_rectangle, state );
-				}
-			}
-		}
-		
 		protected override void RadioButton_DrawFocus( RadioButton radio_button, Graphics dc, Rectangle text_rectangle ) {
 			if ( radio_button.Focused && radio_button.appearance != Appearance.Button ) {
 				if ( radio_button.FlatStyle != FlatStyle.Flat && radio_button.FlatStyle != FlatStyle.Popup ) {
@@ -801,7 +763,7 @@ namespace System.Windows.Forms {
 		}
 		
 		// renders a radio button with the Flat and Popup FlatStyle
-		protected void DrawFlatStyleRadioButton (Graphics dc, Rectangle rectangle, RadioButton radio_button)
+		protected override void DrawFlatStyleRadioButton (Graphics dc, Rectangle rectangle, RadioButton radio_button)
 		{
 			if (radio_button.Enabled) {
 				// draw the outer flatstyle arcs
@@ -3195,7 +3157,7 @@ namespace System.Windows.Forms {
 			CPDrawBorder3D( graphics, rectangle, style, sides, ColorControl );
 		}
 		
-		private void CPDrawBorder3D( Graphics dc, Rectangle rectangle, Border3DStyle style, Border3DSide sides, Color control_color ) {
+		protected override void CPDrawBorder3D( Graphics dc, Rectangle rectangle, Border3DStyle style, Border3DSide sides, Color control_color ) {
 			// currently we don't take care of Border3DStyle or Border3DSide
 			
 			// FIXME: temporary fix for artefacts, it should use the backcolor of the parent control

@@ -363,93 +363,6 @@ namespace System.Windows.Forms
 			}
 		}
 		
-		// FIXME: Not needed anymore. Will be removed when the other themes are updated
-		// draw the flat style part of the rectangle
-		public void DrawFlatStyleButton (Graphics graphics, Rectangle rectangle, ButtonBase button) {
-			Color rect_back_color = button.BackColor;
-			Color rect_fore_color = button.ForeColor;
-			Rectangle trace_rectangle = new Rectangle(rectangle.X, rectangle.Y, Math.Max (rectangle.Width-1, 0), Math.Max (rectangle.Height-1, 0));
-				
-			if (button.Enabled) {
-				if (button.Capture || button.is_entered) {
-					if (button.FlatStyle == FlatStyle.Flat) {
-						// fill the rectangle
-						graphics.FillRectangle (ResPool.GetSolidBrush (rect_back_color), rectangle);
-						
-						// now draw the outer border
-						if (button.Capture && button.is_entered) {
-							rect_back_color = ControlPaint.LightLight (rect_back_color);
-						} else {
-							rect_back_color = ControlPaint.Light (rect_back_color);
-						}
-						
-						// draw rectangle and fill it
-						graphics.FillRectangle (ResPool.GetSolidBrush (rect_back_color), rectangle);
-						graphics.DrawRectangle(ResPool.GetPen (rect_fore_color), trace_rectangle);
-					} else {
-						// else it must be a popup button
-						
-						if (button.Capture && button.is_entered) {
-							graphics.DrawRectangle(ResPool.GetPen (this.ColorControlText), trace_rectangle);
-						} else {
-							// draw a 3d border
-							CPDrawBorder3D (graphics, rectangle, Border3DStyle.RaisedInner, Border3DSide.Left | Border3DSide.Top, button.BackColor); 
-							graphics.DrawLine ( ResPool.GetPen (this.ColorControlText), trace_rectangle.X, trace_rectangle.Bottom, trace_rectangle.Right, trace_rectangle.Bottom);
-							graphics.DrawLine ( ResPool.GetPen (this.ColorControlText), trace_rectangle.Right, trace_rectangle.Y, trace_rectangle.Right, trace_rectangle.Bottom);
-						}
-					}
-					
-					// TODO: draw inner focus rectangle
-					
-				} else {
-					// popup has a ButtonColorText forecolor, not a button.ForeCOlor
-					if (button.FlatStyle == FlatStyle.Popup) {
-						rect_fore_color = ColorGrayText;
-					}
-					
-					// fill then draw outer rect
-					graphics.FillRectangle (ResPool.GetSolidBrush (rect_back_color), rectangle);
-					graphics.DrawRectangle(ResPool.GetPen (rect_fore_color), trace_rectangle);
-				}
-				
-				// finally some small tweaks to render radiobutton and checkbox
-				CheckBox checkbox = button as CheckBox;
-				RadioButton radiobutton = button as RadioButton;
-				if ((checkbox != null && checkbox.Checked) ||
-					(radiobutton != null && radiobutton.Checked)) {
-					if (button.FlatStyle == FlatStyle.Flat && button.is_entered && !button.Capture) {
-						// render the hover for flat flatstyle and cheked
-						graphics.DrawRectangle(ResPool.GetPen (this.ColorControlText), trace_rectangle);
-					} else if (!button.is_entered && !button.Capture) {
-						// render the checked state for popup when unhovered
-						CPDrawBorder3D (graphics, rectangle, Border3DStyle.SunkenInner, Border3DSide.Right | Border3DSide.Bottom, button.BackColor); 
-					}
-				}
-			} else {
-				// rendering checkbox or radio button style buttons
-				CheckBox checkbox = button as CheckBox;
-				RadioButton radiobutton = button as RadioButton;
-				bool draw_popup_checked = false;
-				
-				if (button.FlatStyle == FlatStyle.Popup) {
-					rect_fore_color = ColorGrayText;
-				
-					// see if we should draw a disabled checked popup button
-					draw_popup_checked = ((checkbox != null && checkbox.Checked) ||
-						(radiobutton != null && radiobutton.Checked));
-				}
-				
-				graphics.FillRectangle (ResPool.GetSolidBrush (rect_back_color), rectangle);
-				graphics.DrawRectangle(ResPool.GetPen (rect_fore_color), trace_rectangle);
-				
-				// finally draw the flatstyle checked effect if need
-				if (draw_popup_checked) {
-					// render the checked state for popup when unhovered
-					CPDrawBorder3D (graphics, rectangle, Border3DStyle.SunkenInner, Border3DSide.Right | Border3DSide.Bottom, button.BackColor);
-				}
-			}
-		}
-
 		public override Size ButtonBaseDefaultSize {
 			get {
 				return new Size (75, 23);
@@ -1933,7 +1846,7 @@ namespace System.Windows.Forms
 			}	
 		}		
 		
-		Bitmap CreateGlyphBitmap (Size size, MenuGlyph glyph, Color color)
+		protected Bitmap CreateGlyphBitmap (Size size, MenuGlyph glyph, Color color)
 		{
 			Color bg_color;
 			if (color.R == 0 && color.G == 0 && color.B == 0)
@@ -2884,7 +2797,7 @@ namespace System.Windows.Forms
 		}
 		
 		// renders a radio button with the Flat and Popup FlatStyle
-		protected void DrawFlatStyleRadioButton (Graphics graphics, Rectangle rectangle, RadioButton radio_button)
+		protected virtual void DrawFlatStyleRadioButton (Graphics graphics, Rectangle rectangle, RadioButton radio_button)
 		{
 			int	lineWidth;
 			
@@ -4233,7 +4146,7 @@ namespace System.Windows.Forms
 			CPDrawBorder3D(graphics, rectangle, style, sides, ColorControl);
 		}
 
-		private void CPDrawBorder3D (Graphics graphics, Rectangle rectangle, Border3DStyle style, Border3DSide sides, Color control_color)
+		protected virtual void CPDrawBorder3D (Graphics graphics, Rectangle rectangle, Border3DStyle style, Border3DSide sides, Color control_color)
 		{
 			Pen		penTopLeft;
 			Pen		penTopLeftInner;
