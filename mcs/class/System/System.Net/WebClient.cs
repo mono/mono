@@ -4,8 +4,10 @@
 // Authors:
 // 	Lawrence Pit (loz@cable.a2000.nl)
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
 // (c) 2003 Ximian, Inc. (http://www.ximian.com)
+// (C) 2006 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -36,11 +38,19 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
+#if NET_2_0
+using System.Collections.Generic;
+using System.Threading;
+#endif
 
 namespace System.Net 
 {
 	[ComVisible(true)]
-	public sealed class WebClient : Component
+	public
+#if !NET_2_0
+	sealed
+#endif
+	class WebClient : Component
 	{
 		static readonly string urlEncodedCType = "application/x-www-form-urlencoded";
 		static byte [] hexBytes;
@@ -50,8 +60,10 @@ namespace System.Net
 		Uri baseAddress;
 		string baseString;
 		NameValueCollection queryString;
+		bool isBusy;
 #if NET_2_0
 		Encoding encoding = Encoding.Default;
+		IWebProxy proxy;
 #endif
 
 		// Constructors
@@ -130,42 +142,69 @@ namespace System.Net
 				encoding = value;
 			}
 		}
+
+		public IWebProxy Proxy {
+			get { return proxy; }
+			set { proxy = value; }
+		}
+#endif
+
+#if NET_2_0
+		public bool IsBusy {
+			get { return isBusy || wait_handles != null && wait_handles.Count > 0; }
+		}
+#else
+		bool IsBusy {
+			get { return isBusy; }
+		}
 #endif
 
 		// Methods
-		
+
+		void CheckBusy ()
+		{
+			if (IsBusy)
+				throw new NotSupportedException ("WebClient does not support conccurent I/O operations.");
+		}
+
+		void SetBusy ()
+		{
+			lock (this) {
+				CheckBusy ();
+				isBusy = true;
+			}
+		}
+
+		//   DownloadData
+
 		public byte [] DownloadData (string address)
 		{
-			return DownloadData (address, "GET");
+			return DownloadData (MakeUri (address));
 		}
 
 #if NET_2_0
 		public
 #endif
-		byte [] DownloadData (Uri address, string method)
+		byte [] DownloadData (Uri address)
 		{
-			WebRequest request = SetupRequest (address, method);
-			request.Method = method;
+			try {
+				SetBusy ();
+				return DownloadDataCore (address);
+			} finally {
+				isBusy = false;
+			}
+		}
+
+		byte [] DownloadDataCore (Uri address)
+		{
+			WebRequest request = SetupRequest (address, "GET");
 			WebResponse response = request.GetResponse ();
 			Stream st = ProcessResponse (response);
 			return ReadAll (st, (int) response.ContentLength);
 		}
 
-#if NET_2_0
-		public
-#endif
-		byte [] DownloadData (string address, string method)
-		{
-			return DownloadData (MakeUri (address), method);
-		}
+		//   DownloadFile
 
-#if NET_2_0
-		public byte [] DownloadData (Uri address)
-		{
-			return DownloadData (address, "GET");
-		}
-#endif
-		
 		public void DownloadFile (string address, string fileName)
 		{
 			DownloadFile (MakeUri (address), fileName);
@@ -175,6 +214,16 @@ namespace System.Net
 		public
 #endif
 		void DownloadFile (Uri address, string fileName)
+		{
+			try {
+				SetBusy ();
+				DownloadFileCore (address, fileName);
+			} finally {
+				isBusy = false;
+			}
+		}
+
+		void DownloadFileCore (Uri address, string fileName)
 		{
 			WebRequest request = SetupRequest (address);
 			WebResponse response = request.GetResponse ();
@@ -191,7 +240,9 @@ namespace System.Net
 
 			f.Close ();
 		}
-		
+
+		//   OpenRead
+
 		public Stream OpenRead (string address)
 		{
 			return OpenRead (MakeUri (address));
@@ -202,14 +253,21 @@ namespace System.Net
 #endif
 		Stream OpenRead (Uri address)
 		{
-			WebRequest request = SetupRequest (address);
-			WebResponse response = request.GetResponse ();
-			return ProcessResponse (response);
+			try {
+				SetBusy ();
+				WebRequest request = SetupRequest (address);
+				WebResponse response = request.GetResponse ();
+				return ProcessResponse (response);
+			} finally {
+				isBusy = false;
+			}
 		}
-		
+
+		//   OpenWrite
+
 		public Stream OpenWrite (string address)
 		{
-			return OpenWrite (address, "POST");
+			return OpenWrite (MakeUri (address));
 		}
 		
 		public Stream OpenWrite (string address, string method)
@@ -220,15 +278,41 @@ namespace System.Net
 #if NET_2_0
 		public
 #endif
+		Stream OpenWrite (Uri address)
+		{
+			return OpenWrite (address, DetermineMethod (address));
+		}
+
+#if NET_2_0
+		public
+#endif
 		Stream OpenWrite (Uri address, string method)
 		{
-			WebRequest request = SetupRequest (address, method);
-			return request.GetRequestStream ();
+			try {
+				SetBusy ();
+				WebRequest request = SetupRequest (address, method);
+				return request.GetRequestStream ();
+			} finally {
+				isBusy = false;
+			}
 		}
-				
+
+		private string DetermineMethod (Uri address)
+		{
+			if (address == null)
+				throw new ArgumentNullException ("address");
+#if NET_2_0
+			if (address.Scheme == Uri.UriSchemeFtp)
+				return "RETR";
+#endif
+			return "POST";
+		}
+
+		//   UploadData
+
 		public byte [] UploadData (string address, byte [] data)
 		{
-			return UploadData (address, "POST", data);
+			return UploadData (MakeUri (address), data);
 		}
 		
 		public byte [] UploadData (string address, string method, byte [] data)
@@ -237,16 +321,27 @@ namespace System.Net
 		}
 
 #if NET_2_0
-		public byte [] UploadData (Uri address, byte [] data)
-		{
-			return UploadData (address, "POST", data);
-		}
+		public
 #endif
+		byte [] UploadData (Uri address, byte [] data)
+		{
+			return UploadData (address, DetermineMethod (address), data);
+		}
 
 #if NET_2_0
 		public
 #endif
 		byte [] UploadData (Uri address, string method, byte [] data)
+		{
+			try {
+				SetBusy ();
+				return UploadDataCore (address, method, data);
+			} finally {
+				isBusy = false;
+			}
+		}
+
+		byte [] UploadDataCore (Uri address, string method, byte [] data)
 		{
 			if (data == null)
 				throw new ArgumentNullException ("data");
@@ -261,10 +356,20 @@ namespace System.Net
 			Stream st = ProcessResponse (response);
 			return ReadAll (st, (int) response.ContentLength);
 		}
-		
+
+		//   UploadFile
+
 		public byte [] UploadFile (string address, string fileName)
 		{
-			return UploadFile (address, "POST", fileName);
+			return UploadFile (MakeUri (address), fileName);
+		}
+
+#if NET_2_0
+		public
+#endif
+		byte [] UploadFile (Uri address, string fileName)
+		{
+			return UploadFile (address, DetermineMethod (address), fileName);
 		}
 		
 		public byte [] UploadFile (string address, string method, string fileName)
@@ -276,6 +381,16 @@ namespace System.Net
 		public
 #endif
 		byte [] UploadFile (Uri address, string method, string fileName)
+		{
+			try {
+				SetBusy ();
+				return UploadFileCore (address, method, fileName);
+			} finally {
+				isBusy = false;
+			}
+		}
+
+		byte [] UploadFileCore (Uri address, string method, string fileName)
 		{
 			string fileCType = Headers ["Content-Type"];
 			if (fileCType != null) {
@@ -336,7 +451,7 @@ namespace System.Net
 		
 		public byte[] UploadValues (string address, NameValueCollection data)
 		{
-			return UploadValues (address, "POST", data);
+			return UploadValues (MakeUri (address), data);
 		}
 		
 		public byte[] UploadValues (string address, string method, NameValueCollection data)
@@ -347,7 +462,25 @@ namespace System.Net
 #if NET_2_0
 		public
 #endif
+		byte[] UploadValues (Uri address, NameValueCollection data)
+		{
+			return UploadValues (address, DetermineMethod (address), data);
+		}
+
+#if NET_2_0
+		public
+#endif
 		byte[] UploadValues (Uri uri, string method, NameValueCollection data)
+		{
+			try {
+				SetBusy ();
+				return UploadValuesCore (uri, method, data);
+			} finally {
+				isBusy = false;
+			}
+		}
+
+		byte[] UploadValuesCore (Uri uri, string method, NameValueCollection data)
 		{
 			if (data == null)
 				throw new ArgumentNullException ("data"); // MS throws a nullref
@@ -393,19 +526,9 @@ namespace System.Net
 			return encoding.GetString (DownloadData (address));
 		}
 
-		public string DownloadString (string address, string method)
-		{
-			return encoding.GetString (DownloadData (address, method));
-		}
-
 		public string DownloadString (Uri address)
 		{
 			return encoding.GetString (DownloadData (address));
-		}
-
-		public string DownloadString (Uri address, string method)
-		{
-			return encoding.GetString (DownloadData (address, method));
 		}
 
 		public string UploadString (string address, string data)
@@ -431,6 +554,18 @@ namespace System.Net
 			byte [] resp = UploadData (address, method, encoding.GetBytes (data));
 			return encoding.GetString (resp);
 		}
+
+		public event DownloadDataCompletedEventHandler DownloadDataCompleted;
+		public event AsyncCompletedEventHandler DownloadFileCompleted;
+		public event DownloadProgressChangedEventHandler DownloadProgressChanged;
+		public event DownloadStringCompletedEventHandler DownloadStringCompleted;
+		public event OpenReadCompletedEventHandler OpenReadCompleted;
+		public event OpenWriteCompletedEventHandler OpenWriteCompleted;
+		public event UploadDataCompletedEventHandler UploadDataCompleted;
+		public event UploadFileCompletedEventHandler UploadFileCompleted;
+		public event UploadProgressChangedEventHandler UploadProgressChanged;
+		public event UploadStringCompletedEventHandler UploadStringCompleted;
+		public event UploadValuesCompletedEventHandler UploadValuesCompleted;
 #endif
 
 		Uri MakeUri (string path)
@@ -477,6 +612,10 @@ namespace System.Net
 		WebRequest SetupRequest (Uri uri)
 		{
 			WebRequest request = WebRequest.Create (uri);
+#if NET_2_0
+			if (Proxy != null)
+				request.Proxy = Proxy;
+#endif
 			request.Credentials = credentials;
 
 			// Special headers. These are properties of HttpWebRequest.
@@ -620,6 +759,335 @@ namespace System.Net
 				}
 			}
 		}
+
+#if NET_2_0
+		List<RegisteredWaitHandle> wait_handles;
+
+		List<RegisteredWaitHandle> WaitHandles {
+			get {
+				if (wait_handles == null)
+					wait_handles = new List<RegisteredWaitHandle> ();
+				return wait_handles;
+			}
+		}
+
+		[MonoTODO ("Is it enough to just unregister wait handles from ThreadPool?")]
+		public void CancelAsync ()
+		{
+			if (wait_handles == null)
+				return;
+			lock (wait_handles) {
+				foreach (RegisteredWaitHandle handle in wait_handles)
+					handle.Unregister (null);
+				wait_handles.Clear ();
+			}
+		}
+
+		//    DownloadDataAsync
+
+		public void DownloadDataAsync (Uri uri)
+		{
+			DownloadDataAsync (uri, null);
+		}
+
+		public void DownloadDataAsync (Uri uri, object asyncState)
+		{
+			lock (this) {
+				CheckBusy ();
+
+				object [] cbArgs = new object [] {uri, asyncState};
+				WaitOrTimerCallback cb = delegate (object state, bool timedOut) {
+					object [] args = (object []) state;
+					byte [] data = timedOut ? null : DownloadData ((Uri) args [0]);
+					OnDownloadDataCompleted (
+						new DownloadDataCompletedEventArgs (data, null, timedOut, args [1]));
+					};
+				AutoResetEvent ev = new AutoResetEvent (true);
+				WaitHandles.Add (ThreadPool.RegisterWaitForSingleObject (ev, cb, cbArgs, -1, true));
+			}
+		}
+
+		//    DownloadFileAsync
+
+		public void DownloadFileAsync (Uri uri, string method)
+		{
+			DownloadFileAsync (uri, method, null);
+		}
+
+		public void DownloadFileAsync (Uri uri, string method, object asyncState)
+		{
+			lock (this) {
+				CheckBusy ();
+
+				object [] cbArgs = new object [] {uri, method, asyncState};
+				WaitOrTimerCallback cb = delegate (object innerState, bool timedOut) {
+					object [] args = (object []) innerState;
+					if (!timedOut)
+						DownloadFile ((Uri) args [0], (string) args [1]);
+					OnDownloadFileCompleted (
+						new AsyncCompletedEventArgs (null, timedOut, args [2]));
+					};
+				AutoResetEvent ev = new AutoResetEvent (true);
+				WaitHandles.Add (ThreadPool.RegisterWaitForSingleObject (ev, cb, cbArgs, -1, true));
+			}
+		}
+
+		//    DownloadStringAsync
+
+		public void DownloadStringAsync (Uri uri)
+		{
+			DownloadStringAsync (uri, null);
+		}
+
+		public void DownloadStringAsync (Uri uri, object asyncState)
+		{
+			lock (this) {
+				CheckBusy ();
+
+				object [] cbArgs = new object [] {uri, asyncState};
+				WaitOrTimerCallback cb = delegate (object innerState, bool timedOut) {
+					object [] args = (object []) innerState;
+					string data = timedOut ? null : DownloadString ((Uri) args [0]);
+					OnDownloadStringCompleted (
+						new DownloadStringCompletedEventArgs (data, null, timedOut, args [1]));
+					};
+				AutoResetEvent ev = new AutoResetEvent (true);
+				WaitHandles.Add (ThreadPool.RegisterWaitForSingleObject (ev, cb, cbArgs, -1, true));
+			}
+		}
+
+		//    OpenReadAsync
+
+		public void OpenReadAsync (Uri uri)
+		{
+			OpenReadAsync (uri, null);
+		}
+
+		public void OpenReadAsync (Uri uri, object asyncState)
+		{
+			lock (this) {
+				CheckBusy ();
+
+				object [] cbArgs = new object [] {uri, asyncState};
+				WaitOrTimerCallback cb = delegate (object innerState, bool timedOut) {
+					object [] args = (object []) innerState;
+					Stream stream = timedOut ? null : OpenRead ((Uri) args [0]);
+					OnOpenReadCompleted (
+						new OpenReadCompletedEventArgs (stream, null, timedOut, args [1]));
+					};
+				AutoResetEvent ev = new AutoResetEvent (true);
+				WaitHandles.Add (ThreadPool.RegisterWaitForSingleObject (ev, cb, cbArgs, -1, true));
+			}
+		}
+
+		//    OpenWriteAsync
+
+		public void OpenWriteAsync (Uri uri)
+		{
+			OpenWriteAsync (uri, null);
+		}
+
+		public void OpenWriteAsync (Uri uri, string method)
+		{
+			OpenWriteAsync (uri, method, null);
+		}
+
+		public void OpenWriteAsync (Uri uri, string method, object asyncState)
+		{
+			lock (this) {
+				CheckBusy ();
+
+				object [] cbArgs = new object [] {uri, method, asyncState};
+				WaitOrTimerCallback cb = delegate (object innerState, bool timedOut) {
+					object [] args = (object []) innerState;
+					Stream stream = timedOut ? null : OpenWrite ((Uri) args [0], (string) args [1]);
+					OnOpenWriteCompleted (
+						new OpenWriteCompletedEventArgs (stream, null, timedOut, args [2]));
+					};
+				AutoResetEvent ev = new AutoResetEvent (true);
+				WaitHandles.Add (ThreadPool.RegisterWaitForSingleObject (ev, cb, cbArgs, -1, true));
+			}
+		}
+
+		//    UploadDataAsync
+
+		public void UploadDataAsync (Uri uri, byte [] data)
+		{
+			UploadDataAsync (uri, null, data);
+		}
+
+		public void UploadDataAsync (Uri uri, string method, byte [] data)
+		{
+			UploadDataAsync (uri, method, data, null);
+		}
+
+		public void UploadDataAsync (Uri uri, string method, byte [] data, object asyncState)
+		{
+			lock (this) {
+				CheckBusy ();
+
+				object [] cbArgs = new object [] {uri, method, data,  asyncState};
+				WaitOrTimerCallback cb = delegate (object innerState, bool timedOut) {
+					object [] args = (object []) innerState;
+					byte [] data = timedOut ? null : UploadData ((Uri) args [0], (string) args [1], (byte []) args [2]);
+					OnUploadDataCompleted (
+						new UploadDataCompletedEventArgs (data, null, timedOut, args [3]));
+					};
+				AutoResetEvent ev = new AutoResetEvent (true);
+				WaitHandles.Add (ThreadPool.RegisterWaitForSingleObject (ev, cb, cbArgs, -1, true));
+			}
+		}
+
+		//    UploadFileAsync
+
+		public void UploadFileAsync (Uri uri, string file)
+		{
+			UploadFileAsync (uri, null, file);
+		}
+
+		public void UploadFileAsync (Uri uri, string method, string file)
+		{
+			UploadFileAsync (uri, method, file, null);
+		}
+
+		public void UploadFileAsync (Uri uri, string method, string file, object asyncState)
+		{
+			lock (this) {
+				CheckBusy ();
+
+				object [] cbArgs = new object [] {uri, method, file,  asyncState};
+				WaitOrTimerCallback cb = delegate (object innerState, bool timedOut) {
+					object [] args = (object []) innerState;
+					byte [] data = timedOut ? null : UploadFile ((Uri) args [0], (string) args [1], (string) args [2]);
+					OnUploadFileCompleted (
+						new UploadFileCompletedEventArgs (data, null, timedOut, args [3]));
+					};
+				AutoResetEvent ev = new AutoResetEvent (true);
+				WaitHandles.Add (ThreadPool.RegisterWaitForSingleObject (ev, cb, cbArgs, -1, true));
+			}
+		}
+
+		//    UploadStringAsync
+
+		public void UploadStringAsync (Uri uri, string data)
+		{
+			UploadStringAsync (uri, null, data);
+		}
+
+		public void UploadStringAsync (Uri uri, string method, string data)
+		{
+			UploadStringAsync (uri, method, data, null);
+		}
+
+		public void UploadStringAsync (Uri uri, string method, string data, object asyncState)
+		{
+			lock (this) {
+				CheckBusy ();
+
+				object [] cbArgs = new object [] {uri, method, data, asyncState};
+				WaitOrTimerCallback cb = delegate (object innerState, bool timedOut) {
+					object [] args = (object []) innerState;
+					string data = timedOut ? null : UploadString ((Uri) args [0], (string) args [1], (string) args [2]);
+					OnUploadStringCompleted (
+						new UploadStringCompletedEventArgs (data, null, timedOut, args [3]));
+					};
+				AutoResetEvent ev = new AutoResetEvent (true);
+				WaitHandles.Add (ThreadPool.RegisterWaitForSingleObject (ev, cb, cbArgs, -1, true));
+			}
+		}
+
+		//    UploadValuesAsync
+
+		public void UploadValuesAsync (Uri uri, NameValueCollection values)
+		{
+			UploadValuesAsync (uri, null, values);
+		}
+
+		public void UploadValuesAsync (Uri uri, string method, NameValueCollection values)
+		{
+			UploadValuesAsync (uri, method, values, null);
+		}
+
+		public void UploadValuesAsync (Uri uri, string method, NameValueCollection values, object asyncState)
+		{
+			lock (this) {
+				CheckBusy ();
+
+				object [] cbArgs = new object [] {uri, method, values,  asyncState};
+				WaitOrTimerCallback cb = delegate (object innerState, bool timedOut) {
+					object [] args = (object []) innerState;
+					byte [] data = timedOut ? null : UploadValues ((Uri) args [0], (string) args [1], (NameValueCollection) args [2]);
+					OnUploadValuesCompleted (
+						new UploadValuesCompletedEventArgs (data, null, timedOut, args [3]));
+					};
+				AutoResetEvent ev = new AutoResetEvent (true);
+				WaitHandles.Add (ThreadPool.RegisterWaitForSingleObject (ev, cb, cbArgs, -1, true));
+			}
+		}
+
+		protected virtual void OnDownloadDataCompleted (
+			DownloadDataCompletedEventArgs args)
+		{
+			if (DownloadDataCompleted != null)
+				DownloadDataCompleted (this, args);
+		}
+
+		protected virtual void OnDownloadFileCompleted (
+			AsyncCompletedEventArgs args)
+		{
+			if (DownloadFileCompleted != null)
+				DownloadFileCompleted (this, args);
+		}
+
+		protected virtual void OnDownloadStringCompleted (
+			DownloadStringCompletedEventArgs args)
+		{
+			if (DownloadStringCompleted != null)
+				DownloadStringCompleted (this, args);
+		}
+
+		protected virtual void OnOpenReadCompleted (
+			OpenReadCompletedEventArgs args)
+		{
+			if (OpenReadCompleted != null)
+				OpenReadCompleted (this, args);
+		}
+
+		protected virtual void OnOpenWriteCompleted (
+			OpenWriteCompletedEventArgs args)
+		{
+			if (OpenWriteCompleted != null)
+				OpenWriteCompleted (this, args);
+		}
+
+		protected virtual void OnUploadDataCompleted (
+			UploadDataCompletedEventArgs args)
+		{
+			if (UploadDataCompleted != null)
+				UploadDataCompleted (this, args);
+		}
+
+		protected virtual void OnUploadFileCompleted (
+			UploadFileCompletedEventArgs args)
+		{
+			if (UploadFileCompleted != null)
+				UploadFileCompleted (this, args);
+		}
+
+		protected virtual void OnUploadStringCompleted (
+			UploadStringCompletedEventArgs args)
+		{
+			if (UploadStringCompleted != null)
+				UploadStringCompleted (this, args);
+		}
+
+		protected virtual void OnUploadValuesCompleted (
+			UploadValuesCompletedEventArgs args)
+		{
+			if (UploadValuesCompleted != null)
+				UploadValuesCompleted (this, args);
+		}
+#endif
 	}
 }
 
