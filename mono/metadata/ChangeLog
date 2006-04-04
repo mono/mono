@@ -1,3 +1,12 @@
+2006-04-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* metadata-internals.h: Add comments describing the reference counting scheme
+	used for MonoImage and MonoAssembly.
+
+	* image.c assembly.c reflection.c: Rework reference counting of images and 
+	assemblies so they are freed when the runtime is shut down. Free some 
+	additional memory structures when an image is unloaded.
+	
 2006-04-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c loader.c reflection.c: Allocate more data structures in
