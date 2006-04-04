@@ -1,3 +1,7 @@
+2006-04-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BitVector32.cs : added operator== and != in 2.0.
+
 2006-03-11  Miguel de Icaza  <miguel@novell.com>
 
 	* IOrderedDictionary.cs: Flag GetEnumerator as a "new" method to
