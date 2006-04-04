@@ -2095,7 +2095,19 @@ namespace System.Windows.Forms {
 			#if DriverDebug || DriverDebugCreate
 				Console.WriteLine("Created window {0:X} / {1:X} parent {2:X}, Style {3}, ExStyle {4}", ClientWindow.ToInt32(), WholeWindow.ToInt32(), hwnd.parent != null ? hwnd.parent.Handle.ToInt32() : 0, (WindowStyles)cp.Style, (WindowExStyles)cp.ExStyle);
 			#endif
-				       
+
+			if ((cp.Style & (int)WindowStyles.WS_CHILD) == 0) {
+				if ((X != unchecked((int)0x80000000)) && (Y != unchecked((int)0x80000000))) {
+					XSizeHints	hints;
+
+					hints = new XSizeHints();
+					hints.x = X;
+					hints.y = Y;
+					hints.flags = (IntPtr)XSizeHintsFlags.USPosition;
+					XSetWMNormalHints(DisplayHandle, WholeWindow, ref hints);
+				}
+			}
+
 			lock (XlibLock) {
 				XSelectInput(DisplayHandle, hwnd.whole_window, new IntPtr ((int)SelectInputMask));
 				XSelectInput(DisplayHandle, hwnd.client_window, new IntPtr ((int)SelectInputMask));

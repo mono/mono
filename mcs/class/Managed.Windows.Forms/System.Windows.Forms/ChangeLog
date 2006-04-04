@@ -1,3 +1,15 @@
+2006-04-04  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Form.cs:
+	  - Re-enabled CreateParams.X/Y code for FormStartPosition
+	  - Added code for manual placement when creating the Control
+	  - Incomplete patch to treat MDI forms differently when
+	    setting the ClientSizeCore. (Still need to figure out handling
+	    x/y coords there)
+	* XplatUIX11.cs:
+	  - When we're explicitly setting the X/Y position of a non-Child
+	    window, let the WM know. Metacity really wants this.
+
 2006-04-04  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ThemeNice.cs: Added CPDrawButton

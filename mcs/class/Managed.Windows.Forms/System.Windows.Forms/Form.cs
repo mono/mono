@@ -777,6 +777,12 @@ namespace System.Windows.Forms {
 								break;
 							}
 
+							case FormStartPosition.Manual: {
+								Left = CreateParams.X;
+								Top = CreateParams.Y;
+								break;
+							}
+
 							default: {
 								break;
 							}
@@ -884,7 +890,6 @@ namespace System.Windows.Forms {
 		#endregion	// Public Instance Properties
 
 		#region Protected Instance Properties
-		[MonoTODO("Need to set start position properly")]
 		protected override CreateParams CreateParams {
 			get {
 				CreateParams cp = new CreateParams ();
@@ -898,13 +903,13 @@ namespace System.Windows.Forms {
 				cp.Parent = IntPtr.Zero;
 				cp.menu = ActiveMenu;
 
-//				if (start_position == FormStartPosition.WindowsDefaultLocation) {
+				if (start_position == FormStartPosition.WindowsDefaultLocation) {
 					cp.X = unchecked((int)0x80000000);
 					cp.Y = unchecked((int)0x80000000);
-//				} else {
-//					cp.X = Left;
-//					cp.Y = Top;
-//				}
+				} else {
+					cp.X = Left;
+					cp.Y = Top;
+				}
 				cp.Width = Width;
 				cp.Height = Height;
 
@@ -1392,6 +1397,10 @@ namespace System.Windows.Forms {
 					case FormStartPosition.CenterParent:
 						this.CenterToParent ();
 						break;
+					case FormStartPosition.Manual: 
+						Left = CreateParams.X;
+						Top = CreateParams.Y;
+						break;
 				}
 			} else {
 				Left = 25 * MdiParent.MdiContainer.ChildrenCreated + 1;
@@ -1584,8 +1593,14 @@ namespace System.Windows.Forms {
 
 			clientsize_set = new Size(x, y);
 
-			if (XplatUI.CalculateWindowRect(ref ClientRect, cp.Style, cp.ExStyle, cp.menu, out WindowRect)) {
-				SetBoundsCore(bounds.X, bounds.Y, WindowRect.Width, WindowRect.Height, BoundsSpecified.Size);
+			if (!IsMdiChild) {
+				if (XplatUI.CalculateWindowRect(ref ClientRect, cp.Style, cp.ExStyle, cp.menu, out WindowRect)) {
+					SetBoundsCore(bounds.X, bounds.Y, WindowRect.Width, WindowRect.Height, BoundsSpecified.Size);
+				}
+			} else {
+				if (XplatUI.CalculateWindowRect(ref ClientRect, cp.Style, cp.ExStyle, cp.menu, out WindowRect)) {
+					SetBoundsCore(bounds.X, bounds.Y, WindowRect.Width, WindowRect.Height, BoundsSpecified.Size);
+				}
 			}
 		}
 
