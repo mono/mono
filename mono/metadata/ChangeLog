@@ -1,3 +1,9 @@
+2006-04-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-debug.c (mono_debug_add_method): Appled patch from
+	David S. Miller  <davem@sunset.davemloft.net>: Access 
+	minfo->lexical_blocks[] entry elements using read32().
+
 2006-04-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* loader.c (mono_free_method): No longer free the method header for non-dynamic
