@@ -34,7 +34,7 @@
 #if NET_2_0
 using System.Runtime.Serialization;
 
-namespace System
+namespace System.Security.Authentication
 {
 	[Serializable]
 	public sealed class InvalidCredentialException : SystemException
