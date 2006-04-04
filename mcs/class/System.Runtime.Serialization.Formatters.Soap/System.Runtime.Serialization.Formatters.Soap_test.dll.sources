@@ -1,3 +1,4 @@
 AssemblyInfo.cs
 SoapFormatterTest.cs
 SerializationTest.cs
+InternalSoapValuesTest.cs

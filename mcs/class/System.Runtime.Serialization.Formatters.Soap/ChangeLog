@@ -1,3 +1,8 @@
+2006-04-04 roei erez <roeie@mainsoft.com>
+	* added InternalSoapValuesTest.cs to Tests sources
+	* SoapReader.cs: bug 77563 competability with MS.NET in
+	serializing/deserializing internal soap types (Decimal, DateTime ...)
+
 2005-11-16  Vladislav Spivak  <spivak@mainsoft.com>
 	* Added net_1_1_java source includes
 

@@ -468,7 +468,11 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			bool NeedsSerializationInfo = false;
 			bool hasFixup;
 
-			if(mapper.IsInternalSoapType (type)) 
+			// in case of String & TimeSpan we should allways use 'ReadInternalSoapValue' method
+			// in case of other internal types, we should use ReadInternalSoapValue' only if it is NOT
+			// the root object, means it is a data member of another object that is being serialized.
+			bool shouldReadInternal = (type == typeof(String) || type == typeof(TimeSpan) );
+			if(shouldReadInternal || mapper.IsInternalSoapType (type) && (indices != null || parentMemberInfo != null) ) 
 			{
 				object obj = mapper.ReadInternalSoapValue (this, type);
 				
