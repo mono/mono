@@ -1,3 +1,12 @@
+2006-04-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Stopwatch.cs:
+	  Zoltan was quicker to add it, here I put my implementation ;-)
+	* Process.cs :
+	  Added some missing long members (not implemented anyways).
+	* DataReceivedEventHandler.cs DataReceivedEventArgs.cs :
+	  added new 2.0 types.
+
 2006-04-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* Stopwatch.cs: New file.

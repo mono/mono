@@ -1,3 +1,9 @@
+2006-04-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.dll.sources: added DataReceivedEventArgs.cs and
+	  DataReceivedEventHandler.cs.
+	* System_test.dll.sources : added StopwatchTest.cs.
+
 2006-04-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* System.dll.sources: Added System.Diagnostics/Stopwatch.cs.

@@ -403,6 +403,8 @@ System.Diagnostics/CounterCreationDataCollection.cs
 System.Diagnostics/CounterCreationData.cs
 System.Diagnostics/CounterSampleCalculator.cs
 System.Diagnostics/CounterSample.cs
+System.Diagnostics/DataReceivedEventArgs.cs
+System.Diagnostics/DataReceivedEventHandler.cs
 System.Diagnostics/Debug.cs
 System.Diagnostics/DefaultTraceListener.cs
 System.Diagnostics/DiagnosticsConfigurationHandler.cs

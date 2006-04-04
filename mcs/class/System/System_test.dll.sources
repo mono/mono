@@ -124,6 +124,7 @@ System.ComponentModel/UInt32ConverterTests.cs
 System.ComponentModel/UInt64ConverterTests.cs
 System.ComponentModel.Design/ServiceContainerTest.cs
 System.ComponentModel.Design.Serialization/InstanceDescriptorTest.cs
+System.Diagnostics/StopwatchTest.cs
 System.Diagnostics/TraceTest.cs
 System.Diagnostics/SwitchesTest.cs
 System.Diagnostics/DiagnosticsConfigurationHandlerTest.cs

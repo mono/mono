@@ -321,6 +321,9 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
+#if NET_2_0
+		[Obsolete ("Use NonpagedSystemMemorySize64")]
+#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The number of bytes that are not pageable.")]
 		public int NonpagedSystemMemorySize {
@@ -330,6 +333,9 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
+#if NET_2_0
+		[Obsolete ("Use PagedMemorySize64")]
+#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The number of bytes that are paged.")]
 		public int PagedMemorySize {
@@ -339,6 +345,9 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
+#if NET_2_0
+		[Obsolete ("Use PagedSystemMemorySize64")]
+#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The amount of paged system memory in bytes.")]
 		public int PagedSystemMemorySize {
@@ -348,6 +357,9 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
+#if NET_2_0
+		[Obsolete ("Use PeakPagedMemorySize64")]
+#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The maximum amount of paged memory used by this process.")]
 		public int PeakPagedMemorySize {
@@ -357,6 +369,9 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
+#if NET_2_0
+		[Obsolete ("Use PeakVirtualMemorySize64")]
+#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The maximum amount of virtual memory used by this process.")]
 		public int PeakVirtualMemorySize {
@@ -366,6 +381,9 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
+#if NET_2_0
+		[Obsolete ("Use PeakWorkingSet64")]
+#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The maximum amount of system memory used by this process.")]
 		public int PeakWorkingSet {
@@ -373,6 +391,62 @@ namespace System.Diagnostics {
 				return(0);
 			}
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[MonitoringDescription ("The number of bytes that are not pageable.")]
+		public long NonpagedSystemMemorySize64 {
+			get {
+				return(0);
+			}
+		}
+
+		[MonoTODO]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[MonitoringDescription ("The number of bytes that are paged.")]
+		public long PagedMemorySize64 {
+			get {
+				return(0);
+			}
+		}
+
+		[MonoTODO]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[MonitoringDescription ("The amount of paged system memory in bytes.")]
+		public long PagedSystemMemorySize64 {
+			get {
+				return(0);
+			}
+		}
+
+		[MonoTODO]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[MonitoringDescription ("The maximum amount of paged memory used by this process.")]
+		public long PeakPagedMemorySize64 {
+			get {
+				return(0);
+			}
+		}
+
+		[MonoTODO]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[MonitoringDescription ("The maximum amount of virtual memory used by this process.")]
+		public long PeakVirtualMemorySize64 {
+			get {
+				return(0);
+			}
+		}
+
+		[MonoTODO]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[MonitoringDescription ("The maximum amount of system memory used by this process.")]
+		public long PeakWorkingSet64 {
+			get {
+				return(0);
+			}
+		}
+#endif
 
 		[MonoTODO]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -582,6 +656,9 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
+#if NET_2_0
+		[Obsolete ("Use VirtualMemorySize64")]
+#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The amount of virtual memory currently used for this process.")]
 		public int VirtualMemorySize {
@@ -591,6 +668,9 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
+#if NET_2_0
+		[Obsolete ("Use WorkingSet64")]
+#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The amount of physical memory currently used for this process.")]
 		public int WorkingSet {
@@ -598,6 +678,26 @@ namespace System.Diagnostics {
 				return(0);
 			}
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[MonitoringDescription ("The amount of virtual memory currently used for this process.")]
+		public long VirtualMemorySize64 {
+			get {
+				return(0);
+			}
+		}
+
+		[MonoTODO]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[MonitoringDescription ("The amount of physical memory currently used for this process.")]
+		public long WorkingSet64 {
+			get {
+				return(0);
+			}
+		}
+#endif
 
 		public void Close()
 		{

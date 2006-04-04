@@ -3,9 +3,9 @@
 //
 // Authors:
 //   Zoltan Varga (vargaz@gmail.com)
+//   Atsushi Enomoto  <atsushi@ximian.com>
 //
-// (C) 2001 Ximian, Inc.  http://www.ximian.com
-// Copyright (C) 2004-2005 Novell (http://www.novell.com)
+// (C) 2006 Novell, Inc.
 //
 
 //
@@ -32,72 +32,83 @@
 #if NET_2_0
 
 using System;
+using System.ComponentModel;
 
-namespace System.Diagnostics {
-
-	public class Stopwatch {
-
+namespace System.Diagnostics
+{
+	public class Stopwatch
+	{
+		[MonoTODO ("high resolution mode support")]
 		public static readonly long Frequency;
 
+		[MonoTODO ("high resolution mode support")]
 		public static readonly bool IsHighResolution;
 
-		[MonoTODO]
-		public Stopwatch () {
-			throw new NotImplementedException ();
+		[MonoTODO ("high resolution mode support")]
+		public static long GetTimestamp ()
+		{
+			return DateTime.Now.Ticks;
 		}
 
-		[MonoTODO]
-		public TimeSpan Elapsed {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		[MonoTODO]
-		public long ElapsedMilliseconds {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		[MonoTODO]
-		public long ElapsedTicks {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		[MonoTODO]
-		public bool IsRunning {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		[MonoTODO]
-		public static long GetTimestamp () {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public void Reset () {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public void Start () {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public void Stop () {
-			throw new NotImplementedException ();
-		}
-
-		public static Stopwatch StartNew () {
+		public static Stopwatch StartNew ()
+		{
 			Stopwatch s = new Stopwatch ();
 			s.Start ();
 			return s;
+		}
+
+		static Stopwatch ()
+		{
+			Frequency = TimeSpan.TicksPerSecond;
+			IsHighResolution = false;
+		}
+
+		public Stopwatch ()
+		{
+		}
+
+		long elapsed;
+		long started;
+		bool is_running;
+
+		[MonoTODO ("high resolution mode support")]
+		public TimeSpan Elapsed {
+			get { return TimeSpan.FromTicks (ElapsedTicks); }
+		}
+
+		[MonoTODO ("high resolution mode support")]
+		public long ElapsedMilliseconds {
+			get { checked { return (long) Elapsed.TotalMilliseconds; } }
+		}
+
+		public long ElapsedTicks {
+			get { return is_running ? GetTimestamp () - started + elapsed : elapsed; }
+		}
+
+		public bool IsRunning {
+			get { return is_running; }
+		}
+
+		public void Reset ()
+		{
+			elapsed = 0;
+			is_running = false;
+		}
+
+		public void Start ()
+		{
+			if (is_running)
+				return;
+			started = GetTimestamp ();
+			is_running = true;
+		}
+
+		public void Stop ()
+		{
+			if (!is_running)
+				return;
+			elapsed += GetTimestamp () - started;
+			is_running = false;
 		}
 	}
 }
