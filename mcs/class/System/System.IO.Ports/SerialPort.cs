@@ -14,22 +14,26 @@ namespace System.IO.Ports
 		public const int InfiniteTimeout = -1;
 		const int DefaultReadBufferSize = 4096;
 		const int DefaultWriteBufferSize = 2048;
+		const int DefaultBaudRate = 9600;
+		const int DefaultDataBits = 8;
+		const Parity DefaultParity = Parity.None;
+		const StopBits DefaultStopBits = StopBits.One;
 
-		bool   isOpen     = false;
-		int    baudRate   = 9600;
-		Parity parity     = Parity.None;
-		StopBits stopBits = StopBits.One;
+		bool isOpen;
+		int baudRate;
+		Parity parity;
+		StopBits stopBits;
 		Handshake handshake = Handshake.None;
-		int    dataBits   = 8;
-		bool   breakState = false;
+		int dataBits;
+		bool breakState = false;
 		bool dtr_enable = false;
 		bool rts_enable = false;
 		SerialPortStream stream;
 		Encoding encoding = Encoding.ASCII;
-		string newLine    = Environment.NewLine;
+		string newLine = Environment.NewLine;
 		string portName;
-		int    readTimeout = InfiniteTimeout;
-		int    writeTimeout = InfiniteTimeout;
+		int readTimeout = InfiniteTimeout;
+		int writeTimeout = InfiniteTimeout;
 		int readBufferSize = DefaultReadBufferSize;
 		int writeBufferSize = DefaultWriteBufferSize;
 		object error_received = new object ();
@@ -38,9 +42,9 @@ namespace System.IO.Ports
 		
 		static string default_port_name = "ttyS0";
 
-		public SerialPort ()
+		public SerialPort () : 
+			this (GetDefaultPortName (), DefaultBaudRate, DefaultParity, DefaultDataBits, DefaultStopBits)
 		{
-			this.portName = GetDefaultPortName ();
 		}
 
 		/*
@@ -49,30 +53,24 @@ namespace System.IO.Ports
 		  }
 		*/
 
-		public SerialPort (string portName)
+		public SerialPort (string portName) :
+			this (portName, DefaultBaudRate, DefaultParity, DefaultDataBits, DefaultStopBits)
 		{
-			this.portName = portName;
 		}
 
-		public SerialPort (string portName, int baudRate)
+		public SerialPort (string portName, int baudRate) :
+			this (portName, baudRate, DefaultParity, DefaultDataBits, DefaultStopBits)
 		{
-			this.portName = portName;
-			this.baudRate = baudRate;
 		}
 
-		public SerialPort (string portName, int baudRate, Parity parity)
+		public SerialPort (string portName, int baudRate, Parity parity) :
+			this (portName, baudRate, parity, DefaultDataBits, DefaultStopBits)
 		{
-			this.portName = portName;
-			this.baudRate = baudRate;
-			this.parity = parity;
 		}
 
-		public SerialPort (string portName, int baudRate, Parity parity, int dataBits)
+		public SerialPort (string portName, int baudRate, Parity parity, int dataBits) :
+			this (portName, baudRate, parity, dataBits, DefaultStopBits)
 		{
-			this.portName = portName;
-			this.baudRate = baudRate;
-			this.parity = parity;
-			this.dataBits = dataBits;
 		}
 
 		public SerialPort (string portName, int baudRate, Parity parity, int dataBits, StopBits stopBits) 
@@ -84,7 +82,7 @@ namespace System.IO.Ports
 			this.stopBits = stopBits;
 		}
 
-		string GetDefaultPortName ()
+		static string GetDefaultPortName ()
 		{
 			return default_port_name;
 		}
