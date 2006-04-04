@@ -1,3 +1,8 @@
+2006-04-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DeflateStream.cs GzipStream.cs : updated API to 2.0 RTM.
+	  Dispose() should certainly release resources than the finalizer.
+
 2006-03-11  Miguel de Icaza  <miguel@novell.com>
 
 	* DeflateStream.cs: Comment out DllImport that was not being

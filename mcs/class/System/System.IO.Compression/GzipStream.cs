@@ -48,8 +48,13 @@ namespace System.IO.Compression {
 			this.deflateStream = new DeflateStream (compressedStream, mode, leaveOpen, true);
 		}
 
-		public override void Close () {
-			deflateStream.Close();
+		protected override void Dispose (bool disposing)
+		{
+			try {
+				base.Dispose (disposing);
+			} finally {
+				deflateStream.Dispose (disposing);
+			}
 		}
 
 		public override int Read (byte[] dest, int dest_offset, int count)

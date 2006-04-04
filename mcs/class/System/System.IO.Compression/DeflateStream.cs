@@ -101,13 +101,23 @@ namespace System.IO.Compression {
 		public DeflateStream (Stream compressedStream, CompressionMode mode, bool leaveOpen) :
 			this (compressedStream, mode, leaveOpen, false) { }
 
-		~DeflateStream () {
-			Marshal.FreeHGlobal (sized_buffer);
+		protected override void Dispose (bool disposing)
+		{
+			try {
+				FlushInternal (true);
+				base.Dispose (disposing);
+			} finally {
+				try {
+					DisposeCore ();
+				} finally {
+					if (disposing)
+						Marshal.FreeHGlobal (sized_buffer);
+				}
+			}
 		}
 
-		public override void Close () {
-			FlushInternal (true);
-
+		void DisposeCore ()
+		{
 			if (/*mode == CompressionMode.Decompress &&*/ compressedStream.CanSeek) {
 				int avail_in = z_stream_get_avail_in (z_stream);
 				if (avail_in != 0) {
