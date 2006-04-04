@@ -1,3 +1,8 @@
+2006-04-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am (SUBDIRS): Avoid compiling subdirs needed by the
+	interpreter.
+
 2005-12-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* sparc/sparc-codegen.h (sparc_membar): Add membar instruction.
