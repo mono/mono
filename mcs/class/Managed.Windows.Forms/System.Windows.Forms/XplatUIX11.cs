@@ -728,6 +728,8 @@ namespace System.Windows.Forms {
 
 				if (((cp.Style & (int)WindowStyles.WS_POPUP) != 0)  && (hwnd.parent != null) && (hwnd.parent.whole_window != IntPtr.Zero)) {
 					XSetTransientForHint(DisplayHandle, hwnd.whole_window, hwnd.parent.whole_window);
+				} else if ((cp.ExStyle & (int)WindowExStyles.WS_EX_APPWINDOW) == 0) {
+					XSetTransientForHint(DisplayHandle, hwnd.whole_window, FosterParent);
 				}
 				XMoveResizeWindow(DisplayHandle, hwnd.client_window, client_rect.X, client_rect.Y, client_rect.Width, client_rect.Height);
 
@@ -2118,8 +2120,10 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			if ((cp.ExStyle & (int) WindowExStyles.WS_EX_TOPMOST) != 0) {
+			if ((cp.ExStyle & (int)WindowExStyles.WS_EX_TOPMOST) != 0) {
 				XSetTransientForHint (DisplayHandle, hwnd.whole_window, RootWindow);
+			} else if ((cp.ExStyle & (int)WindowExStyles.WS_EX_APPWINDOW) != 0) {
+				XSetTransientForHint (DisplayHandle, hwnd.whole_window, FosterParent);
 			}
 
 			SetWMStyles(hwnd, cp);
@@ -3972,7 +3976,7 @@ namespace System.Windows.Forms {
 					if (hwnd_owner != null) {
 						XSetTransientForHint(DisplayHandle, hwnd.whole_window, hwnd_owner.whole_window);
 					} else {
-						XSetTransientForHint(DisplayHandle, hwnd.whole_window, FosterParent);
+						XSetTransientForHint(DisplayHandle, hwnd.whole_window, RootWindow);
 					}
 				}
 			} else {
