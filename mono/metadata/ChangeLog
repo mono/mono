@@ -1,3 +1,9 @@
+2006-03-31  Miguel de Icaza  <miguel@novell.com>
+
+	* icall.c
+	(ves_icall_System_Environment_InternalSetEnvironmentVariable): Fix
+	build on pre glib 2.4 systems.
+
 2006-03-31  Zoltan Varga  <vargaz@gmail.com>
 
 	* icall.c (ves_icall_System_Environment_InternalSetEnvironmentVariable): New icall.
