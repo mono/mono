@@ -990,16 +990,24 @@
 #     else
           Linux Sparc/a.out not supported
 #     endif
-      extern int _end[];
-      extern int _etext[];
-#     define DATAEND (_end)
 #     define SVR4
-      extern ptr_t GC_SysVGetDataStart();
-#     ifdef __arch64__
-#	define DATASTART GC_SysVGetDataStart(0x100000, _etext)
+#     include <features.h>
+#     if defined(__GLIBC__) && __GLIBC__ >= 2
+#       define SEARCH_FOR_DATA_START
 #     else
-#       define DATASTART GC_SysVGetDataStart(0x10000, _etext)
+          extern char **__environ;
+#         define DATASTART ((ptr_t)(&__environ))
+                     /* hideous kludge: __environ is the first */
+                     /* word in crt0.o, and delimits the start */
+                     /* of the data segment, no matter which   */
+                     /* ld options were passed through.        */
+                     /* We could use _etext instead, but that  */
+                     /* would include .rodata, which may       */
+                     /* contain large read-only data tables    */
+                     /* that we'd rather not scan.             */
 #     endif
+      extern int _end[];
+#     define DATAEND (_end)
 #     define LINUX_STACKBOTTOM
 #   endif
 #   ifdef OPENBSD
