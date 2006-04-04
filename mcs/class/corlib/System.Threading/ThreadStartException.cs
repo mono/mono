@@ -39,23 +39,23 @@ namespace System.Threading
 	[Serializable]
 	public sealed class ThreadStartException : SystemException
 	{
-		public ThreadStartException()
+		internal ThreadStartException()
 			: base ("Thread Start Error")
 		{
 		}
 
-		public ThreadStartException(string message)
+		internal ThreadStartException(string message)
 			: base (message)
 		{
 		}
 
-		protected ThreadStartException(SerializationInfo info,
+		internal ThreadStartException(SerializationInfo info,
 					       StreamingContext context)
 			: base (info, context)
 		{
 		}
 
-		public ThreadStartException(string message,
+		internal ThreadStartException(string message,
 					    Exception innerException)
 			: base (message, innerException)
 		{

@@ -49,8 +49,10 @@ namespace System.Threading {
 #if NET_2_0
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_Thread))]
-#endif
+	public sealed class Thread : CriticalFinalizerObject, _Thread {
+#else
 	public sealed class Thread : _Thread {
+#endif
 
 		#region Sync with metadata/object-internals.h
 		int lock_thread_id;

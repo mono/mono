@@ -1,3 +1,7 @@
+2004-04-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Thread.cs : base class is CriticalFinalizerObject.
+	* ThreadStartException.cs : no public constructors.
 
 Wed Mar 29 18:29:55 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
@@ -634,7 +638,7 @@ Tue May 13 15:34:29 CEST 2003 Paolo Molaro <lupus@ximian.com>
 	* Thread.cs: added missing field used by the runtime and
 	a new field to support thread-static data.
 
-2003-04-17  Pedro Mart�ez Juli� <yoros@wanadoo.es>
+2003-04-17  Pedro Mart?ez Juli? <yoros@wanadoo.es>
 
 	* Timer.cs: Change the position of two lines because they were
 	before the "if" that ensures the integrity. After this, the first of
