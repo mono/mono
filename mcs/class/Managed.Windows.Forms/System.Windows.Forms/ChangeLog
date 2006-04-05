@@ -1,3 +1,9 @@
+2006-04-05  Mike Kestner  <mkestner@novell.com>
+
+	* Form.cs: fix the menu WndProc hacks to respect the native enabled
+	state of the form, so that we don't process events when Modal dialogs
+	are up. Fixes #77922.
+
 2006-04-05  Alexander Olk  <alex.olk@googlemail.com>
 
 	* Mime.cs: Default for range length is 1 not 0. If set to 0 no match
