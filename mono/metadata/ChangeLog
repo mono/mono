@@ -1,5 +1,7 @@
 2006-04-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* loader.c (mono_method_signature): Add a cache for method signatures.
+
 	* metadata.c (mono_metadata_get_param_attrs): New helper function to return
 	the parameter attributes of a method.
 	(mono_metadata_parse_method_signature_full): Refactored the computation of
