@@ -1,3 +1,8 @@
+
+Wed Apr 5 16:40:33 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: ignore accessibility of methods in managed->native wrappers.
+
 2006-04-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mini_cleanup): Call print_jit_stats () earlier since it accesses metadata.
