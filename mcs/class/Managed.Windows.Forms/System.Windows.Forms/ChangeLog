@@ -1,3 +1,8 @@
+2006-04-05  Mike Kestner  <mkestner@novell.com>
+
+	* ListView.cs (HeaderMouseMove): null guarding for the over column
+	when setting up the drag_to_index.  Fixes #78015.
+
 2006-04-04  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* XplatUIX11.cs: If WS_EX_APPWINDOW isn't set we don't want to show up

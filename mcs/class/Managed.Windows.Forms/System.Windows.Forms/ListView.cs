@@ -1753,7 +1753,9 @@ namespace System.Windows.Forms
 
 						int x = me.X + owner.h_marker;
 						ColumnHeader over = ColumnAtX (x);
-						if (x < over.X + over.Width / 2)
+						if (over == null)
+							drag_to_index = owner.Columns.Count;
+						else if (x < over.X + over.Width / 2)
 							drag_to_index = GetReorderedIndex (over);
 						else
 							drag_to_index = GetReorderedIndex (over) + 1;
