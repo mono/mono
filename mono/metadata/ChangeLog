@@ -1,5 +1,8 @@
 2006-04-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* image.c (mono_image_close): Don't put the image we are about to free into the
+	loaded_images_guid_hash.
+
 	* marshal.c (mono_mb_emit_ptr): Refactor a common code sequence into this function
 	to reduce code duplication.
 
