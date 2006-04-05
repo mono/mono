@@ -116,35 +116,28 @@ namespace System.Xml
 			return Create (builder, null);
 		}
 
-		[MonoTODO ("NewLineHandling/OutputMethod")]
 		public static XmlWriter Create (Stream stream, XmlWriterSettings settings)
 		{
-			// FIXME: this might result in encoding null reference
 			Encoding enc = settings != null ? settings.Encoding : Encoding.UTF8;
 			return Create (new StreamWriter (stream, enc), settings);
 		}
 
-		[MonoTODO ("NewLineHandling/OutputMethod")]
 		public static XmlWriter Create (string file, XmlWriterSettings settings)
 		{
-			// FIXME: this might result in encoding null reference
 			Encoding enc = settings != null ? settings.Encoding : Encoding.UTF8;
 			return Create (new StreamWriter (file, false, enc), settings);
 		}
 
-		[MonoTODO ("NewLineHandling/OutputMethod")]
 		public static XmlWriter Create (StringBuilder builder, XmlWriterSettings settings)
 		{
-			return Create (new StringWriter (builder), null);
+			return Create (new StringWriter (builder), settings);
 		}
 
-		[MonoTODO ("NewLineHandling/OutputMethod")]
 		public static XmlWriter Create (TextWriter writer, XmlWriterSettings settings)
 		{
 			return CreateTextWriter (writer, settings);
 		}
 
-		[MonoTODO ("NewLineHandling/OutputMethod")]
 		public static XmlWriter Create (XmlWriter writer, XmlWriterSettings settings)
 		{
 			if (settings == null)

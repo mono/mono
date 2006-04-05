@@ -137,6 +137,37 @@ namespace MonoTests.System.Xml
 			w.Close ();
 			AssertEquals (output, sw.ToString ());
 		}
+
+		[Test]
+		public void SetEncodingNull ()
+		{
+			// null is allowed.
+			new XmlWriterSettings ().Encoding = null;
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void NewLineCharsNull ()
+		{
+			new XmlWriterSettings ().NewLineChars = null;
+		}
+
+		[Test]
+		public void CreateOmitXmlDeclaration ()
+		{
+			StringBuilder sb = new StringBuilder ();
+			// Even if XmlWriter is allowed to write fragment,
+			// DataContractSerializer never allows it to write
+			// content in contentOnly mode.
+			XmlWriterSettings settings = new XmlWriterSettings ();
+			settings.OmitXmlDeclaration = true;
+			//settings.ConformanceLevel = ConformanceLevel.Fragment;
+			XmlWriter w = XmlWriter.Create (sb, settings);
+			w.WriteStartElement ("root");
+			w.WriteEndElement ();
+			w.Flush ();
+			AssertEquals ("<root />", sb.ToString ());
+		}
 	}
 }
 #endif

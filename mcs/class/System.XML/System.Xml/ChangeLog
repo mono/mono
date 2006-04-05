@@ -1,3 +1,9 @@
+2006-04-05  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlWriter.cs : Create(StringBuilder,XmlWriterSettings) was missing
+	  settings argument to pass another .ctor().
+	* XmlWriterSettings.cs : set_NewLineChars() should reject null.
+
 2006-03-23  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlReader.cs : in XmlReader.Create() ValidationType Auto and XDR

@@ -1,3 +1,9 @@
+2006-04-05  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlWriter.cs : Create(StringBuilder,XmlWriterSettings) was missing
+	  settings argument to pass another .ctor().
+	* XmlWriterSettings.cs : set_NewLineChars() should reject null.
+
 2006-01-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlConvertTests.cs : added test for bug #77350.
