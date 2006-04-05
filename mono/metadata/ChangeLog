@@ -1,5 +1,11 @@
 2006-04-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* marshal.c (mono_mb_emit_ptr): Refactor a common code sequence into this function
+	to reduce code duplication.
+
+	* marshal.c: Register the native functions called by this module as icalls, to
+	somewhat centralize the creation of MonoMethodSignature's.
+
 	* loader.c (mono_method_signature): Add a cache for method signatures.
 
 	* metadata.c (mono_metadata_get_param_attrs): New helper function to return
