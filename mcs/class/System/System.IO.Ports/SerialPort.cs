@@ -375,11 +375,16 @@ namespace System.IO.Ports
 
 		public void Close ()
 		{
-			isOpen = false;
+			Dispose (false);
+		}
 
-			if (stream != null)
-				stream.Close ();
+		protected override void Dispose (bool disposing)
+		{
+			if (!isOpen)
+				return;
 			
+			isOpen = false;
+			stream.Close ();
 			stream = null;
 		}
 
