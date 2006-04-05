@@ -648,6 +648,58 @@ namespace System.Web {
 		}
 
 		static char [] hexChars = "0123456789abcdef".ToCharArray ();
+		const string notEncoded = "!'()*-._";
+
+		static void UrlEncodeChar (char c, Stream result, bool isUnicode) {
+			if (c > 255) {
+				//FIXME: what happens when there is an internal error?
+				//if (!isUnicode)
+				//	throw new ArgumentOutOfRangeException ("c", c, "c must be less than 256");
+				int idx;
+				int i = (int) c;
+
+				result.WriteByte ((byte)'%');
+				result.WriteByte ((byte)'u');
+				idx = i >> 12;
+				result.WriteByte ((byte)hexChars [idx]);
+				idx = (i >> 8) & 0x0F;
+				result.WriteByte ((byte)hexChars [idx]);
+				idx = (i >> 4) & 0x0F;
+				result.WriteByte ((byte)hexChars [idx]);
+				idx = i & 0x0F;
+				result.WriteByte ((byte)hexChars [idx]);
+				return;
+			}
+			
+			if (c>' ' && notEncoded.IndexOf (c)!=-1) {
+				result.WriteByte ((byte)c);
+				return;
+			}
+			if (c==' ') {
+				result.WriteByte ((byte)'+');
+				return;
+			}
+			if (	(c < '0') ||
+				(c < 'A' && c > '9') ||
+				(c > 'Z' && c < 'a') ||
+				(c > 'z')) {
+				if (isUnicode && c > 127) {
+					result.WriteByte ((byte)'%');
+					result.WriteByte ((byte)'u');
+					result.WriteByte ((byte)'0');
+					result.WriteByte ((byte)'0');
+				}
+				else
+					result.WriteByte ((byte)'%');
+				
+				int idx = ((int) c) >> 4;
+				result.WriteByte ((byte)hexChars [idx]);
+				idx = ((int) c) & 0x0F;
+				result.WriteByte ((byte)hexChars [idx]);
+			}
+			else
+				result.WriteByte ((byte)c);
+		}
 
 		public static byte [] UrlEncodeToBytes (byte [] bytes, int offset, int count)
 		{
@@ -664,25 +716,12 @@ namespace System.Web {
 			if (count < 0 || count > len - offset)
 				throw new ArgumentOutOfRangeException("count");
 
-			MemoryStream result = new MemoryStream ();
+			MemoryStream result = new MemoryStream (count);
 			int end = offset + count;
-			for (int i = offset; i < end; i++) {
-				char c = (char) bytes [i];
-				if ((c == ' ') || (c < '0' && c != '-' && c != '.') ||
-				    (c < 'A' && c > '9') ||
-				    (c > 'Z' && c < 'a' && c != '_') ||
-				    (c > 'z')) {
-					result.WriteByte ((byte) '%');
-					int idx = ((int) c) >> 4;
-					result.WriteByte ((byte) hexChars [idx]);
-					idx = ((int) c) & 0x0F;
-					result.WriteByte ((byte) hexChars [idx]);
-				} else {
-					result.WriteByte ((byte) c);
-				}
-			}
+			for (int i = offset; i < end; i++)
+				UrlEncodeChar ((char)bytes [i], result, false);
 
-			return result.ToArray ();
+			return result.ToArray();
 		}
 
 		public static string UrlEncodeUnicode (string str)
@@ -690,43 +729,7 @@ namespace System.Web {
 			if (str == null)
 				return null;
 
-			StringBuilder result = new StringBuilder ();
-			foreach (char c in str){
-				int idx;
-
-				if (c > 255) {
-					result.Append ("%u");
-					idx = ((int) c) >> 24;
-					result.Append (hexChars [idx]);
-					idx = (((int) c) >> 16) & 0x0F;
-					result.Append (hexChars [idx]);
-					idx = (((int) c) >> 8) & 0x0F;
-					result.Append (hexChars [idx]);
-					idx = ((int) c) & 0x0F;
-					result.Append (hexChars [idx]);
-					continue;
-				}
-				
-				if ((c == ' ') || (c < '0' && c != '-' && c != '.') ||
-				    (c < 'A' && c > '9') ||
-				    (c > 'Z' && c < 'a' && c != '_') ||
-				    (c > 'z')) {
-					if (c > 127)
-						result.Append ("%u00");
-					else
-						result.Append ("%");
-					
-					idx = ((int) c) >> 4;
-					result.Append (hexChars [idx]);
-					idx = ((int) c) & 0x0F;
-					result.Append (hexChars [idx]);
-					continue;
-				}
-
-				result.Append (c);
-			}
-
-			return result.ToString ();
+			return Encoding.ASCII.GetString (UrlEncodeUnicodeToBytes (str));
 		}
 
 		public static byte [] UrlEncodeUnicodeToBytes (string str)
@@ -737,7 +740,11 @@ namespace System.Web {
 			if (str == "")
 				return new byte [0];
 
-			return Encoding.ASCII.GetBytes (UrlEncodeUnicode (str));
+			MemoryStream result = new MemoryStream (str.Length);
+			foreach (char c in str){
+				UrlEncodeChar (c, result, true);
+			}
+			return result.ToArray ();
 		}
 
 		/// <summary>

@@ -1,3 +1,8 @@
+2006-04-05 Andrew Skiba <andrews@mainsoft.com>
+
+	* HttpUtility: UrlEncode and UrlEncodeUnicode logic unified, behaviour
+	fixed to match dotnet and http://rfc.net/rfc1738.html
+
 2006-03-30 Konstantin Triger <kostat@mainsoft.com>
 
 	* HttpApplicationFactory.cs: refactoring: remove static modifier from session_end field.

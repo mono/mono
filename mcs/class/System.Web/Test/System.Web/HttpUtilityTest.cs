@@ -28,6 +28,7 @@
 
 using System.Text;
 using System.Web;
+using System.IO;
 
 using NUnit.Framework;
 
@@ -137,6 +138,83 @@ namespace MonoTests.System.Web {
 		{
 			string str = "../../&amp;param2=%CURRREV%";
 			Assert.AreEqual (str, HttpUtility.UrlDecode (str), "#1");
+		}
+
+		static char [] hexChars = "0123456789abcdef".ToCharArray ();
+
+		const string notEncoded = "!'()*-._";
+
+		static void UrlEncodeChar (char c, Stream result, bool isUnicode) {
+			if (c > 255) {
+				//FIXME: what happens when there is an internal error?
+				//if (!isUnicode)
+				//	throw new ArgumentOutOfRangeException ("c", c, "c must be less than 256");
+				int idx;
+				int i = (int) c;
+
+				result.WriteByte ((byte)'%');
+				result.WriteByte ((byte)'u');
+				idx = i >> 12;
+				result.WriteByte ((byte)hexChars [idx]);
+				idx = (i >> 8) & 0x0F;
+				result.WriteByte ((byte)hexChars [idx]);
+				idx = (i >> 4) & 0x0F;
+				result.WriteByte ((byte)hexChars [idx]);
+				idx = i & 0x0F;
+				result.WriteByte ((byte)hexChars [idx]);
+				return;
+			}
+			
+			if (c>' ' && notEncoded.IndexOf (c)!=-1) {
+				result.WriteByte ((byte)c);
+				return;
+			}
+			if (c==' ') {
+				result.WriteByte ((byte)'+');
+				return;
+			}
+			if (	(c < '0') ||
+				(c < 'A' && c > '9') ||
+				(c > 'Z' && c < 'a') ||
+				(c > 'z')) {
+				if (isUnicode && c > 127) {
+					result.WriteByte ((byte)'%');
+					result.WriteByte ((byte)'u');
+					result.WriteByte ((byte)'0');
+					result.WriteByte ((byte)'0');
+				}
+				else
+					result.WriteByte ((byte)'%');
+				
+				int idx = ((int) c) >> 4;
+				result.WriteByte ((byte)hexChars [idx]);
+				idx = ((int) c) & 0x0F;
+				result.WriteByte ((byte)hexChars [idx]);
+			}
+			else
+				result.WriteByte ((byte)c);
+		}
+
+		[Test]
+		public void UrlEncode ()
+		{
+			for (char c=char.MinValue; c<char.MaxValue; c++) {
+				byte [] bIn;
+				bIn = Encoding.UTF8.GetBytes (c.ToString ());
+				MemoryStream expected = new MemoryStream ();
+				MemoryStream expUnicode = new MemoryStream ();
+
+				//build expected result for UrlEncode
+				for (int i = 0; i<bIn.Length; i++)
+					UrlEncodeChar ((char)bIn[i], expected, false);
+				//build expected result for UrlEncodeUnicode
+				UrlEncodeChar (c, expUnicode, true);
+
+				Assert.AreEqual (Encoding.ASCII.GetString(expected.ToArray()), HttpUtility.UrlEncode (c.ToString()),
+					"UrlEncode "+c.ToString());
+				Assert.AreEqual (Encoding.ASCII.GetString(expUnicode.ToArray()), HttpUtility.UrlEncodeUnicode (c.ToString()),
+					"UrlEncodeUnicode "+c.ToString());
+			}
 		}
 	}
 }

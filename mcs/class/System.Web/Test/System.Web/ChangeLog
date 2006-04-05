@@ -1,3 +1,8 @@
+2006-04-05 Andrew Skiba <andrews@mainsoft.com>
+
+	* HttpUtilityTest.cs: test UrlEncode and UrlEncodeUnicode for all values
+	from char.MinValue to char.MaxValue according to reference implementation
+
 2006-03-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpUtilityTest.cs: test from bug #77931.
