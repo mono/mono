@@ -62,7 +62,7 @@ namespace System.Net.Security
 			: base (innerStream, leaveStreamOpen)
 		{
 		}
-
+#if SECURITY_DEP
 		[MonoTODO]
 		public SslStream (Stream innerStream, bool leaveStreamOpen, RemoteCertificateValidationCallback certValidationCallback)
 			: base (innerStream, leaveStreamOpen)
@@ -74,7 +74,7 @@ namespace System.Net.Security
 			: base (innerStream, leaveStreamOpen)
 		{
 		}
-
+#endif
 		#endregion // Constructors
 
 		#region Properties
