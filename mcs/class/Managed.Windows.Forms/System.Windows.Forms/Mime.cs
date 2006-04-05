@@ -941,7 +941,7 @@ namespace System.Windows.Forms
 						}
 						
 						// range length
-						int range_length = 0;
+						int range_length = 1;
 						if (br.PeekChar () == '+') {
 							br.ReadChar ();
 							range_length = ReadValue ();
