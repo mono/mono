@@ -1,3 +1,9 @@
+2006-04-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RemoteCertValidationCallback.cs: Fix build. X509Chain isn't 
+	available when System.dll is first being build. This needs to be
+	reviewed since some System.Security.dll classes migrated to System.dll
+
 2006-04-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SslPolicyErrors.cs : forgot to add.
