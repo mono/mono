@@ -97,7 +97,6 @@ namespace System.Windows.Forms
 				msgbox_default = MessageBoxDefaultButton.Button1;
 
 				this.Text = caption;
-				this.Paint += new PaintEventHandler (MessageBoxForm_Paint);
 			}
 
 			public MessageBoxForm (IWin32Window owner, string text, string caption,
@@ -144,7 +143,7 @@ namespace System.Windows.Forms
 
 			}
 
-			private void MessageBoxForm_Paint (object sender, PaintEventArgs e)
+			internal override void OnPaintInternal (PaintEventArgs e)
 			{
 				e.Graphics.DrawString (msgbox_text, this.Font, ThemeEngine.Current.ResPool.GetSolidBrush (Color.Black), textleft_up);
 				if (icon_image != null) {

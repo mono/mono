@@ -533,17 +533,7 @@ namespace System.Windows.Forms {
 
 		protected override void WndProc (ref Message m)
 		{
-			switch ((Msg) m.Msg) {
-			case Msg.WM_PAINT:
-				PaintEventArgs	paint_event;
-				paint_event = XplatUI.PaintEventStart (Handle, true);
-				PaintInternal (paint_event);
-				XplatUI.PaintEventEnd (Handle, true);
-				break;
-			default:
-				base.WndProc (ref m);
-				break;
-			}
+			base.WndProc (ref m);
 		}
 
 		protected virtual void OnSelectedIndexChanged (EventArgs e)
@@ -552,6 +542,11 @@ namespace System.Windows.Forms {
 				SelectedIndexChanged (this, e);
 		}
 
+		internal override void OnPaintInternal (PaintEventArgs pe)
+		{
+			Draw (pe.Graphics, pe.ClipRectangle);
+			pe.Handled = true;
+		}
 		#endregion	// Protected Instance Methods
 
 		#region Internal & Private Methods
@@ -960,12 +955,6 @@ namespace System.Windows.Forms {
 
 				page.TabBounds = new Rectangle (l, t, r - l, b - t);
 			}
-		}
-
-		private void PaintInternal (PaintEventArgs pe)
-		{
-			Draw (pe.Graphics, pe.ClipRectangle);
-			// On MS the Paint event never seems to be raised
 		}
 
 		private void Draw (Graphics dc, Rectangle clip)

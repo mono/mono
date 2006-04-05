@@ -270,7 +270,6 @@ namespace System.Windows.Forms
 			txtView.TextChanged += new EventHandler(OnTextBoxTextChanged);
 
 			txtView.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-			this.Paint +=new PaintEventHandler(UpDownBase_Paint);
 
 			SetStyle(ControlStyles.FixedHeight, true);
 
@@ -317,7 +316,7 @@ namespace System.Windows.Forms
 			txtView.TabIndex = TabIndex;
 		}
 
-		private void UpDownBase_Paint(object sender, PaintEventArgs e) {
+		internal override void OnPaintInternal (PaintEventArgs e) {
 			e.Graphics.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(BackColor), ClientRectangle);
 		}
 		#endregion	// Private Methods

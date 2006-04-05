@@ -1,3 +1,29 @@
+2006-04-05  Jackson Harper  <jackson@ximian.com>
+
+	* Control.cs: Enable OnPaintInternal so we can use it for drawing
+	all of our controls instead of Paint +=.
+	* ListBox.cs:
+	* ListView.cs:
+	* MenuAPI.cs:
+	* MessageBox.cs:
+	* NotifyIcon.cs:
+	* ProgressBar.cs:
+	* ScrollBar.cs:
+	* Splitter.cs:
+	* StatusBar.cs:
+	* TabControl.cs:
+	* TextBoxBase.cs:
+	* ToolBar.cs:
+	* TrackBar.cs:
+	* UpDownBase.cs:
+	* ComboBox.cs: Remove handling of WM_PAINT and WM_ERASEBKGND and
+	use OnPaintInternal. Remove Width/Height and Visible checks in
+	paint handler, this is done at a higher level now.
+	* GroupBox.cs: Don't need to handle WM_ERASEBKGND anymore.
+	* PaintEventArgs.cs: Add a handled flag so controls that don't
+	want anymore painting after OnPaintInternal can make sure OnPaint
+	isn't called.
+
 2006-04-05  Mike Kestner  <mkestner@novell.com>
 
 	* Form.cs: fix the menu WndProc hacks to respect the native enabled

@@ -453,25 +453,6 @@ namespace System.Windows.Forms
 
 		protected override void WndProc (ref Message m)
     		{
-			switch ((Msg) m.Msg) {
-	
-			case Msg.WM_PAINT: {				
-				PaintEventArgs	paint_event;
-
-				paint_event = XplatUI.PaintEventStart (Handle, true);
-				OnPaintTB (paint_event);
-				XplatUI.PaintEventEnd (Handle, true);
-				return;
-			}		
-				
-			case Msg.WM_ERASEBKGND:
-				m.Result = (IntPtr) 1; /* Disable background painting to avoid flickering */
-				return;
-				
-			default:
-				break;
-			}
-
 			base.WndProc (ref m);
     		}
     		
@@ -612,11 +593,8 @@ namespace System.Windows.Forms
 			}
     		}
 
-		private void OnPaintTB (PaintEventArgs pevent)
+		internal override void OnPaintInternal (PaintEventArgs pevent)
 		{		
-			if (Paint != null) {
-				Paint (this, pevent);
-			}
 			ThemeEngine.Current.DrawTrackBar (pevent.Graphics, pevent.ClipRectangle, this);
 		}
 

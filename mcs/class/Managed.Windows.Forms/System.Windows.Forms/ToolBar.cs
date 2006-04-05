@@ -117,7 +117,6 @@ namespace System.Windows.Forms
 			MouseLeave += new EventHandler (ToolBar_MouseLeave);
 			MouseMove += new MouseEventHandler (ToolBar_MouseMove);
 			MouseUp += new MouseEventHandler (ToolBar_MouseUp);
-			Paint += new PaintEventHandler (ToolBar_Paint);
 
 			SetStyle (ControlStyles.UserPaint, false);
 			SetStyle (ControlStyles.FixedHeight, true);
@@ -616,7 +615,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		private void ToolBar_Paint (object sender, PaintEventArgs pevent)
+		internal override void OnPaintInternal (PaintEventArgs pevent)
 		{
 			ThemeEngine.Current.DrawToolBar (pevent.Graphics, pevent.ClipRectangle, this);
 		}

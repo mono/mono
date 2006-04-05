@@ -3735,9 +3735,11 @@ namespace System.Windows.Forms
 						}
 
 					OnPaintBackground(paint_event);
-					// Leave out for now, our controls can do Paint += ... as well
-					//OnPaintInternal(paint_event);
-					OnPaint(paint_event);
+
+					OnPaintInternal(paint_event);
+
+					if (!paint_event.Handled)
+						OnPaint(paint_event);
 
 					if (ThemeEngine.Current.DoubleBufferingSupported)
 						if ((control_style & ControlStyles.DoubleBuffer) != 0) {

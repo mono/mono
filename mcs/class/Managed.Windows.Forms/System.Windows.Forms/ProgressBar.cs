@@ -121,7 +121,6 @@ namespace System.Windows.Forms
 			step = 10;
 			val = 0;
 
-			base.Paint += new PaintEventHandler (OnPaintPB);
 			base.Resize += new EventHandler (OnResizeTB);
 
 			SetStyle (ControlStyles.UserPaint | 
@@ -421,7 +420,7 @@ namespace System.Windows.Forms
 			UpdateAreas ();
     		}
 
-		private void OnPaintPB (Object o, PaintEventArgs pevent)
+		internal override void OnPaintInternal (PaintEventArgs pevent)
 		{
                         ThemeEngine.Current.DrawProgressBar (pevent.Graphics, pevent.ClipRectangle, this);
 		}		

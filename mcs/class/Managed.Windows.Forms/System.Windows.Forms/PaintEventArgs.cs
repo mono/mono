@@ -32,7 +32,8 @@ namespace System.Windows.Forms {
 	public class PaintEventArgs : EventArgs, IDisposable {
 		private Graphics	graphics;
 		private Rectangle	clip_rectangle;
-
+		internal bool		Handled;
+		
 		#region Public Constructors
 		public PaintEventArgs(System.Drawing.Graphics graphics, System.Drawing.Rectangle clipRect) {
 			this.graphics=graphics;

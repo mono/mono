@@ -97,7 +97,6 @@ namespace System.Windows.Forms {
 			Anchor = AnchorStyles.None;
 			Dock = DockStyle.Left;
 
-			Paint += new PaintEventHandler(PaintSplitter);
 			Layout += new LayoutEventHandler(LayoutSplitter);
 			this.ParentChanged += new EventHandler(ReparentSplitter);
 			Cursor = splitter_we;
@@ -647,7 +646,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private void PaintSplitter(object sender, PaintEventArgs e) {
+		internal override void OnPaintInternal (PaintEventArgs e) {
 			e.Graphics.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(this.BackColor), e.ClipRectangle);
 		}
 

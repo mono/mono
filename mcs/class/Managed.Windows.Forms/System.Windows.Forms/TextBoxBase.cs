@@ -1108,16 +1108,6 @@ namespace System.Windows.Forms {
 
 		protected override void WndProc(ref Message m) {
 			switch ((Msg)m.Msg) {
-				case Msg.WM_PAINT: {
-					PaintEventArgs	paint_event;
-
-					paint_event = XplatUI.PaintEventStart(Handle, true);
-					
-					PaintControl(paint_event);
-					XplatUI.PaintEventEnd(Handle, true);
-					DefWndProc(ref m);
-					return;
-				}
 
 				case Msg.WM_SETFOCUS: {
 					// Set caret
@@ -1254,7 +1244,7 @@ namespace System.Windows.Forms {
 		static int current;
 		#endif
 
-		private void PaintControl(PaintEventArgs pevent) {
+		internal override void OnPaintInternal (PaintEventArgs pevent) {
 			// Fill background
 			pevent.Graphics.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(BackColor), pevent.ClipRectangle);
 			pevent.Graphics.TextRenderingHint=TextRenderingHint.AntiAlias;

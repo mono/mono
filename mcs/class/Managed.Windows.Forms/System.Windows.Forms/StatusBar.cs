@@ -282,16 +282,6 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void WndProc(ref Message m) {
-			switch ((Msg) m.Msg) {
-				case Msg.WM_PAINT: {				
-					PaintEventArgs	paint_event;
-
-					paint_event = XplatUI.PaintEventStart (Handle, true);
-					DoPaint (paint_event);
-					XplatUI.PaintEventEnd (Handle, true);
-					return;
-				}
-			}
 			base.WndProc (ref m);
 		}
 
@@ -330,11 +320,8 @@ namespace System.Windows.Forms {
 			Refresh ();
 		}
 
-		private void DoPaint (PaintEventArgs pevent)
+		internal override void OnPaintInternal (PaintEventArgs pevent)
 		{
-			if (Width <= 0 || Height <=  0 || Visible == false)
-				return;
-
 			Draw (pevent.Graphics, pevent.ClipRectangle);
 		}
 

@@ -194,14 +194,7 @@ namespace System.Windows.Forms
 		}
 
 		protected override void WndProc(ref Message m) {
-			switch ((Msg) m.Msg) {
-				case Msg.WM_ERASEBKGND:
-					m.Result = (IntPtr)1;
-					break;
-				default:
-					base.WndProc (ref m);
-					break;
-			}
+			base.WndProc (ref m);
 		}
 				
 		#endregion Public Methods

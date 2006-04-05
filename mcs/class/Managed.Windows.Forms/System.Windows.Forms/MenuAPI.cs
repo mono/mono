@@ -663,7 +663,6 @@ namespace System.Windows.Forms {
 		public PopUpWindow (Menu menu): base ()
 		{
 			this.menu = menu;
-			Paint += new PaintEventHandler (OnPaintPUW);
 			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 			SetStyle (ControlStyles.ResizeRedraw | ControlStyles.Opaque, true);
 			is_visible = false;
@@ -687,7 +686,7 @@ namespace System.Windows.Forms {
 			Refresh ();
 		}
 		
-		private void OnPaintPUW (Object o, PaintEventArgs args)
+		internal override void OnPaintInternal (PaintEventArgs args)
 		{
 			ThemeEngine.Current.DrawPopupMenu (args.Graphics, menu, args.ClipRectangle, ClientRectangle);
 		}

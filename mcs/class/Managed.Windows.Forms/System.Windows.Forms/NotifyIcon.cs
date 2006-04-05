@@ -60,7 +60,6 @@ namespace System.Windows.Forms {
 
 				CreateControl();
 
-				Paint += new PaintEventHandler(HandlePaint);
 				SizeChanged += new EventHandler(HandleSizeChanged);
 
 				// Events that need to be sent to our parent
@@ -94,7 +93,7 @@ namespace System.Windows.Forms {
 						PaintEventArgs	paint_event;
 
 						paint_event = XplatUI.PaintEventStart(Handle, false);
-						OnPaint(paint_event);
+						OnPaintInternal (paint_event);
 						XplatUI.PaintEventEnd(Handle, false);
 						break;
 					}
@@ -171,7 +170,7 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			private void HandlePaint(object sender, PaintEventArgs e) {
+			internal override void OnPaintInternal (PaintEventArgs e) {
 				if (owner.icon != null) {
 					e.Graphics.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(SystemColors.Window), rect);
 					e.Graphics.DrawImage(owner.icon_bitmap, rect);

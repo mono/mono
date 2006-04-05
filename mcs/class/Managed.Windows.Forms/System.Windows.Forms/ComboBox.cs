@@ -160,7 +160,10 @@ namespace System.Windows.Forms
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event PaintEventHandler Paint;
+		public new event PaintEventHandler Paint {
+			add { base.Paint += value; }
+			remove { base.Paint -= value; }
+		}
 		
 		public event EventHandler SelectedIndexChanged;		
 		public event EventHandler SelectionChangeCommitted;
@@ -919,25 +922,6 @@ namespace System.Windows.Forms
 
 		protected override void WndProc (ref Message m)
 		{
-
-			switch ((Msg) m.Msg) {
-
-			case Msg.WM_PAINT: {
-				PaintEventArgs	paint_event;
-				paint_event = XplatUI.PaintEventStart (Handle, true);
-				OnPaintCB (paint_event);
-				XplatUI.PaintEventEnd (Handle, true);
-				return;
-			}
-
-			case Msg.WM_ERASEBKGND:
-				m.Result = (IntPtr) 1;
-				return;
-
-			default:
-				break;
-			}
-
 			base.WndProc (ref m);
 
 		}
@@ -1181,16 +1165,12 @@ namespace System.Windows.Forms
     			}
     		}
 
-		private void OnPaintCB (PaintEventArgs pevent)
+		internal override void OnPaintInternal (PaintEventArgs pevent)
 		{
-			if (Width <= 0 || Height <=  0 || Visible == false || suspend_ctrlupdate == true)
+			if (suspend_ctrlupdate)
     				return;
     				
-    			/* Copies memory drawing buffer to screen*/
 			Draw (ClientRectangle, pevent.Graphics);			
-
-			if (Paint != null)
-				Paint (this, pevent);
 		}
 		
 		private void OnTextChangedEdit (object sender, EventArgs e)
@@ -1506,7 +1486,6 @@ namespace System.Windows.Forms
 				MouseUp += new MouseEventHandler (OnMouseUpPUW);
 				MouseMove += new MouseEventHandler (OnMouseMovePUW);				
 				KeyDown += new KeyEventHandler (OnKeyDownPUW);
-				Paint += new PaintEventHandler (OnPaintPUW);				
 				SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 				SetStyle (ControlStyles.ResizeRedraw | ControlStyles.Opaque, true);				
 			}
@@ -1965,7 +1944,7 @@ namespace System.Windows.Forms
 		    		}
 			}
 
-			private void OnPaintPUW (Object o, PaintEventArgs pevent)
+			internal override void OnPaintInternal (PaintEventArgs pevent)
 			{				
 				Draw (pevent.ClipRectangle,pevent.Graphics);
 			}

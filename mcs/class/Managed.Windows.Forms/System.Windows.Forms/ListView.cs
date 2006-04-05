@@ -159,7 +159,6 @@ namespace System.Windows.Forms
 
 			// event handlers
 			base.KeyDown += new KeyEventHandler(ListView_KeyDown);
-			base.Paint += new PaintEventHandler (ListView_Paint);
 			SizeChanged += new EventHandler (ListView_SizeChanged);
 
 			this.SetStyle (ControlStyles.UserPaint | ControlStyles.StandardClick, false);
@@ -1195,7 +1194,6 @@ namespace System.Windows.Forms
 				MouseHover += new EventHandler(ItemsMouseHover);
 				MouseUp += new MouseEventHandler(ItemsMouseUp);
 				MouseWheel += new MouseEventHandler(ItemsMouseWheel);
-				Paint += new PaintEventHandler (ItemsPaint);
 			}
 
 			void ItemsDoubleClick (object sender, EventArgs e)
@@ -1366,15 +1364,15 @@ namespace System.Windows.Forms
 				}
 			}
 
-			private void ItemsPaint (object sender, PaintEventArgs pe)
+			internal override void OnPaintInternal (PaintEventArgs pe)
 			{
 				ThemeEngine.Current.DrawListViewItems (pe.Graphics, pe.ClipRectangle, owner);
 			}
 		}
 
-		private void ListView_Paint (object sender, PaintEventArgs pe)
+		internal override void OnPaintInternal (PaintEventArgs pe)
 		{
-			if (Width <= 0 || Height <=  0 || !Visible || updating)
+			if (updating)
 				return;	
 				
 			CalculateScrollBars ();
@@ -1677,7 +1675,6 @@ namespace System.Windows.Forms
 				MouseDown += new MouseEventHandler (HeaderMouseDown);
 				MouseMove += new MouseEventHandler (HeaderMouseMove);
 				MouseUp += new MouseEventHandler (HeaderMouseUp);
-				Paint += new PaintEventHandler (HeaderPaint);
 			}
 
 			private ColumnHeader ColumnAtX (int x)
@@ -1821,9 +1818,9 @@ namespace System.Windows.Forms
 				clicked_column = null;
 			}
 
-			void HeaderPaint (object sender, PaintEventArgs pe)
+			internal override void OnPaintInternal (PaintEventArgs pe)
 			{
-				if (Width <= 0 || Height <=  0 || !Visible || owner.updating)
+				if (owner.updating)
 					return;	
 				
 				Theme theme = ThemeEngine.Current;

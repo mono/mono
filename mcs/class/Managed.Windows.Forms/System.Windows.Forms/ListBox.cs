@@ -821,11 +821,10 @@ namespace System.Windows.Forms
 
 		protected virtual void OnDrawItem (DrawItemEventArgs e)
 		{			
-			
 			if (DrawItem != null && (DrawMode == DrawMode.OwnerDrawFixed || DrawMode == DrawMode.OwnerDrawVariable)) {
 				DrawItem (this, e);
 				return;
-			}			
+			}
 
 			ThemeEngine.Current.DrawListBoxItem (this, e);
 		}
@@ -973,24 +972,6 @@ namespace System.Windows.Forms
 
 		protected override void WndProc (ref Message m)
 		{
-			switch ((Msg) m.Msg) {
-
-			case Msg.WM_PAINT: {
-				PaintEventArgs	paint_event;
-				paint_event = XplatUI.PaintEventStart (Handle, true);
-				OnPaintLB (paint_event);
-				XplatUI.PaintEventEnd (Handle, true);
-				return;
-			}
-
-			case Msg.WM_ERASEBKGND:
-				m.Result = (IntPtr) 1;
-				return;
-
-			default:
-				break;
-			}
-
 			base.WndProc (ref m);
 		}
 
@@ -1463,12 +1444,9 @@ namespace System.Windows.Forms
     			}
     		}
 
-		private void OnPaintLB (PaintEventArgs pevent)
+		internal override void OnPaintInternal (PaintEventArgs pevent)
 		{
-			if (Paint != null)
-				Paint (this, pevent);
-
-			if (suspend_ctrlupdate == true)
+			if (suspend_ctrlupdate)
     				return;
 
 			Draw (pevent.ClipRectangle, pevent.Graphics);
