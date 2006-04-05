@@ -1,5 +1,19 @@
 2006-04-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* assembly.c (mono_assembly_close): Ditto.
+
+	* image.c (mono_image_close): Log trace messages with INFO level.
+
+	* metadata-internals.h (MonoImage): Add a new 'method_signature' cache.
+
+	* image.c reflection.c: Correct reference counting of image modules.
+	
+	* metadata.c (mono_metadata_interfaces_from_typedef_full): Allocate the result
+	of this function from the image mempool.
+	
+	(mono_metadata_parse_type_full): Remove the mode != MONO_PARSE_PARAM restriction
+	to allow more cached types to be used.
+
 	* mono-debug.c (mono_debug_add_method): Appled patch from
 	David S. Miller  <davem@sunset.davemloft.net>: Access 
 	minfo->lexical_blocks[] entry elements using read32().
