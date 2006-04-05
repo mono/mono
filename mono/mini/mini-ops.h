@@ -57,7 +57,7 @@ MINI_OP(OP_VCALLVIRT, 	"vcallvirt", VREG, NONE, NONE)
 MINI_OP(OP_VCALL_REG,	"vcall_reg", VREG, IREG, NONE)
 MINI_OP(OP_VCALL_MEMBASE,	"vcall_membase", VREG, IREG, NONE)
 
-MINI_OP(OP_CALL,        "call", IREG, NONE, NONE)
+MINI_OP(OP_CALL,        "op_call", IREG, NONE, NONE)
 MINI_OP(OP_CALL_REG,	"call_reg", IREG, IREG, NONE)
 MINI_OP(OP_CALL_MEMBASE,	"call_membase", IREG, IREG, NONE)
 MINI_OP(OP_CALLVIRT, "callvirt", IREG, NONE, NONE)
