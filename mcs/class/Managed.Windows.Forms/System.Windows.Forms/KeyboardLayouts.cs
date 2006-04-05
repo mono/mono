@@ -75,8 +75,8 @@ namespace System.Windows.Forms {
 
 
 	[Serializable]
-	[CLSCompliant(false)]
 #if GENERATING_RESOURCES
+	[CLSCompliant(false)]
 	public
 #else 
 	internal

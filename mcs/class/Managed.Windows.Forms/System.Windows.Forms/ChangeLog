@@ -1,5 +1,9 @@
 2006-04-05  Jackson Harper  <jackson@ximian.com>
 
+	* KeyboardLayouts.cs: Remove warning.
+
+2006-04-05  Jackson Harper  <jackson@ximian.com>
+
 	* Control.cs: Enable OnPaintInternal so we can use it for drawing
 	all of our controls instead of Paint +=.
 	* ListBox.cs:
