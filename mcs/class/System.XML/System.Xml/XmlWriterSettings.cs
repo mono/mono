@@ -130,7 +130,11 @@ namespace System.Xml
 		// It affects only on XmlTextWriter
 		public string NewLineChars {
 			get { return newLineChars; }
-			set { newLineChars = value; }
+			set {
+				if (value == null)
+					throw new ArgumentNullException ("value");
+				newLineChars = value;
+			}
 		}
 
 		// It affects only on XmlTextWriter

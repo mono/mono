@@ -1,3 +1,8 @@
+2006-04-05  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlWriterSettingsTest.cs : added tests on set_Encoding(),
+	  set_NewLineChars() and OmitXmlDeclaration.
+
 2006-03-08  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlReaderCommonTests.cs : Added tests for ReadContentAsString() and
