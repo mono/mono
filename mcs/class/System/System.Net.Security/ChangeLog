@@ -1,5 +1,9 @@
 2006-04-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SslPolicyErrors.cs : forgot to add.
+
+2006-04-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* AuthenticationLevel.cs,
 	  NegotiateStream.cs,
 	  SslStream.cs,
