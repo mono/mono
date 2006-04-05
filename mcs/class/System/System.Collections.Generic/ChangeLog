@@ -1,3 +1,8 @@
+2006-04-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SortedDictionary.cs : new file. The original code is mostly
+	  from Kazuki Oikawa.
+
 2006-03-11  Miguel de Icaza  <miguel@novell.com>
 
 	* Queue.cs: Flag as serializable.

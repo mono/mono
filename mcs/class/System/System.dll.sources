@@ -137,6 +137,7 @@ System.CodeDom/MemberAttributes.cs
 System.Collections.Generic/LinkedList.cs
 System.Collections.Generic/LinkedListNode.cs
 System.Collections.Generic/Queue.cs
+System.Collections.Generic/SortedDictionary.cs
 System.Collections.Generic/SortedList.cs
 System.Collections.Generic/Stack.cs
 System.Collections.Specialized/BitVector32.cs

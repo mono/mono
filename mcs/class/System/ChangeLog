@@ -1,3 +1,8 @@
+2006-04-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.dll.sources : added SortedDictionary.cs.
+	* System_test.dll.sources : added SortedDictionaryTest.cs.
+
 2006-04-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.dll.sources: added DataReceivedEventArgs.cs and
