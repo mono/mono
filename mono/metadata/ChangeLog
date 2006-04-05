@@ -1,3 +1,9 @@
+2006-04-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* assembly.c (mono_assembly_open_full): Avoid the situation where two assemblies
+	reference the same MonoImage.
+	(mono_assembly_load_from_full): Add an assert.
+
 2006-04-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* image.c (mono_image_close): Don't put the image we are about to free into the
