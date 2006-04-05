@@ -1,5 +1,9 @@
 2006-04-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* System.dll.sources : added SslPolicyErrors.cs.
+
+2006-04-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* System.dll.sources : added SortedDictionary.cs.
 	* System_test.dll.sources : added SortedDictionaryTest.cs.
 

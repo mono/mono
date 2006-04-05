@@ -1,3 +1,12 @@
+2006-04-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AuthenticationLevel.cs,
+	  NegotiateStream.cs,
+	  SslStream.cs,
+	  LocalCertificateSelectionCallback.cs,
+	  RemoteCertificateValidationCallback.cs :
+	  Updated all unimplemented things to 2.0 RTM.
+
 2006-03-21  Miguel de Icaza  <miguel@novell.com>
 
 	* AuthenticatedStream.cs: Implement Dispose method, remove Close

@@ -122,11 +122,6 @@ namespace System.Net.Security
 		}
 
 		[MonoTODO]
-		public virtual TokenImpersonationLevel ImpersonationLevel {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
 		public override bool IsAuthenticated { 
 			get { throw new NotImplementedException (); }
 		}
@@ -200,13 +195,13 @@ namespace System.Net.Security
 		#region Methods
 
 		[MonoTODO]
-		public virtual IAsyncResult BeginClientAuthenticate (string targetHost, AsyncCallback asyncCallback, object asyncState)
+		public virtual IAsyncResult BeginAuthenticateAsClient (string targetHost, AsyncCallback asyncCallback, object asyncState)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual IAsyncResult BeginClientAuthenticate (string targetHost, X509CertificateCollection clientCertificates, SslProtocols sslProtocolType, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState)
+		public virtual IAsyncResult BeginAuthenticateAsClient (string targetHost, X509CertificateCollection clientCertificates, SslProtocols sslProtocolType, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState)
 		{
 			throw new NotImplementedException ();
 		}
@@ -218,13 +213,13 @@ namespace System.Net.Security
 		}
 
 		[MonoTODO]
-		public virtual IAsyncResult BeginServerAuthenticate (X509Certificate serverCertificate, AsyncCallback callback, object asyncState)
+		public virtual IAsyncResult BeginAuthenticateAsServer (X509Certificate serverCertificate, AsyncCallback callback, object asyncState)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual IAsyncResult BeginServerAuthenticate (X509Certificate serverCertificate, bool clientCertificateRequired, SslProtocols sslProtocolType, bool checkCertificateRevocation, AsyncCallback callback, object asyncState)
+		public virtual IAsyncResult BeginAuthenticateAsServer (X509Certificate serverCertificate, bool clientCertificateRequired, SslProtocols sslProtocolType, bool checkCertificateRevocation, AsyncCallback callback, object asyncState)
 		{
 			throw new NotImplementedException ();
 		}
@@ -236,31 +231,37 @@ namespace System.Net.Security
 		}
 
 		[MonoTODO]
-		public virtual void ClientAuthenticate ()
+		public virtual void AuthenticateAsClient (string targetHost)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual void ClientAuthenticate (string targetHost)
+		public virtual void AuthenticateAsClient (string targetHost, X509CertificateCollection clientCertificates, SslProtocols sslProtocolType, bool checkCertificateRevocation)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual void ClientAuthenticate (string targetHost, X509CertificateCollection clientCertificates, SslProtocols sslProtocolType, bool checkCertificateRevocation)
+		public virtual void AuthenticateAsServer (X509Certificate serverCertificate)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public override void Close ()
+		public virtual void AuthenticateAsServer (X509Certificate serverCertificate, bool clientCertificateRequired, SslProtocols sslProtocolType, bool checkCertificateRevocation)
 		{
-			InnerStream.Close ();
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual void EndClientAuthenticate (IAsyncResult asyncResult)
+		protected override void Dispose (bool disposing)
+		{
+			base.Dispose (disposing);
+		}
+
+		[MonoTODO]
+		public virtual void EndAuthenticateAsClient (IAsyncResult asyncResult)
 		{
 			throw new NotImplementedException ();
 		}
@@ -272,7 +273,7 @@ namespace System.Net.Security
 		}
 
 		[MonoTODO]
-		public virtual void EndServerAuthenticate (IAsyncResult asyncResult)
+		public virtual void EndAuthenticateAsServer (IAsyncResult asyncResult)
 		{
 			throw new NotImplementedException ();
 		}

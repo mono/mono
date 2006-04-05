@@ -221,7 +221,7 @@ namespace System.Net.Security
 		}
 
 		[MonoTODO]
-		public virtual void EndClientAuthenticate (IAsyncResult asyncResult)
+		public virtual void EndAuthenticateAsClient (IAsyncResult asyncResult)
 		{
 			throw new NotImplementedException ();
 		}
@@ -233,7 +233,7 @@ namespace System.Net.Security
 		}
 
 		[MonoTODO]
-		public virtual void EndServerAuthenticate (IAsyncResult asyncResult)
+		public virtual void EndAuthenticateAsServer (IAsyncResult asyncResult)
 		{
 			throw new NotImplementedException ();
 		}

@@ -692,6 +692,7 @@ System.Net.Security/ProtectionLevel.cs
 System.Net/SecurityProtocolType.cs
 System.Net.Security/RemoteCertificateValidationCallback.cs
 System.Net.Security/SslStream.cs
+System.Net.Security/SslPolicyErrors.cs
 System.Net/ServicePoint.cs
 System.Net/ServicePointManager.cs
 System.Net/SocketAddress.cs
