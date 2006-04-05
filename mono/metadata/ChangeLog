@@ -1,5 +1,11 @@
 2006-04-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* metadata.c (mono_metadata_get_param_attrs): New helper function to return
+	the parameter attributes of a method.
+	(mono_metadata_parse_method_signature_full): Refactored the computation of
+	parameter attributes into a separate function. Also avoid one allocation in
+	most cases.
+
 	* assembly.c (mono_assembly_close): Ditto.
 
 	* image.c (mono_image_close): Log trace messages with INFO level.
