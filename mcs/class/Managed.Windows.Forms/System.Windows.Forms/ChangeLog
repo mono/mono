@@ -1,5 +1,9 @@
 2006-04-05  Mike Kestner  <mkestner@novell.com>
 
+	* XplatUIX11.cs: fix typo in the EX_APPWINDOW transient patch.
+
+2006-04-05  Mike Kestner  <mkestner@novell.com>
+
 	* ListView.cs (HeaderMouseMove): null guarding for the over column
 	when setting up the drag_to_index.  Fixes #78015.
 

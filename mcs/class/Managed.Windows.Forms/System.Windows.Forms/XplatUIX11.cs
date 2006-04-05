@@ -2122,7 +2122,7 @@ namespace System.Windows.Forms {
 
 			if ((cp.ExStyle & (int)WindowExStyles.WS_EX_TOPMOST) != 0) {
 				XSetTransientForHint (DisplayHandle, hwnd.whole_window, RootWindow);
-			} else if ((cp.ExStyle & (int)WindowExStyles.WS_EX_APPWINDOW) != 0) {
+			} else if ((cp.ExStyle & (int)WindowExStyles.WS_EX_APPWINDOW) == 0) {
 				XSetTransientForHint (DisplayHandle, hwnd.whole_window, FosterParent);
 			}
 
