@@ -977,11 +977,14 @@ namespace Mono.CSharp {
 
 		public void AddAttributes (ArrayList attrs)
 		{
-			if (OptAttributes == null) {
-				OptAttributes = new Attributes (attrs);
+			foreach (Attribute a in attrs)
+				a.AttachTo (this);
+
+			if (attributes == null) {
+				attributes = new Attributes (attrs);
 				return;
 			}
-			OptAttributes.AddAttributes (attrs);
+			attributes.AddAttributes (attrs);
 		}
 
 		public virtual void Emit (TypeContainer tc) 
@@ -1073,16 +1076,13 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override bool IsClsComplianceRequired()
+		public override bool IsClsComplianceRequired ()
 		{
 			return is_cls_compliant;
 		}
 
 		public void Resolve ()
 		{
-			if (OptAttributes != null)
-				OptAttributes.AttachTo (this);
-
 			ClsCompliantAttribute = ResolveAttribute (TypeManager.cls_compliant_attribute_type);
 			if (ClsCompliantAttribute != null) {
 				is_cls_compliant = ClsCompliantAttribute.GetClsCompliantAttributeValue ();
@@ -1330,16 +1330,13 @@ namespace Mono.CSharp {
  			}
 		}
 
-		public override bool IsClsComplianceRequired()
+		public override bool IsClsComplianceRequired ()
 		{
 			return CodeGen.Assembly.IsClsCompliant;
 		}
 
 		public override void Emit (TypeContainer tc) 
 		{
-			if (OptAttributes != null)
-				OptAttributes.AttachTo (this);
-
 			base.Emit (tc);
 
 			if (!m_module_is_unsafe)

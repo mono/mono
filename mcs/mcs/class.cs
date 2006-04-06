@@ -6973,9 +6973,12 @@ namespace Mono.CSharp {
 				 int mod_flags, Parameters parameters,
 				 ToplevelBlock block, Attributes attrs, Location loc)
 			: base (parent, ret_type, mod_flags, AllowedModifiers, false,
-				new MemberName ("op_" + type, loc), attrs, parameters)
+				new MemberName ("op_" + type, loc), null, parameters)
 		{
 			OperatorType = type;
+			// TODO: As operator breaks all our rules, don't attach the attributes
+			// to fake owner, will finally need to rewrite it
+			attributes = attrs;
 			Block = block;
 		}
 

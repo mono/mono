@@ -36,7 +36,8 @@ namespace Mono.CSharp {
 
 		public Attributable (Attributes attrs)
 		{
-			OptAttributes = attrs;
+			if (attrs != null)
+				OptAttributes = attrs;
 		}
 
 		public Attributes OptAttributes 
@@ -92,7 +93,9 @@ namespace Mono.CSharp {
 
 		bool resolve_error;
 		readonly bool nameEscaped;
-		Attributable owner;
+
+		// It can contain more onwers when the attribute is applied to multiple fiels.
+		Attributable[] owners;
 
 		static readonly AttributeUsageAttribute DefaultUsageAttribute = new AttributeUsageAttribute (AttributeTargets.All);
 		static Assembly orig_sec_assembly;
@@ -136,7 +139,20 @@ namespace Mono.CSharp {
 
 		public void AttachTo (Attributable owner)
 		{
-			this.owner = owner;
+			if (this.owners == null) {
+				this.owners = new Attributable[1] { owner };
+				return;
+			}
+
+			// When the same attribute is attached to multiple fiels
+			// we use this extra_owners as a list of owners. The attribute
+			// then can be removed because will be emitted when first owner
+			// is served
+			Attributable[] new_array = new Attributable [this.owners.Length + 1];
+			owners.CopyTo (new_array, 0);
+			new_array [owners.Length] = owner;
+			this.owners = new_array;
+			owner.OptAttributes = null;
 		}
 
 		void Error_InvalidNamedArgument (string name)
@@ -175,6 +191,12 @@ namespace Mono.CSharp {
 			Error_AttributeEmitError ("it is attached to invalid parent");
 		}
 
+		Attributable Owner {
+			get {
+				return owners [0];
+			}
+		}
+
 		protected virtual TypeExpr ResolveAsTypeTerminal (Expression expr, IResolveContext ec, bool silent)
 		{
 			return expr.ResolveAsTypeTerminal (ec, silent);
@@ -182,7 +204,7 @@ namespace Mono.CSharp {
 
 		Type ResolvePossibleAttributeType (string name, bool silent, ref bool is_attr)
 		{
-			IResolveContext rc = owner.ResolveContext;
+			IResolveContext rc = Owner.ResolveContext;
 
 			TypeExpr te;
 			if (LeftExpr == null) {
@@ -301,6 +323,7 @@ namespace Mono.CSharp {
 				}
 			}
 
+			Attributable owner = Owner;
 			EmitContext ec = new EmitContext (owner.ResolveContext, owner.ResolveContext.DeclContainer, owner.ResolveContext.DeclContainer,
 				Location, null, null, owner.ResolveContext.DeclContainer.ModFlags, false);
 
@@ -364,7 +387,7 @@ namespace Mono.CSharp {
 				return null;
 
 			ObsoleteAttribute oa = AttributeTester.GetMethodObsoleteAttribute (constructor);
-			if (oa != null && !owner.ResolveContext.IsInObsoleteScope) {
+			if (oa != null && !Owner.ResolveContext.IsInObsoleteScope) {
 				AttributeTester.Report_ObsoleteMessage (oa, mg.GetSignatureForError (), mg.Location);
 			}
 
@@ -564,7 +587,7 @@ namespace Mono.CSharp {
 					field_infos.Add (fi);
 				}
 
-				if (obsolete_attr != null && !owner.ResolveContext.IsInObsoleteScope)
+				if (obsolete_attr != null && !Owner.ResolveContext.IsInObsoleteScope)
 					AttributeTester.Report_ObsoleteMessage (obsolete_attr, member.GetSignatureForError (), member.Location);
 			}
 
@@ -777,9 +800,9 @@ namespace Mono.CSharp {
 
 		public bool CheckTarget ()
 		{
-			string[] valid_targets = owner.ValidAttributeTargets;
+			string[] valid_targets = Owner.ValidAttributeTargets;
 			if (ExplicitTarget == null || ExplicitTarget == valid_targets [0]) {
-				Target = owner.AttributeTargets;
+				Target = Owner.AttributeTargets;
 				return true;
 			}
 
@@ -1103,7 +1126,8 @@ namespace Mono.CSharp {
 			}
 
 			try {
-				owner.ApplyAttributeBuilder (this, cb);
+				foreach (Attributable owner in owners)
+					owner.ApplyAttributeBuilder (this, cb);
 			}
 			catch (Exception e) {
 				Error_AttributeEmitError (e.Message);
@@ -1127,7 +1151,7 @@ namespace Mono.CSharp {
 				return;
 
 			// Here we are testing attribute arguments for array usage (error 3016)
-			if (owner.IsClsComplianceRequired ()) {
+			if (Owner.IsClsComplianceRequired ()) {
 				if (PosArguments != null) {
 					foreach (Argument arg in PosArguments) { 
 						// Type is undefined (was error 246)

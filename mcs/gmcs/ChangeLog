@@ -1,3 +1,15 @@
+2006-04-06  Marek Safar  <marek.safar@seznam.cz>
+
+	A fix for #78020.
+
+	* attribute.cs (Attribute.AttachTo): The attribute can have multiple
+	sources (it's composite) so hold them in extra array as they are used in
+	Emit phase only. It worked in the previous versions by mistake.
+	(Attribute.Emit): Emit attribute for more owners when exist.
+
+	* codegen.cs, class.cs: Updated to don't re-attach attribute twice as now
+	it has now different behaviour.
+
 2006-04-04  Marek Safar  <marek.safar@seznam.cz>
 
 	* constant.cs (Constant.IsDefaultInitializer): New method.
