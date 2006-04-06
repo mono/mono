@@ -878,8 +878,6 @@ mono_assembly_load_reference (MonoImage *image, int index)
 	if (reference == NULL) {
 		/* Flag as not found */
 		reference = (gpointer)-1;
-	} else {
-		mono_assembly_addref (reference);
 	}	
 
 	if (!image->references [index])
@@ -1249,6 +1247,10 @@ mono_assembly_open_full (const char *filename, MonoImageOpenStatus *status, gboo
 		return NULL;
 	}
 
+	if (image->assembly)
+		/* Already loaded by another appdomain */
+		return image->assembly;
+
 	ass = mono_assembly_load_from_full (image, fname, status, refonly);
 
 	if (ass) {
@@ -1363,7 +1365,8 @@ mono_assembly_load_from_full (MonoImage *image, const char*fname,
 	ass->basedir = base_dir;
 	ass->ref_only = refonly;
 	ass->image = image;
-	ass->ref_count = 1;
+
+	mono_image_addref (image);
 
 	mono_assembly_fill_assembly_name (image, &ass->aname);
 
@@ -1389,6 +1392,7 @@ mono_assembly_load_from_full (MonoImage *image, const char*fname,
 	g_hash_table_insert (ass_loading, GetCurrentThread (), loading);
 	mono_assemblies_unlock ();
 
+	g_assert (image->assembly == NULL);
 	image->assembly = ass;
 
 	mono_assembly_load_references (image, status);
@@ -2172,9 +2176,12 @@ mono_assembly_close (MonoAssembly *assembly)
 	GSList *tmp;
 	g_return_if_fail (assembly != NULL);
 
-	if (InterlockedDecrement (&assembly->ref_count))
+	/* Might be 0 already */
+	if (InterlockedDecrement (&assembly->ref_count) > 0)
 		return;
-	
+
+	mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Unloading assembly %s %p.", assembly->aname.name, assembly);
+
 	mono_assemblies_lock ();
 	loaded_assemblies = g_list_remove (loaded_assemblies, assembly);
 	mono_assemblies_unlock ();

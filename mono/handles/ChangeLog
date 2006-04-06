@@ -1,3 +1,7 @@
+2006-04-06  Dick Porter  <dick@ximian.com>
+
+	* semdel.c (main): Fix parameters in semctl () call.
+
 2005-12-23  Dick Porter  <dick@ximian.com>
 
 	* hps.c: Add named event support

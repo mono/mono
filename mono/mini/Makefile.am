@@ -305,6 +305,8 @@ arch_BURGSRC = $(srcdir)/inssel-long.brg $(srcdir)/inssel-ia64.brg
 arch_built = cpu-ia64.h
 endif
 
+libmono_la_SOURCES = $(common_sources) $(arch_sources)
+
 nodist_libmono_la_SOURCES = inssel.c inssel.h
 
 libmono_static_la_SOURCES = $(libmono_la_SOURCES)

@@ -193,6 +193,7 @@ struct MonoBasicBlock {
 	gint32 dfn;
 
 	/* Basic blocks: incoming and outgoing counts and pointers */
+	/* Each bb should only appear once in each array */
 	gint16 out_count, in_count;
 	MonoBasicBlock **in_bb;
 	MonoBasicBlock **out_bb;

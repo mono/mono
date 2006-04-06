@@ -1,3 +1,86 @@
+2006-04-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* metadata.c: Add some locking comments.
+	
+	* metadata.c (mono_metadata_signature_alloc): Allocate signatures in the image
+	mempool.
+	(mono_metadata_free_method_signature): Don't free the signature itself.
+
+	* loader.c (mono_free_method): Don't free the signature in non-dynamic methods.	
+
+	* assembly.c (mono_assembly_open_full): Avoid the situation where two assemblies
+	reference the same MonoImage.
+	(mono_assembly_load_from_full): Add an assert.
+
+2006-04-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* image.c (mono_image_close): Don't put the image we are about to free into the
+	loaded_images_guid_hash.
+
+	* marshal.c (mono_mb_emit_ptr): Refactor a common code sequence into this function
+	to reduce code duplication.
+
+	* marshal.c: Register the native functions called by this module as icalls, to
+	somewhat centralize the creation of MonoMethodSignature's.
+
+	* loader.c (mono_method_signature): Add a cache for method signatures.
+
+	* metadata.c (mono_metadata_get_param_attrs): New helper function to return
+	the parameter attributes of a method.
+	(mono_metadata_parse_method_signature_full): Refactored the computation of
+	parameter attributes into a separate function. Also avoid one allocation in
+	most cases.
+
+	* assembly.c (mono_assembly_close): Ditto.
+
+	* image.c (mono_image_close): Log trace messages with INFO level.
+
+	* metadata-internals.h (MonoImage): Add a new 'method_signature' cache.
+
+	* image.c reflection.c: Correct reference counting of image modules.
+	
+	* metadata.c (mono_metadata_interfaces_from_typedef_full): Allocate the result
+	of this function from the image mempool.
+	
+	(mono_metadata_parse_type_full): Remove the mode != MONO_PARSE_PARAM restriction
+	to allow more cached types to be used.
+
+	* mono-debug.c (mono_debug_add_method): Appled patch from
+	David S. Miller  <davem@sunset.davemloft.net>: Access 
+	minfo->lexical_blocks[] entry elements using read32().
+
+2006-04-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* loader.c (mono_free_method): No longer free the method header for non-dynamic
+	methods as it is allocated from the mempool.
+
+	* metadata.c (mono_metadata_parse_mh_full): Allocate method headers from the
+	image mempool.
+
+	* metadata-internals.h: Add comments describing the reference counting scheme
+	used for MonoImage and MonoAssembly.
+
+	* image.c assembly.c reflection.c: Rework reference counting of images and 
+	assemblies so they are freed when the runtime is shut down. Free some 
+	additional memory structures when an image is unloaded.
+	
+2006-04-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c loader.c reflection.c: Allocate more data structures in
+	the image mempool.
+
+2006-03-31  Miguel de Icaza  <miguel@novell.com>
+
+	* icall.c
+	(ves_icall_System_Environment_InternalSetEnvironmentVariable): Fix
+	build on pre glib 2.4 systems.
+
+2006-03-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_System_Environment_InternalSetEnvironmentVariable): New icall.
+
+	* icall.c: Fix some warnings.
+
 2006-03-29  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* culture-info-table.h : regenerated.

@@ -1438,11 +1438,7 @@ mono_metadata_parse_type_full (MonoImage *m, MonoGenericContainer *container, Mo
 	if (rptr)
 		*rptr = ptr;
 
-	
-	/* FIXME: remove the != MONO_PARSE_PARAM condition, this accounts for
-	 * almost 10k (about 2/3rds) of all MonoType's we create.
-	 */
-	if (mode != MONO_PARSE_PARAM && !type->num_mods) {
+		if (!type->num_mods) {
 		/* no need to free type here, because it is on the stack */
 		if ((type->type == MONO_TYPE_CLASS || type->type == MONO_TYPE_VALUETYPE) && !type->pinned && !type->attrs) {
 			MonoType *ret = type->byref ? &type->data.klass->this_arg : &type->data.klass->byval_arg;
@@ -1473,7 +1469,7 @@ mono_metadata_parse_type_full (MonoImage *m, MonoGenericContainer *container, Mo
 			return cached;
 	}
 	
-	/*printf ("%x%c %s\n", type->attrs, type->pinned ? 'p' : ' ', mono_type_full_name (type));*/
+	/* printf ("%x %x %c %s\n", type->attrs, type->num_mods, type->pinned ? 'p' : ' ', mono_type_full_name (type)); */
 	
 	if (type == &stype)
 		type = g_memdup (&stype, sizeof (MonoType));
@@ -1488,12 +1484,47 @@ mono_metadata_parse_type (MonoImage *m, MonoParseTypeMode mode, short opt_attrs,
 }
 
 /*
+ * mono_metadata_get_param_attrs:
+ *
+ *   Return the parameter attributes for the method whose MethodDef index is DEF. The 
+ * returned memory needs to be freed by the caller. If all the param attributes are
+ * 0, then NULL is returned.
+ */
+int*
+mono_metadata_get_param_attrs (MonoImage *m, int def)
+{
+	MonoTableInfo *paramt = &m->tables [MONO_TABLE_PARAM];
+	MonoTableInfo *methodt = &m->tables [MONO_TABLE_METHOD];
+	guint32 cols [MONO_PARAM_SIZE];
+	guint lastp, i, param_index = mono_metadata_decode_row_col (methodt, def - 1, MONO_METHOD_PARAMLIST);
+	int *pattrs = NULL;
+
+	if (def < methodt->rows)
+		lastp = mono_metadata_decode_row_col (methodt, def, MONO_METHOD_PARAMLIST);
+	else
+		lastp = paramt->rows + 1;
+
+	for (i = param_index; i < lastp; ++i) {
+		mono_metadata_decode_row (paramt, i - 1, cols, MONO_PARAM_SIZE);
+		if (cols [MONO_PARAM_FLAGS]) {
+			if (!pattrs)
+				pattrs = g_new0 (int, 1 + (lastp - param_index));
+			pattrs [cols [MONO_PARAM_SEQUENCE]] = cols [MONO_PARAM_FLAGS];
+		}
+	}
+
+	return pattrs;
+}
+
+/*
  * mono_metadata_parse_signature_full:
  * @image: metadata context
  * @generic_container: generic container
  * @toke: metadata token
  *
  * Decode a method signature stored in the STANDALONESIG table
+ *
+ * LOCKING: Assumes the loader lock is held.
  *
  * Returns: a MonoMethodSignature describing the signature.
  */
@@ -1515,7 +1546,7 @@ mono_metadata_parse_signature_full (MonoImage *image, MonoGenericContainer *gene
 	ptr = mono_metadata_blob_heap (image, sig);
 	mono_metadata_decode_blob_size (ptr, &ptr);
 
-	return mono_metadata_parse_method_signature_full (image, generic_container, FALSE, ptr, NULL); 
+	return mono_metadata_parse_method_signature_full (image, generic_container, 0, ptr, NULL); 
 }
 
 /*
@@ -1542,6 +1573,8 @@ mono_metadata_parse_signature (MonoImage *image, guint32 token)
  * The return type and the params types need to be filled later.
  * This is a Mono runtime internal function.
  *
+ * LOCKING: Assumes the loader lock is held.
+ *
  * Returns: the new MonoMethodSignature structure.
  */
 MonoMethodSignature*
@@ -1549,8 +1582,7 @@ mono_metadata_signature_alloc (MonoImage *m, guint32 nparams)
 {
 	MonoMethodSignature *sig;
 
-	/* later we want to allocate signatures with mempools */
-	sig = g_malloc0 (sizeof (MonoMethodSignature) + ((gint32)nparams - MONO_ZERO_LEN_ARRAY) * sizeof (MonoType*));
+	sig = mono_mempool_alloc0 (m->mempool, sizeof (MonoMethodSignature) + ((gint32)nparams - MONO_ZERO_LEN_ARRAY) * sizeof (MonoType*));
 	sig->param_count = nparams;
 	sig->sentinelpos = -1;
 
@@ -1586,6 +1618,8 @@ mono_metadata_signature_dup (MonoMethodSignature *sig)
  * Decode a method signature stored at @ptr.
  * This is a Mono runtime internal function.
  *
+ * LOCKING: Assumes the loader lock is held.
+ *
  * Returns: a MonoMethodSignature describing the signature.
  */
 MonoMethodSignature *
@@ -1610,23 +1644,8 @@ mono_metadata_parse_method_signature_full (MonoImage *m, MonoGenericContainer *c
 		gen_param_count = mono_metadata_decode_value (ptr, &ptr);
 	param_count = mono_metadata_decode_value (ptr, &ptr);
 
-	if (def) {
-		MonoTableInfo *paramt = &m->tables [MONO_TABLE_PARAM];
-		MonoTableInfo *methodt = &m->tables [MONO_TABLE_METHOD];
-		guint32 cols [MONO_PARAM_SIZE];
-		guint lastp, param_index = mono_metadata_decode_row_col (methodt, def - 1, MONO_METHOD_PARAMLIST);
-
-		if (def < methodt->rows)
-			lastp = mono_metadata_decode_row_col (methodt, def, MONO_METHOD_PARAMLIST);
-		else
-			lastp = paramt->rows + 1;
-
-		pattrs = g_new0 (int, 1 + param_count);
-		for (i = param_index; i < lastp; ++i) {
-			mono_metadata_decode_row (paramt, i - 1, cols, MONO_PARAM_SIZE);
-			pattrs [cols [MONO_PARAM_SEQUENCE]] = cols [MONO_PARAM_FLAGS];
-		}
-	}
+	if (def)
+		pattrs = mono_metadata_get_param_attrs (m, def);
 	method = mono_metadata_signature_alloc (m, param_count);
 	method->hasthis = hasthis;
 	method->explicit_this = explicit_this;
@@ -1686,6 +1705,8 @@ mono_metadata_parse_method_signature_full (MonoImage *m, MonoGenericContainer *c
  * Decode a method signature stored at @ptr.
  * This is a Mono runtime internal function.
  *
+ * LOCKING: Assumes the loader lock is held.
+ *
  * Returns: a MonoMethodSignature describing the signature.
  */
 MonoMethodSignature *
@@ -1712,8 +1733,6 @@ mono_metadata_free_method_signature (MonoMethodSignature *sig)
 		if (sig->params [i])
 			mono_metadata_free_type (sig->params [i]);
 	}
-
-	g_free (sig);
 }
 
 /*
@@ -2206,7 +2225,9 @@ parse_section_data (MonoImage *m, MonoMethodHeader *mh, const unsigned char *ptr
  * info about local variables and optional exception tables.
  * This is a Mono runtime internal function.
  *
- * Returns: a MonoMethodHeader.
+ * LOCKING: Assumes the loader lock is held.
+ *
+ * Returns: a MonoMethodHeader allocated from the image mempool.
  */
 MonoMethodHeader *
 mono_metadata_parse_mh_full (MonoImage *m, MonoGenericContainer *container, const char *ptr)
@@ -2223,7 +2244,7 @@ mono_metadata_parse_mh_full (MonoImage *m, MonoGenericContainer *container, cons
 
 	switch (format) {
 	case METHOD_HEADER_TINY_FORMAT:
-		mh = g_new0 (MonoMethodHeader, 1);
+		mh = mono_mempool_alloc0 (m->mempool, sizeof (MonoMethodHeader));
 		ptr++;
 		mh->max_stack = 8;
 		local_var_sig_tok = 0;
@@ -2231,7 +2252,7 @@ mono_metadata_parse_mh_full (MonoImage *m, MonoGenericContainer *container, cons
 		mh->code = ptr;
 		return mh;
 	case METHOD_HEADER_TINY_FORMAT1:
-		mh = g_new0 (MonoMethodHeader, 1);
+		mh = mono_mempool_alloc0 (m->mempool, sizeof (MonoMethodHeader));
 		ptr++;
 		mh->max_stack = 8;
 		local_var_sig_tok = 0;
@@ -2286,7 +2307,7 @@ mono_metadata_parse_mh_full (MonoImage *m, MonoGenericContainer *container, cons
 			g_warning ("wrong signature for locals blob");
 		locals_ptr++;
 		len = mono_metadata_decode_value (locals_ptr, &locals_ptr);
-		mh = g_malloc0 (sizeof (MonoMethodHeader) + (len - MONO_ZERO_LEN_ARRAY) * sizeof (MonoType*));
+		mh = mono_mempool_alloc0 (m->mempool, sizeof (MonoMethodHeader) + (len - MONO_ZERO_LEN_ARRAY) * sizeof (MonoType*));
 		mh->num_locals = len;
 		for (i = 0; i < len; ++i) {
 			mh->locals [i] = mono_metadata_parse_type_full (
@@ -2297,7 +2318,7 @@ mono_metadata_parse_mh_full (MonoImage *m, MonoGenericContainer *container, cons
 			}
 		}
 	} else {
-		mh = g_new0 (MonoMethodHeader, 1);
+		mh = mono_mempool_alloc0 (m->mempool, sizeof (MonoMethodHeader));
 	}
 	mh->code = code;
 	mh->code_size = code_size;
@@ -2322,7 +2343,15 @@ mono_metadata_parse_mh_full (MonoImage *m, MonoGenericContainer *container, cons
 MonoMethodHeader *
 mono_metadata_parse_mh (MonoImage *m, const char *ptr)
 {
-	return mono_metadata_parse_mh_full (m, NULL, ptr);
+	MonoMethodHeader *res;
+
+	mono_loader_lock ();
+
+	res = mono_metadata_parse_mh_full (m, NULL, ptr);
+
+	mono_loader_unlock ();
+
+	return res;
 }
 
 /*
@@ -2335,11 +2364,7 @@ mono_metadata_parse_mh (MonoImage *m, const char *ptr)
 void
 mono_metadata_free_mh (MonoMethodHeader *mh)
 {
-	int i;
-	for (i = 0; i < mh->num_locals; ++i)
-		mono_metadata_free_type (mh->locals[i]);
-	g_free (mh->clauses);
-	g_free (mh);
+	/* Allocated from the mempool */
 }
 
 /*
@@ -2679,6 +2704,8 @@ mono_metadata_typedef_from_method (MonoImage *meta, guint32 index)
  * The array of interfaces that the @index typedef token implements is returned in
  * @interfaces. The number of elemnts in the array is returned in @count.
  *
+ * LOCKING: Assumes the loader lock is held.
+ *
  * Returns: TRUE on success, FALSE on failure.
  */
 gboolean
@@ -2686,7 +2713,7 @@ mono_metadata_interfaces_from_typedef_full (MonoImage *meta, guint32 index, Mono
 {
 	MonoTableInfo *tdef = &meta->tables [MONO_TABLE_INTERFACEIMPL];
 	locator_t loc;
-	guint32 start, i;
+	guint32 start, pos;
 	guint32 cols [MONO_INTERFACEIMPL_SIZE];
 	MonoClass **result;
 
@@ -2713,18 +2740,26 @@ mono_metadata_interfaces_from_typedef_full (MonoImage *meta, guint32 index, Mono
 		else
 			break;
 	}
-	result = NULL;
-	i = 0;
-	while (start < tdef->rows) {
-		mono_metadata_decode_row (tdef, start, cols, MONO_INTERFACEIMPL_SIZE);
+	pos = start;
+	while (pos < tdef->rows) {
+		mono_metadata_decode_row (tdef, pos, cols, MONO_INTERFACEIMPL_SIZE);
 		if (cols [MONO_INTERFACEIMPL_CLASS] != loc.idx)
 			break;
-		result = g_renew (MonoClass*, result, i + 1);
-		result [i] = mono_class_get_full (
-			meta, mono_metadata_token_from_dor (cols [MONO_INTERFACEIMPL_INTERFACE]), context);
-		*count = ++i;
-		++start;
+		++pos;
 	}
+
+	result = mono_mempool_alloc0 (meta->mempool, sizeof (MonoClass*) * (pos - start));
+
+	pos = start;
+	while (pos < tdef->rows) {
+		mono_metadata_decode_row (tdef, pos, cols, MONO_INTERFACEIMPL_SIZE);
+		if (cols [MONO_INTERFACEIMPL_CLASS] != loc.idx)
+			break;
+		result [pos - start] = mono_class_get_full (
+			meta, mono_metadata_token_from_dor (cols [MONO_INTERFACEIMPL_INTERFACE]), context);
+		++pos;
+	}
+	*count = pos - start;
 	*interfaces = result;
 	return TRUE;
 }
@@ -2735,7 +2770,9 @@ mono_metadata_interfaces_from_typedef (MonoImage *meta, guint32 index, guint *co
 	MonoClass **interfaces;
 	gboolean rv;
 
+	mono_loader_lock ();
 	rv = mono_metadata_interfaces_from_typedef_full (meta, index, &interfaces, count, NULL);
+	mono_loader_unlock ();
 	if (rv)
 		return interfaces;
 	else

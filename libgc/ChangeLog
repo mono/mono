@@ -1,3 +1,11 @@
+2006-04-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* include/private/gcconfig.h (LINUX and SPARC): Applied patch from 
+	David S. Miller <davem@davemloft.net>: Do not
+       use _etest and GC_SysVGetDataStart() to figure out DATASTART.
+       Instead use either SEARCH_FOR_DATA_START or __environ, based
+       upon GLIBC version.
+
 2006-03-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* configure.in: Applied patch from David S. Miller <davem@davemloft.net>: Fix support for sparc/linux.

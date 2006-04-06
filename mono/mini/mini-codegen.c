@@ -1021,7 +1021,6 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 	i = 1;
 	fpcount = 0;
 	DEBUG (printf ("\nLOCAL REGALLOC: BASIC BLOCK %d:\n", bb->block_num));
-
 	/* forward pass on the instructions to collect register liveness info */
 	for (ins = bb->code; ins; ins = ins->next) {
 		spec = ins_spec [ins->opcode];

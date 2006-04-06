@@ -285,7 +285,7 @@ add_to_blob_cached (MonoDynamicImage *assembly, char *b1, int s1, char *b2, int 
 	guint32 idx;
 	char *copy;
 	gpointer oldkey, oldval;
-	
+
 	copy = g_malloc (s1+s2);
 	memcpy (copy, b1, s1);
 	memcpy (copy + s1, b2, s2);
@@ -4310,7 +4310,7 @@ create_dynamic_mono_image (MonoDynamicAssembly *assembly, char *assembly_name, c
 	image->image.name = assembly_name;
 	image->image.assembly_name = image->image.name; /* they may be different */
 	image->image.module_name = module_name;
-	image->image.version = version;
+	image->image.version = g_strdup (version);
 	image->image.md_version_major = 1;
 	image->image.md_version_minor = 1;
 	image->image.dynamic = TRUE;
@@ -5081,6 +5081,7 @@ mono_image_load_module (MonoReflectionAssemblyBuilder *ab, MonoString *fileName)
 	if (image->assembly->image->modules)
 		memcpy (new_modules, image->assembly->image->modules, module_count * sizeof (MonoImage *));
 	new_modules [module_count] = image;
+	mono_image_addref (image);
 
 	g_free (image->assembly->image->modules);
 	image->assembly->image->modules = new_modules;
@@ -5204,6 +5205,7 @@ mono_image_module_basic_init (MonoReflectionModuleBuilder *moduleb)
 		if (ass->modules)
 			memcpy (new_modules, ass->modules, module_count * sizeof (MonoImage *));
 		new_modules [module_count] = &image->image;
+		mono_image_addref (&image->image);
 
 		g_free (ass->modules);
 		ass->modules = new_modules;
@@ -5271,8 +5273,6 @@ mono_module_get_object   (MonoDomain *domain, MonoImage *image)
 		}
 		g_assert (res->token);
 	}
-
-	mono_image_addref (image);
 
 	CACHE_OBJECT (MonoReflectionModule *, image, res, NULL);
 }
@@ -7988,7 +7988,6 @@ mono_reflection_setup_internal_class (MonoReflectionTypeBuilder *tb)
 		klass = mono_class_from_mono_type (tb->type.type);
 		klass->parent = NULL;
 		/* fool mono_class_setup_parent */
-		g_free (klass->supertypes);
 		klass->supertypes = NULL;
 		mono_class_setup_parent (klass, parent);
 		mono_class_setup_mono_type (klass);

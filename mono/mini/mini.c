@@ -788,7 +788,6 @@ link_bblock (MonoCompile *cfg, MonoBasicBlock *from, MonoBasicBlock* to)
 void
 mono_unlink_bblock (MonoCompile *cfg, MonoBasicBlock *from, MonoBasicBlock* to)
 {
-	MonoBasicBlock **newa;
 	int i, pos;
 	gboolean found;
 
@@ -800,15 +799,13 @@ mono_unlink_bblock (MonoCompile *cfg, MonoBasicBlock *from, MonoBasicBlock* to)
 		}
 	}
 	if (found) {
-		newa = mono_mempool_alloc (cfg->mempool, sizeof (gpointer) * (from->out_count - 1));
 		pos = 0;
 		for (i = 0; i < from->out_count; ++i) {
 			if (from->out_bb [i] != to)
-				newa [pos ++] = from->out_bb [i];
+				from->out_bb [pos ++] = from->out_bb [i];
 		}
 		g_assert (pos == from->out_count - 1);
 		from->out_count--;
-		from->out_bb = newa;
 	}
 
 	found = FALSE;
@@ -819,15 +816,13 @@ mono_unlink_bblock (MonoCompile *cfg, MonoBasicBlock *from, MonoBasicBlock* to)
 		}
 	}
 	if (found) {
-		newa = mono_mempool_alloc (cfg->mempool, sizeof (gpointer) * (to->in_count - 1));
 		pos = 0;
 		for (i = 0; i < to->in_count; ++i) {
 			if (to->in_bb [i] != from)
-				newa [pos ++] = to->in_bb [i];
+				to->in_bb [pos ++] = to->in_bb [i];
 		}
 		g_assert (pos == to->in_count - 1);
 		to->in_count--;
-		to->in_bb = newa;
 	}
 }
 
@@ -3983,6 +3978,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 	dont_verify = method->klass->image->assembly->corlib_internal? TRUE: FALSE;
 	dont_verify |= method->wrapper_type == MONO_WRAPPER_XDOMAIN_INVOKE;
 	dont_verify |= method->wrapper_type == MONO_WRAPPER_XDOMAIN_DISPATCH;
+	dont_verify |= method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE; /* bug #77896 */
 
 	/* still some type unsefety issues in marshal wrappers... (unknown is PtrToStructure) */
 	dont_verify_stloc = method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE;
@@ -8975,7 +8971,7 @@ remove_block_if_useless (MonoCompile *cfg, MonoBasicBlock *bb, MonoBasicBlock *p
 			link_bblock (cfg, in_bb, target_bb);
 			replace_out_block_in_code (in_bb, bb, target_bb);
 		}
-
+		
 		mono_unlink_bblock (cfg, bb, target_bb);
 		
 		if ((previous_bb != cfg->bb_entry) &&
@@ -9376,7 +9372,7 @@ optimize_branches (MonoCompile *cfg)
 
 						link_bblock (cfg, bb, bb->last_ins->inst_true_bb);
 						link_bblock (cfg, bb, bb->last_ins->inst_false_bb);
-						
+
 						changed = TRUE;
 						continue;
 					}
@@ -11991,6 +11987,9 @@ mini_cleanup (MonoDomain *domain)
 	 */
 	mono_domain_finalize (domain, 2000);
 
+	/* This accesses metadata so needs to be called before runtime shutdown */
+	print_jit_stats ();
+
 	mono_runtime_cleanup (domain);
 
 	mono_profiler_shutdown ();
@@ -12009,8 +12008,8 @@ mini_cleanup (MonoDomain *domain)
 	g_hash_table_destroy (jit_icall_name_hash);
 	if (class_init_hash_addr)
 		g_hash_table_destroy (class_init_hash_addr);
+	g_free (emul_opcode_map);
 
-	print_jit_stats ();
 	mono_counters_dump (-1, stdout);
 }
 

@@ -1174,9 +1174,9 @@ mono_get_method_from_token (MonoImage *image, guint32 token, MonoClass *klass,
 
 	if ((cols [2] & METHOD_ATTRIBUTE_PINVOKE_IMPL) ||
 	    (cols [1] & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL))
-		result = (MonoMethod *)g_new0 (MonoMethodPInvoke, 1);
+		result = (MonoMethod *)mono_mempool_alloc0 (image->mempool, sizeof (MonoMethodPInvoke));
 	else
-		result = (MonoMethod *)g_new0 (MonoMethodNormal, 1);
+		result = (MonoMethod *)mono_mempool_alloc0 (image->mempool, sizeof (MonoMethodNormal));
 
 	if (!klass) {
 		guint32 type = mono_metadata_typedef_from_method (image, token);
@@ -1335,7 +1335,8 @@ mono_free_method  (MonoMethod *method)
 		 * locals are shared.
 		 */
 		/* mono_metadata_free_method_signature (method->signature); */
-		g_free (method->signature);
+		if (method->dynamic)
+			g_free (method->signature);
 	}
 
 	if (method->dynamic) {
@@ -1347,13 +1348,14 @@ mono_free_method  (MonoMethod *method)
 		g_free (mw->method_data);
 	}
 
-	if (!(method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) && ((MonoMethodNormal *)method)->header) {
+	if (method->dynamic && !(method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) && ((MonoMethodNormal *)method)->header) {
 		/* FIXME: Ditto */
 		/* mono_metadata_free_mh (((MonoMethodNormal *)method)->header); */
 		g_free (((MonoMethodNormal*)method)->header);
 	}
 
-	g_free (method);
+	if (method->dynamic)
+		g_free (method);
 }
 
 void
@@ -1612,7 +1614,9 @@ mono_method_signature (MonoMethod *m)
 	int size;
 	MonoImage* img;
 	const char *sig;
+	gboolean can_cache_signature;
 	MonoGenericContainer *container;
+	int *pattrs;
 
 	if (m->signature)
 		return m->signature;
@@ -1639,14 +1643,36 @@ mono_method_signature (MonoMethod *m)
 	img = m->klass->image;
 
 	sig = mono_metadata_blob_heap (img, mono_metadata_decode_row_col (&img->tables [MONO_TABLE_METHOD], idx - 1, MONO_METHOD_SIGNATURE));
-	size = mono_metadata_decode_blob_size (sig, &sig);
 
 	g_assert (!m->klass->generic_class);
 	container = m->generic_container;
 	if (!container)
 		container = m->klass->generic_container;
 
-	m->signature = mono_metadata_parse_method_signature_full (img, container, idx, sig, NULL);
+	/* Generic signatures depend on the container so they cannot be cached */
+	/* icall/pinvoke signatures cannot be cached cause we modify them below */
+	can_cache_signature = !(m->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) && !(m->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL) && !container;
+
+	/* If the method has parameter attributes, that can modify the signature */
+	pattrs = mono_metadata_get_param_attrs (img, idx);
+	if (pattrs) {
+		can_cache_signature = FALSE;
+		g_free (pattrs);
+	}
+
+	if (can_cache_signature)
+		m->signature = g_hash_table_lookup (img->method_signatures, sig);
+
+	if (!m->signature) {
+		const char *sig_body;
+
+		size = mono_metadata_decode_blob_size (sig, &sig_body);
+
+		m->signature = mono_metadata_parse_method_signature_full (img, container, idx, sig_body, NULL);
+
+		if (can_cache_signature)
+			g_hash_table_insert (img->method_signatures, (gpointer)sig, m->signature);
+	}
 
 	/* Verify metadata consistency */
 	if (m->signature->generic_param_count) {
