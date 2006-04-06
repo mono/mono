@@ -1,3 +1,8 @@
+2006-04-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebResponse.cs: don't remove the Set-Cookie headers. Fixes bug
+	#78028.
+
 2006-04-03  Chris Toshok  <toshok@ximian.com>
 
 	* HttpWebResponse.cs (ContentEncoding): return "" if the header
