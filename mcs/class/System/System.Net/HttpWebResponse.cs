@@ -71,9 +71,6 @@ namespace System.Net
 			if (container != null) {
 				this.cookieContainer = container;
 				FillCookies ();
-			} else if (webHeaders != null) {
-				webHeaders.RemoveInternal ("Set-Cookie");
-				webHeaders.RemoveInternal ("Set-Cookie2");
 			}
 		}
 
