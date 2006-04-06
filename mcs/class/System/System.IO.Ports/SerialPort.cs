@@ -141,14 +141,14 @@ namespace System.IO.Ports
 		public bool CDHolding {
 			get {
 				CheckOpen ();
-				throw new NotImplementedException ();
+				return stream.GetSignal (SerialSignal.Cd);
 			}
 		}
 
 		public bool CtsHolding {
 			get {
 				CheckOpen ();
-				throw new NotImplementedException ();
+				return stream.GetSignal (SerialSignal.Cts);
 			}
 		}
 
@@ -180,16 +180,21 @@ namespace System.IO.Ports
 		public bool DsrHolding {
 			get {
 				CheckOpen ();
-				throw new NotImplementedException ();
+				return stream.GetSignal (SerialSignal.Dsr);
 			}
 		}
 
 		public bool DtrEnable {
 			get {
-				throw new NotImplementedException ();
+				return dtr_enable;
 			}
 			set {
-				throw new NotImplementedException ();
+				if (value == dtr_enable)
+					return;
+				if (isOpen)
+					stream.SetSignal (SerialSignal.Dtr, value);
+				
+				dtr_enable = value;
 			}
 		}
 
@@ -320,10 +325,15 @@ namespace System.IO.Ports
 
 		public bool RtsEnable {
 			get {
-				throw new NotImplementedException ();
+				return rts_enable;
 			}
 			set {
-				throw new NotImplementedException ();
+				if (value == rts_enable)
+					return;
+				if (isOpen)
+					stream.SetSignal (SerialSignal.Rts, value);
+				
+				rts_enable = value;
 			}
 		}
 

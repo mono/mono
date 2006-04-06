@@ -50,6 +50,12 @@ namespace System.IO.Ports
 			
 			if (!set_attributes (fd, baud_rate, parity, data_bits, stop_bits, handshake))
 				throw new IOException ();
+
+			SetSignal (SerialSignal.Dtr, dtrEnable);
+			
+			if (handsh != Handshake.RequestToSend && 
+					handsh != Handshake.RequestToSendXOnXOff)
+				SetSignal (SerialSignal.Rts, rtsEnable);
 		}
 
 		public override bool CanRead {
@@ -279,6 +285,37 @@ namespace System.IO.Ports
 		internal void DiscardOutputBuffer ()
 		{
 			discard_buffer (fd, false);
+		}
+		
+		[DllImport ("MonoPosixHelper")]
+		static extern int get_signal (int fd, SerialSignal signal);
+
+		internal bool GetSignal (SerialSignal signal)
+		{
+			if (signal < SerialSignal.Cd || signal > SerialSignal.Rts)
+				throw new Exception ("Invalid internal value");
+
+			int val = get_signal (fd, signal);
+			if (val < 0)
+				throw new IOException ();
+
+			return val == 1;
+		}
+
+		[DllImport ("MonoPosixHelper")]
+		static extern int set_signal (int fd, SerialSignal signal, bool value);
+
+		internal void SetSignal (SerialSignal signal, bool value)
+		{
+			if (signal < SerialSignal.Cd || signal > SerialSignal.Rts ||
+					signal == SerialSignal.Cd ||
+					signal == SerialSignal.Cts ||
+					signal == SerialSignal.Dsr)
+				throw new Exception ("Invalid internal value");
+
+			int val = set_signal (fd, signal, value);
+			if (val < 0)
+				throw new IOException ();
 		}
 
 	}
