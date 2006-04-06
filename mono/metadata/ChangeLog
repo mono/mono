@@ -1,5 +1,7 @@
 2006-04-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* metadata.c: Add some locking comments.
+	
 	* metadata.c (mono_metadata_signature_alloc): Allocate signatures in the image
 	mempool.
 	(mono_metadata_free_method_signature): Don't free the signature itself.
