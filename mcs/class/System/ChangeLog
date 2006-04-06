@@ -1,3 +1,7 @@
+2006-04-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* System.dll.sources: Added System.IO.Ports/SerialSignal.cs.
+	
 2006-04-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.dll.sources : added SslPolicyErrors.cs.
