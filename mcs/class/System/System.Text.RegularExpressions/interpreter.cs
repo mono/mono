@@ -469,6 +469,7 @@ namespace System.Text.RegularExpressions {
 					if (ptr == current.Start) {
 						// degenerate match ... match tail or fail
 						this.repeat = current.Previous;
+						deep = null;
 						if (Eval (Mode.Match, ref ptr, pc + 1))
 							goto Pass;
 					
@@ -480,6 +481,7 @@ namespace System.Text.RegularExpressions {
 						for (;;) {
 							// match tail first ...
 							this.repeat = current.Previous;
+							deep = null;
 							int cp = Checkpoint ();
 							if (Eval (Mode.Match, ref ptr, pc + 1))
 								goto Pass;
@@ -489,7 +491,7 @@ namespace System.Text.RegularExpressions {
 							// ... then match more
 							this.repeat = current;
 							if (current.IsMaximum)
-								return false;
+								goto Fail;
 							++ current.Count;
 							current.Start = ptr;
 							deep = current;
@@ -539,6 +541,7 @@ namespace System.Text.RegularExpressions {
 						// then, match the tail, backtracking as necessary.
 						this.repeat = current.Previous;
 						for (;;) {
+							deep = null;
 							if (Eval (Mode.Match, ref ptr, pc + 1)) {
 								stack.Count = stack_size;
 								goto Pass;
@@ -563,8 +566,6 @@ namespace System.Text.RegularExpressions {
 						(flags & OpFlags.Lazy) != 0,	// lazy
 						pc + 4				// subexpression
 					);
-
-					deep = fast;
 
 					fast.Start = ptr;
 
@@ -618,9 +619,11 @@ namespace System.Text.RegularExpressions {
 						
 						while (true) {
 							int p = ptr + coff;
-							if ((c1 < 0 || (p >= 0 && p < text_end && (c1 == text[p] || c2 == text[p]))) &&
-							    Eval (Mode.Match, ref ptr, pc))
-								break;
+							if (c1 < 0 || (p >= 0 && p < text_end && (c1 == text[p] || c2 == text[p]))) {
+								deep = null;
+								if (Eval (Mode.Match, ref ptr, pc))
+									break;
+							}
 
 							if (fast.IsMaximum) {
 								//Console.WriteLine ("lazy fast: failed with maximum.");
@@ -652,9 +655,11 @@ namespace System.Text.RegularExpressions {
 
 						while (true) {
 							int p = ptr + coff;
-							if ((c1 < 0 || (p >= 0 && p < text_end && (c1 == text[p] || c2 == text[p]))) &&
-							    Eval (Mode.Match, ref ptr, pc))
-								break;
+							if (c1 < 0 || (p >= 0 && p < text_end && (c1 == text[p] || c2 == text[p]))) {
+								deep = null;
+								if (Eval (Mode.Match, ref ptr, pc))
+									break;
+							}
 
 							-- fast.Count;
 							if (!fast.IsMinimum) {

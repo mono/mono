@@ -322,5 +322,14 @@ namespace MonoTests.System.Text.RegularExpressions
 		{
 			bool b = Regex.IsMatch ("foobar", @"[a-\s]");
 		}
+
+		[Test]
+		public void Bug77487 ()
+		{
+			Assert ("#01", Regex.IsMatch ("a a", "^(a[^a]*)*a$"));
+			Assert ("#02", Regex.IsMatch ("a a", "^(a *)*a$"));
+			Assert ("#03", Regex.IsMatch ("a a", "(a[^a]*)+a"));
+			Assert ("#04", Regex.IsMatch ("a a", "(a *)+a"));
+		}
 	}
 }

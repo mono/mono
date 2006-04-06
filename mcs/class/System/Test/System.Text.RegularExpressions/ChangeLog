@@ -1,5 +1,7 @@
 2006-04-06  Raja R Harinath  <rharinath@novell.com>
 
+	* RegexBugs.cs (Bug77487): New test based on #77487.
+
 	* RegexTrial.cs (Execute): Run NUnit assertion here.
 	* PerlTests.cs: Simplify.
 
