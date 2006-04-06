@@ -1,3 +1,8 @@
+2006-04-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FAMWatcher.cs: add new directories to the hashtable after start
+	monitoring them, otherwise the ReqNum is not set. Fixes bug #78029.
+
 2006-01-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FAMWatcher.cs: fix arraylist access when a new directory is added and

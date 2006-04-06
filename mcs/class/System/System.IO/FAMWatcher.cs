@@ -280,11 +280,15 @@ namespace System.IO {
 						string full = fsw.FullPath;
 						string datadir = data.Directory;
 						if (datadir != full) {
-							string reldir = datadir.Substring (full.Length + 1);
+							int len = full.Length;
+							int slash = 1;
+							if (len > 1 && full [len - 1] == Path.DirectorySeparatorChar)
+								slash = 0;
+							string reldir = datadir.Substring (full.Length + slash);
 							datadir = Path.Combine (datadir, filename);
 							filename = Path.Combine (reldir, filename);
 						} else {
-							datadir = Path.Combine (fsw.FullPath, filename);
+							datadir = Path.Combine (full, filename);
 						}
 
 						if (fa == FileAction.Added && Directory.Exists (datadir)) {
@@ -300,7 +304,6 @@ namespace System.IO {
 							fd.Enabled = true;
 							newdirs.Add (fd);
 							newdirs.Add (data);
-							requests [fd.Request.ReqNum] = fd;
 						}
 					}
 
@@ -324,6 +327,7 @@ namespace System.IO {
 					FAMData newdir = (FAMData) newdirs [n];
 					FAMData parent = (FAMData) newdirs [n + 1];
 					StartMonitoringDirectory (newdir);
+					requests [newdir.Request.ReqNum] = newdir;
 					lock (parent) {
 						parent.SubDirs [newdir.Directory] = newdir;
 					}
