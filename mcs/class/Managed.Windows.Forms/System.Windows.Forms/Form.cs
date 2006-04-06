@@ -1128,8 +1128,12 @@ namespace System.Windows.Forms {
 		public DialogResult ShowDialog(IWin32Window ownerWin32) {
 			Form		previous;
 
+			owner = null;
+
 			if (ownerWin32 != null) {
-				owner = (Form)Control.FromHandle(ownerWin32.Handle);
+				Control c = Control.FromHandle (ownerWin32.Handle);
+				if (c != null)
+					owner = c.TopLevelControl as Form;
 			}
 
 			if (owner == this) {

@@ -1,3 +1,10 @@
+2006-04-06  Mike Kestner  <mkestner@novell.com>
+
+	* Form.cs (ShowDialog): MS allows IWin32Window param to be a non-form.
+	I'm assuming that means we need to look up the toplevel for the
+	provided control. Fixes the crash trace in #77911 but exposes another
+	crash in some strange reflection usage in NDocGui.
+
 2006-04-06  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ThemeNice.cs: Gave it a little silver touch and added Images
