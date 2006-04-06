@@ -182,6 +182,11 @@ namespace Mono.CSharp {
 				-202, loc, "Can not use a type parameter in an attribute");
 		}
 
+		public void Error_MissingGuidAttribute ()
+		{
+			Report.Error (596, Location, "The Guid attribute must be specified with the ComImport attribute");
+		}
+
 		/// <summary>
 		/// This is rather hack. We report many emit attribute error with same error to be compatible with
 		/// csc. But because csc has to report them this way because error came from ilasm we needn't.

@@ -2757,6 +2757,12 @@ namespace Mono.CSharp {
 				return;
 			}
 
+			if (a.Type == TypeManager.comimport_attr_type &&
+				!attributes.Contains (TypeManager.guid_attr_type)) {
+					a.Error_MissingGuidAttribute ();
+					return;
+			}
+
 			if (AttributeTester.IsAttributeExcluded (a.Type))
 				return;
 
@@ -3059,6 +3065,17 @@ namespace Mono.CSharp {
 
 			this.ModFlags = Modifiers.Check (AllowedModifiers, mod, accmods, name.Location);
 		}
+
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
+		{
+			if (a.Type == TypeManager.comimport_attr_type &&
+				!attributes.Contains (TypeManager.guid_attr_type)) {
+					a.Error_MissingGuidAttribute ();
+					return;
+			}
+			base.ApplyAttributeBuilder (a, cb);
+		}
+
 
 		public override AttributeTargets AttributeTargets {
 			get {
