@@ -1,3 +1,10 @@
+2006-04-06  Alexander Olk  <alex.olk@googlemail.com>
+
+	* ThemeNice.cs: Gave it a little silver touch and added Images
+	  method
+	* FontDialog.cs: FontDialog is not resizable
+	* FileDialg.cs: Added SizeGripStyle.Show
+
 2006-04-05  Jackson Harper  <jackson@ximian.com>
 
 	* KeyboardLayouts.cs: Remove warning.

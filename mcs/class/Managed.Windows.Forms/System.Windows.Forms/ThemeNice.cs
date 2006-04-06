@@ -54,11 +54,24 @@ namespace System.Windows.Forms
 		
 		static Bitmap size_grip_bmp = CreateSizegripDot();
 		
+		static Blend NormalBlend;
+		static Blend FlatBlend;
+		
+		int platform = (int) Environment.OSVersion.Platform;
+		
 		#region	Principal Theme Methods
 		public ThemeNice( )
 		{
 			ColorControl = NiceBackColor;
 			always_draw_hotkeys = true;
+			
+			FlatBlend = new Blend ();
+			FlatBlend.Factors = new float []{0.0f, 0.992f, 1.0f};
+			FlatBlend.Positions = new float []{0.0f, 0.68f, 1.0f};
+			
+			NormalBlend = new Blend ();
+			NormalBlend.Factors = new float []{0.0f, 0.008f, 1.0f};
+			NormalBlend.Positions = new float []{0.0f, 0.32f, 1.0f};
 		}
 		
 		public override Color DefaultControlBackColor
@@ -83,13 +96,65 @@ namespace System.Windows.Forms
 				SmoothingMode old_smoothing_mode = dc.SmoothingMode;
 				dc.SmoothingMode = SmoothingMode.AntiAlias;
 				
-				using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( 0, 0 ), new Point( 4, 4 ), PressedColor, Color.White ) )
-						dc.FillEllipse( lgbr, new Rectangle( 0, 0, 4, 4 ) );
+				using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( 0, 0 ), new Point( 4, 4 ), PressedColor, Color.White ) ) {
+					Blend bl = new Blend ();
+					bl.Factors = new float []{0.0f, 0.992f, 1.0f};
+					bl.Positions = new float []{0.0f, 0.68f, 1.0f};
+					lgbr.Blend = bl;
+					dc.FillEllipse( lgbr, new Rectangle( 0, 0, 4, 4 ) );
+				}
 				
 				dc.SmoothingMode = old_smoothing_mode;
 			}
 			
 			return bmp;
+		}
+		
+		public override Image Images(UIIcon index, int size) {
+			switch (index) {
+			case UIIcon.PlacesRecentDocuments:
+				if ((platform == 4) || (platform == 128))
+					return MimeIconEngine.GetIconForMimeTypeAndSize( "recently/recently", new Size(size, size) );
+				else
+					return base.Images (UIIcon.PlacesRecentDocuments, size);
+			case UIIcon.PlacesDesktop:
+				if ((platform == 4) || (platform == 128))
+					return MimeIconEngine.GetIconForMimeTypeAndSize( "desktop/desktop", new Size(size, size) );
+				else
+					return base.Images (UIIcon.PlacesDesktop, size);
+			case UIIcon.PlacesPersonal:
+				if ((platform == 4) || (platform == 128))
+					return MimeIconEngine.GetIconForMimeTypeAndSize( "directory/home", new Size(size, size) );
+				else
+					return base.Images (UIIcon.PlacesPersonal, size);
+			case UIIcon.PlacesMyComputer:
+				if ((platform == 4) || (platform == 128))
+					return MimeIconEngine.GetIconForMimeTypeAndSize( "workplace/workplace", new Size(size, size) );
+				else
+					return base.Images (UIIcon.PlacesMyComputer, size);
+			case UIIcon.PlacesMyNetwork:
+				if ((platform == 4) || (platform == 128))
+					return MimeIconEngine.GetIconForMimeTypeAndSize( "network/network", new Size(size, size) );
+				else
+					return base.Images (UIIcon.PlacesMyNetwork, size);
+				
+				// Icons for message boxes
+			case UIIcon.MessageBoxError:		return base.Images (UIIcon.MessageBoxError, size);
+			case UIIcon.MessageBoxInfo:		return base.Images (UIIcon.MessageBoxInfo, size);
+			case UIIcon.MessageBoxQuestion:		return base.Images (UIIcon.MessageBoxQuestion, size);
+			case UIIcon.MessageBoxWarning:		return base.Images (UIIcon.MessageBoxWarning, size);
+				
+				// misc Icons
+			case UIIcon.NormalFolder:
+				if ((platform == 4) || (platform == 128))
+					return MimeIconEngine.GetIconForMimeTypeAndSize( "inode/directory", new Size(size, size) );
+				else
+					return base.Images (UIIcon.NormalFolder, size);
+				
+			default: {
+					throw new ArgumentException("Invalid Icon type requested", "index");
+				}
+			}
 		}
 		#endregion	// Internal Methods
 		
@@ -149,10 +214,13 @@ namespace System.Windows.Forms
 			
 			if (button.flat_style != FlatStyle.Popup || ((button.flat_style == FlatStyle.Popup) && button.is_entered)) {
 				LinearGradientBrush lgbr;
-				if (button.flat_style == FlatStyle.Flat)
+				if (button.flat_style == FlatStyle.Flat) {
 					lgbr = new LinearGradientBrush (new Point (0, 0), new Point (0, height - 1), use_color, first_color);
-				else
+					lgbr.Blend = FlatBlend;
+				} else {
 					lgbr = new LinearGradientBrush (new Point (0, 0), new Point (0, height - 1), first_color, use_color);
+					lgbr.Blend = NormalBlend;
+				}
 				dc.FillRectangle (lgbr, lgbRectangle);
 				lgbr.Dispose ();
 				
@@ -432,12 +500,14 @@ namespace System.Windows.Forms
 			// Draw bar background
 			using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( client_area.Left, client_area.Top ), new Point( client_area.Left, client_area.Bottom ), LightColor, Color.White ) )
 			{
+				lgbr.Blend = FlatBlend;
 				dc.FillRectangle( lgbr, client_area );
 			}
 			
 			// Draw bar
 			using ( LinearGradientBrush lgbr = new LinearGradientBrush( bar.Location, new Point( bar.X, bar.Bottom ), Color.White, PressedColor ) )
 			{
+				lgbr.Blend = NormalBlend;
 				dc.FillRectangle( lgbr, bar );
 			}
 			
@@ -477,6 +547,7 @@ namespace System.Windows.Forms
 			{
 				using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( 0, 0 ), new Point( r. Width - 1, 0 ), LightColor, Color.White ) )
 				{
+					lgbr.Blend = FlatBlend;
 					dc.FillRectangle( lgbr, intersect );
 				}
 			}
@@ -490,6 +561,8 @@ namespace System.Windows.Forms
 			
 			using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( 0, 0 ), new Point( r. Width - 1, 0 ), LightColor, Color.White ) )
 			{
+				lgbr.Blend = FlatBlend;
+				
 				if ( intersect != Rectangle.Empty )
 					dc.FillRectangle( lgbr, intersect );
 				
@@ -512,6 +585,8 @@ namespace System.Windows.Forms
 			
 			using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( 0, 0 ), new Point( r. Width - 1, 0 ), LightColor, Color.White ) )
 			{
+				lgbr.Blend = FlatBlend;
+				
 				if ( intersect != Rectangle.Empty )
 					dc.FillRectangle( lgbr, intersect );
 				
@@ -536,6 +611,8 @@ namespace System.Windows.Forms
 			{
 				using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( 0, 0 ), new Point( 0, r.Height - 1 ), LightColor, Color.White ) )
 				{
+					lgbr.Blend = FlatBlend;
+					
 					dc.FillRectangle( lgbr, intersect );
 				}
 			}
@@ -549,6 +626,8 @@ namespace System.Windows.Forms
 			
 			using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( 0, 0 ), new Point( 0, r.Height - 1 ), LightColor, Color.White ) )
 			{
+				lgbr.Blend = FlatBlend;
+				
 				if ( intersect != Rectangle.Empty )
 					dc.FillRectangle( lgbr, intersect );
 				
@@ -571,6 +650,8 @@ namespace System.Windows.Forms
 			
 			using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( 0, 0 ), new Point( 0, r.Height - 1 ), LightColor, Color.White ) )
 			{
+				lgbr.Blend = FlatBlend;
+				
 				if ( intersect != Rectangle.Empty )
 					dc.FillRectangle( lgbr, intersect );
 				
@@ -785,6 +866,7 @@ namespace System.Windows.Forms
 							
 							using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( bounds.Left + 2, bounds.Top + 2  ), new Point( bounds.Left + 2, bounds.Bottom ), Color.White, LightColor ) )
 							{
+								lgbr.Blend = NormalBlend;
 								dc.FillRectangle( lgbr, interior );
 							}
 						}
@@ -825,6 +907,7 @@ namespace System.Windows.Forms
 							
 							using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( bounds.Left + 3, bounds.Top  ), new Point( bounds.Left + 3, bounds.Bottom  ), Color.White, LightColor ) )
 							{
+								lgbr.Blend = NormalBlend;
 								dc.FillRectangle( lgbr, interior );
 							}
 						}
@@ -865,6 +948,7 @@ namespace System.Windows.Forms
 							
 							using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( bounds.Left + 2, bounds.Top + 2  ), new Point( bounds.Right, bounds.Top + 2 ), LightColor, Color.White ) )
 							{
+								lgbr.Blend = FlatBlend;
 								dc.FillRectangle( lgbr, interior );
 							}
 						}
@@ -911,6 +995,7 @@ namespace System.Windows.Forms
 							
 							using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( bounds.Left + 2, bounds.Top + 2  ), new Point( bounds.Right, bounds.Top + 2 ), Color.White, LightColor ) )
 							{
+								lgbr.Blend = NormalBlend;
 								dc.FillRectangle( lgbr, interior );
 							}
 						}
@@ -1058,8 +1143,14 @@ namespace System.Windows.Forms
 			
 			Rectangle lgbRectangle = Rectangle.Inflate (rectangle, -1, -1);
 			
-			using (LinearGradientBrush lgbr = new LinearGradientBrush (new Point (rectangle.X, rectangle.Y), new Point (rectangle.X, rectangle.Bottom - 1), first_color, second_color))
+			using (LinearGradientBrush lgbr = new LinearGradientBrush (new Point (rectangle.X, rectangle.Y), new Point (rectangle.X, rectangle.Bottom - 1), first_color, second_color)) {
+				if ((state & ButtonState.Flat) == ButtonState.Flat) {
+					lgbr.Blend = FlatBlend;
+				} else {
+					lgbr.Blend = NormalBlend;
+				}
 				dc.FillRectangle (lgbr, lgbRectangle);
+			}
 			
 			Point[] points = new Point [] {
 				new Point (rectangle.X + 2, rectangle.Y),
@@ -1121,6 +1212,7 @@ namespace System.Windows.Forms
 			
 			using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( rectangle.X + 1, rectangle.Y + 1 ), new Point( rectangle.X + 1, rectangle.Bottom - 2 ), first_color, second_color ) )
 			{
+				lgbr.Blend = NormalBlend;
 				dc.FillRectangle( lgbr, rectangle.X + 2, rectangle.Y + 1, rectangle.Width - 4, rectangle.Height - 3 );
 			}
 			
@@ -1290,6 +1382,8 @@ namespace System.Windows.Forms
 			else
 				lgbr = new LinearGradientBrush( new Point( area.X, area.Y ), new Point( area.X, area.Bottom ), Color.White, NormalColor );
 			
+			lgbr.Blend = NormalBlend;
+			
 			Pen pen = ResPool.GetPen( BorderColor );
 			
 			Point[] points = new Point[] {
@@ -1377,8 +1471,9 @@ namespace System.Windows.Forms
 			switch ( scroll_button_type )
 			{
 				case ScrollButton.Left:
-					lgbr = new LinearGradientBrush( new Point( area.X, area.Y ), new Point( area.Right - 2, area.Y ), use_color, Color.White );
-					dc.FillRectangle( lgbr, area.X + 1, area.Y + 1, area.Width - 4, area.Height - 2 );
+					lgbr = new LinearGradientBrush( new Point( area.X, area.Y ), new Point( area.Right - 1, area.Y ), use_color, Color.White );
+					lgbr.Blend = FlatBlend;
+					dc.FillRectangle( lgbr, area.X + 1, area.Y + 1, area.Width - 2, area.Height - 2 );
 					
 					points = new Point[] {
 						new Point( area.X + 2, area.Y ),
@@ -1393,6 +1488,7 @@ namespace System.Windows.Forms
 					break;
 				case ScrollButton.Right:
 					lgbr = new LinearGradientBrush( new Point( area.X, area.Y ), new Point( area.Right - 1, area.Y ), Color.White, use_color );
+					lgbr.Blend = NormalBlend;
 					dc.FillRectangle( lgbr, area.X, area.Y + 1, area.Width - 1, area.Height - 2 );
 					
 					points = new Point[] {
@@ -1408,6 +1504,7 @@ namespace System.Windows.Forms
 					break;
 				case ScrollButton.Up:
 					lgbr = new LinearGradientBrush( new Point( area.X, area.Y ), new Point( area.X, area.Bottom - 1 ), use_color, Color.White );
+					lgbr.Blend = FlatBlend;
 					dc.FillRectangle( lgbr, area.X + 1, area.Y + 1, area.Width - 2, area.Height - 2 );
 					
 					points = new Point[] {
@@ -1423,6 +1520,7 @@ namespace System.Windows.Forms
 					break;
 				case ScrollButton.Down:
 					lgbr = new LinearGradientBrush( new Point( area.X, area.Y ), new Point( area.X, area.Bottom - 1 ), Color.White, use_color );
+					lgbr.Blend = NormalBlend;
 					dc.FillRectangle( lgbr, area.X + 1, area.Y + 1, area.Width - 2, area.Height - 2 );
 					
 					points = new Point[] {

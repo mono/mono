@@ -147,6 +147,9 @@ namespace System.Windows.Forms
 			effectsGroupBox.SuspendLayout( );
 			form.SuspendLayout( );
 			
+			form.FormBorderStyle = FormBorderStyle.FixedDialog;
+			form.MaximizeBox = false;
+			
 			// fontsizeListBox
 			fontsizeListBox.Location = new Point( 284, 47 );
 			fontsizeListBox.Size = new Size( 52, 95 );

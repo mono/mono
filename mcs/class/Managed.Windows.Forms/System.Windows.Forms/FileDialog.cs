@@ -314,6 +314,8 @@ namespace System.Windows.Forms {
 			
 			form.ContextMenu = contextMenu;
 			
+			form.SizeGripStyle = SizeGripStyle.Show;
+			
 			form.Size =  new Size (554, 405); // 384
 			form.MaximizeBox = true;
 			form.FormBorderStyle = FormBorderStyle.Sizable;
