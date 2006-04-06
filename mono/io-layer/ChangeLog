@@ -1,3 +1,7 @@
+2006-04-06  Dick Porter  <dick@ximian.com>
+
+	* shared.c: Fix parameters in semctl () call.
+
 2006-03-27  Dick Porter  <dick@ximian.com>
 
 	* shared.c (_wapi_shm_file_open): Break out of a loop if the
