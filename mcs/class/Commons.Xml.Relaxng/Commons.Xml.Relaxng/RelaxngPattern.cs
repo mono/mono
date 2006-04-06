@@ -322,7 +322,7 @@ namespace Commons.Xml.Relaxng
 			RelaxngGrammar g = null;
 			try {
 				xtr = new XmlTextReader (uri.AbsoluteUri, (Stream) grammar.Resolver.GetEntity (uri, null, typeof (Stream)));
-				RelaxngReader r = new RelaxngReader (xtr, ns);
+				RelaxngReader r = new RelaxngReader (xtr, ns, grammar.Resolver);
 				r.MoveToContent ();
 				g = r.ReadPattern () as RelaxngGrammar;
 			} catch (Exception ex) { // umm, bad catch though :-(
@@ -1232,7 +1232,7 @@ namespace Commons.Xml.Relaxng
 			XmlTextReader xtr = null;
 			try {
 				xtr = new XmlTextReader (uri.AbsoluteUri, (Stream) grammar.Resolver.GetEntity (uri, null, typeof (Stream)));
-				RelaxngReader r = new RelaxngReader (xtr, ns);
+				RelaxngReader r = new RelaxngReader (xtr, ns, grammar.Resolver);
 				r.MoveToContent ();
 				RelaxngPattern p = r.ReadPattern ();
 				p.DataProvider = grammar.Provider;

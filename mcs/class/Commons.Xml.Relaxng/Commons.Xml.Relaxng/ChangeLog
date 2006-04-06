@@ -1,3 +1,8 @@
+2006-04-07  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RelaxngPattern.cs : use new RelaxngReader .ctor () with XmlResolver
+	  argument. Fix by Alexandre Alapetite.
+
 2006-04-03  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RelaxngPattern.cs : set XmlResolver that is passed by
