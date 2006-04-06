@@ -1883,6 +1883,18 @@ namespace MonoTests.System.Xml
 			AssertEquals ("#1", "123", s);
 			AssertEquals ("#2", XmlNodeType.Element, xr.NodeType);
 		}
+
+		[Test]
+		public void ReadElementContentAsString ()
+		{
+			XmlTextReader r = new XmlTextReader (
+				"<root/>", XmlNodeType.Document, null);
+			r.Read ();
+			AssertEquals ("#1",
+				String.Empty, r.ReadElementContentAsString ());
+			AssertEquals ("#2",
+				XmlNodeType.None, r.NodeType);
+		}
 #endif
 	}
 }

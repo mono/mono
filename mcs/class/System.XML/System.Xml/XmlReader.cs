@@ -1040,8 +1040,9 @@ namespace System.Xml
 
 		public virtual string ReadElementContentAsString ()
 		{
+			bool isEmpty = IsEmptyElement;
 			ReadStartElement ();
-			if (IsEmptyElement)
+			if (isEmpty)
 				return String.Empty;
 			string s = ReadContentString (false);
 			ReadEndElement ();

@@ -1,3 +1,8 @@
+2006-04-06  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlReaderCommonTests.cs : added test for 
+	  ReadElementContentAsString() and empty element.
+
 2006-04-05  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlWriterSettingsTest.cs : added tests on set_Encoding(),
