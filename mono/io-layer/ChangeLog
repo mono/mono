@@ -1,4 +1,24 @@
 2006-04-06  Dick Porter  <dick@ximian.com>
+	
+	* processes.c (CreateProcess): Add a reference to the child
+	process' handle, so it won't be destroyed if this process closes
+	its copy of the handle.  Fixes bug 77393.
+	
+	* processes.c (process_set_current): Fall through to creating a
+	new one if the handle lookup fails.
+
+	* processes.c (_wapi_process_signal_self):
+	* handles.c (handle_cleanup): The process is exiting, so set the
+	handle state for this process to signalled.  This should let other
+	non-related processes wait for this handle.
+	
+	* handles.c (_wapi_search_handle): Don't search shared handles in
+	all cases.
+
+	* collection.c (collection_thread): No need to do a collection
+	scan straight away, do the waiting first.
+
+2006-04-06  Dick Porter  <dick@ximian.com>
 
 	* shared.c: Fix parameters in semctl () call.
 
