@@ -166,7 +166,9 @@ namespace Mono.Unix.Native {
 		}
 
 		public static readonly DateTime LocalUnixEpoch = 
-			new DateTime (1970, 1, 1).ToLocalTime();
+			new DateTime (1970, 1, 1);
+		public static readonly TimeSpan LocalUtcOffset = 
+			TimeZone.CurrentTimeZone.GetUtcOffset (DateTime.UtcNow);
 
 		public static DateTime ToDateTime (long time)
 		{
@@ -180,13 +182,15 @@ namespace Mono.Unix.Native {
 
 		public static DateTime FromTimeT (long time)
 		{
-			DateTime r = LocalUnixEpoch.AddSeconds (time);
+			DateTime r = LocalUnixEpoch.AddSeconds ((double) time + 
+					LocalUtcOffset.TotalSeconds);
 			return r;
 		}
 
 		public static long ToTimeT (DateTime time)
 		{
-			return (long) time.Subtract (LocalUnixEpoch).TotalSeconds;
+			TimeSpan unixTime = time.Subtract (LocalUnixEpoch) - LocalUtcOffset;
+			return (long) unixTime.TotalSeconds;
 		}
 
 		public static OpenFlags ToOpenFlags (FileMode mode, FileAccess access)

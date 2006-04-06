@@ -1,3 +1,9 @@
+2006-04-06  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* NativeConvert.cs: Fix ToDateTime()/FromDateTime()/ToTimeT()/FromTimeT() so
+	  that they take timezones into account.  Previously, results would be off
+	  by an hour if Daylight Savings Time was in effect.  Fixes #78033.
+
 2006-03-23  Raja R Harinath  <rharinath@novell.com>
 
 	* NativeConvert.generated.cs: Update after merge.
