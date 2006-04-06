@@ -1874,5 +1874,29 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			} catch {
 			}
 		}
+
+		[Test]
+		public void StripSpace ()
+		{
+			string result = @"
+MonoDevelop
+ProjectTemplates
+FileTemplates
+IDE
+StartupHandlers
+FileTemplateTypes
+Workspace
+Applications
+Services
+";
+
+			XslTransform t = new XslTransform ();
+			t.Load ("Test/XmlFiles/xsl/stripspace.xsl");
+			XPathDocument d = new XPathDocument (
+				"Test/XmlFiles/xsl/stripspace.xml", XmlSpace.Preserve);
+			StringWriter sw = new StringWriter ();
+			t.Transform (d, null, sw);
+			Assert.AreEqual (result, sw.ToString ());
+		}
 	}
 }

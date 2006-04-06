@@ -1,3 +1,7 @@
+2006-04-07  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* stripspace.xml, stripspace.xsl : added strip-space testcases.
+
 2005-11-17  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* 91834.xml, 91834a.xml, 91834.xsl : I ended up to add new files here.

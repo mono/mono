@@ -442,7 +442,11 @@ namespace Mono.Xml.Xsl {
 		
 		public bool NodesetMoveNext ()
 		{
-			return CurrentNodeset.MoveNext ();
+			if (!CurrentNodeset.MoveNext ())
+				return false;
+			if (CurrentNodeset.Current.NodeType == XPathNodeType.Whitespace && !XPathContext.PreserveWhitespace (CurrentNodeset.Current))
+				return NodesetMoveNext ();
+			return true;
 		}
 		
 		public void PushNodeset (XPathNodeIterator itr)
