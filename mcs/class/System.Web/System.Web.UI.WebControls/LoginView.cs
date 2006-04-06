@@ -3,6 +3,7 @@
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
+//	Konstantin Triger  <kostat@mainsoft.com>
 //
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
@@ -51,6 +52,7 @@ namespace System.Web.UI.WebControls {
 
 		private ITemplate anonymousTemplate;
 		private ITemplate loggedInTemplate;
+		private bool isAuthenticated;
 		private bool theming;
 		private RoleGroupCollection coll;
 
@@ -70,9 +72,11 @@ namespace System.Web.UI.WebControls {
 			set { anonymousTemplate = value; }
 		}
 
-		[MonoTODO]
 		public override ControlCollection Controls {
-			get { return base.Controls; }
+			get {
+				EnsureChildControls();
+				return base.Controls;
+			}
 		}
 
 		[Browsable (true)]
@@ -102,24 +106,40 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		[MonoTODO]
 		[Browsable (true)]
 		public override string SkinID {
 			get { return base.SkinID; }
 			set { base.SkinID = value; }
 		}
 
+		bool IsAuthenticated {
+			get {
+				if (Page != null && !Page.IsPostBack)
+					isAuthenticated = Page.Request.IsAuthenticated;
 
-		[MonoTODO]
-		protected internal override void CreateChildControls ()
-		{
-			base.CreateChildControls ();
+				return isAuthenticated;
+			}
 		}
 
-		[MonoTODO]
+		[MonoTODO("Handle RoleGroups")]
+		protected internal override void CreateChildControls ()
+		{
+			Controls.Clear();
+			Control c = new Control();
+			if (IsAuthenticated)
+				LoggedInTemplate.InstantiateIn (c);
+			else
+				AnonymousTemplate.InstantiateIn (c);
+
+			Controls.Add(c);
+		}
+
 		public override void DataBind ()
 		{
-			base.DataBind ();
+			EventArgs args = EventArgs.Empty;
+			OnDataBinding (args);
+			EnsureChildControls ();
+			DataBindChildren ();
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -129,40 +149,58 @@ namespace System.Web.UI.WebControls {
 			throw new NotSupportedException ();
 		}
 
-		[MonoTODO]
 		protected internal override void LoadControlState (object savedState)
 		{
-			base.LoadControlState (savedState);
+			if (savedState == null) {
+				base.LoadControlState (savedState);
+				return;
+			}
+
+			Pair pair = (Pair)savedState;
+			base.LoadControlState (pair.First);
+			isAuthenticated = (bool)pair.Second;
 		}
 
-		[MonoTODO]
 		protected internal override void OnInit (EventArgs e)
 		{
 			base.OnInit (e);
+			if (Page != null)
+				Page.RegisterRequiresControlState(this);
 		}
 
-		[MonoTODO]
 		protected internal override void OnPreRender (EventArgs e)
 		{
 			base.OnPreRender (e);
+			isAuthenticated = IsAuthenticated;
+			EnsureChildControls ();
 		}
 
-		[MonoTODO]
 		protected virtual void OnViewChanged (EventArgs e)
 		{
-			throw new NotImplementedException ();
+			EventHandler h = (EventHandler)Events [viewChangedEvent];
+			if (h != null)
+				h (this, e);
 		}
 
-		[MonoTODO]
 		protected virtual void OnViewChanging (EventArgs e)
 		{
-			throw new NotImplementedException ();
+			EventHandler h = (EventHandler)Events [viewChangingEvent];
+			if (h != null)
+				h (this, e);
 		}
 
-		[MonoTODO]
+		protected internal override void Render(HtmlTextWriter writer) {
+			EnsureChildControls();
+			base.Render (writer);
+		}
+
 		protected internal override object SaveControlState ()
 		{
-			return base.SaveControlState ();
+			object baseState = base.SaveControlState ();
+			if (isAuthenticated)
+				return new Pair (baseState, isAuthenticated);
+
+			return baseState;
 		}
 
 		[MonoTODO ("for design-time usage - no more details available")]

@@ -1,3 +1,8 @@
+2006-04-06	Konstantin Triger <kostat@mainsoft.com>
+
+	* LoginTest.cs: Added LayoutTemplate property Test.
+	* LoginViewTest.cs: Added AnonymousTemplate property Test.
+
 2006-03-28  Alexandre Miguel Pedro Gomes  <alexmipego@gmail.com>
  
  	* FontInfoTest.cs: Implemented ShouldSerializeNames tests

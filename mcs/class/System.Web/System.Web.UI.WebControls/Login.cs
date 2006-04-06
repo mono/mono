@@ -3,6 +3,7 @@
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
+//  Konstantin Triger  <kostat@mainsoft.com>
 //
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
@@ -45,6 +46,374 @@ namespace System.Web.UI.WebControls {
 	[Designer ("System.Web.UI.Design.WebControls.LoginDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public class Login : CompositeControl {
 
+		#region LoginContainer
+		
+		sealed class LoginContainer : WebControl {
+			public Control UserNameTextBox {
+				get {
+					return FindControl("UserName");
+				}
+			}
+
+			public Control PasswordTextBox {
+				get {
+					return FindControl("Password");
+				}
+			}
+
+			public Control RememberMeCheckBox {
+				get {
+					return FindControl("RememberMe");
+				}
+			}
+		}
+
+		#endregion
+
+		#region LoginTemplate
+
+		sealed class LoginTemplate : WebControl, ITemplate {
+			readonly Login _login;
+
+			private TextBox userNameTextBox;
+			private RequiredFieldValidator userNameRequired;
+			private TextBox passwordTextBox;
+			private RequiredFieldValidator passwordRequired;
+			private CheckBox rememberMeCheckBox;
+			private WebControl loginButton;
+
+			public LoginTemplate (Login login)
+			{
+				_login = login;
+			}
+
+			void ITemplate.InstantiateIn(Control container) {
+				container.Controls.Add (this);
+
+				userNameTextBox = new TextBox ();
+				userNameTextBox.ID = "UserName";
+
+				userNameRequired = new RequiredFieldValidator ();
+				userNameRequired.ID = "UserNameRequired";
+				userNameRequired.ControlToValidate = userNameTextBox.ID;
+				userNameRequired.ErrorMessage = "*";
+				userNameRequired.ValidationGroup = this.UniqueID;
+
+				passwordTextBox = new TextBox ();
+				passwordTextBox.ID = "Password";
+				passwordTextBox.TextMode = TextBoxMode.Password;
+
+				passwordRequired = new RequiredFieldValidator ();
+				passwordRequired.ID = "PasswordRequired";
+				passwordRequired.ControlToValidate = passwordTextBox.ID;
+				passwordRequired.ErrorMessage = "*";
+				passwordRequired.ValidationGroup = this.UniqueID;
+
+				rememberMeCheckBox = new CheckBox ();
+				rememberMeCheckBox.ID = "RememberMe";
+				rememberMeCheckBox.Checked = _login.RememberMeSet;
+
+				switch (_login.LoginButtonType) {
+					case ButtonType.Button:
+						loginButton = new Button ();
+						loginButton.ID = "LoginButton";
+						break;
+					case ButtonType.Link:
+						loginButton = new LinkButton ();
+						loginButton.ID = "LoginLinkButton";
+						break;
+					case ButtonType.Image:
+						loginButton = new ImageButton ();
+						loginButton.ID = "LoginImageButton";
+						break;
+				}
+				IButtonControl control = (loginButton as IButtonControl);
+				control.Text = _login.LoginButtonText;
+				control.CommandName = Login.LoginButtonCommandName;
+				control.Command += new CommandEventHandler (_login.LoginClick);
+				control.ValidationGroup = this.UniqueID;
+
+				// adds them all at the end (after setting their properties)
+				Controls.Add (userNameTextBox);
+				Controls.Add (userNameRequired);
+				Controls.Add (passwordTextBox);
+				Controls.Add (passwordRequired);
+				Controls.Add (rememberMeCheckBox);
+				Controls.Add (loginButton);
+			}
+
+			[MonoTODO ("render error messages")]
+			[MonoTODO ("set child control properties in ITemplate.InstantiateIn and let them render themself")]
+			protected internal override void Render(HtmlTextWriter writer) {
+				userNameRequired.ToolTip = _login.UserNameRequiredErrorMessage;
+				passwordRequired.ToolTip = _login.PasswordRequiredErrorMessage;
+
+				bool vertical = (_login.Orientation == Orientation.Vertical);
+				bool textontop = (_login.TextLayout == LoginTextLayout.TextOnTop);
+				string colspan = vertical ? (textontop ? String.Empty : "2") : (textontop ? "4" : "6");
+				string align = (textontop ? "left" : "right");
+
+				// inner table
+				writer.AddAttribute (HtmlTextWriterAttribute.Cellpadding, "0");
+				writer.AddAttribute (HtmlTextWriterAttribute.Border, "0");
+				writer.RenderBeginTag (HtmlTextWriterTag.Table);
+
+				// First row - Title
+				// for both Orientation.Vertical and Orientation.Horizontal
+
+				writer.RenderBeginTag (HtmlTextWriterTag.Tr);
+				writer.AddAttribute (HtmlTextWriterAttribute.Align, "center");
+				if (colspan.Length > 0)
+					writer.AddAttribute (HtmlTextWriterAttribute.Colspan, colspan);
+				if (!_login.IsEmpty (_login.titleTextStyle))
+					_login.titleTextStyle.AddAttributesToRender (writer);
+				writer.RenderBeginTag (HtmlTextWriterTag.Td);
+				writer.Write (_login.TitleText);
+				writer.RenderEndTag ();
+				writer.RenderEndTag ();
+
+				// Second row - Instructions (optional)
+				// for both Orientation.Vertical and Orientation.Horizontal
+
+				string instructions = _login.InstructionText;
+				if (instructions.Length > 0) {
+					writer.RenderBeginTag (HtmlTextWriterTag.Tr);
+					writer.AddAttribute (HtmlTextWriterAttribute.Align, "center");
+					if (colspan.Length > 0)
+						writer.AddAttribute (HtmlTextWriterAttribute.Colspan, colspan);
+					if (!_login.IsEmpty (_login.instructionTextStyle))
+						_login.instructionTextStyle.AddAttributesToRender (writer);
+					writer.RenderBeginTag (HtmlTextWriterTag.Td);
+					writer.Write (instructions);
+					writer.RenderEndTag ();
+					writer.RenderEndTag ();
+				}
+
+				// Third Row
+				// - Orientation.Vertical == Username
+				// - Orientation.Horizontal == Username, Password, RememberMe and LogIn button
+
+				if (!vertical && textontop) {
+					RenderUserNameTextBox (writer);
+					RenderPasswordTextBox (writer);
+				}
+
+				writer.RenderBeginTag (HtmlTextWriterTag.Tr);
+				if (vertical) {
+					writer.AddAttribute (HtmlTextWriterAttribute.Align, align);
+					RenderUserNameTextBox (writer);
+				} else if (!textontop) {
+					RenderUserNameTextBox (writer);
+				}
+				if (vertical && textontop) {
+					writer.RenderEndTag ();
+					writer.RenderBeginTag (HtmlTextWriterTag.Tr);
+				}
+				writer.RenderBeginTag (HtmlTextWriterTag.Td);
+				if (!_login.IsEmpty (_login.textBoxStyle))
+					_login.textBoxStyle.AddAttributesToRender (writer);
+				userNameTextBox.RenderControl (writer);
+				userNameRequired.RenderControl (writer);
+				writer.RenderEndTag ();
+				if (vertical)
+					writer.RenderEndTag ();
+
+				if (vertical) {
+					writer.RenderBeginTag (HtmlTextWriterTag.Tr);
+					writer.AddAttribute (HtmlTextWriterAttribute.Align, align);
+					RenderPasswordTextBox (writer);
+				} else if (!textontop) {
+					RenderPasswordTextBox (writer);
+				}
+				if (vertical && textontop) {
+					writer.RenderEndTag ();
+					writer.RenderBeginTag (HtmlTextWriterTag.Tr);
+				}
+				writer.RenderBeginTag (HtmlTextWriterTag.Td);
+				if (!_login.IsEmpty (_login.textBoxStyle))
+					_login.textBoxStyle.AddAttributesToRender (writer);
+				passwordTextBox.RenderControl (writer);
+				passwordRequired.RenderControl (writer);
+				writer.RenderEndTag ();
+				if (vertical)
+					writer.RenderEndTag ();
+
+				if (_login.DisplayRememberMe) {
+					if (vertical) {
+						writer.RenderBeginTag (HtmlTextWriterTag.Tr);
+						if (colspan.Length > 0)
+							writer.AddAttribute (HtmlTextWriterAttribute.Colspan, colspan);
+					}
+					writer.RenderBeginTag (HtmlTextWriterTag.Td);
+					rememberMeCheckBox.RenderControl (writer);
+					writer.AddAttribute (HtmlTextWriterAttribute.For, rememberMeCheckBox.ClientID);
+					writer.RenderBeginTag (HtmlTextWriterTag.Label);
+					writer.Write (_login.RememberMeText);
+					writer.RenderEndTag ();
+					writer.RenderEndTag ();
+					if (vertical)
+						writer.RenderEndTag ();
+				}
+
+				// TODO - detect failure
+				bool failed = false;
+				if (failed) {
+					if (vertical)
+						writer.RenderBeginTag (HtmlTextWriterTag.Tr);
+					if (colspan.Length > 0)
+						writer.AddAttribute (HtmlTextWriterAttribute.Colspan, colspan);
+					writer.AddAttribute (HtmlTextWriterAttribute.Align, "center");
+					writer.AddStyleAttribute (HtmlTextWriterStyle.Color, "red");
+					if (!_login.IsEmpty (_login.failureTextStyle)) {
+						_login.failureTextStyle.AddAttributesToRender (writer);
+					}
+					writer.Write (_login.FailureText);
+					writer.RenderEndTag ();
+					if (vertical)
+						writer.RenderEndTag ();
+				}
+
+				// LoginButton
+				if (vertical) {
+					writer.RenderBeginTag (HtmlTextWriterTag.Tr);
+					writer.AddAttribute (HtmlTextWriterAttribute.Align, "right");
+					if (colspan.Length > 0)
+						writer.AddAttribute (HtmlTextWriterAttribute.Colspan, colspan);
+				}
+				writer.RenderBeginTag (HtmlTextWriterTag.Td);
+				if (!_login.IsEmpty (_login.logonButtonStyle)) {
+					_login.logonButtonStyle.AddAttributesToRender (writer);
+				}
+				if (loginButton is ImageButton) {
+					(loginButton as ImageButton).ImageUrl = _login.LoginButtonImageUrl;
+				}
+				loginButton.RenderControl (writer);
+				writer.RenderEndTag ();
+				writer.RenderEndTag ();
+
+				bool userText = (_login.CreateUserText.Length > 0);
+				bool userImg = (_login.CreateUserIconUrl.Length > 0);
+				bool passText = (_login.PasswordRecoveryText.Length > 0);
+				bool passImg = (_login.PasswordRecoveryIconUrl.Length > 0);
+				bool helpText = (_login.HelpPageText.Length > 0);
+				bool helpImg = (_login.HelpPageIconUrl.Length > 0);
+				// show row if CreateUserText or CreateUserIconUrl is set
+				// but not if only CreateUserUrl is set
+				if (userText || userImg || passText || passImg || helpText || helpImg) {
+					writer.RenderBeginTag (HtmlTextWriterTag.Tr);
+					if (colspan.Length > 0)
+						writer.AddAttribute (HtmlTextWriterAttribute.Colspan, colspan);
+					writer.RenderBeginTag (HtmlTextWriterTag.Td);
+
+					if (userImg) {
+						writer.AddAttribute (HtmlTextWriterAttribute.Src, _login.CreateUserIconUrl);
+						writer.AddStyleAttribute (HtmlTextWriterStyle.BorderWidth, "0px");
+						if (userText)
+							writer.AddAttribute (HtmlTextWriterAttribute.Alt, _login.CreateUserText);
+						writer.RenderBeginTag (HtmlTextWriterTag.Img);
+						writer.RenderEndTag ();
+					}
+
+					if (userText) {
+						string href = _login.CreateUserUrl;
+						if (href.Length > 0)
+							writer.AddAttribute (HtmlTextWriterAttribute.Href, href);
+						if (_login.hyperLinkStyle != null)
+							_login.hyperLinkStyle.AddAttributesToRender (writer);
+						writer.RenderBeginTag (HtmlTextWriterTag.A);
+						writer.Write (_login.CreateUserText);
+						writer.RenderEndTag ();
+					}
+
+					if (passText || passImg) {
+						if (userImg || userText) {
+							if (vertical) {
+								writer.Write ("<br />");
+							} else {
+								writer.Write (" ");
+							}
+						}
+
+						if (passImg) {
+							writer.AddAttribute (HtmlTextWriterAttribute.Src, _login.PasswordRecoveryIconUrl);
+							writer.AddStyleAttribute (HtmlTextWriterStyle.BorderWidth, "0px");
+							if (passText)
+								writer.AddAttribute (HtmlTextWriterAttribute.Alt, _login.PasswordRecoveryText);
+							writer.RenderBeginTag (HtmlTextWriterTag.Img);
+							writer.RenderEndTag ();
+						}
+
+						if (passText) {
+							string href = _login.PasswordRecoveryUrl;
+							if (href.Length > 0)
+								writer.AddAttribute (HtmlTextWriterAttribute.Href, href);
+							if (_login.hyperLinkStyle != null)
+								_login.hyperLinkStyle.AddAttributesToRender (writer);
+							writer.RenderBeginTag (HtmlTextWriterTag.A);
+							writer.Write (_login.PasswordRecoveryText);
+							writer.RenderEndTag ();
+						}
+					}
+
+					if (helpText || helpImg) {
+						if (userImg || userText || passText || passImg) {
+							if (vertical) {
+								writer.Write ("<br />");
+							} else {
+								writer.Write (" ");
+							}
+						}
+
+						if (helpImg) {
+							writer.AddAttribute (HtmlTextWriterAttribute.Src, _login.HelpPageIconUrl);
+							writer.AddStyleAttribute (HtmlTextWriterStyle.BorderWidth, "0px");
+							if (helpText)
+								writer.AddAttribute (HtmlTextWriterAttribute.Alt, _login.HelpPageText);
+							writer.RenderBeginTag (HtmlTextWriterTag.Img);
+							writer.RenderEndTag ();
+						}
+
+						if (helpText) {
+							string href = _login.HelpPageUrl;
+							if (href.Length > 0)
+								writer.AddAttribute (HtmlTextWriterAttribute.Href, href);
+							if (_login.hyperLinkStyle != null)
+								_login.hyperLinkStyle.AddAttributesToRender (writer);
+							writer.RenderBeginTag (HtmlTextWriterTag.A);
+							writer.Write (_login.HelpPageText);
+							writer.RenderEndTag ();
+						}
+					}
+
+					writer.RenderEndTag ();
+					writer.RenderEndTag ();
+				}
+
+				// inner table (end)
+				writer.RenderEndTag (); // Table
+			}
+
+			private void RenderUserNameTextBox (HtmlTextWriter writer) {
+				writer.RenderBeginTag (HtmlTextWriterTag.Td);
+				writer.AddAttribute (HtmlTextWriterAttribute.For, userNameTextBox.ClientID);
+				writer.RenderBeginTag (HtmlTextWriterTag.Label);
+				writer.Write (_login.UserNameLabelText);
+				writer.RenderEndTag ();
+				writer.RenderEndTag ();
+			}
+
+			private void RenderPasswordTextBox (HtmlTextWriter writer) {
+				writer.RenderBeginTag (HtmlTextWriterTag.Td);
+				writer.AddAttribute (HtmlTextWriterAttribute.For, passwordTextBox.ClientID);
+				writer.RenderBeginTag (HtmlTextWriterTag.Label);
+				writer.Write (_login.PasswordLabelText);
+				writer.RenderEndTag ();
+				writer.RenderEndTag ();
+			}
+		}
+
+		#endregion
+
 		public static readonly string LoginButtonCommandName = "Login";
 
 		private static readonly object authenticateEvent = new object ();
@@ -64,12 +433,7 @@ namespace System.Web.UI.WebControls {
 
 		private ITemplate layoutTemplate;
 
-		private TextBox userNameTextBox;
-		private RequiredFieldValidator userNameRequired;
-		private TextBox passwordTextBox;
-		private RequiredFieldValidator passwordRequired;
-		private CheckBox rememberMeCheckBox;
-		private WebControl loginButton;
+		private string _password;
 
 
 		public Login ()
@@ -437,8 +801,7 @@ namespace System.Web.UI.WebControls {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual string Password {
 			get {
-				object o = ViewState ["Password"];
-				return (o == null) ? String.Empty : (string) o;
+				return _password != null ? _password : String.Empty;
 			}
 		}
 
@@ -681,56 +1044,46 @@ namespace System.Web.UI.WebControls {
 
 		protected internal override void CreateChildControls ()
 		{
-			userNameTextBox = new TextBox ();
-			userNameTextBox.ID = "UserName";
+			Controls.Clear ();
 
-			userNameRequired = new RequiredFieldValidator ();
-			userNameRequired.ID = "UserNameRequired";
-			userNameRequired.ControlToValidate = userNameTextBox.ID;
-			userNameRequired.ErrorMessage = "*";
-			userNameRequired.ValidationGroup = this.UniqueID;
+			Table table = new Table ();
+			table.ID = ClientID;
+			table.CellSpacing = 0;
+			table.CellPadding = BorderPadding;
 
-			passwordTextBox = new TextBox ();
-			passwordTextBox.ID = "Password";
-			passwordTextBox.TextMode = TextBoxMode.Password;
+			TableRow row = new TableRow ();
+			table.Rows.Add (row);
+			TableCell cell = new TableCell ();
+			row.Cells.Add (cell);
 
-			passwordRequired = new RequiredFieldValidator ();
-			passwordRequired.ID = "PasswordRequired";
-			passwordRequired.ControlToValidate = passwordTextBox.ID;
-			passwordRequired.ErrorMessage = "*";
-			passwordRequired.ValidationGroup = this.UniqueID;
+			Controls.Add (table);
 
-			rememberMeCheckBox = new CheckBox ();
-			rememberMeCheckBox.ID = "RememberMe";
-			rememberMeCheckBox.Checked = RememberMeSet;
+			LoginContainer container = new LoginContainer ();
+			cell.Controls.Add (container);
 
-			switch (LoginButtonType) {
-			case ButtonType.Button:
-				loginButton = new Button ();
-				loginButton.ID = "LoginButton";
-				break;
-			case ButtonType.Link:
-				loginButton = new LinkButton ();
-				loginButton.ID = "LoginLinkButton";
-				break;
-			case ButtonType.Image:
-				loginButton = new ImageButton ();
-				loginButton.ID = "LoginImageButton";
-				break;
-			}
-			IButtonControl control = (loginButton as IButtonControl);
-			control.Text = LoginButtonText;
-			control.CommandName = LoginButtonCommandName;
-			control.Command += new CommandEventHandler (LoginClick);
-			control.ValidationGroup = this.UniqueID;
+			ITemplate template = LayoutTemplate;
+			if (template == null)
+				template = new LoginTemplate (this);
 
-			// adds them all at the end (after setting their properties)
-			Controls.Add (userNameTextBox);
-			Controls.Add (userNameRequired);
-			Controls.Add (passwordTextBox);
-			Controls.Add (passwordRequired);
-			Controls.Add (rememberMeCheckBox);
-			Controls.Add (loginButton);
+			template.InstantiateIn (container);
+
+			IEditableTextControl editable;
+
+			editable = container.UserNameTextBox as IEditableTextControl;
+
+			if (editable != null)
+				editable.TextChanged += new EventHandler (UserName_TextChanged);
+
+			editable = container.PasswordTextBox as IEditableTextControl;
+
+			if (editable != null)
+				editable.TextChanged += new EventHandler (Password_TextChanged);
+
+			ICheckBoxControl checkBox = container.RememberMeCheckBox as ICheckBoxControl;
+
+			if (checkBox != null)
+				checkBox.CheckedChanged += new EventHandler (RememberMe_CheckedChanged);
+			
 		}
 
 		protected override void LoadViewState (object savedState)
@@ -774,7 +1127,7 @@ namespace System.Web.UI.WebControls {
 		{
 			// check for submit button
 			CommandEventArgs cea = (e as CommandEventArgs);
-			if ((source == loginButton) && (cea != null) && (cea.CommandName == "Login")) {
+			if ((cea != null) && (cea.CommandName == LoginButtonCommandName)) {
 				AuthenticateUser ();
 				return true;
 			}
@@ -813,12 +1166,8 @@ namespace System.Web.UI.WebControls {
 			// PageLoad but are during PreRender phase, so... ???
 		}
 
-		[MonoTODO ("render error messages")]
 		protected internal override void Render (HtmlTextWriter writer)
 		{
-			if (writer == null)
-				return;
-
 			// VisibleWhenLoggedIn isn't applicable to the default login page
 			if (!VisibleWhenLoggedIn && !IsDefaultLoginPage () && IsLoggedIn ())
 				return;
@@ -829,265 +1178,7 @@ namespace System.Web.UI.WebControls {
 
 			EnsureChildControls ();
 
-			userNameRequired.ToolTip = UserNameRequiredErrorMessage;
-			passwordRequired.ToolTip = PasswordRequiredErrorMessage;
-
-			bool vertical = (Orientation == Orientation.Vertical);
-			bool textontop = (TextLayout == LoginTextLayout.TextOnTop);
-			string colspan = vertical ? (textontop ? String.Empty : "2") : (textontop ? "4" : "6");
-			string align = (textontop ? "left" : "right");
-
-			// outer table
-			writer.AddAttribute (HtmlTextWriterAttribute.Cellpadding, BorderPadding.ToString (CultureInfo.InvariantCulture));
-			writer.AddAttribute (HtmlTextWriterAttribute.Border, "0");
-			AddAttributesToRender (writer);
-			writer.RenderBeginTag (HtmlTextWriterTag.Table);
-			writer.RenderBeginTag (HtmlTextWriterTag.Tr);
-			writer.RenderBeginTag (HtmlTextWriterTag.Td);
-
-			// inner table
-			writer.AddAttribute (HtmlTextWriterAttribute.Cellpadding, "0");
-			writer.AddAttribute (HtmlTextWriterAttribute.Border, "0");
-			writer.RenderBeginTag (HtmlTextWriterTag.Table);
-
-			// First row - Title
-			// for both Orientation.Vertical and Orientation.Horizontal
-
-			writer.RenderBeginTag (HtmlTextWriterTag.Tr);
-			writer.AddAttribute (HtmlTextWriterAttribute.Align, "center");
-			if (colspan.Length > 0)
-				writer.AddAttribute (HtmlTextWriterAttribute.Colspan, colspan);
-			if (!IsEmpty (titleTextStyle))
-				titleTextStyle.AddAttributesToRender (writer);
-			writer.RenderBeginTag (HtmlTextWriterTag.Td);
-			writer.Write (TitleText);
-			writer.RenderEndTag ();
-			writer.RenderEndTag ();
-
-			// Second row - Instructions (optional)
-			// for both Orientation.Vertical and Orientation.Horizontal
-
-			string instructions = InstructionText;
-			if (instructions.Length > 0) {
-				writer.RenderBeginTag (HtmlTextWriterTag.Tr);
-				writer.AddAttribute (HtmlTextWriterAttribute.Align, "center");
-				if (colspan.Length > 0)
-					writer.AddAttribute (HtmlTextWriterAttribute.Colspan, colspan);
-				if (!IsEmpty (instructionTextStyle))
-					instructionTextStyle.AddAttributesToRender (writer);
-				writer.RenderBeginTag (HtmlTextWriterTag.Td);
-				writer.Write (instructions);
-				writer.RenderEndTag ();
-				writer.RenderEndTag ();
-			}
-
-			// Third Row
-			// - Orientation.Vertical == Username
-			// - Orientation.Horizontal == Username, Password, RememberMe and LogIn button
-
-			if (!vertical && textontop) {
-				RenderUserNameTextBox (writer);
-				RenderPasswordTextBox (writer);
-			}
-
-			writer.RenderBeginTag (HtmlTextWriterTag.Tr);
-			if (vertical) {
-				writer.AddAttribute (HtmlTextWriterAttribute.Align, align);
-				RenderUserNameTextBox (writer);
-			} else if (!textontop) {
-				RenderUserNameTextBox (writer);
-			}
-			if (vertical && textontop) {
-				writer.RenderEndTag ();
-				writer.RenderBeginTag (HtmlTextWriterTag.Tr);
-			}
-			writer.RenderBeginTag (HtmlTextWriterTag.Td);
-			if (!IsEmpty (textBoxStyle))
-				textBoxStyle.AddAttributesToRender (writer);
-			userNameTextBox.RenderControl (writer);
-			userNameRequired.RenderControl (writer);
-			writer.RenderEndTag ();
-			if (vertical)
-				writer.RenderEndTag ();
-
-			if (vertical) {
-				writer.RenderBeginTag (HtmlTextWriterTag.Tr);
-				writer.AddAttribute (HtmlTextWriterAttribute.Align, align);
-				RenderPasswordTextBox (writer);
-			} else if (!textontop) {
-				RenderPasswordTextBox (writer);
-			}
-			if (vertical && textontop) {
-				writer.RenderEndTag ();
-				writer.RenderBeginTag (HtmlTextWriterTag.Tr);
-			}
-			writer.RenderBeginTag (HtmlTextWriterTag.Td);
-			if (!IsEmpty (textBoxStyle))
-				textBoxStyle.AddAttributesToRender (writer);
-			passwordTextBox.RenderControl (writer);
-			passwordRequired.RenderControl (writer);
-			writer.RenderEndTag ();
-			if (vertical)
-				writer.RenderEndTag ();
-
-			if (DisplayRememberMe) {
-				if (vertical) {
-					writer.RenderBeginTag (HtmlTextWriterTag.Tr);
-					if (colspan.Length > 0)
-						writer.AddAttribute (HtmlTextWriterAttribute.Colspan, colspan);
-				}
-				writer.RenderBeginTag (HtmlTextWriterTag.Td);
-				rememberMeCheckBox.RenderControl (writer);
-				writer.AddAttribute (HtmlTextWriterAttribute.For, rememberMeCheckBox.ClientID);
-				writer.RenderBeginTag (HtmlTextWriterTag.Label);
-				writer.Write (RememberMeText);
-				writer.RenderEndTag ();
-				writer.RenderEndTag ();
-				if (vertical)
-					writer.RenderEndTag ();
-			}
-
-			// TODO - detect failure
-			bool failed = false;
-			if (failed) {
-				if (vertical)
-					writer.RenderBeginTag (HtmlTextWriterTag.Tr);
-				if (colspan.Length > 0)
-					writer.AddAttribute (HtmlTextWriterAttribute.Colspan, colspan);
-				writer.AddAttribute (HtmlTextWriterAttribute.Align, "center");
-				writer.AddStyleAttribute (HtmlTextWriterStyle.Color, "red");
-				if (!IsEmpty (failureTextStyle)) {
-					failureTextStyle.AddAttributesToRender (writer);
-				}
-				writer.Write (FailureText);
-				writer.RenderEndTag ();
-				if (vertical)
-					writer.RenderEndTag ();
-			}
-
-			// LoginButton
-			if (vertical) {
-				writer.RenderBeginTag (HtmlTextWriterTag.Tr);
-				writer.AddAttribute (HtmlTextWriterAttribute.Align, "right");
-				if (colspan.Length > 0)
-					writer.AddAttribute (HtmlTextWriterAttribute.Colspan, colspan);
-			}
-			writer.RenderBeginTag (HtmlTextWriterTag.Td);
-			if (!IsEmpty (logonButtonStyle)) {
-				logonButtonStyle.AddAttributesToRender (writer);
-			}
-			if (loginButton is ImageButton) {
-				(loginButton as ImageButton).ImageUrl = LoginButtonImageUrl;
-			}
-			loginButton.RenderControl (writer);
-			writer.RenderEndTag ();
-			writer.RenderEndTag ();
-
-			bool userText = (CreateUserText.Length > 0);
-			bool userImg = (CreateUserIconUrl.Length > 0);
-			bool passText = (PasswordRecoveryText.Length > 0);
-			bool passImg = (PasswordRecoveryIconUrl.Length > 0);
-			bool helpText = (HelpPageText.Length > 0);
-			bool helpImg = (HelpPageIconUrl.Length > 0);
-			// show row if CreateUserText or CreateUserIconUrl is set
-			// but not if only CreateUserUrl is set
-			if (userText || userImg || passText || passImg || helpText || helpImg) {
-				writer.RenderBeginTag (HtmlTextWriterTag.Tr);
-				if (colspan.Length > 0)
-					writer.AddAttribute (HtmlTextWriterAttribute.Colspan, colspan);
-				writer.RenderBeginTag (HtmlTextWriterTag.Td);
-
-				if (userImg) {
-					writer.AddAttribute (HtmlTextWriterAttribute.Src, CreateUserIconUrl);
-					writer.AddStyleAttribute (HtmlTextWriterStyle.BorderWidth, "0px");
-					if (userText)
-						writer.AddAttribute (HtmlTextWriterAttribute.Alt, CreateUserText);
-					writer.RenderBeginTag (HtmlTextWriterTag.Img);
-					writer.RenderEndTag ();
-				}
-
-				if (userText) {
-					string href = CreateUserUrl;
-					if (href.Length > 0)
-						writer.AddAttribute (HtmlTextWriterAttribute.Href, href);
-					if (hyperLinkStyle != null)
-						hyperLinkStyle.AddAttributesToRender (writer);
-					writer.RenderBeginTag (HtmlTextWriterTag.A);
-					writer.Write (CreateUserText);
-					writer.RenderEndTag ();
-				}
-
-				if (passText || passImg) {
-					if (userImg || userText) {
-						if (vertical) {
-							writer.Write ("<br />");
-						} else {
-							writer.Write (" ");
-						}
-					}
-
-					if (passImg) {
-						writer.AddAttribute (HtmlTextWriterAttribute.Src, PasswordRecoveryIconUrl);
-						writer.AddStyleAttribute (HtmlTextWriterStyle.BorderWidth, "0px");
-						if (passText)
-							writer.AddAttribute (HtmlTextWriterAttribute.Alt, PasswordRecoveryText);
-						writer.RenderBeginTag (HtmlTextWriterTag.Img);
-						writer.RenderEndTag ();
-					}
-
-					if (passText) {
-						string href = PasswordRecoveryUrl;
-						if (href.Length > 0)
-							writer.AddAttribute (HtmlTextWriterAttribute.Href, href);
-						if (hyperLinkStyle != null)
-							hyperLinkStyle.AddAttributesToRender (writer);
-						writer.RenderBeginTag (HtmlTextWriterTag.A);
-						writer.Write (PasswordRecoveryText);
-						writer.RenderEndTag ();
-					}
-				}
-
-				if (helpText || helpImg) {
-					if (userImg || userText || passText || passImg) {
-						if (vertical) {
-							writer.Write ("<br />");
-						} else {
-							writer.Write (" ");
-						}
-					}
-
-					if (helpImg) {
-						writer.AddAttribute (HtmlTextWriterAttribute.Src, HelpPageIconUrl);
-						writer.AddStyleAttribute (HtmlTextWriterStyle.BorderWidth, "0px");
-						if (helpText)
-							writer.AddAttribute (HtmlTextWriterAttribute.Alt, HelpPageText);
-						writer.RenderBeginTag (HtmlTextWriterTag.Img);
-						writer.RenderEndTag ();
-					}
-
-					if (helpText) {
-						string href = HelpPageUrl;
-						if (href.Length > 0)
-							writer.AddAttribute (HtmlTextWriterAttribute.Href, href);
-						if (hyperLinkStyle != null)
-							hyperLinkStyle.AddAttributesToRender (writer);
-						writer.RenderBeginTag (HtmlTextWriterTag.A);
-						writer.Write (HelpPageText);
-						writer.RenderEndTag ();
-					}
-				}
-
-				writer.RenderEndTag ();
-				writer.RenderEndTag ();
-			}
-
-			// inner table (end)
-			writer.RenderEndTag (); // Table
-
-			// outer table (end)
-			writer.RenderEndTag (); // Td
-			writer.RenderEndTag (); // Tr
-			writer.RenderEndTag (); // Table
+			RenderContents(writer);
 		}
 
 		protected override object SaveViewState ()
@@ -1190,12 +1281,12 @@ namespace System.Web.UI.WebControls {
 			}
 
 			AuthenticateEventArgs aea = new AuthenticateEventArgs ();
-			aea.Authenticated = provider.ValidateUser (userNameTextBox.Text, passwordTextBox.Text);
+			aea.Authenticated = provider.ValidateUser (UserName, Password);
 			OnAuthenticate (aea);
 
 			if (aea.Authenticated) {
 				string url = DestinationPageUrl;
-				FormsAuthentication.SetAuthCookie (userNameTextBox.Text, RememberMeSet);
+				FormsAuthentication.SetAuthCookie (UserName, RememberMeSet);
 				if (url.Length == 0) {
 					Redirect (FormsAuthentication.LoginUrl);
 				} else {
@@ -1248,24 +1339,19 @@ namespace System.Web.UI.WebControls {
 				Page.Response.Redirect (url);
 		}
 
-		private void RenderUserNameTextBox (HtmlTextWriter writer)
+		private void UserName_TextChanged (object sender, EventArgs e)
 		{
-			writer.RenderBeginTag (HtmlTextWriterTag.Td);
-			writer.AddAttribute (HtmlTextWriterAttribute.For, userNameTextBox.ClientID);
-			writer.RenderBeginTag (HtmlTextWriterTag.Label);
-			writer.Write (UserNameLabelText);
-			writer.RenderEndTag ();
-			writer.RenderEndTag ();
+			UserName = ((ITextControl)sender).Text;
 		}
 
-		private void RenderPasswordTextBox (HtmlTextWriter writer)
+		private void Password_TextChanged (object sender, EventArgs e)
 		{
-			writer.RenderBeginTag (HtmlTextWriterTag.Td);
-			writer.AddAttribute (HtmlTextWriterAttribute.For, passwordTextBox.ClientID);
-			writer.RenderBeginTag (HtmlTextWriterTag.Label);
-			writer.Write (PasswordLabelText);
-			writer.RenderEndTag ();
-			writer.RenderEndTag ();
+			_password = ((ITextControl)sender).Text;
+		}
+
+		private void RememberMe_CheckedChanged (object sender, EventArgs e)
+		{
+			RememberMeSet = ((ICheckBoxControl)sender).Checked;
 		}
 	}
 }

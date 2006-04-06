@@ -38,6 +38,17 @@ using System.Web.UI.WebControls;
 using NUnit.Framework;
 
 namespace MonoTests.System.Web.UI.WebControls {
+	
+	public class LoginTemplate : WebControl, ITemplate {
+		public LoginTemplate() {
+			ID = "kuku";
+		}
+			
+		void ITemplate.InstantiateIn(Control container) {
+			container.Controls.Add(this);
+		}
+
+	}
 
 	public class TestLogin : Login {
 
@@ -182,6 +193,10 @@ namespace MonoTests.System.Web.UI.WebControls {
 		public void DoLoginError (EventArgs e)
 		{
 			base.OnLoginError (e);
+		}
+		
+		public void DoEnsureChildControls() {
+			base.EnsureChildControls ();
 		}
 	}
 
@@ -557,6 +572,15 @@ namespace MonoTests.System.Web.UI.WebControls {
 		{
 			TestLogin l = new TestLogin ();
 			l.FailureAction = (LoginFailureAction) Int32.MinValue;
+		}
+		
+		[Test]
+		public void LayoutTemplate ()
+		{
+			TestLogin l = new TestLogin ();
+			l.LayoutTemplate = new LoginTemplate();
+			l.DoEnsureChildControls();
+			Assert.IsNotNull(l.FindControl("kuku"), "LoginTemplate");
 		}
 
 		[Test]

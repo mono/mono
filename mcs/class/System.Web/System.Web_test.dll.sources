@@ -130,6 +130,7 @@ System.Web.UI.WebControls/LiteralTest.cs
 System.Web.UI.WebControls/LoginNameTest.cs
 System.Web.UI.WebControls/LoginStatusTest.cs
 System.Web.UI.WebControls/LoginTest.cs
+System.Web.UI.WebControls/LoginViewTest.cs
 System.Web.UI.WebControls/MonthChangedEventArgsTest.cs
 System.Web.UI.WebControls/PagedDataSourceTest.cs
 System.Web.UI.WebControls/PanelTest.cs

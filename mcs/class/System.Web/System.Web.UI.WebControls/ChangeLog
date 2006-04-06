@@ -1,3 +1,10 @@
+2006-04-06	Konstantin Triger <kostat@mainsoft.com>
+
+	* Login.cs: Added LayoutTemplate property support.
+	* LoginView.cs: Added LoggedInTemplate, AnonymousTemplate support.
+		DataBind: correctly bind child controls.
+		Implemented OnViewChanged, OnViewChanging, Render, Save/LoadControlState.
+
 2006-03-29  Robert Jordan  <robertj@gmx.net>
  
 	* DataGrid.cs: if custom paging is enabled the persisted item count
