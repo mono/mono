@@ -1,6 +1,8 @@
 using System;
 using System.Text.RegularExpressions;
 
+using NUnit.Framework;
+
 namespace MonoTests.System.Text.RegularExpressions {
 
 	class RegexTrial {
@@ -11,7 +13,8 @@ namespace MonoTests.System.Text.RegularExpressions {
 		public string expected;
 		public string error = "";
 
-		public RegexTrial (string pattern, RegexOptions options, string input, string expected) {
+		public RegexTrial (string pattern, RegexOptions options, string input, string expected)
+		{
 			this.pattern = pattern;
 			this.options = options;
 			this.input = input;
@@ -23,13 +26,13 @@ namespace MonoTests.System.Text.RegularExpressions {
 		}
 		
 		public string Error {
-			get {
-				return this.error;
-			}
+			get { return this.error; }
 		}
 
-		public string Execute () {
+		public void Execute ()
+		{
 			string result;
+
 			try {
 				Regex re = new Regex (pattern, options);
 				Match m = re.Match (input);
@@ -38,32 +41,24 @@ namespace MonoTests.System.Text.RegularExpressions {
 					result = "Pass.";
 
 					for (int i = 0; i < m.Groups.Count; ++ i) {
-						Group group = m.Groups[i];
-						
+						Group group = m.Groups [i];
+
 						result += " Group[" + i + "]=";
-						foreach (Capture cap in group.Captures) {
+						foreach (Capture cap in group.Captures)
 							result += "(" + cap.Index + "," + cap.Length + ")";
-						}
 					}
-				}
-				else
+				} else {
 					result = "Fail.";
+				}
 			}
 			catch (Exception e) {
-				
 				error = e.Message + "\n" + e.StackTrace + "\n\n";
-				
+
 				result = "Error.";
 			}
 
-			return result;
-		}
-
-		public override string ToString () {
-			return
-				"Matching input '" + input +
-				"' against pattern '" + pattern +
-				"' with options '" + options + "'.";
+			Assert.AreEqual (expected, result,
+					 "Matching input '{0}' against pattern '{1}' with options '{2}'", input, pattern, options);
 		}
 	}
 

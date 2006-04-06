@@ -1,3 +1,8 @@
+2006-04-06  Raja R Harinath  <rharinath@novell.com>
+
+	* RegexTrial.cs (Execute): Run NUnit assertion here.
+	* PerlTests.cs: Simplify.
+
 2006-03-30  Raja R Harinath  <harinath@gmail.com>
 
 	* RegexBugs.cs (HangingHyphens): New tests from #77626, and
