@@ -1,5 +1,7 @@
 2006-04-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* ssa2.c (evaluate_ins): Fix the computation of the new variable state.
+
 	* method-to-ir.c (decompose_opcode): Add some missing opcodes.
 
 	* cpu-pentium.md: Add missing op_call opcode.

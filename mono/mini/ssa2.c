@@ -870,28 +870,33 @@ evaluate_ins (MonoCompile *cfg, MonoInst *ins, MonoInst **res, MonoInst **carray
 	if (ins->opcode == OP_NOP)
 		return 2;
 
-	r1 = 2;
 	arg0 = NULL;
 	if (spec [MONO_INST_SRC1] != ' ') {
 		MonoInst *var = get_vreg_to_inst (cfg, ins->sreg1);
 
+		r1 = 2;
 		arg0 = carray [ins->sreg1];
 		if (arg0)
 			r1 = 1;
 		else if (var && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT)))
 			r1 = cfg->vars [var->inst_c0]->cpstate;
+	} else {
+		r1 = 2;
 	}
 
-	r2 = 2;
 	arg1 = NULL;
 	if (spec [MONO_INST_SRC2] != ' ') {
 		MonoInst *var = get_vreg_to_inst (cfg, ins->sreg2);
 
+		r2 = 2;
 		arg1 = carray [ins->sreg2];
 		if (arg1)
 			r2 = 1;
 		else if (var && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT)))
 			r2 = cfg->vars [var->inst_c0]->cpstate;
+	}
+	else {
+		r2 = 0;
 	}
 
 	c0 = NULL;
@@ -924,7 +929,22 @@ evaluate_ins (MonoCompile *cfg, MonoInst *ins, MonoInst **res, MonoInst **carray
 			return 2;
 	}
 
-	return MAX (r1, r2);
+	if ((spec [MONO_INST_SRC1] != ' ') && (spec [MONO_INST_SRC2] != ' ')) {
+		/* Binop */
+		if ((r1 == 2) || (r2 == 2))
+			return 2;
+		else
+			return 0;
+	}
+	else if (spec [MONO_INST_SRC1] != ' ') {
+		/* Unop */
+		if (r1 == 2)
+			return 2;
+		else
+			return 0;
+	}
+	else
+		return 2;
 }
 
 static inline void
@@ -937,6 +957,9 @@ change_varstate (MonoCompile *cfg, GList **cvars, MonoMethodVar *info, int state
 
 	if (G_UNLIKELY (cfg->verbose_level > 1))
 		printf ("\tState of R%d set to %d\n", cfg->varinfo [info->idx]->dreg, info->cpstate);
+
+	if (state == 1)
+		g_assert (c0);
 
 	carray [cfg->varinfo [info->idx]->dreg] = c0;
 
