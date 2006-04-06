@@ -3889,6 +3889,7 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 
 	prev_inlined_method = cfg->inlined_method;
 	cfg->inlined_method = cmethod;
+	cfg->ret_var_set = FALSE;
 	prev_real_offset = cfg->real_offset;
 	prev_cbb_hash = cfg->cbb_hash;
 	prev_cbb = cfg->cbb;
@@ -3933,6 +3934,40 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 		}
 
 		if (rvar) {
+			/*
+			 * If the inlined method contains only a throw, then the ret var is not 
+			 * set, so set it to a dummy value.
+			 */
+			if (!cfg->ret_var_set) {
+				static double r8_0 = 0.0;
+
+				switch (rvar->type) {
+				case STACK_I4:
+					MONO_EMIT_NEW_ICONST (cfg, rvar->dreg, 0);
+					break;
+				case STACK_I8:
+					MONO_EMIT_NEW_I8CONST (cfg, rvar->dreg, 0);
+					break;
+				case STACK_PTR:
+				case STACK_MP:
+				case STACK_OBJ:
+					MONO_EMIT_NEW_PCONST (cfg, rvar->dreg, 0);
+					break;
+				case STACK_R8:
+					MONO_INST_NEW (cfg, ins, OP_R8CONST);
+					ins->type = STACK_R8;
+					ins->inst_p0 = (void*)&r8_0;
+					ins->dreg = rvar->dreg;
+					MONO_ADD_INS (cfg->cbb, ins);
+					break;
+				case STACK_VTYPE:
+					MONO_EMIT_NEW_VZERO (cfg, rvar->dreg, mono_class_from_mono_type (fsig->ret));
+					break;
+				default:
+					g_assert_not_reached ();
+				}
+			}
+
 			EMIT_NEW_TEMPLOAD (cfg, ins, rvar->inst_c0);
 			*sp++ = ins;
 		}
@@ -4656,6 +4691,7 @@ mono_decompose_long_opts (MonoCompile *cfg)
 			case OP_LCONV_TO_I4:
 			case OP_LCONV_TO_U4:
 			case OP_LCONV_TO_I:
+			case OP_LCONV_TO_U:
 				MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, tree->dreg, tree->sreg1 + 1);
 				break;
 			case OP_LCONV_TO_R8:
@@ -6261,6 +6297,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					//g_assert (returnvar != -1);
 					EMIT_NEW_TEMPSTORE (cfg, store, return_var->inst_c0, *sp);
 					store->cil_code = sp [0]->cil_code;
+					cfg->ret_var_set = TRUE;
 				} 
 			} else {
 				if (cfg->ret) {

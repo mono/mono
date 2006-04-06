@@ -1112,6 +1112,10 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (dest_dreg != -1)
 				reginfod [ins->dreg].preferred_mask = (regmask (dest_dreg));
 
+#ifdef MONO_ARCH_INST_FIXED_MASK
+			reginfod [ins->dreg].preferred_mask |= MONO_ARCH_INST_FIXED_MASK (spec [MONO_INST_DEST]);
+#endif
+
 			if (MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_DEST])) {
 				/* The virtual register is allocated sequentially */
 				rs->iassign [ins->dreg + 1] = -1;
@@ -1362,9 +1366,6 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		}
 
 		if (is_soft_reg (ins->dreg, fp)) {
-			if (dest_dreg != -1)
-				dreg_mask = (regmask (dest_dreg));
-
 			val = rassign (cfg, ins->dreg, fp);
 
 			if (val < 0) {

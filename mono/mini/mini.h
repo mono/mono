@@ -647,7 +647,8 @@ typedef struct {
 	guint            compile_aot : 1;
 	guint            got_var_allocated : 1;
 	guint            ret_var_is_local : 1;
-	gboolean         new_ir;
+	guint            ret_var_set : 1;
+	guint            new_ir : 1;
 	gpointer         debug_info;
 	guint32          lmf_offset;
 	guint16          *intvars;

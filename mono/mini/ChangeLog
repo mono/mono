@@ -1,3 +1,20 @@
+2006-04-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-codegen.c (mono_local_regalloc): Don't set dreg_mask based on
+	dest_dreg since the former is mandatory, while the later is not.
+
+	* mini-codegen.c (mono_local_regalloc): Set preferred_mask with the result of
+	MONO_ARCH_INST_FIXED_MASK too.
+
+	* method-to-ir.c (mono_decompose_long_opts): Add missing long->u conversion.
+
+	* iltests.il: Add new test for long->u conversion.
+
+	* mini.h (MonoCompile): Add new 'ret_var_set' flag.
+	
+	* method-to-ir.c (inline_method): Handle the case when the inlined method
+	doesn't set the return var.
+
 Wed Mar 29 20:51:14 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
 	* driver.c, wapihandles.c, Makefile.am: integrate the io-layer utils
