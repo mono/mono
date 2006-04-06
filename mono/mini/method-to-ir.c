@@ -4379,6 +4379,8 @@ decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 		break;
 	case OP_LCONV_TO_I8:
 	case OP_LCONV_TO_I:
+	case OP_LCONV_TO_U8:
+	case OP_LCONV_TO_U:
 		ins->opcode = OP_MOVE;
 		break;
 	case OP_ICONV_TO_I8:
@@ -9616,6 +9618,8 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   work of the local deadce pass.
  * - conversion out of SSA form is still missing the coalescing optimization of the old
  *   one.
+ * - compilation of iltests.il on amd64 produces an executable which fails
+ *   some tests.
  * - LAST MERGE: 58789.
  */
 

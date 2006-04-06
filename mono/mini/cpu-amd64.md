@@ -204,6 +204,7 @@ setret: dest:a src1:i len:3
 setlret: dest:i src1:i src2:i len:5
 checkthis: src1:b len:5
 call: dest:a clob:c len:64
+op_call: dest:a clob:c len:64
 ret: len:2
 voidcall: clob:c len:64
 voidcall_reg: src1:i clob:c len:64
