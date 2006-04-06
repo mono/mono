@@ -1,5 +1,18 @@
 2006-04-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mono_local_deadce): Add some support for eliminating dead assignments
+	to global vregs as well.
+
+	* ssa2.c (mono_ssa_compute2): Use pruned SSA.
+
+	* method-to-ir.c (mono_handle_global_vregs): Add ceq + store -> setcc-membase
+	rules.
+
+	* mini.c (mono_method_to_ir): Replace an OP_CALL with CEE_CALL which was missed
+	earlier.
+
+	* exceptions.cs: Add a test for the inline+throw problem.
+
 	* mini-codegen.c (mono_local_regalloc): Don't set dreg_mask based on
 	dest_dreg since the former is mandatory, while the later is not.
 

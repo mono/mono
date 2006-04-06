@@ -8980,6 +8980,23 @@ op_to_op_dest_membase (int opcode)
 }
 
 static inline int
+op_to_op_store_membase (int store_opcode, int opcode)
+{
+#if defined(__i386__) || defined(__x86_64__)
+	switch (opcode) {
+	case OP_ICEQ:
+		if (store_opcode == OP_STOREI1_MEMBASE_REG)
+			return OP_X86_SETEQ_MEMBASE;
+	case OP_CNE:
+		if (store_opcode == OP_STOREI1_MEMBASE_REG)
+			return OP_X86_SETNE_MEMBASE;
+	}
+#endif
+
+	return -1;
+}
+
+static inline int
 op_to_op_src1_membase (int load_opcode, int opcode)
 {
 #ifdef __i386__
@@ -9405,6 +9422,13 @@ mono_spill_global_vars (MonoCompile *cfg)
 							ins->opcode = store_opcode;
 							ins->inst_destbasereg = var->inst_basereg;
 							ins->inst_offset = var->inst_offset;
+						} else if (op_to_op_store_membase (store_opcode, ins->opcode) != -1) {
+							// FIXME: The backends expect the base reg to be in inst_basereg
+							ins->opcode = op_to_op_store_membase (store_opcode, ins->opcode);
+							ins->dreg = -1;
+							ins->inst_basereg = var->inst_basereg;
+							ins->inst_offset = var->inst_offset;
+							spec = ins_info [ins->opcode - OP_START - 1];
 						} else {
 							/* printf ("INS: "); mono_print_ins (ins); */
 							/* Create a store instruction */
@@ -9588,6 +9612,10 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   created during inlining -> or dont create the bblocks in the first place.
  * - transform VCALL's to something other than VOIDCALL since they might need custom
  *   handling like on amd64.
+ * - the simple deadce from the current JIT is still needed, could do some of the
+ *   work of the local deadce pass.
+ * - conversion out of SSA form is still missing the coalescing optimization of the old
+ *   one.
  * - LAST MERGE: 58789.
  */
 

@@ -468,7 +468,7 @@ mono_ssa_compute2 (MonoCompile *cfg)
 
 #ifdef CREATE_PRUNED_SSA
 	/* we need liveness for pruned SSA */
-	if (!cfg->new_ir && !(cfg->comp_done & MONO_COMP_LIVENESS))
+	if (!(cfg->comp_done & MONO_COMP_LIVENESS))
 		mono_analyze_liveness (cfg);
 #endif
 
@@ -675,6 +675,8 @@ mono_ssa_remove2 (MonoCompile *cfg)
 
 	if (cfg->comp_done & MONO_COMP_REACHABILITY)
 		unlink_unused_bblocks (cfg);
+
+	cfg->comp_done &= ~MONO_COMP_LIVENESS;
 
 	cfg->comp_done &= ~MONO_COMP_SSA;
 }
