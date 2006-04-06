@@ -1,3 +1,7 @@
+2006-04-06  Alexander Olk  <alex.olk@googlemail.com>
+
+	* ThemeNice.cs: Added ToolBar drawing code
+
 2006-04-06  Mike Kestner  <mkestner@novell.com>
 
 	* Form.cs (ShowDialog): MS allows IWin32Window param to be a non-form.
