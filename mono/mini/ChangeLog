@@ -1,3 +1,10 @@
+2006-04-06  Dick Porter  <dick@ximian.com>
+
+	* wapihandles.c (mini_wapi_semdel): Fix parameters in semctl () call.
+	
+	* wapihandles.c (mini_wapi_seminfo): 
+	* driver.c (mono_main): Add semaphore info option
+
 2006-04-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* dominators.c (compute_dominators): Fix a bug which surfaced after the recent

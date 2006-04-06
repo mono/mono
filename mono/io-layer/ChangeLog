@@ -1,3 +1,7 @@
+2006-04-06  Dick Porter  <dick@ximian.com>
+
+	* shared.c: Fix parameters in semctl () call.
+
 2006-03-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* atomic.h atomic.c: Applied patch from David S. Miller 
