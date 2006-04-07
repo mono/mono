@@ -1,3 +1,8 @@
+2006-04-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* dominators.c (compute_dominators): Fix yet another bug which surfaced after
+	the branch opt changes.
+
 2006-04-06  Dick Porter  <dick@ximian.com>
 
 	* wapihandles.c (mini_wapi_semdel): Fix parameters in semctl () call.
