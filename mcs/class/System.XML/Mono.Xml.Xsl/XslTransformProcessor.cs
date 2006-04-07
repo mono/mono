@@ -237,14 +237,14 @@ namespace Mono.Xml.Xsl {
 
 			Hashtable passedParams = GetParams (withParams);
 			
-			PushNodeset (nodes);
-			while (NodesetMoveNext ()) {
+			while (NodesetMoveNext (nodes)) {
+				PushNodeset (nodes);
 				XslTemplate t = FindTemplate (CurrentNode, mode);
 				currentTemplateStack.Push (t);
 				t.Evaluate (this, passedParams);
 				currentTemplateStack.Pop ();
+				PopNodeset ();
 			}
-			PopNodeset ();
 			
 			if (passedParams != null) paramPassingCache.Push (passedParams);
 		}
@@ -442,13 +442,18 @@ namespace Mono.Xml.Xsl {
 		
 		public bool NodesetMoveNext ()
 		{
-			if (!CurrentNodeset.MoveNext ())
+			return NodesetMoveNext (CurrentNodeset);
+		}
+
+		public bool NodesetMoveNext (XPathNodeIterator iter)
+		{
+			if (!iter.MoveNext ())
 				return false;
-			if (CurrentNodeset.Current.NodeType == XPathNodeType.Whitespace && !XPathContext.PreserveWhitespace (CurrentNodeset.Current))
-				return NodesetMoveNext ();
+			if (iter.Current.NodeType == XPathNodeType.Whitespace && !XPathContext.PreserveWhitespace (iter.Current))
+				return NodesetMoveNext (iter);
 			return true;
 		}
-		
+
 		public void PushNodeset (XPathNodeIterator itr)
 		{
 			nodesetStack.Add (itr);

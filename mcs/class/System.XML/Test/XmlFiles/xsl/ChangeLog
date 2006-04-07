@@ -1,5 +1,10 @@
 2006-04-07  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* current-in-select.xml current-in-select.xsl current-in-select.ref :
+	  new files for XslTransformTests.CurrentInSelect().
+
+2006-04-07  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* stripspace.xml, stripspace.xsl : added strip-space testcases.
 
 2005-11-17  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>

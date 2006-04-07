@@ -1,5 +1,9 @@
 2006-04-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XslTransformTests.cs : added CurrentInSelect().
+
+2006-04-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XslTransformTests.cs : added StripSpace().
 
 2006-01-13  Atsushi Enomoto  <atsushi@ximian.com>

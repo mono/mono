@@ -1,3 +1,8 @@
+2005-04-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslForEach.cs : push current node context after iterating "selected"
+	  node-set.
+
 2005-03-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslApplyTemplates.cs, XslSort.cs : use new XslSortEvaluator.cs

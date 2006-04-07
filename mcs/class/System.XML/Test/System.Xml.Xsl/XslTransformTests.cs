@@ -1898,5 +1898,21 @@ Services
 			t.Transform (d, null, sw);
 			Assert.AreEqual (result, sw.ToString ());
 		}
+
+		[Test]
+		public void CurrentInSelect ()
+		{
+			XslTransform t = new XslTransform ();
+			t.Load ("Test/XmlFiles/xsl/current-in-select.xsl");
+			XPathDocument d = new XPathDocument (
+				"Test/XmlFiles/xsl/current-in-select.xml", XmlSpace.Preserve);
+			StringWriter sw = new StringWriter ();
+			t.Transform (d, null, sw);
+			using (StreamReader sr = File.OpenText (
+			       "Test/XmlFiles/xsl/current-in-select.ref")) {
+				string s = sr.ReadToEnd ();
+				Assert.AreEqual (s, sw.ToString ());
+			}
+		}
 	}
 }

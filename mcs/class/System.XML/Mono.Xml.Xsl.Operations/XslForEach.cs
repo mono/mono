@@ -85,13 +85,14 @@ namespace Mono.Xml.Xsl.Operations {
 				sortEvaluator.SortedSelect (p) :
 				p.Select (select);
 
-			p.PushNodeset (iter);
-			p.PushForEachContext ();
 			
-			while (p.NodesetMoveNext ())
+			while (p.NodesetMoveNext (iter)) {
+				p.PushNodeset (iter);
+				p.PushForEachContext ();
 				children.Evaluate (p);
-			p.PopForEachContext();
-			p.PopNodeset ();
+				p.PopForEachContext();
+				p.PopNodeset ();
+			}
 		}
 	}
 }

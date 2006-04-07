@@ -1,5 +1,11 @@
 2006-04-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XslTransformProcessor.cs : push current node context after iterating
+	  template target node. Added another NodesetMoveNext() which takes
+	  explicit XPathNodeIterator to iterate and filter whitespaces out.
+
+2006-04-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XslTransformProcessor.cs : in NodesetMoveNext() take
 	  XPathContext.PreserveWhitespace() into consideration.
 
