@@ -1,5 +1,7 @@
 2006-04-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* loader.c metadata.c: Revert r59116 to see if it fixes the breakage.
+
 	* class.c (mono_class_setup_interface_offsets): New internal function.
 
 	* reflection.c (ensure_runtime_vtable): Setup interface offsets for dynamic
