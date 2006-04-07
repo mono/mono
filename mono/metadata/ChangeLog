@@ -1,3 +1,13 @@
+2006-04-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (emit_object_to_ptr_conv): Add support for ARRAY_BYVALCHARARRAY.
+	(emit_ptr_to_object_conv): Ditto. Fixes #77960.
+
+	* metadata.c (mono_type_to_unmanaged): Use ARRAY_BYVALCHARARRAY when converting
+	a byval char array and CharSet is Ansi.
+
+	* metadata.h: Add new marshalling conversion ARRAY_BYVALCHARARRAY.
+
 2006-04-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* metadata.c: Add some locking comments.
