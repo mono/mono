@@ -61,12 +61,16 @@ namespace MonoTests.System.Security.Permissions {
 		FileIOPermission unrestricted;
 
 		private string filename;
+		private bool unix;
 
 		[SetUp]
 		public void SetUp () 
 		{
 			Environment.CurrentDirectory = Path.GetTempPath();
 			filename = Path.GetTempFileName ();
+
+			int os = (int) Environment.OSVersion.Platform;
+			unix = ((os == 4) || (os == 128));
 
 			p = null;
 			pathsInPermission = null;
@@ -87,7 +91,7 @@ namespace MonoTests.System.Security.Permissions {
 				pathArrayGood[0] = "/temp1";
 				pathArrayGood[1] = "/usr/temp2";
 				pathArrayBad[0] = "/temp1";
-				pathArrayBad[1] = "/usr/temp*";
+				pathArrayBad[1] = "/usr/temp*"; // not really bad under Unix...
 				pathArrayGood2[0] = "/temp1";
 				pathArrayGood2[1] = "/usr/temp2";
 				pathArrayGood2[2] = "/usr/bin/something";
@@ -139,10 +143,20 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void ConstructorString_Wildcard () 
 		{
-			p = new FileIOPermission(FileIOPermissionAccess.Append, "\\\\mycomputer\\test*");
+			try {
+				// note: this is a valid path on UNIX so we must be able to protect it
+				p = new FileIOPermission(FileIOPermissionAccess.Append, pathArrayBad [1]);
+			}
+			catch (ArgumentException) {
+				if (unix)
+					Fail ("Wildcard * is valid in filenames");
+				// else it's normal for Windows to throw ArgumentException
+			}
+			catch (Exception e) {
+				Fail ("Bad or wrong exception: " + e.ToString ());
+			}
 		}
 
 		[Test]
@@ -176,10 +190,20 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void ConstructorStringArray_Wildcard () 
 		{
-			p = new FileIOPermission(FileIOPermissionAccess.Append, pathArrayBad);
+			try {
+				// note: this is a valid path on UNIX so we must be able to protect it
+				p = new FileIOPermission(FileIOPermissionAccess.Append, pathArrayBad);
+			}
+			catch (ArgumentException) {
+				if (unix)
+					Fail ("Wildcard * is valid in filenames");
+				// else it's normal for Windows to throw ArgumentException
+			}
+			catch (Exception e) {
+				Fail ("Bad or wrong exception: " + e.ToString ());
+			}
 		}
 
 		[Test]
