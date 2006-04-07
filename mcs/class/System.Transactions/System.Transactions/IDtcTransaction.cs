@@ -15,7 +15,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Transactions
 {
-	[ComImport]
+	//[ComImport]
 	// [Guid (whatever)]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	public interface IDtcTransaction

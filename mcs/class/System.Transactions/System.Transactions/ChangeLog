@@ -1,3 +1,7 @@
+2006-04-07  Mike Kestner  <mkestner@novell.com>
+
+	* IdcTransaction.cs: comment out the ComVisible attr to fix build.
+
 2006-03-03  Ankit Jain  <jankit@novell.com>
 
 	* Initial implementation.
