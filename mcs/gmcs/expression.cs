@@ -6834,24 +6834,26 @@ namespace Mono.CSharp {
 			if (array_data == null) {
 				Constant c = (Constant)((Argument)arguments [0]).Expr;
 				if (c.IsDefaultValue) {
-					value = new object [0];
+					value = Array.CreateInstance (array_element_type, 0);
 					return true;
 				}
 //				Report.Error (-212, Location, "array should be initialized when passing it to an attribute");
 				return base.GetAttributableValue (null, out value);
 			}
 			
-			object [] ret = new object [array_data.Count];
+			Array ret = Array.CreateInstance (array_element_type, array_data.Count);
+			object element_value;
 			for (int i = 0; i < ret.Length; ++i)
 			{
 				Expression e = (Expression)array_data [i];
-				if (e == null) // Is null when initializer is optimized out
+				if (e == null) // Is null when initializer is optimized away
 					e = (Expression)initializers [i];
 
-				if (!e.GetAttributableValue (array_element_type, out ret [i])) {
+				if (!e.GetAttributableValue (array_element_type, out element_value)) {
 					value = null;
 					return false;
 				}
+				ret.SetValue (element_value, i);
 			}
 			value = ret;
 			return true;
