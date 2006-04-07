@@ -1,3 +1,7 @@
+2006-04-07  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Makefile: Changed installation directory of schema files.
+
 2006-03-11  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* Main.cs: Updated for new API.
