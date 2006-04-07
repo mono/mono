@@ -1,3 +1,9 @@
+2006-04-08  Marek Safar  <marek.safar@seznam.cz>
+
+	A fix for #76744.
+	ecore.cs (SimpleName.ResolveAsTypeStep): Report better error when type is
+	only not visible.
+
 2006-04-07  Marek Safar  <marek.safar@seznam.cz>
 
 	A fix for #77916.

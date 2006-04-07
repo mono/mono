@@ -3,6 +3,7 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Marek Safar (marek.safar@seznam.cz)
 //
 // (C) 2001, 2002, 2003 Ximian, Inc.
 //
@@ -1870,10 +1871,21 @@ namespace Mono.CSharp {
 			MemberCore mc = ec.DeclContainer.GetDefinition (Name);
 			if (mc != null) {
 				Error_UnexpectedKind (ec.DeclContainer, "type", GetMemberType (mc), loc);
-			} else {
-				NamespaceEntry.Error_NamespaceNotFound (loc, Name);
+				return null;
 			}
 
+			string ns = ec.DeclContainer.NamespaceEntry.NS.Name;
+			string fullname = (ns.Length > 0) ? ns + "." + Name : Name;
+			foreach (Assembly a in RootNamespace.Global.Assemblies) {
+				Type type = a.GetType (fullname);
+				if (type != null) {
+					Report.SymbolRelatedToPreviousError (type);
+					Expression.ErrorIsInaccesible (loc, fullname);
+					return null;
+				}
+			}
+
+			NamespaceEntry.Error_NamespaceNotFound (loc, Name);
 			return null;
 		}
 
