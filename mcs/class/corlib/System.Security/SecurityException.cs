@@ -305,7 +305,12 @@ namespace System.Security {
 					sb.AppendFormat ("{0}Failed Permission: {1}", Environment.NewLine, FirstPermissionThatFailed);
 				}
 				if (_evidence != null) {
-					sb.AppendFormat ("{0}Evidence: {1}", Environment.NewLine, _evidence);
+					sb.AppendFormat ("{0}Evidences:", Environment.NewLine);
+					foreach (object o in _evidence) {
+						// Hash evidence is way much too verbose to be useful to anyone
+						if (!(o is Hash))
+							sb.AppendFormat ("{0}\t{1}", Environment.NewLine, o);
+					}
 				}
 			}
 			catch (SecurityException) {

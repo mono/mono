@@ -1,3 +1,8 @@
+2006-04-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SecurityException.cs: Show Evidence correctly (it's a collection) 
+	but avoid showing the Hash evidence (it's way too big to be useful).
+
 2005-11-11  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* SecureString.cs: Completed InsertAt, fixed Alloc not to re-alloc a
