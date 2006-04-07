@@ -1,5 +1,10 @@
 2006-04-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* class.c (mono_class_setup_interface_offsets): New internal function.
+
+	* reflection.c (ensure_runtime_vtable): Setup interface offsets for dynamic
+	interfaces too. Fixes #77398.
+
 	* reflection.c (encode_cattr_value): Add support for 
 	parameter type=object, argument type=array.
 	(load_cattr_value): Ditto. Fixes #77916.
