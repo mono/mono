@@ -1,5 +1,9 @@
 2006-04-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (decompose_opcode): Fix OP_LCONV_TO_OVF_I4_UN.
+
+	* iltests.il: Delete a test which only worked on 32 bit machines.
+
 	* ssa2.c (evaluate_ins): Fix the computation of the new variable state.
 
 	* method-to-ir.c (decompose_opcode): Add some missing opcodes.

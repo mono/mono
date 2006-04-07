@@ -4498,7 +4498,7 @@ decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 		break;
 	case OP_LCONV_TO_OVF_I4_UN:
 		MONO_EMIT_NEW_COMPARE_IMM (cfg, ins->sreg1, 0x7fffffff);
-		MONO_EMIT_NEW_COND_EXC (cfg, GT, "OverflowException");
+		MONO_EMIT_NEW_COND_EXC (cfg, GT_UN, "OverflowException");
 		MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, ins->dreg, ins->sreg1);
 		ins->opcode = OP_NOP;
 		break;
@@ -4529,7 +4529,6 @@ decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 	case OP_LCONV_TO_OVF_U8:
 		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, ins->sreg1, 0);
 		MONO_EMIT_NEW_COND_EXC (cfg, LT, "OverflowException");
-
 		MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, ins->dreg, ins->sreg1);
 		ins->opcode = OP_NOP;
 		break;
@@ -9618,8 +9617,6 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   work of the local deadce pass.
  * - conversion out of SSA form is still missing the coalescing optimization of the old
  *   one.
- * - compilation of iltests.il on amd64 produces an executable which fails
- *   some tests.
  * - LAST MERGE: 59160.
  */
 
