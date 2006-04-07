@@ -1,3 +1,7 @@
+2006-04-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequest.cs: the field content_length can be < 0 and then we try to 	read when there's no data and block.
+
 2006-04-05 Andrew Skiba <andrews@mainsoft.com>
 
 	* HttpUtility: UrlEncode and UrlEncodeUnicode logic unified, behaviour
