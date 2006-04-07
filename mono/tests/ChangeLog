@@ -1,3 +1,7 @@
+2006-04-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal2.cs: Add tests for #77960.
+
 2006-03-29  Raja R Harinath  <rharinath@novell.com>
 
 	* iface-large.cs: New test based on #75172.
