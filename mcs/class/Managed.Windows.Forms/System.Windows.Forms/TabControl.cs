@@ -1056,8 +1056,8 @@ namespace System.Windows.Forms {
 				TabPage page = value as TabPage;
 				if (page != null) {
 					int index = owner.IndexForTabPage (page);
-					if (index == owner.SelectedIndex)
-						owner.SelectedIndex = (index + 1) % owner.TabCount;
+					if (index < owner.SelectedIndex || owner.SelectedIndex == Count - 1)
+						owner.SelectedIndex--;
 				}
 				base.Remove (value);
 			}
@@ -1068,14 +1068,12 @@ namespace System.Windows.Forms {
 		public class TabPageCollection	: IList, ICollection, IEnumerable {
 
 			private TabControl owner;
-			private IList controls;
 
 			public TabPageCollection (TabControl owner)
 			{
 				if (owner == null)
 					throw new ArgumentNullException ("Value cannot be null.");
 				this.owner = owner;
-				controls = owner.Controls;
 			}
 
 			[Browsable(false)]
