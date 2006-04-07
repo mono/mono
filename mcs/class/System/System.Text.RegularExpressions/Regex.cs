@@ -387,6 +387,8 @@ namespace System.Text.RegularExpressions {
 				if (count != -1)
 					if(counter -- <= 0)
 						break;
+				if (m.Index < ptr)
+					throw new SystemException ("how");
 				result.Append (input, ptr, m.Index - ptr);
 				evaluator (m, result);
 

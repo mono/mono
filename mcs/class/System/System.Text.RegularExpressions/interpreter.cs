@@ -106,16 +106,16 @@ namespace System.Text.RegularExpressions {
 						//	True
 
 						switch ((Position)program[pc + 4]) {
-						case Position.StartOfString:							
+						case Position.StartOfString:
 							if (anch_reverse || anch_offset == 0) {
-								ptr = anch_offset;
+								if (anch_reverse)
+									ptr = anch_offset;
 								if (TryMatch (ref ptr, pc + skip))
 									goto Pass;
 							}
 							break;
 						
 						case Position.StartOfLine:
-													
 							 if (anch_ptr == 0) {
 								ptr = 0;
 								if (TryMatch (ref ptr, pc + skip))

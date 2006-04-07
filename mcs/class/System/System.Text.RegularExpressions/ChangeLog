@@ -1,5 +1,9 @@
 2006-04-07  Raja R Harinath  <rharinath@novell.com>
 
+	Fix #78007
+	* interpreter.cs (Interpreter.Eval) [Anchor, Position.StartOfString]:
+	Don't reset 'ptr' to 0 during forward scan.
+
 	Fix #76345
 	* interpreter.cs (Interpreter.FastEval) [FastRepeat]: If the first
 	tail operation has a 'negate' flag, avoid the "match next char"

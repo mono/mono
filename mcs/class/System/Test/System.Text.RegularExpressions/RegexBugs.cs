@@ -353,5 +353,20 @@ namespace MonoTests.System.Text.RegularExpressions
 			m = new Regex("'.*?[^,]'").Match(s1); Assert ("#03", m.Success); AssertEquals ("#03v", s1, m.Value);
 			m = new Regex("'.*?[^,]'").Match(s2); Assert ("#04", m.Success); AssertEquals ("#04v", s2, m.Value);
 		}
+
+		[Test]
+		public void Bug78007 ()
+		{
+			string test = "head&gt;<html>";
+			string pattern = @"\Ahead&gt;\<html\>";
+			Regex r = new Regex (pattern);
+			Match m = r.Match (test);
+			Assert ("#01", m.Success);
+			AssertEquals ("#01i", 0, m.Index);
+			AssertEquals ("#01l", 14, m.Length);
+
+			m = m.NextMatch ();
+			Assert ("#02", !m.Success);
+		}
 	}
 }
