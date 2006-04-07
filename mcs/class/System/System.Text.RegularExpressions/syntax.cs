@@ -891,7 +891,7 @@ namespace System.Text.RegularExpressions.Syntax {
 					else
 						cmp.EmitCategory ((Category)i, negate, reverse);
 				} else if (neg_cats[i]) {
-					cmp.EmitCategory ((Category)i, !negate, reverse);
+					cmp.EmitNotCategory ((Category)i, negate, reverse);
 				}
 			}
 

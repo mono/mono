@@ -57,7 +57,8 @@ namespace System.Text.RegularExpressions {
 					skip = 1;
 					break;
 
-				case OpCode.Character: case OpCode.Category: case OpCode.Position:
+				case OpCode.Character: case OpCode.Category: case OpCode.NotCategory:
+				case OpCode.Position:
 				case OpCode.Open: case OpCode.Close: case OpCode.Reference:
 				case OpCode.Sub: case OpCode.Branch: case OpCode.Jump: case OpCode.In:
 					skip = 2;
@@ -108,6 +109,7 @@ namespace System.Text.RegularExpressions {
 				break;
 
 			case OpCode.Category:
+			case OpCode.NotCategory:
 				str += " /" + (Category)image[pc + 1];
 				break;
 			

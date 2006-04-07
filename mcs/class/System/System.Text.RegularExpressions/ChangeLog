@@ -1,3 +1,18 @@
+2006-04-07  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #69269
+	* arch.cs (OpCode.NotCategory): New.  Stands for matching a
+	character _not_ from the given category.
+	* debug.cs (DisassembleBlock): Handle it.
+	* compiler.cs (ICompiler.EmitNotCategory): New.
+	(Compiler.EmitNotCategory): New.  Emit OpCode.NotCategory.
+	* syntax.cs (CharacterClass.Compile): Don't conflate negation of
+	the character class and negation of the category.  Use
+	EmitNotCategory.
+	* interpreter.cs (Interpreter.Eval): Pass OpCode.NotCategory to
+	EvalChar.
+	(Interpreter.EvalChar): Handle it.
+
 2006-04-06  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #77487

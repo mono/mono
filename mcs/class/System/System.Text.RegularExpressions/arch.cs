@@ -46,6 +46,7 @@ namespace System.Text.RegularExpressions {
 
 		Character,		// match character exactly
 		Category,		// match character from category
+		NotCategory,		// match character _not_ from category
 		Range,			// match character from range
 		Set,			// match character from set
 		In,			// match character from group of tests

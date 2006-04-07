@@ -48,6 +48,7 @@ namespace System.Text.RegularExpressions {
 
 		void EmitCharacter (char c, bool negate, bool ignore, bool reverse);
 		void EmitCategory (Category cat, bool negate, bool reverse);
+		void EmitNotCategory (Category cat, bool negate, bool reverse);
 		void EmitRange (char lo, char hi, bool negate, bool ignore, bool reverse);
 		void EmitSet (char lo, BitArray set, bool negate, bool ignore, bool reverse);
 
@@ -151,6 +152,11 @@ namespace System.Text.RegularExpressions {
 
 		public void EmitCategory (Category cat, bool negate, bool reverse) {
 			Emit (OpCode.Category, MakeFlags (negate, false, reverse, false));
+			Emit ((ushort)cat);
+		}
+
+		public void EmitNotCategory (Category cat, bool negate, bool reverse) {
+			Emit (OpCode.NotCategory, MakeFlags (negate, false, reverse, false));
 			Emit ((ushort)cat);
 		}
 

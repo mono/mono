@@ -331,5 +331,13 @@ namespace MonoTests.System.Text.RegularExpressions
 			Assert ("#03", Regex.IsMatch ("a a", "(a[^a]*)+a"));
 			Assert ("#04", Regex.IsMatch ("a a", "(a *)+a"));
 		}
+
+		[Test]
+		public void Bug69269 ()
+		{
+			string s = "CREATE aa\faa; CREATE bb\nbb; CREATE cc\rcc; CREATE dd\tdd; CREATE ee\vee;";
+			AssertEquals ("#01", 5, Regex.Matches(s, @"CREATE[\s\S]+?;").Count);
+			AssertEquals ("#02", 5, Regex.Matches(s, @"CREATE[ \f\n\r\t\v\S]+?;").Count);
+		}
 	}
 }

@@ -316,7 +316,7 @@ namespace System.Text.RegularExpressions {
 					break;
 				}
 
-				case OpCode.Character: case OpCode.Category:
+				case OpCode.Character: case OpCode.Category: case OpCode.NotCategory:
 				case OpCode.Range: case OpCode.Set: {
 					if (!EvalChar (mode, ref ptr, ref pc, false))
 						goto Fail;
@@ -775,7 +775,12 @@ namespace System.Text.RegularExpressions {
 				case OpCode.Category: {
 					if (CategoryUtils.IsCategory ((Category)program[pc ++], c))
 						return !negate;
+					break;
+				}
 
+				case OpCode.NotCategory: {
+					if (!CategoryUtils.IsCategory ((Category)program[pc ++], c))
+						return !negate;
 					break;
 				}
 				
