@@ -400,7 +400,6 @@ namespace System.Web {
 			for (int i = 0; i < len; i++) {
 				if (s [i] == '%' && i + 2 < len) {
 					if (s [i + 1] == 'u' && i + 5 < len) {
-						Console.WriteLine ("uno");
 						if (bytes.Length > 0) {
 							output.Append (GetChars (bytes, e));
 							bytes.SetLength (0);
@@ -413,11 +412,9 @@ namespace System.Web {
 							output.Append ('%');
 						}
 					} else if (TryParseHexa (s.Substring (i + 1, 2), out xchar)) {
-						Console.WriteLine ("dos");
 						bytes.WriteByte ((byte) xchar);
 						i += 2;
 					} else {
-						Console.WriteLine ("tres");
 						output.Append ('%');
 					}
 					continue;
@@ -453,16 +450,14 @@ namespace System.Web {
 
 		private static int GetInt (byte b)
 		{
-			if (b >= '0' && b <= '9')
-				return b - '0';
+			char c = Char.ToUpper ((char) b);
+			if (c >= '0' && c <= '9')
+				return c - '0';
 
-			if (b >= 'A' && b <= 'F')
-				return b - 'A' + 10;
+			if (c < 'A' || c > 'F')
+				return 0;
 
-			if (b >= 'a' && b <= 'f')
-				return b - 'a' + 10;
-
-			return -1;
+			return (c - 'A' + 10);
 		}
 
 		private static char GetChar (byte [] bytes, int offset, int length)
@@ -721,7 +716,7 @@ namespace System.Web {
 			if (count < 0 || count > len - offset)
 				throw new ArgumentOutOfRangeException("count");
 
-			MemoryStream result = new MemoryStream ();
+			MemoryStream result = new MemoryStream (count);
 			int end = offset + count;
 			for (int i = offset; i < end; i++)
 				UrlEncodeChar ((char)bytes [i], result, false);
@@ -745,7 +740,7 @@ namespace System.Web {
 			if (str == "")
 				return new byte [0];
 
-			MemoryStream result = new MemoryStream ();
+			MemoryStream result = new MemoryStream (str.Length);
 			foreach (char c in str){
 				UrlEncodeChar (c, result, true);
 			}
