@@ -1,3 +1,7 @@
+2006-04-07  Dick Porter  <dick@ximian.com>
+
+	* processes.c: Fix build for older glib.
+
 2006-04-06  Dick Porter  <dick@ximian.com>
 	
 	* processes.c (CreateProcess): Add a reference to the child
