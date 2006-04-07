@@ -574,12 +574,16 @@ namespace System.Text.RegularExpressions {
 					pc += program[pc + 1];		// tail expression
 					ushort tail_word = program[pc];
 
-					int c1, c2;			// first character of tail operator
-					int coff;			// 0 or -1 depending on direction
+					int c1 = -1;		// first character of tail operator
+					int c2 = -1;		// ... and the same character, in upper case if ignoring case
+					int coff = 0;		// 0 or -1 depending on direction
 
 					OpCode tail_op = (OpCode)(tail_word & 0xff);
 					if (tail_op == OpCode.Character || tail_op == OpCode.String) {
 						OpFlags tail_flags = (OpFlags)(tail_word & 0xff00);
+
+						if ((tail_flags & OpFlags.Negate) != 0)
+							goto skip;
 
 						if (tail_op == OpCode.String)
 						{
@@ -605,11 +609,8 @@ namespace System.Text.RegularExpressions {
 						else
 							coff = 0;
 					}
-					else {
-						c1 = c2 = -1;
-						coff = 0;
-					}
 
+				skip:
 					if (fast.IsLazy) {
 						if (!fast.IsMinimum && !Eval (Mode.Count, ref ptr, fast.Expression)) {
 							//Console.WriteLine ("lazy fast: failed mininum.");

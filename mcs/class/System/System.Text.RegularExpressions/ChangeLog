@@ -1,5 +1,10 @@
 2006-04-07  Raja R Harinath  <rharinath@novell.com>
 
+	Fix #76345
+	* interpreter.cs (Interpreter.FastEval) [FastRepeat]: If the first
+	tail operation has a 'negate' flag, avoid the "match next char"
+	optimization.
+
 	Fix #69269
 	* arch.cs (OpCode.NotCategory): New.  Stands for matching a
 	character _not_ from the given category.

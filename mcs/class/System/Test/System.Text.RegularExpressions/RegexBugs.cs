@@ -136,7 +136,8 @@ namespace MonoTests.System.Text.RegularExpressions
                                                                                            
             		AssertEquals ("MM #06", "\\", match.Groups[1].Value);
             		AssertEquals ("MM #07", "", match.Groups[2].Value);
-            		AssertEquals ("MM #08", @"d:\Temp\SomeDir\SomeDir\", match.Groups[3].Value);
+            		AssertEquals ("MM #08", @"d:\Temp\SomeDir\SomeDir\", // fool emacs: "
+				      match.Groups[3].Value);
             		AssertEquals ("MM #09", "bla.xml", match.Groups[4].Value);
         	}
 
@@ -338,6 +339,19 @@ namespace MonoTests.System.Text.RegularExpressions
 			string s = "CREATE aa\faa; CREATE bb\nbb; CREATE cc\rcc; CREATE dd\tdd; CREATE ee\vee;";
 			AssertEquals ("#01", 5, Regex.Matches(s, @"CREATE[\s\S]+?;").Count);
 			AssertEquals ("#02", 5, Regex.Matches(s, @"CREATE[ \f\n\r\t\v\S]+?;").Count);
+		}
+
+		[Test]
+		public void Bug76345 ()
+		{
+			Match m;
+			string s1 = "'asdf'";
+			string s2 = "'as,'df'";
+
+			m = new Regex("'.*?'").Match(s1);     Assert ("#01", m.Success); AssertEquals ("#01v", s1, m.Value);
+			m = new Regex("'[^,].*?'").Match(s1); Assert ("#02", m.Success); AssertEquals ("#02v", s1, m.Value);
+			m = new Regex("'.*?[^,]'").Match(s1); Assert ("#03", m.Success); AssertEquals ("#03v", s1, m.Value);
+			m = new Regex("'.*?[^,]'").Match(s2); Assert ("#04", m.Success); AssertEquals ("#04v", s2, m.Value);
 		}
 	}
 }

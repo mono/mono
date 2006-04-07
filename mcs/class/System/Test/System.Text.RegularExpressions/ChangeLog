@@ -1,5 +1,7 @@
 2006-04-07  Raja R Harinath  <rharinath@novell.com>
 
+	* RegexBugs.cs (Bug76345): New test from #76345.
+
 	* RegexBugs.cs (Bug69269): New test from #69269.
 
 2006-04-06  Raja R Harinath  <rharinath@novell.com>
