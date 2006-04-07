@@ -567,6 +567,7 @@ namespace System.IO.IsolatedStorage {
 			}
 		}
 
+		[SecurityPermission (SecurityAction.Assert, SerializationFormatter = true)]
 		private void LoadIdentities (string root)
 		{
 			if (!File.Exists (root + ".storage"))
@@ -583,6 +584,7 @@ namespace System.IO.IsolatedStorage {
 			}
 		}
 
+		[SecurityPermission (SecurityAction.Assert, SerializationFormatter = true)]
 		private void SaveIdentities (string root)
 		{
 			Identities identities = new Identities (_applicationIdentity, _assemblyIdentity, _domainIdentity);

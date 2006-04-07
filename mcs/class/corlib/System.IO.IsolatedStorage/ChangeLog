@@ -1,3 +1,8 @@
+2006-04-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* IsolatedStorageFile.cs: Loading/saving the identities used to 
+	isolate the storage requires the permission to [de]serialize them too.
+
 2005-11-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* IsolatedStorageScope.cs: Added missing [Serializable] in 2.0 profile
