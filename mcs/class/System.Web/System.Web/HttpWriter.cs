@@ -42,6 +42,7 @@ namespace System.Web {
 		HttpResponseStream output_stream;
 		HttpResponse response;
 		Encoding encoding;
+		byte [] bytebuffer = new byte [256];
 
 		internal HttpWriter (HttpResponse response)
 		{
@@ -97,23 +98,20 @@ namespace System.Web {
 		
 		public override void Write (string s)
 		{
-			if (s == null)
-				return;
-			
-			byte [] xx = encoding.GetBytes (s);
-
-			output_stream.Write (xx, 0, xx.Length);
-			
-			if (response.buffer)
-				return;
-
-			response.Flush ();
+			WriteString (s, 0, s.Length);
 		}
 		
 		public override void Write (char [] buffer, int index, int count)
 		{
-			byte [] xx = encoding.GetBytes (buffer, index, count);
-			output_stream.Write (xx, 0, xx.Length);
+			/*byte [] xx = encoding.GetBytes (buffer, index, count);
+			output_stream.Write (xx, 0, xx.Length);*/
+			
+			int length = encoding.GetByteCount (buffer, index, count);
+			if (length > bytebuffer.Length)
+				bytebuffer = new byte [length << 1];
+
+			encoding.GetBytes (buffer, index, count, bytebuffer, 0);
+			output_stream.Write (bytebuffer, 0, length);
 
 			if (response.buffer)
 				return;
@@ -135,12 +133,23 @@ namespace System.Web {
 
 		public void WriteString (string s, int index, int count)
 		{
-			char [] a = s.ToCharArray (index, count);
+			if (s == null)
+				return;
 
-			byte [] xx = encoding.GetBytes (a, 0, count);
+			int length;
+			if (index == 0 && count == s.Length) {
+				length = encoding.GetByteCount (s); 
+			} else {
+				char [] chars = s.ToCharArray (index, count);
+				length = encoding.GetByteCount (chars);
+			}
+
+			if (length > bytebuffer.Length)
+				bytebuffer = new byte [length << 1];
+
+			encoding.GetBytes (s, index, count, bytebuffer, 0);
+			output_stream.Write (bytebuffer, 0, length);
 			
-			output_stream.Write (xx, 0, xx.Length);
-
 			if (response.buffer)
 				return;
 
