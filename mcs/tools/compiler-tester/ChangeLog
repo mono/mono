@@ -1,3 +1,7 @@
+2006-04-07  Marek Safar  <marek.safar@seznam.cz>
+
+	* compiler-tester.cs: Prints known issues stats.
+
 2006-01-18  Martin Baulig  <martin@ximian.com>
 
 	* compiler-tester.cs: Added a new "// Dependencies: " magical

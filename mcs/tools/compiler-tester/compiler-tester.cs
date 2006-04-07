@@ -129,6 +129,8 @@ namespace TestRunner {
 		protected ArrayList know_issues = new ArrayList ();
 		protected ArrayList ignore_list = new ArrayList ();
 		protected ArrayList no_error_list = new ArrayList ();
+			
+		int total_known_issues;
 
 		protected Checker (ITester tester, string log_file, string issue_file)
 		{
@@ -266,6 +268,7 @@ namespace TestRunner {
 					active_cont.Add (file_name);
 				}
 			}
+			total_known_issues = know_issues.Count;
 		}
 
 		public virtual void PrintSummary ()
@@ -275,6 +278,9 @@ namespace TestRunner {
 
 			if (ignored > 0)
 				LogLine ("{0} test cases ignored", ignored);
+			
+			if (total_known_issues - know_issues.Count > 0)
+				LogLine ("{0} known issues", total_known_issues - know_issues.Count);
 
 			know_issues.AddRange (no_error_list);
 			if (know_issues.Count > 0) {
@@ -809,7 +815,11 @@ namespace TestRunner {
 			}
 
 			string mode = args[0].ToLower ();
-			string test_pattern = args [1];
+#if NET_2_0
+			string test_pattern = args [1] == "0" ? "*cs*.cs" : "*test-*.cs"; //args [1];
+#else
+			string test_pattern = args [1] == "0" ? "cs*.cs" : "test-*.cs"; //args [1];
+#endif
 			string mcs = args [2];
 			string issue_file = args [3];
 			string log_fname = args [4];
