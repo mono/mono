@@ -71,8 +71,13 @@ namespace System.Data.SqlClient {
 		{
 			dbSchemaTable = null;
 			adapter = null;
+#if NET_2_0
+			quoteSuffix = "]";
+			quotePrefix = "[";
+#else
 			quoteSuffix = String.Empty;
 			quotePrefix = String.Empty;
+#endif
 		}
 
 		public SqlCommandBuilder (SqlDataAdapter adapter)
@@ -196,7 +201,7 @@ namespace System.Data.SqlClient {
 			dbSchemaTable = schemaTable;
 		}
 
-		private SqlCommand CreateDeleteCommand (DataRow row, DataTableMapping tableMapping) 
+		private SqlCommand CreateDeleteCommand ()
 		{
 			// If no table was found, then we can't do an delete
 			if (QuotedTableName == String.Empty)
@@ -223,42 +228,31 @@ namespace System.Data.SqlClient {
 				bool isKey = (bool) schemaRow ["IsKey"];
 				SqlParameter parameter = null;
 
-				if (!isKey) {
-					parameter = deleteCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
-					parameter.SourceVersion = DataRowVersion.Original;
+				if (isKey)
+					keyFound = true;
 
-					dsColumnName = parameter.SourceColumn;
-					if (tableMapping != null 
-					    && tableMapping.ColumnMappings.Contains (parameter.SourceColumn))
-						dsColumnName = tableMapping.ColumnMappings [parameter.SourceColumn].DataSetColumn;
-				
-					if (row != null)
-						parameter.Value = row [dsColumnName, DataRowVersion.Original];
+				//ms.net 1.1 generates the null check for columns even if AllowDBNull is false
+				//while ms.net 2.0 does not. Anyways, since both forms are logically equivalent
+				//following the 2.0 approach
+				bool allowNull = (bool) schemaRow ["AllowDBNull"];
+				if (!isKey && allowNull) {
+					parameter = deleteCommand.Parameters.Add (String.Format ("@p{0}", parmIndex++),
+										SqlDbType.Int);
+					String sourceColumnName = (string) schemaRow ["BaseColumnName"];
+					parameter.Value = 1;
+
 					whereClause.Append ("(");
-					whereClause.Append (String.Format (clause1, parameter.ParameterName, GetQuotedString (parameter.SourceColumn)));
+					whereClause.Append (String.Format (clause1, parameter.ParameterName, 
+									GetQuotedString (sourceColumnName)));
 					whereClause.Append (" OR ");
 				}
-				else
-					keyFound = true;
-					
+
 				parameter = deleteCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
 				parameter.SourceVersion = DataRowVersion.Original;
 
-				dsColumnName = parameter.SourceColumn;
-				if (tableMapping != null 
-				    && tableMapping.ColumnMappings.Contains (parameter.SourceColumn))
-					dsColumnName = tableMapping.ColumnMappings [parameter.SourceColumn].DataSetColumn;
-
-				if (row != null) {
-					if (row[dsColumnName, DataRowVersion.Original] == null || row[dsColumnName, DataRowVersion.Original] == DBNull.Value)
-						parameter.Value = 1;
-					else
-						parameter.Value = 0;
-				}
-
 				whereClause.Append (String.Format (clause2, GetQuotedString (parameter.SourceColumn), parameter.ParameterName));
 
-				if (!isKey)
+				if (!isKey && allowNull)
 					whereClause.Append (")");
 			}
 			if (!keyFound)
@@ -270,7 +264,7 @@ namespace System.Data.SqlClient {
 			return deleteCommand;
 		}
 
-		private SqlCommand CreateInsertCommand (DataRow row, DataTableMapping tableMapping) 
+		private SqlCommand CreateInsertCommand ()
 		{
 			if (QuotedTableName == String.Empty)
 				return null;
@@ -296,14 +290,6 @@ namespace System.Data.SqlClient {
 				SqlParameter parameter = insertCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
 				parameter.SourceVersion = DataRowVersion.Current;
 
-				dsColumnName = parameter.SourceColumn;
-				if (tableMapping != null 
-				    && tableMapping.ColumnMappings.Contains (parameter.SourceColumn))
-					dsColumnName = tableMapping.ColumnMappings [parameter.SourceColumn].DataSetColumn;
-
-				if (row != null)
-					parameter.Value = row [dsColumnName];
-
 				columns.Append (GetQuotedString (parameter.SourceColumn));
 				values.Append (parameter.ParameterName);
 			}
@@ -326,7 +312,7 @@ namespace System.Data.SqlClient {
 			command.Parameters.Clear ();
 		}
 
-		private SqlCommand CreateUpdateCommand (DataRow row, DataTableMapping tableMapping) 
+		private SqlCommand CreateUpdateCommand ()
 		{
 			// If no table was found, then we can't do an update
 			if (QuotedTableName == String.Empty)
@@ -351,14 +337,6 @@ namespace System.Data.SqlClient {
 				SqlParameter parameter = updateCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
 				parameter.SourceVersion = DataRowVersion.Current;
 
-				dsColumnName = parameter.SourceColumn;
-				if (tableMapping != null 
-				    && tableMapping.ColumnMappings.Contains (parameter.SourceColumn))
-					dsColumnName = tableMapping.ColumnMappings [parameter.SourceColumn].DataSetColumn;
-
-				if (row != null)
-					parameter.Value = row [dsColumnName];
-
 				columns.Append (String.Format ("{0} = {1}", GetQuotedString (parameter.SourceColumn), parameter.ParameterName));
 			}
 
@@ -378,43 +356,29 @@ namespace System.Data.SqlClient {
 				SqlParameter parameter = null;
 
 
-				if (!isKey) {
-					parameter = updateCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
-					parameter.SourceVersion = DataRowVersion.Original;
+				if (isKey)
+					keyFound = true;
 
-					dsColumnName = parameter.SourceColumn;
-					if (tableMapping != null 
-					    && tableMapping.ColumnMappings.Contains (parameter.SourceColumn))
-						dsColumnName = tableMapping.ColumnMappings [parameter.SourceColumn].DataSetColumn;
-
-					if (row != null)
-						parameter.Value = row [dsColumnName, DataRowVersion.Original];
-
+				//ms.net 1.1 generates the null check for columns even if AllowDBNull is false
+				//while ms.net 2.0 does not. Anyways, since both forms are logically equivalent
+				//following the 2.0 approach
+				bool allowNull = (bool) schemaRow ["AllowDBNull"];
+				if (!isKey && allowNull) {
+					parameter = updateCommand.Parameters.Add (String.Format ("@p{0}", parmIndex++),
+										SqlDbType.Int);
+					parameter.Value = 1;
 					whereClause.Append ("(");
-					whereClause.Append (String.Format (clause1, parameter.ParameterName, GetQuotedString (parameter.SourceColumn)));
+					whereClause.Append (String.Format (clause1, parameter.ParameterName,
+									GetQuotedString ((string) schemaRow ["BaseColumnName"])));
 					whereClause.Append (" OR ");
 				}
-				else
-					keyFound = true;
 					
 				parameter = updateCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
 				parameter.SourceVersion = DataRowVersion.Original;
 
-				dsColumnName = parameter.SourceColumn;
-				if (tableMapping != null 
-				    && tableMapping.ColumnMappings.Contains (parameter.SourceColumn))
-					dsColumnName = tableMapping.ColumnMappings [parameter.SourceColumn].DataSetColumn;
-
-				if (row != null) {
-					if (row[dsColumnName, DataRowVersion.Original] == null || row[dsColumnName, DataRowVersion.Original] == DBNull.Value)
-						parameter.Value = 1;
-					else
-						parameter.Value = 0;
-				}
-
 				whereClause.Append (String.Format (clause2, GetQuotedString (parameter.SourceColumn), parameter.ParameterName));
 
-				if (!isKey)
+				if (!isKey && allowNull)
 					whereClause.Append (")");
 			}
 			if (!keyFound)
@@ -465,7 +429,9 @@ namespace System.Data.SqlClient {
                 SqlCommand GetDeleteCommand ()
 		{
 			BuildCache (true);
-			return CreateDeleteCommand (null, null);
+			if (deleteCommand == null)
+				return CreateDeleteCommand ();
+			return deleteCommand;
 		}
 
 		public 
@@ -475,7 +441,9 @@ namespace System.Data.SqlClient {
                 SqlCommand GetInsertCommand ()
 		{
 			BuildCache (true);
-			return CreateInsertCommand (null, null);
+			if (insertCommand == null)
+				return CreateInsertCommand ();
+			return insertCommand;
 		}
 
 		private string GetQuotedString (string value)
@@ -494,7 +462,9 @@ namespace System.Data.SqlClient {
                 SqlCommand GetUpdateCommand ()
 		{
 			BuildCache (true);
-			return CreateUpdateCommand (null, null);
+			if (updateCommand == null)
+				return CreateUpdateCommand ();
+			return updateCommand;
 		}
 
 		private bool IncludedInInsert (DataRow schemaRow)
@@ -550,6 +520,9 @@ namespace System.Data.SqlClient {
 		{
 			tableName = String.Empty;
 			dbSchemaTable = null;
+			CreateNewCommand (ref deleteCommand);
+			CreateNewCommand (ref updateCommand);
+			CreateNewCommand (ref insertCommand);
 		}
 
 #if NET_2_0

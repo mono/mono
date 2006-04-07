@@ -1,3 +1,9 @@
+2006-04-07  Senganal T <tsenganal@novell.com>
+
+	* DbDataAdapter.cs :
+		* Update () : If the Update/Delete Query has a null check,
+		then populate the parameter value correctly.
+
 2006-03-20  Senganal T <tsenganal@novell.com>
 
 	* DataAdapter.cs :

@@ -961,20 +961,28 @@ namespace System.Data.Common {
 				try {
 					if (command != null) {
 						DataColumnMappingCollection columnMappings = tableMapping.ColumnMappings;
+						IDataParameter nullCheckParam = null;
 						foreach (IDataParameter parameter in command.Parameters) {
 							if ((parameter.Direction & ParameterDirection.Input) != 0) {
 								string dsColumnName = parameter.SourceColumn;
 								if (columnMappings.Contains(parameter.SourceColumn))
 									dsColumnName = columnMappings [parameter.SourceColumn].DataSetColumn;
-								if (dsColumnName == null || dsColumnName.Length <= 0)
+								if (dsColumnName == null || dsColumnName.Length <= 0) {
+									nullCheckParam = parameter;
 									continue;
-								
+								}
+
 								DataRowVersion rowVersion = parameter.SourceVersion;
 								// Parameter version is ignored for non-update commands
 								if (statementType == StatementType.Delete) 
 									rowVersion = DataRowVersion.Original;
 
 								parameter.Value = row [dsColumnName, rowVersion];
+								if (nullCheckParam != null && (parameter.Value != null
+									&& parameter.Value != DBNull.Value)) {
+									nullCheckParam.Value = 0;
+									nullCheckParam = null;
+								}
 							}
 						}
 					}

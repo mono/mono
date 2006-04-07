@@ -1,3 +1,14 @@
+2006-04-07  Senganal T  <tsenganal@novell.com>
+
+	* SqlCommandBuilderTest.cs :
+		- Corrected the testcase to check for queries corresponding to
+		ms.net 2.0
+		- verify that columns that do not allow nulls are not included
+		in the null-checks.
+		- Added testcase to check for DBConcurrencyException for
+		Delete Command. 
+		- Check the DataType of the null-check parameters
+
 2006-03-08  Senganal T  <tsenganal@novell.com>
 
 	* SqlCommandBuilderTest.cs :

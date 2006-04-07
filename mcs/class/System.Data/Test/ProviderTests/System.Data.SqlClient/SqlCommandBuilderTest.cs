@@ -89,7 +89,7 @@ namespace MonoTests.System.Data
 		{
 			IDbConnection conn = ConnectionManager.Singleton.Connection;
 			try {
-				string selectQuery = "select id, fname, id+1 as next_id from employee where id = 1";
+				string selectQuery = "select id, fname, lname, id+1 as next_id from employee where id = 1";
 				SqlDataAdapter da = new SqlDataAdapter (selectQuery, (SqlConnection) conn);
 				DataSet ds = new DataSet ();
 				da.Fill (ds, "IntTest");
@@ -97,13 +97,13 @@ namespace MonoTests.System.Data
 
 				SqlCommandBuilder cb = new SqlCommandBuilder (da);
 				SqlCommand cmd = cb.GetUpdateCommand ();
-				Assert.AreEqual ("UPDATE employee SET id = @p1, fname = @p2 WHERE ((id = @p3) AND ((@p4 = 1 AND fname IS NULL) OR (fname = @p5)))",
+				Assert.AreEqual ("UPDATE employee SET id = @p1, fname = @p2, lname = @p3 WHERE ((id = @p4)" +
+						" AND (fname = @p5) AND ((@p6 = 1 AND lname IS NULL) OR (lname = @p7)))",
 						cmd.CommandText, "#2");
-				Assert.AreEqual (5, cmd.Parameters.Count, "#3");
+				Assert.AreEqual (7, cmd.Parameters.Count, "#3");
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
-
 		}
 
 		[Test]
@@ -125,14 +125,44 @@ namespace MonoTests.System.Data
 
 				SqlCommandBuilder cb = new SqlCommandBuilder (da);
 				SqlCommand updateCmd = cb.GetUpdateCommand ();
-				Assert.AreEqual ("UPDATE #tmp_table SET id = @p1, value = @p2 WHERE ((id = @p3) AND ((@p4 = 1 AND " +
-							"counter IS NULL) OR (counter = @p5)) AND ((@p6 = 1 AND value IS NULL) OR (value = @p7)))",
+				Assert.AreEqual ("UPDATE #tmp_table SET id = @p1, value = @p2 WHERE ((id = @p3) AND (" +
+							"counter = @p4) AND ((@p5 = 1 AND value IS NULL) OR (value = @p6)))",
 						updateCmd.CommandText, "#3");
-				Assert.AreEqual (7, updateCmd.Parameters.Count, "#3");
+				Assert.AreEqual (6, updateCmd.Parameters.Count, "#4");
+
+				SqlCommand delCmd = cb.GetDeleteCommand ();
+				Assert.AreEqual ("DELETE FROM #tmp_table WHERE ((id = @p1) AND (counter = @p2) AND " +
+						"((@p3 = 1 AND value IS NULL) OR (value = @p4)))", delCmd.CommandText, "#5");
+				Assert.AreEqual (4, delCmd.Parameters.Count, "#6");
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
+
+		[Test]
+		public void GetUpdateDeleteCommand_CheckParameters ()
+		{
+			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			try {
+				ConnectionManager.Singleton.OpenConnection ();
+				SqlDataAdapter adapter = new SqlDataAdapter ("select id, type_varchar from string_family",
+								(SqlConnection)conn);
+				SqlCommandBuilder cb = new SqlCommandBuilder (adapter);
+
+				SqlCommand updateCommand = cb.GetUpdateCommand ();
+				Assert.AreEqual (5, updateCommand.Parameters.Count, "#1");
+				Assert.AreEqual (SqlDbType.Int, updateCommand.Parameters ["@p4"].SqlDbType, "#2");
+				Assert.AreEqual (1, updateCommand.Parameters ["@p4"].Value, "#3");
+
+				SqlCommand delCommand = cb.GetDeleteCommand ();
+				Assert.AreEqual (3, delCommand.Parameters.Count, "#4");
+				Assert.AreEqual (SqlDbType.Int, delCommand.Parameters ["@p2"].SqlDbType, "#5");
+				Assert.AreEqual (1, delCommand.Parameters ["@p2"].Value, "#6");
+			} finally {
+				ConnectionManager.Singleton.CloseConnection ();
+			}
+		}
+		
 		[Test]
 		[ExpectedException (typeof (DBConcurrencyException))]
 		public void GetUpdateCommandDBConcurrencyExceptionTest ()
@@ -158,12 +188,36 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+		[ExpectedException (typeof (DBConcurrencyException))]
+		public void GetDeleteCommandDBConcurrencyExceptionTest ()
+		{
+			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			try {
+				ConnectionManager.Singleton.OpenConnection ();
+				string selectQuery = "select id, fname from employee where id = 1";
+				SqlDataAdapter da = new SqlDataAdapter (selectQuery, (SqlConnection) conn);
+				DataSet ds = new DataSet ();
+				da.Fill (ds, "IntTest");
+				Assert.AreEqual (1, ds.Tables.Count, "#1 atleast one table should be filled");
+
+				SqlCommandBuilder cb = new SqlCommandBuilder (da);
+				DataRow [] rows = ds.Tables [0].Select ("id=1");
+				rows [0] [0] = 6660; // non existent 
+				ds.Tables [0].AcceptChanges (); // moves 6660 to original value
+				rows [0].Delete ();  // moves 6660 as search key into db table
+				da.Update (rows);
+			} finally {
+				ConnectionManager.Singleton.CloseConnection ();
+			}
+		}
+
+		[Test]
 		public void GetDeleteCommandTest ()
 		{
 			IDbConnection conn = ConnectionManager.Singleton.Connection;
 			try {
 				ConnectionManager.Singleton.OpenConnection ();
-				string selectQuery = "select id, fname, id+1 as next_id from employee where id = 1";
+				string selectQuery = "select id, fname, lname, id+1 as next_id from employee where id = 1";
 				SqlDataAdapter da = new SqlDataAdapter (selectQuery, (SqlConnection) conn);
 				DataSet ds = new DataSet ();
 				da.Fill (ds, "IntTest");
@@ -171,7 +225,7 @@ namespace MonoTests.System.Data
 
 				SqlCommandBuilder cb = new SqlCommandBuilder (da);
 				SqlCommand cmd = cb.GetDeleteCommand ();
-				Assert.AreEqual ("DELETE FROM employee WHERE ((id = @p1) AND ((@p2 = 1 AND fname IS NULL) OR (fname = @p3)))",
+				Assert.AreEqual ("DELETE FROM employee WHERE ((id = @p1) AND (fname = @p2) AND ((@p3 = 1 AND lname IS NULL) OR (lname = @p4)))",
 						cmd.CommandText, "#2");
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
