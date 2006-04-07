@@ -47,7 +47,28 @@ namespace System.Security.Permissions {
                 : CodeAccessPermission, IBuiltInPermission, IUnrestrictedPermission {
 
 		private const int version = 1;
-		private static char[] m_badCharacters = {'\"','<', '>', '|', '*', '?'};
+
+#if NET_2_0
+		private static char[] BadPathNameCharacters;
+		private static char[] BadFileNameCharacters;
+
+		static FileIOPermission ()
+		{
+			// we keep a local (static) copies to avoid calls/allocations
+			BadPathNameCharacters = Path.GetInvalidPathChars ();
+			BadFileNameCharacters = Path.GetInvalidFileNameChars ();
+		}
+#else
+		private static char[] m_badCharacters;
+
+		static FileIOPermission ()
+		{
+			// note: deprecated in 2.0 as InvalidPathChars is an array (i.e. items can be
+			// modified). Anyway we keep our own copy, which should be called by the 
+			// security manager before anyone has the chance to change it.
+			m_badCharacters = (char[]) Path.InvalidPathChars.Clone ();
+		}
+#endif
 
 		private bool m_Unrestricted = false;
 		private FileIOPermissionAccess m_AllFilesAccess = FileIOPermissionAccess.NoAccess;
@@ -438,10 +459,24 @@ namespace System.Security.Permissions {
 
 		internal void ThrowIfInvalidPath (string path)
 		{
+#if NET_2_0
+			string dir = Path.GetDirectoryName (path);
+			if ((dir != null) && (dir.LastIndexOfAny (BadPathNameCharacters) >= 0)) {
+				string msg = String.Format (Locale.GetText ("Invalid path characters in path: '{0}'"), path);
+				throw new ArgumentException (msg, "path");
+			}
+
+			string fname = Path.GetFileName (path);
+			if ((fname != null) && (fname.LastIndexOfAny (BadFileNameCharacters) >= 0)) {
+				string msg = String.Format (Locale.GetText ("Invalid filename characters in path: '{0}'"), path);
+				throw new ArgumentException (msg, "path");
+			}
+#else
 			if (path.LastIndexOfAny (m_badCharacters) >= 0) {
 				string msg = String.Format (Locale.GetText ("Invalid characters in path: '{0}'"), path);
 				throw new ArgumentException (msg, "path");
 			}
+#endif
 			// LAMESPEC: docs don't say it must be a rooted path, but the MS implementation enforces it, so we will too.
 			if (!Path.IsPathRooted (path)) {
 				string msg = Locale.GetText ("Absolute path information is required.");
