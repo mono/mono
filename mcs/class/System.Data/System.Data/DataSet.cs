@@ -204,31 +204,32 @@ namespace System.Data {
 
 		internal void InternalEnforceConstraints(bool value,bool resetIndexes)
 		{
-				if (value != enforceConstraints) {
-					if (value) {
-						foreach (DataTable table in Tables) {
-							// FIXME : is that correct?
-							// By design  the indexes should be updated at this point.
-							// In Fill from BeginLoadData till EndLoadData indexes are not updated (reset in EndLoadData)
-							// In DataRow.EndEdit indexes are always updated.
-							if (resetIndexes) {
-								table.ResetIndexes();
-							}
-							// assert all constraints
-							foreach (Constraint constraint in table.Constraints)
-								constraint.AssertConstraint();
-						}
-					}
+			if (value == enforceConstraints) 
+				return;
 
-					enforceConstraints = value;
+			if (value) {
+				if (resetIndexes) {
+					// FIXME : is that correct?
+					// By design  the indexes should be updated at this point.
+					// In Fill from BeginLoadData till EndLoadData indexes are not updated (reset in EndLoadData)
+					// In DataRow.EndEdit indexes are always updated.
+					foreach (DataTable table in Tables)
+						table.ResetIndexes();
 				}
+
+				foreach (DataTable table in Tables) {
+					foreach (Constraint constraint in table.Constraints)
+						constraint.AssertConstraint();
+				}
+			}
+			enforceConstraints = value;
 		}
 
 		public void Merge (DataRow[] rows)
 		{
 			Merge (rows, false, MissingSchemaAction.Add);
 		}
-		
+
 		public void Merge (DataSet dataSet)
 		{
 			Merge (dataSet, false, MissingSchemaAction.Add);

@@ -1,3 +1,9 @@
+2006-04-07  Senganal T  <tsenganal@novell.com>
+
+	* DataSet.cs :
+		- InternalEnforceConstraints() : Reset Indexes of all tables
+		before validating constraints. Fixes #78010
+
 2006-03-04	Boris Kirzner <borisk@mainsoft.com>
 	* TypeDataSetGeneratorException.cs: fix .Net Soap serialization compatibility.
 

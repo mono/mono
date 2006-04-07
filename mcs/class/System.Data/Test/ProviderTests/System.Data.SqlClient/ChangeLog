@@ -1,5 +1,10 @@
 2006-04-07  Senganal T  <tsenganal@novell.com>
 
+	* SqlDataAdapterTest,cs :
+		- Added testcase for #78010
+
+2006-04-07  Senganal T  <tsenganal@novell.com>
+
 	* SqlCommandBuilderTest.cs :
 		- Corrected the testcase to check for queries corresponding to
 		ms.net 2.0

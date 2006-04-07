@@ -778,5 +778,39 @@ namespace MonoTests.System.Data.SqlClient
 				}
 			}
 		}
+
+		[Test]
+		public void Fill_RelatedTables ()
+		{
+			SqlConnection conn = new SqlConnection(connectionString);
+			using (conn) {
+				conn.Open();
+				IDbCommand command = conn.CreateCommand();
+
+				DataSet dataSet = new DataSet();
+				string selectString = "SELECT id, type_int from numeric_family where id < 3";
+				DbDataAdapter dataAdapter = new SqlDataAdapter (selectString,conn);
+
+				DataTable table2 = dataSet.Tables.Add ("table2");
+				DataColumn ccol1 = table2.Columns.Add ("id", typeof (int));
+				DataColumn ccol2 = table2.Columns.Add ("type_int", typeof (int));
+
+				DataTable table1 = dataSet.Tables.Add ("table1");
+				DataColumn pcol1 = table1.Columns.Add ("id", typeof (int));
+				DataColumn pcol2 = table1.Columns.Add ("type_int", typeof (int));
+
+				table2.Constraints.Add ("fk", pcol1, ccol1);
+
+				dataSet.EnforceConstraints = false;
+				dataAdapter.Fill (dataSet, "table1");
+				dataAdapter.Fill (dataSet, "table2");
+
+				//Should not throw an exception
+				dataSet.EnforceConstraints = true;
+
+				Assert.AreEqual (2, table1.Rows.Count, "#1");
+				Assert.AreEqual (2, table2.Rows.Count, "#2");
+			}
+		}
 	}
 }
