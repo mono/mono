@@ -1,3 +1,9 @@
+2006-04-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RemotingServices.cs: Assert SerializationFormatter permissions if 
+	the runtime wants to do cross-appdomain serialization (this will need
+	to be better reviewed/tested later but it fix some current issues).
+
 2005-12-07  Robert Jordan  <robertj@gmx.net>
 
 	* RemotingServices.cs: Accept the application name beeing a part of

@@ -7,10 +7,7 @@
 //   Patrik Torstensson
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,7 +29,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Diagnostics;
 using System.Text;
 using System.Reflection;
@@ -49,6 +45,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 using System.Runtime.Remoting.Services;
+using System.Security.Permissions;
 
 #if NET_2_0
 using System.Runtime.ConstrainedExecution;
@@ -704,6 +701,7 @@ namespace System.Runtime.Remoting
 		}
 
 		// This method is called by the runtime
+		[SecurityPermission (SecurityAction.Assert, SerializationFormatter = true)] // FIXME: to be reviewed
 		internal static byte[] SerializeCallData (object obj)
 		{
 			LogicalCallContext ctx = CallContext.CreateLogicalCallContext (false);
@@ -721,6 +719,7 @@ namespace System.Runtime.Remoting
 		}
 
 		// This method is called by the runtime
+		[SecurityPermission (SecurityAction.Assert, SerializationFormatter = true)] // FIXME: to be reviewed
 		internal static object DeserializeCallData (byte[] array)
 		{
 			if (array == null) return null;
@@ -737,6 +736,7 @@ namespace System.Runtime.Remoting
 		}
 		
 		// This method is called by the runtime
+		[SecurityPermission (SecurityAction.Assert, SerializationFormatter = true)] // FIXME: to be reviewed
 		internal static byte[] SerializeExceptionData (Exception ex)
 		{
 			try {
