@@ -620,6 +620,11 @@ namespace Mono.CSharp {
 	}
 
 	public class InternalErrorException : Exception {
+		public InternalErrorException (Location loc, string text, Exception e)
+			: base (loc + " " + text, e)
+		{
+		}
+
 		public InternalErrorException ()
 			: base ("Internal error")
 		{

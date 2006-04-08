@@ -72,7 +72,12 @@ namespace Mono.CSharp {
 			public virtual void DefineContainerMembers ()
 			{
 				foreach (MemberCore mc in this) {
-					mc.Define ();
+					try {
+						mc.Define ();
+					}
+					catch (Exception e) {
+						throw new InternalErrorException (mc.Location, mc.GetSignatureForError (), e);
+					}
 				}
 			}
 
@@ -1430,7 +1435,7 @@ namespace Mono.CSharp {
 				for (int i = 0; i < len; i++) {
 					Operator o = (Operator) operators [i];
 
-					members.Add (o.OperatorMethodBuilder);
+					members.Add (o.MethodBuilder);
 				}
 			}
 
@@ -1673,7 +1678,7 @@ namespace Mono.CSharp {
 						if ((o.ModFlags & static_mask) != static_flags)
 							continue;
 						
-						MethodBuilder ob = o.OperatorMethodBuilder;
+						MethodBuilder ob = o.MethodBuilder;
 						if (ob != null && filter (ob, criteria) == true) {
 							if (members == null)
 								members = new ArrayList ();
@@ -3408,6 +3413,82 @@ namespace Mono.CSharp {
 
 	}
 
+	public abstract class MethodOrOperator : MethodCore
+	{
+		public MethodBuilder MethodBuilder;
+		ReturnParameter return_attributes;
+		ListDictionary declarative_security;
+
+		protected MethodOrOperator (DeclSpace parent, Expression type, int mod,
+				int allowed_mod, bool is_interface, MemberName name,
+				Attributes attrs, Parameters parameters)
+			: base (parent, type, mod, allowed_mod, is_interface, name,
+					attrs, parameters)
+		{
+		}
+
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
+		{
+			if (a.Target == AttributeTargets.ReturnValue) {
+				if (return_attributes == null)
+					return_attributes = new ReturnParameter (MethodBuilder, Location);
+
+				return_attributes.ApplyAttributeBuilder (a, cb);
+				return;
+			}
+
+			if (a.Type == TypeManager.methodimpl_attr_type &&
+				(a.GetMethodImplOptions () & MethodImplOptions.InternalCall) != 0) {
+				MethodBuilder.SetImplementationFlags (MethodImplAttributes.InternalCall | MethodImplAttributes.Runtime);
+			}
+
+			if (a.Type == TypeManager.dllimport_type) {
+				const int extern_static = Modifiers.EXTERN | Modifiers.STATIC;
+				if ((ModFlags & extern_static) != extern_static) {
+					Report.Error (601, a.Location, "The DllImport attribute must be specified on a method marked `static' and `extern'");
+				}
+
+				return;
+			}
+
+			if (a.Type.IsSubclassOf (TypeManager.security_attr_type) && a.CheckSecurityActionValidity (false)) {
+				if (declarative_security == null)
+					declarative_security = new ListDictionary ();
+				a.ExtractSecurityPermissionSet (declarative_security);
+				return;
+			}
+
+			MethodBuilder.SetCustomAttribute (cb);
+		}
+
+		public override AttributeTargets AttributeTargets {
+			get {
+				return AttributeTargets.Method; 
+			}
+		}
+
+		public override void Emit ()
+		{
+			if (OptAttributes != null)
+				OptAttributes.Emit ();
+
+			if (declarative_security != null) {
+				foreach (DictionaryEntry de in declarative_security) {
+					MethodBuilder.AddDeclarativeSecurity ((SecurityAction)de.Key, (PermissionSet)de.Value);
+				}
+			}
+
+			base.Emit ();
+		}
+
+		protected void Error_ConditionalAttributeIsNotValid ()
+		{
+			Report.Error (577, Location,
+				"Conditional not valid on `{0}' because it is a constructor, destructor, operator or explicit interface implementation",
+				GetSignatureForError ());
+		}
+	}
+
 	public class SourceMethod : ISourceMethod
 	{
 		DeclSpace parent;
@@ -3471,11 +3552,8 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class Method : MethodCore, IIteratorContainer, IMethodData {
-		public MethodBuilder MethodBuilder;
+	public class Method : MethodOrOperator, IIteratorContainer, IMethodData {
 		public MethodData MethodData;
-		ReturnParameter return_attributes;
-		ListDictionary declarative_security;
 
 		/// <summary>
 		///   Modifiers allowed in a class declaration
@@ -3507,12 +3585,6 @@ namespace Mono.CSharp {
 				is_iface ? AllowedInterfaceModifiers : AllowedModifiers,
 				is_iface, name, attrs, parameters)
 		{
-		}
-
-		public override AttributeTargets AttributeTargets {
-			get {
-				return AttributeTargets.Method;
-			}
 		}
 		
 		public override string GetSignatureForError()
@@ -3556,39 +3628,9 @@ namespace Mono.CSharp {
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
 		{
-			if (a.Target == AttributeTargets.ReturnValue) {
-				if (return_attributes == null)
-					return_attributes = new ReturnParameter (MethodBuilder, Location);
-
-				return_attributes.ApplyAttributeBuilder (a, cb);
-				return;
-			}
-
-			if (a.Type == TypeManager.methodimpl_attr_type &&
-				(a.GetMethodImplOptions () & MethodImplOptions.InternalCall) != 0) {
-				MethodBuilder.SetImplementationFlags (MethodImplAttributes.InternalCall | MethodImplAttributes.Runtime);
-			}
-
-			if (a.Type == TypeManager.dllimport_type) {
-				const int extern_static = Modifiers.EXTERN | Modifiers.STATIC;
-				if ((ModFlags & extern_static) != extern_static) {
-					Report.Error (601, a.Location, "The DllImport attribute must be specified on a method marked `static' and `extern'");
-				}
-
-				return;
-			}
-
-			if (a.Type.IsSubclassOf (TypeManager.security_attr_type) && a.CheckSecurityActionValidity (false)) {
-				if (declarative_security == null)
-					declarative_security = new ListDictionary ();
-				a.ExtractSecurityPermissionSet (declarative_security);
-				return;
-			}
-
 			if (a.Type == TypeManager.conditional_attribute_type) {
-				if (IsOperator != null || IsExplicitImpl) {
-					Report.Error (577, Location, "Conditional not valid on `{0}' because it is a constructor, destructor, operator or explicit interface implementation",
-						GetSignatureForError ());
+				if (IsExplicitImpl) {
+					Error_ConditionalAttributeIsNotValid ();
 					return;
 				}
 
@@ -3621,7 +3663,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			MethodBuilder.SetCustomAttribute (cb);
+			base.ApplyAttributeBuilder (a, cb);
 		}
 
   		protected override bool CheckForDuplications ()
@@ -3752,12 +3794,6 @@ namespace Mono.CSharp {
 		{
 			MethodData.Emit (Parent);
 			base.Emit ();
-
-			if (declarative_security != null) {
-				foreach (DictionaryEntry de in declarative_security) {
-					MethodBuilder.AddDeclarativeSecurity ((SecurityAction)de.Key, (PermissionSet)de.Value);
-				}
-			}
 
 			Block = null;
 			MethodData = null;
@@ -4218,6 +4254,9 @@ namespace Mono.CSharp {
 		//
 		public override void Emit ()
 		{
+			if (OptAttributes != null)
+				OptAttributes.Emit ();
+
 			EmitContext ec = CreateEmitContext (null, null);
 
 			if (block != null) {
@@ -4637,11 +4676,6 @@ namespace Mono.CSharp {
 
 			method.ParameterInfo.ApplyAttributes (MethodBuilder);
 
-			Attributes OptAttributes = method.OptAttributes;
-
-			if (OptAttributes != null)
-				OptAttributes.Emit ();
-
 			ToplevelBlock block = method.Block;
 			
 			SourceMethod source = SourceMethod.Create (parent, MethodBuilder, method.Block);
@@ -4708,8 +4742,7 @@ namespace Mono.CSharp {
 		public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
 		{
 			if (a.Type == TypeManager.conditional_attribute_type) {
-				Report.Error (577, Location, "Conditional not valid on `{0}' because it is a constructor, destructor, operator or explicit interface implementation",
-					GetSignatureForError ());
+				Error_ConditionalAttributeIsNotValid ();
 				return;
 			}
 
@@ -5595,9 +5628,12 @@ namespace Mono.CSharp {
 			throw new NotSupportedException ();
 		}
 
-		public virtual void Emit (DeclSpace parent)
+		public void Emit (DeclSpace parent)
 		{
 			EmitMethod (parent);
+
+			if (OptAttributes != null)
+				OptAttributes.Emit ();
 
 			if (declarative_security != null) {
 				foreach (DictionaryEntry de in declarative_security) {
@@ -6930,7 +6966,7 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class Operator : MethodCore, IIteratorContainer {
+	public class Operator : MethodOrOperator, IIteratorContainer {
 
 		const int AllowedModifiers =
 			Modifiers.PUBLIC |
@@ -6980,7 +7016,6 @@ namespace Mono.CSharp {
 		};
 
 		public readonly OpType OperatorType;
-		public MethodBuilder   OperatorMethodBuilder;
 		
 		public Method OperatorMethod;
 
@@ -6990,24 +7025,20 @@ namespace Mono.CSharp {
 				 int mod_flags, Parameters parameters,
 				 ToplevelBlock block, Attributes attrs, Location loc)
 			: base (parent, ret_type, mod_flags, AllowedModifiers, false,
-				new MemberName ("op_" + type, loc), null, parameters)
+				new MemberName ("op_" + type, loc), attrs, parameters)
 		{
 			OperatorType = type;
-			// TODO: As operator breaks all our rules, don't attach the attributes
-			// to fake owner, will finally need to rewrite it
-			attributes = attrs;
 			Block = block;
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb) 
 		{
-			OperatorMethod.ApplyAttributeBuilder (a, cb);
-		}
-
-		public override AttributeTargets AttributeTargets {
-			get {
-				return AttributeTargets.Method; 
+			if (a.Type == TypeManager.conditional_attribute_type) {
+				Error_ConditionalAttributeIsNotValid ();
+				return;
 			}
+
+			base.ApplyAttributeBuilder (a, cb);
 		}
 		
 		protected override bool CheckForDuplications ()
@@ -7053,9 +7084,10 @@ namespace Mono.CSharp {
 				return false;
 			}
 
+			// Don't pass the attributes, they are handled here.
 			OperatorMethod = new Method (
 				Parent, Type, ModFlags, false, MemberName,
-				Parameters, OptAttributes);
+				Parameters, null);
 
 			OperatorMethod.Block = Block;
 			OperatorMethod.IsOperator = this;			
@@ -7065,10 +7097,10 @@ namespace Mono.CSharp {
 			if (OperatorMethod.MethodBuilder == null)
 				return false;
 
-			OperatorMethodBuilder = OperatorMethod.MethodBuilder;
+			MethodBuilder = OperatorMethod.MethodBuilder;
 
 			Type[] parameter_types = OperatorMethod.ParameterTypes;
-			Type declaring_type = OperatorMethodBuilder.DeclaringType;
+			Type declaring_type = MethodBuilder.DeclaringType;
 			Type return_type = OperatorMethod.ReturnType;
 			Type first_arg_type = parameter_types [0];
 
@@ -7165,13 +7197,15 @@ namespace Mono.CSharp {
 		
 		public override void Emit ()
 		{
+			base.Emit ();
+
 			//
 			// abstract or extern methods have no bodies
 			//
 			if ((ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0)
 				return;
 			
-			OperatorMethod.Emit ();
+			OperatorMethod.MethodData.Emit (OperatorMethod.Parent);
 			Block = null;
 		}
 

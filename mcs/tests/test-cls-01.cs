@@ -11,6 +11,16 @@ public class CLSClass
         public static void Main() {}
 }
 
+
+public class Big
+{
+	[CLSCompliant (false)]
+	public static implicit operator Big (uint value)
+	{
+		return null;
+	}
+}
+
 [CLSCompliant (false)]
 public partial class C1
 {

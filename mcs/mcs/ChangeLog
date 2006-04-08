@@ -1,3 +1,21 @@
+2006-04-09  Marek Safar  <marek.safar@seznam.cz>
+
+	A fix for #78048.
+	class.cs (TypeContainer.MemberCoreArrayList.DefineContainerMembers): Throw
+	customized exception to make crash detection easier.
+	(MethodOrOperator): Started to work on new base class for methods and
+	operators.
+	(Method): Derives from MethodOrOperator.
+	(Constructor.Emit): Emits its own attributes.
+	(AbstractPropertyEventMethod.Emit): Ditto.
+	(Operator): Derives from MethodOrOperator, will refactor fully in extra
+	patch.
+	(Operator.Emit): It's temporary more tricky than should be.
+	
+	* doc.cs (GetMethodDocCommentName): Updated after operator changes.
+
+	* report.cs (InternalErrorException): Add ctor with inner exception.
+
 2006-04-08  Marek Safar  <marek.safar@seznam.cz>
 
 	A fix for #76744.

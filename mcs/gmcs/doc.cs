@@ -875,7 +875,7 @@ namespace Mono.CSharp {
 				switch (op.OperatorType) {
 				case Operator.OpType.Implicit:
 				case Operator.OpType.Explicit:
-					suffix = "~" + GetSignatureForDoc (op.OperatorMethodBuilder.ReturnType);
+					suffix = "~" + GetSignatureForDoc (op.MethodBuilder.ReturnType);
 					break;
 				}
 			}
