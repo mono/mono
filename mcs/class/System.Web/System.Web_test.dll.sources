@@ -200,6 +200,7 @@ System.Web/HttpStaticObjectsCollectionCas.cs
 System.Web/HttpUnhandledExceptionCas.cs
 System.Web/HttpUtilityCas.cs
 System.Web/HttpWorkerRequestCas.cs
+System.Web/HttpWriter.cs
 System.Web/HttpWriterCas.cs
 System.Web/ProcessInfoCas.cs
 System.Web/ProcessModelInfoCas.cs

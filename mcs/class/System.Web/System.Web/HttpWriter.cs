@@ -98,11 +98,17 @@ namespace System.Web {
 		
 		public override void Write (string s)
 		{
+			if (s == null)
+				return;
+			
 			WriteString (s, 0, s.Length);
 		}
 		
 		public override void Write (char [] buffer, int index, int count)
 		{
+			if (buffer == null || index < 0 || count < 0 || (buffer.Length - index) < count)
+				throw new ArgumentOutOfRangeException ();
+			
 			/*byte [] xx = encoding.GetBytes (buffer, index, count);
 			output_stream.Write (xx, 0, xx.Length);*/
 			
@@ -136,6 +142,9 @@ namespace System.Web {
 			if (s == null)
 				return;
 
+			if (index < 0 || count < 0 || ((index + count > s.Length)))
+				throw new ArgumentOutOfRangeException ();
+			
 			int length;
 			if (index == 0 && count == s.Length) {
 				length = encoding.GetByteCount (s); 
