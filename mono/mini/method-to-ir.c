@@ -3599,6 +3599,7 @@ mini_emit_ldelema_1_ins (MonoCompile *cfg, MonoClass *klass, MonoInst *arr, Mono
 	return ins;
 }
 
+#ifndef MONO_ARCH_EMULATE_MUL_DIV
 static MonoInst*
 mini_emit_ldelema_2_ins (MonoCompile *cfg, MonoClass *klass, MonoInst *arr, MonoInst *index_ins1, MonoInst *index_ins2)
 {
@@ -3654,6 +3655,7 @@ mini_emit_ldelema_2_ins (MonoCompile *cfg, MonoClass *klass, MonoInst *arr, Mono
 
 	return ins;
 }
+#endif
 
 static MonoInst*
 mini_emit_ldelema_ins (MonoCompile *cfg, MonoMethod *cmethod, MonoInst **sp, unsigned char *ip, gboolean is_set)
@@ -8267,13 +8269,24 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				type_from_op (ins, sp [0], sp [1]);
 
 				if (cmp->opcode == OP_FCOMPARE) {
+#ifdef MONO_ARCH_HAS_FCOMPARE
+					gboolean has_fcompare = TRUE;
+#else
+					gboolean has_fcompare = FALSE;
+#endif
 					/*
 					 * The backends expect the fceq opcodes to do the
 					 * comparison too.
 					 */
-					cmp->opcode = OP_NOP;
-					ins->sreg1 = cmp->sreg1;
-					ins->sreg2 = cmp->sreg2;
+					if (has_fcompare && cfg->new_ir) {
+						/* The opcodes are defined to take two float arguments */
+						ins->sreg1 = cmp->sreg1;
+						ins->sreg2 = cmp->sreg2;
+					} else {						
+						cmp->opcode = OP_NOP;
+						ins->sreg1 = cmp->sreg1;
+						ins->sreg2 = cmp->sreg2;
+					}
 				}
 				MONO_ADD_INS (bblock, ins);
 				*sp++ = ins;
@@ -8922,6 +8935,8 @@ stind_to_store_membase (int opcode)
 int
 mono_load_membase_to_load_mem (int opcode)
 {
+	// FIXME: Add a MONO_ARCH_HAVE_LOAD_MEM macro
+#if defined(__i386__) || defined(__x86_64__)
 	switch (opcode) {
 	case OP_LOAD_MEMBASE:
 		return OP_LOAD_MEM;
@@ -8938,6 +8953,7 @@ mono_load_membase_to_load_mem (int opcode)
 		return OP_LOADI8_MEM;
 #endif
 	}
+#endif
 
 	return -1;
 }
@@ -9617,6 +9633,12 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   work of the local deadce pass.
  * - conversion out of SSA form is still missing the coalescing optimization of the old
  *   one.
+ * - decompose op_start_handler/op_endfilter/op_endfinally earlier using an arch
+ *   specific function.
+ * - unify the float comparison opcodes with the other comparison opcodes, i.e.
+ *   fcompare + branchCC.
+ * - clean up the contents of the cpu-<ARCH>.md files.
+ * - implement pass+receive vtypes on the stack.
  * - LAST MERGE: 59160.
  */
 

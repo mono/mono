@@ -1,3 +1,17 @@
+2006-04-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.h: Add a few new opcode classification macros.
+	
+	* mini-codegen.c (mono_spillvar_offset): Fix alignment issues.
+	(mono_print_ins_index): Fix compilation on non-x86 platforms.
+
+	* method-to-ir.c: Add a few FIXMEs.
+
+	* method-to-ir.c: Fix compilation on non-x86 platforms.
+
+	* method-to-ir.c (mono_method_to_ir2): Add support for architectures where
+	fceq and its friends need an fcompare.
+	
 2006-04-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (decompose_opcode): Fix OP_LCONV_TO_OVF_I4_UN.

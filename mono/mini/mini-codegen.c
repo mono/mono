@@ -262,6 +262,8 @@ mono_spillvar_offset (MonoCompile *cfg, int spillvar, gboolean fp)
 				info->offset = cfg->stack_offset;
 				cfg->stack_offset += sizeof (double);
 			} else {
+				cfg->stack_offset += sizeof (gpointer) - 1;
+				cfg->stack_offset &= ~(sizeof (gpointer) - 1);
 				info->offset = cfg->stack_offset;
 				cfg->stack_offset += sizeof (gpointer);
 			}
@@ -426,7 +428,9 @@ mono_print_ins_index (int i, MonoInst *ins)
 	case OP_ICONST:
 		printf (" [%d]", (int)ins->inst_c0);
 		break;
+#if defined(__i386__) || defined(__x86_64__)
 	case OP_X86_PUSH_IMM:
+#endif
 	case OP_ICOMPARE_IMM:
 	case OP_COMPARE_IMM:
 		printf (" [%d]", (int)ins->inst_imm);
@@ -549,7 +553,7 @@ struct InstList {
 static inline InstList*
 inst_list_prepend (guint8 *mem, InstList *list, MonoInst *data)
 {
-	InstList *item = (InstList*)mem;
+	InstList *item = (InstList*)(gpointer)mem;
 	item->data = data;
 	item->prev = NULL;
 	item->next = list;
