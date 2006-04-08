@@ -1,3 +1,9 @@
+2006-04-08  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Makefile, xbuild/MSBuild/Microsoft.Build.CommonTypes.xsd: Changed
+	name of Microsoft.Build.Commontypes.xsd to
+	Microsoft.Build.CommonTypes.xsd.
+
 2006-04-07  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* Makefile: Changed installation directory of schema files.
