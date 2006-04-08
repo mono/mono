@@ -1,3 +1,12 @@
+2006-04-08  Miguel de Icaza  <miguel@novell.com>
+
+	* TemplateControlCompiler.cs: An attempt to fix the regression
+	introduced in r58505 (a bug fix for 77762).   This was reported in
+	the mailing list with a batch of new 2.0 failures.
+
+	We really need a test suite in NUnit to check on ASP.NET aspx
+	changes.
+
 2006-03-27  Robert Jordan  <robertj@gmx.net>
 
 	* CachingCompiler.cs:  change the compilation locking scheme
