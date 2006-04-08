@@ -1,3 +1,11 @@
+2006-04-08  Alexander Olk  <alex.olk@googlemail.com>
+
+	* Theme.cs: Added GetDashPen and GetSizedPen to SystemResPool
+	* ThemeWin32Classic.cs: Make use of the new SystemResPool methods.
+	  This dramatically reduces the number of Pen.Dispose calls. 
+	  Where possible call ResPool methods only once instead of calling it
+	  over and over again (for example for the same color).
+
 2006-04-06  Mike Kestner  <mkestner@novell.com>
 
 	* TabControl.cs: fix for SelectedIndex updating on TabPage removals.

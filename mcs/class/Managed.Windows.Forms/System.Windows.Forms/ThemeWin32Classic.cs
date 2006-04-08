@@ -210,8 +210,7 @@ namespace System.Windows.Forms
 				dc.DrawLine (pen, rect.Right - 1, rect.Y, rect.Right - 1, rect.Bottom - 2);
 				break;
 			case 1: // popup button normal (or pressed normal or popup button)
-				pen = ResPool.GetPen (cpcolor.Dark);
-				dc.DrawRectangle (pen, new Rectangle (rect.X, rect.Y, rect.Width - 1, rect.Height - 1));
+				dc.DrawRectangle (ResPool.GetPen (cpcolor.Dark), rect.X, rect.Y, rect.Width - 1, rect.Height - 1);
 				break;
 			case 2: // popup button poped up
 				pen = ResPool.GetPen (cpcolor.Light);
@@ -223,8 +222,7 @@ namespace System.Windows.Forms
 				dc.DrawLine (pen, rect.Right - 1, rect.Y, rect.Right - 1, rect.Bottom - 2);
 				break;
 			case 3: // flat button not entered
-				pen = ResPool.GetPen (cpcolor.DarkDark);
-				dc.DrawRectangle (pen, new Rectangle (rect.X, rect.Y, rect.Width - 1, rect.Height - 1));
+				dc.DrawRectangle (ResPool.GetPen (cpcolor.DarkDark), rect.X, rect.Y, rect.Width - 1, rect.Height - 1);
 				break;
 			default:
 				break;
@@ -335,8 +333,8 @@ namespace System.Windows.Forms
 				if (!button.is_pressed)
 					focus_color = ControlPaint.Dark(button.BackColor);
 			
-			dc.DrawRectangle (ResPool.GetPen (focus_color), new Rectangle (button.ClientRectangle.X, button.ClientRectangle.Y, 
-										       button.ClientRectangle.Width - 1, button.ClientRectangle.Height - 1));
+			dc.DrawRectangle (ResPool.GetPen (focus_color), button.ClientRectangle.X, button.ClientRectangle.Y, 
+					  button.ClientRectangle.Width - 1, button.ClientRectangle.Height - 1);
 		}
 		
 		protected virtual void ButtonBase_DrawText(ButtonBase button, Graphics dc)
@@ -1468,8 +1466,7 @@ namespace System.Windows.Forms
 				return;
 			color = Color.FromArgb (0x7f, ColorControlText.R, ColorControlText.G, ColorControlText.B);
 			dc.DrawString (col.Text, DefaultFont, ResPool.GetSolidBrush (color), rect, col.Format);
-			Pen pen = new Pen (ColorHighlight, 2);
-			dc.DrawLine (pen, target_x, 0, target_x, col.Rect.Height);
+			dc.DrawLine (ResPool.GetSizedPen (ColorHighlight, 2), target_x, 0, target_x, col.Rect.Height);
 		}
 
 		protected virtual void DrawListViewItem (Graphics dc, ListView control, ListViewItem item)
@@ -1503,7 +1500,7 @@ namespace System.Windows.Forms
 									rect_checkrect.Y + 2,
 									rect_checkrect.Width - 4,
 									rect_checkrect.Height - 4);
-					Pen pen = new Pen (this.ColorWindowText, 2);
+					Pen pen = ResPool.GetSizedPen (this.ColorWindowText, 2);
 					dc.DrawRectangle (pen, rect);
 
 					// Need to draw a check-mark
@@ -1537,8 +1534,7 @@ namespace System.Windows.Forms
 
 			if (control.View == View.LargeIcon) {
 				if (control.LargeImageList == null) {
-					Pen pen = new Pen (ColorWindowText, 2);
-					dc.DrawLine (pen, icon_rect.Left, icon_rect.Y, icon_rect.Left + 11, icon_rect.Y);
+					dc.DrawLine (ResPool.GetSizedPen (this.ColorWindowText, 2), icon_rect.Left, icon_rect.Y, icon_rect.Left + 11, icon_rect.Y);
 				} else if (item.ImageIndex > -1 && item.ImageIndex < control.LargeImageList.Images.Count)
 					control.LargeImageList.Draw (dc, icon_rect.Location, item.ImageIndex);
 			} else {
@@ -1987,24 +1983,28 @@ namespace System.Windows.Forms
 
 			dc.FillRectangle (ResPool.GetSolidBrush
 				(ColorMenu), cliparea);
+			
+			Pen pen_cht = ResPool.GetPen (ColorHighlightText);
+			Pen pen_ccd = ResPool.GetPen (ColorControlDark);
+			Pen pen_ccdd = ResPool.GetPen (ColorControlDarkDark);
 
 			/* Draw menu borders */
-			dc.DrawLine (ResPool.GetPen (ColorHighlightText),
+			dc.DrawLine (pen_cht,
 				rect.X, rect.Y, rect.X + rect.Width, rect.Y);
 
-			dc.DrawLine (ResPool.GetPen (ColorHighlightText),
+			dc.DrawLine (pen_cht,
 				rect.X, rect.Y, rect.X, rect.Y + rect.Height);
 
-			dc.DrawLine (ResPool.GetPen (ColorControlDark),
+			dc.DrawLine (pen_ccd,
 				rect.X + rect.Width - 1 , rect.Y , rect.X + rect.Width - 1, rect.Y + rect.Height);
 
-			dc.DrawLine (ResPool.GetPen (ColorControlDarkDark),
+			dc.DrawLine (pen_ccdd,
 				rect.X + rect.Width, rect.Y , rect.X + rect.Width, rect.Y + rect.Height);
 
-			dc.DrawLine (ResPool.GetPen (ColorControlDark),
+			dc.DrawLine (pen_ccd,
 				rect.X , rect.Y + rect.Height - 1 , rect.X + rect.Width - 1, rect.Y + rect.Height -1);
 
-			dc.DrawLine (ResPool.GetPen (ColorControlDarkDark),
+			dc.DrawLine (pen_ccdd,
 				rect.X , rect.Y + rect.Height, rect.X + rect.Width - 1, rect.Y + rect.Height);
 
 			for (int i = 0; i < menu.MenuItems.Count; i++)
@@ -2104,9 +2104,9 @@ namespace System.Windows.Forms
 			// finally paint the borders of the calendars as required
 			for (int i = 0; i <= mc.CalendarDimensions.Width; i++) {
 				if (i == 0 && clip_rectangle.X == client_rectangle.X) {
-					dc.FillRectangle (ResPool.GetSolidBrush (mc.BackColor), new Rectangle (client_rectangle.X, client_rectangle.Y, 1, client_rectangle.Height));
+					dc.FillRectangle (ResPool.GetSolidBrush (mc.BackColor), client_rectangle.X, client_rectangle.Y, 1, client_rectangle.Height);
 				} else if (i == mc.CalendarDimensions.Width && clip_rectangle.Right == client_rectangle.Right) {
-					dc.FillRectangle (ResPool.GetSolidBrush (mc.BackColor), new Rectangle (client_rectangle.Right-1, client_rectangle.Y, 1, client_rectangle.Height));
+					dc.FillRectangle (ResPool.GetSolidBrush (mc.BackColor), client_rectangle.Right-1, client_rectangle.Y, 1, client_rectangle.Height);
 				} else { 
 					Rectangle rect = new Rectangle (
 						client_rectangle.X + (month_size.Width*i) + (calendar_spacing.Width * (i-1)) + 1,
@@ -2120,9 +2120,9 @@ namespace System.Windows.Forms
 			}
 			for (int i = 0; i <= mc.CalendarDimensions.Height; i++) {
 				if (i == 0 && clip_rectangle.Y == client_rectangle.Y) {
-					dc.FillRectangle (ResPool.GetSolidBrush (mc.BackColor), new Rectangle (client_rectangle.X, client_rectangle.Y, client_rectangle.Width, 1));
+					dc.FillRectangle (ResPool.GetSolidBrush (mc.BackColor), client_rectangle.X, client_rectangle.Y, client_rectangle.Width, 1);
 				} else if (i == mc.CalendarDimensions.Height && clip_rectangle.Bottom == client_rectangle.Bottom) {
-					dc.FillRectangle (ResPool.GetSolidBrush (mc.BackColor), new Rectangle (client_rectangle.X, client_rectangle.Bottom-1, client_rectangle.Width, 1));
+					dc.FillRectangle (ResPool.GetSolidBrush (mc.BackColor), client_rectangle.X, client_rectangle.Bottom-1, client_rectangle.Width, 1);
 				} else { 
 					Rectangle rect = new Rectangle (
 						client_rectangle.X,
@@ -2484,11 +2484,9 @@ namespace System.Windows.Forms
 			}
 
 			// draw the selection grid
-			if (mc.is_date_clicked && mc.clicked_date == date) {				
-				using (Pen pen = new Pen (Color.Black, 1) ) {
-					pen.DashStyle = DashStyle.Dot;
-					dc.DrawRectangle (pen, interior);
-				}
+			if (mc.is_date_clicked && mc.clicked_date == date) {
+				Pen pen = ResPool.GetDashPen (Color.Black, DashStyle.Dot);
+				dc.DrawRectangle (pen, interior);
 			}
 			text_format.Dispose ();
 		}
@@ -2503,12 +2501,11 @@ namespace System.Windows.Forms
 			curve_points [1] = new Point (lhs_circle_rect.X + lhs_circle_rect.Width/9, rhs_circle_rect.Y);
 			curve_points [2] = new Point (lhs_circle_rect.X + lhs_circle_rect.Width/2 + 1, rhs_circle_rect.Y);
 
-			using (Pen pen = new Pen (circle_color, 2)) {
-				dc.DrawArc (pen, lhs_circle_rect, 90, 180);
-				dc.DrawArc (pen, rhs_circle_rect, 270, 180);					
-				dc.DrawCurve (pen, curve_points);
-				dc.DrawLine (ResPool.GetPen (circle_color), curve_points [2], new Point (curve_points [2].X, lhs_circle_rect.Y));
-			}
+			Pen pen = ResPool.GetSizedPen(circle_color, 2);
+			dc.DrawArc (pen, lhs_circle_rect, 90, 180);
+			dc.DrawArc (pen, rhs_circle_rect, 270, 180);					
+			dc.DrawCurve (pen, curve_points);
+			dc.DrawLine (ResPool.GetPen (circle_color), curve_points [2], new Point (curve_points [2].X, lhs_circle_rect.Y));
 		}
 
 		#endregion 	// MonthCalendar
@@ -3758,15 +3755,18 @@ namespace System.Windows.Forms
 			case TickStyle.None: {
 				thumb_pos.X = channel_startpoint.X - 8;
 
-				dc.DrawLine (ResPool.GetPen (ColorControlLight), thumb_pos.X, thumb_pos.Y, thumb_pos.X , thumb_pos.Y + 10);
-				dc.DrawLine (ResPool.GetPen (ColorControlLight), thumb_pos.X, thumb_pos.Y, thumb_pos.X + 16, thumb_pos.Y);
-				dc.DrawLine (ResPool.GetPen (ColorControlLight), thumb_pos.X + 16, thumb_pos.Y, thumb_pos.X + 16 + 4, thumb_pos.Y + 4);
+				Pen pen = ResPool.GetPen (ColorControlLight);
+				dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y, thumb_pos.X , thumb_pos.Y + 10);
+				dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y, thumb_pos.X + 16, thumb_pos.Y);
+				dc.DrawLine (pen, thumb_pos.X + 16, thumb_pos.Y, thumb_pos.X + 16 + 4, thumb_pos.Y + 4);
 				
-				dc.DrawLine (ResPool.GetPen (ColorControlDark), thumb_pos.X +1, thumb_pos.Y + 9, thumb_pos.X +15, thumb_pos.Y  +9);
-				dc.DrawLine (ResPool.GetPen (ColorControlDark), thumb_pos.X + 16, thumb_pos.Y + 9, thumb_pos.X +16 + 4, thumb_pos.Y  +9 - 4);
+				pen = ResPool.GetPen (ColorControlDark);
+				dc.DrawLine (pen, thumb_pos.X +1, thumb_pos.Y + 9, thumb_pos.X +15, thumb_pos.Y  +9);
+				dc.DrawLine (pen, thumb_pos.X + 16, thumb_pos.Y + 9, thumb_pos.X +16 + 4, thumb_pos.Y  +9 - 4);
 
-				dc.DrawLine (ResPool.GetPen (ColorControlDarkDark), thumb_pos.X, thumb_pos.Y  + 10, thumb_pos.X +16, thumb_pos.Y +10);
-				dc.DrawLine (ResPool.GetPen (ColorControlDarkDark), thumb_pos.X + 16, thumb_pos.Y  + 10, thumb_pos.X  +16 + 5, thumb_pos.Y +10 - 5);
+				pen = ResPool.GetPen (ColorControlDarkDark);
+				dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y  + 10, thumb_pos.X +16, thumb_pos.Y +10);
+				dc.DrawLine (pen, thumb_pos.X + 16, thumb_pos.Y  + 10, thumb_pos.X  +16 + 5, thumb_pos.Y +10 - 5);
 
 				dc.FillRectangle (br_thumb, thumb_pos.X + 1, thumb_pos.Y + 1, 16, 8);
 				dc.FillRectangle (br_thumb, thumb_pos.X + 17, thumb_pos.Y + 2, 1, 6);
@@ -3778,16 +3778,19 @@ namespace System.Windows.Forms
 			case TickStyle.TopLeft: {
 				thumb_pos.X = channel_startpoint.X - 10;
 
-				dc.DrawLine (ResPool.GetPen (ColorControlLight), thumb_pos.X + 4, thumb_pos.Y, thumb_pos.X + 4 + 16, thumb_pos.Y);
-				dc.DrawLine (ResPool.GetPen (ColorControlLight), thumb_pos.X + 4, thumb_pos.Y, thumb_pos.X, thumb_pos.Y + 4);
+				Pen pen = ResPool.GetPen (ColorControlLight);
+				dc.DrawLine (pen, thumb_pos.X + 4, thumb_pos.Y, thumb_pos.X + 4 + 16, thumb_pos.Y);
+				dc.DrawLine (pen, thumb_pos.X + 4, thumb_pos.Y, thumb_pos.X, thumb_pos.Y + 4);
 
-				dc.DrawLine (ResPool.GetPen (ColorControlDark), thumb_pos.X  + 4, thumb_pos.Y + 9, thumb_pos.X + 4 + 16 , thumb_pos.Y+ 9);
-				dc.DrawLine (ResPool.GetPen (ColorControlDark), thumb_pos.X + 4, thumb_pos.Y  + 9, thumb_pos.X, thumb_pos.Y + 5);
-				dc.DrawLine (ResPool.GetPen (ColorControlDark), thumb_pos.X  + 19, thumb_pos.Y + 9, thumb_pos.X  +19 , thumb_pos.Y+ 1);
+				pen = ResPool.GetPen (ColorControlDark);
+				dc.DrawLine (pen, thumb_pos.X  + 4, thumb_pos.Y + 9, thumb_pos.X + 4 + 16 , thumb_pos.Y+ 9);
+				dc.DrawLine (pen, thumb_pos.X + 4, thumb_pos.Y  + 9, thumb_pos.X, thumb_pos.Y + 5);
+				dc.DrawLine (pen, thumb_pos.X  + 19, thumb_pos.Y + 9, thumb_pos.X  +19 , thumb_pos.Y+ 1);
 
-				dc.DrawLine (ResPool.GetPen (ColorControlDarkDark), thumb_pos.X  + 4, thumb_pos.Y+ 10, thumb_pos.X  + 4 + 16, thumb_pos.Y+ 10);
-				dc.DrawLine (ResPool.GetPen (ColorControlDarkDark), thumb_pos.X  + 4, thumb_pos.Y + 10, thumb_pos.X  -1, thumb_pos.Y+ 5);
-				dc.DrawLine (ResPool.GetPen (ColorControlDarkDark), thumb_pos.X + 20, thumb_pos.Y, thumb_pos.X+ 20, thumb_pos.Y + 10);
+				pen = ResPool.GetPen (ColorControlDarkDark);
+				dc.DrawLine (pen, thumb_pos.X  + 4, thumb_pos.Y+ 10, thumb_pos.X  + 4 + 16, thumb_pos.Y+ 10);
+				dc.DrawLine (pen, thumb_pos.X  + 4, thumb_pos.Y + 10, thumb_pos.X  -1, thumb_pos.Y+ 5);
+				dc.DrawLine (pen, thumb_pos.X + 20, thumb_pos.Y, thumb_pos.X+ 20, thumb_pos.Y + 10);
 
 				dc.FillRectangle (br_thumb, thumb_pos.X + 4, thumb_pos.Y + 1, 15, 8);
 				dc.FillRectangle (br_thumb, thumb_pos.X + 3, thumb_pos.Y + 2, 1, 6);
@@ -3799,14 +3802,18 @@ namespace System.Windows.Forms
 
 			case TickStyle.Both: {
 				thumb_pos.X = area.X + 10;
-				dc.DrawLine (ResPool.GetPen (ColorControlLight), thumb_pos.X, thumb_pos.Y, thumb_pos.X, thumb_pos.Y + 9);
-				dc.DrawLine (ResPool.GetPen (ColorControlLight), thumb_pos.X, thumb_pos.Y, thumb_pos.X + 19, thumb_pos.Y);
+					
+				Pen pen = ResPool.GetPen (ColorControlLight);
+				dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y, thumb_pos.X, thumb_pos.Y + 9);
+				dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y, thumb_pos.X + 19, thumb_pos.Y);
 
-				dc.DrawLine (ResPool.GetPen (ColorControlDark), thumb_pos.X + 1, thumb_pos.Y + 9, thumb_pos.X+ 19, thumb_pos.Y  + 9);
-				dc.DrawLine (ResPool.GetPen (ColorControlDark), thumb_pos.X  + 10, thumb_pos.Y+ 1, thumb_pos.X + 19, thumb_pos.Y  + 8);
+				pen = ResPool.GetPen (ColorControlDark);
+				dc.DrawLine (pen, thumb_pos.X + 1, thumb_pos.Y + 9, thumb_pos.X+ 19, thumb_pos.Y  + 9);
+				dc.DrawLine (pen, thumb_pos.X  + 10, thumb_pos.Y+ 1, thumb_pos.X + 19, thumb_pos.Y  + 8);
 
-				dc.DrawLine (ResPool.GetPen (ColorControlDarkDark), thumb_pos.X, thumb_pos.Y + 10, thumb_pos.X+ 20, thumb_pos.Y  +10);
-				dc.DrawLine (ResPool.GetPen (ColorControlDarkDark), thumb_pos.X  + 20, thumb_pos.Y, thumb_pos.X  + 20, thumb_pos.Y+ 9);
+				pen = ResPool.GetPen (ColorControlDarkDark);
+				dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y + 10, thumb_pos.X+ 20, thumb_pos.Y  +10);
+				dc.DrawLine (pen, thumb_pos.X  + 20, thumb_pos.Y, thumb_pos.X  + 20, thumb_pos.Y+ 9);
 
 				dc.FillRectangle (br_thumb, thumb_pos.X + 1, thumb_pos.Y + 1, 18, 8);
 
@@ -3953,15 +3960,18 @@ namespace System.Windows.Forms
 			case TickStyle.None: {
 				thumb_pos.Y = channel_startpoint.Y - 8;
 
-				dc.DrawLine (ResPool.GetPen (ColorControlLight), thumb_pos.X, thumb_pos.Y, thumb_pos.X + 10, thumb_pos.Y);
-				dc.DrawLine (ResPool.GetPen (ColorControlLight), thumb_pos.X, thumb_pos.Y, thumb_pos.X, thumb_pos.Y + 16);
-				dc.DrawLine (ResPool.GetPen (ColorControlLight), thumb_pos.X, thumb_pos.Y + 16, thumb_pos.X + 4, thumb_pos.Y + 16 + 4);
+				Pen pen = ResPool.GetPen (ColorControlLight);
+				dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y, thumb_pos.X + 10, thumb_pos.Y);
+				dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y, thumb_pos.X, thumb_pos.Y + 16);
+				dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y + 16, thumb_pos.X + 4, thumb_pos.Y + 16 + 4);
 
-				dc.DrawLine (ResPool.GetPen (ColorControlDark), thumb_pos.X + 9, thumb_pos.Y + 1, thumb_pos.X +9, thumb_pos.Y +15);
-				dc.DrawLine (ResPool.GetPen (ColorControlDark), thumb_pos.X + 9, thumb_pos.Y + 16, thumb_pos.X +9 - 4, thumb_pos.Y +16 + 4);
+				pen = ResPool.GetPen (ColorControlDark);
+				dc.DrawLine (pen, thumb_pos.X + 9, thumb_pos.Y + 1, thumb_pos.X +9, thumb_pos.Y +15);
+				dc.DrawLine (pen, thumb_pos.X + 9, thumb_pos.Y + 16, thumb_pos.X +9 - 4, thumb_pos.Y +16 + 4);
 
-				dc.DrawLine (ResPool.GetPen (ColorControlDarkDark), thumb_pos.X + 10, thumb_pos.Y, thumb_pos.X +10, thumb_pos.Y +16);
-				dc.DrawLine (ResPool.GetPen (ColorControlDarkDark), thumb_pos.X + 10, thumb_pos.Y + 16, thumb_pos.X +10 - 5, thumb_pos.Y +16 + 5);
+				pen = ResPool.GetPen (ColorControlDarkDark);
+				dc.DrawLine (pen, thumb_pos.X + 10, thumb_pos.Y, thumb_pos.X +10, thumb_pos.Y +16);
+				dc.DrawLine (pen, thumb_pos.X + 10, thumb_pos.Y + 16, thumb_pos.X +10 - 5, thumb_pos.Y +16 + 5);
 
 				dc.FillRectangle (br_thumb, thumb_pos.X + 1, thumb_pos.Y + 1, 8, 16);
 				dc.FillRectangle (br_thumb, thumb_pos.X + 2, thumb_pos.Y + 17, 6, 1);
@@ -3972,16 +3982,19 @@ namespace System.Windows.Forms
 			case TickStyle.TopLeft:	{
 				thumb_pos.Y = channel_startpoint.Y - 10;
 
-				dc.DrawLine (ResPool.GetPen (ColorControlLight), thumb_pos.X, thumb_pos.Y + 4, thumb_pos.X, thumb_pos.Y + 4 + 16);
-				dc.DrawLine (ResPool.GetPen (ColorControlLight), thumb_pos.X, thumb_pos.Y + 4, thumb_pos.X + 4, thumb_pos.Y);
+				Pen pen = ResPool.GetPen (ColorControlLight);
+				dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y + 4, thumb_pos.X, thumb_pos.Y + 4 + 16);
+				dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y + 4, thumb_pos.X + 4, thumb_pos.Y);
 
-				dc.DrawLine (ResPool.GetPen (ColorControlDark), thumb_pos.X + 9, thumb_pos.Y + 4, thumb_pos.X + 9, thumb_pos.Y + 4 + 16);
-				dc.DrawLine (ResPool.GetPen (ColorControlDark), thumb_pos.X + 9, thumb_pos.Y + 4, thumb_pos.X + 5, thumb_pos.Y);
-				dc.DrawLine (ResPool.GetPen (ColorControlDark), thumb_pos.X + 9, thumb_pos.Y + 19, thumb_pos.X + 1 , thumb_pos.Y +19);
+				pen = ResPool.GetPen (ColorControlDark);
+				dc.DrawLine (pen, thumb_pos.X + 9, thumb_pos.Y + 4, thumb_pos.X + 9, thumb_pos.Y + 4 + 16);
+				dc.DrawLine (pen, thumb_pos.X + 9, thumb_pos.Y + 4, thumb_pos.X + 5, thumb_pos.Y);
+				dc.DrawLine (pen, thumb_pos.X + 9, thumb_pos.Y + 19, thumb_pos.X + 1 , thumb_pos.Y +19);
 
-				dc.DrawLine (ResPool.GetPen (ColorControlDarkDark), thumb_pos.X + 10, thumb_pos.Y + 4, thumb_pos.X + 10, thumb_pos.Y + 4 + 16);
-				dc.DrawLine (ResPool.GetPen (ColorControlDarkDark), thumb_pos.X + 10, thumb_pos.Y + 4, thumb_pos.X + 5, thumb_pos.Y -1);
-				dc.DrawLine (ResPool.GetPen (ColorControlDarkDark), thumb_pos.X, thumb_pos.Y + 20, thumb_pos.X + 10, thumb_pos.Y + 20);
+				pen = ResPool.GetPen (ColorControlDarkDark);
+				dc.DrawLine (pen, thumb_pos.X + 10, thumb_pos.Y + 4, thumb_pos.X + 10, thumb_pos.Y + 4 + 16);
+				dc.DrawLine (pen, thumb_pos.X + 10, thumb_pos.Y + 4, thumb_pos.X + 5, thumb_pos.Y -1);
+				dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y + 20, thumb_pos.X + 10, thumb_pos.Y + 20);
 
 				dc.FillRectangle (br_thumb, thumb_pos.X + 1, thumb_pos.Y + 4, 8, 15);
 				dc.FillRectangle (br_thumb, thumb_pos.X + 2, thumb_pos.Y + 3, 6, 1);
@@ -3992,14 +4005,18 @@ namespace System.Windows.Forms
 
 			case TickStyle.Both: {
 				thumb_pos.Y = area.Y + 10;
-				dc.DrawLine (ResPool.GetPen (ColorControlLight), thumb_pos.X, thumb_pos.Y, thumb_pos.X + 9, thumb_pos.Y);
-				dc.DrawLine (ResPool.GetPen (ColorControlLight), thumb_pos.X, thumb_pos.Y, thumb_pos.X, thumb_pos.Y + 19);
+					
+				Pen pen = ResPool.GetPen (ColorControlLight);
+				dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y, thumb_pos.X + 9, thumb_pos.Y);
+				dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y, thumb_pos.X, thumb_pos.Y + 19);
 
-				dc.DrawLine (ResPool.GetPen (ColorControlDark), thumb_pos.X + 9, thumb_pos.Y + 1, thumb_pos.X + 9, thumb_pos.Y + 19);
-				dc.DrawLine (ResPool.GetPen (ColorControlDark), thumb_pos.X + 1, thumb_pos.Y + 10, thumb_pos.X + 8, thumb_pos.Y + 19);
+				pen = ResPool.GetPen (ColorControlDark);
+				dc.DrawLine (pen, thumb_pos.X + 9, thumb_pos.Y + 1, thumb_pos.X + 9, thumb_pos.Y + 19);
+				dc.DrawLine (pen, thumb_pos.X + 1, thumb_pos.Y + 10, thumb_pos.X + 8, thumb_pos.Y + 19);
 
-				dc.DrawLine (ResPool.GetPen (ColorControlDarkDark), thumb_pos.X + 10, thumb_pos.Y, thumb_pos.X +10, thumb_pos.Y + 20);
-				dc.DrawLine (ResPool.GetPen (ColorControlDarkDark), thumb_pos.X, thumb_pos.Y + 20, thumb_pos.X + 9, thumb_pos.Y + 20);
+				pen = ResPool.GetPen (ColorControlDarkDark);
+				dc.DrawLine (pen, thumb_pos.X + 10, thumb_pos.Y, thumb_pos.X +10, thumb_pos.Y + 20);
+				dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y + 20, thumb_pos.X + 9, thumb_pos.Y + 20);
 
 				dc.FillRectangle (br_thumb, thumb_pos.X + 1, thumb_pos.Y + 1, 8, 18);
 
@@ -4087,10 +4104,11 @@ namespace System.Windows.Forms
 			
 
 			if (tb.Focused) {
-				dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorControl, Color.Black), area.X, area.Y, area.Width - 1, 1);
-				dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorControl, Color.Black), area.X, area.Y + area.Height - 1, area.Width - 1, 1);
-				dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorControl, Color.Black), area.X, area.Y, 1, area.Height - 1);
-				dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorControl, Color.Black), area.X + area.Width - 1, area.Y, 1, area.Height - 1);
+				Brush brush = ResPool.GetHatchBrush (HatchStyle.Percent50, ColorControl, Color.Black);
+				dc.FillRectangle (brush, area.X, area.Y, area.Width - 1, 1);
+				dc.FillRectangle (brush, area.X, area.Y + area.Height - 1, area.Width - 1, 1);
+				dc.FillRectangle (brush, area.X, area.Y, 1, area.Height - 1);
+				dc.FillRectangle (brush, area.X + area.Width - 1, area.Y, 1, area.Height - 1);
 			}
 
 			if (tb.Orientation == Orientation.Vertical) {
@@ -4234,10 +4252,10 @@ namespace System.Windows.Forms
 			CPColor cpcolor = ResPool.GetCPColor (ColorControl);
 			
 			// sadly enough, the rectangle gets always filled with a hatchbrush
-			dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (ColorControl.R + 3, ColorControl.G, ColorControl.B), ColorControl), new Rectangle (rectangle.X + 1, rectangle.Y + 1, rectangle.Width - 2, rectangle.Height - 2));
+			dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (ColorControl.R + 3, ColorControl.G, ColorControl.B), ColorControl), rectangle.X + 1, rectangle.Y + 1, rectangle.Width - 2, rectangle.Height - 2);
 			
 			if ((state & ButtonState.All) == ButtonState.All || ((state & ButtonState.Checked) == ButtonState.Checked && (state & ButtonState.Flat) == ButtonState.Flat)) {
-				dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, cpcolor.Light, ColorControl), new Rectangle (rectangle.X + 2, rectangle.Y + 2, rectangle.Width - 4, rectangle.Height - 4));
+				dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, cpcolor.Light, ColorControl), rectangle.X + 2, rectangle.Y + 2, rectangle.Width - 4, rectangle.Height - 4);
 				
 				dc.DrawRectangle (ResPool.GetPen (cpcolor.Dark), rectangle.X, rectangle.Y, rectangle.Width - 1, rectangle.Height - 1);
 			} else
@@ -4245,7 +4263,7 @@ namespace System.Windows.Forms
 				dc.DrawRectangle (ResPool.GetPen (cpcolor.Dark), rectangle.X, rectangle.Y, rectangle.Width - 1, rectangle.Height - 1);
 			} else
 			if ((state & ButtonState.Checked) == ButtonState.Checked) {
-				dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, cpcolor.Light, ColorControl), new Rectangle (rectangle.X + 2, rectangle.Y + 2, rectangle.Width - 4, rectangle.Height - 4));
+				dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, cpcolor.Light, ColorControl), rectangle.X + 2, rectangle.Y + 2, rectangle.Width - 4, rectangle.Height - 4);
 				
 				Pen pen = ResPool.GetPen (cpcolor.DarkDark);
 				dc.DrawLine (pen, rectangle.X, rectangle.Y, rectangle.X, rectangle.Bottom - 2);
@@ -4312,18 +4330,15 @@ namespace System.Windows.Forms
 				Pen	pen;
 
 				if ((state & ButtonState.Inactive)!=0) {
-					pen=new Pen(ColorControlLight, lineWidth);
+					pen = ResPool.GetSizedPen (ColorControlLight, lineWidth);
 					DrawCaptionHelper(graphics, ColorControlLight, pen, lineWidth, 1, captionRect, button);
-					pen.Dispose();
 
-					pen=new Pen(ColorControlDark, lineWidth);
+					pen = ResPool.GetSizedPen (ColorControlDark, lineWidth);
 					DrawCaptionHelper(graphics, ColorControlDark, pen, lineWidth, 0, captionRect, button);
-					pen.Dispose();
 					return;
 				} else {
-					pen=new Pen(ColorControlText, lineWidth);
+					pen = ResPool.GetSizedPen (ColorControlText, lineWidth);
 					DrawCaptionHelper(graphics, ColorControlText, pen, lineWidth, 0, captionRect, button);
-					pen.Dispose();
 					return;
 				}
 			}
@@ -4513,7 +4528,7 @@ namespace System.Windows.Forms
 
 		public override void CPDrawContainerGrabHandle (Graphics graphics, Rectangle bounds) {
 			
-			Pen			pen	= new Pen(Color.Black, 1);
+			Pen			pen	= ResPool.GetPen (Color.Black);
 			Rectangle	rect	= new Rectangle(bounds.X, bounds.Y, bounds.Width-1, bounds.Height-1);	// Dunno why, but MS does it that way, too
 			int			X;
 			int			Y;
@@ -4535,7 +4550,6 @@ namespace System.Windows.Forms
 			/* Draw 'arrows' for horizontal lines */
 			graphics.DrawLine(pen, rect.X+3, Y-1, rect.X+3, Y+1);
 			graphics.DrawLine(pen, rect.Right-3, Y-1, rect.Right-3, Y+1);
-			pen.Dispose ();
 
 		}
 
@@ -4613,14 +4627,14 @@ namespace System.Windows.Forms
 			Pen			pen;
 
 			if (primary==true) {
-				pen=new Pen(Color.Black, 1);
+				pen = ResPool.GetPen (Color.Black);
 				if (enabled==true) {
 					sb=ResPool.GetSolidBrush (ColorControlText);
 				} else {
 					sb=ResPool.GetSolidBrush (ColorControl);
 				}
 			} else {
-				pen=new Pen(Color.White, 1);
+				pen = ResPool.GetPen(Color.White);
 				if (enabled==true) {
 					sb=ResPool.GetSolidBrush (Color.Black);
 				} else {
@@ -4629,7 +4643,6 @@ namespace System.Windows.Forms
 			}
 			graphics.FillRectangle(sb, rectangle);
 			graphics.DrawRectangle(pen, rectangle);			
-			pen.Dispose();
 		}
 
 
@@ -4726,19 +4739,17 @@ namespace System.Windows.Forms
 			Pen	penInside;
 
 			if (primary) {
-				penBorder=new Pen(Color.White, 2);
-				penInside=new Pen(Color.Black, 1);
+				penBorder = ResPool.GetSizedPen (Color.White, 2);
+				penInside = ResPool.GetPen (Color.Black);
 			} else {
-				penBorder=new Pen(Color.Black, 2);
-				penInside=new Pen(Color.White, 1);
+				penBorder = ResPool.GetSizedPen (Color.Black, 2);
+				penInside = ResPool.GetPen (Color.White);
 			}
 			penBorder.Alignment=PenAlignment.Inset;
 			penInside.Alignment=PenAlignment.Inset;
 
 			graphics.DrawRectangle(penBorder, rectangle);
 			graphics.DrawRectangle(penInside, rectangle.X+2, rectangle.Y+2, rectangle.Width-5, rectangle.Height-5);
-			penBorder.Dispose();
-			penInside.Dispose();
 		}
 
 
@@ -4851,16 +4862,12 @@ namespace System.Windows.Forms
 			
 			int line_width = Math.Max (1, (int)(ellipse_diameter * 0.08f));
 			
-			using (Pen pen = new Pen (top_left_outer,  line_width))
-				dc.DrawArc (pen, rb_rect, 135.0f, 180.0f);
-			using (Pen pen = new Pen (top_left_inner, line_width))
-				dc.DrawArc (pen, Rectangle.Inflate (rb_rect, -line_width, -line_width), 135.0f, 180.0f);
-			using (Pen pen = new Pen (bottom_right_outer, line_width))
-				dc.DrawArc (pen, rb_rect, 315.0f, 180.0f);
+			dc.DrawArc (ResPool.GetSizedPen (top_left_outer, line_width), rb_rect, 135.0f, 180.0f);
+			dc.DrawArc (ResPool.GetSizedPen (top_left_inner, line_width), Rectangle.Inflate (rb_rect, -line_width, -line_width), 135.0f, 180.0f);
+			dc.DrawArc (ResPool.GetSizedPen (bottom_right_outer, line_width), rb_rect, 315.0f, 180.0f);
 			
 			if (bottom_right_inner != Color.Transparent)
-				using (Pen pen = new Pen (bottom_right_inner, line_width))
-					dc.DrawArc (pen, Rectangle.Inflate (rb_rect, -line_width, -line_width), 315.0f, 180.0f);
+				dc.DrawArc (ResPool.GetSizedPen (bottom_right_inner, line_width), Rectangle.Inflate (rb_rect, -line_width, -line_width), 315.0f, 180.0f);
 			else
 				using (Pen h_pen = new Pen (ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (ColorControl.R + 3, ColorControl.G, ColorControl.B), ColorControl), line_width)) {
 					dc.DrawArc (h_pen, Rectangle.Inflate (rb_rect, -line_width, -line_width), 315.0f, 180.0f);
@@ -5033,41 +5040,24 @@ namespace System.Windows.Forms
 		private static void DrawBorderInternal(Graphics graphics, int startX, int startY, int endX, int endY,
 			int width, Color color, ButtonBorderStyle style, Border3DSide side) {
 
-			Pen	pen=new Pen(color, 1);
+			Pen pen = null;
 
-			switch(style) {
-			case ButtonBorderStyle.Solid: {
-				pen.DashStyle=DashStyle.Solid;
-				break;
-			}
-
-			case ButtonBorderStyle.Dashed: {
-				pen.DashStyle=DashStyle.Dash;
-				break;
-			}
-
-			case ButtonBorderStyle.Dotted: {
-				pen.DashStyle=DashStyle.Dot;
-				break;
-			}
-
-			case ButtonBorderStyle.Inset: {
-				pen.DashStyle=DashStyle.Solid;
-				break;
-			}
-
-			case ButtonBorderStyle.Outset: {
-				pen.DashStyle=DashStyle.Solid;
-				break;
-			}
-
+			switch (style) {
+			case ButtonBorderStyle.Solid:
+			case ButtonBorderStyle.Inset:
+			case ButtonBorderStyle.Outset:
+					pen = ThemeEngine.Current.ResPool.GetDashPen (color, DashStyle.Solid);
+					break;
+			case ButtonBorderStyle.Dashed:
+					pen = ThemeEngine.Current.ResPool.GetDashPen (color, DashStyle.Dash);
+					break;
+			case ButtonBorderStyle.Dotted:
+					pen = ThemeEngine.Current.ResPool.GetDashPen (color, DashStyle.Dot);
+					break;
 			default:
-			case ButtonBorderStyle.None: {
-				pen.Dispose();
-				return;
+			case ButtonBorderStyle.None:
+					return;
 			}
-			}
-
 
 			switch(style) {
 			case ButtonBorderStyle.Outset: {
@@ -5088,33 +5078,29 @@ namespace System.Windows.Forms
 				for (int i=0; i<width; i++) {
 					switch(side) {
 					case Border3DSide.Left:	{
-						pen.Dispose();
 						colorGrade=ControlPaint.HBS2Color(hue, Math.Min(255, brightness+brightnessSteps*(width-i)), saturation);
-						pen=new Pen(colorGrade, 1);
+						pen = ThemeEngine.Current.ResPool.GetPen (colorGrade);
 						graphics.DrawLine(pen, startX+i, startY+i, endX+i, endY-i);
 						break;
 					}
 
 					case Border3DSide.Right: {
-						pen.Dispose();
 						colorGrade=ControlPaint.HBS2Color(hue, Math.Max(0, brightness-brightnessDownSteps*(width-i)), saturation);
-						pen=new Pen(colorGrade, 1);
+						pen = ThemeEngine.Current.ResPool.GetPen (colorGrade);
 						graphics.DrawLine(pen, startX-i, startY+i, endX-i, endY-i);
 						break;
 					}
 
 					case Border3DSide.Top: {
-						pen.Dispose();
 						colorGrade=ControlPaint.HBS2Color(hue, Math.Min(255, brightness+brightnessSteps*(width-i)), saturation);
-						pen=new Pen(colorGrade, 1);
+						pen = ThemeEngine.Current.ResPool.GetPen (colorGrade);
 						graphics.DrawLine(pen, startX+i, startY+i, endX-i, endY+i);
 						break;
 					}
 
 					case Border3DSide.Bottom: {
-						pen.Dispose();
 						colorGrade=ControlPaint.HBS2Color(hue, Math.Max(0, brightness-brightnessDownSteps*(width-i)), saturation);
-						pen=new Pen(colorGrade, 1);
+						pen = ThemeEngine.Current.ResPool.GetPen (colorGrade);
 						graphics.DrawLine(pen, startX+i, startY-i, endX-i, endY-i);
 						break;
 					}
@@ -5141,33 +5127,29 @@ namespace System.Windows.Forms
 				for (int i=0; i<width; i++) {
 					switch(side) {
 					case Border3DSide.Left:	{
-						pen.Dispose();
 						colorGrade=ControlPaint.HBS2Color(hue, Math.Max(0, brightness-brightnessDownSteps*(width-i)), saturation);
-						pen=new Pen(colorGrade, 1);
+						pen = ThemeEngine.Current.ResPool.GetPen (colorGrade);
 						graphics.DrawLine(pen, startX+i, startY+i, endX+i, endY-i);
 						break;
 					}
 
 					case Border3DSide.Right: {
-						pen.Dispose();
 						colorGrade=ControlPaint.HBS2Color(hue, Math.Min(255, brightness+brightnessSteps*(width-i)), saturation);
-						pen=new Pen(colorGrade, 1);
+						pen = ThemeEngine.Current.ResPool.GetPen (colorGrade);
 						graphics.DrawLine(pen, startX-i, startY+i, endX-i, endY-i);
 						break;
 					}
 
 					case Border3DSide.Top: {
-						pen.Dispose();
 						colorGrade=ControlPaint.HBS2Color(hue, Math.Max(0, brightness-brightnessDownSteps*(width-i)), saturation);
-						pen=new Pen(colorGrade, 1);
+						pen = ThemeEngine.Current.ResPool.GetPen (colorGrade);
 						graphics.DrawLine(pen, startX+i, startY+i, endX-i, endY+i);
 						break;
 					}
 
 					case Border3DSide.Bottom: {
-						pen.Dispose();
 						colorGrade=ControlPaint.HBS2Color(hue, Math.Min(255, brightness+brightnessSteps*(width-i)), saturation);
-						pen=new Pen(colorGrade, 1);
+						pen = ThemeEngine.Current.ResPool.GetPen (colorGrade);
 						graphics.DrawLine(pen, startX+i, startY-i, endX-i, endY-i);
 						break;
 					}
@@ -5214,7 +5196,6 @@ namespace System.Windows.Forms
 				break;
 			}
 			}
-			pen.Dispose();
 		}
 
 		/*
@@ -5346,26 +5327,31 @@ namespace System.Windows.Forms
 				return;
 			}			
 	
-			dc.FillRectangle (ResPool.GetSolidBrush (ColorControl), area.X, area.Y, area.Width, 1);
-			dc.FillRectangle (ResPool.GetSolidBrush (ColorControl), area.X, area.Y, 1, area.Height);
+			SolidBrush sb_control = ResPool.GetSolidBrush (ColorControl);
+			SolidBrush sb_light = ResPool.GetSolidBrush (ColorControlLight);
+			SolidBrush sb_dark = ResPool.GetSolidBrush (ColorControlDark);
+			SolidBrush sb_darkdark = ResPool.GetSolidBrush (ColorControlDarkDark);
+			
+			dc.FillRectangle (sb_control, area.X, area.Y, area.Width, 1);
+			dc.FillRectangle (sb_control, area.X, area.Y, 1, area.Height);
 
-			dc.FillRectangle (ResPool.GetSolidBrush (ColorControlLight), area.X + 1, area.Y + 1, area.Width - 1, 1);
-			dc.FillRectangle (ResPool.GetSolidBrush (ColorControlLight), area.X + 1, area.Y + 2, 1,
+			dc.FillRectangle (sb_light, area.X + 1, area.Y + 1, area.Width - 1, 1);
+			dc.FillRectangle (sb_light, area.X + 1, area.Y + 2, 1,
 				area.Height - 4);
-
-			dc.FillRectangle (ResPool.GetSolidBrush (ColorControlDark), area.X + 1, area.Y + area.Height - 2,
+			
+			dc.FillRectangle (sb_dark, area.X + 1, area.Y + area.Height - 2,
 				area.Width - 2, 1);
 
-			dc.FillRectangle (ResPool.GetSolidBrush (ColorControlDarkDark), area.X, area.Y + area.Height -1,
+			dc.FillRectangle (sb_darkdark, area.X, area.Y + area.Height -1,
 				area.Width , 1);
 
-			dc.FillRectangle (ResPool.GetSolidBrush (ColorControlDark), area.X + area.Width - 2,
+			dc.FillRectangle (sb_dark, area.X + area.Width - 2,
 				area.Y + 1, 1, area.Height -3);
 
-			dc.FillRectangle (ResPool.GetSolidBrush (ColorControlDarkDark), area.X + area.Width -1,
+			dc.FillRectangle (sb_darkdark, area.X + area.Width -1,
 				area.Y, 1, area.Height - 1);
 
-			dc.FillRectangle (ResPool.GetSolidBrush (ColorControl), area.X + 2,
+			dc.FillRectangle (sb_control, area.X + 2,
 				area.Y + 2, area.Width - 4, area.Height - 4);
 			
 		}

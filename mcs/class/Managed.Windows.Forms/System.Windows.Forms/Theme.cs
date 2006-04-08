@@ -58,6 +58,8 @@ namespace System.Windows.Forms
 	internal class SystemResPool
 	{
 		private Hashtable pens = new Hashtable ();
+		private Hashtable dashpens = new Hashtable ();
+		private Hashtable sizedpens = new Hashtable ();
 		private Hashtable solidbrushes = new Hashtable ();
 		private Hashtable hatchbrushes = new Hashtable ();
 		private Hashtable uiImages = new Hashtable();
@@ -76,7 +78,34 @@ namespace System.Windows.Forms
 			Pen pen = new Pen (color);
 			pens.Add (hash, pen);
 			return pen;
-		}		
+		}
+		
+		public Pen GetDashPen (Color color, DashStyle dashStyle)
+		{
+			string hash = color.ToString() + dashStyle;
+			
+			Pen res = dashpens [hash] as Pen;
+			if (res != null)
+				return res;
+			
+			Pen pen = new Pen (color);
+			pen.DashStyle = dashStyle;
+			dashpens [hash] = pen;
+			return pen;
+		}
+		
+		public Pen GetSizedPen (Color color, int size)
+		{
+			string hash = color.ToString () + size;
+			
+			Pen res = sizedpens [hash] as Pen;
+			if (res != null)
+				return res;
+			
+			Pen pen = new Pen (color, size);
+			sizedpens [hash] = pen;
+			return pen;
+		}
 		
 		public SolidBrush GetSolidBrush (Color color)
 		{
