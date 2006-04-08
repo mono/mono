@@ -39,7 +39,7 @@ namespace System.Windows.Forms
 		public override Version Version
 		{
 			get {
-				return new Version( 0, 0, 0, 2 );
+				return new Version( 0, 0, 0, 3 );
 			}
 		}
 		
@@ -184,20 +184,12 @@ namespace System.Windows.Forms
 				if (button.FlatStyle == FlatStyle.Popup) {
 					if (!button.is_pressed && button.is_entered && !check_or_radio_checked)
 						use_color = MouseOverColor;
-					else if (button.is_pressed || check_or_radio_checked)
-						use_color = PressedColor;
 				} else if (button.FlatStyle == FlatStyle.Flat) {
 					if (button.is_entered && !button.is_pressed && !check_or_radio_checked)
 						use_color = MouseOverColor;
-					else if (button.is_pressed || check_or_radio_checked) {
-						use_color = PressedColor;
-					}
 				} else {
 					if (!button.is_pressed && button.is_entered && !check_or_radio_checked)
 						use_color = MouseOverColor;
-					else
-					if (button.is_pressed || check_or_radio_checked)
-						use_color = PressedColor;
 				}
 			}
 			
@@ -214,12 +206,16 @@ namespace System.Windows.Forms
 			
 			if (button.flat_style != FlatStyle.Popup || ((button.flat_style == FlatStyle.Popup) && button.is_entered)) {
 				LinearGradientBrush lgbr;
-				if (button.flat_style == FlatStyle.Flat) {
-					lgbr = new LinearGradientBrush (new Point (0, 0), new Point (0, height - 1), use_color, first_color);
-					lgbr.Blend = FlatBlend;
+				if (!button.is_pressed && !check_or_radio_checked) {
+					if (button.flat_style == FlatStyle.Flat) {
+						lgbr = new LinearGradientBrush (new Point (0, 0), new Point (0, height - 1), use_color, first_color);
+						lgbr.Blend = FlatBlend;
+					} else {
+						lgbr = new LinearGradientBrush (new Point (0, 0), new Point (0, height - 1), first_color, use_color);
+						lgbr.Blend = NormalBlend;
+					}
 				} else {
-					lgbr = new LinearGradientBrush (new Point (0, 0), new Point (0, height - 1), first_color, use_color);
-					lgbr.Blend = NormalBlend;
+					lgbr = new LinearGradientBrush (new Point (0, 0), new Point (0, height - 1), PressedColor, MouseOverColor);
 				}
 				dc.FillRectangle (lgbr, lgbRectangle);
 				lgbr.Dispose ();
@@ -1088,17 +1084,19 @@ namespace System.Windows.Forms
 			Color first_color = Color.White;
 			
 			if (is_flat) {
-				if (button.Pushed || button.Pressed)
-					use_color = PressedColor;
-				else
+				if (button.Pushed || button.Pressed) {
+					first_color = PressedColor;
+					use_color = MouseOverColor;
+				} else
 				if (button.Hilight)
 					use_color = MouseOverColor;
 				else
 					return;
 			} else {
-				if (button.Pushed || button.Pressed)
-					use_color = PressedColor;
-				else
+				if (button.Pushed || button.Pressed) {
+					first_color = PressedColor;
+					use_color = MouseOverColor;
+				} else
 				if (button.Hilight)
 					use_color = MouseOverColor;
 			}
@@ -1447,9 +1445,9 @@ namespace System.Windows.Forms
 			Pen pen = null;
 			
 			if ( enabled )
-				pen = new Pen( arrow_color, 2 );
+				pen = ResPool.GetSizedPen( arrow_color, 2 );
 			else
-				pen = new Pen( ColorGrayText, 2 );
+				pen = ResPool.GetSizedPen( ColorGrayText, 2 );
 			
 			/* Paint arrows */
 			
@@ -1505,8 +1503,6 @@ namespace System.Windows.Forms
 			dc.DrawLines (pen, arrow);
 			
 			dc.SmoothingMode = old_smoothing_mode;
-			
-			pen.Dispose ();
 		}
 		
 		public override void CPDrawSizeGrip( Graphics dc, Color backColor, Rectangle bounds )
@@ -1557,12 +1553,10 @@ namespace System.Windows.Forms
 					int mid_y = area.Y + ( area.Height / 2 );
 					int mid_x = area.X + ( area.Width / 2 );
 					
-					using ( Pen lpen = new Pen( MouseOverColor, 2 ) )
-					{
-						dc.DrawLine( lpen, mid_x - 3, mid_y, mid_x + 3, mid_y );
-						dc.DrawLine( lpen, mid_x - 3, mid_y - 4, mid_x + 3, mid_y - 4 );
-						dc.DrawLine( lpen, mid_x - 3, mid_y + 4, mid_x + 3, mid_y + 4 );
-					}
+					Pen lpen = ResPool.GetSizedPen( MouseOverColor, 2 );
+					dc.DrawLine( lpen, mid_x - 3, mid_y, mid_x + 3, mid_y );
+					dc.DrawLine( lpen, mid_x - 3, mid_y - 4, mid_x + 3, mid_y - 4 );
+					dc.DrawLine( lpen, mid_x - 3, mid_y + 4, mid_x + 3, mid_y + 4 );
 					
 					Pen spen = ResPool.GetPen( Color.White );
 					dc.DrawLine( spen, mid_x - 3, mid_y - 1, mid_x + 3, mid_y - 1 );
@@ -1581,12 +1575,10 @@ namespace System.Windows.Forms
 					int mid_x = area.X +  ( area.Width / 2 );
 					int mid_y = area.Y +  ( area.Height / 2 );
 					
-					using ( Pen lpen = new Pen( MouseOverColor, 2 ) )
-					{
-						dc.DrawLine( lpen, mid_x, mid_y - 3, mid_x, mid_y + 3 );
-						dc.DrawLine( lpen, mid_x - 4, mid_y - 3, mid_x - 4, mid_y + 3 );
-						dc.DrawLine( lpen, mid_x + 4, mid_y - 3, mid_x + 4, mid_y + 3 );
-					}
+					Pen lpen = ResPool.GetSizedPen( MouseOverColor, 2 );
+					dc.DrawLine( lpen, mid_x, mid_y - 3, mid_x, mid_y + 3 );
+					dc.DrawLine( lpen, mid_x - 4, mid_y - 3, mid_x - 4, mid_y + 3 );
+					dc.DrawLine( lpen, mid_x + 4, mid_y - 3, mid_x + 4, mid_y + 3 );
 					
 					Pen spen = ResPool.GetPen( Color.White );
 					dc.DrawLine( spen, mid_x - 1, mid_y - 3, mid_x - 1, mid_y + 3 );

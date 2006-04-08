@@ -1,5 +1,9 @@
 2006-04-08  Alexander Olk  <alex.olk@googlemail.com>
 
+	* ThemeNice.cs: Use a better graphics effect when a button is pressed
+
+2006-04-08  Alexander Olk  <alex.olk@googlemail.com>
+
 	* Theme.cs: Added GetDashPen and GetSizedPen to SystemResPool
 	* ThemeWin32Classic.cs: Make use of the new SystemResPool methods.
 	  This dramatically reduces the number of Pen.Dispose calls. 
