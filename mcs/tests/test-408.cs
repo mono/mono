@@ -4,6 +4,11 @@ unsafe class T {
 	static int Main () {
 		int len = 10;
 		int* x = stackalloc int [len];
-		return x [0];
+		for (int i = 0; i < len; i++)
+		{
+			if (x [i] != 0)
+				return i + 1;
+		}
+		return 0;
 	}
 }
