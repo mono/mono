@@ -8263,24 +8263,13 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				type_from_op (ins, sp [0], sp [1]);
 
 				if (cmp->opcode == OP_FCOMPARE) {
-#ifdef MONO_ARCH_HAS_FCOMPARE
-					gboolean has_fcompare = TRUE;
-#else
-					gboolean has_fcompare = FALSE;
-#endif
 					/*
 					 * The backends expect the fceq opcodes to do the
 					 * comparison too.
 					 */
-					if (has_fcompare && cfg->new_ir) {
-						/* The opcodes are defined to take two float arguments */
-						ins->sreg1 = cmp->sreg1;
-						ins->sreg2 = cmp->sreg2;
-					} else {						
-						cmp->opcode = OP_NOP;
-						ins->sreg1 = cmp->sreg1;
-						ins->sreg2 = cmp->sreg2;
-					}
+					cmp->opcode = OP_NOP;
+					ins->sreg1 = cmp->sreg1;
+					ins->sreg2 = cmp->sreg2;
 				}
 				MONO_ADD_INS (bblock, ins);
 				*sp++ = ins;

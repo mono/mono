@@ -1,5 +1,11 @@
 2006-04-10  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_method_to_ir2): Remove the special handling of
+	ia64, do it in the arch specific code instead.
+
+	* mini-ia64.c (mono_arch_lowering_pass): Add special handling for float_setcc
+	opcodes.
+
 	* mini.c (move_basic_block_to_end): Handle CEE_BR as well.
 
 2006-04-09  Zoltan Varga  <vargaz@gmail.com>

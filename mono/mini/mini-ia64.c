@@ -2049,6 +2049,18 @@ mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 
 			break;
 		}
+		case OP_FCEQ:
+		case OP_FCGT:
+		case OP_FCGT_UN:
+		case OP_FCLT:
+		case OP_FCLT_UN:
+			/* The front end removes the fcompare, so introduce it again */
+			NEW_INS (cfg, temp, opcode_to_ia64_cmp (ins->opcode, OP_FCOMPARE));
+			temp->sreg1 = ins->sreg1;
+			temp->sreg2 = ins->sreg2;
+			
+			ins->opcode = OP_IA64_CSET;
+			break;
 		case OP_MUL_IMM:
 		case OP_LMUL_IMM:
 		case OP_IMUL_IMM: {
