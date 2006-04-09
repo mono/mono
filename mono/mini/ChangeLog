@@ -1,5 +1,8 @@
 2006-04-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c (mono_arch_create_vars): Remove some redundant checks.
+	(mono_arch_allocate_vars): Ditto.
+
 	* mini-codegen.c (mono_opcode_to_cond): Add more opcodes.
 
 	* mini-amd64.c (mono_arch_create_vars): Move creation of cfg->var from here...

@@ -992,7 +992,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 		case ArgInIReg:
 		case ArgInFloatSSEReg:
 		case ArgInDoubleSSEReg:
-			if ((MONO_TYPE_ISSTRUCT (sig->ret) && !mono_class_from_mono_type (sig->ret)->enumtype) || (sig->ret->type == MONO_TYPE_TYPEDBYREF)) {
+			if (MONO_TYPE_ISSTRUCT (sig->ret)) {
 				if (cfg->new_ir) {
 					/* 
 					 * In the new IR, the cfg->vret_addr variable represents the
@@ -1150,13 +1150,11 @@ mono_arch_create_vars (MonoCompile *cfg)
 	if (cinfo->ret.storage == ArgValuetypeInReg)
 		cfg->ret_var_is_local = TRUE;
 
-	if (cfg->new_ir) {
-		if (cinfo->ret.storage != ArgValuetypeInReg && ((MONO_TYPE_ISSTRUCT (sig->ret) && !mono_class_from_mono_type (sig->ret)->enumtype) || (sig->ret->type == MONO_TYPE_TYPEDBYREF))) {
-			cfg->vret_addr = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_ARG);
-			if (G_UNLIKELY (cfg->verbose_level > 1)) {
-				printf ("vret_addr = ");
-				mono_print_ins (cfg->vret_addr);
-			}
+	if (cfg->new_ir && (cinfo->ret.storage != ArgValuetypeInReg) && MONO_TYPE_ISSTRUCT (sig->ret)) {
+		cfg->vret_addr = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_ARG);
+		if (G_UNLIKELY (cfg->verbose_level > 1)) {
+			printf ("vret_addr = ");
+			mono_print_ins (cfg->vret_addr);
 		}
 	}
 }
