@@ -1993,64 +1993,79 @@ mono_opcode_to_cond (int opcode)
 	case OP_CEQ:
 	case OP_IBEQ:
 	case OP_ICEQ:
+	case OP_LBEQ:
+	case OP_LCEQ:
 	case OP_FBEQ:
 	case OP_FCEQ:
 	case OP_COND_EXC_EQ:
 		return CMP_EQ;
 	case CEE_BNE_UN:
-	case OP_COND_EXC_NE_UN:
 	case OP_IBNE_UN:
+	case OP_LBNE_UN:
 	case OP_FBNE_UN:
+	case OP_COND_EXC_NE_UN:
 		return CMP_NE;
 	case CEE_BLE:
 	case OP_IBLE:
+	case OP_LBLE:
 	case OP_FBLE:
 		return CMP_LE;
 	case CEE_BGE:
 	case OP_IBGE:
+	case OP_LBGE:
 	case OP_FBGE:
 		return CMP_GE;
 	case CEE_BLT:
-	case OP_COND_EXC_LT:
 	case OP_CLT:
 	case OP_IBLT:
 	case OP_ICLT:
+	case OP_LBLT:
+	case OP_LCLT:
 	case OP_FBLT:
 	case OP_FCLT:
+	case OP_COND_EXC_LT:
 		return CMP_LT;
 	case CEE_BGT:
-	case OP_COND_EXC_GT:
 	case OP_CGT:
 	case OP_IBGT:
 	case OP_ICGT:
+	case OP_LBGT:
+	case OP_LCGT:
 	case OP_FBGT:
 	case OP_FCGT:
+	case OP_COND_EXC_GT:
 		return CMP_GT;
 
 	case CEE_BLE_UN:
-	case OP_COND_EXC_LE_UN:
 	case OP_IBLE_UN:
+	case OP_LBLE_UN:
 	case OP_FBLE_UN:
+	case OP_COND_EXC_LE_UN:
 		return CMP_LE_UN;
 	case CEE_BGE_UN:
 	case OP_IBGE_UN:
+	case OP_LBGE_UN:
 	case OP_FBGE_UN:
 		return CMP_GE_UN;
 	case CEE_BLT_UN:
 	case OP_CLT_UN:
 	case OP_IBLT_UN:
 	case OP_ICLT_UN:
+	case OP_LBLT_UN:
+	case OP_LCLT_UN:
 	case OP_FBLT_UN:
 	case OP_FCLT_UN:
 	case OP_COND_EXC_LT_UN:
 		return CMP_LT_UN;
 	case CEE_BGT_UN:
-	case OP_COND_EXC_GT_UN:
 	case OP_CGT_UN:
 	case OP_IBGT_UN:
 	case OP_ICGT_UN:
+	case OP_LBGT_UN:
+	case OP_LCGT_UN:
 	case OP_FCGT_UN:
 	case OP_FBGT_UN:
+	case OP_COND_EXC_GT_UN:
 		return CMP_GT_UN;
 	default:
 		printf ("%s\n", mono_inst_name (opcode));

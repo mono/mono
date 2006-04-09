@@ -1,5 +1,10 @@
 2006-04-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-codegen.c (mono_opcode_to_cond): Add more opcodes.
+
+	* mini-amd64.c: Use mono_opcode_to_cond to simplify the emitting of conditional
+	branches.
+
 	* mini-ops.h: Add OP_VCALL2_... opcodes.
 
 	* mini.h (MonoCompile): Add 'vret_addr' field.
