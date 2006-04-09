@@ -9,5 +9,7 @@ class MainClass {
         {
             return null;
         }
+
+		public static void Main () {}
 }
 

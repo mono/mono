@@ -400,7 +400,7 @@ namespace Mono.CSharp {
 
 		public MethodBuilder GetMethodBuilder ()
 		{
-			return method.MethodData.MethodBuilder;
+			return method.MethodBuilder;
 		}
 
 		public override string GetSignatureForError ()

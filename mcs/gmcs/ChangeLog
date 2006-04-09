@@ -1,5 +1,19 @@
 2006-04-09  Marek Safar  <marek.safar@seznam.cz>
 
+	class.cs (MethodOrOperator): Moved common parts from method class.
+	detect obsolete attributes.
+	(Method.Define): Simplified as it reuses code from base.
+	(Constructor.ValidAttributeTargets): Fixed issue found during
+	refactoring.
+	(Destructor.ValidAttributeTargets): Fixed issue found during
+	refactoring.
+	(Operator): Finished refactoring set off by #78020. Operator class is now
+	ordinary method class.
+
+	* anonymous.cs: Updated.
+
+2006-04-09  Marek Safar  <marek.safar@seznam.cz>
+
 	(Constructor.Emit): Don't emit the attributes twice.
 
 2006-04-09  Marek Safar  <marek.safar@seznam.cz>

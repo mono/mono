@@ -582,6 +582,15 @@ namespace Mono.CSharp {
 		
 		protected Hashtable defined_names;
 
+		//
+		// Whether we are Generic
+		//
+		public bool IsGeneric {
+			get {
+				return false;
+			}
+		}
+
 		static string[] attribute_targets = new string [] { "type" };
 
 		public DeclSpace (NamespaceEntry ns, DeclSpace parent, MemberName name,

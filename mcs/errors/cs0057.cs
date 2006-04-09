@@ -4,7 +4,7 @@
 using System;
 
 class ErrorCS0057 {
-	public ErrorCS0057 ();
+	public ErrorCS0057 () {}
 }
 
 public class Foo {

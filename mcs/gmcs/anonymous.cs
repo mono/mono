@@ -446,7 +446,7 @@ namespace Mono.CSharp {
 
 		public MethodInfo GetMethodBuilder ()
 		{
-			MethodInfo builder = method.MethodData.MethodBuilder;
+			MethodInfo builder = method.MethodBuilder;
 			if (TypeArguments != null)
 				return builder.MakeGenericMethod (TypeArguments);
 			else
@@ -464,7 +464,7 @@ namespace Mono.CSharp {
 			if (!CreateMethodHost (ec))
 				return false;
 
-			MethodBuilder builder = method.MethodData.MethodBuilder;
+			MethodBuilder builder = method.MethodBuilder;
 			ILGenerator ig = builder.GetILGenerator ();
 			aec.ig = ig;
 

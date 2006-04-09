@@ -237,8 +237,8 @@ namespace Mono.CSharp {
 				{
 					flags = f;
 
-					ret_type = o.OperatorMethod.ReturnType;
-					Type [] pt = o.OperatorMethod.ParameterTypes;
+					ret_type = o.MemberType;
+					Type [] pt = o.ParameterTypes;
 					type1 = pt [0];
 					type2 = pt [1];
 					op = o;
@@ -285,7 +285,7 @@ namespace Mono.CSharp {
 					int reg = 0;
 
 					// Skip erroneous code.
-					if (op.OperatorMethod == null)
+					if (op.MethodBuilder == null)
 						continue;
 
 					switch (op.OperatorType){
@@ -2925,16 +2925,11 @@ namespace Mono.CSharp {
 	public abstract class MethodCore : MemberBase {
 		public readonly Parameters Parameters;
 		protected ToplevelBlock block;
-		
-		// Whether this is an operator method.
-		public Operator IsOperator;
 
 		//
 		// The method we're overriding if this is an override method.
 		//
 		protected MethodInfo base_method = null;
-
-		static string[] attribute_targets = new string [] { "method", "return" };
 
 		public MethodCore (DeclSpace parent, Expression type, int mod,
 				   int allowed_mod, bool is_interface, MemberName name,
@@ -3001,8 +2996,7 @@ namespace Mono.CSharp {
 			}
 
 			Type base_ret_type = null;
-			if (IsOperator == null)
-				base_method = FindOutBaseMethod (ref base_ret_type);
+			base_method = FindOutBaseMethod (ref base_ret_type);
 
 			// method is override
 			if (base_method != null) {
@@ -3275,12 +3269,13 @@ namespace Mono.CSharp {
 				if (ds.AsAccessible (partype, ModFlags))
 					continue;
 
+				Report.SymbolRelatedToPreviousError (partype);
 				if (this is Indexer)
 					Report.Error (55, Location,
 						"Inconsistent accessibility: parameter type `" +
 						TypeManager.CSharpName (partype) + "' is less " +
 						"accessible than indexer `" + GetSignatureForError () + "'");
-				else if ((this is Method) && ((Method) this).IsOperator != null)
+				else if (this is Operator)
 					Report.Error (57, Location,
 						"Inconsistent accessibility: parameter type `" +
 						TypeManager.CSharpName (partype) + "' is less " +
@@ -3294,12 +3289,6 @@ namespace Mono.CSharp {
 			}
 
 			return !error;
-		}
-
-		public override string[] ValidAttributeTargets {
-			get {
-				return attribute_targets;
-			}
 		}
 
 		protected override bool VerifyClsCompliance ()
@@ -3413,11 +3402,14 @@ namespace Mono.CSharp {
 
 	}
 
-	public abstract class MethodOrOperator : MethodCore
+	public abstract class MethodOrOperator : MethodCore, IMethodData
 	{
 		public MethodBuilder MethodBuilder;
 		ReturnParameter return_attributes;
 		ListDictionary declarative_security;
+		protected MethodData MethodData;
+
+		static string[] attribute_targets = new string [] { "method", "return" };
 
 		protected MethodOrOperator (DeclSpace parent, Expression type, int mod,
 				int allowed_mod, bool is_interface, MemberName name,
@@ -3478,6 +3470,32 @@ namespace Mono.CSharp {
 			return ec;
 		}
 
+		public override bool Define ()
+		{
+			if (!DoDefine ())
+				return false;
+
+			if (!CheckAbstractAndExtern (block != null))
+				return false;
+
+			if (!CheckBase ())
+				return false;
+
+			MethodData = new MethodData (this, ModFlags, flags, this);
+
+			if (!MethodData.Define (ParentContainer))
+				return false;
+
+			MethodBuilder = MethodData.MethodBuilder;
+
+			if (MemberType.IsAbstract && MemberType.IsSealed) {
+				Report.Error (722, Location, Error722, TypeManager.CSharpName (MemberType));
+				return false;
+			}
+
+			return true;
+		}
+
 		public override void Emit ()
 		{
 			if (OptAttributes != null)
@@ -3498,6 +3516,118 @@ namespace Mono.CSharp {
 				"Conditional not valid on `{0}' because it is a constructor, destructor, operator or explicit interface implementation",
 				GetSignatureForError ());
 		}
+
+		public override bool MarkForDuplicationCheck ()
+		{
+			caching_flags |= Flags.TestMethodDuplication;
+			return true;
+		}
+
+		public override string[] ValidAttributeTargets {
+			get {
+				return attribute_targets;
+			}
+		}
+
+		#region IMethodData Members
+
+		public CallingConventions CallingConventions {
+			get {
+				CallingConventions cc = Parameters.CallingConvention;
+				if (Parameters.HasArglist)
+					block.HasVarargs = true;
+
+				if (!IsInterface)
+					if ((ModFlags & Modifiers.STATIC) == 0)
+						cc |= CallingConventions.HasThis;
+
+				// FIXME: How is `ExplicitThis' used in C#?
+			
+				return cc;
+			}
+		}
+
+		public Type ReturnType {
+			get {
+				return MemberType;
+			}
+		}
+
+		public MemberName MethodName {
+			get {
+				return MemberName;
+			}
+		}
+
+		public new Location Location {
+			get {
+				return base.Location;
+			}
+		}
+
+		protected override bool CheckBase() {
+			if (!base.CheckBase ())
+				return false;
+
+			// TODO: Destructor should derive from MethodCore
+			if (base_method != null && (ModFlags & Modifiers.OVERRIDE) != 0 && Name == "Finalize" &&
+				base_method.DeclaringType == TypeManager.object_type && !(this is Destructor)) {
+				Report.Error (249, Location, "Do not override object.Finalize. Instead, provide a destructor");
+				return false;
+			}
+
+			return true;
+		}
+
+		/// <summary>
+		/// Returns true if method has conditional attribute and the conditions is not defined (method is excluded).
+		/// </summary>
+		public bool IsExcluded () {
+			if ((caching_flags & Flags.Excluded_Undetected) == 0)
+				return (caching_flags & Flags.Excluded) != 0;
+
+			caching_flags &= ~Flags.Excluded_Undetected;
+
+			if (base_method == null) {
+				if (OptAttributes == null)
+					return false;
+
+				Attribute[] attrs = OptAttributes.SearchMulti (TypeManager.conditional_attribute_type);
+
+				if (attrs == null)
+					return false;
+
+				foreach (Attribute a in attrs) {
+					string condition = a.GetConditionalAttributeValue ();
+					if (condition == null)
+						return false;
+
+					if (RootContext.AllDefines.Contains (condition))
+						return false;
+				}
+
+				caching_flags |= Flags.Excluded;
+				return true;
+			}
+
+			IMethodData md = TypeManager.GetMethod (base_method);
+			if (md == null) {
+				if (AttributeTester.IsConditionalMethodExcluded (base_method)) {
+					caching_flags |= Flags.Excluded;
+					return true;
+				}
+				return false;
+			}
+
+			if (md.IsExcluded ()) {
+				caching_flags |= Flags.Excluded;
+				return true;
+			}
+			return false;
+		}
+
+		#endregion
+
 	}
 
 	public class SourceMethod : ISourceMethod
@@ -3563,8 +3693,7 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class Method : MethodOrOperator, IIteratorContainer, IMethodData {
-		public MethodData MethodData;
+	public class Method : MethodOrOperator, IIteratorContainer {
 
 		/// <summary>
 		///   Modifiers allowed in a class declaration
@@ -3600,20 +3729,15 @@ namespace Mono.CSharp {
 		
 		public override string GetSignatureForError()
 		{
-			if (IsOperator != null)
-				return IsOperator.GetSignatureForError ();
-
 			return base.GetSignatureForError () + Parameters.GetSignatureForError ();
 		}
 
-                void DuplicateEntryPoint (MethodInfo b, Location location)
-                {
-                        Report.Error (
-                                17, location,
-                                "Program `" + CodeGen.FileName +
-                                "' has more than one entry point defined: `" +
-                                TypeManager.CSharpSignature(b) + "'");
-                }
+		void Error_DuplicateEntryPoint (MethodInfo b, Location location)
+		{
+			Report.Error (17, location,
+				"Program `{0}' has more than one entry point defined: `{1}'",
+				CodeGen.FileName, TypeManager.CSharpSignature(b));
+		}
 
                 bool IsEntryPoint (MethodBuilder b, Parameters pinfo)
                 {
@@ -3725,27 +3849,13 @@ namespace Mono.CSharp {
 		//
 		public override bool Define ()
 		{
-			if (!DoDefine ())
-				return false;
-
-			if (!CheckAbstractAndExtern (block != null))
+			if (!base.Define ())
 				return false;
 
 			if (RootContext.StdLib && (ReturnType == TypeManager.arg_iterator_type || ReturnType == TypeManager.typed_reference_type)) {
 				Error1599 (Location, ReturnType);
 				return false;
 			}
-
-			if (!CheckBase ())
-				return false;
-
-			if (IsOperator != null)
-				flags |= MethodAttributes.SpecialName | MethodAttributes.HideBySig;
-
-			MethodData = new MethodData (this, ModFlags, flags, this);
-
-			if (!MethodData.Define (ParentContainer))
-				return false;
 
 			if (ReturnType == TypeManager.void_type && ParameterTypes.Length == 0 && 
 				Name == "Finalize" && !(this is Destructor)) {
@@ -3764,35 +3874,33 @@ namespace Mono.CSharp {
 					return false;
 			}
 
-			MethodBuilder = MethodData.MethodBuilder;
-			
 			//
 			// This is used to track the Entry Point,
 			//
 			if (Name == "Main" &&
-			    ((ModFlags & Modifiers.STATIC) != 0) && RootContext.NeedsEntryPoint && 
-			    (RootContext.MainClass == null ||
-			     RootContext.MainClass == Parent.TypeBuilder.FullName)){
-                                if (IsEntryPoint (MethodBuilder, ParameterInfo)) {
-                                        IMethodData md = TypeManager.GetMethod (MethodBuilder);
-                                        md.SetMemberIsUsed ();
+				((ModFlags & Modifiers.STATIC) != 0) && RootContext.NeedsEntryPoint && 
+				(RootContext.MainClass == null ||
+				RootContext.MainClass == Parent.TypeBuilder.FullName)){
+				if (IsEntryPoint (MethodBuilder, ParameterInfo)) {
+					IMethodData md = TypeManager.GetMethod (MethodBuilder);
+					md.SetMemberIsUsed ();
 
-                                        if (RootContext.EntryPoint == null) {
-                                                RootContext.EntryPoint = MethodBuilder;
-                                                RootContext.EntryPointLocation = Location;
-                                        } else {
-                                                DuplicateEntryPoint (RootContext.EntryPoint, RootContext.EntryPointLocation);
-                                                DuplicateEntryPoint (MethodBuilder, Location);
-                                        }
-                                } else {
+					if (RootContext.EntryPoint == null) {
+						if (Parent.IsGeneric){
+							Report.Error (-201, Location,
+								      "Entry point can not be defined in a generic class");
+						}
+
+						RootContext.EntryPoint = MethodBuilder;
+						RootContext.EntryPointLocation = Location;
+					} else {
+						Error_DuplicateEntryPoint (RootContext.EntryPoint, RootContext.EntryPointLocation);
+						Error_DuplicateEntryPoint (MethodBuilder, Location);
+					}
+				} else {
 					if (RootContext.WarningLevel >= 4)
 						Report.Warning (28, 4, Location, "`{0}' has the wrong signature to be an entry point", TypeManager.CSharpSignature(MethodBuilder));
 				}
-			}
-
-			if (MemberType.IsAbstract && MemberType.IsSealed) {
-				Report.Error (722, Location, Error722, TypeManager.CSharpName (MemberType));
-				return false;
 			}
 
 			return true;
@@ -3827,12 +3935,6 @@ namespace Mono.CSharp {
 			return mi;
 		}
 
-		public override bool MarkForDuplicationCheck ()
-		{
-			caching_flags |= Flags.TestMethodDuplication;
-			return true;
-		}
-
 		protected override bool VerifyClsCompliance ()
 		{
 			if (!base.VerifyClsCompliance ())
@@ -3846,106 +3948,6 @@ namespace Mono.CSharp {
 
 			return true;
 		}
-
-		#region IMethodData Members
-
-		public CallingConventions CallingConventions {
-			get {
-				CallingConventions cc = Parameters.CallingConvention;
-				if (Parameters.HasArglist)
-					block.HasVarargs = true;
-
-				if (!IsInterface)
-					if ((ModFlags & Modifiers.STATIC) == 0)
-						cc |= CallingConventions.HasThis;
-
-				// FIXME: How is `ExplicitThis' used in C#?
-			
-				return cc;
-			}
-		}
-
-		public Type ReturnType {
-			get {
-				return MemberType;
-			}
-		}
-
-		public MemberName MethodName {
-			get {
-				return MemberName;
-			}
-		}
-
-		public new Location Location {
-			get {
-				return base.Location;
-			}
-		}
-
-		protected override bool CheckBase() {
-			if (!base.CheckBase ())
-				return false;
-
-			// TODO: Destructor should derive from MethodCore
-			if (base_method != null && (ModFlags & Modifiers.OVERRIDE) != 0 && Name == "Finalize" &&
-				base_method.DeclaringType == TypeManager.object_type && !(this is Destructor)) {
-				Report.Error (249, Location, "Do not override object.Finalize. Instead, provide a destructor");
-				return false;
-			}
-
-			return true;
-		}
-
-		/// <summary>
-		/// Returns true if method has conditional attribute and the conditions is not defined (method is excluded).
-		/// </summary>
-		public bool IsExcluded ()
-		{
-			if ((caching_flags & Flags.Excluded_Undetected) == 0)
-				return (caching_flags & Flags.Excluded) != 0;
-
-			caching_flags &= ~Flags.Excluded_Undetected;
-
-			if (base_method == null) {
-				if (OptAttributes == null)
-					return false;
-
-				Attribute[] attrs = OptAttributes.SearchMulti (TypeManager.conditional_attribute_type);
-
-				if (attrs == null)
-					return false;
-
-				foreach (Attribute a in attrs) {
-					string condition = a.GetConditionalAttributeValue ();
-					if (condition == null)
-						return false;
-
-					if (RootContext.AllDefines.Contains (condition))
-						return false;
-				}
-
-				caching_flags |= Flags.Excluded;
-				return true;
-			}
-
-			IMethodData md = TypeManager.GetMethod (base_method);
-			if (md == null) {
-				if (AttributeTester.IsConditionalMethodExcluded (base_method)) {
-					caching_flags |= Flags.Excluded;
-					return true;
-				}
-				return false;
-			}
-
-			if (md.IsExcluded ()) {
-				caching_flags |= Flags.Excluded;
-				return true;
-			}
-			return false;
-		}
-
-		#endregion
 	}
 
 	public abstract class ConstructorInitializer {
@@ -4083,6 +4085,8 @@ namespace Mono.CSharp {
 			Modifiers.UNSAFE |
 			Modifiers.EXTERN |		
 			Modifiers.PRIVATE;
+
+		static string[] attribute_targets = new string [] { "method" };
 
 		bool has_compliant_args = false;
 		//
@@ -4337,6 +4341,12 @@ namespace Mono.CSharp {
 		public override string GetSignatureForError()
 		{
 			return base.GetSignatureForError () + Parameters.GetSignatureForError ();
+		}
+
+		public override string[] ValidAttributeTargets {
+			get {
+				return attribute_targets;
+			}
 		}
 
 		protected override bool VerifyClsCompliance ()
@@ -4729,6 +4739,8 @@ namespace Mono.CSharp {
 	// TODO: Should derive from MethodCore
 	public class Destructor : Method {
 
+		static string[] attribute_targets = new string [] { "method" };
+
 		public Destructor (DeclSpace parent, Expression return_type, int mod,
 				   string name, Parameters parameters, Attributes attrs,
 				   Location l)
@@ -4751,6 +4763,11 @@ namespace Mono.CSharp {
 			return Parent.GetSignatureForError () + ".~" + Parent.MemberName.Name + "()";
 		}
 
+		public override string[] ValidAttributeTargets {
+			get {
+				return attribute_targets;
+			}
+		}
 	}
 	
 	abstract public class MemberBase : MemberCore {
@@ -7014,10 +7031,6 @@ namespace Mono.CSharp {
 
 		public readonly OpType OperatorType;
 		
-		public Method OperatorMethod;
-
-		static string[] attribute_targets = new string [] { "method", "return" };
-
 		public Operator (DeclSpace parent, OpType type, Expression ret_type,
 				 int mod_flags, Parameters parameters,
 				 ToplevelBlock block, Attributes attrs, Location loc)
@@ -7073,7 +7086,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (!DoDefine ())
+			if (!base.Define ())
 				return false;
 
 			if (MemberType == TypeManager.void_type) {
@@ -7081,28 +7094,9 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			// Don't pass the attributes, they are handled here.
-			OperatorMethod = new Method (
-				Parent, Type, ModFlags, false, MemberName,
-				Parameters, null);
-
-			OperatorMethod.Block = Block;
-			OperatorMethod.IsOperator = this;			
-			OperatorMethod.flags |= MethodAttributes.SpecialName | MethodAttributes.HideBySig;
-			OperatorMethod.Define ();
-
-			if (OperatorMethod.MethodBuilder == null)
-				return false;
-
-			MethodBuilder = OperatorMethod.MethodBuilder;
-
-			Type[] parameter_types = OperatorMethod.ParameterTypes;
 			Type declaring_type = MethodBuilder.DeclaringType;
-			Type return_type = OperatorMethod.ReturnType;
-			Type first_arg_type = parameter_types [0];
-
-			if (!CheckBase ())
-				return false;
+			Type return_type = MemberType;
+			Type first_arg_type = ParameterTypes [0];
 
 			// Rules for conversion operators
 			
@@ -7138,7 +7132,7 @@ namespace Mono.CSharp {
 					return false;
 				}
 			} else if (OperatorType == OpType.LeftShift || OperatorType == OpType.RightShift) {
-				if (first_arg_type != declaring_type || parameter_types [1] != TypeManager.int32_type) {
+				if (first_arg_type != declaring_type || ParameterTypes [1] != TypeManager.int32_type) {
 					Report.Error (564, Location, "Overloaded shift operator must have the type of the first operand be the containing type, and the type of the second operand must be int");
 					return false;
 				}
@@ -7180,7 +7174,7 @@ namespace Mono.CSharp {
 				// Checks for Binary operators
 				
 				if (first_arg_type != declaring_type &&
-				    parameter_types [1] != declaring_type){
+				    ParameterTypes [1] != declaring_type){
 					Report.Error (
 						563, Location,
 						"One of the parameters of a binary operator must " +
@@ -7189,6 +7183,15 @@ namespace Mono.CSharp {
 				}
 			}
 
+			return true;
+		}
+
+		protected override bool DoDefine ()
+		{
+			if (!base.DoDefine ())
+				return false;
+
+			flags |= MethodAttributes.SpecialName | MethodAttributes.HideBySig;
 			return true;
 		}
 		
@@ -7211,7 +7214,7 @@ namespace Mono.CSharp {
 				ec = CreateEmitContext (Parent, null);
 			
 			SourceMethod source = SourceMethod.Create (Parent, MethodBuilder, Block);
-			ec.EmitTopBlock (OperatorMethod, Block);
+			ec.EmitTopBlock (this, Block);
 
 			if (source != null)
 				source.CloseMethod ();
@@ -7312,18 +7315,6 @@ namespace Mono.CSharp {
 
 			sb.Append (Parameters.GetSignatureForError ());
 			return sb.ToString ();
-		}
-
-		public override bool MarkForDuplicationCheck ()
-		{
-			caching_flags |= Flags.TestMethodDuplication;
-			return true;
-		}
-
-		public override string[] ValidAttributeTargets {
-			get {
-				return attribute_targets;
-			}
 		}
 	}
 
