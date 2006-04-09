@@ -1,5 +1,10 @@
 2006-04-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-codegen.c (mono_spillvar_offset): More alignment fixes.
+	(mono_local_regalloc): Only do the OP_MOVE optimization if ins->dreg is a local
+	hreg, not when its !global, since on ia64, there is a third category: stacked
+	registers.
+
 	* method-to-ir.c (mono_op_imm_to_op): New helper function.
 
 	* mini-codegen.c: Remove mono_opcode_to_stack_type which is only used by the

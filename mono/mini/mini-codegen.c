@@ -269,10 +269,13 @@ mono_spillvar_offset (MonoCompile *cfg, int spillvar, gboolean fp)
 			}
 		} else {
 			if (fp) {
-				// FIXME: Align
+				cfg->stack_offset += sizeof (double) - 1;
+				cfg->stack_offset &= ~(sizeof (double) - 1);
 				cfg->stack_offset += sizeof (double);
 				info->offset = - cfg->stack_offset;
 			} else {
+				cfg->stack_offset += sizeof (gpointer) - 1;
+				cfg->stack_offset &= ~(sizeof (gpointer) - 1);
 				cfg->stack_offset += sizeof (gpointer);
 				info->offset = - cfg->stack_offset;
 			}
@@ -1658,7 +1661,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 						spill = -val -1;
 					}
 
-					if (((ins->opcode == OP_MOVE) || (ins->opcode == OP_SETREG)) && !spill && !fp && (!is_global_ireg (ins->dreg) && (rs->ifree_mask & (regmask (ins->dreg))))) {
+					if (((ins->opcode == OP_MOVE) || (ins->opcode == OP_SETREG)) && !spill && !fp && is_local_ireg (ins->dreg) && (rs->ifree_mask & (regmask (ins->dreg)))) {
 						/* 
 						 * Allocate the same hreg to sreg1 as well so the 
 						 * peephole can get rid of the move.
