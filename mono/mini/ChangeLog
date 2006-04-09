@@ -1,5 +1,8 @@
 2006-04-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-codegen.c: Remove mono_opcode_to_stack_type which is only used by the
+	ia64 backend.
+
 	* mini-ppc.c mini-arm.c: Remove NOT_IMPLEMENTED macro which is now in mini.h.
 
 	* cpu-pentium.md mini-x86.c: Update x86 backend after latest changes.

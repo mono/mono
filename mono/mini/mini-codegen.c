@@ -2079,32 +2079,3 @@ mono_opcode_to_cond (int opcode)
 		NOT_IMPLEMENTED;
 	}
 }
-
-MonoStackType
-mono_opcode_to_stack_type (int opcode, int cmp_opcode)
-{
-	if ((opcode >= CEE_BEQ) && (opcode <= CEE_BLT_UN))
-		return STACK_I8;
-	else if ((opcode >= OP_CEQ) && (opcode <= OP_CLT_UN))
-		return STACK_I8;
-	else if ((opcode >= OP_IBEQ) && (opcode <= OP_IBLE_UN))
-		return STACK_I4;
-	else if ((opcode >= OP_ICEQ) && (opcode <= OP_ICLT_UN))
-		return STACK_I4;
-	else if ((opcode >= OP_FBEQ) && (opcode <= OP_FBLE_UN))
-		return STACK_R8;
-	else if ((opcode >= OP_FCEQ) && (opcode <= OP_FCLT_UN))
-		return STACK_R8;
-	else if ((opcode >= OP_COND_EXC_EQ) && (opcode <= OP_COND_EXC_LT_UN)) {
-		switch (cmp_opcode) {
-		case OP_ICOMPARE:
-		case OP_ICOMPARE_IMM:
-			return STACK_I4;
-		default:
-			return STACK_I8;
-		}
-	} else {
-		g_error ("Unknown opcode '%s' in mono_opcode_to_stack_type", mono_inst_name (opcode));
-		return 0;
-	}
-}
