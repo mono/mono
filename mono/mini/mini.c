@@ -87,8 +87,6 @@ static void handle_stobj (MonoCompile *cfg, MonoBasicBlock *bblock, MonoInst *de
 
 static void dec_foreach (MonoInst *tree, MonoCompile *cfg);
 
-#define NOT_IMPLEMENTED g_assert_not_reached ()
-
 int mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_bblock, MonoBasicBlock *end_bblock, 
 		   MonoInst *return_var, GList *dont_inline, MonoInst **inline_args, 
 		   guint inline_offset, gboolean is_virtual_call);

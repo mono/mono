@@ -1,3 +1,7 @@
+2006-04-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-*.c: Move definition of NOT_IMPLEMENTED to mini.h.
+
 2006-04-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mini_init): Add missing opcode emulations.

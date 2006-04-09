@@ -47,8 +47,6 @@ static gboolean optimize_for_xen = TRUE;
 #define CALLCONV_IS_STDCALL(sig) (((sig)->call_convention) == MONO_CALL_STDCALL)
 #endif
 
-#define NOT_IMPLEMENTED g_assert_not_reached ()
-
 const char*
 mono_arch_regname (int reg) {
 	switch (reg) {
