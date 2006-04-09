@@ -1,3 +1,8 @@
+2006-04-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWriter.cs: only keep the byte buffer around if its size is less
+	than or equals to 32K.
+
 2006-04-08  Miguel de Icaza  <miguel@novell.com>
 
 	* HttpWriter.cs (Write): Added missing check for null string as
