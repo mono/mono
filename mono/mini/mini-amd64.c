@@ -1147,6 +1147,9 @@ mono_arch_create_vars (MonoCompile *cfg)
 		cfg->arch.cinfo = get_call_info (cfg->mempool, sig, FALSE);
 	cinfo = cfg->arch.cinfo;
 
+	if (cinfo->ret.storage == ArgValuetypeInReg)
+		cfg->ret_var_is_local = TRUE;
+
 	if (cfg->new_ir) {
 		if (cinfo->ret.storage != ArgValuetypeInReg && ((MONO_TYPE_ISSTRUCT (sig->ret) && !mono_class_from_mono_type (sig->ret)->enumtype) || (sig->ret->type == MONO_TYPE_TYPEDBYREF))) {
 			cfg->vret_addr = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_ARG);
@@ -1155,15 +1158,6 @@ mono_arch_create_vars (MonoCompile *cfg)
 				mono_print_ins (cfg->vret_addr);
 			}
 		}
-
-		if (sig->ret->type != MONO_TYPE_VOID) {
-			cfg->ret = mono_compile_create_var (cfg, sig->ret, OP_ARG);
-			/* Inhibit optimizations */
-			cfg->ret->flags |= MONO_INST_VOLATILE;
-		}
-	} else {
-		if (cinfo->ret.storage == ArgValuetypeInReg)
-			cfg->ret_var_is_local = TRUE;
 	}
 }
 
@@ -2709,14 +2703,14 @@ emit_load_volatile_arguments (MonoCompile *cfg, guint8 *code)
 	
 	/* This is the opposite of the code in emit_prolog */
 	if (sig->ret->type != MONO_TYPE_VOID) {
-		if ((cinfo->ret.storage == ArgInIReg) && (cfg->ret->opcode != OP_REGVAR)) {
-			amd64_mov_reg_membase (code, cinfo->ret.reg, cfg->ret->inst_basereg, cfg->ret->inst_offset, 8);
-		}
-	}
-
-	if (sig->ret->type != MONO_TYPE_VOID) {
-		if ((cinfo->ret.storage == ArgInIReg) && (cfg->ret->opcode != OP_REGVAR)) {
-			amd64_mov_reg_membase (code, cinfo->ret.reg, cfg->ret->inst_basereg, cfg->ret->inst_offset, 8);
+		/* Save volatile arguments to the stack */
+		if (cfg->new_ir) {
+			if (cfg->vret_addr && (cfg->vret_addr->opcode != OP_REGVAR))
+				amd64_mov_reg_membase (code, cinfo->ret.reg, cfg->vret_addr->inst_basereg, cfg->vret_addr->inst_offset, 8);
+		} else {
+			if ((cinfo->ret.storage == ArgInIReg) && (cfg->ret->opcode != OP_REGVAR)) {
+				amd64_mov_reg_membase (code, cinfo->ret.reg, cfg->ret->inst_basereg, cfg->ret->inst_offset, 8);
+			}
 		}
 	}
 
@@ -4858,13 +4852,13 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	cinfo = cfg->arch.cinfo;
 
 	if (sig->ret->type != MONO_TYPE_VOID) {
-		if ((cinfo->ret.storage == ArgInIReg) && (cfg->ret->opcode != OP_REGVAR)) {
-			/* Save volatile arguments to the stack */
-			amd64_mov_membase_reg (code, cfg->ret->inst_basereg, cfg->ret->inst_offset, cinfo->ret.reg, 8);
-		}
-		if (cfg->new_ir && cfg->vret_addr && (cfg->vret_addr->opcode != OP_REGVAR)) {
-			/* Save volatile arguments to the stack */
-			amd64_mov_membase_reg (code, cfg->vret_addr->inst_basereg, cfg->vret_addr->inst_offset, cinfo->ret.reg, 8);
+		/* Save volatile arguments to the stack */
+		if (cfg->new_ir) {
+			if (cfg->vret_addr && (cfg->vret_addr->opcode != OP_REGVAR))
+				amd64_mov_membase_reg (code, cfg->vret_addr->inst_basereg, cfg->vret_addr->inst_offset, cinfo->ret.reg, 8);
+		} else {
+			if ((cinfo->ret.storage == ArgInIReg) && (cfg->ret->opcode != OP_REGVAR))
+				amd64_mov_membase_reg (code, cfg->ret->inst_basereg, cfg->ret->inst_offset, cinfo->ret.reg, 8);
 		}
 	}
 

@@ -9436,12 +9436,16 @@ mono_compile_create_vars (MonoCompile *cfg)
 	sig = mono_method_signature (cfg->method);
 	
 	if (!MONO_TYPE_IS_VOID (sig->ret)) {
-		/* FIXME: Why doesn't this work ? */
-		//cfg->ret = mono_compile_create_var (cfg, sig->ret, OP_RETARG);
-		cfg->ret = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoInst));
-		cfg->ret->opcode = OP_RETARG;
-		cfg->ret->inst_vtype = sig->ret;
-		cfg->ret->klass = mono_class_from_mono_type (sig->ret);
+		if (cfg->new_ir) {
+			cfg->ret = mono_compile_create_var (cfg, sig->ret, OP_ARG);
+			/* Inhibit optimizations */
+			cfg->ret->flags |= MONO_INST_VOLATILE;
+		} else {
+			cfg->ret = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoInst));
+			cfg->ret->opcode = OP_RETARG;
+			cfg->ret->inst_vtype = sig->ret;
+			cfg->ret->klass = mono_class_from_mono_type (sig->ret);
+		}
 	}
 	if (cfg->verbose_level > 2)
 		g_print ("creating vars\n");
