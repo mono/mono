@@ -376,6 +376,8 @@ mono_print_ins_index (int i, MonoInst *ins)
 		case OP_OUTARG_VTRETADDR:
 			printf (" R%d", ((MonoInst*)ins->inst_p0)->dreg);
 			break;
+		case OP_REGOFFSET:
+			printf (" + 0x%lx", (long)ins->inst_offset);
 		default:
 			break;
 		}
@@ -455,6 +457,7 @@ mono_print_ins_index (int i, MonoInst *ins)
 	case OP_LCALLVIRT:
 	case OP_VCALL:
 	case OP_VCALLVIRT:
+	case OP_VCALL2:
 	case OP_VOIDCALL:
 	case OP_VOIDCALLVIRT: {
 		MonoCallInst *call = (MonoCallInst*)ins;
@@ -1980,4 +1983,106 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 	if (reginfo != reginfof)
 		g_free (reginfof);
 	g_list_free (fspill_list);
+}
+
+CompRelation
+mono_opcode_to_cond (int opcode)
+{
+	switch (opcode) {
+	case CEE_BEQ:
+	case OP_CEQ:
+	case OP_IBEQ:
+	case OP_ICEQ:
+	case OP_FBEQ:
+	case OP_FCEQ:
+	case OP_COND_EXC_EQ:
+		return CMP_EQ;
+	case CEE_BNE_UN:
+	case OP_COND_EXC_NE_UN:
+	case OP_IBNE_UN:
+	case OP_FBNE_UN:
+		return CMP_NE;
+	case CEE_BLE:
+	case OP_IBLE:
+	case OP_FBLE:
+		return CMP_LE;
+	case CEE_BGE:
+	case OP_IBGE:
+	case OP_FBGE:
+		return CMP_GE;
+	case CEE_BLT:
+	case OP_COND_EXC_LT:
+	case OP_CLT:
+	case OP_IBLT:
+	case OP_ICLT:
+	case OP_FBLT:
+	case OP_FCLT:
+		return CMP_LT;
+	case CEE_BGT:
+	case OP_COND_EXC_GT:
+	case OP_CGT:
+	case OP_IBGT:
+	case OP_ICGT:
+	case OP_FBGT:
+	case OP_FCGT:
+		return CMP_GT;
+
+	case CEE_BLE_UN:
+	case OP_COND_EXC_LE_UN:
+	case OP_IBLE_UN:
+	case OP_FBLE_UN:
+		return CMP_LE_UN;
+	case CEE_BGE_UN:
+	case OP_IBGE_UN:
+	case OP_FBGE_UN:
+		return CMP_GE_UN;
+	case CEE_BLT_UN:
+	case OP_CLT_UN:
+	case OP_IBLT_UN:
+	case OP_ICLT_UN:
+	case OP_FBLT_UN:
+	case OP_FCLT_UN:
+	case OP_COND_EXC_LT_UN:
+		return CMP_LT_UN;
+	case CEE_BGT_UN:
+	case OP_COND_EXC_GT_UN:
+	case OP_CGT_UN:
+	case OP_IBGT_UN:
+	case OP_ICGT_UN:
+	case OP_FCGT_UN:
+	case OP_FBGT_UN:
+		return CMP_GT_UN;
+	default:
+		printf ("%s\n", mono_inst_name (opcode));
+		NOT_IMPLEMENTED;
+	}
+}
+
+MonoStackType
+mono_opcode_to_stack_type (int opcode, int cmp_opcode)
+{
+	if ((opcode >= CEE_BEQ) && (opcode <= CEE_BLT_UN))
+		return STACK_I8;
+	else if ((opcode >= OP_CEQ) && (opcode <= OP_CLT_UN))
+		return STACK_I8;
+	else if ((opcode >= OP_IBEQ) && (opcode <= OP_IBLE_UN))
+		return STACK_I4;
+	else if ((opcode >= OP_ICEQ) && (opcode <= OP_ICLT_UN))
+		return STACK_I4;
+	else if ((opcode >= OP_FBEQ) && (opcode <= OP_FBLE_UN))
+		return STACK_R8;
+	else if ((opcode >= OP_FCEQ) && (opcode <= OP_FCLT_UN))
+		return STACK_R8;
+	else if ((opcode >= OP_COND_EXC_EQ) && (opcode <= OP_COND_EXC_LT_UN)) {
+		switch (cmp_opcode) {
+		case OP_ICOMPARE:
+		case OP_ICOMPARE_IMM:
+			return STACK_I4;
+		default:
+			return STACK_I8;
+		}
+	} else {
+		g_error ("Unknown opcode '%s' in mono_opcode_to_stack_type", mono_inst_name (opcode));
+		return 0;
+	}
 }

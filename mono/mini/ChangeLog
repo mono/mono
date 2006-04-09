@@ -1,5 +1,20 @@
 2006-04-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ops.h: Add OP_VCALL2_... opcodes.
+
+	* mini.h (MonoCompile): Add 'vret_addr' field.
+
+	* method-to-ir.c mini-amd64.c: Use OP_VCALL2 opcodes for the decomposed 
+	valuetype calls.
+
+	* method-to-ir.c mini-amd64.c: Make cfg->ret a 'real' variable and use the
+	new 'vret_addr' variable for representing the vtype return address.
+
+	* mini-codegen.c (mono_opcode_to_cond): New helper function, moved here from
+	mini-ia64.c.
+
+	* mini-codegen.c (mono_opcode_to_stack_type): Ditto.
+	
 	* mini-*.c: Move definition of NOT_IMPLEMENTED to mini.h.
 
 2006-04-08  Zoltan Varga  <vargaz@gmail.com>

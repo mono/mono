@@ -32,6 +32,8 @@
 #define MINI_DEBUG(level,limit,code) do {if (G_UNLIKELY ((level) >= (limit))) code} while (0)
 #endif
 
+#define NOT_IMPLEMENTED do { g_assert_not_reached (); } while (0)
+
 #ifndef DISABLE_AOT
 #define MONO_USE_AOT_COMPILER
 #endif
@@ -129,7 +131,7 @@ enum {
 #define MONO_IS_STORE_MEMBASE(ins) (((ins)->opcode >= OP_STORE_MEMBASE_REG) && ((ins)->opcode <= OP_STOREV_MEMBASE))
 #define MONO_IS_STORE_MEMINDEX(ins) (((ins)->opcode >= OP_STORE_MEMINDEX) && ((ins)->opcode <= OP_STORER8_MEMINDEX))
 
-#define MONO_IS_CALL(ins) (((ins->opcode >= OP_VOIDCALL) && (ins->opcode <= OP_VOIDCALL_MEMBASE)) || ((ins->opcode >= OP_FCALL) && (ins->opcode <= OP_FCALL_MEMBASE)) || ((ins->opcode >= OP_LCALL) && (ins->opcode <= OP_LCALL_MEMBASE)) || ((ins->opcode >= OP_VCALL) && (ins->opcode <= OP_VCALL_MEMBASE)) || ((ins->opcode >= OP_CALL) && (ins->opcode <= OP_CALL_MEMBASE)))
+#define MONO_IS_CALL(ins) (((ins->opcode >= OP_VOIDCALL) && (ins->opcode <= OP_VOIDCALL_MEMBASE)) || ((ins->opcode >= OP_FCALL) && (ins->opcode <= OP_FCALL_MEMBASE)) || ((ins->opcode >= OP_LCALL) && (ins->opcode <= OP_LCALL_MEMBASE)) || ((ins->opcode >= OP_VCALL) && (ins->opcode <= OP_VCALL_MEMBASE)) || ((ins->opcode >= OP_CALL) && (ins->opcode <= OP_CALL_MEMBASE)) || ((ins->opcode >= OP_VCALL2) && (ins->opcode <= OP_VCALL2_MEMBASE)))
 
 typedef struct MonoInst MonoInst;
 typedef struct MonoCallInst MonoCallInst;
@@ -609,6 +611,14 @@ typedef struct {
 	MonoInst        *got_var; /* Global Offset Table variable */
 	MonoInst        **locals;
 	MonoInst        **args;
+
+	/* 
+	 * In the new IR, this variable represents the hidden argument holding the vtype
+	 * return address. If the method returns something other than a vtype, or
+	 * the vtype is returned in registers (cfg->ret_var_is_local in the old JIT), 
+	 * this is NULL.
+	 */
+	MonoInst        *vret_addr;
 	
 	struct MonoAliasingInformation *aliasing_info;
 
@@ -889,6 +899,19 @@ enum {
 	BRANCH_UNDEF
 };
 
+typedef enum {
+	CMP_EQ,
+	CMP_NE,
+	CMP_LE,
+	CMP_GE,
+	CMP_LT,
+	CMP_GT,
+	CMP_LE_UN,
+	CMP_GE_UN,
+	CMP_LT_UN,
+	CMP_GT_UN
+} CompRelation;
+
 /* Implicit exceptions */
 enum {
 	MONO_EXC_INDEX_OUT_OF_RANGE,
@@ -1022,6 +1045,8 @@ gint32*           mono_allocate_stack_slots (MonoCompile *cfg, guint32 *stack_si
 void              mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb);
 MonoInst         *mono_branch_optimize_exception_target (MonoCompile *cfg, MonoBasicBlock *bb, const char * exname);		  
 void              mini_emit_memcpy2 (MonoCompile *cfg, int destreg, int doffset, int srcreg, int soffset, int size, int align);
+CompRelation      mono_opcode_to_cond (int opcode);
+MonoStackType     mono_opcode_to_stack_type (int opcode, int cmp_opcode);
 
 void              mono_decompose_long_opts (MonoCompile *cfg);
 void              mono_decompose_vtype_opts (MonoCompile *cfg);

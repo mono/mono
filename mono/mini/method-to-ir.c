@@ -77,8 +77,6 @@
 /* Determine whenever 'ins' represents a load of the 'this' argument */
 #define MONO_CHECK_THIS(ins) (mono_method_signature (cfg->method)->hasthis && ((ins)->opcode == OP_MOVE) && ((ins)->sreg1 == cfg->args [0]->dreg))
 
-#define NOT_IMPLEMENTED g_assert_not_reached ()
-
 static int ldind_to_load_membase (int opcode);
 static int stind_to_store_membase (int opcode);
 
@@ -286,6 +284,9 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 		mono_print_ins_index (-1, tree);
 }
 
+#define UNVERIFIED do { G_BREAKPOINT (); } while (0)
+//#define UNVERIFIED do { goto unverified; } while (0)
+
 /*
  * Basic blocks have two numeric identifiers:
  * dfn: Depth First Number
@@ -304,7 +305,7 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 #define GET_BBLOCK(cfg,bbhash,tblock,ip) do {	\
 		(tblock) = g_hash_table_lookup (bbhash, (ip));	\
 		if (!(tblock)) {	\
-			if ((ip) >= end || (ip) < header->code) goto unverified; \
+			if ((ip) >= end || (ip) < header->code) UNVERIFIED; \
             NEW_BBLOCK (cfg, (tblock)); \
 			(tblock)->cil_code = (ip);	\
 			ADD_BBLOCK (cfg, (bbhash), (tblock));	\
@@ -525,14 +526,14 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 #define NEW_LOCLOADA(cfg,dest,num) NEW_VARLOADA ((cfg), (dest), (cfg)->locals [(num)], (cfg)->locals [(num)]->inst_vtype)
 
 #define NEW_RETLOADA(cfg,dest) do {	\
-        if (cfg->ret_var_is_local) { \
-			NEW_VARLOADA ((cfg), (dest), (cfg)->ret, (cfg)->ret->inst_vtype); \
-        } else { \
+        if (cfg->vret_addr) { \
             MONO_INST_NEW ((cfg), (dest), OP_MOVE); \
             (dest)->type = STACK_MP; \
 		    (dest)->klass = cfg->ret->klass;	\
-		    (dest)->sreg1 = cfg->ret->dreg;   \
+		    (dest)->sreg1 = cfg->vret_addr->dreg;   \
             (dest)->dreg = alloc_dreg ((cfg), (dest)->type); \
+        } else { \
+			NEW_VARLOADA ((cfg), (dest), (cfg)->ret, (cfg)->ret->inst_vtype); \
         } \
 	} while (0)
 
@@ -4010,12 +4011,12 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
  * * consider using an array instead of an hash table (bb_hash)
  */
 
-#define CHECK_TYPE(ins) if (!(ins)->type) goto unverified
-#define CHECK_STACK(num) if ((sp - stack_start) < (num)) goto unverified
-#define CHECK_STACK_OVF(num) if (((sp - stack_start) + (num)) > header->max_stack) goto unverified
-#define CHECK_ARG(num) if ((unsigned)(num) >= (unsigned)num_args) goto unverified
-#define CHECK_LOCAL(num) if ((unsigned)(num) >= (unsigned)header->num_locals) goto unverified
-#define CHECK_OPSIZE(size) if (ip + size > end) goto unverified
+#define CHECK_TYPE(ins) if (!(ins)->type) UNVERIFIED
+#define CHECK_STACK(num) if ((sp - stack_start) < (num)) UNVERIFIED
+#define CHECK_STACK_OVF(num) if (((sp - stack_start) + (num)) > header->max_stack) UNVERIFIED
+#define CHECK_ARG(num) if ((unsigned)(num) >= (unsigned)num_args) UNVERIFIED
+#define CHECK_LOCAL(num) if ((unsigned)(num) >= (unsigned)header->num_locals) UNVERIFIED
+#define CHECK_OPSIZE(size) if (ip + size > end) UNVERIFIED
 
 
 /* offset from br.s -> br like opcodes */
@@ -4043,7 +4044,7 @@ get_basic_blocks (MonoCompile *cfg, GHashTable *bbhash, MonoMethodHeader* header
 		cli_addr = ip - start;
 		i = mono_opcode_value ((const guint8 **)&ip, end);
 		if (i < 0)
-			goto unverified;
+			UNVERIFIED;
 		opcode = &mono_opcodes [i];
 		switch (opcode->argument) {
 		case MonoInlineNone:
@@ -5270,19 +5271,15 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 					break;
 				}
 				case OP_VCALL:
-					ins->opcode = OP_VOIDCALL;
-					ins->dreg = -1;
-					break;
-				case OP_VCALLVIRT:
-					ins->opcode = OP_VOIDCALLVIRT;
+					ins->opcode = OP_VCALL2;
 					ins->dreg = -1;
 					break;
 				case OP_VCALL_REG:
-					ins->opcode = OP_VOIDCALL_REG;
+					ins->opcode = OP_VCALL2_REG;
 					ins->dreg = -1;
 					break;
 				case OP_VCALL_MEMBASE:
-					ins->opcode = OP_VOIDCALL_MEMBASE;
+					ins->opcode = OP_VCALL2_MEMBASE;
 					ins->dreg = -1;
 					break;
 				default:
@@ -5307,9 +5304,6 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 		if (cfg->verbose_level > 1) mono_print_bb (bb, "AFTER LOWER-VTYPE-OPTS ");
 	}
 }
-
-#define UNVERIFIED do { G_BREAKPOINT (); } while (0)
-//#define UNVERIFIED do { goto unverified; } while (0)
 
 /*
  * mono_method_to_ir: translates IL into basic blocks containing trees
@@ -9633,12 +9627,14 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   work of the local deadce pass.
  * - conversion out of SSA form is still missing the coalescing optimization of the old
  *   one.
+ * - move the CMP_ stuff from the mini-ia64.c to mini-codegen.c
+ * - scimark slowdown.
  * - decompose op_start_handler/op_endfilter/op_endfinally earlier using an arch
  *   specific function.
  * - unify the float comparison opcodes with the other comparison opcodes, i.e.
  *   fcompare + branchCC.
  * - clean up the contents of the cpu-<ARCH>.md files.
- * - implement pass+receive vtypes on the stack.
+ * - implement pass+receive vtypes in registers.
  * - LAST MERGE: 59160.
  */
 

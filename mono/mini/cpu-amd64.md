@@ -215,9 +215,15 @@ fcall_membase: dest:f src1:b len:64 clob:c
 lcall: dest:a len:64 clob:c
 lcall_reg: dest:a src1:i len:64 clob:c
 lcall_membase: dest:a src1:b len:64 clob:c
+
 vcall: len:64 clob:c
 vcall_reg: src1:i len:64 clob:c
 vcall_membase: src1:b len:64 clob:c
+
+vcall2: len:64 clob:c
+vcall2_reg: src1:i len:64 clob:c
+vcall2_membase: src1:b len:64 clob:c
+
 call_reg: dest:a src1:i len:64 clob:c
 call_membase: dest:a src1:b len:64 clob:c
 iconst: dest:i len:10
