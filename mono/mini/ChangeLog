@@ -1,3 +1,7 @@
+2006-04-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (move_basic_block_to_end): Handle CEE_BR as well.
+
 2006-04-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ia64.h mini-ia64.c cpu-ia64.md: Port the ia64 backend to the new IR.

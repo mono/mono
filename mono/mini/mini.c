@@ -9073,7 +9073,7 @@ move_basic_block_to_end (MonoCompile *cfg, MonoBasicBlock *bb)
 	bb->next_bb = NULL;
 
 	/* Add a branch */
-	if (next && (!bb->last_ins || ((bb->last_ins->opcode != OP_NOT_REACHED) && (bb->last_ins->opcode != OP_BR) && (bb->last_ins->opcode != OP_BR_REG) && (!MONO_IS_COND_BRANCH_OP (bb->last_ins))))) {
+	if (next && (!bb->last_ins || ((bb->last_ins->opcode != OP_NOT_REACHED) && (bb->last_ins->opcode != CEE_BR) && (bb->last_ins->opcode != OP_BR) && (bb->last_ins->opcode != OP_BR_REG) && (!MONO_IS_COND_BRANCH_OP (bb->last_ins))))) {
 		MonoInst *ins;
 
 		MONO_INST_NEW (cfg, ins, cfg->new_ir ? OP_BR : CEE_BR);
@@ -9214,7 +9214,6 @@ optimize_branches (MonoCompile *cfg)
 
 		/* we skip the entry block (exit is handled specially instead ) */
 		for (previous_bb = cfg->bb_entry, bb = cfg->bb_entry->next_bb; bb; previous_bb = bb, bb = bb->next_bb) {
-
 			/* dont touch code inside exception clauses */
 			if (bb->region != -1)
 				continue;
