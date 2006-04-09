@@ -4312,9 +4312,6 @@ namespace Mono.CSharp {
 			if ((ModFlags & Modifiers.STATIC) != 0)
 				ParentContainer.EmitFieldInitializers (ec);
 
-			if (OptAttributes != null) 
-				OptAttributes.Emit ();
-
 			ec.EmitTopBlock (this, block);
 
 			if (source != null)

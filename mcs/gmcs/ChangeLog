@@ -1,5 +1,9 @@
 2006-04-09  Marek Safar  <marek.safar@seznam.cz>
 
+	(Constructor.Emit): Don't emit the attributes twice.
+
+2006-04-09  Marek Safar  <marek.safar@seznam.cz>
+
 	class.cs (Operator.Emit): Extracted code from MethodData to correctly
 	detect obsolete attributes.
 	(Method.CreateEmitContext): Moved to MethodOrOperator.
