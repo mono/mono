@@ -1,5 +1,7 @@
 2006-04-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ia64.h mini-ia64.c cpu-ia64.md: Port the ia64 backend to the new IR.
+
 	* mini-codegen.c (mono_spillvar_offset): More alignment fixes.
 	(mono_local_regalloc): Only do the OP_MOVE optimization if ins->dreg is a local
 	hreg, not when its !global, since on ia64, there is a third category: stacked

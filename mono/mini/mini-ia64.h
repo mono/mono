@@ -84,8 +84,12 @@ mono_ia64_context_get_ip (MonoContext *ctx)
 	err = unw_get_reg (&ctx->cursor, UNW_IA64_IP, &ip);
 	g_assert (err == 0);
 
-	/* Subtrack 1 so ip points into the actual instruction */
-	return ip - 1;
+	/* 
+	 * We used to substract 1 from the ip so it points to the actual instruction, but
+	 * that fails with exceptions generated from signals, causing tests like nonvirt.exe
+	 * to fail with the new IR.
+	 */
+	return ip;
 }
 
 static inline unw_word_t
@@ -180,5 +184,8 @@ unw_dyn_region_info_t* mono_ia64_create_unwind_region (Ia64CodegenState *code);
 #define MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE 1
 #define MONO_ARCH_HAVE_SAVE_UNWIND_INFO 1
 #define MONO_ARCH_HAVE_CREATE_VARS 1
+#define MONO_ARCH_HAS_FCOMPARE 1
+
+#define MONO_ARCH_IS_OP_MEMBASE(opcode) FALSE
 
 #endif /* __MONO_MINI_IA64_H__ */  
