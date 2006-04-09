@@ -42,12 +42,26 @@ namespace System.Web {
 		HttpResponseStream output_stream;
 		HttpResponse response;
 		Encoding encoding;
+		byte [] _bytebuffer = new byte [1024];
 
 		internal HttpWriter (HttpResponse response)
 		{
 			this.response = response;
 			encoding = response.ContentEncoding;
 			output_stream = response.output_stream;
+		}
+
+		byte [] GetByteBuffer (int length)
+		{
+			// We will reuse the buffer if its size is < 32K
+			if (_bytebuffer.Length >= length)
+				return _bytebuffer;
+
+			if (length > 32 * 1024)
+				return new byte [length];
+
+			_bytebuffer = new byte [length];
+			return _bytebuffer;
 		}
 
 		public override Encoding Encoding {
@@ -97,24 +111,19 @@ namespace System.Web {
 		
 		public override void Write (string s)
 		{
-			if (s == null)
-				return;
-			
-			byte [] xx = encoding.GetBytes (s);
-
-			output_stream.Write (xx, 0, xx.Length);
-			
-			if (response.buffer)
-				return;
-
-			response.Flush ();
+			if (s != null)
+				WriteString (s, 0, s.Length);
 		}
 		
 		public override void Write (char [] buffer, int index, int count)
 		{
-			byte [] xx = encoding.GetBytes (buffer, index, count);
-			output_stream.Write (xx, 0, xx.Length);
-
+			if (buffer == null || index < 0 || count < 0 || (buffer.Length - index) < count)
+				throw new ArgumentOutOfRangeException ();
+			
+			int length = encoding.GetByteCount (buffer, index, count);
+			byte [] bytebuffer = GetByteBuffer (length);
+			encoding.GetBytes (buffer, index, count, bytebuffer, 0);
+			output_stream.Write (bytebuffer, 0, length);
 			if (response.buffer)
 				return;
 
@@ -135,12 +144,23 @@ namespace System.Web {
 
 		public void WriteString (string s, int index, int count)
 		{
-			char [] a = s.ToCharArray (index, count);
+			if (s == null)
+				return;
 
-			byte [] xx = encoding.GetBytes (a, 0, count);
+			if (index < 0 || count < 0 || ((index + count > s.Length)))
+				throw new ArgumentOutOfRangeException ();
 			
-			output_stream.Write (xx, 0, xx.Length);
+			int length;
+			if (index == 0 && count == s.Length) {
+				length = encoding.GetByteCount (s); 
+			} else {
+				char [] chars = s.ToCharArray (index, count);
+				length = encoding.GetByteCount (chars);
+			}
 
+			byte [] bytebuffer = GetByteBuffer (length);
+			encoding.GetBytes (s, index, count, bytebuffer, 0);
+			output_stream.Write (bytebuffer, 0, length);
 			if (response.buffer)
 				return;
 
