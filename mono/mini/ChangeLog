@@ -1,5 +1,7 @@
 2006-04-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_op_imm_to_op): New helper function.
+
 	* mini-codegen.c: Remove mono_opcode_to_stack_type which is only used by the
 	ia64 backend.
 
