@@ -1,3 +1,8 @@
+2006-04-09	Boris Kirzner <borisk@mainsoft.com>
+	* OleDbSqlServerProvider.cs:
+		- added OleDbSqlServerProvider2005 class ofr Sql Server 2005
+		- added OleDbSqlHelper class - refactoring for static methods
+
 2006-03-27  Konstantin Triger <kostat@mainsoft.com>
 
 	* OleDbSqlServerProvider.cs: rename OleDbSqlServerProvider class to OleDbSqlServerProvider2000

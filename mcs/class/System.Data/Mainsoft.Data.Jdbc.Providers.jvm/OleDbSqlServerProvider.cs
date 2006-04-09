@@ -39,15 +39,13 @@ using java.net;
 
 namespace Mainsoft.Data.Jdbc.Providers
 {
+	#region OleDbSqlServerProvider2000
+
 	public class OleDbSqlServerProvider2000 : GenericProvider
 	{
 		#region Consts
 
-		private const string Port = "Port";
-		private const string Database = "Database";
-		private const string ServerName = "ServerName";
 		private const string DefaultInstanceName = "MSSQLSERVER";
-		private const string Timeout = "Timeout";
 		private const int DefaultTimeout = 15;
 
 		#endregion //Consts
@@ -76,14 +74,14 @@ namespace Mainsoft.Data.Jdbc.Providers
 			IConnectionStringDictionary conectionStringBuilder = base.GetConnectionStringBuilder (connectionString);
 			if (!conectionStringBuilder.Contains("jndi-datasource-name")) {
 
-				string database = (string) conectionStringBuilder [Database];
+				string database = (string) conectionStringBuilder [OleDbSqlHelper.Database];
 				if (database == null)
-					conectionStringBuilder.Add (Database, String.Empty);
+					conectionStringBuilder.Add (OleDbSqlHelper.Database, String.Empty);
 
-				string port = (string) conectionStringBuilder [Port];
+				string port = (string) conectionStringBuilder [OleDbSqlHelper.Port];
 				if (port == null || port.Length == 0) {
-					port = GetMSSqlPort (GetInstanceName (conectionStringBuilder), GetDataSource (conectionStringBuilder), GetTimeout (conectionStringBuilder));
-					conectionStringBuilder.Add (Port, port);
+					port = GetMSSqlPort (OleDbSqlHelper.GetInstanceName (conectionStringBuilder, DefaultInstanceName), OleDbSqlHelper.GetDataSource (conectionStringBuilder), OleDbSqlHelper.GetTimeout (conectionStringBuilder, DefaultTimeout));
+					conectionStringBuilder.Add (OleDbSqlHelper.Port, port);
 				}
 			}
 
@@ -167,21 +165,84 @@ namespace Mainsoft.Data.Jdbc.Providers
 			}
 		}
 
+		#endregion // Methods
+	}
+
+	#endregion // OleDbSqlServerProvider2000
+
+	#region OleDbSqlServerProvider2005
+
+	public class OleDbSqlServerProvider2005 : GenericProvider
+	{
+		#region Consts
+
+		private const string ServerName = "ServerName";
+
+		#endregion //Consts
+
+		#region Fields
+
+		#endregion // Fields
+
+		#region Constructors
+
+		public OleDbSqlServerProvider2005 (IDictionary providerInfo) : base (providerInfo)
+		{
+		}
+
+		#endregion // Constructors
+
+		#region Properties
+
+		#endregion // Properties
+
+		#region Methods
+
+		public override IConnectionStringDictionary GetConnectionStringBuilder (string connectionString)
+		{
+			//TBD: should wrap the IConnectionStringDictionary
+			IConnectionStringDictionary conectionStringBuilder = base.GetConnectionStringBuilder (connectionString);
+			if (!conectionStringBuilder.Contains("jndi-datasource-name")) {
+				string dataSource = OleDbSqlHelper.GetDataSource (conectionStringBuilder);
+				string instanceName = OleDbSqlHelper.GetInstanceName (conectionStringBuilder, null);
+
+				if (instanceName != null)
+					conectionStringBuilder [ServerName] = dataSource + "\\" + instanceName;
+				else
+					conectionStringBuilder [ServerName] = dataSource;			
+			}
+			return conectionStringBuilder;
+		}		
+
+		#endregion // Methods
+	}
+
+	#endregion // OleDbSqlServerProvider2005
+
+	#region OleDbSqlHelper
+
+	class OleDbSqlHelper
+	{
+		internal const string Port = "Port";
+		internal const string Database = "Database";
+		internal const string ServerName = "ServerName";
+		internal const string Timeout = "Timeout";
+
 		// TBD : refactor GetInstanceName and GetDataSource to single method
-		private string GetInstanceName (IDictionary keyMapper)
+		internal static string GetInstanceName (IDictionary keyMapper, string defaultInstanceName)
 		{
 			string dataSource = (string) keyMapper [ServerName];
 			string instanceName = String.Empty;
 			int instanceIdx;
 			if ((instanceIdx = dataSource.IndexOf ("\\")) == -1) 
 				// no named instance specified - use a default name
-				return DefaultInstanceName;
+				return defaultInstanceName;
 			else 
 				// get named instance name
 				return dataSource.Substring (instanceIdx + 1);
 		}
 
-		private string GetDataSource (IDictionary keyMapper)
+		internal static string GetDataSource (IDictionary keyMapper)
 		{
 			string dataSource = (string) keyMapper [ServerName];
 			int instanceIdx;
@@ -198,7 +259,7 @@ namespace Mainsoft.Data.Jdbc.Providers
 			return dataSource;
 		}
 
-		private int GetTimeout (IDictionary keyMapper)
+		internal static int GetTimeout (IDictionary keyMapper, int defaultTimeout)
 		{
 			string timeoutStr = (string) keyMapper [Timeout];
 			if ((timeoutStr != null) && (timeoutStr.Length != 0)) {
@@ -212,9 +273,10 @@ namespace Mainsoft.Data.Jdbc.Providers
 					throw ExceptionHelper.InvalidValueForKey("connect timeout");
 				}
 			}
-			return DefaultTimeout;
+			return defaultTimeout;
 		}
-
-		#endregion // Methods
 	}
+
+	#endregion // OleDbSqlHelper
+
 }
