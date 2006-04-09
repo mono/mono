@@ -1,5 +1,11 @@
 2006-04-09  Marek Safar  <marek.safar@seznam.cz>
 
+	class.cs (Operator.Emit): Extracted code from MethodData to correctly
+	detect obsolete attributes.
+	(Method.CreateEmitContext): Moved to MethodOrOperator.
+
+2006-04-09  Marek Safar  <marek.safar@seznam.cz>
+
 	A fix for #78048.
 	class.cs (TypeContainer.MemberCoreArrayList.DefineContainerMembers): Throw
 	customized exception to make crash detection easier.

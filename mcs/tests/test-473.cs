@@ -92,21 +92,21 @@ partial struct PS
 }
 
 
-public struct Value
+[Obsolete ("Replaced by direct enum type casts to/from GLib.Value", true)]
+public class EnumWrapper {
+	public EnumWrapper (int val)
+	{
+	}
+}	
+
+public struct Value 
 {
 	[Obsolete ("Replaced by Enum cast", true)]
 	public static explicit operator EnumWrapper (Value val)
 	{
-		return null;
+		return new EnumWrapper (334455);
 	}
 }
-
-
-[Obsolete ("Replaced by direct enum type casts to/from GLib.Value", true)]
-public class EnumWrapper
-{
-}
-
 
 class Test {
 	public static void Main () {

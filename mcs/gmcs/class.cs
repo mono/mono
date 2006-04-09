@@ -3680,6 +3680,18 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public EmitContext CreateEmitContext (DeclSpace tc, ILGenerator ig)
+		{
+			EmitContext ec = new EmitContext (this,
+				tc, this.ds, Location, ig, MemberType, ModFlags, false);
+
+			Iterator iterator = tc as Iterator;
+			if (iterator != null)
+				ec.CurrentAnonymousMethod = iterator.Host;
+
+			return ec;
+		}
+
 		public override void Emit ()
 		{
 			if (OptAttributes != null)
@@ -4120,18 +4132,6 @@ namespace Mono.CSharp {
 			}
 
 			return true;
-		}
-
-		public EmitContext CreateEmitContext (DeclSpace tc, ILGenerator ig)
-		{
-			EmitContext ec = new EmitContext (this,
-				tc, this.ds, Location, ig, ReturnType, ModFlags, false);
-
-			Iterator iterator = tc as Iterator;
-			if (iterator != null)
-				ec.CurrentAnonymousMethod = iterator.Host;
-
-			return ec;
 		}
 
 		/// <summary>
@@ -7557,13 +7557,26 @@ namespace Mono.CSharp {
 		{
 			base.Emit ();
 
+			Parameters.ApplyAttributes (MethodBuilder);
+
 			//
 			// abstract or extern methods have no bodies
 			//
 			if ((ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0)
 				return;
 			
-			OperatorMethod.MethodData.Emit (OperatorMethod.Parent);
+			EmitContext ec;
+			if ((flags & MethodAttributes.PinvokeImpl) == 0)
+				ec = CreateEmitContext (Parent, MethodBuilder.GetILGenerator ());
+			else
+				ec = CreateEmitContext (Parent, null);
+			
+			SourceMethod source = SourceMethod.Create (Parent, MethodBuilder, Block);
+			ec.EmitTopBlock (OperatorMethod, Block);
+
+			if (source != null)
+				source.CloseMethod ();
+
 			Block = null;
 		}
 
