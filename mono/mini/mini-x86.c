@@ -440,6 +440,7 @@ mono_arch_get_argument_info (MonoMethodSignature *csig, int param_count, MonoJit
 {
 	int k, frame_size = 0;
 	int size, align, pad;
+	guint32 ialign;
 	int offset = 8;
 	CallInfo *cinfo;
 
@@ -461,10 +462,12 @@ mono_arch_get_argument_info (MonoMethodSignature *csig, int param_count, MonoJit
 
 	for (k = 0; k < param_count; k++) {
 		
-		if (csig->pinvoke)
-			size = mono_type_native_stack_size (csig->params [k], &align);
-		else
+		if (csig->pinvoke) {
+			size = mono_type_native_stack_size (csig->params [k], &ialign);
+			align = ialign;
+		} else {
 			size = mono_type_stack_size (csig->params [k], &align);
+		}
 
 		/* ignore alignment for now */
 		align = 1;
@@ -837,9 +840,23 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 
 	switch (cinfo->ret.storage) {
 	case ArgOnStack:
-		cfg->ret->opcode = OP_REGOFFSET;
-		cfg->ret->inst_basereg = X86_EBP;
-		cfg->ret->inst_offset = cinfo->ret.offset + ARGS_OFFSET;
+		if (cfg->new_ir && MONO_TYPE_ISSTRUCT (sig->ret)) {
+			/* 
+			 * In the new IR, the cfg->vret_addr variable represents the
+			 * vtype return value.
+			 */
+			cfg->vret_addr->opcode = OP_REGOFFSET;
+			cfg->vret_addr->inst_basereg = cfg->frame_reg;
+			cfg->vret_addr->inst_offset = cinfo->ret.offset + ARGS_OFFSET;
+			if (G_UNLIKELY (cfg->verbose_level > 1)) {
+				printf ("vret_addr =");
+				mono_print_ins (cfg->vret_addr);
+			}
+		} else {
+			cfg->ret->opcode = OP_REGOFFSET;
+			cfg->ret->inst_basereg = X86_EBP;
+			cfg->ret->inst_offset = cinfo->ret.offset + ARGS_OFFSET;
+		}
 		break;
 	case ArgValuetypeInReg:
 		break;
@@ -888,15 +905,10 @@ mono_arch_create_vars (MonoCompile *cfg)
 
 	if (cinfo->ret.storage == ArgValuetypeInReg)
 		cfg->ret_var_is_local = TRUE;
-	else
-		if (cfg->new_ir && ((MONO_TYPE_ISSTRUCT (sig->ret) && !mono_class_from_mono_type (sig->ret)->enumtype) || (sig->ret->type == MONO_TYPE_TYPEDBYREF))) {
-			/* cfg->ret will represent the implicit arg holding the vtype address */
-			cfg->ret = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL);
-			return;
-		}
 
-	if (cfg->new_ir && cfg->ret)
-		cfg->ret->dreg = cinfo->ret.reg;
+	if (cfg->new_ir && (cinfo->ret.storage != ArgValuetypeInReg) && MONO_TYPE_ISSTRUCT (sig->ret)) {
+		cfg->vret_addr = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_ARG);
+	}
 }
 
 /* 
@@ -977,6 +989,7 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 
 			if ((i >= sig->hasthis) && (MONO_TYPE_ISSTRUCT(t))) {
 				gint align;
+				guint32 ialign;
 				guint32 size;
 
 				if (t->type == MONO_TYPE_TYPEDBYREF) {
@@ -984,10 +997,12 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 					align = sizeof (gpointer);
 				}
 				else
-					if (sig->pinvoke)
-						size = mono_type_native_stack_size (&in->klass->byval_arg, &align);
-					else
+					if (sig->pinvoke) {
+						size = mono_type_native_stack_size (&in->klass->byval_arg, &ialign);
+						align = ialign;
+					} else {
 						size = mono_type_stack_size (&in->klass->byval_arg, &align);
+					}
 				arg->opcode = OP_OUTARG_VT;
 				arg->klass = in->klass;
 				arg->unused = sig->pinvoke;
@@ -1093,6 +1108,7 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 
 		if ((i >= sig->hasthis) && (MONO_TYPE_ISSTRUCT(t))) {
 			gint align;
+			guint32 ialign;
 			guint32 size;
 
 			g_assert (in->klass);
@@ -1102,10 +1118,12 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 				align = sizeof (gpointer);
 			}
 			else
-				if (sig->pinvoke)
-					size = mono_type_native_stack_size (&in->klass->byval_arg, &align);
-				else
+				if (sig->pinvoke) {
+					size = mono_type_native_stack_size (&in->klass->byval_arg, &ialign);
+					align = ialign;
+				} else {
 					size = mono_type_stack_size (&in->klass->byval_arg, &align);
+				}
 
 			if (size > 0) {
 				arg->opcode = OP_OUTARG_VT;
@@ -1943,6 +1961,19 @@ branch_cc_table [] = {
 	X86_CC_O, X86_CC_NO, X86_CC_C, X86_CC_NC
 };
 
+/* Maps CMP_... constants to X86_CC_... constants */
+static const int
+cc_table [] = {
+	X86_CC_EQ, X86_CC_NE, X86_CC_LE, X86_CC_GE, X86_CC_LT, X86_CC_GT,
+	X86_CC_LE, X86_CC_GE, X86_CC_LT, X86_CC_GT
+};
+
+static const int
+cc_signed_table [] = {
+	TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,
+	FALSE, FALSE, FALSE, FALSE
+};
+
 static const char*const * ins_spec = pentium_desc;
 
 /*#include "cprop.c"*/
@@ -2112,6 +2143,9 @@ emit_move_return_value (MonoCompile *cfg, MonoInst *ins, guint8 *code)
 	case OP_VCALL:
 	case OP_VCALL_REG:
 	case OP_VCALL_MEMBASE:
+	case OP_VCALL2:
+	case OP_VCALL2_REG:
+	case OP_VCALL2_MEMBASE:
 		cinfo = get_call_info (cfg->mempool, ((MonoCallInst*)ins)->signature, FALSE);
 		if (cinfo->ret.storage == ArgValuetypeInReg) {
 			/* Pop the destination address from the stack */
@@ -2849,6 +2883,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_FCALL:
 		case OP_LCALL:
 		case OP_VCALL:
+		case OP_VCALL2:
 		case OP_VOIDCALL:
 		case CEE_CALL:
 		case OP_CALL:
@@ -2884,6 +2919,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_FCALL_REG:
 		case OP_LCALL_REG:
 		case OP_VCALL_REG:
+		case OP_VCALL2_REG:
 		case OP_VOIDCALL_REG:
 		case OP_CALL_REG:
 			call = (MonoCallInst*)ins;
@@ -2899,6 +2935,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_FCALL_MEMBASE:
 		case OP_LCALL_MEMBASE:
 		case OP_VCALL_MEMBASE:
+		case OP_VCALL2_MEMBASE:
 		case OP_VOIDCALL_MEMBASE:
 		case OP_CALL_MEMBASE:
 			call = (MonoCallInst*)ins;
@@ -3048,31 +3085,16 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case OP_CEQ:
 		case OP_ICEQ:
-			x86_set_reg (code, X86_CC_EQ, ins->dreg, TRUE);
-			x86_widen_reg (code, ins->dreg, ins->dreg, FALSE, FALSE);
-			break;
 		case OP_CLT:
 		case OP_ICLT:
-			x86_set_reg (code, X86_CC_LT, ins->dreg, TRUE);
-			x86_widen_reg (code, ins->dreg, ins->dreg, FALSE, FALSE);
-			break;
 		case OP_CLT_UN:
 		case OP_ICLT_UN:
-			x86_set_reg (code, X86_CC_LT, ins->dreg, FALSE);
-			x86_widen_reg (code, ins->dreg, ins->dreg, FALSE, FALSE);
-			break;
 		case OP_CGT:
 		case OP_ICGT:
-			x86_set_reg (code, X86_CC_GT, ins->dreg, TRUE);
-			x86_widen_reg (code, ins->dreg, ins->dreg, FALSE, FALSE);
-			break;
 		case OP_CGT_UN:
 		case OP_ICGT_UN:
-			x86_set_reg (code, X86_CC_GT, ins->dreg, FALSE);
-			x86_widen_reg (code, ins->dreg, ins->dreg, FALSE, FALSE);
-			break;
 		case OP_CNE:
-			x86_set_reg (code, X86_CC_NE, ins->dreg, TRUE);
+			x86_set_reg (code, cc_table [mono_opcode_to_cond (ins->opcode)], ins->dreg, cc_signed_table [mono_opcode_to_cond (ins->opcode)]);
 			x86_widen_reg (code, ins->dreg, ins->dreg, FALSE, FALSE);
 			break;
 		case OP_COND_EXC_EQ:
@@ -3085,12 +3107,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_COND_EXC_GE_UN:
 		case OP_COND_EXC_LE:
 		case OP_COND_EXC_LE_UN:
-		case OP_COND_EXC_OV:
-		case OP_COND_EXC_NO:
-		case OP_COND_EXC_C:
-		case OP_COND_EXC_NC:
-			EMIT_COND_SYSTEM_EXCEPTION (branch_cc_table [ins->opcode - OP_COND_EXC_EQ], (ins->opcode < OP_COND_EXC_NE_UN), ins->inst_p1);
-			break;
 		case OP_COND_EXC_IEQ:
 		case OP_COND_EXC_INE_UN:
 		case OP_COND_EXC_ILT:
@@ -3101,6 +3117,14 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_COND_EXC_IGE_UN:
 		case OP_COND_EXC_ILE:
 		case OP_COND_EXC_ILE_UN:
+			EMIT_COND_SYSTEM_EXCEPTION (cc_table [mono_opcode_to_cond (ins->opcode)], cc_signed_table [mono_opcode_to_cond (ins->opcode)], ins->inst_p1);
+			break;
+		case OP_COND_EXC_OV:
+		case OP_COND_EXC_NO:
+		case OP_COND_EXC_C:
+		case OP_COND_EXC_NC:
+			EMIT_COND_SYSTEM_EXCEPTION (branch_cc_table [ins->opcode - OP_COND_EXC_EQ], (ins->opcode < OP_COND_EXC_NE_UN), ins->inst_p1);
+			break;
 		case OP_COND_EXC_IOV:
 		case OP_COND_EXC_INO:
 		case OP_COND_EXC_IC:
@@ -3117,8 +3141,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case CEE_BGE_UN:
 		case CEE_BLE:
 		case CEE_BLE_UN:
-			EMIT_COND_BRANCH (ins, branch_cc_table [ins->opcode - CEE_BEQ], (ins->opcode < CEE_BNE_UN));
-			break;
 		case OP_IBEQ:
 		case OP_IBNE_UN:
 		case OP_IBLT:
@@ -3129,7 +3151,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_IBGE_UN:
 		case OP_IBLE:
 		case OP_IBLE_UN:
-			EMIT_COND_BRANCH (ins, branch_cc_table [ins->opcode - OP_IBEQ], (ins->opcode < OP_IBNE_UN));
+			EMIT_COND_BRANCH (ins, cc_table [mono_opcode_to_cond (ins->opcode)], cc_signed_table [mono_opcode_to_cond (ins->opcode)]);
 			break;
 		/* floating point opcodes */
 		case OP_R8CONST: {

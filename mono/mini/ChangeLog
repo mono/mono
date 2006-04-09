@@ -1,5 +1,7 @@
 2006-04-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* cpu-pentium.md mini-x86.c: Update x86 backend after latest changes.
+
 	* mini-amd64.c (mono_arch_create_vars): Remove some redundant checks.
 	(mono_arch_allocate_vars): Ditto.
 
