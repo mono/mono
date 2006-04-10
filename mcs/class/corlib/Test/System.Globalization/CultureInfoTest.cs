@@ -55,6 +55,14 @@ namespace MonoTests.System.Globalization
 			CultureInfo cultureClone = culture.Clone () as CultureInfo;
 			Assert (culture.Equals (cultureClone));
 		}
+
+		[Test]
+		public void Norwegian () // bug #69652
+		{
+			new CultureInfo ("no");
+			new CultureInfo ("nb-NO");
+			new CultureInfo ("nn-NO");
+		}
 	}
 }
 
