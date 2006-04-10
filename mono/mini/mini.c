@@ -9928,7 +9928,6 @@ mono_local_cprop2 (MonoCompile *cfg)
 				regtype = srcindex == 0 ? spec [MONO_INST_SRC1] : spec [MONO_INST_SRC2];
 				sreg = srcindex == 0 ? ins->sreg1 : ins->sreg2;
 
-				/* FIXME: Add support for floats/longs */
 				if ((regtype == ' ') || (sreg == -1) || (!defs [sreg]))
 					continue;
 
@@ -9943,7 +9942,11 @@ mono_local_cprop2 (MonoCompile *cfg)
 				 * The third check avoids copy propagating local vregs through a call, 
 				 * since the lvreg will be spilled 
 				 */
+#ifndef MONO_ARCH_USE_FPSTACK
 				if (MONO_IS_MOVE (def) && (def->opcode != OP_FMOVE) &&
+#else
+				if (MONO_IS_MOVE (def) &&
+#endif
 					(!defs [def->sreg1] || (def_index [def->sreg1] < def_index [sreg])) &&
 					!vreg_is_volatile (cfg, def->sreg1) &&
 					(get_vreg_to_inst (cfg, def->sreg1) || !defs [def->sreg1] || (def_index [def->sreg1] > last_call_index))) {
