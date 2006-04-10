@@ -133,7 +133,7 @@ namespace System.IO {
 					data.SubDirs = new Hashtable ();
 
 				data.Enabled = true;
-				StartMonitoringDirectory (data);
+				StartMonitoringDirectory (data, false);
 				lock (this) {
 					watches [fsw] = data;
 					requests [data.Request.ReqNum] = data;
@@ -144,26 +144,63 @@ namespace System.IO {
 
 		static void StartMonitoringDirectory (FAMData data)
 		{
+			StartMonitoringDirectory (data, false);
+		}
+
+		static void StartMonitoringDirectory (FAMData data, bool justcreated)
+		{
 			FAMRequest fr;
+			FileSystemWatcher fsw;
 			if (FAMMonitorDirectory (ref conn, data.Directory, out fr, IntPtr.Zero) == -1)
 				throw new Win32Exception ();
 
+			fsw = data.FSW;
 			data.Request = fr;
-			if (!data.IncludeSubdirs)
-				return;
 
-			foreach (string directory in Directory.GetDirectories (data.Directory)) {
-				FAMData fd = new FAMData ();
-				fd.FSW = data.FSW;
-				fd.Directory = directory;
-				fd.FileMask = data.FSW.MangledFilter;
-				fd.IncludeSubdirs = true;
-				fd.SubDirs = new Hashtable ();
-				fd.Enabled = true;
+			if (data.IncludeSubdirs) {
+				foreach (string directory in Directory.GetDirectories (data.Directory)) {
+					FAMData fd = new FAMData ();
+					fd.FSW = data.FSW;
+					fd.Directory = directory;
+					fd.FileMask = data.FSW.MangledFilter;
+					fd.IncludeSubdirs = true;
+					fd.SubDirs = new Hashtable ();
+					fd.Enabled = true;
 
-				StartMonitoringDirectory (fd);
-				data.SubDirs [directory] = fd;
-				requests [fd.Request.ReqNum] = fd;
+					if (justcreated) {
+						lock (fsw) {
+							RenamedEventArgs renamed = null;
+
+							fsw.DispatchEvents (FileAction.Added, directory, ref renamed);
+
+							if (fsw.Waiting) {
+								fsw.Waiting = false;
+								System.Threading.Monitor.PulseAll (fsw);
+							}
+						}
+					}
+
+					StartMonitoringDirectory (fd, justcreated);
+					data.SubDirs [directory] = fd;
+					requests [fd.Request.ReqNum] = fd;
+				}
+			}
+
+			if (justcreated) {
+				foreach (string filename in Directory.GetFiles(data.Directory)) {
+					lock (fsw) {
+						RenamedEventArgs renamed = null;
+
+						fsw.DispatchEvents (FileAction.Added, filename, ref renamed);
+						/* If a file has been created, then it has been written to */
+						fsw.DispatchEvents (FileAction.Modified, filename, ref renamed);
+
+						if (fsw.Waiting) {
+							fsw.Waiting = false;
+							System.Threading.Monitor.PulseAll(fsw);
+						}
+					}
+				}
 			}
 		}
 
@@ -326,7 +363,7 @@ namespace System.IO {
 				for (int n = 0; n < count; n += 2) {
 					FAMData newdir = (FAMData) newdirs [n];
 					FAMData parent = (FAMData) newdirs [n + 1];
-					StartMonitoringDirectory (newdir);
+					StartMonitoringDirectory (newdir, true);
 					requests [newdir.Request.ReqNum] = newdir;
 					lock (parent) {
 						parent.SubDirs [newdir.Directory] = newdir;
