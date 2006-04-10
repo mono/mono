@@ -85,6 +85,7 @@ namespace System.Web {
 		string [] accept_types;
 		string [] user_languages;
 		Uri cached_url;
+		TempFileStream request_file;
 		
 		// Validations
 		bool validate_cookies, validate_query_string, validate_form;
@@ -363,7 +364,8 @@ namespace System.Web {
 			}
 		}
 
-		Stream StreamCopy (Stream stream)
+		// GetSubStream returns a 'copy' of the InputStream with Position set to 0.
+		static Stream GetSubStream (Stream stream)
 		{
 #if !TARGET_JVM
 			if (stream is IntPtrStream)
@@ -375,7 +377,19 @@ namespace System.Web {
 				return new MemoryStream (other.GetBuffer (), 0, (int) other.Length, false, true);
 			}
 
+			if (stream is TempFileStream) {
+				((TempFileStream) stream).SavePosition ();
+				return stream;
+			}
+
 			throw new NotSupportedException ("The stream is " + stream.GetType ());
+		}
+
+		static void EndSubStream (Stream stream)
+		{
+			if (stream is TempFileStream) {
+				((TempFileStream) stream).RestorePosition ();
+			}
 		}
 
 		//
@@ -387,7 +401,7 @@ namespace System.Web {
 			if (boundary == null)
 				return;
 
-			Stream input = StreamCopy (InputStream);
+			Stream input = GetSubStream (InputStream);
 			HttpMultipart multi_part = new HttpMultipart (input, boundary, ContentEncoding);
 
 			HttpMultipart.Element e;
@@ -407,6 +421,7 @@ namespace System.Web {
 					files.AddFile (e.Name, sub);
 				}
 			}
+			EndSubStream (input);
 		}
 
 		//
@@ -426,7 +441,7 @@ namespace System.Web {
 		// 
 		void LoadWwwForm ()
 		{
-			Stream input = StreamCopy (InputStream);
+			Stream input = GetSubStream (InputStream);
 			StreamReader s = new StreamReader (input, ContentEncoding);
 
 			StringBuilder key = new StringBuilder ();
@@ -454,6 +469,8 @@ namespace System.Web {
 			}
 			if (c == -1)
 				AddRawKeyValue (key, value);
+
+			EndSubStream (input);
 		}
 		
 		bool IsContentType (string ct, bool starts_with)
@@ -559,7 +576,6 @@ namespace System.Web {
 #else
 			HttpRuntimeConfig config = (HttpRuntimeConfig) HttpContext.GetAppConfig ("system.web/httpRuntime");
 #endif
-			
 			if (content_length > (config.MaxRequestLength * 1024))
 				throw new HttpException ("File exceeds httpRuntime limit");
 			
@@ -593,6 +609,29 @@ namespace System.Web {
 		}
 #else
 		const int INPUT_BUFFER_SIZE = 32*1024;
+
+		TempFileStream GetTempStream ()
+		{
+			string tempdir = AppDomain.CurrentDomain.SetupInformation.DynamicBase;
+			TempFileStream f = null;
+			string path;
+			Random rnd = new Random ();
+			int num;
+			do {
+				num = rnd.Next ();
+				num++;
+				path = System.IO.Path.Combine (tempdir, "tmp" + num.ToString("x") + ".req");
+
+				try {
+					f = new TempFileStream (path);
+				} catch (SecurityException) {
+					// avoid an endless loop
+					throw;
+				} catch { }
+			} while (f == null);
+
+			return f;
+		}
 
 		void DoFilter (byte [] buffer)
 		{
@@ -657,7 +696,31 @@ namespace System.Web {
 			if (buffer != null)
 				total = buffer.Length;
 
-			if (content_length > 0) {
+			if (content_length > 0 && (content_length / 1024) >= config.RequestLengthDiskThreshold) {
+				// Writes the request to disk
+				total = Math.Min (content_length, total);
+				request_file = GetTempStream ();
+				Stream output = request_file;
+				if (total > 0)
+					output.Write (buffer, 0, total);
+
+				if (total < content_length) {
+					buffer = new byte [Math.Min (content_length, INPUT_BUFFER_SIZE)];
+					do {
+						int n;
+						int min = Math.Min (content_length - total, INPUT_BUFFER_SIZE);
+						n = worker_request.ReadEntityBody (buffer, min);
+						if (n <= 0)
+							break;
+						output.Write (buffer, 0, n);
+						total += n;
+					} while (total < content_length);
+				}
+
+				request_file.SetReadOnly ();
+				input_stream = request_file;
+			} else if (content_length > 0) {
+				// Buffers the request in an IntPtrStream
 				total = Math.Min (content_length, total);
 				IntPtr content = Marshal.AllocHGlobal (content_length);
 				if (content == (IntPtr) 0)
@@ -681,13 +744,16 @@ namespace System.Web {
 				}
 
 				input_stream = new IntPtrStream (content, total);
-				DoFilter (buffer);
 			} else {
+				// Buffers the request in a MemoryStream or writes to disk if threshold exceeded
 				MemoryStream ms = new MemoryStream ();
+				Stream output = ms;
 				if (total > 0)
 					ms.Write (buffer, 0, total);
+
 				buffer = new byte [INPUT_BUFFER_SIZE];
 				long maxlength = config.MaxRequestLength * 1024;
+				long disk_th = config.RequestLengthDiskThreshold * 1024;
 				int n;
 				while (true) {
 					n = worker_request.ReadEntityBody (buffer, INPUT_BUFFER_SIZE);
@@ -696,11 +762,25 @@ namespace System.Web {
 					total += n;
 					if (total < 0 || total > maxlength)
 						throw new HttpException (400, "Upload size exceeds httpRuntime limit.");
-					ms.Write (buffer, 0, n);
+
+					if (ms != null && total > disk_th) {
+						// Swith to on-disk file.
+						request_file = GetTempStream ();
+						ms.WriteTo (request_file);
+						ms = null;
+						output = request_file;
+					}
+					output.Write (buffer, 0, n);
 				}
-				input_stream = new MemoryStream (ms.GetBuffer (), 0, (int) ms.Length, false, true);
-				DoFilter (buffer);
+
+				if (ms != null) {
+					input_stream = new MemoryStream (ms.GetBuffer (), 0, (int) ms.Length, false, true);
+				} else {
+					request_file.SetReadOnly ();
+					input_stream = request_file;
+				}
 			}
+			DoFilter (buffer);
 
 			if (total < content_length)
 				throw new HttpException (411, "The request body is incomplete.");
@@ -708,9 +788,21 @@ namespace System.Web {
 #endif
 		internal void ReleaseResources ()
 		{
+			Stream stream;
 			if (input_stream != null){
-				input_stream.Close ();
+				stream = input_stream;
 				input_stream = null;
+				try {
+					stream.Close ();
+				} catch {}
+			}
+
+			if (request_file != null) {
+				stream = request_file;
+				request_file = null;
+				try {
+					stream.Close ();
+				} catch {}
 			}
 		}
 		
@@ -1117,7 +1209,7 @@ namespace System.Web {
 
 			// More than 1 call to SaveAs works fine on MS, so we "copy" the stream
 			// to keep InputStream in its state.
-			Stream input = StreamCopy (InputStream);
+			Stream input = GetSubStream (InputStream);
 			try {
 				long len = input.Length;
 				int buf_size = (int) Math.Min ((len < 0 ? 0 : len), 8192);
@@ -1130,6 +1222,7 @@ namespace System.Web {
 			} finally {
 				output.Flush ();
 				output.Close ();
+				EndSubStream (input);
 			}
 		}
 

@@ -1,3 +1,8 @@
+2006-03-19 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.Web.Configuration/HttpRuntimeConfigurationHandler.cs: removed
+	a bunch of useless stuff for 1.x.
+
 2005-12-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConfigurationSettings.cs: patch by Cyrille Colin that sets the
