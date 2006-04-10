@@ -1,4 +1,9 @@
 
+Mon Apr 10 12:28:05 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* monobitset.c: cap size in mono_bitset_sub () to
+	avoid reading uninit memory.
+
 Wed Mar 29 16:39:14 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mono-counters.c: initialize the next pointer.
