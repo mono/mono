@@ -1,3 +1,8 @@
+2006-04-10  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPathNavigatorReader.cs : Read() did not compute Depth correctly.
+	  It caused bug #78067.
+
 2006-02-21  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DTMXPathNavigator2.cs : removed valueBuilder field (create 

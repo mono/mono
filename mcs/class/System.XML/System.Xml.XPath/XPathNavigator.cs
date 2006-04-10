@@ -35,6 +35,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text;
 #endif
 using System.IO;
 using System.Xml;
@@ -904,15 +905,18 @@ namespace System.Xml.XPath
 			get { return true; }
 		}
 
-		[MonoTODO]
 		public virtual string OuterXml {
 			get {
-				StringWriter sw = new StringWriter ();
-				XmlTextWriter xtw = new XmlTextWriter (sw);
-				WriteSubtree (xtw);
-				xtw.Close ();
-				return sw.ToString ();
+				XmlWriterSettings s = new XmlWriterSettings ();
+				s.Indent = true;
+				s.OmitXmlDeclaration = true;
+				StringBuilder sb = new StringBuilder ();
+				using (XmlWriter w = XmlWriter.Create (sb, s)) {
+					WriteSubtree (w);
+				}
+				return sb.ToString ();
 			}
+			[MonoTODO]
 			set {
 				switch (NodeType) {
 				case XPathNodeType.Root:

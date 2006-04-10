@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.IO;
 using System.Xml;
 using System.Xml.XPath;
 using NUnit.Framework;
@@ -418,5 +419,31 @@ namespace MonoTests.System.Xml
 			XPathNodeIterator iter = nav.SelectChildren ("foo", "urn:foo");
 			AssertEquals (2, iter.Count);
 		}
+
+#if NET_2_0
+
+		[Test]
+		// bug #78067
+		public void OuterXml ()
+		{
+			string xml = @"<?xml version=""1.0""?>
+<one>
+        <two>Some data.</two>
+</one>";
+
+			nav = GetXmlDocumentNavigator (xml);
+			OuterXml (nav);
+			nav = GetXPathDocumentNavigator (document);
+			OuterXml (nav);
+		}
+
+		private void OuterXml (XPathNavigator nav)
+		{
+			string ret = @"<one>
+  <two>Some data.</two>
+</one>";
+			AssertEquals (ret, nav.OuterXml.Replace ("\r\n", "\n"));
+		}
+#endif
 	}
 }
