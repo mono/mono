@@ -1,3 +1,16 @@
+2006-04-06  Mike Kestner  <mkestner@novell.com>
+
+	* ScrollBar.cs: fix "new event" declarations (#76509) and bounds check
+	all user-initiated value changes to min <= value <= max-thumbsz+1.
+	(set_Value): check for vert/horiz when calculating new thumb position.
+	(LargeIncrement): bounds check to stop pos at max - thumb_size + 1
+	like MS does.
+	(OnMouseMoveSB): refactor the thumb dragging code and refine
+	invalidation logic to reduce flicker.
+	(SetEndPosition): bounds check to stop pos at max - thumb_size + 1
+	(SmallIncrement): bounds check to stop pos at max - thumb_size + 1
+	(UpdateThumbPosition): small code readability cleanup
+
 2006-04-10  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ThemeNice.cs: Small UI polishing. Draw borders a little bit

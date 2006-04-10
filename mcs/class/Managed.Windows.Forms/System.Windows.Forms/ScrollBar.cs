@@ -62,17 +62,13 @@ namespace System.Windows.Forms
 		private float pixel_per_pos = 0;
 		private Timer timer = new Timer ();
 		private TimerType timer_type;
-		private int thumb_pixel_click_move;
-		private int thumb_pixel_click_move_prev;
 		private int thumb_size = 40;
 		private const int thumb_min_size = 8;
 		private const int thumb_notshown_size = 40;
 		internal bool vert;
 		private int lastclick_pos;      // Position of the last button-down event
 		private int lastclick_pos_thumb;      // Position of the last button-down event relative to the thumb		
-		private bool outside_thumbarea_right = false;
-		private bool outside_thumbarea_left = false;
-
+		private int thumbclick_offset; // Position of the last button-down event relative to the thumb edge		
 		private Rectangle dirty;
 
 		internal ThumbMoving thumb_moving = ThumbMoving.None;
@@ -97,53 +93,89 @@ namespace System.Windows.Forms
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler BackColorChanged;
+		public new event EventHandler BackColorChanged {
+			add { base.BackColorChanged += value; }
+			remove { base.BackColorChanged -= value; }
+		}
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler BackgroundImageChanged;
+		public new event EventHandler BackgroundImageChanged {
+			add { base.BackgroundImageChanged += value; }
+			remove { base.BackgroundImageChanged -= value; }
+		}
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler Click;
+		public new event EventHandler Click {
+			add { base.Click += value; }
+			remove { base.Click -= value; }
+		}
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler DoubleClick;
+		public new event EventHandler DoubleClick {
+			add { base.DoubleClick += value; }
+			remove { base.DoubleClick -= value; }
+		}
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler FontChanged;
+		public new event EventHandler FontChanged {
+			add { base.FontChanged += value; }
+			remove { base.FontChanged -= value; }
+		}
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler ForeColorChanged;
+		public new event EventHandler ForeColorChanged {
+			add { base.ForeColorChanged += value; }
+			remove { base.ForeColorChanged -= value; }
+		}
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler ImeModeChanged;
+		public new event EventHandler ImeModeChanged {
+			add { base.ImeModeChanged += value; }
+			remove { base.ImeModeChanged -= value; }
+		}
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event MouseEventHandler MouseDown;
+		public new event MouseEventHandler MouseDown {
+			add { base.MouseDown += value; }
+			remove { base.MouseDown -= value; }
+		}
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event MouseEventHandler MouseMove;
+		public new event MouseEventHandler MouseMove {
+			add { base.MouseMove += value; }
+			remove { base.MouseMove -= value; }
+		}
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event MouseEventHandler MouseUp;
+		public new event MouseEventHandler MouseUp {
+			add { base.MouseUp += value; }
+			remove { base.MouseUp -= value; }
+		}
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event PaintEventHandler Paint;
+		public new event PaintEventHandler Paint {
+			add { base.Paint += value; }
+			remove { base.Paint -= value; }
+		}
 		
 		public event ScrollEventHandler Scroll;
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler TextChanged;
+		public new event EventHandler TextChanged {
+			add { base.TextChanged += value; }
+			remove { base.TextChanged -= value; }
+		}
 		
 		public event EventHandler ValueChanged;
 		#endregion Events
@@ -210,10 +242,6 @@ namespace System.Windows.Forms
 			set {
 				if (base.BackColor == value)
 					return;
-
-				if (BackColorChanged != null)
-					BackColorChanged (this, EventArgs.Empty);
-
 				base.BackColor = value;
 				Refresh ();
 			}
@@ -227,9 +255,6 @@ namespace System.Windows.Forms
 			set {
 				if (base.BackgroundImage == value)
 					return;
-
-				if (BackgroundImageChanged != null)
-					BackgroundImageChanged (this, EventArgs.Empty);
 
 				base.BackgroundImage = value;
 			}
@@ -254,9 +279,6 @@ namespace System.Windows.Forms
 				if (base.Font.Equals (value))
 					return;
 
-				if (FontChanged != null)
-					FontChanged (this, EventArgs.Empty);
-
 				base.Font = value;
 			}
 		}
@@ -269,9 +291,6 @@ namespace System.Windows.Forms
 			set {
 				if (base.ForeColor == value)
 					return;
-
-				if (ForeColorChanged != null)
-					ForeColorChanged (this, EventArgs.Empty);
 
 				base.ForeColor = value;
 				Refresh ();
@@ -286,9 +305,6 @@ namespace System.Windows.Forms
 			set {
 				if (base.ImeMode == value)
 					return;
-
-				if (ImeModeChanged != null)
-					ImeModeChanged (this, EventArgs.Empty);
 
 				base.ImeMode = value;
 			}
@@ -413,7 +429,7 @@ namespace System.Windows.Forms
 					ClearDirty ();
 					
 					if (IsHandleCreated) {
-						UpdateThumbPos (thumb_area.Y + (int)(((float)(position - minimum)) * pixel_per_pos), false);
+						UpdateThumbPos ((vert ? thumb_area.Y : thumb_area.X) + (int)(((float)(position - minimum)) * pixel_per_pos), false);
 					}
 					
 					InvalidateDirty ();
@@ -550,7 +566,7 @@ namespace System.Windows.Forms
 		private void LargeIncrement ()
     		{			
 			ScrollEventArgs event_args;
-    			int pos = Math.Min (Maximum, position + large_change);
+    			int pos = Math.Min (Maximum - large_change + 1, position + large_change);
 
     			event_args = new ScrollEventArgs (ScrollEventType.LargeIncrement, pos);
     			OnScroll (event_args);    			
@@ -675,10 +691,6 @@ namespace System.Windows.Forms
 
     		private void OnMouseMoveSB (object sender, MouseEventArgs e)
     		{
-    			if (MouseMove != null) {
-				MouseMove (this, e);
-			}
-				
 			if (Enabled == false || thumb_size == 0)
 				return;
 
@@ -703,83 +715,36 @@ namespace System.Windows.Forms
 					return;
 				}
 			} else if (thumb_pressed == true) {
-    				int pixel_pos;
-
 				if (vert) {
+					int thumb_edge = e.Y - thumbclick_offset;
 
-					int mouse_click = e.Y;
-					int outside_curpos = thumb_area.Y + thumb_area.Height - thumb_size + lastclick_pos_thumb;
-					
-					
-					if (mouse_click > thumb_area.Y + thumb_area.Height) {
-						outside_thumbarea_right = true;
-						mouse_click = thumb_area.Y + thumb_area.Height;
-					}
+					if (thumb_edge < thumb_area.Y)
+						thumb_edge = thumb_area.Y;
+					else if (thumb_edge > thumb_area.Bottom - thumb_size)
+						thumb_edge = thumb_area.Bottom - thumb_size;
 
-					if (mouse_click < thumb_area.Y) {
-						outside_thumbarea_left = true;
-						mouse_click = thumb_area.Y;
-					}
-
-					if (outside_thumbarea_right && mouse_click < outside_curpos) {
-						outside_thumbarea_right = false;
-						thumb_pixel_click_move_prev =
-						thumb_pixel_click_move = outside_curpos;
-					}
-
-					if (outside_thumbarea_left && mouse_click > thumb_area.Y + lastclick_pos_thumb) {
-						outside_thumbarea_left = false;
-						thumb_pixel_click_move_prev =
-						thumb_pixel_click_move = thumb_area.Y + lastclick_pos_thumb;
-					}
-
-					if (outside_thumbarea_right == false && outside_thumbarea_left == false) {
-						pixel_pos = thumb_pos.Y + (thumb_pixel_click_move - thumb_pixel_click_move_prev);
-						thumb_pixel_click_move_prev = thumb_pixel_click_move;
-						thumb_pixel_click_move = mouse_click;
-						
-						UpdateThumbPos (pixel_pos, true);
+					if (thumb_edge != thumb_pos.Y) {
+						UpdateThumbPos (thumb_edge, true);
 						OnScroll (new ScrollEventArgs (ScrollEventType.ThumbTrack, position));
+						Invalidate (thumb_area);
 					}
 
-				}
-				else {
-					int mouse_click = e.X;
-					int outside_curpos = thumb_area.X + thumb_area.Width - thumb_size + lastclick_pos_thumb;
-										
-					if (mouse_click >  thumb_area.X + thumb_area.Width) {
-						outside_thumbarea_right = true;
-						mouse_click = thumb_area.X + thumb_area.Width;
-					}
+				} else {
+					int thumb_edge = e.X - thumbclick_offset;
 
-					if (mouse_click <  thumb_area.X) {
-						outside_thumbarea_left = true;
-						mouse_click = thumb_area.X;
-					}
+					if (thumb_edge < thumb_area.X)
+						thumb_edge = thumb_area.X;
+					else if (thumb_edge > thumb_area.Right - thumb_size)
+						thumb_edge = thumb_area.Right - thumb_size;
 
-					if (outside_thumbarea_right && mouse_click < outside_curpos) {
-						outside_thumbarea_right = false;
-						thumb_pixel_click_move_prev =
-						thumb_pixel_click_move = outside_curpos;
-					}
-
-					if (outside_thumbarea_left && mouse_click > thumb_area.X + lastclick_pos_thumb) {
-						outside_thumbarea_left = false;
-						thumb_pixel_click_move_prev =
-						thumb_pixel_click_move = thumb_area.X + lastclick_pos_thumb;
-					}
-
-					if (outside_thumbarea_right == false && outside_thumbarea_left == false) {
-						pixel_pos = thumb_pos.X + (thumb_pixel_click_move - thumb_pixel_click_move_prev);
-						thumb_pixel_click_move_prev = thumb_pixel_click_move;
-						thumb_pixel_click_move = mouse_click;
-						UpdateThumbPos (pixel_pos, true);						
+					if (thumb_edge != thumb_pos.X) {
+						UpdateThumbPos (thumb_edge, true);
 						OnScroll (new ScrollEventArgs (ScrollEventType.ThumbTrack, position));
+						Invalidate (thumb_area);
 					}
 
 				}
 
-				Refresh ();
 			}
 
     		}
@@ -788,12 +753,6 @@ namespace System.Windows.Forms
     		{
 			ClearDirty ();
 			
-    			if (e.Button == MouseButtons.Right) {
-    				if (MouseDown != null) {
-					MouseDown (this, e);
-				}
-			}
-    			
 			if (Enabled == false)
 				return;
 
@@ -823,14 +782,12 @@ namespace System.Windows.Forms
 				thumb_pressed = true;
 				this.Capture = true;
 				if (vert) {
-					lastclick_pos_thumb = e.Y - thumb_pos.Y;
+					thumbclick_offset = e.Y - thumb_pos.Y;
 					lastclick_pos = e.Y;					
-					thumb_pixel_click_move_prev = thumb_pixel_click_move = e.Y;
 				}
 				else {
-					lastclick_pos_thumb = e.X - thumb_pos.X;
+					thumbclick_offset = e.X - thumb_pos.X;
 					lastclick_pos = e.X;
-					thumb_pixel_click_move_prev = thumb_pixel_click_move = e.X;
 				}
 			} else {
 				if (thumb_size > 0 && thumb_area.Contains (e.X, e.Y)) {
@@ -885,12 +842,6 @@ namespace System.Windows.Forms
     		{
 			ClearDirty ();
 
-    			if (e.Button == MouseButtons.Right) {
-    				if (MouseUp != null) {
-					MouseUp (this, e);
-				}
-			}
-			
 			if (Enabled == false)
 				return;
 
@@ -974,7 +925,7 @@ namespace System.Windows.Forms
 		private void SetEndPosition () 
 		{			
 			ScrollEventArgs event_args;
-    			int pos = Maximum;
+    			int pos = Maximum - large_change + 1;
     			
     			event_args = new ScrollEventArgs (ScrollEventType.Last, pos);
     			OnScroll (event_args);
@@ -1006,7 +957,7 @@ namespace System.Windows.Forms
     		private void SmallIncrement ()
     		{
     			ScrollEventArgs event_args;
-    			int pos = Math.Min (Maximum, position + small_change);
+    			int pos = Math.Min (Maximum - large_change + 1, position + small_change);
     			
     			event_args = new ScrollEventArgs (ScrollEventType.SmallIncrement, pos);
     			OnScroll (event_args);    			
@@ -1102,11 +1053,10 @@ namespace System.Windows.Forms
 				Dirty (thumb_pos);
 	    			if (pixel < thumb_area.Y)
 	    				thumb_pos.Y = thumb_area.Y;
+	    			else if (pixel > thumb_area.Bottom - thumb_size)
+	    				thumb_pos.Y = thumb_area.Bottom - thumb_size;
 	    			else
-	    				if (pixel > thumb_area.Y + thumb_area.Height - thumb_size)
-	    					thumb_pos.Y = thumb_area.Y +  thumb_area.Height - thumb_size;
-	    				else
-	    					thumb_pos.Y = pixel;
+	    				thumb_pos.Y = pixel;
 
 				thumb_pos.X = 0;
 				thumb_pos.Width = ThemeEngine.Current.ScrollBarButtonSize;
@@ -1119,11 +1069,10 @@ namespace System.Windows.Forms
 				Dirty (thumb_pos);
 				if (pixel < thumb_area.X)
 	    				thumb_pos.X = thumb_area.X;
+	    			else if (pixel > thumb_area.Right - thumb_size)
+	    				thumb_pos.X = thumb_area.Right - thumb_size;
 	    			else
-	    				if (pixel > thumb_area.X + thumb_area.Width - thumb_size)
-	    					thumb_pos.X = thumb_area.X +  thumb_area.Width - thumb_size;
-	    				else
-	    					thumb_pos.X = pixel;
+	    				thumb_pos.X = pixel;
 
 				thumb_pos.Y = 0;
 				thumb_pos.Width =  thumb_size;
