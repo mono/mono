@@ -1,3 +1,7 @@
+2006-04-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* culture-info-table.h : regenerated. Fixed bug #69652.
+
 2006-04-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* loader.c metadata.c: Reapply a variant r59116.
