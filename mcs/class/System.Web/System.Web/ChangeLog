@@ -1,3 +1,13 @@
+2006-04-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpUtility.cs: allow "%%" as a escape for '%' and ignore invalid
+	hexadecimal characters. Based on a patch by Vladimir Krasnov.
+
+2006-04-05 Andrew Skiba <andrews@mainsoft.com>
+
+	* HttpUtility: UrlEncode and UrlEncodeUnicode logic unified, behaviour
+	fixed to match dotnet and http://rfc.net/rfc1738.html
+
 2006-03-19 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TempFileStream.cs: a FileStream that removes the file once
