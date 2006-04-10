@@ -195,7 +195,6 @@ namespace System.Windows.Forms
 			
 			Rectangle buttonRectangle;
 			
-			int width = button.ClientSize.Width;
 			int height = button.ClientSize.Height;
 			
 			// set up the button rectangle
@@ -223,21 +222,30 @@ namespace System.Windows.Forms
 				if (button.has_focus && !check_or_radio)
 					return; 
 				
-				Point[] points = new Point [] {
-					new Point (2, 0),
-					new Point (width - 3, 0),
-					new Point (width - 1, 2),
-					new Point (width - 1, height - 3),
-					new Point (width - 3, height - 1),
-					new Point (2, height - 1),
-					new Point (0, height - 3),
-					new Point (0, 2),
-					new Point (2, 0)
-				};
-				
-				Pen pen = ResPool.GetPen (BorderColor);
-				dc.DrawLines (pen, points);
+				Internal_DrawButton(dc, buttonRectangle, BorderColor);
 			}
+		}
+		
+		private void Internal_DrawButton(Graphics dc, Rectangle area, Color border_color)
+		{
+			Point[] points = new Point [] {
+				new Point (area.X + 1, area.Y),
+				new Point (area.Right - 2, area.Y),
+				new Point (area.Right - 2, area.Y + 1),
+				new Point (area.Right - 1, area.Y + 1),
+				new Point (area.Right - 1, area.Bottom - 2),
+				new Point (area.Right - 2, area.Bottom - 2),
+				new Point (area.Right - 2, area.Bottom - 1),
+				new Point (area.X + 1, area.Bottom - 1),
+				new Point (area.X + 1, area.Bottom - 2),
+				new Point (area.X, area.Bottom - 2),
+				new Point (area.X, area.Y + 1),
+				new Point (area.X + 1, area.Y + 1),
+				new Point (area.X + 1, area.Y)
+			};
+			
+			Pen pen = ResPool.GetPen (border_color);
+			dc.DrawPolygon (pen, points);
 		}
 		
 		protected override void ButtonBase_DrawFocus( ButtonBase button, Graphics dc )
@@ -245,23 +253,7 @@ namespace System.Windows.Forms
 			if ((button is RadioButton) || (button is CheckBox))
 				return; 
 			
-			int width = button.ClientSize.Width;
-			int height = button.ClientSize.Height;
-			
-			Point[] points = new Point[] {
-				new Point( 2, 0 ),
-				new Point( width - 3, 0 ),
-				new Point( width - 1, 2 ),
-				new Point( width - 1, height - 3 ),
-				new Point( width - 3, height - 1 ),
-				new Point( 2, height - 1 ),
-				new Point( 0, height - 3 ),
-				new Point( 0, 2 ),
-				new Point( 2, 0 )
-			};
-			
-			Pen pen = ResPool.GetPen( FocusColor );
-			dc.DrawLines( pen, points );
+			Internal_DrawButton(dc, button.ClientRectangle, FocusColor);
 		}
 		
 		protected override void ButtonBase_DrawText( ButtonBase button, Graphics dc )
@@ -672,7 +664,7 @@ namespace System.Windows.Forms
 			area.Height -= border_size;
 			if ( panel.BorderStyle != StatusBarPanelBorderStyle.None )
 			{
-				DrawNiceRoundedBorder( dc, area, BorderColor );
+				Internal_DrawButton( dc, area, BorderColor );
 			}
 			
 			if ( panel.Style == StatusBarPanelStyle.OwnerDraw )
@@ -718,25 +710,6 @@ namespace System.Windows.Forms
 						    area.Bottom - y - border_size );
 			
 			dc.DrawString( text, panel.Parent.Font, br_forecolor, r, string_format );
-		}
-		
-		private void DrawNiceRoundedBorder( Graphics dc, Rectangle area, Color color )
-		{
-			Pen pen = ResPool.GetPen( color ); 
-			
-			Point[] points = new Point[] {
-				new Point( area.Left + 2, area.Top ),
-				new Point( area.Right - 2, area.Top ),
-				new Point( area.Right, area.Top + 2 ),
-				new Point( area.Right, area.Bottom - 2 ),
-				new Point( area.Right - 2, area.Bottom ),
-				new Point( area.Left + 2, area.Bottom ),
-				new Point( area.Left, area.Bottom - 2 ),
-				new Point( area.Left, area.Top + 2 ),
-				new Point( area.Left + 2, area.Top )
-			};
-			
-			dc.DrawLines( pen, points );
 		}
 		#endregion	// StatusBar
 		
@@ -1110,20 +1083,7 @@ namespace System.Windows.Forms
 				dc.FillRectangle (lgbr, lgbRectangle);
 			}
 			
-			Point[] points = new Point  [] {
-				new Point (buttonRectangle.X + 2, buttonRectangle.Y),
-				new Point (buttonRectangle.Right - 3, buttonRectangle.Y),
-				new Point (buttonRectangle.Right - 1, buttonRectangle.Y + 2),
-				new Point (buttonRectangle.Right - 1, buttonRectangle.Bottom - 3),
-				new Point (buttonRectangle.Right - 3, buttonRectangle.Bottom - 1),
-				new Point (buttonRectangle.X + 2, buttonRectangle.Bottom - 1),
-				new Point (buttonRectangle.X, buttonRectangle.Bottom - 3),
-				new Point (buttonRectangle.X, buttonRectangle.Y + 2),
-				new Point (buttonRectangle.X + 2, buttonRectangle.Y)
-			};
-			
-			Pen pen = ResPool.GetPen (BorderColor);
-			dc.DrawLines (pen, points);
+			Internal_DrawButton (dc, buttonRectangle, BorderColor);
 		}
 		
 		void DrawToolBarSeparator (Graphics dc, ToolBarButton button)
@@ -1298,20 +1258,7 @@ namespace System.Windows.Forms
 				dc.FillRectangle (lgbr, lgbRectangle);
 			}
 			
-			Point[] points = new Point [] {
-				new Point (rectangle.X + 2, rectangle.Y),
-				new Point (rectangle.Right - 3, rectangle.Y),
-				new Point (rectangle.Right - 1, rectangle.Y + 2),
-				new Point (rectangle.Right - 1, rectangle.Bottom - 3),
-				new Point (rectangle.Right - 3, rectangle.Bottom - 1),
-				new Point (rectangle.X + 2, rectangle.Bottom - 1),
-				new Point (rectangle.X, rectangle.Bottom - 3),
-				new Point (rectangle.X, rectangle.Y + 2),
-				new Point (rectangle.X + 2, rectangle.Y)
-			};
-			
-			Pen pen = ResPool.GetPen (BorderColor);
-			dc.DrawLines (pen, points);
+			Internal_DrawButton(dc, rectangle, BorderColor);
 		}
 		
 		public override void CPDrawComboButton( Graphics dc, Rectangle rectangle, ButtonState state )
@@ -1362,19 +1309,7 @@ namespace System.Windows.Forms
 				dc.FillRectangle( lgbr, rectangle.X + 2, rectangle.Y + 1, rectangle.Width - 4, rectangle.Height - 3 );
 			}
 			
-			Point[] points = new Point[] {
-				new Point( rectangle.X + 3, rectangle.Y + 1 ),
-				new Point( rectangle.Right - 4, rectangle.Y + 1 ),
-				new Point( rectangle.Right - 2, rectangle.Y + 3 ),
-				new Point( rectangle.Right - 2, rectangle.Bottom - 4 ),
-				new Point( rectangle.Right - 4, rectangle.Bottom - 2 ),
-				new Point( rectangle.X + 3, rectangle.Bottom - 2 ),
-				new Point( rectangle.X + 1, rectangle.Bottom - 4 ),
-				new Point( rectangle.X + 1, rectangle.Y + 3 ),
-				new Point( rectangle.X + 3, rectangle.Y + 1 )
-			};
-			
-			dc.DrawPolygon( ResPool.GetPen( BorderColor ), points );
+			Internal_DrawButton(dc, new Rectangle(rectangle.X + 1, rectangle.Y + 1, rectangle.Width - 2, rectangle.Height - 2), BorderColor);
 			
 			rect = new Rectangle( rectangle.X + rectangle.Width / 4, rectangle.Y + rectangle.Height / 4, rectangle.Width / 2, rectangle.Height / 2 );
 			centerX = rect.Left + rect.Width / 2;
@@ -1528,24 +1463,10 @@ namespace System.Windows.Forms
 			
 			lgbr.Blend = NormalBlend;
 			
-			Pen pen = ResPool.GetPen( BorderColor );
-			
-			Point[] points = new Point[] {
-				new Point( area.X + 2, area.Y ),
-				new Point( area.Right - 3, area.Y ),
-				new Point( area.Right - 1, area.Y + 2 ),
-				new Point( area.Right - 1, area.Bottom - 3 ),
-				new Point( area.Right - 3, area.Bottom - 1 ),
-				new Point( area.X + 2, area.Bottom - 1 ),
-				new Point( area.X, area.Bottom - 3 ),
-				new Point( area.X, area.Y + 2 ),
-				new Point( area.X + 2, area.Y )
-			};
-			
 			if ( bar.vert )
 			{
 				dc.FillRectangle( lgbr, area.X + 1, area.Y + 1, area.Width - 2, area.Height - 2 );
-				dc.DrawPolygon( pen, points );
+				Internal_DrawButton (dc, area, BorderColor);
 				
 				// draw grip lines only if stere is enough space
 				if ( area.Height > 20 )
@@ -1567,7 +1488,7 @@ namespace System.Windows.Forms
 			else
 			{
 				dc.FillRectangle( lgbr, area.X + 1, area.Y + 1, area.Width - 2, area.Height - 2 );
-				dc.DrawPolygon( pen, points );
+				Internal_DrawButton (dc, area, BorderColor);
 				
 				// draw grip lines only if stere is enough space
 				if ( area.Width > 20 )

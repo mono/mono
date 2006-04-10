@@ -1,3 +1,8 @@
+2006-04-10  Alexander Olk  <alex.olk@googlemail.com>
+
+	* ThemeNice.cs: Small UI polishing. Draw borders a little bit
+	  different
+
 2006-04-08  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ThemeNice.cs: Use a better graphics effect when a button is pressed
