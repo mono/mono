@@ -97,6 +97,27 @@ namespace MonoTests.System.Drawing.Drawing2D
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Constructor_Int_4Point ()
+		{
+			new Matrix (rect, new Point[4]);
+		}
+
+		[Test]
+		public void Constructor_Rect_Point ()
+		{
+			Rectangle r = new Rectangle (100, 200, 300, 400);
+			Matrix m = new Matrix (r, new Point[3] { new Point (10, 20), new Point (30, 40), new Point (50, 60) });
+			float[] elements = m.Elements;
+			AssertEquals ("0", 0.06666666, elements[0], 0.00001);
+			AssertEquals ("1", 0.06666666, elements[1], 0.00001);
+			AssertEquals ("2", 0.09999999, elements[2], 0.00001);
+			AssertEquals ("3", 0.09999999, elements[3], 0.00001);
+			AssertEquals ("4", -16.6666679, elements[4], 0.00001);
+			AssertEquals ("5", -6.666667, elements[5], 0.00001);
+		}
+
+		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void Constructor_Float_Null ()
 		{
@@ -108,6 +129,27 @@ namespace MonoTests.System.Drawing.Drawing2D
 		public void Constructor_Float_Empty ()
 		{
 			new Matrix (rectf, new PointF[0]);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Constructor_Float_2PointF ()
+		{
+			new Matrix (rectf, new PointF[2]);
+		}
+
+		[Test]
+		public void Constructor_RectF_PointF ()
+		{
+			RectangleF r = new RectangleF (100, 200, 300, 400);
+			Matrix m = new Matrix (r, new PointF[3] { new PointF (10, 20), new PointF (30, 40), new PointF (50, 60) });
+			float[] elements = m.Elements;
+			AssertEquals ("0", 0.06666666, elements[0], 0.00001);
+			AssertEquals ("1", 0.06666666, elements[1], 0.00001);
+			AssertEquals ("2", 0.09999999, elements[2], 0.00001);
+			AssertEquals ("3", 0.09999999, elements[3], 0.00001);
+			AssertEquals ("4", -16.6666679, elements[4], 0.00001);
+			AssertEquals ("5", -6.666667, elements[5], 0.00001);
 		}
 
 		// Properties
