@@ -1,5 +1,9 @@
 2006-04-10  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XPathNavigatorCommonTests.cs : there were some evil CRLF LF mix.
+
+2006-04-10  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XPathNavigatorCommonTests.cs : added test for bug #78067.
 	* XPathNavigatorReaderTests.cs : ditto, for ReadSubtree() part.
 
