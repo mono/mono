@@ -28,6 +28,7 @@
 
 using System.Text;
 using System.Web;
+using System.IO;
 
 using NUnit.Framework;
 
@@ -81,7 +82,154 @@ namespace MonoTests.System.Web {
 			Assert.AreEqual (0x25, bytes [0], "#5");
 		}
 
+		[Test]
+		public void UrlDecode1 ()
+		{
+			Assert.AreEqual ("http://127.0.0.1:8080/appDir/page.aspx?foo=bar", 
+				HttpUtility.UrlDecode("http://127.0.0.1:8080/appDir/page.aspx?foo=b%61r"),				
+				"UrlDecode1 #1");
+			
+			Assert.AreEqual ("http://127.0.0.1:8080/appDir/page.aspx?foo=b%ar", 
+				HttpUtility.UrlDecode("http://127.0.0.1:8080/appDir/page.aspx?foo=b%%61r"),
+				"UrlDecode1 #2");
+			
+			Assert.AreEqual ("http://127.0.0.1:8080/app%Dir/page.aspx?foo=b%ar", 
+				HttpUtility.UrlDecode("http://127.0.0.1:8080/app%Dir/page.aspx?foo=b%%61r"),
+				"UrlDecode1 #3");
 
+			Assert.AreEqual ("http://127.0.0.1:8080/app%%Dir/page.aspx?foo=b%%r", 
+				HttpUtility.UrlDecode("http://127.0.0.1:8080/app%%Dir/page.aspx?foo=b%%r"),
+				"UrlDecode1 #4");
+
+			Assert.AreEqual ("http://127.0.0.1:8080/appDir/page.aspx?foo=ba%r", 
+				HttpUtility.UrlDecode("http://127.0.0.1:8080/appDir/page.aspx?foo=b%61%r"),
+				"UrlDecode1 #5");
+
+			Assert.AreEqual ("http://127.0.0.1:8080/appDir/page.aspx?foo=bar", 
+				HttpUtility.UrlDecode("http://127.0.0.1:8080/appDir/page.aspx?foo=b%u0061r"),
+				"UrlDecode1 #6");
+			
+			Assert.AreEqual ("http://127.0.0.1:8080/appDir/page.aspx?foo=b%ar", 
+				HttpUtility.UrlDecode("http://127.0.0.1:8080/appDir/page.aspx?foo=b%%u0061r"),
+				"UrlDecode1 #7");
+			
+			Assert.AreEqual ("http://127.0.0.1:8080/appDir/page.aspx?foo=b%uu0061r", 
+				HttpUtility.UrlDecode("http://127.0.0.1:8080/appDir/page.aspx?foo=b%uu0061r"),
+				"UrlDecode1 #8");
+		}
+
+		[Test]
+		public void UrlDecode2 ()
+		{
+			Assert.AreEqual (
+				"http://127.0.0.1:8080/appDir/page.aspx?foo=bar", 
+				HttpUtility.UrlDecode (
+				Encoding.UTF8.GetBytes("http://127.0.0.1:8080/appDir/page.aspx?foo=b%61r"),
+				Encoding.UTF8), 
+				"UrlDecode2 #1");
+
+			Assert.AreEqual (
+				"http://127.0.0.1:8080/appDir/page.aspx?foo=b%ar", 
+				HttpUtility.UrlDecode (
+				Encoding.UTF8.GetBytes("http://127.0.0.1:8080/appDir/page.aspx?foo=b%%61r"),
+				Encoding.UTF8), 
+				"UrlDecode2 #2");
+
+			Assert.AreEqual (
+				"http://127.0.0.1:8080/app%Dir/page.aspx?foo=b%ar", 
+				HttpUtility.UrlDecode (
+				Encoding.UTF8.GetBytes("http://127.0.0.1:8080/app%Dir/page.aspx?foo=b%%61r"),
+				Encoding.UTF8), 
+				"UrlDecode2 #3");
+
+			Assert.AreEqual (
+				"http://127.0.0.1:8080/app%%Dir/page.aspx?foo=b%%r", 
+				HttpUtility.UrlDecode (
+				Encoding.UTF8.GetBytes("http://127.0.0.1:8080/app%%Dir/page.aspx?foo=b%%r"),
+				Encoding.UTF8), 
+				"UrlDecode2 #4");
+
+			Assert.AreEqual (
+				"http://127.0.0.1:8080/appDir/page.aspx?foo=ba%r", 
+				HttpUtility.UrlDecode (
+				Encoding.UTF8.GetBytes("http://127.0.0.1:8080/appDir/page.aspx?foo=b%61%r"),
+				Encoding.UTF8), 
+				"UrlDecode2 #5");
+
+			Assert.AreEqual (
+				"http://127.0.0.1:8080/appDir/page.aspx?foo=bar", 
+				HttpUtility.UrlDecode (
+				Encoding.UTF8.GetBytes("http://127.0.0.1:8080/appDir/page.aspx?foo=b%u0061r"),
+				Encoding.UTF8), 
+				"UrlDecode2 #6");
+
+			Assert.AreEqual (
+				"http://127.0.0.1:8080/appDir/page.aspx?foo=b%ar", 
+				HttpUtility.UrlDecode (
+				Encoding.UTF8.GetBytes("http://127.0.0.1:8080/appDir/page.aspx?foo=b%%u0061r"),
+				Encoding.UTF8), 
+				"UrlDecode2 #7");
+
+			Assert.AreEqual (
+				"http://127.0.0.1:8080/appDir/page.aspx?foo=b%uu0061r", 
+				HttpUtility.UrlDecode (
+				Encoding.UTF8.GetBytes("http://127.0.0.1:8080/appDir/page.aspx?foo=b%uu0061r"),
+				Encoding.UTF8), 
+				"UrlDecode2 #8");
+		}
+
+		[Test]
+		public void UrlDecodeToBytes2 ()
+		{
+			Assert.AreEqual (
+				"http://127.0.0.1:8080/appDir/page.aspx?foo=bar", 
+				Encoding.UTF8.GetString (
+				HttpUtility.UrlDecodeToBytes("http://127.0.0.1:8080/appDir/page.aspx?foo=b%61r")),
+				"UrlDecodeToBytes2 #1");
+
+			Assert.AreEqual (
+				"http://127.0.0.1:8080/appDir/page.aspx?foo=b%ar", 
+				Encoding.UTF8.GetString (
+				HttpUtility.UrlDecodeToBytes("http://127.0.0.1:8080/appDir/page.aspx?foo=b%%61r")),
+				"UrlDecodeToBytes2 #2");
+
+			Assert.AreEqual (
+				"http://127.0.0.1:8080/app%Dir/page.aspx?foo=b%ar", 
+				Encoding.UTF8.GetString (
+				HttpUtility.UrlDecodeToBytes("http://127.0.0.1:8080/app%Dir/page.aspx?foo=b%%61r")),
+				"UrlDecodeToBytes2 #3");
+
+			Assert.AreEqual (
+				"http://127.0.0.1:8080/app%%Dir/page.aspx?foo=b%%r", 
+				Encoding.UTF8.GetString (
+				HttpUtility.UrlDecodeToBytes("http://127.0.0.1:8080/app%%Dir/page.aspx?foo=b%%r")),
+				"UrlDecodeToBytes2 #4");
+
+			Assert.AreEqual (
+				"http://127.0.0.1:8080/appDir/page.aspx?foo=ba%r", 
+				Encoding.UTF8.GetString (
+				HttpUtility.UrlDecodeToBytes("http://127.0.0.1:8080/appDir/page.aspx?foo=b%61%r")),
+				"UrlDecodeToBytes2 #5");
+
+			Assert.AreEqual (
+				"http://127.0.0.1:8080/appDir/page.aspx?foo=b%u0061r", 
+				Encoding.UTF8.GetString (
+				HttpUtility.UrlDecodeToBytes("http://127.0.0.1:8080/appDir/page.aspx?foo=b%u0061r")),
+				"UrlDecodeToBytes2 #6");
+
+			Assert.AreEqual (
+				"http://127.0.0.1:8080/appDir/page.aspx?foo=b%%u0061r", 
+				Encoding.UTF8.GetString (
+				HttpUtility.UrlDecodeToBytes("http://127.0.0.1:8080/appDir/page.aspx?foo=b%%u0061r")),
+				"UrlDecodeToBytes2 #7");
+
+			Assert.AreEqual (
+				"http://127.0.0.1:8080/appDir/page.aspx?foo=b%uu0061r", 
+				Encoding.UTF8.GetString (
+				HttpUtility.UrlDecodeToBytes("http://127.0.0.1:8080/appDir/page.aspx?foo=b%uu0061r")),
+				"UrlDecodeToBytes2 #8");
+		}
+		
 		[Test]
 		public void EscapedCharacters ()
 		{
@@ -137,6 +285,83 @@ namespace MonoTests.System.Web {
 		{
 			string str = "../../&amp;param2=%CURRREV%";
 			Assert.AreEqual (str, HttpUtility.UrlDecode (str), "#1");
+		}
+
+		static char [] hexChars = "0123456789abcdef".ToCharArray ();
+
+		const string notEncoded = "!'()*-._";
+
+		static void UrlEncodeChar (char c, Stream result, bool isUnicode) {
+			if (c > 255) {
+				//FIXME: what happens when there is an internal error?
+				//if (!isUnicode)
+				//	throw new ArgumentOutOfRangeException ("c", c, "c must be less than 256");
+				int idx;
+				int i = (int) c;
+
+				result.WriteByte ((byte)'%');
+				result.WriteByte ((byte)'u');
+				idx = i >> 12;
+				result.WriteByte ((byte)hexChars [idx]);
+				idx = (i >> 8) & 0x0F;
+				result.WriteByte ((byte)hexChars [idx]);
+				idx = (i >> 4) & 0x0F;
+				result.WriteByte ((byte)hexChars [idx]);
+				idx = i & 0x0F;
+				result.WriteByte ((byte)hexChars [idx]);
+				return;
+			}
+			
+			if (c>' ' && notEncoded.IndexOf (c)!=-1) {
+				result.WriteByte ((byte)c);
+				return;
+			}
+			if (c==' ') {
+				result.WriteByte ((byte)'+');
+				return;
+			}
+			if (	(c < '0') ||
+				(c < 'A' && c > '9') ||
+				(c > 'Z' && c < 'a') ||
+				(c > 'z')) {
+				if (isUnicode && c > 127) {
+					result.WriteByte ((byte)'%');
+					result.WriteByte ((byte)'u');
+					result.WriteByte ((byte)'0');
+					result.WriteByte ((byte)'0');
+				}
+				else
+					result.WriteByte ((byte)'%');
+				
+				int idx = ((int) c) >> 4;
+				result.WriteByte ((byte)hexChars [idx]);
+				idx = ((int) c) & 0x0F;
+				result.WriteByte ((byte)hexChars [idx]);
+			}
+			else
+				result.WriteByte ((byte)c);
+		}
+
+		[Test]
+		public void UrlEncode ()
+		{
+			for (char c=char.MinValue; c<char.MaxValue; c++) {
+				byte [] bIn;
+				bIn = Encoding.UTF8.GetBytes (c.ToString ());
+				MemoryStream expected = new MemoryStream ();
+				MemoryStream expUnicode = new MemoryStream ();
+
+				//build expected result for UrlEncode
+				for (int i = 0; i<bIn.Length; i++)
+					UrlEncodeChar ((char)bIn[i], expected, false);
+				//build expected result for UrlEncodeUnicode
+				UrlEncodeChar (c, expUnicode, true);
+
+				Assert.AreEqual (Encoding.ASCII.GetString(expected.ToArray()), HttpUtility.UrlEncode (c.ToString()),
+					"UrlEncode "+c.ToString());
+				Assert.AreEqual (Encoding.ASCII.GetString(expUnicode.ToArray()), HttpUtility.UrlEncodeUnicode (c.ToString()),
+					"UrlEncodeUnicode "+c.ToString());
+			}
 		}
 	}
 }
