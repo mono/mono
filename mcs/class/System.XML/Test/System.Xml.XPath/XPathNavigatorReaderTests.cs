@@ -483,6 +483,113 @@ namespace MonoTests.System.Xml.XPath
 
 			Assert.IsFalse (r.Read (), label + "#27");
 		}
+
+		[Test]
+		public void MixedContentAndDepth ()
+		{
+			string xml = @"<one>  <two>Some data.<three>more</three> done.</two>  </one>";
+
+			nav = GetXmlDocumentNavigator (xml);
+			MixedContentAndDepth (nav, "#1.");
+
+			nav.MoveToRoot ();
+			nav.MoveToFirstChild ();
+			MixedContentAndDepth (nav, "#2.");
+
+			nav = GetXPathDocumentNavigator (document);
+			MixedContentAndDepth (nav, "#3.");
+
+			nav.MoveToRoot ();
+			nav.MoveToFirstChild ();
+			MixedContentAndDepth (nav, "#4.");
+		}
+
+		void MixedContentAndDepth (XPathNavigator nav, string label)
+		{
+			XmlReader r = nav.ReadSubtree ();
+			r.Read ();
+			XmlAssert.AssertNode (label + "#1", r,
+				// NodeType, Depth, IsEmptyElement
+				XmlNodeType.Element, 0, false,
+				// Name, Prefix, LocalName, NamespaceURI
+				"one", String.Empty, "one", String.Empty,
+				// Value, HasValue, AttributeCount, HasAttributes
+				String.Empty, false, 0, false);
+
+			r.Read ();
+			XmlAssert.AssertNode (label + "#2", r,
+				// NodeType, Depth, IsEmptyElement
+				XmlNodeType.Element, 1, false,
+				// Name, Prefix, LocalName, NamespaceURI
+				"two", String.Empty, "two", String.Empty,
+				// Value, HasValue, AttributeCount, HasAttributes
+				String.Empty, false, 0, false);
+
+			r.Read ();
+			XmlAssert.AssertNode (label + "#3", r,
+				// NodeType, Depth, IsEmptyElement
+				XmlNodeType.Text, 2, false,
+				// Name, Prefix, LocalName, NamespaceURI
+				String.Empty, String.Empty, String.Empty, String.Empty,
+				// Value, HasValue, AttributeCount, HasAttributes
+				"Some data.", true, 0, false);
+
+			r.Read ();
+			XmlAssert.AssertNode (label + "#4", r,
+				// NodeType, Depth, IsEmptyElement
+				XmlNodeType.Element, 2, false,
+				// Name, Prefix, LocalName, NamespaceURI
+				"three", String.Empty, "three", String.Empty,
+				// Value, HasValue, AttributeCount, HasAttributes
+				String.Empty, false, 0, false);
+
+			r.Read ();
+			XmlAssert.AssertNode (label + "#5", r,
+				// NodeType, Depth, IsEmptyElement
+				XmlNodeType.Text, 3, false,
+				// Name, Prefix, LocalName, NamespaceURI
+				String.Empty, String.Empty, String.Empty, String.Empty,
+				// Value, HasValue, AttributeCount, HasAttributes
+				"more", true, 0, false);
+
+			r.Read ();
+			XmlAssert.AssertNode (label + "#6", r,
+				// NodeType, Depth, IsEmptyElement
+				XmlNodeType.EndElement, 2, false,
+				// Name, Prefix, LocalName, NamespaceURI
+				"three", String.Empty, "three", String.Empty,
+				// Value, HasValue, AttributeCount, HasAttributes
+				String.Empty, false, 0, false);
+
+			r.Read ();
+			XmlAssert.AssertNode (label + "#7", r,
+				// NodeType, Depth, IsEmptyElement
+				XmlNodeType.Text, 2, false,
+				// Name, Prefix, LocalName, NamespaceURI
+				String.Empty, String.Empty, String.Empty, String.Empty,
+				// Value, HasValue, AttributeCount, HasAttributes
+				" done.", true, 0, false);
+
+			r.Read ();
+			XmlAssert.AssertNode (label + "#8", r,
+				// NodeType, Depth, IsEmptyElement
+				XmlNodeType.EndElement, 1, false,
+				// Name, Prefix, LocalName, NamespaceURI
+				"two", String.Empty, "two", String.Empty,
+				// Value, HasValue, AttributeCount, HasAttributes
+				String.Empty, false, 0, false);
+
+			r.Read ();
+			XmlAssert.AssertNode (label + "#9", r,
+				// NodeType, Depth, IsEmptyElement
+				XmlNodeType.EndElement, 0, false,
+				// Name, Prefix, LocalName, NamespaceURI
+				"one", String.Empty, "one", String.Empty,
+				// Value, HasValue, AttributeCount, HasAttributes
+				String.Empty, false, 0, false);
+
+			Assert.IsFalse (r.Read (), "#10");
+		}
 	}
 }
 

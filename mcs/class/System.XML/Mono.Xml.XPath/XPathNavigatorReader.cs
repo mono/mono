@@ -521,8 +521,6 @@ namespace Mono.Xml.XPath
 					eof = true;
 					return false;
 				}
-				if (!current.IsEmptyElement && current.NodeType == XPathNodeType.Element)
-					depth++;
 				break;
 			case ReadState.EndOfFile:
 			case ReadState.Closed:
@@ -556,18 +554,19 @@ namespace Mono.Xml.XPath
 						return false;
 					}
 					endElement = (current.NodeType == XPathNodeType.Element);
+					if (endElement)
+						depth--;
 				}
 				else
 					endElement = false;
 			}
+			else
+				depth++;
 
 			if (!endElement && current.NodeType == XPathNodeType.Element)
 				attributeCount = GetAttributeCount ();
 			else
 				attributeCount = 0;
-
-			if (endElement)
-				depth--;
 
 			return true;
 		}

@@ -1,3 +1,8 @@
+2006-04-10  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPathNavigatorCommonTests.cs : added test for bug #78067.
+	* XPathNavigatorReaderTests.cs : ditto, for ReadSubtree() part.
+
 2005-12-14  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPathNavigatorReaderTests.cs : Actually AttributesAndNamespaces()

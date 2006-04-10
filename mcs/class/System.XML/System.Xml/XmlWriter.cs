@@ -431,9 +431,41 @@ namespace System.Xml
 			case XPathNodeType.ProcessingInstruction:
 				WriteProcessingInstruction (navigator.Name, navigator.Value);
 				break;
-			default:
-				WriteNode (navigator.ReadSubtree (), defattr);
+			case XPathNodeType.Root:
+				if (navigator.MoveToFirstChild ()) {
+					do {
+						WriteNode (navigator, defattr);
+					} while (navigator.MoveToNext ());
+					navigator.MoveToParent ();
+				}
 				break;
+			case XPathNodeType.Element:
+				WriteStartElement (navigator.Prefix, navigator.LocalName, navigator.NamespaceURI);
+				if (navigator.MoveToFirstNamespace (XPathNamespaceScope.Local)) {
+					do {
+						WriteNode (navigator, defattr);
+					} while (navigator.MoveToNextNamespace (XPathNamespaceScope.Local));
+					navigator.MoveToParent ();
+				}
+				if (navigator.MoveToFirstAttribute ()) {
+					do {
+						WriteNode (navigator, defattr);
+					} while (navigator.MoveToNextAttribute ());
+					navigator.MoveToParent ();
+				}
+				if (navigator.MoveToFirstChild ()) {
+					do {
+						WriteNode (navigator, defattr);
+					} while (navigator.MoveToNext ());
+					navigator.MoveToParent ();
+				}
+				if (navigator.IsEmptyElement)
+					WriteEndElement ();
+				else
+					WriteFullEndElement ();
+				break;
+			default:
+				throw new NotSupportedException ();
 			}
 		}
 #endif
