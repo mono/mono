@@ -1,3 +1,8 @@
+2006-04-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (encode_cattr_value): Fix handling of parameter type=object, 
+	argument type=array. Fixes #78057.
+
 2006-04-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* culture-info-table.h : regenerated. Fixed bug #69652.
