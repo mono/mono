@@ -50,21 +50,25 @@ namespace System.Drawing.Drawing2D
 			GDIPlus.CheckStatus (status);
                 }
         
-                public Matrix (Rectangle rect , Point[] plgpts)
+                public Matrix (Rectangle rect, Point[] plgpts)
                 {
 			if (plgpts == null)
 				throw new ArgumentNullException ("plgpts");
+			if (plgpts.Length != 3)
+				throw new ArgumentException ("plgpts");
 
-			Status status = GDIPlus.GdipCreateMatrix3I (rect, plgpts, out nativeMatrix);
+			Status status = GDIPlus.GdipCreateMatrix3I (ref rect, plgpts, out nativeMatrix);
 			GDIPlus.CheckStatus (status);
                 }
         
-                public Matrix (RectangleF rect , PointF[] pa)
+                public Matrix (RectangleF rect, PointF[] plgpts)
                 {
-			if (pa == null)
-				throw new ArgumentNullException ("pa");
+			if (plgpts == null)
+				throw new ArgumentNullException ("plgpts");
+			if (plgpts.Length != 3)
+				throw new ArgumentException ("plgpts");
 
-			Status status = GDIPlus.GdipCreateMatrix3 (rect, pa, out nativeMatrix);
+			Status status = GDIPlus.GdipCreateMatrix3 (ref rect, plgpts, out nativeMatrix);
 			GDIPlus.CheckStatus (status);
                 }
 

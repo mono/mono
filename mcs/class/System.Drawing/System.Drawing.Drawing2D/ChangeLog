@@ -1,3 +1,8 @@
+2006-04-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Matrix.cs: Fixed ctors to check for the right number (3) of points.
+	Added missing 'ref' to rectangles (required with fixed wrapper code).
+
 2006-03-31  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* LinearGradientBrush.cs: Added a [MonoTODO] to the GammaCorrection
