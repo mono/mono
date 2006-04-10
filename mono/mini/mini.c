@@ -9934,7 +9934,6 @@ mono_local_cprop2 (MonoCompile *cfg)
 				def = defs [sreg];
 
 				/* Copy propagation */
-				/* Enabling this for floats trips up the fp stack */
 				/* 
 				 * The first check makes sure the source of the copy did not change since 
 				 * the copy was made.
@@ -9942,9 +9941,10 @@ mono_local_cprop2 (MonoCompile *cfg)
 				 * The third check avoids copy propagating local vregs through a call, 
 				 * since the lvreg will be spilled 
 				 */
-#ifndef MONO_ARCH_USE_FPSTACK
+#ifdef MONO_ARCH_USE_FPSTACK
 				if (MONO_IS_MOVE (def) && (def->opcode != OP_FMOVE) &&
 #else
+				/* Enabling this for floats trips up the fp stack */
 				if (MONO_IS_MOVE (def) &&
 #endif
 					(!defs [def->sreg1] || (def_index [def->sreg1] < def_index [sreg])) &&

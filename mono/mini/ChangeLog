@@ -1,5 +1,7 @@
 2006-04-10  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mono_local_cprop2): Fix the previous change.
+
 	* mini.c (mono_local_cprop2): Enable copy propagation for floats on non-x86
 	platforms.
 
