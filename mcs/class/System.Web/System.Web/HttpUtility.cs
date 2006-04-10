@@ -398,7 +398,7 @@ namespace System.Web {
 			uint xchar;
 	
 			for (int i = 0; i < len; i++) {
-				if (s [i] == '%' && i + 2 < len) {
+				if (s [i] == '%' && i + 2 < len && s [i + 1] != '%') {
 					if (s [i + 1] == 'u' && i + 5 < len) {
 						if (bytes.Length > 0) {
 							output.Append (GetChars (bytes, e));
@@ -450,24 +450,31 @@ namespace System.Web {
 
 		private static int GetInt (byte b)
 		{
-			char c = Char.ToUpper ((char) b);
+			char c = (char) b;
 			if (c >= '0' && c <= '9')
 				return c - '0';
 
-			if (c < 'A' || c > 'F')
-				return 0;
+			if (c >= 'a' && c <= 'f')
+				return c - 'a' + 10;
 
-			return (c - 'A' + 10);
+			if (c >= 'A' && c <= 'F')
+				return c - 'A' + 10;
+
+			return -1;
 		}
 
-		private static char GetChar (byte [] bytes, int offset, int length)
+		private static int GetChar (byte [] bytes, int offset, int length)
 		{
 			int value = 0;
 			int end = length + offset;
-			for (int i = offset; i < end; i++)
-				value = (value << 4) + GetInt (bytes [i]);
+			for (int i = offset; i < end; i++) {
+				int current = GetInt (bytes [i]);
+				if (current == -1)
+					return -1;
+				value = (value << 4) + current;
+			}
 
-			return (char) value;
+			return value;
 		}
 		
 		public static string UrlDecode (byte [] bytes, int offset, int count, Encoding e)
@@ -490,20 +497,25 @@ namespace System.Web {
 			MemoryStream acc = new MemoryStream ();
 
 			int end = count + offset;
+			int xchar;
 			for (int i = offset; i < end; i++) {
-				if (bytes [i] == '%' && i + 2 < count) {
+				if (bytes [i] == '%' && i + 2 < count && bytes [i + 1] != '%') {
 					if (bytes [i + 1] == (byte) 'u' && i + 5 < end) {
 						if (acc.Length > 0) {
 							output.Append (GetChars (acc, e));
 							acc.SetLength (0);
 						}
-						output.Append (GetChar (bytes, i + 2, 4));
-						i += 5;
-					} else {
-						acc.WriteByte ((byte) GetChar (bytes, i + 1, 2));
+						xchar = GetChar (bytes, i + 2, 4);
+						if (xchar != -1) {
+							output.Append ((char) xchar);
+							i += 5;
+							continue;
+						}
+					} else if ((xchar = GetChar (bytes, i + 1, 2)) != -1) {
+						acc.WriteByte ((byte) xchar);
 						i += 2;
+						continue;
 					}
-					continue;
 				}
 
 				if (acc.Length > 0) {
@@ -568,11 +580,14 @@ namespace System.Web {
 			int end = offset + count;
 			for (int i = offset; i < end; i++){
 				char c = (char) bytes [i];
-				if (c == '+')
+				if (c == '+') {
 					c = ' ';
-				else if (c == '%' && i < end - 2) {
-					c = GetChar (bytes, i + 1, 2);
-					i += 2;
+				} else if (c == '%' && i < end - 2) {
+					int xchar = GetChar (bytes, i + 1, 2);
+					if (xchar != -1) {
+						c = (char) xchar;
+						i += 2;
+					}
 				}
 				result.WriteByte ((byte) c);
 			}
