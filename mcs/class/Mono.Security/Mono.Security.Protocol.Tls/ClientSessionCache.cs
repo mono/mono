@@ -179,7 +179,7 @@ namespace Mono.Security.Protocol.Tls {
 				return null;
 
 			byte[] id = context.SessionId;
-			if (id == null)
+			if ((id == null) || (id.Length == 0))
 				return null;
 
 			// do we have a session cached for this host ?

@@ -1,3 +1,10 @@
+2006-04-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ClientSessionCache.cs: The session id can be zero-length (like our 
+	own server class).
+	* SslServerStream.cs: Adapt code to fixes made in cipher suite and
+	message processing changes in client code.
+
 2006-03-16  Sebastien Pouliot  <sebastien@ximian.com>
  
 	* CipherSuiteFactory.cs: Fix bad key exchange values for non-export
