@@ -52,6 +52,12 @@ namespace System.Web.UI
 
 		internal override void AddDirective (string directive, Hashtable atts)
 		{
+			int cmp = String.Compare ("Register", directive, true);
+			if (cmp == 0) {
+				base.AddDirective (directive, atts);
+				return;
+			}
+
 			ThrowParseException ("Unknown directive: " + directive);
 		}
 
