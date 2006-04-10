@@ -28,11 +28,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 namespace System.Net.Sockets
 {
-	public enum SocketError
+#if NET_2_0
+	public
+#else
+	internal
+#endif
+	enum SocketError
 	{
 		AccessDenied = 10013,
 		AddressAlreadyInUse = 10048,
@@ -83,5 +86,3 @@ namespace System.Net.Sockets
 		WouldBlock = 10035
 	}
 }
-
-#endif

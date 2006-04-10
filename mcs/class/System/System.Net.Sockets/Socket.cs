@@ -1318,7 +1318,14 @@ namespace System.Net.Sockets
 			if (buf == null)
 				throw new ArgumentNullException ("buf");
 
-			return Receive_nochecks (buf, 0, buf.Length, SocketFlags.None);
+			SocketError error;
+
+			int ret = Receive_nochecks (buf, 0, buf.Length, SocketFlags.None, out error);
+			
+			if (error != SocketError.Success)
+				throw new SocketException ((int) error);
+
+			return ret;
 		}
 
 		public int Receive (byte [] buf, SocketFlags flags)
@@ -1329,7 +1336,14 @@ namespace System.Net.Sockets
 			if (buf == null)
 				throw new ArgumentNullException ("buf");
 
-			return Receive_nochecks (buf, 0, buf.Length, flags);
+			SocketError error;
+
+			int ret = Receive_nochecks (buf, 0, buf.Length, flags, out error);
+			
+			if (error != SocketError.Success)
+				throw new SocketException ((int) error);
+
+			return ret;
 		}
 
 		public int Receive (byte [] buf, int size, SocketFlags flags)
@@ -1343,16 +1357,15 @@ namespace System.Net.Sockets
 			if (size < 0 || size > buf.Length)
 				throw new ArgumentOutOfRangeException ("size");
 
-			return Receive_nochecks (buf, 0, size, flags);
-		}
+			SocketError error;
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static int Receive_internal(IntPtr sock,
-							   byte[] buffer,
-							   int offset,
-							   int count,
-							   SocketFlags flags,
-							   out int error);
+			int ret = Receive_nochecks (buf, 0, size, flags, out error);
+			
+			if (error != SocketError.Success)
+				throw new SocketException ((int) error);
+
+			return ret;
+		}
 
 		public int Receive (byte [] buf, int offset, int size, SocketFlags flags)
 		{
@@ -1368,24 +1381,53 @@ namespace System.Net.Sockets
 			if (size < 0 || offset + size > buf.Length)
 				throw new ArgumentOutOfRangeException ("size");
 			
-			return Receive_nochecks (buf, offset, size, flags);
+			SocketError error;
+
+			int ret = Receive_nochecks (buf, offset, size, flags, out error);
+			
+			if(error != SocketError.Success)
+				throw new SocketException ((int) error);
+
+			return ret;
 		}
 
-		int Receive_nochecks (byte [] buf, int offset, int size, SocketFlags flags)
+#if NET_2_0
+		public int Receive (byte [] buf, int offset, int size, SocketFlags flags, out SocketError error)
 		{
-			int ret, error;
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
+			if (buf == null)
+				throw new ArgumentNullException ("buf");
+
+			if (offset < 0 || offset > buf.Length)
+				throw new ArgumentOutOfRangeException ("offset");
+
+			if (size < 0 || offset + size > buf.Length)
+				throw new ArgumentOutOfRangeException ("size");
 			
-			ret = Receive_internal (socket, buf, offset, size, flags, out error);
+			return Receive_nochecks (buf, offset, size, flags, out error);
+		}
+#endif
 
-			if (error != 0) {
-				if (error != 10035 && error != 10036) // WSAEWOULDBLOCK && WSAEINPROGRESS
-					connected = false;
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static int Receive_internal(IntPtr sock,
+							   byte[] buffer,
+							   int offset,
+							   int count,
+							   SocketFlags flags,
+							   out int error);
 
-				throw new SocketException (error);
-			}
-
-			connected = true;
-
+		int Receive_nochecks (byte [] buf, int offset, int size, SocketFlags flags, out SocketError error)
+		{
+			int nativeError;
+			int ret = Receive_internal (socket, buf, offset, size, flags, out nativeError);
+			error = (SocketError) nativeError;
+			if (error != SocketError.Success && error != SocketError.WouldBlock && error != SocketError.InProgress)
+				connected = false;
+			else
+				connected = true;
+			
 			return ret;
 		}
 		
@@ -1506,7 +1548,14 @@ namespace System.Net.Sockets
 			if (buf == null)
 				throw new ArgumentNullException ("buf");
 
-			return Send_nochecks (buf, 0, buf.Length, SocketFlags.None);
+			SocketError error;
+
+			int ret = Send_nochecks (buf, 0, buf.Length, SocketFlags.None, out error);
+
+			if (error != SocketError.Success)
+				throw new SocketException ((int) error);
+
+			return ret;
 		}
 
 		public int Send (byte [] buf, SocketFlags flags)
@@ -1517,7 +1566,14 @@ namespace System.Net.Sockets
 			if (buf == null)
 				throw new ArgumentNullException ("buf");
 
-			return Send_nochecks (buf, 0, buf.Length, flags);
+			SocketError error;
+
+			int ret = Send_nochecks (buf, 0, buf.Length, flags, out error);
+
+			if (error != SocketError.Success)
+				throw new SocketException ((int) error);
+
+			return ret;
 		}
 
 		public int Send (byte [] buf, int size, SocketFlags flags)
@@ -1531,15 +1587,15 @@ namespace System.Net.Sockets
 			if (size < 0 || size > buf.Length)
 				throw new ArgumentOutOfRangeException ("size");
 
-			return Send_nochecks (buf, 0, size, flags);
-		}
+			SocketError error;
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static int Send_internal(IntPtr sock,
-							byte[] buf, int offset,
-							int count,
-							SocketFlags flags,
-							out int error);
+			int ret = Send_nochecks (buf, 0, size, flags, out error);
+
+			if (error != SocketError.Success)
+				throw new SocketException ((int) error);
+
+			return ret;
+		}
 
 		public int Send (byte [] buf, int offset, int size, SocketFlags flags)
 		{
@@ -1555,26 +1611,59 @@ namespace System.Net.Sockets
 			if (size < 0 || offset + size > buf.Length)
 				throw new ArgumentOutOfRangeException ("size");
 
-			return Send_nochecks (buf, offset, size, flags);
+			SocketError error;
+
+			int ret = Send_nochecks (buf, offset, size, flags, out error);
+
+			if (error != SocketError.Success)
+				throw new SocketException ((int) error);
+
+			return ret;
 		}
 
-		int Send_nochecks (byte [] buf, int offset, int size, SocketFlags flags)
+#if NET_2_0
+		public int Send (byte [] buf, int offset, int size, SocketFlags flags, out SocketError error)
 		{
-			if (size == 0)
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
+			if (buf == null)
+				throw new ArgumentNullException ("buffer");
+
+			if (offset < 0 || offset > buf.Length)
+				throw new ArgumentOutOfRangeException ("offset");
+
+			if (size < 0 || offset + size > buf.Length)
+				throw new ArgumentOutOfRangeException ("size");
+
+			return Send_nochecks (buf, offset, size, flags, out error);
+		}
+#endif
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static int Send_internal(IntPtr sock,
+							byte[] buf, int offset,
+							int count,
+							SocketFlags flags,
+							out int error);
+
+		int Send_nochecks (byte [] buf, int offset, int size, SocketFlags flags, out SocketError error)
+		{
+			if (size == 0) {
+				error = SocketError.Success;
 				return 0;
-
-			int ret, error;
-
-			ret = Send_internal (socket, buf, offset, size, flags, out error);
-
-			if (error != 0) {
-				if (error != 10035 && error != 10036) // WSAEWOULDBLOCK && WSAEINPROGRESS
-					connected = false;
-
-				throw new SocketException (error);
 			}
 
-			connected = true;
+			int nativeError;
+
+			int ret = Send_internal (socket, buf, offset, size, flags, out nativeError);
+
+			error = (SocketError)nativeError;
+
+			if (error != SocketError.Success && error != SocketError.WouldBlock && error != SocketError.InProgress)
+				connected = false;
+			else
+				connected = true;
 
 			return ret;
 		}

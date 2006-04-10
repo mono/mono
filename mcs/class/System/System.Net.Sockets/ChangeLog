@@ -1,3 +1,9 @@
+2006-04-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Socket.cs:
+	* SocketError.cs: implemented Reseive/Send overloads that do not throw
+	in case of error. Patch by Tomi Valkeinen.
+
 2006-03-11  Miguel de Icaza  <miguel@novell.com>
 
 	* NetworkStream.cs (Dispose): Use the right signature depending on
