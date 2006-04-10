@@ -1,3 +1,34 @@
+2006-04-10  Martin Baulig  <martin@ximian.com>
+
+	Clean up the debugger's thread-handling code.
+
+	The debugger's thread-handling code has been moved from
+	../mini/debug-debugger.c to threads.c.  We now iterate directly
+	over the `threads' hash, keep track of exiting threads and also
+	use proper locking.
+
+	We can now debug XSP and XSP based applications with the debugger.
+
+	* object-internals.h (MonoThread): Added `gpointer end_stack'.
+
+	* threads.h
+	(MonoThreadCallbacks): Removed; this was only used by the debugger.
+	(mono_install_thread_callbacks): Likewise.	
+
+	* threads.c (mono_thread_callbacks): Removed.
+	(debugger_thread_created, debugger_thread_exited): New static functions.
+	(start_wrapper): Call debugger_thread_created().
+	(thread_cleanup): Call debugger_thread_exited().
+	(mono_gc_stop_world, mono_gc_start_world): Removed; this was never used.
+	(mono_debugger_init_threads): New public function.
+	(debugger_thread_vtable): Moved here from debug-debugger.c; we now
+	iterate directly over the `threads' hash and also use proper locking.
+
+	* mono-debug.h (MONO_DEBUGGER_VERSION): Bumped to 55.
+
+	* mono-debug-debugger.h
+	(MonoDebuggerEvent): Added MONO_DEBUGGER_EVENT_THREAD_EXITED.
+
 2006-04-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c (encode_cattr_value): Fix handling of parameter type=object, 

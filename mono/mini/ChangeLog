@@ -1,3 +1,8 @@
+2006-04-10  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.c: The thread handling code has now been moved
+	into ../metadata/threads.c.
+
 2006-04-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-codegen.c (mono_spillvar_offset): Improve alignment.
