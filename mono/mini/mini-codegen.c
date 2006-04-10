@@ -1320,7 +1320,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			 * The dest reg is read by the instruction, not written, so
 			 * avoid allocating sreg1/sreg2 to the same reg.
 			 */
-			if (dest_sreg1 != -1)
+			if (!dest_sreg1 != -1)
 				dreg_mask &= ~ (regmask (dest_sreg1));
 			if (dest_sreg2 != -1)
 				dreg_mask &= ~ (regmask (dest_sreg2));
@@ -1474,8 +1474,10 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			 * The dest reg is read by the instruction, not written, so
 			 * avoid allocating sreg1/sreg2 to the same reg.
 			 */
-			sreg1_mask &= ~ (regmask (ins->dreg));
-			sreg2_mask &= ~ (regmask (ins->dreg));
+			if (!sreg1_is_fp (spec))
+				sreg1_mask &= ~ (regmask (ins->dreg));
+			if (!sreg2_is_fp (spec))
+				sreg2_mask &= ~ (regmask (ins->dreg));
 		}
 
 		/*

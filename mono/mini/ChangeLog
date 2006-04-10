@@ -1,5 +1,9 @@
 2006-04-10  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-codegen.c (mono_local_regalloc): Relax a condition which was too strict.
+
+	* liveness.c (analyze_liveness_bb): Use SPILL_COST_INCREMENT.
+
 	* method-to-ir.c (mono_method_to_ir2): Remove the special handling of
 	ia64, do it in the arch specific code instead.
 

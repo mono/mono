@@ -316,7 +316,7 @@ analyze_liveness_bb (MonoCompile *cfg, MonoBasicBlock *bb)
 			update_live_range (cfg, idx, dfn, inst_num); 
 			if (!mono_bitset_test (bb->kill_set, idx))
 				mono_bitset_set_fast (bb->gen_set, idx);
-			vi->spill_costs += 1 + (bb->nesting * 2);
+			vi->spill_costs += SPILL_COST_INCREMENT;
 		}				
 
 		if (MONO_IS_STORE_MEMBASE (ins))
@@ -341,7 +341,7 @@ analyze_liveness_bb (MonoCompile *cfg, MonoBasicBlock *bb)
 			update_live_range (cfg, idx, dfn, inst_num); 
 			if (!mono_bitset_test (bb->kill_set, idx))
 				mono_bitset_set_fast (bb->gen_set, idx);
-			vi->spill_costs += 1 + (bb->nesting * 2);
+			vi->spill_costs += SPILL_COST_INCREMENT;
 		}
 
 		/* SREG2 */
@@ -357,7 +357,7 @@ analyze_liveness_bb (MonoCompile *cfg, MonoBasicBlock *bb)
 			update_live_range (cfg, idx, dfn, inst_num); 
 			if (!mono_bitset_test (bb->kill_set, idx))
 				mono_bitset_set_fast (bb->gen_set, idx);
-			vi->spill_costs += 1 + (bb->nesting * 2);
+			vi->spill_costs += SPILL_COST_INCREMENT;
 		}
 
 		/* DREG */
@@ -370,14 +370,14 @@ analyze_liveness_bb (MonoCompile *cfg, MonoBasicBlock *bb)
 				update_live_range (cfg, idx, dfn, inst_num); 
 				if (!mono_bitset_test (bb->kill_set, idx))
 					mono_bitset_set_fast (bb->gen_set, idx);
-				vi->spill_costs += 1 + (bb->nesting * 2);
+				vi->spill_costs += SPILL_COST_INCREMENT;
 			} else {
 #ifdef DEBUG_LIVENESS
 				printf ("\tKILL: R%d(%d)\n", ins->dreg, idx);
 #endif
 				update_live_range (cfg, idx, dfn, inst_num); 
 				mono_bitset_set_fast (bb->kill_set, idx);
-				vi->spill_costs += 1 + (bb->nesting * 2);
+				vi->spill_costs += SPILL_COST_INCREMENT;
 			}
 		}
 	}
