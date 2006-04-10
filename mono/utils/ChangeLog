@@ -1,3 +1,7 @@
+2006-04-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* monobitset.c (mono_bitset_sub): Use src->size since the assert 
+	guarantees it is less than dest->size.
 
 Mon Apr 10 12:28:05 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
