@@ -987,7 +987,10 @@ namespace System.Windows.Forms {
 
 		public event EventHandler AutoGenerateColumnsChanged;
 
-		public new event EventHandler AutoSizeChanged;
+		public new event EventHandler AutoSizeChanged {
+			add { base.AutoSizeChanged += value; }
+			remove { base.AutoSizeChanged -= value; }
+		}
 
 		public event DataGridViewAutoSizeColumnModeEventHandler AutoSizeColumnModeChanged;
 
@@ -995,13 +998,22 @@ namespace System.Windows.Forms {
 
 		public event DataGridViewAutoSizeModeEventHandler AutoSizeRowsModeChanged;
 
-		public new event EventHandler BackColorChanged;
+		public new event EventHandler BackColorChanged {
+			add { base.BackColorChanged += value; }
+			remove { base.BackColorChanged -= value; }
+		}
 
 		public event EventHandler BackgroundColorChanged;
 
-		public new event EventHandler BackgroundImageChanged;
+		public new event EventHandler BackgroundImageChanged {
+			add { base.BackgroundImageChanged += value; }
+			remove { base.BackgroundImageChanged -= value; }
+		}
 
-		public new event EventHandler BackgroundImageLayoutChanged;
+		public new event EventHandler BackgroundImageLayoutChanged {
+			add { base.BackgroundImageLayoutChanged += value; }
+			remove { base.BackgroundImageLayoutChanged -= value; }
+		}
 
 		public event EventHandler BorderStyleChanged;
 
@@ -1135,9 +1147,15 @@ namespace System.Windows.Forms {
 
 		public event EventHandler EditModeChanged;
 
-		public new event EventHandler FontChanged;
+		public new event EventHandler FontChanged {
+			add { base.FontChanged += value; }
+			remove { base.FontChanged -= value; }
+		}
 
-		public new event EventHandler ForeColorChanged;
+		public new event EventHandler ForeColorChanged {
+			add { base.ForeColorChanged += value; }
+			remove { base.ForeColorChanged -= value; }
+		}
 
 		public event EventHandler GridColorChanged;
 
@@ -1221,9 +1239,15 @@ namespace System.Windows.Forms {
 
 		public event DataGridViewRowCancelEventHandler UserDeletingRow;
 
-		public new event EventHandler StyleChanged;
+		public new event EventHandler StyleChanged {
+			add { base.StyleChanged += value; }
+			remove { base.StyleChanged -= value; }
+		}
 
-		public new event EventHandler TextChanged;
+		public new event EventHandler TextChanged {
+			add { base.TextChanged += value; }
+			remove { base.TextChanged -= value; }
+		}
 
 		public virtual DataGridViewAdvancedBorderStyle AdjustColumnHeaderBorderStyle (DataGridViewAdvancedBorderStyle dataGridViewAdvancedBorderStyleInput, DataGridViewAdvancedBorderStyle dataGridViewAdvancedBorderStylePlaceholder, bool isFirstDisplayedColumn, bool isLastVisibleColumn) {
 			return (DataGridViewAdvancedBorderStyle) dataGridViewAdvancedBorderStyleInput.Clone();

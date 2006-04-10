@@ -660,23 +660,38 @@ namespace System.Windows.Forms
 		#region Events
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public new event EventHandler BackgroundImageChanged;
+		public new event EventHandler BackgroundImageChanged {
+			add { base.BackgroundImageChanged += value; }
+			remove { base.BackgroundImageChanged -= value; }
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public new event EventHandler MouseEnter;
+		public new event EventHandler MouseEnter {
+			add { base.MouseEnter += value; }
+			remove { base.MouseEnter -= value; }
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public new event EventHandler MouseHover;
+		public new event EventHandler MouseHover {
+			add { base.MouseHover += value; }
+			remove { base.MouseHover -= value; }
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public new event EventHandler MouseLeave;
+		public new event EventHandler MouseLeave {
+			add { base.MouseLeave += value; }
+			remove { base.MouseLeave -= value; }
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public new event MouseEventHandler MouseMove;
+		public new event MouseEventHandler MouseMove {
+			add { base.MouseMove += value; }
+			remove { base.MouseMove -= value; }
+		}
 		#endregion	// Events
 	}
 }

@@ -195,24 +195,36 @@ namespace System.Windows.Forms
 		#region Events
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler BackgroundImageChanged;
+		public new event EventHandler BackgroundImageChanged {
+			add { base.BackgroundImageChanged += value; }
+			remove { base.BackgroundImageChanged -= value; }
+		}
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		public new event EventHandler Click;
+		public new event EventHandler Click {
+			add { base.Click += value; }
+			remove { base.Click -= value; }
+		}
 
 		public event DrawItemEventHandler DrawItem;
 		public event MeasureItemEventHandler MeasureItem;
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event PaintEventHandler Paint;
+		public new event PaintEventHandler Paint {
+			add { base.Paint += value; }
+			remove { base.Paint -= value; }
+		}
 
 		public event EventHandler SelectedIndexChanged;
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		public new event EventHandler TextChanged;
+		public new event EventHandler TextChanged {
+			add { base.TextChanged += value; }
+			remove { base.TextChanged -= value; }
+		}
 		#endregion // Events
 
 		#region Public Properties
@@ -231,15 +243,8 @@ namespace System.Windows.Forms
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override Image BackgroundImage {
 			get { return base.BackgroundImage; }
-			set {
-				if (base.BackgroundImage == value)
-					return;
-
+			set { 
     				base.BackgroundImage = value;
-
-    				if (BackgroundImageChanged != null)
-					BackgroundImageChanged (this, EventArgs.Empty);
-
 				base.Refresh ();
 			}
 		}
@@ -1430,12 +1435,6 @@ namespace System.Windows.Forms
 
 		internal virtual void OnMouseDownLB (object sender, MouseEventArgs e)
     		{
-    			if (Click != null) {
-				if (e.Button == MouseButtons.Left) {
-					Click (this, e);
-				}
-			}				
-			
     			int index = IndexFromPointDisplayRectangle (e.X, e.Y);
     			
     			if (index != -1) {

@@ -1,3 +1,21 @@
+2006-04-10  Jackson Harper  <jackson@ximian.com>
+
+	* ButtonBase.cs:
+	* CheckedListBox.cs:
+	* ComboBox.cs:
+	* DataGrid.cs:
+	* DataGridView.cs:
+	* Form.cs:
+	* GroupBox.cs:
+	* ListBox.cs:
+	* PrintPreviewControl.cs:
+	* ProgressBar.cs:
+	* PropertyGrid.cs:
+	* Splitter.cs:
+	* StatusBar.cs:
+	* TrackBar.cs:
+	* UpDownBase.cs: Fixup base event overrides.
+	
 2006-04-06  Mike Kestner  <mkestner@novell.com>
 
 	* ScrollBar.cs: fix "new event" declarations (#76509) and bounds check

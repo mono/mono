@@ -50,67 +50,115 @@ namespace System.Windows.Forms
 		#region events
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]		
-		public new event EventHandler BackColorChanged;
+		public new event EventHandler BackColorChanged {
+			add { base.BackColorChanged += value; }
+			remove { base.BackColorChanged -= value; }
+		}
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler BackgroundImageChanged;
+		public new event EventHandler BackgroundImageChanged {
+			add { base.BackgroundImageChanged += value; }
+			remove { base.BackgroundImageChanged -= value; }
+		}
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler CausesValidationChanged;
+		public new event EventHandler CausesValidationChanged {
+			add { base.CausesValidationChanged += value; }
+			remove { base.CausesValidationChanged -= value; }
+		}
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler DoubleClick;
+		public new event EventHandler DoubleClick {
+			add { base.DoubleClick += value; }
+			remove { base.DoubleClick -= value; }
+		}
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler Enter;
+		public new event EventHandler Enter {
+			add { base.Enter += value; }
+			remove { base.Enter -= value; }
+		}
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler FontChanged;
+		public new event EventHandler FontChanged {
+			add { base.FontChanged += value; }
+			remove { base.FontChanged -= value; }
+		}
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler ForeColorChanged;
+		public new event EventHandler ForeColorChanged {
+			add { base.ForeColorChanged += value; }
+			remove { base.ForeColorChanged -= value; }
+		}
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler ImeModeChanged;
+		public new event EventHandler ImeModeChanged {
+			add { base.ImeModeChanged += value; }
+			remove { base.ImeModeChanged -= value; }
+		}
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event KeyEventHandler KeyDown;
+		public new event KeyEventHandler KeyDown {
+			add { base.KeyDown += value; }
+			remove { base.KeyDown -= value; }
+		}
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event KeyPressEventHandler KeyPress;
+		public new event KeyPressEventHandler KeyPress {
+			add { base.KeyPress += value; }
+			remove { base.KeyPress -= value; }
+		}
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event KeyEventHandler KeyUp;
+		public new event KeyEventHandler KeyUp {
+			add { base.KeyUp += value; }
+			remove { base.KeyUp -= value; }
+		}
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler Leave;
+		public new event EventHandler Leave {
+			add { base.Leave += value; }
+			remove { base.Leave -= value; }
+		}
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event PaintEventHandler Paint;
+		public new event PaintEventHandler Paint {
+			add { base.Paint += value; }
+			remove { base.Paint -= value; }
+		}
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler RightToLeftChanged;
+		public new event EventHandler RightToLeftChanged {
+			add { base.RightToLeftChanged += value; }
+			remove { base.RightToLeftChanged -= value; }
+		}
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler TabStopChanged;
+		public new event EventHandler TabStopChanged {
+			add { base.TabStopChanged += value; }
+			remove { base.TabStopChanged -= value; }
+		}
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler TextChanged;
+		public new event EventHandler TextChanged {
+			add { base.TextChanged += value; }
+			remove { base.TextChanged -= value; }
+		}
 		#endregion Events
 
 		#region Public Constructors
@@ -167,14 +215,7 @@ namespace System.Windows.Forms
 		public new bool CausesValidation
 		{
 			get { return base.CausesValidation; }
-			set {
-				if (base.CausesValidation == value)
-					return;
-
-				base.CausesValidation = value;
-				if (CausesValidationChanged != null)
-					CausesValidationChanged (this, new EventArgs ());
-			}
+			set { base.CausesValidation = value; }
 		}
 
 		protected override CreateParams CreateParams
@@ -217,15 +258,7 @@ namespace System.Windows.Forms
 		public new ImeMode ImeMode
 		{
 			get { return base.ImeMode; }
-			set
-			{
-				if (value == base.ImeMode)
-					return;
-
-				base.ImeMode = value;
-				if (ImeModeChanged != null)
-					ImeModeChanged (this, EventArgs.Empty);
-			}
+			set { base.ImeMode = value; }
 		}
 
 		[RefreshProperties(RefreshProperties.Repaint)]
@@ -266,16 +299,7 @@ namespace System.Windows.Forms
 		public override RightToLeft RightToLeft
 		{
 			get { return base.RightToLeft; }
-			set {
-				if (base.RightToLeft == value)
-					return;
-
-				base.RightToLeft = value;
-
-				if (RightToLeftChanged != null)
-					RightToLeftChanged (this, EventArgs.Empty);
-
-			}
+			set { base.RightToLeft = value; }
 		}
 
 		[DefaultValue (10)]
@@ -306,16 +330,7 @@ namespace System.Windows.Forms
 		public new bool TabStop
 		{
 			get { return base.TabStop; }
-			set {
-				if (base.TabStop == value)
-					return;
-
-				base.TabStop = value;
-
-				if (TabStopChanged != null)
-					TabStopChanged (this, EventArgs.Empty);
-
-			}
+			set { base.TabStop = value; }
 		}
 
 		[Browsable (false)]
@@ -324,16 +339,7 @@ namespace System.Windows.Forms
 		public override string Text
 		{
 			get { return base.Text; }
-			set
-			{
-				if (value == base.Text)
-					return;
-
-				if (TextChanged != null)
-					TextChanged (this, EventArgs.Empty);
-
-				Refresh ();
-			}
+			set { base.Text = value; }
 		}
 
 		[Bindable(true)]

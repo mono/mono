@@ -56,28 +56,47 @@ namespace System.Windows.Forms
 		#region events
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler Click;
+		public new event EventHandler Click {
+			add { base.Click += value; }
+			remove { base.Click -= value; }
+		}
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler DataSourceChanged;
+		public new event EventHandler DataSourceChanged {
+			add { base.DataSourceChanged += value; }
+			remove { base.DataSourceChanged -= value; }
+		}
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler DisplayMemberChanged;
+		public new event EventHandler DisplayMemberChanged {
+			add { base.DisplayMemberChanged += value; }
+			remove { base.DisplayMemberChanged -= value; }
+		}
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event DrawItemEventHandler DrawItem;
+		public new event DrawItemEventHandler DrawItem {
+			add { base.DrawItem += value; }
+			remove { base.DrawItem -= value; }
+		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event MeasureItemEventHandler MeasureItem {
+			add { base.MeasureItem += value; }
+			remove { base.MeasureItem -= value; }
+		}
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler ValueMemberChanged {
+			add { base.ValueMemberChanged += value; }
+			remove { base.ValueMemberChanged -= value; }
+		}
+
 		public event ItemCheckEventHandler ItemCheck;
-		
-		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event MeasureItemEventHandler MeasureItem;
-		
-		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler ValueMemberChanged;
 		#endregion Events
 
 		#region Public Properties
@@ -205,9 +224,6 @@ namespace System.Windows.Forms
 		protected override void OnClick (EventArgs e)
 		{
 			base.OnClick (e);
-			
-			if (Click != null)			
-				Click (this, EventArgs.Empty);
 		}
 		
 		protected override void OnDrawItem (DrawItemEventArgs e)
@@ -244,8 +260,7 @@ namespace System.Windows.Forms
 
 		protected override void OnMeasureItem (MeasureItemEventArgs e)
 		{
-			if (MeasureItem != null)
-				MeasureItem (this, e);
+			base.OnMeasureItem (e);
 		}
 
 		protected override void OnSelectedIndexChanged (EventArgs e)
@@ -316,10 +331,8 @@ namespace System.Windows.Forms
 			bool set_value = false;
 			int index = IndexFromPointDisplayRectangle (e.X, e.Y);
 
-			if (Click != null) {
-				if (e.Button == MouseButtons.Left) {
-					Click (this, e);
-				}
+			if (e.Button == MouseButtons.Left) {
+				OnClick (e);
 			}	
 
 			if (index == -1)

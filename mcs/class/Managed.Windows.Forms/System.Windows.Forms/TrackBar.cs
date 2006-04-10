@@ -67,37 +67,61 @@ namespace System.Windows.Forms
 		#region events
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler BackgroundImageChanged;
+		public new event EventHandler BackgroundImageChanged {
+			add { base.BackgroundImageChanged += value; }
+			remove { base.BackgroundImageChanged -= value; }
+		}
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler Click;
+		public new event EventHandler Click {
+			add { base.Click += value; }
+			remove { base.Click -= value; }
+		}
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler DoubleClick;
+		public new event EventHandler DoubleClick {
+			add { base.DoubleClick += value; }
+			remove { base.DoubleClick -= value; }
+		}
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler FontChanged;
+		public new event EventHandler FontChanged {
+			add { base.FontChanged += value; }
+			remove { base.FontChanged -= value; }
+		}
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler ForeColorChanged;
+		public new event EventHandler ForeColorChanged {
+			add { base.ForeColorChanged += value; }
+			remove { base.ForeColorChanged -= value; }
+		}
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler ImeModeChanged;
+		public new event EventHandler ImeModeChanged {
+			add { base.ImeModeChanged += value; }
+			remove { base.ImeModeChanged -= value; }
+		}
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event PaintEventHandler Paint;
-		
+		public new event PaintEventHandler Paint {
+			add { base.Paint += value; }
+			remove { base.Paint -= value; }
+		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler TextChanged {
+			add { base.TextChanged += value; }
+			remove { base.TextChanged -= value; }
+		}
+
 		public event EventHandler Scroll;
-		
-		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler TextChanged;
 		public event EventHandler ValueChanged;
 		
 		#endregion // Events
@@ -157,15 +181,7 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		public override Image BackgroundImage {
 			get { return base.BackgroundImage; }
-			set { 
-				if (base.BackgroundImage == value)
-					return;
-
-				if (BackgroundImageChanged != null)
-					BackgroundImageChanged (this, EventArgs.Empty);
-
-				base.BackgroundImage = value; 
-			}
+			set { base.BackgroundImage = value; }
 		}
 
 		protected override CreateParams CreateParams {
@@ -193,29 +209,14 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		public override Color ForeColor {
 			get { return base.ForeColor; }
-			set {
-				if (value == base.ForeColor)
-					return;
-
-				if (ForeColorChanged != null)
-					ForeColorChanged (this, EventArgs.Empty);
-
-				Refresh ();
-			}
+			set { base.ForeColor = value; }
 		}		
 
 		[EditorBrowsable (EditorBrowsableState.Never)]	
 		[Browsable (false)]
 		public new ImeMode ImeMode {
 			get { return base.ImeMode; }
-			set {
-				if (value == base.ImeMode)
-					return;
-
-				base.ImeMode = value;
-				if (ImeModeChanged != null)
-					ImeModeChanged (this, EventArgs.Empty);
-			}
+			set { base.ImeMode = value; }
 		}
 		
 		[DefaultValue (5)]
@@ -301,15 +302,7 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		public override string Text {
 			get {	return base.Text; }			
-			set {
-				if (value == base.Text)
-					return;
-
-				if (TextChanged != null)
-					TextChanged (this, EventArgs.Empty);
-
-				Refresh ();
-			}
+			set { base.Text = value; }
 		}
 
 		[DefaultValue (1)]

@@ -48,47 +48,80 @@ namespace System.Windows.Forms
 		#region Events
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		public new event EventHandler Click;
+		public new event EventHandler Click {
+			add { base.Click += value; }
+			remove { base.Click -= value; }
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		public new event EventHandler DoubleClick;
+		public new event EventHandler DoubleClick {
+			add { base.DoubleClick += value; }
+			remove { base.DoubleClick -= value; }
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		public new event KeyEventHandler KeyDown;
+		public new event KeyEventHandler KeyDown {
+			add { base.KeyDown += value; }
+			remove { base.KeyDown -= value; }
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		public new event KeyPressEventHandler KeyPress;
+		public new event KeyPressEventHandler KeyPress {
+			add { base.KeyPress += value; }
+			remove { base.KeyPress -= value; }
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		public new event KeyEventHandler KeyUp;
+		public new event KeyEventHandler KeyUp {
+			add { base.KeyUp += value; }
+			remove { base.KeyUp -= value; }
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		public new event MouseEventHandler MouseDown;
+		public new event MouseEventHandler MouseDown {
+			add { base.MouseDown += value; }
+			remove { base.MouseDown -= value; }
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		public new event EventHandler MouseEnter;
+		public new event EventHandler MouseEnter {
+			add { base.MouseEnter += value; }
+			remove { base.MouseEnter -= value; }
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		public new event EventHandler MouseLeave;
+		public new event EventHandler MouseLeave {
+			add { base.MouseLeave += value; }
+			remove { base.MouseLeave -= value; }
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		public new event MouseEventHandler MouseMove;
+		public new event MouseEventHandler MouseMove {
+			add { base.MouseMove += value; }
+			remove { base.MouseMove -= value; }
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		public new event MouseEventHandler MouseUp;
+		public new event MouseEventHandler MouseUp {
+			add { base.MouseUp += value; }
+			remove { base.MouseUp -= value; }
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		public new event EventHandler TabStopChanged;
+		public new event EventHandler TabStopChanged {
+			add { base.TabStopChanged += value; }
+			remove { base.TabStopChanged -= value; }
+		}
 		#endregion Events
 
 		public GroupBox ()

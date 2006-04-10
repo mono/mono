@@ -2221,16 +2221,28 @@ namespace System.Windows.Forms
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public new event EventHandler BackgroundImageChanged;
+		public new event EventHandler BackgroundImageChanged {
+			add { base.BackgroundImageChanged += value; }
+			remove { base.BackgroundImageChanged -= value; }
+		}
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public new event EventHandler TextChanged {
+			add { base.TextChanged += value; }
+			remove { base.TextChanged -= value; }
+		}
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public new event EventHandler CursorChanged {
+			add { base.CursorChanged += value; }
+			remove { base.CursorChanged -= value; }
+		}
 
 		public event EventHandler BorderStyleChanged;
 		public event EventHandler CaptionVisibleChanged;
 		public event EventHandler CurrentCellChanged;
-
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
-		public new event EventHandler CursorChanged;
-
 		public event EventHandler DataSourceChanged;
 		public event EventHandler FlatModeChanged;
 		public event NavigateEventHandler Navigate;
@@ -2241,9 +2253,6 @@ namespace System.Windows.Forms
 		public event EventHandler Scroll;
 		public event EventHandler ShowParentDetailsButtonClick;
 
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
-		public new event EventHandler TextChanged;
 		#endregion	// Events
 	}
 }

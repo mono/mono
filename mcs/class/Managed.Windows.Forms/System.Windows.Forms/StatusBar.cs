@@ -42,9 +42,6 @@ namespace System.Windows.Forms {
 		#region Fields
 		private StatusBarPanelCollection panels;
 
-		private Color back_color;
-		private Color fore_color;
-
 		private bool show_panels = false;
 		private bool sizing_grip = true;
 
@@ -55,8 +52,6 @@ namespace System.Windows.Forms {
 		public StatusBar ()
 		{
 			base.Dock = DockStyle.Bottom;
-			back_color = SystemColors.Control;
-			fore_color = SystemColors.ControlText;
 			Anchor = AnchorStyles.Top | AnchorStyles.Left;
 			this.TabStop = false;
 			this.SetStyle(ControlStyles.UserPaint | ControlStyles.Selectable, false);
@@ -67,28 +62,15 @@ namespace System.Windows.Forms {
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override Color BackColor {
-			get { return back_color; }
-			set {
-				if (value == BackColor)
-					return;
-				back_color = value;
-				if (BackColorChanged != null)
-					BackColorChanged (this, EventArgs.Empty);
-				Update ();
-			}
+			get { return base.BackColor; }
+			set { base.BackColor = value; }
 		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override Image BackgroundImage {
 			get { return base.BackgroundImage; }
-			set {
-				if (value == BackgroundImage)
-					return;
-				base.BackgroundImage = value;
-				if (BackgroundImageChanged != null)
-					BackgroundImageChanged (this, EventArgs.Empty);
-			}
+			set { base.BackgroundImage = value; }
 		}
 
 		[Localizable(true)]
@@ -117,28 +99,15 @@ namespace System.Windows.Forms {
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override Color ForeColor {
-			get { return fore_color; }
-			set {
-				if (value == ForeColor)
-					return;
-				fore_color = value;
-				if (ForeColorChanged != null)
-					ForeColorChanged (this, EventArgs.Empty);
-				Update ();
-			}
+			get { return base.ForeColor; }
+			set { base.ForeColor = value; }
 		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new ImeMode ImeMode {
 			get { return base.ImeMode; }
-			set {
-				if (value == ImeMode)
-					return;
-				base.ImeMode = value;
-				if (ImeModeChanged != null)
-					ImeModeChanged (this, EventArgs.Empty);
-			}
+			set { base.ImeMode = value; }
 		}
 
 		[MergableProperty(false)]
@@ -392,25 +361,40 @@ namespace System.Windows.Forms {
 		#region Events
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public new event EventHandler BackColorChanged;
+		public new event EventHandler BackColorChanged {
+			add { base.BackColorChanged += value; }
+			remove { base.BackColorChanged -= value; }
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public new event EventHandler BackgroundImageChanged;
+		public new event EventHandler BackgroundImageChanged {
+			add { base.BackgroundImageChanged += value; }
+			remove { base.BackgroundImageChanged -= value; }
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public new event EventHandler ForeColorChanged;
+		public new event EventHandler ForeColorChanged {
+			add { base.ForeColorChanged += value; }
+			remove { base.ForeColorChanged -= value; }
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public new event EventHandler ImeModeChanged;
+		public new event EventHandler ImeModeChanged {
+			add { base.ImeModeChanged += value; }
+			remove { base.ImeModeChanged -= value; }
+		}
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public new event PaintEventHandler Paint {
+			add { base.Paint += value; }
+			remove { base.Paint -= value; }
+		}
 
 		public event StatusBarDrawItemEventHandler DrawItem;
-
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
-		public new event PaintEventHandler Paint;
 		public event StatusBarPanelClickEventHandler PanelClick;
 		#endregion	// Events
 		

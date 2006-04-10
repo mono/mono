@@ -151,7 +151,10 @@ namespace System.Windows.Forms
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler BackgroundImageChanged;		
+		public new event EventHandler BackgroundImageChanged {
+			add { base.BackgroundImageChanged += value; }
+			remove { base.BackgroundImageChanged -= value; }
+		}
 		
 		public event DrawItemEventHandler DrawItem;		
 		public event EventHandler DropDown;		
@@ -190,10 +193,6 @@ namespace System.Windows.Forms
 					return;
 
     				base.BackgroundImage = value;
-
-    				if (BackgroundImageChanged != null)
-					BackgroundImageChanged (this, EventArgs.Empty);
-
 				Refresh ();
 			}
 		}

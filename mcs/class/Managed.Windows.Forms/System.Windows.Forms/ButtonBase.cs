@@ -128,7 +128,6 @@ namespace System.Windows.Forms {
 			image_list	= null;
 			image_alignment	= ContentAlignment.MiddleCenter;
 			text_alignment	= ContentAlignment.MiddleCenter;
-			ime_mode	= ImeMode.Inherit;
 			is_default	= false;
 			is_entered	= false;
 			is_pressed	= false;
@@ -240,17 +239,11 @@ namespace System.Windows.Forms {
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new ImeMode ImeMode {
 			get {
-				return ime_mode;
+				return base.ImeMode;
 			}
 
 			set {
-				if (ime_mode != value) {
-					ime_mode = value;
-
-					if (ImeModeChanged != null) {
-						ImeModeChanged(this, EventArgs.Empty);
-					}
-				}
+				base.ImeMode = value;
 			}
 		}
 
@@ -536,7 +529,10 @@ namespace System.Windows.Forms {
 		#region	Events
 		[Browsable(false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler ImeModeChanged;
+		public new event EventHandler ImeModeChanged {
+			add { base.ImeModeChanged += value; }
+			remove { base.ImeModeChanged -= value; }
+		}
 		#endregion	// Events
 
 
