@@ -1131,9 +1131,9 @@ namespace System.Drawing
                 [DllImport ("gdiplus.dll")]
                 internal static extern Status GdipCreateMatrix2 (float m11, float m12, float m21, float m22, float dx, float dy, out IntPtr matrix);
                 [DllImport ("gdiplus.dll")]
-                internal static extern Status GdipCreateMatrix3 (RectangleF rect, PointF [] dstplg, out IntPtr matrix);
+                internal static extern Status GdipCreateMatrix3 (ref RectangleF rect, PointF [] dstplg, out IntPtr matrix);
                 [DllImport ("gdiplus.dll")]                
-                internal static extern Status GdipCreateMatrix3I (Rectangle rect, Point [] dstplg, out IntPtr matrix);
+                internal static extern Status GdipCreateMatrix3I (ref Rectangle rect, Point [] dstplg, out IntPtr matrix);
                 [DllImport ("gdiplus.dll")]
                 internal static extern Status GdipDeleteMatrix (IntPtr matrix);
 

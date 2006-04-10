@@ -1,3 +1,7 @@
+2006-04-10  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* gdipFunctions.cs: Fixed wrappers for GdipCreateMatrix3[I].
+
 2006-03-23  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* gdipFunctions.cs: 
