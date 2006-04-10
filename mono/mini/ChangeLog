@@ -1,3 +1,9 @@
+
+Mon Apr 10 14:39:49 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: set MonoInst->klass for load field address and a few other
+	places.
+
 2006-04-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* helpers.c (mono_disassemble_code): Emit debug info on amd64 as well.
