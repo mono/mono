@@ -65,18 +65,39 @@ namespace System.Web.Security
 			this.comment = comment;
 			this.isApproved = isApproved;
 			this.isLockedOut = isLockedOut;
-			this.creationDate = creationDate;
-			this.lastLoginDate = lastLoginDate;
-			this.lastActivityDate = lastActivityDate;
-			this.lastPasswordChangedDate = lastPasswordChangedDate;
-			this.lastLockoutDate = lastLockoutDate;
+			this.creationDate = creationDate.ToUniversalTime ();
+			this.lastLoginDate = lastLoginDate.ToUniversalTime ();
+			this.lastActivityDate = lastActivityDate.ToUniversalTime ();
+			this.lastPasswordChangedDate = lastPasswordChangedDate.ToUniversalTime ();
+			this.lastLockoutDate = lastLockoutDate.ToUniversalTime ();
 		}
 		
+		void UpdateSelf (MembershipUser fromUser)
+		{
+			try { Comment = fromUser.Comment; } catch (NotSupportedException) {}
+			try { creationDate = fromUser.CreationDate; } catch (NotSupportedException) {}
+			try { Email = fromUser.Email; } catch (NotSupportedException) {}
+			try { IsApproved = fromUser.IsApproved; } catch (NotSupportedException) {}
+			try { isLockedOut = fromUser.IsLockedOut; } catch (NotSupportedException) {}
+			try { LastActivityDate = fromUser.LastActivityDate; } catch (NotSupportedException) {}
+			try { lastLockoutDate = fromUser.LastLockoutDate; } catch (NotSupportedException) {}
+			try { LastLoginDate = fromUser.LastLoginDate; } catch (NotSupportedException) {}
+			try { lastPasswordChangedDate = fromUser.LastPasswordChangedDate; } catch (NotSupportedException) {}
+			try { passwordQuestion = fromUser.PasswordQuestion; } catch (NotSupportedException) {}
+			try { providerUserKey = fromUser.ProviderUserKey; } catch (NotSupportedException) {}
+		}
+
+		internal void UpdateUser ()
+		{
+			MembershipUser newUser = Provider.GetUser (name, false);
+			UpdateSelf (newUser);
+		}
+
 		public virtual bool ChangePassword (string oldPassword, string newPassword)
 		{
 			bool success = Provider.ChangePassword (UserName, oldPassword, newPassword);
-			if (success)
-				lastPasswordChangedDate = DateTime.Now;
+
+			UpdateUser ();
 			
 			return success;
 		}
@@ -84,8 +105,8 @@ namespace System.Web.Security
 		public virtual bool ChangePasswordQuestionAndAnswer (string password, string newPasswordQuestion, string newPasswordAnswer)
 		{
 			bool success = Provider.ChangePasswordQuestionAndAnswer (UserName, password, newPasswordQuestion, newPasswordAnswer);
-			if (success)
-				passwordQuestion = newPasswordQuestion;
+
+			UpdateUser ();
 			
 			return success;
 		}
@@ -108,8 +129,8 @@ namespace System.Web.Security
 		public virtual string ResetPassword (string answer)
 		{
 			string newPass = Provider.ResetPassword (UserName, answer);
-			if (newPass != null)
-				lastPasswordChangedDate = DateTime.Now;
+
+			UpdateUser ();
 			
 			return newPass;
 		}
@@ -120,7 +141,7 @@ namespace System.Web.Security
 		}
 		
 		public virtual DateTime CreationDate {
-			get { return creationDate; }
+			get { return creationDate.ToLocalTime (); }
 		}
 		
 		public virtual string Email {
@@ -144,21 +165,21 @@ namespace System.Web.Security
 		}
 		
 		public virtual DateTime LastActivityDate {
-			get { return lastActivityDate; }
-			set { lastActivityDate = value; }
+			get { return lastActivityDate.ToLocalTime (); }
+			set { lastActivityDate = value.ToUniversalTime (); }
 		}
 		
 		public virtual DateTime LastLoginDate {
-			get { return lastLoginDate; }
-			set { lastLoginDate = value; }
+			get { return lastLoginDate.ToLocalTime (); }
+			set { lastLoginDate = value.ToUniversalTime (); }
 		}
 		
 		public virtual DateTime LastPasswordChangedDate {
-			get { return lastPasswordChangedDate; }
+			get { return lastPasswordChangedDate.ToLocalTime (); }
 		}
 		
 		public virtual DateTime LastLockoutDate {
-			get { return lastLockoutDate; }
+			get { return lastLockoutDate.ToLocalTime (); }
 		}
 		
 		public virtual string PasswordQuestion {
@@ -184,11 +205,11 @@ namespace System.Web.Security
 		
 		public virtual bool UnlockUser ()
 		{
-			if (Provider.UnlockUser (UserName)) {
-				isLockedOut = false;
-				return true;
-			}
-			return false;
+			bool retval = Provider.UnlockUser (UserName);
+
+			UpdateUser ();
+
+			return retval;
 		}
 		
 		MembershipProvider Provider {

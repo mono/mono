@@ -1,3 +1,27 @@
+2006-04-11  Chris Toshok  <toshok@ximian.com>
+
+	* MembershipUser.cs (.ctor): per Shackow's book, all DateTime's
+	are converted using ToUniversalTime when passed into this class.
+	(UpdateSelf): update ourselves from the passed in MembershipUser,
+	swallowing NotSupportedExceptions.
+	(UpdateUser): fetch a new MembershipUser from the db and call
+	UpdateSelf with it.
+	(ChangePassword): call UpdateUser after changing the password.
+	(ChangePasswordQuestionAndAnswer): same.
+	(ResetPassword): same.
+	(UnlockUser): same.  Also, don't explicitly set isLockedOut.
+	It'll be updated in UpdateSelf.
+	(CreationDate): getter calls ToLocalTime, setter calls
+	ToUniversalTime.
+	(LastActivityDate): same.
+	(LastLoginDate): same.
+	(LastPasswordChangedDate): same.
+	(LastLockoutDate): same.
+	
+	* Membership.cs (.cctor): use
+	ProvidersHelper.InstantitateProviders, and remove some unnecessary
+	#if NET_2_0's.
+
 2006-03-29  Chris Toshok  <toshok@ximian.com>
 
 	* SqlRoleProvider.cs: do the LOWER's in SQL, not in C#.

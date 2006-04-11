@@ -44,41 +44,27 @@ namespace System.Web.Security
 		static MembershipProviderCollection providers;
 		static MembershipProvider provider;
 		static int onlineTimeWindow;
-		
+
+		[MonoTODO]
 		static Membership ()
 		{
-#if NET_2_0
 			MembershipSection section = (MembershipSection) WebConfigurationManager.GetSection ("system.web/membership");
-#endif
+
 			providers = new MembershipProviderCollection ();
 
-#if NET_2_0
-			foreach (ProviderSettings prov in section.Providers) {
-				Type t = Type.GetType (prov.Type);
-				if (t == null)
-					throw new ConfigurationException ("Cannot find type: " + prov.Type);
-				if (!typeof(MembershipProvider).IsAssignableFrom (t))
-					throw new ConfigurationException ("The provided type is not a MembershipProvider subclass: " + prov.Type);
-				
-				MembershipProvider pr = (MembershipProvider) Activator.CreateInstance (t);
-				pr.Initialize (prov.Name, prov.Parameters);
-				
-				if (provider == null || prov.Name == section.DefaultProvider)
-					provider = pr;
+			ProvidersHelper.InstantiateProviders (section.Providers, providers, typeof (MembershipProvider));
 
-				providers.Add (pr);
-			}
-#endif
-
+			/* do we add this fallback? */
 			if (providers.Count == 0) {
 				provider = new SqlMembershipProvider ();
 				NameValueCollection attributes = new NameValueCollection ();
 				provider.Initialize ("AspNetSqlMembershipProvider", attributes);
 				providers.Add (provider);
 			}
-#if NET_2_0
+
+			provider = providers[section.DefaultProvider];
+
 			onlineTimeWindow = (int) section.UserIsOnlineTimeWindow.TotalMinutes;
-#endif
 		}
 		
 		public static MembershipUser CreateUser (string username, string password)
