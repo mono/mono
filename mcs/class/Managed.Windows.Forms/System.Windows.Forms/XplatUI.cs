@@ -141,6 +141,12 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		static public int HorizontalScrollBarHeight {
+			get {
+				return driver.HorizontalScrollBarHeight;
+			}
+		}
+
 		static public Size IconSize {
 			get {
 				return driver.IconSize;
@@ -222,6 +228,12 @@ namespace System.Windows.Forms {
 		static public bool MouseWheelPresent {
 			get {
 				return driver.MouseWheelPresent;
+			}
+		}
+
+		static public int VerticalScrollBarWidth {
+			get {
+				return driver.VerticalScrollBarWidth;
 			}
 		}
 

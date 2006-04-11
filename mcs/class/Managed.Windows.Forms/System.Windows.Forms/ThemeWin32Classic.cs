@@ -81,7 +81,7 @@ namespace System.Windows.Forms
 			string_format_menu_menubar_text.Alignment = StringAlignment.Center;
 			string_format_menu_menubar_text.HotkeyPrefix = HotkeyPrefix.Show;
 			always_draw_hotkeys = false;
-		}	
+		}
 
 		public override void ResetDefaults() {
 			throw new NotImplementedException("Need to implement ResetDefaults() for Win32 theme");
@@ -90,6 +90,19 @@ namespace System.Windows.Forms
 		public override bool DoubleBufferingSupported {
 			get {return true; }
 		}
+
+		public override int HorizontalScrollBarHeight {
+			get {
+				return XplatUI.HorizontalScrollBarHeight;
+			}
+		}
+
+		public override int VerticalScrollBarWidth {
+			get {
+				return XplatUI.VerticalScrollBarWidth;
+			}
+		}
+
 		#endregion	// Principal Theme Methods
 
 		#region	Internal Methods

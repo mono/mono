@@ -1,3 +1,34 @@
+2006-04-10  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* ScrollableControl.cs:
+	  - Rewrote DisplayRectangle code, now returning the proper x/y coords 
+	    (instead of 0,0) and we now return the real width/height instead of
+	    just the clientrectangle, adjusted for padding. The rectangle is
+	    now cached and created by the new CalculateDisplayRectangle method.
+	  - Created new CalculateDisplayRectange method, which basically does
+	    what get_DisplayRectangle() did originally, but now using the 
+	    right edge instead of DisplayRectangle to determine the size of
+	    our scrollbars
+	  - get_Canvas(): Fixed it to properly calculate canvas for 
+	    right/bottom controls which seem to be placed to the right/bottom
+	    of any controls that have a fixed location
+	  - Removed TODO that's taken care of
+	  - Removed NotImplementeds and attempted to implement AdjustFormScrollBars
+	    and SetDisplayRectLocation according to new MSDN2 docs
+	  - Added call to PerformLayout in OnVisibleChanged, MS causes a layout
+	    event when that is called, this is added for compatibility
+	  - ScrollControlIntoView(): Implemented.
+	  - Switched scrollbars to be implicit, they shouldn't be selectable
+	* ContainerControl: Now that ScrollControlIntoView is implemented, we 
+	  call it when the active control is set/changed
+	* ScrollBar.cs: Added support for generating Win32 scrollbar messages
+	* ImplicitHScrollBar.cs, ImplicitVScrollBar.cs: Now setting new base
+	  implicit_control variable (used for native Win32 message generation)
+	* XplatUI.cs, XplatUIDriver.cs, XplatUIWin32.cs: Added new 
+	  HorizontalScrollBarHeight and VerticalScrollBarWidth properties
+	* ThemeWin32Classic.cs: Now calling the driver for the scrollbar sizes
+	* XplatUIStructs.cs: Added ScrollBarCommands enum
+
 2006-04-10  Jackson Harper  <jackson@ximian.com>
 
 	* ButtonBase.cs:

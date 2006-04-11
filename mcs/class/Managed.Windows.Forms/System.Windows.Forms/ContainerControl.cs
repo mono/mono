@@ -77,6 +77,7 @@ namespace System.Windows.Forms {
 					CheckAcceptButton();
 				
 				// Scroll control into view
+				ScrollControlIntoView(active_control);
 
 				// Let the control know it's selected
 				Select(value);

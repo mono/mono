@@ -95,6 +95,18 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal virtual int HorizontalScrollBarHeight {
+			get {
+				return 16;
+			}
+		}
+
+		internal virtual int VerticalScrollBarWidth {
+			get {
+				return 16;
+			}
+		}
+
 		internal abstract int Caption { get; }
 		internal abstract Size CursorSize { get; }
 		internal abstract bool DragFullWindows { get; }

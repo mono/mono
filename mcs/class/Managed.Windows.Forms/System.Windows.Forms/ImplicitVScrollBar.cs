@@ -40,6 +40,7 @@ namespace System.Windows.Forms {
 
 		public ImplicitVScrollBar ()
 		{
+			implicit_control = true;
 			SetStyle (ControlStyles.Selectable, false);
 		}
 	}

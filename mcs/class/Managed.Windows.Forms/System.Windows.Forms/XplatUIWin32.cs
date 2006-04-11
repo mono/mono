@@ -59,6 +59,8 @@ namespace System.Windows.Forms {
 		private Hashtable		timer_list;
 		private static Queue		message_queue;
 		private static IntPtr 		clip_magic = new IntPtr(27051977);
+		private static int		scroll_width;
+		private static int		scroll_height;
 
 		private static Win32DnD		DnD;
 		#endregion	// Local Variables
@@ -665,6 +667,9 @@ namespace System.Windows.Forms {
 				Win32MessageBox(IntPtr.Zero, "Could not create foster window, win32 error " + Win32GetLastError().ToString(), "Oops", 0);
 			}
 
+			scroll_height = Win32GetSystemMetrics(SystemMetrics.SM_CYHSCROLL);
+			scroll_width = Win32GetSystemMetrics(SystemMetrics.SM_CXVSCROLL);
+
 			timer_list = new Hashtable ();
 		}
 		#endregion	// Constructor & Destructor
@@ -892,6 +897,17 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal override int HorizontalScrollBarHeight {
+			get {
+				return scroll_height;
+			}
+		}
+
+		internal override int VerticalScrollBarWidth {
+			get {
+				return scroll_width;
+			}
+		}
 
 		internal override bool DropTarget {
 			get {

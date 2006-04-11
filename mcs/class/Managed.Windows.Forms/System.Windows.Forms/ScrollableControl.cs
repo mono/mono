@@ -47,11 +47,12 @@ namespace System.Windows.Forms {
 		private Point			scroll_position;
 		private DockPaddingEdges	dock_padding;
 		private SizeGrip		sizegrip;
-		private HScrollBar		hscrollbar;
-		private VScrollBar		vscrollbar;
+		private ImplicitHScrollBar	hscrollbar;
+		private ImplicitVScrollBar	vscrollbar;
+		private Rectangle		display_rectangle;
+		private Size			canvas_size;
 		#endregion	// Local Variables
 
-		[MonoTODO("Need to use the edge values when performing the layout")]
 		[TypeConverter(typeof(ScrollableControl.DockPaddingEdgesConverter))]
 		#region Subclass DockPaddingEdges
 		public class DockPaddingEdges : ICloneable {
@@ -148,7 +149,6 @@ namespace System.Windows.Forms {
 					owner.PerformLayout();
 				}
 			}
-
 			#endregion	// DockPaddingEdges Public Instance Properties
 
 			// Public Instance Methods
@@ -172,6 +172,13 @@ namespace System.Windows.Forms {
 
 			public override string ToString() {
 				return "All = "+all.ToString()+" Top = "+top.ToString()+" Left = "+left.ToString()+" Bottom = "+bottom.ToString()+" Right = "+right.ToString();
+			}
+
+			internal void Scale(float dx, float dy) {
+				left = (int) (left * dx);
+				right = (int) (right * dx);
+				top = (int) (top * dy);
+				bottom = (int) (bottom * dy);
 			}
 
 			object ICloneable.Clone() {
@@ -270,13 +277,13 @@ namespace System.Windows.Forms {
 				} else {
 					SuspendLayout ();
 
-					hscrollbar = new HScrollBar();
+					hscrollbar = new ImplicitHScrollBar();
 					hscrollbar.Visible = false;
 					hscrollbar.ValueChanged += new EventHandler(HandleScrollBar);
 					hscrollbar.Height = SystemInformation.HorizontalScrollBarHeight;
 					this.Controls.AddImplicit (hscrollbar);
 
-					vscrollbar = new VScrollBar();
+					vscrollbar = new ImplicitVScrollBar();
 					vscrollbar.Visible = false;
 					vscrollbar.ValueChanged += new EventHandler(HandleScrollBar);
 					vscrollbar.Width = SystemInformation.VerticalScrollBarWidth;
@@ -360,31 +367,32 @@ namespace System.Windows.Forms {
 		public override Rectangle DisplayRectangle {
 			get {
 				Rectangle rect;
-				
-				rect = base.DisplayRectangle;
-				if (vscroll_visible) {
-					rect.Width -= vscrollbar.Width;
-					if (rect.Width < 0) {
-						rect.Width = 0;
-					}
+
+				if (display_rectangle.IsEmpty) {
+					CalculateDisplayRectangle();
 				}
-				
-				if (hscroll_visible) {
-					rect.Height -= hscrollbar.Height;
-					if (rect.Height < 0) {
-						rect.Height = 0;
-					}
-				}
+
+				rect = display_rectangle;
 
 				rect.X += dock_padding.Left;
 				rect.Y += dock_padding.Top;
-
-				rect.Width -= dock_padding.Right + dock_padding.Left;
-				rect.Height -= dock_padding.Bottom + dock_padding.Top;
+				rect.Width -= dock_padding.Left + dock_padding.Right;
+				rect.Height -= dock_padding.Top + dock_padding.Bottom;
 
 				return rect;
-				//return new Rectangle(-scroll_position.X, -scroll_position.Y, auto_scroll_min_size.Width, auto_scroll_min_size.Height);
 			}
+		}
+
+		private void CalculateDisplayRectangle() {
+			if (!auto_scroll) {
+				display_rectangle = base.DisplayRectangle;
+				return;
+			}
+
+			display_rectangle.X = -scroll_position.X;
+			display_rectangle.Y = -scroll_position.Y;
+			display_rectangle.Width = Math.Max(auto_scroll_min_size.Width, Math.Max(base.DisplayRectangle.Width, canvas_size.Width));
+			display_rectangle.Height = Math.Max(auto_scroll_min_size.Height, Math.Max(base.DisplayRectangle.Height, canvas_size.Height));
 		}
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
@@ -432,6 +440,51 @@ namespace System.Windows.Forms {
 
 		#region Public Instance Methods
 		public void ScrollControlIntoView(Control activeControl) {
+			int	x;
+			int	y;
+			int	corner_x;
+			int	corner_y;
+
+			if (!AutoScroll || (!hscroll_visible && !vscroll_visible)) {
+				return;
+			}
+
+			if (!Contains(activeControl)) {
+				return;
+			}
+
+			x = activeControl.Left;
+			y = activeControl.Top;
+
+			// Translate into coords relative to us
+			if (activeControl.parent != this) {
+				activeControl.PointToScreen(ref x, ref y);
+				PointToClient(ref x, ref y);
+			}
+
+			x += scroll_position.X;
+			y += scroll_position.Y;
+
+			// FIXME - Bail if the control is already visible?
+
+			// try to center
+			corner_x = Math.Max(0, x + activeControl.Width / 2 - client_size.Width / 2);
+			corner_y = Math.Max(0, y + activeControl.Height / 2- client_size.Height / 2);
+
+			if (hscroll_visible && (corner_x > hscrollbar.Maximum)) {
+				corner_x = Math.Max(0, hscrollbar.Maximum - client_size.Width);
+			}
+
+			if (vscroll_visible && (corner_y > vscrollbar.Maximum)) {
+				corner_y = Math.Max(0, vscrollbar.Maximum - client_size.Height);
+			}
+			if ((corner_x == scroll_position.X) && (corner_y == scroll_position.Y)) {
+				return;
+			}
+
+			//this.SetDisplayRectLocation(-corner_x, -corner_y);
+			hscrollbar.Value = corner_x;
+			vscrollbar.Value = corner_y;
 		}
 
 		public void SetAutoScrollMargin(int x, int y) {
@@ -451,17 +504,21 @@ namespace System.Windows.Forms {
 		#region Protected Instance Methods
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void AdjustFormScrollbars(bool displayScrollbars) {
-			// Internal MS
+			Recalculate(this, EventArgs.Empty);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected bool GetScrollState(int bit) {
-			return false;
 			// Internal MS
+			return false;
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void OnLayout(LayoutEventArgs levent) {
+			CalculateCanvasSize();
+			CalculateDisplayRectangle();
+
+			AdjustFormScrollbars(AutoScroll);	// Dunno what the logic is. Passing AutoScroll seems to match MS behaviour
 			base.OnLayout(levent);
 		}
 
@@ -476,30 +533,45 @@ namespace System.Windows.Forms {
 					}
 				} else {
 					if (vscrollbar.Maximum > (vscrollbar.Value + vscrollbar.LargeChange)) {
-							vscrollbar.Value += vscrollbar.LargeChange;
-						} else {
-							vscrollbar.Value = vscrollbar.Maximum;
-						}
+						vscrollbar.Value += vscrollbar.LargeChange;
+					} else {
+						vscrollbar.Value = vscrollbar.Maximum;
 					}
+				}
 			}
 			base.OnMouseWheel(e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void OnVisibleChanged(EventArgs e) {
+			if (Visible) {
+				PerformLayout();
+			}
 			base.OnVisibleChanged(e);
 		}
 
 		protected override void ScaleCore(float dx, float dy) {
+			dock_padding.Scale(dx, dy);
 			base.ScaleCore(dx, dy);
 		}
 
 		protected void SetDisplayRectLocation(int x, int y) {
-			throw new NotImplementedException();
+			// This method is weird. MS documents that the scrollbars are not
+			// updated. We need to move stuff, but leave the scrollbars as is
+
+			if (x > 0) {
+				x = 0;
+			}
+
+			if (y > 0) {
+				y = 0;
+			}
+
+			ScrollWindow(scroll_position.X - x , scroll_position.Y - y);
 		}
 
 		protected void SetScrollState(int bit, bool value) {
-			throw new NotImplementedException();
+			//throw new NotImplementedException();
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -511,39 +583,95 @@ namespace System.Windows.Forms {
 		#region Internal & Private Methods
 		private Size Canvas {
 			get {
-				int	num_of_children;
-				int	width;
-				int	height;
-
-				num_of_children = child_controls.Count;
-				width = 0;
-				height = 0;
-
-				for (int i = 0; i < num_of_children; i++) {
-					if ((child_controls[i].Visible == false) || (child_controls[i] == hscrollbar) || (child_controls[i] == vscrollbar) || (child_controls[i] == sizegrip)) {
-						continue;
-					}
-					if (child_controls[i].Right > width) {
-						width = child_controls[i].Right;
-					}
-
-					if (child_controls[i].Bottom > height) {
-						height = child_controls[i].Bottom;
-					}
+				if (!canvas_size.IsEmpty) {
+					return canvas_size;
 				}
-
-				return new Size(width, height);
+				CalculateCanvasSize();
+				return canvas_size;
 			}
 		}
 
-		private void Recalculate (object sender, EventArgs e)
-		{
-			if (!Visible || !this.auto_scroll && !force_hscroll_visible && !force_vscroll_visible) {
+		private void CalculateCanvasSize() {
+			Control		child;
+			int		num_of_children;
+			int		width;
+			int		height;
+			int		extra_width;
+			int		extra_height;
+
+			num_of_children = child_controls.Count;
+			width = 0;
+			height = 0;
+			extra_width = dock_padding.Right;
+			extra_height = dock_padding.Bottom;
+
+			for (int i = 0; i < num_of_children; i++) {
+				child = child_controls[i];
+				if (child.Dock == DockStyle.Right) {
+					extra_width += child.Width;
+				} else if (child.Dock == DockStyle.Bottom) {
+					extra_height += child.Height;
+				}
+			}
+
+			for (int i = 0; i < num_of_children; i++) {
+				child = child_controls[i];
+
+				switch(child.Dock) {
+					case DockStyle.Left: {
+						if ((child_controls[i].Right + extra_width) > width) {
+							width = child_controls[i].Right + extra_width;
+						}
+						continue;
+					}
+
+					case DockStyle.Top: {
+						if ((child.Bottom + extra_height) > height) {
+							height = child.Bottom + extra_height;
+						}
+						continue;
+					}
+
+					case DockStyle.Fill:
+					case DockStyle.Right:
+					case DockStyle.Bottom: {
+						continue;
+					}
+
+					default: {
+						AnchorStyles	anchor;
+
+						anchor = child.Anchor;
+
+						if (((anchor & AnchorStyles.Left) != 0) && ((anchor & AnchorStyles.Right) == 0)) {
+							if ((child_controls[i].Right + extra_width) > width) {
+								width = child_controls[i].Right + extra_width;
+							}
+						}
+
+						if (((anchor & AnchorStyles.Top) != 0) || ((anchor & AnchorStyles.Bottom) == 0)) {
+							if ((child.Bottom + extra_height) > height) {
+								height = child.Bottom + extra_height;
+							}
+						}
+						continue;
+					}
+				}
+			}
+			width += scroll_position.X;
+			height += scroll_position.Y;
+
+			canvas_size.Width = width;
+			canvas_size.Height = height;
+		}
+
+		private void Recalculate (object sender, EventArgs e) {
+			if (!auto_scroll && !force_hscroll_visible && !force_vscroll_visible) {
 				return;
 			}
 
-			Size canvas = Canvas;
-			Size client = ClientRectangle.Size;
+			Size canvas = canvas_size;
+			Size client = ClientSize;
 
 			canvas.Width += auto_scroll_margin.Width;
 			canvas.Height += auto_scroll_margin.Height;
@@ -578,8 +706,8 @@ namespace System.Windows.Forms {
 			if (hscroll_visible) {
 				hscrollbar.Left = 0;
 				hscrollbar.Top = client.Height - SystemInformation.HorizontalScrollBarHeight;
-				hscrollbar.LargeChange = DisplayRectangle.Width;
-				hscrollbar.SmallChange = DisplayRectangle.Width / 10;
+				hscrollbar.LargeChange = right_edge;
+				hscrollbar.SmallChange = 5;
 				hscrollbar.Maximum = canvas.Width - 1;
 			} else {
 				scroll_position.X = 0;
@@ -589,8 +717,8 @@ namespace System.Windows.Forms {
 				vscrollbar.Left = client.Width - SystemInformation.VerticalScrollBarWidth;
 				vscrollbar.Top = 0;
 
-				vscrollbar.LargeChange = DisplayRectangle.Height;
-				vscrollbar.SmallChange = DisplayRectangle.Height / 10;
+				vscrollbar.LargeChange = bottom_edge;
+				vscrollbar.SmallChange = 5;
 				vscrollbar.Maximum = canvas.Height - 1;
 			} else {
 				scroll_position.Y = 0;
@@ -637,14 +765,15 @@ namespace System.Windows.Forms {
 		private void ScrollWindow(int XOffset, int YOffset) {
 			int	num_of_children;
 
+			if (XOffset == 0 && YOffset == 0) {
+				return;
+			}
+
 			SuspendLayout();
 
 			num_of_children = child_controls.Count;
 
 			for (int i = 0; i < num_of_children; i++) {
-				if (child_controls[i] == hscrollbar || child_controls[i] == vscrollbar || child_controls[i] == sizegrip) {
-					continue;
-				}
 				child_controls[i].Left -= XOffset;
 				child_controls[i].Top -= YOffset;
 				// Is this faster? child_controls[i].Location -= new Size(XOffset, YOffset);
@@ -652,9 +781,12 @@ namespace System.Windows.Forms {
 
 			scroll_position.X += XOffset;
 			scroll_position.Y += YOffset;
+			display_rectangle.X = -scroll_position.X;
+			display_rectangle.Y = -scroll_position.Y;
 
-			// Should we call XplatUI.ScrollWindow???
-			Invalidate();
+			// Should we call XplatUI.ScrollWindow??? If so, we need to position our windows by other means above
+			// Since we're already causing a redraw above
+			Invalidate(false);
 			ResumeLayout();
 		}
 		#endregion	// Internal & Private Methods

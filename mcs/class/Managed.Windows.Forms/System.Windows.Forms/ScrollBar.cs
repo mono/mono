@@ -48,7 +48,7 @@ namespace System.Windows.Forms
 		private int large_change;
 		private int small_change;
 		internal int scrollbutton_height;
-		internal int scrollbutton_width;		
+		internal int scrollbutton_width;
 		private ScrollBars type;
 		private Rectangle first_arrow_area = new Rectangle ();		// up or left
 		private Rectangle second_arrow_area = new Rectangle ();		// down or right
@@ -66,9 +66,10 @@ namespace System.Windows.Forms
 		private const int thumb_min_size = 8;
 		private const int thumb_notshown_size = 40;
 		internal bool vert;
-		private int lastclick_pos;      // Position of the last button-down event
-		private int lastclick_pos_thumb;      // Position of the last button-down event relative to the thumb		
-		private int thumbclick_offset; // Position of the last button-down event relative to the thumb edge		
+		internal bool implicit_control;
+		private int lastclick_pos;		// Position of the last button-down event
+		private int lastclick_pos_thumb;	// Position of the last button-down event relative to the thumb		
+		private int thumbclick_offset;		// Position of the last button-down event relative to the thumb edge		
 		private Rectangle dirty;
 
 		internal ThumbMoving thumb_moving = ThumbMoving.None;
@@ -478,10 +479,21 @@ namespace System.Windows.Forms
 			Scroll (this, event_args);
 		}
 
+		private void SendWMScroll(ScrollBarCommands cmd) {
+			if ((parent != null) && parent.IsHandleCreated) {
+				if (vert) {
+					XplatUI.SendMessage(parent.Handle, Msg.WM_VSCROLL, (IntPtr)cmd, implicit_control ? IntPtr.Zero : Handle);
+				} else {
+					XplatUI.SendMessage(parent.Handle, Msg.WM_HSCROLL, (IntPtr)cmd, implicit_control ? IntPtr.Zero : Handle);
+				}
+			}
+		}
+
 		protected virtual void OnValueChanged (EventArgs e)
 		{
-			if (ValueChanged != null)
+			if (ValueChanged != null) {
 				ValueChanged (this, e);
+			}
 		}
 
 		public override string ToString()
@@ -620,13 +632,15 @@ namespace System.Windows.Forms
 
 			case TimerType.RepeatButton:
 			{
-				if ((firstbutton_state & ButtonState.Pushed) == ButtonState.Pushed &&
-						position != Minimum)
+				if ((firstbutton_state & ButtonState.Pushed) == ButtonState.Pushed && position != Minimum) {
 					SmallDecrement();
+					SendWMScroll(ScrollBarCommands.SB_LINEUP);
+				}
 
-				if ((secondbutton_state & ButtonState.Pushed) == ButtonState.Pushed &&
-					position != Maximum)
+				if ((secondbutton_state & ButtonState.Pushed) == ButtonState.Pushed && position != Maximum) {
 					SmallIncrement();
+					SendWMScroll(ScrollBarCommands.SB_LINEDOWN);
+				}
 
 				break;
 			}
@@ -660,25 +674,28 @@ namespace System.Windows.Forms
 
 				if (thumb_moving == ThumbMoving.Forward) {
 					if ((vert && (thumb_pos.Y + thumb_size > lastclick_pos)) ||
-						(!vert && (thumb_pos.X + thumb_size > lastclick_pos)) ||
-						(thumb_area.Contains (pnt) == false)){
+					   (!vert && (thumb_pos.X + thumb_size > lastclick_pos)) ||
+					   (thumb_area.Contains (pnt) == false)) {
 						timer.Enabled = false;						
     						thumb_moving = ThumbMoving.None;
     						Refresh ();    			
 						return;
 					} else {
 						LargeIncrement ();
-				}
-				}
-				else
+						SendWMScroll(ScrollBarCommands.SB_PAGEDOWN);
+					}
+				} else {
 					if ((vert && (thumb_pos.Y < lastclick_pos)) ||
-						(!vert && (thumb_pos.X  < lastclick_pos))){
+					   (!vert && (thumb_pos.X  < lastclick_pos))){
 						timer.Enabled = false;
 						thumb_moving = ThumbMoving.None;
-    						Refresh ();    						
+						SendWMScroll(ScrollBarCommands.SB_PAGEUP);
+						Refresh ();    						
 					} else {
 						LargeDecrement ();
+						SendWMScroll(ScrollBarCommands.SB_PAGEUP);
 					}
+				}
 
 				break;
 			}
@@ -728,7 +745,7 @@ namespace System.Windows.Forms
 						OnScroll (new ScrollEventArgs (ScrollEventType.ThumbTrack, position));
 						Invalidate (thumb_area);
 					}
-
+					SendWMScroll(ScrollBarCommands.SB_THUMBTRACK);
 				} else {
 					int thumb_edge = e.X - thumbclick_offset;
 
@@ -742,7 +759,7 @@ namespace System.Windows.Forms
 						OnScroll (new ScrollEventArgs (ScrollEventType.ThumbTrack, position));
 						Invalidate (thumb_area);
 					}
-
+					SendWMScroll(ScrollBarCommands.SB_THUMBTRACK);
 				}
 
 			}
@@ -757,6 +774,7 @@ namespace System.Windows.Forms
 				return;
 
     			if (firstbutton_state != ButtonState.Inactive && first_arrow_area.Contains (e.X, e.Y)) {
+				SendWMScroll(ScrollBarCommands.SB_LINEUP);
 				this.Capture = true;				
 				firstbutton_state = ButtonState.Pushed;
 				firstbutton_pressed = true;
@@ -768,6 +786,7 @@ namespace System.Windows.Forms
 			}
 
 			if (secondbutton_state != ButtonState.Inactive && second_arrow_area.Contains (e.X, e.Y)) {
+				SendWMScroll(ScrollBarCommands.SB_LINEDOWN);
 				this.Capture = true;				
 				secondbutton_state = ButtonState.Pushed;
 				secondbutton_pressed = true;
@@ -781,6 +800,7 @@ namespace System.Windows.Forms
 			if (thumb_size > 0 && thumb_pos.Contains (e.X, e.Y)) {
 				thumb_pressed = true;
 				this.Capture = true;
+				SendWMScroll(ScrollBarCommands.SB_THUMBTRACK);
 				if (vert) {
 					thumbclick_offset = e.Y - thumb_pos.Y;
 					lastclick_pos = e.Y;					
@@ -797,6 +817,7 @@ namespace System.Windows.Forms
 						lastclick_pos = e.Y;
 
 						if (e.Y > thumb_pos.Y + thumb_pos.Height) {
+							SendWMScroll(ScrollBarCommands.SB_PAGEDOWN);
 							LargeIncrement ();							
 							thumb_moving = ThumbMoving.Forward;							
 							Dirty (new Rectangle (0, thumb_pos.Y + thumb_pos.Height,
@@ -804,6 +825,7 @@ namespace System.Windows.Forms
 										      ClientRectangle.Height -	(thumb_pos.Y + thumb_pos.Height) -
 										      scrollbutton_height));
 						} else {
+							SendWMScroll(ScrollBarCommands.SB_PAGEUP);
 							LargeDecrement ();							
 							thumb_moving = ThumbMoving.Backwards;
 							Dirty (new Rectangle (0,  scrollbutton_height,
@@ -816,6 +838,7 @@ namespace System.Windows.Forms
 						lastclick_pos = e.X;
 
 						if (e.X > thumb_pos.X + thumb_pos.Width) {
+							SendWMScroll(ScrollBarCommands.SB_PAGEDOWN);
 							thumb_moving = ThumbMoving.Forward;
 							LargeIncrement ();							
 							Dirty (new Rectangle (thumb_pos.X + thumb_pos.Width, 0,
@@ -823,6 +846,7 @@ namespace System.Windows.Forms
 										      scrollbutton_width,
 										      ClientRectangle.Height));
 						} else {
+							SendWMScroll(ScrollBarCommands.SB_PAGEUP);
 							thumb_moving = ThumbMoving.Backwards;
 							LargeDecrement ();							
 							Dirty (new Rectangle (scrollbutton_width,  0,
@@ -857,6 +881,7 @@ namespace System.Windows.Forms
 				if (first_arrow_area.Contains (e.X, e.Y)) {
 					SmallDecrement ();
 				}
+				SendWMScroll(ScrollBarCommands.SB_LINEUP);
 				firstbutton_pressed = false;
 				Dirty (first_arrow_area);
 			} else if (secondbutton_pressed) {
@@ -864,11 +889,13 @@ namespace System.Windows.Forms
 				if (second_arrow_area.Contains (e.X, e.Y)) {
 					SmallIncrement ();
 				}
+				SendWMScroll(ScrollBarCommands.SB_LINEDOWN);
 				Dirty (second_arrow_area);
 				secondbutton_pressed = false;
 			} else if (thumb_pressed == true) {
 				OnScroll (new ScrollEventArgs (ScrollEventType.ThumbPosition, position));
 				OnScroll (new ScrollEventArgs (ScrollEventType.EndScroll, position));
+				SendWMScroll(ScrollBarCommands.SB_THUMBPOSITION);
 				thumb_pressed = false;
 				Refresh ();
 				return;
