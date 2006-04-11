@@ -988,12 +988,14 @@ namespace System.Web.Compilation
 
 					StringPropertyBuilder pb = b as StringPropertyBuilder;
 					if (pb != null){
-						string str = (pb.Children != null && pb.Children.Count > 0) ? (string) pb.Children [0] : null;
-						if (str != null) {
+						if (pb.Children != null && pb.Children.Count > 0) {
+							StringBuilder asb = new StringBuilder ();
+							foreach (string s in pb.Children)
+								asb.Append (s);
 							CodeMemberMethod method = builder.method;
 							CodeAssignStatement assign = new CodeAssignStatement ();
 							assign.Left = new CodePropertyReferenceExpression (ctrlVar, pb.PropertyName);
-							assign.Right = new CodePrimitiveExpression (str);
+							assign.Right = new CodePrimitiveExpression (asb.ToString ());
 							method.Statements.Add (assign);
 						}
 						continue;
