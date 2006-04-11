@@ -1,3 +1,9 @@
+2006-04-11  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* ScrollableControl.cs: Calculate DisplayRect dynamically, so that
+	  layout changes do to app-triggered resizes will have the proper
+	  display rectangle for layout
+
 2006-04-11  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ThemeWin32Classic.cs:

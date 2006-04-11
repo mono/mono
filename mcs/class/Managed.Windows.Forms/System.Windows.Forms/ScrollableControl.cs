@@ -49,7 +49,6 @@ namespace System.Windows.Forms {
 		private SizeGrip		sizegrip;
 		private ImplicitHScrollBar	hscrollbar;
 		private ImplicitVScrollBar	vscrollbar;
-		private Rectangle		display_rectangle;
 		private Size			canvas_size;
 		#endregion	// Local Variables
 
@@ -366,54 +365,39 @@ namespace System.Windows.Forms {
 
 		public override Rectangle DisplayRectangle {
 			get {
-				Rectangle rect;
+				Rectangle	display_rectangle;
+				int		width;
+				int		height;
 
-				if (display_rectangle.IsEmpty) {
-					CalculateDisplayRectangle();
+				if (!auto_scroll) {
+					return base.DisplayRectangle;
 				}
 
-				rect = display_rectangle;
-
-				rect.X += dock_padding.Left;
-				rect.Y += dock_padding.Top;
-				rect.Width -= dock_padding.Left + dock_padding.Right;
-				rect.Height -= dock_padding.Top + dock_padding.Bottom;
-
-				return rect;
-			}
-		}
-
-		private void CalculateDisplayRectangle() {
-			int	width;
-			int	height;
-
-			if (!auto_scroll) {
-				display_rectangle = base.DisplayRectangle;
-				return;
-			}
-
-			if (canvas_size.Width <= base.DisplayRectangle.Width) {
-				width = base.DisplayRectangle.Width;
-				if (vscroll_visible) {
-					width -= vscrollbar.Width;
+				if (canvas_size.Width <= base.DisplayRectangle.Width) {
+					width = base.DisplayRectangle.Width;
+					if (vscroll_visible) {
+						width -= vscrollbar.Width;
+					}
+				} else {
+					width = canvas_size.Width;
 				}
-			} else {
-				width = canvas_size.Width;
-			}
 
-			if (canvas_size.Height <= base.DisplayRectangle.Height) {
-				height = base.DisplayRectangle.Height;
-				if (hscroll_visible) {
-					height -= hscrollbar.Height;
+				if (canvas_size.Height <= base.DisplayRectangle.Height) {
+					height = base.DisplayRectangle.Height;
+					if (hscroll_visible) {
+						height -= hscrollbar.Height;
+					}
+				} else {
+					height = canvas_size.Height;
 				}
-			} else {
-				height = canvas_size.Height;
-			}
 
-			display_rectangle.X = -scroll_position.X;
-			display_rectangle.Y = -scroll_position.Y;
-			display_rectangle.Width = Math.Max(auto_scroll_min_size.Width, width);
-			display_rectangle.Height = Math.Max(auto_scroll_min_size.Height, height);
+				display_rectangle.X = -scroll_position.X + dock_padding.Left;
+				display_rectangle.Y = -scroll_position.Y + dock_padding.Top;
+				display_rectangle.Width = Math.Max(auto_scroll_min_size.Width, width) - dock_padding.Left - dock_padding.Right;
+				display_rectangle.Height = Math.Max(auto_scroll_min_size.Height, height) - dock_padding.Top - dock_padding.Bottom;
+
+				return display_rectangle;
+			}
 		}
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
@@ -537,7 +521,6 @@ namespace System.Windows.Forms {
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void OnLayout(LayoutEventArgs levent) {
 			CalculateCanvasSize();
-			CalculateDisplayRectangle();
 
 			AdjustFormScrollbars(AutoScroll);	// Dunno what the logic is. Passing AutoScroll seems to match MS behaviour
 			base.OnLayout(levent);
@@ -773,7 +756,6 @@ namespace System.Windows.Forms {
 					vscrollbar.Visible = false;
 				}
 			}
-			CalculateDisplayRectangle();
 		}
 
 		private void HandleScrollBar(object sender, EventArgs e) {
@@ -803,8 +785,6 @@ namespace System.Windows.Forms {
 
 			scroll_position.X += XOffset;
 			scroll_position.Y += YOffset;
-			display_rectangle.X = -scroll_position.X;
-			display_rectangle.Y = -scroll_position.Y;
 
 			// Should we call XplatUI.ScrollWindow??? If so, we need to position our windows by other means above
 			// Since we're already causing a redraw above
