@@ -1,3 +1,9 @@
+2006-04-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestGraphics.cs: Added new test cases for bug #77129 where we should
+	not draw or fill rectangle(s) with negative width or height. Converted
+	all test cases to UNIX line endings.
+
 2006-03-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestGraphics.cs: Added new test cases translating matrix with 

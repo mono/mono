@@ -587,5 +587,99 @@ namespace MonoTests.System.Drawing
 			AssertEquals ("append.4", 8, elements[4]);
 			AssertEquals ("append.5", 3, elements[5]);
 		}
+
+		[Test]
+		public void DrawRectangle_Negative ()
+		{
+			Bitmap bitmap = new Bitmap (20, 20);
+			Graphics g = Graphics.FromImage (bitmap);
+			Pen pen = new Pen (Color.Red);
+			int empty = Color.Empty.ToArgb ();
+			g.DrawRectangle (pen, 5, 5, -10, -10);
+			g.DrawRectangle (pen, 0.0f, 0.0f, 5.0f, -10.0f);
+			g.DrawRectangle (pen, new Rectangle (15, 0, -10, 5));
+			for (int y = 0; y < bitmap.Height; y++) {
+				for (int x = 0; x < bitmap.Width; x++) {
+					if (bitmap.GetPixel (x, y).ToArgb () != empty)
+						Fail (String.Format ("Position {0},{1}", x, y));
+				}
+			}
+			pen.Dispose ();
+			g.Dispose ();
+			bitmap.Dispose ();
+		}
+
+		[Test]
+		public void DrawRectangles_Negative ()
+		{
+			Bitmap bitmap = new Bitmap (20, 20);
+			Graphics g = Graphics.FromImage (bitmap);
+			Pen pen = new Pen (Color.Red);
+			Rectangle[] rects = new Rectangle[2] {
+				new Rectangle (5, 5, -10, -10), new Rectangle (0, 0, 5, -10)
+			};
+			RectangleF[] rectf = new RectangleF[2] {
+				new RectangleF (0.0f, 5.0f, -10.0f, -10.0f), new RectangleF (15.0f, 0.0f, -10.0f, 5.0f)
+			};
+			int empty = Color.Empty.ToArgb ();
+			g.DrawRectangles (pen, rects);
+			g.DrawRectangles (pen, rectf);
+			for (int y = 0; y < bitmap.Height; y++) {
+				for (int x = 0; x < bitmap.Width; x++) {
+					if (bitmap.GetPixel (x, y).ToArgb () != empty)
+						Fail (String.Format ("Position {0},{1}", x, y));
+				}
+			}
+			pen.Dispose ();
+			g.Dispose ();
+			bitmap.Dispose ();
+		}
+
+		[Test]
+		public void FillRectangle_Negative ()
+		{
+			Bitmap bitmap = new Bitmap (20, 20);
+			Graphics g = Graphics.FromImage (bitmap);
+			SolidBrush brush = new SolidBrush (Color.Red);
+			int empty = Color.Empty.ToArgb ();
+			g.FillRectangle (brush, 5, 5, -10, -10);
+			g.FillRectangle (brush, 0.0f, 0.0f, 5.0f, -10.0f);
+			g.FillRectangle (brush, new Rectangle (15, 0, -10, 5));
+			for (int y = 0; y < bitmap.Height; y++) {
+				for (int x = 0; x < bitmap.Width; x++) {
+					if (bitmap.GetPixel (x, y).ToArgb () != empty)
+						Fail (String.Format ("Position {0},{1}", x, y));
+				}
+			}
+			brush.Dispose ();
+			g.Dispose ();
+			bitmap.Dispose ();
+		}
+
+		[Test]
+		public void FillRectangles_Negative ()
+		{
+			Bitmap bitmap = new Bitmap (20, 20);
+			Graphics g = Graphics.FromImage (bitmap);
+			SolidBrush brush = new SolidBrush (Color.Red);
+			Rectangle[] rects = new Rectangle[2] {
+				new Rectangle (5, 5, -10, -10), new Rectangle (0, 0, 5, -10)
+			};
+			RectangleF[] rectf = new RectangleF[2] {
+				new RectangleF (0.0f, 5.0f, -10.0f, -10.0f), new RectangleF (15.0f, 0.0f, -10.0f, 5.0f)
+			};
+			int empty = Color.Empty.ToArgb ();
+			g.FillRectangles (brush, rects);
+			g.FillRectangles (brush, rectf);
+			for (int y = 0; y < bitmap.Height; y++) {
+				for (int x = 0; x < bitmap.Width; x++) {
+					if (bitmap.GetPixel (x, y).ToArgb () != empty)
+						Fail (String.Format ("Position {0},{1}", x, y));
+				}
+			}
+			brush.Dispose ();
+			g.Dispose ();
+			bitmap.Dispose ();
+		}
 	}
 }
