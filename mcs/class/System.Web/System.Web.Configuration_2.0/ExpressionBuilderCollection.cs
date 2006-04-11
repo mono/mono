@@ -83,7 +83,7 @@ namespace System.Web.Configuration
 
 		protected override ConfigurationElement CreateNewElement ()
 		{
-			return new ExpressionBuilder ("", "");
+			return new ExpressionBuilder ();
 		}
 
 		protected override object GetElementKey (ConfigurationElement element)

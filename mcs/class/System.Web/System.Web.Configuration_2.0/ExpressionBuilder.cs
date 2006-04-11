@@ -59,6 +59,10 @@ namespace System.Web.Configuration {
 			properties.Add (typeProp);
 		}
 
+		internal ExpressionBuilder ()
+		{
+		}
+
 		public ExpressionBuilder (string expressionPrefix, string theType)
 		{
 			this.ExpressionPrefix = expressionPrefix;
