@@ -9113,6 +9113,14 @@ op_to_op_src2_membase (int load_opcode, int opcode)
 	case OP_COMPARE:
 	case OP_ICOMPARE:
 		return OP_X86_COMPARE_REG_MEMBASE;
+	case OP_IADD:
+		return OP_X86_ADD_REG_MEMBASE;
+	case OP_ISUB:
+		return OP_X86_SUB_REG_MEMBASE;
+	case OP_IAND:
+		return OP_X86_AND_REG_MEMBASE;
+	case OP_IOR:
+		return OP_X86_OR_REG_MEMBASE;
 	case OP_IXOR:
 		return OP_X86_XOR_REG_MEMBASE;
 	}
@@ -9242,9 +9250,6 @@ mono_handle_global_vregs (MonoCompile *cfg)
 	for (i = 0; i < cfg->num_varinfo; i++) {
 		MonoInst *var = cfg->varinfo [i];
 		MonoMethodVar *vmv = MONO_VARINFO (cfg, i);
-
-		/* FIXME: Enabling this for float screws up the fp stack on x86 */
-		/* FIXME: Enable this for floats on !x86 */
 
 		switch (var->type) {
 		case STACK_I4:

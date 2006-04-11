@@ -1,3 +1,9 @@
+2006-04-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ops.h cpu-pentium.md mini-x86.c: Add some new reg-membase rules.
+	
+	* method-to-ir.c (op_to_op_src2_membase): Use the new rules.
+
 2006-04-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mono_local_cprop2): Fix the previous change.
