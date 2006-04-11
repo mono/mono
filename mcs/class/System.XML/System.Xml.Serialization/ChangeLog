@@ -1,3 +1,10 @@
+2006-04-11  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* XmlSchemas.cs: In 1.1, don't allow adding two schemas
+	with the same namespaces. This is allowed in 2.0. Fixed
+	the Find() method to cope with this case. Based on a patch
+	by David Jung.
+
 2006-03-22  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XmlReflectionImporter.cs: Throw NotSupportException instead of

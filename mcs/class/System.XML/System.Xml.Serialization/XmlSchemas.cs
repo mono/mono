@@ -128,8 +128,21 @@ namespace System.Xml.Serialization {
 				}
 				return null;
 			}
-			else
-				return Find (schema, name, type);
+			else {
+				object fschema = Find (schema, name, type);
+#if NET_2_0
+				if (fschema == null) {
+				   	// still didn't find it
+					// (possibly table[name.Namespace] was overwritten in table due to duplicate "" keys),
+					// so look in all schemas (for consistiency with MS behaviour)
+					foreach (XmlSchema s in this) {
+						object ob = Find (s, name, type);
+						if (ob != null) return ob;
+					}
+				}
+#endif
+				return fschema;
+			}
 		}
 
 		object Find (XmlSchema schema, XmlQualifiedName name, Type type)
@@ -191,6 +204,10 @@ namespace System.Xml.Serialization {
 		{
 			string ns = ((XmlSchema) value).TargetNamespace;
 			if (ns == null) ns = "";
+#if ONLY_1_1
+			if (table.Contains (ns))
+				throw new InvalidOperationException ("A schema with the namespace '" + ns + "' has already been added.");
+#endif
 			table [ns] = value;
 		}
 
