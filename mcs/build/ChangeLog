@@ -1,3 +1,9 @@
+2006-04-11  Raja R Harinath  <rharinath@novell.com>
+
+	* profiles/default.make (BOOTSTRAP_PROFILE): Define.
+	* profiles/net_2_0.make (BOOTSTRAP_PROFILE): Define.
+	* rules.make (INTERNAL_RESGEN): Pick from bootstrap profile.
+
 2006-01-19  Raja R Harinath  <rharinath@novell.com>
 
 	* library.make (test_lib): Don't allow to be overridden.

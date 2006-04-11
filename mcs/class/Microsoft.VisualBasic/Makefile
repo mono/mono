@@ -20,14 +20,8 @@ TXT_RES = Microsoft.VisualBasic.VBUtils.resources
 
 with_mono_path = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" 
 
-ifeq ($(PROFILE), default)
-bootstrap_profile = net_1_1_bootstrap
-else
-bootstrap_profile = $(PROFILE)_bootstrap
-endif
-
-ilasm = $(topdir)/class/lib/$(bootstrap_profile)/ilasm.exe
-ILASM = MONO_PATH="$(topdir)/class/lib/$(bootstrap_profile)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(ilasm)
+ilasm = $(topdir)/class/lib/$(BOOTSTRAP_PROFILE)/ilasm.exe
+ILASM = MONO_PATH="$(topdir)/class/lib/$(BOOTSTRAP_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(ilasm)
 
 the_il = fixup/$(PROFILE)/Microsoft.VisualBasic.il
 

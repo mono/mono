@@ -2,8 +2,8 @@ thisdir = tools/resgen
 SUBDIRS =
 include ../../build/rules.make
 
-PROGRAM = resgen.exe
+PROGRAM = $(topdir)/class/lib/$(PROFILE)/resgen.exe
 
-PROGRAM_COMPILE = $(BOOT_COMPILE)
+CLEAN_FILES = resgen.exe
 
 include ../../build/executable.make
