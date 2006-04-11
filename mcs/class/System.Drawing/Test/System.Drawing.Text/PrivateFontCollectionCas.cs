@@ -38,6 +38,7 @@ using NUnit.Framework;
 namespace MonoCasTests.System.Drawing.Text {
 
 	[TestFixture]
+	[Category ("CAS")]
 	public class PrivateFontCollectionCas {
 
 		[Test]
@@ -51,9 +52,17 @@ namespace MonoCasTests.System.Drawing.Text {
 		// TODO - tests for AddFontFile
 
 		[Test]
+		[ExpectedException (typeof (SecurityException))]
+		[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
+		public void AddMemoryFont_Deny_UnmanagedCode () 
+		{
+			new PrivateFontCollection ().AddMemoryFont (IntPtr.Zero, 1024);
+		}
+
+		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		[SecurityPermission (SecurityAction.PermitOnly, UnmanagedCode = true)]
-		public void AddMemoryFont_NullPointer ()
+		public void AddMemoryFont_PermitOnly_UnmanagedCode ()
 		{
 			new PrivateFontCollection ().AddMemoryFont (IntPtr.Zero, 1024);
 		}
