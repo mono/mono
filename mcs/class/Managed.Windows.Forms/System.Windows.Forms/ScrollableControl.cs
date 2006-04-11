@@ -384,15 +384,36 @@ namespace System.Windows.Forms {
 		}
 
 		private void CalculateDisplayRectangle() {
+			int	width;
+			int	height;
+
 			if (!auto_scroll) {
 				display_rectangle = base.DisplayRectangle;
 				return;
 			}
 
+			if (canvas_size.Width <= base.DisplayRectangle.Width) {
+				width = base.DisplayRectangle.Width;
+				if (vscroll_visible) {
+					width -= vscrollbar.Width;
+				}
+			} else {
+				width = canvas_size.Width;
+			}
+
+			if (canvas_size.Height <= base.DisplayRectangle.Height) {
+				height = base.DisplayRectangle.Height;
+				if (hscroll_visible) {
+					height -= hscrollbar.Height;
+				}
+			} else {
+				height = canvas_size.Height;
+			}
+
 			display_rectangle.X = -scroll_position.X;
 			display_rectangle.Y = -scroll_position.Y;
-			display_rectangle.Width = Math.Max(auto_scroll_min_size.Width, Math.Max(base.DisplayRectangle.Width, canvas_size.Width));
-			display_rectangle.Height = Math.Max(auto_scroll_min_size.Height, Math.Max(base.DisplayRectangle.Height, canvas_size.Height));
+			display_rectangle.Width = Math.Max(auto_scroll_min_size.Width, width);
+			display_rectangle.Height = Math.Max(auto_scroll_min_size.Height, height);
 		}
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
@@ -752,6 +773,7 @@ namespace System.Windows.Forms {
 					vscrollbar.Visible = false;
 				}
 			}
+			CalculateDisplayRectangle();
 		}
 
 		private void HandleScrollBar(object sender, EventArgs e) {

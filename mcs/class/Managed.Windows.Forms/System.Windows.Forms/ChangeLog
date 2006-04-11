@@ -1,3 +1,9 @@
+2006-04-11  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* ScrollabeControl.cs: We need to consider whether or not a scrollbar
+	  is displayed when calculating the display rectangle. Thanks to Mike
+	  for teaching me the err of my ways.
+
 2006-04-10  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* ScrollableControl.cs:
