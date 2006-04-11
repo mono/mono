@@ -1,3 +1,8 @@
+2006-04-11  Andrew Skiba <andrews@mainsoft.com>
+
+	* ThemeDirectoryCompiler.cs : map the virtual path to the physical
+	path
+
 2006-04-08  Miguel de Icaza  <miguel@novell.com>
 
 	* TemplateControlCompiler.cs: An attempt to fix the regression

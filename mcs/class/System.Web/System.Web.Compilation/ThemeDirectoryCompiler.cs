@@ -43,8 +43,7 @@ namespace System.Web.UI
 	{
 		public static Type GetCompiledType (string virtualPath, HttpContext context)
 		{
-			/* XXX map the virtual path to a physical path */
-			string physicalPath = virtualPath;
+			string physicalPath = context.Request.MapPath (virtualPath);
 			string[] skin_files = Directory.GetFiles (physicalPath, "*.skin");
 
 			PageThemeParser ptp = new PageThemeParser (virtualPath, context);
