@@ -305,57 +305,29 @@ namespace System.Web.UI {
 		}
 
 #if NET_2_0
-
-		Stack dataItemCtx;
-	
-		internal void PushDataItemContext (object o)
-		{
-			if (dataItemCtx == null)
-				dataItemCtx = new Stack ();
-		
-			dataItemCtx.Push (o);
-		}
-		
-		internal void PopDataItemContext ()
-		{
-			if (dataItemCtx == null)
-				throw new InvalidOperationException ();
-		
-			dataItemCtx.Pop ();
-		}
-	
-		internal object CurrentDataItem {
-			get {
-				if (dataItemCtx == null || dataItemCtx.Count == 0)
-					throw new InvalidOperationException ("No data item");
-			
-				return dataItemCtx.Peek ();
-			}
-		}
-	
 		protected object Eval (string expression)
 		{
-			return DataBinder.Eval (CurrentDataItem, expression);
+			return DataBinder.Eval (Page.GetDataItem(), expression);
 		}
 	
 		protected string Eval (string expression, string format)
 		{
-			return DataBinder.Eval (CurrentDataItem, expression, format);
+			return DataBinder.Eval (Page.GetDataItem(), expression, format);
 		}
 	
 		protected object XPath (string xpathexpression)
 		{
-			return XPathBinder.Eval (CurrentDataItem, xpathexpression);
+			return XPathBinder.Eval (Page.GetDataItem(), xpathexpression);
 		}
 	
 		protected string XPath (string xpathexpression, string format)
 		{
-			return XPathBinder.Eval (CurrentDataItem, xpathexpression, format);
+			return XPathBinder.Eval (Page.GetDataItem(), xpathexpression, format);
 		}
 	
 		protected IEnumerable XPathSelect (string xpathexpression)
 		{
-			return XPathBinder.Select (CurrentDataItem, xpathexpression);
+			return XPathBinder.Select (Page.GetDataItem(), xpathexpression);
 		}
 
 		// IFilterResolutionService

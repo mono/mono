@@ -1,3 +1,7 @@
+006-04-11 Konstantin Triger <kostat@mainsoft.com>
+
+	* Page.cs, TemplateControl.cs: refactoring implementing Page.GetDataItem().
+
 2006-04-10  Chris Toshok  <toshok@ximian.com>
 
 	* PageThemeFileParser.cs (AddDirective): allow Register directives

@@ -1706,6 +1706,30 @@ public class Page : TemplateControl, IHttpHandler
 	internal PageTheme StyleSheetPageTheme {
 		get { return _styleSheetPageTheme; }
 	}
+
+	Stack dataItemCtx;
+	
+	internal void PushDataItemContext (object o) {
+		if (dataItemCtx == null)
+			dataItemCtx = new Stack ();
+		
+		dataItemCtx.Push (o);
+	}
+	
+	internal void PopDataItemContext () {
+		if (dataItemCtx == null)
+			throw new InvalidOperationException ();
+		
+		dataItemCtx.Pop ();
+	}
+	
+	public object GetDataItem() {
+		if (dataItemCtx == null || dataItemCtx.Count == 0)
+			throw new InvalidOperationException ("No data item");
+		
+		return dataItemCtx.Peek ();
+	}
+
 	#endif
 }
 }
