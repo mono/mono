@@ -1,5 +1,9 @@
 2006-04-11  Andrew Skiba <andrews@mainsoft.com>
 
+	* TemplateControlCompiler.cs : fix for partial parsers
+
+2006-04-11  Andrew Skiba <andrews@mainsoft.com>
+
 	* ThemeDirectoryCompiler.cs : map the virtual path to the physical
 	path
 

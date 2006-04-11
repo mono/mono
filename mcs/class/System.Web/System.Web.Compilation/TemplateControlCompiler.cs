@@ -174,7 +174,12 @@ namespace System.Web.Compilation
 			if (childrenAsProperties || builder.ControlType == null) {
 				string typeString;
 				if (builder is RootBuilder) {
-					typeString = parser.ClassName;
+#if NET_2_0
+					if (parser.IsPartial)
+						typeString = parser.PartialClassName;
+					else
+#endif
+						typeString = parser.ClassName;
 				}
 				else {
 					if (builder.ControlType != null && builder.isProperty &&
