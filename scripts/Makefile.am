@@ -43,6 +43,7 @@ scripts_2_0 = \
 	ilasm2			\
 	monop2 			\
 	nunit-console2		\
+	resgen2			\
 	wsdl2			\
 	xbuild
 
