@@ -1,5 +1,11 @@
 2006-04-06	Konstantin Triger <kostat@mainsoft.com>
 
+	* BaseDataList.cs: Fix searching control by DataSourceID.
+	* DataList.cs: Enable binding using DataSourceID for NET_2_0.
+
+	
+2006-04-06	Konstantin Triger <kostat@mainsoft.com>
+
 	* Login.cs: Added LayoutTemplate property support.
 	* LoginView.cs: Added LoggedInTemplate, AnonymousTemplate support.
 		DataBind: correctly bind child controls.

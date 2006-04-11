@@ -366,11 +366,17 @@ namespace System.Web.UI.WebControls {
 				return null;
 
 			IDataSource ds = null;
-			if (Page != null)
-				ds = (Page.FindControl (DataSourceID) as IDataSource);
 
-			if (ds == null)
-				throw new HttpException (Locale.GetText ("Coulnd't find a DataSource named '{0}'.", DataSourceID));
+			if (NamingContainer != null)
+				ds = (NamingContainer.FindControl (DataSourceID) as IDataSource);
+
+			if (ds == null) {
+				if (Parent != null)
+					ds = (Parent.FindControl (DataSourceID) as IDataSource);
+
+				if (ds == null)
+					throw new HttpException (Locale.GetText ("Coulnd't find a DataSource named '{0}'.", DataSourceID));
+			}
 
 			DataSourceView dsv = ds.GetView (String.Empty);
 			dsv.Select (SelectArguments, new DataSourceViewSelectCallback (SelectCallback));

@@ -538,6 +538,11 @@ namespace System.Web.UI.WebControls {
 
 			if (useDataSource) {
 				idx = 0;
+#if NET_2_0
+				if (IsBoundUsingDataSourceID)
+					ds = GetData();
+				else
+#endif
 				ds = DataSourceResolver.ResolveDataSource (DataSource, DataMember);
 				keys = DataKeysArray;
 				keys.Clear ();
