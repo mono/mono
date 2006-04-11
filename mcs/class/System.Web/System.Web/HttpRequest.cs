@@ -1163,16 +1163,9 @@ namespace System.Web {
  			if (virtualPath.StartsWith(vmw.common.IAppDomainConfig.WAR_ROOT_SYMBOL))			
  				return 	virtualPath;			
 #endif 
-			if (System.IO.Path.DirectorySeparatorChar != '/')
-				virtualPath = virtualPath.Replace (System.IO.Path.DirectorySeparatorChar, '/');
-
-			if (UrlUtils.IsRooted (virtualPath))
-				virtualPath = UrlUtils.Canonic (virtualPath);
-			else {
-				if (baseVirtualDir == null)
-					baseVirtualDir = RootVirtualDir;
-				virtualPath = UrlUtils.Combine (baseVirtualDir, virtualPath);
-			}
+			if (baseVirtualDir == null)
+				baseVirtualDir = RootVirtualDir;
+			virtualPath = UrlUtils.Combine (baseVirtualDir, virtualPath);
 
 			if (!allowCrossAppMapping){
 				if (!StrUtils.StartsWith (virtualPath, RootVirtualDir, true))
