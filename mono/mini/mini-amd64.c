@@ -1061,7 +1061,6 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 			//printf ("allocated local %d to ", i); mono_print_tree_nl (inst);
 		}
 	}
-	g_free (offsets);
 	offset += locals_stack_size;
 
 	if (!sig->pinvoke && (sig->call_convention == MONO_CALL_VARARG)) {
@@ -2618,11 +2617,6 @@ emit_move_return_value (MonoCompile *cfg, MonoInst *ins, guint8 *code)
 	case OP_VCALL2:
 	case OP_VCALL2_REG:
 	case OP_VCALL2_MEMBASE:
-	case OP_VOIDCALL:
-	case OP_VOIDCALL_REG:
-	case OP_VOIDCALL_MEMBASE:
-		// VCALLs are transformed to VOIDCALLs during opcode decomposition
-		// FIXME: Optimize this
 		cinfo = get_call_info (cfg->mempool, ((MonoCallInst*)ins)->signature, FALSE);
 		if (cinfo->ret.storage == ArgValuetypeInReg) {
 			/* Pop the destination address from the stack */
@@ -2819,14 +2813,15 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 		max_len = ((guint8 *)ins_spec [ins->opcode])[MONO_INST_LEN];
 
-		if (offset > (cfg->code_size - max_len - 16)) {
+		if (G_UNLIKELY (offset > (cfg->code_size - max_len - 16))) {
 			cfg->code_size *= 2;
 			cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);
 			code = cfg->native_code + offset;
 			mono_jit_stats.code_reallocs++;
 		}
 
-		mono_debug_record_line_number (cfg, ins, offset);
+		if (cfg->debug_info)
+			mono_debug_record_line_number (cfg, ins, offset);
 
 		switch (ins->opcode) {
 		case OP_BIGMUL:

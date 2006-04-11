@@ -1,5 +1,8 @@
 2006-04-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c method-to-ir.c mini-amd64.c mini-ia64.c mini-x86.c mini-codegen.c:
+	Reduce allocations and other minor JIT performance improvements.
+
 	* mini-ops.h cpu-pentium.md mini-x86.c: Add some new reg-membase rules.
 	
 	* method-to-ir.c (op_to_op_src2_membase): Use the new rules.

@@ -9156,10 +9156,9 @@ mono_handle_global_vregs (MonoCompile *cfg)
 	MonoBasicBlock *bb;
 	int i;
 
-	vreg_to_bb = g_new0 (MonoBasicBlock*, cfg->next_vireg + 1);
+	vreg_to_bb = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoBasicBlock*) * cfg->next_vireg + 1);
 
 	/* Find local vregs used in more than one bb */
-	/* FIXME: Optimize this */
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
 		MonoInst *ins = bb->code;	
 		MonoInst *prev = NULL;
@@ -9171,8 +9170,9 @@ mono_handle_global_vregs (MonoCompile *cfg)
 		for (; ins; ins = ins->next) {
 			const char *spec = ins_info [ins->opcode - OP_START - 1];
 			int regtype, regindex;
+			MonoBasicBlock *prev_bb;
 
-			if (cfg->verbose_level > 1)
+			if (G_UNLIKELY (cfg->verbose_level > 1))
 				mono_print_ins (ins);
 
 			if (ins->opcode == OP_NOP) {
@@ -9180,30 +9180,33 @@ mono_handle_global_vregs (MonoCompile *cfg)
 				continue;
 			}
 
-			if (ins->opcode < MONO_CEE_LAST)
-				spec = "   ";
+			g_assert (ins->opcode >= MONO_CEE_LAST);
 
 			for (regindex = 0; regindex < 3; regindex ++) {
 				int vreg;
 
 				if (regindex == 0) {
-					vreg = ins->dreg;
 					regtype = spec [MONO_INST_DEST];
+					if (regtype == ' ')
+						continue;
+					vreg = ins->dreg;
 				} else if (regindex == 1) {
-					vreg = ins->sreg1;
 					regtype = spec [MONO_INST_SRC1];
+					if (regtype == ' ')
+						continue;
+					vreg = ins->sreg1;
 				} else {
-					vreg = ins->sreg2;
 					regtype = spec [MONO_INST_SRC2];
+					if (regtype == ' ')
+						continue;
+					vreg = ins->sreg2;
 				}
 
-				if (((regtype == 'i' && (vreg < MONO_MAX_IREGS))) || (regtype == 'f' && (vreg < MONO_MAX_FREGS)))
-					continue;
-
+#if SIZEOF_VOID_P == 4
 				if ((regtype == 'l') && (vreg != -1)) {
 					/*
 					 * Since some instructions reference the original long vreg,
-					 * and some references the two component vregs, it is quite hard
+					 * and some reference the two component vregs, it is quite hard
 					 * to determine when it needs to be global. So be conservative.
 					 */
 					if (!get_vreg_to_inst (cfg, vreg)) {
@@ -9213,34 +9216,39 @@ mono_handle_global_vregs (MonoCompile *cfg)
 							printf ("LONG VREG R%d made global.\n", vreg);
 					}
 				}
+#endif
 
-				if (vreg != -1) {
-					if (vreg_to_bb [vreg] == NULL) {
-						vreg_to_bb [vreg] = bb;
-					} else if (vreg_to_bb [vreg] != bb) {
-						if (!get_vreg_to_inst (cfg, vreg)) {
-							if (cfg->verbose_level > 1)
-								printf ("VREG R%d used in BB%d and BB%d made global.\n", vreg, vreg_to_bb [vreg]->block_num, bb->block_num);
+				g_assert (vreg != -1);
 
-							switch (regtype) {
-							case 'i':
-								mono_compile_create_var_for_vreg (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL, vreg);
-								break;
-							case 'f':
-								mono_compile_create_var_for_vreg (cfg, &mono_defaults.double_class->byval_arg, OP_LOCAL, vreg);
-								break;
-							case 'v':
-								mono_compile_create_var_for_vreg (cfg, &ins->klass->byval_arg, OP_LOCAL, vreg);
-								break;
-							default:
-								g_assert_not_reached ();
-							}
+				prev_bb = vreg_to_bb [vreg];
+				if (prev_bb == NULL) {
+					vreg_to_bb [vreg] = bb;
+				} else if ((prev_bb != bb) && (prev_bb != (gpointer)(gssize)-1)) {
+					if (((regtype == 'i' && (vreg < MONO_MAX_IREGS))) || (regtype == 'f' && (vreg < MONO_MAX_FREGS)))
+						continue;
+
+					if (!get_vreg_to_inst (cfg, vreg)) {
+						if (G_UNLIKELY (cfg->verbose_level > 1))
+							printf ("VREG R%d used in BB%d and BB%d made global.\n", vreg, vreg_to_bb [vreg]->block_num, bb->block_num);
+
+						switch (regtype) {
+						case 'i':
+							mono_compile_create_var_for_vreg (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL, vreg);
+							break;
+						case 'f':
+							mono_compile_create_var_for_vreg (cfg, &mono_defaults.double_class->byval_arg, OP_LOCAL, vreg);
+							break;
+						case 'v':
+							mono_compile_create_var_for_vreg (cfg, &ins->klass->byval_arg, OP_LOCAL, vreg);
+							break;
+						default:
+							g_assert_not_reached ();
 						}
-
-						/* Flag as having been used in more than one bb */
-						if (vreg_to_bb [vreg] != (gpointer)(gssize)-1)
-							vreg_to_bb [vreg] = (gpointer)(gssize)-1;
 					}
+
+					/* Flag as having been used in more than one bb */
+					if (prev_bb != (gpointer)(gssize)-1)
+						vreg_to_bb [vreg] = (gpointer)(gssize)-1;
 				}
 			}
 		}
@@ -9275,8 +9283,6 @@ mono_handle_global_vregs (MonoCompile *cfg)
 			break;
 		}
 	}
-
-	g_free (vreg_to_bb);
 }
 
 static void
@@ -9319,7 +9325,7 @@ mono_spill_global_vars (MonoCompile *cfg)
 	memset (spec2, 0, sizeof (spec2));
 
 	/* FIXME: Move this function to mini.c */
-	stacktypes = g_new0 (guint32, 128);
+	stacktypes = mono_mempool_alloc0 (cfg->mempool, sizeof (guint32) * 128);
 	stacktypes ['i'] = STACK_PTR;
 	stacktypes ['l'] = STACK_I8;
 	stacktypes ['f'] = STACK_R8;
@@ -9572,8 +9578,6 @@ mono_spill_global_vars (MonoCompile *cfg)
 			prev = ins;
 		}
 	}
-
-	g_free (stacktypes);
 }
 
 /**

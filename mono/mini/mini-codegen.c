@@ -1987,7 +1987,8 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 
 	if (reginfo != reginfof)
 		g_free (reginfof);
-	g_list_free (fspill_list);
+	if (fspill_list)
+		g_list_free (fspill_list);
 }
 
 CompRelation
