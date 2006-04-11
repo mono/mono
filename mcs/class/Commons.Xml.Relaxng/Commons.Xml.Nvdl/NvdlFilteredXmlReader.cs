@@ -5,34 +5,12 @@ using System.Xml;
 
 namespace Commons.Xml.Nvdl
 {
-#if false
-	internal class NvdlFilteredXmlReader : XmlDefaultReader
-	{
-		public NvdlFilteredXmlReader (XmlReader reader,
-			NvdlValidateInterp validate)
-			: base (reader)
-		{
-		}
-
-		public bool Read ()
-		{
-			return !Reader.EOF;
-		}
-
-		public void AttachPlaceholder ()
-		{
-		}
-
-		public void DetachPlaceholder ()
-		{
-		}
-	}
-#else
 	internal class NvdlFilteredXmlReader : XmlReader, IXmlLineInfo
 	{
+		bool initial = true;
 		int placeHolderDepth = -1;
 		XmlNodeType nextPlaceHolder;
-		XmlNodeType placeHolder;
+		XmlNodeType placeHolder = XmlNodeType.None;
 		bool placeHolderLocalNameAttr;
 		Stack placeHolderDepthStack;
 		NvdlValidateInterp validate;
@@ -40,7 +18,7 @@ namespace Commons.Xml.Nvdl
 		IXmlLineInfo reader_as_line_info;
 
 		AttributeInfo [] attributes = new AttributeInfo [10];
-		int attributeCount;
+		int attributeCount = 0;
 
 		// PlanAtt validation cache.
 		Hashtable attributeValidators = new Hashtable ();
@@ -317,7 +295,8 @@ namespace Commons.Xml.Nvdl
 
 		public override ReadState ReadState {
 			get { 
-				return placeHolder != XmlNodeType.None &&
+				return initial ? ReadState.Initial :
+					placeHolder != XmlNodeType.None &&
 					reader.ReadState != ReadState.Error ? 
 					ReadState.Interactive :
 					reader.ReadState; 
@@ -571,6 +550,5 @@ namespace Commons.Xml.Nvdl
 			}
 		}
 	}
-#endif
 }
 

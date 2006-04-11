@@ -1,3 +1,10 @@
+2006-04-11  Atsushi Enomoto <atsushi@ximian.com>
+
+	* NvdlFilteredXmlReader.cs : quick fix for r58557; it caused a big
+	  NVDL validation breakage (nvdl.nvdl does not validate).
+	  Removed unused and insignificant code.
+	* NvdlCompileContext.cs : removed unused field.
+
 2006-04-03  Atsushi Enomoto <atsushi@ximian.com>
 
 	due to the request by Brian Rasumussen to report NVDL error details:

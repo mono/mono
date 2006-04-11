@@ -98,12 +98,10 @@ namespace Commons.Xml.Nvdl
 
 	internal class NvdlModeCompileContext
 	{
-		NvdlModeBase mode;
 		ArrayList included;
 
 		public NvdlModeCompileContext (NvdlModeBase mode)
 		{
-			this.mode = mode;
 			included = new ArrayList ();
 		}
 
