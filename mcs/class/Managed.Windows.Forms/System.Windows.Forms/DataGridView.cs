@@ -78,8 +78,6 @@ namespace System.Windows.Forms {
 		private int firstDisplayedScrollingColumnHiddenWidth;
 		private int firstDisplayedScrollingColumnIndex;
 		private int firstDisplayedScrollingRowIndex;
-		private Font font = Control.DefaultFont;
-		private Color foreColor = Control.DefaultForeColor;
 		private Color gridColor = Color.FromKnownColor(KnownColor.ControlDarkDark);
 		private int horizontalScrollingOffset;
 		private bool isCurrentCellDirty;
@@ -614,23 +612,13 @@ namespace System.Windows.Forms {
 		}
 
 		public override Font Font {
-			get { return font; }
-			set {
-				if (font != value) {
-					font = value;
-					OnFontChanged(EventArgs.Empty);
-				}
-			}
+			get { return base.Font; }
+			set { base.Font = value; }
 		}
 
 		public override Color ForeColor {
-			get { return foreColor; }
-			set {
-				if (foreColor != value) {
-					foreColor = value;
-					OnForeColorChanged(EventArgs.Empty);
-				}
-			}
+			get { return base.ForeColor; }
+			set { base.ForeColor = value; }
 		}
 
 		public Color GridColor {
@@ -987,10 +975,7 @@ namespace System.Windows.Forms {
 
 		public event EventHandler AutoGenerateColumnsChanged;
 
-		public new event EventHandler AutoSizeChanged {
-			add { base.AutoSizeChanged += value; }
-			remove { base.AutoSizeChanged -= value; }
-		}
+		public new event EventHandler AutoSizeChanged;
 
 		public event DataGridViewAutoSizeColumnModeEventHandler AutoSizeColumnModeChanged;
 
@@ -1010,10 +995,7 @@ namespace System.Windows.Forms {
 			remove { base.BackgroundImageChanged -= value; }
 		}
 
-		public new event EventHandler BackgroundImageLayoutChanged {
-			add { base.BackgroundImageLayoutChanged += value; }
-			remove { base.BackgroundImageLayoutChanged -= value; }
-		}
+		public new event EventHandler BackgroundImageLayoutChanged;
 
 		public event EventHandler BorderStyleChanged;
 
@@ -2173,16 +2155,10 @@ namespace System.Windows.Forms {
 
 		protected override void OnFontChanged (EventArgs e) {
 			base.OnFontChanged(e);
-			if (FontChanged != null) {
-				FontChanged(this, e);
-			}
 		}
 
 		protected override void OnForeColorChanged (EventArgs e) {
 			base.OnForeColorChanged(e);
-			if (ForeColorChanged != null) {
-				ForeColorChanged(this, e);
-			}
 		}
 
 		protected virtual void OnGridColorChanged (EventArgs e) {
