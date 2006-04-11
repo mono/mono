@@ -1,3 +1,7 @@
+2006-04-11  Chris Toshok  <toshok@ximian.com>
+
+	* Login.cs (OnLoggingIn): use Events[loggingInEvent].
+
 2006-04-06	Konstantin Triger <kostat@mainsoft.com>
 
 	* BaseDataList.cs: Fix searching control by DataSourceID.

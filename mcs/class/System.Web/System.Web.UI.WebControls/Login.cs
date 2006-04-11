@@ -1145,7 +1145,7 @@ namespace System.Web.UI.WebControls {
 		protected virtual void OnLoggingIn (LoginCancelEventArgs e)
 		{
 			// this gets called before OnAuthenticate so we can abort the authentication process
-			LoginCancelEventHandler loggingIn = (LoginCancelEventHandler) Events [loggedInEvent];
+			LoginCancelEventHandler loggingIn = (LoginCancelEventHandler) Events [loggingInEvent];
 			if (loggingIn != null)
 				loggingIn (this, e);
 		}
