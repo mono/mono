@@ -140,9 +140,24 @@ namespace System.Web.UI.WebControls {
 			get { return item; }
 		}
 		
-		[MonoTODO]
 		string IHierarchyData.Path {
-			get { throw new NotImplementedException (); }
+			get { 
+				System.Text.StringBuilder sb = new System.Text.StringBuilder();
+				XmlNode nod = item;
+				do {
+					int n=1;
+					XmlNode prev = nod.PreviousSibling;
+					while (prev != null) {
+						prev = prev.PreviousSibling;
+						n++;
+					}
+					
+					sb.Insert (0, "/*[position()=" + n);
+					nod = nod.ParentNode;
+				} while (nod != null && !(nod is XmlDocument));
+				
+				return sb.ToString ();
+			}
 		}
 		
 		string IHierarchyData.Type {

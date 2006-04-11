@@ -286,6 +286,11 @@ namespace System.Web.UI.WebControls
 				ViewState ["Value"] = value;
 			}
 		}
+		
+		internal bool HasPropertyValue (string propName)
+		{
+			return ViewState [propName] != null;
+		}
 
 		[DefaultValue ("")]
 		[TypeConverter ("System.Web.UI.Design.DataSourceViewSchemaConverter, " + Consts.AssemblySystem_Design)]

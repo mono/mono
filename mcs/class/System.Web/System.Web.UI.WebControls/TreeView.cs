@@ -672,6 +672,7 @@ namespace System.Web.UI.WebControls
 		
 		protected internal override void OnInit (EventArgs e)
 		{
+			base.OnInit (e);
 			if (!Page.IsPostBack && ExpandDepth != 0) {
 				foreach (TreeNode node in Nodes)
 					node.Expand (ExpandDepth - 1);
@@ -759,7 +760,7 @@ namespace System.Web.UI.WebControls
 				if (states [i] != null)
 					return states;
 			}
-
+			
 			return null;
 		}
 
@@ -767,7 +768,7 @@ namespace System.Web.UI.WebControls
 		{
 			if (savedState == null)
 				return;
-
+				
 			object [] states = (object []) savedState;
 			base.LoadViewState (states[0]);
 			
@@ -897,16 +898,13 @@ namespace System.Web.UI.WebControls
 			foreach (object obj in e) {
 				IHierarchyData hdata = e.GetHierarchyData (obj);
 				TreeNode node = CreateNode ();
-				node.Bind (hdata);
 				Nodes.Add (node);
+				node.Bind (hdata);
 			}
 		}
 		
 		protected virtual bool LoadPostData (string postDataKey, NameValueCollection postCollection)
 		{
-			RequiresDataBinding = true;
-			EnsureDataBound ();
-			
 			bool res = false;
 
 			if (ShowCheckBoxes != TreeNodeTypes.None) {
@@ -968,16 +966,6 @@ namespace System.Web.UI.WebControls
 		        Page.ClientScript.GetCallbackEventReference (this, "null", "", "null");
 				Page.ClientScript.GetPostBackClientHyperlink (this, "");
 			}
-			
-			if (dataBindings != null && dataBindings.Count > 0) {
-				bindings = new Hashtable ();
-				foreach (TreeNodeBinding bin in dataBindings) {
-					string key = GetBindingKey (bin.DataMember, bin.Depth);
-					bindings [key] = bin;
-				}
-			}
-			else
-				bindings = null;
 		}
 		
 		string GetBindingKey (string dataMember, int depth)
@@ -987,8 +975,18 @@ namespace System.Web.UI.WebControls
 		
 		internal TreeNodeBinding FindBindingForNode (string type, int depth)
 		{
-			if (bindings == null) return null;
-
+			if (bindings == null) {
+				if (dataBindings != null && dataBindings.Count > 0) {
+					bindings = new Hashtable ();
+					foreach (TreeNodeBinding bind in dataBindings) {
+						string key = GetBindingKey (bind.DataMember, bind.Depth);
+						bindings [key] = bind;
+					}
+				}
+				else
+					return null;
+			}
+				
 			TreeNodeBinding bin = (TreeNodeBinding) bindings [GetBindingKey (type, depth)];
 			if (bin != null) return bin;
 			
@@ -998,8 +996,7 @@ namespace System.Web.UI.WebControls
 			bin = (TreeNodeBinding) bindings [GetBindingKey ("", depth)];
 			if (bin != null) return bin;
 			
-			bin = (TreeNodeBinding) bindings [GetBindingKey ("", -1)];
-			return bin;
+			return (TreeNodeBinding) bindings [GetBindingKey ("", -1)];
 		}
 		
 		protected internal override void RenderContents (HtmlTextWriter writer)
@@ -1152,8 +1149,8 @@ namespace System.Web.UI.WebControls
 			// Checkbox
 			
 			bool showChecks;
-			if (node.IsShowCheckBoxSet)
-				showChecks = node.ShowCheckBox.HasValue && node.ShowCheckBox.Value;
+			if (node.ShowCheckBox.HasValue)
+				showChecks = node.ShowCheckBox.Value;
 			else
 				showChecks = (ShowCheckBoxes == TreeNodeTypes.All) ||
 							 (ShowCheckBoxes == TreeNodeTypes.Leaf && node.ChildNodes.Count == 0) ||

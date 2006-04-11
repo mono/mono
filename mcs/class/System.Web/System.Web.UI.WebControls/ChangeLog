@@ -1,3 +1,18 @@
+2006-04-11  Lluis Sanchez  <lluis@novell.com>
+
+	* TreeNodeBinding.cs: Added HasPropertyValue property
+	  to check if some properties have a value in the
+	  state bag.
+	* TreeNode.cs: Lazily get the dataPath. Instead of getting
+	  bound properties when they are requested, get all of
+	  them when the node is bound and store their values in
+	  the state bag. In this way it won't be necessary to
+	  query every time the datasource to get the values.
+	* XmlHierarchyData.cs: Implemented IHierarchyData.Path.
+	* TreeView.cs: Call base in OnInit(). Bind nodes after
+	  adding them to the list, to properly keep track of
+	  changes. Don't databind in postbacks.
+
 2006-04-11  Chris Toshok  <toshok@ximian.com>
 
 	* Login.cs (OnLoggingIn): use Events[loggingInEvent].

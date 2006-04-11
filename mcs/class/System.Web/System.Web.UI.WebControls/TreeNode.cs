@@ -161,6 +161,10 @@ namespace System.Web.UI.WebControls
 		public string DataPath {
 			get {
 				if (!dataBound) throw new InvalidOperationException ("TreeNode is not data bound.");
+				
+				if (dataPath == null && hierarchyData != null)
+					dataPath = hierarchyData.Path;
+
 				return dataPath;
 			}
 		}
@@ -189,10 +193,7 @@ namespace System.Web.UI.WebControls
 					if (PopulateOnDemand && tree == null)
 						return null;
 
-					if (DataBound)
-						FillBoundChildren ();
-					else
-						nodes = new TreeNodeCollection (this);
+					nodes = new TreeNodeCollection (this);
 						
 					if (IsTrackingViewState)
 						((IStateManager)nodes).TrackViewState();
@@ -210,8 +211,7 @@ namespace System.Web.UI.WebControls
 		public bool? Expanded {
 			get {
 				object o = ViewState ["Expanded"];
-				if (o != null) return (bool)o;
-				return true;
+				return (bool?)o;
 			}
 			set {
 				ViewState ["Expanded"] = value;
@@ -226,14 +226,6 @@ namespace System.Web.UI.WebControls
 			get {
 				object o = ViewState ["ImageToolTip"];
 				if (o != null) return (string)o;
-				if (DataBound) {
-					TreeNodeBinding bin = GetBinding ();
-					if (bin != null) {
-						if (bin.ImageToolTipField != "")
-							return (string) GetBoundPropertyValue (bin.ImageToolTipField);
-						return bin.ImageToolTip;
-					}
-				}
 				return "";
 			}
 			set {
@@ -248,14 +240,6 @@ namespace System.Web.UI.WebControls
 			get {
 				object o = ViewState ["ImageUrl"];
 				if (o != null) return (string)o;
-				if (DataBound) {
-					TreeNodeBinding bin = GetBinding ();
-					if (bin != null) {
-						if (bin.ImageUrlField != "")
-							return (string) GetBoundPropertyValue (bin.ImageUrlField);
-						return bin.ImageUrl;
-					}
-				}
 				return "";
 			}
 			set {
@@ -270,14 +254,6 @@ namespace System.Web.UI.WebControls
 			get {
 				object o = ViewState ["NavigateUrl"];
 				if (o != null) return (string)o;
-				if (DataBound) {
-					TreeNodeBinding bin = GetBinding ();
-					if (bin != null) {
-						if (bin.NavigateUrlField != "")
-							return (string) GetBoundPropertyValue (bin.NavigateUrlField);
-						return bin.NavigateUrl;
-					}
-				}
 				return "";
 			}
 			set {
@@ -290,11 +266,6 @@ namespace System.Web.UI.WebControls
 			get {
 				object o = ViewState ["PopulateOnDemand"];
 				if (o != null) return (bool)o;
-				if (DataBound) {
-					TreeNodeBinding bin = GetBinding ();
-					if (bin != null)
-						return bin.PopulateOnDemand;
-				}
 				return false;
 			}
 			set {
@@ -307,11 +278,6 @@ namespace System.Web.UI.WebControls
 			get {
 				object o = ViewState ["SelectAction"];
 				if (o != null) return (TreeNodeSelectAction)o;
-				if (DataBound) {
-					TreeNodeBinding bin = GetBinding ();
-					if (bin != null)
-						return bin.SelectAction;
-				}
 				return TreeNodeSelectAction.Select;
 			}
 			set {
@@ -323,36 +289,18 @@ namespace System.Web.UI.WebControls
 		public bool? ShowCheckBox {
 			get {
 				object o = ViewState ["ShowCheckBox"];
-				if (o != null) return (bool)o;
-				if (DataBound) {
-					TreeNodeBinding bin = GetBinding ();
-					if (bin != null)
-						return bin.ShowCheckBox;
-				}
-				return true;
+				return (bool?)o;
 			}
 			set {
 				ViewState ["ShowCheckBox"] = value;
 			}
 		}
 		
-		internal bool IsShowCheckBoxSet {
-			get { return ViewState ["ShowCheckBox"] != null; }
-		}
-
 		[DefaultValue ("")]
 		public string Target {
 			get {
 				object o = ViewState ["Target"];
 				if(o != null) return (string)o;
-				if (DataBound) {
-					TreeNodeBinding bin = GetBinding ();
-					if (bin != null) {
-						if (bin.TargetField != "")
-							return (string) GetBoundPropertyValue (bin.TargetField);
-						return bin.Target;
-					}
-				}
 				return "";
 			}
 			set {
@@ -367,23 +315,6 @@ namespace System.Web.UI.WebControls
 			get {
 				object o = ViewState ["Text"];
 				if (o != null) return (string)o;
-				if (DataBound) {
-					TreeNodeBinding bin = GetBinding ();
-					if (bin != null) {
-						string text;
-						if (bin.TextField != "")
-							text = (string) GetBoundPropertyValue (bin.TextField);
-						else if (bin.Text != "")
-							text = bin.Text;
-						else
-							text = GetDefaultBoundText ();
-							
-						if (bin.FormatString.Length != 0)
-							text = string.Format (bin.FormatString, text);
-						return text;
-					}
-					return GetDefaultBoundText ();
-				}
 				return "";
 			}
 			set {
@@ -397,14 +328,6 @@ namespace System.Web.UI.WebControls
 			get {
 				object o = ViewState ["ToolTip"];
 				if(o != null) return (string)o;
-				if (DataBound) {
-					TreeNodeBinding bin = GetBinding ();
-					if (bin != null) {
-						if (bin.ToolTipField != "")
-							return (string) GetBoundPropertyValue (bin.ToolTipField);
-						return bin.ToolTip;
-					}
-				}
 				return "";
 			}
 			set {
@@ -418,16 +341,6 @@ namespace System.Web.UI.WebControls
 			get {
 				object o = ViewState ["Value"];
 				if(o != null) return (string)o;
-				if (DataBound) {
-					TreeNodeBinding bin = GetBinding ();
-					if (bin != null) {
-						if (bin.ValueField != "")
-							return (string) GetBoundPropertyValue (bin.ValueField);
-						if (bin.Value != "")
-							return bin.Value;
-					}
-					return GetDefaultBoundText ();
-				}
 				return "";
 			}
 			set {
@@ -658,8 +571,88 @@ namespace System.Web.UI.WebControls
 		{
 			this.hierarchyData = hierarchyData;
 			dataBound = true;
-			dataPath = hierarchyData.Path;
 			dataItem = hierarchyData.Item;
+			
+			TreeNodeBinding bin = GetBinding ();
+			if (bin != null) {
+			
+				// Bind ImageToolTip property
+					
+				if (bin.ImageToolTipField.Length > 0)
+					ImageToolTip = (string) GetBoundPropertyValue (bin.ImageToolTipField);
+				else if (bin.ImageToolTip.Length > 0)
+					ImageToolTip = bin.ImageToolTip;
+					
+				// Bind ImageUrl property
+					
+				if (bin.ImageUrlField.Length > 0)
+					ImageUrl = (string) GetBoundPropertyValue (bin.ImageUrlField);
+				else if (bin.ImageUrl.Length > 0)
+					ImageUrl = bin.ImageUrl;
+					
+				// Bind NavigateUrl property
+					
+				if (bin.NavigateUrlField.Length > 0)
+					NavigateUrl = (string) GetBoundPropertyValue (bin.NavigateUrlField);
+				else if (bin.NavigateUrl.Length > 0)
+					NavigateUrl = bin.NavigateUrl;
+					
+				// Bind PopulateOnDemand property
+				
+				if (bin.HasPropertyValue ("PopulateOnDemand"))
+					PopulateOnDemand = bin.PopulateOnDemand;
+				
+				// Bind SelectAction property
+					
+				if (bin.HasPropertyValue ("SelectAction"))
+					SelectAction = bin.SelectAction;
+				
+				// Bind ShowCheckBox property
+					
+				if (bin.HasPropertyValue ("ShowCheckBox"))
+					ShowCheckBox = bin.ShowCheckBox;
+					
+				// Bind Target property
+					
+				if (bin.TargetField.Length > 0)
+					Target = (string) GetBoundPropertyValue (bin.TargetField);
+				else if (bin.Target.Length > 0)
+					Target = bin.Target;
+					
+				// Bind Text property
+					
+				string text;
+				if (bin.TextField.Length > 0)
+					text = (string) GetBoundPropertyValue (bin.TextField);
+				else if (bin.Text.Length > 0)
+					text = bin.Text;
+				else
+					text = GetDefaultBoundText ();
+					
+				if (bin.FormatString.Length != 0)
+					text = string.Format (bin.FormatString, text);
+				Text = text;
+					
+				// Bind ToolTip property
+					
+				if (bin.ToolTipField.Length > 0)
+					ToolTip = (string) GetBoundPropertyValue (bin.ToolTipField);
+				else if (bin.ToolTip.Length > 0)
+					ToolTip = bin.ToolTip;
+					
+				// Bind Value property
+					
+				if (bin.ValueField.Length > 0)
+					Value = (string) GetBoundPropertyValue (bin.ValueField);
+				if (bin.Value.Length > 0)
+					Value = bin.Value;
+				else
+					Value = GetDefaultBoundText ();
+			} else {
+				Text = Value = GetDefaultBoundText ();
+			}
+			
+			FillBoundChildren ();
 		}
 		
 		internal void SetDataItem (object item)
@@ -733,7 +726,6 @@ namespace System.Web.UI.WebControls
 
 		void FillBoundChildren ()
 		{
-			nodes = new TreeNodeCollection (this);
 			if (hierarchyData == null || !hierarchyData.HasChildren) return;
 			if (tree.MaxDataBindDepth != -1 && Depth >= tree.MaxDataBindDepth) return;
 
@@ -741,8 +733,8 @@ namespace System.Web.UI.WebControls
 			foreach (object obj in e) {
 				IHierarchyData hdata = e.GetHierarchyData (obj);
 				TreeNode node = tree != null ? tree.CreateNode () : new TreeNode ();
+				ChildNodes.Add (node);
 				node.Bind (hdata);
-				nodes.Add (node);
 			}
 		}
 		
