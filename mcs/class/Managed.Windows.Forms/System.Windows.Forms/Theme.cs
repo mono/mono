@@ -52,6 +52,8 @@ namespace System.Windows.Forms
 		internal Color DarkDark;
 		internal Color Light;
 		internal Color LightLight;
+		
+		internal static CPColor Empty;
 	}
 	
 	// Implements a pool of system resources	
