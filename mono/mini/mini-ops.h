@@ -649,6 +649,12 @@ MINI_OP(OP_AMD64_ICOMPARE_REG_MEMBASE,   "amd64_icompare_reg_membase", NONE, IRE
 MINI_OP(OP_AMD64_COMPARE_MEMBASE_REG,    "amd64_compare_membase_reg", NONE, IREG, IREG)
 MINI_OP(OP_AMD64_COMPARE_MEMBASE_IMM,    "amd64_compare_membase_imm", NONE, IREG, NONE)
 MINI_OP(OP_AMD64_COMPARE_REG_MEMBASE,    "amd64_compare_reg_membase", NONE, IREG, IREG)
+MINI_OP(OP_AMD64_ADD_REG_MEMBASE,        "amd64_add_reg_membase", NONE, IREG, IREG)
+MINI_OP(OP_AMD64_SUB_REG_MEMBASE,        "amd64_sub_reg_membase", NONE, IREG, IREG)
+MINI_OP(OP_AMD64_MUL_REG_MEMBASE,        "amd64_mul_reg_membase", NONE, IREG, IREG)
+MINI_OP(OP_AMD64_AND_REG_MEMBASE,        "amd64_and_reg_membase", IREG, IREG, IREG)
+MINI_OP(OP_AMD64_OR_REG_MEMBASE,         "amd64_or_reg_membase", IREG, IREG, IREG)
+MINI_OP(OP_AMD64_XOR_REG_MEMBASE,        "amd64_xor_reg_membase", IREG, IREG, IREG)
 MINI_OP(OP_AMD64_OUTARG_ALIGN_STACK,     "amd64_outarg_align_stack", NONE, NONE, NONE)
 MINI_OP(OP_AMD64_LOADI8_MEMINDEX,        "amd64_loadi8_memindex", NONE, NONE, NONE)
 #endif

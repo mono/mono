@@ -2980,6 +2980,23 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_AMD64_TEST_NULL:
 			amd64_test_reg_reg (code, ins->sreg1, ins->sreg1);
 			break;
+
+		case OP_X86_ADD_REG_MEMBASE:
+			amd64_alu_reg_membase_size (code, X86_ADD, ins->sreg1, ins->sreg2, ins->inst_offset, 4);
+			break;
+		case OP_X86_SUB_REG_MEMBASE:
+			amd64_alu_reg_membase_size (code, X86_SUB, ins->sreg1, ins->sreg2, ins->inst_offset, 4);
+			break;
+		case OP_X86_AND_REG_MEMBASE:
+			amd64_alu_reg_membase_size (code, X86_AND, ins->sreg1, ins->sreg2, ins->inst_offset, 4);
+			break;
+		case OP_X86_OR_REG_MEMBASE:
+			amd64_alu_reg_membase_size (code, X86_OR, ins->sreg1, ins->sreg2, ins->inst_offset, 4);
+			break;
+		case OP_X86_XOR_REG_MEMBASE:
+			amd64_alu_reg_membase_size (code, X86_XOR, ins->sreg1, ins->sreg2, ins->inst_offset, 4);
+			break;
+
 		case OP_X86_ADD_MEMBASE:
 			amd64_alu_reg_membase_size (code, X86_ADD, ins->sreg1, ins->sreg2, ins->inst_offset, 4);
 			break;
@@ -3058,6 +3075,24 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_AMD64_COMPARE_REG_MEMBASE:
 			amd64_alu_reg_membase_size (code, X86_CMP, ins->sreg1, ins->sreg2, ins->inst_offset, 8);
 			break;
+
+
+		case OP_AMD64_ADD_REG_MEMBASE:
+			amd64_alu_reg_membase_size (code, X86_ADD, ins->sreg1, ins->sreg2, ins->inst_offset, 8);
+			break;
+		case OP_AMD64_SUB_REG_MEMBASE:
+			amd64_alu_reg_membase_size (code, X86_SUB, ins->sreg1, ins->sreg2, ins->inst_offset, 8);
+			break;
+		case OP_AMD64_AND_REG_MEMBASE:
+			amd64_alu_reg_membase_size (code, X86_AND, ins->sreg1, ins->sreg2, ins->inst_offset, 8);
+			break;
+		case OP_AMD64_OR_REG_MEMBASE:
+			amd64_alu_reg_membase_size (code, X86_OR, ins->sreg1, ins->sreg2, ins->inst_offset, 8);
+			break;
+		case OP_AMD64_XOR_REG_MEMBASE:
+			amd64_alu_reg_membase_size (code, X86_XOR, ins->sreg1, ins->sreg2, ins->inst_offset, 8);
+			break;
+
 		case CEE_BREAK:
 		case OP_BREAK:
 			amd64_breakpoint (code);
