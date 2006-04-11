@@ -1,3 +1,7 @@
+2006-04-11  Atsushi Enomoto <atsushi@ximian.com>
+
+	* nvdl.nvdl, nvdl.rng : new file for nvdl validation.
+
 2006-04-04  Atsushi Enomoto <atsushi@ximian.com>
 
 	* atom.rnc : new file for RNC parser test (It is from

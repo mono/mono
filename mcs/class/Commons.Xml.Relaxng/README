@@ -93,12 +93,8 @@
 
 *** Known bugs
 
-  RELAX NG implementation should mostly work fine. Known problem are:
+  RELAX NG implementation should mostly work fine. A known problem is:
 
-	- Grammar simplification is somewhat shorthanded. I believe it mostly
-	  works fine, but might fail to check incorrect recursion and might
-	  bind ref to incorrect definitions or might not handle the 
-	  definitions which have the same name.
 	- URI string check is not strictly done; especially it does not check
 	  things described in XLink section 5.4.
 
@@ -115,8 +111,7 @@
 	and problems.
 
 	By default, NvdlValidatingReader supports RELAX NG, RELAX NG Compact
-	syntax, W3C XML Schema and built-in NVDL validations, however without
-	"PlanAtt" support.
+	syntax, W3C XML Schema and built-in NVDL validations.
 
 *** Usage
 
@@ -195,6 +190,3 @@
 	An instance of NvdlValidatorGenerator will be created for each 
 	"validate" element in the NVDL script. When the validate element
 	applies (for a PlanElem), it creates validator XmlReader.
-
-
-
