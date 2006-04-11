@@ -1,5 +1,10 @@
 2006-04-11  Atsushi Enomoto <atsushi@ximian.com>
 
+	* NvdlRelaxngSupport.cs : without ReportDetails RELAX NG support
+	  supplied too little information on validation error.
+
+2006-04-11  Atsushi Enomoto <atsushi@ximian.com>
+
 	* NvdlFilteredXmlReader.cs : quick fix for r58557; it caused a big
 	  NVDL validation breakage (nvdl.nvdl does not validate).
 	  Removed unused and insignificant code.
