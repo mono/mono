@@ -50,6 +50,7 @@ namespace System.Windows.Forms {
 		private ImplicitHScrollBar	hscrollbar;
 		private ImplicitVScrollBar	vscrollbar;
 		private Size			canvas_size;
+		private Rectangle		display_rectangle;
 		#endregion	// Local Variables
 
 		[TypeConverter(typeof(ScrollableControl.DockPaddingEdgesConverter))]
@@ -365,7 +366,6 @@ namespace System.Windows.Forms {
 
 		public override Rectangle DisplayRectangle {
 			get {
-				Rectangle	display_rectangle;
 				int		width;
 				int		height;
 
