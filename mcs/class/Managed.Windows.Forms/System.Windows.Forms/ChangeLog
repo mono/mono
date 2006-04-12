@@ -1,3 +1,7 @@
+2006-04-12  Alexander Olk  <alex.olk@googlemail.com>
+
+	* ThemeWin32Classic.cs: Use even more SystemBrushes and SystemPens
+
 2006-04-12  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Control.cs: 

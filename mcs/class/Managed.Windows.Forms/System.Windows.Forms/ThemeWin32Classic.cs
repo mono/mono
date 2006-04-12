@@ -106,15 +106,15 @@ namespace System.Windows.Forms
 		#endregion	// Principal Theme Methods
 
 		#region	Internal Methods
-		protected SolidBrush GetControlBackBrush (Color c) {
+		protected Brush GetControlBackBrush (Color c) {
 			if (c == DefaultControlBackColor)
-				return ResPool.GetSolidBrush (ColorControl);
+				return SystemBrushes.Control;
 			return ResPool.GetSolidBrush (c);
 		}
 
-		protected SolidBrush GetControlForeBrush (Color c) {
+		protected Brush GetControlForeBrush (Color c) {
 			if (c == DefaultControlForeColor)
-				return ResPool.GetSolidBrush (ColorControlText);
+				return SystemBrushes.ControlText;
 			return ResPool.GetSolidBrush (c);
 		}
 		#endregion	// Internal Methods
@@ -127,7 +127,7 @@ namespace System.Windows.Forms
 				return;
 			}
 
-			e.Graphics.FillRectangle (GetControlBackBrush (e.BackColor), e.Bounds);
+			e.Graphics.FillRectangle (ResPool.GetSolidBrush(e.BackColor), e.Bounds);
 		}
 
 		public  override void DrawOwnerDrawFocusRectangle (DrawItemEventArgs e)
@@ -1218,11 +1218,11 @@ namespace System.Windows.Forms
 			// render the date part
 			if (clip_rectangle.IntersectsWith (dtp.date_area_rect)) {
 				// fill the background
-				dc.FillRectangle (ResPool.GetSolidBrush (ColorWindow), dtp.date_area_rect);
+				dc.FillRectangle (SystemBrushes.Window, dtp.date_area_rect);
 				
 				// fill the currently highlighted area
 				if (dtp.hilight_date_area != Rectangle.Empty) {
-					dc.FillRectangle (ResPool.GetSolidBrush (ColorHighlight), dtp.hilight_date_area);
+					dc.FillRectangle (SystemBrushes.Highlight, dtp.hilight_date_area);
 				}
 				
 				// draw the text part
@@ -1244,7 +1244,7 @@ namespace System.Windows.Forms
 			int		width;
 			int		y;
 
-			dc.FillRectangle (ResPool.GetSolidBrush (box.BackColor), box.ClientRectangle);
+			dc.FillRectangle (GetControlBackBrush (box.BackColor), box.ClientRectangle);
 			
 			text_format = new StringFormat();
 			text_format.HotkeyPrefix = HotkeyPrefix.Show;
@@ -1269,7 +1269,7 @@ namespace System.Windows.Forms
 				if (box.Enabled) {
 					dc.DrawString (box.Text, box.Font, ResPool.GetSolidBrush (box.ForeColor), 10, 0, text_format);
 				} else {
-					dc.DrawString (box.Text, box.Font, ResPool.GetSolidBrush (ColorControlLightLight), 
+					dc.DrawString (box.Text, box.Font, SystemBrushes.ControlLightLight, 
 						       new RectangleF (11, 1, width,  box.Font.Height), text_format);
 					CPDrawStringDisabled (dc, box.Text, box.Font, box.ForeColor, 
 							      new RectangleF (10, 0, width,  box.Font.Height), text_format);
@@ -1298,7 +1298,7 @@ namespace System.Windows.Forms
 		#region Label
 		public  override void DrawLabel (Graphics dc, Rectangle clip_rectangle, Label label) 
 		{		
-			dc.FillRectangle (ResPool.GetSolidBrush (label.BackColor), clip_rectangle);
+			dc.FillRectangle (GetControlBackBrush (label.BackColor), clip_rectangle);
 
 			if (label.Enabled) {
 				dc.DrawString (label.Text, label.Font, ResPool.GetSolidBrush (label.ForeColor), clip_rectangle, label.string_format);
@@ -1320,7 +1320,7 @@ namespace System.Windows.Forms
 		{
 			Color color;
 
-			dc.FillRectangle (ResPool.GetSolidBrush (label.BackColor), clip_rectangle);
+			dc.FillRectangle (GetControlBackBrush (label.BackColor), clip_rectangle);
 
 			for (int i = 0; i < label.num_pieces; i++) {
 				
@@ -1399,7 +1399,7 @@ namespace System.Windows.Forms
 		{
 			bool details = control.View == View.Details;
 
-			dc.FillRectangle (ResPool.GetSolidBrush (control.BackColor), clip);						
+			dc.FillRectangle (GetControlBackBrush (control.BackColor), clip);						
 			int first = control.FirstVisibleIndex;	
 
 			for (int i = first; i <= control.LastVisibleIndex; i ++) {					
@@ -1414,13 +1414,13 @@ namespace System.Windows.Forms
 
 				// draw vertical gridlines
 				foreach (ColumnHeader col in control.Columns)
-					dc.DrawLine (this.ResPool.GetPen (this.ColorControl),
+					dc.DrawLine (SystemPens.Control,
 						     col.Rect.Right, top,
 						     col.Rect.Right, control.TotalHeight);
 				// draw horizontal gridlines
 				ListViewItem last_item = null;
 				foreach (ListViewItem item in control.Items) {
-					dc.DrawLine (this.ResPool.GetPen (this.ColorControl),
+					dc.DrawLine (SystemPens.Control,
 						     item.GetBounds (ItemBoundsPortion.Entire).Left, item.GetBounds (ItemBoundsPortion.Entire).Top,
 						     control.TotalWidth, item.GetBounds (ItemBoundsPortion.Entire).Top);
 					last_item = item;
@@ -1428,7 +1428,7 @@ namespace System.Windows.Forms
 
 				// draw a line after at the bottom of the last item
 				if (last_item != null) {
-					dc.DrawLine (this.ResPool.GetPen (this.ColorControl),
+					dc.DrawLine (SystemPens.Control,
 						     last_item.GetBounds (ItemBoundsPortion.Entire).Left,
 						     last_item.GetBounds (ItemBoundsPortion.Entire).Bottom,
 						     control.TotalWidth,
@@ -1445,7 +1445,7 @@ namespace System.Windows.Forms
 				rect.Width = control.v_scroll.Width;
 				rect.Y = control.v_scroll.Location.Y + control.v_scroll.Height;
 				rect.Height = control.h_scroll.Height;
-				dc.FillRectangle (ResPool.GetSolidBrush (ColorControl), rect);
+				dc.FillRectangle (SystemBrushes.Control, rect);
 			}
 
 		}
@@ -1456,7 +1456,7 @@ namespace System.Windows.Forms
 				
 			// border is drawn directly in the Paint method
 			if (details && control.HeaderStyle != ColumnHeaderStyle.None) {				
-				dc.FillRectangle (ResPool.GetSolidBrush (control.BackColor),
+				dc.FillRectangle (GetControlBackBrush (control.BackColor),
 						  0, 0, control.TotalWidth, control.Font.Height + 5);
 				if (control.Columns.Count > 0) {
 					foreach (ColumnHeader col in control.Columns) {
@@ -1473,7 +1473,7 @@ namespace System.Windows.Forms
 						if (rect.Width <= 0)
 							continue;
 						dc.DrawString (col.Text, DefaultFont,
-							       ResPool.GetSolidBrush (ColorControlText),
+							       SystemBrushes.ControlText,
 							       rect, col.Format);
 					}
 				}
@@ -1519,7 +1519,7 @@ namespace System.Windows.Forms
 					int scale = Math.Max (1, rect_checkrect.Width / 12);
 
 					// set the checkbox background
-					dc.FillRectangle (this.ResPool.GetSolidBrush (this.ColorWindow),
+					dc.FillRectangle (SystemBrushes.Window,
 							  rect_checkrect);
 					// define a rectangle inside the border area
 					Rectangle rect = new Rectangle (rect_checkrect.X + 2,
@@ -1587,14 +1587,13 @@ namespace System.Windows.Forms
 			if (item.Selected) {
 				if (control.View == View.Details) {
 					if (control.FullRowSelect) {
-						dc.FillRectangle (ResPool.GetSolidBrush (ColorHighlight), text_rect);
+						dc.FillRectangle (SystemBrushes.Highlight, text_rect);
 					}
 					else {
 						Size text_size = Size.Ceiling (dc.MeasureString (item.Text,
 												item.Font));
 						text_rect.Width = text_size.Width;
-						dc.FillRectangle (this.ResPool.GetSolidBrush
-								  (this.ColorHighlight), text_rect);
+						dc.FillRectangle (SystemBrushes.Highlight, text_rect);
 					}
 				}
 				else {
@@ -1603,8 +1602,7 @@ namespace System.Windows.Forms
 					  Point loc = text_rect.Location;
 					  loc.X += (text_rect.Width - text_size.Width) / 2;
 					  text_rect.Width = text_size.Width;*/
-					dc.FillRectangle (this.ResPool.GetSolidBrush (this.ColorHighlight),
-							  text_rect);
+					dc.FillRectangle (SystemBrushes.Highlight, text_rect);
 				}
 			}
 			else
@@ -1612,8 +1610,7 @@ namespace System.Windows.Forms
 
 			if (item.Text != null && item.Text.Length > 0) {
 				if (item.Selected)
-					dc.DrawString (item.Text, item.Font, this.ResPool.GetSolidBrush
-						       (this.ColorHighlightText), text_rect, format);
+					dc.DrawString (item.Text, item.Font, SystemBrushes.HighlightText, text_rect, format);
 				else
 					dc.DrawString (item.Text, item.Font, this.ResPool.GetSolidBrush
 						       (item.ForeColor), text_rect, format);
@@ -1659,11 +1656,10 @@ namespace System.Windows.Forms
 						}
 
 						if (item.Selected && control.FullRowSelect) {
-							dc.FillRectangle (ResPool.GetSolidBrush (ColorHighlight), sub_item_rect);
+							dc.FillRectangle (SystemBrushes.Highlight, sub_item_rect);
 							if (subItem.Text != null && subItem.Text.Length > 0)
 								dc.DrawString (subItem.Text, sub_item_font,
-									       this.ResPool.GetSolidBrush
-									       (this.ColorHighlightText),
+									       SystemBrushes.HighlightText,
 									       sub_item_text_rect, format);
 						} else {
 							dc.FillRectangle (sub_item_back_br, sub_item_rect);
@@ -1856,7 +1852,7 @@ namespace System.Windows.Forms
 			string_format_menu_text.HotkeyPrefix = hp;
 
 			rect.Height = menu.Height;
-			dc.FillRectangle (ResPool.GetSolidBrush(ColorMenu), rect);
+			dc.FillRectangle (SystemBrushes.Menu, rect);
 			
 			for (int i = 0; i < menu.MenuItems.Count; i++) {
 				MenuItem item = menu.MenuItems [i];
@@ -1899,10 +1895,10 @@ namespace System.Windows.Forms
 				string_format = string_format_menu_text;
 
 			if (item.Separator == true) {
-				e.Graphics.DrawLine (ResPool.GetPen (ColorControlDark),
+				e.Graphics.DrawLine (SystemPens.ControlDark,
 					e.Bounds.X, e.Bounds.Y, e.Bounds.X + e.Bounds.Width, e.Bounds.Y);
 
-				e.Graphics.DrawLine (ResPool.GetPen (ColorControlLight),
+				e.Graphics.DrawLine (SystemPens.ControlLight,
 					e.Bounds.X, e.Bounds.Y + 1, e.Bounds.X + e.Bounds.Width, e.Bounds.Y + 1);
 
 				return;
@@ -1917,22 +1913,28 @@ namespace System.Windows.Forms
 	        		rect.Width = 3;
 	        		rect.Height = item.MenuHeight - 6;
 
-				e.Graphics.DrawLine (ResPool.GetPen (ColorControlDark),
+				e.Graphics.DrawLine (SystemPens.ControlDark,
 					rect.X, rect.Y , rect.X, rect.Y + rect.Height);
 
-				e.Graphics.DrawLine (ResPool.GetPen (ColorControlLight),
+				e.Graphics.DrawLine (SystemPens.ControlLight,
 					rect.X + 1, rect.Y , rect.X +1, rect.Y + rect.Height);
 			}			
 			
 			Color color_text;
 			Color color_back;
+			Brush brush_text = null;
+			Brush brush_back = null;
 			
 			if ((e.State & DrawItemState.Selected) == DrawItemState.Selected && !item.MenuBar) {
 				color_text = ColorHighlightText;
 				color_back = ColorHighlight;
+				brush_text = SystemBrushes.HighlightText;
+				brush_back = SystemBrushes.Highlight;
 			} else {
 				color_text = ColorMenuText;
 				color_back = ColorMenu;
+				brush_text = ResPool.GetSolidBrush (ColorMenuText);
+				brush_back = SystemBrushes.Menu;
 			}
 
 			/* Draw background */
@@ -1940,11 +1942,11 @@ namespace System.Windows.Forms
 			rect_back.X++;
 			rect_back.Width -=2;
 			if (!item.MenuBar)
-				e.Graphics.FillRectangle (ResPool.GetSolidBrush (color_back), rect_back);
+				e.Graphics.FillRectangle (brush_back, rect_back);
 			
 			if (item.Enabled) {
 				e.Graphics.DrawString (item.Text, e.Font,
-					ResPool.GetSolidBrush (color_text),
+					brush_text,
 					rect_text, string_format);
 				
 				if (!item.MenuBar && item.Shortcut != Shortcut.None && item.ShowShortcut) {
@@ -1953,7 +1955,7 @@ namespace System.Windows.Forms
 					rect.X = item.XTab;
 					rect.Width -= item.XTab;
 
-					e.Graphics.DrawString (str, e.Font, ResPool.GetSolidBrush (color_text),
+					e.Graphics.DrawString (str, e.Font, brush_text,
 						rect, string_format_menu_shortcut);
 				}
 				
@@ -2007,12 +2009,11 @@ namespace System.Windows.Forms
 		public override void DrawPopupMenu (Graphics dc, Menu menu, Rectangle cliparea, Rectangle rect)
 		{
 
-			dc.FillRectangle (ResPool.GetSolidBrush
-				(ColorMenu), cliparea);
+			dc.FillRectangle (SystemBrushes.Menu, cliparea);
 			
-			Pen pen_cht = ResPool.GetPen (ColorHighlightText);
-			Pen pen_ccd = ResPool.GetPen (ColorControlDark);
-			Pen pen_ccdd = ResPool.GetPen (ColorControlDarkDark);
+			Pen pen_cht = SystemPens.HighlightText;
+			Pen pen_ccd = SystemPens.ControlDark;
+			Pen pen_ccdd = SystemPens.ControlDarkDark;
 
 			/* Draw menu borders */
 			dc.DrawLine (pen_cht,
@@ -2098,7 +2099,7 @@ namespace System.Windows.Forms
 			// draw the today date if it's set
 			if (mc.ShowToday && bottom_rect.IntersectsWith (clip_rectangle)) 
 			{
-				dc.FillRectangle (ResPool.GetSolidBrush (mc.BackColor), bottom_rect);
+				dc.FillRectangle (GetControlBackBrush (mc.BackColor), bottom_rect);
 				if (mc.ShowToday) {
 					int today_offset = 5;
 					if (mc.ShowTodayCircle) 
@@ -2121,7 +2122,7 @@ namespace System.Windows.Forms
 							Math.Max(client_rectangle.Bottom - date_cell_size.Height, 0),
 							Math.Max(client_rectangle.Width - today_offset, 0),
 							date_cell_size.Height);
-					dc.DrawString ("Today: " + DateTime.Now.ToShortDateString(), bold_font, ResPool.GetSolidBrush (mc.ForeColor), today_rect, text_format);
+					dc.DrawString ("Today: " + DateTime.Now.ToShortDateString(), bold_font, GetControlForeBrush (mc.ForeColor), today_rect, text_format);
 					text_format.Dispose ();
 					bold_font.Dispose ();
 				}				
@@ -2130,9 +2131,9 @@ namespace System.Windows.Forms
 			// finally paint the borders of the calendars as required
 			for (int i = 0; i <= mc.CalendarDimensions.Width; i++) {
 				if (i == 0 && clip_rectangle.X == client_rectangle.X) {
-					dc.FillRectangle (ResPool.GetSolidBrush (mc.BackColor), client_rectangle.X, client_rectangle.Y, 1, client_rectangle.Height);
+					dc.FillRectangle (GetControlBackBrush (mc.BackColor), client_rectangle.X, client_rectangle.Y, 1, client_rectangle.Height);
 				} else if (i == mc.CalendarDimensions.Width && clip_rectangle.Right == client_rectangle.Right) {
-					dc.FillRectangle (ResPool.GetSolidBrush (mc.BackColor), client_rectangle.Right-1, client_rectangle.Y, 1, client_rectangle.Height);
+					dc.FillRectangle (GetControlBackBrush (mc.BackColor), client_rectangle.Right-1, client_rectangle.Y, 1, client_rectangle.Height);
 				} else { 
 					Rectangle rect = new Rectangle (
 						client_rectangle.X + (month_size.Width*i) + (calendar_spacing.Width * (i-1)) + 1,
@@ -2140,15 +2141,15 @@ namespace System.Windows.Forms
 						calendar_spacing.Width,
 						client_rectangle.Height);
 					if (i < mc.CalendarDimensions.Width && i > 0 && clip_rectangle.IntersectsWith (rect)) {
-						dc.FillRectangle (ResPool.GetSolidBrush (mc.BackColor), rect);
+						dc.FillRectangle (GetControlBackBrush (mc.BackColor), rect);
 					}
 				}
 			}
 			for (int i = 0; i <= mc.CalendarDimensions.Height; i++) {
 				if (i == 0 && clip_rectangle.Y == client_rectangle.Y) {
-					dc.FillRectangle (ResPool.GetSolidBrush (mc.BackColor), client_rectangle.X, client_rectangle.Y, client_rectangle.Width, 1);
+					dc.FillRectangle (GetControlBackBrush (mc.BackColor), client_rectangle.X, client_rectangle.Y, client_rectangle.Width, 1);
 				} else if (i == mc.CalendarDimensions.Height && clip_rectangle.Bottom == client_rectangle.Bottom) {
-					dc.FillRectangle (ResPool.GetSolidBrush (mc.BackColor), client_rectangle.X, client_rectangle.Bottom-1, client_rectangle.Width, 1);
+					dc.FillRectangle (GetControlBackBrush (mc.BackColor), client_rectangle.X, client_rectangle.Bottom-1, client_rectangle.Width, 1);
 				} else { 
 					Rectangle rect = new Rectangle (
 						client_rectangle.X,
@@ -2156,7 +2157,7 @@ namespace System.Windows.Forms
 						client_rectangle.Width,
 						calendar_spacing.Height);
 					if (i < mc.CalendarDimensions.Height && i > 0 && clip_rectangle.IntersectsWith (rect)) {
-						dc.FillRectangle (ResPool.GetSolidBrush (mc.BackColor), rect);
+						dc.FillRectangle (GetControlBackBrush (mc.BackColor), rect);
 					}
 				}
 			}
@@ -2244,7 +2245,7 @@ namespace System.Windows.Forms
 				(7 + col_offset) * date_cell_size.Width,
 				date_cell_size.Height);
 			if (day_name_rect.IntersectsWith (clip_rectangle)) {
-				dc.FillRectangle (ResPool.GetSolidBrush (mc.BackColor), day_name_rect);
+				dc.FillRectangle (GetControlBackBrush (mc.BackColor), day_name_rect);
 				// draw the day names 
 				DayOfWeek first_day_of_week = mc.GetDayOfWeek(mc.FirstDayOfWeek);
 				for (int i=0; i < 7; i++) 
@@ -2297,7 +2298,7 @@ namespace System.Windows.Forms
 		
 				bool draw_row = row_rect.IntersectsWith (clip_rectangle);
 				if (draw_row) {
-					dc.FillRectangle (ResPool.GetSolidBrush (mc.BackColor), row_rect);
+					dc.FillRectangle (GetControlBackBrush (mc.BackColor), row_rect);
 				}
 				// establish if this is a valid week to draw
 				if (mc.IsValidWeekToDraw (this_month, current_date, row, col)) {
@@ -2558,11 +2559,11 @@ namespace System.Windows.Forms
 					break;
 
 				case PictureBoxSizeMode.CenterImage:
-					dc.FillRectangle(ResPool.GetSolidBrush(pb.BackColor), clip);
+					dc.FillRectangle(GetControlBackBrush (pb.BackColor), clip);
 					dc.DrawImage (pb.Image, (client.Width / 2) - (pb.Image.Width / 2), (client.Height / 2) - (pb.Image.Height / 2));
 					break;
 				default:
-					dc.FillRectangle(ResPool.GetSolidBrush(pb.BackColor), clip);
+					dc.FillRectangle(GetControlBackBrush (pb.BackColor), clip);
 					// Normal, AutoSize
 					dc.DrawImage(pb.Image, 0, 0, pb.Image.Width, pb.Image.Height);
 					break;
@@ -2572,7 +2573,7 @@ namespace System.Windows.Forms
 			}
 
 			// We only get here if no image is set. At least paint the background
-			dc.FillRectangle(ResPool.GetSolidBrush(pb.BackColor), clip);
+			dc.FillRectangle(GetControlBackBrush (pb.BackColor), clip);
 		}
 
 		public override Size PictureBoxDefaultSize {
@@ -2793,7 +2794,7 @@ namespace System.Windows.Forms
 
 		protected virtual void RadioButton_DrawButton(RadioButton radio_button, Graphics dc, ButtonState state, Rectangle radiobutton_rectangle)
 		{
-			dc.FillRectangle(ResPool.GetSolidBrush(radio_button.BackColor), radio_button.ClientRectangle);
+			dc.FillRectangle(GetControlBackBrush (radio_button.BackColor), radio_button.ClientRectangle);
 			
 			if (radio_button.appearance==Appearance.Button) {
 				ButtonBase_DrawButton (radio_button, dc);
@@ -3094,8 +3095,11 @@ namespace System.Windows.Forms
 			Rectangle area = sb.ClientRectangle;
 			int horz_border = 2;
 			int vert_border = 2;
+			
+			bool is_color_control = sb.BackColor == ColorControl;
 
-			dc.FillRectangle (ResPool.GetSolidBrush (sb.BackColor), clip);
+			Brush brush = is_color_control ? SystemBrushes.Control : ResPool.GetSolidBrush (sb.BackColor);
+			dc.FillRectangle (brush, clip);
 			
 			if (sb.Panels.Count == 0 && sb.Text != String.Empty) {
 				string text = sb.Text;
@@ -3116,7 +3120,7 @@ namespace System.Windows.Forms
 						new Rectangle(area.X + 2, area.Y + 2, area.Width - 4, area.Height - 4), string_format);
 				string_format.Dispose ();
 			} else if (sb.ShowPanels) {
-				SolidBrush br_forecolor = GetControlForeBrush (sb.ForeColor);
+				Brush br_forecolor = GetControlForeBrush (sb.ForeColor);
 				int prev_x = area.X + horz_border;
 				int y = area.Y + vert_border;
 				for (int i = 0; i < sb.Panels.Count; i++) {
@@ -3135,7 +3139,7 @@ namespace System.Windows.Forms
 
 
 		protected virtual void DrawStatusBarPanel (Graphics dc, Rectangle area, int index,
-			SolidBrush br_forecolor, StatusBarPanel panel) {
+			Brush br_forecolor, StatusBarPanel panel) {
 			int border_size = 3; // this is actually const, even if the border style is none
 
 			area.Height -= border_size;
@@ -3208,7 +3212,8 @@ namespace System.Windows.Forms
 		public override void DrawTabControl (Graphics dc, Rectangle area, TabControl tab)
 		{
 			// Do we need to fill the back color? It can't be changed...
-			dc.FillRectangle (GetControlBackBrush (tab.BackColor), area);
+			Brush brush = tab.BackColor == DefaultControlBackColor ? SystemBrushes.Control : ResPool.GetSolidBrush (tab.BackColor);
+			dc.FillRectangle (brush, area);
 			Rectangle panel_rect = GetTabPanelRectExt (tab);
 
 			if (tab.Appearance == TabAppearance.Normal) {
@@ -4289,8 +4294,6 @@ namespace System.Windows.Forms
 
 		public override void CPDrawButton (Graphics dc, Rectangle rectangle, ButtonState state)
 		{
-//			CPColor cpcolor = ResPool.GetCPColor (ColorControl);
-			
 			// sadly enough, the rectangle gets always filled with a hatchbrush
 			dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (ColorControl.R + 3, ColorControl.G, ColorControl.B), ColorControl), rectangle.X + 1, rectangle.Y + 1, rectangle.Width - 2, rectangle.Height - 2);
 			
@@ -4689,7 +4692,7 @@ namespace System.Windows.Forms
 			int	s;
 
 			ControlPaint.Color2HBS(backColor, out h, out b, out s);
-
+			
 			if (b>127) {
 				foreColor=Color.Black;
 			} else {
@@ -5342,10 +5345,10 @@ namespace System.Windows.Forms
 		/* Generic scroll button */
 		public void DrawScrollButtonPrimitive (Graphics dc, Rectangle area, ButtonState state) {
 			if ((state & ButtonState.Pushed) == ButtonState.Pushed) {
-				dc.FillRectangle (ResPool.GetSolidBrush (ColorControl), area.X + 1,
+				dc.FillRectangle (SystemBrushes.Control, area.X + 1,
 					area.Y + 1, area.Width - 2 , area.Height - 2);
 
-				dc.DrawRectangle (ResPool.GetPen (ColorControlDark), area.X,
+				dc.DrawRectangle (SystemPens.ControlDark, area.X,
 					area.Y, area.Width, area.Height);
 
 				return;
