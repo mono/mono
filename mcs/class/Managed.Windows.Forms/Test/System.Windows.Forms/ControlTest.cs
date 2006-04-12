@@ -787,5 +787,32 @@ namespace MWF.MonoTest
 
 			Assert.AreEqual(5, c.LayoutCount, "Layout Suspend/Resume locking does not bottom out at 0");
 		}
+
+		[Test]
+		[ExpectedException(typeof(System.ArgumentException))]
+		public void TransparentBackgroundTest1() {
+			Control	c;
+
+			c = new Control();
+			c.BackColor = Color.Transparent;
+		}
+
+		[Test]
+		public void TransparentBackgroundTest2() {
+			Panel	c;
+
+			c = new Panel();
+			c.BackColor = Color.Transparent;
+			Assert.AreEqual(Color.Transparent, c.BackColor, "Transparent background not set");
+		}
+
+		[Test]
+		public void TransparentBackgroundTest3() {
+			Control	c;
+
+			c = new Control();
+			c.BackColor = Color.Empty;
+			Assert.AreEqual(Control.DefaultBackColor, c.BackColor, "Setting empty color failed");
+		}
 	}
 }
