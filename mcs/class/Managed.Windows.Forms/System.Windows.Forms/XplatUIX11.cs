@@ -529,6 +529,15 @@ namespace System.Windows.Forms {
 			NetAtoms[(int)NA._NET_WM_CONTEXT_HELP] = XInternAtom(DisplayHandle, "_NET_WM_CONTEXT_HELP", false);
 			NetAtoms[(int)NA._NET_WM_WINDOW_OPACITY] = XInternAtom(DisplayHandle, "_NET_WM_WINDOW_OPACITY", false);
 
+			NetAtoms[(int)NA._NET_WM_WINDOW_TYPE_DESKTOP] = XInternAtom(DisplayHandle, "_NET_WM_WINDOW_TYPE_DESKTOP", false);
+			NetAtoms[(int)NA._NET_WM_WINDOW_TYPE_DOCK] = XInternAtom(DisplayHandle, "_NET_WM_WINDOW_TYPE_DOCK", false);
+			NetAtoms[(int)NA._NET_WM_WINDOW_TYPE_TOOLBAR] = XInternAtom(DisplayHandle, "_NET_WM_WINDOW_TYPE_TOOLBAR", false);
+			NetAtoms[(int)NA._NET_WM_WINDOW_TYPE_MENU] = XInternAtom(DisplayHandle, "_NET_WM_WINDOW_TYPE_MENU", false);
+			NetAtoms[(int)NA._NET_WM_WINDOW_TYPE_UTILITY] = XInternAtom(DisplayHandle, "_NET_WM_WINDOW_TYPE_UTILITY", false);
+			NetAtoms[(int)NA._NET_WM_WINDOW_TYPE_DIALOG] = XInternAtom(DisplayHandle, "_NET_WM_WINDOW_TYPE_DIALOG", false);
+			NetAtoms[(int)NA._NET_WM_WINDOW_TYPE_SPLASH] = XInternAtom(DisplayHandle, "_NET_WM_WINDOW_TYPE_SPLASH", false);
+			NetAtoms[(int)NA._NET_WM_WINDOW_TYPE_NORMAL] = XInternAtom(DisplayHandle, "_NET_WM_WINDOW_TYPE_NORMAL", false);
+
 			// Clipboard support
 			NetAtoms[(int)NA.CLIPBOARD] = XInternAtom (DisplayHandle, "CLIPBOARD", false);
 			NetAtoms[(int)NA.DIB] = (IntPtr)Atom.XA_PIXMAP;
@@ -658,11 +667,14 @@ namespace System.Windows.Forms {
 			MotifDecorations	decorations;
 			int			atom_count;
 			Rectangle		client_rect;
+			bool			transient;
 
 			// Child windows don't need WM window styles
 			if ((cp.Style & (int)WindowStyles.WS_CHILDWINDOW) != 0) {
 				return;
 			}
+
+			transient = false;
 
 			mwmHints = new MotifWmHints();
 			functions = 0;
@@ -727,8 +739,10 @@ namespace System.Windows.Forms {
 				XChangeProperty(DisplayHandle, hwnd.whole_window, NetAtoms[(int)NA._MOTIF_WM_HINTS], NetAtoms[(int)NA._MOTIF_WM_HINTS], 32, PropertyMode.Replace, ref mwmHints, 5);
 
 				if (((cp.Style & (int)WindowStyles.WS_POPUP) != 0)  && (hwnd.parent != null) && (hwnd.parent.whole_window != IntPtr.Zero)) {
+					transient = true;
 					XSetTransientForHint(DisplayHandle, hwnd.whole_window, hwnd.parent.whole_window);
 				} else if ((cp.ExStyle & (int)WindowExStyles.WS_EX_APPWINDOW) == 0) {
+					transient = true;
 					XSetTransientForHint(DisplayHandle, hwnd.whole_window, FosterParent);
 				}
 				XMoveResizeWindow(DisplayHandle, hwnd.client_window, client_rect.X, client_rect.Y, client_rect.Width, client_rect.Height);
@@ -740,6 +754,12 @@ namespace System.Windows.Forms {
 					atoms[atom_count++] = NetAtoms[(int)NA._NET_WM_STATE_NO_TASKBAR].ToInt32();
 				}
 				XChangeProperty(DisplayHandle, hwnd.whole_window, NetAtoms[(int)NA._NET_WM_STATE], (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, atom_count);
+
+				if (transient) {
+					atom_count = 0;
+					atoms[atom_count++] = atoms[atom_count++] = NetAtoms[(int)NA._NET_WM_WINDOW_TYPE_DOCK].ToInt32();
+					XChangeProperty(DisplayHandle, hwnd.whole_window, NetAtoms[(int)NA._NET_WM_WINDOW_TYPE], (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, atom_count);
+				}
 
 				atom_count = 0;
 				IntPtr[] atom_ptrs = new IntPtr[2];
@@ -1859,7 +1879,6 @@ namespace System.Windows.Forms {
 			WindowRect = Hwnd.GetWindowRectangle(border_style, menu, title_style,
 					caption_height, tool_caption_height,
 					ClientRect);
-
 			return true;
 		}
 
@@ -4028,14 +4047,13 @@ namespace System.Windows.Forms {
 			}
 
 			hints = new XSizeHints();
-
-			if (min != Size.Empty) {
+			if ((min != Size.Empty) && (min.Width > 0) && (min.Height > 0)) {
 				hints.flags = (IntPtr)((int)hints.flags | (int)XSizeHintsFlags.PMinSize);
 				hints.min_width = min.Width;
 				hints.min_height = min.Height;
 			}
 
-			if (max != Size.Empty) {
+			if ((max != Size.Empty) && (max.Width > 0) && (max.Height > 0)) {
 				hints.flags = (IntPtr)((int)hints.flags | (int)XSizeHintsFlags.PMaxSize);
 				hints.max_width = max.Width;
 				hints.max_height = max.Height;
@@ -4045,7 +4063,7 @@ namespace System.Windows.Forms {
 				XSetWMNormalHints(DisplayHandle, hwnd.whole_window, ref hints);
 			}
 
-			if (maximized != Rectangle.Empty) {
+			if ((maximized != Rectangle.Empty) && (maximized.Width > 0) && (maximized.Height > 0)) {
 				hints.flags = (IntPtr)XSizeHintsFlags.PPosition;
 				hints.x = maximized.X;
 				hints.y = maximized.Y;

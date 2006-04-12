@@ -413,6 +413,10 @@ namespace System.Windows.Forms
 			// Do not call base.OnPaint since it's the Label class 
 		}
 
+		internal override void OnPaintBackgroundInternal(PaintEventArgs e) {
+			base.OnPaintBackground (e);
+		}
+
 		protected override void OnPaintBackground (PaintEventArgs e)
 		{
 			base.OnPaintBackground (e);

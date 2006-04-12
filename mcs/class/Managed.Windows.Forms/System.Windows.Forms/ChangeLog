@@ -1,3 +1,12 @@
+2006-04-12  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* XplatUIX11.cs: Added setting of window type when transient window
+	  is created (metacity would move it otherwise)
+	* X11Structs.cs: Added WINDOW_TYPE atoms
+	* LinkLabel.cs: Override OnPaintBackgroundInternal and draw the
+	  background (the control is Opaque but still wants transparent
+	  backgrounds)
+
 2006-04-12  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Control.cs: Added OnPaintBackgroundInternal to allow controls
