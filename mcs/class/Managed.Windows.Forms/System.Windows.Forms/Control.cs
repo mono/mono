@@ -164,10 +164,6 @@ namespace System.Windows.Forms
 		#region Public Classes
 		[ComVisible(true)]
 		public class ControlAccessibleObject : AccessibleObject {			
-			#region ControlAccessibleObject Local Variables
-			private Control	owner;
-			#endregion	// ControlAccessibleObject Local Variables
-
 			#region ControlAccessibleObject Constructors
 			public ControlAccessibleObject(Control ownerControl) {
 				this.owner = ownerControl;
@@ -964,6 +960,25 @@ namespace System.Windows.Forms
 		// This method exists so controls overriding OnPaintBackground can have default background painting done
 		internal virtual void PaintControlBackground (PaintEventArgs pevent)
 		{
+			if (GetStyle(ControlStyles.SupportsTransparentBackColor) && (BackColor.A != 0xff)) {
+				if (parent != null) {
+					PaintEventArgs	parent_pe;
+					GraphicsState	state;
+
+					parent_pe = new PaintEventArgs(pevent.Graphics, new Rectangle(pevent.ClipRectangle.X + Left, pevent.ClipRectangle.Y + Top, pevent.ClipRectangle.Width, pevent.ClipRectangle.Height));
+
+					state = parent_pe.Graphics.Save();
+					parent_pe.Graphics.TranslateTransform(-Left, -Top);
+					parent.OnPaintBackground(parent_pe);
+					parent_pe.Graphics.Restore(state);
+
+					state = parent_pe.Graphics.Save();
+					parent_pe.Graphics.TranslateTransform(-Left, -Top);
+					parent.OnPaint(parent_pe);
+					parent_pe.Graphics.Restore(state);
+				}
+			}
+
 			if (background_image == null) {
 				pevent.Graphics.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(BackColor), new Rectangle(pevent.ClipRectangle.X - 1, pevent.ClipRectangle.Y - 1, pevent.ClipRectangle.Width + 2, pevent.ClipRectangle.Height + 2));
 				return;
@@ -1435,6 +1450,10 @@ namespace System.Windows.Forms
 			}
 
 			set {
+				if (!value.IsEmpty && (value.A != 0xff) && !GetStyle(ControlStyles.SupportsTransparentBackColor)) {
+					throw new ArgumentException("Transparent background colors are not supported on this control");
+				}
+
 				background_color=value;
 				SetChildColor(this);
 				OnBackColorChanged(EventArgs.Empty);
@@ -3541,7 +3560,6 @@ namespace System.Windows.Forms
 			} else {
 				control_style &= ~flag;
 			}
-			OnStyleChanged(EventArgs.Empty);
 		}
 
 		protected void SetTopLevel(bool value) {
@@ -3670,6 +3688,7 @@ namespace System.Windows.Forms
 			}
 
 			XplatUI.SetWindowStyle(window.Handle, CreateParams);
+			OnStyleChanged(EventArgs.Empty);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -3716,6 +3735,9 @@ namespace System.Windows.Forms
 					return;
 				}
 
+				// Nice description of what should happen when handling WM_PAINT
+				// can be found here: http://pluralsight.com/wiki/default.aspx/Craig/FlickerFreeControlDrawing.html
+				// and here http://msdn.microsoft.com/msdnmag/issues/06/03/WindowsFormsPerformance/
 				case Msg.WM_PAINT: {
 					PaintEventArgs	paint_event;
 
@@ -3734,7 +3756,9 @@ namespace System.Windows.Forms
 							dc = paint_event.SetGraphics (DeviceContext);
 						}
 
-					OnPaintBackground(paint_event);
+					if (!GetStyle(ControlStyles.Opaque)) {
+						OnPaintBackground(paint_event);
+					}
 
 					OnPaintInternal(paint_event);
 
@@ -3755,6 +3779,8 @@ namespace System.Windows.Forms
 					
 				case Msg.WM_ERASEBKGND: {
 					// The DefWndProc will never have to handle this, we always paint the background in managed code
+					// In theory this code would look at ControlStyles.AllPaintingInWmPaint and and call OnPaintBackground
+					// here but it just makes things more complicated...
 					m.Result = (IntPtr)1;
 					return;
 				}

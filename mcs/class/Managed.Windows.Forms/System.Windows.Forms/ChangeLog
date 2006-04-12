@@ -1,3 +1,19 @@
+2006-04-12  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Control.cs: 
+	  - Added transparency check to BackColor property. Transparent
+	    backgrounds are only allowed if the control styles permit it
+	  - Added recursive painting of parent control background and
+	    foreground if a control with a transparent backcolor is drawn
+	    (Thanks to Tim Ringenback for providing his 'hack' as a base
+	     for this patch) Fixes #77985 and #78026.
+	  - Added Opaque style check before calling OnPaintBackground, no
+	    need to draw the background if the control is opaque
+	  - Removed ControlAccessibleObject owner variable (inherited from
+	    base, no need to define again)
+	  - Added some documentation links explaining the drawing events
+	    and styles
+
 2006-04-11  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* Splitter.cs (CalculateSplitPosition): Corrected the bad assumption
