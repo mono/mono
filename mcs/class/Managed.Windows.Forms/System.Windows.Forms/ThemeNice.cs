@@ -657,7 +657,7 @@ namespace System.Windows.Forms
 		
 		#region StatusBar
 		protected override void DrawStatusBarPanel( Graphics dc, Rectangle area, int index,
-							   SolidBrush br_forecolor, StatusBarPanel panel )
+							   Brush br_forecolor, StatusBarPanel panel )
 		{
 			int border_size = 3; // this is actually const, even if the border style is none
 			

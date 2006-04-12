@@ -256,14 +256,15 @@ namespace System.Windows.Forms {
 			
 			if (flat_style != FlatStyle.Popup || ((flat_style == FlatStyle.Popup) && is_entered)) {
 				LinearGradientBrush lgbr;
-				if (flat_style == FlatStyle.Flat)
+				if (flat_style == FlatStyle.Flat) {
 					lgbr = new LinearGradientBrush (new Point (buttonRectangle.X, buttonRectangle.Y + 3),
-									new Point (buttonRectangle.X, buttonRectangle.Bottom - 3),
-									second_gradient_color, first_gradient_color);
-				else
-					lgbr = new LinearGradientBrush (new Point (buttonRectangle.X, buttonRectangle.Y + 3),
+								       new Point (buttonRectangle.X, buttonRectangle.Bottom - 3),
+								       second_gradient_color, first_gradient_color);
+				} else {
+					lgbr = new LinearGradientBrush  (new Point (buttonRectangle.X, buttonRectangle.Y + 3),
 									new Point (buttonRectangle.X, buttonRectangle.Bottom - 3),
 									first_gradient_color, second_gradient_color);
+				}
 				dc.FillRectangle (lgbr, lgbRectangle);
 				lgbr.Dispose ();
 				
@@ -1035,7 +1036,7 @@ namespace System.Windows.Forms {
 		
 		#region StatusBar
 		protected override void DrawStatusBarPanel( Graphics dc, Rectangle area, int index,
-							   SolidBrush br_forecolor, StatusBarPanel panel ) {
+							   Brush br_forecolor, StatusBarPanel panel ) {
 			int border_size = 3; // this is actually const, even if the border style is none
 			
 			area.Height -= border_size;
@@ -1586,9 +1587,6 @@ namespace System.Windows.Forms {
 			
 			DrawScrollButtonPrimitive( dc, area, state, scroll_button_type );
 			
-			if ( area.Width < 12 || area.Height < 12 ) /* Cannot see a thing at smaller sizes */
-				return;
-			
 			Color color_arrow;
 			
 			if ( enabled )
@@ -1606,39 +1604,46 @@ namespace System.Windows.Forms {
 			if ( ( state & ButtonState.Pushed ) != 0 )
 				shift = 1;
 			
+			int min_4 = 4;
+			int min_2 = 2;
+			if ( area.Width < 12 || area.Height < 12 ) {
+				min_4 = 3;
+				min_2 = 1;
+			}
+			
 			Point[]	arrow = new Point[ 4 ];
 			
-			switch ( scroll_button_type ) {
-				case ScrollButton.Down:
-					centerY += shift + 1;
-					arrow[ 0 ] = new Point( centerX - 4, centerY - 2 );
-					arrow[ 1 ] = new Point( centerX, centerY + 2 );
-					arrow[ 2 ] = new Point( centerX + 4, centerY - 2 );
-					arrow[ 3 ] = new Point( centerX - 4, centerY - 2 );
-					break;
-				case ScrollButton.Up:
-					centerY -= shift;
-					arrow[ 0 ] = new Point( centerX - 4, centerY + 2 );
-					arrow[ 1 ] = new Point( centerX, centerY - 2 );
-					arrow[ 2 ] = new Point( centerX + 4, centerY + 2 );
-					arrow[ 3 ] = new Point( centerX - 4, centerY + 2 );
-					break;
-				case ScrollButton.Left:
-					centerX -= shift;
-					arrow[ 0 ] = new Point( centerX + 2, centerY - 4 );
-					arrow[ 1 ] = new Point( centerX + 2, centerY + 4 );
-					arrow[ 2 ] = new Point( centerX - 2, centerY );
-					arrow[ 3 ] = new Point( centerX + 2, centerY - 4 );
-					break;
-				case ScrollButton.Right:
-					centerX += shift + 1;
-					arrow[ 0 ] = new Point( centerX - 2, centerY - 4 );
-					arrow[ 1 ] = new Point( centerX + 2, centerY );
-					arrow[ 2 ] = new Point( centerX - 2, centerY + 4 );
-					arrow[ 3 ] = new Point( centerX - 2, centerY - 4 );
-					break;
-				default:
-					break;
+			switch (scroll_button_type) {
+			case ScrollButton.Down:
+				centerY += shift + 1;
+				arrow [0] = new Point (centerX - min_4, centerY - min_2);
+				arrow [1] = new Point (centerX, centerY + min_2);
+				arrow [2] = new Point (centerX + min_4, centerY - min_2);
+				arrow [3] = new Point (centerX - min_4, centerY - min_2);
+				break;
+			case ScrollButton.Up:
+				centerY -= shift;
+				arrow [0] = new Point (centerX - min_4, centerY + min_2);
+				arrow [1] = new Point (centerX, centerY - min_2);
+				arrow [2] = new Point (centerX + min_4, centerY + min_2);
+				arrow [3] = new Point (centerX - min_4, centerY + min_2);
+				break;
+			case ScrollButton.Left:
+				centerX -= shift;
+				arrow [0] = new Point (centerX + min_2, centerY - min_4);
+				arrow [1] = new Point (centerX + min_2, centerY + min_4);
+				arrow [2] = new Point (centerX - min_2, centerY);
+				arrow [3] = new Point (centerX + min_2, centerY - min_4);
+				break;
+			case ScrollButton.Right:
+				centerX += shift + 1;
+				arrow [0] = new Point (centerX - min_2, centerY - min_4);
+				arrow [1] = new Point (centerX + min_2, centerY);
+				arrow [2] = new Point (centerX - min_2, centerY + min_4);
+				arrow [3] = new Point (centerX - min_2, centerY - min_4);
+				break;
+			default:
+				break;
 			}
 			
 			SmoothingMode old_smoothing_mode = dc.SmoothingMode;
