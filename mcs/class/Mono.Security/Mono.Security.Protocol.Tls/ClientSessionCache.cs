@@ -66,20 +66,22 @@ namespace Mono.Security.Protocol.Tls {
 		}
 
 		public bool Valid {
-			get { return (validuntil > DateTime.UtcNow); }
+			get { return ((masterSecret != null) && (validuntil > DateTime.UtcNow)); }
 		}
 
 
 		public void GetContext (Context context)
 		{
 			CheckDisposed ();
-			masterSecret = (byte[]) context.MasterSecret.Clone ();
+			if (context.MasterSecret != null)
+				masterSecret = (byte[]) context.MasterSecret.Clone ();
 		}
 
 		public void SetContext (Context context)
 		{
 			CheckDisposed ();
-			context.MasterSecret = (byte[]) masterSecret.Clone ();
+			if (masterSecret != null)
+				context.MasterSecret = (byte[]) masterSecret.Clone ();
 		}
 
 		public void KeepAlive ()
