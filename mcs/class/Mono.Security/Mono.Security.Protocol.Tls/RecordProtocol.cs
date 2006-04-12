@@ -386,15 +386,19 @@ namespace Mono.Security.Protocol.Tls
 							this.ProcessHandshakeMessage(message);
 						}
 						break;
-
-					case (ContentType)0x80:
-						this.context.HandshakeMessages.Write (buffer);
-						break;
+// That MCS bug isn't fixed in 1.1.7 branch
+//					case (ContentType)0x80:
+//						this.context.HandshakeMessages.Write (buffer);
+//						break;
 
 					default:
-						throw new TlsException(
-							AlertDescription.UnexpectedMessage,
-							"Unknown record received from server.");
+						if (contentType != (ContentType)0x80) {
+							this.context.HandshakeMessages.Write (buffer);
+						} else {
+							throw new TlsException(
+								AlertDescription.UnexpectedMessage,
+								"Unknown record received from server.");
+						}
 						break;
 				}
 
