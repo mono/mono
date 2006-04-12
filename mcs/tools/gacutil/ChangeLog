@@ -1,3 +1,9 @@
+2006-04-12  Miguel de Icaza  <miguel@novell.com>
+
+	* driver.cs: Delete the target file before copying over, this will
+	ensure that if some running application is using the assembly or
+	any of its datafiles, it does not get corrupted by an install. 
+
 2005-10-26  Geoff Norton  <gnorton@customerdna.com>
 
 	* driver.cs: Do not match every item with a blank string.  Fixes

@@ -189,6 +189,14 @@ namespace Mono.Tools {
 			return 0;
 		}
 
+		static void Copy (string source, string target, bool v)
+		{
+			try {
+				File.Delete (target);
+			} catch {}
+			File.Copy (source, target, v);
+		}
+		
 		private static bool Install (bool check_refs, string name, string package,
 				string gacdir, string link_gacdir, string libdir, string link_libdir)
 		{
@@ -259,17 +267,17 @@ namespace Mono.Tools {
 				return false;
 			}
 
-			File.Copy (name, asmb_path, true);
+			Copy (name, asmb_path, true);
 
 			foreach (string ext in siblings) {
 				string sibling = String.Concat (name, ext);
 				if (File.Exists (sibling))
-					File.Copy (sibling, String.Concat (asmb_path, ext), true);
+					Copy (sibling, String.Concat (asmb_path, ext), true);
 			}
 
 			foreach (ManifestResourceInfo resource_info in resources) {
 				try {
-					File.Copy (resource_info.FileName, Path.Combine (full_path, Path.GetFileName (resource_info.FileName)), true);
+					Copy (resource_info.FileName, Path.Combine (full_path, Path.GetFileName (resource_info.FileName)), true);
 				} catch {
 					WriteLine ("ERROR: Could not install resource file " + resource_info.FileName);
 					Environment.Exit (1);
@@ -311,7 +319,7 @@ namespace Mono.Tools {
 					//
 					// We can't use 'link_path' here, since it need not be a valid path at the time 'gacutil'
 					// is run, esp. when invoked in a DESTDIR install.
- 					File.Copy (name, ref_path);
+ 					Copy (name, ref_path, true);
 					WriteLine ("Package exported to: " + ref_path);
  				}
 			}
