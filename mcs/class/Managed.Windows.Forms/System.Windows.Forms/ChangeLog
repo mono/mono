@@ -1,3 +1,9 @@
+2006-04-12  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Control.cs (PaintControlBackground): Set the graphics object
+	  on our PaintEvent to null to prevent it from being disposed
+	  when the PaintEvent gets disposed
+
 2006-04-12  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ThemeWin32Classic.cs: Use even more SystemBrushes and SystemPens

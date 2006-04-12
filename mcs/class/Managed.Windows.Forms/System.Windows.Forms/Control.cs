@@ -976,6 +976,7 @@ namespace System.Windows.Forms
 					parent_pe.Graphics.TranslateTransform(-Left, -Top);
 					parent.OnPaint(parent_pe);
 					parent_pe.Graphics.Restore(state);
+					parent_pe.SetGraphics(null);
 				}
 			}
 
