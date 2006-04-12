@@ -1,3 +1,9 @@
+2006-04-11  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* TextBoxBase.cs: Don't try to shortcut by checking against base.Text
+	  since that won't be updated if the user types text (only if it's
+	  programatically set)
+
 2006-04-11  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* ScrollableControl.cs: Calculate DisplayRect dynamically, so that

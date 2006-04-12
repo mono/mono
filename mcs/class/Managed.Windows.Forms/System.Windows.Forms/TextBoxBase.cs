@@ -475,10 +475,6 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				if (value == base.Text) {
-					return;
-				}
-
 				if ((value != null) && (value != "")) {
 					Line	line;
 
