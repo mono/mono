@@ -33,8 +33,19 @@ using System.Drawing;
 
 namespace System.Windows.Forms {
 	public class TextBox : TextBoxBase {
+		#region Variables
+		private ContextMenu	menu;
+		private MenuItem	undo;
+		private MenuItem	cut;
+		private MenuItem	copy;
+		private MenuItem	paste;
+		private MenuItem	delete;
+		private MenuItem	select_all;
+		#endregion	// Variables
+
 		#region Public Constructors
 		public TextBox() {
+
 			scrollbars = RichTextBoxScrollBars.None;
 			alignment = HorizontalAlignment.Left;
 			this.LostFocus +=new EventHandler(TextBox_LostFocus);
@@ -43,6 +54,24 @@ namespace System.Windows.Forms {
 
 			SetStyle (ControlStyles.StandardClick | ControlStyles.StandardDoubleClick, false);
 			SetStyle (ControlStyles.FixedHeight, true);
+
+			undo = new MenuItem(Locale.GetText("&Undo"));
+			cut = new MenuItem(Locale.GetText("Cu&t"));
+			copy = new MenuItem(Locale.GetText("&Copy"));
+			paste = new MenuItem(Locale.GetText("&Paste"));
+			delete = new MenuItem(Locale.GetText("&Delete"));
+			select_all = new MenuItem(Locale.GetText("Select &All"));
+
+			menu = new ContextMenu(new MenuItem[] { undo, new MenuItem("-"), cut, copy, paste, delete, new MenuItem("-"), select_all});
+			ContextMenu = menu;
+
+			menu.Popup += new EventHandler(menu_Popup);
+			undo.Click += new EventHandler(undo_Click);
+			cut.Click += new EventHandler(cut_Click);
+			copy.Click += new EventHandler(copy_Click);
+			paste.Click += new EventHandler(paste_Click);
+			delete.Click += new EventHandler(delete_Click);
+			select_all.Click += new EventHandler(select_all_Click);
 		}
 		#endregion	// Public Constructors
 
@@ -234,5 +263,53 @@ namespace System.Windows.Forms {
 		#region Events
 		public event EventHandler TextAlignChanged;
 		#endregion	// Events
+
+		#region Private Methods
+		private void menu_Popup(object sender, EventArgs e) {
+			if (SelectionLength == 0) {
+				cut.Enabled = false;
+				copy.Enabled = false;
+			} else {
+				cut.Enabled = true;
+				copy.Enabled = true;
+			}
+
+			if (SelectionLength == TextLength) {
+				select_all.Enabled = false;
+			} else {
+				select_all.Enabled = true;
+			}
+
+			if (!CanUndo) {
+				undo.Enabled = false;
+			} else {
+				undo.Enabled = true;
+			}
+		}
+
+		private void undo_Click(object sender, EventArgs e) {
+			Undo();
+		}
+
+		private void cut_Click(object sender, EventArgs e) {
+			Cut();
+		}
+
+		private void copy_Click(object sender, EventArgs e) {
+			Copy();
+		}
+
+		private void paste_Click(object sender, EventArgs e) {
+			Paste();
+		}
+
+		private void delete_Click(object sender, EventArgs e) {
+			SelectedText = "";
+		}
+
+		private void select_all_Click(object sender, EventArgs e) {
+			SelectAll();
+		}
+		#endregion	// Private Methods
 	}
 }

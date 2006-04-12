@@ -1,3 +1,7 @@
+2006-04-12  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* TextBox.cs: Implemented context menu
+
 2006-04-12  Mike Kestner  <mkestner@novell.com>
 
 	* ListView.cs: implement box selection. fixes #77838.
