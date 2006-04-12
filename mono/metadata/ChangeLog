@@ -1,3 +1,7 @@
+2006-04-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_System_Reflection_Assembly_InternalGetAssemblyName): Fix image reference counting.
+
 2006-04-12  Martin Baulig  <martin@ximian.com>
 
 	* threads.c: Use `MONO_DEBUGGER_SUPPORTED' as the conditional, not
