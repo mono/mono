@@ -307,7 +307,7 @@ namespace System.Windows.Forms {
 			}
 
 			if (context.MainForm != null) {
-				context.MainForm.Show();
+				context.MainForm.Visible = true;	// Cannot use Show() or scaling gets confused by menus
 				// FIXME - do we need this?
 				//context.MainForm.PerformLayout();
 				context.MainForm.context = context;

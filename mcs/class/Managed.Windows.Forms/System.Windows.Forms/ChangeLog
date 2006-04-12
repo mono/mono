@@ -1,3 +1,11 @@
+2006-04-12  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Form.cs: Use the provided width when calculating the menu size;
+	  when being maximized we get WM_NCCALCSIZE before WM_WINDOWPOSCHANGED
+	  and ClientSize.Width won't be updated yet
+	* Application.cs: Use Visible instead of Show() to make form visible,
+	  this way we create the handle later and menusize is considered
+
 2006-04-12  Mike Kestner  <mkestner@novell.com>
 
 	* MenuAPI.cs: ignore clicks on disabled menu items. Thanks to Alex for
