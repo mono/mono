@@ -1023,6 +1023,26 @@ namespace MonoTests.System.Web.UI.WebControls {
 			dl.CreateCH ();
 			Assert.AreEqual (11, dl.Controls.Count, "#01");
 		}
+		
+#if NET_2_0
+		[Test]
+		public void DataSourceID ()
+		{
+			Page p = new Page();
+			ObjectDataSource ds = new ObjectDataSource();
+			ds.ID = "ObjectDataSource1";
+			ds.TypeName = "System.Guid";
+			ds.SelectMethod = "ToByteArray";
+			TestDataList dl = new TestDataList ();
+			dl.Page = p;
+			ds.Page = p;
+			p.Controls.Add(dl);
+			p.Controls.Add(ds);
+			dl.DataSourceID = "ObjectDataSource1";
+			dl.CreateCH ();
+			Assert.AreEqual (16, dl.Controls.Count, "#01");
+		}
+#endif
 
 		[Test]
 		public void NControls6 ()
