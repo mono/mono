@@ -2276,14 +2276,15 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 		max_len = ((guint8 *)ins_spec [ins->opcode])[MONO_INST_LEN];
 
-		if (offset > (cfg->code_size - max_len - 16)) {
+		if (G_UNLIKELY (offset > (cfg->code_size - max_len - 16))) {
 			cfg->code_size *= 2;
 			cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);
 			code = cfg->native_code + offset;
 			mono_jit_stats.code_reallocs++;
 		}
 
-		mono_debug_record_line_number (cfg, ins, offset);
+		if (cfg->debug_info)
+			mono_debug_record_line_number (cfg, ins, offset);
 
 		switch (ins->opcode) {
 		case OP_BIGMUL:
@@ -3862,7 +3863,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			g_assert_not_reached ();
 		}
 
-		if ((code - cfg->native_code - offset) > max_len) {
+		if (G_UNLIKELY ((code - cfg->native_code - offset) > max_len)) {
 			g_warning ("wrong maximal instruction length of instruction %s (expected %d, got %d)",
 				   mono_inst_name (ins->opcode), max_len, code - cfg->native_code - offset);
 			g_assert_not_reached ();

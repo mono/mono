@@ -9987,13 +9987,13 @@ mono_local_cprop2 (MonoCompile *cfg)
 					/* srcindex == 1 -> binop, ins->sreg2 == -1 -> unop */
 					if ((srcindex == 1) && (ins->sreg1 != -1) && defs [ins->sreg1] && (defs [ins->sreg1]->opcode == OP_ICONST) && defs [ins->sreg2]) {
 						/* Both arguments are constants, perform cfold */
-						mono_constant_fold_ins2 (ins, defs [ins->sreg1], defs [ins->sreg2]);
+						mono_constant_fold_ins2 (cfg, ins, defs [ins->sreg1], defs [ins->sreg2], TRUE);
 					} else if ((srcindex == 0) && (ins->sreg2 != -1) && defs [ins->sreg2]) {
 						/* Arg 1 is constant, swap arguments if possible */
-						mono_constant_fold_ins2 (ins, defs [ins->sreg1], defs [ins->sreg2]);						
+						mono_constant_fold_ins2 (cfg, ins, defs [ins->sreg1], defs [ins->sreg2], TRUE);						
 					} else if ((srcindex == 0) && (ins->sreg2 == -1)) {
 						/* Constant unop, perform cfold */
-						mono_constant_fold_ins2 (ins, defs [ins->sreg1], NULL);
+						mono_constant_fold_ins2 (cfg, ins, defs [ins->sreg1], NULL, TRUE);
 					}
 
 					opcode2 = mono_op_to_op_imm (ins->opcode);

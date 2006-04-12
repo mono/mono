@@ -343,251 +343,6 @@ mono_eval_cond_branch (MonoInst *ins)
 	    res = (cast)arg1->inst_c0 op (cast)arg2->inst_c0;	\
         break; \
 
-/**
- * mono_constant_fold_ins2:
- *
- * Perform constant folding on INS, using ARG1 and ARG2 as the arguments, and store the
- * result back into INS.
- */
-void
-mono_constant_fold_ins2 (MonoInst *ins, MonoInst *arg1, MonoInst *arg2)
-{
-	MonoInst *dest = ins;
-
-	switch (ins->opcode) {
-	case OP_IMUL:
-	case OP_IADD:
-	case OP_IAND:
-	case OP_IOR:
-	case OP_IXOR:
-		if (arg2->opcode == OP_ICONST) {
-			if (arg1->opcode == OP_ICONST) {
-				switch (ins->opcode) {
-					FOLD_BINOP2 (OP_IMUL, *);
-					FOLD_BINOP2 (OP_IADD, +);
-					FOLD_BINOP2 (OP_IAND, &);
-					FOLD_BINOP2 (OP_IOR, |);
-					FOLD_BINOP2 (OP_IXOR, ^);
-				}
-				ins->opcode = OP_ICONST;
-				ins->sreg1 = ins->sreg2 = -1;
-			}
-		} else if (arg1->opcode == OP_ICONST) {
-			/* 
-			 * This is commutative so swap the arguments, allowing the _imm variant
-			 * to be used later.
-			 */
-			if (mono_op_to_op_imm (ins->opcode) != -1) {
-				ins->opcode = mono_op_to_op_imm (ins->opcode);
-				ins->sreg1 = ins->sreg2;
-				ins->sreg2 = -1;
-				ins->inst_imm = arg1->inst_c0;
-			}
-		}
-		break;
-	case OP_IMUL_IMM:
-	case OP_IADD_IMM:
-	case OP_IAND_IMM:
-	case OP_IOR_IMM:
-	case OP_IXOR_IMM:
-	case OP_ISUB_IMM:
-	case OP_ISHL_IMM:
-	case OP_ISHR_IMM:
-	case OP_ISHR_UN_IMM:
-	case OP_SHL_IMM:
-		if (arg1->opcode == OP_ICONST) {
-			switch (ins->opcode) {
-				FOLD_BINOP2_IMM (OP_IMUL_IMM, *);
-				FOLD_BINOP2_IMM (OP_IADD_IMM, +);
-				FOLD_BINOP2_IMM (OP_IAND_IMM, &);
-				FOLD_BINOP2_IMM (OP_IOR_IMM, |);
-				FOLD_BINOP2_IMM (OP_IXOR_IMM, ^);
-				FOLD_BINOP2_IMM (OP_ISUB_IMM, -);
-				FOLD_BINOP2_IMM (OP_ISHL_IMM, <<);
-				FOLD_BINOP2_IMM (OP_ISHR_IMM, >>);
-				FOLD_BINOPC2_IMM (OP_ISHR_UN_IMM, >>, guint32);
-				FOLD_BINOP2_IMM (OP_SHL_IMM, <<);
-			}
-			ins->opcode = OP_ICONST;
-			ins->sreg1 = ins->sreg2 = -1;
-		}
-		break;
-	case OP_ISUB:
-	case OP_ISHL:
-	case OP_ISHR:
-	case OP_ISHR_UN:
-		if ((arg1->opcode == OP_ICONST) && (arg2->opcode == OP_ICONST)) {
-			switch (ins->opcode) {
-				FOLD_BINOP2 (OP_ISUB, -);
-				FOLD_BINOP2 (OP_ISHL, <<);
-				FOLD_BINOP2 (OP_ISHR, >>);
-				FOLD_BINOPC2 (OP_ISHR_UN, >>, guint32);
-			}
-			ins->opcode = OP_ICONST;
-			ins->sreg1 = ins->sreg2 = -1;
-		}
-		break;
-	case OP_IDIV:
-	case OP_IDIV_UN:
-	case OP_IREM:
-	case OP_IREM_UN:
-		if ((arg1->opcode == OP_ICONST) && (arg2->opcode == OP_ICONST)) {
-			if ((arg2->inst_c0 == 0) || ((arg1->inst_c0 == G_MININT32) && (arg2->inst_c0 == -1)))
-				return;
-			switch (ins->opcode) {
-				FOLD_BINOPC2 (OP_IDIV, /, gint32);
-				FOLD_BINOPC2 (OP_IDIV_UN, /, guint32);
-				FOLD_BINOPC2 (OP_IREM, %, gint32);
-				FOLD_BINOPC2 (OP_IREM_UN, %, guint32);
-			}
-			ins->opcode = OP_ICONST;
-			ins->sreg1 = ins->sreg2 = -1;
-		}
-		break;
-		/* case OP_INEG: */
-	case OP_INOT:
-	case OP_INEG:
-		if (arg1->opcode == OP_ICONST) {
-			/* INEG sets cflags on x86, and the LNEG decomposition depends on that */
-			if ((ins->opcode == OP_INEG) && ins->next && (ins->next->opcode == OP_ADC_IMM))
-				return;
-			switch (ins->opcode) {
-				FOLD_UNOP2 (OP_INEG,-);
-				FOLD_UNOP2 (OP_INOT,~);
-			}
-			ins->opcode = OP_ICONST;
-			ins->sreg1 = ins->sreg2 = -1;
-		}
-		break;
-	case OP_MOVE:
-#if SIZEOF_VOID_P == 8
-		if ((arg1->opcode == OP_ICONST) || (arg1->opcode == OP_I8CONST)) {
-#else
-		if (arg1->opcode == OP_ICONST) {
-#endif
-			ins->opcode = arg1->opcode;
-			ins->sreg1 = ins->sreg2 = -1;
-			ins->inst_c0 = arg1->inst_c0;
-		}
-		break;
-	case OP_VMOVE:
-		if (arg1->opcode == OP_VZERO) {
-			ins->opcode = OP_VZERO;
-			ins->sreg1 = -1;
-		}
-		break;
-	case OP_COMPARE:
-	case OP_ICOMPARE:
-	case OP_COMPARE_IMM:
-	case OP_ICOMPARE_IMM: {
-		MonoInst dummy_arg2;
-		if (ins->sreg2 == -1) {
-			arg2 = &dummy_arg2;
-			arg2->opcode = OP_ICONST;
-			arg2->inst_c0 = ins->inst_imm;
-		}
-
-		if ((arg1->opcode == OP_ICONST) && (arg2->opcode == OP_ICONST)) {
-			MonoInst *next = ins->next;
-			gboolean res = FALSE;
-
-			switch (next->opcode) {
-			case OP_CEQ:
-			case OP_ICEQ:
-			case OP_CGT:
-			case OP_ICGT:
-			case OP_CGT_UN:
-			case OP_ICGT_UN:
-			case OP_CLT:
-			case OP_ICLT:
-			case OP_CLT_UN:
-			case OP_ICLT_UN:
-				switch (next->opcode) {
-					FOLD_BINOPCXX2 (OP_CEQ,==,gint32);
-					FOLD_BINOPCXX2 (OP_ICEQ,==,gint32);
-					FOLD_BINOPCXX2 (OP_CGT,>,gint32);
-					FOLD_BINOPCXX2 (OP_ICGT,>,gint32);
-					FOLD_BINOPCXX2 (OP_CGT_UN,>,guint32);
-					FOLD_BINOPCXX2 (OP_ICGT_UN,>,guint32);
-					FOLD_BINOPCXX2 (OP_CLT,<,gint32);
-					FOLD_BINOPCXX2 (OP_ICLT,<,gint32);
-					FOLD_BINOPCXX2 (OP_CLT_UN,<,guint32);
-					FOLD_BINOPCXX2 (OP_ICLT_UN,<,guint32);
-				}
-
-				ins->opcode = OP_NOP;
-				ins->sreg1 = ins->sreg2 = -1;
-				next->opcode = OP_ICONST;
-				next->inst_c0 = res;
-				next->sreg1 = next->sreg2 = -1;
-				break;
-			case OP_IBEQ:
-			case OP_IBNE_UN:
-			case OP_IBGT:
-			case OP_IBGT_UN:
-			case OP_IBGE:
-			case OP_IBGE_UN:
-			case OP_IBLT:
-			case OP_IBLT_UN:
-			case OP_IBLE:
-			case OP_IBLE_UN:
-				switch (next->opcode) {
-					FOLD_BINOPCXX2 (OP_IBEQ,==,gint32);
-					FOLD_BINOPCXX2 (OP_IBNE_UN,!=,guint32);
-					FOLD_BINOPCXX2 (OP_IBGT,>,gint32);
-					FOLD_BINOPCXX2 (OP_IBGT_UN,>,guint32);
-					FOLD_BINOPCXX2 (OP_IBGE,>=,gint32);
-					FOLD_BINOPCXX2 (OP_IBGE_UN,>=,guint32);
-					FOLD_BINOPCXX2 (OP_IBLT,<,gint32);
-					FOLD_BINOPCXX2 (OP_IBLT_UN,<,guint32);
-					FOLD_BINOPCXX2 (OP_IBLE,<=,gint32);
-					FOLD_BINOPCXX2 (OP_IBLE_UN,<=,guint32);
-				}
-
-				/* 
-				 * Can't nullify OP_COMPARE here since the decompose long branch 
-				 * opcodes depend on it being executed. Also, the branch might not
-				 * be eliminated after all if loop opts is disabled, for example.
-				 */
-				if (res)
-					next->flags |= MONO_INST_CFOLD_TAKEN;
-				else
-					next->flags |= MONO_INST_CFOLD_NOT_TAKEN;
-				break;
-			case OP_NOP:
-			case OP_BR:
-				/* This happens when a conditional branch is eliminated */
-				if (next->next == NULL) {
-					/* Last ins */
-					ins->opcode = OP_NOP;
-					ins->sreg1 = ins->sreg2 = -1;
-				}
-				break;
-			default:
-				return;
-			}
-		}
-		break;
-	}
-	case OP_FMOVE:
-		if (arg1->opcode == OP_R8CONST) {
-			ins->opcode = OP_R8CONST;
-			ins->sreg1 = -1;
-			ins->inst_p0 = arg1->inst_p0;
-		}
-		break;
-
-		/*
-		 * TODO: 
-		 * 	conv.* opcodes.
-		 * 	*ovf* opcodes? I'ts slow and hard to do in C.
-		 *      switch can be replaced by a simple jump 
-		 */
-	default:
-		return;
-	}
-}	
-
 #undef MONO_INST_NEW
 #define MONO_INST_NEW(cfg,dest,op) do {	\
 		(dest) = mono_mempool_alloc ((cfg)->mempool, sizeof (MonoInst));	\
@@ -597,24 +352,28 @@ mono_constant_fold_ins2 (MonoInst *ins, MonoInst *arg1, MonoInst *arg2)
         (dest)->dreg = (dest)->sreg1 = (dest)->sreg2 = -1;  \
 	} while (0)
 
-#define NEW_ICONST(cfg,dest,val) do {	\
-        MONO_INST_NEW ((cfg), (dest), OP_ICONST); \
-		(dest)->inst_c0 = (val);	\
-		(dest)->type = STACK_I4;	\
-		(dest)->dreg = mono_alloc_dreg ((cfg), STACK_I4);	\
-	} while (0)
+#define ALLOC_DEST(cfg, dest, ins) do { \
+    if (!(dest)) { \
+        MONO_INST_NEW ((cfg), (dest), -1); \
+        (dest)->dreg = (ins)->dreg; \
+    } \
+} while (0)
 
 /**
- * mono_constant_fold_new:
+ * mono_constant_fold_ins2:
  *
- * Perform constant folding on INS, using ARG1 and ARG2 as the arguments, and return the
- * result.
- * FIXME: Merge this with fold_ins2.
+ * Perform constant folding on INS, using ARG1 and ARG2 as the arguments. If OVERWRITE is
+ * true, then store the result back into INS and return INS. Otherwise allocate a new ins,
+ * store the result into it and return it. If constant folding cannot be performed, return
+ * NULL.
  */
 MonoInst*
-mono_constant_fold_new (MonoCompile *cfg, MonoInst *ins, MonoInst *arg1, MonoInst *arg2)
+mono_constant_fold_ins2 (MonoCompile *cfg, MonoInst *ins, MonoInst *arg1, MonoInst *arg2, gboolean overwrite)
 {
 	MonoInst *dest = NULL;
+
+	if (overwrite)
+		dest = ins;
 
 	switch (ins->opcode) {
 	case OP_IMUL:
@@ -624,7 +383,7 @@ mono_constant_fold_new (MonoCompile *cfg, MonoInst *ins, MonoInst *arg1, MonoIns
 	case OP_IXOR:
 		if (arg2->opcode == OP_ICONST) {
 			if (arg1->opcode == OP_ICONST) {
-				NEW_ICONST (cfg, dest, 0);
+				ALLOC_DEST (cfg, dest, ins);
 				switch (ins->opcode) {
 					FOLD_BINOP2 (OP_IMUL, *);
 					FOLD_BINOP2 (OP_IADD, +);
@@ -632,15 +391,20 @@ mono_constant_fold_new (MonoCompile *cfg, MonoInst *ins, MonoInst *arg1, MonoIns
 					FOLD_BINOP2 (OP_IOR, |);
 					FOLD_BINOP2 (OP_IXOR, ^);
 				}
+				dest->opcode = OP_ICONST;
+				dest->sreg1 = dest->sreg2 = -1;
 			}
-			else {
-				/* 
-				 * This is commutative so swap the arguments, allowing the _imm variant
-				 * to be used.
-				 */
-				MONO_INST_NEW (cfg, dest, mono_op_to_op_imm (ins->opcode));
+		} else if (arg1->opcode == OP_ICONST) {
+			/* 
+			 * This is commutative so swap the arguments, allowing the _imm variant
+			 * to be used later.
+			 */
+			if (mono_op_to_op_imm (ins->opcode) != -1) {
+				ALLOC_DEST (cfg, dest, ins);
+				dest->opcode = mono_op_to_op_imm (ins->opcode);
 				dest->sreg1 = ins->sreg2;
-				dest->inst_c0 = arg2->inst_c0;
+				dest->sreg2 = -1;
+				dest->inst_imm = arg1->inst_c0;
 			}
 		}
 		break;
@@ -655,7 +419,7 @@ mono_constant_fold_new (MonoCompile *cfg, MonoInst *ins, MonoInst *arg1, MonoIns
 	case OP_ISHR_UN_IMM:
 	case OP_SHL_IMM:
 		if (arg1->opcode == OP_ICONST) {
-			NEW_ICONST (cfg, dest, 0);
+			ALLOC_DEST (cfg, dest, ins);
 			switch (ins->opcode) {
 				FOLD_BINOP2_IMM (OP_IMUL_IMM, *);
 				FOLD_BINOP2_IMM (OP_IADD_IMM, +);
@@ -668,6 +432,8 @@ mono_constant_fold_new (MonoCompile *cfg, MonoInst *ins, MonoInst *arg1, MonoIns
 				FOLD_BINOPC2_IMM (OP_ISHR_UN_IMM, >>, guint32);
 				FOLD_BINOP2_IMM (OP_SHL_IMM, <<);
 			}
+			dest->opcode = OP_ICONST;
+			dest->sreg1 = dest->sreg2 = -1;
 		}
 		break;
 	case OP_ISUB:
@@ -675,13 +441,15 @@ mono_constant_fold_new (MonoCompile *cfg, MonoInst *ins, MonoInst *arg1, MonoIns
 	case OP_ISHR:
 	case OP_ISHR_UN:
 		if ((arg1->opcode == OP_ICONST) && (arg2->opcode == OP_ICONST)) {
-			NEW_ICONST (cfg, dest, 0);
+			ALLOC_DEST (cfg, dest, ins);
 			switch (ins->opcode) {
 				FOLD_BINOP2 (OP_ISUB, -);
 				FOLD_BINOP2 (OP_ISHL, <<);
 				FOLD_BINOP2 (OP_ISHR, >>);
 				FOLD_BINOPC2 (OP_ISHR_UN, >>, guint32);
 			}
+			dest->opcode = OP_ICONST;
+			dest->sreg1 = dest->sreg2 = -1;
 		}
 		break;
 	case OP_IDIV:
@@ -691,13 +459,15 @@ mono_constant_fold_new (MonoCompile *cfg, MonoInst *ins, MonoInst *arg1, MonoIns
 		if ((arg1->opcode == OP_ICONST) && (arg2->opcode == OP_ICONST)) {
 			if ((arg2->inst_c0 == 0) || ((arg1->inst_c0 == G_MININT32) && (arg2->inst_c0 == -1)))
 				return NULL;
-			NEW_ICONST (cfg, dest, 0);
+			ALLOC_DEST (cfg, dest, ins);
 			switch (ins->opcode) {
 				FOLD_BINOPC2 (OP_IDIV, /, gint32);
 				FOLD_BINOPC2 (OP_IDIV_UN, /, guint32);
 				FOLD_BINOPC2 (OP_IREM, %, gint32);
 				FOLD_BINOPC2 (OP_IREM_UN, %, guint32);
 			}
+			dest->opcode = OP_ICONST;
+			dest->sreg1 = dest->sreg2 = -1;
 		}
 		break;
 		/* case OP_INEG: */
@@ -707,21 +477,30 @@ mono_constant_fold_new (MonoCompile *cfg, MonoInst *ins, MonoInst *arg1, MonoIns
 			/* INEG sets cflags on x86, and the LNEG decomposition depends on that */
 			if ((ins->opcode == OP_INEG) && ins->next && (ins->next->opcode == OP_ADC_IMM))
 				return NULL;
-			NEW_ICONST (cfg, dest, 0);
+			ALLOC_DEST (cfg, dest, ins);
 			switch (ins->opcode) {
 				FOLD_UNOP2 (OP_INEG,-);
 				FOLD_UNOP2 (OP_INOT,~);
 			}
+			dest->opcode = OP_ICONST;
+			dest->sreg1 = dest->sreg2 = -1;
 		}
 		break;
 	case OP_MOVE:
+#if SIZEOF_VOID_P == 8
+		if ((arg1->opcode == OP_ICONST) || (arg1->opcode == OP_I8CONST)) {
+#else
 		if (arg1->opcode == OP_ICONST) {
-			NEW_ICONST (cfg, dest, arg1->inst_c0);
+#endif
+			ALLOC_DEST (cfg, dest, ins);
+			dest->opcode = arg1->opcode;
+			dest->sreg1 = dest->sreg2 = -1;
+			dest->inst_c0 = arg1->inst_c0;
 		}
 		break;
 	case OP_VMOVE:
 		if (arg1->opcode == OP_VZERO) {
-			NEW_ICONST (cfg, dest, 0);
+			ALLOC_DEST (cfg, dest, ins);
 			dest->opcode = OP_VZERO;
 			dest->sreg1 = -1;
 		}
@@ -765,7 +544,17 @@ mono_constant_fold_new (MonoCompile *cfg, MonoInst *ins, MonoInst *arg1, MonoIns
 					FOLD_BINOPCXX2 (OP_ICLT_UN,<,guint32);
 				}
 
-				NEW_ICONST (cfg, dest, res);
+				if (overwrite) {
+					ins->opcode = OP_NOP;
+					ins->sreg1 = ins->sreg2 = -1;
+					next->opcode = OP_ICONST;
+					next->inst_c0 = res;
+					next->sreg1 = next->sreg2 = -1;
+				} else {
+					ALLOC_DEST (cfg, dest, ins);
+					dest->opcode = OP_ICONST;
+					dest->inst_c0 = res;
+				}
 				break;
 			case OP_IBEQ:
 			case OP_IBNE_UN:
@@ -790,17 +579,44 @@ mono_constant_fold_new (MonoCompile *cfg, MonoInst *ins, MonoInst *arg1, MonoIns
 					FOLD_BINOPCXX2 (OP_IBLE_UN,<=,guint32);
 				}
 
-				NEW_ICONST (cfg, dest, res);
+				if (overwrite) {
+					/* 
+					 * Can't nullify OP_COMPARE here since the decompose long branch 
+					 * opcodes depend on it being executed. Also, the branch might not
+					 * be eliminated after all if loop opts is disabled, for example.
+					 */
+					if (res)
+						next->flags |= MONO_INST_CFOLD_TAKEN;
+					else
+						next->flags |= MONO_INST_CFOLD_NOT_TAKEN;
+				} else {
+					ALLOC_DEST (cfg, dest, ins);
+					dest->opcode = OP_ICONST;
+					dest->inst_c0 = res;
+				}
+				break;
 			case OP_NOP:
+			case OP_BR:
+				/* This happens when a conditional branch is eliminated */
+				if (next->next == NULL) {
+					/* Last ins */
+					if (overwrite) {
+						ins->opcode = OP_NOP;
+						ins->sreg1 = ins->sreg2 = -1;
+					}
+				}
 				break;
 			default:
-				break;
+				return NULL;
 			}
 		}
+		break;
 	}
 	case OP_FMOVE:
 		if (arg1->opcode == OP_R8CONST) {
-			MONO_INST_NEW (cfg, dest, OP_R8CONST);
+			ALLOC_DEST (cfg, dest, ins);
+			dest->opcode = OP_R8CONST;
+			dest->sreg1 = -1;
 			dest->inst_p0 = arg1->inst_p0;
 		}
 		break;
@@ -808,12 +624,12 @@ mono_constant_fold_new (MonoCompile *cfg, MonoInst *ins, MonoInst *arg1, MonoIns
 		/*
 		 * TODO: 
 		 * 	conv.* opcodes.
-		 * 	*ovf* opcodes? I'ts slow and hard to do in C.
+		 * 	*ovf* opcodes? It's slow and hard to do in C.
 		 *      switch can be replaced by a simple jump 
 		 */
 	default:
-		break;
+		return NULL;
 	}
-
-	return dest;
+		
+    return dest;
 }	
