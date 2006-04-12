@@ -633,13 +633,13 @@ namespace System.Windows.Forms {
 		private int CalculateSplitPosition() {
 			if (horizontal) {
 				if (dock_style == DockStyle.Top) {
-					return split_position;
+					return split_position - affected.Top;
 				} else {
 					return affected.Bottom - split_position - splitter_size;
 				}
 			} else {
 				if (dock_style == DockStyle.Left) {
-					return split_position;
+					return split_position - affected.Left;
 				} else {
 					return affected.Right - split_position - splitter_size;
 				}

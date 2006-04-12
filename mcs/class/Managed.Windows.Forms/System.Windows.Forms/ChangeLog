@@ -1,3 +1,9 @@
+2006-04-11  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Splitter.cs (CalculateSplitPosition): Corrected the bad assumption
+	  that the affected control is the located at the left border of our
+	  parent (Fixes #77936)
+
 2006-04-11  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* TextBoxBase.cs: When rendering disabled or readonly controls,
