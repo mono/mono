@@ -1,5 +1,8 @@
 2006-04-12  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mono_method_to_ir): Handle multiple LEAVE statements inside a single
+	handler clauses. Fixes #78024.
+
 	* mini-sparc.c (mono_arch_output_basic_block): Handle large offsets
 	in the CALL_MEMBASE opcodes. Fixes #78088.
 	(mono_arch_get_vcall_slot_addr): Ditto.
