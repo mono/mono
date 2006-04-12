@@ -1,3 +1,9 @@
+2006-04-11  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* TextBoxBase.cs: When rendering disabled or readonly controls,
+	  draw the background with 'Control' instead of 'Window' color as
+	  long as the user hasn't specifically set a color
+
 2006-04-11  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* TextBoxBase.cs: Don't try to shortcut by checking against base.Text

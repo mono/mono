@@ -44,6 +44,7 @@ namespace System.Windows.Forms {
 		internal bool			accepts_tab;
 		internal bool			accepts_return;
 		internal bool			auto_size;
+		internal bool			backcolor_set;
 		internal CharacterCasing	character_casing;
 		internal bool			undo;
 		internal bool			hide_selection;
@@ -194,6 +195,11 @@ namespace System.Windows.Forms {
 				return base.BackColor;
 			}
 			set {
+				if (value != ThemeEngine.Current.ColorWindow) {
+					backcolor_set = true;
+				} else {
+					backcolor_set = false;
+				}
 				base.BackColor = value;
 			}
 		}
@@ -1242,7 +1248,11 @@ namespace System.Windows.Forms {
 
 		internal override void OnPaintInternal (PaintEventArgs pevent) {
 			// Fill background
-			pevent.Graphics.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(BackColor), pevent.ClipRectangle);
+			if (backcolor_set || (Enabled && !read_only)) {
+				pevent.Graphics.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(BackColor), pevent.ClipRectangle);
+			} else {
+				pevent.Graphics.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorControl), pevent.ClipRectangle);
+			}
 			pevent.Graphics.TextRenderingHint=TextRenderingHint.AntiAlias;
 
 			// Draw the viewable document
