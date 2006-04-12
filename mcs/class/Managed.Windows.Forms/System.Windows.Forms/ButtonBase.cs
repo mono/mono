@@ -470,6 +470,10 @@ namespace System.Windows.Forms {
 			base.OnMouseUp(mevent);
 		}
 
+		internal override void OnPaintBackgroundInternal(PaintEventArgs e) {
+			base.OnPaintBackground (e);
+		}
+
 		protected override void OnPaint(PaintEventArgs pevent) {
 			Draw (pevent);
 			base.OnPaint (pevent);

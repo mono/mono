@@ -3761,10 +3761,13 @@ namespace System.Windows.Forms
 						OnPaintBackground(paint_event);
 					}
 
-					OnPaintInternal(paint_event);
+					// Button-derived controls choose to ignore their Opaque style, give them a chance to draw their background anyways
+					OnPaintBackgroundInternal(paint_event);
 
-					if (!paint_event.Handled)
+					OnPaintInternal(paint_event);
+					if (!paint_event.Handled) {
 						OnPaint(paint_event);
+					}
 
 					if (ThemeEngine.Current.DoubleBufferingSupported)
 						if ((control_style & ControlStyles.DoubleBuffer) != 0) {
@@ -4284,6 +4287,10 @@ namespace System.Windows.Forms
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnPaint(PaintEventArgs e) {
 			if (Paint!=null) Paint(this, e);
+		}
+
+		internal virtual void OnPaintBackgroundInternal(PaintEventArgs e) {
+			// Override me
 		}
 
 		internal virtual void OnPaintInternal(PaintEventArgs e) {

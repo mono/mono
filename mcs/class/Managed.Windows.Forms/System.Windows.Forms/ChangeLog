@@ -1,3 +1,11 @@
+2006-04-12  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Control.cs: Added OnPaintBackgroundInternal to allow controls
+	  that set Opaque but don't mean it (like all ButtonBase-derived
+	  controls) to still draw their background
+	* ButtonBase.cs: Override OnPaintBackgroundInternal and draw
+	  the background
+
 2006-04-12  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* Control.cs (PaintControlBackground): Set the graphics object
