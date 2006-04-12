@@ -7,6 +7,7 @@ System.Xml/XmlCharacterDataTests.cs
 System.Xml/XmlCommentTests.cs
 System.Xml/XmlConvertTests.cs
 System.Xml/XmlDeclarationTests.cs
+System.Xml/XmlDefaultReader.cs
 System.Xml/XmlDocumentEventTests.cs
 System.Xml/XmlDocumentFragmentTests.cs
 System.Xml/XmlDocumentTests.cs

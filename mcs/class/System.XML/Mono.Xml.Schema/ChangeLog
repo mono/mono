@@ -1,3 +1,8 @@
+2006-04-12  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaValidatingReader.cs : don't reject such XmlReader that
+	  does not implement IXmlNamespaceResolver.
+
 2006-02-20  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XsdValidatingReader.cs : when DTD did not appear in 

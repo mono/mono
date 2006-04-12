@@ -113,7 +113,8 @@ namespace Mono.Xml.Schema
 		{
 			IXmlNamespaceResolver nsResolver = reader as IXmlNamespaceResolver;
 			if (nsResolver == null)
-				throw new ArgumentException ("Argument XmlReader must implement IXmlNamespaceResolver.");
+			//	throw new ArgumentException ("Argument XmlReader must implement IXmlNamespaceResolver.");
+				nsResolver = new XmlNamespaceManager (reader.NameTable);
 
 			XmlSchemaSet schemas = settings.Schemas;
 			if (schemas == null)

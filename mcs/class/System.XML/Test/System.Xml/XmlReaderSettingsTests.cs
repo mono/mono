@@ -293,6 +293,19 @@ namespace MonoTests.System.Xml
 			XmlReader xr = XmlReader.Create (new StringReader ("<doc/>"), settings);
 			AssertType.IsFalse (Object.ReferenceEquals (settings, xr.Settings));
 		}
+
+		[Test]
+		public void CreateValidatorFromNonIXmlNamespaceResolver ()
+		{
+			XmlReaderSettings settings = new XmlReaderSettings ();
+			settings.Schemas.Add (null, "Test/XmlFiles/xsd/xml.xsd");
+			settings.ValidationType = ValidationType.Schema;
+			XmlReader xr = XmlReader.Create (new StringReader ("<root/>"));
+			XmlReader dr = new Commons.Xml.XmlDefaultReader (xr);
+			// XmlDefaultReader does not implement IXmlNamespaceResolver
+			// but don't reject because of that fact.
+			XmlReader r = XmlReader.Create (dr, settings);
+		}
 	}
 }
 #endif
