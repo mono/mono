@@ -1,3 +1,8 @@
+2006-04-12  Mike Kestner  <mkestner@novell.com>
+
+	* ListView.cs: implement box selection. fixes #77838.
+	* ThemeWin32Classic.cs: draw box select rect, remove a ResetClip.
+
 2006-04-12  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* XplatUIX11.cs: Added setting of window type when transient window

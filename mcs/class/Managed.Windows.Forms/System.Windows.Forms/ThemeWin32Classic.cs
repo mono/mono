@@ -1436,8 +1436,6 @@ namespace System.Windows.Forms
 				}
 			}			
 			
-			dc.ResetClip ();
-			
 			// Draw corner between the two scrollbars
 			if (control.h_scroll.Visible == true && control.h_scroll.Visible == true) {
 				Rectangle rect = new Rectangle ();
@@ -1447,6 +1445,10 @@ namespace System.Windows.Forms
 				rect.Height = control.h_scroll.Height;
 				dc.FillRectangle (SystemBrushes.Control, rect);
 			}
+
+			Rectangle box_select_rect = control.item_control.BoxSelectRectangle;
+			if (!box_select_rect.Size.IsEmpty)
+				dc.DrawRectangle (ResPool.GetDashPen (ColorControlText, DashStyle.Dot), box_select_rect);
 
 		}
 		

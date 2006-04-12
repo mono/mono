@@ -178,9 +178,13 @@ namespace System.Windows.Forms
 			}
 		}
 
-		internal bool CanMultiselect {
+		bool multiselecting;
+
+		bool CanMultiselect {
 			get {
-				if (multiselect && (XplatUI.State.ModifierKeys & (Keys.Control | Keys.Shift)) != 0)
+				if (multiselecting)
+					return true;
+				else if (multiselect && (XplatUI.State.ModifierKeys & (Keys.Control | Keys.Shift)) != 0)
 					return true;
 				else
 					return false;
@@ -1095,10 +1099,14 @@ namespace System.Windows.Forms
 
 		private void SelectItems (ArrayList sel_items)
 		{
-			SelectedItems.Clear ();
-			SelectedIndices.list.Clear ();
+			multiselecting = true;
+			ArrayList curr_items = (ArrayList) SelectedItems.list.Clone ();
+			foreach (ListViewItem item in curr_items)
+				if (!sel_items.Contains (item))
+					item.Selected = false;
 			foreach (ListViewItem item in sel_items)
 				item.Selected = true;
+			multiselecting = false;
 		}
 
 		private void UpdateMultiSelection (int index)
@@ -1212,6 +1220,122 @@ namespace System.Windows.Forms
 				owner.OnKeyUp (args);
 			}
 
+			enum BoxSelect {
+				None,
+				Normal,
+				Shift,
+				Control
+			}
+
+			BoxSelect box_select_mode = BoxSelect.None;
+			ArrayList prev_selection;
+			Point box_select_start;
+
+			Rectangle box_select_rect;
+			internal Rectangle BoxSelectRectangle {
+				get { return box_select_rect; }
+				set {
+					if (box_select_rect == value)
+						return;
+
+					InvalidateBoxSelectRect ();
+					box_select_rect = value;
+					InvalidateBoxSelectRect ();
+				}
+			}
+
+			void InvalidateBoxSelectRect ()
+			{
+				if (BoxSelectRectangle.Size.IsEmpty)
+					return;
+
+				Rectangle edge = BoxSelectRectangle;
+				edge.X -= 1;
+				edge.Y -= 1;
+				edge.Width += 2;
+				edge.Height = 2;
+				Invalidate (edge);
+				edge.Y = BoxSelectRectangle.Bottom - 1;
+				Invalidate (edge);
+				edge.Y = BoxSelectRectangle.Y - 1;
+				edge.Width = 2;
+				edge.Height = BoxSelectRectangle.Height + 2;
+				Invalidate (edge);
+				edge.X = BoxSelectRectangle.Right - 1;
+				Invalidate (edge);
+			}
+
+			private Rectangle CalculateBoxSelectRectangle (Point pt)
+			{
+				int left = Math.Min (box_select_start.X, pt.X);
+				int right = Math.Max (box_select_start.X, pt.X);
+				int top = Math.Min (box_select_start.Y, pt.Y);
+				int bottom = Math.Max (box_select_start.Y, pt.Y);
+				return Rectangle.FromLTRB (left, top, right, bottom);
+			}
+
+			ArrayList BoxSelectedItems {
+				get {
+					ArrayList result = new ArrayList ();
+					foreach (ListViewItem item in owner.Items) {
+						Rectangle r = item.Bounds;
+						r.X += r.Width / 4;
+						r.Y += r.Height / 4;
+						r.Width /= 2;
+						r.Height /= 2;
+						if (BoxSelectRectangle.IntersectsWith (r))
+							result.Add (item);
+					}
+					return result;
+				}
+			}
+
+			private bool PerformBoxSelection (Point pt)
+			{
+				if (box_select_mode == BoxSelect.None)
+					return false;
+
+				BoxSelectRectangle = CalculateBoxSelectRectangle (pt);
+				
+				ArrayList box_items = BoxSelectedItems;
+
+				ArrayList items;
+
+				switch (box_select_mode) {
+
+				case BoxSelect.Normal:
+					items = box_items;
+					break;
+
+				case BoxSelect.Control:
+					items = new ArrayList ();
+					foreach (ListViewItem item in prev_selection)
+						if (!box_items.Contains (item))
+							items.Add (item);
+					foreach (ListViewItem item in box_items)
+						if (!prev_selection.Contains (item))
+							items.Add (item);
+					break;
+
+				case BoxSelect.Shift:
+					items = box_items;
+					foreach (ListViewItem item in box_items)
+						prev_selection.Remove (item);
+					foreach (ListViewItem item in prev_selection)
+						items.Add (item);
+					break;
+
+				default:
+					throw new Exception ("Unexpected Selection mode: " + box_select_mode);
+				}
+
+				SuspendLayout ();
+				owner.SelectItems (items);
+				ResumeLayout ();
+
+				return true;
+			}
+
 			private void ItemsMouseDown (object sender, MouseEventArgs me)
 			{
 				if (owner.items.Count == 0)
@@ -1262,17 +1386,30 @@ namespace System.Windows.Forms
 						owner.OnDoubleClick (EventArgs.Empty);
 					else if (me.Clicks == 1 && clicked_item != null)
 						owner.OnClick (EventArgs.Empty);
-				} else if (owner.selected_indices.Count > 0) {
-					// Raise the event if there was at least one item
-					// selected and the user click on a dead area (unselecting all)
-					owner.SelectedItems.Clear ();
-					owner.SelectedIndices.list.Clear ();
-					owner.OnSelectedIndexChanged (EventArgs.Empty);
+				} else {
+					if (owner.MultiSelect) {
+						Keys mods = XplatUI.State.ModifierKeys;
+						if ((mods & Keys.Shift) != 0)
+							box_select_mode = BoxSelect.Shift;
+						else if ((mods & Keys.Control) != 0)
+							box_select_mode = BoxSelect.Control;
+						else
+							box_select_mode = BoxSelect.Normal;
+						box_select_start = pt; 
+						prev_selection = (ArrayList) owner.SelectedItems.list.Clone ();
+					} else if (owner.selected_indices.Count > 0) {
+						owner.SelectedItems.Clear ();
+						owner.SelectedIndices.list.Clear ();
+						owner.OnSelectedIndexChanged (EventArgs.Empty);
+					}
 				}
 			}
 
 			private void ItemsMouseMove (object sender, MouseEventArgs me)
 			{
+				if (PerformBoxSelection (new Point (me.X, me.Y)))
+					return;
+
 				if (owner.HoverSelection && hover_processed) {
 
 					Point pt = PointToClient (Control.MousePosition);
@@ -1335,9 +1472,18 @@ namespace System.Windows.Forms
 							break;
 						}
 					}
+				} else if (owner.SelectedItems.Count > 0 && BoxSelectRectangle.Size.IsEmpty) {
+					// Need this to clean up background clicks
+					owner.SelectedItems.Clear ();
+					owner.SelectedIndices.list.Clear ();
+					owner.OnSelectedIndexChanged (EventArgs.Empty);
 				}
 
 				clicked_item = null;
+				box_select_start = Point.Empty;
+				BoxSelectRectangle = Rectangle.Empty;
+				prev_selection = null;
+				box_select_mode = BoxSelect.None;
 			}
 
 			private void ItemsMouseWheel (object sender, MouseEventArgs me)
