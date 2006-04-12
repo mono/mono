@@ -1,3 +1,9 @@
+2006-04-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-sparc.c (mono_arch_output_basic_block): Handle large offsets
+	in the CALL_MEMBASE opcodes. Fixes #78088.
+	(mono_arch_get_vcall_slot_addr): Ditto.
+
 2006-03-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* exceptions-sparc.c: Applied patch from David S. Miller  <davem@sunset.davemloft.net>: Implement correct support for sparc/linux.
