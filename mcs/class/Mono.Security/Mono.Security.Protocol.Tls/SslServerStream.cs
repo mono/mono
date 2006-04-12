@@ -206,7 +206,7 @@ namespace Mono.Security.Protocol.Tls
 			this.protocol.SendRecord(HandshakeType.Certificate);
 
 			// If the negotiated cipher is a KeyEx cipher send ServerKeyExchange
-			if (this.context.Cipher.ExchangeAlgorithmType == ExchangeAlgorithmType.RsaKeyX)
+			if (this.context.Cipher.IsExportable)
 			{
 				this.protocol.SendRecord(HandshakeType.ServerKeyExchange);
 			}
@@ -215,7 +215,7 @@ namespace Mono.Security.Protocol.Tls
 
 			// If the negotiated cipher is a KeyEx cipher or
 			// the client certificate is required send the CertificateRequest message
-			if (this.context.Cipher.ExchangeAlgorithmType == ExchangeAlgorithmType.RsaKeyX ||
+			if (this.context.Cipher.IsExportable ||
 				((ServerContext)this.context).ClientCertificateRequired)
 			{
 				this.protocol.SendRecord(HandshakeType.CertificateRequest);
@@ -254,9 +254,13 @@ namespace Mono.Security.Protocol.Tls
 
 			// Send ChangeCipherSpec and ServerFinished messages
 			this.protocol.SendChangeCipherSpec();
+			this.protocol.SendRecord (HandshakeType.Finished);
 
 			// The handshake is finished
 			this.context.HandshakeState = HandshakeState.Finished;
+
+			// Reset Handshake messages information
+			this.context.HandshakeMessages.Reset ();
 
 			// Clear Key Info
 			this.context.ClearKeyInfo();
