@@ -1,3 +1,7 @@
+2006-04-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ASCIIEncoding.cs : 2.0 decoder fallback support was missing.
+
 2006-03-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Encoder.cs, Decoder.cs : implemented Convert(). Also added argument

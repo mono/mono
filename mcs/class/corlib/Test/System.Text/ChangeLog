@@ -1,3 +1,7 @@
+2006-04-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ASCIIEncodingTest.cs : added DecoderFallback().
+
 2006-03-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* EncoderTest.cs, DecoderTest.cs : new tests, for Convert().

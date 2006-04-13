@@ -171,6 +171,16 @@ namespace MonoTests.System.Text {
 			AssertEquals ("#02", encoding.GetString (new byte [0], 0, 0), "");
 		}
 
+#if NET_2_0
+		[Test]
+		[ExpectedException (typeof (DecoderFallbackException))]
+		public void DecoderFallback ()
+		{
+			Encoding e = Encoding.ASCII.Clone () as Encoding;
+			e.DecoderFallback = new DecoderExceptionFallback ();
+			e.GetChars (new byte [] {0x80});
+		}
+#endif
 	}
 
 }

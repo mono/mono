@@ -223,6 +223,18 @@ public class ASCIIEncoding : Encoding
 	// Get the characters that result from decoding a byte buffer.
 	public override int GetChars (byte[] bytes, int byteIndex, int byteCount, char[] chars, int charIndex)
 	{
+#if NET_2_0
+// well, yes, I know this #if is ugly, but I think it is the simplest switch.
+		DecoderFallbackBuffer buffer = null;
+		return GetChars (bytes, byteIndex, byteCount, chars,
+			charIndex, ref buffer);
+	}
+
+	int GetChars (byte[] bytes, int byteIndex, int byteCount,
+		      char[] chars, int charIndex,
+		      ref DecoderFallbackBuffer buffer)
+	{
+#endif
 		if (bytes == null)
 			throw new ArgumentNullException ("bytes");
 		if (chars == null) 
@@ -242,8 +254,17 @@ public class ASCIIEncoding : Encoding
 			char c = (char) bytes [byteIndex++];
 			if (c < '\x80')
 				chars [charIndex++] = c;
-			else
+			else {
+#if NET_2_0
+				if (buffer == null)
+					buffer = DecoderFallback.CreateFallbackBuffer ();
+				buffer.Fallback (bytes, byteIndex);
+				while (buffer.Remaining > 0)
+					chars [charIndex++] = buffer.GetNextChar ();
+#else
 				chars [charIndex++] = '?';
+#endif
+			}
 		}
 		return byteCount;
 	}
