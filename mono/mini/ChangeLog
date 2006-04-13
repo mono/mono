@@ -1,3 +1,11 @@
+2006-04-13  Martin Baulig  <martin@ximian.com>
+
+	* driver.c: Also check a `MONO_INSIDE_MDB' environment variable to
+	determine whether we're inside the debugger.
+
+	* debug-debugger.h
+	(MonoDebuggerMetadataInfo): Added all offsets from `MonoDefaults'.
+
 2006-04-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mono_method_to_ir): Handle multiple LEAVE statements inside a single
