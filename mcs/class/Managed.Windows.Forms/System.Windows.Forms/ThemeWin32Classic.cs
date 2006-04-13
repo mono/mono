@@ -4463,6 +4463,9 @@ namespace System.Windows.Forms
 					dc.DrawLine (h_pen, rect.X + 1, rect.Bottom - 1, rect.Right - 1, rect.Bottom - 1);
 					dc.DrawLine (h_pen, rect.Right - 1, rect.Y + 1, rect.Right - 1, rect.Bottom - 1);
 				}
+				
+				if ((state & ButtonState.Inactive) == ButtonState.Inactive)
+					check_pen = SystemPens.ControlDark;
 			}
 			
 			if ((state & ButtonState.Checked) == ButtonState.Checked) {

@@ -9,6 +9,7 @@
 	  - Fixed CPDrawStringDisabled
 	  - Corrected drawing of disabled menu items
 	  - Fixed drawing of disabled radio buttons (bug #78095)
+	  - Draw check in a disabled CheckBox with color ControlDark 
 
 2006-04-12  Peter Dennis Bartok  <pbartok@novell.com>
 
