@@ -576,11 +576,11 @@ namespace System
 		}
 
 #if NET_2_0
-		[MonoTODO]
-		public bool IsDaylightSavingTime () {
+		public bool IsDaylightSavingTime ()
+		{
 			if (kind == DateTimeKind.Utc)
 				return false;
-			throw new NotImplementedException ();
+			return TimeZone.CurrentTimeZone.IsDaylightSavingTime (this);
 		}
 
 		public int CompareTo (DateTime value)
