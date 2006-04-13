@@ -1,3 +1,11 @@
+2006-04-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* FontCollection.cs: Remove unused ctor. Throw on disposed (private)
+	collections. Don't dispose (but leak) under non-Windows OS.
+	* InstalledFontCollection.cs: Remove unused ctor.
+	* PrivateFontCollection.cs: Remove unused ctor. Fix exceptions to 
+	match unit tests.
+
 2006-03-23  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* FontCollection.cs (Dispose): When on Linux/Unix, call 

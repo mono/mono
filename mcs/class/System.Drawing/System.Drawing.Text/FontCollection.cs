@@ -28,9 +28,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
-using System.Drawing;
-using System.Runtime.InteropServices;
 
 namespace System.Drawing.Text {
 
@@ -42,11 +39,6 @@ namespace System.Drawing.Text {
 		{
 		}
         
-		internal FontCollection (IntPtr ptr)
-		{
-			nativeFontCollection = ptr;
-		}
-
 		// methods
 		public void Dispose()
 		{
@@ -55,15 +47,10 @@ namespace System.Drawing.Text {
 		}
 
 		protected virtual void Dispose (bool disposing)
-		{		
-			OperatingSystem osInfo = Environment.OSVersion;
-
-			if (nativeFontCollection != IntPtr.Zero) {
-				if ((int) osInfo.Platform == 128 || (int) osInfo.Platform == 4) {
-					GDIPlus.GdipDeletePrivateFontCollection (ref nativeFontCollection);
-					nativeFontCollection = IntPtr.Zero;
-				}       
-			}
+		{
+			// DO NOT FREE FROM HERE
+			// FIXME: InstalledFontCollection cannot be freed safely and will leak one time 
+			// (inside libgdiplus). MS has a similar behaviour (but probably doesn't leak)
 		}
 
 		// properties
@@ -75,6 +62,10 @@ namespace System.Drawing.Text {
 				Status status;
 				FontFamily[] families;
 				IntPtr[] result;
+
+				// MS doesn't throw ObjectDisposedException in this case
+				if (nativeFontCollection == IntPtr.Zero)
+					throw new ArgumentException (Locale.GetText ("Collection was disposed."));
 				
 				status = GDIPlus.GdipGetFontCollectionFamilyCount (nativeFontCollection, out found);
 				GDIPlus.CheckStatus (status);
@@ -95,7 +86,5 @@ namespace System.Drawing.Text {
 		{
 			Dispose (false);
 		}
-
 	}
-
 }

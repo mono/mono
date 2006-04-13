@@ -28,9 +28,9 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
+
 using System.IO;
-using System.Drawing;
+using System.Security.Permissions;
 using System.Runtime.InteropServices;
 
 namespace System.Drawing.Text {
@@ -41,38 +41,42 @@ namespace System.Drawing.Text {
 	public sealed class PrivateFontCollection : FontCollection {
 
 		// constructors
-		internal PrivateFontCollection (IntPtr ptr): base (ptr)
-		{}
 
-		public PrivateFontCollection()
+		public PrivateFontCollection ()
 		{
 			Status status = GDIPlus.GdipNewPrivateFontCollection (out nativeFontCollection);
 			GDIPlus.CheckStatus (status);
 		}
 		
 		// methods
-		public void AddFontFile(string filename) 
+		public void AddFontFile (string filename) 
 		{
-			if ( filename == null )
-				throw new Exception ("Value cannot be null, Parameter name : filename");
-			bool exists = File.Exists(filename);
-			if (!exists)
-				throw new Exception ("The specified file does not exist");
+			if (filename == null)
+				throw new ArgumentNullException ("filename");
 
+			// this ensure the filename is valid (or throw the correct exception)
+			string fname = Path.GetFullPath (filename);
+
+			if (!File.Exists(filename))
+				throw new FileNotFoundException ();
+
+			// note: MS throw the same exception FileNotFoundException if the file exists but isn't a valid font file
 			Status status = GDIPlus.GdipPrivateAddFontFile (nativeFontCollection, filename);
 			GDIPlus.CheckStatus (status);			
 		}
 
-		public void AddMemoryFont(IntPtr memory, int length) 
+		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
+		public void AddMemoryFont (IntPtr memory, int length) 
 		{
+			// note: MS throw FileNotFoundException if something is bad with the data (except for a null pointer)
 			Status status = GDIPlus.GdipPrivateAddMemoryFont (nativeFontCollection, memory, length);
 			GDIPlus.CheckStatus (status);						
 		}
 		
 		// methods	
-		protected override void Dispose(bool disposing)
+		protected override void Dispose (bool disposing)
 		{
-			if (nativeFontCollection!=IntPtr.Zero){
+			if (nativeFontCollection!=IntPtr.Zero) {
 				GDIPlus.GdipDeletePrivateFontCollection (ref nativeFontCollection);							
 
 				// This must be zeroed out, otherwise our base will also call
@@ -81,10 +85,7 @@ namespace System.Drawing.Text {
 				nativeFontCollection = IntPtr.Zero;
 			}
 			
-			base.Dispose (true);
+			base.Dispose (disposing);
 		}		
-		
-
 	}
 }
-
