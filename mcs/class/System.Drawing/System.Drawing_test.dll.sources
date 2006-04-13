@@ -43,6 +43,8 @@ System.Drawing.Imaging/TestImageAttributes.cs
 System.Drawing.Printing/PrinterUnitConvertTest.cs
 System.Drawing.Printing/PrintingPermissionAttributeTest.cs
 System.Drawing.Printing/PrintingPermissionTest.cs
+System.Drawing.Text/PrivateFontCollectionTest.cs
+System.Drawing.Text/InstalledFontCollectionTest.cs
 System.Drawing/BitmapCas.cs
 System.Drawing/GraphicsCas.cs
 System.Drawing/RegionCas.cs
@@ -55,3 +57,4 @@ System.Drawing.Design/ToolboxComponentsCreatingEventArgsCas.cs
 System.Drawing.Design/ToolboxItemCas.cs
 System.Drawing.Design/ToolboxItemCollectionCas.cs
 System.Drawing.Design/UITypeEditorCas.cs
+System.Drawing.Text/PrivateFontCollectionCas.cs
