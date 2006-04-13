@@ -237,7 +237,7 @@ namespace Microsoft.VisualBasic
 			CompilerResults results = new CompilerResults (options.TempFiles);
 			Process mbas = new Process ();
 
-			string mbas_output;
+			string mbas_output = "";
 			string[] mbas_output_lines;
 			// FIXME: these lines had better be platform independent.
 			if (Path.DirectorySeparatorChar == '\\') {
