@@ -1,3 +1,12 @@
+2006-04-13  Kornél Pál  <kornelpal@gmail.com>
+
+	* Encoding.cs: GetString (byte []): Wrap GetString (byte [], int, int)
+	  as MS.NET does. This is a more reasonable high level wrapper
+	  implementation.
+	* UnicodeEncoding.cs: GetBytes (string): Implement as a wrapper
+	  instead of using GetBytesInternal to be MS.NET compatible.
+	  Override GetString (byte [], int, int) to speed up string creation.
+
 2006-04-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ASCIIEncoding.cs : 2.0 decoder fallback support was missing.

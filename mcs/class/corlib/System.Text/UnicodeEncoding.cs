@@ -147,7 +147,7 @@ public class UnicodeEncoding : Encoding
 	}
 
 #if !NET_2_0
-	public unsafe override byte [] GetBytes (String s)
+	public override byte [] GetBytes (String s)
 	{
 		if (s == null)
 			throw new ArgumentNullException ("s");
@@ -155,10 +155,7 @@ public class UnicodeEncoding : Encoding
 		int byteCount = GetByteCount (s);
 		byte [] bytes = new byte [byteCount];
 
-		if (byteCount != 0)
-			fixed (char* charPtr = s)
-				fixed (byte* bytePtr = bytes)
-					GetBytesInternal (charPtr, s.Length, bytePtr, byteCount);
+		GetBytes (s, 0, s.Length, bytes, 0);
 
 		return bytes;
 	}
@@ -182,6 +179,10 @@ public class UnicodeEncoding : Encoding
 		if (byteIndex < 0 || byteIndex > bytes.Length) {
 			throw new ArgumentOutOfRangeException ("byteIndex", _("ArgRange_Array"));
 		}
+
+		// For consistency
+		if (charCount == 0)
+			return 0;
 
 		int byteCount = bytes.Length - byteIndex;
 		if (bytes.Length == 0)
@@ -299,6 +300,30 @@ public class UnicodeEncoding : Encoding
 		return GetCharsInternal (bytes, byteCount, chars, charCount);
 	}
 #endif
+
+	// Decode a buffer of bytes into a string.
+	public unsafe override String GetString (byte [] bytes, int index, int count)
+	{
+		if (bytes == null)
+			throw new ArgumentNullException ("bytes");
+		if (index < 0 || index > bytes.Length)
+			throw new ArgumentOutOfRangeException ("index", _("ArgRange_Array"));
+		if (count < 0 || count > (bytes.Length - index))
+			throw new ArgumentOutOfRangeException ("count", _("ArgRange_Array"));
+
+		if (count == 0)
+			return string.Empty;
+
+		// GetCharCountInternal
+		int charCount = count / 2;
+		string s = string.InternalAllocateStr (charCount);
+
+		fixed (byte* bytePtr = bytes)
+			fixed (char* charPtr = s)
+				GetCharsInternal (bytePtr + index, count, charPtr, charCount);
+
+		return s;
+	}
 
 	private unsafe int GetCharsInternal (byte* bytes, int byteCount,
 										char* chars, int charCount)

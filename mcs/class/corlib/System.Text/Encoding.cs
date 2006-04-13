@@ -663,7 +663,10 @@ public abstract class Encoding
 	}
 	public virtual String GetString (byte[] bytes)
 	{
-		return new String (GetChars(bytes));
+		if (bytes == null)
+			throw new ArgumentNullException ("bytes");
+
+		return GetString (bytes, 0, bytes.Length);
 	}
 
 #if !ECMA_COMPAT
