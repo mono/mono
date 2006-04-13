@@ -19,49 +19,112 @@ namespace System
 		#region NumberToString
 		public static string NumberToString (string format, sbyte value, NumberFormatInfo nfi)
 		{
-			return NumberToString (format, new NumberStore (value), nfi);
+			char specifier;
+			int precision;
+			bool custom;
+			ParseBasicFormat (format, out specifier, out precision, out custom);
+			if (!custom && (specifier == 'x' || specifier == 'X'))
+				return FormatHexadecimal (value >= 0 ? (ulong)value : (ulong)-value, value >= 0, 1, precision, specifier == 'X');
+			return NumberToString (format, new NumberStore (value), nfi, specifier, precision, custom);
 		}
 		public static string NumberToString (string format, byte value, NumberFormatInfo nfi)
 		{
-			return NumberToString (format, new NumberStore (value), nfi);
+			char specifier;
+			int precision;
+			bool custom;
+			ParseBasicFormat (format, out specifier, out precision, out custom);
+			if (!custom && (specifier == 'x' || specifier == 'X'))
+				return FormatHexadecimal (value, true, 1, precision, specifier == 'X');
+			return NumberToString (format, new NumberStore (value), nfi, specifier, precision, custom);
 		}
 		public static string NumberToString (string format, ushort value, NumberFormatInfo nfi)
 		{
-			return NumberToString (format, new NumberStore (value), nfi);
+			char specifier;
+			int precision;
+			bool custom;
+			ParseBasicFormat (format, out specifier, out precision, out custom);
+			if (!custom && (specifier == 'x' || specifier == 'X'))
+				return FormatHexadecimal (value, true, 2, precision, specifier == 'X');
+			return NumberToString (format, new NumberStore (value), nfi, specifier, precision, custom);
 		}
 		public static string NumberToString (string format, short value, NumberFormatInfo nfi)
 		{
-			return NumberToString (format, new NumberStore (value), nfi);
+			char specifier;
+			int precision;
+			bool custom;
+			ParseBasicFormat (format, out specifier, out precision, out custom);
+			if (!custom && (specifier == 'x' || specifier == 'X'))
+				return FormatHexadecimal (value >= 0 ? (ulong)value : (ulong)-value, value >= 0, 2, precision, specifier == 'X');
+			return NumberToString (format, new NumberStore (value), nfi, specifier, precision, custom);
 		}
 		public static string NumberToString (string format, uint value, NumberFormatInfo nfi)
 		{
-			return NumberToString (format, new NumberStore (value), nfi);
+			char specifier;
+			int precision;
+			bool custom;
+			ParseBasicFormat (format, out specifier, out precision, out custom);
+			if (!custom && (specifier == 'x' || specifier == 'X'))
+				return FormatHexadecimal (value, true, 4, precision, specifier == 'X');
+			return NumberToString (format, new NumberStore (value), nfi, specifier, precision, custom);
 		}
 		public static string NumberToString (string format, int value, NumberFormatInfo nfi)
 		{
-			return NumberToString (format, new NumberStore (value), nfi);
+			char specifier;
+			int precision;
+			bool custom;
+			ParseBasicFormat (format, out specifier, out precision, out custom);
+			if (!custom && (specifier == 'x' || specifier == 'X'))
+				return FormatHexadecimal (value >= 0 ? (ulong)value : (ulong)-(long)value, value >= 0, 4, precision, specifier == 'X');
+			return NumberToString (format, new NumberStore (value), nfi, specifier, precision, custom);
 		}
 		public static string NumberToString (string format, ulong value, NumberFormatInfo nfi)
 		{
-			return NumberToString (format, new NumberStore (value), nfi);
+			char specifier;
+			int precision;
+			bool custom;
+			ParseBasicFormat (format, out specifier, out precision, out custom);
+			if (!custom && (specifier == 'x' || specifier == 'X'))
+				return FormatHexadecimal (value, true, 8, precision, specifier == 'X');
+			return NumberToString (format, new NumberStore (value), nfi, specifier, precision, custom);
 		}
 		public static string NumberToString (string format, long value, NumberFormatInfo nfi)
 		{
-			return NumberToString (format, new NumberStore (value), nfi);
+			char specifier;
+			int precision;
+			bool custom;
+			ParseBasicFormat (format, out specifier, out precision, out custom);
+			if (!custom && (specifier == 'x' || specifier == 'X'))
+				return FormatHexadecimal (value >= 0 ? (ulong)value : (ulong)-value, value >= 0, 8, precision, specifier == 'X');
+			return NumberToString (format, new NumberStore (value), nfi, specifier, precision, custom);
 		}
 		public static string NumberToString (string format, float value, NumberFormatInfo nfi)
 		{
-			return NumberToString (format, new NumberStore (value), nfi);
+			char specifier;
+			int precision;
+			bool custom;
+			ParseBasicFormat (format, out specifier, out precision, out custom);
+			if (!custom && (specifier == 'x' || specifier == 'X')) throw new FormatException ();
+			return NumberToString (format, new NumberStore (value), nfi, specifier, precision, custom);
 		}
 		public static string NumberToString (string format, double value, NumberFormatInfo nfi)
 		{
-			return NumberToString (format, new NumberStore (value), nfi);
+			char specifier;
+			int precision;
+			bool custom;
+			ParseBasicFormat (format, out specifier, out precision, out custom);
+			if (!custom && (specifier == 'x' || specifier == 'X')) throw new FormatException ();
+			return NumberToString (format, new NumberStore (value), nfi, specifier, precision, custom);
 		}
 		public static string NumberToString (string format, decimal value, NumberFormatInfo nfi)
 		{
-			return NumberToString (format, new NumberStore (value), nfi);
+			char specifier;
+			int precision;
+			bool custom;
+			ParseBasicFormat (format, out specifier, out precision, out custom);
+			if (!custom && (specifier == 'x' || specifier == 'X')) throw new FormatException ();
+			return NumberToString (format, new NumberStore (value), nfi, specifier, precision, custom);
 		}
-		public static string NumberToString (string format, NumberStore ns, NumberFormatInfo nfi)
+		public static string NumberToString (string format, NumberStore ns, NumberFormatInfo nfi, char specifier, int precision, bool custom)
 		{
 			if (ns.IsNaN) {
 				return nfi.NaNSymbol;
@@ -73,18 +136,8 @@ namespace System
 					return nfi.NegativeInfinitySymbol;
 			}
 
-			char specifier;
-			int precision;
-			bool custom;
-
-			if (format == null || format.Length == 0)
-				format = "G";
-
-			if (nfi == null)
+			if (nfi == null) 
 				nfi = NumberFormatInfo.GetInstance (null);
-			
-			if (!ParseBasicFormat (format, out specifier, out precision, out custom))
-				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
 			
 			if (custom){
 				if (ns.IsFloatingSource)
@@ -139,7 +192,9 @@ namespace System
 				return FormatFixedPoint (ns, precision, nfi);
 			case 'g':
 			case 'G':
-				return FormatGeneral (ns, precision, nfi, specifier == 'G', false);
+				if (ns.IsFloatingSource || ns.IsDecimalSource || precision != -1)
+					return FormatGeneral (ns, precision, nfi, specifier == 'G', false);
+				return FormatDecimal (ns, precision, nfi);
 			case 'n':
 			case 'N':
 				return FormatNumber (ns, precision, nfi);
@@ -153,9 +208,6 @@ namespace System
 				} else {
 					throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
 				}
-			case 'x': 
-			case 'X':
-				return FormatHexadecimal (ns, precision, nfi, specifier == 'X');
 			default: 
 				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
 			}	
@@ -163,20 +215,22 @@ namespace System
 		#endregion
 
 		#region BasicParser
-		private static bool ParseBasicFormat (string format, out char specifier, out int precision, out bool custom)
-		{		 		 
+		private static void ParseBasicFormat (string format, out char specifier, out int precision, out bool custom)
+		{
+	 		if (format == null || format.Length == 0) {
+				precision = -1;
+				specifier = 'G';
+				custom = false;
+				return;
+			}
+
 			precision = -1;
-			specifier = '\0';
+			specifier = format[0];
 			custom = false;
-			
-			if (format.Length < 1)
-				return false;
-			
-			specifier = format [0];
 
 			if (Char.IsLetter (specifier)) {
 				if (format.Length == 1)
-					return true;
+					return;
 
 				bool flag = true;
 				precision = 0;
@@ -195,11 +249,11 @@ namespace System
 					}
 				}
 				if (flag)
-					return true;
+					return;
 			}
 
 			custom = true;
-			return true;
+			return;
 		}	
 
 		#endregion
@@ -591,42 +645,49 @@ namespace System
 
 			return sb.ToString ();
 		}
-		internal static string FormatHexadecimal (NumberStore ns, int precision, NumberFormatInfo nfi, bool upper)
+		unsafe static string FormatHexadecimal (ulong value, bool positive, int byteSize, int precision, bool upper)
 		{
-			if (ns.IsFloatingSource || ns.IsDecimalSource)
-				throw new FormatException ();
-
-			ulong value = 0;
-			for (int i = 0; i < ns.IntegerDigits; i++) {
-				value *= 10;
-				value += ns.GetDigitByte (i);
-			}
-
-			if (!ns.Positive) {
-				int intSize = ns.DefaultByteSize;
+			if (!positive) {
 				/* for large values the cast to ulong is going to return 0 anyway (at least on x86, possibly a MS/Mono runtime bug) */
-				if (intSize < 8) {
-					value = (ulong)(Math.Pow (2, intSize * 8)) - value;
+#if FALSE
+				if (byteSize < 8) {
+					value = (ulong)(Math.Pow (2, byteSize * 8)) - value;
 				} else {
 					value = 0 - value;
 				}
+#else
+				switch (byteSize) {
+				case 1:
+					value = (ulong)(256UL - value);
+					break;
+				case 2:
+					value = (ulong)(65536UL - value);
+					break;
+				case 4:
+					value = (ulong)(4294967296UL - value);
+					break;
+				case 8:
+					value = 0 - value;
+					break;
+				}
+#endif
 			}
 
 			char[] digits = (upper ? digitUpperTable : digitLowerTable);
-			CharBuffer sb = new CharBuffer (16 + precision + 1);
-
+			int size = precision > 16 ? precision : 16;
+			char* buffer = stackalloc char [size];
+			char* last = buffer + size;
+			char* ptr = last;
+			
 			while (value > 0) {
-				sb.InsertToFront (digits [value % 16]);
+				*--ptr = digits[value & 0xF];
 				value >>= 4;
 			}
 
-			if (sb.Length == 0)
-				sb.InsertToFront ('0');
+			while (ptr == last || last - ptr < precision)
+				*--ptr = '0';
 
-			if (sb.Length < precision)
-				sb.InsertToFront ('0', precision - sb.Length);
-
-			return sb.ToString ();
+			return new string (ptr, 0, (int)(last - ptr));
 		}
 		internal static string FormatExponential (NumberStore ns, int precision, NumberFormatInfo nfi, bool upper)
 		{
@@ -2318,66 +2379,6 @@ namespace System
 				} while (i >= 0);
 			}
 			#endregion
-		}
-		internal struct CharBuffer
-		{
-			int offset;
-			char[] buffer;
-
-			public CharBuffer (int capacity)
-			{
-				buffer = new char [capacity];
-				offset = capacity;
-			}
-
-			void AllocateBuffer (int size)
-			{
-				size = size > buffer.Length * 2 ? size : buffer.Length * 2;
-				char[] newBuffer = new char [size];
-				offset += size - buffer.Length;
-				Array.Copy (buffer, 0, newBuffer, size - buffer.Length, buffer.Length);
-				buffer = newBuffer;
-			}
-
-			void CheckInsert (int length)
-			{
-				if (offset - length < 0) {
-					AllocateBuffer (buffer.Length + length - offset);
-				}
-			}
-
-			public void InsertToFront (char c)
-			{
-				CheckInsert (1);
-				buffer [--offset] = c;
-			}
-
-			public void InsertToFront (char c, int repeat)
-			{
-				CheckInsert (repeat);
-				while (repeat-- > 0) {
-					buffer [--offset] = c;
-				}
-			}
-
-			public char this [int index] 
-			{
-				get {
-					return buffer [offset + index];
-				}
-			}
-
-			public override string ToString()
-			{
-				if (offset == buffer.Length)
-					return "";
-				
-				return new string (buffer, offset, buffer.Length - offset);
-			}
-
-			public int Length {
-				get { return buffer.Length - offset; }
-			}
 		}
 		#endregion
 	}

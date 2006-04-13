@@ -1,5 +1,11 @@
 2006-04-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* NumberFormatter.cs : general performance improvements. Avoid 
+	  extraneous evaluation for simple formatting. Details are seen in 
+	  bug #77792. Patch by Kazuki Oikawa.
+
+2006-04-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DateTime.cs : implement IsDaylightSavingTime().
 	  Patch by Seo Sanghyeon <tinuviel@sparcs.kaist.ac.kr>.
 
