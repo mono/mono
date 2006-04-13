@@ -308,7 +308,18 @@ namespace Microsoft.Win32 {
 				keyname = keyname.Replace ('\\', '/');
 			return keyname.ToLower ();
 		}
-		
+
+		static bool IsWellKnownKey (string keyname)
+		{
+			switch (keyname) {
+				// FIXME: Add more here
+				case "Software":
+					return true;
+				default:
+					return false;
+			}
+		}
+
 		public RegistryKey CreateSubKey (RegistryKey rkey, string keyname)
 		{
 			KeyHandler self = KeyHandler.Lookup (rkey);
@@ -318,7 +329,12 @@ namespace Microsoft.Win32 {
 		public RegistryKey OpenSubKey (RegistryKey rkey, string keyname, bool writtable)
 		{
 			KeyHandler self = KeyHandler.Lookup (rkey);
-			return self.Probe (rkey, ToUnix (keyname), writtable);
+			RegistryKey result = self.Probe (rkey, ToUnix (keyname), writtable);
+			if (result == null && IsWellKnownKey (keyname)) {
+				result = CreateSubKey (rkey, keyname);
+			}
+
+			return result;
 		}
 		
 		public void Flush (RegistryKey rkey)

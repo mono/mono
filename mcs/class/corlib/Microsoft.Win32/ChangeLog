@@ -1,7 +1,11 @@
+2006-04-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* UnixRegistryApi.cs: create well-known keys when trying to open them.
+
 2006-03-12  Robert Jordan <robertj@gmx.net>
 
-        * UnixRegistryApi.cs (DeleteValue): Avoid crash, fixes bug
-        #77772
+	* UnixRegistryApi.cs (DeleteValue): Avoid crash, fixes bug
+	#77772
 
 2006-01-14  Robert Jordan  <robertj@gmx.net>
 
