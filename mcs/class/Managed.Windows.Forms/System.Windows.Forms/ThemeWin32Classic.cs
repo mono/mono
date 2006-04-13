@@ -373,10 +373,7 @@ namespace System.Windows.Forms
 				if (button.FlatStyle == FlatStyle.Flat || button.FlatStyle == FlatStyle.Popup) {
 					dc.DrawString(button.text, button.Font, ResPool.GetSolidBrush (ColorGrayText), text_rect, button.text_format);
 				} else {
-					Rectangle rect_white = new Rectangle (text_rect.X + 1, text_rect.Y + 1, text_rect.Width, text_rect.Height);
-					
-					dc.DrawString(button.text, button.Font, SystemBrushes.ControlLightLight, rect_white, button.text_format);
-					dc.DrawString(button.text, button.Font, ResPool.GetSolidBrush (ColorGrayText), text_rect, button.text_format);
+					CPDrawStringDisabled (dc, button.text, button.Font, button.BackColor, text_rect, button.text_format);
 				}
 			}
 		}
@@ -711,7 +708,7 @@ namespace System.Windows.Forms
 			} else if (button_base.FlatStyle == FlatStyle.Flat || button_base.FlatStyle == FlatStyle.Popup) {
 				dc.DrawString (button_base.Text, button_base.Font, SystemBrushes.ControlDarkDark, text_rectangle, text_format);
 			} else {
-				CPDrawStringDisabled (dc, button_base.Text, button_base.Font, ColorControlText, text_rectangle, text_format);
+				CPDrawStringDisabled (dc, button_base.Text, button_base.Font, button_base.BackColor, text_rectangle, text_format);
 			}
 		}
 		#endregion	// CheckBox
@@ -1269,9 +1266,7 @@ namespace System.Windows.Forms
 				if (box.Enabled) {
 					dc.DrawString (box.Text, box.Font, ResPool.GetSolidBrush (box.ForeColor), 10, 0, text_format);
 				} else {
-					dc.DrawString (box.Text, box.Font, SystemBrushes.ControlLightLight, 
-						       new RectangleF (11, 1, width,  box.Font.Height), text_format);
-					CPDrawStringDisabled (dc, box.Text, box.Font, box.ForeColor, 
+					CPDrawStringDisabled (dc, box.Text, box.Font, box.BackColor, 
 							      new RectangleF (10, 0, width,  box.Font.Height), text_format);
 				}
 			}
@@ -1303,7 +1298,7 @@ namespace System.Windows.Forms
 			if (label.Enabled) {
 				dc.DrawString (label.Text, label.Font, ResPool.GetSolidBrush (label.ForeColor), clip_rectangle, label.string_format);
 			} else {
-				ControlPaint.DrawStringDisabled (dc, label.Text, label.Font, label.ForeColor, clip_rectangle, label.string_format);
+				ControlPaint.DrawStringDisabled (dc, label.Text, label.Font, label.BackColor, clip_rectangle, label.string_format);
 			}
 		
 		}
@@ -1972,8 +1967,13 @@ namespace System.Windows.Forms
 						CPDrawBorder3D(e.Graphics, rect_back, border_style,  Border3DSide.Left | Border3DSide.Right | Border3DSide.Top | Border3DSide.Bottom, ColorMenu);
 				}
 			} else {
-				ControlPaint.DrawStringDisabled (e.Graphics, item.Text, e.Font, 
-					Color.Black, rect_text, string_format);
+				if ((item.Status & DrawItemState.Selected) != DrawItemState.Selected) {
+					e.Graphics.DrawString (item.Text, e.Font, Brushes.White, 
+							       new RectangleF(rect_text.X + 1, rect_text.Y + 1, rect_text.Width, rect_text.Height),
+							       string_format);
+				}
+				
+				e.Graphics.DrawString (item.Text, e.Font, ResPool.GetSolidBrush(ColorGrayText), rect_text, string_format);
 			}
 
 			/* Draw arrow */
@@ -2779,6 +2779,10 @@ namespace System.Windows.Forms
 			
 			if (radio_button.Checked) {
 				state |= ButtonState.Checked;
+			}
+			
+			if (!radio_button.Enabled) {
+				state |= ButtonState.Inactive;
 			}
 
 			// Start drawing
@@ -3658,7 +3662,7 @@ namespace System.Windows.Forms
 			if (button.Enabled)
 				dc.DrawString (button.Text, control.Font, SystemBrushes.ControlText, button.TextRectangle, format);
 			else
-				CPDrawStringDisabled (dc, button.Text, control.Font, ColorControlLight, button.TextRectangle, format);
+				CPDrawStringDisabled (dc, button.Text, control.Font, control.BackColor, button.TextRectangle, format);
 		}
 
 		// Grip width for the ToolBar
@@ -4881,6 +4885,9 @@ namespace System.Windows.Forms
 				top_left_inner = cpcolor.DarkDark;
 				bottom_right_outer = cpcolor.Light;
 				bottom_right_inner = Color.Transparent;
+				
+				if ((state & ButtonState.Inactive) == ButtonState.Inactive)
+					dot_color = cpcolor.Dark;
 			}
 			
 			dc.FillEllipse (brush, rb_rect.X + 1, rb_rect.Y + 1, ellipse_diameter - 1, ellipse_diameter - 1);
@@ -5054,12 +5061,14 @@ namespace System.Windows.Forms
 			dc.DrawLine (SystemPens.Control, pt.X - 12, pt.Y, pt.X, pt.Y);
 		}
 
-
-		public  override void CPDrawStringDisabled (Graphics graphics, string s, Font font, Color color, RectangleF layoutRectangle,
-			StringFormat format) {			
-
-			graphics.DrawString(s, font, ResPool.GetSolidBrush (ColorGrayText), layoutRectangle, format);
+		public  override void CPDrawStringDisabled (Graphics dc, string s, Font font, Color color, RectangleF layoutRectangle, StringFormat format)
+		{
+			CPColor cpcolor = ResPool.GetCPColor (color);
 			
+			dc.DrawString (s, font, ResPool.GetSolidBrush(cpcolor.LightLight), 
+				       new RectangleF(layoutRectangle.X + 1, layoutRectangle.Y + 1, layoutRectangle.Width, layoutRectangle.Height),
+				       format);
+			dc.DrawString (s, font, ResPool.GetSolidBrush (cpcolor.Dark), layoutRectangle, format);
 		}
 
 		private static void DrawBorderInternal(Graphics graphics, int startX, int startY, int endX, int endY,

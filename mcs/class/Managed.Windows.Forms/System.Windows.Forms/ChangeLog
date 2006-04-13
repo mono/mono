@@ -1,3 +1,10 @@
+2006-04-13  Alexander Olk  <alex.olk@googlemail.com>
+
+	* ThemeWin32Classic.cs: 
+	  - Fixed CPDrawStringDisabled
+	  - Corrected drawing of disabled menu items
+	  - Fixed drawing of disabled radio buttons (bug #78095)
+
 2006-04-12  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Form.cs: Use the provided width when calculating the menu size;
