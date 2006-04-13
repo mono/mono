@@ -1,3 +1,8 @@
+2006-04-13  Mike Kestner  <mkestner@novell.com>
+
+	* MenuAPI.cs: null guarding for the disbled click check fixes crash
+	reported by Alex.
+
 2006-04-13  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ThemeWin32Classic.cs: 
