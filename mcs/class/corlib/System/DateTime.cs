@@ -592,6 +592,11 @@ namespace System
 		{
 			return value.ticks == ticks;
 		}
+
+		public static DateTime SpecifyKind (DateTime value, DateTimeKind kind)
+		{
+			return new DateTime (value.Ticks, kind);
+		}
 #endif
 
 		public static int DaysInMonth (int year, int month)
