@@ -68,7 +68,6 @@ namespace System.Windows.Forms {
 			}
 
 			MemoryStream decoded = GetDecodedStream (data, 4, data.Length - 4);
-			//WriteToFile (new MemoryStream (decoded.GetBuffer (), 0, (int) decoded.Length));
 			decoded.Position = 4; // jumps over 'magic' and 'version', which are 16-bits each
 
 			BinaryReader reader = new BinaryReader (decoded);
@@ -86,67 +85,53 @@ namespace System.Windows.Forms {
 				ovls[i] = reader.ReadInt16 ();
 			}
 
-			decoded.Position = 28;
-			if (decoded.ReadByte () != 'B') {
-				return;
-				/*
-				Console.WriteLine ("FALLO en 1 {0}", decoded.Position - 1);
-				WriteToFile (new MemoryStream (data));
-				WriteToFile (decoded);
-				throw new Exception ();
-				*/
-			}
-
-			if (decoded.ReadByte () != 'M') {
-				return;
-				/*
-				Console.WriteLine ("FALLO en 2 {0}", decoded.Position - 2);
-				WriteToFile (new MemoryStream (data));
-				WriteToFile (decoded);
-				throw new Exception ();
-				*/
-			}
-	
 			int bmp_offset = 28;
-			int bmp_size = GetInt (decoded);
 			MemoryStream bmpms = new MemoryStream (decoded.GetBuffer (), bmp_offset, (int) decoded.Length - bmp_offset + 1);
 			Bitmap bmp = null;
-			try {
-				bmp = new Bitmap (bmpms);
-			} catch (Exception e) {
-				throw;
-				/*
-				WriteToFile (new MemoryStream (data));
-				WriteToFile (decoded);
-				MemoryStream kk = new MemoryStream (decoded.GetBuffer (), bmp_offset, (int) decoded.Length - bmp_offset + 1);
-				WriteToFile (kk);
-				throw;
-				*/
-			}
+			Bitmap mask = null;
+			bmp = new Bitmap (bmpms);
+			MemoryStream mask_stream = new MemoryStream (decoded.GetBuffer (),
+							((int) bmpms.Position) + bmp_offset,
+							((int) decoded.Length) - (((int) bmpms.Position) + bmp_offset));
 
-			// the mask is set to the color at pixel 0, 0
-			//TODO: do not keep back_color when got from pixel (0,0)?
-			// do this per image?
-			if (bkcolor == 0xFFFFFFFF) 
+			if (mask_stream.Length > 0)
+				mask = new Bitmap (mask_stream);
+
+			if (bkcolor == 0xFFFFFFFF)
 				back_color = bmp.GetPixel (0, 0);
 
-
+			if (mask != null) {
+				int width = bmp.Width;
+				int height = bmp.Height;
+				Bitmap newbmp = new Bitmap (bmp);
+				for (int y = 0; y < height; y++) {
+					for (int x = 0; x < width; x++) {
+						Color mcolor = mask.GetPixel (x, y);
+						if (mcolor.B != 0) {
+							newbmp.SetPixel (x, y, Color.Transparent);
+						}
+					}
+				}
+				bmp.Dispose ();
+				bmp = newbmp;
+				mask.Dispose ();
+				mask = null;
+			}
 			images = new Image [nimages];
-			int w = cx;
-			int h = cy;
 			image_size = new Size (cx, cy);
-			Rectangle dest_rect = new Rectangle (0, 0, w, h);
+			Rectangle dest_rect = new Rectangle (0, 0, cx, cy);
 			for (int r = 0 ; r < nimages ; r++) {
 				int col = r % grow;
 				int row = r / grow;
-				Rectangle area = new Rectangle (col * w, row * h, w, h);
-				Bitmap b = new Bitmap (w, h);
+				Rectangle area = new Rectangle (col * cx, row * cy, cx, cy);
+				Bitmap b = new Bitmap (cx, cy);
 				using (Graphics g = Graphics.FromImage (b)) {
 					g.DrawImage (bmp, dest_rect, area, GraphicsUnit.Pixel);
 				}
-				b.MakeTransparent (back_color);
+
 				images [r] = b;
 			}
+			bmp.Dispose ();
 		}
 
 		/*
@@ -195,6 +180,38 @@ namespace System.Windows.Forms {
 			MemoryStream tmp = new MemoryStream ();
 			main.Save (tmp, ImageFormat.Bmp);
 			tmp.WriteTo (stream);
+			main.Dispose ();
+			main = null;
+
+			Bitmap mask = new Bitmap (cols * ImageSize.Width, rows * ImageSize.Height);
+			int w = images [0].Width;
+			int h = images [0].Height;
+			for (int idx = 0; idx < images.Length; idx++) {
+				Bitmap current = (Bitmap) images [idx];
+				// Hack for newly added images.
+				// Probably has to be done somewhere else.
+				Color c1 = current.GetPixel (0, 0);
+				if (c1.A != 0 && c1 == back_color)
+					current.MakeTransparent (back_color);
+				//
+				int basey = (idx / 4) * h;
+				int basex = (idx % 4) * w;
+				for (int y = 0; y < h; y++) {
+					for (int x = 0; x < w; x++) {
+						Color color = current.GetPixel (x, y);
+						if (color.A == 0) {
+							mask.SetPixel (x+basex, y+basey, Color.FromArgb (255,255,255));
+						} else {
+							mask.SetPixel (x+basex, y+basey, Color.FromArgb (0));
+						}
+					}
+				}
+			}
+
+			tmp = new MemoryStream ();
+			mask.Save (tmp, ImageFormat.Bmp);
+			tmp.WriteTo (stream);
+			mask.Dispose ();
 
 			stream = GetRLEStream (stream, 4);
 			info.AddValue ("Data", stream.ToArray (), typeof (byte []));
@@ -206,8 +223,7 @@ namespace System.Windows.Forms {
 			int position = 0;
 			int count, data;
 			MemoryStream result = new MemoryStream ();
-			int stop = offset + size;
-			while (offset + 1 < stop) {
+			while (size > 0) {
 				count = (int) bytes [offset++];
 				data = (int) bytes [offset++];
 				if ((512 - count) < position) {
@@ -217,6 +233,7 @@ namespace System.Windows.Forms {
 
 				for (int i = 0; i < count; i++)
 					buffer [position++] = (byte) data;
+				size -= 2;
 			}
 
 			if (position > 0)
@@ -249,7 +266,7 @@ namespace System.Windows.Forms {
 				count++;
 			}
 
-			if (current != -1) {
+			if (count > 0) {
 				result.WriteByte ((byte) count);
 				result.WriteByte ((byte) current);
 			}

@@ -1,3 +1,9 @@
+2006-04-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ImageListStreamer.cs: fix handling of the mask that follows the main
+	bitmap when deserializing and serialize it properly. The generated mask
+	should better be a 1bpp image, but I'll do that later.
+
 2006-04-13  Alexander Olk  <alex.olk@googlemail.com>
 
 	* FileDialog.cs: Show something in the DirComboBox on *nix if the
