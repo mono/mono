@@ -2423,6 +2423,7 @@ namespace System.Windows.Forms {
 		private string recently_used_tmp;
 		private string my_computer_tmp;
 		private string my_network_tmp;
+		private string my_root_tmp;
 		private Stack dirStack = new Stack();
 		
 		public DirComboBox ()
@@ -2445,6 +2446,7 @@ namespace System.Windows.Forms {
 				recently_used_tmp = FileDialog.recently_string;
 				my_computer_tmp = FileDialog.mycomputer_string;
 				my_network_tmp = FileDialog.network_string;
+				my_root_tmp = "/";
 			} else {
 				recently_used_tmp = ThemeEngine.Current.Places (UIIcon.PlacesRecentDocuments);
 				my_computer_tmp = ThemeEngine.Current.Places (UIIcon.PlacesMyComputer);
@@ -2459,6 +2461,10 @@ namespace System.Windows.Forms {
 						new DirComboBoxItem (4, "My Network", my_network_tmp, 0)
 					}
 					);
+			
+			if ((platform == 4) || (platform == 128)) {
+				Items.Add(new DirComboBoxItem (5, "/", my_root_tmp, 0));
+			}
 			
 			ResumeLayout (false);
 		}
@@ -2495,6 +2501,9 @@ namespace System.Windows.Forms {
 			else
 			if (currentPath == my_network_tmp)
 				selection = 4;
+			else
+			if (currentPath == my_root_tmp)
+				selection = 5;
 			
 			child_of = CheckChildOf ();
 			
@@ -2515,6 +2524,12 @@ namespace System.Windows.Forms {
 			Items.Add (new DirComboBoxItem (3, "My Computer", my_computer_tmp, 0));
 			
 			Items.Add (new DirComboBoxItem (4, "My Network", my_network_tmp, 0));
+			
+			if ((platform == 4) || (platform == 128)) {
+				Items.Add (new DirComboBoxItem (5, "/", my_root_tmp, 0));
+				if (child_of == 15)
+					selection = AppendToParent ();
+			}
 			
 			if (selection != -1)
 				SelectedIndex = selection;
@@ -2540,8 +2555,11 @@ namespace System.Windows.Forms {
 				if (di.FullName == ThemeEngine.Current.Places (UIIcon.PlacesDesktop))
 					return 1;
 				else
-				if (di.FullName == ThemeEngine.Current.Places (UIIcon.PlacesPersonal))
+				if (di.FullName == ThemeEngine.Current.Places (UIIcon.PlacesPersonal) || di.FullName == "/home")
 					return 2;
+				else
+				if (di.FullName == "/")
+					return 15;
 				
 				dirStack.Push (di);
 			}
