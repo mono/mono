@@ -36,6 +36,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Runtime.InteropServices;
@@ -311,13 +312,8 @@ namespace Microsoft.Win32 {
 
 		static bool IsWellKnownKey (string keyname)
 		{
-			switch (keyname) {
-				// FIXME: Add more here
-				case "Software":
-					return true;
-				default:
-					return false;
-			}
+			// FIXME: Add more keys if needed
+			return (0 == String.Compare ("software", keyname, true, CultureInfo.InvariantCulture));
 		}
 
 		public RegistryKey CreateSubKey (RegistryKey rkey, string keyname)
