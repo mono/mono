@@ -665,19 +665,7 @@ namespace System.Windows.Forms
 		
 		#region ComboBox
 		// Drawing
-		public abstract void DrawComboBoxEditDecorations (Graphics dc, ComboBox ctrl, Rectangle rect);
-		public abstract void DrawComboListBoxDecorations (Graphics dc, ComboBox ctrl, Rectangle rect);
 		public abstract void DrawComboBoxItem (ComboBox ctrl, DrawItemEventArgs e);
-		
-		// Sizing
-		public abstract int DrawComboBoxEditDecorationTop ();
-		public abstract int DrawComboBoxEditDecorationBottom ();
-		public abstract int DrawComboBoxEditDecorationRight ();
-		public abstract int DrawComboBoxEditDecorationLeft ();
-		public abstract int DrawComboListBoxDecorationTop (ComboBoxStyle style);
-		public abstract int DrawComboListBoxDecorationBottom (ComboBoxStyle style);
-		public abstract int DrawComboListBoxDecorationRight (ComboBoxStyle style);
-		public abstract int DrawComboListBoxDecorationLeft (ComboBoxStyle style);
 		#endregion	// ComboBox
 
 		#region Control

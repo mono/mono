@@ -265,47 +265,6 @@ namespace System.Windows.Forms
 		}
 		#endregion	// ButtonBase
 		
-		#region ComboBox
-		
-		public override void DrawComboBoxEditDecorations( Graphics dc, ComboBox ctrl, Rectangle cl )
-		{
-			if ( !ctrl.Focused )
-			{
-				dc.DrawLine (ResPool.GetPen (BorderColor), cl.X, cl.Y, cl.X + cl.Width, cl.Y); //top 
-				dc.DrawLine (ResPool.GetPen (ColorControl), cl.X + 1, cl.Y + 1, cl.X + cl.Width - 2, cl.Y + 1);
-				dc.DrawLine (ResPool.GetPen (BorderColor), cl.X, cl.Y, cl.X, cl.Y + cl.Height); //left
-				dc.DrawLine (ResPool.GetPen (ColorControl), cl.X + 1, cl.Y + 1, cl.X + 1, cl.Y + cl.Height - 2); 
-				dc.DrawLine (ResPool.GetPen (BorderColor), cl.X + cl.Width - 1, cl.Y, cl.X + cl.Width - 1, cl.Y + cl.Height); //right
-				dc.DrawLine (ResPool.GetPen (ColorControl), cl.X + cl.Width - 2, cl.Y + 1 , cl.X + cl.Width - 2, cl.Y + cl.Height - 1);
-				dc.DrawLine (ResPool.GetPen (BorderColor), cl.X, cl.Y + cl.Height - 2, cl.X + cl.Width, cl.Y + cl.Height - 2); //down
-				dc.DrawLine (ResPool.GetPen (ColorControl), cl.X, cl.Y + cl.Height - 1, cl.X + cl.Width, cl.Y + cl.Height - 1);
-			}
-			else
-			{
-				dc.DrawLine (ResPool.GetPen (FocusColor), cl.X, cl.Y, cl.X + cl.Width, cl.Y); //top 
-				dc.DrawLine (ResPool.GetPen (ColorControl), cl.X + 1, cl.Y + 1, cl.X + cl.Width - 2, cl.Y + 1);
-				dc.DrawLine (ResPool.GetPen (FocusColor), cl.X, cl.Y, cl.X, cl.Y + cl.Height); //left
-				dc.DrawLine (ResPool.GetPen (ColorControl), cl.X + 1, cl.Y + 1, cl.X + 1, cl.Y + cl.Height - 2); 
-				dc.DrawLine (ResPool.GetPen (FocusColor), cl.X + cl.Width - 1, cl.Y, cl.X + cl.Width - 1, cl.Y + cl.Height); //right
-				dc.DrawLine (ResPool.GetPen (ColorControl), cl.X + cl.Width - 2, cl.Y + 1 , cl.X + cl.Width - 2, cl.Y + cl.Height - 1);
-				dc.DrawLine (ResPool.GetPen (FocusColor), cl.X, cl.Y + cl.Height - 2, cl.X + cl.Width, cl.Y + cl.Height - 2); //down
-				dc.DrawLine (ResPool.GetPen (FocusColor), cl.X, cl.Y + cl.Height - 1, cl.X + cl.Width, cl.Y + cl.Height - 1);
-			}
-		}
-		
-		public override void DrawComboListBoxDecorations( Graphics dc, ComboBox ctrl, Rectangle cl )
-		{
-			if ( ctrl.DropDownStyle == ComboBoxStyle.Simple )
-			{
-				DrawComboBoxEditDecorations( dc, ctrl, cl );
-			}
-			else
-			{
-				dc.DrawRectangle( ResPool.GetPen( ColorWindowFrame ), cl.X, cl.Y, cl.Width - 1, cl.Height - 1 );
-			}
-		}		
-		#endregion ComboBox
-		
 		#region Menus
 		public override void DrawMenuBar (Graphics dc, Menu menu, Rectangle rect)
 		{

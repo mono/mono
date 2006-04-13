@@ -770,67 +770,7 @@ namespace System.Windows.Forms
 		
 		#endregion // CheckedListBox
 		
-		#region ComboBox
-		
-		// Drawing
-		// TODO: get rid of that and use BorderStyle Fixed3D
-		public override void DrawComboBoxEditDecorations (Graphics dc, ComboBox ctrl, Rectangle cl)
-		{				
-			dc.DrawLine (ResPool.GetPen (ColorControlDark), cl.X, cl.Y, cl.X + cl.Width, cl.Y); //top 
-			dc.DrawLine (ResPool.GetPen (ColorControlDarkDark), cl.X + 1, cl.Y + 1, cl.X + cl.Width - 2, cl.Y + 1);
-			dc.DrawLine (ResPool.GetPen (ColorControl), cl.X, cl.Y + cl.Height - 2, cl.X + cl.Width, cl.Y + cl.Height - 2); //down
-			dc.DrawLine (ResPool.GetPen (ColorControlLight), cl.X, cl.Y + cl.Height - 1, cl.X + cl.Width, cl.Y + cl.Height - 1);
-			dc.DrawLine (ResPool.GetPen (ColorControlDark), cl.X, cl.Y, cl.X, cl.Y + cl.Height); //left
-			dc.DrawLine (ResPool.GetPen (ColorControlDarkDark), cl.X + 1, cl.Y + 1, cl.X + 1, cl.Y + cl.Height - 2); 
-			dc.DrawLine (ResPool.GetPen (ColorControl), cl.X + cl.Width - 1, cl.Y, cl.X + cl.Width - 1, cl.Y + cl.Height); //right
-			dc.DrawLine (ResPool.GetPen (ColorControlLight), cl.X + cl.Width - 2, cl.Y + 1 , cl.X + cl.Width - 2, cl.Y + cl.Height - 1);				
-		}		
-		
-		// Sizing				
-		public override int DrawComboBoxEditDecorationTop () { return 2;}
-		public override int DrawComboBoxEditDecorationBottom () { return 2;}
-		public override int DrawComboBoxEditDecorationRight () { return 2;}
-		public override int DrawComboBoxEditDecorationLeft () { return 2;}
-		
-		private int DrawComboListBoxDecoration (ComboBoxStyle style)
-		{
-			if (style == ComboBoxStyle.Simple)
-				return 2;
-			else
-				return 1;
-		}
-				
-		public override int DrawComboListBoxDecorationTop (ComboBoxStyle style) 
-		{
-			return DrawComboListBoxDecoration (style);
-		}
-		
-		public override int DrawComboListBoxDecorationBottom (ComboBoxStyle style)
-		{
-			return DrawComboListBoxDecoration (style);
-		}
-		
-		public override int DrawComboListBoxDecorationRight (ComboBoxStyle style)
-		{
-			return DrawComboListBoxDecoration (style);
-		}
-		
-		public override int DrawComboListBoxDecorationLeft (ComboBoxStyle style)
-		{
-			return DrawComboListBoxDecoration (style);
-		}
-		
-		public override void DrawComboListBoxDecorations (Graphics dc, ComboBox ctrl, Rectangle cl)
-		{
-			if (ctrl.DropDownStyle == ComboBoxStyle.Simple) {
-				DrawComboBoxEditDecorations (dc, ctrl, cl);
-			}
-			else {			
-				dc.DrawRectangle (ResPool.GetPen (ColorWindowFrame),
-					cl.X, cl.Y, cl.Width - 1, cl.Height - 1);
-			}			
-		}
-		
+		#region ComboBox		
 		public override void DrawComboBoxItem (ComboBox ctrl, DrawItemEventArgs e)
 		{
 			Color back_color, fore_color;
@@ -861,7 +801,6 @@ namespace System.Windows.Forms
 
 			string_format.Dispose ();
 		}
-		
 		#endregion ComboBox
 		
 		#region Datagrid

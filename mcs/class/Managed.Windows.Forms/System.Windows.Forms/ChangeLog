@@ -1,3 +1,13 @@
+2006-04-13  Jackson Harper  <jackson@ximian.com>
+
+	* ComboBox.cs: Use borders instead of drawing our own decorations,
+	try to obey correct rules for heights.
+	* Theme.cs:
+	* ThemeNice.cs:
+	* ThemeClearLooks.cs:
+	* ThemeWin32Classic.cs: Remove combobox decoration drawing code,
+	this is now handled by borders.
+	
 2006-04-13  Mike Kestner  <mkestner@novell.com>
 
 	* MenuAPI.cs: null guarding for the disbled click check fixes crash
