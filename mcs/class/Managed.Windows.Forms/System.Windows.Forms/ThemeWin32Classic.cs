@@ -1279,24 +1279,7 @@ namespace System.Windows.Forms
 		}
 		#endregion	// LinkLabel
 		#region ListBox
-		
-		// Drawing		
-		
-		private int DrawListBoxDecorationSize (BorderStyle border_style)
-		{
-			switch (border_style) {
-				case BorderStyle.Fixed3D:
-					return 2;
-				case BorderStyle.FixedSingle:					
-					return 1;
-				case BorderStyle.None:
-				default:
-					break;
-				}
-				
-			return 0;
-		}			
-		
+
 		// Sizing				
 		public override void DrawListBoxItem (ListBox ctrl, DrawItemEventArgs e)
 		{

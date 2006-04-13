@@ -7,6 +7,7 @@
 	* ThemeClearLooks.cs:
 	* ThemeWin32Classic.cs: Remove combobox decoration drawing code,
 	this is now handled by borders.
+	- Remove unused DrawListBoxDecorationSize method.
 	
 2006-04-13  Mike Kestner  <mkestner@novell.com>
 
