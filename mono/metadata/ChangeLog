@@ -1,3 +1,16 @@
+2006-04-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* assembly.c (mono_assembly_load_reference): Increase the refcount of the
+	referenced assemblies.
+	(mono_assembly_close): Decrease the refcount of the referenced assemblies.
+
+	* domain.c (mono_domain_free): Add a trace message.
+
+	* appdomain.c (add_assemblies_to_domain): Ditto.	
+
+	* metadata-internals.h: (_MonoAssembly): Modify the meaning of the ref_count
+	field.	
+
 2006-04-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* icall.c (ves_icall_System_Reflection_Assembly_InternalGetAssemblyName): Fix image reference counting.
