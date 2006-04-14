@@ -3,7 +3,8 @@
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
-// FIXME: code from monoresgen, add authors
+//   Paolo Molaro (lupus@ximian.com)
+//   Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2005 Marek Sieradzki
 //

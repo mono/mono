@@ -1,3 +1,12 @@
+2006-04-14  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* GenerateResource.cs: Added authors of monoresgen.
+
+2006-03-18  Marek Sieradzki  <marek.sieradzki@gmail.com> 
+
+	* ManagedCompiler.cs: Fixed a typo.
+	* AssemblyInfo.cs: Removed AllowPartiallyTrustedCallersAttribute.
+
 2006-03-11  Marek Sieradzki  <marek.sieradzki@gmail.com> 
 
 	* MonoTODOAttribute.cs: Removed.
