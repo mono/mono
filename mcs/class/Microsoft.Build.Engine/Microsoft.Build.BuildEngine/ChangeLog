@@ -1,3 +1,9 @@
+2006-04-14  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* BuildTask.cs: Removed unnecessary variable.
+	* Engine.cs: Added logging of the build start.
+	* Project.cs: Removed unnecessary variable.
+
 2006-04-07  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* GlobalEngineAccessor.cs, ProjectFileEncoding.cs: Removed.

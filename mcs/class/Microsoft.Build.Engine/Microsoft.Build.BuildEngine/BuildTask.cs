@@ -41,7 +41,6 @@ namespace Microsoft.Build.BuildEngine {
 		ITaskHost		hostObject;
 		Target			parentTarget;
 		XmlElement		taskElement;
-		Type			type;
 	
 		// FIXME: implement
 		internal BuildTask (XmlElement taskElement, Target parentTarget)

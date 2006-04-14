@@ -45,7 +45,6 @@ namespace Microsoft.Build.BuildEngine {
 		IDictionary			conditionedProperties;
 		string[]			defaultTargets;
 		Encoding			encoding;
-		BuildPropertyGroup		environmentProperties;
 		BuildItemGroup			evaluatedItems;
 		BuildItemGroup			evaluatedItemsIgnoringCondition;
 		IDictionary			evaluatedItemsByName;

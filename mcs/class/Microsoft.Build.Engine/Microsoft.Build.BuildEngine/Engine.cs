@@ -185,6 +185,8 @@ namespace Microsoft.Build.BuildEngine {
 		public Project CreateNewProject ()
 		{
 			CheckBinPath ();
+			// FIXME: I don't really know if it should be here
+			LogBuildStarted ();
 			return new Project (this);
 		}
 
@@ -232,6 +234,7 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			if (logger == null)
 				throw new ArgumentNullException ("logger");
+			
 			logger.Initialize (eventSource);
 			loggers.Add (logger);
 		}
