@@ -1,3 +1,8 @@
+2006-04-14  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* XplatUIX11.cs: Improved distinguishing between window types to
+	  tell the WM a type closer to what the app wants (Fixes #78107)
+
 2006-04-14  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ThemeWin32Classic.cs: Fixed drawing of ContainerGrabHandle and

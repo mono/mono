@@ -757,7 +757,13 @@ namespace System.Windows.Forms {
 
 				if (transient) {
 					atom_count = 0;
-					atoms[atom_count++] = atoms[atom_count++] = NetAtoms[(int)NA._NET_WM_WINDOW_TYPE_DOCK].ToInt32();
+					if ((cp.ExStyle & ((int)WindowExStyles.WS_EX_TOOLWINDOW)) != 0) {
+						atoms[atom_count++] = atoms[atom_count++] = NetAtoms[(int)NA._NET_WM_WINDOW_TYPE_TOOLBAR].ToInt32();
+					} else if (decorations == 0) {
+						atoms[atom_count++] = atoms[atom_count++] = NetAtoms[(int)NA._NET_WM_WINDOW_TYPE_DOCK].ToInt32();
+					} else {
+						atoms[atom_count++] = atoms[atom_count++] = NetAtoms[(int)NA._NET_WM_WINDOW_TYPE_DIALOG].ToInt32();
+					}
 					XChangeProperty(DisplayHandle, hwnd.whole_window, NetAtoms[(int)NA._NET_WM_WINDOW_TYPE], (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, atom_count);
 				}
 
