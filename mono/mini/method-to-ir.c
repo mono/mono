@@ -9305,6 +9305,44 @@ mono_handle_global_vregs (MonoCompile *cfg)
 			/* Arguments are implicitly global */
 			/* Putting R4 vars into registers doesn't work currently */
 			if ((var->opcode != OP_ARG) && (var != cfg->ret) && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT)) && (vreg_to_bb [var->dreg] != (gpointer)(gssize)-1) && (var->klass->byval_arg.type != MONO_TYPE_R4)) {
+				/* 
+				 * Make that the variable's liveness interval doesn't contain a call, since
+				 * that would cause the lvreg to be spilled, making the whole optimization
+				 * useless.
+				 */
+				/* FIXME: Only on platforms where the regs used for local regalloc are callee-saved */
+				if (vreg_to_bb [var->dreg]) {
+					MonoInst *ins;
+					int def_index, call_index, ins_index;
+					gboolean spilled = FALSE;
+
+					def_index = -1;
+					call_index = -1;
+					ins_index = 0;
+					for (ins = vreg_to_bb [var->dreg]->code; ins; ins = ins->next) {
+						const char *spec = ins_info [ins->opcode - OP_START - 1];
+
+						if ((spec [MONO_INST_DEST] != ' ') && (ins->dreg == var->dreg))
+							def_index = ins_index;
+
+						if (((spec [MONO_INST_SRC1] != ' ') && (ins->sreg1 == var->dreg)) ||
+							((spec [MONO_INST_SRC1] != ' ') && (ins->sreg1 == var->dreg))) {
+							if (call_index > def_index) {
+								spilled = TRUE;
+								break;
+							}
+						}
+
+						if (MONO_IS_CALL (ins))
+							call_index = ins_index;
+
+						ins_index ++;
+					}
+
+					if (spilled)
+						break;
+				}
+
 				if (cfg->verbose_level > 2)
 					printf ("CONVERTED R%d(%d) TO VREG.\n", var->dreg, vmv->idx);
 				var->flags |= MONO_INST_IS_DEAD;

@@ -1,5 +1,8 @@
 2006-04-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_handle_global_vregs): Avoid the global->local vreg
+	optimization if the liveness internal of the vreg contains a call.
+
 	* liveness.c (analyze_liveness_bb): Increment ins_index by 2s so the destination 
 	and the source operands of an instruction no longer have overlapping live ranges.
 
