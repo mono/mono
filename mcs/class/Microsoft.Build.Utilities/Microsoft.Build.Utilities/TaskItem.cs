@@ -32,7 +32,6 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.IO;
 using Microsoft.Build.Framework;
-using Mono.XBuild.Utilities;
 
 namespace Microsoft.Build.Utilities
 {
@@ -40,7 +39,20 @@ namespace Microsoft.Build.Utilities
 	{
 		IDictionary		metadata;
 		string			itemSpec;
+		static string[]		reservedMetadataNames;
+		static Hashtable	reservedMetadataHash;
 
+		static TaskItem ()
+		{
+			reservedMetadataNames = new string [] {
+				"FullPath", "RootDir", "Filename", "Extension", "RelativeDir", "Directory",
+				"RecursiveDir", "Identity", "ModifiedTime", "CreatedTime", "AccessedTime"};
+			reservedMetadataHash = CollectionsUtil.CreateCaseInsensitiveHashtable (ReservedMetadataNameCount);
+			foreach (string s in reservedMetadataNames) {
+				reservedMetadataHash.Add (s, null);
+			}
+		}
+		
 		public TaskItem ()
 		{
 			this.itemSpec = String.Empty;
@@ -77,6 +89,69 @@ namespace Microsoft.Build.Utilities
 			this.metadata = CollectionsUtil.CreateCaseInsensitiveHashtable (itemMetadata);
 		}
 
+		public static ICollection ReservedMetadataNames {
+			get {
+				return (ICollection) reservedMetadataNames.Clone ();
+			}
+		}
+
+		public static int ReservedMetadataNameCount {
+			get {
+				return reservedMetadataNames.Length;
+			}
+		}
+
+		public static bool IsReservedMetadataName (string metadataName)
+		{
+			return reservedMetadataHash.Contains (metadataName.ToLower ());
+		}
+
+		public static string GetReservedMetadata (string itemSpec, string metadataName)
+		{
+			switch (metadataName.ToLower ()) {
+			case "fullpath":
+				return Path.GetFullPath (itemSpec);
+			case "rootdir":
+				return Path.GetPathRoot (itemSpec);
+			case "filename":
+				return Path.GetFileNameWithoutExtension (itemSpec);
+			case "extension":
+				return Path.GetExtension (itemSpec);
+			case "relativedir":
+				return Path.GetDirectoryName (itemSpec);
+			case "directory":
+				return Path.GetDirectoryName (Path.GetFullPath (itemSpec));
+			case "recursivedir":
+				// FIXME: how to handle this?
+				return "";
+			case "identity":
+				return Path.Combine (Path.GetDirectoryName (itemSpec), Path.GetFileName (itemSpec));
+			case "modifiedtime":
+				if (File.Exists (itemSpec))
+					return File.GetLastWriteTime (itemSpec).ToString ();
+				else if (Directory.Exists (itemSpec))
+					return Directory.GetLastWriteTime (itemSpec).ToString ();
+				else
+					return String.Empty;
+			case "createdtime":
+				if (File.Exists (itemSpec))
+					return File.GetCreationTime (itemSpec).ToString ();
+				else if (Directory.Exists (itemSpec))
+					return Directory.GetCreationTime (itemSpec).ToString ();
+				else
+					return String.Empty;
+			case "accessedtime":
+				if (File.Exists (itemSpec))
+					return File.GetLastAccessTime (itemSpec).ToString ();
+				else if (Directory.Exists (itemSpec))
+					return Directory.GetLastAccessTime (itemSpec).ToString ();
+				else
+					return String.Empty;
+			default:
+				throw new ArgumentException ("Invalid reserved metadata name");
+			}
+		}
+
 		public IDictionary CloneCustomMetadata ()
 		{
 			IDictionary clonedMetadata = CollectionsUtil.CreateCaseInsensitiveHashtable ();
@@ -101,8 +176,8 @@ namespace Microsoft.Build.Utilities
 
 		public string GetMetadata (string metadataName)
 		{
-			if (ReservedNameUtils.IsReservedMetadataName (metadataName))
-				return ReservedNameUtils.GetReservedMetadata (ItemSpec, metadataName);
+			if (IsReservedMetadataName (metadataName))
+				return GetReservedMetadata (ItemSpec, metadataName);
 			else if (metadata.Contains (metadataName))
 				return (string) metadata [metadataName];
 			else
@@ -118,7 +193,7 @@ namespace Microsoft.Build.Utilities
 		{
 			if (metadataName == null)
 				throw new ArgumentNullException ("metadataName");
-			if (ReservedNameUtils.IsReservedMetadataName (metadataName))
+			if (IsReservedMetadataName (metadataName))
 				throw new ArgumentException ("Can't remove reserved metadata");
 			if (metadata.Contains (metadataName))
 				metadata.Remove (metadataName);
@@ -130,7 +205,7 @@ namespace Microsoft.Build.Utilities
 				throw new ArgumentNullException ("metadataName");
 			if (metadataValue == null)
 				throw new ArgumentNullException ("metadataValue");
-			if (ReservedNameUtils.IsReservedMetadataName (metadataName))
+			if (IsReservedMetadataName (metadataName))
 				throw new ArgumentException ("Can't modify reserved metadata");
 				
 			if (metadata.Contains (metadataName))
@@ -156,7 +231,7 @@ namespace Microsoft.Build.Utilities
 			get {
 				ArrayList list = new ArrayList ();
 				
-				foreach (string s in ReservedNameUtils.ReservedMetadataNames)
+				foreach (string s in ReservedMetadataNames)
 					list.Add (s);
 				foreach (string s in metadata.Keys)
 					list.Add (s);

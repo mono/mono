@@ -1,7 +1,3 @@
-2006-04-14  Marek Sieradzki  <marek.sieradzki@gmail.com>
-
-	* ReservedNameUtils.cs: Added.
-
 2005-09-22  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* MonoLocationHelper.cs: Added GetXBuildDir ().
