@@ -12,3 +12,4 @@ Microsoft.Build.Utilities/TaskLoggingHelper.cs
 Microsoft.Build.Utilities/ToolLocationHelper.cs
 Microsoft.Build.Utilities/ToolTask.cs
 Mono.XBuild.Utilities/MonoLocationHelper.cs
+Mono.XBuild.Utilities/ReservedNameUtils.cs
