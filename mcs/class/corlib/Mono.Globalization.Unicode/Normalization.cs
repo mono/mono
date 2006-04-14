@@ -229,7 +229,7 @@ namespace Mono.Globalization.Unicode
 						i, ref start);
 			if (sb != null)
 				sb.Append (source, start, source.Length - start);
-//			ReorderCanonical (source, ref sb, 1);
+			ReorderCanonical (source, ref sb, 1);
 		}
 
 		static void ReorderCanonical (string src, ref StringBuilder sb, int start)
@@ -242,7 +242,7 @@ namespace Mono.Globalization.Unicode
 						continue;
 					if (GetCombiningClass (src [i - 1]) > level) {
 						sb = new StringBuilder (src.Length);
-						sb.Append (src, 0, i - 1);
+						sb.Append (src, 0, src.Length);
 						ReorderCanonical (src, ref sb, i);
 						return;
 					}
@@ -351,12 +351,12 @@ namespace Mono.Globalization.Unicode
 
 		public static bool IsNormalized (string source, int type)
 		{
-//			int prevCC = -1;
+			int prevCC = -1;
 			for (int i = 0; i < source.Length; i++) {
-//				int cc = GetCombiningClass (source [i]);
-//				if (cc != 0 && cc < prevCC)
-//					return false;
-//				prevCC = cc;
+				int cc = GetCombiningClass (source [i]);
+				if (cc != 0 && cc < prevCC)
+					return false;
+				prevCC = cc;
 				switch (QuickCheck (source [i], type)) {
 				case NormalizationCheck.Yes:
 					break;
@@ -435,26 +435,21 @@ namespace Mono.Globalization.Unicode
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		static extern void load_normalization_resource (
-			byte** props, byte** mappedChars, byte** charMapIndex,
-			byte** helperIndex, byte** mapIdxToComposite,
-			byte** combiningClass);
+			out IntPtr props, out IntPtr mappedChars,
+			out IntPtr charMapIndex, out IntPtr helperIndex,
+			out IntPtr mapIdxToComposite, out IntPtr combiningClass);
 
 		static Normalization ()
 		{
+			IntPtr p1, p2, p3, p4, p5, p6;
 			lock (forLock) {
-			fixed (byte** addrProps = &props) {
-			fixed (int** addrMappedChars = &mappedChars) {
-			fixed (short** addrCharMapIndex = &charMapIndex) {
-			fixed (short** addrHelperIndex = &helperIndex) {
-			fixed (ushort** addrMapIdxToComposite = &mapIdxToComposite) {
-			fixed (byte** addrCombiningClass = &combiningClass) {
-				load_normalization_resource (addrProps,
-				(byte**) addrMappedChars,
-				(byte**) addrCharMapIndex,
-				(byte**) addrHelperIndex,
-				(byte**) addrMapIdxToComposite,
-				(byte**) addrCombiningClass);
-			} } } } } }
+				load_normalization_resource (out p1, out p2, out p3, out p4, out p5, out p6);
+				props = (byte*) p1;
+				mappedChars = (int*) p2;
+				charMapIndex = (short*) p3;
+				helperIndex = (short*) p4;
+				mapIdxToComposite = (ushort*) p5;
+				combiningClass = (byte*) p6;
 			}
 
 			isReady = true;

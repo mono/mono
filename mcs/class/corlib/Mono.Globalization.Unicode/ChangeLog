@@ -1,3 +1,11 @@
+2006-04-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* README: removed obsolete info.
+	* Normalization.cs : canonical reordering should participate in the
+	  decomposition step. In reordering, string append was incomplete.
+	  Combining class check is required in NFD check. Icall is written
+	  using IntPtr now.
+
 2005-12-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* SimpleCollator.cs: Fix a warning.
