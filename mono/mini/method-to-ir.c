@@ -9386,6 +9386,8 @@ mono_spill_global_vars (MonoCompile *cfg)
 	guint32 *stacktypes;
 	MonoBasicBlock *bb;
 	char spec2 [16];
+	int orig_next_vireg;
+	guint32 *vreg_to_lvreg;
 #if SIZEOF_VOID_P == 4
 	int i;
 #endif
@@ -9432,6 +9434,14 @@ mono_spill_global_vars (MonoCompile *cfg)
 
 	/* FIXME: widening and truncation */
 
+	/*
+	 * As an optimization, when a variable allocated to the stack is first loaded into 
+	 * an lvreg, we will remember the lvreg and use it the next time instead of loading
+	 * the variable again.
+	 */
+	orig_next_vireg = cfg->next_vireg;
+	vreg_to_lvreg = g_new0 (guint32, cfg->next_vireg);
+	
 	/* Add spill loads/stores */
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
 		MonoInst *ins = bb->code;	
@@ -9439,6 +9449,9 @@ mono_spill_global_vars (MonoCompile *cfg)
 
 		if (cfg->verbose_level > 1)
 			printf ("\nSPILL BLOCK %d:\n", bb->block_num);
+
+		/* FIXME: Optimize this */
+		memset (vreg_to_lvreg, 0, sizeof (guint32) * orig_next_vireg);
 
 		cfg->cbb = bb;
 		for (; ins; ins = ins->next) {
@@ -9495,7 +9508,7 @@ mono_spill_global_vars (MonoCompile *cfg)
 			else
 				store = FALSE;
 
-			if (cfg->verbose_level > 1)
+			if (G_UNLIKELY (cfg->verbose_level > 1))
 				printf ("\t %s %d %d %d\n", spec, ins->dreg, ins->sreg1, ins->sreg2);
 
 			/* DREG */
@@ -9509,7 +9522,7 @@ mono_spill_global_vars (MonoCompile *cfg)
 
 				if (var->opcode == OP_REGVAR) {
 					ins->dreg = var->dreg;
-				} else if ((ins->dreg == ins->sreg1) && (spec [MONO_INST_DEST] == 'i') && (spec [MONO_INST_SRC1] == 'i') && (op_to_op_dest_membase (ins->opcode) != -1)) {
+				} else if ((ins->dreg == ins->sreg1) && (spec [MONO_INST_DEST] == 'i') && (spec [MONO_INST_SRC1] == 'i') && !vreg_to_lvreg [ins->dreg] && (op_to_op_dest_membase (ins->opcode) != -1)) {
 					/* 
 					 * Instead of emitting a load+store, use a _membase opcode.
 					 */
@@ -9525,9 +9538,19 @@ mono_spill_global_vars (MonoCompile *cfg)
 					}
 					spec = ins_info [ins->opcode - OP_START - 1];
 				} else {
+					guint32 lvreg;
+
 					g_assert (var->opcode == OP_REGOFFSET);
 
-					ins->dreg = alloc_dreg (cfg, stacktypes [regtype]);
+					lvreg = vreg_to_lvreg [ins->dreg];
+
+					if (lvreg) {
+						if (G_UNLIKELY (cfg->verbose_level > 1))
+							printf ("\t\tUse lvreg R%d for R%d.\n", lvreg, ins->dreg);
+						ins->dreg = lvreg;
+					} else {
+						ins->dreg = alloc_dreg (cfg, stacktypes [regtype]);
+					}
 
 					if (regtype == 'l') {
 						NEW_STORE_MEMBASE (cfg, store_ins, OP_STOREI4_MEMBASE_REG, var->inst_basereg, var->inst_offset + MINI_LS_WORD_OFFSET, ins->dreg + 1);
@@ -9542,16 +9565,16 @@ mono_spill_global_vars (MonoCompile *cfg)
 
 						/* Try to fuse the store into the instruction itself */
 						/* FIXME: Add more instructions */
-						if ((ins->opcode == OP_ICONST) || ((ins->opcode == OP_I8CONST) && (ins->inst_c0 == 0))) {
+						if (!lvreg && ((ins->opcode == OP_ICONST) || ((ins->opcode == OP_I8CONST) && (ins->inst_c0 == 0)))) {
 							ins->opcode = store_membase_reg_to_store_membase_imm (store_opcode);
 							ins->inst_imm = ins->inst_c0;
 							ins->inst_destbasereg = var->inst_basereg;
 							ins->inst_offset = var->inst_offset;
-						} else if ((ins->opcode == OP_MOVE) || (ins->opcode == OP_FMOVE) || (ins->opcode == OP_LMOVE)) {
+						} else if (!lvreg && ((ins->opcode == OP_MOVE) || (ins->opcode == OP_FMOVE) || (ins->opcode == OP_LMOVE))) {
 							ins->opcode = store_opcode;
 							ins->inst_destbasereg = var->inst_basereg;
 							ins->inst_offset = var->inst_offset;
-						} else if (op_to_op_store_membase (store_opcode, ins->opcode) != -1) {
+						} else if (!lvreg && (op_to_op_store_membase (store_opcode, ins->opcode) != -1)) {
 							// FIXME: The backends expect the base reg to be in inst_basereg
 							ins->opcode = op_to_op_store_membase (store_opcode, ins->opcode);
 							ins->dreg = -1;
@@ -9593,6 +9616,17 @@ mono_spill_global_vars (MonoCompile *cfg)
 
 						g_assert (load_opcode != OP_LOADV_MEMBASE);
 
+						if (vreg_to_lvreg [sreg]) {
+							/* The variable is already loaded to an lvreg */
+							if (G_UNLIKELY (cfg->verbose_level > 1))
+								printf ("\t\tUse lvreg R%d for R%d.\n", vreg_to_lvreg [sreg], sreg);
+							if (srcindex == 0)
+								ins->sreg1 = vreg_to_lvreg [sreg];
+							else
+								ins->sreg2 = vreg_to_lvreg [sreg];
+							continue;
+						}
+
 						/* Try to fuse the load into the instruction */
 						if ((srcindex == 0) && (op_to_op_src1_membase (load_opcode, ins->opcode) != -1)) {
 							ins->opcode = op_to_op_src1_membase (load_opcode, ins->opcode);
@@ -9609,6 +9643,13 @@ mono_spill_global_vars (MonoCompile *cfg)
 							} else {
 								//printf ("%d ", srcindex); mono_print_ins (ins);
 								sreg = alloc_dreg (cfg, stacktypes [regtype]);
+
+								if ((!MONO_ARCH_USE_FPSTACK || ((load_opcode != OP_LOADR8_MEMBASE) && (load_opcode != OP_LOADR4_MEMBASE)))) {
+									if (srcindex == 0)
+										vreg_to_lvreg [ins->sreg1] = sreg;
+									else
+										vreg_to_lvreg [ins->sreg2] = sreg;
+								}
 							}
 
 							if (srcindex == 0)
@@ -9638,6 +9679,10 @@ mono_spill_global_vars (MonoCompile *cfg)
 				tmp_reg = ins->dreg;
 				ins->dreg = ins->sreg2;
 				ins->sreg2 = tmp_reg;
+			}
+
+			if (MONO_IS_CALL (ins)) {
+				memset (vreg_to_lvreg, 0, sizeof (guint32) * orig_next_vireg);
 			}
 
 			if (cfg->verbose_level > 1)
@@ -9693,7 +9738,6 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   like inline_method.
  * - remove inlining restrictions
  * - remove mono_save_args.
- * - get rid of redundant loads and stores inserted by spill_global_vars.
  * - add 'introduce a new optimization to simplify some range checks'
  * - fix LNEG and enable cfold of INEG
  * - generalize x86 optimizations like ldelema as a peephole optimization

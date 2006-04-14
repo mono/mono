@@ -248,12 +248,15 @@ mono_spillvar_offset (MonoCompile *cfg, int spillvar, gboolean fp)
 {
 	MonoSpillInfo *info;
 
-	if (G_UNLIKELY (spillvar >= cfg->spill_info_len)) {
-		resize_spill_info (cfg, FALSE);
-		g_assert (spillvar < cfg->spill_info_len);
+	if (G_UNLIKELY (spillvar >= (fp ? cfg->spill_info_float_len : cfg->spill_info_len))) {
+		resize_spill_info (cfg, fp);
+		g_assert (spillvar < (fp ? cfg->spill_info_float_len : cfg->spill_info_len));
 	}
 
-	info = &cfg->spill_info [spillvar];
+	/*
+	 * Allocate separate spill slots for fp/non-fp variables since most processors prefer it.
+	 */
+	info = fp ? &cfg->spill_info_float [spillvar] : &cfg->spill_info [spillvar];
 	if (info->offset == -1) {
 		if (cfg->flags & MONO_CFG_HAS_SPILLUP) {
 			if (fp) {

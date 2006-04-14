@@ -1,3 +1,11 @@
+2006-04-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-codegen.c (mono_spillvar_offset): Allocate separate spill offsets for
+	fp and non-fp variables.
+
+	* method-to-ir.c (mono_spill_global_vars): Implement an optimization to get rid of
+	redundant loads and stores.
+
 2006-04-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_handle_global_vregs): Avoid the global->local vreg
