@@ -9511,7 +9511,9 @@ mono_spill_global_vars (MonoCompile *cfg)
 			if (G_UNLIKELY (cfg->verbose_level > 1))
 				printf ("\t %s %d %d %d\n", spec, ins->dreg, ins->sreg1, ins->sreg2);
 
-			/* DREG */
+			/***************/
+			/*    DREG     */
+			/***************/
 			regtype = spec [MONO_INST_DEST];
 			g_assert (((ins->dreg == -1) && (regtype == ' ')) || ((ins->dreg != -1) && (regtype != ' ')));
 
@@ -9593,7 +9595,9 @@ mono_spill_global_vars (MonoCompile *cfg)
 				}
 			}
 
-			/* SREGS */
+			/************/
+			/*  SREGS   */
+			/************/
 			for (srcindex = 0; srcindex < 2; ++srcindex) {
 				regtype = spec [(srcindex == 0) ? MONO_INST_SRC1 : MONO_INST_SRC2];
 				sreg = srcindex == 0 ? ins->sreg1 : ins->sreg2;
@@ -9644,7 +9648,7 @@ mono_spill_global_vars (MonoCompile *cfg)
 								//printf ("%d ", srcindex); mono_print_ins (ins);
 								sreg = alloc_dreg (cfg, stacktypes [regtype]);
 
-								if ((!MONO_ARCH_USE_FPSTACK || ((load_opcode != OP_LOADR8_MEMBASE) && (load_opcode != OP_LOADR4_MEMBASE)))) {
+								if ((!MONO_ARCH_USE_FPSTACK || ((load_opcode != OP_LOADR8_MEMBASE) && (load_opcode != OP_LOADR4_MEMBASE) && !((var)->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT))))) {
 									if (srcindex == 0)
 										vreg_to_lvreg [ins->sreg1] = sreg;
 									else

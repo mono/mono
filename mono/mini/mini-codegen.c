@@ -1688,7 +1688,9 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 					}
 				}
 				else if ((dest_sreg1 != -1) && (dest_sreg1 != val)) {
-					create_copy_ins (cfg, dest_sreg1, val, ins, ip, fp);
+					MonoInst *copy = create_copy_ins (cfg, dest_sreg1, val, NULL, ip, fp);
+					insert_before_ins (ins, tmp, copy);
+					sreg2_mask &= ~(regmask (dest_sreg1));
 				}
 				
 				ins->sreg1 = val;

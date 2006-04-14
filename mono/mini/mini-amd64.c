@@ -1875,6 +1875,7 @@ peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
 		switch (ins->opcode) {
 		case OP_ADD_IMM:
 		case OP_IADD_IMM:
+		case OP_LADD_IMM:
 			if ((ins->sreg1 < MONO_MAX_IREGS) && (ins->dreg >= MONO_MAX_IREGS)) {
 				/* 
 				 * X86_LEA is like ADD, but doesn't have the
@@ -1882,6 +1883,15 @@ peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
 				 */
 				ins->opcode = OP_X86_LEA_MEMBASE;
 				ins->inst_basereg = ins->sreg1;
+			}
+			break;
+		case OP_SUB_IMM:
+		case OP_ISUB_IMM:
+		case OP_LSUB_IMM:
+			if ((ins->sreg1 < MONO_MAX_IREGS) && (ins->dreg >= MONO_MAX_IREGS)) {
+				ins->opcode = OP_X86_LEA_MEMBASE;
+				ins->inst_basereg = ins->sreg1;
+				ins->inst_imm = -ins->inst_imm;
 			}
 			break;
 		case OP_COMPARE_IMM:
