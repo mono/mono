@@ -3060,8 +3060,11 @@ namespace System.Windows.Forms
 				}
 			}
 
-			if (sb.SizingGrip)
+			if (sb.SizingGrip) {
+				int sg_height = (area.Height / 3) * 2;
+				area = new Rectangle (area.Right - sg_height - 4, area.Bottom - sg_height - 1, sg_height, sg_height);
 				CPDrawSizeGrip (dc, ColorControl, area);
+			}
 
 		}
 
@@ -4962,28 +4965,16 @@ namespace System.Windows.Forms
 		}
 
 
-		public override void CPDrawSizeGrip (Graphics dc, Color backColor, Rectangle bounds) {
+		public override void CPDrawSizeGrip (Graphics dc, Color backColor, Rectangle bounds)
+		{
+			Pen pen_dark = ResPool.GetPen(ControlPaint.Dark(backColor));
+			Pen pen_light_light = ResPool.GetPen(ControlPaint.LightLight(backColor));
 			
-			Point pt = new Point (bounds.Right - 2, bounds.Bottom - 1);
-
-			Pen pen = SystemPens.ControlDark;
-			
-			dc.DrawLine (pen, pt.X - 11, pt.Y, pt.X, pt.Y - 11);
-			dc.DrawLine (pen, pt.X - 10, pt.Y, pt.X, pt.Y - 10);
-			
-			dc.DrawLine (pen, pt.X - 7, pt.Y, pt.X, pt.Y - 7);
-			dc.DrawLine (pen, pt.X - 6, pt.Y, pt.X, pt.Y - 6);
-			
-			dc.DrawLine (pen, pt.X - 3, pt.Y, pt.X, pt.Y - 3);
-			dc.DrawLine (pen, pt.X - 2, pt.Y, pt.X, pt.Y - 2);
-			
-			pen = SystemPens.ControlLightLight;
-			
-			dc.DrawLine (pen, pt.X - 12, pt.Y, pt.X, pt.Y - 12);
-			dc.DrawLine (pen, pt.X - 8, pt.Y, pt.X, pt.Y - 8);
-			dc.DrawLine (pen, pt.X - 4, pt.Y, pt.X, pt.Y - 4);
-			
-			dc.DrawLine (SystemPens.Control, pt.X - 12, pt.Y, pt.X, pt.Y);
+			for (int i = 2; i < bounds.Width - 2; i += 4) {
+				dc.DrawLine (pen_light_light, bounds.X + i, bounds.Bottom - 2, bounds.Right - 1, bounds.Y + i - 1);
+				dc.DrawLine (pen_dark, bounds.X + i + 1, bounds.Bottom - 2, bounds.Right - 1, bounds.Y + i);
+				dc.DrawLine (pen_dark, bounds.X + i + 2, bounds.Bottom - 2, bounds.Right - 1, bounds.Y + i + 1);
+			}
 		}
 
 		public  override void CPDrawStringDisabled (Graphics dc, string s, Font font, Color color, RectangleF layoutRectangle, StringFormat format)

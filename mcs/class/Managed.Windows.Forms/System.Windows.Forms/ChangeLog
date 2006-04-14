@@ -1,3 +1,8 @@
+2006-04-14  Alexander Olk  <alex.olk@googlemail.com>
+
+	* ThemeWin32Classic.cs: Fixed size grip drawing and updated StatusBar
+	  drawing code to reflect the size grip changes
+
 2006-04-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ImageListStreamer.cs: fix handling of the mask that follows the main
