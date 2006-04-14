@@ -1,5 +1,10 @@
 2006-04-14  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
+	* BuildItem.cs: Moved checking if metadata name is reserved to internal
+	class (Mono.XBuild.Utilities.ReservedNameUtils).
+		
+2006-04-14  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
 	* BuildTask.cs: Removed unnecessary variable.
 	* Engine.cs: Added logging of the build start.
 	* Project.cs: Removed unnecessary variable.
