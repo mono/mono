@@ -35,7 +35,6 @@ using System.Text;
 using System.Xml;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
-using Mono.XBuild.Utilities;
 
 namespace Microsoft.Build.BuildEngine {
 	public class BuildItem {
@@ -109,8 +108,8 @@ namespace Microsoft.Build.BuildEngine {
 
 		public string GetMetadata (string metadataName)
 		{
-			if (ReservedNameUtils.IsReservedMetadataName (metadataName))
-				return ReservedNameUtils.GetReservedMetadata (FinalItemSpec, metadataName);
+			if (TaskItem.IsReservedMetadataName (metadataName))
+				return TaskItem.GetReservedMetadata (FinalItemSpec, metadataName);
 			else if (evaluatedMetadata.Contains (metadataName) == true)
 				return (string) evaluatedMetadata [metadataName];
 			else
@@ -127,7 +126,7 @@ namespace Microsoft.Build.BuildEngine {
 			if (metadataName == null)
 				throw new ArgumentNullException ("metadataName");
 			
-			if (ReservedNameUtils.IsReservedMetadataName (metadataName))
+			if (TaskItem.IsReservedMetadataName (metadataName))
 				throw new ArgumentException ("Can't remove reserved metadata.");
 			
 			if (evaluatedMetadata.Contains (metadataName))
@@ -155,7 +154,7 @@ namespace Microsoft.Build.BuildEngine {
 			if (metadataValue == null)
 				throw new ArgumentNullException ("metadataValue");
 			
-			if (ReservedNameUtils.IsReservedMetadataName (metadataName))
+			if (TaskItem.IsReservedMetadataName (metadataName))
 				throw new ArgumentException ("Can't modify reserved metadata.");
 			
 			RemoveMetadata (metadataName);
