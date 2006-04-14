@@ -4498,32 +4498,30 @@ namespace System.Windows.Forms
 		}
 
 
-		public override void CPDrawContainerGrabHandle (Graphics graphics, Rectangle bounds) {
-			
-//			Pen			pen	= ResPool.GetPen (Color.Black);
-			Pen			pen	= SystemPens.ControlDarkDark;
-			Rectangle	rect	= new Rectangle(bounds.X, bounds.Y, bounds.Width-1, bounds.Height-1);	// Dunno why, but MS does it that way, too
+		public override void CPDrawContainerGrabHandle (Graphics graphics, Rectangle bounds)
+		{
+			Pen			pen	= Pens.Black;
+			Rectangle	rect	= new Rectangle (bounds.X, bounds.Y, bounds.Width - 1, bounds.Height - 1);	// Dunno why, but MS does it that way, too
 			int			X;
 			int			Y;
-
-			graphics.FillRectangle(SystemBrushes.ControlText, rect);
-			graphics.DrawRectangle(pen, rect);
-
-			X=rect.X+rect.Width/2;
-			Y=rect.Y+rect.Height/2;
-
+			
+			graphics.FillRectangle (SystemBrushes.ControlLightLight, rect);
+			graphics.DrawRectangle (pen, rect);
+			
+			X = rect.X + rect.Width / 2;
+			Y = rect.Y + rect.Height / 2;
+			
 			/* Draw the cross */
-			graphics.DrawLine(pen, X, rect.Y+2, X, rect.Bottom-2);
-			graphics.DrawLine(pen, rect.X+2, Y, rect.Right-2, Y);
-
+			graphics.DrawLine (pen, X, rect.Y + 2, X, rect.Bottom - 2);
+			graphics.DrawLine (pen, rect.X + 2, Y, rect.Right - 2, Y);
+			
 			/* Draw 'arrows' for vertical lines */
-			graphics.DrawLine(pen, X-1, rect.Y+3, X+1, rect.Y+3);
-			graphics.DrawLine(pen, X-1, rect.Bottom-3, X+1, rect.Bottom-3);
-
+			graphics.DrawLine (pen, X - 1, rect.Y + 3, X + 1, rect.Y + 3);
+			graphics.DrawLine (pen, X - 1, rect.Bottom - 3, X + 1, rect.Bottom - 3);
+			
 			/* Draw 'arrows' for horizontal lines */
-			graphics.DrawLine(pen, rect.X+3, Y-1, rect.X+3, Y+1);
-			graphics.DrawLine(pen, rect.Right-3, Y-1, rect.Right-3, Y+1);
-
+			graphics.DrawLine (pen, rect.X + 3, Y - 1, rect.X + 3, Y + 1);
+			graphics.DrawLine (pen, rect.Right - 3, Y - 1, rect.Right - 3, Y + 1);
 		}
 
 		public virtual void DrawFlatStyleFocusRectangle (Graphics graphics, Rectangle rectangle, ButtonBase button, Color foreColor, Color backColor) {
@@ -4595,27 +4593,28 @@ namespace System.Windows.Forms
 			pen.Dispose ();
 		}
 		
-		public override void CPDrawGrabHandle (Graphics graphics, Rectangle rectangle, bool primary, bool enabled) {
+		public override void CPDrawGrabHandle (Graphics graphics, Rectangle rectangle, bool primary, bool enabled)
+		{
 			Brush	sb;
-			Pen			pen;
-
-			if (primary==true) {
-				pen = ResPool.GetPen (Color.Black);
-				if (enabled==true) {
-					sb=SystemBrushes.ControlText;
+			Pen pen;
+			
+			if (primary == true) {
+				pen = Pens.Black;
+				if (enabled == true) {
+					sb = Brushes.White;
 				} else {
 					sb = SystemBrushes.Control;
 				}
 			} else {
-				pen = ResPool.GetPen(Color.White);
-				if (enabled==true) {
-					sb=ResPool.GetSolidBrush (Color.Black);
+				pen = Pens.White;
+				if (enabled == true) {
+					sb = Brushes.Black;
 				} else {
 					sb = SystemBrushes.Control;
 				}
 			}
-			graphics.FillRectangle(sb, rectangle);
-			graphics.DrawRectangle(pen, rectangle);			
+			graphics.FillRectangle (sb, rectangle);
+			graphics.DrawRectangle (pen, rectangle);			
 		}
 
 

@@ -1,5 +1,10 @@
 2006-04-14  Alexander Olk  <alex.olk@googlemail.com>
 
+	* ThemeWin32Classic.cs: Fixed drawing of ContainerGrabHandle and
+	  GrabHandle
+
+2006-04-14  Alexander Olk  <alex.olk@googlemail.com>
+
 	* ThemeWin32Classic.cs: Fixed size grip drawing and updated StatusBar
 	  drawing code to reflect the size grip changes
 
