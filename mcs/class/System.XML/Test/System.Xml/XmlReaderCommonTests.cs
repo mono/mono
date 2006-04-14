@@ -1895,6 +1895,28 @@ namespace MonoTests.System.Xml
 			AssertEquals ("#2",
 				XmlNodeType.None, r.NodeType);
 		}
+
+		[Test]
+		public void ReadElementContentAs ()
+		{
+			// as System.Object
+
+			XmlTextReader r = new XmlTextReader (
+				"<root/>", XmlNodeType.Document, null);
+			r.Read ();
+			AssertEquals ("#1",
+				String.Empty, r.ReadElementContentAs (typeof (object), null));
+			AssertEquals ("#2",
+				XmlNodeType.None, r.NodeType);
+
+			// regardless of its value, the return value is string.
+			r = new XmlTextReader ("<root>1</root>", XmlNodeType.Document, null);
+			r.Read ();
+			AssertEquals ("#3",
+				"1", r.ReadElementContentAs (typeof (object), null));
+			AssertEquals ("#4",
+				XmlNodeType.None, r.NodeType);
+		}
 #endif
 	}
 }

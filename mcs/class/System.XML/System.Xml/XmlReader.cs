@@ -878,7 +878,7 @@ namespace System.Xml
 				case XmlNodeType.CDATA:
 					break;
 				default:
-					throw new InvalidOperationException (String.Format ("Node type {0} is not supported in this operation.", NodeType));
+					throw new InvalidOperationException (String.Format ("Node type {0} is not supported in this operation.{1}", NodeType, GetLocation ()));
 				}
 			}
 
@@ -902,6 +902,13 @@ namespace System.Xml
 			throw XmlError ("Unexpected end of document.");
 		}
 
+		string GetLocation ()
+		{
+			IXmlLineInfo li = this as IXmlLineInfo;
+			return li != null && li.HasLineInfo () ?
+				String.Format (" {0} (line {1}, column {2})", BaseURI, li.LineNumber, li.LinePosition) : String.Empty;
+		}
+
 		[MonoTODO]
 		public virtual object ReadElementContentAsObject ()
 		{
@@ -922,9 +929,11 @@ namespace System.Xml
 
 		public virtual object ReadElementContentAs (Type type, IXmlNamespaceResolver resolver)
 		{
+			bool isEmpty = IsEmptyElement;
 			ReadStartElement ();
-			object obj = ValueAs (ReadContentAsString (), type, resolver);
-			ReadEndElement ();
+			object obj = ValueAs (isEmpty ? String.Empty : ReadContentString (false), type, resolver);
+			if (!isEmpty)
+				ReadEndElement ();
 			return obj;
 		}
 
@@ -944,6 +953,8 @@ namespace System.Xml
 		private object ValueAs (string text, Type type, IXmlNamespaceResolver resolver)
 		{
 			try {
+				if (type == typeof (object))
+					return text;
 				if (type == typeof (XmlQualifiedName)) {
 					if (resolver != null)
 						return XmlQualifiedName.Parse (text, resolver);
