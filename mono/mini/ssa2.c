@@ -267,7 +267,7 @@ typedef struct {
 /**
  * mono_ssa_rename_vars2:
  *
- *  Implement renaming of SSA variables. Also compute def-use information in paralell.
+ *  Implement renaming of SSA variables. Also compute def-use information in parallel.
  * @stack_history points to an area of memory which can be used for storing changes 
  * made to the stack, so they can be reverted later.
  */
@@ -367,6 +367,7 @@ mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, gbool
 				if (originals_used [idx]) {
 					new_var = mono_compile_create_var (cfg, var->inst_vtype, OP_LOCAL);
 					new_var->flags = var->flags;
+					cfg->vars [new_var->inst_c0]->reg = idx;
 
 					if (cfg->verbose_level >= 4)
 						printf ("  R%d -> R%d\n", var->dreg, new_var->dreg);
@@ -668,9 +669,80 @@ mono_ssa_remove2 (MonoCompile *cfg)
 				}
 			}
 		}
+	}
 
-		if (cfg->verbose_level >= 4)
+	if (cfg->verbose_level >= 4) {
+		for (i = 0; i < cfg->num_bblocks; ++i) {
+			MonoBasicBlock *bb = cfg->bblocks [i];
+
 			mono_print_bb (bb, "AFTER REMOVE SSA:");
+		}
+	}
+
+	/*
+	 * Removal of SSA form introduces many copies. To avoid this, we tyry to coalesce 
+	 * the variables if possible. Since the newly introduced SSA variables don't
+	 * have overlapping live ranges (because we don't do agressive optimization), we
+	 * can coalesce them into the original variable.
+	 */
+
+	for (i = 0; i < cfg->num_bblocks; ++i) {
+		MonoBasicBlock *bb = cfg->bblocks [i];
+
+		for (ins = bb->code; ins; ins = ins->next) {
+			const char *spec = ins_info [ins->opcode - OP_START - 1];
+
+			if (ins->opcode == OP_NOP)
+				continue;
+
+			if (spec [MONO_INST_DEST] != ' ') {
+				MonoInst *var = get_vreg_to_inst (cfg, ins->dreg);
+
+				if (var) {
+					MonoMethodVar *vmv = MONO_VARINFO (cfg, var->inst_c0);
+					
+					/* 
+					 * The third condition avoids coalescing with variables eliminated
+					 * during deadce.
+					 */
+					if ((vmv->reg != -1) && (vmv->idx != vmv->reg) && (cfg->vars [vmv->reg]->reg != -1)) {
+						printf ("COALESCE: R%d -> R%d\n", ins->dreg, cfg->varinfo [vmv->reg]->dreg);
+						ins->dreg = cfg->varinfo [vmv->reg]->dreg; 
+					}
+				}
+			}
+
+			if (spec [MONO_INST_SRC1] != ' ') {
+				MonoInst *var = get_vreg_to_inst (cfg, ins->sreg1);
+
+				if (var) {
+					MonoMethodVar *vmv = MONO_VARINFO (cfg, var->inst_c0);
+
+					if ((vmv->reg != -1) && (vmv->idx != vmv->reg) && (cfg->vars [vmv->reg]->reg != -1)) {
+						printf ("COALESCE: R%d -> R%d\n", ins->sreg1, cfg->varinfo [vmv->reg]->dreg);
+						ins->sreg1 = cfg->varinfo [vmv->reg]->dreg; 
+					}
+				}
+			}
+
+			if (spec [MONO_INST_SRC2] != ' ') {
+				MonoInst *var = get_vreg_to_inst (cfg, ins->sreg2);
+
+				if (var) {
+					MonoMethodVar *vmv = MONO_VARINFO (cfg, var->inst_c0);
+
+					if ((vmv->reg != -1) && (vmv->idx != vmv->reg) && (cfg->vars [vmv->reg]->reg != -1)) {
+						printf ("COALESCE: R%d -> R%d\n", ins->sreg2, cfg->varinfo [vmv->reg]->dreg);
+						ins->sreg2 = cfg->varinfo [vmv->reg]->dreg; 
+					}
+				}
+			}
+
+		}
+	}
+
+	for (i = 0; i < cfg->num_varinfo; ++i) {
+		cfg->vars [i]->reg = -1;
 	}
 
 	if (cfg->comp_done & MONO_COMP_REACHABILITY)
@@ -680,53 +752,6 @@ mono_ssa_remove2 (MonoCompile *cfg)
 
 	cfg->comp_done &= ~MONO_COMP_SSA;
 }
-
-#ifndef USE_ORIGINAL_VARS
-static GPtrArray *
-mono_ssa_get_allocatable_vars (MonoCompile *cfg)
-{
-	GHashTable *type_hash;
-	GPtrArray *varlist_array = g_ptr_array_new ();
-	int tidx, i;
-
-	g_assert (cfg->comp_done & MONO_COMP_LIVENESS);
-
-	type_hash = g_hash_table_new (NULL, NULL);
-
-	for (i = 0; i < cfg->num_varinfo; i++) {
-		MonoInst *ins = cfg->varinfo [i];
-		MonoMethodVar *vmv = MONO_VARINFO (cfg, i);
-
-		/* unused vars */
-		if (vmv->range.first_use.abs_pos > vmv->range.last_use.abs_pos)
-			continue;
-
-		if (ins->flags & ((MONO_INST_VOLATILE|MONO_INST_INDIRECT)|MONO_INST_INDIRECT) || 
-		    (ins->opcode != OP_LOCAL && ins->opcode != OP_ARG) || vmv->reg != -1)
-			continue;
-
-		g_assert (ins->inst_vtype);
-		g_assert (vmv->reg == -1);
-		g_assert (i == vmv->idx);
-
-		if (!(tidx = (int)g_hash_table_lookup (type_hash, ins->inst_vtype))) {
-			GList *vars = g_list_append (NULL, vmv);
-			g_ptr_array_add (varlist_array, vars);
-			g_hash_table_insert (type_hash, ins->inst_vtype, (gpointer)varlist_array->len);
-		} else {
-			tidx--;
-			g_ptr_array_index (varlist_array, tidx) =
-				mono_varlist_insert_sorted (cfg, g_ptr_array_index (varlist_array, tidx), vmv, FALSE);
-		}
-	}
-
-	g_hash_table_destroy (type_hash);
-
-	return varlist_array;
-}
-#endif
-
-#define IS_CALL(op) (op == CEE_CALLI || op == CEE_CALL || op == CEE_CALLVIRT || (op >= OP_VOIDCALL && op <= OP_CALL_MEMBASE))
 
 static void
 mono_ssa_create_def_use (MonoCompile *cfg) 
@@ -1392,9 +1417,11 @@ mono_ssa_deadce2 (MonoCompile *cfg)
 					add_to_dce_worklist (cfg, info, cfg->vars [src_var->inst_c0], &work_list);
 				def->opcode = OP_NOP;
 				def->dreg = def->sreg1 = def->sreg2 = -1;
+				info->reg = -1;
 			} else if ((def->opcode == OP_ICONST) || (def->opcode == OP_I8CONST) || (def->opcode == OP_VZERO)) {
 				def->opcode = OP_NOP;
 				def->dreg = def->sreg1 = def->sreg2 = -1;
+				info->reg = -1;
 			} else if (MONO_IS_PHI (def)) {
 				int j;
 				for (j = def->inst_phi_args [0]; j > 0; j--) {
@@ -1403,6 +1430,7 @@ mono_ssa_deadce2 (MonoCompile *cfg)
 				}
 				def->opcode = OP_NOP;
 				def->dreg = def->sreg1 = def->sreg2 = -1;
+				info->reg = -1;
 			}
 			else if (def->opcode == OP_NOP) {
 			}

@@ -10123,7 +10123,7 @@ mono_local_cprop2 (MonoCompile *cfg)
 				}
 			}
 			
-			if ((spec [MONO_INST_DEST] != ' ') && !vreg_is_volatile (cfg, ins->dreg)) {
+			if ((spec [MONO_INST_DEST] != ' ') && !MONO_IS_STORE_MEMBASE (ins) && !vreg_is_volatile (cfg, ins->dreg)) {
 				defs [ins->dreg] = ins;
 				def_index [ins->dreg] = ins_index;
 			}

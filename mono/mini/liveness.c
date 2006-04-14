@@ -295,7 +295,7 @@ analyze_liveness_bb (MonoCompile *cfg, MonoBasicBlock *bb)
 
 	dfn = bb->dfn;
 
-	for (inst_num = 0, ins = bb->code; ins; ins = ins->next, inst_num ++) {
+	for (inst_num = 0, ins = bb->code; ins; ins = ins->next, inst_num += 2) {
 		const char *spec = ins_info [ins->opcode - OP_START - 1];
 
 #ifdef DEBUG_LIVENESS
@@ -375,7 +375,7 @@ analyze_liveness_bb (MonoCompile *cfg, MonoBasicBlock *bb)
 #ifdef DEBUG_LIVENESS
 				printf ("\tKILL: R%d(%d)\n", ins->dreg, idx);
 #endif
-				update_live_range (cfg, idx, dfn, inst_num); 
+				update_live_range (cfg, idx, dfn, inst_num + 1); 
 				mono_bitset_set_fast (bb->kill_set, idx);
 				vi->spill_costs += SPILL_COST_INCREMENT;
 			}

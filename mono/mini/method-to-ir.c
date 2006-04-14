@@ -9659,7 +9659,6 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - add 'introduce a new optimization to simplify some range checks'
  * - fix LNEG and enable cfold of INEG
  * - generalize x86 optimizations like ldelema as a peephole optimization
- * - port the x86 optimizations to amd64 as well
  * - add store_mem_imm for amd64
  * - optimize the loading of the interruption flag in the managed->native wrappers
  * - avoid special handling of OP_NOP in passes
@@ -9672,14 +9671,11 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - add float -> vreg conversion + local optimizations on !x86
  * - figure out how to handle decomposed branches during optimizations, ie.
  *   compare+branch, op_jump_table+op_br etc.
- * - run a global->local phase after SSA ?
  * - promote RuntimeXHandles to vregs
- * - apply the HAVE_ARRAY_ELEM_INIT optimization to ins_info
  * - vtype cleanups:
  *   - add a NEW_VARLOADA_VREG macro
  * - the vtype optimizations are blocked by the LDADDR opcodes generated for 
- *   accessing vtype fields and passing/receiving them in calls.
- * - in the managed->native wrappers, place a pop before the call to interrupt_checkpoint
+ *   accessing vtype fields.
  * - get rid of I8CONST on 64 bit platforms
  * - dealing with the increase in code size due to branches created during opcode
  *   decomposition:
@@ -9697,15 +9693,8 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - check for fp stack leakage in other opcodes too. (-> 'exceptions' optimization)
  * - add all micro optimizations from the old JIT
  * - put tree optimizations into the deadce pass
- * - run optimize_branches () before local_cprop2 () to get rid of small bblocks
- *   created during inlining -> or dont create the bblocks in the first place.
- * - transform VCALL's to something other than VOIDCALL since they might need custom
- *   handling like on amd64.
  * - the simple deadce from the current JIT is still needed, could do some of the
  *   work of the local deadce pass.
- * - conversion out of SSA form is still missing the coalescing optimization of the old
- *   one.
- * - move the CMP_ stuff from the mini-ia64.c to mini-codegen.c
  * - scimark slowdown.
  * - decompose op_start_handler/op_endfilter/op_endfinally earlier using an arch
  *   specific function.
