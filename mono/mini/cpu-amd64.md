@@ -403,15 +403,24 @@ x86_xor_reg_membase: dest:i src1:i src2:b clob:1 len:13
 
 x86_add_membase: dest:i src1:i src2:b clob:1 len:13
 x86_sub_membase: dest:i src1:i src2:b clob:1 len:13
+x86_mul_membase: dest:i src1:b src2:i len:14
 x86_and_membase_imm: src1:b len:12
 x86_or_membase_imm: src1:b len:12
 x86_xor_membase_imm: src1:b len:12
+
 x86_add_membase_reg: src1:b src2:i len:12
 x86_sub_membase_reg: src1:b src2:i len:12
 x86_and_membase_reg: src1:b src2:i len:12
 x86_or_membase_reg: src1:b src2:i len:12
 x86_xor_membase_reg: src1:b src2:i len:12
 x86_mul_membase_reg: src1:b src2:i len:14
+
+amd64_add_membase_reg: src1:b src2:i len:13
+amd64_sub_membase_reg: src1:b src2:i len:13
+amd64_and_membase_reg: src1:b src2:i len:13
+amd64_or_membase_reg: src1:b src2:i len:13
+amd64_xor_membase_reg: src1:b src2:i len:13
+amd64_mul_membase_reg: src1:b src2:i len:15
 
 tls_get: dest:i len:13
 amd64_test_null: src1:i len:5
@@ -427,6 +436,12 @@ amd64_sub_reg_membase: dest:i src1:i src2:b clob:1 len:14
 amd64_and_reg_membase: dest:i src1:i src2:b clob:1 len:14
 amd64_or_reg_membase: dest:i src1:i src2:b clob:1 len:14
 amd64_xor_reg_membase: dest:i src1:i src2:b clob:1 len:14
+
+amd64_add_membase_imm: src1:b len:13
+amd64_sub_membase_imm: src1:b len:13
+amd64_and_membase_imm: src1:b len:13
+amd64_or_membase_imm: src1:b len:13
+amd64_xor_membase_imm: src1:b len:13
 
 amd64_set_xmmreg_r4: dest:f src1:f len:14 clob:m
 amd64_set_xmmreg_r8: dest:f src1:f len:14 clob:m

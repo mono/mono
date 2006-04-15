@@ -8994,7 +8994,7 @@ mono_load_membase_to_load_mem (int opcode)
 static inline int
 op_to_op_dest_membase (int opcode)
 {
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(__i386__)
 	switch (opcode) {
 	case OP_IADD:
 		return OP_X86_ADD_MEMBASE_REG;
@@ -9021,6 +9021,58 @@ op_to_op_dest_membase (int opcode)
 	case OP_XOR_IMM:
 	case OP_IXOR_IMM:
 		return OP_X86_XOR_MEMBASE_IMM;
+	case OP_MOVE:
+		return OP_NOP;
+	}
+#endif
+
+#if defined(__x86_64__)
+	switch (opcode) {
+	case OP_IADD:
+		return OP_X86_ADD_MEMBASE_REG;
+	case OP_ISUB:
+		return OP_X86_SUB_MEMBASE_REG;
+	case OP_IAND:
+		return OP_X86_AND_MEMBASE_REG;
+	case OP_IOR:
+		return OP_X86_OR_MEMBASE_REG;
+	case OP_IXOR:
+		return OP_X86_XOR_MEMBASE_REG;
+	case OP_IADD_IMM:
+		return OP_X86_ADD_MEMBASE_IMM;
+	case OP_ISUB_IMM:
+		return OP_X86_SUB_MEMBASE_IMM;
+	case OP_IAND_IMM:
+		return OP_X86_AND_MEMBASE_IMM;
+	case OP_IOR_IMM:
+		return OP_X86_OR_MEMBASE_IMM;
+	case OP_IXOR_IMM:
+		return OP_X86_XOR_MEMBASE_IMM;
+	case OP_LADD:
+		return OP_AMD64_ADD_MEMBASE_REG;
+	case OP_LSUB:
+		return OP_AMD64_SUB_MEMBASE_REG;
+	case OP_LAND:
+		return OP_AMD64_AND_MEMBASE_REG;
+	case OP_LOR:
+		return OP_AMD64_OR_MEMBASE_REG;
+	case OP_LXOR:
+		return OP_AMD64_XOR_MEMBASE_REG;
+	case OP_ADD_IMM:
+	case OP_LADD_IMM:
+		return OP_AMD64_ADD_MEMBASE_IMM;
+	case OP_SUB_IMM:
+	case OP_LSUB_IMM:
+		return OP_AMD64_SUB_MEMBASE_IMM;
+	case OP_AND_IMM:
+	case OP_LAND_IMM:
+		return OP_AMD64_AND_MEMBASE_IMM;
+	case OP_OR_IMM:
+	case OP_LOR_IMM:
+		return OP_AMD64_OR_MEMBASE_IMM;
+	case OP_XOR_IMM:
+	case OP_LXOR_IMM:
+		return OP_AMD64_XOR_MEMBASE_IMM;
 	case OP_MOVE:
 		return OP_NOP;
 	}
@@ -9456,7 +9508,7 @@ mono_spill_global_vars (MonoCompile *cfg)
 		cfg->cbb = bb;
 		for (; ins; ins = ins->next) {
 			const char *spec = ins_info [ins->opcode - OP_START - 1];
-			int regtype, srcindex, sreg, tmp_reg;
+			int regtype, srcindex, sreg, tmp_reg, prev_dreg;
 			gboolean store;
 
 			if (cfg->verbose_level > 1)
@@ -9516,6 +9568,7 @@ mono_spill_global_vars (MonoCompile *cfg)
 			/***************/
 			regtype = spec [MONO_INST_DEST];
 			g_assert (((ins->dreg == -1) && (regtype == ' ')) || ((ins->dreg != -1) && (regtype != ' ')));
+			prev_dreg = -1;
 
 			if ((ins->dreg != -1) && get_vreg_to_inst (cfg, ins->dreg)) {
 				MonoInst *var = get_vreg_to_inst (cfg, ins->dreg);
@@ -9544,6 +9597,7 @@ mono_spill_global_vars (MonoCompile *cfg)
 
 					g_assert (var->opcode == OP_REGOFFSET);
 
+					prev_dreg = ins->dreg;
 					lvreg = vreg_to_lvreg [ins->dreg];
 
 					if (lvreg) {
@@ -9646,13 +9700,20 @@ mono_spill_global_vars (MonoCompile *cfg)
 								sreg = ins->dreg;
 							} else {
 								//printf ("%d ", srcindex); mono_print_ins (ins);
+
 								sreg = alloc_dreg (cfg, stacktypes [regtype]);
 
 								if ((!MONO_ARCH_USE_FPSTACK || ((load_opcode != OP_LOADR8_MEMBASE) && (load_opcode != OP_LOADR4_MEMBASE) && !((var)->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT))))) {
-									if (srcindex == 0)
-										vreg_to_lvreg [ins->sreg1] = sreg;
-									else
-										vreg_to_lvreg [ins->sreg2] = sreg;
+									if (var->dreg == prev_dreg) {
+										/*
+										 * sreg refers to the value loaded by the load
+										 * emitted below, but we need to use ins->dreg
+										 * since it refers to the store emitted earlier.
+										 */
+										sreg = ins->dreg;
+									}
+
+									vreg_to_lvreg [var->dreg] = sreg;
 								}
 							}
 

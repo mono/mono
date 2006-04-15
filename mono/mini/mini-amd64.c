@@ -3061,6 +3061,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			amd64_dec_reg_size (code, ins->dreg, 4);
 			break;
 		case OP_X86_MUL_MEMBASE:
+		case OP_X86_MUL_MEMBASE_REG:
 			amd64_imul_reg_membase_size (code, ins->sreg1, ins->sreg2, ins->inst_offset, 4);
 			break;
 		case OP_AMD64_ICOMPARE_MEMBASE_REG:
@@ -3069,12 +3070,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_AMD64_ICOMPARE_MEMBASE_IMM:
 			amd64_alu_membase_imm_size (code, X86_CMP, ins->inst_basereg, ins->inst_offset, ins->inst_imm, 4);
 			break;
-		case OP_X86_COMPARE_MEMBASE8_IMM:
-			amd64_alu_membase8_imm_size (code, X86_CMP, ins->inst_basereg, ins->inst_offset, ins->inst_imm, 4);
-			break;
-		case OP_AMD64_ICOMPARE_REG_MEMBASE:
-			amd64_alu_reg_membase_size (code, X86_CMP, ins->sreg1, ins->sreg2, ins->inst_offset, 4);
-			break;
 		case OP_AMD64_COMPARE_MEMBASE_REG:
 			amd64_alu_membase_reg_size (code, X86_CMP, ins->inst_basereg, ins->inst_offset, ins->sreg2, 8);
 			break;
@@ -3082,10 +3077,15 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			g_assert (amd64_is_imm32 (ins->inst_imm));
 			amd64_alu_membase_imm_size (code, X86_CMP, ins->inst_basereg, ins->inst_offset, ins->inst_imm, 8);
 			break;
+		case OP_X86_COMPARE_MEMBASE8_IMM:
+			amd64_alu_membase8_imm_size (code, X86_CMP, ins->inst_basereg, ins->inst_offset, ins->inst_imm, 4);
+			break;
+		case OP_AMD64_ICOMPARE_REG_MEMBASE:
+			amd64_alu_reg_membase_size (code, X86_CMP, ins->sreg1, ins->sreg2, ins->inst_offset, 4);
+			break;
 		case OP_AMD64_COMPARE_REG_MEMBASE:
 			amd64_alu_reg_membase_size (code, X86_CMP, ins->sreg1, ins->sreg2, ins->inst_offset, 8);
 			break;
-
 
 		case OP_AMD64_ADD_REG_MEMBASE:
 			amd64_alu_reg_membase_size (code, X86_ADD, ins->sreg1, ins->sreg2, ins->inst_offset, 8);
@@ -3101,6 +3101,43 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case OP_AMD64_XOR_REG_MEMBASE:
 			amd64_alu_reg_membase_size (code, X86_XOR, ins->sreg1, ins->sreg2, ins->inst_offset, 8);
+			break;
+
+		case OP_AMD64_ADD_MEMBASE_REG:
+			amd64_alu_membase_reg_size (code, X86_ADD, ins->inst_basereg, ins->inst_offset, ins->sreg2, 8);
+			break;
+		case OP_AMD64_SUB_MEMBASE_REG:
+			amd64_alu_membase_reg_size (code, X86_SUB, ins->inst_basereg, ins->inst_offset, ins->sreg2, 8);
+			break;
+		case OP_AMD64_AND_MEMBASE_REG:
+			amd64_alu_membase_reg_size (code, X86_AND, ins->inst_basereg, ins->inst_offset, ins->sreg2, 8);
+			break;
+		case OP_AMD64_OR_MEMBASE_REG:
+			amd64_alu_membase_reg_size (code, X86_OR, ins->inst_basereg, ins->inst_offset, ins->sreg2, 8);
+			break;
+		case OP_AMD64_XOR_MEMBASE_REG:
+			amd64_alu_membase_reg_size (code, X86_XOR, ins->inst_basereg, ins->inst_offset, ins->sreg2, 8);
+			break;
+
+		case OP_AMD64_ADD_MEMBASE_IMM:
+			g_assert (amd64_is_imm32 (ins->inst_imm));
+			amd64_alu_membase_imm_size (code, X86_ADD, ins->inst_basereg, ins->inst_offset, ins->inst_imm, 8);
+			break;
+		case OP_AMD64_SUB_MEMBASE_IMM:
+			g_assert (amd64_is_imm32 (ins->inst_imm));
+			amd64_alu_membase_imm_size (code, X86_SUB, ins->inst_basereg, ins->inst_offset, ins->inst_imm, 8);
+			break;
+		case OP_AMD64_AND_MEMBASE_IMM:
+			g_assert (amd64_is_imm32 (ins->inst_imm));
+			amd64_alu_membase_imm_size (code, X86_AND, ins->inst_basereg, ins->inst_offset, ins->inst_imm, 8);
+			break;
+		case OP_AMD64_OR_MEMBASE_IMM:
+			g_assert (amd64_is_imm32 (ins->inst_imm));
+			amd64_alu_membase_imm_size (code, X86_OR, ins->inst_basereg, ins->inst_offset, ins->inst_imm, 8);
+			break;
+		case OP_AMD64_XOR_MEMBASE_IMM:
+			g_assert (amd64_is_imm32 (ins->inst_imm));
+			amd64_alu_membase_imm_size (code, X86_XOR, ins->inst_basereg, ins->inst_offset, ins->inst_imm, 8);
 			break;
 
 		case CEE_BREAK:
