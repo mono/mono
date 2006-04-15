@@ -1,3 +1,10 @@
+2006-04-15  Alexander Olk  <alex.olk@googlemail.com>
+
+	* ThemeWin32Classic.cs: Draw disabled combo button in the correct
+	  place
+	* ComboBox.cs: If the combobox is disabled call CPDrawComboButton
+	  with the correct ButtonState
+
 2006-04-14  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* XplatUIX11.cs: Improved distinguishing between window types to

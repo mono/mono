@@ -4476,20 +4476,19 @@ namespace System.Windows.Forms
 			arrow[0]=P1;
 			arrow[1]=P2;
 			arrow[2]=P3;
-
+			
 			/* Draw the arrow */
 			if ((state & ButtonState.Inactive)!=0) {
-				graphics.FillPolygon(SystemBrushes.ControlLightLight, arrow, FillMode.Winding);
-
 				/* Move away from the shadow */
-				P1.X-=1;		P1.Y-=1;
-				P2.X-=1;		P2.Y-=1;
-				P3.X-=1;		P3.Y-=1;
+				arrow[0].X += 1;	arrow[0].Y += 1;
+				arrow[1].X += 1;	arrow[1].Y += 1;
+				arrow[2].X += 1;	arrow[2].Y += 1;
+				
+				graphics.FillPolygon(SystemBrushes.ControlLightLight, arrow, FillMode.Winding);
 
 				arrow[0]=P1;
 				arrow[1]=P2;
 				arrow[2]=P3;
-
 
 				graphics.FillPolygon(SystemBrushes.ControlDark, arrow, FillMode.Winding);
 			} else {

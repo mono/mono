@@ -1023,6 +1023,9 @@ namespace System.Windows.Forms
 				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorControl),
 					combobox_info.button_rect);
 
+				if (!is_enabled)
+					combobox_info.button_status = ButtonState.Inactive;
+				
 				ThemeEngine.Current.CPDrawComboButton (dc,
 					combobox_info.button_rect, combobox_info.button_status);
 			}			
