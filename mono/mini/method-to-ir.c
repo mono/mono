@@ -9450,9 +9450,9 @@ mono_spill_global_vars (MonoCompile *cfg)
 	char spec2 [16];
 	int orig_next_vireg;
 	guint32 *vreg_to_lvreg;
-#if SIZEOF_VOID_P == 4
-	int i;
-#endif
+	guint32 *lvregs;
+	guint32 i, lvregs_len;
+	gboolean dest_has_lvreg = FALSE;
 
 	memset (spec2, 0, sizeof (spec2));
 
@@ -9502,7 +9502,9 @@ mono_spill_global_vars (MonoCompile *cfg)
 	 * the variable again.
 	 */
 	orig_next_vireg = cfg->next_vireg;
-	vreg_to_lvreg = g_new0 (guint32, cfg->next_vireg);
+	vreg_to_lvreg = mono_mempool_alloc0 (cfg->mempool, sizeof (guint32) * cfg->next_vireg);
+	lvregs = mono_mempool_alloc (cfg->mempool, sizeof (guint32) * 1024);
+	lvregs_len = 0;
 	
 	/* Add spill loads/stores */
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
@@ -9512,8 +9514,10 @@ mono_spill_global_vars (MonoCompile *cfg)
 		if (cfg->verbose_level > 1)
 			printf ("\nSPILL BLOCK %d:\n", bb->block_num);
 
-		/* FIXME: Optimize this */
-		memset (vreg_to_lvreg, 0, sizeof (guint32) * orig_next_vireg);
+		/* Clear vreg_to_lvreg array */
+		for (i = 0; i < lvregs_len; i++)
+			vreg_to_lvreg [lvregs [i]] = 0;
+		lvregs_len = 0;
 
 		cfg->cbb = bb;
 		for (; ins; ins = ins->next) {
@@ -9654,6 +9658,14 @@ mono_spill_global_vars (MonoCompile *cfg)
 
 							/* Insert it after the instruction */
 							insert_after_ins (bb, ins, store_ins);
+
+							/* 
+							 * We can't assign ins->dreg to var->dreg here, since the
+							 * sregs could use it. So set a flag, and do it after
+							 * the sregs.
+							 */
+							if ((!MONO_ARCH_USE_FPSTACK || ((store_opcode != OP_STORER8_MEMBASE_REG) && (store_opcode != OP_STORER4_MEMBASE_REG))) && !((var)->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT)))
+								dest_has_lvreg = TRUE;
 						}
 					}
 				}
@@ -9677,77 +9689,87 @@ mono_spill_global_vars (MonoCompile *cfg)
 							ins->sreg1 = var->dreg;
 						else
 							ins->sreg2 = var->dreg;
+						continue;
+					}
+
+					g_assert (var->opcode == OP_REGOFFSET);
+						
+					load_opcode = mono_type_to_load_membase (var->inst_vtype);
+
+					g_assert (load_opcode != OP_LOADV_MEMBASE);
+
+					if (vreg_to_lvreg [sreg]) {
+						/* The variable is already loaded to an lvreg */
+						if (G_UNLIKELY (cfg->verbose_level > 1))
+							printf ("\t\tUse lvreg R%d for R%d.\n", vreg_to_lvreg [sreg], sreg);
+						if (srcindex == 0)
+							ins->sreg1 = vreg_to_lvreg [sreg];
+						else
+							ins->sreg2 = vreg_to_lvreg [sreg];
+						continue;
+					}
+
+					/* Try to fuse the load into the instruction */
+					if ((srcindex == 0) && (op_to_op_src1_membase (load_opcode, ins->opcode) != -1)) {
+						ins->opcode = op_to_op_src1_membase (load_opcode, ins->opcode);
+						ins->inst_basereg = var->inst_basereg;
+						ins->inst_offset = var->inst_offset;
+					} else if ((srcindex == 1) && (op_to_op_src2_membase (load_opcode, ins->opcode) != -1)) {
+						ins->opcode = op_to_op_src2_membase (load_opcode, ins->opcode);
+						ins->sreg2 = var->inst_basereg;
+						ins->inst_offset = var->inst_offset;
 					} else {
-						g_assert (var->opcode == OP_REGOFFSET);
+						if ((ins->opcode == OP_MOVE) || (ins->opcode == OP_FMOVE)) {
+							ins->opcode = OP_NOP;
+							sreg = ins->dreg;
+						} else {
+							//printf ("%d ", srcindex); mono_print_ins (ins);
 
-						load_opcode = mono_type_to_load_membase (var->inst_vtype);
+							sreg = alloc_dreg (cfg, stacktypes [regtype]);
 
-						g_assert (load_opcode != OP_LOADV_MEMBASE);
+							if ((!MONO_ARCH_USE_FPSTACK || ((load_opcode != OP_LOADR8_MEMBASE) && (load_opcode != OP_LOADR4_MEMBASE))) && !((var)->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT))) {
+								if (var->dreg == prev_dreg) {
+									/*
+									 * sreg refers to the value loaded by the load
+									 * emitted below, but we need to use ins->dreg
+									 * since it refers to the store emitted earlier.
+									 */
+									sreg = ins->dreg;
+								}
 
-						if (vreg_to_lvreg [sreg]) {
-							/* The variable is already loaded to an lvreg */
-							if (G_UNLIKELY (cfg->verbose_level > 1))
-								printf ("\t\tUse lvreg R%d for R%d.\n", vreg_to_lvreg [sreg], sreg);
-							if (srcindex == 0)
-								ins->sreg1 = vreg_to_lvreg [sreg];
-							else
-								ins->sreg2 = vreg_to_lvreg [sreg];
-							continue;
+								vreg_to_lvreg [var->dreg] = sreg;
+								g_assert (lvregs_len < 1024);
+								lvregs [lvregs_len ++] = var->dreg;
+							}
 						}
 
-						/* Try to fuse the load into the instruction */
-						if ((srcindex == 0) && (op_to_op_src1_membase (load_opcode, ins->opcode) != -1)) {
-							ins->opcode = op_to_op_src1_membase (load_opcode, ins->opcode);
-							ins->inst_basereg = var->inst_basereg;
-							ins->inst_offset = var->inst_offset;
-						} else if ((srcindex == 1) && (op_to_op_src2_membase (load_opcode, ins->opcode) != -1)) {
-							ins->opcode = op_to_op_src2_membase (load_opcode, ins->opcode);
-							ins->sreg2 = var->inst_basereg;
-							ins->inst_offset = var->inst_offset;
-						} else {
-							if ((ins->opcode == OP_MOVE) || (ins->opcode == OP_FMOVE)) {
-								ins->opcode = OP_NOP;
-								sreg = ins->dreg;
-							} else {
-								//printf ("%d ", srcindex); mono_print_ins (ins);
+						if (srcindex == 0)
+							ins->sreg1 = sreg;
+						else
+							ins->sreg2 = sreg;
 
-								sreg = alloc_dreg (cfg, stacktypes [regtype]);
-
-								if ((!MONO_ARCH_USE_FPSTACK || ((load_opcode != OP_LOADR8_MEMBASE) && (load_opcode != OP_LOADR4_MEMBASE) && !((var)->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT))))) {
-									if (var->dreg == prev_dreg) {
-										/*
-										 * sreg refers to the value loaded by the load
-										 * emitted below, but we need to use ins->dreg
-										 * since it refers to the store emitted earlier.
-										 */
-										sreg = ins->dreg;
-									}
-
-									vreg_to_lvreg [var->dreg] = sreg;
-								}
-							}
-
-							if (srcindex == 0)
-								ins->sreg1 = sreg;
-							else
-								ins->sreg2 = sreg;
-
-							if (regtype == 'l') {
-								NEW_LOAD_MEMBASE (cfg, load_ins, OP_LOADI4_MEMBASE, sreg + 2, var->inst_basereg, var->inst_offset + MINI_MS_WORD_OFFSET);
-								insert_before_ins (bb, ins, load_ins, &prev);
-								NEW_LOAD_MEMBASE (cfg, load_ins, OP_LOADI4_MEMBASE, sreg + 1, var->inst_basereg, var->inst_offset + MINI_LS_WORD_OFFSET);
-								insert_before_ins (bb, ins, load_ins, &prev);
-							}
-							else {
+						if (regtype == 'l') {
+							NEW_LOAD_MEMBASE (cfg, load_ins, OP_LOADI4_MEMBASE, sreg + 2, var->inst_basereg, var->inst_offset + MINI_MS_WORD_OFFSET);
+							insert_before_ins (bb, ins, load_ins, &prev);
+							NEW_LOAD_MEMBASE (cfg, load_ins, OP_LOADI4_MEMBASE, sreg + 1, var->inst_basereg, var->inst_offset + MINI_LS_WORD_OFFSET);
+							insert_before_ins (bb, ins, load_ins, &prev);
+						}
+						else {
 #if SIZEOF_VOID_P == 4
-								g_assert (load_opcode != OP_LOADI8_MEMBASE);
+							g_assert (load_opcode != OP_LOADI8_MEMBASE);
 #endif
-								NEW_LOAD_MEMBASE (cfg, load_ins, load_opcode, sreg, var->inst_basereg, var->inst_offset);
-								insert_before_ins (bb, ins, load_ins, &prev);
-							}
+							NEW_LOAD_MEMBASE (cfg, load_ins, load_opcode, sreg, var->inst_basereg, var->inst_offset);
+							insert_before_ins (bb, ins, load_ins, &prev);
 						}
 					}
 				}
+			}
+
+			if (dest_has_lvreg) {
+				vreg_to_lvreg [prev_dreg] = ins->dreg;
+				g_assert (lvregs_len < 1024);
+				lvregs [lvregs_len ++] = prev_dreg;
+				dest_has_lvreg = FALSE;
 			}
 
 			if (store) {
@@ -9757,7 +9779,10 @@ mono_spill_global_vars (MonoCompile *cfg)
 			}
 
 			if (MONO_IS_CALL (ins)) {
-				memset (vreg_to_lvreg, 0, sizeof (guint32) * orig_next_vireg);
+				/* Clear vreg_to_lvreg array */
+				for (i = 0; i < lvregs_len; i++)
+					vreg_to_lvreg [lvregs [i]] = 0;
+				lvregs_len = 0;
 			}
 
 			if (cfg->verbose_level > 1)

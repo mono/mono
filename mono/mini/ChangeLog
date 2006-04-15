@@ -1,5 +1,8 @@
 2006-04-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_spill_global_vars): Optimize the lvreg optimization, and fix
+	some small bugs.
+
 	* mini-codegen.c (mono_local_regalloc): Fix yet another bug in the handling of
 	fixed sreg1.
 
