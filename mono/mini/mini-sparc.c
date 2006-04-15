@@ -1012,6 +1012,11 @@ mono_arch_allocate_vars (MonoCompile *m)
 	g_free (cinfo);
 }
 
+void
+mono_arch_create_vars (MonoCompile *cfg)
+{
+}
+
 static MonoInst *
 make_group (MonoCompile *cfg, MonoInst *left, int basereg, int offset)
 {
@@ -1215,6 +1220,24 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 
 	g_free (cinfo);
 	return call;
+}
+
+MonoCallInst*
+mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual)
+{
+	NOT_IMPLEMENTED;
+}
+
+void
+mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins)
+{
+	NOT_IMPLEMENTED;
+}
+
+void
+mono_arch_emit_setret (MonoCompile *cfg, MonoMethod *method, MonoInst *val)
+{
+  NOT_IMPLEMENTED;
 }
 
 /* Map opcode to the sparc condition codes */
@@ -4267,6 +4290,22 @@ mono_arch_get_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethod
 		strcmp (cmethod->name, "MemoryBarrier") == 0) {
 		if (sparcv9)
 			MONO_INST_NEW (cfg, ins, OP_MEMORY_BARRIER);
+	}
+
+	return ins;
+}
+
+MonoInst*
+mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
+{
+	MonoInst *ins = NULL;
+
+	if (cmethod->klass == mono_defaults.thread_class &&
+		strcmp (cmethod->name, "MemoryBarrier") == 0) {
+		if (sparcv9) {
+			MONO_INST_NEW (cfg, ins, OP_MEMORY_BARRIER);
+			MONO_ADD_INS (cfg->cbb, ins);
+		}
 	}
 
 	return ins;
