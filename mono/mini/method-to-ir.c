@@ -9372,7 +9372,6 @@ mono_handle_global_vregs (MonoCompile *cfg)
 				 * that would cause the lvreg to be spilled, making the whole optimization
 				 * useless.
 				 */
-				/* FIXME: Only on platforms where the regs used for local regalloc are callee-saved */
 				if (vreg_to_bb [var->dreg]) {
 					MonoInst *ins;
 					int def_index, call_index, ins_index;
@@ -9886,6 +9885,8 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - implement pass+receive vtypes in registers.
  * - sig->ret->byref seems to be set for some calls made from ldfld wrappers when
  *   running generics.exe.
+ * - create a helper function for allocating a stack slot, taking into account 
+ *   MONO_CFG_HAS_SPILLUP.
  * - LAST MERGE: 59160.
  */
 

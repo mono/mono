@@ -1,5 +1,10 @@
 2006-04-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ia64.c (mono_arch_allocate_vars): Fix the computation of some stack slots
+	when fp is eliminated.
+
+	* method-to-ir.c: Add a FIXME.
+	
 	* method-to-ir.c (mono_spill_global_vars): Optimize the lvreg optimization, and fix
 	some small bugs.
 

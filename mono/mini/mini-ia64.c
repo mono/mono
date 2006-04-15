@@ -938,25 +938,32 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 			}
 
 			if (!inreg && (ainfo->storage != ArgOnStack)) {
+				guint32 size = 0;
+
 				inst->opcode = OP_REGOFFSET;
 				inst->inst_basereg = cfg->frame_reg;
 				/* These arguments are saved to the stack in the prolog */
 				switch (ainfo->storage) {
 				case ArgAggregate:
 					if (ainfo->atype == AggregateSingleHFA)
-						offset += ainfo->nslots * 4;
+						size = ainfo->nslots * 4;
 					else
-						offset += ainfo->nslots * 8;
+						size = ainfo->nslots * 8;
 					break;
 				default:
-					offset += sizeof (gpointer);
+					size = sizeof (gpointer);
 					break;
 				}
+
 				offset = ALIGN_TO (offset, sizeof (gpointer));
-				if (cfg->arch.omit_fp)
+
+				if (cfg->arch.omit_fp) {
 					inst->inst_offset = offset;
-				else
+					offset += size;
+				} else {
+					offset += size;
 					inst->inst_offset = - offset;
+				}
 			}
 		}
 	}
