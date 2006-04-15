@@ -820,10 +820,20 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 	    (cfg)->cbb = (bblock); \
     } while (0)
 
-#if defined(__i386__) || defined(__x86__64)
+#if defined(__i386__)
 #define MONO_EMIT_BOUNDS_CHECK(cfg, array_reg, array_type, array_length_field, index_reg) do { \
             MonoInst *ins; \
             MONO_INST_NEW ((cfg), ins, OP_X86_COMPARE_MEMBASE_REG); \
+            ins->inst_basereg = array_reg; \
+            ins->inst_offset = G_STRUCT_OFFSET (array_type, array_length_field); \
+            ins->sreg2 = index_reg; \
+            MONO_ADD_INS ((cfg)->cbb, ins); \
+			MONO_EMIT_NEW_COND_EXC (cfg, LE_UN, "IndexOutOfRangeException"); \
+	} while (0)
+#elif defined(__x86_64__)
+#define MONO_EMIT_BOUNDS_CHECK(cfg, array_reg, array_type, array_length_field, index_reg) do { \
+            MonoInst *ins; \
+            MONO_INST_NEW ((cfg), ins, OP_AMD64_ICOMPARE_MEMBASE_REG); \
             ins->inst_basereg = array_reg; \
             ins->inst_offset = G_STRUCT_OFFSET (array_type, array_length_field); \
             ins->sreg2 = index_reg; \

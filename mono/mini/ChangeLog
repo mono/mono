@@ -1,5 +1,7 @@
 2006-04-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (MONO_EMIT_BOUNDS_CHECK): Add a correct amd64 version.
+	
 	* method-to-ir.c (mono_spill_global_vars): Fix a bug in the lvreg optimization.
 
 	* mini-ops.h cpu-amd64.md mini-amd64.c: Add some membase_reg/membase_imm opcodes.
