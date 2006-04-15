@@ -103,12 +103,24 @@ namespace System.Xml.Serialization {
 		}
 
 		public XmlTypeMapping ImportTypeMapping (Type type, string defaultNamespace)
-		{ 
+		{
 			if (type == null)
 				throw new ArgumentNullException ("type");
 
 			if (type == typeof (void))
 				throw new InvalidOperationException ("Type " + type.Name + " may not be serialized.");
+
+			return ImportTypeMapping (TypeTranslator.GetTypeData (type),
+				defaultNamespace);
+		}
+
+		internal XmlTypeMapping ImportTypeMapping (TypeData typeData, string defaultNamespace)
+		{
+			if (typeData == null)
+				throw new ArgumentNullException ("typeData");
+
+			if (typeData.Type == null)
+				throw new ArgumentException ("Specified TypeData instance does not have Type set.");
 
 			string oldNs = initialDefaultNamespace;
 			if (defaultNamespace == null) defaultNamespace = initialDefaultNamespace;
@@ -116,20 +128,19 @@ namespace System.Xml.Serialization {
 			initialDefaultNamespace = defaultNamespace; 
 
 			XmlTypeMapping map;
-			switch (TypeTranslator.GetTypeData(type).SchemaType)
-			{
-				case SchemaTypes.Class: map = ImportClassMapping (type, defaultNamespace); break;
-				case SchemaTypes.Array: map = ImportListMapping (type, defaultNamespace); break;
-				case SchemaTypes.XmlNode: throw CreateTypeException (type);
-				case SchemaTypes.Primitive: map = ImportPrimitiveMapping (type, defaultNamespace); break;
-				case SchemaTypes.Enum: map = ImportEnumMapping (type, defaultNamespace); break;
+			switch (typeData.SchemaType) {
+				case SchemaTypes.Class: map = ImportClassMapping (typeData, defaultNamespace); break;
+				case SchemaTypes.Array: map = ImportListMapping (typeData, defaultNamespace); break;
+				case SchemaTypes.XmlNode: throw CreateTypeException (typeData.Type);
+				case SchemaTypes.Primitive: map = ImportPrimitiveMapping (typeData, defaultNamespace); break;
+				case SchemaTypes.Enum: map = ImportEnumMapping (typeData, defaultNamespace); break;
 				case SchemaTypes.XmlSerializable:
-				default: throw new NotSupportedException ("Type " + type.FullName + " not supported for XML serialization");
+				default: throw new NotSupportedException ("Type " + typeData.Type.FullName + " not supported for XML serialization");
 			}
 			map.RelatedMaps = relatedMaps;
 			map.Format = SerializationFormat.Encoded;
 			Type[] extraTypes = includedTypes != null ? (Type[])includedTypes.ToArray(typeof(Type)) : null;
-			map.Source = new SoapTypeSerializationSource (type, attributeOverrides, defaultNamespace, extraTypes);
+			map.Source = new SoapTypeSerializationSource (typeData.Type, attributeOverrides, defaultNamespace, extraTypes);
 			
 			initialDefaultNamespace = oldNs;
 			return map;
@@ -176,12 +187,19 @@ namespace System.Xml.Serialization {
 
 		XmlTypeMapping ImportClassMapping (Type type, string defaultNamespace)
 		{
+			TypeData typeData = TypeTranslator.GetTypeData (type);
+			return ImportClassMapping (typeData, defaultNamespace);
+		}
+
+		XmlTypeMapping ImportClassMapping (TypeData typeData, string defaultNamespace)
+		{
+			Type type = typeData.Type;
+
 			if (type.IsValueType) throw CreateStructException (type);
+
 			if (type == typeof (object)) defaultNamespace = XmlSchema.Namespace;
 
 			ReflectionHelper.CheckSerializableType (type, false);
-				
-			TypeData typeData = TypeTranslator.GetTypeData (type);
 			XmlTypeMapping map = helper.GetRegisteredClrType (type, GetTypeNamespace (typeData, defaultNamespace));
 			if (map != null) return map;
 
@@ -279,9 +297,10 @@ namespace System.Xml.Serialization {
 			else return membersNamespace;
 		}
 		
-		XmlTypeMapping ImportListMapping (Type type, string defaultNamespace)
+		XmlTypeMapping ImportListMapping (TypeData typeData, string defaultNamespace)
 		{
-			TypeData typeData = TypeTranslator.GetTypeData (type);
+			Type type = typeData.Type;
+
 			XmlTypeMapping map = helper.GetRegisteredClrType (type, XmlSerializer.EncodingNamespace);
 			if (map != null) return map;
 
@@ -322,9 +341,9 @@ namespace System.Xml.Serialization {
 			return map;
 		}
 		
-		XmlTypeMapping ImportPrimitiveMapping (Type type, string defaultNamespace)
+		XmlTypeMapping ImportPrimitiveMapping (TypeData typeData, string defaultNamespace)
 		{
-			TypeData typeData = TypeTranslator.GetTypeData (type);
+			Type type = typeData.Type;
 			XmlTypeMapping map = helper.GetRegisteredClrType (type, GetTypeNamespace (typeData, defaultNamespace));
 			if (map != null) return map;
 			map = CreateTypeMapping (typeData, null, defaultNamespace);
@@ -332,10 +351,9 @@ namespace System.Xml.Serialization {
 			return map;
 		}
 
-
-		XmlTypeMapping ImportEnumMapping (Type type, string defaultNamespace)
+		XmlTypeMapping ImportEnumMapping (TypeData typeData, string defaultNamespace)
 		{
-			TypeData typeData = TypeTranslator.GetTypeData (type);
+			Type type = typeData.Type;
 			XmlTypeMapping map = helper.GetRegisteredClrType (type, GetTypeNamespace (typeData, defaultNamespace));
 			if (map != null) return map;
 			

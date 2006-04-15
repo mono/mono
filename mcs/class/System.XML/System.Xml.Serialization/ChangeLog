@@ -1,3 +1,14 @@
+2006-04-15  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XmlSchemaImporter.cs: Make sure we pass TypeData for primitive types
+	to XmlReflectionImporter and SoapReflectionImporter to keep from
+	always ending up with the XSD type that directly maps to the CLR type.
+	* XmlReflectionImporter.cs: Added overloads taking TypeData instead of
+	Type. This improves performance by avoiding the use of 
+	TypeTranslator.GetTypeData for types imported from a schema and fixes
+	bug #77907.
+	* SoapReflectionImporter.cs: Same.
+
 2006-04-11  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* XmlSchemas.cs: In 1.1, don't allow adding two schemas

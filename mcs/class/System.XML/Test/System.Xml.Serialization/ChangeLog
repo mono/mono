@@ -1,5 +1,9 @@
 2006-03-25  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* XmlSchemaImporterTests.cs: Enabled tests for bug #77907.
+
+2006-03-25  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* XmlSchemaImporterTests.cs: Added NotWorking tests as preparation
 	for XmlReflectionImporter and SoapReflectionImporter fixes. Reordered
 	tests.

@@ -246,8 +246,8 @@ namespace System.Xml.Serialization
 			
 			// Does not have the requested base type.
 			// Then, get/create a map for that base type.
-			
-			XmlTypeMapping baseMap = ReflectType (baseType, null);
+
+			XmlTypeMapping baseMap = ReflectType (baseType);
 			
 			// Add this map as a derived map of the base map
 
@@ -419,7 +419,7 @@ namespace System.Xml.Serialization
 			if (stype == null) {
 				// Importing a primitive type
 				TypeData td = TypeTranslator.GetPrimitiveTypeData (qname.Name);
-				return ReflectType (td.Type, name.Namespace);
+				return ReflectType (td, name.Namespace);
 			}
 			
 			XmlTypeMapping map = GetRegisteredTypeMapping (qname);
@@ -1792,18 +1792,24 @@ namespace System.Xml.Serialization
 			}
 			return grp;
 		}
-		
-		XmlTypeMapping ReflectType (Type type, string ns)
+
+		XmlTypeMapping ReflectType (Type type)
+		{
+			TypeData typeData = TypeTranslator.GetTypeData (type);
+			return ReflectType (typeData, (string) null);
+		}
+
+		XmlTypeMapping ReflectType (TypeData typeData, string ns)
 		{
 			if (!encodedFormat)
 			{
 				if (auxXmlRefImporter == null) auxXmlRefImporter = new XmlReflectionImporter ();
-				return auxXmlRefImporter.ImportTypeMapping (type, ns);
+				return auxXmlRefImporter.ImportTypeMapping (typeData, ns);
 			}
 			else
 			{
 				if (auxSoapRefImporter == null) auxSoapRefImporter = new SoapReflectionImporter ();
-				return auxSoapRefImporter.ImportTypeMapping (type, ns);
+				return auxSoapRefImporter.ImportTypeMapping (typeData, ns);
 			}
 		}
 

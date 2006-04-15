@@ -170,31 +170,49 @@ namespace System.Xml.Serialization {
 			if (type == typeof (void))
 				throw new NotSupportedException ("The type " + type.FullName + " may not be serialized.");
 
+			return ImportTypeMapping (TypeTranslator.GetTypeData (type), root, 
+				defaultNamespace);
+		}
+
+		internal XmlTypeMapping ImportTypeMapping (TypeData typeData, string defaultNamespace)
+		{
+			return ImportTypeMapping (typeData, (XmlRootAttribute) null, 
+				defaultNamespace);
+		}
+
+		private XmlTypeMapping ImportTypeMapping (TypeData typeData, XmlRootAttribute root, string defaultNamespace)
+		{
+			if (typeData == null)
+				throw new ArgumentNullException ("typeData");
+
+			if (typeData.Type == null)
+				throw new ArgumentException ("Specified TypeData instance does not have Type set.");
+
 			if (defaultNamespace == null) defaultNamespace = initialDefaultNamespace;
 			if (defaultNamespace == null) defaultNamespace = string.Empty;
 
 			try {
 				XmlTypeMapping map;
 
-				switch (TypeTranslator.GetTypeData (type).SchemaType) {
-					case SchemaTypes.Class: map = ImportClassMapping (type, root, defaultNamespace); break;
-					case SchemaTypes.Array: map = ImportListMapping (type, root, defaultNamespace, null, 0); break;
-					case SchemaTypes.XmlNode: map = ImportXmlNodeMapping (type, root, defaultNamespace); break;
-					case SchemaTypes.Primitive: map = ImportPrimitiveMapping (type, root, defaultNamespace); break;
-					case SchemaTypes.Enum: map = ImportEnumMapping (type, root, defaultNamespace); break;
-					case SchemaTypes.XmlSerializable: map = ImportXmlSerializableMapping (type, root, defaultNamespace); break;
-					default: throw new NotSupportedException ("Type " + type.FullName + " not supported for XML stialization");
+				switch (typeData.SchemaType) {
+					case SchemaTypes.Class: map = ImportClassMapping (typeData, root, defaultNamespace); break;
+					case SchemaTypes.Array: map = ImportListMapping (typeData, root, defaultNamespace, null, 0); break;
+					case SchemaTypes.XmlNode: map = ImportXmlNodeMapping (typeData, root, defaultNamespace); break;
+					case SchemaTypes.Primitive: map = ImportPrimitiveMapping (typeData, root, defaultNamespace); break;
+					case SchemaTypes.Enum: map = ImportEnumMapping (typeData, root, defaultNamespace); break;
+					case SchemaTypes.XmlSerializable: map = ImportXmlSerializableMapping (typeData, root, defaultNamespace); break;
+					default: throw new NotSupportedException ("Type " + typeData.Type.FullName + " not supported for XML stialization");
 				}
 
 				map.RelatedMaps = relatedMaps;
 				map.Format = SerializationFormat.Literal;
 				Type[] extraTypes = includedTypes != null ? (Type[]) includedTypes.ToArray (typeof (Type)) : null;
-				map.Source = new XmlTypeSerializationSource (type, root, attributeOverrides, defaultNamespace, extraTypes);
+				map.Source = new XmlTypeSerializationSource (typeData.Type, root, attributeOverrides, defaultNamespace, extraTypes);
 				if (allowPrivateTypes) map.Source.CanBeGenerated = false;
 				return map;
 			} catch (InvalidOperationException ex) {
 				throw new InvalidOperationException (string.Format (CultureInfo.InvariantCulture,
-					"There was an error reflecting type '{0}'.", type.FullName), ex);
+					"There was an error reflecting type '{0}'.", typeData.Type.FullName), ex);
 			}
 		}
 
@@ -277,6 +295,13 @@ namespace System.Xml.Serialization {
 		XmlTypeMapping ImportClassMapping (Type type, XmlRootAttribute root, string defaultNamespace)
 		{
 			TypeData typeData = TypeTranslator.GetTypeData (type);
+			return ImportClassMapping (typeData, root, defaultNamespace);
+		}
+
+		XmlTypeMapping ImportClassMapping (TypeData typeData, XmlRootAttribute root, string defaultNamespace)
+		{
+			Type type = typeData.Type;
+
 			XmlTypeMapping map = helper.GetRegisteredClrType (type, GetTypeNamespace (typeData, root, defaultNamespace));
 			if (map != null) return map;
 
@@ -410,6 +435,12 @@ namespace System.Xml.Serialization {
 		XmlTypeMapping ImportListMapping (Type type, XmlRootAttribute root, string defaultNamespace, XmlAttributes atts, int nestingLevel)
 		{
 			TypeData typeData = TypeTranslator.GetTypeData (type);
+			return ImportListMapping (typeData, root, defaultNamespace, atts, nestingLevel);
+		}
+
+		XmlTypeMapping ImportListMapping (TypeData typeData, XmlRootAttribute root, string defaultNamespace, XmlAttributes atts, int nestingLevel)
+		{
+			Type type = typeData.Type;
 			ListMap obmap = new ListMap ();
 
 			if (!allowPrivateTypes)
@@ -521,12 +552,13 @@ namespace System.Xml.Serialization {
 			return map;
 		}
 
-		XmlTypeMapping ImportXmlNodeMapping (Type type, XmlRootAttribute root, string defaultNamespace)
+		XmlTypeMapping ImportXmlNodeMapping (TypeData typeData, XmlRootAttribute root, string defaultNamespace)
 		{
-			XmlTypeMapping map = helper.GetRegisteredClrType (type, GetTypeNamespace (TypeTranslator.GetTypeData (type), root, defaultNamespace));
+			Type type = typeData.Type;
+			XmlTypeMapping map = helper.GetRegisteredClrType (type, GetTypeNamespace (typeData, root, defaultNamespace));
 			if (map != null) return map;
 
-			map = CreateTypeMapping (TypeTranslator.GetTypeData (type), root, null, defaultNamespace);
+			map = CreateTypeMapping (typeData, root, null, defaultNamespace);
 			helper.RegisterClrType (map, type, map.XmlTypeNamespace);
 			
 			if (type.BaseType != null)
@@ -541,9 +573,9 @@ namespace System.Xml.Serialization {
 			return map;
 		}
 
-		XmlTypeMapping ImportPrimitiveMapping (Type type, XmlRootAttribute root, string defaultNamespace)
+		XmlTypeMapping ImportPrimitiveMapping (TypeData typeData, XmlRootAttribute root, string defaultNamespace)
 		{
-			TypeData typeData = TypeTranslator.GetTypeData (type);
+			Type type = typeData.Type;
 			XmlTypeMapping map = helper.GetRegisteredClrType (type, GetTypeNamespace (typeData, root, defaultNamespace));
 			if (map != null) return map;
 			map = CreateTypeMapping (typeData, root, null, defaultNamespace);
@@ -551,9 +583,9 @@ namespace System.Xml.Serialization {
 			return map;
 		}
 
-		XmlTypeMapping ImportEnumMapping (Type type, XmlRootAttribute root, string defaultNamespace)
+		XmlTypeMapping ImportEnumMapping (TypeData typeData, XmlRootAttribute root, string defaultNamespace)
 		{
-			TypeData typeData = TypeTranslator.GetTypeData (type);
+			Type type = typeData.Type;
 			XmlTypeMapping map = helper.GetRegisteredClrType (type, GetTypeNamespace (typeData, root, defaultNamespace));
 			if (map != null) return map;
 			
@@ -584,9 +616,9 @@ namespace System.Xml.Serialization {
 			return map;
 		}
 
-		XmlTypeMapping ImportXmlSerializableMapping (Type type, XmlRootAttribute root, string defaultNamespace)
+		XmlTypeMapping ImportXmlSerializableMapping (TypeData typeData, XmlRootAttribute root, string defaultNamespace)
 		{
-			TypeData typeData = TypeTranslator.GetTypeData (type);
+			Type type = typeData.Type;
 			XmlTypeMapping map = helper.GetRegisteredClrType (type, GetTypeNamespace (typeData, root, defaultNamespace));
 			if (map != null) return map;
 			

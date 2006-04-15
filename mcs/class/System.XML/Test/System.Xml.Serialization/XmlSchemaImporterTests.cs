@@ -64,7 +64,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ImportTypeMapping_XsdPrimitive_AnyURI ()
 		{
 			string schemaFragment = "<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
@@ -199,7 +198,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ImportTypeMapping_XsdPrimitive_Date ()
 		{
 			string schemaFragment = "<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
@@ -310,7 +308,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ImportTypeMapping_XsdPrimitive_ENTITIES ()
 		{
 			string schemaFragment = "<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
@@ -340,7 +337,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ImportTypeMapping_XsdPrimitive_ENTITY ()
 		{
 			string schemaFragment = "<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
@@ -387,7 +383,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ImportTypeMapping_XsdPrimitive_GDay ()
 		{
 			string schemaFragment = "<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
@@ -417,7 +412,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ImportTypeMapping_XsdPrimitive_GMonthDay ()
 		{
 			string schemaFragment = "<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
@@ -480,7 +474,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ImportTypeMapping_XsdPrimitive_GYear ()
 		{
 			string schemaFragment = "<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
@@ -510,7 +503,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ImportTypeMapping_XsdPrimitive_GYearMonth ()
 		{
 			string schemaFragment = "<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
@@ -540,7 +532,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ImportTypeMapping_XsdPrimitive_HexBinary ()
 		{
 			string schemaFragment = "<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
@@ -570,7 +561,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ImportTypeMapping_XsdPrimitive_IDREFS ()
 		{
 			string schemaFragment = "<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
@@ -617,7 +607,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ImportTypeMapping_XsdPrimitive_Integer ()
 		{
 			string schemaFragment = "<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
@@ -737,7 +726,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ImportTypeMapping_XsdPrimitive_Time ()
 		{
 			string schemaFragment = "<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
