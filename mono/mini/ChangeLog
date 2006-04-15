@@ -1,5 +1,8 @@
 2006-04-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-codegen.c (mono_local_regalloc): Fix yet another bug in the handling of
+	fixed sreg1.
+
 	* method-to-ir.c (MONO_EMIT_BOUNDS_CHECK): Add a correct amd64 version.
 	
 	* method-to-ir.c (mono_spill_global_vars): Fix a bug in the lvreg optimization.

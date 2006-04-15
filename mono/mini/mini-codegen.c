@@ -1643,7 +1643,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (dest_sreg1 != -1) {
 				sreg1_mask = regmask (dest_sreg1);
 
-				if (!(rs->ifree_mask & (regmask (dest_sreg1)))) {
+				if ((rassign (cfg, ins->sreg1, fp) != dest_sreg1) && !(rs->ifree_mask & (regmask (dest_sreg1)))) {
 					DEBUG (printf ("\tforced spill of R%d\n", rs->isymbolic [dest_sreg1]));
 					get_register_force_spilling (cfg, tmp, ins, rs->isymbolic [dest_sreg1], FALSE);
 					mono_regstate2_free_int (rs, dest_sreg1);
