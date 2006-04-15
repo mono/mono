@@ -912,6 +912,12 @@ typedef enum {
 	CMP_GT_UN
 } CompRelation;
 
+typedef enum {
+	CMP_TYPE_L,
+	CMP_TYPE_I,
+	CMP_TYPE_F
+} CompType;
+
 /* Implicit exceptions */
 enum {
 	MONO_EXC_INDEX_OUT_OF_RANGE,
@@ -1046,6 +1052,7 @@ void              mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb);
 MonoInst         *mono_branch_optimize_exception_target (MonoCompile *cfg, MonoBasicBlock *bb, const char * exname);		  
 void              mini_emit_memcpy2 (MonoCompile *cfg, int destreg, int doffset, int srcreg, int soffset, int size, int align);
 CompRelation      mono_opcode_to_cond (int opcode);
+CompType          mono_opcode_to_type (int opcode, int cmp_opcode);
 
 void              mono_decompose_long_opts (MonoCompile *cfg);
 void              mono_decompose_vtype_opts (MonoCompile *cfg);

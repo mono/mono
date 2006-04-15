@@ -2090,3 +2090,39 @@ mono_opcode_to_cond (int opcode)
 		NOT_IMPLEMENTED;
 	}
 }
+
+CompType
+mono_opcode_to_type (int opcode, int cmp_opcode)
+{
+	if ((opcode >= CEE_BEQ) && (opcode <= CEE_BLT_UN))
+		return CMP_TYPE_L;
+	else if ((opcode >= OP_CEQ) && (opcode <= OP_CLT_UN))
+		return CMP_TYPE_L;
+	else if ((opcode >= OP_IBEQ) && (opcode <= OP_IBLT_UN))
+		return CMP_TYPE_I;
+	else if ((opcode >= OP_ICEQ) && (opcode <= OP_ICLT_UN))
+		return CMP_TYPE_I;
+	else if ((opcode >= OP_LBEQ) && (opcode <= OP_LBLT_UN))
+		return CMP_TYPE_L;
+	else if ((opcode >= OP_LCEQ) && (opcode <= OP_LCLT_UN))
+		return CMP_TYPE_L;
+	else if ((opcode >= OP_FBEQ) && (opcode <= OP_FBLT_UN))
+		return CMP_TYPE_F;
+	else if ((opcode >= OP_FCEQ) && (opcode <= OP_FCLT_UN))
+		return CMP_TYPE_F;
+	else if ((opcode >= OP_COND_EXC_IEQ) && (opcode <= OP_COND_EXC_ILT_UN))
+		return CMP_TYPE_I;
+	else if ((opcode >= OP_COND_EXC_EQ) && (opcode <= OP_COND_EXC_LT_UN)) {
+		switch (cmp_opcode) {
+		case OP_ICOMPARE:
+		case OP_ICOMPARE_IMM:
+		case OP_LCOMPARE_IMM:
+			return CMP_TYPE_I;
+		default:
+			return CMP_TYPE_L;
+		}
+	} else {
+		g_error ("Unknown opcode '%s' in opcode_to_type", mono_inst_name (opcode));
+		return 0;
+	}
+}
