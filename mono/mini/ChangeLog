@@ -1,5 +1,7 @@
 2006-04-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ops.h: Correct metadata of OP_SETFRET.
+
 	* method-to-ir.c (mono_spill_global_vars): Fix handling of long vregs on 
 	big-endian platforms.
 
