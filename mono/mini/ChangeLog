@@ -1,5 +1,8 @@
 2006-04-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mono_compile_create_vars): Print the definitions of the arguments etc.
+	when in verbose mode.
+
 	* method-to-ir.c (mono_decompose_long_opts): Add LNEG implementation for sparc.
 
 	* cpu-sparc.md mini-sparc.h mini-sparc.c: Sparc porting work.	

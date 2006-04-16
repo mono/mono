@@ -9473,6 +9473,23 @@ mono_compile_create_vars (MonoCompile *cfg)
 		}
 	}
 
+	if (cfg->new_ir && cfg->verbose_level > 2) {
+		if (cfg->ret) {
+			printf ("\treturn : ");
+			mono_print_ins (cfg->ret);
+		}
+
+		if (sig->hasthis) {
+			printf ("\tthis: ");
+			mono_print_ins (cfg->args [0]);
+		}
+
+		for (i = 0; i < sig->param_count; ++i) {
+			printf ("\targ [%d]: ", i);
+			mono_print_ins (cfg->args [i + sig->hasthis]);
+		}
+	}
+
 	cfg->locals_start = cfg->num_varinfo;
 	cfg->locals = mono_mempool_alloc0 (cfg->mempool, header->num_locals * sizeof (MonoInst*));
 
