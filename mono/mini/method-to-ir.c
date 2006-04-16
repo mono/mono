@@ -4618,6 +4618,8 @@ mono_decompose_long_opts (MonoCompile *cfg)
 	 * needs to be able to handle long vregs.
 	 */
 
+	/* reg + 1 contains the ls word, reg + 2 contains the ms word */
+
 	/**
 	 * Create a dummy bblock and emit code into it so we can use the normal 
 	 * code generation macros.
@@ -9477,13 +9479,13 @@ mono_spill_global_vars (MonoCompile *cfg)
 				g_assert (tree);
 				tree->opcode = OP_REGOFFSET;
 				tree->inst_basereg = ins->inst_basereg;
-				tree->inst_offset = ins->inst_offset;
+				tree->inst_offset = ins->inst_offset + MINI_LS_WORD_OFFSET;
 
 				tree = get_vreg_to_inst (cfg, ins->dreg + 2);
 				g_assert (tree);
 				tree->opcode = OP_REGOFFSET;
 				tree->inst_basereg = ins->inst_basereg;
-				tree->inst_offset = ins->inst_offset + 4;
+				tree->inst_offset = ins->inst_offset + MINI_MS_WORD_OFFSET;
 				break;
 			}
 			default:
