@@ -1,5 +1,7 @@
 2006-04-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ia64.c (mono_arch_call_opcode2): Simplify the code a bit.
+
 	* mini-ia64.c: Remove opcode_to_type () which is now in mini-codegen.c.
 
 	* mini.c (mono_compile_create_vars): Print the definitions of the arguments etc.

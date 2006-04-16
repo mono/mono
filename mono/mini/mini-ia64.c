@@ -1026,8 +1026,11 @@ add_outarg_reg (MonoCompile *cfg, MonoCallInst *call, MonoInst *arg, ArgStorage 
 }
 
 static void
-add_outarg_reg2 (MonoCompile *cfg, MonoCallInst *call, MonoInst *arg, ArgStorage storage, int reg, MonoInst *tree)
+add_outarg_reg2 (MonoCompile *cfg, MonoCallInst *call, ArgStorage storage, int reg, MonoInst *tree)
 {
+	MonoInst *arg;
+
+	MONO_INST_NEW (cfg, arg, OP_NOP);
 	arg->sreg1 = tree->dreg;
 
 	switch (storage) {
@@ -1296,7 +1299,7 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 MonoCallInst*
 mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual)
 {
-	MonoInst *arg, *in;
+	MonoInst *in;
 	MonoMethodSignature *sig;
 	int i, n, stack_size;
 	CallInfo *cinfo;
@@ -1331,14 +1334,7 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual)
 	}
 
 	if (cinfo->ret.storage == ArgValuetypeAddrInIReg) {
-		MonoInst *vtarg;
-
-		MONO_INST_NEW (cfg, vtarg, OP_MOVE);
-		vtarg->sreg1 = call->vret_var->dreg;
-		vtarg->dreg = mono_alloc_preg (cfg);
-		mono_bblock_add_inst (cfg->cbb, vtarg);
-
-		mono_call_inst_add_outarg_reg (cfg, call, vtarg->dreg, cfg->arch.reg_out0 + cinfo->ret.reg, FALSE);
+		add_outarg_reg2 (cfg, call, ArgInIReg, cfg->arch.reg_out0 + cinfo->ret.reg, call->vret_var);
 	}
 
 	for (i = 0; i < n; ++i) {
@@ -1375,7 +1371,6 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual)
 			MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STOREI8_MEMBASE_REG, IA64_SP, 16 + cinfo->sig_cookie.offset, sig_arg->dreg);
 		}
 
-		MONO_INST_NEW (cfg, arg, OP_OUTARG);
 		in = call->args [i];
 
 		if (sig->hasthis && (i == 0))
@@ -1404,7 +1399,9 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual)
 			}
 
 			if (size > 0) {
-				arg->opcode = OP_OUTARG_VT;
+				MonoInst *arg;
+
+				MONO_INST_NEW (cfg, arg, OP_OUTARG_VT);
 				arg->sreg1 = in->dreg;
 				arg->klass = in->klass;
 				arg->unused = size;
@@ -1418,10 +1415,10 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual)
 		else {
 			switch (ainfo->storage) {
 			case ArgInIReg:
-				add_outarg_reg2 (cfg, call, arg, ainfo->storage, cfg->arch.reg_out0 + ainfo->reg, in);
+				add_outarg_reg2 (cfg, call, ainfo->storage, cfg->arch.reg_out0 + ainfo->reg, in);
 				break;
 			case ArgInFloatReg:
-				add_outarg_reg2 (cfg, call, arg, ainfo->storage, ainfo->reg, in);
+				add_outarg_reg2 (cfg, call, ainfo->storage, ainfo->reg, in);
 				break;
 			case ArgOnStack:
 				if (arg_type->type == MONO_TYPE_R4 && !arg_type->byref)
