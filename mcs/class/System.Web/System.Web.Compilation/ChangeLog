@@ -1,3 +1,8 @@
+2006-04-16  Andrew Skiba <andrews@mainsoft.com>
+
+	* ThemeDirectoryCompiler.cs: add to the directory parser all the
+	assemblies found by PageThemeFileParsers
+
 2006-04-12  Lluis Sanchez Gual <lluis@novell.com>
 
 	* TemplateControlCompiler.cs: Properly read all content of

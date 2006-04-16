@@ -62,6 +62,10 @@ namespace System.Web.UI
 						continue;
 					ptp.RootBuilder.AppendSubBuilder ((ControlBuilder)o);
 				}
+
+				foreach (string ass in ptfp.Assemblies)
+					if (!ptp.Assemblies.Contains (ass))
+						ptp.AddAssemblyByFileName (ass);
 			}
 
 			PageThemeCompiler compiler = new PageThemeCompiler (ptp);

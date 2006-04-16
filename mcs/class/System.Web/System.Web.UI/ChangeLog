@@ -1,8 +1,12 @@
+2006-04-16 Andrew Skiba <andrews@mainsoft.com>
+
+	* TemplateParser.cs: add internal method AddAssemblyByFileName
+
 2006-04-16 Konstantin Triger <kostat@mainsoft.com>
 
 	* SimpleWebHandlerParser.cs: correctly resolve GACs dependencies.
 
-006-04-11 Konstantin Triger <kostat@mainsoft.com>
+2006-04-11 Konstantin Triger <kostat@mainsoft.com>
 
 	* Page.cs, TemplateControl.cs: refactoring implementing Page.GetDataItem().
 
