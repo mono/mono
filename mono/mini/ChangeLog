@@ -1,5 +1,15 @@
 2006-04-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ops.h: Add OP_VTARG_ADDR opcode.
+
+	* method-to-ir.c (mono_spill_global_vars): Add support for architectures where
+	vtypes are passed by reference, i.e. their address is passed as a parameter.
+
+	* mini-codegen.c (mono_local_regalloc): Clear rs->iassign[] entry for vregs clobbered
+	by a call.
+
+	* cpu-sparc.md mini-sparc.c: Sparc porting work.
+
 	* mini-sparc.c: Sparc porting work.
 
 	* mini-<ARCH>.c: Rename mono_arch_call_opcode2 () to mono_arch_emit_call () and simplify its signature.

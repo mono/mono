@@ -942,6 +942,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 #endif
 
 			/* FIXME: Allocate volatile arguments to registers */
+			/* FIXME: This makes the argument holding a vtype address into volatile */
 			if (inst->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT))
 				inreg = FALSE;
 
@@ -1020,7 +1021,10 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 				MonoInst *indir;
 				MONO_INST_NEW (cfg, indir, 0);
 				*indir = *inst;
-				inst->opcode = OP_SPARC_INARG_VT;
+				if (cfg->new_ir)
+					inst->opcode = OP_VTARG_ADDR;
+				else
+					inst->opcode = OP_SPARC_INARG_VT;
 				inst->inst_left = indir;
 			}
 		}
@@ -1273,6 +1277,16 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 
 #define EMIT_NEW_LOAD_MEMBASE(cfg,dest,op,dr,base,offset) do { NEW_LOAD_MEMBASE ((cfg), (dest), (op), (dr), (base), (offset)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
+#undef MONO_EMIT_NEW_STORE_MEMBASE_IMM
+#define MONO_EMIT_NEW_STORE_MEMBASE_IMM(cfg,op,base,offset,imm) do { \
+        MonoInst *inst; \
+        MONO_INST_NEW ((cfg), (inst), (op)); \
+        inst->inst_destbasereg = base; \
+        inst->inst_offset = offset; \
+        inst->inst_p1 = (gpointer)(gssize)imm; \
+        MONO_ADD_INS ((cfg)->cbb, inst); \
+	} while (0)
+
 static void
 add_outarg_reg2 (MonoCompile *cfg, MonoCallInst *call, ArgStorage storage, int reg, guint32 sreg)
 {
@@ -1474,7 +1488,7 @@ emit_pass_other (MonoCompile *cfg, MonoCallInst *call, ArgInfo *ainfo, MonoType 
 void
 mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 {
-	MonoInst *arg, *in;
+	MonoInst *in;
 	MonoMethodSignature *sig;
 	int i, n;
 	CallInfo *cinfo;
@@ -1498,10 +1512,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 
 		if ((sig->call_convention == MONO_CALL_VARARG) && (i == sig->sentinelpos)) {
 			/* Emit the signature cookie just before the first implicit argument */
-			MonoInst *sig_arg;
 			MonoMethodSignature *tmp_sig;
-
-			NOT_IMPLEMENTED;
 
 			/*
 			 * mono_ArgIterator_Setup assumes the signature cookie is 
@@ -1517,26 +1528,15 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 			/* FIXME: Add support for signature tokens to AOT */
 			cfg->disable_aot = TRUE;
 			/* We allways pass the signature on the stack for simplicity */
-			MONO_INST_NEW (cfg, arg, OP_SPARC_OUTARG_MEM);
-			arg->inst_right = make_group (cfg, (MonoInst*)call, sparc_sp, ARGS_OFFSET + cinfo->sig_cookie.offset);
-			MONO_INST_NEW (cfg, sig_arg, OP_ICONST);
-			sig_arg->inst_p0 = tmp_sig;
-			arg->inst_left = sig_arg;
-			arg->type = STACK_PTR;
-			/* prepend, so they get reversed */
-			arg->next = call->out_args;
-			call->out_args = arg;
+			MONO_EMIT_NEW_STORE_MEMBASE_IMM (cfg, OP_STORE_MEMBASE_IMM, sparc_sp, ARGS_OFFSET + cinfo->sig_cookie.offset, tmp_sig);
 		}
 
-		MONO_INST_NEW (cfg, arg, OP_OUTARG);
 		in = call->args [i];
 
 		if (sig->hasthis && (i == 0))
 			arg_type = &mono_defaults.object_class->byval_arg;
 		else
 			arg_type = sig->params [i - sig->hasthis];
-
-		arg->cil_code = in->cil_code;
 
 		if ((i >= sig->hasthis) && (MONO_TYPE_ISSTRUCT(sig->params [i - sig->hasthis])))
 			emit_pass_vtype (cfg, call, cinfo, ainfo, arg_type, in, sig->pinvoke);
@@ -1575,7 +1575,6 @@ mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins)
 {
 	MonoInst *src_var = get_vreg_to_inst (cfg, ins->sreg1);
 	MonoInst *src;
-	MonoCallInst *call = (MonoCallInst*)ins->inst_p0;
 	ArgInfo *ainfo = (ArgInfo*)ins->inst_p1;
 	int size = ins->unused;
 
@@ -3079,6 +3078,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			sparc_fdtos (code, ins->sreg1, ins->dreg);
 			break;
 		case CEE_JMP:
+		case OP_JMP:
 			if (cfg->method->save_lmf)
 				NOT_IMPLEMENTED;
 
@@ -3174,6 +3174,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case OP_LOCALLOC: {
 			guint32 size_reg;
+			gint32 offset2;
 
 #ifdef MONO_ARCH_SIGSEGV_ON_ALTSTACK
 			/* Perform stack touching */
@@ -3181,7 +3182,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 #endif
 
 			/* Keep alignment */
-			sparc_add_imm (code, FALSE, ins->sreg1, MONO_ARCH_FRAME_ALIGNMENT - 1, ins->dreg);
+			/* Add 4 to compensate for the rounding of localloc_offset */
+			sparc_add_imm (code, FALSE, ins->sreg1, 4 + MONO_ARCH_FRAME_ALIGNMENT - 1, ins->dreg);
 			sparc_set (code, ~(MONO_ARCH_FRAME_ALIGNMENT - 1), sparc_o7);
 			sparc_and (code, FALSE, ins->dreg, sparc_o7, ins->dreg);
 
@@ -3199,8 +3201,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			sparc_sub (code, FALSE, sparc_sp, ins->dreg, ins->dreg);
 			/* Keep %sp valid at all times */
 			sparc_mov_reg_reg (code, ins->dreg, sparc_sp);
-			g_assert (sparc_is_imm13 (MONO_SPARC_STACK_BIAS + cfg->arch.localloc_offset));
-			sparc_add_imm (code, FALSE, ins->dreg, MONO_SPARC_STACK_BIAS + cfg->arch.localloc_offset, ins->dreg);
+			/* Round localloc_offset too so the result is at least 8 aligned */
+			offset2 = ALIGN_TO (cfg->arch.localloc_offset, 8);
+			g_assert (sparc_is_imm13 (MONO_SPARC_STACK_BIAS + offset2));
+			sparc_add_imm (code, FALSE, ins->dreg, MONO_SPARC_STACK_BIAS + offset2, ins->dreg);
 
 			if (ins->flags & MONO_INST_INIT) {
 				guint32 *br [3];
@@ -3227,14 +3231,18 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 			break;
 		}
-		case OP_SPARC_LOCALLOC_IMM: {
-			gint32 offset = ins->inst_c0;
+		case OP_SPARC_LOCALLOC_IMM:
+		case OP_LOCALLOC_IMM: {
+			gint32 offset = cfg->new_ir ? ins->inst_imm : ins->inst_c0;
+			gint32 offset2;
 
 #ifdef MONO_ARCH_SIGSEGV_ON_ALTSTACK
 			/* Perform stack touching */
 			NOT_IMPLEMENTED;
 #endif
 
+			/* To compensate for the rounding of localloc_offset */
+			offset += sizeof (gpointer);
 			offset = ALIGN_TO (offset, MONO_ARCH_FRAME_ALIGNMENT);
 			if (sparc_is_imm13 (offset))
 				sparc_sub_imm (code, FALSE, sparc_sp, offset, sparc_sp);
@@ -3242,8 +3250,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				sparc_set (code, offset, sparc_o7);
 				sparc_sub (code, FALSE, sparc_sp, sparc_o7, sparc_sp);
 			}
-			g_assert (sparc_is_imm13 (MONO_SPARC_STACK_BIAS + cfg->arch.localloc_offset));
-			sparc_add_imm (code, FALSE, sparc_sp, MONO_SPARC_STACK_BIAS + cfg->arch.localloc_offset, ins->dreg);
+			/* Round localloc_offset too so the result is at least 8 aligned */
+			offset2 = ALIGN_TO (cfg->arch.localloc_offset, 8);
+			g_assert (sparc_is_imm13 (MONO_SPARC_STACK_BIAS + offset2));
+			sparc_add_imm (code, FALSE, sparc_sp, MONO_SPARC_STACK_BIAS + offset2, ins->dreg);
 			if ((ins->flags & MONO_INST_INIT) && (offset > 0)) {
 				guint32 *br [2];
 				int i;
@@ -3701,7 +3711,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			g_assert_not_reached ();
 			break;
 		}
-		case OP_LCONV_TO_OVF_I: {
+		case OP_LCONV_TO_OVF_I:
+		case OP_LCONV_TO_OVF_I4_2: {
 			guint32 *br [3], *label [1];
 
 			/* 
@@ -3835,7 +3846,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			EMIT_FLOAT_COND_BRANCH (ins, sparc_fble, 1, 1);
 			EMIT_FLOAT_COND_BRANCH (ins, sparc_fbu, 1, 1);
 			break;
-		case CEE_CKFINITE: {
+		case CEE_CKFINITE:
+		case OP_CKFINITE: {
 			gint32 offset = cfg->arch.float_spill_slot_offset;
 			if (!sparc_is_imm13 (offset))
 				NOT_IMPLEMENTED;

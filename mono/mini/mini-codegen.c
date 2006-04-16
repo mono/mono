@@ -1391,7 +1391,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 				if (spill)
 					create_spilled_store (cfg, spill, val, prev_dreg, ins, fp);
 			}
-				
+
 			DEBUG (printf ("\tassigned dreg %s to dest R%d\n", mono_regname_full (val, fp), ins->dreg));
 			ins->dreg = val;
 		}
@@ -1514,8 +1514,12 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 
 			for (j = 0; j < MONO_MAX_IREGS; ++j) {
 				s = regmask (j);
-				if ((clob_mask & s) && !(rs->ifree_mask & s) && (j != ins->sreg1) && (j != dreg) && (j != dreg2)) {
-					get_register_force_spilling (cfg, tmp, ins, rs->isymbolic [j], FALSE);
+				if ((clob_mask & s) && !(rs->ifree_mask & s) && (j != ins->sreg1)) {
+					if ((j != dreg) && (j != dreg2))
+						get_register_force_spilling (cfg, tmp, ins, rs->isymbolic [j], FALSE);
+					else if (rs->isymbolic [j])
+						/* The hreg is assigned to the dreg of this instruction */
+						rs->iassign [rs->isymbolic [j]] = -1;
 					mono_regstate2_free_int (rs, j);
 				}
 			}
@@ -1529,8 +1533,12 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 
 				for (j = 0; j < MONO_MAX_FREGS; ++j) {
 					s = regmask (j);
-					if ((clob_mask & s) && !(rs->ffree_mask & s) && (j != ins->sreg1) && (j != dreg)) {
-						get_register_force_spilling (cfg, tmp, ins, rs->fsymbolic [j], TRUE);
+					if ((clob_mask & s) && !(rs->ffree_mask & s) && (j != ins->sreg1)) {
+						if (j != dreg)
+							get_register_force_spilling (cfg, tmp, ins, rs->fsymbolic [j], TRUE);
+						else if (rs->fsymbolic [j])
+							/* The hreg is assigned to the dreg of this instruction */
+							rs->iassign [rs->fsymbolic [j]] = -1;
 						mono_regstate2_free_float (rs, j);
 					}
 				}

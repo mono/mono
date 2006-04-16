@@ -155,6 +155,7 @@ clt: dest:i len:64
 clt.un: dest:i len:64
 localloc: dest:i src1:i len:64
 sparc_localloc_imm: dest:i len:64
+localloc_imm: dest:i len:64
 compare: src1:i src2:i len:4
 icompare: src1:i src2:i len:4
 compare_imm: src1:i len:64
@@ -271,6 +272,7 @@ long_shl: dest:i src1:i src2:i len:64
 long_shr: dest:i src1:i src2:i len:64
 long_shr_un: dest:i src1:i src2:i len:64
 long_conv_to_ovf_i: dest:i src1:i src2:i len:48
+long_conv_to_ovf_i4_2: dest:i src1:i src2:i len:48
 long_mul_ovf: 
 long_conv_to_r_un: dest:f src1:i src2:i len:64 
 long_shr_imm: dest:i src1:i len:64

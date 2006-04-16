@@ -9552,11 +9552,26 @@ mono_spill_global_vars (MonoCompile *cfg)
 			if (ins->opcode == OP_LDADDR) {
 				MonoInst *var = ins->inst_p0;
 
-				g_assert (var->opcode == OP_REGOFFSET);
+				if (var->opcode == OP_VTARG_ADDR) {
+					/* Happens on SPARC where vtypes are passed by reference */
+					MonoInst *vtaddr = var->inst_left;
+					if (vtaddr->opcode == OP_REGVAR) {
+						ins->opcode = OP_MOVE;
+						ins->sreg1 = vtaddr->dreg;
+					}
+					else if (var->inst_left->opcode == OP_REGOFFSET) {
+						ins->opcode = OP_LOAD_MEMBASE;
+						ins->inst_basereg = vtaddr->inst_basereg;
+						ins->inst_offset = vtaddr->inst_offset;
+					} else
+						NOT_IMPLEMENTED;
+				} else {
+					g_assert (var->opcode == OP_REGOFFSET);
 
-				ins->opcode = OP_ADD_IMM;
-				ins->sreg1 = var->inst_basereg;
-				ins->inst_imm = var->inst_offset;
+					ins->opcode = OP_ADD_IMM;
+					ins->sreg1 = var->inst_basereg;
+					ins->inst_imm = var->inst_offset;
+				}
 
 				spec = ins_info [ins->opcode - OP_START - 1];
 			}
