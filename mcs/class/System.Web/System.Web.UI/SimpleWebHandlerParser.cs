@@ -88,7 +88,7 @@ namespace System.Web.UI
 				if (info.Assembly == "*")
 					addAssembliesInBin = true;
 				else
-					assemblies.Add (info.Assembly);
+					AddAssemblyByName (info.Assembly, null);
 			}
 			if (addAssembliesInBin)
 				AddAssembliesInBin ();
