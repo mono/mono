@@ -1,3 +1,7 @@
+2006-04-16 Konstantin Triger <kostat@mainsoft.com>
+
+	* SimpleWebHandlerParser.cs: correctly resolve GACs dependencies.
+
 2006-04-02  Chris Toshok  <toshok@ximian.com>
 
 	* Control.cs (DesignMode): always return false for now.  Fixes
