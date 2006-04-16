@@ -1466,8 +1466,9 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 
 #define EMIT_NEW_VARLOADA(cfg,dest,var,vartype) do { NEW_VARLOADA ((cfg), (dest), (var), (vartype)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
-MonoCallInst*
-mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
+void
+mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
+{
 	MonoInst *arg, *in;
 	MonoMethodSignature *sig;
 	int i, n, stack_size;
@@ -1619,10 +1620,7 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual) {
 	call->stack_usage = cinfo->stack_usage;
 	cfg->param_area = MAX (cfg->param_area, call->stack_usage);
 	cfg->flags |= MONO_CFG_HAS_CALLS;
-
-	return call;
 }
-
 
 void
 mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins)

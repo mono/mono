@@ -1292,12 +1292,10 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 	cfg->param_area = MAX (cfg->param_area, call->stack_usage);
 	cfg->arch.n_out_regs = MAX (cfg->arch.n_out_regs, cinfo->reg_usage);
 	cfg->flags |= MONO_CFG_HAS_CALLS;
-
-	return call;
 }
 
-MonoCallInst*
-mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual)
+void
+mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 {
 	MonoInst *in;
 	MonoMethodSignature *sig;

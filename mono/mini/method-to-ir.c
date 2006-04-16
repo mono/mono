@@ -2536,7 +2536,7 @@ mono_emit_call_args (MonoCompile *cfg, MonoMethodSignature *sig,
 	} else if (!MONO_TYPE_IS_VOID (sig->ret))
 		call->inst.dreg = alloc_dreg (cfg, call->inst.type);
 
-	call = mono_arch_call_opcode2 (cfg, call, virtual);
+	mono_arch_emit_call (cfg, call);
 	
 	return call;
 }
