@@ -248,7 +248,7 @@ mono_arch_cpu_optimizazions (guint32 *exclude_mask)
 }
 
 static void
-mono_sparc_break (void)
+mono_arch_break (void)
 {
 }
 
@@ -832,10 +832,16 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 #ifdef SPARCV9
 			g_assert_not_reached ();
 #else
-			/* valuetypes */
-			cfg->ret->opcode = OP_REGOFFSET;
-			cfg->ret->inst_basereg = sparc_fp;
-			cfg->ret->inst_offset = 64;
+			if (cfg->new_ir) {
+				cfg->vret_addr->opcode = OP_REGOFFSET;
+				cfg->vret_addr->inst_basereg = sparc_fp;
+				cfg->vret_addr->inst_offset = 64;
+			} else {
+				/* valuetypes */
+				cfg->ret->opcode = OP_REGOFFSET;
+				cfg->ret->inst_basereg = sparc_fp;
+				cfg->ret->inst_offset = 64;
+			}
 #endif
 			break;
 		default:
@@ -870,7 +876,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 	for (i = curinst; i < cfg->num_varinfo; ++i) {
 		inst = cfg->varinfo [i];
 
-		if (inst->opcode == OP_REGVAR) {
+		if ((inst->opcode == OP_REGVAR) || (inst->opcode == OP_REGOFFSET)) {
 			//g_print ("allocating local %d to %s\n", i, mono_arch_regname (inst->dreg));
 			continue;
 		}
@@ -1038,6 +1044,17 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 void
 mono_arch_create_vars (MonoCompile *cfg)
 {
+	MonoMethodSignature *sig;
+
+	sig = mono_method_signature (cfg->method);
+
+	if (MONO_TYPE_ISSTRUCT ((sig->ret))) {
+		cfg->vret_addr = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_ARG);
+		if (G_UNLIKELY (cfg->verbose_level > 1)) {
+			printf ("vret_addr = ");
+			mono_print_ins (cfg->vret_addr);
+		}
+	}
 }
 
 static MonoInst *
@@ -1368,6 +1385,65 @@ emit_pass_float (MonoCompile *cfg, MonoCallInst *call, ArgInfo *ainfo, MonoInst 
 }
 
 static void
+emit_pass_vtype (MonoCompile *cfg, MonoCallInst *call, CallInfo *cinfo, ArgInfo *ainfo, MonoType *arg_type, MonoInst *in, gboolean pinvoke)
+{
+	MonoInst *arg;
+	guint32 align, offset, pad, size;
+
+	if (arg_type->type == MONO_TYPE_TYPEDBYREF) {
+		size = sizeof (MonoTypedRef);
+		align = sizeof (gpointer);
+	}
+	else if (pinvoke)
+		size = mono_type_native_stack_size (&in->klass->byval_arg, &align);
+	else {
+		/* 
+		 * Other backends use mono_type_stack_size (), but that
+		 * aligns the size to 8, which is larger than the size of
+		 * the source, leading to reads of invalid memory if the
+		 * source is at the end of address space.
+		 */
+		size = mono_class_value_size (in->klass, &align);
+	}
+
+	/* The first 6 argument locations are reserved */
+	if (cinfo->stack_usage < 6 * sizeof (gpointer))
+		cinfo->stack_usage = 6 * sizeof (gpointer);
+
+	offset = ALIGN_TO ((ARGS_OFFSET - STACK_BIAS) + cinfo->stack_usage, align);
+	pad = offset - ((ARGS_OFFSET - STACK_BIAS) + cinfo->stack_usage);
+
+	cinfo->stack_usage += size;
+	cinfo->stack_usage += pad;
+
+	ainfo->offset = STACK_BIAS + offset;
+
+	/* 
+	 * We use OP_OUTARG_VT to copy the valuetype to a stack location, then
+	 * use the normal OUTARG opcodes to pass the address of the location to
+	 * the callee.
+	 */
+	if (size > 0) {
+		MONO_INST_NEW (cfg, arg, OP_OUTARG_VT);
+		arg->sreg1 = in->dreg;
+		arg->klass = in->klass;
+		arg->unused = size;
+		arg->inst_p0 = call;
+		arg->inst_p1 = mono_mempool_alloc (cfg->mempool, sizeof (ArgInfo));
+		memcpy (arg->inst_p1, ainfo, sizeof (ArgInfo));
+		MONO_ADD_INS (cfg->cbb, arg);
+
+		MONO_INST_NEW (cfg, arg, OP_ADD_IMM);
+		arg->dreg = mono_alloc_preg (cfg);
+		arg->sreg1 = sparc_sp;
+		arg->inst_imm = ainfo->offset;
+		MONO_ADD_INS (cfg->cbb, arg);
+
+		add_outarg_reg2 (cfg, call, ArgInIReg, sparc_o0 + ainfo->reg, arg->dreg);
+	}
+}
+
+static void
 emit_pass_other (MonoCompile *cfg, MonoCallInst *call, ArgInfo *ainfo, MonoType *arg_type, MonoInst *in)
 {
 	int offset = ARGS_OFFSET + ainfo->offset;
@@ -1395,8 +1471,8 @@ emit_pass_other (MonoCompile *cfg, MonoCallInst *call, ArgInfo *ainfo, MonoType 
 	}
 }
 
-MonoCallInst*
-mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual)
+void
+mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 {
 	MonoInst *arg, *in;
 	MonoMethodSignature *sig;
@@ -1409,6 +1485,11 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual)
 	n = sig->param_count + sig->hasthis;
 	
 	cinfo = get_call_info (sig, sig->pinvoke);
+
+	if (sig->ret && MONO_TYPE_ISSTRUCT (sig->ret)) {
+		/* Set the 'struct/union return pointer' location on the stack */
+		MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STOREI4_MEMBASE_REG, sparc_sp, 64, call->vret_var->dreg);
+	}
 
 	for (i = 0; i < n; ++i) {
 		MonoType *arg_type;
@@ -1457,60 +1538,9 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual)
 
 		arg->cil_code = in->cil_code;
 
-		if ((i >= sig->hasthis) && (MONO_TYPE_ISSTRUCT(sig->params [i - sig->hasthis]))) {
-			MonoInst *inst;
-			gint align;
-			guint32 offset, pad;
-			guint32 size;
-
-			NOT_IMPLEMENTED;
-
-#ifdef SPARCV9
-			if (sig->pinvoke)
-				NOT_IMPLEMENTED;
-#endif
-
-			if (sig->params [i - sig->hasthis]->type == MONO_TYPE_TYPEDBYREF) {
-				size = sizeof (MonoTypedRef);
-				align = sizeof (gpointer);
-			}
-			else if (sig->pinvoke)
-				size = mono_type_native_stack_size (&in->klass->byval_arg, &align);
-			else {
-				/* 
-				 * Can't use mono_type_stack_size (), but that
-				 * aligns the size to sizeof (gpointer), which is larger 
-				 * than the size of the source, leading to reads of invalid
-				 * memory if the source is at the end of address space or
-				 * misaligned reads.
-				 */
-				size = mono_class_value_size (in->klass, &align);
-			}
-
-			/* 
-			 * We use OP_OUTARG_VT to copy the valuetype to a stack location, then
-			 * use the normal OUTARG opcodes to pass the address of the location to
-			 * the callee.
-			 */
-			MONO_INST_NEW (cfg, inst, OP_OUTARG_VT);
-			inst->inst_left = in;
-
-			/* The first 6 argument locations are reserved */
-			if (cinfo->stack_usage < 6 * sizeof (gpointer))
-				cinfo->stack_usage = 6 * sizeof (gpointer);
-
-			offset = ALIGN_TO ((ARGS_OFFSET - STACK_BIAS) + cinfo->stack_usage, align);
-			pad = offset - ((ARGS_OFFSET - STACK_BIAS) + cinfo->stack_usage);
-
-			inst->inst_c1 = STACK_BIAS + offset;
-			inst->unused = size;
-			arg->inst_left = inst;
-
-			cinfo->stack_usage += size;
-			cinfo->stack_usage += pad;
-		}
-
-		if (!arg_type->byref && ((arg_type->type == MONO_TYPE_I8) || (arg_type->type == MONO_TYPE_U8)))
+		if ((i >= sig->hasthis) && (MONO_TYPE_ISSTRUCT(sig->params [i - sig->hasthis])))
+			emit_pass_vtype (cfg, call, cinfo, ainfo, arg_type, in, sig->pinvoke);
+		else if (!arg_type->byref && ((arg_type->type == MONO_TYPE_I8) || (arg_type->type == MONO_TYPE_U8)))
 			emit_pass_long (cfg, call, ainfo, in);
 		else if (!arg_type->byref && (arg_type->type == MONO_TYPE_R8))
 			emit_pass_double (cfg, call, ainfo, in);
@@ -1525,13 +1555,38 @@ mono_arch_call_opcode2 (MonoCompile *cfg, MonoCallInst *call, int is_virtual)
 	cfg->flags |= MONO_CFG_HAS_CALLS;
 
 	g_free (cinfo);
-	return call;
 }
+
+/* FIXME: Remove these later */
+#define NEW_VARLOADA(cfg,dest,var,vartype) do {	\
+        MONO_INST_NEW ((cfg), (dest), OP_LDADDR); \
+		(dest)->ssa_op = MONO_SSA_ADDRESS_TAKEN;	\
+		(dest)->inst_p0 = (var); \
+		(var)->flags |= MONO_INST_INDIRECT;	\
+		(dest)->type = STACK_MP;	\
+		(dest)->klass = (var)->klass;	\
+        (dest)->dreg = mono_alloc_dreg ((cfg), STACK_MP); \
+	} while (0)
+
+#define EMIT_NEW_VARLOADA(cfg,dest,var,vartype) do { NEW_VARLOADA ((cfg), (dest), (var), (vartype)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
 void
 mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins)
 {
-	NOT_IMPLEMENTED;
+	MonoInst *src_var = get_vreg_to_inst (cfg, ins->sreg1);
+	MonoInst *src;
+	MonoCallInst *call = (MonoCallInst*)ins->inst_p0;
+	ArgInfo *ainfo = (ArgInfo*)ins->inst_p1;
+	int size = ins->unused;
+
+	g_assert (ins->klass);
+
+	if (!src_var)
+		src_var = mono_compile_create_var_for_vreg (cfg, &ins->klass->byval_arg, OP_LOCAL, ins->sreg1);
+
+	EMIT_NEW_VARLOADA ((cfg), (src), src_var, src_var->inst_vtype);
+
+	mini_emit_memcpy2 (cfg, sparc_sp, ainfo->offset, src->dreg, 0, size, 0);
 }
 
 void
@@ -2294,6 +2349,9 @@ emit_move_return_value (MonoInst *ins, guint32 *code)
 	case OP_VCALL:
 	case OP_VCALL_REG:
 	case OP_VCALL_MEMBASE:
+	case OP_VCALL2:
+	case OP_VCALL2_REG:
+	case OP_VCALL2_MEMBASE:
 		break;
 	default:
 		NOT_IMPLEMENTED;
@@ -2715,7 +2773,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			 * breakpoint there.
 			 */
 			//sparc_ta (code, 1);
-			mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_ABS, mono_sparc_break);
+			mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_ABS, mono_arch_break);
 			EMIT_CALL();
 			break;
 		case OP_ADDCC:
@@ -3042,6 +3100,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_FCALL:
 		case OP_LCALL:
 		case OP_VCALL:
+		case OP_VCALL2:
 		case OP_VOIDCALL:
 		case CEE_CALL:
 		case OP_CALL:
@@ -3059,6 +3118,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_FCALL_REG:
 		case OP_LCALL_REG:
 		case OP_VCALL_REG:
+		case OP_VCALL2_REG:
 		case OP_VOIDCALL_REG:
 		case OP_CALL_REG:
 			call = (MonoCallInst*)ins;
@@ -3080,6 +3140,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_FCALL_MEMBASE:
 		case OP_LCALL_MEMBASE:
 		case OP_VCALL_MEMBASE:
+		case OP_VCALL2_MEMBASE:
 		case OP_VOIDCALL_MEMBASE:
 		case OP_CALL_MEMBASE:
 			call = (MonoCallInst*)ins;
@@ -3825,7 +3886,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 void
 mono_arch_register_lowlevel_calls (void)
 {
-	mono_register_jit_icall (mono_sparc_break, "mono_sparc_break", NULL, TRUE);
+	mono_register_jit_icall (mono_arch_break, "mono_arch_break", NULL, TRUE);
 	mono_register_jit_icall (mono_arch_get_lmf_addr, "mono_arch_get_lmf_addr", NULL, TRUE);
 }
 
