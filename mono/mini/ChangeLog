@@ -1,5 +1,10 @@
 2006-04-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* cpu-sparc.md mini-sparc.c: Sparc porting work.
+
+	* method-to-ir.c (mono_method_to_ir2): Avoid transforming long shift to shift_imm 
+	if long shifts need to be emulated.
+
 	* mini-ops.h: Correct metadata of OP_SETFRET.
 
 	* method-to-ir.c (mono_spill_global_vars): Fix handling of long vregs on 

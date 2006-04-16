@@ -47,10 +47,23 @@
 #
 # See the code in mini-sparc32.c for more details on how the specifiers are used.
 #
+
 label:
 break: len:64
 jmp: len:64
 br: len:8
+op_jump_table: dest:i len:48
+
+nop: len:0
+op_nop: len:0
+dummy_use: len:0
+dummy_store: len:0
+not_reached: len:0
+
+op_br: len: 8
+op_jmp: len:64
+op_break: len:64
+
 beq: len:8
 bge: len:8
 bgt: len:8
@@ -87,6 +100,7 @@ stind.i2: src1:b src2:i
 stind.i4: src1:b src2:i
 stind.r4: src1:b src2:f
 stind.r8: src1:b src2:f
+
 add: dest:i src1:i src2:i len:64
 sub: dest:i src1:i src2:i len:4
 mul: dest:i src1:i src2:i len:4
@@ -110,15 +124,23 @@ conv.r4: dest:f src1:i len:64
 conv.r8: dest:f src1:i len:64
 conv.u4: dest:i src1:i len:4
 conv.u8: dest:i src1:i len:4
-throw: src1:i len:64
-op_rethrow: src1:i len:64
-conv.ovf.u4: dest:i src1:i len:64
-ckfinite: dest:f src1:f len:40
 conv.u2: dest:i src1:i len:8
 conv.u1: dest:i src1:i len:4
 conv.i: dest:i src1:i len:4
+
+throw: src1:i len:64
+op_throw: src1:i len:64
+op_rethrow: src1:i len:64
+conv.ovf.u4: dest:i src1:i len:64
+ckfinite: dest:f src1:f len:40
+op_ckfinite: dest:f src1:f len:40
+
 mul.ovf: dest:i src1:i src2:i len:64
 mul.ovf.un: dest:i src1:i src2:i len:64
+
+int_mul_ovf: dest:i src1:i src2:i len:64
+int_mul_ovf_un: dest:i src1:i src2:i len:64
+
 start_handler: len:64
 endfinally: len:64
 endfilter: len:64
@@ -147,7 +169,9 @@ setfreg: dest:f src1:f len:4 clob:r
 sparc_setfreg_float: dest:f src1:f len:4 clob:r
 checkthis: src1:b len:4
 oparglist: src1:i len:64
+
 call: dest:o clob:c len:40
+op_call: dest:o clob:c len:40
 call_reg: dest:o src1:i len:64 clob:c
 call_membase: dest:o src1:b len:64 clob:c
 voidcall: len:64 clob:c
@@ -162,6 +186,10 @@ lcall_membase: dest:l src1:b len:64 clob:c
 vcall: len:40 clob:c
 vcall_reg: src1:i len:64 clob:c
 vcall_membase: src1:b len:64 clob:c
+vcall2: len:40 clob:c
+vcall2_reg: src1:i len:64 clob:c
+vcall2_membase: src1:b len:64 clob:c
+
 iconst: dest:i len:64
 i8const: dest:i len:64
 r4const: dest:f len:64
@@ -190,21 +218,23 @@ loadr4_membase: dest:f src1:b len:64
 loadr8_membase: dest:f src1:b len:64
 loadu4_mem: dest:i len:8
 move: dest:i src1:i len:4
+
 add_imm: dest:i src1:i len:64
 addcc_imm: dest:i src1:i len:64
 sub_imm: dest:i src1:i len:64
 subcc_imm: dest:i src1:i len:64
 mul_imm: dest:i src1:i len:64
-div_imm: dest:a src1:i src2:i len:64
-div_un_imm: dest:a src1:i src2:i len:64
-rem_imm: dest:d src1:i src2:i len:64
-rem_un_imm: dest:d src1:i src2:i len:64
+div_imm: dest:a src1:i len:64
+div_un_imm: dest:a src1:i len:64
+rem_imm: dest:d src1:i len:64
+rem_un_imm: dest:d src1:i len:64
 and_imm: dest:i src1:i len:64
 or_imm: dest:i src1:i len:64
 xor_imm: dest:i src1:i len:64
 shl_imm: dest:i src1:i len:64
 shr_imm: dest:i src1:i len:64
 shr_un_imm: dest:i src1:i len:64
+
 cond_exc_eq: len:64
 cond_exc_ne_un: len:64
 cond_exc_lt: len:64
@@ -219,6 +249,22 @@ cond_exc_ov: len:64
 cond_exc_no: len:64
 cond_exc_c: len:64
 cond_exc_nc: len:64
+
+cond_exc_ieq: len:64
+cond_exc_ine_un: len:64
+cond_exc_ilt: len:64
+cond_exc_ilt_un: len:64
+cond_exc_igt: len:64
+cond_exc_igt_un: len:64
+cond_exc_ige: len:64
+cond_exc_ige_un: len:64
+cond_exc_ile: len:64
+cond_exc_ile_un: len:64
+cond_exc_iov: len:64
+cond_exc_ino: len:64
+cond_exc_ic: len:64
+cond_exc_inc: len:64
+
 long_shl: dest:i src1:i src2:i len:64
 long_shr: dest:i src1:i src2:i len:64
 long_shr_un: dest:i src1:i src2:i len:64
@@ -327,5 +373,16 @@ int_bge: len:64
 int_bge_un: len:64
 int_ble: len:64
 int_ble_un: len:64
+
+int_conv_to_i1: dest:i src1:i len:8
+int_conv_to_u1: dest:i src1:i len:8
+int_conv_to_i2: dest:i src1:i len:8
+int_conv_to_u2: dest:i src1:i len:8
+int_conv_to_i4: dest:i src1:i len:4
+int_conv_to_u4: dest:i src1:i len:4
+int_conv_to_i8: dest:i src1:i len:4
+int_conv_to_u8: dest:i src1:i len:4
+int_conv_to_r4: dest:f src1:i len:64
+int_conv_to_r8: dest:f src1:i len:64
 
 memory_barrier: len:4

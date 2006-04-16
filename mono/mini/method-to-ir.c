@@ -6673,7 +6673,14 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 			/* Use the immediate opcodes if possible */
 			if (((sp [1]->opcode == OP_ICONST) || (sp [1]->opcode == OP_I8CONST)) && mono_arch_is_inst_imm (sp [1]->opcode == OP_ICONST ? sp [1]->inst_c0 : sp [1]->inst_l)) {
-				int imm_opcode = mono_op_to_op_imm (ins->opcode);
+				int imm_opcode = -1;
+
+#if SIZEOF_VOID_P == 4 && !defined(MONO_ARCH_NO_EMULATE_LONG_SHIFT_OPTS)
+				if ((ins->opcode != OP_LSHR) && (ins->opcode != OP_LSHL) && (ins->opcode != OP_LSHR_UN))
+					imm_opcode = mono_op_to_op_imm (ins->opcode);
+#else
+					imm_opcode = mono_op_to_op_imm (ins->opcode);
+#endif
 				if (imm_opcode != -1) {
 					ins->opcode = imm_opcode;
 					if (sp [1]->opcode == OP_I8CONST) {
