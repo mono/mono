@@ -143,7 +143,9 @@ int_mul_ovf_un: dest:i src1:i src2:i len:64
 
 start_handler: len:64
 endfinally: len:64
+op_endfinally: len:64
 endfilter: len:64
+op_endfilter: len:64
 conv.u: dest:i src1:i len:4
 arglist: src1:i
 ceq: dest:i len:64
@@ -293,16 +295,19 @@ float_rem: dest:f src1:f src2:f len:64
 float_rem_un: dest:f src1:f src2:f len:64
 float_neg: dest:f src1:f len:4
 float_not: dest:f src1:f len:4
+
 float_conv_to_i1: dest:i src1:f len:40
 float_conv_to_i2: dest:i src1:f len:40
 float_conv_to_i4: dest:i src1:f len:40
 float_conv_to_i8: dest:L src1:f len:40
-float_conv_to_r4: dest:f src1:f len:8
 float_conv_to_u4: dest:i src1:f len:40
 float_conv_to_u8: dest:L src1:f len:40
 float_conv_to_u2: dest:i src1:f len:40
 float_conv_to_u1: dest:i src1:f len:40
 float_conv_to_i: dest:i src1:f len:40
+float_conv_to_r4: dest:f src1:f len:8
+float_conv_to_r8: dest:f src1:f len:8
+
 float_ceq: dest:i src1:f src2:f len:64
 float_cgt: dest:i src1:f src2:f len:64
 float_cgt_un: dest:i src1:f src2:f len:64
@@ -310,7 +315,6 @@ float_clt: dest:i src1:f src2:f len:64
 float_clt_un: dest:i src1:f src2:f len:64
 float_conv_to_u: dest:i src1:f len:64
 call_handler: len:64
-op_endfilter: src1:i len:64
 aot_const: dest:i len:64
 adc: dest:i src1:i src2:i len:4
 addcc: dest:i src1:i src2:i len:4

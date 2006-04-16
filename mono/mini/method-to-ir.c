@@ -4903,12 +4903,16 @@ mono_decompose_long_opts (MonoCompile *cfg)
 				 * FIXME: The original version in inssel-long32.brg does not work
 				 * on x86, and the x86 version might not work on other archs ?
 				 */
-#ifndef __i386__
-				NOT_IMPLEMENTED;
-#endif
+#if defined(__i386__)
 				MONO_EMIT_NEW_UNALU (cfg, OP_INEG, tree->dreg + 1, tree->sreg1 + 1);
 				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ADC_IMM, tree->dreg + 2, tree->sreg1 + 2, 0);
 				MONO_EMIT_NEW_UNALU (cfg, OP_INEG, tree->dreg + 2, tree->dreg + 2);
+#elif defined(__sparc__)
+				MONO_EMIT_NEW_BIALU (cfg, OP_SUBCC, tree->dreg + 1, 0, tree->sreg1 + 1);
+				MONO_EMIT_NEW_BIALU (cfg, OP_SBB, tree->dreg + 2, 0, tree->sreg1 + 2);
+#else
+				NOT_IMPLEMENTED;
+#endif
 				break;
 			case OP_LMUL:
 				/* Emulated */

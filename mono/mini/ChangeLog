@@ -1,5 +1,9 @@
 2006-04-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_decompose_long_opts): Add LNEG implementation for sparc.
+
+	* cpu-sparc.md mini-sparc.h mini-sparc.c: Sparc porting work.	
+
 	* cpu-sparc.md mini-sparc.c: Sparc porting work.
 
 	* method-to-ir.c (mono_method_to_ir2): Avoid transforming long shift to shift_imm 
