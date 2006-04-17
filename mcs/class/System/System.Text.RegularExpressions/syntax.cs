@@ -865,38 +865,22 @@ namespace System.Text.RegularExpressions.Syntax {
 				intervals.GetMetaCollection (new IntervalCollection.CostDelegate (GetIntervalCost));
 
 			// count ops
-			
 			int count = meta.Count;
 			for (int i = 0; i < pos_cats.Length; ++ i) {
-				if (pos_cats[i]) ++ count;
-				if (neg_cats[i]) ++ count;
+				if (pos_cats[i] || neg_cats [i])
+					++ count;
 			}
 
 			if (count == 0)
 				return;
 
 			// emit in op for |meta| > 1
-
 			LinkRef tail = cmp.NewLink ();
 			if (count > 1)
 				cmp.EmitIn (tail);
-				
-
-			// emit categories
-
-			for (int i = 0; i < pos_cats.Length; ++ i) {
-				if (pos_cats[i]) {
-					if (neg_cats [i])
-						cmp.EmitCategory (Category.AnySingleline, negate, reverse);
-					else
-						cmp.EmitCategory ((Category)i, negate, reverse);
-				} else if (neg_cats[i]) {
-					cmp.EmitNotCategory ((Category)i, negate, reverse);
-				}
-			}
 
 			// emit character/range/sets from meta-collection
-
+			// we emit these first so that any 'ignore' flags will be noticed by the evaluator
 			foreach (Interval a in meta) {
 				if (a.IsDiscontiguous) {			// Set
 					BitArray bits = new BitArray (a.Size);
@@ -914,9 +898,20 @@ namespace System.Text.RegularExpressions.Syntax {
 				else						// Range
 					cmp.EmitRange ((char)a.low, (char)a.high, negate, ignore, reverse);
 			}
-			
-			// finish up
 
+			// emit categories
+			for (int i = 0; i < pos_cats.Length; ++ i) {
+				if (pos_cats[i]) {
+					if (neg_cats [i])
+						cmp.EmitCategory (Category.AnySingleline, negate, reverse);
+					else
+						cmp.EmitCategory ((Category)i, negate, reverse);
+				} else if (neg_cats[i]) {
+					cmp.EmitNotCategory ((Category)i, negate, reverse);
+				}
+			}
+
+			// finish up
 			if (count > 1) {
 				if (negate)
 					cmp.EmitTrue ();

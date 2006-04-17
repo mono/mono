@@ -1,3 +1,8 @@
+2006-04-17  Florian Gross  <flgr@ccan.de>
+
+	* RegexBugs.cs (CharClassWithIgnoreCase): Ensure that character
+	classes don't interfere with RegexOptions.IgnoreCase.
+
 2006-04-07  Raja R Harinath  <rharinath@novell.com>
 
 	* RegexBugs.cs (Bug78007): New test from #78007.

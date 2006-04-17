@@ -1,3 +1,10 @@
+2006-04-17  Florian Gross  <flgr@ccan.de>
+	    Raja R Harinath  <rharinath@novell.com>
+
+	* syntax.cs (CharacterClass.Compile): Emit categories after the
+	character intervals so that the evaluator can pick up the
+	'IgnoreCase' flag.
+
 2006-04-07  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #78007

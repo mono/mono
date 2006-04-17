@@ -368,5 +368,14 @@ namespace MonoTests.System.Text.RegularExpressions
 			m = m.NextMatch ();
 			Assert ("#02", !m.Success);
 		}
+
+		[Test]
+		public void CharClassWithIgnoreCase ()
+		{
+			string str = "Foobar qux";
+			Regex re = new Regex (@"[a-z\s]*", RegexOptions.IgnoreCase);
+			Match m = re.Match (str);
+			AssertEquals ("#01", str, m.Value);
+                }
 	}
 }
