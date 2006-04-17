@@ -1,3 +1,8 @@
+2006-04-18  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TabControl.cs: Avoid ArgumentOutOfRangeException when setting
+	SelectedIndex to -1. Fixes bug #78121.
+
 2006-04-17  Jackson Harper  <jackson@ximian.com>
 
 	* Binding.cs: Handle null values for Current and BindingContext.

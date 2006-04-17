@@ -222,17 +222,18 @@ namespace System.Windows.Forms {
 					refresh = true;
 				}
 
-				int le = TabPages [value].TabBounds.Right;
-				int re = ThemeEngine.Current.GetTabControlLeftScrollRect (this).Left;
-
-				if (-1 != value && show_slider && le > re) {
-					int diff = le - re;
-					int ind = value - 1;
-					while (ind > 0 && diff > 0) {
-						diff -= TabPages [ind++].Width;
+				if (-1 != value) {
+        				int le = TabPages [value].TabBounds.Right;
+                                	int re = ThemeEngine.Current.GetTabControlLeftScrollRect (this).Left;
+					if (show_slider && le > re) {
+						int diff = le - re;
+						int ind = value - 1;
+						while (ind > 0 && diff > 0) {
+							diff -= TabPages [ind++].Width;
+						}
+						slider_pos = ind - 1;
+						refresh = true;
 					}
-					slider_pos = ind - 1;
-					refresh = true;
 				}
 
 				if (selected_index != -1) {
@@ -244,9 +245,10 @@ namespace System.Windows.Forms {
 
 				OnSelectedIndexChanged (EventArgs.Empty);
 
-				TabPage selected = (TabPage) Controls [selected_index];
+				TabPage selected = null;
 
 				if (selected_index != -1) {
+					selected = (TabPage) Controls [selected_index];
 					invalid = Rectangle.Union (invalid, GetTabRect (selected_index));
 					selected.Visible = true;
 				}

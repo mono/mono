@@ -7,16 +7,16 @@
 // (C) 2005 Novell, Inc. (http://www.novell.com)
 //
 
-using System;
-using System.Windows.Forms;
 using System.Drawing;
-using System.Reflection;
+using System.Windows.Forms;
+
 using NUnit.Framework;
 
 [TestFixture]
 public class TabControlTest
 {
 	[Test]
+	[Category ("NotWorking")]
 	public void TabControlPropertyTest ()
 	{
 		Form myForm = new Form ();
@@ -55,7 +55,7 @@ public class TabControlTest
 
 		// S
 		Assert.AreEqual (-1, myTabControl.SelectedIndex, "#S1");
-                Assert.AreEqual (null, myTabControl.SelectedTab, "#S2");
+		Assert.AreEqual (null, myTabControl.SelectedTab, "#S2");
 		Assert.AreEqual (false, myTabControl.ShowToolTips, "#S3");
 		Assert.AreEqual (TabSizeMode.Normal, myTabControl.SizeMode, "#S4");
 
@@ -65,23 +65,53 @@ public class TabControlTest
 	}
 
 	[Test]
+	[Category ("NotWorking")]
 	public void GetTabRectTest ()
 	{
 		TabControl myTabControl = new TabControl ();
 		TabPage myTabPage = new TabPage();
 		myTabControl.Controls.Add(myTabPage);
 		myTabPage.TabIndex = 0;
-		Rectangle myTabRect = new Rectangle ();
-		Assert.AreEqual (2, myTabControl.GetTabRect (0).X, "#GetT1");
-		Assert.AreEqual (2, myTabControl.GetTabRect (0).Y, "#GetT2");
-		Assert.AreEqual (42, myTabControl.GetTabRect (0).Width, "#GetT3");
-		Assert.AreEqual (18, myTabControl.GetTabRect (0).Height, "#GetT4");
-	}		
+		Rectangle myTabRect = myTabControl.GetTabRect (0);
+		Assert.AreEqual (2, myTabRect.X, "#GetT1");
+		Assert.AreEqual (2, myTabRect.Y, "#GetT2");
+		Assert.AreEqual (42, myTabRect.Width, "#GetT3");
+		Assert.AreEqual (18, myTabRect.Height, "#GetT4");
+	}
 
 	[Test]
 	public void ToStringTest ()
 	{
 		TabControl myTabControl = new TabControl ();
-		Assert.AreEqual ("System.Windows.Forms.TabControl, TabPages.Count: 0", myTabControl.ToString(), "#Str1");
+		Assert.AreEqual ("System.Windows.Forms.TabControl, TabPages.Count: 0", myTabControl.ToString(), "#1");
+	}
+
+	[Test]
+	public void ClearTabPagesTest ()
+	{
+		// no tab pages
+		TabControl tab = new TabControl ();
+		tab.TabPages.Clear ();
+		Assert.AreEqual (-1, tab.SelectedIndex, "#A1");
+		Assert.AreEqual (0, tab.TabPages.Count, "#A2");
+
+		// single tab page
+		tab.Controls.Add (new TabPage ());
+		Assert.AreEqual (0, tab.SelectedIndex, "#B1");
+		Assert.AreEqual (1, tab.TabPages.Count, "#B2");
+		tab.TabPages.Clear();
+		Assert.AreEqual (-1, tab.SelectedIndex, "#B3");
+		Assert.AreEqual (0, tab.TabPages.Count, "#B4");
+
+		// multiple tab pages
+		tab.Controls.Add (new TabPage ());
+		tab.Controls.Add (new TabPage ());
+		tab.Controls.Add (new TabPage ());
+		Assert.AreEqual (0, tab.SelectedIndex, "#C1");
+		Assert.AreEqual (3, tab.TabPages.Count, "#C2");
+		tab.SelectedIndex = 1;
+		tab.TabPages.Clear ();
+		Assert.AreEqual (-1, tab.SelectedIndex, "#C3");
+		Assert.AreEqual (0, tab.TabPages.Count, "#C4");
 	}
 }
