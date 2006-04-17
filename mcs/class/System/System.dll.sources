@@ -156,7 +156,10 @@ System.ComponentModel/AmbientValueAttribute.cs
 System.ComponentModel/ArrayConverter.cs
 System.ComponentModel/AsyncCompletedEventArgs.cs
 System.ComponentModel/AsyncCompletedEventHandler.cs
+System.ComponentModel/AsyncOperation.cs
+System.ComponentModel/AsyncOperationManager.cs
 System.ComponentModel/AttributeCollection.cs
+System.ComponentModel/BackgroundWorker.cs
 System.ComponentModel/BaseNumberConverter.cs
 System.ComponentModel/BindableAttribute.cs
 System.ComponentModel/BindableSupport.cs
@@ -258,6 +261,8 @@ System.ComponentModel.Design/StandardToolWindows.cs
 System.ComponentModel/DesignTimeVisibleAttribute.cs
 System.ComponentModel.Design/ViewTechnology.cs
 System.ComponentModel/DoubleConverter.cs
+System.ComponentModel/DoWorkEventHandler.cs
+System.ComponentModel/DoWorkEventArgs.cs
 System.ComponentModel/EditorAttribute.cs
 System.ComponentModel/EditorBrowsableAttribute.cs
 System.ComponentModel/EditorBrowsableState.cs
@@ -334,6 +339,8 @@ System.ComponentModel/RefreshEventHandler.cs
 System.ComponentModel/RefreshPropertiesAttribute.cs
 System.ComponentModel/RefreshProperties.cs
 System.ComponentModel/RunInstallerAttribute.cs
+System.ComponentModel/RunWorkerCompletedEventArgs.cs
+System.ComponentModel/RunWorkerCompletedEventHandler.cs
 System.ComponentModel/SByteConverter.cs
 System.ComponentModel/SingleConverter.cs
 System.ComponentModel/StringConverter.cs

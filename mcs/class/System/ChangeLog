@@ -1,3 +1,11 @@
+2006-04-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.dll.sources : Added AsyncOperation.cs,
+	  AsyncOperationManager.cs, BackgroundWorker.cs,
+	  DoWorkEventHandler.cs, DoWorkEventArgs.cs,
+	  RunWorkerCompletedEventArgs.cs and
+	  RunWorkerCompletedEventHandler.cs.
+
 2006-04-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* System.dll.sources: Added System.IO.Ports/SerialSignal.cs.

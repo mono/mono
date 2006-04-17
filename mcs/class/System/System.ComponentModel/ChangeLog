@@ -1,3 +1,18 @@
+2006-04-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AsyncOperation.cs,
+	  AsyncOperationManager.cs
+	  BackgroundWorker.cs
+	  DoWorkEventArgs.cs
+	  DoWorkEventHandler.cs
+	  RunWorkerCompletedEventArgs.cs
+	  RunWorkerCompletedEventHandler.cs :
+	  Initial implementation of AsyncOperation and BackgroundWorker.
+
+	  (However I think it does not work as expected - it depends on
+	  SynchronizationContext.Post() and I doubt it works fine - the
+	  callback should run synchronously while it does not look so.)
+
 2006-03-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* AsyncCompletedEventArgs.cs : constructor did not initialize fields.
