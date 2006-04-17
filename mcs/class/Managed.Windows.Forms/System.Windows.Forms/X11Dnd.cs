@@ -332,6 +332,13 @@ namespace System.Windows.Forms {
 			Init ();
 		}
 
+		public bool InDrag()
+		{
+			if (drag_data == null)
+				return false;
+			return drag_data.State != DragState.None;
+		}
+		
 		public void SetAllowDrop (Hwnd hwnd, bool allow)
 		{
 			int[] atoms;

@@ -1,3 +1,9 @@
+2006-04-17  Jackson Harper  <jackson@ximian.com>
+
+	* X11Dnd.cs:
+	* XplatUIX11.cs: Drops should not create a mousedown. Patch by Tim
+	Ringenbach.
+
 2006-04-15  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ThemeWin32Classic.cs: Draw disabled combo button in the correct

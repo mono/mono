@@ -2934,7 +2934,11 @@ namespace System.Windows.Forms {
 				}
 
 				case XEventName.ButtonRelease: {
-					Dnd.HandleButtonRelease (ref xevent);
+					if (Dnd.InDrag()) {
+						Dnd.HandleButtonRelease (ref xevent);
+						break;
+					}
+
 					switch(xevent.ButtonEvent.button) {
 						case 1: {
 							MouseState &= ~MouseButtons.Left;
