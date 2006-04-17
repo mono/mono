@@ -78,6 +78,7 @@ namespace System.Windows.Forms {
 
 			if (table != null) {
 				list = new DataView (table);
+				((DataView) list).ListChanged += new ListChangedEventHandler (ListChangedHandler);
 				table.Columns.CollectionChanged  += new CollectionChangeEventHandler (MetaDataChangedHandler);
 				table.ChildRelations.CollectionChanged  += new CollectionChangeEventHandler (MetaDataChangedHandler);
 				table.ParentRelations.CollectionChanged  += new CollectionChangeEventHandler (MetaDataChangedHandler);
@@ -91,6 +92,8 @@ namespace System.Windows.Forms {
 
 		public override object Current {
 			get {
+				if (list.Count == 0)
+					return null;
 				return list [listposition];
 			}
 		}
@@ -261,7 +264,6 @@ namespace System.Windows.Forms {
 			return String.Empty;
 		}
 
-		[MonoTODO ("Not totally sure how this works, its doesn't seemt to do a pull/push like i originally assumed")]
 		protected override void UpdateIsBinding ()
 		{
 			UpdateItem ();
@@ -292,6 +294,11 @@ namespace System.Windows.Forms {
 		{
 			if (MetaDataChanged != null)
 				MetaDataChanged (this, EventArgs.Empty);
+		}
+
+		private void ListChangedHandler (object sender, ListChangedEventArgs e)
+		{
+			UpdateIsBinding ();
 		}
 
 		public event ItemChangedEventHandler ItemChanged;

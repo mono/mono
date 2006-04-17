@@ -1,5 +1,15 @@
 2006-04-17  Jackson Harper  <jackson@ximian.com>
 
+	* Binding.cs: Handle null values for Current and BindingContext.
+	This occurs when binding is a little delayed.
+	* CurrencyManager.cs: return null for Current when there are no
+	items in the list.
+	- Hookup to the listchanged event on the DataView and update
+	bindings when the list is changed.  This fixes late binding of
+	controls.
+
+2006-04-17  Jackson Harper  <jackson@ximian.com>
+
 	* X11Dnd.cs:
 	* XplatUIX11.cs: Drops should not create a mousedown. Patch by Tim
 	Ringenbach.

@@ -149,13 +149,17 @@ namespace System.Windows.Forms {
 
 		internal void Check (BindingContext binding_context)
 		{
-			if (control == null)
+			if (control == null || control.BindingContext == null)
 				return;
 
 			string member_name = data_member;
 			if (row_name != null)
 				member_name = row_name;
+
+			Console.WriteLine ("data source  {0}   member name:  {1}",
+					data_source, member_name);
 			manager = control.BindingContext [data_source, member_name];
+
 			manager.AddBinding (this);
 			manager.PositionChanged += new EventHandler (PositionChangedHandler);
 
@@ -178,7 +182,7 @@ namespace System.Windows.Forms {
 
 		internal void PullData ()
 		{
-			if (IsBinding == false)
+			if (IsBinding == false || manager.Current == null)
 				return;
 
 			if (is_null_desc != null) {
@@ -237,6 +241,8 @@ namespace System.Windows.Forms {
 
 		private void WirePropertyValueChangedEvent ()
 		{
+			if (manager.Current == null)
+				return;
 			EventDescriptor changed_event = TypeDescriptor.GetEvents (manager.Current).Find (property_name + "Changed", false);
 			if (changed_event == null)
 				return;
