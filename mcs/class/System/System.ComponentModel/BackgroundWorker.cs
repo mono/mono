@@ -49,10 +49,12 @@ namespace System.ComponentModel
 		public event ProgressChangedEventHandler ProgressChanged;
 		public event RunWorkerCompletedEventHandler RunWorkerCompleted;
 
+		[Browsable (false)]
 		public bool CancellationPending {
 			get { return cancel_pending; }
 		}
 
+		[Browsable (false)]
 		public bool IsBusy {
 			get { return async != null; }
 		}

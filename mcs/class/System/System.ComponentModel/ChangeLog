@@ -1,5 +1,10 @@
 2006-04-17  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* BackgroundWorker.cs, RunWorkerCompletedEventArgs.cs :
+	  cosmetic attribute fixes.
+
+2006-04-17  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* AsyncOperation.cs,
 	  AsyncOperationManager.cs
 	  BackgroundWorker.cs
