@@ -1047,9 +1047,9 @@ internal class TokenStream {
 							ReportCurrentLineError ("msg.invalid.re.flag");
 							return Token.ERROR;
 						}
-						
-						_string = to_string (string_buffer).Substring (0, re_end);
-						reg_exp_flags = to_string (string_buffer).Substring (re_end, string_buffer_top - re_end);
+
+						_string = new String (string_buffer, 0, re_end);
+						reg_exp_flags = new String (string_buffer, re_end, string_buffer_top - re_end);
 						return Token.REGEXP;
 					}
 					

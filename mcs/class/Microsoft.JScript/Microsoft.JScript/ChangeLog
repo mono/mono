@@ -1,3 +1,9 @@
+2006-04-18  Miguel de Icaza  <miguel@novell.com>
+
+	* TokenStream.cs: kill to_string method, it was one inneficient
+	way of turning char [] into strings.  Use the proper String
+	constructor for that. 
+
 2006-01-25  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* FunctionExpression.cs: Set the prefix at resolve time not at
