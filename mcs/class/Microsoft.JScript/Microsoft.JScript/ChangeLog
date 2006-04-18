@@ -1,3 +1,7 @@
+2006-04-18  Cesar Lopez Nataren  <cesar.nataren@medsphere.com>
+
+	* TokenStream.cs: Ciao to_string.
+
 2006-04-18  Miguel de Icaza  <miguel@novell.com>
 
 	* TokenStream.cs: kill to_string method, it was one inneficient

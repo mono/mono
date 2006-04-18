@@ -1465,13 +1465,5 @@ internal class TokenStream {
 			unicode_category == UnicodeCategory.CurrencySymbol || 
 			unicode_category == UnicodeCategory.ConnectorPunctuation;
 	}		
-
-	internal static string to_string (Array a)
-	{
-		string s = String.Empty;
-		foreach (char c in a)
-			s += c;
-		return s;
-	}
 }
 }
