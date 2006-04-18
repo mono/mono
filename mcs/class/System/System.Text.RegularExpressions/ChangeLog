@@ -1,3 +1,14 @@
+2006-04-18  Raja R Harinath  <rharinath@novell.com>
+
+	Treat fixed repetitions of simple regexes as simple too.
+	* syntax.cs (Expression.IsComplex): Make abstract.
+	(Group.IsComplex, Alternation.IsComplex): Move ...
+	(CompositeExpression.IsComplex): ... here.
+	(Group.GetAnchorInfo): Reduce allocations.  Avoid creating another
+	ArrayList, and use a StringBuilder to build up the string.
+	(Repetition.GetAnchorInfo): Use a StringBuilder to build up the string.
+	(ExpressionAssertion.IsComplex): Override.
+
 2006-04-17  Florian Gross  <flgr@ccan.de>
 	    Raja R Harinath  <rharinath@novell.com>
 

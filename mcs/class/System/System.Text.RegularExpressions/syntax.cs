@@ -4,7 +4,7 @@
 // file:	syntax.cs
 //
 // author:	Dan Lewis (dlewis@gmx.co.uk)
-// 		(c) 2002
+//		(c) 2002
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -14,10 +14,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -32,7 +32,7 @@ using System.Collections;
 
 namespace System.Text.RegularExpressions.Syntax {
 	// collection classes
-	
+
 	class ExpressionCollection : CollectionBase {
 		public void Add (Expression e) {
 			List.Add (e);
@@ -49,7 +49,7 @@ namespace System.Text.RegularExpressions.Syntax {
 	}
 
 	// abstract classes
-	
+
 	abstract class Expression {
 		public abstract void Compile (ICompiler cmp, bool reverse);
 		public abstract void GetWidth (out int min, out int max);
@@ -68,13 +68,11 @@ namespace System.Text.RegularExpressions.Syntax {
 			return new AnchorInfo (this, GetFixedWidth ());
 		}
 
-		public virtual bool IsComplex () {
-			return true;
-		}
+		public abstract bool IsComplex ();
 	}
 
 	// composite expressions
-	
+
 	abstract class CompositeExpression : Expression {
 		public CompositeExpression () {
 			expressions = new ExpressionCollection ();
@@ -93,7 +91,7 @@ namespace System.Text.RegularExpressions.Syntax {
 				Expression e = Expressions[i];
 				if (e == null)
 					continue;
-			
+
 				empty = false;
 				int a, b;
 				e.GetWidth (out a, out b);
@@ -105,11 +103,21 @@ namespace System.Text.RegularExpressions.Syntax {
 				min = max = 0;
 		}
 
+
+		public override bool IsComplex ()
+		{
+			foreach (Expression e in Expressions) {
+				if (e.IsComplex ())
+					return true;
+			}
+			return GetFixedWidth () <= 0;
+		}
+
 		private ExpressionCollection expressions;
 	}
 
 	// groups
-	
+
 	class Group : CompositeExpression {
 		public Group () {
 		}
@@ -151,7 +159,8 @@ namespace System.Text.RegularExpressions.Syntax {
 			}
 		}
 
-		public override AnchorInfo GetAnchorInfo (bool reverse) {
+		public override AnchorInfo GetAnchorInfo (bool reverse)
+		{
 			int ptr;
 			int width = GetFixedWidth ();
 
@@ -159,17 +168,15 @@ namespace System.Text.RegularExpressions.Syntax {
 			IntervalCollection segments = new IntervalCollection ();
 
 			// accumulate segments
-
 			ptr = 0;
-			//foreach (Expression e in Expressions) {
 			int count = Expressions.Count;
 			for (int i = 0; i < count; ++ i) {
 				Expression e;
 				if (reverse)
 					e = Expressions [count - i - 1];
 				else
-					e = Expressions [i];		
-				
+					e = Expressions [i];
+
 				AnchorInfo info = e.GetAnchorInfo (reverse);
 				infos.Add (info);
 
@@ -186,7 +193,6 @@ namespace System.Text.RegularExpressions.Syntax {
 			}
 
 			// normalize and find the longest segment
-
 			segments.Normalize ();
 
 			Interval longest = Interval.Empty;
@@ -195,58 +201,46 @@ namespace System.Text.RegularExpressions.Syntax {
 					longest = segment;
 			}
 
+			if (longest.IsEmpty)
+				return new AnchorInfo (this, width);
+
 			// now chain the substrings that made this segment together
+			bool ignore = false;
+			int n_strings = 0;
 
-			if (!longest.IsEmpty) {
-				string str = "";
-				ArrayList strs = new ArrayList();
-				bool ignore = false;
+			ptr = 0;
+			for (int i = 0; i < infos.Count; ++i) {
+				AnchorInfo info = (AnchorInfo) infos [i];
 
-				ptr = 0;
-				
-				//foreach (AnchorInfo info in infos) {
-				for (int i = 0; i < infos.Count; ++ i) {
-					AnchorInfo info;
-
-					info = (AnchorInfo)infos[i];		
-					
-					if (info.IsSubstring && longest.Contains (info.GetInterval (ptr))) {
-						//str += info.Substring;	// TODO mark subexpressions
-						strs.Add(info.Substring);
-						ignore |= info.IgnoreCase;
-					}
-
-					
-					 	if (info.IsUnknownWidth)					 		
-							break;
-					
-						ptr += info.Width;
-				}	
-					
-				for (int i = 0; i< strs.Count; ++i)
-				{
-					if (reverse)
-						str += strs [strs.Count - i - 1];
-					else
-						str += strs [i];
-							
-					
+				if (info.IsSubstring && longest.Contains (info.GetInterval (ptr))) {
+					ignore |= info.IgnoreCase;
+					infos [n_strings ++] = info;
 				}
-			
 
-				return new AnchorInfo (this, longest.low, width, str, ignore);
+				if (info.IsUnknownWidth)
+					break;
+
+				ptr += info.Width;
 			}
 
-			return new AnchorInfo (this, width);
-		}
-
-		public override bool IsComplex () {
-			bool comp = false;
-			foreach (Expression e in Expressions) {
-				comp |= e.IsComplex ();
+			StringBuilder sb = new StringBuilder ();
+			for (int i = 0; i < n_strings; ++i) {
+				AnchorInfo info;
+				if (reverse)
+					info = (AnchorInfo) infos [n_strings - i - 1];
+				else
+					info = (AnchorInfo) infos [i];
+				sb.Append (info.Substring);
 			}
 
-			return comp | GetFixedWidth () <= 0;
+			if (sb.Length == longest.Size)
+				return new AnchorInfo (this, longest.low, width, sb.ToString (), ignore);
+			// were the string segments overlapping?
+			if (sb.Length > longest.Size) {
+				Console.Error.WriteLine ("overlapping?");
+				return new AnchorInfo (this, width);
+			}
+			throw new SystemException ("Shouldn't happen");
 		}
 	}
 
@@ -280,9 +274,9 @@ namespace System.Text.RegularExpressions.Syntax {
 				cmp.EmitPosition (info.Position);
 			else if (info.IsSubstring)
 				cmp.EmitString (info.Substring, info.IgnoreCase, reverse);
-			
+
 			cmp.EmitTrue ();
-			
+
 			// pattern
 
 			cmp.ResolveLink (pattern);
@@ -340,7 +334,7 @@ namespace System.Text.RegularExpressions.Syntax {
 		public override void Compile (ICompiler cmp, bool reverse) {
 			// can't invoke Group.Compile from here :(
 			// so I'll just repeat the code
-			
+
 			LinkRef tail = cmp.NewLink ();
 
 			cmp.EmitBalanceStart (this.Number, balance.Number, this.IsNamed,  tail);
@@ -386,7 +380,7 @@ namespace System.Text.RegularExpressions.Syntax {
 	class Repetition : CompositeExpression {
 		public Repetition (int min, int max, bool lazy) {
 			Expressions.Add (null);
-			
+
 			this.min = min;
 			this.max = max;
 			this.lazy = lazy;
@@ -415,7 +409,7 @@ namespace System.Text.RegularExpressions.Syntax {
 		public override void Compile (ICompiler cmp, bool reverse) {
 			if (Expression.IsComplex ()) {
 				LinkRef until = cmp.NewLink ();
-				
+
 				cmp.EmitRepeat (min, max, lazy, until);
 				Expression.Compile (cmp, reverse);
 				cmp.EmitUntil (until);
@@ -443,18 +437,20 @@ namespace System.Text.RegularExpressions.Syntax {
 			int width = GetFixedWidth ();
 			if (Minimum == 0)
 				return new AnchorInfo (this, width);
-			
+
 			AnchorInfo info = Expression.GetAnchorInfo (reverse);
 			if (info.IsPosition)
 				return new AnchorInfo (this, info.Offset, width, info.Position);
-			
+
 			if (info.IsSubstring) {
 				if (info.IsComplete) {
-					string str = "";
-					for (int i = 0; i < Minimum; ++ i)
-						str += info.Substring;
+					// Minimum > 0
+					string str = info.Substring;
+					StringBuilder sb = new StringBuilder (str);
+					for (int i = 1; i < Minimum; ++ i)
+						sb.Append (str);
 
-					return new AnchorInfo (this, 0, width, str, info.IgnoreCase);
+					return new AnchorInfo (this, 0, width, sb.ToString (), info.IgnoreCase);
 				}
 
 				return new AnchorInfo (this, info.Offset, width, info.Substring, info.IgnoreCase);
@@ -510,7 +506,7 @@ namespace System.Text.RegularExpressions.Syntax {
 				//    IfDefined :1
 				//      <yes_exp>
 				// 1: <tail>
-			
+
 				cmp.EmitIfDefined (gid, tail);
 				TrueExpression.Compile (cmp, reverse);
 			}
@@ -520,7 +516,7 @@ namespace System.Text.RegularExpressions.Syntax {
 				//      Jump :2
 				// 1:   <no_expr>
 				// 2: <tail>
-			
+
 				LinkRef false_expr = cmp.NewLink ();
 				cmp.EmitIfDefined (gid, false_expr);
 				TrueExpression.Compile (cmp, reverse);
@@ -533,13 +529,11 @@ namespace System.Text.RegularExpressions.Syntax {
 		}
 
 		public override bool IsComplex () {
-			bool comp = false;
-			if (TrueExpression != null)
-				comp |= TrueExpression.IsComplex ();
-			if (FalseExpression != null)
-				comp |= FalseExpression.IsComplex ();
-
-			return comp | GetFixedWidth () <= 0;
+			if (TrueExpression != null && TrueExpression.IsComplex ())
+				return true;
+			if (FalseExpression != null && FalseExpression.IsComplex ())
+				return true;
+			return GetFixedWidth () <= 0;
 		}
 
 		private CapturingGroup group;
@@ -575,7 +569,7 @@ namespace System.Text.RegularExpressions.Syntax {
 				cmp.EmitTest (true_expr, false_expr);
 			else
 				cmp.EmitTest (false_expr, true_expr);
-			
+
 			// test expression: lookahead / lookbehind
 
 			TestExpression.Compile (cmp, this.reverse);
@@ -588,7 +582,7 @@ namespace System.Text.RegularExpressions.Syntax {
 				//      <test_expr>
 				// :2   False
 				// :1   <tail>
-			
+
 				cmp.ResolveLink (false_expr);
 				cmp.EmitFalse ();
 				cmp.ResolveLink (true_expr);
@@ -596,7 +590,7 @@ namespace System.Text.RegularExpressions.Syntax {
 			else {
 				cmp.ResolveLink (true_expr);
 				TrueExpression.Compile (cmp, reverse);
-				
+
 				if (FalseExpression == null) {		// (?(...) ...)
 					//    Test :1, :2
 					//      <test_expr>
@@ -612,15 +606,20 @@ namespace System.Text.RegularExpressions.Syntax {
 					//      Jump :3
 					// :2   <no_expr>
 					// :3   <tail>
-				
+
 					LinkRef tail = cmp.NewLink ();
-				
+
 					cmp.EmitJump (tail);
 					cmp.ResolveLink (false_expr);
 					FalseExpression.Compile (cmp, reverse);
 					cmp.ResolveLink (tail);
 				}
 			}
+		}
+
+		public override bool IsComplex ()
+		{
+			return true;
 		}
 
 		private bool reverse, negate;
@@ -643,7 +642,7 @@ namespace System.Text.RegularExpressions.Syntax {
 		public override void Compile (ICompiler cmp, bool reverse) {
 			//			LinkRef next = cmp.NewLink ();
 			LinkRef tail = cmp.NewLink ();
-		
+
 			foreach (Expression e in Alternatives) {
 				LinkRef next = cmp.NewLink ();
 				cmp.EmitBranch (next);
@@ -660,15 +659,6 @@ namespace System.Text.RegularExpressions.Syntax {
 
 		public override void GetWidth (out int min, out int max) {
 			GetWidth (out min, out max, Alternatives.Count);
-		}
-
-		public override bool IsComplex () {
-			bool comp = false;
-			foreach (Expression e in Alternatives) {
-				comp |= e.IsComplex ();
-			}
-
-			return comp | GetFixedWidth () <= 0;
 		}
 	}
 
@@ -815,7 +805,7 @@ namespace System.Text.RegularExpressions.Syntax {
 
 		public void AddCategory (Category cat, bool negate) {
 			int n = (int)cat;
-			
+
 			if (negate) {
 				neg_cats[n] = true;
 			} else {
@@ -824,39 +814,39 @@ namespace System.Text.RegularExpressions.Syntax {
 		}
 
 		public void AddCharacter (char c) {
-			// TODO: this is certainly not the most efficient way of doing things 
- 			// TODO: but at least it produces correct results. 
- 			AddRange (c, c);
+			// TODO: this is certainly not the most efficient way of doing things
+			// TODO: but at least it produces correct results.
+			AddRange (c, c);
 		}
 
 		public void AddRange (char lo, char hi) {
 			Interval new_interval = new Interval (lo, hi);
- 
- 			// ignore case is on. we must make sure our interval does not
- 			// use upper case. if it does, we must normalize the upper case
- 			// characters into lower case. 
- 			if (ignore) {
- 				if (upper_case_characters.Intersects (new_interval)) {
- 					Interval partial_new_interval;
- 
- 					if (new_interval.low < upper_case_characters.low) {
- 						partial_new_interval = new Interval (upper_case_characters.low + distance_between_upper_and_lower_case, 
- 										     new_interval.high +  distance_between_upper_and_lower_case);
- 						new_interval.high = upper_case_characters.low - 1;
- 					}
- 					else {
- 						partial_new_interval = new Interval (new_interval.low + distance_between_upper_and_lower_case, 
- 										     upper_case_characters.high + distance_between_upper_and_lower_case);
- 						new_interval.low = upper_case_characters.high + 1;
- 					}
- 					intervals.Add (partial_new_interval);
- 				}
- 				else if (upper_case_characters.Contains (new_interval)) {
- 					new_interval.high += distance_between_upper_and_lower_case;
- 					new_interval.low += distance_between_upper_and_lower_case;
- 				}
- 			}
- 			intervals.Add (new_interval);
+
+			// ignore case is on. we must make sure our interval does not
+			// use upper case. if it does, we must normalize the upper case
+			// characters into lower case.
+			if (ignore) {
+				if (upper_case_characters.Intersects (new_interval)) {
+					Interval partial_new_interval;
+
+					if (new_interval.low < upper_case_characters.low) {
+						partial_new_interval = new Interval (upper_case_characters.low + distance_between_upper_and_lower_case,
+										     new_interval.high +  distance_between_upper_and_lower_case);
+						new_interval.high = upper_case_characters.low - 1;
+					}
+					else {
+						partial_new_interval = new Interval (new_interval.low + distance_between_upper_and_lower_case,
+										     upper_case_characters.high + distance_between_upper_and_lower_case);
+						new_interval.low = upper_case_characters.high + 1;
+					}
+					intervals.Add (partial_new_interval);
+				}
+				else if (upper_case_characters.Contains (new_interval)) {
+					new_interval.high += distance_between_upper_and_lower_case;
+					new_interval.low += distance_between_upper_and_lower_case;
+				}
+			}
+			intervals.Add (new_interval);
 		}
 
 		public override void Compile (ICompiler cmp, bool reverse) {
@@ -934,7 +924,7 @@ namespace System.Text.RegularExpressions.Syntax {
 
 		private static double GetIntervalCost (Interval i) {
 			// use op length as cost metric (=> optimize for space)
-		
+
 			if (i.IsDiscontiguous)
 				return 3 + ((i.Size + 0xf) >> 4);		// Set
 			else if (i.IsSingleton)
@@ -944,7 +934,7 @@ namespace System.Text.RegularExpressions.Syntax {
 		}
 
 		private static Interval upper_case_characters = new Interval ((char)65, (char)90);
- 		private const int distance_between_upper_and_lower_case = 32;
+		private const int distance_between_upper_and_lower_case = 32;
 		private bool negate, ignore;
 		private BitArray pos_cats, neg_cats;
 		private IntervalCollection intervals;
@@ -969,7 +959,7 @@ namespace System.Text.RegularExpressions.Syntax {
 			this.ignore = false;
 			this.pos = Position.Any;
 		}
-		
+
 		public AnchorInfo (Expression expr, int offset, int width, string str, bool ignore) {
 			this.expr = expr;
 			this.offset = offset;
@@ -1048,4 +1038,3 @@ namespace System.Text.RegularExpressions.Syntax {
 		}
 	}
 }
-
