@@ -35,11 +35,9 @@ using System.Reflection;
 using System.Windows.Forms.Design;
 using System.Windows.Forms.PropertyGridInternal;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
 	[Designer("System.Windows.Forms.Design.PropertyGridDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
-	public class PropertyGrid : System.Windows.Forms.ContainerControl, ComponentModel.Com2Interop.IComPropertyBrowser
-	{
+	public class PropertyGrid : System.Windows.Forms.ContainerControl, ComponentModel.Com2Interop.IComPropertyBrowser {
 		#region Private Members
 		
 		
@@ -149,15 +147,14 @@ namespace System.Windows.Forms
 			toolbar.Appearance = ToolBarAppearance.Flat;
 			toolbar.AutoSize = false;
 			toolbar.Buttons.AddRange(new ToolBarButton[] {
-									     categorized_toolbarbutton,
-									     alphabetic_toolbarbutton,
-									     separator_toolbarbutton,
-									     propertypages_toolbarbutton});
+															 categorized_toolbarbutton,
+															 alphabetic_toolbarbutton,
+															 separator_toolbarbutton,
+															 propertypages_toolbarbutton});
 
 			toolbar.ButtonSize = new System.Drawing.Size(20, 20);
 			toolbar.ImageList = toolbar_imagelist;
 			toolbar.Location = new System.Drawing.Point(0, 0);
-			toolbar.Name = "toolbar";
 			toolbar.ShowToolTips = true;
 			toolbar.Size = new System.Drawing.Size(256, 27);
 			toolbar.TabIndex = 0;
@@ -194,14 +191,6 @@ namespace System.Windows.Forms
 			this.Controls.Add(help_panel);
 			this.Name = "PropertyGrid";
 			this.Size = new System.Drawing.Size(256, 400);
-
-			has_focus = false;
-
-			//TextChanged+=new System.EventHandler(RedrawEvent);
-			//ForeColorChanged+=new EventHandler(RedrawEvent);
-			//BackColorChanged+=new System.EventHandler(RedrawEvent);
-			//FontChanged+=new EventHandler(RedrawEvent);
-			//SizeChanged+=new EventHandler(RedrawEvent);
 
 			UpdateToolBarButtons();
 		}
@@ -338,8 +327,7 @@ namespace System.Windows.Forms
 		
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public override Color ForeColor 
-		{
+		public override Color ForeColor {
 			get {
 				return base.ForeColor;
 			}
@@ -349,12 +337,10 @@ namespace System.Windows.Forms
 		}
 
 		public Color HelpBackColor {
-			get
-			{
+			get {
 				return help_panel.BackColor;
 			}
-			set
-			{
+			set {
 				if (help_panel.BackColor == value) {
 					return;
 				}
@@ -439,7 +425,6 @@ namespace System.Windows.Forms
 				property_sort = value;
 				
 				ReflectObjects();
-				Console.WriteLine("PropertySort");
 				property_grid_view.Refresh();
 				
 				if (PropertySortChanged != null) {
@@ -476,7 +461,6 @@ namespace System.Windows.Forms
 				if (selected_grid_item.PropertyDescriptor != null)
 					this.help_description_label.Text = selected_grid_item.PropertyDescriptor.Description;
 					
-				Console.WriteLine("SelectedGridItem");
 				current_property_value = value.Value;
 				if (oldItem != null && oldItem.PropertyDescriptor != null)
 					oldItem.PropertyDescriptor.RemoveValueChanged(SelectedObject, new EventHandler(HandlePropertyValueChanged));
@@ -487,8 +471,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		private void HandlePropertyValueChanged(object sender, EventArgs e)
-		{
+		private void HandlePropertyValueChanged(object sender, EventArgs e) {
 			OnPropertyValueChanged(new PropertyValueChangedEventArgs( selected_grid_item, current_property_value));
 		}
 
@@ -504,15 +487,12 @@ namespace System.Windows.Forms
 				if (this.SelectedObject == null)
 					return;
 				PropertyTabAttribute[] propTabs = (PropertyTabAttribute[])this.SelectedObject.GetType().GetCustomAttributes(typeof(PropertyTabAttribute),true);
-				if (propTabs.Length > 0)
-				{
-					foreach (Type tabType in propTabs[0].TabClasses)
-					{
+				if (propTabs.Length > 0) {
+					foreach (Type tabType in propTabs[0].TabClasses) {
 						this.PropertyTabs.AddTabType(tabType);
 					}
 				}
 				RefreshTabs(PropertyTabScope.Component);
-				Console.WriteLine("SelectedObject");
 				ReflectObjects();
 				property_grid_view.Refresh();
 			}
@@ -636,34 +616,27 @@ namespace System.Windows.Forms
 
 		#region Public Instance Methods
 		
-		protected override void Dispose(bool val)
-		{
+		protected override void Dispose(bool val) {
 			base.Dispose(val);
 		}
 		
-		public void CollapseAllGridItems () 
-		{
-			foreach (GridItem item in this.grid_items)
-			{
+		public void CollapseAllGridItems () {
+			foreach (GridItem item in this.grid_items) {
 				item.Expanded = false;
 			}
 		}
 
-		public void ExpandAllGridItems () 
-		{
-			foreach (GridItem item in this.grid_items)
-			{
+		public void ExpandAllGridItems () {
+			foreach (GridItem item in this.grid_items) {
 				item.Expanded = true;
 			}
 		}
 
-		public override void Refresh () 
-		{
+		public override void Refresh () {
 			base.Refresh ();
 		}
 
-		public void RefreshTabs (PropertyTabScope tabScope) 
-		{
+		public void RefreshTabs (PropertyTabScope tabScope) {
 			
 			/*button = new ToolBarButton("C");
 			button.ImageIndex = 0;
@@ -684,8 +657,7 @@ namespace System.Windows.Forms
 			
 		}
 
-		public void ResetSelectedProperty() 
-		{
+		public void ResetSelectedProperty() {
 			if (selected_grid_item == null || selected_grid_item.PropertyDescriptor == null)
 				return;
 			
@@ -695,127 +667,101 @@ namespace System.Windows.Forms
 
 		#region Protected Instance Methods
 
-		protected virtual PropertyTab CreatePropertyTab(Type tabType) 
-		{
+		protected virtual PropertyTab CreatePropertyTab(Type tabType) {
 			return (PropertyTab)Activator.CreateInstance(tabType);
 		}
 		
 		[MonoTODO]
-		protected void OnComComponentNameChanged(ComponentRenameEventArgs e)
-		{
+		protected void OnComComponentNameChanged(ComponentRenameEventArgs e) {
 			throw new NotImplementedException();
 		}
 
-		protected override void OnFontChanged(EventArgs e) 
-		{
+		protected override void OnFontChanged(EventArgs e) {
 			base.OnFontChanged (e);
 		}
 
-		protected override void OnGotFocus(EventArgs e) 
-		{
-			has_focus=true;
+		protected override void OnGotFocus(EventArgs e) {
 			base.OnGotFocus(e);
 		}
 
-		protected override void OnHandleCreated (EventArgs e) 
-		{
+		protected override void OnHandleCreated (EventArgs e) {
 			base.OnHandleCreated (e);
 		}
 
-		protected override void OnHandleDestroyed (EventArgs e) 
-		{
+		protected override void OnHandleDestroyed (EventArgs e) {
 			base.OnHandleDestroyed (e);
 		}
 
-		protected override void OnMouseDown (MouseEventArgs e) 
-		{
+		protected override void OnMouseDown (MouseEventArgs e) {
 			base.OnMouseDown (e);
 		}
 
-		protected override void OnMouseMove (MouseEventArgs e) 
-		{
+		protected override void OnMouseMove (MouseEventArgs e) {
 			base.OnMouseMove (e);
 		}
 
-		protected override void OnMouseUp (MouseEventArgs e) 
-		{
+		protected override void OnMouseUp (MouseEventArgs e) {
 			base.OnMouseUp (e);
 		}
 		
 		[MonoTODO]
-		protected void OnNotifyPropertyValueUIItemsChanged(object sender, EventArgs e)
-		{
+		protected void OnNotifyPropertyValueUIItemsChanged(object sender, EventArgs e) {
 		}
 
-		protected override void OnPaint (PaintEventArgs pevent) 
-		{
+		protected override void OnPaint (PaintEventArgs pevent) {
 			base.OnPaint (pevent);
 		}
 
 		[MonoTODO]
-		protected virtual void OnPropertyTabChanged (PropertyTabChangedEventArgs e) 
-		{
+		protected virtual void OnPropertyTabChanged (PropertyTabChangedEventArgs e) {
 			throw new NotImplementedException();
 		}
 
-		protected virtual void OnPropertyValueChanged (PropertyValueChangedEventArgs e) 
-		{
-			if (PropertyValueChanged != null) 
-			{
+		protected virtual void OnPropertyValueChanged (PropertyValueChangedEventArgs e) {
+			if (PropertyValueChanged != null) {
 				PropertyValueChanged(this, e);
 				current_property_value = selected_grid_item.Value;
 			}
 		}
 
-		protected override void OnResize (EventArgs e) 
-		{
+		protected override void OnResize (EventArgs e) {
 			base.OnResize (e);
 		}
 
-		protected virtual void OnSelectedGridItemChanged (SelectedGridItemChangedEventArgs e) 
-		{
-			if (SelectedGridItemChanged != null) 
-			{
+		protected virtual void OnSelectedGridItemChanged (SelectedGridItemChangedEventArgs e) {
+			if (SelectedGridItemChanged != null) {
 				SelectedGridItemChanged(this, e);
 			}
 		}
 
-		protected virtual void OnSelectedObjectsChanged (EventArgs e) 
-		{
-			if (SelectedObjectsChanged != null) 
-			{
+		protected virtual void OnSelectedObjectsChanged (EventArgs e) {
+			if (SelectedObjectsChanged != null) {
 				SelectedObjectsChanged(this, e);
 			}
 		}
 
-		protected override void OnSystemColorsChanged (EventArgs e) 
-		{
+		protected override void OnSystemColorsChanged (EventArgs e) {
 			base.OnSystemColorsChanged (e);
 		}
 
-		protected override void OnVisibleChanged (EventArgs e) 
-		{
+		protected override void OnVisibleChanged (EventArgs e) {
 			base.OnVisibleChanged (e);
 		}
 
-		protected override bool ProcessDialogKey (Keys keyData) 
-		{
+		protected override bool ProcessDialogKey (Keys keyData) {
 			return base.ProcessDialogKey (keyData);
 		}
 
-		protected override void ScaleCore (float dx, float dy) 
-		{
+		protected override void ScaleCore (float dx, float dy) {
 			base.ScaleCore (dx, dy);
 		}
 		
 		[MonoTODO]
-		protected void ShowEventsButton(bool value)
-		{
+		protected void ShowEventsButton(bool value) {
 			throw new NotImplementedException();
 		}
 
-		protected override void WndProc (ref Message m) 
-		{
+		protected override void WndProc (ref Message m) {
 			base.WndProc (ref m);
 		}
 		#endregion
@@ -884,8 +830,7 @@ namespace System.Windows.Forms
 		#endregion	// Com2Interop.IComPropertyBrowser Interface
 
 		#region PropertyTabCollection Class
-		public class PropertyTabCollection : ICollection, IEnumerable
-		{
+		public class PropertyTabCollection : ICollection, IEnumerable {
 			System.Collections.ArrayList list;
 			#region Private Constructors
 			internal PropertyTabCollection() {
@@ -901,20 +846,17 @@ namespace System.Windows.Forms
 			}
 		
 			#region ICollection Members
-			bool ICollection.IsSynchronized
-			{
+			bool ICollection.IsSynchronized {
 				get {
 					return list.IsSynchronized;
 				}
 			}
 
-			void ICollection.CopyTo(Array array, int index)
-			{
+			void ICollection.CopyTo(Array array, int index) {
 				list.CopyTo(array, index);
 			}
 
-			object ICollection.SyncRoot
-			{
+			object ICollection.SyncRoot {
 				get {
 					return list.SyncRoot;
 				}
@@ -939,24 +881,20 @@ namespace System.Windows.Forms
 			#endregion
 			
 			#region Public Instance Methods
-			public void AddTabType(System.Type propertyTabType)
-			{
+			public void AddTabType(System.Type propertyTabType) {
 				list.Add(Activator.CreateInstance(propertyTabType));
 			}
 			[MonoTODO]
 			public void AddTabType(System.Type propertyTabType,
-				System.ComponentModel.PropertyTabScope tabScope)
-			{
+				System.ComponentModel.PropertyTabScope tabScope) {
 				AddTabType(propertyTabType);
 			}
 			[MonoTODO]
-			public void Clear(System.ComponentModel.PropertyTabScope tabScope)
-			{
+			public void Clear(System.ComponentModel.PropertyTabScope tabScope) {
 				throw new NotImplementedException();
 			}
 			[MonoTODO]
-			public void RemoveTabType(System.Type propertyTabType)
-			{
+			public void RemoveTabType(System.Type propertyTabType) {
 				throw new NotImplementedException();
 			}
 			#endregion
@@ -965,8 +903,7 @@ namespace System.Windows.Forms
 
 		#region Private Helper Methods
 
-		private void toolbar_ButtonClick (object sender, ToolBarButtonClickEventArgs e) 
-		{
+		private void toolbar_ButtonClick (object sender, ToolBarButtonClickEventArgs e) {
 			if (e.Button == alphabetic_toolbarbutton) {
 				this.PropertySort = PropertySort.Alphabetical;
 			}
@@ -975,12 +912,10 @@ namespace System.Windows.Forms
 			}
 			UpdateToolBarButtons();
 			ReflectObjects();
-			Console.WriteLine("toolbar_ButtonClick");
 			property_grid_view.Refresh();
 		}
 
-		internal void UpdateToolBarButtons () 
-		{
+		internal void UpdateToolBarButtons () {
 			if (PropertySort == PropertySort.Alphabetical) {
 				categorized_toolbarbutton.Pushed = false;
 				alphabetic_toolbarbutton.Pushed = true;
@@ -995,20 +930,17 @@ namespace System.Windows.Forms
 			}
 		}
 
-		private void OnResetPropertyClick (object sender, EventArgs e) 
-		{
+		private void OnResetPropertyClick (object sender, EventArgs e) {
 			ResetSelectedProperty();
 		}
 
-		private void OnDescriptionClick (object sender, EventArgs e) 
-		{
+		private void OnDescriptionClick (object sender, EventArgs e) {
 			this.HelpVisible = !this.HelpVisible;
 			description_menuitem.Checked = this.HelpVisible;
 
 		}
 
-		private void ReflectObjects () 
-		{
+		private void ReflectObjects () {
 			grid_items = new GridItemCollection();
 			foreach (object obj in selected_objects) {
 				if (obj != null) {
@@ -1017,32 +949,26 @@ namespace System.Windows.Forms
 			}
 		}
 
-		private void PopulateGridItemCollection (object obj, GridItemCollection grid_item_coll, bool recurse) 
-		{
-			//TypeConverter converter = TypeDescriptor.GetConverter(obj);
+		private void PopulateGridItemCollection (object obj, GridItemCollection grid_item_coll, bool recurse) {
 			PropertyDescriptorCollection properties = TypeDescriptor.GetProperties(obj);
 			foreach (PropertyDescriptor property in properties) {
 				if (property.IsBrowsable) {
 					GridEntry grid_entry = new GridEntry(obj, property);
-					if (property_sort == PropertySort.Alphabetical || !recurse)
-					{
+					if (property_sort == PropertySort.Alphabetical || !recurse) {
 						if (grid_item_coll[property.Name] == null)
 							grid_item_coll.Add(property.Name,grid_entry);
 					}
-					else if (property_sort == PropertySort.Categorized || property_sort == PropertySort.CategorizedAlphabetical)
-					{
+					else if (property_sort == PropertySort.Categorized || property_sort == PropertySort.CategorizedAlphabetical) {
 
 						string category = property.Category;
 						GridItem cat_item = grid_item_coll[category];
-						if (cat_item == null) 
-						{
+						if (cat_item == null) {
 							cat_item = new CategoryGridEntry(category);
 							grid_item_coll.Add(category,cat_item);
 						}
 						cat_item.GridItems.Add(property.Name,grid_entry);
 					}
-					if (recurse)
-					{
+					if (recurse) {
 						object propObj = property.GetValue(obj);
 						if (propObj != null)
 							PopulateGridItemCollection(propObj,grid_entry.GridItems, false);
@@ -1051,13 +977,14 @@ namespace System.Windows.Forms
 			}
 		}
 
-		#endregion	// Private Helper Methods
-
-		private void help_panel_Paint(object sender, PaintEventArgs e)
-		{
+		private void help_panel_Paint(object sender, PaintEventArgs e) {
 			e.Graphics.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(help_panel.BackColor), help_panel.ClientRectangle );
 			e.Graphics.DrawRectangle(SystemPens.ControlDark, 0,0,help_panel.Width-1,help_panel.Height-1 );
 		}
+
+		#endregion	// Private Helper Methods
+
+
 #if NET_2_0
 
 		public bool UseCompatibleTextRendering {

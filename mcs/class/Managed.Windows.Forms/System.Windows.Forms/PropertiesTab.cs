@@ -24,54 +24,38 @@
 //
 
 
-// NOT COMPLETE
+// COMPLETE
 
 using System;
 
-namespace System.Windows.Forms.PropertyGridInternal
-{
-	/// <summary>
-	/// Summary description for PropertiesTab.
-	/// </summary>
-	public class PropertiesTab : System.Windows.Forms.Design.PropertyTab
-	{
-		public PropertiesTab()
-		{
+namespace System.Windows.Forms.PropertyGridInternal {
+
+	public class PropertiesTab : System.Windows.Forms.Design.PropertyTab {
+		public PropertiesTab() {
 		}
 
-		public override System.ComponentModel.PropertyDescriptorCollection GetProperties(object component, Attribute[] attributes)
-		{
+		public override System.ComponentModel.PropertyDescriptorCollection GetProperties(object component, Attribute[] attributes) {
 			return base.GetProperties(null, component, attributes);
 		}
 
-		public override System.ComponentModel.PropertyDescriptorCollection GetProperties(System.ComponentModel.ITypeDescriptorContext context, object component, Attribute[] attributes)
-		{
+		public override System.ComponentModel.PropertyDescriptorCollection GetProperties(System.ComponentModel.ITypeDescriptorContext context, object component, Attribute[] attributes) {
 			return base.GetProperties (context, component, attributes);
 		}
 
-		public override System.ComponentModel.PropertyDescriptor GetDefaultProperty (object component)
-		{
+		public override System.ComponentModel.PropertyDescriptor GetDefaultProperty (object component) {
 			return base.GetDefaultProperty(component);
 		}
 
-		public override string HelpKeyword
-		{
-			get
-			{
-				return base.HelpKeyword;
+		public override string HelpKeyword {
+			get {
+				return "vs.properties";
 			}
 		}
 
-
-		public override string TabName
-		{
-			get
-			{
-				return string.Empty;
+		public override string TabName {
+			get {
+				return "Properties";
 			}
 		}
-
-
-
 	}
 }

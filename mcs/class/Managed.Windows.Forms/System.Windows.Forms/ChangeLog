@@ -1,3 +1,11 @@
+2006-04-17  Jonathan Chambers  <jonathan.chambers@ansys.com>
+
+	* PropertyGridTextBox.cs: Formatting, copyright
+	* PropertiesTab.cs: Formatting
+	* PropertyGrid.cs: Formatting
+	* PropertyGridView.cs: Formatting, fix drop down, enabled double 
+	  click toggling of values
+	  
 2006-04-17  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* KeyPressEventArgs: Added 2.0 only setter for KeyChar

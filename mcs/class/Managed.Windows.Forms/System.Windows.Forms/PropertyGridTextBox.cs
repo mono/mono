@@ -1,105 +1,83 @@
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+// Copyright (c) 2004-2005 Novell, Inc.
+//
+// Authors:
+//	Jonathan Chambers (jonathan.chambers@ansys.com)
+//
+
+// COMPLETE
+
 using System;
+using System.Drawing;
 
 namespace System.Windows.Forms.PropertyGridInternal {
 	internal class PropertyGridTextBox : System.Windows.Forms.UserControl {
+		#region Private Members
+
 		private TextBox textbox;
 		private Button dialog_button;
 		private Button dropdown_button;
-		/// <summary> 
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
 
+		#endregion Private Members
+
+		#region Contructors
 		public PropertyGridTextBox() {
-			// This call is required by the Windows.Forms Form Designer.
-			InitializeComponent();
+			dialog_button = new Button();
+			dropdown_button = new Button();
+			textbox = new TextBox();
+
+			SuspendLayout();
+
+			dialog_button.Dock = DockStyle.Right;
+			dialog_button.Size = new Size(16, 16);
+			dialog_button.TabIndex = 1;
+			dialog_button.Visible = false;
+			dialog_button.Click += new System.EventHandler(dialog_button_Click);
+
+			dropdown_button.Dock = DockStyle.Right;
+			dropdown_button.Size = new Size(16, 16);
+			dropdown_button.TabIndex = 2;
+			dropdown_button.Visible = false;
+			dropdown_button.Click += new System.EventHandler(dropdown_button_Click);
+
+			textbox.AutoSize = false;
+			textbox.BorderStyle = BorderStyle.None;
+			textbox.Dock = DockStyle.Fill;
+			textbox.TabIndex = 3;
+
+			Controls.Add(textbox);
+			Controls.Add(dropdown_button);
+			Controls.Add(dialog_button);
+
+			ResumeLayout(false);
+
 			dropdown_button.Paint+=new PaintEventHandler(dropdown_button_Paint);
-
-			// TODO: Add any initialization after the InitializeComponent call
-
-		}
-
-		/// <summary> 
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing ) {
-			if( disposing ) {
-				if(components != null) {
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
-
-		#region Component Designer generated code
-		/// <summary> 
-		/// Required method for Designer support - do not modify 
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent() {
-			this.dialog_button = new System.Windows.Forms.Button();
-			this.dropdown_button = new System.Windows.Forms.Button();
-			this.textbox = new System.Windows.Forms.TextBox();
-			this.SuspendLayout();
-			// 
-			// dialog_button
-			// 
-			this.dialog_button.Dock = System.Windows.Forms.DockStyle.Right;
-			this.dialog_button.Location = new System.Drawing.Point(256, 0);
-			this.dialog_button.Name = "dialog_button";
-			this.dialog_button.Size = new System.Drawing.Size(16, 16);
-			this.dialog_button.TabIndex = 1;
-			this.dialog_button.Text = "D";
-			this.dialog_button.Visible = false;
-			this.dialog_button.Click += new System.EventHandler(this.dialog_button_Click);
-			// 
-			// dropdown_button
-			// 
-			this.dropdown_button.Dock = System.Windows.Forms.DockStyle.Right;
-			this.dropdown_button.Location = new System.Drawing.Point(240, 0);
-			this.dropdown_button.Name = "dropdown_button";
-			this.dropdown_button.Size = new System.Drawing.Size(16, 16);
-			this.dropdown_button.TabIndex = 2;
-			this.dropdown_button.Visible = false;
-			this.dropdown_button.Click += new System.EventHandler(this.dropdown_button_Click);
-			// 
-			// textbox
-			// 
-			this.textbox.AutoSize = false;
-			this.textbox.BackColor = System.Drawing.SystemColors.Window;
-			this.textbox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.textbox.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.textbox.Location = new System.Drawing.Point(0, 0);
-			this.textbox.Name = "textbox";
-			this.textbox.Size = new System.Drawing.Size(240, 16);
-			this.textbox.TabIndex = 3;
-			this.textbox.Text = "textbox";
-			// 
-			// PropertyGridTextBox
-			// 
-			this.Controls.Add(this.textbox);
-			this.Controls.Add(this.dropdown_button);
-			this.Controls.Add(this.dialog_button);
-			this.Name = "PropertyGridTextBox";
-			this.Size = new System.Drawing.Size(272, 16);
-			this.ResumeLayout(false);
-
-		}
-		#endregion
-
-		private void dropdown_button_Click(object sender, System.EventArgs e) {
-			if (DropDownButtonClicked != null)
-				DropDownButtonClicked(this, EventArgs.Empty);
-		}
-
-		private void dialog_button_Click(object sender, System.EventArgs e) {
-			if (DialogButtonClicked != null)
-				DialogButtonClicked(this, EventArgs.Empty);
+			dialog_button.Paint+=new PaintEventHandler(dialog_button_Paint);
+			textbox.DoubleClick+=new EventHandler(textbox_DoubleClick);
 		}
 
 		
-		public event EventHandler DropDownButtonClicked;
-		public event EventHandler DialogButtonClicked;
+		#endregion Contructors
+
+		#region Public Instance Properties
 
 		public bool DialogButtonVisible {
 			get{
@@ -107,7 +85,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			}
 			set {
 				dialog_button.Visible = value;
-				dropdown_button.Redraw();
 			}
 		}
 		public bool DropDownButtonVisible {
@@ -116,7 +93,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			}
 			set {
 				dropdown_button.Visible = value;
-				dropdown_button.Redraw();
 			}
 		}
 
@@ -138,9 +114,43 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			}
 		}
 
+		#endregion Public Instance Properties
+		
+		#region Events
+
+		public event EventHandler DropDownButtonClicked;
+		public event EventHandler DialogButtonClicked;
+		public event EventHandler ToggleValue;
+		
+		#endregion Events
+		
+		#region Private Helper Methods
+
 		private void dropdown_button_Paint(object sender, PaintEventArgs e)
 		{
 			ThemeEngine.Current.CPDrawComboButton(e.Graphics, dropdown_button.ClientRectangle, dropdown_button.ButtonState);
+		}
+
+		private void dialog_button_Paint(object sender, PaintEventArgs e) {
+			// best way to draw the ellipse?
+			e.Graphics.DrawString("...", new Font(Font,FontStyle.Bold), Brushes.Black, 0,0);
+		}
+
+		private void dropdown_button_Click(object sender, System.EventArgs e) {
+			if (DropDownButtonClicked != null)
+				DropDownButtonClicked(this, EventArgs.Empty);
+		}
+
+		private void dialog_button_Click(object sender, System.EventArgs e) {
+			if (DialogButtonClicked != null)
+				DialogButtonClicked(this, EventArgs.Empty);
+		}
+
+		#endregion Private Helper Methods
+
+		private void textbox_DoubleClick(object sender, EventArgs e) {
+			if (ToggleValue != null)
+				ToggleValue(this, EventArgs.Empty);
 		}
 	}
 }
