@@ -1,3 +1,8 @@
+2006-04-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_spill_global_vars): Disable the lvreg optimization for
+	now since it leads to unsolvable situations in the local register allocator.
+
 2006-04-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ops.h: Add OP_VTARG_ADDR opcode.

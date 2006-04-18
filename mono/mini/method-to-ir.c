@@ -9763,10 +9763,24 @@ mono_spill_global_vars (MonoCompile *cfg)
 									 */
 									sreg = ins->dreg;
 								}
-
+								/* 
+								 * FIXME: This causes assertions in the local allocator.
+								 * Specially, in Mono.Globalization.Unicode.SimpleCollator:.ctor:
+								 * there is a instruction of the form:
+								 * int_div R112 <- R250 R111 clobbers: d
+								 * Here, R112 is assigned to RDX, R250 is assigned to
+								 * RCX. int_div has the following spec:
+								 * int_div: dest:a src1:a src2:i len:15 clob:d
+								 * So we need to copy from RCX to RAX, and the
+								 * instruction clobbers RDX before accessing SREG1
+								 * and SREG2, so there are no registers left for
+								 * SREG2. Not sure how this can be fixed.
+								 */
+#if 0
 								vreg_to_lvreg [var->dreg] = sreg;
 								g_assert (lvregs_len < 1024);
 								lvregs [lvregs_len ++] = var->dreg;
+#endif
 							}
 						}
 
@@ -9793,10 +9807,13 @@ mono_spill_global_vars (MonoCompile *cfg)
 			}
 
 			if (dest_has_lvreg) {
+				/* FIXME: This causes assertions in the local allocator */
+#if 0
 				vreg_to_lvreg [prev_dreg] = ins->dreg;
 				g_assert (lvregs_len < 1024);
 				lvregs [lvregs_len ++] = prev_dreg;
 				dest_has_lvreg = FALSE;
+#endif
 			}
 
 			if (store) {
