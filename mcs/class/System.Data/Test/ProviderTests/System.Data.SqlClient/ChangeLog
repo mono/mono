@@ -1,3 +1,10 @@
+2006-04-18  Senganal T  <tsenganal@novell.com>
+
+	* SqlConnectionTest.cs :
+		- OpenTest_1 : test InvalidOperationException is raised if
+		ConnectionString is empty
+		- DisposeTest : test nullreference exception is not raised
+
 2006-04-07  Senganal T  <tsenganal@novell.com>
 
 	* SqlDataAdapterTest,cs :

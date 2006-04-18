@@ -1,3 +1,15 @@
+2006-04-18  Senganal T  <tsenganal@novell.com>
+
+	* SqlConnection.cs :
+		- SetConnectionString : set the pareameter to default values
+		if connection string is empty or null
+		- Open : Raise InvalidOperationException if Connection String
+		is empty or null
+		- Dispose : Test exception not raised if dispose called on a
+		connection with empty connection string
+
+	slight modification of the patch by Jonel Rienton
+
 2006-04-07  Senganal T  <tsenganal@novell.com>
 
 	* SqlCommandBuilder.cs :

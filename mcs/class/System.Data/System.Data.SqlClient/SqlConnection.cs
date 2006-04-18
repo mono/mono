@@ -436,19 +436,19 @@ namespace System.Data.SqlClient {
 
 		protected override void Dispose (bool disposing) 
 		{
-			if (!disposed) { 
-                                try {
-                                        if (disposing) {
-                                                if (State == ConnectionState.Open) 
-                                                        Close ();
-                                                parms.Reset ();
-                                                ConnectionString = "";
-						SetDefaultConnectionParameters (this.connStringParameters); 
-                                        }
-                                } finally {
-                                        disposed = true;
-                                        base.Dispose (disposing);
-                                }
+			if (disposed)
+				return;
+
+			try {
+				if (disposing) {
+					if (State == ConnectionState.Open) 
+						Close ();
+					ConnectionString = "";
+					SetDefaultConnectionParameters (this.connStringParameters); 
+				}
+			} finally {
+				disposed = true;
+				base.Dispose (disposing);
 			}
 		}
 
@@ -503,7 +503,7 @@ namespace System.Data.SqlClient {
 			if (state == ConnectionState.Open)
 				throw new InvalidOperationException ("The Connection is already Open (State=Open)");
 
-			if (connectionString == null)
+			if (connectionString == null || connectionString.Trim().Length == 0)
 				throw new InvalidOperationException ("Connection string has not been initialized.");
 
 			try {
@@ -552,7 +552,7 @@ namespace System.Data.SqlClient {
 			string theInstanceName = "";
 	
 			if (theDataSource == null)
-				throw new ArgumentException("Format of initialization string doesnot conform to specifications");
+				throw new ArgumentException("Format of initialization string does not conform to specifications");
 
 			thePort = 1433; // default TCP port for SQL Server
 			bool success = true;
@@ -633,8 +633,9 @@ namespace System.Data.SqlClient {
                         NameValueCollection parameters = new NameValueCollection ();
                         SetDefaultConnectionParameters (parameters);
 
-			if ((connectionString == null) || (connectionString.Length == 0)) {
-                                this.connectionString = connectionString;
+			if ((connectionString == null) || (connectionString.Trim().Length == 0)) {
+				this.connectionString = connectionString;
+				this.connStringParameters = parameters;
 				return;
                         }
 

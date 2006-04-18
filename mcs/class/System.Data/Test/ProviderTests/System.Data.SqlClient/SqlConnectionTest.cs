@@ -169,9 +169,9 @@ namespace MonoTests.System.Data
 				try {
 					conn.ConnectionString = connString;
 					conn.Open();
-					Assert.AreEqual (typeof (SqlException), null,
-						string.Format (
+					Assert.Fail (String.Format (
 							"#1_{0} Incorrect Connection String",count));				
+						
 				}catch (AssertionException e) {
 					throw e;
 				}catch (Exception e) {
@@ -216,6 +216,26 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+		public void OpenTest_1 ()
+		{
+			SqlConnection conn  = new SqlConnection ();
+
+			conn.ConnectionString = "";
+			try {
+				conn.Open ();
+				Assert.Fail ("#1 Should throw ArgumentException and not SqlException");
+			} catch (InvalidOperationException) {
+			}
+
+			conn.ConnectionString = "    ";
+			try {
+				conn.Open ();
+				Assert.Fail ("#2 Should throw ArgumentException and not SqlException");
+			} catch (InvalidOperationException) {
+			}
+		}
+
+		[Test]
 		public void CreateCommandTest ()
 		{
 			conn = new SqlConnection (connectionString);
@@ -257,6 +277,10 @@ namespace MonoTests.System.Data
 				"#6 Default Workstationid : hostname");
 			Assert.AreEqual (ConnectionState.Closed, conn.State, 
 				"#7 Default State : CLOSED ");
+
+			conn = new SqlConnection ();
+			//shud not throw exception
+			conn.Dispose ();
 		}
 
 		[Test]
