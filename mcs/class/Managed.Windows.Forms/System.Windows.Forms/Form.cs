@@ -903,7 +903,7 @@ namespace System.Windows.Forms {
 				cp.Parent = IntPtr.Zero;
 				cp.menu = ActiveMenu;
 
-				if (start_position == FormStartPosition.WindowsDefaultLocation) {
+				if (start_position == FormStartPosition.WindowsDefaultLocation && !IsMdiChild) {
 					cp.X = unchecked((int)0x80000000);
 					cp.Y = unchecked((int)0x80000000);
 				} else {
@@ -920,6 +920,7 @@ namespace System.Windows.Forms {
 					cp.Parent = Parent.Handle;
 
 					cp.ExStyle |= (int) (WindowExStyles.WS_EX_WINDOWEDGE | WindowExStyles.WS_EX_MDICHILD);
+
 					switch (FormBorderStyle) {
 					case FormBorderStyle.None:
 						break;

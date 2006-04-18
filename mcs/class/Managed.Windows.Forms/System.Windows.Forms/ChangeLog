@@ -1,3 +1,9 @@
+2006-04-18  Jackson Harper  <jackson@ximian.com>
+
+	* Form.cs: MdiChildren don't do default locations the same way as
+	regular forms.  This prevents a crash when trying to position the
+	mdi windows.
+
 2006-04-17  Jonathan Chambers  <jonathan.chambers@ansys.com>
 
 	* PropertyGridTextBox.cs: Formatting, copyright
