@@ -46,7 +46,7 @@ namespace Commons.Xml.Nvdl
 	internal class SimpleRules : SimplifiedItem
 	{
 		SimpleMode startMode;
-		XmlQualifiedName [] triggers;
+		SimpleTrigger [] triggers;
 
 		// FIXME: It is not used in validation step, so move it to
 		// compile context
@@ -64,7 +64,7 @@ namespace Commons.Xml.Nvdl
 			get { return startMode; }
 		}
 
-		public XmlQualifiedName [] Triggers {
+		public SimpleTrigger [] Triggers {
 			get { return triggers; }
 		}
 
@@ -123,17 +123,10 @@ namespace Commons.Xml.Nvdl
 			// 6.4.10 : done in SimpleRule.Simplify
 
 			ArrayList tl = new ArrayList ();
-			for (int i = 0; i < rules.Triggers.Count; i++) {
-				NvdlTrigger t = rules.Triggers [i];
-				foreach (string ss in t.NameList.Split (' ')) {
-					string s = ss.Trim ();
-					if (s.Length == 0)
-						continue;
-					tl.Add (new XmlQualifiedName (s, t.NS));
-				}
-			}
-			triggers = (XmlQualifiedName []) tl.ToArray (
-				typeof (XmlQualifiedName));
+			for (int i = 0; i < rules.Triggers.Count; i++)
+				tl.Add (new SimpleTrigger (rules.Triggers [i]));
+			triggers = (SimpleTrigger []) tl.ToArray (
+				typeof (SimpleTrigger));
 
 			modes = (SimpleMode [])
 				new ArrayList (ctx.GetCompiledModes ())
@@ -152,6 +145,40 @@ namespace Commons.Xml.Nvdl
 				mode.ResolveModes (ctx);
 		}
 		#endregion
+	}
+
+	internal class SimpleTrigger : SimplifiedItem
+	{
+		XmlQualifiedName [] names;
+
+		public SimpleTrigger (NvdlTrigger trigger)
+		{
+			FillLocation (trigger);
+
+			ArrayList al = new ArrayList ();
+			foreach (string ss in trigger.NameList.Split (' ')) {
+				string s = ss.Trim ();
+				if (s.Length == 0)
+					continue;
+				al.Add (new XmlQualifiedName (s, trigger.NS));
+			}
+			names = (XmlQualifiedName []) al.ToArray (
+				typeof (XmlQualifiedName));
+		}
+
+		public XmlQualifiedName [] Names {
+			get { return names; }
+		}
+
+		public bool Cover (string localName, string ns)
+		{
+			for (int i = 0; i < Names.Length; i++) {
+				XmlQualifiedName q = Names [i];
+				if (q.Name == localName && q.Namespace == ns)
+					return true;
+			}
+			return false;
+		}
 	}
 
 	internal class SimpleMode : SimplifiedItem

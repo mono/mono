@@ -1,5 +1,14 @@
 2006-04-18  Atsushi Enomoto <atsushi@ximian.com>
 
+	* NvdlSimplified.cs, NvdlValidator.cs :
+	  Support for revised "trigger" in FDIS was not enough. The validator
+	  must not trigger such element that has a parent which could be
+	  triggered (the parent does not have to be actually triggered).
+	  Thus, introduced a new class SimpleTrigger which holds own qname
+	  array.
+
+2006-04-18  Atsushi Enomoto <atsushi@ximian.com>
+
 	* NvdlSimplified.cs : according to the section 6.4.10 overriden rules
 	  should be filtered out, and rules with cancelNestedAction should be
 	  removed *after* filtering overriden rules out.

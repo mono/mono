@@ -21,6 +21,12 @@ namespace Commons.Xml.Nvdl
 		// IsEmptyElement is true).
 		NvdlSectionStack sectionStack = new NvdlSectionStack ();
 
+		// This qname stack is required for section 7.3 check that
+		// if parent "element" of an element (note that it is not
+		// "element section") must not be located by the same
+		// trigger element
+		Stack qnameStack = new Stack ();
+
 		public NvdlDispatcher (SimpleRules rules, NvdlValidatingReader source)
 		{
 			this.validator = source;
@@ -43,15 +49,37 @@ namespace Commons.Xml.Nvdl
 		{
 NvdlDebug.Writer.WriteLine ("  <dispatcher.StartElement {0}. stack depth: {1}. current section ns {2}",
 Reader.Name, sectionStack.Count, section == null ? "(none)" : section.Namespace);
-			if (section == null)
-				section = new NvdlSection (this, null);
-			else if (section.Namespace != Reader.NamespaceURI)
-				section = new NvdlSection (this, section);
+			section = GetSection (section);
 
 			sectionStack.Push (section);
 			section.StartElement ();
 			if (Reader.IsEmptyElement)
 				sectionStack.Pop ().EndSection ();
+
+			else
+				qnameStack.Push (new XmlQualifiedName (Reader.LocalName, Reader.NamespaceURI));
+		}
+
+		NvdlSection GetSection (NvdlSection section)
+		{
+			if (section == null)
+				return new NvdlSection (this, null);
+			else if (section.Namespace != Reader.NamespaceURI)
+				return new NvdlSection (this, section);
+			else if (qnameStack.Count > 0 && rules.Triggers.Length > 0) {
+				for (int t = 0; t < rules.Triggers.Length; t++) {
+					SimpleTrigger st = rules.Triggers [t];
+					XmlQualifiedName parent =
+						(XmlQualifiedName) qnameStack.Peek ();
+					if (st.Cover (Reader.LocalName,
+						      Reader.NamespaceURI) &&
+					    !st.Cover (parent.Name, parent.Namespace)) {
+NvdlDebug.Writer.WriteLine ("======== triggered by {0}", st.Location);
+						return new NvdlSection (this, section);
+					}
+				}
+			}
+			return section;
 		}
 
 		public void EndElement ()
@@ -67,6 +95,8 @@ Reader.Name, sectionStack.Count);
 				else
 					section = null;
 			}
+
+			qnameStack.Pop ();
 		}
 
 		public void Text ()
