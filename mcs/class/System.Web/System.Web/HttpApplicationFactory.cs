@@ -280,7 +280,7 @@ namespace System.Web {
 				evt.AddEventHandler (target, npi.FakeDelegate);
 			} else {
 				evt.AddEventHandler (target, Delegate.CreateDelegate (
-							typeof (EventHandler), app, method.Name));
+							evt.EventHandlerType, app, method.Name));
 			}
 		}
 
