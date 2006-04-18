@@ -1295,7 +1295,7 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 }
 
 void
-mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
+mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 {
 	MonoInst *in;
 	MonoMethodSignature *sig;

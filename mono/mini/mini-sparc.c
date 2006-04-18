@@ -1486,7 +1486,7 @@ emit_pass_other (MonoCompile *cfg, MonoCallInst *call, ArgInfo *ainfo, MonoType 
 }
 
 void
-mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
+mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 {
 	MonoInst *in;
 	MonoMethodSignature *sig;

@@ -1,5 +1,13 @@
 2006-04-18  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.h method-to-ir.c mini-<ARCH>.c: Put back the 'is_virtual' argument to
+	mono_arch_emit_call () as it is needed on x86.
+
+	* method-to-ir.c (mono_spill_global_vars): Reenable the lvreg optimization.
+
+	* mini-x86.c mini-x86.h: Enable the second argument of div/rem opcodes to be
+	allocated to %edx, and handle this case in the opcodes themselves.
+
 	* method-to-ir.c (mono_spill_global_vars): Disable the lvreg optimization for
 	now since it leads to unsolvable situations in the local register allocator.
 

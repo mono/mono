@@ -1070,7 +1070,7 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 #define EMIT_NEW_VARLOADA(cfg,dest,var,vartype) do { NEW_VARLOADA ((cfg), (dest), (var), (vartype)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
 void
-mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
+mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 {
 	MonoInst *arg, *in;
 	MonoMethodSignature *sig;
@@ -1545,9 +1545,13 @@ peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
 			} else if ((ins->inst_imm == 1) && (ins->dreg == ins->sreg1))
 				ins->opcode = OP_X86_INC_REG;
 			break;
-		case OP_ISUB_IMM:
 		case OP_SUB_IMM:
-			if ((ins->inst_imm == 1) && (ins->dreg == ins->sreg1))
+		case OP_ISUB_IMM:
+			if ((ins->sreg1 < MONO_MAX_IREGS) && (ins->dreg >= MONO_MAX_IREGS)) {
+				ins->opcode = OP_X86_LEA_MEMBASE;
+				ins->inst_basereg = ins->sreg1;
+				ins->inst_imm = -ins->inst_imm;
+			} else if ((ins->inst_imm == 1) && (ins->dreg == ins->sreg1))
 				ins->opcode = OP_X86_DEC_REG;
 			break;
 		case OP_COMPARE_IMM:
@@ -2522,35 +2526,51 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case CEE_DIV:
 		case OP_IDIV:
-			x86_cdq (code);
-			x86_div_reg (code, ins->sreg2, TRUE);
+		case CEE_REM:
+		case OP_IREM:
+			/* 
+			 * The code is the same for div/rem, the allocator will allocate dreg
+			 * to RAX/RDX as appropriate.
+			 */
+			if (ins->sreg2 == X86_EDX) {
+				/* cdq clobbers this */
+				x86_push_reg (code, ins->sreg2);
+				x86_cdq (code);
+				x86_div_membase (code, X86_ESP, 0, TRUE);
+				x86_alu_reg_imm (code, X86_ADD, X86_ESP, 4);				
+			} else {
+				x86_cdq (code);
+				x86_div_reg (code, ins->sreg2, TRUE);
+			}
 			break;
 		case CEE_DIV_UN:
 		case OP_IDIV_UN:
-			x86_alu_reg_reg (code, X86_XOR, X86_EDX, X86_EDX);
-			x86_div_reg (code, ins->sreg2, FALSE);
+		case CEE_REM_UN:
+		case OP_IREM_UN:
+			if (ins->sreg2 == X86_EDX) {
+				x86_push_reg (code, ins->sreg2);
+				x86_alu_reg_reg (code, X86_XOR, X86_EDX, X86_EDX);
+				x86_div_membase (code, X86_ESP, 0, FALSE);
+				x86_alu_reg_imm (code, X86_ADD, X86_ESP, 4);				
+			} else {
+				x86_alu_reg_reg (code, X86_XOR, X86_EDX, X86_EDX);
+				x86_div_reg (code, ins->sreg2, FALSE);
+			}
 			break;
 		case OP_DIV_IMM:
 		case OP_IDIV_IMM:
-			x86_mov_reg_imm (code, ins->sreg2, ins->inst_imm);
-			x86_cdq (code);
-			x86_div_reg (code, ins->sreg2, TRUE);
-			break;
-		case CEE_REM:
-		case OP_IREM:
-			x86_cdq (code);
-			x86_div_reg (code, ins->sreg2, TRUE);
-			break;
-		case CEE_REM_UN:
-		case OP_IREM_UN:
-			x86_alu_reg_reg (code, X86_XOR, X86_EDX, X86_EDX);
-			x86_div_reg (code, ins->sreg2, FALSE);
-			break;
 		case OP_REM_IMM:
 		case OP_IREM_IMM:
-			x86_mov_reg_imm (code, ins->sreg2, ins->inst_imm);
-			x86_cdq (code);
-			x86_div_reg (code, ins->sreg2, TRUE);
+			if (ins->sreg2 == X86_EDX) {
+				x86_push_imm (code, ins->sreg2);
+				x86_cdq (code);
+				x86_div_membase (code, X86_ESP, 0, TRUE);	
+				x86_alu_reg_imm (code, X86_ADD, X86_ESP, 4);
+			} else {
+				x86_mov_reg_imm (code, ins->sreg2, ins->inst_imm);
+				x86_cdq (code);
+				x86_div_reg (code, ins->sreg2, TRUE);
+			}
 			break;
 		case CEE_OR:
 		case OP_IOR:

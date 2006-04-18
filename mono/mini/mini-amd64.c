@@ -1467,7 +1467,7 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 #define EMIT_NEW_VARLOADA(cfg,dest,var,vartype) do { NEW_VARLOADA ((cfg), (dest), (var), (vartype)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
 void
-mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
+mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 {
 	MonoInst *arg, *in;
 	MonoMethodSignature *sig;

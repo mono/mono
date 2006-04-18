@@ -88,7 +88,12 @@ LONG CALLBACK seh_handler(EXCEPTION_POINTERS* ep);
 #define MONO_ARCH_INST_FIXED_MASK(desc) ((desc == 'y') ? (X86_BYTE_REGS) : 0)
 
 /* RDX is clobbered by the opcode implementation before accessing sreg2 */
-#define MONO_ARCH_INST_SREG2_MASK(ins) (((ins [MONO_INST_CLOB] == 'a') || (ins [MONO_INST_CLOB] == 'd')) ? (1 << X86_EDX) : 0)
+/* 
+ * Originally this contained X86_EDX for div/rem opcodes, but that led to unsolvable 
+ * situations since there are only 3 usable registers for local register allocation.
+ * Instead, we handle the sreg2==edx case in the opcodes.
+ */
+#define MONO_ARCH_INST_SREG2_MASK(ins) 0
 
 /*
  * L is a generic register pair, while l means eax:rdx
