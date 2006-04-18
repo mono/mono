@@ -1,5 +1,10 @@
 2006-04-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpResponse.cs:
+	(TransmitFile): make sure we can read the file before buffering it.
+
+2006-04-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpApplicationFactory.cs: don't fail on events that are not
 	EventHandlers. Patch by Matthew Metnetsky.
 
