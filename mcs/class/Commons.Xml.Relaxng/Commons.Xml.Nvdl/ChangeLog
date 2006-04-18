@@ -1,5 +1,11 @@
 2006-04-18  Atsushi Enomoto <atsushi@ximian.com>
 
+	* NvdlSimplified.cs : according to the section 6.4.10 overriden rules
+	  should be filtered out, and rules with cancelNestedAction should be
+	  removed *after* filtering overriden rules out.
+
+2006-04-18  Atsushi Enomoto <atsushi@ximian.com>
+
 	* NvdlSimplified.cs, NvdlValidator.cs :
 	  fixed several context path related bugs.
 	  - Path steps must be trimmed.

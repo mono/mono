@@ -282,8 +282,12 @@ namespace Commons.Xml.Nvdl
 			int checkMax = al.Count;
 			NvdlModeCompileContext mctx = ctx.GetModeContext (this);
 			foreach (SimpleRule rule in rules) {
-				if (ctx.CancelledRules [rule] != null)
-					continue;
+				// Don't skip cancelled rules here. They are
+				// needed to filter overriden rules out
+				// (according to 6.4.10)
+				//if (ctx.CancelledRules [rule] != null)
+				//	continue;
+
 				bool exclude = false;
 				for (int i = 0; i < checkMax; i++) {
 					SimpleRule r = (SimpleRule) al [i];
@@ -301,6 +305,14 @@ namespace Commons.Xml.Nvdl
 			}
 			foreach (SimpleMode mode in mctx.Included)
 				mode.ConsumeIncludes (al, ctx);
+
+			// remove cancelled rules at this stage.
+			for (int i = 0; i < al.Count; ) {
+				if (ctx.CancelledRules [(SimpleRule) al [i]] != null)
+					al.RemoveAt (i);
+				else
+					i++;
+			}
 		}
 
 		private void CheckCollision (ArrayList al, ref SimpleRule el, ref SimpleRule attr)
