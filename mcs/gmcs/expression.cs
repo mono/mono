@@ -3544,7 +3544,7 @@ namespace Mono.CSharp {
 			VariableInfo variable_info = local_info.VariableInfo;
 			if (lvalue_right_side != null){
 				if (is_readonly){
-					if (lvalue_right_side is LocalVariableReference || lvalue_right_side == EmptyExpression.OutAccess)
+					if (lvalue_right_side == EmptyExpression.OutAccess)
 						Report.Error (1657, loc, "Cannot pass `{0}' as a ref or out argument because it is a `{1}'",
 							Name, local_info.GetReadOnlyContext ());
 					else if (lvalue_right_side == EmptyExpression.LValueMemberAccess)
@@ -4119,7 +4119,7 @@ namespace Mono.CSharp {
 				}
 
 				int errors = Report.Errors;
-				Expr = Expr.DoResolveLValue (ec, Expr);
+				Expr = Expr.DoResolveLValue (ec, EmptyExpression.OutAccess);
 				if (Expr == null && errors == Report.Errors)
 					Error_LValueRequired (loc);
 			} else if (ArgType == AType.Out) {
@@ -5312,7 +5312,7 @@ namespace Mono.CSharp {
 			}
 			
 			if (mg.InstanceExpression != null)
-				mg.InstanceExpression.CheckMarshallByRefAccess (ec.ContainerType);
+				mg.InstanceExpression.CheckMarshalByRefAccess ();
 
 			eclass = ExprClass.Value;
 			this.method = method;
@@ -8406,7 +8406,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			instance_expr.CheckMarshallByRefAccess (ec.ContainerType);
+			instance_expr.CheckMarshalByRefAccess ();
 			
 			eclass = ExprClass.IndexerAccess;
 			return this;
@@ -8486,7 +8486,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			instance_expr.CheckMarshallByRefAccess (ec.ContainerType);
+			instance_expr.CheckMarshalByRefAccess ();
 
 			eclass = ExprClass.IndexerAccess;
 			return this;

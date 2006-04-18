@@ -1,3 +1,9 @@
+2006-04-18  Raja R Harinath  <rharinath@novell.com>
+
+	* cs1690.cs, cs1690-2.cs, cs1690-3.cs: Update.
+	* cs1690-4.cs, cs1690-5.cs, cs1690-6.cs, cs1690-7.cs: New tests
+	inspired by #77752.
+
 2006-03-22  Raja R Harinath  <rharinath@novell.com>
 
 	* gcs1908.cs, gcs1908-2.cs, gcs1908-3.cs, gcs1908-4.cs: New tests

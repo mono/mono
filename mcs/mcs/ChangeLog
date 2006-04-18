@@ -1,3 +1,17 @@
+2006-04-18  Raja R Harinath  <rharinath@novell.com>
+
+	Possibly fix #77752.  Fix cs1690-[4-7].cs.
+	* ecore.cs (Expression.CheckMarshalByRefAccess): Renamed from
+	CheckMarshallByRefAccess.  Drop parameter.
+	(FieldExpr.CheckMarshalByRefAccess): Update.  Change CS1690 to a
+	warning.
+	(FieldExpr.DoResolve): Call CheckMarshalByRefAccess on
+	InstanceExpression.
+	* report.cs (AllWarnings): Add CS1690.
+	* expression.cs (Argument.Resolve): Use EmptyExpression.OutAccess
+	for ref access too.
+	(LocalVariableReference.DoResolveBase): Update.
+
 2006-04-09  Marek Safar  <marek.safar@seznam.cz>
 
 	class.cs (MethodOrOperator): Moved common parts from method class.

@@ -129,14 +129,13 @@ namespace Mono.CSharp {
 		/// </summary>
 		public void Error (int error, string s)
 		{
-			if (loc.IsNull)
-				Report.Error (error, s);
-			else
-				Report.Error (error, loc, s);
+			Report.Error (error, loc, s);
 		}
 
-		// Not nice but we have broken hierarchy
-		public virtual void CheckMarshallByRefAccess (Type container) {}
+		// Not nice but we have broken hierarchy.
+		public virtual void CheckMarshalByRefAccess ()
+		{
+		}
 
 		public virtual bool GetAttributableValue (Type valueType, out object value)
 		{
@@ -3099,6 +3098,8 @@ namespace Mono.CSharp {
 
 				if (InstanceExpression == null)
 					return null;
+
+				InstanceExpression.CheckMarshalByRefAccess ();
 			}
 
 			if (!in_initializer && !ec.IsFieldInitializer) {
@@ -3217,12 +3218,12 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		public override void CheckMarshallByRefAccess (Type container)
+		public override void CheckMarshalByRefAccess ()
 		{
-			if (!IsStatic && Type.IsValueType && !container.IsSubclassOf (TypeManager.mbr_type) && DeclaringType.IsSubclassOf (TypeManager.mbr_type)) {
+			if (!IsStatic && Type.IsValueType && !(InstanceExpression is This) && DeclaringType.IsSubclassOf (TypeManager.mbr_type)) {
 				Report.SymbolRelatedToPreviousError (DeclaringType);
-				Report.Error (1690, loc, "Cannot call methods, properties, or indexers on `{0}' because it is a value type member of a marshal-by-reference class",
-					GetSignatureForError ());
+				Report.Warning (1690, 1, loc, "Cannot call methods, properties, or indexers on `{0}' because it is a value type member of a marshal-by-reference class",
+						GetSignatureForError ());
 			}
 		}
 
@@ -3235,7 +3236,7 @@ namespace Mono.CSharp {
 			return variable != null && InstanceExpression.Type.IsValueType && variable.VerifyFixed ();
 		}
 
-		public override int GetHashCode()
+		public override int GetHashCode ()
 		{
 			return FieldInfo.GetHashCode ();
 		}
@@ -3566,8 +3567,8 @@ namespace Mono.CSharp {
 				InstanceExpression = InstanceExpression.DoResolve (ec);
 			if (InstanceExpression == null)
 				return false;
-			
-			InstanceExpression.CheckMarshallByRefAccess (ec.ContainerType);
+
+			InstanceExpression.CheckMarshalByRefAccess ();
 
 			if (must_do_cs1540_check && InstanceExpression != EmptyExpression.Null &&
 			    InstanceExpression.Type != ec.ContainerType &&
