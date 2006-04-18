@@ -683,12 +683,14 @@ namespace Commons.Xml.Nvdl
 
 	internal class SimpleContext : SimplifiedItem
 	{
+		readonly NvdlContext source;
 		readonly string useModeName; // It is never used in validation.
 		SimpleMode useMode;
 		SimplePath [] path;
 
 		public SimpleContext (NvdlContext context)
 		{
+			source = context;
 			FillLocation (context);
 
 			this.useModeName = context.UseMode;
@@ -701,7 +703,7 @@ namespace Commons.Xml.Nvdl
 						Nvdl.Whitespaces);
 					if (spath.Length == 0)
 						continue;
-					ParsePath (al, spath);
+					ParsePath (al, TrimName (spath));
 				}
 				path = (SimplePath []) al.ToArray (
 					typeof (SimplePath));
@@ -713,23 +715,26 @@ namespace Commons.Xml.Nvdl
 		private void ParsePath (ArrayList al, string path)
 		{
 			ArrayList steps = new ArrayList ();
-			int start = 0;
+			int start = path.Length > 0 && path [0] == '/' ? 1 : 0;
 			do {
 				int idx = path.IndexOf ('/', start);
 				if (idx < 0) {
-					steps.Add (new SimplePathStep (path.Substring (start), false));
+					steps.Add (new SimplePathStep (TrimName (path.Substring (start)), false));
 					start = path.Length;
-				}
-				else if (path.Length > idx + 1 && path [idx + 1] == '/') {
-					steps.Add (new SimplePathStep (path.Substring (start, idx - start), true));
+				} else if (path.Length > idx + 1 && path [idx + 1] == '/') {
+					steps.Add (new SimplePathStep (TrimName (path.Substring (start, idx - start)), true));
 					start = idx + 2;
 				} else {
-					steps.Add (new SimplePathStep (path.Substring (start, idx - start), false));
+					steps.Add (new SimplePathStep (TrimName (path.Substring (start, idx - start)), false));
 					start = idx + 1;
 				}
-				
 			} while (start < path.Length);
 			al.Add (new SimplePath (steps.ToArray (typeof (SimplePathStep)) as SimplePathStep []));
+		}
+
+		string TrimName (string src)
+		{
+			return src.TrimStart (Nvdl.Whitespaces).TrimEnd (Nvdl.Whitespaces);
 		}
 
 		internal SimplePath [] Path {
@@ -744,6 +749,8 @@ namespace Commons.Xml.Nvdl
 		{
 			if (useModeName != null)
 				useMode = ctx.GetCompiledMode (useModeName);
+			else if (source.NestedMode != null)
+				useMode = ctx.GetCompiledMode (source);
 			else
 				useMode = current;
 

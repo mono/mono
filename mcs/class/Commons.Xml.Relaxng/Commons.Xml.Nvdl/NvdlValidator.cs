@@ -110,7 +110,7 @@ Reader.Name, sectionStack.Count);
 			} else {
 				foreach (NvdlInterpretation pi in
 					parentState.ilist) {
-					PopulateInterp (dispatcher, pi);
+					PopulateInterp (dispatcher, pi, parentState);
 				}
 			}
 
@@ -134,9 +134,10 @@ NvdlDebug.Writer.WriteLine ("***** new interp from action {0} from mode {1}", a.
 		}
 
 		private void PopulateInterp (
-			NvdlDispatcher d, NvdlInterpretation i)
+			NvdlDispatcher d, NvdlInterpretation i,
+			NvdlSection parentState)
 		{
-			SimpleMode m = FindContextMode (i.Action);
+			SimpleMode m = FindContextMode (i.Action, parentState);
 			SimpleRule rule = FindElementRule (m, dispatcher.Reader);
 NvdlDebug.Writer.WriteLine ("***** populate interp from action {0} whose mode is {1}. Rule is {2} whose actions are {3}", i.Action.Location, m.Location, rule.Location, rule.Actions.Length);
 			foreach (SimpleAction a in rule.Actions) {
@@ -152,33 +153,43 @@ NvdlDebug.Writer.WriteLine ("------- corresponding PlanElem already exists.");
 			}
 		}
 
-		private SimpleMode FindContextMode (SimpleAction a)
+		private SimpleMode FindContextMode (SimpleAction a, NvdlSection parentState)
 		{
 			if (a.Contexts != null)
 				foreach (SimpleContext ctx in a.Contexts)
 					foreach (SimplePath path in ctx.Path)
-						if (MatchPath (path))
+						if (MatchPath (path, parentState)) {
+NvdlDebug.Writer.WriteLine ("------ matched context at {0}.", ctx.Location);
 							return ctx.UseMode;
+}
 			return a.DefaultMode;
 		}
 
-		private bool MatchPath (SimplePath path)
+		private bool MatchPath (SimplePath path, NvdlSection parentState)
 		{
-			int elemStep = elementNameStack.Count - 1;
-			for (int i = path.Steps.Length; i >= 0 && elemStep >= 0;) {
+			ArrayList stack = parentState.elementNameStack;
+			if (stack.Count == 0)
+				return false;
+			int elemStep = stack.Count - 1;
+			for (int i = path.Steps.Length - 1; i >= 0 && elemStep >= 0;) {
 				SimplePathStep ps = path.Steps [i];
-				if (ps.Name != elementNameStack [elemStep] as string) {
+				if (ps.Name != stack [elemStep] as string) {
+					// reject a/b while allow a//b
 					if (!ps.Descendants)
 						return false;
-					if (--elemStep < 0)
-					 	return false;
+					--elemStep;
 				}
 				else {
 					i--;
 					elemStep--;
 				}
 			}
-			return false;
+NvdlDebug.Writer.Write ("------ matched path: ");
+for (int i = 0; i < stack.Count; i++) NvdlDebug.Writer.Write ('[' + (string) stack [i] + ']');
+NvdlDebug.Writer.Write (" -> ");
+for (int i = 0; i < path.Steps.Length; i++) NvdlDebug.Writer.Write ('[' + path.Steps [i].Name + ']');
+NvdlDebug.Writer.WriteLine ();
+			return true;
 		}
 
 		public NvdlDispatcher Dispatcher {

@@ -1,3 +1,11 @@
+2006-04-18  Atsushi Enomoto <atsushi@ximian.com>
+
+	* NvdlSimplified.cs, NvdlValidator.cs :
+	  fixed several context path related bugs.
+	  - Path steps must be trimmed.
+	  - MatchPath() always returned false.
+	  - nested mode in context is always ignored.
+
 2006-04-11  Atsushi Enomoto <atsushi@ximian.com>
 
 	* NvdlRelaxngSupport.cs : without ReportDetails RELAX NG support
