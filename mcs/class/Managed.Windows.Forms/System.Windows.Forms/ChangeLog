@@ -1,3 +1,10 @@
+2006-04-17  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* KeyPressEventArgs: Added 2.0 only setter for KeyChar
+	* Control.cs (.ctor): verify_thread_handle is static, don't reset
+	  every time a control is created
+	* Application.cs: Removed obsolete EnableRTLMirroring method
+
 2006-04-18  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TabControl.cs: Avoid ArgumentOutOfRangeException when setting

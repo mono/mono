@@ -676,7 +676,6 @@ namespace System.Windows.Forms
 			dist_bottom = 0;
 
 #if NET_2_0
-			verify_thread_handle = false;
 			use_compatible_text_rendering = Application.use_compatible_text_rendering;
 			padding = new Padding(0);
 #endif

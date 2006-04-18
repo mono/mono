@@ -230,10 +230,6 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
-		public static void EnableRTLMirroring () 
-		{
-		}
-
 		//
 		// If true, it uses GDI+, performance reasons were quoted
 		//
