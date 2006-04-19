@@ -1326,33 +1326,17 @@ namespace Mono.CSharp {
 			this.expr = expr;
 			this.loc = loc;
 
-			if (target_type == TypeManager.system_void_expr) {
+			if (target_type == TypeManager.system_void_expr)
 				Report.Error (1547, loc, "Keyword `void' cannot be used in this context");
-			}
 		}
 
 		public Expression TargetType {
-			get {
-				return target_type;
-			}
+			get { return target_type; }
 		}
 
 		public Expression Expr {
-			get {
-				return expr;
-			}
-			set {
-				expr = value;
-			}
-		}
-		
-		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
-		{
-			expr = expr.DoResolveLValue (ec, right_side);
-			if (expr == null)
-				return null;
-
-			return ResolveRest (ec);
+			get { return expr; }
+			set { expr = value; }
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -1361,11 +1345,6 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return null;
 
-			return ResolveRest (ec);
-		}
-
-		Expression ResolveRest (EmitContext ec)
-		{
 			TypeExpr target = target_type.ResolveAsTypeTerminal (ec, false);
 			if (target == null)
 				return null;
@@ -1401,9 +1380,6 @@ namespace Mono.CSharp {
 		
 		public override void Emit (EmitContext ec)
 		{
-			//
-			// This one will never happen
-			//
 			throw new Exception ("Should not happen");
 		}
 	}
@@ -4098,11 +4074,6 @@ namespace Mono.CSharp {
 
 			return true;
 		}
-		
-		void Error_LValueRequired (Location loc)
-		{
-			Report.Error (1510, loc, "A ref or out argument must be an assignable variable");
-		}
 
 		public bool Resolve (EmitContext ec, Location loc)
 		{
@@ -4120,8 +4091,17 @@ namespace Mono.CSharp {
 				Expr = Expr.DoResolveLValue (ec, EmptyExpression.OutAccess);
 				ec.InRefOutArgumentResolving = false;
 
+				if (Expr != null && !(Expr is IMemoryLocation)) {
+					// FIXME: There's no problem with correctness, the 'Expr = null' handles that.
+					//        Enabling this 'throw' will "only" result in deleting useless code elsewhere,
+
+					//throw new InternalErrorException ("ResolveLValue didn't return an IMemoryLocation: " +
+					//				  Expr.GetType () + " " + Expr.GetSignatureForError ());
+					Expr = null;
+				}
+
 				if (Expr == null && errors == Report.Errors)
-					Error_LValueRequired (loc);
+					Report.Error (1510, loc, "A ref or out argument must be an assignable variable");
 			}
 
 			ec.DoFlowAnalysis = old_do_flow_analysis;
@@ -4131,37 +4111,26 @@ namespace Mono.CSharp {
 
 		public void Emit (EmitContext ec)
 		{
-			//
-			// Ref and Out parameters need to have their addresses taken.
+			if (ArgType != AType.Ref && ArgType != AType.Out) {
+				Expr.Emit (ec);
+				return;
+			}
+
+			AddressOp mode = AddressOp.Store;
+			if (ArgType == AType.Ref)
+				mode |= AddressOp.Load;
+				
+			IMemoryLocation ml = (IMemoryLocation) Expr;
+			ParameterReference pr = ml as ParameterReference;
+
 			//
 			// ParameterReferences might already be references, so we want
 			// to pass just the value
 			//
-			if (ArgType == AType.Ref || ArgType == AType.Out){
-				AddressOp mode = AddressOp.Store;
-
-				if (ArgType == AType.Ref)
-					mode |= AddressOp.Load;
-				
-				if (Expr is ParameterReference){
-					ParameterReference pr = (ParameterReference) Expr;
-
-					if (pr.IsRef)
-						pr.EmitLoad (ec);
-					else {
-						
-						pr.AddressOf (ec, mode);
-					}
-				} else {
-					if (Expr is IMemoryLocation)
-                                               ((IMemoryLocation) Expr).AddressOf (ec, mode);
-					else {
-						Error_LValueRequired (Expr.Location);
-						return;
-					}
-				}
-			} else
-				Expr.Emit (ec);
+			if (pr != null && pr.IsRef)
+				pr.EmitLoad (ec);
+			else
+				ml.AddressOf (ec, mode);
 		}
 	}
 

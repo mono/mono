@@ -1,5 +1,13 @@
 2006-04-19  Raja R Harinath  <rharinath@novell.com>
 
+	* expression.cs (Cast.ResolveLValue): Remove.  The result of a
+	cast is never an lvalue.
+	(Cast.DoResolve, Cast.ResolveRest): Combine.
+	(Argument.Emit): Simplify slightly.  Move 'Expr is
+	IMemoryLocation' check ...
+	(Argument.Resolve): ... here.
+	(Argument.Error_LValueRequired): Remove.  Inline into only user.
+
 	Simplifications.  Fix cs0191-2.cs
 	* ecore.cs (FieldExpr.DoResolve): Move handling of CS0192, CS0198,
 	CS1649 and CS1651 to ...
