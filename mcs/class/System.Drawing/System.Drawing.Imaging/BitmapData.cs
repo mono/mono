@@ -43,19 +43,27 @@ namespace System.Drawing.Imaging
 #endif
 	[StructLayout(LayoutKind.Sequential)]
 	public sealed class BitmapData {
-		internal int width;
-		internal int height;
-		internal int stride;
-		internal PixelFormat pixel_format; // int
-		internal IntPtr address;
-		internal int reserved;
+		internal int		width;
+		internal int		height;
+		internal int		stride;
+		internal PixelFormat	pixel_format; // int
+		internal IntPtr 	scan0;
+		internal int 		reserved;
+		internal IntPtr 	palette;
 
-		// following added to keep track of frames
-		internal int top;
-		internal int left;
-		internal int byteCount;
-		internal IntPtr bytes;
+		internal int		property_count;
+		internal IntPtr		property;
+
+		internal float		dpi_horz;
+		internal float		dpi_vert;
+		internal int		image_flags;
+
+		internal int		top;
+		internal int		left;
 		
+		internal int		x;
+		internal int		y;
+
 		public int Height {
 			get {
 				return height;
@@ -99,11 +107,11 @@ namespace System.Drawing.Imaging
 
 		public IntPtr Scan0 {
 			get {
-				return address;
+				return scan0;
 			}
 
 			set {
-				address = value;
+				scan0 = value;
 			}
 		}
 
