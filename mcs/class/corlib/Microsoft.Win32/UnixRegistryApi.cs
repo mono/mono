@@ -310,10 +310,14 @@ namespace Microsoft.Win32 {
 			return keyname.ToLower ();
 		}
 
-		static bool IsWellKnownKey (string keyname)
+		static bool IsWellKnownKey (string parentKeyName, string keyname)
 		{
 			// FIXME: Add more keys if needed
-			return (0 == String.Compare ("software", keyname, true, CultureInfo.InvariantCulture));
+			if (parentKeyName == Registry.CurrentUser.Name ||
+				parentKeyName == Registry.LocalMachine.Name)
+				return (0 == String.Compare ("software", keyname, true, CultureInfo.InvariantCulture));
+
+			return false;
 		}
 
 		public RegistryKey CreateSubKey (RegistryKey rkey, string keyname)
@@ -326,7 +330,7 @@ namespace Microsoft.Win32 {
 		{
 			KeyHandler self = KeyHandler.Lookup (rkey);
 			RegistryKey result = self.Probe (rkey, ToUnix (keyname), writtable);
-			if (result == null && IsWellKnownKey (keyname)) {
+			if (result == null && IsWellKnownKey (rkey.Name, keyname)) {
 				result = CreateSubKey (rkey, keyname);
 			}
 

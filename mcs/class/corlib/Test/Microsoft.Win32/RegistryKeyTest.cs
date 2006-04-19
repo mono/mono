@@ -52,5 +52,47 @@ namespace MonoTests.Microsoft.Win32
 			
 			Assert.IsNotNull (k, "#01");
 		}
+
+		[Test]
+		public void OpenSubKeyTest ()
+		{
+			RegistryKey key = Registry.LocalMachine;
+
+			// HKEY_LOCAL_MACHINE\software should always exist on Windows
+			// and is automatically created on Linux
+			Assert.IsNotNull (key.OpenSubKey ("Software"), "#A1");
+			Assert.IsNotNull (key.OpenSubKey ("soFtware"), "#A2");
+
+			key = Registry.CurrentUser;
+
+			// HKEY_CURRENT_USER\software should always exist on Windows
+			// and is automatically created on Linux
+			Assert.IsNotNull (key.OpenSubKey ("Software"), "#B1");
+			Assert.IsNotNull (key.OpenSubKey ("soFtware"), "#B2");
+
+			key = Registry.Users;
+
+			// HKEY_USERS\software should not exist on Windows, and should not
+			// be created automatically on Linux
+			Assert.IsNull (key.OpenSubKey ("Software"), "#C1");
+			Assert.IsNull (key.OpenSubKey ("soFtware"), "#C2");
+		}
+
+		[Test]
+		public void CreateSubKeyTest ()
+		{
+			string subKeyName = Guid.NewGuid ().ToString ();
+
+			RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName);
+			try {
+				// check if key was successfully created
+				Assert.IsNotNull (createdKey, "#1");
+				// software subkey should not be created automatically
+				Assert.IsNull (createdKey.OpenSubKey ("software"), "#2");
+			} finally {
+				// clean-up
+				Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
+			}
+		}
 	}
 }

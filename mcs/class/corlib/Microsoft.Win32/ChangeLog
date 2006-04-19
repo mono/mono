@@ -1,3 +1,8 @@
+2006-04-18  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* UnixRegistryApi.cs: Only consider the "software" subkey a well-known
+	key if the parent is either HKEY_USERS or HKEY_LOCAL_MACHINE.
+
 2006-04-15  Robert Jordan <robertj@gmx.net>
 
 	* UnixRegistryApi.cs (DeleteValue): Avoid crash, fixes bug
