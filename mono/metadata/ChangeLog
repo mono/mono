@@ -1,3 +1,8 @@
+2006-04-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* assembly.c (mono_assembly_open_full): Invoke the load hook when the
+	assembly was already loaded in another appdomain. Fixes #78083.
+
 2006-04-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* assembly.c (mono_assembly_load_reference): Increase the refcount of the
