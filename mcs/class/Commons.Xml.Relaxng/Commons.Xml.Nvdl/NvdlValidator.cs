@@ -478,7 +478,7 @@ NvdlDebug.Writer.WriteLine (": : : : Unwrapping StartElement ");
 				Parent.ValidateStartElement ();
 				break;
 			case NvdlResultType.AttachPlaceholder:
-				throw new NotImplementedException ();
+				break;
 			}
 		}
 		public override void ValidateEndElement ()
@@ -491,7 +491,7 @@ NvdlDebug.Writer.WriteLine (": : : : Unwrapping EndElement ");
 				Parent.ValidateEndElement ();
 				break;
 			case NvdlResultType.AttachPlaceholder:
-				throw new NotImplementedException ();
+				break;
 			}
 		}
 		public override void ValidateText ()
@@ -504,7 +504,7 @@ NvdlDebug.Writer.WriteLine (": : : : Unwrapping Text ");
 				Parent.ValidateText ();
 				break;
 			case NvdlResultType.AttachPlaceholder:
-				throw new NotImplementedException ();
+				break;
 			}
 		}
 		public override void ValidateWhitespace ()
@@ -517,7 +517,7 @@ NvdlDebug.Writer.WriteLine (": : : : Unwrapping Whitespace ");
 				Parent.ValidateWhitespace ();
 				break;
 			case NvdlResultType.AttachPlaceholder:
-				throw new NotImplementedException ();
+				break;
 			}
 		}
 	}
@@ -550,7 +550,9 @@ NvdlDebug.Writer.WriteLine ("++++++ new validate " + validate.Location);
 		public override void DetachPlaceholder ()
 		{
 			reader.DetachPlaceholder ();
-			validator.Read (); // check EndElement
+			// since placeholder is *empty*, we don't have to
+			// validate this virtual element.
+			//validator.Read ();
 		}
 
 		public override void EndSection ()

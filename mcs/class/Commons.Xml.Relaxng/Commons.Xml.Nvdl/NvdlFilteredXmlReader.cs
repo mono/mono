@@ -7,12 +7,17 @@ namespace Commons.Xml.Nvdl
 {
 	internal class NvdlFilteredXmlReader : XmlReader, IXmlLineInfo
 	{
+		// In this XmlReader, when AttachPlaceHolder() is called,
+		// it treats the next node as to point virtual "placeholder"
+		// element where IsEmptyElement is false. When it is
+		// Detached, then *current* node becomes the usual reader
+		// node.
+
 		bool initial = true;
-		int placeHolderDepth = -1;
+		int placeHolderDepth = 0;
 		XmlNodeType nextPlaceHolder;
 		XmlNodeType placeHolder = XmlNodeType.None;
 		bool placeHolderLocalNameAttr;
-		Stack placeHolderDepthStack;
 		NvdlValidateInterp validate;
 		XmlReader reader;
 		IXmlLineInfo reader_as_line_info;
@@ -52,21 +57,14 @@ namespace Commons.Xml.Nvdl
 
 		public void AttachPlaceholder ()
 		{
-			if (placeHolderDepthStack == null)
-				placeHolderDepthStack = new Stack ();
-			else
-				placeHolderDepthStack.Push (placeHolderDepth);
-			placeHolderDepth = reader.Depth;
+			placeHolderDepth++;
 			nextPlaceHolder = XmlNodeType.Element;
 		}
 
 		public void DetachPlaceholder ()
 		{
-			if (placeHolderDepthStack.Count > 0)
-				placeHolderDepth = (int) placeHolderDepthStack.Pop ();
-			else
-				placeHolderDepth = -1;
-			nextPlaceHolder = XmlNodeType.EndElement;
+			placeHolderDepth--;
+			placeHolder = XmlNodeType.None;
 		}
 
 		private void AddAttribute ()
@@ -118,6 +116,12 @@ namespace Commons.Xml.Nvdl
 				nextPlaceHolder = XmlNodeType.None;
 				return true;
 			}
+
+			if (placeHolder != XmlNodeType.None)
+				// Inside placeHolder, ignore all contents.
+				// The source XmlReader should proceed
+				// regardless of this filtered reader.
+				return true;
 
 			if (!reader.MoveToFirstAttribute ())
 				return true;
@@ -175,9 +179,9 @@ namespace Commons.Xml.Nvdl
 
 		public override int Depth {
 			get {
-				if (placeHolderDepth < 0)
+				if (placeHolderDepth == 0)
 					return reader.Depth;
-				int basis = reader.Depth + placeHolderDepthStack.Count + 1;
+				int basis = reader.Depth + 1;
 				switch (placeHolder) {
 				case XmlNodeType.Text:
 					return basis + 2;
@@ -217,7 +221,7 @@ namespace Commons.Xml.Nvdl
 
 		public override bool IsEmptyElement {
 			get {
-				return placeHolder == XmlNodeType.None &&
+				return placeHolder != XmlNodeType.None ||
 					reader.IsEmptyElement; 
 			}
 		}

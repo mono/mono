@@ -1,5 +1,17 @@
 2006-04-19  Atsushi Enomoto <atsushi@ximian.com>
 
+	* NvdlFilteredXmlReader.cs :
+	  Made placeholder element as "empty" i.e. IsEmptyElement = true.
+	  As long as it is at placeholder state, it keeps being placeholder
+	  empty element until DetachPlaceholder() is explicitly called. It
+	  makes this reader simpler.
+	* NvdlValidator.cs : (NvdlResultInterp) for AttachPlaceHolder it does
+	  not have to do anything other than AttachPlaceholder().
+	  (NvdlValidateInterp) Now that placeholder becomes an empty element
+	  it does not have to validate content anymore at DetachPlaceholder().
+
+2006-04-19  Atsushi Enomoto <atsushi@ximian.com>
+
 	* NvdlReader.cs, NvdlFilteredXmlReader.cs :
 	  placeHolder -> placeholder. Also reject unrecognized NVDL elements
 	  in NvdlReader.
