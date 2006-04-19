@@ -1,3 +1,7 @@
+2006-04-19  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Microsoft.Build.Framework.targets: Removed.
+
 2005-12-14  Wade Berrier <wberrier@novell.com>
 
 	* Makefile: Added EXTRA_DISTFILES to fix make dist build
