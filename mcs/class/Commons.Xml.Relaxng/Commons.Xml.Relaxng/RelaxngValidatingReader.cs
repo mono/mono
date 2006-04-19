@@ -59,6 +59,9 @@ namespace Commons.Xml.Relaxng
 		public RelaxngValidatingReader (XmlReader reader, RelaxngPattern pattern)
 			: base (reader)
 		{
+			if (pattern == null)
+				throw new ArgumentNullException ("pattern");
+
 			if (reader.NodeType == XmlNodeType.Attribute)
 				throw new RelaxngException ("RELAX NG does not support standalone attribute validation (it is prohibited due to the specification section 7.1.5");
 			this.reader = reader;
@@ -401,7 +404,7 @@ namespace Commons.Xml.Relaxng
 				string elementNS = reader.NamespaceURI;
 				if (reader.MoveToFirstAttribute ()) {
 					do {
-						if (reader.Name.IndexOf ("xmlns:") == 0 || reader.Name == "xmlns")
+						if (reader.NamespaceURI == "http://www.w3.org/2000/xmlns/")
 							continue;
 
 						prevState = vState;
