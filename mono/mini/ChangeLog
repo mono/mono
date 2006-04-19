@@ -1,5 +1,7 @@
 2006-04-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mono_local_cprop2): Allow copy propagation of OP_VMOVEs across calls.
+
 	* method-to-ir.c (mono_method_check_inlining): Remove some inlining restrictions.
 
 2006-04-18  Zoltan Varga  <vargaz@gmail.com>

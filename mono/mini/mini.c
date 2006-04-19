@@ -10003,7 +10003,8 @@ mono_local_cprop2 (MonoCompile *cfg)
 #endif
 					(!defs [def->sreg1] || (def_index [def->sreg1] < def_index [sreg])) &&
 					!vreg_is_volatile (cfg, def->sreg1) &&
-					(get_vreg_to_inst (cfg, def->sreg1) || !defs [def->sreg1] || (def_index [def->sreg1] > last_call_index))) {
+					/* This avoids propagating local vregs across calls */
+					(get_vreg_to_inst (cfg, def->sreg1) || !defs [def->sreg1] || (def_index [def->sreg1] > last_call_index) || (def->opcode == OP_VMOVE))) {
 					int vreg = def->sreg1;
 
 					//printf ("CCOPY: R%d -> R%d\n", sreg, vreg);
