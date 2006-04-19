@@ -1,5 +1,13 @@
 2006-04-19  Atsushi Enomoto <atsushi@ximian.com>
 
+	* NvdlException.cs : provide BaseURI in such case that argument
+	  IXmlLineInfo is XmlReader.
+	* NvdlValidator.cs : NvdlDispatcher was incorrectly replacing 
+	  current section when an empty element appears (it kept such empty
+	  element section).
+
+2006-04-19  Atsushi Enomoto <atsushi@ximian.com>
+
 	* NvdlRelaxngSupport.cs : It seems that the validating grammar for
 	  planAtt should always contain a definition for virtualElement i.e.
 	  it is not something that NVDL validator should provide

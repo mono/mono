@@ -49,15 +49,17 @@ namespace Commons.Xml.Nvdl
 		{
 NvdlDebug.Writer.WriteLine ("  <dispatcher.StartElement {0}. stack depth: {1}. current section ns {2}",
 Reader.Name, sectionStack.Count, section == null ? "(none)" : section.Namespace);
+			NvdlSection prev = section;
 			section = GetSection (section);
 
-			sectionStack.Push (section);
 			section.StartElement ();
-			if (Reader.IsEmptyElement)
-				sectionStack.Pop ().EndSection ();
-
-			else
+			if (Reader.IsEmptyElement) {
+				section.EndSection ();
+				section = prev;
+			} else {
+				sectionStack.Push (section);
 				qnameStack.Push (new XmlQualifiedName (Reader.LocalName, Reader.NamespaceURI));
+			}
 		}
 
 		NvdlSection GetSection (NvdlSection section)
@@ -258,17 +260,17 @@ NvdlDebug.Writer.WriteLine (" : : : : anyNamespace rule being applied.");
 		// It is invoked regardless of IsEmptyElement.
 		public void EndSection ()
 		{
+NvdlDebug.Writer.WriteLine ("    <section.EndSection> ({0})", ns);
 			foreach (NvdlInterpretation i in ilist)
 				i.EndSection ();
 		}
 
 		public void StartElement ()
 		{
-NvdlDebug.Writer.WriteLine ("    <state.StartElement {0}", Reader.Name);
-			elementNameStack.Add (Reader.LocalName);
+NvdlDebug.Writer.WriteLine ("    <section.StartElement ({0}) {1}", ns, Reader.Name);
 			ValidateStartElement ();
-			if (Reader.IsEmptyElement)
-				elementNameStack.RemoveAt (elementNameStack.Count - 1);
+			if (!Reader.IsEmptyElement)
+				elementNameStack.Add (Reader.LocalName);
 		}
 
 		private void ValidateStartElement ()
@@ -279,7 +281,7 @@ NvdlDebug.Writer.WriteLine ("    <state.StartElement {0}", Reader.Name);
 
 		public void EndElement ()
 		{
-NvdlDebug.Writer.WriteLine ("    <state.EndElement {0} (for {2}). {1} interp.", Reader.Name, ilist.Count, Namespace);
+NvdlDebug.Writer.WriteLine ("    <section.EndElement {0} ({2}). {1} interp.", Reader.Name, ilist.Count, ns);
 			ValidateEndElement ();
 			elementNameStack.RemoveAt (elementNameStack.Count - 1);
 		}
@@ -557,11 +559,13 @@ NvdlDebug.Writer.WriteLine ("++++++ new validate " + validate.Location);
 
 		public override void StartElement ()
 		{
+NvdlDebug.Writer.WriteLine ("  <validate.StartElement {0} {1}", validator.Name, validator.IsEmptyElement ? "(EmptyElement)" : "");
 			ValidateStartElement ();
 		}
 
 		public override void EndElement ()
 		{
+NvdlDebug.Writer.WriteLine ("  <validate.EndElement {0}", validator.Name);
 			ValidateEndElement ();
 		}
 

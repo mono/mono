@@ -19,14 +19,17 @@ namespace Commons.Xml.Nvdl
 			IXmlLineInfo lineInfo)
 		{
 			NvdlElementBase source = lineInfo as NvdlElementBase;
+			XmlReader reader = lineInfo as XmlReader;
 			if (source != null && source.HasLineInfo ())
 				return String.Format ("{0}. {1} ({2},{3})",
 					message, source.SourceUri,
 					source.LineNumber, source.LinePosition);
-			else if (lineInfo != null)
-				return String.Format ("{0}. ({1},{2})",
+			else if (lineInfo != null && lineInfo.HasLineInfo ())
+				return String.Format ("{0}. {3}({1},{2})",
 					message,
-					lineInfo.LineNumber, lineInfo.LinePosition);
+					lineInfo.LineNumber,
+					lineInfo.LinePosition,
+					reader != null ? reader.BaseURI + ' ' : String.Empty);
 			else
 				return message;
 		}
