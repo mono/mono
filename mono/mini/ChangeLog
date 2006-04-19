@@ -1,3 +1,11 @@
+2006-04-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_runtime_install_handlers): Handle SIGABRT similarly to
+	SIGSEGV. Fixes #78072.
+
+	* mini-exceptions.c (mono_handle_native_sigsegv): Add a 'signal' argument,
+	unregister our SIGABRT handler.
+
 2006-04-19  Massimiliano Mantione  <massi@ximian.com>
 
         * mini.c: Disabled inline where it can alter the call stack in a
