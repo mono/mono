@@ -1,3 +1,8 @@
+2006-04-19  Massimiliano Mantione  <massi@ximian.com>
+	* Makefile.am: Added tests to see if inline breaks the call stack.
+	* test-inline-call-stack.cs: Likewise.
+	* test-inline-call-stack-library.cs: Likewise.
+	
 2006-04-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* thread6.cs: Add regression test for #78024.
