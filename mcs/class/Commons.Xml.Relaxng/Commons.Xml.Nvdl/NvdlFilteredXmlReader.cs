@@ -227,7 +227,7 @@ namespace Commons.Xml.Nvdl
 				switch (placeHolder) {
 				case XmlNodeType.Element:
 				case XmlNodeType.EndElement:
-					return "placeHolder";
+					return "placeholder";
 				case XmlNodeType.Attribute:
 					return placeHolderLocalNameAttr ?
 						"localName" : "ns";
@@ -244,7 +244,7 @@ namespace Commons.Xml.Nvdl
 				switch (placeHolder) {
 				case XmlNodeType.Element:
 				case XmlNodeType.EndElement:
-					return "placeHolder";
+					return "placeholder";
 				case XmlNodeType.Attribute:
 					return placeHolderLocalNameAttr ?
 						"localName" : "ns";
@@ -263,8 +263,7 @@ namespace Commons.Xml.Nvdl
 				case XmlNodeType.EndElement:
 					return Nvdl.InstanceNamespace;
 				case XmlNodeType.Attribute:
-					return placeHolderLocalNameAttr ?
-						"localName" : "ns";
+					return String.Empty;
 				case XmlNodeType.Text:
 					return String.Empty;
 				default:

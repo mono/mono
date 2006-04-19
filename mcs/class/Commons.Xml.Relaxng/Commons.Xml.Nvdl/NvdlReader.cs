@@ -278,12 +278,14 @@ namespace Commons.Xml.Nvdl
 			case "attach":
 				el.Actions.Add (ReadAttach ());
 				break;
-			case "attachPlaceholder":
+			case "attachPlaceHolder":
 				el.Actions.Add (ReadAttachPlaceholder ());
 				break;
 			case "unwrap":
 				el.Actions.Add (ReadUnwrap ());
 				break;
+			default:
+				throw new NotSupportedException ();
 			}
 		}
 
@@ -351,6 +353,8 @@ namespace Commons.Xml.Nvdl
 				case "context":
 					mu.Contexts.Add (ReadContext ());
 					break;
+				default:
+					throw new NotSupportedException ();
 				}
 			} while (!reader.EOF);
 			if (!reader.EOF)
@@ -425,6 +429,8 @@ namespace Commons.Xml.Nvdl
 				case "context":
 					mu.Contexts.Add (ReadContext ());
 					break;
+				default:
+					throw new NotSupportedException ();
 				}
 			} while (!reader.EOF);
 			if (!reader.EOF)
@@ -497,6 +503,8 @@ namespace Commons.Xml.Nvdl
 				case "mode":
 					el.NestedMode = ReadNestedMode ();
 					break;
+				default:
+					throw new NotSupportedException ();
 				}
 			} while (!reader.EOF);
 			if (!reader.EOF)

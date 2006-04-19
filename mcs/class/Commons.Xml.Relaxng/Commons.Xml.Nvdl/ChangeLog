@@ -1,5 +1,11 @@
 2006-04-19  Atsushi Enomoto <atsushi@ximian.com>
 
+	* NvdlReader.cs, NvdlFilteredXmlReader.cs :
+	  placeHolder -> placeholder. Also reject unrecognized NVDL elements
+	  in NvdlReader.
+
+2006-04-19  Atsushi Enomoto <atsushi@ximian.com>
+
 	* NvdlException.cs : provide BaseURI in such case that argument
 	  IXmlLineInfo is XmlReader.
 	* NvdlValidator.cs : NvdlDispatcher was incorrectly replacing 
