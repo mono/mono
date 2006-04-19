@@ -1265,11 +1265,199 @@ namespace MonoTests.System.Drawing.Drawing2D {
 			ComparePaths (path, clone);
 		}
 
+		private void CheckWrap (GraphicsPath path)
+		{
+			Assert.AreEqual (3, path.PointCount, "Count");
+
+			PointF[] pts = path.PathPoints;
+			Assert.AreEqual (0, pts[0].X, 1e-30, "0.X");
+			Assert.AreEqual (0, pts[0].Y, 1e-30, "0.Y");
+			Assert.AreEqual (0, pts[1].X, 1e-30, "1.X");
+			Assert.AreEqual (0, pts[1].Y, 1e-30, "1.Y");
+			Assert.AreEqual (0, pts[2].X, 1e-30, "2.X");
+			Assert.AreEqual (0, pts[2].Y, 1e-30, "2.Y");
+
+			byte[] types = path.PathTypes;
+			Assert.AreEqual (0, types[0], "0");
+			Assert.AreEqual (1, types[1], "1");
+			Assert.AreEqual (129, types[2], "2");
+		}
+
+		private void CheckWrapNaN (GraphicsPath path, bool closed)
+		{
+			Assert.AreEqual (3, path.PointCount, "Count");
+
+			PointF[] pts = path.PathPoints;
+			Assert.AreEqual (Single.NaN, pts[0].X, "0.X");
+			Assert.AreEqual (Single.NaN, pts[0].Y, "0.Y");
+			Assert.AreEqual (Single.NaN, pts[1].X, "1.X");
+			Assert.AreEqual (Single.NaN, pts[1].Y, "1.Y");
+			Assert.AreEqual (Single.NaN, pts[2].X, "2.X");
+			Assert.AreEqual (Single.NaN, pts[2].Y, "2.Y");
+
+			byte[] types = path.PathTypes;
+			Assert.AreEqual (0, types[0], "0");
+			Assert.AreEqual (1, types[1], "1");
+			Assert.AreEqual (closed ? 129 : 1, types[2], "2");
+		}
+
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void Warp_Null ()
 		{
 			new GraphicsPath ().Warp (null, new RectangleF ());
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Warp_NoPoints ()
+		{
+			new GraphicsPath ().Warp (new PointF[0], new RectangleF ());
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Warp_NullMatrix ()
+		{
+			PointF[] pts = new PointF[1] { new PointF (0,0) };
+			GraphicsPath path = new GraphicsPath ();
+			path.AddPolygon (new Point[3] { new Point (5, 5), new Point (15, 5), new Point (10, 15) });
+			RectangleF r = new RectangleF (10, 20, 30, 40);
+			path.Warp (pts, r, null);
+			CheckWrap (path);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Warp_EmptyMatrix ()
+		{
+			PointF[] pts = new PointF[1] { new PointF (0, 0) };
+			GraphicsPath path = new GraphicsPath ();
+			path.AddPolygon (new Point[3] { new Point (5, 5), new Point (15, 5), new Point (10, 15) });
+			RectangleF r = new RectangleF (10, 20, 30, 40);
+			path.Warp (pts, r, new Matrix ());
+			CheckWrap (path);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Warp_Rectangle_Empty ()
+		{
+			PointF[] pts = new PointF[1] { new PointF (0, 0) };
+			GraphicsPath path = new GraphicsPath ();
+			path.AddPolygon (new Point[3] { new Point (5, 5), new Point (15, 5), new Point (10, 15) });
+			path.Warp (pts, new RectangleF (), null);
+			CheckWrapNaN (path, true);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Warp_Rectangle_NegativeWidthHeight ()
+		{
+			PointF[] pts = new PointF[1] { new PointF (0, 0) };
+			GraphicsPath path = new GraphicsPath ();
+			path.AddPolygon (new Point[3] { new Point (5, 5), new Point (15, 5), new Point (10, 15) });
+			RectangleF r = new RectangleF (10, 20, -30, -40);
+			path.Warp (pts, r, null);
+			Assert.AreEqual (3, path.PointCount, "Count");
+
+			pts = path.PathPoints;
+			Assert.AreEqual (1.131355e-39, pts[0].X, 1e40, "0.X");
+			Assert.AreEqual (-2.0240637E-33, pts[0].Y, 1e40, "0.Y");
+			Assert.AreEqual (1.070131E-39, pts[1].X, 1e40, "1.X");
+			Assert.AreEqual (-2.02406389E-33, pts[1].Y, 1e40, "1.Y");
+			Assert.AreEqual (3.669146E-40, pts[2].X, 1e40, "2.X");
+			Assert.AreEqual (-6.746879E-34, pts[2].Y, 1e40, "2.Y");
+			byte[] types = path.PathTypes;
+			Assert.AreEqual (0, types[0], "0");
+			Assert.AreEqual (1, types[1], "1");
+			Assert.AreEqual (129, types[2], "2");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Warp_Matrix_NonInvertible ()
+		{
+			Matrix matrix = new Matrix (123, 24, 82, 16, 47, 30);
+			Assert.IsFalse (matrix.IsInvertible, "!IsInvertible");
+			PointF[] pts = new PointF[1] { new PointF (0, 0) };
+			GraphicsPath path = new GraphicsPath ();
+			path.AddPolygon (new Point[3] { new Point (5, 5), new Point (15, 5), new Point (10, 15) });
+			RectangleF r = new RectangleF (10, 20, 30, 40);
+			path.Warp (pts, r, matrix);
+
+			Assert.AreEqual (3, path.PointCount, "Count");
+			pts = path.PathPoints;
+			Assert.AreEqual (47, pts[0].X, "0.X");
+			Assert.AreEqual (30, pts[0].Y, "0.Y");
+			Assert.AreEqual (47, pts[1].X, "1.X");
+			Assert.AreEqual (30, pts[1].Y, "1.Y");
+			Assert.AreEqual (47, pts[2].X, "2.X");
+			Assert.AreEqual (30, pts[2].Y, "2.Y");
+			byte[] types = path.PathTypes;
+			Assert.AreEqual (0, types[0], "0");
+			Assert.AreEqual (1, types[1], "1");
+			Assert.AreEqual (129, types[2], "2");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Warp_Bilinear ()
+		{
+			PointF[] pts = new PointF[1] { new PointF (0, 0) };
+			GraphicsPath path = new GraphicsPath ();
+			path.AddPolygon (new Point[3] { new Point (5, 5), new Point (15, 5), new Point (10, 15) });
+			RectangleF r = new RectangleF (10, 20, 30, 40);
+			path.Warp (pts, r, new Matrix (), WarpMode.Bilinear);
+			// note that the last point is no more closed
+			CheckWrapNaN (path, false);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Warp_Perspective ()
+		{
+			PointF[] pts = new PointF[1] { new PointF (0, 0) };
+			GraphicsPath path = new GraphicsPath ();
+			path.AddPolygon (new Point[3] { new Point (5, 5), new Point (15, 5), new Point (10, 15) });
+			RectangleF r = new RectangleF (10, 20, 30, 40);
+			path.Warp (pts, r, new Matrix (), WarpMode.Perspective);
+			CheckWrap (path);
+		}
+
+		[Test]
+		public void Warp_Invalid ()
+		{
+			PointF[] pts = new PointF[1] { new PointF (0, 0) };
+			GraphicsPath path = new GraphicsPath ();
+			path.AddPolygon (new Point[3] { new Point (5, 5), new Point (15, 5), new Point (10, 15) });
+			RectangleF r = new RectangleF (10, 20, 30, 40);
+			path.Warp (pts, r, new Matrix (), (WarpMode) Int32.MinValue);
+			Assert.AreEqual (0, path.PointCount, "Count");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Warp_Flatness_Negative ()
+		{
+			PointF[] pts = new PointF[1] { new PointF (0, 0) };
+			GraphicsPath path = new GraphicsPath ();
+			path.AddPolygon (new Point[3] { new Point (5, 5), new Point (15, 5), new Point (10, 15) });
+			RectangleF r = new RectangleF (10, 20, 30, 40);
+			path.Warp (pts, r, new Matrix (), WarpMode.Perspective, -1f);
+			CheckWrap (path);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Warp_Flatness_OverOne ()
+		{
+			PointF[] pts = new PointF[1] { new PointF (0, 0) };
+			GraphicsPath path = new GraphicsPath ();
+			path.AddPolygon (new Point[3] { new Point (5, 5), new Point (15, 5), new Point (10, 15) });
+			RectangleF r = new RectangleF (10, 20, 30, 40);
+			path.Warp (pts, r, new Matrix (), WarpMode.Perspective, 2.0f);
+			CheckWrap (path);
 		}
 
 		[Test]
@@ -1552,6 +1740,140 @@ namespace MonoTests.System.Drawing.Drawing2D {
 			Assert.AreEqual (163, types[path.PointCount - 3], "end/String");
 			Assert.AreEqual (1, types[path.PointCount - 2], "start/Line2");
 			Assert.AreEqual (1, types[path.PointCount - 1], "end/Line2");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Widen_Pen_Null ()
+		{
+			new GraphicsPath ().Widen (null);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Widen_Pen ()
+		{
+			Pen pen = new Pen (Color.Blue);
+			GraphicsPath path = new GraphicsPath ();
+			path.AddRectangle (new Rectangle (1, 1, 2, 2));
+			Assert.AreEqual (4, path.PointCount, "Count-1");
+			path.Widen (pen);
+			Assert.AreEqual (12, path.PointCount, "Count-2");
+
+			PointF[] pts = path.PathPoints;
+			Assert.AreEqual (0.5, pts[0].X, 0.25, "0.X");
+			Assert.AreEqual (0.5, pts[0].Y, 0.25, "0.Y");
+			Assert.AreEqual (3.5, pts[1].X, 0.25, "1.X");
+			Assert.AreEqual (0.5, pts[1].Y, 0.25, "1.Y");
+			Assert.AreEqual (3.5, pts[2].X, 0.25, "2.X");
+			Assert.AreEqual (3.5, pts[2].Y, 0.25, "2.Y");
+			Assert.AreEqual (0.5, pts[3].X, 0.25, "3.X");
+			Assert.AreEqual (3.5, pts[3].Y, 0.25, "3.Y");
+			Assert.AreEqual (1.5, pts[4].X, 0.25, "4.X");
+			Assert.AreEqual (3.0, pts[4].Y, 0.25, "4.Y");
+			Assert.AreEqual (1.0, pts[5].X, 0.25, "5.X");
+			Assert.AreEqual (2.5, pts[5].Y, 0.25, "5.Y");
+			Assert.AreEqual (3.0, pts[6].X, 0.25, "6.X");
+			Assert.AreEqual (2.5, pts[6].Y, 0.25, "6.Y");
+			Assert.AreEqual (2.5, pts[7].X, 0.25, "7.X");
+			Assert.AreEqual (3.0, pts[7].Y, 0.25, "7.Y");
+			Assert.AreEqual (2.5, pts[8].X, 0.25, "8.X");
+			Assert.AreEqual (1.0, pts[8].Y, 0.25, "8.Y");
+			Assert.AreEqual (3.0, pts[9].X, 0.25, "9.X");
+			Assert.AreEqual (1.5, pts[9].Y, 0.25, "9.Y");
+			Assert.AreEqual (1.0, pts[10].X, 0.25, "10.X");
+			Assert.AreEqual (1.5, pts[10].Y, 0.25, "10.Y");
+			Assert.AreEqual (1.5, pts[11].X, 0.25, "11.X");
+			Assert.AreEqual (1.0, pts[11].Y, 0.25, "11.Y");
+
+			byte[] types = path.PathTypes;
+			Assert.AreEqual (0, types[0], "0");
+			Assert.AreEqual (1, types[1], "1");
+			Assert.AreEqual (1, types[2], "2");
+			Assert.AreEqual (129, types[3], "3");
+			Assert.AreEqual (0, types[4], "4");
+			Assert.AreEqual (1, types[5], "5");
+			Assert.AreEqual (1, types[6], "6");
+			Assert.AreEqual (1, types[7], "7");
+			Assert.AreEqual (1, types[8], "8");
+			Assert.AreEqual (1, types[9], "9");
+			Assert.AreEqual (1, types[10], "10");
+			Assert.AreEqual (129, types[11], "11");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Widen_Pen_Null_Matrix ()
+		{
+			new GraphicsPath ().Widen (null, new Matrix ());
+		}
+
+		private void CheckWiden3 (GraphicsPath path)
+		{
+			PointF[] pts = path.PathPoints;
+			Assert.AreEqual (4.2, pts[0].X, 0.25, "0.X");
+			Assert.AreEqual (4.5, pts[0].Y, 0.25, "0.Y");
+			Assert.AreEqual (15.8, pts[1].X, 0.25, "1.X");
+			Assert.AreEqual (4.5, pts[1].Y, 0.25, "1.Y");
+			Assert.AreEqual (10.0, pts[2].X, 0.25, "2.X");
+			Assert.AreEqual (16.1, pts[2].Y, 0.25, "2.Y");
+			Assert.AreEqual (10.4, pts[3].X, 0.25, "3.X");
+			Assert.AreEqual (14.8, pts[3].Y, 0.25, "3.Y");
+			Assert.AreEqual (9.6, pts[4].X, 0.25, "4.X");
+			Assert.AreEqual (14.8, pts[4].Y, 0.25, "4.Y");
+			Assert.AreEqual (14.6, pts[5].X, 0.25, "7.X");
+			Assert.AreEqual (4.8, pts[5].Y, 0.25, "7.Y");
+			Assert.AreEqual (15.0, pts[6].X, 0.25, "5.X");
+			Assert.AreEqual (5.5, pts[6].Y, 0.25, "5.Y");
+			Assert.AreEqual (5.0, pts[7].X, 0.25, "6.X");
+			Assert.AreEqual (5.5, pts[7].Y, 0.25, "6.Y");
+			Assert.AreEqual (5.4, pts[8].X, 0.25, "8.X");
+			Assert.AreEqual (4.8, pts[8].Y, 0.25, "8.Y");
+
+			byte[] types = path.PathTypes;
+			Assert.AreEqual (0, types[0], "0");
+			Assert.AreEqual (1, types[1], "1");
+			Assert.AreEqual (129, types[2], "2");
+			Assert.AreEqual (0, types[3], "3");
+			Assert.AreEqual (1, types[4], "4");
+			Assert.AreEqual (1, types[5], "5");
+			Assert.AreEqual (1, types[6], "6");
+			Assert.AreEqual (1, types[7], "7");
+			Assert.AreEqual (129, types[8], "8");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Widen_Pen_Matrix_Null ()
+		{
+			Pen pen = new Pen (Color.Blue);
+			GraphicsPath path = new GraphicsPath ();
+			path.AddPolygon (new Point[3] { new Point (5, 5), new Point (15, 5), new Point (10, 15) });
+			path.Widen (pen, null);
+			Assert.AreEqual (9, path.PointCount, "Count");
+			CheckWiden3 (path);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Widen_Pen_Matrix_Empty ()
+		{
+			Pen pen = new Pen (Color.Blue);
+			GraphicsPath path = new GraphicsPath ();
+			path.AddPolygon (new Point[3] { new Point (5, 5), new Point (15, 5), new Point (10, 15) });
+			path.Widen (pen, new Matrix ());
+			Assert.AreEqual (9, path.PointCount, "Count");
+			CheckWiden3 (path);
+		}
+
+		[Test]
+		public void Widen_Pen_Matrix_NonInvertible ()
+		{
+			Matrix matrix = new Matrix (123, 24, 82, 16, 47, 30);
+			Assert.IsFalse (matrix.IsInvertible, "!IsInvertible");
+			GraphicsPath path = new GraphicsPath ();
+			path.Widen (new Pen (Color.Blue), matrix);
+			Assert.AreEqual (0, path.PointCount, "Points");
 		}
 	}
 }
