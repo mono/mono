@@ -1,5 +1,10 @@
 2006-04-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* marshal.c (mono_type_to_ldind): New helper function moved here from mini.c
+	(mono_type_to_stind): Ditto.
+
+	* marshal.c: Use the new helper functions to simplify code.
+
 	* image.c (mono_image_close): Add some code for help debug assembly unloading
 	problems.
 
