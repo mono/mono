@@ -3053,25 +3053,6 @@ namespace Mono.CSharp {
 
 		Expression DoResolve (EmitContext ec, bool lvalue_instance)
 		{
-			if (ec.InRefOutArgumentResolving && FieldInfo.IsInitOnly && !ec.IsConstructor && FieldInfo.FieldType.IsValueType) {
-				if (FieldInfo.FieldType is TypeBuilder) {
-					if (FieldInfo.IsStatic)
-						Report.Error (1651, loc, "Fields of static readonly field `{0}' cannot be passed ref or out (except in a static constructor)",
-							GetSignatureForError ());
-					else
-						Report.Error (1649, loc, "Members of readonly field `{0}.{1}' cannot be passed ref or out (except in a constructor)",
-							TypeManager.CSharpName (DeclaringType), Name);
-				} else {
-					if (FieldInfo.IsStatic)
-						Report.Error (199, loc, "A static readonly field `{0}' cannot be passed ref or out (except in a static constructor)",
-							Name);
-					else
-						Report.Error (192, loc, "A readonly field `{0}' cannot be passed ref or out (except in a constructor)",
-							Name);
-				}
-				return null;
-			}
-
 			if (!FieldInfo.IsStatic){
 				if (InstanceExpression == null){
 					//
@@ -3144,32 +3125,41 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		void Report_AssignToReadonly (Expression right_side)
-		{
-			int code;
-			string msg;
-			bool need_error_sig = false;
-			if (right_side == EmptyExpression.LValueMemberAccess) {
-				if (IsStatic) {
-					code = 1650;
-					msg = "Fields of static readonly field `{0}' cannot be assigned to (except in a static constructor or a variable initializer)";
-				} else {
-					code = 1648;
-					msg = "Members of readonly field `{0}' cannot be modified (except in a constructor or a variable initializer)";
-				}
-				need_error_sig = true;
-			} else if (IsStatic) {
-				code = 198;
-				msg = "A static readonly field cannot be assigned to (except in a static constructor or a variable initializer)";
-			} else {
-				code = 191;
-				msg = "A readonly field cannot be assigned to (except in a constructor or a variable initializer)";
-			}
+		static readonly int [] codes = {
+			191,	// instance, write access
+			192,	// instance, out access
+			198,	// static, write access
+			199,	// static, out access
+			1648,	// member of value instance, write access
+			1649,	// member of value instance, out access
+			1650,	// member of value static, write access
+			1651	// member of value static, out access
+		};
 
-			if (need_error_sig)
-				Report.Error (code, loc, msg, GetSignatureForError ());
-			else
-				Report.Error (code, loc, msg);
+		static readonly string [] msgs = {
+			/*0191*/ "A readonly field `{0}' cannot be assigned to (except in a constructor or a variable initializer)",
+			/*0192*/ "A readonly field `{0}' cannot be passed ref or out (except in a constructor)",
+			/*0198*/ "A static readonly field `{0}' cannot be assigned to (except in a static constructor or a variable initializer)",
+			/*0199*/ "A static readonly field `{0}' cannot be passed ref or out (except in a static constructor)",
+			/*1648*/ "Members of readonly field `{0}' cannot be modified (except in a constructor or a variable initializer)",
+			/*1649*/ "Members of readonly field `{0}' cannot be passed ref or out (except in a constructor)",
+			/*1650*/ "Fields of static readonly field `{0}' cannot be assigned to (except in a static constructor or a variable initializer)",
+			/*1651*/ "Fields of static readonly field `{0}' cannot be passed ref or out (except in a static constructor)"
+		};
+
+		// The return value is always null.  Returning a value simplifies calling code.
+		Expression Report_AssignToReadonly (Expression right_side, bool out_access)
+		{
+			int i = 0;
+			if (out_access)
+				i += 1;
+			if (IsStatic)
+				i += 2;
+			if (right_side == EmptyExpression.LValueMemberAccess)
+				i += 4;
+			Report.Error (codes [i], loc, msgs [i], GetSignatureForError ());
+
+			return null;
 		}
 		
 		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
@@ -3189,33 +3179,37 @@ namespace Mono.CSharp {
 			if (fb != null)
 				fb.SetAssigned ();
 
-			if (!FieldInfo.IsInitOnly)
-				return this;
+			if (FieldInfo.IsInitOnly) {
+				// InitOnly fields can only be assigned in constructors or initializers
+				if (!ec.IsFieldInitializer && !ec.IsConstructor)
+					return Report_AssignToReadonly (right_side, ec.InRefOutArgumentResolving);
 
-			//
-			// InitOnly fields can only be assigned in constructors or initializers
-			//
+				if (ec.IsConstructor) {
+					Type ctype = ec.TypeContainer.CurrentType;
+					if (ctype == null)
+						ctype = ec.ContainerType;
 
-			if (ec.IsFieldInitializer)
-				return this;
-
-			if (ec.IsConstructor){
-				if (IsStatic && !ec.IsStatic)
-					Report_AssignToReadonly (right_side);
-
-				Type ctype;
-				if (ec.TypeContainer.CurrentType != null)
-					ctype = ec.TypeContainer.CurrentType;
-				else
-					ctype = ec.ContainerType;
-
-				if (TypeManager.IsEqual (ctype, FieldInfo.DeclaringType))
-					return this;
+					// InitOnly fields cannot be assigned-to in a different constructor from their declaring type
+					if (!TypeManager.IsEqual (ctype, FieldInfo.DeclaringType))
+						return Report_AssignToReadonly (right_side, ec.InRefOutArgumentResolving);
+					// static InitOnly fields cannot be assigned-to in an instance constructor
+					if (IsStatic && !ec.IsStatic)
+						return Report_AssignToReadonly (right_side, ec.InRefOutArgumentResolving);
+					// instance constructors can't modify InitOnly fields of other instances of the same type
+					if (!IsStatic && !(InstanceExpression is This))
+						return Report_AssignToReadonly (right_side, ec.InRefOutArgumentResolving);
+				}
 			}
 
-			Report_AssignToReadonly (right_side);
-			
-			return null;
+			if (right_side == EmptyExpression.OutAccess &&
+			    !IsStatic && !(InstanceExpression is This) && DeclaringType.IsSubclassOf (TypeManager.mbr_type)) {
+				Report.SymbolRelatedToPreviousError (DeclaringType);
+				Report.Warning (197, 1, loc,
+						"Passing `{0}' as ref or out or taking its address may cause a runtime exception because it is a field of a marshal-by-reference class",
+						GetSignatureForError ());
+			}
+
+			return this;
 		}
 
 		public override void CheckMarshalByRefAccess ()
@@ -3310,7 +3304,7 @@ namespace Mono.CSharp {
 			prepared = prepare_for_load;
 
 			if (is_readonly && !ec.IsConstructor){
-				Report_AssignToReadonly (source);
+				Report_AssignToReadonly (source, ec.InRefOutArgumentResolving);
 				return;
 			}
 

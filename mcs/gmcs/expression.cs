@@ -4109,20 +4109,12 @@ namespace Mono.CSharp {
 			bool old_do_flow_analysis = ec.DoFlowAnalysis;
 			ec.DoFlowAnalysis = true;
 
-			if (ArgType == AType.Ref) {
-				ec.InRefOutArgumentResolving = true;
+			if (ArgType != AType.Out)
+				// Verify that we can read the argument
 				Expr = Expr.Resolve (ec);
-				ec.InRefOutArgumentResolving = false;
-				if (Expr == null) {
-					ec.DoFlowAnalysis = old_do_flow_analysis;
-					return false;
-				}
 
-				int errors = Report.Errors;
-				Expr = Expr.DoResolveLValue (ec, EmptyExpression.OutAccess);
-				if (Expr == null && errors == Report.Errors)
-					Error_LValueRequired (loc);
-			} else if (ArgType == AType.Out) {
+			if (Expr != null && (ArgType == AType.Out || ArgType == AType.Ref)) {
+				// Verify that we can read write to the argument
 				int errors = Report.Errors;
 				ec.InRefOutArgumentResolving = true;
 				Expr = Expr.DoResolveLValue (ec, EmptyExpression.OutAccess);
@@ -4131,38 +4123,10 @@ namespace Mono.CSharp {
 				if (Expr == null && errors == Report.Errors)
 					Error_LValueRequired (loc);
 			}
-			else
-				Expr = Expr.Resolve (ec);
 
 			ec.DoFlowAnalysis = old_do_flow_analysis;
 
-			if (Expr == null)
-				return false;
-
-			if (ArgType == AType.Expression)
-				return true;
-			else {
-				//
-				// Catch errors where fields of a MarshalByRefObject are passed as ref or out
-				// This is only allowed for `this'
-				//
-				FieldExpr fe = Expr as FieldExpr;
-				if (fe != null && !fe.IsStatic){
-					Expression instance = fe.InstanceExpression;
-
-					if (instance.GetType () != typeof (This)){
-						if (fe.InstanceExpression.Type.IsSubclassOf (TypeManager.mbr_type)){
-							Report.SymbolRelatedToPreviousError (fe.InstanceExpression.Type);
-							Report.Warning (197, 1, loc,
-								"Passing `{0}' as ref or out or taking its address may cause a runtime exception because it is a field of a marshal-by-reference class",
-								fe.GetSignatureForError ());
-							return false;
-						}
-					}
-				}
-			}
-				
-			return true;
+			return Expr != null;
 		}
 
 		public void Emit (EmitContext ec)

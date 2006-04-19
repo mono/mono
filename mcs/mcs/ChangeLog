@@ -1,3 +1,19 @@
+2006-04-19  Raja R Harinath  <rharinath@novell.com>
+
+	Simplifications.  Fix cs0191-2.cs
+	* ecore.cs (FieldExpr.DoResolve): Move handling of CS0192, CS0198,
+	CS1649 and CS1651 to ...
+	(FieldExpr.Report_AssignToReadonly): ... this.  Simplify by moving
+	the actual selection of the error code and message to a lookup
+	table.  Add a dummy return value to simplify callsites.
+	(FieldExpr.ResolveLValue): Don't allow a constructor to write to
+	readonly fields of other instances of the same type.  Move CS0197
+	warning from ...
+	* expression.cs (Argument.Resolve): ... here.  Simplify code.
+	Ensure that ec.InRefOutArgumentResolving is only set during LValue
+	resolution of an out or ref argument.  The code simplification
+	above uses this invariant.
+
 2006-04-18  Raja R Harinath  <rharinath@novell.com>
 
 	Possibly fix #77752.  Fix cs1690-[4-7].cs.

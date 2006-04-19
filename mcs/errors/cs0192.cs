@@ -1,4 +1,4 @@
-// cs0192.cs: A readonly field `a' cannot be passed ref or out (except in a constructor)
+// cs0192.cs: A readonly field `A.a' cannot be passed ref or out (except in a constructor)
 // Line: 17
 
 using System;
