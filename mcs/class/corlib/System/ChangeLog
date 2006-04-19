@@ -1,3 +1,8 @@
+2006-04-19  Raja R Harinath  <rharinath@novell.com>
+
+	* Char.cs (Equals): Don't access 'm_value' field of other
+	instances.  Cast directly to 'char'.
+
 2006-04-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTime.cs : implement SpecifyKind(). Patch by Thong Nguyen.

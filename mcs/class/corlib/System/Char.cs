@@ -102,7 +102,7 @@ namespace System
 			if (!(o is Char))
 				return false;
 
-			return ((Char) o).m_value == m_value;
+			return ((char) o) == m_value;
 		}
 
 #if NET_2_0
