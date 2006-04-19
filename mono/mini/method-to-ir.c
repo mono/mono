@@ -66,6 +66,10 @@
 
 #define BRANCH_COST 100
 #define INLINE_LENGTH_LIMIT 20
+#define INLINE_FAILURE do {\
+		if ((cfg->method != method) && (method->wrapper_type == MONO_WRAPPER_NONE))\
+			goto inline_failure;\
+	} while (0)
 
 /* 
  * this is used to determine when some branch optimizations are possible: we exclude FP compares
@@ -1190,7 +1194,7 @@ type_to_eval_stack_type (MonoType *type, MonoInst *inst)
 		return;
 	}
 
-	klass = mono_class_from_mono_type (type);
+	inst->klass = klass = mono_class_from_mono_type (type);
 
 handle_enum:
 	switch (type->type) {
@@ -6125,6 +6129,9 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 				g_assert (mono_method_signature (cmethod)->is_inflated);
 
+				/* Prevent inlining of methods that contain indirect calls */
+				INLINE_FAILURE;
+
 				this_temp = mono_compile_create_var (cfg, type_from_stack_type (sp [0]), OP_LOCAL);
 				NEW_TEMPSTORE (cfg, store, this_temp->inst_c0, sp [0]);
 				MONO_ADD_INS (bblock, store);
@@ -6147,6 +6154,9 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			if ((ins_flag & MONO_INST_TAILCALL) && cmethod && (*ip == CEE_CALL) &&
 				 (mono_metadata_signature_equal (mono_method_signature (method), mono_method_signature (cmethod)))) {
 				int i;
+
+				/* Prevent inlining of methods with tail calls (the call stack would be altered) */
+				INLINE_FAILURE;
 
 				for (i = 0; i < n; ++i) {
 					/* Prevent argument from being register allocated */
@@ -6195,6 +6205,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 				if ((cmethod->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) ||
 					(cmethod->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)) {
+					/* Prevent inlining of methods that call wrappers */
+					INLINE_FAILURE;
 					cmethod = mono_marshal_get_native_wrapper (cmethod);
 					allways = TRUE;
 				}
@@ -6219,6 +6231,9 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			if ((cfg->opt & MONO_OPT_TAILC) && *ip == CEE_CALL && cmethod == method && ip [5] == CEE_RET) {
 				gboolean has_vtargs = FALSE;
 				int i;
+
+				/* Prevent inlining of methods with tail calls (the call stack would be altered) */
+				INLINE_FAILURE;
 
 				/* keep it simple */
 				for (i =  fsig->param_count - 1; i >= 0; i--) {
@@ -6251,6 +6266,9 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			}
 
 			if (*ip == CEE_CALLI) {
+				/* Prevent inlining of methods with indirect calls */
+				INLINE_FAILURE;
+
 				ins = (MonoInst*)mono_emit_calli (cfg, fsig, sp, addr, ip);
 				if (!MONO_TYPE_IS_VOID (fsig->ret))
 					*sp++ = ins;
@@ -6292,6 +6310,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			}
 
 			/* Common call */
+			INLINE_FAILURE;
 			ins = (MonoInst*)mono_emit_method_call (cfg, cmethod, fsig, sp, ip, virtual ? sp [0] : NULL);
 
 			if (!MONO_TYPE_IS_VOID (fsig->ret))
@@ -7011,10 +7030,12 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 						inline_costs += costs - 5;
 					} else {
+						INLINE_FAILURE;
 						mono_emit_method_call (cfg, cmethod, fsig, sp, ip, callvirt_this_arg);
 					}
 				} else {
 					/* now call the actual ctor */
+					INLINE_FAILURE;
 					mono_emit_method_call (cfg, cmethod, fsig, sp, ip, callvirt_this_arg);
 				}
 			}
@@ -7356,6 +7377,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					dreg = alloc_preg (cfg);
 
 					EMIT_NEW_BIALU_IMM (cfg, ins, OP_PADD_IMM, dreg, sp [0]->dreg, foffset);
+					ins->klass = mono_class_from_mono_type (field->type);
 					ins->type = STACK_MP;
 					*sp++ = ins;
 				} else {
@@ -7445,6 +7467,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 			/* FIXME: mark instructions for use in SSA */
 			if (*ip == CEE_LDSFLDA) {
+				ins->klass = mono_class_from_mono_type (field->type);
 				*sp++ = ins;
 			} else if (*ip == CEE_STSFLD) {
 				MonoInst *store;
@@ -7979,7 +8002,13 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			for (i = 0; i < header->num_clauses; ++i) {
 				MonoExceptionClause *clause = &header->clauses [i];
 
-				if (MONO_OFFSET_IN_HANDLER (clause, ip - header->code) && (clause->flags == MONO_EXCEPTION_CLAUSE_NONE) && (ip - header->code + ((*ip == CEE_LEAVE) ? 5 : 2)) == (clause->handler_offset + clause->handler_len)) {
+				/* 
+				 * Use <= in the final comparison to handle clauses with multiple
+				 * leave statements, like in bug #78024.
+				 * The ordering of the exception clauses guarantees that we find the
+				 * innermost clause.
+				 */
+				if (MONO_OFFSET_IN_HANDLER (clause, ip - header->code) && (clause->flags == MONO_EXCEPTION_CLAUSE_NONE) && (ip - header->code + ((*ip == CEE_LEAVE) ? 5 : 2)) <= (clause->handler_offset + clause->handler_len)) {
 					MonoInst *exc_ins;
 					MonoBasicBlock *dont_throw;
 
@@ -9914,7 +9943,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   running generics.exe.
  * - create a helper function for allocating a stack slot, taking into account 
  *   MONO_CFG_HAS_SPILLUP.
- * - LAST MERGE: 59160.
+ * - LAST MERGE: 59644.
  */
 
 /*

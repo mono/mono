@@ -11,7 +11,6 @@
 #include <locale.h>
 #include <string.h>
 
-static GPtrArray *thread_array = NULL;
 static MonoMethod *debugger_main_method;
 
 static guint64 debugger_insert_breakpoint (guint64 method_argument, const gchar *string_argument);
@@ -48,7 +47,29 @@ static MonoDebuggerMetadataInfo debugger_metadata_info = {
 	G_STRUCT_OFFSET (MonoClass, byval_arg),
 	G_STRUCT_OFFSET (MonoClass, generic_class),
 	G_STRUCT_OFFSET (MonoClass, generic_container),
-	sizeof (MonoClassField)
+	sizeof (MonoClassField),
+	G_STRUCT_OFFSET (MonoDefaults, corlib),
+	G_STRUCT_OFFSET (MonoDefaults, object_class),
+	G_STRUCT_OFFSET (MonoDefaults, byte_class),
+	G_STRUCT_OFFSET (MonoDefaults, void_class),
+	G_STRUCT_OFFSET (MonoDefaults, boolean_class),
+	G_STRUCT_OFFSET (MonoDefaults, sbyte_class),
+	G_STRUCT_OFFSET (MonoDefaults, int16_class),
+	G_STRUCT_OFFSET (MonoDefaults, uint16_class),
+	G_STRUCT_OFFSET (MonoDefaults, int32_class),
+	G_STRUCT_OFFSET (MonoDefaults, uint32_class),
+	G_STRUCT_OFFSET (MonoDefaults, int_class),
+	G_STRUCT_OFFSET (MonoDefaults, uint_class),
+	G_STRUCT_OFFSET (MonoDefaults, int64_class),
+	G_STRUCT_OFFSET (MonoDefaults, uint64_class),
+	G_STRUCT_OFFSET (MonoDefaults, single_class),
+	G_STRUCT_OFFSET (MonoDefaults, double_class),
+	G_STRUCT_OFFSET (MonoDefaults, char_class),
+	G_STRUCT_OFFSET (MonoDefaults, string_class),
+	G_STRUCT_OFFSET (MonoDefaults, enum_class),
+	G_STRUCT_OFFSET (MonoDefaults, array_class),
+	G_STRUCT_OFFSET (MonoDefaults, delegate_class),
+	G_STRUCT_OFFSET (MonoDefaults, exception_class)
 };
 
 /*
@@ -80,12 +101,6 @@ MonoDebuggerInfo MONO_DEBUGGER__debugger_info = {
 	&debugger_attach,
 	&debugger_initialize
 };
-
-typedef struct {
-	gpointer end_stack;
-	gpointer start_stack;
-	guint64 tid;
-} MonoDebuggerThread;
 
 static guint64
 debugger_insert_breakpoint (guint64 method_argument, const gchar *string_argument)
@@ -238,91 +253,6 @@ debugger_attach (void)
 }
 
 static void
-debugger_thread_manager_add_thread (gsize tid, gpointer start_stack, gpointer func)
-{
-	MonoDebuggerThread *thread = g_new0 (MonoDebuggerThread, 1);
-
-	thread->tid = tid;
-	thread->start_stack = start_stack;
-
-	mono_debugger_notification_function (
-		MONO_DEBUGGER_EVENT_THREAD_CREATED, (guint64) (gsize) thread, tid);
-
-	if (!thread_array)
-		thread_array = g_ptr_array_new ();
-
-	g_ptr_array_add (thread_array, thread);
-}
-
-static void
-debugger_thread_manager_start_resume (gsize tid)
-{
-}
-
-static void
-debugger_thread_manager_end_resume (gsize tid)
-{
-}
-
-extern void GC_push_all_stack (gpointer b, gpointer t);
-
-static void
-debugger_gc_init (void)
-{ }
-
-static int count = 0;
-
-static void
-debugger_gc_stop_world (void)
-{
-	mono_debugger_notification_function (
-		MONO_DEBUGGER_EVENT_ACQUIRE_GLOBAL_THREAD_LOCK, 0, 0);
-}
-
-static void
-debugger_gc_start_world (void)
-{
-	mono_debugger_notification_function (
-		MONO_DEBUGGER_EVENT_RELEASE_GLOBAL_THREAD_LOCK, 0, 0);
-}
-
-static void
-debugger_gc_push_all_stacks (void)
-{
-	long tid;
-	int i;
-
-	tid = GetCurrentThreadId ();
-
-	if (!thread_array)
-		return;
-
-	for (i = 0; i < thread_array->len; i++) {
-		MonoDebuggerThread *thread = g_ptr_array_index (thread_array, i);
-		gpointer end_stack = (thread->tid == tid) ? &i : thread->end_stack;
-
-#ifdef USE_INCLUDED_LIBGC
-		GC_push_all_stack (end_stack, thread->start_stack);
-#endif
-	}
-}
-
-static GCThreadFunctions debugger_thread_vtable = {
-	debugger_gc_init,
-
-	debugger_gc_stop_world,
-	debugger_gc_push_all_stacks,
-	debugger_gc_start_world
-};
-
-static MonoThreadCallbacks thread_callbacks = {
-	&debugger_compile_method_cb,
-	&debugger_thread_manager_add_thread,
-	&debugger_thread_manager_start_resume,
-	&debugger_thread_manager_end_resume
-};
-
-static void
 debugger_initialize (void)
 {
 }
@@ -331,6 +261,7 @@ void
 mono_debugger_init (void)
 {
 	mono_debugger_notification_function = mono_debugger_create_notification_function ();
+	mono_debugger_event_handler = debugger_event_handler;
 
 	/*
 	 * Use an indirect call so gcc can't optimize it away.
@@ -341,11 +272,6 @@ mono_debugger_init (void)
 	 * Initialize the thread manager.
 	 */
 
-	thread_array = g_ptr_array_new ();
-	mono_install_thread_callbacks (&thread_callbacks);
-#ifdef USE_INCLUDED_LIBGC
-	gc_thread_vtable = &debugger_thread_vtable;
-#endif
 	mono_debugger_notification_function (MONO_DEBUGGER_EVENT_INITIALIZE_THREAD_MANAGER,
 					     GetCurrentThreadId (), 0);
 }
@@ -389,13 +315,9 @@ int
 mono_debugger_main (MonoDomain *domain, MonoAssembly *assembly, int argc, char **argv)
 {
 	MainThreadArgs main_args;
-	MonoThread *thread;
 	MonoImage *image;
 
-	/*
-	 * Notify the debugger about the main thread.
-	 */
-	debugger_thread_manager_add_thread (GetCurrentThreadId (), &main_args, NULL);
+	mono_debugger_init_threads (&main_args);
 
 	/*
 	 * Get and compile the main function.
@@ -408,7 +330,6 @@ mono_debugger_main (MonoDomain *domain, MonoAssembly *assembly, int argc, char *
 	/*
 	 * Reload symbol tables.
 	 */
-	mono_debugger_event_handler = debugger_event_handler;
 	mono_debugger_notification_function (MONO_DEBUGGER_EVENT_INITIALIZE_MANAGED_CODE, 0, 0);
 	mono_debugger_unlock ();
 
@@ -418,14 +339,16 @@ mono_debugger_main (MonoDomain *domain, MonoAssembly *assembly, int argc, char *
 
 	main_args.domain = domain;
 	main_args.method = debugger_main_method;
-	main_args.argc = argc - 2;
-	main_args.argv = argv + 2;
+	main_args.argc = argc;
+	main_args.argv = argv;
 
 #if RUN_IN_SUBTHREAD
 	mono_thread_create (domain, main_thread_handler, &main_args);
 #else
 	main_thread_handler (&main_args);
 #endif
+
+	mono_thread_manage ();
 
 	/*
 	 * This will never return.

@@ -1,3 +1,99 @@
+2006-04-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* assembly.c (mono_assembly_open_full): Invoke the load hook when the
+	assembly was already loaded in another appdomain. Fixes #78083.
+
+2006-04-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* assembly.c (mono_assembly_load_reference): Increase the refcount of the
+	referenced assemblies.
+	(mono_assembly_close): Decrease the refcount of the referenced assemblies.
+
+	* domain.c (mono_domain_free): Add a trace message.
+
+	* appdomain.c (add_assemblies_to_domain): Ditto.	
+
+	* metadata-internals.h: (_MonoAssembly): Modify the meaning of the ref_count
+	field.	
+
+2006-04-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_System_Reflection_Assembly_InternalGetAssemblyName): Fix image reference counting.
+
+2006-04-12  Martin Baulig  <martin@ximian.com>
+
+	* threads.c: Use `MONO_DEBUGGER_SUPPORTED' as the conditional, not
+	`USE_INCLUDED_LIBGC'.	
+
+2006-04-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* image.c (canonicalize_path): Avoid calling strncpy on overlapping strings if
+	the patch contains ../ and a small directory name later. Hopefully fixes
+	#78035.
+
+2006-04-10  Martin Baulig  <martin@ximian.com>
+
+	Clean up the debugger's thread-handling code.
+
+	The debugger's thread-handling code has been moved from
+	../mini/debug-debugger.c to threads.c.  We now iterate directly
+	over the `threads' hash, keep track of exiting threads and also
+	use proper locking.
+
+	We can now debug XSP and XSP based applications with the debugger.
+
+	* object-internals.h (MonoThread): Added `gpointer end_stack'.
+
+	* threads.h
+	(MonoThreadCallbacks): Removed; this was only used by the debugger.
+	(mono_install_thread_callbacks): Likewise.	
+
+	* threads.c (mono_thread_callbacks): Removed.
+	(debugger_thread_created, debugger_thread_exited): New static functions.
+	(start_wrapper): Call debugger_thread_created().
+	(thread_cleanup): Call debugger_thread_exited().
+	(mono_gc_stop_world, mono_gc_start_world): Removed; this was never used.
+	(mono_debugger_init_threads): New public function.
+	(debugger_thread_vtable): Moved here from debug-debugger.c; we now
+	iterate directly over the `threads' hash and also use proper locking.
+
+	* mono-debug.h (MONO_DEBUGGER_VERSION): Bumped to 55.
+
+	* mono-debug-debugger.h
+	(MonoDebuggerEvent): Added MONO_DEBUGGER_EVENT_THREAD_EXITED.
+
+2006-04-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (encode_cattr_value): Fix handling of parameter type=object, 
+	argument type=array. Fixes #78057.
+
+2006-04-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* culture-info-table.h : regenerated. Fixed bug #69652.
+
+2006-04-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* loader.c metadata.c: Reapply a variant r59116.
+	
+	* loader.c metadata.c: Revert r59116 to see if it fixes the breakage.
+
+	* class.c (mono_class_setup_interface_offsets): New internal function.
+
+	* reflection.c (ensure_runtime_vtable): Setup interface offsets for dynamic
+	interfaces too. Fixes #77398.
+
+	* reflection.c (encode_cattr_value): Add support for 
+	parameter type=object, argument type=array.
+	(load_cattr_value): Ditto. Fixes #77916.
+
+	* marshal.c (emit_object_to_ptr_conv): Add support for ARRAY_BYVALCHARARRAY.
+	(emit_ptr_to_object_conv): Ditto. Fixes #77960.
+
+	* metadata.c (mono_type_to_unmanaged): Use ARRAY_BYVALCHARARRAY when converting
+	a byval char array and CharSet is Ansi.
+
+	* metadata.h: Add new marshalling conversion ARRAY_BYVALCHARARRAY.
+
 2006-04-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* metadata.c: Add some locking comments.

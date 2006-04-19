@@ -1,3 +1,8 @@
+2006-04-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* langs/nn.xml, locales/nn_NO.xml, Driver.cs :
+	  Did the same for nn-NO.
+
 2006-03-29  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* langs/nb.xml

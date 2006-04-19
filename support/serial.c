@@ -41,11 +41,12 @@ typedef enum {
 
 /* This is a copy of System.IO.Ports.SerialSignal */
 typedef enum {
-	Cd = 0, /* Carrier detect */
-	Cts = 1, /* Clear to send */
-	Dsr = 2, /* Data set ready */
-	Dtr = 3, /* Data terminal ready */
-	Rts = 4  /* Request to send */
+	NoneSignal,
+	Cd = 1, /* Carrier detect */
+	Cts = 2, /* Clear to send */
+	Dsr = 4, /* Data set ready */
+	Dtr = 8, /* Data terminal ready */
+	Rts = 16  /* Request to send */
 } MonoSerialSignal;
 
 int
@@ -67,8 +68,6 @@ open_serial (char* devfile)
 	tcflush(fd, TCIOFLUSH);
 	tcsetattr(fd,TCSANOW,&newtio);
 
-	fcntl (fd, F_SETFL, O_NONBLOCK);
-
 	return fd;
 }
 
@@ -79,19 +78,9 @@ close_serial (int unix_fd)
 }
 
 guint32
-read_serial (int fd, guchar *buffer, int offset, int count, int timeout)
+read_serial (int fd, guchar *buffer, int offset, int count)
 {
 	guint32 n;
-	struct pollfd ufd;
-
-	ufd.fd = fd;
-	ufd.events = POLLHUP | POLLIN | POLLERR;
-
-	poll (&ufd, 1, timeout);
-
-	if ((ufd.revents & POLLIN) != POLLIN) {
-		return -1;
-	}
  
 	n = read (fd, buffer + offset, count);
 
@@ -121,6 +110,20 @@ void
 discard_buffer (int fd, gboolean input)
 {
 	tcflush(fd, input ? TCIFLUSH : TCOFLUSH);
+}
+
+gint32
+get_bytes_in_buffer (int fd, gboolean input, gint32 *error)
+{
+	gint32 retval;
+
+	*error = 0;
+	if (ioctl (fd, input ? TIOCINQ : TIOCOUTQ, &retval) == -1) {
+		*error = -1;
+		return -1;
+	}
+
+	return retval;
 }
 
 gboolean
@@ -249,22 +252,46 @@ get_signal_code (MonoSerialSignal signal)
 			return TIOCM_DTR;
 		case Rts:
 			return TIOCM_RTS;
+		default:
+			return 0;
 	}
 
 	/* Not reached */
 	return 0;
 }
 
-gint32
-get_signal (int fd, MonoSerialSignal signal)
+static MonoSerialSignal
+get_mono_signal_codes (int signals)
 {
-	int signals, expected;
+	MonoSerialSignal retval = NoneSignal;
 
-	expected = get_signal_code (signal);
-	if (ioctl (fd, TIOCMGET, &signals) == -1)
-		return -1;
+	if ((signals & TIOCM_CAR) != 0)
+		retval |= Cd;
+	if ((signals & TIOCM_CTS) != 0)
+		retval |= Cts;
+	if ((signals & TIOCM_DSR) != 0)
+		retval |= Dsr;
+	if ((signals & TIOCM_DTR) != 0)
+		retval |= Dtr;
+	if ((signals & TIOCM_RTS) != 0)
+		retval |= Rts;
+
+	return retval;
+}
+
+MonoSerialSignal
+get_signals (int fd, gint32 *error)
+{
+	int signals;
+
+	*error = 0;
 	
-	return (expected & signals) != 0;
+	if (ioctl (fd, TIOCMGET, &signals) == -1) {
+		*error = -1;
+		return NoneSignal;
+	}
+	
+	return get_mono_signal_codes (signals);
 }
 
 gint32
@@ -289,6 +316,25 @@ set_signal (int fd, MonoSerialSignal signal, gboolean value)
 		return -1;
 	
 	return 1;
+}
+
+gboolean
+poll_serial (int fd, gint32 *error)
+{
+	struct pollfd pinfo;
+	
+	*error = 0;
+	
+	pinfo.fd = fd;
+	pinfo.events = POLLIN;
+	pinfo.revents = 0;
+
+	if (poll (&pinfo, 1, 0) == -1) {
+		*error = -1;
+		return FALSE;
+	}
+
+	return (pinfo.revents & POLLIN) != 0 ? 1 : 0;
 }
 
 /*

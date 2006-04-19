@@ -1,3 +1,7 @@
+2006-04-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* sparc/sparc-codegen.h (sparc_inst_i): New disassembly macro.
+
 2006-04-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile.am (SUBDIRS): Avoid compiling subdirs needed by the

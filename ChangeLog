@@ -1,3 +1,29 @@
+2006-04-13  Chris Toshok  <toshok@ximian.com>
+
+	* data/net_2_0/machine.config: add system.data section listing the
+	SqlClient provider.  Also add system.web section listing the
+	membership and role providers.  This is here instead of in
+	web.config because the providers are meant to be available to
+	non-web applications as well.
+
+2006-04-11  Chris Toshok  <toshok@ximian.com>
+
+	* data/net_2_0/web.config: add the builtin expression builders.
+
+2006-04-11  Gert Driesen  <gert.driesen@telenet.be>
+
+	* scripts/Makefile.am (scripts_2_0): Add 'resgen2'.
+
+2006-04-07  Chris Toshok  <toshok@ximian.com>
+
+	* data/net_2_0/machine.config: oh, and
+	system.web/anonymousIdentification.
+
+2006-04-07  Chris Toshok  <toshok@ximian.com>
+
+	* data/net_2_0/machine.config: add system.web/membership and
+	system.web/xhtmlConformance config sections.
+
 2006-04-04  Zoltan Varga  <vargaz@gmail.com>
 
         * configure.in: Add a check and a helpful error message when 'ar' is not found on solaris.

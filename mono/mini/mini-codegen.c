@@ -258,6 +258,9 @@ mono_spillvar_offset (MonoCompile *cfg, int spillvar, gboolean fp)
 	 */
 	info = fp ? &cfg->spill_info_float [spillvar] : &cfg->spill_info [spillvar];
 	if (info->offset == -1) {
+		cfg->stack_offset += sizeof (gpointer) - 1;
+		cfg->stack_offset &= ~(sizeof (gpointer) - 1);
+
 		if (cfg->flags & MONO_CFG_HAS_SPILLUP) {
 			if (fp) {
 				cfg->stack_offset += 7;
@@ -287,7 +290,6 @@ mono_spillvar_offset (MonoCompile *cfg, int spillvar, gboolean fp)
 
 	return info->offset;
 }
-
 
 #define regmask(reg) (((regmask_t)1) << (reg))
 

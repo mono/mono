@@ -424,11 +424,15 @@ namespace Mono.Tools.LocaleBuilder {
 
 		private string GetLanguageFixed (CultureInfoEntry ci)
 		{
-			// This is a hack, but without it nb-NO won't work.
-			if (ci.Territory == "NO" && ci.Language == "nb")
-				return "no";
-			else
-				return ci.Language;
+			// This is a hack, but without it nb-NO and nn-NO won't work.
+			if (ci.Territory == "NO") {
+				switch (ci.Language) {
+				case "nb":
+				case "nn":
+					return "no";
+				}
+			}
+			return ci.Language;
 		}
 
 		private void LookupNames (CultureInfoEntry ci)
@@ -450,8 +454,8 @@ namespace Mono.Tools.LocaleBuilder {
 				ci.NativeName = ci.DisplayName;
 			} else {
 				// FIXME: We use ci.Language here.
-				// This is nothing more than hack for nb-NO 
-				// where Parent of nb-NO is nn (not nb).
+				// This is nothing more than hack for nb-NO and nn-NO
+				// where Parent of them is nn (not nb or nn).
 				string lang = ci.Language;
 				doc = GetXPathDocument (Path.Combine ("langs", GetShortName (lang) + ".xml"));
 				nav = doc.CreateNavigator ();
@@ -1003,8 +1007,8 @@ namespace Mono.Tools.LocaleBuilder {
 			string ret;
 
 			// FIXME: We use ci.Language here.
-			// This is nothing more than hack for nb-NO 
-			// where Parent of nb-NO is nn (not nb).
+			// This is nothing more than hack for nb-NO or nn-NO
+			// where Parent of them is nn (not nb or nn).
 			ret = (string) nav.Evaluate ("string("+
 					pre + "languages/language[@type='" + GetShortName (ci.Language) + "'])");
 

@@ -1,3 +1,11 @@
+2006-04-19  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* serial.c: Added poll_serial () function, to poll
+	outside the read_serial () functions; and get_bytes_in_buffer (), to
+	get bytes in serialport buffers . Update some functions/enums
+	used by System.IO.Port.SerialPort too (Changes aproved by Miguel:
+	we will add tests in the managed side).
+	
 2006-03-22  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* serial.c: Add get_signal_code, get_signal, and set_signal

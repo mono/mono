@@ -66,6 +66,10 @@
 
 #define BRANCH_COST 100
 #define INLINE_LENGTH_LIMIT 20
+#define INLINE_FAILURE do {\
+		if ((cfg->method != method) && (method->wrapper_type == MONO_WRAPPER_NONE))\
+			goto inline_failure;\
+	} while (0)
 
 /* 
  * this is used to determine when some branch optimizations are possible: we exclude FP compares
@@ -1299,12 +1303,11 @@ type_to_eval_stack_type (MonoType *type, MonoInst *inst)
 {
 	MonoClass *klass;
 
+	inst->klass = klass = mono_class_from_mono_type (type);
 	if (type->byref) {
 		inst->type = STACK_MP;
 		return;
 	}
-
-	klass = mono_class_from_mono_type (type);
 
 handle_enum:
 	switch (type->type) {
@@ -4745,6 +4748,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				MonoInst *iargs [3];
 
 				g_assert (mono_method_signature (cmethod)->is_inflated);
+				/* Prevent inlining of methods that contain indirect calls */
+				INLINE_FAILURE;
 
 				this_temp = mono_compile_create_var (cfg, type_from_stack_type (sp [0]), OP_LOCAL);
 				this_temp->cil_code = ip;
@@ -4773,6 +4778,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			if ((ins_flag & MONO_INST_TAILCALL) && cmethod && (*ip == CEE_CALL) &&
 				 (mono_metadata_signature_equal (mono_method_signature (method), mono_method_signature (cmethod)))) {
 				int i;
+				/* Prevent inlining of methods with tail calls (the call stack would be altered) */
+				INLINE_FAILURE;
 				/* FIXME: This assumes the two methods has the same number and type of arguments */
 				for (i = 0; i < n; ++i) {
 					/* Check if argument is the same */
@@ -4830,6 +4837,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 				if ((cmethod->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) ||
 					(cmethod->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)) {
+					/* Prevent inlining of methods that call wrappers */
+					INLINE_FAILURE;
 					cmethod = mono_marshal_get_native_wrapper (cmethod);
 					allways = TRUE;
 				}
@@ -4861,6 +4870,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				gboolean has_vtargs = FALSE;
 				int i;
 				
+				/* Prevent inlining of methods with tail calls (the call stack would be altered) */
+				INLINE_FAILURE;
 				/* keep it simple */
 				for (i =  fsig->param_count - 1; i >= 0; i--) {
 					if (MONO_TYPE_ISSTRUCT (mono_method_signature (cmethod)->params [i])) 
@@ -4892,12 +4903,12 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			}
 
 			if (*ip == CEE_CALLI) {
-
+				/* Prevent inlining of methods with indirect calls */
+				INLINE_FAILURE;
 				if ((temp = mono_emit_calli (cfg, bblock, fsig, sp, addr, ip)) != -1) {
 					NEW_TEMPLOAD (cfg, *sp, temp);
 					sp++;
-				}
-	      				
+				}	      				
 			} else if (array_rank) {
 				MonoInst *addr;
 
@@ -4955,6 +4966,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				}
 
 			} else {
+				/* Prevent inlining of methods which call other methods */
+				INLINE_FAILURE;
 				if (ip_in_bb (cfg, bblock, ip + 5) 
 				    && (!MONO_TYPE_ISSTRUCT (fsig->ret))
 				    && (!MONO_TYPE_IS_VOID (fsig->ret) || cmethod->string_ctor)
@@ -5622,9 +5635,13 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						break;
 						
 					} else {
+						/* Prevent inlining of methods which call other methods */
+						INLINE_FAILURE;
 						mono_emit_method_call_spilled (cfg, bblock, cmethod, fsig, sp, ip, callvirt_this_arg);
 					}
 				} else {
+					/* Prevent inlining of methods which call other methods */
+					INLINE_FAILURE;
 					/* now call the actual ctor */
 					mono_emit_method_call_spilled (cfg, bblock, cmethod, fsig, sp, ip, callvirt_this_arg);
 				}
@@ -6044,6 +6061,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					ins->type = STACK_MP;
 
 					if (*ip == CEE_LDFLDA) {
+						ins->klass = mono_class_from_mono_type (field->type);
 						*sp++ = ins;
 					} else {
 						MonoInst *load;
@@ -6144,6 +6162,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 			/* FIXME: mark instructions for use in SSA */
 			if (*ip == CEE_LDSFLDA) {
+				ins->klass = mono_class_from_mono_type (field->type);
 				*sp++ = ins;
 			} else if (*ip == CEE_STSFLD) {
 				MonoInst *store;
@@ -6782,7 +6801,13 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			for (i = 0; i < header->num_clauses; ++i) {
 				MonoExceptionClause *clause = &header->clauses [i];
 
-				if (MONO_OFFSET_IN_HANDLER (clause, ip - header->code) && (clause->flags == MONO_EXCEPTION_CLAUSE_NONE) && (ip - header->code + ((*ip == CEE_LEAVE) ? 5 : 2)) == (clause->handler_offset + clause->handler_len)) {
+				/* 
+				 * Use <= in the final comparison to handle clauses with multiple
+				 * leave statements, like in bug #78024.
+				 * The ordering of the exception clauses guarantees that we find the
+				 * innermost clause.
+				 */
+				if (MONO_OFFSET_IN_HANDLER (clause, ip - header->code) && (clause->flags == MONO_EXCEPTION_CLAUSE_NONE) && (ip - header->code + ((*ip == CEE_LEAVE) ? 5 : 2)) <= (clause->handler_offset + clause->handler_len)) {
 					int temp;
 					MonoInst *load;
 
@@ -11425,10 +11450,22 @@ SIG_HANDLER_SIGNATURE (sigsegv_signal_handler)
 
 	ji = mono_jit_info_table_find (mono_domain_get (), mono_arch_ip_from_context(ctx));
 	if (!ji) {
-		mono_handle_native_sigsegv (ctx);
+		mono_handle_native_sigsegv (SIGSEGV, ctx);
 	}
 			
 	mono_arch_handle_exception (ctx, exc, FALSE);
+}
+
+static void
+SIG_HANDLER_SIGNATURE (sigabrt_signal_handler)
+{
+	MonoJitInfo *ji;
+	GET_CONTEXT;
+
+	ji = mono_jit_info_table_find (mono_domain_get (), mono_arch_ip_from_context(ctx));
+	if (!ji) {
+		mono_handle_native_sigsegv (SIGABRT, ctx);
+	}
 }
 
 static void
@@ -11561,6 +11598,8 @@ mono_runtime_install_handlers (void)
 	add_signal_handler (mono_thread_get_abort_signal (), sigusr1_signal_handler);
 	signal (SIGPIPE, SIG_IGN);
 
+	add_signal_handler (SIGABRT, sigabrt_signal_handler);
+
 	/* catch SIGSEGV */
 #ifdef MONO_ARCH_SIGSEGV_ON_ALTSTACK
 	sa.sa_sigaction = sigsegv_signal_handler;
@@ -11570,7 +11609,6 @@ mono_runtime_install_handlers (void)
 #else
 	add_signal_handler (SIGSEGV, sigsegv_signal_handler);
 #endif
-
 #endif /* PLATFORM_WIN32 */
 }
 
