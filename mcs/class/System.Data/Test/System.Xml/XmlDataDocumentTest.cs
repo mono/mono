@@ -166,8 +166,8 @@ namespace MonoTests.System.Data.Xml
 			XmlTextWriter xw = new XmlTextWriter (sw);
 			Doc.DataSet.WriteXml (xw);
 			string s = sw.ToString ();
-			AssertEquals (xml, s);
-			AssertEquals (xml, Doc.InnerXml);
+			AssertEquals ("#1", xml, s);
+			AssertEquals ("#2", xml, Doc.InnerXml);
 			AssertEquals ("test#01", "EndOfFile", Reader.ReadState.ToString ());
 
 			DataSet Set = Doc.DataSet;

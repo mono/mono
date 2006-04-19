@@ -120,6 +120,7 @@ System.Data/UpdateRowSource.cs
 System.Data/UpdateStatus.cs
 System.Data/VersionNotFoundException.cs
 System.Data/XmlDataInferenceLoader.cs
+System.Data/XmlHelper.cs
 System.Data/XmlDataReader.cs
 System.Data/XmlReadMode.cs
 System.Data/XmlWriteMode.cs

@@ -3256,5 +3256,24 @@ namespace MonoTests_System.Data
 			Assert.AreEqual(-1,xml.IndexOf("<ChildTable>"), "DS79");
 			}
 		}
+		
+		[Test]
+		public void WriteXmlSchema_ConstraintNameWithSpaces ()
+		{
+			DataSet ds = new DataSet ();
+			DataTable table1 = ds.Tables.Add ("table1");
+			DataTable table2 = ds.Tables.Add ("table2");
+
+			table1.Columns.Add ("col1", typeof (int));
+			table2.Columns.Add ("col1", typeof (int));
+
+			table1.Constraints.Add ("uc 1", table1.Columns [0], false);
+			table2.Constraints.Add ("fc 1", table1.Columns [0], table2.Columns [0]);
+			
+			StringWriter sw = new StringWriter ();
+
+			//should not throw an exception
+			ds.WriteXmlSchema (sw);
+		}
 	}
 }

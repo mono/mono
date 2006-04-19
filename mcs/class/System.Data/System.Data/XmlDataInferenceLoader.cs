@@ -186,7 +186,7 @@ namespace System.Data
 			if (IsDocumentElementTable ())
 				InferTopLevelTable (el);
 			else {
-				string localName = XmlConvert.DecodeName (el.LocalName);
+				string localName = XmlHelper.Decode (el.LocalName);
 				dataset.DataSetName = localName;
 				dataset.Namespace = el.NamespaceURI;
 				dataset.Prefix = el.Prefix;
@@ -250,7 +250,7 @@ namespace System.Data
 
 		private void InferColumnElement (TableMapping table, XmlElement el)
 		{
-			string localName = XmlConvert.DecodeName (el.LocalName);
+			string localName = XmlHelper.Decode (el.LocalName);
 			DataColumn col = table.GetColumn (localName);
 			if (col != null) {
 				if (col.ColumnMapping != MappingType.Element)
@@ -273,7 +273,7 @@ namespace System.Data
 		{
 			if (parentTable == null)
 				return;
-			string localName = XmlConvert.DecodeName (el.LocalName);
+			string localName = XmlHelper.Decode (el.LocalName);
 			DataColumn elc = parentTable.GetColumn (localName);
 			if (elc != null)
 				parentTable.RemoveElementColumn (localName);
@@ -313,7 +313,7 @@ namespace System.Data
 
 		private void InferRepeatedElement (TableMapping parentTable, XmlElement el)
 		{
-			string localName = XmlConvert.DecodeName (el.LocalName);
+			string localName = XmlHelper.Decode (el.LocalName);
 			// FIXME: can be checked later
 			CheckExtraneousElementColumn (parentTable, el);
 			TableMapping table = GetMappedTable (parentTable, localName, el.NamespaceURI);
@@ -338,7 +338,7 @@ namespace System.Data
 			// loss of performance.
 			CheckExtraneousElementColumn (parentTable, el);
 
-			string localName = XmlConvert.DecodeName (el.LocalName);
+			string localName = XmlHelper.Decode (el.LocalName);
 			TableMapping table = GetMappedTable (parentTable, localName, el.NamespaceURI);
 
 			bool hasChildElements = false;
@@ -354,7 +354,7 @@ namespace System.Data
 
 				hasAttributes = true;
 				DataColumn col = GetMappedColumn (table,
-					XmlConvert.DecodeName (attr.LocalName),
+					XmlHelper.Decode (attr.LocalName),
 					attr.Prefix,
 					attr.NamespaceURI,
 					MappingType.Attribute);
@@ -371,7 +371,7 @@ namespace System.Data
 				case XmlNodeType.Element: // child
 					hasChildElements = true;
 					XmlElement cel = n as XmlElement;
-					string childLocalName = XmlConvert.DecodeName (cel.LocalName);
+					string childLocalName = XmlHelper.Decode (cel.LocalName);
 
 					switch (GetElementMappingType (cel, ignoredNamespaces, null)) {
 					case ElementMappingType.Simple:

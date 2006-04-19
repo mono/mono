@@ -1,3 +1,10 @@
+2006-04-19  Senganal T  <tsenganal@novell.com>
+
+	* XmlDataDocumentTest2.cs : Test if DataSet schema with whitespace
+	characters are saved and loaded correctly, Test if null values are 
+	correctly saved and loaded, Test if creating a row in Dataset is 
+	reflected in the document.
+
 2005-01-11  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlDataDocumentTest2.cs : Added re-Load()ing test.

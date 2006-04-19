@@ -1,3 +1,19 @@
+2006-04-19  Senganal T  <tsenganal@novell.com>
+
+	* XmlHelper.cs : A helper class for encoding/decoding schema names.
+	Caches the Schema names to minimize encoding/decoding operations and
+	duplicate strings created.
+	* XmlSchemaWriter : 
+		- Use XmlHelper for encoding/decoding schema names.
+		- Encode ConstraintNames when writing as xml.
+	* DataSet.cs
+	* XmlDataReader.cs
+	* XmlDataInferenceLoader.cs
+	* XmlSchemaDataImporter.cs
+		- Use XmlHelper for encoding/decoding schema names.
+	* DataTableCollections : Minor code refactor.
+	* DataRow.cs : Create XmlElement only if required.
+
 2006-04-07  Senganal T  <tsenganal@novell.com>
 
 	* DataSet.cs :

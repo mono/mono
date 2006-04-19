@@ -125,7 +125,7 @@ namespace System.Data
 
 		private bool IsTopLevelDataSet ()
 		{
-			string local = XmlConvert.DecodeName (reader.LocalName);
+			string local = XmlHelper.Decode (reader.LocalName);
 
 			// No need to check DataSetName. In fact, it is ignored.
 
@@ -147,7 +147,7 @@ namespace System.Data
 		private void ReadTopLevelElement ()
 		{
 			if (mode == XmlReadMode.Fragment &&
-				(XmlConvert.DecodeName (reader.LocalName) !=
+				(XmlHelper.Decode (reader.LocalName) !=
 				dataset.DataSetName ||
 				reader.NamespaceURI != dataset.Namespace))
 				reader.Skip ();
@@ -169,7 +169,7 @@ namespace System.Data
 
 		private void ReadDataSetContent ()
 		{
-			DataTable table = dataset.Tables [XmlConvert.DecodeName (reader.LocalName)];
+			DataTable table = dataset.Tables [XmlHelper.Decode (reader.LocalName)];
 			if (table == null || table.Namespace != reader.NamespaceURI) {
 				reader.Skip ();
 				reader.MoveToContent ();
@@ -221,7 +221,7 @@ namespace System.Data
 
 		private void ReadElementAttribute (DataRow row)
 		{
-			DataColumn col = row.Table.Columns [XmlConvert.DecodeName (reader.LocalName)];
+			DataColumn col = row.Table.Columns [XmlHelper.Decode (reader.LocalName)];
 			if (col == null || col.Namespace != reader.NamespaceURI)
 				return;
 			row [col] = StringToObject (col.DataType, reader.Value);
@@ -276,16 +276,9 @@ namespace System.Data
 			// content element, or child element
 
 			// MS.NET crashes here... but it seems just a bug.
-//			DataColumn col = row.Table.Columns [XmlConvert.DecodeName (reader.LocalName)];
-			DataColumn col = null;
-			DataColumnCollection cols = row.Table.Columns;
-			for (int i = 0; i < cols.Count; i++) {
-				if (cols [i].ColumnName == XmlConvert.DecodeName (reader.LocalName) && cols [i].Namespace == reader.NamespaceURI) {
-					col = cols [i];
-					break;
-				}
-			}
-
+			DataColumn col = row.Table.Columns [XmlHelper.Decode (reader.LocalName)];
+			if (col == null ||  col.Namespace != reader.NamespaceURI)
+				col = null;
 
 			// if col exists, then it should be MappingType.Element
 			if (col != null
@@ -327,7 +320,7 @@ namespace System.Data
 				if (!rel.Nested)
 					continue;
 				DataTable ct = rel.ChildTable;
-				if (ct.TableName != XmlConvert.DecodeName (reader.LocalName) || ct.Namespace != reader.NamespaceURI)
+				if (ct.TableName != XmlHelper.Decode (reader.LocalName) || ct.Namespace != reader.NamespaceURI)
 					continue;
 
 				DataRow childRow = rel.ChildTable.NewRow ();

@@ -99,7 +99,7 @@ namespace System.Data
 			}
 
 			w.WriteStartElement ("xs", "schema", xmlnsxs);
-			w.WriteAttributeString ("id", XmlConvert.EncodeLocalName (ds.DataSetName));
+			w.WriteAttributeString ("id", XmlHelper.Encode (ds.DataSetName));
 
 			if (ds.Namespace != String.Empty) {
 				w.WriteAttributeString ("targetNamespace",
@@ -156,7 +156,7 @@ namespace System.Data
 		private void WriteDataSetElement ()
 		{
 			w.WriteStartElement ("xs", "element", xmlnsxs);
-			w.WriteAttributeString ("name", XmlConvert.EncodeLocalName (ds.DataSetName));
+			w.WriteAttributeString ("name", XmlHelper.Encode (ds.DataSetName));
 			w.WriteAttributeString (XmlConstants.MsdataPrefix,
 				"IsDataSet", XmlConstants.MsdataNamespace,
 				"true");
@@ -200,7 +200,7 @@ namespace System.Data
 							"element",
 							xmlnsxs);
 						w.WriteStartAttribute ("ref", String.Empty);
-						w.WriteQualifiedName (XmlConvert.EncodeLocalName (table.TableName), table.Namespace);
+						w.WriteQualifiedName (XmlHelper.Encode (table.TableName), table.Namespace);
 						w.WriteEndAttribute ();
 						w.WriteEndElement ();
 					}
@@ -236,23 +236,23 @@ namespace System.Data
 			w.WriteStartElement (XmlConstants.MsdataPrefix, "Relationship",
 				 XmlConstants.MsdataNamespace);
 
-			w.WriteAttributeString ("name", XmlConvert.EncodeName (rel.RelationName));
+			w.WriteAttributeString ("name", XmlHelper.Encode (rel.RelationName));
 
 			w.WriteAttributeString (
 					XmlConstants.MsdataPrefix,
 					"parent",
 					XmlConstants.MsdataNamespace,
-					XmlConvert.EncodeLocalName (rel.ParentTable.TableName));
+					XmlHelper.Encode (rel.ParentTable.TableName));
 
 			w.WriteAttributeString (
 					XmlConstants.MsdataPrefix,
 					"child",
 					XmlConstants.MsdataNamespace,
-					XmlConvert.EncodeLocalName (rel.ChildTable.TableName));
+					XmlHelper.Encode (rel.ChildTable.TableName));
 
 			colnames = String.Empty;
 			foreach (DataColumn col in rel.ParentColumns)
-				colnames += XmlConvert.EncodeLocalName (col.ColumnName) + " ";
+				colnames += XmlHelper.Encode (col.ColumnName) + " ";
 			w.WriteAttributeString (
 					XmlConstants.MsdataPrefix,
 					"parentkey",
@@ -261,7 +261,7 @@ namespace System.Data
 
 			colnames = String.Empty;
 			foreach (DataColumn col in rel.ChildColumns)
-				colnames += XmlConvert.EncodeLocalName (col.ColumnName) + " ";
+				colnames += XmlHelper.Encode (col.ColumnName) + " ";
 			w.WriteAttributeString (
 					XmlConstants.MsdataPrefix,
 					"childkey",
@@ -320,19 +320,19 @@ namespace System.Data
 			// if constaraint name do not exist in the hashtable we can use it.
 			string name;
 			if (!names.Contains (uniq.ConstraintName)) {
-				name = uniq.ConstraintName;
-				w.WriteAttributeString ("name", XmlConvert.EncodeName (name));
+				name = XmlHelper.Encode (uniq.ConstraintName);
+				w.WriteAttributeString ("name", name);
 			}
 			// otherwise generate new constraint name for the
 			// XmlSchemaUnique element.
 			else {
-				name = XmlConvert.EncodeLocalName (uniq.Table.TableName) + "_" + uniq.ConstraintName;
+				name = XmlHelper.Encode (uniq.Table.TableName) + "_" + XmlHelper.Encode (uniq.ConstraintName);
 				w.WriteAttributeString ("name", name);
 				w.WriteAttributeString (
 					XmlConstants.MsdataPrefix,
 					XmlConstants.ConstraintName,
 					XmlConstants.MsdataNamespace,
-					uniq.ConstraintName);
+					XmlHelper.Encode (uniq.ConstraintName));
 			}
 			names.Add (name);
 
@@ -349,7 +349,7 @@ namespace System.Data
 			w.WriteStartElement ("xs", "selector",
 				xmlnsxs);
 			w.WriteAttributeString ("xpath", ".//" +
-				ConstraintPrefix + XmlConvert.EncodeLocalName (uniq.Table.TableName));
+				ConstraintPrefix + XmlHelper.Encode (uniq.Table.TableName));
 			w.WriteEndElement (); // selector
 			foreach (DataColumn c in uniq.Columns) {
 				w.WriteStartElement ("xs", "field",
@@ -358,7 +358,7 @@ namespace System.Data
 				if (c.ColumnMapping == MappingType.Attribute)
 					w.WriteString ("@");
 				w.WriteString (ConstraintPrefix);
-				w.WriteString (XmlConvert.EncodeLocalName (c.ColumnName));
+				w.WriteString (XmlHelper.Encode (c.ColumnName));
 				w.WriteEndAttribute (); // xpath
 				w.WriteEndElement (); // field
 			}
@@ -378,7 +378,7 @@ namespace System.Data
 					return;
 
 			w.WriteStartElement ("xs", "keyref", xmlnsxs);
-			w.WriteAttributeString ("name", XmlConvert.EncodeLocalName (rel.RelationName));
+			w.WriteAttributeString ("name", XmlHelper.Encode (rel.RelationName));
 
 			//ForeignKeyConstraint fkConst = rel.ChildKeyConstraint;
 			UniqueConstraint uqConst = null; 
@@ -395,7 +395,7 @@ namespace System.Data
 			else
 				uqConst = rel.ParentKeyConstraint;
 
-			string concatName = XmlConvert.EncodeLocalName (rel.ParentTable.TableName) + "_" + uqConst.ConstraintName;
+			string concatName = XmlHelper.Encode (rel.ParentTable.TableName) + "_" + XmlHelper.Encode (uqConst.ConstraintName);
 			// first try to find the concatenated name. If we didn't find it - use constraint name.
 			if (names.Contains (concatName)) {
 				w.WriteStartAttribute ("refer", String.Empty);
@@ -404,8 +404,7 @@ namespace System.Data
 			}
 			else {
 				w.WriteStartAttribute ("refer", String.Empty);
-				w.WriteQualifiedName (
-					uqConst.ConstraintName, ds.Namespace);
+				w.WriteQualifiedName (XmlHelper.Encode (uqConst.ConstraintName), ds.Namespace);
 				w.WriteEndAttribute ();
 			}
 
@@ -425,7 +424,7 @@ namespace System.Data
 
 			w.WriteStartElement ("xs", "selector", xmlnsxs);
 			w.WriteAttributeString ("xpath", ".//" + 
-				ConstraintPrefix + XmlConvert.EncodeLocalName (rel.ChildTable.TableName));
+				ConstraintPrefix + XmlHelper.Encode (rel.ChildTable.TableName));
 			w.WriteEndElement ();
 
 			foreach (DataColumn c in rel.ChildColumns) {
@@ -435,7 +434,7 @@ namespace System.Data
 				if (c.ColumnMapping == MappingType.Attribute)
 					w.WriteString ("@");
 				w.WriteString (ConstraintPrefix);
-				w.WriteString (XmlConvert.EncodeLocalName (c.ColumnName));
+				w.WriteString (XmlHelper.Encode (c.ColumnName));
 				w.WriteEndAttribute ();
 				w.WriteEndElement (); // field
 			}
@@ -489,7 +488,7 @@ namespace System.Data
 		private void WriteTableElement (DataTable table)
 		{
 			w.WriteStartElement ("xs", "element", xmlnsxs);
-			w.WriteAttributeString ("name", XmlConvert.EncodeLocalName (table.TableName));
+			w.WriteAttributeString ("name", XmlHelper.Encode (table.TableName));
 
 			AddExtendedPropertyAttributes (table.ExtendedProperties);
 
@@ -513,9 +512,9 @@ namespace System.Data
 				// add column name attribute
 				w.WriteAttributeString (
 					XmlConstants.MsdataPrefix,
-					XmlConvert.EncodeLocalName (XmlConstants.ColumnName),
+					XmlConstants.ColumnName,
 					XmlConstants.MsdataNamespace,
-					XmlConvert.EncodeLocalName (simple.ColumnName));
+					XmlHelper.Encode (simple.ColumnName));
 
 				// add ordinal attribute
 				w.WriteAttributeString (
@@ -556,10 +555,8 @@ namespace System.Data
 
 		private void WriteTableTypeParticles (DataColumn col)
 		{
-			w.WriteStartElement ("xs", "element",
-				xmlnsxs);
-			w.WriteAttributeString ("name",
-				XmlConvert.EncodeLocalName (col.ColumnName));
+			w.WriteStartElement ("xs", "element", xmlnsxs);
+			w.WriteAttributeString ("name", XmlHelper.Encode (col.ColumnName));
 
 			if (col.ColumnName != col.Caption && col.Caption != String.Empty)
 				w.WriteAttributeString (
@@ -647,14 +644,14 @@ namespace System.Data
 				w.WriteStartElement ("xs", "element", xmlnsxs);
 				w.WriteStartAttribute ("ref", String.Empty);
 				w.WriteQualifiedName (
-					XmlConvert.EncodeLocalName (rel.ChildTable.TableName),
+					XmlHelper.Encode (rel.ChildTable.TableName),
 					rel.ChildTable.Namespace);
 				w.WriteEndAttribute ();
 			} else {
 				w.WriteStartElement ("xs", "element", xmlnsxs);
 				w.WriteStartAttribute ("type", String.Empty);
 				w.WriteQualifiedName (
-					XmlConvert.EncodeLocalName (rel.ChildTable.TableName),
+					XmlHelper.Encode (rel.ChildTable.TableName),
 					rel.ChildTable.Namespace);
 				w.WriteEndAttribute ();
 				w.WriteEndElement ();
@@ -671,7 +668,7 @@ namespace System.Data
 			foreach (DataColumn col in atts) {
 				w.WriteStartElement ("xs", "attribute", xmlnsxs);
 
-				string name = XmlConvert.EncodeLocalName (col.ColumnName);
+				string name = XmlHelper.Encode (col.ColumnName);
 				if (col.Namespace != String.Empty) {
 					w.WriteAttributeString ("form", "qualified");
 					string prefix = col.Prefix == String.Empty ? "app" + additionalNamespaces.Count : col.Prefix;

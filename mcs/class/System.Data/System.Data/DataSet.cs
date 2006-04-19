@@ -804,7 +804,7 @@ namespace System.Data {
 				shouldOutputContent = tableCollection [n].Rows.Count > 0;
 				
 			if (shouldOutputContent) {
-				WriteStartElement (writer, mode, Namespace, Prefix, XmlConvert.EncodeName (DataSetName));
+				WriteStartElement (writer, mode, Namespace, Prefix, XmlHelper.Encode (DataSetName));
 				
 				if (mode == XmlWriteMode.WriteSchema)
 					DoWriteXmlSchema (writer);
@@ -1409,7 +1409,7 @@ namespace System.Data {
 
 				// If all of the columns were null, we have to write empty element
 				if (AllNulls) {
-					writer.WriteElementString (XmlConvert.EncodeLocalName (table.TableName), "");
+					writer.WriteElementString (XmlHelper.Encode (table.TableName), "");
 					continue;
 				}
 				
@@ -1451,7 +1451,7 @@ namespace System.Data {
 				colnspc = col.Namespace;
 	
 			//TODO check if I can get away with write element string
-			WriteStartElement (writer, mode, colnspc, col.Prefix, XmlConvert.EncodeLocalName (col.ColumnName));
+			WriteStartElement (writer, mode, colnspc, col.Prefix, XmlHelper.Encode (col.ColumnName));
 			writer.WriteString (WriteObjectXml (rowObject));
 			writer.WriteEndElement ();
 		}
@@ -1459,7 +1459,7 @@ namespace System.Data {
 		private void WriteColumnAsAttribute (XmlWriter writer, XmlWriteMode mode, DataColumn col, DataRow row, DataRowVersion version)
 		{
 			if (!row.IsNull (col))
-				WriteAttributeString (writer, mode, col.Namespace, col.Prefix, XmlConvert.EncodeLocalName (col.ColumnName), WriteObjectXml (row[col, version]));
+				WriteAttributeString (writer, mode, col.Namespace, col.Prefix, XmlHelper.Encode (col.ColumnName), WriteObjectXml (row[col, version]));
 		}
 
 		private void WriteTableElement (XmlWriter writer, XmlWriteMode mode, DataTable table, DataRow row, DataRowVersion version)
@@ -1467,7 +1467,7 @@ namespace System.Data {
 			//sort out the namespacing
 			string nspc = table.Namespace.Length > 0 ? table.Namespace : Namespace;
 
-			WriteStartElement (writer, mode, nspc, table.Prefix, XmlConvert.EncodeLocalName (table.TableName));
+			WriteStartElement (writer, mode, nspc, table.Prefix, XmlHelper.Encode (table.TableName));
 
 			if (mode == XmlWriteMode.DiffGram) {
 				WriteAttributeString (writer, mode, XmlConstants.DiffgrNamespace, XmlConstants.DiffgrPrefix, "id", table.TableName + (row.XmlRowID + 1));
@@ -1510,7 +1510,7 @@ namespace System.Data {
 				WriteDiffGramElement (writer);
 			}
 			
-			WriteStartElement (writer, mode, Namespace, Prefix, XmlConvert.EncodeName (DataSetName));
+			WriteStartElement (writer, mode, Namespace, Prefix, XmlHelper.Encode (DataSetName));
 			
 			WriteTable (writer, table, mode, DataRowVersion.Default);
 			

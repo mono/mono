@@ -75,8 +75,6 @@ namespace System.Xml
 					row.DataElement = this;
 					row.XmlRowID = doc.dataRowID;
 					doc.dataRowIDList.Add (row.XmlRowID);
-					// It should not be done here. The node is detached
-					// dt.Rows.Add (tempRow);
 					doc.dataRowID++;
 				}
 			}
@@ -132,7 +130,7 @@ namespace System.Xml
 			this.dataSet = dataset;
 			this.dataSet._xmlDataDocument = this;
 
-			XmlElement docElem = CreateElement (dataSet.Prefix, dataSet.DataSetName, dataSet.Namespace);
+			XmlElement docElem = CreateElement (dataSet.Prefix, XmlHelper.Encode (dataSet.DataSetName), dataSet.Namespace);
 			foreach (DataTable dt in dataSet.Tables) {
 				if (dt.ParentRelations.Count > 0)
 					continue; // don't add them here
@@ -197,27 +195,9 @@ namespace System.Xml
 		private void FillNodeRows (XmlElement parent, DataTable dt, ICollection rows)
 		{
 			foreach (DataRow dr in dt.Rows) {
-				XmlDataElement el = new XmlDataElement (dr, dt.Prefix, dt.TableName, dt.Namespace, this);
-				for (int i = 0; i < dt.Columns.Count; i++) {
-					DataColumn col = dt.Columns [i];
-					string value = dr.IsNull (col) ? String.Empty : dr [col].ToString ();
-					switch (col.ColumnMapping) {
-					case MappingType.Element:
-						XmlElement cel = CreateElement (col.Prefix, col.ColumnName, col.Namespace);
-						cel.InnerText = value;
-						el.AppendChild (cel);
-						break;
-					case MappingType.Attribute:
-						XmlAttribute a = CreateAttribute (col.Prefix, col.ColumnName, col.Namespace);
-						a.Value = value;
-						el.SetAttributeNode (a);
-						break;
-					case MappingType.SimpleContent:
-						XmlText t = CreateTextNode (value);
-						el.AppendChild (t);
-						break;
-					}
-				}
+				XmlDataElement el = dr.DataElement;
+				FillNodeChildrenFromRow (dr, el);
+
 				foreach (DataRelation rel in dt.ChildRelations)
 					FillNodeRows (el, rel.ChildTable, dr.GetChildRows (rel));
 				parent.AppendChild (el);
@@ -250,7 +230,7 @@ namespace System.Xml
 		public override XmlElement CreateElement(
                         string prefix, string localName, string namespaceURI) 
 		{
-			DataTable dt = DataSet.Tables [localName];
+			DataTable dt = DataSet.Tables [XmlHelper.Decode (localName)];
 			DataRow row = dt != null ? dt.NewRow () : null;
 			if (row != null)
 				return GetElementFromRow (row);
@@ -419,7 +399,6 @@ namespace System.Xml
 				return;
 			if (DataSet.EnforceConstraints) 
 				throw new InvalidOperationException (Locale.GetText ("Please set DataSet.EnforceConstraints == false before trying to edit XmlDataDocument using XML operations."));
-			
 		}
 		
 		private void OnNodeInserted (object sender, XmlNodeChangedEventArgs args)
@@ -456,7 +435,7 @@ namespace System.Xml
 
 				XmlAttribute attr = args.Node as XmlAttribute;
 				if (attr != null) { // fill attribute value
-					DataColumn col = row.Table.Columns [attr.LocalName];
+					DataColumn col = row.Table.Columns [XmlHelper.Decode (attr.LocalName)];
 					if (col != null)
 						row [col] = StringToObject (col.DataType, args.Node.Value);
 				} else {
@@ -470,7 +449,7 @@ namespace System.Xml
 						}
 					} else if (args.Node.NodeType == XmlNodeType.Element) {
 						// child element might be a column
-						DataColumn col = row.Table.Columns [args.Node.LocalName];
+						DataColumn col = row.Table.Columns [XmlHelper.Decode (args.Node.LocalName)];
 						if (col != null)
 							row [col] = StringToObject (col.DataType, args.Node.InnerText);
 					} else if (args.Node is XmlCharacterData) {
@@ -572,7 +551,7 @@ namespace System.Xml
 				string value = row.IsNull (col) ? String.Empty : row [col].ToString ();
 				switch (col.ColumnMapping) {
 				case MappingType.Attribute:
-					el.SetAttribute (col.ColumnName, col.Namespace, value);
+					el.SetAttribute (XmlHelper.Encode (col.ColumnName), col.Namespace, value);
 					break;
 				case MappingType.SimpleContent:
 					el.InnerText = value;
@@ -581,14 +560,14 @@ namespace System.Xml
 					bool exists = false;
 					for (int i = 0; i < el.ChildNodes.Count; i++) {
 						XmlElement c = el.ChildNodes [i] as XmlElement;
-						if (c != null && c.LocalName == col.ColumnName && c.NamespaceURI == col.Namespace) {
+						if (c != null && c.LocalName == XmlHelper.Encode (col.ColumnName) && c.NamespaceURI == col.Namespace) {
 							exists = true;
 							c.InnerText = value;
 							break;
 						}
 					}
 					if (!exists) {
-						XmlElement cel = CreateElement (col.Prefix, col.ColumnName, col.Namespace);
+						XmlElement cel = CreateElement (col.Prefix, XmlHelper.Encode (col.ColumnName), col.Namespace); 
 						cel.InnerText = value;
 						el.AppendChild (cel);
 					}
@@ -659,22 +638,26 @@ namespace System.Xml
 		{
 			if (!raiseDataSetEvents)
 				return;
+
 			bool escapedRaiseDocumentEvents = raiseDocumentEvents;
 			raiseDocumentEvents = false;
 
 			try {
-
 				// Create row element. Row's name same as TableName					
 				DataRow row = args.Row;
 
 				// create document element if it does not exist
 				if (DocumentElement == null)
-					this.AppendChild (CreateElement (DataSet.DataSetName));
+					this.AppendChild (CreateElement (XmlHelper.Encode (DataSet.DataSetName)));
 
 				DataTable table= args.Row.Table;
 				XmlElement element = GetElementFromRow (row);
 				if (element == null)
-					element = CreateElement (table.Prefix, table.TableName, table.Namespace);
+					element = CreateElement (table.Prefix, XmlHelper.Encode (table.TableName), table.Namespace);
+
+				if (element.ChildNodes.Count == 0)
+					FillNodeChildrenFromRow (row, element);
+
 				if (element.ParentNode == null) {
 					// parent is not always DocumentElement.
 					XmlElement parent = null;
@@ -709,12 +692,12 @@ namespace System.Xml
 				string value = row.IsNull (col) ? String.Empty : row [col].ToString ();
 				switch (col.ColumnMapping) {
 				case MappingType.Element:
-					XmlElement el = CreateElement (col.Prefix, col.ColumnName, col.Namespace);
+					XmlElement el = CreateElement (col.Prefix, XmlHelper.Encode (col.ColumnName), col.Namespace);
 					el.InnerText = value;
 					element.AppendChild (el);
 					break;
 				case MappingType.Attribute:
-					XmlAttribute attr = CreateAttribute (col.Prefix, col.ColumnName, col.Namespace);
+					XmlAttribute attr = CreateAttribute (col.Prefix, XmlHelper.Encode (col.ColumnName), col.Namespace);
 					attr.Value = value;
 					element.SetAttributeNode (attr);
 					break;
@@ -744,7 +727,7 @@ namespace System.Xml
 				DataTable tab = r.Table;
 				ArrayList al = new ArrayList ();
 				foreach (XmlAttribute attr in el.Attributes) {
-					DataColumn col = tab.Columns [attr.LocalName];
+					DataColumn col = tab.Columns [XmlHelper.Decode (attr.LocalName)];
 					if (col != null) {
 						if (r.IsNull (col))
 							// should be removed
@@ -758,7 +741,7 @@ namespace System.Xml
 				al.Clear ();
 				foreach (XmlNode child in el.ChildNodes) {
 					if (child.NodeType == XmlNodeType.Element) {
-						DataColumn col = tab.Columns [child.LocalName];
+						DataColumn col = tab.Columns [XmlHelper.Decode (child.LocalName)];
 						if (col != null) {
 							if (r.IsNull (col))
 								al.Add (child);
@@ -807,7 +790,8 @@ namespace System.Xml
 
 		internal static object StringToObject (Type type, string value)
 		{
-			if (type == null) return value;
+			if (value == null || value == String.Empty)
+				return DBNull.Value;
 
 			switch (Type.GetTypeCode (type)) {
 				case TypeCode.Boolean: return XmlConvert.ToBoolean (value);

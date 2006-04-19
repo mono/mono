@@ -225,5 +225,89 @@ namespace MonoTests.System.Xml
 			foo.Rows.Add (newRow);
 			doc.Save (new StringWriter ());
 		}
+
+		[Test]
+		public void DataSet_AddRowAfterInitingXmlDataDocument ()
+		{
+			DataSet ds = new DataSet ();
+			DataTable table = ds.Tables.Add ("table1");
+			table.Columns.Add ("col1", typeof (int));
+
+			XmlDataDocument doc = new XmlDataDocument (ds);
+			table.Rows.Add (new object[] {1});
+
+			StringWriter sw = new StringWriter ();
+			doc.Save (sw);
+
+			DataSet ds1 = ds.Clone ();
+			XmlDataDocument doc1 = new XmlDataDocument (ds1);
+			StringReader sr = new StringReader (sw.ToString());
+			doc1.Load (sr);
+
+			AssertEquals ("#1", 1, ds1.Tables [0].Rows.Count);
+			AssertEquals ("#2", 1, ds1.Tables [0].Rows [0][0]);
+		}
+
+		[Test]
+		public void Rows_With_Null_Values ()
+		{
+			DataSet ds = new DataSet ();
+			DataTable table = ds.Tables.Add ("table1");
+			table.Columns.Add ("col1", typeof (int));
+			table.Columns.Add ("col2", typeof (int));
+
+			XmlDataDocument doc = new XmlDataDocument (ds);
+			table.Rows.Add (new object[] {1});
+
+			StringWriter sw = new StringWriter ();
+			doc.Save (sw);
+
+			DataSet ds1 = ds.Clone ();
+			XmlDataDocument doc1 = new XmlDataDocument (ds1);
+			StringReader sr = new StringReader (sw.ToString());
+			doc1.Load (sr);
+
+			AssertEquals ("#1", 1, ds1.Tables [0].Rows [0][0]);
+			AssertEquals ("#2", true, ds1.Tables [0].Rows [0].IsNull (1));
+		}
+
+		[Test]
+		public void DataSet_ColumnNameWithSpaces ()
+		{
+			DataSet ds = new DataSet ("New Data Set");
+
+			DataTable table1 = ds.Tables.Add ("New Table 1");
+			DataTable table2 = ds.Tables.Add ("New Table 2");
+
+			table1.Columns.Add ("col 1" , typeof (int));
+			table1.Columns.Add ("col 2" , typeof (int));
+
+			table1.PrimaryKey = new DataColumn[] {ds.Tables [0].Columns [0]};
+
+			// No exception shud be thrown
+			XmlDataDocument doc = new XmlDataDocument (ds);
+
+			// Should fail to save as there are no rows
+			try {
+				doc.Save (new StringWriter ());
+				Fail ("#1");
+			} catch (InvalidOperationException) {
+			}
+
+			table1.Rows.Add (new object[] {0});
+			table1.Rows.Add (new object[] {1});
+			table1.Rows.Add (new object[] {2});
+
+			// No exception shud be thrown
+			StringWriter swriter = new StringWriter ();
+			doc.Save (swriter);
+
+			StringReader sreader = new StringReader (swriter.ToString ());
+			DataSet ds1 = ds.Clone ();
+			XmlDataDocument doc1 = new XmlDataDocument (ds1);
+			AssertEquals ("#2" , 0, ds1.Tables [0].Rows.Count);
+			doc1.Load (sreader);
+			AssertEquals ("#3" , 3, ds1.Tables [0].Rows.Count);
+		}
 	}
 }

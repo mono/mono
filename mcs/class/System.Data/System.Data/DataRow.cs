@@ -90,11 +90,6 @@ namespace System.Data {
 			_rowId = builder._rowId;
 
 			rowError = String.Empty;
-
-			// create mapped XmlDataElement
-			DataSet ds = _table.DataSet;
-			if (ds != null && ds._xmlDataDocument != null)
-				mappedElement = new XmlDataDocument.XmlDataElement (this, _table.Prefix, _table.TableName, _table.Namespace, ds._xmlDataDocument);
 		}
 
 		internal DataRow(DataTable table,int rowId)
@@ -560,7 +555,16 @@ namespace System.Data {
 		}
 
 		internal XmlDataDocument.XmlDataElement DataElement {
-			get { return mappedElement; }
+			get { 
+				if (mappedElement != null || _table.DataSet == null || 
+					_table.DataSet._xmlDataDocument == null)
+					return mappedElement;
+
+				// create mapped XmlDataElement
+				mappedElement = new XmlDataDocument.XmlDataElement (this, _table.Prefix, XmlHelper.Encode (_table.TableName),
+									_table.Namespace, _table.DataSet._xmlDataDocument);
+				return mappedElement;
+			}
 			set { mappedElement = value; }
 		}
 

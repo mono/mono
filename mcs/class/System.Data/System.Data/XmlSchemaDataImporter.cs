@@ -261,7 +261,7 @@ namespace System.Data
 			TableName = tname;
 			Columns = cols;
 			IsAttribute = isAttr;
-			ConstraintName = XmlConvert.DecodeName (cname);
+			ConstraintName = XmlHelper.Decode (cname);
 			IsPrimaryKey = isPK;
 			ReferName = refName;
 			IsNested = isNested;
@@ -518,7 +518,7 @@ el.ElementType != schemaAnyType)
 
 		private void ProcessDataTableElement (XmlSchemaElement el)
 		{
-			string tableName = XmlConvert.DecodeName (el.QualifiedName.Name);
+			string tableName = XmlHelper.Decode (el.QualifiedName.Name);
 			// If it is already registered, just ignore.
 			if (dataset.Tables.Contains (tableName))
 				return;
@@ -585,7 +585,7 @@ el.ElementType != schemaAnyType)
 			DataTable ctab = dataset.Tables [rs.ChildTableName];
 
 			DataRelation rel ;
-			string name = rs.ExplicitName != null ? rs.ExplicitName : XmlConvert.DecodeName (ptab.TableName) + '_' + XmlConvert.DecodeName (ctab.TableName);
+			string name = rs.ExplicitName != null ? rs.ExplicitName : XmlHelper.Decode (ptab.TableName) + '_' + XmlHelper.Decode (ctab.TableName);
 
 			// Annotation Relations belonging to a DataSet can contain multiple colnames
 			// in parentkey and childkey.
@@ -595,16 +595,16 @@ el.ElementType != schemaAnyType)
 
 				DataColumn[] pcol = new DataColumn [pcolnames.Length];
 				for (int i=0; i<pcol.Length; ++i)
-					pcol [i] = ptab.Columns [XmlConvert.DecodeName (pcolnames [i])];
+					pcol [i] = ptab.Columns [XmlHelper.Decode (pcolnames [i])];
 
 				DataColumn[] ccol = new DataColumn [ccolnames.Length];
 				for (int i=0; i < ccol.Length; ++i)
-					ccol [i] = ctab.Columns [XmlConvert.DecodeName (ccolnames [i])];
+					ccol [i] = ctab.Columns [XmlHelper.Decode (ccolnames [i])];
 
 				rel = new DataRelation (name, pcol, ccol, rs.CreateConstraint);
 			} else {
-				DataColumn pcol = ptab.Columns [XmlConvert.DecodeName (rs.ParentColumnName)];
-				DataColumn ccol = ctab.Columns [XmlConvert.DecodeName (rs.ChildColumnName)];
+				DataColumn pcol = ptab.Columns [XmlHelper.Decode (rs.ParentColumnName)];
+				DataColumn ccol = ctab.Columns [XmlHelper.Decode (rs.ChildColumnName)];
 				if (ccol == null) {
 					ccol = new DataColumn ();
 					ccol.ColumnName = pcol.ColumnName;
@@ -732,7 +732,7 @@ el.ElementType != schemaAnyType)
 			if (targetElements.Contains (el))
 				return; // do nothing
 
-			string elName = XmlConvert.DecodeName (el.QualifiedName.Name);
+			string elName = XmlHelper.Decode (el.QualifiedName.Name);
 			if (elName == dataset.DataSetName)
 				// Well, why it is ArgumentException :-?
 				throw new ArgumentException ("Nested element must not have the same name as DataSet's name.");
@@ -746,7 +746,7 @@ el.ElementType != schemaAnyType)
 				DataColumn pkey = currentTable.PrimaryKey;
 
 				RelationStructure rel = new RelationStructure ();
-				rel.ParentTableName = XmlConvert.DecodeName (parent.QualifiedName.Name);
+				rel.ParentTableName = XmlHelper.Decode (parent.QualifiedName.Name);
 				rel.ChildTableName = elName;
 				rel.ParentColumnName = pkey.ColumnName;
 				rel.ChildColumnName = pkey.ColumnName;
@@ -775,7 +775,7 @@ el.ElementType != schemaAnyType)
 				return;
 
 			// check name identity
-			string name = XmlConvert.DecodeName (parent.QualifiedName.Name) + "_Id";
+			string name = XmlHelper.Decode (parent.QualifiedName.Name) + "_Id";
 			if (currentTable.ContainsColumn (name))
 				throw new DataException (String.Format ("There is already a column that has the same name: {0}", name));
 			// check existing primary key
@@ -803,8 +803,8 @@ el.ElementType != schemaAnyType)
 			AddParentKeyColumn (parent, el, col);
 			DataColumn pkey = currentTable.PrimaryKey;
 
-			string elName = XmlConvert.DecodeName (el.QualifiedName.Name);
-			string parentName = XmlConvert.DecodeName (parent.QualifiedName.Name);
+			string elName = XmlHelper.Decode (el.QualifiedName.Name);
+			string parentName = XmlHelper.Decode (parent.QualifiedName.Name);
 
 			DataTable dt = new DataTable ();
 			dt.TableName = elName;
@@ -840,7 +840,7 @@ el.ElementType != schemaAnyType)
 
 		private void FillDataColumnSimpleElement (XmlSchemaElement el, DataColumn col)
 		{
-			col.ColumnName = XmlConvert.DecodeName (el.QualifiedName.Name);
+			col.ColumnName = XmlHelper.Decode (el.QualifiedName.Name);
 			col.Namespace = el.QualifiedName.Namespace;
 			col.ColumnMapping = MappingType.Element;
 			col.DataType = ConvertDatatype (GetSchemaPrimitiveType (el.ElementType));
@@ -913,7 +913,7 @@ el.ElementType != schemaAnyType)
 			if (index > 0)
 				tableName = tableName.Substring (index + 1);
 
-			return XmlConvert.DecodeName (tableName);
+			return XmlHelper.Decode (tableName);
 		}
 
 		private void ReserveSelfIdentity (XmlSchemaIdentityConstraint ic)
@@ -933,7 +933,7 @@ el.ElementType != schemaAnyType)
 				else if (isAttr)
 					colName = colName.Substring (1);
 
-				colName = XmlConvert.DecodeName (colName);
+				colName = XmlHelper.Decode (colName);
 				cols [i] = colName;
 				isAttrSpec [i] = isAttr;
 				i++;
@@ -1011,7 +1011,7 @@ el.ElementType != schemaAnyType)
 				else if (isAttr)
 					colName = colName.Substring (1);
 
-				colName = XmlConvert.DecodeName (colName);
+				colName = XmlHelper.Decode (colName);
 				cols [i] = colName;
 				isAttrSpec [i] = isAttr;
 				i++;
@@ -1137,9 +1137,9 @@ el.ElementType != schemaAnyType)
 			string fkn = el.GetAttribute ("childkey", XmlConstants.MsdataNamespace);
 
 			RelationStructure rel = new RelationStructure ();
-			rel.ExplicitName = XmlConvert.DecodeName (name);
-			rel.ParentTableName = XmlConvert.DecodeName (ptn);
-			rel.ChildTableName = XmlConvert.DecodeName (ctn);
+			rel.ExplicitName = XmlHelper.Decode (name);
+			rel.ParentTableName = XmlHelper.Decode (ptn);
+			rel.ChildTableName = XmlHelper.Decode (ctn);
 			// ColumnNames will be decoded wherever they are used as they can
 			// contain 'space' separated list of column-names.
 			rel.ParentColumnName = pkn;
