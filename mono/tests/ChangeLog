@@ -1,4 +1,7 @@
 2006-04-19  Massimiliano Mantione  <massi@ximian.com>
+	* test-inline-call-stack.cs: Added missing check.
+
+2006-04-19  Massimiliano Mantione  <massi@ximian.com>
 	* Makefile.am: Added tests to see if inline breaks the call stack.
 	* test-inline-call-stack.cs: Likewise.
 	* test-inline-call-stack-library.cs: Likewise.
