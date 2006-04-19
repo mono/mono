@@ -1,5 +1,7 @@
 2006-04-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.h mini.c: Remove mono_type_to_ldind/stind () which are now in marshal.c.
+	
 	* mini.c (mono_runtime_install_handlers): Handle SIGABRT similarly to
 	SIGSEGV. Fixes #78072.
 
