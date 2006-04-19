@@ -1,3 +1,13 @@
+2006-04-19  Atsushi Enomoto <atsushi@ximian.com>
+
+	* NvdlRelaxngSupport.cs : It seems that the validating grammar for
+	  planAtt should always contain a definition for virtualElement i.e.
+	  it is not something that NVDL validator should provide
+	  automatically. (It makes sense since RELAX NG does not support
+	  attribute-only grammar definition.)
+	* NvdlFilteredXmlReader.cs : for validating attributes, filter xmlns
+	  attributes out.
+
 2006-04-18  Atsushi Enomoto <atsushi@ximian.com>
 
 	* NvdlSimplified.cs, NvdlValidator.cs :

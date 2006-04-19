@@ -125,6 +125,8 @@ namespace Commons.Xml.Nvdl
 			// Attribute rule application
 			attributeValidators.Clear ();
 			do {
+				if (reader.NamespaceURI == "http://www.w3.org/2000/xmlns/")
+					continue;
 				// FIXME: could be more efficient
 				SimpleRule rule = FindAttributeRule (
 					reader.NamespaceURI,
