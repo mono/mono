@@ -902,12 +902,13 @@ namespace System.Drawing.Drawing2D
 		[MonoTODO ("GdipWidenPath isn't implemented in libgdiplus")]
 		public void Widen (Pen pen, Matrix matrix, float flatness)
                 {
-                        IntPtr p = (pen == null) ? IntPtr.Zero : pen.nativeObject;
+			if (pen == null)
+				throw new ArgumentNullException ("pen");
+
                 	IntPtr m = (matrix == null) ? IntPtr.Zero : matrix.nativeMatrix;
 
-                        Status s = GDIPlus.GdipWidenPath (nativePath, p, m, flatness);
-
-                        GDIPlus.CheckStatus (s);
+			Status s = GDIPlus.GdipWidenPath (nativePath, pen.nativeObject, m, flatness);
+			GDIPlus.CheckStatus (s);
                 } 
         }
 }

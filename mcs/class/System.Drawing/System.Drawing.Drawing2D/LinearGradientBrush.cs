@@ -47,10 +47,8 @@ namespace System.Drawing.Drawing2D {
 			Status status = GDIPlus.GdipCreateLineBrushI (ref point1, ref point2, color1.ToArgb (), color2.ToArgb (), WrapMode.Tile, out nativeObject);
 			GDIPlus.CheckStatus (status);
 
-			Rectangle rect;
-			status = GDIPlus.GdipGetLineRectI (nativeObject, out rect);
+			status = GDIPlus.GdipGetLineRect (nativeObject, out rectangle);
 			GDIPlus.CheckStatus (status);
-			rectangle = (RectangleF) rect;
 		}
 
 		public LinearGradientBrush (PointF point1, PointF point2, Color color1, Color color2)

@@ -1,3 +1,9 @@
+2006-04-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GraphicsPath.cs: Fix null pen handling in Widen.
+	* LinearGradientBrush.cs: Avoid temporary Rectangle local and directly
+	get use the instance RectangleF.
+
 2006-04-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Matrix.cs: Fixed ctors to check for the right number (3) of points.
