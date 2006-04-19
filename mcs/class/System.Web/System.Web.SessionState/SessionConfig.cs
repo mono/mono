@@ -5,8 +5,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2003 Ximian, Inc (http://www.ximian.com)
-//
-
+// Copyright (C) 2005-2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,8 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-
 namespace System.Web.SessionState
 {
 	class SessionConfig
@@ -43,15 +40,14 @@ namespace System.Web.SessionState
 
 		public SessionConfig (object parent)
 		{
-			if (parent is SessionConfig) {
-				SessionConfig p = (SessionConfig) parent;
+			SessionConfig p = (parent as SessionConfig);
+			if (p != null) {
 				CookieLess = p.CookieLess;
 				Mode = p.Mode;
 				Timeout = p.Timeout;
 				StateConnectionString = p.StateConnectionString;
 				SqlConnectionString = p.SqlConnectionString;
 			} else {
-				CookieLess = false;
 				Mode = SessionStateMode.InProc;
 				Timeout = 20;
 				StateConnectionString = "127.0.0.1:42424";
