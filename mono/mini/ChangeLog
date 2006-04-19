@@ -1,3 +1,10 @@
+2006-04-19  Massimiliano Mantione  <massi@ximian.com>
+
+        * mini.c: Disabled inline where it can alter the call stack in a
+	way visible from managed code.
+	* driver.c: enabled inline,consprop,copyprop,treeprop,deadce by
+	default.
+
 2006-04-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c (mono_arch_emit_prolog): Attach the thread to the runtime as it is done
