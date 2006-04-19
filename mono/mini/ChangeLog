@@ -1,3 +1,7 @@
+2006-04-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_method_check_inlining): Remove some inlining restrictions.
+
 2006-04-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.h method-to-ir.c mini-<ARCH>.c: Put back the 'is_virtual' argument to

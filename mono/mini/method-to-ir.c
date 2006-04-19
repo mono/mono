@@ -3476,17 +3476,8 @@ mono_method_check_inlining (MonoCompile *cfg, MonoMethod *method)
 	    (method->iflags & METHOD_IMPL_ATTRIBUTE_SYNCHRONIZED) ||
 	    (method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL) ||
 	    (method->klass->marshalbyref) ||
-	    !header || header->num_clauses ||
-	    /* fixme: why cant we inline valuetype returns? */
-	    MONO_TYPE_ISSTRUCT (signature->ret))
+	    !header || header->num_clauses)
 		return FALSE;
-
-	/* its not worth to inline methods with valuetype arguments?? */
-	for (i = 0; i < signature->param_count; i++) {
-		if (MONO_TYPE_ISSTRUCT (signature->params [i])) {
-			return FALSE;
-		}
-	}
 
 	/*
 	 * if we can initialize the class of the method right away, we do,
@@ -3838,8 +3829,6 @@ mono_save_args (MonoCompile *cfg, MonoMethodSignature *sig, MonoInst **sp, MonoI
 {
 	MonoInst *store, *temp;
 	int i;
-
-	g_assert (!MONO_TYPE_ISSTRUCT (sig->ret));
 
 	for (i = 0; i < sig->param_count + sig->hasthis; ++i) {
 		MonoType *argtype = (sig->hasthis && (i == 0)) ? type_from_stack_type (*sp) : sig->params [i - sig->hasthis];
