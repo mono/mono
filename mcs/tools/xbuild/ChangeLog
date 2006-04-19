@@ -1,3 +1,8 @@
+2006-04-19  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* XBuild.targets: Removed.
+	* xbuild/Microsoft.Build.xsd: Changed path separator.
+
 2006-04-08  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* Makefile, xbuild/MSBuild/Microsoft.Build.CommonTypes.xsd: Changed

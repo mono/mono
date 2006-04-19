@@ -5,7 +5,7 @@ xmlns:msb="http://schemas.microsoft.com/developer/msbuild/2003"
 elementFormDefault="qualified">
 
     <!-- =================== IMPORT COMMON SCHEMA =========================== -->
-    <xs:include schemaLocation="MSBuild\Microsoft.Build.CommonTypes.xsd"/>
+    <xs:include schemaLocation="MSBuild/Microsoft.Build.CommonTypes.xsd"/>
 
     <!-- ========= ADD CUSTOM ITEMS, PROPERTIES, AND TASKS BELOW ======= -->
     <!-- Note that these will be in the msbuild namespace. A future version of
