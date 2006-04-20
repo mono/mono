@@ -1,5 +1,9 @@
 2006-04-20  Raja R Harinath  <rharinath@novell.com>
 
+	Fix #75800
+	* expression.cs (Invocation.VerifyArgumentsCompat): Don't try
+	implicit conversions on 'out' and 'ref' arguments.
+
 	* expression.cs (Invocation.VerifyArgumentsCompat): Reorganize to
 	improve clarity.  Remove dead code.
 

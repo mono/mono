@@ -1,5 +1,7 @@
 2006-04-20  Raja R Harinath  <rharinath@novell.com>
 
+	* cs1502-7.cs: New test from #75800.
+
 	* cs0168-2.cs: New test from #66031.
 
 2006-04-18  Raja R Harinath  <rharinath@novell.com>

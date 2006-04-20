@@ -5088,6 +5088,9 @@ namespace Mono.CSharp {
 					break;
 
 				if (!TypeManager.IsEqual (a.Type, parameter_type)) {
+					if (pm == Parameter.Modifier.OUT || pm == Parameter.Modifier.REF)
+						break;
+
 					Expression conv = Convert.ImplicitConversion (ec, a_expr, parameter_type, loc);
 					if (conv == null)
 						break;
