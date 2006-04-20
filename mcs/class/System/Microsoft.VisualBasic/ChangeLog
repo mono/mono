@@ -1,3 +1,8 @@
+2006-04-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* VBCodeGenerator.cs: Empty line and comments should be output after 
+	namespace imports.
+
 2006-02-14  Rafael Teixeira <rafaelteixeirabr@hotmail.com> 
 	* VBCodeCompiler.cs: 
 		use mbas.exe from 1.0 or 2.0, depending on NET_2_0

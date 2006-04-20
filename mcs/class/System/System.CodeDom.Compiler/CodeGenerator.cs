@@ -437,10 +437,7 @@ namespace System.CodeDom.Compiler {
 
 			output.WriteLine();
 
-			foreach (CodeTypeDeclaration type in ns.Types) {
-				GenerateType (type);
-				output.WriteLine();
-			}
+			GenerateTypes (ns);
 
 			GenerateNamespaceEnd (ns);
 		}
@@ -675,8 +672,12 @@ namespace System.CodeDom.Compiler {
 
 		protected void GenerateTypes (CodeNamespace e)
 		{
-			foreach (CodeTypeDeclaration type in e.Types)
+			foreach (CodeTypeDeclaration type in e.Types) {
+				if (options.BlankLinesBetweenMembers)
+					output.WriteLine ();
+
 				GenerateType (type);
+			}
 		}
 
 		protected abstract void GenerateTypeStart (CodeTypeDeclaration declaration);

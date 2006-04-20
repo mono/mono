@@ -986,12 +986,9 @@ namespace Microsoft.VisualBasic
 
 		protected override void GenerateNamespace(CodeNamespace ns)
 		{
-			GenerateCommentStatements (ns.Comments);
-			
-			// add regular imports
 			GenerateNamespaceImports (ns);
-
-			Output.WriteLine (); 
+			Output.WriteLine ();
+			GenerateCommentStatements (ns.Comments);
 			GenerateNamespaceStart (ns); 
 			GenerateTypes (ns);
 			GenerateNamespaceEnd (ns);

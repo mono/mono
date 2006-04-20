@@ -1,10 +1,10 @@
 //
-// Microsoft.CSharp.* Test Cases
+// Microsoft.VisualBasic.* Test Cases
 //
 // Authors:
-// 	Erik LeBel (eriklebel@yahoo.ca)
+// Gert Driesen (drieseng@users.sourceforge.net)
 //
-// (c) 2003 Erik LeBel
+// (c) 2006 Novell
 //
 using System;
 using System.CodeDom;
@@ -15,7 +15,7 @@ using System.Text;
 
 using NUnit.Framework;
 
-namespace MonoTests.Microsoft.CSharp
+namespace MonoTests.Microsoft.VisualBasic
 {
 	/// <summary>
 	/// Test ICodeGenerator's GenerateCodeFromNamespace, along with a 
@@ -68,23 +68,15 @@ namespace MonoTests.Microsoft.CSharp
 		[Test]
 		public void SimpleNamespaceTest ()
 		{
-			string code = null;
-
 			codeNamespace.Name = "A";
-			code = Generate ();
-			Assert.AreEqual ("namespace A {\n    \n}\n", code, "#1");
-
-			CodeGeneratorOptions options = new CodeGeneratorOptions ();
-			options.BracingStyle = "C";
-			code = Generate (options);
-			Assert.AreEqual ("namespace A\n{\n    \n}\n", code, "#2");
+			Assert.AreEqual ("\nNamespace A\nEnd Namespace\n", Generate ());
 		}
 
 		[Test]
 		public void InvalidNamespaceTest ()
 		{
 			codeNamespace.Name = "A,B";
-			Assert.AreEqual ("namespace A,B {\n    \n}\n", Generate ());
+			Assert.AreEqual ("\nNamespace A,B\nEnd Namespace\n", Generate ());
 		}
 
 		[Test]
@@ -92,7 +84,7 @@ namespace MonoTests.Microsoft.CSharp
 		{
 			CodeCommentStatement comment = new CodeCommentStatement ("a");
 			codeNamespace.Comments.Add (comment);
-			Assert.AreEqual ("// a\n\n", Generate ());
+			Assert.AreEqual ("\n'a\n", Generate ());
 		}
 
 		[Test]
@@ -101,38 +93,38 @@ namespace MonoTests.Microsoft.CSharp
 			codeNamespace.Imports.Add (new CodeNamespaceImport ("System"));
 			codeNamespace.Imports.Add (new CodeNamespaceImport ("System.Collections"));
 
-			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"using System;{0}" +
-				"using System.Collections;{0}" +
+			Assert.AreEqual (string.Format(CultureInfo.InvariantCulture,
+				"Imports System{0}" +
+				"Imports System.Collections{0}" +
 				"{0}", NewLine), Generate (), "#1");
 
 			codeNamespace.Name = "A";
 
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"namespace A {{{0}" +
-				"    using System;{0}" +
-				"    using System.Collections;{0}" +
-				"    {0}" +
-				"}}{0}", NewLine), Generate (), "#2");
+				"Imports System{0}" +
+				"Imports System.Collections{0}" +
+				"{0}" +
+				"Namespace A{0}" +
+				"End Namespace{0}", NewLine), Generate (), "#2");
 
 			codeNamespace.Name = null;
 			codeNamespace.Comments.Add (new CodeCommentStatement ("a"));
 
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"// a{0}" +
-				"using System;{0}" +
-				"using System.Collections;{0}" +
-				"{0}", NewLine), Generate (), "#3");
+				"Imports System{0}" +
+				"Imports System.Collections{0}" +
+				"{0}" +
+				"'a{0}", NewLine), Generate (), "#3");
 
 			codeNamespace.Name = "A";
 
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"// a{0}" +
-				"namespace A {{{0}" +
-				"    using System;{0}" +
-				"    using System.Collections;{0}" +
-				"    {0}" +
-				"}}{0}", NewLine), Generate (), "#4");
+				"Imports System{0}" +
+				"Imports System.Collections{0}" +
+				"{0}" +
+				"'a{0}" +
+				"Namespace A{0}" +
+				"End Namespace{0}", NewLine), Generate (), "#4");
 		}
 
 		[Test]
@@ -142,31 +134,31 @@ namespace MonoTests.Microsoft.CSharp
 			Assert.AreEqual (string.Format(CultureInfo.InvariantCulture,
 				"{0}" +
 				"{0}" +
-				"public class Person {{{0}" +
-				"}}{0}", NewLine), Generate (), "#A1");
+				"Public Class Person{0}" +
+				"End Class{0}", NewLine), Generate (), "#A1");
 
 			CodeGeneratorOptions options = new CodeGeneratorOptions ();
 			options.BlankLinesBetweenMembers = false;
 			Assert.AreEqual (string.Format(CultureInfo.InvariantCulture,
 				"{0}" +
-				"public class Person {{{0}" +
-				"}}{0}", NewLine), Generate (options), "#A2");
+				"Public Class Person{0}" +
+				"End Class{0}", NewLine), Generate (options), "#A2");
 
 			codeNamespace.Name = "A";
 			Assert.AreEqual (string.Format(CultureInfo.InvariantCulture,
-				"namespace A {{{0}" +
+				"{0}" +
+				"Namespace A{0}" +
 				"    {0}" +
-				"    {0}" +
-				"    public class Person {{{0}" +
-				"    }}{0}" +
-				"}}{0}", NewLine), Generate (), "#B1");
+				"    Public Class Person{0}" +
+				"    End Class{0}" +
+				"End Namespace{0}", NewLine), Generate (), "#B1");
 
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"namespace A {{{0}" +
-				"    {0}" +
-				"    public class Person {{{0}" +
-				"    }}{0}" +
-				"}}{0}", NewLine), Generate (options), "#B2");
+				"{0}" +
+				"Namespace A{0}" +
+				"    Public Class Person{0}" +
+				"    End Class{0}" +
+				"End Namespace{0}", NewLine), Generate (options), "#B2");
 		}
 	}
 }
