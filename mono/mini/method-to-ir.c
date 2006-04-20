@@ -3459,9 +3459,7 @@ static gboolean
 mono_method_check_inlining (MonoCompile *cfg, MonoMethod *method)
 {
 	MonoMethodHeader *header = mono_method_get_header (method);
-	MonoMethodSignature *signature = mono_method_signature (method);
 	MonoVTable *vtable;
-	int i;
 
 #ifdef MONO_ARCH_HAVE_LMF_OPS
 	if (((method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) ||
