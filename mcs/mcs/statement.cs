@@ -1834,13 +1834,14 @@ namespace Mono.CSharp {
 			if ((variables != null) && (RootContext.WarningLevel >= 3)) {
 				foreach (DictionaryEntry de in variables){
 					LocalInfo vi = (LocalInfo) de.Value;
-					
+
 					if (vi.Used)
 						continue;
-					
+
 					name = (string) de.Key;
 
-					if (vector.IsAssigned (vi.VariableInfo)){
+					// vi.VariableInfo can be null for 'catch' variables
+					if (vi.VariableInfo != null && vector.IsAssigned (vi.VariableInfo)){
 						Report.Warning (219, 3, vi.Location, "The variable `{0}' is assigned but its value is never used", name);
 					} else {
 						Report.Warning (168, 3, vi.Location, "The variable `{0}' is declared but never used", name);
@@ -3604,7 +3605,15 @@ namespace Mono.CSharp {
 				} else
 					type = null;
 
-				return Block.Resolve (ec);
+				if (!Block.Resolve (ec))
+					return false;
+
+				// Even though VarBlock surrounds 'Block' we resolve it later, so that we can correctly
+				// emit the "unused variable" warnings.
+				if (VarBlock != null)
+					return VarBlock.Resolve (ec);
+
+				return true;
 			}
 			finally {
 				ec.InCatch = was_catch;

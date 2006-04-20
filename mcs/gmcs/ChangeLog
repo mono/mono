@@ -1,3 +1,9 @@
+2006-04-20  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #66031
+	* statement.cs (Block.UsageWarning): Allow VariableInfo to be null.
+	(Catch.Resolve): Resolve VarBlock if it exists.
+
 2006-04-19  Miguel de Icaza  <miguel@novell.com>
 
 	* statement.cs (Foreach.EmitFinally): Do not emit the enumerator
