@@ -12,10 +12,10 @@ done
 if test x$assembly = x; then
 	echo You must specify at least the assembly name
 	echo 
-	echo 'Usage is: $0 [options] service'
+	echo "Usage is: $0 [options] service"
 	echo 
 	echo '    -d:<directory>         Working directory'
-	echo '    -l:<lock file>         Lock file (default is /tmp/<service>.log)'
+	echo '    -l:<lock file>         Lock file (default is /tmp/<service>.lock)'
 	echo '    -m:<syslog name>       Name to show in syslog'
 	echo '    -n:<service name>      Name of service to start (default is first defined)'
 	echo 
