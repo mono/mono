@@ -1,3 +1,9 @@
+2006-04-20  Chris Toshok  <toshok@ximian.com>
+
+	* BaseCompiler.cs: for 2.0, emit the correct namespace and class
+	names in the case where you use "NS.ClassName" in the Inherits
+	attribute.  Fixes bug #78135.
+
 2006-04-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CachingCompiler.cs: no need to play the Wait/PulseAll game, as we

@@ -72,8 +72,17 @@ namespace System.Web.Compilation
 			unit = new CodeCompileUnit ();
 #if NET_2_0
 			if (parser.IsPartial) {
-				mainNS = new CodeNamespace ();
-				mainClass = new CodeTypeDeclaration (parser.PartialClassName);
+				string ns = null;
+				string classtype = parser.PartialClassName;
+
+				if (classtype.Contains (".")) {
+					int dot = classtype.LastIndexOf (".");
+					ns = classtype.Substring (0, dot);
+					classtype = classtype.Substring (dot + 1);
+				}
+				
+				mainNS = new CodeNamespace (ns);
+				mainClass = new CodeTypeDeclaration (classtype);
 				mainClass.IsPartial = true;	
 				mainClassExpr = new CodeTypeReferenceExpression (parser.PartialClassName);
 			} else {
