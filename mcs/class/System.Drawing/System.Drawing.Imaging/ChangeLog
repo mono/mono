@@ -1,3 +1,8 @@
+2006-04-20  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* BitmapData.cs: Updated to match the BitmapData structure
+	  from libgdiplus r59689.
+
 2006-04-19  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* BitmapData.cs: Updated to match the BitmapData structure

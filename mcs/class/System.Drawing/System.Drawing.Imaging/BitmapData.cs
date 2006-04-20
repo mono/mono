@@ -64,6 +64,7 @@ namespace System.Drawing.Imaging
 		internal int		x;
 		internal int		y;
 
+		internal int		transparent;
 		public int Height {
 			get {
 				return height;
