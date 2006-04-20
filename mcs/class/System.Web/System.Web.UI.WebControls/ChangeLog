@@ -1,5 +1,13 @@
 2006-04-20  Konstantin Triger  <kostat@mainsoft.com>
 
+	* BaseDataBoundControl.cs: RequiresDataBinding rebinds if the control prerendered.
+	* FormView.cs: 
+		enable binding.
+		ensure rebinding when FormView.PageIndex is called.
+		and bind to the correct PageIndex.
+
+2006-04-20  Konstantin Triger  <kostat@mainsoft.com>
+
 	* MenuItem.cs: when binding to IHierarchyData, check whether 
 		it implements INavigateUIData and retrieve NavigateUrl.
 	* CompositeDataBoundControl.cs: ensures data is bound before creating child controls.

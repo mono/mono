@@ -32,6 +32,7 @@
 using NUnit.Framework;
 using System;
 using System.IO;
+using System.Collections;
 using System.Globalization;
 using System.Web;
 using System.Web.UI;
@@ -52,6 +53,16 @@ namespace MonoTests.System.Web.UI.WebControls
 
 			public void LoadState (object state) {
 				LoadViewState (state);
+			}
+			
+			public void DoConfirmInitState ()
+			{
+				base.ConfirmInitState ();
+			}
+	
+			public void DoOnPreRender (EventArgs e)
+			{
+				base.OnPreRender (e);
 			}
 		}
 		
@@ -107,6 +118,27 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.IsNull (p.DataItem, "A37");
 			Assert.AreEqual (0, p.DataItemCount, "A38");
 			Assert.AreEqual (0, p.DataItemIndex, "A39");
+		}
+		
+		[Test]
+		public void PageIndex ()
+		{
+			ObjectDataSource ds = new ObjectDataSource ();
+			ds.ID = "ObjectDataSource1";
+			ds.TypeName = "System.Guid";
+			ds.SelectMethod = "ToByteArray";
+			Page p = new Page ();
+			Poker f = new Poker ();
+			f.Page = p;
+			ds.Page = p;
+			p.Controls.Add (f);
+			p.Controls.Add (ds);
+			f.DataSourceID = "ObjectDataSource1";
+			f.DoConfirmInitState ();
+			f.DoOnPreRender (EventArgs.Empty);
+			object cur = f.DataItem;
+			f.PageIndex = 1;
+			Assert.IsTrue (cur != f.DataItem, "#01");
 		}
 	}
 }

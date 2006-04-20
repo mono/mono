@@ -1,3 +1,7 @@
+2006-04-20	Konstantin Triger <kostat@mainsoft.com>
+
+	* FormViewTest.cs: added test for PageIndex.
+
 2006-04-06	Konstantin Triger <kostat@mainsoft.com>
 
 	* DataListTest.cs: added test for DataSourceID.

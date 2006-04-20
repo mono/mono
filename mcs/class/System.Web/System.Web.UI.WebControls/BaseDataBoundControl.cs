@@ -45,6 +45,7 @@ namespace System.Web.UI.WebControls {
 		
 		object dataSource;
 		bool initialized;
+		bool preRendered;
 		bool requiresDataBinding;
 		
 		protected BaseDataBoundControl ()
@@ -97,7 +98,11 @@ namespace System.Web.UI.WebControls {
 		
 		protected bool RequiresDataBinding {
 			get { return requiresDataBinding; }
-			set { requiresDataBinding = value; }
+			set { 
+				requiresDataBinding = value;
+				if (value && preRendered && IsBoundUsingDataSourceID && Page != null && !Page.IsCallback)
+					EnsureDataBound ();
+			}
 		}
 		
 		protected void ConfirmInitState ()
@@ -141,6 +146,7 @@ namespace System.Web.UI.WebControls {
 		
 		protected internal override void OnPreRender (EventArgs e)
 		{
+			preRendered = true;
 			EnsureDataBound ();
 			base.OnPreRender (e);
 		}

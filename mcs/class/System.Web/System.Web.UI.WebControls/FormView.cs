@@ -806,55 +806,39 @@ namespace System.Web.UI.WebControls
 		[MonoTODO]
 		protected override void EnsureDataBound ()
 		{
-			throw new NotImplementedException ();
+			base.EnsureDataBound ();
 		}
 	
 		[MonoTODO]
 		protected override Style CreateControlStyle ()
 		{
-			throw new NotImplementedException ();
+			return base.CreateControlStyle ();
 		}
 		
 		protected override int CreateChildControls (IEnumerable data, bool dataBinding)
 		{
-			PagedDataSource dataSource;
+			PagedDataSource dataSource = new PagedDataSource ();
+			dataSource.DataSource = data;
+			dataSource.AllowPaging = AllowPaging;
+			dataSource.PageSize = 1;
+			dataSource.CurrentPageIndex = PageIndex;
 
 			if (dataBinding) {
 				DataSourceView view = GetData ();
-				dataSource = new PagedDataSource ();
-				dataSource.DataSource = data;
-				
-				if (AllowPaging) {
-					dataSource.AllowPaging = true;
-					dataSource.PageSize = 1;
-					dataSource.CurrentPageIndex = PageIndex;
-					if (view.CanPage) {
-						dataSource.AllowServerPaging = true;
-						if (view.CanRetrieveTotalRowCount)
-							dataSource.VirtualCount = SelectArguments.TotalRowCount;
-						else {
-							dataSource.DataSourceView = view;
-							dataSource.DataSourceSelectArguments = SelectArguments;
-							dataSource.SetItemCountFromPageIndex (PageIndex + PagerSettings.PageButtonCount);
-						}
+				if (view.CanPage) {
+					dataSource.AllowServerPaging = true;
+					if (view.CanRetrieveTotalRowCount)
+						dataSource.VirtualCount = SelectArguments.TotalRowCount;
+					else {
+						dataSource.DataSourceView = view;
+						dataSource.DataSourceSelectArguments = SelectArguments;
+						dataSource.SetItemCountFromPageIndex (PageIndex + PagerSettings.PageButtonCount);
 					}
-				}
-				
-				pageCount = dataSource.PageCount;
-			}
-			else
-			{
-				dataSource = new PagedDataSource ();
-				dataSource.DataSource = data;
-				if (AllowPaging) {
-					dataSource.AllowPaging = true;
-					dataSource.PageSize = 1;
-					dataSource.CurrentPageIndex = PageIndex;
 				}
 			}
 
+			pageCount = dataSource.Count;
 			bool showPager = AllowPaging && (PageCount > 1);
-			dataSourceCount = dataSource.Count;
 			
 			Controls.Clear ();
 			table = CreateTable ();
@@ -866,10 +850,16 @@ namespace System.Web.UI.WebControls
 			// Gets the current data item
 			
 			IEnumerator e = dataSource.GetEnumerator (); 
-			if (e.MoveNext ())
-				dataItem = e.Current;
+			dataItem = null;
+
+			if (AllowPaging) {
+				if (e.MoveNext ())
+					dataItem = e.Current;
+			}
 			else
-				dataItem = null;
+			for (int page = 0; e.MoveNext (); page++ )
+				if (page == PageIndex)
+					dataItem = e.Current;
 			
 			// Main table creation
 			
