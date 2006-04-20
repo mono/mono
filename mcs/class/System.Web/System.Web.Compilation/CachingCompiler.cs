@@ -83,10 +83,6 @@ namespace System.Web.Compilation
 
 			try {
 				Monitor.Enter (ticket);
-
-				if (!acquired)
-					Monitor.Wait (ticket);
-
 				results = (CompilerResults) cache [key];
 #if NET_2_0
 				if (!compiler.IsRebuildingPartial)
@@ -98,8 +94,6 @@ namespace System.Web.Compilation
 				results = comp.CompileAssemblyFromDom (compiler.CompilerParameters, compiler.Unit);
 				string [] deps = (string []) compiler.Parser.Dependencies.ToArray (typeof (string));
 				cache.InsertPrivate (key, results, new CacheDependency (deps));
-
-				Monitor.PulseAll (ticket);
 			} finally {
 				Monitor.Exit (ticket);
 				if (acquired)
@@ -122,10 +116,6 @@ namespace System.Web.Compilation
 
 			try {
 				Monitor.Enter (ticket);
-
-				if (!acquired)
-					Monitor.Wait (ticket);
-
 				results = (CompilerResults) cache [key];
 				if (results != null)
 					return results;
@@ -136,8 +126,6 @@ namespace System.Web.Compilation
 				results = compiler.Compiler.CompileAssemblyFromFile (options, compiler.InputFile);
 				string [] deps = (string []) parser.Dependencies.ToArray (typeof (string));
 				cache.InsertPrivate (key, results, new CacheDependency (deps));
-
-				Monitor.PulseAll (ticket);
 			} finally {
 				Monitor.Exit (ticket);
 				if (acquired)
@@ -175,10 +163,6 @@ namespace System.Web.Compilation
 
 			try {
 				Monitor.Enter (ticket);
-
-				if (!acquired)
-					Monitor.Wait (ticket);
-
 				results = (CompilerResults) cache [cachePrefix + key];
 				if (results != null)
 					return results;
@@ -212,8 +196,6 @@ namespace System.Web.Compilation
 
 				string [] deps = (string []) realdeps.ToArray (typeof (string));
 				cache.InsertPrivate (cachePrefix + key, results, new CacheDependency (deps));
-
-				Monitor.PulseAll (ticket);
 			} finally {
 				Monitor.Exit (ticket);
 				if (acquired)

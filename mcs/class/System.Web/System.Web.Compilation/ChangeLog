@@ -1,3 +1,9 @@
+2006-04-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CachingCompiler.cs: no need to play the Wait/PulseAll game, as we
+	already acquired the lock even when we might have not created the 'key'
+	to the compilation ticket.
+
 2006-04-16  Andrew Skiba <andrews@mainsoft.com>
 
 	* ThemeDirectoryCompiler.cs: add to the directory parser all the
