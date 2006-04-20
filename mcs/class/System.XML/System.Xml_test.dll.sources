@@ -68,6 +68,7 @@ System.Xml.Serialization/XmlArrayItemAttributeTests.cs
 System.Xml.Serialization/XmlAttributeAttributeTests.cs
 System.Xml.Serialization/XmlAttributesTests.cs
 System.Xml.Serialization/XmlChoiceIdentifierAttributeTests.cs
+System.Xml.Serialization/XmlCodeExporterTests.cs
 System.Xml.Serialization/XmlElementAttributeTests.cs
 System.Xml.Serialization/XmlEnumAttributeTests.cs
 System.Xml.Serialization/XmlIncludeAttributeTests.cs
