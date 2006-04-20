@@ -1,3 +1,7 @@
+2006-04-20 Andrew Skiba <andrews@mainsoft.com>
+
+	* System.Web_test.dll.sources: add SiteMapNodeTest.cs
+
 2006-04-02 Andrew Skiba <andrews@mainsoft.com>
 
 	* System.Web.vmwcsproj: exclude from project deleted files

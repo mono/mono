@@ -1,3 +1,7 @@
+2006-04-20 Andrew Skiba <andrews@mainsoft.com>
+
+	* SiteMapNode.cs: fix few null reference exceptions
+
 2006-04-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpResponse.cs:

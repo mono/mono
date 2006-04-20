@@ -9,6 +9,7 @@ System.Web/HttpResponseTest.cs
 System.Web/HttpServerUtilityTest.cs
 System.Web/HttpUtilityTest.cs
 System.Web/SiteMapProviderTest.cs
+System.Web/SiteMapNodeTest.cs
 System.Web/StaticSiteMapProviderTest.cs
 System.Web.Compilation/ClientBuildManagerParameterTest.cs
 System.Web.Configuration/AnonymousIdentificationSectionTest.cs

@@ -237,13 +237,15 @@ namespace System.Web {
 			node.url = url;
 			node.title = title;
 			node.description = description;
-			node.roles = new ArrayList (roles);
-			node.attributes = new NameValueCollection (attributes);
+			if (roles != null)
+				node.roles = new ArrayList (roles);
+			if (attributes != null)
+				node.attributes = new NameValueCollection (attributes);
 			if (cloneParentNodes && ParentNode != null)
 				node.parent = (SiteMapNode) ParentNode.Clone (true);
 			return node;
 		}
-		
+				
 		public override bool Equals (object ob)
 		{
 			SiteMapNode node = ob as SiteMapNode;
@@ -255,19 +257,30 @@ namespace System.Web {
 					node.description != description) {
 				return false;
 			}
-			
-			if ((roles == null || node.roles == null) && (roles != node.roles)) return false;
-			if (roles.Count != node.roles.Count) return false;
 
-			foreach (object role in roles)
-				if (!node.roles.Contains (role)) return false;
-				
-			if ((attributes == null || node.attributes == null) && (attributes != node.attributes)) return false;
-			if (attributes.Count != node.attributes.Count) return false;
+			if (roles == null || node.roles == null) {
+				if (roles != node.roles)
+					return false;
+			}
+			else {
+				if (roles.Count != node.roles.Count)
+					return false;
 
-			foreach (string k in attributes)
-				if (attributes [k] != node.attributes [k]) return false;
+				foreach (object role in roles)
+					if (!node.roles.Contains (role)) return false;
+			}
+			if (attributes == null || node.attributes == null) {
+				if (attributes != node.attributes)
+					return false;
+			}
+			else {
+				if (attributes.Count != node.attributes.Count)
+					return false;
 
+				foreach (string k in attributes)
+					if (attributes[k] != node.attributes[k])
+						return false;
+			}
 			return true;
 		}
 		
