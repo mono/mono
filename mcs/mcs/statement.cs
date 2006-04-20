@@ -4663,8 +4663,6 @@ namespace Mono.CSharp {
 				ILGenerator ig = ec.ig;
 
 				if (enumerator_type.IsValueType) {
-					enumerator.Emit (ec);
-
 					MethodInfo mi = FetchMethodDispose (enumerator_type);
 					if (mi != null) {
 						enumerator.EmitLoadAddress (ec);

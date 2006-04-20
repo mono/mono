@@ -1,3 +1,9 @@
+2006-04-19  Miguel de Icaza  <miguel@novell.com>
+
+	* statement.cs (Foreach.EmitFinally): Do not emit the enumerator
+	twice, this was some residual code, the enumerator was emitted
+	properly in the two branche of if later.
+
 2006-04-19  Raja R Harinath  <rharinath@novell.com>
 
 	* expression.cs (Cast.ResolveLValue): Remove.  The result of a
