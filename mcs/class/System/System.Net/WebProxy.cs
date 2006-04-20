@@ -35,30 +35,29 @@ using System.Text.RegularExpressions;
 namespace System.Net 
 {
 	[Serializable]
-	public class WebProxy : IWebProxy, ISerializable
-	{		
-		private Uri address;
-		private bool bypassOnLocal;
-		private ArrayList bypassList;
-		private ICredentials credentials;
-	
+	public class WebProxy : IWebProxy, ISerializable {
+		Uri address;
+		bool bypassOnLocal;
+		ArrayList bypassList;
+		ICredentials credentials;
+
 		// Constructors
-	
-		public WebProxy () 
+
+		public WebProxy ()
 			: this ((Uri) null, false, null, null) {}
-		
-		public WebProxy (string address) 
+
+		public WebProxy (string address)
 			: this (ToUri (address), false, null, null) {}
-		
+
 		public WebProxy (Uri address) 
 			: this (address, false, null, null) {}
-		
+
 		public WebProxy (string address, bool bypassOnLocal) 
 			: this (ToUri (address), bypassOnLocal, null, null) {}
-		
+
 		public WebProxy (string host, int port)
 			: this (new Uri ("http://" + host + ":" + port)) {}
-		
+
 		public WebProxy (Uri address, bool bypassOnLocal)
 			: this (address, bypassOnLocal, null, null) {}
 
@@ -67,9 +66,9 @@ namespace System.Net
 
 		public WebProxy (Uri address, bool bypassOnLocal, string [] bypassList)
 			: this (address, bypassOnLocal, bypassList, null) {}
-		
-		public WebProxy (string address, bool bypassOnLocal,
-				 string[] bypassList, ICredentials credentials)
+
+		public WebProxy (string address, bool bypassOnLocal, string [] bypassList,
+				ICredentials credentials)
 			: this (ToUri (address), bypassOnLocal, bypassList, null) {}
 
 		public WebProxy (Uri address, bool bypassOnLocal, 
@@ -83,29 +82,26 @@ namespace System.Net
 			this.credentials = credentials;
 			CheckBypassList ();
 		}
-		
+
 		protected WebProxy (SerializationInfo serializationInfo, StreamingContext streamingContext) 
 		{
-			this.address = (Uri) serializationInfo.GetValue ("address", typeof(Uri));
+			this.address = (Uri) serializationInfo.GetValue ("address", typeof (Uri));
 			this.bypassOnLocal = serializationInfo.GetBoolean ("bypassOnLocal");
-			this.bypassList = (ArrayList) serializationInfo.GetValue ("bypassList", typeof(ArrayList));
+			this.bypassList = (ArrayList) serializationInfo.GetValue ("bypassList", typeof (ArrayList));
 			this.credentials = null;
 			CheckBypassList ();
 		}
-		
+
 		// Properties
-		
 		public Uri Address {
 			get { return address; }
 			set { address = value; }
 		}
-		
+
 		public ArrayList BypassArrayList {
-			get { 
-				return bypassList;
-			}
+			get { return bypassList; }
 		}
-		
+
 		public string [] BypassList {
 			get { return (string []) bypassList.ToArray (typeof (string)); }
 			set { 
@@ -115,19 +111,18 @@ namespace System.Net
 				CheckBypassList ();
 			}
 		}
-		
+
 		public bool BypassProxyOnLocal {
 			get { return bypassOnLocal; }
 			set { bypassOnLocal = value; }
 		}
-		
+
 		public ICredentials Credentials {
 			get { return credentials; }
 			set { credentials = value; }
 		}
-		
+
 		// Methods
-		
 		[MonoTODO("Can we get this info under windows from the system?")]
 		public static WebProxy GetDefaultProxy ()
 		{
@@ -138,26 +133,26 @@ namespace System.Net
 
 			return new WebProxy ();
 		}
-		
+
 		public Uri GetProxy (Uri destination)
 		{
 			if (IsBypassed (destination))
 				return destination;
-				
+
 			return address;
 		}
-		
+
 		public bool IsBypassed (Uri host)
 		{
 			if (address == null)
 				return true;
-			
+
 			if (host.IsLoopback)
 				return true;
-				
+
 			if (bypassOnLocal && host.Host.IndexOf ('.') == -1)
 				return true;
-				
+
 			try {				
 				string hostStr = host.Scheme + "://" + host.Authority;				
 				int i = 0;
@@ -184,7 +179,7 @@ namespace System.Net
 				return false;
 			}
 		}
-	
+
 		void ISerializable.GetObjectData (SerializationInfo serializationInfo,
 		                                  StreamingContext streamingContext)
 		{
@@ -192,18 +187,17 @@ namespace System.Net
 			serializationInfo.AddValue ("address", address);
 			serializationInfo.AddValue ("bypassList", bypassList);
 		}
-		
+
 		// Private Methods
-		
 		// this compiles the regular expressions, and will throw
 		// an exception when an invalid one is found.
-		private void CheckBypassList ()
+		void CheckBypassList ()
 		{			
 			for (int i = 0; i < bypassList.Count; i++)
 				new Regex ((string) bypassList [i]);
 		}
-		
-		private static Uri ToUri (string address)
+
+		static Uri ToUri (string address)
 		{
 			if (address == null)
 				return null;
@@ -215,3 +209,4 @@ namespace System.Net
 		}
 	}
 }
+
