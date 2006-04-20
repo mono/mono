@@ -5064,85 +5064,51 @@ namespace Mono.CSharp {
 							  Location loc)
 		{
 			ParameterData pd = TypeManager.GetParameterData (method);
-			int pd_count = pd.Count;
-			
-			for (int j = 0; j < arg_count; j++) {
+			int j;
+			for (j = 0; j < arg_count; j++) {
 				Argument a = (Argument) Arguments [j];
 				Expression a_expr = a.Expr;
 				Type parameter_type = pd.ParameterType (j);
 				Parameter.Modifier pm = pd.ParameterModifier (j);
-				
-				if (pm == Parameter.Modifier.PARAMS){
-					if ((pm & ~Parameter.Modifier.PARAMS) != a.Modifier) {
-						if (!may_fail)
-							Error_InvalidArguments (loc, j, method, delegate_type, a, pd);
-						return false;
-					}
+				Parameter.Modifier am = a.Modifier;
 
-					if (chose_params_expanded)
-						parameter_type = TypeManager.GetElementType (parameter_type);
-				} else if (pm == Parameter.Modifier.ARGLIST) {
-					if (!(a.Expr is Arglist)) {
-						if (!may_fail)
-							Error_InvalidArguments (loc, j, method, delegate_type, a, pd);
-						return false;
-					}
+				if (pm == Parameter.Modifier.ARGLIST) {
+					if (!(a.Expr is Arglist))
+						break;
 					continue;
-				} else {
-					//
-					// Check modifiers
-					//
-					if (pd.ParameterModifier (j) != a.Modifier){
-						if (!may_fail)
-							Error_InvalidArguments (loc, j, method, delegate_type, a, pd);
-						return false;
-					}
 				}
 
-				//
-				// Check Type
-				//
-				if (!TypeManager.IsEqual (a.Type, parameter_type)){
-					Expression conv;
+				if (pm == Parameter.Modifier.PARAMS) {
+					pm = Parameter.Modifier.NONE;
+					if (chose_params_expanded)
+						parameter_type = TypeManager.GetElementType (parameter_type);
+				}
 
-					conv = Convert.ImplicitConversion (ec, a_expr, parameter_type, loc);
+				if (pm != am)
+					break;
 
-					if (conv == null) {
-						if (!may_fail)
-							Error_InvalidArguments (loc, j, method, delegate_type, a, pd);
-						return false;
-					}
-					
-					//
+				if (!TypeManager.IsEqual (a.Type, parameter_type)) {
+					Expression conv = Convert.ImplicitConversion (ec, a_expr, parameter_type, loc);
+					if (conv == null)
+						break;
+
 					// Update the argument with the implicit conversion
-					//
 					if (a_expr != conv)
 						a.Expr = conv;
 				}
 
-				if (parameter_type.IsPointer){
-					if (!ec.InUnsafe){
-						UnsafeError (loc);
-						return false;
-					}
-				}
-				
-				Parameter.Modifier a_mod = a.Modifier &
-					unchecked (~(Parameter.Modifier.OUT | Parameter.Modifier.REF));
-				Parameter.Modifier p_mod = pd.ParameterModifier (j) &
-					unchecked (~(Parameter.Modifier.OUT | Parameter.Modifier.REF));
-				
-				if (a_mod != p_mod &&
-				    pd.ParameterModifier (pd_count - 1) != Parameter.Modifier.PARAMS) {
-					if (!may_fail) {
-						Invocation.Error_InvalidArguments (loc, j, method, null, a, pd);
-					}
-					
+				if (parameter_type.IsPointer && !ec.InUnsafe) {
+					UnsafeError (loc);
 					return false;
 				}
 			}
 
-			return true;
+			if (j == arg_count)
+				return true;
+
+			if (!may_fail)
+				Error_InvalidArguments (loc, j, method, delegate_type, (Argument) Arguments [j], pd);
+			return false;
 		}
 
 		private bool resolved = false;
