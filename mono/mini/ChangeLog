@@ -1,5 +1,9 @@
 2006-04-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-sparc.c (emit_pass_vtype): Fix passing of vtype addresses on the stack.
+
+	* objects.cs: Add test for passing vtype addresses on the stack on sparc.	
+
 	* method-to-ir.c (mono_method_check_inlining): Fix warnings.
 
 2006-04-19  Zoltan Varga  <vargaz@gmail.com>

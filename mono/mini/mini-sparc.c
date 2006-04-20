@@ -1399,6 +1399,9 @@ emit_pass_float (MonoCompile *cfg, MonoCallInst *call, ArgInfo *ainfo, MonoInst 
 }
 
 static void
+emit_pass_other (MonoCompile *cfg, MonoCallInst *call, ArgInfo *ainfo, MonoType *arg_type, MonoInst *in);
+
+static void
 emit_pass_vtype (MonoCompile *cfg, MonoCallInst *call, CallInfo *cinfo, ArgInfo *ainfo, MonoType *arg_type, MonoInst *in, gboolean pinvoke)
 {
 	MonoInst *arg;
@@ -1430,8 +1433,6 @@ emit_pass_vtype (MonoCompile *cfg, MonoCallInst *call, CallInfo *cinfo, ArgInfo 
 	cinfo->stack_usage += size;
 	cinfo->stack_usage += pad;
 
-	ainfo->offset = STACK_BIAS + offset;
-
 	/* 
 	 * We use OP_OUTARG_VT to copy the valuetype to a stack location, then
 	 * use the normal OUTARG opcodes to pass the address of the location to
@@ -1445,15 +1446,16 @@ emit_pass_vtype (MonoCompile *cfg, MonoCallInst *call, CallInfo *cinfo, ArgInfo 
 		arg->inst_p0 = call;
 		arg->inst_p1 = mono_mempool_alloc (cfg->mempool, sizeof (ArgInfo));
 		memcpy (arg->inst_p1, ainfo, sizeof (ArgInfo));
+		((ArgInfo*)(arg->inst_p1))->offset = STACK_BIAS + offset;
 		MONO_ADD_INS (cfg->cbb, arg);
 
 		MONO_INST_NEW (cfg, arg, OP_ADD_IMM);
 		arg->dreg = mono_alloc_preg (cfg);
 		arg->sreg1 = sparc_sp;
-		arg->inst_imm = ainfo->offset;
+		arg->inst_imm = STACK_BIAS + offset;
 		MONO_ADD_INS (cfg->cbb, arg);
 
-		add_outarg_reg2 (cfg, call, ArgInIReg, sparc_o0 + ainfo->reg, arg->dreg);
+		emit_pass_other (cfg, call, ainfo, NULL, arg);
 	}
 }
 

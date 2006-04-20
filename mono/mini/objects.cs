@@ -243,17 +243,27 @@ class Tests {
 		return 0;
 	}
 
+	static int receive_small_sparc_many_args (int a, int a2, int a3, int a4, int a5, int a6, Small v, int b) {
+		if (v.b1 != 1)
+			return 1;
+		if (v.b2 != 2)
+			return 2;
+		return 0;
+	}
+
 	static int test_5_pass_small_struct () {
 		Small v = get_small (1);
 		if (receive_small (7, v, 9) != 0)
 			return 0;
 		if (receive_small (7, get_small (1), 9) != 0)
 			return 1;
+		if (receive_small_sparc_many_args (1, 2, 3, 4, 5, 6, v, 9) != 0)
+			return 2;
 		v = return_small (v);
 		if (v.b1 != 1)
-			return 2;
-		if (v.b2 != 2)
 			return 3;
+		if (v.b2 != 2)
+			return 4;
 		return 5;
 	}
 
