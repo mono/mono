@@ -223,7 +223,12 @@ namespace Microsoft.Win32 {
 
 		public void SetValue (string name, object value)
 		{
-			values [name] = value;
+			// immediately convert non-native registry values to string to avoid
+			// returning it unmodified in calls to UnixRegistryApi.GetValue
+			if (value is int || value is string || value is byte[] || value is string[])
+				values[name] = value;
+			else
+				values[name] = value.ToString ();
 			SetDirty ();
 		}
 
@@ -361,9 +366,6 @@ namespace Microsoft.Win32 {
 		
 		public void SetValue (RegistryKey rkey, string name, object value)
 		{
-			if (!((value is int) || (value is string) || (value is string []) || (value is byte [])))
-				throw new ArgumentException ("The value is not int, string, string[] or byte[]", "value");
-			
 			KeyHandler self = KeyHandler.Lookup (rkey);
 			self.SetValue (name, value);
 		}

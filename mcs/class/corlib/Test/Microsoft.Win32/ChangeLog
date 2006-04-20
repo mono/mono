@@ -1,3 +1,7 @@
+2006-04-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* RegistryKeyTest.cs: Added tests for bug #78132.
+
 2006-04-18  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* RegistryKeyTest.cs: Added tests for OpenSubKey and CreateSubKey.

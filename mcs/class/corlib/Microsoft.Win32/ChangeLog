@@ -1,3 +1,11 @@
+2006-04-20  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* UnixRegistryApi.cs: In KeyHandler.SetValue, immediately convert
+	instances of non-native registry types (meaning int, string, string[]
+	or byte[]) to string. This avoids returning an instance of a non-native
+	registry type in calls to UnixRegistryApi.GetValue. Allow instances of
+	non-native registry types in UnixRegistryApi.SetValue. Fixes bug #78132.
+
 2006-04-18  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* UnixRegistryApi.cs: Only consider the "software" subkey a well-known
