@@ -69,7 +69,7 @@ namespace System.Net
 
 		public WebProxy (string address, bool bypassOnLocal, string [] bypassList,
 				ICredentials credentials)
-			: this (ToUri (address), bypassOnLocal, bypassList, null) {}
+			: this (ToUri (address), bypassOnLocal, bypassList, credentials) {}
 
 		public WebProxy (Uri address, bool bypassOnLocal, 
 				 string[] bypassList, ICredentials credentials)
@@ -147,7 +147,7 @@ namespace System.Net
 			if (address == null)
 				return true;
 
-			if (host.IsLoopback)
+			if (bypassOnLocal && host.IsLoopback)
 				return true;
 
 			if (bypassOnLocal && host.Host.IndexOf ('.') == -1)
@@ -204,7 +204,7 @@ namespace System.Net
 				
 			if (address.IndexOf ("://") == -1) 
 				address = "http://" + address;
-			
+
 			return new Uri (address);
 		}
 	}

@@ -1,3 +1,12 @@
+2006-04-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebProxy.cs: a .ctor was not forwarding the 'credentials' argument.
+	This fixes bug #78150. Also fix the bypass check for local requests.
+
+2006-04-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebProxy.cs: removed bogus ^M.
+
 2006-04-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWebResponse.cs: don't remove the Set-Cookie headers. Fixes bug
