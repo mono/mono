@@ -5,8 +5,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2002,2003 Ximian, Inc (http://www.ximian.com)
-//
-
+// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,12 +27,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.IO;
 using System.Collections;
 using System.Collections.Specialized;
 
 namespace System.Web.SessionState {
+
 internal class SessionDictionary : NameObjectCollectionBase
 {
 	bool _dirty;
@@ -68,12 +67,6 @@ internal class SessionDictionary : NameObjectCollectionBase
 			value = BaseGetKey (index);
 			
 		return value;
-	}
-
-	internal static bool IsInmutable (object o)
-	{
-		Type t = o.GetType ();
-		return (t == typeof (string) || t.IsPrimitive);
 	}
 
 	internal void Remove (string s)
@@ -120,12 +113,6 @@ internal class SessionDictionary : NameObjectCollectionBase
 		}
 
 		return result;
-	}
-
-	internal bool Dirty
-	{
-		get { return _dirty; }
-		set { _dirty = value; }
 	}
 
 	internal object this [string s]

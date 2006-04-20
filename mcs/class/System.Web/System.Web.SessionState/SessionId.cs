@@ -4,9 +4,7 @@
 // Author(s):
 //  Jackson Harper (jackson@ximian.com)
 //
-// (C) 2003 Novell, Inc (http://www.novell.com), All rights reserved
-//
-
+// Copyright (C) 2003,2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,7 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Text;
 using System.Security.Cryptography;
 
@@ -40,8 +37,8 @@ namespace System.Web.SessionState {
 						   '6', '7', '8', '9', 'A', 'B',
 						   'C', 'D', 'E', 'F' };
 
-		internal static readonly int IdLength = 30;
-		private static readonly int half_len = 15;
+		internal const int IdLength = 30;
+		private const int half_len = 15;
 		
 		internal static string Create (RandomNumberGenerator rng)
 		{

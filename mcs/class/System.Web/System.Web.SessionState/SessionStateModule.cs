@@ -6,7 +6,7 @@
 //	Stefan Görling (stefan@gorling.se)
 //	Jackson Harper (jackson@ximian.com)
 //
-// Copyright (C) 2002,2003,2004,2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2002-2006 Novell, Inc (http://www.novell.com)
 // (C) 2003 Stefan Görling (http://www.gorling.se)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -42,8 +42,8 @@ namespace System.Web.SessionState
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class SessionStateModule : IHttpModule
 	{
-		internal static readonly string CookieName = "ASPSESSION";
-		internal static readonly string HeaderName = "AspFilterSessionId";
+		internal const string CookieName = "ASPSESSION";
+		internal const string HeaderName = "AspFilterSessionId";
 		static object locker = new object ();
 		
 #if TARGET_J2EE		
