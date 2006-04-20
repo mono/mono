@@ -1,3 +1,8 @@
+2006-04-20  Geoff Norton  <gnorton@customerdna.com>
+
+	* serial.c: Change TIOCINQ to FIONREAD to 
+	fix the build on the *BSDs.
+
 2006-04-19  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* serial.c: Added poll_serial () function, to poll
