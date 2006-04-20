@@ -1,3 +1,9 @@
+2006-04-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* LinearGradientBrushTest.cs: Remove "NonWorking" from many test 
+	cases. Added more test cases for non-invertible matrix and to ensure
+	all matrix-based transformation are correct.
+
 2006-04-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GraphicsPathTest.cs: Add test cases for Wrap and Widen (most of them

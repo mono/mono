@@ -92,7 +92,6 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("NotWorking")]
 		public void Constructor_Point_Point_Color_Color ()
 		{
 			LinearGradientBrush lgb = new LinearGradientBrush (pt1, pt2, c1, c2);
@@ -112,6 +111,7 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		public void Constructor_RectangleF_Color_Color_Single_0 ()
 		{
 			LinearGradientBrush lgb = new LinearGradientBrush (rect, c1, c2, 0f);
+			CheckDefaultRectangle ("Original", lgb.Rectangle);
 			Assert.AreEqual (1, lgb.Blend.Factors.Length, "Blend.Factors");
 			Assert.AreEqual (1, lgb.Blend.Factors[0], "Blend.Factors[0]");
 			Assert.AreEqual (1, lgb.Blend.Positions.Length, "Blend.Positions");
@@ -129,10 +129,10 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("NotWorking")]
 		public void Constructor_RectangleF_Color_Color_Single_22_5 ()
 		{
 			LinearGradientBrush lgb = new LinearGradientBrush (rect, c1, c2, 22.5f);
+			CheckDefaultRectangle ("Original", lgb.Rectangle);
 			float[] elements = lgb.Transform.Elements;
 			Assert.AreEqual (1.207107, elements[0], 0.0001, "matrix.0");
 			Assert.AreEqual (0.5, elements[1], 0.0001, "matrix.1");
@@ -143,7 +143,6 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("NotWorking")]
 		public void Constructor_RectangleF_Color_Color_Single_45 ()
 		{
 			LinearGradientBrush lgb = new LinearGradientBrush (rect, c1, c2, 45f);
@@ -151,10 +150,10 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("NotWorking")]
 		public void Constructor_RectangleF_Color_Color_Single_90 ()
 		{
 			LinearGradientBrush lgb = new LinearGradientBrush (rect, c1, c2, 90f);
+			CheckDefaultRectangle ("Original", lgb.Rectangle);
 			float[] elements = lgb.Transform.Elements;
 			Assert.AreEqual (0, elements[0], 0.0001, "matrix.0");
 			Assert.AreEqual (1, elements[1], 0.0001, "matrix.1");
@@ -165,10 +164,10 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("NotWorking")]
 		public void Constructor_RectangleF_Color_Color_Single_135 ()
 		{
 			LinearGradientBrush lgb = new LinearGradientBrush (rect, c1, c2, 135f);
+			CheckDefaultRectangle ("Original", lgb.Rectangle);
 			float[] elements = lgb.Transform.Elements;
 			Assert.AreEqual (-1, elements[0], 0.0001, "matrix.0");
 			Assert.AreEqual (1, elements[1], 0.0001, "matrix.1");
@@ -179,10 +178,10 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("NotWorking")]
 		public void Constructor_RectangleF_Color_Color_Single_180 ()
 		{
 			LinearGradientBrush lgb = new LinearGradientBrush (rect, c1, c2, 180f);
+			CheckDefaultRectangle ("Original", lgb.Rectangle);
 			float[] elements = lgb.Transform.Elements;
 			Assert.AreEqual (-1, elements[0], 0.0001, "matrix.0");
 			Assert.AreEqual (0, elements[1], 0.0001, "matrix.1");
@@ -193,10 +192,10 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("NotWorking")]
 		public void Constructor_RectangleF_Color_Color_Single_270 ()
 		{
 			LinearGradientBrush lgb = new LinearGradientBrush (rect, c1, c2, 270f);
+			CheckDefaultRectangle ("Original", lgb.Rectangle);
 			float[] elements = lgb.Transform.Elements;
 			Assert.AreEqual (0, elements[0], 0.0001, "matrix.0");
 			Assert.AreEqual (-1, elements[1], 0.0001, "matrix.1");
@@ -207,10 +206,10 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("NotWorking")]
 		public void Constructor_RectangleF_Color_Color_Single_315 ()
 		{
 			LinearGradientBrush lgb = new LinearGradientBrush (rect, c1, c2, 315f);
+			CheckDefaultRectangle ("Original", lgb.Rectangle);
 			float[] elements = lgb.Transform.Elements;
 			Assert.AreEqual (1, elements[0], 0.0001, "matrix.0");
 			Assert.AreEqual (-1, elements[1], 0.0001, "matrix.1");
@@ -224,6 +223,7 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		public void Constructor_RectangleF_Color_Color_Single_360()
 		{
 			LinearGradientBrush lgb = new LinearGradientBrush (rect, c1, c2, 360f);
+			CheckDefaultRectangle ("Original", lgb.Rectangle);
 			float[] elements = lgb.Transform.Elements;
 			// just like 0'
 			Assert.AreEqual (1, elements[0], 0.0001, "matrix.0");
@@ -235,10 +235,10 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("NotWorking")]
 		public void Constructor_RectangleF_Color_Color_Single_540 ()
 		{
 			LinearGradientBrush lgb = new LinearGradientBrush (rect, c1, c2, 540f);
+			CheckDefaultRectangle ("Original", lgb.Rectangle);
 			float[] elements = lgb.Transform.Elements;
 			// just like 180'
 			Assert.AreEqual (-1, elements[0], 0.0001, "matrix.0");
@@ -300,6 +300,28 @@ namespace MonoTests.System.Drawing.Drawing2D {
 			// not the same, the alpha is changed to 255 so they can't compare
 			Assert.AreEqual (Color.FromArgb (255, 255, 0, 0), lgb.LinearColors[0], "0");
 			Assert.AreEqual (Color.FromArgb (255, 0, 128, 0), lgb.LinearColors[1], "1");
+		}
+
+		[Test]
+		public void Rectangle ()
+		{
+			LinearGradientBrush lgb = new LinearGradientBrush (rect, c1, c2, 0f);
+			CheckDefaultRectangle ("Original", lgb.Rectangle);
+			lgb.MultiplyTransform (new Matrix (2, 0, 0, 2, 2, 2));
+			CheckDefaultRectangle ("Multiply", lgb.Rectangle);
+			lgb.ResetTransform ();
+			CheckDefaultRectangle ("Reset", lgb.Rectangle);
+			lgb.RotateTransform (90);
+			CheckDefaultRectangle ("Rotate", lgb.Rectangle);
+			lgb.ScaleTransform (4, 0.25f);
+			CheckDefaultRectangle ("Scale", lgb.Rectangle);
+			lgb.TranslateTransform (-10, -20);
+			CheckDefaultRectangle ("Translate", lgb.Rectangle);
+
+			lgb.SetBlendTriangularShape (0.5f);
+			CheckDefaultRectangle ("SetBlendTriangularShape", lgb.Rectangle);
+			lgb.SetSigmaBellShape (0.5f);
+			CheckDefaultRectangle ("SetSigmaBellShape", lgb.Rectangle);
 		}
 
 		[Test]
@@ -389,7 +411,14 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("NotWorking")]
+		[ExpectedException (typeof (ArgumentException))]
+		public void MultiplyTransform_NonInvertible ()
+		{
+			Matrix noninvertible = new Matrix (123, 24, 82, 16, 47, 30);
+			default_brush.MultiplyTransform (noninvertible);
+		}
+
+		[Test]
 		public void ResetTransform ()
 		{
 			LinearGradientBrush lgb = new LinearGradientBrush (pt1, pt2, c1, c2);
@@ -399,7 +428,6 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("NotWorking")]
 		public void RotateTransform ()
 		{
 			LinearGradientBrush lgb = new LinearGradientBrush (rect, c1, c2, 0f);
@@ -469,6 +497,20 @@ namespace MonoTests.System.Drawing.Drawing2D {
 
 			lgb.ScaleTransform (0.5f, 0.25f);
 			Assert.IsTrue (lgb.Transform.IsIdentity, "Transform.IsIdentity");
+		}
+
+		[Test]
+		public void ScaleTransform_45 ()
+		{
+			LinearGradientBrush lgb = new LinearGradientBrush (rect, c1, c2, 45f);
+			lgb.ScaleTransform (3, 3);
+			float[] elements = lgb.Transform.Elements;
+			Assert.AreEqual (3, elements[0], 0.1, "matrix.0");
+			Assert.AreEqual (3, elements[1], 0.1, "matrix.1");
+			Assert.AreEqual (-3, elements[2], 0.1, "matrix.2");
+			Assert.AreEqual (3, elements[3], 0.1, "matrix.3");
+			Assert.AreEqual (16, elements[4], 0.1, "matrix.4");
+			Assert.AreEqual (-16, elements[5], 0.1, "matrix.5");
 		}
 
 		[Test]
@@ -643,6 +685,98 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		{
 			LinearGradientBrush lgb = new LinearGradientBrush (pt1, pt2, c1, c2);
 			lgb.TranslateTransform (1, 1, (MatrixOrder) Int32.MinValue);
+		}
+
+		[Test]
+		public void Transform_Operations ()
+		{
+			LinearGradientBrush lgb = new LinearGradientBrush (rect, c1, c2, 45f);
+			Matrix clone = lgb.Transform.Clone ();
+			Matrix mul = clone.Clone ();
+
+			clone.Multiply (mul, MatrixOrder.Append);
+			lgb.MultiplyTransform (mul, MatrixOrder.Append);
+			Assert.AreEqual (lgb.Transform, clone, "Multiply/Append");
+
+			clone.Multiply (mul, MatrixOrder.Prepend);
+			lgb.MultiplyTransform (mul, MatrixOrder.Prepend);
+			Assert.AreEqual (lgb.Transform, clone, "Multiply/Prepend");
+
+			clone.Rotate (45, MatrixOrder.Append);
+			lgb.RotateTransform (45, MatrixOrder.Append);
+			Assert.AreEqual (lgb.Transform, clone, "Rotate/Append");
+
+			clone.Rotate (45, MatrixOrder.Prepend);
+			lgb.RotateTransform (45, MatrixOrder.Prepend);
+			Assert.AreEqual (lgb.Transform, clone, "Rotate/Prepend");
+
+			clone.Scale (0.25f, 2, MatrixOrder.Append);
+			lgb.ScaleTransform (0.25f, 2, MatrixOrder.Append);
+			Assert.AreEqual (lgb.Transform, clone, "Scale/Append");
+
+			clone.Scale (0.25f, 2, MatrixOrder.Prepend);
+			lgb.ScaleTransform (0.25f, 2, MatrixOrder.Prepend);
+			Assert.AreEqual (lgb.Transform, clone, "Scale/Prepend");
+
+			clone.Translate (10, 20, MatrixOrder.Append);
+			lgb.TranslateTransform (10, 20, MatrixOrder.Append);
+			Assert.AreEqual (lgb.Transform, clone, "Translate/Append");
+
+			clone.Translate (30, 40, MatrixOrder.Prepend);
+			lgb.TranslateTransform (30, 40, MatrixOrder.Prepend);
+			Assert.AreEqual (lgb.Transform, clone, "Translate/Prepend");
+
+			clone.Reset ();
+			lgb.ResetTransform ();
+			Assert.AreEqual (lgb.Transform, clone, "Reset");
+		}
+
+		[Test]
+		public void Transform_Operations_OnScalableAngle ()
+		{
+			LinearGradientBrush lgb = new LinearGradientBrush (rect, c1, c2, 360f, true);
+			Matrix clone = lgb.Transform.Clone ();
+			Matrix mul = clone.Clone ();
+			Matrix m = new Matrix ();
+			m.Scale (2, 1);
+			m.Translate (rect.Width, rect.Height);
+			m.Rotate (30f);
+
+			clone.Multiply (mul, MatrixOrder.Append);
+			lgb.MultiplyTransform (mul, MatrixOrder.Append);
+			Assert.AreEqual (lgb.Transform, clone, "Multiply/Append");
+
+			clone.Multiply (mul, MatrixOrder.Prepend);
+			lgb.MultiplyTransform (mul, MatrixOrder.Prepend);
+			Assert.AreEqual (lgb.Transform, clone, "Multiply/Prepend");
+
+			clone.Rotate (45, MatrixOrder.Append);
+			lgb.RotateTransform (45, MatrixOrder.Append);
+			Assert.AreEqual (lgb.Transform, clone, "Rotate/Append");
+
+			clone.Rotate (45, MatrixOrder.Prepend);
+			lgb.RotateTransform (45, MatrixOrder.Prepend);
+			Assert.AreEqual (lgb.Transform, clone, "Rotate/Prepend");
+
+			clone.Scale (0.25f, 2, MatrixOrder.Append);
+			lgb.ScaleTransform (0.25f, 2, MatrixOrder.Append);
+			Assert.AreEqual (lgb.Transform, clone, "Scale/Append");
+
+			clone.Scale (0.25f, 2, MatrixOrder.Prepend);
+			lgb.ScaleTransform (0.25f, 2, MatrixOrder.Prepend);
+			Assert.AreEqual (lgb.Transform, clone, "Scale/Prepend");
+
+			clone.Translate (10, 20, MatrixOrder.Append);
+			lgb.TranslateTransform (10, 20, MatrixOrder.Append);
+			Assert.AreEqual (lgb.Transform, clone, "Translate/Append");
+
+			clone.Translate (30, 40, MatrixOrder.Prepend);
+			lgb.TranslateTransform (30, 40, MatrixOrder.Prepend);
+			Assert.AreEqual (lgb.Transform, clone, "Translate/Prepend");
+
+			clone.Reset ();
+			lgb.ResetTransform ();
+			Assert.AreEqual (lgb.Transform, clone, "Reset");
 		}
 	}
 }
