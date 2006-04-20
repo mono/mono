@@ -671,10 +671,13 @@ namespace System.Web.UI.WebControls
 		public string SkipLinkText 
 		{
 			get {
-				throw new NotImplementedException ();
+				object o = ViewState ["SkipLinkText"];
+				if (o != null)
+					return (string) o;
+				return String.Empty;
 			}
 			set {
-				throw new NotImplementedException ();
+				ViewState ["SkipLinkText"] = value;
 			}
 		}
 		
@@ -760,6 +763,10 @@ namespace System.Web.UI.WebControls
 		
 		protected internal virtual void RaisePostBackEvent (string eventArgument)
 		{
+			if (!Enabled)
+				return;
+
+			EnsureChildControls();
 			MenuItem item = FindItemByPos (eventArgument);
 			if (item == null) return;
 			item.Selected = true;
@@ -917,7 +924,8 @@ namespace System.Web.UI.WebControls
 		
 		protected internal override void CreateChildControls ()
 		{
-			base.CreateChildControls ();
+			Controls.Clear ();
+			EnsureDataBound ();
 		}
 		
 		protected override void EnsureDataBound ()
@@ -955,7 +963,7 @@ namespace System.Web.UI.WebControls
 		[MonoTODO]
 		protected override void OnDataBinding (EventArgs e)
 		{
-			throw new NotImplementedException ();
+			base.OnDataBinding (e);
 		}
 		
 		protected internal override void OnPreRender (EventArgs e)

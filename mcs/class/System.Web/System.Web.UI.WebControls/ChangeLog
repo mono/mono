@@ -1,3 +1,14 @@
+2006-04-20  Konstantin Triger  <kostat@mainsoft.com>
+
+	* MenuItem.cs: when binding to IHierarchyData, check whether 
+		it implements INavigateUIData and retrieve NavigateUrl.
+	* CompositeDataBoundControl.cs: ensures data is bound before creating child controls.
+	* Menu.cs:
+		Enable DataBinding by not throwing NotImplementedException in OnDataBound event. 
+		Provide basic CreateChildControls implementation by ensuring the control is bound. 
+		Ensure the child controls are created when the postback event is raised. 
+		Provide default implementation for SkipLinkText to let the default functionality to work.
+
 2006-04-11  Lluis Sanchez  <lluis@novell.com>
 
 	* TreeNodeBinding.cs: Added HasPropertyValue property

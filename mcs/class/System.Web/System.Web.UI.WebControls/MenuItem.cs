@@ -532,6 +532,9 @@ namespace System.Web.UI.WebControls
 			dataBound = true;
 			dataPath = hierarchyData.Path;
 			dataItem = hierarchyData.Item;
+			INavigateUIData navigateUIData = hierarchyData as INavigateUIData;
+			if (navigateUIData != null)
+				NavigateUrl = navigateUIData.NavigateUrl;
 		}
 		
 		internal void SetDataItem (object item)

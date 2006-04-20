@@ -53,10 +53,13 @@ namespace System.Web.UI.WebControls
 		{
 			base.CreateChildControls ();
 
-			if (Page.IsPostBack) {
-				object[] data = new object [(int)ViewState ["_ItemCount"]];
+			object itemCount = ViewState ["_ItemCount"];
+			if (itemCount != null) {
+				object [] data = new object [(int) itemCount];
 				ViewState ["_ItemCount"] = CreateChildControls (data, false);
 			}
+			else
+				EnsureDataBound ();
 		}
 		
 		protected internal override void PerformDataBinding (IEnumerable data)
