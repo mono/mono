@@ -660,7 +660,6 @@ namespace System.Windows.Forms
 		#region CheckedListBox
 		// Drawing		
 		public abstract void DrawCheckedListBoxItem (CheckedListBox ctrl, DrawItemEventArgs e);
-		public abstract Rectangle CheckedListBoxCheckRectangle ();
 		#endregion // CheckedListBox
 		
 		#region ComboBox

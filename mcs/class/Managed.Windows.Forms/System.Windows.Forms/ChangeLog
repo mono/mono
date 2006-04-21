@@ -1,3 +1,21 @@
+2006-04-21  Mike Kestner  <mkestner@novell.com>
+
+	* CheckedListBox.cs: maintain CheckStatus here. Use DrawItemState to
+	pass Checked and Indeterminate to the Theme Engine. Improve
+	encapsulation with ListBox.
+	* ListBox.cs: Keep a StringFormat instead of calculating it every item
+	draw. Kill ListBoxItem. Refactor away the ListBoxInfo and ListBoxItem
+	nested types.  Move all CheckState functionality to CheckedListBox.
+	Make IntegralHeight work like MS.  Rewrite of Layout engine.  Fix
+	OwnerDrawVariable layout/rendering.  Fix multicolumn rendering.  Fix
+	ScrollAlwaysVisible handling. Refactor "selected" collections to use a
+	single base list. Fix scrollbar sizing and placement to mirror MS.
+	* Theme.cs: remove CheckedListBoxCheckRectangle. It wasn't really
+	used.
+	* ThemeWin32Classic.cs: implement Indeterminate CheckState rendering
+	for CheckedListBox by using new DrawItemState info.  Center the
+	checkboxes on the items. Use new StringFormat property.
+
 2006-04-18  Jackson Harper  <jackson@ximian.com>
 
 	* Form.cs: MdiChildren don't do default locations the same way as

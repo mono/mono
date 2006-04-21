@@ -17,10 +17,11 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004-2005 Novell, Inc.
+// Copyright (c) 2004-2006 Novell, Inc.
 //
 // Authors:
 //	Jordi Mas i Hernandez, jordi@ximian.com
+//	Mike Kestner  <mkestner@novell.com>
 //
 //
 
@@ -39,17 +40,14 @@ namespace System.Windows.Forms
 	{
 		private CheckedIndexCollection checked_indices;
 		private CheckedItemCollection checked_items;
-		private bool check_onclick;
-		private bool three_dcheckboxes;
+		private Hashtable check_states = new Hashtable ();
+		private bool check_onclick = false;
+		private bool three_dcheckboxes = false;
 		
 		public CheckedListBox ()
 		{
-			items = new CheckedListBox.ObjectCollection (this);
 			checked_indices = new CheckedIndexCollection (this);
 			checked_items = new CheckedItemCollection (this);
-			check_onclick = false;
-			three_dcheckboxes = false;
-			listbox_info.item_height = FontHeight + 2;
 			SetStyle (ControlStyles.ResizeRedraw, true);
 		}
 
@@ -127,6 +125,7 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		public new object DataSource {
 			get { return base.DataSource; }
+			// FIXME: docs say you can't use a DataSource with this subclass
 			set { base.DataSource = value; }
 		}
 
@@ -142,15 +141,15 @@ namespace System.Windows.Forms
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override DrawMode DrawMode {
 			get { return DrawMode.Normal; }
-			set { /* Not possible */ }
+			set { /* Not an exception, but has no effect. */ }
 		}
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override int ItemHeight {
-			get { return listbox_info.item_height; }
-			set { /* Not possible */ }
+			get { return base.ItemHeight; }
+			set { /* Not an exception, but has no effect. */ }
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
@@ -205,7 +204,7 @@ namespace System.Windows.Forms
 
 		public bool GetItemChecked (int index)
 		{
-			return (GetItemCheckState (index) != CheckState.Unchecked);
+			return check_states.Contains (Items [index]);
 		}
 		
 		public CheckState GetItemCheckState (int index)
@@ -213,7 +212,11 @@ namespace System.Windows.Forms
 			if (index < 0 || index >= Items.Count)
 				throw new ArgumentOutOfRangeException ("Index of out range");
 
-			return (Items.GetListBoxItem (index)).State;
+			object o = Items [index];
+			if (check_states.Contains (o))
+				return (CheckState) check_states [o];
+			else
+				return CheckState.Unchecked;
 		}
 
 		protected override void OnBackColorChanged (EventArgs e)
@@ -228,6 +231,12 @@ namespace System.Windows.Forms
 		
 		protected override void OnDrawItem (DrawItemEventArgs e)
 		{
+			if (check_states.Contains (Items [e.Index])) {
+				DrawItemState state = e.State | DrawItemState.Checked;
+				if (((CheckState) check_states [Items [e.Index]]) == CheckState.Indeterminate)
+					state |= DrawItemState.Inactive;
+				e = new DrawItemEventArgs (e.Graphics, e.Font, e.Bounds, e.Index, state, e.ForeColor, e.BackColor);
+			}
 			ThemeEngine.Current.DrawCheckedListBoxItem (this, e);
 		}
 
@@ -251,11 +260,8 @@ namespace System.Windows.Forms
 		{
 			base.OnKeyPress (e);
 			
-			if (e.KeyChar == ' ') { // Space should check focused item				
-				if (focused_item != -1) {
-					SetItemChecked (focused_item, !GetItemChecked (focused_item));
-				}
-			}
+			if (e.KeyChar == ' ' && FocusedItem != -1)
+				SetItemChecked (FocusedItem, !GetItemChecked (FocusedItem));
 		}
 
 		protected override void OnMeasureItem (MeasureItemEventArgs e)
@@ -281,33 +287,28 @@ namespace System.Windows.Forms
 			if (!Enum.IsDefined (typeof (CheckState), value))
 				throw new InvalidEnumArgumentException (string.Format("Enum argument value '{0}' is not valid for CheckState", value));
 
-			CheckState old_value = (Items.GetListBoxItem (index)).State;
+			CheckState old_value = GetItemCheckState (index);
 			
 			if (old_value == value)
 				return;
 			
-			(Items.GetListBoxItem (index)).State = value;
-
-			Rectangle invalidate = GetItemDisplayRectangle (index, LBoxInfo.top_item);
-
-			switch (value) {
-				case CheckState.Checked:
-					checked_indices.AddIndex (index);
-    					checked_items.AddObject (Items[index]);
-    					break;
-				case CheckState.Unchecked:
-					checked_indices.RemoveIndex (index);
-					checked_items.RemoveObject (Items[index]);
-					break;
-				case CheckState.Indeterminate:
-				default:
-					break;
-			}
-
     			OnItemCheck (new ItemCheckEventArgs (index, value, old_value));
 
-    			if (ClientRectangle.Contains (invalidate))
-    				Invalidate (invalidate);
+			switch (value) {
+			case CheckState.Checked:
+			case CheckState.Indeterminate:
+    				check_states [Items[index]] = value;
+    				break;
+			case CheckState.Unchecked:
+				check_states.Remove (Items[index]);
+				break;
+			default:
+				break;
+			}
+
+			UpdateCollections ();
+
+    			InvalidateItem (index);
 		}
 
 		protected override void WmReflectCommand (ref Message m)
@@ -324,52 +325,26 @@ namespace System.Windows.Forms
 
 		#region Private Methods
 
-		internal override void OnMouseDownLB (object sender, MouseEventArgs e)
+		internal override void OnItemClick (int index)
 		{			
-			Rectangle hit_rect;
-			CheckState value =  CheckState.Checked;
-			bool set_value = false;
-			int index = IndexFromPointDisplayRectangle (e.X, e.Y);
-
-			if (e.Button == MouseButtons.Left) {
-				OnClick (e);
-			}	
-
-			if (index == -1)
-				return;
+			if (GetItemChecked (index))
+				SetItemCheckState (index, CheckState.Unchecked);
+			else if (CheckOnClick || SelectedIndices.Contains (index))
+				SetItemCheckState (index, CheckState.Checked);
 			
-			/* CheckBox hit */
-			hit_rect = GetItemDisplayRectangle (index, LBoxInfo.top_item); // Full item rect
-			hit_rect.X += ThemeEngine.Current.CheckedListBoxCheckRectangle().X;
-			hit_rect.Y += ThemeEngine.Current.CheckedListBoxCheckRectangle().Y;
-			hit_rect.Width = ThemeEngine.Current.CheckedListBoxCheckRectangle().Width;
-			hit_rect.Height = ThemeEngine.Current.CheckedListBoxCheckRectangle().Height;
-			
-			if ((Items.GetListBoxItem (index)).State == CheckState.Checked) { //From checked to unchecked
-				value = CheckState.Unchecked;
-				set_value = true;
-			} else {
-				
-				if (check_onclick) {
-					set_value = true;
-				} else {
-					if ((Items.GetListBoxItem (index)).Selected == true)
-						set_value = true;
-				}
-			}
-
-			if (set_value)
-				SetItemCheckState (index, value);
-			
-			SelectedItemFromNavigation (index);
-			SetFocusedItem (index);
+			base.OnItemClick (index);
 		}
 
-		internal override void UpdateItemInfo (UpdateOperation operation, int first, int last)
+		internal override void CollectionChanged ()
 		{
-			base.UpdateItemInfo (operation, first, last);
-			CheckedItems.ReCreate ();
-			CheckedIndices.ReCreate ();
+			base.CollectionChanged ();
+			UpdateCollections ();
+		}
+
+		private void UpdateCollections ()
+		{
+			CheckedItems.Refresh ();
+			CheckedIndices.Refresh ();
 		}
 
 		#endregion Private Methods
@@ -383,32 +358,22 @@ namespace System.Windows.Forms
 				this.owner = owner;				
 			}
 
-			public int Add (object item,  bool isChecked)
+			public int Add (object item, bool isChecked)
 			{
-				if (isChecked)
-					return Add (item, CheckState.Checked);
-				
-				return Add (item, CheckState.Unchecked);
-					
+				return Add (item, isChecked ? CheckState.Checked : CheckState.Unchecked);
 			}
 			
 			public int Add (object item, CheckState check)
 			{
-				int cnt = object_items.Count;
-				ListBox.ListBoxItem box_item = new ListBox.ListBoxItem (cnt);
-				box_item.State = check;
-				object_items.Add (item);
-				listbox_items.Add (box_item);
+				Add (item);
+				if (check != CheckState.Unchecked)
+					owner.check_states [item] = check;
 				if (check == CheckState.Checked)
-					owner.OnItemCheck (new ItemCheckEventArgs (cnt, check, CheckState.Unchecked));
-				owner.UpdateItemInfo (UpdateOperation.AddItems, cnt, cnt);
-				return cnt;
+					owner.OnItemCheck (new ItemCheckEventArgs (Count, check, CheckState.Unchecked));
+				return Count;
 			}
 		}
 
-		/*
-			CheckedListBox.CheckedIndexCollection
-		*/
 		public class CheckedIndexCollection : IList, ICollection, IEnumerable
 		{
 			private CheckedListBox owner;
@@ -514,44 +479,21 @@ namespace System.Windows.Forms
 			}
 
 			#region Private Methods
-
-			internal void AddIndex (int index)
-			{
-				indices.Add (index);
-			}
-
-			internal void ClearIndices ()
+			internal void Refresh ()
 			{
 				indices.Clear ();
+				for (int i = 0; i < owner.Items.Count; i++)
+					if (owner.check_states.Contains (owner.Items [i]))
+						indices.Add (i);
 			}
-
-			internal void RemoveIndex (int index)
-			{
-				indices.Remove (index);
-			}
-
-			internal void ReCreate ()
-			{
-				indices.Clear ();
-
-				for (int i = 0; i < owner.Items.Count; i++) {
-					ListBox.ListBoxItem item = owner.Items.GetListBoxItem (i);
-
-					if (item.State == CheckState.Checked)
-						indices.Add (item.Index);
-				}
-			}
-
 			#endregion Private Methods
+
 		}
 
-		/*
-			CheckedItemCollection
-		*/
 		public class CheckedItemCollection : IList, ICollection, IEnumerable
 		{
 			private CheckedListBox owner;
-			private ArrayList object_items = new ArrayList ();
+			private ArrayList list = new ArrayList ();
 
 			internal CheckedItemCollection (CheckedListBox owner)
 			{
@@ -560,7 +502,7 @@ namespace System.Windows.Forms
 
 			#region Public Properties
 			public int Count {
-				get { return object_items.Count; }
+				get { return list.Count; }
 			}
 
 			public bool IsReadOnly {
@@ -574,7 +516,7 @@ namespace System.Windows.Forms
 					if (index < 0 || index >= Count)
 						throw new ArgumentOutOfRangeException ("Index of out range");
 
-					return object_items[index];
+					return list[index];
 				}
 				set {throw new NotSupportedException ();}
 			}
@@ -596,12 +538,12 @@ namespace System.Windows.Forms
 			#region Public Methods
 			public bool Contains (object selectedObject)
 			{
-				return object_items.Contains (selectedObject);
+				return list.Contains (selectedObject);
 			}
 
 			public void CopyTo (Array dest, int index)
 			{
-				object_items.CopyTo (dest, index);
+				list.CopyTo (dest, index);
 			}
 
 			int IList.Add (object value)
@@ -631,42 +573,23 @@ namespace System.Windows.Forms
 	
 			public int IndexOf (object item)
 			{
-				return object_items.IndexOf (item);
+				return list.IndexOf (item);
 			}
 
 			public IEnumerator GetEnumerator ()
 			{
-				return object_items.GetEnumerator ();
+				return list.GetEnumerator ();
 			}
 
 			#endregion Public Methods
 
 			#region Private Methods
-			internal void AddObject (object obj)
+			internal void Refresh ()
 			{
-				object_items.Add (obj);
-			}
-
-			internal void ClearObjects ()
-			{
-				object_items.Clear ();
-			}
-
-			internal void ReCreate ()
-			{
-				object_items.Clear ();
-
-				for (int i = 0; i < owner.Items.Count; i++) {
-					ListBox.ListBoxItem item = owner.Items.GetListBoxItem (i);
-
-					if (item.State == CheckState.Checked)
-						object_items.Add (owner.Items[item.Index]);
-				}
-			}
-
-			internal void RemoveObject (object obj)
-			{
-				object_items.Remove (obj);
+				list.Clear ();
+				for (int i = 0; i < owner.Items.Count; i++)
+					if (owner.check_states.Contains (owner.Items [i]))
+						list.Add (owner.Items[i]);
 			}
 			#endregion Private Methods
 		}

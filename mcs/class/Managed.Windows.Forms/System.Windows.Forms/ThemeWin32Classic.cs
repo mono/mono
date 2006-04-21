@@ -51,7 +51,6 @@ namespace System.Windows.Forms
 		protected static StringFormat string_format_menu_text;
 		protected static StringFormat string_format_menu_shortcut;
 		protected static StringFormat string_format_menu_menubar_text;
-		static readonly Rectangle checkbox_rect = new Rectangle (2, 2, 11,11); // Position of the checkbox relative to the item
 		static ImageAttributes imagedisabled_attributes = null;
 		const int SEPARATOR_HEIGHT = 5;
 		const int SM_CXBORDER = 1;
@@ -715,28 +714,25 @@ namespace System.Windows.Forms
 		
 		#region CheckedListBox
 		
-		public override Rectangle CheckedListBoxCheckRectangle ()
-		{
-			return checkbox_rect;
-		}
-		
 		public override void DrawCheckedListBoxItem (CheckedListBox ctrl, DrawItemEventArgs e)
 		{			
 			Color back_color, fore_color;
 			Rectangle item_rect = e.Bounds;
 			ButtonState state;
-			StringFormat string_format = ctrl.GetFormatString ();
 
 			/* Draw checkbox */		
 
-			if ((ctrl.Items.GetListBoxItem (e.Index)).State == CheckState.Checked)
+			if ((e.State & DrawItemState.Checked) == DrawItemState.Checked) {
 				state = ButtonState.Checked;
-			else
+				if ((e.State & DrawItemState.Inactive) == DrawItemState.Inactive)
+					state |= ButtonState.Inactive;
+			} else
 				state = ButtonState.Normal;
 
 			if (ctrl.ThreeDCheckBoxes == false)
 				state |= ButtonState.Flat;
 
+			Rectangle checkbox_rect = new Rectangle (2, (item_rect.Height - 11) / 2, 11, 11);
 			ControlPaint.DrawCheckBox (e.Graphics,
 				item_rect.X + checkbox_rect.X, item_rect.Y + checkbox_rect.Y,
 				checkbox_rect.Width, checkbox_rect.Height,
@@ -760,7 +756,7 @@ namespace System.Windows.Forms
 
 			e.Graphics.DrawString (ctrl.GetItemText (ctrl.Items[e.Index]), e.Font,
 				ResPool.GetSolidBrush (fore_color),
-				item_rect, string_format);
+				item_rect, ctrl.StringFormat);
 					
 			if ((e.State & DrawItemState.Focus) == DrawItemState.Focus) {
 				CPDrawFocusRectangle (e.Graphics, item_rect,
@@ -1280,32 +1276,26 @@ namespace System.Windows.Forms
 		#endregion	// LinkLabel
 		#region ListBox
 
-		// Sizing				
 		public override void DrawListBoxItem (ListBox ctrl, DrawItemEventArgs e)
 		{
 			Color back_color, fore_color;
-			StringFormat string_format = ctrl.GetFormatString ();
 			
 			if ((e.State & DrawItemState.Selected) == DrawItemState.Selected) {
 				back_color = ColorHighlight;
 				fore_color = ColorHighlightText;
-			}
-			else {
+			} else {
 				back_color = e.BackColor;
 				fore_color = e.ForeColor;
 			}
 
-			e.Graphics.FillRectangle (ResPool.GetSolidBrush
-				(back_color), e.Bounds);
+			e.Graphics.FillRectangle (ResPool.GetSolidBrush (back_color), e.Bounds);
 
 			e.Graphics.DrawString (ctrl.GetItemText (ctrl.Items[e.Index]), e.Font,
-				ResPool.GetSolidBrush (fore_color),
-				e.Bounds.X, e.Bounds.Y, string_format);
+					       ResPool.GetSolidBrush (fore_color),
+					       e.Bounds.X, e.Bounds.Y, ctrl.StringFormat);
 					
-			if ((e.State & DrawItemState.Focus) == DrawItemState.Focus) {
-				CPDrawFocusRectangle (e.Graphics, e.Bounds,
-					fore_color, back_color);
-			}
+			if ((e.State & DrawItemState.Focus) == DrawItemState.Focus)
+				CPDrawFocusRectangle (e.Graphics, e.Bounds, fore_color, back_color);
 		}
 		
 		#endregion ListBox

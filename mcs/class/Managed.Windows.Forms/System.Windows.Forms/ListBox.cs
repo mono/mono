@@ -17,10 +17,11 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004-2005 Novell, Inc.
+// Copyright (c) 2004-2006 Novell, Inc.
 //
 // Authors:
 //	Jordi Mas i Hernandez, jordi@ximian.com
+//	Mike Kestner  <mkestner@novell.com>
 //
 
 // COMPLETE
@@ -44,53 +45,6 @@ namespace System.Windows.Forms
 		public const int DefaultItemHeight = 13;
 		public const int NoMatches = -1;
 		
-		internal class ListBoxInfo
-		{
-			internal int item_height; 		/* Item's height */
-			internal int top_item;			/* First item that we show the in the current page */
-			internal int last_item;			/* Last visible item */
-			internal int page_size;			/* Number of listbox items per page. In MultiColumn listbox indicates items per column */
-			internal Rectangle textdrawing_rect;	/* Displayable Client Rectangle minus the scrollbars and with IntegralHeight calculated*/
-			internal bool show_verticalsb;		/* Is Vertical scrollbar show it? */
-			internal bool show_horizontalsb;	/* Is Horizontal scrollbar show it? */
-			internal Rectangle client_rect;		/* Client Rectangle. Usually = ClientRectangle except when IntegralHeight has been applied*/
-			internal int max_itemwidth;		/* Maxium item width within the listbox */
-
-			public ListBoxInfo ()
-			{
-				last_item = 0;
-				item_height = 0;
-				top_item = 0;
-				page_size = 0;
-				max_itemwidth = 0;
-				show_verticalsb = false;
-				show_horizontalsb = false;
-			}
-		}
-
-		internal class ListBoxItem
-		{
-			internal int Index;
-			internal bool Selected;
-			internal int ItemHeight;		/* Only used for OwnerDrawVariable */
-			internal CheckState State;
-
-			public ListBoxItem (int index)
-			{
-				Index = index;
-				Selected = false;
-				ItemHeight = -1;
-				State = CheckState.Unchecked;
-			}
-			
-			public void CopyState (ListBoxItem src)
-			{				
-				Selected = src.Selected;
-				ItemHeight = src.ItemHeight;
-				State = src.State;
-			}
-		}
-
 		internal enum ItemNavigation
 		{
 			First,
@@ -103,84 +57,64 @@ namespace System.Windows.Forms
 			NextColumn
 		}
 		
-		internal enum UpdateOperation
-		{
-			AddItems,
-			DeleteItems,
-			AllItems
-		}
-
-		private int column_width;
-		private DrawMode draw_mode;
-		private int horizontal_extent;
-		private bool horizontal_scrollbar;
-		private bool integral_height;
-		private bool multicolumn;
-		private bool scroll_always_visible;
-		private int selected_index;		
+		Hashtable item_heights;
+		private int item_height = -1;
+		private int column_width = 0;
+		private int requested_height = -1;
+		private DrawMode draw_mode = DrawMode.Normal;
+		private int horizontal_extent = 0;
+		private bool horizontal_scrollbar = false;
+		private bool integral_height = true;
+		private bool multicolumn = false;
+		private bool scroll_always_visible = false;
+		private int selected_index = -1;		
 		private SelectedIndexCollection selected_indices;		
 		private SelectedObjectCollection selected_items;
-		private SelectionMode selection_mode;
-		private bool sorted;
-		private bool use_tabstops;
-		private int column_width_internal;
-		private ImplicitVScrollBar vscrollbar_ctrl;
-		private ImplicitHScrollBar hscrollbar_ctrl;
-		private bool suspend_ctrlupdate;
-		private bool ctrl_pressed;
-		private bool shift_pressed;
-		private bool has_focus;
-		private bool use_item_height;
-		
-		internal int focused_item;		
-		internal ListBoxInfo listbox_info;
-		internal ObjectCollection items;
+		private ArrayList selection = new ArrayList ();
+		private SelectionMode selection_mode = SelectionMode.One;
+		private bool sorted = false;
+		private bool use_tabstops = true;
+		private int column_width_internal = 120;
+		private ImplicitVScrollBar vscrollbar;
+		private ImplicitHScrollBar hscrollbar;
+		private bool suspend_layout;
+		private bool ctrl_pressed = false;
+		private bool shift_pressed = false;
+		private bool has_focus = false;
+		private bool explicit_item_height = false;
+		private int top_index = 0;
+		private int last_visible_index = 0;
+		private Rectangle bounds;
+		private Rectangle items_area;
+		private int focused_item = -1;		
+		private ObjectCollection items;
 
 		public ListBox ()
 		{
 			border_style = BorderStyle.Fixed3D;			
-			draw_mode = DrawMode.Normal;
-			horizontal_extent = 0;
-			horizontal_scrollbar = false;
-			integral_height = true;
-			multicolumn = false;
-			scroll_always_visible = false;
-			selected_index = -1;
-			focused_item = -1;
-			selection_mode = SelectionMode.One;
-			sorted = false;
-			use_tabstops = true;
 			BackColor = ThemeEngine.Current.ColorWindow;
-			ColumnWidth = 0;
-			suspend_ctrlupdate = false;
-			ctrl_pressed = false;
-			shift_pressed = false;
-			has_focus = false;
-			use_item_height = false;
 
-			items = new ObjectCollection (this);
+			items = CreateItemCollection ();
 			selected_indices = new SelectedIndexCollection (this);
 			selected_items = new SelectedObjectCollection (this);
-			listbox_info = new ListBoxInfo ();			
-			listbox_info.item_height = FontHeight;
 
 			/* Vertical scrollbar */
-			vscrollbar_ctrl = new ImplicitVScrollBar ();
-			vscrollbar_ctrl.Minimum = 0;
-			vscrollbar_ctrl.SmallChange = 1;
-			vscrollbar_ctrl.LargeChange = 1;
-			vscrollbar_ctrl.Maximum = 0;
-			vscrollbar_ctrl.ValueChanged += new EventHandler (VerticalScrollEvent);
-			vscrollbar_ctrl.Visible = false;
+			vscrollbar = new ImplicitVScrollBar ();
+			vscrollbar.Minimum = 0;
+			vscrollbar.SmallChange = 1;
+			vscrollbar.LargeChange = 1;
+			vscrollbar.Maximum = 0;
+			vscrollbar.ValueChanged += new EventHandler (VerticalScrollEvent);
+			vscrollbar.Visible = false;
 
 			/* Horizontal scrollbar */
-			hscrollbar_ctrl = new ImplicitHScrollBar ();
-			hscrollbar_ctrl.Minimum = 0;
-			hscrollbar_ctrl.SmallChange = 1;
-			hscrollbar_ctrl.LargeChange = 1;
-			hscrollbar_ctrl.Maximum = 0;
-			hscrollbar_ctrl.Visible = false;
-			hscrollbar_ctrl.ValueChanged += new EventHandler (HorizontalScrollEvent);
+			hscrollbar = new ImplicitHScrollBar ();
+			hscrollbar.Minimum = 0;
+			hscrollbar.SmallChange = 1;
+			hscrollbar.LargeChange = 1;
+			hscrollbar.Maximum = 0;
+			hscrollbar.Visible = false;
+			hscrollbar.ValueChanged += new EventHandler (HorizontalScrollEvent);
 
 			/* Events */
 			MouseDown += new MouseEventHandler (OnMouseDownLB);
@@ -253,7 +187,11 @@ namespace System.Windows.Forms
 		[DispId(-504)]
 		public BorderStyle BorderStyle {
 			get { return InternalBorderStyle; }
-			set { InternalBorderStyle = value; }
+			set { 
+				InternalBorderStyle = value; 
+				if (requested_height != -1)
+					SetBoundsCore (0, 0, 0, requested_height, BoundsSpecified.Height);
+			}
 		}
 
 		[DefaultValue (0)]
@@ -299,6 +237,12 @@ namespace System.Windows.Forms
 					return;
 
     				draw_mode = value;
+
+				if (draw_mode == DrawMode.OwnerDrawVariable)
+					item_heights = new Hashtable ();
+				else
+					item_heights = null;
+
 				base.Refresh ();
     			}
 		}
@@ -337,7 +281,7 @@ namespace System.Windows.Forms
 					return;
 
     				horizontal_scrollbar = value;
-    				UpdateShowHorizontalScrollBar ();
+    				UpdateScrollBars ();
 				base.Refresh ();
 			}
 		}
@@ -352,7 +296,9 @@ namespace System.Windows.Forms
 					return;
 
     				integral_height = value;
-				CalcClientArea ();
+				if (!integral_height && requested_height != -1)
+					Height = requested_height;
+				UpdateBounds ();
 			}
 		}
 
@@ -361,20 +307,26 @@ namespace System.Windows.Forms
 		[RefreshProperties(RefreshProperties.Repaint)]
 		public virtual int ItemHeight {
 			get {
-				if (draw_mode == DrawMode.Normal)
-					return FontHeight;
-				return listbox_info.item_height;
+				if (item_height == -1) {
+					SizeF sz = DeviceContext.MeasureString ("The quick brown Fox", Font);
+					item_height = (int) sz.Height;
+				}
+				return item_height;
 			}
 			set {
 				if (value > 255)
 					throw new ArgumentOutOfRangeException ("The ItemHeight property was set beyond 255 pixels");
 
-				if (listbox_info.item_height == value)
+				explicit_item_height = true;
+				if (item_height == value)
 					return;
 
-				listbox_info.item_height = value;
-				use_item_height = true;
-				CalcClientArea ();
+				item_height = value;
+				Layout ();
+				if (IntegralHeight)
+					UpdateBounds ();
+				else
+					UpdateScrollBars ();
 			}
 		}
 
@@ -396,12 +348,7 @@ namespace System.Windows.Forms
 					throw new ArgumentException ("A multicolumn ListBox cannot have a variable-sized height.");
 					
     				multicolumn = value;
-    				
-    				if (IsHandleCreated) {
-    					RellocateScrollBars ();
-					CalcClientArea ();
-    					UpdateItemInfo (UpdateOperation.AllItems, 0, 0);
-    				}
+				Layout ();
 			}
 		}
 
@@ -417,7 +364,7 @@ namespace System.Windows.Forms
 					itemsHeight = ItemHeight * items.Count;
 				else if (draw_mode == DrawMode.OwnerDrawVariable) {
 					for (int i = 0; i < items.Count; i++)
-						itemsHeight += items.GetListBoxItem (i).ItemHeight;
+						itemsHeight += (int) item_heights [Items [i]];
 				}
 				
 				return itemsHeight;
@@ -428,6 +375,10 @@ namespace System.Windows.Forms
 			get { return base.RightToLeft; }
 			set {
     				base.RightToLeft = value;    				
+				if (base.RightToLeft == RightToLeft.Yes)
+					StringFormat.Alignment = StringAlignment.Far;				
+				else
+					StringFormat.Alignment = StringAlignment.Near;				
 				base.Refresh ();
 			}
 		}
@@ -442,8 +393,7 @@ namespace System.Windows.Forms
 					return;
 
     				scroll_always_visible = value;
-				UpdateShowVerticalScrollBar ();
-				UpdateShowHorizontalScrollBar ();
+				UpdateScrollBars ();
 			}
 		}
 
@@ -467,7 +417,7 @@ namespace System.Windows.Forms
 
     				SelectItem (value);
     				selected_index = value;
-    				focused_item = value;
+    				FocusedItem = value;
     				OnSelectedIndexChanged  (new EventArgs ());
     				OnSelectedValueChanged (new EventArgs ());
 			}
@@ -490,15 +440,10 @@ namespace System.Windows.Forms
 					return null;
 			}
 			set {
-				
-				int index = Items.IndexOf (value);
-
-				if (index == -1)
-					return;
+				if (!Items.Contains (value))
+					return; // FIXME: this is probably an exception
 					
-				if (index != SelectedIndex) {
-					SelectedIndex = index;
-				}
+				SelectedIndex = Items.IndexOf (value);
 			}
 		}
 
@@ -520,23 +465,18 @@ namespace System.Windows.Forms
 					
 				selection_mode = value;
 					
-				if (SelectedItems.Count > 0) {
-					switch (selection_mode) {
-					case SelectionMode.None: 
-						ClearSelected ();
-						break;						
-					case SelectionMode.One: {
-						if (SelectedItems.Count > 1) { // All except one
-							int cnt = selected_indices.Count - 1;
-							for (int i = 0; i < cnt; i++) {
-								UnSelectItem (i, true);								
-							}
-						}
-					}
-						break;
-					default:
-						break;						
-					}
+				switch (selection_mode) {
+				case SelectionMode.None: 
+					ClearSelected ();
+					break;						
+
+				case SelectionMode.One:
+					while (SelectedIndices.Count > 1)
+						UnSelectItem (SelectedIndices [SelectedIndices.Count - 1], true);
+					break;
+
+				default:
+					break;						
 				}
     			}
 		}
@@ -586,16 +526,16 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int TopIndex {
-			get { return LBoxInfo.top_item; }
+			get { return top_index; }
 			set {
-				if (value == LBoxInfo.top_item)
+				if (value == top_index)
 					return;
 
 				if (value < 0 || value >= Items.Count)
 					return;
 
-				LBoxInfo.top_item = value;
-				UpdatedTopItem ();
+				top_index = value;
+				UpdateTopItem ();
 				base.Refresh ();
 			}
 		}
@@ -609,6 +549,10 @@ namespace System.Windows.Forms
 					return;
 
     				use_tabstops = value;    				
+				if (use_tabstops)
+					StringFormat.SetTabStops (0, new float [] {(float)(Font.Height * 3.7)});
+				else
+					StringFormat.SetTabStops (0, new float [0]);
 				base.Refresh ();
     			}
 		}
@@ -617,13 +561,16 @@ namespace System.Windows.Forms
 
 		#region Private Properties
 
-		internal ListBoxInfo LBoxInfo {
-			get { return listbox_info; }
-		}
-
 		private int ColumnWidthInternal {
 			get { return column_width_internal; }
 			set { column_width_internal = value; }
+		}
+
+		private int row_count = 1;
+		private int RowCount {
+			get {
+				return MultiColumn ? row_count : Items.Count;
+			}
 		}
 
 		#endregion Private Properties
@@ -636,7 +583,7 @@ namespace System.Windows.Forms
 
 		public void BeginUpdate ()
 		{
-			suspend_ctrlupdate = true;
+			suspend_layout = true;
 		}
 
 		public void ClearSelected ()
@@ -645,8 +592,7 @@ namespace System.Windows.Forms
 				UnSelectItem (i, false);
 			}
 
-			selected_indices.ClearIndices ();
-			selected_items.ClearObjects ();
+			selection.Clear ();
 		}
 
 		protected virtual ObjectCollection CreateItemCollection ()
@@ -656,8 +602,8 @@ namespace System.Windows.Forms
 
 		public void EndUpdate ()
 		{
-			suspend_ctrlupdate = false;
-			UpdateItemInfo (UpdateOperation.AllItems, 0, 0);
+			suspend_layout = false;
+			Layout ();
 			base.Refresh ();
 		}
 
@@ -712,13 +658,13 @@ namespace System.Windows.Forms
 				
 			if (DrawMode == DrawMode.OwnerDrawVariable && IsHandleCreated == true) {
 				
-				if ((Items.GetListBoxItem (index)).ItemHeight != -1) {
-					return (Items.GetListBoxItem (index)).ItemHeight;
-				}
+				object o = Items [index];
+				if (item_heights.Contains (o))
+					return (int) item_heights [o];
 				
 				MeasureItemEventArgs args = new MeasureItemEventArgs (DeviceContext, index, ItemHeight);
 				OnMeasureItem (args);
-				(Items.GetListBoxItem (index)).ItemHeight = args.ItemHeight;
+				item_heights [o] = args.ItemHeight;
 				return args.ItemHeight;
 			}
 
@@ -732,35 +678,31 @@ namespace System.Windows.Forms
 
 			Rectangle rect = new Rectangle ();
 
-			if (MultiColumn == false) {
-
+			if (MultiColumn) {
+				int col = index / RowCount;
+				rect.Y = ((index - top_index) % RowCount) * ItemHeight;
+				rect.X = col * ColumnWidthInternal;
+				rect.Height = ItemHeight;
+				rect.Width = ColumnWidthInternal;
+			} else {
 				rect.X = 0;				
 				rect.Height = GetItemHeight (index);
-				rect.Width = listbox_info.textdrawing_rect.Width;
+				rect.Width = items_area.Width;
 				
 				if (DrawMode == DrawMode.OwnerDrawVariable) {
 					rect.Y = 0;
-					if (index >= listbox_info.top_item) {
-						for (int i = listbox_info.top_item; i < index; i++) {
+					if (index >= top_index) {
+						for (int i = top_index; i < index; i++) {
 							rect.Y += GetItemHeight (i);
 						}
 					} else {
-						for (int i = index; i < listbox_info.top_item; i++) {
+						for (int i = index; i < top_index; i++) {
 							rect.Y -= GetItemHeight (i);
 						}
 					}
 				} else {
-					rect.Y = ItemHeight * (index - listbox_info.top_item);	
+					rect.Y = ItemHeight * (index - top_index);	
 				}				
-			}
-			else {
-				int which_page;
-
-				which_page = index / listbox_info.page_size;
-				rect.Y = ((index - listbox_info.top_item) % listbox_info.page_size) * ItemHeight;
-				rect.X = which_page * ColumnWidthInternal;
-				rect.Height = ItemHeight;
-				rect.Width = ColumnWidthInternal;
 			}
 
 			return rect;
@@ -771,7 +713,7 @@ namespace System.Windows.Forms
 			if (index < 0 || index >= Items.Count)
 				throw new ArgumentOutOfRangeException ("Index of out range");
 
-			return (Items.GetListBoxItem (index)).Selected;
+			return SelectedIndices.Contains (index);
 		}
 
 		public int IndexFromPoint (Point p)
@@ -787,7 +729,7 @@ namespace System.Windows.Forms
 				return -1;
 			}
 
-			for (int i = LBoxInfo.top_item; i <= LBoxInfo.last_item; i++) {
+			for (int i = top_index; i <= last_visible_index; i++) {
 				if (GetItemRectangle (i).Contains (x,y) == true)
 					return i;
 			}
@@ -826,24 +768,36 @@ namespace System.Windows.Forms
 
 		protected virtual void OnDrawItem (DrawItemEventArgs e)
 		{			
-			if (DrawItem != null && (DrawMode == DrawMode.OwnerDrawFixed || DrawMode == DrawMode.OwnerDrawVariable)) {
-				DrawItem (this, e);
-				return;
-			}
+			switch (DrawMode) {
+			case DrawMode.OwnerDrawFixed:
+			case DrawMode.OwnerDrawVariable:
+				if (DrawItem != null)
+					DrawItem (this, e);
+				break;
 
-			ThemeEngine.Current.DrawListBoxItem (this, e);
+			default:
+				ThemeEngine.Current.DrawListBoxItem (this, e);
+				break;
+			}
 		}
 
 		protected override void OnFontChanged (EventArgs e)
 		{
 			base.OnFontChanged (e);
-			if (!use_item_height) {
-				listbox_info.item_height = FontHeight;
-				RellocateScrollBars ();
-				CalcClientArea ();
-				UpdateItemInfo (UpdateOperation.AllItems, 0, 0);
-			} else {
+
+			if (use_tabstops)
+				StringFormat.SetTabStops (0, new float [] {(float)(Font.Height * 3.7)});
+
+			if (explicit_item_height) {
 				base.Refresh ();
+			} else {
+				SizeF sz = DeviceContext.MeasureString ("The quick brown Fox", Font);
+				item_height = (int) sz.Height;
+				Layout ();
+				if (IntegralHeight)
+					UpdateBounds ();
+				else
+					UpdateScrollBars ();
 			}
 		}
 
@@ -851,12 +805,11 @@ namespace System.Windows.Forms
 		{
 			base.OnHandleCreated (e);
 
-			UpdateInternalClientRect (ClientRectangle);
 			SuspendLayout ();
-			Controls.AddImplicit (vscrollbar_ctrl);
-			Controls.AddImplicit (hscrollbar_ctrl);
+			Controls.AddImplicit (vscrollbar);
+			Controls.AddImplicit (hscrollbar);
 			ResumeLayout ();
-			UpdateItemInfo (UpdateOperation.AllItems, 0, 0);
+			Layout ();
 		}
 
 		protected override void OnHandleDestroyed (EventArgs e)
@@ -881,7 +834,7 @@ namespace System.Windows.Forms
 		protected override void OnResize (EventArgs e)
 		{
 			base.OnResize (e);
-			UpdateInternalClientRect (ClientRectangle);
+			UpdateBounds ();
 		}
 
 		protected override void OnSelectedIndexChanged (EventArgs e)
@@ -899,11 +852,8 @@ namespace System.Windows.Forms
 
 		public override void Refresh ()
 		{
-			if (draw_mode == DrawMode.OwnerDrawVariable) {
-				for (int i = 0; i < Items.Count; i++)  {
-					(Items.GetListBoxItem (i)).ItemHeight = -1;
-				}
-			}
+			if (draw_mode == DrawMode.OwnerDrawVariable)
+				item_heights.Clear ();
 			
 			base.Refresh ();
 		}
@@ -913,13 +863,34 @@ namespace System.Windows.Forms
 			if (index < 0 || index >= Items.Count)
 				throw new ArgumentOutOfRangeException ("Index of out range");
 				
-			if (draw_mode == DrawMode.OwnerDrawVariable) {
-				(Items.GetListBoxItem (index)).ItemHeight = -1;
-			}			
+			if (draw_mode == DrawMode.OwnerDrawVariable)
+				item_heights.Remove (Items [index]);
 		}
 
 		protected override void SetBoundsCore (int x,  int y, int width, int height, BoundsSpecified specified)
 		{
+			if ((specified & BoundsSpecified.Height) == BoundsSpecified.Height)
+				requested_height = height;
+
+			if (IntegralHeight) {
+				int border;
+				switch (border_style) {
+				case BorderStyle.Fixed3D:
+					border = ThemeEngine.Current.Border3DSize.Height;
+					break;
+				case BorderStyle.FixedSingle:
+					border = ThemeEngine.Current.BorderSize.Height;
+					break;
+				case BorderStyle.None:
+				default:
+					border = 0;
+					break;
+				}
+				height -= (2 * border);
+				height -= height % ItemHeight;
+				height += (2 * border);
+			}
+
 			base.SetBoundsCore (x, y, width, height, specified);
 		}
 
@@ -972,7 +943,6 @@ namespace System.Windows.Forms
 
 		protected virtual void WmReflectCommand (ref Message m)
 		{
-
 		}
 
 		protected override void WndProc (ref Message m)
@@ -984,111 +954,113 @@ namespace System.Windows.Forms
 
 		#region Private Methods
 
-		internal void CalcClientArea ()
-		{		
-			listbox_info.textdrawing_rect = listbox_info.client_rect;			
-			
-			if (listbox_info.show_verticalsb)
-				listbox_info.textdrawing_rect.Width -= vscrollbar_ctrl.Width;
+		private Size canvas_size;
 
-			if (listbox_info.show_horizontalsb)
-				listbox_info.textdrawing_rect.Height -= hscrollbar_ctrl.Height;
+		private void Layout ()
+		{
+			if (!IsHandleCreated || suspend_layout)
+				return;
 
-			if (DrawMode == DrawMode.OwnerDrawVariable) {				
-				int height = 0;
-				
-				listbox_info.page_size = 0;
+			if (MultiColumn)
+				LayoutMultiColumn ();
+			else
+				LayoutSingleColumn ();
+
+			UpdateScrollBars ();
+			last_visible_index = LastVisibleItem ();
+		}
+
+		private void LayoutSingleColumn ()
+		{
+			int height, width;
+
+			switch (DrawMode) {
+			case DrawMode.OwnerDrawVariable:
+				height = 0;
+				width = HorizontalExtent;
 				for (int i = 0; i < Items.Count; i++) {
 					height += GetItemHeight (i);
-					if (height > listbox_info.textdrawing_rect.Height)
-						break;
-						
-					listbox_info.page_size++;					
 				}
-								
-			} else {			
-				listbox_info.page_size = listbox_info.textdrawing_rect.Height / ItemHeight;
-			}
+				break;
 
-			if (listbox_info.page_size == 0) {
-				listbox_info.page_size = 1;
-			}
+			case DrawMode.OwnerDrawFixed:
+				height = Items.Count * ItemHeight;
+				width = HorizontalExtent;
+				break;
 
-			/* Adjust size to visible the maximum number of displayable items */
-			if (IntegralHeight == true) {
-
-				// From MS Docs: The integral height is based on the height of the ListBox, rather than
-				// the client area height. As a result, when the IntegralHeight property is set true,
-				// items can still be partially shown if scroll bars are displayed.
-
-				int remaining = listbox_info.client_rect.Height % listbox_info.item_height;
-
-				if (remaining > 0) {
-					listbox_info.client_rect.Height -= remaining;
-					CalcClientArea ();
-					RellocateScrollBars ();
-					base.Refresh ();
+			case DrawMode.Normal:
+			default:
+				height = Items.Count * ItemHeight;
+				width = 0;
+				for (int i = 0; i < Items.Count; i++) {
+					SizeF sz = DeviceContext.MeasureString (GetItemText (Items[i]), Font);
+					if ((int) sz.Width > width)
+						width = (int) sz.Width;
 				}
+				break;
 			}
+
+			canvas_size = new Size (width, height);
+		}
+
+		private void LayoutMultiColumn ()
+		{
+			int usable_height = bounds.Height - (ScrollAlwaysVisible ? hscrollbar.Height : 0);
+			row_count = usable_height / ItemHeight;
+			if (row_count == 0)
+				row_count = 1;
+			int cols = (int) Math.Ceiling ((float)Items.Count / (float) row_count);
+			Size sz = new Size (cols * ColumnWidthInternal, row_count * ItemHeight);
+			if (!ScrollAlwaysVisible && sz.Width > bounds.Width && row_count > 1) {
+				usable_height = bounds.Height - hscrollbar.Height;
+				row_count = usable_height / ItemHeight;
+				cols = (int) Math.Ceiling ((float)Items.Count / (float) row_count);
+				sz = new Size (cols * ColumnWidthInternal, row_count * ItemHeight);
+			}
+			canvas_size = sz;
 		}
 
 		internal void Draw (Rectangle clip, Graphics dc)
 		{				
-			// IntegralHeight has effect, we also have to paint the unused area	
-			if (IntegralHeight) {				
-				if (ClientRectangle.Height > listbox_info.client_rect.Height) {
-					Region area = new Region (ClientRectangle);
-					area.Exclude (LBoxInfo.textdrawing_rect);
+			Theme theme = ThemeEngine.Current;
 
-					if (listbox_info.show_horizontalsb) {
-						area.Exclude (new Rectangle (hscrollbar_ctrl.Location.X, hscrollbar_ctrl.Location.Y,
-							hscrollbar_ctrl.Width, hscrollbar_ctrl.Height));
-					}						
-
-					dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor),
-						area.GetBounds (dc));
-
-					area.Dispose ();
-				}
+			if (hscrollbar.Visible && vscrollbar.Visible) {
+				// Paint the dead space in the bottom right corner
+				Rectangle rect = new Rectangle (hscrollbar.Right, vscrollbar.Bottom, vscrollbar.Width, hscrollbar.Height);
+				if (rect.IntersectsWith (clip))
+					dc.FillRectangle (theme.ResPool.GetSolidBrush (theme.ColorControl), rect);
 			}
-			
-			dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor),
-					LBoxInfo.textdrawing_rect);
 
-			if (Items.Count > 0) {
-				Rectangle item_rect;
+			dc.FillRectangle (theme.ResPool.GetSolidBrush (BackColor), items_area);
+
+			if (Items.Count == 0)
+		       		return;
+
+			for (int i = top_index; i <= last_visible_index; i++) {
+				Rectangle rect = GetItemDisplayRectangle (i, top_index);
+
+				if (!clip.IntersectsWith (rect))
+					continue;
+
 				DrawItemState state = DrawItemState.None;
 
-				for (int i = LBoxInfo.top_item; i <= LBoxInfo.last_item; i++) {
-					item_rect = GetItemDisplayRectangle (i, LBoxInfo.top_item);
-
-					if (clip.IntersectsWith (item_rect) == false)
-						continue;
-
-					/* Draw item */
-					state = DrawItemState.None;
-
-					if ((Items.GetListBoxItem (i)).Selected) {
-						state |= DrawItemState.Selected;
-					}
+				if (SelectedIndices.Contains (i))
+					state |= DrawItemState.Selected;
 					
-					if (has_focus == true && focused_item == i)
-						state |= DrawItemState.Focus;
-						
-					if (MultiColumn == false && hscrollbar_ctrl != null && hscrollbar_ctrl.Visible) {
-						item_rect.X -= hscrollbar_ctrl.Value;
-						item_rect.Width += hscrollbar_ctrl.Value;
-					}
-
-					OnDrawItem (new DrawItemEventArgs (dc, Font, item_rect,
-						i, state, ForeColor, BackColor));
+				if (has_focus && FocusedItem == i)
+					state |= DrawItemState.Focus;
+					
+				if (MultiColumn == false && hscrollbar != null && hscrollbar.Visible) {
+					rect.X -= hscrollbar.Value;
+					rect.Width += hscrollbar.Value;
 				}
+
+				OnDrawItem (new DrawItemEventArgs (dc, Font, rect, i, state, ForeColor, BackColor));
 			}
-			
 		}
 
 		// Converts a GetItemRectangle to a one that we can display
-		internal Rectangle GetItemDisplayRectangle (int index, int first_displayble)
+		Rectangle GetItemDisplayRectangle (int index, int first_displayble)
 		{
 			Rectangle item_rect;
 			Rectangle first_item_rect = GetItemRectangle (first_displayble);
@@ -1107,25 +1079,25 @@ namespace System.Windows.Forms
 				return;
 			}
 
-			int top_item = LBoxInfo.top_item;
-			int last_item = LBoxInfo.last_item;
+			int top_item = top_index;
+			int last_item = last_visible_index;
 
-			LBoxInfo.top_item = listbox_info.page_size * hscrollbar_ctrl.Value;
-			LBoxInfo.last_item = LastVisibleItem ();
+			top_index = RowCount * hscrollbar.Value;
+			last_visible_index = LastVisibleItem ();
 			
-			if (top_item != LBoxInfo.top_item || last_item != LBoxInfo.last_item)
+			if (top_item != top_index || last_item != last_visible_index)
 				base.Refresh ();
 		}
 
 		// Only returns visible points. The diference of with IndexFromPoint is that the rectangle
 		// has screen coordinates
-		internal int IndexFromPointDisplayRectangle (int x, int y)
+		private int IndexFromPointDisplayRectangle (int x, int y)
 		{	
 			if (Items.Count == 0)
 				return -1;
 			
-			for (int i = LBoxInfo.top_item; i <= LBoxInfo.last_item; i++) {
-				if (GetItemDisplayRectangle (i, LBoxInfo.top_item).Contains (x, y) == true)
+			for (int i = top_index; i <= last_visible_index; i++) {
+				if (GetItemDisplayRectangle (i, top_index).Contains (x, y) == true)
 					return i;
 			}
 
@@ -1135,18 +1107,18 @@ namespace System.Windows.Forms
 		private int LastVisibleItem ()
 		{
 			Rectangle item_rect;
-			int top_y = LBoxInfo.textdrawing_rect.Y + LBoxInfo.textdrawing_rect.Height;
+			int top_y = items_area.Y + items_area.Height;
 			int i = 0;
 
-			if (LBoxInfo.top_item >= Items.Count)
-				return LBoxInfo.top_item;
+			if (top_index >= Items.Count)
+				return top_index;
 
-			for (i = LBoxInfo.top_item; i < Items.Count; i++) {
+			for (i = top_index; i < Items.Count; i++) {
 
-				item_rect = GetItemDisplayRectangle (i, LBoxInfo.top_item);
+				item_rect = GetItemDisplayRectangle (i, top_index);
 				if (MultiColumn) {
 
-					if (item_rect.X > LBoxInfo.textdrawing_rect.Width)
+					if (item_rect.X > items_area.Width)
 						return i - 1;
 				}
 				else {					
@@ -1158,21 +1130,20 @@ namespace System.Windows.Forms
 			return i - 1;
 		}
 
-		private void UpdatedTopItem ()
+		private void UpdateTopItem ()
 		{
-			if (multicolumn) {				
-				int col = LBoxInfo.top_item / LBoxInfo.page_size;
+			if (MultiColumn) {				
+				int col = top_index / RowCount;
 				
-				if (col > hscrollbar_ctrl.Maximum)
-					hscrollbar_ctrl.Value = hscrollbar_ctrl.Maximum;
+				if (col > hscrollbar.Maximum)
+					hscrollbar.Value = hscrollbar.Maximum;
 				else
-					hscrollbar_ctrl.Value = col;
-			}
-			else {
-				if (LBoxInfo.top_item > vscrollbar_ctrl.Maximum)
-					vscrollbar_ctrl.Value = vscrollbar_ctrl.Maximum;
+					hscrollbar.Value = col;
+			} else {
+				if (top_index > vscrollbar.Maximum)
+					vscrollbar.Value = vscrollbar.Maximum;
 				else
-					vscrollbar_ctrl.Value = LBoxInfo.top_item;
+					vscrollbar.Value = top_index;
 			}
 		}
 		
@@ -1182,94 +1153,94 @@ namespace System.Windows.Forms
 			int page_size, columns, selected_index = -1;
 
 			if (multicolumn) {
-				columns = LBoxInfo.textdrawing_rect.Width / ColumnWidthInternal; 
-				page_size = columns * LBoxInfo.page_size;
+				columns = items_area.Width / ColumnWidthInternal; 
+				page_size = columns * RowCount;
 				if (page_size == 0) {
-					page_size = LBoxInfo.page_size;
+					page_size = RowCount;
 				}
 			} else {
-				page_size = LBoxInfo.page_size;	
+				page_size = items_area.Height / ItemHeight;	
 			}
 
 			switch (navigation) {
 
 			case ItemNavigation.PreviousColumn: {
-				if (focused_item - LBoxInfo.page_size < 0) {
+				if (FocusedItem - RowCount < 0) {
 					return -1;
 				}
 
-				if (focused_item - LBoxInfo.page_size < LBoxInfo.top_item) {
-					LBoxInfo.top_item = focused_item - LBoxInfo.page_size;
-					UpdatedTopItem ();
+				if (FocusedItem - RowCount < top_index) {
+					top_index = FocusedItem - RowCount;
+					UpdateTopItem ();
 				}
 					
-				selected_index = focused_item - LBoxInfo.page_size;
+				selected_index = FocusedItem - RowCount;
 				break;
 			}
 			
 			case ItemNavigation.NextColumn: {
-				if (focused_item + LBoxInfo.page_size >= Items.Count) {
+				if (FocusedItem + RowCount >= Items.Count) {
 					break;
 				}
 
-				if (focused_item + LBoxInfo.page_size > LBoxInfo.last_item) {
-					LBoxInfo.top_item = focused_item;
-					UpdatedTopItem ();
+				if (FocusedItem + RowCount > last_visible_index) {
+					top_index = FocusedItem;
+					UpdateTopItem ();
 				}
 					
-				selected_index = focused_item + LBoxInfo.page_size;					
+				selected_index = FocusedItem + RowCount;					
 				break;
 			}
 
 			case ItemNavigation.First: {
-				LBoxInfo.top_item = 0;
+				top_index = 0;
 				selected_index  = 0;
-				UpdatedTopItem ();
+				UpdateTopItem ();
 				break;
 			}
 
 			case ItemNavigation.Last: {
 
-				if (Items.Count < LBoxInfo.page_size) {
-					LBoxInfo.top_item = 0;
+				if (Items.Count < RowCount) {
+					top_index = 0;
 					selected_index  = Items.Count - 1;
-					UpdatedTopItem ();
+					UpdateTopItem ();
 				} else {
-					LBoxInfo.top_item = Items.Count - LBoxInfo.page_size;
+					top_index = Items.Count - RowCount;
 					selected_index  = Items.Count - 1;
-					UpdatedTopItem ();
+					UpdateTopItem ();
 				}
 				break;
 			}
 
 			case ItemNavigation.Next: {
-				if (focused_item + 1 < Items.Count) {	
+				if (FocusedItem + 1 < Items.Count) {	
 					int actualHeight = 0;
 					if (draw_mode == DrawMode.OwnerDrawVariable) {
-						for (int i = LBoxInfo.top_item; i <= focused_item + 1; i++)
+						for (int i = top_index; i <= FocusedItem + 1; i++)
 							actualHeight += GetItemHeight (i);
 					} else {
-						actualHeight = ((focused_item + 1) - LBoxInfo.top_item + 1) * ItemHeight;
+						actualHeight = ((FocusedItem + 1) - top_index + 1) * ItemHeight;
 					}
-					if (actualHeight >= LBoxInfo.textdrawing_rect.Height) {
-						int bal = IntegralHeight ? 0 : (listbox_info.textdrawing_rect.Height == actualHeight ? 0 : 1);
-						if (focused_item + bal >= LBoxInfo.last_item) {
-							LBoxInfo.top_item++;
-							UpdatedTopItem ();						
+					if (actualHeight >= items_area.Height) {
+						int bal = IntegralHeight ? 0 : (items_area.Height == actualHeight ? 0 : 1);
+						if (FocusedItem + bal >= last_visible_index) {
+							top_index++;
+							UpdateTopItem ();						
 						}
 					}
-					selected_index = focused_item + 1;
+					selected_index = FocusedItem + 1;
 				}
 				break;
 			}
 
 			case ItemNavigation.Previous: {
-				if (focused_item > 0) {						
-					if (focused_item - 1 < LBoxInfo.top_item) {							
-						LBoxInfo.top_item--;
-						UpdatedTopItem ();
+				if (FocusedItem > 0) {						
+					if (FocusedItem - 1 < top_index) {							
+						top_index--;
+						UpdateTopItem ();
 					}
-					selected_index = focused_item - 1;
+					selected_index = FocusedItem - 1;
 				}					
 				break;
 			}
@@ -1280,18 +1251,18 @@ namespace System.Windows.Forms
 					break;
 				}
 
-				if (focused_item + page_size - 1 >= Items.Count) {
-					LBoxInfo.top_item = Items.Count - page_size;
-					UpdatedTopItem ();
+				if (FocusedItem + page_size - 1 >= Items.Count) {
+					top_index = Items.Count - page_size;
+					UpdateTopItem ();
 					selected_index = Items.Count - 1;						
 				}
 				else {
-					if (focused_item + page_size - 1  > LBoxInfo.last_item) {
-						LBoxInfo.top_item = focused_item;
-						UpdatedTopItem ();
+					if (FocusedItem + page_size - 1  > last_visible_index) {
+						top_index = FocusedItem;
+						UpdateTopItem ();
 					}
 					
-					selected_index = focused_item + page_size - 1;						
+					selected_index = FocusedItem + page_size - 1;						
 				}
 					
 				break;
@@ -1299,19 +1270,19 @@ namespace System.Windows.Forms
 
 			case ItemNavigation.PreviousPage: {
 					
-				if (focused_item - (LBoxInfo.page_size - 1) <= 0) {
+				if (FocusedItem - (RowCount - 1) <= 0) {
 																		
-					LBoxInfo.top_item = 0;					
-					UpdatedTopItem ();					
+					top_index = 0;					
+					UpdateTopItem ();					
 					SelectedIndex = 0;					
 				}
 				else { 
-					if (focused_item - (LBoxInfo.page_size - 1)  < LBoxInfo.top_item) {
-						LBoxInfo.top_item = focused_item - (LBoxInfo.page_size - 1);
-						UpdatedTopItem ();						
+					if (FocusedItem - (RowCount - 1)  < top_index) {
+						top_index = FocusedItem - (RowCount - 1);
+						UpdateTopItem ();						
 					}
 					
-					selected_index = focused_item - (LBoxInfo.page_size - 1);
+					selected_index = FocusedItem - (RowCount - 1);
 				}
 					
 				break;
@@ -1328,20 +1299,16 @@ namespace System.Windows.Forms
 		{			
 			has_focus = true;			
 			
-			if (focused_item != -1) {
-				Rectangle invalidate = GetItemDisplayRectangle (focused_item, LBoxInfo.top_item);
-				Invalidate (invalidate);
-			}
+			if (FocusedItem != -1)
+				InvalidateItem (FocusedItem);
 		}		
 		
 		private void OnLostFocus (object sender, EventArgs e) 			
 		{			
 			has_focus = false;
 			
-			if (focused_item != -1) {
-				Rectangle invalidate = GetItemDisplayRectangle (focused_item, LBoxInfo.top_item);
-				Invalidate (invalidate);
-			}			
+			if (FocusedItem != -1)
+				InvalidateItem (FocusedItem);
 		}		
 
 		private void OnKeyDownLB (object sender, KeyEventArgs e)
@@ -1399,7 +1366,7 @@ namespace System.Windows.Forms
 					
 				case Keys.Space:
 					if (selection_mode == SelectionMode.MultiSimple) {
-						SelectedItemFromNavigation (focused_item);
+						SelectedItemFromNavigation (FocusedItem);
 					}
 					break;
 				
@@ -1409,7 +1376,7 @@ namespace System.Windows.Forms
 				}
 				
 				if (new_item != -1) {
-					SetFocusedItem (new_item);
+					FocusedItem = new_item;
 				}
 				
 				if (new_item != -1) {					
@@ -1433,42 +1400,48 @@ namespace System.Windows.Forms
 			}
 		}		
 
-		internal virtual void OnMouseDownLB (object sender, MouseEventArgs e)
+		internal void InvalidateItem (int index)
+		{
+			Rectangle bounds = GetItemDisplayRectangle (index, top_index);
+    			if (ClientRectangle.IntersectsWith (bounds))
+    				Invalidate (bounds);
+		}
+
+		internal virtual void OnItemClick (int index)
+		{
+    			SelectedItemFromNavigation (index);
+    			FocusedItem = index;
+		}
+
+		private void OnMouseDownLB (object sender, MouseEventArgs e)
     		{
     			int index = IndexFromPointDisplayRectangle (e.X, e.Y);
     			
-    			if (index != -1) {
-    				SelectedItemFromNavigation (index);
-    				SetFocusedItem (index);
-    			}
+    			if (index == -1)
+				return;
+
+			OnItemClick (index);
     		}
 
 		internal override void OnPaintInternal (PaintEventArgs pevent)
 		{
-			if (suspend_ctrlupdate)
+			if (suspend_layout)
     				return;
 
 			Draw (pevent.ClipRectangle, pevent.Graphics);
 		}
 
-		internal void RellocateScrollBars ()
+		internal void RepositionScrollBars ()
 		{
-			if (listbox_info.show_verticalsb) {
-				vscrollbar_ctrl.Size = new Size (vscrollbar_ctrl.Width,	ClientRectangle.Height);
-				vscrollbar_ctrl.Location = new Point (ClientRectangle.Width - vscrollbar_ctrl.Width, 0);
+			if (vscrollbar.Visible) {
+				vscrollbar.Size = new Size (vscrollbar.Width, items_area.Height);
+				vscrollbar.Location = new Point (items_area.Right, 0);
 			}
 
-			if (listbox_info.show_horizontalsb) {
-				int width = listbox_info.client_rect.Width;
-
-				if (listbox_info.show_verticalsb)
-					width -= vscrollbar_ctrl.Width;
-
-				hscrollbar_ctrl.Size = new Size (width, hscrollbar_ctrl.Height);
-				hscrollbar_ctrl.Location = new Point (0, ClientRectangle.Height - hscrollbar_ctrl.Height);
+			if (hscrollbar.Visible) {
+				hscrollbar.Size = new Size (items_area.Width, hscrollbar.Height);
+				hscrollbar.Location = new Point (0, items_area.Bottom);
 			}
-
-			CalcClientArea ();
 		}
 
 		// Add an item in the Selection array and marks it visually as selected
@@ -1477,14 +1450,8 @@ namespace System.Windows.Forms
 			if (index == -1)
 				return;
 
-			Rectangle invalidate = GetItemDisplayRectangle (index, LBoxInfo.top_item);
-			(Items.GetListBoxItem (index)).Selected = true;
-    			selected_indices.AddIndex (index);
-    			selected_items.AddObject (Items[index]);
-
-    			if (ClientRectangle.IntersectsWith (invalidate))
-    				Invalidate (invalidate);
-
+    			selection.Add (Items[index]);
+    			InvalidateItem (index);
 		}		
 		
 		// An item navigation operation (mouse or keyboard) has caused to select a new item
@@ -1502,7 +1469,7 @@ namespace System.Windows.Forms
 						SelectedIndex = index;
 					} else {
 
-						if ((Items.GetListBoxItem (index)).Selected) // BUG: index or selected_index?
+						if (SelectedIndices.Contains (index)) // BUG: index or selected_index?
 							UnSelectItem (index, true);
 						else {
     							SelectItem (index);
@@ -1575,24 +1542,21 @@ namespace System.Windows.Forms
 			}
 		}
 		
-		internal void SetFocusedItem (int index)
-		{			
-			Rectangle invalidate;
-			int prev = focused_item;			
+		internal int FocusedItem {
+			get { return focused_item; }
+			set {			
+				int prev = focused_item;			
 			
-			focused_item = index;
+				focused_item = value;
 			
-			if (has_focus == false)
-				return;
+				if (has_focus == false)
+					return;
 
-			if (prev != -1) { // Invalidates previous item
-				invalidate = GetItemDisplayRectangle (prev, LBoxInfo.top_item);
-				Invalidate (invalidate);
-			}
+				if (prev != -1)
+					InvalidateItem (prev);
 			
-			if (index != -1) {
-				invalidate = GetItemDisplayRectangle (index, LBoxInfo.top_item);
-				Invalidate (invalidate);
+				if (value != -1)
+					InvalidateItem (value);
 			}
 		}
 
@@ -1602,212 +1566,153 @@ namespace System.Windows.Forms
 			if (index == -1)
 				return;
 
-			Rectangle invalidate = GetItemDisplayRectangle (index, LBoxInfo.top_item);
-			(Items.GetListBoxItem (index)).Selected = false;
+			if (remove)
+				selection.Remove (Items[index]);
 
-			if (remove) {
-				selected_indices.RemoveIndex (index);
-				selected_items.RemoveObject (Items[index]);
+			InvalidateItem (index);
+		}
+
+		StringFormat string_format;
+		internal StringFormat StringFormat {
+			get {
+				if (string_format == null) {
+					string_format = new StringFormat ();
+					if (RightToLeft == RightToLeft.Yes)
+						string_format.Alignment = StringAlignment.Far;
+					else
+						string_format.Alignment = StringAlignment.Near;
+					if (use_tabstops)
+						string_format.SetTabStops (0, new float [] {(float)(Font.Height * 3.7)});
+				}
+				return string_format;
 			}
 
-			if (ClientRectangle.IntersectsWith (invalidate))
-				Invalidate (invalidate);
 		}
 
-		internal StringFormat GetFormatString ()
-		{			
-			StringFormat string_format = new StringFormat ();
-			
-			if (RightToLeft == RightToLeft.Yes)
-				string_format.Alignment = StringAlignment.Far;				
-			else
-				string_format.Alignment = StringAlignment.Near;				
-
-			if (UseTabStops)
-				string_format.SetTabStops (0, new float [] {(float)(Font.Height * 3.7)});
-				
-			return string_format;
-		}
-
-		// Updates the scrollbar's position with the new items and inside area
-		internal virtual void UpdateItemInfo (UpdateOperation operation, int first, int last)
+		internal virtual void CollectionChanged ()
 		{
-			if (!IsHandleCreated || suspend_ctrlupdate == true)
+			if (!IsHandleCreated || suspend_layout)
 				return;
-
-			UpdateShowVerticalScrollBar ();			
-
-			if (listbox_info.show_verticalsb && Items.Count > listbox_info.page_size)
-				if (vscrollbar_ctrl.Enabled)
-					vscrollbar_ctrl.Maximum = Items.Count - listbox_info.page_size;
-
-			if (listbox_info.show_horizontalsb) {
-				if (MultiColumn) {
-					int fullpage = (listbox_info.page_size * (listbox_info.client_rect.Width / ColumnWidthInternal));
-
-					if (hscrollbar_ctrl.Enabled && listbox_info.page_size > 0)
-						hscrollbar_ctrl.Maximum  = Math.Max (0, 1 + ((Items.Count - fullpage) / listbox_info.page_size));
-				}
-			}
-
-			if (MultiColumn == false) {
-				/* Calc the longest items for non multicolumn listboxes */
-				if (operation == UpdateOperation.AllItems || operation == UpdateOperation.DeleteItems) {
-
-					SizeF size;
-					for (int i = 0; i < Items.Count; i++) {
-						size = DeviceContext.MeasureString (GetItemText (Items[i]), Font);
-
-						if ((int) size.Width > listbox_info.max_itemwidth)
-							listbox_info.max_itemwidth = (int) size.Width;
-					}
-				}
-				else {
-					if (operation == UpdateOperation.AddItems) {
-
-						SizeF size;
-						for (int i = first; i < last + 1; i++) {
-							size = DeviceContext.MeasureString (GetItemText (Items[i]), Font);
-
-							if ((int) size.Width > listbox_info.max_itemwidth)
-								listbox_info.max_itemwidth = (int) size.Width;
-						}
-					}
-				}
-			}
 
 			if (sorted) 
 				Sort ();				
-						
+
+			Layout ();
+
 			if (Items.Count == 0) {
 				selected_index = -1;
-				focused_item = -1;
+				FocusedItem = -1;
 			}
 
-			SelectedItems.ReCreate ();
-			SelectedIndices.ReCreate ();
-			UpdateShowHorizontalScrollBar ();
-			LBoxInfo.last_item = LastVisibleItem ();
 			base.Refresh ();
 		}
 
-		private void UpdateInternalClientRect (Rectangle client_rectangle)
+		private void UpdateBounds ()
 		{
-			listbox_info.client_rect = client_rectangle;
-			UpdateShowHorizontalScrollBar ();
-			UpdateShowVerticalScrollBar ();
-			RellocateScrollBars ();
-			UpdateItemInfo (UpdateOperation.AllItems, 0, 0);
+			Rectangle prev = bounds;
+
+			bounds = ClientRectangle;
+
+			if (IntegralHeight)
+				bounds.Height -= (bounds.Height % ItemHeight);
+
+			if (bounds == prev)
+				return;
+
+			Layout ();
+			UpdateScrollBars ();
+		}
+
+		private void UpdateScrollBars ()
+		{
+			items_area = bounds;
+			if (UpdateHorizontalScrollBar ()) {
+				items_area.Height -= hscrollbar.Height;
+				if (UpdateVerticalScrollBar ()) {
+					items_area.Width -= vscrollbar.Width;
+					UpdateHorizontalScrollBar ();
+				}
+			} else if (UpdateVerticalScrollBar ()) {
+				items_area.Width -= vscrollbar.Width;
+				if (UpdateHorizontalScrollBar ()) {
+					items_area.Height -= hscrollbar.Height;
+					UpdateVerticalScrollBar ();
+				}
+			}
+
+			RepositionScrollBars ();
 		}
 
 		/* Determines if the horizontal scrollbar has to be displyed */
-		private void UpdateShowHorizontalScrollBar ()
+		private bool UpdateHorizontalScrollBar ()
 		{
 			bool show = false;
 			bool enabled = true;
 
-			if (MultiColumn) {  /* Horizontal scrollbar is always shown in Multicolum mode */
-
-				/* Is it really need it */
-				int page_size = listbox_info.client_rect.Height / listbox_info.item_height;
-				int fullpage = (page_size * (listbox_info.textdrawing_rect.Height / ColumnWidthInternal));
-
-				if (Items.Count > fullpage) {					
+			if (MultiColumn) {
+				if (canvas_size.Width > items_area.Width) {
 					show = true;
+					hscrollbar.Maximum  = canvas_size.Width / ColumnWidthInternal - 1;
+				} else if (ScrollAlwaysVisible == true) {
+					enabled = false;
+					show = true;
+					hscrollbar.Maximum  = 0;
 				}
-				else { /* Acording to MS Documentation ScrollAlwaysVisible only affects Horizontal scrollbars but
-					  this is not true for MultiColumn listboxes */
-					if (ScrollAlwaysVisible == true) {
-						enabled = false;
-						show = true;
-					}
-				}
-
-			} else { /* If large item*/
-
-				if (listbox_info.max_itemwidth > listbox_info.client_rect.Width && HorizontalScrollbar) {
-					show = true;					
-					hscrollbar_ctrl.Maximum = listbox_info.max_itemwidth;
-					hscrollbar_ctrl.LargeChange = listbox_info.textdrawing_rect.Width;
-				}
+			} else if (canvas_size.Width > bounds.Width && HorizontalScrollbar) {
+				show = true;					
+				hscrollbar.Maximum = canvas_size.Width;
+				hscrollbar.LargeChange = items_area.Width;
 			}
 
-			if (hscrollbar_ctrl.Enabled != enabled)
-				hscrollbar_ctrl.Enabled = enabled;
+			hscrollbar.Enabled = enabled;
+			hscrollbar.Visible = show;
 
-			if (listbox_info.show_horizontalsb == show)
-				return;
-
-			listbox_info.show_horizontalsb = show;
-			hscrollbar_ctrl.Visible = show;
-
-			if (show == true) {
-				RellocateScrollBars ();
-			}
-
-			CalcClientArea ();
+			return show;
 		}
 
 		/* Determines if the vertical scrollbar has to be displyed */
-		private void UpdateShowVerticalScrollBar ()
+		private bool UpdateVerticalScrollBar ()
 		{
+			if (MultiColumn) {
+				vscrollbar.Visible = false;
+				return false;
+			}
+
 			bool show = false;
 			bool enabled = true;
-
-			if (!MultiColumn) {  /* Vertical scrollbar is never shown in Multicolum mode */
-				if (Items.Count > listbox_info.page_size) {
-					show = true;
-				}
-				else
-					if (ScrollAlwaysVisible) {
-						show = true;
-						enabled = false;
-					}
+			if (canvas_size.Height > items_area.Height) {
+				show = true;
+				vscrollbar.Maximum = Items.Count - 1;
+			} else if (ScrollAlwaysVisible) {
+				show = true;
+				enabled = false;
+				vscrollbar.Maximum = 0;
 			}
 
-			if (vscrollbar_ctrl.Enabled != enabled)
-				vscrollbar_ctrl.Enabled = enabled;
+			vscrollbar.Enabled = enabled;
+			vscrollbar.Visible = show;
 
-			if (listbox_info.show_verticalsb == show)
-				return;
-
-			listbox_info.show_verticalsb = show;
-			vscrollbar_ctrl.Visible = show;
-
-			if (show == true) {
-				if (vscrollbar_ctrl.Enabled)
-					vscrollbar_ctrl.Maximum = Items.Count - listbox_info.page_size;
-
-				RellocateScrollBars ();
-			} else if (vscrollbar_ctrl.Maximum > 0) {
-				vscrollbar_ctrl.Maximum = 0;
-			}
-
-			CalcClientArea ();
+			return show;
 		}
 
 		// Value Changed
 		private void VerticalScrollEvent (object sender, EventArgs e)
 		{
-			int top_item = LBoxInfo.top_item;
-			int last_item = LBoxInfo.last_item;
+			int top_item = top_index;
+			int last_item = last_visible_index;
 
-			LBoxInfo.top_item = /*listbox_info.page_size + */ vscrollbar_ctrl.Value;
-			LBoxInfo.last_item = LastVisibleItem ();
+			top_index = /*row_count + */ vscrollbar.Value;
+			last_visible_index = LastVisibleItem ();
 
-			if (top_item != LBoxInfo.top_item || last_item != LBoxInfo.last_item)
+			if (top_item != top_index || last_item != last_visible_index)
 				base.Refresh ();
 		}
 
 		#endregion Private Methods
 
-		/*
-			ListBox.ObjectCollection
-		*/
 		[ListBindable (false)]
 		public class ObjectCollection : IList, ICollection, IEnumerable
 		{
-			// Compare objects
 			internal class ListObjectComparer : IComparer
 			{
 				private ListBox owner;
@@ -1825,29 +1730,8 @@ namespace System.Windows.Forms
 				}
 			}
 
-			// Compare ListItem
-			internal class ListItemComparer : IComparer
-			{
-				private ListBox owner;
-			
-				public ListItemComparer (ListBox owner)
-				{
-					this.owner = owner;
-				}
-				
-				public int Compare (object a, object b)
-				{
-					int index1 = ((ListBox.ListBoxItem) (a)).Index;
-					int index2 = ((ListBox.ListBoxItem) (b)).Index;
-					string str1 = owner.GetItemText (owner.Items[index1]);
-					string str2 = owner.GetItemText (owner.Items[index2]);
-					return str1.CompareTo (str2);
-				}
-			}
-
 			private ListBox owner;
 			internal ArrayList object_items = new ArrayList ();
-			internal ArrayList listbox_items = new ArrayList ();
 
 			public ObjectCollection (ListBox owner)
 			{
@@ -1906,69 +1790,47 @@ namespace System.Windows.Forms
 
 			#endregion Public Properties
 			
-			#region Private Properties			
-			internal ArrayList ObjectItems {
-				get { return object_items;}
-				set {
-					object_items = value;
-				}
-			}
-			
-			internal ArrayList ListBoxItems {
-				get { return listbox_items;}
-				set {
-					listbox_items = value;
-				}
-			}			
-			#endregion Private Properties
-
 			#region Public Methods
 			public int Add (object item)
 			{
 				int idx;
 
 				idx = AddItem (item);
-				owner.UpdateItemInfo (UpdateOperation.AddItems, idx, idx);
+				owner.CollectionChanged ();
 				return idx;
 			}
 
 			public void AddRange (object[] items)
 			{
-				int cnt = Count;
-
 				foreach (object mi in items)
 					AddItem (mi);
 
-				owner.UpdateItemInfo (UpdateOperation.AddItems, cnt, Count - 1);
+				owner.CollectionChanged ();
 			}
 
 			public void AddRange (ObjectCollection col)
 			{
-				int cnt = Count;
-
 				foreach (object mi in col)
 					AddItem (mi);
 
-				owner.UpdateItemInfo (UpdateOperation.AddItems, cnt, Count - 1);
+				owner.CollectionChanged ();
 			}
 
 			internal void AddRange (IList list)
 			{
-				int cnt = Count;
-
 				foreach (object mi in list)
 					AddItem (mi);
 
-				owner.UpdateItemInfo (UpdateOperation.AddItems, cnt, Count - 1);
+				owner.CollectionChanged ();
 			}
 
 			public virtual void Clear ()
 			{
 				owner.selected_index = -1;
-				owner.focused_item = -1;
+				owner.selection.Clear ();
+				owner.FocusedItem = -1;
 				object_items.Clear ();
-				listbox_items.Clear ();				
-				owner.UpdateItemInfo (UpdateOperation.AllItems, 0, 0);
+				owner.CollectionChanged ();
 			}
 			public bool Contains (object obj)
 			{
@@ -2005,27 +1867,10 @@ namespace System.Windows.Forms
 				if (index < 0 || index > Count)
 					throw new ArgumentOutOfRangeException ("Index of out range");
 					
-				int idx;
-				ObjectCollection new_items = new ObjectCollection (owner);
-					
 				owner.BeginUpdate ();
-				
-				for (int i = 0; i < index; i++) {
-					idx = new_items.AddItem (ObjectItems[i]);
-					(new_items.GetListBoxItem (idx)).CopyState (GetListBoxItem (i));
-				}
-
-				new_items.AddItem (item);
-
-				for (int i = index; i < Count; i++){
-					idx = new_items.AddItem (ObjectItems[i]);
-					(new_items.GetListBoxItem (idx)).CopyState (GetListBoxItem (i));
-				}				
-
-				ObjectItems = new_items.ObjectItems;
-				ListBoxItems = new_items.ListBoxItems;				
-								
-				owner.EndUpdate ();	// Calls UpdateItemInfo
+				object_items.Insert (index, item);
+				owner.CollectionChanged ();
+				owner.EndUpdate ();
 			}
 
 			public void Remove (object value)
@@ -2038,9 +1883,9 @@ namespace System.Windows.Forms
 				if (index < 0 || index >= Count)
 					throw new ArgumentOutOfRangeException ("Index of out range");
 
+				owner.selection.Remove (object_items [index]);
 				object_items.RemoveAt (index);
-				listbox_items.RemoveAt (index);				
-				owner.UpdateItemInfo (UpdateOperation.DeleteItems, index, index);
+				owner.CollectionChanged ();
 			}
 			#endregion Public Methods
 
@@ -2049,48 +1894,20 @@ namespace System.Windows.Forms
 			{
 				int cnt = object_items.Count;
 				object_items.Add (item);
-				listbox_items.Add (new ListBox.ListBoxItem (cnt));
 				return cnt;
-			}
-
-			internal ListBox.ListBoxItem GetListBoxItem (int index)
-			{
-				if (index < 0 || index >= Count)
-					throw new ArgumentOutOfRangeException ("Index of out range");
-
-				return (ListBox.ListBoxItem) listbox_items[index];
-			}		
-			
-			internal void SetListBoxItem (ListBox.ListBoxItem item, int index)
-			{
-				if (index < 0 || index >= Count)
-					throw new ArgumentOutOfRangeException ("Index of out range");
-
-				listbox_items[index] = item;
 			}
 
 			internal void Sort ()
 			{
-				/* Keep this order */
-				listbox_items.Sort (new ListItemComparer (owner));
 				object_items.Sort (new ListObjectComparer (owner));
-
-				for (int i = 0; i < listbox_items.Count; i++) {
-					ListBox.ListBoxItem item = GetListBoxItem (i);
-					item.Index = i;
-				}
 			}
 
 			#endregion Private Methods
 		}
 
-		/*
-			ListBox.SelectedIndexCollection
-		*/
 		public class SelectedIndexCollection : IList, ICollection, IEnumerable
 		{
 			private ListBox owner;
-			private ArrayList indices = new ArrayList ();
 
 			public SelectedIndexCollection (ListBox owner)
 			{
@@ -2100,7 +1917,7 @@ namespace System.Windows.Forms
 			#region Public Properties
 			[Browsable (false)]
 			public int Count {
-				get { return indices.Count; }
+				get { return owner.selection.Count; }
 			}
 
 			public bool IsReadOnly {
@@ -2112,7 +1929,7 @@ namespace System.Windows.Forms
 					if (index < 0 || index >= Count)
 						throw new ArgumentOutOfRangeException ("Index of out range");
 
-					return (int) indices[index];
+					return owner.Items.IndexOf (owner.selection [index]);
 				}
 			}
 
@@ -2133,16 +1950,25 @@ namespace System.Windows.Forms
 			#region Public Methods
 			public bool Contains (int selectedIndex)
 			{
-				return indices.Contains (selectedIndex);
+				foreach (object o in owner.selection)
+					if (owner.Items.IndexOf (o) == selectedIndex)
+						return true;
+				return false;
 			}
 
 			public void CopyTo (Array dest, int index)
 			{
-				indices.CopyTo (dest, index);
+				foreach (object o in owner.selection)
+					dest.SetValue(owner.Items.IndexOf (o), index++);
 			}
 
 			public IEnumerator GetEnumerator ()
 			{
+				//FIXME: write an enumerator that uses owner.selection.GetEnumerator
+				//  so that invalidation is write on selection changes
+				ArrayList indices = new ArrayList ();
+				foreach (object o in owner.selection)
+					indices.Add (owner.Items.IndexOf (o));
 				return indices.GetEnumerator ();
 			}
 
@@ -2182,55 +2008,23 @@ namespace System.Windows.Forms
 			}
 
 			object IList.this[int index]{
-				get {return indices[index]; }
+				get {return owner.Items.IndexOf (owner.selection [index]); }
 				set {throw new NotImplementedException (); }
 			}
 
 			public int IndexOf (int selectedIndex)
 			{
-				return indices.IndexOf (selectedIndex);
+				for (int i = 0; i < owner.selection.Count; i++)
+					if (owner.Items.IndexOf (owner.selection [i]) == selectedIndex)
+						return i;
+				return -1;
 			}
 			#endregion Public Methods
-
-			#region Private Methods
-
-			internal void AddIndex (int index)
-			{
-				indices.Add (index);
-			}
-
-			internal void ClearIndices ()
-			{
-				indices.Clear ();
-			}
-
-			internal void RemoveIndex (int index)
-			{
-				indices.Remove (index);
-			}
-
-			internal void ReCreate ()
-			{
-				indices.Clear ();
-
-				for (int i = 0; i < owner.Items.Count; i++) {
-					ListBox.ListBoxItem item = owner.Items.GetListBoxItem (i);
-
-					if (item.Selected)
-						indices.Add (item.Index);
-				}
-			}
-
-			#endregion Private Methods
 		}
 
-		/*
-			SelectedObjectCollection
-		*/
 		public class SelectedObjectCollection : IList, ICollection, IEnumerable
 		{
 			private ListBox owner;
-			private ArrayList object_items = new ArrayList ();
 
 			public SelectedObjectCollection (ListBox owner)
 			{
@@ -2239,7 +2033,7 @@ namespace System.Windows.Forms
 
 			#region Public Properties
 			public int Count {
-				get { return object_items.Count; }
+				get { return owner.selection.Count; }
 			}
 
 			public bool IsReadOnly {
@@ -2253,7 +2047,7 @@ namespace System.Windows.Forms
 					if (index < 0 || index >= Count)
 						throw new ArgumentOutOfRangeException ("Index of out range");
 
-					return object_items[index];
+					return owner.selection [index];
 				}
 				set {throw new NotSupportedException ();}
 			}
@@ -2275,12 +2069,12 @@ namespace System.Windows.Forms
 			#region Public Methods
 			public bool Contains (object selectedObject)
 			{
-				return object_items.Contains (selectedObject);
+				return owner.selection.Contains (selectedObject);
 			}
 
 			public void CopyTo (Array dest, int index)
 			{
-				object_items.CopyTo (dest, index);
+				owner.selection.CopyTo (dest, index);
 			}
 
 			int IList.Add (object value)
@@ -2310,46 +2104,15 @@ namespace System.Windows.Forms
 	
 			public int IndexOf (object item)
 			{
-				return object_items.IndexOf (item);
+				return owner.selection.IndexOf (item);
 			}
 
 			public IEnumerator GetEnumerator ()
 			{
-				return object_items.GetEnumerator ();
+				return owner.selection.GetEnumerator ();
 			}
 
 			#endregion Public Methods
-
-			#region Private Methods
-			internal void AddObject (object obj)
-			{
-				object_items.Add (obj);
-			}
-
-			internal void ClearObjects ()
-			{
-				object_items.Clear ();
-			}
-
-			internal void ReCreate ()
-			{
-				object_items.Clear ();
-
-				for (int i = 0; i < owner.Items.Count; i++) {
-					ListBox.ListBoxItem item = owner.Items.GetListBoxItem (i);
-
-					if (item.Selected)
-						object_items.Add (owner.Items[item.Index]);
-				}
-			}
-
-			internal void RemoveObject (object obj)
-			{
-				object_items.Remove (obj);
-			}
-
-			#endregion Private Methods
-
 		}
 
 	}
