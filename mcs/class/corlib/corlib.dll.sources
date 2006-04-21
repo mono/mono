@@ -342,6 +342,7 @@ System.IO/FileInfo.cs
 System.IO/FileLoadException.cs
 System.IO/FileMode.cs
 System.IO/FileNotFoundException.cs
+System.IO/FileOptions.cs
 System.IO/FileShare.cs
 System.IO/FileStream.cs
 System.IO/FileStreamAsyncResult.cs
