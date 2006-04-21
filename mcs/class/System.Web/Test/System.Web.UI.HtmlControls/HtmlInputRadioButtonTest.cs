@@ -228,6 +228,19 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			Assert.IsFalse (pbdh.LoadPostData ("id1", nvc), "LoadPostData");
 			Assert.AreEqual ("id1", rb.Value, "Value");
 		}
+
+		[Test]
+		public void RenderValue1 ()
+		{
+			TestHtmlInputRadioButton rb = new TestHtmlInputRadioButton ();
+			rb.ID = "id";
+			string attrs = rb.RenderAttributes ();
+			Assert.IsTrue (attrs.IndexOf ("value=\"id\"") >= 0);
+			rb.Value = "hola";
+			attrs = rb.RenderAttributes ();
+			Assert.IsTrue (attrs.IndexOf ("value=\"hola\"") >= 0);
+		}
+
 #if NET_2_0
 		[Test]
 		public void RaisePostBackEvent ()

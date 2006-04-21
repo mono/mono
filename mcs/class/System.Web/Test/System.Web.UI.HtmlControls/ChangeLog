@@ -1,3 +1,7 @@
+2006-04-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HtmlInputRadioButtonTest.cs: added test for bug #78101.
+
 2005-11-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlTextAreaTest.cs: add new test for 'Name'.
