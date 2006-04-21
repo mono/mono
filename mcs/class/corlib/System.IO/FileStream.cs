@@ -132,7 +132,19 @@ namespace System.IO
 		{
 		}
 
+#if NET_2_0
+		public FileStream (string name, FileMode mode, FileAccess access, FileShare share, int bufferSize, FileOptions options)
+			: this (name, mode, access, share, bufferSize, false, false, options)
+		{
+		}
+#endif
+
 		internal FileStream (string name, FileMode mode, FileAccess access, FileShare share, int bufferSize, bool isAsync, bool anonymous)
+			: this (name, mode, access, share, bufferSize, isAsync, anonymous, FileOptions.None)
+		{
+		}
+
+		internal FileStream (string name, FileMode mode, FileAccess access, FileShare share, int bufferSize, bool isAsync, bool anonymous, FileOptions options)
 		{
 			if (name == null) {
 				throw new ArgumentNullException ("name");
@@ -141,6 +153,11 @@ namespace System.IO
 			if (name.Length == 0) {
 				throw new ArgumentException ("Name is empty");
 			}
+
+#if NET_2_0
+			if (options != FileOptions.None)
+				throw new NotImplementedException ("Only FileOptions.None is supported.");
+#endif
 
 			if (bufferSize <= 0)
 				throw new ArgumentOutOfRangeException ("Positive number required.");

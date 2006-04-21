@@ -1,3 +1,9 @@
+2006-04-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* FileStream.cs: Add new net 2.0 ctor.
+
+	* FileOptions.cs: New file.
+
 2006-03-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FileStream.cs: Seek() should flush the buffer, if any. Fixes bug
