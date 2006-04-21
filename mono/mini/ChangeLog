@@ -1,3 +1,8 @@
+2006-04-21  Dick Porter  <dick@ximian.com>
+
+	* mini.c (mini_thread_cleanup): Clear the JIT TLS data when
+	cleaning up a thread.  Fixes the new part of bug 77470.
+
 2006-04-20  Geoff Norton  <gnorton@customerdna.com>
 
 	* mini-ppc.c: Call mono_jit_thread_attach when transitioning a native

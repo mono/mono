@@ -1,3 +1,8 @@
+2006-04-21  Dick Porter  <dick@ximian.com>
+
+	* threads.c (mono_thread_detach): Fix reference counting when
+	detaching threads.
+
 2006-04-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* icall.c (ves_icall_System_Enum_ToObject): Improve exception messages. Fixes
