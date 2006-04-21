@@ -668,7 +668,9 @@ namespace System
 			
 			Type vType = value.GetType();
 			if (vType != enumType && vType != Enum.GetUnderlyingType (enumType))
-				throw new ArgumentException ();
+				throw new ArgumentException (string.Format(CultureInfo.InvariantCulture,
+					"Object must be the same type as the enum. The type passed in " +
+					"was {0}; the enum type was {1}.", vType.FullName, enumType.FullName));
 
 			if (format.Length != 1)
 				throw new FormatException ("Format String can be only \"G\",\"g\",\"X\"," + 
