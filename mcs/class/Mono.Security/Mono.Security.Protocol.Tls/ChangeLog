@@ -1,3 +1,7 @@
+2006-04-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SslCipherSuite.cs: Enable abbreviated handshakes for SSL3 too.
+
 2006-04-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ClientSessionCache.cs: Deal with empty (null) master secret, that 

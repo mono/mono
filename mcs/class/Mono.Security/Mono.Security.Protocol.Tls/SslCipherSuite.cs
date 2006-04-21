@@ -260,6 +260,7 @@ namespace Mono.Security.Protocol.Tls
 			DebugHelper.WriteLine(">>>> ServerWriteIV", this.Context.ServerWriteIV);
 			DebugHelper.WriteLine(">>>> ServerWriteMAC", this.Context.ServerWriteMAC);
 
+			ClientSessionCache.SetContextInCache (this.Context);
 			// Clear no more needed data
 			keyBlock.Reset();
 			tmp.Reset();
