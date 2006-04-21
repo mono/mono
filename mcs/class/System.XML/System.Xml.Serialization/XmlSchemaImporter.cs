@@ -414,7 +414,9 @@ namespace System.Xml.Serialization
 		{
 			XmlQualifiedName qname;
 			XmlSchemaType stype;
-			if (!LocateElement (name, out qname, out stype)) return null;
+
+			XmlSchemaElement elem = (XmlSchemaElement) schemas.Find (name, typeof (XmlSchemaElement));
+			if (!LocateElement (elem, out qname, out stype)) return null;
 			
 			if (stype == null) {
 				// Importing a primitive type
@@ -427,6 +429,7 @@ namespace System.Xml.Serialization
 			
 			map = CreateTypeMapping (qname, SchemaTypes.Class, name);
 			map.Documentation = GetDocumentation (stype);
+			map.IsNullable = elem.IsNillable;
 			RegisterMapFixup (map, qname, (XmlSchemaComplexType)stype);
 			
 			BuildPendingMaps ();
@@ -435,10 +438,15 @@ namespace System.Xml.Serialization
 
 		bool LocateElement (XmlQualifiedName name, out XmlQualifiedName qname, out XmlSchemaType stype)
 		{
+			XmlSchemaElement elem = (XmlSchemaElement) schemas.Find (name, typeof (XmlSchemaElement));
+			return LocateElement (elem, out qname, out stype);
+		}
+
+		bool LocateElement (XmlSchemaElement elem, out XmlQualifiedName qname, out XmlSchemaType stype)
+		{
 			qname = null;
 			stype = null;
 			
-			XmlSchemaElement elem = (XmlSchemaElement) schemas.Find (name, typeof (XmlSchemaElement));
 			if (elem == null) return false;
 
 			// The root element must be an element with complex type
@@ -446,7 +454,7 @@ namespace System.Xml.Serialization
 			if (elem.SchemaType != null)
 			{
 				stype = elem.SchemaType;
-				qname = name;
+				qname = elem.QualifiedName;
 			}
 			else
 			{

@@ -593,6 +593,7 @@ namespace System.Xml.Serialization {
 				ReflectionHelper.CheckSerializableType (type, false);
 				
 			map = CreateTypeMapping (typeData, root, null, defaultNamespace);
+			map.IsNullable = false;
 			helper.RegisterClrType (map, type, map.XmlTypeNamespace);
 
 			string [] names = Enum.GetNames (type);

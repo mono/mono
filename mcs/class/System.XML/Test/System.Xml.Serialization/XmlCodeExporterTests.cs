@@ -26,7 +26,6 @@ using MonoTests.System.Xml.TestClasses;
 namespace MonoTests.System.XmlSerialization
 {
 	[TestFixture]
-	[Category ("NotWorking")]
 	public class XmlCodeExporterTests
 	{
 		[Test]

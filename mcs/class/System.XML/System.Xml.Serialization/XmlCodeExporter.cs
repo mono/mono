@@ -60,11 +60,14 @@ namespace System.Xml.Serialization
 
 		public XmlCodeExporter (CodeNamespace codeNamespace, CodeCompileUnit codeCompileUnit)
 		{
-			codeGenerator = new XmlMapCodeGenerator (codeNamespace, codeCompileUnit);
+#if NET_2_0
+			codeGenerator = new XmlMapCodeGenerator (codeNamespace, codeCompileUnit, CodeGenerationOptions.GenerateProperties);
+#else
+			codeGenerator = new XmlMapCodeGenerator (codeNamespace, codeCompileUnit, CodeGenerationOptions.None);
+#endif
 		}
 
 #if NET_2_0
-
 		public XmlCodeExporter (CodeNamespace codeNamespace, 
 								CodeCompileUnit codeCompileUnit, 
 								CodeGenerationOptions options)
@@ -90,7 +93,6 @@ namespace System.Xml.Serialization
 		{
 			codeGenerator = new XmlMapCodeGenerator (codeNamespace, codeCompileUnit, codeGen, options, mappings);
 		}
-		
 #endif
 
 		#endregion // Constructors
@@ -182,8 +184,8 @@ namespace System.Xml.Serialization
 	
 	class XmlMapCodeGenerator : MapCodeGenerator
 	{
-		public XmlMapCodeGenerator (CodeNamespace codeNamespace, CodeCompileUnit codeCompileUnit)
-		: base (codeNamespace, codeCompileUnit)
+		public XmlMapCodeGenerator (CodeNamespace codeNamespace, CodeCompileUnit codeCompileUnit, CodeGenerationOptions options)
+		: base (codeNamespace, codeCompileUnit, options)
 		{
 		}
 
@@ -194,21 +196,22 @@ namespace System.Xml.Serialization
 		
 		protected override void GenerateClass (XmlTypeMapping map, CodeTypeDeclaration codeClass)
 		{
-			CodeAttributeDeclaration att = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlType");
+			CodeAttributeDeclaration att = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlTypeAttribute");
 			if (map.XmlType != map.TypeData.TypeName) att.Arguments.Add (GetArg (map.XmlType));
 			if (map.XmlTypeNamespace != "") att.Arguments.Add (GetArg ("Namespace", map.XmlTypeNamespace));
 			if (!map.IncludeInSchema) att.Arguments.Add (GetArg ("IncludeInSchema", false));
 			AddCustomAttribute (codeClass, att, false);
 
-			CodeAttributeDeclaration ratt = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlRoot");
+			CodeAttributeDeclaration ratt = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlRootAttribute");
 			if (map.ElementName != map.XmlType) ratt.Arguments.Add (GetArg (map.ElementName));
-			if (map.Namespace != "") ratt.Arguments.Add (GetArg ("Namespace", map.Namespace));
+			ratt.Arguments.Add (GetArg ("Namespace", map.Namespace));
+			ratt.Arguments.Add (GetArg ("IsNullable", map.IsNullable));
 			AddCustomAttribute (codeClass, ratt, false);
 		}
 		
 		protected override void GenerateClassInclude (CodeAttributeDeclarationCollection attributes, XmlTypeMapping map)
 		{
-			CodeAttributeDeclaration iatt = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlInclude");
+			CodeAttributeDeclaration iatt = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlIncludeAttribute");
 			iatt.Arguments.Add (new CodeAttributeArgument (new CodeTypeOfExpression(map.TypeData.FullTypeName)));
 			attributes.Add (iatt);
 		}
@@ -220,10 +223,10 @@ namespace System.Xml.Serialization
 		
 		protected override void GenerateAttributeMember (CodeAttributeDeclarationCollection attributes, XmlTypeMapMemberAttribute attinfo, string defaultNamespace, bool forceUseMemberName)
 		{
-			CodeAttributeDeclaration att = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlAttribute");
+			CodeAttributeDeclaration att = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlAttributeAttribute");
 			if (forceUseMemberName || attinfo.Name != attinfo.AttributeName) att.Arguments.Add (GetArg (attinfo.AttributeName));
 			if (attinfo.Namespace != defaultNamespace) att.Arguments.Add (GetArg ("Namespace", attinfo.Namespace));
-			if (attinfo.Form != XmlSchemaForm.None) att.Arguments.Add (GetEnumArg ("Form","System.Xml.Schema.XmlSchemaForm",attinfo.Form.ToString()));
+			if (attinfo.Form == XmlSchemaForm.Qualified) att.Arguments.Add (GetEnumArg ("Form","System.Xml.Schema.XmlSchemaForm",attinfo.Form.ToString()));
 			if (!TypeTranslator.IsDefaultPrimitiveTpeData(attinfo.TypeData)) att.Arguments.Add (GetArg ("DataType",attinfo.TypeData.XmlType));
 			attributes.Add (att);
 			
@@ -233,7 +236,7 @@ namespace System.Xml.Serialization
 		
 		protected override void GenerateElementInfoMember (CodeAttributeDeclarationCollection attributes, XmlTypeMapMemberElement member, XmlTypeMapElementInfo einfo, TypeData defaultType, string defaultNamespace, bool addAlwaysAttr, bool forceUseMemberName)
 		{
-			CodeAttributeDeclaration att = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlElement");
+			CodeAttributeDeclaration att = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlElementAttribute");
 			if (forceUseMemberName || einfo.ElementName != member.Name) att.Arguments.Add (GetArg (einfo.ElementName));
 			if (einfo.TypeData.FullTypeName != defaultType.FullTypeName) att.Arguments.Add (GetTypeArg ("Type", einfo.TypeData.FullTypeName));
 			if (einfo.Namespace != defaultNamespace) att.Arguments.Add (GetArg ("Namespace", einfo.Namespace));
@@ -284,7 +287,7 @@ namespace System.Xml.Serialization
 
 		protected override void GenerateTextElementAttribute (CodeAttributeDeclarationCollection attributes, XmlTypeMapElementInfo einfo, TypeData defaultType)
 		{
-			CodeAttributeDeclaration uatt = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlText");
+			CodeAttributeDeclaration uatt = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlTextAttribute");
 			if (einfo.TypeData.FullTypeName != defaultType.FullTypeName) uatt.Arguments.Add (GetTypeArg ("Type", einfo.TypeData.FullTypeName));
 			attributes.Add (uatt);
 		}
@@ -299,18 +302,15 @@ namespace System.Xml.Serialization
 		
 		protected override void GenerateEnum (XmlTypeMapping map, CodeTypeDeclaration codeEnum)
 		{
-			CodeAttributeDeclaration att = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlTypeAttribute");
-			if (map.XmlType != map.TypeData.TypeName) att.Arguments.Add (GetArg ("TypeName", map.XmlType));
-			if (map.XmlTypeNamespace != "") att.Arguments.Add (GetArg ("Namespace", map.XmlTypeNamespace));
-			AddCustomAttribute (codeEnum, att, false);
-		}		
+			GenerateClass (map, codeEnum);
+		}
 		
 		protected override void GenerateEnumItem (CodeMemberField codeField, EnumMap.EnumMapMember emem)
 		{
 			if (emem.EnumName != emem.XmlName)
 			{
-				CodeAttributeDeclaration xatt = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlEnum");
-				xatt.Arguments.Add (GetArg ("Name", emem.XmlName));
+				CodeAttributeDeclaration xatt = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlEnumAttribute");
+				xatt.Arguments.Add (GetArg (emem.XmlName));
 
 				AddCustomAttribute (codeField, xatt, true);
 			}

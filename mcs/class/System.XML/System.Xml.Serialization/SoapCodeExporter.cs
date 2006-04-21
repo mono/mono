@@ -139,7 +139,7 @@ namespace System.Xml.Serialization
 	class SoapMapCodeGenerator : MapCodeGenerator
 	{
 		public SoapMapCodeGenerator (CodeNamespace codeNamespace, CodeCompileUnit codeCompileUnit)
-		: base (codeNamespace, codeCompileUnit)
+		: base (codeNamespace, codeCompileUnit, CodeGenerationOptions.None)
 		{
 			includeArrayTypes = true;
 		}

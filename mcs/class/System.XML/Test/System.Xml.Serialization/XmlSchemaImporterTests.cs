@@ -870,24 +870,24 @@ namespace MonoTests.System.XmlSerialization
 		public void ImportTypeMapping_EnumSimpleContent ()
 		{
 			string schemaFragment = "<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
-				"<s:schema xmlns:tns=\"NSDate\" elementFormDefault=\"qualified\" targetNamespace=\"NSDate\" xmlns:s=\"http://www.w3.org/2001/XMLSchema\">";
-			schemaFragment += "      <s:element name=\"trans\" type=\"tns:TranslationStatus\" />";
-			schemaFragment += "      <s:complexType name=\"TranslationStatus\">";
-			schemaFragment += "        <s:simpleContent>";
-			schemaFragment += "          <s:extension base=\"tns:StatusType\">";
-			schemaFragment += "            <s:attribute name=\"Language\" type=\"s:int\" use=\"required\" />";
-			schemaFragment += "          </s:extension>";
-			schemaFragment += "        </s:simpleContent>";
-			schemaFragment += "      </s:complexType>";
-			schemaFragment += "      <s:simpleType name=\"StatusType\">";
-			schemaFragment += "        <s:restriction base=\"s:string\">";
-			schemaFragment += "          <s:enumeration value=\"Untouched\" />";
-			schemaFragment += "          <s:enumeration value=\"Touched\" />";
-			schemaFragment += "          <s:enumeration value=\"Complete\" />";
-			schemaFragment += "          <s:enumeration value=\"None\" />";
-			schemaFragment += "        </s:restriction>";
-			schemaFragment += "      </s:simpleType>";
-			schemaFragment += "</s:schema>";
+				"<s:schema xmlns:tns=\"NSDate\" elementFormDefault=\"qualified\" targetNamespace=\"NSDate\" xmlns:s=\"http://www.w3.org/2001/XMLSchema\">" +
+				"      <s:element name=\"trans\" type=\"tns:TranslationStatus\" />" +
+				"      <s:complexType name=\"TranslationStatus\">" +
+				"        <s:simpleContent>" +
+				"          <s:extension base=\"tns:StatusType\">" +
+				"            <s:attribute name=\"Language\" type=\"s:int\" use=\"required\" />" +
+				"          </s:extension>" +
+				"        </s:simpleContent>" +
+				"      </s:complexType>" +
+				"      <s:simpleType name=\"StatusType\">" +
+				"        <s:restriction base=\"s:string\">" +
+				"          <s:enumeration value=\"Untouched\" />" +
+				"          <s:enumeration value=\"Touched\" />" +
+				"          <s:enumeration value=\"Complete\" />" +
+				"          <s:enumeration value=\"None\" />" +
+				"        </s:restriction>" +
+				"      </s:simpleType>" +
+				"</s:schema>";
 
 			XmlSchemas schemas = new XmlSchemas ();
 			schemas.Add (XmlSchema.Read (new StringReader (schemaFragment), null));
@@ -910,18 +910,40 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual ("TranslationStatus", map.TypeName, "#8");
 			
 			CodeNamespace codeNamespace = ExportCode (map);
-			Assert.IsNotNull (codeNamespace);
+			Assert.IsNotNull (codeNamespace, "#9");
 			
 			CodeTypeDeclaration type = FindType (codeNamespace, "TranslationStatus");
-			Assert.IsNotNull (type, "#9");
-			
+			Assert.IsNotNull (type, "#10");
+
+#if NET_2_0
+			CodeMemberProperty property = FindMember (type, "Value") as CodeMemberProperty;
+			Assert.IsNotNull (property, "#A1");
+			Assert.IsTrue (property.HasGet, "#A2");
+			Assert.IsTrue (property.HasSet, "#A3");
+			Assert.AreEqual ("StatusType", property.Type.BaseType, "#A4");
+
+			CodeMemberField field = FindMember (type, "valueField") as CodeMemberField;
+			Assert.IsNotNull (field, "#A5");
+			Assert.AreEqual ("StatusType", field.Type.BaseType, "#A6");
+
+			property = FindMember (type, "Language") as CodeMemberProperty;
+			Assert.IsNotNull (property, "#B1");
+			Assert.IsTrue (property.HasGet, "#B2");
+			Assert.IsTrue (property.HasSet, "#B3");
+			Assert.AreEqual ("System.Int32", property.Type.BaseType, "#B4");
+
+			field = FindMember (type, "languageField") as CodeMemberField;
+			Assert.IsNotNull (field, "#B5");
+			Assert.AreEqual ("System.Int32", field.Type.BaseType, "#B6");
+#else
 			CodeMemberField field = FindMember (type, "Value") as CodeMemberField;
-			Assert.IsNotNull (field, "#10");
-			Assert.AreEqual ("StatusType", field.Type.BaseType, "#11");
-			
+			Assert.IsNotNull (field, "#A1");
+			Assert.AreEqual ("StatusType", field.Type.BaseType, "#A2");
+
 			field = FindMember (type, "Language") as CodeMemberField;
-			Assert.IsNotNull (field, "#12");
-			Assert.AreEqual ("System.Int32", field.Type.BaseType, "#13");
+			Assert.IsNotNull (field, "#B1");
+			Assert.AreEqual ("System.Int32", field.Type.BaseType, "#B2");
+#endif
 		}
 		
 		CodeNamespace ExportCode (XmlTypeMapping map)

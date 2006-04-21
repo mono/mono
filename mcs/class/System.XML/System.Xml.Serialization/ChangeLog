@@ -1,3 +1,23 @@
+2006-04-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XmlCodeExporter.cs: On 2.0 profile, CodeGenerationOptions defaults to
+	GenerateProperties. Use full type name for XML serialization attributes
+	instead of shortcut (without Attribute suffix). Always add Namespace
+	argument for XmlRootAttribute on classes. Added IsNullable argument for
+	XmlRootRootAttribute on classes. For attribute members, only output
+	Form argument for XmlSchemaForm.Qualified. Use MapCodeGenerator base
+	ctor that takes CodeGenerationOptions.
+	* SoapCodeExporter.cs: Use MapCodeGenerator base ctor that takes
+	CodeGenerationOptions.
+	* MapCodeGenerator.cs: Added CodeGenerationOptions to ctor. On 2.0
+	profile, emit GeneratedCodeAttribute, SerializableAttribute, 
+	DebuggerStepThroughAttribute and DesignerCategoryAttribute for classes.
+	To match MS.NET, emit attribute members before element members.
+	* XmlReflectionImporter.cs: Enums are never nullable.
+	* XmlSchemaImporter.cs: Set IsNullable on map using value of
+	XmlSchemaElement.IsNillable. Added LocateElement overload that takes
+	XmlSchemaElement.
+
 2006-04-15  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XmlSchemaImporter.cs: Make sure we pass TypeData for primitive types

@@ -31,8 +31,14 @@
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Collections;
+#if NET_2_0
+using System.ComponentModel;
+using System.Diagnostics;
+#endif
 using System.Globalization;
 using System.Xml.Schema;
+
+using Microsoft.CSharp;
 
 namespace System.Xml.Serialization {
 	internal class MapCodeGenerator {
@@ -48,11 +54,11 @@ namespace System.Xml.Serialization {
 		Hashtable exportedMaps = new Hashtable ();
 		Hashtable includeMaps = new Hashtable ();
 
-		public MapCodeGenerator (CodeNamespace codeNamespace, CodeCompileUnit codeCompileUnit)
+		public MapCodeGenerator (CodeNamespace codeNamespace, CodeCompileUnit codeCompileUnit, CodeGenerationOptions options)
 		{
 			this.codeCompileUnit = codeCompileUnit;
 			this.codeNamespace = codeNamespace;
-			this.options = CodeGenerationOptions.GenerateOldAsync;
+			this.options = options;
 		}
 
 		public MapCodeGenerator (CodeNamespace codeNamespace, CodeCompileUnit codeCompileUnit, ICodeGenerator codeGen, CodeGenerationOptions options, Hashtable mappings)
@@ -149,6 +155,29 @@ namespace System.Xml.Serialization {
 			AddCodeType (codeClass, map.Documentation);
 			codeClass.Attributes = MemberAttributes.Public;
 
+#if NET_2_0
+			codeClass.IsPartial = CodeGenerator.Supports(GeneratorSupport.PartialTypes);
+
+			CodeAttributeDeclaration generatedCodeAttribute = new CodeAttributeDeclaration (
+				new CodeTypeReference (typeof(GeneratedCodeAttribute)));
+			generatedCodeAttribute.Arguments.Add (new CodeAttributeArgument (
+				new CodePrimitiveExpression ("System.Xml")));
+			generatedCodeAttribute.Arguments.Add (new CodeAttributeArgument (
+				new CodePrimitiveExpression ("2.0.50727.42")));
+			codeClass.CustomAttributes.Add (generatedCodeAttribute);
+
+			codeClass.CustomAttributes.Add (new CodeAttributeDeclaration (
+				new CodeTypeReference (typeof (SerializableAttribute))));
+			codeClass.CustomAttributes.Add (new CodeAttributeDeclaration (
+				new CodeTypeReference (typeof (DebuggerStepThroughAttribute))));
+
+			CodeAttributeDeclaration designerCategoryAttribute = new CodeAttributeDeclaration (
+				new CodeTypeReference (typeof(DesignerCategoryAttribute)));
+			designerCategoryAttribute.Arguments.Add (new CodeAttributeArgument (
+				new CodePrimitiveExpression ("code")));
+			codeClass.CustomAttributes.Add (designerCategoryAttribute);
+#endif
+
 			GenerateClass (map, codeClass);
 			ExportDerivedTypeAttributes (map, codeClass);
 			
@@ -189,6 +218,16 @@ namespace System.Xml.Serialization {
 
 		void ExportMembersMapCode (CodeTypeDeclaration codeClass, ClassMap map, string defaultNamespace, XmlTypeMapping baseMap)
 		{
+			// Write attributes
+
+			ICollection attributes = map.AttributeMembers;
+			if (attributes != null) {
+				foreach (XmlTypeMapMemberAttribute attr in attributes) {
+					if (baseMap != null && DefinedInBaseMap (baseMap, attr)) continue;
+					AddAttributeFieldMember (codeClass, attr, defaultNamespace);
+				}
+			}
+
 			ICollection members = map.ElementMembers;
 				
 			if (members != null)
@@ -221,17 +260,6 @@ namespace System.Xml.Serialization {
 				}
 			}
 
-			// Write attributes
-
-			ICollection attributes = map.AttributeMembers;
-			if (attributes != null)
-			{
-				foreach (XmlTypeMapMemberAttribute attr in attributes) {
-					if (baseMap != null && DefinedInBaseMap (baseMap, attr)) continue;
-					AddAttributeFieldMember (codeClass, attr, defaultNamespace);
-				}
-			}
-
 			XmlTypeMapMember anyAttrMember = map.DefaultAnyAttributeMember;
 			if (anyAttrMember != null)
 			{
@@ -261,7 +289,7 @@ namespace System.Xml.Serialization {
 		{
 			CodeMemberField codeField = null;
 			CodeTypeMember codeProp = null;
-			
+
 			if ((options & CodeGenerationOptions.GenerateProperties) > 0) {
 				string field = CodeIdentifier.MakeCamel (name + "Field");
 				codeField = new CodeMemberField (type, field);
@@ -389,8 +417,7 @@ namespace System.Xml.Serialization {
 		void AddArrayElementFieldMember (CodeTypeDeclaration codeClass, XmlTypeMapMemberList member, string defaultNamespace)
 		{
 			CodeTypeMember codeField = CreateFieldMember (codeClass, member.TypeData, member.Name);
-			codeField.Attributes = MemberAttributes.Public;
-			
+
 			CodeAttributeDeclarationCollection attributes = new CodeAttributeDeclarationCollection ();
 			AddArrayAttributes (attributes, member, defaultNamespace, false);
 
@@ -465,12 +492,25 @@ namespace System.Xml.Serialization {
 			codeEnum.IsEnum = true;
 			AddCodeType (codeEnum, map.Documentation);
 
-			GenerateEnum (map, codeEnum);
 			EnumMap emap = (EnumMap) map.ObjectMap;
-			
 			if (emap.IsFlags)
-				codeEnum.CustomAttributes.Add (new CodeAttributeDeclaration ("System.Flags"));
+				codeEnum.CustomAttributes.Add (new CodeAttributeDeclaration ("System.FlagsAttribute"));
 
+#if NET_2_0
+			CodeAttributeDeclaration generatedCodeAttribute = new CodeAttributeDeclaration (
+				new CodeTypeReference (typeof(GeneratedCodeAttribute)));
+			generatedCodeAttribute.Arguments.Add (new CodeAttributeArgument (
+				new CodePrimitiveExpression ("System.Xml")));
+			generatedCodeAttribute.Arguments.Add (new CodeAttributeArgument (
+				new CodePrimitiveExpression ("2.0.50727.42")));
+			codeEnum.CustomAttributes.Add (generatedCodeAttribute);
+
+			codeEnum.CustomAttributes.Add (new CodeAttributeDeclaration (
+				new CodeTypeReference (typeof (SerializableAttribute))));
+#endif
+
+			GenerateEnum (map, codeEnum);
+			
 			int flag = 1;
 			foreach (EnumMap.EnumMapMember emem in emap.Members)
 			{
@@ -573,9 +613,24 @@ namespace System.Xml.Serialization {
 		}
 		
 		#endregion
-		
+
+		#region Private Properties
+
+#if NET_2_0
+		private ICodeGenerator CodeGenerator {
+			get {
+				if (codeGen == null) {
+					codeGen = new CSharpCodeProvider ().CreateGenerator ();
+				}
+				return codeGen;
+			}
+		}
+#endif
+
+		#endregion
+
 		#region Overridable methods
-		
+
 		protected virtual void GenerateClass (XmlTypeMapping map, CodeTypeDeclaration codeClass)
 		{
 		}
@@ -639,7 +694,7 @@ namespace System.Xml.Serialization {
 		
 		protected virtual void GenerateEnum (XmlTypeMapping map, CodeTypeDeclaration codeEnum)
 		{
-		}		
+		}
 		
 		protected virtual void GenerateEnumItem (CodeMemberField codeField, EnumMap.EnumMapMember emem)
 		{
