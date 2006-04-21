@@ -1,3 +1,8 @@
+2006-04-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am (SUBDIRS): Revert the last change as arm depends on the old
+	behaviour.
+
 2006-04-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* sparc/sparc-codegen.h (sparc_inst_i): New disassembly macro.
