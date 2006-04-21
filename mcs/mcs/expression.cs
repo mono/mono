@@ -3437,6 +3437,9 @@ namespace Mono.CSharp {
 					else if (lvalue_right_side == EmptyExpression.LValueMemberAccess)
 						Report.Error (1654, loc, "Cannot assign to members of `{0}' because it is a `{1}'",
 							Name, local_info.GetReadOnlyContext ());
+					else if (lvalue_right_side == EmptyExpression.LValueMemberOutAccess)
+						Report.Error (1655, loc, "Cannot pass members of `{0}' as ref or out arguments because it is a `{1}'",
+							      Name, local_info.GetReadOnlyContext ()) ;
 					else
 						Report.Error (1656, loc, "Cannot assign to `{0}' because it is a `{1}'",
 							Name, local_info.GetReadOnlyContext ());
@@ -3987,29 +3990,13 @@ namespace Mono.CSharp {
 			bool old_do_flow_analysis = ec.DoFlowAnalysis;
 			ec.DoFlowAnalysis = true;
 
+			// Verify that the argument is readable
 			if (ArgType != AType.Out)
-				// Verify that we can read the argument
 				Expr = Expr.Resolve (ec);
 
-			if (Expr != null && (ArgType == AType.Out || ArgType == AType.Ref)) {
-				// Verify that we can read write to the argument
-				int errors = Report.Errors;
-				ec.InRefOutArgumentResolving = true;
-				Expr = Expr.DoResolveLValue (ec, EmptyExpression.OutAccess);
-				ec.InRefOutArgumentResolving = false;
-
-				if (Expr != null && !(Expr is IMemoryLocation)) {
-					// FIXME: There's no problem with correctness, the 'Expr = null' handles that.
-					//        Enabling this 'throw' will "only" result in deleting useless code elsewhere,
-
-					//throw new InternalErrorException ("ResolveLValue didn't return an IMemoryLocation: " +
-					//				  Expr.GetType () + " " + Expr.GetSignatureForError ());
-					Expr = null;
-				}
-
-				if (Expr == null && errors == Report.Errors)
-					Report.Error (1510, loc, "A ref or out argument must be an assignable variable");
-			}
+			// Verify that the argument is writeable
+			if (Expr != null && (ArgType == AType.Out || ArgType == AType.Ref))
+				Expr = Expr.ResolveLValue (ec, EmptyExpression.OutAccess, loc);
 
 			ec.DoFlowAnalysis = old_do_flow_analysis;
 
@@ -7894,7 +7881,7 @@ namespace Mono.CSharp {
 			}
 
 			// if the indexer returns a value type, and we try to set a field in it
-			if (right_side == EmptyExpression.LValueMemberAccess) {
+			if (right_side == EmptyExpression.LValueMemberAccess || right_side == EmptyExpression.LValueMemberOutAccess) {
 				Report.Error (1612, loc, "Cannot modify the return value of `{0}' because it is not a variable",
 					      GetSignatureForError ());
 				return null;
@@ -8159,6 +8146,7 @@ namespace Mono.CSharp {
 
 		public static readonly EmptyExpression OutAccess = new EmptyExpression ();
 		public static readonly EmptyExpression LValueMemberAccess = new EmptyExpression ();
+		public static readonly EmptyExpression LValueMemberOutAccess = new EmptyExpression ();
 
 		static EmptyExpression temp = new EmptyExpression ();
 		public static EmptyExpression Grab ()

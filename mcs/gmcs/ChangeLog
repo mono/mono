@@ -1,3 +1,22 @@
+2006-04-21  Raja R Harinath  <rharinath@novell.com>
+
+	Fix cs1655.cs
+	* codegen.cs (EmitContext.InRefOutArgumentResolving): Remove.
+	* expression.cs (EmptyExpression.LValueMemberOutAccess): New.
+	(LocalVariableReference.DoResolveBase): Use it to implement new
+	CS1655 check.
+	(IndexerAccess.DoResolveLValue): Handle LValueMemberOutAccess.
+	(Argument.Resolve): Simplify.  Move CS1510 check ...
+	* ecore.cs (Expression.ResolveLValue): ... here.
+	(UnboxCast.DoResolveLValue): Handle LValueMemberOutAccess.
+	(PropertyExpr.DoResolveLValue): Likewise.
+	(FieldExpr.Report_AssignToReadonly): Likewise.
+	(FieldExpr.DoResolve): Add 'out_access' argument.  Use
+	LValueMemberAccess or LValueMemberOutAccess on instance depending
+	on it.
+	(FieldExpr.DoResolveLValue): Pass 'out_access' argument to
+	DoResolve as appropriate.
+
 2006-04-20  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #75800

@@ -448,32 +448,43 @@ namespace Mono.CSharp {
 		public Expression ResolveLValue (EmitContext ec, Expression right_side, Location loc)
 		{
 			int errors = Report.Errors;
+			bool out_access = right_side == EmptyExpression.OutAccess;
+
 			Expression e = DoResolveLValue (ec, right_side);
 
+			if (e != null && out_access && !(e is IMemoryLocation)) {
+				// FIXME: There's no problem with correctness, the 'Expr = null' handles that.
+				//        Enabling this 'throw' will "only" result in deleting useless code elsewhere,
+
+				//throw new InternalErrorException ("ResolveLValue didn't return an IMemoryLocation: " +
+				//				  e.GetType () + " " + e.GetSignatureForError ());
+				e = null;
+			}
+
 			if (e == null) {
-				if (errors == Report.Errors)
-					Report.Error (131, loc, "The left-hand side of an assignment or mutating operation must be a variable, property or indexer");
+				if (errors == Report.Errors) {
+					if (out_access)
+						Report.Error (1510, loc, "A ref or out argument must be an assignable variable");
+					else
+						Report.Error (131, loc, "The left-hand side of an assignment or mutating operation must be a variable, property or indexer");
+				}
 				return null;
 			}
 
-			if (e != null){
-				if (e.eclass == ExprClass.Invalid)
-					throw new Exception ("Expression " + e +
-							     " ExprClass is Invalid after resolve");
+			if (e.eclass == ExprClass.Invalid)
+				throw new Exception ("Expression " + e + " ExprClass is Invalid after resolve");
 
-				if (e.eclass == ExprClass.MethodGroup) {
-					((MethodGroupExpr) e).ReportUsageError ();
-					return null;
-				}
-
-				if (e.type == null)
-					throw new Exception ("Expression " + e +
-							     " did not set its type after Resolve");
+			if (e.eclass == ExprClass.MethodGroup) {
+				((MethodGroupExpr) e).ReportUsageError ();
+				return null;
 			}
+
+			if (e.type == null)
+				throw new Exception ("Expression " + e + " did not set its type after Resolve");
 
 			return e;
 		}
-		
+
 		/// <summary>
 		///   Emits the code for the expression
 		/// </summary>
@@ -1505,7 +1516,7 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
-			if (right_side == EmptyExpression.LValueMemberAccess)
+			if (right_side == EmptyExpression.LValueMemberAccess || right_side == EmptyExpression.LValueMemberOutAccess)
 				Report.Error (445, loc, "Cannot modify the result of an unboxing conversion");
 			return base.DoResolveLValue (ec, right_side);
 		}
@@ -2750,10 +2761,10 @@ namespace Mono.CSharp {
 
 		override public Expression DoResolve (EmitContext ec)
 		{
-			return DoResolve (ec, false);
+			return DoResolve (ec, false, false);
 		}
 
-		Expression DoResolve (EmitContext ec, bool lvalue_instance)
+		Expression DoResolve (EmitContext ec, bool lvalue_instance, bool out_access)
 		{
 			if (!FieldInfo.IsStatic){
 				if (InstanceExpression == null){
@@ -2772,7 +2783,9 @@ namespace Mono.CSharp {
 				if (lvalue_instance) {
 					bool old_do_flow_analysis = ec.DoFlowAnalysis;
 					ec.DoFlowAnalysis = false;
-					InstanceExpression = InstanceExpression.ResolveLValue (ec, EmptyExpression.LValueMemberAccess, loc);
+					Expression right_side =
+						out_access ? EmptyExpression.LValueMemberOutAccess : EmptyExpression.LValueMemberAccess;
+					InstanceExpression = InstanceExpression.ResolveLValue (ec, right_side, loc);
 					ec.DoFlowAnalysis = old_do_flow_analysis;
 				} else {
 					ResolveFlags rf = ResolveFlags.VariableOrValue | ResolveFlags.DisableFlowAnalysis;
@@ -2850,14 +2863,14 @@ namespace Mono.CSharp {
 		};
 
 		// The return value is always null.  Returning a value simplifies calling code.
-		Expression Report_AssignToReadonly (Expression right_side, bool out_access)
+		Expression Report_AssignToReadonly (Expression right_side)
 		{
 			int i = 0;
-			if (out_access)
+			if (right_side == EmptyExpression.OutAccess || right_side == EmptyExpression.LValueMemberOutAccess)
 				i += 1;
 			if (IsStatic)
 				i += 2;
-			if (right_side == EmptyExpression.LValueMemberAccess)
+			if (right_side == EmptyExpression.LValueMemberAccess || right_side == EmptyExpression.LValueMemberOutAccess)
 				i += 4;
 			Report.Error (codes [i], loc, msgs [i], GetSignatureForError ());
 
@@ -2871,8 +2884,9 @@ namespace Mono.CSharp {
 				var.VariableInfo.SetFieldAssigned (ec, FieldInfo.Name);
 
 			bool lvalue_instance = !FieldInfo.IsStatic && FieldInfo.DeclaringType.IsValueType;
+			bool out_access = right_side == EmptyExpression.OutAccess || right_side == EmptyExpression.LValueMemberOutAccess;
 
-			Expression e = DoResolve (ec, lvalue_instance);
+			Expression e = DoResolve (ec, lvalue_instance, out_access);
 
 			if (e == null)
 				return null;
@@ -2884,18 +2898,18 @@ namespace Mono.CSharp {
 			if (FieldInfo.IsInitOnly) {
 				// InitOnly fields can only be assigned in constructors or initializers
 				if (!ec.IsFieldInitializer && !ec.IsConstructor)
-					return Report_AssignToReadonly (right_side, ec.InRefOutArgumentResolving);
+					return Report_AssignToReadonly (right_side);
 
 				if (ec.IsConstructor) {
 					// InitOnly fields cannot be assigned-to in a different constructor from their declaring type
 					if (ec.ContainerType != FieldInfo.DeclaringType)
-						return Report_AssignToReadonly (right_side, ec.InRefOutArgumentResolving);
+						return Report_AssignToReadonly (right_side);
 					// static InitOnly fields cannot be assigned-to in an instance constructor
 					if (IsStatic && !ec.IsStatic)
-						return Report_AssignToReadonly (right_side, ec.InRefOutArgumentResolving);
+						return Report_AssignToReadonly (right_side);
 					// instance constructors can't modify InitOnly fields of other instances of the same type
 					if (!IsStatic && !(InstanceExpression is This))
-						return Report_AssignToReadonly (right_side, ec.InRefOutArgumentResolving);
+						return Report_AssignToReadonly (right_side);
 				}
 			}
 
@@ -3002,7 +3016,7 @@ namespace Mono.CSharp {
 			prepared = prepare_for_load;
 
 			if (is_readonly && !ec.IsConstructor){
-				Report_AssignToReadonly (source, ec.InRefOutArgumentResolving);
+				Report_AssignToReadonly (source);
 				return;
 			}
 
@@ -3362,7 +3376,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (right_side == EmptyExpression.LValueMemberAccess) {
+			if (right_side == EmptyExpression.LValueMemberAccess || right_side == EmptyExpression.LValueMemberOutAccess) {
 				Report.Error (1612, loc, "Cannot modify the return value of `{0}' because it is not a variable",
 					      GetSignatureForError ());
 				return null;
