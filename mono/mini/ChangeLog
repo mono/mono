@@ -1,3 +1,8 @@
+2006-04-21  Dick Porter  <dick@ximian.com>
+
+	* mini.c (mini_thread_cleanup): Clear the JIT TLS data when
+	cleaning up a thread.  Fixes the new part of bug 77470.
+
 2006-04-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c (mono_arch_emit_prolog): Attach the thread to the runtime as it is done

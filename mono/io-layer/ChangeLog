@@ -1,3 +1,8 @@
+2006-04-21  Dick Porter  <dick@ximian.com>
+
+	* threads.c (GetCurrentThread): Reference the handle if we return
+	an already-known thread.
+
 2006-04-07  Dick Porter  <dick@ximian.com>
 
 	* processes.c: Fix build for older glib.

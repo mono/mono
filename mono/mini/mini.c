@@ -7766,6 +7766,7 @@ mini_thread_cleanup (MonoThread *thread)
 		g_free (jit_tls->first_lmf);
 		g_free (jit_tls);
 		thread->jit_data = NULL;
+		TlsSetValue (mono_jit_tls_id, NULL);
 	}
 }
 
