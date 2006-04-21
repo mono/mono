@@ -120,6 +120,9 @@ namespace System.Windows.Forms {
 			images = new Image [nimages];
 			image_size = new Size (cx, cy);
 			Rectangle dest_rect = new Rectangle (0, 0, cx, cy);
+			if (grow * bmp.Width > cx) // Some images store a wrong 'grow' factor
+				grow = (ushort) (bmp.Width / cx);
+
 			for (int r = 0 ; r < nimages ; r++) {
 				int col = r % grow;
 				int row = r / grow;

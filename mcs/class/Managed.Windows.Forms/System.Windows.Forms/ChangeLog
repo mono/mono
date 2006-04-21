@@ -1,5 +1,10 @@
 2006-04-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* ImageListStreamer.cs: some images store a wrong grow factor, so don't
+	trust that value blindly and do some sanity check. Fixes bug #77814.
+
+2006-04-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* ImageListStreamer.cs: save the mask as a 1bpp image.
 
 2006-04-21  Mike Kestner  <mkestner@novell.com>
