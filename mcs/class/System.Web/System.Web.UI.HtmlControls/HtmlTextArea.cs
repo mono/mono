@@ -101,8 +101,13 @@ namespace System.Web.UI.HtmlControls {
 		[WebSysDescription("")]
 		[WebCategory("Appearance")]
 		public string Value {
+#if NET_2_0
+			get { return InnerText; }
+			set { InnerText = value; }
+#else		
 			get { return InnerHtml; }
 			set { InnerHtml = value; }
+#endif		
 		}
 
 

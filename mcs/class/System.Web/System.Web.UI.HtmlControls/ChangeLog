@@ -1,5 +1,10 @@
 2006-04-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HtmlTextArea.cs: Value is HtmlEncoded/Decoded in 2.0. Fixes
+	bug #78074.
+
+2006-04-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HtmlInputRadioButton.cs: Value returns the ID only when there's no
 	"value" set. Fixes bug #78101.
 
