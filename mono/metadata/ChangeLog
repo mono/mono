@@ -1,3 +1,8 @@
+2006-04-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_System_Enum_ToObject): Improve exception messages. Fixes
+	#78155.
+
 2006-04-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_type_to_ldind): New helper function moved here from mini.c
