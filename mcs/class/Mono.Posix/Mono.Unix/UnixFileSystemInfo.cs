@@ -276,7 +276,7 @@ namespace Mono.Unix {
 		{
 			int r = Native.Syscall.link (FullName, path);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
-			return Create (path);
+			return GetFileSystemEntry (path);
 		}
 
 		public UnixSymbolicLinkInfo CreateSymbolicLink (string path)
@@ -386,7 +386,7 @@ namespace Mono.Unix {
 			return stat;
 		}
 
-		internal static UnixFileSystemInfo Create (string path)
+		public static UnixFileSystemInfo GetFileSystemEntry (string path)
 		{
 			Native.Stat stat;
 			int r = Native.Syscall.lstat (path, out stat);

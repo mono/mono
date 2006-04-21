@@ -207,7 +207,7 @@ namespace Mono.Unix {
 		{
 			UnixFileSystemInfo[] entries = new UnixFileSystemInfo[dentries.Length];
 			for (int i = 0; i != entries.Length; ++i)
-				entries [i] = UnixFileSystemInfo.Create (
+				entries [i] = UnixFileSystemInfo.GetFileSystemEntry (
 						UnixPath.Combine (FullPath, dentries[i].d_name));
 			return entries;
 		}

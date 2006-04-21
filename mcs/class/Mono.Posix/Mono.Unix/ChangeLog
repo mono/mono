@@ -1,3 +1,11 @@
+2006-04-21  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* UnixFileSystemInfo.cs: rename Create() to GetFileSystemEntry(), and make
+	  it public (so that other's don't need to worry about the
+	  Syscall.lstat()-and-switch to create a UnixFileSystemInfo instance).
+	* UnixDirectoryInfo.cs, UnixSymbolicLinkInfo.cs:
+	  s/Create/GetFileSystemEntry/g (to cope with above change).
+
 2006-03-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* UnixEndPoint.cs: added GetHashCode/Equals.
