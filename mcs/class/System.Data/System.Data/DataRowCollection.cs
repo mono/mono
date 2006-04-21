@@ -145,31 +145,28 @@ namespace System.Data
 		public void Clear () 
 		{
 			if (this.table.DataSet != null && this.table.DataSet.EnforceConstraints) {
-				foreach (DataTable table in this.table.DataSet.Tables) {
-					foreach (Constraint c in table.Constraints) {
-						if (c is ForeignKeyConstraint) {
-                                                                                                                ForeignKeyConstraint fk = (ForeignKeyConstraint) c;
-							if (fk.RelatedTable.Equals(this.table) 
-                                                            && fk.Table.Rows.Count > 0) // check does not make sense if we don't have rows
+				foreach (Constraint c in table.Constraints) {
+					UniqueConstraint uc = c as UniqueConstraint;
+					if (uc == null) 
+						continue;
+					if (uc.ChildConstraint == null || uc.ChildConstraint.Table.Rows.Count == 0)
+						continue;
+
+					string err = String.Format ("Cannot clear table Parent because " +
+								"ForeignKeyConstraint {0} enforces Child.", uc.ConstraintName);
 #if NET_1_1
-								throw new InvalidConstraintException (String.Format ("Cannot clear table Parent" + 
-                                                                                                                     " because ForeignKeyConstraint "+
-                                                                                                                     "{0} enforces Child.", 
-                                                                                                                     c.ConstraintName));
+					throw new InvalidConstraintException (err);
 #else
-								throw new ArgumentException (String.Format ("Cannot clear table Parent because " +
-                                                                                                            "ForeignKeyConstraint {0} enforces Child.", 
-                                                                                                            c.ConstraintName));
+					throw new ArgumentException (err);
 #endif
-						}
-					}
 				}
 			}
-                        // Remove from indexes
-                        for (int i = 0; i < this.Count; i++)
-                                this.table.DeleteRowFromIndexes (this [i]);
 
 			List.Clear ();
+
+                        // Remove from indexes
+			table.ResetIndexes ();
+
 			OnListChanged (this, new ListChangedEventArgs (ListChangedType.Reset, -1, -1));
 		}
 
@@ -196,7 +193,7 @@ namespace System.Data
 		/// </summary>
 		public DataRow Find (object key) 
 		{
-			return Find(new object[]{key});
+			return Find (new object[]{key}, DataViewRowState.CurrentRows);
                 }
 
 		/// <summary>
@@ -204,16 +201,7 @@ namespace System.Data
 		/// </summary>
 		public DataRow Find (object[] keys)
 		{
-			if (table.PrimaryKey.Length == 0)
-				throw new MissingPrimaryKeyException ("Table doesn't have a primary key.");
-
-			if (keys == null)
-				throw new ArgumentException ("Expecting " + table.PrimaryKey.Length +" value(s) for the key being indexed, but received 0 value(s).");
-                                                                                                    
-			Index index = table.GetIndex(table.PrimaryKey,null,DataViewRowState.None,null,false);
-
-			int record = index.Find(keys);
-			return (record != -1) ? table.RecordCache[record] : null;
+			return Find (keys, DataViewRowState.CurrentRows);
 		}
 
 		/// <summary>
@@ -227,45 +215,41 @@ namespace System.Data
 
 			if (keys == null)
 				throw new ArgumentException ("Expecting " + table.PrimaryKey.Length +" value(s) for the key being indexed, but received 0 value(s).");
-			
-			Index index = table.FindIndex (table.PrimaryKey, null, rowStateFilter, null);
-			if (index == null)
-				index = new Index (new Key (table, table.PrimaryKey, null, rowStateFilter, null));
 
-			int record = index.Find(keys);
-			return (record != -1) ? table.RecordCache[record] : null;
-		}
+			Index index = table.GetIndex (table.PrimaryKey, null, rowStateFilter, null, false);
+			int record = index.Find (keys);
 
-		internal DataRow Find(int index)
-		{
-			DataColumn[] primaryKey = table.PrimaryKey;
-			Index primaryKeyIndex = table.FindIndex(primaryKey);
-			// if we can search through index
-			if (primaryKeyIndex != null) {
-				// get the child rows from the index
-				int record = primaryKeyIndex.Find(index);
-				if ( record != -1 ) {
-					return table.RecordCache[record];
-				}
-			}
-			else {
-				//loop through all collection rows			
+			if (record != -1 || !table._duringDataLoad)
+				return (record != -1 ? table.RecordCache [record] : null);
+
+			// If the key is not found using Index *and* if DataTable is under BeginLoadData 
+			// then, check all the DataRows for the key
+			record = table.RecordCache.NewRecord ();
+			try {
+				for (int i=0; i < table.PrimaryKey.Length; ++i)
+					table.PrimaryKey [i].DataContainer [record] = keys [i];
+
+				bool found;
 				foreach (DataRow row in this) {
-					if (row.RowState != DataRowState.Deleted) {
-						int rowIndex = row.IndexFromVersion(DataRowVersion.Default);
-						bool match = true;
-						for (int columnCnt = 0; columnCnt < primaryKey.Length; ++columnCnt) { 
-							if (primaryKey[columnCnt].DataContainer.CompareValues(rowIndex, index) != 0) {
-								match = false;
-							}
-						}
-						if ( match ) {
-							return row;
-						}
+
+					int rowIndex = Key.GetRecord (row, rowStateFilter);
+					if (rowIndex == -1)
+						continue;
+
+					found = true;
+					for (int columnCnt = 0; columnCnt < table.PrimaryKey.Length; ++columnCnt) {
+						if (table.PrimaryKey [columnCnt].CompareValues (rowIndex, record) == 0)
+							continue;
+						found = false;
+						break;
 					}
+					if (found)
+						return row;
 				}
+				return null;
+			} finally {
+				table.RecordCache.DisposeRecord (record);
 			}
-			return null;
 		}
 
 		/// <summary>

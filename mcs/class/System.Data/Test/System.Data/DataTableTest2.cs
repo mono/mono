@@ -423,6 +423,59 @@ namespace MonoTests_System.Data
 		}
 
 		[Test]
+		[ExpectedException (typeof (ConstraintException))]
+		public void LoadDataRow_DuplicateValues ()
+		{
+			DataTable table = new DataTable ();
+			table.Columns.Add ("col1", typeof (int));
+			table.Columns.Add ("col2", typeof (int));
+
+			table.PrimaryKey = new DataColumn[] {table.Columns [0]};
+
+			table.BeginLoadData ();
+			table.LoadDataRow (new object[] {1 , 1}, false);
+			table.LoadDataRow (new object[] {1 , 10}, false);
+			table.EndLoadData ();
+		}
+
+		[Test]
+		public void LoadDataRow_WithoutBeginLoadData ()
+		{
+			DataTable table = new DataTable ();
+			table.Columns.Add ("col1", typeof (int));
+			table.Columns.Add ("col2", typeof (int));
+
+			table.PrimaryKey = new DataColumn[] {table.Columns [0]};
+			table.Rows.Add (new object[] {1,1});
+			table.AcceptChanges ();
+
+			table.LoadDataRow (new object[] {10,1}, false);
+			DataRow row = table.Rows.Find (10);
+			Assert.IsNotNull (row, "#1");
+			Assert.AreEqual (1, row [1], "#2");
+			Assert.AreEqual (DataRowState.Added, row.RowState, "#3");
+			table.AcceptChanges ();
+
+			table.LoadDataRow (new object[] {10,2}, true);
+			row = table.Rows.Find (10);
+			Assert.IsNotNull (row, "#4");
+			Assert.AreEqual (2, row [1], "#5");
+			Assert.AreEqual (DataRowState.Unchanged, row.RowState, "#6");
+
+			table.LoadDataRow (new object[] {1,2}, false);
+			row = table.Rows.Find (1);
+			Assert.IsNotNull (row, "#7");
+			Assert.AreEqual (2, row [1], "#8");
+			Assert.AreEqual (DataRowState.Modified, table.Rows.Find (1).RowState, "#9");
+
+			table.LoadDataRow (new object[] {1,3}, true);
+			row = table.Rows.Find (1);
+			Assert.IsNotNull (row, "#10");
+			Assert.AreEqual (3, row [1], "#11");
+			Assert.AreEqual (DataRowState.Unchanged, table.Rows.Find (1).RowState, "#12");
+		}
+
+		[Test]
 		public void EndLoadData_MergeDuplcateValues ()
 		{
 			DataTable table = new DataTable ();
@@ -430,6 +483,8 @@ namespace MonoTests_System.Data
 			table.Columns.Add ("col2", typeof (int));
 
 			table.PrimaryKey = new DataColumn[] {table.Columns [0]};
+			table.Rows.Add (new object[] {1, 500});
+			table.AcceptChanges ();
 
 			table.BeginLoadData ();
 			table.LoadDataRow (new object[] {1 , 1}, false);

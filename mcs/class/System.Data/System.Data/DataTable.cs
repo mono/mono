@@ -1190,42 +1190,39 @@ namespace System.Data {
 		public DataRow LoadDataRow (object[] values, bool fAcceptChanges) 
 		{
 			DataRow row = null;
-			if (PrimaryKey.Length == 0) {
+			if (PrimaryKey.Length == 0)
 				row = Rows.Add (values);
-				if (fAcceptChanges)
-					row.AcceptChanges ();
-			}
 			else {
 				EnsureDefaultValueRowIndex();
 				int newRecord = CreateRecord(values);
-				int existingRecord = _primaryKeyConstraint.Index.Find(newRecord);
+				int existingRecord = _primaryKeyConstraint.Index.Find (newRecord);
 
 				if (existingRecord < 0) {
 					row = NewRowFromBuilder (RowBuilder);
 					row.Proposed = newRecord;
-					AddRowToIndexes (row);
 					Rows.AddInternal(row);
-				}
-				else {
+					if (!_duringDataLoad)
+						AddRowToIndexes (row);
+				} else {
 					row = RecordCache[existingRecord];
 					row.BeginEdit();
 					row.ImportRecord(newRecord);
 					row.EndEdit();
 				}
-				
-				if (fAcceptChanges)
-					row.AcceptChanges ();
 			}
+			
+			if (fAcceptChanges)
+				row.AcceptChanges ();
 				
 			return row;
 		}
 
-		internal DataRow LoadDataRow(IDataRecord record, int[] mapping, int length, bool fAcceptChanges)
+		internal DataRow LoadDataRow (IDataRecord record, int[] mapping, int length, bool fAcceptChanges)
 		{
 			DataRow row = null;
-				int tmpRecord = this.RecordCache.NewRecord();
-				try {
-				RecordCache.ReadIDataRecord(tmpRecord,record,mapping,length);
+			int tmpRecord = this.RecordCache.NewRecord ();
+			try {
+				RecordCache.ReadIDataRecord (tmpRecord,record,mapping,length);
 				if (PrimaryKey.Length != 0) {
 					bool hasPrimaryValues = true;
 					foreach(DataColumn col in PrimaryKey) {
@@ -1234,35 +1231,28 @@ namespace System.Data {
 							break;
 						}
 					}
-					
+
 					if (hasPrimaryValues) {
-						// find the row in the table.
-						row = Rows.Find(tmpRecord);
+						int existingRecord = _primaryKeyConstraint.Index.Find (tmpRecord);
+						if (existingRecord != -1)
+							row  = RecordCache [existingRecord];
 					}
 				}
-					
-				bool shouldUpdateIndex = false;
+
 				if (row == null) {
 					row = NewNotInitializedRow();
-					row.ImportRecord(tmpRecord);
+					row.Proposed = tmpRecord;
 					Rows.AddInternal (row);
-					shouldUpdateIndex = true;
-				}
-				else {
-					// Proposed = tmpRecord
-					row.ImportRecord(tmpRecord);
-				}
-				
-				if (fAcceptChanges) {
-					row.AcceptChanges();
-				}
-				
-				if (shouldUpdateIndex && !fAcceptChanges) {
-					AddRowToIndexes(row);
+				} else {
+					row.BeginEdit ();
+					row.ImportRecord (tmpRecord);
+					row.EndEdit ();
 				}
 
-			}
-			catch(Exception e) {
+				if (fAcceptChanges)
+					row.AcceptChanges();
+
+			} catch(Exception e) {
 				this.RecordCache.DisposeRecord(tmpRecord);
 				throw e;
 			}				

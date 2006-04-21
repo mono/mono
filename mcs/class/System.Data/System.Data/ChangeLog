@@ -1,3 +1,24 @@
+2006-04-21  Senganal T  <tsenganal@novell.com>
+
+	* DataRowCollection.cs :
+		- Find : If search on the table using PrimaryKey fails and if
+		index is not being maintained (during table load), search the 
+		entire table.
+		- Find (int) : Removed. Deadcode. 
+		- Clear :
+			- Not necessary to delete each row from the Index.
+			Just reset the Indexes after cleaning up the row
+			collection.
+			- Simplify dependency check for child tables
+	* DataTable.cs :
+		- LoadDataRow : 
+			- Do not use DataRowCollection.Find to search for
+			existing records as this wud check even newly loaded rows.
+			Use Index.Find.
+			- Do not add new records to Index. Update Index only
+			if an existing record is modified. New records will be
+			taken care by EndLoadData.
+
 2006-04-19  Senganal T  <tsenganal@novell.com>
 
 	* XmlHelper.cs : A helper class for encoding/decoding schema names.
