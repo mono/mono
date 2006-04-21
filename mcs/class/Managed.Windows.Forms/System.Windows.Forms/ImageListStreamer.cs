@@ -170,7 +170,8 @@ namespace System.Windows.Forms {
 
 			Bitmap main = new Bitmap (cols * ImageSize.Width, rows * ImageSize.Height);
 			using (Graphics g = Graphics.FromImage (main)) {
-				g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), 0, 0, cols * ImageSize.Width, rows * ImageSize.Height);
+				g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), 0, 0,
+						main.Width, main.Height);
 				for (int i = 0; i < images.Length; i++) {
 					g.DrawImage (images [i], (i % cols) * ImageSize.Width,
 							(i / cols) * ImageSize.Height);
@@ -180,12 +181,30 @@ namespace System.Windows.Forms {
 			MemoryStream tmp = new MemoryStream ();
 			main.Save (tmp, ImageFormat.Bmp);
 			tmp.WriteTo (stream);
+
+			Bitmap mask = Get1bppMask (main);
 			main.Dispose ();
 			main = null;
 
-			Bitmap mask = new Bitmap (cols * ImageSize.Width, rows * ImageSize.Height);
+			tmp = new MemoryStream ();
+			mask.Save (tmp, ImageFormat.Bmp);
+			tmp.WriteTo (stream);
+			mask.Dispose ();
+
+			stream = GetRLEStream (stream, 4);
+			info.AddValue ("Data", stream.ToArray (), typeof (byte []));
+		}
+
+		unsafe Bitmap Get1bppMask (Bitmap main)
+		{
+			Rectangle rect = new Rectangle (0, 0, main.Width, main.Height);
+			Bitmap result = new Bitmap (main.Width, main.Height, PixelFormat.Format1bppIndexed);
+			BitmapData dresult = result.LockBits (rect, ImageLockMode.ReadWrite, PixelFormat.Format1bppIndexed);
+
 			int w = images [0].Width;
 			int h = images [0].Height;
+			byte *scan = (byte *) dresult.Scan0.ToPointer ();
+			int stride = dresult.Stride;
 			for (int idx = 0; idx < images.Length; idx++) {
 				Bitmap current = (Bitmap) images [idx];
 				// Hack for newly added images.
@@ -197,24 +216,18 @@ namespace System.Windows.Forms {
 				int basey = (idx / 4) * h;
 				int basex = (idx % 4) * w;
 				for (int y = 0; y < h; y++) {
+					int yidx = (y + basey) * stride;
 					for (int x = 0; x < w; x++) {
 						Color color = current.GetPixel (x, y);
 						if (color.A == 0) {
-							mask.SetPixel (x+basex, y+basey, Color.FromArgb (255,255,255));
-						} else {
-							mask.SetPixel (x+basex, y+basey, Color.FromArgb (0));
+							int ptridx = yidx + ((x + basex) >> 3);
+							scan [ptridx] |= (byte) (0x80 >> (x & 7));
 						}
 					}
 				}
 			}
-
-			tmp = new MemoryStream ();
-			mask.Save (tmp, ImageFormat.Bmp);
-			tmp.WriteTo (stream);
-			mask.Dispose ();
-
-			stream = GetRLEStream (stream, 4);
-			info.AddValue ("Data", stream.ToArray (), typeof (byte []));
+			result.UnlockBits (dresult);
+			return result;
 		}
 
 		static MemoryStream GetDecodedStream (byte [] bytes, int offset, int size)

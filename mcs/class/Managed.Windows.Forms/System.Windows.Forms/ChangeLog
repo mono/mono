@@ -1,3 +1,7 @@
+2006-04-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ImageListStreamer.cs: save the mask as a 1bpp image.
+
 2006-04-21  Mike Kestner  <mkestner@novell.com>
 
 	* CheckedListBox.cs: maintain CheckStatus here. Use DrawItemState to
