@@ -81,7 +81,7 @@ namespace System.Web.UI.HtmlControls {
 		public override string Value {
 			get {
 				string s = Attributes ["value"];
-				if (s == null) {
+				if (s == null || s.Length == 0) {
 					s = ID;
 					if ((s != null) && (s.Length == 0))
 						s = null;
@@ -120,7 +120,8 @@ namespace System.Web.UI.HtmlControls {
 
 		protected override void RenderAttributes (HtmlTextWriter writer)
 		{
-			writer.WriteAttribute ("value", ID);
+			writer.WriteAttribute ("value", Value);
+			Attributes.Remove ("value");
 			base.RenderAttributes (writer);
 		}
 #if NET_2_0
