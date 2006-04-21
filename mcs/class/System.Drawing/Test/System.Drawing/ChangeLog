@@ -1,3 +1,8 @@
+2006-04-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestGraphics.cs: Added new test cases for clipping. Some of them do 
+	not work yet.
+
 2006-04-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestGraphics.cs: Added new test cases for bug #77129 where we should

@@ -535,6 +535,125 @@ namespace MonoTests.System.Drawing
 			g.MultiplyTransform (g.Transform);
 			CheckBounds ("multiply.ClipBounds", g.ClipBounds, -104, -56, 64, 64);
 			CheckBounds ("multiply.Clip.GetBounds", g.Clip.GetBounds (g), -104, -56, 64, 64);
+
+			g.ResetTransform ();
+			CheckBounds ("reset.ClipBounds", g.ClipBounds, 0, 0, 8, 8);
+			CheckBounds ("reset.Clip.GetBounds", g.Clip.GetBounds (g), 0, 0, 8, 8);
+		}
+
+		[Test]
+		public void Clip_TranslateTransform_BoundsChange ()
+		{
+			Graphics g = Get (16, 16);
+			CheckBounds ("graphics.ClipBounds", g.ClipBounds, 0, 0, 16, 16);
+			CheckBounds ("graphics.Clip.GetBounds", g.Clip.GetBounds (g), 0, 0, 16, 16);
+			g.TranslateTransform (-16, -16);
+			CheckBounds ("translated.ClipBounds", g.ClipBounds, 16, 16, 16, 16);
+			CheckBounds ("translated.Clip.GetBounds", g.Clip.GetBounds (g), 16, 16, 16, 16);
+
+			g.Clip = new Region (new Rectangle (0, 0, 8, 8));
+			// ClipBounds isn't affected by a previous translation
+			CheckBounds ("rectangle.ClipBounds", g.ClipBounds, 0, 0, 8, 8);
+			// Clip.GetBounds isn't affected by a previous translation
+			CheckBounds ("rectangle.Clip.GetBounds", g.Clip.GetBounds (g), 0, 0, 8, 8);
+
+			g.ResetTransform ();
+			CheckBounds ("reseted.ClipBounds", g.ClipBounds, -16, -16, 8, 8);
+			CheckBounds ("reseted.Clip.GetBounds", g.Clip.GetBounds (g), -16, -16, 8, 8);
+		}
+
+		[Test]
+		public void Clip_RotateTransform_BoundsChange ()
+		{
+			Graphics g = Get (16, 16);
+			CheckBounds ("graphics.ClipBounds", g.ClipBounds, 0, 0, 16, 16);
+			CheckBounds ("graphics.Clip.GetBounds", g.Clip.GetBounds (g), 0, 0, 16, 16);
+			// we select a "simple" angle because the region will be converted into
+			// a bitmap (well for libgdiplus) and we would lose precision after that
+			g.RotateTransform (90);
+			CheckBounds ("rotated.ClipBounds", g.ClipBounds, 0, -16, 16, 16);
+			CheckBounds ("rotated.Clip.GetBounds", g.Clip.GetBounds (g), 0, -16, 16, 16);
+			g.Clip = new Region (new Rectangle (0, 0, 8, 8));
+			// ClipBounds isn't affected by a previous rotation (90)
+			CheckBounds ("rectangle.ClipBounds", g.ClipBounds, 0, 0, 8, 8);
+			// Clip.GetBounds isn't affected by a previous rotation
+			CheckBounds ("rectangle.Clip.GetBounds", g.Clip.GetBounds (g), 0, 0, 8, 8);
+
+			g.ResetTransform ();
+			CheckBounds ("reseted.ClipBounds", g.ClipBounds, -8, 0, 8, 8);
+			CheckBounds ("reseted.Clip.GetBounds", g.Clip.GetBounds (g), -8, 0, 8, 8);
+		}
+
+		private void CheckBoundsInt (string msg, RectangleF bounds, int x, int y, int w, int h)
+		{
+			// currently bounds are rounded at 8 pixels (FIXME - we can go down to 1 pixel)
+			AssertEquals (msg + ".X", x, bounds.X, 4f);
+			AssertEquals (msg + ".Y", y, bounds.Y, 4f);
+			AssertEquals (msg + ".Width", w, bounds.Width, 4f);
+			AssertEquals (msg + ".Height", h, bounds.Height, 4f);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Clip_RotateTransform_BoundsChange_45 ()
+		{
+			Graphics g = Get (16, 16);
+			CheckBounds ("graphics.ClipBounds", g.ClipBounds, 0, 0, 16, 16);
+			CheckBounds ("graphics.Clip.GetBounds", g.Clip.GetBounds (g), 0, 0, 16, 16);
+			g.RotateTransform (45);
+			// we can't use the "normal" CheckBound here because of libgdiplus crude rounding
+			CheckBoundsInt ("rotated.ClipBounds", g.ClipBounds, 0, -11, 24, 24);
+			CheckBoundsInt ("rotated.Clip.GetBounds", g.Clip.GetBounds (g), 0, -11, 24, 24);
+			g.Clip = new Region (new Rectangle (0, 0, 8, 8));
+			// ClipBounds IS affected by a previous rotation (45)
+			CheckBoundsInt ("rectangle.ClipBounds", g.ClipBounds, -3, -4, 16, 16);
+			// Clip.GetBounds isn't affected by a previous rotation
+			CheckBounds ("rectangle.Clip.GetBounds", g.Clip.GetBounds (g), 0, 0, 8, 8);
+
+			g.ResetTransform ();
+			CheckBounds ("reseted.ClipBounds", g.ClipBounds, -5, 1, 11, 11);
+			CheckBounds ("reseted.Clip.GetBounds", g.Clip.GetBounds (g), -5.6f, 0, 11.3f, 11.3f);
+		}
+
+		[Test]
+		public void Clip_ScaleTransform_NoBoundsChange ()
+		{
+			Graphics g = Get (16, 16);
+			CheckBounds ("graphics.ClipBounds", g.ClipBounds, 0, 0, 16, 16);
+			CheckBounds ("graphics.Clip.GetBounds", g.Clip.GetBounds (g), 0, 0, 16, 16);
+			g.ScaleTransform (2, 0.5f);
+			CheckBounds ("scaled.ClipBounds", g.ClipBounds, 0, 0, 8, 32);
+			CheckBounds ("scaled.Clip.GetBounds", g.Clip.GetBounds (g), 0, 0, 8, 32);
+			g.Clip = new Region (new Rectangle (0, 0, 8, 8));
+			// ClipBounds isn't affected by a previous scaling
+			CheckBounds ("rectangle.ClipBounds", g.ClipBounds, 0, 0, 8, 8);
+			// Clip.GetBounds isn't affected by a previous scaling
+			CheckBounds ("rectangle.Clip.GetBounds", g.Clip.GetBounds (g), 0, 0, 8, 8);
+
+			g.ResetTransform ();
+			CheckBounds ("reseted.ClipBounds", g.ClipBounds, 0, 0, 16, 4);
+			CheckBounds ("reseted.Clip.GetBounds", g.Clip.GetBounds (g), 0, 0, 16, 4);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Clip_MultiplyTransform_NoBoundsChange ()
+		{
+			Graphics g = Get (16, 16);
+			CheckBounds ("graphics.ClipBounds", g.ClipBounds, 0, 0, 16, 16);
+			CheckBounds ("graphics.Clip.GetBounds", g.Clip.GetBounds (g), 0, 0, 16, 16);
+			g.MultiplyTransform (new Matrix (2.5f, 0.5f, -2.5f, 0.5f, 4, -4));
+			CheckBounds ("multiplied.ClipBounds", g.ClipBounds, 3.2f, 1.6f, 19.2f, 19.2f);
+			CheckBounds ("multiplied.Clip.GetBounds", g.Clip.GetBounds (g), 3.2f, 1.6f, 19.2f, 19.2f);
+			g.Clip = new Region (new Rectangle (0, 0, 8, 8));
+			// ClipBounds IS affected by the previous multiplication
+			CheckBounds ("rectangle.ClipBounds", g.ClipBounds, -3, -3, 15, 15);
+			// Clip.GetBounds isn't affected by the previous multiplication
+			CheckBounds ("rectangle.Clip.GetBounds", g.Clip.GetBounds (g), 0, 0, 8, 8);
+
+			g.ResetTransform ();
+			CheckBounds ("reseted.ClipBounds", g.ClipBounds, -16, -3, 40, 7);
+			CheckBounds ("reseted.Clip.GetBounds", g.Clip.GetBounds (g), -16, -4, 40, 8);
 		}
 
 		[Test]
