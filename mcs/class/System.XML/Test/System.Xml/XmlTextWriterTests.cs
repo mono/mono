@@ -2199,6 +2199,14 @@ namespace MonoTests.System.Xml
 			Assert.AreEqual ("<stream:stream version='1.0' to='me@test.com' from='server' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams'>", StringWriterText);
 		}
 
+		[Test] // bug #78148
+		public void UpdateFormattingOnTheFly ()
+		{
+			XmlTextWriter w = new XmlTextWriter (TextWriter.Null);
+			w.WriteStartElement ("test");
+			w.Formatting = Formatting.Indented;
+		}
+
 #if NET_2_0
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]

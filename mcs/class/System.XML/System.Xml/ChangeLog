@@ -1,3 +1,9 @@
+2006-04-21  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextWriter.cs : fix for bug #78148. set_Formatting() is not
+	  rejected after writing some content. I totally disagree on that
+	  it should be allowed, but here is the fix.
+
 2006-04-14  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlReader.cs : ReadElementContentAsObject() incorrectly rejected

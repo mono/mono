@@ -342,8 +342,12 @@ namespace Mono.Xml
 		public Formatting Formatting {
 			get { return indent ? Formatting.Indented : Formatting.None; }
 			set {
-				if (state != WriteState.Start)
-					throw InvalidOperation ("Formatting must be set before it is actually used to write output.");
+				// Someone thinks it should be settable even
+				// after writing some content (bug #78148).
+				// I totally disagree but here is the fix.
+
+				//if (state != WriteState.Start)
+				//	throw InvalidOperation ("Formatting must be set before it is actually used to write output.");
 				indent = (value == Formatting.Indented);
 			}
 		}
