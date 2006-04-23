@@ -234,6 +234,21 @@ namespace Mono.CSharp {
 
 			if (((value < min) || (value > max)))
 				throw new OverflowException ();
+
+			if (double.IsNaN (value))
+				throw new OverflowException ();
+		}
+
+		protected static void CheckRange (bool inCheckedContext, double value, ulong min, ulong max)
+		{
+			if (!inCheckedContext)
+				return;
+
+			if (((value < min) || (value > max)))
+				throw new OverflowException ();
+
+			if (double.IsNaN (value))
+				throw new OverflowException ();
 		}
 
 		protected static void CheckUnsigned (bool inCheckedContext, long value)
@@ -1663,26 +1678,44 @@ namespace Mono.CSharp {
 
 		public override Constant Reduce (bool inCheckedContext, Type target_type)
 		{
-			if (target_type == TypeManager.byte_type)
+			if (target_type == TypeManager.byte_type) {
+				CheckRange (inCheckedContext, Value, byte.MinValue, byte.MaxValue);
 				return new ByteConstant ((byte) Value, Location);
-			if (target_type == TypeManager.sbyte_type)
+			}
+			if (target_type == TypeManager.sbyte_type) {
+				CheckRange (inCheckedContext, Value,  sbyte.MinValue, sbyte.MaxValue);
 				return new SByteConstant ((sbyte) Value, Location);
-			if (target_type == TypeManager.short_type)
+			}
+			if (target_type == TypeManager.short_type) {
+				CheckRange (inCheckedContext, Value, short.MinValue, short.MaxValue);
 				return new ShortConstant ((short) Value, Location);
-			if (target_type == TypeManager.ushort_type)
+			}
+			if (target_type == TypeManager.ushort_type) {
+				CheckRange (inCheckedContext, Value, ushort.MinValue, ushort.MaxValue);
 				return new UShortConstant ((ushort) Value, Location);
-			if (target_type == TypeManager.int32_type)
+			}
+			if (target_type == TypeManager.int32_type) {
+				CheckRange (inCheckedContext, Value, int.MinValue, int.MaxValue);
 				return new IntConstant ((int) Value, Location);
-			if (target_type == TypeManager.uint32_type)
+			}
+			if (target_type == TypeManager.uint32_type) {
+				CheckRange (inCheckedContext, Value, uint.MinValue, uint.MaxValue);
 				return new UIntConstant ((uint) Value, Location);
-			if (target_type == TypeManager.int64_type)
+			}
+			if (target_type == TypeManager.int64_type) {
+				CheckRange (inCheckedContext, Value, long.MinValue, long.MaxValue);
 				return new LongConstant ((long) Value, Location);
-			if (target_type == TypeManager.uint64_type)
+			}
+			if (target_type == TypeManager.uint64_type) {
+				CheckRange (inCheckedContext, Value, ulong.MinValue, ulong.MaxValue);
 				return new ULongConstant ((ulong) Value, Location);
+			}
 			if (target_type == TypeManager.double_type)
 				return new DoubleConstant ((double) Value, Location);
-			if (target_type == TypeManager.char_type)
+			if (target_type == TypeManager.char_type) {
+				CheckRange (inCheckedContext, Value, char.MinValue, char.MaxValue);
 				return new CharConstant ((char) Value, Location);
+			}
 			if (target_type == TypeManager.decimal_type)
 				return new DecimalConstant ((decimal) Value, Location);
 
@@ -1774,18 +1807,30 @@ namespace Mono.CSharp {
 				CheckRange (inCheckedContext, Value, SByte.MinValue, SByte.MaxValue);
 				return new SByteConstant ((sbyte) Value, Location);
 			}
-			if (target_type == TypeManager.short_type)
+			if (target_type == TypeManager.short_type) {
+				CheckRange (inCheckedContext, Value, short.MinValue, short.MaxValue);
 				return new ShortConstant ((short) Value, Location);
-			if (target_type == TypeManager.ushort_type)
+			}
+			if (target_type == TypeManager.ushort_type) {
+				CheckRange (inCheckedContext, Value, ushort.MinValue, ushort.MaxValue);
 				return new UShortConstant ((ushort) Value, Location);
-			if (target_type == TypeManager.int32_type)
+			}
+			if (target_type == TypeManager.int32_type) {
+				CheckRange (inCheckedContext, Value, int.MinValue, int.MaxValue);
 				return new IntConstant ((int) Value, Location);
-			if (target_type == TypeManager.uint32_type)
+			}
+			if (target_type == TypeManager.uint32_type) {
+				CheckRange (inCheckedContext, Value, uint.MinValue, uint.MaxValue);
 				return new UIntConstant ((uint) Value, Location);
-			if (target_type == TypeManager.int64_type)
+			}
+			if (target_type == TypeManager.int64_type) {
+				CheckRange (inCheckedContext, Value, long.MinValue, long.MaxValue);
 				return new LongConstant ((long) Value, Location);
-			if (target_type == TypeManager.uint64_type)
+			}
+			if (target_type == TypeManager.uint64_type) {
+				CheckRange (inCheckedContext, Value, ulong.MinValue, ulong.MaxValue);
 				return new ULongConstant ((ulong) Value, Location);
+			}
 			if (target_type == TypeManager.float_type)
 				return new FloatConstant ((float) Value, Location);
 			if (target_type == TypeManager.char_type) {
