@@ -1,3 +1,7 @@
+2006-04-23 Andrew Skiba <andrews@mainsoft.com>
+
+	* PageThemeParser.cs: add LinkedStyleSheets property
+
 2006-04-16 Andrew Skiba <andrews@mainsoft.com>
 
 	* TemplateParser.cs: add internal method AddAssemblyByFileName

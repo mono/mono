@@ -41,6 +41,20 @@ namespace System.Web.UI
 {
 	internal sealed class PageThemeParser: UserControlParser
 	{
+		string[] linkedStyleSheets;
+
+		public string [] LinkedStyleSheets
+		{
+			get
+			{
+				return linkedStyleSheets;
+			}
+			set
+			{
+				linkedStyleSheets = value;
+			}
+		}
+
 		internal PageThemeParser (string virtualPath, HttpContext context)
 		: base (virtualPath, Path.GetDirectoryName(virtualPath), context, "System.Web.UI.PageTheme")
 		{

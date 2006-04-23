@@ -1,3 +1,10 @@
+2006-04-23  Andrew Skiba  <andrews@mainsoft.com>
+
+	* PageThemeCompiler.cs: initialize __linkedStyleSheets field with the
+	array of style sheets from the parser
+	* ThemeDirectoryCompiler.cs: scan *.css files in theme directory and
+	put them in LinkedStyleSheets of PageThemeParser
+
 2006-04-20  Chris Toshok  <toshok@ximian.com>
 
 	* BaseCompiler.cs: for 2.0, emit the correct namespace and class

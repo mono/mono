@@ -79,7 +79,7 @@ namespace System.Web.Compilation
 			/* LinkedStyleSheets */
 			fld = new CodeMemberField (typeof (string[]), "__linkedStyleSheets");
 			fld.Attributes = MemberAttributes.Private;
-			fld.InitExpression = new CodePrimitiveExpression (null);
+			fld.InitExpression = CreateLinkedStyleSheets ();
 			mainClass.Members.Add (fld);
 
 			prop = new CodeMemberProperty ();
@@ -107,6 +107,19 @@ namespace System.Web.Compilation
 					CreateControlSkinMethod (b);
 				}
 			}
+		}
+
+		private CodeExpression CreateLinkedStyleSheets ()
+		{
+			string [] lss = parser.LinkedStyleSheets;
+			if (lss == null)
+				return new CodePrimitiveExpression (null);
+			
+			CodeExpression [] initializers = new CodeExpression [lss.Length];
+			for (int i = 0; i < lss.Length; i++)
+				initializers[i] = new CodePrimitiveExpression (lss[i]);
+
+			return new CodeArrayCreateExpression (typeof (string), initializers);
 		}
 
 		void CreateControlSkinMethod (ControlBuilder builder)
