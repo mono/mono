@@ -92,6 +92,7 @@ System.Web.UI.WebControls/BaseDataBoundControlTest.cs
 System.Web.UI.WebControls/BaseDataListTest.cs
 System.Web.UI.WebControls/BaseValidatorTest.cs
 System.Web.UI.WebControls/BoundColumnTest.cs
+System.Web.UI.WebControls/BulletedListTest.cs
 System.Web.UI.WebControls/ButtonColumnTest.cs
 System.Web.UI.WebControls/ButtonTest.cs
 System.Web.UI.WebControls/CalendarDayTest.cs
