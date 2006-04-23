@@ -3464,7 +3464,7 @@ namespace Mono.CSharp {
 		bool is_readonly;
 		bool prepared;
 		LocalTemporary temp;
-		
+
 		public LocalVariableReference (Block block, string name, Location l)
 		{
 			Block = block;
@@ -3486,15 +3486,11 @@ namespace Mono.CSharp {
 		}
 
 		public VariableInfo VariableInfo {
-			get {
-				return local_info.VariableInfo;
-			}
+			get { return local_info.VariableInfo; }
 		}
 
 		public bool IsReadOnly {
-			get {
-				return is_readonly;
-			}
+			get { return is_readonly; }
 		}
 
 		public bool VerifyAssigned (EmitContext ec)
@@ -3503,54 +3499,24 @@ namespace Mono.CSharp {
 			return variable_info == null || variable_info.IsAssigned (ec, loc);
 		}
 
-		protected Expression DoResolveBase (EmitContext ec, Expression lvalue_right_side)
+		void ResolveLocalInfo ()
 		{
 			if (local_info == null) {
 				local_info = Block.GetLocalInfo (Name);
-
-				// is out param
-				if (lvalue_right_side == EmptyExpression.OutAccess)
-					local_info.Used = true;
-
 				is_readonly = local_info.ReadOnly;
 			}
+		}
 
+		protected Expression DoResolveBase (EmitContext ec)
+		{
 			type = local_info.VariableType;
 
-			VariableInfo variable_info = local_info.VariableInfo;
-			if (lvalue_right_side != null){
-				if (is_readonly){
-					if (lvalue_right_side == EmptyExpression.OutAccess)
-						Report.Error (1657, loc, "Cannot pass `{0}' as a ref or out argument because it is a `{1}'",
-							Name, local_info.GetReadOnlyContext ());
-					else if (lvalue_right_side == EmptyExpression.LValueMemberAccess)
-						Report.Error (1654, loc, "Cannot assign to members of `{0}' because it is a `{1}'",
-							Name, local_info.GetReadOnlyContext ());
-					else if (lvalue_right_side == EmptyExpression.LValueMemberOutAccess)
-						Report.Error (1655, loc, "Cannot pass members of `{0}' as ref or out arguments because it is a `{1}'",
-							      Name, local_info.GetReadOnlyContext ()) ;
-					else
-						Report.Error (1656, loc, "Cannot assign to `{0}' because it is a `{1}'",
-							Name, local_info.GetReadOnlyContext ());
-					return null;
-				}
-				
-				if (variable_info != null)
-					variable_info.SetAssigned (ec);
-			}
-		
 			Expression e = Block.GetConstantExpression (Name);
-			if (e != null) {
-				local_info.Used = true;
-				eclass = ExprClass.Value;
+			if (e != null)
 				return e.Resolve (ec);
-			}
 
 			if (!VerifyAssigned (ec))
 				return null;
-
-			if (lvalue_right_side == null)
-				local_info.Used = true;
 
 			if (ec.CurrentAnonymousMethod != null){
 				//
@@ -3570,15 +3536,42 @@ namespace Mono.CSharp {
 
 			return this;
 		}
-		
+
 		public override Expression DoResolve (EmitContext ec)
 		{
-			return DoResolveBase (ec, null);
+			ResolveLocalInfo ();
+			local_info.Used = true;
+			return DoResolveBase (ec);
 		}
 
 		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
-			return DoResolveBase (ec, right_side);
+			ResolveLocalInfo ();
+
+			if (is_readonly) {
+				int code;
+				string msg;
+				if (right_side == EmptyExpression.OutAccess) {
+					code = 1657; msg = "Cannot pass `{0}' as a ref or out argument because it is a `{1}'";
+				} else if (right_side == EmptyExpression.LValueMemberAccess) {
+					code = 1654; msg = "Cannot assign to members of `{0}' because it is a `{1}'";
+				} else if (right_side == EmptyExpression.LValueMemberOutAccess) {
+					code = 1655; msg = "Cannot pass members of `{0}' as ref or out arguments because it is a `{1}'";
+				} else {
+					code = 1656; msg = "Cannot assign to `{0}' because it is a `{1}'";
+				}
+				Report.Error (code, loc, msg, Name, local_info.GetReadOnlyContext ());
+				return null;
+			}
+
+			// is out param
+			if (right_side == EmptyExpression.OutAccess)
+				local_info.Used = true;
+
+			if (VariableInfo != null)
+				VariableInfo.SetAssigned (ec);
+
+			return DoResolveBase (ec);
 		}
 
 		public bool VerifyFixed ()
@@ -3587,7 +3580,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public override int GetHashCode()
+		public override int GetHashCode ()
 		{
 			return Name.GetHashCode ();
 		}

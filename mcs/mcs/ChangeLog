@@ -1,3 +1,10 @@
+2006-04-23  Raja R Harinath  <rharinath@novell.com>
+
+	* expression.cs (LocalVariableReference.DoResolveBase): Simplify.
+	Remove 'lvalue_right_side' argument.  Move parts to ...
+	(LocalVariableReference.ResolveLocalInfo, LocalVariable.DoResolve)
+	(LocalVariable.DoResolveLValue): ... these.
+
 2006-04-21  Raja R Harinath  <rharinath@novell.com>
 
 	Fix cs1655.cs
