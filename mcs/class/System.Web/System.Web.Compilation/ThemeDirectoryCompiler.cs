@@ -51,13 +51,14 @@ namespace System.Web.UI
 			string[] css_files = Directory.GetFiles (physicalPath, "*.css");
 			string[] css_urls = new string[css_files.Length];
 			for (int i = 0; i < css_files.Length; i++)
-				css_urls[i] = virtualPath + Path.GetFileName (css_files[i]);
+				css_urls[i] = UrlUtils.Combine (virtualPath, Path.GetFileName (css_files[i]));
 			ptp.LinkedStyleSheets = css_urls;
 			
 			ptp.RootBuilder = new RootBuilder ();
 
 			for (int i = 0; i < skin_files.Length; i ++) {
-				PageThemeFileParser ptfp = new PageThemeFileParser (virtualPath + Path.GetFileName (skin_files[i]),
+				string skin_file_url = UrlUtils.Combine (virtualPath, Path.GetFileName (skin_files[i]));
+				PageThemeFileParser ptfp = new PageThemeFileParser (skin_file_url,
 										   skin_files[i],
 										   context);
 

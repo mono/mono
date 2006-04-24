@@ -1,3 +1,7 @@
+2006-04-24  Andrew Skiba  <andrews@mainsoft.com>
+
+	* ThemeDirectoryCompiler.cs: use UrlUtils.Combine to combine pathes
+
 2006-04-23  Andrew Skiba  <andrews@mainsoft.com>
 
 	* PageThemeCompiler.cs: initialize __linkedStyleSheets field with the
