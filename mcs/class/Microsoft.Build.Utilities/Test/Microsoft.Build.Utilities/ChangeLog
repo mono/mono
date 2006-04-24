@@ -1,3 +1,7 @@
+2006-04-24  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* TaskLoggingHelperTest.cs: Added new tests.
+
 2006-03-29  Crestez Leonard  <cdleonard@gmail.com>
 
 	* TaskItemTest.cs: Added new tests.
