@@ -72,7 +72,7 @@ namespace System.Web.Configuration {
 			string username = (user == null) ? "" : user.Identity.Name;
 
 			foreach (AuthorizationRule rule in Rules) {
-				if (!rule.CheckVerb (verb))
+				if (rule.Verbs.Count != 0 && !rule.CheckVerb (verb))
 					continue;
 
 				if (rule.CheckUser (username) || (user != null && rule.CheckRole(user)))
