@@ -186,5 +186,23 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			// Will fail.
 			Assert.AreEqual ("A-B-C", GetItems (proj, "ItemS3"), "ItemS3");
 		}
+
+		[Test]
+		public void TestDefaultTasks ()
+		{
+			Engine engine = new Engine (binPath);
+			Project project = engine.CreateNewProject ();
+
+			string documentString = @"
+                                <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<Target Name=""Main"">
+						<Message Text='Text' />
+					</Target>
+                                </Project>
+			";
+
+			project.LoadXml (documentString);
+			project.Build ("Main");
+		}
 	}
 }

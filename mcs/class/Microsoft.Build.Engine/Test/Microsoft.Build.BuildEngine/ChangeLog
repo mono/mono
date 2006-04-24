@@ -1,3 +1,8 @@
+2006-04-24  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* ProjectTest.cs: Added tests for loading of default tasks (from
+	Microsoft.Build.Tasks).
+
 2006-03-29  Crestez Leonard  <cdleonard@gmail.com>
 
 	* EngineTest.cs: Added test for GlobalEngine.
