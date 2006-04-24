@@ -26,6 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Globalization;
@@ -50,6 +51,7 @@ namespace System.Web.UI.WebControls {
 #endif
 	{
 		string render_type;
+		AttributeCollection common_attrs;
 
 #if NET_2_0
 		AttributeCollection inputAttributes;
@@ -180,15 +182,7 @@ namespace System.Web.UI.WebControls {
 		[WebCategory ("Appearance")]
 		public virtual TextAlign TextAlign
 		{
-			get {
-				object o = ViewState["TextAlign"];
-
-				if (o == null) {
-					return (TextAlign.Right);
-				} else {
-					return ((TextAlign)o);
-				}
-			}
+			get { return (TextAlign) ViewState.GetInt ("TextAlign", (int)TextAlign.Right); }
 			set {
 				if (value != TextAlign.Left &&
 				    value != TextAlign.Right) {
@@ -204,7 +198,7 @@ namespace System.Web.UI.WebControls {
 		[DefaultValue ("")]
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Behavior")]
-		public string ValidationGroup
+		public virtual string ValidationGroup
 		{
 			get { return ViewState.GetString ("ValidationGroup", String.Empty); }
 			set { ViewState["ValidationGroup"] = value; }
@@ -310,6 +304,57 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
+		static bool IsInputOrCommonAttr (string attname)
+		{
+			attname = attname.ToUpper (CultureInfo.InvariantCulture);
+			switch (attname) {
+			case "VALUE":
+			case "CHECKED":
+			case "SIZE":
+			case "MAXLENGTH":
+			case "SRC":
+			case "ALT":
+			case "USEMAP":
+			case "DISABLED":
+			case "READONLY":
+			case "ACCEPT":
+			case "ACCESSKEY":
+			case "TABINDEX":
+			case "ONFOCUS":
+			case "ONBLUR":
+			case "ONSELECT":
+			case "ONCHANGE":
+			case "ONCLICK":
+			case "ONDBLCLICK":
+			case "ONMOUSEDOWN":
+			case "ONMOUSEUP":
+			case "ONMOUSEOVER":
+			case "ONMOUSEMOVE":
+			case "ONMOUSEOUT":
+			case "ONKEYPRESS":
+			case "ONKEYDOWN":
+			case "ONKEYUP":
+				return true;
+			default:
+				return false;
+			}
+		}
+
+		void AddAttributesForSpan (HtmlTextWriter writer)
+		{
+			ICollection k = Attributes.Keys;
+			string [] keys = new string [k.Count];
+			k.CopyTo (keys, 0);
+			foreach (string key in keys) {
+				if (!IsInputOrCommonAttr (key))
+					continue;
+				if (common_attrs == null)
+					common_attrs = new AttributeCollection (new StateBag ());
+				common_attrs [key] = Attributes [key];
+				Attributes.Remove (key);
+			}
+			Attributes.AddAttributes (writer);
+		}
 #if NET_2_0
 		protected internal
 #else		
@@ -320,13 +365,13 @@ namespace System.Web.UI.WebControls {
 			if (Page != null)
 				Page.VerifyRenderingInServerForm (this);
 
-			bool need_span = ControlStyleCreated;
+			bool need_span = ControlStyleCreated && !ControlStyle.IsEmpty;
 			if (need_span)
 				ControlStyle.AddAttributesToRender (w, this);
 
 			if (!Enabled) {
 				w.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled");
-				//need_span = true;
+				need_span = true;
 			}
 
 			string tt = ToolTip;
@@ -336,6 +381,7 @@ namespace System.Web.UI.WebControls {
 			}
 
 			if (Attributes.Count > 0){
+				AddAttributesForSpan (w);
 				Attributes.AddAttributes (w);
 				need_span = true;
 			}
@@ -354,7 +400,7 @@ namespace System.Web.UI.WebControls {
 
 				if (AutoPostBack){
 					w.AddAttribute (HtmlTextWriterAttribute.Onclick,
-							     Page.ClientScript.GetPostBackClientEvent (this, String.Empty));
+							Page.ClientScript.GetPostBackEventReference (this, String.Empty));
 					w.AddAttribute ("language", "javascript");
 				}
 
@@ -365,6 +411,8 @@ namespace System.Web.UI.WebControls {
 					w.AddAttribute (HtmlTextWriterAttribute.Tabindex,
 							     TabIndex.ToString (CultureInfo.InvariantCulture));
 
+				if (common_attrs != null)
+					common_attrs.AddAttributes (w);
 				w.RenderBeginTag (HtmlTextWriterTag.Input);
 				w.RenderEndTag ();
 				string text = Text;
@@ -391,9 +439,6 @@ namespace System.Web.UI.WebControls {
 					w.RenderEndTag ();
 				}
 
-				if (!Enabled)
-					w.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled");
-
 				w.AddAttribute (HtmlTextWriterAttribute.Id, ClientID);
 				w.AddAttribute (HtmlTextWriterAttribute.Type, render_type);
 				w.AddAttribute (HtmlTextWriterAttribute.Name, NameAttribute);
@@ -403,7 +448,7 @@ namespace System.Web.UI.WebControls {
 
 				if (AutoPostBack){
 					w.AddAttribute (HtmlTextWriterAttribute.Onclick,
-							     Page.ClientScript.GetPostBackClientEvent (this, String.Empty));
+							Page.ClientScript.GetPostBackEventReference (this, String.Empty));
 					w.AddAttribute ("language", "javascript");
 				}
 
@@ -414,6 +459,8 @@ namespace System.Web.UI.WebControls {
 					w.AddAttribute (HtmlTextWriterAttribute.Tabindex,
 							     TabIndex.ToString (NumberFormatInfo.InvariantInfo));
 
+				if (common_attrs != null)
+					common_attrs.AddAttributes (w);
 				w.RenderBeginTag (HtmlTextWriterTag.Input);
 				w.RenderEndTag ();
 			}
@@ -470,6 +517,8 @@ namespace System.Web.UI.WebControls {
 
 		internal virtual void InternalAddAttributesToRender (HtmlTextWriter w)
 		{
+			if (!Enabled)
+				w.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled");
 		}
 	}
 }
