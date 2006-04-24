@@ -1,3 +1,12 @@
+2006-04-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* image.c (mono_image_close): Tidy up trace messages.
+
+	* assembly.c (mono_assembly_close): Ditto.
+
+	* assembly.c (mono_assembly_close): Clear out image->assembly so the image
+	no longer references an already freed assembly. Fixes #78168.
+
 2006-04-21  Dick Porter  <dick@ximian.com>
 
 	* threads.c (mono_thread_detach): Fix reference counting when
