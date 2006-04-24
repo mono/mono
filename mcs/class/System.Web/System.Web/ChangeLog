@@ -1,3 +1,9 @@
+2006-04-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpServerUtility.cs: don't reset the query string in Execute() when
+	the path does not contain it and we have one from the previous request.
+	Fixes bug #78177.
+
 2006-04-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpResponse.cs:
