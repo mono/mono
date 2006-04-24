@@ -78,6 +78,16 @@ namespace Microsoft.Build.BuildEngine {
 				return (Type) typesByFullName [classname];
 		}
 		
+		public void CopyTasks (TaskDatabase taskDatabase)
+		{
+			foreach (DictionaryEntry de in taskDatabase.assemblyInformation)
+				assemblyInformation.Add (de.Key, de.Value);
+			foreach (DictionaryEntry de in taskDatabase.typesByFullName)
+				typesByFullName.Add (de.Key, de.Value);
+			foreach (DictionaryEntry de in taskDatabase.typesByShortName)
+				typesByShortName.Add (de.Key, de.Value);
+		}
+		
 		private string GetShortName (string fullname)
 		{
 			string[] parts = fullname.Split ('.');

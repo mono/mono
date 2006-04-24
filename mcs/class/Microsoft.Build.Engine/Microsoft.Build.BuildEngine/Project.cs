@@ -83,7 +83,11 @@ namespace Microsoft.Build.BuildEngine {
 			itemGroups = new BuildItemGroupCollection (groups);
 			propertyGroups = new BuildPropertyGroupCollection (groups);
 			targets = new TargetCollection (this);
+			
 			taskDatabase = new TaskDatabase ();
+			if (engine.DefaultTasksRegistered == true)
+				taskDatabase.CopyTasks (engine.DefaultTasks);
+			
 			globalProperties = new BuildPropertyGroup ();
 			fullFileName = String.Empty;
 

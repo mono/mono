@@ -1,5 +1,11 @@
 2006-04-24  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
+	* ImportedProject.cs: Removed warning.
+	* Engine.cs, Project.cs, TaskDatabase.cs: Added registration of
+	default tasks.
+
+2006-04-24  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
 	* Project.cs: Removed unnecessary variable.
 	* Engine.cs: Added fixme.
 

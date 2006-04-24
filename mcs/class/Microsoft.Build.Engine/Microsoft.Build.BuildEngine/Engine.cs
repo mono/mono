@@ -29,13 +29,18 @@
 
 using System;
 using System.Collections;
+using System.IO;
 using Microsoft.Build.Framework;
+using Mono.XBuild.Utilities;
 
 namespace Microsoft.Build.BuildEngine {
 	public class Engine {
 		
 		string			binPath;
 		bool			buildEnabled;
+		TaskDatabase		defaultTasks;
+		bool			defaultTasksRegistered;
+		const string		defaultTasksProjectName = "Microsoft.Common.tasks";
 		EventSource		eventSource;
 		bool			buildStarted;
 		BuildPropertyGroup	globalProperties;
@@ -69,7 +74,7 @@ namespace Microsoft.Build.BuildEngine {
 			this.buildStarted = false;
 			this.globalProperties = new BuildPropertyGroup ();
 			
-			// FIXME:add loading of default tasks
+			RegisterDefaultTasks ();
 		}
 		
 		[MonoTODO]
@@ -186,7 +191,8 @@ namespace Microsoft.Build.BuildEngine {
 
 		public Project CreateNewProject ()
 		{
-			CheckBinPath ();
+			if (defaultTasksRegistered == true)
+				CheckBinPath ();
 			// FIXME: I don't really know if it should be here
 			LogBuildStarted ();
 			return new Project (this);
@@ -287,6 +293,26 @@ namespace Microsoft.Build.BuildEngine {
 			bfea = new BuildFinishedEventArgs ("Build finished.", null, succeeded);
 			eventSource.FireBuildFinished (this, bfea);
 		}
+		
+		private void RegisterDefaultTasks ()
+		{
+			this.defaultTasksRegistered = false;
+			
+			Project defaultTasksProject = CreateNewProject ();
+			
+			if (binPath != null) {
+				if (File.Exists (Path.Combine (binPath, defaultTasksProjectName)) == true) {
+					defaultTasksProject.Load (Path.Combine (binPath, defaultTasksProjectName));
+					defaultTasks = defaultTasksProject.TaskDatabase;
+				} else {
+					defaultTasks = new TaskDatabase ();
+				}
+			} else {
+				defaultTasks = new TaskDatabase ();
+			}
+			
+			this.defaultTasksRegistered = true;
+		}
 
 		public string BinPath {
 			get { return binPath; }
@@ -322,6 +348,14 @@ namespace Microsoft.Build.BuildEngine {
 		
 		internal EventSource EventSource {
 			get { return eventSource; }
+		}
+		
+		internal bool DefaultTasksRegistered {
+			get { return defaultTasksRegistered; }
+		}
+		
+		internal TaskDatabase DefaultTasks {
+			get { return defaultTasks; }
 		}
 	}
 }

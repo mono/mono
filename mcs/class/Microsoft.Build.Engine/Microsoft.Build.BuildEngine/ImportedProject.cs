@@ -57,7 +57,7 @@ namespace Microsoft.Build.BuildEngine {
 				lastWrite = File.GetLastWriteTime (filename);
 				fullFileName = filename;
 			}
-			catch (Exception ex) {
+			catch (Exception) {
 				throw;
 			}
 			finally {
