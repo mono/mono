@@ -35,7 +35,7 @@ namespace Mono.CSharp {
 		// end of the code generated for EmitAssign
 		//
 		void Emit (EmitContext ec, bool leave_copy);
-		
+
 		//
 		// This method does the assignment
 		// `source' will be stored into the location specified by `this'
@@ -45,17 +45,17 @@ namespace Mono.CSharp {
 		// for expressions like a [f ()] ++, where you can't call `f ()' twice.
 		//
 		void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load);
-		
+
 		/*
 		For simple assignments, this interface is very simple, EmitAssign is called with source
 		as the source expression and leave_copy and prepare_for_load false.
-		
+
 		For compound assignments it gets complicated.
-		
+
 		EmitAssign will be called as before, however, prepare_for_load will be
 		true. The @source expression will contain an expression
 		which calls Emit. So, the calls look like:
-		
+
 		this.EmitAssign (ec, source, false, true) ->
 			source.Emit (ec); ->
 				[...] ->
@@ -64,89 +64,89 @@ namespace Mono.CSharp {
 				end [...]
 			end source.Emit (ec);
 		end this.EmitAssign (ec, source, false, true)
-		
-		
+
+
 		When prepare_for_load is true, EmitAssign emits a `token' on the stack that
 		Emit will use for its state.
-		
+
 		Let's take FieldExpr as an example. assume we are emitting f ().y += 1;
-		
+
 		Here is the call tree again. This time, each call is annotated with the IL
 		it produces:
-		
+
 		this.EmitAssign (ec, source, false, true)
 			call f
 			dup
-			
+
 			Binary.Emit ()
 				this.Emit (ec, false);
 				ldfld y
 				end this.Emit (ec, false);
-				
+
 				IntConstant.Emit ()
 				ldc.i4.1
 				end IntConstant.Emit
-				
+
 				add
 			end Binary.Emit ()
-			
+
 			stfld
 		end this.EmitAssign (ec, source, false, true)
-		
+
 		Observe two things:
 			1) EmitAssign left a token on the stack. It was the result of f ().
 			2) This token was used by Emit
-		
+
 		leave_copy (in both EmitAssign and Emit) tells the compiler to leave a copy
 		of the expression at that point in evaluation. This is used for pre/post inc/dec
 		and for a = x += y. Let's do the above example with leave_copy true in EmitAssign
-		
+
 		this.EmitAssign (ec, source, true, true)
 			call f
 			dup
-			
+
 			Binary.Emit ()
 				this.Emit (ec, false);
 				ldfld y
 				end this.Emit (ec, false);
-				
+
 				IntConstant.Emit ()
 				ldc.i4.1
 				end IntConstant.Emit
-				
+
 				add
 			end Binary.Emit ()
-			
+
 			dup
 			stloc temp
 			stfld
 			ldloc temp
 		end this.EmitAssign (ec, source, true, true)
-		
+
 		And with it true in Emit
-		
+
 		this.EmitAssign (ec, source, false, true)
 			call f
 			dup
-			
+
 			Binary.Emit ()
 				this.Emit (ec, true);
 				ldfld y
 				dup
 				stloc temp
 				end this.Emit (ec, true);
-				
+
 				IntConstant.Emit ()
 				ldc.i4.1
 				end IntConstant.Emit
-				
+
 				add
 			end Binary.Emit ()
-			
+
 			stfld
 			ldloc temp
 		end this.EmitAssign (ec, source, false, true)
-		
+
 		Note that these two examples are what happens for ++x and x++, respectively.
 		*/
 	}
@@ -164,7 +164,7 @@ namespace Mono.CSharp {
 	///   code to access this value, return its address or save its value.
 	///
 	///   If `is_address' is true, then the value that we store is the address to the
-	///   real value, and not the value itself. 
+	///   real value, and not the value itself.
 	///
 	///   This is needed for a value type, because otherwise you just end up making a
 	///   copy of the value on the stack and modifying it. You really need a pointer
@@ -178,10 +178,10 @@ namespace Mono.CSharp {
 	public class LocalTemporary : Expression, IMemoryLocation {
 		LocalBuilder builder;
 		bool is_address;
-		
+
 		public LocalTemporary (Type t) : this (t, false) {}
-			
-		public LocalTemporary (Type t, bool is_address) 
+
+		public LocalTemporary (Type t, bool is_address)
 		{
 			type = t;
 			eclass = ExprClass.Value;
@@ -201,7 +201,7 @@ namespace Mono.CSharp {
 			ec.FreeTemporaryLocal (builder, type);
 			builder = null;
 		}
-		
+
 		public override Expression DoResolve (EmitContext ec)
 		{
 			return this;
@@ -210,7 +210,7 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-			
+
 			ig.Emit (OpCodes.Ldloc, builder);
 			// we need to copy from the pointer
 			if (is_address)
@@ -237,7 +237,7 @@ namespace Mono.CSharp {
 			// if is_address, than this is just the address anyways,
 			// so we just return this.
 			ILGenerator ig = ec.ig;
-				
+
 			if (is_address)
 				ig.Emit (OpCodes.Ldloc, builder);
 			else
@@ -253,7 +253,7 @@ namespace Mono.CSharp {
 
 	/// <summary>
 	///   The Assign node takes care of assigning the value of source into
-	///   the expression represented by target. 
+	///   the expression represented by target.
 	/// </summary>
 	public class Assign : ExpressionStatement {
 		protected Expression target, source, real_source;
@@ -386,8 +386,8 @@ namespace Mono.CSharp {
 					MemberTypes.Event, AllBindingFlags | BindingFlags.DeclaredOnly, loc);
 
 				if (ml == null) {
-				        //
-					// If this is the case, then the Event does not belong 
+					//
+					// If this is the case, then the Event does not belong
 					// to this Type and so, according to the spec
 					// is allowed to only appear on the left hand of
 					// the += and -= operators
@@ -396,14 +396,14 @@ namespace Mono.CSharp {
 					// in the case it is being referenced within the same type container;
 					// it will appear as a FieldExpr in that case.
 					//
-					
+
 					if (!(source is BinaryDelegate)) {
 						error70 (ei, loc);
 						return null;
-					} 
+					}
 				}
 			}
-			
+
 			if (!(target is IAssignMethod) && (target.eclass != ExprClass.EventAccess)) {
 				Report.Error (131, loc,
 					      "Left hand of an assignment must be a variable, " +
@@ -425,38 +425,38 @@ namespace Mono.CSharp {
 				if (source is New && target_type.IsValueType &&
 				    (target.eclass != ExprClass.IndexerAccess) && (target.eclass != ExprClass.PropertyAccess)){
 					New n = (New) source;
-					
+
 					if (n.SetValueTypeVariable (target))
 						return n;
 					else
 						return null;
 				}
-				
+
 				return this;
 			}
-			
+
 			//
 			// If this assignment/operator was part of a compound binary
 			// operator, then we allow an explicit conversion, as detailed
-			// in the spec. 
+			// in the spec.
 			//
 
 			if (this is CompoundAssign){
 				CompoundAssign a = (CompoundAssign) this;
-				
+
 				Binary b = source as Binary;
 				if (b != null){
 					//
 					// 1. if the source is explicitly convertible to the
 					//    target_type
 					//
-					
+
 					source = Convert.ExplicitConversion (ec, source, target_type, loc);
 					if (source == null){
 						a.original_source.Error_ValueCannotBeConverted (loc, target_type, true);
 						return null;
 					}
-				
+
 					//
 					// 2. and the original right side is implicitly convertible to
 					// the type of target
@@ -497,7 +497,7 @@ namespace Mono.CSharp {
 				temp = new LocalTemporary (type);
 				must_free_temp = true;
 			}
-			
+
 			return this;
 		}
 
@@ -548,7 +548,7 @@ namespace Mono.CSharp {
 				((EventExpr) target).EmitAddOrRemove (ec, source);
 				return;
 			}
-			
+
 			IAssignMethod am = (IAssignMethod) target;
 
 			Expression temp_source;
@@ -564,14 +564,14 @@ namespace Mono.CSharp {
 				temp_source = source;
 
 			am.EmitAssign (ec, temp_source, !is_statement, this is CompoundAssign);
-				
+
 			if (embedded != null) {
 				if (temp != null)
 					temp.Release (ec);
 				embedded.ReleaseEmbedded (ec);
 			}
 		}
-		
+
 		public override void Emit (EmitContext ec)
 		{
 			Emit (ec, false);
@@ -583,14 +583,14 @@ namespace Mono.CSharp {
 		}
 	}
 
-	
+
 	//
-	// This class is used for compound assignments.  
+	// This class is used for compound assignments.
 	//
 	class CompoundAssign : Assign {
 		Binary.Operator op;
 		public Expression original_source;
-		
+
 		public CompoundAssign (Binary.Operator op, Expression target, Expression source)
 			: base (target, source, target.Location)
 		{
@@ -618,7 +618,7 @@ namespace Mono.CSharp {
 			target = target.Resolve (ec);
 			if (target == null)
 				return null;
-			
+
 			//
 			// Only now we can decouple the original source/target
 			// into a tree, to guarantee that we do not have side
@@ -629,7 +629,3 @@ namespace Mono.CSharp {
 		}
 	}
 }
-
-
-
-
