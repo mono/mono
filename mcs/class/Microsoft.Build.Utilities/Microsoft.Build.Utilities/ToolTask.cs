@@ -46,6 +46,7 @@ namespace Microsoft.Build.Utilities
 		int			timeout;
 		string			toolPath;
 		Process			process;
+		Encoding		responseFileEncoding;
 		MessageImportance	standardErrorLoggingImportance;
 		MessageImportance	standardOutputLoggingImportance;
 		
@@ -69,6 +70,7 @@ namespace Microsoft.Build.Utilities
 			this.TaskResources = taskResources;
 			this.HelpKeywordPrefix = helpKeywordPrefix;
 			this.toolPath = MonoLocationHelper.GetBinDir ();
+			this.responseFileEncoding = Encoding.UTF8;
 		}
 
 		static ToolTask ()
@@ -299,7 +301,7 @@ namespace Microsoft.Build.Utilities
 
 		protected virtual Encoding ResponseFileEncoding
 		{
-			get { return Encoding.UTF8; }
+			get { return responseFileEncoding; }
 		}
 
 		protected virtual Encoding StandardErrorEncoding

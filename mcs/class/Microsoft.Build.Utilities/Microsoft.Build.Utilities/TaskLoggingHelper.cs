@@ -52,6 +52,9 @@ namespace Microsoft.Build.Utilities
 		public string ExtractMessageCode (string message,
 						  out string messageWithoutCodePrefix)
 		{
+			if (message == null)
+				throw new ArgumentNullException ("message");
+				
 			messageWithoutCodePrefix = "";
 			return "";
 		}
@@ -60,6 +63,9 @@ namespace Microsoft.Build.Utilities
 		public virtual string FormatResourceString (string resourceName,
 							    params object[] args)
 		{
+			if (resourceName == null)
+				throw new ArgumentNullException ("resourceName");
+		
 			return null;
 		}
 
@@ -67,7 +73,13 @@ namespace Microsoft.Build.Utilities
 		public virtual string FormatString (string unformatted,
 						   params object[] args)
 		{
-			return "";
+			if (unformatted == null)
+				throw new ArgumentNullException ("unformatted");
+		
+			if (args == null)
+				return unformatted;
+			else
+				return String.Format (unformatted, args);
 		}
 		
 		[MonoTODO]
@@ -84,8 +96,11 @@ namespace Microsoft.Build.Utilities
 		public void LogError (string message,
 				     params object[] messageArgs)
 		{
+			if (message == null)
+				throw new ArgumentNullException ("message");
+				
 			BuildErrorEventArgs beea = new BuildErrorEventArgs (
-				null, null, null, 0, 0, 0, 0, message,
+				null, null, null, 0, 0, 0, 0, FormatString (message, messageArgs),
 				helpKeywordPrefix, null);
 			buildEngine.LogErrorEvent (beea);
 			hasLoggedErrors = true;
@@ -98,12 +113,14 @@ namespace Microsoft.Build.Utilities
 				      string message,
 				      params object[] messageArgs)
 		{
+			if (message == null)
+				throw new ArgumentNullException ("message");
+			
 			BuildErrorEventArgs beea = new BuildErrorEventArgs (
 				subcategory, errorCode, file, lineNumber,
 				columnNumber, endLineNumber, endColumnNumber,
-				message, helpKeywordPrefix /*it's helpKeyword*/,
+				FormatString (message, messageArgs), helpKeywordPrefix /*it's helpKeyword*/,
 				null /*it's senderName*/);
-			// FIXME: what with messageArgs?
 			buildEngine.LogErrorEvent (beea);
 			hasLoggedErrors = true;
 		}
@@ -116,6 +133,9 @@ namespace Microsoft.Build.Utilities
 		public void LogErrorFromException (Exception e,
 						   bool showStackTrace)
 		{
+			if (e == null)
+				throw new ArgumentNullException ("e");
+		
 			StringBuilder sb = new StringBuilder ();
 			sb.Append (e.Message);
 			if (showStackTrace == true)
@@ -182,19 +202,19 @@ namespace Microsoft.Build.Utilities
 		public void LogMessage (string message,
 				       params object[] messageArgs)
 		{
-			LogMessage (MessageImportance.Normal, message,
-				messageArgs); 
+			LogMessage (MessageImportance.Normal, message, messageArgs); 
 		}
 
 		public void LogMessage (MessageImportance importance,
 					string message,
 					params object[] messageArgs)
 		{
+			if (message == null)
+				throw new ArgumentNullException ("message");
+		
 			BuildMessageEventArgs bmea = new BuildMessageEventArgs (
-				message, helpKeywordPrefix, /*helpKeyword*/
-				null /*sender*/, importance);
-			// FIXME: probably messageArgs contain helpKeyword or
-			// senderName
+				FormatString (message, messageArgs), helpKeywordPrefix,
+				null, importance);
 			buildEngine.LogMessageEvent (bmea);
 		}
 
@@ -228,7 +248,7 @@ namespace Microsoft.Build.Utilities
 				sr.Close ();
 				return true;
 			}
-			catch (Exception ex) {
+			catch (Exception) {
 				return false;
 			}
 		}
@@ -240,7 +260,7 @@ namespace Microsoft.Build.Utilities
 				LogMessage (messageImportance, stream.ReadToEnd (), null);
 				return true;
 			}
-			catch (Exception ex) {
+			catch (Exception) {
 				return false;
 			}
 			finally {
@@ -263,7 +283,7 @@ namespace Microsoft.Build.Utilities
 		{
 			// FIXME: what about all the parameters?
 			BuildWarningEventArgs bwea = new BuildWarningEventArgs (
-				null, null, null, 0, 0, 0, 0, message,
+				null, null, null, 0, 0, 0, 0, FormatString (message, messageArgs),
 				helpKeywordPrefix, null);
 			buildEngine.LogWarningEvent (bwea);
 		}
@@ -278,7 +298,7 @@ namespace Microsoft.Build.Utilities
 			BuildWarningEventArgs bwea = new BuildWarningEventArgs (
 				subcategory, warningCode, file, lineNumber,
 				columnNumber, endLineNumber, endColumnNumber,
-				message, helpKeywordPrefix, null);
+				FormatString (message, messageArgs), helpKeywordPrefix, null);
 			buildEngine.LogWarningEvent (bwea);
 		}
 

@@ -96,7 +96,7 @@ namespace Microsoft.Build.Utilities
 
 		public static explicit operator string (TaskItem taskItemToCast)
 		{
-			return taskItemToCast.ToString ();
+			return taskItemToCast.ItemSpec;
 		}
 
 		public string GetMetadata (string metadataName)
