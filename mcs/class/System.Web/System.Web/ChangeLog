@@ -1,3 +1,9 @@
+2006-04-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpServerUtility.cs: don't reset the query string in Execute() when
+	the path does not contain it and we have one from the previous request.
+	Fixes bug #78177.
+
 2006-04-20 Andrew Skiba <andrews@mainsoft.com>
 
 	* SiteMapNode.cs: fix few null reference exceptions

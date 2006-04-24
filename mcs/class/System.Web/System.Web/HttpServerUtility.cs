@@ -98,21 +98,17 @@ namespace System.Web {
 			if (path.IndexOf (':') != -1)
 				throw new ArgumentException ("Invalid path.");
 
+			HttpRequest request = context.Request;
+			string oldQuery = request.QueryStringRaw;
 			int qmark = path.IndexOf ('?');
-			string query;
 			if (qmark != -1) {
-				query = path.Substring (qmark + 1);
+				request.QueryStringRaw = path.Substring (qmark + 1);
 				path = path.Substring (0, qmark);
-			} else {
-				query = "";
+			} else if (!preserveQuery) {
+				request.QueryStringRaw = "";
 			}
 
-			HttpRequest request = context.Request;
 			HttpResponse response = context.Response;
-
-			string oldQuery = request.QueryStringRaw;
-			request.QueryStringRaw = query;
-
 			WebROCollection oldForm = null;
 			if (!preserveQuery) {
 				oldForm = request.Form as WebROCollection;
