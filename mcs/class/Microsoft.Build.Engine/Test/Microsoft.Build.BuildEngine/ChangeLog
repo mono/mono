@@ -1,5 +1,9 @@
 2006-04-24  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
+	* ProjectTest.cs, EngineTest.cs: Corrected BinPath.
+
+2006-04-24  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
 	* ProjectTest.cs: Added tests for loading of default tasks (from
 	Microsoft.Build.Tasks).
 
