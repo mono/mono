@@ -1,3 +1,7 @@
+2006-04-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.h *.c: Convert ins_info from an array of strings to an array of characters.
+
 2006-04-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-sparc.c (emit_pass_vtype): Fix passing of vtype addresses on the stack.

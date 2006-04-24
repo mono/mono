@@ -295,30 +295,13 @@ mono_ssa_compute (MonoCompile *cfg)
 		mono_bitset_set (vinfo [i].def_in, 0);
 	}
 
-	if (cfg->new_ir) {
-		for (i = 0; i < cfg->num_bblocks; ++i) {
-			for (ins = cfg->bblocks [i]->code; ins; ins = ins->next) {
-				const char *spec = ins_info [ins->opcode - OP_START - 1];
-
-				if (ins->opcode == OP_NOP)
-					continue;
-
-				/* FIXME: Handle OP_LDADDR */
-				/* FIXME: Handle non-ints as well */
-				if ((spec [MONO_INST_DEST] == 'i') && !MONO_IS_STORE_MEMBASE (ins) && get_vreg_to_inst (cfg, ins->dreg)) {
-					mono_bitset_set (vinfo [get_vreg_to_inst (cfg, ins->dreg)->inst_c0].def_in, i);
-				}
-			}
-		}
-	} else {
-		for (i = 0; i < cfg->num_bblocks; ++i) {
-			for (ins = cfg->bblocks [i]->code; ins; ins = ins->next) {
-				if (ins->ssa_op == MONO_SSA_STORE) {
-					idx = ins->inst_i0->inst_c0;
-					g_assert (idx < cfg->num_varinfo);
-					mono_bitset_set (vinfo [idx].def_in, i);
-				} 
-			}
+	for (i = 0; i < cfg->num_bblocks; ++i) {
+		for (ins = cfg->bblocks [i]->code; ins; ins = ins->next) {
+			if (ins->ssa_op == MONO_SSA_STORE) {
+				idx = ins->inst_i0->inst_c0;
+				g_assert (idx < cfg->num_varinfo);
+				mono_bitset_set (vinfo [idx].def_in, i);
+			} 
 		}
 	}
 
@@ -1299,48 +1282,7 @@ mono_ssa_deadce (MonoCompile *cfg)
 	if (!(cfg->comp_done & MONO_COMP_SSA_DEF_USE))
 		mono_ssa_create_def_use (cfg);
 
-	if (cfg->new_ir)
-		mono_ssa_copyprop (cfg);
-	else
-		mono_ssa_avoid_copies (cfg);
-
-	return;
-
-	work_list = NULL;
-	for (i = 0; i < cfg->num_varinfo; i++) {
-		MonoMethodVar *info = cfg->vars [i];
-		work_list = g_list_prepend (work_list, info);
-		
-		//if ((info->def != NULL) && (info->def->inst_i1->opcode != OP_PHI)) printf ("SSA DEADCE TOTAL LOCAL\n");
-	}
-
-	while (work_list) {
-		MonoMethodVar *info = (MonoMethodVar *)work_list->data;
-		work_list = g_list_delete_link (work_list, work_list);
-
-		if (!info->uses && info->def && (!(cfg->varinfo [info->idx]->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT)))) {
-			MonoInst *i1;
-			//printf ("ELIMINATE %s: ", mono_method_full_name (cfg->method, TRUE)); mono_print_tree (info->def); printf ("\n");
-
-			i1 = info->def->inst_i1;
-			if (i1->opcode == OP_PHI) {
-				int j;
-				for (j = i1->inst_phi_args [0]; j > 0; j--) {
-					MonoMethodVar *u = cfg->vars [i1->inst_phi_args [j]];
-					add_to_dce_worklist (cfg, info, u, &work_list);
-				}
-			} else if (i1->ssa_op == MONO_SSA_LOAD &&
-				   (i1->inst_i0->opcode == OP_LOCAL || i1->inst_i0->opcode == OP_ARG)) {
-					MonoMethodVar *u = cfg->vars [i1->inst_i0->inst_c0];
-					add_to_dce_worklist (cfg, info, u, &work_list);
-			}
-			//if (i1->opcode != OP_PHI) printf ("SSA DEADCE DEAD LOCAL\n");
-
-			info->def->opcode = CEE_NOP;
-			info->def->ssa_op = MONO_SSA_NOP;
-		}
-
-	}
+	mono_ssa_avoid_copies (cfg);
 }
 
 #if 0

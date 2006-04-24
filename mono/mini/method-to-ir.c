@@ -109,18 +109,18 @@ static CRITICAL_SECTION jit_mutex;
 #ifdef MINI_OP
 #undef MINI_OP
 #endif
-#define MINI_OP(a,b,dest,src1,src2) dest src1 src2,
-#define NONE " "
-#define IREG "i"
-#define FREG "f"
-#define VREG "v"
+#define MINI_OP(a,b,dest,src1,src2) dest, src1, src2,
+#define NONE ' '
+#define IREG 'i'
+#define FREG 'f'
+#define VREG 'v'
 #if SIZEOF_VOID_P == 8
 #define LREG IREG
 #else
-#define LREG "l"
+#define LREG 'l'
 #endif
 /* keep in sync with the enum in mini.h */
-const char* const
+const char const
 ins_info[] = {
 #include "mini-ops.h"
 };
@@ -4594,7 +4594,7 @@ static int lcset_decomp [][2] = {
 #endif
 
 /**
- * decompose_long_opts:
+ * mono_decompose_long_opts:
  *
  *  Decompose 64bit opcodes into 32bit opcodes on 32 bit platforms.
  */
@@ -9289,7 +9289,7 @@ mono_handle_global_vregs (MonoCompile *cfg)
 
 		cfg->cbb = bb;
 		for (; ins; ins = ins->next) {
-			const char *spec = ins_info [ins->opcode - OP_START - 1];
+			const char *spec = INS_INFO (ins->opcode);
 			int regtype, regindex;
 			MonoBasicBlock *prev_bb;
 
@@ -9410,7 +9410,7 @@ mono_handle_global_vregs (MonoCompile *cfg)
 					call_index = -1;
 					ins_index = 0;
 					for (ins = vreg_to_bb [var->dreg]->code; ins; ins = ins->next) {
-						const char *spec = ins_info [ins->opcode - OP_START - 1];
+						const char *spec = INS_INFO (ins->opcode);
 
 						if ((spec [MONO_INST_DEST] != ' ') && (ins->dreg == var->dreg))
 							def_index = ins_index;
@@ -9549,7 +9549,7 @@ mono_spill_global_vars (MonoCompile *cfg)
 
 		cfg->cbb = bb;
 		for (; ins; ins = ins->next) {
-			const char *spec = ins_info [ins->opcode - OP_START - 1];
+			const char *spec = INS_INFO (ins->opcode);
 			int regtype, srcindex, sreg, tmp_reg, prev_dreg;
 			gboolean store;
 
@@ -9589,7 +9589,7 @@ mono_spill_global_vars (MonoCompile *cfg)
 					ins->inst_imm = var->inst_offset;
 				}
 
-				spec = ins_info [ins->opcode - OP_START - 1];
+				spec = INS_INFO (ins->opcode);
 			}
 
 			if (ins->opcode < MONO_CEE_LAST) {
@@ -9648,7 +9648,7 @@ mono_spill_global_vars (MonoCompile *cfg)
 						ins->inst_offset = var->inst_offset;
 						ins->dreg = -1;
 					}
-					spec = ins_info [ins->opcode - OP_START - 1];
+					spec = INS_INFO (ins->opcode);
 				} else {
 					guint32 lvreg;
 
@@ -9693,7 +9693,7 @@ mono_spill_global_vars (MonoCompile *cfg)
 							ins->dreg = -1;
 							ins->inst_basereg = var->inst_basereg;
 							ins->inst_offset = var->inst_offset;
-							spec = ins_info [ins->opcode - OP_START - 1];
+							spec = INS_INFO (ins->opcode);
 						} else {
 							/* printf ("INS: "); mono_print_ins (ins); */
 							/* Create a store instruction */

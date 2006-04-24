@@ -284,7 +284,7 @@ mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, gbool
 
 	/* First pass: Create new vars */
 	for (ins = bb->code; ins; ins = ins->next) {
-		const char *spec = ins_info [ins->opcode - OP_START - 1];
+		const char *spec = INS_INFO (ins->opcode);
 
 #ifdef DEBUG_SSA
 		printf ("\tProcessing "); mono_print_ins (ins);
@@ -690,7 +690,7 @@ mono_ssa_remove2 (MonoCompile *cfg)
 		MonoBasicBlock *bb = cfg->bblocks [i];
 
 		for (ins = bb->code; ins; ins = ins->next) {
-			const char *spec = ins_info [ins->opcode - OP_START - 1];
+			const char *spec = INS_INFO (ins->opcode);
 
 			if (ins->opcode == OP_NOP)
 				continue;
@@ -764,7 +764,7 @@ mono_ssa_create_def_use (MonoCompile *cfg)
 
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
 		for (ins = bb->code; ins; ins = ins->next) {
-			const char *spec = ins_info [ins->opcode - OP_START - 1];
+			const char *spec = INS_INFO (ins->opcode);
 			MonoMethodVar *info;
 
 			if (ins->opcode == OP_NOP)
@@ -840,7 +840,7 @@ mono_ssa_copyprop (MonoCompile *cfg)
 					MonoInst *ins = u->inst;
 					GList *next = l->next;
 
-					spec = ins_info [ins->opcode - OP_START - 1];
+					spec = INS_INFO (ins->opcode);
 
 					if (spec [MONO_INST_SRC1] != ' ' && ins->sreg1 == dreg) {
 						ins->sreg1 = sreg1;
@@ -884,7 +884,7 @@ evaluate_ins (MonoCompile *cfg, MonoInst *ins, MonoInst **res, MonoInst **carray
 	MonoInst *arg0, *arg1, *c0;
 	int r1, r2;
 	gboolean const_args = FALSE;
-	const char *spec = ins_info [ins->opcode - OP_START - 1];
+	const char *spec = INS_INFO (ins->opcode);
 
 	/* Short-circuit this */
 	if (ins->opcode == OP_ICONST) {
@@ -1008,7 +1008,7 @@ add_cprop_bb (MonoCompile *cfg, MonoBasicBlock *bb, GList **bblist)
 static void
 visit_inst (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, GList **cvars, GList **bblist, MonoInst **carray)
 {
-	const char *spec = ins_info [ins->opcode - OP_START - 1];
+	const char *spec = INS_INFO (ins->opcode);
 
 	if (ins->opcode == OP_NOP)
 		return;
@@ -1172,7 +1172,7 @@ visit_inst (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, GList **cvars, 
 static void
 fold_ins (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, MonoInst **carray)
 {
-	const char *spec = ins_info [ins->opcode - OP_START - 1];
+	const char *spec = INS_INFO (ins->opcode);
 	int opcode2;
 
 	if ((ins->opcode != OP_NOP) && (ins->dreg != -1) && !MONO_IS_STORE_MEMBASE (ins)) {

@@ -9929,7 +9929,7 @@ mono_local_cprop2 (MonoCompile *cfg)
 		last_call_index = -1;
 		prev = NULL;
 		for (ins = bb->code; ins; ins = ins->next) {
-			const char *spec = ins_info [ins->opcode - OP_START - 1];
+			const char *spec = INS_INFO (ins->opcode);
 			int regtype, srcindex, sreg;
 
 			if (ins->opcode == OP_NOP) {
@@ -10092,7 +10092,7 @@ mono_local_cprop2 (MonoCompile *cfg)
 				if (ins->dreg == ins->sreg1) {
 					ins->opcode = OP_NOP;
 					ins->dreg = ins->sreg1 = -1;
-					spec = ins_info [ins->opcode - OP_START - 1];
+					spec = INS_INFO (ins->opcode);
 				}
 				break;
 			case OP_ADD_IMM:
@@ -10105,7 +10105,7 @@ mono_local_cprop2 (MonoCompile *cfg)
 #endif
 				if (ins->inst_imm == 0) {
 					ins->opcode = OP_MOVE;
-					spec = ins_info [ins->opcode - OP_START - 1];
+					spec = INS_INFO (ins->opcode);
 				}
 				break;
 			case OP_MUL_IMM:
@@ -10130,7 +10130,7 @@ mono_local_cprop2 (MonoCompile *cfg)
 						ins->inst_imm = power2;
 					}
 				}
-				spec = ins_info [ins->opcode - OP_START - 1];
+				spec = INS_INFO (ins->opcode);
 				break;
 			case OP_IREM_UN:
 			case OP_IDIV_UN:
@@ -10150,7 +10150,7 @@ mono_local_cprop2 (MonoCompile *cfg)
 							ins->inst_imm = power2;
 						}
 					}
-					spec = ins_info [ins->opcode - OP_START - 1];
+					spec = INS_INFO (ins->opcode);
 				}
 				break;
 			}
@@ -10211,7 +10211,7 @@ mono_local_deadce (MonoCompile *cfg)
 		/* Manually init the defs entries used by the bblock */
 		nins = 0;
 		for (ins = bb->code; ins; ins = ins->next) {
-			const char *spec = ins_info [ins->opcode - OP_START - 1];
+			const char *spec = INS_INFO (ins->opcode);
 
 			if (spec [MONO_INST_DEST] != ' ') {
 				mono_bitset_clear_fast (used, ins->dreg);
@@ -10252,7 +10252,7 @@ mono_local_deadce (MonoCompile *cfg)
 		 */
 		for (ins_index = 0; ins_index < nins; ins_index ++) {
 			MonoInst *ins = reverse [ins_index];
-			const char *spec = ins_info [ins->opcode - OP_START - 1];
+			const char *spec = INS_INFO (ins->opcode);
 
 			if (ins->opcode == OP_NOP)
 				continue;
@@ -10262,7 +10262,7 @@ mono_local_deadce (MonoCompile *cfg)
 			if ((ins->opcode == OP_MOVE) && get_vreg_to_inst (cfg, ins->dreg)) {
 				if (ins_index + 1 < nins) {
 					MonoInst *def = reverse [ins_index + 1];
-					const char *spec2 = ins_info [def->opcode - OP_START - 1];
+					const char *spec2 = INS_INFO (ins->opcode);
 
 					/* 
 					 * Perform a limited kind of reverse copy propagation, i.e.
@@ -10279,7 +10279,7 @@ mono_local_deadce (MonoCompile *cfg)
 						def->dreg = ins->dreg;
 						ins->opcode = OP_NOP;
 						ins->dreg = ins->sreg1 = -1;
-						spec = ins_info [ins->opcode - OP_START - 1];
+						spec = INS_INFO (ins->opcode);
 					}
 				}
 			}

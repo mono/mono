@@ -209,7 +209,7 @@ visit_bb (MonoCompile *cfg, MonoBasicBlock *bb, GSList **visited)
 	if (cfg->new_ir) {
 		/* FIXME: Rewrite this using the aliasing framework */
 		for (ins = bb->code; ins; ins = ins->next) {
-			const char *spec = ins_info [ins->opcode - OP_START - 1];
+			const char *spec = INS_INFO (ins->opcode);
 			int regtype, srcindex, sreg;
 
 			if (ins->opcode == OP_NOP)
@@ -296,7 +296,7 @@ analyze_liveness_bb (MonoCompile *cfg, MonoBasicBlock *bb)
 	dfn = bb->dfn;
 
 	for (inst_num = 0, ins = bb->code; ins; ins = ins->next, inst_num += 2) {
-		const char *spec = ins_info [ins->opcode - OP_START - 1];
+		const char *spec = INS_INFO (ins->opcode);
 
 #ifdef DEBUG_LIVENESS
 			printf ("\t"); mono_print_ins (ins);
