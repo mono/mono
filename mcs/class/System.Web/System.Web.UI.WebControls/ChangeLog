@@ -1,3 +1,8 @@
+2006-04-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CheckBox.cs: certain attributes have to be rendered in the input tag,
+	not the <span>. Fixes bug #71251.
+
 2006-04-20  Konstantin Triger  <kostat@mainsoft.com>
 
 	* BaseDataBoundControl.cs: RequiresDataBinding rebinds if the control prerendered.

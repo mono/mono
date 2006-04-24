@@ -26,6 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Globalization;
@@ -50,6 +51,7 @@ namespace System.Web.UI.WebControls {
 #endif
 	{
 		string render_type;
+		AttributeCollection common_attrs;
 
 #if NET_2_0
 		AttributeCollection inputAttributes;
@@ -302,6 +304,57 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
+		static bool IsInputOrCommonAttr (string attname)
+		{
+			attname = attname.ToUpper (CultureInfo.InvariantCulture);
+			switch (attname) {
+			case "VALUE":
+			case "CHECKED":
+			case "SIZE":
+			case "MAXLENGTH":
+			case "SRC":
+			case "ALT":
+			case "USEMAP":
+			case "DISABLED":
+			case "READONLY":
+			case "ACCEPT":
+			case "ACCESSKEY":
+			case "TABINDEX":
+			case "ONFOCUS":
+			case "ONBLUR":
+			case "ONSELECT":
+			case "ONCHANGE":
+			case "ONCLICK":
+			case "ONDBLCLICK":
+			case "ONMOUSEDOWN":
+			case "ONMOUSEUP":
+			case "ONMOUSEOVER":
+			case "ONMOUSEMOVE":
+			case "ONMOUSEOUT":
+			case "ONKEYPRESS":
+			case "ONKEYDOWN":
+			case "ONKEYUP":
+				return true;
+			default:
+				return false;
+			}
+		}
+
+		void AddAttributesForSpan (HtmlTextWriter writer)
+		{
+			ICollection k = Attributes.Keys;
+			string [] keys = new string [k.Count];
+			k.CopyTo (keys, 0);
+			foreach (string key in keys) {
+				if (!IsInputOrCommonAttr (key))
+					continue;
+				if (common_attrs == null)
+					common_attrs = new AttributeCollection (new StateBag ());
+				common_attrs [key] = Attributes [key];
+				Attributes.Remove (key);
+			}
+			Attributes.AddAttributes (writer);
+		}
 #if NET_2_0
 		protected internal
 #else		
@@ -328,6 +381,7 @@ namespace System.Web.UI.WebControls {
 			}
 
 			if (Attributes.Count > 0){
+				AddAttributesForSpan (w);
 				Attributes.AddAttributes (w);
 				need_span = true;
 			}
@@ -357,6 +411,8 @@ namespace System.Web.UI.WebControls {
 					w.AddAttribute (HtmlTextWriterAttribute.Tabindex,
 							     TabIndex.ToString (CultureInfo.InvariantCulture));
 
+				if (common_attrs != null)
+					common_attrs.AddAttributes (w);
 				w.RenderBeginTag (HtmlTextWriterTag.Input);
 				w.RenderEndTag ();
 				string text = Text;
@@ -403,6 +459,8 @@ namespace System.Web.UI.WebControls {
 					w.AddAttribute (HtmlTextWriterAttribute.Tabindex,
 							     TabIndex.ToString (NumberFormatInfo.InvariantInfo));
 
+				if (common_attrs != null)
+					common_attrs.AddAttributes (w);
 				w.RenderBeginTag (HtmlTextWriterTag.Input);
 				w.RenderEndTag ();
 			}
