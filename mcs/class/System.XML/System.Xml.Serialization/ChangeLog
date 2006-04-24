@@ -1,3 +1,9 @@
+2006-04-24  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XmlSchemaExporter.cs: Introduce XmlSchemaObjectContainer class to
+	allow XML Schema items to be added to its parent in the same order
+	as MS.NET (schema elements before complex types, ...). 
+
 2006-04-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XmlCodeExporter.cs: On 2.0 profile, CodeGenerationOptions defaults to

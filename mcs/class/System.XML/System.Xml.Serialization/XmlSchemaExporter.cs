@@ -150,17 +150,20 @@ namespace System.Xml.Serialization {
 						XmlSchemaElement exe = FindElement (schema.Items, einfo.ElementName);
 						XmlSchemaElement elem;
 						
+						XmlSchemaObjectContainer container = null;
+						// In encoded format, the schema elements are not needed
+						if (!encodedFormat)
+							container = new XmlSchemaObjectContainer (schema);
+
 						Type memType = member.GetType();
 						if (member is XmlTypeMapMemberFlatList)
 							throw new InvalidOperationException ("Unwrapped arrays not supported as parameters");
 						else if (memType == typeof(XmlTypeMapMemberElement))
-							elem = (XmlSchemaElement) GetSchemaElement (schema, einfo, member.DefaultValue, false);
+							elem = (XmlSchemaElement) GetSchemaElement (schema,
+								einfo, member.DefaultValue, false, container);
 						else
-							elem = (XmlSchemaElement) GetSchemaElement (schema, einfo, false);
-						
-						// In encoded format, the schema elements are not needed
-						if (!encodedFormat)
-							schema.Items.Add (elem);
+							elem = (XmlSchemaElement) GetSchemaElement (schema,
+								einfo, false, container);
 						
 						if (exe != null)
 						{
@@ -207,7 +210,7 @@ namespace System.Xml.Serialization {
 				if (xmlTypeMapping.TypeData.IsComplexType)
 					einfo.MappedType = xmlTypeMapping;
 				einfo.IsNullable = false;
-				schema.Items.Add (GetSchemaElement (schema, einfo, false));
+				GetSchemaElement (schema, einfo, false, new XmlSchemaObjectContainer (schema));
 				SetElementExported (xmlTypeMapping);
 			}
 			
@@ -340,13 +343,13 @@ namespace System.Xml.Serialization {
 					}
 					else if (memType == typeof(XmlTypeMapMemberElement))
 					{
-						XmlSchemaParticle elem = GetSchemaElement (schema, (XmlTypeMapElementInfo) member.ElementInfo [0], member.DefaultValue, true);
-						if (elem != null)
-							seq.Items.Add (elem);
+						GetSchemaElement (schema, (XmlTypeMapElementInfo) member.ElementInfo [0], 
+							member.DefaultValue, true, new XmlSchemaObjectContainer (seq));
 					}
 					else
 					{
-						seq.Items.Add (GetSchemaElement (schema, (XmlTypeMapElementInfo) member.ElementInfo [0], true));
+						GetSchemaElement (schema, (XmlTypeMapElementInfo) member.ElementInfo[0], 
+							true, new XmlSchemaObjectContainer (seq));
 					}
 				}
 			}
@@ -436,10 +439,16 @@ namespace System.Xml.Serialization {
 
 		XmlSchemaParticle GetSchemaElement (XmlSchema currentSchema, XmlTypeMapElementInfo einfo, bool isTypeMember)
 		{
-			return GetSchemaElement (currentSchema, einfo, System.DBNull.Value, isTypeMember);
+			return GetSchemaElement (currentSchema, einfo, System.DBNull.Value, 
+				isTypeMember, (XmlSchemaObjectContainer) null);
 		}
 		
-		XmlSchemaParticle GetSchemaElement (XmlSchema currentSchema, XmlTypeMapElementInfo einfo, object defaultValue, bool isTypeMember)
+		XmlSchemaParticle GetSchemaElement (XmlSchema currentSchema, XmlTypeMapElementInfo einfo, bool isTypeMember, XmlSchemaObjectContainer container)
+		{
+			return GetSchemaElement (currentSchema, einfo, System.DBNull.Value, isTypeMember, container);
+		}
+
+		XmlSchemaParticle GetSchemaElement (XmlSchema currentSchema, XmlTypeMapElementInfo einfo, object defaultValue, bool isTypeMember, XmlSchemaObjectContainer container)
 		{
 			if (einfo.IsTextElement) return null;
 
@@ -448,10 +457,14 @@ namespace System.Xml.Serialization {
 				XmlSchemaAny any = new XmlSchemaAny ();
 				any.MinOccurs = 0;
 				any.MaxOccurs = 1;
+				if (container != null)
+					container.Items.Add (any);
 				return any;
 			}
 			
 			XmlSchemaElement selem = new XmlSchemaElement ();
+			if (container != null)
+				container.Items.Add (selem);
 
 			if (isTypeMember)
 			{
@@ -530,8 +543,9 @@ namespace System.Xml.Serialization {
 				foreach (XmlSchemaObject ob in memberSchema.Items)
 					if (ob is XmlSchemaElement && ((XmlSchemaElement)ob).Name == einfo.ElementName)
 						return selem;
-						
-				memberSchema.Items.Add (GetSchemaElement (memberSchema, einfo, defaultValue, false));
+
+				GetSchemaElement (memberSchema, einfo, defaultValue, false,
+					new XmlSchemaObjectContainer (memberSchema));
 			}
 			return selem;
 		}
@@ -814,5 +828,30 @@ namespace System.Xml.Serialization {
 		}
 
 		#endregion // Methods
+
+		private class XmlSchemaObjectContainer
+		{
+			private readonly XmlSchemaObject _xmlSchemaObject;
+
+			public XmlSchemaObjectContainer (XmlSchema schema)
+			{
+				_xmlSchemaObject = schema;
+			}
+
+			public XmlSchemaObjectContainer (XmlSchemaGroupBase group)
+			{
+				_xmlSchemaObject = group;
+			}
+
+			public XmlSchemaObjectCollection Items {
+				get {
+					if (_xmlSchemaObject is XmlSchema) {
+						return ((XmlSchema) _xmlSchemaObject).Items;
+					} else {
+						return ((XmlSchemaGroupBase) _xmlSchemaObject).Items;
+					}
+				}
+			}
+		}
 	}
 }

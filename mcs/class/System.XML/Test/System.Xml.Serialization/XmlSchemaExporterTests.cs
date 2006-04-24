@@ -129,7 +129,6 @@ namespace MonoTests.System.XmlSerialization
 
 		[Test]
 		[Category ("NotDotNet")] // Mono bug ##77117
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void ExportClass_SimpleClass ()
 		{
 			XmlAttributeOverrides overrides = new XmlAttributeOverrides ();
@@ -177,7 +176,6 @@ namespace MonoTests.System.XmlSerialization
 
 		[Test]
 		[Category ("NotDotNet")] // Mono bug ##77117
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void ExportClass_StringCollection ()
 		{
 			XmlSchemas schemas = Export (typeof (StringCollection), "NSStringCollection");
@@ -217,7 +215,6 @@ namespace MonoTests.System.XmlSerialization
 
 		[Test]
 		[Category ("NotDotNet")] // Mono bug ##77117
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void ExportClass_StringCollectionContainer ()
 		{
 			XmlSchemas schemas = Export (typeof (StringCollectionContainer), "NSStringCollectionContainer");
@@ -267,7 +264,6 @@ namespace MonoTests.System.XmlSerialization
 
 		[Test]
 		[Category ("NotDotNet")] // Mono bug ##77117
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void ExportClass_ArrayContainer ()
 		{
 			XmlSchemas schemas = Export (typeof (ArrayContainer), "NSArrayContainer");
@@ -317,7 +313,6 @@ namespace MonoTests.System.XmlSerialization
 
 		[Test]
 		[Category ("NotDotNet")] // Mono bug ##77117
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void ExportClass_ClassArrayContainer ()
 		{
 			XmlSchemas schemas = Export (typeof (ClassArrayContainer), "NSClassArrayContainer");
@@ -377,7 +372,6 @@ namespace MonoTests.System.XmlSerialization
 
 		[Test]
 		[Category ("NotDotNet")] // Mono bug ##77117
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void ExportClass_SimpleClassWithXmlAttributes ()
 		{
 			XmlSchemas schemas = Export (typeof (SimpleClassWithXmlAttributes), "NSSimpleClassWithXmlAttributes");
@@ -487,7 +481,6 @@ namespace MonoTests.System.XmlSerialization
 
 		[Test]
 		[Category ("NotDotNet")] // Mono bug ##77117
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void ExportClass_MyList ()
 		{
 			XmlSchemas schemas = Export (typeof (MyList), "NSMyList");
@@ -527,7 +520,6 @@ namespace MonoTests.System.XmlSerialization
 
 		[Test]
 		[Category ("NotDotNet")] // Mono bug ##77117
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void ExportClass_Container ()
 		{
 			XmlSchemas schemas = Export (typeof (Container), "NSContainer");
@@ -577,7 +569,6 @@ namespace MonoTests.System.XmlSerialization
 
 		[Test]
 		[Category ("NotDotNet")] // Mono bug ##77117
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void ExportClass_Container2 ()
 		{
 			XmlSchemas schemas = Export (typeof (Container2), "NSContainer2");
@@ -635,7 +626,6 @@ namespace MonoTests.System.XmlSerialization
 
 		[Test]
 		[Category ("NotDotNet")] // Mono bug ##77117
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void ExportClass_CDataContainer ()
 		{
 			XmlSchemas schemas = Export (typeof (CDataContainer), "NSCDataContainer");
@@ -687,7 +677,6 @@ namespace MonoTests.System.XmlSerialization
 
 		[Test]
 		[Category ("NotDotNet")] // Mono bug ##77117
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void ExportClass_NodeContainer ()
 		{
 			XmlSchemas schemas = Export (typeof (NodeContainer), "NSNodeContainer");
@@ -833,7 +822,6 @@ namespace MonoTests.System.XmlSerialization
 
 		[Test]
 		[Category ("NotDotNet")] // Mono bug ##77117
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void ExportClass_ReadOnlyProperties ()
 		{
 			XmlSchemas schemas = Export (typeof (ReadOnlyProperties), "NSReadOnlyProperties");
@@ -945,7 +933,6 @@ namespace MonoTests.System.XmlSerialization
 
 		[Test]
 		[Category ("NotDotNet")] // Mono bug ##77117
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void ExportClass_ClsPerson ()
 		{
 			XmlSchemas schemas = Export (typeof (clsPerson), "NSClsPerson");
@@ -995,7 +982,6 @@ namespace MonoTests.System.XmlSerialization
 
 		[Test]
 		[Category ("NotDotNet")] // Mono bug ##77117
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void ExportClass_ArrayClass ()
 		{
 			XmlSchemas schemas = Export (typeof (ArrayClass), "NSArrayClass");
@@ -1119,7 +1105,6 @@ namespace MonoTests.System.XmlSerialization
 
 		[Test]
 		[Category ("NotDotNet")] // Mono bug ##77117
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void ExportClass_Array ()
 		{
 			XmlAttributeOverrides overrides = new XmlAttributeOverrides ();
@@ -1763,7 +1748,6 @@ namespace MonoTests.System.XmlSerialization
 
 		[Test]
 		[Category ("NotDotNet")] // Mono bug ##77117
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void ExportXsdPrimitive ()
 		{
 			ArrayList types = new ArrayList ();
@@ -1848,7 +1832,6 @@ namespace MonoTests.System.XmlSerialization
 
 		[Test]
 		[Category ("NotDotNet")] // Mono bug ##77117
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void ExportXsdPrimitive_ByteArray ()
 		{
 			XmlSchemas schemas = Export (typeof (byte[]), "NSByteArray");
@@ -1877,8 +1860,10 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
+#if NET_2_0
+		[Category ("NotWorking")] // in 2.0 profile, QName must be nillable
+#endif
 		[Category ("NotDotNet")] // Mono bug ##77117
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void ExportXsdPrimitive_Arrays ()
 		{
 			ArrayList types = new ArrayList ();
@@ -1944,7 +1929,6 @@ namespace MonoTests.System.XmlSerialization
 
 		[Test]
 		[Category ("NotDotNet")] // Mono bug ##77117
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void ExportXsdPrimitive_Object_Arrays ()
 		{
 			XmlSchemas schemas = Export (typeof (object[]), "NSArrayOfAnyType");

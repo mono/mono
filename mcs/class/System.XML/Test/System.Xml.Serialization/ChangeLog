@@ -1,3 +1,8 @@
+2006-04-24  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XmlSchemaExporterTests.cs: Enabled tests which failed due to bug
+	#78145.
+
 2006-04-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XmlCodeExporterTests.cs: Enabled tests for XmlCodeExporter.
