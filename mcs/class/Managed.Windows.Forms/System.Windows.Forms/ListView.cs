@@ -580,9 +580,14 @@ namespace System.Windows.Forms
 		
 		internal int LastVisibleIndex {			
 			get {							
-				for (int i = FirstVisibleIndex; i < Items.Count; i++) {						
-					if (Items[i].Bounds.Y > ClientRectangle.Bottom)						
-							return i -1;					
+				for (int i = FirstVisibleIndex; i < Items.Count; i++) {
+					if (View == View.List || Alignment == ListViewAlignment.Left) {
+						if (Items[i].Bounds.X > ClientRectangle.Right)
+							return i - 1;					
+					} else {
+						if (Items[i].Bounds.Y > ClientRectangle.Bottom)
+							return i - 1;					
+					}
 				}
 				
 				return Items.Count - 1;

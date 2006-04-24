@@ -1,3 +1,9 @@
+2006-04-24  Mike Kestner  <mkestner@novell.com>
+
+	* ListView.cs (LastVisibleIndex): when in List mode of Alignment.Left,
+	check for item.X outside the ClientRect instead of item.Y. Fixes
+	#78151.
+
 2006-04-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ImageListStreamer.cs: some images store a wrong grow factor, so don't
