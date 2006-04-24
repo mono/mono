@@ -1,3 +1,7 @@
+2006-04-24  Ankit Jain  <jankit@novell.com>
+
+	* Driver.cs (DriverMain.Run): Update use of CodeGen.ctor .
+
 2006-02-20  Ankit Jain  <jankit@novell.com>
 
 	* Report.cs (Report): Make all methods,fields static.

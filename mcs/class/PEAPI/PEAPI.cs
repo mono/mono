@@ -972,7 +972,8 @@ namespace PEAPI {
 		/// Write out the PEFile (the "bake" function)
 		/// </summary>
 		public void WritePEFile() { /* the "bake" function */
-			fileImage.ReserveStrongNameSignatureSpace = thisAssembly.HasPublicKey;
+			if (thisAssembly != null)
+				fileImage.ReserveStrongNameSignatureSpace = thisAssembly.HasPublicKey;
 			fileImage.MakeFile();
 		}
 

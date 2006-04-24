@@ -68,17 +68,14 @@ namespace Mono.ILASM {
                 private string output_file;
 		private string debug_file;
                 private bool is_dll;
-                private bool is_assembly;
                 private bool entry_point;
 
                 private Module this_module;
 
-                public CodeGen (string output_file, bool is_dll, bool is_assembly,
-				bool debugging_info)
+                public CodeGen (string output_file, bool is_dll, bool debugging_info)
                 {
                         this.output_file = output_file;
                         this.is_dll = is_dll;
-                        this.is_assembly = is_assembly;
 
 			if (debugging_info)
 				symwriter = new SymbolWriter (CreateDebugFile (output_file));
@@ -492,7 +489,7 @@ namespace Mono.ILASM {
                                         this_module = new Module (Path.GetFileName (output_file));
 
                                 out_stream = new FileStream (output_file, FileMode.Create, FileAccess.Write);
-                                pefile = new PEFile (assembly_name, ThisModule.Name, is_dll, is_assembly, null, out_stream);
+                                pefile = new PEFile (assembly_name, ThisModule.Name, is_dll, assembly_name != null, null, out_stream);
                                 PEAPI.Assembly asmb = pefile.GetThisAssembly ();
 
                                 ThisModule.PeapiModule = pefile.GetThisModule ();
@@ -537,10 +534,11 @@ namespace Mono.ILASM {
                                 if (stack_reserve != -1)
                                         pefile.SetStackReserve (stack_reserve);
 
-                                asmb.AddAssemblyInfo(assembly_major_version,
-                                                assembly_minor_version, assembly_build_version,
-                                                assembly_revision_version, assembly_public_key,
-                                                (uint) assembly_hash_algorithm, assembly_locale);
+                                if (asmb != null)
+                                        asmb.AddAssemblyInfo(assembly_major_version,
+                                                        assembly_minor_version, assembly_build_version,
+                                                        assembly_revision_version, assembly_public_key,
+                                                        (uint) assembly_hash_algorithm, assembly_locale);
 
                                 pefile.WritePEFile ();
 

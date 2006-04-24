@@ -1,3 +1,9 @@
+2006-04-24  Ankit Jain  <jankit@novell.com>
+
+	* CodeGen.cs (CodeGen.ctor): Remove 'is_assembly' param.
+	(CodeGen.Write): Emit assembly manifest only if the source
+	had it.
+
 2006-02-22  Ankit Jain  <jankit@novell.com>
 
 	* ExternTable.cs (ExternTable.GetTypeRef): Emit a warning if mscorlib is

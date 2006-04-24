@@ -1,3 +1,7 @@
+2006-04-24  Ankit Jain  <jankit@novell.com>
+
+	* test-module.il: New. Test for a netmodule.
+
 2006-02-22  Ankit Jain  <jankit@novell.com>
 
 	* test-nonsealed-valueclass.il: New. Value class should be sealed.
