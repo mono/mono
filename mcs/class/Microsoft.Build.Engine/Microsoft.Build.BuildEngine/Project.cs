@@ -39,7 +39,6 @@ using Mono.XBuild.Framework;
 
 namespace Microsoft.Build.BuildEngine {
 	public class Project {
-		static string separator = ";";
 	
 		bool				buildEnabled;
 		IDictionary			conditionedProperties;

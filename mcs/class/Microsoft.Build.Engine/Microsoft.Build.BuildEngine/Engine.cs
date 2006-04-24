@@ -68,6 +68,8 @@ namespace Microsoft.Build.BuildEngine {
 			this.loggers = new ArrayList ();
 			this.buildStarted = false;
 			this.globalProperties = new BuildPropertyGroup ();
+			
+			// FIXME:add loading of default tasks
 		}
 		
 		[MonoTODO]
