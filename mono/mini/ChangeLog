@@ -1,5 +1,7 @@
 2006-04-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot.c (emit_method_order): Don't align method_order_end.
+
 	* inssel.brg (stmt): Fix interface calls in AOT code which got broken by
 	the interface ID changes.
 
