@@ -1,3 +1,8 @@
+2006-04-24  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #78156
+	* flowanalysis.cs (MyBitVector.Or): Add null check on argument.
+
 2006-04-23  Marek Safar  <marek.safar@seznam.cz>
 
 	A fix for #49011.

@@ -1,3 +1,7 @@
+2006-04-24  Raja R Harinath  <rharinath@novell.com>
+
+	* test-501.cs: New test from #78156.
+
 2006-04-01  Raja R Harinath  <rharinath@novell.com>
 
 	* gtest-266.cs: New test from #77929.

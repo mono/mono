@@ -2137,9 +2137,7 @@ namespace Mono.CSharp
 		//   we won't use the inherited vector anymore, but our own copy of it.
 		// </summary>
 		public bool IsDirty {
-			get {
-				return is_dirty;
-			}
+			get { return is_dirty; }
 
 			set {
 				if (!is_dirty)
@@ -2203,6 +2201,9 @@ namespace Mono.CSharp
 		// </summary>
 		public void Or (MyBitVector new_vector)
 		{
+			// Treat null 'new_vector' as all false, just like the And() below
+			if (new_vector == null)
+				return;
 			BitArray new_array = new_vector.Vector;
 
 			initialize_vector ();
