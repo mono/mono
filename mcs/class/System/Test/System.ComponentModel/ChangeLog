@@ -1,3 +1,18 @@
+2006-04-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ByteConverterTests.cs,
+	  DecimalConverterTests.cs,
+	  DoubleConverterTests.cs,
+	  Int16ConverterTests.cs,
+	  Int64ConverterTests.cs,
+	  SByteConverterTests.cs,
+	  SingleConverterTests.cs,
+	  UInt16ConverterTests.cs,
+	  UInt32ConverterTests.cs,
+	  UInt64ConverterTests.cs:
+	  ConvertToString() (test with custom culture) failed on .NET 2.0.
+	  Fixed it by adding NumberFormat override in each test culture.
+
 2006-03-11 Gert Driesen <drieseng@users.sourceforge.net>
 
 	* TypeDescriptorTests.cs: Added test for bug #76686.

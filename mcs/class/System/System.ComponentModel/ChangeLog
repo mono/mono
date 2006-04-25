@@ -1,3 +1,10 @@
+2006-04-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BaseNumberConverter.cs : (ConvertTo) regardless of InnerType,
+	  it converts the argument value to InnerType using supplied format.
+	  (It might be not limited to NET_2_0 but it's too cosmetic to dig
+	  into the problem. At least this is for run-test-ondotnet fixes.)
+
 2006-04-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* BackgroundWorker.cs, RunWorkerCompletedEventArgs.cs :
