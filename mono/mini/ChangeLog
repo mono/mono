@@ -1,5 +1,26 @@
 2006-04-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c aot-compiler.c: Reorganize the AOT code yet again: Make all
+	calls through a jump table similar to the ELF PLT table. Avoid indirect calls for
+	intra-assembly calls if possible.
+	
+	* tramp-*.c: Add new functions for patching/nullifying PLT entries.
+
+	* mini-trampolines.c: Handle PLT entries.
+
+	* mini.c: Avoid creating a GOT var for calls.
+
+	* jit-icalls.c (helper_ldstr_mscorlib): New helper function for loading strings
+	from mscorlib code.
+
+	* jit-icalls.c (helper_newobj_mscorlib): New helper function to create objects
+	from mscorlib code.
+
+	* mini.c (mono_method_to_ir): Use the new helper functions in throw bblocks in
+	AOT code.	
+
+	* mini.h: Bump AOT file format version.
+	
 	* mini.c (get_basic_blocks): Fix the calculation of bb->out_of_line so it
 	covers more cases.
 
