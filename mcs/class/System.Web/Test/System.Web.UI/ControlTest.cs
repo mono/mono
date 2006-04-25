@@ -130,6 +130,12 @@ namespace MonoTests.System.Web.UI
 			public override ControlCollection Controls {
 				get { return coll; }
 			}
+			
+#if NET_2_0
+			public bool DoIsViewStateEnabled {
+				get { return IsViewStateEnabled; }
+			}
+#endif
 		}
 
 		// From bug #76919: Control uses _controls instead of
@@ -155,6 +161,21 @@ namespace MonoTests.System.Web.UI
                         Control c = new Control ();
                         c.ApplyStyleSheetSkin (p);
                 }
+		
+#if NET_2_0
+		[Test]
+		public void IsViewStateEnabled ()
+		{
+			DerivedControl c = new DerivedControl ();
+			Assert.IsFalse (c.DoIsViewStateEnabled);
+			Page p = new Page ();
+			c.Page = p;
+			p.Controls.Add (c);
+			Assert.IsTrue (c.DoIsViewStateEnabled);
+			p.EnableViewState = false;
+			Assert.IsFalse (c.DoIsViewStateEnabled);
+		}
+#endif
 	}
 }
 

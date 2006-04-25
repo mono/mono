@@ -281,7 +281,14 @@ namespace System.Web.UI
 		protected internal bool IsViewStateEnabled 
 		{
 			get {
-				throw new NotImplementedException ();
+				if (Page == null)
+					return false;
+
+				for (Control control = this; control != null; control = control.Parent)
+					if (!control.EnableViewState)
+						return false;
+
+				return true;
 			}
 		}
 

@@ -1,3 +1,7 @@
+2006-04-25 Konstantin Triger <kostat@mainsoft.com>
+
+	* ControlTest.cs: added test for IsViewStateEnabled.
+
 2006-04-25  Andrew Skiba <andrews@mainsoft.com>
 
 	* ControlTest.cs: added test for ApplyStyleSheetSkin

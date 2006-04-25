@@ -1,3 +1,7 @@
+2006-04-25 Konstantin Triger <kostat@mainsoft.com>
+
+	* Control.cs: implementation for IsViewStateEnabled.
+
 2006-04-25 Andrew Skiba <andrews@mainsoft.com>
 
 	* Control.cs: fix null pointer exception
