@@ -1,3 +1,7 @@
+2006-04-25  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* ImageListStreamer.cs: Need to read the var (or we're off)
+
 2006-04-25  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* TextControl.cs, ComboBox.cs, CommonDialog.cs, Theme.cs, 
