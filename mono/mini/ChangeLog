@@ -1,3 +1,8 @@
+2006-04-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (get_basic_blocks): Fix the calculation of bb->out_of_line so it
+	covers more cases.
+
 2006-04-25  Martin Baulig  <martin@ximian.com>
 
 	* debug-debugger.h (MonoDebuggerInfo): Replaced `get_thread_id'
