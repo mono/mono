@@ -1,5 +1,11 @@
 2006-04-25  Alexander Olk  <alex.olk@googlemail.com>
 
+	* ThemeWin32Classic.cs: Fixed drawing code for buttons with an
+	  image. The image position is always the same, no matter if the
+	  button is pressed or not.
+
+2006-04-25  Alexander Olk  <alex.olk@googlemail.com>
+
 	* FileDialog.cs: SaveFileDialog shouldn't rely on a MWFFileView
 	  selection and set the correct filename for SaveFileDialog.
 	  Patch by Emery Conrad.

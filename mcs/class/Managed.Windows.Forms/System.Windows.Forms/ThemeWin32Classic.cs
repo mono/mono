@@ -138,12 +138,17 @@ namespace System.Windows.Forms
 
 		#region ButtonBase
 		public override void DrawButtonBase(Graphics dc, Rectangle clip_area, ButtonBase button) {
-			// Draw the button: fill rectangle, draw border, etc.
-			ButtonBase_DrawButton(button, dc);
+			
+			// Fill the button with the correct color
+			bool is_ColorControl = button.BackColor == ColorControl ? true : false;
+			dc.FillRectangle (is_ColorControl ? SystemBrushes.Control : ResPool.GetSolidBrush (button.BackColor), button.ClientRectangle);
 			
 			// First, draw the image
 			if ((button.image != null) || (button.image_list != null))
 				ButtonBase_DrawImage(button, dc);
+			
+			// Draw the button: Draw border, etc.
+			ButtonBase_DrawButton(button, dc);
 			
 			// Draw the focus rectangle
 			if ((button.has_focus || button.paint_as_acceptbutton) && button.is_enabled)
@@ -164,8 +169,6 @@ namespace System.Windows.Forms
 			
 			CPColor cpcolor = is_ColorControl ? CPColor.Empty : ResPool.GetCPColor (button.BackColor);
 			
-			dc.FillRectangle (is_ColorControl ? SystemBrushes.Control : ResPool.GetSolidBrush (button.BackColor), button.ClientRectangle);
-			
 			if (button is CheckBox) {
 				check_or_radio = true;
 				check_or_radio_checked = ((CheckBox)button).Checked;
@@ -183,40 +186,48 @@ namespace System.Windows.Forms
 			
 			if (button.FlatStyle == FlatStyle.Popup) {
 				if (!button.is_pressed && !button.is_entered && !check_or_radio_checked)
-					Internal_DrawButton (dc, borderRectangle, 1, cpcolor, is_ColorControl);
+					Internal_DrawButton (dc, borderRectangle, 1, cpcolor, is_ColorControl, button.BackColor);
 				else if (!button.is_pressed && button.is_entered &&!check_or_radio_checked)
-					Internal_DrawButton (dc, borderRectangle, 2, cpcolor, is_ColorControl);
+					Internal_DrawButton (dc, borderRectangle, 2, cpcolor, is_ColorControl, button.BackColor);
 				else if (button.is_pressed || check_or_radio_checked)
-					Internal_DrawButton (dc, borderRectangle, 1, cpcolor, is_ColorControl);
+					Internal_DrawButton (dc, borderRectangle, 1, cpcolor, is_ColorControl, button.BackColor);
 			} else if (button.FlatStyle == FlatStyle.Flat) {
 				if (button.is_entered && !button.is_pressed && !check_or_radio_checked) {
-					Brush brush = is_ColorControl ? SystemBrushes.ControlDark : ResPool.GetSolidBrush (cpcolor.Dark);
-					dc.FillRectangle (brush, borderRectangle);
+					if ((button.image == null) && (button.image_list == null)) {
+						Brush brush = is_ColorControl ? SystemBrushes.ControlDark : ResPool.GetSolidBrush (cpcolor.Dark);
+						dc.FillRectangle (brush, borderRectangle);
+					}
 				} else if (button.is_pressed || check_or_radio_checked) {
-					Brush brush = is_ColorControl ? SystemBrushes.ControlLightLight : ResPool.GetSolidBrush (cpcolor.LightLight);
-					dc.FillRectangle (brush, borderRectangle);
+					if ((button.image == null) && (button.image_list == null)) {
+						Brush brush = is_ColorControl ? SystemBrushes.ControlLightLight : ResPool.GetSolidBrush (cpcolor.LightLight);
+						dc.FillRectangle (brush, borderRectangle);
+					}
 					
 					Pen pen = is_ColorControl ? SystemPens.ControlDark : ResPool.GetPen (cpcolor.Dark);
 					dc.DrawRectangle (pen, borderRectangle.X + 4, borderRectangle.Y + 4,
 							  borderRectangle.Width - 9, borderRectangle.Height - 9);
 				}
 				
-				Internal_DrawButton (dc, borderRectangle, 3, cpcolor, is_ColorControl);
+				Internal_DrawButton (dc, borderRectangle, 3, cpcolor, is_ColorControl, button.BackColor);
 			} else {
 				if ((!button.is_pressed || !button.is_enabled) && !check_or_radio_checked)
-					Internal_DrawButton (dc, borderRectangle, 0, cpcolor, is_ColorControl);
+					Internal_DrawButton (dc, borderRectangle, 0, cpcolor, is_ColorControl, button.BackColor);
 				else
-					Internal_DrawButton (dc, borderRectangle, 1, cpcolor, is_ColorControl);
+					Internal_DrawButton (dc, borderRectangle, 1, cpcolor, is_ColorControl, button.BackColor);
 			}
 		}
 		
-		private void Internal_DrawButton (Graphics dc, Rectangle rect, int state, CPColor cpcolor, bool is_ColorControl)
+		private void Internal_DrawButton (Graphics dc, Rectangle rect, int state, CPColor cpcolor, bool is_ColorControl, Color backcolor)
 		{
 			switch (state) {
 			case 0: // normal or normal disabled button
 				Pen pen = is_ColorControl ? SystemPens.ControlLightLight : ResPool.GetPen (cpcolor.LightLight);
 				dc.DrawLine (pen, rect.X, rect.Y, rect.X, rect.Bottom - 2);
 				dc.DrawLine (pen, rect.X + 1, rect.Y, rect.Right - 2, rect.Y);
+				
+				pen = is_ColorControl ? SystemPens.Control : ResPool.GetPen (backcolor);
+				dc.DrawLine (pen, rect.X + 1, rect.Y + 1, rect.X + 1, rect.Bottom - 3);
+				dc.DrawLine (pen, rect.X + 2, rect.Y + 1, rect.Right - 3, rect.Y + 1);
 				
 				pen = is_ColorControl ? SystemPens.ControlDark : ResPool.GetPen (cpcolor.Dark);
 				dc.DrawLine (pen, rect.X + 1, rect.Bottom - 2, rect.Right - 2, rect.Bottom - 2);
@@ -329,11 +340,6 @@ namespace System.Windows.Forms
 					image_y=0;
 					break;
 				}
-			}
-			
-			if (button.is_pressed) {
-				image_x+=1;
-				image_y+=1;
 			}
 			
 			if (button.is_enabled) {
