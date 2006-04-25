@@ -75,9 +75,10 @@ namespace System.ComponentModel
 			if (value is InstanceDescriptor) {
 				return ((InstanceDescriptor) value).Invoke ();
 			}
-
+			if (value == null)
+				throw new NotSupportedException ("Cannot convert from null");
 			throw new NotSupportedException (this.ToString() + " cannot be created from '" +
-						         value == null ? "null" : value.GetType().ToString() + "'");
+						         value.GetType().ToString() + "'");
 		}
 
 		public object ConvertFromInvariantString (string text)
