@@ -107,9 +107,9 @@ public class CompareInfoTest : Assertion
 		if (result == 0)
 			AssertEquals (message, 0, ret);
 		else if (result < 0)
-			Assert (message, ret < 0);
+			Assert (message + String.Format ("(neg: {0})", ret), ret < 0);
 		else
-			Assert (message, ret > 0);
+			Assert (message + String.Format ("(pos: {0})", ret), ret > 0);
 	}
 
 	void AssertCompare (string message, int result,
@@ -294,6 +294,8 @@ public class CompareInfoTest : Assertion
 //		AssertSortKey ("#9", new byte [] {
 //			0xE, 2, 6, 0x82, 1, 1, 2, 0x3, 1, 1, 0},
 //			"a\uFF0D", CompareOptions.StringSort);
+
+		AssertSortKey ("#10", new byte [] {1, 1, 1, 1, 0}, "\u3007");
 	}
 
 
@@ -510,6 +512,9 @@ public class CompareInfoTest : Assertion
 	}
 
 	[Test]
+#if NET_2_0
+	[Category ("NotDotNet")]
+#endif
 	public void FrenchSort ()
 	{
 		if (!doTest)
@@ -517,7 +522,13 @@ public class CompareInfoTest : Assertion
 
 		// invariant
 		AssertSortKey ("#inv-1", new byte [] {0xE, 0xA, 0xE, 0x7C, 0xE, 0x99, 0xE, 0x21, 1, 2, 0x12, 1, 1, 1, 0}, "c\u00F4te");
+		AssertSortKey ("#inv-1-2", new byte [] {0xE, 0xA, 0xE, 0x7C, 0xE, 0x99, 0xE, 0x21, 1, 2, 0x12, 1, 1, 1, 0}, "co\u0302te");
+		AssertSortKey ("#inv-1-3", new byte [] {0xE, 0xA, 0xE, 0x7C, 0xE, 0x99, 0xE, 0x21, 1, 2, 2, 2, 0x15, 1, 1, 1, 0}, "cote\u0306");
 		AssertSortKey ("#inv-2", new byte [] {0xE, 0xA, 0xE, 0x7C, 0xE, 0x99, 0xE, 0x21, 1, 2, 2, 2, 0xE, 1, 1, 1, 0}, "cot\u00E9");
+		AssertSortKey ("#inv-2-2", new byte [] {0xE, 0xA, 0xE, 0x7C, 0xE, 0x99, 0xE, 0x21, 1, 2, 0x14, 1, 1, 1, 0}, "co\u030Cte");
+// They are all bugs in 2.0:
+// #inv-3: should not be 0 since those sortkey values differ.
+// #inv-4: should not be -1 since co\u0302te sortkey is bigger than cote\u0306.
 		AssertCompare ("#inv-3", 1, "c\u00F4te", "cot\u00E9");
 		AssertCompare ("#inv-4", 1, "co\u0302te", "cote\u0306");
 		AssertCompare ("#inv-5", 1, "co\u030Cte", "cote\u0306");
@@ -683,6 +694,9 @@ public class CompareInfoTest : Assertion
 	}
 
 	[Test]
+#if NET_2_0
+	[Category ("NotDotNet")]
+#endif
 	public void CultureSensitiveCompare ()
 	{
 		if (!doTest)
@@ -694,17 +708,23 @@ public class CompareInfoTest : Assertion
 		AssertCompare ("#4", 0, "\uFF10", "0", CompareOptions.IgnoreWidth);
 		AssertCompare ("#5", 0, "\uFF21", "a", ignoreCW);
 		AssertCompare ("#6", 1, "12", "1");
+// BUG in .NET 2.0: See GetSortKey() test that assures sortkeys for "AE" and
+// "\u00C6" are equivalent.
 		AssertCompare ("#7", 0, "AE", "\u00C6");
 		AssertCompare ("#8", 0, "AB\u01c0C", "A\u01c0B\u01c0C", CompareOptions.IgnoreSymbols);
+// BUG in .NET 2.0: ditto.
 		AssertCompare ("#9", 0, "A\u0304", "\u0100");
 		AssertCompare ("#10", 1, "ABCABC", 5, 1, "1", 0, 1, CompareOptions.IgnoreCase, invariant);
 		AssertCompare ("#11", 0, "-d:NET_2_0", 0, 1, "-", 0, 1);
 
+// BUG in .NET 2.0: ditto.
 		AssertCompare ("#12", 0, "ae", "\u00E6");
 		AssertCompare ("#13", 0, "\u00E6", "ae");
 		AssertCompare ("#14", 0, "\u00E6s", 0, 1, "ae", 0, 2);
 
 		// target is "empty" (in culture-sensitive context).
+// BUG in .NET 2.0: \u3007 is totally-ignored character as a GetSortKey()
+// result, while it is not in Compare().
 		AssertCompare ("#17", 0, String.Empty, "\u3007");
 		AssertCompare ("#18", 1, "A", "\u3007");
 		AssertCompare ("#19", 1, "ABC", "\u3007");
@@ -712,16 +732,21 @@ public class CompareInfoTest : Assertion
 		// shift weight comparison 
 		AssertCompare ("#20", 1, "--start", "--");
 		// expansion
+// BUG in .NET 2.0: the same 00C6/00E6 issue.
 		AssertCompare ("#21", -1, "\u00E6", "aes");
 	}
 
 	[Test]
+#if NET_2_0
+	[Category ("NotDotNet")]
+#endif
 	public void CompareSpecialWeight ()
 	{
 		if (!doTest)
 			return;
 
 		// Japanese (in invariant)
+// BUG in .NET 2.0 : half-width kana should be bigger.
 		AssertCompare ("#1", 1, "\u30D1\u30FC\u30B9", "\uFF8A\uFF9F\uFF70\uFF7D");
 		AssertCompare ("#2", 0, "\u30D1\u30FC\u30B9", "\uFF8A\uFF9F\uFF70\uFF7D", CompareOptions.IgnoreWidth);
 		AssertCompare ("#3", 0, "\uFF80\uFF9E\uFF72\uFF8C\uFF9E", 
@@ -732,9 +757,11 @@ public class CompareInfoTest : Assertion
 			"\u30D0\u30FC\u30EB", CompareOptions.IgnoreWidth);
 
 		// extender in target
+// BUG in .NET 2.0 : an extender should result in bigger sortkey
 		AssertCompare ("#7", -1, "\u30D1\u30A2", "\u30D1\u30FC");
 		AssertCompare ("#8", 0, "\u30D1\u30A2", "\u30D1\u30FC", CompareOptions.IgnoreNonSpace);
 		// extender in source
+// BUG in .NET 2.0 : vice versa
 		AssertCompare ("#9", 1, "\u30D1\u30FC", "\u30D1\u30A2");
 		AssertCompare ("#10", 0, "\u30D1\u30FC", "\u30D1\u30A2", CompareOptions.IgnoreNonSpace);
 	}
@@ -801,6 +828,9 @@ public class CompareInfoTest : Assertion
 	}
 
 	[Test]
+#if NET_2_0
+	[Category ("NotDotNet")]
+#endif
 	public void IsPrefix ()
 	{
 		if (!doTest)
@@ -811,9 +841,11 @@ public class CompareInfoTest : Assertion
 		AssertIsPrefix ("#3", true, "C", "c", CompareOptions.IgnoreCase);
 		AssertIsPrefix ("#4", true, "EDCBA", "\u0117", ignoreCN);
 		AssertIsPrefix ("#5", true, "ABC", "AB", CompareOptions.IgnoreCase);
+// BUG in .NET 2.0 : see GetSortKey() test (mentioned above).
 		AssertIsPrefix ("#6", true, "ae", "\u00E6", CompareOptions.None);
 		AssertIsPrefix ("#7", true, "\u00E6", "ae", CompareOptions.None);
 
+// BUG in .NET 2.0 : see GetSortKey() test (mentioned above).
 		AssertIsPrefix ("#8", true, "\u00E6", "a", CompareOptions.None);
 		AssertIsPrefix ("#9", true, "\u00E6s", "ae", CompareOptions.None);
 		AssertIsPrefix ("#10", false, "\u00E6", "aes", CompareOptions.None);
@@ -822,6 +854,7 @@ public class CompareInfoTest : Assertion
 		AssertIsPrefix ("#13", false, "-d:NET_1_1", "@", CompareOptions.None);
 		// U+3007 is completely ignored character.
 		AssertIsPrefix ("#14", true, "\uff21\uff21", "\uff21", CompareOptions.None);
+// BUG in .NET 2.0 : see \u3007 issue (mentioned above).
 		AssertIsPrefix ("#15", true, "\uff21\uff21", "\u3007\uff21", CompareOptions.None);
 		AssertIsPrefix ("#16", true, "\uff21\uff21", "\uff21\u3007", CompareOptions.None);
 		AssertIsPrefix ("#17", true, "\\b\\a a", "\\b\\a a");
@@ -864,6 +897,9 @@ public class CompareInfoTest : Assertion
 	}
 
 	[Test]
+#if NET_2_0
+	[Category ("NotDotNet")]
+#endif
 	public void IsSuffix ()
 	{
 		if (!doTest)
@@ -874,11 +910,13 @@ public class CompareInfoTest : Assertion
 		AssertIsSuffix ("#3", false, "CBA", "c", CompareOptions.IgnoreCase);
 		AssertIsSuffix ("#4", true, "ABCDE", "\u0117", CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreCase);
 		AssertIsSuffix ("#5", false, "\u00E6", "a", CompareOptions.None);
+// BUG in .NET 2.0 : see GetSortKey() test (mentioned above).
 		AssertIsSuffix ("#6", true, "\u00E6", "ae", CompareOptions.None);
 		AssertIsSuffix ("#7", true, "ae", "\u00E6", CompareOptions.None);
 		AssertIsSuffix ("#8", false, "e", "\u00E6", CompareOptions.None);
 		// U+3007 is completely ignored character.
 		AssertIsSuffix ("#9", true, "\uff21\uff21", "\uff21", CompareOptions.None);
+// BUG in .NET 2.0 : see \u3007 issue (mentioned above).
 		AssertIsSuffix ("#10", true, "\uff21\uff21", "\u3007\uff21", CompareOptions.None);
 		AssertIsSuffix ("#11", true, "\uff21\uff21", "\uff21\u3007", CompareOptions.None);
 		// extender in target
@@ -913,6 +951,9 @@ public class CompareInfoTest : Assertion
 	}
 
 	[Test]
+#if NET_2_0
+	[Category ("NotDotNet")]
+#endif
 	public void IndexOfString ()
 	{
 		if (!doTest)
@@ -928,15 +969,18 @@ public class CompareInfoTest : Assertion
 		AssertIndexOf ("#8", 0, "-ABC", "-", CompareOptions.None);
 		AssertIndexOf ("#9", 0, "--ABC", "--", CompareOptions.None);
 		AssertIndexOf ("#10", -1, "--ABC", "--", 1, 2, CompareOptions.None, invariant);
+// BUG in .NET 2.0 : see GetSortKey() test (mentioned above).
 		AssertIndexOf ("#11", 0, "AE", "\u00C6", CompareOptions.None);
 		// U+3007 is completely ignored character.
 		AssertIndexOf ("#12", 0, "\uff21\uff21", "\uff21", CompareOptions.None);
+// BUG in .NET 2.0 : see \u3007 issue (mentioned above).
 		AssertIndexOf ("#13", 0, "\uff21\uff21", "\u3007\uff21", CompareOptions.None);
 		AssertIndexOf ("#14", 0, "\uff21\uff21", "\uff21\u3007", CompareOptions.None);
 		AssertIndexOf ("#15", 0, "\uff21\uff21", "\u3007", CompareOptions.None);
 		AssertIndexOf ("#15-2", 1, "\u3007\uff21", "\uff21", CompareOptions.None);
 		// target is "empty" (in culture-sensitive context).
 		AssertIndexOf ("#16", -1, String.Empty, "\u3007");
+// BUG in .NET 2.0 : see \u3007 issue (mentioned above).
 		AssertIndexOf ("#17", 0, "A", "\u3007");
 		AssertIndexOf ("#18", 0, "ABC", "\u3007");
 
@@ -971,6 +1015,9 @@ public class CompareInfoTest : Assertion
 	}
 
 	[Test]
+#if NET_2_0
+	[Category ("NotDotNet")]
+#endif
 	public void LastIndexOfString ()
 	{
 		if (!doTest)
@@ -983,14 +1030,17 @@ public class CompareInfoTest : Assertion
 		AssertLastIndexOf ("#5", 4, "ABCABC", "BC", CompareOptions.IgnoreCase);
 		AssertLastIndexOf ("#6", 4, "BBCBBC", "BC", CompareOptions.IgnoreCase);
 		AssertLastIndexOf ("#7", 1, "original", "rig", CompareOptions.None);
+// BUG in .NET 2.0 : see GetSortKey() test (mentioned above).
 		AssertLastIndexOf ("#8", 0, "\u00E6", "ae", CompareOptions.None);
 		AssertLastIndexOf ("#9", 0, "-ABC", "-", CompareOptions.None);
 		AssertLastIndexOf ("#10", 0, "--ABC", "--", CompareOptions.None);
 		AssertLastIndexOf ("#11", -1, "--ABC", "--", 2, 2, CompareOptions.None, invariant);
 		AssertLastIndexOf ("#12", -1, "--ABC", "--", 4, 2, CompareOptions.None, invariant);
+// BUG in .NET 2.0 : see GetSortKey() test (mentioned above).
 		AssertLastIndexOf ("#13", 0, "AE", "\u00C6", CompareOptions.None);
 		// U+3007 is completely ignored character.
 		AssertLastIndexOf ("#14", 1, "\uff21\uff21", "\uff21", CompareOptions.None);
+// BUG in .NET 2.0 : see \u3007 issue (mentioned above).
 		AssertLastIndexOf ("#15", 1, "\uff21\uff21", "\u3007\uff21", CompareOptions.None);
 		AssertLastIndexOf ("#16", 1, "\uff21\uff21", "\uff21\u3007", CompareOptions.None);
 		AssertLastIndexOf ("#17", 1, "\uff21\uff21", "\u3007", CompareOptions.None);
@@ -1048,15 +1098,19 @@ public class CompareInfoTest : Assertion
 
 #if NET_2_0
 	[Test]
+	[Category ("NotDotNet")]
 	public void OrdinalIgnoreCaseCompare ()
 	{
 		if (!doTest)
 			return;
 
 		// matches
+// BUG in .NET 2.0 : see GetSortKey() test (mentioned above).
 		AssertCompare ("#1", 0, "AE", "\u00C6", CompareOptions.None);
+// BUG in .NET 2.0 : It raises inappropriate ArgumentException.
 		// should not match since it is Ordinal
 		AssertCompare ("#2", -133, "AE", "\u00C6", CompareOptions.OrdinalIgnoreCase);
+return;
 
 		AssertCompare ("#3", 1, "AE", "\u00E6", CompareOptions.None);
 		// matches
