@@ -5,6 +5,11 @@
 
 2006-04-25  Martin Baulig  <martin@ximian.com>
 
+	* driver.c: Disable copyprop, consprop and inline when running
+	inside the debugger.
+
+2006-04-25  Martin Baulig  <martin@ximian.com>
+
 	* debug-debugger.h (MonoDebuggerInfo): Replaced `get_thread_id'
 	with `get_current_thread' and added `detach'.
 	(MonoDebuggerMetadataInfo): Added `thread_size',
