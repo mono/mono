@@ -8,7 +8,8 @@
 	special way.
 	(mono_debugger_init_threads): Removed the `main_thread_stack' arg.
 	(mono_debugger_finalize_threads): New function; undo the effects
-	of mono_debugger_init_threads().	
+	of mono_debugger_init_threads().
+	(mono_debugger_create_all_threads): Removed.
 
 2006-04-24  Zoltan Varga  <vargaz@gmail.com>
 
