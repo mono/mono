@@ -1,3 +1,11 @@
+2006-04-25  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.h (MonoDebuggerInfo): Replaced `get_thread_id'
+	with `get_current_thread' and added `detach'.
+	(MonoDebuggerMetadataInfo): Added `thread_size',
+	`thread_tid_offset', `thread_stack_ptr_offset' and
+	`thread_end_stack_offset'.
+
 2006-04-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot.c Makefile.am: Split aot.c into two new files aot-compiler.c and 
