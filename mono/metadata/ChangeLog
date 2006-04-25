@@ -1,3 +1,15 @@
+2006-04-25  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.h (MONO_DEBUGGER_VERSION): Bump to 56.
+
+	* threads.c (mono_thread_attach): Set `thread->stack_ptr' and call
+	debugger_thread_created().
+	(debugger_gc_push_all_stacks): Don't handle the main thread in any
+	special way.
+	(mono_debugger_init_threads): Removed the `main_thread_stack' arg.
+	(mono_debugger_finalize_threads): New function; undo the effects
+	of mono_debugger_init_threads().	
+
 2006-04-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* image.c (mono_image_close): Tidy up trace messages.
