@@ -282,62 +282,62 @@ namespace System.Windows.Forms
 			
 			switch (button.image_alignment) {
 				case ContentAlignment.TopLeft: {
-					image_x=0;
-					image_y=0;
+					image_x = 5;
+					image_y = 5;
 					break;
 				}
 					
 				case ContentAlignment.TopCenter: {
-					image_x=(width-image_width)/2;
-					image_y=0;
+					image_x = (width - image_width) / 2;
+					image_y = 5;
 					break;
 				}
 					
 				case ContentAlignment.TopRight: {
-					image_x=width-image_width;
-					image_y=0;
+					image_x = width - image_width - 5;
+					image_y = 5;
 					break;
 				}
 					
 				case ContentAlignment.MiddleLeft: {
-					image_x=0;
-					image_y=(height-image_height)/2;
+					image_x = 5;
+					image_y = (height - image_height) / 2;
 					break;
 				}
 					
 				case ContentAlignment.MiddleCenter: {
-					image_x=(width-image_width)/2;
-					image_y=(height-image_height)/2;
+					image_x = (width - image_width) / 2;
+					image_y = (height - image_height) / 2;
 					break;
 				}
 					
 				case ContentAlignment.MiddleRight: {
-					image_x=width-image_width;
-					image_y=(height-image_height)/2;
+					image_x = width - image_width - 4;
+					image_y = (height - image_height) / 2;
 					break;
 				}
 					
 				case ContentAlignment.BottomLeft: {
-					image_x=0;
-					image_y=height-image_height;
+					image_x = 5;
+					image_y = height - image_height - 4;
 					break;
 				}
 					
 				case ContentAlignment.BottomCenter: {
-					image_x=(width-image_width)/2;
-					image_y=height-image_height;
+					image_x = (width - image_width) / 2;
+					image_y = height - image_height - 4;
 					break;
 				}
 					
 				case ContentAlignment.BottomRight: {
-					image_x=width-image_width;
-					image_y=height-image_height;
+					image_x = width - image_width - 4;
+					image_y = height - image_height - 4;
 					break;
 				}
 					
 				default: {
-					image_x=0;
-					image_y=0;
+					image_x = 5;
+					image_y = 5;
 					break;
 				}
 			}

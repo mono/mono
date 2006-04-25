@@ -1,5 +1,10 @@
 2006-04-25  Alexander Olk  <alex.olk@googlemail.com>
 
+	* ThemeWin32Classic.cs: Button image alignment now matches exactly
+	  ms
+
+2006-04-25  Alexander Olk  <alex.olk@googlemail.com>
+
 	* ThemeWin32Classic.cs: Fixed drawing code for buttons with an
 	  image. The image position is always the same, no matter if the
 	  button is pressed or not.
