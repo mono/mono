@@ -1,5 +1,8 @@
 2006-04-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot.c Makefile.am: Split aot.c into two new files aot-compiler.c and 
+	aot-runtime.c.
+
 	* inssel.brg (mini_emit_load_intf_reg_vtable): Use a new kind of AOT constant
 	ADJUSTED_IID to avoid the need for adjusting the IID at runtime.
 
