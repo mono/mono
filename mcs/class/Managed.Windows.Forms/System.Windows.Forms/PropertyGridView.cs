@@ -327,7 +327,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 							}
 						
 						}
-						catch (Exception ex) {
+						catch (Exception) {
 						}
 					}
 				}
@@ -362,7 +362,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 					}
 
 				}
-				catch (Exception e) {
+				catch (Exception) {
 				}
 				if (grid_item == property_grid.SelectedGridItem && grid_item.GridItemType != GridItemType.Category) {
 					grid_textbox.SetBounds(xLoc, rect.Top, ClientRectangle.Width-xLoc - (vbar.Visible ? vbar.Width: 0),ROW_HEIGHT);
@@ -418,7 +418,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 							System.Console.WriteLine("No converter for type {0}",desc.PropertyType);
 						}
 					}
-					catch (Exception ex) {
+					catch (Exception) {
 						Console.WriteLine("Error converting string");
 					}
 				}

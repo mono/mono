@@ -1975,7 +1975,7 @@ namespace System.Windows.Forms
 			cached_currencymgr = cached_currencymgr_events = null;
 			try {
 				real_datasource = GetDataSource (datasource, DataMember);
-			}catch (Exception e) {				
+			}catch (Exception) {				
 				real_datasource = source;
 			}
 

@@ -147,7 +147,7 @@ namespace System.Windows.Forms
 				SetColumnValueAtRow (dataSource, rowNum, text);
 			}
 			
-			catch (Exception e) {
+			catch (Exception) {
 				string message = "The data entered in column ["+ MappingName +"] has an invalid format.";
 				MessageBox.Show( message);
 			}

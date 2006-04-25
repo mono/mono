@@ -815,7 +815,7 @@ namespace System.Windows.Forms
 					icon_theme = "gnome";
 					return false;
 				}
-			} catch ( Exception e ) {
+			} catch (Exception) {
 				return false;
 			}
 		}
@@ -888,7 +888,7 @@ namespace System.Windows.Forms
 				}
 				
 				sr.Close ();
-			} catch (Exception e) {
+			} catch (Exception) {
 				
 			}
 			

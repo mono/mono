@@ -83,7 +83,7 @@ namespace System.Windows.Forms {
 			
 			try {
 				retValue = new FileStream (FileName, FileMode.Create, FileAccess.ReadWrite);
-			} catch (Exception ex) {
+			} catch (Exception) {
 				retValue = null;
 			}
 			

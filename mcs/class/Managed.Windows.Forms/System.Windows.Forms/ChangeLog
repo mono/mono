@@ -1,3 +1,7 @@
+2006-04-25  Mike Kestner  <mkestner@novell.com>
+
+	* *.cs: cleanup newly reported exception var unused warnings.
+
 2006-04-25  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ThemeWin32Classic.cs: Button image alignment now matches exactly

@@ -702,7 +702,7 @@ namespace System.Windows.Forms
 				
 				file_stream.Close( );
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 				return false;
 			}

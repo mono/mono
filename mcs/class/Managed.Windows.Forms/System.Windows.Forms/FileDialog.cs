@@ -1248,7 +1248,7 @@ namespace System.Windows.Forms {
 						
 						try {
 							xml_doc.Save (recently_used_path);
-						} catch ( Exception e ) {
+						} catch (Exception) {
 						}
 					}
 				} else {
@@ -1292,7 +1292,7 @@ namespace System.Windows.Forms {
 					
 					try {
 						xml_doc.Save (recently_used_path);
-					} catch ( Exception e ) {
+					} catch (Exception) {
 					}
 				}
 			}
@@ -2062,7 +2062,7 @@ namespace System.Windows.Forms {
 			try {
 				if (fileInfo.Length > 1024)
 					fileLen = fileInfo.Length / 1024;
-			} catch ( Exception e ) {
+			} catch (Exception) {
 				fileLen = 1;
 			}
 			
@@ -2100,7 +2100,7 @@ namespace System.Windows.Forms {
 						}
 					}
 					xtr.Close ();
-				} catch ( Exception e ) {
+				} catch (Exception) {
 					
 				}
 			}
