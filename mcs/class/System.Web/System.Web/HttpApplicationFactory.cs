@@ -401,7 +401,7 @@ namespace System.Web {
 		{
 			HttpApplicationFactory factory = theFactory;
 			HttpApplication app = null;
-			if (factory.needs_init){
+			if (factory.app_start_needed){
 				if (context == null)
 					return null;
 
