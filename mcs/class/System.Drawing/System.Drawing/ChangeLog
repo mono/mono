@@ -1,3 +1,11 @@
+2006-04-25  Miguel de Icaza  <miguel@novell.com>
+
+	* FontConverter.cs (FontUnitConverter): implement.   CorCompare
+	for some reason does not dig into nested classes, match the
+	documentation. 
+
+	(FontNameConverter): Return the fonts available on the system. 
+
 2006-04-25  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Icon.cs: We need to or, not and our alpha values into the

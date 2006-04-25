@@ -128,9 +128,7 @@ namespace System.Drawing
 			return base.ConvertTo (context, culture, value, destinationType);
 		}
 
-		public override object ConvertFrom (ITypeDescriptorContext context,
-			CultureInfo culture,
-			object value)
+		public override object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, object value)
 		{
 			string fontFamily = value as string;
 			if (fontFamily == null)
@@ -141,8 +139,7 @@ namespace System.Drawing
 			return new Font (fontFamily, 8);
 		}
 
-		public override object CreateInstance (ITypeDescriptorContext context,
-			IDictionary propertyValues)
+		public override object CreateInstance (ITypeDescriptorContext context, IDictionary propertyValues)
 		{
 			Object value;
 			byte charSet = 1;
@@ -251,13 +248,15 @@ namespace System.Drawing
 		, IDisposable		
 #endif
 		{
+			FontFamily [] fonts;
+			
 			public FontNameConverter ()
 			{
+				fonts = FontFamily.Families;
 			}	
 #if NET_2_0			
 			void IDisposable.Dispose ()
 			{
-
 			}
 #endif
 			public override bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)
@@ -268,43 +267,46 @@ namespace System.Drawing
 				return base.CanConvertFrom (context, sourceType);
 			}
 
-			[MonoTODO]
-			public override object ConvertFrom (ITypeDescriptorContext context,
-				CultureInfo culture,
-				object value)
+			public override object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, object value)
 			{
-				throw new NotImplementedException ();
+				if (value is string)
+					return value;
+				return base.ConvertFrom (context, culture, value);
 			}
 
-			[MonoTODO]
 			public override StandardValuesCollection GetStandardValues (ITypeDescriptorContext context)
 			{
-				throw new NotImplementedException ();
+				string [] values = new string [fonts.Length];
+				for (int i = fonts.Length; i > 0;){
+					i--;
+					values [i] = fonts [i].Name;
+				}
+				
+				return new TypeConverter.StandardValuesCollection (values);
 			}
 
-			[MonoTODO]
 			public override bool GetStandardValuesExclusive (ITypeDescriptorContext context)
 			{
-				throw new NotImplementedException ();
+				// We allow other values other than those in the font list.
+				return false;
 			}
 
 			public override bool GetStandardValuesSupported (ITypeDescriptorContext context)
 			{
+				// Yes, we support picking an element from the list. 
 				return true;
 			}
 		}
 
 		public class FontUnitConverter : EnumConverter
 		{
-			public FontUnitConverter () : base (typeof (GraphicsUnit))
+			public FontUnitConverter () : base (typeof (GraphicsUnit)) {}
+			
+			public override StandardValuesCollection GetStandardValues (ITypeDescriptorContext context)
 			{
+				return base.GetStandardValues (context);
 			}
-
-			[MonoTODO]
-			public override TypeConverter.StandardValuesCollection GetStandardValues (ITypeDescriptorContext context)
-			{
-				throw new NotImplementedException ();
-			}
+				
 		}
 	}
 }
