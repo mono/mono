@@ -151,9 +151,11 @@ namespace System.Web.Configuration {
 			VerifyData ();
 		}
 
-		[MonoTODO]
 		protected override void Reset (ConfigurationElement parentElement)
 		{
+			AuthorizationRule r = (AuthorizationRule)parentElement;
+			Action = r.Action;
+
 			base.Reset (parentElement);
 		}
 

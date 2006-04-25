@@ -1,5 +1,11 @@
 2006-04-25  Chris Toshok  <toshok@ximian.com>
 
+	* AuthorizationRule.cs (Reset): finally figure out what this
+	method is supposed to do.  Assign our Action property based on
+	parentElement's.
+
+2006-04-25  Chris Toshok  <toshok@ximian.com>
+
 	* WebConfigurationHost.cs (InitForConfiguration): actually, use
 	HttpRuntime.AppDomainAppVirtualPath on gonzalo's recommendation.
 	It's never null, and its use cleans things up a bit.
