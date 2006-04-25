@@ -1,3 +1,9 @@
+2006-04-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* QueueTest.cs, SortedListTest.cs : many capacity-related tests are
+	  written under improper assumption. As a result they don't pass when
+	  we run make PROFILE=net_2_0 run-test-ondotnet, so got rid of them.
+
 2006-01-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HashtableTest.cs: Added test case to check if all subclasses are 

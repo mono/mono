@@ -39,7 +39,9 @@ public class SortedListTest : Assertion {
 	public void TestConstructor1() {
 		SortedList temp1 = new SortedList();
 		AssertNotNull("sl.constructor-1: returns null", temp1);
+#if !NET_2_0 // no such expectation as it is broken in .NET 2.0
 		AssertEquals("sl.constructor-1: incorrect initial capacity", icap, temp1.Capacity);
+#endif
 	}
 
         [Test]
@@ -47,7 +49,9 @@ public class SortedListTest : Assertion {
 		Comparer c = Comparer.Default;
 		SortedList temp1 = new SortedList(c);
 		AssertNotNull("sl.constructor-2: returns null", temp1);
+#if !NET_2_0 // no such expectation as it is broken in .NET 2.0
 		AssertEquals("sl.constructor-2: incorrect initial capacity", icap, temp1.Capacity);
+#endif
 	}
 
         [Test]
@@ -111,6 +115,7 @@ public class SortedListTest : Assertion {
 		} catch (ArgumentOutOfRangeException) {}
 	}
 
+#if !NET_2_0 // no such expectation as it is broken in .NET 2.0
 	[Test]
 	public void Constructor_Capacity () 
 	{
@@ -128,6 +133,7 @@ public class SortedListTest : Assertion {
 			AssertEquals ("Capacity-Resetted" + i.ToString (), 16, sl.Capacity);
 		}
 	}
+#endif
 
         [Test]	
 	public void TestIsSynchronized() {
@@ -183,7 +189,9 @@ public class SortedListTest : Assertion {
 		SortedList list = new SortedList (42);
 		AssertEquals ("42", 42, list.Capacity);
 		list.Capacity = 0;
+#if !NET_2_0 // no such expectation as it is broken in .NET 2.0
 		AssertEquals ("0(16)", 16, list.Capacity);
+#endif
 	}
 
         [Test]
@@ -312,9 +320,12 @@ public class SortedListTest : Assertion {
 		AssertEquals("sl.Clear: should have one element", 2, sl1.Count);
 		sl1.Clear();
 		AssertEquals("sl.Clear: is not cleared", 0, sl1.Count);
+#if !NET_2_0 // no such expectation as it is broken in .NET 2.0
 		AssertEquals("sl.Clear: capacity is altered", 16, sl1.Capacity);
+#endif
 	}
 
+#if !NET_2_0 // no such expectation as it is broken in .NET 2.0
 	[Test]
 	public void Clear_Capacity () 
 	{
@@ -340,6 +351,7 @@ public class SortedListTest : Assertion {
 		AssertEquals ("Capacity", 16, sl.Capacity);
 		// note: we didn't return to 0 - so Clear cahnge the default capacity
 	}
+#endif
 
         [Test]
 	public void TestClone() {
@@ -799,11 +811,15 @@ public class SortedListTest : Assertion {
 		SortedList sl1 = new SortedList(24);
 		
 		sl1.TrimToSize();
+#if !NET_2_0 // no such expectation as it is broken in .NET 2.0
 		AssertEquals("sl.TrimToSize: incorrect capacity after trimming empty list",icap,sl1.Capacity);
+#endif
 		
 		for (int i = 72; i>=0; i--) sl1.Add(100+i,i);
 		sl1.TrimToSize();
+#if !NET_2_0 // no such expectation as it is broken in .NET 2.0
 		AssertEquals("sl.TrimToSize: incorrect capacity after trimming a list",73,sl1.Capacity);
+#endif
 	}
 
 	[Test]

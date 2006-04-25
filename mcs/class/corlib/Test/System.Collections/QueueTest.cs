@@ -136,9 +136,11 @@ namespace MonoTests.System.Collections {
 		public void TestSyncRoot() 
 		{
 			SetUp();
+#if !NET_2_0 // umm, why on earth do you expect SyncRoot is the Queue itself?
 			AssertEquals("SyncRoot q1", q1, q1.SyncRoot);
 			AssertEquals("SyncRoot q2", q2, q2.SyncRoot);
 			AssertEquals("SyncRoot emptyQueue", emptyQueue, emptyQueue.SyncRoot);
+#endif
 
 			Queue q1sync = Queue.Synchronized(q1);
 			AssertEquals("SyncRoot value of a synchronized queue", q1, q1sync.SyncRoot);
