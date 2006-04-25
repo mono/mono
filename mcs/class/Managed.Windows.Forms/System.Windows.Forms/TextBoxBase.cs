@@ -1405,7 +1405,6 @@ namespace System.Windows.Forms {
 		private void TextBoxBase_MouseWheel(object sender, MouseEventArgs e) {
 			Line	line;
 			int	line_no;
-			int	target;
 
 			if (!vscroll.Enabled) {
 				return;

@@ -1939,7 +1939,6 @@ namespace System.Windows.Forms
 					return false;
 					
 				SetHighLightedItem (owner.SelectedItem);
-				int index = GetHighLightedIndex ();
 
 				CalcListBoxArea ();				
 				Show ();

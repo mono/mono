@@ -782,22 +782,23 @@ namespace System.Windows.Forms {
 		private void SetIcon(Hwnd hwnd, Icon icon) {
 			Bitmap		bitmap;
 			int		size;
-			uint[]		data;
+			IntPtr[]	data;
 			int		index;
 
 			bitmap = icon.ToBitmap();
 			index = 0;
 			size = bitmap.Width * bitmap.Height + 2;
-			data = new uint[size];
+			data = new IntPtr[size];
 
-			data[index++] = (uint)bitmap.Width;
-			data[index++] = (uint)bitmap.Height;
+			data[index++] = (IntPtr)bitmap.Width;
+			data[index++] = (IntPtr)bitmap.Height;
 
 			for (int y = 0; y < bitmap.Height; y++) {
 				for (int x = 0; x < bitmap.Width; x++) {
-					data[index++] = (uint)bitmap.GetPixel(x, y).ToArgb();
+					data[index++] = (IntPtr)bitmap.GetPixel(x, y).ToArgb();
 				}
 			}
+
 			XChangeProperty(DisplayHandle, hwnd.whole_window, NetAtoms[(int)NA._NET_WM_ICON], (IntPtr)Atom.XA_CARDINAL, 32, PropertyMode.Replace, data, size);
 		}
 
@@ -960,10 +961,10 @@ namespace System.Windows.Forms {
 
 			XGetWindowProperty(DisplayHandle, window, NetAtoms[(int)NA._NET_FRAME_EXTENTS], IntPtr.Zero, new IntPtr (16), false, (IntPtr)Atom.XA_CARDINAL, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
 			if (((long)nitems == 4) && (prop != IntPtr.Zero)) {
-				left = Marshal.ReadInt32(prop, 0);
-				//right = Marshal.ReadInt32(prop, 4);
-				top = Marshal.ReadInt32(prop, 8);
-				//bottom = Marshal.ReadInt32(prop, 12);
+				left = Marshal.ReadIntPtr(prop, 0).ToInt32();
+				//right = Marshal.ReadIntPtr(prop, IntPtr.Size).ToInt32();
+				top = Marshal.ReadIntPtr(prop, IntPtr.Size * 2).ToInt32();
+				//bottom = Marshal.ReadIntPtr(prop, IntPtr.Size * 3).ToInt32();
 			} else {
 				left = 0;
 				top = 0;
@@ -1488,9 +1489,6 @@ namespace System.Windows.Forms {
 
 			rect = new Rectangle(ncp.rgrc1.left, ncp.rgrc1.top, ncp.rgrc1.right - ncp.rgrc1.left, ncp.rgrc1.bottom - ncp.rgrc1.top);
 
-			Control c;
-			c = Control.FromHandle(hwnd.Handle);
-
 			if (hwnd.visible) {
 				XMoveResizeWindow(DisplayHandle, hwnd.client_window, rect.X, rect.Y, rect.Width, rect.Height);
 			}
@@ -1797,8 +1795,8 @@ namespace System.Windows.Forms {
 
 				XGetWindowProperty(DisplayHandle, RootWindow, NetAtoms[(int)NA._NET_DESKTOP_GEOMETRY], IntPtr.Zero, new IntPtr (256), false, (IntPtr)Atom.XA_CARDINAL, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
 				if (((long)nitems == 2) && (prop != IntPtr.Zero) && IntPtr.Size == 4) {
-					width = Marshal.ReadInt32(prop, 0);
-					height = Marshal.ReadInt32(prop, 4);
+					width = Marshal.ReadIntPtr(prop, 0).ToInt32();
+					height = Marshal.ReadIntPtr(prop, IntPtr.Size).ToInt32();
 
 					XFree(prop);
 					return new Rectangle(0, 0, width, height);
@@ -3146,9 +3144,9 @@ namespace System.Windows.Forms {
 
 							msg.message = Msg.WM_WINDOWPOSCHANGED;
 							if (hwnd.opacity != 0xffffffff) {
-								uint opacity;
+								IntPtr opacity;
 
-								opacity = hwnd.opacity;
+								opacity = (IntPtr)hwnd.opacity;
 								XChangeProperty(DisplayHandle, XGetParent(hwnd.whole_window), NetAtoms[(int)NA._NET_WM_WINDOW_OPACITY], (IntPtr)Atom.XA_CARDINAL, 32, PropertyMode.Replace, ref opacity, 1);
 							}
 						} else {
@@ -4195,7 +4193,7 @@ namespace System.Windows.Forms {
 
 		internal override void SetWindowTransparency(IntPtr handle, double transparency, Color key) {
 			Hwnd	hwnd;
-			uint	opacity;
+			IntPtr	opacity;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
@@ -4204,7 +4202,7 @@ namespace System.Windows.Forms {
 			}
 
 			hwnd.opacity = (uint)(0xffffffff * transparency);
-			opacity = hwnd.opacity;
+			opacity = (IntPtr)hwnd.opacity;
 
 			if (hwnd.reparented) {
 				XChangeProperty(DisplayHandle, XGetParent(hwnd.whole_window), NetAtoms[(int)NA._NET_WM_WINDOW_OPACITY], (IntPtr)Atom.XA_CARDINAL, 32, PropertyMode.Replace, ref opacity, 1);
@@ -4551,10 +4549,16 @@ namespace System.Windows.Forms {
 		internal extern static int XChangeProperty(IntPtr display, IntPtr window, IntPtr property, IntPtr type, int format, PropertyMode mode, ref uint value, int nelements);
 
 		[DllImport ("libX11", EntryPoint="XChangeProperty")]
+		internal extern static int XChangeProperty(IntPtr display, IntPtr window, IntPtr property, IntPtr type, int format, PropertyMode mode, ref IntPtr value, int nelements);
+
+		[DllImport ("libX11", EntryPoint="XChangeProperty")]
 		internal extern static int XChangeProperty(IntPtr display, IntPtr window, IntPtr property, IntPtr type, int format, PropertyMode mode, uint[] data, int nelements);
 
 		[DllImport ("libX11", EntryPoint="XChangeProperty")]
 		internal extern static int XChangeProperty(IntPtr display, IntPtr window, IntPtr property, IntPtr type, int format, PropertyMode mode, int[] data, int nelements);
+
+		[DllImport ("libX11", EntryPoint="XChangeProperty")]
+		internal extern static int XChangeProperty(IntPtr display, IntPtr window, IntPtr property, IntPtr type, int format, PropertyMode mode, IntPtr[] data, int nelements);
 
 		[DllImport ("libX11", EntryPoint="XChangeProperty")]
 		internal extern static int XChangeProperty(IntPtr display, IntPtr window, IntPtr property, IntPtr type, int format, PropertyMode mode, IntPtr atoms, int nelements);

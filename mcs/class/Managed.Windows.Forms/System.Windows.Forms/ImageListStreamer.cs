@@ -72,7 +72,7 @@ namespace System.Windows.Forms {
 
 			BinaryReader reader = new BinaryReader (decoded);
 			ushort nimages = reader.ReadUInt16 ();
-			ushort max_image = reader.ReadUInt16 ();	// cMaxImage
+			//ushort max_image = reader.ReadUInt16 ();	// cMaxImage
 			ushort grow = reader.ReadUInt16 (); // cGrow
 			ushort cx = reader.ReadUInt16 ();
 			ushort cy = reader.ReadUInt16 ();

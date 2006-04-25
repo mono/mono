@@ -262,8 +262,6 @@ namespace System.Windows.Forms {
 			get {
 				Line		start_line;
 				Line		end_line;
-				int		current;
-				int		total;
 
 				start_line = document.GetLine(1);
 				end_line = document.GetLine(document.Lines);
@@ -849,8 +847,6 @@ namespace System.Windows.Forms {
 		}
 
 		public void LoadFile(System.IO.Stream data, RichTextBoxStreamType fileType) {
-			RTF.RTF rtf;	// Not 'using SWF.RTF' to avoid ambiguities with font and color
-
 			document.Empty();
 
 			// FIXME - ignoring unicode

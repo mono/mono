@@ -3108,11 +3108,6 @@ namespace System.Windows.Forms {
 
 		internal void ReplaceSelection(string s) {
 			int		i;
-			int		base_line;
-			string[]	ins;
-			int		insert_lines;
-
-			base_line = selection_start.line.line_no;
 
 			// First, delete any selected text
 			if ((selection_start.pos != selection_end.pos) || (selection_start.line != selection_end.line)) {

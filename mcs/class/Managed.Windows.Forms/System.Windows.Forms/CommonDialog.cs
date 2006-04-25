@@ -105,13 +105,11 @@ namespace System.Windows.Forms {
 		}
 
 		public DialogResult ShowDialog(IWin32Window ownerWin32) {
-			DialogResult	result;
-
 			// Prep the dialog
 			RunDialog(form.Handle);
 
 			// Run
-			result = form.ShowDialog(ownerWin32);
+			form.ShowDialog(ownerWin32);
 
 			return form.DialogResult;
 		}

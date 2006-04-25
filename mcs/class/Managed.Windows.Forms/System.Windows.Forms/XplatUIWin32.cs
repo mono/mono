@@ -722,7 +722,7 @@ namespace System.Windows.Forms {
 			BITMAPINFOHEADER	bmi;
 			int			ncolors;
 			int			imagesize;
-			int			palettesize;
+			//int			palettesize;
 			Bitmap			bmp;
 			BitmapData		bits;
 			ColorPalette		pal;
@@ -738,7 +738,7 @@ namespace System.Windows.Forms {
 					ncolors = (int)(1 << bmi.biBitCount);
 				}
 			}
-			palettesize = ncolors * 4;
+			//palettesize = ncolors * 4;
 
 			imagesize = (int)bmi.biSizeImage;
 			if (imagesize == 0) {

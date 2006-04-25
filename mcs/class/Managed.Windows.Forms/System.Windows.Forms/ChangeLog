@@ -1,3 +1,14 @@
+2006-04-25  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* TextControl.cs, ComboBox.cs, CommonDialog.cs, Theme.cs, 
+	  XplatUIWin32.cs, RichTextBox.cs, ImageListStreamer.cs,
+	  TextBoxBase.cs: Unused var fixes
+	* AxHost.cs: Small 2.0 fix
+	* XplatUIX11.cs: Switched to IntPtr from int for XA_CARDINAL atoms 
+	  as it seems that is what at least Metacity expects. This will make
+	  icons show up on 64bit platforms. We still have some 64bit size
+	  issues, though, since the startup app window size still won't match.
+
 2006-04-25  Mike Kestner  <mkestner@novell.com>
 
 	* *.cs: cleanup newly reported exception var unused warnings.

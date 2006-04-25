@@ -622,7 +622,6 @@ namespace System.Windows.Forms
 					throw new ArgumentException("Invalid Icon type requested", "index");
 				}
 			}
-			return null;
 		}
 
 		public virtual Image Images(string mimetype, string extension, int size) {
