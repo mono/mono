@@ -1,3 +1,10 @@
+2006-04-25  Chris Toshok  <toshok@ximian.com>
+
+	* ConfigurationElementCollection.cs (Reset): it makes no sense to
+	pass the typename to CreateNewElementInternal.  the argument is
+	the elementname. pass null instead.
+	(Unmerge): same.
+
 2006-02-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ConfigurationElement.cs : ListErrors() and SetPropertyValue()

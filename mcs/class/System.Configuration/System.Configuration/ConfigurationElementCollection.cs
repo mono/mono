@@ -372,7 +372,7 @@ namespace System.Configuration
 			for (int n=0; n<parent.Count; n++)
 			{
 				ConfigurationElement parentItem = parent.BaseGet (n);
-				ConfigurationElement item = CreateNewElementInternal (parentItem.GetType().FullName);
+				ConfigurationElement item = CreateNewElementInternal (null);
 				item.Reset (parentItem);
 				BaseAdd (item);
 				
@@ -503,13 +503,13 @@ namespace System.Configuration
 				object key = source.GetElementKey (sitem);
 				ConfigurationElement pitem = parent != null ? parent.BaseGet (key) as ConfigurationElement : null;
 				if (pitem != null && updateMode != ConfigurationSaveMode.Full) {
-					ConfigurationElement nitem = CreateNewElementInternal (pitem.GetType().FullName);
+					ConfigurationElement nitem = CreateNewElementInternal (null);
 					nitem.Unmerge (sitem, pitem, ConfigurationSaveMode.Minimal);
 					if (nitem.HasValues ())
 						BaseAdd (nitem);
 				}
 				else {
-					ConfigurationElement nitem = CreateNewElementInternal (sitem.GetType().FullName);
+					ConfigurationElement nitem = CreateNewElementInternal (null);
 					nitem.Unmerge (sitem, null, ConfigurationSaveMode.Full);
 					BaseAdd (nitem);
 				}
