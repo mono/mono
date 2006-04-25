@@ -601,7 +601,7 @@ namespace System.Web.UI
 				return;
 
 			/* apply the style sheet skin here */
-			if (page.StyleSheetTheme != null) {
+			if (page.StyleSheetPageTheme != null) {
 				ControlSkin cs = page.StyleSheetPageTheme.GetControlSkin (GetType(), SkinID);
 				if (cs != null)
 					cs.ApplySkin (this);

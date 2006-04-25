@@ -1,3 +1,7 @@
+2006-04-25 Andrew Skiba <andrews@mainsoft.com>
+
+	* Control.cs: fix null pointer exception
+
 2006-04-23 Andrew Skiba <andrews@mainsoft.com>
 
 	* PageThemeParser.cs: add LinkedStyleSheets property

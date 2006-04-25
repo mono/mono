@@ -1,3 +1,7 @@
+2006-04-25  Andrew Skiba <andrews@mainsoft.com>
+
+	* ControlTest.cs: added test for ApplyStyleSheetSkin
+
 2006-02-12  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* HtmlTextWriterTest.cs: Added test for WriteBreak.

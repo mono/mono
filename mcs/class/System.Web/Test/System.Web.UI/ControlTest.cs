@@ -146,6 +146,15 @@ namespace MonoTests.System.Web.UI
 
 			Assert.AreEqual ("", result, "#01");
 		}
+
+                [Test]
+                public void ApplyStyleSheetSkin ()
+                {
+                        Page p = new Page ();
+                        p.StyleSheetTheme = "";
+                        Control c = new Control ();
+                        c.ApplyStyleSheetSkin (p);
+                }
 	}
 }
 
