@@ -1,3 +1,14 @@
+2006-04-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* inssel.brg (mini_emit_load_intf_reg_vtable): Use a new kind of AOT constant
+	ADJUSTED_IID to avoid the need for adjusting the IID at runtime.
+
+	* mini.h (MonoJumpInfoType): Add MONO_PATCH_INFO_ADJUSTED_IID.
+
+	* mini.c (mono_resolve_patch_target): Handle ADJUSTED_IID.
+
+	* aot.c: Add support for ADJUSTED_IID.	
+
 2006-04-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot.c (emit_method_order): Don't align method_order_end.
