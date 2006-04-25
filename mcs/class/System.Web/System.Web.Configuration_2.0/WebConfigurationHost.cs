@@ -170,7 +170,15 @@ namespace System.Web.Configuration
 				else
 					configPath = locationSubPath;
 
-				if (configPath == "/")
+				string basedir = null;
+				if (HttpContext.Current != null
+				    && HttpContext.Current.Request != null)
+					basedir = HttpContext.Current.Request.ApplicationPath;
+
+				if (basedir == null)
+					basedir = "/";
+
+				if (configPath == basedir)
 					i = -1;
 				else
 					i = configPath.LastIndexOf ("/");

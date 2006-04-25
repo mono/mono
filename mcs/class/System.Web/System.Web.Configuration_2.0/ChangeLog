@@ -1,3 +1,9 @@
+2006-04-25  Chris Toshok  <toshok@ximian.com>
+
+	* WebConfigurationHost.cs (InitForConfiguration): stop going up
+	the virtual hierarchy once we reach the application's base virtual
+	path.
+
 2006-04-24  Chris Toshok  <toshok@ximian.com>
 
 	* AuthorizationSection.cs (IsValidUser): fix a problem that
