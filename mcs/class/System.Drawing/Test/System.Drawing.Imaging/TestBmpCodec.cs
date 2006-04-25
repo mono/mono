@@ -85,6 +85,7 @@ namespace MonoTests.System.Drawing
 #if TARGET_JVM
 		[NUnit.Framework.Category ("NotWorking")]
 #endif
+		[Category("NotWorking")]
 		public void Bitmap24bitFeatures()
 		{
 			string sInFile = getInFile ("bitmaps/almogaver24bits.bmp");			
