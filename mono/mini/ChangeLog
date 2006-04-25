@@ -1,5 +1,8 @@
 2006-04-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c aot-compiler.c cpu-amd64.md mini-amd64.c: Update parts of the 
+	amd64 AOT support.
+
 	* Makefile.am (common_sources): Fix build breakage.
 
 	* aot-runtime.c aot-compiler.c: Reorganize the AOT code yet again: Make all
