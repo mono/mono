@@ -1,3 +1,8 @@
+2006-04-25  Miguel de Icaza  <miguel@novell.com>
+
+	* TypeConverter.cs (ConvertFrom): Do not crash if we are passed a
+	null value. 
+
 2006-04-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* BaseNumberConverter.cs : (ConvertTo) regardless of InnerType,

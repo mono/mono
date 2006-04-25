@@ -77,7 +77,7 @@ namespace System.ComponentModel
 			}
 
 			throw new NotSupportedException (this.ToString() + " cannot be created from '" +
-						         value.GetType().ToString() + "'");
+						         value == null ? "null" : value.GetType().ToString() + "'");
 		}
 
 		public object ConvertFromInvariantString (string text)
