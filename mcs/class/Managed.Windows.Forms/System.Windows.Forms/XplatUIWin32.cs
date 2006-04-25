@@ -781,8 +781,9 @@ namespace System.Windows.Forms {
 				Marshal.Copy((IntPtr)((int)dib_data + Marshal.SizeOf(typeof(BITMAPINFOHEADER))), palette, 0, palette.Length);
 
 				for (int i = 0; i < ncolors; i++) {
-					pal.Entries[i] = Color.FromArgb(palette[i] & unchecked((int)0xff000000));
+					pal.Entries[i] = Color.FromArgb(palette[i] | unchecked((int)0xff000000));
 				}
+				bmp.Palette = pal;
 			}
 
 			bytesPerLine = (int)((((bmi.biWidth * bmi.biBitCount) + 31) & ~31) >> 3);

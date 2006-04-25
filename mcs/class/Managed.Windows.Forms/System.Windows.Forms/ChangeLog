@@ -1,3 +1,9 @@
+2006-04-25  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* XplatUIWin32.cs (DIBtoImage): ORing instead of ANDing the alpha
+	  into the palette entries. Also, since we're working on a copy
+	  we needed to copy the palette back onto the bitmap.
+
 2006-04-25  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* ImageListStreamer.cs: Need to read the var (or we're off)
