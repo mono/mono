@@ -1,5 +1,11 @@
 2006-04-25  Chris Toshok  <toshok@ximian.com>
 
+	* WebConfigurationHost.cs (InitForConfiguration): actually, use
+	HttpRuntime.AppDomainAppVirtualPath on gonzalo's recommendation.
+	It's never null, and its use cleans things up a bit.
+
+2006-04-25  Chris Toshok  <toshok@ximian.com>
+
 	* WebConfigurationHost.cs (InitForConfiguration): stop going up
 	the virtual hierarchy once we reach the application's base virtual
 	path.
