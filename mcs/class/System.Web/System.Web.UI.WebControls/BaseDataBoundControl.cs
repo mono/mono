@@ -137,6 +137,9 @@ namespace System.Web.UI.WebControls {
 		{
 			base.OnInit (e);
 			Page.PreLoad += new EventHandler (OnPagePreLoad);
+
+			if (!IsViewStateEnabled && Page != null && Page.IsPostBack)
+				RequiresDataBinding = true;
 		}
 		
 		protected virtual void OnPagePreLoad (object sender, EventArgs e)

@@ -1,3 +1,7 @@
+2006-04-25  Konstantin Triger  <kostat@mainsoft.com>
+
+	* BaseDataBoundControl.cs: ensure the control is bound if ViewState is disabled.
+
 2006-04-25 Konstantin Triger <kostat@mainsoft.com>
 
 	* FormView.cs: fix FormView.PageCount after data binding.
