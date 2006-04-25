@@ -1,5 +1,7 @@
 2006-04-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* Makefile.am (common_sources): Fix build breakage.
+
 	* aot-runtime.c aot-compiler.c: Reorganize the AOT code yet again: Make all
 	calls through a jump table similar to the ELF PLT table. Avoid indirect calls for
 	intra-assembly calls if possible.
