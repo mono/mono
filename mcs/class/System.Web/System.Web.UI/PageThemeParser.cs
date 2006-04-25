@@ -43,16 +43,9 @@ namespace System.Web.UI
 	{
 		string[] linkedStyleSheets;
 
-		public string [] LinkedStyleSheets
-		{
-			get
-			{
-				return linkedStyleSheets;
-			}
-			set
-			{
-				linkedStyleSheets = value;
-			}
+		public string [] LinkedStyleSheets {
+			get { return linkedStyleSheets; }
+			set { linkedStyleSheets = value; }
 		}
 
 		internal PageThemeParser (string virtualPath, HttpContext context)

@@ -1,3 +1,7 @@
+2006-04-25  Chris Toshok  <toshok@ximian.com>
+
+	* PageThemeParser.cs (LinkedStyleSheets): reformat.
+
 2006-04-25 Konstantin Triger <kostat@mainsoft.com>
 
 	* Control.cs: implementation for IsViewStateEnabled.
