@@ -734,7 +734,7 @@ namespace System.Windows.Forms {
 		
 		void OnClickOpenSaveButton (object sender, EventArgs e)
 		{
-			if (mwfFileView.SelectedItems [0] != null) {
+			if (fileDialogType == FileDialogType.OpenFileDialog && mwfFileView.SelectedItems [0] != null) {
 				string path = Path.Combine (currentDirectoryName, mwfFileView.SelectedItems [0].Text);
 				if (Directory.Exists (path)) {
 					ChangeDirectory (null, path);
@@ -752,7 +752,7 @@ namespace System.Windows.Forms {
 							fileFromComboBox = Path.Combine (currentDirectoryName, fileFromComboBox);
 						
 						FileInfo fileInfo = new FileInfo (fileFromComboBox);
-						if (fileInfo.Exists)
+						if (fileInfo.Exists || fileDialogType == FileDialogType.SaveFileDialog)
 							currentFileName = fileFromComboBox;
 						else {
 							DirectoryInfo dirInfo = new DirectoryInfo (fileFromComboBox);

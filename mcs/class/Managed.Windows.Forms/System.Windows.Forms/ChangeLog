@@ -1,3 +1,9 @@
+2006-04-25  Alexander Olk  <alex.olk@googlemail.com>
+
+	* FileDialog.cs: SaveFileDialog shouldn't rely on a MWFFileView
+	  selection and set the correct filename for SaveFileDialog.
+	  Patch by Emery Conrad.
+
 2006-04-24  Mike Kestner  <mkestner@novell.com>
 
 	* ListView.cs (LastVisibleIndex): when in List mode of Alignment.Left,
