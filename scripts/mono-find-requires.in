@@ -80,7 +80,7 @@ UNIQ=$(echo "$PROVIDES
 $REQUIRES" | sort | uniq -u)
 
 #
-# Of those, only chose the ones that are in REQUIRES
+# Of those, only choose the ones that are in REQUIRES
 #
 echo "$UNIQ
 $REQUIRES" | sort | uniq -d
