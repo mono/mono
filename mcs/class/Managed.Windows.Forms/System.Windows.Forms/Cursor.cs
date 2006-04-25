@@ -694,8 +694,9 @@ namespace System.Windows.Forms {
 					pal = bmp.Palette;				// Managed palette
 
 					for (int i = 0; i < ci.cursorColors.Length; i++) {
-						pal.Entries[i] = Color.FromArgb((int)ci.cursorColors[i] & unchecked((int)0xff000000));
+						pal.Entries[i] = Color.FromArgb((int)ci.cursorColors[i] | unchecked((int)0xff000000));
 					}
+					bmp.Palette = pal;
 				}
 
 				bytesPerLine = (int)((((cih.biWidth * cih.biBitCount) + 31) & ~31) >> 3);
