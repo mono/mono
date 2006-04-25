@@ -1,3 +1,7 @@
+2006-04-25 Konstantin Triger <kostat@mainsoft.com>
+
+	* FormView.cs: fix FormView.PageCount after data binding.
+
 2006-04-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CheckBox.cs: certain attributes have to be rendered in the input tag,

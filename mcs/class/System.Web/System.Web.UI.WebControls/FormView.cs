@@ -85,7 +85,6 @@ namespace System.Web.UI.WebControls
 		
 		DataKey key;
 		DataKey oldEditValues;
-		int dataSourceCount;
 		
 		private static readonly object PageIndexChangedEvent = new object();
 		private static readonly object PageIndexChangingEvent = new object();
@@ -655,6 +654,8 @@ namespace System.Web.UI.WebControls
 				return pageIndex;
 			}
 			set {
+				if (pageIndex == value)
+					return;
 				pageIndex = value;
 				RequireBinding ();
 			}
@@ -786,8 +787,8 @@ namespace System.Web.UI.WebControls
 		void RequireBinding ()
 		{
 			if (Initialized) {
-				RequiresDataBinding = true;
 				pageCount = -1;
+				RequiresDataBinding = true;
 			}
 		}
 		
@@ -837,8 +838,8 @@ namespace System.Web.UI.WebControls
 				}
 			}
 
-			pageCount = dataSource.Count;
-			bool showPager = AllowPaging && (PageCount > 1);
+			pageCount = dataSource.DataSourceCount;
+			bool showPager = AllowPaging && (dataSource.Count > 1);
 			
 			Controls.Clear ();
 			table = CreateTable ();
@@ -875,7 +876,7 @@ namespace System.Web.UI.WebControls
 				table.Rows.Add (topPagerRow);
 			}
 
-			if (dataSourceCount > 0) {
+			if (pageCount > 0) {
 				DataControlRowState rstate = GetRowState ();
 				itemRow = CreateRow (0, DataControlRowType.DataRow, rstate);
 				InitializeRow (itemRow);
@@ -1035,7 +1036,7 @@ namespace System.Web.UI.WebControls
 			cachedKeyProperties = null;
 			base.DataBind ();
 			
-			if (dataSourceCount > 0) {
+			if (pageCount > 0) {
 				if (CurrentMode == FormViewMode.Edit)
 					oldEditValues = new DataKey (GetRowValues (true));
 				key = new DataKey (CreateRowDataKey (dataItem), DataKeyNames);

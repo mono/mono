@@ -1,3 +1,7 @@
+2006-04-25	Konstantin Triger <kostat@mainsoft.com>
+
+	* FormViewTest.cs: added test for PageCount.
+
 2006-04-20	Konstantin Triger <kostat@mainsoft.com>
 
 	* FormViewTest.cs: added test for PageIndex.

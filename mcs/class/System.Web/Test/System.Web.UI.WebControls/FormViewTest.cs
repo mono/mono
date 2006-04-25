@@ -140,6 +140,26 @@ namespace MonoTests.System.Web.UI.WebControls
 			f.PageIndex = 1;
 			Assert.IsTrue (cur != f.DataItem, "#01");
 		}
+		
+		[Test]
+		public void PageCount ()
+		{
+			ObjectDataSource ds = new ObjectDataSource ();
+			ds.ID = "ObjectDataSource1";
+			ds.TypeName = "System.Guid";
+			ds.SelectMethod = "ToByteArray";
+			Page p = new Page ();
+			Poker f = new Poker ();
+			f.Page = p;
+			ds.Page = p;
+			p.Controls.Add (f);
+			p.Controls.Add (ds);
+			f.DataSourceID = "ObjectDataSource1";
+			f.DoConfirmInitState ();
+			f.DoOnPreRender (EventArgs.Empty);
+			f.PageIndex = 1;
+			Assert.AreEqual (16, f.PageCount, "#01");
+		}
 	}
 }
 #endif
