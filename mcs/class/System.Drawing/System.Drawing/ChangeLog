@@ -1,3 +1,9 @@
+2006-04-25  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Icon.cs: We need to or, not and our alpha values into the
+	  palette. Also, we need to actually store the altered palette
+	  on the bitmap, since we are altering a copy.
+
 2006-04-10  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* gdipFunctions.cs: Fixed wrappers for GdipCreateMatrix3[I].

@@ -373,8 +373,9 @@ namespace System.Drawing
 				pal = bmp.Palette;				// Managed palette
 
 				for (int i = 0; i < ii.iconColors.Length; i++) {
-					pal.Entries[i] = Color.FromArgb((int)ii.iconColors[i] & unchecked((int)0xff000000));
+					pal.Entries[i] = Color.FromArgb((int)ii.iconColors[i] | unchecked((int)0xff000000));
 				}
+				bmp.Palette = pal;
 			}
 
 			bytesPerLine = (int)((((bih.biWidth * bih.biBitCount) + 31) & ~31) >> 3);
@@ -448,7 +449,7 @@ namespace System.Drawing
 				throw new System.ArgumentException ("The argument 'stream' must be a picture that can be used as a Icon", "stream");
 			
 			BinaryReader reader = new BinaryReader (stream);
-            
+
 			//iconDir = new IconDir ();
 			iconDir.idReserved = reader.ReadUInt16();
 			if (iconDir.idReserved != 0) //must be 0
