@@ -225,6 +225,7 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
+		[Category ("NotDotNet")] // FriendlyName should not only be English.
 		public void Build_X509EnhancedKeyUsageExtension ()
 		{
 			AsnEncodedData aed = new AsnEncodedData (new byte[] { 0x30, 0x05, 0x06, 0x03, 0x2A, 0x03, 0x04 });
@@ -232,15 +233,18 @@ namespace MonoTests.System.Security.Cryptography {
 			Assert.AreEqual ("30 05 06 03 2a 03 04", aed.Format (false), "Format(false)");
 			aed.Oid = new Oid ("2.5.29.37");
 			// and now "AsnEncodedData" knows how to (magically) decode the data without involving the class
+			// FIXME: Don't expect that FriendlyName is English. This test fails under non-English Windows.
 			Assert.AreEqual ("Unknown Key Usage (1.2.3.4)" + Environment.NewLine, aed.Format (true), "aed.Format(true)");
 			Assert.AreEqual ("Unknown Key Usage (1.2.3.4)", aed.Format (false), "aed.Format(false)");
 			// compare with the output of the "appropriate" class
 			X509EnhancedKeyUsageExtension eku = new X509EnhancedKeyUsageExtension (aed, false);
+			// FIXME: Don't expect that FriendlyName is English. This test fails under non-English Windows.
 			Assert.AreEqual ("Unknown Key Usage (1.2.3.4)" + Environment.NewLine, eku.Format (true), "eku.Format(true)");
 			Assert.AreEqual ("Unknown Key Usage (1.2.3.4)", eku.Format (false), "eku.Format(false)");
 		}
 
 		[Test]
+		[Category ("NotDotNet")] // FriendlyName should not only be English.
 		// note: important to emulate in Mono because we need it for SSL/TLS
 		public void Build_NetscapeCertTypeExtension ()
 		{
@@ -254,11 +258,13 @@ namespace MonoTests.System.Security.Cryptography {
 			// note that the Fx doesn't "really" support this extension
 			// and strangely no NewLine is being appended to Format(true)
 			// finally this also means that the Oid "knowns" about oid not used in the Fx itself
+			// FIXME: Don't expect that FriendlyName is English. This test fails under non-English Windows.
 			Assert.AreEqual ("Netscape Cert Type", aed.Oid.FriendlyName, "FriendlyName");
 			// anyway the answer is most probably CryptoAPI
 		}
 
 		[Test]
+		[Category ("NotDotNet")] // FriendlyName should not only be English.
 		// note: important to emulate in Mono because we need it for SSL/TLS
 		public void Build_SubjectAltNameExtension ()
 		{
@@ -271,6 +277,7 @@ namespace MonoTests.System.Security.Cryptography {
 			Assert.AreEqual ("DNS Name=www.mono-project.com", aed.Format (false), "aed.Format(false)");
 			// note that the Fx doesn't "really" support this extension
 			// finally this also means that the Oid "knowns" about oid not used in the Fx itself
+			// FIXME: Don't expect that FriendlyName is English. This test fails under non-English Windows.
 			Assert.AreEqual ("Subject Alternative Name", aed.Oid.FriendlyName, "FriendlyName");
 			// anyway the answer is most probably CryptoAPI
 		}

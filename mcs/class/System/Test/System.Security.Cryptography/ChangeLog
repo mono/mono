@@ -1,3 +1,9 @@
+2006-04-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* OidTest.cs,
+	  AsnEncodedDataTest.cs : commented locale-dependent tests
+	  (FriendlyName and Format(bool)) out.
+
 2005-09-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Asn*.cs, Oid*.cs: Moved from System.Security.dll

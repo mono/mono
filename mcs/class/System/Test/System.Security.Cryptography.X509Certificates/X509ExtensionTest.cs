@@ -62,10 +62,12 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			Assert.IsTrue (ex.Critical, "Critical 2");
 			ex.Oid = new Oid ("2.5.29.37");
 			Assert.AreEqual ("2.5.29.37", ex.Oid.Value, "Oid.Value");
-			Assert.AreEqual ("Enhanced Key Usage", ex.Oid.FriendlyName, "Oid.FriendlyName");
+			// FIXME: Don't expect that FriendlyName is English. This test fails under non-English Windows.
+			//Assert.AreEqual ("Enhanced Key Usage", ex.Oid.FriendlyName, "Oid.FriendlyName");
 			ex.RawData = new byte[] { 0x30, 0x05, 0x06, 0x03, 0x2A, 0x03, 0x04 };
-			Assert.AreEqual ("Unknown Key Usage (1.2.3.4)" + Environment.NewLine, ex.Format (true), "Format(true)");
-			Assert.AreEqual ("Unknown Key Usage (1.2.3.4)", ex.Format (false), "Format(false)");
+			// FIXME: Don't expect that FriendlyName is English. This test fails under non-English Windows.
+			//Assert.AreEqual ("Unknown Key Usage (1.2.3.4)" + Environment.NewLine, ex.Format (true), "Format(true)");
+			//Assert.AreEqual ("Unknown Key Usage (1.2.3.4)", ex.Format (false), "Format(false)");
 		}
 
 		[Test]
@@ -84,9 +86,10 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			Assert.IsTrue (ex.Critical, "Critical");
 			Assert.AreEqual (7, ex.RawData.Length, "RawData");	// original Oid ignored
 			Assert.AreEqual ("2.5.29.37", ex.Oid.Value, "Oid.Value");
-			Assert.AreEqual ("Enhanced Key Usage", ex.Oid.FriendlyName, "Oid.FriendlyName");
-			Assert.AreEqual ("Unknown Key Usage (1.2.3.4)" + Environment.NewLine, ex.Format (true), "Format(true)");
-			Assert.AreEqual ("Unknown Key Usage (1.2.3.4)", ex.Format (false), "Format(false)");
+			// FIXME: Don't expect that FriendlyName is English. This test fails under non-English Windows.
+			//Assert.AreEqual ("Enhanced Key Usage", ex.Oid.FriendlyName, "Oid.FriendlyName");
+			//Assert.AreEqual ("Unknown Key Usage (1.2.3.4)" + Environment.NewLine, ex.Format (true), "Format(true)");
+			//Assert.AreEqual ("Unknown Key Usage (1.2.3.4)", ex.Format (false), "Format(false)");
 		}
 
 		[Test]
@@ -168,8 +171,9 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		{
 			AsnEncodedData aed = new AsnEncodedData (new Oid ("2.5.29.37"), new byte[] { 0x30, 0x05, 0x06, 0x03, 0x2A, 0x03, 0x04 });
 			// this is recognized as an Enhanced Key Usages extension
-			Assert.AreEqual ("Unknown Key Usage (1.2.3.4)" + Environment.NewLine, aed.Format (true), "aed.Format(true)");
-			Assert.AreEqual ("Unknown Key Usage (1.2.3.4)", aed.Format (false), "aed.Format(false)");
+			// FIXME: Don't expect that FriendlyName is English. This test fails under non-English Windows.
+			//Assert.AreEqual ("Unknown Key Usage (1.2.3.4)" + Environment.NewLine, aed.Format (true), "aed.Format(true)");
+			//Assert.AreEqual ("Unknown Key Usage (1.2.3.4)", aed.Format (false), "aed.Format(false)");
 			X509Ex ex = new X509Ex ();
 			// but won't be accepted by the CopyFrom method (no a X509Extension)
 			ex.CopyFrom (aed);
@@ -180,8 +184,9 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		{
 			X509Extension ex = new X509Extension (new Oid ("2.16.840.1.113730.1.1"), new byte[] { 0x03, 0x02, 0x00, 0xFF }, false);
 			// strangely no NewLine is being appended to Format(true)
-			Assert.AreEqual ("SSL Client Authentication, SSL Server Authentication, SMIME, Signature, Unknown cert type, SSL CA, SMIME CA, Signature CA (ff)", ex.Format (true), "aed.Format(true)");
-			Assert.AreEqual ("SSL Client Authentication, SSL Server Authentication, SMIME, Signature, Unknown cert type, SSL CA, SMIME CA, Signature CA (ff)", ex.Format (false), "aed.Format(false)");
+			// FIXME: Don't expect that FriendlyName is English. This test fails under non-English Windows.
+			//Assert.AreEqual ("SSL Client Authentication, SSL Server Authentication, SMIME, Signature, Unknown cert type, SSL CA, SMIME CA, Signature CA (ff)", ex.Format (true), "aed.Format(true)");
+			//Assert.AreEqual ("SSL Client Authentication, SSL Server Authentication, SMIME, Signature, Unknown cert type, SSL CA, SMIME CA, Signature CA (ff)", ex.Format (false), "aed.Format(false)");
 		}
 	}
 }

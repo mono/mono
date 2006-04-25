@@ -1,3 +1,12 @@
+2006-04-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* X509EnhancedKeyUsageExtensionTest.cs,
+	  X509BasicConstraintsExtensionTest.cs,
+	  X509SubjectKeyIdentifierExtensionTest.cs,
+	  X509KeyUsageExtensionTest.cs,
+	  X509ExtensionTest.cs : commented locale-dependent tests
+	  (FriendlyName and Format(bool)) out.
+
 2005-11-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X500DistinguishedNameCas.cs: New. CAS tests (some are disabled).

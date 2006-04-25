@@ -49,7 +49,8 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			Assert.IsFalse (ku.Critical , "Critical");
 			Assert.IsNull (ku.RawData, "RawData");
 			Assert.AreEqual (oid, ku.Oid.Value, "Oid.Value");
-			Assert.AreEqual (fname, ku.Oid.FriendlyName, "Oid.FriendlyName");
+			// FIXME: Don't expect that FriendlyName is English. This test fails under non-English Windows.
+			//Assert.AreEqual (fname, ku.Oid.FriendlyName, "Oid.FriendlyName");
 			Assert.AreEqual (String.Empty, ku.Format (true), "Format(true)");
 			Assert.AreEqual (String.Empty, ku.Format (false), "Format(false)");
 			Assert.AreEqual (0, (int)ku.KeyUsages, "KeyUsages");
@@ -63,9 +64,10 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			Assert.IsTrue (ku.Critical, "Critical");
 			Assert.AreEqual (3, ku.RawData.Length, "RawData");	// original Oid ignored
 			Assert.AreEqual (oid, ku.Oid.Value, "Oid.Value");
-			Assert.AreEqual (fname, ku.Oid.FriendlyName, "Oid.FriendlyName");
-			Assert.AreEqual ("Information Not Available", ku.Format (true), "Format(true)");
-			Assert.AreEqual ("Information Not Available", ku.Format (false), "Format(false)");
+			// FIXME: Don't expect that FriendlyName is English. This test fails under non-English Windows.
+			//Assert.AreEqual (fname, ku.Oid.FriendlyName, "Oid.FriendlyName");
+			//Assert.AreEqual ("Information Not Available", ku.Format (true), "Format(true)");
+			//Assert.AreEqual ("Information Not Available", ku.Format (false), "Format(false)");
 			Assert.AreEqual (0, (int)ku.KeyUsages, "KeyUsages");
 		}
 
@@ -117,8 +119,9 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			X509KeyUsageExtension ku = new X509KeyUsageExtension (kuf, false);
 			Assert.AreEqual (0, (int)ku.KeyUsages, "KeyUsages");
 			Assert.AreEqual ("03-01-00", BitConverter.ToString (ku.RawData), "RawData");
-			Assert.AreEqual ("Information Not Available", ku.Format (true), "Format(true)");
-			Assert.AreEqual ("Information Not Available", ku.Format (false), "Format(false)");
+			// FIXME: Don't expect that FriendlyName is English. This test fails under non-English Windows.
+			//Assert.AreEqual ("Information Not Available", ku.Format (true), "Format(true)");
+			//Assert.AreEqual ("Information Not Available", ku.Format (false), "Format(false)");
 		}
 
 		private X509KeyUsageExtension ValidateKeyUsage (X509KeyUsageFlags kuf, string rawdata)
@@ -127,7 +130,8 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			Assert.IsFalse (ku.Critical, kuf.ToString () + ".Critical");
 			Assert.AreEqual (rawdata, BitConverter.ToString (ku.RawData), kuf.ToString () + ".RawData");
 			Assert.AreEqual (oid, ku.Oid.Value, kuf.ToString () + ".Oid.Value");
-			Assert.AreEqual (fname, ku.Oid.FriendlyName, kuf.ToString () + ".Oid.FriendlyName");
+			// FIXME: Don't expect that FriendlyName is English. This test fails under non-English Windows.
+			//Assert.AreEqual (fname, ku.Oid.FriendlyName, kuf.ToString () + ".Oid.FriendlyName");
 			Assert.AreEqual (kuf, ku.KeyUsages, kuf.ToString () + ".KeyUsages");
 			return ku;
 		}
@@ -235,7 +239,8 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			Assert.IsFalse (copy.Critical, "Critical");
 			Assert.AreEqual (4, copy.RawData.Length, "RawData");	// original Oid ignored
 			Assert.AreEqual (oid, copy.Oid.Value, "Oid.Value");
-			Assert.AreEqual (fname, copy.Oid.FriendlyName, "Oid.FriendlyName");
+			// FIXME: Don't expect that FriendlyName is English. This test fails under non-English Windows.
+			//Assert.AreEqual (fname, copy.Oid.FriendlyName, "Oid.FriendlyName");
 			Assert.AreEqual (X509KeyUsageFlags.CrlSign, copy.KeyUsages, "KeyUsages");
 		}
 	}
