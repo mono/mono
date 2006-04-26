@@ -1,5 +1,7 @@
 2006-04-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c (mono_aot_plt_resolve): Fix ppc etc. builds.
+
 	* aot-compiler.c: Refactor mono_aot_compile_aot () into a bunch of smaller
 	functions.
 
