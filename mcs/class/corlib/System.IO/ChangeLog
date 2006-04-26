@@ -1,3 +1,14 @@
+2006-04-26  Miguel de Icaza  <miguel@novell.com>
+
+	* FileStream.cs: Implement the FileOptions usage by passing all
+	the information to the C layer.  Remove the "isAsync" argument for
+	MonoIO.Open, and instead pass it on the FileOptions.
+
+	* FileOptions.cs: Make it build when including WriteThrough
+
+	* MonoIO.cs: Update MonoIO.Open signature to drop the async
+	argument and take FileOptions instead. 
+
 2006-04-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* FileStream.cs: Add new net 2.0 ctor.

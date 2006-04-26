@@ -108,7 +108,7 @@ namespace System.IO
 		// construct from filename
 		
 		public FileStream (string name, FileMode mode)
-			: this (name, mode, (mode == FileMode.Append ? FileAccess.Write : FileAccess.ReadWrite), FileShare.Read, DefaultBufferSize, false, false)
+			: this (name, mode, (mode == FileMode.Append ? FileAccess.Write : FileAccess.ReadWrite), FileShare.Read, DefaultBufferSize, false, FileOptions.None)
 		{
 		}
 
@@ -118,33 +118,33 @@ namespace System.IO
 		}
 
 		public FileStream (string name, FileMode mode, FileAccess access, FileShare share)
-			: this (name, mode, access, share, DefaultBufferSize, false, false)
+			: this (name, mode, access, share, DefaultBufferSize, false, FileOptions.None)
 		{
 		}
 		
 		public FileStream (string name, FileMode mode, FileAccess access, FileShare share, int bufferSize)
-			: this (name, mode, access, share, bufferSize, false, false)
+			: this (name, mode, access, share, bufferSize, false, FileOptions.None)
 		{
 		}
 
 		public FileStream (string name, FileMode mode, FileAccess access, FileShare share, int bufferSize, bool isAsync)
-			: this (name, mode, access, share, bufferSize, isAsync, false)
+			: this (name, mode, access, share, bufferSize, isAsync, FileOptions.None)
 		{
 		}
 
 #if NET_2_0
 		public FileStream (string name, FileMode mode, FileAccess access, FileShare share, int bufferSize, FileOptions options)
-			: this (name, mode, access, share, bufferSize, false, false, options)
+			: this (name, mode, access, share, bufferSize, false, options)
 		{
 		}
 #endif
 
 		internal FileStream (string name, FileMode mode, FileAccess access, FileShare share, int bufferSize, bool isAsync, bool anonymous)
-			: this (name, mode, access, share, bufferSize, isAsync, anonymous, FileOptions.None)
+			: this (name, mode, access, share, bufferSize, anonymous, isAsync ? FileOptions.Asynchronous : FileOptions.None)
 		{
 		}
 
-		internal FileStream (string name, FileMode mode, FileAccess access, FileShare share, int bufferSize, bool isAsync, bool anonymous, FileOptions options)
+		internal FileStream (string name, FileMode mode, FileAccess access, FileShare share, int bufferSize, bool anonymous, FileOptions options)
 		{
 			if (name == null) {
 				throw new ArgumentNullException ("name");
@@ -158,8 +158,6 @@ namespace System.IO
 			// ignore the Inheritable flag
 			share &= ~FileShare.Inheritable;
 
-			if (options != FileOptions.None)
-				throw new NotImplementedException ("Only FileOptions.None is supported.");
 #endif
 
 			if (bufferSize <= 0)
@@ -227,7 +225,7 @@ namespace System.IO
 
 			MonoIOError error;
 
-			this.handle = MonoIO.Open (name, mode, access, share, false, out error);
+			this.handle = MonoIO.Open (name, mode, access, share, options, out error);
 			if (handle == MonoIO.InvalidHandle) {
 				// don't leak the path information for isolated storage
 				string fname = (anonymous) ? Path.GetFileName (name) : name;
@@ -242,7 +240,7 @@ namespace System.IO
 			
 			if (MonoIO.GetFileType (handle, out error) == MonoFileType.Disk) {
 				this.canseek = true;
-				this.async = isAsync;
+				this.async = (options & FileOptions.Asynchronous) != 0;
 			} else {
 				this.canseek = false;
 				this.async = false;

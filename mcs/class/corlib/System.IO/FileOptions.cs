@@ -49,8 +49,7 @@ namespace System.IO
 		SequentialScan = 0x8000000,
 		RandomAccess = 0x10000000,
 		Asynchronous = 0x40000000,
-		// FIXME: This field cannot be encoded as an int in C#
-		//WriteThrough = 0x80000000
+		WriteThrough = -2147483648
 	}
 }
 

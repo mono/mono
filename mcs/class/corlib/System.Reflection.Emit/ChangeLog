@@ -1,3 +1,8 @@
+2006-04-26  Miguel de Icaza  <miguel@novell.com>
+
+	* MethodBuilder.cs: better error messages when we close the
+	method. 
+
 2006-03-28  Marek Safar  <marek.safar@seznam.cz>
 
 	* ILGenerator.cs: Delayed the exception stack creation. It saves ~1.5 MB

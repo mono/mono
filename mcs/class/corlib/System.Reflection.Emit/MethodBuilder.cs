@@ -294,7 +294,9 @@ namespace System.Reflection.Emit {
 #else
 				if (((ilgen == null) || (ILGenerator.Mono_GetCurrentOffset (ilgen) == 0)) && (code == null))
 #endif
-					throw new InvalidOperationException ("Method '" + Name + "' does not have a method body.");
+					throw new InvalidOperationException (
+									     String.Format ("Method '{0}.{1}' does not have a method body.",
+											    DeclaringType.Name, Name));
 			}
 			if (ilgen != null)
 				ilgen.label_fixup ();

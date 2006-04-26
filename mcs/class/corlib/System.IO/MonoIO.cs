@@ -114,6 +114,9 @@ namespace System.IO
 			case MonoIOError.ERROR_DIR_NOT_EMPTY:
 				message = String.Format ("Directory {0} is not empty", path);
 				return new IOException (message, unchecked((int)0x80070000) | (int)error);
+
+			case MonoIOError.ERROR_ENCRYPTION_FAILED:
+				return new IOException ("Encryption failed", unchecked((int)0x80070000) | (int)error);
 				
 			default:
 				message = String.Format ("Win32 IO returned {0}. Path: {1}", error, path);
@@ -217,7 +220,7 @@ namespace System.IO
 						  FileMode mode,
 						  FileAccess access,
 						  FileShare share,
-						  bool async,
+						  FileOptions options,
 						  out MonoIOError error);
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -308,7 +311,7 @@ namespace System.IO
 
 			handle = Open (path, FileMode.Open,
 				       FileAccess.ReadWrite,
-				       FileShare.ReadWrite, false, out error);
+				       FileShare.ReadWrite, FileOptions.None, out error);
 			if (handle == MonoIO.InvalidHandle)
 				return false;
 
