@@ -60,7 +60,7 @@ namespace MonoTests.System.Drawing{
 		public void TestPixels() 
 		{		
 			// Tests GetSetPixel/SetPixel			
-			Bitmap bmp= new Bitmap(100,100, PixelFormat.Format32bppRgb);											
+			Bitmap bmp= new Bitmap(100,100, PixelFormat.Format32bppRgb);
 			bmp.SetPixel(0,0,Color.FromArgb(255,128,128,128));					
 			Color color = bmp.GetPixel(0,0);				
 						
@@ -70,7 +70,26 @@ namespace MonoTests.System.Drawing{
 			Color color2 = bmp.GetPixel(99,99);										
 			Assert.AreEqual (Color.FromArgb(255,255,0,155), color2);			
 		}
-		
+
+		[Test]
+		public void LockBits_NonIndexedWrite ()
+		{
+			Bitmap bmp= new Bitmap(100,100, PixelFormat.Format32bppRgb);
+			Rectangle rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
+                        BitmapData mybitmapdata = bmp.LockBits(rect, ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+			bmp.UnlockBits (mybitmapdata);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void LockBits_IndexedWrite ()
+		{
+			Bitmap bmp= new Bitmap(100,100, PixelFormat.Format8bppIndexed);
+			Rectangle rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
+                        BitmapData mybitmapdata = bmp.LockBits(rect, ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+			bmp.UnlockBits (mybitmapdata);
+		}
+
 		/* Get the output directory depending on the runtime and location*/
 		public static string getOutSubDir()
 		{				
