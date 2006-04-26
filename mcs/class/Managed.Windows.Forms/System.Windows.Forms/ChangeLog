@@ -1,3 +1,8 @@
+2006-04-26  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* TextBoxBase.cs: Moved Backspace handling into WM_CHAR block to
+	  match MS behaviour
+
 2006-04-26  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* TextBoxBase.cs: 

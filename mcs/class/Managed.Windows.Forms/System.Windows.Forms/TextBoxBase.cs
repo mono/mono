@@ -974,63 +974,6 @@ namespace System.Windows.Forms {
 					break;
 				}
 
-
-				case Keys.Back: {
-					bool	fire_changed;
-
-					if (read_only) {
-						break;
-					}
-
-					fire_changed = false;
-
-					// delete only deletes on the line, doesn't do the combine
-					if (document.selection_visible) {
-						document.ReplaceSelection("");
-						fire_changed = true;
-					}
-					document.SetSelectionToCaret(true);
-
-					if (document.CaretPosition == 0) {
-						if (document.CaretLine.LineNo > 1) {
-							Line	line;
-							int	new_caret_pos;
-
-							line = document.GetLine(document.CaretLine.LineNo - 1);
-							new_caret_pos = line.text.Length;
-
-							document.Combine(line, document.CaretLine);
-							document.UpdateView(line, 1, 0);
-							document.PositionCaret(line, new_caret_pos);
-							//document.MoveCaret(CaretDirection.CharForward);
-							document.UpdateCaret();
-							fire_changed = true;
-						}
-					} else {
-						if (!control || document.CaretPosition == 0) {
-							document.DeleteChar(document.CaretTag, document.CaretPosition, false);
-							document.MoveCaret(CaretDirection.CharBack);
-						} else {
-							int start_pos;
-
-							start_pos = document.CaretPosition - 1;
-
-							while ((start_pos > 0) && !Document.IsWordSeparator(document.CaretLine.Text[start_pos - 1])) {
-								start_pos--;
-							}
-							document.DeleteChars(document.CaretTag, start_pos, document.CaretPosition - start_pos);
-							document.PositionCaret(document.CaretLine, start_pos);
-						}
-						document.UpdateCaret();
-						fire_changed = true;
-					}
-					if (fire_changed) {
-						OnTextChanged(EventArgs.Empty);
-					}
-					CaretMoved(this, null);
-					return true;
-				}
-
 				case Keys.Insert: {
 					if (shift) {
 						Paste(null, true);
@@ -1110,6 +1053,57 @@ namespace System.Windows.Forms {
 			return false;
 		}
 
+		private void HandleBackspace(bool control) {
+			bool	fire_changed;
+
+			fire_changed = false;
+
+			// delete only deletes on the line, doesn't do the combine
+			if (document.selection_visible) {
+				document.ReplaceSelection("");
+				fire_changed = true;
+			}
+			document.SetSelectionToCaret(true);
+
+			if (document.CaretPosition == 0) {
+				if (document.CaretLine.LineNo > 1) {
+					Line	line;
+					int	new_caret_pos;
+
+					line = document.GetLine(document.CaretLine.LineNo - 1);
+					new_caret_pos = line.text.Length;
+
+					document.Combine(line, document.CaretLine);
+					document.UpdateView(line, 1, 0);
+					document.PositionCaret(line, new_caret_pos);
+					//document.MoveCaret(CaretDirection.CharForward);
+					document.UpdateCaret();
+					fire_changed = true;
+				}
+			} else {
+				if (!control || document.CaretPosition == 0) {
+					document.DeleteChar(document.CaretTag, document.CaretPosition, false);
+					document.MoveCaret(CaretDirection.CharBack);
+				} else {
+					int start_pos;
+
+					start_pos = document.CaretPosition - 1;
+
+					while ((start_pos > 0) && !Document.IsWordSeparator(document.CaretLine.Text[start_pos - 1])) {
+						start_pos--;
+					}
+					document.DeleteChars(document.CaretTag, start_pos, document.CaretPosition - start_pos);
+					document.PositionCaret(document.CaretLine, start_pos);
+				}
+				document.UpdateCaret();
+				fire_changed = true;
+			}
+			if (fire_changed) {
+				OnTextChanged(EventArgs.Empty);
+			}
+			CaretMoved(this, null);
+		}
+
 		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
 			// Make sure we don't get sized bigger than we want to be
 			if (!richtext) {
@@ -1155,18 +1149,24 @@ namespace System.Windows.Forms {
 				}
 
 				case Msg.WM_CHAR: {
+					int	ch;
+
 					if (ProcessKeyMessage(ref m)) {
 						m.Result = IntPtr.Zero;
 						return;
 					}
 
-					// Ctrl-Backspace generates a real char, whack it
-					if (m.WParam.ToInt32() == 127) {
-						base.WndProc(ref m);
+					if (read_only) {
 						return;
 					}
 
-					if (!read_only && (m.WParam.ToInt32() >= 32)) {	// FIXME, tabs should probably go through
+					m.Result = IntPtr.Zero;
+
+					ch = m.WParam.ToInt32();
+
+					if (ch == 127) {
+						HandleBackspace(true);
+					} else if (ch >= 32) {
 						if (document.selection_visible) {
 							document.ReplaceSelection("");
 						}
@@ -1205,7 +1205,10 @@ namespace System.Windows.Forms {
 								return;
 							}
 						}
+					} else if (ch == 8) {
+						HandleBackspace(false);
 					}
+
 					return;
 				}
 
