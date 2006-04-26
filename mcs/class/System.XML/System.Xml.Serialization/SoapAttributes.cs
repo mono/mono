@@ -58,7 +58,7 @@ namespace System.Xml.Serialization
 				if(obj is SoapAttributeAttribute)
 					soapAttribute = (SoapAttributeAttribute) obj;
 				else if(obj is DefaultValueAttribute)
-					soapDefaultValue = obj;
+					soapDefaultValue = ((DefaultValueAttribute) obj).Value;
 				else if(obj is SoapElementAttribute)
 					soapElement = (SoapElementAttribute) obj;
 				else if(obj is SoapEnumAttribute)

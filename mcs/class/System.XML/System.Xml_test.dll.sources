@@ -55,6 +55,7 @@ System.Xml.Schema/XmlSchemaSetTests.cs
 System.Xml.Serialization/ComplexDataStructure.cs
 System.Xml.Serialization/DeserializeTests.cs
 System.Xml.Serialization/SoapAttributeAttributeTests.cs
+System.Xml.Serialization/SoapAttributesTests.cs
 System.Xml.Serialization/SoapElementAttributeTests.cs
 System.Xml.Serialization/SoapEnumAttributeTests.cs
 System.Xml.Serialization/SoapIncludeAttributeTests.cs

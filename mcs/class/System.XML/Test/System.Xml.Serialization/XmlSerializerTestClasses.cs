@@ -31,7 +31,20 @@ namespace MonoTests.System.Xml.TestClasses
 		[XmlEnum ("two")]
 		e2 = 2,
 		[XmlEnum ("four")]
-		e4 = 4 }
+		e4 = 4
+	}
+
+	[Flags]
+	[SoapType ("flagenum")]
+	public enum FlagEnum_Encoded
+	{
+		[SoapEnum ("one")]
+		e1 = 1,
+		[SoapEnum ("two")]
+		e2 = 2,
+		[SoapEnum ("four")]
+		e4 = 4
+	}
 
 	[Flags]
 	public enum ZeroFlagEnum {
@@ -101,6 +114,21 @@ namespace MonoTests.System.Xml.TestClasses
 	[XmlRoot("field")]
 	public class Field
 	{
+		[XmlAttribute ("flag1")]
+		[DefaultValue (1)]
+		public FlagEnum Flags1;
+
+		[XmlAttribute ("flag2")]
+		[DefaultValue (FlagEnum.e1)]
+		public FlagEnum Flags2;
+
+		[XmlAttribute ("flag3", Form = XmlSchemaForm.Qualified)]
+		[DefaultValue (FlagEnum.e1 | FlagEnum.e2)]
+		public FlagEnum Flags3;
+
+		[XmlAttribute ("flag4")]
+		public FlagEnum Flags4;
+
 		[XmlAttribute("modifiers")]
 		public MapModifiers Modifiers;
 
@@ -112,13 +140,59 @@ namespace MonoTests.System.Xml.TestClasses
 		public MapModifiers Modifiers3;
 
 		[XmlAttribute ("modifiers4", Form=XmlSchemaForm.Unqualified)]
-		[DefaultValue (0)]
+		[DefaultValue (MapModifiers.Protected)]
 		public MapModifiers Modifiers4;
+
+		[XmlAttribute ("modifiers5", Form = XmlSchemaForm.Qualified)]
+		[DefaultValue (MapModifiers.Public)]
+		public MapModifiers Modifiers5;
 
 		[XmlAttribute ("names")]
 		public string[] Names;
 
 		[XmlAttribute ("street")]
+		public string Street;
+	}
+
+	[SoapType ("field", Namespace = "some:urn")]
+	public class Field_Encoded
+	{
+		[SoapAttribute ("flag1")]
+		[DefaultValue (FlagEnum_Encoded.e1)]
+		public FlagEnum_Encoded Flags1;
+
+		[SoapAttribute ("flag2")]
+		[DefaultValue (FlagEnum_Encoded.e1)]
+		public FlagEnum_Encoded Flags2;
+
+		[SoapAttribute ("flag3")]
+		[DefaultValue (FlagEnum_Encoded.e1 | FlagEnum_Encoded.e2)]
+		public FlagEnum_Encoded Flags3;
+
+		[SoapAttribute ("flag4")]
+		public FlagEnum_Encoded Flags4;
+
+		[SoapAttribute ("modifiers")]
+		public MapModifiers Modifiers;
+
+		[SoapAttribute ("modifiers2")]
+		public MapModifiers Modifiers2;
+
+		[SoapAttribute ("modifiers3")]
+		[DefaultValue (MapModifiers.Public)]
+		public MapModifiers Modifiers3;
+
+		[SoapAttribute ("modifiers4")]
+		[DefaultValue (MapModifiers.Protected)]
+		public MapModifiers Modifiers4;
+
+		[SoapAttribute ("modifiers5")]
+		[DefaultValue (MapModifiers.Public)]
+		public MapModifiers Modifiers5;
+
+		public string[] Names;
+
+		[SoapAttribute ("street")]
 		public string Street;
 	}
 
@@ -561,6 +635,61 @@ namespace MonoTests.System.Xml.TestClasses
 	    
 		[XmlElement (Form=XmlSchemaForm.Unqualified, IsNullable=true)]
 	    public string data;
-	}	
+	}
+
+	[XmlRootAttribute ("testDefault", Namespace="urn:myNS", IsNullable=false)]
+	[SoapType("testDefault", Namespace="urn:myNS")]
+	public class TestDefault
+	{
+		public string str;
+
+		[DefaultValue ("Default Value")]
+		public string strDefault = "Default Value";
+
+		[DefaultValue (true)]
+		public bool boolT = true;
+
+		[DefaultValue (false)]
+		public bool boolF = false;
+
+		[DefaultValue (typeof (decimal), "10")]
+		public decimal decimalval = 10m;
+
+		[DefaultValue (FlagEnum.e1 | FlagEnum.e4)]
+		public FlagEnum flag = (FlagEnum.e1 | FlagEnum.e4);
+
+		[DefaultValue (FlagEnum_Encoded.e1 | FlagEnum_Encoded.e4)]
+		public FlagEnum_Encoded flagencoded = (FlagEnum_Encoded.e1 | FlagEnum_Encoded.e4);
+	}
+
+	[XmlType ("optionalValueType", Namespace="some:urn")]
+	[XmlRootAttribute ("optionalValue", Namespace="another:urn", IsNullable=false)]
+	public class OptionalValueTypeContainer
+	{
+		[DefaultValue (FlagEnum.e1 | FlagEnum.e4)]
+		public FlagEnum Attributes = FlagEnum.e1 | FlagEnum.e4;
+
+		[DefaultValue (FlagEnum.e1)]
+		public FlagEnum Flags = FlagEnum.e1;
+
+		[XmlIgnore]
+		[SoapIgnore]
+		public bool FlagsSpecified;
+
+		[DefaultValue (false)]
+		public bool IsEmpty;
+
+		[XmlIgnore]
+		[SoapIgnore]
+		public bool IsEmptySpecified {
+			get { return _isEmptySpecified; }
+			set { _isEmptySpecified = value; }
+		}
+
+		[DefaultValue (false)]
+		public bool IsNull;
+
+		private bool _isEmptySpecified;
+	}
 }
 
