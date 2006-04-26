@@ -43,10 +43,10 @@ namespace MonoTests.System.Data.SqlClient
 				return;
 			}
 
-			TestCheckSqlStatementThatDeclaresLocalVariableAndUsesIt();
+			DoTestCheckSqlStatementThatDeclaresLocalVariableAndUsesIt();
 		}
 
-		public void TestCheckSqlStatementThatDeclaresLocalVariableAndUsesIt()
+		public void DoTestCheckSqlStatementThatDeclaresLocalVariableAndUsesIt()
 		{
 			SqlConnection conn = new SqlConnection(ConnectedDataProvider.ConnectionStringSQLClient);
 			SqlDataReader rdr=null;

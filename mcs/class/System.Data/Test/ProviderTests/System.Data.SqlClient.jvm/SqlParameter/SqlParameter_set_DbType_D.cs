@@ -41,6 +41,12 @@ namespace MonoTests.System.Data.SqlClient
 		[Test]
 		public void TestBug4689()
 		{
+			if (ConnectedDataProvider.GetDbType() != DataBaseServer.SQLServer) {
+				//All tests in this class are only for MSSQLServer.
+				Log(string.Format("All tests in this class are only for MSSQLServer and cannot be tested on {0}", ConnectedDataProvider.GetDbType()));
+				return;
+			}
+
 			try
 			{
 				// Every Sub Test must begin with BeginCase

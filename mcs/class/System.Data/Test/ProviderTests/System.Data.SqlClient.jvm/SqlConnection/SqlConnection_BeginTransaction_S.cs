@@ -17,6 +17,12 @@ namespace MonoTests.System.Data.SqlClient
 		[SetUp]
 		public void SetUp()
 		{
+			if (ConnectedDataProvider.GetDbType() != DataBaseServer.SQLServer) {
+				//All tests in this class are only for MSSQLServer.
+				Log(string.Format("All tests in this class are only for MSSQLServer and cannot be tested on {0}", ConnectedDataProvider.GetDbType()));
+				return;
+			}
+
 			Exception exp = null;
 			BeginCase("Setup");
 			try
@@ -32,6 +38,12 @@ namespace MonoTests.System.Data.SqlClient
 		[TearDown]
 		public void TearDown()
 		{
+			if (ConnectedDataProvider.GetDbType() != DataBaseServer.SQLServer) {
+				//All tests in this class are only for MSSQLServer.
+				Log(string.Format("All tests in this class are only for MSSQLServer and cannot be tested on {0}", ConnectedDataProvider.GetDbType()));
+				return;
+			}
+
 			if (con != null)
 			{
 				if (con.State == ConnectionState.Open) con.Close();
@@ -66,6 +78,12 @@ namespace MonoTests.System.Data.SqlClient
 		[Test] 
 		public void run()
 		{
+			if (ConnectedDataProvider.GetDbType() != DataBaseServer.SQLServer) {
+				//All tests in this class are only for MSSQLServer.
+				Log(string.Format("All tests in this class are only for MSSQLServer and cannot be tested on {0}", ConnectedDataProvider.GetDbType()));
+				return;
+			}
+
 			Exception exp = null;
 
 			#region		---- Bug 2716 - MSSQL - SqlCommand.Transaction ---- 

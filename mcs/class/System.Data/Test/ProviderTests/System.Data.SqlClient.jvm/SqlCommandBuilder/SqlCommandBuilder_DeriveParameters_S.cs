@@ -39,6 +39,12 @@ namespace MonoTests.System.Data.SqlClient
 		[SetUp]
 		public void setUp()
 		{
+			if (ConnectedDataProvider.GetDbType() != DataBaseServer.SQLServer) {
+				//All tests in this class are only for MSSQLServer.
+				Log(string.Format("All tests in this class are only for MSSQLServer and cannot be tested on {0}", ConnectedDataProvider.GetDbType()));
+				return;
+			}
+
 			if (con == null)
 			{
 				con = new SqlConnection(ConnectedDataProvider.ConnectionStringSQLClient);
@@ -49,6 +55,12 @@ namespace MonoTests.System.Data.SqlClient
 		[TearDown]
 		public void tearDown()
 		{
+			if (ConnectedDataProvider.GetDbType() != DataBaseServer.SQLServer) {
+				//All tests in this class are only for MSSQLServer.
+				Log(string.Format("All tests in this class are only for MSSQLServer and cannot be tested on {0}", ConnectedDataProvider.GetDbType()));
+				return;
+			}
+
 			if (con.State == ConnectionState.Open)
 			{
 				con.Close();

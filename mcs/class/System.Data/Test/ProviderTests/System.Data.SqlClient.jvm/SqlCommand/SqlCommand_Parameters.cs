@@ -44,7 +44,7 @@ namespace MonoTests.System.Data.SqlClient
 			}
 
 			CommandParameterTreatBitAsBoolean();
-			TestparametersBindByNameOnMSSQLServer();
+			DoTestparametersBindByNameOnMSSQLServer();
 		
 		}
 
@@ -95,7 +95,7 @@ namespace MonoTests.System.Data.SqlClient
 		/// <summary>
 		/// Binding parameters in MSSQLServer should be done by parameter name, regardless of their order.
 		/// </summary>
-		public void TestparametersBindByNameOnMSSQLServer()
+		public void DoTestparametersBindByNameOnMSSQLServer()
 		{
 			SqlConnection conn = new SqlConnection(ConnectedDataProvider.ConnectionStringSQLClient);
 			SqlDataReader rdr;
