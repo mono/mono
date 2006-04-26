@@ -973,6 +973,7 @@ namespace System.Windows.Forms {
 						if (propObj != null)
 							PopulateGridItemCollection(propObj,grid_entry.GridItems, false);
 					}
+					grid_entry.Expanded = false;
 				}
 			}
 		}

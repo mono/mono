@@ -1,3 +1,8 @@
+2006-04-25  Jonathan Chambers  <jonathan.chambers@ansys.com>
+
+	* PropertyGrid.cs: Bug 78196, font size, and splitter location.
+	* PropertyGridView.cs: Bug 78196, font size, and splitter location.
+
 2006-04-25  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* XplatUIWin32.cs (DIBtoImage): ORing instead of ANDing the alpha
