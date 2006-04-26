@@ -174,55 +174,83 @@ namespace System.Net
 
 			sb.Append ("\r\nHost: ");
 			sb.Append (request.Address.Authority);
-			if (request.Headers ["Proxy-Authorization"] != null) {
+			string challenge = Data.Challenge;
+			bool have_auth = (request.Headers ["Proxy-Authorization"] != null);
+			if (have_auth) {
 				sb.Append ("\r\nProxy-Authorization: ");
 				sb.Append (request.Headers ["Proxy-Authorization"]);
+			} else if (challenge != null && Data.StatusCode == 407) {
+				have_auth = true;
+				ICredentials creds = request.Proxy.Credentials;
+				Authorization auth = AuthenticationManager.Authenticate (challenge, request, creds);
+				if (auth != null) {
+					sb.Append ("\r\nProxy-Authorization: ");
+					sb.Append (auth.Message);
+				}
+				Data.Challenge = null;
 			}
-				
+
 			sb.Append ("\r\n\r\n");
+
 			byte [] connectBytes = Encoding.Default.GetBytes (sb.ToString ());
 			stream.Write (connectBytes, 0, connectBytes.Length);
-			return ReadHeaders (request, stream, out buffer);
+
+			int status;
+			WebHeaderCollection result = ReadHeaders (request, stream, out buffer, out status);
+			if (!have_auth && result != null && status == 407) { // Needs proxy auth
+				Data.StatusCode = status;
+				Data.Challenge = result ["Proxy-Authenticate"];
+				return false;
+			} else if (status != 200) {
+				HandleError (WebExceptionStatus.SecureChannelFailure, null, "CreateTunnel");
+				return false;
+			}
+
+			return (result != null);
 		}
 
-		bool ReadHeaders (HttpWebRequest request, Stream stream, out byte [] retBuffer)
+		WebHeaderCollection ReadHeaders (HttpWebRequest request, Stream stream, out byte [] retBuffer, out int status)
 		{
 			retBuffer = null;
+			status = 200;
 
-			byte [] buffer = new byte [256];
+			byte [] buffer = new byte [1024];
 			MemoryStream ms = new MemoryStream ();
 			bool gotStatus = false;
+			WebHeaderCollection headers = null;
 
 			while (true) {
-				int n = stream.Read (buffer, 0, 256);
+				int n = stream.Read (buffer, 0, 1024);
 				if (n == 0) {
-					HandleError (WebExceptionStatus.ServerProtocolViolation, null, "ReadHeders");
-					return false;
+					HandleError (WebExceptionStatus.ServerProtocolViolation, null, "ReadHeaders");
+					return null;
 				}
 				
 				ms.Write (buffer, 0, n);
 				int start = 0;
 				string str = null;
+				headers = new WebHeaderCollection ();
 				while (ReadLine (ms.GetBuffer (), ref start, (int) ms.Length, ref str)) {
 					if (str == null) {
 						if (ms.Length - start > 0) {
 							retBuffer = new byte [ms.Length - start];
 							Buffer.BlockCopy (ms.GetBuffer (), start, retBuffer, 0, retBuffer.Length);
 						}
-						return true;
+						return headers;
 					}
 
-					if (gotStatus)
+					if (gotStatus) {
+						headers.Add (str);
 						continue;
+					}
 
 					int spaceidx = str.IndexOf (' ');
-					if (spaceidx == -1)
-						throw new Exception ();
+					if (spaceidx == -1) {
+						HandleError (WebExceptionStatus.ServerProtocolViolation, null, "ReadHeaders2");
+						return null;
+					}
 
-					int resultCode = Int32.Parse (str.Substring (spaceidx + 1, 3));
-					if (resultCode != 200)
-						throw new Exception ();
-
+					status = (int) UInt32.Parse (str.Substring (spaceidx + 1, 3));
 					gotStatus = true;
 				}
 			}
@@ -540,6 +568,7 @@ namespace System.Net
 			keepAlive = request.KeepAlive;
 			Data = new WebConnectionData ();
 			Data.request = request;
+		retry:
 			Connect ();
 			if (status != WebExceptionStatus.Success) {
 				if (status != WebExceptionStatus.RequestCanceled) {
@@ -550,6 +579,9 @@ namespace System.Net
 			}
 			
 			if (!CreateStream (request)) {
+				if (Data.Challenge != null)
+					goto retry;
+
 				request.SetWriteStreamError (status);
 				Close (true);
 				return;
