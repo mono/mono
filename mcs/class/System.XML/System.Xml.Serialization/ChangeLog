@@ -1,5 +1,12 @@
 2006-04-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* SerializationCodeGenerator.cs: For flag enums, we should split on all
+	whitespace chars instead of only on blanks.
+	* XmlTypeMapping.cs: Same. Added ToEnum method for converting from
+	constant name(s) to integral enum value.
+
+2006-04-26  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* SoapAttributes.cs: The DefaultValueAttribute.Value should be returned
 	as SoapDefaultValue instead of the attribute itself. Fixes bug #78205.
 

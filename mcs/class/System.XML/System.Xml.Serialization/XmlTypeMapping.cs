@@ -739,29 +739,27 @@ namespace System.Xml.Serialization
 				if (xmlName.Length == 0)
 					return "0";
 
-				if (xmlName.IndexOf (' ') > 0) {
-					System.Text.StringBuilder sb = new System.Text.StringBuilder ();
-					string[] enumNames = xmlName.ToString ().Split (' ');
-					foreach (string name in enumNames) {
-						if (name == string.Empty) continue;
-						string foundEnumValue = null;
-						for (int i = 0; i < XmlNames.Length; i++)
-							if (XmlNames[i] == name) {
-								foundEnumValue = EnumNames[i];
-								break;
-							}
-
-						if (foundEnumValue != null) {
-							if (sb.Length > 0)
-								sb.Append (',');
-							sb.Append (foundEnumValue);
-						} else {
-							throw new InvalidOperationException (string.Format (CultureInfo.CurrentCulture,
-								"'{0}' is not a valid value for {1}.", name, typeName));
+				System.Text.StringBuilder sb = new System.Text.StringBuilder ();
+				string[] enumNames = xmlName.Split (null);
+				foreach (string name in enumNames) {
+					if (name == string.Empty) continue;
+					string foundEnumValue = null;
+					for (int i = 0; i < XmlNames.Length; i++)
+						if (XmlNames[i] == name) {
+							foundEnumValue = EnumNames[i];
+							break;
 						}
+
+					if (foundEnumValue != null) {
+						if (sb.Length > 0)
+							sb.Append (',');
+						sb.Append (foundEnumValue);
+					} else {
+						throw new InvalidOperationException (string.Format (CultureInfo.CurrentCulture,
+							"'{0}' is not a valid value for {1}.", name, typeName));
 					}
-					return sb.ToString ();
 				}
+				return sb.ToString ();
 			}
 
 			foreach (EnumMapMember mem in _members)

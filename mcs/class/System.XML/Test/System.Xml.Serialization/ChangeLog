@@ -1,5 +1,10 @@
 2006-04-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* DeserializeTests.cs: Improved TestDeserialize_Enum test for 
+	bug #78204.
+
+2006-04-26  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* SoapAttributesTests.cs: Added tests for bug #78205.
 	* XmlSerializerTestClasses.cs: Added test classes and improved existing
 	classes for usage in upcoming bug reports.

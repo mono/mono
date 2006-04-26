@@ -42,6 +42,20 @@ namespace MonoTests.System.XmlSerialization
 			return Deserialize (t, xr);
 		}
 
+		private object Deserialize (Type t, string xml, string defaultNamespace)
+		{
+			StringReader sr = new StringReader (xml);
+			XmlReader xr = new XmlTextReader (sr);
+			return Deserialize (t, xr, defaultNamespace);
+		}
+
+		private object Deserialize (Type t, string xml, XmlAttributeOverrides ao)
+		{
+			StringReader sr = new StringReader (xml);
+			XmlReader xr = new XmlTextReader (sr);
+			return Deserialize (t, xr, ao);
+		}
+
 		private object DeserializeEncoded (Type t, string xml)
 		{
 			StringReader sr = new StringReader (xml);
@@ -52,6 +66,20 @@ namespace MonoTests.System.XmlSerialization
 		private object Deserialize (Type t, XmlReader xr)
 		{
 			XmlSerializer ser = new XmlSerializer (t);
+			result = ser.Deserialize (xr);
+			return result;
+		}
+
+		private object Deserialize (Type t, XmlReader xr, string defaultNamespace)
+		{
+			XmlSerializer ser = new XmlSerializer (t, defaultNamespace);
+			result = ser.Deserialize (xr);
+			return result;
+		}
+
+		private object Deserialize (Type t, XmlReader xr, XmlAttributeOverrides ao)
+		{
+			XmlSerializer ser = new XmlSerializer (t, ao);
 			result = ser.Deserialize (xr);
 			return result;
 		}
@@ -680,7 +708,7 @@ namespace MonoTests.System.XmlSerialization
 			e = (FlagEnum) Deserialize (typeof (FlagEnum), "<FlagEnum>one</FlagEnum>");
 			Assert.AreEqual (FlagEnum.e1, e, "#A2");
 
-			e = (FlagEnum) Deserialize (typeof (FlagEnum), "<FlagEnum>one two</FlagEnum>");
+			e = (FlagEnum) Deserialize (typeof (FlagEnum), "<FlagEnum>one\u200atwo</FlagEnum>");
 			Assert.AreEqual (FlagEnum.e1 | FlagEnum.e2, e, "#A3");
 
 			e = (FlagEnum) Deserialize (typeof (FlagEnum), "<FlagEnum>one two four</FlagEnum>");
@@ -692,7 +720,7 @@ namespace MonoTests.System.XmlSerialization
 			e = (FlagEnum) Deserialize (typeof (FlagEnum), "<FlagEnum>two four two</FlagEnum>");
 			Assert.AreEqual (FlagEnum.e2 | FlagEnum.e4, e, "#A6");
 
-			e = (FlagEnum) Deserialize (typeof (FlagEnum), "<FlagEnum>two four two one four two one</FlagEnum>");
+			e = (FlagEnum) Deserialize (typeof (FlagEnum), "<FlagEnum>two four two\tone\u2002four\u200btwo one</FlagEnum>");
 			Assert.AreEqual (FlagEnum.e1 | FlagEnum.e2 | FlagEnum.e4, e, "#A7");
 
 			e = (FlagEnum) Deserialize (typeof (FlagEnum), "<FlagEnum></FlagEnum>");
