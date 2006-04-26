@@ -1049,6 +1049,9 @@ namespace Microsoft.VisualBasic
 				beg += (indexOf + limitStr.Length); 
 			}
 
+			if (beg != limitStr.Length && numMatches != Limit)
+				retArray [numMatches ++] = Expression.Substring (beg);
+
 			if (numMatches == 0)
 				return new string [1] {Expression};
 
