@@ -1,3 +1,11 @@
+2006-04-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConnectionData.cs:
+	* WebConnection.cs:
+	* HttpWebRequest.cs: when tunneling an ssl conneciton through a proxy,
+	we were not handling a proxy authentication request. Fixes bug #78150
+	take 2.
+
 2006-04-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebProxy.cs: a .ctor was not forwarding the 'credentials' argument.
