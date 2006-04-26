@@ -1,3 +1,17 @@
+2006-04-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (init_plt): Use a normal trampoline to transfer code to the
+	AOT loader.
+
+	* aot-compiler.c (emit_plt): Pass the plt offset in %eax instead of on the
+	stack.
+
+	* mini-trampolines.c (mono_aot_plt_trampoline): New trampoline to handle calls
+	made from AOT code through the PLT table.
+
+	* mini-x86.h mini-amd64.h: Define MONO_ARCH_AOT_PLT_OFFSET_REG to the register
+	holding the plt offset when a call is made to the aot plt trampoline.
+	
 2006-04-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-runtime.c aot-compiler.c cpu-amd64.md mini-amd64.c: Update parts of the 
