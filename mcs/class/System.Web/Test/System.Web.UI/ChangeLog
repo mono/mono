@@ -1,3 +1,7 @@
+2006-04-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ControlTest.cs : fix r59834: both the build and the coding style.
+
 2006-04-25 Konstantin Triger <kostat@mainsoft.com>
 
 	* ControlTest.cs: added test for IsViewStateEnabled.
