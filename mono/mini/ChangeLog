@@ -1,5 +1,8 @@
 2006-04-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c: Refactor mono_aot_compile_aot () into a bunch of smaller
+	functions.
+
 	* aot-runtime.c (init_plt): Use a normal trampoline to transfer code to the
 	AOT loader.
 
