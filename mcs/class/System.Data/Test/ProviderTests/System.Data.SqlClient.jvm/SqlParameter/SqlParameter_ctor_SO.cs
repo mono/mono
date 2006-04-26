@@ -41,6 +41,11 @@ namespace MonoTests.System.Data.SqlClient
 		[Test(Description="Create an SqlParameter with value of type bool (true)")]
 		public void CreateParamWithTypeBoolTrue()
 		{
+			if (ConnectedDataProvider.GetDbType() != DataBaseServer.SQLServer) {
+				//All tests in this class are only for MSSQLServer.
+				Log(string.Format("All tests in this class are only for MSSQLServer and cannot be tested on {0}", ConnectedDataProvider.GetDbType()));
+				return;
+			}
 			exp = null;
 
 			try
@@ -65,6 +70,11 @@ namespace MonoTests.System.Data.SqlClient
 		[Test(Description="Create an SqlParameter with value of type bool (false)")]
 		public void CreateParamWithTypeBoolFalse()
 		{
+			if (ConnectedDataProvider.GetDbType() != DataBaseServer.SQLServer) {
+				//All tests in this class are only for MSSQLServer.
+				Log(string.Format("All tests in this class are only for MSSQLServer and cannot be tested on {0}", ConnectedDataProvider.GetDbType()));
+				return;
+			}
 			exp = null;
 
 			try

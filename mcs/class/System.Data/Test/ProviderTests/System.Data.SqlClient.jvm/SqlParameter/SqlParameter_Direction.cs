@@ -43,6 +43,12 @@ namespace MonoTests.System.Data.SqlClient
 		[TestFixtureSetUp]
 		public void TestSetup()
 		{
+			if (ConnectedDataProvider.GetDbType() != DataBaseServer.SQLServer) {
+				//All tests in this class are only for MSSQLServer.
+				Log(string.Format("All tests in this class are only for MSSQLServer and cannot be tested on {0}", ConnectedDataProvider.GetDbType()));
+				return;
+			}
+
 			BeginCase("Test Setup");
 			SqlConnection con = new SqlConnection(ConnectedDataProvider.ConnectionStringSQLClient);
 			StringBuilder createTestSpBuilder = new StringBuilder();
@@ -79,6 +85,12 @@ namespace MonoTests.System.Data.SqlClient
 		[TestFixtureTearDown()]
 		public void TestTearDown()
 		{
+			if (ConnectedDataProvider.GetDbType() != DataBaseServer.SQLServer) {
+				//All tests in this class are only for MSSQLServer.
+				Log(string.Format("All tests in this class are only for MSSQLServer and cannot be tested on {0}", ConnectedDataProvider.GetDbType()));
+				return;
+			}
+
 			BeginCase("Test Teardown");
 			SqlConnection con = new SqlConnection(ConnectedDataProvider.ConnectionStringSQLClient);
 			StringBuilder createTestSpBuilder = new StringBuilder();
@@ -109,6 +121,12 @@ namespace MonoTests.System.Data.SqlClient
 		[Test]
 		public void TestBug4703()
 		{
+			if (ConnectedDataProvider.GetDbType() != DataBaseServer.SQLServer) {
+				//All tests in this class are only for MSSQLServer.
+				Log(string.Format("All tests in this class are only for MSSQLServer and cannot be tested on {0}", ConnectedDataProvider.GetDbType()));
+				return;
+			}
+
 			try
 			{
 				BeginCase("Test Bug 4703 - DateTime output parameter of stored procedure contains incorrect time ( always 12:00 AM )");

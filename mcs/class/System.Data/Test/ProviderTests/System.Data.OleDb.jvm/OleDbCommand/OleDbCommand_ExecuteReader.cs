@@ -315,6 +315,11 @@ namespace MonoTests.System.Data.OleDb
 		[Test]
 		public void testBug3965()
 		{
+			// testing only SQLServerr
+			if (ConnectedDataProvider.GetDbType() != DataBaseServer.SQLServer) {
+				Log("This test is relevant only for MSSQLServer!");
+				return;
+			}
 			Exception exp=null;
 			BeginCase("Test for bug #3965");
 			OleDbConnection con = new OleDbConnection("Provider=SQLOLEDB.1;Data Source=TESTDIR;User ID=ghuser;Password=ghuser;Persist Security Info=True;Initial Catalog=default_grasshopper_db;Packet Size=4096;Connect Timeout=60");

@@ -41,6 +41,12 @@ namespace MonoTests.System.Data.SqlClient
 		[Category("NotWorking")]
 		public void run()
 		{
+			if (ConnectedDataProvider.GetDbType() != DataBaseServer.SQLServer) {
+				//All tests in this class are only for MSSQLServer.
+				Log(string.Format("All tests in this class are only for MSSQLServer and cannot be tested on {0}", ConnectedDataProvider.GetDbType()));
+				return;
+			}
+
 			Exception exp = null;
 
 			// Start Sub Test
