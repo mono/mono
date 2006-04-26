@@ -1,5 +1,11 @@
 2006-04-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* SoapSchemaExporterTests.cs: Sync expected results with changes to
+	test classes.
+	* XmlCodeExporterTests.cs: Same.
+
+2006-04-26  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* DeserializeTests.cs: Improved TestDeserialize_Enum test for 
 	bug #78204.
 

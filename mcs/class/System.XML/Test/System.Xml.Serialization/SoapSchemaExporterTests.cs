@@ -336,22 +336,43 @@ namespace MonoTests.System.XmlSerialization
 				"  <xs:complexType name=\"Field\">{0}" +
 				"    <xs:sequence>{0}" +
 #if NET_2_0
+				"      <xs:element minOccurs=\"1\" maxOccurs=\"1\" form=\"unqualified\" name=\"Flags1\" type=\"tns:FlagEnum\" />{0}" +
+				"      <xs:element minOccurs=\"1\" maxOccurs=\"1\" form=\"unqualified\" name=\"Flags2\" type=\"tns:FlagEnum\" />{0}" +
+				"      <xs:element minOccurs=\"1\" maxOccurs=\"1\" form=\"unqualified\" name=\"Flags3\" type=\"tns:FlagEnum\" />{0}" +
+				"      <xs:element minOccurs=\"1\" maxOccurs=\"1\" form=\"unqualified\" name=\"Flags4\" type=\"tns:FlagEnum\" />{0}" +
 				"      <xs:element minOccurs=\"1\" maxOccurs=\"1\" form=\"unqualified\" name=\"Modifiers\" type=\"tns:MapModifiers\" />{0}" +
 				"      <xs:element minOccurs=\"1\" maxOccurs=\"1\" form=\"unqualified\" name=\"Modifiers2\" type=\"tns:MapModifiers\" />{0}" +
 				"      <xs:element minOccurs=\"1\" maxOccurs=\"1\" form=\"unqualified\" name=\"Modifiers3\" type=\"tns:MapModifiers\" />{0}" +
 				"      <xs:element minOccurs=\"1\" maxOccurs=\"1\" form=\"unqualified\" name=\"Modifiers4\" type=\"tns:MapModifiers\" />{0}" +
+				"      <xs:element minOccurs=\"1\" maxOccurs=\"1\" form=\"unqualified\" name=\"Modifiers5\" type=\"tns:MapModifiers\" />{0}" +
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" form=\"unqualified\" name=\"Names\" type=\"tns:ArrayOfString\" />{0}" +
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" form=\"unqualified\" name=\"Street\" type=\"xs:string\" />{0}" +
 #else
+				"      <xs:element minOccurs=\"1\" maxOccurs=\"1\" name=\"Flags1\" type=\"tns:FlagEnum\" />{0}" +
+				"      <xs:element minOccurs=\"1\" maxOccurs=\"1\" name=\"Flags2\" type=\"tns:FlagEnum\" />{0}" +
+				"      <xs:element minOccurs=\"1\" maxOccurs=\"1\" name=\"Flags3\" type=\"tns:FlagEnum\" />{0}" +
+				"      <xs:element minOccurs=\"1\" maxOccurs=\"1\" name=\"Flags4\" type=\"tns:FlagEnum\" />{0}" +
 				"      <xs:element minOccurs=\"1\" maxOccurs=\"1\" name=\"Modifiers\" type=\"tns:MapModifiers\" />{0}" +
 				"      <xs:element minOccurs=\"1\" maxOccurs=\"1\" name=\"Modifiers2\" type=\"tns:MapModifiers\" />{0}" +
 				"      <xs:element minOccurs=\"1\" maxOccurs=\"1\" name=\"Modifiers3\" type=\"tns:MapModifiers\" />{0}" +
 				"      <xs:element minOccurs=\"1\" maxOccurs=\"1\" name=\"Modifiers4\" type=\"tns:MapModifiers\" />{0}" +
+				"      <xs:element minOccurs=\"1\" maxOccurs=\"1\" name=\"Modifiers5\" type=\"tns:MapModifiers\" />{0}" +
 				"      <xs:element minOccurs=\"1\" maxOccurs=\"1\" name=\"Names\" type=\"tns:ArrayOfString\" />{0}" +
 				"      <xs:element minOccurs=\"1\" maxOccurs=\"1\" name=\"Street\" type=\"xs:string\" />{0}" +
 #endif
 				"    </xs:sequence>{0}" +
 				"  </xs:complexType>{0}" +
+				"  <xs:simpleType name=\"FlagEnum\">{0}" +
+				"    <xs:list>{0}" +
+				"      <xs:simpleType>{0}" +
+				"        <xs:restriction base=\"xs:string\">{0}" +
+				"          <xs:enumeration value=\"e1\" />{0}" +
+				"          <xs:enumeration value=\"e2\" />{0}" +
+				"          <xs:enumeration value=\"e4\" />{0}" +
+				"        </xs:restriction>{0}" +
+				"      </xs:simpleType>{0}" +
+				"    </xs:list>{0}" +
+				"  </xs:simpleType>{0}" +
 				"  <xs:simpleType name=\"MapModifiers\">{0}" +
 				"    <xs:list>{0}" +
 				"      <xs:simpleType>{0}" +
