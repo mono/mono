@@ -1,3 +1,7 @@
+2006-04-26  Alexander Olk  <alex.olk@googlemail.com>
+
+	* X11DesktopColors.cs: One gtk_init_check should be enough
+
 2006-04-26  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* TextBoxBase.cs: Moved Backspace handling into WM_CHAR block to

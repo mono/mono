@@ -102,7 +102,6 @@ namespace System.Windows.Forms {
 						gtk_init_check (out argc, argv);
 						//dispmgr =  gdk_display_manager_get ();
 						//gdkdisplay =  gdk_display_manager_get_default_display (dispmgr);
-						gtk_init_check (out argc, argv);
 
 						widget = gtk_invisible_new ();
 						gtk_widget_ensure_style (widget);
