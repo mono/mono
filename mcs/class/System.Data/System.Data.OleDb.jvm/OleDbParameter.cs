@@ -222,7 +222,7 @@ namespace System.Data.OleDb
 					jdbcType = Types.VARCHAR;
 				}
 				else if(String.Compare("NCHAR",typeName,true) == 0) {
-					jdbcType = Types.CHAR;
+					jdbcType = Types.VARCHAR;
 				}
 			}
 			OleDbType = OleDbConvert.JdbcTypeToOleDbType(jdbcType);
