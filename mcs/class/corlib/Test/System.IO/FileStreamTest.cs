@@ -1407,6 +1407,20 @@ namespace MonoTests.System.IO
 				DeleteFile (path);
 			}
 		}
+
+#if NET_2_0
+		[Test] public void DeleteOnClose ()
+		{
+			string path = TempFolder + DSC + "created.txt";
+			DeleteFile (path);
+			FileStream fs = new FileStream (path, FileMode.CreateNew, FileAccess.Write, FileShare.None, 1024,
+							FileOptions.DeleteOnClose);
+			Assert.AreEqual (true, File.Exists (path), "DOC#1");
+			fs.Close ();
+			Assert.AreEqual (false, File.Exists (path), "DOC#2");
+			
+		}
+#endif
 	}
 }
 
