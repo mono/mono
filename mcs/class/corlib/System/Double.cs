@@ -286,8 +286,10 @@ namespace System {
 			//
 			string decimal_separator = null;
 			string group_separator = null;
+			string currency_symbol = null;
 			int decimal_separator_len = 0;
 			int group_separator_len = 0;
+			int currency_symbol_len = 0;
 			if ((style & NumberStyles.AllowDecimalPoint) != 0){
 				decimal_separator = format.NumberDecimalSeparator;
 				decimal_separator_len = decimal_separator.Length;
@@ -295,6 +297,10 @@ namespace System {
 			if ((style & NumberStyles.AllowThousands) != 0){
 				group_separator = format.NumberGroupSeparator;
 				group_separator_len = group_separator.Length;
+			}
+			if ((style & NumberStyles.AllowCurrencySymbol) != 0){
+				currency_symbol = format.CurrencySymbol;
+				currency_symbol_len = currency_symbol.Length;
 			}
 			string positive = format.PositiveSign;
 			string negative = format.NegativeSign;
@@ -336,9 +342,8 @@ namespace System {
 						goto case State_Decimal;
 					
 					if (decimal_separator != null &&
-					    decimal_separator [0] == c){
-						if (s.Substring (sidx, decimal_separator_len) ==
-						    decimal_separator){
+					    decimal_separator [0] == c) {
+						if (String.CompareOrdinal (s, sidx, decimal_separator, 0, decimal_separator_len) == 0) {
 							b [didx++] = (byte) '.';
 							sidx += decimal_separator_len-1;
 							state = State_Decimal; 
@@ -350,6 +355,15 @@ namespace System {
 						if (s.Substring (sidx, group_separator_len) ==
 						    group_separator){
 							sidx += group_separator_len-1;
+							state = State_Digits; 
+							break;
+						}
+					}
+					if (currency_symbol != null &&
+					    currency_symbol [0] == c){
+						if (s.Substring (sidx, currency_symbol_len) ==
+						    currency_symbol){
+							sidx += currency_symbol_len-1;
 							state = State_Digits; 
 							break;
 						}

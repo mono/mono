@@ -1,5 +1,12 @@
 2006-04-26  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Double.cs : (Parse) handle currency symbol when
+	  AllowCurrencySymbol is passed as part of the style. Patch by
+	  nede@aliquant.com, modified to eliminate redundant Substring().
+	  This fixes bug #77721.
+
+2006-04-26  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MonoType.cs : (GetMethod) when zero-length type[] is explicitly
 	  passed, don't return methods with some arguments. Fixed bug #77367.
 

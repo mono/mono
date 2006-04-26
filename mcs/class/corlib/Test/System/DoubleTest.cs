@@ -9,6 +9,7 @@
 using System;
 using System.Collections;
 using System.Globalization;
+using System.Threading;
 
 using NUnit.Framework;
 
@@ -507,6 +508,14 @@ namespace MonoTests.System {
 		public void ParseEmptyString ()
 		{
 			double.Parse (String.Empty);
+		}
+
+		[Test] // bug #77721
+		public void ParseCurrency ()
+		{
+			Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US");
+			NumberFormatInfo f = NumberFormatInfo.CurrentInfo;
+			double dMin = double.Parse ("$0.00", NumberStyles.Currency, f);
 		}
 	}
 }
