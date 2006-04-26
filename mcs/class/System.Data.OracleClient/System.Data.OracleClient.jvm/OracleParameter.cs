@@ -206,7 +206,7 @@ namespace System.Data.OracleClient {
 					jdbcType = (int)JavaSqlTypes.VARCHAR;
 				}
 				else if(String.Compare("NCHAR",typeName,true, CultureInfo.InvariantCulture) == 0) {
-					jdbcType = (int)JavaSqlTypes.CHAR;
+					jdbcType = (int)JavaSqlTypes.VARCHAR;
 				}
 			}
 			OracleType = OracleConvert.JdbcTypeToOracleType(jdbcType);
