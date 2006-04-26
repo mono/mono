@@ -360,6 +360,7 @@ System.ComponentModel/WarningException.cs
 System.ComponentModel/Win32Exception.cs
 System.Configuration/ApplicationScopedSettingAttribute.cs
 System.Configuration/ApplicationSettingsBase.cs
+System.Configuration/ApplicationSettingsGroup.cs
 System.Configuration/AppSettingsReader.cs
 System.Configuration/ConfigHelper.cs
 System.Configuration/ConfigurationException.cs

@@ -1,3 +1,7 @@
+2006-04-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.dll.sources : added ApplicationSettingsGroup.cs.
+
 2006-04-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System_test.dll.sources: Added CodeGeneratorFromNamespaceTest.cs from
