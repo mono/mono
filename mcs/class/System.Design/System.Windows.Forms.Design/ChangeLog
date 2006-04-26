@@ -1,3 +1,12 @@
+2006-04-25  Miguel de Icaza  <miguel@novell.com>
+
+	* AnchorEditor.cs: Implement the anchor editor.   
+
+	Two thoughts: I love the "Walkthrough" to implement UI editors
+	from the documentation.
+
+	And Visual Studio 2005 was really nice to use to write this code.
+	
 2005-06-21  Jonathan Chambers <jonathan.chambers@ansys.com>
 	* DockEditor.cs: Use context information 
 
