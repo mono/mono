@@ -34,6 +34,7 @@ using System.Text;
 using System.Collections;
 using System.Net.Sockets;
 using System.Security.Permissions;
+using System.Reflection;
 
 namespace System.Web.Mail {
 
@@ -43,8 +44,13 @@ namespace System.Web.Mail {
 	private string server;
 	private TcpClient tcpConnection;
 	private SmtpStream smtp;
-	
-	//Initialise the variables and connect
+ 	private string username;
+ 	private string password;
+ 	private int port = 25;
+ 	private bool usessl = false;
+ 	private short authenticate = 1;  	
+        
+    //Initialise the variables and connect
 	public SmtpClient( string server ) {
 	    
 	    this.server = server;
@@ -54,18 +60,96 @@ namespace System.Web.Mail {
 	// make the actual connection
 	// and HELO handshaking
 	private void Connect() {
-	    tcpConnection = new TcpClient( server , 25 );
+	    tcpConnection = new TcpClient( server , port );
 	    
-	    Stream stream = tcpConnection.GetStream();
+	    NetworkStream stream = tcpConnection.GetStream();
 	    smtp = new SmtpStream( stream );
-	    
-	    // read the server greeting
-	    smtp.ReadResponse();
-	    smtp.CheckForStatusCode( 220 );
-	   
-	    // write the HELO command to the server
-	    smtp.WriteHelo( Dns.GetHostName() );
+	}
 	    	    
+	private void ChangeToSSLSocket( ) {
+#if TARGET_JVM
+		java.lang.Class c = vmw.common.TypeUtils.ToClass( smtp.Stream );
+		java.lang.reflect.Method m = c.getMethod("ChangeToSSLSocket", null);
+		m.invoke(smtp.Stream, new object[]{});
+#else
+		// Load Mono.Security.dll
+		Assembly a;
+		try {
+			a = Assembly.Load("Consts.AssemblyMono_Security");
+		}
+		catch(System.IO.FileNotFoundException) {
+			throw new SmtpException( "Cannot load Mono.Security.dll" );
+		}
+		Type tSslClientStream = a.GetType("Mono.Security.Protocol.Tls.SslClientStream");
+		object[] consArgs = new object[4];
+		consArgs[0] = smtp.Stream;
+		consArgs[1] = server;
+		consArgs[2] = true;
+		Type tSecurityProtocolType = a.GetType("Mono.Security.Protocol.Tls.SecurityProtocolType");
+		int nSsl3Val = (int) Enum.Parse(tSecurityProtocolType, "Ssl3");
+		int nTlsVal = (int) Enum.Parse(tSecurityProtocolType, "Tls");
+		consArgs[3] = Enum.ToObject(tSecurityProtocolType, nSsl3Val | nTlsVal);
+
+		object objSslClientStream = 
+			Activator.CreateInstance(tSslClientStream, consArgs); 
+
+		if (objSslClientStream != null)
+			smtp = new SmtpStream( (Stream)objSslClientStream );
+#endif
+	}
+		
+	private void ReadFields(MailMessageWrapper msg)
+	{
+		string tmp;
+		username = msg.Fields.Data["http://schemas.microsoft.com/cdo/configuration/sendusername"];
+		password = msg.Fields.Data["http://schemas.microsoft.com/cdo/configuration/sendpassword"]; 
+		tmp = msg.Fields.Data["http://schemas.microsoft.com/cdo/configuration/smtpauthenticate"]; 
+		if (tmp != null)
+			authenticate = short.Parse(tmp);
+		tmp = msg.Fields.Data["http://schemas.microsoft.com/cdo/configuration/smtpusessl"]; 	
+		if (tmp != null)
+			usessl = bool.Parse(tmp);
+		tmp = msg.Fields.Data["http://schemas.microsoft.com/cdo/configuration/smtpserverport"]; 
+		if (tmp != null)
+			port = int.Parse(tmp);
+	}
+
+	private void StartSend(MailMessageWrapper msg)
+	{
+		ReadFields(msg);
+		
+		// read the server greeting
+		smtp.ReadResponse();
+		smtp.CheckForStatusCode( 220 );
+
+		if (usessl || (username != null && password != null && authenticate != 1)) 
+		{
+			smtp.WriteEhlo( Dns.GetHostName() );
+
+			if (usessl) {
+				bool isSSL = smtp.WriteStartTLS();
+				if (isSSL)
+					ChangeToSSLSocket();
+			}
+
+			if (username != null && password != null && authenticate != 1) 
+			{
+				smtp.WriteAuthLogin();
+				if (smtp.LastResponse.StatusCode == 334) 
+				{
+					smtp.WriteLine(Convert.ToBase64String(Encoding.ASCII.GetBytes(username)));
+					smtp.ReadResponse();
+					smtp.CheckForStatusCode(334);
+					smtp.WriteLine(Convert.ToBase64String(Encoding.ASCII.GetBytes(password)));
+					smtp.ReadResponse();
+					smtp.CheckForStatusCode(235);
+				}
+			}
+		}
+		else 
+		{
+			smtp.WriteHelo( Dns.GetHostName() );
+		}
 	}
 	
 	public void Send( MailMessageWrapper msg ) {
@@ -78,7 +162,7 @@ namespace System.Web.Mail {
 		if( msg.To.Count < 1 ) throw new SmtpException( "Atleast one recipient must be set." );
 	    }
 	    
-	    	    
+	    StartSend (msg);
 	    // start with a reset incase old data
 	    // is present at the server in this session
 	    smtp.WriteRset();

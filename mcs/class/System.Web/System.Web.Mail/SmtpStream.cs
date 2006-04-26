@@ -62,6 +62,31 @@ namespace System.Web.Mail {
 	
 	}
 	
+	public void WriteAuthLogin()
+	{
+		command = "AUTH LOGIN";
+		WriteLine( command );
+		ReadResponse();		
+	}
+
+	public bool WriteStartTLS( ) 
+	{ 
+		command = "STARTTLS";
+		WriteLine( command );
+		ReadResponse();
+		return LastResponse.StatusCode == 220;
+
+	}
+
+	public void WriteEhlo( string hostName ) 
+	{ 
+		command = "EHLO " + hostName;
+		WriteLine( command );
+		ReadResponse();
+		CheckForStatusCode( 250 );
+	
+	}
+	
 	public void WriteHelo( string hostName ) { 
 	    command = "HELO " + hostName;
 	    WriteLine( command );
@@ -173,22 +198,39 @@ namespace System.Web.Mail {
 	
 	// read a line from the server
 	public void ReadResponse( ) {
-	    string line = null;
-	    
-	    byte[] buffer = new byte[ 4096 ];
-	    
-	    int readLength = stream.Read( buffer , 0 , buffer.Length );
-	    
-	    if( readLength > 0 ) { 
-	    
-		line = encoding.GetString( buffer , 0 , readLength );
 		
-		line = line.TrimEnd( new Char[] { '\r' , '\n' , ' ' } );
+		byte[] buffer = new byte [512];
+		int position = 0;
+		bool lastLine = false;
+
+		do {
+			int readLength = stream.Read (buffer , position , buffer.Length - position);
+			if (readLength > 0) { 
+				int available = position + readLength - 1;
+				if (available > 4 && (buffer [available] == '\n' || buffer [available] == '\r'))
+					for (int index = available - 3; ; index--) {
+						if (index < 0 || buffer [index] == '\n' || buffer [index] == '\r') {
+							lastLine = buffer [index + 4] == ' ';
+							break;
+						}
+					}
+
+				// move position
+				position += readLength;
+
+				// check if buffer is full
+				if (position == buffer.Length) {
+					byte [] newBuffer = new byte [buffer.Length * 2];
+					Array.Copy (buffer, 0, newBuffer, 0, buffer.Length);
+					buffer = newBuffer;
+				}
+			}
+		} while(!lastLine);
+
+		string line = encoding.GetString (buffer , 0 , position - 1);
 			
-	    }
-	   
 	    // parse the line to the lastResponse object
-	    lastResponse = SmtpResponse.Parse( line );
+	    lastResponse = SmtpResponse.Parse (line);
 	   
 	    #if DEBUG
 	      DebugPrint( line );
