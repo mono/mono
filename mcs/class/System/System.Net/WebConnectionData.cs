@@ -40,6 +40,7 @@ namespace System.Net
 		public WebHeaderCollection Headers;
 		public Version Version;
 		public Stream stream;
+		public string Challenge;
 		public byte [] initialData;
 		public int initialOffset;
 		public int length;

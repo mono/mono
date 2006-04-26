@@ -966,7 +966,7 @@ namespace System.Net
 				contentLength = bodyBufferLength;
 				writeStream.SendChunked = false;
 			}
-			
+
 			SendRequestHeaders ();
 
 			haveRequest = true;
@@ -1129,7 +1129,7 @@ namespace System.Net
 			if (throwMe == null && webResponse != null) {
 				code  = webResponse.StatusCode;
 				if (!authCompleted && ((code == HttpStatusCode.Unauthorized && credentials != null) ||
-							code == HttpStatusCode.ProxyAuthenticationRequired)) {
+				     (ProxyQuery && code == HttpStatusCode.ProxyAuthenticationRequired))) {
 					if (!usedPreAuth && CheckAuthorization (webResponse, code)) {
 						// Keep the written body, so it can be rewritten in the retry
 						if (InternalAllowBuffering) {
