@@ -337,6 +337,7 @@ namespace Mono.CSharp {
 			Attributable owner = Owner;
 			EmitContext ec = new EmitContext (owner.ResolveContext, owner.ResolveContext.DeclContainer, owner.ResolveContext.DeclContainer,
 				Location, null, null, owner.ResolveContext.DeclContainer.ModFlags, false);
+			ec.IsAnonymousMethodAllowed = false;
 
 			ConstructorInfo ctor = ResolveConstructor (ec);
 			if (ctor == null) {

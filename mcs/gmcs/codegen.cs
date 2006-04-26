@@ -372,7 +372,9 @@ namespace Mono.CSharp {
 			Resolving,
 			Emitting
 		}
-		
+
+		bool isAnonymousMethodAllowed = true;
+
 		Phase current_phase;
 		FlowBranching current_flow_branching;
 
@@ -444,6 +446,14 @@ namespace Mono.CSharp {
 			get { return InUnsafe || ResolveContext.IsInUnsafeScope; }
 		}
 
+		public bool IsAnonymousMethodAllowed {
+			get {
+				return isAnonymousMethodAllowed;
+			}
+			set {
+				isAnonymousMethodAllowed = value;
+			}
+		}
 
 		public FlowBranching CurrentBranching {
 			get { return current_flow_branching; }

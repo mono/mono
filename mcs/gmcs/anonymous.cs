@@ -83,7 +83,6 @@ namespace Mono.CSharp {
 			// The order is important: this setups the CaptureContext tree hierarchy.
 			//
 			if (container == null) {
-				Report.Error (1706, l, "Anonymous methods are not allowed in attribute declaration");
 				return;
 			}
 			container.SetHaveAnonymousMethods (l, this);
@@ -430,6 +429,11 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
+			if (!ec.IsAnonymousMethodAllowed) {
+				Report.Error (1706, loc, "Anonymous methods are not allowed in the attribute declaration");
+				return null;
+			}
+
 			if (Parameters != null && !Parameters.Resolve (ec)) {
 				return null;
 			}

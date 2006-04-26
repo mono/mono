@@ -1,4 +1,4 @@
-// cs1706.cs: Anonymous methods are not allowed in attribute declaration
+// cs1706.cs: Anonymous methods are not allowed in the attribute declaration
 // Line: 13
 
 using System;
