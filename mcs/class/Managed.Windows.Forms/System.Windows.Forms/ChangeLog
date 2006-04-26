@@ -1,3 +1,12 @@
+2006-04-26  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* FixedSizeTextBox.cs: Added constructor to allow specifying which
+	  dimension is fixed
+	* UpDownBase.cs: Set the spinner control to be fixed height vertical,
+	  and switched FixedSizeTextBox to only be fixed vertical (#78116)
+	* Form.cs: Not applying the 'MS 0.08 fudge factor' for a given dimension
+	  if it matches the scale base font (avoids unneeded scaling)
+
 2006-04-26  Alexander Olk  <alex.olk@googlemail.com>
 
 	* X11DesktopColors.cs: One gtk_init_check should be enough

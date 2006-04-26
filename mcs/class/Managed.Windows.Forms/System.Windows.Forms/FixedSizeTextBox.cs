@@ -37,6 +37,11 @@ namespace System.Windows.Forms {
 			SetStyle (ControlStyles.FixedWidth, true);
 			SetStyle (ControlStyles.FixedHeight, true);
 		}
+
+		public FixedSizeTextBox (bool fixed_horz, bool fixed_vert) {
+			SetStyle (ControlStyles.FixedWidth, fixed_horz);
+			SetStyle (ControlStyles.FixedHeight, fixed_vert);
+		}
 	}
 }
 

@@ -66,6 +66,7 @@ namespace System.Windows.Forms
 				this.SetStyle(ControlStyles.ResizeRedraw, true);
 				this.SetStyle(ControlStyles.UserPaint, true);
 				this.SetStyle(ControlStyles.Selectable, false);
+				this.SetStyle(ControlStyles.FixedHeight, true);
 
 				tmrRepeat = new Timer();
 
@@ -241,7 +242,7 @@ namespace System.Windows.Forms
 
 			spnSpinner = new UpDownSpinner(this);
 
-			txtView = new FixedSizeTextBox();
+			txtView = new FixedSizeTextBox(false, true);
 			txtView.ModifiedChanged += new EventHandler(OnChanged);
 			txtView.AcceptsReturn = true;
 			txtView.AutoSize = false;

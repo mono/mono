@@ -1201,6 +1201,8 @@ namespace System.Windows.Forms {
 		{
 			SizeF current_size_f = GetAutoScaleSize (DeviceContext, Font);
 			Size current_size = new Size ((int) current_size_f.Width, (int) current_size_f.Height);
+			float	dx;
+			float	dy;
 
 			if (current_size == autoscale_base_size)
 				return;
@@ -1215,8 +1217,19 @@ namespace System.Windows.Forms {
 			// http://blogs.msdn.com/mharsh/archive/2004/01/25/62621.aspx
 			// but it makes things larger without looking better.
 			//
-			Scale (current_size_f.Width / AutoScaleBaseSize.Width + 0.08f,
-			       current_size_f.Height / AutoScaleBaseSize.Height + 0.08f);
+			if (current_size_f.Width != AutoScaleBaseSize.Width) {
+				dx = current_size_f.Width / AutoScaleBaseSize.Width + 0.08f;
+			} else {
+				dx = 1;
+			}
+
+			if (current_size_f.Height != AutoScaleBaseSize.Height) {
+				dy = current_size_f.Height / AutoScaleBaseSize.Height + 0.08f;
+			} else {
+				dy = 1;
+			}
+
+			Scale (dx, dy);
 			
 			AutoScaleBaseSize = current_size;
 		}
