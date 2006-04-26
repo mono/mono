@@ -97,7 +97,7 @@ namespace System.Windows.Forms.Design
 	        {
 	            this.SuspendLayout();
 	            this.Name = "AnchorSelector";
-	            this.Size = new System.Drawing.Size(180, 100);
+	            this.Size = new System.Drawing.Size (40, 120);
 	            this.ResumeLayout(false);
 	        }
 
@@ -172,6 +172,7 @@ namespace System.Windows.Forms.Design
 	        {
 			OnClick (ee);
 		}
+
 	}
 	
 }
