@@ -1,3 +1,9 @@
+2006-04-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Bitmap.cs: throw when the target pixel format differs from the one
+	of the image and it's an indexed format. We were failing in UnlockBits
+	before.
+
 2006-04-25  Miguel de Icaza  <miguel@novell.com>
 
 	* FontConverter.cs (FontUnitConverter): implement.   CorCompare

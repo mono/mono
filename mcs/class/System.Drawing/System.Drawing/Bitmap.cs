@@ -260,27 +260,29 @@ namespace System.Drawing
 		public BitmapData LockBits (Rectangle rect, ImageLockMode flags, PixelFormat format)
 		{
 			BitmapData result = new BitmapData();
-
-			if (nativeObject == IntPtr.Zero)
-				throw new Exception ("nativeObject is null");			
-			
-			Status status = GDIPlus.GdipBitmapLockBits (nativeObject, ref rect, flags, format,  result);
-			
-			//NOTE: scan0 points to piece of memory allocated in the unmanaged space
-			GDIPlus.CheckStatus (status);
-
-			return  result;
+			return LockBits (rect, flags, format, result);
 		}
 
 #if NET_2_0
-		public BitmapData LockBits (Rectangle rect, ImageLockMode flags, PixelFormat format, BitmapData bitmapData)
+		public
+#endif
+		BitmapData LockBits (Rectangle rect, ImageLockMode flags, PixelFormat format, BitmapData bitmapData)
 		{
+			if (nativeObject == IntPtr.Zero)
+				throw new Exception ("nativeObject is null");			
+			
+			int img_format = (int) PixelFormat;
+			if ((int) format != img_format && (img_format & (int) PixelFormat.Indexed) != 0 &&
+			    (flags == ImageLockMode.WriteOnly || flags == ImageLockMode.ReadWrite)) {
+				throw new ArgumentException ("Parameter is not valid.");
+			}
+				
 			Status status = GDIPlus.GdipBitmapLockBits (nativeObject, ref rect, flags, format,  bitmapData);
+			//NOTE: scan0 points to piece of memory allocated in the unmanaged space
 			GDIPlus.CheckStatus (status);
 
 			return bitmapData;
 		}
-#endif
 
 		public void MakeTransparent ()
 		{
