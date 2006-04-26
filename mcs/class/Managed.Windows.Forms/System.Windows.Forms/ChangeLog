@@ -1,3 +1,12 @@
+2006-04-26  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* TextBoxBase.cs: 
+	  - Generate OnTextChanged for Backspace even if we're only deleting
+	    the current selection
+	  - When setting the Text property, only select all text if the
+	    control does not have focus when it is being set. Otherwise
+	    just place the cursor at the beginning of the control
+
 2006-04-26  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ThemeWin32Classic.cs: ToolBars get drawn with two lines at the top.

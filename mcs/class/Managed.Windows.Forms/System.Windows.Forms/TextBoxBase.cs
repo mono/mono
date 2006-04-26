@@ -497,19 +497,31 @@ namespace System.Windows.Forms {
 						this.Lines = lines;
 
 						line = document.GetLine(1);
-						document.SetSelectionStart(line, 0);
+						if (!Focused) {
+							document.SetSelectionStart(line, 0);
 
-						line = document.GetLine(document.Lines);
-						document.SetSelectionEnd(line, line.text.Length);
-						document.PositionCaret(line, line.text.Length);
+							line = document.GetLine(document.Lines);
+							document.SetSelectionEnd(line, line.text.Length);
+							document.PositionCaret(line, line.text.Length);
+						} else {
+							document.SetSelectionStart(line, 0);
+							document.SetSelectionEnd(line, 0);
+							document.PositionCaret(line, 0);
+						}
 					} else {
 						document.Clear();
 						document.Add(1, CaseAdjust(value), alignment, Font, ThemeEngine.Current.ResPool.GetSolidBrush(ForeColor));
 						CalculateDocument();
 						line = document.GetLine(1);
-						document.SetSelectionStart(line, 0);
-						document.SetSelectionEnd(line, value.Length);
-						document.PositionCaret(line, value.Length);
+						if (!Focused) {
+							document.SetSelectionStart(line, 0);
+							document.SetSelectionEnd(line, value.Length);
+							document.PositionCaret(line, value.Length);
+						} else {
+							document.SetSelectionStart(line, 0);
+							document.SetSelectionEnd(line, 0);
+							document.PositionCaret(line, 0);
+						}
 					}
 				} else {
 					document.Empty();
@@ -964,13 +976,18 @@ namespace System.Windows.Forms {
 
 
 				case Keys.Back: {
+					bool	fire_changed;
+
 					if (read_only) {
 						break;
 					}
 
+					fire_changed = false;
+
 					// delete only deletes on the line, doesn't do the combine
 					if (document.selection_visible) {
 						document.ReplaceSelection("");
+						fire_changed = true;
 					}
 					document.SetSelectionToCaret(true);
 
@@ -987,7 +1004,7 @@ namespace System.Windows.Forms {
 							document.PositionCaret(line, new_caret_pos);
 							//document.MoveCaret(CaretDirection.CharForward);
 							document.UpdateCaret();
-							OnTextChanged(EventArgs.Empty);
+							fire_changed = true;
 						}
 					} else {
 						if (!control || document.CaretPosition == 0) {
@@ -1005,6 +1022,9 @@ namespace System.Windows.Forms {
 							document.PositionCaret(document.CaretLine, start_pos);
 						}
 						document.UpdateCaret();
+						fire_changed = true;
+					}
+					if (fire_changed) {
 						OnTextChanged(EventArgs.Empty);
 					}
 					CaretMoved(this, null);
