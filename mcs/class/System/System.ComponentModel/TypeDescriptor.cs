@@ -763,7 +763,6 @@ public sealed class TypeDescriptor
 				return _properties;
 			
 			bool cache = true;
-			Console.WriteLine ("Here");
 			PropertyInfo[] props = _component.GetType().GetProperties (BindingFlags.Instance | BindingFlags.Public);
 			Hashtable t = new Hashtable ();
 			foreach (PropertyInfo pr in props)
