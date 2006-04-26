@@ -1,5 +1,11 @@
 2006-04-26  Miguel de Icaza  <miguel@novell.com>
 
+	* file-io.c (ves_icall_System_IO_MonoIO_Open): Remove `async'
+	boolean parameter and instead pass the information on `options'
+	parameter (FileOptions).
+
+	* icall.c: Register the new signature for MonoIO.Open.
+
 	* debug-helpers.c (dis_one): Trying to understand how coverity
 	works.  Fix Run 5, item 78.
 

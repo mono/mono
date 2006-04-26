@@ -1,3 +1,16 @@
+2006-04-26  Miguel de Icaza  <miguel@novell.com>
+
+	Add support for the new FileOptions bits on .NET 2.0.
+
+	It might be good if Dick reviews these changes.
+	
+	* io.c (file_close): If DeleteOnClose is set, then delete the file
+	before freeing it.
+	(CreateFile): Do not support encryption per user. 
+	
+	If posix_fadvise exists, pass hints on sequential scan and random
+	access.   Did not figure out what WRITE_THROUGH maps to.
+
 2006-04-26  Dick Porter  <dick@ximian.com>
 
 	* sockets.c (WSAIoctl): Check the output buffer is valid before
