@@ -1,5 +1,8 @@
 2006-04-26  Miguel de Icaza  <miguel@novell.com>
 
+	* io.c (file_close): Oops, do not use DeleteFile which expects
+	unicode, instead use unlink directly
+
 	Add support for the new FileOptions bits on .NET 2.0.
 
 	It might be good if Dick reviews these changes.
