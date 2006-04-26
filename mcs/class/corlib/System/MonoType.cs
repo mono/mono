@@ -199,7 +199,7 @@ namespace System
 			if (count == 0)
 				return null;
 			
-			if (count == 1 && typesLen == 0) 
+			if (count == 1 && types == null) 
 				return (MethodInfo) CheckMethodSecurity (found);
 
 			match = new MethodBase [count];

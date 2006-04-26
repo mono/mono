@@ -527,6 +527,13 @@ PublicKeyToken=b77a5c561934e089"));
 			typeof (BindingFlags).GetConstructor (BindingFlags.Default, null, CallingConventions.Any, new Type[1] { null }, null);
 		}
 
+		[Test]
+		public void GetMethod_Bug77367 ()
+		{
+			MethodInfo i = typeof (Bug77367).GetMethod ("Run", Type.EmptyTypes);
+			Assert.IsNull (i);
+		}
+
 #if NET_2_0
 		[Test]
 		public void FullNameGenerics ()
@@ -641,6 +648,13 @@ PublicKeyToken=b77a5c561934e089"));
 		class A { }
 
 		struct FooStruct {
+		}
+
+		public class Bug77367
+		{
+			public void Run (bool b)
+			{
+			}
 		}
 	}
 }
