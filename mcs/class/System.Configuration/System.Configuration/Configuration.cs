@@ -289,7 +289,7 @@ namespace System.Configuration {
 			if (sec.SectionInformation.Type == null)
 				sec.SectionInformation.Type = system.Host.GetConfigTypeName (sec.GetType ());
 			
-			SectionInfo section = new SectionInfo (name, sec.SectionInformation.Type, sec.SectionInformation.AllowLocation, sec.SectionInformation.AllowDefinition, sec.SectionInformation.AllowExeDefinition);
+			SectionInfo section = new SectionInfo (name, sec.SectionInformation);
 			section.StreamName = streamName;
 			section.ConfigHost = system.Host;
 			group.AddChild (section);

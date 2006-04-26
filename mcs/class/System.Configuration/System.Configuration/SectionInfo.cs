@@ -38,6 +38,7 @@ namespace System.Configuration
 	internal class SectionInfo: ConfigInfo
 	{
 		bool allowLocation = true;
+		bool? requirePermission = true;
 		ConfigurationAllowDefinition allowDefinition = ConfigurationAllowDefinition.Everywhere;
 		ConfigurationAllowExeDefinition allowExeDefinition = ConfigurationAllowExeDefinition.MachineToApplication;
 
@@ -45,14 +46,14 @@ namespace System.Configuration
 		{
 		}
 		
-		public SectionInfo (string sectionName, string typeName,
-				    bool allowLocation, ConfigurationAllowDefinition allowDefinition, ConfigurationAllowExeDefinition allowExeDefinition)
+		public SectionInfo (string sectionName, SectionInformation info)
 		{
 			Name = sectionName;
-			TypeName = typeName;
-			this.allowLocation = allowLocation;
-			this.allowDefinition = allowDefinition;
-			this.allowExeDefinition = allowExeDefinition;
+			TypeName = info.Type;
+			this.allowLocation = info.AllowLocation;
+			this.allowDefinition = info.AllowDefinition;
+			this.allowExeDefinition = info.AllowExeDefinition;
+			this.requirePermission = info.RequirePermission;
 		}
 		
 		public override object CreateInstance ()
@@ -63,6 +64,8 @@ namespace System.Configuration
 				sec.SectionInformation.AllowLocation = allowLocation;
 				sec.SectionInformation.AllowDefinition = allowDefinition;
 				sec.SectionInformation.AllowExeDefinition = allowExeDefinition;
+				if (requirePermission != null)
+					sec.SectionInformation.RequirePermission = requirePermission.Value;
 				sec.SectionInformation.SetName (Name);
 			}
 			return ob;
@@ -123,8 +126,16 @@ namespace System.Configuration
 							ThrowException ("location is a reserved section name", reader);
 						break;
 						
+					case "requirePermission":
+						string reqPerm = reader.Value;
+						bool reqPermValue = (reqPerm == "true");
+						if (!reqPermValue && reqPerm != "false")
+							ThrowException ("Invalid attribute value", reader);
+						requirePermission = reqPermValue;
+						break;
+
 					default:
-						ThrowException ("Unrecognized attribute.", reader);
+						ThrowException (String.Format ("Unrecognized attribute: {0}", reader.Name), reader);
 						break;
 				}
 			}
@@ -147,6 +158,8 @@ namespace System.Configuration
 				writer.WriteAttributeString ("allowDefinition", allowDefinition.ToString ());
 			if (allowExeDefinition != ConfigurationAllowExeDefinition.MachineToApplication)
 				writer.WriteAttributeString ("allowExeDefinition", allowExeDefinition.ToString ());
+			if (requirePermission != null)
+				writer.WriteAttributeString ("requirePermission", requirePermission.Value ? "true" : "false");
 			writer.WriteEndElement ();
 		}
 		

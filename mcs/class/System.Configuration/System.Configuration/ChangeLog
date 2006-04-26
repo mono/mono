@@ -1,3 +1,9 @@
+2006-04-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Configuration.cs,
+	  SectionInfo.cs : added support for "requirePermission" attribute
+	  in "section" element. This fixes bug #77957.
+
 2006-04-25  Chris Toshok  <toshok@ximian.com>
 
 	* ConfigurationElementCollection.cs (Reset): it makes no sense to
