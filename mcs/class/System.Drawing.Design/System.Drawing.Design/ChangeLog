@@ -1,3 +1,9 @@
+2006-04-26  Alexander Olk <alex.olk@googlemail.com>
+
+	* ColorEditor.cs: Dispose the SolidBrush that fills the color
+	  rectangle and don't draw a border which uglifys
+	  PropertyGrid
+
 2004-02-24  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* BitmapEditor.cs

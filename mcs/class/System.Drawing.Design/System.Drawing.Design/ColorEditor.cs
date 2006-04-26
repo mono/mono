@@ -90,10 +90,9 @@ namespace System.Drawing.Design
 			if (e.Value != null)
 			{
 				Color C = (Color) e.Value;
-				G.FillRectangle (new SolidBrush (C), e.Bounds);
+				using (SolidBrush sb = new SolidBrush (C))
+					G.FillRectangle (sb, e.Bounds);
 			}
-
-			G.DrawRectangle (Pens.Black, e.Bounds);
 		}
 	}
 }
