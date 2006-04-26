@@ -99,10 +99,12 @@ namespace System.ComponentModel
 		DesignerTransaction CreateTransaction (object obj)
 		{
 			IComponent com = obj as IComponent;
-			if (com == null || com.Site == null) return null;
+			if (com == null || com.Site == null)
+				return null;
 			
 			IDesignerHost dh = (IDesignerHost) com.Site.GetService (typeof(IDesignerHost));
-			if (dh == null) return null;
+			if (dh == null)
+				return null;
 			
 			DesignerTransaction tran = dh.CreateTransaction ();
 			IComponentChangeService ccs = (IComponentChangeService) com.Site.GetService (typeof(IComponentChangeService));
@@ -113,7 +115,8 @@ namespace System.ComponentModel
 		
 		void EndTransaction (object obj, DesignerTransaction tran, object oldValue, object newValue, bool commit)
 		{
-			if (tran == null) return;
+			if (tran == null)
+				return;
 			
 			if (commit) {
 				IComponent com = obj as IComponent;
@@ -121,8 +124,7 @@ namespace System.ComponentModel
 				if (ccs != null)
 					ccs.OnComponentChanged (com, this, oldValue, newValue);
 				tran.Commit ();
-			}
-			else
+			} else
 				tran.Cancel ();
 		}
 		
@@ -131,13 +133,10 @@ namespace System.ComponentModel
 			DesignerTransaction tran = CreateTransaction (component);
 			object old = GetValue (component);
 			
-			try
-			{
+			try {
 				GetPropertyInfo ().SetValue (component, value, null);
 				EndTransaction (component, tran, old, value, true);
-			}
-			catch
-			{
+			} catch {
 				EndTransaction (component, tran, old, value, false);
 				throw;
 			}
@@ -146,21 +145,18 @@ namespace System.ComponentModel
 		public override void ResetValue (object component)
 		{
 			DefaultValueAttribute attrib = ((DefaultValueAttribute) Attributes[typeof (DefaultValueAttribute)]);
-			if (attrib != null) {
+			if (attrib != null) 
 				SetValue (component, attrib.Value); 
-			}
 			
 			DesignerTransaction tran = CreateTransaction (component);
 			object old = GetValue (component);
 			
-			try
-			{
+			try {
 				MethodInfo mi = component.GetType().GetMethod ("Reset" + Name, Type.EmptyTypes);
-				if (mi != null) mi.Invoke (component, null);
+				if (mi != null)
+					mi.Invoke (component, null);
 				EndTransaction (component, tran, old, GetValue (component), true);
-			}
-			catch
-			{
+			} catch {
 				EndTransaction (component, tran, old, GetValue (component), false);
 				throw;
 			}
@@ -171,14 +167,20 @@ namespace System.ComponentModel
 			DefaultValueAttribute attrib = ((DefaultValueAttribute) Attributes[typeof (DefaultValueAttribute)]);
 			if (attrib != null) {
 				object current = GetValue (component);
-				if ((attrib.Value == null || current == null) && attrib.Value != current) return true;
+				if (attrib.Value == null || current == null){
+					if (attrib.Value != current)
+						return true;
+					if (attrib.Value == null && current == null)
+						return false;
+				}
+
 				return !attrib.Value.Equals (current);
-			}
-			else {
+			} else {
 				MethodInfo mi = component.GetType().GetMethod ("ShouldPersist" + Name, Type.EmptyTypes);
-				if (mi != null) return (bool) mi.Invoke (component, null);
+				if (mi != null)
+					return (bool) mi.Invoke (component, null);
 				mi = component.GetType().GetMethod ("Reset" + Name, Type.EmptyTypes);
-				return (mi != null);
+				return mi != null;
 			}
 		}
 
@@ -187,12 +189,14 @@ namespace System.ComponentModel
 			DefaultValueAttribute attrib = ((DefaultValueAttribute) Attributes[typeof (DefaultValueAttribute)]);
 			if (attrib != null) {
 				object current = GetValue (component);
-				if ((attrib.Value == null || current == null) && attrib.Value != current) return true;
+				if ((attrib.Value == null || current == null) && attrib.Value != current)
+					return true;
 				return !attrib.Value.Equals (current);
 			}
 			else {
 				MethodInfo mi = component.GetType().GetMethod ("ShouldSerialize" + Name, Type.EmptyTypes);
-				if (mi != null) return (bool) mi.Invoke (component, null);
+				if (mi != null)
+					return (bool) mi.Invoke (component, null);
 				return true;
 			}
 		}

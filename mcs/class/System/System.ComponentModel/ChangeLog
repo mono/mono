@@ -1,3 +1,10 @@
+2006-04-26  Miguel de Icaza  <miguel@novell.com>
+
+	* ReflectionPropertyDescriptor.cs (CanResetvalue): Do not
+	dereference a null value, avoids crash in property grid.
+
+	Code formatting police. 
+
 2006-04-25  Miguel de Icaza  <miguel@novell.com>
 
 	* TypeConverter.cs (ConvertFrom): Do not crash if we are passed a
