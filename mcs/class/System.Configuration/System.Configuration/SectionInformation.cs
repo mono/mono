@@ -42,6 +42,7 @@ namespace System.Configuration
 		bool allow_location, allow_override;
 		bool inherit_on_child_apps;
 		bool restart_on_external_changes;
+		bool require_permission;
 
 		string config_source;
 		bool force_update, is_declared, is_locked;
@@ -50,6 +51,8 @@ namespace System.Configuration
 
 		ProtectedConfigurationProvider protection_provider;
 		
+
+		[MonoTODO ("default value for require_permission")]
 		internal SectionInformation ()
 		{
 			allow_definition = ConfigurationAllowDefinition.Everywhere;
@@ -123,8 +126,8 @@ namespace System.Configuration
 
 		[MonoTODO]
 		public bool RequirePermission {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return require_permission; }
+			set { require_permission = value; }
 		}
 
 		[MonoTODO]

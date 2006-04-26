@@ -1,3 +1,10 @@
+2006-04-26  Chris Toshok  <toshok@ximian.com>
+
+	* SectionInformation.cs (.ctor): add MonoTODO about the default
+	value for require_permission.
+	(RequirePermission): implement the getter/setter for this so
+	Atsushi's previous commit doesn't break everything :)
+
 2006-04-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Configuration.cs,
