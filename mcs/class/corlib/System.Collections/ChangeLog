@@ -1,3 +1,8 @@
+2006-04-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Comparer.cs : changed internal field from CultureInfo to
+	  CompareInfo. This cosmetic change should fix bug #77701.
+
 2006-03-28  Marek Safar  <marek.safar@seznam.cz>
 
 	* Stack.cs: Changed ctor to allocate only requested memory.

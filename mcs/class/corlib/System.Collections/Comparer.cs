@@ -48,7 +48,8 @@ namespace System.Collections
 #endif
 		static readonly Comparer DefaultInvariant = new Comparer (CultureInfo.InvariantCulture);
 
-		CultureInfo _culture;
+		// This field was introduced for MS kompatibility. see bug #77701
+		CompareInfo m_compareInfo;
 
 		private Comparer ()
 		{
@@ -65,7 +66,7 @@ namespace System.Collections
 			if (culture == null)
 				throw new ArgumentNullException ("culture");
 
-			_culture = culture;
+			m_compareInfo = culture.CompareInfo;
 		}
 
 
@@ -79,11 +80,11 @@ namespace System.Collections
 			else if (b == null)
 				return 1;
 
-			if (_culture != null) {
+			if (m_compareInfo != null) {
 				string sa = a as string;
 				string sb = b as string;
 				if (sa != null && sb != null)
-					return _culture.CompareInfo.Compare (sa, sb);
+					return m_compareInfo.Compare (sa, sb);
 			}
 
 			if (a is IComparable)
@@ -101,7 +102,7 @@ namespace System.Collections
 			if (info == null)
 				throw new ArgumentNullException ("info");
 
-			info.AddValue ("CompareInfo", _culture.CompareInfo, typeof (CompareInfo));
+			info.AddValue ("CompareInfo", m_compareInfo, typeof (CompareInfo));
 		}
 	}
 }
