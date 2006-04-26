@@ -1,8 +1,10 @@
 2006-04-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c (mono_aot_get_method_from_token_inner): Fix the previous patch.
+	
 	* aot-runtime.c (mono_aot_get_method_from_token_inner): Mark the method
 	as loaded only after resolving patches since that could invoke the same method.
-	
+
 	* aot-runtime.c (mono_aot_plt_resolve): Fix ppc etc. builds.
 
 	* aot-compiler.c: Refactor mono_aot_compile_aot () into a bunch of smaller
