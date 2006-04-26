@@ -150,9 +150,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			// Grid
 			DrawGrid(e);
 
-			// Border
-			e.Graphics.DrawRectangle(SystemPens.ControlDark, 0,0,Width-1,Height-1 );
-			
 			UpdateScrollBar();
 			
 			base.OnPaint(e);
@@ -369,7 +366,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 
 				int xLoc = SplitterLocation+1;
 				if (paintsValue) {
-					pevent.Graphics.DrawRectangle(ThemeEngine.Current.ResPool.GetPen(Color.Black), SplitterLocation+2,rect.Y+2, 20, row_height-4);
+					pevent.Graphics.DrawRectangle(Pens.Black, SplitterLocation+2,rect.Y+2, 20, row_height-4);
 					try {
 						editor.PaintValue(grid_item.Value, pevent.Graphics, new Rectangle(SplitterLocation+3,rect.Y+3, 19, row_height-5));
 					}
@@ -423,11 +420,12 @@ namespace System.Windows.Forms.PropertyGridInternal {
 
 		private Rectangle DrawPlusMinus (Graphics g, int x, int y, bool expanded, bool category) {
 			Rectangle bounds = new Rectangle(x, y, 8, 8);
-			if (!category) g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush(Color.White), bounds);
-			g.DrawRectangle (SystemPens.ControlDark, bounds);
-			g.DrawLine (SystemPens.ControlDark, x+2, y+4, x + 6, y+4);
+			if (!category) g.FillRectangle (Brushes.White, bounds);
+			Pen pen = ThemeEngine.Current.ResPool.GetPen (property_grid.ViewForeColor);
+			g.DrawRectangle (pen, bounds);
+			g.DrawLine (pen, x+2, y+4, x + 6, y+4);
 			if (!expanded)
-				g.DrawLine (SystemPens.ControlDark, x+4, y+2, x+4, y+6);
+				g.DrawLine (pen, x+4, y+2, x+4, y+6);
 
 			return bounds;
 		}

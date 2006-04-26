@@ -3452,7 +3452,24 @@ namespace System.Windows.Forms
 				format.Alignment = StringAlignment.Near;
 			
 			//dc.FillRectangle (ResPool.GetSolidBrush( DefaultControlBackColor ), clip_rectangle);
-			dc.FillRectangle (SystemBrushes.Control, clip_rectangle);
+//			dc.FillRectangle (SystemBrushes.Control, clip_rectangle);
+			
+			if (control is PropertyGrid.PropertyToolBar) {
+				dc.FillRectangle (ResPool.GetSolidBrush(control.BackColor), clip_rectangle);
+				
+				Pen pen = SystemPens.ControlLightLight;
+				dc.DrawLine (pen, clip_rectangle.X, clip_rectangle.Y + 1, clip_rectangle.X, clip_rectangle.Bottom - 2);
+				dc.DrawLine (pen, clip_rectangle.X + 1, clip_rectangle.Y + 1, clip_rectangle.Right - 2, clip_rectangle.Y + 1);
+				
+				pen = SystemPens.ControlDark;
+				dc.DrawLine (pen, clip_rectangle.X, clip_rectangle.Bottom - 1, clip_rectangle.Right - 1, clip_rectangle.Bottom - 1);
+				dc.DrawLine (pen, clip_rectangle.Right - 1, clip_rectangle.Y + 1, clip_rectangle.Right - 1, clip_rectangle.Bottom - 2);
+			} else {
+				dc.FillRectangle (SystemBrushes.Control, clip_rectangle);
+				
+				dc.DrawLine (SystemPens.ControlDark, clip_rectangle.X, clip_rectangle.Y, clip_rectangle.Right - 1, clip_rectangle.Y);
+				dc.DrawLine (SystemPens.ControlLightLight, clip_rectangle.X, clip_rectangle.Y + 1, clip_rectangle.Right - 1, clip_rectangle.Y + 1);
+			}
 
 			foreach (ToolBarButton button in control.Buttons)
 				if (button.Visible && clip_rectangle.IntersectsWith (button.Rectangle))

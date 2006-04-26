@@ -79,7 +79,7 @@ namespace System.Windows.Forms {
 		private object current_property_value;
 
 		#endregion	// Private Members
-
+		
 		#region Contructors
 		public PropertyGrid() {
 			selected_objects = new object[1];
@@ -93,7 +93,6 @@ namespace System.Windows.Forms {
 			property_sort = PropertySort.Categorized;
 
 			property_grid_view = new PropertyGridView(this);
-			property_grid_view.Dock = DockStyle.Fill;
 
 			splitter = new Splitter();
 			splitter.Dock = DockStyle.Bottom;
@@ -128,7 +127,7 @@ namespace System.Windows.Forms {
 			help_panel.Controls.Add(help_title_label);
 			help_panel.Paint+=new PaintEventHandler(help_panel_Paint);
 
-			toolbar = new ToolBar();
+			toolbar = new PropertyToolBar();
 			toolbar.Dock = DockStyle.Top;
 			categorized_toolbarbutton = new ToolBarButton();
 			alphabetic_toolbarbutton = new ToolBarButton();
@@ -184,8 +183,12 @@ namespace System.Windows.Forms {
 			description_menuitem.Checked = this.HelpVisible;
 			this.ContextMenu = context_menu;
 			toolbar.ContextMenu = context_menu;
-
-			this.Controls.Add(property_grid_view);
+			
+			BorderHelperControl helper = new BorderHelperControl ();
+			helper.Dock = DockStyle.Fill;
+			helper.Controls.Add (property_grid_view);
+			
+			this.Controls.Add(helper);
 			this.Controls.Add(toolbar);
 			this.Controls.Add(splitter);
 			this.Controls.Add(help_panel);
@@ -232,10 +235,9 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				if (base.BackColor == value) {
-					return;
-				}
 				base.BackColor = value;
+				toolbar.BackColor = value;
+				Refresh ();
 			}
 		}
 		
@@ -709,6 +711,7 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void OnPaint (PaintEventArgs pevent) {
+			pevent.Graphics.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(BackColor), pevent.ClipRectangle);
 			base.OnPaint (pevent);
 		}
 
@@ -998,5 +1001,36 @@ namespace System.Windows.Forms {
 			}
 		}
 #endif
+		
+		// as we can not change the color for BorderStyle.FixedSingle and we need the correct
+		// ClientRectangle so that the ScrollBar doesn't draw over the border we need this class
+		internal class BorderHelperControl : Control {
+			
+			protected override void OnPaint (PaintEventArgs e)
+			{
+				e.Graphics.DrawRectangle (SystemPens.ControlDark, 0 , 0 , Width - 1, Height - 1);
+				base.OnPaint (e);
+			}
+			
+			protected override void OnSizeChanged (EventArgs e)
+			{
+				if (Controls.Count == 1) {
+					Control control = Controls [0];
+					
+					if (control.Location.X != 1 || control.Location.Y != 1)
+						control.Location = new Point (1, 1);
+					
+					control.Width = ClientRectangle.Width - 2;
+					control.Height = ClientRectangle.Height - 2;
+					
+					Refresh ();
+				}
+				base.OnSizeChanged (e);
+			}
+		}
+		
+		// needed! this little helper makes it possible to draw a different toolbar border
+		// and toolbar backcolor in ThemeWin32Classic
+		internal class PropertyToolBar : ToolBar {}
 	}
 }

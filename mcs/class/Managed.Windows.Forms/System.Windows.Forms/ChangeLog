@@ -1,3 +1,14 @@
+2006-04-26  Alexander Olk  <alex.olk@googlemail.com>
+
+	* ThemeWin32Classic.cs: ToolBars get drawn with two lines at the top.
+	  Added a little helper to draw PropertyGrid ToolBar with a different
+	  border and a different BackColor.
+	* PropertyGrid.cs: Some background parts didn't get painted with the
+	  correct background color. Added a class that helps us to draw the
+	  correct border for PropertyGridView and a class that helps us to
+	  draw ToolBars with a different backcolor
+	* PropertyGridView.cs: Draw PlusMinus with the correct colors.
+
 2006-04-25  Jonathan Chambers  <jonathan.chambers@ansys.com>
 
 	* PropertyGrid.cs: Bug 78196, font size, and splitter location.
