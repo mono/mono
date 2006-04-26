@@ -1,3 +1,8 @@
+2006-04-26  Dick Porter  <dick@ximian.com>
+
+	* socket-io.c (hostent_to_IPHostEntry2): Explicitly check for NULL
+	dereference.
+
 2006-04-25  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.h (MONO_DEBUGGER_VERSION): Bump to 56.
