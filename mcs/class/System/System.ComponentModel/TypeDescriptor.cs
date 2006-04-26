@@ -595,7 +595,8 @@ public sealed class TypeDescriptor
 	{
 		if (component != null && component.Site != null) {
 			ITypeResolutionService resver = (ITypeResolutionService) component.Site.GetService (typeof(ITypeResolutionService));
-			if (resver != null) return resver.GetType (typeName, true, false);
+			if (resver != null)
+				return resver.GetType (typeName, true, false);
 		}
 		
 		Type t = Type.GetType (typeName);
@@ -630,20 +631,25 @@ public sealed class TypeDescriptor
 		public EventDescriptorCollection GetEvents (Attribute[] attributes)
 		{
 			EventDescriptorCollection evs = GetEvents ();
-			if (attributes == null) return evs;
-			else return evs.Filter (attributes);
+			if (attributes == null)
+				return evs;
+			else
+				return evs.Filter (attributes);
 		}
 		
 		public PropertyDescriptorCollection GetProperties (Attribute[] attributes)
 		{
 			PropertyDescriptorCollection props = GetProperties ();
-			if (attributes == null) return props;
-			else return props.Filter (attributes);
+			if (attributes == null)
+				return props;
+			else
+				return props.Filter (attributes);
 		}
 		
 		public EventDescriptor GetDefaultEvent ()
 		{
-			if (_gotDefaultEvent) return _defaultEvent;
+			if (_gotDefaultEvent)
+				return _defaultEvent;
 			
 			DefaultEventAttribute attr = (DefaultEventAttribute) GetAttributes()[typeof(DefaultEventAttribute)];
 			if (attr == null || attr.Name == null) 
@@ -671,7 +677,8 @@ public sealed class TypeDescriptor
 		
 		public PropertyDescriptor GetDefaultProperty ()
 		{
-			if (_gotDefaultProperty) return _defaultProperty;
+			if (_gotDefaultProperty)
+				return _defaultProperty;
 			
 			DefaultPropertyAttribute attr = (DefaultPropertyAttribute) GetAttributes()[typeof(DefaultPropertyAttribute)];
 			if (attr == null || attr.Name == null) 
@@ -686,7 +693,8 @@ public sealed class TypeDescriptor
 		
 		protected AttributeCollection GetAttributes (IComponent comp)
 		{
-			if (_attributes != null) return _attributes;
+			if (_attributes != null)
+				return _attributes;
 			
 			bool cache = true;
 			object[] ats = _infoType.GetCustomAttributes (true);
@@ -703,7 +711,8 @@ public sealed class TypeDescriptor
 			ArrayList atts = new ArrayList ();
 			atts.AddRange (t.Values);
 			AttributeCollection attCol = new AttributeCollection (atts);
-			if (cache) _attributes = attCol;
+			if (cache)
+				_attributes = attCol;
 			return attCol;
 		}
 	}
@@ -726,7 +735,8 @@ public sealed class TypeDescriptor
 		
 		public override EventDescriptorCollection GetEvents ()
 		{
-			if (_events != null) return _events;
+			if (_events != null)
+				return _events;
 			
 			bool cache = true;
 			EventInfo[] events = _component.GetType().GetEvents ();
@@ -749,10 +759,12 @@ public sealed class TypeDescriptor
 		
 		public override PropertyDescriptorCollection GetProperties ()
 		{
-			if (_properties != null) return _properties;
+			if (_properties != null)
+				return _properties;
 			
 			bool cache = true;
-			PropertyInfo[] props = _component.GetType().GetProperties ();
+			Console.WriteLine ("Here");
+			PropertyInfo[] props = _component.GetType().GetProperties (BindingFlags.Instance | BindingFlags.Public);
 			Hashtable t = new Hashtable ();
 			foreach (PropertyInfo pr in props)
 				t [pr.Name] = new ReflectionPropertyDescriptor (pr);
@@ -766,7 +778,8 @@ public sealed class TypeDescriptor
 			PropertyDescriptor[] descriptors = new PropertyDescriptor[t.Values.Count];
 			t.Values.CopyTo (descriptors, 0);
 			PropertyDescriptorCollection attCol = new PropertyDescriptorCollection (descriptors, true);
-			if (cache) _properties = attCol;
+			if (cache)
+				_properties = attCol;
 			return attCol;
 		}
 	}
@@ -787,7 +800,8 @@ public sealed class TypeDescriptor
 		
 		public override EventDescriptorCollection GetEvents ()
 		{
-			if (_events != null) return _events;
+			if (_events != null)
+				return _events;
 			
 			EventInfo[] events = InfoType.GetEvents ();
 			EventDescriptor[] descs = new EventDescriptor [events.Length];
@@ -800,9 +814,10 @@ public sealed class TypeDescriptor
 		
 		public override PropertyDescriptorCollection GetProperties ()
 		{
-			if (_properties != null) return _properties;
+			if (_properties != null)
+				return _properties;
 			
-			PropertyInfo[] props = InfoType.GetProperties ();
+			PropertyInfo[] props = InfoType.GetProperties (BindingFlags.Instance | BindingFlags.Public);
 			PropertyDescriptor[] descs = new PropertyDescriptor [props.Length];
 			for (int n=0; n<props.Length; n++)
 				descs [n] = new ReflectionPropertyDescriptor (props[n]);

@@ -1,5 +1,12 @@
 2006-04-26  Miguel de Icaza  <miguel@novell.com>
 
+	* TypeDescriptor.cs (Info.GetProperties, TypeInfo.GetProperties):
+	Use the more specific GetProperties call so we do not return
+	static properties, should fix that part of the PropertyGrid bug
+	#78192.
+
+	Code formatting police hit again.
+
 	* ReflectionPropertyDescriptor.cs (CanResetvalue): Do not
 	dereference a null value, avoids crash in property grid.
 
