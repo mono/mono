@@ -1,5 +1,13 @@
 2006-04-27  Ankit Jain  <jankit@novell.com>
 
+	* OperationMessage.cs (Extensions): Remove, incorrectly added in earlier
+	commit.
+	* OperationInput.cs (Extensions):
+	* OperationOutput.cs (Extensions):
+	* OperationFault.cs (Extensions): Override and implement missing property.
+
+2006-04-27  Ankit Jain  <jankit@novell.com>
+
 	* ServiceDescriptionSerializerBase.cs (ServiceDescriptionWriterBase):
 	Make it internal.
 

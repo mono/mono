@@ -3,8 +3,10 @@
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
+//   Ankit Jain (jankit@novell.com)
 //
 // Copyright (C) Tim Coleman, 2002
+// Copyright (C) 2006 Novell, Inc.  http://www.novell.com
 //
 
 //
@@ -29,8 +31,32 @@
 //
 
 using System.Web.Services;
+using System.Web.Services.Configuration;
+using System.Xml.Serialization;
 
 namespace System.Web.Services.Description {
+#if NET_2_0
+	[XmlFormatExtensionPoint ("Extensions")]
+#endif
 	public sealed class OperationFault : OperationMessage {
+		
+#if NET_2_0
+		ServiceDescriptionFormatExtensionCollection extensions;
+#endif
+
+		public OperationFault ()
+		{
+#if NET_2_0
+			extensions = new ServiceDescriptionFormatExtensionCollection (this);
+#endif
+		}
+		
+#if NET_2_0
+		[XmlIgnore]
+		public override ServiceDescriptionFormatExtensionCollection Extensions {
+			get { return extensions; }
+		}
+#endif
+
 	}
 }

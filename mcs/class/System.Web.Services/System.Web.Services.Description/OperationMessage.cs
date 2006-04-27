@@ -49,9 +49,6 @@ namespace System.Web.Services.Description
 #endif
 		Operation operation;
 
-#if NET_2_0
-		ServiceDescriptionFormatExtensionCollection extensions;
-#endif
 		#endregion // Fields
 
 		#region Constructors
@@ -60,9 +57,6 @@ namespace System.Web.Services.Description
 		{
 			message = XmlQualifiedName.Empty;
 			operation = null;
-#if NET_2_0
-			extensions = new ServiceDescriptionFormatExtensionCollection (this);
-#endif
 		}
 		
 		#endregion // Constructors
@@ -87,13 +81,6 @@ namespace System.Web.Services.Description
 		public Operation Operation {
 			get { return operation; }
 		}
-
-#if NET_2_0
-		[XmlIgnore]
-		public override ServiceDescriptionFormatExtensionCollection Extensions {
-			get { return extensions; }
-		}
-#endif
 
 		#endregion // Properties
 
