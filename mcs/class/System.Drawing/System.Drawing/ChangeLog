@@ -1,3 +1,8 @@
+2006-04-27  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* gdipFunctions.cs: Added CharSet=CharSet.Unicode to GdipAddString and
+	GdipAddStringI wrapper methods.
+
 2006-04-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Bitmap.cs: throw when the target pixel format differs from the one
