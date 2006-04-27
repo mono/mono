@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Xml;
 using System.Xml.Schema;
@@ -75,6 +76,48 @@ namespace MonoTests.System.Xml
 		public void TestGetEnumerator ()
 		{
 			new XmlSchemaCollection().GetEnumerator();
+		}
+
+		[Test] // bug #78220
+		[Category ("NotWorking")]
+		public void TestCompile ()
+		{
+			string schemaFragment1 = string.Format (CultureInfo.InvariantCulture,
+				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
+				"<xs:schema xmlns:tns=\"NSDate\" elementFormDefault=\"qualified\" targetNamespace=\"NSDate\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
+				"  <xs:import namespace=\"NSStatus\" />{0}" +
+				"  <xs:element name=\"trans\" type=\"tns:TranslationStatus\" />{0}" +
+				"  <xs:complexType name=\"TranslationStatus\">{0}" +
+				"    <xs:simpleContent>{0}" +
+				"      <xs:extension xmlns:q1=\"NSStatus\" base=\"q1:StatusType\">{0}" +
+				"        <xs:attribute name=\"Language\" type=\"xs:int\" use=\"required\" />{0}" +
+				"      </xs:extension>{0}" +
+				"    </xs:simpleContent>{0}" +
+				"  </xs:complexType>{0}" +
+				"</xs:schema>", Environment.NewLine);
+
+			string schemaFragment2 = string.Format (CultureInfo.InvariantCulture,
+				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
+				"<xs:schema xmlns:tns=\"NSStatus\" elementFormDefault=\"qualified\" targetNamespace=\"NSStatus\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
+				"  <xs:simpleType name=\"StatusType\">{0}" +
+				"    <xs:restriction base=\"xs:string\">{0}" +
+				"      <xs:enumeration value=\"Untouched\" />{0}" +
+				"      <xs:enumeration value=\"Touched\" />{0}" +
+				"      <xs:enumeration value=\"Complete\" />{0}" +
+				"      <xs:enumeration value=\"None\" />{0}" +
+				"    </xs:restriction>{0}" +
+				"  </xs:simpleType>{0}" +
+				"</xs:schema>", Environment.NewLine);
+
+			XmlSchema schema1 = XmlSchema.Read (new StringReader (schemaFragment1), null);
+			XmlSchema schema2 = XmlSchema.Read (new StringReader (schemaFragment2), null);
+
+			XmlSchemaCollection schemas = new XmlSchemaCollection ();
+			schemas.Add (schema2);
+			schemas.Add (schema1);
+
+			Assert ("#1", schema1.IsCompiled);
+			Assert ("#2", schema2.IsCompiled);
 		}
 	}
 }

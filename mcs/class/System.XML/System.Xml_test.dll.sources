@@ -47,6 +47,7 @@ System.Xml/nist_dom/fundamental/NodeList/NodeList.cs
 System.Xml/nist_dom/fundamental/Text/Text.cs
 System.Xml.Schema/XmlSchemaAssertion.cs
 System.Xml.Schema/XmlSchemaBuiltInDatatypeTests.cs
+System.Xml.Schema/XmlSchemaCollectionTests.cs
 System.Xml.Schema/XmlSchemaDatatypeTests.cs
 System.Xml.Schema/XmlSchemaLengthFacetTests.cs
 System.Xml.Schema/XmlSchemaTests.cs

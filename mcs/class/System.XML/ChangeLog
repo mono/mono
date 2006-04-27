@@ -1,3 +1,8 @@
+2006-04-27  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* System.Xml_test.dll.sources: Added Test/System.Xml.Serialization/
+	XmlSchemaCollectionTests.cs.
+
 2006-04-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System.Xml_test.dll.sources: Added Test/System.Xml.Serialization/
