@@ -1,3 +1,8 @@
+2006-04-27  Massimiliano Mantione  <massi@ximian.com>
+
+	* driver.c: Disabled inline,consprop,copyprop,treeprop,deadce by
+	default until all their problems (or the ones they trigger) are fixed.
+
 2006-04-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-runtime.c (mono_aot_get_method_from_token_inner): Fix the previous patch.
