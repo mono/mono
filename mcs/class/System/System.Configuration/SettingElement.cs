@@ -36,11 +36,14 @@ namespace System.Configuration
 		: ConfigurationElement
 #endif
 	{
+#if CONFIGURATION_DEP
 		static ConfigurationPropertyCollection properties;
 		static ConfigurationProperty name_prop, serialize_as_prop, value_prop;
+#endif
 
 		static SettingElement ()
 		{
+#if CONFIGURATION_DEP
 			name_prop = new ConfigurationProperty ("name", typeof (string), null, ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
 			serialize_as_prop = new ConfigurationProperty ("serializeAs", typeof (SettingsSerializeAs), null, ConfigurationPropertyOptions.IsRequired);
 			value_prop = new ConfigurationProperty ("value", typeof (SettingValueElement), null, ConfigurationPropertyOptions.IsRequired);
@@ -49,6 +52,7 @@ namespace System.Configuration
 			properties.Add (name_prop);
 			properties.Add (serialize_as_prop);
 			properties.Add (value_prop);
+#endif
 		}
 
 		public SettingElement ()

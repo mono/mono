@@ -39,7 +39,9 @@ namespace System.Configuration
 		: ConfigurationElement
 #endif
 	{
+#if XML_DEP
 		XmlNode node;
+#endif
 
 		[MonoTODO]
 		public SettingValueElement ()
