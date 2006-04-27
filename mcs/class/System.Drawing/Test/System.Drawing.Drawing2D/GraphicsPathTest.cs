@@ -1014,6 +1014,57 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		}
 
 		[Test]
+		[ExpectedException (typeof (NullReferenceException))]
+		public void AddString_NullString ()
+		{
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddString (null, FontFamily.GenericMonospace, 0, 10, new Point (10, 10), StringFormat.GenericDefault);
+		}
+
+		[Test]
+		public void AddString_EmptyString ()
+		{
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddString (String.Empty, FontFamily.GenericMonospace, 0, 10, new Point (10, 10), StringFormat.GenericDefault);
+			Assert.AreEqual (0, gp.PointCount, "PointCount");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void AddString_NullFontFamily ()
+		{
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddString ("mono", null, 0, 10, new Point (10, 10), StringFormat.GenericDefault);
+		}
+
+		[Test]
+		public void AddString_NegativeSize ()
+		{
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddString ("mono", FontFamily.GenericMonospace, 0, -10, new Point (10, 10), StringFormat.GenericDefault);
+			Assert.IsTrue (gp.PointCount > 0, "PointCount");
+		}
+
+		[Test]
+		[Category ("NotWorking")] // StringFormat not yet supported in libgdiplus
+		public void AddString_StringFormat ()
+		{
+			// null maps to ?
+			GraphicsPath gp1 = new GraphicsPath ();
+			gp1.AddString ("mono", FontFamily.GenericMonospace, 0, 10, new RectangleF (10, 10, 10, 10), null);
+
+			// StringFormat.GenericDefault
+			GraphicsPath gp2 = new GraphicsPath ();
+			gp2.AddString ("mono", FontFamily.GenericMonospace, 0, 10, new RectangleF (10, 10, 10, 10), StringFormat.GenericDefault);
+			Assert.AreEqual (gp1.PointCount, gp2.PointCount, "GenericDefault");
+
+			// StringFormat.GenericTypographic
+			GraphicsPath gp3 = new GraphicsPath ();
+			gp3.AddString ("mono", FontFamily.GenericMonospace, 0, 10, new RectangleF (10, 10, 10, 10), StringFormat.GenericTypographic);
+			Assert.IsFalse (gp1.PointCount == gp3.PointCount, "GenericTypographic");
+		}
+
+		[Test]
 		public void GetBounds_Empty_Empty ()
 		{
 			GraphicsPath gp = new GraphicsPath ();
