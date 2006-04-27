@@ -32,14 +32,17 @@
 
 using System;
 using System.Drawing;
+using System.Drawing.Design;
 using System.ComponentModel;
 using System.Windows.Forms;
+using System.Windows.Forms.Design;
 
 namespace System.Drawing.Design
 {
 	public class ColorEditor : UITypeEditor
 	{
-		private ColorDialog colorEdit;
+		private IWindowsFormsEditorService editorService;
+		private Color selected_color;
 
 		public ColorEditor()
 		{
@@ -48,34 +51,89 @@ namespace System.Drawing.Design
 		public override object EditValue (ITypeDescriptorContext context,
 			IServiceProvider provider, object value)
 		{
-			// TODO MS.Net is using a in place color editor. We just use the modal
-			// Windows.Forms.ColorDialog to keep things simple for now
-			// especially as Windows.Forms are not fully implemented right now
+			if (context != null && provider != null) {
+				editorService = (IWindowsFormsEditorService)provider.GetService(typeof(IWindowsFormsEditorService));
+				if (editorService != null) {
+					// Create the UI editor control
+					
+					TabControl tab_control = new TabControl();
+					tab_control.Dock = DockStyle.Fill;
+					TabPage custom_tab = new TabPage("Custom");
+					TabPage web_tab = new TabPage("Web");
+					TabPage system_tab = new TabPage("System");
 
-			colorEdit = new ColorDialog ();
+					ColorListBox web_listbox = new ColorListBox();
+					ColorListBox system_listbox = new ColorListBox();
+					web_listbox.Dock = DockStyle.Fill;
+					system_listbox.Dock = DockStyle.Fill;
 
-			if (value is Color)
-				colorEdit.Color = (Color) value;
-			else
-				// Set default
-				colorEdit.Color = Color.White; // TODO set which color as default?
+					web_tab.Controls.Add(web_listbox);
+					system_tab.Controls.Add(system_listbox);
 
-			colorEdit.FullOpen = true;
-			DialogResult result = colorEdit.ShowDialog();
+					SystemColorCompare system_compare = new SystemColorCompare();
+					System.Collections.ArrayList color_list = new System.Collections.ArrayList();
+					foreach (System.Reflection.PropertyInfo property in typeof(SystemColors).GetProperties(System.Reflection.BindingFlags.Public |System.Reflection.BindingFlags.Static)) {
+						Color clr = (Color)property.GetValue(null,null);
+						color_list.Add(clr);
+					}
+					color_list.Sort(system_compare);
+					system_listbox.Items.AddRange(color_list.ToArray());
+					system_listbox.MouseUp+=new MouseEventHandler(HandleMouseUp);
+					system_listbox.SelectedValueChanged+=new EventHandler(HandleChange);
 
-			if (result == DialogResult.OK)
-				return colorEdit.Color;
-			else
-				return value;
+					WebColorCompare web_compare = new WebColorCompare();
+					color_list = new System.Collections.ArrayList();
+					foreach (KnownColor known_color in Enum.GetValues(typeof(KnownColor))) 
+					{
+						Color color = Color.FromKnownColor(known_color);
+						if (color.IsSystemColor)
+							continue;
+						color_list.Add(color);
+					}
+					color_list.Sort(web_compare);
+					web_listbox.Items.AddRange(color_list.ToArray());
+					web_listbox.MouseUp+=new MouseEventHandler(HandleMouseUp);
+					web_listbox.SelectedValueChanged+=new EventHandler(HandleChange);
+
+
+					tab_control.TabPages.Add(custom_tab);
+					tab_control.TabPages.Add(web_tab);
+					tab_control.TabPages.Add(system_tab);
+
+					Color current_color = (Color)value;
+					if (current_color.IsSystemColor) 
+					{
+						system_listbox.SelectedValue = current_color;
+						tab_control.SelectedTab = system_tab;
+					}
+					else if (current_color.IsKnownColor)
+					{
+						web_listbox.SelectedValue = current_color;
+						tab_control.SelectedTab = web_tab;
+					}
+
+
+					editorService.DropDownControl(tab_control);
+					return selected_color;
+				}
+			}
+			return base.EditValue(context, provider, value);
+		}
+
+		private void HandleChange(object sender, EventArgs e) 
+		{
+			selected_color = (Color)((ColorListBox)sender).Items[((ColorListBox)sender).SelectedIndex];
+		}
+
+		private void HandleMouseUp(object sender, MouseEventArgs e) 
+		{
+			if (editorService != null)
+				editorService.CloseDropDown();
 		}
 
 		public override UITypeEditorEditStyle GetEditStyle (ITypeDescriptorContext context)
 		{
-			return UITypeEditorEditStyle.Modal;
-
-			// TODO UITypeEditorEditStyle.DropDown is returned by the MS.Net library
-			// see EditValue why we use a modal window for now
-			// return UITypeEditorEditStyle.DropDown;
+			return UITypeEditorEditStyle.DropDown;
 		}
 
 		public override bool GetPaintValueSupported (ITypeDescriptorContext context)
@@ -93,6 +151,52 @@ namespace System.Drawing.Design
 				using (SolidBrush sb = new SolidBrush (C))
 					G.FillRectangle (sb, e.Bounds);
 			}
+		}
+
+		class ColorListBox : ListBox {
+			public ColorListBox() {
+				this.DrawMode = DrawMode.OwnerDrawFixed;
+				this.Sorted = true;
+				this.ItemHeight = 14;
+				this.BorderStyle = BorderStyle.FixedSingle;
+			}
+
+			protected override void OnDrawItem(DrawItemEventArgs e) {
+				e.DrawBackground();
+				Color color = (Color)this.Items[e.Index];
+				using (System.Drawing.SolidBrush brush = new SolidBrush(color))
+					e.Graphics.FillRectangle(brush, 2,e.Bounds.Top+2,21,9);
+				e.Graphics.DrawRectangle(SystemPens.WindowText, 2,e.Bounds.Top+2,21,9);
+				e.Graphics.DrawString(color.Name, this.Font, SystemBrushes.WindowText, 26,e.Bounds.Top);
+				if ((e.State & DrawItemState.Selected) != 0)
+					e.DrawFocusRectangle();
+				base.OnDrawItem (e);
+			}
+		}
+
+		class SystemColorCompare : System.Collections.IComparer {
+			#region IComparer Members
+
+			public int Compare(object x, object y) {
+				Color c1 = (Color)x;
+				Color c2 = (Color)y;
+				return String.Compare(c1.Name, c2.Name);
+			}
+
+			#endregion
+		}
+		class WebColorCompare : System.Collections.IComparer 
+		{
+			#region IComparer Members
+
+			public int Compare(object x, object y) 
+			{
+				Color c1 = (Color)x;
+				Color c2 = (Color)y;
+				return String.Compare(c1.Name, c2.Name);
+			}
+
+			#endregion
 		}
 	}
 }

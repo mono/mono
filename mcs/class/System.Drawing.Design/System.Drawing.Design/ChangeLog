@@ -1,3 +1,8 @@
+2006-04-27  Jonathan Chambers <jonathan.chambers@ansys.com>
+
+	* ColorEditor.cs: Make into a drop down editor
+	  and begin work on editor.
+
 2006-04-26  Alexander Olk <alex.olk@googlemail.com>
 
 	* ColorEditor.cs: Dispose the SolidBrush that fills the color
