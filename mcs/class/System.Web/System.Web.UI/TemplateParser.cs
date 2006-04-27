@@ -392,16 +392,18 @@ namespace System.Web.UI {
 
 		internal virtual Assembly AddAssemblyByFileName (string filename)
 		{
+			Assembly assembly = null;
+			Exception error = null;
+
 			try {
-				Assembly assembly = Assembly.LoadFrom(filename);
-				AddAssembly (assembly, true);
-				return assembly;
-			}
-			catch (Exception e)
-			{
-				ThrowParseException ("Assembly file " + filename + " not found", e);
-				return null; //never gets here, only to satisfy the compiler
-			}
+				assembly = Assembly.LoadFrom (filename);
+			} catch (Exception e) { error = e; }
+
+			if (assembly == null)
+				ThrowParseException ("Assembly " + filename + " not found", error);
+
+			AddAssembly (assembly, true);
+			return assembly;
 		}
 
 		internal virtual Assembly AddAssemblyByName (string name)
