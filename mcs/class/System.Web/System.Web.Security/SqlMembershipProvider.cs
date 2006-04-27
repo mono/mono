@@ -1215,16 +1215,17 @@ UPDATE dbo.aspnet_Users
 		[MonoTODO]
 		public override bool UnlockUser (string userName)
 		{
-			string commandText = @"
-UPDATE dbo.aspnet_Membership, dbo.aspnet_Users, dbo.aspnet_Application
-   SET dbo.aspnet_Membership.IsLockedOut = 0
- WHERE dbo.aspnet_Membership.UserId = dbo.aspnet_Users.UserId
-   AND dbo.aspnet_Membership.ApplicationId = dbo.aspnet_Applications.ApplicationId
-   AND dbo.aspnet_Users.ApplicationId = dbo.aspnet_Applications.ApplicationId
-   AND dbo.aspnet_Users.LoweredUserName = LOWER (@UserName)
-   AND dbo.aspnet_Applications.LoweredApplicationName = LOWER(@ApplicationName)";
-
 			CheckParam ("userName", userName, 256);
+
+			string commandText = @"
+UPDATE dbo.aspnet_Membership
+   SET IsLockedOut = 0
+  FROM dbo.aspnet_Membership m, dbo.aspnet_Users u , dbo.aspnet_Application a
+ WHERE m.UserId = u.UserId
+   AND m.ApplicationId = a.ApplicationId
+   AND u.ApplicationId = a.ApplicationId
+   AND u.LoweredUserName = LOWER (@UserName)
+   AND a.LoweredApplicationName = LOWER(@ApplicationName)";
 
 			InitConnection();
 
