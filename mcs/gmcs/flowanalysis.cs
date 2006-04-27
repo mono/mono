@@ -588,9 +588,7 @@ namespace Mono.CSharp
 			}
 
 			public Reachability Reachability {
-				get {
-					return reachability;
-				}
+				get { return reachability; }
 			}
 
 			public void Return ()
@@ -637,32 +635,6 @@ namespace Mono.CSharp
 					      result.Reachability, reachability, Type);
 
 				Reachability new_r = result.Reachability;
-
-				if (branching.Type == BranchingType.Loop) {
-					bool may_leave_loop = new_r.MayBreak;
-					new_r.ResetBreaks ();
-
-					if (branching.Infinite && !may_leave_loop) {
-						if (new_r.Returns == FlowReturns.Sometimes) {
-							// If we're an infinite loop and do not break,
-							// the code after the loop can never be reached.
-							// However, if we may return from the loop,
-							// then we do always return (or stay in the
-							// loop forever).
-							new_r.SetReturns ();
-						}
-
-						new_r.SetBarrier ();
-					}
-
-					if (may_leave_loop)
-						new_r.ResetBarrier ();
-				} else if (branching.Type == BranchingType.Switch) {
-					if (new_r.MayBreak || new_r.MayReturn)
-						new_r.ResetBarrier ();
-
-					new_r.ResetBreaks ();
-				}
 
 				//
 				// We've now either reached the point after the branching or we will
@@ -1316,6 +1288,25 @@ namespace Mono.CSharp
 
 			vector.MergeBreakOrigins (this, break_origins);
 
+			Reachability r = vector.Reachability;
+
+			if (r.MayBreak) {
+				r.ResetBarrier ();
+			} else if (Infinite) {
+				r.SetBarrier ();
+				if (r.MayReturn) {
+					// If we're an infinite loop and do not break,
+					// the code after the loop can never be reached.
+					// However, if we may return from the loop,
+					// then we do always return (or stay in the
+					// loop forever).
+					r.SetReturns ();
+				}
+			}
+
+			// swallow up the 'break'
+			r.ResetBreaks ();
+
 			return vector;
 		}
 	}
@@ -1350,6 +1341,13 @@ namespace Mono.CSharp
 			UsageVector vector = base.Merge ();
 
 			vector.MergeBreakOrigins (this, break_origins);
+
+			Reachability r = vector.Reachability;
+
+			if (r.MayBreak || r.MayReturn)
+				r.ResetBarrier ();
+
+			r.ResetBreaks ();
 
 			return vector;
 		}

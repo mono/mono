@@ -1,3 +1,9 @@
+2006-04-28  Raja R Harinath  <harinath@gmail.com>
+
+	* flowanalysis.cs (UsageVector.MergeChild): Move special-case
+	handling of loop and switch reachability to ...
+	(FlowBranchingLoop.Merge, FlowBranchingSwitch.Merge): ... these.
+
 2006-04-27  Raja R Harinath  <harinath@gmail.com>
 
 	* flowanalysis.cs (FlowBranching.InLoop): Move special-case
