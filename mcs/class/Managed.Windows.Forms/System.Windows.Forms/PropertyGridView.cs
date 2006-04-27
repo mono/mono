@@ -525,8 +525,8 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				listBox.MouseUp+=new MouseEventHandler(listBox_MouseUp);
 				dropdown_form.Controls.Clear();
 				dropdown_form.Controls.Add(listBox);
-				dropdown_form.Location = PointToScreen(new Point(grid_textbox.Location.X,grid_textbox.Location.Y+row_height));
-				dropdown_form.Width = grid_textbox.Width;
+				dropdown_form.Location = PointToScreen(new Point(SplitterLocation,grid_textbox.Location.Y+row_height));
+				dropdown_form.Width = this.Width - this.SplitterLocation;
 				dropdown_form.Show();
 			}
 			else { // use editor
@@ -614,8 +614,8 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			control.Dock = DockStyle.Fill;
 			dropdown_form.Controls.Clear();
 			dropdown_form.Controls.Add(control);
-			dropdown_form.Location = PointToScreen(new Point(grid_textbox.Location.X,grid_textbox.Location.Y+row_height));
-			dropdown_form.Width = grid_textbox.Width;
+			dropdown_form.Location = PointToScreen(new Point(SplitterLocation,grid_textbox.Location.Y+row_height));
+			dropdown_form.Width = Width - SplitterLocation;
 
 			dropdown_form_showing = true;
 			dropdown_form.Show();
@@ -631,9 +631,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		}
 
 		#endregion
-
-		#region DropDownForm Class
-		#endregion DropDownForm Class
 
 		#region Internal Classes
 		internal class ITypeDescriptorContextImpl : System.ComponentModel.ITypeDescriptorContext {

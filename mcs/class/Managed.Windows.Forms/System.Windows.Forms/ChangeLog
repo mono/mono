@@ -1,3 +1,7 @@
+2006-04-27  Jonathan Chambers  <jonathan.chambers@ansys.com>
+
+	* PropertyGridView.cs: Fix drop down width.
+
 2006-04-27  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ThemeWin32Classic.cs: Peter thinks that three additional lines are
