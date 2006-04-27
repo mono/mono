@@ -1,0 +1,10 @@
+2006-04-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* t16.exe.result
+	  t17.exe.result
+	  t18.exe.result : removed.
+	* t32.cs
+	  t32.exe.expected
+	  t32.exe.config : new test from bug #77957.
+	* Makefile : use diff --strip-trailing-cr instead of cmp so that
+	  it works fine on windows.
