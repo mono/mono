@@ -52,6 +52,7 @@ namespace Npgsql
         // Logging related values
         private static readonly String CLASSNAME = "NpgsqlCommand";
         private static ResourceManager resman = new ResourceManager(typeof(NpgsqlCommand));
+        private static readonly Regex parameterReplace = new Regex(@"([:@][\w\.]*)", RegexOptions.Singleline);
 
         private NpgsqlConnection            connection;
         private NpgsqlConnector             connector;
@@ -68,6 +69,8 @@ namespace Npgsql
         private Boolean						invalidTransactionDetected = false;
         
         private CommandBehavior             commandBehavior;
+
+        private Int64                       lastInsertedOID = 0;
 
         // Constructors
 
@@ -347,9 +350,21 @@ namespace Npgsql
 
             set
             {
-                throw new NotImplementedException();
             }
         }
+
+        /// <summary>
+        /// Returns oid of inserted row. This is only updated when using executenonQuery and when command inserts just a single row. If table is created without oids, this will always be 0.
+        /// </summary>
+
+	public Int64 LastInsertedOID
+        {
+            get
+            {
+                return lastInsertedOID;
+            }
+        }
+
 
         /// <summary>
         /// Attempts to cancel the execution of a <see cref="Npgsql.NpgsqlCommand">NpgsqlCommand</see>.
@@ -413,6 +428,9 @@ namespace Npgsql
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ExecuteNonQuery");
 
+            // Initialize lastInsertOID
+            lastInsertedOID = 0;
+
             ExecuteCommand();
             
             UpdateOutputParameters();
@@ -433,7 +451,7 @@ namespace Npgsql
             String[] ret_string_tokens = firstCompletedResponse.Split(null);        // whitespace separator.
 
 
-            // Check if the command was insert, delete or update.
+            // Check if the command was insert, delete, update, fetch or move.
             // Only theses commands return rows affected.
             // [FIXME] Is there a better way to check this??
             if ((String.Compare(ret_string_tokens[0], "INSERT", true) == 0) ||
@@ -441,12 +459,19 @@ namespace Npgsql
                     (String.Compare(ret_string_tokens[0], "DELETE", true) == 0) ||
                     (String.Compare(ret_string_tokens[0], "FETCH", true) == 0) ||
                     (String.Compare(ret_string_tokens[0], "MOVE", true) == 0))
-
+                
+                
+            {
+                if (String.Compare(ret_string_tokens[0], "INSERT", true) == 0)
+                    // Get oid of inserted row.
+                    lastInsertedOID = Int32.Parse(ret_string_tokens[1]);
+                
                 // The number of rows affected is in the third token for insert queries
                 // and in the second token for update and delete queries.
                 // In other words, it is the last token in the 0-based array.
 
                 return Int32.Parse(ret_string_tokens[ret_string_tokens.Length - 1]);
+            }
             else
                 return -1;
         }
@@ -600,19 +625,37 @@ namespace Npgsql
             if (parameters.Count != 0)
             {
                 Object[] parameterValues = new Object[parameters.Count];
+                Int16[] parameterFormatCodes = bind.ParameterFormatCodes;
+                
                 for (Int32 i = 0; i < parameters.Count; i++)
                 {
                     // Do not quote strings, or escape existing quotes - this will be handled by the backend.
                     // DBNull or null values are returned as null.
                     // TODO: Would it be better to remove this null special handling out of ConvertToBackend??
-                    parameterValues[i] = parameters[i].TypeInfo.ConvertToBackend(parameters[i].Value, true);
+                    
+                    // Do special handling of bytea values. They will be send in binary form.
+                    // TODO: Add binary format support for all supported types. Not only bytea.
+                    if (parameters[i].TypeInfo.NpgsqlDbType != NpgsqlDbType.Bytea)
+                    {
+                        
+                        parameterValues[i] = parameters[i].TypeInfo.ConvertToBackend(parameters[i].Value, true);
+                    }
+                    else
+                    {
+                        parameterFormatCodes[i] = (Int16) FormatCode.Binary;
+                        parameterValues[i]=(byte[])parameters[i].Value;
+                    }
                 }
                 bind.ParameterValues = parameterValues;
+                bind.ParameterFormatCodes = parameterFormatCodes;
             }
 
             Connector.Bind(bind);
+            
+            // See Prepare() method for a discussion of this.
             Connector.Mediator.RequireReadyForQuery = false;
             Connector.Flush();
+            
 
             connector.CheckErrorsAndNotifications();
         }
@@ -626,18 +669,6 @@ namespace Npgsql
         public Object ExecuteScalar()
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ExecuteScalar");
-
-            /*if ((type == CommandType.Text) || (type == CommandType.StoredProcedure))
-              if (parse == null)
-            			connection.Query(this); 
-               else
-               {
-                 BindParameters();
-                 connection.Execute(new NpgsqlExecute(bind.PortalName, 0));
-               }
-            else
-            	throw new NotImplementedException(resman.GetString("Exception_CommandTypeTableDirect"));
-            */
 
             ExecuteCommand();
 
@@ -675,8 +706,14 @@ namespace Npgsql
 
             // Check the connection state.
             CheckConnectionState();
+            
+            // reset any responses just before getting new ones
+            Connector.Mediator.ResetResponses();
+            
+            // Set command timeout.
+            connector.Mediator.CommandTimeout = CommandTimeout;
 
-            if (! Connector.SupportsPrepare)
+            if (! connector.SupportsPrepare)
             {
                 return;	// Do nothing.
             }
@@ -688,21 +725,86 @@ namespace Npgsql
             }
             else
             {
-                // Use the extended query parsing...
-                //planName = "NpgsqlPlan" + Connector.NextPlanIndex();
-                planName = Connector.NextPlanName();
-                String portalName = Connector.NextPortalName();
-
-                parse = new NpgsqlParse(planName, GetParseCommandText(), new Int32[] {});
-
-                Connector.Parse(parse);
-                Connector.Mediator.RequireReadyForQuery = false;
-                Connector.Flush();
-
-                // Check for errors and/or notifications and do the Right Thing.
-                connector.CheckErrorsAndNotifications();
-
-                bind = new NpgsqlBind("", planName, new Int16[] {0}, null, new Int16[] {0});
+                try
+                {
+                    
+                    connector.StopNotificationThread();
+                    
+                    // Use the extended query parsing...
+                    planName = connector.NextPlanName();
+                    String portalName = connector.NextPortalName();
+    
+                    parse = new NpgsqlParse(planName, GetParseCommandText(), new Int32[] {});
+    
+                    connector.Parse(parse);
+                    
+                    // We need that because Flush() doesn't cause backend to send
+                    // ReadyForQuery on error. Without ReadyForQuery, we don't return 
+                    // from query extended processing.
+                    
+                    // We could have used Connector.Flush() which sends us back a
+                    // ReadyForQuery, but on postgresql server below 8.1 there is an error
+                    // with extended query processing which hinders us from using it.
+                    connector.Mediator.RequireReadyForQuery = false;
+                    connector.Flush();
+                    
+                    // Check for errors and/or notifications and do the Right Thing.
+                    connector.CheckErrorsAndNotifications();
+    
+                    
+                    // Description...
+                    NpgsqlDescribe describe = new NpgsqlDescribe('S', planName);
+                
+                
+                    connector.Describe(describe);
+                    
+                    connector.Sync();
+                    
+                    Npgsql.NpgsqlRowDescription returnRowDesc = connector.Mediator.LastRowDescription;
+                
+                    Int16[] resultFormatCodes;
+                    
+                    
+                    if (returnRowDesc != null)
+                    {
+                        resultFormatCodes = new Int16[returnRowDesc.NumFields];
+                        
+                        for (int i=0; i < returnRowDesc.NumFields; i++)
+                        {
+                            Npgsql.NpgsqlRowDescriptionFieldData returnRowDescData = returnRowDesc[i];
+                            
+                            
+                            if (returnRowDescData.type_info != null && returnRowDescData.type_info.NpgsqlDbType == NpgsqlTypes.NpgsqlDbType.Bytea)
+                            {
+                            // Binary format
+                                resultFormatCodes[i] = (Int16)FormatCode.Binary;
+                            }
+                            else 
+                            // Text Format
+                                resultFormatCodes[i] = (Int16)FormatCode.Text;
+                        }
+                    
+                        
+                    }
+                    else
+                        resultFormatCodes = new Int16[]{0};
+                    
+                    bind = new NpgsqlBind("", planName, new Int16[Parameters.Count], null, resultFormatCodes);
+                }    
+                catch
+                {
+                    // See ExecuteCommand method for a discussion of this.
+                    connector.Sync();
+                    
+                    throw;
+                }
+                finally
+                {
+                    connector.ResumeNotificationThread();
+                }
+                
+                
+                
             }
         }
 
@@ -833,28 +935,22 @@ namespace Npgsql
             // If parenthesis don't need to be added, they were added by user with parameter names. Replace them.
             if (!addProcedureParenthesis)
             {
-
-                Regex a = new Regex(@"(:[\w]*)|(@[\w]*)|(.)", RegexOptions.Singleline);
-
-                //CheckParameters();
-
                 StringBuilder sb = new StringBuilder();
+                NpgsqlParameter p;
+                string[] queryparts = parameterReplace.Split(result);
 
-                for ( Match m = a.Match(result); m.Success; m = m.NextMatch() )
+                foreach (String s in queryparts)
                 {
-                    String s = m.Groups[0].ToString();
+                    if (s == string.Empty)
+                        continue;
 
-                    if ((s.StartsWith(":") ||
-                         s.StartsWith("@")) &&
-                         Parameters.Contains(s))
+                    if ((s[0] == ':' || s[0] == '@') &&
+                        Parameters.TryGetValue(s, out p))
                     {
                         // It's a parameter. Lets handle it.
-
-                        NpgsqlParameter p = Parameters[s];
                         if ((p.Direction == ParameterDirection.Input) ||
                              (p.Direction == ParameterDirection.InputOutput))
                         {
-
                             // FIXME DEBUG ONLY
                             // adding the '::<datatype>' on the end of a parameter is a highly
                             // questionable practice, but it is great for debugging!
@@ -875,12 +971,10 @@ namespace Npgsql
                     }
                     else
                         sb.Append(s);
-
                 }
 
                 result = sb.ToString();
             }
-
 
             else
             {
@@ -957,6 +1051,10 @@ namespace Npgsql
 
             // reset any responses just before getting new ones
             connector.Mediator.ResetResponses();
+            
+            // Set command timeout.
+            connector.Mediator.CommandTimeout = CommandTimeout;
+            
             return ret;
 
 
@@ -1018,6 +1116,9 @@ namespace Npgsql
             
             // reset any responses just before getting new ones
             connector.Mediator.ResetResponses();
+            
+            // Set command timeout.
+            connector.Mediator.CommandTimeout = CommandTimeout;
             
             return sb.ToString();
                     
@@ -1163,7 +1264,7 @@ namespace Npgsql
 
                 }
 
-                //[TODO] Check if there is any missing parameters in the query.
+                //[TODO] Check if there are any missing parameters in the query.
                 // For while, an error is thrown saying about the ':' char.
 
                 command.Append('(');
@@ -1193,41 +1294,51 @@ namespace Npgsql
         }
 
 
-        private String ReplaceParameterValue(String result, String parameterName, String paramVal)
+        private static String ReplaceParameterValue(String result, String parameterName, String paramVal)
         {
-            Int32 resLen = result.Length;
-            Int32 paramStart = result.IndexOf(parameterName);
-            Int32 paramLen = parameterName.Length;
-            Int32 paramEnd = paramStart + paramLen;
-            Boolean found = false;
-
-
-            while(paramStart > -1)
-            {
-                if((resLen > paramEnd) && !Char.IsLetterOrDigit(result, paramEnd))
-                {
-                    result = result.Substring(0, paramStart) + paramVal + result.Substring(paramEnd);
-                    found = true;
-                }
-                else if(resLen == paramEnd)
-                {
-                    result = result.Substring(0, paramStart)+ paramVal;
-                    found = true;
-                }
-                else
-                    break;
-                resLen = result.Length;
-                paramStart = result.IndexOf(parameterName, paramStart);
-                paramEnd = paramStart + paramLen;
-
-            }//while
-            if(!found)
-                throw new IndexOutOfRangeException (String.Format(resman.GetString("Exception_ParamNotInQuery"), parameterName));
-
-
-            return result;
-        }//ReplaceParameterValue
         
+            String quote_pattern = @"['][^']*[']";
+            String pattern = "[- |\n\r\t,)(;=+/]" + parameterName + "([- |\n\r\t,)(;=+/]|$)";
+            Int32 start, end;
+            String withoutquote = result;
+            Boolean found = false;
+            // First of all
+            // Suppress quoted string from query (because we ave to ignore them)
+            MatchCollection results = Regex.Matches(result,quote_pattern);
+            foreach (Match match in results)
+            {
+                start = match.Index;
+                end = match.Index + match.Length;
+                String spaces = new String(' ', match.Length-2);
+                withoutquote = withoutquote.Substring(0,start + 1) + spaces + withoutquote.Substring(end - 1);
+            }
+            do
+            {
+                // Now we look for the searched parameters on the "withoutquote" string
+                results = Regex.Matches(withoutquote,pattern);
+                if (results.Count == 0)
+                // If no parameter is found, go out!
+                    break;
+                // We take the first parameter found
+                found = true;
+                Match match = results[0];
+                start = match.Index;
+                if ((match.Length - parameterName.Length) == 2)
+                    // If the found string is not the end of the string
+                    end = match.Index + match.Length - 1;
+                else
+                    // If the found string is the end of the string
+                    end = match.Index + match.Length;
+                result = result.Substring(0, start + 1) + paramVal + result.Substring(end);
+                withoutquote = withoutquote.Substring(0,start + 1) + paramVal + withoutquote.Substring(end);
+            }
+            while (true);
+            if (!found)
+                throw new IndexOutOfRangeException (String.Format(resman.GetString("Exception_ParamNotInQuery"),
+                    parameterName));
+            return result;
+        }
+
         
         private String AddSingleRowBehaviorSupport(String ResultCommandText)
         {
@@ -1279,14 +1390,26 @@ namespace Npgsql
 
             // reset any responses just before getting new ones
             Connector.Mediator.ResetResponses();
+            
+            // Set command timeout.
+            connector.Mediator.CommandTimeout = CommandTimeout;
+            
+            
+            connector.StopNotificationThread();
 
 
             if (parse == null)
             {
-                Connector.Query(this);
+                connector.Query(this);
 
+
+                connector.ResumeNotificationThread();
+                
                 // Check for errors and/or notifications and do the Right Thing.
                 connector.CheckErrorsAndNotifications();
+                
+                
+                
             }
             else
             {
@@ -1300,7 +1423,7 @@ namespace Npgsql
                     // Check for errors and/or notifications and do the Right Thing.
                     connector.CheckErrorsAndNotifications();
                 }
-                finally
+                catch
                 {
                     // As per documentation:
                     // "[...] When an error is detected while processing any extended-query message,
@@ -1309,6 +1432,12 @@ namespace Npgsql
                     // So, send a sync command if we get any problems.
 
                     connector.Sync();
+                    
+                    throw;
+                }
+                finally
+                {
+                    connector.ResumeNotificationThread();
                 }
             }
         }
