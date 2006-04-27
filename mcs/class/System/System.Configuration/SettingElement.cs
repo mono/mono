@@ -62,42 +62,37 @@ namespace System.Configuration
 		public SettingElement (string name,
 				       SettingsSerializeAs serializeAs)
 		{
+#if CONFIGURATION_DEP
 			Name = name;
 			SerializeAs = serializeAs;
+#endif
 		}
 
 #if (CONFIGURATION_DEP)
 		[ConfigurationProperty ("name", DefaultValue="",
 					Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
-#endif
 		public string Name {
 			get { return (string) base [name_prop]; }
 			set { base [name_prop] = value; } // it does not reject null
 		}
 
-#if (CONFIGURATION_DEP)
 		[ConfigurationProperty ("value", DefaultValue=null,
 					Options = ConfigurationPropertyOptions.IsRequired)]
-#endif
 		public SettingValueElement Value {
 			get { return (SettingValueElement) base [value_prop]; }
 			set { base [value_prop] = value; }
 		}
 
-#if (CONFIGURATION_DEP)
 		[ConfigurationProperty ("serializeAs", DefaultValue=SettingsSerializeAs.String,
 					Options = ConfigurationPropertyOptions.IsRequired)]
-#endif
 		public SettingsSerializeAs SerializeAs {
 			get { return base [serialize_as_prop] != null ? (SettingsSerializeAs) base [serialize_as_prop] : default (SettingsSerializeAs); }
 			set { base [serialize_as_prop] = value; }
 		}
 
-#if (CONFIGURATION_DEP)
 		protected override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
-#endif
 
 		public override bool Equals (object o)
 		{
@@ -117,6 +112,7 @@ namespace System.Configuration
 				v += Value.GetHashCode ();
 			return v;
 		}
+#endif
 	}
 
 }

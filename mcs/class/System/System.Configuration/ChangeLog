@@ -1,5 +1,9 @@
 2006-04-27  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SettingElement.cs : more circular dependency fix.
+
+2006-04-27  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SettingValueElement.cs,
 	  SettingElement.cs : circular dependency hell fix.
 
