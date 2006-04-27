@@ -610,7 +610,7 @@ namespace System.Drawing.Drawing2D
                         GDIPlus.CheckStatus (status);                      	
                 }
                 
-		[MonoTODO ("GdipAddStringI isn't implemented in libgdiplus")]
+		[MonoTODO ("StringFormat isn't supported inside libgdiplus")]
 		public void AddString (string s, FontFamily family, int style, float emSize, Point origin, StringFormat format)
 		{
 			Rectangle layout;
@@ -619,7 +619,7 @@ namespace System.Drawing.Drawing2D
 			AddString (s, family, style, emSize, layout, format);
 		}
 
-		[MonoTODO ("GdipAddString isn't implemented in libgdiplus")]
+		[MonoTODO ("StringFormat isn't supported inside libgdiplus")]
 		public void AddString (string s, FontFamily family, int style, float emSize, PointF origin, StringFormat format)
   		{
 			RectangleF layout;
@@ -628,29 +628,27 @@ namespace System.Drawing.Drawing2D
 			AddString (s, family, style, emSize, layout, format);
                 }
 
-		[MonoTODO ("GdipAddStringI isn't implemented in libgdiplus")]
+		[MonoTODO ("layoutRect and StringFormat aren't supported inside libgdiplus")]
 		public void AddString (string s, FontFamily family, int style, float emSize, Rectangle layoutRect, StringFormat format)
 		{
-			if (s == null)
-				throw new ArgumentNullException ("s");
+			if (family == null)
+				throw new ArgumentException ("family");
 
-			IntPtr ffamily = (family == null) ? IntPtr.Zero : family.NativeObject;
 			IntPtr sformat = (format == null) ? IntPtr.Zero : format.NativeObject;
-
-			Status status = GDIPlus.GdipAddStringI (nativePath, s, s.Length, ffamily, style, emSize, ref layoutRect, sformat);
+			// note: the NullReferenceException on s.Length is the expected (MS) exception
+			Status status = GDIPlus.GdipAddStringI (nativePath, s, s.Length, family.NativeObject, style, emSize, ref layoutRect, sformat);
 			GDIPlus.CheckStatus (status);
 		}
 
-		[MonoTODO ("GdipAddString isn't implemented in libgdiplus")]
+		[MonoTODO ("layoutRect and StringFormat aren't supported inside libgdiplus")]
   		public void AddString (string s, FontFamily family, int style, float emSize, RectangleF layoutRect, StringFormat format)
 		{
-			if (s == null)
-				throw new ArgumentNullException ("s");
+			if (family == null)
+				throw new ArgumentException ("family");
 
-			IntPtr ffamily = (family == null) ? IntPtr.Zero : family.NativeObject;
 			IntPtr sformat = (format == null) ? IntPtr.Zero : format.NativeObject;
-
-			Status status = GDIPlus.GdipAddString (nativePath, s, s.Length, ffamily, style, emSize, ref layoutRect, sformat);
+			// note: the NullReferenceException on s.Length is the expected (MS) exception
+			Status status = GDIPlus.GdipAddString (nativePath, s, s.Length, family.NativeObject, style, emSize, ref layoutRect, sformat);
 			GDIPlus.CheckStatus (status);
 		}
 
