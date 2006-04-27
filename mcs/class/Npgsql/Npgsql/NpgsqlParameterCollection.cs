@@ -250,12 +250,12 @@ namespace Npgsql
 
             // Iterate values to see what is the index of parameter.
             Int32 index = 0;
-            if ( (parameterName[0] != ':') && (parameterName[0] != '@') )
-                parameterName = ':' + parameterName;
+            if ((parameterName[0] == ':') || (parameterName[0] == '@'))
+                parameterName = parameterName.Remove(0, 1);
 
-            foreach(NpgsqlParameter parameter in this)
+            foreach (NpgsqlParameter parameter in this)
             {
-                if (parameter.ParameterName.Remove(0, 1) == parameterName.Remove(0, 1))
+                if (parameter.ParameterName.Remove(0, 1) == parameterName)
                     return index;
                 index++;
             }
@@ -331,6 +331,28 @@ namespace Npgsql
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Contains", value);
             CheckType(value);
             return this.InternalList.Contains(value);
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether a <see cref="Npgsql.NpgsqlParameter">NpgsqlParameter</see> with the specified parameter name exists in the collection.
+        /// </summary>
+        /// <param name="parameterName">The name of the <see cref="Npgsql.NpgsqlParameter">NpgsqlParameter</see> object to find.</param>
+        /// <param name="parameter">A reference to the requested parameter is returned in this out param if it is found in the list.  This value is null if the parameter is not found.</param>
+        /// <returns><b>true</b> if the collection contains the parameter and param will contain the parameter; otherwise, <b>false</b>.</returns>
+        public bool TryGetValue(string parameterName, out NpgsqlParameter parameter)
+        {
+            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "TryGetValue", parameterName);
+            int index = IndexOf(parameterName);
+            if (index != -1)
+            {
+                parameter = this[index];
+                return true;
+            }
+            else
+            {
+                parameter = null;
+                return false;
+            }
         }
 
         /// <summary>

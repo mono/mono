@@ -48,7 +48,8 @@ namespace Npgsql
         private Int16[] _parameterFormatCodes;
         private Object[] _parameterValues;
         private Int16[] _resultFormatCodes;
-
+        
+        
 
         public NpgsqlBind(String portalName,
                           String preparedStatementName,
@@ -63,6 +64,8 @@ namespace Npgsql
             _parameterValues = parameterValues;
             _resultFormatCodes = resultFormatCodes;
 
+            
+
 
         }
 
@@ -71,6 +74,27 @@ namespace Npgsql
             get
             {
                 return _portalName;
+            }
+        }
+        
+        public String PreparedStatementName
+        {
+            get
+            {
+                return _preparedStatementName;
+            }
+        }
+
+        public Int16[] ResultFormatCodes
+        {
+            get
+            {
+                return _resultFormatCodes;
+            }
+            set
+            {
+                _resultFormatCodes = value;
+                
             }
         }
 
@@ -84,6 +108,7 @@ namespace Npgsql
             set
             {
                 _parameterFormatCodes = value;
+                
             }
         }
 
@@ -107,11 +132,11 @@ namespace Npgsql
 
 
             Int32 messageLength = 4 +
-                                  encoding.GetByteCount(_portalName) + 1 +
-                                  encoding.GetByteCount(_preparedStatementName) + 1 +
-                                  2 +
-                                  (_parameterFormatCodes.Length * 2) +
-                                  2;
+                    encoding.GetByteCount(_portalName) + 1 +
+                    encoding.GetByteCount(_preparedStatementName) + 1 +
+                    2 +
+                    (_parameterFormatCodes.Length * 2) +
+                    2;
 
 
             // Get size of parameter values.
@@ -169,9 +194,9 @@ namespace Npgsql
                             PGUtil.WriteInt32(outputStream, -1);
                         else
                         {
-                            String parameterValue = (String)_parameterValues[i];
-                            PGUtil.WriteInt32(outputStream, encoding.GetByteCount(parameterValue));
-                            outputStream.Write(encoding.GetBytes(parameterValue), 0, encoding.GetByteCount(parameterValue));
+                            Byte[] parameterValueBytes = encoding.GetBytes((String)_parameterValues[i]);
+                            PGUtil.WriteInt32(outputStream, parameterValueBytes.Length);
+                            outputStream.Write(parameterValueBytes, 0, parameterValueBytes.Length);
                         }
                     }
 

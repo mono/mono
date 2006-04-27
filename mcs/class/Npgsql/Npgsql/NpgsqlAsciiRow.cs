@@ -132,7 +132,7 @@ namespace Npgsql
 				}
 
 				NpgsqlRowDescriptionFieldData field_descr = row_desc[field_count];
-
+    
 				if (row_desc[field_count].format_code == FormatCode.Text)
 				{
 					string result = ReadStringFromStream(inputStream, field_value_size, decoder);
@@ -141,9 +141,9 @@ namespace Npgsql
 				}
 				else
 				{
-					PGUtil.CheckedStreamRead(inputStream, _inputBuffer, 0, Math.Min(field_value_size, _inputBuffer.Length));
-					// FIXME: _inputBuffer isn't holding all the field value. This code isn't handling binary data correctly.
-					data.Add(NpgsqlTypesHelper.ConvertBackendBytesToSystemType(field_descr.type_info, _inputBuffer, encoding, field_value_size, field_descr.type_modifier));
+                    Byte[] binary_data = ReadBytesFromStream(inputStream, field_value_size);
+
+                    data.Add(NpgsqlTypesHelper.ConvertBackendBytesToSystemType(field_descr.type_info, binary_data, encoding,field_value_size, field_descr.type_modifier));
 				}
             }
         }
@@ -199,5 +199,26 @@ namespace Npgsql
 				return new String(_chars, 0,charCount);
 			}
 		}
+  
+        private byte[] ReadBytesFromStream(Stream inputStream, int field_value_size)
+        {
+            byte[] binary_data = new byte[field_value_size];
+            int bytes_left = field_value_size;
+            if (field_value_size > _inputBuffer.Length)
+            {
+                int i=0;
+                while (bytes_left > READ_BUFFER_SIZE)
+                {
+                    PGUtil.CheckedStreamRead(inputStream, _inputBuffer, 0, READ_BUFFER_SIZE);
+                    _inputBuffer.CopyTo(binary_data, i*READ_BUFFER_SIZE);
+                    i++;
+                    bytes_left -= READ_BUFFER_SIZE;
+                }
+            }
+            PGUtil.CheckedStreamRead(inputStream, _inputBuffer, 0, bytes_left);
+            Int32 offset = field_value_size - bytes_left;
+            Array.Copy(_inputBuffer, 0, binary_data, offset, bytes_left);
+            return binary_data;
+        }
     }
 }

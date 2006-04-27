@@ -79,9 +79,16 @@ namespace Npgsql
             {
                 NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Open");
     
-                TcpClient tcpc = new TcpClient();
+                /*TcpClient tcpc = new TcpClient();
                 tcpc.Connect(new IPEndPoint(ResolveIPHost(context.Host), context.Port));
-                Stream stream = tcpc.GetStream();
+                Stream stream = tcpc.GetStream();*/
+                
+                Socket socket = new Socket(AddressFamily.InterNetwork,SocketType.Stream,ProtocolType.Tcp);
+
+                socket.Connect(new IPEndPoint(ResolveIPHost(context.Host), context.Port));
+
+                Stream stream = new NetworkStream(socket, true);
+
     
                                
                 // If the PostgreSQL server has SSL connectors enabled Open SslClientStream if (response == 'S') {
@@ -95,7 +102,7 @@ namespace Npgsql
                     if (response == 'S')
                     {
                         stream = new SslClientStream(
-                                    tcpc.GetStream(),
+                                    stream,
                                     context.Host,
                                     true,
                                     Mono.Security.Protocol.Tls.SecurityProtocolType.Default
@@ -111,6 +118,7 @@ namespace Npgsql
                 }
     
                 context.Stream = new BufferedStream(stream);
+                context.Socket = socket;
                 
     
                 NpgsqlEventLog.LogMsg(resman, "Log_ConnectedTo", LogLevel.Normal, context.Host, context.Port);
@@ -120,7 +128,7 @@ namespace Npgsql
             }
             catch (Exception e)
             {
-                throw new NpgsqlException(e.ToString(), e);
+                throw new NpgsqlException(e.Message, e);
             }
         }
 

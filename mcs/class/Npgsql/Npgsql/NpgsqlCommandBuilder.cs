@@ -1,9 +1,9 @@
 // NpgsqlCommandBuilder.cs
 //
 // Author:
-//   Pedro Mart√≠nez Juli√° (yoros@wanadoo.es)
+//   Pedro MartÌnez Juli· (yoros@wanadoo.es)
 //
-// Copyright (C) 2003 Pedro Mart√≠nez Juli√°
+// Copyright (C) 2003 Pedro MartÌnez Juli·
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,6 +26,7 @@
 
 
 using System;
+using System.Resources;
 using System.Data;
 using System.Data.Common;
 using System.ComponentModel;
@@ -40,6 +41,10 @@ namespace Npgsql
     public sealed class NpgsqlCommandBuilder : Component
     {
 
+        // Logging related values
+        private static readonly String CLASSNAME = "NpgsqlCommandBuilder";
+        private static ResourceManager resman = new ResourceManager(typeof(NpgsqlCommandBuilder));
+        
         bool disposed = false;
 
 
@@ -48,10 +53,9 @@ namespace Npgsql
         private NpgsqlCommand update_command;
         private NpgsqlCommand delete_command;
 
-        private string table_name = String.Empty;
-
         private string quotePrefix = "\"";
         private string quoteSuffix = "\"";
+		private DataTable select_schema;
 
         public NpgsqlCommandBuilder ()
         {}
@@ -74,37 +78,21 @@ namespace Npgsql
                     throw new InvalidOperationException ("DataAdapter is already set");
                 }
                 data_adapter = value;
-                string select_text = data_adapter.SelectCommand.CommandText;
-                string[] words = select_text.Split(new char [] {' '});
-                bool from_found = false;
-                for (int i = 0; i < words.Length; i++)
-                {
-                    if (from_found && (words[i] != String.Empty))
-                    {
-                        table_name = words[i];
-                        break;
-                    }
-                    if (words[i].ToLower() == "from")
-                    {
-                        from_found = true;
-                    }
-                }
             }
         }
 
-        private void OnRowUpdating(Object sender, NpgsqlRowUpdatingEventArgs value)
-        {
+        private void OnRowUpdating(Object sender, NpgsqlRowUpdatingEventArgs value) {
             switch (value.StatementType)
             {
-            case StatementType.Insert:
-                value.Command = GetInsertCommand(value.Row);
-                break;
-            case StatementType.Update:
-                value.Command = GetUpdateCommand(value.Row);
-                break;
-            case StatementType.Delete:
-                value.Command = GetDeleteCommand(value.Row);
-                break;  
+                case StatementType.Insert:
+                    value.Command = GetInsertCommand(value.Row);
+                    break;
+                case StatementType.Update:
+                    value.Command = GetUpdateCommand(value.Row);
+                    break;
+                case StatementType.Delete:
+                    value.Command = GetDeleteCommand(value.Row);
+                    break;
             }
 
             DataColumnMappingCollection columnMappings = value.TableMapping.ColumnMappings;
@@ -131,7 +119,6 @@ namespace Npgsql
             value.Row.AcceptChanges ();
         }
 
-
         public string QuotePrefix {
             get
             {
@@ -139,10 +126,9 @@ namespace Npgsql
             }
             set
             {
-                quotePrefix = value;
-            }
+				quotePrefix = value;
+			}
         }
-
 
         public string QuoteSuffix {
             get
@@ -151,32 +137,34 @@ namespace Npgsql
             }
             set
             {
-                quoteSuffix = value;
-            }
+				quoteSuffix = value;
+			}
         }
 
-        ///<summary>
-        ///
-        /// This method is reponsible to derive the command parameter list with values obtained from function definition.
-        /// It clears the Parameters collection of command. Also, if there is any parameter type which is not supported by Npgsql, an InvalidOperationException will be thrown.
-        /// Parameters name will be parameter1, parameter2, ...
-        /// For while, only parameter name and NpgsqlDbType are obtained.
-        ///</summary>
-        /// <param name="command">NpgsqlCommand whose function parameters will be obtained.</param>
-
+	///<summary>
+	///
+	/// This method is reponsible to derive the command parameter list with values obtained from function definition. 
+	/// It clears the Parameters collection of command. Also, if there is any parameter type which is not supported by Npgsql, an InvalidOperationException will be thrown.
+	/// Parameters name will be parameter1, parameter2, ...
+	/// For while, only parameter name and NpgsqlDbType are obtained.
+	///</summary>
+	/// <param name="command">NpgsqlCommand whose function parameters will be obtained.</param>
         public static void DeriveParameters (NpgsqlCommand command)
         {
             String query = "select proargtypes from pg_proc where proname = :procname";
-
+    
             NpgsqlCommand c = new NpgsqlCommand(query, command.Connection);
             c.Parameters.Add(new NpgsqlParameter("procname", NpgsqlDbType.Text));
             c.Parameters[0].Value = command.CommandText;
-
+    
             String types = (String) c.ExecuteScalar();
-
+            
+            if (types == null)
+                throw new InvalidOperationException (String.Format(resman.GetString("Exception_InvalidFunctionName"), command.CommandText));
+    
             command.Parameters.Clear();
             Int32 i = 1;
-
+            
             foreach(String s in types.Split())
             {
                 if (!c.Connector.OidToNameMapping.ContainsOID(Int32.Parse(s)))
@@ -186,9 +174,9 @@ namespace Npgsql
                 }
                 command.Parameters.Add(new NpgsqlParameter("parameter" + i++, c.Connector.OidToNameMapping[Int32.Parse(s)].NpgsqlDbType));
             }
-
+	    	
         }
-
+ 
         private string GetQuotedName(string str)
         {
             string result = str;
@@ -203,27 +191,41 @@ namespace Npgsql
             return result;
         }
 
+
         public NpgsqlCommand GetInsertCommand (DataRow row)
         {
             if (insert_command == null)
             {
                 string fields = "";
                 string values = "";
-                for (int i = 0; i < row.Table.Columns.Count; i++)
-                {
-                    DataColumn column = row.Table.Columns[i];
-                    if (i != 0)
-                    {
-                        fields += ", ";
-                        values += ", ";
-                    }
-                    fields += GetQuotedName(column.ColumnName);
-                    values += ":param_" + column.ColumnName;
-                }
-                if (table_name == String.Empty)
-                {
-                    table_name = row.Table.TableName;
-                }
+				bool first = true;
+				if (select_schema == null)
+				{
+					BuildSchema();
+				}
+				string table_name = string.Empty;
+				foreach(DataRow schemaRow in select_schema.Rows)
+				{
+					if (!(bool)schemaRow["IsAutoIncrement"])
+					{
+						if (!first)
+						{
+							fields += ", ";
+							values += ", ";
+						}
+						else
+						{
+							table_name = (string)schemaRow["BaseTableName"];
+							if (table_name == null || table_name.Length == 0)
+							{
+								table_name = row.Table.TableName;
+							}
+						}
+						fields += GetQuotedName((string)schemaRow["BaseColumnName"]);
+						values += ":param_" + schemaRow["ColumnName"];
+						first = false;
+					}
+				}
                 NpgsqlCommand cmdaux = new NpgsqlCommand("insert into " + GetQuotedName(table_name) + " (" + fields + ") values (" + values + ")", data_adapter.SelectCommand.Connection);
                 foreach (DataColumn column in row.Table.Columns)
                 {
@@ -242,22 +244,32 @@ namespace Npgsql
             if (update_command == null)
             {
                 string sets = "";
-                string wheres = "";
-                for (int i = 0; i < row.Table.Columns.Count; i++)
-                {
-                    if (i != 0)
-                    {
-                        sets += ", ";
-                        wheres += " and ";
-                    }
-                    DataColumn column = row.Table.Columns[i];
-                    sets += String.Format(GetQuotedName("{0}") + " = :s_param_{0}", column.ColumnName);
-                    wheres += String.Format("((" + GetQuotedName("{0}") + " is null) or (" + GetQuotedName("{0}") + " = :w_param_{0}))", column.ColumnName);
-                }
-                if (table_name == String.Empty)
-                {
-                    table_name = row.Table.TableName;
-                }
+				string wheres = "";
+				bool first = true;
+				if (select_schema == null)
+				{
+					BuildSchema();
+				}
+				string table_name = string.Empty;
+				foreach(DataRow schemaRow in select_schema.Rows)
+				{
+					if (!first)
+					{
+						sets += ", ";
+						wheres += " and ";
+					}
+					else
+					{
+						table_name = (string)schemaRow["BaseTableName"];
+						if (table_name == null || table_name.Length == 0)
+						{
+							table_name = row.Table.TableName;
+						}
+					}
+					sets += String.Format("{0} = :s_param_{1}", GetQuotedName((string)schemaRow["BaseColumnName"]), schemaRow["ColumnName"]);
+					wheres += String.Format("(({0} is null) or ({0} = :w_param_{1}))", GetQuotedName((string)schemaRow["BaseColumnName"]), schemaRow["ColumnName"]);
+					first = false;
+				}
                 NpgsqlCommand cmdaux = new NpgsqlCommand("update " + GetQuotedName(table_name) + " set " + sets + " where ( " + wheres + " )", data_adapter.SelectCommand.Connection);
                 foreach (DataColumn column in row.Table.Columns)
                 {
@@ -285,20 +297,30 @@ namespace Npgsql
         {
             if (delete_command == null)
             {
-                string wheres = "";
-                for (int i = 0; i < row.Table.Columns.Count; i++)
-                {
-                    DataColumn column = row.Table.Columns[i];
-                    if (i != 0)
-                    {
-                        wheres += " and ";
-                    }
-                    wheres += String.Format("((" + GetQuotedName("{0}") + " is null) or (" + GetQuotedName("{0}") + " = :param_{0}))", column.ColumnName);
-                }
-                if (table_name == String.Empty)
-                {
-                    table_name = row.Table.TableName;
-                }
+				string wheres = "";
+				bool first = true;
+				if (select_schema == null)
+				{
+					BuildSchema();
+				}
+				string table_name = string.Empty;
+				foreach(DataRow schemaRow in select_schema.Rows)
+				{
+					if (!first)
+					{
+						wheres += " and ";
+					}
+					else
+					{
+						table_name = (string)schemaRow["BaseTableName"];
+						if (table_name == null || table_name.Length == 0)
+						{
+							table_name = row.Table.TableName;
+						}
+					}
+					wheres += String.Format("(({0} is null) or ({0} = :param_{1}))", GetQuotedName((string)schemaRow["BaseColumnName"]), schemaRow["ColumnName"]);
+					first = false;
+				}
                 NpgsqlCommand cmdaux = new NpgsqlCommand("delete from " + GetQuotedName(table_name) + " where ( " + wheres + " )", data_adapter.SelectCommand.Connection);
                 foreach (DataColumn column in row.Table.Columns)
                 {
@@ -318,6 +340,7 @@ namespace Npgsql
             insert_command = null;
             update_command = null;
             delete_command = null;
+			select_schema = null;
         }
 
         protected override void Dispose (bool disposing)
@@ -341,6 +364,33 @@ namespace Npgsql
                 }
             }
         }
+
+		private void BuildSchema()
+		{
+			if (select_schema == null)
+			{
+				bool openedConnection = false;
+				try
+				{
+					if ((data_adapter.SelectCommand.Connection.State & ConnectionState.Open) != ConnectionState.Open)
+					{
+						data_adapter.SelectCommand.Connection.Open();
+						openedConnection = true;
+					}
+					using (NpgsqlDataReader reader = data_adapter.SelectCommand.ExecuteReader(CommandBehavior.SchemaOnly|CommandBehavior.KeyInfo))
+					{
+						select_schema = reader.GetSchemaTable();
+					}
+				}
+				finally
+				{
+					if (openedConnection)
+					{
+						data_adapter.SelectCommand.Connection.Close();
+					}
+				}
+			}
+		}
 
         /*~NpgsqlCommandBuilder ()
         {

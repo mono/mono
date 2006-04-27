@@ -3,6 +3,7 @@
 -resource:Npgsql/NpgsqlParameterCollection.resources,Npgsql.NpgsqlParameterCollection.resources
 -resource:Npgsql/NpgsqlParameter.resources,Npgsql.NpgsqlParameter.resources
 -resource:Npgsql/NpgsqlCommand.resources,Npgsql.NpgsqlCommand.resources
+-resource:Npgsql/NpgsqlCommandBuilder.resources,Npgsql.NpgsqlCommandBuilder.resources
 -resource:Npgsql/NpgsqlConnectedState.resources,Npgsql.NpgsqlConnectedState.resources
 -resource:Npgsql/NpgsqlConnection.resources,Npgsql.NpgsqlConnection.resources
 -resource:Npgsql/NpgsqlReadyState.resources,Npgsql.NpgsqlReadyState.resources

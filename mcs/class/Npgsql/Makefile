@@ -44,6 +44,7 @@ RESX_RES = \
 	Npgsql/NpgsqlClosedState.resources			\
 	Npgsql/NpgsqlParameterCollection.resources		\
 	Npgsql/NpgsqlCommand.resources				\
+	Npgsql/NpgsqlCommandBuilder.resources			\
 	Npgsql/NpgsqlConnectedState.resources			\
 	Npgsql/NpgsqlParameter.resources			\
 	Npgsql/NpgsqlConnection.resources			\
@@ -52,7 +53,7 @@ RESX_RES = \
 	Npgsql/NpgsqlEventLog.resources				\
 	Npgsql/NpgsqlException.resources			\
 	Npgsql/PGUtil.resources					\
-	Npgsql/NpgsqlConnectionString.resources					\
+	Npgsql/NpgsqlConnectionString.resources			\
 	NpgsqlTypes/NpgsqlTypesHelper.resources			
 
 include ../../build/library.make

@@ -59,6 +59,7 @@ namespace Npgsql
         private NpgsqlRowDescription	_rd;
         private ArrayList				_rows;
         private String                  _sqlSent;
+        private Int32                   _commandTimeout;
         
 
         public NpgsqlMediator()
@@ -73,6 +74,7 @@ namespace Npgsql
             _parameters = new ListDictionary(CaseInsensitiveComparer.Default);
             _backend_key_data = null;
             _sqlSent = String.Empty;
+            _commandTimeout = 0;
         }
 
         public void ResetExpectations()
@@ -90,6 +92,7 @@ namespace Npgsql
             _parameters.Clear();
             _backend_key_data = null;
             _sqlSent = String.Empty;
+            _commandTimeout = 0;
         }
 
 
@@ -184,6 +187,20 @@ namespace Npgsql
             {
                 return _sqlSent;
             }
+        }
+        
+        public Int32 CommandTimeout
+        {
+            set
+            {
+                _commandTimeout = value;
+            }
+            
+            get
+            {
+                return _commandTimeout;
+            }
+        
         }
 
         public void AddNotification(NpgsqlNotificationEventArgs data)

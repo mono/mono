@@ -71,9 +71,9 @@ namespace Npgsql
 
             NpgsqlQuery query = new NpgsqlQuery(command, context.BackendProtocolVersion);
 
-            BufferedStream stream = new BufferedStream(context.Stream);
-            query.WriteToStream(stream, context.Encoding);
-            stream.Flush();
+            query.WriteToStream(context.Stream, context.Encoding);
+            context.Stream.Flush();
+            
 
             ProcessBackendResponses(context);
 
@@ -82,9 +82,10 @@ namespace Npgsql
         public override void Parse(NpgsqlConnector context, NpgsqlParse parse)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Parse");
-            BufferedStream stream = new BufferedStream(context.Stream);
+                        
+            Stream stream = context.Stream;
             parse.WriteToStream(stream, context.Encoding);
-            stream.Flush();
+            //stream.Flush();
         }
 
 
@@ -100,16 +101,26 @@ namespace Npgsql
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Flush");
             _flushMessage.WriteToStream(context.Stream, context.Encoding);
+            context.Stream.Flush();
             ProcessBackendResponses(context);
         }
 
         public override void Bind(NpgsqlConnector context, NpgsqlBind bind)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Bind");
-            BufferedStream stream = new BufferedStream(context.Stream);
+            
+            Stream stream = context.Stream;
+            
             bind.WriteToStream(stream, context.Encoding);
-            stream.Flush();
+            //stream.Flush();
 
+        }
+        
+        public override void Describe(NpgsqlConnector context, NpgsqlDescribe describe)
+        {
+            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Describe");
+            describe.WriteToStream(context.Stream, context.Encoding);
+            //context.Stream.Flush();
         }
 
         public override void Execute(NpgsqlConnector context, NpgsqlExecute execute)
@@ -117,10 +128,10 @@ namespace Npgsql
 
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Execute");
             NpgsqlDescribe describe = new NpgsqlDescribe('P', execute.PortalName);
-            BufferedStream stream = new BufferedStream(context.Stream);
+            Stream stream = context.Stream;
             describe.WriteToStream(stream, context.Encoding);
             execute.WriteToStream(stream, context.Encoding);
-            stream.Flush();
+            //stream.Flush();
             Sync(context);
         }
 

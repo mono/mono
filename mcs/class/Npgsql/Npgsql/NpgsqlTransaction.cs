@@ -52,21 +52,24 @@ namespace Npgsql
             resman = new System.Resources.ResourceManager(this.GetType());
 
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, CLASSNAME);
-            if ((isolation != IsolationLevel.ReadCommitted) &&
-                    (isolation != IsolationLevel.Serializable))
-                throw new ArgumentOutOfRangeException(resman.GetString("Exception_UnsopportedIsolationLevel"), "isolation");
-
+            
             _conn = conn;
             _isolation = isolation;
 
-            StringBuilder commandText = new StringBuilder("SET TRANSACTION ISOLATION LEVEL ");
+            StringBuilder commandText = new StringBuilder("BEGIN; SET TRANSACTION ISOLATION LEVEL ");
 
-            if (isolation == IsolationLevel.ReadCommitted)
-                commandText.Append("READ COMMITTED");
-            else
+            if ( (isolation == IsolationLevel.RepeatableRead) || 
+                 (isolation == IsolationLevel.Serializable)
+               )
                 commandText.Append("SERIALIZABLE");
+            else
+            {
+                // Set isolation level default to read committed.
+                _isolation = IsolationLevel.ReadCommitted;
+                commandText.Append("READ COMMITTED");
+            }
 
-            commandText.Append("; BEGIN");
+            commandText.Append(";");
 
             NpgsqlCommand command = new NpgsqlCommand(commandText.ToString(), conn.Connector);
             command.ExecuteNonQuery();

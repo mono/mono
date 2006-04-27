@@ -83,6 +83,8 @@ namespace Npgsql
 
         public static bool operator == (ServerVersion One, ServerVersion TheOther)
         {
+            if (((Object)One == null) || ((Object)TheOther == null))
+                 return false;
             return
               One._Major == TheOther._Major &&
               One._Minor == TheOther._Minor &&
@@ -91,6 +93,9 @@ namespace Npgsql
 
         public static bool operator != (ServerVersion One, ServerVersion TheOther)
         {
+            if (((Object)One == null) || ((Object)TheOther == null))
+                return true;
+            
             return ! (One == TheOther);
         }
 
@@ -128,6 +133,9 @@ namespace Npgsql
 
         public override bool Equals(object O)
         {
+            if (O == null)
+                return false;
+            
             return (O.GetType() == this.GetType() && this == (ServerVersion)O);
         }
 

@@ -7,6 +7,7 @@ Npgsql/NpgsqlAsciiRow.cs
 Npgsql/NpgsqlBackEndKeyData.cs
 Npgsql/NpgsqlBinaryRow.cs
 Npgsql/NpgsqlBind.cs
+Npgsql/NpgsqlCancelRequest.cs
 Npgsql/NpgsqlClosedState.cs
 Npgsql/NpgsqlCommand.cs
 Npgsql/NpgsqlCommandBuilder.cs

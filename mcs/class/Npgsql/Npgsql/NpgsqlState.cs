@@ -33,6 +33,7 @@ using System.Collections;
 using System.Text;
 using System.Resources;
 
+
 namespace Npgsql
 {
     ///<summary> This class represents the base class for the state pattern design pattern
@@ -93,6 +94,16 @@ namespace Npgsql
         {
             throw new InvalidOperationException("Internal Error! " + this);
         }
+        
+        public virtual void Describe(NpgsqlConnector context, NpgsqlDescribe describe)
+        {
+            throw new InvalidOperationException("Internal Error! " + this);
+        }
+        
+        public virtual void CancelRequest(NpgsqlConnector context)
+        {
+            throw new InvalidOperationException("Internal Error! " + this);
+        }
 
         public virtual void Close( NpgsqlConnector context )
         {
@@ -126,11 +137,18 @@ namespace Npgsql
         /// to handle backend requests.
         /// </summary>
         ///
-        protected virtual void ProcessBackendResponses( NpgsqlConnector context )
+        internal virtual void ProcessBackendResponses( NpgsqlConnector context )
         {
 
             try
             {
+                
+                // Process commandTimeout behavior.
+                
+                if ((context.Mediator.CommandTimeout > 0) && (!context.Socket.Poll(1000000 * context.Mediator.CommandTimeout, SelectMode.SelectRead)))
+                    context.CancelRequest();
+                
+                
                 switch (context.BackendProtocolVersion)
                 {
                 case ProtocolVersion.Version2 :
@@ -154,7 +172,7 @@ namespace Npgsql
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ProcessBackendResponses");
 
-            BufferedStream 	stream = new BufferedStream(context.Stream);
+            Stream 	stream = context.Stream;
             NpgsqlMediator mediator = context.Mediator;
 
             // Often used buffer
@@ -403,6 +421,9 @@ namespace Npgsql
                     Int32 PID = PGUtil.ReadInt32(stream, inputBuffer);
                     String notificationResponse = PGUtil.ReadString( stream, context.Encoding );
                     mediator.AddNotification(new NpgsqlNotificationEventArgs(PID, notificationResponse));
+                    
+                    if (context.IsNotificationThreadRunning)
+                        readyForQuery = true;
 
                     // Wait for ReadForQuery message
                     break;
@@ -424,7 +445,7 @@ namespace Npgsql
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ProcessBackendResponses");
 
-            BufferedStream 	stream = new BufferedStream(context.Stream);
+            Stream 	stream = context.Stream;
             NpgsqlMediator mediator = context.Mediator;
 
             // Often used buffers
@@ -573,6 +594,17 @@ namespace Npgsql
 
                     // Now wait for the AsciiRow messages.
                     break;
+                case NpgsqlMessageTypes_Ver_3.ParameterDescription:
+                    
+                    // Do nothing,for instance,  just read...
+                    int lenght = PGUtil.ReadInt32(stream, inputBuffer);
+                    int nb_param = PGUtil.ReadInt16(stream, inputBuffer);
+                    for (int i=0; i < nb_param; i++)
+                    {
+                        int typeoid = PGUtil.ReadInt32(stream, inputBuffer);
+                    }
+                    
+                    break;
 
                 case NpgsqlMessageTypes_Ver_3.DataRow:
                     // This is the AsciiRow message.
@@ -680,6 +712,9 @@ namespace Npgsql
                         PGUtil.ReadString( stream, context.Encoding );
                         mediator.AddNotification(new NpgsqlNotificationEventArgs(PID, notificationResponse));
                     }
+                    
+                    if (context.IsNotificationThreadRunning)
+                        readyForQuery = true;
 
                     // Wait for ReadForQuery message
                     break;

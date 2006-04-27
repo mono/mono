@@ -392,6 +392,7 @@ namespace Npgsql
         public static readonly String ConnectionLifeTime    = "CONNECTIONLIFETIME";
         public static readonly String MinPoolSize           = "MINPOOLSIZE";
         public static readonly String MaxPoolSize           = "MAXPOOLSIZE";
+        public static readonly String SyncNotification      = "SYNCNOTIFICATION";
 
         // A list of aliases for some of the above values.  If one of these aliases is
         // encountered when parsing a connection string, it's real key name will
@@ -439,6 +440,7 @@ namespace Npgsql
         public static readonly Int32 MaxPoolSize            = 20;
         public static readonly Int32 Timeout                = 15; // Seconds
         public static readonly Int32 ConnectionLifeTime     = 15; // Seconds
+        public static readonly Boolean SyncNotification     = false; 
     }
     
     internal enum SslMode

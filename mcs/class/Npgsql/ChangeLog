@@ -1,10 +1,74 @@
 
+2006-04-27  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+
+    * Npgsql_test.dll.sources,
+      Npgsql.dll.sources,
+      Npgsql/NpgsqlError.cs,
+      Npgsql/NpgsqlCommandBuilder.resx,
+      Npgsql/NpgsqlConnectedState.cs,
+      Npgsql/NpgsqlBind.cs,
+      Npgsql/NpgsqlTransaction.cs,
+      Npgsql/NpgsqlConnectionString.cs,
+      Npgsql/NpgsqlConnection.cs,
+      Npgsql/NpgsqlClosedState.cs,
+      Npgsql/NpgsqlState.cs,
+      Npgsql/NpgsqlAsciiRow.cs,
+      Npgsql/NpgsqlConnector.cs,
+      Npgsql/NpgsqlParameterCollection.cs,
+      Npgsql/NpgsqlCancelRequest.cs,
+      Npgsql/NpgsqlCommandBuilder.cs,
+      Npgsql/NpgsqlException.cs,
+      Npgsql/NpgsqlMediator.cs,
+      Npgsql/NpgsqlReadyState.cs,
+      Npgsql/PGUtil.cs,
+      ChangeLog,
+      Npgsql.dll.resources,
+      NpgsqlTypes/NpgsqlDbType.cs,
+      NpgsqlTypes/NpgsqlTypeConverters.cs,
+      NpgsqlTypes/NpgsqlTypes.cs,
+      NpgsqlTypes/NpgsqlTypesHelper.cs,
+      Makefile: Updated to RC1 version.
+
+
 Thu Feb 23 10:29:13 CET 2006 Paolo Molaro <lupus@ximian.com>
 
-	* Npgsql/NpgsqlCommand.cs: return count for fetch and move, too,
-	patch from Federico Di Gregorio <fog@initd.org>.
+    * Npgsql/NpgsqlCommand.cs: return count for fetch and move, too,
+    patch from Federico Di Gregorio <fog@initd.org>.
+
+
+2006-01-05  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+
+    * PGUtil.cs: [#1000517] ServerVersion operator overload. Fixed. Thanks Otto for heads up.
+
+
+2006-01-01  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+	
+    * NpgsqlCommand.cs: [#1000497] Dot in parameter name causes exception. Added performance patch for GetClearCommandText() thanks Bryan Mayland.
+    * NpgsqlParameterCollection.cs: Added performance patch for GetClearCommandText() thanks Bryan Mayland.
+    * [#1000454] Getting identifier of an inserted row. Added property LastInsertedOID to NpgsqlCommand. This property only works when using a single insert command and the table was created with oids else it returns 0.
+
+2005-12-29  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+
+    * NpgsqlCommand.cs: [#1000500] Fixed problem when parsing parameter names with NpgsqlCommand.Prepare(), [#1000497] Fixed problem with dot in parameter names.
+
+2005-12-25  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+
+    * NpgsqlTransaction.cs: [#1000491] Fixed transaction isolation level setting. Thanks Ottó Havasvölgyi for heads up.
+    * NpgsqlTransaction.cs.resx: Removed unused key.
+
+2005-12-14  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+
+    * NpgsqlAsciiRow.cs,
+      NpgsqlBind.cs,
+      NpgsqlCommand.cs,
+      NpgsqlConnector.cs,
+      NpgsqlReadyState.cs,
+      NpgsqlState.cs,
+      NpgsqlTypesHelper.cs: [#1000458] Enormous memory increase (and application crash) with large BYTEA parameter. Added binary support.  Thanks Hubert FONGARNAND for patch. Improved network performance by removing some Stream.Flush() calls.
+
 
 2005-12-13  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+
 
 	* NpgsqlClosedState.cs:  Added a performance improvement fix. Npgsql now use a buffered stream for all server interactions.
 

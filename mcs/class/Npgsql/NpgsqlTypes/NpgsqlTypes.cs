@@ -218,4 +218,59 @@ namespace NpgsqlTypes
             return string.Format("({0}), {1}", Center, Radius);
         }
     }
+
+
+	/// <summary>
+	/// Represents a PostgreSQL inet type.
+	/// </summary>
+	public struct NpgsqlInet
+	{
+		public IPAddress addr;
+		public int mask;
+
+		public NpgsqlInet(IPAddress addr, int mask)
+		{
+			this.addr = addr;
+			this.mask = mask;
+		}
+
+		public NpgsqlInet(IPAddress addr)
+		{
+			this.addr = addr;
+			this.mask = 32;
+		}
+
+		public NpgsqlInet(string addr)
+		{
+			if (addr.IndexOf('/') > 0)
+			{
+				string[] addrbits = addr.Split('/');
+				if (addrbits.GetUpperBound(0) != 1)
+					throw new FormatException("Invalid number of parts in CIDR specification");
+				this.addr = IPAddress.Parse(addrbits[0]);
+				this.mask = int.Parse(addrbits[1]);
+			}
+			else
+			{
+				this.addr = IPAddress.Parse(addr);
+				this.mask = 32;
+			}
+		}
+
+		public override String ToString()
+		{
+			if (mask != 32)
+				return string.Format("{0}/{1}", addr.ToString(), mask);
+			else
+				return addr.ToString();
+		}
+
+		public static implicit operator IPAddress(NpgsqlInet x)
+		{
+			if (x.mask != 32)
+				throw new InvalidCastException("Cannot cast CIDR network to address");
+			else
+				return x.addr;
+		}
+	}
 }

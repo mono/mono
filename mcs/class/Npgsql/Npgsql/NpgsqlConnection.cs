@@ -140,19 +140,67 @@ namespace Npgsql
         /// <summary>
         /// Gets or sets the string used to connect to a PostgreSQL database.
         /// Valid values are:
+        /// <ul>
+        /// <li>
         /// Server:             Address/Name of Postgresql Server;
+        /// </li>
+        /// <li>
         /// Port:               Port to connect to;
+        /// </li>
+        /// <li>
         /// Protocol:           Protocol version to use, instead of automatic; Integer 2 or 3;
+        /// </li>
+        /// <li>
         /// Database:           Database name. Defaults to user name if not specified;
+        /// </li>
+        /// <li>
+        
         /// User Id:            User name;
+        /// </li>
+        /// <li>
+        
         /// Password:           Password for clear text authentication;
+        /// </li>
+        /// <li>
+        
         /// SSL:                True or False. Controls whether to attempt a secure connection. Default = False;
+        /// </li>
+        /// <li>
+        
         /// Pooling:            True or False. Controls whether connection pooling is used. Default = True;
+        /// </li>
+        /// <li>
+        
         /// MinPoolSize:        Min size of connection pool;
+        /// </li>
+        /// <li>
+        
         /// MaxPoolSize:        Max size of connection pool;
-        /// Encoding:           Encoding to be used;
-        /// Timeout:            Time to wait for connection open in seconds.
-        /// ConnectionLifeTime: Time to wait before closing unused connections in the pool.
+        /// </li>
+        /// <li>
+        
+        /// Encoding:           Encoding to be used; Can be ASCII or UNICODE. Default is ASCII. Use UNICODE if you are having problems with accents.
+        /// </li>
+        /// <li>
+        
+        /// Timeout:            Time to wait for connection open in seconds. Default is 15.
+        /// </li>
+        /// <li>
+        
+        /// Sslmode:            Mode for ssl connection control. Can be Prefer, Require, Allow or Disable. Default is Disable. Check user manual for explanation of values.
+        /// </li>
+        
+        /// <li>
+        
+        /// ConnectionLifeTime: Time to wait before closing unused connections in the pool in seconds. Default is 15.
+        /// </li>
+        /// <li>
+        
+        /// SyncNotification:   Specifies if Npgsql should use synchronous notifications.
+        /// </li>
+        /// </ul>
+        
+        
         /// </summary>
         /// <value>The connection string that includes the server name,
         /// the database name, and other parameters needed to establish
@@ -262,6 +310,18 @@ namespace Npgsql
             get
             {
                 return connection_string.ToString(ConnectionStringKeys.Database);
+            }
+        }
+        
+        /// <summary>
+        /// Gets flag indicating if we are using Synchronous notification or not.
+        /// The default value is false.
+        /// </summary>
+        public Boolean SyncNotification
+        {
+            get
+            {
+                return connection_string.ToBool(ConnectionStringKeys.SyncNotification, ConnectionStringDefaults.SyncNotification);
             }
         }
 
@@ -400,9 +460,13 @@ namespace Npgsql
 
             // Get a Connector.  The connector returned is guaranteed to be connected and ready to go.
             connector = NpgsqlConnectorPool.ConnectorPoolMgr.RequestConnector (this);
-
+            
             connector.Notice += NoticeDelegate;
             connector.Notification += NotificationDelegate;
+            
+            if (SyncNotification)
+                connector.AddNotificationThread();
+            
         }
 
         /// <summary>
@@ -446,8 +510,14 @@ namespace Npgsql
 
                     connector.Notification -= NotificationDelegate;
                     connector.Notice -= NoticeDelegate;
+                    
+                    if (SyncNotification)
+                        connector.RemoveNotificationThread();
 
                     NpgsqlConnectorPool.ConnectorPoolMgr.ReleaseConnector(this, connector);
+                    
+                    
+                    
                     connector = null;
                 }
             }

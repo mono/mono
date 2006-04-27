@@ -60,7 +60,19 @@ namespace Npgsql
 
             startupPacket.WriteToStream( new BufferedStream(context.Stream), context.Encoding );
             context.Mediator.RequireReadyForQuery = false;
+            context.Mediator.CommandTimeout = 20;
+            context.Stream.Flush();
             ProcessBackendResponses( context );
+        }
+        
+        public override void CancelRequest(NpgsqlConnector context)
+        {
+            NpgsqlCancelRequest CancelRequestMessage = new NpgsqlCancelRequest(context.BackEndKeyData);
+            
+            
+            CancelRequestMessage.WriteToStream(context.Stream, context.Encoding);
+            
+                
         }
 
     }

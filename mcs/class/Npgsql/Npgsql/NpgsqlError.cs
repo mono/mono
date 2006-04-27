@@ -49,6 +49,7 @@ namespace Npgsql
     /// This class represents the ErrorResponse and NoticeResponse
     /// message sent from PostgreSQL server.
     /// </summary>
+    [Serializable]
     public sealed class NpgsqlError
     {
         // Logging related values

@@ -32,6 +32,8 @@ using System.Data;
 using System.Security;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading;
+using System.Net.Sockets;
 
 using Mono.Security.Protocol.Tls;
 
@@ -80,6 +82,8 @@ namespace Npgsql
         // The physical network connection to the backend.
         private Stream                           _stream;
 
+        private Socket                           _socket;
+         
         // Mediator which will hold data generated from backend.
         private NpgsqlMediator                   _mediator;
 
@@ -113,6 +117,15 @@ namespace Npgsql
         private const String                     _planNamePrefix = "npgsqlplan";
         private const String                     _portalNamePrefix = "npgsqlportal";
 
+                
+        private Thread                           _notificationThread;
+        
+        // The AutoResetEvent to synchronize processing threads.
+        internal AutoResetEvent                   _notificationAutoResetEvent;
+        
+        // Counter of notification thread start/stop requests in order to 
+        internal Int16                            _notificationThreadStopCount;
+
 
 
         /// <summary>
@@ -131,6 +144,8 @@ namespace Npgsql
             _oidToNameMapping = new NpgsqlBackendTypeMapping();
             _planIndex = 0;
             _portalIndex = 0;
+            _notificationThreadStopCount = -99;
+            _notificationAutoResetEvent = new AutoResetEvent(true);
 
         }
 
@@ -233,6 +248,11 @@ namespace Npgsql
         internal void Bind (NpgsqlBind bind)
         {
             CurrentState.Bind(this, bind);
+        }
+        
+        internal void Describe (NpgsqlDescribe describe)
+        {
+            CurrentState.Describe(this, describe);
         }
 
         internal void Execute (NpgsqlExecute execute)
@@ -452,6 +472,21 @@ namespace Npgsql
             set
             {
                 _stream = value;
+            }
+        }
+        
+        /// <summary>
+        /// The physical connection socket to the backend.
+        /// </summary>
+
+        internal Socket Socket {
+            get
+            {
+                return _socket;
+            }
+            set
+            {
+                _socket = value;
             }
         }
 
@@ -689,12 +724,29 @@ namespace Npgsql
             }
             catch {}
         }
+        
+        internal void CancelRequest()
+        {
+            
+            NpgsqlConnector CancelConnector = new NpgsqlConnector(ConnectionString, false, false);
+            
+            CancelConnector._backend_keydata = BackEndKeyData;
+            
+            
+            // Get a raw connection, possibly SSL...
+            CancelConnector.CurrentState.Open(CancelConnector);
+            
+            // Cancel current request.
+            CancelConnector.CurrentState.CancelRequest(CancelConnector);
+            
+            
+        }
 
 
-    ///<summary>
-    /// Returns next portal index.
-    ///</summary>
-    internal String NextPortalName()
+        ///<summary>
+        /// Returns next portal index.
+        ///</summary>
+        internal String NextPortalName()    
         {
             
             return _portalNamePrefix + System.Threading.Interlocked.Increment(ref _portalIndex);
@@ -707,6 +759,110 @@ namespace Npgsql
         internal String NextPlanName()
         {
             return _planNamePrefix + System.Threading.Interlocked.Increment(ref _planIndex);
+        }
+        
+        
+        internal void RemoveNotificationThread()
+        {
+            // Wait notification thread finish its work.
+            _notificationAutoResetEvent.WaitOne();
+            
+            // Kill notification thread.
+            _notificationThread.Abort();
+            _notificationThread = null;
+            
+            // Special case in order to not get problems with thread synchronization.
+            // It will be turned to 0 when synch thread is created.
+            _notificationThreadStopCount = -99;  
+            
+        }
+        
+        internal void AddNotificationThread()
+        {
+            
+            _notificationThreadStopCount = 0;
+            _notificationAutoResetEvent.Set();
+            
+            NpgsqlContextHolder contextHolder = new NpgsqlContextHolder(this, CurrentState);
+            
+            _notificationThread = new Thread(new ThreadStart(contextHolder.ProcessServerMessages));
+            
+            _notificationThread.Start();
+            
+            
+            
+        }
+        
+        internal void StopNotificationThread()
+        {
+            
+            _notificationThreadStopCount++;
+            
+            if (_notificationThreadStopCount == 1) // If this call was the first to increment.
+            {
+                
+                _notificationAutoResetEvent.WaitOne();
+                
+            }
+        }
+        
+        internal void ResumeNotificationThread()
+        {
+            _notificationThreadStopCount--;
+            if (_notificationThreadStopCount == 0)
+            {
+                // Release the synchronization handle.
+                
+                _notificationAutoResetEvent.Set();
+            }
+            
+        }
+        
+        internal Boolean IsNotificationThreadRunning
+        {
+            get
+            {
+                return _notificationThreadStopCount <= 0;
+                
+            }
+        }
+        
+        
+        internal class NpgsqlContextHolder
+        {
+        
+            private NpgsqlConnector connector;
+            private NpgsqlState     state;
+        
+            internal NpgsqlContextHolder(NpgsqlConnector connector, NpgsqlState state)
+            {
+                this.connector = connector;
+                this.state = state;
+            
+            }
+        
+            internal void ProcessServerMessages()
+            {
+                
+                while(true)
+                {
+                    this.connector._notificationAutoResetEvent.WaitOne();
+                    
+                    if (this.connector.Socket.Poll(1000, SelectMode.SelectRead))
+                    {
+                        // reset any responses just before getting new ones
+                        this.connector.Mediator.ResetResponses();
+                        this.state.ProcessBackendResponses(this.connector);
+                        this.connector.CheckErrorsAndNotifications();
+                    }
+               
+                    this.connector._notificationAutoResetEvent.Set();
+                }
+    
+                
+                
+            }
+        
         }
 
 

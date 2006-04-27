@@ -251,7 +251,17 @@ namespace NpgsqlTypes
             return "$" + ((IFormattable)NativeData).ToString(null, CultureInfo.InvariantCulture.NumberFormat);
         }
         
-        
+		/// <summary>
+		/// Convert to a postgres inet.
+		/// </summary>
+		internal static String ToIPAddress(NpgsqlNativeTypeInfo TypeInfo, Object NativeData)
+		{
+			if (NativeData is NpgsqlInet)
+				return ((NpgsqlInet)NativeData).ToString();
+			else
+				return ((System.Net.IPAddress)NativeData).ToString();
+		}
+
     }
 
 

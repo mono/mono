@@ -63,11 +63,14 @@ namespace Npgsql
         }
         
         
-        internal NpgsqlException(String message) : base (message)
+        internal NpgsqlException(String message) : this (message, null)
         {}
         
         internal NpgsqlException(String message, Exception innerException) : base (message, innerException)
-        {}
+        {
+            errors = new ArrayList();
+            errors.Add(new NpgsqlError(ProtocolVersion.Unknown, message));
+        }
         
         
         override public void GetObjectData(SerializationInfo info,StreamingContext context) 

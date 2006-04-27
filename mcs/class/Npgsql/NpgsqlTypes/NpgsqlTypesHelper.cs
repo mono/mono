@@ -97,7 +97,7 @@ namespace NpgsqlTypes
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ConvertBackendBytesToStytemType");
 
-            /*
+            
             // We are never guaranteed to know about every possible data type the server can send us.
             // When we encounter an unknown type, we punt and return the data without modification.
             if (TypeInfo == null)
@@ -105,9 +105,9 @@ namespace NpgsqlTypes
 
             switch (TypeInfo.NpgsqlDbType)
             {
-            case NpgsqlDbType.Binary:
+            case NpgsqlDbType.Bytea:
                 return data;
-            case NpgsqlDbType.Boolean:
+            /*case NpgsqlDbType.Boolean:
                 return BitConverter.ToBoolean(data, 0);
             case NpgsqlDbType.DateTime:
                 return DateTime.MinValue.AddTicks(IPAddress.NetworkToHostOrder(BitConverter.ToInt64(data, 0)));
@@ -121,10 +121,10 @@ namespace NpgsqlTypes
             case NpgsqlDbType.String:
             case NpgsqlDbType.AnsiString:
             case NpgsqlDbType.StringFixedLength:
-                return encoding.GetString(data, 0, fieldValueSize);
+                return encoding.GetString(data, 0, fieldValueSize);*/
             default:
                 throw new InvalidCastException("Type not supported in binary format");
-            }*/
+            }
             
             return null;
         }
@@ -268,6 +268,12 @@ namespace NpgsqlTypes
                 new ConvertNativeToBackendHandler(ExtendedNativeToBackendTypeConverter.ToCircle));
 
                 NativeTypeMapping.AddTypeAlias("circle", typeof(NpgsqlCircle));
+
+				NativeTypeMapping.AddType("inet", NpgsqlDbType.Inet, DbType.Object, true,
+                new ConvertNativeToBackendHandler(BasicNativeToBackendTypeConverter.ToIPAddress));
+
+				NativeTypeMapping.AddTypeAlias("inet", typeof(IPAddress));
+				NativeTypeMapping.AddTypeAlias("inet", typeof(NpgsqlInet));
             }
         }
 
@@ -351,6 +357,9 @@ namespace NpgsqlTypes
 
                     new NpgsqlBackendTypeInfo(0, "numeric", NpgsqlDbType.Numeric, DbType.Decimal, typeof(Decimal),
                         null),
+
+					new NpgsqlBackendTypeInfo(0, "inet", NpgsqlDbType.Inet, DbType.Object, typeof(NpgsqlInet),
+					    null),
 
                     new NpgsqlBackendTypeInfo(0, "money", NpgsqlDbType.Money, DbType.Decimal, typeof(Decimal),
                         new ConvertBackendToNativeHandler(BasicBackendToNativeTypeConverter.ToMoney)),
