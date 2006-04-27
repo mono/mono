@@ -868,6 +868,7 @@ namespace System.Xml
 					reader.MoveToAttribute (i);
 					element.SetAttributeNode (
 						ReadAttributeNode (reader));
+					reader.MoveToElement ();
 				}
 				// FIXME: the code below should be fine and
 				// in some XmlReaders it is much faster, but
