@@ -59,36 +59,28 @@ namespace System.Configuration
 		}
 
 		[MonoTODO]
-		public void Remove (string elementKey)
+		public void Remove (SettingElement element)
 		{
 			throw new NotImplementedException ();
 		}
 
 #if (CONFIGURATION_DEP)
-		[MonoTODO]
 		protected override ConfigurationElement CreateNewElement ()
 		{
-			throw new NotImplementedException ();
+			return new SettingElement ();
 		}
 
-		[MonoTODO]
 		protected override object GetElementKey (ConfigurationElement element)
 		{
-			throw new NotImplementedException ();
+			return ((SettingElement) element).Name;
 		}
 
-		[MonoTODO]
 		public override ConfigurationElementCollectionType CollectionType {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return ConfigurationElementCollectionType.BasicMap; }
 		}
 
-		[MonoTODO]
 		protected override string ElementName {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return "setting"; }
 		}
 #endif
 	}

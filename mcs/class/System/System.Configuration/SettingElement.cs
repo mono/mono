@@ -36,65 +36,62 @@ namespace System.Configuration
 		: ConfigurationElement
 #endif
 	{
-		[MonoTODO]
+		static ConfigurationPropertyCollection properties;
+		static ConfigurationProperty name_prop, serialize_as_prop, value_prop;
+
+		static SettingElement ()
+		{
+			name_prop = new ConfigurationProperty ("name", typeof (string), null, ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
+			serialize_as_prop = new ConfigurationProperty ("serializeAs", typeof (SettingsSerializeAs), null, ConfigurationPropertyOptions.IsRequired);
+			value_prop = new ConfigurationProperty ("value", typeof (SettingValueElement), null, ConfigurationPropertyOptions.IsRequired);
+			properties = new ConfigurationPropertyCollection ();
+
+			properties.Add (name_prop);
+			properties.Add (serialize_as_prop);
+			properties.Add (value_prop);
+		}
+
 		public SettingElement ()
 		{
 		}
 
-		[MonoTODO]
 		public SettingElement (string name,
 				       SettingsSerializeAs serializeAs)
 		{
+			Name = name;
+			SerializeAs = serializeAs;
 		}
 
-		[MonoTODO]
 #if (CONFIGURATION_DEP)
 		[ConfigurationProperty ("name", DefaultValue="",
 					Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
 #endif
 		public string Name {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return (string) base [name_prop]; }
+			set { base [name_prop] = value; } // it does not reject null
 		}
 
-		[MonoTODO]
 #if (CONFIGURATION_DEP)
 		[ConfigurationProperty ("value", DefaultValue=null,
 					Options = ConfigurationPropertyOptions.IsRequired)]
 #endif
 		public SettingValueElement Value {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return (SettingValueElement) base [value_prop]; }
+			set { base [value_prop] = value; }
 		}
 
-		[MonoTODO]
 #if (CONFIGURATION_DEP)
-		[ConfigurationProperty ("Serialize", DefaultValue=SettingsSerializeAs.String,
+		[ConfigurationProperty ("serializeAs", DefaultValue=SettingsSerializeAs.String,
 					Options = ConfigurationPropertyOptions.IsRequired)]
 #endif
 		public SettingsSerializeAs SerializeAs {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return base [serialize_as_prop] != null ? (SettingsSerializeAs) base [serialize_as_prop] : default (SettingsSerializeAs); }
+			set { base [serialize_as_prop] = value; }
 		}
 
 #if (CONFIGURATION_DEP)
-		[MonoTODO]
 		protected override ConfigurationPropertyCollection Properties {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return properties; }
 		}
 #endif
 
@@ -104,13 +101,17 @@ namespace System.Configuration
 			if (e == null)
 				return false;
 
-			return e.Name == Name && e.SerializeAs == SerializeAs;
+			return e.SerializeAs == SerializeAs && e.Value == Value && e.Name == Name;
 		}
 
-		[MonoTODO]
 		public override int GetHashCode ()
 		{
-			throw new NotImplementedException();
+			int v = (int) SerializeAs ^ 0x7F;
+			if (Name != null)
+				v += Name.GetHashCode () ^ 0x7F;
+			if (Value != null)
+				v += Value.GetHashCode ();
+			return v;
 		}
 	}
 

@@ -1,3 +1,7 @@
+2006-04-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.dll.sources : added ClientSettingsSection.cs.
+
 2006-04-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.dll.sources : added ApplicationSettingsGroup.cs.

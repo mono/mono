@@ -39,6 +39,8 @@ namespace System.Configuration
 		: ConfigurationElement
 #endif
 	{
+		XmlNode node;
+
 		[MonoTODO]
 		public SettingValueElement ()
 		{
@@ -54,20 +56,16 @@ namespace System.Configuration
 #endif
 
 #if (XML_DEP)
-		[MonoTODO]
 		public XmlNode ValueXml {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return node; }
+			set { node = value; }
 		}
 
 #if (CONFIGURATION_DEP)
+		[MonoTODO]
 		protected override void DeserializeElement (XmlReader reader, bool serializeCollectionKey)
 		{
-			throw new NotImplementedException ();
+			node = new XmlDocument ().ReadNode (reader);
 		}
 #endif
 #endif

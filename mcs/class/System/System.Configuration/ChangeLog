@@ -1,3 +1,14 @@
+2006-04-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClientSettingsSection.cs : new (implemented) file.
+	* SettingValueElement.cs : implemented.
+	  SettingElement.cs : implemented.
+	  SettingElementCollection.cs : implemented except for Add(),
+	  Clear(), Get() and Remove().
+
+	  A test will be soon added as part of bug #77957 test with
+	  DefaultCollection support in sys.configuration.
+
 2006-04-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ApplicationSettingsGroup.cs : added missing type. This is part of
