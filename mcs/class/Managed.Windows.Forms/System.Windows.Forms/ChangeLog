@@ -1,5 +1,10 @@
 2006-04-27  Alexander Olk  <alex.olk@googlemail.com>
 
+	* ThemeWin32Classic.cs: Peter thinks that three additional lines are
+	  a mess in DrawToolBar, so I removed one of them.
+
+2006-04-27  Alexander Olk  <alex.olk@googlemail.com>
+
 	* ThemeWin32Classic.cs: Draw the ToolBar border lines only if
 	  needed (clip). Otherwise we get artifacts.
 

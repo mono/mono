@@ -3481,14 +3481,13 @@ namespace System.Windows.Forms
 			} else {
 				dc.FillRectangle (SystemBrushes.Control, clip_rectangle);
 				
-				if (clip_rectangle.Y == 0)
+				if (clip_rectangle.Y == 0) {
 					dc.DrawLine (SystemPens.ControlDark, clip_rectangle.X, clip_rectangle.Y, clip_rectangle.Right, clip_rectangle.Y);
+					dc.DrawLine (SystemPens.ControlLightLight, clip_rectangle.X, clip_rectangle.Y + 1, clip_rectangle.Right, clip_rectangle.Y + 1);
+				}
 				
-				if (clip_rectangle.Y == 1)
+				if (clip_rectangle.Y == 1) 
 					dc.DrawLine (SystemPens.ControlLightLight, clip_rectangle.X, clip_rectangle.Y, clip_rectangle.Right, clip_rectangle.Y);
-				else
-					if (clip_rectangle.Y == 0)
-						dc.DrawLine (SystemPens.ControlLightLight, clip_rectangle.X, clip_rectangle.Y + 1, clip_rectangle.Right, clip_rectangle.Y + 1);
 			}
 
 			foreach (ToolBarButton button in control.Buttons)
