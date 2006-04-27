@@ -3454,40 +3454,30 @@ namespace System.Windows.Forms
 			if (control is PropertyGrid.PropertyToolBar) {
 				dc.FillRectangle (ResPool.GetSolidBrush(control.BackColor), clip_rectangle);
 				
-				Pen pen = SystemPens.ControlLightLight;
-				
 				if (clip_rectangle.X == 0) {
-					int y_add = clip_rectangle.Y == 0 ? 1 : 0;
-					dc.DrawLine (pen, clip_rectangle.X, clip_rectangle.Y + y_add, clip_rectangle.X, clip_rectangle.Bottom);
+					dc.DrawLine (SystemPens.ControlLightLight, clip_rectangle.X, 1, clip_rectangle.X, control.Bottom);
 				}
-				
-				if (clip_rectangle.Y == 1)
-					dc.DrawLine (pen, clip_rectangle.X, clip_rectangle.Y, clip_rectangle.Right, clip_rectangle.Y);
-				else
-					if (clip_rectangle.Y == 0)
-						dc.DrawLine (pen, clip_rectangle.X, clip_rectangle.Y + 1, clip_rectangle.Right, clip_rectangle.Y + 1);
-				
-				pen = SystemPens.ControlDark;
-				
-				if (clip_rectangle.Bottom == control.Height)
-					dc.DrawLine (pen, clip_rectangle.X, clip_rectangle.Bottom - 1, clip_rectangle.Right, clip_rectangle.Bottom - 1);
-				
-				if (clip_rectangle.Right == control.Width) {
-					if (clip_rectangle.Y == 0)
-						dc.DrawLine (pen, clip_rectangle.Right - 1, clip_rectangle.Y + 1, clip_rectangle.Right - 1, clip_rectangle.Bottom);
-					else
-						dc.DrawLine (pen, clip_rectangle.Right - 1, clip_rectangle.Y, clip_rectangle.Right - 1, clip_rectangle.Bottom);
+
+				if (clip_rectangle.Y < 2) {
+					dc.DrawLine (SystemPens.ControlLightLight, clip_rectangle.X, 1, clip_rectangle.Right, 1);
+				}
+
+				if (clip_rectangle.Bottom >= (control.Bottom - 1)) {
+					dc.DrawLine (SystemPens.ControlDark, clip_rectangle.X, clip_rectangle.Bottom - 1, clip_rectangle.Right, clip_rectangle.Bottom - 1);
+				}
+
+				if (clip_rectangle.Right >= (control.Right - 1)) {
+					dc.DrawLine (SystemPens.ControlDark, clip_rectangle.Right - 1, 1, clip_rectangle.Right - 1, control.Bottom);
 				}
 			} else {
 				dc.FillRectangle (SystemBrushes.Control, clip_rectangle);
-				
-				if (clip_rectangle.Y == 0) {
-					dc.DrawLine (SystemPens.ControlDark, clip_rectangle.X, clip_rectangle.Y, clip_rectangle.Right, clip_rectangle.Y);
-					dc.DrawLine (SystemPens.ControlLightLight, clip_rectangle.X, clip_rectangle.Y + 1, clip_rectangle.Right, clip_rectangle.Y + 1);
+
+				if (clip_rectangle.Y < 2) {
+					if (clip_rectangle.Y < 1) {
+						dc.DrawLine (SystemPens.ControlDark, clip_rectangle.X, 0, clip_rectangle.Right, 0);
+					}
+					dc.DrawLine (SystemPens.ControlLightLight, clip_rectangle.X, 1, clip_rectangle.Right, 1);
 				}
-				
-				if (clip_rectangle.Y == 1) 
-					dc.DrawLine (SystemPens.ControlLightLight, clip_rectangle.X, clip_rectangle.Y, clip_rectangle.Right, clip_rectangle.Y);
 			}
 
 			foreach (ToolBarButton button in control.Buttons)

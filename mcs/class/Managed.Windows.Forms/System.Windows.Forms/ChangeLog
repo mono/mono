@@ -1,3 +1,8 @@
+2006-04-27  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* ThemeWin32Classic.cs (DrawToolBar): Refactored, simplified the logic,
+	  fixed off-by-one comparisons between Width/Height and Right/Bottom.
+
 2006-04-27  Jonathan Chambers  <jonathan.chambers@ansys.com>
 
 	* PropertyGridView.cs: Fix drop down width.
