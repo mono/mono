@@ -352,38 +352,27 @@ namespace System.Drawing.Drawing2D
                 //
                 // AddLines
                 //
-                public void AddLines (Point [] points)
-                {
+		public void AddLines (Point[] points)
+		{
 			if (points == null)
 				throw new ArgumentNullException ("points");
 			if (points.Length == 0)
 				throw new ArgumentException ("points");
 
-                        int length = points.Length;
-                        for (int i = 0; i < length - 1; i++) {
-                                int j = i + 1;
-                                Status status = GDIPlus.GdipAddPathLineI (
-                                        nativePath, points [i].X, points [i].Y, points [j].X, points [j].Y);
-                                GDIPlus.CheckStatus (status);                      	
-                        }
-                }
+			Status status = GDIPlus.GdipAddPathLine2I (nativePath, points, points.Length);
+			GDIPlus.CheckStatus (status);                      	
+		}
 
-                public void AddLines (PointF [] points)
-                {
+		public void AddLines (PointF[] points)
+		{
 			if (points == null)
 				throw new ArgumentNullException ("points");
 			if (points.Length == 0)
 				throw new ArgumentException ("points");
 
-                        int length = points.Length;
-
-                        for (int i = 0; i < length - 1; i++) {
-                                int j = i + 1;
-                                Status status = GDIPlus.GdipAddPathLine (
-                                        nativePath, points [i].X, points [i].Y, points [j].X, points [j].Y);
-                                GDIPlus.CheckStatus (status);                      	
-                        }
-                }
+			Status status = GDIPlus.GdipAddPathLine2 (nativePath, points, points.Length);
+			GDIPlus.CheckStatus (status);                      	
+		}
         
                 //
                 // AddPie
