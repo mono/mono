@@ -122,6 +122,9 @@ namespace System.Web.Configuration {
 			get { return properties; }
 		}
 
+		protected override bool ThrowOnDuplicate {
+			get { return false; }
+		}
 	}
 
 }

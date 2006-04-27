@@ -1,3 +1,10 @@
+2006-04-27  Chris Toshok  <toshok@ximian.com>
+
+	* AuthorizationRuleCollection.cs (ThrowOnDuplicate): for the time
+	being introduce a overridden property MS doesn't make use of.
+	This needs readdressing, but it should get people making use of
+	<authorization> rules working again.
+
 2006-04-25  Chris Toshok  <toshok@ximian.com>
 
 	* AuthorizationRule.cs (Reset): finally figure out what this
