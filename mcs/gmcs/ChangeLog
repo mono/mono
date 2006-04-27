@@ -1,3 +1,9 @@
+2006-04-27  Raja R Harinath  <harinath@gmail.com>
+
+	* flowanalysis.cs (FlowBranching.InLoop): Move special-case
+	handling to FlowBranchingLoop.InLoop.
+	(FlowBranching.InSwitch): Likewise, to FlowBranchingSwitch.
+
 2006-04-26  Marek Safar  <marek.safar@seznam.cz>
 
 	A fix for #78115

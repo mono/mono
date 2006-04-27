@@ -114,10 +114,10 @@ namespace Mono.CSharp
 			// </summary>
 			public static FlowReturns AndFlowReturns (FlowReturns a, FlowReturns b)
 			{
-				if (a == FlowReturns.Undefined)
+				switch (a) {
+				case FlowReturns.Undefined:
 					return b;
 
-				switch (a) {
 				case FlowReturns.Never:
 					if (b == FlowReturns.Never)
 						return FlowReturns.Never;
@@ -132,18 +132,17 @@ namespace Mono.CSharp
 						return FlowReturns.Always;
 					else
 						return FlowReturns.Sometimes;
-
-				default:
-					throw new ArgumentException ();
 				}
+
+				throw new ArgumentException ("shouldn't get here");
 			}
 
 			public static FlowReturns OrFlowReturns (FlowReturns a, FlowReturns b)
 			{
-				if (a == FlowReturns.Undefined)
+				switch (a) {
+				case FlowReturns.Undefined:
 					return b;
 
-				switch (a) {
 				case FlowReturns.Never:
 					return b;
 
@@ -155,10 +154,9 @@ namespace Mono.CSharp
 
 				case FlowReturns.Always:
 					return FlowReturns.Always;
-
-				default:
-					throw new ArgumentException ();
 				}
+
+				throw new ArgumentException ("shouldn't get here");
 			}
 
 			public static void And (ref Reachability a, Reachability b, bool do_break)
@@ -867,51 +865,33 @@ namespace Mono.CSharp
 			}
 
 			public bool HasParameters {
-				get {
-					return parameters != null;
-				}
+				get { return parameters != null; }
 			}
 
 			public bool HasLocals {
-				get {
-					return locals != null;
-				}
+				get { return locals != null; }
 			}
 
 			// <summary>
 			//   Returns a deep copy of the parameters.
 			// </summary>
 			public MyBitVector Parameters {
-				get {
-					if (parameters != null)
-						return parameters.Clone ();
-					else
-						return null;
-				}
+				get { return parameters == null ? null : parameters.Clone (); }
 			}
 
 			// <summary>
 			//   Returns a deep copy of the locals.
 			// </summary>
 			public MyBitVector Locals {
-				get {
-					if (locals != null)
-						return locals.Clone ();
-					else
-						return null;
-				}
+				get { return locals == null ? null : locals.Clone (); }
 			}
 
 			public MyBitVector ParameterVector {
-				get {
-					return parameters;
-				}
+				get { return parameters; }
 			}
 
 			public MyBitVector LocalVector {
-				get {
-					return locals;
-				}
+				get { return locals; }
 			}
 
 			//
@@ -1160,52 +1140,31 @@ namespace Mono.CSharp
 		//
 		public virtual bool InTryOrCatch (bool is_return)
 		{
-			if ((Block != null) && Block.IsDestructor)
+			if (Block != null && Block.IsDestructor)
 				return true;
-			else if (!is_return &&
-			    ((Type == BranchingType.Loop) || (Type == BranchingType.Switch)))
+			if (!is_return && (Type == BranchingType.Loop || Type == BranchingType.Switch))
 				return false;
-			else if (Parent != null)
-				return Parent.InTryOrCatch (is_return);
-			else
-				return false;
+			return Parent != null && Parent.InTryOrCatch (is_return);
 		}
 
 		public virtual bool InTryWithCatch ()
 		{
-			if (Parent != null)
-				return Parent.InTryWithCatch ();
-			return false;
+			return Parent != null && Parent.InTryWithCatch ();
 		}
 
 		public virtual bool InLoop ()
 		{
-			if (Type == BranchingType.Loop)
-				return true;
-			else if (Parent != null)
-				return Parent.InLoop ();
-			else
-				return false;
+			return Parent != null && Parent.InLoop ();
 		}
 
 		public virtual bool InSwitch ()
 		{
-			if (Type == BranchingType.Switch)
-				return true;
-			else if (Parent != null)
-				return Parent.InSwitch ();
-			else
-				return false;
+			return Parent != null && Parent.InSwitch ();
 		}
 
 		public virtual bool BreakCrossesTryCatchBoundary ()
 		{
-			if ((Type == BranchingType.Loop) || (Type == BranchingType.Switch))
-				return false;
-			else if (Parent != null)
-				return Parent.BreakCrossesTryCatchBoundary ();
-			else
-				return false;
+			return Parent != null && Parent.BreakCrossesTryCatchBoundary ();
 		}
 
 		public virtual void AddFinallyVector (UsageVector vector)
@@ -1237,10 +1196,7 @@ namespace Mono.CSharp
 
 		public bool IsFieldAssigned (VariableInfo vi, string field_name)
 		{
-			if (CurrentUsageVector.IsAssigned (vi))
-				return true;
-
-			return CurrentUsageVector.IsFieldAssigned (vi, field_name);
+			return CurrentUsageVector.IsAssigned (vi) || CurrentUsageVector.IsFieldAssigned (vi, field_name);
 		}
 
 		public void SetAssigned (VariableInfo vi)
@@ -1277,10 +1233,7 @@ namespace Mono.CSharp
 		}
 
 		public string Name {
-			get {
-				return String.Format ("{0} ({1}:{2}:{3})",
-						      GetType (), id, Type, Location);
-			}
+			get { return String.Format ("{0} ({1}:{2}:{3})", GetType (), id, Type, Location); }
 		}
 	}
 
@@ -1347,6 +1300,16 @@ namespace Mono.CSharp
 			break_origins = vector;
 		}
 
+		public override bool InLoop ()
+		{
+			return true;
+		}
+
+		public override bool BreakCrossesTryCatchBoundary ()
+		{
+			return false;
+		}
+
 		protected override UsageVector Merge ()
 		{
 			UsageVector vector = base.Merge ();
@@ -1370,6 +1333,16 @@ namespace Mono.CSharp
 			vector = vector.Clone ();
 			vector.Next = break_origins;
 			break_origins = vector;
+		}
+
+		public override bool InSwitch ()
+		{
+			return true;
+		}
+
+		public override bool BreakCrossesTryCatchBoundary ()
+		{
+			return false;
 		}
 
 		protected override UsageVector Merge ()
@@ -1434,10 +1407,7 @@ namespace Mono.CSharp
 					return true;
 			}
 
-			if (Parent != null)
-				return Parent.InTryWithCatch ();
-
-			return false;
+			return base.InTryWithCatch ();
 		}
 
 		public override bool BreakCrossesTryCatchBoundary ()
