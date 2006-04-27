@@ -40,6 +40,10 @@ namespace System.Web.Services.Description {
 
 		XmlElement docElement;
 
+#if NET_2_0
+		XmlAttribute [] extAttributes;
+#endif
+
 		#endregion // Fields
 
 		#region Constructors
@@ -76,7 +80,20 @@ namespace System.Web.Services.Description {
 			get { return docElement; }
 			set { docElement = value; }
 		}
-	
+
+#if NET_2_0
+		[XmlAnyAttribute]
+		public XmlAttribute [] ExtensibleAttributes {
+			get { return extAttributes; }
+			set { extAttributes = value; }
+		}
+
+		[XmlIgnore]
+		public abstract ServiceDescriptionFormatExtensionCollection Extensions {
+			get;
+		}
+#endif
+
 		#endregion // Properties
 	}
 }

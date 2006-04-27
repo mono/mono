@@ -30,10 +30,14 @@
 
 using System.Collections;
 using System.Web.Services;
+using System.Web.Services.Configuration;
 using System.Xml.Serialization;
 
 namespace System.Web.Services.Description 
 {
+#if NET_2_0
+	[XmlFormatExtensionPoint ("Extensions")]
+#endif
 	public sealed class Message :
 #if NET_2_0
 		NamedItem
@@ -48,6 +52,9 @@ namespace System.Web.Services.Description
 #endif
 		MessagePartCollection parts;
 		ServiceDescription serviceDescription;
+#if NET_2_0
+		ServiceDescriptionFormatExtensionCollection extensions;
+#endif
 
 		#endregion // Fields
 
@@ -57,6 +64,9 @@ namespace System.Web.Services.Description
 		{
 #if !NET_2_0
 			name = String.Empty;
+#endif
+#if NET_2_0
+			extensions = new ServiceDescriptionFormatExtensionCollection (this);
 #endif
 			parts = new MessagePartCollection (this);
 			serviceDescription = null;
@@ -83,6 +93,13 @@ namespace System.Web.Services.Description
 		public ServiceDescription ServiceDescription {
 			get { return serviceDescription; }
 		}
+
+#if NET_2_0
+		[XmlIgnore]
+		public override ServiceDescriptionFormatExtensionCollection Extensions {
+			get { return extensions; }
+		}
+#endif
 
 		#endregion // Properties
 

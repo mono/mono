@@ -31,9 +31,13 @@
 using System.ComponentModel;
 using System.Xml;
 using System.Xml.Serialization;
+using System.Web.Services.Configuration;
 
 namespace System.Web.Services.Description 
 {
+#if NET_2_0
+	[XmlFormatExtensionPoint ("Extensions")]
+#endif
 	public sealed class Operation :
 #if NET_2_0
 		NamedItem
@@ -50,6 +54,9 @@ namespace System.Web.Services.Description
 #endif
 		string[] parameterOrder;
 		PortType portType;
+#if NET_2_0
+		ServiceDescriptionFormatExtensionCollection extensions;
+#endif
 
 		#endregion // Fields
 
@@ -64,6 +71,9 @@ namespace System.Web.Services.Description
 #endif
 			parameterOrder = null;
 			portType = null;
+#if NET_2_0
+			extensions = new ServiceDescriptionFormatExtensionCollection (this);
+#endif
 		}
 		
 		#endregion // Constructors
@@ -110,6 +120,13 @@ namespace System.Web.Services.Description
 		public PortType PortType {
 			get { return portType; }
 		}
+
+#if NET_2_0
+		[XmlIgnore]
+		public override ServiceDescriptionFormatExtensionCollection Extensions {
+			get { return extensions; }
+		}
+#endif
 
 		#endregion // Properties
 

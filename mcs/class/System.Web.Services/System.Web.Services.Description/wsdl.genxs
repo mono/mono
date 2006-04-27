@@ -11,6 +11,22 @@
 				</select>
 				<replace>ServiceDescription.ReadExtension (Reader, $OBJECT);</replace>
 			</hook>
+			<hook type="unknownAttribute">
+				<replace>
+#if NET_2_0
+				ServiceDescription.AddUnknownAttribute ((XmlAttribute) ReadXmlNode (false));
+#else
+				UnknownNode ($OBJECT);
+#endif
+				</replace>
+			</hook>
+			<hook type="attributes">
+				<insertAfter>
+#if NET_2_0
+				ServiceDescription.SetExtensibleAttributes ($OBJECT);
+#endif
+				</insertAfter>
+			</hook>
 			<hook type="type">
 				<select>
 					<typeName>System.Xml.Schema.XmlSchema</typeName>

@@ -29,9 +29,13 @@
 //
 
 using System.Xml.Serialization;
+using System.Web.Services.Configuration;
 
 namespace System.Web.Services.Description
 {
+#if NET_2_0
+	[XmlFormatExtensionPoint ("Extensions")]
+#endif
 	public sealed class Service :
 #if NET_2_0
 		NamedItem
@@ -67,7 +71,11 @@ namespace System.Web.Services.Description
 		#region Properties
 
 		[XmlIgnore]
-		public ServiceDescriptionFormatExtensionCollection Extensions { 	
+		public
+#if NET_2_0
+		override
+#endif
+		ServiceDescriptionFormatExtensionCollection Extensions { 	
 			get { return extensions; }
 		}
 

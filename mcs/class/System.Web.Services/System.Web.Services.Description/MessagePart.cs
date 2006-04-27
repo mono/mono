@@ -30,9 +30,13 @@
 
 using System.Xml;
 using System.Xml.Serialization;
+using System.Web.Services.Configuration;
 
 namespace System.Web.Services.Description 
 {
+#if NET_2_0
+	[XmlFormatExtensionPoint ("Extensions")]
+#endif
 	public sealed class MessagePart :
 #if NET_2_0
 		NamedItem
@@ -49,6 +53,9 @@ namespace System.Web.Services.Description
 		string name;
 #endif
 		XmlQualifiedName type;
+#if NET_2_0
+		ServiceDescriptionFormatExtensionCollection extensions;
+#endif
 
 		#endregion // Fields
 
@@ -62,6 +69,9 @@ namespace System.Web.Services.Description
 			name = String.Empty;
 #endif
 			type = XmlQualifiedName.Empty;
+#if NET_2_0
+			extensions = new ServiceDescriptionFormatExtensionCollection (this);
+#endif
 		}
 		
 		#endregion // Constructors
@@ -100,6 +110,13 @@ namespace System.Web.Services.Description
 		internal bool DefinedByElement {
 			get { return element != null && element != XmlQualifiedName.Empty; }
 		}
+
+#if NET_2_0
+		[XmlIgnore]
+		public override ServiceDescriptionFormatExtensionCollection Extensions {
+			get { return extensions; }
+		}
+#endif
 
 		#endregion // Properties
 

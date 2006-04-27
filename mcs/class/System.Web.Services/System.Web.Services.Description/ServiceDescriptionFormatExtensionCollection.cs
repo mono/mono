@@ -167,7 +167,10 @@ namespace System.Web.Services.Description {
 			
 		protected override void SetParent (object value, object parent)
 		{
-			((ServiceDescriptionFormatExtension) value).SetParent (parent);
+			ServiceDescriptionFormatExtension extension = value as ServiceDescriptionFormatExtension;
+			if (extension == null)
+				return;
+			extension.SetParent (parent);
 		}
 			
 		#endregion // Methods

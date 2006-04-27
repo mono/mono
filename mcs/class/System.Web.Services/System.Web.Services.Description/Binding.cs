@@ -73,7 +73,11 @@ namespace System.Web.Services.Description
 		#region Properties
 
 		[XmlIgnore]
-		public ServiceDescriptionFormatExtensionCollection Extensions { 	
+		public 
+#if NET_2_0
+		override
+#endif
+		ServiceDescriptionFormatExtensionCollection Extensions { 	
 			get { return extensions; }
 		}
 

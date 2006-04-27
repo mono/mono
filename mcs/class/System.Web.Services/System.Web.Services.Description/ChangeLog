@@ -1,3 +1,35 @@
+2006-04-27  Ankit Jain  <jankit@novell.com>
+
+	* DocumentableItem.cs (ExtensibleAttributes):
+	(Extensions): Add missing NET_2_0 properties.
+	* Port.cs:
+	* OperationBinding.cs:
+	* MessagePart.cs
+	* Binding.cs:
+	* Types.cs:
+	* Service.cs:
+	* OperationMessage.cs:
+	* Message.cs: 
+	* Import.cs: 
+	* Operation.cs:
+	* PortType.cs: Override and implement Extensions property. Add
+	XmlFormatExtensionPoint attribute.
+
+	* MessageBinding.cs: Abstract Extensions property is not present in
+	NET_2_0.
+
+	* wsdl.genxs: Update to process unknown attributes as ExtensibleAttributes in NET_2_0.
+	* ServiceDescriptionSerializerBase.cs: Regenerated from wsdl.genxs
+
+	* ServiceDescription.cs (ServiceDescription.AddUnknownAttribute): New. Add attribute to
+	attributes collection.
+	(ServiceDescription.SetExtensibleAttributes): Set DocumentableItem.ExtensibleAttributes
+	property.
+
+	* ServiceDescriptionFormatExtensionCollection.cs
+	(ServiceDescriptionFormatExtensionCollection.SetParent): Set only if
+	value is a ServiceDescriptionFormatExtension type object.
+
 2006-03-12  VLadimir Krasnov  <vladimirk@mainsoft.com>
 
 	* ServiceDescription.cs: removed TARGET_JVM directives from

@@ -1,3 +1,7 @@
+2006-04-27  Ankit Jain  <jankit@novell.com>
+
+	* ServiceDescriptionTest.cs (ExtensibleAttributes): New test.
+
 2006-02-04  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ServiceDescriptionReflectorTest.cs: Use only one include as otherwise

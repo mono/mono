@@ -60,12 +60,12 @@ namespace System.Web.Services.Description
 
 		#region Properties
 
+#if !NET_2_0
 		[XmlIgnore]
 		public abstract ServiceDescriptionFormatExtensionCollection Extensions { 	
 			get;
 		}
 
-#if !NET_2_0
 //		[DefaultValue (null)]
 		[XmlAttribute ("name", DataType = "NMTOKEN")]	
 		public string Name {
