@@ -7269,7 +7269,7 @@ namespace System.Web.Services.Description
 
 	}
 
-	public class ServiceDescriptionWriterBase : XmlSerializationWriter
+	internal class ServiceDescriptionWriterBase : XmlSerializationWriter
 	{
 		const string xmlNamespace = "http://www.w3.org/2000/xmlns/";
 		public void WriteTree (System.Web.Services.Description.ServiceDescription ob)

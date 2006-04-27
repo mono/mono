@@ -1,5 +1,10 @@
 2006-04-27  Ankit Jain  <jankit@novell.com>
 
+	* ServiceDescriptionSerializerBase.cs (ServiceDescriptionWriterBase):
+	Make it internal.
+
+2006-04-27  Ankit Jain  <jankit@novell.com>
+
 	* DocumentableItem.cs (ExtensibleAttributes):
 	(Extensions): Add missing NET_2_0 properties.
 	* Port.cs:
