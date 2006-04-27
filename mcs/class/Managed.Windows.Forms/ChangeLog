@@ -1,3 +1,7 @@
+2006-04-27  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* SWF.csproj: Updated, matching current .sources
+
 2006-04-16  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System.Windows.Forms_test.dll.sources: Added TabControlTest.cs.
