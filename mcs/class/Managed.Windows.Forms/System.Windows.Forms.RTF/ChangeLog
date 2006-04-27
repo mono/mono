@@ -1,3 +1,8 @@
+2006-04-26  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* RTF.cs: Skip \r and \n characters instead of passing them back up
+	  to the parser. It will confuse the parser. (Fixes #77914)
+
 2005-12-22  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* RTF.cs: Added method to allow setting the default font for the RTF

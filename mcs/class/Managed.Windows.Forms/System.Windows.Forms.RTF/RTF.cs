@@ -247,6 +247,7 @@ namespace System.Windows.Forms.RTF {
 			char	c;
 			bool	old_bump_line;
 
+SkipCRLF:
 			if ((c = (char)source.Read()) != EOF) {
 				this.text_buffer.Append(c);
 			}
@@ -260,11 +261,15 @@ namespace System.Windows.Forms.RTF {
 
 			if (c == '\r') {
 				bump_line = true;
+				text_buffer.Length--;
+				goto SkipCRLF;
 			} else if (c == '\n') {
 				bump_line = true;
 				if (this.prev_char == '\r') {
 					old_bump_line = false;
 				}
+				text_buffer.Length--;
+				goto SkipCRLF;
 			}
 
 			this.line_pos ++;
