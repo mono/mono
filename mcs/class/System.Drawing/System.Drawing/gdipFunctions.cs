@@ -1214,6 +1214,10 @@ namespace System.Drawing
                 internal static extern Status GdipGetPathLastPoint (IntPtr path, out PointF lastPoint);
                 [DllImport ("gdiplus.dll")]                                                
                 internal static extern Status GdipAddPathLine (IntPtr path, float x1, float y1, float x2, float y2);
+                [DllImport ("gdiplus.dll")]
+                internal static extern Status GdipAddPathLine2 (IntPtr path, PointF[] points, int count);
+                [DllImport ("gdiplus.dll")]
+                internal static extern Status GdipAddPathLine2I (IntPtr path, Point[] points, int count);
                 [DllImport ("gdiplus.dll")]                                                
                 internal static extern Status GdipAddPathArc (IntPtr path, float x, float y, float width, float height, float startAngle, float sweepAngle);
                 [DllImport ("gdiplus.dll")]                                                                

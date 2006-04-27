@@ -1,3 +1,8 @@
+2006-04-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* gdipFunctions.cs: Added wrappers for GdipAddPathLine2 and 
+	GdipAddPathLine2I methods (to allow adding a single point).
+
 2006-04-27  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* gdipFunctions.cs: Added CharSet=CharSet.Unicode to GdipAddString and
