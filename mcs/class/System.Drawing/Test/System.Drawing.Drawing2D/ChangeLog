@@ -1,3 +1,8 @@
+2006-04-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GraphicsPathTest.cs: Activate two unit tests where we use AddLines
+	to add a single point to a path.
+
 2006-04-27  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* GraphicsPathTest.cs: Added new test cases for AddString.

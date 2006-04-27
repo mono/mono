@@ -479,7 +479,6 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void AddLines_Point_1 ()
 		{
 			GraphicsPath gp = new GraphicsPath ();
@@ -514,7 +513,6 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void AddLines_PointF_1 ()
 		{
 			GraphicsPath gp = new GraphicsPath ();
