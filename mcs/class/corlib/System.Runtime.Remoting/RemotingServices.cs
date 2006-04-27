@@ -434,15 +434,25 @@ namespace System.Runtime.Remoting
 
 		public static bool IsObjectOutOfAppDomain(object tp)
 		{
+			MarshalByRefObject mbr = tp as MarshalByRefObject;
+
+			if (mbr == null)
+				return false;
+
 			// TODO: use internal call for better performance
-			Identity ident = GetObjectIdentity((MarshalByRefObject)tp);
+			Identity ident = GetObjectIdentity (mbr);
 			return ident is ClientIdentity;
 		}
 
 		public static bool IsObjectOutOfContext(object tp)
 		{
+			MarshalByRefObject mbr = tp as MarshalByRefObject;
+
+			if (mbr == null)
+				return false;
+
 			// TODO: use internal call for better performance
-			Identity ident = GetObjectIdentity((MarshalByRefObject)tp);
+			Identity ident = GetObjectIdentity (mbr);
 			if (ident == null) return false;
 			
 			ServerIdentity sident = ident as ServerIdentity;
