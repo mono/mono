@@ -1442,7 +1442,9 @@ namespace System.Windows.Forms
 			get {
 				if (background_color.IsEmpty) {
 					if (parent!=null) {
-						return parent.BackColor;
+						Color pcolor = parent.BackColor;
+						if (pcolor.A == 0xff || GetStyle(ControlStyles.SupportsTransparentBackColor))
+							return pcolor;
 					}
 					return DefaultBackColor;
 				}

@@ -1,3 +1,9 @@
+2006-04-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Control.cs:
+	(BackColor): if the control does not support a transparent background,
+	return the default backcolor when the parent backcolor is transparent.
+
 2006-04-28  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Application.cs: Updated to new StartLoop/GetMessage API
