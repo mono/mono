@@ -1,3 +1,7 @@
+2006-04-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSerializationWriter.cs : fix cosmetic typo (bug #78228).
+
 2006-04-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SerializationCodeGenerator.cs: For flag enums, we should split on all

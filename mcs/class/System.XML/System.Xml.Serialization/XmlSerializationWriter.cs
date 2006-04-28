@@ -792,7 +792,7 @@ namespace System.Xml.Serialization
 			if (o != null)
 			{
 				if (serializedObjects.Contains (o))
-					throw new InvalidOperationException ("A cirtular reference was detected while serializing an object of type " + o.GetType().Name);
+					throw new InvalidOperationException ("A circular reference was detected while serializing an object of type " + o.GetType().Name);
 				else
 					serializedObjects [o] = o;
 			}
