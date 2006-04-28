@@ -626,15 +626,11 @@ namespace Mono.CSharp
 			// <summary>
 			//   Merges a child branching.
 			// </summary>
-			public UsageVector MergeChild (FlowBranching branching)
+			public UsageVector MergeChild (UsageVector child, bool implicit_block)
 			{
-				UsageVector result = branching.Merge ();
+				Report.Debug (2, "    MERGING CHILD EFFECTS", this, child, IsDirty, reachability, Type);
 
-				Report.Debug (2, "  MERGING CHILD", this, branching, IsDirty,
-					      result.ParameterVector, result.LocalVector,
-					      result.Reachability, reachability, Type);
-
-				Reachability new_r = result.Reachability;
+				Reachability new_r = child.Reachability;
 
 				//
 				// We've now either reached the point after the branching or we will
@@ -649,26 +645,23 @@ namespace Mono.CSharp
 					Report.Error (163, Location,
 						      "Control cannot fall through from one " +
 						      "case label to another");
-					return result;
+					return child;
 				}
 
-				if (locals != null && result.LocalVector != null)
-					locals.Or (result.LocalVector);
+				if (locals != null && child.LocalVector != null)
+					locals.Or (child.LocalVector);
 
-				if (result.ParameterVector != null)
-					parameters.Or (result.ParameterVector);
+				if (child.ParameterVector != null)
+					parameters.Or (child.ParameterVector);
 
-				if ((branching.Type == BranchingType.Block) && branching.Block.Implicit)
+				if (implicit_block)
 					reachability = new_r.Clone ();
 				else
 					reachability.Or (new_r);
 
-				Report.Debug (2, "  MERGING CHILD DONE", this, result,
-					      new_r, reachability);
-
 				IsDirty = true;
 
-				return result;
+				return child;
 			}
 
 			protected static void MergeFinally (UsageVector f_origins,
@@ -1081,7 +1074,11 @@ namespace Mono.CSharp
 		// </summary>
 		public UsageVector MergeChild (FlowBranching child)
 		{
-			return CurrentUsageVector.MergeChild (child);
+			bool implicit_block = child.Type == BranchingType.Block && child.Block.Implicit;
+			Report.Debug (2, "  MERGING CHILD", this, child);
+			UsageVector result = CurrentUsageVector.MergeChild (child.Merge (), implicit_block);
+			Report.Debug (2, "  MERGING CHILD DONE", this, result);
+			return result;
  		}
 
 		// <summary>
@@ -1096,7 +1093,7 @@ namespace Mono.CSharp
 				SiblingType.Block, null, Block, Location,
 				param_map.Length, local_map.Length);
 
-			UsageVector result = vector.MergeChild (this);
+			UsageVector result = vector.MergeChild (Merge (), false);
 
 			Report.Debug (4, "MERGE TOP BLOCK", Location, vector, result.Reachability);
 

@@ -1,5 +1,10 @@
 2006-04-28  Raja R Harinath  <harinath@gmail.com>
 
+	* flowanalysis.cs (UsageVector.MergeChild): Change FlowBranching
+	argument to two arguments: an usage-vector and a bool.  Move call
+	to FlowBranching.Merge () ...
+	(FlowBranching.MergeChild, FlowBranching.MergeTopBlock): ... here.
+
 	* flowanalysis.cs (UsageVector.MergeChild): Move special-case
 	handling of loop and switch reachability to ...
 	(FlowBranchingLoop.Merge, FlowBranchingSwitch.Merge): ... these.
