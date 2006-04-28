@@ -1,5 +1,5 @@
 //
-// Microsoft.VisualBasic.ApplicationServices.WindowsFormsApplicationBase.cs
+// Microsoft.VisualBasic.ApplicationServices.User.cs
 //
 // Authors:
 //   Miguel de Icaza (miguel@novell.com)
@@ -28,75 +28,14 @@
 
 #if NET_2_0
 using System;
+using System.Globalization;
 using System.Threading;
-using System.Windows.Forms;
 
 namespace Microsoft.VisualBasic.ApplicationServices {
 
-	public class WindowsFormsApplicationBase : ConsoleApplicationBase {
-		public WindowsFormsApplicationBase ()
+	public class User {
+		public User ()
 		{
-		}
-
-		public WindowsFormsApplicationBase (AuthenticationMode mode)
-		{
-		}
-
-		protected static bool UseCompatibleTextRendering {
-			get {
-				return false;
-			}
-		}
-
-		[MonoTODO("We ignore the commandLine argument")]
-		public void Run (string [] commandLine)
-		{
-			throw new Exception ("Visual Basic 2005 applications are not supported");
-			Application.Run ();
-		}
-
-		bool is_single_instance = false;
-		protected bool IsSingleInstance {
-			get {
-				return is_single_instance;
-			}
-
-			set {
-				is_single_instance = value;
-			}
-		}
-
-		bool enable_visual_styles = false;
-		protected bool EnableVisualStyles {
-			get {
-				return enable_visual_styles;
-			}
-
-			set {
-				enable_visual_styles = value;
-			}
-		}
-
-		bool save_my_settings_on_exit = false;
-		protected bool SaveMySettingsOnExit {
-			get {
-				return save_my_settings_on_exit;
-			}
-
-			set {
-				save_my_settings_on_exit = value;
-			}
-		}
-
-		ShutdownMode shutdown_style;
-		protected ShutdownMode ShutdownStyle {
-			get {
-				return shutdown_style;
-			}
-
-			set {
-				shutdown_style = value;
-			}
 		}
 	}
 }

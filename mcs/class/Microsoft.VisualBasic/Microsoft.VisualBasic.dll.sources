@@ -74,5 +74,9 @@ Microsoft.VisualBasic.CompilerServices/VBBinder.cs
 Microsoft.VisualBasic.CompilerServices/VBErrors.cs
 Microsoft.VisualBasic.CompilerServices/DefaultParameterValueAttribute.cs
 Microsoft.VisualBasic.ApplicationServices/ApplicationBase.cs
+Microsoft.VisualBasic.ApplicationServices/AuthenticationMode.cs
 Microsoft.VisualBasic.ApplicationServices/ConsoleApplicationBase.cs
+Microsoft.VisualBasic.ApplicationServices/ShutdownMode.cs
+Microsoft.VisualBasic.ApplicationServices/User.cs
 Microsoft.VisualBasic.ApplicationServices/WindowsFormsApplicationBase.cs
+Microsoft.VisualBasic.Devices/Computer.cs
