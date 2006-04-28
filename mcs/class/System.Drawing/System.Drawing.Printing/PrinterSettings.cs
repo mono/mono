@@ -7,10 +7,7 @@
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002 Ximian, Inc
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,10 +29,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Runtime.InteropServices;
 using System.Collections;
-using System.Drawing.Printing;
 using System.ComponentModel;
 using System.Drawing.Imaging;
 
@@ -456,7 +451,7 @@ namespace System.Drawing.Printing
 		}
 
 		//methods		
-		public virtual object Clone()
+		public object Clone ()
 		{
 			PrinterSettings ps = new PrinterSettings (printer_name);
 			return ps;

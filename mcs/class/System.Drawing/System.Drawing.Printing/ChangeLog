@@ -1,3 +1,8 @@
+2006-04-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PrintController.cs: corcompare fix. No public ctor in 2.0.
+	* PrinterSettings.cs: corcompare fix. Clone method isn't virtual.
+
 2006-03-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PrintingServicesUnix.cs: cupsGetPrinters(char***) requires to free 
