@@ -42,6 +42,48 @@ namespace MonoTests.System.Drawing
 	{
 		private RectangleF[] rects;
 
+		private bool IsEmptyBitmap (Bitmap bitmap, out int x, out int y)
+		{
+			bool result = true;
+			int empty = Color.Empty.ToArgb ();
+#if false
+			for (y = 0; y < bitmap.Height; y++) {
+				for (x = 0; x < bitmap.Width; x++) {
+					if (bitmap.GetPixel (x, y).ToArgb () != empty) {
+						Console.Write ("X");
+						result = false;
+					} else
+						Console.Write (" ");
+				}
+				Console.WriteLine ();
+			}
+#else
+			for (y = 0; y < bitmap.Height; y++) {
+				for (x = 0; x < bitmap.Width; x++) {
+					if (bitmap.GetPixel (x, y).ToArgb () != empty)
+						return false;
+				}
+			}
+#endif
+			x = -1;
+			y = -1;
+			return result;
+		}
+
+		private void CheckForEmptyBitmap (Bitmap bitmap)
+		{
+			int x, y;
+			if (!IsEmptyBitmap (bitmap, out x, out y))
+				Fail (String.Format ("Position {0},{1}", x, y));
+		}
+
+		private void CheckForNonEmptyBitmap (Bitmap bitmap)
+		{
+			int x, y;
+			if (IsEmptyBitmap (bitmap, out x, out y))
+				Fail ("Bitmap was empty");
+		}
+
 		[Test]
 		public void DefaultProperties ()
 		{
@@ -707,22 +749,160 @@ namespace MonoTests.System.Drawing
 			AssertEquals ("append.5", 3, elements[5]);
 		}
 
+		static Point[] SmallCurve = new Point[3] { new Point (0, 0), new Point (15, 5), new Point (5, 15) };
+		static PointF[] SmallCurveF = new PointF[3] { new PointF (0, 0), new PointF (15, 5), new PointF (5, 15) };
+
+		static Point[] TooSmallCurve = new Point[2] { new Point (0, 0), new Point (15, 5) };
+		static PointF[] LargeCurveF = new PointF[4] { new PointF (0, 0), new PointF (15, 5), new PointF (5, 15), new PointF (0, 20) };
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void DrawCurve_PenNull ()
+		{
+			Bitmap bitmap = new Bitmap (20, 20);
+			Graphics g = Graphics.FromImage (bitmap);
+			g.DrawCurve (null, SmallCurveF);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void DrawCurve_PointFNull ()
+		{
+			Bitmap bitmap = new Bitmap (20, 20);
+			Graphics g = Graphics.FromImage (bitmap);
+			g.DrawCurve (Pens.Black, (PointF[]) null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void DrawCurve_PointNull ()
+		{
+			Bitmap bitmap = new Bitmap (20, 20);
+			Graphics g = Graphics.FromImage (bitmap);
+			g.DrawCurve (Pens.Black, (Point[]) null);
+		}
+
+		[Test]
+		public void DrawCurve_NotEnoughPoints ()
+		{
+			Bitmap bitmap = new Bitmap (20, 20);
+			Graphics g = Graphics.FromImage (bitmap);
+			CheckForEmptyBitmap (bitmap);
+			g.DrawCurve (Pens.Black, TooSmallCurve, 0.5f);
+			CheckForNonEmptyBitmap (bitmap);
+			// so a "curve" can be drawn with less than 3 points!
+			// actually I used to call that a line... (and it's not related to tension)
+			g.Dispose ();
+			bitmap.Dispose ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void DrawCurve_SinglePoint ()
+		{
+			Bitmap bitmap = new Bitmap (20, 20);
+			Graphics g = Graphics.FromImage (bitmap);
+			g.DrawCurve (Pens.Black, new Point[1] { new Point (10, 10) }, 0.5f);
+			// a single point isn't enough
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void DrawCurve3_NotEnoughPoints ()
+		{
+			Bitmap bitmap = new Bitmap (20, 20);
+			Graphics g = Graphics.FromImage (bitmap);
+			g.DrawCurve (Pens.Black, TooSmallCurve, 0, 2, 0.5f);
+			// aha, this is API dependent
+		}
+
+		[Test]
+		public void DrawCurve_NegativeTension ()
+		{
+			Bitmap bitmap = new Bitmap (20, 20);
+			Graphics g = Graphics.FromImage (bitmap);
+			// documented as bigger (or equals) to 0
+			g.DrawCurve (Pens.Black, SmallCurveF, -1);
+			CheckForNonEmptyBitmap (bitmap);
+			g.Dispose ();
+			bitmap.Dispose ();
+		}
+
+		[Test]
+		public void DrawCurve_PositiveTension ()
+		{
+			Bitmap bitmap = new Bitmap (20, 20);
+			Graphics g = Graphics.FromImage (bitmap);
+			g.DrawCurve (Pens.Black, SmallCurveF, 1);
+			// this is not the same as -1
+			CheckForNonEmptyBitmap (bitmap);
+			g.Dispose ();
+			bitmap.Dispose ();
+		}
+
+		[Test]
+		[Category ("NotWorking")] // libgdiplus is drawing something
+		public void DrawCurve_LargeTension ()
+		{
+			Bitmap bitmap = new Bitmap (20, 20);
+			Graphics g = Graphics.FromImage (bitmap);
+			g.DrawCurve (Pens.Black, SmallCurve, Single.MaxValue);
+			CheckForEmptyBitmap (bitmap);
+			// too much tension ;)
+			g.Dispose ();
+			bitmap.Dispose ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void DrawCurve_ZeroSegments ()
+		{
+			Bitmap bitmap = new Bitmap (20, 20);
+			Graphics g = Graphics.FromImage (bitmap);
+			g.DrawCurve (Pens.Black, SmallCurveF, 0, 0);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void DrawCurve_NegativeSegments ()
+		{
+			Bitmap bitmap = new Bitmap (20, 20);
+			Graphics g = Graphics.FromImage (bitmap);
+			g.DrawCurve (Pens.Black, SmallCurveF, 0, -1);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void DrawCurve_OffsetTooLarge ()
+		{
+			Bitmap bitmap = new Bitmap (20, 20);
+			Graphics g = Graphics.FromImage (bitmap);
+			// starting offset 1 doesn't give 3 points to make a curve
+			g.DrawCurve (Pens.Black, SmallCurveF, 1, 2);
+			// and in this case 2 points aren't enough to draw something
+		}
+
+		[Test]
+		public void DrawCurve_Offset ()
+		{
+			Bitmap bitmap = new Bitmap (20, 20);
+			Graphics g = Graphics.FromImage (bitmap);
+			g.DrawCurve (Pens.Black, LargeCurveF, 1, 2, 0.5f);
+			CheckForNonEmptyBitmap (bitmap);
+			g.Dispose ();
+			bitmap.Dispose ();
+		}
+
 		[Test]
 		public void DrawRectangle_Negative ()
 		{
 			Bitmap bitmap = new Bitmap (20, 20);
 			Graphics g = Graphics.FromImage (bitmap);
 			Pen pen = new Pen (Color.Red);
-			int empty = Color.Empty.ToArgb ();
 			g.DrawRectangle (pen, 5, 5, -10, -10);
 			g.DrawRectangle (pen, 0.0f, 0.0f, 5.0f, -10.0f);
 			g.DrawRectangle (pen, new Rectangle (15, 0, -10, 5));
-			for (int y = 0; y < bitmap.Height; y++) {
-				for (int x = 0; x < bitmap.Width; x++) {
-					if (bitmap.GetPixel (x, y).ToArgb () != empty)
-						Fail (String.Format ("Position {0},{1}", x, y));
-				}
-			}
+			CheckForEmptyBitmap (bitmap);
 			pen.Dispose ();
 			g.Dispose ();
 			bitmap.Dispose ();
@@ -740,15 +920,9 @@ namespace MonoTests.System.Drawing
 			RectangleF[] rectf = new RectangleF[2] {
 				new RectangleF (0.0f, 5.0f, -10.0f, -10.0f), new RectangleF (15.0f, 0.0f, -10.0f, 5.0f)
 			};
-			int empty = Color.Empty.ToArgb ();
 			g.DrawRectangles (pen, rects);
 			g.DrawRectangles (pen, rectf);
-			for (int y = 0; y < bitmap.Height; y++) {
-				for (int x = 0; x < bitmap.Width; x++) {
-					if (bitmap.GetPixel (x, y).ToArgb () != empty)
-						Fail (String.Format ("Position {0},{1}", x, y));
-				}
-			}
+			CheckForEmptyBitmap (bitmap);
 			pen.Dispose ();
 			g.Dispose ();
 			bitmap.Dispose ();
@@ -760,16 +934,10 @@ namespace MonoTests.System.Drawing
 			Bitmap bitmap = new Bitmap (20, 20);
 			Graphics g = Graphics.FromImage (bitmap);
 			SolidBrush brush = new SolidBrush (Color.Red);
-			int empty = Color.Empty.ToArgb ();
 			g.FillRectangle (brush, 5, 5, -10, -10);
 			g.FillRectangle (brush, 0.0f, 0.0f, 5.0f, -10.0f);
 			g.FillRectangle (brush, new Rectangle (15, 0, -10, 5));
-			for (int y = 0; y < bitmap.Height; y++) {
-				for (int x = 0; x < bitmap.Width; x++) {
-					if (bitmap.GetPixel (x, y).ToArgb () != empty)
-						Fail (String.Format ("Position {0},{1}", x, y));
-				}
-			}
+			CheckForEmptyBitmap (bitmap);
 			brush.Dispose ();
 			g.Dispose ();
 			bitmap.Dispose ();
@@ -787,15 +955,9 @@ namespace MonoTests.System.Drawing
 			RectangleF[] rectf = new RectangleF[2] {
 				new RectangleF (0.0f, 5.0f, -10.0f, -10.0f), new RectangleF (15.0f, 0.0f, -10.0f, 5.0f)
 			};
-			int empty = Color.Empty.ToArgb ();
 			g.FillRectangles (brush, rects);
 			g.FillRectangles (brush, rectf);
-			for (int y = 0; y < bitmap.Height; y++) {
-				for (int x = 0; x < bitmap.Width; x++) {
-					if (bitmap.GetPixel (x, y).ToArgb () != empty)
-						Fail (String.Format ("Position {0},{1}", x, y));
-				}
-			}
+			CheckForEmptyBitmap (bitmap);
 			brush.Dispose ();
 			g.Dispose ();
 			bitmap.Dispose ();
