@@ -807,8 +807,10 @@ namespace System.Net
 			case HttpStatusCode.MovedPermanently: // 301
 			case HttpStatusCode.Redirect: // 302
 			case HttpStatusCode.TemporaryRedirect: // 307
+				/* MS follows the redirect for POST too
 				if (method != "GET" && method != "HEAD") // 10.3
 					return false;
+				*/
 
 				uriString = webResponse.Headers ["Location"];
 				break;
