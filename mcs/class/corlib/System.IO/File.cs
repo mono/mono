@@ -37,6 +37,9 @@
 
 using System;
 using System.Text;
+#if NET_2_0
+using System.Collections.Generic;
+#endif
 
 namespace System.IO
 {
@@ -56,6 +59,22 @@ namespace System.IO
 		private File () {}
 #endif
 		
+#if NET_2_0
+		public static void AppendAllText (string path, string contents)
+		{	
+			using (TextWriter w = new StreamWriter (path, true)) {
+				w.Write (contents);
+			}
+		}
+
+		public static void AppendAllText (string path, string contents, Encoding encoding)
+		{	
+			using (TextWriter w = new StreamWriter (path, true, encoding)) {
+				w.Write (contents);
+			}
+		}
+#endif
+
 		public static StreamWriter AppendText (string path)
 		{	
 			return new StreamWriter (path, true);
@@ -467,6 +486,30 @@ namespace System.IO
 			}
 		}
 
+#if NET_2_0
+		public static string [] ReadAllLines (string path)
+		{
+			using (StreamReader reader = File.OpenText (path)) {
+				return ReadAllLines (reader);
+			}
+		}
+
+		public static string [] ReadAllLines (string path, Encoding encoding)
+		{
+			using (StreamReader reader = new StreamReader (path, encoding)) {
+				return ReadAllLines (reader);
+			}
+		}
+
+		static string [] ReadAllLines (StreamReader reader)
+		{
+			List<string> list = new List<string> ();
+			while (!reader.EndOfStream)
+				list.Add (reader.ReadLine ());
+			return list.ToArray ();
+		}
+#endif
+
 		public static string ReadAllText (string path)
 		{
 			return ReadAllText (path, Encoding.UTF8Unmarked);
@@ -478,6 +521,35 @@ namespace System.IO
 				return sr.ReadToEnd ();
 			}
 		}
+
+#if NET_2_0
+		public static void WriteAllBytes (string path, byte [] data)
+		{
+			using (Stream stream = File.Create (path)) {
+				stream.Write (data, 0, data.Length);
+			}
+		}
+
+		public static void WriteAllLines (string path, string [] lines)
+		{
+			using (StreamWriter writer = new StreamWriter (path)) {
+				WriteAllLines (writer, lines);
+			}
+		}
+
+		public static void WriteAllLines (string path, string [] lines, Encoding encoding)
+		{
+			using (StreamWriter writer = new StreamWriter (path, false, encoding)) {
+				WriteAllLines (writer, lines);
+			}
+		}
+
+		static void WriteAllLines (StreamWriter writer, string [] lines)
+		{
+			foreach (string line in lines)
+				writer.WriteLine (line);
+		}
+#endif
 
 		public static void WriteAllText (string path, string contents)
 		{

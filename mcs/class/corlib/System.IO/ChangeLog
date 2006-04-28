@@ -1,3 +1,9 @@
+2006-04-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* StreamReader.cs : implemented EndOfStream property.
+	* File.cs : implemented AppendAllText(), WriteAllLines(),
+	  WriteAllBytes() and ReadAllLines(). Bug #77813 fixed.
+
 2006-04-28  Robert Jordan  <robertj@gmx.net>
 
 	* Path.cs (GetPathRoot): Return just the \\server\share

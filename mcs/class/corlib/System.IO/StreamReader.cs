@@ -216,6 +216,12 @@ namespace System.IO {
 			}
 		}
 
+#if NET_2_0
+		public bool EndOfStream {
+			get { return Peek () < 0; }
+		}
+#endif
+
 		public override void Close ()
 		{
 			Dispose (true);
