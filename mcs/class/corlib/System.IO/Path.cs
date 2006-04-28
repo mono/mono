@@ -323,11 +323,16 @@ namespace System.IO {
 					// UNC: \\server or \\server\share
 					// Get server
 					while (len < path.Length && !IsDsc (path [len])) len++;
+
 					// Get share
-					while (len < path.Length && !IsDsc (path [len])) len++;
+					if (len < path.Length) {
+						len++;
+						while (len < path.Length && !IsDsc (path [len])) len++;
+					}
+
 					return DirectorySeparatorStr +
 						DirectorySeparatorStr +
-						path.Substring (2).Replace (AltDirectorySeparatorChar, DirectorySeparatorChar);
+						path.Substring (2, len - 2).Replace (AltDirectorySeparatorChar, DirectorySeparatorChar);
 				} else if (IsDsc (path [0])) {
 					// path starts with '\' or '/'
 					return DirectorySeparatorStr;

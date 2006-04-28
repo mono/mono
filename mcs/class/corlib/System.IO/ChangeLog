@@ -1,3 +1,9 @@
+2006-04-28  Robert Jordan  <robertj@gmx.net>
+
+	* Path.cs (GetPathRoot): Return just the \\server\share
+	part of a UNC. Fixes #78147.
+
+
 2006-04-26  Miguel de Icaza  <miguel@novell.com>
 
 	* FileStream.cs: Implement the FileOptions usage by passing all

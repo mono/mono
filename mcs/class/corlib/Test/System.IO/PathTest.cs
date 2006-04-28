@@ -269,6 +269,15 @@ namespace MonoTests.System.IO
 				AssertEquals ("GetDirectoryName #07", @"C:\dir", Path.GetDirectoryName (@"C:\dir\"));
 				AssertEquals ("GetDirectoryName #08", @"C:\dir", Path.GetDirectoryName (@"C:\dir\dir"));
 				AssertEquals ("GetDirectoryName #09", @"C:\dir\dir", Path.GetDirectoryName (@"C:\dir\dir\"));
+
+				// UNC tests
+				AssertEquals ("GetDirectoryName #10", null, Path.GetDirectoryName (@"\\"));
+				AssertEquals ("GetDirectoryName #11", null, Path.GetDirectoryName (@"\\server"));
+				AssertEquals ("GetDirectoryName #12", null, Path.GetDirectoryName (@"\\server\share"));
+
+				AssertEquals ("GetDirectoryName #13", @"\\server\share", Path.GetDirectoryName (@"\\server\share\"));
+				AssertEquals ("GetDirectoryName #14", @"\\server\share", Path.GetDirectoryName (@"\\server\share\dir"));
+				AssertEquals ("GetDirectoryName #15", @"\\server\share\dir", Path.GetDirectoryName (@"\\server\share\dir\subdir"));
 			}
 					
 		}
@@ -522,6 +531,7 @@ namespace MonoTests.System.IO
 				AssertEquals ("GetPathRoot w#14", "\\\\abc\\def", Path.GetPathRoot ("//abc/def"));
 				AssertEquals ("GetPathRoot w#15", @"C:\", Path.GetPathRoot (@"C:\"));
 				AssertEquals ("GetPathRoot w#16", @"C:\", Path.GetPathRoot (@"C:\\"));
+				AssertEquals ("GetPathRoot w#17", "\\\\abc\\def", Path.GetPathRoot ("\\\\abc\\def\\ghi"));
 			} else {
 				// TODO: Same tests for Unix.
 			}
