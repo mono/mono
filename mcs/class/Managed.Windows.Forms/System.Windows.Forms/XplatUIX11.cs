@@ -96,7 +96,7 @@ namespace System.Windows.Forms {
 		private static IntPtr		AsyncAtom;		// Support for async messages
 
 		// Message Loop
-		private static XEventQueue	MessageQueue;		// Holds our queued up events
+		private static Hashtable	MessageQueues;		// Holds our thread-specific XEventQueues
 		#if __MonoCS__						//
 		private static Pollfd[]		pollfds;		// For watching the X11 socket
 		#endif							//
@@ -171,7 +171,7 @@ namespace System.Windows.Forms {
 
 			// Now regular initialization
 			XlibLock = new object ();
-			MessageQueue = new XEventQueue ();
+			MessageQueues = new Hashtable(7);
 			TimerList = new ArrayList ();
 			XInitThreads();
 
@@ -810,6 +810,18 @@ namespace System.Windows.Forms {
 			wake.Send (new byte [] { 0xFF });
 		}
 
+		private XEventQueue ThreadQueue(Thread thread) {
+			XEventQueue	queue;
+
+			queue = (XEventQueue)MessageQueues[thread];
+			if (queue == null) {
+				queue = new XEventQueue(thread);
+				MessageQueues[thread] = queue;
+			}
+
+			return queue;
+		}
+
 		private void TranslatePropertyToClipboard(IntPtr property) {
 			IntPtr			actual_atom;
 			int			actual_format;
@@ -838,11 +850,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private void AddExpose (XEvent xevent) {
-			Hwnd	hwnd;
-
-			hwnd = Hwnd.GetObjectFromWindow(xevent.AnyEvent.window);
-
+		private void AddExpose (Hwnd hwnd, XEvent xevent) {
 			// Don't waste time
 			if (hwnd == null) {	
 				return;
@@ -851,14 +859,14 @@ namespace System.Windows.Forms {
 			if (xevent.AnyEvent.window == hwnd.client_window) {
 				hwnd.AddInvalidArea(xevent.ExposeEvent.x, xevent.ExposeEvent.y, xevent.ExposeEvent.width, xevent.ExposeEvent.height);
 				if (!hwnd.expose_pending) {
-					MessageQueue.Enqueue(xevent);
+					hwnd.Queue.Enqueue(xevent);
 					hwnd.expose_pending = true;
 				}
 			} else {
 				hwnd.AddNcInvalidArea (xevent.ExposeEvent.x, xevent.ExposeEvent.y, xevent.ExposeEvent.width, xevent.ExposeEvent.height);
 				
 				if (!hwnd.nc_expose_pending) {
-					MessageQueue.Enqueue(xevent);
+					hwnd.Queue.Enqueue(xevent);
 					hwnd.nc_expose_pending = true;
 				}
 			}
@@ -878,7 +886,6 @@ namespace System.Windows.Forms {
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
-
 			xevent = new XEvent ();
 			xevent.type = XEventName.Expose;
 			xevent.ExposeEvent.display = DisplayHandle;
@@ -889,7 +896,7 @@ namespace System.Windows.Forms {
 			xevent.ExposeEvent.width = rectangle.Width;
 			xevent.ExposeEvent.height = rectangle.Height;
 
-			AddExpose (xevent);
+			AddExpose (hwnd, xevent);
 		}
 
 		private void WholeToScreen(IntPtr handle, ref int x, ref int y) {
@@ -1021,7 +1028,7 @@ namespace System.Windows.Forms {
 				hwnd.height = xevent.ConfigureEvent.height;
 
 				if (!hwnd.configure_pending) {
-					MessageQueue.Enqueue(xevent);
+					hwnd.Queue.Enqueue(xevent);
 					hwnd.configure_pending = true;
 				}
 			}
@@ -1119,6 +1126,7 @@ namespace System.Windows.Forms {
 		private void UpdateMessageQueue () {
 			DateTime	now;
 			int		pending;
+			Hwnd		hwnd;
 
 			now = DateTime.Now;
 
@@ -1175,9 +1183,15 @@ namespace System.Windows.Forms {
 					}
 				}
 //Console.WriteLine("Got x event {0}", xevent);
+
+				hwnd = Hwnd.GetObjectFromWindow(xevent.AnyEvent.window);
+				if (hwnd == null) {
+					pending = XPending (DisplayHandle);
+					continue;
+				}
 				switch (xevent.type) {
 					case XEventName.Expose:
-						AddExpose (xevent);
+						AddExpose (hwnd, xevent);
 						break;
 
 					case XEventName.SelectionClear: {
@@ -1294,20 +1308,14 @@ namespace System.Windows.Forms {
 					}
 
 					case XEventName.MapNotify: {
-						Hwnd hwnd;
-
-						hwnd = Hwnd.GetObjectFromWindow(xevent.MapEvent.window);
-						if ((hwnd != null) && (hwnd.client_window == xevent.MapEvent.window)) {
+						if (hwnd.client_window == xevent.MapEvent.window) {
 							hwnd.mapped = true;
 						}
 						break;
 					}
 
 					case XEventName.UnmapNotify: {
-						Hwnd hwnd;
-
-						hwnd = Hwnd.GetObjectFromWindow(xevent.MapEvent.window);
-						if ((hwnd != null) && (hwnd.client_window == xevent.MapEvent.window)) {
+						if (hwnd.client_window == xevent.MapEvent.window) {
 							hwnd.mapped = false;
 						}
 						break;
@@ -1326,7 +1334,7 @@ namespace System.Windows.Forms {
 					case XEventName.FocusOut:
 					case XEventName.ClientMessage:
 					case XEventName.ReparentNotify:
-						MessageQueue.Enqueue (xevent);
+						hwnd.Queue.Enqueue (xevent);
 						break;
 
 					case XEventName.ConfigureNotify:
@@ -1444,11 +1452,11 @@ namespace System.Windows.Forms {
 			if (c != null) {
 				controls = c.child_controls.GetAllControls ();
 
-				#if DriverDebugDestroy
-					Console.WriteLine("Destroying {0} [Child of {1}]", XplatUI.Window(controls[i].Handle), XplatUI.Window(controls[i].parent.Handle));
-				#endif
+				if (c.IsHandleCreated && !c.IsDisposed) {
+					#if DriverDebugDestroy
+						Console.WriteLine("Destroying {0}, child of {1}", XplatUI.Window(c.Handle), (c.Parent != null) ? XplatUI.Window(c.Parent.Handle) : "<none>");
+					#endif
 
-				if (c.IsHandleCreated) {
 					hwnd = Hwnd.ObjectFromHandle(c.Handle);
 					SendMessage(c.Handle, Msg.WM_DESTROY, IntPtr.Zero, IntPtr.Zero);
 				}
@@ -1497,23 +1505,27 @@ namespace System.Windows.Forms {
 
 		#region	Callbacks
 		private void MouseHover(object sender, EventArgs e) {
-			XEvent xevent;
+			XEvent	xevent;
+			Hwnd	hwnd;
 
 			HoverState.Timer.Enabled = false;
 
 			if (HoverState.Window != IntPtr.Zero) {
-				xevent = new XEvent ();
+				hwnd = Hwnd.GetObjectFromWindow(HoverState.Window);
+				if (hwnd != null) {
+					xevent = new XEvent ();
 
-				xevent.type = XEventName.ClientMessage;
-				xevent.ClientMessageEvent.display = DisplayHandle;
-				xevent.ClientMessageEvent.window = HoverState.Window;
-				xevent.ClientMessageEvent.message_type = HoverState.Atom;
-				xevent.ClientMessageEvent.format = 32;
-				xevent.ClientMessageEvent.ptr1 = (IntPtr) (HoverState.Y << 16 | HoverState.X);
+					xevent.type = XEventName.ClientMessage;
+					xevent.ClientMessageEvent.display = DisplayHandle;
+					xevent.ClientMessageEvent.window = HoverState.Window;
+					xevent.ClientMessageEvent.message_type = HoverState.Atom;
+					xevent.ClientMessageEvent.format = 32;
+					xevent.ClientMessageEvent.ptr1 = (IntPtr) (HoverState.Y << 16 | HoverState.X);
 
-				MessageQueue.EnqueueLocked (xevent);
+					hwnd.Queue.EnqueueLocked (xevent);
 
-				WakeupMain ();
+					WakeupMain ();
+				}
 			}
 		}
 
@@ -2114,6 +2126,7 @@ namespace System.Windows.Forms {
 				throw new Exception("Could not create X11 windows");
 			}
 
+			hwnd.Queue = ThreadQueue(Thread.CurrentThread);
 			hwnd.WholeWindow = WholeWindow;
 			hwnd.ClientWindow = ClientWindow;
 
@@ -2627,13 +2640,16 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void DoEvents() {
-			MSG msg = new MSG ();
+			MSG	msg = new MSG ();
+			Object	queue_id;
 
 			if (OverrideCursorHandle != IntPtr.Zero) {
 				OverrideCursorHandle = IntPtr.Zero;
 			}
 
-			while (PeekMessage(ref msg, IntPtr.Zero, 0, 0, (uint)PeekMessageFlags.PM_REMOVE)) {
+			queue_id = (Object)ThreadQueue(Thread.CurrentThread);
+
+			while (PeekMessage(queue_id, ref msg, IntPtr.Zero, 0, 0, (uint)PeekMessageFlags.PM_REMOVE)) {
 				TranslateMessage (ref msg);
 				DispatchMessage (ref msg);
 			}
@@ -2764,20 +2780,20 @@ namespace System.Windows.Forms {
 			return Point.Empty;
 		}
 
-		internal override bool GetMessage(ref MSG msg, IntPtr handle, int wFilterMin, int wFilterMax) {
+		internal override bool GetMessage(Object queue_id, ref MSG msg, IntPtr handle, int wFilterMin, int wFilterMax) {
 			XEvent	xevent;
 			bool	client;
 			Hwnd	hwnd;
 
 			ProcessNextMessage:
 
-			if (MessageQueue.Count > 0) {
-				xevent = (XEvent) MessageQueue.Dequeue ();
+			if (((XEventQueue)queue_id).Count > 0) {
+				xevent = (XEvent) ((XEventQueue)queue_id).Dequeue ();
 			} else {
 				UpdateMessageQueue ();
 
-				if (MessageQueue.Count > 0) {
-					xevent = (XEvent) MessageQueue.Dequeue ();
+				if (((XEventQueue)queue_id).Count > 0) {
+					xevent = (XEvent) ((XEventQueue)queue_id).Dequeue ();
 				} else {
 					if (!PostQuitState) {
 						msg.hwnd= IntPtr.Zero;
@@ -3149,12 +3165,13 @@ namespace System.Windows.Forms {
 								opacity = (IntPtr)hwnd.opacity;
 								XChangeProperty(DisplayHandle, XGetParent(hwnd.whole_window), NetAtoms[(int)NA._NET_WM_WINDOW_OPACITY], (IntPtr)Atom.XA_CARDINAL, 32, PropertyMode.Replace, ref opacity, 1);
 							}
+							return true;
 						} else {
 							hwnd.Reparented = false;
 							goto ProcessNextMessage;
 						}
 					}
-					break;
+					goto ProcessNextMessage;
 				}
 
 				case XEventName.ConfigureNotify: {
@@ -3279,6 +3296,11 @@ namespace System.Windows.Forms {
 						if (Caret.Window == hwnd.client_window) {
 							DestroyCaretInternal();
 						}
+
+						#if DriverDebugDestroy
+							Console.WriteLine("Received X11 Destroy Notification for {0}", XplatUI.Window(hwnd.client_window));
+						#endif
+
 						msg.hwnd = hwnd.client_window;
 						msg.message=Msg.WM_DESTROY;
 						hwnd.Dispose();
@@ -3300,14 +3322,14 @@ namespace System.Windows.Forms {
 
 					if (xevent.ClientMessageEvent.message_type == AsyncAtom) {
 						XplatUIDriverSupport.ExecuteClientMessage((GCHandle)xevent.ClientMessageEvent.ptr1);
-						break;
+						goto ProcessNextMessage;
 					}
 
 					if (xevent.ClientMessageEvent.message_type == HoverState.Atom) {
 						msg.message = Msg.WM_MOUSEHOVER;
 						msg.wParam = GetMousewParam(0);
 						msg.lParam = (IntPtr) (xevent.ClientMessageEvent.ptr1);
-						break;
+						return true;
 					}
 
 					if (xevent.ClientMessageEvent.message_type == (IntPtr)PostAtom) {
@@ -3315,7 +3337,7 @@ namespace System.Windows.Forms {
 						msg.message = (Msg) xevent.ClientMessageEvent.ptr2.ToInt32 ();
 						msg.wParam = xevent.ClientMessageEvent.ptr3;
 						msg.lParam = xevent.ClientMessageEvent.ptr4;
-						break;
+						return true;
 					}
 
 					#if dontcare
@@ -3329,7 +3351,7 @@ namespace System.Windows.Forms {
 						if (xevent.ClientMessageEvent.ptr1 == NetAtoms[(int)NA.WM_DELETE_WINDOW]) {
 							msg.message = Msg.WM_CLOSE;
 							Graphics.FromHdcInternal (IntPtr.Zero);
-							break;
+							return true;
 						}
 
 						// We should not get this, but I'll leave the code in case we need it in the future
@@ -3337,12 +3359,12 @@ namespace System.Windows.Forms {
 							goto ProcessNextMessage;
 						}
 					}
-					break;
+					goto ProcessNextMessage;
 				}
 
 				case XEventName.TimerNotify: {
 					xevent.TimerNotifyEvent.handler (this, EventArgs.Empty);
-					break;
+					goto ProcessNextMessage;
 				}
 		                        
 				default: {
@@ -3527,7 +3549,7 @@ namespace System.Windows.Forms {
 				xevent.ExposeEvent.height = rc.Height;
 			}
 
-			AddExpose (xevent);
+			AddExpose (hwnd, xevent);
 		}
 
 		internal override bool IsEnabled(IntPtr handle) {
@@ -3624,7 +3646,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		internal override bool PeekMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax, uint flags) {
+		internal override bool PeekMessage(Object queue_id, ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax, uint flags) {
 			bool	pending;
 
 			// FIXME - imlement filtering
@@ -3634,7 +3656,7 @@ namespace System.Windows.Forms {
 			}
 
 			pending = false;
-			if (MessageQueue.Count > 0) {
+			if (((XEventQueue)queue_id).Count > 0) {
 				pending = true;
 			} else {
 				// Only call UpdateMessageQueue if real events are pending 
@@ -3650,7 +3672,7 @@ namespace System.Windows.Forms {
 			if (!pending) {
 				return false;
 			}
-			return GetMessage(ref msg, hWnd, wFilterMin, wFilterMax);
+			return GetMessage(queue_id, ref msg, hWnd, wFilterMin, wFilterMax);
 		}
 
 		// FIXME - I think this should just enqueue directly
@@ -3674,7 +3696,7 @@ namespace System.Windows.Forms {
 			xevent.ClientMessageEvent.ptr3 = wparam;
 			xevent.ClientMessageEvent.ptr4 = lparam;
 
-			MessageQueue.Enqueue (xevent);
+			hwnd.Queue.Enqueue (xevent);
 
 			return true;
 		}
@@ -3811,7 +3833,10 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void SendAsyncMethod (AsyncMethodData method) {
-			XEvent xevent = new XEvent ();
+			Hwnd	hwnd;
+			XEvent	xevent = new XEvent ();
+
+			hwnd = Hwnd.ObjectFromHandle(FosterParent);
 
 			xevent.type = XEventName.ClientMessage;
 			xevent.ClientMessageEvent.display = DisplayHandle;
@@ -3820,7 +3845,7 @@ namespace System.Windows.Forms {
 			xevent.ClientMessageEvent.format = 32;
 			xevent.ClientMessageEvent.ptr1 = (IntPtr) GCHandle.Alloc (method);
 
-			MessageQueue.EnqueueLocked (xevent);
+			hwnd.Queue.EnqueueLocked (xevent);
 
 			WakeupMain ();
 		}
@@ -4249,8 +4274,8 @@ namespace System.Windows.Forms {
 			;	// FIXME - X11 doesn't 'hide' the cursor. we could create an empty cursor
 		}
 
-		internal override void StartLoop(Thread thread) {
-			// Future place for prepping a new queue for this specific thread
+		internal override object StartLoop(Thread thread) {
+			return (Object) ThreadQueue(thread);
 		}
 
 		internal override bool SupportsTransparency() {
@@ -4378,7 +4403,7 @@ namespace System.Windows.Forms {
 			xevent.ExposeEvent.display = DisplayHandle;
 			xevent.ExposeEvent.window = hwnd.client_window;
 
-			MessageQueue.Enqueue(xevent);
+			hwnd.Queue.Enqueue(xevent);
 			hwnd.expose_pending = true;
 #endif
 		}

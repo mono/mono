@@ -28,7 +28,7 @@
 #undef DriverDebug
 #undef DriverDebugPaint
 #undef DriverDebugCreate
-#undef DriverDebugDestroy
+#define DriverDebugDestroy
 #undef DriverDebugState
 
 using System;
@@ -485,8 +485,8 @@ namespace System.Windows.Forms {
 			return driver.GetMenuOrigin(handle);
 		}
 
-		internal static bool GetMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax) {
-			return driver.GetMessage(ref msg, hWnd, wFilterMin, wFilterMax);
+		internal static bool GetMessage(object queue_id, ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax) {
+			return driver.GetMessage(queue_id, ref msg, hWnd, wFilterMin, wFilterMax);
 		}
 
 		internal static IntPtr GetParent(IntPtr handle) {
@@ -592,8 +592,8 @@ namespace System.Windows.Forms {
 			return driver.PaintEventStart(handle, client);
 		}
 
-		internal static bool PeekMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax, uint flags) {
-			return driver.PeekMessage(ref msg, hWnd, wFilterMin, wFilterMax, flags);
+		internal static bool PeekMessage(Object queue_id, ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax, uint flags) {
+			return driver.PeekMessage(queue_id, ref msg, hWnd, wFilterMin, wFilterMax, flags);
 		}
 
 		internal static bool PostMessage(IntPtr hwnd, Msg message, IntPtr wParam, IntPtr lParam) {
@@ -830,11 +830,11 @@ namespace System.Windows.Forms {
 			return driver.StartDrag (handle, data, allowedEffects);
 		}
 
-		internal static void StartLoop(Thread thread) {
+		internal static object StartLoop(Thread thread) {
 			#if DriverDebug
 				Console.WriteLine("StartLoop({0:X}): Called", thread.GetHashCode());
 			#endif
-			driver.StartLoop(thread);
+			return driver.StartLoop(thread);
 		}
 
 		internal static bool SupportsTransparency() {

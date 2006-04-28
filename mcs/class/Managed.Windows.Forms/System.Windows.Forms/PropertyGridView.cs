@@ -31,6 +31,7 @@ using System.Collections;
 using System.Drawing;
 using System.Drawing.Design;
 using System.ComponentModel;
+using System.Threading;
 using System.Windows.Forms.Design;
 
 namespace System.Windows.Forms.PropertyGridInternal {
@@ -609,6 +610,8 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		}
 
 		public void DropDownControl(Control control) {
+			Object	queue_id;
+
 			dropdown_form.Deactivate +=new EventHandler(dropdown_form_Deactivate);
 			dropdown_form.Size = control.Size;
 			control.Dock = DockStyle.Fill;
@@ -620,7 +623,8 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			dropdown_form_showing = true;
 			dropdown_form.Show();
 			System.Windows.Forms.MSG msg = new MSG();
-			while (XplatUI.GetMessage(ref msg, IntPtr.Zero, 0, 0) && dropdown_form_showing) {
+			queue_id = XplatUI.StartLoop(Thread.CurrentThread);
+			while (XplatUI.GetMessage(queue_id, ref msg, IntPtr.Zero, 0, 0) && dropdown_form_showing) {
 				XplatUI.TranslateMessage(ref msg);
 				XplatUI.DispatchMessage(ref msg);
 			}

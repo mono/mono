@@ -1191,7 +1191,7 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException();
 		}
 
-		internal override bool GetMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax) {
+		internal override bool GetMessage(object queue_id, ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax) {
 			IntPtr evtRef = IntPtr.Zero;
 			IntPtr target = GetEventDispatcherTarget();
 			CheckTimers (DateTime.Now);
@@ -1366,7 +1366,7 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		internal override bool PeekMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax, uint flags) {
+		internal override bool PeekMessage(Object queue_id, ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax, uint flags) {
 			Console.WriteLine("XplatUIOSX.PeekMessage");
 			return true;
 		}
@@ -1711,7 +1711,7 @@ namespace System.Windows.Forms {
 				CGDisplayHideCursor (CGMainDisplayID ());
 		}
 
-		internal override void StartLoop(Thread thread) {
+		internal override object StartLoop(Thread thread) {
 			throw new NotImplementedException();
 		}
 		

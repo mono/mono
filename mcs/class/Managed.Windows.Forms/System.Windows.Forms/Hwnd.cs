@@ -74,6 +74,7 @@ namespace System.Windows.Forms {
 		internal bool		whacky_wm;
 		internal bool		fixed_size;
 		internal static Bitmap	bmp = new Bitmap(1, 1, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+		internal XEventQueue	queue;
 		#endregion	// Local Variables
 
 		#region Constructors and destructors
@@ -330,6 +331,16 @@ namespace System.Windows.Forms {
 
 			set {
 				opacity = value;
+			}
+		}
+
+		public XEventQueue Queue {
+			get {
+				return queue;
+			}
+
+			set {
+				queue = value;
 			}
 		}
 

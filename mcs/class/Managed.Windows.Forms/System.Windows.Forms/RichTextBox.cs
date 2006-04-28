@@ -1468,9 +1468,9 @@ namespace System.Windows.Forms {
 				FlushText(rtf, false);
 			}
 
-			catch (RTF.RTFException) {
-				// Seems to be plain text...
-				
+			catch (RTF.RTFException e) {
+				// Seems to be plain text or broken RTF
+				Console.WriteLine("RTF Parsing failure: {0}", e.Message);
 			}
 
 			to_x = rtf_cursor_x;

@@ -1,3 +1,20 @@
+2006-04-28  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Application.cs: Updated to new StartLoop/GetMessage API
+	* RichTextBox.cs: Provide some output on RTF parsing errors
+	* XplatUI.cs, XplatUIDriver.cs, XplatUIOSX.cs, XplatUIWin32.cs: Added
+	  new queue_id argument to GetMessage and PeekMessage to allow faster
+	  handling of per-thread queues in drivers.
+	* Hwnd.cs: Added Queue tracking and property
+	* MenuAPI.cs: Updated to new StartLoop/GetMessage API
+	* XEventQueue.cs: Added thread trackingA
+	* PropertyGridView.cs: Updated to new StartLoop/GetMessage API
+	* XplatUIX11.cs:
+	  - Implemented new per-thread queue
+	  - GetMessage: Fixed return/break behaviour on several cases. We were
+	    returning stale messages in some cases, instead of just processing
+	    the next message
+
 2006-04-27  Jonathan Chambers  <jonathan.chambers@ansys.com>
 
 	* PropertyGrid.cs: Call GetPropertiesSupported on TypeConverter.

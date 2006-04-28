@@ -28,6 +28,7 @@
 
 using System.Collections;
 using System.Drawing;
+using System.Threading;
 
 namespace System.Windows.Forms {
 
@@ -180,6 +181,8 @@ namespace System.Windows.Forms {
 
 		static public bool TrackPopupMenu (Menu menu, Point pnt)
 		{
+			Object	queue_id;
+
 			if (menu.MenuItems.Count <= 0)	// No submenus to track
 				return true;				
 
@@ -194,9 +197,11 @@ namespace System.Windows.Forms {
 
 			bool no_quit = true;
 
+			queue_id = XplatUI.StartLoop(Thread.CurrentThread);
+
 			while ((menu.Wnd != null) && menu.Wnd.Visible && no_quit) {
 				MSG msg = new MSG ();
-				no_quit = XplatUI.GetMessage(ref msg, IntPtr.Zero, 0, 0);
+				no_quit = XplatUI.GetMessage(queue_id, ref msg, IntPtr.Zero, 0, 0);
 				XplatUI.TranslateMessage(ref msg);
 				XplatUI.DispatchMessage(ref msg);				
 			}

@@ -295,6 +295,7 @@ namespace System.Windows.Forms {
 			Queue		toplevels;
 			IEnumerator	control;
 			MSG		msg;
+			Object		queue_id;
 
 			msg = new MSG();
 
@@ -346,10 +347,10 @@ namespace System.Windows.Forms {
 				toplevels = null;
 			}
 
-			XplatUI.StartLoop(Thread.CurrentThread);
+			queue_id = XplatUI.StartLoop(Thread.CurrentThread);
 			messageloop_started = true;
 
-			while (XplatUI.GetMessage(ref msg, IntPtr.Zero, 0, 0)) {
+			while (XplatUI.GetMessage(queue_id, ref msg, IntPtr.Zero, 0, 0)) {
 				if ((message_filters != null) && (message_filters.Count > 0)) {
 					Message	m;
 					bool	drop;

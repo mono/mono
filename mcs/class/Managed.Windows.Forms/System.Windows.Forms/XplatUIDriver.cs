@@ -184,9 +184,9 @@ namespace System.Windows.Forms {
 		internal abstract IntPtr DefWndProc(ref Message msg);
 		internal abstract void HandleException(Exception e);
 		internal abstract void DoEvents();
-		internal abstract bool PeekMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax, uint flags);
+		internal abstract bool PeekMessage(Object queue_id, ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax, uint flags);
 		internal abstract void PostQuitMessage(int exitCode);
-		internal abstract bool GetMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax);
+		internal abstract bool GetMessage(object queue_id, ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax);
 		internal abstract bool TranslateMessage(ref MSG msg);
 		internal abstract IntPtr DispatchMessage(ref MSG msg);
 
@@ -254,7 +254,7 @@ namespace System.Windows.Forms {
 		internal abstract IntPtr SendMessage(IntPtr hwnd, Msg message, IntPtr wParam, IntPtr lParam);
 		internal abstract bool PostMessage(IntPtr hwnd, Msg message, IntPtr wParam, IntPtr lParam);
 
-		internal abstract void StartLoop(Thread thread);
+		internal abstract object StartLoop(Thread thread);
 		internal abstract void EndLoop(Thread thread);
 
 		internal abstract void RequestNCRecalc(IntPtr hwnd);

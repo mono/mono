@@ -1350,7 +1350,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		internal override bool PeekMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax, uint flags) {
+		internal override bool PeekMessage(Object queue_id, ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax, uint flags) {
 			return Win32PeekMessage(ref msg, hWnd, wFilterMin, wFilterMax, flags);
 		}
 
@@ -1373,7 +1373,7 @@ namespace System.Windows.Forms {
 		}
 
 
-		internal override bool GetMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax) {
+		internal override bool GetMessage(Object queue_id, ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax) {
 			return GetMessage(ref msg, hWnd, wFilterMin, wFilterMax, true);
 		}
 
@@ -1709,8 +1709,8 @@ namespace System.Windows.Forms {
 			// Nothing to do
 		}
 
-		internal override void StartLoop(System.Threading.Thread thread) {
-			// Nothing to do
+		internal override object StartLoop(System.Threading.Thread thread) {
+			return null;
 		}
 
 		internal override void SetModal(IntPtr handle, bool Modal) {
