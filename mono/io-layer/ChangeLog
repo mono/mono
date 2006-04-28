@@ -1,3 +1,32 @@
+2006-04-26  Miguel de Icaza  <miguel@novell.com>
+
+	* io.c (file_close): Oops, do not use DeleteFile which expects
+	unicode, instead use unlink directly
+
+	Add support for the new FileOptions bits on .NET 2.0.
+
+	It might be good if Dick reviews these changes.
+	
+	* io.c (file_close): If DeleteOnClose is set, then delete the file
+	before freeing it.
+	(CreateFile): Do not support encryption per user. 
+	
+	If posix_fadvise exists, pass hints on sequential scan and random
+	access.   Did not figure out what WRITE_THROUGH maps to.
+
+2006-04-26  Dick Porter  <dick@ximian.com>
+
+	* sockets.c (WSAIoctl): Check the output buffer is valid before
+	writing to it.
+
+	* handles.c (_wapi_search_handle): Set shared pointer if we find a
+	shared handle that has been already opened.
+
+2006-04-21  Dick Porter  <dick@ximian.com>
+
+	* threads.c (GetCurrentThread): Reference the handle if we return
+	an already-known thread.
+
 2006-04-07  Dick Porter  <dick@ximian.com>
 
 	* processes.c: Fix build for older glib.

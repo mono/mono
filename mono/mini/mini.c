@@ -1076,117 +1076,6 @@ reverse_branch_op (guint32 opcode)
 }
 
 guint
-mono_type_to_ldind (MonoType *type)
-{
-	if (type->byref)
-		return CEE_LDIND_I;
-
-handle_enum:
-	switch (type->type) {
-	case MONO_TYPE_I1:
-		return CEE_LDIND_I1;
-	case MONO_TYPE_U1:
-	case MONO_TYPE_BOOLEAN:
-		return CEE_LDIND_U1;
-	case MONO_TYPE_I2:
-		return CEE_LDIND_I2;
-	case MONO_TYPE_U2:
-	case MONO_TYPE_CHAR:
-		return CEE_LDIND_U2;
-	case MONO_TYPE_I4:
-		return CEE_LDIND_I4;
-	case MONO_TYPE_U4:
-		return CEE_LDIND_U4;
-	case MONO_TYPE_I:
-	case MONO_TYPE_U:
-	case MONO_TYPE_PTR:
-	case MONO_TYPE_FNPTR:
-		return CEE_LDIND_I;
-	case MONO_TYPE_CLASS:
-	case MONO_TYPE_STRING:
-	case MONO_TYPE_OBJECT:
-	case MONO_TYPE_SZARRAY:
-	case MONO_TYPE_ARRAY:    
-		return CEE_LDIND_REF;
-	case MONO_TYPE_I8:
-	case MONO_TYPE_U8:
-		return CEE_LDIND_I8;
-	case MONO_TYPE_R4:
-		return CEE_LDIND_R4;
-	case MONO_TYPE_R8:
-		return CEE_LDIND_R8;
-	case MONO_TYPE_VALUETYPE:
-		if (type->data.klass->enumtype) {
-			type = type->data.klass->enum_basetype;
-			goto handle_enum;
-		}
-		return CEE_LDOBJ;
-	case MONO_TYPE_TYPEDBYREF:
-		return CEE_LDOBJ;
-	case MONO_TYPE_GENERICINST:
-		type = &type->data.generic_class->container_class->byval_arg;
-		goto handle_enum;
-	default:
-		g_error ("unknown type 0x%02x in type_to_ldind", type->type);
-	}
-	return -1;
-}
-
-guint
-mono_type_to_stind (MonoType *type)
-{
-	if (type->byref)
-		return CEE_STIND_I;
-
-handle_enum:
-	switch (type->type) {
-	case MONO_TYPE_I1:
-	case MONO_TYPE_U1:
-	case MONO_TYPE_BOOLEAN:
-		return CEE_STIND_I1;
-	case MONO_TYPE_I2:
-	case MONO_TYPE_U2:
-	case MONO_TYPE_CHAR:
-		return CEE_STIND_I2;
-	case MONO_TYPE_I4:
-	case MONO_TYPE_U4:
-		return CEE_STIND_I4;
-	case MONO_TYPE_I:
-	case MONO_TYPE_U:
-	case MONO_TYPE_PTR:
-	case MONO_TYPE_FNPTR:
-		return CEE_STIND_I;
-	case MONO_TYPE_CLASS:
-	case MONO_TYPE_STRING:
-	case MONO_TYPE_OBJECT:
-	case MONO_TYPE_SZARRAY:
-	case MONO_TYPE_ARRAY:    
-		return CEE_STIND_REF;
-	case MONO_TYPE_I8:
-	case MONO_TYPE_U8:
-		return CEE_STIND_I8;
-	case MONO_TYPE_R4:
-		return CEE_STIND_R4;
-	case MONO_TYPE_R8:
-		return CEE_STIND_R8;
-	case MONO_TYPE_VALUETYPE:
-		if (type->data.klass->enumtype) {
-			type = type->data.klass->enum_basetype;
-			goto handle_enum;
-		}
-		return CEE_STOBJ;
-	case MONO_TYPE_TYPEDBYREF:
-		return CEE_STOBJ;
-	case MONO_TYPE_GENERICINST:
-		type = &type->data.generic_class->container_class->byval_arg;
-		goto handle_enum;
-	default:
-		g_error ("unknown type 0x%02x in type_to_stind", type->type);
-	}
-	return -1;
-}
-
-guint
 mono_type_to_store_membase (MonoType *type)
 {
 	if (type->byref)
@@ -2751,9 +2640,7 @@ mono_emit_method_call_full (MonoCompile *cfg, MonoBasicBlock *bblock, MonoMethod
 	call->inst.flags |= MONO_INST_HAS_METHOD;
 	call->inst.inst_left = this;
 
-	if (!virtual)
-		mono_get_got_var (cfg);
-	else if (call->method->klass->flags & TYPE_ATTRIBUTE_INTERFACE)
+	if (call->method->klass->flags & TYPE_ATTRIBUTE_INTERFACE)
 		/* Needed by the code generated in inssel.brg */
 		mono_get_got_var (cfg);
 
@@ -2797,8 +2684,6 @@ mono_emit_native_call (MonoCompile *cfg, MonoBasicBlock *bblock, gconstpointer f
 	call = mono_emit_call_args (cfg, bblock, sig, args, FALSE, FALSE, ip, to_end);
 	call->fptr = func;
 
-	mono_get_got_var (cfg);
-
 	return mono_spill_call (cfg, bblock, call, sig, ret_object, ip, to_end);
 }
 
@@ -2812,7 +2697,6 @@ mono_emit_jit_icall (MonoCompile *cfg, MonoBasicBlock *bblock, gconstpointer fun
 		g_assert_not_reached ();
 	}
 
-	mono_get_got_var (cfg);
 	return mono_emit_native_call (cfg, bblock, mono_icall_get_wrapper (info), info->sig, args, ip, FALSE, FALSE);
 }
 
@@ -2834,8 +2718,6 @@ mono_emulate_opcode (MonoCompile *cfg, MonoInst *tree, MonoInst **iargs, MonoJit
 	call->signature = info->sig;
 
 	call = mono_arch_call_opcode (cfg, cfg->cbb, call, FALSE);
-
-	mono_get_got_var (cfg);
 
 	if (!MONO_TYPE_IS_VOID (info->sig->ret)) {
 		temp = mono_compile_create_var (cfg, info->sig->ret, OP_LOCAL);
@@ -3074,10 +2956,15 @@ handle_alloc (MonoCompile *cfg, MonoBasicBlock *bblock, MonoClass *klass, gboole
 		NEW_CLASSCONST (cfg, iargs [1], klass);
 
 		alloc_ftn = mono_object_new;
+	} else if (cfg->compile_aot && bblock->out_of_line && klass->type_token && klass->image == mono_defaults.corlib) {
+		/* This happens often in argument checking code, eg. throw new FooException... */
+		/* Avoid relocations by calling a helper function specialized to mscorlib */
+		NEW_ICONST (cfg, iargs [0], mono_metadata_token_index (klass->type_token));
+		return mono_emit_jit_icall (cfg, bblock, helper_newobj_mscorlib, iargs, ip);
 	} else {
 		MonoVTable *vtable = mono_class_vtable (cfg->domain, klass);
 		gboolean pass_lw;
-		
+
 		alloc_ftn = mono_class_get_allocation_ftn (vtable, for_box, &pass_lw);
 		if (pass_lw) {
 			guint32 lw = vtable->klass->instance_size;
@@ -3748,7 +3635,7 @@ get_basic_blocks (MonoCompile *cfg, GHashTable *bbhash, MonoMethodHeader* header
 			
 			/* Find the start of the bblock containing the throw */
 			bblock = NULL;
-			while ((bb_start > start) && !bblock) {
+			while ((bb_start >= start) && !bblock) {
 				bblock = g_hash_table_lookup (bbhash, (bb_start));
 				bb_start --;
 			}
@@ -4015,10 +3902,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 	dont_inline = g_list_prepend (dont_inline, method);
 	if (cfg->method == method) {
-
-		if (cfg->method->save_lmf)
-			/* Needed by the prolog code */
-			mono_get_got_var (cfg);
 
 		if (cfg->prof_options & MONO_PROFILE_INS_COVERAGE)
 			cfg->coverage_info = mono_profiler_coverage_alloc (cfg->method, header->code_size);
@@ -4676,16 +4559,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 			}
 
-			if (!virtual) {
-				mono_get_got_var (cfg);
-			} else {
-				/* code in inssel.brg might transform a virtual call to a normal call */
-				if (!(cmethod->flags & METHOD_ATTRIBUTE_VIRTUAL) || 
-					((cmethod->flags & METHOD_ATTRIBUTE_FINAL) && 
-					 cmethod->wrapper_type != MONO_WRAPPER_REMOTING_INVOKE_WITH_CHECK))
-					mono_get_got_var (cfg);
-			}
-
 			if (cmethod && cmethod->klass->generic_container) {
 				// G_BREAKPOINT ();
 				goto unverified;
@@ -5247,7 +5120,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			if (mono_find_jit_opcode_emulation (ins->opcode)) {
 				--sp;
 				*sp++ = emit_tree (cfg, bblock, ins, ip + 1);
-				mono_get_got_var (cfg);
 			}
 			ip++;
 			break;
@@ -5279,7 +5151,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			if (mono_find_jit_opcode_emulation (ins->opcode)) {
 				--sp;
 				*sp++ = emit_tree (cfg, bblock, ins, ip + 1);
-				mono_get_got_var (cfg);
 			}
 			ip++;
 			break;
@@ -5301,7 +5172,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			if (mono_find_jit_opcode_emulation (ins->opcode)) {
 				--sp;
 				*sp++ = emit_tree (cfg, bblock, ins, ip + 1);
-				mono_get_got_var (cfg);
 			}
 			ip++;			
 			break;
@@ -5519,10 +5389,19 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						MonoInst *iargs [2];
 						int temp;
 
-						/* Avoid creating the string object */
-						NEW_IMAGECONST (cfg, iargs [0], image);
-						NEW_ICONST (cfg, iargs [1], mono_metadata_token_index (n));
-						temp = mono_emit_jit_icall (cfg, bblock, helper_ldstr, iargs, ip);
+						if (cfg->compile_aot && cfg->method->klass->image == mono_defaults.corlib) {
+							/* 
+							 * Avoid relocations by using a version of helper_ldstr
+							 * specialized to mscorlib.
+							 */
+							NEW_ICONST (cfg, iargs [0], mono_metadata_token_index (n));
+							temp = mono_emit_jit_icall (cfg, bblock, helper_ldstr_mscorlib, iargs, ip);
+						} else {
+							/* Avoid creating the string object */
+							NEW_IMAGECONST (cfg, iargs [0], image);
+							NEW_ICONST (cfg, iargs [1], mono_metadata_token_index (n));
+							temp = mono_emit_jit_icall (cfg, bblock, helper_ldstr, iargs, ip);
+						}
 						NEW_TEMPLOAD (cfg, *sp, temp);
 					} 
 					else
@@ -5596,10 +5475,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					/* 
 					 * The code generated by mini_emit_virtual_call () expects
 					 * iargs [0] to be a boxed instance, but luckily the vcall
-					 * will be transformed into a normal call there. The AOT
-					 * case needs an already allocate got_var.
+					 * will be transformed into a normal call there.
 					 */
-					mono_get_got_var (cfg);
 				} else {
 					temp = handle_alloc (cfg, bblock, cmethod->klass, FALSE, ip);
 					NEW_TEMPLOAD (cfg, *sp, temp);
@@ -5919,7 +5796,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			
 			link_bblock (cfg, bblock, end_bblock);
 			start_new_bblock = 1;
-			mono_get_got_var (cfg);
 			break;
 		case CEE_LDFLD:
 		case CEE_LDFLDA:
@@ -6751,7 +6627,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			if (mono_find_jit_opcode_emulation (ins->opcode)) {
 				--sp;
 				*sp++ = emit_tree (cfg, bblock, ins, ip + 1);
-				mono_get_got_var (cfg);
 			}
 			ip++;
 			break;
@@ -7407,7 +7282,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				link_bblock (cfg, bblock, end_bblock);
 				start_new_bblock = 1;
 				ip += 2;
-				mono_get_got_var (cfg);
 				break;
 			}
 			case CEE_SIZEOF:
@@ -7767,6 +7641,7 @@ mono_init_trampolines (void)
 	mono_trampoline_code [MONO_TRAMPOLINE_CLASS_INIT] = mono_arch_create_trampoline_code (MONO_TRAMPOLINE_CLASS_INIT);
 #ifdef MONO_ARCH_HAVE_PIC_AOT
 	mono_trampoline_code [MONO_TRAMPOLINE_AOT] = mono_arch_create_trampoline_code (MONO_TRAMPOLINE_AOT);
+	mono_trampoline_code [MONO_TRAMPOLINE_AOT_PLT] = mono_arch_create_trampoline_code (MONO_TRAMPOLINE_AOT_PLT);
 #endif
 #ifdef MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE
 	mono_trampoline_code [MONO_TRAMPOLINE_DELEGATE] = mono_arch_create_trampoline_code (MONO_TRAMPOLINE_DELEGATE);
@@ -8569,6 +8444,7 @@ mini_thread_cleanup (MonoThread *thread)
 		g_free (jit_tls->first_lmf);
 		g_free (jit_tls);
 		thread->jit_data = NULL;
+		TlsSetValue (mono_jit_tls_id, NULL);
 	}
 }
 
@@ -8675,6 +8551,10 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 	case MONO_PATCH_INFO_IID:
 		mono_class_init (patch_info->data.klass);
 		target = GINT_TO_POINTER ((int)patch_info->data.klass->interface_id);
+		break;
+	case MONO_PATCH_INFO_ADJUSTED_IID:
+		mono_class_init (patch_info->data.klass);
+		target = GINT_TO_POINTER ((int)(-((patch_info->data.klass->interface_id + 1) * SIZEOF_VOID_P)));
 		break;
 	case MONO_PATCH_INFO_VTABLE:
 		target = mono_class_vtable (domain, patch_info->data.klass);
@@ -11984,6 +11864,8 @@ mini_init (const char *filename)
 	register_icall (mono_ldvirtfn, "mono_ldvirtfn", "ptr object ptr", FALSE);
 	register_icall (helper_compile_generic_method, "compile_generic_method", "ptr object ptr ptr", FALSE);
 	register_icall (helper_ldstr, "helper_ldstr", "object ptr int", FALSE);
+	register_icall (helper_ldstr_mscorlib, "helper_ldstr_mscorlib", "object int", FALSE);
+	register_icall (helper_newobj_mscorlib, "helper_newobj_mscorlib", "object int", FALSE);
 #endif
 
 #define JIT_RUNTIME_WORKS

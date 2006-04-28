@@ -99,11 +99,6 @@ opt_names [] = {
 #define DEFAULT_OPTIMIZATIONS (	\
 	MONO_OPT_PEEPHOLE |	\
 	MONO_OPT_CFOLD |	\
-	MONO_OPT_INLINE |	\
-	MONO_OPT_CONSPROP |	\
-	MONO_OPT_COPYPROP |	\
-	MONO_OPT_TREEPROP |	\
-	MONO_OPT_DEADCE |	\
 	MONO_OPT_BRANCH |	\
 	MONO_OPT_LINEARS |	\
 	MONO_OPT_INTRINS |  \
@@ -867,6 +862,9 @@ mono_main (int argc, char* argv[])
 
 	if (action == DO_DEBUGGER) {
 		opt |= MONO_OPT_SHARED;
+		opt &= ~MONO_OPT_INLINE;
+		opt &= ~MONO_OPT_COPYPROP;
+		opt &= ~MONO_OPT_CONSPROP;
 		enable_debugging = TRUE;
 
 #ifdef MONO_DEBUGGER_SUPPORTED

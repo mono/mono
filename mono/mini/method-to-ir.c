@@ -1937,18 +1937,9 @@ mini_emit_load_intf_reg_vtable (MonoCompile *cfg, int intf_reg, int vtable_reg, 
 	if (cfg->compile_aot) {
 		int ioffset_reg = alloc_preg (cfg);
 		int iid_reg = alloc_preg (cfg);
-		int adjiid_reg = alloc_preg (cfg);
-		MONO_EMIT_NEW_AOTCONST (cfg, iid_reg, klass, MONO_PATCH_INFO_IID);
-		/* Consider having it already adjusted with a new AOT const,
-		 * so we avoid both the inc and the shift.
-		 */
-		MONO_EMIT_NEW_BIALU (cfg, OP_ADD_IMM, adjiid_reg, iid_reg, 1);
-#if SIZEOF_VOID_P == 8
-		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SHL_IMM, ioffset_reg, adjiid_reg, 3);
-#else
-		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SHL_IMM, ioffset_reg, adjiid_reg, 2);
-#endif
-		MONO_EMIT_NEW_BIALU (cfg, OP_PADD, ioffset_reg, ioffset_reg, iid_reg);
+
+		MONO_EMIT_NEW_AOTCONST (cfg, iid_reg, klass, MONO_PATCH_INFO_ADJUSTED_IID);
+		MONO_EMIT_NEW_BIALU (cfg, OP_PADD, ioffset_reg, iid_reg, vtable_reg);
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, intf_reg, ioffset_reg, 0);
 	}
 	else {
@@ -2603,9 +2594,6 @@ mono_emit_method_call_full (MonoCompile *cfg, MonoMethod *method, MonoMethodSign
 				method = call->method = mono_marshal_get_remoting_invoke_with_check (method);
 			}
 
-			/* The backends will need the got var */
-			mono_get_got_var (cfg);
-
 			if (!method->string_ctor)
 				MONO_EMIT_NEW_UNALU (cfg, OP_CHECK_THIS, -1, this_reg);
 
@@ -2636,10 +2624,6 @@ mono_emit_method_call_full (MonoCompile *cfg, MonoMethod *method, MonoMethodSign
 		call->virtual = TRUE;
 	}
 
-	if (!virtual)
-		/* The backends will need the got var */
-		mono_get_got_var (cfg);
-
 	MONO_ADD_INS (cfg->cbb, (MonoInst*)call);
 
 	return (MonoInst*)call;
@@ -2664,9 +2648,6 @@ mono_emit_native_call (MonoCompile *cfg, gconstpointer func, MonoMethodSignature
 	call->fptr = func;
 
 	MONO_ADD_INS (cfg->cbb, (MonoInst*)call);
-
-	/* The backends will need the got var */
-	mono_get_got_var (cfg);
 
 	return (MonoInst*)call;
 }
@@ -2899,6 +2880,11 @@ handle_alloc (MonoCompile *cfg, MonoClass *klass, gboolean for_box, const guchar
 		EMIT_NEW_CLASSCONST (cfg, iargs [1], klass);
 
 		alloc_ftn = mono_object_new;
+	} else if (cfg->compile_aot && cfg->cbb->out_of_line && klass->type_token && klass->image == mono_defaults.corlib) {
+		/* This happens often in argument checking code, eg. throw new FooException... */
+		/* Avoid relocations by calling a helper function specialized to mscorlib */
+		EMIT_NEW_ICONST (cfg, iargs [0], mono_metadata_token_index (klass->type_token));
+		return mono_emit_jit_icall (cfg, helper_newobj_mscorlib, iargs, ip);
 	} else {
 		MonoVTable *vtable = mono_class_vtable (cfg->domain, klass);
 		gboolean pass_lw;
@@ -5389,10 +5375,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 	dont_inline = g_list_prepend (dont_inline, method);
 	if (cfg->method == method) {
 
-		if (cfg->method->save_lmf)
-			/* Needed by the prolog code */
-			mono_get_got_var (cfg);
-
 		if (cfg->prof_options & MONO_PROFILE_INS_COVERAGE)
 			cfg->coverage_info = mono_profiler_coverage_alloc (cfg->method, header->code_size);
 
@@ -6913,10 +6895,19 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					if (bblock->out_of_line) {
 						MonoInst *iargs [2];
 
-						/* Avoid creating the string object */
-						EMIT_NEW_IMAGECONST (cfg, iargs [0], image);
-						EMIT_NEW_ICONST (cfg, iargs [1], mono_metadata_token_index (n));
-						*sp = mono_emit_jit_icall (cfg, helper_ldstr, iargs, ip);
+						if (cfg->compile_aot && cfg->method->klass->image == mono_defaults.corlib) {
+							/* 
+							 * Avoid relocations by using a version of helper_ldstr
+							 * specialized to mscorlib.
+							 */
+							EMIT_NEW_ICONST (cfg, iargs [0], mono_metadata_token_index (n));
+							*sp = mono_emit_jit_icall (cfg, helper_ldstr_mscorlib, iargs, ip);
+						} else {
+							/* Avoid creating the string object */
+							EMIT_NEW_IMAGECONST (cfg, iargs [0], image);
+							EMIT_NEW_ICONST (cfg, iargs [1], mono_metadata_token_index (n));
+							*sp = mono_emit_jit_icall (cfg, helper_ldstr, iargs, ip);
+						}
 					} 
 					else
 					if (cfg->compile_aot) {
@@ -7947,9 +7938,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			
 			link_bblock (cfg, bblock, end_bblock);
 			start_new_bblock = 1;
-
-			/* Needed by the backend */
-			mono_get_got_var (cfg);
 			break;
 		case CEE_ENDFINALLY:
 			MONO_INST_NEW (cfg, ins, OP_ENDFINALLY);
@@ -8598,9 +8586,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				link_bblock (cfg, bblock, end_bblock);
 				start_new_bblock = 1;
 				ip += 2;
-
-				/* Needed by the backend */
-				mono_get_got_var (cfg);
 				break;
 			}
 			case CEE_SIZEOF: {
@@ -9930,7 +9915,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   running generics.exe.
  * - create a helper function for allocating a stack slot, taking into account 
  *   MONO_CFG_HAS_SPILLUP.
- * - LAST MERGE: 59644.
+ * - LAST MERGE: 60046.
  */
 
 /*

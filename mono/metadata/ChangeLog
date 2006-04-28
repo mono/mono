@@ -1,4 +1,63 @@
+2006-04-26  Miguel de Icaza  <miguel@novell.com>
+
+	* file-io.c (ves_icall_System_IO_MonoIO_Open): Remove `async'
+	boolean parameter and instead pass the information on `options'
+	parameter (FileOptions).
+
+	* icall.c: Register the new signature for MonoIO.Open.
+
+	* debug-helpers.c (dis_one): Trying to understand how coverity
+	works.  Fix Run 5, item 78.
+
+2006-04-26  Dick Porter  <dick@ximian.com>
+
+	* socket-io.c (hostent_to_IPHostEntry2): Explicitly check for NULL
+	dereference.
+
+2006-04-25  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.h (MONO_DEBUGGER_VERSION): Bump to 56.
+
+	* threads.c (mono_thread_attach): Set `thread->stack_ptr' and call
+	debugger_thread_created().
+	(debugger_gc_push_all_stacks): Don't handle the main thread in any
+	special way.
+	(mono_debugger_init_threads): Removed the `main_thread_stack' arg.
+	(mono_debugger_finalize_threads): New function; undo the effects
+	of mono_debugger_init_threads().
+	(mono_debugger_create_all_threads): Removed.
+
+2006-04-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* image.c (mono_image_close): Tidy up trace messages.
+
+	* assembly.c (mono_assembly_close): Ditto.
+
+	* assembly.c (mono_assembly_close): Clear out image->assembly so the image
+	no longer references an already freed assembly. Fixes #78168.
+
+2006-04-21  Dick Porter  <dick@ximian.com>
+
+	* threads.c (mono_thread_detach): Fix reference counting when
+	detaching threads.
+
+2006-04-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_System_Enum_ToObject): Improve exception messages. Fixes
+	#78155.
+
 2006-04-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_type_to_ldind): New helper function moved here from mini.c
+	(mono_type_to_stind): Ditto.
+
+	* marshal.c: Use the new helper functions to simplify code.
+
+	* image.c (mono_image_close): Add some code for help debug assembly unloading
+	problems.
+
+	* metadata.c (mono_metadata_parse_type_full): Allocate MonoType's from the
+	image mempool.
 
 	* assembly.c (mono_assembly_open_full): Invoke the load hook when the
 	assembly was already loaded in another appdomain. Fixes #78083.

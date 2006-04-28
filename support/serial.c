@@ -118,7 +118,7 @@ get_bytes_in_buffer (int fd, gboolean input, gint32 *error)
 	gint32 retval;
 
 	*error = 0;
-	if (ioctl (fd, input ? TIOCINQ : TIOCOUTQ, &retval) == -1) {
+	if (ioctl (fd, input ? FIONREAD : TIOCOUTQ, &retval) == -1) {
 		*error = -1;
 		return -1;
 	}

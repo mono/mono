@@ -447,6 +447,7 @@ mono_thread_attach (MonoDomain *domain)
 
 	thread->handle=thread_handle;
 	thread->tid=tid;
+	thread->stack_ptr = &tid;
 	MONO_OBJECT_SETREF (thread, synch_lock, mono_object_new (domain, mono_defaults.object_class));
 
 	THREAD_DEBUG (g_message ("%s: Attached thread ID %"G_GSIZE_FORMAT" (handle %p)", __func__, tid, thread_handle));
@@ -457,6 +458,8 @@ mono_thread_attach (MonoDomain *domain)
 
 	SET_CURRENT_OBJECT (thread);
 	mono_domain_set (domain, TRUE);
+
+	debugger_thread_created (thread);
 
 	thread_adjust_static_data (thread);
 
@@ -477,10 +480,10 @@ mono_thread_detach (MonoThread *thread)
 	
 	thread_cleanup (thread);
 
-	/* Need to CloseHandle this thread, because we took a reference in
-	 * mono_thread_attach ()
+	/* Don't need to CloseHandle this thread, even though we took a
+	 * reference in mono_thread_attach (), because the GC will do it
+	 * when the Thread object is finalised.
 	 */
-	CloseHandle(thread->handle);
 }
 
 void
@@ -2803,24 +2806,7 @@ gint32* mono_thread_interruption_request_flag ()
 	return &thread_interruption_requested;
 }
 
-static void debugger_create_all_threads (gpointer key, gpointer value, gpointer user)
-{
-	debugger_thread_created ((MonoThread *) value);
-}
-
-void
-mono_debugger_create_all_threads (void)
-{
-	mono_threads_lock ();
-	mono_g_hash_table_foreach (threads, debugger_create_all_threads, NULL);
-	mono_threads_unlock ();
-}
-
 #if MONO_DEBUGGER_SUPPORTED
-
-static guint64 debugger_main_thread_id = -1;
-static gpointer debugger_main_thread_stack_ptr = NULL;
-static gpointer debugger_main_thread_end_stack = NULL;
 
 extern void GC_push_all_stack (gpointer b, gpointer t);
 
@@ -2837,8 +2823,10 @@ debugger_gc_push_stack (gpointer key, gpointer value, gpointer user)
 
 	end_stack = (thread->tid == GetCurrentThreadId ()) ? &key : thread->end_stack;
 
-	if (!end_stack || !thread->stack_ptr)
+	if (!end_stack || !thread->stack_ptr) {
+		g_warning (G_STRLOC ": Cannot push stack of thread %Lx", thread->tid);
 		return;
+	}
 
 	GC_push_all_stack (end_stack, thread->stack_ptr);
 }
@@ -2849,11 +2837,6 @@ debugger_gc_push_stack (gpointer key, gpointer value, gpointer user)
 static void
 debugger_gc_push_all_stacks (void)
 {
-	gpointer end_stack = (debugger_main_thread_id == GetCurrentThreadId ()) ?
-		&end_stack : debugger_main_thread_end_stack;
-
-	GC_push_all_stack (end_stack, debugger_main_thread_stack_ptr);
-
 	if (threads != NULL)
 		mono_g_hash_table_foreach (threads, debugger_gc_push_stack, NULL);
 }
@@ -2892,28 +2875,44 @@ static GCThreadFunctions debugger_thread_vtable = {
 	debugger_gc_start_world
 };
 
+static GCThreadFunctions *old_gc_thread_vtable = NULL;
+
 /**
  * mono_debugger_init_threads:
  *
  * This is used when running inside the Mono Debugger.
  */
 void
-mono_debugger_init_threads (gpointer main_thread_stack)
+mono_debugger_init_threads (void)
 {
+	old_gc_thread_vtable = gc_thread_vtable;
 	gc_thread_vtable = &debugger_thread_vtable;
+	debugger_thread_created (mono_thread_current ());
+}
 
-	debugger_main_thread_id = GetCurrentThreadId ();
-	debugger_main_thread_stack_ptr = main_thread_stack;
-
-	mono_debugger_event (MONO_DEBUGGER_EVENT_THREAD_CREATED,
-			     (guint64) (gsize) &debugger_main_thread_end_stack,
-			     debugger_main_thread_id);
+/**
+ * mono_debugger_finalize_threads:
+ *
+ * This is used when running inside the Mono Debugger.
+ * Undo the effects of mono_debugger_init_threads(); this is called
+ * prior to detaching from a process.
+ */
+void
+mono_debugger_finalize_threads (void)
+{
+	gc_thread_vtable = old_gc_thread_vtable;
 }
 
 #else /* WITH_INCLUDED_LIBGC */
 
 void
-mono_debugger_init_threads (gpointer main_thread_stack)
+mono_debugger_init_threads (void)
+{
+	g_assert_not_reached ();
+}
+
+void
+mono_debugger_finalize_threads (void)
 {
 	g_assert_not_reached ();
 }

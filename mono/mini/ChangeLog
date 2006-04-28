@@ -1,3 +1,4 @@
+<<<<<<< .working
 2006-04-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.h *.c: Convert ins_info from an array of strings to an array of characters.
@@ -10,9 +11,132 @@
 
 	* method-to-ir.c (mono_method_check_inlining): Fix warnings.
 
+=======
+2006-04-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* dominators.c (compute_dominators): Avoid using a worklist since
+	it is not correct in some cases. Instead, iterate over all bblocks as
+	in the original paper. Fixes --compile-all -O=all System.Xml.dll.
+
+2006-04-27  Massimiliano Mantione  <massi@ximian.com>
+
+	* aliasing.c: Fixed bug 78210.
+
+2006-04-27  Massimiliano Mantione  <massi@ximian.com>
+
+	* driver.c: Disabled inline,consprop,copyprop,treeprop,deadce by
+	default until all their problems (or the ones they trigger) are fixed.
+
+2006-04-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (mono_aot_get_method_from_token_inner): Fix the previous patch.
+	
+	* aot-runtime.c (mono_aot_get_method_from_token_inner): Mark the method
+	as loaded only after resolving patches since that could invoke the same method.
+
+	* aot-runtime.c (mono_aot_plt_resolve): Fix ppc etc. builds.
+
+	* aot-compiler.c: Refactor mono_aot_compile_aot () into a bunch of smaller
+	functions.
+
+	* aot-runtime.c (init_plt): Use a normal trampoline to transfer code to the
+	AOT loader.
+
+	* aot-compiler.c (emit_plt): Pass the plt offset in %eax instead of on the
+	stack.
+
+	* mini-trampolines.c (mono_aot_plt_trampoline): New trampoline to handle calls
+	made from AOT code through the PLT table.
+
+	* mini-x86.h mini-amd64.h: Define MONO_ARCH_AOT_PLT_OFFSET_REG to the register
+	holding the plt offset when a call is made to the aot plt trampoline.
+	
+2006-04-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c aot-compiler.c cpu-amd64.md mini-amd64.c: Update parts of the 
+	amd64 AOT support.
+
+	* Makefile.am (common_sources): Fix build breakage.
+
+	* aot-runtime.c aot-compiler.c: Reorganize the AOT code yet again: Make all
+	calls through a jump table similar to the ELF PLT table. Avoid indirect calls for
+	intra-assembly calls if possible.
+	
+	* tramp-*.c: Add new functions for patching/nullifying PLT entries.
+
+	* mini-trampolines.c: Handle PLT entries.
+
+	* mini.c: Avoid creating a GOT var for calls.
+
+	* jit-icalls.c (helper_ldstr_mscorlib): New helper function for loading strings
+	from mscorlib code.
+
+	* jit-icalls.c (helper_newobj_mscorlib): New helper function to create objects
+	from mscorlib code.
+
+	* mini.c (mono_method_to_ir): Use the new helper functions in throw bblocks in
+	AOT code.	
+
+	* mini.h: Bump AOT file format version.
+	
+	* mini.c (get_basic_blocks): Fix the calculation of bb->out_of_line so it
+	covers more cases.
+
+2006-04-25  Martin Baulig  <martin@ximian.com>
+
+	* driver.c: Disable copyprop, consprop and inline when running
+	inside the debugger.
+
+2006-04-25  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.h (MonoDebuggerInfo): Replaced `get_thread_id'
+	with `get_current_thread' and added `detach'.
+	(MonoDebuggerMetadataInfo): Added `thread_size',
+	`thread_tid_offset', `thread_stack_ptr_offset' and
+	`thread_end_stack_offset'.
+
+2006-04-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot.c Makefile.am: Split aot.c into two new files aot-compiler.c and 
+	aot-runtime.c.
+
+	* inssel.brg (mini_emit_load_intf_reg_vtable): Use a new kind of AOT constant
+	ADJUSTED_IID to avoid the need for adjusting the IID at runtime.
+
+	* mini.h (MonoJumpInfoType): Add MONO_PATCH_INFO_ADJUSTED_IID.
+
+	* mini.c (mono_resolve_patch_target): Handle ADJUSTED_IID.
+
+	* aot.c: Add support for ADJUSTED_IID.	
+
+2006-04-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot.c (emit_method_order): Don't align method_order_end.
+
+	* inssel.brg (stmt): Fix interface calls in AOT code which got broken by
+	the interface ID changes.
+
+2006-04-21  Dick Porter  <dick@ximian.com>
+
+	* mini.c (mini_thread_cleanup): Clear the JIT TLS data when
+	cleaning up a thread.  Fixes the new part of bug 77470.
+
+2006-04-20  Geoff Norton  <gnorton@customerdna.com>
+
+	* mini-ppc.c: Call mono_jit_thread_attach when transitioning a native
+	to managed wrapper.
+                     
+>>>>>>> .merge-right.r60044
 2006-04-19  Zoltan Varga  <vargaz@gmail.com>
 
+<<<<<<< .working
 	* mini.c (mono_local_cprop2): Allow copy propagation of OP_VMOVEs across calls.
+=======
+	* mini.h mini.c: Remove mono_type_to_ldind/stind () which are now in marshal.c.
+	
+	* mini.c (mono_runtime_install_handlers): Handle SIGABRT similarly to
+	SIGSEGV. Fixes #78072.
+>>>>>>> .merge-right.r60044
 
 	* method-to-ir.c (mono_method_check_inlining): Remove some inlining restrictions.
 
