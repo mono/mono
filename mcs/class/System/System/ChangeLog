@@ -1,3 +1,8 @@
+2006-04-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Uri.cs : Patch by pawel.sakowski@mind-breeze.com (bug #77382).
+	  Reduce object allocation and avoid culture-sensitive comparison.
+
 2006-03-11  Miguel de Icaza  <miguel@novell.com>
 
 	* Uri.cs: Pragma disable warning 612 (Obsolete methods are being

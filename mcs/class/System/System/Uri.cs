@@ -200,7 +200,7 @@ namespace System {
 			userEscaped = dontEscape;
 
 			// Check Windows UNC (for // it is scheme/host separator)
-			if (relativeUri.StartsWith ("\\\\")) {
+			if (relativeUri.Length >= 2 && relativeUri [0] == '\\' && relativeUri [1] == '\\') {
 				source = relativeUri;
 #if NET_2_0
 				ParseUri ();
@@ -944,7 +944,7 @@ namespace System {
 
 			cachedToString = Unescape (GetLeftPart (UriPartial.Path), true);
 			if (query.Length > 0) {
-				string q = query.StartsWith ("?") ? '?' + Unescape (query.Substring (1), true) : Unescape (query, true);
+				string q = query [0] == '?' ? '?' + Unescape (query.Substring (1), true) : Unescape (query, true);
 				cachedToString += q;
 			}
 			if (fragment.Length > 0)
@@ -1143,7 +1143,7 @@ namespace System {
 			host = String.Empty;
 			path = null;
 
-			if (uriString.StartsWith ("//")) {
+			if (uriString.Length >= 2 && uriString [0] == '/' && uriString [1] == '/') {
 				uriString = uriString.TrimStart (new char [] {'/'});
 				// Now we don't regard //foo/bar as "foo" host.
 				/* 
@@ -1193,7 +1193,7 @@ namespace System {
 				// It must be Unix file path or Windows UNC
 				if (uriString [0] == '/')
 					ParseAsUnixAbsoluteFilePath (uriString);
-				else if (uriString.StartsWith ("\\\\"))
+				else if (uriString.Length >= 2 && uriString [0] == '\\' && uriString [1] == '\\')
 					ParseAsWindowsUNC (uriString);
 				else
 					/* Relative path */
@@ -1217,66 +1217,71 @@ namespace System {
 				throw new UriFormatException (msg);
 			}
 
-			uriString = uriString.Substring (pos + 1);
+			// from here we're practically working on uriString.Substring(startpos,endpos-startpos)
+			int startpos = pos + 1;
+			int endpos = uriString.Length;
 
 			// 8 fragment
-			pos = uriString.IndexOf ('#');
+			pos = uriString.IndexOf ('#', startpos);
 			if (!IsUnc && pos != -1) {
 				if (userEscaped)
 					fragment = uriString.Substring (pos);
 				else
 					fragment = "#" + EscapeString (uriString.Substring (pos+1));
 
-				uriString = uriString.Substring (0, pos);
+				endpos = pos;
 			}
 
 			// 6 query
-			pos = uriString.IndexOf ('?');
+			pos = uriString.IndexOf ('?', startpos, endpos-startpos);
 			if (pos != -1) {
-				query = uriString.Substring (pos);
-				uriString = uriString.Substring (0, pos);
+				query = uriString.Substring (pos, endpos-pos);
+				endpos = pos;
 				if (!userEscaped)
 					query = EscapeString (query);
 			}
 
 			// 3
 			if (IsPredefinedScheme (scheme) && scheme != UriSchemeMailto && scheme != UriSchemeNews && (
-				(uriString.Length < 2) ||
-				(uriString.Length >= 2 && uriString [0] == '/' && uriString [1] != '/')))				
+				(endpos-startpos < 2) ||
+				(endpos-startpos >= 2 && uriString [startpos] == '/' && uriString [startpos+1] != '/')))				
 				throw new UriFormatException ("Invalid URI: The Authority/Host could not be parsed.");
 			
 			
-			bool unixAbsPath = scheme == UriSchemeFile && (uriString.StartsWith ("///") || uriString == "//");
-			if (uriString.StartsWith ("//")) {
+			bool startsWithSlashSlash = endpos-startpos >= 2 && uriString [startpos] == '/' && uriString [startpos+1] == '/';
+			bool unixAbsPath = scheme == UriSchemeFile && startsWithSlashSlash && (endpos-startpos == 2 || uriString [startpos+2] == '/');
+			if (startsWithSlashSlash) {
 				if (scheme != UriSchemeMailto && scheme != UriSchemeNews)
-					uriString = uriString.Substring (2);
+					startpos += 2;
 
 				if (scheme == UriSchemeFile) {
 					int num_leading_slash = 2;
-					for (int i = 0; i < uriString.Length; i++) {
+					for (int i = startpos; i < endpos; i++) {
 						if (uriString [i] != '/')
 							break;
 						num_leading_slash++;
 					}
 					if (num_leading_slash >= 4) {
 						unixAbsPath = false;
-						uriString = uriString.TrimStart ('/');
+						while (startpos < endpos && uriString[startpos] == '/') {
+							startpos++;
+						}
 					} else if (num_leading_slash >= 3) {
-						uriString = uriString.Substring (1);
+						startpos += 1;
 					}
 				}
 				
-				if (uriString.Length > 1 && uriString [1] == ':')
+				if (endpos - startpos > 1 && uriString [startpos + 1] == ':')
 					unixAbsPath = false;
 
 			} else if (!IsPredefinedScheme (scheme)) {
-				path = uriString;
+				path = uriString.Substring(startpos, endpos-startpos);
 				isOpaquePart = true;
 				return;
 			}
 
 			// 5 path
-			pos = uriString.IndexOf ('/');
+			pos = uriString.IndexOf ('/', startpos, endpos-startpos);
 			if (unixAbsPath)
 				pos = -1;
 			if (pos == -1) {
@@ -1287,24 +1292,24 @@ namespace System {
 				    (scheme != Uri.UriSchemeNews))
 					path = "/";
 			} else {
-				path = uriString.Substring (pos);
-				uriString = uriString.Substring (0, pos);
+				path = uriString.Substring (pos, endpos-pos);
+				endpos = pos;
 			}
 
 			// 4.a user info
-			pos = uriString.IndexOf ("@");
+			pos = uriString.IndexOf ('@', startpos, endpos-startpos);
 			if (pos != -1) {
-				userinfo = uriString.Substring (0, pos);
-				uriString = uriString.Remove (0, pos + 1);
+				userinfo = uriString.Substring (startpos, pos-startpos);
+				startpos = pos + 1;
 			}
 
 			// 4.b port
 			port = -1;
-			pos = uriString.LastIndexOf (":");
+			pos = uriString.LastIndexOf (':', endpos-1, endpos-startpos);
 			if (unixAbsPath)
 				pos = -1;
-			if (pos != -1 && pos != (uriString.Length - 1)) {
-				string portStr = uriString.Remove (0, pos + 1);
+			if (pos != -1 && pos != endpos - 1) {
+				string portStr = uriString.Substring(pos + 1, endpos - (pos + 1));
 				if (portStr.Length > 1 && portStr[portStr.Length - 1] != ']') {
 					try {
 #if NET_2_0
@@ -1312,7 +1317,7 @@ namespace System {
 #else
 						port = (int) UInt32.Parse (portStr, CultureInfo.InvariantCulture);
 #endif
-						uriString = uriString.Substring (0, pos);
+						endpos = pos;
 					} catch (Exception) {
 						throw new UriFormatException ("Invalid URI: Invalid port number");
 					}
@@ -1328,6 +1333,7 @@ namespace System {
 			}
 			
 			// 4 authority
+			uriString = uriString.Substring(startpos, endpos-startpos);
 			host = uriString;
 
 			if (unixAbsPath) {
@@ -1378,12 +1384,13 @@ namespace System {
 		private static string Reduce (string path)
 		{
 			path = path.Replace ('\\','/');
-			string [] parts = path.Split ('/');
 			ArrayList result = new ArrayList ();
 
-			int end = parts.Length;
-			for (int i = 0; i < end; i++) {
-				string current = parts [i];
+			for (int startpos = 0; startpos < path.Length; ) {
+				int endpos = path.IndexOf('/', startpos);
+				if (endpos == -1) endpos = path.Length;
+				string current = path.Substring (startpos, endpos-startpos);
+				startpos = endpos + 1;
 				if (current == "" || current == "." )
 					continue;
 
@@ -1415,14 +1422,24 @@ namespace System {
 			if (result.Count == 0)
 				return "/";
 
+			StringBuilder res = new StringBuilder();
 			if (path [0] == '/')
-				result.Insert (0, "");
+				res.Append ('/');
 
-			string res = String.Join ("/", (string []) result.ToArray (typeof (string)));
+			bool first = true;
+			foreach (string part in result) {
+				if (first) {
+					first = false;
+				} else {
+					res.Append ('/');
+				}
+				res.Append(part);
+			}
+
 			if (path.EndsWith ("/"))
-				res += '/';
+				res.Append ('/');
 				
-			return res;
+			return res.ToString();
 		}
 
 		// A variant of HexUnescape() which can decode multi-byte escaped
