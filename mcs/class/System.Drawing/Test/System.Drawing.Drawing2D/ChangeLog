@@ -1,5 +1,7 @@
-2006-04-28  Sebastien Pouliot  <sebastien@ximian.com>
-
+2006-04-28  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* TestColorBlend.cs: Added new test cases to verify if the TODO were
+	still valid. Updated existing test cases to nunit 2.2 api.
 	* GraphicsPathTest.cs: Added new test cases for AddCurve and it's 
 	different behaviour (in some methods) when only two points are used 
 	to define a curve.

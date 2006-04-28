@@ -1,10 +1,11 @@
 //
 // Tests for System.Drawing.Drawing2D.ColorBlend.cs
 //
-// Author:
-//   Ravindra (rkumar@novell.com)
+// Authors:
+//	Ravindra (rkumar@novell.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -36,48 +37,77 @@ namespace MonoTests.System.Drawing.Drawing2D
 {
 	[TestFixture]	
 	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
-	public class ColorBlendTest : Assertion
-	{
-		[TearDown]
-		public void TearDown () { }
-
-		[SetUp]
-		public void SetUp () { }
+	public class ColorBlendTest {
 
 		[Test]
 		public void TestConstructors ()
 		{
-			ColorBlend cb0 = new ColorBlend ();
-
-			AssertEquals ("C#1", 1, cb0.Colors.Length);
-			AssertEquals ("C#2", 1, cb0.Positions.Length);
-
 			ColorBlend cb1 = new ColorBlend (1);
-
-			AssertEquals ("C#3", 1, cb1.Colors.Length);
-			AssertEquals ("C#4", 1, cb1.Positions.Length);
+			Assert.AreEqual (1, cb1.Colors.Length, "Colors");
+			Assert.AreEqual (1, cb1.Positions.Length, "Positions");
 		}
 
 		[Test]
 		public void TestProperties () 
 		{
-			ColorBlend cb0 = new ColorBlend ();
-
-			AssertEquals ("P#1", Color.Empty, cb0.Colors[0]);
-			AssertEquals ("P#2", 0, cb0.Positions[0]);
-
 			ColorBlend cb1 = new ColorBlend (1);
 			float[] positions = {0.0F, 0.5F, 1.0F};
 			Color[] colors = {Color.Red, Color.White, Color.Black};
 			cb1.Colors = colors;
 			cb1.Positions = positions;
 
-			AssertEquals ("P#3", colors[0], cb1.Colors[0]);
-			AssertEquals ("P#4", colors[1], cb1.Colors[1]);
-			AssertEquals ("P#5", colors[2], cb1.Colors[2]);
-			AssertEquals ("P#6", positions[0], cb1.Positions[0]);
-			AssertEquals ("P#7", positions[1], cb1.Positions[1]);
-			AssertEquals ("P#8", positions[2], cb1.Positions[2]);
+			// size match
+			Assert.AreEqual (colors[0], cb1.Colors[0], "c0");
+			Assert.AreEqual (colors[1], cb1.Colors[1], "c1");
+			Assert.AreEqual (colors[2], cb1.Colors[2], "c2");
+			Assert.AreEqual (positions[0], cb1.Positions[0], "p0");
+			Assert.AreEqual (positions[1], cb1.Positions[1], "p1");
+			Assert.AreEqual (positions[2], cb1.Positions[2], "p2");
+		}
+
+		[Test]
+		public void ColorBlend_Empty ()
+		{
+			ColorBlend cb = new ColorBlend ();
+			Assert.AreEqual (1, cb.Colors.Length, "Colors");
+			Assert.IsTrue (cb.Colors[0].IsEmpty, "C0");
+			Assert.AreEqual (1, cb.Positions.Length, "Positions");
+			Assert.AreEqual (0f, cb.Positions[0], "P0");
+		}
+
+		[Test]
+		public void ColorBlend_Zero ()
+		{
+			ColorBlend cb = new ColorBlend (0);
+			Assert.AreEqual (0, cb.Colors.Length, "Colors");
+			Assert.AreEqual (0, cb.Positions.Length, "Positions");
+		}
+
+		[Test]
+		public void MismatchSizes ()
+		{
+			ColorBlend cb = new ColorBlend ();
+
+			cb.Colors = new Color[16];
+			Assert.AreEqual (16, cb.Colors.Length, "Colors");
+
+			cb.Positions = new float[1];
+			Assert.AreEqual (1, cb.Positions.Length, "Positions");
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void ColorBlend_Negative ()
+		{
+			ColorBlend cb = new ColorBlend (-1);
+		}
+
+		[Test]
+		public void ColorBlend_Lots ()
+		{
+			ColorBlend cb = new ColorBlend (1000);
+			Assert.AreEqual (1000, cb.Colors.Length, "Colors");
+			Assert.AreEqual (1000, cb.Positions.Length, "Positions");
 		}
 	}
 }
