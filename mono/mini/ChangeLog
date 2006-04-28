@@ -1,3 +1,9 @@
+2006-04-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* dominators.c (compute_dominators): Avoid using a worklist since
+	it is not correct in some cases. Instead, iterate over all bblocks as
+	in the original paper. Fixes --compile-all -O=all System.Xml.dll.
+
 2006-04-27  Massimiliano Mantione  <massi@ximian.com>
 
 	* aliasing.c: Fixed bug 78210.
