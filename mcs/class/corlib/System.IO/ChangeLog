@@ -1,3 +1,9 @@
+2006-04-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Directory.cs: make sure the parent directory is not an empty string
+	when a file name with no path is provided. Fixes bug #78209. Patch by
+	Emery Conrad.
+
 2006-04-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* StreamReader.cs : implemented EndOfStream property.

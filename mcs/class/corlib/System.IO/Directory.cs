@@ -298,8 +298,12 @@ namespace System.IO
 			// return null if the path is the root directory
 			if (IsRootDirectory (path))
 				return null;
-			
-			return new DirectoryInfo (Path.GetDirectoryName (path));
+
+			string parent_name = Path.GetDirectoryName (path);
+			if (parent_name == "")
+				parent_name = GetCurrentDirectory();
+
+			return new DirectoryInfo (parent_name);
 		}
 
 		public static void Move (string src, string dest)
