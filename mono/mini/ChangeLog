@@ -1,3 +1,7 @@
+2006-04-28  Massimiliano Mantione  <massi@ximian.com>
+
+	* mini-codegen.c: Fixed typo that thrashed inline.
+
 2006-04-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* dominators.c (compute_dominators): Avoid using a worklist since
