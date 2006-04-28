@@ -107,27 +107,27 @@ namespace System.Configuration
 			isReadOnly = true;
 		}
 
-		protected void OnAdd (SettingsProperty property)
+		protected virtual void OnAdd (SettingsProperty property)
 		{
 		}
 
-		protected void OnAddComplete (SettingsProperty property)
+		protected virtual void OnAddComplete (SettingsProperty property)
 		{
 		}
 
-		protected void OnClear ()
+		protected virtual void OnClear ()
 		{
 		}
 
-		protected void OnClearComplete ()
+		protected virtual void OnClearComplete ()
 		{
 		}
 
-		protected void OnRemove (SettingsProperty property)
+		protected virtual void OnRemove (SettingsProperty property)
 		{
 		}
 
-		protected void OnRemoveComplete (SettingsProperty property)
+		protected virtual void OnRemoveComplete (SettingsProperty property)
 		{
 		}
 

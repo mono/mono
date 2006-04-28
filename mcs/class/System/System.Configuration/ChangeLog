@@ -1,3 +1,16 @@
+2006-04-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* NoSettingsVersionUpgradeAttribute.cs
+	  SettingsDescriptionAttribute.cs
+	  SettingsGroupDescriptionAttribute.cs
+	  SettingsGroupNameAttribute.cs
+	  SettingsManageability.cs
+	  SettingsManageabilityAttribute.cs
+	  SpecialSetting.cs
+	  SpecialSettingAttribute.cs : new files.
+	* ConfigurationException.cs
+	  SettingsPropertyCollection.cs : minor API compat fixes.
+
 2006-04-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SettingElement.cs : more circular dependency fix.

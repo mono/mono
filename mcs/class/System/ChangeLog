@@ -1,3 +1,8 @@
+2006-04-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.dll.sources : added a bunch of missing sys.configuration
+	  files.
+
 2006-04-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.dll.sources : added ClientSettingsSection.cs.

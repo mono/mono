@@ -379,6 +379,7 @@ System.Configuration/ISettingsProviderService.cs
 System.Configuration/LocalFileSettingsProvider.cs
 System.Configuration/NameValueFileSectionHandler.cs
 System.Configuration/NameValueSectionHandler.cs
+System.Configuration/NoSettingsVersionUpgradeAttribute.cs
 System.Configuration/SettingAttribute.cs
 System.Configuration/SettingChangingEventArgs.cs
 System.Configuration/SettingChangingEventHandler.cs
@@ -403,7 +404,15 @@ System.Configuration/SettingsSavingEventHandler.cs
 System.Configuration/SettingsSerializeAsAttribute.cs
 System.Configuration/SettingsSerializeAs.cs
 System.Configuration/SettingValueElement.cs
+System.Configuration/SettingsManageability.cs
+System.Configuration/SettingsManageabilityAttribute.cs
+System.Configuration/SettingsGroupDescriptionAttribute.cs
+System.Configuration/SettingsDescriptionAttribute.cs
+System.Configuration/SettingsGroupNameAttribute.cs
 System.Configuration/SingleTagSectionHandler.cs
+System.Configuration/SpecialSetting.cs
+System.Configuration/SpecialSettingAttribute.cs
+System.Configuration/UserSettingsGroup.cs
 System.Configuration/UserScopedSettingAttribute.cs
 System/DefaultUriParser.cs
 System.Diagnostics/AlphabeticalEnumConverter.cs
