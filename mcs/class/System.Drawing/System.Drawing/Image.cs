@@ -705,7 +705,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	}
 
 #if NET_2_0
-	[DefaultValue ("")]
+	[DefaultValue (null)]
 	[LocalizableAttribute(false)] 
 	[BindableAttribute(true)] 	
 	[TypeConverter (typeof (StringConverter))]
