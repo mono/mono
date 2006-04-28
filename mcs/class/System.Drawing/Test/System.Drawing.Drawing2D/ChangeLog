@@ -1,3 +1,9 @@
+2006-04-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GraphicsPathTest.cs: Added new test cases for AddCurve and it's 
+	different behaviour (in some methods) when only two points are used 
+	to define a curve.
+
 2006-04-27  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GraphicsPathTest.cs: Activate two unit tests where we use AddLines

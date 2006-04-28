@@ -978,6 +978,27 @@ namespace MonoTests.System.Drawing.Drawing2D {
 			GraphicsPath gp = new GraphicsPath ();
 			gp.AddCurve (new Point[2] { new Point (1, 1), new Point (2, 2) });
 			CheckCurve (gp);
+			// note: GdipAddPathCurveI allows adding a "curve" with only 2 points (a.k.a. a line ;-)
+			gp.Dispose ();
+		}
+
+		[Test]
+		public void AddCurve_Point_2_Tension ()
+		{
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddCurve (new Point[2] { new Point (1, 1), new Point (2, 2) }, 1.0f);
+			CheckCurve (gp);
+			// note: GdipAddPathCurve2I allows adding a "curve" with only 2 points (a.k.a. a line ;-)
+			gp.Dispose ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void AddCurve3_Point_2 ()
+		{
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddCurve (new Point[2] { new Point (1, 1), new Point (2, 2) }, 0, 2, 0.5f);
+			// adding only two points isn't supported by GdipAddCurve3I
 		}
 
 		[Test]
@@ -1009,6 +1030,67 @@ namespace MonoTests.System.Drawing.Drawing2D {
 			GraphicsPath gp = new GraphicsPath ();
 			gp.AddCurve (new PointF[2] { new PointF (1f, 1f), new PointF (2f, 2f) });
 			CheckCurve (gp);
+			// note: GdipAddPathCurve allows adding a "curve" with only 2 points (a.k.a. a line ;-)
+			gp.Dispose ();
+		}
+
+		[Test]
+		public void AddCurve_PoinFt_2_Tension ()
+		{
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddCurve (new PointF[2] { new PointF (1f, 1f), new PointF (2f, 2f) }, 1.0f);
+			CheckCurve (gp);
+			// note: GdipAddPathCurve2 allows adding a "curve" with only 2 points (a.k.a. a line ;-)
+			gp.Dispose ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void AddCurve3_PointF_2 ()
+		{
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddCurve (new PointF[2] { new PointF (1f, 1f), new PointF (2f, 2f) }, 0, 2, 0.5f);
+			// adding only two points isn't supported by GdipAddCurve3
+		}
+
+		[Test]
+		[Category ("NotWorking")] // libgdiplus is drawing something
+		public void AddCurve_LargeTension ()
+		{
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddCurve (new PointF[3] { new PointF (1f, 1f), new PointF (0f, 20f), new PointF (20f, 0f) }, 0, 2, Single.MaxValue);
+			gp.Dispose ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void AddCurve_ZeroSegments ()
+		{
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddCurve (new PointF[2] { new PointF (1f, 1f), new PointF (2f, 2f) }, 0, 0, 0.5f);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void AddCurve_NegativeSegments ()
+		{
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddCurve (new PointF[2] { new PointF (1f, 1f), new PointF (2f, 2f) }, 0, -1, 0.5f);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void AddCurve_OffsetTooLarge ()
+		{
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddCurve (new PointF[3] { new PointF (1f, 1f), new PointF (0f, 20f), new PointF (20f, 0f) }, 1, 2, 0.5f);
+		}
+
+		[Test]
+		public void AddCurve_Offset ()
+		{
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddCurve (new PointF[4] { new PointF (1f, 1f), new PointF (0f, 20f), new PointF (20f, 0f), new PointF (0f, 10f) }, 1, 2, 0.5f);
 		}
 
 		[Test]
