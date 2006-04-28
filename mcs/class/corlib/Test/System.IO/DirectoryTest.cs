@@ -1256,6 +1256,13 @@ public class DirectoryTest : Assertion {
 		dir.GetFiles ("*.nonext");
 	}
 
+
+	[Test]
+	public void FilenameOnly () // bug 78209
+	{
+		Directory.GetParent ("somefile");
+	}
+
 	private void DeleteDirectory (string path)
 	{
 		if (Directory.Exists (path))
