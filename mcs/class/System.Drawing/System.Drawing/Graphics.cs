@@ -483,7 +483,7 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 		}
 		
-		
+		[MonoTODO ("libgdiplus doesn't use the numberOfSegments parameter")]
 		public void DrawCurve (Pen pen, PointF [] points, int offset, int numberOfSegments)
 		{
 			if (pen == null)
@@ -498,6 +498,7 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 		}
 
+		[MonoTODO ("libgdiplus doesn't use the numberOfSegments parameter")]
 		public void DrawCurve (Pen pen, Point [] points, int offset, int numberOfSegments, float tension)
 		{
 			if (pen == null)
@@ -512,7 +513,7 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 		}
 
-		
+		[MonoTODO ("libgdiplus doesn't use the numberOfSegments parameter")]
 		public void DrawCurve (Pen pen, PointF [] points, int offset, int numberOfSegments, float tension)
 		{
 			if (pen == null)
