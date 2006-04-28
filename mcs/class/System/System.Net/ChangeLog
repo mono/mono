@@ -1,3 +1,11 @@
+2006-04-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConnection.cs: reset the challenge and the status code when
+	creating the tunnel and sending the proxy auth. headers. Improve error
+	message when there's an error creating the tunnel.
+	* HttpWebRequest.cs: don't trigger an early throw for a POST that gets
+	a 401 or 407 response.
+
 2006-04-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConnectionData.cs:
