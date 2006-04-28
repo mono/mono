@@ -140,15 +140,12 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		return new Bitmap (stream, useECM);
 	}
 
-#if NET_2_0
-
 	// See http://support.microsoft.com/default.aspx?scid=kb;en-us;831419 for performance discussion	
 	public static Image FromStream (Stream stream, bool useECM, bool validateImageData)
 	{
 		return new Bitmap (stream, useECM);
 	}
 
-#endif
 	public static int GetPixelFormatSize(PixelFormat pixfmt)
 	{
 		int result = 0;
@@ -708,7 +705,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	}
 
 #if NET_2_0
-
+	[DefaultValue ("")]
 	[LocalizableAttribute(false)] 
 	[BindableAttribute(true)] 	
 	[TypeConverter (typeof (StringConverter))]
@@ -775,7 +772,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		}
 	}
 	
-	public virtual object Clone()
+	public object Clone()
 	{				
 
 		IntPtr newimage = IntPtr.Zero;

@@ -45,7 +45,9 @@ using System.Reflection;
 namespace System.Drawing 
 {
 	[TypeConverter(typeof(ColorConverter))]
+#if ONLY_1_1
 	[ComVisible (true)]
+#endif
 #if !TARGET_JVM
 	[Editor ("System.Drawing.Design.ColorEditor, " + Consts.AssemblySystem_Drawing_Design, typeof (System.Drawing.Design.UITypeEditor))]
 #endif

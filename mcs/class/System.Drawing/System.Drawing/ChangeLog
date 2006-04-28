@@ -1,3 +1,11 @@
+2006-04-28  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* Color.cs: corcompare fix. Remove ComVisible attribute from 2.0 build
+	* Region.cs: Remove old todo that were fixed in libgdiplus.
+	* Image.cs: corcompare fixes. Clone isn't virtual. Added DefaultValue
+	attribute to Tag property. FromStream(Stream,bool,bool) is available
+	in Fx 1.1 (probably since SP1).
+
 2006-04-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Graphics.cs: Added MonoTODO on some DrawCurve methods because 
