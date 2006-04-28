@@ -953,6 +953,8 @@ namespace System.Windows.Forms {
 		}
 
 		private void PopulateGridItemCollection (object obj, GridItemCollection grid_item_coll, bool recurse) {
+			if (!TypeDescriptor.GetConverter(obj).GetPropertiesSupported())
+				return;
 			PropertyDescriptorCollection properties = TypeDescriptor.GetProperties(obj);
 			foreach (PropertyDescriptor property in properties) {
 				if (property.IsBrowsable) {
