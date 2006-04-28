@@ -6,11 +6,7 @@
 //   Ravindra (rkumar@novell.com)
 //
 // (C) 2002/3 Ximian, Inc. http://www.ximian.com
-// (C) 2004 Novell, Inc. http://www.novell.com
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,7 +27,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
 
 namespace System.Drawing.Drawing2D
 {
@@ -46,14 +41,12 @@ namespace System.Drawing.Drawing2D
 			colors = new Color [1];
 		}
 
-		[MonoTODO]
 		public ColorBlend (int count)
 		{
 			positions = new float [count];
 			colors = new Color [count];
 		}
 
-		[MonoTODO]
 		public Color [] Colors {
 			get {
 				return colors;
@@ -64,7 +57,6 @@ namespace System.Drawing.Drawing2D
 			}
 		}
 
-		[MonoTODO]
 		public float [] Positions {
 			get {
 				return positions;

@@ -1,3 +1,10 @@
+2006-04-28  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* ColorBlend.cs: Removed TODO. ColorBlend may not be complete where
+	used (e.g. gradients) but the class is complete.
+	* CustomLineCap.cs: corcompare fixes. Clone and Dispose() methods are
+	not virtual.
+
 2006-04-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GraphicsPath.cs: Added MonoTODO on some AddCurve methods because 

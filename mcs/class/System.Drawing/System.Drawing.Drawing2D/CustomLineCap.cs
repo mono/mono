@@ -7,11 +7,7 @@
 //	Ravindra (rkumar@novell.com)
 //
 // Copyright (C) 2002/3 Ximian, Inc. http://www.ximian.com
-// Copyright (C) 2004 Novell, Inc. http://www.novell.com
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,13 +29,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
+namespace System.Drawing.Drawing2D {
 
-namespace System.Drawing.Drawing2D
-{
-	/// <summary>
-	/// Summary description for CustomLineCap.
-	/// </summary>
 	public class CustomLineCap : MarshalByRefObject, ICloneable, IDisposable
 	{
 		private bool disposed;
@@ -47,7 +38,9 @@ namespace System.Drawing.Drawing2D
 
 		// Constructors
 
-		internal CustomLineCap () { }
+		internal CustomLineCap ()
+		{
+		}
 
 		internal CustomLineCap (IntPtr ptr)
 		{
@@ -138,7 +131,7 @@ namespace System.Drawing.Drawing2D
 
 		// Public Methods
 
-		public virtual object Clone ()
+		public object Clone ()
 		{
 			IntPtr clonePtr;
 			Status status = GDIPlus.GdipCloneCustomLineCap (nativeObject, out clonePtr);
@@ -147,7 +140,7 @@ namespace System.Drawing.Drawing2D
 			return new CustomLineCap (clonePtr);
 		}
 		
-		public virtual void Dispose ()
+		public void Dispose ()
 		{
 			Dispose (true);
 			System.GC.SuppressFinalize (this);
