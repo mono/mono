@@ -4169,6 +4169,9 @@ namespace Mono.CSharp {
 			if (mi == null)
 				return null;
 
+			if (mi.IsSpecialName)
+				return null;
+
 			base_ret_type = mi.ReturnType;
 			return mi;
 		}

@@ -1,3 +1,8 @@
+2006-04-28  Marek Safar  <marek.safar@seznam.cz>
+
+	A fix for #78049
+	*class.cs (Method.FindOutBaseMethod): Base method cannot be property method.
+
 2006-04-28  Raja R Harinath  <harinath@gmail.com>
 
 	* flowanalysis.cs (FlowBranching.MergeTopBlock): Don't create a
