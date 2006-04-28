@@ -1089,17 +1089,13 @@ namespace Mono.CSharp
 			if ((Type != BranchingType.Block) || (Block == null))
 				throw new NotSupportedException ();
 
-			UsageVector vector = new UsageVector (
-				SiblingType.Block, null, Block, Location,
-				param_map.Length, local_map.Length);
+			UsageVector result = Merge ();
 
-			UsageVector result = vector.MergeChild (Merge (), false);
+			Report.Debug (4, "MERGE TOP BLOCK", Location, result);
 
-			Report.Debug (4, "MERGE TOP BLOCK", Location, vector, result.Reachability);
-
-			if ((vector.Reachability.Throws != FlowReturns.Always) &&
-			    (vector.Reachability.Barrier != FlowReturns.Always))
-				CheckOutParameters (vector.Parameters, Location);
+			if ((result.Reachability.Throws != FlowReturns.Always) &&
+			    (result.Reachability.Barrier != FlowReturns.Always))
+				CheckOutParameters (result.Parameters, Location);
 
 			return result.Reachability;
 		}

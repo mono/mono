@@ -1,5 +1,8 @@
 2006-04-28  Raja R Harinath  <harinath@gmail.com>
 
+	* flowanalysis.cs (FlowBranching.MergeTopBlock): Don't create a
+	dummy UsageVector.
+
 	* flowanalysis.cs (UsageVector.MergeChild): Change FlowBranching
 	argument to two arguments: an usage-vector and a bool.  Move call
 	to FlowBranching.Merge () ...
