@@ -1030,7 +1030,8 @@ namespace System.Net
 		void CheckSendError (WebConnectionData data)
 		{
 			// Got here, but no one called GetResponse
-			if (data.StatusCode < 400)
+			int status = data.StatusCode;
+			if (status < 400 || status == 401 || status == 407)
 				return;
 
 			if (writeStream != null && asyncRead == null && !writeStream.CompleteRequestWritten) {
@@ -1142,7 +1143,7 @@ namespace System.Net
 			WebExceptionStatus protoError = WebExceptionStatus.ProtocolError;
 			HttpStatusCode code = 0;
 			if (throwMe == null && webResponse != null) {
-				code  = webResponse.StatusCode;
+				code = webResponse.StatusCode;
 				if (!authCompleted && ((code == HttpStatusCode.Unauthorized && credentials != null) ||
 				     (ProxyQuery && code == HttpStatusCode.ProxyAuthenticationRequired))) {
 					if (!usedPreAuth && CheckAuthorization (webResponse, code)) {
@@ -1187,8 +1188,13 @@ namespace System.Net
 			if (throwMe == null) {
 				bool b = false;
 				int c = (int) code;
-				if (allowAutoRedirect && c >= 300)
+				if (allowAutoRedirect && c >= 300) {
+					if (InternalAllowBuffering && writeStream.WriteBufferLength > 0) {
+						bodyBuffer = writeStream.WriteBuffer;
+						bodyBufferLength = writeStream.WriteBufferLength;
+					}
 					b = Redirect (result, code);
+				}
 
 				if (resp != null && c >= 300 && c != 304)
 					resp.ReadAll ();
