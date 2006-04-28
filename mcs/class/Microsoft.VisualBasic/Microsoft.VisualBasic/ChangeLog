@@ -1,3 +1,7 @@
+2006-04-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Conversion.cs : Val(null) and Val("") returns 0. Fixed bug #75555.
+
 2006-04-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Strings.cs : don't miss the last split entry. Fixed bug #77228.

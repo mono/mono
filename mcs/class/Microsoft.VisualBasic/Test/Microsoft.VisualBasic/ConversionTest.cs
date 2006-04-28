@@ -706,6 +706,9 @@ namespace MonoTests.Microsoft.VisualBasic
 				caughtException = true;
 			}
 			AssertEquals("#V09", true, caughtException);
+
+			AssertEquals("#V10", 0, Conversion.Val (null));
+			AssertEquals("#V11", 0, Conversion.Val (String.Empty));
 		}
 	}
 }

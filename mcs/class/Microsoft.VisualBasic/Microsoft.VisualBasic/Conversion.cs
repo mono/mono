@@ -582,6 +582,9 @@ namespace Microsoft.VisualBasic {
 		// Val ("1234 Any Street") = 1234
 		// Val ("     12   45    .   90  7   E    +   0 0 2  ") = 1245.907e+002 = 124590.7
 		public static double Val (string InputStr) {
+			if (InputStr == null || InputStr.Length == 0)
+				return 0;
+
 			int i;
 			int Base; 
 			int NumChars = 0;
