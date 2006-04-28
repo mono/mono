@@ -1,3 +1,8 @@
+2004-04-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SynchronizationContext.cs : use ThreadPool in Post(), as suggested
+	  by cl (bug #78139).
+
 2004-04-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Thread.cs : base class is CriticalFinalizerObject.

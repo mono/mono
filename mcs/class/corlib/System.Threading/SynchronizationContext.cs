@@ -74,7 +74,7 @@ namespace System.Threading
 		
 		public virtual void Post (SendOrPostCallback d, object state)
 		{
-			d.BeginInvoke (state, null, null);
+			ThreadPool.QueueUserWorkItem (new WaitCallback (d), state);
 		}
 		
 		public virtual void Send (SendOrPostCallback d, object state)
