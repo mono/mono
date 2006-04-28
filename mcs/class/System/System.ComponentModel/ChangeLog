@@ -1,3 +1,9 @@
+2006-04-27  Miguel de Icaza  <miguel@novell.com>
+
+	* Component.cs: The converter for the Component is
+	ComponentConverter, which makes the GetPropertiesSupported return
+	true.   So JChamber's patch should work now.
+
 2006-04-26  Miguel de Icaza  <miguel@novell.com>
 
 	* TypeDescriptor.cs (Info.GetProperties, TypeInfo.GetProperties):
