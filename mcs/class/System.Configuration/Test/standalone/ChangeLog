@@ -1,3 +1,9 @@
+2006-04-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* t33.cs, t33.exe.config, t33.exe.expected,
+	  t34.cs, t34.exe.config, t34.exe.expected,
+	  Makefile : new tests.
+
 2006-04-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* t16.exe.result

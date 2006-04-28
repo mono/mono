@@ -1,3 +1,10 @@
+2006-04-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SectionGroupInfo.cs :
+	  sections which are defined in sectionGroups could be directly
+	  referenced, so search corresponding section recursively.
+	* DefaultSection.cs : It does not reject unrecognized contents.
+
 2006-04-26  Chris Toshok  <toshok@ximian.com>
 
 	* SectionInformation.cs (.ctor): add MonoTODO about the default

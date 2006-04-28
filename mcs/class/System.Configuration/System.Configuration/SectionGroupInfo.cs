@@ -307,16 +307,37 @@ namespace System.Configuration
 				}
 
 				
-				ConfigInfo data = (sections != null) ? (ConfigInfo) sections [reader.LocalName] : (ConfigInfo) null;
-				if (data == null) data = (groups != null) ? (ConfigInfo) groups [reader.LocalName] : (ConfigInfo) null;
-				
+				ConfigInfo data = GetConfigInfo (reader, this);
+
 				if (data != null)
 					data.ReadData (config, reader, overrideAllowed);
 				else
 					ThrowException ("Unrecognized configuration section <" + reader.LocalName + ">", reader);
 			}
 		}
-		
+
+		ConfigInfo GetConfigInfo (XmlReader reader, SectionGroupInfo current)
+		{
+			ConfigInfo data = null;
+			if (current.sections != null)
+				data = current.sections [reader.LocalName];
+			if (data != null)
+				return data;
+			if (current.groups != null) 
+				data = current.groups [reader.LocalName];
+			if (data != null)
+				return data;
+			if (current.groups == null)
+				return null;
+			// It might be a section in descendant sectionGroups
+			foreach (string key in current.groups.AllKeys) {
+				data = GetConfigInfo (reader, (SectionGroupInfo) current.groups [key]);
+				if (data != null)
+					return data;
+			}
+			return null;
+		}
+
 		public void WriteRootData (XmlWriter writer, Configuration config, ConfigurationSaveMode mode)
 		{
 			WriteContent (writer, config, mode, false);

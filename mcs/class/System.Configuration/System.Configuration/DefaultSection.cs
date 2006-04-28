@@ -41,10 +41,12 @@ namespace System.Configuration {
 			properties = new ConfigurationPropertyCollection ();
 		}
 
-		[MonoTODO]
 		protected internal override void DeserializeSection (XmlReader xmlReader)
 		{
-			base.DeserializeSection (xmlReader);
+			// not sure if it is the right thing to do,
+			// but DefaultSection does not raise errors on
+			// unrecognized contents.
+			RawXml = xmlReader.ReadOuterXml ();
 		}
 
 		[MonoTODO]
