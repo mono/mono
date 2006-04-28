@@ -1,3 +1,7 @@
+2006-04-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Nullable.cs : updated Nullable<T> API to 2.0 RTM.
+
 2006-04-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Double.cs : (Parse) handle currency symbol when

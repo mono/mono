@@ -69,7 +69,8 @@ namespace System {
 		}
 	}
 
-	public struct Nullable<T> : IComparable, INullableValue where T: struct
+	[Serializable]
+	public struct Nullable<T> where T: struct
 	{
 		#region Sync with runtime code
 		internal T value;
@@ -95,27 +96,6 @@ namespace System {
 			}
 		}
 
-		object INullableValue.Value {
-			get {
-				return (object)Value;
-			}
-		}
-		
-		[Obsolete]
-		public int CompareTo (Nullable<T> other)
-		{
-			return Nullable.Compare<T> (this, other);
-		}
-
-		[Obsolete]
-		public int CompareTo (object other)
-		{
-			if (!(other is Nullable<T>))
-				throw new ArgumentException ("Object type can not be converted to target type.");
-
-			return Nullable.Compare<T> (this, (Nullable<T>) other);
-		}
-
 		public override bool Equals (object other)
 		{
 			if (!(other is Nullable<T>))
@@ -124,15 +104,16 @@ namespace System {
 			return Equals ((Nullable <T>) other);
 		}
 
-		public bool Equals (Nullable<T> other)
+		bool Equals (Nullable<T> other)
 		{
-			if (other.has_value != has_value)
+			Nullable<T> no = (Nullable<T>) other;
+			if (no.has_value != has_value)
 				return false;
 
 			if (has_value == false)
 				return true;
 
-			return other.value.Equals (value);
+			return no.value.Equals (value);
 		}
 
 		public override int GetHashCode ()
