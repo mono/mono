@@ -175,6 +175,7 @@ namespace System.Net
 			sb.Append ("\r\nHost: ");
 			sb.Append (request.Address.Authority);
 			string challenge = Data.Challenge;
+			Data.Challenge = null;
 			bool have_auth = (request.Headers ["Proxy-Authorization"] != null);
 			if (have_auth) {
 				sb.Append ("\r\nProxy-Authorization: ");
@@ -187,11 +188,10 @@ namespace System.Net
 					sb.Append ("\r\nProxy-Authorization: ");
 					sb.Append (auth.Message);
 				}
-				Data.Challenge = null;
 			}
-
 			sb.Append ("\r\n\r\n");
 
+			Data.StatusCode = 0;
 			byte [] connectBytes = Encoding.Default.GetBytes (sb.ToString ());
 			stream.Write (connectBytes, 0, connectBytes.Length);
 
@@ -202,7 +202,8 @@ namespace System.Net
 				Data.Challenge = result ["Proxy-Authenticate"];
 				return false;
 			} else if (status != 200) {
-				HandleError (WebExceptionStatus.SecureChannelFailure, null, "CreateTunnel");
+				string msg = String.Format ("The remote server returned a {0} status code.", status);
+				HandleError (WebExceptionStatus.SecureChannelFailure, null, msg);
 				return false;
 			}
 
