@@ -260,8 +260,10 @@ namespace System.Threading
 					t.Abort ();
 				t = null;
 			}
-			runner.Dispose ();
-			runner = null;
+			if (runner != null) {
+				runner.Dispose ();
+				runner = null;
+			}
 			GC.SuppressFinalize (this);
 		}
 

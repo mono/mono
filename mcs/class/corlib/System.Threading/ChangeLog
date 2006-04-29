@@ -1,3 +1,8 @@
+2004-04-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Timer.cs : avoid NullReferenceException when it is already disposed.
+	  Patch by pawel.sakowski@mind-breeze.com. Fixed bug #78208.
+
 2004-04-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SynchronizationContext.cs : use ThreadPool in Post(), as suggested
