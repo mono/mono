@@ -1,3 +1,7 @@
+2006-04-28  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* ControlBindingsConverter.cs: Added 
+
 2006-04-25  Miguel de Icaza  <miguel@novell.com>
 
 	* AnchorEditor.cs: Implement the anchor editor.   

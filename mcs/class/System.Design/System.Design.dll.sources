@@ -85,16 +85,15 @@ System.Web.UI.Design.WebControls/RegexEditorDialog.cs
 System.Web.UI.Design.WebControls/XmlDesigner.cs
 System.Web.UI.Design.WebControls/TableCellsCollectionEditor.cs
 System.Web.UI.Design.WebControls/ButtonDesigner.cs
-System.Web.UI.Design.WebControls/BaseDataListComponentEditor.cs
 System.Web.UI.Design.WebControls/ListControlDataBindingHandler.cs
 System.Web.UI.Design.WebControls/LabelDesigner.cs
-System.Web.UI.Design.WebControls/DataListComponentEditor.cs
 System.Windows.Forms.Design/AnchorEditor.cs
 System.Windows.Forms.Design/AxImporter.cs
 System.Windows.Forms.Design/AxParameterData.cs
 System.Windows.Forms.Design/AxWrapperGen.cs
 System.Windows.Forms.Design/ComponentDocumentDesigner.cs
 System.Windows.Forms.Design/ComponentTray.cs
+System.Windows.Forms.Design/ControlBindingsConverter.cs
 System.Windows.Forms.Design/ControlDesigner.cs
 System.Windows.Forms.Design/DockEditor.cs
 System.Windows.Forms.Design/DocumentDesigner.cs
