@@ -1,3 +1,8 @@
+2006-04-27  Alexander Olk  <alex.olk@googlemail.com>
+
+	* FileDialog.cs: Remember the last directory not only for the
+	  current instance but also for new FileDialog instances.
+
 2006-04-29  Peter Dennis Bartok  <pbartok@novell.com> 
 	
 	* XplatUIX11.cs: Forgot to set the queue on the foster parent. That

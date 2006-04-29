@@ -116,7 +116,7 @@ namespace System.Windows.Forms {
 		
 		internal FileFilter fileFilter;
 		
-		private string last_dir_when_opened_or_saved = "";
+		private static string last_dir_when_opened_or_saved = String.Empty;
 		private string start_dir;
 		
 		internal FileDialog ()
