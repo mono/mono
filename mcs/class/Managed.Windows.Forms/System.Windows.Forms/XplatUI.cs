@@ -28,7 +28,7 @@
 #undef DriverDebug
 #undef DriverDebugPaint
 #undef DriverDebugCreate
-#define DriverDebugDestroy
+#undef DriverDebugDestroy
 #undef DriverDebugState
 
 using System;
