@@ -356,6 +356,7 @@ namespace System.Windows.Forms {
 				}
 
 				hwnd = new Hwnd();
+				hwnd.Queue = ThreadQueue(Thread.CurrentThread);
 				hwnd.WholeWindow = FosterParent;
 				hwnd.ClientWindow = FosterParent;
 
