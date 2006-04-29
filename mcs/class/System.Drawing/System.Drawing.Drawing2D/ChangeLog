@@ -1,3 +1,7 @@
+2006-04-29  Jordi Mas i Hernandez <jordimash@gmail.com>
+
+	* GraphicsPath.cs: Fixes use of unasssigned variables
+
 2006-04-28  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* ColorBlend.cs: Removed TODO. ColorBlend may not be complete where

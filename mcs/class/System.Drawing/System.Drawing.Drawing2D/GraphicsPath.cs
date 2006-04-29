@@ -604,7 +604,7 @@ namespace System.Drawing.Drawing2D
 		[MonoTODO ("StringFormat isn't supported inside libgdiplus")]
 		public void AddString (string s, FontFamily family, int style, float emSize, Point origin, StringFormat format)
 		{
-			Rectangle layout;
+			Rectangle layout = new Rectangle ();
 			layout.X = origin.X;
 			layout.Y = origin.Y;
 			AddString (s, family, style, emSize, layout, format);
@@ -613,7 +613,7 @@ namespace System.Drawing.Drawing2D
 		[MonoTODO ("StringFormat isn't supported inside libgdiplus")]
 		public void AddString (string s, FontFamily family, int style, float emSize, PointF origin, StringFormat format)
   		{
-			RectangleF layout;
+			RectangleF layout = new RectangleF ();
 			layout.X = origin.X;
 			layout.Y = origin.Y;
 			AddString (s, family, style, emSize, layout, format);
