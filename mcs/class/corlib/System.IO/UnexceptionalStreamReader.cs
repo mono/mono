@@ -128,16 +128,16 @@ namespace System.IO {
 				throw new ArgumentException ("index + count > dest_buffer.Length");
 
 			int chars_read = 0;
-			int c = Read ();
-			while ((c != -1) && (count > 0)) {
+			while (count > 0) {
+				int c = Read ();
+				if (c < 0)
+					break;
 				chars_read++;
 				count--;
 
 				dest_buffer [index] = (char) c;
 				if (CheckEOL (dest_buffer [index++]))
 					return chars_read;
-
-				c = Read ();
 			}
 			return chars_read;
 		}
