@@ -1,3 +1,7 @@
+2006-04-28  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* System.Design.dll.sources: Put back two accidentally deleted lines
+
 2006-04-28  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* System.Design.dll.sources: Added ControlBindingsConverter.cs
