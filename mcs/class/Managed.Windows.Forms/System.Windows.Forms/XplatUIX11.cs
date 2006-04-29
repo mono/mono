@@ -850,23 +850,27 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private void AddExpose (Hwnd hwnd, XEvent xevent) {
+		private void AddExpose (Hwnd hwnd, bool client, int x, int y, int width, int height) {
 			// Don't waste time
 			if (hwnd == null) {	
 				return;
 			}
 
-			if (xevent.AnyEvent.window == hwnd.client_window) {
-				hwnd.AddInvalidArea(xevent.ExposeEvent.x, xevent.ExposeEvent.y, xevent.ExposeEvent.width, xevent.ExposeEvent.height);
+			if (client) {
+				hwnd.AddInvalidArea(x, y, width, height);
 				if (!hwnd.expose_pending) {
-					hwnd.Queue.Enqueue(xevent);
+					if (!hwnd.nc_expose_pending) {
+						hwnd.Queue.Paint.Enqueue(hwnd);
+					}
 					hwnd.expose_pending = true;
 				}
 			} else {
-				hwnd.AddNcInvalidArea (xevent.ExposeEvent.x, xevent.ExposeEvent.y, xevent.ExposeEvent.width, xevent.ExposeEvent.height);
+				hwnd.AddNcInvalidArea (x, y, width, height);
 				
 				if (!hwnd.nc_expose_pending) {
-					hwnd.Queue.Enqueue(xevent);
+					if (!hwnd.expose_pending) {
+						hwnd.Queue.Paint.Enqueue(hwnd);
+					}
 					hwnd.nc_expose_pending = true;
 				}
 			}
@@ -882,21 +886,10 @@ namespace System.Windows.Forms {
 
 		private void InvalidateWholeWindow(IntPtr handle, Rectangle rectangle) {
 			Hwnd	hwnd;
-			XEvent	xevent;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
-			xevent = new XEvent ();
-			xevent.type = XEventName.Expose;
-			xevent.ExposeEvent.display = DisplayHandle;
-			xevent.ExposeEvent.window = hwnd.whole_window;
-
-			xevent.ExposeEvent.x = rectangle.X;
-			xevent.ExposeEvent.y = rectangle.Y;
-			xevent.ExposeEvent.width = rectangle.Width;
-			xevent.ExposeEvent.height = rectangle.Height;
-
-			AddExpose (hwnd, xevent);
+			AddExpose (hwnd, false, rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
 		}
 
 		private void WholeToScreen(IntPtr handle, ref int x, ref int y) {
@@ -1123,7 +1116,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private void UpdateMessageQueue () {
+		private void UpdateMessageQueue (XEventQueue queue) {
 			DateTime	now;
 			int		pending;
 			Hwnd		hwnd;
@@ -1146,6 +1139,10 @@ namespace System.Windows.Forms {
 
 			if (pending == 0) {
 				int	timeout;
+
+				if ((queue != null) && (queue.Paint.Count > 0)) {
+					return;
+				}
 
 				timeout = NextTimeout (now);
 				if (timeout > 0) {
@@ -1191,7 +1188,7 @@ namespace System.Windows.Forms {
 				}
 				switch (xevent.type) {
 					case XEventName.Expose:
-						AddExpose (hwnd, xevent);
+						AddExpose (hwnd, xevent.ExposeEvent.window == hwnd.ClientWindow, xevent.ExposeEvent.x, xevent.ExposeEvent.y, xevent.ExposeEvent.width, xevent.ExposeEvent.height);
 						break;
 
 					case XEventName.SelectionClear: {
@@ -1931,7 +1928,7 @@ namespace System.Windows.Forms {
 
 				Clipboard.Enumerating = true;
 				while (Clipboard.Enumerating) {
-					UpdateMessageQueue();
+					UpdateMessageQueue(null);
 				}
 				f = f.Next;
 			}
@@ -1987,7 +1984,7 @@ namespace System.Windows.Forms {
 
 			Clipboard.Retrieving = true;
 			while (Clipboard.Retrieving) {
-				UpdateMessageQueue();
+				UpdateMessageQueue(null);
 			}
 
 			return Clipboard.Item;
@@ -2442,6 +2439,28 @@ namespace System.Windows.Forms {
 
 		internal override IntPtr DefWndProc(ref Message msg) {
 			switch ((Msg)msg.Msg) {
+				case Msg.WM_PAINT: {
+					Hwnd hwnd;
+
+					hwnd = Hwnd.GetObjectFromWindow(msg.HWnd);
+					if (hwnd != null) {
+						hwnd.expose_pending = false;
+					}
+
+					return IntPtr.Zero;
+				}
+
+				case Msg.WM_NCPAINT: {
+					Hwnd hwnd;
+
+					hwnd = Hwnd.GetObjectFromWindow(msg.HWnd);
+					if (hwnd != null) {
+						hwnd.nc_expose_pending = false;
+					}
+
+					return IntPtr.Zero;
+				}
+
 				case Msg.WM_SETCURSOR: {
 					Hwnd	hwnd;
 
@@ -2780,6 +2799,7 @@ namespace System.Windows.Forms {
 			return Point.Empty;
 		}
 
+		[MonoTODO("Implement filtering")]
 		internal override bool GetMessage(Object queue_id, ref MSG msg, IntPtr handle, int wFilterMin, int wFilterMax) {
 			XEvent	xevent;
 			bool	client;
@@ -2790,10 +2810,12 @@ namespace System.Windows.Forms {
 			if (((XEventQueue)queue_id).Count > 0) {
 				xevent = (XEvent) ((XEventQueue)queue_id).Dequeue ();
 			} else {
-				UpdateMessageQueue ();
+				UpdateMessageQueue ((XEventQueue)queue_id);
 
 				if (((XEventQueue)queue_id).Count > 0) {
 					xevent = (XEvent) ((XEventQueue)queue_id).Dequeue ();
+				} else if (((XEventQueue)queue_id).Paint.Count > 0) {
+					xevent = ((XEventQueue)queue_id).Paint.Dequeue();
 				} else {
 					if (!PostQuitState) {
 						msg.hwnd= IntPtr.Zero;
@@ -2807,8 +2829,6 @@ namespace System.Windows.Forms {
 					return false;
 				}
 			}
-
-			// FIXME - handle filtering
 
 			hwnd = Hwnd.GetObjectFromWindow(xevent.AnyEvent.window);
 
@@ -3267,7 +3287,6 @@ namespace System.Windows.Forms {
 						IntPtr hrgn = region.GetHrgn (null); // Graphics object isn't needed
 						msg.message = Msg.WM_NCPAINT;
 						msg.wParam = hrgn;
-						hwnd.nc_expose_pending = false;
 						break;
 					}
 					#if DriverDebugExtra
@@ -3527,29 +3546,14 @@ namespace System.Windows.Forms {
 
 		internal override void Invalidate(IntPtr handle, Rectangle rc, bool clear) {
 			Hwnd	hwnd;
-			XEvent	xevent;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
-
-			xevent = new XEvent ();
-			xevent.type = XEventName.Expose;
-			xevent.ExposeEvent.display = DisplayHandle;
-			xevent.ExposeEvent.window = hwnd.client_window;
-
 			if (clear) {
-				xevent.ExposeEvent.x = hwnd.X;
-				xevent.ExposeEvent.y = hwnd.Y;
-				xevent.ExposeEvent.width = hwnd.Width;
-				xevent.ExposeEvent.height = hwnd.Height;
+				AddExpose (hwnd, true, hwnd.X, hwnd.Y, hwnd.Width, hwnd.Height);
 			} else {
-				xevent.ExposeEvent.x = rc.X;
-				xevent.ExposeEvent.y = rc.Y;
-				xevent.ExposeEvent.width = rc.Width;
-				xevent.ExposeEvent.height = rc.Height;
+				AddExpose (hwnd, true, rc.X, rc.Y, rc.Width, rc.Height);
 			}
-
-			AddExpose (hwnd, xevent);
 		}
 
 		internal override bool IsEnabled(IntPtr handle) {
@@ -3646,10 +3650,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[MonoTODO("Implement filtering and PM_NOREMOVE")]
 		internal override bool PeekMessage(Object queue_id, ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax, uint flags) {
 			bool	pending;
-
-			// FIXME - imlement filtering
 
 			if ((flags & (uint)PeekMessageFlags.PM_REMOVE) == 0) {
 				throw new NotImplementedException("PeekMessage PM_NOREMOVE is not implemented yet");	// FIXME - Implement PM_NOREMOVE flag
@@ -3662,7 +3665,9 @@ namespace System.Windows.Forms {
 				// Only call UpdateMessageQueue if real events are pending 
 				// otherwise we go to sleep on the socket
 				if (XPending(DisplayHandle) != 0) {
-					UpdateMessageQueue();
+					UpdateMessageQueue((XEventQueue)queue_id);
+					pending = true;
+				} else if (((XEventQueue)queue_id).Paint.Count > 0) {
 					pending = true;
 				}
 			}
@@ -3807,21 +3812,22 @@ namespace System.Windows.Forms {
 			XCopyArea(DisplayHandle, hwnd.client_window, hwnd.client_window, gc, area.X - XAmount, area.Y - YAmount, area.Width, area.Height, area.X, area.Y);
 
 			// Generate an expose for the area exposed by the horizontal scroll
+			// We don't use AddExpose since we're 
 			if (XAmount > 0) {
-				hwnd.AddInvalidArea (area.X, area.Y, XAmount, area.Height);
+				AddExpose(hwnd, true, area.X, area.Y, XAmount, area.Height);
 			} else if (XAmount < 0) {
-				hwnd.AddInvalidArea (XAmount + area.X + area.Width, area.Y, -XAmount, area.Height);
+				AddExpose(hwnd, true, XAmount + area.X + area.Width, area.Y, -XAmount, area.Height);
 			}
 
 			// Generate an expose for the area exposed by the vertical scroll
 			if (YAmount > 0) {
-				hwnd.AddInvalidArea (area.X, area.Y, area.Width, YAmount);
+				AddExpose(hwnd, true, area.X, area.Y, area.Width, YAmount);
 			} else if (YAmount < 0) {
-				hwnd.AddInvalidArea (area.X, YAmount + area.Y + area.Height, area.Width, -YAmount);
+				AddExpose(hwnd, true, area.X, YAmount + area.Y + area.Height, area.Width, -YAmount);
 			}
 			XFreeGC(DisplayHandle, gc);
 
-			UpdateWindow(handle);
+//			UpdateWindow(handle);
 		}
 
 		internal override void ScrollWindow(IntPtr handle, int XAmount, int YAmount, bool with_children) {
@@ -4386,26 +4392,16 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void UpdateWindow(IntPtr handle) {
-			XEvent	xevent;
 			Hwnd	hwnd;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
-			if (!hwnd.visible || hwnd.expose_pending) {
+			if (!hwnd.visible || !hwnd.expose_pending) {
 				return;
 			}
 
-#if not
 			SendMessage(handle, Msg.WM_PAINT, IntPtr.Zero, IntPtr.Zero);
-#else
-			xevent = new XEvent();
-			xevent.type = XEventName.Expose;
-			xevent.ExposeEvent.display = DisplayHandle;
-			xevent.ExposeEvent.window = hwnd.client_window;
-
-			hwnd.Queue.Enqueue(xevent);
-			hwnd.expose_pending = true;
-#endif
+			hwnd.Queue.Paint.Remove(hwnd);
 		}
 
 		private bool WindowIsMapped(IntPtr handle) {

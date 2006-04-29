@@ -1,3 +1,37 @@
+2006-04-29  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* XplatUIX11.cs:
+	  - ScrollWindow: Fixed method. We finally generate expose events again
+	    for scrolled areas. This was causing 'garbage' when scrolling
+	    textbox and other controls that used ScrollWindow
+	  - Switched from using the regular queue for paint events to the MS 
+	    model of 'generating' paint events when the queue is empty.
+	    We use the new XQueueEvent.Paint subclass to store which windows
+	    need painting.
+	  - AddExpose now takes the x/y/width/height of the exposed area
+	    and inserts the window into the paint queue if not already there
+	  - InvalidateWholeWindow: Switched to use new AddExpose method
+	  - UpdateMessageQueue: Added which queue to monitor for paint events
+	  - DefWndProc: Added default handler for WM_PAINT and WM_NCPAINT in
+	    the unlikely case nothing above handles it. We reset the expose
+	    pending states to get them off the queue.
+	  - GetMessage: Now pulls a paint event if no other events are in the
+	    queue
+	  - Invalidate: Switched to new AddExpose method
+	  - PeekMessage: Updated to understand pending paint events
+	  - UpdateWindow: Fixed logic bug. We were only updating if the window
+	    didn't need updating. Also switched to sending WM_PAINT directly,
+	    like MS does.
+	* XEventQueue.cs: Added Paint queue support. Allows enqueue/dequeue
+	  and random access Remove(). The random access is needed to handle
+	  UpdateWindow() where a WM_PAINT is sent directly without accessing
+	  the queue.
+	* ScrollBar.cs: Added Update() calls to cause immediate updates to
+	  allow for better feedback when scrolling. Scrollbars are small and
+	  the immediate update should make it 'feel' more responsive without
+	  slowing things down. ScrollBar still needs it's invaliate logic
+	  updated to not always invalidate the whole bar on certain changes.
+
 2006-04-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Control.cs:

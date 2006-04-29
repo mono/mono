@@ -715,20 +715,24 @@ namespace System.Windows.Forms
     				if (!first_arrow_area.Contains (e.X, e.Y) && ((firstbutton_state & ButtonState.Pushed) == ButtonState.Pushed)) {
 					firstbutton_state = ButtonState.Normal;
 					Invalidate (first_arrow_area);
+					Update();
 					return;
 				} else if (first_arrow_area.Contains (e.X, e.Y) && ((firstbutton_state & ButtonState.Normal) == ButtonState.Normal)) {
 					firstbutton_state = ButtonState.Pushed;
 					Invalidate (first_arrow_area);
+					Update();
 					return;
 				}
 			} else if (secondbutton_pressed) {
 				if (!second_arrow_area.Contains (e.X, e.Y) && ((secondbutton_state & ButtonState.Pushed) == ButtonState.Pushed)) {
 					secondbutton_state = ButtonState.Normal;
 					Invalidate (second_arrow_area);
+					Update();
 					return;
 				} else if (second_arrow_area.Contains (e.X, e.Y) && ((secondbutton_state & ButtonState.Normal) == ButtonState.Normal)) {
 					secondbutton_state = ButtonState.Pushed;
 					Invalidate (second_arrow_area);
+					Update();
 					return;
 				}
 			} else if (thumb_pressed == true) {
@@ -744,6 +748,7 @@ namespace System.Windows.Forms
 						UpdateThumbPos (thumb_edge, true);
 						OnScroll (new ScrollEventArgs (ScrollEventType.ThumbTrack, position));
 						Invalidate (thumb_area);
+						Update();
 					}
 					SendWMScroll(ScrollBarCommands.SB_THUMBTRACK);
 				} else {
@@ -758,6 +763,7 @@ namespace System.Windows.Forms
 						UpdateThumbPos (thumb_edge, true);
 						OnScroll (new ScrollEventArgs (ScrollEventType.ThumbTrack, position));
 						Invalidate (thumb_area);
+						Update();
 					}
 					SendWMScroll(ScrollBarCommands.SB_THUMBTRACK);
 				}
@@ -779,6 +785,7 @@ namespace System.Windows.Forms
 				firstbutton_state = ButtonState.Pushed;
 				firstbutton_pressed = true;
 				Invalidate (first_arrow_area);
+				Update();
 				if (!timer.Enabled) {
 					SetHoldButtonClickTimer ();
 					timer.Enabled = true;
@@ -791,6 +798,7 @@ namespace System.Windows.Forms
 				secondbutton_state = ButtonState.Pushed;
 				secondbutton_pressed = true;
 				Invalidate (second_arrow_area);
+				Update();
 				if (!timer.Enabled) {
 					SetHoldButtonClickTimer ();
 					timer.Enabled = true;
@@ -985,7 +993,7 @@ namespace System.Windows.Forms
     		{
     			ScrollEventArgs event_args;
     			int pos = Math.Min (Maximum - large_change + 1, position + small_change);
-    			
+
     			event_args = new ScrollEventArgs (ScrollEventType.SmallIncrement, pos);
     			OnScroll (event_args);    			
     			Value = event_args.NewValue;    			
@@ -1172,6 +1180,7 @@ namespace System.Windows.Forms
 		private void InvalidateDirty ()
 		{
 			Invalidate (dirty);
+			Update();
 			dirty = Rectangle.Empty;
 		}
 
