@@ -1,3 +1,12 @@
+2006-04-29  Raja R Harinath  <harinath@gmail.com>
+
+	* flowanalysis.cs (TriState): Rename from FlowBranching.FlowReturns.
+	Remove 'Undefined'.
+	(FlowBranching.TriState_Meet): Rename from AndFlowReturns. Simplify.
+	(FlowBranching.TriState_Max): Rename from OrFlowReturns. Simplify.
+	(*): Update to changes.
+	* statement.cs: Update to changes.
+
 2006-04-28  Marek Safar  <marek.safar@seznam.cz>
 
 	A fix for #78049

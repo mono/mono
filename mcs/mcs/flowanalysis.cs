@@ -16,6 +16,13 @@ using System.Diagnostics;
 
 namespace Mono.CSharp
 {
+	public enum TriState : byte {
+		// Never < Sometimes < Always
+		Never,
+		Sometimes,
+		Always
+	}
+
 	// <summary>
 	//   A new instance of this class is created every time a new block is resolved
 	//   and if there's branching in the block's control flow.
@@ -57,44 +64,23 @@ namespace Mono.CSharp
 			Finally
 		}
 
-		// <summary>
-		//   This is used in the control flow analysis code to specify whether the
-		//   current code block may return to its enclosing block before reaching
-		//   its end.
-		// </summary>
-		public enum FlowReturns : byte {
-			Undefined = 0,
-
-			// It can never return.
-			Never,
-
-			// This means that the block contains a conditional return statement
-			// somewhere.
-			Sometimes,
-
-			// The code always returns, ie. there's an unconditional return / break
-			// statement in it.
-			Always
-		}
-
 		public sealed class Reachability
 		{
-			FlowReturns returns, breaks, throws, barrier;
+			TriState returns, breaks, throws, barrier;
 
-			public FlowReturns Returns {
+			public TriState Returns {
 				get { return returns; }
 			}
-			public FlowReturns Breaks {
+			public TriState Breaks {
 				get { return breaks; }
 			}
-			public FlowReturns Throws {
+			public TriState Throws {
 				get { return throws; }
 			}
-			public FlowReturns Barrier {
+			public TriState Barrier {
 				get { return barrier; }
 			}
-			public Reachability (FlowReturns returns, FlowReturns breaks,
-					     FlowReturns throws, FlowReturns barrier)
+			public Reachability (TriState returns, TriState breaks, TriState throws, TriState barrier)
 			{
 				this.returns = returns;
 				this.breaks = breaks;
@@ -107,56 +93,18 @@ namespace Mono.CSharp
 				return new Reachability (returns, breaks, throws, barrier);
 			}
 
-			// <summary>
-			//   Performs an `And' operation on the FlowReturns status
-			//   (for instance, a block only returns Always if all its siblings
-			//   always return).
-			// </summary>
-			public static FlowReturns AndFlowReturns (FlowReturns a, FlowReturns b)
+			public static TriState TriState_Meet (TriState a, TriState b)
 			{
-				switch (a) {
-				case FlowReturns.Undefined:
-					return b;
-
-				case FlowReturns.Never:
-					if (b == FlowReturns.Never)
-						return FlowReturns.Never;
-					else
-						return FlowReturns.Sometimes;
-
-				case FlowReturns.Sometimes:
-					return FlowReturns.Sometimes;
-
-				case FlowReturns.Always:
-					if (b == FlowReturns.Always)
-						return FlowReturns.Always;
-					else
-						return FlowReturns.Sometimes;
-				}
-
-				throw new ArgumentException ("shouldn't get here");
+				// (1) if both are Never, return Never
+				// (2) if both are Always, return Always
+				// (3) otherwise, return Sometimes
+				// note that (3) => (3') if both are Sometimes, return Sometimes
+				return a == b ? a : TriState.Sometimes;
 			}
 
-			public static FlowReturns OrFlowReturns (FlowReturns a, FlowReturns b)
+			public static TriState TriState_Max (TriState a, TriState b)
 			{
-				switch (a) {
-				case FlowReturns.Undefined:
-					return b;
-
-				case FlowReturns.Never:
-					return b;
-
-				case FlowReturns.Sometimes:
-					if (b == FlowReturns.Always)
-						return FlowReturns.Always;
-					else
-						return FlowReturns.Sometimes;
-
-				case FlowReturns.Always:
-					return FlowReturns.Always;
-				}
-
-				throw new ArgumentException ("shouldn't get here");
+				return ((byte) a > (byte) b) ? a : b;
 			}
 
 			public static void And (ref Reachability a, Reachability b, bool do_break)
@@ -202,152 +150,152 @@ namespace Mono.CSharp
 				//
 				if (AlwaysReturns) {
 					if (b.AlwaysReturns || b_unreachable)
-						returns = FlowReturns.Always;
+						returns = TriState.Always;
 					else
-						returns = FlowReturns.Sometimes;
+						returns = TriState.Sometimes;
 				} else if (b.AlwaysReturns) {
 					if (AlwaysReturns || a_unreachable)
-						returns = FlowReturns.Always;
+						returns = TriState.Always;
 					else
-						returns = FlowReturns.Sometimes;
+						returns = TriState.Sometimes;
 				} else if (!MayReturn) {
 					if (b.MayReturn)
-						returns = FlowReturns.Sometimes;
+						returns = TriState.Sometimes;
 					else
-						returns = FlowReturns.Never;
+						returns = TriState.Never;
 				} else if (!b.MayReturn) {
 					if (MayReturn)
-						returns = FlowReturns.Sometimes;
+						returns = TriState.Sometimes;
 					else
-						returns = FlowReturns.Never;
+						returns = TriState.Never;
 				}
 
-				breaks = AndFlowReturns (breaks, b.breaks);
-				throws = AndFlowReturns (throws, b.throws);
-				barrier = AndFlowReturns (barrier, b.barrier);
+				breaks = TriState_Meet (breaks, b.breaks);
+				throws = TriState_Meet (throws, b.throws);
+				barrier = TriState_Meet (barrier, b.barrier);
 
 				if (a_unreachable && b_unreachable)
-					barrier = FlowReturns.Always;
+					barrier = TriState.Always;
 				else if (a_unreachable || b_unreachable)
-					barrier = FlowReturns.Sometimes;
+					barrier = TriState.Sometimes;
 				else
-					barrier = FlowReturns.Never;
+					barrier = TriState.Never;
 			}
 
 			public void Or (Reachability b)
 			{
-				returns = OrFlowReturns (returns, b.returns);
-				breaks = OrFlowReturns (breaks, b.breaks);
-				throws = OrFlowReturns (throws, b.throws);
-				barrier = OrFlowReturns (barrier, b.barrier);
+				returns = TriState_Max (returns, b.returns);
+				breaks = TriState_Max (breaks, b.breaks);
+				throws = TriState_Max (throws, b.throws);
+				barrier = TriState_Max (barrier, b.barrier);
 			}
 
 			public static Reachability Never ()
 			{
 				return new Reachability (
-					FlowReturns.Never, FlowReturns.Never,
-					FlowReturns.Never, FlowReturns.Never);
+					TriState.Never, TriState.Never,
+					TriState.Never, TriState.Never);
 			}
 
-			public FlowReturns Reachable {
+			public TriState Reachable {
 				get {
-					if ((returns == FlowReturns.Always) ||
-					    (breaks == FlowReturns.Always) ||
-					    (throws == FlowReturns.Always) ||
-					    (barrier == FlowReturns.Always))
-						return FlowReturns.Never;
-					else if ((returns == FlowReturns.Never) &&
-						 (breaks == FlowReturns.Never) &&
-						 (throws == FlowReturns.Never) &&
-						 (barrier == FlowReturns.Never))
-						return FlowReturns.Always;
+					if ((returns == TriState.Always) ||
+					    (breaks == TriState.Always) ||
+					    (throws == TriState.Always) ||
+					    (barrier == TriState.Always))
+						return TriState.Never;
+					else if ((returns == TriState.Never) &&
+						 (breaks == TriState.Never) &&
+						 (throws == TriState.Never) &&
+						 (barrier == TriState.Never))
+						return TriState.Always;
 					else
-						return FlowReturns.Sometimes;
+						return TriState.Sometimes;
 				}
 			}
 
 			public bool AlwaysBreaks {
-				get { return breaks == FlowReturns.Always; }
+				get { return breaks == TriState.Always; }
 			}
 
 			public bool MayBreak {
-				get { return breaks != FlowReturns.Never; }
+				get { return breaks != TriState.Never; }
 			}
 
 			public bool AlwaysReturns {
-				get { return returns == FlowReturns.Always; }
+				get { return returns == TriState.Always; }
 			}
 
 			public bool MayReturn {
-				get { return returns != FlowReturns.Never; }
+				get { return returns != TriState.Never; }
 			}
 
 			public bool AlwaysThrows {
-				get { return throws == FlowReturns.Always; }
+				get { return throws == TriState.Always; }
 			}
 
 			public bool MayThrow {
-				get { return throws != FlowReturns.Never; }
+				get { return throws != TriState.Never; }
 			}
 
 			public bool AlwaysHasBarrier {
-				get { return barrier == FlowReturns.Always; }
+				get { return barrier == TriState.Always; }
 			}
 
 			public bool MayHaveBarrier {
-				get { return barrier != FlowReturns.Never; }
+				get { return barrier != TriState.Never; }
 			}
 
 			public bool IsUnreachable {
-				get { return Reachable == FlowReturns.Never; }
+				get { return Reachable == TriState.Never; }
 			}
 
 			public void SetReturns ()
 			{
-				returns = FlowReturns.Always;
+				returns = TriState.Always;
 			}
 
 			public void SetReturnsSometimes ()
 			{
-				returns = FlowReturns.Sometimes;
+				returns = TriState.Sometimes;
 			}
 
 			public void SetBreaks ()
 			{
-				breaks = FlowReturns.Always;
+				breaks = TriState.Always;
 			}
 
 			public void ResetBreaks ()
 			{
-				breaks = FlowReturns.Never;
+				breaks = TriState.Never;
 			}
 
 			public void SetThrows ()
 			{
-				throws = FlowReturns.Always;
+				throws = TriState.Always;
 			}
 
 			public void SetThrowsSometimes ()
 			{
-				throws = FlowReturns.Sometimes;
+				throws = TriState.Sometimes;
 			}
 
 			public void SetBarrier ()
 			{
-				barrier = FlowReturns.Always;
+				barrier = TriState.Always;
 			}
 
 			public void ResetBarrier ()
 			{
-				barrier = FlowReturns.Never;
+				barrier = TriState.Never;
 			}
 
-			static string ShortName (FlowReturns returns)
+			static string ShortName (TriState returns)
 			{
 				switch (returns) {
-				case FlowReturns.Never:
+				case TriState.Never:
 					return "N";
-				case FlowReturns.Sometimes:
+				case TriState.Sometimes:
 					return "S";
 				default:
 					return "A";
@@ -1093,8 +1041,8 @@ namespace Mono.CSharp
 
 			Report.Debug (4, "MERGE TOP BLOCK", Location, result);
 
-			if ((result.Reachability.Throws != FlowReturns.Always) &&
-			    (result.Reachability.Barrier != FlowReturns.Always))
+			if ((result.Reachability.Throws != TriState.Always) &&
+			    (result.Reachability.Barrier != TriState.Always))
 				CheckOutParameters (result.Parameters, Location);
 
 			return result.Reachability;
