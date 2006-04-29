@@ -1,3 +1,7 @@
+2005-06-29  Jonathan Chambers <jonathan.chambers@ansys.com>
+
+	* ControlBindingsConverter.cs: Fix namespace 
+
 2006-04-28  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* ControlBindingsConverter.cs: Added 

@@ -28,7 +28,7 @@
 
 using System.ComponentModel;
 
-namespace System.Windows.Forms {
+namespace System.Windows.Forms.Design {
 	internal class ControlBindingsConverter : TypeConverter {
 		public ControlBindingsConverter() {
 		}
