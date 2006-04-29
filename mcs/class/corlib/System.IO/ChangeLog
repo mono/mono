@@ -1,3 +1,10 @@
+2006-04-29  Atsushi Enomoto <atsushi@ximian.com>
+
+	* UnexceptionalStreamReader.cs (Read): Fix for #78218, where we
+	consumed characters from the input even when the count was not set
+	to zero, causing some characters to be missing in some
+	circumstances. 
+
 2006-04-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Directory.cs: make sure the parent directory is not an empty string
