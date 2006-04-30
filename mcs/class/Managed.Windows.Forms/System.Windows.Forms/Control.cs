@@ -1399,8 +1399,10 @@ namespace System.Windows.Forms
 				if (allow_drop == value)
 					return;
 				allow_drop = value;
-				UpdateStyles();
-				XplatUI.SetAllowDrop (Handle, value);
+				if (IsHandleCreated) {
+					UpdateStyles();
+					XplatUI.SetAllowDrop (Handle, value);
+				}
 			}
 		}
 
@@ -3157,8 +3159,10 @@ namespace System.Windows.Forms
 					}
 				}
 
-				// Find out where the window manager placed us
 				UpdateStyles();
+				XplatUI.SetAllowDrop (Handle, allow_drop);
+
+				// Find out where the window manager placed us
 				if ((CreateParams.Style & (int)WindowStyles.WS_CHILD) != 0) {
 					XplatUI.SetBorderStyle(window.Handle, (FormBorderStyle)border_style);
 				}

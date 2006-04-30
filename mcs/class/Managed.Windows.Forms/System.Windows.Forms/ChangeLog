@@ -1,3 +1,9 @@
+2006-04-29  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Control.cs:
+	  - AllowDrop: Don't force handle creation.
+	  - CreateHandle: Added call to tell driver if we're allowed to drop
+
 2006-04-27  Alexander Olk  <alex.olk@googlemail.com>
 
 	* FileDialog.cs: Remember the last directory not only for the
