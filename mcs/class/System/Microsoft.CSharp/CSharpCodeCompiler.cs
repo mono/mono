@@ -236,8 +236,12 @@ namespace Mono.CSharp
 
 			if (null != options.ReferencedAssemblies)
 			{
-				foreach (string import in options.ReferencedAssemblies)
+				foreach (string import in options.ReferencedAssemblies) {
+					if (import == null || import.Length == 0)
+						continue;
+
 					args.AppendFormat("/r:\"{0}\" ",import);
+				}
 			}
 
 			if (options.CompilerOptions != null) {

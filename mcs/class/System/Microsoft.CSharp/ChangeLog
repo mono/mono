@@ -1,3 +1,7 @@
+2006-04-30 Marek Safar <marek.safar@seznam.cz>
+
+	* CSharpCodeCompiler.cs: mcs does not like /r:"" syntax; fixes #78038.
+
 2005-12-07  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CSharpCodeGenerator.cs: Override GeneratePrimitiveExpression to
