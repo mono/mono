@@ -86,7 +86,7 @@ namespace MonoTests.System.Threading {
 			AssertEquals (c, counter);
 		}
 
-		[Test] // bug #78202
+		[Test] // bug #78208
 		public void TestDispose2 ()
 		{
 			Timer t = new Timer (new TimerCallback (CallbackTestDispose), null, 10, 10);
