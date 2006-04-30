@@ -80,7 +80,8 @@ namespace Mono.CSharp
 			public TriState Barrier {
 				get { return barrier; }
 			}
-			public Reachability (TriState returns, TriState breaks, TriState throws, TriState barrier)
+
+			Reachability (TriState returns, TriState breaks, TriState throws, TriState barrier)
 			{
 				this.returns = returns;
 				this.breaks = breaks;
@@ -107,17 +108,7 @@ namespace Mono.CSharp
 				return ((byte) a > (byte) b) ? a : b;
 			}
 
-			public static void And (ref Reachability a, Reachability b, bool do_break)
-			{
-				if (a == null) {
-					a = b.Clone ();
-					return;
-				}
-
-				a.And (b, do_break);
-			}
-
-			public void And (Reachability b, bool do_break)
+			public void Meet (Reachability b, bool do_break)
 			{
 				//
 				// `break' does not "break" in a Switch or a LoopBlock
@@ -190,7 +181,7 @@ namespace Mono.CSharp
 				barrier = TriState_Max (barrier, b.barrier);
 			}
 
-			public static Reachability Never ()
+			public static Reachability Always ()
 			{
 				return new Reachability (
 					TriState.Never, TriState.Never,
@@ -454,7 +445,7 @@ namespace Mono.CSharp
 					if (num_params > 0)
 						parameters = new MyBitVector (null, num_params);
 
-					reachability = Reachability.Never ();
+					reachability = Reachability.Always ();
 				}
 
 				id = ++next_id;
@@ -660,7 +651,7 @@ namespace Mono.CSharp
 			{
 				Report.Debug (1, "  MERGING JUMP ORIGINS", this);
 
-				reachability = Reachability.Never ();
+				reachability = Reachability.Always ();
 
 				if (o_vectors == null) {
 					reachability.SetBarrier ();
@@ -688,7 +679,7 @@ namespace Mono.CSharp
 							parameters.And (vector.parameters);
 					}
 
-					Reachability.And (ref reachability, vector.Reachability, true);
+					reachability.Meet (vector.Reachability, true);
 
 					Report.Debug (1, "  MERGING JUMP ORIGIN #1", vector);
 				}
@@ -704,7 +695,7 @@ namespace Mono.CSharp
 			{
 				Report.Debug (1, "  MERGING FINALLY ORIGIN", this);
 
-				reachability = Reachability.Never ();
+				reachability = Reachability.Always ();
 
 				for (UsageVector vector = f_origins; vector != null; vector = vector.Next) {
 					Report.Debug (1, "    MERGING FINALLY ORIGIN", vector);
@@ -712,7 +703,7 @@ namespace Mono.CSharp
 					if (parameters != null)
 						parameters.And (vector.parameters);
 
-					Reachability.And (ref reachability, vector.Reachability, true);
+					reachability.Meet (vector.Reachability, true);
 				}
 
 				Report.Debug (1, "  MERGING FINALLY ORIGIN DONE", this);
@@ -745,7 +736,7 @@ namespace Mono.CSharp
 							parameters.And (vector.parameters);
 					}
 
-					reachability.And (vector.Reachability, false);
+					reachability.Meet (vector.Reachability, false);
 				}
 
 				Report.Debug (1, "  MERGING BREAK ORIGINS DONE", this);
@@ -944,7 +935,10 @@ namespace Mono.CSharp
 					      child.ParameterVector, child.LocalVector,
 					      reachability, child.Reachability, do_break);
 
-				Reachability.And (ref reachability, child.Reachability, do_break);
+				if (reachability == null)
+					reachability = child.Reachability.Clone ();
+				else
+					reachability.Meet (child.Reachability, do_break);
 
 				// A local variable is initialized after a flow branching if it
 				// has been initialized in all its branches which do neither
@@ -1006,7 +1000,7 @@ namespace Mono.CSharp
 			}
 
 			if (reachability == null)
-				reachability = Reachability.Never ();
+				throw new InternalErrorException ("Cannot happen: the loop above runs at least twice");
 
 			Report.Debug (2, "  MERGING SIBLINGS DONE", parameters, locals,
 				      reachability, Infinite);

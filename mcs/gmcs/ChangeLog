@@ -1,3 +1,14 @@
+2006-04-30  Raja R Harinath  <harinath@gmail.com>
+
+	* flowanalysis.cs (Reachability): Make 4-argument constructor
+	private.
+	(Reachability.Meet): Rename from 'And'.  Remove static variant.
+	(Reachability.Always): Rename from the highly misleading
+	'Reachability.Never'.
+	(FlowBranching.Merge): Update to changes.  Mark an impossible
+	situation with a 'throw'.
+	(*): Update to changes.
+
 2006-04-29  Raja R Harinath  <harinath@gmail.com>
 
 	* flowanalysis.cs (TriState): Rename from FlowBranching.FlowReturns.
