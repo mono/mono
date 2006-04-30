@@ -1,8 +1,10 @@
-2006-04-30  Marek Safar  <marek.safar@seznam.cz>
+2006-05-01  Marek Safar  <marek.safar@seznam.cz>
 
-	A fix for #78065
-	*class.cs (MethodData.Define): Add check for new params modifiers in an
-	explicit interface implementation.
+	A fix for #77980
+	*flowanalysis.cs (UsageVector.IsAssigned): Add flag to ignore short path.
+
+	* statement.cs (Block.UsageWarning): Uses newly introduced flag to detect
+	whether field is really assigned.
 
 2006-04-30  Raja R Harinath  <harinath@gmail.com>
 

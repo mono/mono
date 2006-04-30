@@ -1841,7 +1841,7 @@ namespace Mono.CSharp {
 					name = (string) de.Key;
 
 					// vi.VariableInfo can be null for 'catch' variables
-					if (vi.VariableInfo != null && vector.IsAssigned (vi.VariableInfo)){
+					if (vi.VariableInfo != null && vector.IsAssigned (vi.VariableInfo, true)){
 						Report.Warning (219, 3, vi.Location, "The variable `{0}' is assigned but its value is never used", name);
 					} else {
 						Report.Warning (168, 3, vi.Location, "The variable `{0}' is declared but never used", name);

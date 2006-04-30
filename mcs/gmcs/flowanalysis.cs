@@ -492,9 +492,9 @@ namespace Mono.CSharp
 				return retval;
 			}
 
-			public bool IsAssigned (VariableInfo var)
+			public bool IsAssigned (VariableInfo var, bool ignoreReachability)
 			{
-				if (!var.IsParameter && Reachability.IsUnreachable)
+				if (!ignoreReachability && !var.IsParameter && Reachability.IsUnreachable)
 					return true;
 
 				return var.IsAssigned (var.IsParameter ? parameters : locals);
@@ -1098,12 +1098,12 @@ namespace Mono.CSharp
 
 		public bool IsAssigned (VariableInfo vi)
 		{
-			return CurrentUsageVector.IsAssigned (vi);
+			return CurrentUsageVector.IsAssigned (vi, false);
 		}
 
 		public bool IsFieldAssigned (VariableInfo vi, string field_name)
 		{
-			return CurrentUsageVector.IsAssigned (vi) || CurrentUsageVector.IsFieldAssigned (vi, field_name);
+			return CurrentUsageVector.IsAssigned (vi, false) || CurrentUsageVector.IsFieldAssigned (vi, field_name);
 		}
 
 		public void SetAssigned (VariableInfo vi)
