@@ -1,5 +1,9 @@
 2006-04-23 Tal Klahr <talk@mainsoft.com>
 
+	* System.Web_test.dll.sources: add ViewTest.cs and MultiViewTest.cs
+
+2006-04-23 Tal Klahr <talk@mainsoft.com>
+
 	* System.Web_test.dll.sources: add BulletedListTest.cs
 
 2006-04-20 Andrew Skiba <andrews@mainsoft.com>

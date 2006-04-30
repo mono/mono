@@ -1,3 +1,7 @@
+2006-04-23 Tal Klahr <talk@mainsoft.com>
+
+	* Added ViewTest.cs and MultiViewTest.cs
+
 2006-04-25	Konstantin Triger <kostat@mainsoft.com>
 
 	* FormViewTest.cs: added test for PageCount.
