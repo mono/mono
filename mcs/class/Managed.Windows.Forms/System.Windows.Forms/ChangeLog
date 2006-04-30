@@ -1,3 +1,14 @@
+2006-04-30  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* XplatUIX11.cs:
+	  - ScrollWindow: We were passing hwnd.ClientRectangle which returns
+	    the rectangle relative to the parent, considering borders. We
+	    don't really want that.
+	  - ScrollWindow: Fixed warning to be more understandable
+	* TextBoxBase.cs: Fixed ScrollWindow calculations to consider our
+	  scrollbars and scroll only the visible area
+	* RichTextBox.cs: Removed debug output
+
 2006-04-29  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* NumericUpDown.cs (Text): Just use base

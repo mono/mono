@@ -1275,7 +1275,7 @@ namespace System.Windows.Forms {
 				}
 
 				case RTF.Major.SpecialChar: {
-					Console.Write("[Got SpecialChar control {0}]", rtf.Minor);
+					//Console.Write("[Got SpecialChar control {0}]", rtf.Minor);
 					SpecialChar(rtf);
 					break;
 				}

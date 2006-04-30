@@ -1524,7 +1524,11 @@ namespace System.Windows.Forms {
 		}
 
 		private void hscroll_ValueChanged(object sender, EventArgs e) {
-			XplatUI.ScrollWindow(this.Handle, document.ViewPortX-this.hscroll.Value, 0, false);
+			if (vscroll.Visible) {
+				XplatUI.ScrollWindow(this.Handle, new Rectangle(0, 0, ClientSize.Width - vscroll.Width, ClientSize.Height), document.ViewPortX-this.hscroll.Value, 0, false);
+			} else {
+				XplatUI.ScrollWindow(this.Handle, ClientRectangle, document.ViewPortX-this.hscroll.Value, 0, false);
+			}
 			document.ViewPortX = this.hscroll.Value;
 			document.UpdateCaret();
 
@@ -1534,7 +1538,11 @@ namespace System.Windows.Forms {
 		}
 
 		private void vscroll_ValueChanged(object sender, EventArgs e) {
-			XplatUI.ScrollWindow(this.Handle, 0, document.ViewPortY-this.vscroll.Value, false);
+			if (hscroll.Visible) {
+				XplatUI.ScrollWindow(this.Handle, new Rectangle(0, 0, ClientSize.Width, ClientSize.Height - hscroll.Height), 0, document.ViewPortY-this.vscroll.Value, false);
+			} else {
+				XplatUI.ScrollWindow(this.Handle, ClientRectangle, 0, document.ViewPortY-this.vscroll.Value, false);
+			}
 			document.ViewPortY = this.vscroll.Value;
 			document.UpdateCaret();
 

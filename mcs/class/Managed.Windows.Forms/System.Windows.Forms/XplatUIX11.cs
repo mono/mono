@@ -3784,9 +3784,8 @@ namespace System.Windows.Forms {
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
 			if (hwnd.invalid != Rectangle.Empty) {
-				// BIG FAT WARNING. This only works with how we use this function right now
-				// where we basically still scroll the whole window, but work around areas
-				// that are covered by our children
+				/* We have an invalid area in the window we're scrolling. 
+				   Adjust our stored invalid rectangle to to match the scrolled amount */
 
 				hwnd.invalid.X += XAmount;
 				hwnd.invalid.Y += YAmount;
@@ -3827,16 +3826,18 @@ namespace System.Windows.Forms {
 				AddExpose(hwnd, true, area.X, YAmount + area.Y + area.Height, area.Width, -YAmount);
 			}
 			XFreeGC(DisplayHandle, gc);
-
-//			UpdateWindow(handle);
 		}
 
 		internal override void ScrollWindow(IntPtr handle, int XAmount, int YAmount, bool with_children) {
-			Hwnd	hwnd;
+			Hwnd		hwnd;
+			Rectangle	rect;
 
 			hwnd = Hwnd.GetObjectFromWindow(handle);
 
-			ScrollWindow(handle, hwnd.ClientRect, XAmount, YAmount, with_children);
+			rect = hwnd.ClientRect;
+			rect.X = 0;
+			rect.Y = 0;
+			ScrollWindow(handle, rect, XAmount, YAmount, with_children);
 		}
 
 		internal override void SendAsyncMethod (AsyncMethodData method) {
