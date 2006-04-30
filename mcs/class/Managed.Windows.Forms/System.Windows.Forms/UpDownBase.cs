@@ -480,7 +480,10 @@ namespace System.Windows.Forms
 		[Localizable(true)]
 		public override string Text {
 			get {
-				return txtView.Text;
+				if (txtView != null) {
+					return txtView.Text;
+				}
+				return "";
 			}
 			set {
 				bool suppress_validation = changing_text;

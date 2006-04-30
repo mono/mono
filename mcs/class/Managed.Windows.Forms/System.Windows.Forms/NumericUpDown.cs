@@ -224,11 +224,11 @@ namespace System.Windows.Forms {
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override string Text {
 			get {
-				return base.txtView.Text;
+				return base.Text;
 			}
 
 			set {
-				base.txtView.Text = value;
+				base.Text = value;
 			}
 		}
 
