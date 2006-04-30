@@ -4825,6 +4825,12 @@ namespace Mono.CSharp {
 						Modifiers.Error_InvalidModifier (method.Location, "public, virtual or abstract");
 						implementing = null;
 					}
+					if (method.ParameterInfo.HasParams && !TypeManager.GetParameterData (implementing).HasParams) {
+						Report.SymbolRelatedToPreviousError (implementing);
+						Report.Error (466, method.Location, "`{0}': the explicit interface implementation cannot introduce the params modifier",
+							method.GetSignatureForError ());
+						return false;
+					}
 				} else if ((flags & MethodAttributes.MemberAccessMask) != MethodAttributes.Public){
 					if (TypeManager.IsInterfaceType (implementing.DeclaringType)){
 						//

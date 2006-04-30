@@ -1,3 +1,9 @@
+2006-04-30  Marek Safar  <marek.safar@seznam.cz>
+
+	A fix for #78065
+	*class.cs (MethodData.Define): Add check for new params modifiers in an
+	explicit interface implementation.
+
 2006-04-30  Raja R Harinath  <harinath@gmail.com>
 
 	* flowanalysis.cs (Reachability): Make 4-argument constructor
