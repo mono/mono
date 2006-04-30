@@ -220,7 +220,7 @@ namespace Mac {
 					options.assembly = value;
 					break;
 				case "-i": case "-icon":
-					options.output = value;
+					options.icon = value;
 					break;
 				case "-r": case "-resource":
 					foreach (string ss in value.Split (new char [] {','}))

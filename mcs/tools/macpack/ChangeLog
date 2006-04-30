@@ -1,3 +1,8 @@
+2006-04-30  Aaron Flynt  <aaron@aaronflynt.com>
+
+	* MacPack.cs: Fixed typo in main method causing -i argument to be 
+	treated like -o.
+
 2006-03-13  Miguel de Icaza  <miguel@novell.com>
 
 	* MacPack.cs: Remove Mono.GetOptions to provide better handling of
