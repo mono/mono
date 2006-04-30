@@ -4234,7 +4234,7 @@ namespace System.Windows.Forms {
 			}
 
 			hwnd.opacity = (uint)(0xffffffff * transparency);
-			opacity = (IntPtr)hwnd.opacity;
+			opacity = (IntPtr)((int)hwnd.opacity);
 
 			if (hwnd.reparented) {
 				XChangeProperty(DisplayHandle, XGetParent(hwnd.whole_window), NetAtoms[(int)NA._NET_WM_WINDOW_OPACITY], (IntPtr)Atom.XA_CARDINAL, 32, PropertyMode.Replace, ref opacity, 1);
