@@ -22,15 +22,9 @@ namespace MonoTests.System.Threading {
 	// Am going with door #1, but it would be nice to investigate this.
 	// -- Ben
 	//
-	[Category ("NotWorking")]
 	public class TimerTest : Assertion {
-
-		public int counter;
-		
-		private void Callback (object foo) {
-			counter ++;
-		}
-
+		[Test]
+		[Category ("NotWorking")]
 		public void TestDueTime ()
 		{
 			counter = 0;
@@ -47,7 +41,9 @@ namespace MonoTests.System.Threading {
 			Assert ("t3", counter > 20);
 			t.Dispose ();
 		}
-		
+
+		[Test]
+		[Category ("NotWorking")]
 		public void TestChange ()
 		{
 			counter = 0;
@@ -61,6 +57,8 @@ namespace MonoTests.System.Threading {
 			t.Dispose ();
 		}
 
+		[Test]
+		[Category ("NotWorking")]
 		public void TestZeroDueTime () {
 			counter = 0;
 
@@ -72,7 +70,9 @@ namespace MonoTests.System.Threading {
 			AssertEquals (2, counter);
 			t.Dispose ();
 		}
-		
+
+		[Test]
+		[Category ("NotWorking")]
 		public void TestDispose ()
 		{
 			counter = 0;
@@ -85,12 +85,17 @@ namespace MonoTests.System.Threading {
 			Thread.Sleep (200);
 			AssertEquals (c, counter);
 		}
-		
-		private void CallbackTestDispose (object foo) {
-			counter ++;
-		}
 
-		Timer t1;
+		[Test] // bug #78202
+		public void TestDispose2 ()
+		{
+			Timer t = new Timer (new TimerCallback (CallbackTestDispose), null, 10, 10);
+			t.Dispose ();
+			t.Dispose ();
+		}
+		
+		[Test]
+		[Category ("NotWorking")]
 		public void TestDisposeOnCallback () {
 			counter = 0;
 			t1 = new Timer (new TimerCallback (CallbackTestDisposeOnCallback), null, 0, 10);
@@ -110,5 +115,18 @@ namespace MonoTests.System.Threading {
 				t1 = null;
 			}
 		}
+
+		private void CallbackTestDispose (object foo)
+		{
+			counter++;
+		}
+
+		private void Callback (object foo)
+		{
+			counter++;
+		}
+
+		Timer t1;
+		int counter;
 	}
 }
