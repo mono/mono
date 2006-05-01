@@ -270,15 +270,15 @@ namespace System.Windows.Forms
 			
 			int width = button.ClientSize.Width;
 			int height = button.ClientSize.Height;
-			
+
 			if (button.ImageIndex != -1) {	 // We use ImageIndex instead of image_index since it will return -1 if image_list is null
 				i = button.image_list.Images[button.image_index];
 			} else {
 				i = button.image;
 			}
-			
-			image_width = button.image.Width;
-			image_height = button.image.Height;
+
+			image_width = i.Width;
+			image_height = i.Height;
 			
 			switch (button.image_alignment) {
 				case ContentAlignment.TopLeft: {
