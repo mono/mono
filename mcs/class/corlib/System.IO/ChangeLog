@@ -1,3 +1,8 @@
+2006-05-01  Daniel Drake  <dsd@gentoo.org>
+
+	* Directory.cs: Return false (as documented) on ERROR_ACCESS_DENIED in
+	Exists() rather than throwing an exception. Bug #78239.
+
 2006-04-29  Atsushi Enomoto <atsushi@ximian.com>
 
 	* UnexceptionalStreamReader.cs (Read): Fix for #78218, where we

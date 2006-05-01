@@ -173,7 +173,8 @@ namespace System.IO
 			
 			exists = MonoIO.ExistsDirectory (path, out error);
 			if (error != MonoIOError.ERROR_SUCCESS &&
-			    error != MonoIOError.ERROR_PATH_NOT_FOUND) {
+			    error != MonoIOError.ERROR_PATH_NOT_FOUND &&
+			    error != MonoIOError.ERROR_ACCESS_DENIED) {
 				throw MonoIO.GetException (path, error);
 			}
 
