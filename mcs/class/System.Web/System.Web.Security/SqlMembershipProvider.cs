@@ -1195,10 +1195,11 @@ SELECT u.UserName
 			try {
 				MembershipPasswordFormat db_passwordFormat;
 				string db_salt;
+				string newPassword = null;
 
 				if (ValidateUsingPasswordAnswer (trans, user.UserName, answer, out db_passwordFormat, out db_salt)) {
 
-					string newPassword = GeneratePassword ();
+					newPassword = GeneratePassword ();
 					string db_password = newPassword;
 
 					EmitValidatingPassword (username, newPassword, false);
@@ -1243,8 +1244,12 @@ UPDATE m
 						throw new ProviderException ("failed to update Membership table");
 
 					trans.Commit ();
-					return newPassword;
 				}
+				else {
+					/* XXX something here? */
+				}
+
+				return newPassword;
 			}
 			catch (MembershipPasswordException) {
 				trans.Rollback ();
@@ -1521,7 +1526,7 @@ SELECT m.Password, m.PasswordFormat, m.PasswordSalt
 			bool valid = (password == db_password);
 
 			if (!valid) {
-				DateTime now = DateTime.Now ();
+				DateTime now = DateTime.Now;
 
 				/* if validation fails:
 				   if (FailedPasswordAttemptWindowStart - DateTime.Now < PasswordAttemptWindow)
@@ -1532,7 +1537,7 @@ SELECT m.Password, m.PasswordFormat, m.PasswordSalt
 				     set LastLockoutDate = DateTime.Now
 				*/
 
-				string commandText = @"
+				commandText = @"
 SELECT m.FailedPasswordAttemptCount, m.FailedPasswordAttemptWindowStart
   FROM dbo.aspnet_Membership m, dbo.aspnet_Applications a, dbo.aspnet_Users u
  WHERE m.ApplicationId = a.ApplicationId
@@ -1541,7 +1546,7 @@ SELECT m.FailedPasswordAttemptCount, m.FailedPasswordAttemptWindowStart
    AND u.LoweredUserName = LOWER(@UserName)
    AND a.LoweredApplicationName = LOWER(@ApplicationName)";
 
-				DbCommand command = factory.CreateCommand ();
+				command = factory.CreateCommand ();
 				command.Transaction = trans;
 				command.CommandText = commandText;
 				command.Connection = connection;
@@ -1552,17 +1557,17 @@ SELECT m.FailedPasswordAttemptCount, m.FailedPasswordAttemptWindowStart
 				DateTime db_FailedPasswordAttemptWindowStart;
 				int db_FailedPasswordAttemptCount;
 
-				DbDataReader reader = command.ExecuteReader ();
+				reader = command.ExecuteReader ();
 				reader.Read ();
 				db_FailedPasswordAttemptCount = reader.GetInt32 (0);
 				db_FailedPasswordAttemptWindowStart = reader.GetDateTime (1).ToLocalTime ();
 				reader.Close();
 
-				TimeSpan diff = db_FailedPasswordAttempt.Subtract (now);
+				TimeSpan diff = db_FailedPasswordAttemptWindowStart.Subtract (now);
 				if (diff.Minutes < PasswordAttemptWindow)
 					db_FailedPasswordAttemptCount ++;
 
-				if (db_FailedPasswordAttemptCount > MaxInvalidaPasswordAttempts) {
+				if (db_FailedPasswordAttemptCount > MaxInvalidPasswordAttempts) {
 					/* lock the user out */
 					commandText = @"
 UPDATE m
@@ -1575,14 +1580,14 @@ UPDATE m
    AND u.LoweredUserName = LOWER(@UserName)
    AND a.LoweredApplicationName = LOWER(@ApplicationName)";
 
-					DbCommand command = factory.CreateCommand ();
+					command = factory.CreateCommand ();
 					command.Transaction = trans;
 					command.CommandText = commandText;
 					command.Connection = connection;
 					command.CommandType = CommandType.Text;
 					AddParameter (command, "UserName", username);
 					AddParameter (command, "ApplicationName", ApplicationName);
-					AddParameter (command, "LastLockoutDate", now.ToUniversalTime.ToString ());
+					AddParameter (command, "LastLockoutDate", now.ToUniversalTime().ToString ());
 				}
 				else {
 					/* just store back the updated window start and count */
@@ -1597,15 +1602,15 @@ UPDATE m
    AND u.LoweredUserName = LOWER(@UserName)
    AND a.LoweredApplicationName = LOWER(@ApplicationName)";
 
-					DbCommand command = factory.CreateCommand ();
+					command = factory.CreateCommand ();
 					command.Transaction = trans;
 					command.CommandText = commandText;
 					command.Connection = connection;
 					command.CommandType = CommandType.Text;
 					AddParameter (command, "UserName", username);
 					AddParameter (command, "ApplicationName", ApplicationName);
-					AddParameter (command, "FailedPasswordAttemptCount", db_FailedPasswordAttemptCount);
-					AddParameter (command, "FailedPasswordAttemptWindowStart", now.ToUniversalTime.ToString ());
+					AddParameter (command, "FailedPasswordAttemptCount", db_FailedPasswordAttemptCount.ToString());
+					AddParameter (command, "FailedPasswordAttemptWindowStart", now.ToUniversalTime().ToString ());
 				}
 
 				if (1 != (int)command.ExecuteNonQuery ())
@@ -1614,6 +1619,7 @@ UPDATE m
 
 			return valid;
 		}
+
 
 		bool ValidateUsingPasswordAnswer (DbTransaction trans, string username, string answer,
 						  out MembershipPasswordFormat passwordFormat,
@@ -1660,7 +1666,7 @@ SELECT m.PasswordAnswer, m.PasswordFormat, m.PasswordSalt
 			if (answer.Length > 128)
 				throw new ArgumentException (String.Format ("password answer hashed to longer than 128 characters"));
 
-			valid = (answer == db_answer);
+			bool valid = (answer == db_answer);
 
 			if (!valid) {
 				/* if validation fails:
@@ -1673,6 +1679,8 @@ SELECT m.PasswordAnswer, m.PasswordFormat, m.PasswordSalt
 				     set LastLockoutDate = DateTime.Now
 				*/
 			}
+
+			return valid;
 		}
 
 		[MonoTODO]
