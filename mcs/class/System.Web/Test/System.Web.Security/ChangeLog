@@ -1,3 +1,8 @@
+2006-05-01  Chris Toshok  <toshok@ximian.com>
+
+	* MembershipTest.cs (GeneratePassword): add test for password
+	generation.
+
 2005-09-21  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* FormsAuthenticationTest.cs: CookieDomain property (2.0) changed from

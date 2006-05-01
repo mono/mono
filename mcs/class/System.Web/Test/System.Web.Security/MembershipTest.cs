@@ -43,6 +43,26 @@ namespace MonoTests.System.Web.Security {
 		{
 			Assert.IsNotNull (Membership.Provider, "Membership.Provider");
 		}
+
+		[Test]
+		public void GeneratePassword ()
+		{
+			string pwd;
+			int count;
+			int i;
+
+			pwd = Membership.GeneratePassword (5, 0);
+			Assert.AreEqual (5, pwd.Length, "A1");
+
+			pwd = Membership.GeneratePassword (5, 1);
+			Assert.AreEqual (5, pwd.Length, "A2");
+			/* count up the non-alphanumeric characters in the string */
+			count = 0;
+			for (i = 0; i < pwd.Length; i ++)
+				if (!Char.IsLetterOrDigit (pwd, i))
+					count++;
+			Assert.IsTrue (count >= 1, "A2");
+		}
 	}
 }
 
