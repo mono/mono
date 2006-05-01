@@ -1,5 +1,10 @@
 2006-05-01  Chris Toshok  <toshok@ximian.com>
 
+	* Membership.cs (GeneratePassword): don't include quotes (',",`)
+	in the set of characters in the generated passwords.
+
+2006-05-01  Chris Toshok  <toshok@ximian.com>
+
 	* MembershipProvider.cs (GetAlg): switch from Exception to
 	ProviderException to match MS behavior (and fix the unit test.)
 

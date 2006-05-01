@@ -115,6 +115,14 @@ namespace System.Web.Security
 				    || (pass_bytes[i] >= 91 && pass_bytes[i] <= 96)
 				    || (pass_bytes[i] >= 123 && pass_bytes[i] <= 126))
 					num_nonalpha++;
+
+				/* get rid of any quotes in the
+				 * password, just in case they cause
+				 * problems */
+				if (pass_bytes[i] == 34 || pass_bytes[i] == 39)
+					pass_bytes[i] ++;
+				else if (pass_bytes[i] == 96)
+					pass_bytes[i] --;
 			}
 
 			if (num_nonalpha < numberOfNonAlphanumericCharacters) {
@@ -136,6 +144,12 @@ namespace System.Web.Security
 						pass_bytes[i] = (byte)((pass_bytes[i] - 97) % 13 + 33);
 						num_nonalpha++;
 					}
+
+					/* and make sure we don't end up with quote characters */
+					if (pass_bytes[i] == 34 || pass_bytes[i] == 39)
+						pass_bytes[i]++;
+					else if (pass_bytes[i] == 96)
+						pass_bytes[i] --;
 				}
 			}
 
