@@ -910,6 +910,12 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal override int MenuHeight {
+			get {
+				return Win32GetSystemMetrics(SystemMetrics.SM_CYMENU);
+			}
+		}
+
 		internal override bool DropTarget {
 			get {
 				return false;

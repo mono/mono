@@ -1398,13 +1398,13 @@ namespace System.Windows.Forms {
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnLoad(EventArgs e) {
-			if (Load != null) {
-				Load(this, e);
-			}
-
 			if (AutoScale){
 				ApplyAutoScaling ();
 				AutoScale = false;
+			}
+
+			if (Load != null) {
+				Load(this, e);
 			}
 
 			if (!IsMdiChild) {

@@ -86,6 +86,12 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal virtual int MenuHeight {
+			get {
+				return 19;
+			}
+		}
+
 		internal virtual bool DropTarget {
 			get {
 				return false;

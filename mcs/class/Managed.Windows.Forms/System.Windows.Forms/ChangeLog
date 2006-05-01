@@ -1,3 +1,13 @@
+2006-05-01  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* XplatUI.cs, XplatUIDriver.cs: Added MenuHeight property
+	* XplatUIWin32.cs: Overriding new MenuHeight property, retrieving
+	  height from system
+	* Theme.cs: No longer returns hardcoded menu height, instead calls
+	  new driver method
+	* Form.cs (OnLoad): Scaling happens before triggering Load events 
+	  on MS (# 78257)
+
 2006-05-01  Mike Kestner  <mkestner@novell.com>
 
 	* MenuItem.cs: fix NRE for text == null.  Fixes #78250.

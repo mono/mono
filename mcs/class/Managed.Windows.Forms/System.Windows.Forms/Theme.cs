@@ -468,7 +468,7 @@ namespace System.Windows.Forms
 
 		public virtual int MenuHeight {
 			get {
-				return 19;
+				return XplatUI.MenuHeight;
 			}
 		}
 

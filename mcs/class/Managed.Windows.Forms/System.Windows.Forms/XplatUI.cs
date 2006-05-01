@@ -201,6 +201,12 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		static public int MenuHeight {
+			get {
+				return driver.MenuHeight;
+			}
+		}
+
 		static public int MouseButtonCount {
 			get {
 				return driver.MouseButtonCount;
