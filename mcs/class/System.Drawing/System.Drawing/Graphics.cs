@@ -53,14 +53,18 @@ namespace System.Drawing
 		private static float defDpiX = 0;
 		private static float defDpiY = 0;
 
+#if !NET_2_0
 		[ComVisible(false)]
+#endif
 		public delegate bool EnumerateMetafileProc (EmfPlusRecordType recordType,
 							    int flags,
 							    int dataSize,
 							    IntPtr data,
 							    PlayRecordCallback callbackData);
 		
+#if !NET_2_0
 		[ComVisible (false)]
+#endif
 		public delegate bool DrawImageAbort (IntPtr callbackData);
 
 		internal Graphics (IntPtr nativeGraphics)
@@ -483,7 +487,6 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 		}
 		
-		[MonoTODO ("libgdiplus doesn't use the numberOfSegments parameter")]
 		public void DrawCurve (Pen pen, PointF [] points, int offset, int numberOfSegments)
 		{
 			if (pen == null)
@@ -498,7 +501,6 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 		}
 
-		[MonoTODO ("libgdiplus doesn't use the numberOfSegments parameter")]
 		public void DrawCurve (Pen pen, Point [] points, int offset, int numberOfSegments, float tension)
 		{
 			if (pen == null)
@@ -513,7 +515,6 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 		}
 
-		[MonoTODO ("libgdiplus doesn't use the numberOfSegments parameter")]
 		public void DrawCurve (Pen pen, PointF [] points, int offset, int numberOfSegments, float tension)
 		{
 			if (pen == null)
@@ -2445,6 +2446,13 @@ namespace System.Drawing
                                 return rect;
 			}
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		public object GetContextInfo ()
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 }
-

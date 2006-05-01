@@ -1,3 +1,8 @@
+2006-05-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Graphics.cs: Removed MonoTODO on DrawCurve methods (it's fixed in 
+	libgdiplus). Fixed minor extra/missing for corcompare.
+
 2006-05-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SizeF.cs: serialization compatibility fixes. Closes bug #78236.
