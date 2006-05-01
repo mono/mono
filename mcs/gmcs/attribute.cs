@@ -1651,6 +1651,7 @@ namespace Mono.CSharp {
 				return fb as IFixedBuffer;
 			}
 
+#if NET_2_0
 			object o = fixed_buffer_cache [fi];
 			if (o == null) {
 				if (System.Attribute.GetCustomAttribute (fi, TypeManager.fixed_buffer_attr_type) == null) {
@@ -1667,6 +1668,9 @@ namespace Mono.CSharp {
 				return null;
 
 			return (IFixedBuffer)o;
+#else
+			return null;
+#endif		
 		}
 
 		public static void VerifyModulesClsCompliance ()

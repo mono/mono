@@ -1,3 +1,8 @@
+2006-05-01  Rafael Teixeira <rafaelteixeirabr@hotmail.com> 
+	* attribute.cs: fixed_buffer_cache is declared only if  NET_2_0 is
+	defined, so it's references should also compile only for NET_2_0 
+	(as occurs in mcs version)
+		
 2006-05-01  Raja R Harinath  <harinath@gmail.com>
 
 	* codegen.cs (EmitContext.ResolveTopBlock): Remove redundant
