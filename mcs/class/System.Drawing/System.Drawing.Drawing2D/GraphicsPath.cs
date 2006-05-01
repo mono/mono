@@ -556,7 +556,6 @@ namespace System.Drawing.Drawing2D
                         GDIPlus.CheckStatus (status);                      	
                 }
 
-		[MonoTODO ("libgdiplus doesn't use the numberOfSegments parameter")]
                 public void AddCurve (Point [] points, int offset, int numberOfSegments, float tension)
                 {
 			if (points == null)
@@ -568,7 +567,6 @@ namespace System.Drawing.Drawing2D
 			GDIPlus.CheckStatus (status);                      	                                       
                 }
                 
-		[MonoTODO ("libgdiplus doesn't use the numberOfSegments parameter")]
                 public void AddCurve (PointF [] points, int offset, int numberOfSegments, float tension)
                 {
 			if (points == null)
