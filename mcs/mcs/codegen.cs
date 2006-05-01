@@ -673,9 +673,7 @@ namespace Mono.CSharp {
 
 				DoFlowAnalysis = old_do_flow_analysis;
 
-				if (reachability.AlwaysReturns ||
-				    reachability.AlwaysThrows ||
-				    reachability.IsUnreachable)
+				if (reachability.IsUnreachable)
 					unreachable = true;
 #if PRODUCTION
 			} catch (Exception e) {
