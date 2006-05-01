@@ -388,11 +388,13 @@ namespace System.Drawing
 			bmp.UnlockBits(bits);
 
 			bmp = new Bitmap(bmp);	// This makes a 32bpp image out of an indexed one
+
 			// Apply the mask to make properly transparent
+			bytesPerLine = (int)((((bih.biWidth) + 31) & ~31) >> 3);
 			for (int y = 0; y < biHeight; y++) {
 				for (int x = 0; x < bih.biWidth / 8; x++) {
 					for (int bit = 7; bit >= 0; bit--) {
-						if (((ii.iconAND[y * bih.biWidth / 8 +x] >> bit) & 1) != 0) {
+						if (((ii.iconAND[y * bytesPerLine +x] >> bit) & 1) != 0) {
 							bmp.SetPixel(x*8 + 7-bit, biHeight - y - 1, Color.Transparent);
 						}
 					}
@@ -556,12 +558,11 @@ namespace System.Drawing
 					iidata.iconXOR[i] = bihReader.ReadByte();		
 				
 				//Determine the AND array size
-				//For this i subtract the current position from the length.
-				//ugly hack...
-				int andSize = (int) (bihReader.BaseStream.Length - bihReader.BaseStream.Position);
+				numBytesPerLine = (int)((((bih.biWidth) + 31) & ~31) >> 3);
+				int andSize = numBytesPerLine * iconHeight;
 				iidata.iconAND = new byte [andSize];
 				for (int i=0; i<andSize; i++)
-					iidata.iconAND[i] = bihReader.ReadByte();		
+					iidata.iconAND[i] = bihReader.ReadByte();
 				
 				imageData [j] = iidata;
 				bihReader.Close();

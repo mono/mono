@@ -1,3 +1,9 @@
+2006-04-30  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Icon.cs: Icon AND masks are organized in strides, fixed to calculate
+	  and set proper transparency. Also fixed broken calculation of AND
+	  size when reading the icon. NDocGui now shows pretty buttons.
+
 2006-04-28  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* Color.cs: corcompare fix. Remove ComVisible attribute from 2.0 build
