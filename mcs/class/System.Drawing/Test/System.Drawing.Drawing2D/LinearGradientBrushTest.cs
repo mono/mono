@@ -91,6 +91,29 @@ namespace MonoTests.System.Drawing.Drawing2D {
 			CheckDefaultMatrix (lgb.Transform);
 		}
 
+		private void CheckMatrixAndRect (PointF pt1, PointF pt2, float[] testVals)
+		{
+			Matrix m;
+			RectangleF rect;
+
+			using (LinearGradientBrush b = new LinearGradientBrush (pt1, pt2, Color.Black, Color.White)) {
+				m = b.Transform;
+				rect = b.Rectangle;
+			}
+
+			Assert.AreEqual (testVals[0], m.Elements[0], 0.0001, "matrix.0");
+			Assert.AreEqual (testVals[1], m.Elements[1], 0.0001, "matrix.1");
+			Assert.AreEqual (testVals[2], m.Elements[2], 0.0001, "matrix.2");
+			Assert.AreEqual (testVals[3], m.Elements[3], 0.0001, "matrix.3");
+			Assert.AreEqual (testVals[4], m.Elements[4], 0.0001, "matrix.4");
+			Assert.AreEqual (testVals[5], m.Elements[5], 0.0001, "matrix.5");
+
+			Assert.AreEqual (testVals[6], rect.X, 0.0001, "rect.X");
+			Assert.AreEqual (testVals[7], rect.Y, 0.0001, "rect.Y");
+			Assert.AreEqual (testVals[8], rect.Width, 0.0001, "rect.Width");
+			Assert.AreEqual (testVals[9], rect.Height, 0.0001, "rect.Height");
+		}
+
 		[Test]
 		public void Constructor_Point_Point_Color_Color ()
 		{
@@ -105,6 +128,42 @@ namespace MonoTests.System.Drawing.Drawing2D {
 			lgb.WrapMode = WrapMode.TileFlipXY;
 			Assert.AreEqual (WrapMode.TileFlipXY, lgb.WrapMode, "WrapMode.TileFlipXY");
 			// can't set WrapMode.Clamp
+		}
+
+		[Test]
+		public void Constructor_Point_Point_Color_Color_1 ()
+		{
+			PointF pt1 = new Point (100, 200);
+			PointF pt2 = new Point (200, 200);
+			CheckMatrixAndRect (pt1, pt2, new float[] { 1, 0, 0, 1, 0, 0, 100, 150, 100, 100 });
+
+			pt1 = new Point (100, 200);
+			pt2 = new Point (0, 200);
+			CheckMatrixAndRect (pt1, pt2, new float[] { -1, 0, 0, -1, 100, 400, 0, 150, 100, 100 });
+
+			pt1 = new Point (100, 200);
+			pt2 = new Point (100, 300);
+			CheckMatrixAndRect (pt1, pt2, new float[] { 0, 1, -1, 0, 350, 150, 50, 200, 100, 100  });
+
+			pt1 = new Point (100, 200);
+			pt2 = new Point (100, 100);
+			CheckMatrixAndRect (pt1, pt2, new float[] { 0, -1, 1, 0, -50, 250, 50, 100, 100, 100 });
+
+			pt1 = new Point (100, 100);
+			pt2 = new Point (150, 225);
+			CheckMatrixAndRect (pt1, pt2, new float[] { 1, 2.5f, -0.6896552f, 0.2758622f, 112.069f, -194.8276f, 100, 100, 50, 125 });
+
+			pt1 = new Point (100, 100);
+			pt2 = new Point (55, 200);
+			CheckMatrixAndRect (pt1, pt2, new float[] { -1, 2.222222f, -0.7484408f, -0.3367983f, 267.2661f, 28.29753f, 55, 100, 45, 100 });
+
+			pt1 = new Point (100, 100);
+			pt2 = new Point (150, 60);
+			CheckMatrixAndRect (pt1, pt2, new float[] { 1, -0.8000001f, 0.9756095f, 1.219512f, -78.04876f, 82.43903f, 100, 60, 50, 40 });
+
+			pt1 = new Point (100, 100);
+			pt2 = new Point (27, 59);
+			CheckMatrixAndRect (pt1, pt2, new float[] { -1, -0.5616435f, 0.8539224f, -1.520399f, 59.11317f, 236.0361f, 27, 59, 73, 41 });
 		}
 
 		[Test]
