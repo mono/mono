@@ -65,6 +65,10 @@ namespace System.Query
                         // It first enumerates source, collecting all elements
                         source_list = new List<T> (items);
                         
+                        // If the source contains just zero or one element, there's no need to sort
+                        if (source_list.Count <= 1)
+                                return source_list;
+                        
                         // Then evaluate the keySelector function for each element,
                         // collecting the key values
                         keys = new K [source_list.Count];
