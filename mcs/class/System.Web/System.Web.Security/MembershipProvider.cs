@@ -103,7 +103,7 @@ namespace System.Web.Security
 			MachineKeySection section = (MachineKeySection)WebConfigurationManager.GetSection ("system.web/machineKey");
 
 			if (section.DecryptionKey.StartsWith ("AutoGenerate"))
-				throw new Exception ("You must explicitly specify a decryption key in the <machineKey> section when using encrypted passwords.");
+				throw new ProviderException ("You must explicitly specify a decryption key in the <machineKey> section when using encrypted passwords.");
 
 			string alg_type = section.Decryption;
 			if (alg_type == "Auto")
@@ -115,7 +115,7 @@ namespace System.Web.Security
 			else if (alg_type == "3DES")
 				alg = TripleDES.Create ();
 			else
-				throw new Exception (String.Format ("Unsupported decryption attribute '{0}' in <machineKey> configuration section", alg_type));
+				throw new ProviderException (String.Format ("Unsupported decryption attribute '{0}' in <machineKey> configuration section", alg_type));
 
 			decryptionKey = section.DecryptionKey192Bits;
 			return alg;

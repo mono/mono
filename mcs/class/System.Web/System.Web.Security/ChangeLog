@@ -1,5 +1,12 @@
 2006-05-01  Chris Toshok  <toshok@ximian.com>
 
+	* MembershipProvider.cs (GetAlg): switch from Exception to
+	ProviderException to match MS behavior (and fix the unit test.)
+
+	* Membership.cs (GeneratePassword): implement.
+
+2006-05-01  Chris Toshok  <toshok@ximian.com>
+
 	* SqlMembershipProvider.cs: lots more work.  checking this in in
 	its present state because I don't want to lose it.  It still needs
 	work.

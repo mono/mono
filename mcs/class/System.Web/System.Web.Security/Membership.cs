@@ -36,6 +36,7 @@ using System.Collections.Specialized;
 using System.Text;
 using System.Web.Configuration;
 using System.Configuration;
+using System.Security.Cryptography;
 
 namespace System.Web.Security
 {
@@ -93,10 +94,52 @@ namespace System.Web.Security
 			return Provider.DeleteUser (username, deleteAllRelatedData);
 		}
 		
-		[MonoTODO]
 		public static string GeneratePassword (int length, int numberOfNonAlphanumericCharacters)
 		{
-			throw new NotImplementedException ();
+			RandomNumberGenerator rng = RandomNumberGenerator.Create ();
+			byte[] pass_bytes = new byte[length];
+			int i;
+			int num_nonalpha = 0;
+
+			rng.GetBytes (pass_bytes);
+			
+			for (i = 0; i < length; i ++) {
+				/* convert the random bytes to ascii values 33-126 */
+				pass_bytes[i] = (byte)(pass_bytes[i] % 93 + 33);
+
+				/* and count the number of
+				 * non-alphanumeric characters we have
+				 * as we go */
+				if ((pass_bytes[i] >= 33 && pass_bytes[i] <= 47)
+				    || (pass_bytes[i] >= 58 && pass_bytes[i] <= 64)
+				    || (pass_bytes[i] >= 91 && pass_bytes[i] <= 96)
+				    || (pass_bytes[i] >= 123 && pass_bytes[i] <= 126))
+					num_nonalpha++;
+			}
+
+			if (num_nonalpha < numberOfNonAlphanumericCharacters) {
+				/* loop over the array, converting the
+				 * least number of alphanumeric
+				 * characters to non-alpha */
+				for (i = 0; i < length; i ++) {
+					if (num_nonalpha == numberOfNonAlphanumericCharacters)
+						break;
+					if (pass_bytes[i] >= 48 && pass_bytes[i] <= 57) {
+						pass_bytes[i] = (byte)(pass_bytes[i] - 48 + 33);
+						num_nonalpha++;
+					}
+					else if (pass_bytes[i] >= 65 && pass_bytes[i] <= 90) {
+						pass_bytes[i] = (byte)((pass_bytes[i] - 65) % 13 + 33);
+						num_nonalpha++;
+					}
+					else if (pass_bytes[i] >= 97 && pass_bytes[i] <= 122) {
+						pass_bytes[i] = (byte)((pass_bytes[i] - 97) % 13 + 33);
+						num_nonalpha++;
+					}
+				}
+			}
+
+			return Encoding.ASCII.GetString (pass_bytes);
 		}
 		
 		public static MembershipUserCollection GetAllUsers ()
