@@ -15,6 +15,7 @@ using System.Text;
 using System;
 using System.Globalization;
 using System.Threading;
+using System.Diagnostics;
 
 namespace MonoTests.System.IO {
 
@@ -197,6 +198,24 @@ public class DirectoryTest : Assertion {
 	public void Exists ()
 	{
 		AssertEquals ("test#01", false, Directory.Exists (null as string));
+	}
+
+	[Test]
+	[Category("NotDotNet")]
+	public void ExistsAccessDenied ()
+	{
+		// bug #78239
+		string path = TempFolder + DSC + "ExistsAccessDenied";
+		Process p;
+
+		Directory.CreateDirectory (path);
+		Process.Start ("/bin/chmod", "000 " + path).WaitForExit ();
+		try {
+			AssertEquals ("#1", false, Directory.Exists(path + DSC + "b"));
+		} finally {
+			Process.Start ("/bin/chmod", "755 " + path).WaitForExit ();
+			Directory.Delete (path);
+		}
 	}
 	
 	[Test]
