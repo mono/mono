@@ -45,7 +45,6 @@ namespace System.Web.Security
 		static MembershipProvider provider;
 		static int onlineTimeWindow;
 
-		[MonoTODO]
 		static Membership ()
 		{
 			MembershipSection section = (MembershipSection) WebConfigurationManager.GetSection ("system.web/membership");
@@ -53,14 +52,6 @@ namespace System.Web.Security
 			providers = new MembershipProviderCollection ();
 
 			ProvidersHelper.InstantiateProviders (section.Providers, providers, typeof (MembershipProvider));
-
-			/* do we add this fallback? */
-			if (providers.Count == 0) {
-				provider = new SqlMembershipProvider ();
-				NameValueCollection attributes = new NameValueCollection ();
-				provider.Initialize ("AspNetSqlMembershipProvider", attributes);
-				providers.Add (provider);
-			}
 
 			provider = providers[section.DefaultProvider];
 
@@ -240,7 +231,6 @@ namespace System.Web.Security
 			get { return onlineTimeWindow; }
 		}
 		
-		[MonoTODO ("Fire it")]
 		public static event MembershipValidatePasswordEventHandler ValidatingPassword {
 			add { Provider.ValidatingPassword += value; }
 			remove { Provider.ValidatingPassword -= value; }

@@ -30,6 +30,8 @@
 
 #if NET_2_0
 using System.Configuration.Provider;
+using System.Web.Configuration;
+using System.Security.Cryptography;
 
 namespace System.Web.Security
 {
@@ -74,19 +76,65 @@ namespace System.Web.Security
 				ValidatingPassword (this, args);
 		}
 
-		[MonoTODO]
 		protected virtual byte[] DecryptPassword (byte[] encodedPassword)
 		{
-			throw new NotImplementedException ();
+			byte[] decryptionKey;
+			SymmetricAlgorithm alg = GetAlg (out decryptionKey);
+
+			ICryptoTransform decryptor = alg.CreateDecryptor (decryptionKey, InitVector);
+
+			return decryptor.TransformFinalBlock (encodedPassword, 0, encodedPassword.Length);
 		}
 
-		[MonoTODO]
 		protected virtual byte[] EncryptPassword (byte[] password)
 		{
-			throw new NotImplementedException ();
+			byte[] decryptionKey;
+			SymmetricAlgorithm alg = GetAlg (out decryptionKey);
+
+			ICryptoTransform encryptor = alg.CreateEncryptor (decryptionKey, InitVector);
+
+			return encryptor.TransformFinalBlock (password, 0, password.Length);
 		}
 		
 		public event MembershipValidatePasswordEventHandler ValidatingPassword;
+
+		SymmetricAlgorithm GetAlg (out byte[] decryptionKey)
+		{
+			MachineKeySection section = (MachineKeySection)WebConfigurationManager.GetSection ("system.web/machineKey");
+
+			if (section.DecryptionKey.StartsWith ("AutoGenerate"))
+				throw new Exception ("You must explicitly specify a decryption key in the <machineKey> section when using encrypted passwords.");
+
+			string alg_type = section.Decryption;
+			if (alg_type == "Auto")
+				alg_type = "AES";
+
+			SymmetricAlgorithm alg = null;
+			if (alg_type == "AES")
+				alg = Rijndael.Create ();
+			else if (alg_type == "3DES")
+				alg = TripleDES.Create ();
+			else
+				throw new Exception (String.Format ("Unsupported decryption attribute '{0}' in <machineKey> configuration section", alg_type));
+
+			decryptionKey = section.DecryptionKey192Bits;
+			return alg;
+		}
+
+		byte[] init_vector;
+		byte[] InitVector {
+			get {
+				if (init_vector == null) {
+					/* come up with an init_vector for encryption algorithms */
+					// IV is 8 bytes long for 3DES
+					init_vector = new byte[8];
+					for (int i = 0; i < 8; i++)
+						init_vector [i] = (byte) ApplicationName [i % ApplicationName.Length];
+				}
+
+				return init_vector;
+			}
+		}
 	}
 }
 #endif

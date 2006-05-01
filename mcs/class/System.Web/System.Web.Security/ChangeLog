@@ -1,6 +1,27 @@
+2006-05-01  Chris Toshok  <toshok@ximian.com>
+
+	* SqlMembershipProvider.cs: lots more work.  checking this in in
+	its present state because I don't want to lose it.  It still needs
+	work.
+	
+	* Membership.cs (.cctor): remove the fallback.
+	(ValidatingPassword): remove the MonoTODO.
+
+	* MembershipProvider.cs (DecryptPassword): implement.
+	(EncryptPassword): implement.
+	(GetAlg): helper function for Decrypt/EncryptPassword.
+	(InitVector): same.
+
 2006-04-27  Chris Toshok  <toshok@ximian.com>
 
-	* SqlMembershipProvider.cs (UnlockUser): fix sql query.
+	* SqlMembershipProvider.cs (GeneratePassword): call
+	Membership.GeneratePassword with the configured minimum strength
+	requirements.
+
+2006-04-27  Chris Toshok  <toshok@ximian.com>
+
+	* SqlMembershipProvider.cs (UnlockUser): fix sql query, and move
+	the CheckPararm call to the top of the method.
 
 2006-04-12  Chris Toshok  <toshok@ximian.com>
 

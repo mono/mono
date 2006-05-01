@@ -64,8 +64,6 @@ namespace System.Web.Security {
 
 		string applicationName;
 		
-		byte[] init_vector;
-
 		static object lockobj = new object();
 
 		void InitConnection ()
@@ -118,44 +116,190 @@ namespace System.Web.Security {
 
 			return Convert.ToBase64String (hashedBytes);
 		}
-		
+
 		string EncryptAndBase64Encode (string s)
 		{
-			MachineKeySection section = (MachineKeySection)WebConfigurationManager.GetSection ("system.web/machineKey");
+			return Convert.ToBase64String (EncryptPassword (Encoding.UTF8.GetBytes (s)));
+		}
 
-			if (section.DecryptionKey.StartsWith ("AutoGenerate"))
-				throw new Exception ("You must explicitly specify a decryption key in the <machineKey> section when using encrypted passwords.");
-
-			string alg_type = section.Decryption;
-			if (alg_type == "Auto")
-				alg_type = "AES";
-
-			SymmetricAlgorithm alg = null;
-			if (alg_type == "AES")
-				alg = Rijndael.Create ();
-			else if (alg_type == "3DES")
-				alg = TripleDES.Create ();
-			else
-				throw new Exception (String.Format ("Unsupported decryption attribute '{0}' in <machineKey> configuration section", alg_type));
-
-			ICryptoTransform encryptor = alg.CreateEncryptor (section.DecryptionKey192Bits, init_vector);
-
-			byte[] result = Encoding.UTF8.GetBytes (s);
-			result = encryptor.TransformFinalBlock (result, 0, result.Length);
-
-			return Convert.ToBase64String (result);
+		string Base64DecodeAndDecrypt (string s)
+		{
+			return Encoding.UTF8.GetString (DecryptPassword (Convert.FromBase64String (s)));
 		}
 
 		[MonoTODO]
 		public override bool ChangePassword (string username, string oldPwd, string newPwd)
 		{
-			throw new NotImplementedException ();
+			if (username != null) username = username.Trim ();
+			if (oldPwd != null) oldPwd = oldPwd.Trim ();
+			if (newPwd != null) newPwd = newPwd.Trim ();
+
+			CheckParam ("username", username, 256);
+			CheckParam ("oldPwd", oldPwd, 128);
+			CheckParam ("newPwd", newPwd, 128);
+
+			MembershipUser user = GetUser (username, false);
+			if (user == null) throw new ProviderException ("could not find user in membership database");
+			if (user.IsLockedOut) throw new MembershipPasswordException ("user is currently locked out");
+
+			InitConnection();
+
+			DbTransaction trans = connection.BeginTransaction ();
+
+			string commandText;
+			DbCommand command;
+
+			try {
+				MembershipPasswordFormat passwordFormat;
+				string db_salt;
+
+				bool valid = ValidateUsingPassword (trans, username, oldPwd, out passwordFormat, out db_salt);
+				if (valid) {
+
+					EmitValidatingPassword (username, newPwd, false);
+
+					string db_password = newPwd;
+
+					switch (passwordFormat) {
+					case MembershipPasswordFormat.Hashed:
+						byte[] salt = Convert.FromBase64String (db_salt);
+						db_password = HashAndBase64Encode (db_password, salt);
+						break;
+					case MembershipPasswordFormat.Encrypted:
+						db_password = EncryptAndBase64Encode (db_password);
+						break;
+					case MembershipPasswordFormat.Clear:
+						break;
+					}
+
+					DateTime now = DateTime.Now.ToUniversalTime ();
+
+					commandText = @"
+UPDATE m
+   SET Password = @Password
+       FailedPasswordAttemptCount = 0,
+       FailedPasswordAttemptWindowStart = @DefaultDateTime
+       LastPasswordChangeDate = @Now
+  FROM dbo.aspnet_Membership m, dbo.aspnet_Users u, dbo.aspnet_Applications a
+ WHERE m.ApplicationId = a.ApplicationId
+   AND u.ApplicationId = a.ApplicationId
+   AND m.UserId = u.UserId
+   AND u.LoweredUserName = LOWER(@UserName)
+   AND a.LoweredApplicationName = LOWER(@ApplicationName)";
+
+					command = factory.CreateCommand ();
+					command.Transaction = trans;
+					command.CommandText = commandText;
+					command.Connection = connection;
+					command.CommandType = CommandType.Text;
+					AddParameter (command, "UserName", user.UserName);
+					AddParameter (command, "Now", now.ToString ());
+					AddParameter (command, "Password", db_password);
+					AddParameter (command, "ApplicationName", ApplicationName);
+					AddParameter (command, "DefaultDateTime", DefaultDateTime.ToString());
+
+					if (1 != (int)command.ExecuteNonQuery ())
+						throw new ProviderException ("failed to update Membership table");
+				}
+
+				trans.Commit ();
+				return valid;
+			}
+			catch (ProviderException) {
+				trans.Rollback ();
+				throw;
+			}
+			catch (Exception e) {
+				trans.Rollback ();
+				throw new ProviderException ("error changing password", e);
+			}
 		}
 		
 		[MonoTODO]
 		public override bool ChangePasswordQuestionAndAnswer (string username, string password, string newPwdQuestion, string newPwdAnswer)
 		{
-			throw new NotImplementedException ();
+			if (username != null) username = username.Trim ();
+			if (newPwdQuestion != null) newPwdQuestion = newPwdQuestion.Trim ();
+			if (newPwdAnswer != null) newPwdAnswer = newPwdAnswer.Trim ();
+
+			CheckParam ("username", username, 256);
+			if (RequiresQuestionAndAnswer)
+				CheckParam ("newPwdQuestion", newPwdQuestion, 128);
+			if (RequiresQuestionAndAnswer)
+				CheckParam ("newPwdAnswer", newPwdAnswer, 128);
+
+			MembershipUser user = GetUser (username, false);
+			if (user == null) throw new ProviderException ("could not find user in membership database");
+			if (user.IsLockedOut) throw new MembershipPasswordException ("user is currently locked out");
+
+			InitConnection();
+
+			DbTransaction trans = connection.BeginTransaction ();
+
+			string commandText;
+			DbCommand command;
+
+			try {
+				MembershipPasswordFormat passwordFormat;
+				string db_salt;
+
+				bool valid = ValidateUsingPassword (trans, username, password, out passwordFormat, out db_salt);
+				if (valid) {
+
+					string db_passwordAnswer = newPwdAnswer;
+
+					switch (passwordFormat) {
+					case MembershipPasswordFormat.Hashed:
+						byte[] salt = Convert.FromBase64String (db_salt);
+						db_passwordAnswer = HashAndBase64Encode (db_passwordAnswer, salt);
+						break;
+					case MembershipPasswordFormat.Encrypted:
+						db_passwordAnswer = EncryptAndBase64Encode (db_passwordAnswer);
+						break;
+					case MembershipPasswordFormat.Clear:
+						break;
+					}
+
+					commandText = @"
+UPDATE m
+   SET PasswordQuestion = @PasswordQuestion
+       PasswordAnswer = @PasswordAnswer
+       FailedPasswordAttemptCount = 0,
+       FailedPasswordAttemptWindowStart = @DefaultDateTime
+  FROM dbo.aspnet_Membership m, dbo.aspnet_Users u, dbo.aspnet_Applications a
+ WHERE m.ApplicationId = a.ApplicationId
+   AND u.ApplicationId = a.ApplicationId
+   AND m.UserId = u.UserId
+   AND u.LoweredUserName = LOWER(@UserName)
+   AND a.LoweredApplicationName = LOWER(@ApplicationName)";
+
+					command = factory.CreateCommand ();
+					command.Transaction = trans;
+					command.CommandText = commandText;
+					command.Connection = connection;
+					command.CommandType = CommandType.Text;
+					AddParameter (command, "UserName", user.UserName);
+					AddParameter (command, "PasswordQuestion", newPwdQuestion);
+					AddParameter (command, "PasswordAnswer", db_passwordAnswer);
+					AddParameter (command, "ApplicationName", ApplicationName);
+					AddParameter (command, "DefaultDateTime", DefaultDateTime.ToString());
+
+					if (1 != (int)command.ExecuteNonQuery ())
+						throw new ProviderException ("failed to update Membership table");
+
+				}
+
+				trans.Commit ();
+				return valid;
+			}
+			catch (ProviderException) {
+				trans.Rollback ();
+				throw;
+			}
+			catch (Exception e) {
+				trans.Rollback ();
+				throw new ProviderException ("error changing password question and answer", e);
+			}
 		}
 		
 		public override MembershipUser CreateUser (string username,
@@ -211,7 +355,7 @@ namespace System.Web.Security {
 
 			switch (PasswordFormat) {
 			case MembershipPasswordFormat.Hashed:
-				byte[] salt = new byte[16];
+				byte[] salt = new byte[SALT_BYTES];
 				rng.GetBytes (salt);
 				passwordSalt = Convert.ToBase64String (salt);
 				password = HashAndBase64Encode (password, salt);
@@ -509,10 +653,9 @@ DELETE dbo.aspnet_Users
 			}
 		}
 		
-		[MonoTODO]
 		public virtual string GeneratePassword ()
 		{
-			throw new NotImplementedException ();
+			return Membership.GeneratePassword (minRequiredPasswordLength, minRequiredNonAlphanumericCharacters);
 		}
 		
 		[MonoTODO]
@@ -691,28 +834,81 @@ SELECT COUNT (*)
 			}
 		}
 		
-		[MonoTODO]
+		[MonoTODO ("more details here")]
 		public override string GetPassword (string username, string answer)
 		{
-			/* do the actual validation */
+			if (!enablePasswordRetrieval)
+				throw new NotSupportedException ("this provider has not been configured to allow the retrieval of passwords");
 
-			/* if the validation succeeds:
-			   
-			   set LastLoginDate to DateTime.Now
-			   set FailedPasswordAnswerAttemptCount to 0
-			   set FailedPasswordAnswerAttemptWindowStart to DefaultDateTime
-			*/
+			CheckParam ("username", username, 256);
+			if (RequiresQuestionAndAnswer)
+				CheckParam ("answer", answer, 128);
 
-			/* if validation fails:
+			MembershipUser user = GetUser (username, false);
+			if (user == null) throw new ProviderException ("could not find user in membership database");
+			if (user.IsLockedOut) throw new MembershipPasswordException ("user is currently locked out");
 
-			   if (FailedPasswordAnswerAttemptWindowStart - DateTime.Now < PasswordAttemptWindow)
-			     increment FailedPasswordAnswerAttemptCount
-			   FailedPasswordAnswerAttemptWindowStart = DateTime.Now
-			   if (FailedPasswordAnswerAttemptCount > MaxInvalidPasswordAttempts)
-			     set IsLockedOut = true.
-			     set LastLockoutDate = DateTime.Now
-			*/
-			throw new NotImplementedException ();
+			InitConnection();
+
+			DbTransaction trans = connection.BeginTransaction ();
+
+			try {
+				MembershipPasswordFormat passwordFormat;
+				string salt;
+				string password = null;
+
+				if (ValidateUsingPasswordAnswer (trans, username, answer,
+								 out passwordFormat, out salt)) {
+
+
+					/* if the validation succeeds:
+
+					   set LastLoginDate to DateTime.Now
+					   set FailedPasswordAnswerAttemptCount to 0
+					   set FailedPasswordAnswerAttemptWindowStart to DefaultDateTime
+					*/
+
+					string commandText = @"
+SELECT m.Password
+  FROM dbo.aspnet_Membership m, dbo.aspnet_Applications a, dbo.aspnet_Users u
+ WHERE m.ApplicationId = a.ApplicationId
+   AND u.ApplicationId = a.ApplicationId
+   AND m.UserId = u.UserId
+   AND u.LoweredUserName = LOWER(@UserName)
+   AND a.LoweredApplicationName = LOWER(@ApplicationName)";
+
+					DbCommand command = factory.CreateCommand ();
+					command.Transaction = trans;
+					command.CommandText = commandText;
+					command.Connection = connection;
+					command.CommandType = CommandType.Text;
+					AddParameter (command, "UserName", username);
+					AddParameter (command, "ApplicationName", ApplicationName);
+
+					DbDataReader reader = command.ExecuteReader ();
+					reader.Read ();
+					password = reader.GetString (0);
+					reader.Close();
+
+					/* decrypt the password */
+					switch (passwordFormat) {
+					case MembershipPasswordFormat.Hashed:
+						throw new NotSupportedException ("can't retrieve hashed passwords");
+					case MembershipPasswordFormat.Encrypted:
+						password = Base64DecodeAndDecrypt (password);
+						break;
+					case MembershipPasswordFormat.Clear:
+						break;
+					}
+				}
+
+				trans.Commit ();
+				return password;
+			}
+			catch {
+				trans.Rollback ();
+				throw;
+			}
 		}
 
 		MembershipUser GetUserFromReader (DbDataReader reader)
@@ -922,7 +1118,21 @@ SELECT u.UserName
 				rv = val;
 			return rv;
 		}
-		
+
+		void EmitValidatingPassword (string username, string password, bool isNewUser)
+		{
+			ValidatePasswordEventArgs args = new ValidatePasswordEventArgs (username, password, isNewUser);
+			OnValidatingPassword (args);
+
+			/* if we're canceled.. */
+			if (args.Cancel) {
+				if (args.FailureInformation == null)
+					throw new ProviderException ("Password validation canceled");
+				else
+					throw args.FailureInformation;
+			}
+		}
+
 		public override void Initialize (string name, NameValueCollection config)
 		{
 			if (config == null)
@@ -947,16 +1157,9 @@ SELECT u.UserName
 			
 			userIsOnlineTimeWindow = section.UserIsOnlineTimeWindow;
 
-			/* come up with an init_vector for encryption algorithms */
-			// IV is 8 bytes long for 3DES
-			init_vector = new byte[8];
-			int len = applicationName.Length;
-			for (int i = 0; i < 8; i++) {
-				if (i >= len)
-					break;
-
-				init_vector [i] = (byte) applicationName [i];
-			}
+			/* we can't support password retrieval with hashed passwords */
+			if (passwordFormat == MembershipPasswordFormat.Hashed && enablePasswordRetrieval)
+				throw new ProviderException ("password retrieval cannot be used with hashed passwords");
 
 			string connectionStringName = config["connectionStringName"];
 
@@ -967,11 +1170,95 @@ SELECT u.UserName
 
 			connectionString = WebConfigurationManager.ConnectionStrings[connectionStringName];
 		}
-		
-		[MonoTODO]
+
+		[MonoTODO ("flesh out what happens when answer validation fails")]
 		public override string ResetPassword (string username, string answer)
 		{
-			throw new NotImplementedException ();
+			if (!enablePasswordReset)
+				throw new NotSupportedException ("this provider has not been configured to allow the resetting of passwords");
+
+			CheckParam ("username", username, 256);
+			if (RequiresQuestionAndAnswer)
+				CheckParam ("answer", answer, 128);
+
+			MembershipUser user = GetUser (username, false);
+			if (user == null) throw new ProviderException ("could not find user in membership database");
+			if (user.IsLockedOut) throw new MembershipPasswordException ("user is currently locked out");
+
+			InitConnection();
+
+			string commandText;
+			DbCommand command;
+
+			DbTransaction trans = connection.BeginTransaction ();
+
+			try {
+				MembershipPasswordFormat db_passwordFormat;
+				string db_salt;
+
+				if (ValidateUsingPasswordAnswer (trans, user.UserName, answer, out db_passwordFormat, out db_salt)) {
+
+					string newPassword = GeneratePassword ();
+					string db_password = newPassword;
+
+					EmitValidatingPassword (username, newPassword, false);
+
+					/* otherwise update the user's password in the db */
+
+					switch (db_passwordFormat) {
+					case MembershipPasswordFormat.Hashed:
+						byte[] salt = Convert.FromBase64String (db_salt);
+						db_password = HashAndBase64Encode (newPassword, salt);
+						break;
+					case MembershipPasswordFormat.Encrypted:
+						db_password = EncryptAndBase64Encode (newPassword);
+						break;
+					case MembershipPasswordFormat.Clear:
+						break;
+					}
+
+					commandText = @"
+UPDATE m
+   SET Password = @Password
+       FailedPasswordAnswerAttemptCount = 0,
+       FailedPasswordAnswerAttemptWindowStart = @DefaultDateTime
+  FROM dbo.aspnet_Membership m, dbo.aspnet_Users u, dbo.aspnet_Applications a
+ WHERE m.ApplicationId = a.ApplicationId
+   AND u.ApplicationId = a.ApplicationId
+   AND m.UserId = u.UserId
+   AND u.LoweredUserName = LOWER(@UserName)
+   AND a.LoweredApplicationName = LOWER(@ApplicationName)";
+
+					command = factory.CreateCommand ();
+					command.Transaction = trans;
+					command.CommandText = commandText;
+					command.Connection = connection;
+					command.CommandType = CommandType.Text;
+					AddParameter (command, "UserName", user.UserName);
+					AddParameter (command, "Password", db_password);
+					AddParameter (command, "ApplicationName", ApplicationName);
+					AddParameter (command, "DefaultDateTime", DefaultDateTime.ToString());
+
+					if (1 != (int)command.ExecuteNonQuery ())
+						throw new ProviderException ("failed to update Membership table");
+
+					trans.Commit ();
+					return newPassword;
+				}
+			}
+			catch (MembershipPasswordException) {
+				trans.Rollback ();
+				throw;
+			}
+			catch (ProviderException) {
+				trans.Rollback ();
+				throw;
+			}
+			catch (Exception e) {
+				trans.Rollback ();
+
+				throw new ProviderException ("Failed to reset password", e);
+			}
 		}
 		
 		public override void UpdateUser (MembershipUser user)
@@ -1049,9 +1336,9 @@ UPDATE dbo.aspnet_Users
 
 				trans.Commit ();
 			}
-			catch (ProviderException e) {
+			catch (ProviderException) {
 				trans.Rollback ();
-				throw e;
+				throw;
 			}
 			catch (Exception e) {
 				trans.Rollback ();
@@ -1072,67 +1359,22 @@ UPDATE dbo.aspnet_Users
 			if (!user.IsApproved)
 				return false;
 
-			ValidatePasswordEventArgs args = new ValidatePasswordEventArgs (username, password, false);
-			OnValidatingPassword (args);
+			EmitValidatingPassword (username, password, false);
 
-			if (args.Cancel)
-				throw new ProviderException ("Password validation failed");
-			if (args.FailureInformation != null)
-				throw args.FailureInformation;
-
-			/* get the password/salt from the db */
-			string db_password;
-			MembershipPasswordFormat db_passwordFormat;
-			string db_salt;
+			InitConnection();
 
 			DbTransaction trans = connection.BeginTransaction ();
 
 			string commandText;
 			DbCommand command;
 
-			InitConnection();
-
 			try {
-				commandText = @"
-SELECT m.Password, m.PasswordFormat, m.PasswordSalt
-  FROM dbo.aspnet_Membership m, dbo.aspnet_Applications a, dbo.aspnet_Users u
- WHERE m.ApplicationId = a.ApplicationId
-   AND u.ApplicationId = a.ApplicationId
-   AND m.UserId = u.UserId
-   AND u.LoweredUserName = LOWER(@UserName)
-   AND a.LoweredApplicationName = LOWER(@ApplicationName)";
+				MembershipPasswordFormat passwordFormat;
+				string salt;
 
-				command = factory.CreateCommand ();
-				command.Transaction = trans;
-				command.CommandText = commandText;
-				command.Connection = connection;
-				command.CommandType = CommandType.Text;
-				AddParameter (command, "UserName", user.UserName);
-				AddParameter (command, "ApplicationName", ApplicationName);
-
-				DbDataReader reader = command.ExecuteReader ();
-				reader.Read ();
-				db_password = reader.GetString (0);
-				db_passwordFormat = (MembershipPasswordFormat)reader.GetInt32 (1);
-				db_salt = reader.GetString (2);
-				reader.Close();
-
-				/* do the actual validation */
-				switch (db_passwordFormat) {
-				case MembershipPasswordFormat.Hashed:
-					byte[] salt = Convert.FromBase64String (db_salt);
-					password = HashAndBase64Encode (password, salt);
-					break;
-				case MembershipPasswordFormat.Encrypted:
-					password = EncryptAndBase64Encode (password);
-					break;
-				case MembershipPasswordFormat.Clear:
-					break;
-				}
-
-				bool valid = (password == db_password);
-
+				bool valid = ValidateUsingPassword (trans, username, password, out passwordFormat, out salt);
 				if (valid) {
+
 					DateTime now = DateTime.Now.ToUniversalTime ();
 
 					/* if the validation succeeds:
@@ -1190,16 +1432,6 @@ UPDATE dbo.aspnet_Users
 					if (1 != (int)command.ExecuteNonQuery ())
 						throw new ProviderException ("failed to update User table");
 				}
-				else {
-					/* if validation fails:
-					   if (FailedPasswordAttemptWindowStart - DateTime.Now < PasswordAttemptWindow)
-					     increment FailedPasswordAttemptCount
-					   FailedPasswordAttemptWindowStart = DateTime.Now
-					   if (FailedPasswordAttemptCount > MaxInvalidPasswordAttempts)
-					     set IsLockedOut = true.
-					     set LastLockoutDate = DateTime.Now
-					*/
-				}
 
 				trans.Commit ();
 
@@ -1243,7 +1475,206 @@ UPDATE dbo.aspnet_Membership
 				return false;
 			}
 		}
-		
+
+		bool ValidateUsingPassword (DbTransaction trans, string username, string password,
+					    out MembershipPasswordFormat passwordFormat,
+					    out string salt)
+		{
+			string commandText = @"
+SELECT m.Password, m.PasswordFormat, m.PasswordSalt
+  FROM dbo.aspnet_Membership m, dbo.aspnet_Applications a, dbo.aspnet_Users u
+ WHERE m.ApplicationId = a.ApplicationId
+   AND u.ApplicationId = a.ApplicationId
+   AND m.UserId = u.UserId
+   AND u.LoweredUserName = LOWER(@UserName)
+   AND a.LoweredApplicationName = LOWER(@ApplicationName)";
+
+			DbCommand command = factory.CreateCommand ();
+			command.Transaction = trans;
+			command.CommandText = commandText;
+			command.Connection = connection;
+			command.CommandType = CommandType.Text;
+			AddParameter (command, "UserName", username);
+			AddParameter (command, "ApplicationName", ApplicationName);
+
+			string db_password;
+
+			DbDataReader reader = command.ExecuteReader ();
+			reader.Read ();
+			db_password = reader.GetString (0);
+			passwordFormat = (MembershipPasswordFormat)reader.GetInt32 (1);
+			salt = reader.GetString (2);
+			reader.Close();
+
+			/* do the actual validation */
+			switch (passwordFormat) {
+			case MembershipPasswordFormat.Hashed:
+				password = HashAndBase64Encode (password, Convert.FromBase64String (salt));
+				break;
+			case MembershipPasswordFormat.Encrypted:
+				password = EncryptAndBase64Encode (password);
+				break;
+			case MembershipPasswordFormat.Clear:
+				break;
+			}
+
+			bool valid = (password == db_password);
+
+			if (!valid) {
+				DateTime now = DateTime.Now ();
+
+				/* if validation fails:
+				   if (FailedPasswordAttemptWindowStart - DateTime.Now < PasswordAttemptWindow)
+				     increment FailedPasswordAttemptCount
+				   FailedPasswordAttemptWindowStart = DateTime.Now
+				   if (FailedPasswordAttemptCount > MaxInvalidPasswordAttempts)
+				     set IsLockedOut = true.
+				     set LastLockoutDate = DateTime.Now
+				*/
+
+				string commandText = @"
+SELECT m.FailedPasswordAttemptCount, m.FailedPasswordAttemptWindowStart
+  FROM dbo.aspnet_Membership m, dbo.aspnet_Applications a, dbo.aspnet_Users u
+ WHERE m.ApplicationId = a.ApplicationId
+   AND u.ApplicationId = a.ApplicationId
+   AND m.UserId = u.UserId
+   AND u.LoweredUserName = LOWER(@UserName)
+   AND a.LoweredApplicationName = LOWER(@ApplicationName)";
+
+				DbCommand command = factory.CreateCommand ();
+				command.Transaction = trans;
+				command.CommandText = commandText;
+				command.Connection = connection;
+				command.CommandType = CommandType.Text;
+				AddParameter (command, "UserName", username);
+				AddParameter (command, "ApplicationName", ApplicationName);
+
+				DateTime db_FailedPasswordAttemptWindowStart;
+				int db_FailedPasswordAttemptCount;
+
+				DbDataReader reader = command.ExecuteReader ();
+				reader.Read ();
+				db_FailedPasswordAttemptCount = reader.GetInt32 (0);
+				db_FailedPasswordAttemptWindowStart = reader.GetDateTime (1).ToLocalTime ();
+				reader.Close();
+
+				TimeSpan diff = db_FailedPasswordAttempt.Subtract (now);
+				if (diff.Minutes < PasswordAttemptWindow)
+					db_FailedPasswordAttemptCount ++;
+
+				if (db_FailedPasswordAttemptCount > MaxInvalidaPasswordAttempts) {
+					/* lock the user out */
+					commandText = @"
+UPDATE m
+   SET LockedOut = TRUE
+       LastLockoutDate = @Now
+  FROM dbo.aspnet_Membership m, dbo.aspnet_Users u, dbo.aspnet_Applications a
+ WHERE m.ApplicationId = a.ApplicationId
+   AND u.ApplicationId = a.ApplicationId
+   AND m.UserId = u.UserId
+   AND u.LoweredUserName = LOWER(@UserName)
+   AND a.LoweredApplicationName = LOWER(@ApplicationName)";
+
+					DbCommand command = factory.CreateCommand ();
+					command.Transaction = trans;
+					command.CommandText = commandText;
+					command.Connection = connection;
+					command.CommandType = CommandType.Text;
+					AddParameter (command, "UserName", username);
+					AddParameter (command, "ApplicationName", ApplicationName);
+					AddParameter (command, "LastLockoutDate", now.ToUniversalTime.ToString ());
+				}
+				else {
+					/* just store back the updated window start and count */
+					commandText = @"
+UPDATE m
+   SET FailedPasswordAttemptCount = @FailedPasswordAttemptCount
+       FailedPasswordAttemptWindowStart = @FailedPasswordAttemptWindowStart
+  FROM dbo.aspnet_Membership m, dbo.aspnet_Users u, dbo.aspnet_Applications a
+ WHERE m.ApplicationId = a.ApplicationId
+   AND u.ApplicationId = a.ApplicationId
+   AND m.UserId = u.UserId
+   AND u.LoweredUserName = LOWER(@UserName)
+   AND a.LoweredApplicationName = LOWER(@ApplicationName)";
+
+					DbCommand command = factory.CreateCommand ();
+					command.Transaction = trans;
+					command.CommandText = commandText;
+					command.Connection = connection;
+					command.CommandType = CommandType.Text;
+					AddParameter (command, "UserName", username);
+					AddParameter (command, "ApplicationName", ApplicationName);
+					AddParameter (command, "FailedPasswordAttemptCount", db_FailedPasswordAttemptCount);
+					AddParameter (command, "FailedPasswordAttemptWindowStart", now.ToUniversalTime.ToString ());
+				}
+
+				if (1 != (int)command.ExecuteNonQuery ())
+					throw new ProviderException ("failed to update Membership table");
+			}
+
+			return valid;
+		}
+
+		bool ValidateUsingPasswordAnswer (DbTransaction trans, string username, string answer,
+						  out MembershipPasswordFormat passwordFormat,
+						  out string salt)
+		{
+			string commandText = @"
+SELECT m.PasswordAnswer, m.PasswordFormat, m.PasswordSalt
+  FROM dbo.aspnet_Membership m, dbo.aspnet_Applications a, dbo.aspnet_Users u
+ WHERE m.ApplicationId = a.ApplicationId
+   AND u.ApplicationId = a.ApplicationId
+   AND m.UserId = u.UserId
+   AND u.LoweredUserName = LOWER(@UserName)
+   AND a.LoweredApplicationName = LOWER(@ApplicationName)";
+
+			DbCommand command = factory.CreateCommand ();
+			command.Transaction = trans;
+			command.CommandText = commandText;
+			command.Connection = connection;
+			command.CommandType = CommandType.Text;
+			AddParameter (command, "UserName", username);
+			AddParameter (command, "ApplicationName", ApplicationName);
+
+			string db_answer;
+
+			DbDataReader reader = command.ExecuteReader ();
+			reader.Read ();
+			db_answer = reader.GetString (0);
+			passwordFormat = (MembershipPasswordFormat)reader.GetInt32 (1);
+			salt = reader.GetString (2);
+			reader.Close();
+
+			/* do the actual password answer check */
+			switch (passwordFormat) {
+			case MembershipPasswordFormat.Hashed:
+				answer = HashAndBase64Encode (answer, Convert.FromBase64String (salt));
+				break;
+			case MembershipPasswordFormat.Encrypted:
+				answer = EncryptAndBase64Encode (answer);
+				break;
+			case MembershipPasswordFormat.Clear:
+				break;
+			}
+
+			if (answer.Length > 128)
+				throw new ArgumentException (String.Format ("password answer hashed to longer than 128 characters"));
+
+			valid = (answer == db_answer);
+
+			if (!valid) {
+				/* if validation fails:
+
+				   if (FailedPasswordAnswerAttemptWindowStart - DateTime.Now < PasswordAttemptWindow)
+				     increment FailedPasswordAnswerAttemptCount
+				   FailedPasswordAnswerAttemptWindowStart = DateTime.Now
+				   if (FailedPasswordAnswerAttemptCount > MaxInvalidPasswordAttempts)
+				     set IsLockedOut = true.
+				     set LastLockoutDate = DateTime.Now
+				*/
+			}
+		}
+
 		[MonoTODO]
 		public override string ApplicationName {
 			get { return applicationName; }
