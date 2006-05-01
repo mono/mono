@@ -1,3 +1,7 @@
+2006-05-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SizeF.cs: serialization compatibility fixes. Closes bug #78236.
+
 2006-04-30  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Icon.cs: Icon AND masks are organized in strides, fixed to calculate

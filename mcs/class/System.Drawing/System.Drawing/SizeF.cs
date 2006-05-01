@@ -46,7 +46,7 @@ namespace System.Drawing
 	public struct SizeF
 	{
 		// Private height and width fields.
-		private float wd, ht;
+		private float width, height;
 
 		// -----------------------
 		// Public Shared Members
@@ -151,8 +151,8 @@ namespace System.Drawing
 		
 		public SizeF (PointF pt)
 		{
-			wd = pt.X;
-			ht = pt.Y;
+			width = pt.X;
+			height = pt.Y;
 		}
 
 		/// <summary>
@@ -165,8 +165,8 @@ namespace System.Drawing
 		
 		public SizeF (SizeF sz)
 		{
-			wd = sz.Width;
-			ht = sz.Height;
+			width = sz.Width;
+			height = sz.Height;
 		}
 
 		/// <summary>
@@ -179,8 +179,8 @@ namespace System.Drawing
 		
 		public SizeF (float width, float height)
 		{
-			wd = width;
-			ht = height;
+			this.width = width;
+			this.height = height;
 		}
 
 		// -----------------------
@@ -198,7 +198,7 @@ namespace System.Drawing
 		[Browsable (false)]
 		public bool IsEmpty {
 			get {
-				return ((wd == 0.0) && (ht == 0.0));
+				return ((width == 0.0) && (height == 0.0));
 			}
 		}
 
@@ -212,10 +212,10 @@ namespace System.Drawing
 		
 		public float Width {
 			get {
-				return wd;
+				return width;
 			}
 			set {
-				wd = value;
+				width = value;
 			}
 		}
 
@@ -229,10 +229,10 @@ namespace System.Drawing
 		
 		public float Height {
 			get {
-				return ht;
+				return height;
 			}
 			set {
-				ht = value;
+				height = value;
 			}
 		}
 
@@ -262,20 +262,20 @@ namespace System.Drawing
 		
 		public override int GetHashCode ()
 		{
-			return (int) wd ^ (int) ht;
+			return (int) width ^ (int) height;
 		}
 
 		public PointF ToPointF ()
 		{
-			return new PointF (wd, ht);
+			return new PointF (width, height);
 		}
 
 		public Size ToSize ()
 		{
 			int w, h;
 			checked {
-				w = (int) wd;
-				h = (int) ht;
+				w = (int) width;
+				h = (int) height;
 			}
 
 			return new Size (w, h);
@@ -291,8 +291,8 @@ namespace System.Drawing
 		
 		public override string ToString ()
 		{
-			return string.Format ("{{Width={0}, Height={1}}}", wd.ToString (CultureInfo.CurrentCulture),
-				ht.ToString (CultureInfo.CurrentCulture));
+			return string.Format ("{{Width={0}, Height={1}}}", width.ToString (CultureInfo.CurrentCulture),
+				height.ToString (CultureInfo.CurrentCulture));
 		}
 
 #if NET_2_0
