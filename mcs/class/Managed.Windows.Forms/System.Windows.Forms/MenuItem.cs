@@ -551,7 +551,7 @@ namespace System.Windows.Forms
 
 		private void ProcessMnemonic ()
 		{
-			if (text.Length < 2) {
+			if (text == null || text.Length < 2) {
 				mnemonic = '\0';
 				return;
 			}
