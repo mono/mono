@@ -1459,7 +1459,7 @@ namespace System.Windows.Forms {
 			}
 			document.RecalculateDocument(CreateGraphicsInternal());
 			CalculateScrollBars();
-			Invalidate();	// FIXME - do we need this?
+			Invalidate();
 		}
 
 		internal void CalculateScrollBars() {

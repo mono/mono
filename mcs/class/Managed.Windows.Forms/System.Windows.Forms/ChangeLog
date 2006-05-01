@@ -1,3 +1,8 @@
+2006-04-30  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* TextBoxBase.cs: Removed Fixme
+	* RichTextBox.cs (set_RTF): Invalidate document after update (#78247)
+
 2006-04-30  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* XplatUIX11.cs:

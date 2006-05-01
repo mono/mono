@@ -277,6 +277,8 @@ namespace System.Windows.Forms {
 				InsertRTFFromStream(data, 0, 1);
 
 				data.Close();
+
+				Invalidate();
 			}
 		}
 
