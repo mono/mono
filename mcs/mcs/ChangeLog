@@ -1,3 +1,10 @@
+2006-05-02  Raja R Harinath  <harinath@gmail.com>
+
+	* flowanalysis.cs (UsageVector.Throw): Set barrier too.
+	(Reachability.Meet): Don't bother checking AlwaysThrows --
+	barrier is always set.
+	(FlowBranchingBlock.Merge): Likewise.
+
 2006-05-01  Raja R Harinath  <harinath@gmail.com>
 
 	* codegen.cs (EmitContext.ResolveTopBlock): Remove redundant

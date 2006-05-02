@@ -133,8 +133,8 @@ namespace Mono.CSharp
 					b_has_barrier = !b.AlwaysBreaks && b.AlwaysHasBarrier;
 				}
 
-				bool a_unreachable = a_breaks || AlwaysThrows || a_has_barrier;
-				bool b_unreachable = b_breaks || b.AlwaysThrows || b_has_barrier;
+				bool a_unreachable = a_breaks || a_has_barrier;
+				bool b_unreachable = b_breaks || b_has_barrier;
 
 				//
 				// Do all code paths always return ?
@@ -551,6 +551,7 @@ namespace Mono.CSharp
 				if (!reachability.IsUnreachable) {
 					IsDirty = true;
 					reachability.SetThrows ();
+					reachability.SetBarrier ();
 				}
 			}
 
@@ -977,16 +978,14 @@ namespace Mono.CSharp
 				// 
 				bool do_break_2 = (child.Type != SiblingType.Block) &&
 					(child.Type != SiblingType.SwitchSection);
-				bool always_throws = (child.Type != SiblingType.Try) &&
-					child.Reachability.AlwaysThrows;
-				bool unreachable = always_throws ||
+				bool unreachable =
 					(do_break_2 && child.Reachability.AlwaysBreaks) ||
 					child.Reachability.AlwaysReturns ||
 					child.Reachability.AlwaysHasBarrier;
 
 				Report.Debug (2, "    MERGING SIBLING #1", reachability,
 					      Type, child.Type, child.Reachability.IsUnreachable,
-					      do_break_2, always_throws, unreachable);
+					      do_break_2, unreachable);
 
 				if (!unreachable && (child.LocalVector != null))
 					MyBitVector.And (ref locals, child.LocalVector);
