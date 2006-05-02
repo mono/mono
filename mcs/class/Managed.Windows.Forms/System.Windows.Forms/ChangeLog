@@ -1,3 +1,8 @@
+2006-05-01  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* LinkLabel.cs: Trigger a recalc of our label dimensions when
+	  bounds are changed
+
 2006-05-01  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* ThemeWin32Classic.cs (ButtonBase_DrawImage): Use the proper image
