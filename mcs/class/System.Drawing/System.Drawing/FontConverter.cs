@@ -8,7 +8,7 @@
 //
 // Copyright (C) 2002,2003 Ximian, Inc.  http://www.ximian.com
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -79,7 +79,7 @@ namespace System.Drawing
 			if ((destinationType == typeof (string)) && (value is Font)) {
 				Font font = (Font) value;
 				StringBuilder sb = new StringBuilder ();
-				sb.Append (font.Name).Append (", ");
+				sb.Append (font.Name).Append (culture.TextInfo.ListSeparator[0] + " ");
 				sb.Append (font.Size);
 
 				switch (font.Unit) {
@@ -109,7 +109,7 @@ namespace System.Drawing
 				}
 
 				if (font.Style != FontStyle.Regular)
-					sb.Append (", style=").Append (font.Style);
+					sb.Append (culture.TextInfo.ListSeparator[0] + " style=").Append (font.Style);
 
 				return sb.ToString ();
 			}
@@ -130,13 +130,92 @@ namespace System.Drawing
 
 		public override object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, object value)
 		{
-			string fontFamily = value as string;
-			if (fontFamily == null)
-				return base.ConvertFrom (context, culture, value);
+			FontStyle	f_style;
+			float		f_size;
+			GraphicsUnit	f_unit;
+			string		font;
+			string		units;
+			string[]	fields;
 
-			// MS creates a font from the given family with
-			// emSize = 8.
-			return new Font (fontFamily, 8);
+			if (! (value is string)) {
+				return base.ConvertFrom (context, culture, value);
+			}
+
+			font = (string)value;
+			font.Trim();
+
+			if (font.Length == 0) {
+				return null;
+			}
+
+			if (culture == null) {
+				culture = CultureInfo.CurrentCulture;
+			}
+
+			// Format is FontFamily, size[<units>[, style=1,2,3]]
+			// This is a bit tricky since the comma can be used for styles and fields
+			fields = font.Split(new char[] {culture.TextInfo.ListSeparator[0]});
+			if (fields.Length < 1) {
+				throw new ArgumentException("Failed to parse font format");
+			}
+
+			font = fields[0];
+			f_size = 8f;
+			units = "px";
+			f_unit = GraphicsUnit.Pixel;
+			if (fields.Length > 1) {	// We have a size
+				for (int i = 0; i < fields[1].Length; i++) {
+					if (Char.IsLetter(fields[1][i])) {
+						f_size = (float)TypeDescriptor.GetConverter(typeof(float)).ConvertFromString(context, culture, fields[1].Substring(0, i));
+						units = fields[1].Substring(i);
+						break;
+					}
+				}
+				if (units == "display") {
+					f_unit = GraphicsUnit.Display;
+				} else if (units == "doc") {
+					f_unit = GraphicsUnit.Document;
+				} else if (units == "pt") {
+					f_unit = GraphicsUnit.Point;
+				} else if (units == "in") {
+					f_unit = GraphicsUnit.Inch;
+				} else if (units == "mm") {
+					f_unit = GraphicsUnit.Millimeter;
+				} else if (units == "px") {
+					f_unit = GraphicsUnit.Pixel;
+				} else if (units == "world") {
+					f_unit = GraphicsUnit.World;
+				}
+			}
+
+			f_style = FontStyle.Regular;
+			if (fields.Length > 2) {	// We have style
+				int		eq;
+				string[]	styles;
+				string		compare;
+
+				for (int i = 2; i < fields.Length; i++) {
+					compare = fields[i];
+
+					if (compare.IndexOf("Regular") != -1) {
+						f_style |= FontStyle.Regular;
+					}
+					if (compare.IndexOf("Bold") != -1) {
+						f_style |= FontStyle.Bold;
+					}
+					if (compare.IndexOf("Italic") != -1) {
+						f_style |= FontStyle.Italic;
+					}
+					if (compare.IndexOf("Strikeout") != -1) {
+						f_style |= FontStyle.Strikeout;
+					}
+					if (compare.IndexOf("Underline") != -1) {
+						f_style |= FontStyle.Underline;
+					}
+				}
+			}
+
+			return new Font (font, f_size, f_style, f_unit);
 		}
 
 		public override object CreateInstance (ITypeDescriptorContext context, IDictionary propertyValues)

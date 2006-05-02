@@ -1,3 +1,7 @@
+2006-05-02  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* FontConverter.cs (ConvertFrom): Implemented it properly. Fixes #78269
+
 2006-05-02  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* PointF.cs: Add operators + and - between PointF and SizeF in the
