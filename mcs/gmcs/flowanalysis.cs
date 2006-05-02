@@ -240,11 +240,6 @@ namespace Mono.CSharp
 				barrier = TriState.Always;
 			}
 
-			public void ResetBarrier ()
-			{
-				barrier = TriState.Never;
-			}
-
 			static string ShortName (TriState returns)
 			{
 				switch (returns) {
@@ -681,23 +676,19 @@ namespace Mono.CSharp
 				if (o_vectors == null)
 					return;
 
-				bool first = branching.Infinite;
+				bool first = reachability.IsUnreachable;
 
-				for (UsageVector vector = o_vectors; vector != null;
-				     vector = vector.Next) {
+				for (UsageVector vector = o_vectors; vector != null; vector = vector.Next) {
 					Report.Debug (1, "    MERGING BREAK ORIGIN", vector, first);
 
 					if (first) {
-						if (locals != null && vector.Locals != null)
-							locals.Or (vector.locals);
-						
-						if (parameters != null)
-							parameters.Or (vector.parameters);
+						locals = vector.Locals;
+						parameters = vector.Parameters;
 						first = false;
 					} else {
-						if (locals != null && vector.Locals != null)
+						if (locals != null && vector.locals != null)
 							locals.And (vector.locals);
-						if (parameters != null)
+						if (parameters != null && vector.parameters != null)
 							parameters.And (vector.parameters);
 					}
 
@@ -1183,26 +1174,11 @@ namespace Mono.CSharp
 		{
 			UsageVector vector = base.Merge ();
 
+			if (Infinite)
+				vector.Reachability.SetBarrier ();
+
 			vector.MergeBreakOrigins (this, break_origins);
-
-			Reachability r = vector.Reachability;
-
-			if (r.MayBreak) {
-				r.ResetBarrier ();
-			} else if (Infinite) {
-				r.SetBarrier ();
-				if (r.MayReturn) {
-					// If we're an infinite loop and do not break,
-					// the code after the loop can never be reached.
-					// However, if we may return from the loop,
-					// then we do always return (or stay in the
-					// loop forever).
-					r.SetReturns ();
-				}
-			}
-
-			// swallow up the 'break'
-			r.ResetBreaks ();
+			vector.Reachability.ResetBreaks ();
 
 			return vector;
 		}
@@ -1239,12 +1215,7 @@ namespace Mono.CSharp
 
 			vector.MergeBreakOrigins (this, break_origins);
 
-			Reachability r = vector.Reachability;
-
-			if (r.MayBreak || r.MayReturn)
-				r.ResetBarrier ();
-
-			r.ResetBreaks ();
+			vector.Reachability.ResetBreaks ();
 
 			return vector;
 		}

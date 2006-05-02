@@ -1,5 +1,11 @@
 2006-05-02  Raja R Harinath  <rharinath@novell.com>
 
+	* flowanalysis.cs (Reachability.ResetBarrier): Remove.
+	(UsageVector.MergeBreakOrigins): If the current path is
+	unreachable, treat it as if all parameters/locals are initialized.
+	(FlowBranchingLoop.Merge): Don't clear any barriers.  Handle
+	infinite loops before merging-in break origins.
+
 	* flowanalysis.cs (Reachability.Meet): Simplify code handling 'returns'.
 	(Reachability.Reachable): Split part into ...
 	(Reachability.Unreachable): ... this.  Simplify.
