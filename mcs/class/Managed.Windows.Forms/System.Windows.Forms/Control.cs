@@ -731,7 +731,6 @@ namespace System.Windows.Forms
 		private delegate void RemoveDelegate(object c);
 
 		protected override void Dispose(bool disposing) {
-			is_disposed = true;
 			if (dc_mem!=null) {
 				dc_mem.Dispose();
 				dc_mem=null;
@@ -751,6 +750,8 @@ namespace System.Windows.Forms
 				DestroyHandle();
 				controls.Remove(this);
 			}
+			is_disposed = true;
+			base.Dispose(disposing);
 		}
 		#endregion 	// Public Constructors
 
@@ -3589,11 +3590,11 @@ namespace System.Windows.Forms
 
 		protected virtual void SetVisibleCore(bool value) {
 			if (value!=is_visible) {
-				is_visible=value;
-
-				if (is_visible && !is_created) {
+				if (value && !is_created) {
 					CreateControl();
 				}
+
+				is_visible=value;
 
 				if (IsHandleCreated) {
 					XplatUI.SetVisible(Handle, value);

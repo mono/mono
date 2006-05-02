@@ -1,3 +1,20 @@
+2006-05-02  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Control.cs:
+	  - Dispose: Call base.Dispose, this causes the disposed event
+	    to be fired (and probably other, more important stuff)
+	  - SetVisibleCore: Set is_visible to true after creating the
+	    window so that the window still gets created invisible (if
+	    WM_VISIBLE isn't set). That will cause the ShowWindow afterwards
+	    to generate a WM_ACTIVE message
+	* Form.cs: Call Dispose when we want to destroy the window, instead of
+	  just destroying the handle (Dispose will do that for us)
+	* XplatUIX11.cs:
+	  - RootWindow also needs a queue, so we can properly process the
+	    property change events from RootWindow (like Activate)
+	  - Generatic synthetic WM_ACTIVE message when the active window is
+	    being destroyed
+
 2006-05-01  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* LinkLabel.cs: Trigger a recalc of our label dimensions when

@@ -360,6 +360,12 @@ namespace System.Windows.Forms {
 				hwnd.WholeWindow = FosterParent;
 				hwnd.ClientWindow = FosterParent;
 
+				// Create a HWND for RootWIndow as well, so our queue doesn't eat the events
+				hwnd = new Hwnd();
+				hwnd.Queue = ThreadQueue(Thread.CurrentThread);
+				hwnd.whole_window = RootWindow;
+				hwnd.ClientWindow = RootWindow;
+
 				// For sleeping on the X11 socket
 				listen = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
 				IPEndPoint ep = new IPEndPoint(IPAddress.Loopback, 0);
@@ -2579,6 +2585,10 @@ namespace System.Windows.Forms {
 				DestroyCaret(handle);
 			}
 
+			if (ActiveWindow == handle) {
+				SendMessage(handle, Msg.WM_ACTIVATE, (IntPtr)WindowActiveFlags.WA_INACTIVE, IntPtr.Zero);
+				ActiveWindow = IntPtr.Zero;
+			}
 
 			SendWMDestroyMessages(Control.ControlNativeWindow.ControlFromHandle(hwnd.Handle));
 
@@ -3313,6 +3323,11 @@ namespace System.Windows.Forms {
 
 					// We may get multiple for the same window, act only one the first (when Hwnd still knows about it)
 					if ((hwnd != null) && (hwnd.client_window == xevent.DestroyWindowEvent.window)) {
+						if (ActiveWindow == hwnd.client_window) {
+							SendMessage(hwnd.client_window, Msg.WM_ACTIVATE, (IntPtr)WindowActiveFlags.WA_INACTIVE, IntPtr.Zero);
+							ActiveWindow = IntPtr.Zero;
+						}
+
 						if (Caret.Window == hwnd.client_window) {
 							DestroyCaretInternal();
 						}

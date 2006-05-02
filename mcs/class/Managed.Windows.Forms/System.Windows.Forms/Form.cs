@@ -1661,7 +1661,7 @@ namespace System.Windows.Forms {
 						OnClosing (args);
 						if (!args.Cancel) {
 							OnClosed (EventArgs.Empty);
-							DestroyHandle();
+							base.Dispose();
 						}
 						return;
 					} else {
