@@ -1,3 +1,12 @@
+2006-05-02  Raja R Harinath  <rharinath@novell.com>
+
+	* flowanalysis.cs (Reachability.SetReturnsSometimes): Remove.
+	(Reachability.SetThrowsSometimes): Likewise.
+	(FlowBranchingBlock.MergeTopBlock): Don't compare against
+	TriState.Always, use corresponding property.
+	* statement.cs (Lock.Resolve, Try.Resolve, Using.Resolve): Likewise.
+	(Block.Resolve): Likewise.  Remove some redundant checks.
+
 2006-05-02  Raja R Harinath  <harinath@gmail.com>
 
 	* flowanalysis.cs (UsageVector.Throw): Set barrier too.

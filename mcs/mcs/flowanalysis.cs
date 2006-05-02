@@ -246,11 +246,6 @@ namespace Mono.CSharp
 				returns = TriState.Always;
 			}
 
-			public void SetReturnsSometimes ()
-			{
-				returns = TriState.Sometimes;
-			}
-
 			public void SetBreaks ()
 			{
 				breaks = TriState.Always;
@@ -264,11 +259,6 @@ namespace Mono.CSharp
 			public void SetThrows ()
 			{
 				throws = TriState.Always;
-			}
-
-			public void SetThrowsSometimes ()
-			{
-				throws = TriState.Sometimes;
 			}
 
 			public void SetBarrier ()
@@ -1034,8 +1024,7 @@ namespace Mono.CSharp
 
 			Report.Debug (4, "MERGE TOP BLOCK", Location, result);
 
-			if ((result.Reachability.Throws != TriState.Always) &&
-			    (result.Reachability.Barrier != TriState.Always))
+			if (!result.Reachability.AlwaysThrows && !result.Reachability.AlwaysHasBarrier)
 				CheckOutParameters (result.Parameters, Location);
 
 			return result.Reachability;

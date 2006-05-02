@@ -1950,7 +1950,7 @@ namespace Mono.CSharp {
 			// initializer, then we must initialize all of the struct's fields.
 			if ((flags & Flags.IsToplevel) != 0 && 
 			    !Toplevel.IsThisAssigned (ec) &&
-			    vector.Reachability.Throws != TriState.Always)
+			    !vector.Reachability.AlwaysThrows)
 				ok = false;
 
 			if ((labels != null) && (RootContext.WarningLevel >= 2)) {
@@ -1962,9 +1962,7 @@ namespace Mono.CSharp {
 
 			Report.Debug (4, "RESOLVE BLOCK DONE #2", StartLocation, vector);
 
-			if ((vector.Reachability.Returns == TriState.Always) ||
-			    (vector.Reachability.Throws == TriState.Always) ||
-			    (vector.Reachability.Reachable == TriState.Never))
+			if (vector.Reachability.IsUnreachable)
 				flags |= Flags.HasRet;
 
 			if (ok && (errors == Report.Errors)) {
@@ -3121,7 +3119,7 @@ namespace Mono.CSharp {
 			ResolveFinally (branching);
 
 			FlowBranching.Reachability reachability = ec.EndFlowBranching ();
-			if (reachability.Returns != TriState.Always) {
+			if (!reachability.AlwaysReturns) {
 				// Unfortunately, System.Reflection.Emit automatically emits
 				// a leave to the end of the finally block.
 				// This is a problem if `returns' is true since we may jump
@@ -3743,7 +3741,7 @@ namespace Mono.CSharp {
 
 			Report.Debug (1, "END OF TRY", ec.CurrentBranching, reachability, vector, f_vector);
 
-			if (reachability.Returns != TriState.Always) {
+			if (!reachability.AlwaysReturns) {
 				// Unfortunately, System.Reflection.Emit automatically emits
 				// a leave to the end of the finally block.  This is a problem
 				// if `returns' is true since we may jump to a point after the
@@ -4089,7 +4087,7 @@ namespace Mono.CSharp {
 			ResolveFinally (branching);					
 			FlowBranching.Reachability reachability = ec.EndFlowBranching ();
 
-			if (reachability.Returns != TriState.Always) {
+			if (!reachability.AlwaysReturns) {
 				// Unfortunately, System.Reflection.Emit automatically emits a leave
 				// to the end of the finally block.  This is a problem if `returns'
 				// is true since we may jump to a point after the end of the method.
