@@ -109,7 +109,9 @@ namespace Mono.Data.SqlExpressions {
 		override public object Eval (DataRow row)
 		{
 			object val = expr.Eval (row);
-			return (val != null ? val : defaultExpr.Eval (row));
+			if (val == null || val == DBNull.Value)
+				return defaultExpr.Eval (row);
+			return val;
 		}
 	}
 	

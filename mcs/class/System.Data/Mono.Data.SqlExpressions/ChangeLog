@@ -1,3 +1,10 @@
+2006-05-02  Senganal T  <tsenganal@novell.com>
+
+	* Parser.jay : fix the rule for IsNull. Fixes bug #78254
+	* Functions.cs : 
+		- IsNullFunction.Eval : If expr evaluates to null or DBNull.Value, return the
+		default expression value.
+
 2006-03-27	Boris Kirzner <borisk@mainsoft.com>
 	* Aggregation.cs: fix possible NullReferenceException.
 

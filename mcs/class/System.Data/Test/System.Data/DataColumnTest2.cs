@@ -745,6 +745,7 @@ namespace MonoTests.System.Data
 			}
 		}
 
+		[Test]
 		public void Expression_IIF()
 		{
 			DataTable dt = DataProvider.CreateParentDataTable();
@@ -766,6 +767,34 @@ namespace MonoTests.System.Data
 			{
 				Assert.AreEqual(25.5,dr["computedCol"],"dceiif#2");
 			}
+		}
+
+		// bug #78254
+		[Test]
+		public void Expression_ISNULL ()
+		{
+			DataSet ds = new DataSet ();
+
+			DataTable ptable = new DataTable ();
+			ptable.Columns.Add ("col1", typeof (int));
+
+			DataTable ctable = new DataTable ();
+			ctable.Columns.Add ("col1", typeof (int));
+			ctable.Columns.Add ("col2", typeof (int));
+
+			ds.Tables.AddRange (new DataTable[] {ptable, ctable});
+			ds.Relations.Add ("rel1", ptable.Columns [0], ctable.Columns [0]);
+
+			ptable.Rows.Add (new object[] {1});
+			ptable.Rows.Add (new object[] {2});
+			for (int i=0; i < 5; ++i)
+				ctable.Rows.Add (new object[] {1, i});
+
+			// should not throw exception
+			ptable.Columns.Add ("col2", typeof (int), "IsNull (Sum (Child (rel1).col2), -1)");
+
+			Assert.AreEqual (10, ptable.Rows [0][1], "#1");
+			Assert.AreEqual (-1, ptable.Rows [1][1], "#2");
 		}
 	}
 }
