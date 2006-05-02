@@ -6,10 +6,7 @@
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002/3 Ximian, Inc
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,29 +27,21 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
 
 namespace System.Drawing.Drawing2D {
-	/// <summary>
-	/// Summary description for GraphicsContainer.
-	/// </summary>
+
 	public sealed class GraphicsContainer : MarshalByRefObject {
 		
-		private int nativeState = 0;
+		private uint nativeState;
 
-		private GraphicsContainer () { }
-		
-		internal GraphicsContainer (int state)
+		internal GraphicsContainer (uint state)
 		{
 			nativeState = state;
 		}
 		
-		internal int NativeObject {
+		internal uint NativeObject {
 			get {
 				return nativeState;
-			}
-			set {
-				nativeState = value;
 			}
 		}
 	}
