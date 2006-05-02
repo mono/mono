@@ -8,12 +8,6 @@
  *	Gonzalo Paniagua Javier (gonzalo@ximian.com)
  */
 
-/*
- * TODO:
- * * escape/unescape in the .txt reader/writer to be able to roundtrip values with newlines
- *   (unlike the MS ResGen utility)
- */
-
 using System;
 using System.Text;
 using System.IO;
@@ -195,9 +189,34 @@ class TxtResourceWriter : IResourceWriter {
 		throw new Exception ("Objects not valid in a text resource file");
 	}
 	
-	/* FIXME: handle newlines */
 	public void AddResource (string name, string value) {
-		s.WriteLine ("{0}={1}", name, value);
+		s.WriteLine ("{0}={1}", name, Escape (value));
+	}
+
+	// \n -> \\n ...
+	static string Escape (string value)
+	{
+		StringBuilder b = new StringBuilder ();
+		for (int i = 0; i < value.Length; i++) {
+			switch (value [i]) {
+			case '\n':
+				b.Append ("\\n");
+				break;
+			case '\r':
+				b.Append ("\\r");
+				break;
+			case '\t':
+				b.Append ("\\t");
+				break;
+			case '\\':
+				b.Append ("\\\\");
+				break;
+			default:
+				b.Append (value [i]);
+				break;
+			}
+		}
+		return b.ToString ();
 	}
 	
 	public void Close () {
@@ -245,8 +264,50 @@ class TxtResourceReader : IResourceReader {
 			val = val.Trim ();
 			if (key.Length == 0) 
 				throw new Exception ("Key is empty at line " + line_num);
+
+			val = Unescape (val);
+			if (val == null)
+				throw new Exception (String.Format ("Unsupported escape character in value of key '{0}'.", key));
+
+
 			data.Add (key, val);
 		}
+	}
+
+	// \\n -> \n ...
+	static string Unescape (string value)
+	{
+		StringBuilder b = new StringBuilder ();
+
+		for (int i = 0; i < value.Length; i++) {
+			if (value [i] == '\\') {
+				if (i == value.Length - 1)
+					return null;
+
+				i++;
+				switch (value [i]) {
+				case 'n':
+					b.Append ('\n');
+					break;
+				case 'r':
+					b.Append ('\r');
+					break;
+				case 't':
+					b.Append ('\t');
+					break;
+				case '\\':
+					b.Append ('\\');
+					break;
+				default:
+					return null;
+				}
+
+			} else {
+				b.Append (value [i]);
+			}
+		}
+
+		return b.ToString ();
 	}
 	
 	IEnumerator IEnumerable.GetEnumerator () {
