@@ -47,7 +47,7 @@ namespace Cairo {
 			}
 		}
 
-		public ImageSurface (string data, Cairo.Format format, int width, int height, int stride)
+		public ImageSurface (ref byte[] data, Cairo.Format format, int width, int height, int stride)
 		{
 			surface = CairoAPI.cairo_image_surface_create_for_data (data, format, width, height, stride);
 			lock (surfaces.SyncRoot){
@@ -183,7 +183,7 @@ namespace Cairo {
 		
 		[Obsolete ("Use an ImageSurface constructor instead.")]
                 public static Cairo.Surface CreateForImage (
-                        string data, Cairo.Format format, int width, int height, int stride)
+                        ref byte[] data, Cairo.Format format, int width, int height, int stride)
                 {
                         IntPtr p = CairoAPI.cairo_image_surface_create_for_data (
                                 data, format, width, height, stride);

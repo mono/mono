@@ -1,3 +1,9 @@
+2006-05-02  Zac Bowling  <zac@zacbowling.com>
+	
+	* Mono.Cairo/Surface.cs: string should be byte[]
+	* Mono.Cairo/Cairo.cs: string should be byte[]
+	(Patch from Philipp Baer <phbaer@npw.net>)
+
 2006-01-17  Alp Toker  <alp@atoker.com>
 
 	* Samples/x11/compile.sh: Remove unused gtk-sharp reference
