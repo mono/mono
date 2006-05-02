@@ -280,6 +280,10 @@ MINI_OP(OP_LXOR_IMM,    "long_xor_imm", LREG, LREG, NONE)
 MINI_OP(OP_LSHL_IMM,    "long_shl_imm", LREG, LREG, NONE)
 MINI_OP(OP_LSHR_IMM,    "long_shr_imm", LREG, LREG, NONE)
 MINI_OP(OP_LSHR_UN_IMM, "long_shr_un_imm", LREG, LREG, NONE)
+MINI_OP(OP_LDIV_IMM,    "long_div_imm", LREG, LREG, NONE)
+MINI_OP(OP_LDIV_UN_IMM, "long_div_un_imm", LREG, LREG, NONE)
+MINI_OP(OP_LREM_IMM,    "long_rem_imm", LREG, LREG, NONE)
+MINI_OP(OP_LREM_UN_IMM, "long_rem_un_imm", LREG, LREG, NONE)
 
 /* mono_decompose_long_opts () depends on the order here */
 MINI_OP(OP_LBEQ,    "long_beq", NONE, NONE, NONE)

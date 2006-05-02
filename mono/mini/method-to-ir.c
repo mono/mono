@@ -9538,7 +9538,7 @@ mono_spill_global_vars (MonoCompile *cfg)
 			int regtype, srcindex, sreg, tmp_reg, prev_dreg;
 			gboolean store;
 
-			if (cfg->verbose_level > 1)
+			if (G_UNLIKELY (cfg->verbose_level > 1))
 				mono_print_ins (ins);
 
 			if (ins->opcode == OP_NOP) {
@@ -9603,7 +9603,7 @@ mono_spill_global_vars (MonoCompile *cfg)
 				store = FALSE;
 
 			if (G_UNLIKELY (cfg->verbose_level > 1))
-				printf ("\t %s %d %d %d\n", spec, ins->dreg, ins->sreg1, ins->sreg2);
+				printf ("\t %.3s %d %d %d\n", spec, ins->dreg, ins->sreg1, ins->sreg2);
 
 			/***************/
 			/*    DREG     */

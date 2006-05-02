@@ -9922,7 +9922,12 @@ mono_local_cprop2 (MonoCompile *cfg)
 					opcode2 = mono_op_to_op_imm (ins->opcode);
 					if ((opcode2 != -1) && mono_arch_is_inst_imm (def->inst_c0) && ((srcindex == 1) || (ins->sreg2 == -1))) {
 						ins->opcode = opcode2;
-						ins->inst_imm = def->inst_c0;
+						if ((def->opcode == OP_I8CONST) && (sizeof (gpointer) == 4)) {
+							ins->inst_ls_word = def->inst_ls_word;
+							ins->inst_ms_word = def->inst_ms_word;
+						} else {
+							ins->inst_imm = def->inst_c0;
+						}
 						if (srcindex == 0)
 							ins->sreg1 = -1;
 						else

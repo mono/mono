@@ -1,4 +1,11 @@
-<<<<<<< .working
+2006-05-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_spill_global_vars): Fix printing of instruction specs.
+
+	* mini.c (mono_local_cprop2): Fix cprop of I8CONST on 32 bit platforms.
+
+	* mini-ops.h: Add some missing OP_L<XXX>_IMM opcodes for consistency.
+
 2006-04-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.h *.c: Convert ins_info from an array of strings to an array of characters.
@@ -126,17 +133,15 @@
 	* mini-ppc.c: Call mono_jit_thread_attach when transitioning a native
 	to managed wrapper.
                      
->>>>>>> .merge-right.r60044
 2006-04-19  Zoltan Varga  <vargaz@gmail.com>
 
-<<<<<<< .working
 	* mini.c (mono_local_cprop2): Allow copy propagation of OP_VMOVEs across calls.
-=======
+
 	* mini.h mini.c: Remove mono_type_to_ldind/stind () which are now in marshal.c.
 	
 	* mini.c (mono_runtime_install_handlers): Handle SIGABRT similarly to
 	SIGSEGV. Fixes #78072.
->>>>>>> .merge-right.r60044
+
 
 	* method-to-ir.c (mono_method_check_inlining): Remove some inlining restrictions.
 
