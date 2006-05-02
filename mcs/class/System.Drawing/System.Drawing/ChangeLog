@@ -1,3 +1,9 @@
+2006-05-02  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* PointF.cs: Add operators + and - between PointF and SizeF in the
+	2.0 profile (CSC 8.x can compile that, but sadly it doesn't show in as
+	missing in corcompare results).
+
 2006-05-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* gdipFunctions.cs: Fixed wrappers for Gdip[Begin|End]Container[2][I]
