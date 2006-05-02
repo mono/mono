@@ -822,7 +822,7 @@ namespace MonoTests.System.Drawing
 			Bitmap bitmap = new Bitmap (20, 20);
 			Graphics g = Graphics.FromImage (bitmap);
 			// documented as bigger (or equals) to 0
-			g.DrawCurve (Pens.Black, SmallCurveF, -1);
+			g.DrawCurve (Pens.Black, SmallCurveF, -0.9f);
 			CheckForNonEmptyBitmap (bitmap);
 			g.Dispose ();
 			bitmap.Dispose ();
@@ -833,7 +833,7 @@ namespace MonoTests.System.Drawing
 		{
 			Bitmap bitmap = new Bitmap (20, 20);
 			Graphics g = Graphics.FromImage (bitmap);
-			g.DrawCurve (Pens.Black, SmallCurveF, 1);
+			g.DrawCurve (Pens.Black, SmallCurveF, 0.9f);
 			// this is not the same as -1
 			CheckForNonEmptyBitmap (bitmap);
 			g.Dispose ();
@@ -883,11 +883,34 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-		public void DrawCurve_Offset ()
+		public void DrawCurve_Offset_0 ()
+		{
+			Bitmap bitmap = new Bitmap (20, 20);
+			Graphics g = Graphics.FromImage (bitmap);
+			g.DrawCurve (Pens.Black, LargeCurveF, 0, 2, 0.5f);
+			CheckForNonEmptyBitmap (bitmap);
+			g.Dispose ();
+			bitmap.Dispose ();
+		}
+
+		[Test]
+		public void DrawCurve_Offset_1 ()
 		{
 			Bitmap bitmap = new Bitmap (20, 20);
 			Graphics g = Graphics.FromImage (bitmap);
 			g.DrawCurve (Pens.Black, LargeCurveF, 1, 2, 0.5f);
+			CheckForNonEmptyBitmap (bitmap);
+			g.Dispose ();
+			bitmap.Dispose ();
+		}
+
+		[Test]
+		public void DrawCurve_Offset_2 ()
+		{
+			Bitmap bitmap = new Bitmap (20, 20);
+			Graphics g = Graphics.FromImage (bitmap);
+			// it works even with two points because we know the previous ones
+			g.DrawCurve (Pens.Black, LargeCurveF, 2, 1, 0.5f);
 			CheckForNonEmptyBitmap (bitmap);
 			g.Dispose ();
 			bitmap.Dispose ();
@@ -961,6 +984,248 @@ namespace MonoTests.System.Drawing
 			brush.Dispose ();
 			g.Dispose ();
 			bitmap.Dispose ();
+		}
+
+		private void CheckDefaultProperties (string message, Graphics g)
+		{
+			Assert (message + ".Clip.IsInfinite", g.Clip.IsInfinite (g));
+			AssertEquals (message + ".CompositingMode", CompositingMode.SourceOver, g.CompositingMode);
+			AssertEquals (message + ".CompositingQuality", CompositingQuality.Default, g.CompositingQuality);
+			AssertEquals (message + ".InterpolationMode", InterpolationMode.Bilinear, g.InterpolationMode);
+			AssertEquals (message + ".PageScale", 1.0f, g.PageScale);
+			AssertEquals (message + ".PageUnit", GraphicsUnit.Display, g.PageUnit);
+			AssertEquals (message + ".PixelOffsetMode", PixelOffsetMode.Default, g.PixelOffsetMode);
+			AssertEquals (message + ".SmoothingMode", SmoothingMode.None, g.SmoothingMode);
+			AssertEquals (message + ".TextContrast", 4, g.TextContrast);
+			AssertEquals (message + ".TextRenderingHint", TextRenderingHint.SystemDefault, g.TextRenderingHint);
+			Assert (message + ".Transform.IsIdentity", g.Transform.IsIdentity);
+		}
+
+		private void CheckCustomProperties (string message, Graphics g)
+		{
+			Assert (message + ".Clip.IsInfinite", !g.Clip.IsInfinite (g));
+			AssertEquals (message + ".CompositingMode", CompositingMode.SourceCopy, g.CompositingMode);
+			AssertEquals (message + ".CompositingQuality", CompositingQuality.HighQuality, g.CompositingQuality);
+			AssertEquals (message + ".InterpolationMode", InterpolationMode.HighQualityBicubic, g.InterpolationMode);
+			AssertEquals (message + ".PageScale", 0.5f, g.PageScale);
+			AssertEquals (message + ".PageUnit", GraphicsUnit.Inch, g.PageUnit);
+			AssertEquals (message + ".PixelOffsetMode", PixelOffsetMode.Half, g.PixelOffsetMode);
+			AssertEquals (message + ".RenderingOrigin", new Point (-1, -1), g.RenderingOrigin);
+			AssertEquals (message + ".SmoothingMode", SmoothingMode.AntiAlias, g.SmoothingMode);
+			AssertEquals (message + ".TextContrast", 0, g.TextContrast);
+			AssertEquals (message + ".TextRenderingHint", TextRenderingHint.AntiAlias, g.TextRenderingHint);
+			Assert (message + ".Transform.IsIdentity", !g.Transform.IsIdentity);
+		}
+
+		private void CheckMatrix (string message, Matrix m, float xx, float yx, float xy, float yy, float x0, float y0)
+		{
+			float[] elements = m.Elements;
+			AssertEquals (message + ".Matrix.xx", xx, elements[0], 0.01);
+			AssertEquals (message + ".Matrix.yx", yx, elements[1], 0.01);
+			AssertEquals (message + ".Matrix.xy", xy, elements[2], 0.01);
+			AssertEquals (message + ".Matrix.yy", yy, elements[3], 0.01);
+			AssertEquals (message + ".Matrix.x0", x0, elements[4], 0.01);
+			AssertEquals (message + ".Matrix.y0", y0, elements[5], 0.01);
+		}
+
+		[Test]
+		public void BeginContainer ()
+		{
+			Bitmap bitmap = new Bitmap (20, 20);
+			Graphics g = Graphics.FromImage (bitmap);
+
+			CheckDefaultProperties ("default", g);
+			AssertEquals ("default.RenderingOrigin", new Point (0, 0), g.RenderingOrigin);
+
+			g.Clip = new Region (new Rectangle (10, 10, 10, 10));
+			g.CompositingMode = CompositingMode.SourceCopy;
+			g.CompositingQuality = CompositingQuality.HighQuality;
+			g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+			g.PageScale = 0.5f;
+			g.PageUnit = GraphicsUnit.Inch;
+			g.PixelOffsetMode = PixelOffsetMode.Half;
+			g.RenderingOrigin = new Point (-1, -1);
+			g.RotateTransform (45);
+			g.SmoothingMode = SmoothingMode.AntiAlias;
+			g.TextContrast = 0;
+			g.TextRenderingHint = TextRenderingHint.AntiAlias;
+			CheckCustomProperties ("modified", g);
+			CheckMatrix ("modified.Transform", g.Transform, 0.707f, 0.707f, -0.707f, 0.707f, 0, 0);
+
+			GraphicsContainer gc = g.BeginContainer ();
+			// things gets reseted after calling BeginContainer
+			CheckDefaultProperties ("BeginContainer", g);
+			// but not everything 
+			AssertEquals ("BeginContainer.RenderingOrigin", new Point (-1, -1), g.RenderingOrigin);
+
+			g.EndContainer (gc);
+			CheckCustomProperties ("EndContainer", g);
+		}
+
+		[Test]
+		public void BeginContainer_Rect ()
+		{
+			Bitmap bitmap = new Bitmap (20, 20);
+			Graphics g = Graphics.FromImage (bitmap);
+
+			CheckDefaultProperties ("default", g);
+			AssertEquals ("default.RenderingOrigin", new Point (0, 0), g.RenderingOrigin);
+
+			g.Clip = new Region (new Rectangle (10, 10, 10, 10));
+			g.CompositingMode = CompositingMode.SourceCopy;
+			g.CompositingQuality = CompositingQuality.HighQuality;
+			g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+			g.PageScale = 0.5f;
+			g.PageUnit = GraphicsUnit.Inch;
+			g.PixelOffsetMode = PixelOffsetMode.Half;
+			g.RenderingOrigin = new Point (-1, -1);
+			g.RotateTransform (45);
+			g.SmoothingMode = SmoothingMode.AntiAlias;
+			g.TextContrast = 0;
+			g.TextRenderingHint = TextRenderingHint.AntiAlias;
+			CheckCustomProperties ("modified", g);
+			CheckMatrix ("modified.Transform", g.Transform, 0.707f, 0.707f, -0.707f, 0.707f, 0, 0);
+
+			GraphicsContainer gc = g.BeginContainer (new Rectangle (10, 20, 30, 40), new Rectangle (10, 20, 300, 400), GraphicsUnit.Millimeter);
+			// things gets reseted after calling BeginContainer
+			CheckDefaultProperties ("BeginContainer", g);
+			// but not everything 
+			AssertEquals ("BeginContainer.RenderingOrigin", new Point (-1, -1), g.RenderingOrigin);
+
+			g.EndContainer (gc);
+			CheckCustomProperties ("EndContainer", g);
+			CheckMatrix ("EndContainer.Transform", g.Transform, 0.707f, 0.707f, -0.707f, 0.707f, 0, 0);
+		}
+
+		[Test]
+		public void BeginContainer_RectF ()
+		{
+			Bitmap bitmap = new Bitmap (20, 20);
+			Graphics g = Graphics.FromImage (bitmap);
+
+			CheckDefaultProperties ("default", g);
+			AssertEquals ("default.RenderingOrigin", new Point (0, 0), g.RenderingOrigin);
+
+			g.Clip = new Region (new Rectangle (10, 10, 10, 10));
+			g.CompositingMode = CompositingMode.SourceCopy;
+			g.CompositingQuality = CompositingQuality.HighQuality;
+			g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+			g.PageScale = 0.5f;
+			g.PageUnit = GraphicsUnit.Inch;
+			g.PixelOffsetMode = PixelOffsetMode.Half;
+			g.RenderingOrigin = new Point (-1, -1);
+			g.RotateTransform (45);
+			g.SmoothingMode = SmoothingMode.AntiAlias;
+			g.TextContrast = 0;
+			g.TextRenderingHint = TextRenderingHint.AntiAlias;
+			CheckCustomProperties ("modified", g);
+			CheckMatrix ("modified.Transform", g.Transform, 0.707f, 0.707f, -0.707f, 0.707f, 0, 0);
+
+			GraphicsContainer gc = g.BeginContainer (new RectangleF (40, 30, 20, 10), new RectangleF (10, 20, 30, 40), GraphicsUnit.Inch);
+			// things gets reseted after calling BeginContainer
+			CheckDefaultProperties ("BeginContainer", g);
+			// but not everything 
+			AssertEquals ("BeginContainer.RenderingOrigin", new Point (-1, -1), g.RenderingOrigin);
+
+			g.EndContainer (gc);
+			CheckCustomProperties ("EndContainer", g);
+		}
+
+		private void BeginContainer_GraphicsUnit (GraphicsUnit unit)
+		{
+			Bitmap bitmap = new Bitmap (20, 20);
+			Graphics g = Graphics.FromImage (bitmap);
+			g.BeginContainer (new RectangleF (40, 30, 20, 10), new RectangleF (10, 20, 30, 40), unit);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void BeginContainer_GraphicsUnit_Display ()
+		{
+			BeginContainer_GraphicsUnit (GraphicsUnit.Display);
+		}
+
+		[Test]
+		public void BeginContainer_GraphicsUnit_Valid ()
+		{
+			BeginContainer_GraphicsUnit (GraphicsUnit.Document);
+			BeginContainer_GraphicsUnit (GraphicsUnit.Inch);
+			BeginContainer_GraphicsUnit (GraphicsUnit.Millimeter);
+			BeginContainer_GraphicsUnit (GraphicsUnit.Pixel);
+			BeginContainer_GraphicsUnit (GraphicsUnit.Point);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void BeginContainer_GraphicsUnit_World ()
+		{
+			BeginContainer_GraphicsUnit (GraphicsUnit.World);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void BeginContainer_GraphicsUnit_Bad ()
+		{
+			BeginContainer_GraphicsUnit ((GraphicsUnit)Int32.MinValue);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void EndContainer_Null ()
+		{
+			Bitmap bitmap = new Bitmap (20, 20);
+			Graphics g = Graphics.FromImage (bitmap);
+			g.EndContainer (null);
+		}
+
+		[Test]
+		public void Save ()
+		{
+			Bitmap bitmap = new Bitmap (20, 20);
+			Graphics g = Graphics.FromImage (bitmap);
+
+			CheckDefaultProperties ("default", g);
+			AssertEquals ("default.RenderingOrigin", new Point (0, 0), g.RenderingOrigin);
+
+			GraphicsState gs1 = g.Save ();
+			// nothing is changed after a save
+			CheckDefaultProperties ("save1", g);
+			AssertEquals ("save1.RenderingOrigin", new Point (0, 0), g.RenderingOrigin);
+
+			g.Clip = new Region (new Rectangle (10, 10, 10, 10));
+			g.CompositingMode = CompositingMode.SourceCopy;
+			g.CompositingQuality = CompositingQuality.HighQuality;
+			g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+			g.PageScale = 0.5f;
+			g.PageUnit = GraphicsUnit.Inch;
+			g.PixelOffsetMode = PixelOffsetMode.Half;
+			g.RenderingOrigin = new Point (-1, -1);
+			g.RotateTransform (45);
+			g.SmoothingMode = SmoothingMode.AntiAlias;
+			g.TextContrast = 0;
+			g.TextRenderingHint = TextRenderingHint.AntiAlias;
+			CheckCustomProperties ("modified", g);
+			CheckMatrix ("modified.Transform", g.Transform, 0.707f, 0.707f, -0.707f, 0.707f, 0, 0);
+
+			GraphicsState gs2 = g.Save ();
+			CheckCustomProperties ("save2", g);
+
+			g.Restore (gs2);
+			CheckCustomProperties ("restored1", g);
+			CheckMatrix ("restored1.Transform", g.Transform, 0.707f, 0.707f, -0.707f, 0.707f, 0, 0);
+
+			g.Restore (gs1);
+			CheckDefaultProperties ("restored2", g);
+			AssertEquals ("restored2.RenderingOrigin", new Point (0, 0), g.RenderingOrigin);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NullReferenceException))]
+		public void Restore_Null ()
+		{
+			Bitmap bitmap = new Bitmap (20, 20);
+			Graphics g = Graphics.FromImage (bitmap);
+			g.Restore (null);
 		}
 	}
 }
