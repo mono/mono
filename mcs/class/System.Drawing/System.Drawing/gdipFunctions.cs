@@ -630,7 +630,7 @@ namespace System.Drawing
 		[DllImport("gdiplus.dll")] 	
 		internal static extern Status GdipResetClip(IntPtr graphics);		
 		[DllImport("gdiplus.dll")] 	
-		internal static extern Status GdipEndContainer(IntPtr graphics, int state);
+		internal static extern Status GdipEndContainer(IntPtr graphics, uint state);
 		[DllImport("gdiplus.dll")] 	
 		internal static extern Status GdipGetClip (IntPtr graphics, IntPtr region);
 
@@ -1052,16 +1052,13 @@ namespace System.Drawing
 		internal static extern Status GdipGetImageGraphicsContext (IntPtr image, out IntPtr graphics);		
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipDrawImage (IntPtr graphics, IntPtr image, float x, float y);
-		[DllImport("gdiplus.dll")]	
-		internal static extern Status GdipBeginContainer (IntPtr graphics,  RectangleF dstrect,
-                   RectangleF srcrect, GraphicsUnit unit, out int  state);
 
-		[DllImport("gdiplus.dll")]	
-		internal static extern Status GdipBeginContainerI (IntPtr graphics, Rectangle dstrect,
-                    Rectangle srcrect, GraphicsUnit unit, out int state);
-
-		[DllImport("gdiplus.dll")]	
-		internal static extern Status GdipBeginContainer2 (IntPtr graphics, out int state); 
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipBeginContainer (IntPtr graphics, ref RectangleF dstrect, ref RectangleF srcrect, GraphicsUnit unit, out uint state);
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipBeginContainerI (IntPtr graphics, ref Rectangle dstrect, ref Rectangle srcrect, GraphicsUnit unit, out uint state);
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipBeginContainer2 (IntPtr graphics, out uint state); 
 		
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipDrawImagePoints (IntPtr graphics, IntPtr image, PointF [] destPoints, int count);

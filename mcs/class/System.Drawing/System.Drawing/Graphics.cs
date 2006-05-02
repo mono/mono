@@ -117,33 +117,33 @@ namespace System.Drawing
 			throw new NotImplementedException ();
 		}
 
-		
 		public GraphicsContainer BeginContainer ()
 		{
-			int state;
+			uint state;
 			Status status;
 			status = GDIPlus.GdipBeginContainer2 (nativeObject, out state);
         		GDIPlus.CheckStatus (status);
 
                         return new GraphicsContainer(state);
 		}
-		
+
+		[MonoTODO ("rectangles and unit aren't supported in libgdiplus")]		
 		public GraphicsContainer BeginContainer (Rectangle dstrect, Rectangle srcrect, GraphicsUnit unit)
 		{
-			int state;
+			uint state;
 			Status status;
-			status = GDIPlus.GdipBeginContainerI (nativeObject, dstrect, srcrect, unit, out state);
+			status = GDIPlus.GdipBeginContainerI (nativeObject, ref dstrect, ref srcrect, unit, out state);
 			GDIPlus.CheckStatus (status);
 
 			return new GraphicsContainer (state);
 		}
 
-		
+		[MonoTODO ("rectangles and unit aren't supported in libgdiplus")]		
 		public GraphicsContainer BeginContainer (RectangleF dstrect, RectangleF srcrect, GraphicsUnit unit)
 		{
-			int state;
+			uint state;
 			Status status;
-			status = GDIPlus.GdipBeginContainer (nativeObject, dstrect, srcrect, unit, out state);
+			status = GDIPlus.GdipBeginContainer (nativeObject, ref dstrect, ref srcrect, unit, out state);
 			GDIPlus.CheckStatus (status);
 
 			return new GraphicsContainer (state);
@@ -2391,6 +2391,7 @@ namespace System.Drawing
 			}
 		}
 
+		[MonoTODO ("not supported by libgdiplus")]
 		public int TextContrast {
 			get {	
                                 int contrast;
@@ -2449,6 +2450,7 @@ namespace System.Drawing
 
 #if NET_2_0
 		[MonoTODO]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public object GetContextInfo ()
 		{
 			throw new NotImplementedException ();

@@ -1,3 +1,10 @@
+2006-05-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* gdipFunctions.cs: Fixed wrappers for Gdip[Begin|End]Container[2][I]
+	* Graphics.cs: Fixed usage of fixed API ;-) Added MonoTODO on 
+	BeginContainer methods that use rectangles and on TextContrast property 
+	(all aren't currently supported in libgdiplus).
+
 2006-05-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Graphics.cs: Removed MonoTODO on DrawCurve methods (it's fixed in 
