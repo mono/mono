@@ -1,5 +1,14 @@
 2006-05-02  Raja R Harinath  <rharinath@novell.com>
 
+	* statement.cs (Do.Resolve): If the loop is infinite, set the
+	barrier.
+	(While.Resolve, For.Resolve): Set a barrier after the embedded
+	statement.  There's no direct control flow that goes from the end
+	of the embedded statement to the end of the loop.
+	* flowanalysis.cs (FlowBranching.Infinite): Remove.
+	(FlowBranchingLoop.Merge): Don't look at 'Infinite'.  The changes
+	above ensure that the reachability is correctly computed.
+
 	* flowanalysis.cs (Reachability.ResetBarrier): Remove.
 	(UsageVector.MergeBreakOrigins): If the current path is
 	unreachable, treat it as if all parameters/locals are initialized.

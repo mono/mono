@@ -265,8 +265,9 @@ namespace Mono.CSharp {
 				if (res)
 					infinite = true;
 			}
+			if (infinite)
+				ec.CurrentBranching.CurrentUsageVector.Goto ();
 
-			ec.CurrentBranching.Infinite = infinite;
 			ec.EndFlowBranching ();
 
 			return ok;
@@ -346,7 +347,9 @@ namespace Mono.CSharp {
 			if (!Statement.Resolve (ec))
 				ok = false;
 
-			ec.CurrentBranching.Infinite = infinite;
+			// There's no direct control flow from the end of the embedded statement to the end of the loop
+			ec.CurrentBranching.CurrentUsageVector.Goto ();
+
 			ec.EndFlowBranching ();
 
 			return ok;
@@ -459,8 +462,10 @@ namespace Mono.CSharp {
 					ok = false;
 			}
 
-				ec.CurrentBranching.Infinite = infinite;
-				ec.EndFlowBranching ();
+			// There's no direct control flow from the end of the embedded statement to the end of the loop
+			ec.CurrentBranching.CurrentUsageVector.Goto ();
+
+			ec.EndFlowBranching ();
 
 			return ok;
 		}

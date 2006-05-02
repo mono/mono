@@ -305,11 +305,6 @@ namespace Mono.CSharp
 		// </summary>
 		public readonly Location Location;
 
-		// <summary>
-		//   If this is an infinite loop.
-		// </summary>
-		public bool Infinite;
-
 		//
 		// Private
 		//
@@ -956,8 +951,7 @@ namespace Mono.CSharp
 			if (reachability == null)
 				throw new InternalErrorException ("Cannot happen: the loop above runs at least twice");
 
-			Report.Debug (2, "  MERGING SIBLINGS DONE", parameters, locals,
-				      reachability, Infinite);
+			Report.Debug (2, "  MERGING SIBLINGS DONE", parameters, locals, reachability);
 
 			return new UsageVector (
 				parameters, locals, reachability, null, Location);
@@ -1174,9 +1168,6 @@ namespace Mono.CSharp
 		{
 			UsageVector vector = base.Merge ();
 
-			if (Infinite)
-				vector.Reachability.SetBarrier ();
-
 			vector.MergeBreakOrigins (this, break_origins);
 			vector.Reachability.ResetBreaks ();
 
@@ -1214,7 +1205,6 @@ namespace Mono.CSharp
 			UsageVector vector = base.Merge ();
 
 			vector.MergeBreakOrigins (this, break_origins);
-
 			vector.Reachability.ResetBreaks ();
 
 			return vector;
