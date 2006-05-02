@@ -1,5 +1,10 @@
 2006-05-02  Raja R Harinath  <rharinath@novell.com>
 
+	* flowanalysis.cs (Reachability.Meet): Simplify code handling 'returns'.
+	(Reachability.Reachable): Split part into ...
+	(Reachability.Unreachable): ... this.  Simplify.
+	(Reachability.IsUnreachable): Use 'Unreachable' instead.
+
 	* flowanalysis.cs (Reachability.SetReturnsSometimes): Remove.
 	(Reachability.SetThrowsSometimes): Likewise.
 	(FlowBranchingBlock.MergeTopBlock): Don't compare against

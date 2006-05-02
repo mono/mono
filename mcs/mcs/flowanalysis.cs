@@ -136,30 +136,10 @@ namespace Mono.CSharp
 				bool a_unreachable = a_breaks || a_has_barrier;
 				bool b_unreachable = b_breaks || b_has_barrier;
 
-				//
-				// Do all code paths always return ?
-				//
-				if (AlwaysReturns) {
-					if (b.AlwaysReturns || b_unreachable)
-						returns = TriState.Always;
-					else
-						returns = TriState.Sometimes;
-				} else if (b.AlwaysReturns) {
-					if (AlwaysReturns || a_unreachable)
-						returns = TriState.Always;
-					else
-						returns = TriState.Sometimes;
-				} else if (!MayReturn) {
-					if (b.MayReturn)
-						returns = TriState.Sometimes;
-					else
-						returns = TriState.Never;
-				} else if (!b.MayReturn) {
-					if (MayReturn)
-						returns = TriState.Sometimes;
-					else
-						returns = TriState.Never;
-				}
+				if ((AlwaysReturns && b_unreachable) || (b.AlwaysReturns && a_unreachable))
+					returns = TriState.Always;
+				else
+					returns = TriState_Meet (returns, b.returns);
 
 				breaks = TriState_Meet (breaks, b.breaks);
 				throws = TriState_Meet (throws, b.throws);
@@ -183,25 +163,19 @@ namespace Mono.CSharp
 
 			public static Reachability Always ()
 			{
-				return new Reachability (
-					TriState.Never, TriState.Never,
-					TriState.Never, TriState.Never);
+				return new Reachability (TriState.Never, TriState.Never, TriState.Never, TriState.Never);
 			}
 
-			public TriState Reachable {
+			TriState Unreachable {
+				get { return TriState_Max (returns, TriState_Max (breaks, TriState_Max (throws, barrier))); }
+			}
+
+			TriState Reachable {
 				get {
-					if ((returns == TriState.Always) ||
-					    (breaks == TriState.Always) ||
-					    (throws == TriState.Always) ||
-					    (barrier == TriState.Always))
-						return TriState.Never;
-					else if ((returns == TriState.Never) &&
-						 (breaks == TriState.Never) &&
-						 (throws == TriState.Never) &&
-						 (barrier == TriState.Never))
-						return TriState.Always;
-					else
+					TriState unreachable = Unreachable;
+					if (unreachable == TriState.Sometimes)
 						return TriState.Sometimes;
+					return unreachable == TriState.Always ? TriState.Never : TriState.Always;
 				}
 			}
 
@@ -238,7 +212,7 @@ namespace Mono.CSharp
 			}
 
 			public bool IsUnreachable {
-				get { return Reachable == TriState.Never; }
+				get { return Unreachable == TriState.Always; }
 			}
 
 			public void SetReturns ()
