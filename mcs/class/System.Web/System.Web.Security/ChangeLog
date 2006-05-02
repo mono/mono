@@ -1,3 +1,9 @@
+2006-05-02  Chris Toshok  <toshok@ximian.com>
+
+	* SqlMembershipProvider.cs: 85% complete, maybe more.  The major
+	functionality should work.  Password retrieval (and encrypted
+	passwords in general) is untested.
+
 2006-05-01  Chris Toshok  <toshok@ximian.com>
 
 	* Membership.cs (GeneratePassword): don't include quotes (',",`)

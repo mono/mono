@@ -44,6 +44,8 @@ namespace System.Web.Security {
 	public class SqlMembershipProvider : MembershipProvider {
 
 		const int SALT_BYTES = 16;
+
+		/* can this be done just by setting the datetime fields to 0? */
 		DateTime DefaultDateTime = new DateTime (1754,1,1).ToUniversalTime();
 
 		bool enablePasswordReset;
@@ -101,20 +103,23 @@ namespace System.Web.Security {
 
 		string HashAndBase64Encode (string s, byte[] salt)
 		{
-			byte[] tmp = Encoding.UTF8.GetBytes (s);
+			byte[] tmp = Encoding.Unicode.GetBytes (s);
 
-			byte[] hashedBytes = new byte[salt.Length + tmp.Length];
-			Array.Copy (salt, hashedBytes, salt.Length);
-			Array.Copy (tmp, 0, hashedBytes, salt.Length, tmp.Length);
+			byte[] hashBytes = new byte[salt.Length + tmp.Length];
+
+			Buffer.BlockCopy (salt, 0, hashBytes, 0, salt.Length);
+			Buffer.BlockCopy (tmp, 0, hashBytes, salt.Length, tmp.Length);
 
 			MembershipSection section = (MembershipSection)WebConfigurationManager.GetSection ("system.web/membership");
 			string alg_type = section.HashAlgorithmType;
-			if (alg_type == "")
-				alg_type = "SHA1";
-			HashAlgorithm alg = HashAlgorithm.Create (alg_type);
-			hashedBytes = alg.ComputeHash (hashedBytes);
-
-			return Convert.ToBase64String (hashedBytes);
+			if (alg_type == "") {
+				MachineKeySection keysection = (MachineKeySection)WebConfigurationManager.GetSection ("system.web/machineKey");
+				alg_type = keysection.Validation.ToString ();
+			}
+			using (HashAlgorithm hash = HashAlgorithm.Create (alg_type)) {
+				hash.TransformFinalBlock (hashBytes, 0, hashBytes.Length);
+				return Convert.ToBase64String (hash.Hash);
+			}
 		}
 
 		string EncryptAndBase64Encode (string s)
@@ -127,7 +132,6 @@ namespace System.Web.Security {
 			return Encoding.UTF8.GetString (DecryptPassword (Convert.FromBase64String (s)));
 		}
 
-		[MonoTODO]
 		public override bool ChangePassword (string username, string oldPwd, string newPwd)
 		{
 			if (username != null) username = username.Trim ();
@@ -176,10 +180,10 @@ namespace System.Web.Security {
 
 					commandText = @"
 UPDATE m
-   SET Password = @Password
+   SET Password = @Password,
        FailedPasswordAttemptCount = 0,
-       FailedPasswordAttemptWindowStart = @DefaultDateTime
-       LastPasswordChangeDate = @Now
+       FailedPasswordAttemptWindowStart = @DefaultDateTime,
+       LastPasswordChangedDate = @Now
   FROM dbo.aspnet_Membership m, dbo.aspnet_Users u, dbo.aspnet_Applications a
  WHERE m.ApplicationId = a.ApplicationId
    AND u.ApplicationId = a.ApplicationId
@@ -215,7 +219,6 @@ UPDATE m
 			}
 		}
 		
-		[MonoTODO]
 		public override bool ChangePasswordQuestionAndAnswer (string username, string password, string newPwdQuestion, string newPwdAnswer)
 		{
 			if (username != null) username = username.Trim ();
@@ -262,10 +265,12 @@ UPDATE m
 
 					commandText = @"
 UPDATE m
-   SET PasswordQuestion = @PasswordQuestion
-       PasswordAnswer = @PasswordAnswer
+   SET PasswordQuestion = @PasswordQuestion,
+       PasswordAnswer = @PasswordAnswer,
        FailedPasswordAttemptCount = 0,
-       FailedPasswordAttemptWindowStart = @DefaultDateTime
+       FailedPasswordAttemptWindowStart = @DefaultDateTime,
+       FailedPasswordAnswerAttemptCount = 0,
+       FailedPasswordAnswerAttemptWindowStart = @DefaultDateTime
   FROM dbo.aspnet_Membership m, dbo.aspnet_Users u, dbo.aspnet_Applications a
  WHERE m.ApplicationId = a.ApplicationId
    AND u.ApplicationId = a.ApplicationId
@@ -658,7 +663,6 @@ DELETE dbo.aspnet_Users
 			return Membership.GeneratePassword (minRequiredPasswordLength, minRequiredNonAlphanumericCharacters);
 		}
 		
-		[MonoTODO]
 		public override MembershipUserCollection FindUsersByEmail (string emailToMatch, int pageIndex, int pageSize, out int totalRecords)
 		{
 			CheckParam ("emailToMatch", emailToMatch, 256);
@@ -697,7 +701,6 @@ SELECT u.UserName, m.UserId, m.Email, m.PasswordQuestion, m.Comment, m.IsApprove
 			return c;
 		}
 
-		[MonoTODO]
 		public override MembershipUserCollection FindUsersByName (string nameToMatch, int pageIndex, int pageSize, out int totalRecords)
 		{
 			CheckParam ("nameToMatch", nameToMatch, 256);
@@ -736,7 +739,6 @@ SELECT u.UserName, m.UserId, m.Email, m.PasswordQuestion, m.Comment, m.IsApprove
 			return c;
 		}
 		
-		[MonoTODO]
 		public override MembershipUserCollection GetAllUsers (int pageIndex, int pageSize, out int totalRecords)
 		{
 			if (pageIndex < 0)
@@ -803,35 +805,32 @@ SELECT u.UserName, m.UserId, m.Email, m.PasswordQuestion, m.Comment, m.IsApprove
 		}
 		
 		
-		[MonoTODO]
 		public override int GetNumberOfUsersOnline ()
 		{
 			string commandText;
 
 			InitConnection();
 
-			commandText = @"
+			DateTime now = DateTime.Now.ToUniversalTime ();
+
+			commandText = String.Format (@"
 SELECT COUNT (*)
   FROM dbo.aspnet_Membership m, dbo.aspnet_Applications a, dbo.aspnet_Users u
  WHERE m.ApplicationId = a.ApplicationId
    AND u.ApplicationId = a.ApplicationId
    AND m.UserId = u.UserId
-   AND DATEADD(m,@UserIsOnlineTimeWindow,dbo.aspnet_Users.LastActivityDate) >= GETDATE()
-   AND a.LoweredApplicationName = LOWER(@ApplicationName)";
+   AND DATEADD(minute,{0},u.LastActivityDate) >= @Now
+   AND a.LoweredApplicationName = LOWER(@ApplicationName)",
+						     userIsOnlineTimeWindow.Minutes);
 
 			DbCommand command = factory.CreateCommand ();
 			command.CommandText = commandText;
 			command.Connection = connection;
 			command.CommandType = CommandType.Text;
-			AddParameter (command, "UserIsOnlineTimeWindow", userIsOnlineTimeWindow.Minutes.ToString());
+			AddParameter (command, "Now", now.ToString ());
 			AddParameter (command, "ApplicationName", ApplicationName);
 
-			try { 
-				return (int)command.ExecuteScalar ();
-			}
-			catch {
-				return -1;
-			}
+			return (int)command.ExecuteScalar ();
 		}
 		
 		[MonoTODO ("more details here")]
@@ -921,11 +920,11 @@ SELECT m.Password
 						   reader.IsDBNull (4) ? null : reader.GetString (4), /* comment */
 						   reader.GetBoolean (5), /* isApproved */
 						   reader.GetBoolean (6), /* isLockedOut */
-						   reader.GetDateTime (7), /* creationDate */
-						   reader.GetDateTime (8), /* lastLoginDate */
-						   reader.GetDateTime (9), /* lastActivityDate */
-						   reader.GetDateTime (10), /* lastPasswordChangedDate */
-						   reader.GetDateTime (11) /* lastLockoutDate */);
+						   reader.GetDateTime (7).ToLocalTime (), /* creationDate */
+						   reader.GetDateTime (8).ToLocalTime (), /* lastLoginDate */
+						   reader.GetDateTime (9).ToLocalTime (), /* lastActivityDate */
+						   reader.GetDateTime (10).ToLocalTime (), /* lastPasswordChangedDate */
+						   reader.GetDateTime (11).ToLocalTime () /* lastLockoutDate */);
 		}
 
 		MembershipUser BuildMembershipUser (DbCommand query, bool userIsOnline)
@@ -1171,7 +1170,6 @@ SELECT u.UserName
 			connectionString = WebConfigurationManager.ConnectionStrings[connectionStringName];
 		}
 
-		[MonoTODO ("flesh out what happens when answer validation fails")]
 		public override string ResetPassword (string username, string answer)
 		{
 			if (!enablePasswordReset)
@@ -1220,7 +1218,7 @@ SELECT u.UserName
 
 					commandText = @"
 UPDATE m
-   SET Password = @Password
+   SET Password = @Password,
        FailedPasswordAnswerAttemptCount = 0,
        FailedPasswordAnswerAttemptWindowStart = @DefaultDateTime
   FROM dbo.aspnet_Membership m, dbo.aspnet_Users u, dbo.aspnet_Applications a
@@ -1246,13 +1244,13 @@ UPDATE m
 					trans.Commit ();
 				}
 				else {
-					/* XXX something here? */
+					throw new MembershipPasswordException ("The password-answer supplied is wrong.");
 				}
 
 				return newPassword;
 			}
 			catch (MembershipPasswordException) {
-				trans.Rollback ();
+				trans.Commit ();
 				throw;
 			}
 			catch (ProviderException) {
@@ -1351,7 +1349,6 @@ UPDATE dbo.aspnet_Users
 			}
 		}
 		
-		[MonoTODO ("flesh out the case where validation fails")]
 		public override bool ValidateUser (string username, string password)
 		{
 			MembershipUser user = GetUser (username, false);
@@ -1442,22 +1439,28 @@ UPDATE dbo.aspnet_Users
 
 				return valid;
 			}
-			catch {
+			catch (Exception e) {
+				Console.WriteLine (e);
+
 				trans.Rollback ();
 
-				return false; /* should we allow the exception through? */
+				throw;
 			}
 		}
 
-		[MonoTODO]
 		public override bool UnlockUser (string userName)
 		{
 			CheckParam ("userName", userName, 256);
 
 			string commandText = @"
 UPDATE dbo.aspnet_Membership
-   SET IsLockedOut = 0
-  FROM dbo.aspnet_Membership m, dbo.aspnet_Users u , dbo.aspnet_Application a
+   SET IsLockedOut = 0,
+       LastLockoutDate = @DefaultDateTime,
+       FailedPasswordAttemptCount = 0,
+       FailedPasswordAttemptWindowStart = @DefaultDateTime,
+       FailedPasswordAnswerAttemptCount = 0,
+       FailedPasswordAnswerAttemptWindowStart = @DefaultDateTime
+  FROM dbo.aspnet_Membership m, dbo.aspnet_Users u, dbo.aspnet_Applications a
  WHERE m.UserId = u.UserId
    AND m.ApplicationId = a.ApplicationId
    AND u.ApplicationId = a.ApplicationId
@@ -1472,13 +1475,106 @@ UPDATE dbo.aspnet_Membership
 			command.CommandType = CommandType.Text;
 			AddParameter (command, "UserName", userName);
 			AddParameter (command, "ApplicationName", ApplicationName);
+			AddParameter (command, "DefaultDateTime", DefaultDateTime.ToString());
 
-			try {
-				return command.ExecuteNonQuery() == 1;
+			return command.ExecuteNonQuery() == 1;
+		}
+
+		void IncrementFailureAndMaybeLockout (DbTransaction trans, string username,
+						      string failureCountAttribute, string failureWindowAttribute)
+		{
+			DateTime now = DateTime.Now;
+
+			/* if validation fails:
+			   if (FailedPasswordAttemptWindowStart - DateTime.Now < PasswordAttemptWindow)
+			     increment FailedPasswordAttemptCount
+			   FailedPasswordAttemptWindowStart = DateTime.Now
+			   if (FailedPasswordAttemptCount > MaxInvalidPasswordAttempts)
+			     set IsLockedOut = true.
+			     set LastLockoutDate = DateTime.Now
+			*/
+
+			string commandText = String.Format (@"
+SELECT m.{0}, m.{1}
+  FROM dbo.aspnet_Membership m, dbo.aspnet_Applications a, dbo.aspnet_Users u
+ WHERE m.ApplicationId = a.ApplicationId
+   AND u.ApplicationId = a.ApplicationId
+   AND m.UserId = u.UserId
+   AND u.LoweredUserName = LOWER(@UserName)
+   AND a.LoweredApplicationName = LOWER(@ApplicationName)",
+						     failureCountAttribute, failureWindowAttribute);
+
+			DbCommand command = factory.CreateCommand ();
+			command.Transaction = trans;
+			command.CommandText = commandText;
+			command.Connection = connection;
+			command.CommandType = CommandType.Text;
+			AddParameter (command, "UserName", username);
+			AddParameter (command, "ApplicationName", ApplicationName);
+
+			DateTime db_FailedWindowStart;
+			int db_FailedCount;
+
+			DbDataReader reader = command.ExecuteReader ();
+			reader.Read ();
+			db_FailedCount = reader.GetInt32 (0);
+			db_FailedWindowStart = reader.GetDateTime (1).ToLocalTime ();
+			reader.Close();
+
+			TimeSpan diff = now.Subtract (db_FailedWindowStart);
+			if ((db_FailedWindowStart == DefaultDateTime.ToLocalTime ())
+			    || diff.Minutes < PasswordAttemptWindow)
+				db_FailedCount ++;
+
+			if (db_FailedCount > MaxInvalidPasswordAttempts) {
+				/* lock the user out */
+				commandText = @"
+UPDATE dbo.aspnet_Membership
+   SET IsLockedOut = 1,
+       LastLockoutDate = @LastLockoutDate
+  FROM dbo.aspnet_Membership m, dbo.aspnet_Users u, dbo.aspnet_Applications a
+ WHERE m.ApplicationId = a.ApplicationId
+   AND u.ApplicationId = a.ApplicationId
+   AND m.UserId = u.UserId
+   AND u.LoweredUserName = LOWER(@UserName)
+   AND a.LoweredApplicationName = LOWER(@ApplicationName)";
+
+				command = factory.CreateCommand ();
+				command.Transaction = trans;
+				command.CommandText = commandText;
+				command.Connection = connection;
+				command.CommandType = CommandType.Text;
+				AddParameter (command, "UserName", username);
+				AddParameter (command, "ApplicationName", ApplicationName);
+				AddParameter (command, "LastLockoutDate", now.ToUniversalTime().ToString ());
 			}
-			catch {
-				return false;
+			else {
+				/* just store back the updated window start and count */
+				commandText = String.Format (@"
+UPDATE dbo.aspnet_Membership
+   SET {0} = @{0},
+       {1} = @{1}
+  FROM dbo.aspnet_Membership m, dbo.aspnet_Users u, dbo.aspnet_Applications a
+ WHERE m.ApplicationId = a.ApplicationId
+   AND u.ApplicationId = a.ApplicationId
+   AND m.UserId = u.UserId
+   AND u.LoweredUserName = LOWER(@UserName)
+   AND a.LoweredApplicationName = LOWER(@ApplicationName)",
+						     failureCountAttribute, failureWindowAttribute);
+
+				command = factory.CreateCommand ();
+				command.Transaction = trans;
+				command.CommandText = commandText;
+				command.Connection = connection;
+				command.CommandType = CommandType.Text;
+				AddParameter (command, "UserName", username);
+				AddParameter (command, "ApplicationName", ApplicationName);
+				AddParameter (command, failureCountAttribute, db_FailedCount.ToString());
+				AddParameter (command, failureWindowAttribute, now.ToUniversalTime().ToString ());
 			}
+
+			if (1 != (int)command.ExecuteNonQuery ())
+				throw new ProviderException ("failed to update Membership table");
 		}
 
 		bool ValidateUsingPassword (DbTransaction trans, string username, string password,
@@ -1525,97 +1621,9 @@ SELECT m.Password, m.PasswordFormat, m.PasswordSalt
 
 			bool valid = (password == db_password);
 
-			if (!valid) {
-				DateTime now = DateTime.Now;
-
-				/* if validation fails:
-				   if (FailedPasswordAttemptWindowStart - DateTime.Now < PasswordAttemptWindow)
-				     increment FailedPasswordAttemptCount
-				   FailedPasswordAttemptWindowStart = DateTime.Now
-				   if (FailedPasswordAttemptCount > MaxInvalidPasswordAttempts)
-				     set IsLockedOut = true.
-				     set LastLockoutDate = DateTime.Now
-				*/
-
-				commandText = @"
-SELECT m.FailedPasswordAttemptCount, m.FailedPasswordAttemptWindowStart
-  FROM dbo.aspnet_Membership m, dbo.aspnet_Applications a, dbo.aspnet_Users u
- WHERE m.ApplicationId = a.ApplicationId
-   AND u.ApplicationId = a.ApplicationId
-   AND m.UserId = u.UserId
-   AND u.LoweredUserName = LOWER(@UserName)
-   AND a.LoweredApplicationName = LOWER(@ApplicationName)";
-
-				command = factory.CreateCommand ();
-				command.Transaction = trans;
-				command.CommandText = commandText;
-				command.Connection = connection;
-				command.CommandType = CommandType.Text;
-				AddParameter (command, "UserName", username);
-				AddParameter (command, "ApplicationName", ApplicationName);
-
-				DateTime db_FailedPasswordAttemptWindowStart;
-				int db_FailedPasswordAttemptCount;
-
-				reader = command.ExecuteReader ();
-				reader.Read ();
-				db_FailedPasswordAttemptCount = reader.GetInt32 (0);
-				db_FailedPasswordAttemptWindowStart = reader.GetDateTime (1).ToLocalTime ();
-				reader.Close();
-
-				TimeSpan diff = db_FailedPasswordAttemptWindowStart.Subtract (now);
-				if (diff.Minutes < PasswordAttemptWindow)
-					db_FailedPasswordAttemptCount ++;
-
-				if (db_FailedPasswordAttemptCount > MaxInvalidPasswordAttempts) {
-					/* lock the user out */
-					commandText = @"
-UPDATE m
-   SET LockedOut = TRUE
-       LastLockoutDate = @Now
-  FROM dbo.aspnet_Membership m, dbo.aspnet_Users u, dbo.aspnet_Applications a
- WHERE m.ApplicationId = a.ApplicationId
-   AND u.ApplicationId = a.ApplicationId
-   AND m.UserId = u.UserId
-   AND u.LoweredUserName = LOWER(@UserName)
-   AND a.LoweredApplicationName = LOWER(@ApplicationName)";
-
-					command = factory.CreateCommand ();
-					command.Transaction = trans;
-					command.CommandText = commandText;
-					command.Connection = connection;
-					command.CommandType = CommandType.Text;
-					AddParameter (command, "UserName", username);
-					AddParameter (command, "ApplicationName", ApplicationName);
-					AddParameter (command, "LastLockoutDate", now.ToUniversalTime().ToString ());
-				}
-				else {
-					/* just store back the updated window start and count */
-					commandText = @"
-UPDATE m
-   SET FailedPasswordAttemptCount = @FailedPasswordAttemptCount
-       FailedPasswordAttemptWindowStart = @FailedPasswordAttemptWindowStart
-  FROM dbo.aspnet_Membership m, dbo.aspnet_Users u, dbo.aspnet_Applications a
- WHERE m.ApplicationId = a.ApplicationId
-   AND u.ApplicationId = a.ApplicationId
-   AND m.UserId = u.UserId
-   AND u.LoweredUserName = LOWER(@UserName)
-   AND a.LoweredApplicationName = LOWER(@ApplicationName)";
-
-					command = factory.CreateCommand ();
-					command.Transaction = trans;
-					command.CommandText = commandText;
-					command.Connection = connection;
-					command.CommandType = CommandType.Text;
-					AddParameter (command, "UserName", username);
-					AddParameter (command, "ApplicationName", ApplicationName);
-					AddParameter (command, "FailedPasswordAttemptCount", db_FailedPasswordAttemptCount.ToString());
-					AddParameter (command, "FailedPasswordAttemptWindowStart", now.ToUniversalTime().ToString ());
-				}
-
-				if (1 != (int)command.ExecuteNonQuery ())
-					throw new ProviderException ("failed to update Membership table");
-			}
+			if (!valid)
+				IncrementFailureAndMaybeLockout (trans, username,
+								 "FailedPasswordAttemptCount", "FailedPasswordAttemptWindowStart");
 
 			return valid;
 		}
@@ -1668,17 +1676,10 @@ SELECT m.PasswordAnswer, m.PasswordFormat, m.PasswordSalt
 
 			bool valid = (answer == db_answer);
 
-			if (!valid) {
-				/* if validation fails:
-
-				   if (FailedPasswordAnswerAttemptWindowStart - DateTime.Now < PasswordAttemptWindow)
-				     increment FailedPasswordAnswerAttemptCount
-				   FailedPasswordAnswerAttemptWindowStart = DateTime.Now
-				   if (FailedPasswordAnswerAttemptCount > MaxInvalidPasswordAttempts)
-				     set IsLockedOut = true.
-				     set LastLockoutDate = DateTime.Now
-				*/
-			}
+			if (!valid)
+				IncrementFailureAndMaybeLockout (trans, username,
+								 "FailedPasswordAnswerAttemptCount",
+								 "FailedPasswordAnswerAttemptWindowStart");
 
 			return valid;
 		}
