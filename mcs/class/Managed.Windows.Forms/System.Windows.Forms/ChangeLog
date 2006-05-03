@@ -1,3 +1,9 @@
+2006-05-03  Alexander Olk  <alex.olk@googlemail.com>
+
+	* ThemeWin32Classic.cs: Draw the ToolBar top border only if
+	  Divider is true. Fix a little glitch in PropertyToolBar
+	  drawing code
+
 2006-05-02  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* Control.cs:

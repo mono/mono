@@ -3462,14 +3462,14 @@ namespace System.Windows.Forms
 					dc.DrawLine (SystemPens.ControlLightLight, clip_rectangle.X, 1, clip_rectangle.Right, 1);
 				}
 
-				if (clip_rectangle.Bottom >= (control.Bottom - 1)) {
+				if (clip_rectangle.Bottom == control.Bottom) {
 					dc.DrawLine (SystemPens.ControlDark, clip_rectangle.X, clip_rectangle.Bottom - 1, clip_rectangle.Right, clip_rectangle.Bottom - 1);
 				}
 
-				if (clip_rectangle.Right >= (control.Right - 1)) {
-					dc.DrawLine (SystemPens.ControlDark, clip_rectangle.Right - 1, 1, clip_rectangle.Right - 1, control.Bottom);
+				if (clip_rectangle.Right == control.Right) {
+					dc.DrawLine (SystemPens.ControlDark, clip_rectangle.Right - 1, 1, clip_rectangle.Right - 1, control.Bottom - 1);
 				}
-			} else {
+			} else if (control.Divider) {
 				dc.FillRectangle (SystemBrushes.Control, clip_rectangle);
 
 				if (clip_rectangle.Y < 2) {
