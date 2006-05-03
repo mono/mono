@@ -1358,19 +1358,17 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			ILGenerator ig = ec.ig;
-
-			EmitLong (ig, Value);
+			EmitLong (ec.ig, Value);
 		}
 
 		static public void EmitLong (ILGenerator ig, long l)
 		{
-			if ((l >> 32) == 0){
+			if (l >= int.MinValue && l <= int.MaxValue) {
 				IntLiteral.EmitInt (ig, unchecked ((int) l));
-				ig.Emit (OpCodes.Conv_U8);
-			} else {
-				ig.Emit (OpCodes.Ldc_I8, l);
+				ig.Emit (OpCodes.Conv_I8);
+				return;
 			}
+			ig.Emit (OpCodes.Ldc_I8, l);
 		}
 
 		public override string AsString ()

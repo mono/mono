@@ -1,3 +1,9 @@
+2006-05-03  Marek Safar  <marek.safar@seznam.cz>
+
+	A fix for #60069
+	*constant.cs (LongConstant.EmitLong): Fixed to catch also negative values
+	for emitting small (int) values.
+
 2006-05-03  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #59427
