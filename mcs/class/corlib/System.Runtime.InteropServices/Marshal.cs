@@ -161,10 +161,8 @@ namespace System.Runtime.InteropServices
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static void DestroyStructure (IntPtr ptr, Type structuretype);
 
-		[MonoTODO]
-		public static void FreeBSTR (IntPtr ptr) {
-			throw new NotImplementedException ();
-		}
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        public extern static void FreeBSTR (IntPtr ptr);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static void FreeCoTaskMem (IntPtr ptr);
@@ -592,10 +590,8 @@ namespace System.Runtime.InteropServices
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static int SizeOf (Type t);
 
-		[MonoTODO]
-		public static IntPtr StringToBSTR (string s) {
-			throw new NotImplementedException ();
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static IntPtr StringToBSTR (string s);
 
 		public static IntPtr StringToCoTaskMemAnsi (string s) {
 			int length = s.Length + 1;

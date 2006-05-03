@@ -1,3 +1,7 @@
+2006-05-02  Jonathan Chambers  <jonathan.chambers@ansys.com>
+
+	* Marshal.cs: Implement BSTR methods
+
 2006-01-12  Ben Maurer  <bmaurer@andrew.cmu.edu>
 
 	* SafeHandle.cs: Update to RTM api
