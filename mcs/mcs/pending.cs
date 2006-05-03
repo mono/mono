@@ -541,6 +541,9 @@ namespace Mono.CSharp {
 			//
 			MethodInfo base_method = (MethodInfo) list [0];
 
+			if (base_method.DeclaringType.IsInterface)
+				return false;
+
 			if (!base_method.IsAbstract && !base_method.IsVirtual)
 				DefineProxy (iface_type, base_method, mi, args);
 
