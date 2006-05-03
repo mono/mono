@@ -124,14 +124,7 @@ public class Test {
 
 	static void Usage ()
 	{
-		Console.WriteLine ("available command line args:");
-		Console.WriteLine ("----------------------------");
-		Console.WriteLine ("populate           creates some test users");
-		Console.WriteLine ("createuser         creates user based on the rest of the command line");
-		Console.WriteLine ("generatepassword   calls GeneratePassword");
-		Console.WriteLine ("listallusers       prints all the users in the db");
-		Console.WriteLine ("validateuser       tries to validate a user with their password");
-		Console.WriteLine ("unlockuser         unlocks the user");
+		Console.WriteLine ("usage:   just look at test.cs...");
 	}
 
 	public static void Main (string[] args) {
@@ -187,5 +180,25 @@ public class Test {
 			Console.WriteLine ("unknown command {0}", args[0]);
 			break;
 		}
+	}
+}
+
+
+
+public class ProvPoker : Toshok.Web.Security.SqlMembershipProvider {
+	protected override byte[] EncryptPassword (byte[] pwd) {
+		Console.WriteLine ("pwd = ({0})", Convert.ToBase64String (pwd));
+		byte[] buf = base.EncryptPassword (pwd);
+		Console.WriteLine ("buf = {0} bytes long ({1})", buf.Length, Convert.ToBase64String (buf));
+		return buf;
+	}
+
+	protected override byte[] DecryptPassword (byte[] pwd) {
+		Console.WriteLine ("pwd = ({0})", Convert.ToBase64String (pwd));
+		byte[] buf = base.DecryptPassword (pwd);
+		Console.WriteLine ("buf = {0} bytes long ({1})", buf.Length, Convert.ToBase64String (buf));
+		byte[] rv = new byte[buf.Length - 16];
+		Array.Copy (buf, 16, rv, 0, buf.Length - 16);
+		return rv;
 	}
 }
