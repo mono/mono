@@ -1325,6 +1325,10 @@ namespace Mono.CSharp
 		{
 			UsageVector vector = Merge (catch_vectors);
 
+			if (finally_vector != null)
+				vector.MergeChild (finally_vector, false);
+
+			// FIXME: this should probably go away.  I think it's harmless right now
 			vector.MergeFinally (finally_vector, finally_origins);
 
 			for (UsageVector origin = break_origins; origin != null; origin = origin.Next) {

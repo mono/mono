@@ -1,5 +1,10 @@
 2006-05-03  Raja R Harinath  <rharinath@novell.com>
 
+	Fix #59427
+	* flowanalysis.cs (FlowBranchingException.Merge): Ensure
+	control-flow passes through the 'finally' after merging-in all the
+	control-flows from 'try' and the 'catch' clauses.
+
 	* flowanalysis.cs (FlowBranching.IsLoop): Remove.
 	(FlowBranching.IsTryOrCatch): Remove 'is_return' parameter.  It's
 	always true at the only non-recursive entry point.
