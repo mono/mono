@@ -104,13 +104,13 @@ namespace Microsoft.Build.Tasks {
 						    string responseFileCommands,
 						    string commandLineCommands)
 		{
-			return 0;
+			return base.ExecuteTool (GenerateFullPathToTool (), String.Empty, String.Empty);
 		}
 		
 		[MonoTODO]
 		protected override string GenerateFullPathToTool ()
 		{
-			return null;
+			return command;
 		}
 		
 		[MonoTODO]

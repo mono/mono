@@ -1,3 +1,9 @@
+2006-05-03  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* MakeDir.cs: Removed warning.
+	* Exec.cs: Fixed commmand execution.
+	* ReadLinesFromFile.cs: Formatting.
+
 2006-04-14  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* GenerateResource.cs: Added authors of monoresgen.

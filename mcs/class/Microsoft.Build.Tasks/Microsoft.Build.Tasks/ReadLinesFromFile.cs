@@ -49,6 +49,7 @@ namespace Microsoft.Build.Tasks {
 		{
 			if ( file == null)
 				throw new ArgumentNullException ("File", "File property must be set.");
+
 			try {
 				streamReader = new StreamReader(file.GetMetadata ("FullPath"));
 				string line;

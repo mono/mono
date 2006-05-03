@@ -51,7 +51,7 @@ namespace Microsoft.Build.Tasks {
 					Directory.CreateDirectory (directory.GetMetadata ("FullPath"));
 					temporaryDirectoriesCreated.Add (directory);
 				}
-				catch (Exception ex) {
+				catch (Exception) {
 				}
 			}
 			
