@@ -114,6 +114,22 @@ namespace MonoTests.System.Drawing.Drawing2D {
 			Assert.AreEqual (testVals[9], rect.Height, 0.0001, "rect.Height");
 		}
 
+		private void CheckMatrixForScalableAngle (RectangleF rect, float angle, float[] testVals)
+		{
+			Matrix m;
+
+			using (LinearGradientBrush b = new LinearGradientBrush (rect, Color.Firebrick, Color.Lavender, angle, true)) {
+				m = b.Transform;
+			}
+
+			Assert.AreEqual (testVals[0], m.Elements[0], 0.0001, "matrix.0");
+			Assert.AreEqual (testVals[1], m.Elements[1], 0.0001, "matrix.1");
+			Assert.AreEqual (testVals[2], m.Elements[2], 0.0001, "matrix.2");
+			Assert.AreEqual (testVals[3], m.Elements[3], 0.0001, "matrix.3");
+			Assert.AreEqual (testVals[4], m.Elements[4], 0.0001, "matrix.4");
+			Assert.AreEqual (testVals[5], m.Elements[5], 0.0001, "matrix.5");
+		}
+
 		[Test]
 		public void Constructor_Point_Point_Color_Color ()
 		{
@@ -836,6 +852,26 @@ namespace MonoTests.System.Drawing.Drawing2D {
 			clone.Reset ();
 			lgb.ResetTransform ();
 			Assert.AreEqual (lgb.Transform, clone, "Reset");
+		}
+
+		[Test]
+		public void Constructor_Rectangle_Angle_Scalable ()
+		{
+			CheckMatrixForScalableAngle (new RectangleF (0, 0, 10, 10), 15, new float[] { 1.183013f, 0.3169873f, -0.3169873f, 1.183012f, 0.6698728f, -2.5f });
+
+			CheckMatrixForScalableAngle (new RectangleF (30, 60, 90, 50), 15, new float[] { 1.183012f, 0.176104f, -0.5705772f, 1.183012f, 34.77311f, -28.76387f });
+			CheckMatrixForScalableAngle (new RectangleF (30, 60, 90, 50), 75, new float[] { 0.3169872f, 0.6572293f, -2.129423f, 0.3169873f, 232.2269f, 8.763878f });
+			CheckMatrixForScalableAngle (new RectangleF (30, 60, 90, 50), 95, new float[] { -0.09442029f, 0.599571f, -1.942611f, -0.09442017f, 247.2034f, 48.05788f });
+			CheckMatrixForScalableAngle (new RectangleF (30, 60, 90, 50), 150, new float[] { -1.183013f, 0.3794515f, -1.229423f, -1.183013f, 268.2269f, 157.0972f });
+			CheckMatrixForScalableAngle (new RectangleF (30, 60, 90, 50), 215, new float[] { -1.140856f, -0.4437979f, 1.437905f, -1.140856f, 38.34229f, 215.2576f });
+			CheckMatrixForScalableAngle (new RectangleF (30, 60, 90, 50), 300, new float[] { 0.6830127f, -0.6572294f, 2.129422f, 0.6830124f, -157.2269f, 76.23613f });
+
+			CheckMatrixForScalableAngle (new RectangleF (30, 60, 90, 150), 15, new float[] { 1.183012f, 0.5283121f, -0.1901924f, 1.183012f, 11.95002f, -64.33012f });
+			CheckMatrixForScalableAngle (new RectangleF (30, 60, 90, 150), 75, new float[] { 0.3169872f, 1.971688f, -0.7098077f, 0.3169872f, 147.05f, -55.66987f });
+			CheckMatrixForScalableAngle (new RectangleF (30, 60, 90, 150), 95, new float[] { -0.09442029f, 1.798713f, -0.6475369f, -0.09442022f, 169.499f, 12.84323f });
+			CheckMatrixForScalableAngle (new RectangleF (30, 60, 90, 150), 150, new float[] { -1.183013f, 1.138354f, -0.4098077f, -1.183013f, 219.05f, 209.3301f });
+			CheckMatrixForScalableAngle (new RectangleF (30, 60, 90, 150), 215, new float[] { -1.140856f, -1.331394f, 0.4793016f, -1.140856f, 95.85849f, 388.8701f });
+			CheckMatrixForScalableAngle (new RectangleF (30, 60, 90, 150), 300, new float[] { 0.6830127f, -1.971688f, 0.7098075f, 0.6830125f, -72.04998f, 190.6699f });
 		}
 	}
 }
