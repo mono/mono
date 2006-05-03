@@ -303,7 +303,7 @@ namespace System.Web.Services.Description
 			info.Serializer.Serialize (writer, ext, ns);
 		}
 		
-		internal static void ReadExtension (XmlReader reader, object ob)
+		internal static void ReadExtension (XmlDocument doc, XmlReader reader, object ob)
 		{
 			ServiceDescriptionFormatExtensionCollection extensions = ExtensionManager.GetExtensionPoint (ob);
 			if (extensions != null)
@@ -316,7 +316,21 @@ namespace System.Web.Services.Description
 					return;
 				}
 			}
+
+			//No XmlFormatExtensionPoint attribute found
+
+#if NET_2_0
+			//Add to DocumentableItem.Extensions property
+			DocumentableItem item = ob as DocumentableItem;
+			if (item == null) {
+				reader.Skip ();
+				return;
+			}
+
+			item.Extensions.Add (doc.ReadNode (reader));
+#else
 			reader.Skip ();
+#endif
 		}
 
 #if NET_2_0
@@ -350,13 +364,13 @@ namespace System.Web.Services.Description
 			protected override void Serialize (object o, XmlSerializationWriter writer)
 			{
 				ServiceDescriptionWriterBase xsWriter = writer as ServiceDescriptionWriterBase;
-				xsWriter.WriteTree ((ServiceDescription)o);
+				xsWriter.WriteRoot_ServiceDescription (o);
 			}
 			
 			protected override object Deserialize (XmlSerializationReader reader)
 			{
 				ServiceDescriptionReaderBase xsReader = reader as ServiceDescriptionReaderBase;
-				return xsReader.ReadTree ();
+				return xsReader.ReadRoot_ServiceDescription ();
 			}
 			
 			protected override XmlSerializationWriter CreateWriter ()

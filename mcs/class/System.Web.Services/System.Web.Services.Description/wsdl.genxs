@@ -2,14 +2,12 @@
 	<serializer class="System.Web.Services.Description.ServiceDescription" assembly="System.Web.Services">
 		<reader>ServiceDescriptionReaderBase</reader>
 		<writer>ServiceDescriptionWriterBase</writer>
+		<generateAsInternal>true</generateAsInternal>
 		<namespace>System.Web.Services.Description</namespace>
 		<outFileName>ServiceDescriptionSerializerBase.cs</outFileName>
 		<readerHooks>
 			<hook type="unknownElement">
-				<select>
-					<typeAttribute>System.Web.Services.Configuration.XmlFormatExtensionPointAttribute</typeAttribute>
-				</select>
-				<replace>ServiceDescription.ReadExtension (Reader, $OBJECT);</replace>
+				<replace>ServiceDescription.ReadExtension (Document, Reader, $OBJECT);</replace>
 			</hook>
 			<hook type="unknownAttribute">
 				<replace>

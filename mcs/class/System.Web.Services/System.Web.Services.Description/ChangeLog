@@ -1,3 +1,15 @@
+2006-05-03  Ankit Jain  <jankit@novell.com>
+
+	* wsdl.genxs: Call ReadExtension for all unknown elements.
+	* ServiceDescription.cs (ServiceDescription.ReadExtension): Add
+	XmlDocument param. For NET_2_0, add any elements with no corresponding
+	extensions to the DocumentableItem.Extensions property.
+	(ServiceDescriptionSerializer.Serialize): Use
+	WriteRoot_ServiceDescription instead of WriteTree.
+	(ServiceDescriptionSerializer.Deserialize): Use
+	ReadRoot_ServiceDescription instead of ReadTree.
+	* ServiceDescriptionSerializerBase.cs: Regenerate.
+
 2006-04-27  Ankit Jain  <jankit@novell.com>
 
 	* OperationMessage.cs (Extensions): Remove, incorrectly added in earlier

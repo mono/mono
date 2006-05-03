@@ -1,3 +1,10 @@
+2006-05-03  Ankit Jain  <jankit@novell.com>
+
+	* ServiceDescriptionTest.cs (Extensions) New test.
+	(CheckExtensions):
+	(CheckXmlElement): New. Helper methods.
+	* test.wsdl: Test wsdl.
+
 2006-04-27  Ankit Jain  <jankit@novell.com>
 
 	* ServiceDescriptionTest.cs (ExtensibleAttributes): New test.

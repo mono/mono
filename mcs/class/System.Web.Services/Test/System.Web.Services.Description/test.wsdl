@@ -6,6 +6,7 @@
       xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:s0="http://tempuri.org/"
       name="HelloService" targetNamespace="http://tempuri.org/"
       xmlns="http://schemas.xmlsoap.org/wsdl/" sdAtt="sdVal">
+  <sdElem>sdVal</sdElem>
   <types>
     <xs:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/"
           xmlns:xs="http://www.w3.org/2001/XMLSchema">
@@ -23,7 +24,10 @@
     </xs:schema>
   </types>
   <message name="HelloWorldSoapIn" msgAtt="msgVal">
-    <part name="parameters" element="s0:HelloWorld" partAtt="partVal"/>
+    <part name="parameters" element="s0:HelloWorld" partAtt="partVal">
+	<partElem>partVal</partElem>
+    </part>
+    <msgElem>msgVal</msgElem>
   </message>
   <message name="HelloWorldSoapOut">
     <part name="parameters" element="s0:HelloWorldResponse"/>
@@ -40,7 +44,9 @@
     <operation name="HelloWorld" opAtt="opVal">
       <input message="s0:HelloWorldSoapIn" opmsgAtt="opmsgVal"/>
       <output message="s0:HelloWorldSoapOut"/>
+      <opElem>opVal</opElem>
     </operation>
+    <ptElem>ptVal</ptElem>
   </portType>
   <portType name="HelloServiceHttpGet">
     <operation name="HelloWorld">
@@ -55,6 +61,7 @@
     </operation>
   </portType>
   <binding name="HelloServiceSoap" type="s0:HelloServiceSoap" binAtt="binVal">
+    <binElem>binVal</binElem>
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
     <operation name="HelloWorld">
       <soap:operation soapAction="http://tempuri.org/HelloWorld" style="document"/>
@@ -93,6 +100,7 @@
   <service name="HelloService" svcAtt="svcVal">
     <port name="HelloServiceSoap" binding="s0:HelloServiceSoap" portAtt="portVal">
       <soap:address location="http://192.168.0.128:8080/simple.asmx"/>
+      <portElem>portVal</portElem>
     </port>
     <port name="HelloServiceHttpGet" binding="s0:HelloServiceHttpGet">
       <http:address location="http://192.168.0.128:8080/simple.asmx"/>
@@ -100,6 +108,7 @@
     <port name="HelloServiceHttpPost" binding="s0:HelloServiceHttpPost">
       <http:address location="http://192.168.0.128:8080/simple.asmx"/>
     </port>
+    <svcElem>svcVal</svcElem>
   </service>
 </definitions>
 <definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
