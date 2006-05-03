@@ -1,3 +1,10 @@
+2006-05-02  Jonathan Chambers  <jonathan.chambers@ansys.com>
+
+	* marshal.c: Add BSTR support on Win32 (all changes under MIT X11)
+	* marshal.h: Add BSTR support on Win32
+	* icall.c: Add BSTR icalls
+	* metadata.h: Add BSTR enums
+
 2006-04-26  Miguel de Icaza  <miguel@novell.com>
 
 	* file-io.c (ves_icall_System_IO_MonoIO_Open): Remove `async'
