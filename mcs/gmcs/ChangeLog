@@ -1,5 +1,13 @@
 2006-05-03  Raja R Harinath  <rharinath@novell.com>
 
+	* flowanalysis.cs (FlowBranching.IsLoop): Remove.
+	(FlowBranching.IsTryOrCatch): Remove 'is_return' parameter.  It's
+	always true at the only non-recursive entry point.
+	(FlowBranching.CreateBranching) [BranchingType.Loop]: Return a
+	FlowBranchingBreakable.
+	(FlowBranchingLoop): Remove.
+	* statement.cs (Return.DoResolve): Update to changes.
+
 	Fix #76471, #76665
 	* flowanalysis.cs (FlowBranching.BranchingType.Embedded): New.
 	(FlowBranching.CreateBranching): Handle it: create a

@@ -280,7 +280,7 @@ namespace Mono.CSharp
 				return new FlowBranchingBlock (parent, type, SiblingType.Block, block, loc);
 
 			case BranchingType.Loop:
-				return new FlowBranchingLoop (parent, block, loc);
+				return new FlowBranchingBreakable (parent, type, SiblingType.Conditional, block, loc);
 
 			case BranchingType.Embedded:
 				return new FlowBranchingContinuable (parent, type, SiblingType.Conditional, block, loc);
@@ -998,23 +998,16 @@ namespace Mono.CSharp
 		//
 		// Checks whether we're in a `try' block.
 		//
-		public virtual bool InTryOrCatch (bool is_return)
+		public virtual bool InTryOrCatch ()
 		{
 			if (Block != null && Block.IsDestructor)
 				return true;
-			if (!is_return && (Type == BranchingType.Loop || Type == BranchingType.Switch))
-				return false;
-			return Parent != null && Parent.InTryOrCatch (is_return);
+			return Parent != null && Parent.InTryOrCatch ();
 		}
 
 		public virtual bool InTryWithCatch ()
 		{
 			return Parent != null && Parent.InTryWithCatch ();
-		}
-
-		public virtual bool InLoop ()
-		{
-			return Parent != null && Parent.InLoop ();
 		}
 
 		public virtual void AddFinallyVector (UsageVector vector)
@@ -1200,18 +1193,6 @@ namespace Mono.CSharp
 		}
 	}
 
-	public class FlowBranchingLoop : FlowBranchingBreakable
-	{
-		public FlowBranchingLoop (FlowBranching parent, Block block, Location loc)
-			: base (parent, BranchingType.Loop, SiblingType.Conditional, block, loc)
-		{ }
-
-		public override bool InLoop ()
-		{
-			return true;
-		}
-	}
-
 	public class FlowBranchingException : FlowBranching
 	{
 		ExceptionStatement stmt;
@@ -1255,7 +1236,7 @@ namespace Mono.CSharp
 			get { return current_vector; }
 		}
 
-		public override bool InTryOrCatch (bool is_return)
+		public override bool InTryOrCatch ()
 		{
 			return finally_vector == null;
 		}

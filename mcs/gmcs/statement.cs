@@ -620,7 +620,7 @@ namespace Mono.CSharp {
 
 			FlowBranching.UsageVector vector = ec.CurrentBranching.CurrentUsageVector;
 
-			if (ec.CurrentBranching.InTryOrCatch (true)) {
+			if (ec.CurrentBranching.InTryOrCatch ()) {
 				ec.CurrentBranching.AddFinallyVector (vector);
 				in_exc = true;
 			} else if (ec.InFinally) {
