@@ -32,6 +32,7 @@
 using System.Configuration.Provider;
 using System.Web.Configuration;
 using System.Security.Cryptography;
+using System.Text;
 
 namespace System.Web.Security
 {
@@ -78,61 +79,71 @@ namespace System.Web.Security
 
 		protected virtual byte[] DecryptPassword (byte[] encodedPassword)
 		{
-			byte[] decryptionKey;
-			SymmetricAlgorithm alg = GetAlg (out decryptionKey);
-
-			ICryptoTransform decryptor = alg.CreateDecryptor (decryptionKey, InitVector);
-
-			return decryptor.TransformFinalBlock (encodedPassword, 0, encodedPassword.Length);
+			throw new NotImplementedException ();
 		}
 
 		protected virtual byte[] EncryptPassword (byte[] password)
 		{
-			byte[] decryptionKey;
-			SymmetricAlgorithm alg = GetAlg (out decryptionKey);
-
-			ICryptoTransform encryptor = alg.CreateEncryptor (decryptionKey, InitVector);
-
-			return encryptor.TransformFinalBlock (password, 0, password.Length);
+			throw new NotImplementedException ();
 		}
-		
+
 		public event MembershipValidatePasswordEventHandler ValidatingPassword;
 
-		SymmetricAlgorithm GetAlg (out byte[] decryptionKey)
+		internal string EncodePassword (string password, MembershipPasswordFormat passwordFormat, string salt)
 		{
-			MachineKeySection section = (MachineKeySection)WebConfigurationManager.GetSection ("system.web/machineKey");
+			byte[] password_bytes;
+			byte[] salt_bytes;
 
-			if (section.DecryptionKey.StartsWith ("AutoGenerate"))
-				throw new ProviderException ("You must explicitly specify a decryption key in the <machineKey> section when using encrypted passwords.");
+			switch (passwordFormat) {
+			case MembershipPasswordFormat.Clear:
+				return password;
+			case MembershipPasswordFormat.Hashed:
+				password_bytes = Encoding.Unicode.GetBytes (password);
+				salt_bytes = Convert.FromBase64String (salt);
 
-			string alg_type = section.Decryption;
-			if (alg_type == "Auto")
-				alg_type = "AES";
+				byte[] hashBytes = new byte[salt_bytes.Length + password_bytes.Length];
 
-			SymmetricAlgorithm alg = null;
-			if (alg_type == "AES")
-				alg = Rijndael.Create ();
-			else if (alg_type == "3DES")
-				alg = TripleDES.Create ();
-			else
-				throw new ProviderException (String.Format ("Unsupported decryption attribute '{0}' in <machineKey> configuration section", alg_type));
+				Buffer.BlockCopy (salt_bytes, 0, hashBytes, 0, salt_bytes.Length);
+				Buffer.BlockCopy (password_bytes, 0, hashBytes, salt_bytes.Length, password_bytes.Length);
 
-			decryptionKey = section.DecryptionKey192Bits;
-			return alg;
+				MembershipSection section = (MembershipSection)WebConfigurationManager.GetSection ("system.web/membership");
+				string alg_type = section.HashAlgorithmType;
+				if (alg_type == "") {
+					MachineKeySection keysection = (MachineKeySection)WebConfigurationManager.GetSection ("system.web/machineKey");
+					alg_type = keysection.Validation.ToString ();
+				}
+				using (HashAlgorithm hash = HashAlgorithm.Create (alg_type)) {
+					hash.TransformFinalBlock (hashBytes, 0, hashBytes.Length);
+					return Convert.ToBase64String (hash.Hash);
+				}
+			case MembershipPasswordFormat.Encrypted:
+				password_bytes = Encoding.Unicode.GetBytes (password);
+				salt_bytes = Convert.FromBase64String (salt);
+
+				byte[] buf = new byte[password_bytes.Length + salt_bytes.Length];
+
+				Array.Copy (salt_bytes, 0, buf, 0, salt_bytes.Length);
+				Array.Copy (password_bytes, 0, buf, salt_bytes.Length, password_bytes.Length);
+
+				return Convert.ToBase64String (EncryptPassword (buf));
+			default:
+				/* not reached.. */
+				return null;
+			}
 		}
 
-		byte[] init_vector;
-		byte[] InitVector {
-			get {
-				if (init_vector == null) {
-					/* come up with an init_vector for encryption algorithms */
-					// IV is 8 bytes long for 3DES
-					init_vector = new byte[8];
-					for (int i = 0; i < 8; i++)
-						init_vector [i] = (byte) ApplicationName [i % ApplicationName.Length];
-				}
-
-				return init_vector;
+		internal string DecodePassword (string password, MembershipPasswordFormat passwordFormat)
+		{
+			switch (passwordFormat) {
+			case MembershipPasswordFormat.Clear:
+				return password;
+			case MembershipPasswordFormat.Hashed:
+				throw new ProviderException ("Hashed passwords cannot be decoded.");
+			case MembershipPasswordFormat.Encrypted:
+				return Encoding.Unicode.GetString (DecryptPassword (Convert.FromBase64String (password)));
+			default:
+				/* not reached.. */
+				return null;
 			}
 		}
 	}

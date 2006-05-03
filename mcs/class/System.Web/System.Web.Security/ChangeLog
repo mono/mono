@@ -1,3 +1,33 @@
+2006-05-03  Chris Toshok  <toshok@ximian.com>
+
+	* SqlMembershipProvider.cs (GetAlg): move this here for the time
+	being, as it's the only class that uses it.
+	(HashAndBase64Encode): nuke.
+	(EncryptAndBase64Encode): nuke.
+	(Base64DecodeAndDecrypt): nuke.
+	(DecryptPassword): new function.
+	(EncryptPassword): new function.
+	(ChangePassword): replace the switch with a call to
+	EncodePassword.
+	(ChangePasswordQuestionAndAnswer): same.
+	(CreateUser): same.
+	(ResetPassword): same.
+	(ValidateUsingPassword): same.
+	(ValidateUsingPasswordAnswer): same.
+	(GetPassword): same, and throw MembershipPasswordException if the
+	password answer is incorrect.
+
+	* MembershipProvider.cs (InitVector): nuke this.  it's actually
+	the salt from the database (for the sql provider, anyway).
+	(EncodePassword): based on the password format, password, and
+	salt, encode it.  Makes use of EncryptPassword.
+	(DecodePassword): likewise for decoding, makes use of
+	DecryptPassword.
+	(DecryptPassword): revert this to throwing
+	NotImplementedException, as the sql provideroverrides it to
+	perform the actual decryption.
+	(EncryptPassword): same.
+
 2006-05-02  Chris Toshok  <toshok@ximian.com>
 
 	* SqlMembershipProvider.cs: 85% complete, maybe more.  The major

@@ -101,35 +101,60 @@ namespace System.Web.Security {
 				throw new ArgumentException (String.Format ("invalid format for {0}", pName));
 		}
 
-		string HashAndBase64Encode (string s, byte[] salt)
+		SymmetricAlgorithm GetAlg (out byte[] decryptionKey)
 		{
-			byte[] tmp = Encoding.Unicode.GetBytes (s);
+			MachineKeySection section = (MachineKeySection)WebConfigurationManager.GetSection ("system.web/machineKey");
 
-			byte[] hashBytes = new byte[salt.Length + tmp.Length];
+			if (section.DecryptionKey.StartsWith ("AutoGenerate"))
+				throw new ProviderException ("You must explicitly specify a decryption key in the <machineKey> section when using encrypted passwords.");
 
-			Buffer.BlockCopy (salt, 0, hashBytes, 0, salt.Length);
-			Buffer.BlockCopy (tmp, 0, hashBytes, salt.Length, tmp.Length);
+			string alg_type = section.Decryption;
+			if (alg_type == "Auto")
+				alg_type = "AES";
 
-			MembershipSection section = (MembershipSection)WebConfigurationManager.GetSection ("system.web/membership");
-			string alg_type = section.HashAlgorithmType;
-			if (alg_type == "") {
-				MachineKeySection keysection = (MachineKeySection)WebConfigurationManager.GetSection ("system.web/machineKey");
-				alg_type = keysection.Validation.ToString ();
-			}
-			using (HashAlgorithm hash = HashAlgorithm.Create (alg_type)) {
-				hash.TransformFinalBlock (hashBytes, 0, hashBytes.Length);
-				return Convert.ToBase64String (hash.Hash);
-			}
+			SymmetricAlgorithm alg = null;
+			if (alg_type == "AES")
+				alg = Rijndael.Create ();
+			else if (alg_type == "3DES")
+				alg = TripleDES.Create ();
+			else
+				throw new ProviderException (String.Format ("Unsupported decryption attribute '{0}' in <machineKey> configuration section", alg_type));
+
+			decryptionKey = section.DecryptionKey192Bits;
+			return alg;
 		}
 
-		string EncryptAndBase64Encode (string s)
-		{
-			return Convert.ToBase64String (EncryptPassword (Encoding.UTF8.GetBytes (s)));
-		}
+                protected override byte[] DecryptPassword (byte[] encodedPassword)
+                {
+			byte[] decryptionKey;
 
-		string Base64DecodeAndDecrypt (string s)
-		{
-			return Encoding.UTF8.GetString (DecryptPassword (Convert.FromBase64String (s)));
+			using (SymmetricAlgorithm alg = GetAlg (out decryptionKey)) {
+				alg.Key = decryptionKey;
+
+				using (ICryptoTransform decryptor = alg.CreateDecryptor ()) {
+
+					byte[] buf = decryptor.TransformFinalBlock (encodedPassword, 0, encodedPassword.Length);
+					byte[] rv = new byte[buf.Length - SALT_BYTES];
+
+					Array.Copy (buf, 16, rv, 0, buf.Length - 16);
+					return rv;
+				}
+			}
+                }
+
+                protected override byte[] EncryptPassword (byte[] password)
+                {
+			byte[] decryptionKey;
+			byte[] iv = new byte[SALT_BYTES];
+
+			Array.Copy (password, 0, iv, 0, SALT_BYTES);
+			Array.Clear (password, 0, SALT_BYTES);
+
+			using (SymmetricAlgorithm alg = GetAlg (out decryptionKey)) {
+				using (ICryptoTransform encryptor = alg.CreateEncryptor (decryptionKey, iv)) {
+					return encryptor.TransformFinalBlock (password, 0, password.Length);
+				}
+			}
 		}
 
 		public override bool ChangePassword (string username, string oldPwd, string newPwd)
@@ -162,19 +187,7 @@ namespace System.Web.Security {
 
 					EmitValidatingPassword (username, newPwd, false);
 
-					string db_password = newPwd;
-
-					switch (passwordFormat) {
-					case MembershipPasswordFormat.Hashed:
-						byte[] salt = Convert.FromBase64String (db_salt);
-						db_password = HashAndBase64Encode (db_password, salt);
-						break;
-					case MembershipPasswordFormat.Encrypted:
-						db_password = EncryptAndBase64Encode (db_password);
-						break;
-					case MembershipPasswordFormat.Clear:
-						break;
-					}
+					string db_password = EncodePassword (newPwd, passwordFormat, db_salt);
 
 					DateTime now = DateTime.Now.ToUniversalTime ();
 
@@ -249,19 +262,7 @@ UPDATE m
 				bool valid = ValidateUsingPassword (trans, username, password, out passwordFormat, out db_salt);
 				if (valid) {
 
-					string db_passwordAnswer = newPwdAnswer;
-
-					switch (passwordFormat) {
-					case MembershipPasswordFormat.Hashed:
-						byte[] salt = Convert.FromBase64String (db_salt);
-						db_passwordAnswer = HashAndBase64Encode (db_passwordAnswer, salt);
-						break;
-					case MembershipPasswordFormat.Encrypted:
-						db_passwordAnswer = EncryptAndBase64Encode (db_passwordAnswer);
-						break;
-					case MembershipPasswordFormat.Clear:
-						break;
-					}
+					string db_passwordAnswer = EncodePassword (newPwdAnswer, passwordFormat, db_salt);
 
 					commandText = @"
 UPDATE m
@@ -357,23 +358,13 @@ UPDATE m
 			string passwordSalt = "";
 
 			RandomNumberGenerator rng = RandomNumberGenerator.Create ();
+			byte[] salt = new byte[SALT_BYTES];
+			rng.GetBytes (salt);
+			passwordSalt = Convert.ToBase64String (salt);
 
-			switch (PasswordFormat) {
-			case MembershipPasswordFormat.Hashed:
-				byte[] salt = new byte[SALT_BYTES];
-				rng.GetBytes (salt);
-				passwordSalt = Convert.ToBase64String (salt);
-				password = HashAndBase64Encode (password, salt);
-				if (RequiresQuestionAndAnswer)
-					pwdAnswer = HashAndBase64Encode (pwdAnswer, salt);
-				break;
-			case MembershipPasswordFormat.Encrypted:
-				password = EncryptAndBase64Encode (password);
-				break;
-			case MembershipPasswordFormat.Clear:
-			default:
-				break;
-			}
+			password = EncodePassword (password, PasswordFormat, passwordSalt);
+			if (RequiresQuestionAndAnswer)
+				pwdAnswer = EncodePassword (pwdAnswer, PasswordFormat, passwordSalt);
 
 			/* make sure the hashed/encrypted password and
 			 * answer are still under 128 characters. */
@@ -833,7 +824,6 @@ SELECT COUNT (*)
 			return (int)command.ExecuteScalar ();
 		}
 		
-		[MonoTODO ("more details here")]
 		public override string GetPassword (string username, string answer)
 		{
 			if (!enablePasswordRetrieval)
@@ -889,20 +879,18 @@ SELECT m.Password
 					password = reader.GetString (0);
 					reader.Close();
 
-					/* decrypt the password */
-					switch (passwordFormat) {
-					case MembershipPasswordFormat.Hashed:
-						throw new NotSupportedException ("can't retrieve hashed passwords");
-					case MembershipPasswordFormat.Encrypted:
-						password = Base64DecodeAndDecrypt (password);
-						break;
-					case MembershipPasswordFormat.Clear:
-						break;
-					}
+					password = DecodePassword (password, passwordFormat);
+				}
+				else {
+					throw new MembershipPasswordException ("The password-answer supplied is wrong.");
 				}
 
 				trans.Commit ();
 				return password;
+			}
+			catch (MembershipPasswordException) {
+				trans.Commit ();
+				throw;
 			}
 			catch {
 				trans.Rollback ();
@@ -1198,23 +1186,13 @@ SELECT u.UserName
 				if (ValidateUsingPasswordAnswer (trans, user.UserName, answer, out db_passwordFormat, out db_salt)) {
 
 					newPassword = GeneratePassword ();
-					string db_password = newPassword;
+					string db_password;
 
 					EmitValidatingPassword (username, newPassword, false);
 
 					/* otherwise update the user's password in the db */
 
-					switch (db_passwordFormat) {
-					case MembershipPasswordFormat.Hashed:
-						byte[] salt = Convert.FromBase64String (db_salt);
-						db_password = HashAndBase64Encode (newPassword, salt);
-						break;
-					case MembershipPasswordFormat.Encrypted:
-						db_password = EncryptAndBase64Encode (newPassword);
-						break;
-					case MembershipPasswordFormat.Clear:
-						break;
-					}
+					db_password = EncodePassword (newPassword, db_passwordFormat, db_salt);
 
 					commandText = @"
 UPDATE m
@@ -1439,9 +1417,7 @@ UPDATE dbo.aspnet_Users
 
 				return valid;
 			}
-			catch (Exception e) {
-				Console.WriteLine (e);
-
+			catch {
 				trans.Rollback ();
 
 				throw;
@@ -1608,16 +1584,7 @@ SELECT m.Password, m.PasswordFormat, m.PasswordSalt
 			reader.Close();
 
 			/* do the actual validation */
-			switch (passwordFormat) {
-			case MembershipPasswordFormat.Hashed:
-				password = HashAndBase64Encode (password, Convert.FromBase64String (salt));
-				break;
-			case MembershipPasswordFormat.Encrypted:
-				password = EncryptAndBase64Encode (password);
-				break;
-			case MembershipPasswordFormat.Clear:
-				break;
-			}
+			password = EncodePassword (password, passwordFormat, salt);
 
 			bool valid = (password == db_password);
 
@@ -1660,16 +1627,7 @@ SELECT m.PasswordAnswer, m.PasswordFormat, m.PasswordSalt
 			reader.Close();
 
 			/* do the actual password answer check */
-			switch (passwordFormat) {
-			case MembershipPasswordFormat.Hashed:
-				answer = HashAndBase64Encode (answer, Convert.FromBase64String (salt));
-				break;
-			case MembershipPasswordFormat.Encrypted:
-				answer = EncryptAndBase64Encode (answer);
-				break;
-			case MembershipPasswordFormat.Clear:
-				break;
-			}
+			answer = EncodePassword (answer, passwordFormat, salt);
 
 			if (answer.Length > 128)
 				throw new ArgumentException (String.Format ("password answer hashed to longer than 128 characters"));
