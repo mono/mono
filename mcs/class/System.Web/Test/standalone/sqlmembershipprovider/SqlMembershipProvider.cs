@@ -237,7 +237,9 @@ namespace Toshok.Web.Security {
 			byte[] buf = decryptor.TransformFinalBlock (encodedPassword, 0, encodedPassword.Length);
 			byte[] rv = new byte[buf.Length - SALT_BYTES];
 
-			return buf;
+			Array.Copy (buf, 16, rv, 0, buf.Length - 16);
+
+			return rv;
                 }
 
                 protected override byte[] EncryptPassword (byte[] password)

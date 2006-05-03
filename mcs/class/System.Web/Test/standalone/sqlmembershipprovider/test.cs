@@ -197,8 +197,6 @@ public class ProvPoker : Toshok.Web.Security.SqlMembershipProvider {
 		Console.WriteLine ("pwd = ({0})", Convert.ToBase64String (pwd));
 		byte[] buf = base.DecryptPassword (pwd);
 		Console.WriteLine ("buf = {0} bytes long ({1})", buf.Length, Convert.ToBase64String (buf));
-		byte[] rv = new byte[buf.Length - 16];
-		Array.Copy (buf, 16, rv, 0, buf.Length - 16);
-		return rv;
+		return buf;
 	}
 }
