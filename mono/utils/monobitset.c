@@ -614,7 +614,7 @@ mono_bitset_sub (MonoBitSet *dest, const MonoBitSet *src) {
 
 	g_assert (src->size <= dest->size);
 
-	size = dest->size / BITS_PER_CHUNK;
+	size = src->size / BITS_PER_CHUNK;
 	for (i = 0; i < size; ++i)
 		dest->data [i] &= ~src->data [i];
 }

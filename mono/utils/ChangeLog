@@ -1,5 +1,7 @@
 2006-05-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* monobitset.c: Fix mono_bitset_sub again: Use src->size instead of dest->size.
+
 	* monobitset.h monobitset.c: Add new macros for performing copy/union operations
 	with little overhead.
 
