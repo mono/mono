@@ -1,5 +1,24 @@
 2006-05-03  Raja R Harinath  <rharinath@novell.com>
 
+	Fix #76471, #76665
+	* flowanalysis.cs (FlowBranching.BranchingType.Embedded): New.
+	(FlowBranching.CreateBranching): Handle it: create a
+	FlowBranchingContinuable.
+	(FlowBranching.BreakCrossesExceptionBoundary): Remove.
+	(FlowBranching.AddContinueOrigin): Similar to AddBreakOrigin,
+	except that it handles the 'continue' command.
+	(FlowBranching.UsageVector.MergeOrigins): Rename from
+	MergeBreakOrigins.
+	(FlowBranchingContinuable): Similar to FlowBranchingBreakable,
+	except that it overrides AddContinueOrigin.
+	(FlowBranchingException): Override AddContinueOrigin, similar to
+	AddBreakOrigin.
+	* statement.cs (While.Resolve, Foreach.ArrayForeach.Resolve):
+	Create a new branching around the embedded statement.
+	(Do.Resolve, For.Resolve): Likewise.  Do reachability analysis for
+	control flow after the embedded statement.
+	(Continue.Resolve): Move all error checking to AddContinueOrigin.
+
 	* flowanalysis.cs (FlowBranching.IsSwitch): Remove.
 	(FlowBranching.CreateBranching) [BranchingType.Switch]: Create a
 	FlowBranchingBreakable.

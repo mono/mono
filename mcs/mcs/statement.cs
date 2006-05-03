@@ -253,8 +253,15 @@ namespace Mono.CSharp {
 
 			ec.StartFlowBranching (FlowBranching.BranchingType.Loop, loc);
 
+			bool was_unreachable = ec.CurrentBranching.CurrentUsageVector.Reachability.IsUnreachable;
+
+			ec.StartFlowBranching (FlowBranching.BranchingType.Embedded, loc);
 			if (!EmbeddedStatement.Resolve (ec))
 				ok = false;
+			ec.EndFlowBranching ();
+
+			if (ec.CurrentBranching.CurrentUsageVector.Reachability.IsUnreachable && !was_unreachable)
+				Report.Warning (162, 2, expr.Location, "Unreachable code detected");
 
 			expr = Expression.ResolveBoolean (ec, expr, loc);
 			if (expr == null)
@@ -344,8 +351,10 @@ namespace Mono.CSharp {
 			if (!infinite)
 				ec.CurrentBranching.CreateSibling ();
 
+			ec.StartFlowBranching (FlowBranching.BranchingType.Embedded, loc);
 			if (!Statement.Resolve (ec))
 				ok = false;
+			ec.EndFlowBranching ();
 
 			// There's no direct control flow from the end of the embedded statement to the end of the loop
 			ec.CurrentBranching.CurrentUsageVector.Goto ();
@@ -454,12 +463,21 @@ namespace Mono.CSharp {
 			if (!infinite)
 				ec.CurrentBranching.CreateSibling ();
 
+			bool was_unreachable = ec.CurrentBranching.CurrentUsageVector.Reachability.IsUnreachable;
+
+			ec.StartFlowBranching (FlowBranching.BranchingType.Embedded, loc);
 			if (!Statement.Resolve (ec))
 				ok = false;
+			ec.EndFlowBranching ();
 
 			if (Increment != null){
-				if (!Increment.Resolve (ec))
-					ok = false;
+				if (ec.CurrentBranching.CurrentUsageVector.Reachability.IsUnreachable) {
+					if (!Increment.ResolveUnreachable (ec, !was_unreachable))
+						ok = false;
+				} else {
+					if (!Increment.Resolve (ec))
+						ok = false;
+				}
 			}
 
 			// There's no direct control flow from the end of the embedded statement to the end of the loop
@@ -901,13 +919,14 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
+			int errors = Report.Errors;
 			crossing_exc = ec.CurrentBranching.AddBreakOrigin (ec.CurrentBranching.CurrentUsageVector, loc);
 
 			if (!crossing_exc)
 				ec.NeedReturnLabel ();
 
 			ec.CurrentBranching.CurrentUsageVector.Break ();
-			return true;
+			return errors == Report.Errors;
 		}
 
 		protected override void DoEmit (EmitContext ec)
@@ -933,19 +952,10 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
-			if (!ec.CurrentBranching.InLoop ()){
-				Error (139, "No enclosing loop out of which to break or continue");
-				return false;
-			} else if (ec.InFinally) {
-				Error (157, "Control cannot leave the body of a finally clause");
-				return false;
-			} else if (ec.CurrentBranching.InTryOrCatch (false))
-				ec.CurrentBranching.AddFinallyVector (ec.CurrentBranching.CurrentUsageVector);
-
-			crossing_exc = ec.CurrentBranching.BreakCrossesTryCatchBoundary ();
-
+			int errors = Report.Errors;
+			crossing_exc = ec.CurrentBranching.AddContinueOrigin (ec.CurrentBranching.CurrentUsageVector, loc);
 			ec.CurrentBranching.CurrentUsageVector.Goto ();
-			return true;
+			return errors == Report.Errors;
 		}
 
 		protected override void DoEmit (EmitContext ec)
@@ -4277,8 +4287,10 @@ namespace Mono.CSharp {
 				if (variable == null)
 					ok = false;
 
+				ec.StartFlowBranching (FlowBranching.BranchingType.Embedded, loc);
 				if (!statement.Resolve (ec))
 					ok = false;
+				ec.EndFlowBranching ();
 
 				// There's no direct control flow from the end of the embedded statement to the end of the loop
 				ec.CurrentBranching.CurrentUsageVector.Goto ();
