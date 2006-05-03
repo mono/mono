@@ -1,3 +1,9 @@
+2006-05-03  Raja R Harinath  <rharinath@novell.com>
+
+	* statement.cs (Foreach.ArrayForeach.Resolve): Set barrier after
+	embedded statement.
+	(Foreach.CollectionForeach.Resolve): Remove extraneous flowbranching.
+
 2006-05-02  Raja R Harinath  <rharinath@novell.com>
 
 	* statement.cs (Do.Resolve): If the loop is infinite, set the

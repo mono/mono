@@ -4297,6 +4297,9 @@ namespace Mono.CSharp {
 				if (!statement.Resolve (ec))
 					ok = false;
 
+				// There's no direct control flow from the end of the embedded statement to the end of the loop
+				ec.CurrentBranching.CurrentUsageVector.Goto ();
+
 				ec.EndFlowBranching ();
 
 				return ok;
@@ -4658,9 +4661,6 @@ namespace Mono.CSharp {
 
 				bool ok = true;
 
-				ec.StartFlowBranching (FlowBranching.BranchingType.Loop, loc);
-				ec.CurrentBranching.CreateSibling ();
-
 				FlowBranchingException branching = null;
 				if (is_disposable)
 					branching = ec.StartFlowBranching (this);
@@ -4673,8 +4673,6 @@ namespace Mono.CSharp {
 					ec.EndFlowBranching ();
 				} else
 					emit_finally = true;
-
-				ec.EndFlowBranching ();
 
 				return ok;
 			}
