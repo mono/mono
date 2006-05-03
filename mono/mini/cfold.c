@@ -545,8 +545,7 @@ mono_constant_fold_ins2 (MonoCompile *cfg, MonoInst *ins, MonoInst *arg1, MonoIn
 				}
 
 				if (overwrite) {
-					ins->opcode = OP_NOP;
-					ins->sreg1 = ins->sreg2 = -1;
+					NULLIFY_INS (ins);
 					next->opcode = OP_ICONST;
 					next->inst_c0 = res;
 					next->sreg1 = next->sreg2 = -1;
@@ -600,10 +599,8 @@ mono_constant_fold_ins2 (MonoCompile *cfg, MonoInst *ins, MonoInst *arg1, MonoIn
 				/* This happens when a conditional branch is eliminated */
 				if (next->next == NULL) {
 					/* Last ins */
-					if (overwrite) {
-						ins->opcode = OP_NOP;
-						ins->sreg1 = ins->sreg2 = -1;
-					}
+					if (overwrite)
+						NULLIFY_INS (ins);
 				}
 				break;
 			default:

@@ -73,6 +73,16 @@ update_live_range (MonoCompile *cfg, int idx, int block_dfn, int tree_pos)
 		range->last_use.abs_pos = abs_pos;
 }
 
+static inline void
+update_live_range2 (MonoMethodVar *var, int abs_pos)
+{
+	if (var->range.first_use.abs_pos > abs_pos)
+		var->range.first_use.abs_pos = abs_pos;
+
+	if (var->range.last_use.abs_pos < abs_pos)
+		var->range.last_use.abs_pos = abs_pos;
+}
+
 static void
 update_gen_kill_set (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *inst, int inst_num)
 {
@@ -290,11 +300,10 @@ static void
 analyze_liveness_bb (MonoCompile *cfg, MonoBasicBlock *bb)
 {
 	MonoInst *ins;
-	int sreg, inst_num, dfn;
-	gboolean store;
-
-	dfn = bb->dfn;
-
+	int sreg, inst_num;
+	MonoMethodVar *vars = cfg->vars;
+	guint32 abs_pos = (bb->dfn << 16);
+	
 	for (inst_num = 0, ins = bb->code; ins; ins = ins->next, inst_num += 2) {
 		const char *spec = INS_INFO (ins->opcode);
 
@@ -313,18 +322,11 @@ analyze_liveness_bb (MonoCompile *cfg, MonoBasicBlock *bb)
 #ifdef DEBUG_LIVENESS
 			printf ("\tGEN: R%d(%d)\n", var->dreg, idx);
 #endif
-			update_live_range (cfg, idx, dfn, inst_num); 
-			if (!mono_bitset_test (bb->kill_set, idx))
+			update_live_range2 (&vars [idx], abs_pos + inst_num); 
+			if (!mono_bitset_test_fast (bb->kill_set, idx))
 				mono_bitset_set_fast (bb->gen_set, idx);
 			vi->spill_costs += SPILL_COST_INCREMENT;
 		}				
-
-		if (MONO_IS_STORE_MEMBASE (ins))
-			store = TRUE;
-		else if (MONO_IS_STORE_MEMINDEX (ins))
-			g_assert_not_reached ();
-		else
-			store = FALSE;
 
 		/* SREGs must come first, so MOVE r <- r is handled correctly */
 
@@ -338,8 +340,8 @@ analyze_liveness_bb (MonoCompile *cfg, MonoBasicBlock *bb)
 #ifdef DEBUG_LIVENESS
 			printf ("\tGEN: R%d(%d)\n", sreg, idx);
 #endif
-			update_live_range (cfg, idx, dfn, inst_num); 
-			if (!mono_bitset_test (bb->kill_set, idx))
+			update_live_range2 (&vars [idx], abs_pos + inst_num); 
+			if (!mono_bitset_test_fast (bb->kill_set, idx))
 				mono_bitset_set_fast (bb->gen_set, idx);
 			vi->spill_costs += SPILL_COST_INCREMENT;
 		}
@@ -354,8 +356,8 @@ analyze_liveness_bb (MonoCompile *cfg, MonoBasicBlock *bb)
 #ifdef DEBUG_LIVENESS
 			printf ("\tGEN: R%d(%d)\n", sreg, idx);
 #endif
-			update_live_range (cfg, idx, dfn, inst_num); 
-			if (!mono_bitset_test (bb->kill_set, idx))
+			update_live_range2 (&vars [idx], abs_pos + inst_num); 
+			if (!mono_bitset_test_fast (bb->kill_set, idx))
 				mono_bitset_set_fast (bb->gen_set, idx);
 			vi->spill_costs += SPILL_COST_INCREMENT;
 		}
@@ -366,16 +368,16 @@ analyze_liveness_bb (MonoCompile *cfg, MonoBasicBlock *bb)
 			int idx = var->inst_c0;
 			MonoMethodVar *vi = MONO_VARINFO (cfg, idx);
 
-			if (store) {
-				update_live_range (cfg, idx, dfn, inst_num); 
-				if (!mono_bitset_test (bb->kill_set, idx))
+			if (MONO_IS_STORE_MEMBASE (ins)) {
+				update_live_range2 (&vars [idx], abs_pos + inst_num); 
+				if (!mono_bitset_test_fast (bb->kill_set, idx))
 					mono_bitset_set_fast (bb->gen_set, idx);
 				vi->spill_costs += SPILL_COST_INCREMENT;
 			} else {
 #ifdef DEBUG_LIVENESS
 				printf ("\tKILL: R%d(%d)\n", ins->dreg, idx);
 #endif
-				update_live_range (cfg, idx, dfn, inst_num + 1); 
+				update_live_range2 (&vars [idx], abs_pos + inst_num + 1); 
 				mono_bitset_set_fast (bb->kill_set, idx);
 				vi->spill_costs += SPILL_COST_INCREMENT;
 			}
@@ -508,7 +510,7 @@ mono_analyze_liveness (MonoCompile *cfg)
 		}
 		else {
 			changed = FALSE;
-			mono_bitset_copyto (bb->live_out_set, old_live_out_set);
+			mono_bitset_copyto_fast (bb->live_out_set, old_live_out_set);
 		}
  
 		for (j = 0; j < bb->out_count; j++) {
@@ -518,12 +520,12 @@ mono_analyze_liveness (MonoCompile *cfg)
 				out_bb->live_in_set = mono_bitset_mem_new (mem, max_vars, MONO_BITSET_DONT_FREE);
 				mem += bitsize;
 
-				mono_bitset_copyto (out_bb->live_out_set, out_bb->live_in_set);
-				mono_bitset_sub (out_bb->live_in_set, out_bb->kill_set);
-				mono_bitset_union (out_bb->live_in_set, out_bb->gen_set);
+				mono_bitset_copyto_fast (out_bb->live_out_set, out_bb->live_in_set);
+				mono_bitset_sub_fast (out_bb->live_in_set, out_bb->kill_set);
+				mono_bitset_union_fast (out_bb->live_in_set, out_bb->gen_set);
 			}
 
-			mono_bitset_union (bb->live_out_set, out_bb->live_in_set);
+			mono_bitset_union_fast (bb->live_out_set, out_bb->live_in_set);
 		}
 				
 		if (changed || !mono_bitset_equal (old_live_out_set, bb->live_out_set)) {
@@ -531,9 +533,9 @@ mono_analyze_liveness (MonoCompile *cfg)
 				bb->live_in_set = mono_bitset_mem_new (mem, max_vars, MONO_BITSET_DONT_FREE);
 				mem += bitsize;
 			}
-			mono_bitset_copyto (bb->live_out_set, bb->live_in_set);
-			mono_bitset_sub (bb->live_in_set, bb->kill_set);
-			mono_bitset_union (bb->live_in_set, bb->gen_set);
+			mono_bitset_copyto_fast (bb->live_out_set, bb->live_in_set);
+			mono_bitset_sub_fast (bb->live_in_set, bb->kill_set);
+			mono_bitset_union_fast (bb->live_in_set, bb->gen_set);
 
 			for (j = 0; j < bb->in_count; j++) {
 				MonoBasicBlock *in_bb = bb->in_bb [j];
@@ -573,19 +575,17 @@ mono_analyze_liveness (MonoCompile *cfg)
 			bb->live_in_set = mono_bitset_mem_new (mem, max_vars, MONO_BITSET_DONT_FREE);
 			mem += bitsize;
 
-			mono_bitset_copyto (bb->live_out_set, bb->live_in_set);
-			mono_bitset_sub (bb->live_in_set, bb->kill_set);
-			mono_bitset_union (bb->live_in_set, bb->gen_set);
+			mono_bitset_copyto_fast (bb->live_out_set, bb->live_in_set);
+			mono_bitset_sub_fast (bb->live_in_set, bb->kill_set);
+			mono_bitset_union_fast (bb->live_in_set, bb->gen_set);
 		}
 	}
 
-	/*
-	 * This code can be slow for large methods so inline the calls to
-	 * mono_bitset_test.
-	 */
 	for (i = 0; i < cfg->num_bblocks; ++i) {
 		MonoBasicBlock *bb = cfg->bblocks [i];
 		guint32 rem, max;
+		guint32 abs_pos = (bb->dfn << 16);
+		MonoMethodVar *vars = cfg->vars;
 
 		if (!bb->live_out_set)
 			continue;
@@ -608,9 +608,9 @@ mono_analyze_liveness (MonoCompile *cfg)
 			k = (j * BITS_PER_CHUNK);
 			while ((bits_in || bits_out)) {
 				if (bits_in & 1)
-					update_live_range (cfg, k, bb->dfn, 0);
+					update_live_range2 (&vars [k], abs_pos + 0);
 				if (bits_out & 1)
-					update_live_range (cfg, k, bb->dfn, 0xffff);
+					update_live_range2 (&vars [k], abs_pos + 0xffff);
 				bits_in >>= 1;
 				bits_out >>= 1;
 				k ++;

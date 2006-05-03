@@ -173,6 +173,16 @@ mono_create_ftnptr (MonoDomain *domain, gpointer addr)
 #endif
 }
 
+static inline MonoBitSet* 
+mono_bitset_mp_new_noinit (MonoMemPool *mp,  guint32 max_size)
+{
+	int size = mono_bitset_alloc_size (max_size, 0);
+	gpointer mem;
+
+	mem = mono_mempool_alloc (mp, size);
+	return mono_bitset_mem_new (mem, max_size, MONO_BITSET_DONT_FREE);
+}
+
 typedef struct {
 	void *ip;
 	MonoMethod *method;
@@ -1673,9 +1683,11 @@ mono_compile_create_var_for_vreg (MonoCompile *cfg, MonoType *type, int opcode, 
 	int num = cfg->num_varinfo;
 
 	if ((num + 1) >= cfg->varinfo_count) {
+		int orig_count = cfg->varinfo_count;
 		cfg->varinfo_count = cfg->varinfo_count ? (cfg->varinfo_count * 2) : 64;
 		cfg->varinfo = (MonoInst **)g_realloc (cfg->varinfo, sizeof (MonoInst*) * cfg->varinfo_count);
-		cfg->vars = (MonoMethodVar **)g_realloc (cfg->vars, sizeof (MonoMethodVar*) * cfg->varinfo_count);      
+		cfg->vars = (MonoMethodVar *)g_realloc (cfg->vars, sizeof (MonoMethodVar) * cfg->varinfo_count);
+		memset (&cfg->vars [orig_count], 0, (cfg->varinfo_count - orig_count) * sizeof (MonoMethodVar));
 	}
 
 	/*g_print ("created temp %d of type 0x%x\n", num, type->type);*/
@@ -1692,8 +1704,7 @@ mono_compile_create_var_for_vreg (MonoCompile *cfg, MonoType *type, int opcode, 
 
 	cfg->varinfo [num] = inst;
 
-	cfg->vars [num] = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoMethodVar));
-	MONO_INIT_VARINFO (cfg->vars [num], num);
+	MONO_INIT_VARINFO (&cfg->vars [num], num);
 
 	if (vreg != -1)
 		set_vreg_to_inst (cfg, vreg, inst);
@@ -8930,8 +8941,7 @@ mono_merge_basic_blocks (MonoBasicBlock *bb, MonoBasicBlock *bbn)
 	for (inst = bb->code; inst != NULL; inst = inst->next) {
 		if (inst->opcode == OP_CALL_HANDLER) {
 			g_assert (inst->inst_target_bb == bbn);
-			inst->opcode = OP_NOP;
-			inst->dreg = inst->sreg1 = inst->sreg2 = -1;
+			NULLIFY_INS (inst);
 		}
 		if (inst->opcode == OP_JUMP_TABLE) {
 			int i;
@@ -9775,8 +9785,8 @@ mono_local_cprop2 (MonoCompile *cfg)
 	guint32 *def_index;
 	int max = cfg->next_vireg;
 
-	defs = g_new (MonoInst*, cfg->next_vireg + 1);
-	def_index = g_new (guint32, cfg->next_vireg + 1);
+	defs = mono_mempool_alloc (cfg->mempool, sizeof (MonoInst*) * (cfg->next_vireg + 1));
+	def_index = mono_mempool_alloc (cfg->mempool, sizeof (guint32) * (cfg->next_vireg + 1));
 
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
 		MonoInst *ins, *prev;
@@ -9975,8 +9985,7 @@ mono_local_cprop2 (MonoCompile *cfg)
 			switch (ins->opcode) {
 			case OP_MOVE:
 				if (ins->dreg == ins->sreg1) {
-					ins->opcode = OP_NOP;
-					ins->dreg = ins->sreg1 = -1;
+					NULLIFY_INS (ins);
 					spec = INS_INFO (ins->opcode);
 				}
 				break;
@@ -10062,9 +10071,6 @@ mono_local_cprop2 (MonoCompile *cfg)
 			ins_index ++;
 		}
 	}
-
-	g_free (defs);
-	g_free (def_index);
 }
 
 /**
@@ -10086,10 +10092,10 @@ mono_local_deadce (MonoCompile *cfg)
 	 * after the handle_global_vregs () pass.
 	 */
 
-	used = mono_bitset_new (cfg->next_vireg + 1, 0);
-	defined = mono_bitset_new (cfg->next_vireg + 1, 0);
+	used = mono_bitset_mp_new_noinit (cfg->mempool, cfg->next_vireg + 1);
+	defined = mono_bitset_mp_new_noinit (cfg->mempool, cfg->next_vireg + 1);
 	reverse_len = 1024;
-	reverse = g_new (MonoInst*, reverse_len);
+	reverse = mono_mempool_alloc (cfg->mempool, sizeof (MonoInst*) * reverse_len);
 
 	/* First pass: collect liveness info */
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
@@ -10123,9 +10129,8 @@ mono_local_deadce (MonoCompile *cfg)
 		}
 
 		if (nins > reverse_len) {
-			g_free (reverse);
 			reverse_len = nins;
-			reverse = g_new (MonoInst*, reverse_len);
+			reverse = mono_mempool_alloc (cfg->mempool, sizeof (MonoInst*) * reverse_len);
 		}
 		ins_index = nins;
 		for (ins = bb->code; ins; ins = ins->next) {
@@ -10162,8 +10167,7 @@ mono_local_deadce (MonoCompile *cfg)
 						}
 
 						def->dreg = ins->dreg;
-						ins->opcode = OP_NOP;
-						ins->dreg = ins->sreg1 = -1;
+						NULLIFY_INS (ins);
 						spec = INS_INFO (ins->opcode);
 					}
 				}
@@ -10240,10 +10244,6 @@ mono_local_deadce (MonoCompile *cfg)
 			}
 		}
 	}
-
-	g_free (reverse);
-
-	mono_bitset_free (used);
 }
 
 static void

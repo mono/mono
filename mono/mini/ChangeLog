@@ -1,3 +1,14 @@
+2006-05-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.h *.c: Make cfg->vars an array of structures instead of pointers to 
+	cut back on the number of indirections.
+
+	* liveness.c dominators.: Use the new mono_bitset_<XXX>_fast functions.
+
+	* mini.c (mono_local_cprop2): Allocate memory from the cfg mempool.
+
+	* mini.c (mono_local_deadce): Allocate memory from the cfg mempool.	
+
 2006-05-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_spill_global_vars): Fix printing of instruction specs.

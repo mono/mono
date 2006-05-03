@@ -154,7 +154,7 @@ record_use (MonoCompile *cfg, MonoInst *var, MonoBasicBlock *bb, MonoInst *ins)
 	MonoMethodVar *info;
 	MonoVarUsageInfo *ui = mono_mempool_alloc (cfg->mempool, sizeof (MonoVarUsageInfo));
 
-	info = cfg->vars [var->inst_c0];
+	info = MONO_VARINFO (cfg, var->inst_c0);
 	
 	ui->bb = bb;
 	ui->inst = ins;
@@ -367,7 +367,7 @@ mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, gbool
 				if (originals_used [idx]) {
 					new_var = mono_compile_create_var (cfg, var->inst_vtype, OP_LOCAL);
 					new_var->flags = var->flags;
-					cfg->vars [new_var->inst_c0]->reg = idx;
+					MONO_VARINFO (cfg, new_var->inst_c0)->reg = idx;
 
 					if (cfg->verbose_level >= 4)
 						printf ("  R%d -> R%d\n", var->dreg, new_var->dreg);
@@ -382,7 +382,7 @@ mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, gbool
 					originals_used [idx] = TRUE;
 				}
 
-				info = cfg->vars [var->inst_c0];
+				info = MONO_VARINFO (cfg, var->inst_c0);
 				info->def = ins;
 				info->def_bb = bb;
 			}
@@ -513,7 +513,6 @@ mono_ssa_compute2 (MonoCompile *cfg)
 			continue;
 
 		set = mono_compile_iterated_dfrontier (cfg, vinfo [i].def_in);
-		vinfo [i].dfrontier = set;
 
 		if (cfg->verbose_level >= 4) {
 			if (mono_bitset_count (set) > 0) {
@@ -561,28 +560,12 @@ mono_ssa_compute2 (MonoCompile *cfg)
 			for (j = 0; j < cfg->bblocks [idx]->in_count; ++j)
 				ins->inst_phi_args [j + 1] = -1;
 
-			if (cfg->new_ir) {
-				ins->dreg = cfg->varinfo [i]->dreg;
+			ins->dreg = cfg->varinfo [i]->dreg;
 
-				ins->next = bb->code;
-				bb->code = ins;
-				if (!bb->last_ins)
-					bb->last_ins = bb->code;
-			} else {
-				store = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));
-				if (!cfg->varinfo [i]->inst_vtype->type)
-					g_assert_not_reached ();
-				store->opcode = mono_type_to_stind (cfg->varinfo [i]->inst_vtype);
-				store->ssa_op = MONO_SSA_STORE;
-				store->inst_i0 = cfg->varinfo [i];
-				store->inst_i1 = ins;
-				store->klass = store->inst_i0->klass;
-	     
-				store->next = bb->code;
-				bb->code = store;
-				if (!bb->last_ins)
-					bb->last_ins = bb->code;
-			}
+			ins->next = bb->code;
+			bb->code = ins;
+			if (!bb->last_ins)
+				bb->last_ins = bb->code;
 
 #ifdef DEBUG_SSA
 			printf ("ADD PHI BB%d %s\n", cfg->bblocks [idx]->block_num, mono_method_full_name (cfg->method, TRUE));
@@ -705,7 +688,7 @@ mono_ssa_remove2 (MonoCompile *cfg)
 					 * The third condition avoids coalescing with variables eliminated
 					 * during deadce.
 					 */
-					if ((vmv->reg != -1) && (vmv->idx != vmv->reg) && (cfg->vars [vmv->reg]->reg != -1)) {
+					if ((vmv->reg != -1) && (vmv->idx != vmv->reg) && (MONO_VARINFO (cfg, vmv->reg)->reg != -1)) {
 						printf ("COALESCE: R%d -> R%d\n", ins->dreg, cfg->varinfo [vmv->reg]->dreg);
 						ins->dreg = cfg->varinfo [vmv->reg]->dreg; 
 					}
@@ -718,7 +701,7 @@ mono_ssa_remove2 (MonoCompile *cfg)
 				if (var) {
 					MonoMethodVar *vmv = MONO_VARINFO (cfg, var->inst_c0);
 
-					if ((vmv->reg != -1) && (vmv->idx != vmv->reg) && (cfg->vars [vmv->reg]->reg != -1)) {
+					if ((vmv->reg != -1) && (vmv->idx != vmv->reg) && (MONO_VARINFO (cfg, vmv->reg)->reg != -1)) {
 						printf ("COALESCE: R%d -> R%d\n", ins->sreg1, cfg->varinfo [vmv->reg]->dreg);
 						ins->sreg1 = cfg->varinfo [vmv->reg]->dreg; 
 					}
@@ -731,7 +714,7 @@ mono_ssa_remove2 (MonoCompile *cfg)
 				if (var) {
 					MonoMethodVar *vmv = MONO_VARINFO (cfg, var->inst_c0);
 
-					if ((vmv->reg != -1) && (vmv->idx != vmv->reg) && (cfg->vars [vmv->reg]->reg != -1)) {
+					if ((vmv->reg != -1) && (vmv->idx != vmv->reg) && (MONO_VARINFO (cfg, vmv->reg)->reg != -1)) {
 						printf ("COALESCE: R%d -> R%d\n", ins->sreg2, cfg->varinfo [vmv->reg]->dreg);
 						ins->sreg2 = cfg->varinfo [vmv->reg]->dreg; 
 					}
@@ -742,7 +725,7 @@ mono_ssa_remove2 (MonoCompile *cfg)
 	}
 
 	for (i = 0; i < cfg->num_varinfo; ++i) {
-		cfg->vars [i]->reg = -1;
+		MONO_VARINFO (cfg, i)->reg = -1;
 	}
 
 	if (cfg->comp_done & MONO_COMP_REACHABILITY)
@@ -802,7 +785,7 @@ mono_ssa_create_def_use (MonoCompile *cfg)
 				MonoInst *var = get_vreg_to_inst (cfg, ins->dreg);
 
 				if (var && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT))) {
-					info = cfg->vars [var->inst_c0];
+					info = MONO_VARINFO (cfg, var->inst_c0);
 					info->def = ins;
 					info->def_bb = bb;
 				}
@@ -823,12 +806,12 @@ mono_ssa_copyprop (MonoCompile *cfg)
 
 	for (index = 0; index < cfg->num_varinfo; ++index) {
 		MonoInst *var = cfg->varinfo [index];
-		MonoMethodVar *info = cfg->vars [index];
+		MonoMethodVar *info = MONO_VARINFO (cfg, index);
 
 		if (info->def && (MONO_IS_MOVE (info->def))) {
 			MonoInst *var2 = get_vreg_to_inst (cfg, info->def->sreg1);
 
-			if (var2 && !(var2->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT)) && cfg->vars [var2->inst_c0]->def && (!MONO_IS_PHI (cfg->vars [var2->inst_c0]->def))) {
+			if (var2 && !(var2->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT)) && MONO_VARINFO (cfg, var2->inst_c0)->def && (!MONO_IS_PHI (MONO_VARINFO (cfg, var2->inst_c0)->def))) {
 				/* Rewrite all uses of var to be uses of var2 */
 				int dreg = var->dreg;
 				int sreg1 = var2->dreg;
@@ -904,7 +887,7 @@ evaluate_ins (MonoCompile *cfg, MonoInst *ins, MonoInst **res, MonoInst **carray
 		if (arg0)
 			r1 = 1;
 		else if (var && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT)))
-			r1 = cfg->vars [var->inst_c0]->cpstate;
+			r1 = MONO_VARINFO (cfg, var->inst_c0)->cpstate;
 	} else {
 		r1 = 2;
 	}
@@ -918,7 +901,7 @@ evaluate_ins (MonoCompile *cfg, MonoInst *ins, MonoInst **res, MonoInst **carray
 		if (arg1)
 			r2 = 1;
 		else if (var && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT)))
-			r2 = cfg->vars [var->inst_c0]->cpstate;
+			r2 = MONO_VARINFO (cfg, var->inst_c0)->cpstate;
 	}
 	else {
 		r2 = 0;
@@ -1016,18 +999,17 @@ visit_inst (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, GList **cvars, 
 	if (cfg->verbose_level > 1)
 		mono_print_ins (ins);
 
-	/* FIXME: Work directly on cfg->vars */
 	/* FIXME: Support longs/floats */
 	/* FIXME: Work on vregs as well */
 
 	if (MONO_IS_PHI (ins)) {
-		MonoMethodVar *info = cfg->vars [get_vreg_to_inst (cfg, ins->dreg)->inst_c0];
+		MonoMethodVar *info = MONO_VARINFO (cfg, get_vreg_to_inst (cfg, ins->dreg)->inst_c0);
 		MonoInst *c0 = NULL;
 		int j;
 
 		for (j = 1; j <= ins->inst_phi_args [0]; j++) {
 			MonoInst *var = get_vreg_to_inst (cfg, ins->inst_phi_args [j]);
-			MonoMethodVar *mv = cfg->vars [var->inst_c0];
+			MonoMethodVar *mv = MONO_VARINFO (cfg, var->inst_c0);
 			MonoInst *src = mv->def;
 
 			if (mv->def_bb && !(mv->def_bb->flags & BB_REACHABLE))
@@ -1077,7 +1059,7 @@ visit_inst (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, GList **cvars, 
 		state = evaluate_ins (cfg, ins, &c0, carray);
 
 		if (var && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT))) {
-			MonoMethodVar *info = cfg->vars [var->inst_c0];
+			MonoMethodVar *info = MONO_VARINFO (cfg, var->inst_c0);
 
 			if (info->cpstate < 2) {
 				if (state == 1)
@@ -1298,7 +1280,7 @@ mono_ssa_cprop2 (MonoCompile *cfg)
 	memset (carray, 0, sizeof (MonoInst *) * cfg->num_varinfo);
 
 	for (i = 0; i < cfg->num_varinfo; i++) {
-		MonoMethodVar *info = cfg->vars [i];
+		MonoMethodVar *info = MONO_VARINFO (cfg, i);
 		if (!info->def)
 			info->cpstate = 2;
 	}
@@ -1355,7 +1337,7 @@ mono_ssa_cprop2 (MonoCompile *cfg)
 	/* fixme: we should update usage infos during cprop, instead of computing it again */
 	cfg->comp_done &=  ~MONO_COMP_SSA_DEF_USE;
 	for (i = 0; i < cfg->num_varinfo; i++) {
-		MonoMethodVar *info = cfg->vars [i];
+		MonoMethodVar *info = MONO_VARINFO (cfg, i);
 		info->def = NULL;
 		info->uses = NULL;
 	}
@@ -1395,7 +1377,7 @@ mono_ssa_deadce2 (MonoCompile *cfg)
 
 	work_list = NULL;
 	for (i = 0; i < cfg->num_varinfo; i++) {
-		MonoMethodVar *info = cfg->vars [i];
+		MonoMethodVar *info = MONO_VARINFO (cfg, i);
 		work_list = g_list_prepend_mempool (work_list, cfg->mempool, info);
 	}
 
@@ -1414,7 +1396,7 @@ mono_ssa_deadce2 (MonoCompile *cfg)
 			if (MONO_IS_MOVE (def) && (!MONO_ARCH_USE_FPSTACK || (def->opcode != OP_FMOVE))) {
 				MonoInst *src_var = get_vreg_to_inst (cfg, def->sreg1);
 				if (src_var && !(src_var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT)))
-					add_to_dce_worklist (cfg, info, cfg->vars [src_var->inst_c0], &work_list);
+					add_to_dce_worklist (cfg, info, MONO_VARINFO (cfg, src_var->inst_c0), &work_list);
 				def->opcode = OP_NOP;
 				def->dreg = def->sreg1 = def->sreg2 = -1;
 				info->reg = -1;
@@ -1425,7 +1407,7 @@ mono_ssa_deadce2 (MonoCompile *cfg)
 			} else if (MONO_IS_PHI (def)) {
 				int j;
 				for (j = def->inst_phi_args [0]; j > 0; j--) {
-					MonoMethodVar *u = cfg->vars [get_vreg_to_inst (cfg, def->inst_phi_args [j])->inst_c0];
+					MonoMethodVar *u = MONO_VARINFO (cfg, get_vreg_to_inst (cfg, def->inst_phi_args [j])->inst_c0);
 					add_to_dce_worklist (cfg, info, u, &work_list);
 				}
 				def->opcode = OP_NOP;
@@ -1463,7 +1445,7 @@ mono_ssa_strength_reduction (MonoCompile *cfg)
 				continue;
 
 			for (i = 0; i < cfg->num_varinfo; i++) {
-				MonoMethodVar *info = cfg->vars [i];
+				MonoMethodVar *info = MONO_VARINFO (cfg, i);
 			
 				if (info->def && info->def->ssa_op == MONO_SSA_STORE &&
 				    info->def->inst_i0->opcode == OP_LOCAL && g_list_find (lp, info->def_bb)) {
