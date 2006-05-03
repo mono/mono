@@ -101,6 +101,8 @@ namespace System.Reflection {
 
 		public override object GetValue (object obj)
 		{
+			if (!IsStatic && obj == null)
+				throw new TargetException ("Non-static field requires a target");
 			return GetValueInternal (obj);
 		}
 
@@ -114,7 +116,7 @@ namespace System.Reflection {
 		public override void SetValue (object obj, object val, BindingFlags invokeAttr, Binder binder, CultureInfo culture)
 		{
 			if (!IsStatic && obj == null)
-				throw new ArgumentNullException ("obj");
+				throw new TargetException ("Non-static field requires a target");
 			if (binder == null)
 				binder = Binder.DefaultBinder;
 			if (val != null) {
