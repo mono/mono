@@ -1,5 +1,10 @@
 2006-05-03  Raja R Harinath  <rharinath@novell.com>
 
+	* flowanalysis.cs (FlowBranching.IsSwitch): Remove.
+	(FlowBranching.CreateBranching) [BranchingType.Switch]: Create a
+	FlowBranchingBreakable.
+	(FlowBranchingSwitch): Remove.
+
 	Fix test-503.cs
 	* statement.cs (Break.Resolve): Simplify.  Move responsibility for
 	error reporting to ...

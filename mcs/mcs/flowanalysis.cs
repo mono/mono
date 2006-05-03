@@ -268,7 +268,7 @@ namespace Mono.CSharp
 				throw new InvalidOperationException ();
 
 			case BranchingType.Switch:
-				return new FlowBranchingSwitch (parent, block, loc);
+				return new FlowBranchingBreakable (parent, type, SiblingType.SwitchSection, block, loc);
 
 			case BranchingType.SwitchSection:
 				return new FlowBranchingBlock (parent, type, SiblingType.Block, block, loc);
@@ -1011,11 +1011,6 @@ namespace Mono.CSharp
 			return Parent != null && Parent.InLoop ();
 		}
 
-		public virtual bool InSwitch ()
-		{
-			return Parent != null && Parent.InSwitch ();
-		}
-
 		public virtual bool BreakCrossesTryCatchBoundary ()
 		{
 			return Parent != null && Parent.BreakCrossesTryCatchBoundary ();
@@ -1181,18 +1176,6 @@ namespace Mono.CSharp
 		{ }
 
 		public override bool InLoop ()
-		{
-			return true;
-		}
-	}
-
-	public class FlowBranchingSwitch : FlowBranchingBreakable
-	{
-		public FlowBranchingSwitch (FlowBranching parent, Block block, Location loc)
-			: base (parent, BranchingType.Switch, SiblingType.SwitchSection, block, loc)
-		{ }
-
-		public override bool InSwitch ()
 		{
 			return true;
 		}
