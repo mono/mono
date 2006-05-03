@@ -1,3 +1,8 @@
+2006-05-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* monobitset.h monobitset.c: Add new macros for performing copy/union operations
+	with little overhead.
+
 2006-04-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* monobitset.c (mono_bitset_sub): Use src->size since the assert 
