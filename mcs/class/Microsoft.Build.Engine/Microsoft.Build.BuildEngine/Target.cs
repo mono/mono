@@ -89,8 +89,10 @@ namespace Microsoft.Build.BuildEngine {
 			} else if (dependsOnTargets.Value == "") {
 				;
 			} else {
-				Expression dependencies = new Expression (Project, dependsOnTargets.Value);
-				string[] targetsToBuildFirst = (string[]) dependencies.ToArray (typeof (string[]));
+				OldExpression dependencies = new OldExpression (Project);
+				dependencies.ParseSource (dependsOnTargets.Value);
+				
+				string[] targetsToBuildFirst = (string[]) dependencies.ConvertTo (typeof (string[]));
 				foreach (string target in targetsToBuildFirst) {
 					string trimmed = target.Trim ();
 					Target t = (Target) project.Targets [trimmed];

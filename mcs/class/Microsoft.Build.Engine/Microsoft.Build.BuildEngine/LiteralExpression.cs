@@ -1,10 +1,10 @@
 //
-// PropertyReference.cs
+// LiteralExpression.cs
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
 // 
-// (C) 2005 Marek Sieradzki
+// (C) 2006 Marek Sieradzki
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,41 +29,16 @@
 
 using System;
 using System.Collections;
-using Microsoft.Build.Framework;
-using Microsoft.Build.Utilities;
+using System.Text;
 
 namespace Microsoft.Build.BuildEngine {
-	internal class PropertyReference {
-	
-		OldExpression	parent;
-		string		propertyName;
-	
-		public PropertyReference (OldExpression parent)
-		{
-			if (parent == null)
-				throw new Exception ("Parent Expression needed to find project.");
-			this.parent = parent;
-		}
 
-		public void ParseSource (string source)
-		{
-			if (source.Length < 3)
-				throw new ArgumentException ("Invalid property.");
-			propertyName  = source.Substring (2, source.Length - 3);
-		}
+	internal class LiteralExpression {
+	
+		Tokenizer	tokenizer;
 		
-		public new string ToString ()
+		public LiteralExpression ()
 		{
-			if (propertyName != String.Empty) {
-				Project p = parent.Project;
-				BuildProperty bp;
-				bp = p.EvaluatedProperties [propertyName];
-				if (bp != null)
-					return bp.FinalValue;
-				else
-					return String.Empty;
-			} else
-				return String.Empty;
 		}
 	}
 }

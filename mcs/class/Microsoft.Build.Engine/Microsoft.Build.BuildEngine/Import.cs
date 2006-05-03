@@ -56,10 +56,12 @@ namespace Microsoft.Build.BuildEngine {
 		internal void Evaluate ()
 		{
 			string file;
-			Expression exp;
+			OldExpression exp;
 
-			exp = new Expression (project, ProjectPath);
-			file = evaluatedProjectPath = (string) exp.ToNonArray (typeof (string));
+			exp = new OldExpression (project);
+			exp.ParseSource (ProjectPath);
+			
+			file = evaluatedProjectPath = (string) exp.ConvertTo (typeof (string));
 
 			if (Path.IsPathRooted (EvaluatedProjectPath) == false) {
 				string dir;

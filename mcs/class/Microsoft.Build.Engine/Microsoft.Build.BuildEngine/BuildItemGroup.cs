@@ -146,7 +146,7 @@ namespace Microsoft.Build.BuildEngine {
 			return array;
 		}
 		
-		internal string ToString (Expression transform, string separator)
+		internal string ToString (OldExpression transform, string separator)
 		{
 			string[] items = new string [buildItems.Count];
 			int i = 0;
@@ -155,7 +155,7 @@ namespace Microsoft.Build.BuildEngine {
 			return String.Join (separator, items);
 		}
 		
-		internal ITaskItem[] ToITaskItemArray (Expression transform)
+		internal ITaskItem[] ToITaskItemArray (OldExpression transform)
 		{
 			ITaskItem[] array = new ITaskItem [buildItems.Count];
 			int i = 0;

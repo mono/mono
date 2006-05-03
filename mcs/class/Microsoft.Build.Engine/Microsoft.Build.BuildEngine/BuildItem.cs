@@ -159,9 +159,11 @@ namespace Microsoft.Build.BuildEngine {
 				throw new ArgumentException ("Can't modify reserved metadata.");
 			
 			RemoveMetadata (metadataName);
+			
 			unevaluatedMetadata.Add (metadataName, metadataValue);
-			Expression finalValue = new Expression (parentItemGroup.Project, metadataValue);
-			evaluatedMetadata.Add (metadataName, (string) finalValue.ToNonArray (typeof (string)));
+			OldExpression finalValue = new OldExpression (parentItemGroup.Project);
+			finalValue.ParseSource (metadataValue);
+			evaluatedMetadata.Add (metadataName, (string) finalValue.ConvertTo (typeof (string)));
 		}
 		
 		private void BindToXml (XmlElement xmlElement)
@@ -183,14 +185,16 @@ namespace Microsoft.Build.BuildEngine {
 		internal void Evaluate ()
 		{
 			DirectoryScanner directoryScanner;
-			Expression includeExpr, excludeExpr;
+			OldExpression includeExpr, excludeExpr;
 			string includes, excludes;
 
-			includeExpr = new Expression (parentItemGroup.Project, Include);
-			excludeExpr = new Expression (parentItemGroup.Project, Exclude);
+			includeExpr = new OldExpression (parentItemGroup.Project);
+			includeExpr.ParseSource (Include);
+			excludeExpr = new OldExpression (parentItemGroup.Project);
+			excludeExpr.ParseSource (Exclude);
 			
-			includes = (string) includeExpr.ToNonArray (typeof (string));
-			excludes = (string) excludeExpr.ToNonArray (typeof (string));
+			includes = (string) includeExpr.ConvertTo (typeof (string));
+			excludes = (string) excludeExpr.ConvertTo (typeof (string));
 
 			this.finalItemSpec = includes;
 			
@@ -227,19 +231,19 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 		
-		internal string ToString (Expression transform)
+		internal string ToString (OldExpression transform)
 		{
 			return GetItemSpecFromTransform (transform);
 		}
 		
-		internal ITaskItem ToITaskItem (Expression transform)
+		internal ITaskItem ToITaskItem (OldExpression transform)
 		{
 			TaskItem taskItem;
 			taskItem = new TaskItem (GetItemSpecFromTransform (transform), evaluatedMetadata);
 			return taskItem;
 		}
 
-		private string GetItemSpecFromTransform (Expression transform)
+		private string GetItemSpecFromTransform (OldExpression transform)
 		{
 			StringBuilder sb;
 		
@@ -247,7 +251,7 @@ namespace Microsoft.Build.BuildEngine {
 				return finalItemSpec;
 			else {
 				sb = new StringBuilder ();
-				foreach (object o in transform) {
+				foreach (object o in transform.Collection) {
 					if (o is string) {
 						sb.Append ((string)o);
 					} else if (o is PropertyReference) {

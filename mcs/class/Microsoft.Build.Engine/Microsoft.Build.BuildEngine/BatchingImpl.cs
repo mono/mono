@@ -55,7 +55,7 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			// FIXME: change this to ITaskItem instead of string
 		
-			Expression inputExpr, outputExpr;
+			OldExpression inputExpr, outputExpr;
 			string[] inputFiles, outputFiles;
 			DateTime oldestInput, youngestOutput;
 		
@@ -66,11 +66,13 @@ namespace Microsoft.Build.BuildEngine {
 				return true;
 			}
 			
-			inputExpr = new Expression (project, inputs);
-			outputExpr = new Expression (project, outputs);
+			inputExpr = new OldExpression (project);
+			inputExpr.ParseSource (inputs);
+			outputExpr = new OldExpression (project);
+			outputExpr.ParseSource (outputs);
 			
-			inputFiles = (string[]) inputExpr.ToArray (typeof (string[]));
-			outputFiles = (string[]) outputExpr.ToArray (typeof (string[]));
+			inputFiles = (string[]) inputExpr.ConvertTo (typeof (string[]));
+			outputFiles = (string[]) outputExpr.ConvertTo (typeof (string[]));
 			
 			if (inputFiles == null) {
 				return true;

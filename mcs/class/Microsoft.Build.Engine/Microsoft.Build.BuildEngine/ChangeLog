@@ -1,3 +1,15 @@
+2006-05-03  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Target.cs, TaskEngine.cs, BuildItemGroup.cs, MetadataReference.cs,
+	Import.cs, ItemReference.cs, BuildItem.cs, BatchingImpl.cs,
+	PropertyReference.cs, BuildProperty.cs: Changed Expression to
+	OldExpression and changed To* functions to one ConvertTo ().
+	* TaskEngine.cs: Fixed PublishOutput ().
+	* OldExpression.cs: Added. It will be temporarily used before
+	LiteralExpression will be written using Tokenizer.
+	* Tokenizer.cs, Token.cs, ExpressionCollection.cs,
+	ExpressionParseException.cs, LiteralExpression.cs: Added.
+
 2006-04-24  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* ImportedProject.cs: Removed warning.

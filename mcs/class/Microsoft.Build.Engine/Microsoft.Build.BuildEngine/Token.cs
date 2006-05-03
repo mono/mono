@@ -1,10 +1,12 @@
 //
-// PropertyReference.cs
+// TokenType.cs
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
+//   Jaroslaw Kowalski <jaak@jkowalski.net>
 // 
-// (C) 2005 Marek Sieradzki
+// (C) 2006 Marek Sieradzki
+// (C) 2004-2006 Jaroslaw Kowalski
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,44 +29,58 @@
 
 #if NET_2_0
 
-using System;
-using System.Collections;
-using Microsoft.Build.Framework;
-using Microsoft.Build.Utilities;
-
 namespace Microsoft.Build.BuildEngine {
-	internal class PropertyReference {
-	
-		OldExpression	parent;
-		string		propertyName;
-	
-		public PropertyReference (OldExpression parent)
-		{
-			if (parent == null)
-				throw new Exception ("Parent Expression needed to find project.");
-			this.parent = parent;
-		}
 
-		public void ParseSource (string source)
+	internal class Token {
+	
+		string		tokenValue;
+		TokenType	tokenType;
+	
+		public Token (string tokenValue, TokenType tokenType)
 		{
-			if (source.Length < 3)
-				throw new ArgumentException ("Invalid property.");
-			propertyName  = source.Substring (2, source.Length - 3);
+			this.tokenValue = tokenValue;
+			this.tokenType = tokenType;
 		}
 		
-		public new string ToString ()
-		{
-			if (propertyName != String.Empty) {
-				Project p = parent.Project;
-				BuildProperty bp;
-				bp = p.EvaluatedProperties [propertyName];
-				if (bp != null)
-					return bp.FinalValue;
-				else
-					return String.Empty;
-			} else
-				return String.Empty;
+		public string Value {
+			get { return tokenValue; }
 		}
+		
+		public TokenType Type {
+			get { return tokenType; }
+		}
+	}
+	
+	internal enum TokenType {
+		EOF,
+		BOF,
+		Number,
+		String,
+		//Keyword,
+		Punct,
+		WhiteSpace,
+		Item,
+		Property,
+		Metadata,
+
+		FirstPunct,
+
+		LessThan,
+		GreaterThan,
+		LessOrEqual,
+		GreaterThanOrEqual,
+		Equal,
+		NotEqual,
+		LeftParen,
+		RightParen,
+		Dot,
+		Comma,
+		Not,
+		And,
+		Or,
+		
+		LastPunct,
+		Invalid,
 	}
 }
 

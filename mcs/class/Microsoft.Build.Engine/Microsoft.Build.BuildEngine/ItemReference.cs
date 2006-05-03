@@ -37,22 +37,16 @@ namespace Microsoft.Build.BuildEngine {
 	
 		string		itemName;
 		string		separator;
-		Expression	parent;
-		Expression	transform;
+		OldExpression	parent;
+		OldExpression	transform;
 	
-		public ItemReference (Expression parent)
+		public ItemReference (OldExpression parent)
 		{
 			if (parent == null)
 				throw new Exception ("Parent Expression needed to find project.");
 			this.parent = parent;
 			this.itemName = null;
 			this.separator = ";";
-		}
-		
-		public ItemReference (Expression parent, string source)
-			: this (parent)
-		{
-			ParseSource (source);
 		}
 		
 		public void ParseSource (string source)
@@ -105,11 +99,13 @@ namespace Microsoft.Build.BuildEngine {
 				if (separatorStart != -1) {
 					separator = sourceWithoutParens.Substring (separatorStart + 1, sourceWithoutParens.Length
 						- separatorStart - 2);
-					transform = new Expression (parent.Project, sourceWithoutParens.Substring (itemNameEnd + 4,
-					transformEnd - itemNameEnd - 4));
+					transform = new OldExpression (parent.Project);
+					transform.ParseSource (sourceWithoutParens.Substring (itemNameEnd + 4,
+						transformEnd - itemNameEnd - 4));
 				} else {
-					transform = new Expression (parent.Project, sourceWithoutParens.Substring (itemNameEnd + 4,
-					sourceWithoutParens.Length - itemNameEnd - 5));
+					transform = new OldExpression (parent.Project);
+					transform.ParseSource (sourceWithoutParens.Substring (itemNameEnd + 4,
+						sourceWithoutParens.Length - itemNameEnd - 5));
 				}
 			} else {
 				if (separatorStart != -1) {

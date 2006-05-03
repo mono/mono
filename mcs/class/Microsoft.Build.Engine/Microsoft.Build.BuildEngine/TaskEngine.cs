@@ -40,6 +40,7 @@ namespace Microsoft.Build.BuildEngine {
 		
 		ITask		task;
 		XmlElement	taskElement;
+		Type		taskType;
 		Project		parentProject;
 		
 		static Type	requiredAttribute;
@@ -65,6 +66,7 @@ namespace Microsoft.Build.BuildEngine {
 		
 			this.task = task;
 			this.taskElement = taskElement;
+			this.taskType = taskType;
 			values = new Hashtable ();
 			
 			foreach (DictionaryEntry de in parameters) {
@@ -114,7 +116,7 @@ namespace Microsoft.Build.BuildEngine {
 					itemName = xmlElement.GetAttribute ("ItemName");
 					propertyName = xmlElement.GetAttribute ("PropertyName");
 					
-					propertyInfo = GetType ().GetProperty (taskParameter);
+					propertyInfo = taskType.GetProperty (taskParameter);
 					if (propertyInfo == null)
 						throw new Exception ("Could not get property info.");
 					if (propertyInfo.IsDefined (outputAttribute, false) == false)
@@ -221,21 +223,18 @@ namespace Microsoft.Build.BuildEngine {
 				
 		private object GetObjectFromString (string raw, Type type)
 		{
-			Expression e;
+			OldExpression e;
 			object result;
 			
-			e = new Expression (parentProject, raw);
+			e = new OldExpression (parentProject);
+			e.ParseSource (raw);
 			
 			if (type == typeof (ITaskItem)) {
-				result = (object) e.ToITaskItem ();
+				result = e.ConvertTo (typeof (ITaskItem));
 			} else if (type == typeof (ITaskItem[])) {
-				result = (object) e.ToITaskItemArray ();
+				result = e.ConvertTo (typeof (ITaskItem[]));
 			} else {
-				if (type.IsArray) {
-					result = e.ToArray (type);
-				} else {
-					result = e.ToNonArray (type);
-				}
+				result = e.ConvertTo (type);
 			}
 			
 			return result;
