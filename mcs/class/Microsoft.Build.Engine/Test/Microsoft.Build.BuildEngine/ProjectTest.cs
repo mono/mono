@@ -39,7 +39,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		[SetUp]
 		public void SetUp ()
 		{
-		    binPath = "Test/resources";
+		    binPath = "../../tools/xbuild/xbuild";
 		}
 
 		// Clones a project by reloading from original.Xml

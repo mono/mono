@@ -1,3 +1,7 @@
+2006-05-03  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* ProjectTest.cs, EngineTest.cs: Corrected BinPath once more.
+
 2006-04-24  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* ProjectTest.cs, EngineTest.cs: Corrected BinPath.
