@@ -149,6 +149,8 @@ namespace Microsoft.Build.Utilities
 			process.Start ();
 			process.WaitForExit ();
 			
+			exitCode = process.ExitCode;
+			
 			while ((line = process.StandardError.ReadLine ()) != null) {
 				LogEventsFromTextOutput (line, MessageImportance.Normal);
 			}
