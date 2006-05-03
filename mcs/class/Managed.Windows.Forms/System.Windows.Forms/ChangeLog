@@ -1,5 +1,11 @@
 2006-05-03  Jonathan Chambers  <jonathan.chambers@ansys.com>
 
+	* TextBox.cs: Add MWFCategoryAttributes
+	* TextBoxBase.cs: Add MWFCategoryAttributes
+	* Form.cs: Add MWFCategoryAttributes
+
+2006-05-03  Jonathan Chambers  <jonathan.chambers@ansys.com>
+
 	* Control.cs: Add MWFCategoryAttributes
 	* ScrollableControl.cs: Add MWFCategoryAttributes
 

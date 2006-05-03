@@ -100,6 +100,7 @@ namespace System.Windows.Forms {
 #endif
 
 		[DefaultValue(false)]
+		[MWFCategory("Behavior")]
 		public bool AcceptsReturn {
 			get {
 				return accepts_return;
@@ -113,6 +114,7 @@ namespace System.Windows.Forms {
 		}
 
 		[DefaultValue(CharacterCasing.Normal)]
+		[MWFCategory("Behavior")]
 		public CharacterCasing CharacterCasing {
 			get {
 				return character_casing;
@@ -127,6 +129,7 @@ namespace System.Windows.Forms {
 
 		[Localizable(true)]
 		[DefaultValue('\0')]
+		[MWFCategory("Behavior")]
 		public char PasswordChar {
 			get {
 #if NET_2_0
@@ -151,6 +154,7 @@ namespace System.Windows.Forms {
 
 		[DefaultValue(ScrollBars.None)]
 		[Localizable(true)]
+		[MWFCategory("Appearance")]
 		public ScrollBars ScrollBars {
 			get {
 				return (ScrollBars)scrollbars;
@@ -188,6 +192,7 @@ namespace System.Windows.Forms {
 
 		[DefaultValue(HorizontalAlignment.Left)]
 		[Localizable(true)]
+		[MWFCategory("Appearance")]
 		public HorizontalAlignment TextAlign {
 			get {
 				return alignment;

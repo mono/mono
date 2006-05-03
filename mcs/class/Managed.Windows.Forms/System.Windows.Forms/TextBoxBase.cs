@@ -155,6 +155,7 @@ namespace System.Windows.Forms {
 
 		#region Public Instance Properties
 		[DefaultValue(false)]
+		[MWFCategory("Behavior")]
 		public bool AcceptsTab {
 			get {
 				return accepts_tab;
@@ -171,6 +172,7 @@ namespace System.Windows.Forms {
 		[DefaultValue(true)]
 		[Localizable(true)]
 		[RefreshProperties(RefreshProperties.Repaint)]
+		[MWFCategory("Behavior")]
 		public virtual bool AutoSize {
 			get {
 				return auto_size;
@@ -217,6 +219,7 @@ namespace System.Windows.Forms {
 
 		[DefaultValue(BorderStyle.Fixed3D)]
 		[DispId(-504)]
+		[MWFCategory("Appearance")]
 		public BorderStyle BorderStyle {
 			get { return InternalBorderStyle; }
 			set { 
@@ -244,6 +247,7 @@ namespace System.Windows.Forms {
 		}
 
 		[DefaultValue(true)]
+		[MWFCategory("Behavior")]
 		public bool HideSelection {
 			get {
 				return hide_selection;
@@ -267,6 +271,7 @@ namespace System.Windows.Forms {
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[Editor("System.Windows.Forms.Design.StringArrayEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
 		[Localizable(true)]
+		[MWFCategory("Layout")]
 		public string[] Lines {
 			get {
 				string[]	lines;
@@ -303,6 +308,7 @@ namespace System.Windows.Forms {
 
 		[DefaultValue(32767)]
 		[Localizable(true)]
+		[MWFCategory("Behavior")]
 		public virtual int MaxLength {
 			get {
 				if (max_length == 2147483646) {	// We don't distinguish between single and multi-line limits
@@ -336,6 +342,7 @@ namespace System.Windows.Forms {
 		[DefaultValue(false)]
 		[Localizable(true)]
 		[RefreshProperties(RefreshProperties.All)]
+		[MWFCategory("Behavior")]
 		public virtual bool Multiline {
 			get {
 				return multiline;
@@ -380,6 +387,7 @@ namespace System.Windows.Forms {
 		}
 
 		[DefaultValue(false)]
+		[MWFCategory("Behavior")]
 		public bool ReadOnly {
 			get {
 				return read_only;
@@ -559,6 +567,7 @@ namespace System.Windows.Forms {
 
 		[DefaultValue(true)]
 		[Localizable(true)]
+		[MWFCategory("Behavior")]
 		public bool WordWrap {
 			get {
 				return word_wrap;

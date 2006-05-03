@@ -211,6 +211,7 @@ namespace System.Windows.Forms {
 		}
 
 		[DefaultValue(true)]
+		[MWFCategory("Layout")]
 		public bool AutoScale {
 			get {
 				return autoscale;
@@ -277,6 +278,7 @@ namespace System.Windows.Forms {
 		}
 
 		[DefaultValue(true)]
+		[MWFCategory("Window Style")]
 		public bool ControlBox {
 			get {
 				return control_box;
@@ -331,6 +333,7 @@ namespace System.Windows.Forms {
 
 		[DefaultValue(FormBorderStyle.Sizable)]
 		[DispId(-504)]
+		[MWFCategory("Appearance")]
 		public FormBorderStyle FormBorderStyle {
 			get {
 				return form_border_style;
@@ -355,6 +358,7 @@ namespace System.Windows.Forms {
 		}
 
 		[DefaultValue(false)]
+		[MWFCategory("Window Style")]
 		public bool HelpButton {
 			get {
 				return help_button;
@@ -370,6 +374,7 @@ namespace System.Windows.Forms {
 
 		[Localizable(true)]
 		[AmbientValue(null)]
+		[MWFCategory("Window Style")]
 		public Icon Icon {
 			get {
 				return icon;
@@ -395,6 +400,7 @@ namespace System.Windows.Forms {
 		}
 
 		[DefaultValue(false)]
+		[MWFCategory("Window Style")]
 		public bool IsMdiContainer {
 			get {
 				return mdi_container != null;
@@ -441,6 +447,7 @@ namespace System.Windows.Forms {
 		}
 
 		[DefaultValue(true)]
+		[MWFCategory("Window Style")]
 		public bool MaximizeBox {
 			get {
 				return maximize_box;
@@ -459,6 +466,7 @@ namespace System.Windows.Forms {
 		[DefaultValue("{Width=0, Height=0}")]
 		[Localizable(true)]
 		[RefreshProperties(RefreshProperties.Repaint)]
+		[MWFCategory("Layout")]
 		public Size MaximumSize {
 			get {
 				return maximum_size;
@@ -544,6 +552,7 @@ namespace System.Windows.Forms {
 		}
 
 		[DefaultValue(null)]
+		[MWFCategory("Window Style")]
 		public MainMenu Menu {
 			get {
 				return menu;
@@ -615,6 +624,7 @@ namespace System.Windows.Forms {
 		}
 
 		[DefaultValue(true)]
+		[MWFCategory("Window Style")]
 		public bool MinimizeBox {
 			get {
 				return minimize_box;
@@ -633,6 +643,7 @@ namespace System.Windows.Forms {
 		[DefaultValue("{Width=0, Height=0}")]
 		[Localizable(true)]
 		[RefreshProperties(RefreshProperties.Repaint)]
+		[MWFCategory("Layout")]
 		public Size MinimumSize {
 			get {
 				return minimum_size;
@@ -659,6 +670,7 @@ namespace System.Windows.Forms {
 
 		[DefaultValue(1D)]
 		[TypeConverter(typeof(OpacityConverter))]
+		[MWFCategory("Window Style")]
 		public double Opacity {
 			get {
 				return opacity;
@@ -716,6 +728,7 @@ namespace System.Windows.Forms {
 		}
 
 		[DefaultValue(true)]
+		[MWFCategory("Window Style")]
 		public bool ShowInTaskbar {
 			get {
 				return show_in_taskbar;
@@ -745,6 +758,7 @@ namespace System.Windows.Forms {
 
 		[MonoTODO("Trigger something when GripStyle is set")]
 		[DefaultValue(SizeGripStyle.Auto)]
+		[MWFCategory("Window Style")]
 		public SizeGripStyle SizeGripStyle {
 			get {
 				return size_grip_style;
@@ -757,6 +771,7 @@ namespace System.Windows.Forms {
 
 		[DefaultValue(FormStartPosition.WindowsDefaultLocation)]
 		[Localizable(true)]
+		[MWFCategory("Layout")]
 		public FormStartPosition StartPosition {
 			get {
 				return start_position;
@@ -821,6 +836,7 @@ namespace System.Windows.Forms {
 		}
 
 		[DefaultValue(false)]
+		[MWFCategory("Window Style")]
 		public bool TopMost {
 			get {
 				return topmost;
@@ -835,6 +851,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[MWFCategory("Window Style")]
 		public Color TransparencyKey {
 			get {
 				return transparency_key;
@@ -850,6 +867,7 @@ namespace System.Windows.Forms {
 		}
 
 		[DefaultValue(FormWindowState.Normal)]
+		[MWFCategory("Layout")]
 		public FormWindowState WindowState {
 			get {
 				if (IsHandleCreated) {
