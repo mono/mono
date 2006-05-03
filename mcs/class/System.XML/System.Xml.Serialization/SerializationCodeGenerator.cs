@@ -1298,14 +1298,18 @@ namespace System.Xml.Serialization
 
 				if (_format == SerializationFormat.Literal)
 				{
-					if (typeMap.TypeData.SchemaType == SchemaTypes.XmlNode)
-						throw new Exception ("Not supported for XmlNode types");
-						
-					WriteLineInd ("if (Reader.LocalName != " + GetLiteral (typeMap.ElementName) + " || Reader.NamespaceURI != " + GetLiteral (typeMap.Namespace) + ")");
-					WriteLine ("throw CreateUnknownNodeException();");
-					Unindent ();
+					if (typeMap.TypeData.SchemaType == SchemaTypes.XmlNode) {
+						if (typeMap.TypeData.Type == typeof (XmlDocument))
+							WriteLine ("return ReadXmlDocument (false);");
+						else
+							WriteLine ("return ReadXmlNode (false);");
+					} else {
+						WriteLineInd ("if (Reader.LocalName != " + GetLiteral (typeMap.ElementName) + " || Reader.NamespaceURI != " + GetLiteral (typeMap.Namespace) + ")");
+						WriteLine ("throw CreateUnknownNodeException();");
+						Unindent ();
 
-					WriteLine ("return " + GetReadObjectCall (typeMap, GetLiteral(typeMap.IsNullable), "true") + ";");
+						WriteLine ("return " + GetReadObjectCall (typeMap, GetLiteral(typeMap.IsNullable), "true") + ";");
+					}
 				}
 				else
 				{
@@ -2175,8 +2179,8 @@ namespace System.Xml.Serialization
 			string valueArray = GetObTempVar ();
 			WriteLine ("string[] " + valueArray + " = " + var + ".Split (' ');");
 			
-			WriteLine (list + " = new " + itemType + " [" + valueArray + ".Length];");
-
+			WriteLine (list + " = new " + GetArrayDeclaration (listType, valueArray + ".Length") + ";");
+			
 			XmlTypeMapElementInfo info = (XmlTypeMapElementInfo)listMap.ItemInfo[0];
 
 			string index = GetNumTempVar ();
@@ -2185,9 +2189,22 @@ namespace System.Xml.Serialization
 			Unindent ();
 			WriteLineUni ("}");
 			WriteLine ("else");
-			WriteLine ("\t" + list + " = new " + itemType + " [0];");
+			WriteLine ("\t" + list + " = new " + GetArrayDeclaration (listType, "0") + ";");
 			
 			return list;
+		}
+		
+		string GetArrayDeclaration (Type type, string length)
+		{
+			Type t = type.GetElementType();
+			System.Text.StringBuilder sb = new System.Text.StringBuilder ();
+			sb.Append ('[').Append (length).Append (']');
+			while (t.IsArray) {
+				sb.Append ("[]");
+				t = t.GetElementType();
+			}
+			sb.Insert (0, t.FullName);
+			return sb.ToString ();
 		}
 
 		void GenerateAddListValue (TypeData listType, string list, string index, string value, bool canCreateInstance)

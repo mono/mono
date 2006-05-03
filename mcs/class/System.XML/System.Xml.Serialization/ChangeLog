@@ -1,3 +1,9 @@
+2006-05-03  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* SerializationCodeGenerator.cs: Allow generating serializer for
+	  reading an XmlElement or XmlDocument as root element.
+	  Properly generate jagged array creation.
+
 2006-04-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSerializationWriter.cs : fix cosmetic typo (bug #78228).
