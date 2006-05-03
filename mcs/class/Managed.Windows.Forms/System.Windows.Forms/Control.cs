@@ -1356,6 +1356,7 @@ namespace System.Windows.Forms
 
 		[Localizable(true)]
 		[DefaultValue(null)]
+		[MWFCategory("Accessibility")]
 		public string AccessibleDescription {
 			get {
 				return AccessibilityObject.description;
@@ -1368,6 +1369,7 @@ namespace System.Windows.Forms
 
 		[Localizable(true)]
 		[DefaultValue(null)]
+		[MWFCategory("Accessibility")]
 		public string AccessibleName {
 			get {
 				return AccessibilityObject.Name;
@@ -1391,6 +1393,7 @@ namespace System.Windows.Forms
 		}
 
 		[DefaultValue(false)]
+		[MWFCategory("Behavior")]
 		public virtual bool AllowDrop {
 			get {
 				return allow_drop;
@@ -1409,7 +1412,8 @@ namespace System.Windows.Forms
 
 		[Localizable(true)]
 		[RefreshProperties(RefreshProperties.Repaint)]
-	        [DefaultValue(AnchorStyles.Top | AnchorStyles.Left)]
+		[DefaultValue(AnchorStyles.Top | AnchorStyles.Left)]
+		[MWFCategory("Layout")]
 		public virtual AnchorStyles Anchor {
 			get {
 				return anchor_style;
@@ -1441,6 +1445,7 @@ namespace System.Windows.Forms
 #endif // NET_2_0
 
 		[DispId(-501)]
+		[MWFCategory("Appearance")]
 		public virtual Color BackColor {
 			get {
 				if (background_color.IsEmpty) {
@@ -1468,6 +1473,7 @@ namespace System.Windows.Forms
 
 		[Localizable(true)]
 		[DefaultValue(null)]
+		[MWFCategory("Appearance")]
 		public virtual Image BackgroundImage {
 			get {
 				return background_image;
@@ -1580,6 +1586,7 @@ namespace System.Windows.Forms
 		}
 
 		[DefaultValue(true)]
+		[MWFCategory("Focus")]
 		public bool CausesValidation {
 			get {
 				return this.causes_validation;
@@ -1652,6 +1659,7 @@ namespace System.Windows.Forms
 		}
 
 		[DefaultValue(null)]
+		[MWFCategory("Behavior")]
 		public virtual ContextMenu ContextMenu {
 			get {
 				return context_menu;
@@ -1683,6 +1691,7 @@ namespace System.Windows.Forms
 		}
 
 		[AmbientValue(null)]
+		[MWFCategory("Appearance")]
 		public virtual Cursor Cursor {
 			get {
 				if (cursor != null) {
@@ -1729,6 +1738,7 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
 		[ParenthesizePropertyName(true)]
 		[RefreshProperties(RefreshProperties.All)]
+		[MWFCategory("Data")]
 		public ControlBindingsCollection DataBindings {
 			get {
 				if (data_bindings == null)
@@ -1758,6 +1768,7 @@ namespace System.Windows.Forms
 		[Localizable(true)]
 		[RefreshProperties(RefreshProperties.Repaint)]
 		[DefaultValue(DockStyle.None)]
+		[MWFCategory("Layout")]
 		public virtual DockStyle Dock {
 			get {
 				return dock_style;
@@ -1780,6 +1791,7 @@ namespace System.Windows.Forms
 
 		[DispId(-514)]
 		[Localizable(true)]
+		[MWFCategory("Behavior")]
 		public bool Enabled {
 			get {
 				if (!is_enabled) {
@@ -1825,6 +1837,7 @@ namespace System.Windows.Forms
 		[DispId(-512)]
 	        [AmbientValue(null)]
 		[Localizable(true)]
+		[MWFCategory("Appearance")]
 		public virtual Font Font {
 			get {
 				if (font != null) {
@@ -1851,6 +1864,7 @@ namespace System.Windows.Forms
 		}
 
 		[DispId(-513)]
+		[MWFCategory("Appearance")]
 		public virtual Color ForeColor {
 			get {
 				if (foreground_color.IsEmpty) {
@@ -1917,6 +1931,7 @@ namespace System.Windows.Forms
 
 		[AmbientValue(ImeMode.Inherit)]
 		[Localizable(true)]
+		[MWFCategory("Behavior")]
 		public ImeMode ImeMode {
 			get {
 				 if (ime_mode == DefaultImeMode) {
@@ -1998,6 +2013,7 @@ namespace System.Windows.Forms
 		}
 
 		[Localizable(true)]
+		[MWFCategory("Layout")]
 		public Point Location {
 			get {
 				return new Point(bounds.X, bounds.Y);
@@ -2127,6 +2143,7 @@ namespace System.Windows.Forms
 
 		[AmbientValue(RightToLeft.Inherit)]
 		[Localizable(true)]
+		[MWFCategory("Appearance")]
 		public virtual RightToLeft RightToLeft {
 			get {
 				if (right_to_left == RightToLeft.Inherit) {
@@ -2166,6 +2183,7 @@ namespace System.Windows.Forms
 		}
 
 		[Localizable(true)]
+		[MWFCategory("Layout")]
 		public Size Size {
 			get {
 				return new Size(Width, Height);
@@ -2178,6 +2196,7 @@ namespace System.Windows.Forms
 
 		[Localizable(true)]
 		[MergableProperty(false)]
+		[MWFCategory("Behavior")]
 		public int TabIndex {
 			get {
 				if (tab_index != -1) {
@@ -2196,6 +2215,7 @@ namespace System.Windows.Forms
 
 		[DispId(-516)]
 		[DefaultValue(true)]
+		[MWFCategory("Behavior")]
 		public bool TabStop {
 			get {
 				return tab_stop;
@@ -2213,6 +2233,7 @@ namespace System.Windows.Forms
 		[Bindable(true)]
 		[TypeConverter(typeof(StringConverter))]
 		[DefaultValue(null)]
+		[MWFCategory("Data")]
 		public object Tag {
 			get {
 				return control_tag;
@@ -2226,6 +2247,7 @@ namespace System.Windows.Forms
 		[DispId(-517)]
 		[Localizable(true)]
 		[BindableAttribute(true)]
+		[MWFCategory("Appearance")]
 		public virtual string Text {
 			get {
 				// Our implementation ignores ControlStyles.CacheText - we always cache
@@ -2276,6 +2298,7 @@ namespace System.Windows.Forms
 		}
 
 		[Localizable(true)]
+		[MWFCategory("Behavior")]
 		public bool Visible {
 			get {
 				if (!is_visible) {

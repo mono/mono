@@ -245,6 +245,7 @@ namespace System.Windows.Forms {
 		#region Public Instance Properties
 		[DefaultValue(false)]
 		[Localizable(true)]
+		[MWFCategory("Layout")]
 		public virtual bool AutoScroll {
 			get {
 				return	auto_scroll;
@@ -299,6 +300,7 @@ namespace System.Windows.Forms {
 		}
 
 		[Localizable(true)]
+		[MWFCategory("Layout")]
 		public Size AutoScrollMargin {
 			get {
 				return auto_scroll_margin;
@@ -318,6 +320,7 @@ namespace System.Windows.Forms {
 		}
 
 		[Localizable(true)]
+		[MWFCategory("Layout")]
 		public Size AutoScrollMinSize {
 			get {
 				return auto_scroll_min_size;
@@ -402,6 +405,7 @@ namespace System.Windows.Forms {
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
 		[Localizable(true)]
+		[MWFCategory("Layout")]
 		public DockPaddingEdges DockPadding {
 			get {
 				return dock_padding;

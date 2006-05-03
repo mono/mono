@@ -1,3 +1,8 @@
+2006-05-03  Jonathan Chambers  <jonathan.chambers@ansys.com>
+
+	* Control.cs: Add MWFCategoryAttributes
+	* ScrollableControl.cs: Add MWFCategoryAttributes
+
 2006-05-03  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ThemeWin32Classic.cs: Draw the ToolBar top border only if
