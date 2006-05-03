@@ -1,5 +1,18 @@
 2006-05-03  Raja R Harinath  <rharinath@novell.com>
 
+	Fix test-503.cs
+	* statement.cs (Break.Resolve): Simplify.  Move responsibility for
+	error reporting to ...
+	* flowanalysis.cs (FlowBranching.AddBreakOrigin) ... this.
+	Rename from 'AddBreakVector'.  Add new location argument.  Return
+	a bool indicating whether the 'break' crosses an unwind-protect.
+	(FlowBranchingException.AddBreakOrigin): Add.
+	(FlowBranchingException.Merge): Propagate 'break's to surrounding
+	flowbranching after updating with the effects of the 'finally'
+	clause.
+	(FlowBranchingBreakable): New common base class for
+	FlowBranchingLoop and FlowBranchingSwitch.
+
 	* statement.cs (Foreach.ArrayForeach.Resolve): Set barrier after
 	embedded statement.
 	(Foreach.CollectionForeach.Resolve): Remove extraneous flowbranching.

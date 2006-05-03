@@ -326,7 +326,7 @@ namespace Mono.CSharp
 			// <summary>
 			//   Start location of this branching.
 			// </summary>
-			public readonly Location Location;
+			public Location Location;
 
 			// <summary>
 			//   This is only valid for SwitchSection, Try, Catch and Finally.
@@ -1029,12 +1029,14 @@ namespace Mono.CSharp
 				throw new NotSupportedException ();
 		}
 
-		public virtual void AddBreakVector (UsageVector vector)
+		// returns true if we crossed an unwind-protected region (try/catch/finally, lock, using, ...)
+		public virtual bool AddBreakOrigin (UsageVector vector, Location loc)
 		{
 			if (Parent != null)
-				Parent.AddBreakVector (vector);
-			else if ((Block == null) || !Block.IsDestructor)
-				throw new NotSupportedException ();
+				return Parent.AddBreakOrigin (vector, loc);
+
+			Report.Error (139, loc, "No enclosing loop out of which to break or continue");
+			return false;
 		}
 
 		public virtual void StealFinallyClauses (ref ArrayList list)
@@ -1139,24 +1141,21 @@ namespace Mono.CSharp
 		}
 	}
 
-	public class FlowBranchingLoop : FlowBranchingBlock
+
+	public class FlowBranchingBreakable : FlowBranchingBlock
 	{
 		UsageVector break_origins;
 
-		public FlowBranchingLoop (FlowBranching parent, Block block, Location loc)
-			: base (parent, BranchingType.Loop, SiblingType.Conditional, block, loc)
+		public FlowBranchingBreakable (FlowBranching parent, BranchingType type, SiblingType stype, Block block, Location loc)
+			: base (parent, type, stype, block, loc)
 		{ }
 
-		public override void AddBreakVector (UsageVector vector)
+		public override bool AddBreakOrigin (UsageVector vector, Location loc)
 		{
 			vector = vector.Clone ();
 			vector.Next = break_origins;
 			break_origins = vector;
-		}
-
-		public override bool InLoop ()
-		{
-			return true;
+			return false;
 		}
 
 		public override bool BreakCrossesTryCatchBoundary ()
@@ -1175,39 +1174,27 @@ namespace Mono.CSharp
 		}
 	}
 
-	public class FlowBranchingSwitch : FlowBranchingBlock
+	public class FlowBranchingLoop : FlowBranchingBreakable
 	{
-		UsageVector break_origins;
+		public FlowBranchingLoop (FlowBranching parent, Block block, Location loc)
+			: base (parent, BranchingType.Loop, SiblingType.Conditional, block, loc)
+		{ }
 
+		public override bool InLoop ()
+		{
+			return true;
+		}
+	}
+
+	public class FlowBranchingSwitch : FlowBranchingBreakable
+	{
 		public FlowBranchingSwitch (FlowBranching parent, Block block, Location loc)
 			: base (parent, BranchingType.Switch, SiblingType.SwitchSection, block, loc)
 		{ }
 
-		public override void AddBreakVector (UsageVector vector)
-		{
-			vector = vector.Clone ();
-			vector.Next = break_origins;
-			break_origins = vector;
-		}
-
 		public override bool InSwitch ()
 		{
 			return true;
-		}
-
-		public override bool BreakCrossesTryCatchBoundary ()
-		{
-			return false;
-		}
-
-		protected override UsageVector Merge ()
-		{
-			UsageVector vector = base.Merge ();
-
-			vector.MergeBreakOrigins (this, break_origins);
-			vector.Reachability.ResetBreaks ();
-
-			return vector;
 		}
 	}
 
@@ -1218,6 +1205,9 @@ namespace Mono.CSharp
 		UsageVector catch_vectors;
 		UsageVector finally_vector;
 		UsageVector finally_origins;
+
+		UsageVector break_origins;
+
 		bool emit_finally;
 
 		public FlowBranchingException (FlowBranching parent,
@@ -1278,6 +1268,19 @@ namespace Mono.CSharp
 			finally_origins = vector;
 		}
 
+		public override bool AddBreakOrigin (UsageVector vector, Location loc)
+		{
+			if (finally_vector != null) {
+				Report.Error (157, loc, "Control cannot leave the body of a finally clause");
+			} else {
+				vector = vector.Clone ();
+				vector.Location = loc;
+				vector.Next = break_origins;
+				break_origins = vector;
+			}
+			return true;
+		}
+
 		public override void StealFinallyClauses (ref ArrayList list)
 		{
 			if (list == null)
@@ -1319,6 +1322,13 @@ namespace Mono.CSharp
 			UsageVector vector = Merge (catch_vectors);
 
 			vector.MergeFinally (finally_vector, finally_origins);
+
+			for (UsageVector origin = break_origins; origin != null; origin = origin.Next) {
+				if (finally_vector != null)
+					origin.MergeChild (finally_vector, false);
+				if (!origin.Reachability.IsUnreachable)
+					Parent.AddBreakOrigin (origin, origin.Location);
+			}
 
 			return vector;
 		}

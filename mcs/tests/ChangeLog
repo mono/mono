@@ -1,3 +1,7 @@
+2006-05-03  Raja R Harinath  <rharinath@novell.com>
+
+	* test-503.cs: Distilled from System.Web.Hosting/ApplicationHost.cs.
+
 2006-04-24  Raja R Harinath  <rharinath@novell.com>
 
 	* test-501.cs: New test from #78156.

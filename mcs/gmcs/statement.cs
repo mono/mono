@@ -901,20 +901,7 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
-			if (!ec.CurrentBranching.InLoop () && !ec.CurrentBranching.InSwitch ()){
-				Error (139, "No enclosing loop out of which to break or continue");
-				return false;
-			} else if (ec.InFinally && ec.CurrentBranching.BreakCrossesTryCatchBoundary()) {
-				Error (157, "Control cannot leave the body of a finally clause");
-				return false;
-			} else if (ec.CurrentBranching.InTryOrCatch (false))
-				ec.CurrentBranching.AddFinallyVector (
-					ec.CurrentBranching.CurrentUsageVector);
-			else if (ec.CurrentBranching.InLoop () || ec.CurrentBranching.InSwitch ())
-				ec.CurrentBranching.AddBreakVector (
-					ec.CurrentBranching.CurrentUsageVector);
-
-			crossing_exc = ec.CurrentBranching.BreakCrossesTryCatchBoundary ();
+			crossing_exc = ec.CurrentBranching.AddBreakOrigin (ec.CurrentBranching.CurrentUsageVector, loc);
 
 			if (!crossing_exc)
 				ec.NeedReturnLabel ();
