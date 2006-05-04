@@ -1,3 +1,14 @@
+2006-05-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c: Fix some unload leaks in the remoting code.
+
+	* object-internals.h object-internal.c (mono_string_to_utf8_mp): New helper
+	function.
+
+	* assembly.c (mono_assembly_close): Fix a leak when unloading dynamic assemblies.
+
+	* reflection.c: Fix some unload leaks in dynamic assemblies.
+
 2006-05-02  Jonathan Chambers  <jonathan.chambers@ansys.com>
 
 	* marshal.c: Add BSTR support on Win32 (all changes under MIT X11)
