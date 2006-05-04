@@ -1,3 +1,8 @@
+2006-05-04  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* Graphics.cs: Chaned DrawIcon methods to dispose the temporary bitmap
+	on it's drawn.
+
 2006-05-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Graphics.cs: Added a MonoTODO to PixelOffsetMode property so it shows

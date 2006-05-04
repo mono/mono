@@ -563,20 +563,23 @@ namespace System.Drawing
 
 		public void DrawIcon (Icon icon, Rectangle targetRect)
 		{
-			Image img = icon.ToBitmap ();
-			DrawImage (img, targetRect);
+			using (Image img = icon.ToBitmap ()) {
+				DrawImage (img, targetRect);
+			}
 		}
 
 		public void DrawIcon (Icon icon, int x, int y)
 		{
-			Image img = icon.ToBitmap ();
-			DrawImage (img, x, y);
+			using (Image img = icon.ToBitmap ()) {
+				DrawImage (img, x, y);
+			}
 		}
 
 		public void DrawIconUnstretched (Icon icon, Rectangle targetRect)
 		{
-			Image img = icon.ToBitmap ();
-			DrawImageUnscaled (img, targetRect);
+			using (Image img = icon.ToBitmap ()) {
+				DrawImageUnscaled (img, targetRect);
+			}
 		}
 		
 		public void DrawImage (Image image, RectangleF rect)
