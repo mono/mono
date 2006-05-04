@@ -1504,7 +1504,7 @@ namespace Mono.Data.Tds.Protocol {
 			if (charset == null || charset.Length > 30)
 				charset = "iso_1";
 
-			if (this.charset != null && this.charset != charset)
+			if (this.charset != null && this.charset == charset)
 				return;
 
 			if (charset.StartsWith ("cp")) {
