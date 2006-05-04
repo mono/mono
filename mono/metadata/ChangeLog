@@ -1,5 +1,17 @@
 2006-05-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* metadata-internals.h (MonoImage): Add a couple of new wrapper caches.
+
+	* image.c (mono_image_init): Initialize the new cashes.
+
+	* image.c (mono_image_close): Destroy the new cashes.
+
+	* marshal.c: Get rid of most of the static caches in favor of per-image caches.
+
+	* mempool.c (mono_mempool_strdup): New helper function.
+
+	* class-internals.h: Add prototype for mono_loader_unlock ().
+
 	* domain.c (mono_jit_info_table_find): Fix a warning.
 	(mono_debugger_check_runtime_version): Ditto.
 
