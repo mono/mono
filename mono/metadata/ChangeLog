@@ -1,5 +1,15 @@
 2006-05-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* domain.c (mono_jit_info_table_find): Fix a warning.
+	(mono_debugger_check_runtime_version): Ditto.
+
+	* rawbuffer.h rawbuffer.c metadata-internals.h metadata.c class-internals.h 
+	class.c loader.c image.h image.c assembly.h assembly.c: Add init () and cleanup ()
+	functions to these modules.
+
+	* domain-internals.h domain (mono_cleanup): New internal method to cleanup most
+	metadata modules.
+	
 	* marshal.c (mono_free_bstr): Fix a warning.
 
 	* assembly.c (mono_assembly_open_full): Fix another small leak.
