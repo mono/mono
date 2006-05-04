@@ -1,3 +1,8 @@
+2006-05-04  LLuis Sanchez Gual  <lluis@novell.com>
+
+	* TempFileCollection.cs: Make sure generated file names
+	  are unique. Fixes bug #76125 and #78230.
+
 2006-04-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CodeGenerator.cs: Output empty line between types if 

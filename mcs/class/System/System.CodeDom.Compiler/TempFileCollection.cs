@@ -77,9 +77,30 @@ namespace System.CodeDom.Compiler {
 					if (rnd == null)
 						rnd = new Random ();
 
-					string random = rnd.Next (10000,99999).ToString ();
-					basepath = Path.Combine (temp, random);
+					// Create a temporary file at the target directory. This ensures
+					// that the generated file name is unique.
+					FileStream f = null;
+					do {
+						int num = rnd.Next ();
+						num++;
+						basepath = Path.Combine (temp, num.ToString("x"));
+						string path = basepath + ".tmp";
 
+						try {
+							f = new FileStream (path, FileMode.CreateNew);
+						}
+						catch (System.IO.IOException) {
+							f = null;
+							continue;
+						}
+						catch {
+							// avoid endless loop
+							throw;
+						}
+					} while (f == null);
+					
+					f.Close ();
+					
 					// and you must have discovery access to the combined path
 					// note: the cache behaviour is tested in the CAS tests
 					if (SecurityManager.SecurityEnabled) {
@@ -177,6 +198,10 @@ namespace System.CodeDom.Compiler {
 					File.Delete(file);
 					filehash.Remove(file);
 				}
+			}
+			if (basepath != null) {
+				string tmpFile = basepath + ".tmp";
+				File.Delete (tmpFile);
 			}
 		}
 
