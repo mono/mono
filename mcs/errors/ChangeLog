@@ -1,3 +1,7 @@
+2006-05-05  Raja R Harinath  <rharinath@novell.com>
+
+	* cs0177-5.cs, cs0177-6.cs: New tests based on #78290.
+
 2006-05-03  Raja R Harinath  <rharinath@novell.com>
 
 	* cs0162-5.cs: New test from #76665.

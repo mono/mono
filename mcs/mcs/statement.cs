@@ -618,22 +618,12 @@ namespace Mono.CSharp {
 				}
 			}
 
-			FlowBranching.UsageVector vector = ec.CurrentBranching.CurrentUsageVector;
-
-			if (ec.CurrentBranching.InTryOrCatch ()) {
-				ec.CurrentBranching.AddFinallyVector (vector);
-				in_exc = true;
-			} else if (ec.InFinally) {
-				Error (157, "Control cannot leave the body of a finally clause");
-				return false;
-			} else
-				vector.CheckOutParameters (ec.CurrentBranching);
-
+			int errors = Report.Errors;
+			in_exc = ec.CurrentBranching.AddReturnOrigin (ec.CurrentBranching.CurrentUsageVector, loc);
 			if (in_exc)
 				ec.NeedReturnLabel ();
-
 			ec.CurrentBranching.CurrentUsageVector.Return ();
-			return true;
+			return errors == Report.Errors;
 		}
 		
 		protected override void DoEmit (EmitContext ec)

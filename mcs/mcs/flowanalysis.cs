@@ -621,12 +621,6 @@ namespace Mono.CSharp
 				Report.Debug (1, "  MERGING BREAK ORIGINS DONE", this);
 			}
 
-			public void CheckOutParameters (FlowBranching branching)
-			{
-				if (parameters != null)
-					branching.CheckOutParameters (parameters, branching.Location);
-			}
-
 			// <summary>
 			//   Performs an `or' operation on the locals and the parameters.
 			// </summary>
@@ -780,6 +774,9 @@ namespace Mono.CSharp
 		// </summary>
 		public void CheckOutParameters (MyBitVector parameters, Location loc)
 		{
+			if (parameters == null)
+				return;
+
 			for (int i = 0; i < param_map.Count; i++) {
 				VariableInfo var = param_map [i];
 
@@ -948,6 +945,16 @@ namespace Mono.CSharp
 			return false;
 		}
 
+		// returns true if we crossed an unwind-protected region (try/catch/finally, lock, using, ...)
+		public virtual bool AddReturnOrigin (UsageVector vector, Location loc)
+		{
+			if (Parent != null)
+				return Parent.AddReturnOrigin (vector, loc);
+
+			CheckOutParameters (vector.Parameters, loc);
+			return false;
+		}
+
 		public virtual void StealFinallyClauses (ref ArrayList list)
 		{
 			if (Parent != null)
@@ -1108,6 +1115,7 @@ namespace Mono.CSharp
 
 		UsageVector break_origins;
 		UsageVector continue_origins;
+		UsageVector return_origins;
 
 		bool emit_finally;
 
@@ -1190,6 +1198,19 @@ namespace Mono.CSharp
 			return true;
 		}
 
+		public override bool AddReturnOrigin (UsageVector vector, Location loc)
+		{
+			if (finally_vector != null) {
+				Report.Error (157, loc, "Control cannot leave the body of a finally clause");
+			} else {
+				vector = vector.Clone ();
+				vector.Location = loc;
+				vector.Next = return_origins;
+				return_origins = vector;
+			}
+			return true;
+		}
+
 		public override void StealFinallyClauses (ref ArrayList list)
 		{
 			if (list == null)
@@ -1248,6 +1269,13 @@ namespace Mono.CSharp
 					origin.MergeChild (finally_vector, false);
 				if (!origin.Reachability.IsUnreachable)
 					Parent.AddContinueOrigin (origin, origin.Location);
+			}
+
+			for (UsageVector origin = return_origins; origin != null; origin = origin.Next) {
+				if (finally_vector != null)
+					origin.MergeChild (finally_vector, false);
+				if (!origin.Reachability.IsUnreachable)
+					Parent.AddReturnOrigin (origin, origin.Location);
 			}
 
 			return vector;

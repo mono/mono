@@ -1,3 +1,12 @@
+2006-05-05  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #78290
+	* statement.cs (Return.Resolve): Move error checking to ...
+	* flowbranching.cs (FlowBranching.AddReturnOrigin): ... this.
+	(FlowBranchingException): Handle return origins like break and
+	continue origins.
+	(FlowBranching.UsageVector.CheckOutParameters): Remove.
+
 2006-05-04  Marek Safar  <marek.safar@seznam.cz>
 
 	A fix for #77543

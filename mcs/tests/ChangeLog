@@ -1,3 +1,8 @@
+2006-05-05  Raja R Harinath  <rharinath@novell.com>
+
+	* test-508.cs: New test -- didn't fail earlier, but include to
+	catch any regressions.
+
 2006-05-03  Raja R Harinath  <rharinath@novell.com>
 
 	* test-505.cs: New test from #59427.
