@@ -1,5 +1,7 @@
 2006-05-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* marshal.c (mono_free_bstr): Fix a warning.
+
 	* assembly.c (mono_assembly_open_full): Fix another small leak.
 
 	* object.c: Fix some unload leaks in the remoting code.
