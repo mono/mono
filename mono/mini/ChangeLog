@@ -1,3 +1,10 @@
+2006-05-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.h (MonoCompile): Add 'cil_offset_to_bb' field.
+
+	* mini.c method-to-ir.c ssa2.c branch-opts.c: Use an array instead of a hash
+	table for storing the cil offset->bblock associations.
+
 2006-05-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.h *.c: Make cfg->vars an array of structures instead of pointers to 

@@ -590,6 +590,7 @@ typedef struct {
 	MonoBasicBlock  *bb_init;
 	MonoBasicBlock **bblocks;
 	GHashTable      *bb_hash;
+	MonoBasicBlock **cil_offset_to_bb;
 	MonoMemPool     *state_pool; /* used by instruction selection */
 	MonoBasicBlock  *cbb;        /* used by instruction selection */
 	MonoInst        *prev_ins;   /* in decompose */
@@ -602,6 +603,7 @@ typedef struct {
 	guint            varinfo_count; /* total storage in varinfo */
 	gint             stack_offset;
 	gint             max_ireg;
+	gint             cil_offset_to_bb_len;
 	MonoRegState    *rs;
 	MonoSpillInfo   *spill_info; /* machine register spills */
 	MonoSpillInfo   *spill_info_float; /* fp register spills */
@@ -642,6 +644,7 @@ typedef struct {
 	/* The current virtual register numbers */
 	guint32 next_vireg, next_vfreg;
 
+	unsigned char   *cil_start;
 	unsigned char   *native_code;
 	guint            code_size;
 	guint            code_len;

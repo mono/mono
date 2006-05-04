@@ -450,7 +450,7 @@ mono_ssa_compute2 (MonoCompile *cfg)
 	int i, j, idx, bitsize;
 	MonoBitSet *set;
 	MonoMethodVar *vinfo = g_new0 (MonoMethodVar, cfg->num_varinfo);
-	MonoInst *ins, *store, **stack;
+	MonoInst *ins, **stack;
 	guint8 *buf, *buf_start;
 	RenameInfo *stack_history;
 	int stack_history_size;

@@ -10432,7 +10432,8 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	cfg->opt = opts;
 	cfg->prof_options = mono_profiler_get_events ();
 	cfg->run_cctors = run_cctors;
-	cfg->bb_hash = g_hash_table_new (NULL, NULL);
+	if (!cfg->new_ir)
+		cfg->bb_hash = g_hash_table_new (NULL, NULL);
 	cfg->domain = domain;
 	cfg->verbose_level = mini_verbose;
 	cfg->compile_aot = compile_aot;
@@ -10828,22 +10829,34 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 			ei->exvar_offset = exvar ? exvar->inst_offset : 0;
 
 			if (ei->flags == MONO_EXCEPTION_CLAUSE_FILTER) {
-				tblock = g_hash_table_lookup (cfg->bb_hash, ip + ec->data.filter_offset);
+				if (cfg->new_ir)
+					tblock = cfg->cil_offset_to_bb [ec->data.filter_offset];
+				else
+					tblock = g_hash_table_lookup (cfg->bb_hash, ip + ec->data.filter_offset);
 				g_assert (tblock);
 				ei->data.filter = cfg->native_code + tblock->native_offset;
 			} else {
 				ei->data.catch_class = ec->data.catch_class;
 			}
 
-			tblock = g_hash_table_lookup (cfg->bb_hash, ip + ec->try_offset);
+			if (cfg->new_ir)
+				tblock = cfg->cil_offset_to_bb [ec->try_offset];
+			else
+				tblock = g_hash_table_lookup (cfg->bb_hash, ip + ec->try_offset);
 			g_assert (tblock);
 			ei->try_start = cfg->native_code + tblock->native_offset;
 			g_assert (tblock->native_offset);
-			tblock = g_hash_table_lookup (cfg->bb_hash, ip + ec->try_offset + ec->try_len);
+			if (cfg->new_ir)
+				tblock = cfg->cil_offset_to_bb [ec->try_offset + ec->try_len];
+			else
+				tblock = g_hash_table_lookup (cfg->bb_hash, ip + ec->try_offset + ec->try_len);
 			g_assert (tblock);
 			ei->try_end = cfg->native_code + tblock->native_offset;
 			g_assert (tblock->native_offset);
-			tblock = g_hash_table_lookup (cfg->bb_hash, ip + ec->handler_offset);
+			if (cfg->new_ir)
+				tblock = cfg->cil_offset_to_bb [ec->handler_offset];
+			else
+				tblock = g_hash_table_lookup (cfg->bb_hash, ip + ec->handler_offset);
 			g_assert (tblock);
 			ei->handler_start = cfg->native_code + tblock->native_offset;
 		}
