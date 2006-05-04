@@ -1,5 +1,13 @@
 2006-05-04  Raja R Harinath  <rharinath@novell.com>
 
+	Remove special handling of 'break'
+	* flowanalysis.cs (Reachability): Remove all mention of 'breaks'.
+	(Reachability.Meet): Simplify.  Remove 'do_breaks' argument.
+	(UsageVector.Break): Remove.
+	(FlowBranching.Merge): Use 'Reachable.IsUnreachable' to determine
+	reachability.
+	(FlowBranchingBreakable.Merge): Don't ResetBreaks.
+
 	* statement.cs (Break.Resolve): Call UsageVector.Goto (), not
 	UsageVector.Breaks ().  Don't set NeedsReturnLabel.
 

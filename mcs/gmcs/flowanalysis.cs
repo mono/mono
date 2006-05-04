@@ -69,13 +69,10 @@ namespace Mono.CSharp
 
 		public sealed class Reachability
 		{
-			TriState returns, breaks, throws, barrier;
+			TriState returns, throws, barrier;
 
 			public TriState Returns {
 				get { return returns; }
-			}
-			public TriState Breaks {
-				get { return breaks; }
 			}
 			public TriState Throws {
 				get { return throws; }
@@ -84,17 +81,16 @@ namespace Mono.CSharp
 				get { return barrier; }
 			}
 
-			Reachability (TriState returns, TriState breaks, TriState throws, TriState barrier)
+			Reachability (TriState returns, TriState throws, TriState barrier)
 			{
 				this.returns = returns;
-				this.breaks = breaks;
 				this.throws = throws;
 				this.barrier = barrier;
 			}
 
 			public Reachability Clone ()
 			{
-				return new Reachability (returns, breaks, throws, barrier);
+				return new Reachability (returns, throws, barrier);
 			}
 
 			public static TriState TriState_Meet (TriState a, TriState b)
@@ -111,66 +107,31 @@ namespace Mono.CSharp
 				return ((byte) a > (byte) b) ? a : b;
 			}
 
-			public void Meet (Reachability b, bool do_break)
+			public void Meet (Reachability b)
 			{
-				//
-				// `break' does not "break" in a Switch or a LoopBlock
-				//
-				bool a_breaks = do_break && AlwaysBreaks;
-				bool b_breaks = do_break && b.AlwaysBreaks;
-
-				bool a_has_barrier, b_has_barrier;
-				if (do_break) {
-					//
-					// This is the normal case: the code following a barrier
-					// cannot be reached.
-					//
-					a_has_barrier = AlwaysHasBarrier;
-					b_has_barrier = b.AlwaysHasBarrier;
-				} else {
-					//
-					// Special case for Switch and LoopBlocks: we can reach the
-					// code after the barrier via the `break'.
-					//
-					a_has_barrier = !AlwaysBreaks && AlwaysHasBarrier;
-					b_has_barrier = !b.AlwaysBreaks && b.AlwaysHasBarrier;
-				}
-
-				bool a_unreachable = a_breaks || a_has_barrier;
-				bool b_unreachable = b_breaks || b_has_barrier;
-
-				if ((AlwaysReturns && b_unreachable) || (b.AlwaysReturns && a_unreachable))
+				if ((AlwaysReturns && b.AlwaysHasBarrier) || (AlwaysHasBarrier && b.AlwaysReturns))
 					returns = TriState.Always;
 				else
 					returns = TriState_Meet (returns, b.returns);
 
-				breaks = TriState_Meet (breaks, b.breaks);
 				throws = TriState_Meet (throws, b.throws);
 				barrier = TriState_Meet (barrier, b.barrier);
-
-				if (a_unreachable && b_unreachable)
-					barrier = TriState.Always;
-				else if (a_unreachable || b_unreachable)
-					barrier = TriState.Sometimes;
-				else
-					barrier = TriState.Never;
 			}
 
 			public void Or (Reachability b)
 			{
 				returns = TriState_Max (returns, b.returns);
-				breaks = TriState_Max (breaks, b.breaks);
 				throws = TriState_Max (throws, b.throws);
 				barrier = TriState_Max (barrier, b.barrier);
 			}
 
 			public static Reachability Always ()
 			{
-				return new Reachability (TriState.Never, TriState.Never, TriState.Never, TriState.Never);
+				return new Reachability (TriState.Never, TriState.Never, TriState.Never);
 			}
 
 			TriState Unreachable {
-				get { return TriState_Max (returns, TriState_Max (breaks, TriState_Max (throws, barrier))); }
+				get { return TriState_Max (returns, TriState_Max (throws, barrier)); }
 			}
 
 			TriState Reachable {
@@ -182,36 +143,16 @@ namespace Mono.CSharp
 				}
 			}
 
-			public bool AlwaysBreaks {
-				get { return breaks == TriState.Always; }
-			}
-
-			public bool MayBreak {
-				get { return breaks != TriState.Never; }
-			}
-
 			public bool AlwaysReturns {
 				get { return returns == TriState.Always; }
-			}
-
-			public bool MayReturn {
-				get { return returns != TriState.Never; }
 			}
 
 			public bool AlwaysThrows {
 				get { return throws == TriState.Always; }
 			}
 
-			public bool MayThrow {
-				get { return throws != TriState.Never; }
-			}
-
 			public bool AlwaysHasBarrier {
 				get { return barrier == TriState.Always; }
-			}
-
-			public bool MayHaveBarrier {
-				get { return barrier != TriState.Never; }
 			}
 
 			public bool IsUnreachable {
@@ -221,16 +162,6 @@ namespace Mono.CSharp
 			public void SetReturns ()
 			{
 				returns = TriState.Always;
-			}
-
-			public void SetBreaks ()
-			{
-				breaks = TriState.Always;
-			}
-
-			public void ResetBreaks ()
-			{
-				breaks = TriState.Never;
 			}
 
 			public void SetThrows ()
@@ -257,9 +188,8 @@ namespace Mono.CSharp
 
 			public override string ToString ()
 			{
-				return String.Format ("[{0}:{1}:{2}:{3}:{4}]",
-						      ShortName (returns), ShortName (breaks),
-						      ShortName (throws), ShortName (barrier),
+				return String.Format ("[{0}:{1}:{2}:{3}]",
+						      ShortName (returns), ShortName (throws), ShortName (barrier),
 						      ShortName (Reachable));
 			}
 		}
@@ -498,14 +428,6 @@ namespace Mono.CSharp
 				}
 			}
 
-			public void Break ()
-			{
-				if (!reachability.IsUnreachable) {
-					IsDirty = true;
-					reachability.SetBreaks ();
-				}
-			}
-
 			public void Throw ()
 			{
 				if (!reachability.IsUnreachable) {
@@ -640,7 +562,7 @@ namespace Mono.CSharp
 							parameters.And (vector.parameters);
 					}
 
-					reachability.Meet (vector.Reachability, true);
+					reachability.Meet (vector.Reachability);
 
 					Report.Debug (1, "  MERGING JUMP ORIGIN #1", vector);
 				}
@@ -664,7 +586,7 @@ namespace Mono.CSharp
 					if (parameters != null)
 						parameters.And (vector.parameters);
 
-					reachability.Meet (vector.Reachability, true);
+					reachability.Meet (vector.Reachability);
 				}
 
 				Report.Debug (1, "  MERGING FINALLY ORIGIN DONE", this);
@@ -693,7 +615,7 @@ namespace Mono.CSharp
 							parameters.And (vector.parameters);
 					}
 
-					reachability.Meet (vector.Reachability, false);
+					reachability.Meet (vector.Reachability);
 				}
 
 				Report.Debug (1, "  MERGING BREAK ORIGINS DONE", this);
@@ -885,17 +807,12 @@ namespace Mono.CSharp
 			Report.Debug (2, "  MERGING SIBLINGS", this, Name);
 
 			for (UsageVector child = sibling_list; child != null; child = child.Next) {
-				bool do_break = (Type != BranchingType.Switch) &&
-					(Type != BranchingType.Loop);
-
-				Report.Debug (2, "    MERGING SIBLING   ", child,
-					      child.ParameterVector, child.LocalVector,
-					      reachability, child.Reachability, do_break);
+				Report.Debug (2, "    MERGING SIBLING   ", reachability, child);
 
 				if (reachability == null)
 					reachability = child.Reachability.Clone ();
 				else
-					reachability.Meet (child.Reachability, do_break);
+					reachability.Meet (child.Reachability);
 
 				// A local variable is initialized after a flow branching if it
 				// has been initialized in all its branches which do neither
@@ -932,16 +849,10 @@ namespace Mono.CSharp
 				// Here, `a' is initialized in line 3 and we must not look at
 				// line 5 since it always returns.
 				// 
-				bool do_break_2 = (child.Type != SiblingType.Block) &&
-					(child.Type != SiblingType.SwitchSection);
-				bool unreachable =
-					(do_break_2 && child.Reachability.AlwaysBreaks) ||
-					child.Reachability.AlwaysReturns ||
-					child.Reachability.AlwaysHasBarrier;
+				bool unreachable = child.Reachability.IsUnreachable;
 
 				Report.Debug (2, "    MERGING SIBLING #1", reachability,
-					      Type, child.Type, child.Reachability.IsUnreachable,
-					      do_break_2, unreachable);
+					      Type, child.Type, child.Reachability.IsUnreachable, unreachable);
 
 				if (!unreachable && (child.LocalVector != null))
 					MyBitVector.And (ref locals, child.LocalVector);
@@ -959,8 +870,7 @@ namespace Mono.CSharp
 
 			Report.Debug (2, "  MERGING SIBLINGS DONE", parameters, locals, reachability);
 
-			return new UsageVector (
-				parameters, locals, reachability, null, Location);
+			return new UsageVector (parameters, locals, reachability, null, Location);
 		}
 
 		protected abstract UsageVector Merge ();
@@ -1159,10 +1069,7 @@ namespace Mono.CSharp
 		protected override UsageVector Merge ()
 		{
 			UsageVector vector = base.Merge ();
-
 			vector.MergeOrigins (this, break_origins);
-			vector.Reachability.ResetBreaks ();
-
 			return vector;
 		}
 	}
@@ -1186,9 +1093,7 @@ namespace Mono.CSharp
 		protected override UsageVector Merge ()
 		{
 			UsageVector vector = base.Merge ();
-
 			vector.MergeOrigins (this, continue_origins);
-
 			return vector;
 		}
 	}
