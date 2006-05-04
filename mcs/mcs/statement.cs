@@ -921,23 +921,13 @@ namespace Mono.CSharp {
 		{
 			int errors = Report.Errors;
 			crossing_exc = ec.CurrentBranching.AddBreakOrigin (ec.CurrentBranching.CurrentUsageVector, loc);
-
-			if (!crossing_exc)
-				ec.NeedReturnLabel ();
-
-			ec.CurrentBranching.CurrentUsageVector.Break ();
+			ec.CurrentBranching.CurrentUsageVector.Goto ();
 			return errors == Report.Errors;
 		}
 
 		protected override void DoEmit (EmitContext ec)
 		{
-			ILGenerator ig = ec.ig;
-
-			if (crossing_exc)
-				ig.Emit (OpCodes.Leave, ec.LoopEnd);
-			else {
-				ig.Emit (OpCodes.Br, ec.LoopEnd);
-			}
+			ec.ig.Emit (crossing_exc ? OpCodes.Leave : OpCodes.Br, ec.LoopEnd);
 		}
 	}
 
@@ -960,12 +950,7 @@ namespace Mono.CSharp {
 
 		protected override void DoEmit (EmitContext ec)
 		{
-			Label begin = ec.LoopBegin;
-			
-			if (crossing_exc)
-				ec.ig.Emit (OpCodes.Leave, begin);
-			else
-				ec.ig.Emit (OpCodes.Br, begin);
+			ec.ig.Emit (crossing_exc ? OpCodes.Leave : OpCodes.Br, ec.LoopBegin);
 		}
 	}
 
