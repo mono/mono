@@ -1,5 +1,12 @@
 2006-05-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* appdomain.c (mono_runtime_cleanup): Call mono_marshal_cleanup ().
+
+	* marshal.c (mono_marshal_cleanup): New cleanup function.
+
+	* marshal.c: Rewrite the wrapper code to allocate most of its memory from the 
+	image mempools.
+
 	* class.c (mono_class_init): Fix leaking class->nested_classes.
 
 	* metadata-internals.h (MonoImage): Add a couple of new wrapper caches.
