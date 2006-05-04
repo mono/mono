@@ -1,3 +1,9 @@
+2006-05-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Graphics.cs: Added a MonoTODO to PixelOffsetMode property so it shows
+	(in the class status library) a note that this isn't supported with 
+	libgdiplus.
+
 2006-05-02  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* FontConverter.cs (ConvertFrom): Implemented it properly. Fixes #78269

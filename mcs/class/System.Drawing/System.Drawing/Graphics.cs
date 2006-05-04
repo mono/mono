@@ -2348,6 +2348,7 @@ namespace System.Drawing
 			}
 		}
 
+		[MonoTODO ("not supported by libgdiplus")]
 		public PixelOffsetMode PixelOffsetMode {
 			get {
 			        PixelOffsetMode pixelOffset = PixelOffsetMode.Invalid;
