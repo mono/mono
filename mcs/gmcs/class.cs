@@ -1867,6 +1867,31 @@ namespace Mono.CSharp {
 				}
 				}
 
+				if (events != null) {
+					foreach (Event e in events) {
+						if ((e.ModFlags & modflags) == 0)
+							continue;
+						if ((e.ModFlags & static_mask) != static_flags)
+							continue;
+
+						MethodBuilder b = e.AddBuilder;
+						if (b != null && filter (b, criteria)) {
+							if (members == null)
+								members = new ArrayList (4);
+
+							members.Add (b);
+						}
+
+						b = e.RemoveBuilder;
+						if (b != null && filter (b, criteria)) {
+							if (members == null) 
+								members = new ArrayList (4);
+
+							members.Add (b);
+						}
+					}
+				}
+
 				if (properties != null) {
 					int len = properties.Count;
 					for (int i = 0; i < len; i++) {
