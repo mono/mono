@@ -81,6 +81,10 @@ namespace System.Windows.Forms {
 		}
 		#endregion	// Public Constructors
 
+		internal Form ParentForm {
+			get { return (Form) Parent; }
+		}
+
 		protected override Control.ControlCollection CreateControlsInstance ()
 		{
 			return new MdiClient.ControlCollection (this);
@@ -274,6 +278,7 @@ namespace System.Windows.Forms {
 			hbar.LargeChange = 50;
 			hbar.Maximum = diff + 51;
 			hbar.Value = -virtual_left;
+
 			hbar.ValueChanged += new EventHandler (HBarValueChanged);
 		}
 

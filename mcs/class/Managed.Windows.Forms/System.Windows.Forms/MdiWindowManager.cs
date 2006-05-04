@@ -126,7 +126,8 @@ namespace System.Windows.Forms {
 
 		private void DrawIconMenuItem (object sender, DrawItemEventArgs de)
 		{
-			de.Graphics.DrawIcon (form.Icon, new Rectangle (2, 2, de.Bounds.Height - 4, de.Bounds.Height - 4));
+			de.Graphics.DrawIcon (form.Icon, new Rectangle (de.Bounds.X + 2, de.Bounds.Y + 2,
+							      de.Bounds.Height - 4, de.Bounds.Height - 4));
 		}
 
 		private void MeasureIconMenuItem (object sender, MeasureItemEventArgs me)
@@ -194,6 +195,25 @@ namespace System.Windows.Forms {
 				XplatUI.SetBorderStyle (form.Handle, FormBorderStyle.None);
 		}
 		*/
+
+		public override void DrawMaximizedButtons (PaintEventArgs pe, MainMenu menu)
+		{
+			Size bs = ButtonSize;
+			Point pnt =  XplatUI.GetMenuOrigin (mdi_container.ParentForm.Handle);
+
+			close_button.Rectangle = new Rectangle (menu.Width - BorderWidth - bs.Width - 2,
+					pnt.Y + 2, bs.Width, bs.Height);
+
+			maximize_button.Rectangle = new Rectangle (close_button.Rectangle.Left - 2 - bs.Width,
+					pnt.Y + 2, bs.Width, bs.Height);
+				
+			minimize_button.Rectangle = new Rectangle (maximize_button.Rectangle.Left - bs.Width,
+					pnt.Y + 2, bs.Width, bs.Height);
+
+			DrawTitleButton (pe.Graphics, minimize_button, pe.ClipRectangle);
+			DrawTitleButton (pe.Graphics, maximize_button, pe.ClipRectangle);
+			DrawTitleButton (pe.Graphics, close_button, pe.ClipRectangle);
+		}
 
 		protected override bool ShouldRemoveWindowManager (FormBorderStyle style)
 		{

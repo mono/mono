@@ -41,9 +41,9 @@ namespace System.Windows.Forms {
 
 		internal Form form;
 
-		private TitleButton close_button;
-		private TitleButton maximize_button;
-		private TitleButton minimize_button;
+		protected TitleButton close_button;
+		protected TitleButton maximize_button;
+		protected TitleButton minimize_button;
 
 		private TitleButton [] title_buttons = new TitleButton [3];
 		
@@ -54,7 +54,7 @@ namespace System.Windows.Forms {
 		internal Rectangle virtual_position;
 		private Rectangle prev_virtual_position;
 
-		private class TitleButton {
+		public class TitleButton {
 			public Rectangle Rectangle;
 			public ButtonState State;
 			public CaptionButton Caption;
@@ -531,7 +531,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private Size ButtonSize {
+		protected Size ButtonSize {
 			get {
 				int height = TitleBarHeight;
 				if (IsToolWindow)
@@ -650,23 +650,22 @@ namespace System.Windows.Forms {
 						dc.DrawIcon (form.Icon, icon);
 				}
 
-				Size bs = ButtonSize;
-				close_button.Rectangle = new Rectangle (form.Width - BorderWidth - bs.Width - 2,
-						BorderWidth + 2, bs.Width, bs.Height);
+				if (!IsMaximized) {
+					Size bs = ButtonSize;
+					close_button.Rectangle = new Rectangle (form.Width - BorderWidth - bs.Width - 2,
+							BorderWidth + 2, bs.Width, bs.Height);
+					maximize_button.Rectangle = new Rectangle (close_button.Rectangle.Left - 2 - bs.Width,
+							BorderWidth + 2, bs.Width, bs.Height);
+					minimize_button.Rectangle = new Rectangle (maximize_button.Rectangle.Left - bs.Width,
+							BorderWidth + 2, bs.Width, bs.Height);
 
-				maximize_button.Rectangle = new Rectangle (close_button.Rectangle.Left - 2 - bs.Width,
-						BorderWidth + 2, bs.Width, bs.Height);
-				
-				minimize_button.Rectangle = new Rectangle (maximize_button.Rectangle.Left - bs.Width,
-						BorderWidth + 2, bs.Width, bs.Height);
+					DrawTitleButton (dc, minimize_button, pe.ClipRectangle);
+					DrawTitleButton (dc, maximize_button, pe.ClipRectangle);
+					DrawTitleButton (dc, close_button, pe.ClipRectangle);
+				} else {
+					//	DrawMaximizedButtons (pe, form.ActiveMenu);
+				}
 
-				
-				
-				
-
-				DrawTitleButton (dc, minimize_button, pe.ClipRectangle);
-				DrawTitleButton (dc, maximize_button, pe.ClipRectangle);
-				DrawTitleButton (dc, close_button, pe.ClipRectangle);
 			} else if (IsToolWindow) {
 				Size bs = ButtonSize;
 				close_button.Rectangle = new Rectangle (form.Width - BorderWidth - 2 - bs.Width,
@@ -675,7 +674,7 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		private void DrawTitleButton (Graphics dc, TitleButton button, Rectangle clip)
+		protected void DrawTitleButton (Graphics dc, TitleButton button, Rectangle clip)
 		{
 			if (!button.Rectangle.IntersectsWith (clip))
 				return;
@@ -686,18 +685,19 @@ namespace System.Windows.Forms {
 					button.Caption, ButtonState.Normal);
 		}
 
-		public void DrawMaximizedButtons (PaintEventArgs pe, MainMenu menu)
+		public virtual void DrawMaximizedButtons (PaintEventArgs pe, MainMenu menu)
 		{
 			Size bs = ButtonSize;
+			Point pnt =  XplatUI.GetMenuOrigin (form.Handle);
 
 			close_button.Rectangle = new Rectangle (menu.Width - BorderWidth - bs.Width - 2,
-						2, bs.Width, bs.Height);
+					pnt.Y + 2, bs.Width, bs.Height);
 
 			maximize_button.Rectangle = new Rectangle (close_button.Rectangle.Left - 2 - bs.Width,
-					2, bs.Width, bs.Height);
+					pnt.Y + 2, bs.Width, bs.Height);
 				
 			minimize_button.Rectangle = new Rectangle (maximize_button.Rectangle.Left - bs.Width,
-					2, bs.Width, bs.Height);
+					pnt.Y + 2, bs.Width, bs.Height);
 
 			DrawTitleButton (pe.Graphics, minimize_button, pe.ClipRectangle);
 			DrawTitleButton (pe.Graphics, maximize_button, pe.ClipRectangle);
@@ -712,9 +712,11 @@ namespace System.Windows.Forms {
 		private void MinimizeClicked (object sender, EventArgs e)
 		{
 			if (GetWindowState () != FormWindowState.Minimized) {
+				maximize_button.Caption = CaptionButton.Maximize;
 				minimize_button.Caption = CaptionButton.Restore;
 				form.WindowState = FormWindowState.Minimized;
 			} else {
+				maximize_button.Caption = CaptionButton.Maximize;
 				minimize_button.Caption = CaptionButton.Minimize;
 				form.WindowState = FormWindowState.Normal;
 			}
@@ -723,9 +725,11 @@ namespace System.Windows.Forms {
 		private void MaximizeClicked (object sender, EventArgs e)
 		{
 			if (GetWindowState () != FormWindowState.Maximized) {
+				minimize_button.Caption = CaptionButton.Minimize;
 				maximize_button.Caption = CaptionButton.Restore;
 				form.WindowState = FormWindowState.Maximized;
 			} else {
+				minimize_button.Caption = CaptionButton.Minimize;
 				maximize_button.Caption = CaptionButton.Maximize;
 				form.WindowState = FormWindowState.Normal;
 			}

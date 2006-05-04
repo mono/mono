@@ -1,3 +1,15 @@
+2006-05-04  Jackson Harper  <jackson@ximian.com>
+
+	* MdiClient.cs: Add a helper property to get the container form.
+	* MdiWindowManager.cs: We have to make sure to use the menu origin
+	when drawing the icons and buttons, this fixes maximized window
+	icons/buttons on win32.
+	* InternalWindowManager.cs: Reset the restore captions when a
+	window goes from Maximized to Minimized and vice versa. Move the
+	DrawMaximizedButtons into the MdiWindowManager source, tool
+	windows can't be maximized. NOTE: This could use a little
+	refactoring if time ever permits.
+	
 2006-05-03  Jonathan Chambers  <jonathan.chambers@ansys.com>
 
 	* TextBox.cs: Add MWFCategoryAttributes
