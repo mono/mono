@@ -1,5 +1,7 @@
 2006-05-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* marshal.c: Fix support for dynamic methods.
+
 	* appdomain.c (mono_runtime_cleanup): Call mono_marshal_cleanup ().
 
 	* marshal.c (mono_marshal_cleanup): New cleanup function.
