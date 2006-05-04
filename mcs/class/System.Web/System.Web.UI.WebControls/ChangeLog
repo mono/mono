@@ -1,3 +1,7 @@
+2006-05-04  Lluis Sanchez  <lluis@novell.com>
+
+	* BoundField.cs: Added missing throw kyword. Patch by Marek Habersack.
+
 2006-04-25  Konstantin Triger  <kostat@mainsoft.com>
 
 	* BaseDataBoundControl.cs: ensure the control is bound if ViewState is disabled.
