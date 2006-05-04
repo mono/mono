@@ -1,5 +1,7 @@
 2006-05-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* class.c (mono_class_init): Fix leaking class->nested_classes.
+
 	* metadata-internals.h (MonoImage): Add a couple of new wrapper caches.
 
 	* image.c (mono_image_init): Initialize the new cashes.
