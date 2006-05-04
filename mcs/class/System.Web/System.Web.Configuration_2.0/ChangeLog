@@ -1,3 +1,19 @@
+2006-05-04  Chris Toshok  <toshok@ximian.com>
+
+	[ Fixes bug #78256 ]
+	
+	* WebConfigurationHost.cs (GetConfigType): add a MonoTODO about
+	how we should use the build provider machinery to get types.
+	(MapPath): add rudimentary mapping in the case where we don't have
+	a request, basically handle the case where the url begins with (or
+	is) HttpRuntime.AppDomainAppVirtualPath.
+
+	* WebConfigurationManager.cs (GetSection): if we don't have a
+	valid request, open the web configuration corresponding to
+	HttpRuntime.AppDomainAppVirtualPath.
+	(GetBasePath): comment this a little, and make it work in the case
+	where we don't have an HttpRequest.
+
 2006-04-27  Chris Toshok  <toshok@ximian.com>
 
 	* AuthorizationRuleCollection.cs (ThrowOnDuplicate): for the time

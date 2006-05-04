@@ -189,16 +189,19 @@ namespace System.Web.Configuration {
 			return OpenMappedMachineConfiguration (fileMap);
 		}
 
-		[MonoTODO ("apparently this bad boy can return null, but GetWebApplicationSection doesn't")]
 		public static object GetSection (string sectionName)
 		{
-			try {
-				_Configuration c = OpenWebConfiguration (HttpContext.Current.Request.Path);
+			_Configuration c;
+			if (HttpContext.Current != null
+			    && HttpContext.Current.Request != null)
+				c = OpenWebConfiguration (HttpContext.Current.Request.Path);
+			else
+				c = OpenWebConfiguration (HttpRuntime.AppDomainAppVirtualPath);
+
+			if (c == null)
+				return null;
+			else
 				return c.GetSection (sectionName);
-			}
-			catch {
-				return GetWebApplicationSection (sectionName);
-			}
 		}
 
 		[MonoTODO]
@@ -256,16 +259,24 @@ namespace System.Web.Configuration {
 		{
  			if (path == "/" || path == "")
 				return path;
-			
-			string pd = HttpContext.Current.Request.MapPath (path);
 
-			if (!Directory.Exists (pd)) {
-				int i = path.LastIndexOf ('/');
-				path = path.Substring (0, i);
-			} 
+			/* first if we can, map it to a physical path
+			 * to see if it corresponds to a file */
+			if (HttpContext.Current != null
+			    && HttpContext.Current.Request != null) {
+				string pd = HttpContext.Current.Request.MapPath (path);
+
+				if (!Directory.Exists (pd)) {
+					/* if it does, remove the file from the url */
+					int i = path.LastIndexOf ('/');
+					path = path.Substring (0, i);
+				} 
+			}
 			
+			/* remove excess /'s from the end of the virtual path */
 			while (path [path.Length - 1] == '/')
 				path = path.Substring (0, path.Length - 1);
+
 			return path;
 		}
 

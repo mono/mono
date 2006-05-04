@@ -87,6 +87,7 @@ namespace System.Web.Configuration
 			return configPath + "/" + locatinSubPath;
 		}
 		
+		[MonoTODO ("this should consult with the build provider machinery")]
 		public virtual Type GetConfigType (string typeName, bool throwOnError)
 		{
 			Type type = Type.GetType (typeName);
@@ -201,6 +202,11 @@ namespace System.Web.Configuration
 			else if (HttpContext.Current != null
 				 && HttpContext.Current.Request != null)
 				return HttpContext.Current.Request.MapPath (virtualPath);
+			else if (virtualPath.StartsWith (HttpRuntime.AppDomainAppVirtualPath)) {
+				if (virtualPath == HttpRuntime.AppDomainAppVirtualPath)
+					return HttpRuntime.AppDomainAppPath;
+				return UrlUtils.Combine (HttpRuntime.AppDomainAppPath, virtualPath.Substring (HttpRuntime.AppDomainAppVirtualPath.Length));
+			}
 			else
 				return virtualPath;
 		}
