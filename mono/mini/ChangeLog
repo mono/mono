@@ -1,3 +1,10 @@
+2006-05-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_cleanup): Call mono_cleanup ().
+
+	* mini.c (UNVERIFIED): New macro to make it easier to track down verification
+	errors.
+
 2006-05-04  Massimiliano Mantione  <massi@ximian.com>
 
 	* aliasing.c: Fixed shameful cut&paste error that caused JIT crashes.
@@ -9,6 +16,7 @@
 
 	* mini-codegen.c: Fixed typo that thrashed inline.
 
+>>>>>>> .r60286
 2006-04-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* dominators.c (compute_dominators): Avoid using a worklist since
