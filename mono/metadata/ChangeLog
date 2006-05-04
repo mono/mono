@@ -1,5 +1,7 @@
 2006-05-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* assembly.c (mono_assembly_open_full): Fix another small leak.
+
 	* object.c: Fix some unload leaks in the remoting code.
 
 	* object-internals.h object-internal.c (mono_string_to_utf8_mp): New helper
