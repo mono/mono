@@ -7,7 +7,7 @@
 2006-05-03  Marek Safar  <marek.safar@seznam.cz>
 
 	A fix for #60069
-	*constant.cs (LongConstant.EmitLong): Fixed to catch also negative values
+	* constant.cs (LongConstant.EmitLong): Fixed to catch also negative values
 	for emitting small (int) values.
 
 2006-05-03  Raja R Harinath  <rharinath@novell.com>
@@ -110,7 +110,7 @@
 2006-05-01  Marek Safar  <marek.safar@seznam.cz>
 
 	A fix for #77980
-	*flowanalysis.cs (UsageVector.IsAssigned): Add flag to ignore short path.
+	* flowanalysis.cs (UsageVector.IsAssigned): Add flag to ignore short path.
 
 	* statement.cs (Block.UsageWarning): Uses newly introduced flag to detect
 	whether field is really assigned.
@@ -163,8 +163,8 @@
 2006-04-26  Marek Safar  <marek.safar@seznam.cz>
 
 	A fix for #78115
-	anonymous.cs.cs (AnonymousMethod.DoResolve): Moved the check whether
-	anonymous method  is allowed from AnonymousContainer here.
+	* anonymous.cs (AnonymousMethod.DoResolve): Moved the check whether
+	anonymous method is allowed from AnonymousContainer here.
 
 	* attribute.cs, codegen.cs (EmitContext): Add IsAnonymousMethodAllowed.
 
@@ -176,7 +176,7 @@
 2006-04-23  Marek Safar  <marek.safar@seznam.cz>
 
 	A fix for #49011.
-	constant.cs (FloatConstant.Reduce): Add range checking for checked context.
+	* constant.cs (FloatConstant.Reduce): Add range checking for checked context.
 	(DoubleConstant.Reduce): Ditto.
 
 2006-04-23  Raja R Harinath  <rharinath@novell.com>
@@ -264,7 +264,7 @@
 
 2006-04-09  Marek Safar  <marek.safar@seznam.cz>
 
-	class.cs (MethodOrOperator): Moved common parts from method class.
+	* class.cs (MethodOrOperator): Moved common parts from method class.
 	detect obsolete attributes.
 	(Method.Define): Simplified as it reuses code from base.
 	(Constructor.ValidAttributeTargets): Fixed issue found during
@@ -280,18 +280,18 @@
 
 2006-04-09  Marek Safar  <marek.safar@seznam.cz>
 
-	(Constructor.Emit): Don't emit the attributes twice.
+	* class.cs (Constructor.Emit): Don't emit the attributes twice.
 
 2006-04-09  Marek Safar  <marek.safar@seznam.cz>
 
-	class.cs (Operator.Emit): Extracted code from MethodData to correctly
+	* class.cs (Operator.Emit): Extracted code from MethodData to correctly
 	detect obsolete attributes.
 	(Method.CreateEmitContext): Moved to MethodOrOperator.
 
 2006-04-09  Marek Safar  <marek.safar@seznam.cz>
 
 	A fix for #78048.
-	class.cs (TypeContainer.MemberCoreArrayList.DefineContainerMembers): Throw
+	* class.cs (TypeContainer.MemberCoreArrayList.DefineContainerMembers): Throw
 	customized exception to make crash detection easier.
 	(MethodOrOperator): Started to work on new base class for methods and
 	operators.
@@ -309,13 +309,13 @@
 2006-04-08  Marek Safar  <marek.safar@seznam.cz>
 
 	A fix for #76744.
-	ecore.cs (SimpleName.ResolveAsTypeStep): Report better error when type is
+	* ecore.cs (SimpleName.ResolveAsTypeStep): Report better error when type is
 	only not visible.
 
 2006-04-07  Marek Safar  <marek.safar@seznam.cz>
 
 	A fix for #77916.
-	expression.cs (ArrayCreation.GetAttributableValue): Creates correctly typed
+	* expression.cs (ArrayCreation.GetAttributableValue): Creates correctly typed
 	array.
 
 2006-04-06  Marek Safar  <marek.safar@seznam.cz>

@@ -677,15 +677,15 @@ namespace Mono.CSharp {
 					unreachable = true;
 #if PRODUCTION
 			} catch (Exception e) {
-					Console.WriteLine ("Exception caught by the compiler while compiling:");
-					Console.WriteLine ("   Block that caused the problem begin at: " + loc);
-					
-					if (CurrentBlock != null){
-						Console.WriteLine ("                     Block being compiled: [{0},{1}]",
-								   CurrentBlock.StartLocation, CurrentBlock.EndLocation);
-					}
-					Console.WriteLine (e.GetType ().FullName + ": " + e.Message);
-					throw;
+				Console.WriteLine ("Exception caught by the compiler while compiling:");
+				Console.WriteLine ("   Block that caused the problem begin at: " + loc);
+
+				if (CurrentBlock != null){
+					Console.WriteLine ("                     Block being compiled: [{0},{1}]",
+							   CurrentBlock.StartLocation, CurrentBlock.EndLocation);
+				}
+				Console.WriteLine (e.GetType ().FullName + ": " + e.Message);
+				throw;
 			}
 #endif
 
