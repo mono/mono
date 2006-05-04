@@ -1,3 +1,7 @@
+2006-05-04  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* TestGraphics.cs: Re-introduce the removed check :)	
+
 2006-05-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestGraphics.cs: Temporarily remove the checks for the transform in
