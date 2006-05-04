@@ -4789,7 +4789,7 @@ namespace Mono.CSharp {
 				} else {
 					if (implementing != null) {
 						AbstractPropertyEventMethod prop_method = method as AbstractPropertyEventMethod;
-						if (prop_method != null) {
+						if (prop_method != null && implementing.DeclaringType.IsInterface) {
 							if (!implementing.IsSpecialName) {
 								Report.SymbolRelatedToPreviousError (implementing);
 								Report.Error (686, method.Location, "Accessor `{0}' cannot implement interface member `{1}' for type `{2}'. Use an explicit interface implementation",

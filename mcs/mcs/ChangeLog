@@ -1,3 +1,9 @@
+2006-05-04  Marek Safar  <marek.safar@seznam.cz>
+
+	A fix for #77543
+	* class.cs (MethodData.Define): Do public accessor check only when method
+	implements an interface.
+
 2006-05-04  Raja R Harinath  <rharinath@novell.com>
 
 	Remove special handling of 'break'
