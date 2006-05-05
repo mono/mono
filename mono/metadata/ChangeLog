@@ -1,3 +1,8 @@
+2006-05-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* assembly.c: use GetCurrentThreadId for the hash, as GetCurrentThread
+	behavior was changed recently and has bad side effects.
+
 2006-05-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* assembly.c (mono_assembly_open_full): Add a missing mono_image_close ().
