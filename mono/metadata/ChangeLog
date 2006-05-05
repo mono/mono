@@ -1,5 +1,7 @@
 2006-05-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* profiler.c (create_profiler): Use mono_aligned_addr_hash.
+
 	* metadata-internals.h image.c assembly.c: Change the reference counting scheme
 	to also allow for temporary references between mono_image_open ()/close ().
 
