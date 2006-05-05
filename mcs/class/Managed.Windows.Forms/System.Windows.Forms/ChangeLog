@@ -1,3 +1,20 @@
+2006-05-05  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* ListView.cs:
+	  - Moved adding of Implicit controls into .ctor. That way, subsequent
+	    creation of the controls will not cause them to think they are 
+	    toplevel windows (fixes #78200 header problem)
+	  - Added 2.0 ShowGroups and UseCompatibleStateImageBehaviour
+	  - Switched visibility setting of header control to use internal field
+	    to avoid triggering handle creation
+	  - Now checking if handle is created before causing a refresh when items
+	    are added (This makes us now match handle creation time with MS)
+	* Splitter.cs: Removed loading of private splitter cursor, switched to
+	  Cursors version now that that is loading the right ones
+	* Cursors.cs: Load proper splitter cursors from resources
+	* Cursor.cs: Added second method of loading resource cursors for the 
+	  VS.Net users amongst us
+
 2006-05-05  Mike Kestner  <mkestner@novell.com>
 
 	* ListView.cs: give header_control a minimum size based on the

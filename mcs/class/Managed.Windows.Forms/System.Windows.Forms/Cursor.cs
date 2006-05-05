@@ -33,6 +33,7 @@ using System.IO;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
+using System.Reflection;
 
 namespace System.Windows.Forms {
 	[Editor("System.Drawing.Design.CursorEditor, " + Consts.AssemblySystem_Drawing_Design, typeof(System.Drawing.Design.UITypeEditor))]
@@ -139,11 +140,20 @@ namespace System.Windows.Forms {
 
 		public Cursor(Type type, string resource) {
 			using (Stream s = type.Assembly.GetManifestResourceStream (type, resource)) {
-				if (s == null) {
-					throw new FileNotFoundException ("Resource name was not found: `" + resource + "'");
+				if (s != null) {
+					CreateCursor(s);
+					return;
 				}
-				CreateCursor(s);
 			}
+
+			// Try a different way, previous failed
+			using (Stream s = Assembly.GetExecutingAssembly().GetManifestResourceStream(resource)) {
+				if (s != null) {
+					CreateCursor(s);
+					return;
+				}
+			}
+			throw new FileNotFoundException ("Resource name was not found: `" + resource + "'");
 		}
 		#endregion	// Public Constructors
 

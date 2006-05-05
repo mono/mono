@@ -143,11 +143,17 @@ namespace System.Windows.Forms
 
 			header_control = new HeaderControl (this);
 			header_control.Visible = false;
+			Controls.AddImplicit (header_control);
+
 			item_control = new ItemControl (this);
-			item_control.Visible = true;
+			Controls.AddImplicit (item_control);
 
 			h_scroll = new HScrollBar ();
+			Controls.AddImplicit (this.h_scroll);
+
 			v_scroll = new VScrollBar ();
+			Controls.AddImplicit (this.v_scroll);
+
 			h_marker = v_marker = 0;
 			keysearch_tickcnt = 0;
 
@@ -465,6 +471,18 @@ namespace System.Windows.Forms
 			get { return selected_items; }
 		}
 
+#if NET_2_0
+		[MonoTODO("Implement")]
+		public bool ShowGroups {
+			get {
+				return false;
+			}
+
+			set {
+			}
+		}
+#endif
+
 		[DefaultValue (null)]
 		public ImageList SmallImageList {
 			get { return small_image_list; }
@@ -537,6 +555,18 @@ namespace System.Windows.Forms
 				}
 			}
 		}
+
+#if NET_2_0
+		[MonoTODO("Implement")]
+		public bool UseCompatibleStateImageBehavior {
+			get {
+				return false;
+			}
+
+			set {
+			}
+		}
+#endif
 
 		[DefaultValue (View.LargeIcon)]
 		public View View {
@@ -955,7 +985,7 @@ namespace System.Windows.Forms
 
 			header_control.Width = x;
 			header_control.Height = columns [0].Ht;
-			header_control.Visible = true;
+			header_control.is_visible = true;
 		}
 
 		void LayoutDetails ()
@@ -1649,12 +1679,6 @@ namespace System.Windows.Forms
 		protected override void OnHandleCreated (EventArgs e)
 		{
 			base.OnHandleCreated (e);
-			SuspendLayout ();
-			Controls.AddImplicit (header_control);
-			Controls.AddImplicit (item_control);
-			Controls.AddImplicit (this.v_scroll);
-			Controls.AddImplicit (this.h_scroll);
-			ResumeLayout ();
 		}
 
 		protected override void OnHandleDestroyed (EventArgs e)
@@ -1990,7 +2014,6 @@ namespace System.Windows.Forms
 					target_x = owner.GetReorderedColumn (drag_to_index).Rect.X - owner.h_marker;
 				theme.DrawListViewHeaderDragDetails (pe.Graphics, owner, drag_column, target_x);
 			}
-					
 		}
 
 		public class CheckedIndexCollection : IList, ICollection, IEnumerable
@@ -2264,7 +2287,9 @@ namespace System.Windows.Forms
 				int idx;
 				value.owner = this.owner;
 				idx = list.Add (value);
-				owner.Redraw (true); 
+				if (owner.IsHandleCreated) {
+					owner.Redraw (true); 
+				}
 				return idx;
 			}
 

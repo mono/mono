@@ -67,21 +67,8 @@ namespace System.Windows.Forms {
 
 		#region Constructors
 		static Splitter() {
-			try {
-				splitter_ns = new Cursor(typeof(Splitter), "SplitterNS.cur");
-			}
-
-			catch (System.IO.FileNotFoundException) {
-				splitter_ns = Cursors.SizeNS;
-			}
-
-			try {
-				splitter_we = new Cursor(typeof(Splitter), "SplitterWE.cur");
-			}
-
-			catch (System.IO.FileNotFoundException) {
-				splitter_we = Cursors.SizeWE;
-			}
+			splitter_ns = Cursors.HSplit;
+			splitter_we = Cursors.VSplit;
 		}
 
 		public Splitter() {
