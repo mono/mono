@@ -1,3 +1,7 @@
+2006-05-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* inssel.brg (mini_emit_virtual_call): Fix a warning.
+
 2006-05-05  Martin Baulig  <martin@ximian.com>
 
 	* debug-mini.c (mono_debug_open_block): New method.
@@ -15,6 +19,7 @@
 	* driver.c: Disabled inline,consprop,copyprop,treeprop,deadce by
 	default until I understand why they break the build on amd64.
 
+>>>>>>> .r60307
 2006-05-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mini_cleanup): Call mono_cleanup ().
