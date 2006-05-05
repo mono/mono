@@ -7,10 +7,7 @@
 //
 // (C) Alejandro Sánchez Acosta
 // (C) 2003 Andreas Nahr
-// 
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -36,8 +33,11 @@ using System.Collections;
 using System.ComponentModel.Design;
 using System.Runtime.InteropServices;
 
-namespace System.Drawing.Design
-{
+namespace System.Drawing.Design {
+
+#if NET_2_0
+	[ComImport]
+#endif
 	[Guid("4BACD258-DE64-4048-BC4E-FEDBEF9ACB76"),
 	InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	public interface IToolboxService

@@ -1,3 +1,11 @@
+2006-05-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* IToolboxService.cs: corcompare fix. Added [ComImport] for 2.0.
+	* ToolboxItem.cs: corcompare fix. Added new overload for 
+	CreateComponentsCore in 2.0
+	* UITypeEditor.cs: corcompare fix. Added new IsDropDownResizable
+	property for 2.0.
+
 2005-12-05 Jordi Mas i Hernandez <jordimash@gmail.com>
 
 	* ToolboxItem.cs: Add new methods and properties for .Net and 

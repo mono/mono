@@ -7,10 +7,7 @@
 // 
 // (C) 2003 Alan Tam Siu Lung <Tam@SiuLung.com>
 // (C) 2003 Andreas Nahr
-// 
-
-//
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -83,6 +80,12 @@ namespace System.Drawing.Design
 			// Usually you would expect, that this class gets inherited and this overridden, 
 			// but on the other hand the class is not abstract. Could never observe it did paint anything
 			return;
+		}
+#endif
+#if NET_2_0
+		[MonoTODO]
+		public virtual bool IsDropDownResizable {
+			get { throw new NotImplementedException (); }
 		}
 #endif
 	}

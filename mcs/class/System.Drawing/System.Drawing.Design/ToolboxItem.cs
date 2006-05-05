@@ -8,10 +8,7 @@
 //
 // (C) Alejandro Sánchez Acosta
 // (C) 2003 Andreas Nahr
-//
-
-//
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -194,6 +191,12 @@ namespace System.Drawing.Design
 		}
 
 #if NET_2_0
+		[MonoTODO] 
+		protected virtual IComponent[] CreateComponentsCore (IDesignerHost host, IDictionary defaultValues)
+		{
+			throw new NotImplementedException ();
+		} 
+
 		[MonoTODO] 
 		public IComponent[] CreateComponents (IDesignerHost host, IDictionary defaultValues)
 		{
