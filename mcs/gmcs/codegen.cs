@@ -501,8 +501,14 @@ namespace Mono.CSharp {
 
 		public FlowBranchingException StartFlowBranching (ExceptionStatement stmt)
 		{
-			FlowBranchingException branching = new FlowBranchingException (
-				CurrentBranching, stmt);
+			FlowBranchingException branching = new FlowBranchingException (CurrentBranching, stmt);
+			current_flow_branching = branching;
+			return branching;
+		}
+
+		public FlowBranchingLabeled StartFlowBranching (LabeledStatement stmt)
+		{
+			FlowBranchingLabeled branching = new FlowBranchingLabeled (CurrentBranching, stmt);
 			current_flow_branching = branching;
 			return branching;
 		}

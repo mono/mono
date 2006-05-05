@@ -45,6 +45,9 @@ namespace Mono.CSharp
 			// The statement embedded inside a loop
 			Embedded,
 
+			// part of a block headed by a jump target
+			Labeled,
+
 			// Try/Catch block.
 			Exception,
 
@@ -198,6 +201,7 @@ namespace Mono.CSharp
 		{
 			switch (type) {
 			case BranchingType.Exception:
+			case BranchingType.Labeled:
 				throw new InvalidOperationException ();
 
 			case BranchingType.Switch:
@@ -546,7 +550,7 @@ namespace Mono.CSharp
 				Report.Debug (1, "  MERGING JUMP ORIGINS DONE", this);
 			}
 
-			public void MergeOrigins (FlowBranching branching, UsageVector o_vectors)
+			public void MergeOrigins (UsageVector o_vectors)
 			{
 				Report.Debug (1, "  MERGING BREAK ORIGINS", this);
 
@@ -1012,7 +1016,7 @@ namespace Mono.CSharp
 		protected override UsageVector Merge ()
 		{
 			UsageVector vector = base.Merge ();
-			vector.MergeOrigins (this, break_origins);
+			vector.MergeOrigins (break_origins);
 			return vector;
 		}
 	}
@@ -1036,8 +1040,18 @@ namespace Mono.CSharp
 		protected override UsageVector Merge ()
 		{
 			UsageVector vector = base.Merge ();
-			vector.MergeOrigins (this, continue_origins);
+			vector.MergeOrigins (continue_origins);
 			return vector;
+		}
+	}
+
+	public class FlowBranchingLabeled : FlowBranchingBlock
+	{
+		LabeledStatement stmt;
+		public FlowBranchingLabeled (FlowBranching parent, LabeledStatement stmt)
+			: base (parent, BranchingType.Labeled, SiblingType.Conditional, null, stmt.loc)
+		{
+			this.stmt = stmt;
 		}
 	}
 
@@ -1065,17 +1079,18 @@ namespace Mono.CSharp
 
 		protected override void AddSibling (UsageVector sibling)
 		{
-			if (sibling.Type == SiblingType.Try) {
+			switch (sibling.Type) {
+			case SiblingType.Try:
+			case SiblingType.Catch:
 				sibling.Next = catch_vectors;
 				catch_vectors = sibling;
-			} else if (sibling.Type == SiblingType.Catch) {
-				sibling.Next = catch_vectors;
-				catch_vectors = sibling;
-			} else if (sibling.Type == SiblingType.Finally) {
+				break;
+			case SiblingType.Finally:
 				finally_vector = sibling;
-			} else
+				break;
+			default:
 				throw new InvalidOperationException ();
-
+			}
 			current_vector = sibling;
 		}
 

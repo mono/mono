@@ -1,5 +1,14 @@
 2006-05-05  Raja R Harinath  <rharinath@novell.com>
 
+	* flowanalysis.cs (BranchingType.Labeled): New.
+	(UsageVector.MergeOrigins): Remove unused 'branching' argument.
+	(FlowBranchingLabeled): New.  Does nothing for now, but will
+	eventually handle 'goto' flows.
+	* codegen.cs (StartFlowBranching): Add new LabeledStatement variant.
+	* statement.cs (LabeledStatement.Resolve): Create a FlowBranching
+	that's terminated ...
+	(Block.Resolve): ... here.
+
 	* flowanalysis.cs (UsageVector.MergeFinally): Remove.
 	(UsageVector.MergeFinallyOrigins): Likewise.
 	(FlowBranching.InTryOrCatch): Likewise.

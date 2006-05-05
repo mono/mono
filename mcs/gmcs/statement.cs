@@ -728,6 +728,8 @@ namespace Mono.CSharp {
 		{
 			ec.CurrentBranching.Label (vectors);
 
+			// this flow-branching will be terminated when the surrounding block ends
+			ec.StartFlowBranching (this);
 			return true;
 		}
 
@@ -1918,6 +1920,9 @@ namespace Mono.CSharp {
 
 			Report.Debug (4, "RESOLVE BLOCK DONE", StartLocation,
 				      ec.CurrentBranching, statement_count, num_statements);
+
+			while (ec.CurrentBranching is FlowBranchingLabeled)
+				ec.EndFlowBranching ();
 
 			FlowBranching.UsageVector vector = ec.DoEndFlowBranching ();
 
