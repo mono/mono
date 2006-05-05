@@ -532,7 +532,6 @@ namespace System.Windows.Forms
 
 				label_rect.X = icon_rect.Right + 1;
 
-				Console.WriteLine (checkbox_rect + " " + icon_rect + " " + label_rect);
 				if (owner.Columns.Count > 0)
 					label_rect.Width = Math.Max (text_size.Width, owner.Columns[0].Wd);
 				else
