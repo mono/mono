@@ -52,7 +52,7 @@ namespace Microsoft.Build.BuildEngine {
 			propertyName  = source.Substring (2, source.Length - 3);
 		}
 		
-		public new string ToString ()
+		public string ConvertToString ()
 		{
 			if (propertyName != String.Empty) {
 				Project p = parent.Project;

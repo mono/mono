@@ -1,3 +1,11 @@
+2006-05-05  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* ExpressionCollection.cs, BuildItemGroup.cs, BuildItem.cs,
+	ItemReference.cs, PropertyReference.cs: Changed name of *Reference
+	methods converting reference to string from ToString () to
+	ConvertToString () to avoid mistakes like using ToString () provided
+	by default.
+
 2006-05-03  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* Target.cs, TaskEngine.cs, BuildItemGroup.cs, MetadataReference.cs,

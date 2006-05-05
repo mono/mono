@@ -231,12 +231,12 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 		
-		internal string ToString (OldExpression transform)
+		internal string ConvertToString (OldExpression transform)
 		{
 			return GetItemSpecFromTransform (transform);
 		}
 		
-		internal ITaskItem ToITaskItem (OldExpression transform)
+		internal ITaskItem ConvertToITaskItem (OldExpression transform)
 		{
 			TaskItem taskItem;
 			taskItem = new TaskItem (GetItemSpecFromTransform (transform), evaluatedMetadata);
@@ -255,9 +255,9 @@ namespace Microsoft.Build.BuildEngine {
 					if (o is string) {
 						sb.Append ((string)o);
 					} else if (o is PropertyReference) {
-						sb.Append (((PropertyReference)o).ToString ());
+						sb.Append (((PropertyReference)o).ConvertToString ());
 					} else if (o is ItemReference) {
-						sb.Append (((ItemReference)o).ToString ());
+						sb.Append (((ItemReference)o).ConvertToString ());
 					} else if (o is MetadataReference) {
 						sb.Append (GetMetadata (((MetadataReference)o).MetadataName));
 					}

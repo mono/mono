@@ -36,9 +36,11 @@ namespace Microsoft.Build.BuildEngine {
 	internal class ItemReference {
 	
 		string		itemName;
-		string		separator;
 		OldExpression	parent;
+		string		separator;
 		OldExpression	transform;
+		
+		static	string	defaultSeparator = ";";
 	
 		public ItemReference (OldExpression parent)
 		{
@@ -46,7 +48,7 @@ namespace Microsoft.Build.BuildEngine {
 				throw new Exception ("Parent Expression needed to find project.");
 			this.parent = parent;
 			this.itemName = null;
-			this.separator = ";";
+			this.separator = defaultSeparator;
 		}
 		
 		public void ParseSource (string source)
@@ -115,28 +117,28 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 		
-		public ITaskItem[] ToITaskItemArray ()
+		public ITaskItem[] ConvertToITaskItemArray ()
 		{
 			if (itemName != String.Empty) {
 				Project p = parent.Project;
 				BuildItemGroup big;
 				if (p.EvaluatedItemsByName.Contains (itemName)) {
 					big = (BuildItemGroup)p.EvaluatedItemsByName [itemName];
-					return big.ToITaskItemArray (transform);
+					return big.ConvertToITaskItemArray (transform);
 				} else
 					return null;
 			} else
 				return null;
 		}
 		
-		public new string ToString ()
+		public string ConvertToString ()
 		{
 			if (itemName != String.Empty) {
 				Project p = parent.Project;
 				BuildItemGroup big;
 				if (p.EvaluatedItemsByName.Contains (itemName)) {
 					big = (BuildItemGroup)p.EvaluatedItemsByName [itemName];
-					return big.ToString (transform, separator);
+					return big.ConvertToString (transform, separator);
 				} else
 					return String.Empty;
 			} else

@@ -134,9 +134,9 @@ namespace Microsoft.Build.BuildEngine {
 				if (o is string) {
 					sb.Append ((string) o);
 				} else if (o is ItemReference) {
-					sb.Append (((ItemReference)o).ToString ());
+					sb.Append (((ItemReference)o).ConvertToString ());
 				} else if (o is PropertyReference) {
-					sb.Append (((PropertyReference)o).ToString ());
+					sb.Append (((PropertyReference)o).ConvertToString ());
 				} else if (o is MetadataReference) {
 					// FIXME: we don't handle them yet
 				} else {
@@ -155,7 +155,7 @@ namespace Microsoft.Build.BuildEngine {
 			
 			if (objects [0] is ItemReference) {
 				ItemReference ir = (ItemReference) objects [0];
-				ITaskItem[] array = ir.ToITaskItemArray ();
+				ITaskItem[] array = ir.ConvertToITaskItemArray ();
 				if (array.Length == 1) {
 					return array [0];
 				} else {
@@ -179,7 +179,7 @@ namespace Microsoft.Build.BuildEngine {
 					tempItems.Add (o);
 				} else if (o is PropertyReference) {
 					PropertyReference pr = (PropertyReference) o;
-					tempItems.Add (pr.ToString ());
+					tempItems.Add (pr.ConvertToString ());
 				} else if (o is MetadataReference) {
 					// FIXME: not handled yet
 				} else if (o is string) {
@@ -191,7 +191,7 @@ namespace Microsoft.Build.BuildEngine {
 			foreach (object o in tempItems) {
 				if (o is ItemReference) {
 					ItemReference ir = (ItemReference) o;
-					array = ir.ToITaskItemArray ();
+					array = ir.ConvertToITaskItemArray ();
 					if (array != null)
 						foreach (ITaskItem item in array)
 							finalItems.Add (item);

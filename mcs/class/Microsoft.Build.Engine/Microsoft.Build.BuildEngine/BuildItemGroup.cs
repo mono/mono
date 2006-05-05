@@ -146,21 +146,21 @@ namespace Microsoft.Build.BuildEngine {
 			return array;
 		}
 		
-		internal string ToString (OldExpression transform, string separator)
+		internal string ConvertToString (OldExpression transform, string separator)
 		{
 			string[] items = new string [buildItems.Count];
 			int i = 0;
 			foreach (BuildItem bi in  buildItems)
-				items [i++] = bi.ToString (transform);
+				items [i++] = bi.ConvertToString (transform);
 			return String.Join (separator, items);
 		}
 		
-		internal ITaskItem[] ToITaskItemArray (OldExpression transform)
+		internal ITaskItem[] ConvertToITaskItemArray (OldExpression transform)
 		{
 			ITaskItem[] array = new ITaskItem [buildItems.Count];
 			int i = 0;
 			foreach (BuildItem item in buildItems)
-				array [i++] = item.ToITaskItem (transform);
+				array [i++] = item.ConvertToITaskItem (transform);
 			return array;
 		}
 
