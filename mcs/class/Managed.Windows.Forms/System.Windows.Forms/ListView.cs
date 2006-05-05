@@ -950,6 +950,9 @@ namespace System.Windows.Forms
 				x += col.Wd;
 			}
 
+			if (x < ClientRectangle.Width)
+				x = ClientRectangle.Width;
+
 			header_control.Width = x;
 			header_control.Height = columns [0].Ht;
 			header_control.Visible = true;

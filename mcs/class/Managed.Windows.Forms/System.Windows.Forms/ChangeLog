@@ -1,3 +1,8 @@
+2006-05-05  Mike Kestner  <mkestner@novell.com>
+
+	* ListView.cs: give header_control a minimum size based on the
+	ListView size.
+
 2006-05-05  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* XplatUIX11.cs: WS_EX_TOPMOST requires window to be on top. A dock
