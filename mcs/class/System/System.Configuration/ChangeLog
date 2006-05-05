@@ -1,3 +1,17 @@
+2006-05-05  Chris Toshok  <toshok@ximian.com>
+
+	* ApplicationSettingsBase.cs (CacheValuesByProvider): emit
+	SettingsLoaded after we load the property values.
+	(set_Item[string]): fill in settingClass in the
+	SettingChangingEventArgs properly.
+	(get_Properties): don't depend on setting_attrs[0] being either
+	UserScoped- or ApplicationScopedSettingAttribute.  Also, call
+	Initialize on any providers we create here.
+
+	* LocalFileSettingsProvider.cs (GetPropertyValues): add a naive
+	implementation, leave a MonoTODO.
+	(Initialize): fill in name properly, and deal with null values.
+
 2006-04-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* NoSettingsVersionUpgradeAttribute.cs

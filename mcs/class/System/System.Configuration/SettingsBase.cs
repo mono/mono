@@ -53,37 +53,28 @@ namespace System.Configuration
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public static SettingsBase Synchronized (SettingsBase settingsBase)
 		{
-			throw new NotImplementedException ();
+			return new SyncSettingsBase (settingsBase);
 		}
 
 		public virtual SettingsContext Context {
-			get {
-				return context;
-			}
+			get { return context; }
 		}
 
 		[Browsable (false)]
 		public bool IsSynchronized {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return false; }
 		}
 
 		public virtual object this [ string propertyName ] {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
 		}
 
 		public virtual SettingsPropertyCollection Properties {
-			get {
-				return properties;
-			}
+			get { return properties; }
 		}
 
 		public virtual SettingsPropertyValueCollection PropertyValues {
@@ -108,8 +99,71 @@ namespace System.Configuration
 		SettingsContext context;
 		SettingsPropertyCollection properties;
 		SettingsProviderCollection providers;
-	}
 
+		private class SyncSettingsBase : SettingsBase
+		{
+			SettingsBase host;
+			object syncRoot;
+
+			public SyncSettingsBase (SettingsBase host)
+			{
+				this.host = host;
+				syncRoot = host;
+			}
+
+			public override void Save ()
+			{
+				lock (syncRoot) {
+					host.Save ();
+				}
+			}
+
+			public override object this [ string propertyName ] {
+				get { return host[propertyName]; }
+				set {
+					lock (syncRoot) {
+						host[propertyName] = value;
+					}
+				}
+			}
+
+			public override SettingsPropertyCollection Properties {
+				get {
+					SettingsPropertyCollection props;
+
+					lock (syncRoot) {
+						props = host.Properties;
+					}
+
+					return props;
+				}
+			}
+
+			public virtual SettingsPropertyValueCollection PropertyValues {
+				get {
+					SettingsPropertyValueCollection vals;
+
+					lock (syncRoot) {
+						vals = host.PropertyValues;
+					}
+
+					return vals;
+				}
+			}
+
+			public virtual SettingsProviderCollection Providers {
+				get {
+					SettingsProviderCollection prov;
+
+					lock (syncRoot) {
+						prov = host.Providers;
+					}
+
+					return prov;
+				}
+			}
+		}
+	}
 }
 
 #endif

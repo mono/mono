@@ -43,6 +43,7 @@ namespace System.Configuration
 		{
 		}
 
+		[MonoTODO]
 		public SettingsPropertyValue GetPreviousVersion (SettingsContext context,
 								 SettingsProperty property)
 		{
@@ -50,49 +51,67 @@ namespace System.Configuration
 		}
 
 
+		[MonoTODO]
 		public override SettingsPropertyValueCollection GetPropertyValues (SettingsContext context,
 										   SettingsPropertyCollection properties)
 		{
-			throw new NotImplementedException ();
+			SettingsPropertyValueCollection pv = new SettingsPropertyValueCollection ();
+			foreach (SettingsProperty prop in properties)
+				pv.Add (new SettingsPropertyValue (prop));
+
+			return pv;
 		}
 
 #if CONFIGURATION_DEP
 		public override void Initialize (string name,
 						 NameValueCollection values)
 		{
-			applicationName = values["applicationName"];
+			if (name == null)
+				name = "LocalFileSettingsProvider";
+			if (values != null)
+				applicationName = values["applicationName"];
 
 			base.Initialize (name, values);
 		}
 #endif
 
+		[MonoTODO]
 		public void Reset (SettingsContext context)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public override void SetPropertyValues (SettingsContext context,
 							SettingsPropertyValueCollection values)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void Upgrade (SettingsContext context,
 				     SettingsPropertyCollection properties)
 		{
 			throw new NotImplementedException ();
 		}
 
+		string applicationName = "";
 		public override string ApplicationName {
-			get {
-				return applicationName;
-			}
-			set {
-				applicationName = value;
-			}
+			get { return applicationName; }
+			set { applicationName = value; }
 		}
 
-		string applicationName = "";
+		bool IsUserSetting (SettingsProperty prop)
+		{
+			if (prop.Attributes.ContainsKey (typeof (UserScopedSettingAttribute)))
+				return true;
+			else if (prop.Attributes.ContainsKey (typeof (ApplicationScopedSettingAttribute)))
+				return false;
+			else
+				throw new ConfigurationErrorsException (
+							String.Format ("The setting '{0}' does not have either an ApplicationScopedSettingAttribute or UserScopedSettingAttribute.",
+								       prop.Name));
+		}
 	}
 
 }

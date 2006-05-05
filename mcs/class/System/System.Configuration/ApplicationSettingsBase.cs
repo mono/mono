@@ -21,6 +21,11 @@
 //
 
 #if NET_2_0
+#if CONFIGURATION_DEP
+extern alias PrebuiltSystem;
+using NameValueCollection = PrebuiltSystem.System.Collections.Specialized.NameValueCollection;
+#endif
+
 using System.ComponentModel;
 using System.Reflection;
 using System.Collections.Specialized;
@@ -168,6 +173,8 @@ namespace System.Configuration {
 				SettingsPropertyValueCollection vals = provider.GetPropertyValues (Context, col);
 				PropertyValues.Add (vals);
 			}
+
+			OnSettingsLoaded (this, new SettingsLoadedEventArgs (provider));
 		}
 
 		void InitializeSettings (SettingsPropertyCollection settings)
@@ -213,7 +220,7 @@ namespace System.Configuration {
 					CacheValuesByProvider (prop.Provider);
 
 				SettingChangingEventArgs changing_args = new SettingChangingEventArgs (propertyName,
-												       "" /* XXX settingClass? */,
+												       GetType().FullName,
 												       settingsKey,
 												       value,
 												       false);
@@ -241,24 +248,18 @@ namespace System.Configuration {
 
 					foreach (PropertyInfo prop in GetType().GetProperties (/* only public properties? */)) {
 						SettingAttribute[] setting_attrs = (SettingAttribute[])prop.GetCustomAttributes (typeof (SettingAttribute), false);
-						if (setting_attrs != null && setting_attrs.Length > 0 &&
-						    (setting_attrs[0] is UserScopedSettingAttribute
-						    || setting_attrs[0] is ApplicationScopedSettingAttribute)) {
-
+						if (setting_attrs != null && setting_attrs.Length > 0) {
 							SettingsAttributeDictionary dict = new SettingsAttributeDictionary ();
 							SettingsProvider provider = null;
 							object defaultValue = null;
 							SettingsSerializeAs serializeAs = SettingsSerializeAs.String;
 
 							foreach (Attribute a in prop.GetCustomAttributes (false)) {
-								if (a is UserScopedSettingAttribute
-								    || a is ApplicationScopedSettingAttribute)
-									continue;
-
 								/* the attributes we handle natively here */
 								if (a is SettingsProviderAttribute) {
 									Type provider_type = Type.GetType (((SettingsProviderAttribute)a).ProviderTypeName);
 									provider = (SettingsProvider) Activator.CreateInstance (provider_type);
+									provider.Initialize (null, null);
 								}
 								else if (a is DefaultSettingValueAttribute) {
 									defaultValue = ((DefaultSettingValueAttribute)a).Value; /* XXX this is a string.. do we convert? */
@@ -266,8 +267,12 @@ namespace System.Configuration {
 								else if (a is SettingsSerializeAsAttribute) {
 									serializeAs = ((SettingsSerializeAsAttribute)a).SerializeAs;
 								}
+								else if (a is ApplicationScopedSettingAttribute ||
+									 a is UserScopedSettingAttribute) {
+									dict.Add (a.GetType(), a);
+								}
 								else {
-									dict.Add (a.GetType().ToString() /* XXX ?*/, a);
+									dict.Add (a.GetType(), a);
 								}
 							}
 
@@ -285,8 +290,10 @@ namespace System.Configuration {
 								setting.Provider = providerService.GetSettingsProvider (setting);
 
 							if (provider == null) {
-								if (local_provider == null)
+								if (local_provider == null) {
 									local_provider = new LocalFileSettingsProvider ();
+									local_provider.Initialize (null, null);
+								}
 								setting.Provider = local_provider;
 							}
 
