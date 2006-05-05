@@ -71,6 +71,7 @@ namespace System.Windows.Forms
 		private SelectedIndexCollection selected_indices;		
 		private SelectedObjectCollection selected_items;
 		private ArrayList selection = new ArrayList ();
+		private ArrayList display_selection = new ArrayList ();
 		private SelectionMode selection_mode = SelectionMode.One;
 		private bool sorted = false;
 		private bool use_tabstops = true;
@@ -84,7 +85,6 @@ namespace System.Windows.Forms
 		private bool explicit_item_height = false;
 		private int top_index = 0;
 		private int last_visible_index = 0;
-		private Rectangle bounds;
 		private Rectangle items_area;
 		private int focused_item = -1;		
 		private ObjectCollection items;
@@ -118,6 +118,9 @@ namespace System.Windows.Forms
 
 			/* Events */
 			MouseDown += new MouseEventHandler (OnMouseDownLB);
+			MouseMove += new MouseEventHandler (OnMouseMoveLB);
+			MouseUp += new MouseEventHandler (OnMouseUpLB);
+			MouseWheel += new MouseEventHandler (OnMouseWheelLB);
 			KeyDown += new KeyEventHandler (OnKeyDownLB);
 			KeyUp += new KeyEventHandler (OnKeyUpLB);
 			GotFocus += new EventHandler (OnGotFocus);
@@ -189,8 +192,7 @@ namespace System.Windows.Forms
 			get { return InternalBorderStyle; }
 			set { 
 				InternalBorderStyle = value; 
-				if (requested_height != -1)
-					SetBoundsCore (0, 0, 0, requested_height, BoundsSpecified.Height);
+				UpdateBounds ();
 			}
 		}
 
@@ -296,8 +298,6 @@ namespace System.Windows.Forms
 					return;
 
     				integral_height = value;
-				if (!integral_height && requested_height != -1)
-					Height = requested_height;
 				UpdateBounds ();
 			}
 		}
@@ -322,11 +322,9 @@ namespace System.Windows.Forms
 					return;
 
 				item_height = value;
-				Layout ();
 				if (IntegralHeight)
 					UpdateBounds ();
-				else
-					UpdateScrollBars ();
+				Layout ();
 			}
 		}
 
@@ -412,7 +410,9 @@ namespace System.Windows.Forms
 				if (selected_index == value)
 					return;
 
-				if (SelectionMode == SelectionMode.One)
+				if (value == -1)
+					ClearSelected ();
+				else if (SelectionMode == SelectionMode.One)
 					UnSelectItem (selected_index, true);
 
     				SelectItem (value);
@@ -793,11 +793,9 @@ namespace System.Windows.Forms
 			} else {
 				SizeF sz = DeviceContext.MeasureString ("The quick brown Fox", Font);
 				item_height = (int) sz.Height;
-				Layout ();
 				if (IntegralHeight)
 					UpdateBounds ();
-				else
-					UpdateScrollBars ();
+				Layout ();
 			}
 		}
 
@@ -834,7 +832,8 @@ namespace System.Windows.Forms
 		protected override void OnResize (EventArgs e)
 		{
 			base.OnResize (e);
-			UpdateBounds ();
+			if (canvas_size.IsEmpty || MultiColumn)
+				Layout ();
 		}
 
 		protected override void OnSelectedIndexChanged (EventArgs e)
@@ -1005,14 +1004,14 @@ namespace System.Windows.Forms
 
 		private void LayoutMultiColumn ()
 		{
-			int usable_height = bounds.Height - (ScrollAlwaysVisible ? hscrollbar.Height : 0);
+			int usable_height = ClientRectangle.Height - (ScrollAlwaysVisible ? hscrollbar.Height : 0);
 			row_count = usable_height / ItemHeight;
 			if (row_count == 0)
 				row_count = 1;
 			int cols = (int) Math.Ceiling ((float)Items.Count / (float) row_count);
 			Size sz = new Size (cols * ColumnWidthInternal, row_count * ItemHeight);
-			if (!ScrollAlwaysVisible && sz.Width > bounds.Width && row_count > 1) {
-				usable_height = bounds.Height - hscrollbar.Height;
+			if (!ScrollAlwaysVisible && sz.Width > ClientRectangle.Width && row_count > 1) {
+				usable_height = ClientRectangle.Height - hscrollbar.Height;
 				row_count = usable_height / ItemHeight;
 				cols = (int) Math.Ceiling ((float)Items.Count / (float) row_count);
 				sz = new Size (cols * ColumnWidthInternal, row_count * ItemHeight);
@@ -1091,15 +1090,24 @@ namespace System.Windows.Forms
 
 		// Only returns visible points. The diference of with IndexFromPoint is that the rectangle
 		// has screen coordinates
-		private int IndexFromPointDisplayRectangle (int x, int y)
+		private int IndexAtClientPoint (int x, int y)
 		{	
 			if (Items.Count == 0)
 				return -1;
 			
-			for (int i = top_index; i <= last_visible_index; i++) {
-				if (GetItemDisplayRectangle (i, top_index).Contains (x, y) == true)
+			if (x < 0)
+				x = 0;
+			else if (x > ClientRectangle.Right)
+				x = ClientRectangle.Right;
+
+			if (y < 0)
+				y = 0;
+			else if (y > ClientRectangle.Bottom)
+				y = ClientRectangle.Bottom;
+
+			for (int i = top_index; i <= last_visible_index; i++)
+				if (GetItemDisplayRectangle (i, top_index).Contains (x, y))
 					return i;
-			}
 
 			return -1;
 		}
@@ -1409,19 +1417,158 @@ namespace System.Windows.Forms
 
 		internal virtual void OnItemClick (int index)
 		{
-    			SelectedItemFromNavigation (index);
-    			FocusedItem = index;
+    			OnSelectedIndexChanged  (EventArgs.Empty);
+    			OnSelectedValueChanged (EventArgs.Empty);
+		}
+
+		int anchor = -1;
+		int[] prev_selection;
+		bool button_pressed = false;
+
+		private void SelectExtended (int index)
+		{
+			SuspendLayout ();
+
+			ArrayList new_selection = new ArrayList ();
+			int start = anchor < index ? anchor : index;
+			int end = anchor > index ? anchor : index;
+			for (int i = start; i <= end; i++)
+				new_selection.Add (i);
+
+			if (ctrl_pressed)
+				foreach (int i in prev_selection)
+					if (!selection.Contains (i))
+						new_selection.Add (i);
+
+			foreach (int i in SelectedIndices)
+				if (!new_selection.Contains (i))
+					UnSelectItem (i, true);
+
+			foreach (int i in new_selection)
+				if (!SelectedIndices.Contains (i))
+					SelectItem (i);
+			ResumeLayout ();
 		}
 
 		private void OnMouseDownLB (object sender, MouseEventArgs e)
     		{
-    			int index = IndexFromPointDisplayRectangle (e.X, e.Y);
+    			int index = IndexAtClientPoint (e.X, e.Y);
     			
     			if (index == -1)
 				return;
 
-			OnItemClick (index);
+			switch (SelectionMode) {
+			case SelectionMode.One:
+				UnSelectItem (SelectedIndex, true);
+				SelectItem (index);
+				selected_index = index;
+				break;
+
+			case SelectionMode.MultiSimple:
+				if (SelectedIndices.Contains (index))
+					UnSelectItem (index, true);
+				else
+					SelectItem (index);
+				break;
+
+			case SelectionMode.MultiExtended:
+				shift_pressed = (XplatUI.State.ModifierKeys & Keys.Shift) != 0;
+				ctrl_pressed = (XplatUI.State.ModifierKeys & Keys.Control) != 0;
+
+				if (ctrl_pressed) {
+					prev_selection = new int [selection.Count];
+					SelectedIndices.CopyTo (prev_selection, 0);
+				} else
+					ClearSelected ();
+
+				if (!shift_pressed)
+					anchor = index;
+
+				SelectExtended (index);
+				break;
+
+			case SelectionMode.None:
+			default:
+				return;
+			}
+				
+			button_pressed = true;
+			FocusedItem = index;
     		}
+
+		private void OnMouseMoveLB (object sender, MouseEventArgs e)
+    		{
+			if (!button_pressed)
+				return;
+
+    			int index = IndexAtClientPoint (e.X, e.Y);
+
+			switch (SelectionMode) {
+			case SelectionMode.One:
+				if (index == selected_index)
+					return;
+
+				UnSelectItem (SelectedIndex, true);
+				SelectItem (index);
+				selected_index = index;
+				break;
+
+			case SelectionMode.MultiSimple:
+				break;
+
+			case SelectionMode.MultiExtended:
+				SelectExtended (index);
+				break;
+
+			case SelectionMode.None:
+			default:
+				return;
+			}
+
+			FocusedItem = index;
+		}
+
+		private void OnMouseUpLB (object sender, MouseEventArgs e)
+    		{
+			if (!button_pressed)
+				return;
+
+    			int index = IndexAtClientPoint (e.X, e.Y);
+			OnItemClick (index);
+			button_pressed = ctrl_pressed = shift_pressed = false;
+		}
+
+		private void Scroll (ScrollBar scrollbar, int delta)
+		{
+			if (delta == 0 || !scrollbar.Visible || !scrollbar.Enabled)
+				return;
+
+			int max;
+			if (scrollbar == hscrollbar)
+				max = hscrollbar.Maximum - (items_area.Width / ColumnWidthInternal) + 1;
+			else
+				max = vscrollbar.Maximum - (items_area.Height / ItemHeight) + 1;
+
+			int val = scrollbar.Value + delta;
+			if (val > max)
+				val = max;
+			else if (val < scrollbar.Minimum)
+				val = scrollbar.Minimum;
+			scrollbar.Value = val;
+		}
+
+		private void OnMouseWheelLB (object sender, MouseEventArgs me)
+		{
+			if (Items.Count == 0)
+				return;
+
+			int lines = me.Delta / 120;
+
+			if (MultiColumn)
+				Scroll (hscrollbar, -SystemInformation.MouseWheelScrollLines * lines);
+			else
+				Scroll (vscrollbar, -lines);
+		}
 
 		internal override void OnPaintInternal (PaintEventArgs pevent)
 		{
@@ -1465,11 +1612,11 @@ namespace System.Windows.Forms
     					break;
     				}
     				case SelectionMode.MultiSimple: {
-					if (selected_index == -1) {
+					if (SelectedIndex == -1) {
 						SelectedIndex = index;
 					} else {
 
-						if (SelectedIndices.Contains (index)) // BUG: index or selected_index?
+						if (SelectedIndices.Contains (index))
 							UnSelectItem (index, true);
 						else {
     							SelectItem (index);
@@ -1481,7 +1628,7 @@ namespace System.Windows.Forms
     				}
     				
     				case SelectionMode.MultiExtended: {
-					if (selected_index == -1) {
+					if (SelectedIndex == -1) {
 						SelectedIndex = index;
 					} else {
 
@@ -1545,6 +1692,9 @@ namespace System.Windows.Forms
 		internal int FocusedItem {
 			get { return focused_item; }
 			set {			
+				if (focused_item == value)
+					return;
+
 				int prev = focused_item;			
 			
 				focused_item = value;
@@ -1609,23 +1759,15 @@ namespace System.Windows.Forms
 
 		private void UpdateBounds ()
 		{
-			Rectangle prev = bounds;
-
-			bounds = ClientRectangle;
-
-			if (IntegralHeight)
-				bounds.Height -= (bounds.Height % ItemHeight);
-
-			if (bounds == prev)
+			if (requested_height == -1)
 				return;
 
-			Layout ();
-			UpdateScrollBars ();
+			SetBoundsCore (0, 0, 0, requested_height, BoundsSpecified.Height);
 		}
 
 		private void UpdateScrollBars ()
 		{
-			items_area = bounds;
+			items_area = ClientRectangle;
 			if (UpdateHorizontalScrollBar ()) {
 				items_area.Height -= hscrollbar.Height;
 				if (UpdateVerticalScrollBar ()) {
@@ -1658,7 +1800,7 @@ namespace System.Windows.Forms
 					show = true;
 					hscrollbar.Maximum  = 0;
 				}
-			} else if (canvas_size.Width > bounds.Width && HorizontalScrollbar) {
+			} else if (canvas_size.Width > ClientRectangle.Width && HorizontalScrollbar) {
 				show = true;					
 				hscrollbar.Maximum = canvas_size.Width;
 				hscrollbar.LargeChange = items_area.Width;
@@ -1683,6 +1825,7 @@ namespace System.Windows.Forms
 			if (canvas_size.Height > items_area.Height) {
 				show = true;
 				vscrollbar.Maximum = Items.Count - 1;
+				vscrollbar.LargeChange = items_area.Height / ItemHeight;
 			} else if (ScrollAlwaysVisible) {
 				show = true;
 				enabled = false;
@@ -1826,9 +1969,7 @@ namespace System.Windows.Forms
 
 			public virtual void Clear ()
 			{
-				owner.selected_index = -1;
 				owner.selection.Clear ();
-				owner.FocusedItem = -1;
 				object_items.Clear ();
 				owner.CollectionChanged ();
 			}

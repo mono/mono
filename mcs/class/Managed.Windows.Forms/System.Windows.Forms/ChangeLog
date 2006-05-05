@@ -1,3 +1,11 @@
+2006-05-05  Mike Kestner  <mkestner@novell.com>
+
+	* CheckedListBox.cs: update check handling code to not use selected.
+	* ListBox.cs: rewrite of mouse selection handling to correspond to MS
+	behavior for visual feedback, motion response, shift/ctrl handling,
+	and properly deal with all 4 selection modes. Updates to bounds
+	handling logic.  Add scroll wheel support. [Fixes #77842]
+
 2006-05-05  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* ListView.cs:

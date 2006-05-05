@@ -325,13 +325,16 @@ namespace System.Windows.Forms
 
 		#region Private Methods
 
+		int last_clicked_index = -1;
+
 		internal override void OnItemClick (int index)
 		{			
 			if (GetItemChecked (index))
 				SetItemCheckState (index, CheckState.Unchecked);
-			else if (CheckOnClick || SelectedIndices.Contains (index))
+			else if (CheckOnClick || last_clicked_index == index)
 				SetItemCheckState (index, CheckState.Checked);
 			
+			last_clicked_index = index;
 			base.OnItemClick (index);
 		}
 
