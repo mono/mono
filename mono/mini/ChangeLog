@@ -1,3 +1,8 @@
+2006-05-04  Massimiliano Mantione  <massi@ximian.com>
+
+	* driver.c: Disabled inline,consprop,copyprop,treeprop,deadce by
+	default until I understand why they break the build on amd64.
+
 2006-05-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mini_cleanup): Call mono_cleanup ().
