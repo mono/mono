@@ -1,3 +1,10 @@
+2006-05-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* metadata-internals.h image.c assembly.c: Change the reference counting scheme
+	to also allow for temporary references between mono_image_open ()/close ().
+
+	* domain.c (get_runtimes_from_exe): Add a FIXME.	
+
 2006-05-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c: Fix support for dynamic methods.
