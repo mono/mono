@@ -1,3 +1,8 @@
+2006-05-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ExecutionContext.cs: Don't capture the compressed stack unless the 
+	security manager is active (this wasn't ready to be called in 
+	production code).
 
 Wed Mar 15 16:35:49 CET 2006 Paolo Molaro <lupus@ximian.com>
 
