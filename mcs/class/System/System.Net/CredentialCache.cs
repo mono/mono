@@ -32,6 +32,7 @@ using System.Runtime.Serialization;
 
 namespace System.Net {
 	public class CredentialCache : ICredentials, IEnumerable {
+		static NetworkCredential empty = new NetworkCredential ("", "", "");
 		Hashtable cache;
 
 		public CredentialCache () 
@@ -43,10 +44,17 @@ namespace System.Net {
 		public static ICredentials DefaultCredentials {
 			get {
 				// This is used for NTLM, Kerberos and Negotiate under MS
-				return null;
+				return empty;
 			}
 		}
-		
+
+#if NET_2_0
+		// MS does might return a special ICredentials which does not allow getting the
+		// username/password information out of it for non-internal classes.
+		public static NetworkCredential DefaultNetworkCredentials {
+			get { return empty; }
+		}
+#endif
 
 		public NetworkCredential GetCredential (Uri uriPrefix, string authType)
 		{

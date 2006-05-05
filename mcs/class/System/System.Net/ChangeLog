@@ -1,5 +1,9 @@
 2006-05-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* CredentialCache.cs: added DefaultNetworkCredentials.
+
+2006-05-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* NetworkCredential.cs: implement ICredentialsByHost interface.
 
 2006-04-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
