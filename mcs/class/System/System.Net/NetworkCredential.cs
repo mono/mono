@@ -30,6 +30,9 @@
 namespace System.Net
 {
 	public class NetworkCredential : ICredentials
+#if NET_2_0
+					, ICredentialsByHost
+#endif
 	{
 		// Fields
 		string userName;
@@ -78,6 +81,13 @@ namespace System.Net
 		public NetworkCredential GetCredential (Uri uri, string authType)
 		{
 			return this;
-		}					
+		}
+
+#if NET_2_0
+		public NetworkCredential GetCredential (string host, int port, string authenticationType)
+		{
+			return this;
+		}
+#endif
 	}
 }

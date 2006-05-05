@@ -1,3 +1,7 @@
+2006-05-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* NetworkCredential.cs: implement ICredentialsByHost interface.
+
 2006-04-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConnection.cs: reset the challenge and the status code when
