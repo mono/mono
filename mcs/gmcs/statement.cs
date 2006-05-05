@@ -97,7 +97,12 @@ namespace Mono.CSharp {
 		{
 			return true;
 		}
-		
+
+		public override bool ResolveUnreachable (EmitContext ec, bool warn)
+		{
+			return true;
+		}
+
 		protected override void DoEmit (EmitContext ec)
 		{
 		}
@@ -682,6 +687,7 @@ namespace Mono.CSharp {
 	}
 
 	public class LabeledStatement : Statement {
+		string name;
 		bool defined;
 		bool referenced;
 		Label label;
@@ -689,8 +695,9 @@ namespace Mono.CSharp {
 
 		FlowBranching.UsageVector vectors;
 		
-		public LabeledStatement (Location l)
+		public LabeledStatement (string name, Location l)
 		{
+			this.name = name;
 			this.loc = l;
 		}
 
@@ -705,16 +712,20 @@ namespace Mono.CSharp {
 			return label;
 		}
 
+		public string Name {
+			get { return name; }
+		}
+
 		public bool IsDefined {
-			get {
-				return defined;
-			}
+			get { return defined; }
 		}
 
 		public bool HasBeenReferenced {
-			get {
-				return referenced;
-			}
+			get { return referenced; }
+		}
+
+		public FlowBranching.UsageVector JumpOrigins {
+			get { return vectors; }
 		}
 
 		public void AddUsageVector (FlowBranching.UsageVector vector)
@@ -1317,17 +1328,17 @@ namespace Mono.CSharp {
 		///   otherwise.
 		/// </returns>
 		///
-		public bool AddLabel (string name, LabeledStatement target, Location loc)
+		public bool AddLabel (LabeledStatement target)
 		{
 			if (switch_block != null)
-				return switch_block.AddLabel (name, target, loc);
+				return switch_block.AddLabel (target);
+
+			string name = target.Name;
 
 			Block cur = this;
 			while (cur != null) {
 				if (cur.DoLookupLabel (name) != null) {
-					Report.Error (
-						140, loc, "The label `{0}' is a duplicate",
-						name);
+					Report.Error (140, target.loc, "The label `{0}' is a duplicate", name);
 					return false;
 				}
 
@@ -1340,9 +1351,8 @@ namespace Mono.CSharp {
 			while (cur != null) {
 				if (cur.DoLookupLabel (name) != null) {
 					Report.Error (
-						158, loc,
-						"The label `{0}' shadows another label " +
-						"by the same name in a contained scope.",
+						158, target.loc,
+						"The label `{0}' shadows another label by the same name in a contained scope.",
 						name);
 					return false;
 				}
@@ -1355,9 +1365,7 @@ namespace Mono.CSharp {
 
 						Report.Error (
 							158, s.loc,
-							"The label `{0}' shadows another " +
-							"label by the same name in a " +
-							"contained scope.",
+							"The label `{0}' shadows another label by the same name in a contained scope.",
 							name);
 						return false;
 					}

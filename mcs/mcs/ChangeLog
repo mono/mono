@@ -1,5 +1,11 @@
 2006-05-05  Raja R Harinath  <rharinath@novell.com>
 
+	* statement.cs (EmptyStatement.ResolveUnreachable): Override.
+	(LabeledStatement): Add 'name' parameter.
+	(LabeledStatement.Name, LabeledStatement.JumpOrigins): New.
+	(Block.AddLabel): Update to changes.
+	* cs-parser.jay (labeled_statement): Likewise.
+
 	* flowanalysis.cs (BranchingType.Labeled): New.
 	(UsageVector.MergeOrigins): Remove unused 'branching' argument.
 	(FlowBranchingLabeled): New.  Does nothing for now, but will

@@ -3687,9 +3687,9 @@ labeled_statement
 	: IDENTIFIER COLON 
 	  {
 		LocatedToken lt = (LocatedToken) $1;
-		LabeledStatement labeled = new LabeledStatement (lt.Location);
+		LabeledStatement labeled = new LabeledStatement (lt.Value, lt.Location);
 
-		if (current_block.AddLabel (lt.Value, labeled, lt.Location))
+		if (current_block.AddLabel (labeled))
 			current_block.AddStatement (labeled);
 	  }
 	  statement
