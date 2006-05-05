@@ -1,3 +1,21 @@
+2006-05-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_bounded_array_class_get): Allocate data from the image mempool.
+	(mono_ptr_class_get): Ditto. Also change the cache from a global one to a 
+	per-image cache.
+
+	* assembly.c (mono_assembly_close): Free image->references.
+
+	* assembly.c (mono_assembly_names_equal): Fix a warning.
+	(mono_assemblies_cleanup): Cleanup more global data.
+
+	* metadata-internals.h (MonoImage): Add 'ptr_cache'.
+
+	* image.c (mono_image_close): Free up the contents of 'array_cache', free up
+	ptr_cache and image->modules.
+
+	* image.c (mono_image_init): Allocate array_cache lazily.
+	
 2006-05-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* assembly.c: use GetCurrentThreadId for the hash, as GetCurrentThread
