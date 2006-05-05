@@ -149,23 +149,16 @@ namespace MonoTests.System.Configuration {
 
 			SettingsPropertyValue v = new SettingsPropertyValue (p);
 
-			/* this is wonky... ms returns false for all of the below cases */
-			Assert.IsFalse (v.UsingDefaultValue, "A1");
+			Assert.AreEqual (10, v.PropertyValue, "A1");
+			Assert.IsTrue (v.UsingDefaultValue, "A2");
 
 			/* set PropertyValue to something else */
 			v.PropertyValue = 5;
-			Assert.IsFalse (v.UsingDefaultValue, "A2");
+			Assert.IsFalse (v.UsingDefaultValue, "A3");
 
 			/* set PropertyValue back to the default */
 			v.PropertyValue = 10;
-			Assert.IsFalse (v.UsingDefaultValue, "A3");
-
-
-			/* let's try again */
-			v = new SettingsPropertyValue (p);
-			
-			Assert.AreEqual (10, v.PropertyValue, "A4");
-			Assert.IsTrue (v.UsingDefaultValue, "A5");
+			Assert.IsFalse (v.UsingDefaultValue, "A4");
 		}
 
 		[Test]

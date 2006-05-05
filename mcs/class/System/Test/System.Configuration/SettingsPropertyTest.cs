@@ -92,7 +92,7 @@ namespace MonoTests.System.Configuration {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
-		public void Ctor_2_ArgNull ()
+		public void Ctor_2_AttributesNull ()
 		{
 			/* same as above, but a null
 			 * SettingsAttributeDictionary, which causes a
@@ -111,6 +111,20 @@ namespace MonoTests.System.Configuration {
 		}
 
 		[Test]
+		public void Ctor_2_NameNull ()
+		{
+			SettingsProperty q = new SettingsProperty (null,
+								   typeof (int),
+								   null,
+								   true,
+								   10,
+								   SettingsSerializeAs.Binary,
+								   new SettingsAttributeDictionary(),
+								   true,
+								   false);
+		}
+
+		[Test]
 		public void Ctor_3 ()
 		{
 			SettingsProperty p = new SettingsProperty ("property");
@@ -125,7 +139,6 @@ namespace MonoTests.System.Configuration {
 			Assert.IsFalse (p.ThrowOnErrorSerializing, "A8");
 			Assert.IsFalse (p.IsReadOnly, "A9");
 		}
-
 	}
 
 }
