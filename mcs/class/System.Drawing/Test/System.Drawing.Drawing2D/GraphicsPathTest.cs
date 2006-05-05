@@ -825,12 +825,12 @@ namespace MonoTests.System.Drawing.Drawing2D {
 			Assert.AreEqual (10, path.PathTypes.Length, "PathPoints");
 			Assert.AreEqual (10, path.PathData.Points.Length, "PathData");
 
-			// GetBounds (well GdipGetPathWorldBounds) isn't implemented
+			// GetBounds (well GdipGetPathWorldBounds) isn't very precise with curves
 			RectangleF rect = path.GetBounds ();
-			Assert.AreEqual (0.8333333f, rect.X, "Bounds.X");
-			Assert.AreEqual (0.8333333f, rect.Y, "Bounds.Y");
-			Assert.AreEqual (2.33333278f, rect.Width, "Bounds.Width");
-			Assert.AreEqual (2.33333278f, rect.Height, "Bounds.Height");
+			Assert.AreEqual (0.8333333f, rect.X, 0.2f, "Bounds.X");
+			Assert.AreEqual (0.8333333f, rect.Y, 0.2f, "Bounds.Y");
+			Assert.AreEqual (2.33333278f, rect.Width, 0.4f, "Bounds.Width");
+			Assert.AreEqual (2.33333278f, rect.Height, 0.4f, "Bounds.Height");
 
 			Assert.AreEqual (0, path.PathData.Types[0], "PathData.Types[0]");
 			for (int i = 1; i < 9; i++)
@@ -1205,18 +1205,21 @@ namespace MonoTests.System.Drawing.Drawing2D {
 			gp.AddRectangle (rect);
 
 			RectangleF bounds = gp.GetBounds (null, p);
+#if false
+			// those bounds doesn't make any sense (even visually)
+			// probably null gets mis-interpreted ???
 			Assert.AreEqual (-6.09999943f, bounds.X, "NullMatrix.Bounds.X");
 			Assert.AreEqual (-6.09999943f, bounds.Y, "NullMatrix.Bounds.Y");
 			Assert.AreEqual (16.1999989f, bounds.Width, "NullMatrix.Bounds.Width");
 			Assert.AreEqual (16.1999989f, bounds.Height, "NullMatrix.Bounds.Height");
-
+#endif
 			Matrix m = new Matrix ();
-			// an empty matrix is different than a null matrix
 			bounds = gp.GetBounds (m, p);
 			Assert.AreEqual (-0.419999957f, bounds.X, "EmptyMatrix.Bounds.X");
 			Assert.AreEqual (-0.419999957f, bounds.Y, "EmptyMatrix.Bounds.Y");
 			Assert.AreEqual (4.83999968f, bounds.Width, "EmptyMatrix.Bounds.Width");
 			Assert.AreEqual (4.83999968f, bounds.Height, "EmptyMatrix.Bounds.Height");
+			// visually we can see the bounds just a pixel bigger than the rectangle
 
 			gp = new GraphicsPath ();
 			gp.AddRectangle (rect);
@@ -1232,6 +1235,66 @@ namespace MonoTests.System.Drawing.Drawing2D {
 			Assert.AreEqual (0.499999523f, bounds.Y, "WidenEmptyMatrix.Bounds.Y");
 			Assert.AreEqual (3.000001f, bounds.Width, "WidenEmptyMatrix.Bounds.Width");
 			Assert.AreEqual (3.000001f, bounds.Height, "WidenEmptyMatrix.Bounds.Height");
+		}
+
+		private void CheckPieBounds (RectangleF rect)
+		{
+			Assert.AreEqual (60.0f, rect.X, 1, "Bounds.X");
+			Assert.AreEqual (60.0f, rect.Y, 1, "Bounds.Y");
+			Assert.AreEqual (43.3f, rect.Width, 1, "Bounds.Width");
+			Assert.AreEqual (48.3f, rect.Height, 1, "Bounds.Height");
+		}
+
+		[Test]
+		public void GetBounds_Empty_Pie ()
+		{
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddPie (10, 10, 100, 100, 30, 45);
+			CheckPieBounds (gp.GetBounds ());
+			gp.Dispose ();
+		}
+
+		[Test]
+		public void GetBounds_Null_Pie ()
+		{
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddPie (10, 10, 100, 100, 30, 45);
+			CheckPieBounds (gp.GetBounds (null));
+			gp.Dispose ();
+		}
+
+		[Test]
+		public void GetBounds_MatrixEmpty_Pie ()
+		{
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddPie (10, 10, 100, 100, 30, 45);
+			CheckPieBounds (gp.GetBounds (new Matrix ()));
+			gp.Dispose ();
+		}
+
+		[Test]
+		public void GetBounds_NullNull_Pie ()
+		{
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddPie (10, 10, 100, 100, 30, 45);
+			CheckPieBounds (gp.GetBounds (null, null));
+			gp.Dispose ();
+		}
+
+		[Test]
+		public void GetBounds_Empty_ClosedCurve ()
+		{
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddClosedCurve (new Point[4] { new Point (20, 100), new Point (70, 10),
+				new Point (130, 200), new Point (180, 100) });
+#if false
+			// so far from reality that it's totally useless
+			Assert.AreEqual (1.666666f, rect.X, 0.00001, "Bounds.X");
+			Assert.AreEqual (-6.66666f, rect.Y, 1, "Bounds.Y");
+			Assert.AreEqual (196.6666f, rect.Width, 1, "Bounds.Width");
+			Assert.AreEqual (221.6666f, rect.Height, 1, "Bounds.Height");
+#endif
+			gp.Dispose ();
 		}
 
 		[Test]
@@ -2005,6 +2068,55 @@ namespace MonoTests.System.Drawing.Drawing2D {
 			GraphicsPath path = new GraphicsPath ();
 			path.Widen (new Pen (Color.Blue), matrix);
 			Assert.AreEqual (0, path.PointCount, "Points");
+		}
+
+		private void CheckWidenedBounds (string message, GraphicsPath gp, Matrix m)
+		{
+			RectangleF bounds = gp.GetBounds (m);
+			Assert.AreEqual (0.5f, bounds.X, 0.00001f, message + ".Bounds.X");
+			Assert.AreEqual (0.5f, bounds.Y, 0.00001f, message + ".Bounds.Y");
+			Assert.AreEqual (3.0f, bounds.Width, 0.00001f, message + ".Bounds.Width");
+			Assert.AreEqual (3.0f, bounds.Height, 0.00001f, message + ".Bounds.Height");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Widen_Pen_SmallWidth ()
+		{
+			Matrix m = new Matrix ();
+			Rectangle rect = new Rectangle (1, 1, 2, 2);
+
+			// pen's smaller than 1.0 (width) are "promoted" to 1
+			Pen p = new Pen (Color.Aqua, 0);
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddRectangle (rect);
+			gp.Widen (p);
+			CheckWidenedBounds ("Width == 0, Null matrix", gp, null);
+			CheckWidenedBounds ("Width == 0, Empty matrix", gp, m);
+
+			p.Width = 0.5f;
+			gp = new GraphicsPath ();
+			gp.AddRectangle (rect);
+			gp.Widen (p);
+			CheckWidenedBounds ("Width == 0.5, Null matrix", gp, null);
+			CheckWidenedBounds ("Width == 0.5, Empty matrix", gp, m);
+
+			p.Width = 1.0f;
+			gp = new GraphicsPath ();
+			gp.AddRectangle (rect);
+			gp.Widen (p);
+			CheckWidenedBounds ("Width == 1.0, Null matrix", gp, null);
+			CheckWidenedBounds ("Width == 1.0, Empty matrix", gp, m);
+
+			p.Width = 1.1f;
+			gp = new GraphicsPath ();
+			gp.AddRectangle (rect);
+			gp.Widen (p);
+			RectangleF bounds = gp.GetBounds (m);
+			Assert.AreEqual (0.45f, bounds.X, 0.00001f, "1.1.Bounds.X");
+			Assert.AreEqual (0.45f, bounds.Y, 0.00001f, "1.1.Bounds.Y");
+			Assert.AreEqual (3.10f, bounds.Width, 0.00001f, "1.1.Bounds.Width");
+			Assert.AreEqual (3.10f, bounds.Height, 0.00001f, "1.1.Bounds.Height");
 		}
 	}
 }

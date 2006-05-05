@@ -1,3 +1,9 @@
+2006-05-05  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* GraphicsPathTest.cs: Added more test cases for GetBounds and found
+	out the results are very imprecise when curves are used (hence 
+	difficult to test but much easier to implement ;-)
+
 2006-05-03  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* LinearGradientBrushTest.cs: Added new test case for #78185 (from 
