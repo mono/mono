@@ -1,5 +1,7 @@
 2006-05-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* assembly.c (mono_assembly_open_full): Add a missing mono_image_close ().
+	
 	* assembly.c (mono_assembly_close): Remove a debug printf.
 
 	* profiler.c (create_profiler): Use mono_aligned_addr_hash.
