@@ -1,5 +1,10 @@
 2006-05-05  Chris Toshok  <toshok@ximian.com>
 
+	* LocalFileSettingsProvider.cs (IsUserSetting): more
+	CONFIGURATION_DEP crap.
+
+2006-05-05  Chris Toshok  <toshok@ximian.com>
+
 	* ApplicationSettingsBase.cs (CacheValuesByProvider): emit
 	SettingsLoaded after we load the property values.
 	(set_Item[string]): fill in settingClass in the
