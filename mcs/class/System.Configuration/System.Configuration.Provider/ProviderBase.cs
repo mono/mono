@@ -44,7 +44,8 @@ namespace System.Configuration.Provider
 		{
 			_name = name;
 
-			_description = config["description"];
+			if (config != null)
+				_description = config["description"];
 			if (_description == null)
 				_description = _name;
 		}

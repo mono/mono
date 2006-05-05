@@ -1,3 +1,7 @@
+2006-05-05  Chris Toshok  <toshok@ximian.com>
+
+	* ProviderBase.cs (Initialize): don't die if config == null.
+
 2005-10-07  Chris Toshok  <toshok@ximian.com>
 
 	* ProviderCollection.cs: fix compiler warning with Hashtable ctor.
