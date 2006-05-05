@@ -486,30 +486,6 @@ namespace Mono.CSharp
 				return child;
 			}
 
-			protected static void MergeFinally (UsageVector f_origins,
-						     MyBitVector f_params)
-			{
-				for (UsageVector vector = f_origins; vector != null; vector = vector.Next) {
-					MyBitVector temp_params = f_params.Clone ();
-					temp_params.Or (vector.Parameters);
-				}
-			}
-
-			public void MergeFinally (UsageVector f_vector,
-						  UsageVector f_origins)
-			{
-				if (parameters != null) {
-					if (f_vector != null) {
-						MergeFinally (f_origins, f_vector.Parameters);
-						MyBitVector.Or (ref parameters, f_vector.ParameterVector);
-					} else
-						MergeFinally (f_origins, parameters);
-				}
-
-				if (f_vector != null && f_vector.LocalVector != null)
-					MyBitVector.Or (ref locals, f_vector.LocalVector);
-			}
-
 			// <summary>
 			//   Tells control flow analysis that the current code position may be reached with
 			//   a forward jump from any of the origins listed in `origin_vectors' which is a
@@ -568,28 +544,6 @@ namespace Mono.CSharp
 				}
 
 				Report.Debug (1, "  MERGING JUMP ORIGINS DONE", this);
-			}
-
-			// <summary>
-			//   This is used at the beginning of a finally block if there were
-			//   any return statements in the try block or one of the catch blocks.
-			// </summary>
-			public void MergeFinallyOrigins (UsageVector f_origins)
-			{
-				Report.Debug (1, "  MERGING FINALLY ORIGIN", this);
-
-				reachability = Reachability.Always ();
-
-				for (UsageVector vector = f_origins; vector != null; vector = vector.Next) {
-					Report.Debug (1, "    MERGING FINALLY ORIGIN", vector);
-
-					if (parameters != null)
-						parameters.And (vector.parameters);
-
-					reachability.Meet (vector.Reachability);
-				}
-
-				Report.Debug (1, "  MERGING FINALLY ORIGIN DONE", this);
 			}
 
 			public void MergeOrigins (FlowBranching branching, UsageVector o_vectors)
@@ -902,27 +856,9 @@ namespace Mono.CSharp
 			return result.Reachability;
 		}
 
-		//
-		// Checks whether we're in a `try' block.
-		//
-		public virtual bool InTryOrCatch ()
-		{
-			if (Block != null && Block.IsDestructor)
-				return true;
-			return Parent != null && Parent.InTryOrCatch ();
-		}
-
 		public virtual bool InTryWithCatch ()
 		{
 			return Parent != null && Parent.InTryWithCatch ();
-		}
-
-		public virtual void AddFinallyVector (UsageVector vector)
-		{
-			if (Parent != null)
-				Parent.AddFinallyVector (vector);
-			else if ((Block == null) || !Block.IsDestructor)
-				throw new NotSupportedException ();
 		}
 
 		// returns true if we crossed an unwind-protected region (try/catch/finally, lock, using, ...)
@@ -1111,7 +1047,6 @@ namespace Mono.CSharp
 		UsageVector current_vector;
 		UsageVector catch_vectors;
 		UsageVector finally_vector;
-		UsageVector finally_origins;
 
 		UsageVector break_origins;
 		UsageVector continue_origins;
@@ -1137,7 +1072,6 @@ namespace Mono.CSharp
 				sibling.Next = catch_vectors;
 				catch_vectors = sibling;
 			} else if (sibling.Type == SiblingType.Finally) {
-				sibling.MergeFinallyOrigins (finally_origins);
 				finally_vector = sibling;
 			} else
 				throw new InvalidOperationException ();
@@ -1149,11 +1083,6 @@ namespace Mono.CSharp
 			get { return current_vector; }
 		}
 
-		public override bool InTryOrCatch ()
-		{
-			return finally_vector == null;
-		}
-
 		public override bool InTryWithCatch ()
 		{
 			if (finally_vector == null) {
@@ -1163,13 +1092,6 @@ namespace Mono.CSharp
 			}
 
 			return base.InTryWithCatch ();
-		}
-
-		public override void AddFinallyVector (UsageVector vector)
-		{
-			vector = vector.Clone ();
-			vector.Next = finally_origins;
-			finally_origins = vector;
 		}
 
 		public override bool AddBreakOrigin (UsageVector vector, Location loc)
@@ -1253,9 +1175,6 @@ namespace Mono.CSharp
 
 			if (finally_vector != null)
 				vector.MergeChild (finally_vector, false);
-
-			// FIXME: this should probably go away.  I think it's harmless right now
-			vector.MergeFinally (finally_vector, finally_origins);
 
 			for (UsageVector origin = break_origins; origin != null; origin = origin.Next) {
 				if (finally_vector != null)

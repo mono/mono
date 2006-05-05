@@ -1,5 +1,11 @@
 2006-05-05  Raja R Harinath  <rharinath@novell.com>
 
+	* flowanalysis.cs (UsageVector.MergeFinally): Remove.
+	(UsageVector.MergeFinallyOrigins): Likewise.
+	(FlowBranching.InTryOrCatch): Likewise.
+	(FlowBranching.AddFinallyVector): Likewise.
+	(FlowBranchingException): Update to changes.
+
 	Fix #78290
 	* statement.cs (Return.Resolve): Move error checking to ...
 	* flowbranching.cs (FlowBranching.AddReturnOrigin): ... this.
