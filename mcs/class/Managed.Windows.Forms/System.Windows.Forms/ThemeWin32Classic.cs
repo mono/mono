@@ -1391,6 +1391,18 @@ namespace System.Windows.Forms
 							       SystemBrushes.ControlText,
 							       rect, col.Format);
 					}
+					int right = control.Columns [control.Columns.Count - 1].Rect.Right - control.h_marker;
+					if (right < control.Right) {
+						Rectangle rect = control.Columns [0].Rect;
+						rect.X = right;
+						rect.Width = control.Right - right;
+						ButtonState state;
+						if (control.HeaderStyle == ColumnHeaderStyle.Clickable)
+							state = ButtonState.Normal;
+						else
+							state = ButtonState.Flat;
+						CPDrawButton (dc, rect, state);
+					}
 				}
 			}
 		}

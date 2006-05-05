@@ -1,3 +1,9 @@
+2006-05-05  Mike Kestner  <mkestner@novell.com>
+
+	* ListViewItem.cs: fix Details mode checkbox layout bug.
+	* ThemeWin32Classic.cs: draw a ListView column header for unused space
+	at the end of the header, if it exists. [Fixes for #78200]
+
 2006-05-04  Jackson Harper  <jackson@ximian.com>
 
 	* MdiClient.cs: Add a helper property to get the container form.
