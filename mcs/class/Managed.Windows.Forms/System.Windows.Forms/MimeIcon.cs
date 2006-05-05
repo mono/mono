@@ -278,7 +278,7 @@ namespace System.Windows.Forms
 			{
 				if ( platform == EPlatformHandler.Default )
 				{
-					if ( mime_type == "inode/directory" )
+					if (mime_type =="inode/directory")
 					{
 						return (int)MimeTypeIconIndexHash[ "inode/directory" ];
 					}
@@ -357,12 +357,12 @@ namespace System.Windows.Forms
 			
 			string[] split = mime_type.Split( new char[] { ',' } );
 			
-			foreach ( string s in split )
+			for (int i = 0; i < split.Length; i++)
 			{
-				if ( MimeTypeIconIndexHash.ContainsKey( s ) )
+				if ( MimeTypeIconIndexHash.ContainsKey( split[i] ) )
 					continue;
 				
-				MimeTypeIconIndexHash.Add( s, path_or_index );
+				MimeTypeIconIndexHash.Add( split[i], path_or_index );
 			}
 		}
 		
@@ -400,9 +400,9 @@ namespace System.Windows.Forms
 					{
 						string[] split = alias.Split( new char[] { ',' } );
 						
-						foreach ( string s in split )
+						for (int i = 0; i < split.Length; i++)
 						{
-							oindex = MimeTypeIconIndexHash[ s ];
+							oindex = MimeTypeIconIndexHash[ split[i] ];
 							
 							if ( oindex != null )
 								return oindex;
@@ -529,9 +529,9 @@ namespace System.Windows.Forms
 				string icon_path = icon_paths[ 0 ] + icon_theme;
 				string[] dirs = Directory.GetDirectories( icon_path );
 				
-				foreach( string path in dirs )
+				for (int i = 0; i < dirs.Length; i++)
 				{
-					if ( path.EndsWith( "48x48" ) )
+					if ( dirs[i].EndsWith( "48x48" ) )
 						return false;
 				}
 			}
@@ -605,17 +605,17 @@ namespace System.Windows.Forms
 				
 				string[] directories = Directory.GetDirectories( icon_path );
 				
-				foreach ( string d in directories )
+				for (int i = 0; i < directories.Length; i++)
 				{
-					DirectoryInfo di = new DirectoryInfo( d );
+					DirectoryInfo di = new DirectoryInfo( directories [i] );
 					
 					FileInfo[] fileinfo = di.GetFiles( );
 					
-					foreach ( FileInfo fi in fileinfo )
+					for (int z = 0; z < fileinfo.Length; z++)
 					{
-						string name = Path.GetFileNameWithoutExtension( fi.Name );
+						string name = Path.GetFileNameWithoutExtension( fileinfo [z].Name );
 						
-						MimeIconEngine.AddIcon( name, fi.FullName );
+						MimeIconEngine.AddIcon( name, fileinfo [z].FullName );
 					}
 				}
 			}
@@ -641,15 +641,15 @@ namespace System.Windows.Forms
 			{
 				string[] directories = Directory.GetDirectories( mime_path );
 				
-				foreach ( string d in directories )
+				for (int i = 0; i < directories.Length; i++)
 				{
-					string[] files = Directory.GetFiles( d );
+					string[] files = Directory.GetFiles( directories [i] );
 					
-					foreach ( string f in files )
+					for (int z = 0; z < files.Length; z++)
 					{
 					    try {
-						ReadDotDesktop( f );
-					    } catch {
+							ReadDotDesktop( files [z] );
+						} catch {
 						// Ignore errors if the file can not be read.
 					    }
 					}
@@ -966,16 +966,16 @@ namespace System.Windows.Forms
 			string extension = is_svg_icon_theme ? "svg" : "png";
 			int counter = 0;
 			
-			foreach (string place in dirs) {
+			for (int i = 0; i < dirs.Length; i++) {
 				foreach (DictionaryEntry entry in name_mime_hash) {
 					string key = (string)entry.Key;
-					if (File.Exists (place + "/" + key + "." + extension)) {
+					if (File.Exists (dirs [i] + "/" + key + "." + extension)) {
 						string value = (string)entry.Value;
 						MimeIconEngine.AddMimeTypeAndIconName (value, key);
 						if (!is_svg_icon_theme)
-							MimeIconEngine.AddIcon (key, place + "/" + key + "." + extension);
+							MimeIconEngine.AddIcon (key, dirs [i] + "/" + key + "." + extension);
 						else
-							MimeIconEngine.AddSVGIcon (key, place + "/" + key + "." + extension);
+							MimeIconEngine.AddSVGIcon (key, dirs [i] + "/" + key + "." + extension);
 						counter++;
 						if (counter == name_mime_hash.Count)
 							return true;
@@ -999,8 +999,8 @@ namespace System.Windows.Forms
 				
 				string[] files = Directory.GetFiles (path_to_use + "mimetypes");
 				
-				foreach (string file in files) {
-					string extension = Path.GetExtension (file);
+				for (int z = 0; z < files.Length; z++) {
+					string extension = Path.GetExtension (files [z]);
 					
 					if (!is_svg_icon_theme) {
 						if (extension != ".png")
@@ -1009,7 +1009,7 @@ namespace System.Windows.Forms
 					if (extension != ".svg")
 						continue;
 					
-					string file_name = Path.GetFileNameWithoutExtension (file);
+					string file_name = Path.GetFileNameWithoutExtension (files [z]);
 					
 					if (!file_name.StartsWith ("gnome-mime-"))
 						continue;
@@ -1025,9 +1025,9 @@ namespace System.Windows.Forms
 					MimeIconEngine.AddMimeTypeAndIconName (mime_type.ToString (), file_name);
 					
 					if (!is_svg_icon_theme)
-						MimeIconEngine.AddIcon (file_name, file);
+						MimeIconEngine.AddIcon (file_name, files [z]);
 					else
-						MimeIconEngine.AddSVGIcon (file_name, file);
+						MimeIconEngine.AddSVGIcon (file_name, files [z]);
 				}
 			}
 		}

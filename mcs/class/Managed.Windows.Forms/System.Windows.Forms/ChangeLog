@@ -1,3 +1,7 @@
+2006-05-05  Alexander Olk  <alex.olk@googlemail.com>
+
+	* MimeIcon.cs: for is faster than foreach for strings.
+
 2006-05-05  Mike Kestner  <mkestner@novell.com>
 
 	* CheckedListBox.cs: update check handling code to not use selected.
