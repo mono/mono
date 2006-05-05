@@ -30,20 +30,14 @@ using System;
 using System.Collections;
 using System.Runtime.Serialization;
 
-namespace System.Net 
-{
-	public class CredentialCache : ICredentials, IEnumerable
-	{
-		// Fields
-		private Hashtable cache;
-		
-		// Constructors		
+namespace System.Net {
+	public class CredentialCache : ICredentials, IEnumerable {
+		Hashtable cache;
+
 		public CredentialCache () 
 		{
 			cache = new Hashtable ();
 		}
-		
-		// Properties
 		
 		[MonoTODO ("Need EnvironmentPermission implementation first")]
 		public static ICredentials DefaultCredentials {
@@ -53,8 +47,6 @@ namespace System.Net
 			}
 		}
 		
-
-		// ICredentials
 
 		public NetworkCredential GetCredential (Uri uriPrefix, string authType)
 		{
@@ -98,14 +90,10 @@ namespace System.Net
 			return result;
 		}
 
-		// IEnumerable
-
 		public IEnumerator GetEnumerator ()
 		{
 			return cache.Values.GetEnumerator ();
 		}		
-		
-		// Methods
 		
 		public void Add (Uri uriPrefix, string authType, NetworkCredential cred)
 		{
@@ -130,16 +118,12 @@ namespace System.Net
 			cache.Remove (new CredentialCacheKey (uriPrefix, authType));
 		}
 		
-		// Inner Classes
-		
-		internal class CredentialCacheKey
-		{
-			private Uri uriPrefix;
-			private string authType;
-			
-			private string absPath;
-			private int len;
-			private int hash;
+		class CredentialCacheKey {
+			Uri uriPrefix;
+			string authType;
+			string absPath;
+			int len;
+			int hash;
 			
 			internal CredentialCacheKey (Uri uriPrefix, string authType)
 			{
@@ -187,5 +171,5 @@ namespace System.Net
 			}
 		}
 	} 
-} 
+}
 
