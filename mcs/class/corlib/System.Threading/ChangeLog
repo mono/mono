@@ -1,3 +1,9 @@
+2006-05-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ExecutionContext.cs: Don't capture the compressed stack unless the 
+	security manager is active (this wasn't ready to be called in 
+	production code).
+
 2004-04-29  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Timer.cs : avoid NullReferenceException when it is already disposed.

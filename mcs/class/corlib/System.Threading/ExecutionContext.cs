@@ -69,7 +69,8 @@ namespace System.Threading {
 				return null;
 
 			ExecutionContext capture = new ExecutionContext (ec);
-			capture.SecurityContext = SecurityContext.Capture ();
+			if (SecurityManager.SecurityEnabled)
+				capture.SecurityContext = SecurityContext.Capture ();
 			return capture;
 		}
 		
