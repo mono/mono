@@ -393,7 +393,7 @@ namespace System.Net {
 			return false;
 		}
 
-		internal void SendHeaders ()
+		internal void SendHeaders (bool closing)
 		{
 			//TODO: When do we send KeepAlive?
 			//TODO: send cookies
@@ -418,8 +418,15 @@ namespace System.Net {
 			if (headers ["Date"] == null)
 				headers.SetInternal ("Date", DateTime.UtcNow.ToString ("r", inv));
 
-			if (!chunked && cl_set)
-				headers.SetInternal ("Content-Length", content_length.ToString (inv));
+			if (!chunked) {
+				if (!cl_set && closing) {
+					cl_set = true;
+					content_length = 0;
+				}
+
+				if (cl_set)
+					headers.SetInternal ("Content-Length", content_length.ToString (inv));
+			}
 
 			Version v = context.Request.ProtocolVersion;
 			if (!cl_set && !chunked && v >= HttpVersion.Version11)
@@ -465,6 +472,9 @@ namespace System.Net {
 			writer.Flush ();
 			// Perf.: use TCP_CORK if we're writing more?
 			int preamble = encoding.GetPreamble ().Length;
+			if (output_stream == null)
+				output_stream = context.Connection.GetResponseStream ();
+
 			output_stream.InternalWrite (ms.GetBuffer (), 0 + preamble, (int) ms.Length - preamble);
 			HeadersSent = true;
 		}

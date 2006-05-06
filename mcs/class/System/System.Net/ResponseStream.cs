@@ -74,6 +74,9 @@ namespace System.Net {
 		{
 			if (disposed == false) {
 				disposed = true;
+				if (response.HeadersSent == false)
+					response.SendHeaders (true);
+
 				if (response.SendChunked && !trailer_sent) {
 					WriteChunkSize (0, true);
 					trailer_sent = true;
@@ -111,7 +114,7 @@ namespace System.Net {
 				throw new ObjectDisposedException (GetType ().ToString ());
 
 			if (response.HeadersSent == false)
-				response.SendHeaders ();
+				response.SendHeaders (false);
 
 			bool chunked = response.SendChunked;
 			try {
@@ -132,7 +135,7 @@ namespace System.Net {
 				throw new ObjectDisposedException (GetType ().ToString ());
 
 			if (response.HeadersSent == false)
-				response.SendHeaders ();
+				response.SendHeaders (false);
 
 			try {
 				if (response.SendChunked)
