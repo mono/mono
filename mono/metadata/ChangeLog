@@ -1,5 +1,9 @@
 2006-05-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* threads.c (ves_icall_System_Threading_Interlocked_Add_Int): Return the new
+	value, not the old. Fixes #78312.
+	(ves_icall_System_Threading_Interlocked_Add_Long): Ditto.
+
 	* class.c (mono_bounded_array_class_get): Allocate data from the image mempool.
 	(mono_ptr_class_get): Ditto. Also change the cache from a global one to a 
 	per-image cache.
