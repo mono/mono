@@ -1,3 +1,8 @@
+2006-05-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ISerialStream.cs: New internal interface used for 
+	accessing the backend streams functionality.
+
 2006-04-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* WinSerialPort.cs: Inital import of the backend stream
