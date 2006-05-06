@@ -1,3 +1,9 @@
+2006-05-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ResponseStream.cs:
+	* HttpListenerResponse.cs: allow 0 length POST. Patch by Horst Reiterer.
+	Closes bug #78316.
+
 2006-05-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CredentialCache.cs: added DefaultNetworkCredentials.
