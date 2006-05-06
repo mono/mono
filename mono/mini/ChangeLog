@@ -1,5 +1,8 @@
 2006-05-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mini_cleanup): Applied patch from Joachim Ante (joe@otee.dk). Call
+	mono_trace_cleanup ().
+
 	* iltests.il: Fix problem with the newly added test.
 
 	* mini-codegen.c (mono_local_regalloc): When changing the dreg of an instruction
