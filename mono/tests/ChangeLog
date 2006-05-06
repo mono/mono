@@ -1,3 +1,7 @@
+2006-05-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* interlocked-2.2.cs: New tests for the net 2.0 Interlocked methods.
+
 2006-04-19  Massimiliano Mantione  <massi@ximian.com>
 	* test-inline-call-stack.cs: Added missing check.
 
