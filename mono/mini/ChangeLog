@@ -1,5 +1,10 @@
 2006-05-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-codegen.c (mono_local_regalloc): When changing the dreg of an instruction
+	due to register constraints, free up the previous hreg. Fixes #78314.
+
+	* iltests.il: Add new test for #78314.	
+
 	* mini-x86.c (mono_arch_get_inst_for_method): Use OP_ATOMIC_ADD_NEW_I4 for
 	Interlocked.Add. Fixes #78312.
 
