@@ -6932,7 +6932,7 @@ namespace Mono.CSharp {
 			if (ec.IsFieldInitializer || !ec.CurrentBlock.Toplevel.HasVarargs) 
 			{
 				Error (190, "The __arglist construct is valid only within " +
-				       "a variable argument method.");
+				       "a variable argument method");
 				return null;
 			}
 

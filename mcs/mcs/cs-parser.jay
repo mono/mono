@@ -1021,6 +1021,10 @@ variable_initializer
 	  {
 		$$ = new StackAlloc ((Expression) $2, (Expression) $4, (Location) $1);
 	  }
+	| ARGLIST
+	  {
+		$$ = new ArglistAccess ((Location) $1);
+	  }
 	| STACKALLOC type
 	  {
 		Report.Error (1575, (Location) $1, "A stackalloc expression requires [] after type");
