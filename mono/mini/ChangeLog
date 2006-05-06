@@ -1,3 +1,10 @@
+2006-05-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-x86.c (mono_arch_get_inst_for_method): Use OP_ATOMIC_ADD_NEW_I4 for
+	Interlocked.Add. Fixes #78312.
+
+	* mini-amd64.c (mono_arch_get_inst_for_method): Ditto.
+	
 2006-05-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* inssel.brg (mini_emit_virtual_call): Fix a warning.
