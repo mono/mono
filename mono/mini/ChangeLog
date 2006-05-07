@@ -1,5 +1,7 @@
 2006-05-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* liveness.c (optimize_initlocals): Eliminate R8CONST as well.
+	
 	* liveness.c (optimize_initlocals): A new, simple optimization pass to eliminate
 	some of the redundant initialization code added by 'locals init'.
 
