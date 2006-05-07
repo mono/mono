@@ -1,3 +1,6 @@
+2006-05-07 	Boris Kirzner <borisk@mainsoft.com>
+	* System.Data.vmwcsproj: added XmlHelper.cs to TARGET_JVM project.
+
 2006-03-16 	Boris Kirzner <borisk@mainsfot.com>
 	* run-tests.test.connected.bat - fix in TARGET_JVM test script.
 

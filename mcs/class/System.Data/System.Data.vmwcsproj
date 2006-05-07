@@ -162,6 +162,7 @@
 				<File RelPath="System.Data\XmlDataLoader.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\XmlDataReader.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\XmlDiffLoader.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Data\XmlHelper.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\XmlReadMode.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\XmlSchemaDataImporter.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\XmlSchemaWriter.cs" SubType="Code" BuildAction="Compile"/>
