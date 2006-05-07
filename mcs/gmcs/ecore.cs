@@ -442,7 +442,12 @@ namespace Mono.CSharp {
 			if (c != null)
 				return c;
 
-			Const.Error_ExpressionMustBeConstant (loc, mc.GetSignatureForError ());
+			Type constant_type = null;
+			if (mc is MemberBase) {
+				constant_type = ((MemberBase)mc).MemberType;
+			}
+
+			Const.Error_ExpressionMustBeConstant (constant_type, loc, mc.GetSignatureForError ());
 			return null;
 		}
 

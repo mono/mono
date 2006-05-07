@@ -108,8 +108,13 @@ namespace Mono.CSharp {
 			base.Emit ();
 		}
 
-		public static void Error_ExpressionMustBeConstant (Location loc, string e_name)
+		public static void Error_ExpressionMustBeConstant (Type constantType, Location loc, string e_name)
 		{
+			if (constantType != null && TypeManager.IsValueType (constantType) &&
+				!TypeManager.IsBuiltinOrEnum (constantType)) {
+				Report.Error (283, loc, "The type `{0}' cannot be declared const", TypeManager.CSharpName (constantType));
+				return;
+			}
 			Report.Error (133, loc, "The expression being assigned to `{0}' must be constant", e_name);
 		}
 
