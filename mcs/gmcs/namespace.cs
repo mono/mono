@@ -188,6 +188,12 @@ namespace Mono.CSharp {
 				EnsureNamespace (t.Namespace);
 		}
 
+		public override void Error_NamespaceDoesNotExist(Location loc, string name)
+		{
+			Report.Error (400, loc, "The type or namespace name `{0}' could not be found in the global namespace (are you missing an assembly reference?)",
+				name);
+		}
+
 		public override Type LookupTypeReflection (string name, Location loc)
 		{
 			Type found_type = null;
@@ -297,6 +303,12 @@ namespace Mono.CSharp {
 		public override Expression DoResolve (EmitContext ec)
 		{
 			return this;
+		}
+
+		public virtual void Error_NamespaceDoesNotExist (Location loc, string name)
+		{
+			Report.Error (234, loc, "The type or namespace name `{0}' does not exist in the namespace `{1}'. Are you missing an assembly reference?",
+				name, FullName);
 		}
 
 		public override void Emit (EmitContext ec)

@@ -1,5 +1,15 @@
 2006-05-07  Marek Safar  <marek.safar@seznam.cz>
 
+	* expression.cs (QualifiedAliasMember.ResolveAsTypeStep): Pass location
+	to newly introduced ctor.
+
+	* namespace.cs (Namespace.Error_NamespaceDoesNotExist): Moved an error
+	message to one place.
+	(GlobalRootNamespace.Error_NamespaceDoesNotExist): Custom message for
+	global namespace.
+
+2006-05-07  Marek Safar  <marek.safar@seznam.cz>
+
 	* const.cs (Const.Error_ExpressionMustBeConstant): Better error message.
 
 	* ecore.cs (Expression.ResolveAsConstant): Updated.

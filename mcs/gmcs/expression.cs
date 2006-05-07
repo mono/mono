@@ -7158,7 +7158,7 @@ namespace Mono.CSharp {
 		public override FullNamedExpression ResolveAsTypeStep (IResolveContext ec, bool silent)
 		{
 			if (alias == "global")
-				return new MemberAccess (RootNamespace.Global, identifier).ResolveAsTypeStep (ec, silent);
+				return new MemberAccess (RootNamespace.Global, identifier, loc).ResolveAsTypeStep (ec, silent);
 
 			int errors = Report.Errors;
 			FullNamedExpression fne = ec.DeclContainer.NamespaceEntry.LookupAlias (alias);
@@ -7233,10 +7233,15 @@ namespace Mono.CSharp {
 		TypeArguments args;
 		
 		public MemberAccess (Expression expr, string id)
+			: this (expr, id, expr.Location)
+		{
+		}
+
+		public MemberAccess (Expression expr, string identifier, Location loc)
 		{
 			this.expr = expr;
-			Identifier = id;
-			loc = expr.Location;
+			Identifier = identifier;
+			this.loc = loc;
 		}
 
 		public MemberAccess (Expression expr, string id, TypeArguments args)
@@ -7278,8 +7283,7 @@ namespace Mono.CSharp {
 				if ((retval != null) && (args != null))
 					retval = new ConstructedType (retval, args, loc).ResolveAsTypeStep (ec, false);
 				if (retval == null)
-					Report.Error (234, loc, "The type or namespace name `{0}' does not exist in the namespace `{1}'. Are you missing an assembly reference?",
-						Identifier, ns.FullName);
+					ns.Error_NamespaceDoesNotExist (loc, Identifier);
 				return retval;
 			}
 
@@ -7397,8 +7401,7 @@ namespace Mono.CSharp {
 				if ((retval != null) && (args != null))
 					retval = new ConstructedType (retval, args, loc).ResolveAsTypeStep (rc, false);
 				if (!silent && retval == null)
-					Report.Error (234, loc, "The type or namespace name `{0}' does not exist in the namespace `{1}'. Are you missing an assembly reference?",
-						Identifier, ns.FullName);
+					ns.Error_NamespaceDoesNotExist (loc, Identifier);
 				return retval;
 			}
 
