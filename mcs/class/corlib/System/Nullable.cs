@@ -98,6 +98,8 @@ namespace System {
 
 		public override bool Equals (object other)
 		{
+			if (other == null)
+				return has_value == false;
 			if (!(other is Nullable<T>))
 				return false;
 
@@ -164,7 +166,6 @@ namespace System {
 		{
 			return !left.Equals (right);
 		}
-
 
 		// These are called by the JIT
 		// Ironicly, the C#  code is the same for these two,

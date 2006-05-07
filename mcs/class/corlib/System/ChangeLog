@@ -1,3 +1,7 @@
+2006-05-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* Nullable.cs (Equals): Fix comparison to null. Fixes #78322.
+
 2006-04-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Nullable.cs : updated Nullable<T> API to 2.0 RTM.
