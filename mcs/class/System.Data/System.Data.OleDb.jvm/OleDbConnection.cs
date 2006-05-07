@@ -159,7 +159,7 @@ namespace System.Data.OleDb
 			java.sql.Connection con = JdbcConnection;
 			String catalog = con.getCatalog();
             
-			DatabaseMetaData meta = con.getMetaData();
+			java.sql.DatabaseMetaData meta = con.getMetaData();
 			java.sql.ResultSet schemaRes = meta.getSchemas();
 			System.Collections.ArrayList schemas = new System.Collections.ArrayList();
 			while(schemaRes.next()) {
