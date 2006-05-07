@@ -1,3 +1,10 @@
+2006-05-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* liveness.c (optimize_initlocals): A new, simple optimization pass to eliminate
+	some of the redundant initialization code added by 'locals init'.
+
+	* mini-amd64.c (mono_arch_compute_omit_fp): Omit fp for vtype returns as well.
+
 2006-05-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.h (MonoCompile): Add 'cil_offset_to_bb' field.

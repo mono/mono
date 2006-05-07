@@ -385,6 +385,9 @@ analyze_liveness_bb (MonoCompile *cfg, MonoBasicBlock *bb)
 	}
 }
 
+static void
+optimize_initlocals (MonoCompile *cfg);
+
 /* generic liveness analysis code. CFG specific parts are 
  * in update_gen_kill_set()
  */
@@ -649,4 +652,58 @@ mono_analyze_liveness (MonoCompile *cfg)
 		mono_bitset_print (bb->live_out_set); 
 	}
 #endif
+
+	optimize_initlocals (cfg);
+}
+
+/**
+ * optimize_initlocals:
+ *
+ * Try to optimize away some of the redundant initialization code inserted because of
+ * 'locals init' using the liveness information.
+ */
+static void
+optimize_initlocals (MonoCompile *cfg)
+{
+	MonoBitSet *used;
+	MonoInst *ins;
+	MonoBasicBlock *initlocals_bb;
+
+	used = mono_bitset_new (cfg->next_vireg + 1, 0);
+
+	mono_bitset_clear_all (used);
+	initlocals_bb = cfg->bb_entry->next_bb;
+	for (ins = initlocals_bb->code; ins; ins = ins->next) {
+		const char *spec = INS_INFO (ins->opcode);
+
+		if (spec [MONO_INST_SRC1] != ' ')
+			mono_bitset_set_fast (used, ins->sreg1);
+		if (spec [MONO_INST_SRC2] != ' ')
+			mono_bitset_set_fast (used, ins->sreg2);
+		if (MONO_IS_STORE_MEMBASE (ins))
+			mono_bitset_set_fast (used, ins->dreg);
+	}
+
+	for (ins = initlocals_bb->code; ins; ins = ins->next) {
+		const char *spec = INS_INFO (ins->opcode);
+
+		/* Look for statements whose dest is not used in this bblock and not live on exit. */
+		if ((spec [MONO_INST_DEST] != ' ') && !MONO_IS_STORE_MEMBASE (ins)) {
+			MonoInst *var = get_vreg_to_inst (cfg, ins->dreg);
+
+			if (var && !mono_bitset_test_fast (used, ins->dreg) && !mono_bitset_test_fast (initlocals_bb->live_out_set, var->inst_c0) && (var != cfg->ret) && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT))) {
+				//printf ("DEAD: "); mono_print_ins (ins);
+				if ((ins->opcode == OP_ICONST) || (ins->opcode == OP_I8CONST)) {
+					NULLIFY_INS (ins);
+					MONO_VARINFO (cfg, var->inst_c0)->spill_costs -= 1;
+					/* 
+					 * We should shorten the liveness interval of these vars as well, but
+					 * don't have enough info to do that.
+					 */
+				}
+			}
+		}
+	}
+
+	g_free (used);
 }
