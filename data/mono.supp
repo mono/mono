@@ -7,34 +7,34 @@
    Memcheck:Cond
    fun:GC_*
    fun:*
-   obj:/usr/local/bin/mono
+   obj:*mono
 }
 {
    mono - Use of uninitialized value of size 4
    Memcheck:Value4
    fun:GC_*
    fun:*
-   obj:/usr/local/bin/mono
+   obj:*mono
 }
 {
    mono - Use of uninitialized value of size 8
    Memcheck:Value8
    fun:GC_*
    fun:*
-   obj:/usr/local/bin/mono
+   obj:*mono
 }
 {
    mono - Use of uninitialized value of size 1
    Memcheck:Value1
    fun:GC_*
    fun:*
-   obj:/usr/local/bin/mono
+   obj:*mono
 }
 {
    mono - Invalid read of size 4
    Memcheck:Addr4
    fun:GC_*
    fun:*
-   obj:/usr/local/bin/mono
+   obj:*mono
 }
 
