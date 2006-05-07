@@ -12,11 +12,12 @@
 namespace System.IO.Ports
 {
 	enum SerialSignal {
-		Cd, // Carrier detect 
-		Cts, // Clear to send
-		Dsr, // Data set ready
-		Dtr, // Data terminal ready
-		Rts // Request to send
+		None = 0,
+		Cd = 1, // Carrier detect 
+		Cts = 2, // Clear to send
+		Dsr = 4, // Data set ready
+		Dtr = 8, // Data terminal ready
+		Rts = 16 // Request to send
 	}
 }
 

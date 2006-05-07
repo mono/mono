@@ -19,21 +19,21 @@ namespace System.IO.Ports
 		const Parity DefaultParity = Parity.None;
 		const StopBits DefaultStopBits = StopBits.One;
 
-		bool isOpen;
-		int baudRate;
+		bool is_open;
+		int baud_rate;
 		Parity parity;
-		StopBits stopBits;
-		Handshake handshake = Handshake.None;
-		int dataBits;
-		bool breakState = false;
+		StopBits stop_bits;
+		Handshake handshake;
+		int data_bits;
+		bool break_state = false;
 		bool dtr_enable = false;
 		bool rts_enable = false;
-		SerialPortStream stream;
+		ISerialStream stream;
 		Encoding encoding = Encoding.ASCII;
-		string newLine = Environment.NewLine;
-		string portName;
-		int readTimeout = InfiniteTimeout;
-		int writeTimeout = InfiniteTimeout;
+		string new_line = Environment.NewLine;
+		string port_name;
+		int read_timeout = InfiniteTimeout;
+		int write_timeout = InfiniteTimeout;
 		int readBufferSize = DefaultReadBufferSize;
 		int writeBufferSize = DefaultWriteBufferSize;
 		object error_received = new object ();
@@ -75,11 +75,11 @@ namespace System.IO.Ports
 
 		public SerialPort (string portName, int baudRate, Parity parity, int dataBits, StopBits stopBits) 
 		{
-			this.portName = portName;
-			this.baudRate = baudRate;
+			port_name = portName;
+			baud_rate = baudRate;
+			data_bits = dataBits;
+			stop_bits = stopBits;
 			this.parity = parity;
-			this.dataBits = dataBits;
-			this.stopBits = stopBits;
 		}
 
 		static string GetDefaultPortName ()
@@ -89,37 +89,38 @@ namespace System.IO.Ports
 
 		public Stream BaseStream {
 			get {
-				if (!isOpen)
+				if (!is_open)
 					throw new InvalidOperationException ();
 
-				return stream;
+				return (Stream) stream;
 			}
 		}
 
 		public int BaudRate {
 			get {
-				return baudRate;
+				return baud_rate;
 			}
 			set {
 				if (value <= 0)
 					throw new ArgumentOutOfRangeException ("value");
 				
-				baudRate = value;
-				if (isOpen)
-					stream.BaudRate = value;
+				if (is_open)
+					stream.SetAttributes (value, parity, data_bits, stop_bits, handshake);
+				
+				baud_rate = value;
 			}
 		}
 
 		public bool BreakState {
 			get {
-				return breakState;
+				return break_state;
 			}
 			set {
 				CheckOpen ();
-				if (value == breakState)
+				if (value == break_state)
 					return; // Do nothing.
 
-				breakState = value;
+				break_state = value;
 				// Update the state
 			}
 		}
@@ -141,28 +142,29 @@ namespace System.IO.Ports
 		public bool CDHolding {
 			get {
 				CheckOpen ();
-				return stream.GetSignal (SerialSignal.Cd);
+				return (stream.GetSignals () & SerialSignal.Cd) != 0;
 			}
 		}
 
 		public bool CtsHolding {
 			get {
 				CheckOpen ();
-				return stream.GetSignal (SerialSignal.Cts);
+				return (stream.GetSignals () & SerialSignal.Cts) != 0;
 			}
 		}
 
 		public int DataBits {
 			get {
-				return dataBits;
+				return data_bits;
 			}
 			set {
 				if (value < 5 || value > 8)
 					throw new ArgumentOutOfRangeException ("value");
 
-				dataBits = value;
-				if (isOpen)
-					stream.DataBits = value;
+				if (is_open)
+					stream.SetAttributes (baud_rate, parity, value, stop_bits, handshake);
+				
+				data_bits = value;
 			}
 		}
 
@@ -180,7 +182,7 @@ namespace System.IO.Ports
 		public bool DsrHolding {
 			get {
 				CheckOpen ();
-				return stream.GetSignal (SerialSignal.Dsr);
+				return (stream.GetSignals () & SerialSignal.Dsr) != 0;
 			}
 		}
 
@@ -191,7 +193,7 @@ namespace System.IO.Ports
 			set {
 				if (value == dtr_enable)
 					return;
-				if (isOpen)
+				if (is_open)
 					stream.SetSignal (SerialSignal.Dtr, value);
 				
 				dtr_enable = value;
@@ -218,27 +220,28 @@ namespace System.IO.Ports
 				if (value < Handshake.None || value > Handshake.RequestToSendXOnXOff)
 					throw new ArgumentOutOfRangeException ("value");
 
+				if (is_open)
+					stream.SetAttributes (baud_rate, parity, data_bits, stop_bits, value);
+				
 				handshake = value;
-				if (isOpen)
-					stream.Handshake = value;
 			}
 		}
 
 		public bool IsOpen {
 			get {
-				return isOpen;
+				return is_open;
 			}
 		}
 
 		public string NewLine {
 			get {
-				return newLine;
+				return new_line;
 			}
 			set {
 				if (value == null)
 					throw new ArgumentNullException ("value");
 				
-				newLine = value;
+				new_line = value;
 			}
 		}
 
@@ -250,9 +253,10 @@ namespace System.IO.Ports
 				if (value < Parity.None || value > Parity.Space)
 					throw new ArgumentOutOfRangeException ("value");
 
+				if (is_open)
+					stream.SetAttributes (baud_rate, value, data_bits, stop_bits, handshake);
+				
 				parity = value;
-				if (isOpen)
-					stream.Parity = value;
 			}
 		}
 
@@ -267,17 +271,17 @@ namespace System.IO.Ports
 
 		public string PortName {
 			get {
-				return portName;
+				return port_name;
 			}
 			set {
-				if (isOpen)
+				if (is_open)
 					throw new InvalidOperationException ("Port name cannot be set while port is open.");
 				if (value == null)
 					throw new ArgumentNullException ("value");
 				if (value.Length == 0 || value.StartsWith ("\\\\"))
 					throw new ArgumentException ("value");
 
-				portName = value;
+				port_name = value;
 			}
 		}
 
@@ -286,7 +290,7 @@ namespace System.IO.Ports
 				return readBufferSize;
 			}
 			set {
-				if (isOpen)
+				if (is_open)
 					throw new InvalidOperationException ();
 				if (value <= 0)
 					throw new ArgumentOutOfRangeException ("value");
@@ -299,15 +303,16 @@ namespace System.IO.Ports
 
 		public int ReadTimeout {
 			get {
-				return readTimeout;
+				return read_timeout;
 			}
 			set {
 				if (value <= 0 && value != InfiniteTimeout)
 					throw new ArgumentOutOfRangeException ("value");
 
-				readTimeout = value;
-				if (isOpen)
+				if (is_open)
 					stream.ReadTimeout = value;
+				
+				read_timeout = value;
 			}
 		}
 
@@ -330,7 +335,7 @@ namespace System.IO.Ports
 			set {
 				if (value == rts_enable)
 					return;
-				if (isOpen)
+				if (is_open)
 					stream.SetSignal (SerialSignal.Rts, value);
 				
 				rts_enable = value;
@@ -339,15 +344,16 @@ namespace System.IO.Ports
 
 		public StopBits StopBits {
 			get {
-				return stopBits;
+				return stop_bits;
 			}
 			set {
 				if (value < StopBits.One || value > StopBits.OnePointFive)
 					throw new ArgumentOutOfRangeException ("value");
 				
-				stopBits = value;
-				if (isOpen)
-					stream.StopBits = value;
+				if (is_open)
+					stream.SetAttributes (baud_rate, parity, data_bits, value, handshake);
+				
+				stop_bits = value;
 			}
 		}
 
@@ -356,7 +362,7 @@ namespace System.IO.Ports
 				return writeBufferSize;
 			}
 			set {
-				if (isOpen)
+				if (is_open)
 					throw new InvalidOperationException ();
 				if (value <= 0)
 					throw new ArgumentOutOfRangeException ("value");
@@ -369,15 +375,16 @@ namespace System.IO.Ports
 
 		public int WriteTimeout {
 			get {
-				return writeTimeout;
+				return write_timeout;
 			}
 			set {
 				if (value <= 0 && value != InfiniteTimeout)
 					throw new ArgumentOutOfRangeException ("value");
 
-				writeTimeout = value;
-				if (isOpen)
+				if (is_open)
 					stream.WriteTimeout = value;
+				
+				write_timeout = value;
 			}
 		}
 
@@ -390,10 +397,10 @@ namespace System.IO.Ports
 
 		protected override void Dispose (bool disposing)
 		{
-			if (!isOpen)
+			if (!is_open)
 				return;
 			
-			isOpen = false;
+			is_open = false;
 			stream.Close ();
 			stream = null;
 		}
@@ -401,13 +408,13 @@ namespace System.IO.Ports
 		public void DiscardInBuffer ()
 		{
 			CheckOpen ();
-			stream.DiscardInputBuffer ();
+			stream.DiscardInBuffer ();
 		}
 
 		public void DiscardOutBuffer ()
 		{
 			CheckOpen ();
-			stream.DiscardOutputBuffer ();
+			stream.DiscardOutBuffer ();
 		}
 
 		public static string [] GetPortNames ()
@@ -421,12 +428,12 @@ namespace System.IO.Ports
 
 		public void Open ()
 		{
-			if (isOpen)
+			if (is_open)
 				throw new InvalidOperationException ("Port is already open");
 			
-			stream = new SerialPortStream (portName, baudRate, dataBits, parity, stopBits, dtr_enable,
-					rts_enable, handshake, readTimeout, writeTimeout, readBufferSize, writeBufferSize);
-			isOpen = true;
+			stream = new SerialPortStream (port_name, baud_rate, data_bits, parity, stop_bits, dtr_enable,
+					rts_enable, handshake, read_timeout, write_timeout, readBufferSize, writeBufferSize);
+			is_open = true;
 		}
 
 		public int Read (byte[] buffer, int offset, int count)
@@ -481,7 +488,7 @@ namespace System.IO.Ports
 
 		public string ReadLine ()
 		{
-			return ReadTo (newLine);
+			return ReadTo (new_line);
 		}
 
 		public string ReadTo (string value)
@@ -538,12 +545,12 @@ namespace System.IO.Ports
 
 		public void WriteLine (string str)
 		{
-			Write (str + newLine);
+			Write (str + new_line);
 		}
 
 		void CheckOpen ()
 		{
-			if (!isOpen)
+			if (!is_open)
 				throw new InvalidOperationException ("Specified port is not open.");
 		}
 

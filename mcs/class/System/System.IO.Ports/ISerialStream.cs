@@ -20,6 +20,9 @@ namespace System.IO.Ports
 		void SetAttributes (int baud_rate, Parity parity, int data_bits, StopBits sb, Handshake hs);
 		void DiscardInBuffer ();
 		void DiscardOutBuffer ();
+		SerialSignal GetSignals ();
+		void SetSignal (SerialSignal signal, bool value);
+		void Close ();
 
 		int BytesToRead { get; }
 		int BytesToWrite { get; }

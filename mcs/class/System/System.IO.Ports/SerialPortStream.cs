@@ -17,14 +17,9 @@ using System.Runtime.InteropServices;
 
 namespace System.IO.Ports
 {
-	class SerialPortStream : Stream, IDisposable
+	class SerialPortStream : Stream, ISerialStream, IDisposable
 	{
 		int fd;
-		int baud_rate;
-		int data_bits;
-		Parity parity;
-		StopBits stop_bits;
-		Handshake handshake;
 		int read_timeout;
 		int write_timeout;
 		bool disposed;
@@ -32,29 +27,24 @@ namespace System.IO.Ports
 		[DllImport ("MonoPosixHelper")]
 		static extern int open_serial (string portName);
 
-		public SerialPortStream (string portName, int baudRate, int dataBits, Parity par, StopBits stopBits,
-				bool dtrEnable, bool rtsEnable, Handshake handsh, int readTimeout, int writeTimeout,
+		public SerialPortStream (string portName, int baudRate, int dataBits, Parity parity, StopBits stopBits,
+				bool dtrEnable, bool rtsEnable, Handshake handshake, int readTimeout, int writeTimeout,
 				int readBufferSize, int writeBufferSize)
 		{
 			fd = open_serial (portName);
 			if (fd == -1)
 				throw new IOException ();
 			
-			baud_rate = baudRate;
-			data_bits = dataBits;
-			parity = par;
-			stop_bits = stopBits;
-			handshake = handsh;
+			if (!set_attributes (fd, baudRate, parity, dataBits, stopBits, handshake))
+				throw new IOException (); // Probably Win32Exc for compatibility
+
 			read_timeout = readTimeout;
 			write_timeout = writeTimeout;
 			
-			if (!set_attributes (fd, baud_rate, parity, data_bits, stop_bits, handshake))
-				throw new IOException ();
-
 			SetSignal (SerialSignal.Dtr, dtrEnable);
 			
-			if (handsh != Handshake.RequestToSend && 
-					handsh != Handshake.RequestToSendXOnXOff)
+			if (handshake != Handshake.RequestToSend && 
+					handshake != Handshake.RequestToSendXOnXOff)
 				SetSignal (SerialSignal.Rts, rtsEnable);
 		}
 
@@ -210,65 +200,19 @@ namespace System.IO.Ports
 		[DllImport ("MonoPosixHelper")]
 		static extern bool set_attributes (int fd, int baudRate, Parity parity, int dataBits, StopBits stopBits, Handshake handshake);
 
-		// FIXME - Separate baud rate from the other values,
-		// since it can be set individually
-		internal int BaudRate {
-			get {
-				return baud_rate;
-			}
-			set {
-				baud_rate = value;
-				set_attributes (fd, baud_rate, parity, data_bits, stop_bits, handshake);
-			}
+		public void SetAttributes (int baud_rate, Parity parity, int data_bits, StopBits sb, Handshake hs)
+		{
+			if (!set_attributes (fd, baud_rate, parity, data_bits, sb, hs))
+				throw new IOException ();
 		}
 
-		internal Parity Parity {
-			get {
-				return parity;
-			}
-			set {
-				parity = value;
-				set_attributes (fd, baud_rate, parity, data_bits, stop_bits, handshake);
-			}
-		}
-
-		internal int DataBits {
-			get {
-				return data_bits;
-			}
-			set {
-				data_bits = value;
-				set_attributes (fd, baud_rate, parity, data_bits, stop_bits, handshake);
-			}
-		}
-
-		internal StopBits StopBits {
-			get {
-				return stop_bits;
-			}
-			set {
-				stop_bits = value;
-				set_attributes (fd, baud_rate, parity, data_bits, stop_bits, handshake);
-			}
-		}
-
-		internal Handshake Handshake {
-			get {
-				return handshake;
-			}
-			set {
-				handshake = value;
-				set_attributes (fd, baud_rate, parity, data_bits, stop_bits, handshake);
-			}
-		}
-
-		internal int BytesToRead {
+		public int BytesToRead {
 			get {
 				return 0; // Not implemented yet
 			}
 		}
 
-		internal int BytesToWrite {
+		public int BytesToWrite {
 			get {
 				return 0; // Not implemented yet
 			}
@@ -277,35 +221,33 @@ namespace System.IO.Ports
 		[DllImport ("MonoPosixHelper")]
 		static extern void discard_buffer (int fd, bool inputBuffer);
 		
-		internal void DiscardInputBuffer ()
+		public void DiscardInBuffer ()
 		{
 			discard_buffer (fd, true);
 		}
 
-		internal void DiscardOutputBuffer ()
+		public void DiscardOutBuffer ()
 		{
 			discard_buffer (fd, false);
 		}
 		
 		[DllImport ("MonoPosixHelper")]
-		static extern int get_signal (int fd, SerialSignal signal);
+		static extern SerialSignal get_signals (int fd, out int error);
 
-		internal bool GetSignal (SerialSignal signal)
+		public SerialSignal GetSignals ()
 		{
-			if (signal < SerialSignal.Cd || signal > SerialSignal.Rts)
-				throw new Exception ("Invalid internal value");
-
-			int val = get_signal (fd, signal);
-			if (val < 0)
+			int error;
+			SerialSignal signals = get_signals (fd, out error);
+			if (error == -1)
 				throw new IOException ();
 
-			return val == 1;
+			return signals;
 		}
 
 		[DllImport ("MonoPosixHelper")]
 		static extern int set_signal (int fd, SerialSignal signal, bool value);
 
-		internal void SetSignal (SerialSignal signal, bool value)
+		public void SetSignal (SerialSignal signal, bool value)
 		{
 			if (signal < SerialSignal.Cd || signal > SerialSignal.Rts ||
 					signal == SerialSignal.Cd ||
@@ -313,8 +255,7 @@ namespace System.IO.Ports
 					signal == SerialSignal.Dsr)
 				throw new Exception ("Invalid internal value");
 
-			int val = set_signal (fd, signal, value);
-			if (val < 0)
+			if (set_signal (fd, signal, value) == -1)
 				throw new IOException ();
 		}
 
