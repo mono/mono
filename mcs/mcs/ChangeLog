@@ -1,5 +1,9 @@
 2006-05-07  Marek Safar  <marek.safar@seznam.cz>
 
+	* class.cs (MethodData.Define): Method cannot implement interface accessor.
+
+2006-05-07  Marek Safar  <marek.safar@seznam.cz>
+
 	* expression.cs (QualifiedAliasMember.ResolveAsTypeStep): Pass location
 	to newly introduced ctor.
 
