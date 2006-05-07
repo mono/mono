@@ -33,6 +33,7 @@ using System;
 using System.Collections;
 using System.Data.Common;
 using System.Data.Configuration;
+using System.Data.ProviderBase;
 using Mainsoft.Data.Configuration;
 
 using java.net;
@@ -213,8 +214,121 @@ namespace Mainsoft.Data.Jdbc.Providers
 			}
 			return conectionStringBuilder;
 		}		
+		
+		public override java.sql.Connection GetConnection(IConnectionStringDictionary conectionStringBuilder)
+		{
+			return new SqlServer2005Connection (base.GetConnection (conectionStringBuilder));
+		}
 
 		#endregion // Methods
+
+		#region SqlServer2005Connection
+
+		sealed class SqlServer2005Connection : Connection
+		{
+			#region Constructors
+
+			public SqlServer2005Connection(java.sql.Connection connection) : base (connection)
+			{
+			}
+
+			#endregion
+
+			#region Methods
+
+			public override java.sql.DatabaseMetaData getMetaData()
+			{
+				return new SqlServer2005DatabaseMetaData (base.getMetaData ());
+			}
+
+			#endregion
+		}
+
+		#endregion
+
+		#region SqlServer2005DatabaseMetaData
+
+		sealed class SqlServer2005DatabaseMetaData : DatabaseMetaData
+		{
+			#region Fields
+
+			#endregion // Fields
+
+			#region Constructors
+
+			public SqlServer2005DatabaseMetaData (java.sql.DatabaseMetaData databaseMetaData) : base (databaseMetaData)
+			{
+			}
+
+			#endregion // Constructors
+
+			#region Properties
+
+			#endregion // Properties
+
+			#region Methods
+
+			public override java.sql.ResultSet getProcedureColumns(string arg_0, string arg_1, string arg_2, string arg_3)
+			{
+				return new SqlServer2005DatbaseMetaDataResultSet (Wrapped.getProcedureColumns (arg_0, arg_1, arg_2, arg_3));
+			}
+
+			#endregion // Methods						
+		}
+
+		#endregion
+
+		#region SqlServer2005DatbaseMetaDataResultSet
+
+		sealed class SqlServer2005DatbaseMetaDataResultSet : ResultSet
+		{
+			#region Consts
+
+			private const string DataType = "DATA_TYPE";
+
+			#endregion
+
+			#region Fields
+
+			#endregion // Fields
+
+			#region Constructors
+
+			public SqlServer2005DatbaseMetaDataResultSet (java.sql.ResultSet resultSet) : base (resultSet)
+			{
+			}
+
+			#endregion // Constructors
+
+			#region Properties
+
+			#endregion // Properties
+
+			#region Methods
+
+			public override int getInt(int arg_0)
+			{
+				int res = base.getInt (arg_0);
+				if (res == -9) // sql server 2005 jdbc driver value for NVARCHAR
+					if (String.CompareOrdinal (getMetaData ().getColumnName (arg_0), DataType) == 0)
+						return java.sql.Types.VARCHAR;
+				return res;
+			}
+
+			public override int getInt(string arg_0)
+			{
+				int res = base.getInt (arg_0);
+
+				if (res == -9) // sql server 2005 jdbc driver value for NVARCHAR
+					if (String.CompareOrdinal (arg_0, DataType) == 0)
+						return java.sql.Types.VARCHAR;
+				return res;
+			}
+
+			#endregion // Methods	
+		}
+
+		#endregion
 	}
 
 	#endregion // OleDbSqlServerProvider2005

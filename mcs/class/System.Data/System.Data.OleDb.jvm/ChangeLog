@@ -1,3 +1,6 @@
+2006-05-07 Boris Kirzner <borisk@mainsoft.com>
+	* OleDbConnection.cs: resolved ambigous reference.
+
 2006-04-26  Konstantin Triger <kostat@mainsoft.com>
 
         * OleDbParameter.cs: map NCHAR to VARCHAR type.

@@ -1526,5 +1526,848 @@ namespace Mainsoft.Data.Jdbc.Providers {
 
 		#endregion 
 	}
+	
+		public class DatabaseMetaData : java.sql.DatabaseMetaData
+	{
+		readonly java.sql.DatabaseMetaData _databaseMetaData;
+
+		public DatabaseMetaData (java.sql.DatabaseMetaData databaseMetaData) {
+			_databaseMetaData = databaseMetaData;
+		}
+
+		protected java.sql.DatabaseMetaData Wrapped {
+			get { return _databaseMetaData; }
+		}
+
+		#region DatabaseMetaData Members
+
+		public virtual bool nullsAreSortedLow()
+		{
+			return Wrapped.nullsAreSortedLow ();
+		}
+
+		public virtual bool supportsSchemasInPrivilegeDefinitions()
+		{
+			return Wrapped.supportsSchemasInPrivilegeDefinitions ();
+		}
+
+		public virtual string getSearchStringEscape()
+		{
+			return Wrapped.getSearchStringEscape ();
+		}
+
+		public virtual bool supportsGroupByUnrelated()
+		{
+			return Wrapped.supportsGroupByUnrelated ();
+		}
+
+		public virtual bool supportsSchemasInDataManipulation()
+		{
+			return Wrapped.supportsSchemasInDataManipulation ();
+		}
+
+		public virtual bool supportsTransactions()
+		{
+			return Wrapped.supportsTransactions ();
+		}
+
+		public virtual bool supportsSchemasInProcedureCalls()
+		{
+			return Wrapped.supportsSchemasInProcedureCalls ();
+		}
+
+		public virtual java.sql.ResultSet getImportedKeys(string arg_0, string arg_1, string arg_2)
+		{
+			return Wrapped.getImportedKeys (arg_0, arg_1, arg_2);
+		}
+
+		public virtual bool supportsTransactionIsolationLevel(int arg_0)
+		{
+			return Wrapped.supportsTransactionIsolationLevel (arg_0);
+		}
+
+		public virtual bool supportsResultSetConcurrency(int arg_0, int arg_1)
+		{
+			return Wrapped.supportsResultSetConcurrency (arg_0, arg_1);
+		}
+
+		public virtual bool supportsSubqueriesInQuantifieds()
+		{
+			return Wrapped.supportsSubqueriesInQuantifieds ();
+		}
+
+		public virtual bool othersInsertsAreVisible(int arg_0)
+		{
+			return Wrapped.othersInsertsAreVisible (arg_0);
+		}
+
+		public virtual bool supportsSchemasInTableDefinitions()
+		{
+			return Wrapped.supportsSchemasInTableDefinitions ();
+		}
+
+		public virtual bool supportsGetGeneratedKeys()
+		{
+			return Wrapped.supportsGetGeneratedKeys ();
+		}
+
+		public virtual bool supportsConvert()
+		{
+			return Wrapped.supportsConvert ();
+		}
+
+		bool java.sql.DatabaseMetaData.supportsConvert(int arg_0, int arg_1)
+		{
+			return Wrapped.supportsConvert (arg_0, arg_1);
+		}
+
+		public virtual bool deletesAreDetected(int arg_0)
+		{
+			return Wrapped.deletesAreDetected (arg_0);
+		}
+
+		public virtual bool supportsExtendedSQLGrammar()
+		{
+			return Wrapped.supportsExtendedSQLGrammar ();
+		}
+
+		public virtual string getStringFunctions()
+		{
+			return Wrapped.getStringFunctions ();
+		}
+
+		public virtual java.sql.ResultSet getExportedKeys(string arg_0, string arg_1, string arg_2)
+		{
+			return Wrapped.getExportedKeys (arg_0, arg_1, arg_2);
+		}
+
+		public virtual bool supportsDataDefinitionAndDataManipulationTransactions()
+		{
+			return Wrapped.supportsDataDefinitionAndDataManipulationTransactions ();
+		}
+
+		public virtual bool supportsOrderByUnrelated()
+		{
+			return Wrapped.supportsOrderByUnrelated ();
+		}
+
+		public virtual bool supportsGroupByBeyondSelect()
+		{
+			return Wrapped.supportsGroupByBeyondSelect ();
+		}
+
+		public virtual string getDatabaseProductName()
+		{
+			return Wrapped.getDatabaseProductName ();
+		}
+
+		public virtual int getMaxStatementLength()
+		{
+			return Wrapped.getMaxStatementLength ();
+		}
+
+		public virtual java.sql.ResultSet getTypeInfo()
+		{
+			return Wrapped.getTypeInfo ();
+		}
+
+		public virtual bool supportsSubqueriesInIns()
+		{
+			return Wrapped.supportsSubqueriesInIns ();
+		}
+
+		public virtual string getSystemFunctions()
+		{
+			return Wrapped.getSystemFunctions ();
+		}
+
+		public virtual bool nullPlusNonNullIsNull()
+		{
+			return Wrapped.nullPlusNonNullIsNull ();
+		}
+
+		public virtual bool usesLocalFilePerTable()
+		{
+			return Wrapped.usesLocalFilePerTable ();
+		}
+
+		public virtual int getDatabaseMinorVersion()
+		{
+			return Wrapped.getDatabaseMinorVersion ();
+		}
+
+		public virtual bool supportsLikeEscapeClause()
+		{
+			return Wrapped.supportsLikeEscapeClause ();
+		}
+
+		public virtual int getMaxColumnNameLength()
+		{
+			return Wrapped.getMaxColumnNameLength ();
+		}
+
+		public virtual bool supportsSubqueriesInComparisons()
+		{
+			return Wrapped.supportsSubqueriesInComparisons ();
+		}
+
+		public virtual bool isReadOnly()
+		{
+			return Wrapped.isReadOnly ();
+		}
+
+		public virtual java.sql.Connection getConnection()
+		{
+			return Wrapped.getConnection ();
+		}
+
+		public virtual bool supportsPositionedDelete()
+		{
+			return Wrapped.supportsPositionedDelete ();
+		}
+
+		public virtual bool doesMaxRowSizeIncludeBlobs()
+		{
+			return Wrapped.doesMaxRowSizeIncludeBlobs ();
+		}
+
+		public virtual bool supportsAlterTableWithDropColumn()
+		{
+			return Wrapped.supportsAlterTableWithDropColumn ();
+		}
+
+		public virtual bool supportsFullOuterJoins()
+		{
+			return Wrapped.supportsFullOuterJoins ();
+		}
+
+		public virtual int getDatabaseMajorVersion()
+		{
+			return Wrapped.getDatabaseMajorVersion ();
+		}
+
+		public virtual bool supportsCorrelatedSubqueries()
+		{
+			return Wrapped.supportsCorrelatedSubqueries ();
+		}
+
+		public virtual bool supportsOpenStatementsAcrossCommit()
+		{
+			return Wrapped.supportsOpenStatementsAcrossCommit ();
+		}
+
+		public virtual bool supportsMixedCaseIdentifiers()
+		{
+			return Wrapped.supportsMixedCaseIdentifiers ();
+		}
+
+		public virtual string getDatabaseProductVersion()
+		{
+			return Wrapped.getDatabaseProductVersion ();
+		}
+
+		public virtual bool supportsUnion()
+		{
+			return Wrapped.supportsUnion ();
+		}
+
+		public virtual bool supportsResultSetHoldability(int arg_0)
+		{
+			return Wrapped.supportsResultSetHoldability (arg_0);
+		}
+
+		public virtual string getSQLKeywords()
+		{
+			return Wrapped.getSQLKeywords ();
+		}
+
+		public virtual bool nullsAreSortedAtEnd()
+		{
+			return Wrapped.nullsAreSortedAtEnd ();
+		}
+
+		public virtual bool locatorsUpdateCopy()
+		{
+			return Wrapped.locatorsUpdateCopy ();
+		}
+
+		public virtual bool supportsColumnAliasing()
+		{
+			return Wrapped.supportsColumnAliasing ();
+		}
+
+		public virtual bool supportsCatalogsInPrivilegeDefinitions()
+		{
+			return Wrapped.supportsCatalogsInPrivilegeDefinitions ();
+		}
+
+		public virtual bool supportsSchemasInIndexDefinitions()
+		{
+			return Wrapped.supportsSchemasInIndexDefinitions ();
+		}
+
+		public virtual string getDriverVersion()
+		{
+			return Wrapped.getDriverVersion ();
+		}
+
+		public virtual int getDriverMajorVersion()
+		{
+			return Wrapped.getDriverMajorVersion ();
+		}
+
+		public virtual java.sql.ResultSet getSchemas()
+		{
+			return Wrapped.getSchemas ();
+		}
+
+		public virtual bool supportsSelectForUpdate()
+		{
+			return Wrapped.supportsSelectForUpdate ();
+		}
+
+		public virtual int getResultSetHoldability()
+		{
+			return Wrapped.getResultSetHoldability ();
+		}
+
+		public virtual java.sql.ResultSet getAttributes(string arg_0, string arg_1, string arg_2, string arg_3)
+		{
+			return Wrapped.getAttributes (arg_0, arg_1, arg_2, arg_3);
+		}
+
+		public virtual bool supportsSavepoints()
+		{
+			return Wrapped.supportsSavepoints ();
+		}
+
+		public virtual string getUserName()
+		{
+			return Wrapped.getUserName ();
+		}
+
+		public virtual string getExtraNameCharacters()
+		{
+			return Wrapped.getExtraNameCharacters ();
+		}
+
+		public virtual bool insertsAreDetected(int arg_0)
+		{
+			return Wrapped.insertsAreDetected (arg_0);
+		}
+
+		public virtual java.sql.ResultSet getCatalogs()
+		{
+			return Wrapped.getCatalogs ();
+		}
+
+		public virtual bool nullsAreSortedAtStart()
+		{
+			return Wrapped.nullsAreSortedAtStart ();
+		}
+
+		public virtual bool supportsOpenCursorsAcrossRollback()
+		{
+			return Wrapped.supportsOpenCursorsAcrossRollback ();
+		}
+
+		public virtual int getMaxColumnsInIndex()
+		{
+			return Wrapped.getMaxColumnsInIndex ();
+		}
+
+		public virtual int getMaxColumnsInGroupBy()
+		{
+			return Wrapped.getMaxColumnsInGroupBy ();
+		}
+
+		public virtual bool supportsBatchUpdates()
+		{
+			return Wrapped.supportsBatchUpdates ();
+		}
+
+		public virtual java.sql.ResultSet getCrossReference(string arg_0, string arg_1, string arg_2, string arg_3, string arg_4, string arg_5)
+		{
+			return Wrapped.getCrossReference (arg_0, arg_1, arg_2, arg_3, arg_4, arg_5);
+		}
+
+		public virtual string getCatalogTerm()
+		{
+			return Wrapped.getCatalogTerm ();
+		}
+
+		public virtual int getMaxStatements()
+		{
+			return Wrapped.getMaxStatements ();
+		}
+
+		public virtual string getCatalogSeparator()
+		{
+			return Wrapped.getCatalogSeparator ();
+		}
+
+		public virtual int getMaxBinaryLiteralLength()
+		{
+			return Wrapped.getMaxBinaryLiteralLength ();
+		}
+
+		public virtual bool supportsOuterJoins()
+		{
+			return Wrapped.supportsOuterJoins ();
+		}
+
+		public virtual int getSQLStateType()
+		{
+			return Wrapped.getSQLStateType ();
+		}
+
+		public virtual bool dataDefinitionIgnoredInTransactions()
+		{
+			return Wrapped.dataDefinitionIgnoredInTransactions ();
+		}
+
+		public virtual int getMaxColumnsInSelect()
+		{
+			return Wrapped.getMaxColumnsInSelect ();
+		}
+
+		public virtual bool supportsIntegrityEnhancementFacility()
+		{
+			return Wrapped.supportsIntegrityEnhancementFacility ();
+		}
+
+		public virtual string getTimeDateFunctions()
+		{
+			return Wrapped.getTimeDateFunctions ();
+		}
+
+		public virtual bool ownDeletesAreVisible(int arg_0)
+		{
+			return Wrapped.ownDeletesAreVisible (arg_0);
+		}
+
+		public virtual java.sql.ResultSet getProcedures(string arg_0, string arg_1, string arg_2)
+		{
+			return Wrapped.getProcedures (arg_0, arg_1, arg_2);
+		}
+
+		public virtual string getURL()
+		{
+			return Wrapped.getURL ();
+		}
+
+		public virtual bool supportsStoredProcedures()
+		{
+			return Wrapped.supportsStoredProcedures ();
+		}
+
+		public virtual bool usesLocalFiles()
+		{
+			return Wrapped.usesLocalFiles ();
+		}
+
+		public virtual java.sql.ResultSet getTableTypes()
+		{
+			return Wrapped.getTableTypes ();
+			
+		}
+
+		public virtual bool dataDefinitionCausesTransactionCommit()
+		{
+			return Wrapped.dataDefinitionCausesTransactionCommit ();
+		}
+
+		public virtual bool supportsGroupBy()
+		{
+			return Wrapped.supportsGroupBy ();
+		}
+
+		public virtual bool supportsExpressionsInOrderBy()
+		{
+			return Wrapped.supportsExpressionsInOrderBy ();
+		}
+
+		public virtual bool isCatalogAtStart()
+		{
+			return Wrapped.isCatalogAtStart ();
+		}
+
+		public virtual bool storesUpperCaseQuotedIdentifiers()
+		{
+			return Wrapped.storesUpperCaseQuotedIdentifiers ();
+		}
+
+		public virtual int getMaxRowSize()
+		{
+			return Wrapped.getMaxRowSize ();
+		}
+
+		public virtual bool supportsSubqueriesInExists()
+		{
+			return Wrapped.supportsSubqueriesInExists ();
+		}
+
+		public virtual bool supportsCatalogsInIndexDefinitions()
+		{
+			return Wrapped.supportsCatalogsInIndexDefinitions ();
+		}
+
+		public virtual bool supportsANSI92EntryLevelSQL()
+		{
+			return Wrapped.supportsANSI92EntryLevelSQL ();
+		}
+
+		public virtual bool storesMixedCaseQuotedIdentifiers()
+		{
+			return Wrapped.storesMixedCaseQuotedIdentifiers ();
+		}
+
+		public virtual bool supportsMultipleTransactions()
+		{
+			return Wrapped.supportsMultipleTransactions ();
+		}
+
+		public virtual bool othersUpdatesAreVisible(int arg_0)
+		{
+			return Wrapped.othersUpdatesAreVisible (arg_0);
+		}
+
+		public virtual java.sql.ResultSet getProcedureColumns(string arg_0, string arg_1, string arg_2, string arg_3)
+		{
+			return Wrapped.getProcedureColumns (arg_0, arg_1, arg_2, arg_3);
+		}
+
+		public virtual int getMaxProcedureNameLength()
+		{
+			return Wrapped.getMaxProcedureNameLength ();
+		}
+
+		public virtual java.sql.ResultSet getSuperTables(string arg_0, string arg_1, string arg_2)
+		{
+			return Wrapped.getSuperTables (arg_0, arg_1, arg_2);
+		}
+
+		public virtual int getJDBCMajorVersion()
+		{
+			return Wrapped.getJDBCMajorVersion ();
+		}
+
+		public virtual bool supportsPositionedUpdate()
+		{
+			return Wrapped.supportsPositionedUpdate ();
+		}
+
+		public virtual bool supportsLimitedOuterJoins()
+		{
+			return Wrapped.supportsLimitedOuterJoins ();
+		}
+
+		public virtual bool allTablesAreSelectable()
+		{
+			return Wrapped.allTablesAreSelectable ();
+		}
+
+		public virtual java.sql.ResultSet getSuperTypes(string arg_0, string arg_1, string arg_2)
+		{
+			return Wrapped.getSuperTypes (arg_0, arg_1, arg_2);
+		}
+
+		public virtual int getMaxTablesInSelect()
+		{
+			return Wrapped.getMaxTablesInSelect ();
+		}
+
+		public virtual string getNumericFunctions()
+		{
+			return Wrapped.getNumericFunctions ();
+		}
+
+		public virtual bool ownInsertsAreVisible(int arg_0)
+		{
+			return Wrapped.ownInsertsAreVisible (arg_0);
+		}
+
+		public virtual bool supportsResultSetType(int arg_0)
+		{
+			return Wrapped.supportsResultSetType (arg_0);
+		}
+
+		public virtual java.sql.ResultSet getPrimaryKeys(string arg_0, string arg_1, string arg_2)
+		{
+			return Wrapped.getPrimaryKeys (arg_0, arg_1, arg_2);
+		}
+
+		public virtual bool nullsAreSortedHigh()
+		{
+			return Wrapped.nullsAreSortedHigh ();
+		}
+
+		public virtual bool supportsAlterTableWithAddColumn()
+		{
+			return Wrapped.supportsAlterTableWithAddColumn ();
+		}
+
+		public virtual bool supportsDataManipulationTransactionsOnly()
+		{
+			return Wrapped.supportsDataManipulationTransactionsOnly ();
+		}
+
+		public virtual java.sql.ResultSet getUDTs(string arg_0, string arg_1, string arg_2, int[] arg_3)
+		{
+			return Wrapped.getUDTs (arg_0, arg_1, arg_2, arg_3);
+		}
+
+		public virtual int getMaxConnections()
+		{
+			return Wrapped.getMaxConnections ();
+		}
+
+		public virtual bool supportsNonNullableColumns()
+		{
+			return Wrapped.supportsNonNullableColumns ();
+		}
+
+		public virtual bool supportsTableCorrelationNames()
+		{
+			return Wrapped.supportsTableCorrelationNames ();
+		}
+
+		public virtual java.sql.ResultSet getVersionColumns(string arg_0, string arg_1, string arg_2)
+		{
+			return Wrapped.getVersionColumns (arg_0, arg_1, arg_2);
+		}
+
+		public virtual bool supportsOpenStatementsAcrossRollback()
+		{
+			return Wrapped.supportsOpenStatementsAcrossRollback ();
+		}
+
+		public virtual bool supportsMultipleResultSets()
+		{
+			return Wrapped.supportsMultipleResultSets ();
+		}
+
+		public virtual string getDriverName()
+		{
+			return Wrapped.getDriverName ();
+		}
+
+		public virtual bool storesLowerCaseQuotedIdentifiers()
+		{
+			return Wrapped.storesLowerCaseQuotedIdentifiers ();
+		}
+
+		public virtual java.sql.ResultSet getBestRowIdentifier(string arg_0, string arg_1, string arg_2, int arg_3, bool arg_4)
+		{
+			return Wrapped.getBestRowIdentifier (arg_0, arg_1, arg_2, arg_3, arg_4);
+		}
+
+		public virtual bool supportsOpenCursorsAcrossCommit()
+		{
+			return Wrapped.supportsOpenCursorsAcrossCommit ();
+		}
+
+		public virtual int getMaxCursorNameLength()
+		{
+			return Wrapped.getMaxCursorNameLength ();
+		}
+
+		public virtual int getMaxColumnsInOrderBy()
+		{
+			return Wrapped.getMaxColumnsInOrderBy ();
+		}
+
+		public virtual java.sql.ResultSet getColumns(string arg_0, string arg_1, string arg_2, string arg_3)
+		{
+			return Wrapped.getColumns (arg_0, arg_1, arg_2, arg_3);
+		}
+
+		public virtual bool supportsStatementPooling()
+		{
+			return Wrapped.supportsStatementPooling ();
+		}
+
+		public virtual bool storesMixedCaseIdentifiers()
+		{
+			return Wrapped.storesMixedCaseIdentifiers ();
+		}
+
+		public virtual int getMaxCharLiteralLength()
+		{
+			return Wrapped.getMaxCharLiteralLength ();
+		}
+
+		public virtual bool supportsUnionAll()
+		{
+			return Wrapped.supportsUnionAll ();
+		}
+
+		public virtual string getProcedureTerm()
+		{
+			return Wrapped.getProcedureTerm ();
+		}
+
+		public virtual bool storesLowerCaseIdentifiers()
+		{
+			return Wrapped.storesLowerCaseIdentifiers ();
+		}
+
+		public virtual bool supportsMixedCaseQuotedIdentifiers()
+		{
+			return Wrapped.supportsMixedCaseQuotedIdentifiers ();
+		}
+
+		public virtual int getDefaultTransactionIsolation()
+		{
+			return Wrapped.getDefaultTransactionIsolation ();
+		}
+
+		public virtual bool ownUpdatesAreVisible(int arg_0)
+		{
+			return Wrapped.ownUpdatesAreVisible (arg_0);
+		}
+
+		public virtual bool supportsNamedParameters()
+		{
+			return Wrapped.supportsNamedParameters ();
+		}
+
+		public virtual int getMaxColumnsInTable()
+		{
+			return Wrapped.getMaxColumnsInTable ();
+		}
+
+		public virtual bool supportsMinimumSQLGrammar()
+		{
+			return Wrapped.supportsMinimumSQLGrammar ();
+		}
+
+		public virtual bool supportsDifferentTableCorrelationNames()
+		{
+			return Wrapped.supportsDifferentTableCorrelationNames ();
+		}
+
+		public virtual java.sql.ResultSet getTables(string arg_0, string arg_1, string arg_2, string[] arg_3)
+		{
+			return Wrapped.getTables (arg_0, arg_1, arg_2, arg_3);
+		}
+
+		public virtual int getMaxIndexLength()
+		{
+			return Wrapped.getMaxIndexLength ();
+		}
+
+		public virtual int getMaxSchemaNameLength()
+		{
+			return Wrapped.getMaxSchemaNameLength ();
+		}
+
+		public virtual int getMaxCatalogNameLength()
+		{
+			return Wrapped.getMaxCatalogNameLength ();
+		}
+
+		public virtual int getMaxTableNameLength()
+		{
+			return Wrapped.getMaxTableNameLength ();
+		}
+
+		public virtual bool supportsCoreSQLGrammar()
+		{
+			return Wrapped.supportsCoreSQLGrammar ();
+		}
+
+		public virtual bool othersDeletesAreVisible(int arg_0)
+		{
+			return Wrapped.othersDeletesAreVisible (arg_0);
+		}
+
+		public virtual bool allProceduresAreCallable()
+		{
+			return Wrapped.allProceduresAreCallable ();
+		}
+
+		public virtual int getDriverMinorVersion()
+		{
+			return Wrapped.getDriverMinorVersion ();
+		}
+
+		public virtual java.sql.ResultSet getColumnPrivileges(string arg_0, string arg_1, string arg_2, string arg_3)
+		{
+			return Wrapped.getColumnPrivileges (arg_0, arg_1, arg_2, arg_3);
+		}
+
+		public virtual bool updatesAreDetected(int arg_0)
+		{
+			return Wrapped.updatesAreDetected (arg_0);
+		}
+
+		public virtual string getSchemaTerm()
+		{
+			return Wrapped.getSchemaTerm ();
+		}
+
+		public virtual bool supportsANSI92FullSQL()
+		{
+			return Wrapped.supportsANSI92FullSQL ();
+		}
+
+		public virtual java.sql.ResultSet getTablePrivileges(string arg_0, string arg_1, string arg_2)
+		{
+			return Wrapped.getTablePrivileges (arg_0, arg_1, arg_2);
+		}
+
+		public virtual bool supportsANSI92IntermediateSQL()
+		{
+			return Wrapped.supportsANSI92IntermediateSQL ();
+		}
+
+		public virtual string getIdentifierQuoteString()
+		{
+			return Wrapped.getIdentifierQuoteString ();
+		}
+
+		public virtual int getMaxUserNameLength()
+		{
+			return Wrapped.getMaxUserNameLength ();
+		}
+
+		public virtual bool supportsCatalogsInProcedureCalls()
+		{
+			return Wrapped.supportsCatalogsInProcedureCalls ();
+		}
+
+		public virtual bool supportsCatalogsInDataManipulation()
+		{
+			return Wrapped.supportsCatalogsInDataManipulation ();
+		}
+
+		public virtual bool storesUpperCaseIdentifiers()
+		{
+			return Wrapped.storesUpperCaseIdentifiers ();
+		}
+
+		public virtual int getJDBCMinorVersion()
+		{
+			return Wrapped.getJDBCMinorVersion ();
+		}
+
+		public virtual java.sql.ResultSet getIndexInfo(string arg_0, string arg_1, string arg_2, bool arg_3, bool arg_4)
+		{
+			return Wrapped.getIndexInfo (arg_0, arg_1, arg_2, arg_3, arg_4);
+		}
+
+		public virtual bool supportsMultipleOpenResults()
+		{
+			return Wrapped.supportsMultipleOpenResults ();
+		}
+
+		public virtual bool supportsCatalogsInTableDefinitions()
+		{
+			return Wrapped.supportsCatalogsInTableDefinitions ();
+		}
+
+		#endregion
+	}
 
 }

@@ -1,3 +1,8 @@
+2006-05-07 Boris Kirzner <borisk@mainsoft.com>
+	* OleDbSqlServerProvider.cs: adeed wrappers for sql server 2005, 
+	handling NVARCHAR as VARCHAR for metadata.
+	* wrappers.cs: added DatabaseMetaData wrapper.
+
 2006-03-27  Konstantin Triger <kostat@mainsoft.com>
 
        * OleDbSqlServerProvider.cs: rename OleDbSqlServerProvider class to OleDbSqlServerProvider2000

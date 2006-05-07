@@ -78,7 +78,7 @@ namespace System.Data.ProviderBase
 
 				ObjectNameResolversCollection basic = (ObjectNameResolversCollection)ConfigurationSettings.GetConfig("system.data/objectnameresolution");
 				
-				DatabaseMetaData metaData = connection.JdbcConnection.getMetaData();
+				java.sql.DatabaseMetaData metaData = connection.JdbcConnection.getMetaData();
 				string productName = metaData.getDatabaseProductName();
 
 				foreach(ObjectNameResolver nameResolver in basic) {
@@ -506,7 +506,7 @@ namespace System.Data.ProviderBase
 					if (JdbcConnection == null)
 						return String.Empty;
 
-					DatabaseMetaData metaData = JdbcConnection.getMetaData();
+					java.sql.DatabaseMetaData metaData = JdbcConnection.getMetaData();
 					return metaData.getDatabaseProductVersion();
 				}
 				catch (SQLException exp) {
@@ -522,7 +522,7 @@ namespace System.Data.ProviderBase
 					if (JdbcConnection == null)
 						return String.Empty;
 
-					DatabaseMetaData metaData = JdbcConnection.getMetaData();
+					java.sql.DatabaseMetaData metaData = JdbcConnection.getMetaData();
 					return metaData.getDriverName() + " " + metaData.getDriverVersion();
 				}
 				catch (SQLException exp) {
@@ -568,7 +568,7 @@ namespace System.Data.ProviderBase
 				string schema = null;
 				string spname = null;
 						
-				DatabaseMetaData metadata = JdbcConnection.getMetaData();	
+				java.sql.DatabaseMetaData metadata = JdbcConnection.getMetaData();	
 				bool storesUpperCaseIdentifiers = false;
 				bool storesLowerCaseIdentifiers = false;
 				try {
