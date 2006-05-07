@@ -473,12 +473,22 @@ public class Page : TemplateControl, IHttpHandler
 
 	void InitializeStyleSheet ()
 	{
+		if (_styleSheetTheme == null) {
+			PagesSection ps = WebConfigurationManager.GetSection ("system.web/pages") as PagesSection;
+			if (ps != null)
+				_styleSheetTheme = ps.StyleSheetTheme;
+		}
 		if (_styleSheetTheme != null && _styleSheetTheme != "")
 			_styleSheetPageTheme = ThemeDirectoryCompiler.GetCompiledInstance ("./App_Themes/" + _styleSheetTheme + "/", _context);
 	}
 
 	void InitializeTheme ()
 	{
+		if (_theme == null) {
+			PagesSection ps = WebConfigurationManager.GetSection ("system.web/pages") as PagesSection;
+			if (ps != null)
+				_theme = ps.Theme;
+		}
 		if (_theme != null && _theme != "") {
 			_pageTheme = ThemeDirectoryCompiler.GetCompiledInstance ("./App_Themes/" + _theme + "/", _context);
 			ApplyThemeRecursive ();
