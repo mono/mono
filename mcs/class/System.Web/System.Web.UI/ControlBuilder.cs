@@ -503,6 +503,7 @@ namespace System.Web.UI {
 
 		internal void ResetState()
 		{
+			renderIndex = 0;
 			haveParserVariable = false;
 
 			if (Children != null) {
