@@ -1849,7 +1849,7 @@ namespace System
 			if (array == null)
 				throw new ArgumentNullException ("array");
 	
-			return IndexOf (array, value, 0, array.Length);
+			return IndexOf<T> (array, value, 0, array.Length);
 		}
 
 		public static int IndexOf<T> (T [] array, T value, int startIndex)
@@ -1857,7 +1857,7 @@ namespace System
 			if (array == null)
 				throw new ArgumentNullException ("array");
 
-			return IndexOf (array, value, startIndex, array.Length - startIndex);
+			return IndexOf<T> (array, value, startIndex, array.Length - startIndex);
 		}
 
 		public static int IndexOf<T> (T [] array, T value, int startIndex, int count)
@@ -1870,8 +1870,9 @@ namespace System
 				throw new ArgumentOutOfRangeException ();
 
 			int max = startIndex + count;
+			EqualityComparer<T> equalityComparer = EqualityComparer<T>.Default;
 			for (int i = startIndex; i < max; i++) {
-				if (Object.Equals (value, array [i]))
+				if (equalityComparer.Equals (value, array [i]))
 					return i;
 			}
 
@@ -1883,7 +1884,7 @@ namespace System
 			if (array == null)
 				throw new ArgumentNullException ("array");
 
-			return LastIndexOf (array, value, array.Length - 1);
+			return LastIndexOf<T> (array, value, array.Length - 1);
 		}
 
 		public static int LastIndexOf<T> (T [] array, T value, int startIndex)
@@ -1891,7 +1892,7 @@ namespace System
 			if (array == null)
 				throw new ArgumentNullException ("array");
 
-			return LastIndexOf (array, value, startIndex, startIndex + 1);
+			return LastIndexOf<T> (array, value, startIndex, startIndex + 1);
 		}
 
 		public static int LastIndexOf<T> (T [] array, T value, int startIndex, int count)
@@ -1902,8 +1903,9 @@ namespace System
 			if (count < 0 || startIndex > array.Length || startIndex - count + 1 < 0)
 				throw new ArgumentOutOfRangeException ();
 
+			EqualityComparer<T> equalityComparer = EqualityComparer<T>.Default;
 			for (int i = startIndex; i >= startIndex - count + 1; i--) {
-				if (Object.Equals (value, array [i]))
+				if (equalityComparer.Equals (value, array [i]))
 					return i;
 			}
 

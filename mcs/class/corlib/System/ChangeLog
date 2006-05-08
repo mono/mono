@@ -1,3 +1,8 @@
+2006-05-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ArrayTest.cs : use proper comparer in IndexOf() and LastIndexOf().
+	  Patch by Kazuki Oikawa. Fixed bug #77277.
+
 2006-05-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* Nullable.cs (Equals): Fix comparison to null. Fixes #78322.

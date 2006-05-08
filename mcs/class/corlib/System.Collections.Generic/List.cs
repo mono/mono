@@ -160,7 +160,11 @@ namespace System.Collections.Generic {
 		
 		public bool Contains (T item)
 		{
-			return IndexOf (item) != -1;
+			EqualityComparer<T> equalityComparer = EqualityComparer<T>.Default;
+			for (int i = 0; i < size; i++)
+				if (equalityComparer.Equals (data[i], item))
+					return true;
+			return false;
 		}
 		
 		public List <TOutput> ConvertAll <TOutput> (Converter <T, TOutput> converter)
@@ -307,13 +311,13 @@ namespace System.Collections.Generic {
 		
 		public int IndexOf (T item)
 		{
-			return Array.IndexOf (data, item, 0, size);
+			return Array.IndexOf<T> (data, item, 0, size);
 		}
 		
 		public int IndexOf (T item, int index)
 		{
 			CheckIndex (index);
-			return Array.IndexOf (data, item, index, size - index);
+			return Array.IndexOf<T> (data, item, index, size - index);
 		}
 		
 		public int IndexOf (T item, int index, int count)
@@ -327,7 +331,7 @@ namespace System.Collections.Generic {
 			if ((uint) index + (uint) count > (uint) size)
 				throw new ArgumentOutOfRangeException ("index and count exceed length of list");
 
-			return Array.IndexOf (data, item, index, count);
+			return Array.IndexOf<T> (data, item, index, count);
 		}
 		
 		void Shift (int start, int delta)
@@ -388,19 +392,27 @@ namespace System.Collections.Generic {
 
 		public int LastIndexOf (T item)
 		{
-			return Array.LastIndexOf (data, item, 0, size);
+			return Array.LastIndexOf<T> (data, item, size - 1, size);
 		}
 		
 		public int LastIndexOf (T item, int index)
 		{
 			CheckIndex (index);
-			return Array.LastIndexOf (data, item, index, size - index);
+			return Array.LastIndexOf<T> (data, item, index, index + 1);
 		}
 		
 		public int LastIndexOf (T item, int index, int count)
 		{
-			CheckRange (index, count);			 
-			return Array.LastIndexOf (data, item, index, count);
+			if (index < 0)
+				throw new ArgumentOutOfRangeException ("index", index, "index is negative");
+
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count", count, "count is negative");
+
+			if (index - count + 1 < 0)
+				throw new ArgumentOutOfRangeException ("cound", count, "count is too large");
+
+			return Array.LastIndexOf<T> (data, item, index, count);
 		}
 		
 		public bool Remove (T item)

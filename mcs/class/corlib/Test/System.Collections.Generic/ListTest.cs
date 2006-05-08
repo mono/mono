@@ -711,6 +711,41 @@ namespace MonoTests.System.Collections.Generic {
 			l.Sort ();
 			// two element -> sort -> exception!
 		}
+
+		// for bug #77277 test case
+		[Test]
+		public void Test_ContainsAndIndexOf_EquatableItem ()
+		{
+			List<EquatableClass> list = new List<EquatableClass> ();
+			EquatableClass item0 = new EquatableClass (0);
+			EquatableClass item1 = new EquatableClass (1);
+
+			list.Add (item0);
+			list.Add (item1);
+			list.Add (item0);
+
+			Assert.AreEqual (true, list.Contains (item0), "#0");
+			Assert.AreEqual (true, list.Contains (new EquatableClass (0)), "#1");
+			Assert.AreEqual (0, list.IndexOf (item0), "#2");
+			Assert.AreEqual (0, list.IndexOf (new EquatableClass (0)), "#3");
+			Assert.AreEqual (2, list.LastIndexOf (item0), "#4");
+			Assert.AreEqual (2, list.LastIndexOf (new EquatableClass (0)), "#5");
+		}
+
+		public class EquatableClass : IEquatable<EquatableClass>
+		{
+			int _x;
+			public EquatableClass (int x)
+			{
+				_x = x;
+			}
+
+			public bool Equals (EquatableClass other)
+			{
+				return this._x == other._x;
+			}
+
+		}
 	}
 }
 #endif

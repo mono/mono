@@ -2757,6 +2757,32 @@ public class ArrayTest : Assertion
 		Array.Resize (ref arr, 10);
 		AssertEquals (arr.Length, 10);
 	}
+
+	[Test]
+	public void Test_ContainsAndIndexOf_EquatableItem ()
+	{
+		EquatableClass[] list = new EquatableClass[] {new EquatableClass (0), new EquatableClass (1), new EquatableClass (0)};
+
+		AssertEquals ("#0", 0, Array.IndexOf<EquatableClass> (list, list[0]));
+		AssertEquals ("#1", 0, Array.IndexOf<EquatableClass> (list, new EquatableClass (0)));
+		AssertEquals ("#2", 2, Array.LastIndexOf<EquatableClass> (list, list[0]));
+		AssertEquals ("#3", 2, Array.LastIndexOf<EquatableClass> (list, new EquatableClass (0)));
+	}
+
+	public class EquatableClass : IEquatable<EquatableClass>
+	{
+    	int _x;
+    	public EquatableClass (int x)
+    	{
+    		_x = x;
+    	}
+
+    	public bool Equals (EquatableClass other)
+    	{
+        	return this._x == other._x;
+    	}
+
+	}
 #endif
 }
 
