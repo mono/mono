@@ -346,12 +346,75 @@ namespace System.Reflection
 						continue;
 
 					if (result != null)
-						throw new AmbiguousMatchException ();
-
-					result = m;
+						result = GetBetterMethod (result, m, types);
+					else
+						result = m;
 				}
 
 				return result;
+			}
+
+			MethodBase GetBetterMethod (MethodBase m1, MethodBase m2, Type [] types)
+			{
+#if NET_2_0
+				if (m1.IsGenericMethodDefinition && 
+				    !m2.IsGenericMethodDefinition)
+					return m2;
+				if (m2.IsGenericMethodDefinition && 
+				    !m1.IsGenericMethodDefinition)
+					return m1;
+#endif
+
+				ParameterInfo [] pl1 = m1.GetParameters ();
+				ParameterInfo [] pl2 = m2.GetParameters ();
+				int prev = 0;
+				for (int i = 0; i < pl1.Length; i++) {
+					int cmp = CompareCloserType (pl1 [i].ParameterType, pl2 [i].ParameterType);
+					if (cmp != 0 && prev != 0 && prev != cmp)
+						throw new AmbiguousMatchException ();
+					if (cmp != 0)
+						prev = cmp;
+				}
+				if (prev != 0)
+					return prev > 0 ? m2 : m1;
+
+				bool va1 = (m1.CallingConvention & CallingConventions.VarArgs) != 0;
+				bool va2 = (m1.CallingConvention & CallingConventions.VarArgs) != 0;
+				if (va1 && !va2)
+					return m2;
+				if (va2 && !va1)
+					return m1;
+
+				throw new AmbiguousMatchException ();
+			}
+
+			int CompareCloserType (Type t1, Type t2)
+			{
+				if (t1 == t2)
+					return 0;
+#if NET_2_0
+				if (t1.IsGenericParameter && !t2.IsGenericParameter)
+					return 1; // t2
+				if (!t1.IsGenericParameter && t2.IsGenericParameter)
+					return -1; // t1
+#endif
+				if (t1.HasElementType && t2.HasElementType)
+					return CompareCloserType (
+						t1.GetElementType (),
+						t2.GetElementType ());
+
+				if (t1.IsSubclassOf (t2))
+					return -1; // t1
+				if (t2.IsSubclassOf (t1))
+					return 1; // t2
+
+				if (t1.IsInterface && Array.IndexOf (t2.GetInterfaces (), t1) >= 0)
+					return 1; // t2
+				if (t2.IsInterface && Array.IndexOf (t1.GetInterfaces (), t2) >= 0)
+					return -1; // t1
+
+				// What kind of cases could reach here?
+				return 0;
 			}
 
 			public override PropertyInfo SelectProperty (BindingFlags bindingAttr, PropertyInfo[] match, Type returnType, Type[] indexes, ParameterModifier[] modifiers)

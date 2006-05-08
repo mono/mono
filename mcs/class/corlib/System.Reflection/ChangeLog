@@ -1,6 +1,12 @@
 2006-05-08  Atsushi Enomoto  <atsushi@ximian.com>
 
-	* Binder.cs : (DefaultBinder.BindToMethod) reorder parameters based
+	* Binder.cs : (Default.SelectMethod)
+	  don't throw AmbiguousMatchException when one of conflicting method
+	  matches weakly. Fixed bug #42547.
+
+2006-05-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Binder.cs : (Default.BindToMethod) reorder parameters based
 	  on namedParameters. Fixed bug #41691.
 
 2006-05-03  Jb Evain  <jbevain@gmail.com>

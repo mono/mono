@@ -1,5 +1,9 @@
 2006-05-08  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* BinderTests.cs : added test for bug #42547.
+
+2006-05-08  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* BinderTests.cs : added test for bug #41691.
 
 2006-03-09  Zoltan Varga  <vargaz@gmail.com>

@@ -255,6 +255,75 @@ namespace MonoTests.System.Reflection
 				output.WriteLine (lastName);
 			}
 		}
+
+		[Test] // bug #42457
+		public void GetMethodAmbiguity ()
+		{
+			object IntegerObject = 5;
+			object IntArrayObject = new int[] {5, 2, 5};
+			object StringArrayObject = new string [] {"One", "Two"};
+			object [] IntParam = new object [] {IntegerObject};
+			object [] IntArrayParam = new object [] {IntArrayObject};
+			object [] StringArrayParam = new object [] {StringArrayObject};
+
+			object be = this;
+			Type betype = this.GetType ();
+
+			string name1 = "Bug42457Method";
+			string name2 = "Bug42457Method2";
+
+			MethodInfo mi_obj = betype.GetMethod (name1, Type.GetTypeArray (IntParam));
+			mi_obj.Invoke (be, IntParam);
+			Assert.AreEqual (1, bug42457, "#1");
+			MethodInfo mi_arr = betype.GetMethod (name1, Type.GetTypeArray (IntArrayParam));
+			mi_arr.Invoke (be, IntArrayParam);
+			Assert.AreEqual (2, bug42457, "#2");
+			MethodInfo mi_str = betype.GetMethod (name1, Type.GetTypeArray (StringArrayParam));
+			mi_str.Invoke (be, StringArrayParam);
+			Assert.AreEqual (3, bug42457, "#3");
+
+			MethodInfo m2_obj = betype.GetMethod (name2, Type.GetTypeArray (IntParam));
+			m2_obj.Invoke (be, IntParam);
+			Assert.AreEqual (1, bug42457_2, "#4");
+			MethodInfo m2_arr = betype.GetMethod (name2, Type.GetTypeArray (IntArrayParam));
+			m2_arr.Invoke (be, IntArrayParam);
+			Assert.AreEqual (2, bug42457_2, "#5");
+			MethodInfo m2_str = betype.GetMethod (name2, Type.GetTypeArray(StringArrayParam));
+			m2_str.Invoke (be, StringArrayParam);
+			Assert.AreEqual (3, bug42457_2, "#6");
+		}
+
+		public void Bug42457Method (object thing)
+		{
+			bug42457 = 1;
+		}
+
+		public void Bug42457Method (Array thing)
+		{
+			bug42457 = 2;
+		}
+
+		public void Bug42457Method (string [] thing)
+		{
+			bug42457 = 3;
+		}
+
+		public void Bug42457Method2 (object thing)
+		{
+			bug42457_2 = 1;
+		}
+
+		public void Bug42457Method2 (Array thing)
+		{
+			bug42457_2 = 2;
+		}
+
+		public void Bug42457Method2 (string [] thing)
+		{
+			bug42457_2 = 3;
+		}
+
+		int bug42457, bug42457_2;
 	}
 }
 
