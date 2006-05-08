@@ -205,6 +205,10 @@ public class DirectoryTest : Assertion {
 	public void ExistsAccessDenied ()
 	{
 		// bug #78239
+
+		if (Path.DirectorySeparatorChar == '\\')
+			return; // this test does not work on Windows.
+
 		string path = TempFolder + DSC + "ExistsAccessDenied";
 		Process p;
 
