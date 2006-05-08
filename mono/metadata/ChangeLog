@@ -1,3 +1,7 @@
+2006-05-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c: Allocate some more signatures from mempools.
+
 2006-05-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* threads.c (ves_icall_System_Threading_Interlocked_Add_Int): Return the new
