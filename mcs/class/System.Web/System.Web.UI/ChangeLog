@@ -1,7 +1,7 @@
 2006-05-08  Chris Toshok  <toshok@ximian.com>
 
 	* ControlBuilder.cs (ResetState): set renderIndex to 0 here.  This
-	fixes the last thing keeping the test in #78616 from working.
+	fixes the last thing keeping the test in #76818 from working.
 
 2006-05-07 Andrew Skiba <andrews@mainsoft.com>
 
