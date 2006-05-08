@@ -41,9 +41,10 @@ namespace System.ComponentModel
 			this.state = state;
 		}
 
-		[MonoTODO ("What is expected here?")]
 		~AsyncOperation ()
 		{
+			if (!done && ctx != null)
+				ctx.OperationCompleted ();
 		}
 
 		SynchronizationContext ctx;
@@ -73,6 +74,7 @@ namespace System.ComponentModel
 			if (done)
 				throw new InvalidOperationException ("This task is already completed. Multiple call to Post is not allowed.");
 
+			ctx.OperationStarted ();
 			ctx.Post (d, arg);
 		}
 

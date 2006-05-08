@@ -1,5 +1,10 @@
 2006-05-08  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* AsyncOperation.cs : call OperationStared() at Post(). Call
+	  OperationCompleted() at the finalizer. Thanks to cl.
+
+2006-05-08  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SettingsBindableAttribute.cs : new file. Bug #78333 is fixed.
 
 2006-04-27  Miguel de Icaza  <miguel@novell.com>
