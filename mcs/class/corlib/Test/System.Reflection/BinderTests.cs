@@ -324,6 +324,43 @@ namespace MonoTests.System.Reflection
 		}
 
 		int bug42457, bug42457_2;
+
+		[Test] // bug #77079
+		public void GetMethodAvoidAmbiguity2 ()
+		{
+			Type tType = this.GetType ();
+			Bug77079A a = new Bug77079C ();
+
+			tType.InvokeMember ("Bug77079",
+				BindingFlags.Public | BindingFlags.InvokeMethod | 
+				BindingFlags.Instance,
+				null, this, new object[] {a});
+			Assert.AreEqual (2, bug77079);
+		}
+
+		int bug77079;
+
+		public void Bug77079 (Bug77079A a)
+		{
+			bug77079 = 1;
+		}
+
+		public void Bug77079 (Bug77079B a)
+		{
+			bug77079 = 2;
+		}
+
+		public class Bug77079A
+		{
+		}
+
+		public class Bug77079B : Bug77079A
+		{
+		}
+
+		public class Bug77079C : Bug77079B
+		{
+		}
 	}
 }
 
