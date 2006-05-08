@@ -1,3 +1,10 @@
+2006-05-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GraphicsPathTest.cs: Added test cases for Widen and Wrap with empty
+	path (expected behaviour) and paths that have a single point (stranger
+	behaviour). Changed comments on GetBounds_WithPen test case as it will
+	probably never work under Mono due to difference in precisions.
+
 2006-05-05  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* GraphicsPathTest.cs: Added more test cases for GetBounds and found

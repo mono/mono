@@ -1054,11 +1054,11 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		}
 
 		[Test]
-		[Category ("NotWorking")] // libgdiplus is drawing something
 		public void AddCurve_LargeTension ()
 		{
 			GraphicsPath gp = new GraphicsPath ();
 			gp.AddCurve (new PointF[3] { new PointF (1f, 1f), new PointF (0f, 20f), new PointF (20f, 0f) }, 0, 2, Single.MaxValue);
+			Assert.AreEqual (7, gp.PointCount, "PointCount");
 			gp.Dispose ();
 		}
 
@@ -1091,6 +1091,8 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		{
 			GraphicsPath gp = new GraphicsPath ();
 			gp.AddCurve (new PointF[4] { new PointF (1f, 1f), new PointF (0f, 20f), new PointF (20f, 0f), new PointF (0f, 10f) }, 1, 2, 0.5f);
+			Assert.AreEqual (7, gp.PointCount, "PointCount");
+			gp.Dispose ();
 		}
 
 		[Test]
@@ -1196,7 +1198,7 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		}
 
 		[Test]
-		[Category ("NotWorking")] // bounds+pen support is missing in libgdiplus
+		[Category ("NotWorking")] // can't/wont duplicate the lack of precision
 		public void GetBounds_WithPen ()
 		{
 			Rectangle rect = new Rectangle (1, 1, 2, 2);
@@ -1205,14 +1207,13 @@ namespace MonoTests.System.Drawing.Drawing2D {
 			gp.AddRectangle (rect);
 
 			RectangleF bounds = gp.GetBounds (null, p);
-#if false
 			// those bounds doesn't make any sense (even visually)
 			// probably null gets mis-interpreted ???
 			Assert.AreEqual (-6.09999943f, bounds.X, "NullMatrix.Bounds.X");
 			Assert.AreEqual (-6.09999943f, bounds.Y, "NullMatrix.Bounds.Y");
 			Assert.AreEqual (16.1999989f, bounds.Width, "NullMatrix.Bounds.Width");
 			Assert.AreEqual (16.1999989f, bounds.Height, "NullMatrix.Bounds.Height");
-#endif
+
 			Matrix m = new Matrix ();
 			bounds = gp.GetBounds (m, p);
 			Assert.AreEqual (-0.419999957f, bounds.X, "EmptyMatrix.Bounds.X");
@@ -1507,6 +1508,50 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		public void Warp_NoPoints ()
 		{
 			new GraphicsPath ().Warp (new PointF[0], new RectangleF ());
+		}
+
+		[Test]
+		public void Wrap_NoPoint ()
+		{
+			using (GraphicsPath gp = new GraphicsPath ()) {
+				Assert.AreEqual (0, gp.PointCount, "PointCount-1");
+
+				PointF[] pts = new PointF[1] { new PointF (0, 0) };
+				RectangleF r = new RectangleF (10, 20, 30, 40);
+				gp.Warp (pts, r, new Matrix ());
+				Assert.AreEqual (0, gp.PointCount, "PointCount-2");
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Wrap_SinglePoint ()
+		{
+			using (GraphicsPath gp = new GraphicsPath ()) {
+				gp.AddLines (new Point[1] { new Point (1, 1) });
+				// Special case - a line with a single point is valid
+				Assert.AreEqual (1, gp.PointCount, "PointCount-1");
+
+				PointF[] pts = new PointF[1] { new PointF (0, 0) };
+				RectangleF r = new RectangleF (10, 20, 30, 40);
+				gp.Warp (pts, r, new Matrix ());
+				Assert.AreEqual (0, gp.PointCount, "PointCount-2");
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Wrap_Line ()
+		{
+			using (GraphicsPath gp = new GraphicsPath ()) {
+				gp.AddLine (new Point (1, 1), new Point (20, 20));
+				Assert.AreEqual (2, gp.PointCount, "PointCount-1");
+
+				PointF[] pts = new PointF[1] { new PointF (0, 0) };
+				RectangleF r = new RectangleF (10, 20, 30, 40);
+				gp.Warp (pts, r, new Matrix ());
+				Assert.AreEqual (2, gp.PointCount, "PointCount-2");
+			}
 		}
 
 		[Test]
@@ -2000,6 +2045,30 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		public void Widen_Pen_Null_Matrix ()
 		{
 			new GraphicsPath ().Widen (null, new Matrix ());
+		}
+
+		[Test]
+		public void Widen_NoPoint ()
+		{
+			using (GraphicsPath gp = new GraphicsPath ()) {
+				Assert.AreEqual (0, gp.PointCount, "PointCount-1");
+				Pen pen = new Pen (Color.Blue);
+				gp.Widen (pen);
+				Assert.AreEqual (0, gp.PointCount, "PointCount-2");
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (OutOfMemoryException))]
+		public void Widen_SinglePoint ()
+		{
+			using (GraphicsPath gp = new GraphicsPath ()) {
+				gp.AddLines (new Point[1] { new Point (1, 1) });
+				// Special case - a line with a single point is valid
+				Assert.AreEqual (1, gp.PointCount, "PointCount");
+				gp.Widen (Pens.Red);
+				// oops ;-)
+			}
 		}
 
 		private void CheckWiden3 (GraphicsPath path)
