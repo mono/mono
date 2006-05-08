@@ -1,3 +1,9 @@
+2006-05-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_create_jump_trampoline): Allocate MonoJitInfo from the domain
+	mempool.
+	(mono_jit_free_method): Remove the method from jump_trampoline_hash as well.
+
 2006-05-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mini_cleanup): Applied patch from Joachim Ante (joe@otee.dk). Call
