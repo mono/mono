@@ -516,6 +516,7 @@ System.IO.Ports/SerialPortStream.cs
 System.IO.Ports/SerialReceivedEventArgs.cs
 System.IO.Ports/SerialSignal.cs
 System.IO.Ports/StopBits.cs
+System.IO.Ports/WinSerialStream.cs
 System.IO/RenamedEventArgs.cs
 System.IO/RenamedEventHandler.cs
 System.IO/SearchPattern.cs
