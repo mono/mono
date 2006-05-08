@@ -1,3 +1,8 @@
+2006-05-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DeflateStreamTest.cs, GzipStreamTest.cs : enabled tests that are
+	  marked as NotWorking. Closed bug #72143.
+
 2005-05-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DeflateStreamCas.cs: New. CAS unit tests to test stack propagation 

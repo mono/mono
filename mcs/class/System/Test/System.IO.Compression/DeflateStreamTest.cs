@@ -140,7 +140,6 @@ namespace MonoTests.System.IO.Compression
 
 		[Test]
 		[ExpectedException (typeof (ObjectDisposedException))]
-		[Category("NotWorking")] // #72143
 		public void CheckClosedFlush () {
 			MemoryStream backing = new MemoryStream ();
 			DeflateStream compressing = new DeflateStream (backing, CompressionMode.Compress);

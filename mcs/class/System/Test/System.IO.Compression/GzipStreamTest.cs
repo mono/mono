@@ -59,7 +59,6 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
-		[Category("NotWorking")] // #72143
 		public void CheckCompressDecompress () {
 			byte [] data = new byte[100000];
 			for (int i = 0; i < 100000; i++) {
@@ -141,7 +140,6 @@ namespace MonoTests.System.IO.Compression
 
 		[Test]
 		[ExpectedException (typeof (ObjectDisposedException))]
-		[Category("NotWorking")] // #72143
 		public void CheckClosedFlush () {
 			MemoryStream backing = new MemoryStream ();
 			GZipStream compressing = new GZipStream (backing, CompressionMode.Compress);
