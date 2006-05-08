@@ -426,13 +426,25 @@ namespace System.IO.Ports
 			throw new NotImplementedException ("Detection of ports is not implemented for this platform yet.");
 		}
 
+		static bool IsWindows {
+			get {
+				PlatformID id =  Environment.OSVersion.Platform;
+				return id == PlatformID.Win32Windows || id == PlatformID.Win32NT; // WinCE not supported
+			}
+		}
+
 		public void Open ()
 		{
 			if (is_open)
 				throw new InvalidOperationException ("Port is already open");
 			
-			stream = new SerialPortStream (port_name, baud_rate, data_bits, parity, stop_bits, dtr_enable,
+			if (IsWindows) // Use windows kernel32 backend
+				stream = new WinSerialStream (port_name, baud_rate, data_bits, parity, stop_bits,
+						handshake, read_timeout, write_timeout, readBufferSize, writeBufferSize);
+			else // Use standard unix backend
+				stream = new SerialPortStream (port_name, baud_rate, data_bits, parity, stop_bits, dtr_enable,
 					rts_enable, handshake, read_timeout, write_timeout, readBufferSize, writeBufferSize);
+			
 			is_open = true;
 		}
 

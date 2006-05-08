@@ -8,7 +8,6 @@
 //
 
 using System;
-using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -19,7 +18,7 @@ using System.ComponentModel;
 
 namespace System.IO.Ports
 {
-	public class WinSerialStream : Stream, IDisposable
+	class WinSerialStream : Stream, ISerialStream, IDisposable
 	{
 		// Windows API Constants
 		const uint GenericRead = 0x80000000;
@@ -55,7 +54,7 @@ namespace System.IO.Ports
 		[DllImport("kernel32", SetLastError = true)]
 		static extern bool SetCommTimeouts(int handle, Timeouts timeouts);
 
-		public unsafe WinSerialStream (string port_name, int baud_rate, int data_bits, Parity parity,
+		public WinSerialStream (string port_name, int baud_rate, int data_bits, Parity parity,
 				StopBits sb, Handshake hs, int read_timeout, int write_timeout,
 				int read_buffer_size, int write_buffer_size)
 		{
@@ -63,7 +62,7 @@ namespace System.IO.Ports
 					FileFlagOverlapped, 0);
 
 			if (handle == -1)
-				ReportIOError(port_name);
+				ReportIOError (port_name);
 
 			// Set port low level attributes
 			SetAttributes (baud_rate, parity, data_bits, sb, hs);
@@ -220,7 +219,7 @@ namespace System.IO.Ports
 			static extern unsafe bool GetOverlappedResult (int handle, IntPtr overlapped,
 					ref int bytes_transfered, bool wait);
 
-		public override unsafe int Read ([In, Out] byte [] buffer, int offset, int count)
+		public override int Read ([In, Out] byte [] buffer, int offset, int count)
 		{
 			CheckDisposed ();
 			if (buffer == null)
@@ -234,16 +233,19 @@ namespace System.IO.Ports
 
 			int bytes_read;
 
-			fixed (byte* ptr = buffer) {
-				if (ReadFile (handle, ptr + offset, count, out bytes_read, read_overlapped))
-					return bytes_read;
-
-				// Test for overlapped behavior
-				if (Marshal.GetLastWin32Error () != FileIOPending)
-					ReportIOError (null);
-
-				if (!GetOverlappedResult (handle, read_overlapped, ref bytes_read, true))
-					ReportIOError (null);
+			unsafe {
+				fixed (byte* ptr = buffer) {
+					if (ReadFile (handle, ptr + offset, count, out bytes_read, read_overlapped))
+						return bytes_read;
+				
+					// Test for overlapped behavior
+					if (Marshal.GetLastWin32Error () != FileIOPending)
+						ReportIOError (null);
+				
+					if (!GetOverlappedResult (handle, read_overlapped, ref bytes_read, true))
+						ReportIOError (null);
+			
+				}
 			}
 
 			if (bytes_read == 0)
@@ -256,7 +258,7 @@ namespace System.IO.Ports
 		static extern unsafe bool WriteFile (int handle, byte* buffer, int bytes_to_write,
 				out int bytes_written, IntPtr overlapped);
 
-		public override unsafe void Write (byte [] buffer, int offset, int count)
+		public override void Write (byte [] buffer, int offset, int count)
 		{
 			CheckDisposed ();
 			if (buffer == null)
@@ -270,15 +272,16 @@ namespace System.IO.Ports
 
 			int bytes_written = 0;
 
-			fixed (byte* ptr = buffer) {
-				if (WriteFile (handle, ptr + offset, count, out bytes_written, write_overlapped))
-					return;
-
-				if (Marshal.GetLastWin32Error() != FileIOPending)
-					ReportIOError (null);
-
-				if (!GetOverlappedResult(handle, write_overlapped, ref bytes_written, true))
-					ReportIOError (null);
+			unsafe {
+				fixed (byte* ptr = buffer) {
+					if (WriteFile (handle, ptr + offset, count, out bytes_written, write_overlapped))
+						return;
+					if (Marshal.GetLastWin32Error() != FileIOPending)
+						ReportIOError (null);
+					
+					if (!GetOverlappedResult(handle, write_overlapped, ref bytes_written, true))
+						ReportIOError (null);
+				}
 			}
 
 			// If the operation timed out, then
@@ -293,7 +296,7 @@ namespace System.IO.Ports
 		[DllImport ("kernel32", SetLastError=true)]
 		static extern bool SetCommState (int handle, DCB dcb);
 
-		void SetAttributes (int baud_rate, Parity parity, int data_bits, StopBits bits, Handshake hs)
+		public void SetAttributes (int baud_rate, Parity parity, int data_bits, StopBits bits, Handshake hs)
 		{
 			DCB dcb = new DCB ();
 			if (!GetCommState (handle, dcb))
@@ -329,6 +332,39 @@ namespace System.IO.Ports
 		{
 			if (disposed)
 				throw new ObjectDisposedException (GetType ().FullName);
+		}
+
+		// ISerialStream members
+		public void DiscardInBuffer ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public void DiscardOutBuffer ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public int BytesToRead {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public int BytesToWrite {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public SerialSignal GetSignals ()
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public void SetSignal (SerialSignal signal, bool value)
+		{
+			throw new NotImplementedException ();
 		}
 
 	}

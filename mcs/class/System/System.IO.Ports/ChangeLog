@@ -1,5 +1,12 @@
 2005-05-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* SerialPort.cs:
+	* WinSerialStream.cs: Actually plug the Win serial stream
+	in the SerialPort and use it if we are on Windows (use std
+	stream otherwise).
+
+2005-05-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* WinSerialStream.cs: Implement some bits needed for
 	the backend thing.
 
