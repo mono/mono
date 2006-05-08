@@ -39,6 +39,8 @@ namespace System.ComponentModel
 		{
 			this.ctx = ctx;
 			this.state = state;
+
+			ctx.OperationStarted ();
 		}
 
 		~AsyncOperation ()
@@ -74,7 +76,6 @@ namespace System.ComponentModel
 			if (done)
 				throw new InvalidOperationException ("This task is already completed. Multiple call to Post is not allowed.");
 
-			ctx.OperationStarted ();
 			ctx.Post (d, arg);
 		}
 

@@ -1,5 +1,11 @@
 2006-05-08  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* AsyncOperation.cs : SynchronizationContext.OperationStarted()
+	  should not be called more than once. So move it from Post() to
+	  .ctor(). Thanks again to cl.
+
+2006-05-08  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* AsyncOperation.cs : call OperationStared() at Post(). Call
 	  OperationCompleted() at the finalizer. Thanks to cl.
 
