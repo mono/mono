@@ -5,10 +5,7 @@
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2003 Ximian, Inc.  http://www.ximian.com
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -42,18 +39,21 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyVersion (Consts.FxVersion)]
 [assembly: SatelliteContractVersion (Consts.FxVersion)]
 
-#if (ONLY_1_1)
-[assembly: ComCompatibleVersion (1, 0, 3300, 0)]
+#if NET_2_0
+[assembly: AssemblyFileVersion (Consts.RuntimeVersion)]
+[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
+[assembly: Dependency ("System,", LoadHint.Always)]
+#else
 [assembly: TypeLibVersion (1, 10)]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyConfiguration("Development version")]
 #endif
 
 [assembly: AssemblyTitle("System.Drawing.dll")]
 [assembly: AssemblyDescription("System.Drawing.dll")]
-[assembly: AssemblyConfiguration("Development version")]
 [assembly: AssemblyCompany("MONO development team")]
 [assembly: AssemblyProduct("MONO CLI")]
 [assembly: AssemblyCopyright("(c) 2003 Various Authors")]
-[assembly: AssemblyTrademark("")]
 
 #if !TARGET_JVM
 [assembly: CLSCompliant(true)]
@@ -62,6 +62,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyInformationalVersion("0.0.0.1")]
 [assembly: NeutralResourcesLanguage("en-US")]
 
+[assembly: ComCompatibleVersion (1, 0, 3300, 0)]
 [assembly: ComVisible(false)]
 [assembly: AllowPartiallyTrustedCallers]
 

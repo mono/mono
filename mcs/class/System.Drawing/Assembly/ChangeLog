@@ -1,3 +1,7 @@
+2006-05-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyInfo.cs: Reduce the errors reported by corcompare.
+
 2005-11-28  Konstantin Triger <kostat@mainsoft.com>
 
 	* Added system icons.
