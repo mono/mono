@@ -927,7 +927,7 @@ namespace System.Windows.Forms
 		#endregion Public Methods
 
 		#region Private Methods
-		
+
 		private void AdjustHeightForDropDown ()
 		{
 			if (dropdown_style == ComboBoxStyle.Simple) 
@@ -1489,7 +1489,7 @@ namespace System.Windows.Forms
 				SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 				SetStyle (ControlStyles.ResizeRedraw | ControlStyles.Opaque, true);				
 
-				border_style = BorderStyle.FixedSingle;
+				InternalBorderStyle = BorderStyle.FixedSingle;
 			}
 
 			protected override CreateParams CreateParams
@@ -1504,6 +1504,23 @@ namespace System.Windows.Forms
 					return cp;
 				}
 			}
+
+			internal override bool InternalCapture {
+				get {
+					return Capture;
+				}
+
+				set {
+				}
+			}
+
+			protected override void OnLostFocus(EventArgs e) {
+				if (Capture) {
+					HideWindow();
+				}
+				base.OnLostFocus (e);
+			}
+
 
 			#region Private Methods			
 			// Calcs the listbox area
@@ -1894,9 +1911,9 @@ namespace System.Windows.Forms
 		    			scrollbar_screenrect.X = scrollbar_screen.X;
 		    			scrollbar_screenrect.Y = scrollbar_screen.Y;
 		    			
-		    			if (scrollbar_screenrect.Contains (mouse_screen)){	    				
+		    			if (scrollbar_screenrect.Contains (mouse_screen)) {
 		    				Point pnt_client = vscrollbar_ctrl.PointToClient (mouse_screen);
-		    				
+
 		    				vscrollbar_ctrl.FireMouseMove (new MouseEventArgs (e.Button, e.Clicks,
 		    					pnt_client.X, pnt_client.Y, e.Delta));
 		    			}
@@ -1907,7 +1924,7 @@ namespace System.Windows.Forms
 			{
 				if (owner.DropDownStyle == ComboBoxStyle.Simple)
 					return;					
-					
+
 				/* Reroute event to scrollbar */	
 				Rectangle scrollbar_screenrect;
 	    			Point mouse_screen, scrollbar_screen;

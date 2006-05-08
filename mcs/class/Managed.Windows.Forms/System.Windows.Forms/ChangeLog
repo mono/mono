@@ -1,3 +1,15 @@
+2006-05-08  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Control.cs: 
+	  - Added new InternalCapture method to allow controls to prevent
+	    the capture behaviour on the click handlers
+	  - Switched to use InternalCapture
+	* ComboBox.cs:
+	  - Using InternalCapture to prevent mouse captures from being released
+	    on mouse button release (Fixes #78100)
+	* XplatUIX11.cs (DeriveStyles): Now checks caption state and only
+	  returns Form borders if a caption is present. (Fixes #78310)
+
 2006-05-08  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* TreeNode.cs: Changed serialization .ctor to not require every field

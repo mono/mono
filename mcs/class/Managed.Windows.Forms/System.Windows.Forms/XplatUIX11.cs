@@ -649,16 +649,20 @@ namespace System.Windows.Forms {
 						border_style = FormBorderStyle.Sizable;
 					}
 				} else {
-					if ((ExStyle & (int)WindowExStyles.WS_EX_CLIENTEDGE) != 0) {
-						border_style = FormBorderStyle.Fixed3D;
-					} else if ((ExStyle & (int)WindowExStyles.WS_EX_DLGMODALFRAME) != 0) {
-						border_style = FormBorderStyle.FixedDialog;
-					} else if ((ExStyle & (int)WindowExStyles.WS_EX_TOOLWINDOW) != 0) {
-						border_style = FormBorderStyle.FixedToolWindow;
-					} else if ((Style & (int)WindowStyles.WS_BORDER) != 0) {
-						border_style = FormBorderStyle.Sizable;
+					if ((Style & (int)WindowStyles.WS_CAPTION) == (int)WindowStyles.WS_CAPTION) {
+						if ((ExStyle & (int)WindowExStyles.WS_EX_CLIENTEDGE) != 0) {
+							border_style = FormBorderStyle.Fixed3D;
+						} else if ((ExStyle & (int)WindowExStyles.WS_EX_DLGMODALFRAME) != 0) {
+							border_style = FormBorderStyle.FixedDialog;
+						} else if ((ExStyle & (int)WindowExStyles.WS_EX_TOOLWINDOW) != 0) {
+							border_style = FormBorderStyle.FixedToolWindow;
+						} else if ((Style & (int)WindowStyles.WS_BORDER) != 0) {
+							border_style = FormBorderStyle.FixedSingle;
+						}
 					} else {
-						border_style = FormBorderStyle.None;
+						if ((Style & (int)WindowStyles.WS_BORDER) != 0) {
+							border_style = FormBorderStyle.FixedSingle;
+						}
 					}
 				}
 			}
