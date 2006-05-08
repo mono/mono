@@ -1,3 +1,9 @@
+2006-05-08  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* TreeNode.cs: Changed serialization .ctor to not require every field
+	  to be present. (#78265)
+	* OwnerDrawPropertyBag.cs: Added serialization .ctor
+
 2006-05-05  Alexander Olk  <alex.olk@googlemail.com>
 
 	* MimeIcon.cs: for is faster than foreach for strings.

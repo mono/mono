@@ -47,6 +47,23 @@ namespace System.Windows.Forms {
 			this.font = font;
 		}
 
+		internal OwnerDrawPropertyBag(SerializationInfo info, StreamingContext context) {
+			SerializationInfoEnumerator	en;
+			SerializationEntry		e;
+
+			en = info.GetEnumerator();
+
+			while (en.MoveNext()) {
+				e = en.Current;
+				switch(e.Name) {
+					case "Font": font = (Font)e.Value; break;
+					case "ForeColor": fore_color = (Color)e.Value; break;
+					case "BackColor": back_color = (Color)e.Value; break;
+				}
+			}
+		}
+
+
 		public Color ForeColor {
 			get { return fore_color; }
 			set { fore_color = value; }

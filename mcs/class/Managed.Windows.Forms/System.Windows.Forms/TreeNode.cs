@@ -64,20 +64,31 @@ namespace System.Windows.Forms {
 
 		private TreeNode (SerializationInfo info, StreamingContext context) : this ()
 		{
-			Text = (string) info.GetValue ("Text", typeof (string));
-			prop_bag = (OwnerDrawPropertyBag) info.GetValue ("prop_bag", typeof (OwnerDrawPropertyBag));
-			image_index = (int) info.GetValue ("ImageIndex", typeof (int));
-			selected_image_index = (int) info.GetValue ("SelectedImageIndex", typeof (int));
-			tag = info.GetValue ("Tag", typeof (object));
-			check = (bool) info.GetValue ("Checked", typeof (bool));
+			SerializationInfoEnumerator	en;
+			SerializationEntry		e;
+			int				children;
 
-			int count = (int) info.GetValue ("NumberOfChildren", typeof (int));
-			for (int i = 0; i < count; i++) {
-				TreeNode node = (TreeNode) info.GetValue ("Child-" + i, typeof (TreeNode));
-				Nodes.Add (node);
+			en = info.GetEnumerator();
+			children = 0;
+			while (en.MoveNext()) { 
+				e = en.Current;
+				switch(e.Name) {
+					case "Text": Text = (string)e.Value; break;
+					case "PropBag": prop_bag = (OwnerDrawPropertyBag)e.Value; break;
+					case "ImageIndex": image_index = (int)e.Value; break;
+					case "SelectedImageIndex": selected_image_index = (int)e.Value; break;
+					case "Tag": tag = e.Value; break;
+					case "IsChecked": check = (bool)e.Value; break;
+					case "ChildCount": children = (int)e.Value; break;
+				}
+			}
+			if (children > 0) {
+				for (int i = 0; i < children; i++) {
+					TreeNode node = (TreeNode) info.GetValue ("children" + i, typeof (TreeNode));
+					Nodes.Add (node);
+				}
 			}
 		}
-
 		#endregion	// Internal Constructors
 
 		#region Public Constructors
