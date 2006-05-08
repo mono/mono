@@ -1,3 +1,21 @@
+2006-05-08  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #78278
+	Remove 65535-limit on number of repetitions matched by a pattern.
+	We still have a 65535 limit on the length of a pattern and the
+	number of groups in a pattern.
+	* compiler.cs (PatternCompiler.EmitCount): New.  Emits an int as
+	two ushorts into the program stream.
+	(EmitInfo, EmitRepeat, EmitFastRepeat): Use it to emit integers
+	rather than shorts.
+	* interpreter.cs (Intepreter.ReadProgramCount): Read an int
+	emitted into the program stream.
+	(Interpreter): Use it.  Update counts.
+	(Interpreter.Eval) [OpCode.Repeat, OpCode.FastRepeat]: Likewise.
+	* parser.cs (ParseGroup): Pass 0x7ffffff as the max value for '*'
+	and '+' repetition patterns.
+	* arch.cs (Info, Repeat, FastRepeat): Update description.
+
 2006-04-18  Raja R Harinath  <rharinath@novell.com>
 
 	Treat fixed repetitions of simple regexes as simple too.

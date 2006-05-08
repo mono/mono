@@ -9,6 +9,7 @@
 
 using NUnit.Framework;
 using System;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace MonoTests.System.Text.RegularExpressions
@@ -377,5 +378,46 @@ namespace MonoTests.System.Text.RegularExpressions
 			Match m = re.Match (str);
 			AssertEquals ("#01", str, m.Value);
                 }
+
+		void Kill65535_1 (int length)
+		{
+			StringBuilder sb = new StringBuilder ("x");
+			sb.Append ('a', length);
+			sb.Append ('y');
+			string teststring = sb.ToString ();
+			Regex regex = new Regex (@"xa*y");
+			Match m = regex.Match (teststring);
+			Assert ("#01 " + length, m.Success);
+			AssertEquals ("#02 " + length, m.Index, 0);
+			AssertEquals ("#03 " + length, m.Length, teststring.Length);
+		}
+
+		void Kill65535_2 (int length)
+		{
+			StringBuilder sb = new StringBuilder ("xaaaax");
+			sb.Append ('a', length);
+			sb.Append ('y');
+			string teststring = sb.ToString ();
+			Regex regex = new Regex (@"x.*y");
+			Match m = regex.Match(teststring);
+			Assert ("#01 " + length, m.Success);
+			AssertEquals ("#02 " + length, m.Index, 0);
+			AssertEquals ("#03 " + length, m.Length, teststring.Length);
+		}
+		
+
+		[Test] // Based on bug #78278
+		public void No65535Limit ()
+		{
+			Kill65535_1 (65535);
+			Kill65535_1 (65536);
+			Kill65535_1 (131071);
+			Kill65535_1 (131072);
+
+			Kill65535_2 (65530);
+			Kill65535_2 (65531);
+			Kill65535_2 (131066);
+			Kill65535_2 (131067);
+		} 
 	}
 }

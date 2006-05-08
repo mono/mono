@@ -300,8 +300,8 @@ namespace System.Text.RegularExpressions.Syntax {
 
 						switch (k) {
 						case '?': min = 0; max = 1; break;
-						case '*': min = 0; max = 0xffff; break;
-						case '+': min = 1; max = 0xffff; break;
+						case '*': min = 0; max = 0x7fffffff; break;
+						case '+': min = 1; max = 0x7fffffff; break;
 						}
 					} else if (k == '{' && ptr + 1 < pattern.Length) {
 						int saved_ptr = ptr;

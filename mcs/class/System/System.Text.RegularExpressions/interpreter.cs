@@ -35,6 +35,14 @@ using System.Globalization;
 namespace System.Text.RegularExpressions {
 
 	class Interpreter : IMachine {
+		private int ReadProgramCount (int ptr)
+		{
+			int ret = program [ptr + 1];
+			ret <<= 16;
+			ret += program [ptr];
+			return ret;
+		}
+
 		public Interpreter (ushort[] program) {
 			this.program = program;
 			this.qs = null;
@@ -43,13 +51,13 @@ namespace System.Text.RegularExpressions {
 
 			Debug.Assert ((OpCode)program[0] == OpCode.Info, "Regex", "Cant' find info block");
 
-			this.group_count = program[1] + 1;
-			this.match_min = program[2];
-			//this.match_max = program[3];
+			this.group_count = ReadProgramCount (1) + 1;
+			this.match_min = ReadProgramCount (3);
+			//this.match_max = ReadProgramCount (5);
 
 			// setup
 
-			this.program_start = 4;
+			this.program_start = 7;
 			this.groups = new int [group_count];
 		}
 
@@ -420,10 +428,10 @@ namespace System.Text.RegularExpressions {
 				case OpCode.Repeat: {
 					this.repeat = new RepeatContext (
 						this.repeat,			// previous context
-						program[pc + 2],		// minimum
-						program[pc + 3],		// maximum
+						ReadProgramCount (pc + 2),		// minimum
+						ReadProgramCount (pc + 4),		// maximum
 						(flags & OpFlags.Lazy) != 0,	// lazy
-						pc + 4				// subexpression
+						pc + 6				// subexpression
 					);
 
 					if (Eval (Mode.Match, ref ptr, pc + program[pc + 1]))
@@ -561,10 +569,10 @@ namespace System.Text.RegularExpressions {
 				case OpCode.FastRepeat: {
 					this.fast = new RepeatContext (
 						fast,
-						program[pc + 2],		// minimum
-						program[pc + 3],		// maximum
+						ReadProgramCount (pc + 2),		// minimum
+						ReadProgramCount (pc + 4),		// maximum
 						(flags & OpFlags.Lazy) != 0,	// lazy
-						pc + 4				// subexpression
+						pc + 6				// subexpression
 					);
 
 					fast.Start = ptr;

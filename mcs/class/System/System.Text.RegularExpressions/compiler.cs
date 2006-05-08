@@ -141,6 +141,13 @@ namespace System.Text.RegularExpressions {
 			Emit (OpCode.True);
 		}
 
+		void EmitCount (int count)
+		{
+			uint ucount = (uint) count;
+			Emit ((ushort) (ucount & 0xFFFF)); // lo 16bits
+			Emit ((ushort) (ucount >> 16));	   // hi
+		}
+
 		public void EmitCharacter (char c, bool negate, bool ignore, bool reverse) {
 			Emit (OpCode.Character, MakeFlags (negate, ignore, reverse, false));
 
@@ -272,8 +279,8 @@ namespace System.Text.RegularExpressions {
 			BeginLink (until);
 			Emit (OpCode.Repeat, MakeFlags (false, false, false, lazy));
 			EmitLink (until);
-			Emit ((ushort)min);
-			Emit ((ushort)max);
+			EmitCount (min);
+			EmitCount (max);
 		}
 
 		public void EmitUntil (LinkRef repeat) {
@@ -285,8 +292,8 @@ namespace System.Text.RegularExpressions {
 			BeginLink (tail);
 			Emit (OpCode.FastRepeat, MakeFlags (false, false, false, lazy));
 			EmitLink (tail);
-			Emit ((ushort)min);
-			Emit ((ushort)max);
+			EmitCount (min);
+			EmitCount (max);
 		}
 
 		public void EmitIn (LinkRef tail) {
@@ -304,9 +311,9 @@ namespace System.Text.RegularExpressions {
 
 		public void EmitInfo (int count, int min, int max) {
 			Emit (OpCode.Info);
-			Emit ((ushort)count);
-			Emit ((ushort)min);
-			Emit ((ushort)max);
+			EmitCount (count);
+			EmitCount (min);
+			EmitCount (max);
 		}
 
 		public LinkRef NewLink () {

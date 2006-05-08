@@ -159,8 +159,8 @@ namespace System.Text.RegularExpressions {
 	//
 	// Flags:	[Lazy]
 	// SKIP:	relative address of Until instruction
-	// MIN:		minimum iterations
-	// MAX:		maximum iterations (0xffff is infinity)
+	// MIN:		minimum iterations (2 slots)
+	// MAX:		maximum iterations (2 slots, 0x7fffffff is infinity)
 	//
 	//	Repeat :1 MIN MAX
 	//		<expr>
@@ -171,8 +171,8 @@ namespace System.Text.RegularExpressions {
 	//
 	// Flags:	[Lazy]
 	// SKIP:	relative address of tail expression
-	// MIN:		minimum iterations
-	// MAX:		maximum iterations (0xffff is infinity)
+	// MIN:		minimum iterations (2 slots)
+	// MAX:		maximum iterations (2 slots, 0x7fffffff is infinity)
 	//
 	//	FastRepeat :1 MIN MAX
 	//		<expr>
@@ -344,9 +344,9 @@ namespace System.Text.RegularExpressions {
 
 	// Info GROUPS MIN MAX
 	//
-	// GROUPS:	number of capturing groups
-	// MIN:		minimum width of pattern
-	// MAX:		maximum width of pattern (0xffff means undefined)
+	// GROUPS:	number of capturing groups (2 slots)
+	// MIN:		minimum width of pattern (2 slots)
+	// MAX:		maximum width of pattern (2 slots, 0x7fffffff means undefined)
 
 	// False
 
