@@ -1,3 +1,9 @@
+2006-05-08  Chris Toshok  <toshok@ximian.com>
+
+	* WebConfigurationManager.cs (GetBasePath): fix bug where
+	path.Length was 0 when we got to the last while loop (and indexed
+	-1 into an array.)  Thanks Marek for the fix.
+
 2006-05-04  Chris Toshok  <toshok@ximian.com>
 
 	[ Fixes bug #78256 ]

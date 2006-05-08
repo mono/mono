@@ -273,6 +273,9 @@ namespace System.Web.Configuration {
 				} 
 			}
 			
+			if (path.Length == 0)
+				return path;
+
 			/* remove excess /'s from the end of the virtual path */
 			while (path [path.Length - 1] == '/')
 				path = path.Substring (0, path.Length - 1);
