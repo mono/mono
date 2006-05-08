@@ -141,7 +141,23 @@ namespace System.Reflection
 				}
 				MethodBase selected = SelectMethod (bindingAttr, match, types, modifiers);
 				state = null;
+				if (names != null)
+					ReorderParameters (names, ref args, selected);
 				return selected;
+			}
+
+			void ReorderParameters (string [] names, ref object [] args, MethodBase selected)
+			{
+				ParameterInfo [] plist = selected.GetParameters ();
+				for (int n = 0; n < names.Length; n++)
+					for (int p = 0; p < plist.Length; p++) {
+						if (names [n] == plist [p].Name) {
+							object o = args [n];
+							args [n] = args [p];
+							args [p] = o;
+						}
+						break;
+					}
 			}
 
 			static bool IsArrayAssignable (Type object_type, Type target_type)

@@ -9,6 +9,7 @@
 
 using NUnit.Framework;
 using System;
+using System.IO;
 using System.Reflection;
 
 namespace MonoTests.System.Reflection
@@ -220,6 +221,39 @@ namespace MonoTests.System.Reflection
 
 			PropertyInfo prop = binder.SelectProperty (0, props, null, new Type [] {null}, null);
 			Assert.IsNotNull (prop);
+		}
+
+		[Test] // bug #41691
+		public void BindToMethodNamedArgs ()
+		{
+			Type t = typeof (Bug41691);
+
+			StringWriter sw = new StringWriter ();
+			sw.NewLine = "\n";
+
+			object[] argValues = new object [] {"Hello", "World", "Extra", sw};
+			string [] argNames = new string [] {"firstName", "lastName"};
+
+			t.InvokeMember ("PrintName",
+					BindingFlags.InvokeMethod,
+					null,
+					null,
+					argValues,
+					null,
+					null,
+					argNames);
+
+			Assert.AreEqual ("Hello\nExtra\nWorld", sw.ToString ());
+		}
+
+		public class Bug41691
+		{
+			public static void PrintName (string lastName, string firstName, string extra, TextWriter output)
+			{
+				output.WriteLine (firstName);
+				output.WriteLine (extra);
+				output.WriteLine (lastName);
+			}
 		}
 	}
 }

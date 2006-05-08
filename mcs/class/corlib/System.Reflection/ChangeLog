@@ -1,3 +1,8 @@
+2006-05-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Binder.cs : (DefaultBinder.BindToMethod) reorder parameters based
+	  on namedParameters. Fixed bug #41691.
+
 2006-05-03  Jb Evain  <jbevain@gmail.com>
 
 	* MonoField.cs (GetValue,SetValue): throw a TargetException
