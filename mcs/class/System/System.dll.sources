@@ -342,6 +342,7 @@ System.ComponentModel/RunInstallerAttribute.cs
 System.ComponentModel/RunWorkerCompletedEventArgs.cs
 System.ComponentModel/RunWorkerCompletedEventHandler.cs
 System.ComponentModel/SByteConverter.cs
+System.ComponentModel/SettingsBindableAttribute.cs
 System.ComponentModel/SingleConverter.cs
 System.ComponentModel/StringConverter.cs
 System.ComponentModel/SyntaxCheck.cs
