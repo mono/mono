@@ -1,3 +1,8 @@
+2006-05-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslTransform.cs : fixed ObsoleteAttributes. It won't be harmful
+	  as we have working XslCompiledTransform stubs.
+
 2006-02-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XsltContext.cs : don't expect that it is always XsltCompiledContext

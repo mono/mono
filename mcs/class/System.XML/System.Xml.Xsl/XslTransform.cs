@@ -46,7 +46,8 @@ namespace System.Xml.Xsl {
 		XmlResolver xmlResolver = new XmlUrlResolver ();
 
 		[MonoTODO ("Security check.")]
-#if NET_1_1
+#if NET_2_0
+#elif NET_1_1
 		[Obsolete ("You should pass XmlResolver to Transform() method", false)]
 #endif
 		public XmlResolver XmlResolver {
@@ -56,7 +57,8 @@ namespace System.Xml.Xsl {
 		}
 		
 		#region Transform
-#if NET_1_1
+#if NET_2_0
+#elif NET_1_1
 		[Obsolete ("You should pass XmlResolver to Transform() method", false)]
 #endif
 		public XmlReader Transform (IXPathNavigable input, XsltArgumentList args)
@@ -73,7 +75,8 @@ namespace System.Xml.Xsl {
 			return Transform (input.CreateNavigator (), args, resolver);
 		}
 
-#if NET_1_1
+#if NET_2_0
+#elif NET_1_1
 		[Obsolete ("You should pass XmlResolver to Transform() method", false)]
 #endif
 		public XmlReader Transform (XPathNavigator input, XsltArgumentList args)
@@ -93,7 +96,8 @@ namespace System.Xml.Xsl {
 			return new XmlTextReader (stream, XmlNodeType.Element, null);
 		}
 
-#if NET_1_1
+#if NET_2_0
+#elif NET_1_1
 		[Obsolete ("You should pass XmlResolver to Transform() method", false)]
 #endif
 		public void Transform (IXPathNavigable input, XsltArgumentList args, TextWriter output)
@@ -109,7 +113,8 @@ namespace System.Xml.Xsl {
 			Transform (input.CreateNavigator (), args, output, resolver);
 		}
 		
-#if NET_1_1
+#if NET_2_0
+#elif NET_1_1
 		[Obsolete ("You should pass XmlResolver to Transform() method", false)]
 #endif
 		public void Transform (IXPathNavigable input, XsltArgumentList args, Stream output)
@@ -125,7 +130,8 @@ namespace System.Xml.Xsl {
 			Transform (input.CreateNavigator (), args, output, resolver);
 		}
 		
-#if NET_1_1
+#if NET_2_0
+#elif NET_1_1
 		[Obsolete ("You should pass XmlResolver to Transform() method", false)]
 #endif
 		public void Transform (IXPathNavigable input, XsltArgumentList args, XmlWriter output)
@@ -141,7 +147,8 @@ namespace System.Xml.Xsl {
 			Transform (input.CreateNavigator (), args, output, resolver);
 		}
 
-#if NET_1_1
+#if NET_2_0
+#elif NET_1_1
 		[Obsolete ("You should pass XmlResolver to Transform() method", false)]
 #endif
 		public void Transform (XPathNavigator input, XsltArgumentList args, XmlWriter output)
@@ -162,7 +169,8 @@ namespace System.Xml.Xsl {
 			output.Flush ();
 		}
 
-#if NET_1_1
+#if NET_2_0
+#elif NET_1_1
 		[Obsolete ("You should pass XmlResolver to Transform() method", false)]
 #endif
 		public void Transform (XPathNavigator input, XsltArgumentList args, Stream output)
@@ -179,7 +187,8 @@ namespace System.Xml.Xsl {
 			Transform (input, args, new StreamWriter (output, xslOutput.Encoding), resolver);
 		}
 
-#if NET_1_1
+#if NET_2_0
+#elif NET_1_1
 		[Obsolete ("You should pass XmlResolver to Transform() method", false)]
 #endif
 		public void Transform (XPathNavigator input, XsltArgumentList args, TextWriter output)
@@ -201,7 +210,8 @@ namespace System.Xml.Xsl {
 			output.Flush ();
 		}
 		
-#if NET_1_1
+#if NET_2_0
+#elif NET_1_1
 		[Obsolete ("You should pass XmlResolver to Transform() method", false)]
 #endif
 		public void Transform (string inputfile, string outputfile)
@@ -243,7 +253,8 @@ namespace System.Xml.Xsl {
 			}
 		}
 
-#if NET_1_1
+#if NET_2_0
+#elif NET_1_1
 		[Obsolete("You should pass evidence.", false)]
 #endif
 		public void Load (XmlReader stylesheet)
@@ -251,7 +262,8 @@ namespace System.Xml.Xsl {
 			Load (stylesheet, null, null);
 		}
 
-#if NET_1_1
+#if NET_2_0
+#elif NET_1_1
 		[Obsolete("You should pass evidence.", false)]
 #endif
 		public void Load (XmlReader stylesheet, XmlResolver resolver)
@@ -259,7 +271,8 @@ namespace System.Xml.Xsl {
 			Load (stylesheet, resolver, null);
 		}
 
-#if NET_1_1
+#if NET_2_0
+#elif NET_1_1
 		[Obsolete("You should pass evidence.", false)]
 #endif
 		public void Load (XPathNavigator stylesheet)
@@ -267,7 +280,8 @@ namespace System.Xml.Xsl {
 			Load (stylesheet, null, null);
 		}
 
-#if NET_1_1
+#if NET_2_0
+#elif NET_1_1
 		[Obsolete("You should pass evidence.", false)]
 #endif
 		public void Load (XPathNavigator stylesheet, XmlResolver resolver)
@@ -275,7 +289,8 @@ namespace System.Xml.Xsl {
 			Load (stylesheet, resolver, null);
 		}
 		
-#if NET_1_1
+#if NET_2_0
+#elif NET_1_1
 		[Obsolete("You should pass evidence.", false)]
 #endif
 		public void Load (IXPathNavigable stylesheet)
@@ -283,7 +298,8 @@ namespace System.Xml.Xsl {
 			Load (stylesheet.CreateNavigator(), null);
 		}
 
-#if NET_1_1
+#if NET_2_0
+#elif NET_1_1
 		[Obsolete("You should pass evidence.", false)]
 #endif
 		public void Load (IXPathNavigable stylesheet, XmlResolver resolver)
