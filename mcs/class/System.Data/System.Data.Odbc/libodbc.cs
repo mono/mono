@@ -65,7 +65,8 @@ namespace System.Data.Odbc
 	internal enum OdbcConnectionAttribute : int 
 	{
 		AutoCommit=102,
-		TransactionIsolation=108
+		TransactionIsolation=108,
+		CurrentCatalog=109
 	}
 
         internal enum OdbcInfo : ushort

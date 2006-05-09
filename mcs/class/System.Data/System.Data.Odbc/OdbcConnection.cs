@@ -33,6 +33,7 @@
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
+using System.Runtime.InteropServices;
 #if NET_2_0
 using System.Data.ProviderBase;
 #endif // NET_2_0
@@ -277,9 +278,21 @@ namespace System.Data.Odbc
 #endif // NET_2_0
                 void ChangeDatabase(string Database)
 		{
-			throw new NotImplementedException ();
+			IntPtr ptr = IntPtr.Zero;
+			OdbcReturn ret = OdbcReturn.Error;
+
+			try {
+				ptr = Marshal.StringToHGlobalAnsi (Database);
+				ret = libodbc.SQLSetConnectAttr (hdbc, OdbcConnectionAttribute.CurrentCatalog, ptr, Database.Length);
+
+				if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
+					throw new OdbcException (new OdbcError ("SQLSetConnectAttr", OdbcHandleType.Dbc, hdbc));
+			} finally {
+				if (ptr != IntPtr.Zero)
+					Marshal.FreeCoTaskMem (ptr);
+			}
 		}
-		
+
 		protected override void Dispose (bool disposing)
 		{
 			if (!this.disposed) {
