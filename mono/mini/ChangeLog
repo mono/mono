@@ -1,3 +1,8 @@
+2006-05-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_instrument_epilog): Fix handling of 
+	MONO_TYPE_GENERICINST.
+
 2006-05-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-x86.c (mono_arch_get_vcall_slot_addr): Add a missing call sequence. Fixes
