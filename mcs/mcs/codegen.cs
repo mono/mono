@@ -499,6 +499,13 @@ namespace Mono.CSharp {
 			return branching;
 		}
 
+		public FlowBranchingToplevel StartFlowBranching (ToplevelBlock stmt)
+		{
+			FlowBranchingToplevel branching = new FlowBranchingToplevel (CurrentBranching, stmt);
+			current_flow_branching = branching;
+			return branching;
+		}
+
 		// <summary>
 		//   Ends a code branching.  Merges the state of locals and parameters
 		//   from all the children of the ending branching.
@@ -662,9 +669,7 @@ namespace Mono.CSharp {
 				DoFlowAnalysis = true;
 
 				if (anonymous_method_host != null)
-					current_flow_branching = FlowBranching.CreateBranching (
-						anonymous_method_host.CurrentBranching,
-						FlowBranching.BranchingType.Block, block, loc);
+					current_flow_branching = new FlowBranchingToplevel (anonymous_method_host.CurrentBranching, block);
 				else 
 					current_flow_branching = block.TopLevelBranching;
 

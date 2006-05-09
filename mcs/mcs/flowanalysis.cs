@@ -55,7 +55,10 @@ namespace Mono.CSharp
 			Switch,
 
 			// Switch section.
-			SwitchSection
+			SwitchSection,
+
+			// The toplevel block of a function
+			Toplevel
 		}
 
 		// <summary>
@@ -202,6 +205,7 @@ namespace Mono.CSharp
 			switch (type) {
 			case BranchingType.Exception:
 			case BranchingType.Labeled:
+			case BranchingType.Toplevel:
 				throw new InvalidOperationException ();
 
 			case BranchingType.Switch:
@@ -840,7 +844,7 @@ namespace Mono.CSharp
 		// </summary>
 		public Reachability MergeTopBlock ()
 		{
-			if ((Type != BranchingType.Block) || (Block == null))
+			if ((Type != BranchingType.Toplevel) || (Block == null))
 				throw new NotSupportedException ();
 
 			UsageVector result = Merge ();
@@ -1047,6 +1051,15 @@ namespace Mono.CSharp
 			this.stmt = stmt;
 		}
 	}
+
+	public class FlowBranchingToplevel : FlowBranchingBlock
+	{
+		public FlowBranchingToplevel (FlowBranching parent, ToplevelBlock stmt)
+			: base (parent, BranchingType.Toplevel, SiblingType.Conditional, stmt, stmt.loc)
+		{
+		}
+	}
+
 
 	public class FlowBranchingException : FlowBranching
 	{

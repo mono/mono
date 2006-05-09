@@ -1,5 +1,13 @@
 2006-05-09  Raja R Harinath  <rharinath@novell.com>
 
+	* flowanalysis.cs (BranchingType.Toplevel): New.  Represents a
+	toplevel block.
+	(FlowBranchingToplevel): New.  Empty for now.
+	(FlowBranching.MergeTopBlock): Update.
+	* codegen.cs (EmitContext.ResolveTopBlock): Create a Toplevel
+	branching for the anonymous delegate.
+	(EmitContext.StartFlowBranching): Add ToplevelBlock variant.
+
 	* flowanalysis.cs (UsageVector.MergeOrigins): Reorganize.
 	(UsageVector.MergeJumpOrigins): Don't ignore current reachability
 	information at the start of the merge.  Reorganize.
