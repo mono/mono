@@ -32,6 +32,9 @@ using System.Collections.Specialized;
 using System.Configuration;
 using System.IO;
 using System.Runtime.Serialization;
+#if NET_2_0
+using System.Net.Configuration;
+#endif
 
 namespace System.Net 
 {
@@ -44,6 +47,16 @@ namespace System.Net
 		
 		static WebRequest ()
 		{
+#if NET_2_0 && CONFIGURATION_DEP
+			object cfg = ConfigurationManager.GetSection ("system.net/webRequestModules");
+			WebRequestModulesSection s = cfg as WebRequestModulesSection;
+			if (s != null) {
+				foreach (WebRequestModuleElement el in
+					 s.WebRequestModules)
+					AddPrefix (el.Prefix, el.Type);
+				return;
+			}
+#endif
 			ConfigurationSettings.GetConfig ("system.net/webRequestModules");
 		}
 		
@@ -228,7 +241,11 @@ namespace System.Net
 			Type type = Type.GetType (typeName);
 			if (type == null)
 				throw new ConfigurationException (String.Format ("Type {0} not found", typeName));
+			AddPrefix (prefix, type);
+		}
 
+		internal static void AddPrefix (string prefix, Type type)
+		{
 			object o = Activator.CreateInstance (type, true);
 			prefixes [prefix] = o;
 		}

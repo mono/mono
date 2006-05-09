@@ -80,7 +80,6 @@ namespace System.Net.Configuration
 		[MonoTODO]
 		protected override void InitializeDefault ()
 		{
-			throw new NotImplementedException ();
 		}
 
 		#endregion // Methods

@@ -33,6 +33,7 @@
 #if NET_2_0 && CONFIGURATION_DEP
 
 using System;
+using System.ComponentModel;
 using System.Configuration;
 
 namespace System.Net.Configuration 
@@ -85,7 +86,7 @@ namespace System.Net.Configuration
 		}
 
 		[ConfigurationProperty ("type")]
-		//		[TypeConverter (typeof (TypeTypeConverter))]
+		[TypeConverter (typeof (TypeConverter))]
 		public Type Type {
 			get { return Type.GetType ((string) base [typeProp]); }
 			set { base [typeProp] = value.FullName; }
@@ -96,12 +97,6 @@ namespace System.Net.Configuration
 		}
 
 		#endregion // Properties
-
-#if notyet
-		class TypeTypeConverter : TypeConverter
-		{
-		}
-#endif
 	}
 }
 

@@ -80,10 +80,9 @@ namespace System.Net.Configuration
 			return new WebRequestModuleElement ();
 		}
 
-		[MonoTODO ("argument exception?")]
 		protected override object GetElementKey (ConfigurationElement element)
 		{
-			if (!(element is WebRequestModuleElementCollection))
+			if (!(element is WebRequestModuleElement))
 				throw new ArgumentException ("element");
 			return ((WebRequestModuleElement)element).Prefix;
 		}

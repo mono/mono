@@ -1,5 +1,16 @@
 2006-05-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* WebRequestModulesSection.cs :
+	  don't throw NotImpl in InitializeDefault().
+	* WebRequestModuleElement.cs :
+	  TypeTypeConverter -> TypeConverter and uncomment it.
+	* WebRequestModuleElementCollection.cs :
+	  element is WebRequestModuleElement in GetElementKey().
+
+	Similarly no actual config change yet.
+
+2006-05-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ConnectionManagementHandler.cs : (ConnectionManagementData) add
 	  Add(string,int) overload so that it could be used with
 	  ConnectionManagementSection seamlessly.
