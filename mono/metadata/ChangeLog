@@ -1,5 +1,10 @@
 2006-05-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* icall.c (ves_icall_System_Reflection_Assembly_InternalGetAssemblyName): Remove
+	a redundant (and incorrect) addref. Hopefully fixes sn.exe on windows.
+
+	* marshal.c: Allocate all signatures from mempools.
+
 	* marshal.c: Allocate some more signatures from mempools.
 
 2006-05-06  Zoltan Varga  <vargaz@gmail.com>
