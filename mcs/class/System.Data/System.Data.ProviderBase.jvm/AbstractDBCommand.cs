@@ -996,7 +996,9 @@ namespace System.Data.ProviderBase
 				preparedStatement.setInt(parameterIndex, (int)value);
 			}
 			else if (value is string) {
-				if (preparedStatement is Mainsoft.Data.Jdbc.Providers.IPreparedStatement &&
+				//can not be done for inout params, due to Oracle problem with FIXED_CHAR out param fetching
+				if (parameter.Direction == ParameterDirection.Input && 
+					preparedStatement is Mainsoft.Data.Jdbc.Providers.IPreparedStatement &&
 					(DbConvert.JavaSqlTypes)parameter.JdbcType == DbConvert.JavaSqlTypes.CHAR) {
 					((Mainsoft.Data.Jdbc.Providers.IPreparedStatement)preparedStatement)
 						.setChar(parameterIndex, (string)value);
