@@ -62,7 +62,13 @@ public class OleDbConnection_GetOleDbSchemaTable : ADONetTesterClass
 		try
 		{
 			BeginCase("Check table is not null");
-			dt = con.GetOleDbSchemaTable(OleDbSchemaGuid.Tables,new object[] {null,null,null,"TABLE"});
+			string catalog = null;
+			string schema = null;
+			if (ConnectedDataProvider.GetDbType(con) != DataBaseServer.Oracle)
+				catalog = "GHTDB";
+			else
+				schema = "GHTDB";
+			dt = con.GetOleDbSchemaTable(OleDbSchemaGuid.Tables,new object[] {catalog,schema,null,"TABLE"});
 			Compare(dt == null,false);
 		}
 		catch(Exception ex)	{exp = ex;}
@@ -90,8 +96,7 @@ public class OleDbConnection_GetOleDbSchemaTable : ADONetTesterClass
 		try
 		{
 			BeginCase("Table Customers");
-			int expected = (ConnectedDataProvider.GetDbType(con) != DataBaseServer.Oracle) ? 1 : 2; // in Oracle return a value of 2 instead of 1. ?????
-			Compare(dt.Select("TABLE_NAME='Customers'").Length ,expected );
+			Compare(dt.Select("TABLE_NAME='Customers'").Length ,1 );
 		}
 		catch(Exception ex)	{exp = ex;}
 		finally	{EndCase(exp); exp = null;}

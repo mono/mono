@@ -1,3 +1,7 @@
+2006-05-09  Konstantin Triger <kostat@mainsoft.com>
+
+	* OleDbConnection.cs: fix GetOleDbSchemaTable for OleDbSchemaGuid.Tables.
+
 2006-04-26  Konstantin Triger <kostat@mainsoft.com>
 
         * OleDbParameter.cs: map NCHAR to VARCHAR type.

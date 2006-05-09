@@ -144,44 +144,64 @@ namespace System.Data.OleDb
 
 		public DataTable GetOleDbSchemaTable (Guid schema, object[] restrictions)
 		{
-			DataTable schemaTable = new DataTable("Tables");
-			schemaTable.Columns.Add("TABLE_CATALOG");
-			schemaTable.Columns.Add("TABLE_SCHEMA");
-			schemaTable.Columns.Add("TABLE_NAME");
-			schemaTable.Columns.Add("TABLE_TYPE");
-			schemaTable.Columns.Add("TABLE_GUID");
-			schemaTable.Columns.Add("DESCRIPTION");
-			schemaTable.Columns.Add("TABLE_PROPID");
-			schemaTable.Columns.Add("DATE_CREATED");
-			schemaTable.Columns.Add("DATE_MODIFIED");
-            
-            
-			java.sql.Connection con = JdbcConnection;
-			String catalog = con.getCatalog();
-            
-			java.sql.DatabaseMetaData meta = con.getMetaData();
-			java.sql.ResultSet schemaRes = meta.getSchemas();
-			System.Collections.ArrayList schemas = new System.Collections.ArrayList();
-			while(schemaRes.next()) {
-				schemas.Add(schemaRes.getString(1));
-			}
-			schemaRes.close();
+			if (State != ConnectionState.Open)
+				throw ExceptionHelper.ConnectionNotOpened("GetOleDbSchemaTable", State.ToString());
 
-			for(int i = 0; i < schemas.Count; i++) {
-				java.sql.ResultSet tableRes = meta.getTables(catalog, schemas[i].ToString(), null, null);
-				while(tableRes.next()) {
-					DataRow row = schemaTable.NewRow();
-					row["TABLE_CATALOG"] = catalog;
-					row["TABLE_SCHEMA"] = schemas[i];
-					row["TABLE_NAME"] = tableRes.getString("TABLE_NAME");
-					row["TABLE_TYPE"] = tableRes.getString("TABLE_TYPE");
-					row["DESCRIPTION"] = tableRes.getString("REMARKS");
-                    
-					schemaTable.Rows.Add(row);
+			try {
+
+				string[] fixedRestrictions = new string[4];
+				if (restrictions != null) {
+					if (restrictions.Length > 4)
+						throw new OleDbException("The parameter is incorrect", null, this);
+
+					for (int i = 0, count = restrictions.Length; i < count; i ++) {
+						if (restrictions[i] != null) {
+							if (!(restrictions[i] is string))
+								throw new OleDbException("The parameter is incorrect", null, this);
+
+							fixedRestrictions[i] = (string)restrictions[i];
+						}
+					}
 				}
-				tableRes.close();
+
+				DataTable schemaTable = new DataTable("Tables");
+				schemaTable.Columns.Add("TABLE_CATALOG");
+				schemaTable.Columns.Add("TABLE_SCHEMA");
+				schemaTable.Columns.Add("TABLE_NAME");
+				schemaTable.Columns.Add("TABLE_TYPE");
+				schemaTable.Columns.Add("TABLE_GUID");
+				schemaTable.Columns.Add("DESCRIPTION");
+				schemaTable.Columns.Add("TABLE_PROPID");
+				schemaTable.Columns.Add("DATE_CREATED");
+				schemaTable.Columns.Add("DATE_MODIFIED");
+
+				java.sql.ResultSet tableRes = JdbcConnection.getMetaData().getTables(
+					fixedRestrictions[0],
+					fixedRestrictions[1],
+					fixedRestrictions[2],
+					new string[]{fixedRestrictions[3]});
+
+				try {
+					while(tableRes.next()) {
+						DataRow row = schemaTable.NewRow();
+						row["TABLE_CATALOG"] = tableRes.getString("TABLE_CAT");
+						row["TABLE_SCHEMA"] = tableRes.getString("TABLE_SCHEM");
+						row["TABLE_NAME"] = tableRes.getString("TABLE_NAME");
+						row["TABLE_TYPE"] = tableRes.getString("TABLE_TYPE");
+						row["DESCRIPTION"] = tableRes.getString("REMARKS");
+                
+						schemaTable.Rows.Add(row);
+					}
+				}
+				finally {
+					tableRes.close();
+				}
+
+				return schemaTable;
 			}
-			return schemaTable;
+			catch (SQLException e) {
+				throw CreateException(e);
+			}
 		}
 
 		public static void ReleaseObjectPool()
