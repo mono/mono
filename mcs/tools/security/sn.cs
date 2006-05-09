@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2006 Novell, Inc (http://www.novell.com)
 //
 
 using System;
@@ -116,7 +116,7 @@ namespace Mono.Tools {
 			}
 			return sb.ToString ();
 		}
-
+#if false
 		// is assembly signed (or delayed signed) ?
 		static bool IsStrongNamed (Assembly assembly) 
 		{
@@ -132,12 +132,17 @@ namespace Mono.Tools {
 			}
 			return false;
 		}
-
+#endif
 		static bool ReSign (string assemblyName, RSA key) 
 		{
 			// this doesn't load the assembly (well it unloads it ;)
 			// http://weblogs.asp.net/nunitaddin/posts/9991.aspx
-			AssemblyName an = AssemblyName.GetAssemblyName (assemblyName);
+			AssemblyName an = null;
+			try {
+				an = AssemblyName.GetAssemblyName (assemblyName);
+			}
+			catch {
+			}
 			if (an == null) {
 				Console.WriteLine ("Unable to load assembly: {0}", assemblyName);
 				return false;
@@ -172,7 +177,12 @@ namespace Mono.Tools {
 		{
 			// this doesn't load the assembly (well it unloads it ;)
 			// http://weblogs.asp.net/nunitaddin/posts/9991.aspx
-			AssemblyName an = AssemblyName.GetAssemblyName (assemblyName);
+			AssemblyName an = null;
+			try {
+				an = AssemblyName.GetAssemblyName (assemblyName);
+			}
+			catch {
+			}
 			if (an == null) {
 				Console.WriteLine ("Unable to load assembly: {0}", assemblyName);
 				return 2;
@@ -235,6 +245,7 @@ namespace Mono.Tools {
 					Console.WriteLine (" -Vr assembly [userlist]{0}\tExempt the specified assembly from verification for the user list", Environment.NewLine);
 					Console.WriteLine (" -Vu assembly{0}\tRemove exemption entry for the specified assembly", Environment.NewLine);
 					Console.WriteLine (" -Vx{0}\tRemove all exemptions entries", Environment.NewLine);
+					Console.WriteLine ("{0}<1> Currently not implemented in the tool", Environment.NewLine);
 					break;
 				case "csp":
 					Console.WriteLine ("CSP related options");
@@ -271,7 +282,6 @@ namespace Mono.Tools {
 					Console.WriteLine (" -? | -h sn     \tStrongName signing options");
 					break;
 			}
-			Console.WriteLine ("{0}<1> Currently not implemented in the tool", Environment.NewLine);
 		}
 
 		[STAThread]
@@ -363,7 +373,7 @@ namespace Mono.Tools {
 					byte[] infileD = ReadFromFile (args [i++]);
 					WriteCSVToFile (args [i], infileD, "D");
 					if (!quiet)
-						Console.WriteLine ("Output CVS file is {0} (decimal format)", args [i]);
+						Console.WriteLine ("Output CSV file is {0} (decimal format)", args [i]);
 					break;
 				case "-oh":
 					byte[] infileX2 = ReadFromFile (args [i++]);
