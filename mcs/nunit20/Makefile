@@ -1,5 +1,5 @@
 thisdir = nunit20
-SUBDIRS = framework core util nunit-console
+SUBDIRS = framework core util nunit-console mocks
 include ../build/rules.make
 
 DISTFILES = license.rtf nunit-console.sln nunit-console.suo README
