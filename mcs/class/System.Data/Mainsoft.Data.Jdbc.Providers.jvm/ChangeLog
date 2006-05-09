@@ -1,3 +1,6 @@
+2006-05-09 Boris Kirzner <borisk@mainsoft.com>
+	* OleDbSqlServerProvider.cs: handling NCHAR as CHAR for metadata.
+
 2006-05-07 Boris Kirzner <borisk@mainsoft.com>
 	* OleDbSqlServerProvider.cs: adeed wrappers for sql server 2005, 
 	handling NVARCHAR as VARCHAR for metadata.
