@@ -243,7 +243,7 @@ namespace MonoTests.System.Reflection
 					null,
 					argNames);
 
-			Assert.AreEqual ("Hello\nExtra\nWorld", sw.ToString ());
+			Assert.AreEqual ("Hello\nExtra\nWorld\n", sw.ToString ());
 		}
 
 		public class Bug41691
