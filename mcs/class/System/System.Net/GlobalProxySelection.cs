@@ -31,6 +31,9 @@ using System.Collections;
 using System.Configuration;
 using System.IO;
 using System.Runtime.Serialization;
+#if NET_2_0
+using System.Net.Configuration;
+#endif
 
 namespace System.Net 
 {
@@ -53,7 +56,18 @@ namespace System.Net
 				object p = ConfigurationSettings.GetConfig ("system.net/defaultProxy");
 				if (p == null)
 					p = new EmptyWebProxy ();
-
+#if NET_2_0 && CONFIGURATION_DEP
+				DefaultProxySection s = p as DefaultProxySection;
+				if (s != null) {
+					// FIXME: handle Module
+					ProxyElement e = s.Proxy;
+					// FIXME: handle AutoDetect, ScriptLocation, UseSystemDefault
+					if (e.BypassOnLocal == ProxyElement.BypassOnLocalValues.Unspecified)
+						p = new WebProxy (e.ProxyAddress);
+					else
+						p = new WebProxy (e.ProxyAddress, e.BypassOnLocal == ProxyElement.BypassOnLocalValues.True);
+				}
+#endif
 				proxy = (IWebProxy) p;
 			}
 

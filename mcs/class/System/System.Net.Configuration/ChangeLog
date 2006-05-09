@@ -1,5 +1,12 @@
 2006-05-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DefaultProxySection.cs :
+	  remove NotImpl from PostDeserialize() and Reset().
+
+	  (ditto).
+
+2006-05-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* WebRequestModulesSection.cs :
 	  don't throw NotImpl in InitializeDefault().
 	* WebRequestModuleElement.cs :

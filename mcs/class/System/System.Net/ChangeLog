@@ -1,5 +1,10 @@
 2006-05-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* GlobalProxySelection.cs : if corresponding config section is
+	  DefaultProxySection then use it.
+
+2006-05-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* WebRequest.cs : if corresponding config section is
 	  WebRequestModulesSection then use it.
 

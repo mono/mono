@@ -111,13 +111,11 @@ namespace System.Net.Configuration
 		[MonoTODO]
 		protected override void PostDeserialize ()
 		{
-			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		protected override void Reset (ConfigurationElement parentElement)
 		{
-			throw new NotImplementedException ();
 		}
 
 		#endregion // Methods
