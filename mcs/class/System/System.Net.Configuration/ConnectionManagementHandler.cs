@@ -60,6 +60,11 @@ namespace System.Net.Configuration
 			data [address] = UInt32.Parse (nconns);
 		}
 
+		public void Add (string address, int nconns)
+		{
+			data [address] = (uint) nconns;
+		}
+
 		public void Remove (string address)
 		{
 			// Removing non-existent address is fine.

@@ -1,3 +1,15 @@
+2006-05-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ConnectionManagementHandler.cs : (ConnectionManagementData) add
+	  Add(string,int) overload so that it could be used with
+	  ConnectionManagementSection seamlessly.
+	* ConnectionManagementElementCollection.cs :
+	  create ConnectionManagementElement. in CreateNewElement().
+	  remove extra MonoTODO as it does not (well, won't) happen anymore.
+
+	The actual configuration file change will follow in the later stage
+	since it needs changes in ConfigurationSettings and sys.conf.dll.
+
 2005-12-14  Chris Toshok  <toshok@ximian.com>
 
 	* MailSettingsSectionGroup.cs, PerformanceCountersElement.cs,

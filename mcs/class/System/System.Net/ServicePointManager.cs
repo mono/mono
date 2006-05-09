@@ -84,8 +84,20 @@ namespace System.Net
 		
 		static ServicePointManager ()
 		{
+#if NET_2_0
+			object cfg = ConfigurationManager.GetSection (configKey);
+			ConnectionManagementSection s = cfg as ConnectionManagementSection;
+			if (s != null) {
+				manager = new ConnectionManagementData (null);
+				foreach (ConnectionManagementElement e in s.ConnectionManagement)
+					manager.Add (e.Address, e.MaxConnection);
+
+				return;
+			}
+#endif
 			manager = (ConnectionManagementData) ConfigurationSettings.GetConfig (configKey);
 		}
+
 		// Constructors
 		private ServicePointManager ()
 		{

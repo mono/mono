@@ -76,10 +76,9 @@ namespace System.Net.Configuration
 
 		protected override ConfigurationElement CreateNewElement ()
 		{
-			return new AuthenticationModuleElement ();
+			return new ConnectionManagementElement ();
 		}
 
-		[MonoTODO ("argument exception?")]
 		protected override object GetElementKey (ConfigurationElement element)
 		{
 			if (!(element is ConnectionManagementElement))

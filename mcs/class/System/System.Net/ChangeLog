@@ -1,3 +1,8 @@
+2006-05-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServicePointManager.cs : if corresponding config section is
+	  ConnectionManagementSection then use it.
+
 2006-05-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ResponseStream.cs:
