@@ -84,7 +84,7 @@ namespace System.Net
 		
 		static ServicePointManager ()
 		{
-#if NET_2_0
+#if NET_2_0 && CONFIGURATION_DEP
 			object cfg = ConfigurationManager.GetSection (configKey);
 			ConnectionManagementSection s = cfg as ConnectionManagementSection;
 			if (s != null) {
