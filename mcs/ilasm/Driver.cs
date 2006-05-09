@@ -52,6 +52,7 @@ namespace Mono.ILASM {
                         private CodeGen codegen;
 			private bool keycontainer = false;
 			private string keyname;
+			private StrongName sn;
 
                         public DriverMain (string[] args)
                         {
@@ -78,6 +79,13 @@ namespace Mono.ILASM {
                                         if (target != Target.Dll && !codegen.HasEntryPoint)
                                                 Report.Error ("No entry point found.");
 
+					// if we have a key and aren't assembling a netmodule
+					if ((keyname != null) && !codegen.IsThisAssembly (null)) {
+						LoadKey ();
+						// this overrides any attribute or .publickey directive in the source
+						codegen.SetAssemblyPublicKey (sn.PublicKey);
+					}
+
                                         try {
                                                 codegen.Write ();
                                         } catch {
@@ -93,7 +101,7 @@ namespace Mono.ILASM {
                                 } 
 
                                 try {
-					if (keyname != null) {
+					if (sn != null) {
 						Console.WriteLine ("Signing assembly with the specified strongname keypair");
 						return Sign (output_file);
 					}
@@ -110,12 +118,8 @@ namespace Mono.ILASM {
                                 Console.WriteLine ("***** FAILURE *****\n");
                         }
 
-			private bool Sign (string filename)
+			private void LoadKey ()
 			{
-				// note: if the file cannot be signed (no public key in it) then
-				// we do not show an error, or a warning, if the key file doesn't 
-				// exists
-				StrongName sn = null;
 				if (keycontainer) {
 					CspParameters csp = new CspParameters ();
 					csp.KeyContainerName = keyname;
@@ -130,6 +134,13 @@ namespace Mono.ILASM {
 					}
 					sn = new StrongName (data);
 				}
+			}
+
+			private bool Sign (string filename)
+			{
+				// note: if the file cannot be signed (no public key in it) then
+				// we do not show an error, or a warning, if the key file doesn't 
+				// exists
 				return sn.Sign (filename);
 			}
 

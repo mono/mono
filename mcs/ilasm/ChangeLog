@@ -1,3 +1,9 @@
+2006-05-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Driver.cs: Move up the loading of the strongname key pair to allow
+	embedding the public part into the assembly. Also don't try to sign
+	netmodules.
+
 2006-04-24  Ankit Jain  <jankit@novell.com>
 
 	* Driver.cs (DriverMain.Run): Update use of CodeGen.ctor .
