@@ -1,3 +1,9 @@
+2006-05-09 Boris Kirzner <borisk@mainsoft.com>
+	* AbstractDBCommand.cs: only input parameters can be set by specialized methods.
+
+2006-05-07 Boris Kirzner <borisk@mainsfot.com>
+	* AbstractDBConnection.cs : resolved ambigous reference.
+
 2006-03-26  Konstantin Triger <kostat@mainsoft.com>
 
 	* AbstractDataReader.cs: check for SQLServer uniqueidentifier type for VARCHAR.
