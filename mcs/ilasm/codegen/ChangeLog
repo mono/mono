@@ -1,3 +1,11 @@
+2006-05-09 Ankit Jain  <jankit@novell.com>
+
+	* CodeGen.cs (CodeGen.data_list): Change to ..
+	(CodeGen.data_table): .. a hashtable.
+	(CodeGen.AddDataDef): Update to throw exception for duplicate .data
+	labels.
+	(CodeGen.GetDataConst): Update to use data_table.
+
 2006-04-24  Ankit Jain  <jankit@novell.com>
 
 	* CodeGen.cs (CodeGen.ctor): Remove 'is_assembly' param.
