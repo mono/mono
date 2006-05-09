@@ -314,9 +314,7 @@ namespace Mono.CSharp
 			//
 			// Normally, you should not use any of these constructors.
 			//
-			public UsageVector (SiblingType type, UsageVector parent,
-					    Block block, Location loc,
-					    int num_params, int num_locals)
+			public UsageVector (SiblingType type, UsageVector parent, Block block, Location loc, int num_params, int num_locals)
 			{
 				this.Type = type;
 				this.Block = block;
@@ -325,36 +323,24 @@ namespace Mono.CSharp
 				this.CountParameters = num_params;
 				this.CountLocals = num_locals;
 
-				if (parent != null) {
-					if (num_locals > 0)
-						locals = new MyBitVector (parent.locals, CountLocals);
-					
-					if (num_params > 0)
-						parameters = new MyBitVector (parent.parameters, num_params);
+				locals = num_locals == 0 
+					? MyBitVector.Empty
+					: new MyBitVector (parent == null ? MyBitVector.Empty : parent.locals, num_locals);
 
-					reachability = parent.Reachability.Clone ();
-				} else {
-					if (num_locals > 0)
-						locals = new MyBitVector (null, CountLocals);
-					
-					if (num_params > 0)
-						parameters = new MyBitVector (null, num_params);
+				parameters = num_params == 0
+					? MyBitVector.Empty
+					: new MyBitVector (parent == null ? MyBitVector.Empty : parent.parameters, num_params);
 
-					reachability = Reachability.Always ();
-				}
+				reachability = parent == null ? Reachability.Always () : parent.Reachability.Clone ();
 
 				id = ++next_id;
 			}
 
-			public UsageVector (SiblingType type, UsageVector parent,
-					    Block block, Location loc)
-				: this (type, parent, block, loc,
-					parent.CountParameters, parent.CountLocals)
+			public UsageVector (SiblingType type, UsageVector parent, Block block, Location loc)
+				: this (type, parent, block, loc, parent.CountParameters, parent.CountLocals)
 			{ }
 
-			public UsageVector (MyBitVector parameters, MyBitVector locals,
-					    Reachability reachability, Block block,
-					    Location loc)
+			public UsageVector (MyBitVector parameters, MyBitVector locals, Reachability reachability, Block block, Location loc)
 			{
 				this.Type = SiblingType.Block;
 				this.Location = loc;
@@ -372,16 +358,10 @@ namespace Mono.CSharp
 			// </summary>
 			public UsageVector Clone ()
 			{
-				UsageVector retval = new UsageVector (
-					Type, null, Block, Location,
-					CountParameters, CountLocals);
+				UsageVector retval = new UsageVector (Type, null, Block, Location, CountParameters, CountLocals);
 
-				if (retval.locals != null)
-					retval.locals = locals.Clone ();
-				
-				if (parameters != null)
-					retval.parameters = parameters.Clone ();
-				
+				retval.locals = locals.Clone ();
+				retval.parameters = parameters.Clone ();
 				retval.reachability = reachability.Clone ();
 
 				return retval;
@@ -475,11 +455,8 @@ namespace Mono.CSharp
 					return child;
 				}
 
-				if (locals != null && child.LocalVector != null)
-					locals.Or (child.LocalVector);
-
-				if (child.ParameterVector != null)
-					parameters.Or (child.ParameterVector);
+				MyBitVector.Or (ref locals, child.LocalVector);
+				MyBitVector.Or (ref parameters, child.ParameterVector);
 
 				if (implicit_block)
 					reachability = new_r.Clone ();
@@ -521,21 +498,16 @@ namespace Mono.CSharp
 				UsageVector vector = o_vectors;
 				if (reachability.IsUnreachable) {
 					Report.Debug (1, "  MERGING JUMP ORIGIN INTO UNREACHABLE", this, vector);
-					if (locals != null && vector.Locals != null)
-						locals.Or (vector.locals);
-					if (parameters != null)
-						parameters.Or (vector.parameters);
+					MyBitVector.Or (ref locals, vector.locals);
+					MyBitVector.Or (ref parameters, vector.parameters);
 					reachability.Meet (vector.Reachability);
 					vector = vector.Next;
 				}
 
 				for (; vector != null; vector = vector.Next) {
 					Report.Debug (1, "  MERGING JUMP ORIGIN", this, vector);
-
-					if (locals != null)
-						locals.And (vector.locals);
-					if (parameters != null)
-						parameters.And (vector.parameters);
+					MyBitVector.And (ref locals, vector.locals);
+					MyBitVector.And (ref parameters, vector.parameters);
 					reachability.Meet (vector.Reachability);
 
 					Report.Debug (1, "  MERGING JUMP ORIGIN #1", vector);
@@ -563,10 +535,8 @@ namespace Mono.CSharp
 
 				for (; vector != null; vector = vector.Next) {
 					Report.Debug (1, "    MERGING BREAK ORIGIN", vector);
-					if (locals != null && vector.locals != null)
-						locals.And (vector.locals);
-					if (parameters != null && vector.parameters != null)
-						parameters.And (vector.parameters);
+					MyBitVector.And (ref locals, vector.locals);
+					MyBitVector.And (ref parameters, vector.parameters);
 					reachability.Meet (vector.Reachability);
 				}
 
@@ -574,45 +544,17 @@ namespace Mono.CSharp
 			}
 
 			// <summary>
-			//   Performs an `or' operation on the locals and the parameters.
-			// </summary>
-			public void Or (UsageVector new_vector)
-			{
-				IsDirty = true;
-				locals.Or (new_vector.locals);
-				if (parameters != null)
-					parameters.Or (new_vector.parameters);
-			}
-
-			// <summary>
-			//   Performs an `and' operation on the locals.
-			// </summary>
-			public void AndLocals (UsageVector new_vector)
-			{
-				IsDirty = true;
-				locals.And (new_vector.locals);
-			}
-
-			public bool HasParameters {
-				get { return parameters != null; }
-			}
-
-			public bool HasLocals {
-				get { return locals != null; }
-			}
-
-			// <summary>
 			//   Returns a deep copy of the parameters.
 			// </summary>
 			public MyBitVector Parameters {
-				get { return parameters == null ? null : parameters.Clone (); }
+				get { return parameters.Clone (); }
 			}
 
 			// <summary>
 			//   Returns a deep copy of the locals.
 			// </summary>
 			public MyBitVector Locals {
-				get { return locals == null ? null : locals.Clone (); }
+				get { return locals.Clone (); }
 			}
 
 			public MyBitVector ParameterVector {
@@ -781,12 +723,12 @@ namespace Mono.CSharp
 				Report.Debug (2, "    MERGING SIBLING #1", reachability,
 					      Type, child.Type, child.Reachability.IsUnreachable, unreachable);
 
-				if (!unreachable && (child.LocalVector != null))
+				if (!unreachable)
 					MyBitVector.And (ref locals, child.LocalVector);
 
 				// An `out' parameter must be assigned in all branches which do
 				// not always throw an exception.
-				if ((child.ParameterVector != null) && !child.Reachability.AlwaysThrows)
+				if (!child.Reachability.AlwaysThrows)
 					MyBitVector.And (ref parameters, child.ParameterVector);
 
 				Report.Debug (2, "    MERGING SIBLING #2", parameters, locals);
@@ -1851,16 +1793,21 @@ namespace Mono.CSharp
 	public class MyBitVector {
 		public readonly int Count;
 		public readonly MyBitVector InheritsFrom;
+		public static readonly MyBitVector Empty = new MyBitVector ();
 
 		bool is_dirty;
 		BitArray vector;
 
-		public MyBitVector (int Count)
-			: this (null, Count)
-		{ }
+		MyBitVector ()
+		{
+			InheritsFrom = null;
+			Count = 0;
+		}
 
 		public MyBitVector (MyBitVector InheritsFrom, int Count)
 		{
+			if (InheritsFrom == null)
+				throw new InternalErrorException ("");
 			this.InheritsFrom = InheritsFrom;
 			this.Count = Count;
 		}
@@ -1884,7 +1831,7 @@ namespace Mono.CSharp
 		public bool this [int index]
 		{
 			get {
-				if (index > Count)
+				if (index >= Count)
 					throw new ArgumentOutOfRangeException ();
 
 				// We're doing a "copy-on-write" strategy here; as long
@@ -1905,7 +1852,7 @@ namespace Mono.CSharp
 			}
 
 			set {
-				if (index > Count)
+				if (index >= Count)
 					throw new ArgumentOutOfRangeException ();
 
 				// Only copy the vector if we're actually modifying it.
@@ -1932,11 +1879,14 @@ namespace Mono.CSharp
 		//   Performs an `or' operation on the bit vector.  The `new_vector' may have a
 		//   different size than the current one.
 		// </summary>
-		public void Or (MyBitVector new_vector)
+		private void Or (MyBitVector new_vector)
 		{
-			// Treat null 'new_vector' as all false, just like the And() below
-			if (new_vector == null)
+			if (new_vector == null) {
+				for (int i = 0; i < Count; i++)
+					this [i] = true;
 				return;
+			}
+
 			BitArray new_array = new_vector.Vector;
 
 			initialize_vector ();
@@ -1955,14 +1905,12 @@ namespace Mono.CSharp
 		//   Perfonrms an `and' operation on the bit vector.  The `new_vector' may have
 		//   a different size than the current one.
 		// </summary>
-		public void And (MyBitVector new_vector)
+		private void And (MyBitVector new_vector)
 		{
-			BitArray new_array;
+			if (new_vector == null)
+				return;
 
-			if (new_vector != null)
-				new_array = new_vector.Vector;
-			else
-				new_array = new BitArray (Count, false);
+			BitArray new_array = new_vector.Vector;
 
 			initialize_vector ();
 
@@ -1985,7 +1933,7 @@ namespace Mono.CSharp
 		{
 			if (target != null)
 				target.And (vector);
-			else
+			else if (vector != null)
 				target = vector.Clone ();
 		}
 
@@ -1993,8 +1941,6 @@ namespace Mono.CSharp
 		{
 			if (target != null)
 				target.Or (vector);
-			else
-				target = vector.Clone ();
 		}
 
 		// <summary>
@@ -2002,10 +1948,10 @@ namespace Mono.CSharp
 		// </summary>
 		public MyBitVector Clone ()
 		{
-			MyBitVector retval = new MyBitVector (Count);
-
+			if (Count == 0)
+				return Empty;
+			MyBitVector retval = new MyBitVector (Empty, Count);
 			retval.Vector = Vector;
-
 			return retval;
 		}
 

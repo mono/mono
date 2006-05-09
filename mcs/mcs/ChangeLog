@@ -1,5 +1,10 @@
 2006-05-09  Raja R Harinath  <rharinath@novell.com>
 
+	* flowanalysis.cs (MyBitVector.Empty): New.
+	(MyBitVector): Don't allow InheritedFrom to be null.
+	(MyBitVector.And, MyBitVector.Or): Treat 'null' as all-ones.
+	(UsageVector, FlowBranching): Update to changes.
+
 	* flowanalysis.cs (FlowBranching.InTryWithCatch): Don't terminate
 	recursion.  The 'Parent == null' condition isn't sufficient for
 	anonymous methods.
