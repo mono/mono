@@ -7,8 +7,7 @@
 //   Ravindra (rkumar@novell.com)
 //
 // Copyright (C) 2002/3 Ximian, Inc. http://www.ximian.com
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,21 +29,21 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Drawing;
+using System.ComponentModel;
 
-namespace System.Drawing.Drawing2D
-{
-	/// <summary>
-	/// Summary description for PathGradientBrush.
-	/// </summary>
-	public sealed class PathGradientBrush : Brush
-	{
+namespace System.Drawing.Drawing2D {
+
+	public sealed class PathGradientBrush : Brush {
+
 		internal PathGradientBrush (IntPtr native) : base (native)
 		{
 		}
 
 		public PathGradientBrush (GraphicsPath path)
 		{
+			if (path == null)
+				throw new ArgumentNullException ("path");
+
 			Status status = GDIPlus.GdipCreatePathGradientFromPath (path.NativeObject, out nativeObject);
 			GDIPlus.CheckStatus (status);
 		}
@@ -59,12 +58,22 @@ namespace System.Drawing.Drawing2D
 
 		public PathGradientBrush (Point [] points, WrapMode wrapMode)
 		{
+			if (points == null)
+				throw new ArgumentNullException ("points");
+			if ((wrapMode < WrapMode.Tile) || (wrapMode > WrapMode.Clamp))
+				throw new InvalidEnumArgumentException ("WrapMode");
+
 			Status status = GDIPlus.GdipCreatePathGradientI (points, points.Length, wrapMode, out nativeObject);
 			GDIPlus.CheckStatus (status);
 		}
 
 		public PathGradientBrush (PointF [] points, WrapMode wrapMode)
 		{
+			if (points == null)
+				throw new ArgumentNullException ("points");
+			if ((wrapMode < WrapMode.Tile) || (wrapMode > WrapMode.Clamp))
+				throw new InvalidEnumArgumentException ("WrapMode");
+
 			Status status = GDIPlus.GdipCreatePathGradient (points, points.Length, wrapMode, out nativeObject);
 			GDIPlus.CheckStatus (status);
 		}
@@ -245,6 +254,9 @@ namespace System.Drawing.Drawing2D
 				return matrix;
 			}
 			set {
+				if (value == null)
+					throw new ArgumentNullException ("Transform");
+
 				Status status = GDIPlus.GdipSetPathGradientTransform (nativeObject, value.nativeMatrix);
 				GDIPlus.CheckStatus (status);
 			}
@@ -259,6 +271,9 @@ namespace System.Drawing.Drawing2D
 				return wrapMode;
 			}
 			set {
+				if ((value < WrapMode.Tile) || (value > WrapMode.Clamp))
+					throw new InvalidEnumArgumentException ("WrapMode");
+
 				Status status = GDIPlus.GdipSetPathGradientWrapMode (nativeObject, value);
 				GDIPlus.CheckStatus (status);
 			}
@@ -273,6 +288,9 @@ namespace System.Drawing.Drawing2D
 
 		public void MultiplyTransform (Matrix matrix, MatrixOrder order)
 		{
+			if (matrix == null)
+				throw new ArgumentNullException ("matrix");
+
 			Status status = GDIPlus.GdipMultiplyPathGradientTransform (nativeObject, matrix.nativeMatrix, order);
 			GDIPlus.CheckStatus (status);
 		}

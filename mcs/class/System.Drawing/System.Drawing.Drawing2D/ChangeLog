@@ -1,3 +1,8 @@
+2006-05-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PathGradientBrush.cs: Added missing checks before calling libgdiplus
+	(or GDI+).
+
 2006-05-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GraphicsContainer.cs: Change the state from int to uint to match the
