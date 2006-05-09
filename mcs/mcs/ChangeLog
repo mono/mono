@@ -1,3 +1,9 @@
+2006-05-09  Marek Safar  <marek.safar@seznam.cz>
+
+	* statement.cs (LocalInfo): Add IsConstant.
+	(LocalInfo.DeclareLocal): Moved from EmitMeta and changed to don't emit
+	local variable for constants.
+
 2006-05-09  Raja R Harinath  <rharinath@novell.com>
 
 	* flowanalysis.cs (MyBitVector.Empty): New.

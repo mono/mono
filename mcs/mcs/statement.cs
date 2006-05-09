@@ -981,6 +981,7 @@ namespace Mono.CSharp {
 
 		public VariableInfo VariableInfo;
 
+		[Flags]
 		enum Flags : byte {
 			Used = 1,
 			ReadOnly = 2,
@@ -988,7 +989,8 @@ namespace Mono.CSharp {
 			IsThis = 8,
 			Captured = 16,
 			AddressTaken = 32,
-			CompilerGenerated = 64
+			CompilerGenerated = 64,
+			IsConstant = 128
 		}
 
 		public enum ReadOnlyContext: byte {
@@ -1013,6 +1015,20 @@ namespace Mono.CSharp {
 			VariableType = ds.TypeBuilder;
 			Block = block;
 			Location = l;
+		}
+
+		public void DeclareLocal (ILGenerator ig)
+		{
+			if (Pinned) {
+				//
+				// This is needed to compile on both .NET 1.x and .NET 2.x
+				// the later introduced `DeclareLocal (Type t, bool pinned)'
+				//
+				LocalBuilder = TypeManager.DeclareLocalPinned (ig, VariableType);
+				return;
+			}
+			if (!IsThis && !IsConstant)
+				LocalBuilder = ig.DeclareLocal (VariableType);
 		}
 
 		public bool IsThisAssigned (EmitContext ec, Location loc)
@@ -1068,6 +1084,15 @@ namespace Mono.CSharp {
 
 			set {
 				flags |= Flags.Captured;
+			}
+		}
+
+		public bool IsConstant {
+			get {
+				return (flags & Flags.IsConstant) != 0;
+			}
+			set {
+				flags |= Flags.IsConstant;
 			}
 		}
 
@@ -1749,6 +1774,7 @@ namespace Mono.CSharp {
 					}
 
 					constants.Add (name, e);
+					vi.IsConstant = true;
 				}
 			}
 			ec.ConstantCheckState = old_check_state;
@@ -1779,14 +1805,7 @@ namespace Mono.CSharp {
 					if (have_captured_vars && ec.IsCaptured (vi))
 						continue;
 
-					if (vi.Pinned)
-						//
-						// This is needed to compile on both .NET 1.x and .NET 2.x
-						// the later introduced `DeclareLocal (Type t, bool pinned)'
-						//
-						vi.LocalBuilder = TypeManager.DeclareLocalPinned (ig, vi.VariableType);
-					else if (!vi.IsThis)
-						vi.LocalBuilder = ig.DeclareLocal (vi.VariableType);
+					vi.DeclareLocal (ig);
 				}
 			}
 
