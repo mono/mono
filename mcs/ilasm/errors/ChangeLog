@@ -1,5 +1,9 @@
 2006-05-09  Ankit Jain  <jankit@novell.com>
 
+	* err-dup-label.il: New.
+
+2006-05-09  Ankit Jain  <jankit@novell.com>
+
 	* err-dup-datalabel.il: New.
 
 2006-02-10  Ankit Jain  <jankit@novell.com>
