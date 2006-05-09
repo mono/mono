@@ -1,3 +1,7 @@
+2006-05-09  Ankit Jain  <jankit@novell.com>
+
+	* err-dup-datalabel.il: New.
+
 2006-02-10  Ankit Jain  <jankit@novell.com>
 
 	* err-global.il, err-global2.il: New. Tests for refs to non-existant

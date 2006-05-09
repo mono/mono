@@ -53,7 +53,7 @@ namespace Mono.ILASM {
                 private Hashtable global_method_table;
                 private Hashtable global_methodref_table;
                 private Hashtable global_fieldref_table;
-                private ArrayList data_list;
+                private Hashtable data_table;
                 private FileRef file_ref;
                 private ArrayList manifestResources;
                 private Hashtable typeref_table;
@@ -87,7 +87,7 @@ namespace Mono.ILASM {
                         global_field_table = new Hashtable ();
                         global_method_table = new Hashtable ();
 
-                        data_list = new ArrayList ();
+                        data_table = new Hashtable ();
 
                         defcont_list = new ArrayList ();
 
@@ -355,7 +355,9 @@ namespace Mono.ILASM {
 
                 public void AddDataDef (DataDef datadef)
                 {
-                        data_list.Add (datadef);
+                        if (data_table [datadef.Name] != null)
+                                throw new ILAsmException (String.Format ("Duplicate global label '{0}'", datadef.Name));
+                        data_table [datadef.Name] = datadef;
                 }
 
 		public void AddManifestResource (ManifestResource mr)
@@ -367,12 +369,11 @@ namespace Mono.ILASM {
 
                 public PEAPI.DataConstant GetDataConst (string name)
                 {
-                        foreach (DataDef def in data_list) {
-                                if (def.Name == name)
-                                        return (DataConstant) def.PeapiConstant;
-                        }
-                        return null;
+                        DataDef def = (DataDef) data_table [name];
+                        if (def == null)
+                                return null;
 
+                        return (DataConstant) def.PeapiConstant;
                 }
 
                 public void BeginMethodDef (MethodDef methoddef)
