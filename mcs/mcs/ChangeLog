@@ -1,5 +1,18 @@
 2006-05-09  Raja R Harinath  <rharinath@novell.com>
 
+	* flowanalysis.cs (FlowBranching.InTryWithCatch): Don't terminate
+	recursion.  The 'Parent == null' condition isn't sufficient for
+	anonymous methods.
+	(FlowBranching.AddBreakOrigin): Likewise.
+	(FlowBranching.AddContinueOrigin): Likewise.
+	(FlowBranching.AddReturnOrigin): Likewise.
+	(FlowBranching.StealFinallyClauses): Likewise.
+	(FlowBranching.MergeTopBlock): Move to FlowBranchingToplevel.
+	(FlowBranching.CheckOutParameters): Likewise.
+	(FlowBranchingToplevel): Terminate all the above recursions here.
+	(FlowBranchingToplevel.End): Rename from MergeTopBlock.
+	* codegen.cs (EmitContext.ResolveTopBlock): Update to changes.
+
 	* flowanalysis.cs (BranchingType.Toplevel): New.  Represents a
 	toplevel block.
 	(FlowBranchingToplevel): New.  Empty for now.

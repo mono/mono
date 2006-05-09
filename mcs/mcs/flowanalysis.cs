@@ -249,10 +249,7 @@ namespace Mono.CSharp
 		// </summary>
 		public readonly Location Location;
 
-		//
-		// Private
-		//
-		VariableMap param_map, local_map;
+		protected VariableMap param_map, local_map;
 
 		static int next_id = 0;
 		int id;
@@ -724,28 +721,6 @@ namespace Mono.CSharp
 
 		public abstract void Label (UsageVector origin_vectors);
 
-		// <summary>
-		//   Check whether all `out' parameters have been assigned.
-		// </summary>
-		public void CheckOutParameters (MyBitVector parameters, Location loc)
-		{
-			if (parameters == null)
-				return;
-
-			for (int i = 0; i < param_map.Count; i++) {
-				VariableInfo var = param_map [i];
-
-				if (var == null)
-					continue;
-
-				if (var.IsAssigned (parameters))
-					continue;
-
-				Report.Error (177, loc, "The out parameter `{0}' must be assigned to before control leaves the current method",
-					var.Name);
-			}
-		}
-
 		protected UsageVector Merge (UsageVector sibling_list)
 		{
 			if (sibling_list.Next == null)
@@ -839,63 +814,32 @@ namespace Mono.CSharp
 			return result;
  		}
 
-		// <summary>
-		//   Does the toplevel merging.
-		// </summary>
-		public Reachability MergeTopBlock ()
-		{
-			if ((Type != BranchingType.Toplevel) || (Block == null))
-				throw new NotSupportedException ();
-
-			UsageVector result = Merge ();
-
-			Report.Debug (4, "MERGE TOP BLOCK", Location, result);
-
-			if (!result.Reachability.AlwaysThrows && !result.Reachability.AlwaysHasBarrier)
-				CheckOutParameters (result.Parameters, Location);
-
-			return result.Reachability;
-		}
-
 		public virtual bool InTryWithCatch ()
 		{
-			return Parent != null && Parent.InTryWithCatch ();
+			return Parent.InTryWithCatch ();
 		}
 
 		// returns true if we crossed an unwind-protected region (try/catch/finally, lock, using, ...)
 		public virtual bool AddBreakOrigin (UsageVector vector, Location loc)
 		{
-			if (Parent != null)
-				return Parent.AddBreakOrigin (vector, loc);
-
-			Report.Error (139, loc, "No enclosing loop out of which to break or continue");
-			return false;
+			return Parent.AddBreakOrigin (vector, loc);
 		}
 
 		// returns true if we crossed an unwind-protected region (try/catch/finally, lock, using, ...)
 		public virtual bool AddContinueOrigin (UsageVector vector, Location loc)
 		{
-			if (Parent != null)
-				return Parent.AddContinueOrigin (vector, loc);
-
-			Report.Error (139, loc, "No enclosing loop out of which to break or continue");
-			return false;
+			return Parent.AddContinueOrigin (vector, loc);
 		}
 
 		// returns true if we crossed an unwind-protected region (try/catch/finally, lock, using, ...)
 		public virtual bool AddReturnOrigin (UsageVector vector, Location loc)
 		{
-			if (Parent != null)
-				return Parent.AddReturnOrigin (vector, loc);
-
-			CheckOutParameters (vector.Parameters, loc);
-			return false;
+			return Parent.AddReturnOrigin (vector, loc);
 		}
 
 		public virtual void StealFinallyClauses (ref ArrayList list)
 		{
-			if (Parent != null)
-				Parent.StealFinallyClauses (ref list);
+			Parent.StealFinallyClauses (ref list);
 		}
 
 		public bool IsAssigned (VariableInfo vi)
@@ -1058,8 +1002,69 @@ namespace Mono.CSharp
 			: base (parent, BranchingType.Toplevel, SiblingType.Conditional, stmt, stmt.loc)
 		{
 		}
-	}
 
+		// <summary>
+		//   Check whether all `out' parameters have been assigned.
+		// </summary>
+		void CheckOutParameters (MyBitVector parameters, Location loc)
+		{
+			if (parameters == null)
+				return;
+
+			for (int i = 0; i < param_map.Count; i++) {
+				VariableInfo var = param_map [i];
+
+				if (var == null)
+					continue;
+
+				if (var.IsAssigned (parameters))
+					continue;
+
+				Report.Error (177, loc, "The out parameter `{0}' must be assigned to before control leaves the current method",
+					var.Name);
+			}
+		}
+
+		public override bool InTryWithCatch ()
+		{
+			return false;
+		}
+
+		public override bool AddBreakOrigin (UsageVector vector, Location loc)
+		{
+			Report.Error (139, loc, "No enclosing loop out of which to break or continue");
+			return false;
+		}
+
+		public override bool AddContinueOrigin (UsageVector vector, Location loc)
+		{
+			Report.Error (139, loc, "No enclosing loop out of which to break or continue");
+			return false;
+		}
+
+		public override bool AddReturnOrigin (UsageVector vector, Location loc)
+		{
+			CheckOutParameters (vector.Parameters, loc);
+			return false;
+		}
+
+		public override void StealFinallyClauses (ref ArrayList list)
+		{
+			// nothing to do
+		}
+
+		public Reachability End ()
+		{
+			UsageVector result = Merge ();
+
+			Report.Debug (4, "MERGE TOP BLOCK", Location, result);
+
+			if (!result.Reachability.AlwaysThrows && !result.Reachability.AlwaysHasBarrier)
+				CheckOutParameters (result.Parameters, Location);
+
+			return result.Reachability;
+		}
+	}
 
 	public class FlowBranchingException : FlowBranching
 	{

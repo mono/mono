@@ -693,7 +693,7 @@ namespace Mono.CSharp {
 					return false;
 				}
 
-				FlowBranching.Reachability reachability = current_flow_branching.MergeTopBlock ();
+				FlowBranching.Reachability reachability = ((FlowBranchingToplevel) current_flow_branching).End ();
 				current_flow_branching = null;
 
 				DoFlowAnalysis = old_do_flow_analysis;
