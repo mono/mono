@@ -1,3 +1,9 @@
+2006-05-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ia64.c (get_call_info): Fix handling of MONO_TYPE_GENERICINST.
+
+	* mini-amd64.c (mono_arch_instrument_epilog): Ditto.	
+
 2006-04-21  Dick Porter  <dick@ximian.com>
 
 	* mini.c (mini_thread_cleanup): Clear the JIT TLS data when
