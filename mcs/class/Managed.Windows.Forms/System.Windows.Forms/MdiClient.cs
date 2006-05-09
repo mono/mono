@@ -62,9 +62,10 @@ namespace System.Windows.Forms {
 				base.Add (value);
 				SetChildIndex (value, 0); // always insert at front
 				// newest member is the active one
-				owner.ActiveMdiChild = (Form) value;
+				Form form = (Form) value;
+				owner.ActiveMdiChild = form;
 
-				value.LocationChanged += new EventHandler (owner.FormLocationChanged);
+				form.LocationChanged += new EventHandler (owner.FormLocationChanged);
 			}
 
 			public override void Remove(Control value) {
@@ -390,8 +391,22 @@ namespace System.Windows.Forms {
 			lock_sizing = false;
 		}
 
+		internal void ActivateNextChild ()
+		{
+			if (Controls.Count < 1)
+				return;
+
+			Form form = (Form) Controls [1];
+			ActivateChild (form);
+		}
+
 		internal void ActivateChild (Form form)
 		{
+			if (Controls.Count > 0) {
+				Form front = (Form) Controls [0];
+				front.SendToBack ();
+			}
+
 			form.BringToFront ();
 			active = form;
 
