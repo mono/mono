@@ -1,3 +1,9 @@
+2006-05-09  Raja R Harinath  <rharinath@novell.com>
+
+	* flowanalysis.cs (UsageVector.MergeOrigins): Reorganize.
+	(UsageVector.MergeJumpOrigins): Don't ignore current reachability
+	information at the start of the merge.  Reorganize.
+
 2006-05-07  Marek Safar  <marek.safar@seznam.cz>
 
 	* class.cs (MethodData.Define): Method cannot implement interface accessor.

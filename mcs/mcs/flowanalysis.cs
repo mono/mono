@@ -514,34 +514,27 @@ namespace Mono.CSharp
 			{
 				Report.Debug (1, "  MERGING JUMP ORIGINS", this);
 
-				reachability = Reachability.Always ();
-
-				if (o_vectors == null) {
-					reachability.SetBarrier ();
+				if (o_vectors == null)
 					return;
+
+				UsageVector vector = o_vectors;
+				if (reachability.IsUnreachable) {
+					Report.Debug (1, "  MERGING JUMP ORIGIN INTO UNREACHABLE", this, vector);
+					if (locals != null && vector.Locals != null)
+						locals.Or (vector.locals);
+					if (parameters != null)
+						parameters.Or (vector.parameters);
+					reachability.Meet (vector.Reachability);
+					vector = vector.Next;
 				}
 
-				bool first = true;
+				for (; vector != null; vector = vector.Next) {
+					Report.Debug (1, "  MERGING JUMP ORIGIN", this, vector);
 
-				for (UsageVector vector = o_vectors; vector != null;
-				     vector = vector.Next) {
-					Report.Debug (1, "  MERGING JUMP ORIGIN", vector,
-						      first, locals, vector.Locals);
-
-					if (first) {
-						if (locals != null && vector.Locals != null)
-							locals.Or (vector.locals);
-						
-						if (parameters != null)
-							parameters.Or (vector.parameters);
-						first = false;
-					} else {
-						if (locals != null)
-							locals.And (vector.locals);
-						if (parameters != null)
-							parameters.And (vector.parameters);
-					}
-
+					if (locals != null)
+						locals.And (vector.locals);
+					if (parameters != null)
+						parameters.And (vector.parameters);
 					reachability.Meet (vector.Reachability);
 
 					Report.Debug (1, "  MERGING JUMP ORIGIN #1", vector);
@@ -557,22 +550,22 @@ namespace Mono.CSharp
 				if (o_vectors == null)
 					return;
 
-				bool first = reachability.IsUnreachable;
+				UsageVector vector = o_vectors;
 
-				for (UsageVector vector = o_vectors; vector != null; vector = vector.Next) {
-					Report.Debug (1, "    MERGING BREAK ORIGIN", vector, first);
+				if (reachability.IsUnreachable) {
+					Report.Debug (1, "    MERGING BREAK ORIGIN INTO UNREACHABLE", vector);
+					locals = vector.Locals;
+					parameters = vector.Parameters;
+					reachability.Meet (vector.Reachability);
+					vector = vector.Next;
+				}
 
-					if (first) {
-						locals = vector.Locals;
-						parameters = vector.Parameters;
-						first = false;
-					} else {
-						if (locals != null && vector.locals != null)
-							locals.And (vector.locals);
-						if (parameters != null && vector.parameters != null)
-							parameters.And (vector.parameters);
-					}
-
+				for (; vector != null; vector = vector.Next) {
+					Report.Debug (1, "    MERGING BREAK ORIGIN", vector);
+					if (locals != null && vector.locals != null)
+						locals.And (vector.locals);
+					if (parameters != null && vector.parameters != null)
+						parameters.And (vector.parameters);
 					reachability.Meet (vector.Reachability);
 				}
 
