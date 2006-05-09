@@ -1,3 +1,16 @@
+2006-05-09  Jackson Harper  <jackson@ximian.com>
+
+	* Form.cs: Window managers need the old window state when setting
+	window state now.
+	* InternalWindowManager.cs: Allow the base mdi window manager to
+	handle more of the MDI only stuff (like maximize buttons).
+	* MdiWindowManager.cs: Fix some snafus in changing the window
+	state.  Add all the menu functionality, for both popup and
+	maximized menus.
+	* MdiClient.cs: When a new form is selected the currently
+	activated form is sent to the back, this matches MS.
+	- Implement a new method to activate the next mdi child window.
+
 2006-05-08  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Control.cs: 

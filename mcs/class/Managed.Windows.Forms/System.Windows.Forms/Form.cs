@@ -887,11 +887,12 @@ namespace System.Windows.Forms {
 			}
 
 			set {
+				FormWindowState old_state = window_state;
 				window_state = value;
 				if (IsHandleCreated) {
 
 					if (window_manager != null) {
-						window_manager.SetWindowState (window_state);
+						window_manager.SetWindowState (old_state, value);
 						return;
 					}
 

@@ -38,21 +38,25 @@ namespace System.Windows.Forms {
 		private MainMenu merged_menu;
 		private MainMenu maximized_menu;
 		private MenuItem icon_menu;
+		private ContextMenu icon_popup_menu;
 		private FormWindowState prev_window_state;
 
 		private MdiClient mdi_container;
 		private Rectangle prev_virtual_position;
 
 		private Rectangle prev_bounds;
+
 		internal Rectangle IconicBounds;
+		internal int mdi_index;
 
 		public MdiWindowManager (Form form, MdiClient mdi_container) : base (form)
 		{
 			this.mdi_container = mdi_container;
+			prev_bounds = form.Bounds;
 			prev_window_state = form.window_state;
 			form.GotFocus += new EventHandler (FormGotFocus);
 
-			icon_menu = CreateIconMenu ();
+			CreateIconMenus ();
 		}
 
 		public MainMenu MergedMenu {
@@ -102,26 +106,76 @@ namespace System.Windows.Forms {
 			return res;
 		}
 
-		private MenuItem CreateIconMenu ()
+		private void CreateIconMenus ()
 		{
-			MenuItem res = new MenuItem ();
+			icon_menu = new MenuItem ();
+			icon_popup_menu = new ContextMenu ();
 
-			res.OwnerDraw = true;
-			res.MeasureItem += new MeasureItemEventHandler (MeasureIconMenuItem);
-			res.DrawItem += new DrawItemEventHandler (DrawIconMenuItem);
+			icon_menu.OwnerDraw = true;
+			icon_menu.MeasureItem += new MeasureItemEventHandler (MeasureIconMenuItem);
+			icon_menu.DrawItem += new DrawItemEventHandler (DrawIconMenuItem);
 
-			MenuItem restore = new MenuItem ("Restore");;
-			MenuItem move = new MenuItem ("Move");
-			MenuItem size = new MenuItem ("Size");
-			MenuItem minimize = new MenuItem ("Minimize");
-			MenuItem maximize = new MenuItem ("Maximize");
-			MenuItem close = new MenuItem ("Close");
-			MenuItem next = new MenuItem ("Next");
+			MenuItem restore = new MenuItem ("Restore", new EventHandler (RestoreItemHandler));
+			MenuItem move = new MenuItem ("Move", new EventHandler (MoveItemHandler));
+			MenuItem size = new MenuItem ("Size", new EventHandler (SizeItemHandler));
+			MenuItem minimize = new MenuItem ("Minimize", new EventHandler (MinimizeItemHandler));
+			MenuItem maximize = new MenuItem ("Maximize", new EventHandler (MaximizeItemHandler));
+			MenuItem close = new MenuItem ("Close", new EventHandler (CloseItemHandler));
+			MenuItem next = new MenuItem ("Next", new EventHandler (NextItemHandler));
 
-			res.MenuItems.AddRange (new MenuItem [] { restore, move, size, minimize,
+			icon_menu.MenuItems.AddRange (new MenuItem [] { restore, move, size, minimize,
 									maximize, close, next });
-									
-			return res;
+			icon_popup_menu.MenuItems.AddRange (new MenuItem [] { restore, move, size, minimize,
+									maximize, close, next });
+		}
+
+		private void RestoreItemHandler (object sender, EventArgs e)
+		{
+			form.WindowState = FormWindowState.Normal;
+		}
+
+		private void MoveItemHandler (object sender, EventArgs e)
+		{
+			int x = 0;
+			int y = 0;
+
+			PointToScreen (ref x, ref y);
+			Cursor.Position = new Point (x, y);
+			form.Cursor = Cursors.Cross;
+			state = State.Moving;
+			form.Capture = true;
+		}
+
+		private void SizeItemHandler (object sender, EventArgs e)
+		{
+			int x = 0;
+			int y = 0;
+
+			PointToScreen (ref x, ref y);
+			Cursor.Position = new Point (x, y);
+			form.Cursor = Cursors.Cross;
+			state = State.Sizing;
+			form.Capture = true;
+		}		
+
+		private void MinimizeItemHandler (object sender, EventArgs e)
+		{
+			form.WindowState = FormWindowState.Minimized;
+		}
+
+		private void MaximizeItemHandler (object sender, EventArgs e)
+		{
+			form.WindowState = FormWindowState.Maximized;
+		}
+
+		private void CloseItemHandler (object sender, EventArgs e)
+		{
+			form.Close ();
+		}
+
+		private void NextItemHandler (object sender, EventArgs e)
+		{
+			mdi_container.ActivateNextChild ();
 		}
 
 		private void DrawIconMenuItem (object sender, DrawItemEventArgs de)
@@ -152,26 +206,39 @@ namespace System.Windows.Forms {
 			XplatUI.ClientToScreen (mdi_container.Handle, ref x, ref y);
 		}
 
-		public override void SetWindowState (FormWindowState window_state)
+		public override void SetWindowState (FormWindowState old_state, FormWindowState window_state)
 		{
 			switch (window_state) {
 			case FormWindowState.Minimized:
+				maximize_button.Caption = CaptionButton.Maximize;
+				minimize_button.Caption = CaptionButton.Restore;
+				prev_window_state = old_state;
 				prev_bounds = form.Bounds;
 				mdi_container.ArrangeIconicWindows ();
 				break;
 			case FormWindowState.Maximized:
+				maximize_button.Caption = CaptionButton.Restore;
+				minimize_button.Caption = CaptionButton.Minimize;
+				prev_window_state = old_state;
 				prev_bounds = form.Bounds;
 				SizeMaximized ();
-				XplatUI.RequestNCRecalc (mdi_container.Parent.Handle);
 				break;
 			case FormWindowState.Normal:
+				if (prev_window_state == FormWindowState.Maximized) {
+					form.WindowState = FormWindowState.Maximized;
+					break;
+				} else if (prev_window_state == FormWindowState.Minimized) {
+					form.WindowState = FormWindowState.Minimized;
+					break;
+				}
+				maximize_button.Caption = CaptionButton.Maximize;
+				minimize_button.Caption = CaptionButton.Minimize;
+				prev_window_state = form.WindowState;
 				form.Bounds = prev_bounds;
 				break;
 			}
 
-			if (prev_window_state == FormWindowState.Maximized)
-				XplatUI.RequestNCRecalc (mdi_container.Parent.Handle);
-			prev_window_state = window_state;
+			XplatUI.RequestNCRecalc (mdi_container.Parent.Handle);
 		}
 
 		internal void SizeMaximized ()
@@ -213,6 +280,24 @@ namespace System.Windows.Forms {
 			DrawTitleButton (pe.Graphics, minimize_button, pe.ClipRectangle);
 			DrawTitleButton (pe.Graphics, maximize_button, pe.ClipRectangle);
 			DrawTitleButton (pe.Graphics, close_button, pe.ClipRectangle);
+
+			minimize_button.Rectangle.Y -= pnt.Y;
+			maximize_button.Rectangle.Y -= pnt.Y;
+			close_button.Rectangle.Y -= pnt.Y;
+		}
+
+		protected override void HandleTitleBarDown (int x, int y)
+		{
+			if (form.Icon != null) {
+				Rectangle icon = new Rectangle (BorderWidth + 3,
+						BorderWidth + 2, IconWidth, IconWidth);
+				if (icon.Contains (x, y)) {
+					icon_popup_menu.Show (form, Point.Empty);
+					return;
+				}
+			}
+
+			base.HandleTitleBarDown (x, y);
 		}
 
 		protected override bool ShouldRemoveWindowManager (FormBorderStyle style)
