@@ -312,6 +312,9 @@ namespace Mainsoft.Data.Jdbc.Providers
 				if (res == -9) // sql server 2005 jdbc driver value for NVARCHAR
 					if (String.CompareOrdinal (getMetaData ().getColumnName (arg_0), DataType) == 0)
 						return java.sql.Types.VARCHAR;
+				if (res == -8) // sql server 2005 jdbc driver value for NVARCHAR
+					if (String.CompareOrdinal (getMetaData ().getColumnName (arg_0), DataType) == 0)
+						return java.sql.Types.CHAR;
 				return res;
 			}
 
@@ -322,6 +325,10 @@ namespace Mainsoft.Data.Jdbc.Providers
 				if (res == -9) // sql server 2005 jdbc driver value for NVARCHAR
 					if (String.CompareOrdinal (arg_0, DataType) == 0)
 						return java.sql.Types.VARCHAR;
+
+				if (res == -8) // sql server 2005 jdbc driver value for NVARCHAR
+					if (String.CompareOrdinal (arg_0, DataType) == 0)
+						return java.sql.Types.CHAR;
 				return res;
 			}
 
