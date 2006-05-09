@@ -324,7 +324,7 @@ namespace System.Xml
 		{
 			if (isDefault)
 				return; // Write nothing.
-			w.WriteStartAttribute (name.Prefix, name.LocalName, name.NS);
+			w.WriteStartAttribute (name.NS.Length > 0 ? name.Prefix : String.Empty, name.LocalName, name.NS);
 			WriteContentTo (w);
 			w.WriteEndAttribute ();
 		}

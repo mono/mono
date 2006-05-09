@@ -368,5 +368,22 @@ namespace MonoTests.System.Xml
 //			AssertNull ("#6-2", doc.SelectSingleNode ("id ('bar')"));
 //			AssertNotNull ("#7", doc.SelectSingleNode ("id ('bazbaz')"));
 		}
+
+		[Test] // http://lists.ximian.com/pipermail/mono-list/2006-May/031557.html
+		public void NonEmptyPrefixWithEmptyNS ()
+		{
+			XmlDocument xmlDoc = new XmlDocument ();
+			xmlDoc.AppendChild (xmlDoc.CreateNode (XmlNodeType.XmlDeclaration, "", ""));
+
+			XmlElement docElement = xmlDoc.CreateElement ("doc");
+			docElement.SetAttribute ("xmlns", "http://whatever.org/XMLSchema/foo");
+			docElement.SetAttribute ("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+			docElement.SetAttribute ("xsi:schemaLocation", "http://whatever.org/XMLSchema/foo.xsd");
+			xmlDoc.AppendChild (docElement);
+
+			XmlElement fooElement = xmlDoc.CreateElement ("foo");
+			docElement.AppendChild (fooElement);
+			xmlDoc.Save (TextWriter.Null);
+		}
 	}
 }

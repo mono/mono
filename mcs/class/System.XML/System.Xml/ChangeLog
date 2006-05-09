@@ -1,3 +1,8 @@
+2006-05-09  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlAttribute.cs : (WriteTo) when the namespace URI is empty,
+	  always use empty string for prefix.
+
 2006-04-27  Geoff Norton  <gnorton@customerdna.com>
 
 	* XmlDocument.cs: Move back to the element after
