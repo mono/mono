@@ -82,6 +82,13 @@ namespace System.Windows.Forms {
 		}
 		#endregion	// Public Constructors
 
+		internal override void OnPaintBackgroundInternal (PaintEventArgs pe)
+		{
+			if (Parent == null || Parent.BackgroundImage == null)
+				return;
+			Parent.PaintControlBackground (pe);
+		}
+
 		internal Form ParentForm {
 			get { return (Form) Parent; }
 		}

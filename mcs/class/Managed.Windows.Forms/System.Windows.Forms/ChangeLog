@@ -1,3 +1,9 @@
+2006-05-10  Jackson Harper  <jackson@ximian.com>
+
+	* MdiClient.cs: If the mdi clients parent form has a background
+	image set, we draw that background image for the mdi area's
+	background.
+
 2006-05-10  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* TextBoxBase.cs: Set IBeam cursor (#78347)
