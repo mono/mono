@@ -1199,6 +1199,8 @@ namespace System.Windows.Forms {
 
 				hwnd = Hwnd.GetObjectFromWindow(xevent.AnyEvent.window);
 				if (hwnd == null) {
+					if (xevent.type == XEventName.Expose) {
+					}
 					pending = XPending (DisplayHandle);
 					continue;
 				}
@@ -3205,7 +3207,8 @@ namespace System.Windows.Forms {
 								opacity = (IntPtr)hwnd.opacity;
 								XChangeProperty(DisplayHandle, XGetParent(hwnd.whole_window), NetAtoms[(int)NA._NET_WM_WINDOW_OPACITY], (IntPtr)Atom.XA_CARDINAL, 32, PropertyMode.Replace, ref opacity, 1);
 							}
-							return true;
+							SendMessage(msg.hwnd, Msg.WM_WINDOWPOSCHANGED, msg.wParam, msg.lParam);
+							goto ProcessNextMessage;
 						} else {
 							hwnd.Reparented = false;
 							goto ProcessNextMessage;
@@ -3628,8 +3631,13 @@ namespace System.Windows.Forms {
 			
 			if (client) {
 				hwnd.client_dc = Graphics.FromHwnd (hwnd.client_window);
-				hwnd.client_dc.SetClip(hwnd.invalid);
-				paint_event = new PaintEventArgs(hwnd.client_dc, hwnd.invalid);
+
+				Region clip_region = new Region ();
+				foreach (Rectangle r in hwnd.ClipRectangles) {
+					clip_region.Union (r);
+				}
+				hwnd.client_dc.Clip = clip_region;
+				paint_event = new PaintEventArgs(hwnd.client_dc, hwnd.Invalid);
 				hwnd.expose_pending = false;
 
 				return paint_event;
@@ -3804,25 +3812,30 @@ namespace System.Windows.Forms {
 			Hwnd		hwnd;
 			IntPtr		gc;
 			XGCValues	gc_values;
+			Rectangle	r;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
-			if (hwnd.invalid != Rectangle.Empty) {
+			r = hwnd.Invalid;
+			if (r != Rectangle.Empty) {
 				/* We have an invalid area in the window we're scrolling. 
 				   Adjust our stored invalid rectangle to to match the scrolled amount */
 
-				hwnd.invalid.X += XAmount;
-				hwnd.invalid.Y += YAmount;
+				r.X += XAmount;
+				r.Y += YAmount;
 
-				if (hwnd.invalid.X < 0) {
-					hwnd.invalid.Width += hwnd.invalid.X;
-					hwnd.invalid.X =0;
+				if (r.X < 0) {
+					r.Width += r.X;
+					r.X =0;
 				}
 
-				if (hwnd.invalid.Y < 0) {
-					hwnd.invalid.Height += hwnd.invalid.Y;
-					hwnd.invalid.Y =0;
+				if (r.Y < 0) {
+					r.Height += r.Y;
+					r.Y =0;
 				}
+
+				hwnd.ClearInvalidArea();
+				hwnd.AddInvalidArea(r);
 			}
 
 			gc_values = new XGCValues();

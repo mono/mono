@@ -58,7 +58,7 @@ namespace System.Windows.Forms {
 		internal uint		opacity;
 		internal bool		enabled;
 		internal bool		zero_sized;
-		internal Rectangle	invalid;
+		internal ArrayList	invalid_list;
 		internal Rectangle	nc_invalid;
 		internal bool		expose_pending;
 		internal bool		nc_expose_pending;
@@ -90,7 +90,7 @@ namespace System.Windows.Forms {
 			whole_window = IntPtr.Zero;
 			handle = IntPtr.Zero;
 			parent = null;
-			invalid = Rectangle.Empty;
+			invalid_list = new ArrayList();
 			expose_pending = false;
 			nc_expose_pending = false;
 			enabled = true;
@@ -399,13 +399,24 @@ namespace System.Windows.Forms {
 
 		public Rectangle Invalid {
 			get {
-				return invalid;
-			}
+				if (invalid_list.Count == 1) {
+					return (Rectangle) invalid_list [0];
+				}
 
-			set {
-				invalid = value;
+				Rectangle result = Rectangle.Empty;
+				foreach (Rectangle r in invalid_list) {
+					result = Rectangle.Union (result, r);
+				}
+				return result;
+
 			}
 		}
+
+		public Rectangle[] ClipRectangles {
+			get {
+				return (Rectangle[]) invalid_list.ToArray (typeof (Rectangle));
+ 			}
+ 		}
 
 		public Rectangle NCInvalid {
 			get { return nc_invalid; }
@@ -539,31 +550,22 @@ namespace System.Windows.Forms {
 
 		#region Methods
 		public void AddInvalidArea(int x, int y, int width, int height) {
-			if (invalid == Rectangle.Empty) {
-				invalid = new Rectangle (x, y, width, height);
-				return;
-			}
-
-			int right, bottom;
-			right = Math.Max (invalid.Right, x + width);
-			bottom = Math.Max (invalid.Bottom, y + height);
-			invalid.X = Math.Min (invalid.X, x);
-			invalid.Y = Math.Min (invalid.Y, y);
-
-			invalid.Width = right - invalid.X;
-			invalid.Height = bottom - invalid.Y;
+			AddInvalidArea(new Rectangle(x, y, width, height));
 		}
 
 		public void AddInvalidArea(Rectangle rect) {
-			if (invalid == Rectangle.Empty) {
-				invalid = rect;
-				return;
+			ArrayList tmp = new ArrayList ();
+			foreach (Rectangle r in invalid_list) {
+				if (!rect.Contains (r)) {
+					tmp.Add (r);
+				}
 			}
-			invalid = Rectangle.Union (invalid, rect);
+			tmp.Add (rect);
+			invalid_list = tmp;
 		}
 
 		public void ClearInvalidArea() {
-			invalid = Rectangle.Empty;
+			invalid_list.Clear();
 			expose_pending = false;
 		}
 

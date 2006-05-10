@@ -1343,7 +1343,7 @@ namespace System.Windows.Forms {
 			}
 
 			hwnd.client_dc  = Graphics.FromHwnd (hwnd.client_window);
-			paint_event = new PaintEventArgs(hwnd.client_dc, hwnd.invalid);
+			paint_event = new PaintEventArgs(hwnd.client_dc, hwnd.Invalid);
 			
 			return paint_event;
 		}
