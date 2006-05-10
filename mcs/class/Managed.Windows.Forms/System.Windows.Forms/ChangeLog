@@ -1,3 +1,7 @@
+2006-05-10  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* TextBoxBase.cs: Set IBeam cursor (#78347)
+
 2006-05-10  Mike Kestner  <mkestner@novell.com>
 
 	* ListBox.cs: use is_visible for scrollbar positioning in case the

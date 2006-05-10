@@ -136,6 +136,8 @@ namespace System.Windows.Forms {
 			canvas_width = ClientSize.Width;
 			canvas_height = ClientSize.Height;
 
+			Cursor = Cursors.IBeam;
+
 			CalculateScrollBars();
 		}
 		#endregion	// Internal Constructor
