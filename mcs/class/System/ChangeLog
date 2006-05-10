@@ -1,5 +1,10 @@
 2006-05-10  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* System_test.dll.sources : added ConnectionManagementSectionTest.cs
+	  and WebRequestModulesSectionTest.cs.
+
+2006-05-10  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Makefile : add -r:System.Configuration under net_2_0.
 
 2005-05-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
