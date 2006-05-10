@@ -1,5 +1,9 @@
 2006-05-10  Ankit Jain  <jankit@novell.com>
 
+	* get.c (init_key_table): Add keyword 'switch'.
+
+2006-05-10  Ankit Jain  <jankit@novell.com>
+
 	* get.c (init_key_table): Add keyword 'property'.
 
 2006-03-15  Zoltan Varga  <vargaz@gmail.com>
