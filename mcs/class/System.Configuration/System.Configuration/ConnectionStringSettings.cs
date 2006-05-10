@@ -51,7 +51,7 @@ namespace System.Configuration
 							       new StringValidator (1),
 							       ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
 
-			_propProviderName = new ConfigurationProperty ("providerName", typeof (string), "",
+			_propProviderName = new ConfigurationProperty ("providerName", typeof (string), "System.Data.SqlClient",
 								       ConfigurationPropertyOptions.None);
 
 			_propConnectionString = new ConfigurationProperty ("connectionString", typeof (string), "",
@@ -67,7 +67,7 @@ namespace System.Configuration
 		}
 
 		public ConnectionStringSettings (string name, string connectionString)
-			: this (name, connectionString, "")
+			: this (name, connectionString, "System.Data.SqlClient")
 		{
 		}
 
@@ -83,15 +83,14 @@ namespace System.Configuration
 			get { return _properties; }
 		}
 
-		[ConfigurationProperty ("name", DefaultValue = null, Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
-		[StringValidator (MinLength = 1)]
+		[ConfigurationProperty ("name", DefaultValue = "", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
 		public string Name
 		{
 			get { return (string) base [_propName];}
 			set { base [_propName] = value; }
 		}
 
-		[ConfigurationProperty ("providerName", DefaultValue = "")]
+		[ConfigurationProperty ("providerName", DefaultValue = "System.Data.SqlClient")]
 		public string ProviderName
 		{
 			get { return (string) base [_propProviderName]; }

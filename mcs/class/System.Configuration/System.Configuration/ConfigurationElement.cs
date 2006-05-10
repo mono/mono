@@ -145,7 +145,7 @@ namespace System.Configuration
 		}
 
 		[MonoTODO]
-		protected void ListErrors (IList list)
+		protected virtual void ListErrors (IList list)
 		{
 			throw new NotImplementedException ();
 		}

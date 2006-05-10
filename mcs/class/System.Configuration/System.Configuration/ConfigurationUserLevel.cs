@@ -30,7 +30,6 @@ using System;
 
 namespace System.Configuration {
 
-        [Serializable]
         public enum ConfigurationUserLevel
         {
                 None = 0,

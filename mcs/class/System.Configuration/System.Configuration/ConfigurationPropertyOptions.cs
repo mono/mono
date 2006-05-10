@@ -29,7 +29,7 @@
 #if NET_2_0
 namespace System.Configuration
 {
-        [Serializable, Flags]
+        [Flags]
         public enum ConfigurationPropertyOptions
         {
                 None = 0,

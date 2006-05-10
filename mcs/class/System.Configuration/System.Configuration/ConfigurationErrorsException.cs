@@ -104,7 +104,7 @@ namespace System.Configuration
 		//
 		// Properties
 		//
-		public new string BareMessage
+		public override string BareMessage
 		{
 			get  { return bareMessage; }
 		}
@@ -114,12 +114,12 @@ namespace System.Configuration
 			get { throw new NotImplementedException (); }
 		}
 
-		public new string Filename
+		public override string Filename
 		{
 			get { return filename; }
 		}
 		
-		public new int Line
+		public override int Line
 		{
 			get { return line; }
 		}
