@@ -1161,10 +1161,10 @@ namespace MonoTests.System.IO
 				fs.Write (buffer, 0, buffer.Length);
 				fs.Seek (0, SeekOrigin.Begin);
 				char a = Convert.ToChar (fs.ReadByte ());
-				Assert.AreEqual ('A', a, "#A1");
-				Assert.AreEqual (23, fs.Length, "#A2");
+				AssertEquals ("#A1", 'A', a);
+				AssertEquals ("#A2", 23, fs.Length);
 				int nread = fs.Read (buffer, 0, 5);
-				Assert.AreEqual (5, nread, "#A3");
+				AssertEquals ("#A3", 5, nread);
 			} finally {
 				if (fs != null)
 					fs.Close ();
