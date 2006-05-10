@@ -471,7 +471,7 @@ namespace System.Windows.Forms {
 							xevent.MotionEvent.y_root = y_temp;
 						}
 					}
-					
+
 					if (child == IntPtr.Zero)
 						break;
 					
@@ -641,9 +641,10 @@ namespace System.Windows.Forms {
 
 			allowed = EffectFromAction (xevent.ClientMessageEvent.ptr5);
 
-			IntPtr parent, child, new_child;
+			IntPtr parent, child, new_child, last_drop_child;
 			parent = XplatUIX11.XRootWindow (display, 0);
 			child = toplevel;
+			last_drop_child = IntPtr.Zero;
 			while (true) {
 				int xd, yd;
 				new_child = IntPtr.Zero;
@@ -655,7 +656,15 @@ namespace System.Windows.Forms {
 				if (new_child == IntPtr.Zero)
 					break;
 				child = new_child;
+
+				Hwnd h = Hwnd.ObjectFromHandle (child);
+				Control d = Control.FromHandle (h.client_window);
+				if (d != null && d.allow_drop)
+					last_drop_child = child;
 			}
+
+			if (last_drop_child != IntPtr.Zero)
+				child = last_drop_child;
 
 			if (target != child) {
 				// We have moved into a new control 
