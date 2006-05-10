@@ -1,3 +1,11 @@
+2006-05-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.h (MonoLiveInternal): New structure for representing liveness intervals
+	by a list of liveness ranges.
+
+	* liveness.c (mono_analyze_liveness2): A variant of the liveness computation
+	algorithm which uses liveness intervals instead of just one liveness range.
+
 2006-05-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* liveness.c (optimize_initlocals): Eliminate R8CONST as well.
