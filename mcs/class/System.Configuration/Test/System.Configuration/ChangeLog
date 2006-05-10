@@ -1,5 +1,9 @@
 2006-05-10  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* StringValidatorTest.cs : added NullZero().
+
+2006-05-10  Atsushi Enomoto  <atsushi@ximian.com>
+
 	(first ChangeLog entry here).
 
 	* ConfigurationManagerTest.cs :

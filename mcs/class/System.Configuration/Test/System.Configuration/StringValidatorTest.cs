@@ -48,6 +48,14 @@ namespace MonoTests.System.Configuration {
 		}
 
 		[Test]
+		public void NullZero ()
+		{
+			StringValidator v = new StringValidator (0);
+
+			v.Validate (null);
+		}
+
+		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void Null ()
 		{

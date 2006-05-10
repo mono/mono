@@ -63,8 +63,11 @@ namespace System.Configuration
 
 		public override void Validate (object value)
 		{
+			if (value == null && minLength <= 0)
+				return;
+
 			string s = (string) value;
-			if (s.Length < minLength)
+			if (s == null || s.Length < minLength)
 				throw new ArgumentException ("The string must be at least " + minLength + " characters long.");
 			if (s.Length > maxLength)
 				throw new ArgumentException ("The string must be no more than " + maxLength + " characters long.");

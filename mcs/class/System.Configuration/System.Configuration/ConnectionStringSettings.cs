@@ -48,7 +48,7 @@ namespace System.Configuration
 			_properties	= new ConfigurationPropertyCollection ();
 			_propName = new ConfigurationProperty ("name", typeof(string), null,
 							       TypeDescriptor.GetConverter (typeof (string)),
-							       new StringValidator (1),
+							       null,
 							       ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
 
 			_propProviderName = new ConfigurationProperty ("providerName", typeof (string), "",
