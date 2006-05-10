@@ -1,3 +1,8 @@
+2006-05-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c: Allocate memory for dynamically created methods in the image
+	mempools.
+
 2006-05-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* appdomain.c: In ves_icall_System_AppDomain_[Get|Set]Data functions, 
