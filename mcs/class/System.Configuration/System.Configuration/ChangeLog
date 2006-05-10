@@ -1,5 +1,10 @@
 2006-05-10  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ConnectionStringSettings.cs : oops, this API fix broke standalone
+	  test.
+
+2006-05-10  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ConfigurationElement.cs,
 	  ConfigurationErrorsException.cs,
 	  ConfigurationUserLevel.cs,

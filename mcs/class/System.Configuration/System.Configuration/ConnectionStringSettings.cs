@@ -51,7 +51,7 @@ namespace System.Configuration
 							       new StringValidator (1),
 							       ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
 
-			_propProviderName = new ConfigurationProperty ("providerName", typeof (string), "System.Data.SqlClient",
+			_propProviderName = new ConfigurationProperty ("providerName", typeof (string), "",
 								       ConfigurationPropertyOptions.None);
 
 			_propConnectionString = new ConfigurationProperty ("connectionString", typeof (string), "",
@@ -67,7 +67,7 @@ namespace System.Configuration
 		}
 
 		public ConnectionStringSettings (string name, string connectionString)
-			: this (name, connectionString, "System.Data.SqlClient")
+			: this (name, connectionString, "")
 		{
 		}
 
