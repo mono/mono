@@ -298,8 +298,7 @@ namespace System.Windows.Forms
 			if (Parent == null || !Visible)
 				return;
 
-			Size sz = CalculateSize ();
-			Layout (sz);
+			Layout (Parent.ButtonSize);
 		}
 
 		internal void Layout (Size size)

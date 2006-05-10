@@ -221,9 +221,12 @@ namespace System.Windows.Forms
 			get {
 				if (button_size.IsEmpty) {
 					if (buttons.Count == 0)
-						return new Size (39, 36);
+						return new Size (24, 22);
+					Size result = CalcButtonSize ();
+					if (result.IsEmpty)
+						return new Size (24, 22);
 					else
-						return CalcButtonSize ();
+						return result;
 				}
 				return button_size;
 			}
@@ -630,16 +633,21 @@ namespace System.Windows.Forms
 			Refresh ();
 		}
 
+		const int text_padding = 3;
+
 		private Size CalcButtonSize ()
 		{
-			String longestText = buttons [0].Text;
+			string longest_text = buttons [0].Text;
 			for (int i = 1; i < buttons.Count; i++) {
-				if (buttons[i].Text.Length > longestText.Length)
-					longestText = buttons[i].Text;
+				if (buttons[i].Text.Length > longest_text.Length)
+					longest_text = buttons[i].Text;
 			}
 
-			SizeF sz = this.DeviceContext.MeasureString (longestText, this.Font);
-			Size size = new Size ((int) Math.Ceiling (sz.Width), (int) Math.Ceiling (sz.Height));
+			Size size = Size.Empty;
+			if (longest_text != null && longest_text.Length > 0) {
+				SizeF sz = this.DeviceContext.MeasureString (longest_text, this.Font);
+				size = new Size ((int) Math.Ceiling (sz.Width) + 2 * text_padding, (int) Math.Ceiling (sz.Height));
+			}
 
 			if (ImageList != null) {
 				// adjustment for the image grip 
