@@ -416,6 +416,7 @@ namespace Mono.ILASM {
 %token K_HANDLER
 %token K_TLS
 %token K_FIELD
+%token K_PROPERTY
 %token K_REQUEST
 %token K_DEMAND
 %token K_ASSERT
