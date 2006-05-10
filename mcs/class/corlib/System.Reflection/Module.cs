@@ -162,7 +162,12 @@ namespace System.Reflection {
 	
 		public MethodInfo GetMethod (string name) 
 		{
-			return GetMethodImpl (name, defaultBindingFlags, null, CallingConventions.Any, Type.EmptyTypes, null);
+			// Can't call the other overloads since they call Type.GetMethod () which does a null check on the 'types' array
+			if (IsResource ())
+				return null;
+
+			Type globalType = GetGlobalType ();
+			return (globalType != null) ? globalType.GetMethod (name) : null;
 		}
 	
 		public MethodInfo GetMethod (string name, Type[] types) 
