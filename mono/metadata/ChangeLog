@@ -1,5 +1,10 @@
 2006-05-10  Martin Baulig  <martin@ximian.com>
 
+	* metadata.c (mono_type_size): Kill the g_assert() in MONO_TYPE_GENERICINST;
+	I thought I already killed that two months ago, but now it somehow reappeared.
+
+2006-05-10  Martin Baulig  <martin@ximian.com>
+
 	* mono-debug.c (mono_debug_add_method): Allow instantiated generic methods.
 
 2006-05-10  Zoltan Varga  <vargaz@gmail.com>
