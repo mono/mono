@@ -298,6 +298,7 @@ namespace System.Windows.Forms {
 
 		private void ListChangedHandler (object sender, ListChangedEventArgs e)
 		{
+			OnItemChanged (new ItemChangedEventArgs (-1));	
 			UpdateIsBinding ();
 		}
 

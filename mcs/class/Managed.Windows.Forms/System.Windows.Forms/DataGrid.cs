@@ -495,7 +495,7 @@ namespace System.Windows.Forms
 					SetDataSource (datasource);
 					if (styles_collection.Contains (value) == true) {
 						CurrentTableStyle = styles_collection[value];
-						current_style.CreateColumnsForTable (false);
+						current_style.CreateColumnsForTable (true);
 					} else {
 						CurrentTableStyle = default_style;
 						current_style.GridColumnStyles.Clear ();
@@ -1823,6 +1823,7 @@ namespace System.Windows.Forms
 		private void ConnectListManagerEvents ()
 		{
 			cached_currencymgr_events.CurrentChanged += new EventHandler (OnListManagerCurrentChanged);			
+			cached_currencymgr_events.ItemChanged += new ItemChangedEventHandler (OnListManagerItemChanged);
 		}
 		
 		private void DisconnectListManagerEvents ()
@@ -1984,11 +1985,20 @@ namespace System.Windows.Forms
 		}
 
 		private void SetNewDataSource ()
-		{				
-			if (ListManager != null && TableStyles[datamember] == null) {
-				current_style.GridColumnStyles.Clear ();
+		{		
+			if (ListManager != null && TableStyles[ListManager.ListName] == null) {
+				current_style.GridColumnStyles.Clear ();			
+				current_style.CreateColumnsForTable (false);
 			}
-			current_style.CreateColumnsForTable (false);
+			else {
+				// If the style has been defined by the user, use it
+				if (ListManager != null && CurrentTableStyle.MappingName != ListManager.ListName) {					
+					CurrentTableStyle = styles_collection[ListManager.ListName];
+					current_style.CreateColumnsForTable (true);
+				} else
+					current_style.CreateColumnsForTable (false);				
+			}
+			
 			CalcAreasAndInvalidate ();			
 		}
 
@@ -2015,8 +2025,18 @@ namespace System.Windows.Forms
 			CurrentCell = new DataGridCell (cached_currencymgr_events.Position, current_cell.RowNumber);
 		}
 		
-		private void OnTableStylesCollectionChanged (object sender, CollectionChangeEventArgs e)
+		private void OnListManagerItemChanged (object sender, ItemChangedEventArgs e)
 		{				
+			if (accept_listmgrevents == false) {
+				return;
+			}			
+			if (e.Index == -1) {				
+				CalcAreasAndInvalidate ();
+			}
+		}
+		
+		private void OnTableStylesCollectionChanged (object sender, CollectionChangeEventArgs e)
+		{
 			if (ListManager == null)
 				return;
 			

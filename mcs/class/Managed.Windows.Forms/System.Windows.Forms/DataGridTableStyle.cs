@@ -870,6 +870,7 @@ namespace System.Windows.Forms
 		internal void CreateColumnsForTable (bool onlyBind)
 		{
 			CurrencyManager	mgr = null;
+			DataGridColumnStyle st;
 			mgr = datagrid.ListManager;
 
 			if (mgr == null) {
@@ -881,9 +882,14 @@ namespace System.Windows.Forms
 			for (int i = 0; i < propcol.Count; i++)
 			{
 				// The column style is already provided by the user
-				if (column_styles[propcol[i].Name] != null) {
-					column_styles[propcol[i].Name].table_style = this;
-					column_styles[propcol[i].Name].SetDataGridInternal (datagrid);
+				st = column_styles[propcol[i].Name];
+				if (st != null) {
+					st.table_style = this;
+					st.SetDataGridInternal (datagrid);
+					
+					if (st.Width == -1)
+						st.Width = CurrentPreferredColumnWidth;
+
 					continue;
 				}
 
@@ -897,7 +903,7 @@ namespace System.Windows.Forms
 					Console.WriteLine ("CreateColumnsForTable::System.Data.DataTablePropertyDescriptor");
 
 				} else {
-					DataGridColumnStyle st = CreateGridColumn (propcol[i],  true);
+					st = CreateGridColumn (propcol[i],  true);
 					st.grid = datagrid;
 					st.MappingName = propcol[i].Name;
 					st.HeaderText = propcol[i].Name;

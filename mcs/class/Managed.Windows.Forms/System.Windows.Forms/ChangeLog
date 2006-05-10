@@ -1,3 +1,12 @@
+2006-05-10  Jordi Mas i Hernandez <jordimash@gmail.com>
+
+	* DataGrid.cs:
+	  - Recalculate grid when the data source has changed
+	  - Matches styles provided by user from all data sources types
+	* DataGridTableStyle.cs: For columns that provided by the user set the
+	with the preferred value is there was unassigned.
+	* CurrencyManager.cs: throw OnItemChanged event
+
 2006-05-10  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* PictureBox.cs: Don't animate until handle is created. Start animation
