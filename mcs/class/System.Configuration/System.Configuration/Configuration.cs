@@ -240,11 +240,15 @@ namespace System.Configuration {
 			}
 
 			ConfigurationSection parentSection = parent != null ? parent.GetSectionInstance (config, true) : null;
-			sec.RawXml = data as string;
+
+			string xml = data as string;
+			if (xml == null && parentSection != null)
+				xml = parentSection.RawXml;
+			sec.RawXml = xml;
 			sec.Reset (parentSection);
 
-			if (data is string) {
-				XmlTextReader r = new XmlTextReader (new StringReader (data as string));
+			if (xml != null && xml == data) {
+				XmlTextReader r = new XmlTextReader (new StringReader (xml));
 				sec.DeserializeSection (r);
 				r.Close ();
 			}

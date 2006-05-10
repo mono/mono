@@ -1,5 +1,11 @@
 2006-05-10  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Configuration.cs : some kind of refactoring is absolutely needed
+	  here. Reuse RawXml from parentSection when data was not available
+	  on current section. This should fix bug #78353.
+
+2006-05-10  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ConfigurationElement.cs,
 	  DefaultSection.cs :
 	  in some cases RawXml was set null string, so skip such cases.
