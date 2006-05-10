@@ -1,5 +1,11 @@
 2006-05-10  Ankit Jain  <jankit@novell.com>
 
+	* ILParser.jay (native_type | K_ERROR): Use NativeType.Error for the
+	value.
+	(native_type | K_LPSTRUCT): Likewise for K_LPSTRUCT.
+
+2006-05-10  Ankit Jain  <jankit@novell.com>
+
 	* ILParser.jay: Add K_PROPERTY.
 
 2006-02-20  Ankit Jain  <jankit@novell.com>

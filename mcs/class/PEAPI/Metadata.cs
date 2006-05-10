@@ -4031,6 +4031,8 @@ namespace PEAPI {
 		public static readonly NativeType VariantBool = new NativeType(0x25);
 		public static readonly NativeType FuncPtr = new NativeType(0x26);
 		public static readonly NativeType AsAny = new NativeType(0x28);
+		public static readonly NativeType LPStruct = new NativeType(0x2b);
+		public static readonly NativeType Error = new NativeType(0x2d);
 
 		protected byte typeIndex;
 
