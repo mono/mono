@@ -483,7 +483,7 @@ namespace System.Web.UI {
 
 				// Add the code file as an option to the
 				// compiler. This lets both files be compiled at once.
-				compilerOptions += " " + realPath;
+				compilerOptions += " \"" + realPath + "\"";
 			} else if (inherits != null) {
 				// We just set the inherits directly because this is a
 				// Single-Page model.

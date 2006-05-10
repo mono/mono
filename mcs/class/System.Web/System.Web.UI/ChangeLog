@@ -1,3 +1,7 @@
+2006-05-10  Andrew Skiba  <andrews@mainsoft.com>
+
+	* TemlpateParser.cs: surround file name with quotes
+
 2006-05-08  Chris Toshok  <toshok@ximian.com>
 
 	* ControlBuilder.cs (ResetState): set renderIndex to 0 here.  This
