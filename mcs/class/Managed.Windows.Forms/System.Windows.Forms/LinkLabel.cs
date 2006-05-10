@@ -539,6 +539,8 @@ namespace System.Windows.Forms
 			string_format.SetMeasurableCharacterRanges (charRanges);
 
 			// BUG: This sizes do not match the ones used later when drawing
+			if (link_font == null)
+				CreateLinkFont ();
 			charRegions = DeviceContext.MeasureCharacterRanges (Text, link_font, ClientRectangle, string_format);
 	
 			RectangleF rect;

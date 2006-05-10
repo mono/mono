@@ -1,5 +1,10 @@
 2006-05-10  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* LinkLabel.cs : link_font could be uninitialized, so populate one
+	  before actual use. Fixed bug #78340.
+
+2006-05-10  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XplatUIX11.cs : clipboard format native value is IntPtr.
 	  Fixed bug #78283.
 
