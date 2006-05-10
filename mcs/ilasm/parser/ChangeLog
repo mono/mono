@@ -1,3 +1,7 @@
+2006-05-10  Ankit Jain  <jankit@novell.com>
+
+	* ILParser.jay: Add K_PROPERTY.
+
 2006-02-20  Ankit Jain  <jankit@novell.com>
 
 	* ILParser.jay: Remove D_CONSTRAINT
