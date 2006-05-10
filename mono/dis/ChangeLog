@@ -1,3 +1,7 @@
+2006-05-10  Ankit Jain  <jankit@novell.com>
+
+	* get.c (init_key_table): Add keyword 'property'.
+
 2006-02-21  Ankit Jain  <jankit@novell.com>
 
 	* get.c (can_print_generic_param_name): Rename to ..
