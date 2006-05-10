@@ -30,6 +30,7 @@
 #if NET_2_0
 
 using System;
+using System.Collections.Specialized;
 using System.Configuration;
 using System.IO;
 using NUnit.Framework;
@@ -249,6 +250,11 @@ namespace MonoTests.System.Configuration {
 			Assert.AreEqual ("machine.config", fi.Name);
 		}
 
+		[Test]
+		public void GetSectionReturnsNativeObject ()
+		{
+			Assert.IsTrue (ConfigurationManager.GetSection ("appSettings") is NameValueCollection);
+		}
 	}
 }
 

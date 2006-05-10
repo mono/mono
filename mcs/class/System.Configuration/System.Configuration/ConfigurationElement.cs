@@ -67,7 +67,12 @@ namespace System.Configuration
 
 		internal string RawXml {
 			get { return rawXml; }
-			set { rawXml = value; }
+			set {
+				// FIXME: this hack is nasty. We should make
+				// some refactory on the entire assembly.
+				if (rawXml == null || value != null)
+					rawXml = value;
+			}
 		}
 
 		protected internal virtual void Init ()

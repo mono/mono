@@ -42,7 +42,9 @@ namespace System.Configuration {
 
 			Configuration cfg = ConfigurationManager.OpenExeConfigurationInternal (ConfigurationUserLevel.None, a, AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
 			if (cfg == null) return null;
-			return cfg.GetSection (configKey);
+
+			ConfigurationSection s = cfg.GetSection (configKey);
+			return s != null ? s.GetRuntimeObject () : null;
 		}
 
 		void IInternalConfigSystem.RefreshConfig (string sectionName)

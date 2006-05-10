@@ -168,8 +168,7 @@ namespace System.Configuration {
 
 		public static NameValueCollection AppSettings {
 			get {
-				AppSettingsSection appsettings = (AppSettingsSection) GetSection ("appSettings");
-				return (NameValueCollection)appsettings.GetRuntimeObject ();
+				return (NameValueCollection) GetSection ("appSettings");
 			}
 		}
 

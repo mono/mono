@@ -1,3 +1,19 @@
+2006-05-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ConfigurationElement.cs,
+	  DefaultSection.cs :
+	  in some cases RawXml was set null string, so skip such cases.
+	* Configuration.cs : support IConfigurationSectionHandler here.
+	* ConfigurationManager.cs : GetSection() now returns name value
+	  collection, not a section.
+	* ConfigurationSection.cs : added SectionHandler for
+	  IConfigurationSectionHandler support, and use its Create() in
+	  GetRuntimeObject().
+	* ClientConfigurationSystem.cs :
+	  use GetRuntimeObject() in GetSection(). Thus now
+	  ConfigurationManager.GetSection() returns a runtime object.
+	  Fixed bug #78337.
+
 2006-04-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SectionGroupInfo.cs :

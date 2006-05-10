@@ -38,11 +38,17 @@ namespace System.Configuration
 	public abstract class ConfigurationSection : ConfigurationElement
 	{
 		SectionInformation sectionInformation;
-		
+		IConfigurationSectionHandler section_handler;
+
 		protected ConfigurationSection ()
 		{
 		}
-		
+
+		internal IConfigurationSectionHandler SectionHandler {
+			get { return section_handler; }
+			set { section_handler = value; }
+		}
+
 		[MonoTODO]
 		public SectionInformation SectionInformation {
 			get {
@@ -51,9 +57,17 @@ namespace System.Configuration
 				return sectionInformation;
 			}
 		}
-		
+
+		[MonoTODO]
 		protected internal virtual object GetRuntimeObject ()
 		{
+			// FIXME: this hack is nasty. We should make some
+			// refactory on the entire assembly.
+			if (SectionHandler != null && RawXml != null) {
+				XmlDocument doc = new XmlDocument ();
+				doc.LoadXml (RawXml);
+				return SectionHandler.Create (null, null, doc.DocumentElement);
+			}
 			return this;
 		}
 

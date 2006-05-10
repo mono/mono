@@ -231,17 +231,19 @@ namespace System.Configuration {
 			ConfigurationSection sec = data as ConfigurationSection;
 			if (sec != null || !createDefaultInstance) return sec;
 			
-			object secObj = config.CreateInstance () as ConfigurationSection;
-			if (secObj == null)
-				sec = new IgnoreSection ();
-			else
-				sec = (ConfigurationSection) secObj;
-				
+			object secObj = config.CreateInstance ();
+			sec = secObj as ConfigurationSection;
+			if (sec == null) {
+				DefaultSection ds = new DefaultSection ();
+				ds.SectionHandler = secObj as IConfigurationSectionHandler;
+				sec = ds;
+			}
+
 			ConfigurationSection parentSection = parent != null ? parent.GetSectionInstance (config, true) : null;
 			sec.RawXml = data as string;
 			sec.Reset (parentSection);
-			
-			if (data != null) {
+
+			if (data is string) {
 				XmlTextReader r = new XmlTextReader (new StringReader (data as string));
 				sec.DeserializeSection (r);
 				r.Close ();

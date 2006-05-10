@@ -59,44 +59,23 @@ namespace System.Configuration
 
 		public static object GetConfig (string sectionName)
 		{
+#if NET_2_0 && CONFIGURATION_DEP
+			return ConfigurationManager.GetSection (sectionName);
+#else
 			return config.GetConfig (sectionName);
+#endif
 		}
 
 #if NET_2_0
 		[Obsolete ("This property is obsolete.  Please use System.Configuration.ConfigurationManager.AppSettings")]
 #endif
-#if NET_2_0 && CONFIGURATION_2_0
-		static NameValueCollection appSettingsCol;
-#endif
 		public static NameValueCollection AppSettings
 		{
 			get {
-#if NET_2_0 && CONFIGURATION_2_0
-#if CONFIGURATION_DEP
-				lock (lockobj) {
-					if (appSettingsCol == null) {
-						AppSettingsSection appSettings = (AppSettingsSection)GetConfig ("appSettings");
-
-						appSettingsCol = new NameValueCollection ();
-				
-						foreach (string key in appSettings.Settings.AllKeys) {
-							KeyValueConfigurationElement ele = appSettings.Settings[key];
-							appSettingsCol.Add (ele.Key, ele.Value);
-						}
-					}
-				}
-
-				return appSettingsCol;
-#else
-				return null;
-#endif
-#else
 				object appSettings = GetConfig ("appSettings");
 				if (appSettings == null)
 					appSettings = new NameValueCollection ();
-
 				return (NameValueCollection) appSettings;
-#endif
 			}
 		}
 
@@ -109,9 +88,6 @@ namespace System.Configuration
 			lock (lockobj) {
 				IConfigurationSystem old = config;
 				config = newSystem;
-#if NET_2_0 && CONFIGURATION_2_0
-				appSettingsCol = null;
-#endif
 				return old;
 			}
 		}
@@ -140,33 +116,8 @@ namespace System.Configuration
 #endif
 		public object GetConfig (string sectionName)
 		{
-#if NET_2_0 && CONFIGURATION_2_0
-#if CONFIGURATION_DEP
-			Init ();
-			object o = ConfigurationManager.GetSection (sectionName);
-			if (o == null || o is IgnoreSection) {
-				/* this can happen when the section
-				 * handler doesn't subclass from
-				 * ConfigurationSection.  let's be
-				 * nice and try to load it using the
-				 * 1.x style routines in case there's
-				 * a 1.x section handler registered
-				 * for it.
-				 */
-				object o1 = config.GetConfig (sectionName);
-				if (o1 != null)
-					return o1;
-			}
-
-			return o;
-#else
-			return null;
-#endif
-
-#else
 			Init ();
 			return config.GetConfig (sectionName);
-#endif
 		}
 
 		public void Init ()

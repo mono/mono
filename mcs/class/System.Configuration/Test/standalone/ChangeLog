@@ -1,3 +1,8 @@
+2006-05-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* t35.cs, t35.exe.config, t35.exe.expected :
+	  new test, largely from bug #78337.
+
 2006-04-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* t33.cs, t33.exe.config, t33.exe.expected,

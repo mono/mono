@@ -46,7 +46,13 @@ namespace System.Configuration {
 			// not sure if it is the right thing to do,
 			// but DefaultSection does not raise errors on
 			// unrecognized contents.
-			RawXml = xmlReader.ReadOuterXml ();
+
+			// FIXME: it is nothing more than hack: RawXml should
+			// not be set more than once.
+			if (RawXml == null)
+				RawXml = xmlReader.ReadOuterXml ();
+			else
+				xmlReader.Skip ();
 		}
 
 		[MonoTODO]
