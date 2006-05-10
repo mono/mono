@@ -137,10 +137,12 @@ namespace System.Windows.Forms {
 				}
 				if (hwnd.expose_pending) {
 					xevent.ExposeEvent.window = hwnd.client_window;
+#if not
 					xevent.ExposeEvent.x = hwnd.invalid.X;
 					xevent.ExposeEvent.y = hwnd.invalid.Y;
 					xevent.ExposeEvent.width = hwnd.invalid.Width;
 					xevent.ExposeEvent.height = hwnd.invalid.Height;
+#endif
 					return xevent;
 				} else {
 					xevent.ExposeEvent.window = hwnd.whole_window;
