@@ -1,5 +1,11 @@
 2006-05-10  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ConfigurationManager.cs : use GetCallingAssembly() instead of
+	  GetEntryAssembly() which possibly returns null (e.g. nunit) in
+	  OpenExeConfiguration(). Several nunit test failures are gone.
+
+2006-05-10  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ConnectionStringSettings.cs : oops, this API fix broke standalone
 	  test.
 

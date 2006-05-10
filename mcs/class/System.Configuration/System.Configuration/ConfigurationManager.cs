@@ -123,7 +123,7 @@ namespace System.Configuration {
 
 		public static Configuration OpenExeConfiguration (ConfigurationUserLevel userLevel)
 		{
-			return OpenExeConfigurationInternal (userLevel, Assembly.GetEntryAssembly (), null);
+			return OpenExeConfigurationInternal (userLevel, Assembly.GetCallingAssembly (), null);
 		}
 		
 		public static Configuration OpenExeConfiguration (string exePath)
