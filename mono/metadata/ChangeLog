@@ -1,3 +1,8 @@
+2006-05-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* marshal.c: In function mono_mb_add_local don't use the mb pointer 
+	before checking if it's NULL (g_assert).
+
 2006-05-10  Martin Baulig  <martin@ximian.com>
 
 	* metadata.c (mono_type_size): Kill the g_assert() in MONO_TYPE_GENERICINST;
