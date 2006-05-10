@@ -60,6 +60,7 @@ namespace System.Windows.Forms {
 			allow_drop = false;
 			SetStyle (ControlStyles.Selectable, false);
 			SetStyle (ControlStyles.SupportsTransparentBackColor, true);
+			HandleCreated += new EventHandler(PictureBox_HandleCreated);
 		}
 		#endregion	// Public Constructor
 
@@ -92,14 +93,16 @@ namespace System.Windows.Forms {
 
 				image = value;
 
-				UpdateSize ();
-				if (image != null && ImageAnimator.CanAnimate (image)) {
-					frame_handler = new EventHandler (OnAnimateImage);
-					ImageAnimator.Animate (image, frame_handler);
-				}
-				if (no_update == 0) {
-					Redraw (true);
-					Invalidate ();
+				if (IsHandleCreated) {
+					UpdateSize ();
+					if (image != null && ImageAnimator.CanAnimate (image)) {
+						frame_handler = new EventHandler (OnAnimateImage);
+						ImageAnimator.Animate (image, frame_handler);
+					}
+					if (no_update == 0) {
+						Redraw (true);
+						Invalidate ();
+					}
 				}
 			}
 		}
@@ -319,6 +322,17 @@ namespace System.Windows.Forms {
 			Refresh ();
 		}
 
+		private void PictureBox_HandleCreated(object sender, EventArgs e) {
+			UpdateSize ();
+			if (image != null && ImageAnimator.CanAnimate (image)) {
+				frame_handler = new EventHandler (OnAnimateImage);
+				ImageAnimator.Animate (image, frame_handler);
+			}
+			if (no_update == 0) {
+				Redraw (true);
+				Invalidate ();
+			}
+		}
 		#endregion	// Private Methods
 
 		#region Public Instance Methods
@@ -421,7 +435,6 @@ namespace System.Windows.Forms {
 
 		public event EventHandler SizeModeChanged;
 		#endregion	// Events
-
 	}
 }
 

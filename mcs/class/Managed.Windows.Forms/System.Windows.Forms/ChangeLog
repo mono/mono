@@ -1,3 +1,8 @@
+2006-05-10  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* PictureBox.cs: Don't animate until handle is created. Start animation
+	  when handle is created.
+
 2006-05-10  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* XplatUIX11.cs, Hwnd.cs: Adopted Mike's patch from #77979 to match
