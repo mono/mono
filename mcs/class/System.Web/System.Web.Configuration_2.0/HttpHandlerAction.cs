@@ -180,7 +180,7 @@ namespace System.Web.Configuration
 			try {
 				t = System.Type.GetType (type_name, true);
 			} catch (Exception e) {
-				throw new HttpException (String.Format ("Failed to load httpHandler type `{0}'", type_name));
+				throw new HttpException (String.Format ("Failed to load httpHandler type `{0}'", type_name), e);
 			}
 
 			if (typeof (IHttpHandler).IsAssignableFrom (t) ||
