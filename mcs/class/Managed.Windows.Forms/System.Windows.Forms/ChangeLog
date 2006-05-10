@@ -1,3 +1,9 @@
+2006-05-10  Mike Kestner  <mkestner@novell.com>
+
+	* ListBox.cs: use is_visible for scrollbar positioning in case the
+	control isn't on screen yet.  Fix off by one with Right vs Width
+	usage.  Update Scrollbars in SetBoundsCore. Fixes #78188 and #78258.
+	
 2006-05-10  Jackson Harper  <jackson@ximian.com>
 
 	* X11Dnd.cs: Drop to a control with another control on top of it.

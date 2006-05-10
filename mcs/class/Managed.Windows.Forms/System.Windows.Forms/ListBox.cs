@@ -891,6 +891,7 @@ namespace System.Windows.Forms
 			}
 
 			base.SetBoundsCore (x, y, width, height, specified);
+			UpdateScrollBars ();
 		}
 
 		protected override void SetItemCore (int index,  object value)
@@ -1580,14 +1581,14 @@ namespace System.Windows.Forms
 
 		internal void RepositionScrollBars ()
 		{
-			if (vscrollbar.Visible) {
+			if (vscrollbar.is_visible) {
 				vscrollbar.Size = new Size (vscrollbar.Width, items_area.Height);
-				vscrollbar.Location = new Point (items_area.Right, 0);
+				vscrollbar.Location = new Point (items_area.Width, 0);
 			}
 
-			if (hscrollbar.Visible) {
+			if (hscrollbar.is_visible) {
 				hscrollbar.Size = new Size (items_area.Width, hscrollbar.Height);
-				hscrollbar.Location = new Point (0, items_area.Bottom);
+				hscrollbar.Location = new Point (0, items_area.Height);
 			}
 		}
 
