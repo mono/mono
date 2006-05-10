@@ -1954,7 +1954,7 @@ namespace System.Windows.Forms {
 			result = new int[Clipboard.Formats.Count];
 
 			for (int i = 0; i < Clipboard.Formats.Count; i++) {
-				result[i] = (int)Clipboard.Formats[i];
+				result[i] = ((IntPtr)Clipboard.Formats[i]).ToInt32 ();
 			}
 
 			Clipboard.Formats = null;
