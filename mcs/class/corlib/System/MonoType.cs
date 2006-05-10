@@ -185,7 +185,6 @@ namespace System
 			MethodInfo[] methods = GetMethodsByName (name, bindingAttr, ignoreCase, this);
 			MethodInfo found = null;
 			MethodBase[] match;
-			int typesLen = (types != null) ? types.Length : 0;
 			int count = 0;
 			
 			foreach (MethodInfo m in methods) {
@@ -213,7 +212,7 @@ namespace System
 					match [count++] = m;
 				}
 			}
-			
+
 			if (types == null) 
 				return (MethodInfo) CheckMethodSecurity (Binder.FindMostDerivedMatch (match));
 
