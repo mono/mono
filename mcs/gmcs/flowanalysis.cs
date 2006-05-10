@@ -547,14 +547,14 @@ namespace Mono.CSharp
 			//   Returns a deep copy of the parameters.
 			// </summary>
 			public MyBitVector Parameters {
-				get { return parameters.Clone (); }
+				get { return parameters == null ? null : parameters.Clone (); }
 			}
 
 			// <summary>
 			//   Returns a deep copy of the locals.
 			// </summary>
 			public MyBitVector Locals {
-				get { return locals.Clone (); }
+				get { return locals == null ? null : locals.Clone (); }
 			}
 
 			public MyBitVector ParameterVector {
@@ -1588,6 +1588,9 @@ namespace Mono.CSharp
 
 		public bool IsAssigned (MyBitVector vector)
 		{
+			if (vector == null)
+				return true;
+
 			if (vector [Offset])
 				return true;
 
@@ -1792,10 +1795,9 @@ namespace Mono.CSharp
 	// </summary>
 	public class MyBitVector {
 		public readonly int Count;
-		public readonly MyBitVector InheritsFrom;
+		public MyBitVector InheritsFrom;
 		public static readonly MyBitVector Empty = new MyBitVector ();
 
-		bool is_dirty;
 		BitArray vector;
 
 		MyBitVector ()
@@ -1806,23 +1808,15 @@ namespace Mono.CSharp
 
 		public MyBitVector (MyBitVector InheritsFrom, int Count)
 		{
-			if (InheritsFrom == null)
-				throw new InternalErrorException ("");
+			if (InheritsFrom != null) {
+				while (InheritsFrom.InheritsFrom != null)
+					InheritsFrom = InheritsFrom.InheritsFrom;				
+				if (InheritsFrom.Count >= Count && InheritsFrom.vector == null)
+					InheritsFrom = null;
+			}
+
 			this.InheritsFrom = InheritsFrom;
 			this.Count = Count;
-		}
-
-		// <summary>
-		//   Checks whether this bit vector has been modified.  After setting this to true,
-		//   we won't use the inherited vector anymore, but our own copy of it.
-		// </summary>
-		public bool IsDirty {
-			get { return is_dirty; }
-
-			set {
-				if (!is_dirty)
-					initialize_vector ();
-			}
 		}
 
 		// <summary>
@@ -1840,39 +1834,21 @@ namespace Mono.CSharp
 
 				if (vector != null)
 					return vector [index];
-				else if (InheritsFrom != null) {
-					BitArray inherited = InheritsFrom.Vector;
-
-					if (index < inherited.Count)
-						return inherited [index];
-					else
-						return false;
-				} else
-					return false;
+				if (InheritsFrom == null)
+					return true;
+				if (index < InheritsFrom.Count)
+					return InheritsFrom [index];
+				return false;
 			}
 
 			set {
-				if (index >= Count)
-					throw new ArgumentOutOfRangeException ();
-
 				// Only copy the vector if we're actually modifying it.
-
 				if (this [index] != value) {
-					initialize_vector ();
-
+					if (vector == null)
+						initialize_vector ();
 					vector [index] = value;
 				}
 			}
-		}
-
-		// <summary>
-		//   If you explicitly convert the MyBitVector to a BitArray, you will get a deep
-		//   copy of the bit vector.
-		// </summary>
-		public static explicit operator BitArray (MyBitVector vector)
-		{
-			vector.initialize_vector ();
-			return vector.Vector;
 		}
 
 		// <summary>
@@ -1881,24 +1857,12 @@ namespace Mono.CSharp
 		// </summary>
 		private void Or (MyBitVector new_vector)
 		{
-			if (new_vector == null) {
-				for (int i = 0; i < Count; i++)
-					this [i] = true;
-				return;
-			}
+			int min = new_vector.Count;
+			if (Count < min)
+				min = Count;
 
-			BitArray new_array = new_vector.Vector;
-
-			initialize_vector ();
-
-			int upper;
-			if (vector.Count < new_array.Count)
-				upper = vector.Count;
-			else
-				upper = new_array.Count;
-
-			for (int i = 0; i < upper; i++)
-				vector [i] = vector [i] | new_array [i];
+			for (int i = 0; i < min; i++)
+				this [i] |= new_vector [i];
 		}
 
 		// <summary>
@@ -1907,39 +1871,34 @@ namespace Mono.CSharp
 		// </summary>
 		private void And (MyBitVector new_vector)
 		{
-			if (new_vector == null)
-				return;
+			int min = new_vector.Count;
+			if (Count < min)
+				min = Count;
 
-			BitArray new_array = new_vector.Vector;
+			for (int i = 0; i < min; i++)
+				this [i] &= new_vector [i];
 
-			initialize_vector ();
-
-			int lower, upper;
-			if (vector.Count < new_array.Count)
-				lower = upper = vector.Count;
-			else {
-				lower = new_array.Count;
-				upper = vector.Count;
-			}
-
-			for (int i = 0; i < lower; i++)
-				vector [i] = vector [i] & new_array [i];
-
-			for (int i = lower; i < upper; i++)
-				vector [i] = false;
+			for (int i = min; i < Count; i++)
+				this [i] = false;
 		}
 
 		public static void And (ref MyBitVector target, MyBitVector vector)
 		{
-			if (target != null)
-				target.And (vector);
-			else if (vector != null)
+			if (vector == null)
+				return;
+			if (target == null)
 				target = vector.Clone ();
+			else
+				target.And (vector);
 		}
 
 		public static void Or (ref MyBitVector target, MyBitVector vector)
 		{
-			if (target != null)
+			if (target == null)
+				return;
+			if (vector == null)
+				target = null;
+			else
 				target.Or (vector);
 		}
 
@@ -1950,56 +1909,42 @@ namespace Mono.CSharp
 		{
 			if (Count == 0)
 				return Empty;
-			MyBitVector retval = new MyBitVector (Empty, Count);
-			retval.Vector = Vector;
+			MyBitVector retval = new MyBitVector (this, Count);
+			retval.initialize_vector ();
 			return retval;
-		}
-
-		BitArray Vector {
-			get {
-				if (vector != null)
-					return vector;
-				else if (!is_dirty && (InheritsFrom != null))
-					return InheritsFrom.Vector;
-
-				initialize_vector ();
-
-				return vector;
-			}
-
-			set {
-				initialize_vector ();
-
-				for (int i = 0; i < System.Math.Min (vector.Count, value.Count); i++)
-					vector [i] = value [i];
-			}
 		}
 
 		void initialize_vector ()
 		{
-			if (vector != null)
+			if (InheritsFrom == null) {
+				vector = new BitArray (Count, true);
 				return;
-			
-			vector = new BitArray (Count, false);
-			if (InheritsFrom != null)
-				Vector = InheritsFrom.Vector;
+			}
 
-			is_dirty = true;
+			vector = new BitArray (Count, false);
+
+			int min = InheritsFrom.Count;
+			if (min > Count)
+				min = Count;
+
+			for (int i = 0; i < min; i++)
+				vector [i] = InheritsFrom [i];
+
+			InheritsFrom = null;
+		}
+
+		StringBuilder Dump (StringBuilder sb)
+		{
+			if (vector == null)
+				return InheritsFrom == null ? sb.Append ("/") : InheritsFrom.Dump (sb.Append ("="));
+			for (int i = 0; i < Count; i++)
+				sb.Append (this [i] ? "1" : "0");
+			return sb;
 		}
 
 		public override string ToString ()
 		{
-			StringBuilder sb = new StringBuilder ("{");
-
-			BitArray vector = Vector;
-			if (!IsDirty)
-				sb.Append ("=");
-			for (int i = 0; i < vector.Count; i++) {
-				sb.Append (vector [i] ? "1" : "0");
-			}
-			
-			sb.Append ("}");
-			return sb.ToString ();
+			return Dump (new StringBuilder ("{")).Append ("}").ToString ();
 		}
 	}
 }
