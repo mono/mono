@@ -398,6 +398,12 @@ namespace System.Windows.Forms {
 			lock_sizing = false;
 		}
 
+		internal void CloseChildForm (Form form)
+		{
+			Controls.Remove (form);
+			form.Close ();
+		}
+
 		internal void ActivateNextChild ()
 		{
 			if (Controls.Count < 1)

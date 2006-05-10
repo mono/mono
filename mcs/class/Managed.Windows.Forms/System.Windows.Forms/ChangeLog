@@ -1,3 +1,11 @@
+2006-05-10  Jackson Harper  <jackson@ximian.com>
+
+	* MdiClient.cs: We need to remove the controls from the mdi
+	collection, when we close the window.
+	* MdiWindowManager.cs: Special handling of closing mdi windows.
+	* InternalWindowManager.cs: Make the close method virtual so the
+	mdi window manager can handle it specially.
+
 2006-05-10  Jordi Mas i Hernandez <jordimash@gmail.com>
 
 	* DataGrid.cs:

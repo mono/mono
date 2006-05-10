@@ -250,6 +250,12 @@ namespace System.Windows.Forms {
 					pb.Height + TitleBarHeight + BorderWidth * 2);
 		}
 
+
+		protected override void CloseClicked (object sender, EventArgs e)
+		{
+			mdi_container.CloseChildForm (form);
+		}
+
 		/*
 		public override void UpdateBorderStyle (FormBorderStyle border_style)
 		{

@@ -689,7 +689,7 @@ namespace System.Windows.Forms {
 
 		}
 
-		private void CloseClicked (object sender, EventArgs e)
+		protected virtual void CloseClicked (object sender, EventArgs e)
 		{
 			form.Close ();
 		}
