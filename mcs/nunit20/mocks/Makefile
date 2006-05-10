@@ -13,6 +13,6 @@ NO_INSTALL = yes
 endif
 
 
-EXTRA_DISTFILES = nunit.mocks.dll.csproj
+EXTRA_DISTFILES = nunit.mocks.csproj
 
 include ../../build/library.make
