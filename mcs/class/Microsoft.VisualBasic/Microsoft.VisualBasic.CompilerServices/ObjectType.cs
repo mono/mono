@@ -2081,7 +2081,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 
 		private static int getObjTstInt64(object o1,object o2,TypeCode tc1,TypeCode tc2) {
 			long l1 = convertObjectToLong(o1,tc1);
-			long l2 = convertObjectToLong(o1,tc1);
+			long l2 = convertObjectToLong(o2,tc2);
 			if (l1 < l2)
 				return -1;
 			if (l1 > l2)
