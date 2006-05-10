@@ -370,17 +370,6 @@ namespace System.Web {
 			return e.GetChars (b.GetBuffer (), 0, (int) b.Length);
 		}
 
-		static bool TryParseHexa (string str, out uint result)
-		{
-			result = 0;
-			try {
-				result = UInt32.Parse (str, NumberStyles.HexNumber, CultureInfo.InvariantCulture);
-				return true;
-			} catch {
-				return false;
-			}
-		}
-
 		public static string UrlDecode (string s, Encoding e)
 		{
 			if (null == s) 
@@ -395,7 +384,7 @@ namespace System.Web {
 			StringBuilder output = new StringBuilder ();
 			long len = s.Length;
 			MemoryStream bytes = new MemoryStream ();
-			uint xchar;
+			int xchar;
 	
 			for (int i = 0; i < len; i++) {
 				if (s [i] == '%' && i + 2 < len && s [i + 1] != '%') {
@@ -405,13 +394,14 @@ namespace System.Web {
 							bytes.SetLength (0);
 						}
 
-						if (TryParseHexa (s.Substring (i + 2, 4), out xchar)) {
+						xchar = GetChar (s, i + 2, 4);
+						if (xchar != -1) {
 							output.Append ((char) xchar);
 							i += 5;
 						} else {
 							output.Append ('%');
 						}
-					} else if (TryParseHexa (s.Substring (i + 1, 2), out xchar)) {
+					} else if ((xchar = GetChar (s, i + 1, 2)) != -1) {
 						bytes.WriteByte ((byte) xchar);
 						i += 2;
 					} else {
@@ -475,6 +465,24 @@ namespace System.Web {
 			}
 
 			return value;
+		}
+
+		private static int GetChar (string str, int offset, int length)
+		{
+			int val = 0;
+			int end = length + offset;
+			for (int i = offset; i < end; i++) {
+				char c = str [i];
+				if (c > 127)
+					return -1;
+
+				int current = GetInt ((byte) c);
+				if (current == -1)
+					return -1;
+				val = (val << 4) + current;
+			}
+
+			return val;
 		}
 		
 		public static string UrlDecode (byte [] bytes, int offset, int count, Encoding e)

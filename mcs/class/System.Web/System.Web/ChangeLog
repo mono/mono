@@ -1,3 +1,7 @@
+2006-05-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpUtility.cs: get rid of TryParseHexa.
+
 2006-04-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplicationFactory.cs: make sure that the application start event
