@@ -1,3 +1,12 @@
+2006-05-10  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Control.cs: 
+	  - Instead of showing context menus directly we send WM_CONTEXTMENU, 
+	    which is passed up the parent chain by DefWndProc
+	  - We now handle WM_CONTEXTMENU to display any menu, or pass it 
+	    to DefWndProc (#77956)
+	* XplatUIX11.cs: Added handling of WM_CONTEXTMENU (pass up) to DefWndProc
+
 2006-05-10  Jackson Harper  <jackson@ximian.com>
 
 	* MdiClient.cs: We need to remove the controls from the mdi

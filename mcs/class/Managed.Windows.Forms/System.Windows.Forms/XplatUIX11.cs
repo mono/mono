@@ -2479,6 +2479,17 @@ namespace System.Windows.Forms {
 					return IntPtr.Zero;
 				}
 
+				case Msg.WM_CONTEXTMENU: {
+					Hwnd hwnd;
+
+					hwnd = Hwnd.GetObjectFromWindow(msg.HWnd);
+
+					if ((hwnd != null) && (hwnd.parent != null)) {
+						SendMessage(hwnd.parent.client_window, Msg.WM_CONTEXTMENU, msg.WParam, msg.LParam);
+					}
+					return IntPtr.Zero;
+				}
+
 				case Msg.WM_SETCURSOR: {
 					Hwnd	hwnd;
 

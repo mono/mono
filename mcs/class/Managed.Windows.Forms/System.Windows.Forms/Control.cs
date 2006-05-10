@@ -2989,7 +2989,6 @@ namespace System.Windows.Forms
 
 		public virtual void Refresh() {			
 			if (IsHandleCreated == true) {
-
 				Invalidate();
 				XplatUI.UpdateWindow(window.Handle);
 
@@ -3909,11 +3908,14 @@ namespace System.Windows.Forms
 				}
 
 				case Msg.WM_RBUTTONUP: {
-					MouseEventArgs me;
+					MouseEventArgs	me;
+					Point		pt;
 
-					if (context_menu != null) {
-						context_menu.Show(this, new Point(LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ())));
-					}
+					pt = new Point(LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()));
+					pt = PointToScreen(pt);
+
+					XplatUI.SendMessage(m.HWnd, Msg.WM_CONTEXTMENU, m.HWnd, (IntPtr)(pt.X + (pt.Y << 16)));
+
 					me = new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()) | MouseButtons.Right, 
 						mouse_clicks, 
 						LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
@@ -3946,6 +3948,19 @@ namespace System.Windows.Forms
 					OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
 						mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
 						0));
+					return;
+				}
+
+				case Msg.WM_CONTEXTMENU: {
+					if (context_menu != null) {
+						Point	pt;
+
+						pt = new Point(LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()));
+						context_menu.Show(this, PointToClient(pt));
+						return;
+					}
+
+					DefWndProc(ref m);
 					return;
 				}
 
