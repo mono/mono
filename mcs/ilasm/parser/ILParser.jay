@@ -1223,6 +1223,9 @@ native_type		: /* EMPTY */
                                 $$ = NativeType.Float64;
                           }
 			| K_ERROR
+                          {
+                                $$ = NativeType.Error;
+                          }
 			| K_UNSIGNED K_INT8
                           {
                                 $$ = NativeType.UInt8;
@@ -1351,6 +1354,9 @@ native_type		: /* EMPTY */
                                 $$ = NativeType.AsAny;
                           }
 			| K_LPSTRUCT
+                          {
+                                $$ = NativeType.LPStruct;
+                          }
 			;
 
 variant_type		: /* EMPTY */
