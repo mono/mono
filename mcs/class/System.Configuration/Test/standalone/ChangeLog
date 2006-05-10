@@ -1,5 +1,11 @@
 2006-05-10  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* t36.cs, t36-lib.cs, t36.exe.config, t36.exe.expected :
+	  new test for bug #77236.
+	* Makefile : added a trick for building this test.
+
+2006-05-10  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* t35.cs, t35.exe.config, t35.exe.expected :
 	  new test, largely from bug #78337.
 
