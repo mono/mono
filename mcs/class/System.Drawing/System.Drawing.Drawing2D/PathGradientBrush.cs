@@ -33,6 +33,7 @@ using System.ComponentModel;
 
 namespace System.Drawing.Drawing2D {
 
+	[MonoTODO ("libgdiplus/cairo doesn't support path gradients - unless it can be mapped to a radial gradient")]
 	public sealed class PathGradientBrush : Brush {
 
 		internal PathGradientBrush (IntPtr native) : base (native)
