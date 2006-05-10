@@ -530,6 +530,8 @@ namespace System.Windows.Forms
 			Point loc = new Point (me.X, me.Y);
 
 			// draw the normal button
+			// Make a copy in case the list is modified during enumeration
+			ArrayList buttons = new ArrayList (this.buttons);
 			foreach (ToolBarButton button in buttons) {
 				if (button.Enabled && button.Rectangle.Contains (loc)) {
 					if (button.Style == ToolBarButtonStyle.DropDownButton) {

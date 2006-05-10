@@ -1,6 +1,9 @@
 2006-05-10  Jackson Harper  <jackson@ximian.com>
 
 	* X11Dnd.cs: Drop to a control with another control on top of it.
+	* ToolBar.cs: Work on a copy of the buttons list, so that it can
+	be modified in click handlers. TODO: Look for similar problems in
+	other controls.
 
 2006-05-09  Jackson Harper  <jackson@ximian.com>
 
