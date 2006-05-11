@@ -1,3 +1,14 @@
+2006-05-11  Ankit Jain  <jankit@novell.com>
+
+	* Report.cs (Report.Error): Add 2 new overloads.
+	(ILAsmException.ctor): Add 2 new overloads, with location and file_path
+	params.
+	(ILAsmException.Location):
+	(ILAsmException.FilePath): New properties.
+	(ILAsmException.ToString): Return formatted error message.
+	* Driver.cs (DriverMain.ProcessFile): Improve error message display.
+	(DriverMain.Run): Use ILAsmException.ToString (). 
+
 2006-05-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Driver.cs: Move up the loading of the strongname key pair to allow
