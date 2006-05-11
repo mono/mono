@@ -1,3 +1,14 @@
+2006-05-11  Raja R Harinath  <rharinath@novell.com>
+
+	* flowanalysis.cs (UsageVector.IsDirty): Remove.
+	(UsageVector.Parameters, UsageVector.ParameterVector): Likewise.
+	(UsageVector.Locals, UsageVector.LocalVector): Likewise.
+	(UsageVector.ToString): Simplify.
+	(UsageVector.MergeSiblings): Move here from ...
+	(FlowBranching.Merge): ... here.
+	(FlowBranchingToplevel.CheckOutParameters): Take an UsageVector,
+	not a MyBitVector.
+
 2006-05-10  Raja R Harinath  <rharinath@novell.com>
 
 	* flowanalysis.cs (UsageVector.MergeOrigins): Simplify, now that a

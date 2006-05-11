@@ -275,12 +275,6 @@ namespace Mono.CSharp
 			public readonly Block Block;
 
 			// <summary>
-			//   If this is true, then the usage vector has been modified and must be
-			//   merged when we're done with this branching.
-			// </summary>
-			public bool IsDirty;
-
-			// <summary>
 			//   The number of parameters in this block.
 			// </summary>
 			public readonly int CountParameters;
@@ -380,7 +374,6 @@ namespace Mono.CSharp
 				if (!var.IsParameter && Reachability.IsUnreachable)
 					return;
 
-				IsDirty = true;
 				var.SetAssigned (var.IsParameter ? parameters : locals);
 			}
 
@@ -397,7 +390,6 @@ namespace Mono.CSharp
 				if (!var.IsParameter && Reachability.IsUnreachable)
 					return;
 
-				IsDirty = true;
 				var.SetFieldAssigned (var.IsParameter ? parameters : locals, name);
 			}
 
@@ -407,16 +399,13 @@ namespace Mono.CSharp
 
 			public void Return ()
 			{
-				if (!reachability.IsUnreachable) {
-					IsDirty = true;
+				if (!reachability.IsUnreachable)
 					reachability.SetReturns ();
-				}
 			}
 
 			public void Throw ()
 			{
 				if (!reachability.IsUnreachable) {
-					IsDirty = true;
 					reachability.SetThrows ();
 					reachability.SetBarrier ();
 				}
@@ -424,10 +413,82 @@ namespace Mono.CSharp
 
 			public void Goto ()
 			{
-				if (!reachability.IsUnreachable) {
-					IsDirty = true;
+				if (!reachability.IsUnreachable)
 					reachability.SetBarrier ();
+			}
+
+			public static UsageVector MergeSiblings (UsageVector sibling_list, Location loc)
+			{
+				if (sibling_list.Next == null)
+					return sibling_list;
+
+				MyBitVector locals = null;
+				MyBitVector parameters = null;
+				Reachability reachability = null;
+
+				for (UsageVector child = sibling_list; child != null; child = child.Next) {
+					Report.Debug (2, "    MERGING SIBLING   ", reachability, child);
+
+					if (reachability == null)
+						reachability = child.Reachability.Clone ();
+					else
+						reachability.Meet (child.Reachability);
+
+					// A local variable is initialized after a flow branching if it
+					// has been initialized in all its branches which do neither
+					// always return or always throw an exception.
+					//
+					// If a branch may return, but does not always return, then we
+					// can treat it like a never-returning branch here: control will
+					// only reach the code position after the branching if we did not
+					// return here.
+					//
+					// It's important to distinguish between always and sometimes
+					// returning branches here:
+					//
+					//    1   int a;
+					//    2   if (something) {
+					//    3      return;
+					//    4      a = 5;
+					//    5   }
+					//    6   Console.WriteLine (a);
+					//
+					// The if block in lines 3-4 always returns, so we must not look
+					// at the initialization of `a' in line 4 - thus it'll still be
+					// uninitialized in line 6.
+					//
+					// On the other hand, the following is allowed:
+					//
+					//    1   int a;
+					//    2   if (something)
+					//    3      a = 5;
+					//    4   else
+					//    5      return;
+					//    6   Console.WriteLine (a);
+					//
+					// Here, `a' is initialized in line 3 and we must not look at
+					// line 5 since it always returns.
+					// 
+					bool unreachable = child.Reachability.IsUnreachable;
+
+					Report.Debug (2, "    MERGING SIBLING #1", reachability,
+						      child.Type, child.Reachability.IsUnreachable, unreachable);
+
+					if (!unreachable)
+						MyBitVector.And (ref locals, child.locals);
+
+					// An `out' parameter must be assigned in all branches which do
+					// not always throw an exception.
+					if (!child.Reachability.AlwaysThrows)
+						MyBitVector.And (ref parameters, child.parameters);
+
+					Report.Debug (2, "    MERGING SIBLING #2", parameters, locals);
 				}
+				
+				if (reachability == null)
+					throw new InternalErrorException ("Cannot happen: the loop above runs at least twice");
+
+				return new UsageVector (parameters, locals, reachability, null, loc);
 			}
 
 			// <summary>
@@ -435,7 +496,7 @@ namespace Mono.CSharp
 			// </summary>
 			public UsageVector MergeChild (UsageVector child, bool implicit_block)
 			{
-				Report.Debug (2, "    MERGING CHILD EFFECTS", this, child, IsDirty, reachability, Type);
+				Report.Debug (2, "    MERGING CHILD EFFECTS", this, child, reachability, Type);
 
 				Reachability new_r = child.Reachability;
 
@@ -455,15 +516,13 @@ namespace Mono.CSharp
 					return child;
 				}
 
-				MyBitVector.Or (ref locals, child.LocalVector);
-				MyBitVector.Or (ref parameters, child.ParameterVector);
+				MyBitVector.Or (ref locals, child.locals);
+				MyBitVector.Or (ref parameters, child.parameters);
 
 				if (implicit_block)
 					reachability = new_r.Clone ();
 				else
 					reachability.Or (new_r);
-
-				IsDirty = true;
 
 				return child;
 			}
@@ -538,53 +597,13 @@ namespace Mono.CSharp
 				Report.Debug (1, "  MERGING BREAK ORIGINS DONE", this);
 			}
 
-			// <summary>
-			//   Returns a deep copy of the parameters.
-			// </summary>
-			public MyBitVector Parameters {
-				get { return parameters == null ? null : parameters.Clone (); }
-			}
-
-			// <summary>
-			//   Returns a deep copy of the locals.
-			// </summary>
-			public MyBitVector Locals {
-				get { return locals == null ? null : locals.Clone (); }
-			}
-
-			public MyBitVector ParameterVector {
-				get { return parameters; }
-			}
-
-			public MyBitVector LocalVector {
-				get { return locals; }
-			}
-
 			//
 			// Debugging stuff.
 			//
 
 			public override string ToString ()
 			{
-				StringBuilder sb = new StringBuilder ();
-
-				sb.Append ("Vector (");
-				sb.Append (Type);
-				sb.Append (",");
-				sb.Append (id);
-				sb.Append (",");
-				sb.Append (IsDirty);
-				sb.Append (",");
-				sb.Append (reachability);
-				if (parameters != null) {
-					sb.Append (" - ");
-					sb.Append (parameters);
-				}
-				sb.Append (" - ");
-				sb.Append (locals);
-				sb.Append (")");
-
-				return sb.ToString ();
+				return String.Format ("Vector ({0},{1},{2}-{3}-{4})", Type, id, reachability, parameters, locals);
 			}
 		}
 
@@ -657,85 +676,6 @@ namespace Mono.CSharp
 		}
 
 		public abstract void Label (UsageVector origin_vectors);
-
-		protected UsageVector Merge (UsageVector sibling_list)
-		{
-			if (sibling_list.Next == null)
-				return sibling_list;
-
-			MyBitVector locals = null;
-			MyBitVector parameters = null;
-
-			Reachability reachability = null;
-
-			Report.Debug (2, "  MERGING SIBLINGS", this, Name);
-
-			for (UsageVector child = sibling_list; child != null; child = child.Next) {
-				Report.Debug (2, "    MERGING SIBLING   ", reachability, child);
-
-				if (reachability == null)
-					reachability = child.Reachability.Clone ();
-				else
-					reachability.Meet (child.Reachability);
-
-				// A local variable is initialized after a flow branching if it
-				// has been initialized in all its branches which do neither
-				// always return or always throw an exception.
-				//
-				// If a branch may return, but does not always return, then we
-				// can treat it like a never-returning branch here: control will
-				// only reach the code position after the branching if we did not
-				// return here.
-				//
-				// It's important to distinguish between always and sometimes
-				// returning branches here:
-				//
-				//    1   int a;
-				//    2   if (something) {
-				//    3      return;
-				//    4      a = 5;
-				//    5   }
-				//    6   Console.WriteLine (a);
-				//
-				// The if block in lines 3-4 always returns, so we must not look
-				// at the initialization of `a' in line 4 - thus it'll still be
-				// uninitialized in line 6.
-				//
-				// On the other hand, the following is allowed:
-				//
-				//    1   int a;
-				//    2   if (something)
-				//    3      a = 5;
-				//    4   else
-				//    5      return;
-				//    6   Console.WriteLine (a);
-				//
-				// Here, `a' is initialized in line 3 and we must not look at
-				// line 5 since it always returns.
-				// 
-				bool unreachable = child.Reachability.IsUnreachable;
-
-				Report.Debug (2, "    MERGING SIBLING #1", reachability,
-					      Type, child.Type, child.Reachability.IsUnreachable, unreachable);
-
-				if (!unreachable)
-					MyBitVector.And (ref locals, child.LocalVector);
-
-				// An `out' parameter must be assigned in all branches which do
-				// not always throw an exception.
-				if (!child.Reachability.AlwaysThrows)
-					MyBitVector.And (ref parameters, child.ParameterVector);
-
-				Report.Debug (2, "    MERGING SIBLING #2", parameters, locals);
-			}
-
-			if (reachability == null)
-				throw new InternalErrorException ("Cannot happen: the loop above runs at least twice");
-
-			Report.Debug (2, "  MERGING SIBLINGS DONE", parameters, locals, reachability);
-
-			return new UsageVector (parameters, locals, reachability, null, Location);
-		}
 
 		protected abstract UsageVector Merge ();
 
@@ -871,7 +811,10 @@ namespace Mono.CSharp
 
 		protected override UsageVector Merge ()
 		{
-			return Merge (sibling_list);
+			Report.Debug (2, "  MERGING SIBLINGS", Name);
+			UsageVector vector = UsageVector.MergeSiblings (sibling_list, Location);
+			Report.Debug (2, "  MERGING SIBLINGS DONE", Name, vector);
+			return vector;
 		}
 	}
 
@@ -943,18 +886,15 @@ namespace Mono.CSharp
 		// <summary>
 		//   Check whether all `out' parameters have been assigned.
 		// </summary>
-		void CheckOutParameters (MyBitVector parameters, Location loc)
+		void CheckOutParameters (UsageVector vector, Location loc)
 		{
-			if (parameters == null)
-				return;
-
 			for (int i = 0; i < param_map.Count; i++) {
 				VariableInfo var = param_map [i];
 
 				if (var == null)
 					continue;
 
-				if (var.IsAssigned (parameters))
+				if (vector.IsAssigned (var, false))
 					continue;
 
 				Report.Error (177, loc, "The out parameter `{0}' must be assigned to before control leaves the current method",
@@ -981,7 +921,7 @@ namespace Mono.CSharp
 
 		public override bool AddReturnOrigin (UsageVector vector, Location loc)
 		{
-			CheckOutParameters (vector.Parameters, loc);
+			CheckOutParameters (vector, loc);
 			return false;
 		}
 
@@ -997,7 +937,7 @@ namespace Mono.CSharp
 			Report.Debug (4, "MERGE TOP BLOCK", Location, result);
 
 			if (!result.Reachability.AlwaysThrows && !result.Reachability.AlwaysHasBarrier)
-				CheckOutParameters (result.Parameters, Location);
+				CheckOutParameters (result, Location);
 
 			return result.Reachability;
 		}
@@ -1134,7 +1074,9 @@ namespace Mono.CSharp
 
 		protected override UsageVector Merge ()
 		{
-			UsageVector vector = Merge (catch_vectors);
+			Report.Debug (2, "  MERGING TRY/CATCH", Name);
+			UsageVector vector = UsageVector.MergeSiblings (catch_vectors, Location);
+			Report.Debug (2, "  MERGING TRY/CATCH DONE", vector);
 
 			if (finally_vector != null)
 				vector.MergeChild (finally_vector, false);
