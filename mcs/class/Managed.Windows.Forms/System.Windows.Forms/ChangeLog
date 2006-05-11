@@ -1,3 +1,7 @@
+2006-05-11  Jackson Harper  <jackson@ximian.com>
+
+	* MdiClient.cs: Improved layout code.
+
 2006-05-11  Jonathan Chambers  <jonathan.chambers@ansys.com>
 
 	* PropertyGrid.cs : Only check GetPropertiesSupported for properties,

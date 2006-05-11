@@ -43,6 +43,7 @@ namespace System.Windows.Forms {
 		private int hbar_value;
 		private int vbar_value;
 		private bool lock_sizing;
+		private LayoutEventHandler initial_layout_handler;
 		
 		#endregion	// Local Variables
 
@@ -89,7 +90,8 @@ namespace System.Windows.Forms {
 			Dock = DockStyle.Fill;
 			SetStyle (ControlStyles.Selectable, false);
 
-			parent.VisibleChanged += new EventHandler (VisibleChangedHandler);
+			initial_layout_handler = new LayoutEventHandler (InitialLayoutHandler);
+			Layout += initial_layout_handler;
 		}
 		#endregion	// Public Constructors
 
@@ -104,14 +106,10 @@ namespace System.Windows.Forms {
 			get { return (Form) Parent; }
 		}
 
-		private bool layout_done;
-
-		private void VisibleChangedHandler (object sender, EventArgs e)
+		private void InitialLayoutHandler (object sender, LayoutEventArgs e)
 		{
-			if (layout_done)
-				return;
 			LayoutMdi (MdiLayout.Cascade);
-			layout_done = true;
+			Layout -= initial_layout_handler;
 		}
 
 		protected override Control.ControlCollection CreateControlsInstance ()
@@ -188,24 +186,19 @@ namespace System.Windows.Forms {
 				int i = 0;
 				for (int c = Controls.Count - 1; c >= 0; c--) {
 					Form form = (Form) Controls [c];
-					int l = 25 * i + 1;
-					int t = 25 * i + 1;
 
-					Console.WriteLine ("{0}  {1}    :   {2}   {3}",
-							l + form.Width, Width, t + form.Height, Height);
-					if (l + form.Width > Width || t + form.Height > Height) {
-						i = 1;
+					int l = 22 * i;
+					int t = 22 * i;
+
+					if (i != 0 && (l + form.Width > Width || t + form.Height > Height)) {
+						i = 0;
 						l = 22 * i;
 						t = 22 * i;
 					}
 
 					form.Left = l;
 					form.Top = t;
-/*
-					form.Left = 25 * MdiParent.MdiContainer.ChildrenCreated + 1;
-					form.Top = 25 * MdiParent.MdiContainer.ChildrenCreated + 1;
-					MdiParent.MdiContainer.ChildrenCreated++;
-*/
+
 					i++;
 				}
 				break;
