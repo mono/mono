@@ -1,3 +1,8 @@
+2006-05-11  Jackson Harper  <jackson@ximian.com>
+
+	* Form.cs: Match MS's DefaultSize for forms (they must have
+	changed the size in sp2).
+
 2006-05-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TextBoxBase.cs : implement CTRL+A (select all). Fixed bug #78368.

@@ -1053,7 +1053,7 @@ namespace System.Windows.Forms {
 
 		protected override Size DefaultSize {
 			get {
-				return new Size (250, 250);
+				return new Size (300, 300);
 			}
 		}
 
