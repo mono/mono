@@ -1,3 +1,8 @@
+2006-05-11  Jonathan Chambers  <jonathan.chambers@ansys.com>
+
+	* PropertyGrid.cs : Only check GetPropertiesSupported for properties,
+	  not SelectedObject.
+
 2006-05-11  Chris Toshok  <toshok@ximian.com>
 
 	* Hwnd.cs (Invalid): don't start off with Rectangle.Empty, as
