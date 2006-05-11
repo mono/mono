@@ -141,9 +141,6 @@ namespace NunitWeb
 
 		public string RunUrl (string url, Delegate method, object anyParam)
 		{
-			if (method != null && method.Target != null && !(method.Target is MarshalByRefObject))
-				throw new ArgumentException ("delegate Target must be MarshalByRefObject to pass AppDomain boundaries");
-
 			try {
 				return host.DoRun (url, method, anyParam);
 			}
