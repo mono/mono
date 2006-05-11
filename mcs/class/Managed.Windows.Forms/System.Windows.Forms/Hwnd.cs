@@ -399,6 +399,9 @@ namespace System.Windows.Forms {
 
 		public Rectangle Invalid {
 			get {
+				if (invalid_list.Count == 0)
+					return Rectangle.Empty;
+
 				Rectangle result = (Rectangle)invalid_list[0];
 				for (int i = 1; i < invalid_list.Count; i ++) {
 					result = Rectangle.Union (result, (Rectangle)invalid_list[i]);
