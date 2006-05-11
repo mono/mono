@@ -523,17 +523,12 @@ namespace Mono.CSharp
 				if (o_vectors == null)
 					return;
 
-				UsageVector vector = o_vectors;
-
 				if (reachability.IsUnreachable) {
-					Report.Debug (1, "    MERGING BREAK ORIGIN INTO UNREACHABLE", vector);
-					locals = vector.Locals;
-					parameters = vector.Parameters;
-					reachability.Meet (vector.Reachability);
-					vector = vector.Next;
+					locals = null;
+					parameters = null;
 				}
 
-				for (; vector != null; vector = vector.Next) {
+				for (UsageVector vector = o_vectors; vector != null; vector = vector.Next) {
 					Report.Debug (1, "    MERGING BREAK ORIGIN", vector);
 					MyBitVector.And (ref locals, vector.locals);
 					MyBitVector.And (ref parameters, vector.parameters);

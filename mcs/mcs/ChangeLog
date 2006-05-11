@@ -1,5 +1,8 @@
 2006-05-10  Raja R Harinath  <rharinath@novell.com>
 
+	* flowanalysis.cs (UsageVector.MergeOrigins): Simplify, now that a
+	null bitvector is treated as all-true.
+
 	* flowanalysis.cs (MyBitVector.And, MyBitVector.Or): Make lazier.
 	(MyBitVector): Rationalize invariants.  'vector != null' implies
 	that we have our own copy of the bitvector.  Otherwise,
