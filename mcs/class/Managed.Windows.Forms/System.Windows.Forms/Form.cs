@@ -408,7 +408,7 @@ namespace System.Windows.Forms {
 
 			set {
 				if (value && mdi_container == null) {
-					mdi_container = new MdiClient();
+					mdi_container = new MdiClient (this);
 					Controls.Add(mdi_container);
 				} else if (!value && mdi_container != null) {
 					Controls.Remove(mdi_container);
@@ -1440,9 +1440,8 @@ namespace System.Windows.Forms {
 						break;
 				}
 			} else {
-				Left = 25 * MdiParent.MdiContainer.ChildrenCreated + 1;
-				Top = 25 * MdiParent.MdiContainer.ChildrenCreated + 1;
-				MdiParent.MdiContainer.ChildrenCreated++;
+				MdiParent.MdiContainer.LayoutMdi (MdiLayout.Cascade);
+				
 			}
 
 		}

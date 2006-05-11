@@ -1,3 +1,12 @@
+2006-05-10  Jackson Harper  <jackson@ximian.com>
+
+	* MdiClient.cs: Active form is only sent to the back when using
+	the Next form functionality, when a form is clicked the current
+	active shouldn't be sent to the back.
+	- Layout the mdi windows when the container is first made visible.
+	* Form.cs: Give the MdiClient a ref to the containing form when we
+	create it.
+	
 2006-05-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* LinkLabel.cs : link_font could be uninitialized, so populate one

@@ -66,6 +66,7 @@ namespace System.Windows.Forms {
 				owner.ActiveMdiChild = form;
 
 				form.LocationChanged += new EventHandler (owner.FormLocationChanged);
+				owner.LayoutMdi (MdiLayout.Cascade);
 			}
 
 			public override void Remove(Control value) {
@@ -75,10 +76,20 @@ namespace System.Windows.Forms {
 		#endregion	// Public Classes
 
 		#region Public Constructors
-		public MdiClient() {
+		public MdiClient()
+		{
 			BackColor = SystemColors.AppWorkspace;
 			Dock = DockStyle.Fill;
 			SetStyle (ControlStyles.Selectable, false);
+		}
+
+		public MdiClient (Form parent)
+		{
+			BackColor = SystemColors.AppWorkspace;
+			Dock = DockStyle.Fill;
+			SetStyle (ControlStyles.Selectable, false);
+
+			parent.VisibleChanged += new EventHandler (VisibleChangedHandler);
 		}
 		#endregion	// Public Constructors
 
@@ -91,6 +102,16 @@ namespace System.Windows.Forms {
 
 		internal Form ParentForm {
 			get { return (Form) Parent; }
+		}
+
+		private bool layout_done;
+
+		private void VisibleChangedHandler (object sender, EventArgs e)
+		{
+			if (layout_done)
+				return;
+			LayoutMdi (MdiLayout.Cascade);
+			layout_done = true;
 		}
 
 		protected override Control.ControlCollection CreateControlsInstance ()
@@ -161,8 +182,36 @@ namespace System.Windows.Forms {
 		#endregion	// Protected Instance Properties
 
 		#region Public Instance Methods
-		public void LayoutMdi(MdiLayout value) {
-			throw new NotImplementedException();
+		public void LayoutMdi (MdiLayout value) {
+			switch (value) {
+			case MdiLayout.Cascade:
+				int i = 0;
+				for (int c = Controls.Count - 1; c >= 0; c--) {
+					Form form = (Form) Controls [c];
+					int l = 25 * i + 1;
+					int t = 25 * i + 1;
+
+					Console.WriteLine ("{0}  {1}    :   {2}   {3}",
+							l + form.Width, Width, t + form.Height, Height);
+					if (l + form.Width > Width || t + form.Height > Height) {
+						i = 1;
+						l = 22 * i;
+						t = 22 * i;
+					}
+
+					form.Left = l;
+					form.Top = t;
+/*
+					form.Left = 25 * MdiParent.MdiContainer.ChildrenCreated + 1;
+					form.Top = 25 * MdiParent.MdiContainer.ChildrenCreated + 1;
+					MdiParent.MdiContainer.ChildrenCreated++;
+*/
+					i++;
+				}
+				break;
+			default:
+				throw new NotImplementedException();
+			}
 		}
 		#endregion	// Public Instance Methods
 
@@ -409,17 +458,15 @@ namespace System.Windows.Forms {
 			if (Controls.Count < 1)
 				return;
 
+			Form front = (Form) Controls [0];
 			Form form = (Form) Controls [1];
+
+			front.SendToBack ();
 			ActivateChild (form);
 		}
 
 		internal void ActivateChild (Form form)
 		{
-			if (Controls.Count > 0) {
-				Form front = (Form) Controls [0];
-				front.SendToBack ();
-			}
-
 			form.BringToFront ();
 			active = form;
 
