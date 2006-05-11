@@ -1,3 +1,7 @@
+2006-05-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (mono_image_basic_init): Fix a small memory leak.
+
 2006-05-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* marshal.c: In function mono_mb_add_local don't use the mb pointer 
