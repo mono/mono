@@ -115,8 +115,11 @@ namespace System.ComponentModel
 		
 		void EndTransaction (object obj, DesignerTransaction tran, object oldValue, object newValue, bool commit)
 		{
-			if (tran == null)
+			if (tran == null) {
+				// FIXME: EventArgs might be differen type.
+				OnValueChanged (obj, new PropertyChangedEventArgs (Name));
 				return;
+			}
 			
 			if (commit) {
 				IComponent com = obj as IComponent;
@@ -124,6 +127,8 @@ namespace System.ComponentModel
 				if (ccs != null)
 					ccs.OnComponentChanged (com, this, oldValue, newValue);
 				tran.Commit ();
+				// FIXME: EventArgs might be differen type.
+				OnValueChanged (obj, new PropertyChangedEventArgs (Name));
 			} else
 				tran.Cancel ();
 		}

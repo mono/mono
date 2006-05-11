@@ -78,6 +78,8 @@ namespace System.ComponentModel
 				prop = componentType.GetProperty (Name);
 
 			prop.SetValue (component, value, null);
+			// FIXME: EventArgs might be differen type.
+			OnValueChanged (component, new PropertyChangedEventArgs (Name));
 		}
 
 		[MonoTODO]

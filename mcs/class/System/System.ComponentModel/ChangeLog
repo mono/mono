@@ -1,3 +1,10 @@
+2006-05-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ReflectionPropertyDescriptor.cs,
+	  DerivedPropertyDescriptor.cs : invoke OnValueChanged() when
+	  the value was successfully changed. It is needed to have
+	  MWF PropertyGrid change properties successfully.
+
 2006-05-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* AsyncOperation.cs : SynchronizationContext.OperationStarted()
