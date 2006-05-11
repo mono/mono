@@ -1,5 +1,10 @@
 2006-05-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* assembly.c (mono_assembly_load_from_full): Fix a bunch of warnings.
+	(mono_assembly_close): Null out assembly->image->references after freeing it.
+
+	* image.c (mono_image_close): Free image->references.
+	
 	* reflection.c (mono_image_basic_init): Fix a small memory leak.
 
 2006-05-10  Sebastien Pouliot  <sebastien@ximian.com>
