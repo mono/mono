@@ -1,3 +1,7 @@
+2006-05-11  Ankit Jain  <jankit@novell.com>
+
+	* ILParser.jay (type |type MODREQ ..): Use CustomModifier.modreq .
+
 2006-05-10  Ankit Jain  <jankit@novell.com>
 
 	* ILParser.jay (native_type | K_ERROR): Use NativeType.Error for the
