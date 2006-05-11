@@ -1,5 +1,10 @@
 2006-05-11  Raja R Harinath  <rharinath@novell.com>
 
+	* flowanalysis.cs (MyBitVector.SetAll): New.  Sets all bits to the
+	given value.
+	(MyBitVector.Or): Use it to avoid losing information (Count).
+	(FlowBranching.MergeOrigins): Likewise.
+
 	* flowanalysis.cs (UsageVector.IsDirty): Remove.
 	(UsageVector.Parameters, UsageVector.ParameterVector): Likewise.
 	(UsageVector.Locals, UsageVector.LocalVector): Likewise.

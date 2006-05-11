@@ -583,8 +583,10 @@ namespace Mono.CSharp
 					return;
 
 				if (reachability.IsUnreachable) {
-					locals = null;
-					parameters = null;
+					if (locals != null)
+						locals.SetAll (true);
+					if (parameters != null)
+						parameters.SetAll (true);
 				}
 
 				for (UsageVector vector = o_vectors; vector != null; vector = vector.Next) {
@@ -1834,7 +1836,7 @@ namespace Mono.CSharp
 			if (target == null)
 				return;
 			if (vector == null)
-				target = null;
+				target.SetAll (true);
 			else
 				target.Or (vector);
 		}
@@ -1849,6 +1851,12 @@ namespace Mono.CSharp
 			MyBitVector retval = new MyBitVector (this, Count);
 			retval.initialize_vector ();
 			return retval;
+		}
+
+		public void SetAll (bool value)
+		{
+			InheritsFrom = value ? null : Empty;
+			vector = null;
 		}
 
 		void initialize_vector ()
