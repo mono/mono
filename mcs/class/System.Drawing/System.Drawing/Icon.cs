@@ -195,7 +195,7 @@ namespace System.Drawing
 					height = iconSize.Height;
 				}
 			}
-			if (dataStream != null && width != 0 && height != 0) {
+			if ((dataStream != null) && (width == height)) {
 				dataStream.Seek (0, SeekOrigin.Begin);
 				InitFromStreamWithSize (dataStream, width, height);
 			}

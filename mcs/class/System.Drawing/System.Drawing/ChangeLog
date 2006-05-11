@@ -1,3 +1,8 @@
+2006-05-11  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Icon.cs: Don't require width/height to be non-0 when creating from
+	  serialized data, just require them to be square
+
 2006-05-04  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* Graphics.cs: Chaned DrawIcon methods to dispose the temporary bitmap
