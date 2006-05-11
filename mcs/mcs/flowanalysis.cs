@@ -527,54 +527,6 @@ namespace Mono.CSharp
 				return child;
 			}
 
-			// <summary>
-			//   Tells control flow analysis that the current code position may be reached with
-			//   a forward jump from any of the origins listed in `origin_vectors' which is a
-			//   list of UsageVectors.
-			//
-			//   This is used when resolving forward gotos - in the following example, the
-			//   variable `a' is uninitialized in line 8 becase this line may be reached via
-			//   the goto in line 4:
-			//
-			//      1     int a;
-			//
-			//      3     if (something)
-			//      4        goto World;
-			//
-			//      6     a = 5;
-			//
-			//      7  World:
-			//      8     Console.WriteLine (a);
-			//
-			// </summary>
-			public void MergeJumpOrigins (UsageVector o_vectors)
-			{
-				Report.Debug (1, "  MERGING JUMP ORIGINS", this);
-
-				if (o_vectors == null)
-					return;
-
-				UsageVector vector = o_vectors;
-				if (reachability.IsUnreachable) {
-					Report.Debug (1, "  MERGING JUMP ORIGIN INTO UNREACHABLE", this, vector);
-					MyBitVector.Or (ref locals, vector.locals);
-					MyBitVector.Or (ref parameters, vector.parameters);
-					reachability.Meet (vector.Reachability);
-					vector = vector.Next;
-				}
-
-				for (; vector != null; vector = vector.Next) {
-					Report.Debug (1, "  MERGING JUMP ORIGIN", this, vector);
-					MyBitVector.And (ref locals, vector.locals);
-					MyBitVector.And (ref parameters, vector.parameters);
-					reachability.Meet (vector.Reachability);
-
-					Report.Debug (1, "  MERGING JUMP ORIGIN #1", vector);
-				}
-
-				Report.Debug (1, "  MERGING JUMP ORIGINS DONE", this);
-			}
-
 			public void MergeOrigins (UsageVector o_vectors)
 			{
 				Report.Debug (1, "  MERGING BREAK ORIGINS", this);
@@ -808,7 +760,7 @@ namespace Mono.CSharp
 				origin_vectors = vector;
 			}
 
-			CurrentUsageVector.MergeJumpOrigins (origin_vectors);
+			CurrentUsageVector.MergeOrigins (origin_vectors);
 		}
 
 		protected override UsageVector Merge ()
@@ -1071,7 +1023,7 @@ namespace Mono.CSharp
 
 		public override void Label (UsageVector origin_vectors)
 		{
-			CurrentUsageVector.MergeJumpOrigins (origin_vectors);
+			CurrentUsageVector.MergeOrigins (origin_vectors);
 		}
 
 		protected override UsageVector Merge ()

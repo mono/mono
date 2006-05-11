@@ -1,3 +1,9 @@
+2006-05-11  Raja R Harinath  <rharinath@novell.com>
+
+	* test-154.cs (test39): Move buggy testcase to errors/cs0177-7.cs.
+	Fix it and move ...
+	* test-510.cs: ... here.
+
 2006-05-05  Raja R Harinath  <rharinath@novell.com>
 
 	* test-508.cs: New test -- didn't fail earlier, but include to

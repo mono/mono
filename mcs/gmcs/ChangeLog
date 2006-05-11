@@ -1,5 +1,9 @@
 2006-05-11  Raja R Harinath  <rharinath@novell.com>
 
+	* flowanalysis.cs (UsageVector.MergeJumpOrigins): Kill.
+	(FlowBranchingBlock.Label): Use UsageVector.MergeOrigins.
+	(FlowBranchingException.Label): Likewise.
+
 	* flowanalysis.cs (MyBitVector.SetAll): New.  Sets all bits to the
 	given value.
 	(MyBitVector.Or): Use it to avoid losing information (Count).

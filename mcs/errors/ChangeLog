@@ -1,3 +1,7 @@
+2006-05-11  Raja R Harinath  <rharinath@novell.com>
+
+	* cs0177-7.cs: Taken from erroneous sub-test in tests/test-154.cs.
+
 2006-05-05  Raja R Harinath  <rharinath@novell.com>
 
 	* cs0177-5.cs, cs0177-6.cs: New tests based on #78290.
