@@ -356,7 +356,7 @@ namespace Mono.ILASM {
                 public void AddDataDef (DataDef datadef)
                 {
                         if (data_table [datadef.Name] != null)
-                                throw new ILAsmException (String.Format ("Duplicate global label '{0}'", datadef.Name));
+                                Report.Error ("Duplicate global label '" + datadef.Name + "'");
                         data_table [datadef.Name] = datadef;
                 }
 

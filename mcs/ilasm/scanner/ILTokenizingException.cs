@@ -14,13 +14,11 @@ namespace Mono.ILASM {
 
         public class ILTokenizingException : ILAsmException {
 
-                public readonly Location Location;
                 public readonly string Token;
 
                 public ILTokenizingException (Location location, string token)
                         : base (location, token)
                 {
-                        Location = location;
                         Token = token;
                 }
         }

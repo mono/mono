@@ -1,5 +1,11 @@
 2006-05-11  Ankit Jain  <jankit@novell.com>
 
+	* CodeGen.cs (CodeGen.AddDataDef): Use Report.Error for consistent error
+	reporting.
+	* MethodDef.cs (MethodDef.AddLabel): Likewise.
+
+2006-05-11  Ankit Jain  <jankit@novell.com>
+
 	* MethodDef.cs (MethodDef.AddLabel): Fix exception message.
 
 2006-05-09  Ankit Jain  <jankit@novell.com>

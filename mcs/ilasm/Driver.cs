@@ -93,10 +93,10 @@ namespace Mono.ILASM {
                                                 throw;
                                         }
                                 } catch (ILAsmException e) {
-                                        Error (e.Message);
+                                        Error (e.ToString ());
                                         return false;
                                 } catch (PEAPI.PEFileException pe) {
-                                        Error (pe.Message);
+                                        Error ("Error : " + pe.Message);
                                         return false;
                                 } 
 
@@ -114,7 +114,7 @@ namespace Mono.ILASM {
 
                         private void Error (string message)
                         {
-                                Console.WriteLine ("Error : " + message + "\n");
+                                Console.WriteLine (message + "\n");
                                 Console.WriteLine ("***** FAILURE *****\n");
                         }
 
@@ -180,12 +180,15 @@ namespace Mono.ILASM {
                                         else
                                                 parser.yyparse (new ScannerAdapter (scanner),  null);
                                 } catch (ILTokenizingException ilte) {
-                                        Report.Error (file_path + "(" + ilte.Location.line + ") : error : " +
-                                                        "syntax error at token '" + ilte.Token + "'.");
-                                } catch (Mono.ILASM.yyParser.yyException) {
-                                        Report.Error ("Error at: " + scanner.Reader.Location);
-                                } catch {
-                                        Console.WriteLine ("Error at: " + scanner.Reader.Location);
+                                        Report.Error (file_path, ilte.Location, "syntax error at token '" + ilte.Token + "'");
+                                } catch (Mono.ILASM.yyParser.yyException ye) {
+                                        Report.Error (file_path, scanner.Reader.Location, ye.Message);
+                                } catch (ILAsmException ie) {
+                                        ie.FilePath = file_path;
+                                        ie.Location = scanner.Reader.Location;
+                                        throw;
+                                } catch (Exception e){
+                                        Console.Write ("{0} ({1}, {2}): ",file_path, scanner.Reader.Location.line, scanner.Reader.Location.column);
                                         throw;
                                 } finally {
 					codegen.EndSourceFile ();
