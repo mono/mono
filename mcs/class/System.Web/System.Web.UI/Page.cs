@@ -1740,6 +1740,28 @@ public class Page : TemplateControl, IHttpHandler
 		return dataItemCtx.Peek ();
 	}
 
+	protected internal override void OnInit (EventArgs e)
+	{
+		base.OnInit (e);
+		if (Header == null)
+			return;
+
+		ArrayList themes = new ArrayList();
+
+		if (StyleSheetPageTheme != null)
+			themes.AddRange (StyleSheetPageTheme.GetStyleSheets ());
+		if (PageTheme != null)
+			themes.AddRange (PageTheme.GetStyleSheets ());
+		
+		foreach (string lss in themes) {
+			HtmlLink hl = new HtmlLink ();
+			hl.Href = lss;
+			hl.Attributes["type"] = "text/css";
+			hl.Attributes["rel"] = "stylesheet";
+			Header.Controls.Add (hl);
+		}
+	}
+
 	#endif
 }
 }

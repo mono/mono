@@ -116,6 +116,10 @@ namespace System.Web.UI {
 			object key = PageTheme.CreateSkinKey (controlType, skinID);
 			return ControlSkins[key] as ControlSkin;
 		}
+
+		internal string [] GetStyleSheets () {
+			return LinkedStyleSheets;
+		}
 	}
 }
 

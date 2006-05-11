@@ -1,3 +1,8 @@
+2006-05-11  Andrew Skiba  <andrews@mainsoft.com>
+
+	* Page.cs, PageTheme.cs: This patch uses LinkedStyleSheets from the
+	PageTheme and from StyleSheetPageTheme to insert links in page header.
+
 2006-05-10  Andrew Skiba  <andrews@mainsoft.com>
 
 	* TemlpateParser.cs: surround file name with quotes
