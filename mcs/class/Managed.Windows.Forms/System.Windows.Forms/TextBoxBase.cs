@@ -831,6 +831,14 @@ namespace System.Windows.Forms {
 					return false;
 				}
 
+				case Keys.A: {	// Select All (Ctrl-A)
+					if (control) {
+						SelectAll();
+						return true;
+					}
+					return false;
+				}
+
 				case Keys.Left: {
 					if (control) {
 						document.MoveCaret(CaretDirection.WordBack);
