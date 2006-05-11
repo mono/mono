@@ -1,5 +1,13 @@
 2006-05-11  Ankit Jain  <jankit@novell.com>
 
+	* get.c (get_custom_mod): Fix printing of custom modifiers.
+	(dis_stringify_type): Likewise.
+	(get_field_signature): Likewise.
+	(get_ret_type): Likewise.
+	(get_param): Likewise.
+
+2006-05-11  Ankit Jain  <jankit@novell.com>
+
 	* get.c (dis_stringify_method_signature): Rename to .. 
 	(dis_stringify_method_signature_full): .. this. Add 'with_marshal_info'
 	param.
