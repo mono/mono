@@ -558,7 +558,7 @@ namespace Mono.ILASM {
                 {
                         LabelInfo label_info = (LabelInfo) label_table[name];
                         if (label_info != null)
-                                throw new ILAsmException ("Duplicate label: '{0}'" + name);
+                                throw new ILAsmException ("Duplicate label '" + name + "'");
 
                         label_info = new LabelInfo (name, inst_list.Count);
                         label_table [name] = label_info;
