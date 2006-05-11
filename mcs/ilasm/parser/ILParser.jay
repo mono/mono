@@ -970,7 +970,7 @@ type			: generic_class_ref
                                 BaseTypeRef base_type = GetTypeRef ((BaseTypeRef) $1);
                                 BaseClassRef class_ref = (BaseClassRef) $4;
                                 base_type.MakeCustomModified (codegen,
-                                        CustomModifier.modopt, class_ref);
+                                        CustomModifier.modreq, class_ref);
                                 $$ = base_type;
                           }
 			| type K_MODOPT OPEN_PARENS class_ref CLOSE_PARENS

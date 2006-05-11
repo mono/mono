@@ -1,3 +1,7 @@
+2006-05-11  Ankit Jain  <jankit@novell.com>
+
+	* test-modifiers.il: New. Test for custom modifiers, modreq & modopt.
+
 2006-05-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* test-sn-key.il: New. Added test case when /key is used but the IL 
