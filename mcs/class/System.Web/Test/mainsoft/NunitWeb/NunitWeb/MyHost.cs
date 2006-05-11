@@ -18,9 +18,11 @@ namespace NunitWeb
 		public const string CALL_CONTEXT_METHOD = "MyHostMethod";
 		public const string CALL_CONTEXT_PARAM = "MyHostParam";
 		public const string CALL_CONTEXT_EXCEPTION = "MyHostException";
+		public const string HELPER_INSTANCE_NAME = "mainsoft/NunitWeb/Helper";
 		
-		public void Initialize ()
+		public void Initialize (Helper h)
 		{
+			AppDomain.CurrentDomain.SetData (HELPER_INSTANCE_NAME, h);
 		}
 
 		public AppDomain AppDomain
@@ -35,12 +37,8 @@ namespace NunitWeb
 					SimpleWorkerRequest sr = new SimpleWorkerRequest (
 						url, null, tw);
 					HttpRuntime.ProcessRequest (sr);
-					Exception e = CallContext.GetData (CALL_CONTEXT_EXCEPTION) as Exception;
-					if (e != null) {
-						Exception outer = (Exception) Activator.CreateInstance (e.GetType (), 
-							e.Message, e);
-						throw outer;
-					}
+					Exception inner = CallContext.GetData (CALL_CONTEXT_EXCEPTION) as Exception;
+					RethrowException (inner);
 					tw.Close ();
 					return tw.ToString ();
 				}
@@ -50,6 +48,22 @@ namespace NunitWeb
 				CallContext.FreeNamedDataSlot (CALL_CONTEXT_PARAM);
 				CallContext.FreeNamedDataSlot (CALL_CONTEXT_EXCEPTION);
 			}
+		}
+
+		private static void RethrowException (Exception inner)
+		{
+			if (inner == null)
+				return;
+
+			Exception outer;
+			try { //Try create a similar exception and keep the inner intact
+				outer = (Exception) Activator.CreateInstance (inner.GetType (),
+					inner.Message, inner);
+			}
+			catch { //Failed to create a similar, fallback to the inner, ruining the call stack
+				throw inner;
+			}
+			throw outer;
 		}
 
 		static public void RunDelegate (HttpContext context, Page page)

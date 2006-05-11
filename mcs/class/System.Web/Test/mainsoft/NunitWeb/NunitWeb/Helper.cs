@@ -12,7 +12,7 @@ using System.Collections.Specialized;
 
 namespace NunitWeb
 {
-	public class Helper
+	public class Helper : MarshalByRefObject
 	{
 		public delegate void AnyMethod (HttpContext context, object anyParam);
 		public delegate void AnyMethodInPage (HttpContext context, Page page, object anyParam);
@@ -34,7 +34,7 @@ namespace NunitWeb
 			binDir = Directory.CreateDirectory (Path.Combine (baseDir, "bin")).FullName;
 
 			foreach (Assembly ass in AppDomain.CurrentDomain.GetAssemblies ())
-				CopyAssembly (ass);
+				CopyAssembly (ass, binDir);
 
 			CopyResource (Assembly.GetExecutingAssembly (), "NunitWeb.Resources.Web.config", "Web.config");
 			CopyResource (Assembly.GetExecutingAssembly (), "NunitWeb.Resources.MyPage.aspx", "MyPage.aspx");
@@ -42,22 +42,20 @@ namespace NunitWeb
 			CopyResource (Assembly.GetExecutingAssembly (), "NunitWeb.Resources.MyPageWithMaster.aspx", "MyPageWithMaster.aspx");
 			CopyResource (Assembly.GetExecutingAssembly (), "NunitWeb.Resources.MyPageWithMaster.aspx.cs", "MyPageWithMaster.aspx.cs");
 			CopyResource (Assembly.GetExecutingAssembly (), "NunitWeb.Resources.My.master", "My.master");
-			CopyResource (Assembly.GetExecutingAssembly (), "NunitWeb.Resources.My.master", "aaa\\bbb\\ccc\\My.master");
-
 
 			host = (MyHost) ApplicationHost.CreateApplicationHost (typeof (MyHost), VIRTUAL_BASE_DIR, baseDir);
 
-			host.Initialize ();
+			host.Initialize (this);
 		}
 
-		private void CopyAssembly (Assembly ass)
+		private static void CopyAssembly (Assembly ass, string dir)
 		{
 			if (ass.GlobalAssemblyCache)
 				return;
 			string oldfn = ass.ManifestModule.FullyQualifiedName;
 			if (oldfn.EndsWith (".exe"))
 				return;
-			string newfn = Path.Combine (binDir, Path.GetFileName (oldfn));
+			string newfn = Path.Combine (dir, Path.GetFileName (oldfn));
 
 			File.Copy (oldfn, newfn);
 		}
@@ -91,6 +89,10 @@ namespace NunitWeb
 		{
 			get
 			{
+				if (_instance != null)
+					return _instance;
+
+				_instance = AppDomain.CurrentDomain.GetData (MyHost.HELPER_INSTANCE_NAME) as Helper;
 				if (_instance == null)
 					_instance = new Helper ();
 				return _instance;
