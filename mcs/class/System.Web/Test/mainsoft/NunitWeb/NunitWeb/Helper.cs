@@ -34,6 +34,9 @@ namespace NunitWeb
 			binDir = Directory.CreateDirectory (Path.Combine (baseDir, "bin")).FullName;
 
 			foreach (Assembly ass in AppDomain.CurrentDomain.GetAssemblies ())
+				LoadAssemblyRecursive (ass);
+
+			foreach (Assembly ass in AppDomain.CurrentDomain.GetAssemblies ())
 				CopyAssembly (ass, binDir);
 
 			CopyResource (Assembly.GetExecutingAssembly (), "NunitWeb.Resources.Web.config", "Web.config");
@@ -48,6 +51,25 @@ namespace NunitWeb
 			host.Initialize (this);
 		}
 
+		static void LoadAssemblyRecursive (Assembly ass)
+		{
+			if (ra.GlobalAssemblyCache)
+				return;
+			foreach (AssemblyName ran in ass.GetReferencedAssemblies ()) {
+				bool found = false;
+				foreach (Assembly domain_ass in AppDomain.CurrentDomain.GetAssemblies ()) {
+					if (domain_ass.FullName == ran.FullName) {
+						found = true;
+						break;
+					}
+				}
+				if (found)
+					continue;
+				Assembly ra = Assembly.Load (ran, null);
+				LoadAssemblyRecursive (ra);
+			}
+		}
+
 		private static void CopyAssembly (Assembly ass, string dir)
 		{
 			if (ass.GlobalAssemblyCache)
@@ -56,9 +78,13 @@ namespace NunitWeb
 			if (oldfn.EndsWith (".exe"))
 				return;
 			string newfn = Path.Combine (dir, Path.GetFileName (oldfn));
-
+			if (File.Exists (newfn))
+				return;
 			File.Copy (oldfn, newfn);
 		}
+
+
+
 
 		static void EnsureDirectoryExists (string directory)
 		{
