@@ -1182,40 +1182,24 @@ namespace System.Windows.Forms {
 							document.ReplaceSelection("");
 						}
 
+						char c = (char)m.WParam;
 						switch (character_casing) {
-							case CharacterCasing.Normal: {
-								if (document.Length < max_length) {
-									document.InsertCharAtCaret((char)m.WParam, true);
-									OnTextChanged(EventArgs.Empty);
-									CaretMoved(this, null);
-								} else {
-									XplatUI.AudibleAlert();
-								}
-								return;
-							}
-
-							case CharacterCasing.Lower: {
-								if (document.Length < max_length) {
-									document.InsertCharAtCaret(Char.ToLower((char)m.WParam), true);
-									OnTextChanged(EventArgs.Empty);
-									CaretMoved(this, null);
-								} else {
-									XplatUI.AudibleAlert();
-								}
-								return;
-							}
-
-							case CharacterCasing.Upper: {
-								if (document.Length < max_length) {
-									document.InsertCharAtCaret(Char.ToUpper((char)m.WParam), true);
-									OnTextChanged(EventArgs.Empty);
-									CaretMoved(this, null);
-								} else {
-									XplatUI.AudibleAlert();
-								}
-								return;
-							}
+						case CharacterCasing.Upper:
+							c = Char.ToUpper((char) m.WParam);
+							break;
+						case CharacterCasing.Lower:
+							c = Char.ToLower((char) m.WParam);
+							break;
 						}
+
+						if (document.Length < max_length) {
+							document.InsertCharAtCaret(c, true);
+							OnTextChanged(EventArgs.Empty);
+							CaretMoved(this, null);
+						} else {
+							XplatUI.AudibleAlert();
+						}
+						return;
 					} else if (ch == 8) {
 						HandleBackspace(false);
 					}

@@ -1,3 +1,9 @@
+2006-05-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TextControl.cs : Fixed bug #78109. This incorrect position
+	  comparison caused crash on automatic line split.
+	* TextBoxBase.cs : reduce duplicate code.
+
 2006-05-10  Jackson Harper  <jackson@ximian.com>
 
 	* MdiClient.cs: Active form is only sent to the back when using

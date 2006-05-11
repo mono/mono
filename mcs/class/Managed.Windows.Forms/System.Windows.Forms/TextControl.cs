@@ -2377,7 +2377,7 @@ namespace System.Windows.Forms {
 			move_sel_end = false;
 
 			// Adjust selection and cursors
-			if (soft && (caret.line == line) && (caret.pos > pos)) {
+			if (soft && (caret.line == line) && (caret.pos >= pos)) {
 				move_caret = true;
 			}
 			if (selection_start.line == line && selection_start.pos > pos) {
