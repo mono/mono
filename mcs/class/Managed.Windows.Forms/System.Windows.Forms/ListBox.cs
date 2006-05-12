@@ -673,6 +673,7 @@ namespace System.Windows.Forms
 
 		public Rectangle GetItemRectangle (int index)
 		{
+			Console.WriteLine (index + " " + Items.Count);
 			if (index < 0 || index >= Items.Count)
 				throw new  ArgumentOutOfRangeException ("GetItemRectangle index out of range.");
 
@@ -1752,7 +1753,7 @@ namespace System.Windows.Forms
 
 			if (Items.Count == 0) {
 				selected_index = -1;
-				FocusedItem = -1;
+				focused_item = -1;
 			}
 
 			base.Refresh ();
