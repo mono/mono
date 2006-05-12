@@ -52,6 +52,7 @@ System.Windows.Forms/CheckBox.cs
 System.Windows.Forms/CheckedListBox.cs
 System.Windows.Forms/CheckState.cs
 System.Windows.Forms/ColorDepth.cs
+System.Windows.Forms/ColumnStyle.cs
 System.Windows.Forms/Clipboard.cs
 System.Windows.Forms/ColorDialog.cs
 System.Windows.Forms/ColumnClickEventArgs.cs
@@ -318,8 +319,10 @@ System.Windows.Forms/KeysConverter.cs
 System.Windows.Forms/Label.cs
 System.Windows.Forms/LabelEditEventArgs.cs
 System.Windows.Forms/LabelEditEventHandler.cs
+System.Windows.Forms/LayoutEngine.cs
 System.Windows.Forms/LayoutEventArgs.cs
 System.Windows.Forms/LayoutEventHandler.cs
+System.Windows.Forms/LayoutSettings.cs
 System.Windows.Forms/LeftRightAlignment.cs
 System.Windows.Forms/LinkArea.cs
 System.Windows.Forms/LinkBehavior.cs
@@ -416,6 +419,7 @@ System.Windows.Forms/RichTextBoxSelectionTypes.cs
 System.Windows.Forms/RichTextBoxStreamType.cs
 System.Windows.Forms/RichTextBoxWordPunctuations.cs
 System.Windows.Forms/RightToLeft.cs
+System.Windows.Forms/RowStyle.cs
 System.Windows.Forms/SaveFileDialog.cs
 System.Windows.Forms/Screen.cs
 System.Windows.Forms/ScrollableControl.cs
@@ -435,6 +439,7 @@ System.Windows.Forms/SendKeys.cs
 System.Windows.Forms/Shortcut.cs
 System.Windows.Forms/SizeGrip.cs
 System.Windows.Forms/SizeGripStyle.cs
+System.Windows.Forms/SizeType.cs
 System.Windows.Forms/SortOrder.cs
 System.Windows.Forms/Splitter.cs
 System.Windows.Forms/SplitterEventArgs.cs
@@ -456,6 +461,10 @@ System.Windows.Forms/TabControl.cs
 System.Windows.Forms/TabDrawMode.cs
 System.Windows.Forms/TabPage.cs
 System.Windows.Forms/TabSizeMode.cs
+System.Windows.Forms/TableLayout.cs
+System.Windows.Forms/TableLayoutPanel.cs
+System.Windows.Forms/TableLayoutPanelGrowStyle.cs
+System.Windows.Forms/TableLayoutSettings.cs
 System.Windows.Forms/TextBox.cs
 System.Windows.Forms/TextBoxBase.cs
 System.Windows.Forms/TextControl.cs

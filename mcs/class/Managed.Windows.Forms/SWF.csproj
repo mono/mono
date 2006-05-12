@@ -404,6 +404,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\ColumnStyle.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\Clipboard.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1734,12 +1739,22 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\LayoutEngine.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\LayoutEventArgs.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "System.Windows.Forms\LayoutEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\LayoutSettings.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -2224,6 +2239,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\RowStyle.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\SaveFileDialog.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -2315,6 +2335,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\SizeGripStyle.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\SizeType.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -2420,6 +2445,26 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\TabSizeMode.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\TableLayout.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\TableLayoutPanel.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\TableLayoutPanelGrowStyle.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\TableLayoutSettings.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
