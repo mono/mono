@@ -3160,16 +3160,10 @@ namespace System.Windows.Forms
 				string_rect = new Rectangle (x, y, 
 						area.Right - x - border_size,
 						area.Bottom - y - border_size);
-
-				if (panel.Icon != null) {
-					dc.DrawIcon (panel.Icon, icon_x, area.Top);
-				}
-
 				break;
 			}
 
-			dc.DrawString (text, panel.Parent.Font, br_forecolor, string_rect, string_format);
-			
+			dc.DrawString (text, panel.Parent.Font, br_forecolor, string_rect, string_format);			
 		}
 
 		public override int StatusBarSizeGripWidth {
