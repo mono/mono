@@ -1,7 +1,11 @@
 2006-05-12  Chris Toshok  <toshok@ximian.com>
 
-	* XplatUIX11.cs (ScrollWindow): optimize copying.
+	* ScrollBar.cs (OnMouseMoveSB): when dragging the thumb, don't
+	invalidate the entire thumb area.  Call InvalidateDirty which
+	limits the redraw to the thumb itself and surrounding pixels.
 
+	* XplatUIX11.cs (ScrollWindow): optimize copying.
+	
 2006-05-12  Chris Toshok  <toshok@ximian.com>
 
 	* DataGridDrawingLogic.cs: make CalcGridAreas non-reentrant.

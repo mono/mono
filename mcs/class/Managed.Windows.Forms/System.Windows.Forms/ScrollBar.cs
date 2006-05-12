@@ -747,8 +747,7 @@ namespace System.Windows.Forms
 					if (thumb_edge != thumb_pos.Y) {
 						UpdateThumbPos (thumb_edge, true);
 						OnScroll (new ScrollEventArgs (ScrollEventType.ThumbTrack, position));
-						Invalidate (thumb_area);
-						Update();
+						InvalidateDirty ();
 					}
 					SendWMScroll(ScrollBarCommands.SB_THUMBTRACK);
 				} else {
@@ -762,8 +761,7 @@ namespace System.Windows.Forms
 					if (thumb_edge != thumb_pos.X) {
 						UpdateThumbPos (thumb_edge, true);
 						OnScroll (new ScrollEventArgs (ScrollEventType.ThumbTrack, position));
-						Invalidate (thumb_area);
-						Update();
+						InvalidateDirty ();
 					}
 					SendWMScroll(ScrollBarCommands.SB_THUMBTRACK);
 				}
