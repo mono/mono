@@ -332,7 +332,7 @@ namespace System.Windows.Forms
 					// so we need to recalculate it.
 					CalcThumbArea ();
 					UpdatePos (Value, true);
-					Refresh ();
+					InvalidateDirty ();
 				}
 			}
 		}
@@ -355,7 +355,7 @@ namespace System.Windows.Forms
 				// so we need to recalculate it.
 				CalcThumbArea ();
 				UpdatePos (Value, true);
-				Refresh ();
+				InvalidateDirty ();
 			}
 		}
 
@@ -377,7 +377,7 @@ namespace System.Windows.Forms
 				// so we need to recalculate it.
 				CalcThumbArea ();
 				UpdatePos (Value, true);
-				Refresh ();
+				InvalidateDirty ();
 			}
 		}
 
@@ -392,7 +392,7 @@ namespace System.Windows.Forms
 				if (small_change != value) {
 					small_change = value;
 					UpdatePos (Value, true);
-					Refresh ();
+					InvalidateDirty ();
 				}
 			}
 		}

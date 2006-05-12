@@ -1,3 +1,10 @@
+2006-05-12  Chris Toshok  <toshok@ximian.com>
+
+	* ScrollBar.cs (set_LargeChange): Refresh() -> InvalidateDirty()
+	(set_Maximum): same.
+	(set_Minimum): same.
+	(set_SmallChange): same.
+
 2006-05-12  Miguel de Icaza  <miguel@novell.com>
 
 	* StatusBar.cs (UpdatePanel): If the panel being refreshes has the
