@@ -1,3 +1,7 @@
+2006-05-12  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* gdipFunctions.c: Fix misnamed GdipAdd*Path*String[I] API (#78383)
+
 2006-05-11  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Icon.cs: Don't require width/height to be non-0 when creating from

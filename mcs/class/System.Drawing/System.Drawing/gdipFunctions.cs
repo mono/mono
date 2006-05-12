@@ -741,9 +741,9 @@ namespace System.Drawing
 		internal static extern Status GdipFlush(IntPtr graphics, FlushIntention intention);
 
 		[DllImport("gdiplus.dll", CharSet=CharSet.Unicode)]
-		internal static extern Status GdipAddString (IntPtr graphics, string s, int len, IntPtr font, int style, float size, ref RectangleF layout, IntPtr format);
+		internal static extern Status GdipAddPathString (IntPtr path, string s, int lenght, IntPtr family, int style, float emSize, ref RectangleF layoutRect, IntPtr format);
 		[DllImport("gdiplus.dll", CharSet=CharSet.Unicode)]
-		internal static extern Status GdipAddStringI (IntPtr graphics, string s, int len, IntPtr font, int style, float size, ref Rectangle layout, IntPtr format);
+		internal static extern Status GdipAddPathStringI (IntPtr path, string s, int lenght, IntPtr family, int style, float emSize, ref Rectangle layoutRect, IntPtr format);
 
 				
 		// Pen functions
