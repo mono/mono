@@ -719,6 +719,12 @@ mono_linterval_add_range (MonoCompile *cfg, MonoLiveInterval *interval, int from
 
 	g_assert (to >= from);
 
+	/* Optimize for extending the first interval backwards */
+	if (G_LIKELY (interval->range && (interval->range->from > from) && (interval->range->from == to))) {
+		interval->range->from = from;
+		return;
+	}
+
 	/* Find a place in the list for the new range */
 	prev_range = NULL;
 	next_range = interval->range;
@@ -735,9 +741,10 @@ mono_linterval_add_range (MonoCompile *cfg, MonoLiveInterval *interval, int from
 		next_range->from = from;
 	} else {
 		/* Insert it */
-		new_range = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoLiveRange2));
+		new_range = mono_mempool_alloc (cfg->mempool, sizeof (MonoLiveRange2));
 		new_range->from = from;
 		new_range->to = to;
+		new_range->next = NULL;
 
 		if (prev_range)
 			prev_range->next = new_range;
@@ -884,9 +891,10 @@ update_liveness2 (MonoCompile *cfg, MonoInst *ins, gboolean set_volatile, int in
 static void
 mono_analyze_liveness2 (MonoCompile *cfg)
 {
-	int bnum, idx, i, j, rem, max_vars, block_from, block_to, pos;
+	int bnum, idx, i, j, nins, rem, max_vars, block_from, block_to, pos, reverse_len;
 	gint32 *last_use;
 	static guint32 disabled = -1;
+	MonoInst **reverse;
 
 	if (disabled == -1)
 		disabled = getenv ("DISABLED") != NULL;
@@ -902,6 +910,9 @@ mono_analyze_liveness2 (MonoCompile *cfg)
 	max_vars = cfg->num_varinfo;
 	last_use = g_new0 (gint32, max_vars);
 
+	reverse_len = 1024;
+	reverse = mono_mempool_alloc (cfg->mempool, sizeof (MonoInst*) * reverse_len);
+
 	for (idx = 0; idx < max_vars; ++idx) {
 		MonoMethodVar *vi = MONO_VARINFO (cfg, idx);
 
@@ -915,7 +926,6 @@ mono_analyze_liveness2 (MonoCompile *cfg)
 	for (bnum = cfg->num_bblocks - 1; bnum >= 0; --bnum) {
 		MonoBasicBlock *bb = cfg->bblocks [bnum];
 		MonoInst *ins;
-		GList *instructions, *l;
 
 		block_from = (bb->dfn << 16) + 1; /* so pos > 0 */
 		if (bnum < cfg->num_bblocks - 1)
@@ -955,14 +965,21 @@ mono_analyze_liveness2 (MonoCompile *cfg)
 		if (cfg->ret)
 			last_use [cfg->ret->inst_c0] = block_to;
 
-		instructions = NULL;
-		for (pos = block_from, ins = bb->code; ins; ins = ins->next, pos++) {
-			instructions = g_list_prepend (instructions, ins);
+		for (nins = 0, pos = block_from, ins = bb->code; ins; ins = ins->next, ++nins, ++pos) {
+			if (nins >= reverse_len) {
+				int new_reverse_len = reverse_len * 2;
+				MonoInst **new_reverse = mono_mempool_alloc (cfg->mempool, sizeof (MonoInst*) * new_reverse_len);
+				memcpy (new_reverse, reverse, sizeof (MonoInst*) * reverse_len);
+				reverse = new_reverse;
+				reverse_len = new_reverse_len;
+			}
+
+			reverse [nins] = ins;
 		}
 
 		/* Process instructions backwards */
-		for (l = instructions; l != NULL; l = l->next) {
-			MonoInst *ins = (MonoInst*)l->data;
+		for (i = nins - 1; i >= 0; --i) {
+			MonoInst *ins = (MonoInst*)reverse [i];
 
  			update_liveness2 (cfg, ins, FALSE, pos, last_use);
 
@@ -978,8 +995,6 @@ mono_analyze_liveness2 (MonoCompile *cfg)
 				mono_linterval_add_range (cfg, vi->interval, block_from, last_use [idx]);
 			}
 		}
-
-		g_list_free (instructions);
 	}
 
 	/*
