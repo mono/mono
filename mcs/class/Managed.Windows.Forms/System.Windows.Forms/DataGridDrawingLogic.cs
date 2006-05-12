@@ -71,7 +71,7 @@ namespace System.Windows.Forms
 		}
 
 		// Gets a column from a pixel
-		public int FromPixelToColumn (int pixel)
+		private int FromPixelToColumn (int pixel)
 		{
 			int width = 0;
 			int cnt = grid.CurrentTableStyle.GridColumnStyles.Count;
@@ -129,50 +129,105 @@ namespace System.Windows.Forms
 			}			
 		}
 
+		bool in_calc_grid_areas;
 		public void CalcGridAreas ()
 		{
 			if (grid.IsHandleCreated == false) // Delay calculations until the handle is created
 				return;
 
+			/* make sure we don't happen to end up in this method again */
+			if (in_calc_grid_areas)
+				return;
+
+			in_calc_grid_areas = true;
+
 			/* Order is important. E.g. row headers max. height depends on caption */
 			grid.horz_pixeloffset = 0;			
 			CalcCaption ();
 			CalcParentRows ();
-			CalcRowsHeaders ();
+			CalcRowsHeaders (grid.visiblerow_count);
 			CalcColumnsHeader ();
 			CalcCellsArea ();
 
-			UpdateVisibleRowCount (); // need it to be able to calcultate the need of horz scrollbar
-			if (SetUpVerticalScrollBar ()) { // We need a Vertical ScrollBar
-				
+			bool needHoriz = false;
+			bool needVert = false;
+
+			/* figure out which scrollbars we need, and what the visible areas are */
+			int visible_cells_width = cells_area.Width;
+			int visible_cells_height = cells_area.Height;
+			int width_of_all_columns = CalcAllColumnsWidth ();
+			int allrows = grid.RowsCount;
+			if (grid.ShowEditRow && grid.RowsCount > 0)
+				allrows++;
+
+			/* use a loop to iteratively calculate whether
+			 * we need horiz/vert scrollbars. */
+			for (int i = 0; i < 3; i ++) {
+				if (needVert)
+					visible_cells_width = cells_area.Width - grid.vert_scrollbar.Width;
+				if (needHoriz)
+					visible_cells_height = cells_area.Height - grid.horiz_scrollbar.Height;
+
+				UpdateVisibleRowCount ();
+
+				needHoriz = (width_of_all_columns > visible_cells_width);
+				needVert = (grid.visiblerow_count != allrows);
+			}
+
+			int horiz_scrollbar_width = grid.ClientRectangle.Width;
+			int horiz_scrollbar_maximum = 0;
+			int vert_scrollbar_height = 0;
+			int vert_scrollbar_maximum = 0;
+
+			if (needVert)
+				SetUpVerticalScrollBar (out vert_scrollbar_height, out vert_scrollbar_maximum);
+
+			if (needHoriz)
+				SetUpHorizontalScrollBar (out horiz_scrollbar_maximum);
+
+			cells_area.Width = visible_cells_width;
+			cells_area.Height = visible_cells_height;
+
+			if (needVert && needHoriz) {
 				if (grid.ShowParentRowsVisible) {
 					parent_rows.Width -= grid.vert_scrollbar.Width;
 				}
 
-				if (grid.columnheaders_visible == false || grid.CurrentTableStyle.GridColumnStyles.Count == 0) {
+				if (!ShowingColumnHeaders) {
 					if (columnshdrs_area.X + columnshdrs_area.Width > grid.vert_scrollbar.Location.X) {
 						columnshdrs_area.Width -= grid.vert_scrollbar.Width;
 					}
 				}
 
-				if (cells_area.X + cells_area.Width >= grid.vert_scrollbar.Location.X) {
-					cells_area.Width -= grid.vert_scrollbar.Width;
-				}
+				horiz_scrollbar_width -= grid.vert_scrollbar.Width;
+				vert_scrollbar_height -= grid.horiz_scrollbar.Height;
 			}
 
-			if (SetUpHorizontalScrollBar ()) { // We need a Horizontal ScrollBar
-				cells_area.Height -= grid.horiz_scrollbar.Height;
-
+			if (needVert) {
 				if (rowshdrs_area.Y + rowshdrs_area.Height > grid.ClientRectangle.Y + grid.ClientRectangle.Height) {
 					rowshdrs_area.Height -= grid.horiz_scrollbar.Height;
 					rowshdrs_maxheight -= grid.horiz_scrollbar.Height;
 				}
+
+				grid.vert_scrollbar.Height = vert_scrollbar_height;
+				grid.vert_scrollbar.Maximum = vert_scrollbar_maximum;
+				grid.Controls.Add (grid.vert_scrollbar);
+				grid.vert_scrollbar.Visible = true;
+			}
+			else {
+				grid.Controls.Remove (grid.vert_scrollbar);
+				grid.vert_scrollbar.Visible = false;
 			}
 
-			// Reajust scrollbars to avoid overlapping at the corners
-			if (grid.vert_scrollbar.Visible && grid.horiz_scrollbar.Visible) {
-				grid.horiz_scrollbar.Width -= grid.vert_scrollbar.Width;
-				grid.vert_scrollbar.Height -= grid.horiz_scrollbar.Height;
+			if (needHoriz) {
+				grid.horiz_scrollbar.Width = horiz_scrollbar_width;
+				grid.horiz_scrollbar.Maximum = horiz_scrollbar_maximum;
+				grid.Controls.Add (grid.horiz_scrollbar);
+				grid.horiz_scrollbar.Visible = true;
+			}
+			else {
+				grid.Controls.Remove (grid.horiz_scrollbar);
+				grid.horiz_scrollbar.Visible = false;
 			}
 
 			UpdateVisibleColumn ();
@@ -183,9 +238,11 @@ namespace System.Windows.Forms
 			//Console.WriteLine ("DataGridDrawing.CalcGridAreas rowshdrs_area:{0}", rowshdrs_area);
 			//Console.WriteLine ("DataGridDrawing.CalcGridAreas columnshdrs_area:{0}", columnshdrs_area);
 			//Console.WriteLine ("DataGridDrawing.CalcGridAreas cells:{0}", cells_area);
+
+			in_calc_grid_areas = false;
 		}
 
-		public void CalcCaption ()
+		private void CalcCaption ()
 		{
 			if (grid.caption_visible == false) {
 				caption_area = Rectangle.Empty;
@@ -200,7 +257,7 @@ namespace System.Windows.Forms
 			//Console.WriteLine ("DataGridDrawing.CalcCaption {0}", caption_area);
 		}
 
-		public void CalcCellsArea ()
+		private void CalcCellsArea ()
 		{
 			if (grid.caption_visible) {
 				cells_area.Y = caption_area.Y + caption_area.Height;
@@ -212,7 +269,7 @@ namespace System.Windows.Forms
 				cells_area.Y += parent_rows.Height;
 			}
 
-			if (!(grid.columnheaders_visible == false || grid.CurrentTableStyle.GridColumnStyles.Count == 0)) {
+			if (ShowingColumnHeaders) {
 				cells_area.Y += columnshdrs_area.Height;
 			}
 
@@ -223,11 +280,11 @@ namespace System.Windows.Forms
 			//Console.WriteLine ("DataGridDrawing.CalcCellsArea {0}", cells_area);
 		}
 
-		public void CalcColumnsHeader ()
+		private void CalcColumnsHeader ()
 		{
 			int width_all_cols, max_width_cols;
 			
-			if (grid.columnheaders_visible == false || grid.CurrentTableStyle.GridColumnStyles.Count == 0) {
+			if (!ShowingColumnHeaders) {
 				columnshdrs_area = Rectangle.Empty;				
 				return;
 			}
@@ -267,7 +324,7 @@ namespace System.Windows.Forms
 			//Console.WriteLine ("DataGridDrawing.CalcColumnsHeader {0}", columnshdrs_area);
 		}
 
-		public void CalcParentRows ()
+		private void CalcParentRows ()
 		{
 			if (grid.ShowParentRowsVisible == false) {
 				parent_rows = Rectangle.Empty;
@@ -288,7 +345,7 @@ namespace System.Windows.Forms
 			//Console.WriteLine ("DataGridDrawing.CalcParentRows {0}", parent_rows);
 		}
 
-		public void CalcRowsHeaders ()
+		private void CalcRowsHeaders (int visiblerow_count)
 		{
 			if (grid.CurrentTableStyle.CurrentRowHeadersVisible == false) {
 				rowshdrs_area = Rectangle.Empty;
@@ -305,17 +362,44 @@ namespace System.Windows.Forms
 				rowshdrs_area.Y += parent_rows.Height;
 			}
 
-			if (!(grid.columnheaders_visible == false || grid.CurrentTableStyle.GridColumnStyles.Count == 0)) { // first block is painted by ColumnHeader
+			if (ShowingColumnHeaders) { // first block is painted by ColumnHeader
 				rowshdrs_area.Y += ColumnsHeaderHeight;
 			}
 
 			rowshdrs_area.X = grid.ClientRectangle.X;
 			rowshdrs_area.Width = grid.RowHeaderWidth;
-			rowshdrs_area.Height = grid.visiblerow_count * grid.RowHeight;
+			rowshdrs_area.Height = visiblerow_count * grid.RowHeight;
 			rowshdrs_maxheight = grid.ClientRectangle.Height + grid.ClientRectangle.Y - rowshdrs_area.Y;
 
 			//Console.WriteLine ("DataGridDrawing.CalcRowsHeaders {0} {1}", rowshdrs_area,
 			//	rowshdrs_maxheight);
+		}
+
+		private int GetVisibleRowCount (int visibleHeight)
+		{
+			int rv;
+			int total_rows = grid.RowsCount;
+			
+			if (grid.ShowEditRow && grid.RowsCount > 0) {
+				total_rows++;
+			}
+
+			int rows_height = (total_rows - grid.first_visiblerow) * grid.RowHeight;
+			int max_rows = visibleHeight / grid.RowHeight;
+						
+			if (max_rows > total_rows) {
+				max_rows = total_rows;
+			}
+
+			if (rows_height > cells_area.Height) {
+				rv = max_rows;
+			} else {
+				rv = total_rows;
+			}	
+
+			if (rv + grid.first_visiblerow > total_rows)
+				rv = total_rows - grid.first_visiblerow;
+			return rv;
 		}
 
 		public void UpdateVisibleColumn ()
@@ -341,29 +425,21 @@ namespace System.Windows.Forms
 		public void UpdateVisibleRowCount ()
 		{
 			int max_height = cells_area.Height;
+			int max_rows = max_height / grid.RowHeight;
+
 			int total_rows = grid.RowsCount;
 			
 			if (grid.ShowEditRow && grid.RowsCount > 0) {
 				total_rows++;
 			}
 
-			int rows_height = (total_rows - grid.first_visiblerow) * grid.RowHeight;
-			int max_rows = max_height / grid.RowHeight;
-						
 			if (max_rows > total_rows) {
 				max_rows = total_rows;
 			}
 
-			if (rows_height > cells_area.Height) {
-				grid.visiblerow_count = max_rows;
-			} else {
-				grid.visiblerow_count = total_rows;
-			}	
+			grid.visiblerow_count = GetVisibleRowCount (max_height);
 
-			CalcRowsHeaders (); // Height depends on num of visible rows		
-			
-			if (grid.visiblerow_count + grid.first_visiblerow > total_rows)
-				grid.visiblerow_count = total_rows - grid.first_visiblerow;
+			CalcRowsHeaders (grid.visiblerow_count); // Height depends on num of visible rows		
 
 			if (grid.visiblerow_count < max_rows) {
 				grid.visiblerow_count = max_rows;
@@ -468,8 +544,11 @@ namespace System.Windows.Forms
 
 			Rectangle rect_row = new Rectangle ();
 
+			int row_width = CalcAllColumnsWidth ();
+			if (row_width > cells_area.Width)
+				row_width = cells_area.Width;
 			rect_row.X = cells_area.X;
-			rect_row.Width = cells_area.Width;
+			rect_row.Width = row_width;
 			rect_row.Height = grid.RowHeight;
 			rect_row.Y = cells_area.Y + ((row - grid.FirstVisibleRow) * grid.RowHeight);
 			grid.Invalidate (rect_row);
@@ -504,17 +583,10 @@ namespace System.Windows.Forms
 			rect_col.Height = cells_area.Height;
 			grid.Invalidate (rect_col);
 		}
-				
-		// Return true if the scrollbar is needed
-		public bool SetUpHorizontalScrollBar ()
-		{
-			int width_all = CalcAllColumnsWidth ();
 
-			if (width_all <= cells_area.Width) {
-				grid.horiz_scrollbar.Visible = false;
-				grid.Controls.Remove (grid.horiz_scrollbar);
-				return false;
-			}
+		void SetUpHorizontalScrollBar (out int maximum)
+		{
+			maximum = CalcAllColumnsWidth ();
 
 			grid.horiz_scrollbar.Location = new Point (grid.ClientRectangle.X, grid.ClientRectangle.Y +
 				grid.ClientRectangle.Height - grid.horiz_scrollbar.Height);
@@ -522,28 +594,13 @@ namespace System.Windows.Forms
 			grid.horiz_scrollbar.Size = new Size (grid.ClientRectangle.Width,
 				grid.horiz_scrollbar.Height);
 
-			grid.horiz_scrollbar.Maximum = width_all;// - cells_area.Width;
 			grid.horiz_scrollbar.LargeChange = cells_area.Width;
-			grid.Controls.Add (grid.horiz_scrollbar);
-			grid.horiz_scrollbar.Visible = true;
-			return true;
 		}
 
-		// Return true if the scrollbar is needed
-		public bool SetUpVerticalScrollBar ()
-		{
-			int y, height;
-			int allrows = grid.RowsCount;
 
-			if (grid.ShowEditRow && grid.RowsCount > 0) {
-				allrows++;
-			}
-			
-			if (grid.visiblerow_count == allrows) {
-				grid.vert_scrollbar.Visible = false;
-				grid.Controls.Remove (grid.vert_scrollbar);
-				return false;
-			}
+		void SetUpVerticalScrollBar (out int height, out int maximum)
+		{
+			int y;
 			
 			if (grid.caption_visible) {
 				y = grid.ClientRectangle.Y + caption_area.Height;
@@ -559,17 +616,13 @@ namespace System.Windows.Forms
 			grid.vert_scrollbar.Size = new Size (grid.vert_scrollbar.Width,
 				height);
 
-			grid.vert_scrollbar.Maximum = grid.RowsCount;
+			maximum = grid.RowsCount;
 			
 			if (grid.ShowEditRow && grid.RowsCount > 0) {
-				grid.vert_scrollbar.Maximum++;	
+				maximum++;	
 			}
 			
 			grid.vert_scrollbar.LargeChange = VLargeChange;
-
-			grid.Controls.Add (grid.vert_scrollbar);
-			grid.vert_scrollbar.Visible = true;
-			return true;
 		}
 
 		#endregion // Public Instance Methods
@@ -594,7 +647,11 @@ namespace System.Windows.Forms
 			}
 		}
 
-		public int ColumnsHeaderHeight {
+		bool ShowingColumnHeaders {
+			get { return grid.columnheaders_visible != false && grid.CurrentTableStyle.GridColumnStyles.Count > 0; }
+		}
+
+		int ColumnsHeaderHeight {
 			get {
 				return grid.CurrentTableStyle.HeaderFont.Height + 6;
 			}
