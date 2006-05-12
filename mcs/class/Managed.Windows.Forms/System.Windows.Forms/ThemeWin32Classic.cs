@@ -1772,7 +1772,7 @@ namespace System.Windows.Forms
 		{
 			if (menu.Height == 0)
 				CalcMenuBarSize (dc, menu, rect.Width);
-				
+
 			bool keynav = (menu as MainMenu).tracker.Navigating;
 			HotkeyPrefix hp = always_draw_hotkeys || keynav ? HotkeyPrefix.Show : HotkeyPrefix.Hide;
 			string_format_menu_menubar_text.HotkeyPrefix = hp;
@@ -3099,21 +3099,15 @@ namespace System.Windows.Forms
 				return;
 			}
 
-			int left = area.Left;
-			if (panel.Icon != null) {
-				left += 2;
-				dc.DrawIcon (panel.Icon, left, area.Top);
-				left += panel.Icon.Width;
-			}
-
 			if (panel.Text == String.Empty)
-				return;
+					return;
 
 			string text = panel.Text;
 			StringFormat string_format = new StringFormat ();
 			string_format.Trimming = StringTrimming.Character;
 			string_format.FormatFlags = StringFormatFlags.NoWrap;
 
+			
 			if (text [0] == '\t') {
 				string_format.Alignment = StringAlignment.Center;
 				text = text.Substring (1);
@@ -3123,14 +3117,58 @@ namespace System.Windows.Forms
 				}
 			}
 
-			int x = left + border_size;
-			int y = border_size + 2;
-			Rectangle r = new Rectangle (x, y, 
-				area.Right - x - border_size,
-				area.Bottom - y - border_size);
+			Rectangle string_rect = Rectangle.Empty;
+			int x, y, len;
+			int icon_x = 0;;
 			
-			dc.DrawString (text, panel.Parent.Font, br_forecolor, r, string_format);
-			string_format.Dispose ();
+			switch (panel.Alignment) {
+			case HorizontalAlignment.Right:
+				len = (int) dc.MeasureString (text, panel.Parent.Font).Width;
+				x = area.Right - len - 2;
+				y = border_size + 2;
+				string_rect = new Rectangle (x, y, 
+						area.Right - x - border_size,
+						area.Bottom - y - border_size);
+
+				if (panel.Icon != null) {
+					icon_x = x - panel.Icon.Width - 2;
+				}
+				break;
+			case HorizontalAlignment.Center:
+				len = (int) dc.MeasureString (text, panel.Parent.Font).Width;
+				x = (panel.Width / 2) + (len / 2);
+				y = border_size + 2;
+				string_rect = new Rectangle (x, y, 
+						area.Right - x - border_size,
+						area.Bottom - y - border_size);
+
+				// Centered panels don't get an icon apparently.
+				break;
+
+				
+			default:
+				int left = area.Left;
+				if (panel.Icon != null) {
+					left += 2;
+					dc.DrawIcon (panel.Icon, left, area.Top);
+					left += panel.Icon.Width;
+				}
+
+				x = left + border_size;
+				y = border_size + 2;
+				string_rect = new Rectangle (x, y, 
+						area.Right - x - border_size,
+						area.Bottom - y - border_size);
+
+				if (panel.Icon != null) {
+					dc.DrawIcon (panel.Icon, icon_x, area.Top);
+				}
+
+				break;
+			}
+
+			dc.DrawString (text, panel.Parent.Font, br_forecolor, string_rect, string_format);
+			
 		}
 
 		public override int StatusBarSizeGripWidth {
@@ -3462,7 +3500,7 @@ namespace System.Windows.Forms
 				format.Alignment = StringAlignment.Center;
 			else
 				format.Alignment = StringAlignment.Near;
-			
+
 			if (control is PropertyGrid.PropertyToolBar) {
 				dc.FillRectangle (ResPool.GetSolidBrush(control.BackColor), clip_rectangle);
 				
@@ -3482,13 +3520,28 @@ namespace System.Windows.Forms
 					dc.DrawLine (SystemPens.ControlDark, clip_rectangle.Right - 1, 1, clip_rectangle.Right - 1, control.Bottom - 1);
 				}
 			} else if (control.Divider) {
-				dc.FillRectangle (SystemBrushes.Control, clip_rectangle);
+
+				if (control.Appearance == ToolBarAppearance.Flat &&
+						control.Parent != null && control.Parent.BackgroundImage != null) {
+					using (TextureBrush b = new TextureBrush (control.Parent.BackgroundImage, WrapMode.Tile)) {
+						dc.FillRectangle (b, clip_rectangle);
+					}
+				} else {
+					dc.FillRectangle (SystemBrushes.Control, clip_rectangle);
+				}
 
 				if (clip_rectangle.Y < 2) {
 					if (clip_rectangle.Y < 1) {
 						dc.DrawLine (SystemPens.ControlDark, clip_rectangle.X, 0, clip_rectangle.Right, 0);
 					}
 					dc.DrawLine (SystemPens.ControlLightLight, clip_rectangle.X, 1, clip_rectangle.Right, 1);
+				}
+			} else {
+				if (control.Appearance == ToolBarAppearance.Flat &&
+						control.Parent != null && control.Parent.BackgroundImage != null) {
+					using (TextureBrush b = new TextureBrush (control.Parent.BackgroundImage, WrapMode.Tile)) {
+						dc.FillRectangle (b, clip_rectangle);
+					}
 				}
 			}
 

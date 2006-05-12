@@ -1,3 +1,10 @@
+2006-05-12  Jackson Harper  <jackson@ximian.com>
+
+	* ThemeWin32Classic.cs (DrawToolBar): Flat toolbars get their
+	parents background image,  but strangely not their own.
+	- (DrawStatusBarPanel): Take into account horizontal alignment
+	when drawing the strings and icons.
+
 2006-05-12  Mike Kestner  <mkestner@novell.com>
 
 	* ListBox.cs: avoid invalidations for focus when the collection is
