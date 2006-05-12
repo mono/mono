@@ -3857,7 +3857,33 @@ namespace System.Windows.Forms {
 
 			gc = XCreateGC(DisplayHandle, hwnd.client_window, IntPtr.Zero, ref gc_values);
 
-			XCopyArea(DisplayHandle, hwnd.client_window, hwnd.client_window, gc, area.X - XAmount, area.Y - YAmount, area.Width, area.Height, area.X, area.Y);
+			int src_x, src_y;
+			int dest_x, dest_y;
+			int width, height;
+
+			if (YAmount > 0) {
+				src_y = area.Y;
+				height = area.Height - YAmount;
+				dest_y = area.Y + YAmount;
+			}
+			else {
+				src_y = area.Y - YAmount;
+				height = area.Height + YAmount;
+				dest_y = area.Y;
+			}
+
+			if (XAmount > 0) {
+				src_x = area.X;
+				width = area.Width - XAmount;
+				dest_x = area.X + XAmount;
+			}
+			else {
+				src_x = area.X - XAmount;
+				width = area.Width + XAmount;
+				dest_x = area.X;
+			}
+
+			XCopyArea(DisplayHandle, hwnd.client_window, hwnd.client_window, gc, src_x, src_y, width, height, dest_x, dest_y);
 
 			// Generate an expose for the area exposed by the horizontal scroll
 			// We don't use AddExpose since we're 

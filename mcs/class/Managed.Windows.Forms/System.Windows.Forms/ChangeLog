@@ -1,5 +1,9 @@
 2006-05-12  Chris Toshok  <toshok@ximian.com>
 
+	* XplatUIX11.cs (ScrollWindow): optimize copying.
+
+2006-05-12  Chris Toshok  <toshok@ximian.com>
+
 	* DataGridDrawingLogic.cs: make CalcGridAreas non-reentrant.
 	Figure out the positioning/layout in a single pass instead of
 	multiple recursive invocations.  Speeds up the initial display of
