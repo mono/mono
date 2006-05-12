@@ -1,3 +1,8 @@
+2006-05-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_fnptr_class_get): Set class->image to corlib for now, since other
+	functions try to allocate from the image mempool.
+
 2006-05-12  Dick Porter  <dick@ximian.com>
 
 	* threads.c (mono_thread_attach): Fix usage of GetCurrentThread().
