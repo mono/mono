@@ -1,3 +1,7 @@
+2006-05-12  Wade Berrier <wberrier@novell.com>
+
+	* threads.c: Define G_GSIZE_FORMAT for systems with glib < 2.6
+
 2006-05-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_fnptr_class_get): Set class->image to corlib for now, since other
