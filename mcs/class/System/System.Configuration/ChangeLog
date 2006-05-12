@@ -1,3 +1,10 @@
+2006-05-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ConfigurationSettings.cs : ok, now I correctly understand the
+	  problem. Since appSettings section handlers are different between
+	  1.x and 2.0 AppSettings property implementation should also be
+	  different. It should really fix bug #78372.
+
 2006-05-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ConfigurationSettings.cs : use ConfigurationManager.GetConfig()

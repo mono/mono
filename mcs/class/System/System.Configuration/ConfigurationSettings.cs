@@ -59,11 +59,7 @@ namespace System.Configuration
 
 		public static object GetConfig (string sectionName)
 		{
-#if NET_2_0 && CONFIGURATION_DEP
-			return ConfigurationManager.GetSection (sectionName);
-#else
 			return config.GetConfig (sectionName);
-#endif
 		}
 
 #if NET_2_0
@@ -72,7 +68,11 @@ namespace System.Configuration
 		public static NameValueCollection AppSettings
 		{
 			get {
+#if NET_2_0
+				object appSettings = ConfigurationManager.GetSection ("appSettings");
+#else
 				object appSettings = GetConfig ("appSettings");
+#endif
 				if (appSettings == null)
 					appSettings = new NameValueCollection ();
 				return (NameValueCollection) appSettings;
