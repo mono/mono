@@ -109,7 +109,7 @@ namespace System.Configuration {
 				rootGroup.StreamName = streamName;
 			}
 			
-			if (configPath != null)
+			if (streamName != null)
 				Load ();
 		}
 		

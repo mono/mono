@@ -4,8 +4,9 @@
 //
 // Author:
 //	Chris Toshok  <toshok@ximian.com>
+//	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -254,6 +255,16 @@ namespace MonoTests.System.Configuration {
 		public void GetSectionReturnsNativeObject ()
 		{
 			Assert.IsTrue (ConfigurationManager.GetSection ("appSettings") is NameValueCollection);
+		}
+
+		[Test] // test for bug #78372.
+		public void OpenMachineConfiguration ()
+		{
+			Configuration cfg = ConfigurationManager.OpenMachineConfiguration ();
+			Assert.IsTrue (cfg.Sections.Count > 0, "#1");
+			ConfigurationSection s = cfg.Sections ["system.net/connectionManagement"];
+			Assert.IsNotNull (s, "#2");
+			Assert.IsTrue (s is ConnectionManagementSection, "#3");
 		}
 	}
 }

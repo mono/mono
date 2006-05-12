@@ -1,3 +1,9 @@
+2006-05-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Configuration.cs : configPath is null for machine.config, so don't
+	  use it. Use streamName instead. To my understanding, this should
+	  fix bug #78372.
+
 2006-05-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ConnectionStringSettings.cs : it seems that "name" property
