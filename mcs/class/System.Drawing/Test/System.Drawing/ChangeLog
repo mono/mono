@@ -1,3 +1,8 @@
+2006-05-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestRegion.cs: Added a new test case for unioning a rectangle with 
+	infinity and a new test case for GetRegionScans.
+
 2006-05-04  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* TestGraphics.cs: Re-introduce the removed check :)	

@@ -1109,6 +1109,17 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
+		public void Union_Region_Infinite ()
+		{
+			// default ctor creates an infinite region
+			Region r = new Region ();
+			CheckEmpty ("default .ctor", r);
+			// union-ing to infinity doesn't change the results
+			r.Union (new Rectangle (10, 10, 100, 100));
+			CheckEmpty ("U infinity", r);
+		}
+
+		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void Intersect_GraphicsPath_Null ()
 		{
@@ -1361,6 +1372,20 @@ namespace MonoTests.System.Drawing
 			gp.AddRectangle (new Rectangle (-4194304, -4194304, 4194304, 8388608));
 			gp.AddRectangle (new Rectangle (0, -4194304, 4194304, 8388608));
 			Assert.IsFalse (region.IsInfinite (graphic), "TwoSideBySideRectangle.IsInfinite");
+		}
+
+		[Test]
+		public void Rectangle_GetRegionScans ()
+		{
+			Matrix matrix = new Matrix ();
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddRectangle (new Rectangle (10, 10, 10, 10));
+			Region region = new Region (gp);
+			Assert.AreEqual (1, region.GetRegionScans (matrix).Length, "1");
+
+			gp.AddRectangle (new Rectangle (20, 20, 20, 20));
+			region = new Region (gp);
+			Assert.AreEqual (2, region.GetRegionScans (matrix).Length, "2");
 		}
 	}
 }
