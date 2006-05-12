@@ -107,6 +107,12 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal virtual bool UserClipWontExposeParent {
+			get {
+				return true;
+			}
+		}
+
 		internal virtual int VerticalScrollBarWidth {
 			get {
 				return 16;
@@ -200,6 +206,9 @@ namespace System.Windows.Forms {
 		internal abstract bool SetTopmost(IntPtr hWnd, IntPtr hWndOwner, bool Enabled);
 
 		internal abstract bool CalculateWindowRect(ref Rectangle ClientRect, int Style, int ExStyle, Menu menu, out Rectangle WindowRect);
+
+		internal abstract Region GetClipRegion(IntPtr hwnd);
+		internal abstract void SetClipRegion(IntPtr hwnd, Region region);
 
 		internal abstract void SetCursor(IntPtr hwnd, IntPtr cursor);
 		internal abstract void ShowCursor(bool show);

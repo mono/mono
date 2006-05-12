@@ -87,6 +87,7 @@ namespace System.Windows.Forms
 		internal int			mouse_clicks;		// Counter for mouse clicks
 		internal Cursor			cursor;			// Cursor for the window
 		internal bool			allow_drop;		// true if the control accepts droping objects on it   
+		internal Region			clip_region;		// User-specified clip region for the window
 
 		// Visuals
 		internal Color			foreground_color;	// foreground color for control
@@ -977,6 +978,47 @@ namespace System.Windows.Forms
 					parent.OnPaint(parent_pe);
 					parent_pe.Graphics.Restore(state);
 					parent_pe.SetGraphics(null);
+				}
+			}
+
+			if ((clip_region != null) && (XplatUI.UserClipWontExposeParent)) {
+				if (parent != null) {
+					PaintEventArgs	parent_pe;
+					Region		region;
+					GraphicsState	state;
+					Hwnd		hwnd;
+
+					hwnd = Hwnd.ObjectFromHandle(Handle);
+
+					if (hwnd != null) {
+						parent_pe = new PaintEventArgs(pevent.Graphics, new Rectangle(pevent.ClipRectangle.X + Left, pevent.ClipRectangle.Y + Top, pevent.ClipRectangle.Width, pevent.ClipRectangle.Height));
+
+						region = new Region ();
+						region.MakeEmpty();
+						region.Union(ClientRectangle);
+
+						foreach (Rectangle r in hwnd.ClipRectangles) {
+							region.Union (r);
+						}
+
+						state = parent_pe.Graphics.Save();
+						parent_pe.Graphics.Clip = region;
+
+						parent_pe.Graphics.TranslateTransform(-Left, -Top);
+						parent.OnPaintBackground(parent_pe);
+						parent_pe.Graphics.Restore(state);
+
+						state = parent_pe.Graphics.Save();
+						parent_pe.Graphics.Clip = region;
+
+						parent_pe.Graphics.TranslateTransform(-Left, -Top);
+						parent.OnPaint(parent_pe);
+						parent_pe.Graphics.Restore(state);
+						parent_pe.SetGraphics(null);
+
+						region.Intersect(clip_region);
+						pevent.Graphics.Clip = region;
+					}
 				}
 			}
 
@@ -2126,19 +2168,14 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public Region Region {
 			get {
-				return new Region(this.bounds);
+				return clip_region;
 			}
 
 			set {
-				Graphics	g;
-				RectangleF	r;
-
-				g = this.CreateGraphics();
-				r = value.GetBounds(g);
-
-				SetBounds((int)r.X, (int)r.Y, (int)r.Width, (int)r.Height);
-
-				g.Dispose();
+				if (IsHandleCreated) {
+					XplatUI.SetClipRegion(Handle, value);
+				}
+				clip_region = value;
 			}
 		}
 
@@ -3176,6 +3213,10 @@ namespace System.Windows.Forms
 				creator_thread = Thread.CurrentThread;
 
 				XplatUI.EnableWindow(window.Handle, is_enabled);
+
+				if (clip_region != null) {
+					XplatUI.SetClipRegion(Handle, clip_region);
+				}
 
 				// Set our handle with our parent
 				if ((parent != null) && (parent.IsHandleCreated)) {

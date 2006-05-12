@@ -237,6 +237,12 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		static public bool UserClipWontExposeParent {
+			get {
+				return driver.UserClipWontExposeParent;
+			}
+		}
+
 		static public int VerticalScrollBarWidth {
 			get {
 				return driver.VerticalScrollBarWidth;
@@ -454,6 +460,13 @@ namespace System.Windows.Forms {
 				Console.WriteLine("GetAutoScaleSize({0}): Called", font);
 			#endif
 			return driver.GetAutoScaleSize(font);
+		}
+
+		internal static Region GetClipRegion(IntPtr handle) {
+			#if DriverDebug
+				Console.WriteLine("GetClipRegion({0}): Called", Window(handle));
+			#endif
+			return driver.GetClipRegion(handle);
 		}
 
 		internal static void GetCursorInfo(IntPtr cursor, out int width, out int height, out int hotspot_x, out int hotspot_y) {
@@ -706,6 +719,13 @@ namespace System.Windows.Forms {
 				Console.WriteLine("SetCaretPos({0}, {1}, {2}): Called", Window(handle), x, y);
 			#endif
 			driver.SetCaretPos(handle, x, y);
+		}
+
+		internal static void SetClipRegion(IntPtr handle, Region region) {
+			#if DriverDebug
+				Console.WriteLine("SetClipRegion({0}, {1}): Called", Window(handle), region);
+			#endif
+			driver.SetClipRegion(handle, region);
 		}
 
 		internal static void SetCursor(IntPtr handle, IntPtr cursor) {

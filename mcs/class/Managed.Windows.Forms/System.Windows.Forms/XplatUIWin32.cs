@@ -904,6 +904,13 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal override bool UserClipWontExposeParent {
+			get {
+				return false;
+			}
+		}
+
+
 		internal override int VerticalScrollBarWidth {
 			get {
 				return scroll_width;
@@ -1705,6 +1712,20 @@ namespace System.Windows.Forms {
 
 		internal override void SetCursorPos(IntPtr handle, int x, int y) {
 			Win32SetCursorPos(x, y);
+		}
+
+		internal override Region GetClipRegion(IntPtr hwnd) {
+			Region region;
+
+			region = new Region();
+
+			Win32GetWindowRgn(hwnd, region.GetHrgn(Graphics.FromHwnd(hwnd)));
+
+			return region;
+		}
+
+		internal override void SetClipRegion(IntPtr hwnd, Region region) {
+			Win32SetWindowRgn(hwnd, region.GetHrgn(Graphics.FromHwnd(hwnd)), false);
 		}
 
 		internal override void EnableWindow(IntPtr handle, bool Enable) {
@@ -2619,6 +2640,12 @@ namespace System.Windows.Forms {
 
 		[DllImport ("winmm.dll", EntryPoint="PlaySoundW", CallingConvention=CallingConvention.StdCall, CharSet=CharSet.Unicode)]
 		internal extern static IntPtr Win32PlaySound(string pszSound, IntPtr hmod, SndFlags fdwSound);
+
+		[DllImport ("user32.dll", EntryPoint="SetWindowRgn", CallingConvention=CallingConvention.StdCall, CharSet=CharSet.Unicode)]
+		internal extern static int Win32SetWindowRgn(IntPtr hWnd, IntPtr hRgn, bool redraw);
+
+		[DllImport ("user32.dll", EntryPoint="GetWindowRgn", CallingConvention=CallingConvention.StdCall, CharSet=CharSet.Unicode)]
+		internal extern static IntPtr Win32GetWindowRgn(IntPtr hWnd, IntPtr hRgn);
 		#endregion
 	}
 }

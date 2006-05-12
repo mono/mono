@@ -1154,7 +1154,11 @@ namespace System.Windows.Forms {
 
 			return IntPtr.Zero;
 		}
-		
+
+		internal override Region GetClipRegion(IntPtr hwnd) {
+			return null;
+		}
+
 		[MonoTODO]
 		internal override void GetCursorInfo(IntPtr cursor, out int width, out int height, out int hotspot_x, out int hotspot_y) {
 			throw new NotImplementedException ();
@@ -1510,6 +1514,10 @@ namespace System.Windows.Forms {
 					Caret.Timer.Start ();
 				}
 			}
+		}
+
+		internal override void SetClipRegion(IntPtr hwnd, Region region) {
+			throw new NotImplementedException();
 		}
 		
 		internal override void SetCursor(IntPtr window, IntPtr cursor) {

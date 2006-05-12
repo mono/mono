@@ -2748,6 +2748,17 @@ namespace System.Windows.Forms {
 			return active;
 		}
 
+		internal override Region GetClipRegion(IntPtr handle) {
+			Hwnd	hwnd;
+
+			hwnd = Hwnd.ObjectFromHandle(handle);
+			if (hwnd != null) {
+				return hwnd.UserClip;
+			}
+
+			return null;
+		}
+
 		internal override void GetCursorInfo(IntPtr cursor, out int width, out int height, out int hotspot_x, out int hotspot_y) {
 			width = 20;
 			height = 20;
@@ -3211,7 +3222,6 @@ namespace System.Windows.Forms {
 								hwnd.whacky_wm = true;
 							}
 
-							msg.message = Msg.WM_WINDOWPOSCHANGED;
 							if (hwnd.opacity != 0xffffffff) {
 								IntPtr opacity;
 
@@ -3233,17 +3243,13 @@ namespace System.Windows.Forms {
 						#if DriverDebugExtra
 							Console.WriteLine("GetMessage(): Window {0:X} ConfigureNotify x={1} y={2} width={3} height={4}", hwnd.client_window.ToInt32(), xevent.ConfigureEvent.x, xevent.ConfigureEvent.y, xevent.ConfigureEvent.width, xevent.ConfigureEvent.height);
 						#endif
-						msg.message = Msg.WM_WINDOWPOSCHANGED;
+						SendMessage(msg.hwnd, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
 						hwnd.configure_pending = false;
 
 						// We need to adjust our client window to track the resize of whole_window
 						PerformNCCalc(hwnd);
-					} else {
-						goto ProcessNextMessage;
 					}
-
-					msg.lParam=IntPtr.Zero;		// FIXME - Generate LPWINDOWPOS structure and pass on
-					break;
+					goto ProcessNextMessage;
 				}
 
 				case XEventName.FocusIn: {
@@ -3644,9 +3650,16 @@ namespace System.Windows.Forms {
 				hwnd.client_dc = Graphics.FromHwnd (hwnd.client_window);
 
 				Region clip_region = new Region ();
+				clip_region.MakeEmpty();
+
 				foreach (Rectangle r in hwnd.ClipRectangles) {
 					clip_region.Union (r);
 				}
+
+				if (hwnd.UserClip != null) {
+					clip_region.Intersect(hwnd.UserClip);
+				}
+
 				hwnd.client_dc.Clip = clip_region;
 				paint_event = new PaintEventArgs(hwnd.client_dc, hwnd.Invalid);
 				hwnd.expose_pending = false;
@@ -3974,6 +3987,17 @@ namespace System.Windows.Forms {
 					Caret.Timer.Start();
 				}
 			}
+		}
+
+		internal override void SetClipRegion(IntPtr handle, Region region) {
+			Hwnd	hwnd;
+
+			hwnd = Hwnd.ObjectFromHandle(handle);
+			if (hwnd == null) {
+				return;
+			}
+
+			hwnd.UserClip = region;
 		}
 
 		internal override void SetCursor(IntPtr handle, IntPtr cursor) {

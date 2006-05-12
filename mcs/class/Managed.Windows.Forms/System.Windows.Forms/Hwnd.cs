@@ -73,6 +73,7 @@ namespace System.Windows.Forms {
 		internal int		tool_caption_height;
 		internal bool		whacky_wm;
 		internal bool		fixed_size;
+		internal Region		user_clip;
 		internal static Bitmap	bmp = new Bitmap(1, 1, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 		internal XEventQueue	queue;
 		#endregion	// Local Variables
@@ -263,6 +264,16 @@ namespace System.Windows.Forms {
 				if (windows[client_window] == null) {
 					windows[client_window] = this;
 				}
+			}
+		}
+
+		public Region UserClip {
+			get {
+				return user_clip;
+			}
+
+			set {
+				user_clip = value;
 			}
 		}
 

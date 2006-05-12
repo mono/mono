@@ -1,3 +1,20 @@
+2006-05-12  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* XplatUI.cs, XplatUIDriver.cs, XplatUIOSX.cs: Added new SetClipRegion
+	  and GetClipRegion methods and UserClipWontExposeParent property.
+	* XplatUIWin32.cs: Implemented SetClipRegion/GetClipRegion methods,
+	  overriding UserClipWontExposeParent property, setting to false, since
+	  Win32 handles the required expose messages to draw our clipped parent
+	  areas internally
+	* XplatUIX11.cs: Implemented SetClipRegion and GetClipRegion; updated
+	  PaintEventStart to set the user clip region if set.
+	* Control.cs: 
+	  - Now internally tracking the Region for the control since we need to
+	    store it if the handle is not yet created and only set it when it
+	    becomes created. Before setting the region forced handle creation
+	  - Added code to draw the parents underneath a user-clipped region
+	* Hwnd.cs: Added UserClip property
+
 2006-05-12  Chris Toshok  <toshok@ximian.com>
 
 	* ScrollBar.cs (set_LargeChange): Refresh() -> InvalidateDirty()
