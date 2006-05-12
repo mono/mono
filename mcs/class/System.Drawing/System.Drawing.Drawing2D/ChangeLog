@@ -1,3 +1,7 @@
+2006-05-12  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* GraphicsPath.cs: Fix misnamed GdipAdd*Path*String[I] API (#78383)
+
 2006-05-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PathGradientBrush.cs: Added MonoTODO to warn about the lack of 

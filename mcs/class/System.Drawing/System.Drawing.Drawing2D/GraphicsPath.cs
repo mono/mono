@@ -625,7 +625,7 @@ namespace System.Drawing.Drawing2D
 
 			IntPtr sformat = (format == null) ? IntPtr.Zero : format.NativeObject;
 			// note: the NullReferenceException on s.Length is the expected (MS) exception
-			Status status = GDIPlus.GdipAddStringI (nativePath, s, s.Length, family.NativeObject, style, emSize, ref layoutRect, sformat);
+			Status status = GDIPlus.GdipAddPathStringI (nativePath, s, s.Length, family.NativeObject, style, emSize, ref layoutRect, sformat);
 			GDIPlus.CheckStatus (status);
 		}
 
@@ -637,7 +637,7 @@ namespace System.Drawing.Drawing2D
 
 			IntPtr sformat = (format == null) ? IntPtr.Zero : format.NativeObject;
 			// note: the NullReferenceException on s.Length is the expected (MS) exception
-			Status status = GDIPlus.GdipAddString (nativePath, s, s.Length, family.NativeObject, style, emSize, ref layoutRect, sformat);
+			Status status = GDIPlus.GdipAddPathString (nativePath, s, s.Length, family.NativeObject, style, emSize, ref layoutRect, sformat);
 			GDIPlus.CheckStatus (status);
 		}
 
