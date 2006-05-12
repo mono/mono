@@ -3069,8 +3069,7 @@ namespace System.Windows.Forms
 			}
 
 			if (sb.SizingGrip) {
-				int sg_height = (area.Height / 3) * 2;
-				area = new Rectangle (area.Right - sg_height - 4, area.Bottom - sg_height - 1, sg_height, sg_height);
+				area = new Rectangle (area.Right - 16 - 2, area.Bottom - 12 - 1, 16, 16);
 				CPDrawSizeGrip (dc, ColorControl, area);
 			}
 
@@ -3080,7 +3079,8 @@ namespace System.Windows.Forms
 		protected virtual void DrawStatusBarPanel (Graphics dc, Rectangle area, int index,
 			Brush br_forecolor, StatusBarPanel panel) {
 			int border_size = 3; // this is actually const, even if the border style is none
-
+			int icon_width = 16;
+			
 			area.Height -= border_size;
 			
 			if (panel.BorderStyle != StatusBarPanelBorderStyle.None) {
@@ -3118,45 +3118,43 @@ namespace System.Windows.Forms
 			}
 
 			Rectangle string_rect = Rectangle.Empty;
-			int x, y, len;
-			int icon_x = 0;;
-			
+			int x;
+			int len;
+			int icon_x = 0;
+			int y = (area.Height / 2 - (int) panel.Parent.Font.Size / 2) - 1;
+
 			switch (panel.Alignment) {
 			case HorizontalAlignment.Right:
 				len = (int) dc.MeasureString (text, panel.Parent.Font).Width;
-				x = area.Right - len - 2;
-				y = border_size + 2;
+				x = area.Right - len - 4;
 				string_rect = new Rectangle (x, y, 
 						area.Right - x - border_size,
 						area.Bottom - y - border_size);
-
 				if (panel.Icon != null) {
-					icon_x = x - panel.Icon.Width - 2;
-					dc.DrawIcon (panel.Icon, icon_x, area.Top);
+					icon_x = x - icon_width - 2;
 				}
 				break;
 			case HorizontalAlignment.Center:
 				len = (int) dc.MeasureString (text, panel.Parent.Font).Width;
 				x = (panel.Width / 2) + (len / 2);
-				y = border_size + 2;
 				string_rect = new Rectangle (x, y, 
 						area.Right - x - border_size,
 						area.Bottom - y - border_size);
 
-				// Centered panels don't get an icon apparently.
+				if (panel.Icon != null) {
+					icon_x = x - icon_width - 2;
+				}
 				break;
 
 				
 			default:
-				int left = area.Left;
+				int left = area.Left + border_size;;
 				if (panel.Icon != null) {
-					left += 2;
-					dc.DrawIcon (panel.Icon, left, area.Top);
-					left += panel.Icon.Width;
+					icon_x = area.Left + 2;
+					left = icon_x + icon_width + 2;
 				}
 
-				x = left + border_size;
-				y = border_size + 2;
+				x = left;
 				string_rect = new Rectangle (x, y, 
 						area.Right - x - border_size,
 						area.Bottom - y - border_size);
@@ -3164,6 +3162,10 @@ namespace System.Windows.Forms
 			}
 
 			dc.DrawString (text, panel.Parent.Font, br_forecolor, string_rect, string_format);			
+
+			if (panel.Icon != null) {
+				dc.DrawIcon (panel.Icon, new Rectangle (icon_x, y, icon_width, icon_width));
+			}
 		}
 
 		public override int StatusBarSizeGripWidth {
