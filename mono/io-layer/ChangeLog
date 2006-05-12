@@ -1,3 +1,15 @@
+2006-05-12  Dick Porter  <dick@ximian.com>
+
+	* threads.c: Implement pseudo handles, making GetCurrentThread()
+	match MS behaviour.  Notice when attached threads exit, and unref
+	the handle.  Fix usage of GetCurrentThread() in other places.
+
+	* handles.c (DuplicateHandle): Implement a basic form of
+	DuplicateHandle().
+
+	* wait.c: Fix usage of GetCurrentThread() throughout, and cope
+	with pseudo handles.
+
 2006-04-26  Miguel de Icaza  <miguel@novell.com>
 
 	* io.c (file_close): Oops, do not use DeleteFile which expects
