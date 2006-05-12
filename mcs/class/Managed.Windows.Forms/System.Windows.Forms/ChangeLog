@@ -21,7 +21,9 @@
 	(set_Maximum): same.
 	(set_Minimum): same.
 	(set_SmallChange): same.
-
+	(OnMouseUpSB): remove the call to refresh when releasing the
+	thumb.  We shouldn't need it.
+	
 2006-05-12  Miguel de Icaza  <miguel@novell.com>
 
 	* StatusBar.cs (UpdatePanel): If the panel being refreshes has the

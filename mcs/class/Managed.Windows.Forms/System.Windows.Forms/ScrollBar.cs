@@ -903,7 +903,6 @@ namespace System.Windows.Forms
 				OnScroll (new ScrollEventArgs (ScrollEventType.EndScroll, position));
 				SendWMScroll(ScrollBarCommands.SB_THUMBPOSITION);
 				thumb_pressed = false;
-				Refresh ();
 				return;
 			}
 
