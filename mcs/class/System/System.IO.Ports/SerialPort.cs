@@ -120,8 +120,8 @@ namespace System.IO.Ports
 				if (value == break_state)
 					return; // Do nothing.
 
+				stream.SetBreakState (value);
 				break_state = value;
-				// Update the state
 			}
 		}
 

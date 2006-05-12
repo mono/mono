@@ -22,6 +22,7 @@ namespace System.IO.Ports
 		void DiscardOutBuffer ();
 		SerialSignal GetSignals ();
 		void SetSignal (SerialSignal signal, bool value);
+		void SetBreakState (bool value);
 		void Close ();
 
 		int BytesToRead { get; }

@@ -259,6 +259,11 @@ namespace System.IO.Ports
 				throw new IOException ();
 		}
 
+		public void SetBreakState (bool value)
+		{
+			throw new NotImplementedException ();
+		}
+
 	}
 }
 

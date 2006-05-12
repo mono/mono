@@ -30,6 +30,26 @@ namespace System.IO.Ports
 		const uint WinInfiniteTimeout = 0xFFFFFFFF;
 		const uint FileIOPending = 997;
 
+		// Signal constants
+		const uint SetRts = 3;
+		const uint ClearRts = 4;
+		const uint SetDtr = 5;
+		const uint ClearDtr = 6;
+		const uint SetBreak = 8;
+		const uint ClearBreak = 9;
+		const uint CtsOn = 0x0010;
+		const uint DsrOn = 0x0020;
+		const uint RsldOn = 0x0080;
+
+		// Event constants
+		const uint EvRxChar = 0x0001;
+		const uint EvCts = 0x0008;
+		const uint EvDsr = 0x0010;
+		const uint EvRlsd = 0x0020;
+		const uint EvBreak = 0x0040;
+		const uint EvErr = 0x0080;
+		const uint EvRing = 0x0100;
+
 		int handle;
 		int read_timeout;
 		int write_timeout;
@@ -337,34 +357,87 @@ namespace System.IO.Ports
 		// ISerialStream members
 		public void DiscardInBuffer ()
 		{
-			throw new NotImplementedException ();
+			if (!PurgeComm (handle, PurgeRxClear))
+				ReportIOError (null);
 		}
 
 		public void DiscardOutBuffer ()
 		{
-			throw new NotImplementedException ();
+			if (!PurgeComm (handle, PurgeRxClear))
+				ReportIOError (null);
 		}
+
+		[DllImport ("kernel32", SetLastError=true)]
+		static extern bool ClearCommError (int handle, out CommStat stat);
 
 		public int BytesToRead {
 			get {
-				throw new NotImplementedException ();
+				CommStat stat;
+				if (!ClearCommError (handle, out stat))
+					ReportIOError (null);
+
+				return (int)stat.BytesIn;
 			}
 		}
 
 		public int BytesToWrite {
 			get {
-				throw new NotImplementedException ();
+				CommStat stat;
+				if (!ClearCommError (handle, out stat))
+					ReportIOError (null);
+
+				return (int)stat.BytesOut;
 			}
 		}
 
+		[DllImport ("kernel32", SetLastError=true)]
+		static extern bool GetCommModemStatus (int handle, out uint flags);
+
 		public SerialSignal GetSignals ()
 		{
-			throw new NotImplementedException ();
+			uint flags;
+			if (!GetCommModemStatus (handle, out flags))
+				ReportIOError (null);
+
+			SerialSignal signals = SerialSignal.None;
+			if ((flags & RsldOn) != 0)
+				signals |= SerialSignal.Cd;
+			if ((flags & CtsOn) != 0)
+				signals |= SerialSignal.Cts;
+			if ((flags & DsrOn) != 0)
+				signals |= SerialSignal.Dsr;
+
+			return signals;
 		}
 		
+		[DllImport ("kernel32", SetLastError=true)]
+		static extern bool EscapeCommFunction (int handle, uint flags);
+
 		public void SetSignal (SerialSignal signal, bool value)
 		{
-			throw new NotImplementedException ();
+			if (signal != SerialSignal.Rts || signal != SerialSignal.Dtr)
+				throw new Exception ("Wrong internal value");
+
+			uint flag;
+			if (signal == SerialSignal.Rts)
+				if (value)
+					flag = SetRts;
+				else
+					flag = ClearRts;
+			else 
+				if (value)
+					flag = SetDtr;
+				else
+					flag = ClearDtr;
+
+			if (!EscapeCommFunction (handle, flag))
+				ReportIOError (null);
+		}
+
+		public void SetBreakState (bool value)
+		{
+			if (!EscapeCommFunction (handle, value ? SetBreak : ClearBreak))
+				ReportIOError (null);
 		}
 
 	}
@@ -439,6 +512,14 @@ namespace System.IO.Ports
 			WriteTotalTimeoutConstant = (write_timeout == -1 ? MaxDWord : (uint) write_timeout);
 		}
 
+	}
+
+	[StructLayout (LayoutKind.Sequential)]
+	class CommStat
+	{
+		public uint flags;
+		public uint BytesIn;
+		public uint BytesOut;
 	}
 }
 
