@@ -1,5 +1,12 @@
 2006-05-12  Miguel de Icaza  <miguel@novell.com>
 
+	* StatusBar.cs (UpdatePanel): If the panel being refreshes has the
+	AutoSize set to None, we do not need to relayout everything, we
+	just need to invalidate the current region.
+
+	(Draw): Do not draw the entire ClientArea, just redraw the
+	clip area being passed.
+
 	* MdiClient.cs: Make MdiClient constructor with the Form argument
 	internal. 
 

@@ -275,6 +275,11 @@ namespace System.Windows.Forms {
 
 		internal void UpdatePanelContents (StatusBarPanel panel)
 		{
+			if (panel.AutoSize == StatusBarPanelAutoSize.None){
+				Invalidate (new Rectangle (panel.X, 0, panel.Width, bounds.Height), false);
+				return;
+			}
+			
 			if (panel.AutoSize == StatusBarPanelAutoSize.Contents) {
 				Update ();
 				return;
@@ -353,7 +358,8 @@ namespace System.Windows.Forms {
 
 		private void Draw (Graphics dc, Rectangle clip)
 		{
-			ThemeEngine.Current.DrawStatusBar (dc, this.ClientRectangle, this);
+			ThemeEngine.Current.DrawStatusBar (dc, clip, this);
+			
 		}
 		#endregion	// Internal Methods
 
