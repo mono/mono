@@ -3132,6 +3132,7 @@ namespace System.Windows.Forms
 
 				if (panel.Icon != null) {
 					icon_x = x - panel.Icon.Width - 2;
+					dc.DrawIcon (panel.Icon, icon_x, area.Top);
 				}
 				break;
 			case HorizontalAlignment.Center:
