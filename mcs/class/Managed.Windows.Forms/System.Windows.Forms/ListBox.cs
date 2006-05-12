@@ -673,7 +673,6 @@ namespace System.Windows.Forms
 
 		public Rectangle GetItemRectangle (int index)
 		{
-			Console.WriteLine (index + " " + Items.Count);
 			if (index < 0 || index >= Items.Count)
 				throw new  ArgumentOutOfRangeException ("GetItemRectangle index out of range.");
 
