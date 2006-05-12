@@ -84,7 +84,7 @@ namespace System.Windows.Forms {
 			SetStyle (ControlStyles.Selectable, false);
 		}
 
-		public MdiClient (Form parent)
+		internal MdiClient (Form parent)
 		{
 			BackColor = SystemColors.AppWorkspace;
 			Dock = DockStyle.Fill;
