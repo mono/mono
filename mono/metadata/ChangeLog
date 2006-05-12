@@ -1,3 +1,8 @@
+2006-05-12  Lluis Sanchez  <lluis@ximian.com>
+
+	* object.c: The FieldGetter and FieldSetter methods require the full
+	name of the class, not only the name. Fixes bug #78277.
+
 2006-05-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* assembly.c (mono_assembly_load_from_full): Fix a bunch of warnings.
