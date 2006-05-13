@@ -273,6 +273,30 @@ namespace MonoTests.System {
 			Uri http = new Uri ("http://www.mono-project.com/Main_Page#FAQ?Edit");
 			http.IsBaseOf (null);
 		}
+
+		[Test]
+		// LAMESPEC: see bug #78374.
+		public void OriginalStringRelative ()
+		{
+			Uri k1 = new Uri ("http://www.mono-project.com");
+			Uri k2 = new Uri (k1, "docs");
+			Assert.AreEqual ("http://www.mono-project.com/docs", k2.OriginalString, "#1");
+
+			Uri a = new Uri ("http://www.mono-project.com:808/foo");
+			Uri b = new Uri (a, "../docs?queryyy#% %20%23%25bar");
+
+			// it won't work.
+			// Assert.AreEqual ("http://www.mono-project.com:808/docs?queryyy#% %20%23%25bar", b.OriginalString, "#2");
+
+			Uri c = new Uri ("http://www.mono-project.com:909");
+			Uri d = new Uri (c, "http://www.mono-project.com:606/docs");
+			Assert.AreEqual ("http://www.mono-project.com:606/docs", d.OriginalString, "#3");
+
+			Uri e = new Uri ("http://www.mono-project.com:303/foo");
+			Uri f = new Uri (e, "?query");
+			// it doesn't work. MS.NET also returns incorrect URI: ..303/?query
+			// Assert.AreEqual ("http://www.mono-project.com:303/foo?query", e.OriginalString, "#4");
+		}
 	}
 }
 
