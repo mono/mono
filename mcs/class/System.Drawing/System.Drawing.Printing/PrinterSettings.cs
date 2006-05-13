@@ -55,11 +55,13 @@ namespace System.Drawing.Printing
 		internal bool can_duplex;
 		internal bool supports_color;
 		internal int landscape_angle;		
+		private bool print_tofile;
 		internal PrinterSettings.PrinterResolutionCollection printer_resolutions;
 		internal PrinterSettings.PaperSizeCollection paper_sizes;
 		
 		public PrinterSettings() : this (SysPrn.Service.DefaultPrinter)
 		{			
+			print_tofile = false;
 		}
 		
 		internal PrinterSettings (string printer)
@@ -281,9 +283,7 @@ namespace System.Drawing.Printing
 			{
 				return new PageSettings(
 					this,
-					// TODO: get default color mode for this printer
-					false,
-					// TODO: get default orientation for this printer
+					SupportsColor,
 					false,
 					// TODO: get default paper size for this printer
 					new PaperSize("A4", 827, 1169),
@@ -426,12 +426,11 @@ namespace System.Drawing.Printing
 				print_range = value;
 			}
 		}
-
-		[MonoTODO("PrinterSettings.PrintToFile")]
+		
 		public bool PrintToFile
 		{
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
+			get { return print_tofile; }
+			set { print_tofile = value; }
 		}
 		
 		public bool SupportsColor
@@ -526,11 +525,13 @@ namespace System.Drawing.Printing
 		{
 			throw new NotImplementedException();
 		}
-
-		[MonoTODO("PrinterSettings.ToString")]
+		
 		public override string ToString()
 		{
-			throw new NotImplementedException();
+			return "Printer [PrinterSettings" + printer_name + " Copies=" + copies +  " Collate=" + collate 
+			+ " Duplex=" + can_duplex + " FromPage=" + from_page + " LandscapeAngle=" + landscape_angle 
+			+ " MaximumCopies=" + maximum_copies + " OutputPort=" + " ToPage=" + to_page + "]";
+
 		}		
 	}
 }

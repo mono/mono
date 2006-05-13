@@ -1,3 +1,8 @@
+2006-04-13 Jordi Mas i Hernandez <jordimash@gmail.com>
+
+	* PrintingServicesUnix.cs: Checks if cups is installed
+	* PrinterSettings.cs: PrintToFile property and ToString method
+
 2006-04-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PrintController.cs: corcompare fix. No public ctor in 2.0.

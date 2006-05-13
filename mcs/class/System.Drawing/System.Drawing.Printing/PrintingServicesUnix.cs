@@ -37,10 +37,25 @@ namespace System.Drawing.Printing
 	internal class PrintingServicesUnix : PrintingServices
 	{
 		private Hashtable doc_info = new Hashtable ();
+		private bool cups_installed;
 
 		internal PrintingServicesUnix ()
 		{
+			CheckCupsInstalled ();
+		}
 
+		private void CheckCupsInstalled ()
+		{
+			try {
+				cupsGetDefault ();
+			}
+			catch (DllNotFoundException) {
+				Console.WriteLine("libcups not found. To have printing support, you need cups installed");
+				cups_installed = false;
+				return;
+			}
+
+			cups_installed = true;
 		}
 
 		// Methods
@@ -50,7 +65,7 @@ namespace System.Drawing.Printing
 			string ppd_filename;
 			PPD_FILE ppd;
 
-			if ((printer == null) || (printer == String.Empty)) {
+			if (cups_installed == false || (printer == null) || (printer == String.Empty)) {
 				return;
 			}
 
@@ -164,6 +179,9 @@ namespace System.Drawing.Printing
 				string str;
 				PrinterSettings.StringCollection col = new PrinterSettings.StringCollection (new string[] {});
 
+				if (cups_installed == false)
+					return col;
+
 				/* FIXME: call is deprecated */
 				n_printers = cupsGetPrinters (ref printers);
 
@@ -183,6 +201,10 @@ namespace System.Drawing.Printing
 		internal override string DefaultPrinter {
 			get {
 				IntPtr str;
+
+				if (cups_installed == false)
+					return string.Empty;
+
 				str = cupsGetDefault ();
 				return Marshal.PtrToStringAnsi (str);
 			}
