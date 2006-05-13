@@ -517,10 +517,7 @@ namespace Mono.Data.SqliteClient
 
 		public int LastInsertRowID () 
 		{
-			if (parent_conn.Version == 3)
-				return Sqlite.sqlite3_last_insert_rowid(parent_conn.Handle);
-			else
-				return Sqlite.sqlite_last_insert_rowid(parent_conn.Handle);
+			return parent_conn.LastInsertRowId;
 		}
 		
 		private string GetError3() {

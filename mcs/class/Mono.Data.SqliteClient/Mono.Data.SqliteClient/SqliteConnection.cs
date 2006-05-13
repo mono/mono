@@ -110,7 +110,7 @@ namespace Mono.Data.SqliteClient
 		public int LastInsertRowId {
 			get {
 				if (Version == 3)
-					return Sqlite.sqlite3_last_insert_rowid (Handle);
+					return (int)Sqlite.sqlite3_last_insert_rowid (Handle);
 				else
 					return Sqlite.sqlite_last_insert_rowid (Handle);
 			}

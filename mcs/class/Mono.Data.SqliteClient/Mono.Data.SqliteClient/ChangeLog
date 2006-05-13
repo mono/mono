@@ -1,3 +1,13 @@
+2006-05-13  Joshua Tauberer  <tauberer@for.net>
+
+	Reported by Sebastian Dröge <slomo@ubuntu.com>.
+	* Sqlite.cs: The binding for sqlite3_last_insert_rowid had
+	  the wrong type for the return (int vs long).
+	* SqliteConnection: LastInsertRowId: I didn't want to break
+	  the public API, so it casts the long return from that
+	  to an int.
+	* SqliteCommand: LastInsertRowID(): Wrap the above property.
+
 2006-03-14  Kamil Skalski  <nazgul@nemerle.org>
 
 	* SqliteConnection.cs, Sqlite.cs: Add option for specifying busy

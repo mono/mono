@@ -151,7 +151,7 @@ namespace Mono.Data.SqliteClient
 		internal static extern int sqlite3_changes (IntPtr handle);
 
 		[DllImport("sqlite3")]
-		internal static extern int sqlite3_last_insert_rowid (IntPtr sqlite_handle);
+		internal static extern long sqlite3_last_insert_rowid (IntPtr sqlite_handle);
 
 		[DllImport ("sqlite3")]
 		internal static extern SqliteError sqlite3_prepare16 (IntPtr sqlite_handle, IntPtr zSql, int zSqllen, out IntPtr pVm, out IntPtr pzTail);
