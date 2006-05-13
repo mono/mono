@@ -1,3 +1,20 @@
+2006-05-12  Chris Toshok  <toshok@ximian.com>
+
+	* ScrollBar.cs (set_Value): don't use Dirty/Invalidate to move the
+	thumb, instead use MoveThumb.  This has the side effect of making
+	most of the other thumb moving machinery use MoveThumb as well.
+	(OnHandleCreated): pass false for @dirty to UpdateThumbPos, as we
+	need to actually invalidate the rectangle where the new thumb will
+	go.
+	(MoveThumb): use XplatUI.ScrollWindow to move the thumb around.
+	We force an Update() after, so it's not as fast as it could be,
+	but at least there's zero flicker and no droppings.
+	(OnMouseMoveSB): in the thumb dragging case, use MoveThumb.
+	(UpdateThumbPos): add another argument (dirty), which says whether
+	or not to calculate/add dirty regions which we later invalidate.
+	For cases where we know we're going to use MoveThumb, we pass
+	false for this.  Otherwise, pass true.
+
 2006-05-12  Jackson Harper  <jackson@ximian.com>
 
 	* ThemeWin32Class.cs: Fixes for alignment and icon rendering in

@@ -68,8 +68,8 @@ namespace System.Windows.Forms
 		internal bool vert;
 		internal bool implicit_control;
 		private int lastclick_pos;		// Position of the last button-down event
-		private int lastclick_pos_thumb;	// Position of the last button-down event relative to the thumb		
-		private int thumbclick_offset;		// Position of the last button-down event relative to the thumb edge		
+		private int lastclick_pos_thumb;	// Position of the last button-down event relative to the thumb
+		private int thumbclick_offset;		// Position of the last button-down event relative to the thumb edge
 		private Rectangle dirty;
 
 		internal ThumbMoving thumb_moving = ThumbMoving.None;
@@ -82,7 +82,7 @@ namespace System.Windows.Forms
 			HoldThumbArea,
 			RepeatThumbArea
 		}
-		
+
 		internal enum ThumbMoving
 		{
 			None,
@@ -91,93 +91,93 @@ namespace System.Windows.Forms
 		}
 
 		#region events
-		
+
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler BackColorChanged {
 			add { base.BackColorChanged += value; }
 			remove { base.BackColorChanged -= value; }
 		}
-		
+
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler BackgroundImageChanged {
 			add { base.BackgroundImageChanged += value; }
 			remove { base.BackgroundImageChanged -= value; }
 		}
-		
+
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler Click {
 			add { base.Click += value; }
 			remove { base.Click -= value; }
 		}
-		
+
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler DoubleClick {
 			add { base.DoubleClick += value; }
 			remove { base.DoubleClick -= value; }
 		}
-		
+
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler FontChanged {
 			add { base.FontChanged += value; }
 			remove { base.FontChanged -= value; }
 		}
-		
+
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler ForeColorChanged {
 			add { base.ForeColorChanged += value; }
 			remove { base.ForeColorChanged -= value; }
 		}
-		
+
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler ImeModeChanged {
 			add { base.ImeModeChanged += value; }
 			remove { base.ImeModeChanged -= value; }
 		}
-		
+
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event MouseEventHandler MouseDown {
 			add { base.MouseDown += value; }
 			remove { base.MouseDown -= value; }
 		}
-		
+
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event MouseEventHandler MouseMove {
 			add { base.MouseMove += value; }
 			remove { base.MouseMove -= value; }
 		}
-		
+
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event MouseEventHandler MouseUp {
 			add { base.MouseUp += value; }
 			remove { base.MouseUp -= value; }
 		}
-		
+
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event PaintEventHandler Paint {
 			add { base.Paint += value; }
 			remove { base.Paint -= value; }
 		}
-		
+
 		public event ScrollEventHandler Scroll;
-		
+
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler TextChanged {
 			add { base.TextChanged += value; }
 			remove { base.TextChanged -= value; }
 		}
-		
+
 		public event EventHandler ValueChanged;
 		#endregion Events
 
@@ -197,7 +197,7 @@ namespace System.Windows.Forms
 			base.Resize += new EventHandler (OnResizeSB);
 			base.TabStop = false;
 			base.cursor = Cursors.Default;
-                        
+
 			SetStyle (ControlStyles.UserPaint | ControlStyles.StandardClick, false);
 		}
 
@@ -345,7 +345,7 @@ namespace System.Windows.Forms
 			set {
 				if (maximum == value)
 					return;
-					
+
 				maximum = value;
 
 				if (maximum < minimum)
@@ -367,7 +367,7 @@ namespace System.Windows.Forms
 			set {
 				if (minimum == value)
 					return;
-					
+
 				minimum = value;
 
 				if (minimum > maximum)
@@ -427,13 +427,13 @@ namespace System.Windows.Forms
 
 					OnValueChanged (EventArgs.Empty);
 
-					ClearDirty ();
-					
 					if (IsHandleCreated) {
-						UpdateThumbPos ((vert ? thumb_area.Y : thumb_area.X) + (int)(((float)(position - minimum)) * pixel_per_pos), false);
+						Rectangle thumb_rect = thumb_pos;
+
+						UpdateThumbPos ((vert ? thumb_area.Y : thumb_area.X) + (int)(((float)(position - minimum)) * pixel_per_pos), false, false);
+
+						MoveThumb (thumb_rect, vert ? thumb_pos.Y : thumb_pos.X);
 					}
-					
-					InvalidateDirty ();
 				}
 			}
 		}
@@ -441,7 +441,7 @@ namespace System.Windows.Forms
 		#endregion //Public Properties
 
 		#region Public Methods
-		
+
 		protected override void OnEnabledChanged (EventArgs e)
 		{
 			base.OnEnabledChanged (e);
@@ -453,25 +453,25 @@ namespace System.Windows.Forms
 
 			Refresh ();
 		}
-		
+
 		protected override void OnHandleCreated (System.EventArgs e)
 		{
-			base.OnHandleCreated (e);		
+			base.OnHandleCreated (e);
 
 			CalcButtonSizes ();
-			CalcThumbArea ();			
-			UpdateThumbPos (thumb_area.Y + (int)(((float)(position - minimum)) * pixel_per_pos), false);			
+			CalcThumbArea ();
+			UpdateThumbPos (thumb_area.Y + (int)(((float)(position - minimum)) * pixel_per_pos), true, false);
 		}
 
 		protected virtual void OnScroll (ScrollEventArgs event_args)
 		{
 			if (Scroll == null)
 				return;
-				
+
 			if (event_args.NewValue < Minimum) {
 				event_args.NewValue = Minimum;
 			}
-			
+
 			if (event_args.NewValue > Maximum) {
 				event_args.NewValue = Maximum;
 			}
@@ -515,15 +515,15 @@ namespace System.Windows.Forms
 		#endregion //Public Methods
 
 		#region Private Methods
-		
+
 		private void CalcButtonSizes ()
-    		{    		
+    		{
     			if (vert) {
 				if (Height < ThemeEngine.Current.ScrollBarButtonSize * 2)
 					scrollbutton_height = Height /2;
 				else
 					scrollbutton_height = ThemeEngine.Current.ScrollBarButtonSize;
-				
+
 			} else {
 				if (Width < ThemeEngine.Current.ScrollBarButtonSize * 2)
 					scrollbutton_width = Width /2;
@@ -531,7 +531,7 @@ namespace System.Windows.Forms
 					scrollbutton_width = ThemeEngine.Current.ScrollBarButtonSize;
 			}
 		}
-				
+
 		private void CalcThumbArea ()
 		{
 			// Thumb area
@@ -546,11 +546,11 @@ namespace System.Windows.Forms
 					thumb_size = 0;
 				else {
 					double per =  ((double) this.LargeChange / (double)((1 + maximum - minimum)));
-					thumb_size = 1 + (int) (thumb_area.Height * per);					
-					
+					thumb_size = 1 + (int) (thumb_area.Height * per);
+
 					if (thumb_size < thumb_min_size)
 						thumb_size = thumb_min_size;
-				}				
+				}
 
 				pixel_per_pos = ((float)(thumb_area.Height - thumb_size) / (float) ((maximum - minimum - this.LargeChange) + 1));
 
@@ -559,55 +559,55 @@ namespace System.Windows.Forms
 				thumb_area.Y = 0;
 				thumb_area.X = scrollbutton_width;
 				thumb_area.Height = Height;
-				thumb_area.Width = Width - scrollbutton_width -  scrollbutton_width;	
-				
+				thumb_area.Width = Width - scrollbutton_width -  scrollbutton_width;
+
 				if (Width < thumb_notshown_size)
 					thumb_size = 0;
 				else {
 					double per =  ((double) this.LargeChange / (double)((1 + maximum - minimum)));
 					thumb_size = 1 + (int) (thumb_area.Width * per);
-					
+
 					if (thumb_size < thumb_min_size)
 						thumb_size = thumb_min_size;
 				}
-				
+
 				pixel_per_pos = ((float)(thumb_area.Width - thumb_size) / (float) ((maximum - minimum - this.LargeChange) + 1));
 			}
 		}
 
 		private void LargeIncrement ()
-    		{			
+    		{
 			ScrollEventArgs event_args;
     			int pos = Math.Min (Maximum - large_change + 1, position + large_change);
 
     			event_args = new ScrollEventArgs (ScrollEventType.LargeIncrement, pos);
-    			OnScroll (event_args);    			
-			Value = event_args.NewValue;    			
+    			OnScroll (event_args);
+			Value = event_args.NewValue;
 
 			event_args = new ScrollEventArgs (ScrollEventType.EndScroll, Value);
-			OnScroll (event_args);		
+			OnScroll (event_args);
     			Value = event_args.NewValue;
     		}
 
     		private void LargeDecrement ()
-    		{			
+    		{
 			ScrollEventArgs event_args;
     			int pos = Math.Max (Minimum, position - large_change);
-    			
+
     			event_args = new ScrollEventArgs (ScrollEventType.LargeDecrement, pos);
     			OnScroll (event_args);
-    			Value = event_args.NewValue;    			
-			
+    			Value = event_args.NewValue;
+
 			event_args = new ScrollEventArgs (ScrollEventType.EndScroll, Value);
 			OnScroll (event_args);
     			Value = event_args.NewValue;
-    		}    		
-    		
+    		}
+
     		private void OnResizeSB (Object o, EventArgs e)
-    		{    			
+    		{
     			if (Width <= 0 || Height <= 0)
     				return;
-			
+
 			CalcButtonSizes ();
 			CalcThumbArea ();
 			UpdatePos (position, true);
@@ -657,16 +657,16 @@ namespace System.Windows.Forms
 				pnt_screen = PointToScreen (new Point (thumb_area.X, thumb_area.Y));
 				thumb_area_screen.X = pnt_screen.X;
 				thumb_area_screen.Y = pnt_screen.Y;
-				
-				if (thumb_area_screen.Contains (MousePosition) == false) {					
+
+				if (thumb_area_screen.Contains (MousePosition) == false) {
 					timer.Enabled = false;
 					thumb_moving = ThumbMoving.None;
 					DirtyThumbArea ();
 					InvalidateDirty ();
-				}				
-				
+				}
+
 				pnt = PointToClient (MousePosition);
-				
+
 				if (vert)
 					lastclick_pos = pnt.Y;
 				else
@@ -676,9 +676,9 @@ namespace System.Windows.Forms
 					if ((vert && (thumb_pos.Y + thumb_size > lastclick_pos)) ||
 					   (!vert && (thumb_pos.X + thumb_size > lastclick_pos)) ||
 					   (thumb_area.Contains (pnt) == false)) {
-						timer.Enabled = false;						
+						timer.Enabled = false;
     						thumb_moving = ThumbMoving.None;
-    						Refresh ();    			
+    						Refresh ();
 						return;
 					} else {
 						LargeIncrement ();
@@ -690,7 +690,7 @@ namespace System.Windows.Forms
 						timer.Enabled = false;
 						thumb_moving = ThumbMoving.None;
 						SendWMScroll(ScrollBarCommands.SB_PAGEUP);
-						Refresh ();    						
+						Refresh ();
 					} else {
 						LargeDecrement ();
 						SendWMScroll(ScrollBarCommands.SB_PAGEUP);
@@ -704,7 +704,83 @@ namespace System.Windows.Forms
 			}
 
 			InvalidateDirty ();
-		}		
+		}
+
+		private void MoveThumb (Rectangle original_thumbpos, int value)
+		{
+			/* so, the reason this works can best be
+			 * described by the following 1 dimensional
+			 * pictures
+			 *
+			 * say you have a scrollbar thumb positioned
+			 * thusly:
+			 *
+			 * <---------------------|          |------------------------------>
+			 *
+			 * and you want it to end up looking like this:
+			 *
+			 * <-----------------------------|          |---------------------->
+			 *
+			 * that can be done with the scrolling api by
+			 * extending the rectangle to encompass both
+			 * positions:
+			 *
+			 *               start of range          end of range
+			 *                       \	    	    /
+			 * <---------------------|	    |-------|---------------------->
+			 *
+			 * so, we end up scrolling just this little region:
+			 *
+			 *                       |          |-------|
+			 *
+			 * and end up with       ********|          |
+			 *
+			 * where ****** is space that is automatically
+			 * redrawn.
+			 *
+			 * It's clear that in both cases (left to
+			 * right, right to left) we need to extend the
+			 * size of the scroll rectangle to encompass
+			 * both.  In the right to left case, we also
+			 * need to decrement the X coordinate.
+			 *
+			 * We call Update after scrolling to make sure
+			 * there's no garbage left in the window to be
+			 * copied again if we're called before the
+			 * paint events have been handled.
+			 *
+			 */
+			int delta;
+
+			if (vert) {
+				delta = value - original_thumbpos.Y;
+
+				if (delta < 0) {
+					original_thumbpos.Y += delta;
+					original_thumbpos.Height -= delta;
+				}
+				else {
+					original_thumbpos.Height += delta;
+				}
+
+				XplatUI.ScrollWindow (Handle, original_thumbpos, 0, delta, false);
+			}
+			else {
+				delta = value - original_thumbpos.X;
+
+				if (delta < 0) {
+					original_thumbpos.X += delta;
+					original_thumbpos.Width -= delta;
+				}
+				else {
+					original_thumbpos.Width += delta;
+				}
+
+				XplatUI.ScrollWindow (Handle, original_thumbpos, delta, 0, false);
+			}
+
+			Update ();
+		}
 
     		private void OnMouseMoveSB (object sender, MouseEventArgs e)
     		{
@@ -745,9 +821,13 @@ namespace System.Windows.Forms
 						thumb_edge = thumb_area.Bottom - thumb_size;
 
 					if (thumb_edge != thumb_pos.Y) {
-						UpdateThumbPos (thumb_edge, true);
+						Rectangle thumb_rect = thumb_pos;
+
+						UpdateThumbPos (thumb_edge, false, true);
+
+						MoveThumb (thumb_rect, thumb_pos.Y);
+
 						OnScroll (new ScrollEventArgs (ScrollEventType.ThumbTrack, position));
-						InvalidateDirty ();
 					}
 					SendWMScroll(ScrollBarCommands.SB_THUMBTRACK);
 				} else {
@@ -759,9 +839,13 @@ namespace System.Windows.Forms
 						thumb_edge = thumb_area.Right - thumb_size;
 
 					if (thumb_edge != thumb_pos.X) {
-						UpdateThumbPos (thumb_edge, true);
+						Rectangle thumb_rect = thumb_pos;
+
+						UpdateThumbPos (thumb_edge, false, true);
+
+						MoveThumb (thumb_rect, thumb_pos.X);
+
 						OnScroll (new ScrollEventArgs (ScrollEventType.ThumbTrack, position));
-						InvalidateDirty ();
 					}
 					SendWMScroll(ScrollBarCommands.SB_THUMBTRACK);
 				}
@@ -773,13 +857,13 @@ namespace System.Windows.Forms
     		private void OnMouseDownSB (object sender, MouseEventArgs e)
     		{
 			ClearDirty ();
-			
+
 			if (Enabled == false)
 				return;
 
     			if (firstbutton_state != ButtonState.Inactive && first_arrow_area.Contains (e.X, e.Y)) {
 				SendWMScroll(ScrollBarCommands.SB_LINEUP);
-				this.Capture = true;				
+				this.Capture = true;
 				firstbutton_state = ButtonState.Pushed;
 				firstbutton_pressed = true;
 				Invalidate (first_arrow_area);
@@ -792,7 +876,7 @@ namespace System.Windows.Forms
 
 			if (secondbutton_state != ButtonState.Inactive && second_arrow_area.Contains (e.X, e.Y)) {
 				SendWMScroll(ScrollBarCommands.SB_LINEDOWN);
-				this.Capture = true;				
+				this.Capture = true;
 				secondbutton_state = ButtonState.Pushed;
 				secondbutton_pressed = true;
 				Invalidate (second_arrow_area);
@@ -809,7 +893,7 @@ namespace System.Windows.Forms
 				SendWMScroll(ScrollBarCommands.SB_THUMBTRACK);
 				if (vert) {
 					thumbclick_offset = e.Y - thumb_pos.Y;
-					lastclick_pos = e.Y;					
+					lastclick_pos = e.Y;
 				}
 				else {
 					thumbclick_offset = e.X - thumb_pos.X;
@@ -824,15 +908,15 @@ namespace System.Windows.Forms
 
 						if (e.Y > thumb_pos.Y + thumb_pos.Height) {
 							SendWMScroll(ScrollBarCommands.SB_PAGEDOWN);
-							LargeIncrement ();							
-							thumb_moving = ThumbMoving.Forward;							
+							LargeIncrement ();
+							thumb_moving = ThumbMoving.Forward;
 							Dirty (new Rectangle (0, thumb_pos.Y + thumb_pos.Height,
 										      ClientRectangle.Width,
 										      ClientRectangle.Height -	(thumb_pos.Y + thumb_pos.Height) -
 										      scrollbutton_height));
 						} else {
 							SendWMScroll(ScrollBarCommands.SB_PAGEUP);
-							LargeDecrement ();							
+							LargeDecrement ();
 							thumb_moving = ThumbMoving.Backwards;
 							Dirty (new Rectangle (0,  scrollbutton_height,
 										      ClientRectangle.Width,
@@ -846,7 +930,7 @@ namespace System.Windows.Forms
 						if (e.X > thumb_pos.X + thumb_pos.Width) {
 							SendWMScroll(ScrollBarCommands.SB_PAGEDOWN);
 							thumb_moving = ThumbMoving.Forward;
-							LargeIncrement ();							
+							LargeIncrement ();
 							Dirty (new Rectangle (thumb_pos.X + thumb_pos.Width, 0,
 										      ClientRectangle.Width -  (thumb_pos.X + thumb_pos.Width) -
 										      scrollbutton_width,
@@ -854,7 +938,7 @@ namespace System.Windows.Forms
 						} else {
 							SendWMScroll(ScrollBarCommands.SB_PAGEUP);
 							thumb_moving = ThumbMoving.Backwards;
-							LargeDecrement ();							
+							LargeDecrement ();
 							Dirty (new Rectangle (scrollbutton_width,  0,
 										      thumb_pos.X - scrollbutton_width,
 										      ClientRectangle.Height));
@@ -867,7 +951,7 @@ namespace System.Windows.Forms
 				}
 			}
     		}
-    		
+
     		private void OnMouseUpSB (object sender, MouseEventArgs e)
     		{
 			ClearDirty ();
@@ -879,7 +963,7 @@ namespace System.Windows.Forms
     			if (thumb_moving != ThumbMoving.None) {
 				DirtyThumbArea ();
     				thumb_moving = ThumbMoving.None;
-    			}    			
+    			}
 			this.Capture = false;
 
 			if (firstbutton_pressed) {
@@ -938,12 +1022,12 @@ namespace System.Windows.Forms
 				break;
 			}
 			case Keys.Home:
-			{		
-				SetHomePosition ();				
+			{
+				SetHomePosition ();
 				break;
-			}			
+			}
 			case Keys.End:
-			{	
+			{
 				SetEndPosition ();
 				break;
 			}
@@ -952,39 +1036,39 @@ namespace System.Windows.Forms
 			}
 
 			InvalidateDirty ();
-		}		
-		
-		private void SetEndPosition () 
-		{			
+		}
+
+		private void SetEndPosition ()
+		{
 			ScrollEventArgs event_args;
     			int pos = Maximum - large_change + 1;
-    			
+
     			event_args = new ScrollEventArgs (ScrollEventType.Last, pos);
     			OnScroll (event_args);
-    			pos = event_args.NewValue;    			
-			
+    			pos = event_args.NewValue;
+
 			event_args = new ScrollEventArgs (ScrollEventType.EndScroll, pos);
-			OnScroll (event_args);			
-    			pos = event_args.NewValue;    			
+			OnScroll (event_args);
+    			pos = event_args.NewValue;
 
 			SetValue (pos);
 		}
-		
+
 		private void SetHomePosition ()
 		{
 			ScrollEventArgs event_args;
     			int pos = Minimum;
-    			
+
     			event_args = new ScrollEventArgs (ScrollEventType.First, pos);
     			OnScroll (event_args);
     			pos = event_args.NewValue;
-    						
+
 			event_args = new ScrollEventArgs (ScrollEventType.EndScroll, pos);
-			OnScroll (event_args);			
-			pos = event_args.NewValue;    			
-    			
+			OnScroll (event_args);
+			pos = event_args.NewValue;
+
 			SetValue (pos);
-		}		
+		}
 
     		private void SmallIncrement ()
     		{
@@ -992,28 +1076,28 @@ namespace System.Windows.Forms
     			int pos = Math.Min (Maximum - large_change + 1, position + small_change);
 
     			event_args = new ScrollEventArgs (ScrollEventType.SmallIncrement, pos);
-    			OnScroll (event_args);    			
-    			Value = event_args.NewValue;    			
-			
+    			OnScroll (event_args);
+    			Value = event_args.NewValue;
+
 			event_args = new ScrollEventArgs (ScrollEventType.EndScroll, Value);
-			OnScroll (event_args);			
-			Value = event_args.NewValue;    			
+			OnScroll (event_args);
+			Value = event_args.NewValue;
     		}
 
     		private void SmallDecrement ()
-    		{			
+    		{
 			ScrollEventArgs event_args;
     			int pos = Math.Max (Minimum, position - small_change);
 
     			event_args = new ScrollEventArgs (ScrollEventType.SmallDecrement, pos);
     			OnScroll (event_args);
     			Value = event_args.NewValue;
-    						
+
 			event_args = new ScrollEventArgs (ScrollEventType.EndScroll, Value);
-			OnScroll (event_args);			
+			OnScroll (event_args);
 			Value = event_args.NewValue;
     		}
-    		
+
     		private void SetHoldButtonClickTimer ()
 		{
 			timer.Enabled = false;
@@ -1044,10 +1128,10 @@ namespace System.Windows.Forms
 			timer.Interval = 50;
 			timer_type = TimerType.RepeatThumbArea;
 			timer.Enabled = true;
-		}    				
-		
+		}
+
     		private void UpdatePos (int newPos, bool update_thumbpos)
-    		{    			
+    		{
 			int pos;
 
     			if (newPos < minimum)
@@ -1064,25 +1148,26 @@ namespace System.Windows.Forms
 
 			if (update_thumbpos) {
 				if (vert)
-					UpdateThumbPos (thumb_area.Y + (int)(((float)(pos - minimum)) * pixel_per_pos), false);
+					UpdateThumbPos (thumb_area.Y + (int)(((float)(pos - minimum)) * pixel_per_pos), true, false);
 				else
-					UpdateThumbPos (thumb_area.X + (int)(((float)(pos - minimum)) * pixel_per_pos), false);
+					UpdateThumbPos (thumb_area.X + (int)(((float)(pos - minimum)) * pixel_per_pos), true, false);
 				SetValue (pos);
 			}
 			else {
 				position = pos; // Updates directly the value to avoid thumb pos update
-				
+
 				if (ValueChanged != null)
 					ValueChanged (this, EventArgs.Empty);
-			}			
+			}
     		}
 
-    		private void UpdateThumbPos (int pixel, bool update_value)
+    		private void UpdateThumbPos (int pixel, bool dirty, bool update_value)
     		{
     			float new_pos = 0;
 
     			if (vert) {
-				Dirty (thumb_pos);
+				if (dirty)
+					Dirty (thumb_pos);
 	    			if (pixel < thumb_area.Y)
 	    				thumb_pos.Y = thumb_area.Y;
 	    			else if (pixel > thumb_area.Bottom - thumb_size)
@@ -1095,10 +1180,11 @@ namespace System.Windows.Forms
 				thumb_pos.Height = thumb_size;
 				new_pos = (float) (thumb_pos.Y - thumb_area.Y);
 				new_pos = new_pos / pixel_per_pos;
-
-				Dirty (thumb_pos);
+				if (dirty)
+					Dirty (thumb_pos);
 			} else	{
-				Dirty (thumb_pos);
+				if (dirty)
+					Dirty (thumb_pos);
 				if (pixel < thumb_area.X)
 	    				thumb_pos.X = thumb_area.X;
 	    			else if (pixel > thumb_area.Right - thumb_size)
@@ -1112,7 +1198,8 @@ namespace System.Windows.Forms
 				new_pos = (float) (thumb_pos.X - thumb_area.X);
 				new_pos = new_pos / pixel_per_pos;
 
-				Dirty (thumb_pos);
+				if (dirty)
+					Dirty (thumb_pos);
 			}
 
 			if (update_value)
