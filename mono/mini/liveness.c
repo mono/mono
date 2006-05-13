@@ -600,15 +600,10 @@ mono_analyze_liveness (MonoCompile *cfg)
 		for (j = 0; j < max; ++j) {
 			gsize bits_in;
 			gsize bits_out;
-			int k, end;
+			int k;
 
 			bits_in = mono_bitset_get_fast (bb->live_in_set, j);
 			bits_out = mono_bitset_get_fast (bb->live_out_set, j);
-
-			if (j == max)
-				end = (j * BITS_PER_CHUNK) + rem;
-			else
-				end = (j * BITS_PER_CHUNK) + BITS_PER_CHUNK;
 
 			k = (j * BITS_PER_CHUNK);
 			while ((bits_in || bits_out)) {
@@ -891,7 +886,7 @@ update_liveness2 (MonoCompile *cfg, MonoInst *ins, gboolean set_volatile, int in
 static void
 mono_analyze_liveness2 (MonoCompile *cfg)
 {
-	int bnum, idx, i, j, nins, rem, max_vars, block_from, block_to, pos, reverse_len;
+	int bnum, idx, i, j, nins, rem, max, max_vars, block_from, block_to, pos, reverse_len;
 	gint32 *last_use;
 	static guint32 disabled = -1;
 	MonoInst **reverse;
@@ -934,31 +929,27 @@ mono_analyze_liveness2 (MonoCompile *cfg)
 		else
 			block_to = (bb->dfn << 16) + 0xffff;
 
-		LIVENESS_DEBUG (printf ("LIVENESS BLOCK BB%d\n", bb->block_num));
+		LIVENESS_DEBUG (printf ("LIVENESS BLOCK BB%d:\n", bb->block_num));
 
 		memset (last_use, 0, max_vars * sizeof (gint32));
 		
 		/* For variables in bb->live_out, set last_use to block_to */
 
-		rem = max_vars % 32;
-		for (j = 0; j < (max_vars / 32) + 1; ++j) {
-			guint32 bits_out;
-			int k, nbits;
+		rem = max_vars % BITS_PER_CHUNK;
+		max = ((max_vars + (BITS_PER_CHUNK -1)) / BITS_PER_CHUNK);
+		for (j = 0; j < max; ++j) {
+			gsize bits_out;
+			int k;
 
-			if (j > (max_vars / 32))
-				break;
-			else
-				if (j == (max_vars / 32))
-					nbits = rem;
-				else
-					nbits = 32;
-
-			bits_out = mono_bitset_test_bulk (bb->live_out_set, j * 32);
-			for (k = 0; k < nbits; ++k) {
-				if (bits_out & (1 << k)) {
-					LIVENESS_DEBUG (printf ("Var R%d live at exit, set last_use to %x\n", cfg->varinfo [(j * 32)  + k]->dreg, block_to));
-					last_use [(j * 32) + k] = block_to;
+			bits_out = mono_bitset_get_fast (bb->live_out_set, j);
+			k = (j * BITS_PER_CHUNK);	
+			while (bits_out) {
+				if (bits_out & 1) {
+					LIVENESS_DEBUG (printf ("Var R%d live at exit, set last_use to %x\n", cfg->varinfo [k]->dreg, block_to));
+					last_use [k] = block_to;
 				}
+				bits_out >>= 1;
+				k ++;
 			}
 		}
 

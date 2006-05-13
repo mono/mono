@@ -1,5 +1,7 @@
 2006-05-13  Zoltan Varga  <vargaz@gmail.com>
 
+	* liveness.c (mono_analyze_liveness2): Make this work on 64 bit machines.
+	
 	* liveness.c (mono_analyze_liveness2): Optimize this a bit.
 
 	* linear-scan.c: Add a variant of the linear scan allocator which operates on
