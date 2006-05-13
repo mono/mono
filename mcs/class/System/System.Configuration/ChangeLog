@@ -1,5 +1,9 @@
 2006-05-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ConfigurationSettings.cs : another System.Orgy insanity.
+
+2006-05-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ConfigurationSettings.cs : ok, now I correctly understand the
 	  problem. Since appSettings section handlers are different between
 	  1.x and 2.0 AppSettings property implementation should also be

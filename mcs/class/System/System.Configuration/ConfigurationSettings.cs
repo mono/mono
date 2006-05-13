@@ -68,7 +68,7 @@ namespace System.Configuration
 		public static NameValueCollection AppSettings
 		{
 			get {
-#if NET_2_0
+#if NET_2_0 && CONFIGURATION_DEP
 				object appSettings = ConfigurationManager.GetSection ("appSettings");
 #else
 				object appSettings = GetConfig ("appSettings");
