@@ -241,7 +241,7 @@ namespace Mono.CSharp {
 
 			ObsoleteAttribute obsolete_attr = AttributeTester.GetObsoleteAttribute (te.Type);
 			if (obsolete_attr != null && !ec.IsInObsoleteScope) {
-				AttributeTester.Report_ObsoleteMessage (obsolete_attr, GetSignatureForError (), Location);
+				AttributeTester.Report_ObsoleteMessage (obsolete_attr, te.GetSignatureForError (), Location);
 			}
 			return te;
 		}
