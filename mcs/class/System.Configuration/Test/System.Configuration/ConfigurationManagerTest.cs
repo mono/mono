@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Specialized;
 using System.Configuration;
+using System.Net.Configuration;
 using System.IO;
 using NUnit.Framework;
 using SysConfig = System.Configuration.Configuration;
@@ -260,7 +261,7 @@ namespace MonoTests.System.Configuration {
 		[Test] // test for bug #78372.
 		public void OpenMachineConfiguration ()
 		{
-			Configuration cfg = ConfigurationManager.OpenMachineConfiguration ();
+			SysConfig cfg = ConfigurationManager.OpenMachineConfiguration ();
 			Assert.IsTrue (cfg.Sections.Count > 0, "#1");
 			ConfigurationSection s = cfg.Sections ["system.net/connectionManagement"];
 			Assert.IsNotNull (s, "#2");
