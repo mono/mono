@@ -456,9 +456,9 @@ namespace System.Windows.Forms
 					printer_combo.SelectedItem = installed_printers[i];
 			}
 
-			form.MinimumSize = form.Size =  new Size (438, 327); // 384
-			form.MaximizeBox = true;
-			form.FormBorderStyle = FormBorderStyle.Sizable;
+			form.Size =  new Size (438, 327); // 384
+			form.FormBorderStyle = FormBorderStyle.FixedDialog;
+			form.MaximizeBox = false;
 			form.Controls.Add (accept_button);
 			form.Controls.Add (cancel_button);
 			form.Controls.Add (printer_combo);

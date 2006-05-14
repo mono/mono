@@ -1,3 +1,9 @@
+2006-05-14  Alexander Olk  <alex.olk@googlemail.com>
+
+	* PrintDialog.cs: PrintDialog is not resizable
+	* ThemeWin32Classic.cs: Draw non links in LinkLabel with the correct
+	  color. Made some ToolBar drawing methods protected virtual.
+
 2006-05-13  Jordi Mas i Hernandez <jordimash@gmail.com>
 
 	* PrintDialog.cs: Implementation of the PrintDialog
