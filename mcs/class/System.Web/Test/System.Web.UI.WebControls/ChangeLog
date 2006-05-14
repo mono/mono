@@ -1,3 +1,11 @@
+2006-05-14 Yoni Klain <yonik@mainsoft.com>
+
+	* Added MenuTest.cs
+
+2006-05-14 Yoni Klain <yonik@mainsoft.com>
+
+	* Added SiteMapPathTest.cs 
+
 2006-04-30 Yoni Klain <yonik@mainsoft.com>
 
 	* Added SiteMapDataSourceTest.cs 
