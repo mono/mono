@@ -1,5 +1,10 @@
 2006-05-14  Alexander Olk  <alex.olk@googlemail.com>
 
+	* ColorDialog.cs: Finally it is possible to select the color with
+	  the text boxes
+
+2006-05-14  Alexander Olk  <alex.olk@googlemail.com>
+
 	* PrintDialog.cs: Fix typo
 
 2006-05-14  Alexander Olk  <alex.olk@googlemail.com>

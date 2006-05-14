@@ -291,6 +291,27 @@ namespace System.Windows.Forms {
 			redTextBox.KeyPress += new KeyPressEventHandler (OnKeyPressTextBoxes);
 			greenTextBox.KeyPress += new KeyPressEventHandler (OnKeyPressTextBoxes);
 			blueTextBox.KeyPress += new KeyPressEventHandler (OnKeyPressTextBoxes);
+			
+			hueTextBox.TextChanged += new EventHandler (OnTextChangedTextBoxes);
+			satTextBox.TextChanged += new EventHandler (OnTextChangedTextBoxes);
+			briTextBox.TextChanged += new EventHandler (OnTextChangedTextBoxes);
+			redTextBox.TextChanged += new EventHandler (OnTextChangedTextBoxes);
+			greenTextBox.TextChanged += new EventHandler (OnTextChangedTextBoxes);
+			blueTextBox.TextChanged += new EventHandler (OnTextChangedTextBoxes);
+			
+			hueTextBox.GotFocus += new EventHandler (OnGotFocusTextBoxes);
+			satTextBox.GotFocus += new EventHandler (OnGotFocusTextBoxes);
+			briTextBox.GotFocus += new EventHandler (OnGotFocusTextBoxes);
+			redTextBox.GotFocus += new EventHandler (OnGotFocusTextBoxes);
+			greenTextBox.GotFocus += new EventHandler (OnGotFocusTextBoxes);
+			blueTextBox.GotFocus += new EventHandler (OnGotFocusTextBoxes);
+			
+			hueTextBox.LostFocus += new EventHandler (OnLostFocusTextBoxes);
+			satTextBox.LostFocus += new EventHandler (OnLostFocusTextBoxes);
+			briTextBox.LostFocus += new EventHandler (OnLostFocusTextBoxes);
+			redTextBox.LostFocus += new EventHandler (OnLostFocusTextBoxes);
+			greenTextBox.LostFocus += new EventHandler (OnLostFocusTextBoxes);
+			blueTextBox.LostFocus += new EventHandler (OnLostFocusTextBoxes);
 		}
 		#endregion	// Public Constructors
 		
@@ -301,9 +322,11 @@ namespace System.Windows.Forms {
 			}
 			
 			set {
-				if (color != value) {
+				if (value.IsEmpty) {
+					color = Color.Black;
+					baseColorControl.SetColor (color);
+				} else if (color != value) {
 					color = value;
-					
 					baseColorControl.SetColor (color);
 				}
 			}
@@ -489,79 +512,106 @@ namespace System.Windows.Forms {
 			OnHelpRequest (e);
 		}
 		
-		// not working 100 %, S.W.F.TextBox isn't finished yet
+		string textBox_text_old = "";
+		
+		void OnGotFocusTextBoxes (object sender, EventArgs e)
+		{
+			TextBox textbox = sender as TextBox;
+			textBox_text_old = textbox.Text;
+		}
+		
+		void OnLostFocusTextBoxes (object sender, EventArgs e)
+		{
+			TextBox textbox = sender as TextBox;
+			
+			if (textbox.Text.Length == 0)
+				textbox.Text = textBox_text_old;
+		}
+		
 		void OnKeyPressTextBoxes (object sender, KeyPressEventArgs e)
 		{
-			if (Char.IsLetter (e.KeyChar) || Char.IsWhiteSpace (e.KeyChar) || Char.IsPunctuation (e.KeyChar)) {
+			if (Char.IsLetter (e.KeyChar) || Char.IsWhiteSpace (e.KeyChar) || Char.IsPunctuation (e.KeyChar) || e.KeyChar == ',') {
 				e.Handled = true;
 				return; 
 			}
 			
-			TextChangedTextBoxes (sender);
+			internal_textbox_change = true;
 		}
 		
-		// not working 100 %, S.W.F.TextBox isn't finished yet
-		// setting TextBox.Maxlength gives us weird results
-		void TextChangedTextBoxes (object sender)
+		internal TextBox edit_textbox = null;
+		bool internal_textbox_change = false;
+		
+		void OnTextChangedTextBoxes (object sender, EventArgs e)
 		{
+			if (!internal_textbox_change)
+				return;
+			
+			internal_textbox_change = false;
+			
 			TextBox tmp_box = sender as TextBox;
 			
 			if (tmp_box.Text.Length == 0)
 				return;
 			
-			int val;
+			string text = tmp_box.Text;
+			
+			int val = 0;
+			
+			try {
+				val = System.Convert.ToInt32 (text);
+			} catch (Exception) {
+				// bla
+			}
 			
 			if (sender == hueTextBox) {
-				val = System.Convert.ToInt32 (hueTextBox.Text);
-				
-				if (val > 240) {
-					val = 240;
+				if (val > 239) {
+					val = 239;
 					hueTextBox.Text = val.ToString ();
 				} else
 				if (val < 0) {
 					val = 0;
 					hueTextBox.Text = val.ToString ();
 				}
+				
+				edit_textbox = hueTextBox;
 				
 				UpdateFromHSBTextBoxes ();
 				
 				UpdateControls (selectedColorPanel.BackColor);
 			} else
 			if (sender == satTextBox) {
-				val = System.Convert.ToInt32 (satTextBox.Text);
-				
-				if (val > 239) {
-					val = 239;
+				if (val > 240) {
+					val = 240;
 					satTextBox.Text = val.ToString ();
 				} else
 				if (val < 0) {
 					val = 0;
 					satTextBox.Text = val.ToString ();
 				}
+				
+				edit_textbox = satTextBox;
 				
 				UpdateFromHSBTextBoxes ();
 				
 				UpdateControls (selectedColorPanel.BackColor);
 			} else
 			if (sender == briTextBox) {
-				val = System.Convert.ToInt32 (briTextBox.Text);
-				
-				if (val > 239) {
-					val = 239;
+				if (val > 240) {
+					val = 240;
 					briTextBox.Text = val.ToString ();
 				} else
 				if (val < 0) {
 					val = 0;
 					briTextBox.Text = val.ToString ();
 				}
+				
+				edit_textbox = briTextBox;
 				
 				UpdateFromHSBTextBoxes ();
 				
 				UpdateControls (selectedColorPanel.BackColor);
 			} else
 			if (sender == redTextBox) {
-				val = System.Convert.ToInt32 (redTextBox.Text);
-				
 				if (val > 255) {
 					val = 255;
 					redTextBox.Text = val.ToString ();
@@ -570,12 +620,12 @@ namespace System.Windows.Forms {
 					val = 0;
 					redTextBox.Text = val.ToString ();
 				}
+				
+				edit_textbox = redTextBox;
 				
 				UpdateFromRGBTextBoxes ();
 			} else
 			if (sender == greenTextBox) {
-				val = System.Convert.ToInt32 (greenTextBox.Text);
-				
 				if (val > 255) {
 					val = 255;
 					greenTextBox.Text = val.ToString ();
@@ -584,12 +634,12 @@ namespace System.Windows.Forms {
 					val = 0;
 					greenTextBox.Text = val.ToString ();
 				}
+				
+				edit_textbox = greenTextBox;
 				
 				UpdateFromRGBTextBoxes ();
 			} else
 			if (sender == blueTextBox) {
-				val = System.Convert.ToInt32 (blueTextBox.Text);
-				
 				if (val > 255) {
 					val = 255;
 					blueTextBox.Text = val.ToString ();
@@ -599,8 +649,14 @@ namespace System.Windows.Forms {
 					blueTextBox.Text = val.ToString ();
 				}
 				
+				edit_textbox = blueTextBox;
+				
 				UpdateFromRGBTextBoxes ();
 			}
+			
+			textBox_text_old = edit_textbox.Text;
+			
+			edit_textbox = null;
 		}
 		
 		internal void UpdateControls (Color acolor)
@@ -613,18 +669,24 @@ namespace System.Windows.Forms {
 		
 		internal void UpdateRGBTextBoxes (Color acolor)
 		{
-			redTextBox.Text = acolor.R.ToString ();
-			greenTextBox.Text = acolor.G.ToString ();
-			blueTextBox.Text = acolor.B.ToString ();
+			if (edit_textbox != redTextBox)
+				redTextBox.Text = acolor.R.ToString ();
+			if (edit_textbox != greenTextBox)
+				greenTextBox.Text = acolor.G.ToString ();
+			if (edit_textbox != blueTextBox)
+				blueTextBox.Text = acolor.B.ToString ();
 		}
 		
 		internal void UpdateHSBTextBoxes (Color acolor)
 		{
 			HSB hsb = HSB.RGB2HSB (acolor);
 			
-			hueTextBox.Text = hsb.hue.ToString ();
-			satTextBox.Text = hsb.sat.ToString ();
-			briTextBox.Text = hsb.bri.ToString ();
+			if (edit_textbox != hueTextBox)
+				hueTextBox.Text = hsb.hue.ToString ();
+			if (edit_textbox != satTextBox)
+				satTextBox.Text = hsb.sat.ToString ();
+			if (edit_textbox != briTextBox)
+				briTextBox.Text = hsb.bri.ToString ();
 		}
 		
 		internal void UpdateFromHSBTextBoxes ()
@@ -647,8 +709,6 @@ namespace System.Windows.Forms {
 			
 			UpdateHSBTextBoxes (col);
 			
-			UpdateFromHSBTextBoxes ();
-			
 			UpdateControls (col);
 		}
 		#endregion
@@ -663,13 +723,13 @@ namespace System.Windows.Forms {
 			{
 				HSB hsb = new HSB ();
 				
-				hsb.hue = (int)((color.GetHue () / 360.0f) * 241);
+				hsb.hue = (int)((color.GetHue () / 360.0f) * 240);
 				hsb.sat = (int)(color.GetSaturation () * 241);
-				hsb.bri = (int)(color.GetBrightness () * 240);
+				hsb.bri = (int)(color.GetBrightness () * 241);
 				
-				if (hsb.hue > 240) hsb.hue = 240;
+				if (hsb.hue > 239) hsb.hue = 239;
 				if (hsb.sat > 240) hsb.sat = 240;
-				if (hsb.bri > 239) hsb.bri = 239;
+				if (hsb.bri > 240) hsb.bri = 240;
 				
 				return hsb;
 			}
@@ -677,8 +737,8 @@ namespace System.Windows.Forms {
 			// not using ControlPaint HBS2Color, this algo is more precise
 			public static Color HSB2RGB (int hue, int saturation, int brightness)
 			{
-				if (hue > 240)
-					hue = 240;
+				if (hue > 239)
+					hue = 239;
 				else
 				if (hue < 0)
 					hue = 0;
@@ -689,15 +749,15 @@ namespace System.Windows.Forms {
 				if (saturation < 0)
 					saturation = 0;
 				
-				if (brightness > 239)
-					brightness = 239;
+				if (brightness > 240)
+					brightness = 240;
 				else
 				if (brightness < 0)
 					brightness = 0;
 				
-				float H = hue / 240.0f;
+				float H = hue / 239.0f;
 				float S = saturation / 240.0f;
-				float L = brightness / 239.0f;
+				float L = brightness / 240.0f;
 				
 				float r = 0, g = 0, b = 0;
 				float d1, d2;
@@ -765,12 +825,12 @@ namespace System.Windows.Forms {
 			
 			public static int Brightness (Color color)
 			{
-				return (int)(color.GetBrightness () * 240);
+				return (int)(color.GetBrightness () * 241);
 			}
 			
 			public static void GetHueSaturation (Color color, out int hue, out int sat)
 			{
-				hue = (int)((color.GetHue () / 360.0f) * 241);
+				hue = (int)((color.GetHue () / 360.0f) * 240);
 				sat = (int)(color.GetSaturation () * 241);
 			}
 			
@@ -1394,7 +1454,7 @@ namespace System.Windows.Forms {
 				{
 					bitmap = new Bitmap (size.Width, size.Height);
 					
-					float hueadd = 241.0f / (size.Width - 1);
+					float hueadd = 240.0f / (size.Width - 1);
 					float satsub = 241.0f / (size.Height - 1);
 					float satpos = 240.0f;
 					
@@ -1508,7 +1568,7 @@ namespace System.Windows.Forms {
 				
 				ResumeLayout (false);
 				
-				xstep = 241.0f / (ClientSize.Width - 1);
+				xstep = 240.0f / (ClientSize.Width - 1);
 				ystep = 241.0f / (ClientSize.Height - 1);
 				
 				SetStyle (ControlStyles.DoubleBuffer, true);
@@ -1619,7 +1679,10 @@ namespace System.Windows.Forms {
 				colorDialog.satTextBox.Text = satvalue.ToString ();
 				
 				// update hue text box
-				colorDialog.hueTextBox.Text = ((int)((float)currentXPos * xstep)).ToString ();
+				int huevalue = (int)((float)currentXPos * xstep);
+				if (huevalue > 239)
+					huevalue = 239;
+				colorDialog.hueTextBox.Text = huevalue.ToString ();
 				
 				// update the main selected color panel
 				colorDialog.selectedColorPanel.BackColor = tmpColor;
@@ -1653,8 +1716,8 @@ namespace System.Windows.Forms {
 				// color will be computed with an iteration
 				public void Draw (int hue, int sat)
 				{
-					float brisub = 240.0f / 190.0f;
-					float bri = 240.0f;
+					float brisub = 241.0f / 190.0f;
+					float bri = 241.0f;
 					
 					for (int height = 0; height < 190; height++) {
 						for (int width = 0; width < 14; width++) {
@@ -1666,7 +1729,7 @@ namespace System.Windows.Forms {
 				}
 			}
 			
-			private const float step = 240.0f/189.0f;
+			private const float step = 241.0f/189.0f;
 			
 			private DrawingBitmap bitmap;
 			
@@ -1736,7 +1799,7 @@ namespace System.Windows.Forms {
 			private int currentTrianglePosition = 195;
 //			private Rectangle clipRectangle;
 			
-			private const float briStep = 239.0f/186.0f;
+			private const float briStep = 241.0f/186.0f;
 			
 			private static int currentBrightness = 0;
 			
@@ -1842,7 +1905,7 @@ namespace System.Windows.Forms {
 					float tmp = (float)(currentTrianglePosition - 9);
 					tmp = tmp * briStep;
 					
-					int retval = 239 - (int)tmp;
+					int retval = 240 - (int)tmp;
 					
 					TriangleControl.CurrentBrightness = retval;
 					
@@ -1875,7 +1938,8 @@ namespace System.Windows.Forms {
 				float tmp = (float)pos_raw / briStep;
 				currentTrianglePosition = 186 - (int)tmp + 9;
 				
-				colorDialog.briTextBox.Text = TrianglePosition.ToString ();
+				if (colorDialog.edit_textbox == null)
+					colorDialog.briTextBox.Text = TrianglePosition.ToString ();
 				
 				Invalidate ();
 			}
