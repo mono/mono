@@ -53,7 +53,7 @@ namespace NunitWeb
 
 		static void LoadAssemblyRecursive (Assembly ass)
 		{
-			if (ra.GlobalAssemblyCache)
+			if (ass.GlobalAssemblyCache)
 				return;
 			foreach (AssemblyName ran in ass.GetReferencedAssemblies ()) {
 				bool found = false;
