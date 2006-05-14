@@ -605,6 +605,7 @@ public class DirectoryTest : Assertion {
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
+	[Ignore ("On IA64, causes nunit to abort due to bug #76388")]
 	public void MoveException4 ()
 	{
 		string path = TempFolder + DSC + "DirectoryTest.Test.13";
