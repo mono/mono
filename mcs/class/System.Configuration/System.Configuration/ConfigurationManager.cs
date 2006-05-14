@@ -158,7 +158,11 @@ namespace System.Configuration {
 
 		public static object GetSection (string sectionName)
 		{
-			return ConfigurationSystem.GetSection (sectionName);
+			object o = ConfigurationSystem.GetSection (sectionName);
+			if (o is ConfigurationSection)
+				return ((ConfigurationSection) o).GetRuntimeObject ();
+			else
+				return o;
 		}
 
 		public static void RefreshSection (string sectionName)

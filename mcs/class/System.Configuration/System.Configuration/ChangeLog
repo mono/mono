@@ -1,3 +1,10 @@
+2006-05-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ConfigurationManager.cs: since ConfigurationSystem is different
+	  for web.config, cast from ConfigurationSection to runtime object
+	  should be done at GetSection().
+	  This really fixed bug #78372.
+
 2006-05-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Configuration.cs : configPath is null for machine.config, so don't
