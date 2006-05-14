@@ -96,7 +96,7 @@ namespace System.Windows.Forms
 
 			set {
 				allow_current_page = value;
-				radio_page.Enabled = value;
+				radio_pages.Enabled = value;
 			}
 		}
 #endif
