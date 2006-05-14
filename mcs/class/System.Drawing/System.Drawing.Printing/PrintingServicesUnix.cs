@@ -175,25 +175,24 @@ namespace System.Drawing.Printing
 		internal override PrinterSettings.StringCollection InstalledPrinters {
 			get {
 			  	int n_printers;
-				IntPtr printers = IntPtr.Zero, ptr_printers, ptr_printer;
+				IntPtr dests = IntPtr.Zero, ptr_printers, ptr_printer;
 				string str;
 				PrinterSettings.StringCollection col = new PrinterSettings.StringCollection (new string[] {});
 
 				if (cups_installed == false)
 					return col;
 
-				/* FIXME: call is deprecated */
-				n_printers = cupsGetPrinters (ref printers);
+				n_printers = cupsGetDests (ref dests);
 
-				ptr_printers = printers;
+				ptr_printers = dests;
 				for (int i = 0; i < n_printers; i++) {
 					ptr_printer = (IntPtr) Marshal.ReadInt32 (ptr_printers);
 					str = Marshal.PtrToStringAnsi (ptr_printer);
 					Marshal.FreeHGlobal (ptr_printer);
-					ptr_printers = new IntPtr (ptr_printers.ToInt64 () + 4);
+					ptr_printers = new IntPtr (ptr_printers.ToInt64 () + 20 /*size of CUPS_DEST*/);
 					col.Add (str);
 				}
-				Marshal.FreeHGlobal (printers);
+				Marshal.FreeHGlobal (dests);
 				return col;
 			}
 		}
@@ -257,7 +256,7 @@ namespace System.Drawing.Printing
 		//
 
 		[DllImport("libcups", CharSet=CharSet.Ansi)]
-		static extern int cupsGetPrinters (ref IntPtr printers);
+		static extern int cupsGetDests (ref IntPtr dests);
 
 		[DllImport("libcups", CharSet=CharSet.Ansi)]
 		static extern IntPtr cupsTempFile (StringBuilder sb, int len);

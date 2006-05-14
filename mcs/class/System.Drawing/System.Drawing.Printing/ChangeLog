@@ -1,3 +1,7 @@
+2006-04-14 Jordi Mas i Hernandez <jordimash@gmail.com>
+
+	* PrintingServicesUnix.cs: Replace cupsGetPrinters deprecated API call
+
 2006-04-13 Jordi Mas i Hernandez <jordimash@gmail.com>
 
 	* PrintingServicesUnix.cs: Checks if cups is installed
