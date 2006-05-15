@@ -1,3 +1,9 @@
+2006-05-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* appdomain.c (MONO_CORLIB_VERSION): Bump corlib version.
+
+	* object-internals.h (MonoReflectionResource): Sync with managed version.
+
 2006-05-12  Wade Berrier <wberrier@novell.com>
 
 	* threads.c: Define G_GSIZE_FORMAT for systems with glib < 2.6
