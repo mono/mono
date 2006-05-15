@@ -1,3 +1,7 @@
+2006-05-15  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Control.cs: Dispose all child controls when control is diposed (#78394)
+
 2006-05-14  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ColorDialog.cs: Finally it is possible to select the color with

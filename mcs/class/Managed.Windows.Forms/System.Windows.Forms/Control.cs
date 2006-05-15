@@ -732,24 +732,37 @@ namespace System.Windows.Forms
 		private delegate void RemoveDelegate(object c);
 
 		protected override void Dispose(bool disposing) {
-			if (dc_mem!=null) {
-				dc_mem.Dispose();
-				dc_mem=null;
-			}
-
-			if (bmp_mem!=null) {
-				bmp_mem.Dispose();
-				bmp_mem=null;
-			}
-
-			if (this.InvokeRequired) {
-				if (Application.MessageLoop) {
-					this.BeginInvokeInternal(new MethodInvoker(DestroyHandle), null, true);
-					this.BeginInvokeInternal(new RemoveDelegate(controls.Remove), new object[] {this}, true);
+			if (disposing) {
+				if (dc_mem!=null) {
+					dc_mem.Dispose();
+					dc_mem=null;
 				}
-			} else {
-				DestroyHandle();
-				controls.Remove(this);
+
+				if (bmp_mem!=null) {
+					bmp_mem.Dispose();
+					bmp_mem=null;
+				}
+
+				if (this.InvokeRequired) {
+					if (Application.MessageLoop) {
+						this.BeginInvokeInternal(new MethodInvoker(DestroyHandle), null, true);
+						this.BeginInvokeInternal(new RemoveDelegate(controls.Remove), new object[] {this}, true);
+					}
+				} else {
+					DestroyHandle();
+					controls.Remove(this);
+				}
+
+
+				if (parent != null) {
+					parent.Controls.Remove(this);
+				}
+
+				Control [] children = child_controls.GetAllControls ();
+				for (int i=0; i<children.Length; i++) {
+					children[i].parent = null;	// Need to set to null or our child will try and remove from ourselves and crash
+					children[i].Dispose();
+				}
 			}
 			is_disposed = true;
 			base.Dispose(disposing);
@@ -3822,6 +3835,10 @@ namespace System.Windows.Forms
 					PaintEventArgs	paint_event;
 
 					paint_event = XplatUI.PaintEventStart(Handle, true);
+
+					if (paint_event == null) {
+						return;
+					}
 
 					if (!needs_redraw) {
 						// Just blit the previous image
