@@ -16,12 +16,13 @@ RENAME "%%f" _svn
 rem =================================================
 if "%1"=="JBoss" (
 echo Building JBoss web project...
-"%VS71COMNTOOLS%..\IDE\devenv.com" MainsoftWebApp.JBoss.vmwcsproj /build Debug_Java
+"%VS71COMNTOOLS%..\IDE\devenv.com" MainsoftWebApp.JBoss.vmwcsproj /build Debug_Java  > nul
 ) else (
 echo Building Tomcat web project...
-"%VS71COMNTOOLS%..\IDE\devenv.com" MainsoftWebApp.Tomcat.vmwcsproj /build Debug_Java
+"%VS71COMNTOOLS%..\IDE\devenv.com" MainsoftWebApp.Tomcat.vmwcsproj /build Debug_Java  > nul
 )
 
+IF NOT ERRORLEVEL==0 (set BUILD_FAILED=TRUE)
 
 rem =================================================
 echo Restoring svn...
@@ -32,46 +33,54 @@ ATTRIB +h "%%~pf\.svn"
 popd
 
 rem =================================================
+IF "%BUILD_FAILED%"=="TRUE" GOTO FAILURE
+
+rem =================================================
+if "%NUNIT_BUILD%" == "DONE" goto NUNITSKIP
 echo Build NUnit...
 pushd ..\..\..\..\nunit20\
-"%VS71COMNTOOLS%..\IDE\devenv.com" nunit.java.sln /build Debug_Java
+"%VS71COMNTOOLS%..\IDE\devenv.com" nunit.java.sln /build Debug_Java > nul
 popd
+
+goto NUNITREADY
+:NUNITSKIP
+echo Skipping NUnit Build...
+:NUNITREADY
+set NUNIT_BUILD=DONE
 
 rem =================================================
 echo Build System.Web test client side...
 pushd MainsoftWebTest
-"%VS71COMNTOOLS%..\IDE\devenv.com" SystemWebTest.vmwcsproj /build Debug_Java_NUnit
+"%VS71COMNTOOLS%..\IDE\devenv.com" SystemWebTest.vmwcsproj /build Debug_Java_NUnit > nul
 popd
 
 rem =================================================
 echo Build System.Web mono tests...
 pushd ..
-dos2unix System.Web.UI.HtmlControls\HtmlSelectTest.cs
-dos2unix System.Web.UI.WebControls\CheckBoxListTest.cs
-dos2unix System.Web.UI.WebControls\RepeatInfoTest.auto.cs
-"%VS71COMNTOOLS%..\IDE\devenv.com" TestMonoWeb_jvm.vmwcsproj /build Debug_Java
+dos2unix System.Web.UI.HtmlControls\HtmlSelectTest.cs  > nul
+dos2unix System.Web.UI.WebControls\CheckBoxListTest.cs  > nul
+dos2unix System.Web.UI.WebControls\RepeatInfoTest.auto.cs  > nul
+"%VS71COMNTOOLS%..\IDE\devenv.com" TestMonoWeb_jvm.vmwcsproj /build Debug_Java  > nul
 popd
 
 rem =================================================
-copy MainsoftWebTest\almost_config.xml MainsoftWebTest\bin\almost_config.xml /Y
-copy MainsoftWebTest\test_catalog.xml MainsoftWebTest\bin\test_catalog.xml /Y
-copy MainsoftWebTest\App.gh.config MainsoftWebTest\bin\nunit-console.exe.config /Y
-copy ..\..\..\..\nunit20\core\bin\Debug_Java\nunit.core.jar MainsoftWebTest\bin\nunit.core.jar /Y
-copy ..\..\..\..\nunit20\framework\bin\Debug_Java\nunit.framework.jar MainsoftWebTest\bin\nunit.framework.jar /Y
-copy ..\..\..\..\nunit20\util\bin\Debug_Java\nunit.util.jar MainsoftWebTest\bin\nunit.util.jar /Y
-copy ..\..\..\..\nunit20\nunit-console\bin\Debug_Java\nunit-console.jar MainsoftWebTest\bin\nunit-console.jar /Y
+copy MainsoftWebTest\almost_config.xml MainsoftWebTest\bin\almost_config.xml /Y  > nul
+copy MainsoftWebTest\test_catalog.xml MainsoftWebTest\bin\test_catalog.xml /Y  > nul
+copy MainsoftWebTest\App.gh.config MainsoftWebTest\bin\nunit-console.exe.config /Y  > nul
+copy ..\..\..\..\nunit20\core\bin\Debug_Java\nunit.core.jar MainsoftWebTest\bin\nunit.core.jar /Y  > nul
+copy ..\..\..\..\nunit20\framework\bin\Debug_Java\nunit.framework.jar MainsoftWebTest\bin\nunit.framework.jar /Y  > nul
+copy ..\..\..\..\nunit20\util\bin\Debug_Java\nunit.util.jar MainsoftWebTest\bin\nunit.util.jar /Y  > nul
+copy ..\..\..\..\nunit20\nunit-console\bin\Debug_Java\nunit-console.jar MainsoftWebTest\bin\nunit-console.jar /Y  > nul
 
 rem =================================================
 echo Buildinig xmltool...
 pushd ..\..\..\..\tools\mono-xmltool
-"%VS71COMNTOOLS%..\IDE\devenv.com" XmlTool.sln /build Debug_Java
+"%VS71COMNTOOLS%..\IDE\devenv.com" XmlTool.sln /build Debug_Java  > nul
 popd
-copy ..\..\..\..\tools\mono-xmltool\bin\Debug_Java\xmltool.exe MainsoftWebTest\bin\xmltool.exe
-copy ..\..\..\..\tools\mono-xmltool\nunit_transform.xslt MainsoftWebTest\bin\nunit_transform.xslt
+copy ..\..\..\..\tools\mono-xmltool\bin\Debug_Java\xmltool.exe MainsoftWebTest\bin\xmltool.exe  > nul
+copy ..\..\..\..\tools\mono-xmltool\nunit_transform.xslt MainsoftWebTest\bin\nunit_transform.xslt  > nul
 
 rem =================================================
-echo Running...
-
 set GH_CP=%JGAC_PATH%\mscorlib.jar
 set GH_CP=%GH_CP%;%JGAC_PATH%\System.jar
 set GH_CP=%GH_CP%;%JGAC_PATH%\System.Xml.jar
@@ -92,12 +101,23 @@ set monologfile=mono.xml
 
 pushd MainsoftWebTest\bin
 
-"%JAVA_HOME%\bin\java.exe" -cp .;"%GH_CP%" NUnit.Console.ConsoleUi SystemWebTest.jar /xml=%ghlogfile% /fixture:MonoTests.stand_alone.WebHarness.Harness
-"%JAVA_HOME%\bin\java.exe" -cp .;"%GH_CP%" NUnit.Console.ConsoleUi TestMonoWeb_jvm.jar /xml=%monologfile% /exclude:NotWorking,ValueAdd,InetAccess /fixture:MonoTests.System.Web
+echo Running Mainsoft tests...
+"%JAVA_HOME%\bin\java.exe" -cp .;"%GH_CP%" NUnit.Console.ConsoleUi SystemWebTest.jar /xml=%ghlogfile% /fixture:MonoTests.stand_alone.WebHarness.Harness  > nul
+
+echo Running Mono tests...
+"%JAVA_HOME%\bin\java.exe" -cp .;"%GH_CP%" NUnit.Console.ConsoleUi TestMonoWeb_jvm.jar /xml=%monologfile% /exclude:NotWorking,ValueAdd,InetAccess /fixture:MonoTests.System.Web  > nul
 
 echo Finished...
 xmltool.exe --transform nunit_transform.xslt %ghlogfile%
 xmltool.exe --transform nunit_transform.xslt %monologfile%
 
 popd
+
+goto :END
+:FAILURE
+popd
+echo Failed during build...
+set BUILD_FAILED=
+:END
+
 

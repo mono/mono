@@ -1,3 +1,7 @@
+2006-15-05  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* run-test.bat: removed build console outputs
+
 2006-03-07  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* run-test.bat: fixed enviroment variables
