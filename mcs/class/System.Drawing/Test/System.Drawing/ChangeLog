@@ -1,3 +1,7 @@
+2006-05-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TestGraphics.cs : added test for bug #78408 (FillRectangles).
+
 2006-05-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestRegion.cs: Added a new test case for unioning a rectangle with 

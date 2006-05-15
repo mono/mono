@@ -1227,5 +1227,16 @@ namespace MonoTests.System.Drawing
 			Graphics g = Graphics.FromImage (bitmap);
 			g.Restore (null);
 		}
+
+		[Test]
+		public void FillRectanglesZeroRects ()
+		{
+			using (Bitmap bitmap = new Bitmap (20, 20)) {
+				Graphics g = Graphics.FromImage (bitmap);
+				Brush brush = new SolidBrush (Color.Red);
+				g.FillRectangles (brush, new Rectangle [0]);
+				g.FillRectangles (brush, new RectangleF [0]);
+			}
+		}
 	}
 }

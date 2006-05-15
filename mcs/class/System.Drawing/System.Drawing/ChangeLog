@@ -1,3 +1,8 @@
+2006-05-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Graphics.cs : (FillRectangles/FillRectanglesI): when argument
+	  array is empty, don't invoke GDI+. Fixed bug #78408.
+
 2006-05-12  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* gdipFunctions.c: Fix misnamed GdipAdd*Path*String[I] API (#78383)

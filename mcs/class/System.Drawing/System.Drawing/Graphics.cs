@@ -1611,7 +1611,9 @@ namespace System.Drawing
 		{
 			if (brush == null)
 				throw new ArgumentNullException ("brush");
-			
+			if (rects.Length == 0)
+				return;
+
 			Status status = GDIPlus.GdipFillRectanglesI (nativeObject, brush.nativeObject, rects, rects.Length);
 			GDIPlus.CheckStatus (status);
 		}
@@ -1620,6 +1622,8 @@ namespace System.Drawing
 		{
 			if (brush == null)
 				throw new ArgumentNullException ("brush");
+			if (rects.Length == 0)
+				return;
 			
 			Status status = GDIPlus.GdipFillRectangles (nativeObject, brush.nativeObject, rects, rects.Length);
 			GDIPlus.CheckStatus (status);
