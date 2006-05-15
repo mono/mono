@@ -65,6 +65,7 @@ namespace System.Reflection.Emit {
 		public string filename;
 		public ResourceAttributes attrs;
 		public int offset;
+		public Stream stream;
 	}
 
 	internal struct MonoWin32Resource {

@@ -1,3 +1,9 @@
+2006-05-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* AssemblyBuilder.cs (MonoResource): Add a 'stream' field.
+
+	* ModuleBuilder.cs (DefineManifestResource): Add new net 2.0 method.
+
 2006-04-26  Miguel de Icaza  <miguel@novell.com>
 
 	* MethodBuilder.cs: better error messages when we close the

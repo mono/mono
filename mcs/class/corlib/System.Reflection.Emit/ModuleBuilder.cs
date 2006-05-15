@@ -510,6 +510,33 @@ namespace System.Reflection.Emit {
 			throw new NotImplementedException ();
 		}
 
+#if NET_2_0
+		public void DefineManifestResource (string name, Stream stream, ResourceAttributes attribute) {
+			if (name == null)
+				throw new ArgumentNullException ("name");
+			if (name == String.Empty)
+				throw new ArgumentException ("name cannot be empty");
+			if (stream == null)
+				throw new ArgumentNullException ("stream");
+			if (transient)
+				throw new InvalidOperationException ("The module is transient");
+			if (!assemblyb.IsSave)
+				throw new InvalidOperationException ("The assembly is transient");
+
+			if (resources != null) {
+				MonoResource[] new_r = new MonoResource [resources.Length + 1];
+				System.Array.Copy(resources, new_r, resources.Length);
+				resources = new_r;
+			} else {
+				resources = new MonoResource [1];
+			}
+			int p = resources.Length - 1;
+			resources [p].name = name;
+			resources [p].attrs = attribute;
+			resources [p].stream = stream;
+		}
+#endif
+
 		[MonoTODO]
 		public void SetSymCustomAttribute (string name, byte[] data)
 		{
@@ -660,6 +687,24 @@ namespace System.Reflection.Emit {
 					stream.Seek (0, SeekOrigin.Begin);
 					stream.Read (resources [i].data, 0, (int)stream.Length);
 				}					
+			}
+
+			if (resources != null) {
+				for (int i = 0; i < resources.Length; ++i) {
+					Stream stream = resources [i].stream;
+
+					// According to MSDN docs, the stream is read during assembly save, not earlier
+					if (stream != null) {
+						try {
+							long len = stream.Length;
+							resources [i].data = new byte [len];
+							stream.Seek (0, SeekOrigin.Begin);
+							stream.Read (resources [i].data, 0, (int)len);
+						} catch {
+							/* do something */
+						}
+					}
+				}
 			}
 
 			build_metadata (this);
