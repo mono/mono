@@ -211,6 +211,8 @@ namespace System.Windows.Forms {
 					throw new ArgumentException ("'" + value + "' is not a valid value for 'value'. " +
 							"'value' must be greater than or equal to -1.");
 				}
+				if (value >= TabCount)
+					return;
 
 				SuspendLayout ();
 

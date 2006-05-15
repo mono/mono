@@ -114,4 +114,18 @@ public class TabControlTest
 		Assert.AreEqual (-1, tab.SelectedIndex, "#C3");
 		Assert.AreEqual (0, tab.TabPages.Count, "#C4");
 	}
+
+	[Test]
+	public void SetSelectedIndex ()
+	{
+		// bug #78395
+		TabControl c = new TabControl ();
+		c.SelectedIndex = 0;
+
+		c.TabPages.Add (new TabPage ());
+		c.TabPages.Add (new TabPage ());
+		Assert.AreEqual (0, c.SelectedIndex, "#1");
+		c.SelectedIndex = 2; // beyond the pages - ignored
+		Assert.AreEqual (0, c.SelectedIndex, "#2");
+	}
 }
