@@ -1,3 +1,9 @@
+2006-05-15  Chris Toshok  <toshok@ximian.com>
+
+	* ListBox.cs (HorizontalScrollEvent): in the non-multicolumn case,
+	use XplatUI.ScrollWindow.
+	(VerticalScrollEvent): use XplatUI.ScrollWindow.
+
 2006-05-15  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* TextBoxBase.cs: Added handling of middle-button paste for X11. (#78375)

@@ -78,6 +78,7 @@ namespace System.Windows.Forms
 		private int column_width_internal = 120;
 		private ImplicitVScrollBar vscrollbar;
 		private ImplicitHScrollBar hscrollbar;
+		private int hbar_offset;
 		private bool suspend_layout;
 		private bool ctrl_pressed = false;
 		private bool shift_pressed = false;
@@ -1074,19 +1075,25 @@ namespace System.Windows.Forms
 		// Value Changed
 		private void HorizontalScrollEvent (object sender, EventArgs e)
 		{
-			if (!multicolumn) {
-				base.Refresh ();
-				return;
+			if (multicolumn) {
+				int top_item = top_index;
+				int last_item = last_visible_index;
+
+				top_index = RowCount * hscrollbar.Value;
+				last_visible_index = LastVisibleItem ();
+
+				if (top_item != top_index || last_item != last_visible_index)
+					Invalidate (items_area);
 			}
+			else {
+				int old_offset = hbar_offset;
+				hbar_offset = hscrollbar.Value;
 
-			int top_item = top_index;
-			int last_item = last_visible_index;
+				if (hbar_offset < 0)
+					hbar_offset = 0;
 
-			top_index = RowCount * hscrollbar.Value;
-			last_visible_index = LastVisibleItem ();
-			
-			if (top_item != top_index || last_item != last_visible_index)
-				base.Refresh ();
+				XplatUI.ScrollWindow (Handle, items_area, old_offset - hbar_offset, 0, false);
+			}
 		}
 
 		// Only returns visible points. The diference of with IndexFromPoint is that the rectangle
@@ -1807,6 +1814,7 @@ namespace System.Windows.Forms
 				hscrollbar.LargeChange = items_area.Width;
 			}
 
+			hbar_offset = hscrollbar.Value;
 			hscrollbar.Enabled = enabled;
 			hscrollbar.Visible = show;
 
@@ -1843,13 +1851,13 @@ namespace System.Windows.Forms
 		private void VerticalScrollEvent (object sender, EventArgs e)
 		{
 			int top_item = top_index;
-			int last_item = last_visible_index;
 
 			top_index = /*row_count + */ vscrollbar.Value;
 			last_visible_index = LastVisibleItem ();
 
-			if (top_item != top_index || last_item != last_visible_index)
-				base.Refresh ();
+			int diff = top_item - top_index;
+
+			XplatUI.ScrollWindow (Handle, items_area, 0, ItemHeight * diff, false);
 		}
 
 		#endregion Private Methods
