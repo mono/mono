@@ -1,3 +1,16 @@
+2006-05-15  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XmlCodeExporter.cs: Added bool argument to GenerateClass and 
+	GenerateEnum methods that specifies whether we're dealing with a type
+	for a top-level element. In GenerateClass, do not always add Namespace
+	argument for XmlRootAttribute if isTopLevel is false, and do not
+	emit XmlRootAttribute if isTopLevel is false and no arguments have been
+	added.
+	* SoapCodeExporter.cs: Added bool argument to GenerateClass and
+	GenerateEnum methods.
+	* MapCodeGenerator.cs: Added bool argument to GenerateClass and 
+	GenerateEnum methods.
+
 2006-05-03  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* SerializationCodeGenerator.cs: Allow generating serializer for

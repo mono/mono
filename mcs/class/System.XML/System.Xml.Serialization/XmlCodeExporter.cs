@@ -176,7 +176,7 @@ namespace System.Xml.Serialization
 
 		public void ExportTypeMapping (XmlTypeMapping xmlTypeMapping)
 		{
-			codeGenerator.ExportTypeMapping (xmlTypeMapping);
+			codeGenerator.ExportTypeMapping (xmlTypeMapping, true);
 		}
 
 		#endregion // Methods
@@ -194,7 +194,7 @@ namespace System.Xml.Serialization
 		{
 		}
 		
-		protected override void GenerateClass (XmlTypeMapping map, CodeTypeDeclaration codeClass)
+		protected override void GenerateClass (XmlTypeMapping map, CodeTypeDeclaration codeClass, bool isTopLevel)
 		{
 			CodeAttributeDeclaration att = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlTypeAttribute");
 			if (map.XmlType != map.TypeData.TypeName) att.Arguments.Add (GetArg (map.XmlType));
@@ -204,9 +204,14 @@ namespace System.Xml.Serialization
 
 			CodeAttributeDeclaration ratt = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlRootAttribute");
 			if (map.ElementName != map.XmlType) ratt.Arguments.Add (GetArg (map.ElementName));
-			ratt.Arguments.Add (GetArg ("Namespace", map.Namespace));
-			ratt.Arguments.Add (GetArg ("IsNullable", map.IsNullable));
-			AddCustomAttribute (codeClass, ratt, false);
+			if (isTopLevel) {
+				ratt.Arguments.Add (GetArg ("Namespace", map.Namespace));
+				ratt.Arguments.Add (GetArg ("IsNullable", map.IsNullable));
+			} else {
+				if (map.Namespace != "") 
+					ratt.Arguments.Add (GetArg ("Namespace", map.Namespace));
+			}
+			AddCustomAttribute (codeClass, ratt, isTopLevel);
 		}
 		
 		protected override void GenerateClassInclude (CodeAttributeDeclarationCollection attributes, XmlTypeMapping map)
@@ -299,10 +304,10 @@ namespace System.Xml.Serialization
 			if (einfo.Namespace != defaultNamespace) uatt.Arguments.Add (GetArg ("Namespace", einfo.Namespace));
 			attributes.Add (uatt);
 		}
-		
-		protected override void GenerateEnum (XmlTypeMapping map, CodeTypeDeclaration codeEnum)
+
+		protected override void GenerateEnum (XmlTypeMapping map, CodeTypeDeclaration codeEnum, bool isTopLevel)
 		{
-			GenerateClass (map, codeEnum);
+			GenerateClass (map, codeEnum, isTopLevel);
 		}
 		
 		protected override void GenerateEnumItem (CodeMemberField codeField, EnumMap.EnumMapMember emem)

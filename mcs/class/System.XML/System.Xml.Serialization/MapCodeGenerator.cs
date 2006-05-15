@@ -92,18 +92,18 @@ namespace System.Xml.Serialization {
 			ExportMembersMapCode (dummyClass, (ClassMap)xmlMembersMapping.ObjectMap, xmlMembersMapping.Namespace, null);
 		}
 
-		public void ExportTypeMapping (XmlTypeMapping xmlTypeMapping)
+		public void ExportTypeMapping (XmlTypeMapping xmlTypeMapping, bool isTopLevel)
 		{
-			ExportMapCode (xmlTypeMapping);
+			ExportMapCode (xmlTypeMapping, isTopLevel);
 			RemoveInclude (xmlTypeMapping);
 		}
 
-		void ExportMapCode (XmlTypeMapping map)
+		void ExportMapCode (XmlTypeMapping map, bool isTopLevel)
 		{
 			switch (map.TypeData.SchemaType)
 			{
 				case SchemaTypes.Enum:
-					ExportEnumCode (map);
+					ExportEnumCode (map, isTopLevel);
 					break;
 
 				case SchemaTypes.Array:
@@ -111,7 +111,7 @@ namespace System.Xml.Serialization {
 					break;
 
 				case SchemaTypes.Class:
-					ExportClassCode (map);
+					ExportClassCode (map, isTopLevel);
 					break;
 
 				case SchemaTypes.XmlSerializable:
@@ -122,16 +122,18 @@ namespace System.Xml.Serialization {
 			}
 		}
 
-		void ExportClassCode (XmlTypeMapping map)
+		void ExportClassCode (XmlTypeMapping map, bool isTopLevel)
 		{
 			CodeTypeDeclaration codeClass;
-			
 			if (IsMapExported (map)) {
-				// Regenerate attributes, since things may have changed
 				codeClass = GetMapDeclaration (map);
 				if (codeClass != null) {
-					codeClass.CustomAttributes = null;
-					GenerateClass (map, codeClass);
+					// Regenerate attributes, since things may have changed
+					codeClass.CustomAttributes.Clear ();
+#if NET_2_0
+					AddClassAttributes (codeClass);
+#endif
+					GenerateClass (map, codeClass, isTopLevel);
 					ExportDerivedTypeAttributes (map, codeClass);
 				}
 				return;
@@ -143,7 +145,7 @@ namespace System.Xml.Serialization {
 				SetMapExported (map, null);
 				foreach (XmlTypeMapping dmap in exportedAnyType.DerivedTypes) {
 					if (IsMapExported (dmap) || !dmap.IncludeInSchema) continue;
-					ExportTypeMapping (dmap);
+					ExportTypeMapping (dmap, false);
 					AddInclude (dmap);
 				}
 				return;
@@ -157,28 +159,10 @@ namespace System.Xml.Serialization {
 
 #if NET_2_0
 			codeClass.IsPartial = CodeGenerator.Supports(GeneratorSupport.PartialTypes);
-
-			CodeAttributeDeclaration generatedCodeAttribute = new CodeAttributeDeclaration (
-				new CodeTypeReference (typeof(GeneratedCodeAttribute)));
-			generatedCodeAttribute.Arguments.Add (new CodeAttributeArgument (
-				new CodePrimitiveExpression ("System.Xml")));
-			generatedCodeAttribute.Arguments.Add (new CodeAttributeArgument (
-				new CodePrimitiveExpression ("2.0.50727.42")));
-			codeClass.CustomAttributes.Add (generatedCodeAttribute);
-
-			codeClass.CustomAttributes.Add (new CodeAttributeDeclaration (
-				new CodeTypeReference (typeof (SerializableAttribute))));
-			codeClass.CustomAttributes.Add (new CodeAttributeDeclaration (
-				new CodeTypeReference (typeof (DebuggerStepThroughAttribute))));
-
-			CodeAttributeDeclaration designerCategoryAttribute = new CodeAttributeDeclaration (
-				new CodeTypeReference (typeof(DesignerCategoryAttribute)));
-			designerCategoryAttribute.Arguments.Add (new CodeAttributeArgument (
-				new CodePrimitiveExpression ("code")));
-			codeClass.CustomAttributes.Add (designerCategoryAttribute);
+			AddClassAttributes (codeClass);
 #endif
 
-			GenerateClass (map, codeClass);
+			GenerateClass (map, codeClass, isTopLevel);
 			ExportDerivedTypeAttributes (map, codeClass);
 			
 			ExportMembersMapCode (codeClass, (ClassMap)map.ObjectMap, map.XmlTypeNamespace, map.BaseMap);
@@ -188,7 +172,7 @@ namespace System.Xml.Serialization {
 				CodeTypeReference ctr = new CodeTypeReference (map.BaseMap.TypeData.FullTypeName);
 				codeClass.BaseTypes.Add (ctr);
 				if (map.BaseMap.IncludeInSchema) {
-					ExportMapCode (map.BaseMap);
+					ExportMapCode (map.BaseMap, false);
 					AddInclude (map.BaseMap);
 				}
 			}
@@ -211,7 +195,7 @@ namespace System.Xml.Serialization {
 				if (codeClass.CustomAttributes == null) 
 					codeClass.CustomAttributes = new CodeAttributeDeclarationCollection ();
 
-				ExportMapCode (tm);
+				ExportMapCode (tm, false);
 				ExportDerivedTypes (tm, codeClass);
 			}
 		}
@@ -332,7 +316,7 @@ namespace System.Xml.Serialization {
 			if (attributes.Count > 0) codeField.CustomAttributes = attributes;
 
 			if (attinfo.MappedType != null) {
-				ExportMapCode (attinfo.MappedType);
+				ExportMapCode (attinfo.MappedType, false);
 				RemoveInclude (attinfo.MappedType);
 			}
 
@@ -385,7 +369,7 @@ namespace System.Xml.Serialization {
 
 				GenerateElementInfoMember (attributes, member, einfo, defaultType, defaultNamespace, addAlwaysAttr, forceUseMemberName);
 				if (einfo.MappedType != null) {
-					ExportMapCode (einfo.MappedType);
+					ExportMapCode (einfo.MappedType, false);
 					RemoveInclude (einfo.MappedType);
 				}
 			}
@@ -444,7 +428,7 @@ namespace System.Xml.Serialization {
 				if (ainfo.MappedType != null) {
 					if (!IsMapExported (ainfo.MappedType) && includeArrayTypes)
 						AddInclude (ainfo.MappedType);
-					ExportMapCode (ainfo.MappedType);
+					ExportMapCode (ainfo.MappedType, false);
 				}
 			}
 
@@ -463,7 +447,7 @@ namespace System.Xml.Serialization {
 				if (ainfo.MappedType != null) {
 					if (!IsMapExported (ainfo.MappedType) && includeArrayTypes)
 						AddInclude (ainfo.MappedType);
-					ExportMapCode (ainfo.MappedType);
+					ExportMapCode (ainfo.MappedType, false);
 				}
 			}
 		}
@@ -481,7 +465,7 @@ namespace System.Xml.Serialization {
 			return false;
 		}
 
-		void ExportEnumCode (XmlTypeMapping map)
+		void ExportEnumCode (XmlTypeMapping map, bool isTopLevel)
 		{
 			if (IsMapExported (map)) return;
 
@@ -509,7 +493,7 @@ namespace System.Xml.Serialization {
 				new CodeTypeReference (typeof (SerializableAttribute))));
 #endif
 
-			GenerateEnum (map, codeEnum);
+			GenerateEnum (map, codeEnum, isTopLevel);
 			
 			int flag = 1;
 			foreach (EnumMap.EnumMapMember emem in emap.Members)
@@ -603,6 +587,30 @@ namespace System.Xml.Serialization {
 			AddComments (type, comments);
 			codeNamespace.Types.Add (type);
 		}
+
+#if NET_2_0
+		void AddClassAttributes (CodeTypeDeclaration codeClass)
+		{
+			CodeAttributeDeclaration generatedCodeAttribute = new CodeAttributeDeclaration (
+				new CodeTypeReference (typeof (GeneratedCodeAttribute)));
+			generatedCodeAttribute.Arguments.Add (new CodeAttributeArgument (
+				new CodePrimitiveExpression ("System.Xml")));
+			generatedCodeAttribute.Arguments.Add (new CodeAttributeArgument (
+				new CodePrimitiveExpression ("2.0.50727.42")));
+			codeClass.CustomAttributes.Add (generatedCodeAttribute);
+
+			codeClass.CustomAttributes.Add (new CodeAttributeDeclaration (
+				new CodeTypeReference (typeof (SerializableAttribute))));
+			codeClass.CustomAttributes.Add (new CodeAttributeDeclaration (
+				new CodeTypeReference (typeof (DebuggerStepThroughAttribute))));
+
+			CodeAttributeDeclaration designerCategoryAttribute = new CodeAttributeDeclaration (
+				new CodeTypeReference (typeof (DesignerCategoryAttribute)));
+			designerCategoryAttribute.Arguments.Add (new CodeAttributeArgument (
+				new CodePrimitiveExpression ("code")));
+			codeClass.CustomAttributes.Add (designerCategoryAttribute);
+		}
+#endif
 		
 		CodeTypeReference GetDomType (TypeData data)
 		{
@@ -631,7 +639,7 @@ namespace System.Xml.Serialization {
 
 		#region Overridable methods
 
-		protected virtual void GenerateClass (XmlTypeMapping map, CodeTypeDeclaration codeClass)
+		protected virtual void GenerateClass (XmlTypeMapping map, CodeTypeDeclaration codeClass, bool isTopLevel)
 		{
 		}
 		
@@ -691,8 +699,8 @@ namespace System.Xml.Serialization {
 		protected virtual void GenerateUnnamedAnyElementAttribute (CodeAttributeDeclarationCollection attributes, XmlTypeMapElementInfo einfo, string defaultNamespace)
 		{
 		}
-		
-		protected virtual void GenerateEnum (XmlTypeMapping map, CodeTypeDeclaration codeEnum)
+
+		protected virtual void GenerateEnum (XmlTypeMapping map, CodeTypeDeclaration codeEnum, bool isTopLevel)
 		{
 		}
 		

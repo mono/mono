@@ -129,7 +129,7 @@ namespace System.Xml.Serialization
 
 		public void ExportTypeMapping (XmlTypeMapping xmlTypeMapping)
 		{
-			codeGenerator.ExportTypeMapping (xmlTypeMapping);
+			codeGenerator.ExportTypeMapping (xmlTypeMapping, true);
 		}
 
 
@@ -148,8 +148,8 @@ namespace System.Xml.Serialization
 		: base (codeNamespace, codeCompileUnit, codeGen, options, mappings)
 		{
 		}
-		
-		protected override void GenerateClass (XmlTypeMapping map, CodeTypeDeclaration codeClass)
+
+		protected override void GenerateClass (XmlTypeMapping map, CodeTypeDeclaration codeClass, bool isTopLevel)
 		{
 			CodeAttributeDeclaration att = new CodeAttributeDeclaration ("System.Xml.Serialization.SoapType");
 			if (map.XmlType != map.TypeData.TypeName) att.Arguments.Add (GetArg (map.XmlType));
@@ -181,8 +181,8 @@ namespace System.Xml.Serialization
 			if (!TypeTranslator.IsDefaultPrimitiveTpeData(einfo.TypeData)) att.Arguments.Add (GetArg ("DataType",einfo.TypeData.XmlType));
 			if (addAlwaysAttr || att.Arguments.Count > 0) attributes.Add (att);
 		}
-		
-		protected override void GenerateEnum (XmlTypeMapping map, CodeTypeDeclaration codeEnum)
+
+		protected override void GenerateEnum (XmlTypeMapping map, CodeTypeDeclaration codeEnum, bool isTopLevel)
 		{
 			CodeAttributeDeclaration att = new CodeAttributeDeclaration ("System.Xml.Serialization.SoapType");
 			if (map.XmlType != map.TypeData.TypeName) att.Arguments.Add (GetArg (map.XmlType));
