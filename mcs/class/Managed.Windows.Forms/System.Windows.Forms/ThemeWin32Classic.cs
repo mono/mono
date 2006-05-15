@@ -1048,36 +1048,56 @@ namespace System.Windows.Forms
 			for (int row = grid.FirstVisibleRow; row < rowcnt; row++) {								
 				rect_row.Y = cells.Y + ((row - grid.FirstVisibleRow) * grid.RowHeight);
 				if (clip.IntersectsWith (rect_row)) {
-					DataGridPaintRow (g, row, rect_row, false, grid);
+					DataGridPaintRow (g, row, rect_row, false, clip, grid);
 				}
 			}
 			
 			if (grid.ShowEditRow && grid.RowsCount > 0 && grid.FirstVisibleRow + grid.VisibleRowCount == grid.RowsCount + 1) {
 				rect_row.Y = cells.Y + ((rowcnt - grid.FirstVisibleRow) * grid.RowHeight);
 				if (clip.IntersectsWith (rect_row)) {
-					DataGridPaintRow (g, rowcnt, rect_row, true, grid);
+					DataGridPaintRow (g, rowcnt, rect_row, true, clip, grid);
 				}
-			}			
+			}
+
 
 			not_usedarea.Height = cells.Y + cells.Height - rect_row.Y - rect_row.Height;
 			not_usedarea.Y = rect_row.Y + rect_row.Height;
 			not_usedarea.Width = rect_row.Width = cells.Width;
 			not_usedarea.X = cells.X;
-			
+
 			g.FillRectangle (ResPool.GetSolidBrush (grid.BackgroundColor), not_usedarea);
 		}
 		
-		public override void DataGridPaintRow (Graphics g, int row, Rectangle row_rect, bool is_newrow, DataGrid grid)
+		public override void DataGridPaintRow (Graphics g, int row, Rectangle row_rect, bool is_newrow,
+						       Rectangle clip, DataGrid grid)
 		{			
 			Rectangle rect_cell = new Rectangle ();
 			int col_pixel;
 			Color backcolor, forecolor;
+			Brush backBrush, foreBrush;
 			Region prev_clip = g.Clip;
 			Region current_clip;
 			Rectangle not_usedarea = new Rectangle ();
 
 			rect_cell.Y = row_rect.Y;
 			rect_cell.Height = row_rect.Height;
+
+			if (grid.IsSelected (row)) {
+				backcolor =  grid.SelectionBackColor;
+				forecolor =  grid.SelectionForeColor;
+			} else {
+				if (row % 2 == 0) {
+					backcolor =  grid.BackColor;
+				} else {
+					backcolor =  grid.AlternatingBackColor;
+				}
+
+				forecolor =  grid.ForeColor;
+			}			
+
+
+			backBrush = ResPool.GetSolidBrush (backcolor);
+			foreBrush = ResPool.GetSolidBrush (forecolor);
 
 			// PaintCells at row, column
 			int column_cnt = grid.first_visiblecolumn + grid.visiblecolumn_count;
@@ -1088,46 +1108,36 @@ namespace System.Windows.Forms
 				rect_cell.X = row_rect.X + col_pixel - grid.horz_pixeloffset;
 				rect_cell.Width = grid.CurrentTableStyle.GridColumnStyles[column].Width;
 
-				current_clip = new Region (row_rect);
-				g.Clip = current_clip;
+				if (clip.IntersectsWith (rect_cell)) {
+					current_clip = new Region (row_rect);
+					current_clip.Intersect (rect_cell);
+					g.Clip = current_clip;
 
-				if (grid.IsSelected (row)) {
-					backcolor =  grid.SelectionBackColor;
-					forecolor =  grid.SelectionForeColor;
-				} else {
-					if (row % 2 == 0) {
-						backcolor =  grid.BackColor;
+					if (is_newrow) {
+						grid.CurrentTableStyle.GridColumnStyles[column].PaintNewRow (g, rect_cell, 
+													     backBrush,
+													     foreBrush);
 					} else {
-						backcolor =  grid.AlternatingBackColor;
+						grid.CurrentTableStyle.GridColumnStyles[column].Paint (g, rect_cell, grid.ListManager, row,
+												       backBrush,
+												       foreBrush,
+												       grid.RightToLeft == RightToLeft.Yes);
 					}
-					
-					forecolor =  grid.ForeColor;
-				}			
 
-				if (is_newrow) {
-					grid.CurrentTableStyle.GridColumnStyles[column].PaintNewRow (g, rect_cell, 
-						ResPool.GetSolidBrush (backcolor),
-						ResPool.GetSolidBrush (forecolor));						
-					
-				} else {
-					grid.CurrentTableStyle.GridColumnStyles[column].Paint (g, rect_cell, grid.ListManager, row,
-						ResPool.GetSolidBrush (backcolor),
-						ResPool.GetSolidBrush (forecolor),
-						grid.RightToLeft == RightToLeft.Yes);
+					current_clip.Dispose ();
 				}
-
-				g.Clip = prev_clip;
-				current_clip.Dispose ();
 			}
+
+			g.Clip = prev_clip;
 			
 			if (row_rect.X + row_rect.Width > rect_cell.X + rect_cell.Width) {
-
 				not_usedarea.X = rect_cell.X + rect_cell.Width;
 				not_usedarea.Width = row_rect.X + row_rect.Width - rect_cell.X - rect_cell.Width;
 				not_usedarea.Y = row_rect.Y;
 				not_usedarea.Height = row_rect.Height;
-				g.FillRectangle (ResPool.GetSolidBrush (grid.BackgroundColor),
-					not_usedarea);
+				if (clip.IntersectsWith (not_usedarea))
+					g.FillRectangle (ResPool.GetSolidBrush (grid.BackgroundColor),
+							 not_usedarea);
 			}
 		}
 		
@@ -2927,7 +2937,7 @@ namespace System.Windows.Forms
 			Rectangle r = new Rectangle( 0,	 
 						    scrollbutton_height, bar.ClientRectangle.Width, bar.ClientRectangle.Height - ( scrollbutton_height * 2 ) );
 			Rectangle intersect = Rectangle.Intersect( clip, r );
-			
+
 			if ( intersect != Rectangle.Empty )
 			{
 				Brush h = ResPool.GetHatchBrush( HatchStyle.Percent50, ColorScrollBar, Color.White);

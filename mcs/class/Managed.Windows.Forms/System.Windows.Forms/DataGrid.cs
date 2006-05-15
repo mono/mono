@@ -1005,7 +1005,7 @@ namespace System.Windows.Forms
 		}
 
 		protected virtual void CancelEditing ()
-		{			
+		{
 			if (current_cell.ColumnNumber < CurrentTableStyle.GridColumnStyles.Count) {
 				CurrentTableStyle.GridColumnStyles[current_cell.ColumnNumber].Abort (current_cell.RowNumber);
 			}
@@ -1969,7 +1969,7 @@ namespace System.Windows.Forms
 			if (source != null && source as IListSource != null && source as IList != null) {
 				throw new Exception ("Wrong complex data binding source");
 			}
-			
+
 			current_cell = new DataGridCell ();
 			datasource = source;
 			DisconnectListManagerEvents ();
@@ -1985,7 +1985,7 @@ namespace System.Windows.Forms
 		}
 
 		private void SetNewDataSource ()
-		{		
+		{			
 			if (ListManager != null && TableStyles[ListManager.ListName] == null) {
 				current_style.GridColumnStyles.Clear ();			
 				current_style.CreateColumnsForTable (false);
@@ -2132,103 +2132,47 @@ namespace System.Windows.Forms
 
 		private void ScrollToColumnInPixels (int pixel)
 		{
-			Rectangle invalidate = new Rectangle ();
-			Rectangle invalidate_column = new Rectangle ();
+			int pixels;
 
 			if (pixel > horz_pixeloffset) { // ScrollRight
-				int pixels = pixel - horz_pixeloffset;
-				
-				horz_pixeloffset = horiz_scrollbar.Value = pixel;
-				grid_drawing.UpdateVisibleColumn ();
+				pixels = -1 * (pixel - horz_pixeloffset);
+			}
+			else {
+				pixels = horz_pixeloffset - pixel;
+			}
 
-				// Columns header
-				invalidate_column.X = grid_drawing.ColumnsHeadersArea.X + grid_drawing.ColumnsHeadersArea.Width - pixels;
-				invalidate_column.Y = grid_drawing.ColumnsHeadersArea.Y;
-				invalidate_column.Width = pixels;
-				invalidate_column.Height = grid_drawing.ColumnsHeadersArea.Height;
-				XplatUI.ScrollWindow (Handle, grid_drawing.ColumnsHeadersArea, -pixels, 0, false);
+			Rectangle area = grid_drawing.CellsArea;
+				
+			horz_pixeloffset = pixel;
+			grid_drawing.UpdateVisibleColumn ();
 
-				// Cells
-				invalidate.X = grid_drawing.CellsArea.X + grid_drawing.CellsArea.Width - pixels;
-				invalidate.Y = grid_drawing.CellsArea.Y;
-				invalidate.Width = pixels;
-				invalidate.Height = grid_drawing.CellsArea.Height;
-				
-				
-				if (columnheaders_visible == true) {
-					invalidate.Y -= grid_drawing.ColumnsHeadersArea.Height;
-					invalidate.Height += grid_drawing.ColumnsHeadersArea.Height;
-				}
-				
-				XplatUI.ScrollWindow (Handle, grid_drawing.CellsArea, -pixels, 0, false);
-				Invalidate (invalidate_column);
-				Invalidate (invalidate);
+			if (columnheaders_visible == true) {
+				area.Y -= grid_drawing.ColumnsHeadersArea.Height;
+				area.Height += grid_drawing.ColumnsHeadersArea.Height;
+			}
 
-
-			} else {
-				int pixels = horz_pixeloffset - pixel;
-				Rectangle area = grid_drawing.CellsArea;
-				
-				horz_pixeloffset = horiz_scrollbar.Value = pixel;
-				grid_drawing.UpdateVisibleColumn ();
-
-				// Columns header
-				invalidate_column.X = grid_drawing.ColumnsHeadersArea.X;
-				invalidate_column.Y = grid_drawing.ColumnsHeadersArea.Y;
-				invalidate_column.Width = pixels;
-				invalidate_column.Height = grid_drawing.ColumnsHeadersArea.Height;
-				//XplatUI.ScrollWindow (Handle, grid_drawing.ColumnsHeadersArea, pixels, 0, false);
-
-				// Cells
-				invalidate.X =  grid_drawing.CellsArea.X;
-				invalidate.Y =  grid_drawing.CellsArea.Y;
-				invalidate.Width = pixels;
-				invalidate.Height = grid_drawing.CellsArea.Height;
-				
-				if (columnheaders_visible == true) {
-					invalidate.Y -= grid_drawing.ColumnsHeadersArea.Height;
-					invalidate.Height += grid_drawing.ColumnsHeadersArea.Height;
-					area.Y -= grid_drawing.ColumnsHeadersArea.Height;
-					area.Height += grid_drawing.ColumnsHeadersArea.Height;
-				}
-				
-				XplatUI.ScrollWindow (Handle, area, pixels, 0, false);
-				Invalidate (invalidate);
-			}		
-			
+			XplatUI.ScrollWindow (Handle, area, pixels, 0, false);
 		}
 
 		private void ScrollToRow (int old_row, int new_row)
 		{
-			Rectangle invalidate = new Rectangle ();			
-			
+			int pixels;
+
 			if (new_row > old_row) { // Scrolldown
-				int scrolled_rows = new_row - old_row;
-				int pixels = scrolled_rows * RowHeight;
-				Rectangle rows_area = grid_drawing.CellsArea; // Cells area - partial rows space
-				rows_area.Height = grid_drawing.CellsArea.Height - grid_drawing.CellsArea.Height % RowHeight;
-				
-				invalidate.X =  grid_drawing.CellsArea.X;
-				invalidate.Y =  grid_drawing.CellsArea.Y + rows_area.Height - pixels;
-				invalidate.Width = grid_drawing.CellsArea.Width;
-				invalidate.Height = pixels;
-
-				XplatUI.ScrollWindow (Handle, rows_area, 0, -pixels, false);
-
-			} else { // ScrollUp
-				int scrolled_rows = old_row - new_row;				
-				int pixels = scrolled_rows * RowHeight;
-
-				invalidate.X =  grid_drawing.CellsArea.X;
-				invalidate.Y =  grid_drawing.CellsArea.Y;
-				invalidate.Width = grid_drawing.CellsArea.Width;
-				invalidate.Height = pixels;
-				XplatUI.ScrollWindow (Handle, grid_drawing.CellsArea, 0, pixels, false);				
+				pixels = -1 * (new_row - old_row) * RowHeight;
+			}
+			else {
+				pixels = (old_row - new_row) * RowHeight;
 			}
 
-			// Right now we use ScrollWindow Invalidate, let's leave remarked it here for X11 if need it
-			//Invalidate (invalidate);
-			Invalidate (grid_drawing.RowsHeadersArea);
+			Rectangle rows_area = grid_drawing.CellsArea; // Cells area - partial rows space
+			if (rowheaders_visible) {
+				rows_area.X -= RowHeaderWidth;
+				rows_area.Width += RowHeaderWidth;
+			}
+			rows_area.Height = grid_drawing.CellsArea.Height - grid_drawing.CellsArea.Height % RowHeight;
+
+			XplatUI.ScrollWindow (Handle, rows_area, 0, pixels, false);
 		}
 
 		#endregion Private Instance Methods

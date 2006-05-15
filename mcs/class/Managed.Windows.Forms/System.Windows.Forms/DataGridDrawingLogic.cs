@@ -417,7 +417,7 @@ namespace System.Windows.Forms
 			
 			grid.visiblecolumn_count = 1 + col - grid.first_visiblecolumn;
 			
-			if (grid.first_visiblecolumn + grid.visiblecolumn_count + 1 < grid.CurrentTableStyle.GridColumnStyles.Count) { 
+			if (grid.first_visiblecolumn + grid.visiblecolumn_count < grid.CurrentTableStyle.GridColumnStyles.Count) { 
 				grid.visiblecolumn_count++; // Partially visible column
 			}
 		}

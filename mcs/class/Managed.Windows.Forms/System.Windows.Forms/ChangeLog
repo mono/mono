@@ -1,5 +1,23 @@
 2006-05-15  Chris Toshok  <toshok@ximian.com>
 
+	[ fixes bug #78011 ]
+	* ThemeWin32Classic.cs (DataGridPaintRows): pass the clip argument
+	on to DataGridPaintRow.
+	(DataGridPaintRow): take a clip argument, and only draw the cells
+	which intersect it.  same with the not_usedarea.
+
+	* Theme.cs (DataGridPaintRow) add @clip parameter.
+
+	* DataGrid.cs (ScrollToColumnInPixels): simplify, use
+	XplatUI.ScrollWindow.
+	(ScrollToRow): same.
+
+	* DataGridDrawingLogic.cs (UpdateVisibleColumn): fix corner case
+	with last column which was causing a gray swath to appear with the
+	XplatUI.ScrollWindow code.
+
+2006-05-15  Chris Toshok  <toshok@ximian.com>
+
 	* ListBox.cs (HorizontalScrollEvent): in the non-multicolumn case,
 	use XplatUI.ScrollWindow.
 	(VerticalScrollEvent): use XplatUI.ScrollWindow.
