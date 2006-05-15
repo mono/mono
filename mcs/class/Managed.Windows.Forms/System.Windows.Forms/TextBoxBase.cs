@@ -1361,6 +1361,18 @@ namespace System.Windows.Forms {
 				return;
 			}
 
+			if ((e.Button == MouseButtons.Middle) && (((int)Environment.OSVersion.Platform == 4) || ((int)Environment.OSVersion.Platform == 128))) {
+				Document.Marker	marker;
+
+				marker.tag = document.FindCursor(e.X + document.ViewPortX, e.Y + document.ViewPortY, out marker.pos);
+				marker.line = marker.tag.line;
+				marker.height = marker.tag.height;
+
+				document.SetSelection(marker.line, marker.pos, marker.line, marker.pos);
+				Paste();
+
+			}
+
 			#if Debug
 				LineTag	tag;
 				Line	line;

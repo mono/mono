@@ -1,3 +1,7 @@
+2006-05-15  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* TextBoxBase.cs: Added handling of middle-button paste for X11. (#78375)
+
 2006-05-15  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Cursors.cs: For X11, read NWSE and NESW cursors from our resource
