@@ -282,8 +282,13 @@ namespace System.Windows.Forms {
 		public static Cursor SizeNESW {
 			get {
 				if (size_nesw == null) {
-					size_nesw = new Cursor(XplatUI.DefineStdCursor(StdCursor.SizeNESW));
-					size_nesw.name = "SizeNESW";
+					if (((int)Environment.OSVersion.Platform == 4) || ((int)Environment.OSVersion.Platform == 128)) {
+						size_nesw = new Cursor(typeof(Cursor), "NESW.cur");
+						size_nesw.name = "SizeNESW";
+					} else {
+						size_nesw = new Cursor(XplatUI.DefineStdCursor(StdCursor.SizeNWSE));
+						size_nesw.name = "SizeNESW";
+					}
 				}
 				return size_nesw;
 			}
@@ -302,8 +307,13 @@ namespace System.Windows.Forms {
 		public static Cursor SizeNWSE {
 			get {
 				if (size_nwse == null) {
-					size_nwse = new Cursor(XplatUI.DefineStdCursor(StdCursor.SizeNWSE));
-					size_nwse.name = "SizeNWSE";
+					if (((int)Environment.OSVersion.Platform == 4) || ((int)Environment.OSVersion.Platform == 128)) {
+						size_nwse = new Cursor(typeof(Cursor), "NWSE.cur");
+						size_nwse.name = "SizeNWSE";
+					} else {
+						size_nwse = new Cursor(XplatUI.DefineStdCursor(StdCursor.SizeNWSE));
+						size_nwse.name = "SizeNWSE";
+					}
 				}
 				return size_nwse;
 			}

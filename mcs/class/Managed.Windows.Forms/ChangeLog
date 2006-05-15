@@ -1,3 +1,8 @@
+2006-05-15  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Makefile, System.Windows.Forms.dll.resources: Added NWSE and NESW 
+	  cursors
+
 2006-04-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile : added -r:System.Data.dll for "make test".

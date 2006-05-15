@@ -2866,6 +2866,16 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "resources\NESW.cur"
+                    CustomToolNameSpace = "System.Windows.Forms.NESW.cur"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\NWSE.cur"
+                    CustomToolNameSpace = "System.Windows.Forms.NWSE.cur"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "resources\DnDNo.cur"
                     CustomToolNameSpace = "System.Windows.Forms.DnDNo.cur"
                     BuildAction = "EmbeddedResource"
@@ -2883,6 +2893,10 @@
                 <File
                     RelPath = "resources\DnDMove.cur"
                     CustomToolNameSpace = "System.Windows.Forms.DnDMove.cur"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\keyboards.resources"
                     BuildAction = "EmbeddedResource"
                 />
                 <File

@@ -1,3 +1,8 @@
+2006-05-15  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Cursors.cs: For X11, read NWSE and NESW cursors from our resource
+	  file since there are no equivalent X11 cursors
+
 2006-05-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MonthCalendar.cs : DateTimePicker should reflect selected date

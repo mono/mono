@@ -19,9 +19,11 @@ RESX_RESOURCES = \
 	resources/System.Windows.Forms.de.resources \
 	resources/keyboards.resources
 
-CUR_RESOURCES = \
+CUR_RESOURCES = resources/NWSE.cur resources/NESW.cur \
 	resources/SplitterNS.cur \
 	resources/SplitterWE.cur \
+	resources/NWSE.cur \
+	resources/NESW.cur \
 	resources/DnDNo.cur \
 	resources/DnDCopy.cur \
 	resources/DnDLink.cur \
