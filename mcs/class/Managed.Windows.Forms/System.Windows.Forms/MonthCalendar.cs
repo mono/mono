@@ -1557,12 +1557,21 @@ namespace System.Windows.Forms {
 		// selects the clicked date
 		private void DoDateMouseDown (HitTestInfo hti) {
 			SetItemClick(hti);
-			this.SelectDate (clicked_date);
-			this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
 		}
 		
 		// event run on the mouse up event
 		private void DoMouseUp () {
+
+			HitTestInfo hti = this.HitTest (this.PointToClient (MousePosition));
+			switch (hti.HitArea) {
+			case HitArea.PrevMonthDate:
+			case HitArea.NextMonthDate:
+			case HitArea.Date:
+				this.SelectDate (clicked_date);
+				this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
+				break;
+			}
+
 			// invalidate the next monthbutton
 			if (this.is_next_clicked) {
 				this.Invalidate(

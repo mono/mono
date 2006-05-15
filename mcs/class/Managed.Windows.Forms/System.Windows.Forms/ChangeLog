@@ -1,7 +1,13 @@
 2006-05-15  Atsushi Enomoto  <atsushi@ximian.com>
 
-	* When argument index is equal or more than tab count, just ignore.
-	  Fixed bug #78395.
+	* MonthCalendar.cs : DateTimePicker should reflect selected date
+	  on mouse*up*, not mouse*down*. Fixed originally reported part of
+	  bug #76474.
+
+2006-05-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TabControl.cs : When argument index is equal or more than tab
+	  count, just ignore. Fixed bug #78395.
 
 2006-05-15  Peter Dennis Bartok  <pbartok@novell.com>
 
