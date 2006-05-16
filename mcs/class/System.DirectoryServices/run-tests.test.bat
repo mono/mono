@@ -83,12 +83,14 @@ copy Test\bin\Debug_Java\System.DirectoryServices.Test.jar .
 
 IF "%SECURE_MODE%" NEQ "secure" (
 	copy App.config nunit-console.exe.config 
+	set JVM_OPTIONS=-Xmx1024M
 ) ELSE (
 	copy Secure.config nunit-console.exe.config 
+	set JVM_OPTIONS=-Djava.security.krb5.conf=Test\krb5.conf  -Djava.security.auth.login.config=Test\java.login.sun.config -Xmx1024M
 )
 
 REM @echo on
-"%JAVA_HOME%\bin\java" -Xmx1024M -cp %CLASSPATH% NUnit.Console.ConsoleUi System.DirectoryServices.Test.jar /fixture=%RUNNING_FIXTURE%  %NUNIT_OPTIONS% /xml=%GH_OUTPUT_XML% >>%RUNNING_FIXTURE%_run.log.txt 2<&1
+"%JAVA_HOME%\bin\java" %JVM_OPTIONS%  -cp %CLASSPATH% NUnit.Console.ConsoleUi System.DirectoryServices.Test.jar /fixture=%RUNNING_FIXTURE%  %NUNIT_OPTIONS% /xml=%GH_OUTPUT_XML% >>%RUNNING_FIXTURE%_run.log.txt 2<&1
 REM @echo off
 
 

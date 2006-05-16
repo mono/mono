@@ -3,6 +3,9 @@
 	* run-tests.test.bat: skip nunit build if already done
 
 2006-16-05 Boris Kirzner <borisk@mainsoft.com>
+	* run-tests.test.bat: pass java security parameters as jvm options.
+
+2006-16-05 Boris Kirzner <borisk@mainsoft.com>
 	* run-tests.bat: disable running secure mode tests by default.
 
 2006-03-06 Boris Kirzner <borisk@mainsoft.com>
