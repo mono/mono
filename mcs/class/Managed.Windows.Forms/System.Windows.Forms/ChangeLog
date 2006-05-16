@@ -1,3 +1,9 @@
+2006-05-16  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Application.cs: Introduced sub-class to allow tracking of
+	  threads and centralized triggering of the event mess for
+	  ThreadExit, AppExit, etc..  (#76156)
+
 2006-05-16  Alexander Olk  <alex.olk@googlemail.com>
 
 	* MimeIcon.cs:

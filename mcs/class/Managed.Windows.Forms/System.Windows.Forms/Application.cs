@@ -41,9 +41,104 @@ using System.Threading;
 
 namespace System.Windows.Forms {
 	public sealed class Application {
+		private class MWFThread {
+			#region Fields
+			private ApplicationContext	context;
+			private bool			messageloop_started;
+			private int			thread_id;
+
+			private static Hashtable	threads = new Hashtable();
+			#endregion	// Fields
+
+			#region Constructors
+			private MWFThread() {
+			}
+			#endregion	// Constructors
+
+			#region Properties
+			public ApplicationContext Context {
+				get {
+					return context;
+				}
+
+				set {
+					context = value;
+				}
+			}
+
+			public bool MessageLoop {
+				get {
+					return messageloop_started;
+				}
+
+				set {
+					messageloop_started = value;
+				}
+			}
+
+
+			public static int LoopCount {
+				get {
+					IEnumerator	e;
+					int		loops;
+					MWFThread	thread;
+
+					e = threads.Values.GetEnumerator();
+					loops = 0;
+
+					while (e.MoveNext()) {
+						thread = (MWFThread)e.Current;
+						if (thread != null && thread.messageloop_started) {
+							loops++;
+						}
+					}
+
+					return loops;
+				}
+			}
+
+			public static MWFThread Current {
+				get {
+					MWFThread	thread;
+
+					thread = null;
+					lock (threads) {
+						thread = (MWFThread)threads[Thread.CurrentThread.GetHashCode()];
+						if (thread == null) {
+							thread = new MWFThread();
+							thread.thread_id = Thread.CurrentThread.GetHashCode();
+							threads[thread.thread_id] = thread;
+						}
+					}
+
+					return thread;
+				}
+			}
+			#endregion	// Properties
+
+			#region Methods
+			public void Exit() {
+				if (context != null) {
+					context.ExitThread();
+				}
+				context = null;
+
+				if (Application.ThreadExit != null) {
+					Application.ThreadExit(null, EventArgs.Empty);
+				}
+
+				if (LoopCount == 0) {
+					if (Application.ApplicationExit != null) {
+						Application.ApplicationExit(null, EventArgs.Empty);
+					}
+				}
+				threads[thread_id] = null;
+			}
+			#endregion	// Methods
+		}
+
 		private static bool			browser_embedded	= false;
 		private static InputLanguage		input_language		= InputLanguage.CurrentInputLanguage;
-		private static bool			messageloop_started	= false;
 		private static string			safe_caption_format	= "{1} - {0} - {2}";
 		private static ArrayList		message_filters		= new ArrayList();
 
@@ -154,7 +249,7 @@ namespace System.Windows.Forms {
 
 		public static bool MessageLoop {
 			get {
-				return messageloop_started;
+				return MWFThread.Current.MessageLoop;
 			}
 		}
 
@@ -254,6 +349,7 @@ namespace System.Windows.Forms {
 
 		public static void ExitThread() {
 			CloseForms(Thread.CurrentThread);
+			MWFThread.Current.Exit();
 		}
 
 		public static ApartmentState OleRequired() {
@@ -296,12 +392,18 @@ namespace System.Windows.Forms {
 			IEnumerator	control;
 			MSG		msg;
 			Object		queue_id;
+			MWFThread	thread;
+
+
+			thread = MWFThread.Current;
 
 			msg = new MSG();
 
 			if (context == null) {
 				context = new ApplicationContext();
 			}
+
+			thread.Context = context;
 
 			if (context.MainForm != null) {
 				context.MainForm.Visible = true;	// Cannot use Show() or scaling gets confused by menus
@@ -348,7 +450,7 @@ namespace System.Windows.Forms {
 			}
 
 			queue_id = XplatUI.StartLoop(Thread.CurrentThread);
-			messageloop_started = true;
+			thread.MessageLoop = true;
 
 			while (XplatUI.GetMessage(queue_id, ref msg, IntPtr.Zero, 0, 0)) {
 				if ((message_filters != null) && (message_filters.Count > 0)) {
@@ -406,7 +508,7 @@ namespace System.Windows.Forms {
 				Console.WriteLine("   RunLoop loop left");
 			#endif
 
-			messageloop_started = false;
+			thread.MessageLoop = false;
 			XplatUI.EndLoop(Thread.CurrentThread);
 
 			if (Modal) {
@@ -443,11 +545,7 @@ namespace System.Windows.Forms {
 			}
 
 			if (!Modal) {
-				if (ThreadExit != null) {
-					ThreadExit(null, EventArgs.Empty);
-				}
-
-				context.ExitThread();
+				thread.Exit();
 			}
 		}
 
