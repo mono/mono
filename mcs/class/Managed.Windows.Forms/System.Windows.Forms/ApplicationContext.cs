@@ -36,7 +36,7 @@ namespace System.Windows.Forms {
 		}
 
 		public ApplicationContext(Form mainForm) {
-			main_form=mainForm;
+			MainForm = mainForm; // Use  property to get event handling setup
 		}
 
 		~ApplicationContext() {
@@ -51,8 +51,14 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				if (main_form!=value) {
-					main_form=value;
+				if (main_form != value) {
+					// Catch when the form is destroyed so we can fire OnMainFormClosed
+
+					if (main_form != null) {
+						main_form.HandleDestroyed -= new EventHandler(OnMainFormClosed);
+					}
+					main_form = value;
+					main_form.HandleDestroyed += new EventHandler(OnMainFormClosed);
 				}
 			}
 		}

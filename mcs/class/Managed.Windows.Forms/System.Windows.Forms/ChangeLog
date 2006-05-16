@@ -1,3 +1,8 @@
+2006-05-16  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* ApplicationContext.cs: Grab the HandleDestroyed event so
+	  we know when to fire OnMainFormClosed 
+
 2006-05-16  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* Application.cs: Introduced sub-class to allow tracking of
