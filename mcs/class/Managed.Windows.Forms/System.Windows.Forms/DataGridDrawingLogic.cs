@@ -534,7 +534,14 @@ namespace System.Windows.Forms
 
 			grid.Invalidate (caption_area);
 		}
-		
+
+		public void InvalidateCells ()
+		{
+			if (cells_area.IsEmpty)
+				return;
+
+			grid.Invalidate (cells_area);
+		}
 		
 		public void InvalidateRow (int row)
 		{

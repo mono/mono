@@ -293,7 +293,7 @@ namespace System.Windows.Forms
 			set {
 				if (alternating_backcolor != value) {
 					alternating_backcolor = value;
-					Refresh ();
+					grid_drawing.InvalidateCells ();
 				}
 			}
 		}
@@ -303,7 +303,10 @@ namespace System.Windows.Forms
 				return backColor;
 			}
 			set {
-				backColor = value;
+				if (backColor != value) {
+					backColor = value;
+					grid_drawing.InvalidateCells ();
+				}
 			}
 		}
 
@@ -315,7 +318,7 @@ namespace System.Windows.Forms
 				 if (background_color != value) {
 					background_color = value;
 					OnBackgroundColorChanged (EventArgs.Empty);
-					Refresh ();
+					Invalidate ();
 				}
 			}
 		}

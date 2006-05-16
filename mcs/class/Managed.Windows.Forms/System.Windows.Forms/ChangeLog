@@ -1,3 +1,14 @@
+2006-05-16  Chris Toshok  <toshok@ximian.com>
+
+	[ fixes bug #78410 ]
+	* DataGrid.cs (set_AlternatingBackColor): use
+	grid_drawing.InvalidateCells instead of Refresh().
+	(set_BackColor): call grid_drawing.InvalidateCells.
+	(set_BackgroundColor): use Invalidate instead of Refresh.
+
+	* DataGridDrawingLogic.cs (InvalidateCells): new function, just
+	invalidate the cell area.
+
 2006-05-15  Chris Toshok  <toshok@ximian.com>
 
 	[ fixes bug #78011 ]
