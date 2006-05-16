@@ -1,3 +1,7 @@
+2006-05-16  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* run-tests.test.bat: skip nunit build if already done
+
 2006-16-05 Boris Kirzner <borisk@mainsoft.com>
 	* run-tests.bat: disable running secure mode tests by default.
 
