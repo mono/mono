@@ -554,7 +554,8 @@ namespace System.Windows.Forms
 				} else {
 					list.Insert(newIndex, child);
 				}
-				owner.UpdateZOrder();
+				child.UpdateZOrder();
+				owner.PerformLayout();
 			}
 			#endregion // ControlCollection Private Instance Methods
 
@@ -2618,24 +2619,8 @@ namespace System.Windows.Forms
 		}
 
 		public void BringToFront() {
-			if ((parent != null) && (parent.child_controls[0]!=this)) {
-				if (parent.child_controls.Contains(this)) {
-					parent.child_controls.SetChildIndex(this, 0);
-				}
-			} else if (parent != null) {
-				if (parent.child_controls.impl_list != null) {
-					Control last_impl = (Control) parent.child_controls.impl_list [parent.child_controls.impl_list.Count - 1];
-					if (IsHandleCreated) {
-						XplatUI.SetZOrder (this.window.Handle, last_impl.Handle, false, false);
-					}
-				} else {
-					if (IsHandleCreated) {
-						XplatUI.SetZOrder(this.window.Handle, IntPtr.Zero, true, false);
-					}
-				}
-			}
-
 			if (parent != null) {
+				parent.child_controls.SetChildIndex(this, 0);
 				parent.Refresh();
 			}
 		}
@@ -2906,8 +2891,6 @@ namespace System.Windows.Forms
 
 					if (child.Visible && (child.Dock == DockStyle.Fill)) {
 						child.SetBounds(space.Left, space.Top, space.Width, space.Height);
-						space.Width=0;
-						space.Height=0;
 					}
 				}
 
@@ -3146,18 +3129,8 @@ namespace System.Windows.Forms
 		}
 
 		public void SendToBack() {
-			if ((parent != null) && (parent.child_controls[parent.child_controls.Count-1]!=this)) {
-				if (parent.child_controls.Contains(this)) {
-					parent.child_controls.SetChildIndex(this, parent.child_controls.Count);
-				}
-			}
-
-			if (IsHandleCreated) {
-				XplatUI.SetZOrder(this.window.Handle, IntPtr.Zero, false, true);
-			}
-
 			if (parent != null) {
-				parent.Refresh();
+				parent.child_controls.SetChildIndex(this, parent.child_controls.Count);
 			}
 		}
 
@@ -3784,16 +3757,24 @@ namespace System.Windows.Forms
 			OnStyleChanged(EventArgs.Empty);
 		}
 
+		private void UpdateZOrderOfChild(Control child) {
+			if (IsHandleCreated && child.IsHandleCreated && (child.parent == this)) {
+				int	index;
+
+				index = child_controls.IndexOf(child);
+
+				if (index > 0) {
+					XplatUI.SetZOrder(child.Handle, child_controls[index - 1].Handle, false, false);
+				} else {
+					XplatUI.SetZOrder(child.Handle, IntPtr.Zero, true, false);
+				}
+			}
+		}
+
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected void UpdateZOrder() {
-			Control [] controls;
-			if (!IsHandleCreated) {
-				return;
-			}
-
-			controls = child_controls.GetAllControls ();
-			for (int i = 1; i < controls.Length; i++ ) {
-				XplatUI.SetZOrder(controls[i].Handle, controls[i-1].Handle, false, false); 
+			if (parent != null) {
+				parent.UpdateZOrderOfChild(this);
 			}
 		}
 

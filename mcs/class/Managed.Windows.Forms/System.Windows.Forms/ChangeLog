@@ -1,3 +1,15 @@
+2006-05-16  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Control.cs:
+	  - PerformLayout: Do not shrink space filled by DockStyle.Fill
+	    controls, all filled controls are supposed to overlap (#78080)
+	  - UpdateZOrder is supposed to update the control's z-order in the
+	    parent's z-order chain. Fixed to behave like that
+	  - BringToFront: Removed obsolete code
+	  - SendToBack: Simplyfied
+	  - SetChildIndex: Trigger layout calculations when Z-order changes
+	    since layout is done by z-order
+
 2006-05-16  Chris Toshok  <toshok@ximian.com>
 
 	[ fixes bug #78410 ]
