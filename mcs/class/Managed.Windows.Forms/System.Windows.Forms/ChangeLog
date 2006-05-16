@@ -1,3 +1,8 @@
+2006-05-16  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Form.cs: Only apply transparency settings after the form
+	  is created. (Fixes #77800)
+
 2006-05-16  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* ApplicationContext.cs: Grab the HandleDestroyed event so

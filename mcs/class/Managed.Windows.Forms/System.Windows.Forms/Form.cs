@@ -198,11 +198,17 @@ namespace System.Windows.Forms {
 			}
 
 			set {
+				if (value == allow_transparency) {
+					return;
+				}
+
 				if (XplatUI.SupportsTransparency()) {
 					allow_transparency = value;
 
 					if (value) {
-						XplatUI.SetWindowTransparency(Handle, Opacity, TransparencyKey);
+						if (IsHandleCreated) {
+							XplatUI.SetWindowTransparency(Handle, Opacity, TransparencyKey);
+						}
 					} else {
 						UpdateStyles(); // Remove the WS_EX_LAYERED style
 					}
@@ -680,8 +686,11 @@ namespace System.Windows.Forms {
 				opacity = value;
 
 				AllowTransparency = true;
-				UpdateStyles();
-				XplatUI.SetWindowTransparency(Handle, opacity, TransparencyKey);
+
+				if (IsHandleCreated) {
+					UpdateStyles();
+					XplatUI.SetWindowTransparency(Handle, opacity, TransparencyKey);
+				}
 			}
 		}
 			
@@ -1311,6 +1320,12 @@ namespace System.Windows.Forms {
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void CreateHandle() {
 			base.CreateHandle ();
+
+			if (XplatUI.SupportsTransparency()) {
+				if (allow_transparency) {
+					XplatUI.SetWindowTransparency(Handle, Opacity, TransparencyKey);
+				}
+			}
 
 			XplatUI.SetWindowMinMax(window.Handle, maximized_bounds, minimum_size, maximum_size);
 			if (icon != null) {
