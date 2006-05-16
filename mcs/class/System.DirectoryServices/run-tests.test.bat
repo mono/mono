@@ -86,7 +86,7 @@ IF "%SECURE_MODE%" NEQ "secure" (
 	set JVM_OPTIONS=-Xmx1024M
 ) ELSE (
 	copy Secure.config nunit-console.exe.config 
-	set JVM_OPTIONS=-Djava.security.krb5.conf=Test\krb5.conf  -Djava.security.auth.login.config=Test\java.login.sun.config -Xmx1024M
+	set JVM_OPTIONS=-Djava.security.krb5.conf=Test\krb5.conf.example -Djava.security.auth.login.config=Test\java.login.sun.config -Xmx1024M
 )
 
 REM @echo on
