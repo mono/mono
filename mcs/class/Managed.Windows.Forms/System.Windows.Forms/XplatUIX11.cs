@@ -868,7 +868,7 @@ namespace System.Windows.Forms {
 
 		private void AddExpose (Hwnd hwnd, bool client, int x, int y, int width, int height) {
 			// Don't waste time
-			if (hwnd == null) {	
+			if ((hwnd == null) || (x > hwnd.Width) || (y > hwnd.Height)) {	
 				return;
 			}
 
@@ -3225,7 +3225,7 @@ namespace System.Windows.Forms {
 							if (hwnd.opacity != 0xffffffff) {
 								IntPtr opacity;
 
-								opacity = (IntPtr)hwnd.opacity;
+								opacity = (IntPtr)(Int32)hwnd.opacity;
 								XChangeProperty(DisplayHandle, XGetParent(hwnd.whole_window), NetAtoms[(int)NA._NET_WM_WINDOW_OPACITY], (IntPtr)Atom.XA_CARDINAL, 32, PropertyMode.Replace, ref opacity, 1);
 							}
 							SendMessage(msg.hwnd, Msg.WM_WINDOWPOSCHANGED, msg.wParam, msg.lParam);
@@ -3647,7 +3647,18 @@ namespace System.Windows.Forms {
 			}
 			
 			if (client) {
+#if true
 				hwnd.client_dc = Graphics.FromHwnd (hwnd.client_window);
+#else
+				// Protected against illegal cross-thread painting
+				lock (XlibLock) {
+					if (hwnd.client_dc != null) {
+						return null;
+					}
+
+					hwnd.client_dc = Graphics.FromHwnd (hwnd.client_window);
+				}
+#endif
 
 				Region clip_region = new Region ();
 				clip_region.MakeEmpty();
@@ -3688,9 +3699,17 @@ namespace System.Windows.Forms {
 			if (client) {
 				hwnd.ClearInvalidArea();
 
+#if true
 				hwnd.client_dc.Flush();
 				hwnd.client_dc.Dispose();
 				hwnd.client_dc = null;
+#else
+				lock (XlibLock) {
+					hwnd.client_dc.Flush();
+					hwnd.client_dc.Dispose();
+					hwnd.client_dc = null;
+				}
+#endif
 			} else {
 				hwnd.ClearNcInvalidArea ();
 

@@ -1,3 +1,13 @@
+2006-05-16  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* XplatUIX11.cs:
+	  - AddExpose: Don't add expose ranges outside the size of our
+	    window
+	  - Cast opacity values to Int32 to avoid crashes with certain
+	    values
+	  - Added disabled code paths that protect against illegal cross-
+	    thread painting (Developers.exe)
+
 2006-05-16  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* ProgressBar.cs: Invalidate the control when it's resized
