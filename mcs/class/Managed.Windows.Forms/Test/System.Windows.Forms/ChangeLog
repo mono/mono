@@ -1,3 +1,8 @@
+2006-05-16  Miguel de Icaza  <miguel@novell.com>
+
+	* DataGridTest.cs: Add a test case based on 78420, confirm that
+	the fix works.
+
 2006-05-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TabControlTest.cs : added test for bug #78395.

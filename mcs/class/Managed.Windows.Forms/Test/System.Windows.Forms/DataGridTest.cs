@@ -31,6 +31,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
 using NUnit.Framework;
+using System.Data;
 
 namespace MonoTests.System.Windows.Forms
 {
@@ -310,5 +311,16 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (dg.SelectionForeColor, dg2.SelectionForeColor, "A1");
 		}
 
+		[Test] public void TestSetDataBinding ()
+		{
+			DataGrid dg = new DataGrid ();
+			DataSet ds = new DataSet ("DataSet");
+			DataTable dt = new DataTable ("DataTable");
+			DataColumn dc = new DataColumn ("C");
+			ds.Tables.Add (dt);
+
+			dg.SetDataBinding (ds, "DataTable");
+			
+		}
 	}
 }
