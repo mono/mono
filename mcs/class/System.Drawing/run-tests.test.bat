@@ -51,7 +51,17 @@ REM ********************************************************
 @echo Building .Net solution...
 REM ********************************************************
 
+if "%NUNIT_BUILD%" == "DONE" goto NUNITSKIP
+
 devenv Test\DrawingTest\System.Drawing.Test.dotnet.sln /%BUILD_OPTION% Debug >%RUNNING_FIXTURE%_build.log.txt 2<&1
+
+goto NUNITREADY
+
+:NUNITSKIP
+echo Skipping NUnit Build...
+
+:NUNITREADY
+set NUNIT_BUILD=DONE
 
 IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
 
