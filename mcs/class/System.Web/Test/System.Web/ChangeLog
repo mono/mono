@@ -1,3 +1,7 @@
+2006-05-17 Kazuki Oikawa <kazuki@panicode.com>
+
+	* HttpUtilityTest.cs: added tests for HttpUtility.ParseQueryString.
+
 2006-04-20 Andrew Skiba <andrews@mainsoft.com>
 
 	* SiteMapNodeTest.cs: new tests for null reference exceptions in SiteMapNode

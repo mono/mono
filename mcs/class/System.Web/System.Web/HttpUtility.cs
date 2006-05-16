@@ -963,17 +963,54 @@ namespace System.Web {
 #endif
 
 #if NET_2_0
-		[MonoTODO]
 		public static NameValueCollection ParseQueryString (string query)
 		{
-			// LAMESPEC: default encoding not specified
-			throw new NotImplementedException ();
+			return ParseQueryString (query, Encoding.UTF8);
 		}
 
-		[MonoTODO]
 		public static NameValueCollection ParseQueryString (string query, Encoding encoding)
 		{
-			throw new NotImplementedException ();
+			if (query == null)
+				throw new ArgumentNullException ("query");
+			if (encoding == null)
+				throw new ArgumentNullException ("encoding");
+			if (query.Length == 0 || (query.Length == 1 && query[0] == '?'))
+				return new NameValueCollection ();
+			if (query[0] == '?')
+				query = query.Substring (1);
+
+			int namePos = 0;
+			NameValueCollection collection = new NameValueCollection ();
+			while (namePos <= query.Length) {
+				int valuePos = -1, valueEnd = -1;
+				for (int q = namePos; q < query.Length; q++) {
+					if (valuePos == -1 && query[q] == '=') {
+						valuePos = q + 1;
+					} else if (query[q] == '&') {
+						valueEnd = q;
+						break;
+					}
+				}
+
+				string name, value;
+				if (valuePos == -1) {
+					name = null;
+					valuePos = namePos;
+				} else {
+					name = System.Web.HttpUtility.UrlDecode (query.Substring (namePos, valuePos - namePos - 1), encoding);
+				}
+				if (valueEnd < 0) {
+					namePos = -1;
+					valueEnd = query.Length;
+				} else {
+					namePos = valueEnd + 1;
+				}
+				value = System.Web.HttpUtility.UrlDecode (query.Substring (valuePos, valueEnd - valuePos), encoding);
+
+				collection.Add (name, value);
+				if (namePos == -1) break;
+			}
+			return collection;
 		}
 #endif
 		#endregion // Methods
