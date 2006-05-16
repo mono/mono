@@ -1439,15 +1439,20 @@ namespace System
 		{
 			if (array == null)
 				throw new ArgumentNullException ("array");
+			Sort<T> (array, array.Length, comparison);
+		}
+
+		internal static void Sort<T> (T [] array, int length, Comparison<T> comparison)
+		{
 			if (comparison == null)
 				throw new ArgumentNullException ("comparison");
 
-			if (array.Length <= 1)
+			if (length <= 1 || array.Length <= 1)
 				return;
 			
 			try {
 				int low0 = 0;
-				int high0 = array.Length - 1;
+				int high0 = length - 1;
 				qsort<T> (array, low0, high0, comparison);
 			}
 			catch (Exception e) {

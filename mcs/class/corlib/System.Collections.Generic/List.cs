@@ -472,12 +472,10 @@ namespace System.Collections.Generic {
 		{
 			Array.Sort<T> (data, 0, size, comparer);
 		}
-		
-		// Waiting on Array
-		[MonoTODO]
+
 		public void Sort (Comparison <T> comparison)
 		{
-			throw new NotImplementedException ();
+			Array.Sort<T> (data, size, comparison);
 		}
 		
 		public void Sort (int index, int count, IComparer <T> comparer)

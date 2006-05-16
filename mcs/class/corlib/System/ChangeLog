@@ -1,3 +1,8 @@
+2006-05-17  Kazuki Oikawa  <kazuki@panicode.com>
+
+	* Array.cs : added internal sort method used
+	  in System.Collections.Generics.List<T>.Sort(Comparison<T>).
+
 2006-05-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* Environment.cs: Bump corlib version.
