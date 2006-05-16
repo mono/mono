@@ -1,3 +1,8 @@
+2006-05-16  Jackson Harper  <jackson@ximian.com>
+
+	* MdiClient.cs: Don't paint the parent background image if we have
+	our own background image.
+
 2006-05-16  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* Control.cs:

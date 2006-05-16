@@ -97,6 +97,9 @@ namespace System.Windows.Forms {
 
 		internal override void OnPaintBackgroundInternal (PaintEventArgs pe)
 		{
+			if (BackgroundImage != null)
+				return;
+
 			if (Parent == null || Parent.BackgroundImage == null)
 				return;
 			Parent.PaintControlBackground (pe);
