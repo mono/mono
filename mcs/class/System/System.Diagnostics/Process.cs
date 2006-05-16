@@ -1019,6 +1019,11 @@ namespace System.Diagnostics {
 			base.Dispose (disposing);
 		}
 
+		~Process ()
+		{
+			Dispose (false);
+		}
+
 		static void CBOnExit (object state, bool unused)
 		{
 			Process p = (Process) state;

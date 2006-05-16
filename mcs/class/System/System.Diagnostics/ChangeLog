@@ -1,3 +1,7 @@
+2006-05-16  Dick Porter  <dick@ximian.com>
+
+	* Process.cs: Dispose the handle from a destructor too
+
 2006-04-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* Stopwatch.cs: New file.
