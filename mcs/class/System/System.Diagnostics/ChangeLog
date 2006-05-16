@@ -1,3 +1,7 @@
+2006-05-16  Dick Porter  <dick@ximian.com>
+
+	* Process.cs: Dispose the handle from a destructor too
+
 2006-04-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Stopwatch.cs:
