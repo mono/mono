@@ -868,8 +868,17 @@ namespace System.Windows.Forms {
 
 		private void AddExpose (Hwnd hwnd, bool client, int x, int y, int width, int height) {
 			// Don't waste time
-			if ((hwnd == null) || (x > hwnd.Width) || (y > hwnd.Height)) {	
+			if ((hwnd == null) || (x > hwnd.Width) || (y > hwnd.Height) || ((x + width) < 0) || ((y + height) < 0)) {
 				return;
+			}
+
+			// Keep the invalid area as small as needed
+			if ((x + width) > hwnd.width) {
+				width = hwnd.width - x;
+			}
+
+			if ((y + height) > hwnd.height) {
+				height = hwnd.height - y;
 			}
 
 			if (client) {
