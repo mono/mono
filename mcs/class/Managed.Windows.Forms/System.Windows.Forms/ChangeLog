@@ -1,3 +1,12 @@
+2006-05-16  Alexander Olk  <alex.olk@googlemail.com>
+
+	* MimeIcon.cs:
+	  - Do not return a null icon index value for a mime subclass.
+	    Instead try the main mime type class too.
+	  - Seems that some newer distributions don't have a link to some
+	    gnome default icons anymore. So check the default gnome dir too.
+	  
+
 2006-05-16  Jackson Harper  <jackson@ximian.com>
 
 	* MdiClient.cs: Don't paint the parent background image if we have

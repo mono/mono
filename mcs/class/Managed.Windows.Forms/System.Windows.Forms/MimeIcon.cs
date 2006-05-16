@@ -412,8 +412,12 @@ namespace System.Windows.Forms
 					// if oindex is still null check if mime_type is a sub class of an other mime type
 					string sub_class = Mime.SubClasses[ mime_type ];
 					
-					if ( sub_class != null )
-						return MimeTypeIconIndexHash[ sub_class ];
+					if ( sub_class != null ) {
+						oindex = MimeTypeIconIndexHash[ sub_class ];
+						
+						if ( oindex != null )
+							return oindex;
+					}
 					
 					// last check, see if we find an entry for the main mime type class
 					string mime_class_main = mime_type.Substring( 0, mime_type.IndexOf( '/' ) );
@@ -896,10 +900,12 @@ namespace System.Windows.Forms
 				foreach (string icon_theme in tmp_inherits) {
 					foreach (string path in icon_paths) {
 						if (Directory.Exists (path + "/" + icon_theme)) {
-							if (!inherits_path_collection.Contains (path + "/" + icon_theme))
+							if (!inherits_path_collection.Contains (path + "/" + icon_theme)) {
 								inherits_path_collection.Add (path + "/" + icon_theme);
-							if (File.Exists (path + "/" + icon_theme + "/" + "index.theme"))
-								GetIndexThemeInherits (path + "/" + icon_theme + "/" + "index.theme");
+								
+								if (File.Exists (path + "/" + icon_theme + "/" + "index.theme"))
+									GetIndexThemeInherits (path + "/" + icon_theme + "/" + "index.theme");
+							}
 							break;
 						}
 					}
@@ -910,17 +916,19 @@ namespace System.Windows.Forms
 		private void CreateUIIcons ()
 		{
 			string resolv_path = ResolvePath (main_icon_theme_path);
+			string default_gnome_path = "";
 			
+			// get the default gnome icon theme path
+			foreach (string path in icon_paths)
+				if (Directory.Exists (path + "/gnome")) {
+					default_gnome_path = path + "/gnome/48x48/";
+					break;
+				}
+
 			// use default gnome icon theme if there isn't a "/48x48" or "/scalable" dir
-			// for the current theme
+			// for the current theme			
 			if (resolv_path == String.Empty)
-				foreach (string path in icon_paths)
-					if (Directory.Exists (path + "/gnome")) {
-						resolv_path = path + "/gnome/48x48/";
-						break;
-					}
-			
-			string[] dirs = Directory.GetDirectories (resolv_path);
+				resolv_path = default_gnome_path;
 			
 			Hashtable name_mime_hash = new Hashtable ();
 			
@@ -939,51 +947,72 @@ namespace System.Windows.Forms
 			name_mime_hash ["gnome-dev-harddisk"] = "harddisk/harddisk";
 			name_mime_hash ["gnome-dev-removable"] = "removable/removable";
 			
-			if (!CheckAndAddUIIcons (dirs, name_mime_hash)) {
-				//could be a kde icon theme, so we check kde icon names also
-				name_mime_hash.Clear ();
-				name_mime_hash ["folder"] = "inode/directory";
-				name_mime_hash ["unknown"] = "unknown/unknown";
-				name_mime_hash ["desktop"] = "desktop/desktop";
-				name_mime_hash ["folder_home"] = "directory/home";
-				name_mime_hash ["network"] = "network/network";
-				name_mime_hash ["folder_man"] = "recently/recently";
-				name_mime_hash ["system"] = "workplace/workplace";
+			int initial_name_mime_hash_count = name_mime_hash.Count;
+			
+			// first check the current icon theme path
+			string[] dirs = Directory.GetDirectories (resolv_path);
+			ArrayList objects = CheckAndAddUIIcons (dirs, name_mime_hash);
+			
+			if (objects.Count != name_mime_hash.Count) {
+				// remove found icons
+				foreach (object o in objects) {
+					name_mime_hash.Remove (o);
+				}
 				
-				name_mime_hash ["nfs_mount"] = "nfs/nfs";
-				name_mime_hash ["server"] = "smb/smb";
+				// check the default gnome path
+				dirs = Directory.GetDirectories (default_gnome_path);
+				objects = CheckAndAddUIIcons (dirs, name_mime_hash);
 				
-				name_mime_hash ["cdrom_mount"] = "cdrom/cdrom";
-				name_mime_hash ["hdd_mount"] = "harddisk/harddisk";
-				name_mime_hash ["usbpendrive_mount"] = "removable/removable";
-				
-				CheckAndAddUIIcons (dirs, name_mime_hash);
+				//could be a kde icon theme, so we check kde icon names too
+				if (objects.Count == initial_name_mime_hash_count) {
+					dirs = Directory.GetDirectories (resolv_path);
+					
+					name_mime_hash.Clear ();
+					name_mime_hash ["folder"] = "inode/directory";
+					name_mime_hash ["unknown"] = "unknown/unknown";
+					name_mime_hash ["desktop"] = "desktop/desktop";
+					name_mime_hash ["folder_home"] = "directory/home";
+					name_mime_hash ["network"] = "network/network";
+					name_mime_hash ["folder_man"] = "recently/recently";
+					name_mime_hash ["system"] = "workplace/workplace";
+					
+					name_mime_hash ["nfs_mount"] = "nfs/nfs";
+					name_mime_hash ["server"] = "smb/smb";
+					
+					name_mime_hash ["cdrom_mount"] = "cdrom/cdrom";
+					name_mime_hash ["hdd_mount"] = "harddisk/harddisk";
+					name_mime_hash ["usbpendrive_mount"] = "removable/removable";
+					
+					CheckAndAddUIIcons (dirs, name_mime_hash);
+				}
 			}
 		}
 		
-		private bool CheckAndAddUIIcons (string[] dirs, Hashtable name_mime_hash)
+		private ArrayList CheckAndAddUIIcons (string[] dirs, Hashtable name_mime_hash)
 		{
+			ArrayList al = new ArrayList (name_mime_hash.Count);
+			
 			string extension = is_svg_icon_theme ? "svg" : "png";
-			int counter = 0;
 			
 			for (int i = 0; i < dirs.Length; i++) {
 				foreach (DictionaryEntry entry in name_mime_hash) {
 					string key = (string)entry.Key;
 					if (File.Exists (dirs [i] + "/" + key + "." + extension)) {
 						string value = (string)entry.Value;
+						
 						MimeIconEngine.AddMimeTypeAndIconName (value, key);
+						
 						if (!is_svg_icon_theme)
 							MimeIconEngine.AddIcon (key, dirs [i] + "/" + key + "." + extension);
 						else
 							MimeIconEngine.AddSVGIcon (key, dirs [i] + "/" + key + "." + extension);
-						counter++;
-						if (counter == name_mime_hash.Count)
-							return true;
+						
+						al.Add (entry.Key);
 					}
 				}
 			}
 			
-			return false;
+			return al;
 		}
 		
 		private void CreateMimeTypeIcons ()
