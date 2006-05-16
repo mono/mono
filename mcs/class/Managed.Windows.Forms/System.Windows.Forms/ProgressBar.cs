@@ -396,7 +396,7 @@ namespace System.Windows.Forms
 				return;
 
 			Value = Value + Step;
-			Refresh ();
+			Refresh ();	// FIXME - calculate delta and only expose that
 		}
 
 		public override string ToString()
@@ -424,6 +424,7 @@ namespace System.Windows.Forms
     				return;
 
 			UpdateAreas ();
+			Invalidate();	// Invalidate the full surface, blocks will not match
     		}
 
 		internal override void OnPaintInternal (PaintEventArgs pevent)
