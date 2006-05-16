@@ -1,3 +1,6 @@
+2006-16-05 Boris Kirzner <borisk@mainsoft.com>
+	* run-tests.bat: disable running secure mode tests by default.
+
 2006-03-06 Boris Kirzner <borisk@mainsoft.com>
 	* run-tests.bat,run-tests.test.bat,Secure.config,App.config: 
 	files for automated testing.

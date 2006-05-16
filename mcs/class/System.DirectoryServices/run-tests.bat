@@ -24,4 +24,4 @@ set SECURE_MODE=secure
 set OUTPUT_FILE_PREFIX=MonoTests.System.DirectoryServices
 set RUNNING_FIXTURE=MonoTests.System.DirectoryServices
 
-call run-tests.test.bat %BUILD_OPTION% %SECURE_MODE% %OUTPUT_FILE_PREFIX% %RUNNING_FIXTURE%
+REM call run-tests.test.bat %BUILD_OPTION% %SECURE_MODE% %OUTPUT_FILE_PREFIX% %RUNNING_FIXTURE%
