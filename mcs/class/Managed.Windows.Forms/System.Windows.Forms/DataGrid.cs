@@ -1726,7 +1726,7 @@ namespace System.Windows.Forms
 
 		public void SetDataBinding (object dataSource, string dataMember)
 		{
-			dataMember = null;
+			this.datamember = string.Empty;
 			SetDataSource (dataSource);
 			SetDataMember (dataMember);		
 			SetNewDataSource ();
