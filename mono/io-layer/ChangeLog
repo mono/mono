@@ -1,3 +1,8 @@
+2006-05-16  Dick Porter  <dick@ximian.com>
+
+	* processes.c (process_set_termination_details): Unref the handle
+	when we've stored the exit details.  Fixes the rest of 78241.
+
 2006-05-12  Dick Porter  <dick@ximian.com>
 
 	* threads.c: Implement pseudo handles, making GetCurrentThread()
