@@ -1,5 +1,8 @@
 2006-05-16  Raja R Harinath  <rharinath@novell.com>
 
+	* statement.cs (Goto.Resolve): Merge jump origins here ...
+	* flowanalysis.cs (FlowBranching.Label): ... rather than here.
+
 	* flowanalysis.cs (FlowBranching.LookupLabel): Move CS0159 check ...
 	(FlowBranchingToplevel.LookupLabel): ... here.  Add CS1632 check.
 	(FlowBranchingGoto.LookupLabel): New.  Handle back jumps.

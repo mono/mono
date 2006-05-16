@@ -623,8 +623,6 @@ namespace Mono.CSharp
 			return Parent.LookupLabel (name, loc);
 		}
 
-		public abstract void Label (UsageVector origin_vectors);
-
 		protected abstract UsageVector Merge ();
 
 		// <summary>
@@ -742,17 +740,6 @@ namespace Mono.CSharp
 
 			stmt.AddReference ();
 			return stmt;
-		}
-
-		public override void Label (UsageVector origin_vectors)
-		{
-			if (!CurrentUsageVector.Reachability.IsUnreachable) {
-				UsageVector vector = CurrentUsageVector.Clone ();
-				vector.Next = origin_vectors;
-				origin_vectors = vector;
-			}
-
-			CurrentUsageVector.MergeOrigins (origin_vectors);
 		}
 
 		protected override UsageVector Merge ()
@@ -1037,11 +1024,6 @@ namespace Mono.CSharp
 			}
 
 			return base.LookupLabel (name, loc);
-		}
-
-		public override void Label (UsageVector origin_vectors)
-		{
-			CurrentUsageVector.MergeOrigins (origin_vectors);
 		}
 
 		protected override UsageVector Merge ()
