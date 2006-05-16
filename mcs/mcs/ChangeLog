@@ -1,3 +1,13 @@
+2006-05-16  Raja R Harinath  <rharinath@novell.com>
+
+	* flowanalysis.cs (FlowBranching.LookupLabel): Move CS0159 check ...
+	(FlowBranchingToplevel.LookupLabel): ... here.  Add CS1632 check.
+	(FlowBranchingGoto.LookupLabel): New.  Handle back jumps.
+	(FlowBranchingBlock.LookupLabel): Call LabeledStatement.AddReference
+	here, ...
+	* statement.cs (Goto.Resolve): ... not here.
+	(Goto.Emit): Remove CS1632 check.
+
 2006-05-14  Marek Safar  <marek.safar@seznam.cz>
 
 	* ecore.cs (Expression.ResolveAsTypeTerminal): Fixed type in the obsolete

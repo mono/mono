@@ -620,13 +620,7 @@ namespace Mono.CSharp
 
 		public virtual LabeledStatement LookupLabel (string name, Location loc)
 		{
-			if (Parent != null)
-				return Parent.LookupLabel (name, loc);
-
-			Report.Error (
-				159, loc,
-				"No such label `" + name + "' in this scope");
-			return null;
+			return Parent.LookupLabel (name, loc);
 		}
 
 		public abstract void Label (UsageVector origin_vectors);
@@ -742,14 +736,12 @@ namespace Mono.CSharp
 
 		public override LabeledStatement LookupLabel (string name, Location loc)
 		{
-			if (Block == null)
-				return base.LookupLabel (name, loc);
+			LabeledStatement stmt = Block == null ? null : Block.LookupLabel (name);
+			if (stmt == null)
+				return Parent.LookupLabel (name, loc);
 
-			LabeledStatement s = Block.LookupLabel (name);
-			if (s != null)
-				return s;
-
-			return base.LookupLabel (name, loc);
+			stmt.AddReference ();
+			return stmt;
 		}
 
 		public override void Label (UsageVector origin_vectors)
@@ -828,6 +820,15 @@ namespace Mono.CSharp
 		{
 			this.stmt = stmt;
 		}
+
+		public override LabeledStatement LookupLabel (string name, Location loc)
+		{
+			if (name != stmt.Name)
+				return Parent.LookupLabel (name, loc);
+
+			stmt.AddReference ();
+			return stmt;
+		}
 	}
 
 	public class FlowBranchingToplevel : FlowBranchingBlock
@@ -882,6 +883,24 @@ namespace Mono.CSharp
 		public override void StealFinallyClauses (ref ArrayList list)
 		{
 			// nothing to do
+		}
+
+		public override LabeledStatement LookupLabel (string name, Location loc)
+		{
+			LabeledStatement s = Block.LookupLabel (name);
+			if (s != null)
+				throw new InternalErrorException ("Shouldn't get here");
+
+			if (Parent != null) {
+				s = Parent.LookupLabel (name, loc);
+				if (s != null) {
+					Report.Error (1632, loc, "Control cannot leave the body of an anonymous method");
+					return null;
+				}
+			}
+
+			Report.Error (159, loc, "No such label `{0}' in this scope", name);
+			return null;
 		}
 
 		public Reachability End ()
@@ -1013,8 +1032,7 @@ namespace Mono.CSharp
 				return s;
 
 			if (finally_vector != null) {
-				Report.Error (157, loc,
-					"Control cannot leave the body of a finally clause");
+				Report.Error (157, loc, "Control cannot leave the body of a finally clause");
 				return null;
 			}
 

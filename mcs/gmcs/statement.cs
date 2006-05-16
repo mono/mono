@@ -662,7 +662,6 @@ namespace Mono.CSharp {
 				label.AddUsageVector (ec.CurrentBranching.CurrentUsageVector);
 
 			ec.CurrentBranching.CurrentUsageVector.Goto ();
-			label.AddReference ();
 
 			return true;
 		}
@@ -674,9 +673,7 @@ namespace Mono.CSharp {
 		}
 
 		public string Target {
-			get {
-				return target;
-			}
+			get { return target; }
 		}
 
 		protected override void DoEmit (EmitContext ec)
@@ -746,11 +743,8 @@ namespace Mono.CSharp {
 
 		protected override void DoEmit (EmitContext ec)
 		{
-			if (ig != null && ig != ec.ig) {
-				// TODO: location is wrong
-				Report.Error (1632, loc, "Control cannot leave the body of an anonymous method");
-				return;
-			}
+			if (ig != null && ig != ec.ig)
+				throw new InternalErrorException ("cannot happen");
 			LabelTarget (ec);
 			ec.ig.MarkLabel (label);
 		}
