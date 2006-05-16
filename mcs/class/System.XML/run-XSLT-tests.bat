@@ -46,7 +46,16 @@ IF "%BUILD_OPTION%"=="nobuild" GOTO RUN
 REM ********************************************************
 @echo Building NUnit solution...
 REM ********************************************************
+if "%NUNIT_BUILD%" == "DONE" goto NUNITSKIP
 devenv %NUNIT_PATH%nunit.java.sln /%BUILD_OPTION% Debug_Java >build.log.txt 2<&1
+goto NUNITREADY
+
+:NUNITSKIP
+echo Skipping NUnit Build...
+
+:NUNITREADY
+set NUNIT_BUILD=DONE
+
 IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
 
 REM ********************************************************
