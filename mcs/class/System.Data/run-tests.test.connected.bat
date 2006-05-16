@@ -92,7 +92,17 @@ REM ********************************************************
 @echo Building NUnit solution...
 REM ********************************************************
 
+if "%NUNIT_BUILD%" == "DONE" goto NUNITSKIP
+
 devenv ..\..\nunit20\nunit.java.sln /%BUILD_OPTION% %PROJECT_CONFIGURATION% >>%RUNNING_FIXTURE%_build.%RUN_ID%.log.txt 2<&1
+
+goto NUNITREADY
+
+:NUNITSKIP
+echo Skipping NUnit Build...
+
+:NUNITREADY
+set NUNIT_BUILD=DONE
 
 IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
 
