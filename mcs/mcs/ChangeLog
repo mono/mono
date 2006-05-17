@@ -1,3 +1,8 @@
+2006-05-17  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* driver.cs: Pass filename without path to AssemblyBuilder's 
+	AddResourceFile. Fixes bug #78407.
+
 2006-05-17  Raja R Harinath  <rharinath@novell.com>
 
 	* statement.cs (LabeledStatement.Resolve): Move merging of origins ...

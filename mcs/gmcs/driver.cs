@@ -1898,7 +1898,7 @@ namespace Mono.CSharp
 
 			public void Emit ()
 			{
-				CodeGen.Assembly.Builder.AddResourceFile (name, file, attribute);
+				CodeGen.Assembly.Builder.AddResourceFile (name, Path.GetFileName(file), attribute);
 			}
 
 			public string FileName {
