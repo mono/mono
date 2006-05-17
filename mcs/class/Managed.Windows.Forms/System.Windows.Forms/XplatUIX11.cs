@@ -756,7 +756,11 @@ namespace System.Windows.Forms {
 					transient = true;
 					XSetTransientForHint(DisplayHandle, hwnd.whole_window, FosterParent);
 				}
-				XMoveResizeWindow(DisplayHandle, hwnd.client_window, client_rect.X, client_rect.Y, client_rect.Width, client_rect.Height);
+				if ((client_rect.Width < 1) || (client_rect.Height < 1)) {
+					XMoveResizeWindow(DisplayHandle, hwnd.client_window, -5, -5, 1, 1);
+				} else {
+					XMoveResizeWindow(DisplayHandle, hwnd.client_window, client_rect.X, client_rect.Y, client_rect.Width, client_rect.Height);
+				}
 
 				int[] atoms = new int[8];
 				atom_count = 0;
@@ -1522,7 +1526,11 @@ namespace System.Windows.Forms {
 			rect = new Rectangle(ncp.rgrc1.left, ncp.rgrc1.top, ncp.rgrc1.right - ncp.rgrc1.left, ncp.rgrc1.bottom - ncp.rgrc1.top);
 
 			if (hwnd.visible) {
-				XMoveResizeWindow(DisplayHandle, hwnd.client_window, rect.X, rect.Y, rect.Width, rect.Height);
+				if ((rect.Width < 1) || (rect.Height < 1)) {
+					XMoveResizeWindow(DisplayHandle, hwnd.client_window, -5, -5, 1, 1);
+				} else {
+					XMoveResizeWindow(DisplayHandle, hwnd.client_window, rect.X, rect.Y, rect.Width, rect.Height);
+				}
 			}
 		}
 		#endregion	// Private Methods
@@ -4278,8 +4286,12 @@ namespace System.Windows.Forms {
 				}
 
 				lock (XlibLock) {
+					if ((client_rect.Width < 1) || (client_rect.Height < 1)) {
+						XMoveResizeWindow(DisplayHandle, hwnd.client_window, -5, -5, 1, 1);	// Hide the window
+					} else {
+						XMoveResizeWindow(DisplayHandle, hwnd.client_window, client_rect.X, client_rect.Y, client_rect.Width, client_rect.Height);
+					}
 					XMoveResizeWindow(DisplayHandle, hwnd.whole_window, x, y, width, height);
-					XMoveResizeWindow(DisplayHandle, hwnd.client_window, client_rect.X, client_rect.Y, client_rect.Width, client_rect.Height);
 				}
 			}
 

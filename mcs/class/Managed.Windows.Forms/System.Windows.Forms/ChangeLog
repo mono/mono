@@ -1,3 +1,8 @@
+2006-05-17  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* XplatUIX11.cs: If client_window ends up being width or height zero
+	  due to border settings, move it off window inside whole_window (#78433)
+
 2006-05-17  Alexander Olk  <alex.olk@googlemail.com>
 
 	* Mime.cs: Shrink the mime file cache correctly.
