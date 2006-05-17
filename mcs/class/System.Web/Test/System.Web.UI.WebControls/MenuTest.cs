@@ -127,8 +127,8 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			PokerMenu p = new PokerMenu ();
 			Assert.AreEqual ("Click",PokerMenu.MenuItemClickCommandName,"Staic_MenuItemClickCommandName");
-			Assert.AreEqual (p.Controls.Count,"ControlsCollection");
-			Assert.AreEqual (p.DataBindings.Count,"DataBindings");
+			Assert.AreEqual (0, p.Controls.Count,"ControlsCollection");
+			Assert.AreEqual (0, p.DataBindings.Count,"DataBindings");
 			Assert.AreEqual (500,p.DisappearAfter,"DisappearAfter");
 			Assert.AreEqual (string.Empty, p.DynamicBottomSeparatorImageUrl, "DynamicBottomSeparatorImageUrl");
 			Assert.IsTrue (p.DynamicEnableDefaultPopOutImage, "DynamicEnableDefaultPopOutImage");
