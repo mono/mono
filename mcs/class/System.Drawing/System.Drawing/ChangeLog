@@ -1,3 +1,9 @@
+2006-05-17  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* Pen.cs: Get the pen color from the solid brush (when applicable). 
+	Added missing validations for most properties. Always return a clone 
+	of the internal brush (so no one can dispose of it in our back).
+
 2006-05-17 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Color.cs: make it serialization-compatible with MS. Fixes bug #78265.

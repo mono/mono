@@ -8,8 +8,7 @@
 //   Ravindra (rkumar@novell.com)
 //
 // Copyright (C) Ximian, Inc.  http://www.ximian.com
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,7 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
+using System.ComponentModel;
 using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
 
@@ -61,10 +60,19 @@ namespace System.Drawing
 
 		public Pen (Brush brush, float width)
 		{
+			if (brush == null)
+				throw new ArgumentNullException ("brush");
+
 			Status status = GDIPlus.GdipCreatePen2 (brush.nativeObject, width, Unit.UnitWorld, out nativeObject);
 			GDIPlus.CheckStatus (status);
 		
-			this.brush = brush;			
+			this.brush = brush;
+			if (brush is SolidBrush) {
+				int c;
+				status = GDIPlus.GdipGetSolidFillColor (brush.NativeObject, out c);
+				GDIPlus.CheckStatus (status);
+				color = Color.FromArgb (c);
+			}
 		}
 
 		public Pen (Color color, float width)
@@ -87,6 +95,9 @@ namespace System.Drawing
                         }
 
 			set {
+				if ((value < PenAlignment.Center) || (value > PenAlignment.Right))
+					throw new InvalidEnumArgumentException ("Alignment", (int)value, typeof (PenAlignment));
+
 				if (isModifiable) {
 					Status status = GDIPlus.GdipSetPenMode (nativeObject, value);
 					GDIPlus.CheckStatus (status);
@@ -119,26 +130,28 @@ namespace System.Drawing
 				//
 				if (brush == null)
 					GetSolidColorBrush ();
-                                return brush;
+				// we can't let outsiders dispose of our internal brush
+				return (Brush) brush.Clone ();
                         }
 
 			set {
+				if (value == null)
+					throw new ArgumentNullException ("Brush");
+
 				if (isModifiable) {
 					brush = value;
+					Status status = GDIPlus.GdipSetPenBrushFill (nativeObject, value.nativeObject);
+					GDIPlus.CheckStatus (status);
+
 					if (value is SolidBrush) {
-						Status status = GDIPlus.GdipSetPenBrushFill (nativeObject, value.nativeObject);
-						GDIPlus.CheckStatus (status);
 						color = ((SolidBrush) brush).Color;
-						status = GDIPlus.GdipSetPenColor (nativeObject, color.ToArgb ());
-						GDIPlus.CheckStatus (status);
 					} else {
 						// other brushes should clear the color property
-						Status status = GDIPlus.GdipSetPenBrushFill (nativeObject, value.nativeObject);
-						GDIPlus.CheckStatus (status);
-						status = GDIPlus.GdipSetPenColor (nativeObject, 0);
-						GDIPlus.CheckStatus (status);
 						color = Color.Empty;
 					}
+
+					status = GDIPlus.GdipSetPenColor (nativeObject, color.ToArgb ());
+					GDIPlus.CheckStatus (status);
 				} else
 					throw new ArgumentException ("This Pen object can't be modified.");
 			}
@@ -231,6 +244,9 @@ namespace System.Drawing
                         }
 
                         set {
+				if ((value < DashCap.Flat) || (value > DashCap.Triangle))
+					throw new InvalidEnumArgumentException ("DashCap", (int)value, typeof (DashCap));
+
 				if (isModifiable) {
                                 	Status status = GDIPlus.GdipSetPenDashCap197819 (nativeObject, value);
 					GDIPlus.CheckStatus (status);
@@ -294,6 +310,9 @@ namespace System.Drawing
 			}
 
 			set {
+				if ((value < DashStyle.Solid) || (value > DashStyle.Custom))
+					throw new InvalidEnumArgumentException ("DashStyle", (int)value, typeof (DashStyle));
+
 				if (isModifiable) {
 					Status status = GDIPlus.GdipSetPenDashStyle (nativeObject, value);
 					GDIPlus.CheckStatus (status);
@@ -312,6 +331,9 @@ namespace System.Drawing
 			}
 
 			set {
+				if ((value < LineCap.Flat) || (value > LineCap.Custom))
+					throw new InvalidEnumArgumentException ("StartCap", (int)value, typeof (LineCap));
+
 				if (isModifiable) {
 					Status status = GDIPlus.GdipSetPenStartCap (nativeObject, value);
 					GDIPlus.CheckStatus (status);
@@ -330,6 +352,9 @@ namespace System.Drawing
 			}
 
 			set {
+				if ((value < LineCap.Flat) || (value > LineCap.Custom))
+					throw new InvalidEnumArgumentException ("EndCap", (int)value, typeof (LineCap));
+
 				if (isModifiable) {
 					Status status = GDIPlus.GdipSetPenEndCap (nativeObject, value);
 					GDIPlus.CheckStatus (status);
@@ -348,6 +373,9 @@ namespace System.Drawing
                         }
 
                         set {
+				if ((value < LineJoin.Miter) || (value > LineJoin.MiterClipped))
+					throw new InvalidEnumArgumentException ("LineJoin", (int)value, typeof (LineJoin));
+
 				if (isModifiable) {
                                 	Status status = GDIPlus.GdipSetPenLineJoin (nativeObject, value);
 					GDIPlus.CheckStatus (status);
@@ -397,6 +425,9 @@ namespace System.Drawing
                         }
 
                         set {
+				if (value == null)
+					throw new ArgumentNullException ("Transform");
+
 				if (isModifiable) {
                                 	Status status = GDIPlus.GdipSetPenTransform (nativeObject, value.nativeMatrix);
 					GDIPlus.CheckStatus (status);
