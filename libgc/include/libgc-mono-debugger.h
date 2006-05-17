@@ -1,6 +1,8 @@
 #ifndef LIBGC_MONO_DEBUGGER_H
 #define LIBGC_MONO_DEBUGGER_H
 
+#ifdef LIBGC_MONO_DEBUGGER_SUPPORTED
+
 #if defined(_IN_LIBGC_GC_H) || defined(_IN_THE_MONO_DEBUGGER)
 
 typedef struct
@@ -21,6 +23,8 @@ GC_mono_debugger_add_all_threads (void);
 
 #else
 #error "This header is only intended to be used by the Mono Debugger"
+#endif
+
 #endif
 
 #endif

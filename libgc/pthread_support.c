@@ -691,8 +691,10 @@ void GC_delete_thread(pthread_t id)
     } else {
         prev -> next = p -> next;
     }
+#ifdef LIBGC_MONO_DEBUGGER_SUPPORTED
     if (gc_thread_vtable && gc_thread_vtable->thread_exited)
 	gc_thread_vtable->thread_exited (id, &p->stop_info.stack_ptr);
+#endif
     free(p);
 }
 
@@ -970,8 +972,10 @@ void GC_thr_init()
          t -> stop_info.stack_ptr = (ptr_t)(&dummy);
 #     endif
       t -> flags = DETACHED | MAIN_THREAD;
+#ifdef LIBGC_MONO_DEBUGGER_SUPPORTED
       if (gc_thread_vtable && gc_thread_vtable->thread_created)
         gc_thread_vtable->thread_created (pthread_self (), &t->stop_info.stack_ptr);
+#endif
 
     GC_stop_init();
 
@@ -1277,8 +1281,10 @@ void * GC_start_routine_head(void * arg, void *base_addr,
       /* This is also < 100% convincing.  We should also read this 	*/
       /* from /proc, but the hook to do so isn't there yet.		*/
 #   endif /* IA64 */
+#ifdef LIBGC_MONO_DEBUGGER_SUPPORTED
     if (gc_thread_vtable && gc_thread_vtable->thread_created)
 	gc_thread_vtable->thread_created (my_pthread, &me->stop_info.stack_ptr);
+#endif
     UNLOCK();
 
     if (start) *start = si -> start_routine;

@@ -1,5 +1,10 @@
 2006-05-17  Martin Baulig  <martin@ximian.com>
 
+	* pthread-support.c, pthread-stop-world.c: Put the debugger stuff
+	inside a `#if LIBGC_MONO_DEBUGGER_SUPPORTED' conditional.
+
+2006-05-17  Martin Baulig  <martin@ximian.com>
+
 	Fix a weird race condition which prevented XSP from working inside
 	the debugger - see doc/debugger-issues.txt for details.
 

@@ -412,9 +412,11 @@ void GC_stop_world()
       /* We should have previously waited for it to become zero. */
 #   endif /* PARALLEL_MARK */
     ++GC_stop_count;
+#ifdef LIBGC_MONO_DEBUGGER_SUPPORTED
     if (gc_thread_vtable && gc_thread_vtable->stop_world)
 	gc_thread_vtable->stop_world ();
     else
+#endif
 	pthread_stop_world ();
 #   ifdef PARALLEL_MARK
       GC_release_mark_lock();
@@ -481,9 +483,11 @@ static void pthread_start_world()
 
 void GC_start_world()
 {
+#ifdef LIBGC_MONO_DEBUGGER_SUPPORTED
     if (gc_thread_vtable && gc_thread_vtable->start_world)
 	gc_thread_vtable->start_world();
     else
+#endif
 	pthread_start_world ();
 }
 
@@ -533,11 +537,15 @@ static void pthread_stop_init() {
 /* We hold the allocation lock.	*/
 void GC_stop_init()
 {
+#ifdef LIBGC_MONO_DEBUGGER_SUPPORTED
     if (gc_thread_vtable && gc_thread_vtable->initialize)
 	gc_thread_vtable->initialize ();
     else
+#endif
 	pthread_stop_init ();
 }
+
+#ifdef LIBGC_MONO_DEBUGGER_SUPPORTED
 
 GCThreadFunctions *gc_thread_vtable = NULL;
 
@@ -556,5 +564,6 @@ GC_mono_debugger_add_all_threads (void)
     }
 }
 
+#endif
 
 #endif
