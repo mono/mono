@@ -146,13 +146,10 @@ namespace MonoTests.System.Drawing{
 		public void Clone()
 		{
 			string sInFile = getInFile ("bitmaps/almogaver24bits.bmp");
-			string sOutFile =  getOutSubDir() + "clone24.bmp";			
-			
 			Rectangle rect = new Rectangle(0,0,50,50);						
 			Bitmap	bmp = new Bitmap(sInFile);			
 			
 			Bitmap bmpNew = bmp.Clone (rect, PixelFormat.Format32bppArgb);									
-			
 			Color colororg0 = bmp.GetPixel(0,0);		
 			Color colororg50 = bmp.GetPixel(49,49);					
 			Color colornew0 = bmpNew.GetPixel(0,0);		
@@ -212,18 +209,17 @@ namespace MonoTests.System.Drawing{
 
 		public string RotateBmp (Bitmap src, RotateFlipType rotate)
 		{			
-			int witdh = 150, height = 150, index = 0;			
-			byte[] pixels = new byte [witdh * height * 3];
+			int width = 150, height = 150, index = 0;			
+			byte[] pixels = new byte [width * height * 3];
 			Bitmap bmp_rotate;
 			byte[] hash;
 			Color clr;
 
-
-			bmp_rotate = src.Clone (new RectangleF (0,0, witdh, height), PixelFormat.Format32bppArgb);	
+			bmp_rotate = src.Clone (new RectangleF (0,0, width, height), PixelFormat.Format32bppArgb);	
 			bmp_rotate.RotateFlip (rotate);			
 
 			for (int y = 0; y < height; y++) {
-				for (int x = 0; x < witdh; x++) {				
+				for (int x = 0; x < width; x++) {
 					clr = bmp_rotate.GetPixel (x,y);
 					pixels[index++] = clr.R; pixels[index++] = clr.G; pixels[index++]  = clr.B;	
 				}				
@@ -294,7 +290,7 @@ namespace MonoTests.System.Drawing{
 		public void Rotate()
 		{
 			string sInFile = getInFile ("bitmaps/almogaver24bits.bmp");	
-			Bitmap	bmp = new Bitmap(sInFile);		
+			Bitmap	bmp = new Bitmap(sInFile);
 			
 			Assert.AreEqual ("312958A3C67402E1299413794988A3", RotateBmp (bmp, RotateFlipType.Rotate90FlipNone));	
 			Assert.AreEqual ("BF70D8DA4F1545AEDD77D0296B47AE", RotateBmp (bmp, RotateFlipType.Rotate180FlipNone));
