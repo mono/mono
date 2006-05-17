@@ -1,8 +1,11 @@
 2006-05-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* marshal.c (mono_marshal_emit_native_wrapper): Make the marshalling code more
+	uniform by moving stuff from this function to the proper emit_marshal_XXX functions.
+	
 	* marshal.c (emit_marshal_vtype): Add limited support for 
 	UnmanagedType.LPStruct. Fixes #78427.
-	
+
 	* marshal.c (ves_icall_System_Runtime_InteropServices_Marshal_PtrToStructure): 
 	Applied a patch from kangaroo to fix #77523.
 
