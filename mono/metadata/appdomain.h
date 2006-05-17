@@ -16,9 +16,9 @@
 #include <mono/metadata/reflection.h>
 #include <mono/metadata/mempool.h>
 
-typedef void (*MonoThreadStartCB) (guint32 tid, gpointer stack_start,
+typedef void (*MonoThreadStartCB) (gsize tid, gpointer stack_start,
 				   gpointer func);
-typedef void (*MonoThreadAttachCB) (guint32 tid, gpointer stack_start);
+typedef void (*MonoThreadAttachCB) (gsize tid, gpointer stack_start);
 
 typedef struct _MonoAppDomain MonoAppDomain;
 typedef struct _MonoJitInfo MonoJitInfo;
