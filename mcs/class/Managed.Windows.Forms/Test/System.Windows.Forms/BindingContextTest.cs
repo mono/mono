@@ -445,14 +445,14 @@ namespace MonoTests.System.Windows.Forms {
 			p._Clear ();
 			Assert.IsFalse (p.Contains (data_source), "CLEARCORE1");
 			Assert.AreEqual (0, ((ICollection) p).Count, "CLEARCORE2");
-			Assert.AreEqual (p.collection_changed, -1, "CLEARCORE3");
+			Assert.AreEqual (p.collection_changed, (int) CollectionChangeAction.Refresh, "CLEARCORE3");
 
 			// Double clear
 			p.collection_changed = -1;
 			p._Clear ();
-			Assert.IsFalse (p.Contains (data_source), "CLEARCORE1");
-			Assert.AreEqual (0, ((ICollection) p).Count, "CLEARCORE2");
-			Assert.AreEqual (p.collection_changed, -1, "CLEARCORE3");
+			Assert.IsFalse (p.Contains (data_source), "CLEARCORE4");
+			Assert.AreEqual (0, ((ICollection) p).Count, "CLEARCORE5");
+			Assert.AreEqual (p.collection_changed, (int) CollectionChangeAction.Refresh, "CLEARCORE6");
 		}
 	}
 }
