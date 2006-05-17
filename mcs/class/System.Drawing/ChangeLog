@@ -1,3 +1,7 @@
+2006-05-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* System.Drawing_test.dll.sources: Added unit tests for Pen.
+
 2006-05-16  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* run-tests.test.bat: skip nunit build if already done
