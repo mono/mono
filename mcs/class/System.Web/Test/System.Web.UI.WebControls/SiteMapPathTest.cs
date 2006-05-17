@@ -201,7 +201,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category ("NotWorking")]  //Must be running after hosting bug resolve
 		public void SiteMapPath_RenderProperty ()
 		{
-			string RenderedPageHtml = Helper.Instance.RunInPage (TestPropertyRender, null);
+			string RenderedPageHtml = Helper.Instance.RunInPage (DoTestPropertyRender, null);
 			string RenderedControlHtml = WebTest.GetControlFromPageHtml (RenderedPageHtml);
 			string OriginControlHtml = @"<span style=""display:inline-block;""><font color=""Red"">
                                            <a href=""#ctl01_SkipLink"">
@@ -218,7 +218,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category ("NotWorking")]  //Must be running after hosting bug resolve
 		public void SiteMapPath_RenderStyles ()
 		{
-			string RenderedPageHtml = Helper.Instance.RunInPage (TestStylesRender, null);
+			string RenderedPageHtml = Helper.Instance.RunInPage (DoTestStylesRender, null);
 			string RenderedControlHtml = WebTest.GetControlFromPageHtml (RenderedPageHtml);
 			string OriginControlHtml = @"<span><a href=""#ctl01_SkipLink"">
                                           <img alt=""Skip Navigation Links"" height=""0"" width=""0"" src=""/NunitWeb/WebResource.axd?d=gZrz8lvSQfolS1pG07HX9g2&amp;t=632784640484505569"" border=""0"" />
@@ -232,7 +232,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category ("NotWorking")]  //Must be running after hosting bug resolve
 		public void SiteMapPath_DefaultRender()
 		{
-			string RenderedPageHtml = Helper.Instance.RunInPage (TestDefaultRender, null);
+			string RenderedPageHtml = Helper.Instance.RunInPage (DoTestDefaultRender, null);
 			string RenderedControlHtml = WebTest.GetControlFromPageHtml (RenderedPageHtml);
 			string OriginControlHtml = @"<span><a href=""#ctl01_SkipLink"">
 						  <img alt=""Skip Navigation Links"" height=""0"" width=""0"" src=""/NunitWeb/WebResource.axd?d=gZrz8lvSQfolS1pG07HX9g2&amp;t=632784640484505569"" border=""0"" /></a>
@@ -245,7 +245,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		/// All this methods are delegates for running tests in host assembly. 
 		/// </summary>
 		
-		public static void TestDefaultRender (HttpContext c, Page p, object param)
+		public static void DoTestDefaultRender (HttpContext c, Page p, object param)
 		{
 			LiteralControl lcb = new LiteralControl (WebTest.BEGIN_TAG);
 			LiteralControl lce = new LiteralControl (WebTest.END_TAG);
@@ -254,7 +254,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			p.Form.Controls.Add (smp);
 			p.Form.Controls.Add (lce);
 		}
-		public static void TestPropertyRender (HttpContext c, Page p, object param)
+		public static void DoTestPropertyRender (HttpContext c, Page p, object param)
 		{
 			SiteMapPath smp = new SiteMapPath ();
 			smp.BackColor = Color.Red;
@@ -271,7 +271,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			p.Form.Controls.Add (smp);
 			p.Form.Controls.Add (lce);
 		}
-		public static void TestStylesRender (HttpContext c, Page p, object param)
+		public static void DoTestStylesRender (HttpContext c, Page p, object param)
 		{
 			PokerSiteMapPath smp = new PokerSiteMapPath ();
 			smp.ControlStyle.BackColor = Color.Red;

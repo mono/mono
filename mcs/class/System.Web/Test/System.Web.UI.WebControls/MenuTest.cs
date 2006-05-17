@@ -498,9 +498,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void Menu_RenderBeginTag ()
 		{
 			//Thread.Sleep (1000);
-		        Helper.Instance.RunInPage(TestBeginTagRender, null);
+		        Helper.Instance.RunInPage(DoTestBeginTagRender, null);
 		}
-		public static void TestBeginTagRender(HttpContext c, Page p, object param)
+		public static void DoTestBeginTagRender(HttpContext c, Page p, object param)
 		{
 		        PokerMenu pm = new PokerMenu ();
 		        p.Form.Controls.Add (pm);
@@ -526,9 +526,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void Menu_RenderEndTag ()
 		{
 			//Thread.Sleep (1000);
-		        Helper.Instance.RunInPage (TestEndTagRender, null);
+		        Helper.Instance.RunInPage (DoTestEndTagRender, null);
 		}
-		public static void TestEndTagRender (HttpContext c, Page p, object param)
+		public static void DoTestEndTagRender (HttpContext c, Page p, object param)
 		{
 		        PokerMenu pm = new PokerMenu ();
 		        p.Form.Controls.Add (pm);
@@ -608,7 +608,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category ("NotWorking")]  //Must be running after hosting bug resolve
 		public void Menu_DefaultRender ()
 		{
-		        string RenderedPageHtml = Helper.Instance.RunInPage (TestDefaultRender, null);
+		        string RenderedPageHtml = Helper.Instance.RunInPage (DoTestDefaultRender, null);
 		        string RenderedControlHtml = WebTest.GetControlFromPageHtml (RenderedPageHtml);
 		        string OriginControlHtml = "";
 		        Assert.AreEqual (true, WebTest.HtmlComparer (OriginControlHtml, RenderedControlHtml), "RenderDefault");
@@ -617,7 +617,7 @@ namespace MonoTests.System.Web.UI.WebControls
 	
 		 // All this methods are delegates for running tests in host assembly. 
 		 
-		public static void TestDefaultRender (HttpContext c, Page p, object param)
+		public static void DoTestDefaultRender (HttpContext c, Page p, object param)
 		{
 		        LiteralControl lcb = new LiteralControl (WebTest.BEGIN_TAG);
 		        LiteralControl lce = new LiteralControl (WebTest.END_TAG);
@@ -633,7 +633,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void Menu_ItemsRender ()
 		{
 			//Thread.Sleep (1000);
-		        string RenderedPageHtml = Helper.Instance.RunInPage (TestItemsRender, null);
+		        string RenderedPageHtml = Helper.Instance.RunInPage (DoTestItemsRender, null);
 		        string RenderedControlHtml = WebTest.GetControlFromPageHtml (RenderedPageHtml);
 		        string OriginControlHtml = @"<a href=""#ctl01_SkipLink""><img alt=""Skip Navigation Links"" src=""/NunitWeb/WebResource.axd?d=gZrz8lvSQfolS1pG07HX9g2&amp;t=632784640484505569"" width=""0"" height=""0"" border=""0"" />
 		                                     </a><table id=""ctl01"" cellpadding=""0"" cellspacing=""0"" border=""0"">
@@ -670,7 +670,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		        Assert.AreEqual (true, WebTest.HtmlComparer (OriginControlHtml, RenderedControlHtml), "Render Items");
 		}
 
-		public static void TestItemsRender (HttpContext c, Page p, object param)
+		public static void DoTestItemsRender (HttpContext c, Page p, object param)
 		{
 		        LiteralControl lcb = new LiteralControl (WebTest.BEGIN_TAG);
 		        LiteralControl lce = new LiteralControl (WebTest.END_TAG);
