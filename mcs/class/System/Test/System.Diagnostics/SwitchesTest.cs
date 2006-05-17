@@ -131,6 +131,9 @@ namespace MonoTests.System.Diagnostics {
 		}
 
 		[Test]
+#if NET_2_0
+		[Ignore ("this test depends on 1.x configuration type")]
+#endif
 		public void NewSwitch ()
 		{
 			AssertEquals ("#NS:Value", "42", tns.Value);

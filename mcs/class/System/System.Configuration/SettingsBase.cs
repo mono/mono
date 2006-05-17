@@ -53,10 +53,10 @@ namespace System.Configuration
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static SettingsBase Synchronized (SettingsBase settingsBase)
 		{
-			return new SyncSettingsBase (settingsBase);
+			settingsBase.sync = true;
+			return settingsBase;
 		}
 
 		public virtual SettingsContext Context {
@@ -65,7 +65,7 @@ namespace System.Configuration
 
 		[Browsable (false)]
 		public bool IsSynchronized {
-			get { return false; }
+			get { return sync; }
 		}
 
 		public virtual object this [ string propertyName ] {
@@ -74,20 +74,35 @@ namespace System.Configuration
 		}
 
 		public virtual SettingsPropertyCollection Properties {
-			get { return properties; }
+			get {
+				// It seems that Properties.IsSynchronized is
+				// nothing to do with this.IsSynchronized.
+				return properties;
+			}
 		}
 
 		public virtual SettingsPropertyValueCollection PropertyValues {
 			get {
-				SettingsPropertyValueCollection col = new SettingsPropertyValueCollection ();
-
-				foreach (SettingsProperty prop in properties)
-				{
-					col.Add (new SettingsPropertyValue (prop));
+				if (sync) {
+					lock (this) {
+						return GetPropertyValues ();
+					}
 				}
-
-				return col;
+				else
+					return GetPropertyValues ();
 			}
+		}
+
+		SettingsPropertyValueCollection GetPropertyValues ()
+		{
+			SettingsPropertyValueCollection col = new SettingsPropertyValueCollection ();
+
+			foreach (SettingsProperty prop in properties)
+			{
+				col.Add (new SettingsPropertyValue (prop));
+			}
+
+			return col;
 		}
 
 		public virtual SettingsProviderCollection Providers {
@@ -96,73 +111,10 @@ namespace System.Configuration
 			}
 		}
 
+		bool sync;
 		SettingsContext context;
 		SettingsPropertyCollection properties;
 		SettingsProviderCollection providers;
-
-		private class SyncSettingsBase : SettingsBase
-		{
-			SettingsBase host;
-			object syncRoot;
-
-			public SyncSettingsBase (SettingsBase host)
-			{
-				this.host = host;
-				syncRoot = host;
-			}
-
-			public override void Save ()
-			{
-				lock (syncRoot) {
-					host.Save ();
-				}
-			}
-
-			public override object this [ string propertyName ] {
-				get { return host[propertyName]; }
-				set {
-					lock (syncRoot) {
-						host[propertyName] = value;
-					}
-				}
-			}
-
-			public override SettingsPropertyCollection Properties {
-				get {
-					SettingsPropertyCollection props;
-
-					lock (syncRoot) {
-						props = host.Properties;
-					}
-
-					return props;
-				}
-			}
-
-			public virtual SettingsPropertyValueCollection PropertyValues {
-				get {
-					SettingsPropertyValueCollection vals;
-
-					lock (syncRoot) {
-						vals = host.PropertyValues;
-					}
-
-					return vals;
-				}
-			}
-
-			public virtual SettingsProviderCollection Providers {
-				get {
-					SettingsProviderCollection prov;
-
-					lock (syncRoot) {
-						prov = host.Providers;
-					}
-
-					return prov;
-				}
-			}
-		}
 	}
 }
 

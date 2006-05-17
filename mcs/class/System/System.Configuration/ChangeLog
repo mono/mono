@@ -1,3 +1,10 @@
+2006-05-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SettingsPropertyCollection.cs : implemented some synchronization
+	  releated members. Actually it can never be synchronized by itself.
+	* SettingsBase.cs : Synchronized() just returns the same instance,
+	  marking it as IsSynchronized = true. Fixed bug #78430.
+
 2006-05-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ConfigurationSettings.cs : another System.Orgy insanity.

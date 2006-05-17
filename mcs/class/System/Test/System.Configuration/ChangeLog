@@ -1,0 +1,6 @@
+2006-05-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* LocalFileSettingsProviderTest.cs : commented some lines in
+	  Initialized() as they don't work under .NET.
+	* ApplicationSettingsBaseTest.cs : added Synchronized(), test for
+	  bug #78430.

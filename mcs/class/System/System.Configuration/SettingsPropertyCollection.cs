@@ -138,9 +138,7 @@ namespace System.Configuration
 		}
 
 		public bool IsSynchronized {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return false; }
 		}
 
 		public SettingsProperty this [ string name ] {
@@ -150,9 +148,7 @@ namespace System.Configuration
 		}
 
 		public object SyncRoot {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return this; }
 		}
 	}
 

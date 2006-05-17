@@ -279,7 +279,7 @@ namespace MonoTests.System.Configuration {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Ignore ("On MS.NET it returns null ...")]
 		public void TestSettings3_Properties ()
 		{
 			TestSettings3 settings = new TestSettings3 ();
@@ -291,6 +291,25 @@ namespace MonoTests.System.Configuration {
 		{
 			ApplicationSettingsBaseTest test = new ApplicationSettingsBaseTest();
 			test.TestSettings1_Properties();
+		}
+
+		[Test]
+		public void Synchronized ()
+		{
+			Bug78430 s = new Bug78430 ();
+			s.Initialize (null, new SettingsPropertyCollection (),
+				new SettingsProviderCollection ());
+			SettingsBase sb = SettingsBase.Synchronized (s);
+			Assert.IsTrue (sb.IsSynchronized, "#1");
+			Assert.IsTrue (sb is Bug78430, "#2");
+			// these checks are so cosmetic, actually not
+			// worthy of testing.
+			Assert.IsTrue (Object.ReferenceEquals (s, sb), "#3");
+			Assert.IsFalse (sb.Properties.IsSynchronized, "#4");
+		}
+
+		class Bug78430 : SettingsBase
+		{
 		}
 	}
 
