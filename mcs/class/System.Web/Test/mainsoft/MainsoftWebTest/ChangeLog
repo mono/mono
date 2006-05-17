@@ -1,3 +1,8 @@
+2006-05-17  Andrew Skiba <andrews@mainsoft.com>
+
+	* nunitweb_config.xml: similar to almost_config.xml but ignores more stuff
+	* NunitWebTest.cs: use nunit_config.xml and fallback on XmlException
+
 2006-03-27  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* test_catalog.xml: fixed not working tests

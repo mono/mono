@@ -32,6 +32,7 @@ using System.Xml;
 using System.Net;
 using System.Text;
 using System.Collections;
+using System.Reflection;
 
 namespace MonoTests.stand_alone.WebHarness
 {
@@ -138,11 +139,9 @@ namespace MonoTests.stand_alone.WebHarness
 				}
 				tempDoc.Save(sw);
 			}
-			catch (Exception)
+			catch (XmlException e)
 			{
-				Console.WriteLine("Error parsing html response...");
-				Console.WriteLine("Test case aborted");
-				return "<TestCaseAborted></TestCaseAborted>";
+				return "<Exception><![CDATA["+e.Message +"]]></Exception>";
 			}
 			return fixedxml.ToString();
 		}
@@ -167,8 +166,8 @@ namespace MonoTests.stand_alone.WebHarness
 			{
 				_xmlIgnoreList = new XmlDocument();
 				string xml;
-				using (Stream source = System.Reflection.Assembly.GetExecutingAssembly()
-					.GetManifestResourceStream ("HTMLComparer.almost_config.xml")) {
+				using (Stream source = Assembly.GetExecutingAssembly()
+					.GetManifestResourceStream ("nunitweb_config.xml")) {
 					using (StreamReader sr = new StreamReader (source))
 						xml = sr.ReadToEnd ();
 				}
