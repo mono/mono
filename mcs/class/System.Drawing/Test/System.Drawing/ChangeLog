@@ -1,3 +1,7 @@
+2006-05-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PenTest.cs: New. Unit tests for Pen.
+
 2006-05-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TestGraphics.cs : added test for bug #78408 (FillRectangles).
