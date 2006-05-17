@@ -59,27 +59,24 @@ namespace System.Drawing
 		static Color [] knownColors;
 		
 		// Private transparancy (A) and R,G,B fields.
-		private byte a;
-		private byte r;
-		private byte g;
-		private byte b;
+		private long value;
 		private static string creatingColorNames = "creatingColorNames";
 
 		// The specs also indicate that all three of these propities are true
 		// if created with FromKnownColor or FromNamedColor, false otherwise (FromARGB).
 		// Per Microsoft and ECMA specs these varibles are set by which constructor is used, not by their values.
 		[Flags]
-		enum ColorType {
+		enum ColorType : short {
 			Empty=0,
 			ARGB=1,
 			Known=2,
 			Named=4,
 			System=8
 		}
-		private ColorType colorType;
-		private KnownColor knownColor;
+		private short state;
+		private short knownColor;
 
-		private string myname;
+		private string name;
 
 #if TARGET_JVM
 		internal java.awt.Color NativeObject {
@@ -91,27 +88,27 @@ namespace System.Drawing
 
 		public string Name {
 			get{
-				if (myname == null || myname == String.Empty)
+				if (name == null || name == String.Empty)
 					return String.Format ("{0:x}", ToArgb ());
-				return myname;
+				return name;
 			}
 		}
 
 		public bool IsKnownColor {
 			get{
-				return (colorType & ColorType.Known) != 0;
+				return (state & ((short) ColorType.Known)) != 0;
 			}
 		}
 
 		public bool IsSystemColor {
 			get{
-				return (colorType & ColorType.System) != 0;
+				return (state & ((short) ColorType.System)) != 0;
 			}
 		}
 
 		public bool IsNamedColor {
 			get{
-				return (colorType & (ColorType.Known|ColorType.Named)) != 0;
+				return (state & (short)(ColorType.Known|ColorType.Named)) != 0;
 			}
 		}
 
@@ -125,42 +122,39 @@ namespace System.Drawing
 		{
 			CheckARGBValues (alpha, red, green, blue);
 			Color color = new Color ();
-			color.colorType = ColorType.ARGB;
-			color.a = (byte) alpha;
-			color.r = (byte) red;
-			color.g = (byte) green;
-			color.b = (byte) blue;
-			color.myname = String.Empty;
+			color.state = (short) ColorType.ARGB;
+			color.value = (alpha << 24) + (red << 16) + (green << 8) + blue;
+			color.name = String.Empty;
 			return color;
 		}
 
 		private static Color FromArgbNamed (int alpha, int red, int green, int blue, string name, KnownColor knownColor)
 		{
 			Color color = FromArgb (alpha, red, green, blue);
-			color.colorType = ColorType.Known|ColorType.Named;
+			color.state = (short) (ColorType.Known|ColorType.Named);
 			//color.issystemcolor = false; //???
-			color.myname = name;
+			color.name = name;
 			// FIXME: here happens SEGFAULT.
 			//color.knownColor = (KnownColor) Enum.Parse (typeof (KnownColor), name, false);
-			color.knownColor = knownColor;
+			color.knownColor = (short) knownColor;
 			return color;
 		}
 
 		internal static Color FromArgbSystem (int alpha, int red, int green, int blue, string name, KnownColor knownColor)
 		{
 			Color color = FromArgbNamed (alpha, red, green, blue, name, knownColor);
-			color.colorType |= ColorType.System;
+			color.state |= (short) ColorType.System;
 			return color;
 		}
 
 		public int ToArgb()
 		{
-			return a << 24 | r << 16 | g << 8 | b;
+			return (int) value;
 		} 
 
 		public static Color FromArgb (int alpha, Color baseColor)
 		{
-			return FromArgb (alpha, baseColor.r, baseColor.g, baseColor.b);
+			return FromArgb (alpha, baseColor.R, baseColor.G, baseColor.B);
 		}
 
 		public static Color FromArgb (int argb)
@@ -180,9 +174,9 @@ namespace System.Drawing
 #endif			
 				// This is what it returns!
 				Color d = FromArgb (0, 0, 0, 0);
-				d.myname = c.ToString ();
-				d.colorType |= ColorType.Named;
-				d.knownColor = c;
+				d.name = c.ToString ();
+				d.state |= (short) ColorType.Named;
+				d.knownColor = (short) c;
 				return d;
 			}
 			
@@ -247,8 +241,8 @@ namespace System.Drawing
 				if (c == null) {
 					// This is what it returns!
 					Color d = FromArgb (0, 0, 0, 0);
-					d.myname = colorName;
-					d.colorType |= ColorType.Named;
+					d.name = colorName;
+					d.state |= (short) ColorType.Named;
 					c = d;
 				}
 			}
@@ -298,13 +292,7 @@ namespace System.Drawing
 
 		public static bool operator == (Color colorA, Color colorB)
 		{
-			if (colorA.a != colorB.a)
-				return false;
-			if (colorA.r != colorB.r)
-				return false;
-            if (colorA.g != colorB.g)
-				return false;
-			if (colorA.b != colorB.b)
+			if (colorA.value != colorB.value)
 				return false;
 			if (colorA.IsNamedColor != colorB.IsNamedColor)
 				return false;
@@ -334,16 +322,16 @@ namespace System.Drawing
 		
 		public float GetBrightness ()
 		{
-			byte minval = Math.Min (r, Math.Min (g, b));
-			byte maxval = Math.Max (r, Math.Max (g, b));
+			byte minval = Math.Min (R, Math.Min (G, B));
+			byte maxval = Math.Max (R, Math.Max (G, B));
 	
 			return (float)(maxval + minval) / 510;
 		}
 
 		public float GetSaturation ()
 		{
-			byte minval = Math.Min (r, Math.Min (g, b));
-			byte maxval = Math.Max (r, Math.Max (g, b));
+			byte minval = (byte) Math.Min (R, Math.Min (G, B));
+			byte maxval = (byte) Math.Max (R, Math.Max (G, B));
 			
 			if (maxval == minval)
 					return 0.0f;
@@ -357,8 +345,11 @@ namespace System.Drawing
 
 		public float GetHue ()
 		{
-			byte minval = Math.Min (r, Math.Min (g, b));
-			byte maxval = Math.Max (r, Math.Max (g, b));
+			int r = R;
+			int g = G;
+			int b = B;
+			byte minval = (byte) Math.Min (r, Math.Min (g, b));
+			byte maxval = (byte) Math.Max (r, Math.Max (g, b));
 			
 			if (maxval == minval)
 					return 0.0f;
@@ -394,7 +385,7 @@ namespace System.Drawing
 		/// </remarks>
 		public KnownColor ToKnownColor ()
 		{
-			return knownColor;
+			return (KnownColor) knownColor;
 		}
 
 		/// <summary>
@@ -408,7 +399,7 @@ namespace System.Drawing
 		public bool IsEmpty 
 		{
 			get {
-				return colorType == ColorType.Empty;
+				return state == (short) ColorType.Empty;
 			}
 		}
 
@@ -423,7 +414,7 @@ namespace System.Drawing
 		public byte A
 		{
 			get {
-				return a;
+				return (byte) ((value >> 24 & 0x0ff));
 			}
 		}
 
@@ -438,7 +429,7 @@ namespace System.Drawing
 		public byte R
 		{
 			get {
-				return r;
+				return (byte) ((value >> 16 & 0x0ff));
 			}
 		}
 
@@ -453,7 +444,7 @@ namespace System.Drawing
 		public byte G
 		{
 			get {
-				return g;
+				return (byte) ((value >> 8 & 0x0ff));
 			}
 		}
 
@@ -468,7 +459,7 @@ namespace System.Drawing
 		public byte B
 		{
 			get {
-				return b;
+				return (byte) (value & 0x0ff);
 			}
 		}
 
@@ -515,7 +506,7 @@ namespace System.Drawing
 		
 		public override int GetHashCode ()
 		{
-			return ToArgb().GetHashCode () ^ Name.GetHashCode ();
+			return ((int) value) ^ Name.GetHashCode ();
 		}
 
 		/// <summary>
@@ -531,10 +522,10 @@ namespace System.Drawing
 			if (IsEmpty)
 				return "Color [Empty]";
 
-			if (myname != "")
-				return "Color [" + myname + "]";
+			if (name != "")
+				return "Color [" + name + "]";
 
-			return String.Format ("Color [A={0}, R={1}, G={2}, B={3}]", a, r, g, b);
+			return String.Format ("Color [A={0}, R={1}, G={2}, B={3}]", A, R, G, B);
 		}
  
 		private static void CheckRGBValues (int red,int green,int blue)

@@ -1,5 +1,9 @@
 2006-05-17 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Color.cs: make it serialization-compatible with MS. Fixes bug #78265.
+
+2006-05-17 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Bitmap.cs: (Clone) use the 'format' argument instead of the
 	PixelFormat.
 
