@@ -1,3 +1,10 @@
+2006-05-17  Martin Baulig  <martin@ximian.com>
+
+	* threads.c
+	(debugger_thread_vtable): Moved into ../mini/debug-debugger.c.
+	(debugger_thread_created): Removed.
+	(debugger_thread_exited): Removed.
+
 2006-05-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* appdomain.c (MONO_CORLIB_VERSION): Bump corlib version.
