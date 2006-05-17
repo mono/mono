@@ -81,6 +81,9 @@ namespace MonoTests.System.Drawing
 		}
 		
 		/* Checks bitmap features on a know 24-bits bitmap */
+#if TARGET_JVM
+		[NUnit.Framework.Category ("NotWorking")]
+#endif
 		[Test]
 		public void Bitmap24bitFeatures()
 		{
