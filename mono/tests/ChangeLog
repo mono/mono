@@ -1,5 +1,7 @@
 2006-05-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* pinvoke2.cs libtest.c: Add tests for marshalling UnmanagedType.LPStruct.
+
 	* marshal8.cs: Applied a patch from Jonathan Chambers to add a test case to
 	#77523.
 
