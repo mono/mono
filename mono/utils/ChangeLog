@@ -1,3 +1,9 @@
+
+Wed May 17 19:00:15 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mono-hash.h, mono-hash.c: changed the code so we're able to
+	specify if the key or value or both are managed objects.
+
 2006-04-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* monobitset.c (mono_bitset_sub): Use src->size since the assert 
