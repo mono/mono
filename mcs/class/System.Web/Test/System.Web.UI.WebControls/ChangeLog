@@ -1,3 +1,8 @@
+2006-05-17 Andrew Skiba <andrews@mainsoft.com>
+
+	* MenuTest.cs, SiteMapPathTest.cs: multiple changes, now passes on 
+	dotnet with mono makefile
+
 2006-05-14 Yoni Klain <yonik@mainsoft.com>
 
 	* Added MenuTest.cs

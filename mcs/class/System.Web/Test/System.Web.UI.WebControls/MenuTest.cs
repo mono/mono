@@ -32,6 +32,7 @@
 
 using NUnit.Framework;
 using System;
+using System.Threading;
 using System.Collections.Generic;
 using System.Text;
 using System.Web;
@@ -109,7 +110,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 		public void DoOnPreRender (EventArgs e)
 		{
-			OnPreRender (e);
+			base.OnPreRender(e);
 		}
 		public bool DoOnBubbleEvent(EventArgs e)
 		{
@@ -126,8 +127,8 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			PokerMenu p = new PokerMenu ();
 			Assert.AreEqual ("Click",PokerMenu.MenuItemClickCommandName,"Staic_MenuItemClickCommandName");
-			Assert.IsEmpty (p.Controls,"ControlsCollection");
-			Assert.IsEmpty (p.DataBindings,"DataBindings");
+			Assert.AreEqual (p.Controls.Count,"ControlsCollection");
+			Assert.AreEqual (p.DataBindings.Count,"DataBindings");
 			Assert.AreEqual (500,p.DisappearAfter,"DisappearAfter");
 			Assert.AreEqual (string.Empty, p.DynamicBottomSeparatorImageUrl, "DynamicBottomSeparatorImageUrl");
 			Assert.IsTrue (p.DynamicEnableDefaultPopOutImage, "DynamicEnableDefaultPopOutImage");
@@ -172,6 +173,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.IsNotNull (p.OnTagKey (), "TagKey");
 
 		}
+
 		[Test]
 		public void Menu_ChangeDefaultProperties ()
 		{
@@ -331,342 +333,360 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Test]
 		public void Menu_StateBag ()
 		{
-			PokerMenu p = new PokerMenu ();
-			PokerMenu c = new PokerMenu (); //Only for default property 
+		        PokerMenu p = new PokerMenu ();
+		        PokerMenu c = new PokerMenu (); //Only for default property 
 			
-			p.DisappearAfter = 100;
-			Assert.AreEqual (1, p.StateBag.Count, "DisappearAfter");
-			Assert.AreEqual (100, p.DisappearAfter, "DisappearAfter");
-			p.DisappearAfter = c.DisappearAfter;
-			Assert.AreEqual (1, p.StateBag.Count, "DisappearAfter"); //Set back to default do not change Statebag state
+		        p.DisappearAfter = 100;
+		        Assert.AreEqual (1, p.StateBag.Count, "DisappearAfter");
+		        Assert.AreEqual (100, p.DisappearAfter, "DisappearAfter");
+		        p.DisappearAfter = c.DisappearAfter;
+		        Assert.AreEqual (1, p.StateBag.Count, "DisappearAfter"); //Set back to default do not change Statebag state
 
-			p.DynamicBottomSeparatorImageUrl = "test.aspx";
-			Assert.AreEqual ("test.aspx", p.DynamicBottomSeparatorImageUrl, "DynamicBottomSeparatorImageUrl");
-			Assert.AreEqual (2, p.StateBag.Count, "DynamicBottomSeparatorImageUrl");
-			p.DynamicBottomSeparatorImageUrl = null;
-			Assert.AreEqual (2, p.StateBag.Count, "DynamicBottomSeparatorImageUrl"); //Set back to default do not change Statebag state
+		        p.DynamicBottomSeparatorImageUrl = "test.aspx";
+		        Assert.AreEqual ("test.aspx", p.DynamicBottomSeparatorImageUrl, "DynamicBottomSeparatorImageUrl");
+		        Assert.AreEqual (2, p.StateBag.Count, "DynamicBottomSeparatorImageUrl");
+		        p.DynamicBottomSeparatorImageUrl = null;
+		        Assert.AreEqual (2, p.StateBag.Count, "DynamicBottomSeparatorImageUrl"); //Set back to default do not change Statebag state
 
-			p.DynamicEnableDefaultPopOutImage = false;
-			Assert.AreEqual (3, p.StateBag.Count, "DynamicEnableDefaultPopOutImage");
-			Assert.AreEqual (false, p.DynamicEnableDefaultPopOutImage, "DynamicEnableDefaultPopOutImage");
+		        p.DynamicEnableDefaultPopOutImage = false;
+		        Assert.AreEqual (3, p.StateBag.Count, "DynamicEnableDefaultPopOutImage");
+		        Assert.AreEqual (false, p.DynamicEnableDefaultPopOutImage, "DynamicEnableDefaultPopOutImage");
 
-			p.DynamicHorizontalOffset = 10;
-			Assert.AreEqual (4, p.StateBag.Count, "DynamicHorizontalOffset");
-			Assert.AreEqual (10, p.DynamicHorizontalOffset, "DynamicHorizontalOffset");
+		        p.DynamicHorizontalOffset = 10;
+		        Assert.AreEqual (4, p.StateBag.Count, "DynamicHorizontalOffset");
+		        Assert.AreEqual (10, p.DynamicHorizontalOffset, "DynamicHorizontalOffset");
 
-			p.DynamicHoverStyle.BackColor = Color.Red;
-			Assert.AreEqual (Color.Red, p.DynamicHoverStyle.BackColor, "DynamicHoverStyle");
-			Assert.AreEqual (4, p.StateBag.Count, "DynamicHoverStyle"); //This property change do not change Statebag
+		        p.DynamicHoverStyle.BackColor = Color.Red;
+		        Assert.AreEqual (Color.Red, p.DynamicHoverStyle.BackColor, "DynamicHoverStyle");
+		        Assert.AreEqual (4, p.StateBag.Count, "DynamicHoverStyle"); //This property change do not change Statebag
 
-			p.DynamicItemFormatString = "Mytest";
-			Assert.AreEqual (5, p.StateBag.Count, "DynamicItemFormatString");
-			Assert.AreEqual ("Mytest", p.DynamicItemFormatString, "DynamicItemFormatString");
-			p.DynamicItemFormatString = null;
-			Assert.AreEqual (5, p.StateBag.Count, "DynamicItemFormatString");
+		        p.DynamicItemFormatString = "Mytest";
+		        Assert.AreEqual (5, p.StateBag.Count, "DynamicItemFormatString");
+		        Assert.AreEqual ("Mytest", p.DynamicItemFormatString, "DynamicItemFormatString");
+		        p.DynamicItemFormatString = null;
+		        Assert.AreEqual (5, p.StateBag.Count, "DynamicItemFormatString");
 
-			p.DynamicPopOutImageTextFormatString = "test";
-			Assert.AreEqual (6, p.StateBag.Count, "DynamicPopOutImageTextFormatString");
-			Assert.AreEqual ("test", p.DynamicPopOutImageTextFormatString, "DynamicPopOutImageTextFormatString");
-			p.DynamicPopOutImageTextFormatString = null;
-			p.DynamicPopOutImageTextFormatString = c.DynamicPopOutImageTextFormatString;
-			Assert.AreEqual (6, p.StateBag.Count, "DynamicPopOutImageTextFormatString");
+		        p.DynamicPopOutImageTextFormatString = "test";
+		        Assert.AreEqual (6, p.StateBag.Count, "DynamicPopOutImageTextFormatString");
+		        Assert.AreEqual ("test", p.DynamicPopOutImageTextFormatString, "DynamicPopOutImageTextFormatString");
+		        p.DynamicPopOutImageTextFormatString = null;
+		        p.DynamicPopOutImageTextFormatString = c.DynamicPopOutImageTextFormatString;
+		        Assert.AreEqual (6, p.StateBag.Count, "DynamicPopOutImageTextFormatString");
 
-			p.DynamicPopOutImageUrl = "test";
-			Assert.AreEqual (7, p.StateBag.Count, "DynamicPopOutImageUrl");
-			Assert.AreEqual ("test", p.DynamicPopOutImageUrl, "DynamicPopOutImageUrl");
-			p.DynamicPopOutImageUrl = null;
-			p.DynamicPopOutImageUrl = c.DynamicPopOutImageUrl;
-			Assert.AreEqual (7, p.StateBag.Count, "DynamicPopOutImageUrl");
+		        p.DynamicPopOutImageUrl = "test";
+		        Assert.AreEqual (7, p.StateBag.Count, "DynamicPopOutImageUrl");
+		        Assert.AreEqual ("test", p.DynamicPopOutImageUrl, "DynamicPopOutImageUrl");
+		        p.DynamicPopOutImageUrl = null;
+		        p.DynamicPopOutImageUrl = c.DynamicPopOutImageUrl;
+		        Assert.AreEqual (7, p.StateBag.Count, "DynamicPopOutImageUrl");
 
-			p.DynamicTopSeparatorImageUrl = "test";
-			Assert.AreEqual (8, p.StateBag.Count, "DynamicTopSeparatorImageUrl");
-			Assert.AreEqual ("test", p.DynamicTopSeparatorImageUrl, "DynamicTopSeparatorImageUrl");
-			p.DynamicTopSeparatorImageUrl = null;
-			p.DynamicTopSeparatorImageUrl = c.DynamicPopOutImageUrl;
-			Assert.AreEqual (8, p.StateBag.Count, "DynamicTopSeparatorImageUrl");
+		        p.DynamicTopSeparatorImageUrl = "test";
+		        Assert.AreEqual (8, p.StateBag.Count, "DynamicTopSeparatorImageUrl");
+		        Assert.AreEqual ("test", p.DynamicTopSeparatorImageUrl, "DynamicTopSeparatorImageUrl");
+		        p.DynamicTopSeparatorImageUrl = null;
+		        p.DynamicTopSeparatorImageUrl = c.DynamicPopOutImageUrl;
+		        Assert.AreEqual (8, p.StateBag.Count, "DynamicTopSeparatorImageUrl");
 
-			p.DynamicVerticalOffset = 10;
-			Assert.AreEqual (9, p.StateBag.Count, "DynamicVerticalOffset#1");
-			Assert.AreEqual (10, p.DynamicVerticalOffset, "DynamicVerticalOffset#2");
-			p.DynamicVerticalOffset = c.DynamicVerticalOffset;
-			Assert.AreEqual (9, p.StateBag.Count, "DynamicVerticalOffset#3");
+		        p.DynamicVerticalOffset = 10;
+		        Assert.AreEqual (9, p.StateBag.Count, "DynamicVerticalOffset#1");
+		        Assert.AreEqual (10, p.DynamicVerticalOffset, "DynamicVerticalOffset#2");
+		        p.DynamicVerticalOffset = c.DynamicVerticalOffset;
+		        Assert.AreEqual (9, p.StateBag.Count, "DynamicVerticalOffset#3");
 
-			p.ItemWrap = true;
-			Assert.AreEqual (true, p.ItemWrap, "ItemWrap#1");
-			Assert.AreEqual (10, p.StateBag.Count, "ItemWrap#2");
-			p.ItemWrap = c.ItemWrap;
-			Assert.AreEqual (10, p.StateBag.Count, "ItemWrap#3");
+		        p.ItemWrap = true;
+		        Assert.AreEqual (true, p.ItemWrap, "ItemWrap#1");
+		        Assert.AreEqual (10, p.StateBag.Count, "ItemWrap#2");
+		        p.ItemWrap = c.ItemWrap;
+		        Assert.AreEqual (10, p.StateBag.Count, "ItemWrap#3");
 			
-			p.MaximumDynamicDisplayLevels = 5;
-			Assert.AreEqual (5, p.MaximumDynamicDisplayLevels, "MaximumDynamicDisplayLevels");
-			Assert.AreEqual (11, p.StateBag.Count, "MaximumDynamicDisplayLevels#1");
-			p.MaximumDynamicDisplayLevels = c.MaximumDynamicDisplayLevels;
-			Assert.AreEqual (11, p.StateBag.Count, "MaximumDynamicDisplayLevels#2");
+		        p.MaximumDynamicDisplayLevels = 5;
+		        Assert.AreEqual (5, p.MaximumDynamicDisplayLevels, "MaximumDynamicDisplayLevels");
+		        Assert.AreEqual (11, p.StateBag.Count, "MaximumDynamicDisplayLevels#1");
+		        p.MaximumDynamicDisplayLevels = c.MaximumDynamicDisplayLevels;
+		        Assert.AreEqual (11, p.StateBag.Count, "MaximumDynamicDisplayLevels#2");
 
-			p.Orientation = Orientation.Horizontal;
-			Assert.AreEqual (12, p.StateBag.Count, "Orientation#1");
-			Assert.AreEqual (Orientation.Horizontal, p.Orientation, "Orientation");
-			p.Orientation = c.Orientation;
-			Assert.AreEqual (12, p.StateBag.Count, "Orientation#2");
+		        p.Orientation = Orientation.Horizontal;
+		        Assert.AreEqual (12, p.StateBag.Count, "Orientation#1");
+		        Assert.AreEqual (Orientation.Horizontal, p.Orientation, "Orientation");
+		        p.Orientation = c.Orientation;
+		        Assert.AreEqual (12, p.StateBag.Count, "Orientation#2");
 
-			p.PathSeparator = 'A';
-			Assert.AreEqual ('A', p.PathSeparator, "PathSeparator");
-			Assert.AreEqual (13, p.StateBag.Count, "PathSeparator#1");
-			p.PathSeparator = c.PathSeparator;
-			Assert.AreEqual (13, p.StateBag.Count, "PathSeparator#2");
+		        p.PathSeparator = 'A';
+		        Assert.AreEqual ('A', p.PathSeparator, "PathSeparator");
+		        Assert.AreEqual (13, p.StateBag.Count, "PathSeparator#1");
+		        p.PathSeparator = c.PathSeparator;
+		        Assert.AreEqual (13, p.StateBag.Count, "PathSeparator#2");
 
-			p.ScrollDownImageUrl = "test";
-			Assert.AreEqual ("test", p.ScrollDownImageUrl, "ScrollDownImageUrl");
-			Assert.AreEqual (14, p.StateBag.Count, "ScrollDownImageUrl#1");
-			p.ScrollDownImageUrl = c.ScrollDownImageUrl;
-			Assert.AreEqual (14, p.StateBag.Count, "ScrollDownImageUrl#3");
-
-
-			p.ScrollDownText = "test";
-			Assert.AreEqual ("test", p.ScrollDownText, "ScrollDownText");
-			Assert.AreEqual (15, p.StateBag.Count, "ScrollDownText#1");
-			p.ScrollDownText = c.ScrollDownImageUrl;
-			Assert.AreEqual (15, p.StateBag.Count, "ScrollDownText#2");
+		        p.ScrollDownImageUrl = "test";
+		        Assert.AreEqual ("test", p.ScrollDownImageUrl, "ScrollDownImageUrl");
+		        Assert.AreEqual (14, p.StateBag.Count, "ScrollDownImageUrl#1");
+		        p.ScrollDownImageUrl = c.ScrollDownImageUrl;
+		        Assert.AreEqual (14, p.StateBag.Count, "ScrollDownImageUrl#3");
 
 
-			p.ScrollUpText = "test";
-			Assert.AreEqual ("test", p.ScrollUpText, "ScrollUpText");
-			Assert.AreEqual (16, p.StateBag.Count, "ScrollUpText#1");
-			p.ScrollUpText = c.ScrollDownText;
-			Assert.AreEqual (16, p.StateBag.Count, "ScrollUpText#1");
+		        p.ScrollDownText = "test";
+		        Assert.AreEqual ("test", p.ScrollDownText, "ScrollDownText");
+		        Assert.AreEqual (15, p.StateBag.Count, "ScrollDownText#1");
+		        p.ScrollDownText = c.ScrollDownImageUrl;
+		        Assert.AreEqual (15, p.StateBag.Count, "ScrollDownText#2");
 
-			p.SkipLinkText = "test";
-			Assert.AreEqual ("test", p.SkipLinkText, "SkipLinkText");
-			Assert.AreEqual (17, p.StateBag.Count, "SkipLinkText#1");
-			p.SkipLinkText = c.SkipLinkText;
-			Assert.AreEqual (17, p.StateBag.Count, "SkipLinkText#2");
+
+		        p.ScrollUpText = "test";
+		        Assert.AreEqual ("test", p.ScrollUpText, "ScrollUpText");
+		        Assert.AreEqual (16, p.StateBag.Count, "ScrollUpText#1");
+		        p.ScrollUpText = c.ScrollDownText;
+		        Assert.AreEqual (16, p.StateBag.Count, "ScrollUpText#1");
+
+		        p.SkipLinkText = "test";
+		        Assert.AreEqual ("test", p.SkipLinkText, "SkipLinkText");
+		        Assert.AreEqual (17, p.StateBag.Count, "SkipLinkText#1");
+		        p.SkipLinkText = c.SkipLinkText;
+		        Assert.AreEqual (17, p.StateBag.Count, "SkipLinkText#2");
 		}
 		[Test]
 		public void Menu_CreateChildControl ()
 		{
-			PokerMenu p = new PokerMenu ();
-			Button B = new Button ();
-			p.Controls.Add (B);
-			Assert.AreEqual (1, p.Controls.Count, "CreateChildControl#1");
-			p.DoCreateChildControls ();
-			Assert.AreEqual (0, p.Controls.Count, "CreateChildControl#2");
+		        PokerMenu p = new PokerMenu ();
+		        Button B = new Button ();
+		        p.Controls.Add (B);
+		        Assert.AreEqual (1, p.Controls.Count, "CreateChildControl#1");
+		        p.DoCreateChildControls ();
+		        Assert.AreEqual (0, p.Controls.Count, "CreateChildControl#2");
 		}
-		[Test]
+
+	        [Test]
 		public void Menu_ControlState()
 		{
-			PokerMenu p = new PokerMenu ();
-			MenuItem I1 = new MenuItem ();
-			MenuItem I2 = new MenuItem ();
-			p.Items.Add (I1);
-			p.Items.Add (I2);
-			MenuEventArgs e = new MenuEventArgs (I1);
-			p.DoOnMenuItemClick (e);
-			object state = p.DoSaveControlState ();
-			p.DoLoadControlState (state);
-			e = new MenuEventArgs (I2);
-			p.DoOnMenuItemClick (e);
-			Console.WriteLine();
+		        PokerMenu p = new PokerMenu ();
+		        MenuItem I1 = new MenuItem ();
+		        MenuItem I2 = new MenuItem ();
+		        p.Items.Add (I1);
+		        p.Items.Add (I2);
+		        MenuEventArgs e = new MenuEventArgs (I1);
+		        p.DoOnMenuItemClick (e);
+		        object state = p.DoSaveControlState ();
+		        p.DoLoadControlState (state);
+		        e = new MenuEventArgs (I2);
+		        p.DoOnMenuItemClick (e);
+		        Console.WriteLine();
 		}
+
 		[Test]
 		public void Menu_FindItem ()
 		{
-			PokerMenu p = new PokerMenu ();
-			MenuItem I = new MenuItem ();
-			string path = I.ValuePath;  
-			p.Items.Add (I);
-			MenuItem V = new MenuItem ();
-			I.ChildItems.Add (V);
-			MenuItem copy = p.FindItem (path);
-			Assert.AreEqual (I, copy, "FindItem#1");
-			path = V.ValuePath;
-			Assert.AreEqual (V, p.FindItem (path), "FindItem#2");
+		        PokerMenu p = new PokerMenu ();
+		        MenuItem I = new MenuItem ();
+		        string path = I.ValuePath;  
+		        p.Items.Add (I);
+		        MenuItem V = new MenuItem ();
+		        I.ChildItems.Add (V);
+		        MenuItem copy = p.FindItem (path);
+		        Assert.AreEqual (I, copy, "FindItem#1");
+		        path = V.ValuePath;
+		        Assert.AreEqual (V, p.FindItem (path), "FindItem#2");
 		}
-		/// <summary>
-		/// Set & Get DesignModeState dosn't tested 
-		/// Can't test on Page Load event 
-		/// </summary>
-		[Test]
+
+		
+		 // Set & Get DesignModeState dosn't tested 
+		 // Can't test on Page Load event 
+		 
+
+	       	[Test]
 		[Category ("NunitWeb")]
 		[Category ("NotWorking")]  //Must be running after hosting bug resolve
+		//[Category ("StucksOnMono")]
 		public void Menu_RenderBeginTag ()
 		{
-			Helper.Instance.RunInPage(TestBeginTagRender, null);
+			//Thread.Sleep (1000);
+		        Helper.Instance.RunInPage(TestBeginTagRender, null);
 		}
-		static void TestBeginTagRender(HttpContext c, Page p, object param)
+		public static void TestBeginTagRender(HttpContext c, Page p, object param)
 		{
-			PokerMenu pm = new PokerMenu ();
-			p.Form.Controls.Add (pm);
-			StringWriter sw = new StringWriter ();
-			HtmlTextWriter tw = new HtmlTextWriter (sw);
-			pm.RenderBeginTag (tw);
-			string RenderedControlHtml = sw.ToString();
-			string OriginControlHtml = @"<a href=""#ctl01_SkipLink"">
-						     <img alt=""Skip Navigation Links"" src=""/NunitWeb/WebResource.axd?d=gZrz8lvSQfolS1pG07HX9g2&amp;t=632784640484505569"" 
-						      width=""0"" height=""0"" style=""border-width:0px;"" />
-						     </a><table id=""ctl01"" cellpadding=""0"" cellspacing=""0"" border=""0"">";
+		        PokerMenu pm = new PokerMenu ();
+		        p.Form.Controls.Add (pm);
+		        StringWriter sw = new StringWriter ();
+		        HtmlTextWriter tw = new HtmlTextWriter (sw);
+		        pm.RenderBeginTag (tw);
+		        string RenderedControlHtml = sw.ToString();
+		        string OriginControlHtml = @"<a href=""#ctl01_SkipLink"">
+		                                     <img alt=""Skip Navigation Links"" src=""/NunitWeb/WebResource.axd?d=gZrz8lvSQfolS1pG07HX9g2&amp;t=632784640484505569"" 
+		                                      width=""0"" height=""0"" style=""border-width:0px;"" />
+		                                     </a><table id=""ctl01"" cellpadding=""0"" cellspacing=""0"" border=""0"">";
 
 
 
-			Assert.AreEqual (true, WebTest.HtmlComparer (OriginControlHtml, RenderedControlHtml), "RenderBeginTag");
+		        Assert.AreEqual (true, WebTest.HtmlComparer (OriginControlHtml, RenderedControlHtml), "RenderBeginTag");
+			Helper.Unload ();
 		}
+
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]  //Must be running after hosting bug resolve
+	        [Category ("NotWorking")]  //Must be running after hosting bug resolve
+		//[Category ("StucksOnMono")]
 		public void Menu_RenderEndTag ()
 		{
-			Helper.Instance.RunInPage (TestEndTagRender, null);
+			//Thread.Sleep (1000);
+		        Helper.Instance.RunInPage (TestEndTagRender, null);
 		}
-		static void TestEndTagRender (HttpContext c, Page p, object param)
+		public static void TestEndTagRender (HttpContext c, Page p, object param)
 		{
-			PokerMenu pm = new PokerMenu ();
-			p.Form.Controls.Add (pm);
-			StringWriter sw = new StringWriter ();
-			HtmlTextWriter tw = new HtmlTextWriter (sw);
-			pm.RenderBeginTag (tw);
-			pm.RenderEndTag (tw);
-			string RenderedControlHtml = sw.ToString ();
-			string OriginControlHtml = @"<a href=""#ctl01_SkipLink"">
-                                                     <img alt=""Skip Navigation Links"" src=""/NunitWeb/WebResource.axd?d=gZrz8lvSQfolS1pG07HX9g2&amp;t=632784640484505569""
-                                                      width=""0"" height=""0"" style=""border-width:0px;"" />
-                                                     </a><table id=""ctl01"" cellpadding=""0"" cellspacing=""0"" border=""0"">
-						     </table><a id=""ctl01_SkipLink""></a>";
+		        PokerMenu pm = new PokerMenu ();
+		        p.Form.Controls.Add (pm);
+		        StringWriter sw = new StringWriter ();
+		        HtmlTextWriter tw = new HtmlTextWriter (sw);
+		        pm.RenderBeginTag (tw);
+		        pm.RenderEndTag (tw);
+		        string RenderedControlHtml = sw.ToString ();
+		        string OriginControlHtml = @"<a href=""#ctl01_SkipLink"">
+		                                     <img alt=""Skip Navigation Links"" src=""/NunitWeb/WebResource.axd?d=gZrz8lvSQfolS1pG07HX9g2&amp;t=632784640484505569""
+		                                      width=""0"" height=""0"" style=""border-width:0px;"" />
+		                                     </a><table id=""ctl01"" cellpadding=""0"" cellspacing=""0"" border=""0"">
+		                                     </table><a id=""ctl01_SkipLink""></a>";
 
 
 
-			Assert.AreEqual (true, WebTest.HtmlComparer (OriginControlHtml, RenderedControlHtml), "RenderBeginTag");
+		        Assert.AreEqual (true, WebTest.HtmlComparer (OriginControlHtml, RenderedControlHtml), "RenderEndTag");
+			
 		}
+
 		[Test]
 		public void Menu_ViewState()
 		{
-			PokerMenu b = new PokerMenu ();
-			PokerMenu copy = new PokerMenu ();
-			b.ToolTip = "mytest1";
-			b.Target = "mytest2";
-			b.BackColor = Color.Red;
-			b.BorderColor = Color.Red;
-			b.BorderStyle = BorderStyle.Dotted;
-			b.BorderWidth = 1;
-			b.Font.Size = 10;
-			b.ForeColor = Color.Red;
-			b.Height = 100;
-			b.MaximumDynamicDisplayLevels = 2;
-			b.Orientation = Orientation.Vertical;
-			b.PathSeparator = '-';
-			b.ScrollDownImageUrl = "test";
-			b.ScrollDownText = "test";
-			b.ScrollUpImageUrl = "test";
-			b.ScrollUpText = "test";
-			b.SkipLinkText = "test";
-			b.Visible = false;
-			b.Width = 100;
-			b.TabIndex = 1;
+		        PokerMenu b = new PokerMenu ();
+		        PokerMenu copy = new PokerMenu ();
+		        b.ToolTip = "mytest1";
+		        b.Target = "mytest2";
+		        b.BackColor = Color.Red;
+		        b.BorderColor = Color.Red;
+		        b.BorderStyle = BorderStyle.Dotted;
+		        b.BorderWidth = 1;
+		        b.Font.Size = 10;
+		        b.ForeColor = Color.Red;
+		        b.Height = 100;
+		        b.MaximumDynamicDisplayLevels = 2;
+		        b.Orientation = Orientation.Vertical;
+		        b.PathSeparator = '-';
+		        b.ScrollDownImageUrl = "test";
+		        b.ScrollDownText = "test";
+		        b.ScrollUpImageUrl = "test";
+		        b.ScrollUpText = "test";
+		        b.SkipLinkText = "test";
+		        b.Visible = false;
+		        b.Width = 100;
+		        b.TabIndex = 1;
 			
-			object state = b.DoSaveViewState ();
-			copy.DoLoadViewState (state);
-			Assert.AreEqual ("mytest1", copy.ToolTip, "ViewState#1");
-			Assert.AreEqual ("mytest2", copy.Target, "ViewState#2");
-			Assert.AreEqual (Color.Red, copy.BackColor, "ViewState#3");
-			Assert.AreEqual (Color.Red, copy.BorderColor , "ViewState#4");
-			Assert.AreEqual (BorderStyle.Dotted, copy.BorderStyle, "ViewState#5");
-			Assert.AreEqual (Unit.Pixel(1), copy.BorderWidth, "ViewState#6");
-			Assert.AreEqual ("10pt", copy.Font.Size.ToString() , "ViewState#7");
-			Assert.AreEqual (Color.Red, copy.ForeColor, "ViewState#8");
-			Assert.AreEqual (Unit.Pixel(100), copy.Height, "ViewState#9");
-			Assert.AreEqual (2, copy.MaximumDynamicDisplayLevels, "ViewState#10");
-			Assert.AreEqual (Orientation.Vertical, copy.Orientation, "ViewState#11");
-			Assert.AreEqual ('-', copy.PathSeparator, "ViewState#12");
-			Assert.AreEqual ("test", copy.ScrollDownImageUrl, "ViewState#13");
-			Assert.AreEqual ("test", copy.ScrollDownText, "ViewState#14");
-			Assert.AreEqual ("test", copy.ScrollUpImageUrl, "ViewState#15");
-			Assert.AreEqual ("test", copy.ScrollUpText, "ViewState#16");
-			Assert.AreEqual ("test", copy.SkipLinkText, "ViewState#17");
-			Assert.AreEqual (1, copy.TabIndex, "ViewState#18");
-			Assert.AreEqual (false, copy.Visible, "ViewState#19");
-			Assert.AreEqual (Unit.Pixel (100), copy.Width, "ViewState#20");
+		        object state = b.DoSaveViewState ();
+		        copy.DoLoadViewState (state);
+		        Assert.AreEqual ("mytest1", copy.ToolTip, "ViewState#1");
+		        Assert.AreEqual ("mytest2", copy.Target, "ViewState#2");
+		        Assert.AreEqual (Color.Red, copy.BackColor, "ViewState#3");
+		        Assert.AreEqual (Color.Red, copy.BorderColor , "ViewState#4");
+		        Assert.AreEqual (BorderStyle.Dotted, copy.BorderStyle, "ViewState#5");
+		        Assert.AreEqual (Unit.Pixel(1), copy.BorderWidth, "ViewState#6");
+		        Assert.AreEqual ("10pt", copy.Font.Size.ToString() , "ViewState#7");
+		        Assert.AreEqual (Color.Red, copy.ForeColor, "ViewState#8");
+		        Assert.AreEqual (Unit.Pixel(100), copy.Height, "ViewState#9");
+		        Assert.AreEqual (2, copy.MaximumDynamicDisplayLevels, "ViewState#10");
+		        Assert.AreEqual (Orientation.Vertical, copy.Orientation, "ViewState#11");
+		        Assert.AreEqual ('-', copy.PathSeparator, "ViewState#12");
+		        Assert.AreEqual ("test", copy.ScrollDownImageUrl, "ViewState#13");
+		        Assert.AreEqual ("test", copy.ScrollDownText, "ViewState#14");
+		        Assert.AreEqual ("test", copy.ScrollUpImageUrl, "ViewState#15");
+		        Assert.AreEqual ("test", copy.ScrollUpText, "ViewState#16");
+		        Assert.AreEqual ("test", copy.SkipLinkText, "ViewState#17");
+		        Assert.AreEqual (1, copy.TabIndex, "ViewState#18");
+		        Assert.AreEqual (false, copy.Visible, "ViewState#19");
+		        Assert.AreEqual (Unit.Pixel (100), copy.Width, "ViewState#20");
 
 		}
-		/// <summary>
-		///  Rendering Menu controll with some possible options, styles and items
-		/// </summary>
+		 
+		 // Rendering Menu controll with some possible options, styles and items
+		 
+
 		[Test]
 		[Category ("NunitWeb")]
 		[Category ("NotWorking")]  //Must be running after hosting bug resolve
 		public void Menu_DefaultRender ()
 		{
-			string RenderedPageHtml = Helper.Instance.RunInPage (TestDefaultRender, null);
-			string RenderedControlHtml = WebTest.GetControlFromPageHtml (RenderedPageHtml);
-			string OriginControlHtml = "";
-			Assert.AreEqual (true, WebTest.HtmlComparer (OriginControlHtml, RenderedControlHtml), "RenderDefault");
+		        string RenderedPageHtml = Helper.Instance.RunInPage (TestDefaultRender, null);
+		        string RenderedControlHtml = WebTest.GetControlFromPageHtml (RenderedPageHtml);
+		        string OriginControlHtml = "";
+		        Assert.AreEqual (true, WebTest.HtmlComparer (OriginControlHtml, RenderedControlHtml), "RenderDefault");
+			
 		}
-		/// <summary>
-		/// All this methods are delegates for running tests in host assembly. 
-		/// </summary>
-		static void TestDefaultRender (HttpContext c, Page p, object param)
+	
+		 // All this methods are delegates for running tests in host assembly. 
+		 
+		public static void TestDefaultRender (HttpContext c, Page p, object param)
 		{
-			LiteralControl lcb = new LiteralControl (WebTest.BEGIN_TAG);
-			LiteralControl lce = new LiteralControl (WebTest.END_TAG);
-			Menu menu = new Menu ();
-			p.Form.Controls.Add (lcb);
-			p.Form.Controls.Add (menu);
-			p.Form.Controls.Add (lce);
+		        LiteralControl lcb = new LiteralControl (WebTest.BEGIN_TAG);
+		        LiteralControl lce = new LiteralControl (WebTest.END_TAG);
+		        Menu menu = new Menu ();
+		        p.Form.Controls.Add (lcb);
+		        p.Form.Controls.Add (menu);
+		        p.Form.Controls.Add (lce);
 		}
-		[Test]
+	  	[Test]
 		[Category ("NunitWeb")]
 		[Category ("NotWorking")]  //Must be running after hosting bug resolve
+		//[Category ("StucksOnMono")]
 		public void Menu_ItemsRender ()
 		{
-			string RenderedPageHtml = Helper.Instance.RunInPage (TestItemsRender, null);
-			string RenderedControlHtml = WebTest.GetControlFromPageHtml (RenderedPageHtml);
-			string OriginControlHtml = @"<a href=""#ctl01_SkipLink""><img alt=""Skip Navigation Links"" src=""/NunitWeb/WebResource.axd?d=gZrz8lvSQfolS1pG07HX9g2&amp;t=632784640484505569"" width=""0"" height=""0"" border=""0"" />
-                                                     </a><table id=""ctl01"" cellpadding=""0"" cellspacing=""0"" border=""0"">
-	                                             <tr onmouseover=""Menu_HoverStatic(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(event)"" id=""ctl01n0"">
+			//Thread.Sleep (1000);
+		        string RenderedPageHtml = Helper.Instance.RunInPage (TestItemsRender, null);
+		        string RenderedControlHtml = WebTest.GetControlFromPageHtml (RenderedPageHtml);
+		        string OriginControlHtml = @"<a href=""#ctl01_SkipLink""><img alt=""Skip Navigation Links"" src=""/NunitWeb/WebResource.axd?d=gZrz8lvSQfolS1pG07HX9g2&amp;t=632784640484505569"" width=""0"" height=""0"" border=""0"" />
+		                                     </a><table id=""ctl01"" cellpadding=""0"" cellspacing=""0"" border=""0"">
+		                                     <tr onmouseover=""Menu_HoverStatic(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(event)"" id=""ctl01n0"">
 		                                     <td><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
-			                             <tr>
-				                     <td nowrap=""nowrap"" width=""100%""><a href=""javascript:__doPostBack('ctl01','value1')"">root</a></td><td width=""0"">
-                                                     <img src=""/NunitWeb/WebResource.axd?d=jEQEPhExqNH3fus0nmWZ3pFNw-rGIVoBqrGqFcOqB1U1&amp;t=632784640484505569"" alt=""Expand root"" valign=""middle"" /></td>
-			                             </tr>
-		                                     </table></td>
-	                                             </tr>
-                                                     </table><div id=""ctl01n0Items"" style=""display:none;"">
-	                                             <table border=""0"" cellpadding=""0"" cellspacing=""0"">
-		                                     <tr onmouseover=""Menu_HoverDynamic(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(event)"" id=""ctl01n1"">
-			                             <td><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
-				                     <tr>
-				                     <td nowrap=""nowrap"" width=""100%""><a href=""javascript:__doPostBack('ctl01','value1\\value2')"">node1</a></td>
-				                     </tr>
-			                             </table></td>
-		                                     </tr><tr onmouseover=""Menu_HoverDynamic(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(event)"" id=""ctl01n2"">
-			                             <td><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
-				                     <tr>
-					             <td nowrap=""nowrap"" width=""100%""><a href=""javascript:__doPostBack('ctl01','value1\\value3')"">node2</a></td>
-				                     </tr>
-			                             </table></td>
+		                                     <tr>
+		                                     <td nowrap=""nowrap"" width=""100%""><a href=""javascript:__doPostBack('ctl01','value1')"">root</a></td><td width=""0"">
+		                                     <img src=""/NunitWeb/WebResource.axd?d=jEQEPhExqNH3fus0nmWZ3pFNw-rGIVoBqrGqFcOqB1U1&amp;t=632784640484505569"" alt=""Expand root"" valign=""middle"" /></td>
 		                                     </tr>
-	                                             </table><div id=""ctl01n0ItemsUp"" onmouseover=""PopOut_Up(this)"" onmouseout=""PopOut_Stop(this)"" align=""center"" style=""display:none;"">
+		                                     </table></td>
+		                                     </tr>
+		                                     </table><div id=""ctl01n0Items"" style=""display:none;"">
+		                                     <table border=""0"" cellpadding=""0"" cellspacing=""0"">
+		                                     <tr onmouseover=""Menu_HoverDynamic(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(event)"" id=""ctl01n1"">
+		                                     <td><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
+		                                     <tr>
+		                                     <td nowrap=""nowrap"" width=""100%""><a href=""javascript:__doPostBack('ctl01','value1\\value2')"">node1</a></td>
+		                                     </tr>
+		                                     </table></td>
+		                                     </tr><tr onmouseover=""Menu_HoverDynamic(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(event)"" id=""ctl01n2"">
+		                                     <td><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
+		                                     <tr>
+		                                     <td nowrap=""nowrap"" width=""100%""><a href=""javascript:__doPostBack('ctl01','value1\\value3')"">node2</a></td>
+		                                     </tr>
+		                                     </table></td>
+		                                     </tr>
+		                                     </table><div id=""ctl01n0ItemsUp"" onmouseover=""PopOut_Up(this)"" onmouseout=""PopOut_Stop(this)"" align=""center"" style=""display:none;"">
 		                                     <img src=""/NunitWeb/WebResource.axd?d=Kql4shtTcfCiKn_s1ZX6W6WIJmS2VsB7hDFw8oD-9I01&amp;t=632784640484505569"" alt=""Scroll up"" />
-	                                             </div><div id=""ctl01n0ItemsDn"" onmouseover=""PopOut_Down(this)"" onmouseout=""PopOut_Stop(this)"" align=""center"" style=""display:none;"">
+		                                     </div><div id=""ctl01n0ItemsDn"" onmouseover=""PopOut_Down(this)"" onmouseout=""PopOut_Stop(this)"" align=""center"" style=""display:none;"">
 		                                     <img src=""/NunitWeb/WebResource.axd?d=QxI-WSWnY8jfAZsv_BcOLFGj_CTJTI_bGi0dPzQPCtI1&amp;t=632784640484505569"" alt=""Scroll down"" />
-	                                             </div>
-                                                     </div><a id=""ctl01_SkipLink""></a>";
+		                                     </div>
+		                                     </div><a id=""ctl01_SkipLink""></a>";
 
-			Assert.AreEqual (true, WebTest.HtmlComparer (OriginControlHtml, RenderedControlHtml), "Render Items");
+		        Assert.AreEqual (true, WebTest.HtmlComparer (OriginControlHtml, RenderedControlHtml), "Render Items");
 		}
-		static void TestItemsRender (HttpContext c, Page p, object param)
+
+		public static void TestItemsRender (HttpContext c, Page p, object param)
 		{
-			LiteralControl lcb = new LiteralControl (WebTest.BEGIN_TAG);
-			LiteralControl lce = new LiteralControl (WebTest.END_TAG);
-			Menu menu = new Menu ();
-			MenuItem R = new MenuItem ("root", "value1");
-			MenuItem N1 = new MenuItem ("node1", "value2");
-			MenuItem N2 = new MenuItem ("node2", "value3");
-			R.ChildItems.Add (N1);
-			R.ChildItems.Add (N2);
-			menu.Items.Add (R);
-			p.Form.Controls.Add (lcb);
-			p.Form.Controls.Add (menu);
-			p.Form.Controls.Add (lce);
+		        LiteralControl lcb = new LiteralControl (WebTest.BEGIN_TAG);
+		        LiteralControl lce = new LiteralControl (WebTest.END_TAG);
+		        Menu menu = new Menu ();
+		        MenuItem R = new MenuItem ("root", "value1");
+		        MenuItem N1 = new MenuItem ("node1", "value2");
+		        MenuItem N2 = new MenuItem ("node2", "value3");
+		        R.ChildItems.Add (N1);
+		        R.ChildItems.Add (N2);
+		        menu.Items.Add (R);
+		        p.Form.Controls.Add (lcb);
+		        p.Form.Controls.Add (menu);
+		        p.Form.Controls.Add (lce);
 		}
-		// Events Stuff
+
+		 //Events Stuff
 		private bool OnDataBinding;
 		private bool OnDataBound;
 		private bool OnMenuItemClick;
@@ -709,65 +729,84 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Test]
 		public void Menu_Events ()
 		{
-			Page myPage = new Page ();
-			PokerMenu p = new PokerMenu ();
-			MenuItem I = new MenuItem ();
-			p.Items.Add (I);
-			myPage.Controls.Add(p);
+		        Page myPage = new Page ();
+		        PokerMenu p = new PokerMenu ();
+		        MenuItem I = new MenuItem ();
+		        p.Items.Add (I);
+		        myPage.Controls.Add(p);
 
 			
 		        p.Init += new EventHandler(OnInitHandler); 
-			p.DataBinding += new EventHandler (OnDataBindingHandler);
-			p.DataBound  += new EventHandler(OnDataDataBoundHandler);
-			p.PreRender += new EventHandler (OnPreRenderHandler);
-			p.MenuItemClick += new MenuEventHandler(OnMenuItemClickHandler);
-			p.MenuItemDataBound += new MenuEventHandler (OnMenuItemDataBoundHandler);
-			Assert.AreEqual (false, OnDataBinding, "BeforeOnDataBinding");
+		        p.DataBinding += new EventHandler (OnDataBindingHandler);
+		        p.DataBound  += new EventHandler(OnDataDataBoundHandler);
+		        p.MenuItemClick += new MenuEventHandler(OnMenuItemClickHandler);
+		        p.MenuItemDataBound += new MenuEventHandler (OnMenuItemDataBoundHandler);
+		        Assert.AreEqual (false, OnDataBinding, "BeforeOnDataBinding");
 		        p.DoOnDataBind (new EventArgs ());
-			Assert.AreEqual (true, OnDataBinding, "AfterOnDataBinding");
-			Assert.AreEqual (false, OnDataBound, "BeforeOnDataBound");
-			p.DoOnDataBound (new EventArgs ());
-			Assert.AreEqual (true, OnDataBound, "AfterOnDataBinding");
-			MenuEventArgs e = new MenuEventArgs (I);
-			Assert.AreEqual (false, OnMenuItemClick, "BeforeMenuItemClick");
-			p.DoOnMenuItemClick (e);
-			Assert.AreEqual (true, OnMenuItemClick, "AfterMenuItemClick");
-			Assert.AreEqual (false, OnInit, "BeforeOnInit");
-			p.DoOnInit (new EventArgs());
-			Assert.AreEqual (true, OnInit, "AfterOnInit");
-			Assert.AreEqual (false, OnMenuItemDataBound, "BeforeMenuItemDataBound");
-			p.DoMenuItemDataBound(e);
-			Assert.AreEqual (true, OnMenuItemDataBound, "AfterMenuItemDataBound");
+		        Assert.AreEqual (true, OnDataBinding, "AfterOnDataBinding");
+		        Assert.AreEqual (false, OnDataBound, "BeforeOnDataBound");
+		        p.DoOnDataBound (new EventArgs ());
+		        Assert.AreEqual (true, OnDataBound, "AfterOnDataBinding");
+		        MenuEventArgs e = new MenuEventArgs (I);
+		        Assert.AreEqual (false, OnMenuItemClick, "BeforeMenuItemClick");
+		        p.DoOnMenuItemClick (e);
+		        Assert.AreEqual (true, OnMenuItemClick, "AfterMenuItemClick");
+		        Assert.AreEqual (false, OnInit, "BeforeOnInit");
+		        p.DoOnInit (new EventArgs());
+		        Assert.AreEqual (true, OnInit, "AfterOnInit");
+		        Assert.AreEqual (false, OnMenuItemDataBound, "BeforeMenuItemDataBound");
+		        p.DoMenuItemDataBound(e);
+		        Assert.AreEqual (true, OnMenuItemDataBound, "AfterMenuItemDataBound");
 		}
 		[Test]
 		public void Menu_BubbleEvent()
 		{
-			PokerMenu pm = new PokerMenu ();
-			CommandEventArgs commandarg = new CommandEventArgs (Menu.MenuItemClickCommandName, null);
-			Assert.AreEqual (true, pm.DoOnBubbleEvent (commandarg), "Bubble Event#1");
-			Assert.AreEqual (false, pm.DoOnBubbleEvent (new EventArgs ()), "Bubble Event#2");
+		        PokerMenu pm = new PokerMenu ();
+		        CommandEventArgs commandarg = new CommandEventArgs (Menu.MenuItemClickCommandName, null);
+		        Assert.AreEqual (true, pm.DoOnBubbleEvent (commandarg), "Bubble Event#1");
+		        Assert.AreEqual (false, pm.DoOnBubbleEvent (new EventArgs ()), "Bubble Event#2");
 		}
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]  //Must be running after hosting bug resolve
+		// [Category ("NotWorking")]  //Must be running after hosting bug resolve
 		public void Menu_PreRenderEvent ()
 		{
-			Helper.Instance.RunInPage (PreRenderEvent, null);
+		        Helper.Instance.RunInPage (PreRenderEvent, null);
 		}
 		public void PreRenderEvent (HttpContext c, Page p, object param)
 		{
-			PokerMenu pm = new PokerMenu ();
-			MenuItem I = new MenuItem ();
-			pm.Items.Add (I);
-			p.Controls.Add (pm);
-			Assert.AreEqual (false, OnPreRender, "BeforePreRender");
-			pm.DoOnPreRender (new EventArgs ());
-			Assert.AreEqual (true, OnPreRender, "AfterPreRender");
+		        PokerMenu pm = new PokerMenu ();
+		        p.Controls.Add (pm);
+		        pm.PreRender += new EventHandler (OnPreRenderHandler);
+		        Assert.AreEqual (false, OnPreRender, "BeforePreRender");
+		        pm.DoOnPreRender (new EventArgs ());
+		        Assert.AreEqual (true, OnPreRender, "AfterPreRender");
 		}
 		[TestFixtureTearDown]
 		public void TearDown ()
 		{
-			Helper.Unload ();
+		        Helper.Unload ();
+		}
+	
+		// A simple Template class to wrap an image.
+		public class ImageTemplate : ITemplate
+		{
+			private MyWebControl.Image myImage;
+			public MyWebControl.Image MyImage
+			{
+				get
+				{
+					return myImage;
+				}
+				set
+				{
+					myImage = value;
+				}
+			}
+			public void InstantiateIn (Control container)
+			{
+				container.Controls.Add (MyImage);
+			}
 		}
 	}
 }

@@ -88,36 +88,8 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			base.OnItemCreated (e);
 		}
-
-		// Render Method
-		public string Render ()
-		{
-			StringWriter sw = new StringWriter ();
-			HtmlTextWriter tw = new HtmlTextWriter (sw);
-			base.Render (tw);
-			return sw.ToString ();
-		}
 	}
-	// A simple Template class to wrap an image.
-	public class ImageTemplate : ITemplate
-	{
-		private MyWebControl.Image myImage;
-		public MyWebControl.Image MyImage
-		{
-			get
-			{
-				return myImage;
-			}
-			set
-			{
-				myImage = value;
-			}
-		}
-		public void InstantiateIn (Control container)
-		{
-			container.Controls.Add (MyImage);
-		}
-	}
+	
 
 	[Serializable]
 	[TestFixture]
@@ -126,7 +98,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[TestFixtureSetUp]
 		public void Set_Up ()
 		{
-			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (), "MonoTests.System.Web.UI.WebControls.Resources.Web.sitemap", "Web.sitemap");
+			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (), "Web.sitemap", "Web.sitemap");
 		}
 		[Test]
 		public void SiteMapPath_DefaultProperties ()
@@ -273,7 +245,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		/// All this methods are delegates for running tests in host assembly. 
 		/// </summary>
 		
-		static void TestDefaultRender (HttpContext c, Page p, object param)
+		public static void TestDefaultRender (HttpContext c, Page p, object param)
 		{
 			LiteralControl lcb = new LiteralControl (WebTest.BEGIN_TAG);
 			LiteralControl lce = new LiteralControl (WebTest.END_TAG);
@@ -282,7 +254,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			p.Form.Controls.Add (smp);
 			p.Form.Controls.Add (lce);
 		}
-		static void TestPropertyRender (HttpContext c, Page p, object param)
+		public static void TestPropertyRender (HttpContext c, Page p, object param)
 		{
 			SiteMapPath smp = new SiteMapPath ();
 			smp.BackColor = Color.Red;
@@ -299,7 +271,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			p.Form.Controls.Add (smp);
 			p.Form.Controls.Add (lce);
 		}
-		static void TestStylesRender (HttpContext c, Page p, object param)
+		public static void TestStylesRender (HttpContext c, Page p, object param)
 		{
 			PokerSiteMapPath smp = new PokerSiteMapPath ();
 			smp.ControlStyle.BackColor = Color.Red;
@@ -364,12 +336,12 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			NunitWeb.Helper.Instance.RunInPage (InitializeItem, null);
 		}
-		static void SiteMapRootNode (HttpContext c, Page p, object param)
+		public static void SiteMapRootNode (HttpContext c, Page p, object param)
 		{
 			PokerSiteMapPath smp = new PokerSiteMapPath ();
 			Assert.AreEqual ("root", smp.Provider.RootNode.Title, "RootNode");
 		}
-		static void InitializeItem (HttpContext c, Page p, object param)
+		public static void InitializeItem (HttpContext c, Page p, object param)
 		{
 			PokerSiteMapPath smp = new PokerSiteMapPath ();
 			SiteMapNodeItem I = new SiteMapNodeItem (0, SiteMapNodeItemType.PathSeparator);
@@ -377,7 +349,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			smp.InitilizeItems (I);
 			Assert.AreEqual (Color.Red, I.BorderColor, "InitializeItem");
 		}
-		static void SiteMapChildNode (HttpContext c, Page p, object param)
+		public static void SiteMapChildNode (HttpContext c, Page p, object param)
 		{
 			PokerSiteMapPath smp = new PokerSiteMapPath ();
 			SiteMapNodeCollection myCol = smp.Provider.GetChildNodes (smp.Provider.RootNode);
@@ -459,6 +431,27 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void TearDown ()
 		{
 			Helper.Unload ();
+		}
+		
+		// A simple Template class to wrap an image.
+		public class ImageTemplate : ITemplate
+		{
+			private MyWebControl.Image myImage;
+			public MyWebControl.Image MyImage
+			{
+				get
+				{
+					return myImage;
+				}
+				set
+				{
+					myImage = value;
+				}
+			}
+			public void InstantiateIn (Control container)
+			{
+				container.Controls.Add (MyImage);
+			}
 		}
 	}
 }
