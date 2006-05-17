@@ -494,7 +494,7 @@ namespace Mono.CSharp
 			// <summary>
 			//   Merges a child branching.
 			// </summary>
-			public UsageVector MergeChild (UsageVector child, bool implicit_block)
+			public UsageVector MergeChild (UsageVector child, bool overwrite)
 			{
 				Report.Debug (2, "    MERGING CHILD EFFECTS", this, child, reachability, Type);
 
@@ -519,7 +519,7 @@ namespace Mono.CSharp
 				MyBitVector.Or (ref locals, child.locals);
 				MyBitVector.Or (ref parameters, child.parameters);
 
-				if (implicit_block)
+				if (overwrite)
 					reachability = new_r.Clone ();
 				else
 					reachability.Or (new_r);
@@ -630,9 +630,10 @@ namespace Mono.CSharp
 		// </summary>
 		public UsageVector MergeChild (FlowBranching child)
 		{
-			bool implicit_block = child.Type == BranchingType.Block && child.Block.Implicit;
+			bool overwrite = child.Type == BranchingType.Labeled ||
+				(child.Type == BranchingType.Block && child.Block.Implicit);
 			Report.Debug (2, "  MERGING CHILD", this, child);
-			UsageVector result = CurrentUsageVector.MergeChild (child.Merge (), implicit_block);
+			UsageVector result = CurrentUsageVector.MergeChild (child.Merge (), overwrite);
 			Report.Debug (2, "  MERGING CHILD DONE", this, result);
 			return result;
  		}
@@ -806,6 +807,7 @@ namespace Mono.CSharp
 			: base (parent, BranchingType.Labeled, SiblingType.Conditional, null, stmt.loc)
 		{
 			this.stmt = stmt;
+			CurrentUsageVector.MergeOrigins (stmt.JumpOrigins);
 		}
 
 		public override LabeledStatement LookupLabel (string name, Location loc)

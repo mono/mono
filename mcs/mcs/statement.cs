@@ -734,8 +734,6 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
-			ec.CurrentBranching.CurrentUsageVector.MergeOrigins (vectors);
-
 			// this flow-branching will be terminated when the surrounding block ends
 			ec.StartFlowBranching (this);
 			return true;

@@ -1,3 +1,10 @@
+2006-05-17  Raja R Harinath  <rharinath@novell.com>
+
+	* statement.cs (LabeledStatement.Resolve): Move merging of origins ...
+	* flowanalysis.cs (FlowBranchingLabeled): ... here.
+	(FlowBranching.MergeChild): Overwrite
+	reachability information from Labeled branchings too.
+
 2006-05-16  Raja R Harinath  <rharinath@novell.com>
 
 	* statement.cs (Goto.Resolve): Merge jump origins here ...
