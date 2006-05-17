@@ -187,11 +187,11 @@ namespace System.Drawing
 		{				
 			IntPtr bmp;			
    			Status status = GDIPlus.GdipCloneBitmapAreaI(rect.X, rect.Top, rect.Width, rect.Height,
-                               PixelFormat, nativeObject,  out bmp);
+                               format, nativeObject,  out bmp);
                                
 			GDIPlus.CheckStatus (status);
 
-			Bitmap bmpnew = new Bitmap (rect.Width, rect.Height,  PixelFormat, bmp);
+			Bitmap bmpnew = new Bitmap (rect.Width, rect.Height,  format, bmp);
        			return bmpnew;
        		}
 		
@@ -199,10 +199,10 @@ namespace System.Drawing
 		{
 			IntPtr bmp;			
    			Status status = GDIPlus.GdipCloneBitmapArea (rect.X, rect.Top, rect.Width, rect.Height,
-                               PixelFormat, nativeObject,  out bmp);
+                               format, nativeObject,  out bmp);
 			GDIPlus.CheckStatus (status);
 
-			Bitmap bmpnew = new Bitmap (rect.Width, rect.Height,  PixelFormat, bmp);
+			Bitmap bmpnew = new Bitmap (rect.Width, rect.Height,  format, bmp);
 	       		return bmpnew;
 		}
 
