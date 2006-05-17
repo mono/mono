@@ -39,12 +39,12 @@ namespace NunitWeb
 			foreach (Assembly ass in AppDomain.CurrentDomain.GetAssemblies ())
 				CopyAssembly (ass, binDir);
 
-			CopyResource (Assembly.GetExecutingAssembly (), "NunitWeb.Resources.Web.config", "Web.config");
-			CopyResource (Assembly.GetExecutingAssembly (), "NunitWeb.Resources.MyPage.aspx", "MyPage.aspx");
-			CopyResource (Assembly.GetExecutingAssembly (), "NunitWeb.Resources.MyPage.aspx.cs", "MyPage.aspx.cs");
-			CopyResource (Assembly.GetExecutingAssembly (), "NunitWeb.Resources.MyPageWithMaster.aspx", "MyPageWithMaster.aspx");
-			CopyResource (Assembly.GetExecutingAssembly (), "NunitWeb.Resources.MyPageWithMaster.aspx.cs", "MyPageWithMaster.aspx.cs");
-			CopyResource (Assembly.GetExecutingAssembly (), "NunitWeb.Resources.My.master", "My.master");
+			CopyResource (Assembly.GetExecutingAssembly (), "Web.config", "Web.config");
+			CopyResource (Assembly.GetExecutingAssembly (), "MyPage.aspx", "MyPage.aspx");
+			CopyResource (Assembly.GetExecutingAssembly (), "MyPage.aspx.cs", "MyPage.aspx.cs");
+			CopyResource (Assembly.GetExecutingAssembly (), "MyPageWithMaster.aspx", "MyPageWithMaster.aspx");
+			CopyResource (Assembly.GetExecutingAssembly (), "MyPageWithMaster.aspx.cs", "MyPageWithMaster.aspx.cs");
+			CopyResource (Assembly.GetExecutingAssembly (), "My.master", "My.master");
 
 			host = (MyHost) ApplicationHost.CreateApplicationHost (typeof (MyHost), VIRTUAL_BASE_DIR, baseDir);
 
