@@ -360,6 +360,11 @@ namespace System.Windows.Forms
 			
 			dc.DrawRectangle (ResPool.GetPen (focus_color), button.ClientRectangle.X, button.ClientRectangle.Y, 
 					  button.ClientRectangle.Width - 1, button.ClientRectangle.Height - 1);
+			
+			if (button.has_focus) {
+				Rectangle rect = Rectangle.Inflate (button.ClientRectangle, -4, -4);
+				ControlPaint.DrawFocusRectangle (dc, rect);
+			}
 		}
 		
 		protected virtual void ButtonBase_DrawText(ButtonBase button, Graphics dc)
