@@ -106,7 +106,16 @@ namespace System.Drawing
 			
 			if (!ht.ContainsKey (img)) {
 				AnimateEventArgs evtArgs = new AnimateEventArgs (img);
-				WorkerThread WT = new WorkerThread(onFrameChangeHandler, evtArgs);
+				int delay;
+				try {
+					PropertyItem item = img.GetPropertyItem (0x5100); // FrameDelay in libgdiplus
+					// Time is in 1/100th of a second
+					delay = (item.Value [0] + item.Value [1] * 256) * 10;
+				} catch {
+					delay = 200;
+				}
+
+				WorkerThread WT = new WorkerThread (onFrameChangeHandler, evtArgs, delay);
 				ThreadStart TS = new ThreadStart(WT.LoopHandler);	
 				Thread thread = new Thread(TS);
 				thread.IsBackground = true;
@@ -185,34 +194,30 @@ namespace System.Drawing
 
 	class WorkerThread
 	{
-		private EventHandler frameChangeHandler;
-		private AnimateEventArgs animateEventArgs;
+		EventHandler frameChangeHandler;
+		AnimateEventArgs animateEventArgs;
+		int delay;
 				
-		public WorkerThread(EventHandler frmChgHandler, AnimateEventArgs aniEvtArgs)
+		public WorkerThread (EventHandler frmChgHandler, AnimateEventArgs aniEvtArgs, int delay)
 		{
 			frameChangeHandler = frmChgHandler;
 			animateEventArgs = aniEvtArgs;
+			this.delay = delay;
 		}
     
 		public void LoopHandler()
 		{
-			try
-			{
+			try {
 				while (true) {
-					//Need a way to get the delay during animation
-					Thread.Sleep (100);
+					Thread.Sleep (delay);
 					frameChangeHandler (null, animateEventArgs);
 				}				
-			}
-			catch(ThreadAbortException)
-			{ 
-				//lets not bother ourselves with tae
-				//it will be thrown anyway
-			}
-			catch(Exception er)
-			{
+			} catch (ThreadAbortException) { 
+				Thread.ResetAbort (); // we're going to finish anyway
+			} catch (Exception er) {
 				throw er;
 			}
 		}
 	}
 }
+

@@ -1,3 +1,8 @@
+2006-05-17 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ImageAnimator.cs: get the FrameDelay from the image properties, if
+	available. Remove ^Ms.
+
 2006-05-17  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* Pen.cs: Get the pen color from the solid brush (when applicable). 
