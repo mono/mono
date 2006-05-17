@@ -294,7 +294,7 @@ void GC_restart_handler(int sig)
 /* world is stopped.  Should not fail if it isn't.			*/
 void GC_push_all_stacks()
 {
-    gc_thread_vtable->push_all_stacks();
+    pthread_push_all_stacks();
 }
 
 /* There seems to be a very rare thread stopping problem.  To help us  */
@@ -353,7 +353,7 @@ static void pthread_stop_world()
     #if DEBUG_THREADS
     GC_printf1("Stopping the world from 0x%lx\n", pthread_self());
     #endif
-       
+
     n_live_threads = GC_suspend_all();
 
       if (GC_retry_signals) {
@@ -412,7 +412,10 @@ void GC_stop_world()
       /* We should have previously waited for it to become zero. */
 #   endif /* PARALLEL_MARK */
     ++GC_stop_count;
-    gc_thread_vtable->stop_world ();
+    if (gc_thread_vtable && gc_thread_vtable->stop_world)
+	gc_thread_vtable->stop_world ();
+    else
+	pthread_stop_world ();
 #   ifdef PARALLEL_MARK
       GC_release_mark_lock();
 #   endif
@@ -478,7 +481,10 @@ static void pthread_start_world()
 
 void GC_start_world()
 {
-    gc_thread_vtable->start_world();
+    if (gc_thread_vtable && gc_thread_vtable->start_world)
+	gc_thread_vtable->start_world();
+    else
+	pthread_start_world ();
 }
 
 static void pthread_stop_init() {
@@ -527,20 +533,28 @@ static void pthread_stop_init() {
 /* We hold the allocation lock.	*/
 void GC_stop_init()
 {
-    gc_thread_vtable->initialize ();
+    if (gc_thread_vtable && gc_thread_vtable->initialize)
+	gc_thread_vtable->initialize ();
+    else
+	pthread_stop_init ();
 }
 
-/*
- * This is used by the Mono Debugger to stop/start the world.
- */
-GCThreadFunctions pthread_thread_vtable = {
-    pthread_stop_init,
- 
-    pthread_stop_world,
-    pthread_push_all_stacks,
-    pthread_start_world
-};
+GCThreadFunctions *gc_thread_vtable = NULL;
 
-GCThreadFunctions *gc_thread_vtable = &pthread_thread_vtable;
+void
+GC_mono_debugger_add_all_threads (void)
+{
+    GC_thread p;
+    int i;
+
+    if (gc_thread_vtable && gc_thread_vtable->thread_created) {
+	for (i = 0; i < THREAD_TABLE_SZ; i++) {
+	    for (p = GC_threads[i]; p != 0; p = p -> next) {
+		gc_thread_vtable->thread_created (p->id, &p->stop_info.stack_ptr);
+	    }
+	}
+    }
+}
+
 
 #endif

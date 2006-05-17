@@ -663,8 +663,7 @@ GC_thread GC_new_thread(pthread_t id)
     	result = &first_thread;
     	first_thread_used = TRUE;
     } else {
-        result = (struct GC_Thread_Rep *)
-        	 GC_INTERNAL_MALLOC(sizeof(struct GC_Thread_Rep), NORMAL);
+	result = calloc (1, sizeof (struct GC_Thread_Rep));
     }
     if (result == 0) return(0);
     result -> id = id;
@@ -692,7 +691,9 @@ void GC_delete_thread(pthread_t id)
     } else {
         prev -> next = p -> next;
     }
-    GC_INTERNAL_FREE(p);
+    if (gc_thread_vtable && gc_thread_vtable->thread_exited)
+	gc_thread_vtable->thread_exited (id, &p->stop_info.stack_ptr);
+    free(p);
 }
 
 /* If a thread has been joined, but we have not yet		*/
@@ -714,7 +715,7 @@ void GC_delete_gc_thread(pthread_t id, GC_thread gc_id)
     } else {
         prev -> next = p -> next;
     }
-    GC_INTERNAL_FREE(p);
+    free(p);
 }
 
 /* Return a GC_thread corresponding to a given pthread_t.	*/
@@ -767,7 +768,7 @@ void GC_remove_all_threads_but_me(void)
 	      GC_destroy_thread_local(p);
 	    }
 #	  endif /* THREAD_LOCAL_ALLOC */
-	  if (p != &first_thread) GC_INTERNAL_FREE(p);
+	    if (p != &first_thread) free(p);
 	}
       }
       GC_threads[hv] = me;
@@ -969,6 +970,8 @@ void GC_thr_init()
          t -> stop_info.stack_ptr = (ptr_t)(&dummy);
 #     endif
       t -> flags = DETACHED | MAIN_THREAD;
+      if (gc_thread_vtable && gc_thread_vtable->thread_created)
+        gc_thread_vtable->thread_created (pthread_self (), &t->stop_info.stack_ptr);
 
     GC_stop_init();
 
@@ -1274,6 +1277,8 @@ void * GC_start_routine_head(void * arg, void *base_addr,
       /* This is also < 100% convincing.  We should also read this 	*/
       /* from /proc, but the hook to do so isn't there yet.		*/
 #   endif /* IA64 */
+    if (gc_thread_vtable && gc_thread_vtable->thread_created)
+	gc_thread_vtable->thread_created (my_pthread, &me->stop_info.stack_ptr);
     UNLOCK();
 
     if (start) *start = si -> start_routine;
@@ -1356,8 +1361,7 @@ WRAP_FUNC(pthread_create)(pthread_t *new_thread,
     /* responsibility.							*/
 
     LOCK();
-    si = (struct start_info *)GC_INTERNAL_MALLOC(sizeof(struct start_info),
-						 NORMAL);
+    si = calloc (1, sizeof (struct start_info));
     UNLOCK();
     if (!parallel_initialized) GC_init_parallel();
     if (0 == si) return(ENOMEM);
@@ -1417,7 +1421,7 @@ WRAP_FUNC(pthread_create)(pthread_t *new_thread,
     }
     sem_destroy(&(si -> registered));
     LOCK();
-    GC_INTERNAL_FREE(si);
+    free(si);
     UNLOCK();
 
     return(result);
