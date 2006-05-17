@@ -1,3 +1,7 @@
+2006-05-17 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TestBmpCodec.cs: Bitmap24bitFeatures works now.
+
 2006-04-25  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* TestBmpCodec.cs: Marked the 24bit test as not working until
