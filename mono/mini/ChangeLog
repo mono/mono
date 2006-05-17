@@ -1,3 +1,11 @@
+2006-05-17  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.c
+	(debugger_thread_vtable): Moved here from ../metadata/threads.c.
+	(debugger_init_threads): Formerly known as mono_debugger_init_threads().
+	(debugger_finalize_threads): Formaly known as mono_debugger_finalize_threads().
+	(debugger_attach): Call GC_mono_debugger_add_all_threads().
+
 2006-05-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mini_init): Call pthread_attr_destroy () to fix a small memory leak.
