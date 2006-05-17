@@ -1,5 +1,9 @@
 2006-05-17  Alexander Olk  <alex.olk@googlemail.com>
 
+	* Mime.cs: Shrink the mime file cache correctly.
+
+2006-05-17  Alexander Olk  <alex.olk@googlemail.com>
+
 	* ThemeWin32Classic.cs: Readded button focus drawing code. (#78429)
 
 2006-05-16  Peter Dennis Bartok  <pbartok@novell.com>

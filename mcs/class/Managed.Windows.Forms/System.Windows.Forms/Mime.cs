@@ -177,17 +177,19 @@ namespace System.Windows.Forms
 			GoByFileName( );
 //			}
 			
-//			if ( !mime_file_cache.ContainsKey( current_file_name ) )
 			mime_file_cache.Add( current_file_name, global_result );
 			
-			// not tested
-			if ( mime_file_cache.Count > mime_file_cache_max_size )
-			{
-				IEnumerator enumerator = mime_file_cache.GetEnumerator( );
+			if (mime_file_cache.Count > mime_file_cache_max_size) {
+				IEnumerator enumerator = mime_file_cache.GetEnumerator ();
 				
-				for ( int i = 0; i < mime_file_cache_max_size - 1000; i++ )
-				{
-					mime_file_cache.Remove( enumerator.Current.ToString( ) );
+				int counter = mime_file_cache_max_size - 1000;
+				
+				while (enumerator.MoveNext ()) {
+					mime_file_cache.Remove (enumerator.Current.ToString ());
+					counter--;
+					
+					if (counter == 0)
+						break;
 				}
 			}
 		}
