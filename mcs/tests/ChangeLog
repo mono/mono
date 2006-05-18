@@ -1,3 +1,9 @@
+2006-05-18  Raja R Harinath  <rharinath@novell.com>
+
+	* test-514.cs: New test from #76148.
+	* test-515.cs, test-516.cs: New tests based on #77755.
+	* test-517.cs: New test based on #75255.
+
 2006-05-17  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* test-513.cs: New test for bug #78407.

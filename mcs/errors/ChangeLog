@@ -1,3 +1,9 @@
+2006-05-18  Raja R Harinath  <rharinath@novell.com>
+
+	* cs0162-6.cs, cs0162-7.cs: New tests for unreachable code.
+	Emitting the warning on cs0162-7.cs needs a multi-pass algorithm.
+	* cs0165-12.cs: New test from #77869.
+
 2006-05-11  Raja R Harinath  <rharinath@novell.com>
 
 	* cs0177-7.cs: Taken from erroneous sub-test in tests/test-154.cs.

@@ -1,3 +1,20 @@
+2006-05-18  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #77869, #76148, #77755, #75255 and a host of other bugs.
+	This is still "wrong", but anything better would probably need a
+	multi-pass algorithm.
+	* flowanalysis.cs (FlowBranchingLabeled): Salt away a copy of the
+	usage vector.  Force current usage vector to be reachable, to
+	optimistically signify backward jumps.
+	(FlowBranchingLabeled.LookupLabel): Note if a backward jump is
+	detected.
+	(FlowBranchingLabeled.Merge): New.  If no backward jump was
+	detected, return the original salted-away usage vector instead,
+	updated with appropriate changes.  Print unreachable warning if
+	necessary.
+	* statement.cs (Block.Resolve): Don't print unreachable warning on
+	a labeled statement.
+
 2006-05-17  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* driver.cs: Pass filename without path to AssemblyBuilder's 

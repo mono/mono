@@ -1915,7 +1915,7 @@ namespace Mono.CSharp {
 					if (s is Block)
 						((Block) s).unreachable = true;
 
-					if (!unreachable_shown) {
+					if (!unreachable_shown && !(s is LabeledStatement)) {
 						Report.Warning (162, 2, s.loc, "Unreachable code detected");
 						unreachable_shown = true;
 					}

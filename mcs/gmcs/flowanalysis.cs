@@ -802,12 +802,20 @@ namespace Mono.CSharp
 
 	public class FlowBranchingLabeled : FlowBranchingBlock
 	{
+		bool unreachable, backward_jump;
 		LabeledStatement stmt;
+		UsageVector actual;
+
 		public FlowBranchingLabeled (FlowBranching parent, LabeledStatement stmt)
 			: base (parent, BranchingType.Labeled, SiblingType.Conditional, null, stmt.loc)
 		{
 			this.stmt = stmt;
 			CurrentUsageVector.MergeOrigins (stmt.JumpOrigins);
+			actual = CurrentUsageVector.Clone ();
+			unreachable = actual.Reachability.IsUnreachable;
+
+			// stand-in for backward jumps
+			CurrentUsageVector.Reachability.Meet (Reachability.Always ());
 		}
 
 		public override LabeledStatement LookupLabel (string name, Location loc)
@@ -815,8 +823,25 @@ namespace Mono.CSharp
 			if (name != stmt.Name)
 				return Parent.LookupLabel (name, loc);
 
+			unreachable = false;
+			backward_jump = true;
+
 			stmt.AddReference ();
 			return stmt;
+		}
+
+		protected override UsageVector Merge ()
+		{
+			UsageVector vector = base.Merge ();
+
+			if (unreachable)
+				Report.Warning (162, 2, stmt.loc, "Unreachable code detected");
+
+			if (backward_jump)
+				return vector;
+
+			actual.MergeChild (vector, false);
+			return actual;
 		}
 	}
 
