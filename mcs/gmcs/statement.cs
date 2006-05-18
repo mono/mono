@@ -582,7 +582,7 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		bool in_exc;
+		bool unwind_protect;
 
 		public override bool Resolve (EmitContext ec)
 		{
@@ -624,8 +624,8 @@ namespace Mono.CSharp {
 			}
 
 			int errors = Report.Errors;
-			in_exc = ec.CurrentBranching.AddReturnOrigin (ec.CurrentBranching.CurrentUsageVector, loc);
-			if (in_exc)
+			unwind_protect = ec.CurrentBranching.AddReturnOrigin (ec.CurrentBranching.CurrentUsageVector, loc);
+			if (unwind_protect)
 				ec.NeedReturnLabel ();
 			ec.CurrentBranching.CurrentUsageVector.Return ();
 			return errors == Report.Errors;
@@ -636,11 +636,11 @@ namespace Mono.CSharp {
 			if (Expr != null) {
 				Expr.Emit (ec);
 
-				if (in_exc)
+				if (unwind_protect)
 					ec.ig.Emit (OpCodes.Stloc, ec.TemporaryReturn ());
 			}
 
-			if (in_exc)
+			if (unwind_protect)
 				ec.ig.Emit (OpCodes.Leave, ec.ReturnLabel);
 			else
 				ec.ig.Emit (OpCodes.Ret);
@@ -650,20 +650,14 @@ namespace Mono.CSharp {
 	public class Goto : Statement {
 		string target;
 		LabeledStatement label;
+		bool unwind_protect;
 		
 		public override bool Resolve (EmitContext ec)
 		{
-			label = ec.CurrentBranching.LookupLabel (target, loc);
-			if (label == null)
-				return false;
-
-			// If this is a forward goto.
-			if (!label.IsDefined)
-				label.AddUsageVector (ec.CurrentBranching.CurrentUsageVector);
-
+			int errors = Report.Errors;
+			unwind_protect = ec.CurrentBranching.AddGotoOrigin (ec.CurrentBranching.CurrentUsageVector, this);
 			ec.CurrentBranching.CurrentUsageVector.Goto ();
-
-			return true;
+			return errors == Report.Errors;
 		}
 		
 		public Goto (string label, Location l)
@@ -676,10 +670,18 @@ namespace Mono.CSharp {
 			get { return target; }
 		}
 
+		public void SetResolvedTarget (LabeledStatement label)
+		{
+			this.label = label;
+			label.AddReference ();
+		}
+
 		protected override void DoEmit (EmitContext ec)
 		{
+			if (label == null)
+				throw new InternalErrorException ("goto emitted before target resolved");
 			Label l = label.LabelTarget (ec);
-			ec.ig.Emit (OpCodes.Br, l);
+			ec.ig.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, l);
 		}
 	}
 
@@ -910,19 +912,19 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		bool crossing_exc;
+		bool unwind_protect;
 
 		public override bool Resolve (EmitContext ec)
 		{
 			int errors = Report.Errors;
-			crossing_exc = ec.CurrentBranching.AddBreakOrigin (ec.CurrentBranching.CurrentUsageVector, loc);
+			unwind_protect = ec.CurrentBranching.AddBreakOrigin (ec.CurrentBranching.CurrentUsageVector, loc);
 			ec.CurrentBranching.CurrentUsageVector.Goto ();
 			return errors == Report.Errors;
 		}
 
 		protected override void DoEmit (EmitContext ec)
 		{
-			ec.ig.Emit (crossing_exc ? OpCodes.Leave : OpCodes.Br, ec.LoopEnd);
+			ec.ig.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, ec.LoopEnd);
 		}
 	}
 
@@ -933,19 +935,19 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		bool crossing_exc;
+		bool unwind_protect;
 
 		public override bool Resolve (EmitContext ec)
 		{
 			int errors = Report.Errors;
-			crossing_exc = ec.CurrentBranching.AddContinueOrigin (ec.CurrentBranching.CurrentUsageVector, loc);
+			unwind_protect = ec.CurrentBranching.AddContinueOrigin (ec.CurrentBranching.CurrentUsageVector, loc);
 			ec.CurrentBranching.CurrentUsageVector.Goto ();
 			return errors == Report.Errors;
 		}
 
 		protected override void DoEmit (EmitContext ec)
 		{
-			ec.ig.Emit (crossing_exc ? OpCodes.Leave : OpCodes.Br, ec.LoopBegin);
+			ec.ig.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, ec.LoopBegin);
 		}
 	}
 

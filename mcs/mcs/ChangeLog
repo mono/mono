@@ -1,5 +1,22 @@
 2006-05-18  Raja R Harinath  <rharinath@novell.com>
 
+	Fix #77601
+	* statement.cs (Goto.Resolve): Move responsibility for resolving
+	'goto' to FlowBranching.AddGotoOrigin.
+	(Goto.SetResolvedTarget): New.  Callback to set the
+	LabeledStatement that's the target of the goto.
+	(Goto.DoEmit): Use Leave instead of Br when crossing an
+	unwind-protect boundary.
+	* flowanalysis.cs (FlowBranching.AddGotoOrigin): Rename from
+	LookupLabel and adjust to new semantics.
+	(FlowBranchingToplevel.AddGotoOrigin): Likewise.
+	(FlowBranchingBlock.AddGotoOrigin): Likewise. Use
+	Goto.SetResolvedTarget to update target.
+	(FlowBranchingLabeled.AddGotoOrigin): Likewise.
+	(FlowBranchingException.AddGotoOrigin): Rewrite to be similar to
+	AddBreakOrigin & co.  Delay propagation until ...
+	(FlowBranchingException.Merge): ... this.
+
 	* statement.cs (Block.Resolve): Always depend on flow-branching to
 	determine unreachability.  Kill workaround that originally emitted
 	only one statement after an "unreachable" label (see infloop in

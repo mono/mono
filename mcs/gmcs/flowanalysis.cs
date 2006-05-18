@@ -618,11 +618,6 @@ namespace Mono.CSharp
 
 		protected abstract void AddSibling (UsageVector uv);
 
-		public virtual LabeledStatement LookupLabel (string name, Location loc)
-		{
-			return Parent.LookupLabel (name, loc);
-		}
-
 		protected abstract UsageVector Merge ();
 
 		// <summary>
@@ -659,6 +654,12 @@ namespace Mono.CSharp
 		public virtual bool AddReturnOrigin (UsageVector vector, Location loc)
 		{
 			return Parent.AddReturnOrigin (vector, loc);
+		}
+
+		// returns true if we crossed an unwind-protected region (try/catch/finally, lock, using, ...)
+		public virtual bool AddGotoOrigin (UsageVector vector, Goto goto_stmt)
+		{
+			return Parent.AddGotoOrigin (vector, goto_stmt);
 		}
 
 		public virtual void StealFinallyClauses (ref ArrayList list)
@@ -733,14 +734,16 @@ namespace Mono.CSharp
 			sibling_list = sibling;
 		}
 
-		public override LabeledStatement LookupLabel (string name, Location loc)
+		public override bool AddGotoOrigin (UsageVector vector, Goto goto_stmt)
 		{
-			LabeledStatement stmt = Block == null ? null : Block.LookupLabel (name);
+			LabeledStatement stmt = Block == null ? null : Block.LookupLabel (goto_stmt.Target);
 			if (stmt == null)
-				return Parent.LookupLabel (name, loc);
+				return Parent.AddGotoOrigin (vector, goto_stmt);
 
-			stmt.AddReference ();
-			return stmt;
+			// forward jump
+			goto_stmt.SetResolvedTarget (stmt);
+			stmt.AddUsageVector (vector);
+			return false;
 		}
 
 		protected override UsageVector Merge ()
@@ -802,7 +805,6 @@ namespace Mono.CSharp
 
 	public class FlowBranchingLabeled : FlowBranchingBlock
 	{
-		bool unreachable, backward_jump;
 		LabeledStatement stmt;
 		UsageVector actual;
 
@@ -812,33 +814,29 @@ namespace Mono.CSharp
 			this.stmt = stmt;
 			CurrentUsageVector.MergeOrigins (stmt.JumpOrigins);
 			actual = CurrentUsageVector.Clone ();
-			unreachable = actual.Reachability.IsUnreachable;
 
 			// stand-in for backward jumps
 			CurrentUsageVector.Reachability.Meet (Reachability.Always ());
 		}
 
-		public override LabeledStatement LookupLabel (string name, Location loc)
+		public override bool AddGotoOrigin (UsageVector vector, Goto goto_stmt)
 		{
-			if (name != stmt.Name)
-				return Parent.LookupLabel (name, loc);
+			if (goto_stmt.Target != stmt.Name)
+				return Parent.AddGotoOrigin (vector, goto_stmt);
 
-			unreachable = false;
-			backward_jump = true;
+			// backward jump
+			goto_stmt.SetResolvedTarget (stmt);
+			actual.MergeOrigins (vector.Clone ());
 
-			stmt.AddReference ();
-			return stmt;
+			return false;
 		}
 
 		protected override UsageVector Merge ()
 		{
 			UsageVector vector = base.Merge ();
 
-			if (unreachable)
+			if (actual.Reachability.IsUnreachable)
 				Report.Warning (162, 2, stmt.loc, "Unreachable code detected");
-
-			if (backward_jump)
-				return vector;
 
 			actual.MergeChild (vector, false);
 			return actual;
@@ -899,22 +897,23 @@ namespace Mono.CSharp
 			// nothing to do
 		}
 
-		public override LabeledStatement LookupLabel (string name, Location loc)
+		public override bool AddGotoOrigin (UsageVector vector, Goto goto_stmt)
 		{
+			string name = goto_stmt.Target;
 			LabeledStatement s = Block.LookupLabel (name);
 			if (s != null)
 				throw new InternalErrorException ("Shouldn't get here");
 
-			if (Parent != null) {
-				s = Parent.LookupLabel (name, loc);
-				if (s != null) {
-					Report.Error (1632, loc, "Control cannot leave the body of an anonymous method");
-					return null;
-				}
+			if (Parent == null) {
+				Report.Error (159, goto_stmt.loc, "No such label `{0}' in this scope", name);
+				return false;
 			}
 
-			Report.Error (159, loc, "No such label `{0}' in this scope", name);
-			return null;
+			int errors = Report.Errors;
+			Parent.AddGotoOrigin (vector, goto_stmt);
+			if (errors == Report.Errors)
+				Report.Error (1632, goto_stmt.loc, "Control cannot leave the body of an anonymous method");
+			return false;
 		}
 
 		public Reachability End ()
@@ -940,6 +939,20 @@ namespace Mono.CSharp
 		UsageVector break_origins;
 		UsageVector continue_origins;
 		UsageVector return_origins;
+		GotoOrigin goto_origins;
+
+		class GotoOrigin {
+			public GotoOrigin Next;
+			public Goto GotoStmt;
+			public UsageVector Vector;
+
+			public GotoOrigin (UsageVector vector, Goto goto_stmt, GotoOrigin next)
+			{
+				Vector = vector;
+				GotoStmt = goto_stmt;
+				Next = next;
+			}
+		}
 
 		bool emit_finally;
 
@@ -1023,6 +1036,19 @@ namespace Mono.CSharp
 			return true;
 		}
 
+		public override bool AddGotoOrigin (UsageVector vector, Goto goto_stmt)
+		{
+			LabeledStatement s = current_vector.Block == null ? null : current_vector.Block.LookupLabel (goto_stmt.Target);
+			if (s != null)
+				throw new InternalErrorException ("Shouldn't get here");
+
+			if (finally_vector != null)
+				Report.Error (157, goto_stmt.loc, "Control cannot leave the body of a finally clause");
+			else
+				goto_origins = new GotoOrigin (vector.Clone (), goto_stmt, goto_origins);
+			return true;
+		}
+
 		public override void StealFinallyClauses (ref ArrayList list)
 		{
 			if (list == null)
@@ -1034,23 +1060,6 @@ namespace Mono.CSharp
 
 		public bool EmitFinally {
 			get { return emit_finally; }
-		}
-
-		public override LabeledStatement LookupLabel (string name, Location loc)
-		{
-			if (current_vector.Block == null)
-				return base.LookupLabel (name, loc);
-
-			LabeledStatement s = current_vector.Block.LookupLabel (name);
-			if (s != null)
-				return s;
-
-			if (finally_vector != null) {
-				Report.Error (157, loc, "Control cannot leave the body of a finally clause");
-				return null;
-			}
-
-			return base.LookupLabel (name, loc);
 		}
 
 		protected override UsageVector Merge ()
@@ -1081,6 +1090,13 @@ namespace Mono.CSharp
 					origin.MergeChild (finally_vector, false);
 				if (!origin.Reachability.IsUnreachable)
 					Parent.AddReturnOrigin (origin, origin.Location);
+			}
+
+			for (GotoOrigin origin = goto_origins; origin != null; origin = origin.Next) {
+				if (finally_vector != null)
+					origin.Vector.MergeChild (finally_vector, false);
+				if (!origin.Vector.Reachability.IsUnreachable)
+					Parent.AddGotoOrigin (origin.Vector, origin.GotoStmt);
 			}
 
 			return vector;
