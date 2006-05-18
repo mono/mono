@@ -1614,7 +1614,7 @@ namespace System.Windows.Forms
 				}
 			}
 			
-			if (item.Focused) {				
+			if (item.Focused && control.item_control.Focused) {				
 				Rectangle focus_rect = text_rect;
 				if (control.FullRowSelect && control.View == View.Details) {
 					int width = 0;

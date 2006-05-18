@@ -328,8 +328,6 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public ListViewItem FocusedItem {
 			get {
-				if (focused_item == null && Focused && items.Count > 0)
-					focused_item = items [0];
 				return focused_item;
 			}
 		}
@@ -1240,6 +1238,8 @@ namespace System.Windows.Forms
 				MouseHover += new EventHandler(ItemsMouseHover);
 				MouseUp += new MouseEventHandler(ItemsMouseUp);
 				MouseWheel += new MouseEventHandler(ItemsMouseWheel);
+				GotFocus += new EventHandler (FocusChanged);
+				LostFocus += new EventHandler (FocusChanged);
 			}
 
 			void ItemsDoubleClick (object sender, EventArgs e)
@@ -1425,8 +1425,6 @@ namespace System.Windows.Forms
 					else if (me.Clicks == 1 && clicked_item != null)
 						owner.OnClick (EventArgs.Empty);
 				} else {
-					if (owner.FocusedItem == null)
-						owner.SetFocusedItem (owner.Items [0]);
 					if (owner.MultiSelect) {
 						Keys mods = XplatUI.State.ModifierKeys;
 						if ((mods & Keys.Shift) != 0)
@@ -1548,6 +1546,17 @@ namespace System.Windows.Forms
 					owner.Scroll (owner.h_scroll, -owner.Items [0].Bounds.Width * lines);
 					break;
 				}
+			}
+
+			void FocusChanged (object o, EventArgs args)
+			{
+				if (owner.Items.Count == 0)
+					return;
+
+				if (owner.FocusedItem == null)
+					owner.SetFocusedItem (owner.Items [0]);
+
+				Invalidate (owner.FocusedItem.Bounds);
 			}
 
 			internal override void OnPaintInternal (PaintEventArgs pe)
