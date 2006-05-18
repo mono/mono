@@ -887,9 +887,6 @@ GC_API void (*GC_is_valid_displacement_print_proc)
 GC_API void (*GC_is_visible_print_proc)
 	GC_PROTO((GC_PTR p));
 
-#define _IN_LIBGC_GC_H
-#include "libgc-mono-debugger.h"
-
 /* For pthread support, we generally need to intercept a number of 	*/
 /* thread library calls.  We do that here by macro defining them.	*/
 
@@ -901,6 +898,9 @@ GC_API void (*GC_is_visible_print_proc)
 # include <gc/gc_pthread_redirects.h>
 #endif
 #endif
+
+#define _IN_LIBGC_GC_H
+#include "libgc-mono-debugger.h"
 
 # if defined(PCR) || defined(GC_SOLARIS_THREADS) || \
      defined(GC_PTHREADS) || defined(GC_WIN32_THREADS)

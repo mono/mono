@@ -2818,6 +2818,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 	offset = code - cfg->native_code;
 
+	mono_debug_open_block (cfg, bb, offset);
+
 	ins = bb->code;
 	while (ins) {
 		offset = code - cfg->native_code;
@@ -5463,7 +5465,7 @@ mono_arch_instrument_epilog (MonoCompile *cfg, void *func, void *p, gboolean ena
 		save_mode = SAVE_XMM;
 		break;
 	case MONO_TYPE_GENERICINST:
-		if (mono_type_generic_inst_is_valuetype (mono_method_signature (method)->ret)) {
+		if (!mono_type_generic_inst_is_valuetype (mono_method_signature (method)->ret)) {
 			save_mode = SAVE_EAX;
 			break;
 		}
@@ -5857,9 +5859,9 @@ mono_arch_get_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethod
 			guint32 opcode;
 
 			if (fsig->params [0]->type == MONO_TYPE_I4)
-				opcode = OP_ATOMIC_ADD_I4;
+				opcode = OP_ATOMIC_ADD_NEW_I4;
 			else if (fsig->params [0]->type == MONO_TYPE_I8)
-				opcode = OP_ATOMIC_ADD_I8;
+				opcode = OP_ATOMIC_ADD_NEW_I8;
 			else
 				g_assert_not_reached ();
 			

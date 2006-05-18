@@ -33,18 +33,10 @@ gboolean
 mono_mempool_contains_addr (MonoMemPool *pool,
 			    gpointer addr);
 
-gpointer
-mono_mempool_alloc_inner         (MonoMemPool *pool, 
-			    guint        size);
-/*
-extern inline gpointer
-mono_mempool_alloc0 (MonoMemPool *pool, guint size)
-{
-	gpointer rval = mono_mempool_alloc (pool, size);
-	memset (rval, 0, size);
-	return rval;
-}	
-*/
+char*
+mono_mempool_strdup        (MonoMemPool *pool,
+							const char *s);
+
 G_END_DECLS
 
 #endif

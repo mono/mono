@@ -43,6 +43,15 @@
 /*#define LIBGC_DEBUG(a) do { a; } while (0)*/
 #define LIBGC_DEBUG(a)
 
+/* Provide this for systems with glib < 2.6 */
+#ifndef G_GSIZE_FORMAT
+#   if GLIB_SIZEOF_LONG == 8
+#       define G_GSIZE_FORMAT "lu"
+#   else
+#       define G_GSIZE_FORMAT "u"
+#   endif
+#endif
+
 struct StartInfo 
 {
 	guint32 (*func)(void *);
@@ -211,26 +220,6 @@ static void handle_remove(gsize tid)
 	 */
 }
 
-/*
- * Tell the Mono Debugger about a newly created thread.
- * mono_debugger_event() is a no-op if we're not running inside the debugger.
- */
-static void debugger_thread_created (MonoThread *thread)
-{
-	mono_debugger_event (MONO_DEBUGGER_EVENT_THREAD_CREATED,
-			     (guint64) (gsize) &thread->end_stack, thread->tid);
-}
-
-/*
- * Tell the Mono Debugger that a thrad is about to exit.
- * mono_debugger_event() is a no-op if we're not running inside the debugger.
- */
-static void debugger_thread_exited (MonoThread *thread)
-{
-	mono_debugger_event (MONO_DEBUGGER_EVENT_THREAD_EXITED,
-			     (guint64) (gsize) &thread->end_stack, thread->tid);
-}
-
 static void thread_cleanup (MonoThread *thread)
 {
 	g_assert (thread != NULL);
@@ -253,8 +242,6 @@ static void thread_cleanup (MonoThread *thread)
 
 	thread->cached_culture_info = NULL;
 
-	debugger_thread_exited (thread);
-
 	if (mono_thread_cleanup)
 		mono_thread_cleanup (thread);
 }
@@ -269,7 +256,7 @@ static guint32 WINAPI start_wrapper(void *data)
 	MonoObject *start_delegate = start_info->delegate;
 
 	THREAD_DEBUG (g_message ("%s: (%"G_GSIZE_FORMAT") Start wrapper", __func__, GetCurrentThreadId ()));
-	
+
 	/* We can be sure start_info->obj->tid and
 	 * start_info->obj->handle have been set, because the thread
 	 * was created suspended, and these values were set before the
@@ -295,8 +282,6 @@ static guint32 WINAPI start_wrapper(void *data)
 	 */
 	mono_thread_new_init (tid, &tid, start_func);
 	thread->stack_ptr = &tid;
-
-	debugger_thread_created (thread);
 
 	LIBGC_DEBUG (g_message ("%s: (%"G_GSIZE_FORMAT",%d) Setting thread stack to %p", __func__, GetCurrentThreadId (), getpid (), thread->stack_ptr));
 
@@ -378,7 +363,7 @@ void mono_thread_create (MonoDomain *domain, gpointer func, gpointer arg)
 	HANDLE thread_handle;
 	struct StartInfo *start_info;
 	gsize tid;
-	
+
 	thread=(MonoThread *)mono_object_new (domain,
 					      mono_defaults.thread_class);
 
@@ -425,7 +410,7 @@ mono_thread_attach (MonoDomain *domain)
 	}
 
 	if (!mono_gc_register_thread (&domain)) {
-		g_error ("Thread %p calling into managed code is not registered with the GC. On UNIX, this can be fixed by #include-ing <gc.h> before <pthread.h> in the file containing the thread creation code.", GetCurrentThread ());
+		g_error ("Thread %"G_GSIZE_FORMAT" calling into managed code is not registered with the GC. On UNIX, this can be fixed by #include-ing <gc.h> before <pthread.h> in the file containing the thread creation code.", GetCurrentThreadId ());
 	}
 
 	thread = (MonoThread *)mono_object_new (domain,
@@ -436,14 +421,12 @@ mono_thread_attach (MonoDomain *domain)
 
 	tid=GetCurrentThreadId ();
 
-#ifdef PLATFORM_WIN32
 	/* 
 	 * The handle returned by GetCurrentThread () is a pseudo handle, so it can't be used to
 	 * refer to the thread from other threads for things like aborting.
 	 */
 	DuplicateHandle (GetCurrentProcess (), thread_handle, GetCurrentProcess (), &thread_handle, 
 					 THREAD_ALL_ACCESS, TRUE, 0);
-#endif
 
 	thread->handle=thread_handle;
 	thread->tid=tid;
@@ -458,8 +441,6 @@ mono_thread_attach (MonoDomain *domain)
 
 	SET_CURRENT_OBJECT (thread);
 	mono_domain_set (domain, TRUE);
-
-	debugger_thread_created (thread);
 
 	thread_adjust_static_data (thread);
 
@@ -1387,7 +1368,7 @@ ves_icall_System_Threading_Interlocked_Add_Int (gint32 *location, gint32 value)
 	*location = orig + value;
 	mono_interlocked_unlock ();
 
-	return orig;
+	return orig + value;
 #endif
 }
 
@@ -1406,7 +1387,7 @@ ves_icall_System_Threading_Interlocked_Add_Long (gint64 *location, gint64 value)
 	*location = orig + value;
 	mono_interlocked_unlock ();
 
-	return orig;
+	return orig + value;
 #endif
 }
 
@@ -2057,7 +2038,7 @@ void mono_thread_manage (void)
 	 * anything in the documentation that would let me do this
 	 * here yet still be safe to call on windows.
 	 */
-	_wapi_thread_abandon_mutexes (GetCurrentThread ());
+	_wapi_thread_abandon_mutexes (NULL);
 #endif
 	
 	/* 
@@ -2805,116 +2786,3 @@ gint32* mono_thread_interruption_request_flag ()
 {
 	return &thread_interruption_requested;
 }
-
-#if MONO_DEBUGGER_SUPPORTED
-
-extern void GC_push_all_stack (gpointer b, gpointer t);
-
-static void
-debugger_gc_push_stack (gpointer key, gpointer value, gpointer user)
-{
-	MonoThread *thread = (MonoThread*)value;
-	gpointer end_stack;
-
-	/*
-	 * The debugger stops all other threads for us in debugger_gc_stop_world() and
-	 * then sets `thread->end_stack' for each of them.
-	 */
-
-	end_stack = (thread->tid == GetCurrentThreadId ()) ? &key : thread->end_stack;
-
-	if (!end_stack || !thread->stack_ptr) {
-		g_warning (G_STRLOC ": Cannot push stack of thread %Lx", thread->tid);
-		return;
-	}
-
-	GC_push_all_stack (end_stack, thread->stack_ptr);
-}
-
-/*
- * We're called with the thread lock.
- */
-static void
-debugger_gc_push_all_stacks (void)
-{
-	if (threads != NULL)
-		mono_g_hash_table_foreach (threads, debugger_gc_push_stack, NULL);
-}
-
-static void
-debugger_gc_stop_world (void)
-{
-	/*
-	 * Acquire the thread lock and tell the debugger to stop all other threads.
-	 */
-	mono_threads_lock ();
-	mono_debugger_event (
-		MONO_DEBUGGER_EVENT_ACQUIRE_GLOBAL_THREAD_LOCK, 0, 0);
-}
-
-static void
-debugger_gc_start_world (void)
-{
-	/*
-	 * Tell the debugger to resume all other threads and release the lock.
-	 */
-	mono_debugger_event (
-		MONO_DEBUGGER_EVENT_RELEASE_GLOBAL_THREAD_LOCK, 0, 0);
-	mono_threads_unlock ();
-}
-
-static void
-debugger_gc_init (void)
-{ }
-
-static GCThreadFunctions debugger_thread_vtable = {
-	debugger_gc_init,
-
-	debugger_gc_stop_world,
-	debugger_gc_push_all_stacks,
-	debugger_gc_start_world
-};
-
-static GCThreadFunctions *old_gc_thread_vtable = NULL;
-
-/**
- * mono_debugger_init_threads:
- *
- * This is used when running inside the Mono Debugger.
- */
-void
-mono_debugger_init_threads (void)
-{
-	old_gc_thread_vtable = gc_thread_vtable;
-	gc_thread_vtable = &debugger_thread_vtable;
-	debugger_thread_created (mono_thread_current ());
-}
-
-/**
- * mono_debugger_finalize_threads:
- *
- * This is used when running inside the Mono Debugger.
- * Undo the effects of mono_debugger_init_threads(); this is called
- * prior to detaching from a process.
- */
-void
-mono_debugger_finalize_threads (void)
-{
-	gc_thread_vtable = old_gc_thread_vtable;
-}
-
-#else /* WITH_INCLUDED_LIBGC */
-
-void
-mono_debugger_init_threads (void)
-{
-	g_assert_not_reached ();
-}
-
-void
-mono_debugger_finalize_threads (void)
-{
-	g_assert_not_reached ();
-}
-
-#endif

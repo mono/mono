@@ -1,3 +1,7 @@
+2006-05-09  Miguel de Icaza  <miguel@novell.com>
+
+	* interp.c (ves_exec_method_with_context): Pass a temporary to the
+	mono_load_remote_field routine, instead of passing a NULL.
 
 Thu Aug 4 20:09:40 BST 2005 Paolo Molaro <lupus@ximian.com>
 

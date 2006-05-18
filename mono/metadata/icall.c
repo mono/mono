@@ -4396,8 +4396,6 @@ ves_icall_System_Reflection_Assembly_InternalGetAssemblyName (MonoString *fname,
 		mono_raise_exception (exc);
 	}
 
-	/* So we can call mono_image_close () later */
-	mono_image_addref (image);
 	res = mono_assembly_fill_assembly_name (image, &name);
 	if (!res) {
 		mono_image_close (image);
@@ -6913,6 +6911,7 @@ static const IcallEntry marshal_icalls [] = {
 	{"AllocCoTaskMem", ves_icall_System_Runtime_InteropServices_Marshal_AllocCoTaskMem},
 	{"AllocHGlobal", ves_icall_System_Runtime_InteropServices_Marshal_AllocHGlobal},
 	{"DestroyStructure", ves_icall_System_Runtime_InteropServices_Marshal_DestroyStructure},
+	{"FreeBSTR", ves_icall_System_Runtime_InteropServices_Marshal_FreeBSTR},
 	{"FreeCoTaskMem", ves_icall_System_Runtime_InteropServices_Marshal_FreeCoTaskMem},
 	{"FreeHGlobal", ves_icall_System_Runtime_InteropServices_Marshal_FreeHGlobal},
 	{"GetDelegateForFunctionPointerInternal", ves_icall_System_Runtime_InteropServices_Marshal_GetDelegateForFunctionPointerInternal},
@@ -6937,6 +6936,7 @@ static const IcallEntry marshal_icalls [] = {
 	{"ReadInt64", ves_icall_System_Runtime_InteropServices_Marshal_ReadInt64},
 	{"ReadIntPtr", ves_icall_System_Runtime_InteropServices_Marshal_ReadIntPtr},
 	{"SizeOf", ves_icall_System_Runtime_InteropServices_Marshal_SizeOf},
+	{"StringToBSTR", ves_icall_System_Runtime_InteropServices_Marshal_StringToBSTR},
 	{"StringToHGlobalAnsi", ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi},
 	{"StringToHGlobalAuto", ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi},
 	{"StringToHGlobalUni", ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalUni},

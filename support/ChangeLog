@@ -1,3 +1,7 @@
+2006-04-28  Wade Berrier <wberrier@novell.com>
+
+	* serial.c: Add sys/filio.h for solaris for FIONREAD
+
 2006-04-20  Geoff Norton  <gnorton@customerdna.com>
 
 	* serial.c: Change TIOCINQ to FIONREAD to 

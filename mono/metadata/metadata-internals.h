@@ -63,7 +63,8 @@ struct _MonoImage {
 	/*
 	 * The number of assemblies which reference this MonoImage though their 'image'
 	 * field plus the number of images which reference this MonoImage through their 
-	 * 'modules' field. Initially 0.
+	 * 'modules' field, plus the number of threads holding temporary references to
+	 * this image between calls of mono_image_open () and mono_image_close ().
 	 */
 	int   ref_count;
 	FILE *file_descr;
@@ -145,10 +146,10 @@ struct _MonoImage {
 	GHashTable *name_cache;
 
 	/*
-	 * Indexed by ((rank << 24) | (typedef & 0xffffff)), which limits us to a
-	 * maximal rank of 255
+	 * Indexed by MonoClass
 	 */
 	GHashTable *array_cache;
+	GHashTable *ptr_cache;
 
 	/*
 	 * indexed by MonoMethodSignature 
@@ -166,6 +167,18 @@ struct _MonoImage {
 	GHashTable *remoting_invoke_cache;
 	GHashTable *synchronized_cache;
 	GHashTable *unbox_wrapper_cache;
+
+	/*
+	 * indexed by MonoClass pointers
+	 */
+	GHashTable *ldfld_wrapper_cache;
+	GHashTable *ldflda_wrapper_cache;
+	GHashTable *ldfld_remote_wrapper_cache;
+	GHashTable *stfld_wrapper_cache;
+	GHashTable *stfld_remote_wrapper_cache;
+	GHashTable *isinst_cache;
+	GHashTable *castclass_cache;
+	GHashTable *proxy_isinst_cache;
 
 	void *reflection_info;
 
@@ -290,6 +303,9 @@ struct _MonoMethodHeader {
 
 /* for use with allocated memory blocks (assumes alignment is to 8 bytes) */
 guint mono_aligned_addr_hash (gconstpointer ptr) MONO_INTERNAL;
+
+void
+mono_metadata_cleanup (void);
 
 const char *   mono_meta_table_name              (int table) MONO_INTERNAL;
 void           mono_metadata_compute_table_bases (MonoImage *meta) MONO_INTERNAL;

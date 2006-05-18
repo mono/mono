@@ -1,3 +1,7 @@
+2006-05-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* make_store_test.sh make_obj_store_test.sh make_stack_merge_test.sh: Make
+	valuetypes sealed to fix ilasm warnings.
 
 Sun Mar 12 16:18:04 CET 2006 Paolo Molaro <lupus@ximian.com>
 

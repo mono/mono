@@ -81,10 +81,19 @@ static gboolean process_set_termination_details (gpointer handle, int status)
 	}
 	_wapi_time_t_to_filetime (time(NULL), &process_handle->exit_time);
 	
+#ifdef DEBUG
+	g_message ("%s: Setting handle %p signalled", __func__, handle);
+#endif
+
 	_wapi_shared_handle_set_signal_state (handle, TRUE);
 
 	_wapi_handle_unlock_shared_handles ();
 
+	/* Drop the reference we hold so we have somewhere to store
+	 * the exit details, now the process has in fact exited
+	 */
+	_wapi_handle_unref (handle);
+	
 	return (ok);
 }
 
@@ -171,7 +180,7 @@ static guint32 process_wait (gpointer handle, guint32 timeout)
 	pid = process_handle->id;
 	
 #ifdef DEBUG
-	g_message ("%s: PID is %d", __func__, pid);
+	g_message ("%s: PID is %d, timeout %d", __func__, pid, timeout);
 #endif
 
 	if (timeout == INFINITE) {
@@ -207,7 +216,7 @@ static guint32 process_wait (gpointer handle, guint32 timeout)
 
 	/* Process must have exited */
 #ifdef DEBUG
-	g_message ("%s: Wait done", __func__);
+	g_message ("%s: Wait done, status %d", __func__, status);
 #endif
 
 	ok = process_set_termination_details (handle, status);
@@ -940,12 +949,21 @@ static void process_set_current (void)
 	_wapi_handle_ref (current_process);
 }
 
+gpointer _wapi_process_duplicate ()
+{
+	mono_once (&process_current_once, process_set_current);
+	
+	_wapi_handle_ref (current_process);
+	
+	return(current_process);
+}
+
 /* Returns a pseudo handle that doesn't need to be closed afterwards */
 gpointer GetCurrentProcess (void)
 {
 	mono_once (&process_current_once, process_set_current);
 		
-	return((gpointer)-1);
+	return(_WAPI_PROCESS_CURRENT);
 }
 
 guint32 GetProcessId (gpointer handle)

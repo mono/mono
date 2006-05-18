@@ -1101,6 +1101,22 @@ create_remote_class_key (MonoRemoteClass *remote_class, MonoClass *extra_class)
 }
 
 /**
+ * copy_remote_class_key:
+ *
+ *   Make a copy of KEY in the mempool MP and return the copy.
+ */
+static gpointer*
+copy_remote_class_key (MonoMemPool *mp, gpointer *key)
+{
+	int key_size = (GPOINTER_TO_UINT (key [0]) + 1) * sizeof (gpointer);
+	gpointer *mp_key = mono_mempool_alloc (mp, key_size);
+
+	memcpy (mp_key, key, key_size);
+
+	return mp_key;
+}
+
+/**
  * mono_remote_class:
  * @domain: the application domain
  * @class_name: name of the remote class
@@ -1112,7 +1128,7 @@ MonoRemoteClass*
 mono_remote_class (MonoDomain *domain, MonoString *class_name, MonoClass *proxy_class)
 {
 	MonoRemoteClass *rc;
-	gpointer* key;
+	gpointer* key, *mp_key;
 	
 	key = create_remote_class_key (NULL, proxy_class);
 	
@@ -1124,6 +1140,10 @@ mono_remote_class (MonoDomain *domain, MonoString *class_name, MonoClass *proxy_
 		mono_domain_unlock (domain);
 		return rc;
 	}
+
+	mp_key = copy_remote_class_key (domain->mp, key);
+	g_free (key);
+	key = mp_key;
 
 	if (proxy_class->flags & TYPE_ATTRIBUTE_INTERFACE) {
 		rc = mono_mempool_alloc (domain->mp, sizeof(MonoRemoteClass) + sizeof(MonoClass*));
@@ -1138,7 +1158,7 @@ mono_remote_class (MonoDomain *domain, MonoString *class_name, MonoClass *proxy_
 	
 	rc->default_vtable = NULL;
 	rc->xdomain_vtable = NULL;
-	rc->proxy_class_name = mono_string_to_utf8 (class_name);
+	rc->proxy_class_name = mono_string_to_utf8_mp (domain->mp, class_name);
 
 	g_hash_table_insert (domain->proxy_vtable_hash, key, rc);
 
@@ -1154,7 +1174,7 @@ static MonoRemoteClass*
 clone_remote_class (MonoDomain *domain, MonoRemoteClass* remote_class, MonoClass *extra_class)
 {
 	MonoRemoteClass *rc;
-	gpointer* key;
+	gpointer* key, *mp_key;
 	
 	key = create_remote_class_key (remote_class, extra_class);
 	rc = g_hash_table_lookup (domain->proxy_vtable_hash, key);
@@ -1162,6 +1182,10 @@ clone_remote_class (MonoDomain *domain, MonoRemoteClass* remote_class, MonoClass
 		g_free (key);
 		return rc;
 	}
+
+	mp_key = copy_remote_class_key (domain->mp, key);
+	g_free (key);
+	key = mp_key;
 
 	if (extra_class->flags & TYPE_ATTRIBUTE_INTERFACE) {
 		int i,j;
@@ -1734,10 +1758,17 @@ mono_property_get_value (MonoProperty *prop, void *obj, void **params, MonoObjec
 
 /*
  * mono_nullable_init:
+ * @buf: The nullable structure to initialize.
+ * @value: the value to initialize from
+ * @klass: the type for the object
  *
- *   Initialize the nullable structure pointed to by @buf from @value which
- * should be a boxed value type. Since Nullables have variable structure, we 
- * can't define a C structure for them.
+ * Initialize the nullable structure pointed to by @buf from @value which
+ * should be a boxed value type.   The size of @buf should be able to hold
+ * as much data as the @klass->instance_size (which is the number of bytes
+ * that will be copies).
+ *
+ * Since Nullables have variable structure, we can not define a C
+ * structure for them.
  */
 void
 mono_nullable_init (guint8 *buf, MonoObject *value, MonoClass *klass)
@@ -1756,8 +1787,10 @@ mono_nullable_init (guint8 *buf, MonoObject *value, MonoClass *klass)
 
 /**
  * mono_nullable_box:
+ * @buf: The buffer representing the data to be boxed
+ * @klass: the type to box it as.
  *
- *   Creates a boxed vtype or NULL from the Nullable structure pointed to by
+ * Creates a boxed vtype or NULL from the Nullable structure pointed to by
  * @buf.
  */
 MonoObject*
@@ -3359,6 +3392,31 @@ mono_string_from_utf16 (gunichar2 *data)
 	return mono_string_new_utf16 (domain, data, len);
 }
 
+/**
+ * mono_string_to_utf8_mp:
+ * @s: a System.String
+ *
+ * Same as mono_string_to_utf8, but allocate the string from a mempool.
+ */
+char *
+mono_string_to_utf8_mp (MonoMemPool *mp, MonoString *s)
+{
+	char *r = mono_string_to_utf8 (s);
+	char *mp_s;
+	int len;
+
+	if (!r)
+		return NULL;
+
+	len = strlen (r) + 1;
+	mp_s = mono_mempool_alloc (mp, len);
+	memcpy (mp_s, r, len);
+
+	g_free (r);
+
+	return mp_s;
+}
+
 static void
 default_ex_handler (MonoException *ex)
 {
@@ -3832,12 +3890,10 @@ mono_load_remote_field (MonoObject *this, MonoClass *klass, MonoClassField *fiel
 	MonoMethodMessage *msg;
 	MonoArray *out_args;
 	MonoObject *exc;
-	gpointer tmp;
+	char* full_name;
 
 	g_assert (this->vtable->klass == mono_defaults.transparent_proxy_class);
-
-	if (!res)
-		res = &tmp;
+	g_assert (res != NULL);
 
 	if (tp->remote_class->proxy_class->contextbound && tp->rp->context == (MonoObject *) mono_context_get ()) {
 		mono_field_get_value (tp->rp->unwrapped_server, field, res);
@@ -3855,8 +3911,10 @@ mono_load_remote_field (MonoObject *this, MonoClass *klass, MonoClassField *fiel
 	out_args = mono_array_new (domain, mono_defaults.object_class, 1);
 	mono_message_init (domain, msg, mono_method_get_object (domain, getter, NULL), out_args);
 
-	mono_array_setref (msg->args, 0, mono_string_new (domain, klass->name));
+	full_name = mono_type_get_full_name (klass);
+	mono_array_setref (msg->args, 0, mono_string_new (domain, full_name));
 	mono_array_setref (msg->args, 1, mono_string_new (domain, field->name));
+	g_free (full_name);
 
 	mono_remoting_invoke ((MonoObject *)(tp->rp), msg, &exc, &out_args);
 
@@ -3891,6 +3949,7 @@ mono_load_remote_field_new (MonoObject *this, MonoClass *klass, MonoClassField *
 	MonoMethodMessage *msg;
 	MonoArray *out_args;
 	MonoObject *exc, *res;
+	char* full_name;
 
 	g_assert (this->vtable->klass == mono_defaults.transparent_proxy_class);
 
@@ -3918,8 +3977,10 @@ mono_load_remote_field_new (MonoObject *this, MonoClass *klass, MonoClassField *
 
 	mono_message_init (domain, msg, mono_method_get_object (domain, getter, NULL), out_args);
 
-	mono_array_setref (msg->args, 0, mono_string_new (domain, klass->name));
+	full_name = mono_type_get_full_name (klass);
+	mono_array_setref (msg->args, 0, mono_string_new (domain, full_name));
 	mono_array_setref (msg->args, 1, mono_string_new (domain, field->name));
+	g_free (full_name);
 
 	mono_remoting_invoke ((MonoObject *)(tp->rp), msg, &exc, &out_args);
 
@@ -3955,6 +4016,7 @@ mono_store_remote_field (MonoObject *this, MonoClass *klass, MonoClassField *fie
 	MonoArray *out_args;
 	MonoObject *exc;
 	MonoObject *arg;
+	char* full_name;
 
 	g_assert (this->vtable->klass == mono_defaults.transparent_proxy_class);
 
@@ -3980,9 +4042,11 @@ mono_store_remote_field (MonoObject *this, MonoClass *klass, MonoClassField *fie
 	msg = (MonoMethodMessage *)mono_object_new (domain, mono_defaults.mono_method_message_class);
 	mono_message_init (domain, msg, mono_method_get_object (domain, setter, NULL), NULL);
 
-	mono_array_setref (msg->args, 0, mono_string_new (domain, klass->name));
+	full_name = mono_type_get_full_name (klass);
+	mono_array_setref (msg->args, 0, mono_string_new (domain, full_name));
 	mono_array_setref (msg->args, 1, mono_string_new (domain, field->name));
 	mono_array_setref (msg->args, 2, arg);
+	g_free (full_name);
 
 	mono_remoting_invoke ((MonoObject *)(tp->rp), msg, &exc, &out_args);
 
@@ -4008,6 +4072,7 @@ mono_store_remote_field_new (MonoObject *this, MonoClass *klass, MonoClassField 
 	MonoMethodMessage *msg;
 	MonoArray *out_args;
 	MonoObject *exc;
+	char* full_name;
 
 	g_assert (this->vtable->klass == mono_defaults.transparent_proxy_class);
 
@@ -4027,9 +4092,11 @@ mono_store_remote_field_new (MonoObject *this, MonoClass *klass, MonoClassField 
 	msg = (MonoMethodMessage *)mono_object_new (domain, mono_defaults.mono_method_message_class);
 	mono_message_init (domain, msg, mono_method_get_object (domain, setter, NULL), NULL);
 
-	mono_array_setref (msg->args, 0, mono_string_new (domain, klass->name));
+	full_name = mono_type_get_full_name (klass);
+	mono_array_setref (msg->args, 0, mono_string_new (domain, full_name));
 	mono_array_setref (msg->args, 1, mono_string_new (domain, field->name));
 	mono_array_setref (msg->args, 2, arg);
+	g_free (full_name);
 
 	mono_remoting_invoke ((MonoObject *)(tp->rp), msg, &exc, &out_args);
 

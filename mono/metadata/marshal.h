@@ -27,6 +27,9 @@ typedef struct _MonoMethodBuilder MonoMethodBuilder;
 void
 mono_marshal_init (void);
 
+void
+mono_marshal_cleanup (void);
+
 gint32
 mono_class_native_size (MonoClass *klass, guint32 *align);
 
@@ -330,6 +333,9 @@ int
 ves_icall_System_Runtime_InteropServices_Marshal_OffsetOf (MonoReflectionType *type, MonoString *field_name);
 
 gpointer
+ves_icall_System_Runtime_InteropServices_Marshal_StringToBSTR (MonoString *string);
+
+gpointer
 ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi (MonoString *string);
 
 gpointer
@@ -349,6 +355,9 @@ ves_icall_System_Runtime_InteropServices_Marshal_AllocHGlobal (int size);
 
 void
 ves_icall_System_Runtime_InteropServices_Marshal_FreeHGlobal (void *ptr);
+
+void
+ves_icall_System_Runtime_InteropServices_Marshal_FreeBSTR (void *ptr);
 
 void*
 ves_icall_System_Runtime_InteropServices_Marshal_UnsafeAddrOfPinnedArrayElement (MonoArray *arrayobj, int index);

@@ -228,6 +228,7 @@ endif
 DISABLED_TESTS=			\
 	delegate-async-exception.exe	\
 	delegate-delegate-exception.exe	\
+	appdomain-unload.exe		\
 	$(PLATFORM_DISABLED_TESTS)
 
 # These only compile with MS CSC
@@ -249,12 +250,12 @@ TEST_IL_SRC=			\
 	test-enum-indstoreil.il	\
 	even-odd.il
 
-TEST_CS2_SRC =
+TEST_CS2_SRC = interlocked-2.2.cs
 TEST_IL2_SRC = find-method.2.il
 
 TESTSI_CS=$(TEST_CS_SRC:.cs=.exe)
 TESTSI_IL=$(TEST_IL_SRC:.il=.exe)
-TESTSI_CS2=$(TEST_CS2_SRC:.2.il=.exe)
+TESTSI_CS2=$(TEST_CS2_SRC:.2.cs=.exe)
 TESTSI_IL2=$(TEST_IL2_SRC:.2.il=.exe)
 TESTBS=$(BENCHSRC:.cs=.exe)
 STRESS_TESTS=$(STRESS_TESTS_SRC:.cs=.exe)

@@ -1362,6 +1362,12 @@ mono_arch_instrument_epilog (MonoCompile *cfg, void *func, void *p, gboolean ena
 	case MONO_TYPE_R8:
 		save_mode = SAVE_FP;
 		break;
+	case MONO_TYPE_GENERICINST:
+		if (!mono_type_generic_inst_is_valuetype (mono_method_signature (method)->ret)) {
+			save_mode = SAVE_EAX;
+			break;
+		}
+		/* Fall through */
 	case MONO_TYPE_VALUETYPE:
 		save_mode = SAVE_STRUCT;
 		break;
@@ -2253,6 +2259,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 	}
 
 	offset = code - cfg->native_code;
+
+	mono_debug_open_block (cfg, bb, offset);
 
 	ins = bb->code;
 	while (ins) {
@@ -4535,7 +4543,7 @@ mono_arch_get_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethod
 			ins->inst_i0 = args [0];
 			ins->inst_i1 = args [1];
 		} else if (strcmp (cmethod->name, "Add") == 0 && fsig->params [0]->type == MONO_TYPE_I4) {
-			MONO_INST_NEW (cfg, ins, OP_ATOMIC_ADD_I4);
+			MONO_INST_NEW (cfg, ins, OP_ATOMIC_ADD_NEW_I4);
 
 			ins->inst_i0 = args [0];
 			ins->inst_i1 = args [1];
@@ -4721,7 +4729,21 @@ mono_arch_get_vcall_slot_addr (guint8 *code, gpointer *regs)
 	 * 0xff m=2,o=2 imm32
 	 */
 	code -= 6;
-	if ((code [1] != 0xe8) && (code [3] == 0xff) && ((code [4] & 0x18) == 0x10) && ((code [4] >> 6) == 1)) {
+
+	/* 
+	 * A given byte sequence can match more than case here, so we have to be
+	 * really careful about the ordering of the cases. Longer sequences
+	 * come first.
+	 */
+	if ((code [-2] == 0x8b) && (x86_modrm_mod (code [-1]) == 0x2) && (code [4] == 0xff) && (x86_modrm_reg (code [5]) == 0x2) && (x86_modrm_mod (code [5]) == 0x0)) {
+		/*
+		 * This is an interface call
+		 * 8b 80 0c e8 ff ff       mov    0xffffe80c(%eax),%eax
+		 * ff 10                   call   *(%eax)
+		 */
+		reg = x86_modrm_rm (code [5]);
+		disp = 0;
+	} else if ((code [1] != 0xe8) && (code [3] == 0xff) && ((code [4] & 0x18) == 0x10) && ((code [4] >> 6) == 1)) {
 		reg = code [4] & 0x07;
 		disp = (signed char)code [5];
 	} else {
@@ -4732,7 +4754,7 @@ mono_arch_get_vcall_slot_addr (guint8 *code, gpointer *regs)
 			return NULL;
 		} else if ((code [4] == 0xff) && (((code [5] >> 6) & 0x3) == 0) && (((code [5] >> 3) & 0x7) == 2)) {
 			/*
-			 * This is a interface call: should check the above code can't catch it earlier 
+			 * This is a interface call
 			 * 8b 40 30   mov    0x30(%eax),%eax
 			 * ff 10      call   *(%eax)
 			 */

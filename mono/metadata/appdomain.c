@@ -31,7 +31,7 @@
 #include <mono/utils/mono-uri.h>
 #include <mono/utils/mono-logger.h>
 
-#define MONO_CORLIB_VERSION 50
+#define MONO_CORLIB_VERSION 51
 
 CRITICAL_SECTION mono_delegate_section;
 
@@ -202,6 +202,8 @@ mono_runtime_cleanup (MonoDomain *domain)
 	mono_gc_cleanup ();
 
 	mono_network_cleanup ();
+
+	mono_marshal_cleanup ();
 }
 
 static MonoDomainFunc quit_function = NULL;
@@ -350,13 +352,15 @@ mono_domain_set (MonoDomain *domain, gboolean force)
 MonoObject *
 ves_icall_System_AppDomain_GetData (MonoAppDomain *ad, MonoString *name)
 {
-	MonoDomain *add = ad->data;
+	MonoDomain *add;
 	MonoObject *o;
 	char *str;
 
 	MONO_ARCH_SAVE_REGS;
 
 	g_assert (ad != NULL);
+	add = ad->data;
+	g_assert (add != NULL);
 
 	if (name == NULL)
 		mono_raise_exception (mono_get_exception_argument_null ("name"));
@@ -398,11 +402,13 @@ ves_icall_System_AppDomain_GetData (MonoAppDomain *ad, MonoString *name)
 void
 ves_icall_System_AppDomain_SetData (MonoAppDomain *ad, MonoString *name, MonoObject *data)
 {
-	MonoDomain *add = ad->data;
+	MonoDomain *add;
 
 	MONO_ARCH_SAVE_REGS;
 
 	g_assert (ad != NULL);
+	add = ad->data;
+	g_assert (add != NULL);
 
 	if (name == NULL)
 		mono_raise_exception (mono_get_exception_argument_null ("name"));

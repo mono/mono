@@ -3655,15 +3655,25 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case CEE_CONV_R4:
 		case OP_ICONV_TO_R4: {
 			gint32 offset = cfg->arch.float_spill_slot_offset;
-			if (!sparc_is_imm13 (offset))
-				NOT_IMPLEMENTED;
 #ifdef SPARCV9
-			sparc_stx_imm (code, ins->sreg1, sparc_sp, offset);
-			sparc_lddf_imm (code, sparc_sp, offset, FP_SCRATCH_REG);
+			if (!sparc_is_imm13 (offset)) {
+				sparc_set (code, offset, sparc_o7);
+				sparc_stx (code, ins->sreg1, sparc_sp, offset);
+				sparc_lddf (code, sparc_sp, offset, FP_SCRATCH_REG);
+			} else {
+				sparc_stx_imm (code, ins->sreg1, sparc_sp, offset);
+				sparc_lddf_imm (code, sparc_sp, offset, FP_SCRATCH_REG);
+			}
 			sparc_fxtos (code, FP_SCRATCH_REG, FP_SCRATCH_REG);
 #else
-			sparc_st_imm (code, ins->sreg1, sparc_sp, offset);
-			sparc_ldf_imm (code, sparc_sp, offset, FP_SCRATCH_REG);
+			if (!sparc_is_imm13 (offset)) {
+				sparc_set (code, offset, sparc_o7);
+				sparc_st (code, ins->sreg1, sparc_sp, sparc_o7);
+				sparc_ldf (code, sparc_sp, sparc_o7, FP_SCRATCH_REG);
+			} else {
+				sparc_st_imm (code, ins->sreg1, sparc_sp, offset);
+				sparc_ldf_imm (code, sparc_sp, offset, FP_SCRATCH_REG);
+			}
 			sparc_fitos (code, FP_SCRATCH_REG, FP_SCRATCH_REG);
 #endif
 			sparc_fstod (code, FP_SCRATCH_REG, ins->dreg);
@@ -3672,15 +3682,25 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case CEE_CONV_R8:
 		case OP_ICONV_TO_R8: {
 			gint32 offset = cfg->arch.float_spill_slot_offset;
-			if (!sparc_is_imm13 (offset))
-				NOT_IMPLEMENTED;
 #ifdef SPARCV9
-			sparc_stx_imm (code, ins->sreg1, sparc_sp, offset);
-			sparc_lddf_imm (code, sparc_sp, offset, FP_SCRATCH_REG);
+			if (!sparc_is_imm13 (offset)) {
+				sparc_set (code, offset, sparc_o7);
+				sparc_stx (code, ins->sreg1, sparc_sp, sparc_o7);
+				sparc_lddf (code, sparc_sp, sparc_o7, FP_SCRATCH_REG);
+			} else {
+				sparc_stx_imm (code, ins->sreg1, sparc_sp, offset);
+				sparc_lddf_imm (code, sparc_sp, offset, FP_SCRATCH_REG);
+			}
 			sparc_fxtod (code, FP_SCRATCH_REG, ins->dreg);
 #else
-			sparc_st_imm (code, ins->sreg1, sparc_sp, offset);
-			sparc_ldf_imm (code, sparc_sp, offset, FP_SCRATCH_REG);
+			if (!sparc_is_imm13 (offset)) {
+				sparc_set (code, offset, sparc_o7);
+				sparc_st (code, ins->sreg1, sparc_sp, sparc_o7);
+				sparc_ldf (code, sparc_sp, sparc_o7, FP_SCRATCH_REG);
+			} else {
+				sparc_st_imm (code, ins->sreg1, sparc_sp, offset);
+				sparc_ldf_imm (code, sparc_sp, offset, FP_SCRATCH_REG);
+			}
 			sparc_fitod (code, FP_SCRATCH_REG, ins->dreg);
 #endif
 			break;
@@ -3696,11 +3716,15 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_FCONV_TO_I4:
 		case OP_FCONV_TO_U4: {
 			gint32 offset = cfg->arch.float_spill_slot_offset;
-			if (!sparc_is_imm13 (offset))
-				NOT_IMPLEMENTED;
 			sparc_fdtoi (code, ins->sreg1, FP_SCRATCH_REG);
-			sparc_stdf_imm (code, FP_SCRATCH_REG, sparc_sp, offset);
-			sparc_ld_imm (code, sparc_sp, offset, ins->dreg);
+			if (!sparc_is_imm13 (offset)) {
+				sparc_set (code, offset, sparc_o7);
+				sparc_stdf (code, FP_SCRATCH_REG, sparc_sp, sparc_o7);
+				sparc_ld (code, sparc_sp, sparc_o7, ins->dreg);
+			} else {
+				sparc_stdf_imm (code, FP_SCRATCH_REG, sparc_sp, offset);
+				sparc_ld_imm (code, sparc_sp, offset, ins->dreg);
+			}
 
 			switch (ins->opcode) {
 			case OP_FCONV_TO_I1:
@@ -3886,10 +3910,14 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case CEE_CKFINITE:
 		case OP_CKFINITE: {
 			gint32 offset = cfg->arch.float_spill_slot_offset;
-			if (!sparc_is_imm13 (offset))
-				NOT_IMPLEMENTED;
-			sparc_stdf_imm (code, ins->sreg1, sparc_sp, offset);
-			sparc_lduh_imm (code, sparc_sp, offset, sparc_o7);
+			if (!sparc_is_imm13 (offset)) {
+				sparc_set (code, offset, sparc_o7);
+				sparc_stdf (code, ins->sreg1, sparc_sp, sparc_o7);
+				sparc_lduh (code, sparc_sp, sparc_o7, sparc_o7);
+			} else {
+				sparc_stdf_imm (code, ins->sreg1, sparc_sp, offset);
+				sparc_lduh_imm (code, sparc_sp, offset, sparc_o7);
+			}
 			sparc_srl_imm (code, sparc_o7, 4, sparc_o7);
 			sparc_and_imm (code, FALSE, sparc_o7, 2047, sparc_o7);
 			sparc_cmp_imm (code, sparc_o7, 2047);

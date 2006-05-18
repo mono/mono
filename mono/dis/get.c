@@ -417,19 +417,19 @@ const char *
 get_custom_mod (MonoImage *m, const char *ptr, char **return_value)
 {
 	char *s;
-	const char *reqd;
+	const char *mod;
 	
 	*return_value = NULL;
 	while ((*ptr == MONO_TYPE_CMOD_OPT) ||
 		   (*ptr == MONO_TYPE_CMOD_REQD)) {
-		reqd = (*ptr == MONO_TYPE_CMOD_REQD) ? "reqd" : "opt";
+		mod = (*ptr == MONO_TYPE_CMOD_REQD) ? "modreq" : "modopt";
 		ptr++;
 		ptr = get_encoded_typedef_or_ref (m, ptr, &s);
 
 		if (*return_value == NULL)
-			*return_value = g_strconcat (reqd, " ", s, NULL);
+			*return_value = g_strconcat (" ", mod, " (", s, ")", NULL);
 		else
-			*return_value = g_strconcat (*return_value, " ", reqd, " ", s, NULL);
+			*return_value = g_strconcat (*return_value, " ", mod, " (", s, ")", NULL);
 		g_free (s);
 	}
 	return ptr;
@@ -508,7 +508,7 @@ dis_stringify_modifiers (MonoImage *m, int n, MonoCustomMod *mod)
 		char *tok = dis_stringify_token (m, mod[i].token);
 		if (i > 0)
 			g_string_sprintfa (s, " ");
-		g_string_sprintfa (s, "%s (%s)", mod[i].required ? "modreq": "modopt", tok);
+		g_string_sprintfa (s, " %s (%s)", mod[i].required ? "modreq": "modopt", tok);
 		g_free (tok);
 	}
 	g_string_append_c (s, ' ');
@@ -828,6 +828,13 @@ get_generic_param (MonoImage *m, MonoGenericContainer *container)
         return retval;
 }
 
+char*
+dis_stringify_method_signature (MonoImage *m, MonoMethodSignature *method, int methoddef_row,
+				MonoGenericContext *context, gboolean fully_qualified)
+{
+	return dis_stringify_method_signature_full (m, method, methoddef_row, context, fully_qualified, TRUE);
+}
+
 /* 
  * @m: metadata context
  * @method: MonoMethodSignature to dis-stringify
@@ -839,8 +846,8 @@ get_generic_param (MonoImage *m, MonoGenericContainer *container)
  * Returns: Allocated stringified method signature
  */
 char*
-dis_stringify_method_signature (MonoImage *m, MonoMethodSignature *method, int methoddef_row,
-				MonoGenericContext *context, gboolean fully_qualified)
+dis_stringify_method_signature_full (MonoImage *m, MonoMethodSignature *method, int methoddef_row,
+				MonoGenericContext *context, gboolean fully_qualified, gboolean with_marshal_info)
 {
 	guint32 cols [MONO_METHOD_SIZE];
 	guint32 pcols [MONO_PARAM_SIZE];
@@ -910,7 +917,7 @@ dis_stringify_method_signature (MonoImage *m, MonoMethodSignature *method, int m
 			if (i)
 				name = mono_metadata_string_heap (m, pcols [MONO_PARAM_NAME]);
 
-			if (pcols [MONO_PARAM_FLAGS] & PARAM_ATTRIBUTE_HAS_FIELD_MARSHAL) {
+			if (with_marshal_info && (pcols [MONO_PARAM_FLAGS] & PARAM_ATTRIBUTE_HAS_FIELD_MARSHAL)) {
 				const char *tp;
 				MonoMarshalSpec *spec;
 				tp = mono_metadata_get_marshal_info (m, param_index - 1, FALSE);
@@ -1202,7 +1209,7 @@ dis_stringify_type (MonoImage *m, MonoType *type, gboolean is_def)
 	if (type->byref)
 		byref = "&";
 		
-	result = g_strconcat (mods ? mods : "", bare, byref, pinned, NULL);
+	result = g_strconcat (bare, byref, pinned, mods ? mods : "", NULL);
 
 	g_free (bare);
 
@@ -1306,9 +1313,9 @@ get_field_signature (MonoImage *m, guint32 blob_signature, MonoGenericContext *c
 	ptr = get_type (m, ptr, &allocated_type_string, FALSE, context);
 
 	res = g_strdup_printf (
-		"%s %s",
-		allocated_modifier_string ? allocated_modifier_string : "",
-		allocated_type_string);
+		"%s%s",
+		allocated_type_string,
+		allocated_modifier_string ? allocated_modifier_string : "");
 	
 	if (allocated_modifier_string)
 		g_free (allocated_modifier_string);
@@ -1371,11 +1378,6 @@ get_ret_type (MonoImage *m, const char *ptr, char **ret_type, MonoGenericContext
 	int has_byref = 0;
 	
 	ptr = get_custom_mod (m, ptr, &mod);
-	if (mod){
-		g_string_append (str, mod);
-		g_string_append_c (str, ' ');
-		g_free (mod);
-	}
 
 	if (*ptr == MONO_TYPE_TYPEDBYREF){
 		g_string_append (str, "typedref");
@@ -1394,6 +1396,12 @@ get_ret_type (MonoImage *m, const char *ptr, char **ret_type, MonoGenericContext
 		if (has_byref)
 			g_string_append (str, "& ");
 		g_free (allocated_type_string);
+	}
+
+	if (mod){
+		g_string_append (str, mod);
+		g_string_append_c (str, ' ');
+		g_free (mod);
 	}
 
 	*ret_type = str->str;
@@ -1419,11 +1427,6 @@ get_param (MonoImage *m, const char *ptr, char **retval, MonoGenericContext *con
 	char *allocated_mod_string, *allocated_type_string;
 	
 	ptr = get_custom_mod (m, ptr, &allocated_mod_string);
-	if (allocated_mod_string){
-		g_string_append (str, allocated_mod_string);
-		g_string_append_c (str, ' ');
-		g_free (allocated_mod_string);
-	}
 	
 	if (*ptr == MONO_TYPE_TYPEDBYREF){
 		g_string_append (str, " typedref ");
@@ -1440,6 +1443,12 @@ get_param (MonoImage *m, const char *ptr, char **retval, MonoGenericContext *con
 		if (by_ref)
 			g_string_append_c (str, '&');
 		g_free (allocated_type_string);
+	}
+
+	if (allocated_mod_string){
+		g_string_append (str, allocated_mod_string);
+		g_string_append_c (str, ' ');
+		g_free (allocated_mod_string);
 	}
 
 	*retval = str->str;
@@ -2871,6 +2880,7 @@ init_key_table (void)
 	g_hash_table_insert (key_table, (char *) "preservesig", GINT_TO_POINTER (TRUE));
 	g_hash_table_insert (key_table, (char *) "private", GINT_TO_POINTER (TRUE));
 	g_hash_table_insert (key_table, (char *) "privatescope", GINT_TO_POINTER (TRUE));
+	g_hash_table_insert (key_table, (char *) "property", GINT_TO_POINTER (TRUE));
 	g_hash_table_insert (key_table, (char *) "protected", GINT_TO_POINTER (TRUE));
 	g_hash_table_insert (key_table, (char *) "public", GINT_TO_POINTER (TRUE));
 	g_hash_table_insert (key_table, (char *) "readonly", GINT_TO_POINTER (TRUE));
@@ -2934,6 +2944,7 @@ init_key_table (void)
 	g_hash_table_insert (key_table, (char *) "sub", GINT_TO_POINTER (TRUE));
 	g_hash_table_insert (key_table, (char *) "sub.ovf", GINT_TO_POINTER (TRUE));
 	g_hash_table_insert (key_table, (char *) "sub.ovf.un", GINT_TO_POINTER (TRUE));
+	g_hash_table_insert (key_table, (char *) "switch", GINT_TO_POINTER (TRUE));
 	g_hash_table_insert (key_table, (char *) "synchronized", GINT_TO_POINTER (TRUE));
 	g_hash_table_insert (key_table, (char *) "syschar", GINT_TO_POINTER (TRUE));
 	g_hash_table_insert (key_table, (char *) "sysstring", GINT_TO_POINTER (TRUE));

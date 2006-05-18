@@ -555,6 +555,9 @@ void
 mono_classes_init (void) MONO_INTERNAL;
 
 void
+mono_classes_cleanup (void) MONO_INTERNAL;
+
+void
 mono_class_layout_fields   (MonoClass *klass) MONO_INTERNAL;
 
 void
@@ -691,6 +694,9 @@ extern MonoDefaults mono_defaults MONO_INTERNAL;
 
 void
 mono_loader_init           (void) MONO_INTERNAL;
+
+void
+mono_loader_cleanup        (void) MONO_INTERNAL;
 
 void
 mono_loader_lock           (void) MONO_INTERNAL;

@@ -438,6 +438,7 @@ mono_trace_enter_method (MonoMethod *method, char *ebp)
 	}
 
 	printf (")\n");
+	fflush (stdout);
 }
 
 void
@@ -561,6 +562,7 @@ handle_enum:
 
 	//printf (" ip: %p\n", __builtin_return_address (1));
 	printf ("\n");
+	fflush (stdout);
 }
 
 void

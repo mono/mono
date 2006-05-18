@@ -4292,9 +4292,6 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		/* No LMF on IA64 */
 	}
 
-	if (strstr (cfg->method->name, "end_invoke_int_IAsyncResult"))
-		code = emit_call (cfg, code, MONO_PATCH_INFO_ABS, mono_arch_break);
-
 	ia64_codegen_close (code);
 
 	if (mono_jit_trace_calls != NULL && mono_trace_eval (method))

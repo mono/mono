@@ -3,6 +3,7 @@
 
 #include <mono/metadata/object.h>
 #include <mono/metadata/reflection.h>
+#include <mono/metadata/mempool.h>
 #include <mono/io-layer/io-layer.h>
 
 #if 1
@@ -755,6 +756,7 @@ typedef struct {
 	MonoString *filename;
 	guint32 attrs;
 	guint32 offset;
+	MonoObject *stream;
 } MonoReflectionResource;
 
 typedef struct {
@@ -1065,6 +1067,9 @@ mono_get_constant_value_from_blob (MonoDomain* domain, MonoTypeEnum type, const 
 
 void
 mono_release_type_locks (MonoThread *thread);
+
+char *
+mono_string_to_utf8_mp	(MonoMemPool *mp, MonoString *s);
 
 MonoArray*
 mono_array_clone_in_domain (MonoDomain *domain, MonoArray *array);

@@ -2876,7 +2876,7 @@ handle_alloc (MonoCompile *cfg, MonoClass *klass, gboolean for_box, const guchar
 		/* This happens often in argument checking code, eg. throw new FooException... */
 		/* Avoid relocations by calling a helper function specialized to mscorlib */
 		EMIT_NEW_ICONST (cfg, iargs [0], mono_metadata_token_index (klass->type_token));
-		return mono_emit_jit_icall (cfg, helper_newobj_mscorlib, iargs, ip);
+		return mono_emit_jit_icall (cfg, mono_helper_newobj_mscorlib, iargs, ip);
 	} else {
 		MonoVTable *vtable = mono_class_vtable (cfg->domain, klass);
 		gboolean pass_lw;
@@ -6109,7 +6109,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				EMIT_NEW_TEMPLOAD (cfg, iargs [0], this_temp->inst_c0);
 				EMIT_NEW_PCONST (cfg, iargs [1], cmethod);
 				EMIT_NEW_PCONST (cfg, iargs [2], ((MonoMethodInflated *) cmethod)->context);
-				addr = mono_emit_jit_icall (cfg, helper_compile_generic_method, iargs, ip);
+				addr = mono_emit_jit_icall (cfg, mono_helper_compile_generic_method, iargs, ip);
 				EMIT_NEW_TEMPLOAD (cfg, sp [0], this_temp->inst_c0);
 
 				ins = (MonoInst*)mono_emit_calli (cfg, fsig, sp, addr, ip);
@@ -6257,7 +6257,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 						iargs [0] = sp [0];
 						iargs [1] = sp [fsig->param_count];
 						
-						mono_emit_jit_icall (cfg, helper_stelem_ref_check, iargs, ip);
+						mono_emit_jit_icall (cfg, mono_helper_stelem_ref_check, iargs, ip);
 					}
 					
 					addr = mini_emit_ldelema_ins (cfg, cmethod, sp, ip, TRUE);
@@ -6902,12 +6902,12 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 							 * specialized to mscorlib.
 							 */
 							EMIT_NEW_ICONST (cfg, iargs [0], mono_metadata_token_index (n));
-							*sp = mono_emit_jit_icall (cfg, helper_ldstr_mscorlib, iargs, ip);
+							*sp = mono_emit_jit_icall (cfg, mono_helper_ldstr_mscorlib, iargs, ip);
 						} else {
 							/* Avoid creating the string object */
 							EMIT_NEW_IMAGECONST (cfg, iargs [0], image);
 							EMIT_NEW_ICONST (cfg, iargs [1], mono_metadata_token_index (n));
-							*sp = mono_emit_jit_icall (cfg, helper_ldstr, iargs, ip);
+							*sp = mono_emit_jit_icall (cfg, mono_helper_ldstr, iargs, ip);
 						}
 					} 
 					else
@@ -9907,7 +9907,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   running generics.exe.
  * - create a helper function for allocating a stack slot, taking into account 
  *   MONO_CFG_HAS_SPILLUP.
- * - LAST MERGE: 60046.
+ * - LAST MERGE: 60838.
  */
 
 /*

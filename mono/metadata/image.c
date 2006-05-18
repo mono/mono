@@ -148,6 +148,22 @@ mono_images_init (void)
 }
 
 /**
+ * mono_images_cleanup:
+ *
+ *  Free all resources used by this module.
+ */
+void
+mono_images_cleanup (void)
+{
+	DeleteCriticalSection (&images_mutex);
+
+	g_hash_table_destroy (loaded_images_hash);
+	g_hash_table_destroy (loaded_images_guid_hash);
+	g_hash_table_destroy (loaded_images_refonly_hash);
+	g_hash_table_destroy (loaded_images_refonly_guid_hash);
+}
+
+/**
  * mono_image_ensure_section_idx:
  * @image: The image we are operating on
  * @section: section number that we will load/map into memory
@@ -386,7 +402,7 @@ load_metadata_ptrs (MonoImage *image, MonoCLIImageInfo *iinfo)
 	g_assert (image->heap_guid.data);
 	g_assert (image->heap_guid.size >= 16);
 
-	image->guid = mono_guid_to_string (image->heap_guid.data);
+	image->guid = mono_guid_to_string ((guint8*)image->heap_guid.data);
 
 	return TRUE;
 }
@@ -586,7 +602,6 @@ mono_image_init (MonoImage *image)
 	image->class_cache = g_hash_table_new (NULL, NULL);
 	image->field_cache = g_hash_table_new (NULL, NULL);
 	image->name_cache = g_hash_table_new (g_str_hash, g_str_equal);
-	image->array_cache = g_hash_table_new (mono_aligned_addr_hash, NULL);
 
 	image->delegate_begin_invoke_cache = 
 		g_hash_table_new ((GHashFunc)mono_signature_hash, 
@@ -606,6 +621,15 @@ mono_image_init (MonoImage *image)
 	image->remoting_invoke_cache = g_hash_table_new (mono_aligned_addr_hash, NULL);
 	image->synchronized_cache = g_hash_table_new (mono_aligned_addr_hash, NULL);
 	image->unbox_wrapper_cache = g_hash_table_new (mono_aligned_addr_hash, NULL);
+
+	image->ldfld_wrapper_cache = g_hash_table_new (mono_aligned_addr_hash, NULL);
+	image->ldflda_wrapper_cache = g_hash_table_new (mono_aligned_addr_hash, NULL);
+	image->ldfld_remote_wrapper_cache = g_hash_table_new (mono_aligned_addr_hash, NULL);
+	image->stfld_wrapper_cache = g_hash_table_new (mono_aligned_addr_hash, NULL);
+	image->stfld_remote_wrapper_cache = g_hash_table_new (mono_aligned_addr_hash, NULL);
+	image->isinst_cache = g_hash_table_new (mono_aligned_addr_hash, NULL);
+	image->castclass_cache = g_hash_table_new (mono_aligned_addr_hash, NULL);
+	image->proxy_isinst_cache = g_hash_table_new (mono_aligned_addr_hash, NULL);
 
 	image->typespec_cache = g_hash_table_new (NULL, NULL);
 	image->memberref_signatures = g_hash_table_new (NULL, NULL);
@@ -809,6 +833,7 @@ do_mono_image_open (const char *fname, MonoImageOpenStatus *status,
 	image->image_info = iinfo;
 	image->name = canonicalize_path (fname);
 	image->ref_only = refonly;
+	image->ref_count = 1;
 
 	return do_mono_image_load (image, status, care_about_cli);
 }
@@ -942,6 +967,7 @@ mono_image_open_full (const char *fname, MonoImageOpenStatus *status, gboolean r
 	g_free (absfname);
 	
 	if (image){
+		mono_image_addref (image);
 		mono_images_unlock ();
 		return image;
 	}
@@ -959,7 +985,9 @@ mono_image_open_full (const char *fname, MonoImageOpenStatus *status, gboolean r
  * @fname: filename that points to the module we want to open
  * @status: An error condition is returned in this field
  *
- * Returns: An open image of type %MonoImage or NULL on error.
+ * Returns: An open image of type %MonoImage or NULL on error. 
+ * The caller holds a temporary reference to the returned image which should be cleared 
+ * when no longer needed by calling mono_image_close ().
  * if NULL, then check the value of @status for details on the error
  */
 MonoImage *
@@ -993,11 +1021,13 @@ free_hash_table (gpointer key, gpointer val, gpointer user_data)
 	g_hash_table_destroy ((GHashTable*)val);
 }
 
+/*
 static void
 free_mr_signatures (gpointer key, gpointer val, gpointer user_data)
 {
 	mono_metadata_free_method_signature ((MonoMethodSignature*)val);
 }
+*/
 
 static void
 free_blob_cache_entry (gpointer key, gpointer val, gpointer user_data)
@@ -1009,6 +1039,12 @@ static void
 free_remoting_wrappers (gpointer key, gpointer val, gpointer user_data)
 {
 	g_free (val);
+}
+
+static void
+free_array_cache_entry (gpointer key, gpointer val, gpointer user_data)
+{
+	g_slist_free ((GSList*)val);
 }
 
 /**
@@ -1108,7 +1144,12 @@ mono_image_close (MonoImage *image)
 	g_hash_table_destroy (image->method_cache);
 	g_hash_table_destroy (image->class_cache);
 	g_hash_table_destroy (image->field_cache);
-	g_hash_table_destroy (image->array_cache);
+	if (image->array_cache) {
+		g_hash_table_foreach (image->array_cache, free_array_cache_entry, NULL);
+		g_hash_table_destroy (image->array_cache);
+	}
+	if (image->ptr_cache)
+		g_hash_table_destroy (image->ptr_cache);
 	g_hash_table_foreach (image->name_cache, free_hash_table, NULL);
 	g_hash_table_destroy (image->name_cache);
 	g_hash_table_destroy (image->native_wrapper_cache);
@@ -1122,6 +1163,15 @@ mono_image_close (MonoImage *image)
 	g_hash_table_destroy (image->synchronized_cache);
 	g_hash_table_destroy (image->unbox_wrapper_cache);
 	g_hash_table_destroy (image->typespec_cache);
+	g_hash_table_destroy (image->ldfld_wrapper_cache);
+	g_hash_table_destroy (image->ldflda_wrapper_cache);
+	g_hash_table_destroy (image->ldfld_remote_wrapper_cache);
+	g_hash_table_destroy (image->stfld_wrapper_cache);
+	g_hash_table_destroy (image->stfld_remote_wrapper_cache);
+	g_hash_table_destroy (image->isinst_cache);
+	g_hash_table_destroy (image->castclass_cache);
+	g_hash_table_destroy (image->proxy_isinst_cache);
+
 	/* The ownership of signatures is not well defined */
 	//g_hash_table_foreach (image->memberref_signatures, free_mr_signatures, NULL);
 	g_hash_table_destroy (image->memberref_signatures);
@@ -1147,6 +1197,10 @@ mono_image_close (MonoImage *image)
 		if (image->modules [i])
 			mono_image_close (image->modules [i]);
 	}
+	if (image->modules)
+		g_free (image->modules);
+	if (image->references)
+		g_free (image->references);
 	/*g_print ("destroy image %p (dynamic: %d)\n", image, image->dynamic);*/
 	if (!image->dynamic) {
 		if (debug_assembly_unload)

@@ -14,6 +14,11 @@
 
 #include <glib.h>
 
+/* This is for FIONREAD on solaris */
+#if defined(sun)
+#include <sys/filio.h>
+#endif
+
 /* This is a copy of System.IO.Ports.Handshake */
 typedef enum {
 	NoneHandshake = 0,

@@ -2183,6 +2183,16 @@ initialize_object_slots (MonoClass *class)
 	}
 }
 
+static GList*
+g_list_prepend_mempool (GList* l, MonoMemPool* mp, gpointer datum)
+{
+	GList* n = mono_mempool_alloc (mp, sizeof (GList));
+	n->next = l;
+	n->prev = NULL;
+	n->data = datum;
+	return n;
+}
+
 /**
  * mono_class_init:
  * @class: the class to initialize
@@ -2295,7 +2305,7 @@ mono_class_init (MonoClass *class)
 			guint32 cols [MONO_NESTED_CLASS_SIZE];
 			mono_metadata_decode_row (&class->image->tables [MONO_TABLE_NESTEDCLASS], i - 1, cols, MONO_NESTED_CLASS_SIZE);
 			nclass = mono_class_create_from_typedef (class->image, MONO_TOKEN_TYPE_DEF | cols [MONO_NESTED_CLASS_NESTED]);
-			class->nested_classes = g_list_prepend (class->nested_classes, nclass);
+			class->nested_classes = g_list_prepend_mempool (class->nested_classes, class->image->mempool, nclass);
 
 			i = mono_metadata_nesting_typedef (class->image, class->type_token, i + 1);
 		}
@@ -3043,22 +3053,28 @@ mono_ptr_class_get (MonoType *type)
 {
 	MonoClass *result;
 	MonoClass *el_class;
-	static GHashTable *ptr_hash = NULL;
+	MonoImage *image;
+	char *name;
+
+	el_class = mono_class_from_mono_type (type);
+	image = el_class->image;
 
 	mono_loader_lock ();
 
-	if (!ptr_hash)
-		ptr_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
-	el_class = mono_class_from_mono_type (type);
-	if ((result = g_hash_table_lookup (ptr_hash, el_class))) {
+	if (!image->ptr_cache)
+		image->ptr_cache = g_hash_table_new (mono_aligned_addr_hash, NULL);
+
+	if ((result = g_hash_table_lookup (image->ptr_cache, el_class))) {
 		mono_loader_unlock ();
 		return result;
 	}
-	result = g_new0 (MonoClass, 1);
+	result = mono_mempool_alloc0 (image->mempool, sizeof (MonoClass));
 
 	result->parent = NULL; /* no parent for PTR types */
 	result->name_space = el_class->name_space;
-	result->name = g_strdup_printf ("%s*", el_class->name);
+	name = g_strdup_printf ("%s*", el_class->name);
+	result->name = mono_mempool_strdup (image->mempool, name);
+	g_free (name);
 	result->image = el_class->image;
 	result->inited = TRUE;
 	result->flags = TYPE_ATTRIBUTE_CLASS | (el_class->flags & TYPE_ATTRIBUTE_VISIBILITY_MASK);
@@ -3074,7 +3090,7 @@ mono_ptr_class_get (MonoType *type)
 
 	mono_class_setup_supertypes (result);
 
-	g_hash_table_insert (ptr_hash, el_class, result);
+	g_hash_table_insert (image->ptr_cache, el_class, result);
 
 	mono_loader_unlock ();
 
@@ -3086,6 +3102,8 @@ mono_fnptr_class_get (MonoMethodSignature *sig)
 {
 	MonoClass *result;
 	static GHashTable *ptr_hash = NULL;
+
+	/* FIXME: These should be allocate from a mempool as well, but which one ? */
 
 	mono_loader_lock ();
 
@@ -3101,7 +3119,7 @@ mono_fnptr_class_get (MonoMethodSignature *sig)
 	result->parent = NULL; /* no parent for PTR types */
 	result->name_space = "System";
 	result->name = "MonoFNPtrFakeClass";
-	result->image = NULL; /* need to fix... */
+	result->image = mono_defaults.corlib; /* need to fix... */
 	result->inited = TRUE;
 	result->flags = TYPE_ATTRIBUTE_CLASS; /* | (el_class->flags & TYPE_ATTRIBUTE_VISIBILITY_MASK); */
 	/* Can pointers get boxed? */
@@ -3233,6 +3251,9 @@ mono_bounded_array_class_get (MonoClass *eclass, guint32 rank, gboolean bounded)
 
 	mono_loader_lock ();
 
+	if (!image->array_cache)
+		image->array_cache = g_hash_table_new (mono_aligned_addr_hash, NULL);
+
 	if ((rootlist = list = g_hash_table_lookup (image->array_cache, eclass))) {
 		for (; list; list = list->next) {
 			class = list->data;
@@ -3265,7 +3286,7 @@ mono_bounded_array_class_get (MonoClass *eclass, guint32 rank, gboolean bounded)
 			mono_class_init (parent);
 	}
 
-	class = g_malloc0 (sizeof (MonoClass));
+	class = mono_mempool_alloc0 (image->mempool, sizeof (MonoClass));
 
 	class->image = image;
 	class->name_space = eclass->name_space;
@@ -3277,7 +3298,8 @@ mono_bounded_array_class_get (MonoClass *eclass, guint32 rank, gboolean bounded)
 		memset (name + nsize + 1, ',', rank - 1);
 	name [nsize + rank] = ']';
 	name [nsize + rank + 1] = 0;
-	class->name = name;
+	class->name = mono_mempool_strdup (image->mempool, name);
+	g_free (name);
 	class->type_token = 0;
 	/* all arrays are marked serializable and sealed, bug #42779 */
 	class->flags = TYPE_ATTRIBUTE_CLASS | TYPE_ATTRIBUTE_SERIALIZABLE | TYPE_ATTRIBUTE_SEALED |
@@ -3302,7 +3324,7 @@ mono_bounded_array_class_get (MonoClass *eclass, guint32 rank, gboolean bounded)
 	class->element_class = eclass;
 
 	if ((rank > 1) || bounded) {
-		MonoArrayType *at = g_new0 (MonoArrayType, 1);
+		MonoArrayType *at = mono_mempool_alloc0 (image->mempool, sizeof (MonoArrayType));
 		class->byval_arg.type = MONO_TYPE_ARRAY;
 		class->byval_arg.data.array = at;
 		at->eklass = eclass;
@@ -4957,6 +4979,37 @@ mono_class_set_failure (MonoClass *klass, guint32 ex_type, void *ex_data)
 	klass->exception_type = ex_type;
 	klass->exception_data = ex_data;
 	return TRUE;
+}
+
+/**
+ * mono_classes_init:
+ *
+ * Initialize the resources used by this module.
+ */
+void
+mono_classes_init (void)
+{
+}
+
+/**
+ * mono_classes_cleanup:
+ *
+ * Free the resources used by this module.
+ */
+void
+mono_classes_cleanup (void)
+{
+	IOffsetInfo *cached_info, *next;
+
+	if (global_interface_bitset)
+		mono_bitset_free (global_interface_bitset);
+
+	for (cached_info = cached_offset_info; cached_info;) {
+		next = cached_info->next;
+
+		g_free (cached_info);
+		cached_info = next;
+	}
 }
 
 /**

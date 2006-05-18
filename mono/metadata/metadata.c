@@ -1327,6 +1327,20 @@ mono_metadata_init (void)
 }
 
 /**
+ * mono_metadata_cleanup:
+ *
+ * Free all resources used by this module.
+ * This is a Mono runtime internal function.
+ */
+void
+mono_metadata_cleanup (void)
+{
+	g_hash_table_destroy (type_cache);
+	g_hash_table_destroy (generic_inst_cache);
+	g_hash_table_destroy (generic_class_cache);
+}
+
+/**
  * mono_metadata_parse_type:
  * @m: metadata context
  * @mode: king of type that may be found at @ptr
@@ -2185,7 +2199,7 @@ parse_section_data (MonoImage *m, MonoMethodHeader *mh, const unsigned char *ptr
 			int i;
 			mh->num_clauses = is_fat ? sect_data_len / 24: sect_data_len / 12;
 			/* we could just store a pointer if we don't need to byteswap */
-			mh->clauses = g_new0 (MonoExceptionClause, mh->num_clauses);
+			mh->clauses = mono_mempool_alloc0 (m->mempool, sizeof (MonoExceptionClause) * mh->num_clauses);
 			for (i = 0; i < mh->num_clauses; ++i) {
 				MonoExceptionClause *ec = &mh->clauses [i];
 				guint32 tof_value;
@@ -3053,8 +3067,8 @@ mono_type_size (MonoType *t, gint *align)
 		MonoClass *container_class;
 
 		gclass = mono_get_inflated_generic_class (t->data.generic_class);
-		g_assert (!gclass->generic_class.inst->is_open);
-		g_assert (!gclass->klass->generic_container);
+		// g_assert (!gclass->generic_class.inst->is_open);
+		// g_assert (!gclass->klass->generic_container);
 
 		container_class = gclass->generic_class.container_class;
 

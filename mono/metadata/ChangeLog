@@ -1,3 +1,187 @@
+2006-05-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (emit_marshal_vtype): Add support for UnmanagedType.LPStruct 
+	and blittable types.
+
+2006-05-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_emit_native_wrapper): Make the marshalling code more
+	uniform by moving stuff from this function to the proper emit_marshal_XXX functions.
+	
+	* marshal.c (emit_marshal_vtype): Add limited support for 
+	UnmanagedType.LPStruct. Fixes #78427.
+
+	* marshal.c (ves_icall_System_Runtime_InteropServices_Marshal_PtrToStructure): 
+	Applied a patch from kangaroo to fix #77523.
+
+2006-05-17  Martin Baulig  <martin@ximian.com>
+
+	* threads.c
+	(debugger_thread_vtable): Moved into ../mini/debug-debugger.c.
+	(debugger_thread_created): Removed.
+	(debugger_thread_exited): Removed.
+
+2006-05-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* appdomain.c (MONO_CORLIB_VERSION): Bump corlib version.
+
+	* object-internals.h (MonoReflectionResource): Sync with managed version.
+
+2006-05-12  Wade Berrier <wberrier@novell.com>
+
+	* threads.c: Define G_GSIZE_FORMAT for systems with glib < 2.6
+
+2006-05-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_fnptr_class_get): Set class->image to corlib for now, since other
+	functions try to allocate from the image mempool.
+
+2006-05-12  Dick Porter  <dick@ximian.com>
+
+	* threads.c (mono_thread_attach): Fix usage of GetCurrentThread().
+
+2006-05-12  Lluis Sanchez  <lluis@ximian.com>
+
+	* object.c: The FieldGetter and FieldSetter methods require the full
+	name of the class, not only the name. Fixes bug #78277.
+
+2006-05-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* assembly.c (mono_assembly_load_from_full): Fix a bunch of warnings.
+	(mono_assembly_close): Null out assembly->image->references after freeing it.
+
+	* image.c (mono_image_close): Free image->references.
+	
+	* reflection.c (mono_image_basic_init): Fix a small memory leak.
+
+2006-05-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* marshal.c: In function mono_mb_add_local don't use the mb pointer 
+	before checking if it's NULL (g_assert).
+
+2006-05-10  Martin Baulig  <martin@ximian.com>
+
+	* metadata.c (mono_type_size): Kill the g_assert() in MONO_TYPE_GENERICINST;
+	I thought I already killed that two months ago, but now it somehow reappeared.
+
+2006-05-10  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.c (mono_debug_add_method): Allow instantiated generic methods.
+
+2006-05-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c: Allocate memory for dynamically created methods in the image
+	mempools.
+
+2006-05-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* appdomain.c: In ves_icall_System_AppDomain_[Get|Set]Data functions, 
+	don't use the ad pointer before checking if it's NULL (g_assert).
+
+2006-05-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_System_Reflection_Assembly_InternalGetAssemblyName): Remove
+	a redundant (and incorrect) addref. Hopefully fixes sn.exe on windows.
+
+	* marshal.c: Allocate all signatures from mempools.
+
+	* marshal.c: Allocate some more signatures from mempools.
+
+2006-05-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.c (ves_icall_System_Threading_Interlocked_Add_Int): Return the new
+	value, not the old. Fixes #78312.
+	(ves_icall_System_Threading_Interlocked_Add_Long): Ditto.
+
+	* class.c (mono_bounded_array_class_get): Allocate data from the image mempool.
+	(mono_ptr_class_get): Ditto. Also change the cache from a global one to a 
+	per-image cache.
+
+	* assembly.c (mono_assembly_close): Free image->references.
+
+	* assembly.c (mono_assembly_names_equal): Fix a warning.
+	(mono_assemblies_cleanup): Cleanup more global data.
+
+	* metadata-internals.h (MonoImage): Add 'ptr_cache'.
+
+	* image.c (mono_image_close): Free up the contents of 'array_cache', free up
+	ptr_cache and image->modules.
+
+	* image.c (mono_image_init): Allocate array_cache lazily.
+	
+2006-05-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* assembly.c: use GetCurrentThreadId for the hash, as GetCurrentThread
+	behavior was changed recently and has bad side effects.
+
+2006-05-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* assembly.c (mono_assembly_open_full): Add a missing mono_image_close ().
+	
+	* assembly.c (mono_assembly_close): Remove a debug printf.
+
+	* profiler.c (create_profiler): Use mono_aligned_addr_hash.
+
+	* metadata-internals.h image.c assembly.c: Change the reference counting scheme
+	to also allow for temporary references between mono_image_open ()/close ().
+
+	* domain.c (get_runtimes_from_exe): Add a FIXME.	
+
+2006-05-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c: Fix support for dynamic methods.
+
+	* appdomain.c (mono_runtime_cleanup): Call mono_marshal_cleanup ().
+
+	* marshal.c (mono_marshal_cleanup): New cleanup function.
+
+	* marshal.c: Rewrite the wrapper code to allocate most of its memory from the 
+	image mempools.
+
+	* class.c (mono_class_init): Fix leaking class->nested_classes.
+
+	* metadata-internals.h (MonoImage): Add a couple of new wrapper caches.
+
+	* image.c (mono_image_init): Initialize the new cashes.
+
+	* image.c (mono_image_close): Destroy the new cashes.
+
+	* marshal.c: Get rid of most of the static caches in favor of per-image caches.
+
+	* mempool.c (mono_mempool_strdup): New helper function.
+
+	* class-internals.h: Add prototype for mono_loader_unlock ().
+
+	* domain.c (mono_jit_info_table_find): Fix a warning.
+	(mono_debugger_check_runtime_version): Ditto.
+
+	* rawbuffer.h rawbuffer.c metadata-internals.h metadata.c class-internals.h 
+	class.c loader.c image.h image.c assembly.h assembly.c: Add init () and cleanup ()
+	functions to these modules.
+
+	* domain-internals.h domain (mono_cleanup): New internal method to cleanup most
+	metadata modules.
+	
+	* marshal.c (mono_free_bstr): Fix a warning.
+
+	* assembly.c (mono_assembly_open_full): Fix another small leak.
+
+	* object.c: Fix some unload leaks in the remoting code.
+
+	* object-internals.h object-internal.c (mono_string_to_utf8_mp): New helper
+	function.
+
+	* assembly.c (mono_assembly_close): Fix a leak when unloading dynamic assemblies.
+
+	* reflection.c: Fix some unload leaks in dynamic assemblies.
+
+2006-05-02  Jonathan Chambers  <jonathan.chambers@ansys.com>
+
+	* marshal.c: Add BSTR support on Win32 (all changes under MIT X11)
+	* marshal.h: Add BSTR support on Win32
+	* icall.c: Add BSTR icalls
+	* metadata.h: Add BSTR enums
+
 2006-04-26  Miguel de Icaza  <miguel@novell.com>
 
 	* file-io.c (ves_icall_System_IO_MonoIO_Open): Remove `async'

@@ -62,7 +62,107 @@
 
 	* method-to-ir.c (mono_method_check_inlining): Fix warnings.
 
-=======
+2006-05-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-sparc.c (mono_arch_output_basic_block): Add support for large stack offets
+	to a few opcodes. Fixes #78439.
+
+	* mini-sparc.c: Rename mono_sparch_break () to mono_arch_break () to improve
+	consistency with other archs.
+
+	* mini-ia64.c (mono_arch_emit_prolog): Remove debug stuff left in by mistake.
+
+Wed May 17 18:07:33 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* debug-debugger.c: fix the build.
+
+2006-05-17  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.c
+	(debugger_thread_vtable): Moved here from ../metadata/threads.c.
+	(debugger_init_threads): Formerly known as mono_debugger_init_threads().
+	(debugger_finalize_threads): Formaly known as mono_debugger_finalize_threads().
+	(debugger_attach): Call GC_mono_debugger_add_all_threads().
+
+2006-05-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_init): Call pthread_attr_destroy () to fix a small memory leak.
+
+2006-05-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-x86.c (mono_arch_instrument_epilog): Fix handling of 
+	MONO_TYPE_GENERICINST.
+	
+	* mini-amd64.c (mono_arch_instrument_epilog): Fix handling of 
+	MONO_TYPE_GENERICINST.
+
+2006-05-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-x86.c (mono_arch_get_vcall_slot_addr): Add a missing call sequence. Fixes
+	#78325.
+
+2006-05-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_create_jump_trampoline): Allocate MonoJitInfo from the domain
+	mempool.
+	(mono_jit_free_method): Remove the method from jump_trampoline_hash as well.
+
+2006-05-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_cleanup): Applied patch from Joachim Ante (joe@otee.dk). Call
+	mono_trace_cleanup ().
+
+	* iltests.il: Fix problem with the newly added test.
+
+	* mini-codegen.c (mono_local_regalloc): When changing the dreg of an instruction
+	due to register constraints, free up the previous hreg. Fixes #78314.
+
+	* iltests.il: Add new test for #78314.	
+
+	* mini-x86.c (mono_arch_get_inst_for_method): Use OP_ATOMIC_ADD_NEW_I4 for
+	Interlocked.Add. Fixes #78312.
+
+	* mini-amd64.c (mono_arch_get_inst_for_method): Ditto.
+	
+2006-05-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* inssel.brg (mini_emit_virtual_call): Fix a warning.
+
+2006-05-05  Martin Baulig  <martin@ximian.com>
+
+	* debug-mini.c (mono_debug_open_block): New method.
+
+	* mini-amd64.c
+	(mono_arch_output_basic_block): Call mono_debug_open_block() at
+	the beginning of each basic block.
+
+	* mini-x86.c
+	(mono_arch_output_basic_block): Call mono_debug_open_block() at
+	the beginning of each basic block.
+
+2006-05-04  Massimiliano Mantione  <massi@ximian.com>
+
+	* driver.c: Disabled inline,consprop,copyprop,treeprop,deadce by
+	default until I understand why they break the build on amd64.
+
+2006-05-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_cleanup): Call mono_cleanup ().
+
+	* mini.c (UNVERIFIED): New macro to make it easier to track down verification
+	errors.
+
+2006-05-04  Massimiliano Mantione  <massi@ximian.com>
+
+	* aliasing.c: Fixed shameful cut&paste error that caused JIT crashes.
+	* driver.c: Enabled inline,consprop,copyprop,treeprop,deadce by
+	default since all known bugs are fixed, and I cannot reproduce bug
+	77944... I'm asking Matt Hargett to test again after this commit.
+
+2006-04-28  Massimiliano Mantione  <massi@ximian.com>
+
+	* mini-codegen.c: Fixed typo that thrashed inline.
+
 2006-04-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* dominators.c (compute_dominators): Avoid using a worklist since

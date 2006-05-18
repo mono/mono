@@ -354,7 +354,7 @@ print_code_with_aliasing_information (MonoAliasingInformation *info) {
 #define ADD_ARGUMGENT(info,inst,alias) do {\
 		if ((info)->number_of_arguments == (info)->arguments_capacity) {\
 			MonoInst **new_arguments = mono_mempool_alloc ((info)->mempool, sizeof (MonoInst*) * ((info)->arguments_capacity * 2));\
-			MonoAliasValue *new_arguments_aliases = mono_mempool_alloc ((info)->mempool, sizeof (MonoInst*) * ((info)->arguments_capacity * 2));\
+			MonoAliasValue *new_arguments_aliases = mono_mempool_alloc ((info)->mempool, sizeof (MonoAliasValue) * ((info)->arguments_capacity * 2));\
 			memcpy (new_arguments, (info)->arguments, sizeof (MonoInst*) * ((info)->arguments_capacity));\
 			memcpy (new_arguments_aliases, (info)->arguments_aliases, sizeof (MonoAliasValue) * ((info)->arguments_capacity));\
 			(info)->arguments = new_arguments;\
@@ -811,7 +811,7 @@ mono_aliasing_get_affected_variables_for_inst_traversing_code (MonoAliasingInfor
 	}
 }
 
-MonoLocalVariableList*
+static MonoLocalVariableList*
 mono_aliasing_get_affected_variables_for_inst_in_bb (MonoAliasingInformation *info, MonoInst *inst, MonoBasicBlock *bb) {
 	MonoAliasUsageInformation *use;
 	

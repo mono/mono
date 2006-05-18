@@ -248,6 +248,70 @@ debugger_get_current_thread (void)
 	return (guint64) (gsize) mono_thread_current ();
 }
 
+#if FIXME_BROKEN_OVER_NIGHT
+
+static void
+debugger_gc_thread_created (pthread_t thread, void *stack_ptr)
+{
+	mono_debugger_event (MONO_DEBUGGER_EVENT_THREAD_CREATED,
+			     (guint64) (gsize) stack_ptr, thread);
+}
+
+static void
+debugger_gc_thread_exited (pthread_t thread, void *stack_ptr)
+{
+	mono_debugger_event (MONO_DEBUGGER_EVENT_THREAD_EXITED,
+			     (guint64) (gsize) stack_ptr, thread);
+}
+
+static void
+debugger_gc_stop_world (void)
+{
+	mono_debugger_event (
+		MONO_DEBUGGER_EVENT_ACQUIRE_GLOBAL_THREAD_LOCK, 0, 0);
+}
+
+static void
+debugger_gc_start_world (void)
+{
+	mono_debugger_event (
+		MONO_DEBUGGER_EVENT_RELEASE_GLOBAL_THREAD_LOCK, 0, 0);
+}
+
+static GCThreadFunctions debugger_thread_vtable = {
+	NULL,
+
+	debugger_gc_thread_created,
+	debugger_gc_thread_exited,
+
+	debugger_gc_stop_world,
+	debugger_gc_start_world
+};
+
+static void
+debugger_init_threads (void)
+{
+	gc_thread_vtable = &debugger_thread_vtable;
+}
+
+static void
+debugger_finalize_threads (void)
+{
+	gc_thread_vtable = NULL;
+}
+
+#else
+
+static void
+debugger_init_threads (void)
+{ }
+
+static void
+debugger_finalize_threads (void)
+{ }
+
+#endif
+
 static void
 debugger_attach (void)
 {
@@ -256,7 +320,10 @@ debugger_attach (void)
 	mono_debugger_event_handler = debugger_event_handler;
 	mono_debugger_notification_function (MONO_DEBUGGER_EVENT_INITIALIZE_MANAGED_CODE, 0, 0);
 
-	mono_debugger_init_threads ();
+	debugger_init_threads ();
+#if FIXME_BROKEN_OVER_NIGHT
+	GC_mono_debugger_add_all_threads ();
+#endif
 }
 
 static void
@@ -264,7 +331,7 @@ debugger_detach (void)
 {
 	mono_debugger_event_handler = NULL;
 	mono_debugger_notification_function = NULL;
-	mono_debugger_finalize_threads ();
+	debugger_finalize_threads ();
 }
 
 static void
@@ -282,6 +349,8 @@ mono_debugger_init (void)
 	 * Use an indirect call so gcc can't optimize it away.
 	 */
 	MONO_DEBUGGER__debugger_info.initialize ();
+
+	debugger_init_threads ();
 
 	/*
 	 * Initialize the thread manager.
@@ -331,8 +400,6 @@ mono_debugger_main (MonoDomain *domain, MonoAssembly *assembly, int argc, char *
 {
 	MainThreadArgs main_args;
 	MonoImage *image;
-
-	mono_debugger_init_threads ();
 
 	/*
 	 * Get and compile the main function.

@@ -303,7 +303,12 @@ typedef struct {
 	gunichar2 *d2;
 } SimpleStruct;
 
-STDCALL SimpleStruct
+typedef struct {
+	double x;
+	double y;
+} point;
+
+STDCALL simplestruct
 mono_test_return_vtype (int i)
 {
 	SimpleStruct res;
@@ -450,6 +455,25 @@ mono_test_marshal_struct2_2 (int i, int j, int k, SimpleStruct2 ss)
 	return 1;
 }
 
+STDCALL int 
+mono_test_marshal_lpstruct (simplestruct *ss)
+{
+	if (ss->a == 0 && ss->b == 1 && ss->c == 0 &&
+	    !strcmp (ss->d, "TEST"))
+		return 0;
+
+	return 1;
+}
+
+STDCALL int 
+mono_test_marshal_lpstruct_blittable (point *p)
+{
+	if (p->x == 1.0 && p->y == 2.0)
+		return 0;
+	else
+		return 1;
+}
+
 STDCALL int
 mono_test_marshal_struct_array (SimpleStruct2 *ss)
 {
@@ -524,6 +548,7 @@ get_sp (void)
 	int i;
 	void *p;
 
+	/* Yes, this is correct, we are only trying to determine the value of the stack here */
 	p = &i;
 	return p;
 }
@@ -1133,11 +1158,6 @@ BugGetVersionEx (int a, int b, int c, int d, int e, int f, int g, int h, OSVERSI
 
 	return osvi->a + osvi->b;
 }
-
-typedef struct {
-	double x;
-	double y;
-} point;
 
 STDCALL int
 mono_test_marshal_point (point pt)
