@@ -1534,6 +1534,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\IDropTarget.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\IFeatureSupport.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1890,6 +1895,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\MenuMerge.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\MenuStrip.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -2570,6 +2580,21 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\ToolBarTextAlign.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\ToolStripDropDownItem.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\ToolStripItem.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\ToolStripMenuItem.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
