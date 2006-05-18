@@ -1,3 +1,11 @@
+2006-05-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PaintEventArgs.cs: For 2.0, check for a null Graphics in the .ctor. 
+	Don't set the disposed graphics to null, so we can throw the "right"
+	exception if the graphics is reused later (added a flag to avoid 
+	double disposing). Some behaviours are different under 2.0 and are
+	filled under bug #78448.
+
 2006-05-18  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Control.cs: When double-buffering is enabled, we need to reset

@@ -33,9 +33,15 @@ namespace System.Windows.Forms {
 		private Graphics	graphics;
 		private Rectangle	clip_rectangle;
 		internal bool		Handled;
+		private bool		disposed;
 		
 		#region Public Constructors
-		public PaintEventArgs(System.Drawing.Graphics graphics, System.Drawing.Rectangle clipRect) {
+		public PaintEventArgs (Graphics graphics, Rectangle clipRect)
+		{
+#if NET_2_0
+			if (graphics == null)
+				throw new ArgumentNullException ("graphics");
+#endif
 			this.graphics=graphics;
 			this.clip_rectangle=clipRect;
 		}
@@ -76,10 +82,12 @@ namespace System.Windows.Forms {
 			Dispose(false);
 		}
 
-		protected virtual void Dispose(bool disposing) {
-			if (this.graphics!=null) {
-				graphics.Dispose();
-				this.graphics=null;
+		protected virtual void Dispose (bool disposing)
+		{
+			if (!disposed) {
+				if (graphics != null)
+					graphics.Dispose ();
+				disposed = true;
 			}
 		}
 		#endregion	// Protected Instance Methods
