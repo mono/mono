@@ -233,6 +233,8 @@ namespace System.Web.Configuration {
 			return config;
 		}
 
+		static MethodInfo get_runtime_object = typeof (ConfigurationSection).GetMethod ("GetRuntimeObject", BindingFlags.NonPublic | BindingFlags.Instance);
+
 		[MonoTODO]
 		public static object GetWebApplicationSection (string sectionName)
 		{
@@ -240,7 +242,7 @@ namespace System.Web.Configuration {
 
 			ConfigurationSection section = config.GetSection (sectionName);
 
-			return section;
+			return get_runtime_object.Invoke (section, new object [0]);
 		}
 
 		public static NameValueCollection AppSettings {

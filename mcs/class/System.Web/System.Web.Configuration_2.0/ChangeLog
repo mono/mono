@@ -1,3 +1,9 @@
+2006-05-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebConfigurationManager.cs: recent sys.config.dll changes on
+	  ConfigurationManager.GetSection() which should call
+	  GetRuntimeObject() should also apply here. Fixed monodoc web.
+
 2006-05-10  Andrew Skiba <andrews@mainsoft.com>
 
 	* HttpHandlerAction.cs: keep the internal exception
