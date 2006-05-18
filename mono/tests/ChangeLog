@@ -1,3 +1,7 @@
+2006-05-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* pinvoke2.cs libtest.c: Add tests for UnamangedType.LPStruct and blittable types.
+
 2006-05-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* pinvoke2.cs libtest.c: Add tests for marshalling UnmanagedType.LPStruct.
