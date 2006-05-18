@@ -4271,7 +4271,7 @@ namespace System.Windows.Forms
 			if (wm.HasBorders) {
 				Rectangle borders = new Rectangle (0, 0, form.Width, form.Height);
 				// The 3d border is only 2 pixels wide, so we draw the innermost pixel ourselves
-				dc.DrawRectangle (new Pen (ColorControl, 1), 2, 2, form.Width - 3, form.Height - 3);
+				dc.DrawRectangle (new Pen (ColorControl, 1), 2, 2, form.Width - 5, form.Height - 5);
 				ControlPaint.DrawBorder3D (dc, borders,	Border3DStyle.Raised);
 			}
 
