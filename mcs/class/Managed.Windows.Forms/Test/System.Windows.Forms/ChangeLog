@@ -1,3 +1,7 @@
+2006-05-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PaintEventArgsTest.cs: New. Unit tests for PaintEventArgs.
+
 2006-05-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	Some compat fixes found by make run-test-ondotnet:
