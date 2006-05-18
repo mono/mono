@@ -1,3 +1,9 @@
+2006-05-18  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Control.cs: Brought back our old UpdateZOrder method as a private
+	  function and switched our calls from UpdateZOrder to the new one.
+	  This fixes the Paint.Net canvas disappearing bug.
+
 2006-05-18  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* XplatUIX11.cs (DefWndProc): WM_SETCURSOR: Assign the return value 

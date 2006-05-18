@@ -337,7 +337,7 @@ namespace System.Windows.Forms
 
 				value.InitLayout();
 
-				owner.UpdateZOrder();
+				owner.UpdateChildrenZOrder();
 				owner.PerformLayout(value, "Parent");
 				owner.OnControlAdded(new ControlEventArgs(value));
 			}
@@ -357,7 +357,7 @@ namespace System.Windows.Forms
 
 				control.ChangeParent (owner);
 				control.InitLayout ();
-				owner.UpdateZOrder ();
+				owner.UpdateChildrenZOrder ();
 				owner.PerformLayout (control, "Parent");
 				owner.OnControlAdded (new ControlEventArgs (control));
 			}
@@ -514,7 +514,7 @@ namespace System.Windows.Forms
 
 				value.ChangeParent(null);
 
-				owner.UpdateZOrder();
+				owner.UpdateChildrenZOrder();
 			}
 
 			internal virtual void RemoveImplicit (Control control)
@@ -526,7 +526,7 @@ namespace System.Windows.Forms
 					impl_list.Remove (control);
 				}
 				control.ChangeParent (null);
-				owner.UpdateZOrder ();
+				owner.UpdateChildrenZOrder ();
 			}
 
 			public void RemoveAt(int index) {
@@ -2660,7 +2660,7 @@ namespace System.Windows.Forms
 				controls [i].CreateControl ();
 			}
 
-			UpdateZOrder();
+			UpdateChildrenZOrder();
 
 			if (binding_context == null) {	// seem to be sent whenever it's null?
 				OnBindingContextChanged(EventArgs.Empty);
@@ -3775,6 +3775,19 @@ namespace System.Windows.Forms
 				} else {
 					XplatUI.SetZOrder(child.Handle, IntPtr.Zero, true, false);
 				}
+			}
+		}
+
+		private void UpdateChildrenZOrder() {
+			Control [] controls;
+
+			if (!IsHandleCreated) {
+				return;
+			}
+
+			controls = child_controls.GetAllControls ();
+			for (int i = 1; i < controls.Length; i++ ) {
+				XplatUI.SetZOrder(controls[i].Handle, controls[i-1].Handle, false, false);
 			}
 		}
 
