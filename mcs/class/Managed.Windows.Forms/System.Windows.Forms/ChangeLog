@@ -1,6 +1,10 @@
 2006-05-18  Mike Kestner  <mkestner@novell.com>
 
 	* ListView.cs: do focused item selection like MS on clicks. 
+	Rework focus handling for ItemControl so LostFocus invalidates as
+	well.
+	* ThemeWin32Classic.cs: only draw focus rectangle for ListViewItems if
+	the ListView ItemControl has focus.
 
 2006-05-17  Peter Dennis Bartok  <pbartok@novell.com>
 
