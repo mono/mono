@@ -401,7 +401,7 @@ namespace System.Windows.Forms {
 			cursor_dir.idType = reader.ReadUInt16();
 			if (cursor_dir.idReserved != 0 || !(cursor_dir.idType == 2 || cursor_dir.idType == 1))
 				throw new System.ArgumentException ("Invalid Argument, format error", "stream");
-		
+
 			entry_count = reader.ReadUInt16();
 			cursor_dir.idCount = entry_count;
 			cursor_dir.idEntries = new CursorEntry[entry_count];
@@ -417,6 +417,10 @@ namespace System.Windows.Forms {
 				ce.reserved = reader.ReadByte();
 				ce.xHotspot = reader.ReadUInt16();
 				ce.yHotspot = reader.ReadUInt16();
+				if (cursor_dir.idType == 1) {
+					ce.xHotspot = (ushort)(ce.width / 2);
+					ce.yHotspot = (ushort)(ce.height / 2);
+				}
 				ce.sizeInBytes = reader.ReadUInt32();
 				ce.fileOffset = reader.ReadUInt32();
 

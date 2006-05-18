@@ -2516,7 +2516,7 @@ namespace System.Windows.Forms {
 					// Pass to parent window first
 					while ((hwnd.parent != null) && (msg.Result == IntPtr.Zero)) {
 						hwnd = hwnd.parent;
-						NativeWindow.WndProc(hwnd.Handle, Msg.WM_SETCURSOR, msg.HWnd, msg.LParam);
+						msg.Result = NativeWindow.WndProc(hwnd.Handle, Msg.WM_SETCURSOR, msg.HWnd, msg.LParam);
 					}
 
 					if (msg.Result == IntPtr.Zero) {

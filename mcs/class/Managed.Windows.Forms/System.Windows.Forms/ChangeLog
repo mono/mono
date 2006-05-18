@@ -1,3 +1,13 @@
+2006-05-18  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* XplatUIX11.cs (DefWndProc): WM_SETCURSOR: Assign the return value 
+	  from the call to NativeWindow to avoid walking up the parent chain
+	  further than needed (speeds up setting cursors and avoids setting
+	  the wrong cursor if a parent has another cursor defined)
+	* Cursor.cs: When loading an icon as cursor, MS uses the center of
+	  the icon as hotspot, not what's contained as hotspot in the icon
+	  file. This fixes the perceived drawing offset seen with Paint.Net
+	
 2006-05-18  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* XplatUIX11.cs: 
