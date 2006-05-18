@@ -1,5 +1,10 @@
 2006-05-18  Raja R Harinath  <rharinath@novell.com>
 
+	* statement.cs (Block.Resolve): Always depend on flow-branching to
+	determine unreachability.  Kill workaround that originally emitted
+	only one statement after an "unreachable" label (see infloop in
+	test-515.cs).
+
 	Fix #77869, #76148, #77755, #75255 and a host of other bugs.
 	This is still "wrong", but anything better would probably need a
 	multi-pass algorithm.

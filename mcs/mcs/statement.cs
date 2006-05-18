@@ -1936,10 +1936,10 @@ namespace Mono.CSharp {
 					statements [ix] = EmptyStatement.Value;
 
 				num_statements = ix + 1;
-				if (s is LabeledStatement)
-					unreachable = false;
-				else
-					unreachable = ec.CurrentBranching.CurrentUsageVector.Reachability.IsUnreachable;
+
+				unreachable = ec.CurrentBranching.CurrentUsageVector.Reachability.IsUnreachable;
+				if (unreachable && s is LabeledStatement)
+					throw new InternalErrorException ("should not happen");
 			}
 
 			Report.Debug (4, "RESOLVE BLOCK DONE", StartLocation,
