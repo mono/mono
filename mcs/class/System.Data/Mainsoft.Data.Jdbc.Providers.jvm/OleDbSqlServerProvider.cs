@@ -46,6 +46,7 @@ namespace Mainsoft.Data.Jdbc.Providers
 	{
 		#region Consts
 
+		private const string Port = "Port";
 		private const string DefaultInstanceName = "MSSQLSERVER";
 		private const int DefaultTimeout = 15;
 
@@ -73,25 +74,12 @@ namespace Mainsoft.Data.Jdbc.Providers
 		{
 			//TBD: should wrap the IConnectionStringDictionary
 			IConnectionStringDictionary conectionStringBuilder = base.GetConnectionStringBuilder (connectionString);
-			if (!conectionStringBuilder.Contains("jndi-datasource-name")) {
-
-				string database = (string) conectionStringBuilder [OleDbSqlHelper.Database];
-				if (database == null)
-					conectionStringBuilder.Add (OleDbSqlHelper.Database, String.Empty);
-
-				string dataSource = OleDbSqlHelper.GetDataSource (conectionStringBuilder);
-				string instanceName = OleDbSqlHelper.GetInstanceName (conectionStringBuilder, null);
-
-				if (instanceName != null)
-					conectionStringBuilder [OleDbSqlHelper.ServerName] = dataSource + "\\" + instanceName;
-				else
-					conectionStringBuilder [OleDbSqlHelper.ServerName] = dataSource;		
-
-				string port = (string) conectionStringBuilder [OleDbSqlHelper.Port];
-				if (port == null || port.Length == 0) {
-					port = GetMSSqlPort (OleDbSqlHelper.GetInstanceName (conectionStringBuilder, DefaultInstanceName), OleDbSqlHelper.GetDataSource (conectionStringBuilder), OleDbSqlHelper.GetTimeout (conectionStringBuilder, DefaultTimeout));
-					conectionStringBuilder.Add (OleDbSqlHelper.Port, port);
-				}
+			OleDbSqlHelper.InitConnectionStringBuilder (conectionStringBuilder);
+			
+			string port = (string) conectionStringBuilder [Port];
+			if (port == null || port.Length == 0) {
+				port = GetMSSqlPort (OleDbSqlHelper.GetInstanceName (conectionStringBuilder, DefaultInstanceName), OleDbSqlHelper.GetDataSource (conectionStringBuilder), OleDbSqlHelper.GetTimeout (conectionStringBuilder, DefaultTimeout));
+				conectionStringBuilder.Add (Port, port);
 			}
 
 			return conectionStringBuilder;
@@ -209,19 +197,7 @@ namespace Mainsoft.Data.Jdbc.Providers
 		{
 			//TBD: should wrap the IConnectionStringDictionary
 			IConnectionStringDictionary conectionStringBuilder = base.GetConnectionStringBuilder (connectionString);
-			if (!conectionStringBuilder.Contains("jndi-datasource-name")) {
-				string database = (string) conectionStringBuilder [OleDbSqlHelper.Database];
-				if (database == null)
-					conectionStringBuilder.Add (OleDbSqlHelper.Database, String.Empty);
-
-				string dataSource = OleDbSqlHelper.GetDataSource (conectionStringBuilder);
-				string instanceName = OleDbSqlHelper.GetInstanceName (conectionStringBuilder, null);
-
-				if (instanceName != null)
-					conectionStringBuilder [OleDbSqlHelper.ServerName] = dataSource + "\\" + instanceName;
-				else
-					conectionStringBuilder [OleDbSqlHelper.ServerName] = dataSource;			
-			}
+			OleDbSqlHelper.InitConnectionStringBuilder (conectionStringBuilder);
 			return conectionStringBuilder;
 		}		
 		
@@ -354,10 +330,27 @@ namespace Mainsoft.Data.Jdbc.Providers
 
 	class OleDbSqlHelper
 	{
-		internal const string Port = "Port";
-		internal const string Database = "Database";
-		internal const string ServerName = "ServerName";
-		internal const string Timeout = "Timeout";
+		private const string Database = "Database";
+		private const string ServerName = "ServerName";
+		private const string Timeout = "Timeout";
+
+		internal static void InitConnectionStringBuilder (IConnectionStringDictionary conectionStringBuilder)
+		{
+			if (!conectionStringBuilder.Contains("jndi-datasource-name")) {
+
+				string database = (string) conectionStringBuilder [Database];
+				if (database == null)
+					conectionStringBuilder.Add (Database, String.Empty);
+
+				string dataSource = GetDataSource (conectionStringBuilder);
+				string instanceName = GetInstanceName (conectionStringBuilder, null);
+
+				if (instanceName != null)
+					conectionStringBuilder [ServerName] = dataSource + "\\" + instanceName;
+				else
+					conectionStringBuilder [ServerName] = dataSource;						
+			}
+		}		
 
 		// TBD : refactor GetInstanceName and GetDataSource to single method
 		internal static string GetInstanceName (IDictionary keyMapper, string defaultInstanceName)
