@@ -1,3 +1,16 @@
+2006-05-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	Some compat fixes found by make run-test-ondotnet:
+	* ListBoxTest.cs : they don't throw exceptions.
+	* RichTextBoxTest.cs,
+	  ScrollBarTest.cs,
+	  ComboBoxTest.cs,
+	  ComboBoxTests.cs : Commented some lines out since they are
+	  environment (especially desktop theme) dependent.
+	  TabControlTest.cs : SetSelectedIndex() was my bad that the test
+	  needed the tab control be drawn to pass the test.
+	  Some tests are env. dependent (as well as others).
+
 2006-05-16  Miguel de Icaza  <miguel@novell.com>
 
 	* DataGridTest.cs: Add a test case based on 78420, confirm that

@@ -250,13 +250,13 @@ namespace MonoTests.System.Windows.Forms
 			listBox.SelectionMode = (SelectionMode) 10;
 		}
 
-		[Test][ExpectedException(typeof(InvalidOperationException))]
+		[Test]
 		public void SelectedValueNull()
 		{
 			listBox.SelectedValue = null;
 		}
 
-		[Test][ExpectedException(typeof(InvalidOperationException))]
+		[Test]
 		public void SelectedValueEmptyString()
 		{
 			listBox.SelectedValue = String.Empty;

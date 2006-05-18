@@ -174,6 +174,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[Ignore ("this test depends on system default font")]
 		public void GetCharFromPositionTest ()
 		{
 			Form myForm = new Form ();

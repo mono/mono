@@ -40,7 +40,8 @@ public class TabControlTest
 		
 		// I 
 		Assert.AreEqual (null, myTabControl.ImageList, "#I1");
-		Assert.AreEqual (18, myTabControl.ItemSize.Height, "#I2");
+		// It is environment dependent
+		//Assert.AreEqual (18, myTabControl.ItemSize.Height, "#I2");
 		Assert.AreEqual (0, myTabControl.ItemSize.Width, "#I3");
 
 		// M 
@@ -76,7 +77,8 @@ public class TabControlTest
 		Assert.AreEqual (2, myTabRect.X, "#GetT1");
 		Assert.AreEqual (2, myTabRect.Y, "#GetT2");
 		Assert.AreEqual (42, myTabRect.Width, "#GetT3");
-		Assert.AreEqual (18, myTabRect.Height, "#GetT4");
+		// It is environment dependent
+		//Assert.AreEqual (18, myTabRect.Height, "#GetT4");
 	}
 
 	[Test]
@@ -125,6 +127,9 @@ public class TabControlTest
 		c.TabPages.Add (new TabPage ());
 		c.TabPages.Add (new TabPage ());
 		Assert.AreEqual (0, c.SelectedIndex, "#1");
+		Form f = new Form ();
+		f.Controls.Add (c);
+		f.Show ();
 		c.SelectedIndex = 2; // beyond the pages - ignored
 		Assert.AreEqual (0, c.SelectedIndex, "#2");
 	}
