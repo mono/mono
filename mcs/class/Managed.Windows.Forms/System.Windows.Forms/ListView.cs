@@ -1406,9 +1406,9 @@ namespace System.Windows.Forms
 					}
 				}
 
-				owner.SetFocusedItem (clicked_item);
 
 				if (clicked_item != null) {
+					owner.SetFocusedItem (clicked_item);
 					bool changed = !clicked_item.Selected;
 					if (owner.MultiSelect && (XplatUI.State.ModifierKeys & Keys.Control) == 0)
 						owner.UpdateMultiSelection (clicked_item.Index);
@@ -1425,6 +1425,8 @@ namespace System.Windows.Forms
 					else if (me.Clicks == 1 && clicked_item != null)
 						owner.OnClick (EventArgs.Empty);
 				} else {
+					if (owner.FocusedItem == null)
+						owner.SetFocusedItem (owner.Items [0]);
 					if (owner.MultiSelect) {
 						Keys mods = XplatUI.State.ModifierKeys;
 						if ((mods & Keys.Shift) != 0)
