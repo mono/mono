@@ -40,6 +40,7 @@ System.Windows.Forms/ListViewItemTest.cs
 System.Windows.Forms/MenuTest.cs
 System.Windows.Forms/MenuItemTest.cs
 System.Windows.Forms/MonthCalendarTest.cs
+System.Windows.Forms/PaintEventArgsTest.cs
 System.Windows.Forms/PictureBoxTest.cs
 System.Windows.Forms/ProgressBarTest.cs
 System.Windows.Forms/RadioButtonTest.cs
