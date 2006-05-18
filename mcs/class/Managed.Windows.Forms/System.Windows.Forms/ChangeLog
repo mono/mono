@@ -1,8 +1,20 @@
+2006-05-18  Jackson Harper  <jackson@ximian.com>
+
+	* ThemeWin32Classic.cs: Don't use endcaps, they mess the drawing
+	up.
+
 2006-05-18  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* Control.cs: Brought back our old UpdateZOrder method as a private
 	  function and switched our calls from UpdateZOrder to the new one.
 	  This fixes the Paint.Net canvas disappearing bug.
+
+2006-05-18  Jackson Harper  <jackson@ximian.com>
+
+	* Theme.cs:
+	* ThemeWin32Classic.cs:
+	* InternalWindowManager.cs: Move the drawing into the theme,
+	expose everything the theme should need from the window manager.
 
 2006-05-18  Peter Dennis Bartok  <pbartok@novell.com>
 

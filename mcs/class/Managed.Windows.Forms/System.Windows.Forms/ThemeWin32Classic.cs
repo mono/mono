@@ -5387,10 +5387,6 @@ namespace System.Windows.Forms
 		private void DrawCaptionHelper(Graphics graphics, Color color, Pen pen, int lineWidth, int shift, Rectangle captionRect, CaptionButton button) {
 			switch(button) {
 			case CaptionButton.Close: {
-				LineCap oldStartCap = pen.StartCap;
-				LineCap oldEndCap = pen.EndCap;
-				pen.StartCap=LineCap.Triangle;
-				pen.EndCap=LineCap.Triangle;
 				if (lineWidth<2) {
 					graphics.DrawLine(pen, captionRect.Left+2*lineWidth+1+shift, captionRect.Top+2*lineWidth+shift, captionRect.Right-2*lineWidth+1+shift, captionRect.Bottom-2*lineWidth+shift);
 					graphics.DrawLine(pen, captionRect.Right-2*lineWidth+1+shift, captionRect.Top+2*lineWidth+shift, captionRect.Left+2*lineWidth+1+shift, captionRect.Bottom-2*lineWidth+shift);
@@ -5398,8 +5394,6 @@ namespace System.Windows.Forms
 
 				graphics.DrawLine(pen, captionRect.Left+2*lineWidth+shift, captionRect.Top+2*lineWidth+shift, captionRect.Right-2*lineWidth+shift, captionRect.Bottom-2*lineWidth+shift);
 				graphics.DrawLine(pen, captionRect.Right-2*lineWidth+shift, captionRect.Top+2*lineWidth+shift, captionRect.Left+2*lineWidth+shift, captionRect.Bottom-2*lineWidth+shift);
-				pen.StartCap = oldStartCap;
-				pen.EndCap = oldEndCap;
 				return;
 			}
 
