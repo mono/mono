@@ -41,10 +41,11 @@ namespace System.Windows.Forms {
 
 		internal Form form;
 
-		protected TitleButton close_button;
-		protected TitleButton maximize_button;
-		protected TitleButton minimize_button;
-
+		internal TitleButton close_button;
+		internal TitleButton maximize_button;
+		internal TitleButton minimize_button;
+		protected Rectangle icon_rect;
+		
 		private TitleButton [] title_buttons = new TitleButton [3];
 		
 		// moving windows
@@ -98,11 +99,33 @@ namespace System.Windows.Forms {
 			titlebar_color = Color.FromArgb (255, 0, 0, 255);
 			this.form = form;
 
+			form.SizeChanged += new EventHandler (FormSizeChangedHandler);
+
 			CreateButtons ();
 		}
 
 		public Form Form {
 			get { return form; }
+		}
+
+		public Rectangle CloseButtonRect {
+			get { return close_button.Rectangle; }
+			set { close_button.Rectangle = value; }
+		}
+
+		public Rectangle MinimizeButtonRect {
+			get { return minimize_button.Rectangle; }
+			set { minimize_button.Rectangle = value; }
+		}
+
+		public Rectangle MaximizeButtonRect {
+			get { return maximize_button.Rectangle; }
+			set { maximize_button.Rectangle = value; }
+		}
+
+		public Rectangle IconRect {
+			get { return icon_rect; }
+			set { value = icon_rect; }
 		}
 
 		public int IconWidth {
@@ -213,13 +236,11 @@ namespace System.Windows.Forms {
 
 			case Msg.WM_NCPAINT:
 				PaintEventArgs pe;
-
 				pe = XplatUI.PaintEventStart(m.HWnd, false);
-				PaintWindowDecorations (pe);
+				ThemeEngine.Current.DrawManagedWindowDecorations (pe.Graphics, pe.ClipRectangle, this);
+//				PaintWindowDecorations (pe);
 				XplatUI.PaintEventEnd(m.HWnd, false);
 
-				// We don't want the form.WndProc to handle this because it
-				// will call a PaintEventEnd
 				
 				return true;
 			}
@@ -282,9 +303,14 @@ namespace System.Windows.Forms {
 			form.Refresh ();
 		}
 
-		protected virtual bool IsActive ()
+		public virtual bool IsActive ()
 		{
 			return true;
+		}
+
+		private void FormSizeChangedHandler (object sender, EventArgs e)
+		{
+			ThemeEngine.Current.ManagedWindowSetButtonLocations (this);
 		}
 
 		private void CreateButtons ()
@@ -489,11 +515,11 @@ namespace System.Windows.Forms {
 			UpdateVP (pos);
 		}
 
-		private bool IsMaximized {
+		public bool IsMaximized {
 			get { return GetWindowState () == FormWindowState.Maximized; }
 		}
 
-		private bool IsSizable {
+		public bool IsSizable {
 			get {
 				switch (form.FormBorderStyle) {
 				case FormBorderStyle.Sizable:
@@ -505,13 +531,13 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private bool HasBorders {
+		public bool HasBorders {
 			get {
 				return form.FormBorderStyle != FormBorderStyle.None;
 			}
 		}
 
-		private bool IsToolWindow {
+		public bool IsToolWindow {
 			get {
 				if (form.FormBorderStyle == FormBorderStyle.SizableToolWindow ||
 						form.FormBorderStyle == FormBorderStyle.FixedToolWindow)
@@ -530,7 +556,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		protected Size ButtonSize {
+		public Size ButtonSize {
 			get {
 				int height = TitleBarHeight;
 				if (IsToolWindow)
@@ -595,82 +621,6 @@ namespace System.Windows.Forms {
 			}
 
 			return true;
-		}
-
-		private void PaintWindowDecorations (PaintEventArgs pe)
-		{
-			Graphics dc = pe.Graphics;
-
-			if (HasBorders) {
-				Rectangle borders = new Rectangle (0, 0, form.Width, form.Height);
-			
-				ControlPaint.DrawBorder3D (dc, borders,	Border3DStyle.Raised);
-			}
-
-			Color color = ThemeEngine.Current.ColorControlDark;
-
-			if (IsActive () && !IsMaximized)
-				color = titlebar_color;
-
-			Rectangle tb = new Rectangle (BorderWidth, BorderWidth,
-					form.Width - (BorderWidth * 2), TitleBarHeight - 1);
-
-			// HACK: For now always draw the titlebar until we get updates better
-			// Rectangle vis = Rectangle.Intersect (tb, pe.ClipRectangle);	
-			//if (vis != Rectangle.Empty)
-				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (color), tb);
-
-			dc.DrawLine (new Pen (SystemColors.ControlLight, 1), BorderWidth,
-					TitleBarHeight + BorderWidth, form.Width - (BorderWidth * 2),
-					TitleBarHeight + BorderWidth);
-
-			if (!IsToolWindow) {
-				tb.X += 18; // Room for the icon and the buttons
-				tb.Width = (form.Width - 62) - tb.X;
-			}
-
-			if (form.Text != null) {
-				StringFormat format = new StringFormat ();
-				format.FormatFlags = StringFormatFlags.NoWrap;
-				format.Trimming = StringTrimming.EllipsisCharacter;
-				format.LineAlignment = StringAlignment.Center;
-
-				if (tb.IntersectsWith (pe.ClipRectangle))
-					dc.DrawString (form.Text, form.Font,
-						ThemeEngine.Current.ResPool.GetSolidBrush (Color.White),
-						tb, format);
-			}
-
-			if (!IsToolWindow && HasBorders) {
-				if (form.Icon != null) {
-					Rectangle icon = new Rectangle (BorderWidth + 3,
-							BorderWidth + 2, IconWidth, IconWidth);
-					if (icon.IntersectsWith (pe.ClipRectangle))
-						dc.DrawIcon (form.Icon, icon);
-				}
-
-				if (!IsMaximized) {
-					Size bs = ButtonSize;
-					close_button.Rectangle = new Rectangle (form.Width - BorderWidth - bs.Width - 2,
-							BorderWidth + 2, bs.Width, bs.Height);
-					maximize_button.Rectangle = new Rectangle (close_button.Rectangle.Left - 2 - bs.Width,
-							BorderWidth + 2, bs.Width, bs.Height);
-					minimize_button.Rectangle = new Rectangle (maximize_button.Rectangle.Left - bs.Width,
-							BorderWidth + 2, bs.Width, bs.Height);
-
-					DrawTitleButton (dc, minimize_button, pe.ClipRectangle);
-					DrawTitleButton (dc, maximize_button, pe.ClipRectangle);
-					DrawTitleButton (dc, close_button, pe.ClipRectangle);
-				} else {
-					//	DrawMaximizedButtons (pe, form.ActiveMenu);
-				}
-
-			} else if (IsToolWindow) {
-				Size bs = ButtonSize;
-				close_button.Rectangle = new Rectangle (form.Width - BorderWidth - 2 - bs.Width,
-						BorderWidth + 2, bs.Width, bs.Height);
-				DrawTitleButton (dc, close_button, pe.ClipRectangle);
-			}
 		}
 		
 		protected void DrawTitleButton (Graphics dc, TitleButton button, Rectangle clip)

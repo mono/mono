@@ -4219,6 +4219,139 @@ namespace System.Windows.Forms
 
 		#endregion
 
+		public override int ManagedWindowTitleBarHeight (InternalWindowManager wm)
+		{
+			if (wm.IsToolWindow)
+				return SystemInformation.ToolWindowCaptionHeight;
+			if (wm.Form.FormBorderStyle == FormBorderStyle.None)
+				return 0;
+			return SystemInformation.CaptionHeight;
+		}
+
+		public override int ManagedWindowBorderWidth (InternalWindowManager wm)
+		{
+			return 3;
+		}
+
+		public override int ManagedWindowIconWidth (InternalWindowManager wm)
+		{
+			return ManagedWindowTitleBarHeight (wm) - 5;
+		}
+
+		public override void ManagedWindowSetButtonLocations (InternalWindowManager wm)
+		{
+			int bw = ManagedWindowBorderWidth (wm);
+			Size btsize = ManagedWindowButtonSize (wm);
+			int btw = btsize.Width;
+			int bth = btsize.Height;
+
+			if (!wm.IsToolWindow && wm.HasBorders) {
+				if (!wm.IsMaximized) {
+					wm.close_button.Rectangle = new Rectangle (wm.Form.Width - bw - btw - 2,
+							bw + 2, btw, bth);
+					wm.maximize_button.Rectangle = new Rectangle (wm.close_button.Rectangle.Left - 2 - btw,
+							bw + 2, btw, bth);
+					wm.minimize_button.Rectangle = new Rectangle (wm.maximize_button.Rectangle.Left - btw,
+							bw + 2, btw, bth);
+				} else {
+					// Maximized
+				}
+			} else if (wm.IsToolWindow) {
+				wm.close_button.Rectangle = new Rectangle (wm.Form.Width - bw - 2 - btw, bw + 2, btw, bth);
+			}
+		}
+
+		public override void DrawManagedWindowDecorations (Graphics dc, Rectangle clip, InternalWindowManager wm)
+		{
+			Form form = wm.Form;
+			int tbheight = ManagedWindowTitleBarHeight (wm);
+			int bdwidth = ManagedWindowBorderWidth (wm);
+			Color titlebar_color = Color.FromArgb (255, 0, 0, 255);
+			
+			if (wm.HasBorders) {
+				Rectangle borders = new Rectangle (0, 0, form.Width, form.Height);
+				// The 3d border is only 2 pixels wide, so we draw the innermost pixel ourselves
+				dc.DrawRectangle (new Pen (ColorControl, 1), 2, 2, form.Width - 3, form.Height - 3);
+				ControlPaint.DrawBorder3D (dc, borders,	Border3DStyle.Raised);
+			}
+
+			Color color = ThemeEngine.Current.ColorControlDark;
+
+			if (wm.IsActive () && !wm.IsMaximized)
+				color = titlebar_color;
+
+			Rectangle tb = new Rectangle (bdwidth, bdwidth,
+					form.Width - (bdwidth * 2), tbheight);
+
+			// HACK: For now always draw the titlebar until we get updates better
+			// Rectangle vis = Rectangle.Intersect (tb, pe.ClipRectangle);	
+			//if (vis != Rectangle.Empty)
+			dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (color), tb);
+
+			dc.DrawLine (new Pen (SystemColors.ControlLight, 1), bdwidth,
+					tbheight + bdwidth, form.Width - (bdwidth * 2),
+					tbheight + bdwidth);
+
+			if (!wm.IsToolWindow) {
+				tb.X += 18; // Room for the icon and the buttons
+				tb.Width = (form.Width - 62) - tb.X;
+			}
+
+			if (form.Text != null) {
+				StringFormat format = new StringFormat ();
+				format.FormatFlags = StringFormatFlags.NoWrap;
+				format.Trimming = StringTrimming.EllipsisCharacter;
+				format.LineAlignment = StringAlignment.Center;
+
+				if (tb.IntersectsWith (clip))
+					dc.DrawString (form.Text, form.Font,
+						ThemeEngine.Current.ResPool.GetSolidBrush (Color.White),
+						tb, format);
+			}
+
+			if (wm.HasBorders) {
+				if (!wm.IsToolWindow && form.Icon != null) {
+					Rectangle icon = new Rectangle (bdwidth + 3,
+							bdwidth + 2, wm.IconWidth, wm.IconWidth);
+					if (icon.IntersectsWith (clip))
+						dc.DrawIcon (form.Icon, icon);
+				}
+
+				if (!wm.IsMaximized) {
+					if (!wm.IsToolWindow) {
+						DrawTitleButton (dc, wm.minimize_button, clip);
+						DrawTitleButton (dc, wm.maximize_button, clip);
+					}
+					DrawTitleButton (dc, wm.close_button, clip);
+				} else {
+					//	DrawMaximizedButtons (pe, form.ActiveMenu);
+				}
+			}
+		}
+
+		private void DrawTitleButton (Graphics dc, InternalWindowManager.TitleButton button, Rectangle clip)
+		{
+			if (!button.Rectangle.IntersectsWith (clip))
+				return;
+
+			dc.FillRectangle (SystemBrushes.Control, button.Rectangle);
+
+			ControlPaint.DrawCaptionButton (dc, button.Rectangle,
+					button.Caption, ButtonState.Normal);
+		}
+
+		private Size ManagedWindowButtonSize (InternalWindowManager wm)
+		{
+			int height = wm.TitleBarHeight;
+			if (wm.IsToolWindow)
+				return new Size (SystemInformation.ToolWindowCaptionButtonSize.Width - 2,
+						height - 5);
+			if (wm.Form.FormBorderStyle == FormBorderStyle.None)
+				return Size.Empty;
+			return new Size (SystemInformation.CaptionButtonSize.Width - 2,
+					height - 5);
+		}
+
 		#region ControlPaint
 		public override void CPDrawBorder (Graphics graphics, Rectangle bounds, Color leftColor, int leftWidth,
 			ButtonBorderStyle leftStyle, Color topColor, int topWidth, ButtonBorderStyle topStyle,

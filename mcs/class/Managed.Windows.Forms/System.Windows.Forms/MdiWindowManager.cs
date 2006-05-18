@@ -346,7 +346,7 @@ namespace System.Windows.Forms {
 			form.Refresh ();
 		}
 
-		protected override bool IsActive ()
+		public override bool IsActive ()
 		{
 			return mdi_container.ActiveMdiChild == form;
 		}

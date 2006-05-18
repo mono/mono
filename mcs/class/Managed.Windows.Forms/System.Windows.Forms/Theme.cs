@@ -862,6 +862,34 @@ namespace System.Windows.Forms
 		public abstract Size TreeViewDefaultSize { get; }
 		#endregion
 
+		public virtual void DrawManagedWindowDecorations (Graphics dc, Rectangle clip, InternalWindowManager wm)
+		{
+			// Just making virtual for now so all the themes still build.
+		}
+
+		public virtual int ManagedWindowTitleBarHeight (InternalWindowManager wm)
+		{
+			// Just making virtual for now so all the themes still build.
+			return 15;
+		}
+
+		public virtual int ManagedWindowBorderWidth (InternalWindowManager wm)
+		{
+			// Just making virtual for now so all the themes still build.
+			return 3;
+		}
+
+		public virtual int ManagedWindowIconWidth (InternalWindowManager wm)
+		{
+			// Just making virtual for now so all the themes still build.
+			return ManagedWindowTitleBarHeight (wm) - 5;
+		}
+
+		public virtual void ManagedWindowSetButtonLocations (InternalWindowManager wm)
+		{
+			// Just making virtual for now so all the themes still build.
+		}
+
 		#region	ControlPaint Methods
 		public abstract void CPDrawBorder (Graphics graphics, Rectangle bounds, Color leftColor, int leftWidth,
 			ButtonBorderStyle leftStyle, Color topColor, int topWidth, ButtonBorderStyle topStyle,
