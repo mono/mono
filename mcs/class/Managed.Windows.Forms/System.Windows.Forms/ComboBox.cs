@@ -17,13 +17,12 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004-2005 Novell, Inc.
+// Copyright (c) 2004-2006 Novell, Inc.
 //
 // Authors:
 //	Jordi Mas i Hernandez, jordi@ximian.com
+//	Mike Kestner  <mkestner@novell.com>
 //
-//
-
 // NOT COMPLETE
 
 using System;
@@ -44,24 +43,32 @@ namespace System.Windows.Forms
 	[Designer ("System.Windows.Forms.Design.ComboBoxDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public class ComboBox : ListControl
 	{
-		private DrawMode draw_mode;
-		private ComboBoxStyle dropdown_style;
-		private int dropdown_width;		
-		private int preferred_height;
-		private int selected_index;
+		private DrawMode draw_mode = DrawMode.Normal;
+		private ComboBoxStyle dropdown_style = (ComboBoxStyle)(-1);
+		private int dropdown_width = -1;		
+		private int selected_index = -1;
 		private object selected_item;
 		internal ObjectCollection items = null;
 		private bool suspend_ctrlupdate;
-		private int maxdrop_items;
-		private bool integral_height;
+		private int maxdrop_items = 8;			
+		private bool integral_height = true;
 		private bool sorted;
-		internal ComboBoxInfo combobox_info;
-		private readonly int def_button_width = 16;
 		private bool clicked;		
 		private int max_length;
 		private ComboListBox listbox_ctrl;		
 		private TextBox textbox_ctrl;
-		private bool process_textchanged_event;
+		private bool process_textchanged_event = true;
+		private bool item_height_specified = false;
+		private int item_height;
+		private int requested_height = -1;
+		private Hashtable item_heights;
+		private bool show_dropdown_button = false;
+		private ButtonState button_state = ButtonState.Normal;
+		private bool dropped_down;
+		private Rectangle text_area;
+		private Rectangle button_area;
+		private Rectangle listbox_area;
+		private const int button_width = 16;
 
 		[ComVisible(true)]
 		public class ChildAccessibleObject : AccessibleObject {
@@ -78,68 +85,15 @@ namespace System.Windows.Forms
 					return base.Name;
 				}
 			}
-
-			
-		}
-
-		internal class ComboBoxInfo
-		{
-			internal int item_height; 		/* Item's height */
-			internal Rectangle textarea;		/* Rectangle of the editable text area  */
-			internal Rectangle textarea_drawable;	/* Rectangle of the editable text area - decorations - button if present*/
-			internal Rectangle button_rect;
-			internal bool show_button;		/* Is the DropDown button shown? */
-			internal ButtonState button_status;	/* Drop button status */
-			internal Rectangle listbox_area;	/* ListBox area in Simple combox, not used in the rest */
-			internal bool droppeddown;		/* Is the associated ListBox dropped down? */
-			internal int combosimple_height;	/* Simple default height */
-			
-			public ComboBoxInfo ()
-			{
-				button_status = ButtonState.Normal;
-				show_button = false;
-				item_height = 0;
-				droppeddown = false;
-				combosimple_height = 150;
-			}
-		}
-
-		internal class ComboBoxItem
-		{
-			internal int Index;
-			internal int ItemHeight;		/* Only used for OwnerDrawVariable */
-
-			public ComboBoxItem (int index)
-			{
-				Index = index;
-				ItemHeight = -1;
-			}			
 		}
 
 		public ComboBox ()
 		{
 			items = new ObjectCollection (this);
-			listbox_ctrl = null;
-			textbox_ctrl = null;
-			combobox_info = new ComboBoxInfo ();
-			combobox_info.item_height = FontHeight + 2;
-			dropdown_style = (ComboBoxStyle)(-1);
 			DropDownStyle = ComboBoxStyle.DropDown;
+			item_height = FontHeight + 2;
 			BackColor = ThemeEngine.Current.ColorWindow;
-			draw_mode = DrawMode.Normal;
-			selected_index = -1;
-			selected_item = null;
-			maxdrop_items = 8;			
-			suspend_ctrlupdate = false;
-			clicked = false;
-			dropdown_width = -1;
-			max_length = 0;
-			integral_height = true;
-			process_textchanged_event = true;
-			has_focus = false;
-			border_style = BorderStyle.Fixed3D;
-
-			CalcPreferredHeight ();
+			border_style = BorderStyle.None;
 
 			/* Events */
 			MouseDown += new MouseEventHandler (OnMouseDownCB);
@@ -218,7 +172,11 @@ namespace System.Windows.Forms
 				if (draw_mode == value)
 					return;
 
+				if (draw_mode == DrawMode.OwnerDrawVariable)
+					item_heights = null;
     				draw_mode = value;
+				if (draw_mode == DrawMode.OwnerDrawVariable)
+					item_heights = new Hashtable ();
 				Refresh ();
     			}
 		}
@@ -244,32 +202,30 @@ namespace System.Windows.Forms
 					}
 				}
 
-				if (dropdown_style != ComboBoxStyle.DropDownList && value == ComboBoxStyle.DropDownList) {
-					if (textbox_ctrl != null) {						
-						Controls.RemoveImplicit (textbox_ctrl);
-						textbox_ctrl.Dispose ();						
-						textbox_ctrl = null;						
-					}
-				}				
-
 				dropdown_style = value;					
 				
+				if (dropdown_style == ComboBoxStyle.DropDownList && textbox_ctrl != null) {
+					Controls.RemoveImplicit (textbox_ctrl);
+					textbox_ctrl.Dispose ();						
+					textbox_ctrl = null;						
+				}				
+
 				if (dropdown_style == ComboBoxStyle.Simple) {
-					CBoxInfo.show_button = false;					
+					show_dropdown_button = false;					
 					
 					CreateComboListBox ();
 
-					if (IsHandleCreated == true) {
+					if (IsHandleCreated)
 						Controls.AddImplicit (listbox_ctrl);
-					}
-				}
-				else {
-					CBoxInfo.show_button = true;
-					CBoxInfo.button_status = ButtonState.Normal;
+				} else {
+					show_dropdown_button = true;
+					button_state = ButtonState.Normal;
 				}				
 	
 				if (dropdown_style != ComboBoxStyle.DropDownList && textbox_ctrl == null) {
 					textbox_ctrl = new FixedSizeTextBox ();
+					if (selected_index != -1)
+						textbox_ctrl.Text = GetItemText (Items [selected_index]);
 					textbox_ctrl.BorderStyle = BorderStyle.None;
 					textbox_ctrl.TextChanged += new EventHandler (OnTextChangedEdit);
 					textbox_ctrl.KeyPress += new KeyPressEventHandler(textbox_ctrl_KeyPress);
@@ -282,10 +238,10 @@ namespace System.Windows.Forms
 					}
 				}
 				
-				if (DropDownStyleChanged  != null)
-					DropDownStyleChanged (this, EventArgs.Empty);
+				OnDropDownStyleChanged (EventArgs.Empty);
     				
-				CalcTextArea ();
+				Layout ();
+				UpdateBounds ();
 				Refresh ();
     			}
 		}
@@ -315,22 +271,16 @@ namespace System.Windows.Forms
 				if (dropdown_style == ComboBoxStyle.Simple) 				
 					return true;
 				
-				return CBoxInfo.droppeddown;
+				return dropped_down;
 			}
 			set {
-				if (dropdown_style == ComboBoxStyle.Simple) 				
+				if (dropdown_style == ComboBoxStyle.Simple || dropped_down == value)
 					return;
 					
-					
-				if (value == true) {
+				if (value) 
 					DropDownListBox ();
-				}
-				else {
+				else
 					listbox_ctrl.Hide ();
-				}
-				
-				if (DropDown != null)
-					DropDown (this, EventArgs.Empty);
 			}
 		}		
 
@@ -358,19 +308,29 @@ namespace System.Windows.Forms
 					return;
 
     				integral_height = value;
+				UpdateBounds ();
     				Refresh ();
 			}
 		}
 
 		[Localizable (true)]
 		public int ItemHeight {
-			get { return combobox_info.item_height; }
+			get {
+				if (item_height == -1) {
+					SizeF sz = DeviceContext.MeasureString ("The quick brown Fox", Font);
+					item_height = (int) sz.Height;
+				}
+				return item_height;
+			}
 			set {
 				if (value < 0)
 					throw new ArgumentException ("The item height value is less than zero");
 
-				combobox_info.item_height = value;
-				CalcTextArea ();
+				item_height_specified = true;
+				item_height = value;
+				if (IntegralHeight)
+					UpdateBounds ();
+				Layout ();
 				Refresh ();
 			}
 		}
@@ -418,9 +378,11 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]		
 		public int PreferredHeight {
-			get { return preferred_height; }
+			get {
+				return ItemHeight + 5;
+			}
 		}
-		
+
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override int SelectedIndex {
@@ -435,17 +397,22 @@ namespace System.Windows.Forms
     				selected_index = value;
     				
     				if (dropdown_style != ComboBoxStyle.DropDownList) {
-					if (selected_index != -1) {
-						SetControlText (GetItemText (Items[selected_index]));
-					} else {
+					if (selected_index == -1)
 						SetControlText("");
+					else {
+						SetControlText (GetItemText (Items[selected_index]));
+						SelectAll ();
 					}
     				}
     				
-    				OnSelectedIndexChanged  (new EventArgs ());
+				if (listbox_ctrl != null)
+					listbox_ctrl.HighlightedIndex = value;
+
     				OnSelectedValueChanged (new EventArgs ());
+    				OnSelectedIndexChanged  (new EventArgs ());
     				OnSelectedItemChanged (new EventArgs ());
-    				Refresh ();
+				if (DropDownStyle == ComboBoxStyle.DropDownList)
+    					Refresh ();
 			}
 		}
 
@@ -458,7 +425,7 @@ namespace System.Windows.Forms
 					return Items[selected_index];
 				else
 					return null;
-				}				
+			}
 			set {				
     				int index = Items.IndexOf (value);
 
@@ -468,14 +435,7 @@ namespace System.Windows.Forms
 				if (selected_index == index)
 					return;
 
-				selected_index = index;
-				
-				if (dropdown_style != ComboBoxStyle.DropDownList) {
-					SetControlText (GetItemText (Items[selected_index]));
-    				}
-				
-				OnSelectedItemChanged  (new EventArgs ());
-				Refresh ();
+				SelectedIndex = index;
 			}
 		}
 		
@@ -489,9 +449,8 @@ namespace System.Windows.Forms
 				return textbox_ctrl.SelectedText;
 			}
 			set {
-				if (dropdown_style == ComboBoxStyle.DropDownList) {
+				if (dropdown_style == ComboBoxStyle.DropDownList)
 					return;
-				}
 				
 				textbox_ctrl.SelectedText = value;
 			}
@@ -559,9 +518,8 @@ namespace System.Windows.Forms
 					}
 				}
 
-				if (SelectedItem != null)  {
+				if (SelectedItem != null)
 					return GetItemText (SelectedItem);
-				}
 								
 				return base.Text;				
 			}
@@ -578,20 +536,12 @@ namespace System.Windows.Forms
 					return;					
 				}
 				
-				if (dropdown_style != ComboBoxStyle.DropDownList) {
+				if (dropdown_style != ComboBoxStyle.DropDownList)
 					textbox_ctrl.Text = GetItemText (value);
-				}				
 			}
 		}
 
 		#endregion Public Properties
-
-		#region Private Properties
-		internal ComboBoxInfo CBoxInfo {
-			get { return combobox_info; }
-		}
-
-		#endregion Private Properties
 
 		#region Public Methods
 		protected virtual void AddItemsCore (object[] value)
@@ -606,7 +556,7 @@ namespace System.Windows.Forms
 
 		protected override void Dispose (bool disposing)
 		{						
-			if (disposing == true) {
+			if (disposing) {
 				if (listbox_ctrl != null) {
 					listbox_ctrl.Dispose ();
 					Controls.RemoveImplicit (listbox_ctrl);
@@ -675,18 +625,18 @@ namespace System.Windows.Forms
 
 		public int GetItemHeight (int index)
 		{	
-			if (DrawMode == DrawMode.OwnerDrawVariable && IsHandleCreated == true) {
+			if (DrawMode == DrawMode.OwnerDrawVariable && IsHandleCreated) {
 
 				if (index < 0 || index >= Items.Count )
 					throw new ArgumentOutOfRangeException ("The item height value is less than zero");
 				
-				if ((Items.GetComboBoxItem (index)).ItemHeight != -1) {
-					return (Items.GetComboBoxItem (index)).ItemHeight;
-				}
+				object item = Items [index];
+				if (item_heights.Contains (item))
+					return (int) item_heights [item];
 				
 				MeasureItemEventArgs args = new MeasureItemEventArgs (DeviceContext, index, ItemHeight);
 				OnMeasureItem (args);
-				(Items.GetComboBoxItem (index)).ItemHeight = args.ItemHeight;
+				item_heights [item] = args.ItemHeight;
 				return args.ItemHeight;
 			}
 
@@ -738,12 +688,16 @@ namespace System.Windows.Forms
 
 		protected virtual void OnDrawItem (DrawItemEventArgs e)
 		{
-			if (DrawItem != null && (DrawMode == DrawMode.OwnerDrawFixed || DrawMode == DrawMode.OwnerDrawVariable)) {
-				DrawItem (this, e);
-				return;
+			switch (DrawMode) {
+			case DrawMode.OwnerDrawFixed:
+			case DrawMode.OwnerDrawVariable:
+				if (DrawItem != null)
+					DrawItem (this, e);
+				break;
+			default:
+				ThemeEngine.Current.DrawComboBoxItem (this, e);
+				break;
 			}
-			
-			ThemeEngine.Current.DrawComboBoxItem (this, e);
 		}		
 
 		protected virtual void OnDropDown (EventArgs e)
@@ -761,14 +715,19 @@ namespace System.Windows.Forms
 		protected override void OnFontChanged (EventArgs e)
 		{
 			base.OnFontChanged (e);
-			CalcPreferredHeight ();
 
-			if (textbox_ctrl != null) {
+			if (textbox_ctrl != null)
 				textbox_ctrl.Font = Font;
-			}
 			
-			combobox_info.item_height = FontHeight + 2;
-			CalcTextArea ();
+			if (!item_height_specified) {
+				SizeF sz = DeviceContext.MeasureString ("The quick brown Fox", Font);
+				item_height = (int) sz.Height;
+			}
+
+			if (IntegralHeight)
+				UpdateBounds ();
+
+			Layout ();
 		}
 
 		protected override void OnForeColorChanged (EventArgs e)
@@ -792,19 +751,13 @@ namespace System.Windows.Forms
 		{
 			base.OnHandleCreated (e);
 
-			if (listbox_ctrl != null) {
+			if (listbox_ctrl != null)
 				Controls.AddImplicit (listbox_ctrl);
-
-//				if (dropdown_style == ComboBoxStyle.Simple)
-//					Height = combobox_info.combosimple_height;
-				
-			}
 			
-			if (textbox_ctrl != null) {
+			if (textbox_ctrl != null)
 				Controls.AddImplicit (textbox_ctrl);
-			}
 
-			CalcTextArea ();
+			Layout ();
 		}
 
 		protected override void OnHandleDestroyed (EventArgs e)
@@ -830,13 +783,9 @@ namespace System.Windows.Forms
 
 		protected override void OnResize (EventArgs e)
 		{			
-			base.OnResize (e);
-			AdjustHeightForDropDown ();
-
+			Layout ();
 			if (listbox_ctrl != null)
 				listbox_ctrl.CalcListBoxArea ();
-
-			CalcTextArea ();
 		}
 
 		protected override void OnSelectedIndexChanged (EventArgs e)
@@ -868,9 +817,8 @@ namespace System.Windows.Forms
 			if (index < 0 || index >= Items.Count)
 				throw new ArgumentOutOfRangeException ("Index of out range");
 				
-			if (draw_mode == DrawMode.OwnerDrawVariable) {
-				(Items.GetComboBoxItem (index)).ItemHeight = -1;
-			}
+			if (draw_mode == DrawMode.OwnerDrawVariable)
+				item_heights.Remove (Items [index]);
 		}
 
 		public void Select (int start, int lenght)
@@ -897,6 +845,23 @@ namespace System.Windows.Forms
 
 		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
 		{			
+			if ((specified & BoundsSpecified.Height) != 0) {
+				requested_height = height;
+
+				if (DropDownStyle == ComboBoxStyle.Simple && height > PreferredHeight) {
+					if (IntegralHeight) {
+						int border = ThemeEngine.Current.Border3DSize.Height;
+						int lb_height = height - PreferredHeight - 2;
+						if (lb_height - 2 * border > ItemHeight) {
+							int partial = (lb_height - 2 * border) % ItemHeight;
+							height -= partial;
+						} else
+							height = PreferredHeight;
+					}
+				} else
+					height = PreferredHeight;
+			}
+
 			base.SetBoundsCore (x, y, width, height, specified);
 		}
 
@@ -928,19 +893,6 @@ namespace System.Windows.Forms
 
 		#region Private Methods
 
-		private void AdjustHeightForDropDown ()
-		{
-			if (dropdown_style == ComboBoxStyle.Simple) 
-				return;
-				
-			int new_height = preferred_height;
-				
-			if (Height == new_height)
-				return;		
-				
-			Height = new_height;
-		}
-
 		private void textbox_ctrl_KeyPress(object sender, KeyPressEventArgs e) 
 		{
 			OnKeyPress (e);
@@ -956,37 +908,45 @@ namespace System.Windows.Forms
 			OnLostFocus(e);
 		}
 		
-		// Calcs the text area size
-		internal void CalcTextArea ()
+		void Layout ()
 		{			
-			combobox_info.textarea = ClientRectangle;
-					
-			/* Edit area */
-			combobox_info.textarea.Height = ItemHeight + 2;
-			combobox_info.textarea_drawable = combobox_info.textarea;
-			
-			RectangleF bounds = ClientRectangle;
-			combobox_info.listbox_area = new Rectangle ((int)bounds.X, (int)bounds.Y, 
-				(int)bounds.Width, (int)bounds.Height);				
-			
-			if (CBoxInfo.show_button) {
-				combobox_info.textarea_drawable.Width -= def_button_width;
+			int border = ThemeEngine.Current.Border3DSize.Width;
 
-				combobox_info.button_rect = new Rectangle (combobox_info.textarea_drawable.X + combobox_info.textarea_drawable.Width,
-					combobox_info.textarea_drawable.Y, def_button_width, combobox_info.textarea_drawable.Height - 2);				
-					
-			}
+			text_area = ClientRectangle;
+			text_area.Height = PreferredHeight;
 			
-			if (dropdown_style != ComboBoxStyle.DropDownList) { /* There is an edit control*/
-				if (textbox_ctrl != null) {
-					textbox_ctrl.Location = new Point (combobox_info.textarea_drawable.X, combobox_info.textarea_drawable.Y);
-					textbox_ctrl.Size = new Size (combobox_info.textarea_drawable.Width, combobox_info.textarea_drawable.Height);					
-				}
+			listbox_area = ClientRectangle;
+			listbox_area.Y = text_area.Bottom + 3;
+			listbox_area.Height -= (text_area.Height + 2);
+
+			Rectangle prev_button_area = button_area;
+
+			if (DropDownStyle == ComboBoxStyle.Simple)
+				button_area = Rectangle.Empty;
+			else {
+				button_area = text_area;
+			       	button_area.X = text_area.Right - button_width - border;
+			       	button_area.Y = text_area.Y + border;
+				button_area.Width = button_width;
+				button_area.Height = text_area.Height - 2 * border;
 			}
-			
+
+			if (button_area != prev_button_area) {
+				prev_button_area.Y -= border;
+				prev_button_area.Width += border;
+				prev_button_area.Height += 2 * border;
+				Invalidate (prev_button_area);
+				Invalidate (button_area);
+			}
+
+			if (textbox_ctrl != null) {
+				textbox_ctrl.Location = new Point (text_area.X + border, text_area.Y + border);
+				textbox_ctrl.Width = text_area.Width - button_area.Width - border * 2;
+				textbox_ctrl.Height = text_area.Height - border * 2;
+			}
+
 			if (listbox_ctrl != null && dropdown_style == ComboBoxStyle.Simple) {
-				listbox_ctrl.Location = new Point (combobox_info.textarea.X, combobox_info.textarea.Y +
-					combobox_info.textarea.Height);
+				listbox_ctrl.Location = listbox_area.Location;
 				listbox_ctrl.CalcListBoxArea ();
 			}
 		}
@@ -994,17 +954,32 @@ namespace System.Windows.Forms
 		private void CreateComboListBox ()
 		{			
 			listbox_ctrl = new ComboListBox (this);			
+			if (selected_index != -1)
+				listbox_ctrl.HighlightedIndex = selected_index;
 		}
 		
 		internal void Draw (Rectangle clip, Graphics dc)
 		{				
-			// No edit control, we paint the edit ourselfs
+			Theme theme = ThemeEngine.Current;
+
+			if (DropDownStyle == ComboBoxStyle.Simple)
+				dc.FillRectangle (theme.ResPool.GetSolidBrush (Parent.BackColor), ClientRectangle);
+
+			if (clip.IntersectsWith (text_area))
+				ControlPaint.DrawBorder3D (dc, text_area, Border3DStyle.Sunken);
+
+			int border = theme.Border3DSize.Width;
+
+			// No edit control, we paint the edit ourselves
 			if (dropdown_style == ComboBoxStyle.DropDownList) {
 				DrawItemState state = DrawItemState.None;
-				Rectangle item_rect = combobox_info.textarea_drawable;
-				item_rect.Height = ItemHeight + 2;				
+				Rectangle item_rect = text_area;
+				item_rect.X += border;
+				item_rect.Y += border;
+				item_rect.Width -= (button_area.Width + 2 * border);				
+				item_rect.Height -= 2 * border;				
 								
-				if (has_focus == true) {
+				if (has_focus) {
 					state = DrawItemState.Selected;
 					state |= DrawItemState.Focus;
 				}
@@ -1014,20 +989,13 @@ namespace System.Windows.Forms
 							selected_index, state, ForeColor, BackColor));
 			}						
 			
-			if (DropDownStyle == ComboBoxStyle.Simple && clip.IntersectsWith (combobox_info.listbox_area) == true) {
-				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (Parent.BackColor), 
-						combobox_info.listbox_area);
-			}
-			
-			if (CBoxInfo.show_button) {
-				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorControl),
-					combobox_info.button_rect);
+			if (show_dropdown_button) {
+				dc.FillRectangle (theme.ResPool.GetSolidBrush (theme.ColorControl), button_area);
 
 				if (!is_enabled)
-					combobox_info.button_status = ButtonState.Inactive;
+					button_state = ButtonState.Inactive;
 				
-				ThemeEngine.Current.CPDrawComboButton (dc,
-					combobox_info.button_rect, combobox_info.button_status);
+				theme.CPDrawComboButton (dc, button_area, button_state);
 			}			
 		}
 
@@ -1036,21 +1004,19 @@ namespace System.Windows.Forms
 			if (DropDownStyle == ComboBoxStyle.Simple)
 				return;			
 			
-			if (listbox_ctrl == null) {
+			if (listbox_ctrl == null)
     				CreateComboListBox ();
-    			}
 
-			listbox_ctrl.Location = PointToScreen (new Point (combobox_info.textarea.X, combobox_info.textarea.Y +
-				combobox_info.textarea.Height));
+			listbox_ctrl.Location = PointToScreen (new Point (text_area.X, text_area.Y + text_area.Height));
 						
-    			if (listbox_ctrl.ShowWindow () == true) {    				
-    				CBoxInfo.droppeddown = true;        				
-    			}
+    			if (listbox_ctrl.ShowWindow ())    				
+    				dropped_down = true;        				
     			
-    			combobox_info.button_status = ButtonState.Pushed;				
-    			if (dropdown_style == ComboBoxStyle.DropDownList) {
-    				Invalidate (combobox_info.textarea_drawable);
-    			}
+    			button_state = ButtonState.Pushed;				
+    			if (dropdown_style == ComboBoxStyle.DropDownList)
+    				Invalidate (text_area);
+
+			OnDropDown (EventArgs.Empty);
 		}
 		
 		internal void DropDownListBoxFinished ()
@@ -1058,9 +1024,9 @@ namespace System.Windows.Forms
 			if (DropDownStyle == ComboBoxStyle.Simple)
 				return;			
 				
-			combobox_info.button_status = ButtonState.Normal;
-			Invalidate (combobox_info.button_rect);
-			CBoxInfo.droppeddown = false;
+			button_state = ButtonState.Normal;
+			Invalidate (button_area);
+			dropped_down = false;
 			clicked = false;			
 		}
 		
@@ -1106,18 +1072,9 @@ namespace System.Windows.Forms
 			}
 		}
 		
-		internal virtual void OnMouseDownCB (object sender, MouseEventArgs e)
+		void OnMouseDownCB (object sender, MouseEventArgs e)
     		{    			
-    			/* Click On button*/    			
-    			Rectangle hit_rect;
-    			
-    			if (dropdown_style == ComboBoxStyle.DropDownList) {
-    				hit_rect = combobox_info.textarea;
-    			} else {
-    				hit_rect = combobox_info.button_rect;
-    			}    			
-    			
-			if (hit_rect.Contains (e.X, e.Y)) {
+			if (button_area.Contains (e.X, e.Y)) {
 				if (clicked == false) {
 	    				clicked = true;
 	    				DropDownListBox ();	    				
@@ -1125,42 +1082,24 @@ namespace System.Windows.Forms
 	    				listbox_ctrl.Hide ();
 	    				DropDownListBoxFinished ();
 	    			}
-	    			
-	    			Invalidate (combobox_info.button_rect);
+
+	    			Invalidate (button_area);
     			}
     		}
 
-    		private void CalcPreferredHeight ()
-		{
-			preferred_height = Font.Height;
-
-			switch (border_style) {
-			case BorderStyle.None:
-				preferred_height += 3;
-				break;
-			case BorderStyle.FixedSingle:
-			case BorderStyle.Fixed3D:
-				preferred_height += 6;
-				break;
-			default:
-				break;
-			}
-
-		}
-
-    		internal virtual void OnMouseMoveCB (object sender, MouseEventArgs e)
+    		void OnMouseMoveCB (object sender, MouseEventArgs e)
     		{    			
     			/* When there are no items, act as a regular button */
     			if (clicked == true && Items.Count == 0 &&
-    				 combobox_info.button_rect.Contains (e.X, e.Y) == false) {
+    				 button_area.Contains (e.X, e.Y) == false) {
     				DropDownListBoxFinished ();
     			}
     		}
 
-    		internal virtual void OnMouseUpCB (object sender, MouseEventArgs e)
+    		void OnMouseUpCB (object sender, MouseEventArgs e)
     		{
     			/* Click on button*/
-    			if (clicked == true && combobox_info.button_rect.Contains (e.X, e.Y)) {    				
+    			if (clicked == true && button_area.Contains (e.X, e.Y)) {    				
     				DropDownListBoxFinished ();
     			}
     		}
@@ -1185,7 +1124,7 @@ namespace System.Windows.Forms
 
 			if (listbox_ctrl != null) {
 				listbox_ctrl.SetTopItem (item);
-				listbox_ctrl.SetHighLightedItem (Items[item]);
+				listbox_ctrl.HighlightedIndex = item;
 			}
 		}
 		
@@ -1196,6 +1135,12 @@ namespace System.Windows.Forms
     			process_textchanged_event = true;
     		}
 		
+		void UpdateBounds ()
+		{
+			if (requested_height != -1)
+				SetBoundsCore (0, 0, 0, requested_height, BoundsSpecified.Height);
+		}
+
 		private void UpdatedItems ()
 		{
 			if (listbox_ctrl != null) {
@@ -1207,7 +1152,6 @@ namespace System.Windows.Forms
 
 		#endregion Private Methods
 
-
 		/*
 			ComboBox.ObjectCollection
 		*/
@@ -1217,7 +1161,6 @@ namespace System.Windows.Forms
 
 			private ComboBox owner;
 			internal ArrayList object_items = new ArrayList ();
-			internal ArrayList combobox_items = new ArrayList ();
 
 			public ObjectCollection (ComboBox owner)
 			{
@@ -1272,12 +1215,6 @@ namespace System.Windows.Forms
 				}
 			}
 			
-			internal ArrayList ListBoxItems {
-				get { return combobox_items;}
-				set {
-					combobox_items = value;
-				}
-			}			
 			#endregion Private Properties
 
 			#region Public Methods
@@ -1302,7 +1239,6 @@ namespace System.Windows.Forms
 			{
 				owner.selected_index = -1;
 				object_items.Clear ();
-				combobox_items.Clear ();
 				owner.UpdatedItems ();
 				owner.Refresh ();
 			}
@@ -1358,12 +1294,11 @@ namespace System.Windows.Forms
 				}				
 
 				ObjectItems = new_items.ObjectItems;
-				ListBoxItems = new_items.ListBoxItems;
 				
 				if (sel_item != null) {
 					int idx = IndexOf (sel_item);
 					owner.selected_index = idx;
-					owner.listbox_ctrl.SetHighLightedItem (owner.Items[idx]);
+					owner.listbox_ctrl.HighlightedIndex = idx;
 				}
 												
 				owner.EndUpdate ();	// Calls UpdatedItems
@@ -1387,7 +1322,6 @@ namespace System.Windows.Forms
 					owner.SelectedItem = null;
 
 				object_items.RemoveAt (index);
-				combobox_items.RemoveAt (index);
 				owner.UpdatedItems ();
 			}
 			#endregion Public Methods
@@ -1397,7 +1331,6 @@ namespace System.Windows.Forms
 			{
 				int cnt = object_items.Count;
 				object_items.Add (item);
-				combobox_items.Add (new ComboBox.ComboBoxItem (cnt));				
 				return cnt;
 			}
 			
@@ -1409,35 +1342,15 @@ namespace System.Windows.Forms
 				owner.UpdatedItems ();
 			}
 
-			internal ComboBox.ComboBoxItem GetComboBoxItem (int index)
-			{
-				if (index < 0 || index >= Count)
-					throw new ArgumentOutOfRangeException ("Index of out range");
-
-				return (ComboBox.ComboBoxItem) combobox_items[index];
-			}
-
-			internal void SetComboBoxItem (ComboBox.ComboBoxItem item, int index)
-			{
-				if (index < 0 || index >= Count)
-					throw new ArgumentOutOfRangeException ("Index of out range");
-
-				combobox_items[index] = item;
-			}
-
 			#endregion Private Methods
 		}
 
-		/*
-			class ComboListBox
-		*/
 		internal class ComboListBox : Control
 		{
 			private ComboBox owner;			
 			private VScrollBarLB vscrollbar_ctrl;
 			private int top_item;			/* First item that we show the in the current page */
 			private int last_item;			/* Last visible item */
-			public object highlighted_item;	/* Item that is currently selected */
 			internal int page_size;			/* Number of listbox items per page */
 			private Rectangle textarea_drawable;	/* Rectangle of the drawable text area */
 			
@@ -1480,7 +1393,6 @@ namespace System.Windows.Forms
 				top_item = 0;
 				last_item = 0;
 				page_size = 0;
-				highlighted_item = null;
 
 				MouseDown += new MouseEventHandler (OnMouseDownPUW);
 				MouseUp += new MouseEventHandler (OnMouseUpPUW);
@@ -1489,18 +1401,22 @@ namespace System.Windows.Forms
 				SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 				SetStyle (ControlStyles.ResizeRedraw | ControlStyles.Opaque, true);				
 
-				InternalBorderStyle = BorderStyle.FixedSingle;
+				if (owner.DropDownStyle == ComboBoxStyle.Simple)
+					InternalBorderStyle = BorderStyle.Fixed3D;
+				else
+					InternalBorderStyle = BorderStyle.FixedSingle;
 			}
 
 			protected override CreateParams CreateParams
 			{
 				get {
 					CreateParams cp = base.CreateParams;					
-					if (owner != null && owner.DropDownStyle != ComboBoxStyle.Simple) {
-						cp.Style ^= (int) WindowStyles.WS_CHILD;
-						cp.Style |= (int) WindowStyles.WS_POPUP;
-						cp.ExStyle |= (int) WindowExStyles.WS_EX_TOOLWINDOW | (int) WindowExStyles.WS_EX_TOPMOST;
-					}					
+					if (owner == null || owner.DropDownStyle == ComboBoxStyle.Simple)
+						return cp;
+
+					cp.Style ^= (int) WindowStyles.WS_CHILD;
+					cp.Style |= (int) WindowStyles.WS_POPUP;
+					cp.ExStyle |= (int) WindowExStyles.WS_EX_TOOLWINDOW | (int) WindowExStyles.WS_EX_TOPMOST;
 					return cp;
 				}
 			}
@@ -1522,25 +1438,28 @@ namespace System.Windows.Forms
 			}
 
 
+			int BorderWidth {
+				get {
+					switch (border_style) {
+					case BorderStyle.Fixed3D:
+						return ThemeEngine.Current.Border3DSize.Width;
+					default:
+						return ThemeEngine.Current.BorderSize.Width;
+					}
+				}
+			}
+
 			#region Private Methods			
 			// Calcs the listbox area
 			internal void CalcListBoxArea ()
 			{				
 				int width, height;
-				int item_height = owner.ItemHeight;
 				bool show_scrollbar = false;
 				
 				if (owner.DropDownStyle == ComboBoxStyle.Simple) {
-					width = owner.CBoxInfo.listbox_area.Width;
-					height = owner.CBoxInfo.listbox_area.Height;
-
-					if (owner.IntegralHeight == true) {
-						int remaining = (height % (item_height - 2));							
-		
-						if (remaining > 0) {
-							height -= remaining;							
-						}
-					}
+					Rectangle area = owner.listbox_area;
+					width = area.Width;
+					height = area.Height;
 				}
 				else { // DropDown or DropDownList
 					
@@ -1554,18 +1473,14 @@ namespace System.Windows.Forms
 						}
 						
 					} else	{
-						height = (item_height - 2) * count;
+						height = owner.ItemHeight * count;
 					}
 				}
 				
 				if (owner.Items.Count <= owner.MaxDropDownItems) {					
-					
-					/* Does not need vertical scrollbar*/
-					if (vscrollbar_ctrl != null) {						
-						vscrollbar_ctrl.Visible = false;						
-					}
-				}
-				else {					
+					if (vscrollbar_ctrl != null)
+						vscrollbar_ctrl.Visible = false;
+				} else {					
 					/* Need vertical scrollbar */
 					if (vscrollbar_ctrl == null) {
 						vscrollbar_ctrl = new VScrollBarLB ();
@@ -1574,18 +1489,17 @@ namespace System.Windows.Forms
 						vscrollbar_ctrl.LargeChange = 1;
 						vscrollbar_ctrl.Maximum = 0;
 						vscrollbar_ctrl.ValueChanged += new EventHandler (VerticalScrollEvent);
-						
 						Controls.AddImplicit (vscrollbar_ctrl);
 					}
 					
-					vscrollbar_ctrl.Height = height;
+					vscrollbar_ctrl.Height = height - 2 * BorderWidth;
 							
-					vscrollbar_ctrl.Location = new Point (width - vscrollbar_ctrl.Width , 0);
+					vscrollbar_ctrl.Location = new Point (width - vscrollbar_ctrl.Width - BorderWidth - 1, 0);
 
 					vscrollbar_ctrl.Maximum = owner.Items.Count - (owner.DropDownStyle == ComboBoxStyle.Simple ? page_size : owner.maxdrop_items);
 					show_scrollbar = vscrollbar_ctrl.Visible = true;
 
-					int hli = GetHighLightedIndex ();
+					int hli = HighlightedIndex;
 					if (hli > 0) {
 						hli = Math.Min (hli, vscrollbar_ctrl.Maximum);
 						vscrollbar_ctrl.Value = hli;
@@ -1601,28 +1515,24 @@ namespace System.Windows.Forms
 					textarea_drawable.Width -= vscrollbar_ctrl.Width;
 
 				last_item = LastVisibleItem ();
-				page_size = textarea_drawable.Height / (item_height - 2);
+				page_size = textarea_drawable.Height / owner.ItemHeight;
 			}			
 
 			private void Draw (Rectangle clip, Graphics dc)
 			{	
-				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
-					(owner.BackColor), clip);				
+				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (owner.BackColor), clip);
 
 				if (owner.Items.Count > 0) {
-					Rectangle item_rect;
-					DrawItemState state = DrawItemState.None;
 					
 					for (int i = top_item; i <= last_item; i++) {
-						item_rect = GetItemDisplayRectangle (i, top_item);
+						Rectangle item_rect = GetItemDisplayRectangle (i, top_item);
 
-						if (clip.IntersectsWith (item_rect) == false)
+						if (!clip.IntersectsWith (item_rect))
 							continue;
 
-						/* Draw item */
-						state = DrawItemState.None;
+						DrawItemState state = DrawItemState.None;
 
-						if (i == GetHighLightedIndex () ) {
+						if (i == HighlightedIndex) {
 							state |= DrawItemState.Selected;
 							
 							if (owner.DropDownStyle == ComboBoxStyle.DropDownList) {
@@ -1636,17 +1546,23 @@ namespace System.Windows.Forms
 				}
 			}
 			
-			public int GetHighLightedIndex ()
-			{					
-				return owner.Items.IndexOf (highlighted_item);
+			int highlighted_index = -1;
+
+			public int HighlightedIndex {
+				get { return highlighted_index; }
+				set {
+					if (highlighted_index == value)
+						return;
+				
+    					if (highlighted_index != -1)    					
+						Invalidate (GetItemDisplayRectangle (highlighted_index, top_item));
+    					highlighted_index = value;
+    					if (highlighted_index != -1)
+						Invalidate (GetItemDisplayRectangle (highlighted_index, top_item));
+				}
 			}
 			
-			public object GetHighLightedItem ()
-			{				
-				return highlighted_item;
-			}
-
-			private Rectangle GetItemDisplayRectangle (int index, int first_displayble)
+			private Rectangle GetItemDisplayRectangle (int index, int top_index)
 			{
 				if (index < 0 || index >= owner.Items.Count)
 					throw new  ArgumentOutOfRangeException ("GetItemRectangle index out of range.");
@@ -1656,10 +1572,12 @@ namespace System.Windows.Forms
 
 				item_rect.X = 0;
 				item_rect.Width = textarea_drawable.Width;
-				item_rect.Y = ((height - 2) * (index - first_displayble));
-
-				if (owner.dropdown_style == ComboBoxStyle.Simple)
-					item_rect.Y += 2;
+				if (owner.DrawMode == DrawMode.OwnerDrawVariable) {
+					item_rect.Y = 0;
+					for (int i = top_index; i < index; i++)
+						item_rect.Y += owner.GetItemHeight (i);
+				} else
+					item_rect.Y = height * (index - top_index);
 
 				item_rect.Height = height;
 				return item_rect;
@@ -1672,7 +1590,6 @@ namespace System.Windows.Forms
 					
 				Capture = false;
 				Hide ();
-				highlighted_item = -1;
 				owner.DropDownListBoxFinished ();
 			}
 
@@ -1711,80 +1628,63 @@ namespace System.Windows.Forms
 				int item = -1;
 				
 				switch (navigation) {
-				case ItemNavigation.Next: {
-					if (GetHighLightedIndex () + 1 < owner.Items.Count) {
-						
-						if (GetHighLightedIndex () + 1 > last_item) {
+				case ItemNavigation.Next:
+					if (HighlightedIndex + 1 < owner.Items.Count) {
+						if (HighlightedIndex + 1 > last_item) {
 							top_item++;
 							vscrollbar_ctrl.Value = top_item;
 						}
-						item = GetHighLightedIndex () + 1;
+						item = HighlightedIndex + 1;
 					}
 					break;
-				}
 				
-				case ItemNavigation.Previous: {
-					if (GetHighLightedIndex () > 0) {						
-						
-						if (GetHighLightedIndex () - 1 < top_item) {							
+				case ItemNavigation.Previous:
+					if (HighlightedIndex > 0) {						
+						if (HighlightedIndex - 1 < top_item) {							
 							top_item--;
 							vscrollbar_ctrl.Value = top_item;							
 						}
-						item = GetHighLightedIndex () - 1;
+						item = HighlightedIndex - 1;
 					}					
 					break;
-				}
 				
-				case ItemNavigation.NextPage: {
-					if (GetHighLightedIndex () + page_size - 1 >= owner.Items.Count) {
+				case ItemNavigation.NextPage:
+					if (HighlightedIndex + page_size - 1 >= owner.Items.Count) {
 						top_item = owner.Items.Count - page_size;
-						vscrollbar_ctrl.Value = top_item; 						
+						vscrollbar_ctrl.Value = top_item;
 						item = owner.Items.Count - 1;
-					}
-					else {
-						if (GetHighLightedIndex () + page_size - 1  > last_item) {
-							top_item = GetHighLightedIndex ();
-							vscrollbar_ctrl.Value = GetHighLightedIndex ();
+					} else {
+						if (HighlightedIndex + page_size - 1  > last_item) {
+							top_item = HighlightedIndex;
+							vscrollbar_ctrl.Value = HighlightedIndex;
 						}
-					
-						item = GetHighLightedIndex () + page_size - 1;
+						item = HighlightedIndex + page_size - 1;
 					}					
 					break;
-				}
 				
-				case ItemNavigation.PreviousPage: {					
-					
-					/* Go to the first item*/
-					if (GetHighLightedIndex () - (page_size - 1) <= 0) {
-																		
+				case ItemNavigation.PreviousPage:
+					if (HighlightedIndex - page_size - 1 <= 0) {
 						top_item = 0;
 						vscrollbar_ctrl.Value = top_item;
 						item = 0;			
-					}
-					else { /* One page back */
-						if (GetHighLightedIndex () - (page_size - 1)  < top_item) {
-							top_item = GetHighLightedIndex () - (page_size - 1);
+					} else {
+						if (HighlightedIndex - page_size - 1  < top_item) {
+							top_item = HighlightedIndex - page_size - 1;
 							vscrollbar_ctrl.Value = top_item;
 						}
-					
-						item = GetHighLightedIndex () - (page_size - 1);
+						item = HighlightedIndex - page_size - 1;
 					}
-					
 					break;
-				}				
 					
 				default:
 					break;
 				}	
 				
 				if (item != -1) {
-					SetHighLightedItem (owner.Items[item]);
-					
+					HighlightedIndex = item;
 					owner.OnSelectionChangeCommitted (new EventArgs ());
-					
-					if (owner.DropDownStyle == ComboBoxStyle.Simple) {
+					if (owner.DropDownStyle == ComboBoxStyle.Simple)
 						owner.SetControlText (owner.GetItemText (owner.Items[item]));
-					}
 				}
 			}
 
@@ -1812,35 +1712,10 @@ namespace System.Windows.Forms
 				}
 			}
 			
-			public void SetHighLightedItem (object item)
-			{
-				Rectangle invalidate = Rectangle.Empty;
-				int hli;
-				
-				if (GetHighLightedItem () == item)
-					return;
-				
-				/* Previous item */
-				hli = GetHighLightedIndex ();
-    				if (hli != -1) {    					
-					invalidate = GetItemDisplayRectangle (hli, top_item);
-	    			}
-				
-    				highlighted_item = item;
-    				
-    				if (highlighted_item != null) {
-	    				 /* Current item */
-	    				invalidate = Rectangle.Union (invalidate,
-							GetItemDisplayRectangle (GetHighLightedIndex (), top_item));
-	    				
-	    			}
-
-				if (ClientRectangle.IntersectsWith (invalidate))
-					Invalidate (invalidate);
-			}			
-
 			public void SetTopItem (int item)
 			{
+				if (top_item == item)
+					return;
 				top_item = item;
 				UpdateLastVisibleItem ();
 				Refresh ();
@@ -1855,14 +1730,15 @@ namespace System.Windows.Forms
     				/* Click on an element ? */    				
 	    			int index = IndexFromPointDisplayRectangle (e.X, e.Y);
     				if (index != -1) {    					
-					owner.SelectedIndex = index;
-					SetHighLightedItem (owner.Items[index]);
 					owner.OnSelectionChangeCommitted (new EventArgs ());
+					owner.SelectedIndex = index;
+					HighlightedIndex = index;
 					HideWindow ();
 					return;
 				}
 				
 				if (owner.DropDownStyle == ComboBoxStyle.Simple) {
+					owner.textbox_ctrl.Focus ();
 					return;
 				}
 								
@@ -1893,7 +1769,7 @@ namespace System.Windows.Forms
 				int index = IndexFromPointDisplayRectangle (e.X, e.Y);
 
     				if (index != -1) {
-					SetHighLightedItem (owner.Items[index]);
+					HighlightedIndex = index;
 					return;
 				}
 				
@@ -1955,7 +1831,7 @@ namespace System.Windows.Forms
 				if (owner.DropDownStyle == ComboBoxStyle.Simple && owner.Items.Count == 0)
 					return false;
 					
-				SetHighLightedItem (owner.SelectedItem);
+				HighlightedIndex = owner.SelectedIndex;
 
 				CalcListBoxArea ();				
 				Show ();

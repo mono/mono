@@ -1,3 +1,16 @@
+2006-05-18  Mike Kestner  <mkestner@novell.com>
+
+	* ComboBox.cs: first pass at ComboBox rework.  Layout is more
+	consistent with MS positioning.  IntegralHeight, ItemHeight, Sizing.
+	Correctly initialize textcontrol and ListBox on DropDownStyle changes. 
+	Substantial refactoring to remove confusing nested classes. Coding
+	standard and Get+Set->property refactorings.  Shift to index based
+	highlighting in ComboListBox instead of constantly using IndexOf and
+	Items[]. Add invalidations on resize for DropDownList to fix ugliness
+	in FileDialog growth.  Draw borders manually since Simple mode needs
+	to look like two independent controls.  Make listbox border
+	conditional to DropDownStyle.  Improved OwnerDraw support.
+
 2006-05-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PaintEventArgs.cs: For 2.0, check for a null Graphics in the .ctor. 
