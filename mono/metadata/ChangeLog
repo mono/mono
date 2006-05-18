@@ -1,3 +1,8 @@
+2006-05-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (emit_marshal_vtype): Add support for UnmanagedType.LPStruct 
+	and blittable types.
+
 2006-05-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_marshal_emit_native_wrapper): Make the marshalling code more
