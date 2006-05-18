@@ -1,3 +1,13 @@
+2006-05-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-sparc.c (mono_arch_output_basic_block): Add support for large stack offets
+	to a few opcodes. Fixes #78439.
+
+	* mini-sparc.c: Rename mono_sparch_break () to mono_arch_break () to improve
+	consistency with other archs.
+
+	* mini-ia64.c (mono_arch_emit_prolog): Remove debug stuff left in by mistake.
+
 2006-05-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-x86.c (mono_arch_instrument_epilog): Fix handling of 
