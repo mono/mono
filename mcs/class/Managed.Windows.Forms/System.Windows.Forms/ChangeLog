@@ -1,3 +1,10 @@
+2006-05-18  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* XplatUIX11.cs: 
+	  - Store the calculated rectangle in Hwnd object and use it when 
+	    setting the client size
+	  - Force Toolwindows to always be type Dock, to ensure they're on top
+
 2006-05-18  Mike Kestner  <mkestner@novell.com>
 
 	* ComboBox.cs: first pass at ComboBox rework.  Layout is more

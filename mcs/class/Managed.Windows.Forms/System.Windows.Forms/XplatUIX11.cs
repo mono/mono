@@ -778,8 +778,6 @@ namespace System.Windows.Forms {
 					atom_count = 0;
 
 					if ((cp.ExStyle & ((int)WindowExStyles.WS_EX_TOOLWINDOW)) != 0) {
-						atoms[atom_count++] = atoms[atom_count++] = NetAtoms[(int)NA._NET_WM_WINDOW_TYPE_TOOLBAR].ToInt32();
-					} else if (decorations == 0) {
 						atoms[atom_count++] = atoms[atom_count++] = NetAtoms[(int)NA._NET_WM_WINDOW_TYPE_DOCK].ToInt32();
 					} else {
 						atoms[atom_count++] = atoms[atom_count++] = NetAtoms[(int)NA._NET_WM_WINDOW_TYPE_DIALOG].ToInt32();
@@ -1521,9 +1519,10 @@ namespace System.Windows.Forms {
 			ncp = (XplatUIWin32.NCCALCSIZE_PARAMS)Marshal.PtrToStructure(ptr, typeof(XplatUIWin32.NCCALCSIZE_PARAMS));
 			Marshal.FreeHGlobal(ptr);
 
-			// FIXME - debug this with Menus, need to set hwnd.ClientRect
+			// FIXME - debug this with Menus
 
 			rect = new Rectangle(ncp.rgrc1.left, ncp.rgrc1.top, ncp.rgrc1.right - ncp.rgrc1.left, ncp.rgrc1.bottom - ncp.rgrc1.top);
+			hwnd.ClientRect = rect;
 
 			if (hwnd.visible) {
 				if ((rect.Width < 1) || (rect.Height < 1)) {
@@ -3487,7 +3486,11 @@ namespace System.Windows.Forms {
 				width = hwnd.width;
 				height = hwnd.height;
 
-				rect = Hwnd.GetClientRectangle(hwnd.border_style, hwnd.menu, hwnd.title_style, hwnd.caption_height, hwnd.tool_caption_height, width, height);
+				if (hwnd.ClientRect.IsEmpty) {
+					rect = Hwnd.GetClientRectangle(hwnd.border_style, hwnd.menu, hwnd.title_style, hwnd.caption_height, hwnd.tool_caption_height, width, height);
+				} else {
+					rect = hwnd.ClientRect;
+				}
 
 				client_width = rect.Width;
 				client_height = rect.Height;
@@ -4270,12 +4273,15 @@ namespace System.Windows.Forms {
 				UnmapWindow(hwnd, WindowType.Whole);
 			}
 
-			client_rect = Hwnd.GetClientRectangle(hwnd.border_style, hwnd.menu, hwnd.title_style, hwnd.caption_height, hwnd.tool_caption_height, width, height);
+			if (hwnd.ClientRect.IsEmpty) {
+				client_rect = Hwnd.GetClientRectangle(hwnd.border_style, hwnd.menu, hwnd.title_style, hwnd.caption_height, hwnd.tool_caption_height, width, height);
+			} else {
+				client_rect = hwnd.ClientRect;
+			}
 
 			// Save a server roundtrip (and prevent a feedback loop)
 			if ((hwnd.x == x) && (hwnd.y == y) && 
-				(hwnd.width == width) && (hwnd.height == height) &&
-				(hwnd.ClientRect == client_rect)) {
+				(hwnd.width == width) && (hwnd.height == height)) {
 				return;
 			}
 
