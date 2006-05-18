@@ -116,6 +116,7 @@ namespace System.Windows.Forms
 		internal ContextMenu		context_menu;		// Context menu associated with the control
 
 		private Graphics		dc_mem;			// Graphics context for double buffering
+		private GraphicsState		dc_state;		// Pristine graphics context to reset after paint code alters dc_mem
 		private Bitmap			bmp_mem;		// Bitmap for double buffering control
 		private bool			needs_redraw = true;
 
@@ -868,11 +869,17 @@ namespace System.Windows.Forms
 
 		internal Graphics DeviceContext {
 			get { 
-				if (dc_mem==null) {
+				if (dc_mem == null) {
 					CreateBuffers(this.Width, this.Height);
+					dc_state = dc_mem.Save();
 				}
 				return dc_mem;
 			}
+		}
+
+		internal void ResetDeviceContext() {
+			dc_mem.Restore(dc_state);
+			dc_state = dc_mem.Save();
 		}
 
 		private Bitmap ImageBuffer {
@@ -3814,8 +3821,10 @@ namespace System.Windows.Forms
 				// and here http://msdn.microsoft.com/msdnmag/issues/06/03/WindowsFormsPerformance/
 				case Msg.WM_PAINT: {
 					PaintEventArgs	paint_event;
+					bool		reset_context;
 
 					paint_event = XplatUI.PaintEventStart(Handle, true);
+					reset_context = false;
 
 					if (paint_event == null) {
 						return;
@@ -3829,10 +3838,12 @@ namespace System.Windows.Forms
 					}
 
 					Graphics dc = null;
-					if (ThemeEngine.Current.DoubleBufferingSupported)
+					if (ThemeEngine.Current.DoubleBufferingSupported) {
 						if ((control_style & ControlStyles.DoubleBuffer) != 0) {
 							dc = paint_event.SetGraphics (DeviceContext);
+							reset_context = true;
 						}
+					}
 
 					if (!GetStyle(ControlStyles.Opaque)) {
 						OnPaintBackground(paint_event);
@@ -3854,6 +3865,10 @@ namespace System.Windows.Forms
 						}
 
 					XplatUI.PaintEventEnd(Handle, true);
+
+					if (reset_context) {
+						ResetDeviceContext();
+					}
 
 					return;
 				}

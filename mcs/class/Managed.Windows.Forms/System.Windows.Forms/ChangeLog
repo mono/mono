@@ -1,3 +1,10 @@
+2006-05-18  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Control.cs: When double-buffering is enabled, we need to reset
+	  our graphics context between paint calls. Otherwise, any 
+	  transformations and other alterations on the context will 
+	  become cumulative (#77734)
+
 2006-05-18  Mike Kestner  <mkestner@novell.com>
 
 	* ListView.cs: do focused item selection like MS on clicks. 
