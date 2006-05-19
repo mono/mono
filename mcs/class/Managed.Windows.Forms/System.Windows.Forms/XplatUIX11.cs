@@ -3488,6 +3488,7 @@ namespace System.Windows.Forms {
 
 				if (hwnd.ClientRect.IsEmpty) {
 					rect = Hwnd.GetClientRectangle(hwnd.border_style, hwnd.menu, hwnd.title_style, hwnd.caption_height, hwnd.tool_caption_height, width, height);
+					hwnd.ClientRect = rect;
 				} else {
 					rect = hwnd.ClientRect;
 				}
@@ -4273,11 +4274,8 @@ namespace System.Windows.Forms {
 				UnmapWindow(hwnd, WindowType.Whole);
 			}
 
-			if (hwnd.ClientRect.IsEmpty) {
-				client_rect = Hwnd.GetClientRectangle(hwnd.border_style, hwnd.menu, hwnd.title_style, hwnd.caption_height, hwnd.tool_caption_height, width, height);
-			} else {
-				client_rect = hwnd.ClientRect;
-			}
+			PerformNCCalc(hwnd);
+			client_rect = hwnd.ClientRect;
 
 			// Save a server roundtrip (and prevent a feedback loop)
 			if ((hwnd.x == x) && (hwnd.y == y) && 
