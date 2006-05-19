@@ -1473,16 +1473,16 @@ namespace System.Windows.Forms
 
 					// Need to draw a check-mark
 					if (item.Checked) {
-						pen.Width = 1;
+						Pen check_pen = ResPool.GetSizedPen (this.ColorWindowText, 1);
 						// adjustments to get the check-mark at the right place
 						rect.X ++; rect.Y ++;
 						// following logic is taken from DrawFrameControl method
 						for (int i = 0; i < check_wd; i++) {
-							dc.DrawLine (pen, rect.Left + check_wd / 2,
+							dc.DrawLine (check_pen, rect.Left + check_wd / 2,
 								     rect.Top + check_wd + i,
 								     rect.Left + check_wd / 2 + 2 * scale,
 								     rect.Top + check_wd + 2 * scale + i);
-							dc.DrawLine (pen,
+							dc.DrawLine (check_pen,
 								     rect.Left + check_wd / 2 + 2 * scale,
 								     rect.Top + check_wd + 2 * scale + i,
 								     rect.Left + check_wd / 2 + 6 * scale,
@@ -1526,7 +1526,7 @@ namespace System.Windows.Forms
 			if (!control.LabelWrap)
 				format.FormatFlags = StringFormatFlags.NoWrap;
 			
-			if (item.Selected) {
+			if (item.Selected && control.item_control.Focused) {
 				if (control.View == View.Details) {
 					if (control.FullRowSelect) {
 						dc.FillRectangle (SystemBrushes.Highlight, text_rect);
@@ -1551,7 +1551,7 @@ namespace System.Windows.Forms
 				dc.FillRectangle (ResPool.GetSolidBrush (item.BackColor), text_rect);
 
 			if (item.Text != null && item.Text.Length > 0) {
-				if (item.Selected)
+				if (item.Selected && control.item_control.Focused)
 					dc.DrawString (item.Text, item.Font, SystemBrushes.HighlightText, text_rect, format);
 				else
 					dc.DrawString (item.Text, item.Font, this.ResPool.GetSolidBrush

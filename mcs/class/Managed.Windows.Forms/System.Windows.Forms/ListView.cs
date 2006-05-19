@@ -911,6 +911,7 @@ namespace System.Windows.Forms
 		{
 			header_control.Visible = false;
 			header_control.Size = Size.Empty;
+			item_control.Visible = true;
 			item_control.Location = Point.Empty;
 
 			if (items.Count == 0)
@@ -963,7 +964,7 @@ namespace System.Windows.Forms
 
 		void LayoutHeader ()
 		{
-			if (columns.Count == 0 || header_style == ColumnHeaderStyle.None) {
+			if (header_style == ColumnHeaderStyle.None) {
 				header_control.Visible = false;
 				header_control.Size = Size.Empty;
 				return;
@@ -983,13 +984,20 @@ namespace System.Windows.Forms
 
 			header_control.Width = x;
 			header_control.Height = columns [0].Ht;
-			header_control.is_visible = true;
+			header_control.Visible = true;
 		}
 
 		void LayoutDetails ()
 		{
+			if (columns.Count == 0) {
+				header_control.Visible = false;
+				item_control.Visible = false;
+				return;
+			}
+
 			LayoutHeader ();
 
+			item_control.Visible = true;
 			item_control.Location = new Point (0, header_control.Height);
 
 			int y = 0; 
@@ -1179,7 +1187,7 @@ namespace System.Windows.Forms
 
 		private void ListView_KeyDown (object sender, KeyEventArgs ke)
 		{			
-			if (ke.Handled || Items.Count == 0)
+			if (ke.Handled || Items.Count == 0 || !item_control.Visible)
 				return;
 
 			int index = -1;

@@ -1,3 +1,11 @@
+2006-05-18  Mike Kestner  <mkestner@novell.com>
+
+	* ListView.cs: match MS behavior in Details view where items are not
+	drawn if Columns.Count == 0. 
+	* ThemeWin32Classic.cs: only highlight ListView selection if focused.
+	Use a separate pen to draw the check, since changing the width affects
+	the box as well.  Fixes #78454.
+
 2006-05-18  Miguel de Icaza  <miguel@novell.com>
 
 	* ListView.cs: ArgumentOutOfRangeException, single versions of the
