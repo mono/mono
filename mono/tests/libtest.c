@@ -301,7 +301,7 @@ typedef struct {
 	int c;
 	const char *d;
 	gunichar2 *d2;
-} SimpleStruct;
+} simplestruct;
 
 typedef struct {
 	double x;
@@ -311,7 +311,7 @@ typedef struct {
 STDCALL simplestruct
 mono_test_return_vtype (int i)
 {
-	SimpleStruct res;
+	simplestruct res;
 	static gunichar2 test2 [] = { 'T', 'E', 'S', 'T', '2', 0 };
 
 	res.a = 0;
@@ -345,10 +345,10 @@ mono_test_return_string (ReturnStringDelegate func)
 	return g_strdup ("12345");
 }
 
-typedef int (STDCALL *RefVTypeDelegate) (int a, SimpleStruct *ss, int b);
+typedef int (STDCALL *RefVTypeDelegate) (int a, simplestruct *ss, int b);
 
 STDCALL int
-mono_test_ref_vtype (int a, SimpleStruct *ss, int b, RefVTypeDelegate func)
+mono_test_ref_vtype (int a, simplestruct *ss, int b, RefVTypeDelegate func)
 {
 	if (a == 1 && b == 2 && ss->a == 0 && ss->b == 1 && ss->c == 0 &&
 	    !strcmp (ss->d, "TEST1")) {
@@ -363,10 +363,10 @@ mono_test_ref_vtype (int a, SimpleStruct *ss, int b, RefVTypeDelegate func)
 	return 1;
 }
 
-typedef int (STDCALL *OutVTypeDelegate) (int a, SimpleStruct *ss, int b);
+typedef int (STDCALL *OutVTypeDelegate) (int a, simplestruct *ss, int b);
 
 STDCALL int
-mono_test_marshal_out_struct (int a, SimpleStruct *ss, int b, OutVTypeDelegate func)
+mono_test_marshal_out_struct (int a, simplestruct *ss, int b, OutVTypeDelegate func)
 {
 	/* Check that the input pointer is ignored */
 	ss->d = (gpointer)0x12345678;
@@ -397,7 +397,7 @@ mono_test_marshal_delegate_struct (DelegateStruct ds)
 }
 
 STDCALL int 
-mono_test_marshal_struct (SimpleStruct ss)
+mono_test_marshal_struct (simplestruct ss)
 {
 	if (ss.a == 0 && ss.b == 1 && ss.c == 0 &&
 	    !strcmp (ss.d, "TEST"))
@@ -407,7 +407,7 @@ mono_test_marshal_struct (SimpleStruct ss)
 }
 
 STDCALL int
-mono_test_marshal_byref_struct (SimpleStruct *ss, int a, int b, int c, char *d)
+mono_test_marshal_byref_struct (simplestruct *ss, int a, int b, int c, char *d)
 {
 	gboolean res = (ss->a == a && ss->b == b && ss->c == c && strcmp (ss->d, d) == 0);
 
@@ -428,10 +428,10 @@ typedef struct {
 	double f;
 	unsigned char g;
 	guint64 h;
-} SimpleStruct2;
+} simplestruct2;
 
 STDCALL int
-mono_test_marshal_struct2 (SimpleStruct2 ss)
+mono_test_marshal_struct2 (simplestruct2 ss)
 {
 	if (ss.a == 0 && ss.b == 1 && ss.c == 0 &&
 	    !strcmp (ss.d, "TEST") && 
@@ -443,7 +443,7 @@ mono_test_marshal_struct2 (SimpleStruct2 ss)
 
 /* on HP some of the struct should be on the stack and not in registers */
 STDCALL int
-mono_test_marshal_struct2_2 (int i, int j, int k, SimpleStruct2 ss)
+mono_test_marshal_struct2_2 (int i, int j, int k, simplestruct2 ss)
 {
 	if (i != 10 || j != 11 || k != 12)
 		return 1;
@@ -475,7 +475,7 @@ mono_test_marshal_lpstruct_blittable (point *p)
 }
 
 STDCALL int
-mono_test_marshal_struct_array (SimpleStruct2 *ss)
+mono_test_marshal_struct_array (simplestruct2 *ss)
 {
 	if (! (ss[0].a == 0 && ss[0].b == 1 && ss[0].c == 0 &&
 		   !strcmp (ss[0].d, "TEST") && 
@@ -502,10 +502,10 @@ mono_test_marshal_long_align_struct_array (long_align_struct *ss)
 	return ss[0].a + ss[0].b + ss[0].c + ss[1].a + ss[1].b + ss[1].c;
 }
 
-STDCALL SimpleStruct2 *
-mono_test_marshal_class (int i, int j, int k, SimpleStruct2 *ss, int l)
+STDCALL simplestruct2 *
+mono_test_marshal_class (int i, int j, int k, simplestruct2 *ss, int l)
 {
-	SimpleStruct2 *res;
+	simplestruct2 *res;
 
 	if (!ss)
 		return NULL;
@@ -517,25 +517,25 @@ mono_test_marshal_class (int i, int j, int k, SimpleStruct2 *ss, int l)
 		   ss->e == 99 && ss->f == 1.5 && ss->g == 42 && ss->h == (guint64)123))
 		return NULL;
 
-	res = g_new0 (SimpleStruct2, 1);
-	memcpy (res, ss, sizeof (SimpleStruct2));
+	res = g_new0 (simplestruct2, 1);
+	memcpy (res, ss, sizeof (simplestruct2));
 	res->d = g_strdup ("TEST");
 	return res;
 }
 
 STDCALL int
-mono_test_marshal_byref_class (SimpleStruct2 **ssp)
+mono_test_marshal_byref_class (simplestruct2 **ssp)
 {
-	SimpleStruct2 *ss = *ssp;
-	SimpleStruct2 *res;
+	simplestruct2 *ss = *ssp;
+	simplestruct2 *res;
 	
 	if (! (ss->a == 0 && ss->b == 1 && ss->c == 0 &&
 		   !strcmp (ss->d, "TEST") && 
 		   ss->e == 99 && ss->f == 1.5 && ss->g == 42 && ss->h == (guint64)123))
 		return 1;
 
-	res = g_new0 (SimpleStruct2, 1);
-	memcpy (res, ss, sizeof (SimpleStruct2));
+	res = g_new0 (simplestruct2, 1);
+	memcpy (res, ss, sizeof (simplestruct2));
 	res->d = g_strdup ("TEST-RES");
 
 	*ssp = res;
@@ -608,7 +608,7 @@ mono_test_marshal_return_delegate_2 ()
 	return return_plus_one;
 }
 
-typedef SimpleStruct (STDCALL *SimpleDelegate2) (SimpleStruct ss);
+typedef simplestruct (STDCALL *SimpleDelegate2) (simplestruct ss);
 
 static gboolean
 is_utf16_equals (gunichar2 *s1, const char *s2)
@@ -626,7 +626,7 @@ is_utf16_equals (gunichar2 *s1, const char *s2)
 STDCALL int
 mono_test_marshal_delegate2 (SimpleDelegate2 delegate)
 {
-	SimpleStruct ss, res;
+	simplestruct ss, res;
 
 	ss.a = 0;
 	ss.b = 1;
@@ -641,13 +641,13 @@ mono_test_marshal_delegate2 (SimpleDelegate2 delegate)
 	return 0;
 }
 
-typedef SimpleStruct* (STDCALL *SimpleDelegate4) (SimpleStruct *ss);
+typedef simplestruct* (STDCALL *SimpleDelegate4) (simplestruct *ss);
 
 STDCALL int
 mono_test_marshal_delegate4 (SimpleDelegate4 delegate)
 {
-	SimpleStruct ss;
-	SimpleStruct *res;
+	simplestruct ss;
+	simplestruct *res;
 
 	ss.a = 0;
 	ss.b = 1;
@@ -671,14 +671,14 @@ mono_test_marshal_delegate4 (SimpleDelegate4 delegate)
 	return 0;
 }
 
-typedef int (STDCALL *SimpleDelegate5) (SimpleStruct **ss);
+typedef int (STDCALL *SimpleDelegate5) (simplestruct **ss);
 
 STDCALL int
 mono_test_marshal_delegate5 (SimpleDelegate5 delegate)
 {
-	SimpleStruct ss;
+	simplestruct ss;
 	int res;
-	SimpleStruct *ptr;
+	simplestruct *ptr;
 
 	ss.a = 0;
 	ss.b = 1;
@@ -707,13 +707,13 @@ mono_test_marshal_delegate6 (SimpleDelegate5 delegate)
 	return 0;
 }
 
-typedef int (STDCALL *SimpleDelegate7) (SimpleStruct **ss);
+typedef int (STDCALL *SimpleDelegate7) (simplestruct **ss);
 
 STDCALL int
 mono_test_marshal_delegate7 (SimpleDelegate7 delegate)
 {
 	int res;
-	SimpleStruct *ptr;
+	simplestruct *ptr;
 
 	/* Check that the input pointer is ignored */
 	ptr = (gpointer)0x12345678;
@@ -1263,7 +1263,7 @@ mono_test_asany (void *ptr, int what)
 	case 2:
 		return strcmp (ptr, "ABC") == 0 ? 0 : 1;
 	case 3: {
-		SimpleStruct2 ss = *(SimpleStruct2*)ptr;
+		simplestruct2 ss = *(simplestruct2*)ptr;
 
 		if (ss.a == 0 && ss.b == 1 && ss.c == 0 &&
 	    !strcmp (ss.d, "TEST") && 
@@ -1818,18 +1818,4 @@ mono_test_marshal_return_string_array_delegate (ReturnStringArrayDelegate d)
 	marshal_free (arr);
 
 	return res;
-}
-
-typedef struct {
-	int a;
-	int b;
-	int c;
-} TestStruct;
-	
-STDCALL int 
-mono_test_marshal_struct_test (TestStruct ss)
-{
-	printf ("A: %d %d %d\n", ss.a, ss.b, ss.c);
-
-	return 0;
 }
