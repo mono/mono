@@ -5,7 +5,7 @@
 
 2006-05-19  Peter Dennis Bartok  <pbartok@novell.com> 
 
-	* XplatUIX11.cs (SetWindowPos): Recalculate claient area size on resizes
+	* XplatUIX11.cs (SetWindowPos): Recalculate client area size on resizes
 	  instead of sticking to the first ever calculated value
 
 2006-05-19  Mike Kestner  <mkestner@novell.com>
