@@ -1319,7 +1319,7 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		internal class PopupButtonPanel : Panel {
+		internal class PopupButtonPanel : Control {
 			internal class PopupButton : Control {
 				internal enum PopupButtonState { Normal, Down, Up}
 				
@@ -1408,13 +1408,20 @@ namespace System.Windows.Forms {
 				{
 					if (popupButtonState != PopupButtonState.Down)
 						popupButtonState = PopupButtonState.Up;
+					
+					PopupButtonPanel panel = Parent as PopupButtonPanel;
+					
+					if (panel.focusButton != null && panel.focusButton.ButtonState == PopupButtonState.Up) {
+						panel.focusButton.ButtonState = PopupButtonState.Normal;
+						panel.focusButton = null;
+					}
 					Refresh ();
 					base.OnMouseEnter (e);
 				}
 				
 				protected override void OnMouseLeave (EventArgs e)
 				{
-					if (popupButtonState != PopupButtonState.Down)
+					if (popupButtonState == PopupButtonState.Up)
 						popupButtonState = PopupButtonState.Normal;
 					Refresh ();
 					base.OnMouseLeave (e);
@@ -1437,6 +1444,7 @@ namespace System.Windows.Forms {
 			private PopupButton networkButton;
 			
 			private PopupButton lastPopupButton = null;
+			private PopupButton focusButton = null;
 			
 			private int platform = (int) Environment.OSVersion.Platform;
 			
@@ -1446,7 +1454,6 @@ namespace System.Windows.Forms {
 				
 				SuspendLayout ();
 				
-				BorderStyle = BorderStyle.Fixed3D;
 				BackColor = Color.FromArgb (128, 128, 128);
 				Size = new Size (85, 336);
 				
@@ -1460,7 +1467,7 @@ namespace System.Windows.Forms {
 				recentlyusedButton.Image = ThemeEngine.Current.Images (UIIcon.PlacesRecentDocuments, 30);
 				recentlyusedButton.BackColor = BackColor;
 				recentlyusedButton.ForeColor = Color.White;
-				recentlyusedButton.Location = new Point (0, 0);
+				recentlyusedButton.Location = new Point (2, 2);
 				recentlyusedButton.Text = "Recently\nused";
 				recentlyusedButton.Click += new EventHandler (OnClickButton);
 				
@@ -1468,7 +1475,7 @@ namespace System.Windows.Forms {
 				desktopButton.BackColor = BackColor;
 				desktopButton.ForeColor = Color.White;
 				desktopButton.Size = new Size (81, 64);
-				desktopButton.Location = new Point (0, 64);
+				desktopButton.Location = new Point (2, 66);
 				desktopButton.Text = "Desktop";
 				desktopButton.Click += new EventHandler (OnClickButton);
 				
@@ -1476,7 +1483,7 @@ namespace System.Windows.Forms {
 				personalButton.BackColor = BackColor;
 				personalButton.ForeColor = Color.White;
 				personalButton.Size = new Size (81, 64);
-				personalButton.Location = new Point (0, 128);
+				personalButton.Location = new Point (2, 130);
 				personalButton.Text = "Personal";
 				personalButton.Click += new EventHandler (OnClickButton);
 				
@@ -1484,7 +1491,7 @@ namespace System.Windows.Forms {
 				mycomputerButton.BackColor = BackColor;
 				mycomputerButton.ForeColor = Color.White;
 				mycomputerButton.Size = new Size (81, 64);
-				mycomputerButton.Location = new Point (0, 192);
+				mycomputerButton.Location = new Point (2, 194);
 				mycomputerButton.Text = "My Computer";
 				mycomputerButton.Click += new EventHandler (OnClickButton);
 				
@@ -1492,7 +1499,7 @@ namespace System.Windows.Forms {
 				networkButton.BackColor = BackColor;
 				networkButton.ForeColor = Color.White;
 				networkButton.Size = new Size (81, 64);
-				networkButton.Location = new Point (0, 256);
+				networkButton.Location = new Point (2, 258);
 				networkButton.Text = "My Network";
 				networkButton.Click += new EventHandler (OnClickButton);
 				
@@ -1594,6 +1601,28 @@ namespace System.Windows.Forms {
 						lastPopupButton = null;
 					}
 				}
+			}
+			
+			protected override void OnPaint (PaintEventArgs e)
+			{
+				ControlPaint.DrawBorder3D (e.Graphics, ClientRectangle, Border3DStyle.Sunken);
+				base.OnPaint (e);
+			}
+			
+			protected override void OnGotFocus (EventArgs e)
+			{
+				if (lastPopupButton != recentlyusedButton) {
+					recentlyusedButton.ButtonState = PopupButton.PopupButtonState.Up;
+					focusButton = recentlyusedButton;
+				}
+				base.OnGotFocus (e);
+			}
+			
+			protected override void OnLostFocus (EventArgs e)
+			{
+				if (focusButton != null && focusButton.ButtonState != PopupButton.PopupButtonState.Down)
+					focusButton.ButtonState = PopupButton.PopupButtonState.Normal;
+				base.OnLostFocus (e);
 			}
 		}
 	}
