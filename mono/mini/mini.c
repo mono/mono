@@ -7932,8 +7932,14 @@ compare_by_interval_start_pos_func (gconstpointer a, gconstpointer b)
 			return 1;
 }
 
+#if 0
+#define LSCAN_DEBUG(a) do { a; } while (0)
+#else
+#define LSCAN_DEBUG(a)
+#endif
+
 static gint32*
-mono_allocate_stack_slots_full2 (MonoCompile *m, gboolean backward, guint32 *stack_size, guint32 *stack_align)
+mono_allocate_stack_slots_full2 (MonoCompile *cfg, gboolean backward, guint32 *stack_size, guint32 *stack_align)
 {
 	int i, slot, offset, size;
 	guint32 align;
@@ -7945,17 +7951,19 @@ mono_allocate_stack_slots_full2 (MonoCompile *m, gboolean backward, guint32 *sta
 	MonoType *t;
 	int nvtypes;
 
-	scalar_stack_slots = mono_mempool_alloc0 (m->mempool, sizeof (StackSlotInfo) * MONO_TYPE_PINNED);
+	LSCAN_DEBUG (printf ("Allocate Stack Slots 2 for %s:\n", mono_method_full_name (cfg->method, TRUE)));
+
+	scalar_stack_slots = mono_mempool_alloc0 (cfg->mempool, sizeof (StackSlotInfo) * MONO_TYPE_PINNED);
 	vtype_stack_slots = NULL;
 	nvtypes = 0;
 
-	offsets = mono_mempool_alloc (m->mempool, sizeof (gint32) * m->num_varinfo);
-	for (i = 0; i < m->num_varinfo; ++i)
+	offsets = mono_mempool_alloc (cfg->mempool, sizeof (gint32) * cfg->num_varinfo);
+	for (i = 0; i < cfg->num_varinfo; ++i)
 		offsets [i] = -1;
 
-	for (i = m->locals_start; i < m->num_varinfo; i++) {
-		inst = m->varinfo [i];
-		vmv = MONO_VARINFO (m, i);
+	for (i = cfg->locals_start; i < cfg->num_varinfo; i++) {
+		inst = cfg->varinfo [i];
+		vmv = MONO_VARINFO (cfg, i);
 
 		if ((inst->flags & MONO_INST_IS_DEAD) || inst->opcode == OP_REGVAR || inst->opcode == OP_REGOFFSET)
 			continue;
@@ -7971,7 +7979,7 @@ mono_allocate_stack_slots_full2 (MonoCompile *m, gboolean backward, guint32 *sta
 		MonoMethodVar *current = unhandled->data;
 
 		vmv = current;
-		inst = m->varinfo [vmv->idx];
+		inst = cfg->varinfo [vmv->idx];
 
 		/* inst->unused indicates native sized value types, this is used by the
 		* pinvoke wrappers when they call functions returning structures */
@@ -7994,7 +8002,7 @@ mono_allocate_stack_slots_full2 (MonoCompile *m, gboolean backward, guint32 *sta
 			/* Fall through */
 		case MONO_TYPE_VALUETYPE:
 			if (!vtype_stack_slots)
-				vtype_stack_slots = mono_mempool_alloc0 (m->mempool, sizeof (StackSlotInfo) * 256);
+				vtype_stack_slots = mono_mempool_alloc0 (cfg->mempool, sizeof (StackSlotInfo) * 256);
 			for (i = 0; i < nvtypes; ++i)
 				if (t->data.klass == vtype_stack_slots [i].vtype)
 					break;
@@ -8019,16 +8027,16 @@ mono_allocate_stack_slots_full2 (MonoCompile *m, gboolean backward, guint32 *sta
 		case MONO_TYPE_I4:
 #else
 		case MONO_TYPE_I8:
-#endif
 			/* Share non-float stack slots of the same size */
 			slot_info = &scalar_stack_slots [MONO_TYPE_CLASS];
 			break;
+#endif
 		default:
 			slot_info = &scalar_stack_slots [t->type];
 		}
 
 		slot = 0xffffff;
-		if (m->comp_done & MONO_COMP_LIVENESS) {
+		if (cfg->comp_done & MONO_COMP_LIVENESS) {
 			int pos;
 			gboolean changed;
 
@@ -8056,15 +8064,15 @@ mono_allocate_stack_slots_full2 (MonoCompile *m, gboolean backward, guint32 *sta
 
 					if (v->interval->last_range->to < pos) {
 						slot_info->active = g_list_delete_link (slot_info->active, l);
-						slot_info->slots = g_slist_prepend_mempool (m->mempool, slot_info->slots, GINT_TO_POINTER (offsets [v->idx]));
-						//LSCAN_DEBUG (printf ("Interval R%d has expired\n", v->idx));
+						slot_info->slots = g_slist_prepend_mempool (cfg->mempool, slot_info->slots, GINT_TO_POINTER (offsets [v->idx]));
+						LSCAN_DEBUG (printf ("Interval R%d has expired, adding 0x%x to slots\n", cfg->varinfo [v->idx]->dreg, offsets [v->idx]));
 						changed = TRUE;
 						break;
 					}
 					else if (!mono_linterval_covers (v->interval, pos)) {
 						slot_info->inactive = g_list_append (slot_info->inactive, v);
 						slot_info->active = g_list_delete_link (slot_info->active, l);
-						//LSCAN_DEBUG (printf ("Interval R%d became inactive\n", v->idx));
+						LSCAN_DEBUG (printf ("Interval R%d became inactive\n", cfg->varinfo [v->idx]->dreg));
 						changed = TRUE;
 						break;
 					}
@@ -8081,15 +8089,16 @@ mono_allocate_stack_slots_full2 (MonoCompile *m, gboolean backward, guint32 *sta
 
 					if (v->interval->last_range->to < pos) {
 						slot_info->inactive = g_list_delete_link (slot_info->inactive, l);
-						slot_info->slots = g_slist_prepend_mempool (m->mempool, slot_info->slots, GINT_TO_POINTER (offsets [v->idx]));
-						//LSCAN_DEBUG (printf ("\tInterval R%d has expired\n", v->idx));
+						// FIXME: Enabling this seems to cause impossible to debug crashes
+						//slot_info->slots = g_slist_prepend_mempool (cfg->mempool, slot_info->slots, GINT_TO_POINTER (offsets [v->idx]));
+						LSCAN_DEBUG (printf ("Interval R%d has expired, adding 0x%x to slots\n", cfg->varinfo [v->idx]->dreg, offsets [v->idx]));
 						changed = TRUE;
 						break;
 					}
 					else if (mono_linterval_covers (v->interval, pos)) {
 						slot_info->active = g_list_append (slot_info->active, v);
 						slot_info->inactive = g_list_delete_link (slot_info->inactive, l);
-						//LSCAN_DEBUG (printf ("\tInterval R%d became active\n", v->idx));
+						LSCAN_DEBUG (printf ("\tInterval R%d became active\n", cfg->varinfo [v->idx]->dreg));
 						changed = TRUE;
 						break;
 					}
@@ -8113,24 +8122,26 @@ mono_allocate_stack_slots_full2 (MonoCompile *m, gboolean backward, guint32 *sta
 
 				/* FIXME: We might want to consider the inactive intervals as well if slot_info->slots is empty */
 
-				slot_info->active = mono_varlist_insert_sorted (m, slot_info->active, vmv, TRUE);
+				slot_info->active = mono_varlist_insert_sorted (cfg, slot_info->active, vmv, TRUE);
 			}
 		}
 
+#if 0
 		{
 			static int count = 0;
 			count ++;
 
-			/*
-			if (count == atoi (getenv ("COUNT")))
-				printf ("LAST: %s\n", mono_method_full_name (m->method, TRUE));
-			if (count > atoi (getenv ("COUNT")))
+			if (count == atoi (getenv ("COUNT3")))
+				printf ("LAST: %s\n", mono_method_full_name (cfg->method, TRUE));
+			if (count > atoi (getenv ("COUNT3")))
 				slot = 0xffffff;
 			else {
 				mono_print_tree_nl (inst);
 				}
-			*/
 		}
+#endif
+
+		LSCAN_DEBUG (printf ("R%d %s -> 0x%x\n", inst->dreg, mono_type_full_name (t), slot));
 
 		if (slot == 0xffffff) {
 			/*
@@ -12206,6 +12217,7 @@ print_jit_stats (void)
 		g_print ("Allocated code size:    %ld\n", mono_jit_stats.allocated_code_size);
 		g_print ("Inlineable methods:     %ld\n", mono_jit_stats.inlineable_methods);
 		g_print ("Inlined methods:        %ld\n", mono_jit_stats.inlined_methods);
+		g_print ("Regvars:                %ld\n", mono_jit_stats.regvars);
 		g_print ("Locals stack size:      %ld\n", mono_jit_stats.locals_stack_size);
 		
 		g_print ("\nCreated object count:   %ld\n", mono_stats.new_object_count);

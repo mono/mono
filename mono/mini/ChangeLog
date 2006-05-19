@@ -1,5 +1,14 @@
 2006-05-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* linear-scan.c (mono_linear_scan2): Avoid negative 'gains'.
+
+	* mini.h (MonoJitStats): Add a 'regvars' statistics.
+
+	* liveness.c linear-scan.c: Improve debug output.
+
+	* mini.c (mono_allocate_stack_slots_full2): Fix some problems with the original
+	code, add comments and debug code.
+
 	* mini.c (mono_allocate_stack_slots_full2): A variant of the original 
 	allocate_stack_slots () function using the interval based liveness information.
 

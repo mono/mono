@@ -760,7 +760,7 @@ mono_linterval_print (MonoLiveInterval *interval)
 	MonoLiveRange2 *range;
 
 	for (range = interval->range; range != NULL; range = range->next)
-		printf ("[%d-%d) ", range->from, range->to);
+		printf ("[%x-%x) ", range->from, range->to);
 }
 
 /**
@@ -821,7 +821,7 @@ update_liveness2 (MonoCompile *cfg, MonoInst *ins, gboolean set_volatile, int in
 	const char *spec = INS_INFO (ins->opcode);
 	int sreg;
 
-	LIVENESS_DEBUG (printf ("\t%d: ", inst_num); mono_print_ins (ins));
+	LIVENESS_DEBUG (printf ("\t%x: ", inst_num); mono_print_ins (ins));
 
 	if (ins->opcode == OP_NOP)
 		return;
@@ -896,6 +896,8 @@ mono_analyze_liveness2 (MonoCompile *cfg)
 
 	if (disabled)
 		return;
+
+	LIVENESS_DEBUG (printf ("LIVENESS 2 %s\n", mono_method_full_name (cfg->method, TRUE)));
 
 	/*
 	if (strstr (cfg->method->name, "test_") != cfg->method->name)
@@ -999,11 +1001,11 @@ mono_analyze_liveness2 (MonoCompile *cfg)
 			mono_linterval_add_range (cfg, vi->interval, 0, 1);
 	}
 
-#if 0
+#if 1
 	for (idx = 0; idx < max_vars; ++idx) {
 		MonoMethodVar *vi = MONO_VARINFO (cfg, idx);
 		
-		LIVENESS_DEBUG (printf ("LIVENESS R%d: ", idx));
+		LIVENESS_DEBUG (printf ("LIVENESS R%d: ", cfg->varinfo [idx]->dreg));
 		LIVENESS_DEBUG (mono_linterval_print (vi->interval));
 		LIVENESS_DEBUG (printf ("\n"));
 	}

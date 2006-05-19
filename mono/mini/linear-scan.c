@@ -294,7 +294,7 @@ mono_linear_scan2 (MonoCompile *cfg, GList *vars, GList *regs, regmask_t *used_m
 
 	for (l = vars; l; l = l->next) {
 		vmv = l->data;
-		LSCAN_DEBUG (printf ("VAR %d %08x %08x C%d\n", vmv->idx, vmv->range.first_use.abs_pos, 
+		LSCAN_DEBUG (printf ("VAR R%d %08x %08x C%d\n", cfg->varinfo [vmv->idx]->dreg, vmv->range.first_use.abs_pos, 
 							 vmv->range.last_use.abs_pos, vmv->spill_costs));
 	}
 
@@ -313,7 +313,7 @@ mono_linear_scan2 (MonoCompile *cfg, GList *vars, GList *regs, regmask_t *used_m
 
 		unhandled = g_list_delete_link (unhandled, unhandled);
 
-		LSCAN_DEBUG (printf ("Processing R%d: ", current->idx));
+		LSCAN_DEBUG (printf ("Processing R%d: ", cfg->varinfo [current->idx]->dreg));
 		LSCAN_DEBUG (mono_linterval_print (current->interval));
 		LSCAN_DEBUG (printf ("\n"));
 
@@ -332,14 +332,14 @@ mono_linear_scan2 (MonoCompile *cfg, GList *vars, GList *regs, regmask_t *used_m
 
 				if (v->interval->last_range->to < pos) {
 					active = g_list_delete_link (active, l);
-					LSCAN_DEBUG (printf ("Interval R%d has expired\n", v->idx));
+					LSCAN_DEBUG (printf ("Interval R%d has expired\n", cfg->varinfo [v->idx]->dreg));
 					changed = TRUE;
 					break;
 				}
 				else if (!mono_linterval_covers (v->interval, pos)) {
 					inactive = g_list_append (inactive, v);
 					active = g_list_delete_link (active, l);
-					LSCAN_DEBUG (printf ("Interval R%d became inactive\n", v->idx));
+					LSCAN_DEBUG (printf ("Interval R%d became inactive\n", cfg->varinfo [v->idx]->dreg));
 					changed = TRUE;
 					break;
 				}
@@ -356,14 +356,14 @@ mono_linear_scan2 (MonoCompile *cfg, GList *vars, GList *regs, regmask_t *used_m
 
 				if (v->interval->last_range->to < pos) {
 					inactive = g_list_delete_link (inactive, l);
-					LSCAN_DEBUG (printf ("\tInterval R%d has expired\n", v->idx));
+					LSCAN_DEBUG (printf ("\tInterval R%d has expired\n", cfg->varinfo [v->idx]->dreg));
 					changed = TRUE;
 					break;
 				}
 				else if (mono_linterval_covers (v->interval, pos)) {
 					active = g_list_append (active, v);
 					inactive = g_list_delete_link (inactive, l);
-					LSCAN_DEBUG (printf ("\tInterval R%d became active\n", v->idx));
+					LSCAN_DEBUG (printf ("\tInterval R%d became active\n", cfg->varinfo [v->idx]->dreg));
 					changed = TRUE;
 					break;
 				}
@@ -379,7 +379,7 @@ mono_linear_scan2 (MonoCompile *cfg, GList *vars, GList *regs, regmask_t *used_m
 
 			if (v->reg >= 0) {
 				free_pos [v->reg] = 0;
-				LSCAN_DEBUG (printf ("\threg %d is busy\n", v->reg));
+				LSCAN_DEBUG (printf ("\threg %d is busy (cost %d)\n", v->reg, v->spill_costs));
 			}
 		}
 
@@ -409,7 +409,7 @@ mono_linear_scan2 (MonoCompile *cfg, GList *vars, GList *regs, regmask_t *used_m
 		if (free_pos [reg] >= current->interval->last_range->to) {
 			/* Register available for whole interval */
 			current->reg = reg;
-			LSCAN_DEBUG (printf ("\tAssigned hreg %d to R%d\n", reg, current->idx));
+			LSCAN_DEBUG (printf ("\tAssigned hreg %d to R%d\n", reg, cfg->varinfo [current->idx]->dreg));
 
 			active = g_list_append (active, current);
 			gains [current->reg] += current->spill_costs;
@@ -426,9 +426,13 @@ mono_linear_scan2 (MonoCompile *cfg, GList *vars, GList *regs, regmask_t *used_m
 			/* FIXME: Optimize the selection of the interval */
 
 			if (active) {
-#if 0
-				guint32 min_spill_value = G_MAXINT32;
 				GList *min_spill_pos;
+#if 0
+				/* 
+				 * This favors registers with big spill costs, thus larger liveness ranges,
+				 * thus actually leading to worse code size.
+				 */
+				guint32 min_spill_value = G_MAXINT32;
 
 				for (l = active; l != NULL; l = l->next) {
 					vmv = (MonoMethodVar*)l->data;
@@ -438,20 +442,20 @@ mono_linear_scan2 (MonoCompile *cfg, GList *vars, GList *regs, regmask_t *used_m
 						min_spill_value = vmv->spill_costs;
 					}
 				}
-				vmv = (MonoMethodVar*)min_spill_pos->data;
-#endif
-
+#else
 				/* Spill either the first active or the current interval */
-				vmv = (MonoMethodVar*)active->data;
+				min_spill_pos = active;
+#endif
+				vmv = (MonoMethodVar*)min_spill_pos->data;
 				if (vmv->spill_costs < current->spill_costs) {
 				//				if (vmv->interval->last_range->to < current->interval->last_range->to) {
 					gains [vmv->reg] -= vmv->spill_costs;
 					vmv->reg = -1;
-					LSCAN_DEBUG (printf ("\tSpilled R%d\n", vmv->idx));
-					active = g_list_delete_link (active, active);
+					LSCAN_DEBUG (printf ("\tSpilled R%d\n", cfg->varinfo [vmv->idx]->dreg));
+					active = g_list_delete_link (active, min_spill_pos);
 				}
 				else
-					LSCAN_DEBUG (printf ("\tSpilled current\n"));
+					LSCAN_DEBUG (printf ("\tSpilled current (cost %d)\n", current->spill_costs));
 			}
 			else
 				LSCAN_DEBUG (printf ("\tSpilled current\n"));
@@ -459,9 +463,14 @@ mono_linear_scan2 (MonoCompile *cfg, GList *vars, GList *regs, regmask_t *used_m
 	}
 
 	/* Decrease the gains by the cost of saving+restoring the register */
-	for (i = 0; i < n_regs; ++i)
-		/* FIXME: This is x86 only */
-		gains [i] -= cfg->method->save_lmf ? 1 : 2;
+	for (i = 0; i < n_regs; ++i) {
+		if (gains [i]) {
+			/* FIXME: This is x86 only */
+			gains [i] -= cfg->method->save_lmf ? 1 : 2;
+			if (gains [i] < 0)
+				gains [i] = 0;
+		}
+	}
 
 	/* Do the actual register assignment */
 	n_regvars = 0;
@@ -475,28 +484,21 @@ mono_linear_scan2 (MonoCompile *cfg, GList *vars, GList *regs, regmask_t *used_m
 			vmv->reg = GPOINTER_TO_INT (g_list_nth_data (regs, vmv->reg));
 
 			if ((gains [reg_index] > regalloc_cost (cfg, vmv)) && (cfg->varinfo [vmv->idx]->opcode != OP_REGVAR)) {
+				if (cfg->verbose_level > 2)
+					printf ("REGVAR R%d G%d C%d %s\n", cfg->varinfo [vmv->idx]->dreg, gains [reg_index], regalloc_cost (cfg, vmv), mono_arch_regname (vmv->reg));
 				cfg->varinfo [vmv->idx]->opcode = OP_REGVAR;
 				cfg->varinfo [vmv->idx]->dreg = vmv->reg;
 				n_regvars ++;
-				if (cfg->verbose_level > 2)
-					printf ("REGVAR %d G%d C%d %s\n", vmv->idx, gains [reg_index], regalloc_cost (cfg, vmv), mono_arch_regname (vmv->reg));
 			}
 			else {
 				if (cfg->verbose_level > 2)
-					printf ("COSTLY: %s R%d G%d C%d %s\n", mono_method_full_name (cfg->method, TRUE), vmv->idx, gains [reg_index], regalloc_cost (cfg, vmv), mono_arch_regname (vmv->reg));
+					printf ("COSTLY: %s R%d G%d C%d %s\n", mono_method_full_name (cfg->method, TRUE), cfg->varinfo [vmv->idx]->dreg, gains [reg_index], regalloc_cost (cfg, vmv), mono_arch_regname (vmv->reg));
 				vmv->reg = -1;
 			}
 		}
 	}
 
-	{
-		static int all_n_regvars = 0;
-
-		all_n_regvars += n_regvars;
-
-		if (cfg->verbose_level > 2)
-			printf ("ALL REGVARS: %d\n", all_n_regvars);
-	}
+	mono_jit_stats.regvars += n_regvars;
 
 	/* Compute used regs */
 	used_regs = 0;
