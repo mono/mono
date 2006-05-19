@@ -9473,7 +9473,7 @@ mono_spill_global_vars (MonoCompile *cfg)
 	for (i = 0; i < cfg->num_varinfo; i++) {
 		MonoInst *ins = cfg->varinfo [i];
 
-		if (ins->opcode != OP_REGVAR) {
+		if ((ins->opcode != OP_REGVAR) && !(ins->flags & MONO_INST_IS_DEAD)) {
 			switch (ins->type) {
 			case STACK_I8: {
 				MonoInst *tree;

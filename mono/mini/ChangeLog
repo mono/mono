@@ -1,3 +1,13 @@
+2006-05-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_allocate_stack_slots_full2): A variant of the original 
+	allocate_stack_slots () function using the interval based liveness information.
+
+	* method-to-ir.c (mono_spill_global_vars): Handle dead I8/U8 variables without
+	asserting.
+
+	* mini.h (MonoJitStats): Add a new statistics 'locals_stack_size'.
+
 2006-05-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* liveness.c (mono_analyze_liveness2): Make this work on 64 bit machines.
