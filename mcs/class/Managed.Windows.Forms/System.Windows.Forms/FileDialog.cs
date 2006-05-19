@@ -734,12 +734,15 @@ namespace System.Windows.Forms {
 		
 		void OnClickOpenSaveButton (object sender, EventArgs e)
 		{
-			if (fileDialogType == FileDialogType.OpenFileDialog && mwfFileView.SelectedItems [0] != null) {
-				string path = Path.Combine (currentDirectoryName, mwfFileView.SelectedItems [0].Text);
-				if (Directory.Exists (path)) {
-					ChangeDirectory (null, path);
-					openSaveButton.Select ();
-					return;
+			if (fileDialogType == FileDialogType.OpenFileDialog){
+				ListView.SelectedListViewItemCollection sl = mwfFileView.SelectedItems;
+				if (sl.Count > 0 && sl [0] != null){
+					string path = Path.Combine (currentDirectoryName, mwfFileView.SelectedItems [0].Text);
+					if (Directory.Exists (path)) {
+						ChangeDirectory (null, path);
+						openSaveButton.Select ();
+						return;
+					}
 				}
 			}
 			

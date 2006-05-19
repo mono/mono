@@ -1818,7 +1818,7 @@ namespace System.Windows.Forms
 		public Rectangle GetItemRect (int index, ItemBoundsPortion portion)
 		{
 			if (index < 0 || index >= items.Count)
-				throw new IndexOutOfRangeException ("Invalid Index");
+				throw new IndexOutOfRangeException ("index");
 
 			return items [index].GetBounds (portion);
 		}
@@ -2053,7 +2053,7 @@ namespace System.Windows.Forms
 			public int this [int index] {
 				get {
 					if (index < 0 || index >= list.Count)
-						throw new ArgumentOutOfRangeException ("Index out of range.");
+						throw new ArgumentOutOfRangeException ("index");
 					return (int) list [index];
 				}
 			}
@@ -2161,7 +2161,7 @@ namespace System.Windows.Forms
 			public ListViewItem this [int index] {
 				get {
 					if (index < 0 || index >= list.Count)
-						throw new ArgumentOutOfRangeException ("Index out of range.");
+						throw new ArgumentOutOfRangeException ("index");
 					return (ListViewItem) list [index];
 				}
 			}
@@ -2269,7 +2269,7 @@ namespace System.Windows.Forms
 			public virtual ColumnHeader this [int index] {
 				get {
 					if (index < 0 || index >= list.Count)
-						throw new ArgumentOutOfRangeException ("Index out of range.");
+						throw new ArgumentOutOfRangeException ("index");
 					return (ColumnHeader) list [index];
 				}
 			}
@@ -2397,7 +2397,7 @@ namespace System.Windows.Forms
 				// LAMESPEC: MSDOCS say greater than or equal to the value of the Count property
 				// but it's really only greater.
 				if (index < 0 || index > list.Count)
-					throw new ArgumentOutOfRangeException ("Index out of range.");
+					throw new ArgumentOutOfRangeException ("index");
 
 				value.owner = this.owner;
 				list.Insert (index, value);
@@ -2420,7 +2420,7 @@ namespace System.Windows.Forms
 			public virtual void RemoveAt (int index)
 			{
 				if (index < 0 || index >= list.Count)
-					throw new ArgumentOutOfRangeException ("Index out of range.");
+					throw new ArgumentOutOfRangeException ("index");
 
 				// TODO: Update Column internal index ?
 				list.RemoveAt (index);
@@ -2457,13 +2457,13 @@ namespace System.Windows.Forms
 			public virtual ListViewItem this [int displayIndex] {
 				get {
 					if (displayIndex < 0 || displayIndex >= list.Count)
-						throw new ArgumentOutOfRangeException ("Index out of range.");
+						throw new ArgumentOutOfRangeException ("displayIndex");
 					return (ListViewItem) list [displayIndex];
 				}
 
 				set {
 					if (displayIndex < 0 || displayIndex >= list.Count)
-						throw new ArgumentOutOfRangeException ("Index out of range.");
+						throw new ArgumentOutOfRangeException ("displayIndex");
 
 					if (list.Contains (value))
 						throw new ArgumentException ("An item cannot be added more than once. To add an item again, you need to clone it.", "value");
@@ -2626,7 +2626,7 @@ namespace System.Windows.Forms
 				// LAMESPEC: MSDOCS say greater than or equal to the value of the Count property
 				// but it's really only greater.
 				if (index < 0 || index > list.Count)
-					throw new ArgumentOutOfRangeException ("Index out of range.");
+					throw new ArgumentOutOfRangeException ("index");
 
 				if (list.Contains (item))
 					throw new ArgumentException ("An item cannot be added more than once. To add an item again, you need to clone it.", "item");
@@ -2663,7 +2663,7 @@ namespace System.Windows.Forms
 			public virtual void RemoveAt (int index)
 			{
 				if (index < 0 || index >= list.Count)
-					throw new ArgumentOutOfRangeException ("Index out of range.");
+					throw new ArgumentOutOfRangeException ("index");
 
 				list.RemoveAt (index);
 				owner.SelectedItems.list.RemoveAt (index);
@@ -2702,7 +2702,7 @@ namespace System.Windows.Forms
 			public int this [int index] {
 				get {
 					if (index < 0 || index >= list.Count)
-						throw new ArgumentOutOfRangeException ("Index out of range.");
+						throw new ArgumentOutOfRangeException ("index");
 					return (int) list [index];
 				}
 			}
@@ -2810,7 +2810,7 @@ namespace System.Windows.Forms
 			public ListViewItem this [int index] {
 				get {
 					if (index < 0 || index >= list.Count)
-						throw new ArgumentOutOfRangeException ("Index out of range.");
+						throw new ArgumentOutOfRangeException ("index");
 					return (ListViewItem) list [index];
 				}
 			}

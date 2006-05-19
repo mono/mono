@@ -1,3 +1,11 @@
+2006-05-18  Miguel de Icaza  <miguel@novell.com>
+
+	* ListView.cs: ArgumentOutOfRangeException, single versions of the
+	exception should throw the name of the invalid argument.
+
+	* FileDialog.cs (OnClickOpenSaveButton): Avoid crash in open if
+	there are no files listed. 
+
 2006-05-18  Jackson Harper  <jackson@ximian.com>
 
 	* ThemeWin32Classic.cs: Don't use endcaps, they mess the drawing
