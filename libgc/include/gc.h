@@ -899,9 +899,6 @@ GC_API void (*GC_is_visible_print_proc)
 #endif
 #endif
 
-#define _IN_LIBGC_GC_H
-#include "libgc-mono-debugger.h"
-
 # if defined(PCR) || defined(GC_SOLARIS_THREADS) || \
      defined(GC_PTHREADS) || defined(GC_WIN32_THREADS)
    	/* Any flavor of threads except SRC_M3.	*/

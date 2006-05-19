@@ -191,6 +191,10 @@ static __thread MONO_TLS_FAST void* GC_thread_tls;
 
 static GC_bool keys_initialized;
 
+#ifdef MONO_DEBUGGER_SUPPORTED
+#include "include/libgc-mono-debugger.h"
+#endif
+
 /* Recover the contents of the freelist array fl into the global one gfl.*/
 /* Note that the indexing scheme differs, in that gfl has finer size	*/
 /* resolution, even if not all entries are used.			*/
@@ -691,7 +695,7 @@ void GC_delete_thread(pthread_t id)
     } else {
         prev -> next = p -> next;
     }
-#ifdef LIBGC_MONO_DEBUGGER_SUPPORTED
+#ifdef MONO_DEBUGGER_SUPPORTED
     if (gc_thread_vtable && gc_thread_vtable->thread_exited)
 	gc_thread_vtable->thread_exited (id, &p->stop_info.stack_ptr);
 #endif
@@ -972,7 +976,7 @@ void GC_thr_init()
          t -> stop_info.stack_ptr = (ptr_t)(&dummy);
 #     endif
       t -> flags = DETACHED | MAIN_THREAD;
-#ifdef LIBGC_MONO_DEBUGGER_SUPPORTED
+#ifdef MONO_DEBUGGER_SUPPORTED
       if (gc_thread_vtable && gc_thread_vtable->thread_created)
         gc_thread_vtable->thread_created (pthread_self (), &t->stop_info.stack_ptr);
 #endif
@@ -1281,7 +1285,7 @@ void * GC_start_routine_head(void * arg, void *base_addr,
       /* This is also < 100% convincing.  We should also read this 	*/
       /* from /proc, but the hook to do so isn't there yet.		*/
 #   endif /* IA64 */
-#ifdef LIBGC_MONO_DEBUGGER_SUPPORTED
+#ifdef MONO_DEBUGGER_SUPPORTED
     if (gc_thread_vtable && gc_thread_vtable->thread_created)
 	gc_thread_vtable->thread_created (my_pthread, &me->stop_info.stack_ptr);
 #endif
