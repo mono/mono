@@ -1,4 +1,9 @@
-2006-05-18  Mike Kestner  <mkestner@novell.com>
+2006-05-19  Mike Kestner  <mkestner@novell.com>
+
+	* ComboBox.cs: fix mouse motion selection to use MousePosition and
+	PointToClient, since Capture is set. Fixes #78344.
+
+2006-05-19  Mike Kestner  <mkestner@novell.com>
 
 	* ListView.cs: match MS behavior in Details view where items are not
 	drawn if Columns.Count == 0. 

@@ -1766,7 +1766,8 @@ namespace System.Windows.Forms
 				if (owner.DropDownStyle == ComboBoxStyle.Simple)
 					return;
 						
-				int index = IndexFromPointDisplayRectangle (e.X, e.Y);
+				Point pt = PointToClient (Control.MousePosition);
+				int index = IndexFromPointDisplayRectangle (pt.X, pt.Y);
 
     				if (index != -1) {
 					HighlightedIndex = index;
