@@ -66,6 +66,10 @@ namespace System.Windows.Forms
 		private CheckBox chkbox_print;
 		private NumericUpDown updown_copies;
 		private CheckBox chkbox_collate;
+		private Label label_status;
+		private Label label_type;
+		private Label label_where;
+		private Label label_comment;
 
 		public PrintDialog ()
 		{
@@ -222,13 +226,15 @@ namespace System.Windows.Forms
 				txtFrom.Text = current_settings.FromPage.ToString ();
 				txtTo.Text = current_settings.ToPage.ToString ();
 			}
-			
+
 			updown_copies.Value = current_settings.Copies;
 			chkbox_collate.Enabled = (updown_copies.Value > 0) ? true : false;
 
 			if (show_help) {
 				ShowHelpButton ();
 			}
+
+			SetPrinterDetails ();
 
 			return true;
 		}
@@ -246,7 +252,7 @@ namespace System.Windows.Forms
 				from = Int32.Parse (txtFrom.Text);
 				to = Int32.Parse (txtTo.Text);
 			}
-	
+
 			catch {
 				MessageBox.Show ("From/To values should be numeric", "Print",
 						MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -289,7 +295,7 @@ namespace System.Windows.Forms
 					}
 				}
 			}
-			
+
 			current_settings.Copies = (short) updown_copies.Value;
 			current_settings.FromPage = from;
 			current_settings.ToPage = to;
@@ -310,7 +316,7 @@ namespace System.Windows.Forms
 			if (help_button == null) {
 				help_button = new Button ();
 
-				help_button.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Right)));
+				help_button.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Left)));
 				help_button.FlatStyle = FlatStyle.System;
 				help_button.Location = new Point (20, 270);
 				help_button.Text = "&Help";
@@ -319,8 +325,8 @@ namespace System.Windows.Forms
 			}
 
 			help_button.Visible = show_help;
-		}		
-		
+		}
+
 		private void OnUpDownValueChanged (object sender, System.EventArgs e)
 		{
 			chkbox_collate.Enabled = (updown_copies.Value > 0) ? true : false;
@@ -354,19 +360,57 @@ namespace System.Windows.Forms
 			Label label = new Label ();
 			label.AutoSize = true;
 			label.Text = "&Name:";
-			label.Location = new Point (20, 43);
+			label.Location = new Point (20, 33);
 			form.Controls.Add (label);
 
 			label = new Label ();
-			label.Text = "&Status:";
+			label.Text = "Status:";
 			label.AutoSize = true;
-			label.Location = new Point (20, 70);
+			label.Location = new Point (20, 60);
 			form.Controls.Add (label);
+
+			label_status = new Label ();
+			label_status.AutoSize = true;
+			label_status.Location = new Point (80, 60);
+			form.Controls.Add (label_status);
+
+			label = new Label ();
+			label.Text = "Type:";
+			label.AutoSize = true;
+			label.Location = new Point (20, 80);
+			form.Controls.Add (label);
+
+			label_type = new Label ();
+			label_type.AutoSize = true;
+			label_type.Location = new Point (80, 80);
+			form.Controls.Add (label_type);
+
+			label = new Label ();
+			label.Text = "Where:";
+			label.AutoSize = true;
+			label.Location = new Point (20, 100);
+			form.Controls.Add (label);
+
+			label_where = new Label ();
+			label_where.AutoSize = true;
+			label_where.Location = new Point (80, 100);
+			form.Controls.Add (label_where);
+			label = new Label ();
+
+			label.Text = "Comment:";
+			label.AutoSize = true;
+			label.Location = new Point (20, 120);
+			form.Controls.Add (label);
+
+			label_comment = new Label ();
+			label_comment.AutoSize = true;
+			label_comment.Location = new Point (80, 120);
+			form.Controls.Add (label_where);
 
 			GroupBox group_box_prn = new GroupBox ();
 			group_box_prn.Location = new Point (10, 8);
 			group_box_prn.Text = "Printer";
-			group_box_prn.Size = new Size (400, 140);
+			group_box_prn.Size = new Size (400, 145);
 
 			GroupBox group_box_range = new GroupBox ();
 			group_box_range.Location = new Point (10, 155);
@@ -428,7 +472,7 @@ namespace System.Windows.Forms
 			form.Controls.Add (updown_copies);
 			updown_copies.ValueChanged += new System.EventHandler (OnUpDownValueChanged);
 			updown_copies.Size = new System.Drawing.Size (40, 20);
-			
+
 			chkbox_collate = new CheckBox ();
 			chkbox_collate.Location = new Point (320, 210);
 			chkbox_collate.Text = "C&ollate";
@@ -446,8 +490,9 @@ namespace System.Windows.Forms
 			// Printer combo
 			printer_combo = new ComboBox ();
 			printer_combo.DropDownStyle = ComboBoxStyle.DropDownList;
-			printer_combo.Location = new Point (80, 42);
+			printer_combo.Location = new Point (80, 32);
 			printer_combo.Width = 220;
+			printer_combo.SelectedIndexChanged += new EventHandler (OnPrinterSelectedIndexChanged);
 
 			default_printer_settings = new PrinterSettings ();
 			for (int i = 0; i < installed_printers.Count; i++) {
@@ -465,6 +510,46 @@ namespace System.Windows.Forms
 			form.Controls.Add (group_box_prn);
 			form.Controls.Add (group_box_range);
 			form.ResumeLayout (false);
-		}		
+		}
+
+		private void OnPrinterSelectedIndexChanged (object sender,  System.EventArgs e)
+    		{    			
+    			SetPrinterDetails ();
+    		}
+
+		private void SetPrinterDetails ()
+		{
+			try
+			{
+				string printer, port = string.Empty, type = string.Empty;
+				string status = string.Empty, comment = string.Empty;
+				Type sysprn = Type.GetType ("System.Drawing.Printing.SysPrn, System.Drawing");
+				MethodInfo dlg_info = sysprn.GetMethod ("GetPrintDialogInfo", BindingFlags.Static | BindingFlags.NonPublic);
+
+				printer = (string) printer_combo.SelectedItem;
+
+				if (printer != null) {
+					object[] args  = new object [5];
+					args[0] = printer;
+					args[1] = port;
+					args[2] = type;
+					args[3] = status;
+					args[4] = comment;
+					dlg_info.Invoke (null, args);
+					port = (string) args[1];
+					type = (string) args[2];
+					status = (string) args[3];
+					comment = (string) args[4];
+				}
+
+				label_status.Text = status;
+				label_type.Text = type;
+				label_where.Text = port;
+				label_comment.Text = comment;
+
+			}
+			catch  {
+			}
+		}
 	}
 }

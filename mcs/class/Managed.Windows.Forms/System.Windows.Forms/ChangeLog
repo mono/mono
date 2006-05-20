@@ -1,3 +1,7 @@
+2006-05-20  Jordi Mas i Hernandez <jordimash@gmail.com>
+
+	* PrintDialog.cs: Implements printer details
+
 2006-05-19  Alexander Olk  <alex.olk@googlemail.com>
 
 	* FileDialog.cs: Added focus handling for PopupButtonPanel.
