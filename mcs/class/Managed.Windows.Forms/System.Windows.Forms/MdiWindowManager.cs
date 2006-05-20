@@ -244,10 +244,11 @@ namespace System.Windows.Forms {
 		internal void SizeMaximized ()
 		{
 			Rectangle pb = mdi_container.Bounds;
-			form.Bounds = new Rectangle (pb.Left - BorderWidth,
-					pb.Top - TitleBarHeight - BorderWidth,
-					pb.Width + BorderWidth * 2,
-					pb.Height + TitleBarHeight + BorderWidth * 2);
+			int bw = ThemeEngine.Current.ManagedWindowBorderWidth (this);
+			form.Bounds = new Rectangle (pb.Left - bw,
+					pb.Top - TitleBarHeight - bw,
+					pb.Width + bw * 2,
+					pb.Height + TitleBarHeight + bw * 2);
 		}
 
 
@@ -273,8 +274,9 @@ namespace System.Windows.Forms {
 		{
 			Size bs = ButtonSize;
 			Point pnt =  XplatUI.GetMenuOrigin (mdi_container.ParentForm.Handle);
-
-			close_button.Rectangle = new Rectangle (menu.Width - BorderWidth - bs.Width - 2,
+			int bw = ThemeEngine.Current.ManagedWindowBorderWidth (this);
+			
+			close_button.Rectangle = new Rectangle (menu.Width - bw - bs.Width - 2,
 					pnt.Y + 2, bs.Width, bs.Height);
 
 			maximize_button.Rectangle = new Rectangle (close_button.Rectangle.Left - 2 - bs.Width,
@@ -295,8 +297,9 @@ namespace System.Windows.Forms {
 		protected override void HandleTitleBarDown (int x, int y)
 		{
 			if (form.Icon != null) {
-				Rectangle icon = new Rectangle (BorderWidth + 3,
-						BorderWidth + 2, IconWidth, IconWidth);
+				int bw = ThemeEngine.Current.ManagedWindowBorderWidth (this);
+				Rectangle icon = new Rectangle (bw + 3,
+						bw + 2, IconWidth, IconWidth);
 				if (icon.Contains (x, y)) {
 					icon_popup_menu.Show (form, Point.Empty);
 					return;

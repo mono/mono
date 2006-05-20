@@ -36,7 +36,6 @@ namespace System.Windows.Forms {
 
 		private static Color titlebar_color;
 
-		internal int BorderWidth = 3;
 		private Size MinTitleBarSize = new Size (115, 25);
 
 		internal Form form;
@@ -220,7 +219,7 @@ namespace System.Windows.Forms {
 					ncp = (XplatUIWin32.NCCALCSIZE_PARAMS) Marshal.PtrToStructure (m.LParam,
 							typeof (XplatUIWin32.NCCALCSIZE_PARAMS));
 
-					int bw = BorderWidth;
+					int bw = ThemeEngine.Current.ManagedWindowBorderWidth (this);
 
 					if (HasBorders) {
 						ncp.rgrc1.top += TitleBarHeight + bw;
@@ -479,8 +478,9 @@ namespace System.Windows.Forms {
 		{
 			Point move = MouseMove (m);
 			Rectangle pos = virtual_position;
-			int mw = MinTitleBarSize.Width + (BorderWidth * 2);
-			int mh = MinTitleBarSize.Height + (BorderWidth * 2);
+			int bw = ThemeEngine.Current.ManagedWindowBorderWidth (this);
+			int mw = MinTitleBarSize.Width + (bw * 2);
+			int mh = MinTitleBarSize.Height + (bw * 2);
 			
 			if ((sizing_edge & FormPos.Top) != 0) {
 				int height = form.Height - move.Y;
@@ -685,45 +685,46 @@ namespace System.Windows.Forms {
 
 		private FormPos FormPosForCoords (int x, int y)
 		{
-			if (y < TitleBarHeight + BorderWidth) {
+			int bw = ThemeEngine.Current.ManagedWindowBorderWidth (this);
+			if (y < TitleBarHeight + bw) {
 				//	Console.WriteLine ("A");
-				if (y > BorderWidth && x > BorderWidth &&
-						x < form.Width - BorderWidth)
+				if (y > bw && x > bw &&
+						x < form.Width - bw)
 					return FormPos.TitleBar;
 
-				if (x < BorderWidth || (x < 20 && y < BorderWidth))
+				if (x < bw || (x < 20 && y < bw))
 					return FormPos.TopLeft;
 
-				if (x > form.Width - BorderWidth ||
-					(x > form.Width - 20 && y < BorderWidth))
+				if (x > form.Width - bw ||
+					(x > form.Width - 20 && y < bw))
 					return FormPos.TopRight;
 
-				if (y < BorderWidth)
+				if (y < bw)
 					return FormPos.Top;
 
 			} else if (y > form.Height - 20) {
 				//	Console.WriteLine ("B");
-				if (x < BorderWidth ||
-						(x < 20 && y > form.Height - BorderWidth))
+				if (x < bw ||
+						(x < 20 && y > form.Height - bw))
 					return FormPos.BottomLeft;
 
-				if (x > form.Width - (BorderWidth * 2) ||
+				if (x > form.Width - (bw * 2) ||
 						(x > form.Width - 20 &&
-						 y > form.Height - BorderWidth))
+						 y > form.Height - bw))
 					return FormPos.BottomRight;
 
-				if (y > form.Height - (BorderWidth * 2))
+				if (y > form.Height - (bw * 2))
 					return FormPos.Bottom;
 
 
-			} else if (x < BorderWidth) {
+			} else if (x < bw) {
 				//	Console.WriteLine ("C");
 				return FormPos.Left;
-			} else if (x > form.Width - (BorderWidth * 2)) {
+			} else if (x > form.Width - (bw * 2)) {
 //				Console.WriteLine ("D");
 				return FormPos.Right;
 			} else {
-				//			Console.WriteLine ("E   {0}", form.Width - BorderWidth);
+				//			Console.WriteLine ("E   {0}", form.Width - bw);
 			}
 			
 			return FormPos.None;

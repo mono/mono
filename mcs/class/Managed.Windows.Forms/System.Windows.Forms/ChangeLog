@@ -1,3 +1,10 @@
+2006-05-20  Jackson Harper  <jackson@ximian.com>
+
+	* MdiClient.cs:
+	* MdiWindowManager.cs:
+	* InternalWindowManager.cs: Make sure to use the border width from
+	the theme.
+
 2006-05-20  Jordi Mas i Hernandez <jordimash@gmail.com>
 
 	* PrintDialog.cs: Implements printer details

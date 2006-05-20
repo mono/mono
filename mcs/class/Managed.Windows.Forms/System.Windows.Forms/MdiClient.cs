@@ -422,7 +422,10 @@ namespace System.Windows.Forms {
 					continue;
 
 				MdiWindowManager wm = (MdiWindowManager) form.WindowManager;
-
+				// Need to get the width in the loop cause some themes might have
+				// different widths for different styles
+				int bw = ThemeEngine.Current.ManagedWindowBorderWidth (wm);
+				
 				if (wm.IconicBounds != Rectangle.Empty) {
 					form.Bounds = wm.IconicBounds;
 					continue;
@@ -430,7 +433,7 @@ namespace System.Windows.Forms {
 					
 				// The extra one pixel is a cheap hack for now until we
 				// handle 0 client sizes properly in the driver
-				int height = wm.TitleBarHeight + (wm.BorderWidth * 2) + 1; 
+				int height = wm.TitleBarHeight + (bw * 2) + 1; 
 				Rectangle rect = new Rectangle (iconic_x, iconic_y, xspacing, height);
 				form.Bounds = wm.IconicBounds = rect;
 
