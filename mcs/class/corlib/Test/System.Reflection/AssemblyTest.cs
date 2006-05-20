@@ -44,22 +44,22 @@ namespace MonoTests.System.Reflection
 	[TestFixture]
 	public class AssemblyTest
 	{
-                [Test] 
-                public void CreateInstance() 
-                {
+		[Test] 
+		public void CreateInstance() 
+		{
 			Type type = typeof (AssemblyTest);
-                        Object obj = type.Assembly.CreateInstance ("MonoTests.System.Reflection.AssemblyTest");
+			Object obj = type.Assembly.CreateInstance ("MonoTests.System.Reflection.AssemblyTest");
 			Assert.IsNotNull (obj, "#01");
 			Assert.AreEqual (GetType (), obj.GetType (), "#02");
-		} 
+		}
 
-                [Test] 
-                public void CreateInvalidInstance() 
-                { 
+		[Test] 
+		public void CreateInvalidInstance() 
+		{
 			Type type = typeof (AssemblyTest);
-                        Object obj = type.Assembly.CreateInstance("NunitTests.ThisTypeDoesNotExist");
+			Object obj = type.Assembly.CreateInstance("NunitTests.ThisTypeDoesNotExist");
 			Assert.IsNull (obj, "#03");
-		} 
+		}
 
 		[Test]
 #if NET_2_0
@@ -242,15 +242,143 @@ namespace MonoTests.System.Reflection
 					AppDomain.CurrentDomain.Evidence);
 				ab.Save (Path.GetFileName (assemblyFileName));
 
-				using (FileStream fs = File.OpenRead(assemblyFileName)) {
+				using (FileStream fs = File.OpenRead (assemblyFileName)) {
 					byte[] buffer = new byte[fs.Length];
-					fs.Read(buffer, 0, buffer.Length);
-					Assembly assembly = Assembly.Load(buffer);
-					Assert.AreEqual(string.Empty, assembly.Location);
-					fs.Close();
+					fs.Read (buffer, 0, buffer.Length);
+					Assembly assembly = Assembly.Load (buffer);
+					Assert.AreEqual (string.Empty, assembly.Location);
+					fs.Close ();
 				}
 			} finally {
 				File.Delete (assemblyFileName);
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void bug78464 ()
+		{
+			string assemblyFileName = Path.Combine (
+				Path.GetTempPath (), "bug78464.dll");
+
+			try {
+				// execute test in separate appdomain to allow assembly to be unloaded
+				AppDomain testDomain = CreateTestDomain ();
+				CrossDomainTester crossDomainTester = CreateCrossDomainTester (testDomain);
+				try {
+					crossDomainTester.bug78464 (assemblyFileName);
+				} finally {
+					AppDomain.Unload (testDomain);
+				}
+			} finally {
+				File.Delete (assemblyFileName);
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void bug78465 ()
+		{
+			string assemblyFileName = Path.Combine (
+				Path.GetTempPath (), "bug78465.dll");
+
+			try {
+				AssemblyName assemblyName = new AssemblyName ();
+				assemblyName.Name = "bug78465";
+
+				AssemblyBuilder ab = AppDomain.CurrentDomain
+					.DefineDynamicAssembly (assemblyName,
+					AssemblyBuilderAccess.Save,
+					Path.GetDirectoryName (assemblyFileName),
+					AppDomain.CurrentDomain.Evidence);
+				ab.Save (Path.GetFileName (assemblyFileName));
+
+				using (FileStream fs = File.OpenRead (assemblyFileName)) {
+					byte[] buffer = new byte[fs.Length];
+					fs.Read (buffer, 0, buffer.Length);
+					Assembly assembly = Assembly.Load (buffer);
+					Assert.AreEqual (string.Empty, assembly.Location, "#1");
+					fs.Close ();
+				}
+
+				AppDomain testDomain = CreateTestDomain ();
+				CrossDomainTester crossDomainTester = CreateCrossDomainTester (testDomain);
+				try {
+					crossDomainTester.bug78465 (assemblyFileName);
+				} finally {
+					AppDomain.Unload (testDomain);
+				}
+			} finally {
+				File.Delete (assemblyFileName);
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void bug78468 ()
+		{
+			string assemblyFileNameA = Path.Combine (Path.GetTempPath (),
+				"bug78468a.dll");
+			string resourceFileName = Path.Combine (Path.GetTempPath (),
+				"readme.txt");
+
+			using (StreamWriter sw = File.CreateText (resourceFileName)) {
+				sw.WriteLine ("FOO");
+				sw.Close ();
+			}
+
+			try {
+				AssemblyName assemblyName = new AssemblyName ();
+				assemblyName.Name = "bug78468a";
+
+				AssemblyBuilder ab = AppDomain.CurrentDomain
+					.DefineDynamicAssembly (assemblyName,
+					AssemblyBuilderAccess.Save,
+					Path.GetTempPath (),
+					AppDomain.CurrentDomain.Evidence);
+				ab.AddResourceFile ("read", "readme.txt");
+				ab.Save (Path.GetFileName (assemblyFileNameA));
+
+				Assembly assembly;
+
+				using (FileStream fs = File.OpenRead (assemblyFileNameA)) {
+					byte[] buffer = new byte[fs.Length];
+					fs.Read (buffer, 0, buffer.Length);
+					assembly = Assembly.Load (buffer);
+					fs.Close ();
+				}
+
+				Assert.AreEqual (string.Empty, assembly.Location, "#A1");
+				string[] resNames = assembly.GetManifestResourceNames ();
+				Assert.IsNotNull (resNames, "#A2");
+				Assert.AreEqual (1, resNames.Length, "#A3");
+				Assert.AreEqual ("read", resNames[0], "#A4");
+				ManifestResourceInfo resInfo = assembly.GetManifestResourceInfo ("read");
+				Assert.IsNotNull (resInfo, "#A5");
+				Assert.AreEqual ("readme.txt", resInfo.FileName, "#A6");
+				Assert.IsNull (resInfo.ReferencedAssembly, "#A7");
+				Assert.AreEqual ((ResourceLocation) 0, resInfo.ResourceLocation, "#A8");
+				Assert.IsNull (assembly.GetManifestResourceStream ("read"), "#A9");
+				try {
+					assembly.GetFile ("readme.txt");
+					Assert.Fail ("#A10");
+				} catch (FileNotFoundException) {
+				}
+
+				string assemblyFileNameB = Path.Combine (Path.GetTempPath (),
+					"bug78468b.dll");
+
+				AppDomain testDomain = CreateTestDomain ();
+				CrossDomainTester crossDomainTester = CreateCrossDomainTester (testDomain);
+				try {
+					crossDomainTester.bug78468 (assemblyFileNameB);
+				} finally {
+					AppDomain.Unload (testDomain);
+					File.Delete (assemblyFileNameB);
+				}
+			} finally {
+				File.Delete (assemblyFileNameA);
+				File.Delete (resourceFileName);
 			}
 		}
 
@@ -284,6 +412,97 @@ namespace MonoTests.System.Reflection
 			assembly.CreateInstance ("MonoTests.System.Reflection.AssemblyTest");
 		}
 #endif
+
+		private static AppDomain CreateTestDomain ()
+		{
+			return AppDomain.CreateDomain ("CompileFromDom", AppDomain.CurrentDomain.Evidence,
+				AppDomain.CurrentDomain.SetupInformation);
+		}
+
+		private static CrossDomainTester CreateCrossDomainTester (AppDomain domain)
+		{
+			Type testerType = typeof (CrossDomainTester);
+
+			return (CrossDomainTester) domain.CreateInstanceAndUnwrap (
+				testerType.Assembly.FullName, testerType.FullName, false,
+				BindingFlags.Public | BindingFlags.Instance, null, new object[0],
+				CultureInfo.InvariantCulture, new object[0], domain.Evidence);
+		}
+
+		private class CrossDomainTester : MarshalByRefObject
+		{
+			public void bug78464 (string assemblyFileName)
+			{
+				AssemblyName assemblyName = new AssemblyName ();
+				assemblyName.Name = "bug78464";
+
+				AssemblyBuilder ab = AppDomain.CurrentDomain
+					.DefineDynamicAssembly (assemblyName,
+					AssemblyBuilderAccess.Save,
+					Path.GetDirectoryName (assemblyFileName),
+					AppDomain.CurrentDomain.Evidence);
+				ab.Save (Path.GetFileName (assemblyFileName));
+
+				Assembly assembly;
+
+				using (FileStream fs = File.OpenRead (assemblyFileName)) {
+					byte[] buffer = new byte[fs.Length];
+					fs.Read (buffer, 0, buffer.Length);
+					assembly = Assembly.Load (buffer);
+					fs.Close ();
+				}
+
+				Assert.AreEqual (string.Empty, assembly.Location, "#1");
+
+				assembly = Assembly.LoadFrom (assemblyFileName, AppDomain.CurrentDomain.Evidence);
+				Assert.IsFalse (assembly.Location == string.Empty, "#2");
+				Assert.AreEqual (Path.GetFileName (assemblyFileName), Path.GetFileName(assembly.Location), "#3");
+				// note: we cannot check if directory names match, as MS.NET seems to 
+				// convert directory part of assembly location to lowercase
+				Assert.IsFalse (Path.GetDirectoryName(assembly.Location) == string.Empty, "#4");
+			}
+
+			public void bug78465 (string assemblyFileName)
+			{
+				Assembly assembly = Assembly.LoadFrom (assemblyFileName, AppDomain.CurrentDomain.Evidence);
+				Assert.IsFalse (assembly.Location == string.Empty, "#2");
+				Assert.AreEqual (Path.GetFileName (assemblyFileName), Path.GetFileName (assembly.Location), "#3");
+				// note: we cannot check if directory names match, as MS.NET seems to 
+				// convert directory part of assembly location to lowercase
+				Assert.IsFalse (Path.GetDirectoryName (assembly.Location) == string.Empty, "#4");
+			}
+
+			public void bug78468 (string assemblyFileName)
+			{
+				AssemblyName assemblyName = new AssemblyName ();
+				assemblyName.Name = "bug78468b";
+
+				AssemblyBuilder ab = AppDomain.CurrentDomain
+					.DefineDynamicAssembly (assemblyName,
+					AssemblyBuilderAccess.Save,
+					Path.GetDirectoryName (assemblyFileName),
+					AppDomain.CurrentDomain.Evidence);
+				ab.AddResourceFile ("read", "readme.txt");
+				ab.Save (Path.GetFileName (assemblyFileName));
+
+				Assembly assembly = Assembly.LoadFrom (assemblyFileName, AppDomain.CurrentDomain.Evidence);
+				Assert.IsTrue (assembly.Location != string.Empty, "#B1");
+				string[] resNames = assembly.GetManifestResourceNames ();
+				Assert.IsNotNull (resNames, "#B2");
+				Assert.AreEqual (1, resNames.Length, "#B3");
+				Assert.AreEqual ("read", resNames[0], "#B4");
+				ManifestResourceInfo resInfo = assembly.GetManifestResourceInfo ("read");
+				Assert.IsNotNull (resInfo, "#B5");
+				Assert.AreEqual ("readme.txt", resInfo.FileName, "#B6");
+				Assert.IsNull (resInfo.ReferencedAssembly, "#B7");
+				Assert.AreEqual ((ResourceLocation) 0, resInfo.ResourceLocation, "#B8");
+				Stream s = assembly.GetManifestResourceStream ("read");
+				Assert.IsNotNull (s, "#B9");
+				s.Close ();
+				s = assembly.GetFile ("readme.txt");
+				Assert.IsNotNull (s, "#B10");
+				s.Close ();
+			}
+		}
 	}
 }
-
