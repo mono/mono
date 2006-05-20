@@ -1,3 +1,9 @@
+2006-05-20 Jordi Mas i Hernandez <jordimash@gmail.com>
+
+	* PrintingServices.cs: GetPrintDialogInfo definition
+	* PrintingServicesWin32.cs GetPrintDialogInfo implementation
+	* PrintingServicesUnix.cs: GetPrintDialogInfo stub
+
 2006-04-14 Jordi Mas i Hernandez <jordimash@gmail.com>
 
 	* PrintingServicesUnix.cs: Replace cupsGetPrinters deprecated API call

@@ -250,6 +250,11 @@ namespace System.Drawing.Printing
 			return rslt;
 		}
 
+		// TODO
+		internal override void GetPrintDialogInfo (string printer, ref string port, ref string type, ref string status, ref string comment)
+		{			
+			status = "Ready";			
+		}
 
 		//
 		// DllImports

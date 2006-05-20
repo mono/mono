@@ -50,6 +50,9 @@ namespace System.Drawing.Printing
 		internal abstract void LoadPrinterSettings (string printer, PrinterSettings settings);
 		internal abstract void LoadPrinterResolutions (string printer, PrinterSettings settings);
 		internal abstract void LoadPrinterPaperSizes (string printer, PrinterSettings settings);
+
+		//Used from SWF
+		internal abstract void GetPrintDialogInfo (string printer, ref string port, ref string type, ref string status, ref string comment);
 		
 		internal void LoadDefaultResolutions (PrinterSettings.PrinterResolutionCollection col)
 		{
@@ -77,6 +80,11 @@ namespace System.Drawing.Printing
 
 		static internal PrintingServices Service {
 			get { return service; }
+		}
+
+		internal static void GetPrintDialogInfo (string printer, ref string port, ref string type, ref string status, ref string comment)
+		{
+			service.GetPrintDialogInfo (printer, ref port, ref type, ref status, ref comment);
 		}
 	}
 	

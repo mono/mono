@@ -158,28 +158,28 @@ namespace System.Drawing.Printing
   			di.lpszDatatype = IntPtr.Zero;
   			di.fwType = 0;
 
-  			ret = Win32StartDoc (gr.Hdc, ref di);  			
+  			ret = Win32StartDoc (gr.Hdc, ref di);
 			Marshal.FreeHGlobal (di.lpszDocName);
 			return (ret > 0) ? true : false;
 		}
 
 		internal override bool StartPage (GraphicsPrinter gr)
 		{
-			int ret = Win32StartPage (gr.Hdc);			
+			int ret = Win32StartPage (gr.Hdc);
 			return (ret > 0) ? true : false;
 		}
 
 		internal override bool EndPage (GraphicsPrinter gr)
 		{
-			int ret = Win32EndPage (gr.Hdc);			
+			int ret = Win32EndPage (gr.Hdc);
 			return (ret > 0) ? true : false;
 		}
 
 		internal override bool EndDoc (GraphicsPrinter gr)
 		{
 			int ret = Win32EndDoc (gr.Hdc);
-			Win32DeleteDC (gr.Hdc);			
-			gr.Graphics.Dispose ();						
+			Win32DeleteDC (gr.Hdc);
+			gr.Graphics.Dispose ();
 			return (ret > 0) ? true : false;
 		}
 
@@ -196,7 +196,7 @@ namespace System.Drawing.Printing
             			StringBuilder name = new StringBuilder (1024);
             			int length = name.Capacity;
 
-            			Win32GetDefaultPrinter (name, ref length);            			
+            			Win32GetDefaultPrinter (name, ref length);
 				return name.ToString ();
 			}
 		}
@@ -233,9 +233,81 @@ namespace System.Drawing.Printing
 			}
 		}
 
+		internal override void GetPrintDialogInfo (string printer, ref string port, ref string type, ref string status, ref string comment)
+		{
+			IntPtr hPrn;
+			PRINTER_INFO printer_info = new PRINTER_INFO ();
+			int needed = 0;
+			IntPtr ptr;
+
+			Win32OpenPrinter (printer, out hPrn, IntPtr.Zero);
+			
+			if (hPrn == IntPtr.Zero)
+				return;
+
+			Win32GetPrinter (hPrn, 2, IntPtr.Zero, 0, ref needed);
+			ptr = Marshal.AllocHGlobal (needed);
+
+			Win32GetPrinter (hPrn, 2, ptr, needed, ref needed);
+			printer_info = (PRINTER_INFO) Marshal.PtrToStructure (ptr, typeof (PRINTER_INFO));
+			Marshal.FreeHGlobal (ptr);
+
+			port  = Marshal.PtrToStringUni (printer_info.pPortName);
+			comment  = Marshal.PtrToStringUni (printer_info.pComment);
+			type  = Marshal.PtrToStringUni (printer_info.pDriverName);
+			status = GetPrinterStatusMsg (printer_info.Status);
+
+			Win32ClosePrinter (hPrn);
+		}
+
+		private string GetPrinterStatusMsg (uint status)
+		{
+			string rslt = string.Empty;
+
+			if (status == 0)
+				return "Ready";
+
+			if ((status & (uint) PrinterStatus.PS_PAUSED) != 0) rslt += "Paused; ";
+			if ((status & (uint) PrinterStatus.PS_ERROR) != 0) rslt += "Error; ";
+			if ((status & (uint) PrinterStatus.PS_PENDING_DELETION) != 0) rslt += "Pending deletion; ";
+			if ((status & (uint) PrinterStatus.PS_PAPER_JAM) != 0) rslt += "Paper jam; ";
+			if ((status & (uint) PrinterStatus.PS_PAPER_OUT) != 0) rslt += "Paper out; ";
+			if ((status & (uint) PrinterStatus.PS_MANUAL_FEED) != 0) rslt += "Manual feed; ";
+			if ((status & (uint) PrinterStatus.PS_PAPER_PROBLEM) != 0) rslt += "Paper problem; ";
+			if ((status & (uint) PrinterStatus.PS_OFFLINE) != 0) rslt += "Offline; ";
+			if ((status & (uint) PrinterStatus.PS_IO_ACTIVE) != 0) rslt += "I/O active; ";
+			if ((status & (uint) PrinterStatus.PS_BUSY) != 0) rslt += "Busy; ";
+			if ((status & (uint) PrinterStatus.PS_PRINTING) != 0) rslt += "Printing; ";
+			if ((status & (uint) PrinterStatus.PS_OUTPUT_BIN_FULL) != 0) rslt += "Output bin full; ";
+			if ((status & (uint) PrinterStatus.PS_NOT_AVAILABLE) != 0) rslt += "Not available; ";
+			if ((status & (uint) PrinterStatus.PS_WAITING) != 0) rslt += "Waiting; ";
+			if ((status & (uint) PrinterStatus.PS_PROCESSING) != 0) rslt += "Processing; ";
+			if ((status & (uint) PrinterStatus.PS_INITIALIZING) != 0) rslt += "Initializing; ";
+			if ((status & (uint) PrinterStatus.PS_WARMING_UP) != 0) rslt += "Warming up; ";
+			if ((status & (uint) PrinterStatus.PS_TONER_LOW) != 0) rslt += "Toner low; ";
+			if ((status & (uint) PrinterStatus.PS_NO_TONER) != 0) rslt += "No toner; ";
+			if ((status & (uint) PrinterStatus.PS_PAGE_PUNT) != 0) rslt += "Page punt; ";
+			if ((status & (uint) PrinterStatus.PS_USER_INTERVENTION) != 0) rslt += "User intervention; ";
+			if ((status & (uint) PrinterStatus.PS_OUT_OF_MEMORY) != 0) rslt += "Out of memory; ";
+			if ((status & (uint) PrinterStatus.PS_DOOR_OPEN) != 0) rslt += "Door open; ";
+			if ((status & (uint) PrinterStatus.PS_SERVER_UNKNOWN) != 0) rslt += "Server unkown; ";
+			if ((status & (uint) PrinterStatus.PS_POWER_SAVE) != 0) rslt += "Power save; ";
+
+			return rslt;
+		}
+
 		//
 		// DllImports
 		//
+
+		[DllImport("winspool.drv", CharSet=CharSet.Unicode, EntryPoint="OpenPrinter", SetLastError=true)]
+		static extern int Win32OpenPrinter (string pPrinterName, out IntPtr phPrinter, IntPtr pDefault);
+
+		[DllImport("winspool.drv", CharSet=CharSet.Unicode, EntryPoint="GetPrinter", SetLastError=true)]
+		static extern int Win32GetPrinter (IntPtr hPrinter, int level, IntPtr dwBuf, int size, ref int dwNeeded);
+
+		[DllImport("winspool.drv", CharSet=CharSet.Unicode, EntryPoint="ClosePrinter", SetLastError=true)]
+		static extern int Win32ClosePrinter (IntPtr hPrinter);
 
 		[DllImport("winspool.drv", CharSet=CharSet.Unicode, EntryPoint="DeviceCapabilities", SetLastError=true)]
 		static extern int Win32DeviceCapabilities (string device, string port, DCCapabilities cap, IntPtr outputBuffer, IntPtr deviceMode);
@@ -342,6 +414,36 @@ namespace System.Drawing.Printing
 			DC_COLORDEVICE = 32,
 			DC_NUP = 33
 		}
+
+		[Flags]
+		internal enum PrinterStatus : uint
+		{
+			PS_PAUSED =		0x00000001,
+			PS_ERROR = 		0x00000002,
+			PS_PENDING_DELETION =	0x00000004,
+			PS_PAPER_JAM = 		0x00000008,
+			PS_PAPER_OUT = 		0x00000010,
+			PS_MANUAL_FEED = 	0x00000020,
+			PS_PAPER_PROBLEM = 	0x00000040,
+			PS_OFFLINE = 		0x00000080,
+			PS_IO_ACTIVE = 		0x00000100,
+			PS_BUSY = 		0x00000200,
+			PS_PRINTING	= 	0x00000400,
+			PS_OUTPUT_BIN_FULL = 	0x00000800,
+			PS_NOT_AVAILABLE = 	0x00001000,
+			PS_WAITING = 		0x00002000,
+			PS_PROCESSING = 	0x00004000,
+			PS_INITIALIZING = 	0x00008000,
+			PS_WARMING_UP = 	0x00010000,
+			PS_TONER_LOW =		0x00020000,
+			PS_NO_TONER =		0x00040000,
+			PS_PAGE_PUNT = 		0x00080000,
+			PS_USER_INTERVENTION =	0x00100000,
+			PS_OUT_OF_MEMORY = 	0x00200000,
+			PS_DOOR_OPEN = 		0x00400000,
+			PS_SERVER_UNKNOWN = 	0x00800000,
+			PS_POWER_SAVE = 	0x01000000
+ 		}
  	}
 }
 
