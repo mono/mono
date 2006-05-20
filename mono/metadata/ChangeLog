@@ -1,3 +1,8 @@
+2006-05-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (encode_cattr_value): Fix yet another bug in the encoding of
+	MONO_TYPE_OBJECT. Fixes #78462.
+
 2006-05-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (emit_marshal_vtype): Add support for UnmanagedType.LPStruct 
