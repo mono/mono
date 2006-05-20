@@ -25,12 +25,9 @@
 	any function in it be NULL; use NULL as the default vtable.
 	(GC_mono_debugger_add_all_threads): New public function.
 
-	* pthread_support.c (GC_new_thread): Use calloc() instead of
-	GC_INTERNAL_MALLOC() to allocate the `GC_thread' structure.
+	* pthread_support.c
 	(GC_delete_thread): Call `gc_thread_vtable->thread_exited()'.
 	(GC_thr_init): Call `gc_thread_vtable->thread_created()'.
-	(GC_start_routine_head): Likewise; use calloc() instead of
-	GC_INTERNAL_MALLOC() to allocate the `start_info'.
 
 2006-04-05  Zoltan Varga  <vargaz@gmail.com>
 

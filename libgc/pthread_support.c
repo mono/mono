@@ -667,7 +667,8 @@ GC_thread GC_new_thread(pthread_t id)
     	result = &first_thread;
     	first_thread_used = TRUE;
     } else {
-	result = calloc (1, sizeof (struct GC_Thread_Rep));
+        result = (struct GC_Thread_Rep *)
+        	 GC_INTERNAL_MALLOC(sizeof(struct GC_Thread_Rep), NORMAL);
     }
     if (result == 0) return(0);
     result -> id = id;
@@ -699,7 +700,7 @@ void GC_delete_thread(pthread_t id)
     if (gc_thread_vtable && gc_thread_vtable->thread_exited)
 	gc_thread_vtable->thread_exited (id, &p->stop_info.stack_ptr);
 #endif
-    free(p);
+    GC_INTERNAL_FREE(p);
 }
 
 /* If a thread has been joined, but we have not yet		*/
@@ -721,7 +722,7 @@ void GC_delete_gc_thread(pthread_t id, GC_thread gc_id)
     } else {
         prev -> next = p -> next;
     }
-    free(p);
+    GC_INTERNAL_FREE(p);
 }
 
 /* Return a GC_thread corresponding to a given pthread_t.	*/
@@ -774,11 +775,12 @@ void GC_remove_all_threads_but_me(void)
 	      GC_destroy_thread_local(p);
 	    }
 #	  endif /* THREAD_LOCAL_ALLOC */
-	    if (p != &first_thread) free(p);
+	    if (p != &first_thread) GC_INTERNAL_FREE(p);
 	}
       }
       GC_threads[hv] = me;
     }
+    GC_INTERNAL_FREE(p);
 }
 #endif /* HANDLE_FORK */
 
@@ -1371,7 +1373,8 @@ WRAP_FUNC(pthread_create)(pthread_t *new_thread,
     /* responsibility.							*/
 
     LOCK();
-    si = calloc (1, sizeof (struct start_info));
+    si = (struct start_info *)GC_INTERNAL_MALLOC(sizeof(struct start_info),
+						 NORMAL);
     UNLOCK();
     if (!parallel_initialized) GC_init_parallel();
     if (0 == si) return(ENOMEM);
@@ -1431,7 +1434,7 @@ WRAP_FUNC(pthread_create)(pthread_t *new_thread,
     }
     sem_destroy(&(si -> registered));
     LOCK();
-    free(si);
+    GC_INTERNAL_FREE(si);
     UNLOCK();
 
     return(result);
