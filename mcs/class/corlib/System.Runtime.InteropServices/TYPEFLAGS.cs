@@ -34,8 +34,10 @@ namespace System.Runtime.InteropServices
 {
 #if NET_2_0
 	[Obsolete]
+#else
+	[ComVisible (false)]
 #endif
-	[Serializable, ComVisible (false), Flags]
+	[Serializable, Flags]
 	public enum TYPEFLAGS
 	{
 		TYPEFLAG_FAPPOBJECT = 1,

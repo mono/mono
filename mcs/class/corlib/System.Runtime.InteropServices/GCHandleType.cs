@@ -35,27 +35,14 @@
 
 namespace System.Runtime.InteropServices {
 
-
-	/// <summary>
-	/// </summary>
+#if NET_2_0
+	[ComVisible(true)]
+#endif
+	[Serializable]
 	public enum GCHandleType {
-
-		
-		/// <summary>
-		/// </summary>
 		Weak = 0,
-  
-		/// <summary>
-		/// </summary>
 		WeakTrackResurrection = 1,
- 
-		/// <summary>
-		/// </summary>
 		Normal = 2,
-
-		/// <summary>
-		/// </summary>
 		Pinned = 3,
-	} // GCHandleType
-
-} // System.Runtime.InteropServices
+	} 
+}

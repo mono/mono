@@ -11,7 +11,7 @@ using System;
 
 namespace System.Runtime.InteropServices
 {
-	[ComVisible (false)]
+	[Flags]
 	public enum RegistrationConnectionType
 	{
 		MultipleUse = 1,

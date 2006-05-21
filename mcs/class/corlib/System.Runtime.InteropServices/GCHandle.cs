@@ -35,9 +35,11 @@ using System.Runtime.InteropServices;
 
 namespace System.Runtime.InteropServices
 {
-	/// <summary>
-	/// Summary description for GCHandle.
-	/// </summary>
+
+#if NET_2_0
+	[ComVisible(true)]
+#endif
+	[MonoTODO("Struct should be [StructLayout(LayoutKind.Sequential)] but will need to be reordered for that.")]
 	public struct GCHandle 
 	{
 		// fields
@@ -137,6 +139,16 @@ namespace System.Runtime.InteropServices
 		private extern static IntPtr GetAddrOfPinnedObject(int handle);
 
 #if NET_2_0
+		public static bool operator ==(GCHandle a, GCHandle b)
+		{
+			return a.Equals(b);
+		}
+
+		public static bool operator !=(GCHandle a, GCHandle b)
+		{
+			return (!(a.Equals(b)));
+		}
+		
 		public override bool Equals(object o)
 		{
 			if (o == null || !(o is GCHandle))

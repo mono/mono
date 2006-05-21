@@ -34,8 +34,10 @@ namespace System.Runtime.InteropServices
 {
 #if NET_2_0
 	[Obsolete]
+#else
+	[ComVisible (false)]
 #endif
-	[Serializable, ComVisible (false)]
+	[Serializable]
 	public enum SYSKIND
 	{
 		SYS_WIN16 = 0,

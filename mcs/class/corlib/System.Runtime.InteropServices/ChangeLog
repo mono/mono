@@ -1,3 +1,95 @@
+2006-05-20  Zac Bowling <zac@zacbowling.com>
+	* VarEnum.cs: ComVisible Attribute (2.0)
+	* InterfaceTypeAttribute.cs: ComVisible Attribute (2.0)
+	* UCOMITypeInfo.cs: ComImport Attribute (1.x)
+	* UCOMITypeComp.cs: ComImport Attribute (1.x)
+	* MarshalAsAttribute.cs: ComVisible Attribute (2.0)
+	* StructLayoutAttribute.cs: ComVisible Attribute (2.0)
+	* ProgIdAttribute.cs: ComVisible Attribute (2.0)
+	* PrimaryInteropAssemblyAttribute.cs: ComVisible Attribute (2.0)
+	* ImporterEventKind.cs: ComVisible Attribute (2.0)
+	* UCOMIPersistFile.cs: ComImport Attribute (1.x)
+	* SetWin32ContextInIDispatchAttribute.cs: Obselete and ComVisible
+	Attribute (2.0)
+	* IRegistrationServices.cs: ComVisible Attribute and CAS Attributes (2.0)
+	* InAttribute.cs: ComVisible Attribute (2.0)
+	* UCOMIMoniker.cs: ComImport Attribute (1.x)
+	* MarshalDirectiveException.cs: ComVisible Attribute (2.0)
+	* IDLDESC.cs: ComVisible Attribute (1.x)
+	* FUNCFLAGS.cs: ComVisible Attribute (1.x)
+	* UCOMIConnectionPointContainer.cs: ComImport Attribute (1.x)
+	* TypeLibExporterFlags.cs: ComVisible Attribute (2.0)
+	* ICustomMarshaler.cs: ComVisible Attribute (2.0)
+	* LayoutKind.cs: ComVisible Attribute (2.0) + Serializable + Clean
+	* ICustomAdapter.cs: ComVisible Attribute (2.0)
+	* UnmanagedFunctionPointerAttribute.cs: ComVisible Attribute and Param
+	Signature of UnmanagedFunctionPointerAttribute(...)
+	* FUNCKIND.cs: ComVisble Attribute (1.x)
+	* TypeLibVersionAttribute.cs: ComVisible Attribute (2.0) + Missing in
+	2.0
+	* TypeLibVarAttribute.cs: ComVisible Attribute (2.0)
+	* ITypeLibConverter.cs: ComVisible Attribute (2.0)
+	* UCOMIRunningObjectTable.cs: ComImport Attribute (1.x)
+	* IDispatchImplAttribute.cs: Obsolete + ComVisible Attribute (2.0)
+	* ITypeLibImporterNotifySink.cs: ComVisible Attribute (2.0)
+	* PreserveSigAttribute.cs: ComVisible Attribute (2.0)
+	* SYSKIND.cs: ComVisible Attribute (1.x) 
+	* UCOMIEnumVARIANT.cs: ComImport Attribute (1.x)
+	* UCOMIEnumString.cs: ComImport Attribute (1.x) and Expose to 1.x (not
+	a 2.0 exclusive class)
+	* OutAttribute.cs: ComVisible Attribute (2.0)
+	* InvalidComObjectException.cs: ComVisible Attribute (2.0)
+	* SEHException.cs: ComVisible Attribute (2.0)
+	* UCOMIConnectionPoint.cs: ComImport Attribute (1.x)
+	* TypeLibImporterFlags.cs: ComVisible Attribute (2.0) and
+	Serializable
+	* OptionalAttribute.cs: ComVisible Attribute (2.0)
+	* TYPEDESC.cs: ComVisible Attribute (1.x)
+	* UCOMIEnumMoniker.cs: ComImport Attribute (1.x) and Expose to 1.x
+	(not a 2.0 exclusive class)
+	* TypeLibTypeFlags.cs: ComVisible Attribute (2.0)
+	* ITypeLibExporterNotifySink.cs: ComVisible Attribute (2.0)
+	* HandleRef.cs: ComVisible.cs and add ToIntPtr (2.0)
+	* DllImportAttribute.cs: ComVisible Attribute (2.0)
+	* TypeLibTypeAttribute.cs: ComVisible Attribute (2.0)
+	* UnknownWrapper.cs: Serializable, ComVisible Attribute (2.0)
+	* IDFLAGS.cs: ComVisible Attribute (1.x only)
+	* RegistrationClassContext.cs: License + Flags attribute (2.0)
+	* GCHandle.cs: ComVisible Attribute + Operator Overrides (2.0)
+	* TypeLibImportClassAttribute.cs: ComVisible Attribute (2.0)
+	* IMPLYTPEFLAGS.cs: ComVisible Attribute (1.x)
+	* ImportedFromTypeLibAttribute.cs: ComVisible (2.0)
+	* UCOMIBindCtx.cs: Obsolete Attribute (2.0)
+	* FUNCDESC.cs: ComVisible Attribute (1.x)
+	* RegistrationConnectionType.cs: Flags Attribute (2.0)
+	* IDispatchImplType.cs: Obsolete + ComVisible Attribute (2.0)
+	* TypeLibConverter.cs: ComVisible (2.0)
+	* INVOKEKIND.cs: ComVisible Attribute (1.x)
+	* GCHandleType.cs: ComVisible Attribute (2.0) + Serializable
+	* ICustomFactory.cs: ComVisible Attribute (2.0)
+	* FieldOffsetAttribute.cs: ComVisible Attribute (2.0)
+	* LIBFLAGS.cs: ComVisible Attribute (1.x)
+	* ComSourceInterfacesAttributes.cs: ComVisible Attribute (2.0)
+	* STATSTG.cs: ComVisible Attribute (1.x)
+	* InvalidOleVariantTypeException.cs: ComVisible Attribute (2.0)
+	* TypeLibVarFlags.cs: ComVisible Attribute (2.0)
+	* TYPEFLAGS.cs: ComVisible Attribute (1.x)
+	* SafeArrayRankMismatchException.cs: ComVisible Attribute (2.0)
+	* TYPEATTR.cs: ComVisible Attribute (1.x)
+	* GuidAttribute.cs: ComVisible Attribute (2.0)
+	* UCOMIEnumConnectionPoints.cs: ComImport Attribute (1.x) + Expose to
+	1.x (not a 2.0 exclusive)
+	* SafeArrayTypeMismatchException.cs: ComVisible Attribute (2.0)
+	* ObjectCreationDelegate.cs: ComVisible Attribute (2.0)
+	* ITypeLibExporterNameProvider.cs: ComVisible Attribute (2.0) and
+	MarshelAs VarEnum Type.
+	* UCOMIStream.cs: ComImport Attribute (1.x)
+	* TypeLibFuncFlags.cs ComVisible Attribute (2.0)
+	* UnmanagedType.cs: ComVisible Attribute (2.0) + clean up
+	* UCOMIEnumConnections.cs: ComImport Attribute (1.0)
+	* LCIDConversionAttribute.cs: ComVisible Attribute (2.0)
+	* TypeLibFuncAttribute.cs: ComVisible Attribute (2.0)
+
 2006-05-02  Jonathan Chambers  <jonathan.chambers@ansys.com>
 
 	* Marshal.cs: Implement BSTR methods

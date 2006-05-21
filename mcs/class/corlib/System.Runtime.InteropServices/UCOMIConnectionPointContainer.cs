@@ -30,8 +30,8 @@ namespace System.Runtime.InteropServices
 {
 #if NET_2_0
 	[Obsolete]
-	[ComImport]
 #endif
+	[ComImport]
 	[Guid ("b196b284-bab4-101a-b69c-00aa00341d07")]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	public interface UCOMIConnectionPointContainer

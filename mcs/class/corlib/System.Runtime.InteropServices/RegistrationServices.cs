@@ -33,6 +33,10 @@ using System.Reflection;
 
 namespace System.Runtime.InteropServices
 {
+	
+#if NET_2_0
+	[ComVisible(true)]
+#endif	
 	[Guid ("475e398f-8afa-43a7-a3be-f4ef8d6787c9")]
 	[ClassInterface (ClassInterfaceType.None)]
 	public class RegistrationServices : IRegistrationServices
@@ -88,5 +92,23 @@ namespace System.Runtime.InteropServices
 		{
 			throw new NotImplementedException ();
 		}
+
+#if NET_2_0
+				
+		[ComVisible(false)]
+		[MonoTODO ("implement")]
+		public virtual int RegisterTypeForComClients(Type type, RegistrationClassContext classContext, RegistrationConnectionType flags)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[ComVisible(false)]
+		[MonoTODO ("implement")]
+		public virtual void UnregisterTypeForComClients(int cookie)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+		
 	}
 }

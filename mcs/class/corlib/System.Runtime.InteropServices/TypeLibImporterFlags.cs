@@ -32,7 +32,10 @@ using System;
 
 namespace System.Runtime.InteropServices
 {
-	[Flags]
+#if NET_2_0
+	[ComVisible(true)]
+#endif
+	[Serializable,Flags]
 	public enum TypeLibImporterFlags
 	{
 		PrimaryInteropAssembly = 1,

@@ -32,6 +32,9 @@
 using System;
 
 namespace System.Runtime.InteropServices {
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public struct HandleRef {
 
 		#region Fields
@@ -69,7 +72,14 @@ namespace System.Runtime.InteropServices {
 		{
 			return value.Handle;
 		}
-
+		
 		#endregion // Type Conversions
+#if NET_2_0
+		public static IntPtr ToIntPtr(HandleRef value)
+		{
+			return value.Handle; 
+			// Why did MS add a function for this?
+		}
+#endif
 	}
 }

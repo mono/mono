@@ -34,8 +34,10 @@ namespace System.Runtime.InteropServices
 {
 #if NET_2_0
 	[Obsolete]
+#else
+	[ComVisible (false)]
 #endif
-	[Flags, Serializable, ComVisible (false)]
+	[Flags, Serializable]
 	public enum FUNCFLAGS
 	{
 		FUNCFLAG_FRESTRICTED = 1,

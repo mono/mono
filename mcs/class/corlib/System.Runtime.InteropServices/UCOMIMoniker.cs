@@ -32,16 +32,14 @@ namespace System.Runtime.InteropServices
 {
 #if NET_2_0
 	[Obsolete]
-	[ComImport]
 #endif
+	[ComImport]
 	[Guid ("0000000f-0000-0000-c000-000000000046")]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	public interface UCOMIMoniker
 	{
 		void GetClassID (out Guid pClassID);
-#if NET_2_0
 		[PreserveSig]
-#endif
 		int IsDirty ();
 		void Load (UCOMIStream pStm);
 		void Save (UCOMIStream pStm, [MarshalAs (UnmanagedType.Bool)] bool fClearDirty);

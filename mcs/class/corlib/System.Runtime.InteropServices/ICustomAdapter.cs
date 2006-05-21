@@ -32,6 +32,9 @@
 
 namespace System.Runtime.InteropServices {
 
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public interface ICustomAdapter {
 		[return: MarshalAs (UnmanagedType.IUnknown)]
 		object GetUnderlyingObject ();

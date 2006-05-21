@@ -35,7 +35,7 @@ namespace System.Runtime.InteropServices
 {
 	[AttributeUsage (AttributeTargets.Class, AllowMultiple = false,
 #if NET_2_0
-			Inherited = true)]
+			Inherited = true),ComVisible(true)]
 #else
 			Inherited = false)]
 #endif

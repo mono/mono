@@ -32,23 +32,17 @@ namespace System.Runtime.InteropServices
 {
 #if NET_2_0
 	[Obsolete]
-	[ComImport]
 #endif
+	[ComImport]
 	[Guid ("00020404-0000-0000-c000-000000000046")]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	public interface UCOMIEnumVARIANT
 	{
-#if NET_2_0
 		[PreserveSig]
-#endif
 		int Next (int celt, int rgvar, int pceltFetched);
-#if NET_2_0
 		[PreserveSig]
-#endif
 		int Skip (int celt);
-#if NET_2_0
 		[PreserveSig]
-#endif
 		int Reset ();
 		void Clone (int ppenum);
 	}

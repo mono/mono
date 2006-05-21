@@ -35,22 +35,14 @@
 
 namespace System.Runtime.InteropServices {
 
-
-	/// <summary>
-	/// </summary>
+#if NET_2_0
+	[ComVisible(true)]
+#endif	
+	[Serializable]
 	public enum LayoutKind {
-
-		/// <summary>
-		/// </summary>
 		Sequential = 0,
-
-		/// <summary>
-		/// </summary>
 		Explicit = 2,
-
-		/// <summary>
-		/// </summary>
-		Auto = 3,
-	} // LayoutKind
-
-} // System.Runtime.InteropServices
+		Auto = 3
+	}
+	
+} 

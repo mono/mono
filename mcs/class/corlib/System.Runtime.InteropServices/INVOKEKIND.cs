@@ -34,9 +34,10 @@ namespace System.Runtime.InteropServices
 {
 #if NET_2_0
 	[Obsolete]
+#else
+	[ComVisible(false)]
 #endif
 	[Serializable]
-	[ComVisible(false)]
 	public enum INVOKEKIND {
 		INVOKE_FUNC = 1,
 		INVOKE_PROPERTYGET = 2,

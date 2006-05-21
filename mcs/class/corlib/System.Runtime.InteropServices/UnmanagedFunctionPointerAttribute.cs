@@ -32,7 +32,7 @@ using System;
 
 namespace System.Runtime.InteropServices {
 
-	[AttributeUsage (AttributeTargets.Delegate, Inherited = false)]
+	[AttributeUsage (AttributeTargets.Delegate, Inherited = false,AllowMultiple=false),ComVisible(true)]
 	public sealed class UnmanagedFunctionPointerAttribute: Attribute {
 		#region Sync with object-internals.h
 		private CallingConvention call_conv;
@@ -48,8 +48,8 @@ namespace System.Runtime.InteropServices {
 			}
 		}
 		
-		public UnmanagedFunctionPointerAttribute (CallingConvention call_conv) {
-			this.call_conv = call_conv;
+		public UnmanagedFunctionPointerAttribute (CallingConvention callingConvention) {
+			this.call_conv = callingConvention;
 		}
 	}
 }

@@ -25,6 +25,9 @@ using System;
 
 namespace System.Runtime.InteropServices {
 
+#if NET_2_0
+	[ComVisible (false)]
+#endif
 	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Struct,
 			 Inherited=false)]
 	public sealed class StructLayoutAttribute : Attribute {

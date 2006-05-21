@@ -32,14 +32,26 @@ using System;
 
 namespace System.Runtime.InteropServices {
 
+#if NET_2_0
+	[ComVisible(true)]
+#endif	
 	[AttributeUsage (AttributeTargets.Field | AttributeTargets.Parameter | 
 			 AttributeTargets.ReturnValue, Inherited=false)]
 	public sealed class MarshalAsAttribute : Attribute {
 		private UnmanagedType utype;
 		public UnmanagedType ArraySubType;
 		public string MarshalCookie;
+
+#if NET_2_0
+		[ComVisible(true)]
+#endif	
 		public string MarshalType;
+
+#if NET_2_0
+		[ComVisible(true)]
+#endif	
 		public Type MarshalTypeRef;
+		
 		public VarEnum SafeArraySubType;
 		public int SizeConst;
 		public short SizeParamIndex;

@@ -30,23 +30,17 @@ namespace System.Runtime.InteropServices
 {
 #if NET_2_0
 	[Obsolete]
-	[ComImport]
 #endif
+	[ComImport]
 	[Guid ("00000102-0000-0000-c000-000000000046")]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	public interface UCOMIEnumMoniker
 	{
-#if NET_2_0
 		[PreserveSig]
-#endif
 		int Next (int celt, [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] UCOMIMoniker[] rgelt, out int pceltFetched);
-#if NET_2_0
 		[PreserveSig]
-#endif
 		int Skip (int celt);
-#if NET_2_0
 		[PreserveSig]
-#endif
 		int Reset ();
 		void Clone (out UCOMIEnumMoniker ppenum);
 	}
