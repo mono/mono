@@ -1,3 +1,4 @@
+#if NET_2_0
 using System;
 using System.Web;
 
@@ -16,3 +17,4 @@ namespace NunitWeb
 		}
 	}
 }
+#endif
