@@ -1,3 +1,13 @@
+2006-05-21  Yoni Klain <yonik@mainsoft.com>
+
+	* NunitWebTest.cs: add method for Nunit tests asserting fails
+
+
+2006-05-17  Andrew Skiba <andrews@mainsoft.com>
+
+	* nunitweb_config.xml: similar to almost_config.xml but ignores more stuff
+	* NunitWebTest.cs: use nunit_config.xml and fallback on XmlException
+
 2006-05-17  Andrew Skiba <andrews@mainsoft.com>
 
 	* nunitweb_config.xml: similar to almost_config.xml but ignores more stuff

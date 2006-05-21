@@ -33,12 +33,12 @@ using System.Net;
 using System.Text;
 using System.Collections;
 using System.Reflection;
+using NUnit.Framework;
 
 namespace MonoTests.stand_alone.WebHarness
 {
 	public abstract class XmlComparableTest
 	{
-
 		public abstract bool XmlCompare(XmlDocument d1, XmlDocument d2, bool ignoreAlmost);
 	}
 
@@ -49,6 +49,8 @@ namespace MonoTests.stand_alone.WebHarness
 
 		private XmlDocument _xmlIgnoreList = null;
 		private string _compareStatus = "";
+		private static string _compareActual = "";
+		private static string _compareExpect = "";
 		private string _ignoreListFile = "";
 
 		
@@ -62,6 +64,7 @@ namespace MonoTests.stand_alone.WebHarness
 			get {return _ignoreListFile;}
 			set {_ignoreListFile = value;}
 		}
+
 		public string CompareStatus
 		{
 			get {return _compareStatus.ToString();}
@@ -74,6 +77,14 @@ namespace MonoTests.stand_alone.WebHarness
 			return sb.ToString ();
 		}
 
+		public static void AssertAreEqual (string origin, string derived, string msg)
+		{
+			bool test = HtmlComparer (origin, derived);
+			if (!test) {
+				Assert.AreEqual (_compareActual, _compareExpect, msg);
+				       
+			}
+		}
 
 		public static bool HtmlComparer (string origin, string derived)
 		{
@@ -95,6 +106,8 @@ namespace MonoTests.stand_alone.WebHarness
 			}
 			bool c = comparer.AreEqual(d1, d2);
 			_compareStatus = comparer.LastCompare;
+			_compareActual = comparer.Actual;
+			_compareExpect = comparer.Expected;
 			return c;
 		}
 
@@ -139,9 +152,11 @@ namespace MonoTests.stand_alone.WebHarness
 				}
 				tempDoc.Save(sw);
 			}
-			catch (XmlException e)
+			catch (Exception)
 			{
-				return "<Exception><![CDATA["+e.Message +"]]></Exception>";
+				Console.WriteLine("Error parsing html response...");
+				Console.WriteLine("Test case aborted");
+				return "<TestCaseAborted></TestCaseAborted>";
 			}
 			return fixedxml.ToString();
 		}
@@ -167,7 +182,7 @@ namespace MonoTests.stand_alone.WebHarness
 				_xmlIgnoreList = new XmlDocument();
 				string xml;
 				using (Stream source = Assembly.GetExecutingAssembly()
-					.GetManifestResourceStream ("nunitweb_config.xml")) {
+					.GetManifestResourceStream ("HTMLComparer.nunitweb_config.xml")) {
 					using (StreamReader sr = new StreamReader (source))
 						xml = sr.ReadToEnd ();
 				}
