@@ -1,7 +1,9 @@
-<%@	Page Language="C#" MasterPageFile="~/Default.master" Title="Your Name Here | Home" Theme ="Black" %>
+<%@	Page Language="C#" CodeFile="Default.aspx.cs" Inherits="MyDefault"
+ MasterPageFile="~/Default.master" Title="Your Name Here | Home" Theme ="Black" %>
 
-<asp:content id="Content1" contentplaceholderid="Main" runat="server">
-    <asp:panel id="Panel" runat="server">
-        <asp:Imagebutton runat="server" id="Button" CommandName="Login" AlternateText="login" skinid="login" CssClass="button"/>
-    </asp:panel>
-</asp:content>
+<%@ Register Src="MyParent.ascx" TagName="MyParent" TagPrefix="uc1" %>
+
+<asp:Content ID="Content1" runat="server" ContentPlaceHolderID="Main">
+    <uc1:MyParent id="Parent1" runat="server">
+    </uc1:MyParent>
+</asp:Content>
