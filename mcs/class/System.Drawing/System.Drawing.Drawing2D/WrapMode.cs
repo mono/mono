@@ -7,11 +7,7 @@
 //   Ravindra (rkumar@novell.com)
 //
 // (C) 2002/3 Ximian, Inc. http://www.ximian.com
-// (C) 2004 Novell, Inc. http://www.novell.com
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,13 +28,12 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
 
 namespace System.Drawing.Drawing2D {
-	/// <summary>
-	/// Summary description for WrapMode.
-	/// </summary>
+
+#if ONLY_1_1
 	[Serializable]
+#endif
 	public enum WrapMode {
 		Tile,
 		TileFlipX,

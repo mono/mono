@@ -1,3 +1,28 @@
+2006-05-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CombineMode.cs: Removed [Serializable] from 2.0 profile.
+	* CompostingMode.cs: Removed [Serializable] from 2.0 profile.
+	* CompostingQuality.cs: Removed [Serializable] from 2.0 profile.
+	* CoordinateSpace.cs: Removed [Serializable] from 2.0 profile.
+	* DashCap.cs: Removed [Serializable] from 2.0 profile.
+	* DashStyle.cs: Removed [Serializable] from 2.0 profile.
+	* FillMode.cs: Removed [Serializable] from 2.0 profile.
+	* FlushIntention.cs: Removed [Serializable] from 2.0 profile.
+	* HatchStyle.cs: Removed [Serializable] from 2.0 profile.
+	* InterpolationMode.cs: Removed [Serializable] from 2.0 profile.
+	* LinearGradientMode.cs: Removed [Serializable] from 2.0 profile.
+	* LineCap.cs: Removed [Serializable] from 2.0 profile.
+	* LineJoin.cs: Removed [Serializable] from 2.0 profile.
+	* MatrixOrder.cs: Removed [Serializable] from 2.0 profile.
+	* PathPointType.cs: Removed [Serializable] from 2.0 profile.
+	* PenAlignment.cs: Removed [Serializable] from 2.0 profile.
+	* PenType.cs: Removed [Serializable] from 2.0 profile.
+	* PixelOffsetMode.cs: Removed [Serializable] from 2.0 profile.
+	* QualityMode.cs: Removed [Serializable] from 2.0 profile.
+	* SmoothingMode.cs: Removed [Serializable] from 2.0 profile.
+	* WarpMode.cs: Removed [Serializable] from 2.0 profile.
+	* WrapMode.cs: Removed [Serializable] from 2.0 profile.
+
 2006-05-12  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* GraphicsPath.cs: Fix misnamed GdipAdd*Path*String[I] API (#78383)
