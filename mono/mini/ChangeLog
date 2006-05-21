@@ -1,3 +1,9 @@
+
+Sun May 21 12:22:29 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* debug-debugger.c: fix the build. Again. Hopefully Martin will stop
+	reverting changes without reason and without changelog entries.
+
 2006-05-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-sparc.c (mono_arch_output_basic_block): Add support for large stack offets
