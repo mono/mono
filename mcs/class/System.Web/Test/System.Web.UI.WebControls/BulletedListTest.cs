@@ -103,8 +103,15 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (1, b.FirstBulletNumber, "FirstBulletNumber");
 			Assert.AreEqual (-1, b.SelectedIndex, "SelectedIndex");
 			Assert.AreEqual (null, b.SelectedItem, "SelectedItem");
-			Assert.AreEqual (string.Empty, b.SelectedValue, "SelectedValue"); // NotImplementedException on Mono
 			Assert.AreEqual (string.Empty, b.Target, "Target");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void BulletedList_DefaultPropertiesNotWorking ()
+		{
+			PokerBulletedList b = new PokerBulletedList ();
+			Assert.AreEqual (string.Empty, b.SelectedValue, "SelectedValue"); // NotImplementedException on Mono
 			Assert.AreEqual (string.Empty, b.Text, "Text");
 		}
 

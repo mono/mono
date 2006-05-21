@@ -1,3 +1,11 @@
+2006-05-21 Yoni Klain <yonik@mainsoft.com>
+
+	* MenuTest.cs, SiteMapPathTest.cs ,BulletedListTest.cs -  add attributes for NotWorking tests 
+	  
+2006-05-21 Yoni Klain <yonik@mainsoft.com>
+
+	* Added ContentTest.cs
+
 2006-05-17 Andrew Skiba <andrews@mainsoft.com>
 
 	* MenuTest.cs, SiteMapPathTest.cs: multiple changes, now passes on 
