@@ -1,3 +1,15 @@
+2006-05-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PropertyValueUIHandler.cs: Removed [Serializable] from 2.0 profile.
+	* PropertyValueUIItemInvokeHandler.cs: Removed [Serializable] from 
+	2.0 profile.
+	* ToolboxComponentsCreatedEventHandler.cs: Removed [Serializable] 
+	from 2.0 profile.
+	* ToolboxComponentsCreatingEventHandler.cs: Removed [Serializable] 
+	from 2.0 profile.
+	* ToolboxItemCreatorCallback.cs: Removed [Serializable] from 2.0 
+	profile.
+
 2006-05-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* IToolboxService.cs: corcompare fix. Added [ComImport] for 2.0.
