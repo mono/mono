@@ -1,11 +1,9 @@
 //
 // System.Drawing.Imaging.MetafileFrameUnit.cs
 //
-// (C) 2002 Ximian, Inc.  http://www.ximian.com
 // Author: Dennis Hayes (dennish@raytek.com)
 //
-
-//
+// (C) 2002 Ximian, Inc.  http://www.ximian.com
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -27,10 +25,12 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
-namespace System.Drawing.Imaging 
-{
+
+namespace System.Drawing.Imaging {
+
+#if ONLY_1_1
 	[Serializable]
+#endif
 	public enum MetafileFrameUnit {
 		Document = 5,
 		GdiCompatible = 7,

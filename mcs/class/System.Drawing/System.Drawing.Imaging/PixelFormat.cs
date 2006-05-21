@@ -2,16 +2,13 @@
 // 
 // Image.cs
 //
-// (C) 2002 Ximian, Inc.  http://www.ximian.com
 // Author: Christian Meyer
 // eMail: Christian.Meyer@cs.tum.edu
 //		Dennis Hayes
 //		dennish@raytek.com
 //
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// (C) 2002 Ximian, Inc.  http://www.ximian.com
+// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,9 +29,12 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 namespace System.Drawing.Imaging {
 
+#if ONLY_1_1
 	[Serializable]
+#endif
 	public enum PixelFormat {
 		Alpha = 262144,
 		Canonical = 2097152,

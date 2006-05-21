@@ -1,14 +1,12 @@
 //
 // System.Drawing.Imaging.Metafile.cs
 //
-// (C) 2002 Ximian, Inc.  http://www.ximian.com
 // Author: Christian Meyer
 // eMail: Christian.Meyer@cs.tum.edu
 // Dennis Hayes (dennish@raytek.com)
 //
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// (C) 2002 Ximian, Inc.  http://www.ximian.com
+// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,7 +27,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
+
 using System.IO;
 using System.Reflection;
 using System.ComponentModel;
@@ -38,7 +36,9 @@ using System.Runtime.InteropServices;
 namespace System.Drawing.Imaging {
 
 	[Serializable]
+#if ONLY_1_1
 	[ComVisible (false)]
+#endif
 	[Editor ("System.Drawing.Design.MetafileEditor, " + Consts.AssemblySystem_Drawing_Design, typeof (System.Drawing.Design.UITypeEditor))]
 	public sealed class Metafile : Image {
 

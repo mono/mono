@@ -1,3 +1,25 @@
+2006-05-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ColorAdjustType.cs: Removed [Serializable] from 2.0 profile.
+	* ColorChannelFlag.cs: Removed [Serializable] from 2.0 profile.
+	* ColorMapType.cs: Removed [Serializable] from 2.0 profile.
+	* ColorMatrixFlag.cs: Removed [Serializable] from 2.0 profile.
+	* ColorMode.cs: Removed [Serializable] from 2.0 profile.
+	* EmfPlusRecordType.cs: Removed [Serializable] from 2.0 profile.
+	* EmfType.cs: Removed [Serializable] from 2.0 profile.
+	* EncoderParameterValueType.cs: Removed [Serializable] from 2.0 
+	profile.
+	* EncoderValue.cs: Removed [Serializable] from 2.0 profile.
+	* ImageCodecFlags.cs: Removed [Serializable] from 2.0 profile.
+	* ImageCodecInfo.cs: Removed [Serializable] from 2.0 profile.
+	* ImageFlags.cs: Removed [Serializable] from 2.0 profile.
+	* ImageLockMode.cs: Removed [Serializable] from 2.0 profile.
+	* Metafile.cs: Removed [Serializable] from 2.0 profile.
+	* MetafileFrameUnit.cs: Removed [Serializable] from 2.0 profile.
+	* MetafileType.cs: Removed [Serializable] from 2.0 profile.
+	* PixelFormat.cs: Removed [Serializable] from 2.0 profile.
+	* PlayRecordCallback.cs: Removed [Serializable] from 2.0 profile.
+
 2006-05-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PaletteFlags.cs: corcompare fixes for 2.0. Add [Flags] and remove
