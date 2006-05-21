@@ -1,5 +1,9 @@
 2006-05-21 Yoni Klain <yonik@mainsoft.com>
 
+	* Added MasterPageTest.cs
+
+2006-05-21 Yoni Klain <yonik@mainsoft.com>
+
 	* MenuTest.cs, SiteMapPathTest.cs ,BulletedListTest.cs -  add attributes for NotWorking tests 
 	  
 2006-05-21 Yoni Klain <yonik@mainsoft.com>
