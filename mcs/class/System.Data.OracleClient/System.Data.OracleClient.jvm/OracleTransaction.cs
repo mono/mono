@@ -36,7 +36,7 @@ namespace System.Data.OracleClient {
 	using System.Data.ProviderBase;
 	using System.Data;
 
-	public class OracleTransaction : AbstractTransaction {
+	public sealed class OracleTransaction : AbstractTransaction {
     
 		internal OracleTransaction(OracleConnection connection) : base(IsolationLevel.ReadCommitted, connection, null) {
 		}

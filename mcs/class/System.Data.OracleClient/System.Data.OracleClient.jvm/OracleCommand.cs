@@ -270,11 +270,13 @@ namespace System.Data.OracleClient {
 			throw new NotImplementedException();
 		}
 
+#if SUPPORT_ORACLE_TYPES
 		public int ExecuteOracleNonQuery(
 			out OracleString rowid
 			) {
 			throw new NotImplementedException();
 		}
+#endif
 
 		#endregion // Methods
       
