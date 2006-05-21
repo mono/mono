@@ -1,14 +1,12 @@
 //
 // System.Drawing.Color.cs
 //
-// (C) 2002 Dennis Hayes
 // Author:
 // Dennis Hayes (dennish@raytek.com)
 // Ben Houston  (ben@exocortex.org)
 //
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// (C) 2002 Dennis Hayes
+// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,10 +28,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-namespace System.Drawing 
-{
+namespace System.Drawing {
+
+#if ONLY_1_1
 	[Serializable]
+#endif
 	public enum KnownColor {
 		ActiveBorder = 1,
 		ActiveCaption = 2,

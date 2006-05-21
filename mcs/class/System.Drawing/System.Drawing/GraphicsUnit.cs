@@ -1,10 +1,10 @@
 //
 // System.Drawing.GraphicsUnit.cs
 //
-// (C) 2001 Ximian, Inc.  http://www.ximian.com
 // Author: Dennis Hayes (dennish@raytek.com)
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// (C) 2001 Ximian, Inc.  http://www.ximian.com
+// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,10 +26,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-namespace System.Drawing 
-{
+namespace System.Drawing {
+
+#if ONLY_1_1
 	[Serializable]
+#endif
 	public enum GraphicsUnit {
 		World      = 0,
 		Display    = 1,

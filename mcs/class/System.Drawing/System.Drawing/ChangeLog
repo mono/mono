@@ -1,3 +1,16 @@
+2006-05-21  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* ContentAlignment.cs: Removed [Serializable] from 2.0 profile.
+	* FontStyle.cs: Removed [Serializable] from 2.0 profile.
+	* GraphicsUnit.cs: Removed [Serializable] from 2.0 profile.
+	* KnownColor.cs: Removed [Serializable] from 2.0 profile.
+	* RotateFlipType.cs: Removed [Serializable] from 2.0 profile.
+	* StringAligment.cs: Removed [Serializable] from 2.0 profile.
+	* StringDigitSubstitute.cs: Removed [Serializable] from 2.0 profile.
+	* StringFormatFlags.cs: Removed [Serializable] from 2.0 profile.
+	* StringTrimming.cs: Removed [Serializable] from 2.0 profile.
+	* StringUnit.cs: Removed [Serializable] from 2.0 profile.
+
 2006-05-17 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ImageAnimator.cs: get the FrameDelay from the image properties, if
