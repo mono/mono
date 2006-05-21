@@ -1,5 +1,9 @@
 2006-05-21  Yoni Klain <yonik@mainsoft.com>
 
+	* XmlComparer.cs: add 2 variable for test fail asserting information
+
+2006-05-21  Yoni Klain <yonik@mainsoft.com>
+
 	* NunitWebTest.cs: add method for Nunit tests asserting fails
 
 

@@ -1,5 +1,6 @@
 using System;
 using System.Xml;
+using NUnit.Framework;
 
 namespace MonoTests.stand_alone.WebHarness
 {
@@ -15,8 +16,11 @@ namespace MonoTests.stand_alone.WebHarness
 		}
 		Flags flags;
 		bool ignoreWS = true;
+
 		string lastCompare = "";
-		
+		string actual = "";
+		string expected = "";
+
 		public XmlComparer (Flags flags, bool ignoreWS) 
 		{
 			this.flags = flags;
@@ -69,6 +73,8 @@ namespace MonoTests.stand_alone.WebHarness
 		public bool AreEqual (XmlNode node1, XmlNode node2)
 		{
 			lastCompare = node1.OuterXml + "\n" + node2.OuterXml;
+			actual = node1.OuterXml;
+			expected = node2.OuterXml;
 			// skip XmlDeclaration
 			if ((node1.NodeType == XmlNodeType.XmlDeclaration) &&
 				(node2.NodeType == XmlNodeType.XmlDeclaration))
@@ -108,6 +114,16 @@ namespace MonoTests.stand_alone.WebHarness
 		public string LastCompare 
 		{
 			get {return lastCompare;}
+		}
+
+		public string Actual
+		{
+			get { return actual; }
+		}
+
+		public string Expected
+		{
+			get { return expected; }
 		}
 	}
 }
