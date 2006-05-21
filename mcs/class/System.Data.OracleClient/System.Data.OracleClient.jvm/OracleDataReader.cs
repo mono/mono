@@ -205,6 +205,7 @@ namespace System.Data.OracleClient {
 			return base.GetInt64(i);
 		}
 
+#if SUPPORT_ORACLE_TYPES
 		#region GetOracleXXX
 
 		public OracleBFile GetOracleBFile(
@@ -268,6 +269,7 @@ namespace System.Data.OracleClient {
 		}
 
 		#endregion
+#endif
 
 		#endregion // Methods
 	}
