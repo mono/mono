@@ -1,3 +1,9 @@
+2006-05-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GenericFontFamilies.cs: Removed [Serializable] from 2.0 profile.
+	* HotkeyPrefix.cs: Removed [Serializable] from 2.0 profile.
+	* TextRenderingHint.cs: Removed [Serializable] from 2.0 profile.
+
 2006-04-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* FontCollection.cs: Remove unused ctor. Throw on disposed (private)
