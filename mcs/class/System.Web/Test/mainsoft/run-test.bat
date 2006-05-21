@@ -55,6 +55,7 @@ pushd MainsoftWebTest
 popd
 
 rem =================================================
+if "%TEST_17%" == "TRUE" goto SKIPMONO3
 echo Build System.Web mono tests...
 pushd ..
 dos2unix System.Web.UI.HtmlControls\HtmlSelectTest.cs  > nul
@@ -62,6 +63,7 @@ dos2unix System.Web.UI.WebControls\CheckBoxListTest.cs  > nul
 dos2unix System.Web.UI.WebControls\RepeatInfoTest.auto.cs  > nul
 "%VS71COMNTOOLS%..\IDE\devenv.com" TestMonoWeb_jvm.vmwcsproj /build Debug_Java  > nul
 popd
+:SKIPMONO3
 
 rem =================================================
 copy MainsoftWebTest\almost_config.xml MainsoftWebTest\bin\almost_config.xml /Y  > nul
@@ -104,12 +106,17 @@ pushd MainsoftWebTest\bin
 echo Running Mainsoft tests...
 "%JAVA_HOME%\bin\java.exe" -cp .;"%GH_CP%" NUnit.Console.ConsoleUi SystemWebTest.jar /xml=%ghlogfile% /fixture:MonoTests.stand_alone.WebHarness.Harness  > nul
 
+if "%TEST_17%" == "TRUE" goto SKIPMONO
 echo Running Mono tests...
 "%JAVA_HOME%\bin\java.exe" -cp .;"%GH_CP%" NUnit.Console.ConsoleUi TestMonoWeb_jvm.jar /xml=%monologfile% /exclude:NotWorking,ValueAdd,InetAccess /fixture:MonoTests.System.Web  > nul
+:SKIPMONO
 
 echo Finished...
 xmltool.exe --transform nunit_transform.xslt %ghlogfile%
+
+if "%TEST_17%" == "TRUE" goto SKIPMONO2
 xmltool.exe --transform nunit_transform.xslt %monologfile%
+:SKIPMONO2
 
 popd
 
