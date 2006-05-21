@@ -3,6 +3,10 @@
 	* run-test.bat: Added env var TEST_17 for testing 1.7 and 1.8 versions
 	of GH
 
+2006-21-05 Yoni Klain <yonik@mainsoft.com>
+	
+	* MyPageWithMaster.aspx;My.master - Resources changed for MasterPageTest
+
 2006-15-05  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* run-test.bat: removed build console outputs
