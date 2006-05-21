@@ -4,6 +4,5 @@
 <%@ Register Src="MyParent.ascx" TagName="MyParent" TagPrefix="uc1" %>
 
 <asp:Content ID="Content1" runat="server" ContentPlaceHolderID="Main">
-    <uc1:MyParent id="Parent1" runat="server">
-    </uc1:MyParent>
+    <uc1:MyParent id="Parent1" runat="server" skinid="login"/>
 </asp:Content>

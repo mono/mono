@@ -54,7 +54,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App_Themes\Black\Default1.skin" />
     <None Include="App_Themes\Black\Default.skin" />
     <None Include="Default.master" />
     <None Include="Web.config" />

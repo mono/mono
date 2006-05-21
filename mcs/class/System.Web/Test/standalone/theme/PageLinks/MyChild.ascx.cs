@@ -22,6 +22,7 @@ using System.Diagnostics;
 			}
 			set
 			{
+				Debug.WriteLine ("child.set_ImageUrl");
 				((Image) Controls[0]).ImageUrl = value;
 			}
 		}
