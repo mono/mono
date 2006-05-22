@@ -42,12 +42,11 @@
     <Reference Include="nunit.framework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="BuildItemTest.cs" />
-    <Compile Include="ProjectTest.cs" />
-    <Compile Include="EngineTest.cs" />
-    <Compile Include="InternalLoggerExceptionTest.cs" />
-    <Compile Include="InvalidProjectFileExceptionTest.cs" />
+    <Compile Include="Microsoft.Build.Tasks/BuildItemTest.cs" />
+    <Compile Include="Microsoft.Build.Tasks/ProjectTest.cs" />
+    <Compile Include="Microsoft.Build.Tasks/EngineTest.cs" />
+    <Compile Include="Microsoft.Build.Tasks/InternalLoggerExceptionTest.cs" />
+    <Compile Include="Microsoft.Build.Tasks/InvalidProjectFileExceptionTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>
