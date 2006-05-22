@@ -1,3 +1,8 @@
+2006-05-22  Alexander Olk  <alex.olk@googlemail.com>
+
+	* FileDialog.cs: Update the filename combobox when navigating through
+	  the ListView with the cursor keys. Fixes part 7 of bug #78446.
+
 2006-05-22  Mike Kestner  <mkestner@novell.com>
 
 	* ListView.cs: raise SelectedIndexChanged on keyboard selection.

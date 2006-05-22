@@ -2226,27 +2226,25 @@ namespace System.Windows.Forms {
 		
 		protected override void OnSelectedIndexChanged (EventArgs e)
 		{
-			if (MultiSelect) {
-				if (SelectedItems.Count > 0) {
-					selectedFilesString = "";
+			if (SelectedItems.Count > 0) {
+				selectedFilesString = "";
+				
+				if (SelectedItems.Count == 1) {
+					FileStruct fileStruct = (FileStruct)fileHashtable [SelectedItems [0].Text];
 					
-					if (SelectedItems.Count == 1) {
-						FileStruct fileStruct = (FileStruct)fileHashtable [SelectedItems [0].Text];
+					if (fileStruct.attributes != FileAttributes.Directory)
+						selectedFilesString = SelectedItems [0].Text;
+				} else {
+					foreach (ListViewItem lvi in SelectedItems) {
+						FileStruct fileStruct = (FileStruct)fileHashtable [lvi.Text];
 						
 						if (fileStruct.attributes != FileAttributes.Directory)
-							selectedFilesString = SelectedItems [0].Text;
-					} else {
-						foreach (ListViewItem lvi in SelectedItems) {
-							FileStruct fileStruct = (FileStruct)fileHashtable [lvi.Text];
-							
-							if (fileStruct.attributes != FileAttributes.Directory)
-								selectedFilesString += "\"" + lvi.Text + "\" ";
-						}
+							selectedFilesString += "\"" + lvi.Text + "\" ";
 					}
-					
-					if (on_selected_files_changed != null)
-						on_selected_files_changed (this, EventArgs.Empty);
 				}
+				
+				if (on_selected_files_changed != null)
+					on_selected_files_changed (this, EventArgs.Empty);
 			}
 			
 			base.OnSelectedIndexChanged (e);
