@@ -150,13 +150,13 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 						<Item5 Include=""@(Item1)"" Exclude=""@(Item2)"" />
 						<Item6 Include=""@(Item2)"" Exclude=""@(Item1)"" />
 
-						<ItemOrig Include=""A/B.txt;A/C.txt;B/B.zip;B/C.zip"" />
+						<ItemOrig Include=""A\B.txt;A\C.txt;B\B.zip;B\C.zip"" />
 						<ItemT1 Include=""@(Item1->'%(Identity)')"" />
 						<ItemT2 Include=""@(Item1->'%(Identity)%(Identity)')"" />
 						<ItemT3 Include=""@(Item1->'(-%(Identity)-)')"" />
 						<ItemT4 Include=""@(ItemOrig->'%(Extension)')"" />
 						<ItemT5 Include=""@(ItemOrig->'%(Filename)/%(Extension)')"" />
-						<ItemT6 Include=""@(ItemOrig->'%(RelativeDir)/X/%(Filename)')"" />
+						<ItemT6 Include=""@(ItemOrig->'%(RelativeDir)X/%(Filename)')"" />
 						
 						<ItemS1 Include=""@(Item1,'-')"" />
 						<ItemS2 Include=""@(Item1,'xx')"" />
@@ -166,25 +166,25 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			";
 
 			proj.LoadXml (documentString);
-			Assert.AreEqual ("A", GetItems (proj, "Item0"), "Item0");
-			Assert.AreEqual ("A;B;C", GetItems (proj, "Item1"), "Item1");
-			Assert.AreEqual ("A;B;C;A;D", GetItems (proj, "Item2"), "Item2");
-			Assert.AreEqual ("B;C;D", GetItems (proj, "Item3"), "Item3");
-			Assert.AreEqual ("Q", GetItems (proj, "Item4"), "Item4");
-			Assert.AreEqual ("", GetItems (proj, "Item5"), "Item5");
-			Assert.AreEqual ("D", GetItems (proj, "Item6"), "Item6");
+			Assert.AreEqual ("A", GetItems (proj, "Item0"), "A1");
+			Assert.AreEqual ("A;B;C", GetItems (proj, "Item1"), "A2");
+			Assert.AreEqual ("A;B;C;A;D", GetItems (proj, "Item2"), "A3");
+			Assert.AreEqual ("B;C;D", GetItems (proj, "Item3"), "A4");
+			Assert.AreEqual ("Q", GetItems (proj, "Item4"), "A5");
+			Assert.AreEqual ("", GetItems (proj, "Item5"), "A6");
+			Assert.AreEqual ("D", GetItems (proj, "Item6"), "A7");
 
-			Assert.AreEqual ("A;B;C", GetItems (proj, "ItemT1"), "ItemT1");
-			Assert.AreEqual ("AA;BB;CC", GetItems (proj, "ItemT2"), "ItemT2");
-			Assert.AreEqual ("(-A-);(-B-);(-C-)", GetItems (proj, "ItemT3"), "ItemT3");
-			Assert.AreEqual (".txt;.txt;.zip;.zip", GetItems (proj, "ItemT4"), "ItemT4");
-			Assert.AreEqual ("B/.txt;C/.txt;B/.zip;C/.zip", GetItems (proj, "ItemT5"), "ItemT5");
-			Assert.AreEqual ("A/X/B;A/X/C;B/X/B;B/X/C", GetItems (proj, "ItemT6"), "ItemT6");
+			Assert.AreEqual ("A;B;C", GetItems (proj, "ItemT1"), "A8");
+			Assert.AreEqual ("AA;BB;CC", GetItems (proj, "ItemT2"), "A9");
+			Assert.AreEqual ("(-A-);(-B-);(-C-)", GetItems (proj, "ItemT3"), "A10");
+			Assert.AreEqual (".txt;.txt;.zip;.zip", GetItems (proj, "ItemT4"), "A11");
+			Assert.AreEqual ("B/.txt;C/.txt;B/.zip;C/.zip", GetItems (proj, "ItemT5"), "A12");
+			Assert.AreEqual (@"A\X/B;A\X/C;B\X/B;B\X/C", GetItems (proj, "ItemT6"), "A13");
 
-			Assert.AreEqual ("A-B-C", GetItems (proj, "ItemS1"), "ItemS1");
-			Assert.AreEqual ("AxxBxxC", GetItems (proj, "ItemS2"), "ItemS2");
+			Assert.AreEqual ("A-B-C", GetItems (proj, "ItemS1"), "A14");
+			Assert.AreEqual ("AxxBxxC", GetItems (proj, "ItemS2"), "A15");
 			// Will fail.
-			Assert.AreEqual ("A-B-C", GetItems (proj, "ItemS3"), "ItemS3");
+			Assert.AreEqual ("A-B-C", GetItems (proj, "ItemS3"), "A16");
 		}
 
 		[Test]
