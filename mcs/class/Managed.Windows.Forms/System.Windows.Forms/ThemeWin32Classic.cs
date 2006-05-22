@@ -63,7 +63,7 @@ namespace System.Windows.Forms
 		{			
 			defaultWindowBackColor = this.ColorWindow;
 			defaultWindowForeColor = this.ColorControlText;
-			default_font =	new Font (FontFamily.GenericSansSerif, 8.25f);
+			default_font =	new Font (FontFamily.GenericSansSerif, 8f);
 			
 			/* Menu string formats */
 			string_format_menu_text = new StringFormat ();

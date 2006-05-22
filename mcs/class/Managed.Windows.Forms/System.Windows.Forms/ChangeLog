@@ -1,3 +1,10 @@
+2006-05-22  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* ThemeWin32Classic.cs: Changed DefaultFont emSize from 8.25 to 8
+	  to get the same width/height (5/13) on X11 as the default font has on
+	  win32. This means that our DefaultFont emSize is smaller than the 
+	  the MS SWF equivalent (even thought the width/height stays the same)
+
 2006-05-20  Jackson Harper  <jackson@ximian.com>
 
 	* MdiClient.cs:
