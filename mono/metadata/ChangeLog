@@ -1,3 +1,7 @@
+2006-05-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.c (start_wrapper): Fix a missed guint32 tid declaration.
+
 2005-10-25  Miguel de Icaza  <miguel@novell.com>
 
 	* assembly.c (mono_assemblies_init): Do not set the Mono root dir
