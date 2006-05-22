@@ -1,3 +1,7 @@
+2006-05-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.c (start_wrapper): Fix a missed guint32 tid declaration.
+
 2006-05-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c (encode_cattr_value): Fix yet another bug in the encoding of
