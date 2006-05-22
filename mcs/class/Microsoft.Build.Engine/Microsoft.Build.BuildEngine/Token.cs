@@ -62,6 +62,8 @@ namespace Microsoft.Build.BuildEngine {
 		Item,
 		Property,
 		Metadata,
+		Transform,
+		LiteralSubExpression,
 
 		FirstPunct,
 
@@ -78,6 +80,7 @@ namespace Microsoft.Build.BuildEngine {
 		Not,
 		And,
 		Or,
+		Apostrophe,
 		
 		LastPunct,
 		Invalid,

@@ -38,7 +38,6 @@ namespace Microsoft.Build.BuildEngine {
 	internal class OldExpression {
 	
 		Project	project;
-		ItemReference parentItemReference;
 		ExpressionCollection expressionCollection;
 	
 		public OldExpression (Project project)
@@ -111,7 +110,7 @@ namespace Microsoft.Build.BuildEngine {
 						break;
 					case ')':
 						if (pState == ParenState.Left && aState == ApostropheState.Out) {
-							ItemReference ir = new ItemReference (this);
+							ItemReference ir = new ItemReference (project);
 							ir.ParseSource (source.Substring (start, current - start + 1));
 							expressionCollection.Add (ir);
 							
@@ -139,7 +138,7 @@ namespace Microsoft.Build.BuildEngine {
 						break;
 					case ')':
 						if (pState == ParenState.Left) {
-							PropertyReference pr = new PropertyReference (this);
+							PropertyReference pr = new PropertyReference (project);
 							pr.ParseSource (source.Substring (start, current - start + 1));
 							expressionCollection.Add (pr);
 							
@@ -159,7 +158,7 @@ namespace Microsoft.Build.BuildEngine {
 						break;
 					case ')':
 						if (pState == ParenState.Left) {
-							MetadataReference mr = new MetadataReference (this);
+							MetadataReference mr = new MetadataReference ();
 							mr.ParseSource (source.Substring (start, current - start + 1));
 							expressionCollection.Add (mr);
 							

@@ -35,25 +35,36 @@ using Microsoft.Build.Utilities;
 namespace Microsoft.Build.BuildEngine {
 	internal class ItemReference {
 	
-		string		itemName;
-		OldExpression	parent;
-		string		separator;
-		OldExpression	transform;
+		string			itemName;
+		OldExpression		separator;
+		OldExpression		transform;
+		Project			parentProject;
 		
-		static	string	defaultSeparator = ";";
-	
-		public ItemReference (OldExpression parent)
+		/*
+		public ItemReference (Project parentProject, string itemName,
+				      LiteralExpression transform,
+				      LiteralExpression separator)
 		{
-			if (parent == null)
-				throw new Exception ("Parent Expression needed to find project.");
-			this.parent = parent;
+			this.parentProject = parentProject;
+			this.itemName = itemName;
+			this.transform = transform;
+			this.separator = separator;
+		}
+		*/
+	
+		public ItemReference (Project parentProject)
+		{
+			if (parentProject == null)
+				throw new ArgumentNullException ("Parent Project needed.");
+			this.parentProject = parentProject;
 			this.itemName = null;
-			this.separator = defaultSeparator;
+			this.separator = null;
 		}
 		
 		public void ParseSource (string source)
 		{
 			string sourceWithoutParens;
+			string separatorString = null;
 			ApostropheState aState = ApostropheState.Out;
 			ItemParsingState iState = ItemParsingState.Name;
 			int c = -1;
@@ -99,31 +110,35 @@ namespace Microsoft.Build.BuildEngine {
 			itemName = sourceWithoutParens.Substring (0, itemNameEnd + 1);
 			if (transformEnd != -1) {
 				if (separatorStart != -1) {
-					separator = sourceWithoutParens.Substring (separatorStart + 1, sourceWithoutParens.Length
+					separatorString = sourceWithoutParens.Substring (separatorStart + 1, sourceWithoutParens.Length
 						- separatorStart - 2);
-					transform = new OldExpression (parent.Project);
+					transform = new OldExpression (parentProject);
 					transform.ParseSource (sourceWithoutParens.Substring (itemNameEnd + 4,
 						transformEnd - itemNameEnd - 4));
 				} else {
-					transform = new OldExpression (parent.Project);
+					transform = new OldExpression (parentProject);
 					transform.ParseSource (sourceWithoutParens.Substring (itemNameEnd + 4,
 						sourceWithoutParens.Length - itemNameEnd - 5));
 				}
 			} else {
 				if (separatorStart != -1) {
-					separator = sourceWithoutParens.Substring (separatorStart + 1, sourceWithoutParens.Length
+					separatorString = sourceWithoutParens.Substring (separatorStart + 1, sourceWithoutParens.Length
 						- separatorStart - 2);
 				}
+			}
+			
+			if (separatorString != null) {
+				separator = new OldExpression (parentProject);
+				separator.ParseSource (separatorString);
 			}
 		}
 		
 		public ITaskItem[] ConvertToITaskItemArray ()
 		{
 			if (itemName != String.Empty) {
-				Project p = parent.Project;
 				BuildItemGroup big;
-				if (p.EvaluatedItemsByName.Contains (itemName)) {
-					big = (BuildItemGroup)p.EvaluatedItemsByName [itemName];
+				if (parentProject.EvaluatedItemsByName.Contains (itemName)) {
+					big = (BuildItemGroup)parentProject.EvaluatedItemsByName [itemName];
 					return big.ConvertToITaskItemArray (transform);
 				} else
 					return null;
@@ -134,10 +149,10 @@ namespace Microsoft.Build.BuildEngine {
 		public string ConvertToString ()
 		{
 			if (itemName != String.Empty) {
-				Project p = parent.Project;
 				BuildItemGroup big;
-				if (p.EvaluatedItemsByName.Contains (itemName)) {
-					big = (BuildItemGroup)p.EvaluatedItemsByName [itemName];
+				if (parentProject.EvaluatedItemsByName.Contains (itemName)) {
+					big = (BuildItemGroup)parentProject.EvaluatedItemsByName [itemName];
+					
 					return big.ConvertToString (transform, separator);
 				} else
 					return String.Empty;
@@ -147,10 +162,6 @@ namespace Microsoft.Build.BuildEngine {
 		
 		public string ItemName {
 			get { return itemName; }
-		}
-		
-		public string Separator {
-			get { return separator; }
 		}
 	}
 }

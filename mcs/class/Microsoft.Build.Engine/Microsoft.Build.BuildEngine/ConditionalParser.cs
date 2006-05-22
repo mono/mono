@@ -1,5 +1,5 @@
 //
-// LiteralExpression.cs
+// ConditionalParser.cs
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
@@ -33,11 +33,9 @@ using System.Text;
 
 namespace Microsoft.Build.BuildEngine {
 
-	internal class LiteralExpression {
-	
-		Tokenizer	tokenizer;
+	internal class ConditionalParser {
 		
-		public LiteralExpression ()
+		public ConditionalParser ()
 		{
 		}
 	}

@@ -81,8 +81,10 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 		
-		internal void Build ()
+		internal bool Build ()
 		{
+			bool result;
+		
 			buildState = BuildState.Started;
 			if (dependsOnTargets == null) {
 				;
@@ -105,11 +107,14 @@ namespace Microsoft.Build.BuildEngine {
 						throw new InvalidProjectFileException ("Cycle in target dependencies detected.");
 				}
 			}
-			RealBuild ();
+			
+			result = RealBuild ();
 			buildState = BuildState.Finished;
+			
+			return result;
 		}
 		
-		private void RealBuild ()
+		private bool RealBuild ()
 		{
 			bool executeOnErrors = false;
 			bool result = true;
@@ -132,6 +137,8 @@ namespace Microsoft.Build.BuildEngine {
 			
 			if (executeOnErrors == true)
 				ExecuteOnErrors ();
+				
+			return result;
 		}
 		
 		private void ExecuteOnErrors ()

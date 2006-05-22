@@ -36,18 +36,13 @@ namespace Microsoft.Build.BuildEngine {
 	
 		string		itemName;
 		string		metadataName;
-		OldExpression	parent;
 	
-		public MetadataReference (OldExpression parent)
+		public MetadataReference ()
 		{
-			this.itemName = null;
-			this.metadataName = null;
-			this.parent = parent;
 		}
 
-		public MetadataReference (OldExpression parent, string itemName, string metadataName)
+		public MetadataReference (string itemName, string metadataName)
 		{
-			this.parent = parent;
 			this.itemName = itemName;
 			this.metadataName = metadataName;
 		}

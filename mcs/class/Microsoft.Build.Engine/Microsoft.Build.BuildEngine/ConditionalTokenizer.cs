@@ -1,5 +1,5 @@
 //
-// Tokenizer.cs
+// ConditionalTokenizer.cs
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
@@ -36,7 +36,7 @@ using System.Text;
 
 namespace Microsoft.Build.BuildEngine {
 
-	internal sealed class Tokenizer {
+	internal sealed class ConditionalTokenizer {
 		string	inputString = null;
 		int	position = 0;
 		int	tokenPosition = 0;
@@ -48,7 +48,7 @@ namespace Microsoft.Build.BuildEngine {
 		static TokenType[] charIndexToTokenType = new TokenType[128];
 		static Hashtable keywordToTokenType = CollectionsUtil.CreateCaseInsensitiveHashtable ();
 
-		static Tokenizer ()
+		static ConditionalTokenizer ()
 		{
 			for (int i = 0; i < 128; i++)
 				charIndexToTokenType [i] = TokenType.Invalid;
@@ -58,13 +58,17 @@ namespace Microsoft.Build.BuildEngine {
 			
 		}
 		
-		public Tokenizer (string s, bool ignoreWhiteSpace)
+		public ConditionalTokenizer ()
+		{
+			this.ignoreWhiteSpace = true;
+		}
+		
+		public void Tokenize (string s)
 		{
 			this.inputString = s;
 			this.position = 0;
 			this.token = new Token (null, TokenType.BOF);
-			this.ignoreWhiteSpace = ignoreWhiteSpace;
-			
+
 			GetNextToken ();
 		}
 		
@@ -149,7 +153,7 @@ namespace Microsoft.Build.BuildEngine {
 				int ch2;
 
 				while ((ch2 = PeekChar ()) != -1)  {
-					if (!Char.IsWhiteSpace ((char)ch2))
+					if (!Char.IsWhiteSpace ((char) ch2))
 						break;
 
 					sb.Append ((char)ch2);
@@ -201,14 +205,10 @@ namespace Microsoft.Build.BuildEngine {
 			if (ch == '_' || Char.IsLetter (ch)) {
 				StringBuilder sb = new StringBuilder ();
 				
-				sb.Append (ch);
+				sb.Append ((char) ch);
 				ReadChar ();
 				
 				while ((i = PeekChar ()) != -1) {
-					ch = (char) i;
-					
-					sb.Append ((char)ReadChar ());
-					
 					if ((char) i == '_' || Char.IsLetterOrDigit ((char) i))
 						sb.Append ((char) ReadChar ());
 					else
@@ -222,25 +222,31 @@ namespace Microsoft.Build.BuildEngine {
 			ReadChar ();
 			
 			if (ch == '!' && PeekChar () == (int) '=') {
-				token = new Token ("!=",TokenType.NotEqual);
+				token = new Token ("!=", TokenType.NotEqual);
 				ReadChar ();
 				return;
 			}
 			
 			if (ch == '<' && PeekChar () == (int) '=') {
-				token = new Token ("<=",TokenType.LessOrEqual);
+				token = new Token ("<=", TokenType.LessOrEqual);
 				ReadChar ();
 				return;
 			}
 			
 			if (ch == '>' && PeekChar () == (int) '=') {
-				token = new Token (">=",TokenType.GreaterThanOrEqual);
+				token = new Token (">=", TokenType.GreaterThanOrEqual);
 				ReadChar ();
 				return;
 			}
 			
 			if (ch == '=' && PeekChar () == (int) '=') {
-				token = new Token ("==",TokenType.Equal);
+				token = new Token ("==", TokenType.Equal);
+				ReadChar ();
+				return;
+			}
+			
+			if (ch == '-' && PeekChar () == (int) '>') {
+				token = new Token ("->", TokenType.Transform);
 				ReadChar ();
 				return;
 			}
@@ -292,6 +298,7 @@ namespace Microsoft.Build.BuildEngine {
 			new CharToTokenType ('@', TokenType.Item),
 			new CharToTokenType ('$', TokenType.Property),
 			new CharToTokenType ('%', TokenType.Metadata),
+			new CharToTokenType ('\'', TokenType.Apostrophe),
 		};
 	}
 }

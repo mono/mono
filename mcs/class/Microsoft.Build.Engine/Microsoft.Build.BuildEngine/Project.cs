@@ -159,8 +159,7 @@ namespace Microsoft.Build.BuildEngine {
 			if (targets.Exists (targetName) == false)
 				throw new Exception ("Target specified to build does not exist.");
 			
-			this.targets [targetName].Build ();
-			return true;
+			return this.targets [targetName].Build ();
 		}
 		
 		[MonoTODO]

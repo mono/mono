@@ -129,6 +129,7 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 		
+		// FIXME: should do everything from task batching specification, not just run task once
 		public bool BatchBuildTask (BuildTask buildTask)
 		{
 			return buildTask.Execute ();

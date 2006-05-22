@@ -1,3 +1,16 @@
+2006-05-22  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Token: Added new few missing tokens.
+	* Target.cs, Project.cs: Patch from Matthew Metnesky.
+	* BuildItemGroup.cs, OldExpression.cs, MetadataReference.cs,
+	ItemReference.cs, PropertyReference.cs, ConditionalTokenizer.cs,
+	ConditionalParser.cs, Tokenizer.cs, LiteralExpression.cs,
+	LiteralTokenizer.cs:
+	Removed literal expression parsing based on tokenizer and
+	parser. It needs to be done by regex.
+	
+	Moved tokenizer to ConditionalTokenizer.cs.
+
 2006-05-05  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* ExpressionCollection.cs, BuildItemGroup.cs, BuildItem.cs,
