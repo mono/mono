@@ -1,3 +1,7 @@
+2006-05-22  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Message.cs: Made messageImportance local variable.
+
 2006-05-03  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* MakeDir.cs: Removed warning.

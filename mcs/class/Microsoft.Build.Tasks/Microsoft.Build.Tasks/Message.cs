@@ -33,7 +33,6 @@ using Microsoft.Build.Tasks;
 namespace Microsoft.Build.Tasks {
 	public sealed class Message : TaskExtension {
 	
-		MessageImportance	messageImportance;
 		string			importance;
 		string			text;
 	
@@ -43,6 +42,8 @@ namespace Microsoft.Build.Tasks {
 
 		public override bool Execute ()
 		{
+			MessageImportance	messageImportance;
+			
 			if (importance == null)
 				messageImportance = MessageImportance.Normal;
 			else if (importance == "Low")
@@ -58,7 +59,9 @@ namespace Microsoft.Build.Tasks {
 					"Invalid Importance attribute.", null);
 				return false;
 			}
+			
 			Log.LogMessage (messageImportance, text, null);
+
 			return true;
 		}
 		
