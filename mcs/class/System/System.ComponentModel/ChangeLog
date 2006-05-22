@@ -1,3 +1,7 @@
+2006-05-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TypeDescriptor.cs : GetProperties() does not return indexers.
+
 2006-05-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ReflectionPropertyDescriptor.cs,

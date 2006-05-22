@@ -502,6 +502,21 @@ namespace MonoTests.System.ComponentModel
 			TestConverter converter = (TestConverter) t;
 			AssertEquals ("#03", typeof (TestConverterClass), converter.Type);
 		}
+
+		[Test]
+		public void GetPropertiesIgnoreIndexers ()
+		{
+			PropertyDescriptorCollection pc =
+				TypeDescriptor.GetProperties (typeof (string));
+			// There are two string properties: Length and Chars.
+			// Chars is an indexer.
+			//
+			// Future version of CLI might contain some additional
+			// properties. In that case simply increase the
+			// number. (Also, it is fine to just remove #2.)
+			AssertEquals ("#1", 1, pc.Count);
+			AssertEquals ("#2", "Length", pc [0].Name);
+		}
 	}
 }
 

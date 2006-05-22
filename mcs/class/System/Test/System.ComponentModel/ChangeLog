@@ -1,3 +1,7 @@
+2006-05-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TypeDescriptorTest.cs : added GetPropertiesIgnoreIndexers().
+
 2006-04-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ByteConverterTests.cs,

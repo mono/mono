@@ -817,11 +817,12 @@ public sealed class TypeDescriptor
 				return _properties;
 			
 			PropertyInfo[] props = InfoType.GetProperties (BindingFlags.Instance | BindingFlags.Public);
-			PropertyDescriptor[] descs = new PropertyDescriptor [props.Length];
+			ArrayList descs = new ArrayList (props.Length);
 			for (int n=0; n<props.Length; n++)
-				descs [n] = new ReflectionPropertyDescriptor (props[n]);
+				if (props [n].GetIndexParameters ().Length == 0)
+					descs.Add (new ReflectionPropertyDescriptor (props[n]));
 
-			_properties = new PropertyDescriptorCollection (descs, true);
+			_properties = new PropertyDescriptorCollection ((PropertyDescriptor[]) descs.ToArray (typeof (PropertyDescriptor)), true);
 			return _properties;
 		}
 	}
