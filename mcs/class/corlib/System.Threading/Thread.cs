@@ -152,7 +152,7 @@ namespace System.Threading
 
 		internal static int CurrentThreadId {
 			get {
-				return CurrentThread.thread_id;
+				return (int)(CurrentThread.thread_id);
 			}
 		}
 
@@ -853,7 +853,7 @@ namespace System.Threading
 		}
 
 		public int ManagedThreadId {
-			get { return thread_id; }
+			get { return (int)thread_id; }
 		}
 
 		[MonoTODO]
@@ -913,7 +913,7 @@ namespace System.Threading
 		public override int GetHashCode ()
 		{
 			// ??? overridden but not guaranteed to be unique ???
-			return thread_id;
+			return (int)thread_id;
 		}
 
 		public void Start (object parameter)
