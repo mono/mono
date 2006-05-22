@@ -1,5 +1,4 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" >
-	<Import Project="$(MSBuildBinPath)/Microsoft.Common.tasks" />
 	<ItemGroup>
 		<FilesToCopy Include="a;b" />
 	</ItemGroup>

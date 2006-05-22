@@ -1,7 +1,6 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" >
-	<Import Project="$(MSBuildBinPath)/Microsoft.Common.tasks" />
 	<PropertyGroup>
-		<Command>ls</Command>
+		<Command>/bin/false</Command>
 	</PropertyGroup>
 	<Target Name="Main" >
 		<Exec Command="$(Command)" >

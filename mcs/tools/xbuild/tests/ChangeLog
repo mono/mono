@@ -1,3 +1,11 @@
+2006-05-22  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Touch.csproj, Message.csproj, Exec.csproj, WriteLinesToFile.csproj,
+	Error.csproj, ReadLinesFromFile.csproj, FindUnderPath.csproj,
+	RemoveDir.csproj, AL.csproj, MSBuild.csproj, SignFile.csproj,
+	GenerateResource.csproj, Delete.csproj, Warning.csproj, Copy.csproj,
+	MakeDir.csproj: Removed hackish import.
+
 2005-09-25  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* AL/AL.csproj: Added nearly empty target.
