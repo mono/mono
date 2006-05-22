@@ -25,6 +25,7 @@ namespace Test1
 		{
 			string res = Helper.Instance.RunInPage (_RenderSiteMapPath);
 			Console.WriteLine (res);
+			Assert.IsFalse (string.IsNullOrEmpty (res));
 		}
 
 		public static void _RenderSiteMapPath (HttpContext c, Page p, object o)
@@ -38,6 +39,7 @@ namespace Test1
 		{
 			string res = Helper.Instance.RunInPage (_RenderSiteMapPathProp);
 			Console.WriteLine (res);
+			Assert.IsFalse (string.IsNullOrEmpty (res));
 		}
 
 		public static void _RenderSiteMapPathProp (HttpContext c, Page p, object o)
@@ -52,6 +54,7 @@ namespace Test1
 		{
 			string res = Helper.Instance.RunInPageWithMaster (_TestMasterPage);
 			Console.WriteLine (res);
+			Assert.IsFalse (string.IsNullOrEmpty (res));
 		}
 
 		public static void _TestMasterPage (HttpContext c, Page p, object o)
@@ -65,6 +68,7 @@ namespace Test1
 		{
 			string res = Helper.Instance.RunInPage(_TestStyle);
 			Console.WriteLine (res);
+			Assert.IsFalse (string.IsNullOrEmpty (res));
 		}
 
 		public static void _TestStyle (HttpContext c, Page p, object param)
