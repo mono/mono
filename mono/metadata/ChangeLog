@@ -1,3 +1,7 @@
+2006-05-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.c (start_wrapper): Fix a missed guint32 tid declaration.
+
 2006-05-12  Wade Berrier <wberrier@novell.com>
 
 	* threads.c: Define G_GSIZE_FORMAT for systems with glib < 2.6
