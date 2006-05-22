@@ -1,3 +1,7 @@
+2006-05-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* Thread.cs: Change thread_id to int64 to match the unmanaged structure.
+
 2005-04-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ReaderWriterLock.cs: fix random ApplicationException errors. Tested

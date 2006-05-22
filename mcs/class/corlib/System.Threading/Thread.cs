@@ -62,7 +62,7 @@ namespace System.Threading
 		private object abort_exc;
 		internal object abort_state;
 		/* thread_id is only accessed from unmanaged code */
-		private int thread_id;
+		private Int64 thread_id;
 		
 		/* start_notify is used by the runtime to signal that Start()
 		 * is ok to return
