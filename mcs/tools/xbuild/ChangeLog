@@ -1,3 +1,7 @@
+2006-05-22  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Main.cs: Patch from Matthew Metnetsky.
+
 2006-04-19  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* XBuild.targets: Removed.

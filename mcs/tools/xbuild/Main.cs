@@ -64,6 +64,8 @@ namespace Mono.XBuild.CommandLine {
 		
 		public void Execute ()
 		{
+			bool result = false;
+			
 			try {
 				parameters.ParseArguments (args);
 				
@@ -103,7 +105,7 @@ namespace Mono.XBuild.CommandLine {
 
 				project.Load (parameters.ProjectFile);
 				
-				engine.BuildProject (project, parameters.Targets, new Hashtable ());
+				result = engine.BuildProject (project, parameters.Targets, new Hashtable ());
 			}
 			catch (CommandLineException cex) {
 				switch (cex.ErrorCode) {
@@ -146,7 +148,10 @@ namespace Mono.XBuild.CommandLine {
 			finally {
 				if (engine != null)
 					engine.UnregisterAllLoggers ();
+
+				Environment.Exit ((result ? 0 : 1));
 			}
+
 		}
 		
 		private void Display (string[] array) {
