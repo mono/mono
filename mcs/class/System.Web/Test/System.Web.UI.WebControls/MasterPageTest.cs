@@ -83,6 +83,8 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
+		[Category ("NotWorking")]
+		[Category ("NunitWeb")]
 		public void MasterPage_Render()
 		{
 			string PageRenderHtml = Helper.Instance.RunInPageWithMaster (TestRenderDefault, null);

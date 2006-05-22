@@ -411,7 +411,7 @@ namespace MonoTests.System.Web.UI.WebControls
 	        [Category ("NotWorking")]  //Must be running after hosting bug resolve
 		public void Menu_RenderEndTag ()
 		{
-			Thread.Sleep (1000);
+			Thread.Sleep (100);
 		        Helper.Instance.RunInPage (TestEndTagRender, null);
 		}
 		public static void TestEndTagRender (HttpContext c, Page p, object param)
@@ -504,7 +504,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category ("NotWorking")]  //Must be running after hosting bug resolve
 		public void Menu_DefaultRender ()
 		{
-			Thread.Sleep (1000);
+			Thread.Sleep (100);
 		        string RenderedPageHtml = Helper.Instance.RunInPage (TestDefaultRender, null);
 		        string RenderedControlHtml = WebTest.GetControlFromPageHtml (RenderedPageHtml);
 		        string OriginControlHtml = "";
@@ -667,7 +667,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category ("NotWorking")]  //Must be running after hosting bug resolve
 		public void Menu_PreRenderEvent ()
 		{
-			Thread.Sleep (1000);
+			Thread.Sleep (100);
 		        Helper.Instance.RunInPage (PreRenderEvent, null);
 		}
 		public void PreRenderEvent (HttpContext c, Page p, object param)
