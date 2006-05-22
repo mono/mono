@@ -1141,16 +1141,23 @@ namespace System.Windows.Forms
 
 		ListViewItem selection_start;
 
-		private void SelectItems (ArrayList sel_items)
+		private bool SelectItems (ArrayList sel_items)
 		{
+			bool changed = false;
 			multiselecting = true;
 			ArrayList curr_items = (ArrayList) SelectedItems.list.Clone ();
 			foreach (ListViewItem item in curr_items)
-				if (!sel_items.Contains (item))
+				if (!sel_items.Contains (item)) {
 					item.Selected = false;
+					changed = true;
+				}
 			foreach (ListViewItem item in sel_items)
-				item.Selected = true;
+				if (!item.Selected) {
+					item.Selected = true;
+					changed = true;
+				}
 			multiselecting = false;
+			return changed;
 		}
 
 		private void UpdateMultiSelection (int index)
@@ -1176,12 +1183,14 @@ namespace System.Windows.Forms
 						    curr.col >= left && curr.col <= right)
 							list.Add (curr);
 				}
-				SelectItems (list);
+				if (SelectItems (list))
+					OnSelectedIndexChanged (EventArgs.Empty);
 			} else if (!ctrl_pressed) {
 				SelectedItems.Clear ();
 				SelectedIndices.list.Clear ();
 				item.Selected = true;
 				selection_start = item;
+				OnSelectedIndexChanged (EventArgs.Empty);
 			}
 		}
 
@@ -1220,8 +1229,10 @@ namespace System.Windows.Forms
 
 			if (MultiSelect)
 				UpdateMultiSelection (index);
-			else
+			else if (!items [index].Selected) {
 				items [index].Selected = true;
+				OnSelectedIndexChanged (EventArgs.Empty);
+			}
 
 			SetFocusedItem (items [index]);				
 			EnsureVisible (index);

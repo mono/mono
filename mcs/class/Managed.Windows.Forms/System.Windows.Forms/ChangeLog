@@ -1,5 +1,10 @@
 2006-05-22  Mike Kestner  <mkestner@novell.com>
 
+	* ListView.cs: raise SelectedIndexChanged on keyboard selection.
+	Fixes #78463.
+
+2006-05-22  Mike Kestner  <mkestner@novell.com>
+
 	* ComboBox.cs: Refresh in EndUpdate to pick up all the dropped Paint
 	requests. Fix a misspelled parameter and a copy paste exception error
 	in Select.
