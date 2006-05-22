@@ -577,6 +577,7 @@ namespace System.Windows.Forms
 		{
 			suspend_ctrlupdate = false;
 			UpdatedItems ();
+			Refresh ();
 		}
 
 		public int FindString (string s)
@@ -821,18 +822,18 @@ namespace System.Windows.Forms
 				item_heights.Remove (Items [index]);
 		}
 
-		public void Select (int start, int lenght)
+		public void Select (int start, int length)
 		{
 			if (start < 0)
 				throw new ArgumentException ("Start cannot be less than zero");
 				
-			if (lenght < 0)
-				throw new ArgumentException ("Start cannot be less than zero");
+			if (length < 0)
+				throw new ArgumentException ("length cannot be less than zero");
 				
 			if (dropdown_style == ComboBoxStyle.DropDownList)
 				return;
 				
-			textbox_ctrl.Select (start, lenght);
+			textbox_ctrl.Select (start, length);
 		}
 
 		public void SelectAll ()
@@ -1152,9 +1153,6 @@ namespace System.Windows.Forms
 
 		#endregion Private Methods
 
-		/*
-			ComboBox.ObjectCollection
-		*/
 		[ListBindableAttribute (false)]
 		public class ObjectCollection : IList, ICollection, IEnumerable
 		{
