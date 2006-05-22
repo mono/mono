@@ -1,5 +1,5 @@
 //
-// ErrorTest.cs
+// Consts.cs
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
@@ -25,57 +25,12 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
-using Microsoft.Build.BuildEngine;
-using Microsoft.Build.Framework;
-using Microsoft.Build.Tasks;
-using Microsoft.Build.Utilities;
-using NUnit.Framework;
-
 namespace MonoTests.Microsoft.Build.Tasks {
-	[TestFixture]
-	public class ErrorTest {
 
-		Engine engine;
-		Project project;
+	public static class Consts {
 
-		[Test]
-		public void TestAssignment ()
-		{
-			string code = "code";
-			string helpKeyword = "helpKeyword";
-			string text = "text";
-			
-			Error error = new Error ();
-			
-			error.Code = code;
-			error.HelpKeyword = helpKeyword;
-			error.Text = text;
-
-			Assert.AreEqual (code, error.Code, "#1");
-			Assert.AreEqual (helpKeyword, error.HelpKeyword, "#2");
-			Assert.AreEqual (text, error.Text, "#3");
-		}
-
-		[Test]
-		public void TestExecution ()
-		{
-			string documentString = @"
-                                <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-					<Target Name='1'>
-						<Error Text='Text' HelpKeyword='HelpKeyword' Code='Code' />
-					</Target>
-				</Project>
-			";
-			
-			engine = new Engine (Consts.BinPath);
-			project = engine.CreateNewProject ();
-			project.LoadXml (documentString);
-
-			bool result = project.Build ("1");
-
-			Assert.AreEqual (false, result, "#1");
+		public static string BinPath {
+			get { return "../../tools/xbuild/xbuild"; }
 		}
 	}
 }
-        
