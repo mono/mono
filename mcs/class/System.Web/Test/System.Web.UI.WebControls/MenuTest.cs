@@ -411,7 +411,7 @@ namespace MonoTests.System.Web.UI.WebControls
 	        [Category ("NotWorking")]  //Must be running after hosting bug resolve
 		public void Menu_RenderEndTag ()
 		{
-			Thread.Sleep (100);
+			Thread.Sleep (1000);
 		        Helper.Instance.RunInPage (TestEndTagRender, null);
 		}
 		public static void TestEndTagRender (HttpContext c, Page p, object param)
@@ -493,6 +493,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			PokerMenu b = new PokerMenu ();
 		        PokerMenu copy = new PokerMenu ();
 			b.Font.Size = 10;
+			object state = b.DoSaveViewState ();
+			copy.DoLoadViewState (state);
 		        Assert.AreEqual ("10pt", copy.Font.Size.ToString() , "ViewState#7");			
 		}
 		 
@@ -504,7 +506,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category ("NotWorking")]  //Must be running after hosting bug resolve
 		public void Menu_DefaultRender ()
 		{
-			Thread.Sleep (100);
+			Thread.Sleep (1000);
 		        string RenderedPageHtml = Helper.Instance.RunInPage (TestDefaultRender, null);
 		        string RenderedControlHtml = WebTest.GetControlFromPageHtml (RenderedPageHtml);
 		        string OriginControlHtml = "";
@@ -667,7 +669,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category ("NotWorking")]  //Must be running after hosting bug resolve
 		public void Menu_PreRenderEvent ()
 		{
-			Thread.Sleep (100);
+			Thread.Sleep (1000);
 		        Helper.Instance.RunInPage (PreRenderEvent, null);
 		}
 		public void PreRenderEvent (HttpContext c, Page p, object param)
