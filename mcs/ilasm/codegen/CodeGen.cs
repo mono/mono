@@ -476,9 +476,9 @@ namespace Mono.ILASM {
 
                         PermissionSet ps = perm as PermissionSet;
                         if (ps == null)
-                                CurrentDeclSecurityTarget.AddPermission (sec_action, (IPermission) perm);
+                                CurrentDeclSecurityTarget.DeclSecurity.AddPermission (sec_action, (IPermission) perm);
                         else
-                                CurrentDeclSecurityTarget.AddPermissionSet (sec_action, ps);
+                                CurrentDeclSecurityTarget.DeclSecurity.AddPermissionSet (sec_action, ps);
                 }
 
                 public void Write ()

@@ -159,6 +159,14 @@ namespace Mono.ILASM {
                         }
                 }
 
+                public DeclSecurity DeclSecurity {
+                        get {
+                                if (decl_sec == null)
+                                        decl_sec = new DeclSecurity ();
+                                return decl_sec;
+                        }
+                }
+
                 public override void Resolve (CodeGen code_gen)
                 {
                         if (is_resolved)
@@ -193,22 +201,6 @@ namespace Mono.ILASM {
                         return AssemblyRef;
                 }
                 
-                public void AddPermissionSet (PEAPI.SecurityAction sec_action, PermissionSet ps)
-                {
-                        if (decl_sec == null)
-                                decl_sec = new DeclSecurity ();
-
-                        decl_sec.AddPermissionSet (sec_action, ps);        
-                }
-                
-                public void AddPermission (PEAPI.SecurityAction sec_action, IPermission iper)
-                {
-                        if (decl_sec == null)
-                                decl_sec = new DeclSecurity ();
-
-                        decl_sec.AddPermission (sec_action, iper);
-                }
-
                 public void SetVersion (int major, int minor, int build, int revision)
                 {
                         this.major = major;

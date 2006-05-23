@@ -16,8 +16,7 @@ using System.Security.Permissions;
 namespace Mono.ILASM {
 
         public interface IDeclSecurityTarget {
-                void AddPermission (PEAPI.SecurityAction sec_action, IPermission iper);
-                void AddPermissionSet (PEAPI.SecurityAction sec_action, PermissionSet perm_set);
+                DeclSecurity DeclSecurity { get; }
         }
 
         public class DeclSecurity {
