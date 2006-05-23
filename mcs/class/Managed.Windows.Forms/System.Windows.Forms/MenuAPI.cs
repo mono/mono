@@ -24,8 +24,6 @@
 //	Mike Kestner  <mkestner@novell.com>
 //
 
-// NOT COMPLETE
-
 using System.Collections;
 using System.Drawing;
 using System.Threading;
@@ -110,9 +108,11 @@ namespace System.Windows.Forms {
 		MenuItem GetItemAtXY (int x, int y)
 		{
 			Point pnt = new Point (x, y);
-			MenuItem item = FindItemByCoords (TopMenu, pnt);
-			if (item == null && TopMenu.SelectedItem != null)
+			MenuItem item = null;
+			if (TopMenu.SelectedItem != null)
 				item = FindSubItemByCoord (TopMenu.SelectedItem, Control.MousePosition);
+			if (item == null)
+				item = FindItemByCoords (TopMenu, pnt);
 			return item;
 		}
 
@@ -285,7 +285,7 @@ namespace System.Windows.Forms {
 			
 			Point pnt;
 			if (menu is MainMenu)
-				pnt = new Point (item.X, 0);
+				pnt = new Point (item.X, item.Y + item.Height - 2 - menu.Height);
 			else
 				pnt = new Point (item.X + item.Width, item.Y + 1);
 			pnt = menu.Wnd.PointToScreen (pnt);

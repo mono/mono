@@ -1,3 +1,9 @@
+2006-05-23  Mike Kestner  <mkestner@novell.com>
+
+	* MenuAPI.cs: fix placement of submenus for multi-row menu bars, and
+	prefer submenus to the top menu for item lookup, to avoid popping down
+	top-row items.
+
 2006-05-23  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ThemeWin32Classic.cs: Rewrote CPCPDrawScrollButton to drop
