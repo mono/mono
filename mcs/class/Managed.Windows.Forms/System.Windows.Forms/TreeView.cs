@@ -459,11 +459,6 @@ namespace System.Windows.Forms {
 			update_stack++;
 		}
 
-		public void CollapseAll ()
-		{
-			root_node.CollapseAll ();
-		}
-
 		public void EndUpdate ()
 		{
 			if (update_stack > 1) {
@@ -479,8 +474,19 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public void ExpandAll () {
+		public void ExpandAll ()
+		{
+			BeginUpdate ();
 			root_node.ExpandAll ();
+			EndUpdate ();
+		}
+
+		
+		public void CollapseAll ()
+		{
+			BeginUpdate ();
+			root_node.CollapseAll ();
+			EndUpdate ();
 		}
 
 		public TreeNode GetNodeAt (Point pt) {

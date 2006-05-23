@@ -1,5 +1,10 @@
 2006-05-23  Jackson Harper  <jackson@ximian.com>
 
+	* TreeView.cs: Use begin/end update when doing expand/collapse all
+	so that we don't get flicker on the scrollbar.
+
+2006-05-23  Jackson Harper  <jackson@ximian.com>
+
 	* TreeNode.cs: Bounds are computed 'on the fly' now.  This allows
 	treenode calculations to be independant of the painting code. To
 	do this nodes track a visible order which is calculated by the
