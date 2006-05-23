@@ -1,3 +1,8 @@
+2006-05-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* os_dep.c (GC_unix_get_mem): Add an assert to bail out early if the runtime is
+	run on a machine with smaller page size than HBLKSIZE.
+
 2006-05-19  Martin Baulig  <martin@ximian.com>
 
 	* include/gc.h: Don't include "libgc-mono-debugger.h".
