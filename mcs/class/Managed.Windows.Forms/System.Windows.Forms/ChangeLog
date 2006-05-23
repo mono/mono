@@ -1,3 +1,10 @@
+2006-05-23  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Hwnd.cs (Dispose): Remove any pending exposures. XEventQueue holds
+	  a reference to the hwnd and will not remove it unless there are
+	  no pending exposures (fixes #78341)
+	* XplatUI.cs: Improved debug
+
 2006-05-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MenuAPI.cs : don't handle OnClick event when it was not the left

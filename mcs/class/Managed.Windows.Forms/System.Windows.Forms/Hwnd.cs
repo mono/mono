@@ -103,6 +103,8 @@ namespace System.Windows.Forms {
 		}
 
 		public void Dispose() {
+			expose_pending = false;
+			nc_expose_pending = false;
 			windows.Remove(client_window);
 			windows.Remove(whole_window);
 			for (int i = 0; i < marshal_free_list.Count; i++) {
