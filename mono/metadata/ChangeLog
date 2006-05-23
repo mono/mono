@@ -1,4 +1,10 @@
 
+Tue May 23 13:44:11 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am, gc-internal.h, reflection.c: updates for the new GC.
+	* sgen.-gc.c, sgen-gc.h: simple generational compacting GC
+	implementation.
+
 Tue May 23 13:40:30 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c: precise GC support: objects can't be stored in unmanaged
