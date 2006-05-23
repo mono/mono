@@ -1,3 +1,6 @@
+2006-05-23 Boris Kirzner <borisk@mainsoft.com>
+	* OleDbConnection.cs: add MonoTODO to GetOleDbSchemaTable.
+
 2006-05-09  Konstantin Triger <kostat@mainsoft.com>
 
 	* OleDbConnection.cs: fix GetOleDbSchemaTable for OleDbSchemaGuid.Tables.
