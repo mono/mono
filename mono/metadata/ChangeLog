@@ -1,4 +1,8 @@
 
+Tue May 23 12:38:56 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* class.c, gc.c: sgen and precise GC updates.
+
 Tue May 23 12:33:24 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
 	* marshal.h, marshal.c: added write barrier wrapper and precise type
