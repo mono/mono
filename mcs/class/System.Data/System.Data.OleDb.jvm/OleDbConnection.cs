@@ -142,6 +142,7 @@ namespace System.Data.OleDb
 			return new OleDbException(message, null, this);	
 		}
 
+		[MonoTODO]
 		public DataTable GetOleDbSchemaTable (Guid schema, object[] restrictions)
 		{
 			if (State != ConnectionState.Open)
