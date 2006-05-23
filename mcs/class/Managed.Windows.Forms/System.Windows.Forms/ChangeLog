@@ -1,5 +1,9 @@
 2006-05-23  Chris Toshok  <toshok@ximian.com>
 
+	* DataGridColumnStyle.cs
+	(IDataGridColumnStyleEditingNotificationService.ColumnStartedEditing):
+	call the non-interface version.
+
 	* ThemeWin32Classic.cs (DataGridPaintColumsHdrs): intersect the
 	header rectangle with the clip rectangle so we don't redraw the
 	entire header for just a small area.  Gets rid of the last flicker

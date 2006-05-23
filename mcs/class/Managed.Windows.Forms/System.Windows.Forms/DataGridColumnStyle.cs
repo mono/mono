@@ -453,7 +453,7 @@ namespace System.Windows.Forms
 
 		void  IDataGridColumnStyleEditingNotificationService.ColumnStartedEditing (Control editingControl)
 		{
-
+			ColumnStartedEditing (editingControl);
 		}
 
 		protected virtual void Invalidate ()
