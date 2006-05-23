@@ -970,7 +970,6 @@ namespace System.Windows.Forms {
 			if (Width <= 0 || Height <=  0 || Visible == false)
 				return;
 
-			Console.WriteLine ("CLIP:  {0}", pe.ClipRectangle);
 			Draw (pe.ClipRectangle, pe.Graphics);
 		}
 
