@@ -1,3 +1,10 @@
+2006-05-23  Mike Kestner  <mkestner@novell.com>
+
+	* ListViewItem.cs: remove size for line hack from LargeIcon layout.
+	* ThemeWin32Classic.cs: don't draw line.  it's really the top of a
+	poorly placed checkbox on the MS control.  Fixes Alex's unfiled
+	Critical bug report.
+
 2006-05-23  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* PictureBox.cs: Fixed broken ControlStyles. Unit test no longer fails,

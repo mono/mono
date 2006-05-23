@@ -1501,9 +1501,8 @@ namespace System.Windows.Forms
 			}
 
 			if (control.View == View.LargeIcon) {
-				if (control.LargeImageList == null) {
-					dc.DrawLine (ResPool.GetSizedPen (this.ColorWindowText, 2), icon_rect.Left, icon_rect.Y, icon_rect.Left + 11, icon_rect.Y);
-				} else if (item.ImageIndex > -1 && item.ImageIndex < control.LargeImageList.Images.Count)
+				if (item.ImageIndex > -1 && control.LargeImageList != null &&
+				    item.ImageIndex < control.LargeImageList.Images.Count)
 					control.LargeImageList.Draw (dc, icon_rect.Location, item.ImageIndex);
 			} else {
 				if (item.ImageIndex > -1 && control.SmallImageList != null &&

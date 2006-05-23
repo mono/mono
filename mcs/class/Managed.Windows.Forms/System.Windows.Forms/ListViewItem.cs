@@ -552,9 +552,7 @@ namespace System.Windows.Forms
 			case View.LargeIcon:
 				label_rect = icon_rect = Rectangle.Empty;
 
-				if (owner.LargeImageList == null) {
-					icon_rect.Size = new Size (12, 2);
-				} else {
+				if (owner.LargeImageList != null) {
 					icon_rect.Width = owner.LargeImageList.ImageSize.Width;
 					icon_rect.Height = owner.LargeImageList.ImageSize.Height;
 				}
