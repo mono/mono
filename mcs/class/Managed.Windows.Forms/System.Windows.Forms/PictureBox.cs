@@ -58,6 +58,8 @@ namespace System.Windows.Forms {
 			redraw = true;
 			recalc = true;
 			allow_drop = false;
+			SetStyle (ControlStyles.DoubleBuffer, true);
+			SetStyle (ControlStyles.Opaque, false);
 			SetStyle (ControlStyles.Selectable, false);
 			SetStyle (ControlStyles.SupportsTransparentBackColor, true);
 			HandleCreated += new EventHandler(PictureBox_HandleCreated);
