@@ -1,4 +1,10 @@
 
+Tue May 23 13:40:30 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: precise GC support: objects can't be stored in unmanaged
+	memory anymore, even if they are kept alive by other references: since
+	they can move the GC needs to be able to always find them.
+
 Tue May 23 12:57:08 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
 	* object.c: precise GC support for static fields. Support
