@@ -903,8 +903,6 @@ namespace System.Windows.Forms
 			rect_columnhdr.Y = columns_area.Y;
 			rect_columnhdr.Height = columns_area.Height;
 			
-			current_clip = new Region (columns_area);
-			g.Clip = current_clip;
 			int column_cnt = grid.first_visiblecolumn + grid.visiblecolumn_count;
 			for (int column = grid.first_visiblecolumn; column < column_cnt; column++) {
 				
@@ -915,12 +913,15 @@ namespace System.Windows.Forms
 				if (clip.IntersectsWith (rect_columnhdr) == false)
 					continue;
 
+				current_clip = new Region (rect_columnhdr);
+				current_clip.Intersect (clip);
+				g.Clip = current_clip;
+
 				grid.CurrentTableStyle.GridColumnStyles[column].PaintHeader (g, rect_columnhdr, column);
 
-				
+				current_clip.Dispose ();
 			}
 
-			current_clip.Dispose ();
 			g.ResetClip ();
 				
 			Rectangle not_usedarea = columnshdrs_area_complete;				
@@ -1114,8 +1115,8 @@ namespace System.Windows.Forms
 				rect_cell.Width = grid.CurrentTableStyle.GridColumnStyles[column].Width;
 
 				if (clip.IntersectsWith (rect_cell)) {
-					current_clip = new Region (row_rect);
-					current_clip.Intersect (rect_cell);
+					current_clip = new Region (rect_cell);
+					current_clip.Intersect (clip);
 					g.Clip = current_clip;
 
 					if (is_newrow) {

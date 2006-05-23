@@ -1,3 +1,11 @@
+2006-05-23  Chris Toshok  <toshok@ximian.com>
+
+	* ThemeWin32Classic.cs (DataGridPaintColumsHdrs): intersect the
+	header rectangle with the clip rectangle so we don't redraw the
+	entire header for just a small area.  Gets rid of the last flicker
+	when horizontally scrolling.
+	(DataGridPaintRow): same.
+
 2006-05-23  Mike Kestner  <mkestner@novell.com>
 
 	* ListViewItem.cs: remove size for line hack from LargeIcon layout.
