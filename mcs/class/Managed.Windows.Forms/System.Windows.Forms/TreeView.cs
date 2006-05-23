@@ -45,7 +45,7 @@ namespace System.Windows.Forms {
 		internal bool nodes_added;
 		private TreeNodeCollection nodes;
 
-		private TreeNode selected_node = null;
+		internal TreeNode selected_node = null;
 		private TreeNode focused_node = null;
 		private bool select_mmove = false;
 
@@ -68,15 +68,11 @@ namespace System.Windows.Forms {
 		private bool show_plus_minus = true;
 		private bool hide_selection = true;
 
-		private bool add_hscroll;
-		private bool add_vscroll;
-		private int max_node_width;
+		private int max_visible_order;
 		private VScrollBar vbar;
-		private int skipped_nodes;
 		private HScrollBar hbar;
-		private int hbar_offset;
-		private int used_height;
-		private bool update_node_bounds;
+		internal int skipped_nodes;
+		internal int hbar_offset;
 		
 		private int update_stack;
 		private bool update_needed;
@@ -94,7 +90,6 @@ namespace System.Windows.Forms {
 
 		private Pen dash;
 		private StringFormat string_format;
-		private int open_node_count = -1;
 
 		private int drag_begin_x = 0;
 		private int drag_begin_y = 0;
@@ -127,6 +122,19 @@ namespace System.Windows.Forms {
 			string_format = new StringFormat ();
 			string_format.LineAlignment = StringAlignment.Center;
 			string_format.Alignment = StringAlignment.Center;
+
+			
+			vbar = new ImplicitVScrollBar ();
+			hbar = new ImplicitHScrollBar ();
+
+			vbar.Visible = false;
+			hbar.Visible = false;
+			vbar.ValueChanged += new EventHandler (VScrollBarValueChanged);
+			hbar.ValueChanged += new EventHandler (HScrollBarValueChanged);
+			SuspendLayout ();
+			Controls.AddImplicit (vbar);
+			Controls.AddImplicit (hbar);
+			ResumeLayout ();
 		}
 
 		#endregion	// Public Constructors
@@ -463,6 +471,8 @@ namespace System.Windows.Forms {
 			} else {
 				update_stack = 0;
 				if (update_needed) {
+					RecalculateVisibleOrder (root_node);
+					UpdateScrollBars ();
 					Invalidate (ViewportRectangle);
 					update_needed = false;
 				}
@@ -711,19 +721,6 @@ namespace System.Windows.Forms {
 
 		protected override void OnHandleCreated (EventArgs e) {
 			base.OnHandleCreated (e);
-
-			vbar = new ImplicitVScrollBar ();
-			hbar = new ImplicitHScrollBar ();
-
-			vbar.Visible = false;
-			hbar.Visible = false;
-			vbar.ValueChanged += new EventHandler (VScrollBarValueChanged);
-			hbar.ValueChanged += new EventHandler (HScrollBarValueChanged);
-
-			SuspendLayout ();
-			Controls.AddImplicit (vbar);
-			Controls.AddImplicit (hbar);
-			ResumeLayout ();
 		}
 
 		protected override void OnHandleDestroyed (EventArgs e) {
@@ -860,8 +857,32 @@ namespace System.Windows.Forms {
 			return (x > l && x < l + 10);
 		}
 
+		internal void RecalculateVisibleOrder (TreeNode start)
+		{
+			if (update_stack > 0)
+				return;
+
+			int order;
+			if (start == null) {
+				start = root_node;
+				order = 0;
+			} else
+				order = start.visible_order;
+
+			OpenTreeNodeEnumerator walk = new OpenTreeNodeEnumerator (start);
+			while (walk.MoveNext ()) {
+				walk.CurrentNode.visible_order = order;
+				order++;
+			}
+
+			max_visible_order = order;
+		}
+
 		internal void SetTop (TreeNode node)
 		{
+			if (!vbar.Visible)
+				return;
+
 			OpenTreeNodeEnumerator walk = new OpenTreeNodeEnumerator (root_node);
 			int offset = 0;
 
@@ -873,6 +894,9 @@ namespace System.Windows.Forms {
 
 		internal void SetBottom (TreeNode node)
 		{
+			if (!vbar.Visible)
+				return;
+
 			OpenTreeNodeEnumerator walk = new OpenTreeNodeEnumerator (node);
 
 			int bottom = ViewportRectangle.Bottom;
@@ -882,7 +906,9 @@ namespace System.Windows.Forms {
 					break;
 				offset++;
 			}
-			vbar.Value += offset;
+
+			if (vbar.Value + offset < vbar.Maximum)
+				vbar.Value += offset;
 		}
 
 		internal void UpdateBelow (TreeNode node)
@@ -944,6 +970,7 @@ namespace System.Windows.Forms {
 			if (Width <= 0 || Height <=  0 || Visible == false)
 				return;
 
+			Console.WriteLine ("CLIP:  {0}", pe.ClipRectangle);
 			Draw (pe.ClipRectangle, pe.Graphics);
 		}
 
@@ -954,13 +981,6 @@ namespace System.Windows.Forms {
 
 			if (selected_node == null && Nodes.Count > 0)
 				SelectedNode = nodes [0];
-
-			// Decide if we need a scrollbar
-			int old_open_node_count = open_node_count;
-
-			//Rectangle fill = ClientRectangle;
-			add_vscroll = false;
-			add_hscroll = false;
 			
 			dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), clip);
 
@@ -970,45 +990,44 @@ namespace System.Windows.Forms {
 			dash = new Pen (dash_color, 1);
 			dash.DashStyle = DashStyle.Dot;
 
-			int depth = 0;
-			int item_height = ItemHeight;
-			int height = ClientRectangle.Height;
+			OpenTreeNodeEnumerator walk = new OpenTreeNodeEnumerator (TopNode);
+			while (walk.MoveNext ()) {
+				TreeNode current = walk.CurrentNode;
 
-			open_node_count = 0;
-			used_height = 0;
-			foreach (TreeNode node in nodes) {
-				DrawNode (node, dc, clip, ref depth, item_height, height);
-				depth = 0;
+				// This is temp to make sure the lines get drawn, with my optimizations
+				// some corner cases aren't getting lines during scrolling
+				if (show_lines)
+					DrawLinesToNext (current, dc, clip, dash, current.GetLinesX (), current.GetY ());
+
+				if (current.GetY () + ItemHeight < clip.Top) {
+					/*
+					// If the next or child node is in the clip we need to draw the line to it
+					TreeNode next = current.NextNode;
+					if (next != null && clip.Top <= next.GetY () + ItemHeight) {
+						DrawLinesToNext (current, dc, clip, dash, current.GetLinesX (), current.GetY ());
+					} else if (current.nodes.Count > 0) {
+						TreeNode child = current.nodes [0];
+						if (clip.Top <= child.GetY () + ItemHeight) {
+							DrawLinesToNext (current, dc, clip, dash, current.GetLinesX (), current.GetY ());
+						}
+					}
+					*/
+					continue;
+				}
+
+
+				if (current.GetY () > clip.Bottom) {
+					break;
+				}
+
+				DrawNode (current, dc, clip);
 			}
 
-			add_vscroll = (open_node_count * ItemHeight) > ClientRectangle.Height;
-
-			if (max_node_width > ClientRectangle.Width)
-				add_hscroll = true;
-
-			if (add_vscroll)
-				add_hscroll = max_node_width > ClientRectangle.Width - ThemeEngine.Current.VScrollBarDefaultSize.Width;
-			if (add_hscroll)
-				add_vscroll = (open_node_count * ItemHeight) > ClientRectangle.Height - ThemeEngine.Current.HScrollBarDefaultSize.Height;
-			
-			if (add_hscroll) {
-				AddHorizontalScrollBar ();
-			} else if (hbar != null) {
-				hbar_offset = 0;
-				hbar.Visible = false;
-			}
-
-			if (add_vscroll) {
-				AddVerticalScrollBar (open_node_count, old_open_node_count != open_node_count);
-			} else if (vbar != null) {
-				vbar.Visible = false;
-				skipped_nodes = 0;
-			}
-
-			if (add_hscroll && add_vscroll) {
+			if (hbar.Visible && vbar.Visible) {
 				Rectangle corner = new Rectangle (hbar.Right, vbar.Bottom, vbar.Width, hbar.Height);
 				if (clip.IntersectsWith (corner))
-					dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorControl), corner);
+					dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorControl),
+							corner);
 			}
 		}
 
@@ -1040,33 +1059,40 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private void DrawNodeLines (TreeNode node, Graphics dc, bool visible, Pen dash, int x, int y,
-				int middle, int item_height, int node_count)
+		private void DrawNodeLines (TreeNode node, Graphics dc, Rectangle clip, Pen dash, int x, int y,	int middle)
 		{
-			int ladjust = 9; // left adjust
-			int radjust = 0; // right adjust
+			int ladjust = 9;
+			int radjust = 0;
 
-			if (node_count > 0 && show_plus_minus)
+			if (node.nodes.Count > 0 && show_plus_minus)
 				ladjust = 13;
 			if (checkboxes)
 				radjust = 3;
 
 			dc.DrawLine (dash, x - indent + ladjust, middle, x + radjust, middle);
 
-			//if (!visible)
-			//	return;
+			DrawLinesToNext (node, dc, clip, dash, x, y);
+		}
 
-			int ly = 0;
-			if (node.PrevNode != null) {
-				int prevadjust = (node.Nodes.Count > 0 && show_plus_minus ? (node.PrevNode.Nodes.Count == 0 ? 0 : 4) :
-						(node.PrevNode.Nodes.Count == 0 ? 0 : 4));
-				int myadjust = (node.Nodes.Count > 0 && show_plus_minus ? 4 : 0);
-				ly = node.PrevNode.Bounds.Bottom - (item_height / 2) + prevadjust;
-				dc.DrawLine (dash, x - indent + 9, middle - myadjust, x - indent + 9, ly);
-			} else if (node.Parent != null) {
-				int myadjust = (node.Nodes.Count > 0 && show_plus_minus ? 4 : 0);
-				ly = node.Parent.Bounds.Bottom + 1;
-				dc.DrawLine (dash, x - indent + 9, middle - myadjust, x - indent + 9, ly);
+		private void DrawLinesToNext (TreeNode node, Graphics dc, Rectangle clip, Pen dash, int x, int y)
+		{
+			int middle = y + (ItemHeight / 2);
+
+			if (node.NextNode != null) {
+				int top = (node.Nodes.Count > 0 && show_plus_minus ? middle + 4 : middle);
+				int ncap = (node.NextNode.Nodes.Count > 0 && show_plus_minus ? 4 : 8);
+				int bottom = Math.Min (node.NextNode.GetY () + ncap, clip.Bottom);
+
+				dc.DrawLine (dash, x - indent + 9, top, x - indent + 9, bottom);
+			}
+
+			if (node.IsExpanded && node.Nodes.Count > 0) {
+				int top = node.Bounds.Bottom;
+				int ncap = (node.Nodes [0].Nodes.Count > 0 && show_plus_minus ? 4 : 8);
+				int bottom = Math.Min (node.Nodes [0].GetY () + ncap, clip.Bottom);
+				int nx = node.Nodes [0].GetLinesX ();
+
+				dc.DrawLine (dash, nx - indent + 9, top, nx - indent + 9, bottom);
 			}
 		}
 
@@ -1127,19 +1153,14 @@ namespace System.Windows.Forms {
 			UpdateNode(edit_node);
 		}
 
-		private void UpdateNodeBounds (TreeNode node, int x, int y, int item_height, Graphics dc)
+		internal int GetNodeWidth (TreeNode node)
 		{
 			Font font = node.NodeFont;
 			if (node.NodeFont == null)
 				font = Font;
-
-			if (node.NeedsWidth || update_node_bounds)
-				node.SetWidth ((int) dc.MeasureString (node.Text, font, 0,
-							       string_format).Width + 3);
-			node.SetHeight (item_height);
-			node.SetPosition (x, y);
+			return (int) DeviceContext.MeasureString (node.Text, font, 0, string_format).Width + 3;
 		}
-		
+
 		private void DrawSelectionAndFocus(TreeNode node, Graphics dc, Rectangle r)
 		{
 			if (Focused && focused_node == node) {
@@ -1167,142 +1188,100 @@ namespace System.Windows.Forms {
 					node.Bounds, string_format);
 		}
 
-		private void DrawNode (TreeNode node, Graphics dc, Rectangle clip, ref int depth, int item_height, int max_height)
+		private void DrawNode (TreeNode node, Graphics dc, Rectangle clip)
 		{
-			open_node_count++;
-			int x = (!show_root_lines && node.Parent != null ? depth  - 1 : depth) * indent - hbar_offset;
-			int y = item_height * (open_node_count - skipped_nodes - 1);
-			bool visible = (y >= 0 && y < max_height);
-			int _n_count = node.nodes.Count;
-			int middle = y + (item_height / 2);
+			int child_count = node.nodes.Count;
+			int y = node.GetY ();
+			int middle = y + (ItemHeight / 2);
 
-			// The thing is totally out of the clipping rectangle
-			if (clip.Top > y + ItemHeight || clip.Bottom < y)
-				visible = false;
-
-			if (visible && full_row_select) {
-				Rectangle r = new Rectangle(1, y+2, ViewportRectangle.Width-2, item_height);
-				DrawSelectionAndFocus(node, dc, r);
+			if (full_row_select) {
+				Rectangle r = new Rectangle (1, y + 2, ViewportRectangle.Width - 2, ItemHeight);
+				DrawSelectionAndFocus (node, dc, r);
 			}
 
-			if (show_root_lines || node.Parent != null) {
-				x += 5;
-				if (_n_count > 0) {
-					if (show_plus_minus && visible) {
-						DrawNodePlusMinus (node, dc, x, middle);
-					}
-				}
-				x += indent - 5; 
+			if ((show_root_lines || node.Parent != null) && show_plus_minus && child_count > 0) {
+				DrawNodePlusMinus (node, dc, node.GetLinesX () - Indent + 5, middle);
 			}
 
-			int ox = x;
+			if (checkboxes)
+				DrawNodeCheckBox (node, dc, node.GetX () - 19, middle);
 
-			if (checkboxes) {
-				if (visible)
-					DrawNodeCheckBox (node, dc, ox, middle);
-				ox += 19;
-			}
 
 			if (show_lines)
-				DrawNodeLines (node, dc, visible, dash, x, y, middle, item_height, _n_count);
+				DrawNodeLines (node, dc, clip, dash, node.GetLinesX (), y, middle);
 
-			if (ImageList != null) {
-                                if (visible)
-                                        DrawNodeImage (node, dc, clip, ox, y);
-				// MS leaves the space for the image if the ImageList is
-				// non null regardless of whether or not an image is drawn
-				ox += ImageList.ImageSize.Width + 3; // leave a little space so the text isn't against the image
-			}
+			if (ImageList != null)
+                                DrawNodeImage (node, dc, clip, node.GetImageX (), y);
 
-			UpdateNodeBounds (node, ox, y, item_height, dc);
+			if (node.IsEditing)
+				DrawEditNode (node);
+			else
+				DrawStaticNode (node, dc);
+		}
 
-			bool bounds_in_clip = clip.IntersectsWith (node.Bounds) || full_row_select;
-			if (visible &&	bounds_in_clip) {
-				if (node.IsEditing)
-					DrawEditNode (node);
-				else
-					DrawStaticNode (node, dc);
-			}
+		internal void UpdateScrollBars ()
+		{
+			if (update_stack > 0)
+				return;
 			
-			if (node.Bounds.Right > max_node_width) {
-				max_node_width = node.Bounds.Right;
-				if (max_node_width > ClientRectangle.Width && !add_hscroll) {
-					max_height -= ItemHeight;
-					add_hscroll = true;
-				}
+			OpenTreeNodeEnumerator walk = new OpenTreeNodeEnumerator (root_node);
+			int height = -1;
+			int width = -1;
+			bool vert = false;
+			bool horz = false;
+
+			while (walk.MoveNext ()) {
+				int r = walk.CurrentNode.Bounds.Right;
+				int b = walk.CurrentNode.Bounds.Bottom;
+
+				if (r > width)
+					width = r;
+				if (b > height)
+					height = b;
 			}
 
-			if (node.Bounds.Bottom > used_height)
-				used_height = node.Bounds.Bottom;
+			// Remove scroll adjustments
+			if (nodes.Count > 0)
+				height -= nodes [0].Bounds.Top;
+			width += hbar_offset;
 
-			depth++;
-			if (node.IsExpanded) {
-				for (int i = 0; i < _n_count; i++) {
-					int tdepth = depth;
-					DrawNode (node.nodes [i], dc, clip, ref tdepth, item_height, max_height);
-				}
+			if (height > ClientRectangle.Height) {
+				vert = true;
+
+				if (width > ClientRectangle.Width - SystemInformation.VerticalScrollBarWidth)
+					horz = true;
+			} else if (width > ClientRectangle.Width) {
+				horz = true;
 			}
 
-		}
+			if (!vert && horz && height > ClientRectangle.Height - SystemInformation.HorizontalScrollBarHeight)
+				vert = true;
 
-		private void AddVerticalScrollBar (int total_nodes, bool count_changed)
-		{
-			vbar.Bounds = new Rectangle (ClientRectangle.Width - vbar.Width,
-				0, vbar.Width, (add_hscroll ? Height - ThemeEngine.Current.HScrollBarDefaultSize.Height : Height));
-
-			if (count_changed) {
-				vbar.Maximum = total_nodes;
-				int height = ClientRectangle.Height;
-				vbar.LargeChange = height / ItemHeight;
+			if (vert) {
+				vbar.Maximum = max_visible_order;
+				vbar.LargeChange = ClientRectangle.Height / ItemHeight;
+				vbar.Bounds = new Rectangle (ClientRectangle.Width - vbar.Width, 0, vbar.Width,
+						Height - (horz ? SystemInformation.VerticalScrollBarWidth : 0));
+				vbar.Visible = true;
+			} else {
+				vbar.Visible = false;
 			}
 
-			vbar.Visible = true;
-		}
-
-		private void AddHorizontalScrollBar ()
-		{
-			hbar.Bounds = new Rectangle (ClientRectangle.Left,
-					ClientRectangle.Bottom - hbar.Height,
-					(add_vscroll ? Width - ThemeEngine.Current.VScrollBarDefaultSize.Width : Width), hbar.Height);
-
-			int width = ClientRectangle.Width;
-			if (vbar.Visible)
-				width -= vbar.Width;
-
-			hbar.SmallChange = 15;
-			hbar.LargeChange = 50;
-			int num_pixels = max_node_width - width;
-			hbar.Maximum = num_pixels + 50;
-			hbar.Visible = true;
+			if (horz) {
+				hbar.LargeChange = ClientRectangle.Width;
+				hbar.Maximum = width + 1;
+				hbar.Bounds = new Rectangle (0, Height - hbar.Height,
+						Width - (vert ? SystemInformation.HorizontalScrollBarHeight : 0), hbar.Height);
+				hbar.Visible = true;
+			} else {
+				hbar.Visible = false;
+			}
 		}
 
 		private void SizeChangedHandler (object sender, EventArgs e)
 		{
-			SuspendLayout ();
-
-			if (max_node_width > ClientRectangle.Width && ClientRectangle.Width >= 0) {
-				add_hscroll = true;
-				AddHorizontalScrollBar ();
-				return;
-			}
-
-			if (used_height > ClientRectangle.Height && ClientRectangle.Height >= 0) {
-				add_vscroll = true;
-				AddVerticalScrollBar (open_node_count, true);
-				return;
-			}
-
-			if (vbar != null && vbar.Visible) {
-				int height = (hbar != null && hbar.Visible ? Height - hbar.Height : Height);
-				vbar.SetBounds (Right - vbar.Width, 0, 0, height, BoundsSpecified.X | BoundsSpecified.Height);
-			}
-
-			if (hbar != null && hbar.Visible) {
-				int width = (vbar != null && vbar.Visible ? Width - vbar.Width : Width);
-				hbar.SetBounds (0, Bottom - hbar.Height, width, 0, BoundsSpecified.Y | BoundsSpecified.Width);
-			}
-
-			ResumeLayout ();
+			if (IsHandleCreated)
+				UpdateScrollBars ();
 		}
 
 		private void VScrollBarValueChanged (object sender, EventArgs e)
@@ -1349,10 +1328,42 @@ namespace System.Windows.Forms {
 			int old_offset = hbar_offset;
 			hbar_offset = hbar.Value;
 
-			if (hbar_offset < 0)
+			if (hbar_offset < 0) {
 				hbar_offset = 0;
+			}
 
 			XplatUI.ScrollWindow (Handle, ViewportRectangle, old_offset - hbar_offset, 0, false);
+		}
+
+		internal void ExpandBelow (TreeNode node, int count_to_next)
+		{
+			Rectangle below = new Rectangle (0, node.Bounds.Bottom, ViewportRectangle.Width,
+					ViewportRectangle.Height - node.Bounds.Bottom);
+				
+			int amount = count_to_next * ItemHeight;
+
+			if (amount > 0)
+				XplatUI.ScrollWindow (Handle, below, 0, amount, false);
+
+			if (show_plus_minus) {
+				int linesx = node.GetLinesX ();
+				Invalidate (new Rectangle (0, node.GetY (), Width, ItemHeight));
+			}
+		}
+
+		internal void CollapseBelow (TreeNode node, int count_to_next)
+		{
+			Rectangle below = new Rectangle (0, node.Bounds.Bottom, ViewportRectangle.Width,
+					ViewportRectangle.Height - node.Bounds.Bottom);
+			int amount = count_to_next * ItemHeight;
+
+			if (amount > 0)
+				XplatUI.ScrollWindow (Handle, below, 0, -amount, false);
+
+			if (show_plus_minus) {
+				int linesx = node.GetLinesX ();
+				Invalidate (new Rectangle (0, node.GetY (), Width, ItemHeight));
+			}
 		}
 
 		private void MouseWheelHandler(object sender, MouseEventArgs e) {
@@ -1369,7 +1380,8 @@ namespace System.Windows.Forms {
 
 		private void FontChangedHandler (object sender, EventArgs e)
 		{
-			update_node_bounds = true;
+			// TODO: I guess we should enumerate every node and invalidate the sizes here :-(
+			//	update_node_bounds = true;
 		}
 
 		private void FocusChangedHandler (object sender, EventArgs e)

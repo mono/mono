@@ -1,3 +1,21 @@
+2006-05-23  Jackson Harper  <jackson@ximian.com>
+
+	* TreeNode.cs: Bounds are computed 'on the fly' now.  This allows
+	treenode calculations to be independant of the painting code. To
+	do this nodes track a visible order which is calculated by the
+	treeview.
+	- Call new methods for expanding/collapsing nodes.  These methods
+	use scrollwindow so we don't have to update everything below the
+	node.
+	* TreeView.cs: Refactored drawing and scrolling code.  We don't
+	need to update nodes when drawing anymore or calculate scrollbar
+	stuff.
+	- Added new methods for expanding/collapsing nodes. These methods
+	use ScrollWindow so as to not have to redraw all the nodes below.
+	* TreeNodeCollection.cs: Recalc visible order and scrollbars when
+	we add/remove nodes or sort.
+	- Handle removing the selected and the top node properly.
+
 2006-05-23  Chris Toshok  <toshok@ximian.com>
 
 	* DataGridColumnStyle.cs

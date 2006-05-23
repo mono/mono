@@ -42,9 +42,12 @@ namespace System.Windows.Forms {
 		private int selected_image_index = -1;
 		internal TreeNodeCollection nodes;
 		internal TreeViewAction check_reason = TreeViewAction.Unknown;
+
+		internal int visible_order;
+		internal int indent_level;
+		internal int width = -1;
 		
 		private bool is_expanded = false;
-		private Rectangle bounds = Rectangle.Empty;
 		private bool check;
 		private bool is_editing;
 		internal OwnerDrawPropertyBag prop_bag;
@@ -175,7 +178,64 @@ namespace System.Windows.Forms {
 		}
 
 		public Rectangle Bounds {
-			get { return bounds; }
+			get {
+				if (TreeView == null)
+					return Rectangle.Empty;
+
+				int x = GetX ();
+				int y = GetY ();
+				
+				if (width == -1)
+					width = TreeView.GetNodeWidth (this);
+
+				Rectangle res = new Rectangle (x, y, width, TreeView.ItemHeight);
+				return res;
+			}
+		}
+
+		internal int GetY ()
+		{
+			if (TreeView == null)
+				return 0;
+			return (visible_order - 1) * TreeView.ItemHeight - (TreeView.skipped_nodes * TreeView.ItemHeight);
+		}
+
+		internal int GetX ()
+		{
+			if (TreeView == null)
+				return 0;
+			indent_level = IndentLevel;
+			int roots = (TreeView.ShowRootLines ? 1 : 0);
+			int cb = (TreeView.CheckBoxes ? 19 : 0);
+			int imgs = (TreeView.ImageList != null ?  TreeView.ImageList.ImageSize.Width + 3 : 0);
+			return ((indent_level + roots) * TreeView.Indent) + cb + imgs - TreeView.hbar_offset;
+		}
+
+		internal int GetLinesX ()
+		{
+			int roots = (TreeView.ShowRootLines ? 1 : 0);
+			return (IndentLevel + roots) * TreeView.Indent - TreeView.hbar_offset;
+		}
+
+		internal int GetImageX ()
+		{
+			return GetLinesX () + (TreeView.CheckBoxes ? 19 : 0);
+		}
+
+		// In theory we should be able to track this instead of computing
+		// every single time we need it, however for now I am going to
+		// do it this way to reduce bugs in my new bounds computing code
+		internal int IndentLevel {
+			get {
+				TreeNode walk = this;
+				int res = 0;
+				while (walk.Parent != null) {
+					walk = walk.Parent;
+					res++;
+				}
+
+				return res;
+			}
 		}
 
 		public bool Checked {
@@ -269,6 +329,7 @@ namespace System.Windows.Forms {
 				if (TreeView == null)
 					return false;
 
+				Rectangle bounds = Bounds;
 				if (bounds.Y < 0 && bounds.Y > TreeView.ClientRectangle.Height)
 					return false;
 
@@ -304,7 +365,7 @@ namespace System.Windows.Forms {
 				OpenTreeNodeEnumerator o = new OpenTreeNodeEnumerator (this);
 				if (!o.MoveNext ())
 					return null;
-				TreeNode c = (TreeNode) o.Current;
+				TreeNode c = o.CurrentNode;
 				if (!c.IsInClippingRect)
 					return null;
 				return c;
@@ -362,7 +423,7 @@ namespace System.Windows.Forms {
 				OpenTreeNodeEnumerator o = new OpenTreeNodeEnumerator (this);
 				if (!o.MovePrevious ())
 					return null;
-				TreeNode c = (TreeNode) o.Current;
+				TreeNode c = o.CurrentNode;
 				if (!c.IsInClippingRect)
 					return null;
 				return c;
@@ -395,7 +456,7 @@ namespace System.Windows.Forms {
 				if (text == value)
 					return;
 				text = value;
-				bounds.Width = 0;
+				InvalidateWidth ();
 			}
 		}
 
@@ -468,6 +529,7 @@ namespace System.Windows.Forms {
 			if (this.Parent != null)
 				ExpandParentRecursive (this.Parent);
 
+			Rectangle bounds = Bounds;
 			if (bounds.Y < 0) {
 				TreeView.SetTop (this);
 			} else if (bounds.Bottom > TreeView.ViewportRectangle.Bottom) {
@@ -551,10 +613,16 @@ namespace System.Windows.Forms {
 
 			if (!cancel) {
 				is_expanded = true;
+				int count_to_next = CountToNext ();
 				if (TreeView != null)
 					TreeView.OnAfterExpand (new TreeViewEventArgs (this));
 				if (IsVisible && TreeView != null)
-					TreeView.UpdateBelow (this);
+					TreeView.ExpandBelow (this, count_to_next);
+			}
+
+			if (TreeView != null) {
+				TreeView.RecalculateVisibleOrder (this);
+				TreeView.UpdateScrollBars ();
 			}
 		}
 
@@ -574,22 +642,44 @@ namespace System.Windows.Forms {
 			}
 
 			if (!cancel) {
+				int count_to_next = CountToNext ();
+
 				is_expanded = false;
 				if (TreeView != null)
 					TreeView.OnAfterCollapse (new TreeViewEventArgs (this));
 				if (IsVisible && TreeView != null)
-					TreeView.UpdateBelow (this);
+					TreeView.CollapseBelow (this, count_to_next);
 				if(!byInternal && TreeView != null && HasFocusInChildren ())
 					TreeView.SelectedNode = this;
 			}
+
+			if (TreeView != null) {
+				TreeView.RecalculateVisibleOrder (this);
+				TreeView.UpdateScrollBars ();
+			}
+		}
+
+		private int CountToNext ()
+		{
+			TreeNode next = NextNode;
+			OpenTreeNodeEnumerator walk = new OpenTreeNodeEnumerator (this);
+
+			walk.MoveNext ();  // Step past start node
+
+			int count = 0;
+			while (walk.MoveNext () && walk.CurrentNode != next)
+				count++;
+
+			return count;
 		}
 
 		private bool HasFocusInChildren()
 		{
 			if(TreeView == null) return false;
-			foreach(TreeNode node in nodes) {
-				if(node == TreeView.SelectedNode) return true;
-				if(node.HasFocusInChildren())
+			foreach (TreeNode node in nodes) {
+				if(node == TreeView.SelectedNode)
+					return true;
+				if(node.HasFocusInChildren ())
 					return true;
 			}
 			return false;
@@ -651,28 +741,18 @@ namespace System.Windows.Forms {
 		}
 
 		internal bool NeedsWidth {
-			get { return bounds.Width == 0; }
+			get { return width == -1; }
 		}
 
 		internal void InvalidateWidth ()
 		{
-			bounds.Width = 0;
+			// bounds.Width = 0;
+			width = -1;
 		}
 
 		internal void SetWidth (int width)
 		{
-			bounds.Width = width;
-		}
-
-		internal void SetHeight (int height)
-		{
-			bounds.Height = height;
-		}
-
-		internal void SetPosition (int x, int y)
-		{
-			bounds.X = x;
-			bounds.Y = y;
+			this.width = width;
 		}
 
 		internal void SetParent (TreeNode parent)
@@ -685,6 +765,7 @@ namespace System.Windows.Forms {
 			get {
 				if (TreeView == null)
 					return false;
+				Rectangle bounds = Bounds;
 				if (bounds.Y < 0 && bounds.Y > TreeView.ClientRectangle.Height)
 					return false;
 				return true;

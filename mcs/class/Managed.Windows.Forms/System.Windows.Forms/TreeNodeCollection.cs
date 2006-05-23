@@ -117,8 +117,10 @@ namespace System.Windows.Forms {
 
 			int res;
 			TreeView tree_view = null;
-			if (owner != null)
+			if (owner != null) {
 				tree_view = owner.TreeView;
+				node.indent_level = owner.indent_level + 1;
+			}
 			if (tree_view != null && tree_view.Sorted) {
 				res = AddSorted (node);
 			} else {
@@ -127,6 +129,14 @@ namespace System.Windows.Forms {
 					Grow ();
 				nodes [count++] = node;
 				res = count;
+			}
+
+			if (tree_view != null) {
+				TreeNode prev = node.PrevNode;
+				if (prev == null)
+					prev = owner;
+				tree_view.RecalculateVisibleOrder (prev);
+				tree_view.UpdateScrollBars ();
 			}
 
 			if (owner != null && tree_view != null && (owner.IsExpanded || owner.IsRoot)) {
@@ -215,6 +225,9 @@ namespace System.Windows.Forms {
 		private void RemoveAt (int index, bool update)
 		{
 			TreeNode removed = nodes [index];
+			TreeNode prev = GetPrevNode (removed);
+			TreeNode new_selected = null;
+			bool visible = removed.IsVisible;
 			
 			Array.Copy (nodes, index + 1, nodes, index, count - index);
 			count--;
@@ -224,19 +237,50 @@ namespace System.Windows.Forms {
                         TreeView tree_view = null;
 			if (owner != null)
 				tree_view = owner.TreeView;
-			if (tree_view != null && removed == tree_view.top_node) {
-				OpenTreeNodeEnumerator oe = new OpenTreeNodeEnumerator (removed);
-				if (oe.MoveNext () && oe.MoveNext ())
-					tree_view.top_node = oe.CurrentNode;
-				else
-					tree_view.top_node = null;
+			if (tree_view != null) {
+				if (removed == tree_view.top_node) {
+					OpenTreeNodeEnumerator oe = new OpenTreeNodeEnumerator (removed);
+					if (oe.MoveNext () && oe.MoveNext ()) {
+						tree_view.top_node = oe.CurrentNode;
+					} else {
+						oe = new OpenTreeNodeEnumerator (removed);
+						oe.MovePrevious ();
+						tree_view.top_node = oe.CurrentNode;
+					}
+				}
+				if (removed == tree_view.selected_node) {
+					OpenTreeNodeEnumerator oe = new OpenTreeNodeEnumerator (removed);
+					if (oe.MoveNext () && oe.MoveNext ()) {
+						new_selected = oe.CurrentNode;
+					} else {
+						oe = new OpenTreeNodeEnumerator (removed);
+						oe.MovePrevious ();
+						new_selected = oe.CurrentNode;
+					}
+				}
+				
+			}
+
+			if (tree_view != null && new_selected != null) {
+				tree_view.SelectedNode = new_selected;
 			}
 
 			TreeNode parent = removed.parent;
 			removed.parent = null;
 
-			if (tree_view != null)
+			if (tree_view != null && visible) {
+				tree_view.RecalculateVisibleOrder (prev);
+				tree_view.UpdateScrollBars ();
 				tree_view.UpdateBelow (parent);
+			}
+		}
+
+		private TreeNode GetPrevNode (TreeNode node)
+		{
+			TreeNode prev = node.PrevNode;
+			if (prev == null)
+				prev = owner;
+			return prev;
 		}
 
 		int IList.Add (object node)
@@ -304,6 +348,10 @@ namespace System.Windows.Forms {
 			for (int i = 0; i < count; i++) {
 				nodes [i].Nodes.Sort ();
 			}
+
+			// No null checks since sort can only be called from the treeviews root node collection
+			owner.TreeView.RecalculateVisibleOrder (owner);
+			owner.TreeView.UpdateScrollBars ();
 		}
 
 		private void Grow ()
