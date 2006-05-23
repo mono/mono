@@ -543,6 +543,8 @@ namespace Mono.CSharp
 
 				for (UsageVector vector = o_vectors; vector != null; vector = vector.Next) {
 					Report.Debug (1, "    MERGING BREAK ORIGIN", vector);
+					if (vector.Reachability.IsUnreachable)
+						continue;
 					MyBitVector.And (ref locals, vector.locals);
 					MyBitVector.And (ref parameters, vector.parameters);
 					reachability.Meet (vector.Reachability);
@@ -1074,29 +1076,25 @@ namespace Mono.CSharp
 			for (UsageVector origin = break_origins; origin != null; origin = origin.Next) {
 				if (finally_vector != null)
 					origin.MergeChild (finally_vector, false);
-				if (!origin.Reachability.IsUnreachable)
-					Parent.AddBreakOrigin (origin, origin.Location);
+				Parent.AddBreakOrigin (origin, origin.Location);
 			}
 
 			for (UsageVector origin = continue_origins; origin != null; origin = origin.Next) {
 				if (finally_vector != null)
 					origin.MergeChild (finally_vector, false);
-				if (!origin.Reachability.IsUnreachable)
-					Parent.AddContinueOrigin (origin, origin.Location);
+				Parent.AddContinueOrigin (origin, origin.Location);
 			}
 
 			for (UsageVector origin = return_origins; origin != null; origin = origin.Next) {
 				if (finally_vector != null)
 					origin.MergeChild (finally_vector, false);
-				if (!origin.Reachability.IsUnreachable)
-					Parent.AddReturnOrigin (origin, origin.Location);
+				Parent.AddReturnOrigin (origin, origin.Location);
 			}
 
 			for (GotoOrigin origin = goto_origins; origin != null; origin = origin.Next) {
 				if (finally_vector != null)
 					origin.Vector.MergeChild (finally_vector, false);
-				if (!origin.Vector.Reachability.IsUnreachable)
-					Parent.AddGotoOrigin (origin.Vector, origin.GotoStmt);
+				Parent.AddGotoOrigin (origin.Vector, origin.GotoStmt);
 			}
 
 			return vector;

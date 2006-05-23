@@ -1,3 +1,10 @@
+2006-05-23  Raja R Harinath  <rharinath@novell.com>
+
+	* flowanalysis.cs (UsageVector.MergeOrigins): If an origin is
+	unreachable, skip it.
+	(FlowBranchingException.Merge): Always propagate jumps, even if
+	the finally block renders subsequent code unreachable.
+
 2006-05-18  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #77601

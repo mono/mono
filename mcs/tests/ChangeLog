@@ -1,3 +1,7 @@
+2006-05-23  Raja R Harinath  <rharinath@novell.com>
+
+	* test-519.cs: New test for compiler crash.
+
 2006-05-18  Raja R Harinath  <rharinath@novell.com>
 
 	* test-518.cs: New test based on #77601.
