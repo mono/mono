@@ -1,4 +1,10 @@
 
+Tue May 23 12:57:08 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* object.c: precise GC support for static fields. Support
+	for moving GCs: write barriers and pinned allocation for interned
+	strings.
+
 Tue May 23 12:41:44 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
 	* domain.c, domain-internals.h: precise GC support for the MonoDomain
