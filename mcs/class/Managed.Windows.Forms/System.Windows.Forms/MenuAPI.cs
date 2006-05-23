@@ -118,6 +118,9 @@ namespace System.Windows.Forms {
 
 		public void OnClick (MouseEventArgs args)
 		{
+			if ((args.Button & MouseButtons.Left) == 0)
+				return;
+
 			MenuItem item = GetItemAtXY (args.X, args.Y);
 
 			if (item != null && !item.Enabled)
