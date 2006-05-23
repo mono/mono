@@ -1,4 +1,8 @@
 
+Tue May 23 12:27:14 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: precise and sgen GC updates.
+
 Tue May 23 12:21:46 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
 	* debug-helpers.c, class-internals.h: added write barrier wrapper type.
