@@ -4863,26 +4863,14 @@ namespace System.Windows.Forms
 				foreColor=Color.White;
 			}
 
-			/* Slow method */
+			// still not perfect. it seems that ms calculates the position of the first dot or line
 
-			Bitmap bitmap = new Bitmap(area.Width, area.Height, graphics);
-
-			for (int x=0; x<area.Width; x+=pixelsBetweenDots.Width) {
-				for (int y=0; y<area.Height; y+=pixelsBetweenDots.Height) {
-					bitmap.SetPixel(x, y, foreColor);
-				}
-			}
-			graphics.DrawImage(bitmap, area.X, area.Y, area.Width, area.Height);
-			bitmap.Dispose();
-			
-#if correct_but_needs_libgdiplus_fix_bug_nr_78059
 			using (Pen pen = new Pen (foreColor)) {
 				pen.DashPattern = new float [] {1.0f, pixelsBetweenDots.Width - 1};
 				
-				for (int y = area.Y; y < area.Bottom; y += pixelsBetweenDots.Height - 1)
+				for (int y = area.Top; y < area.Bottom; y += pixelsBetweenDots.Height)
 					graphics.DrawLine (pen, area.X, y, area.Right - 1, y);
 			}
-#endif
 		}
 
 		public override void CPDrawImageDisabled (Graphics graphics, Image image, int x, int y, Color background) {
@@ -4964,7 +4952,7 @@ namespace System.Windows.Forms
 				rect.X-=shiftX;
 				centerX-=shiftX;
 
-				P1=new Point(centerX, rect.Top-1);
+				P1=new Point(centerX, rect.Top);
 				P2=new Point(centerX, rect.Bottom);
 				P3=new Point(rect.Right, centerY);
 
@@ -5093,99 +5081,199 @@ namespace System.Windows.Forms
 
 
 		/* Scroll button: regular button + direction arrow */
-		public override void CPDrawScrollButton (Graphics dc, Rectangle area, ScrollButton type, ButtonState state) {
+		public override void CPDrawScrollButton (Graphics dc, Rectangle area, ScrollButton type, ButtonState state)
+		{
 			DrawScrollButtonPrimitive (dc, area, state);
-
-			int arrow_y_pos_diff = 3;
 			
-			switch (type) {
-			case ScrollButton.Up:
-				arrow_y_pos_diff = 2;
-				break;
-			case ScrollButton.Down:
-				arrow_y_pos_diff = 4;
-				break;
-			default:
-				break;
-			}
+			bool fill_rect = true;
+			int offset = 0;
 			
-			// A lot of the following is adapted from the rewind project
-			Rectangle rect = new Rectangle (area.X - 3, area.Y - arrow_y_pos_diff,
-					area.Width + 6, area.Height + 6);
-			int small_diam = rect.Width > rect.Height ? rect.Height : rect.Width;
-			if (rect.Width < rect.Height) {
-				rect.Y += (rect.Height - rect.Width) / 2;
-				rect.Height = small_diam;
-			} else if (rect.Width > rect.Height) {
-				rect.X += (rect.Width - rect.Height) / 2;
-				rect.Width = small_diam;
-			}
-
-			small_diam -= 2;
-
-			int tri = 290 * small_diam / 1000 - 1;
-			if (tri == 0)
-				tri = 1;
-
+			if ((state & ButtonState.Pushed) != 0)
+				offset = 1;
+			
+			// skip the border
+			Rectangle rect = new Rectangle (area.X + 2 + offset, area.Y + 2 + offset, area.Width - 4, area.Height - 4);
+			
 			Point [] arrow = new Point [3];
 			for (int i = 0; i < 3; i++)
 				arrow [i] = new Point ();
-
-			switch(type) {
-			default:
-			case ScrollButton.Down:
-				arrow [2].X = rect.Left + 470 * small_diam / 1000 + 2;
-				arrow [2].Y = rect.Top + 687 * small_diam / 1000 + 1;
-				arrow [0].X = arrow [2].X - tri;
-				arrow [1].X = arrow [2].X + tri;
-				arrow [0].Y = arrow [1].Y = arrow [2].Y - tri;
-				break;
-
-			case ScrollButton.Up:
-				arrow [2].X = rect.Left + 470 * small_diam / 1000 + 2;
-				arrow [2].Y = rect.Bottom - (687 * small_diam / 1000 + 1);
-				arrow [0].X = arrow [2].X - tri;
-				arrow [1].X = arrow [2].X + tri;
-				arrow [0].Y = arrow [1].Y = arrow [2].Y + tri;
-				break;
-
-			case ScrollButton.Left:
-				arrow [2].X = rect.Right - (687 * small_diam / 1000 + 1);
-				arrow [2].Y = rect.Top + 470 * small_diam / 1000 + 2;
-				arrow [0].Y = arrow [2].Y - tri;
-				arrow [1].Y = arrow [2].Y + tri;
-				arrow [0].X = arrow [1].X = arrow [2].X + tri;
-				break;
-				// Left and Right are not drawn correctly because of libgdiplus problems
-				// once that is solved change it to the code below to match ms
-//			case ScrollButton.Left:
-//				arrow [2].X = rect.Right - (687 * small_diam / 1000 + 1);
-//				arrow [2].Y = (rect.Top + 470 * small_diam / 1000 + 2) - 1;
-//				arrow [1].Y = arrow [2].Y + tri;
-//				arrow [0].Y = arrow [2].Y - tri + 1;
-//				arrow [0].X = arrow [1].X = arrow [2].X + tri;
-//				break;
-			case ScrollButton.Right:
-				arrow [2].X = rect.Left + 687 * small_diam / 1000 + 1;
-				arrow [2].Y = rect.Top + 470 * small_diam / 1000 + 2;
-				arrow [0].Y = arrow [2].Y - tri;
-				arrow [1].Y = arrow [2].Y + tri;
-				arrow [0].X = arrow [1].X = arrow [2].X - tri;
-				break;
+			
+			Pen pen = SystemPens.ControlText;
+			
+			if ((state & ButtonState.Inactive) != 0) {
+				pen = SystemPens.ControlDark;
 			}
-
-			/* Draw the arrow */
-			if ((state & ButtonState.Inactive)!=0) {
-				dc.FillPolygon (SystemBrushes.ControlLightLight, arrow, FillMode.Winding);
-
-				for (int i = 0; i < 3; i++) {
-					arrow [i].X--;
-					arrow [i].Y--;
-				}
-				
-				dc.FillPolygon (SystemBrushes.ControlDark, arrow, FillMode.Winding);
-			} else {
-				dc.FillPolygon (SystemBrushes.ControlText, arrow, FillMode.Winding);
+			
+			switch (type) {
+				default:
+				case ScrollButton.Down:
+					int x_middle = (int)Math.Round (rect.Width / 2.0f) - 1;
+					if (x_middle == 1)
+						x_middle = 2;
+					
+					int triangle_height;
+					
+					if (rect.Height < 8) {
+						triangle_height = 2;
+						fill_rect = false;
+					} else if (rect.Height == 11) {
+						triangle_height = 3;
+					} else {
+						triangle_height = (int)Math.Round (rect.Height / 3.0f);
+					}
+					
+					arrow [0].X = rect.X + x_middle;
+					arrow [0].Y = rect.Bottom - triangle_height - 1;
+					
+					if (arrow [0].Y - 1 == rect.Y)
+						arrow [0].Y += 1;
+					
+					arrow [1].X = arrow [0].X + triangle_height - 1;
+					arrow [1].Y = arrow [0].Y - triangle_height + 1;
+					arrow [2].X = arrow [0].X - triangle_height + 1;
+					arrow [2].Y = arrow [1].Y;
+					
+					dc.DrawPolygon (pen, arrow);
+					
+					if ((state & ButtonState.Inactive) != 0) {
+						dc.DrawLine (SystemPens.ControlLightLight, arrow [1].X + 1, arrow [1].Y + 1, arrow [0].X + 1, arrow [0].Y + 1);
+						dc.DrawLine (SystemPens.ControlLightLight, arrow [1].X, arrow [1].Y + 1, arrow [0].X + 1, arrow [0].Y);
+					}
+					
+					if (fill_rect) {
+						for (int i = 0; i < arrow [0].Y - arrow [1].Y; i++) {
+							dc.DrawLine (pen, arrow [1].X, arrow [1].Y + i, arrow [2].X, arrow [1].Y + i);
+							arrow [1].X -= 1;
+							arrow [2].X += 1;
+						}
+					}
+					
+					
+					break;
+					
+				case ScrollButton.Up:
+					x_middle = (int)Math.Round (rect.Width / 2.0f) - 1;
+					if (x_middle == 1)
+						x_middle = 2;
+					
+					if (rect.Height < 8) {
+						triangle_height = 2;
+						fill_rect = false;
+					} else if (rect.Height == 11) {
+						triangle_height = 3;
+					} else {
+						triangle_height = (int)Math.Round (rect.Height / 3.0f);
+					}
+					
+					arrow [0].X = rect.X + x_middle;
+					arrow [0].Y = rect.Y + triangle_height;
+					
+					if (arrow [0].Y + 1 == rect.Bottom - 1)
+						arrow [0].Y -= 1;
+					
+					arrow [1].X = arrow [0].X + triangle_height - 1;
+					arrow [1].Y = arrow [0].Y + triangle_height - 1;
+					arrow [2].X = arrow [0].X - triangle_height + 1;
+					arrow [2].Y = arrow [1].Y;
+					
+					dc.DrawPolygon (pen, arrow);
+					
+					if ((state & ButtonState.Inactive) != 0) {
+						dc.DrawLine (SystemPens.ControlLightLight, arrow [1].X + 1, arrow [1].Y + 1, arrow [2].X + 1, arrow [1].Y + 1);
+					}
+					
+					if (fill_rect) {
+						for (int i = 0; i < arrow [1].Y - arrow [0].Y; i++) {
+							dc.DrawLine (pen, arrow [2].X, arrow [1].Y - i, arrow [1].X, arrow [1].Y - i);
+							arrow [1].X -= 1;
+							arrow [2].X += 1;
+						}
+					}
+					
+					break;
+					
+				case ScrollButton.Left:
+					int y_middle = (int)Math.Round (rect.Height / 2.0f) - 1;
+					if (y_middle == 1)
+						y_middle = 2;
+					
+					int triangle_width;
+					
+					if (rect.Width < 8) {
+						triangle_width = 2;
+						fill_rect = false;
+					} else if (rect.Width == 11) {
+						triangle_width = 3;
+					} else {
+						triangle_width = (int)Math.Round (rect.Width / 3.0f);
+					}
+					
+					arrow [0].X = rect.Left + triangle_width - 1;
+					arrow [0].Y = rect.Y + y_middle;
+					
+					if (arrow [0].X - 1 == rect.X)
+						arrow [0].X += 1;
+					
+					arrow [1].X = arrow [0].X + triangle_width - 1;
+					arrow [1].Y = arrow [0].Y - triangle_width + 1;
+					arrow [2].X = arrow [1].X;
+					arrow [2].Y = arrow [0].Y + triangle_width - 1;
+					
+					dc.DrawPolygon (pen, arrow);
+					
+					if ((state & ButtonState.Inactive) != 0) {
+						dc.DrawLine (SystemPens.ControlLightLight, arrow [1].X + 1, arrow [1].Y + 1, arrow [2].X + 1, arrow [2].Y + 1);
+					}
+					
+					if (fill_rect) {
+						for (int i = 0; i < arrow [2].X - arrow [0].X; i++) {
+							dc.DrawLine (pen, arrow [2].X - i, arrow [1].Y, arrow [2].X - i, arrow [2].Y);
+							arrow [1].Y += 1;
+							arrow [2].Y -= 1;
+						}
+					}
+					break;
+					
+				case ScrollButton.Right:
+					y_middle = (int)Math.Round (rect.Height / 2.0f) - 1;
+					if (y_middle == 1)
+						y_middle = 2;
+					
+					if (rect.Width < 8) {
+						triangle_width = 2;
+						fill_rect = false;
+					} else if (rect.Width == 11) {
+						triangle_width = 3;
+					} else {
+						triangle_width = (int)Math.Round (rect.Width / 3.0f);
+					}
+					
+					arrow [0].X = rect.Right - triangle_width - 1;
+					arrow [0].Y = rect.Y + y_middle;
+					
+					if (arrow [0].X - 1 == rect.X)
+						arrow [0].X += 1;
+					
+					arrow [1].X = arrow [0].X - triangle_width + 1;
+					arrow [1].Y = arrow [0].Y - triangle_width + 1;
+					arrow [2].X = arrow [1].X;
+					arrow [2].Y = arrow [0].Y + triangle_width - 1;
+					
+					dc.DrawPolygon (pen, arrow);
+					
+					if ((state & ButtonState.Inactive) != 0) {
+						dc.DrawLine (SystemPens.ControlLightLight, arrow [0].X + 1, arrow [0].Y + 1, arrow [2].X + 1, arrow [2].Y + 1);
+						dc.DrawLine (SystemPens.ControlLightLight, arrow [0].X, arrow [0].Y + 1, arrow [2].X + 1, arrow [2].Y);
+					}
+					
+					if (fill_rect) {
+						for (int i = 0; i < arrow [0].X - arrow [1].X; i++) {
+							dc.DrawLine (pen, arrow [2].X + i, arrow [1].Y, arrow [2].X + i, arrow [2].Y);
+							arrow [1].Y += 1;
+							arrow [2].Y -= 1;
+						}
+					}
+					break;
 			}
 		}
 

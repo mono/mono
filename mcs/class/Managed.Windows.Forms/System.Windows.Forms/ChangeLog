@@ -1,3 +1,11 @@
+2006-05-23  Alexander Olk  <alex.olk@googlemail.com>
+
+	* ThemeWin32Classic.cs: Rewrote CPCPDrawScrollButton to drop
+	  Graphics.FillRectangle as the visual results are really bad (even
+	  on win). We now draw perfect arrows (and perfect shadows when the
+	  scrollbar is disabled). Simplified CPDrawGrid. CPDrawGrid now uses
+	  Pen.DashPattern to draw the dots of each line.
+
 2006-05-22  Alexander Olk  <alex.olk@googlemail.com>
 
 	* FileDialog.cs: Update the filename combobox when navigating through
