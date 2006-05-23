@@ -33,9 +33,31 @@ RESOURCES = $(RESX_RESOURCES) $(CUR_RESOURCES)
 
 PREBUILT = $(RESX_RESOURCES:=.prebuilt)
 
+IMAGES_RESOURCES = \
+	resources/computer_16.png		\
+	resources/computer_32.png		\
+	resources/computer.png			\
+	resources/document-open_16.png		\
+	resources/document-open_32.png		\
+	resources/document-open.png		\
+	resources/folder_16.png			\
+	resources/folder-new.png		\
+	resources/folder.png			\
+	resources/folder-remote_16.png		\
+	resources/folder-remote_32.png		\
+	resources/folder-remote.png		\
+	resources/go-previous.png		\
+	resources/go-top.png			\
+	resources/preferences-system-windows.png\
+	resources/text-x-generic.png		\
+	resources/user-desktop_16.png		\
+	resources/user-desktop_32.png		\
+	resources/user-desktop.png
+
 EXTRA_DISTFILES = \
 	README System.Windows.Forms.dll.resources \
 	$(RESX_RESOURCES:.resources=.resx) $(CUR_RESOURCES) $(PREBUILT) build-csproj \
+	$(IMAGES_RESOURCES) \
 	Test/resources/a.cur
 
 TEST_MCS_FLAGS = /r:System.Data.dll /r:System.Drawing.dll \
