@@ -23,6 +23,29 @@
 
 2006-05-23  Chris Toshok  <toshok@ximian.com>
 
+	* DataGridTextBoxColumn.cs (Edit): set grid.is_editing to true.
+	maybe this should actually happen in the datagrid code?
+	(EndEdit): no need to invalidate anything, given that
+	ReleaseHostedControl causes the datagrid to relayout, which
+	invalidates everything anyway.
+
+	* DataGrid.cs (set_CurrentCell): remove duplicate check (it's also
+	in SetCurrentCell).
+	(set_SelectionBackColor): call InvalidateSelection instead of
+	Refresh.
+	(set_SelectionForeColor): same.
+	(BeginEdit): Flesh this out a bit.
+	(CancelEditing): only do any of this if we're editing/adding.
+	(EndEdit): same.
+	(OnMouseDown): there's no need to cancel editing here, it's done
+	in SetCurrentCell.
+	(SetCurrentCell): only invalidate the current row header if it's a
+	different row than the new one.
+	(ShiftSelection): fix this to work like MS does.
+	(ResetSelection): factor out the invalidation of selected_rows to
+	InvalidateSelection.
+	(SetDataSource): cancel any editing that's going on.
+
 	* DataGridColumnStyle.cs
 	(IDataGridColumnStyleEditingNotificationService.ColumnStartedEditing):
 	call the non-interface version.

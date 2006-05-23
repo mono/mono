@@ -187,13 +187,14 @@ namespace System.Windows.Forms
 
 			textbox.Visible = cellIsVisible;
 			textbox.Focus ();
-			textbox.SelectAll ();			
+			textbox.SelectAll ();
+
+			grid.is_editing = true;
 		}
 
 		protected void EndEdit ()
 		{
 			ReleaseHostedControl ();
-			grid.Invalidate (grid.GetCurrentCellBounds ());
 		}
 
 		protected internal override void EnterNullValue ()

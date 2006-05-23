@@ -175,6 +175,7 @@ namespace System.Windows.Forms
 		internal bool is_changing;	// Indicates if current cell is been changed (in edit mode)
 		internal bool is_adding;	// Indicates when we are adding a row
 		private Hashtable selected_rows;
+		private int selection_start; // used for range selection
 		private bool ctrl_pressed;
 		private bool shift_pressed;
 		private bool begininit;
@@ -232,6 +233,7 @@ namespace System.Windows.Forms
 			is_adding = false;
 			parentrowslabel_style = DataGridParentRowsLabelStyle.Both;
 			selected_rows = new Hashtable ();
+			selection_start = -1;
 			ctrl_pressed = false;
 			shift_pressed = false;
 			preferredrow_height = def_preferredrow_height = FontHeight + 3;
@@ -445,9 +447,6 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				if (current_cell.Equals (value)) 
-					return;
-					
 				if (value.RowNumber >= RowsCount) {
 					value.RowNumber = RowsCount == 0 ? 0 : RowsCount - 1;
 				}
@@ -864,7 +863,7 @@ namespace System.Windows.Forms
 			set {
 				if (selection_backcolor != value) {
 					selection_backcolor = value;
-					Refresh ();
+					InvalidateSelection ();
 				}
 			}
 		}
@@ -877,7 +876,7 @@ namespace System.Windows.Forms
 			set {
 				if (selection_forecolor != value) {
 					selection_forecolor = value;
-					Refresh ();
+					InvalidateSelection ();
 				}
 			}
 		}
@@ -999,7 +998,20 @@ namespace System.Windows.Forms
 		[MonoTODO]
 		public bool BeginEdit (DataGridColumnStyle gridColumn, int rowNumber)
 		{
-			return false;
+			if (is_changing)
+				return false;
+
+			int column = CurrentTableStyle.GridColumnStyles.IndexOf (gridColumn);
+			if (column < 0)
+				return false;
+
+			DataGridCell new_cell = new DataGridCell (rowNumber, column);
+
+			SetCurrentCell (new_cell);
+
+			EditCell (new_cell);
+
+			return true;
 		}
 
 		public void BeginInit ()
@@ -1009,17 +1021,21 @@ namespace System.Windows.Forms
 
 		protected virtual void CancelEditing ()
 		{
+			if (!is_editing && !is_adding && !is_changing)
+				return;
+
 			if (current_cell.ColumnNumber < CurrentTableStyle.GridColumnStyles.Count) {
 				CurrentTableStyle.GridColumnStyles[current_cell.ColumnNumber].Abort (current_cell.RowNumber);
 			}
 			
-			if (is_adding == true) {
+			if (is_adding) {
 				ListManager.RemoveAt (RowsCount - 1);
-				is_adding = false;
 			}
-			
+
+			is_adding = false;
 			is_editing = false;
 			is_changing = false;
+
 			InvalidateCurrentRowHeader ();
 		}
 
@@ -1060,7 +1076,10 @@ namespace System.Windows.Forms
 		}
 
 		public bool EndEdit (DataGridColumnStyle gridColumn, int rowNumber, bool shouldAbort)
-		{						
+		{	
+			if (!is_adding && !is_editing && !is_changing)
+				return true;
+
 			if (is_adding == true) {				
 				if (shouldAbort) {
 					ListManager.CancelCurrentEdit ();
@@ -1310,7 +1329,6 @@ namespace System.Windows.Forms
 				DataGridCell new_cell = new DataGridCell (testinfo.Row, testinfo.Column);
 
 				if ((new_cell.Equals (current_cell) == false) || (!is_editing)) {
-					CancelEditing ();
 					SetCurrentCell (new_cell);
 					EditCell (current_cell);
 
@@ -1326,13 +1344,13 @@ namespace System.Windows.Forms
 					ResetSelection (); // Invalidates selected rows
 				}
 
-				if (shift_pressed == true) {
+				if (shift_pressed == true && selection_start != -1) {
 					ShiftSelection (testinfo.Row);
 				} else { // ctrl_pressed or single item
+					selection_start = testinfo.Row;
 					Select (testinfo.Row);
 				}
 
-				CancelEditing ();
 				CurrentCell = new DataGridCell (testinfo.Row, current_cell.ColumnNumber);
 				OnRowHeaderClick (EventArgs.Empty);
 				break;
@@ -1694,13 +1712,18 @@ namespace System.Windows.Forms
 		}
 
 		protected void ResetSelection ()
-		{			
+		{
+			InvalidateSelection ();
+			selected_rows.Clear ();
+			selection_start = -1;
+		}
+
+		void InvalidateSelection ()
+		{
 			foreach (int row in selected_rows.Keys) {
 				grid_drawing.InvalidateRow (row);
 				grid_drawing.InvalidateRowHeader (row);
 			}
-
-			selected_rows.Clear ();
 		}
 
 		public void ResetSelectionBackColor ()
@@ -1846,8 +1869,7 @@ namespace System.Windows.Forms
 			if (cell.ColumnNumber <= first_visiblecolumn ||
 				cell.ColumnNumber + 1 >= first_visiblecolumn + visiblecolumn_count) {			
 					
-				first_visiblecolumn = grid_drawing.GetFirstColumnForColumnVisilibility (first_visiblecolumn, cell.ColumnNumber);						
-				
+				first_visiblecolumn = grid_drawing.GetFirstColumnForColumnVisilibility (first_visiblecolumn, cell.ColumnNumber);				
 				int pixel = grid_drawing.GetColumnStartingPixel (first_visiblecolumn);
 				ScrollToColumnInPixels (pixel);
 			}
@@ -1949,7 +1971,10 @@ namespace System.Windows.Forms
 				cached_currencymgr_events.Position = current_cell.RowNumber;
 			}
 			accept_listmgrevents = true;
-			InvalidateCurrentRowHeader ();
+
+			if (current_cell.RowNumber != old_row) {
+				InvalidateCurrentRowHeader ();
+			}
 			OnCurrentCellChanged (EventArgs.Empty);
 		}
 
@@ -1968,10 +1993,11 @@ namespace System.Windows.Forms
 
 		private bool SetDataSource (object source)
 		{			
-
 			if (source != null && source as IListSource != null && source as IList != null) {
 				throw new Exception ("Wrong complex data binding source");
 			}
+
+			CancelEditing ();
 
 			current_cell = new DataGridCell ();
 			datasource = source;
@@ -2098,38 +2124,25 @@ namespace System.Windows.Forms
 
 		private void ShiftSelection (int index)
 		{
-			int shorter_item = -1, dist = RowsCount + 1, cur_dist;			
+			// we have to save off selection_start
+			// because ResetSelection clobbers it
+			int saved_selection_start = selection_start;
+			int start, end;
 
-			foreach (int row in selected_rows.Keys) {
+			ResetSelection ();
+			selection_start = saved_selection_start;
 
-				if (row > index) {
-					cur_dist = row - index;
-				}
-				else {
-					cur_dist = index - row;
-				}
-
-				if (cur_dist < dist) {
-					dist = cur_dist;
-					shorter_item = row;
-				}
+			if (index >= selection_start) {
+				start = selection_start;
+				end = index;
+			}
+			else {
+				start = index;
+				end = selection_start;
 			}
 
-			if (shorter_item != -1) {
-				int start, end;
-
-				if (shorter_item > index) {
-					start = index;
-					end = shorter_item;
-				} else {
-					start = shorter_item;
-					end = index;
-				}
-
-				ResetSelection ();
-				for (int idx = start; idx <= end; idx++) {
-					Select (idx);
-				}
+			for (int idx = start; idx <= end; idx ++) {
+				Select (idx);
 			}
 		}
 
