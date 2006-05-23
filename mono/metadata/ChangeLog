@@ -1,4 +1,9 @@
 
+Tue May 23 12:33:24 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.h, marshal.c: added write barrier wrapper and precise type
+	fixes.
+
 Tue May 23 12:31:22 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
 	* object.h, null-gc.c, boehm-gc.c: more write barrier functions and
