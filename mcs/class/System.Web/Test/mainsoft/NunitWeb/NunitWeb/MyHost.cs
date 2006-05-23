@@ -38,10 +38,14 @@ namespace NunitWeb
 					SimpleWorkerRequest sr = new SimpleWorkerRequest (
 						url, null, tw);
 					HttpRuntime.ProcessRequest (sr);
+					tw.Close ();
+					string res = tw.ToString ();
 					Exception inner = CallContext.GetData (CALL_CONTEXT_EXCEPTION) as Exception;
 					RethrowException (inner);
-					tw.Close ();
-					return tw.ToString ();
+					if (CallContext.GetData (CALL_CONTEXT_METHOD) != null)
+						throw new Exception ("ProcessRequest did not reach RunDelegate");
+										
+					return res;
 				}
 			}
 			finally {
@@ -72,6 +76,7 @@ namespace NunitWeb
 			object param = CallContext.GetData (MyHost.CALL_CONTEXT_PARAM);
 			try {
 				Delegate method = (Delegate) CallContext.GetData (CALL_CONTEXT_METHOD);
+				CallContext.FreeNamedDataSlot (CALL_CONTEXT_METHOD);
 				Helper.AnyMethodInPage amip = method as Helper.AnyMethodInPage;
 				if (amip != null) {
 					amip (context, page, param);
