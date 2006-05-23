@@ -1,3 +1,7 @@
+2006-05-23  Miguel de Icaza  <miguel@novell.com>
+
+	* resources/: Add Tango icons in various sizes.
+
 2006-05-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* System.Windows.Forms_test.dll.sources: Add the unit tests for

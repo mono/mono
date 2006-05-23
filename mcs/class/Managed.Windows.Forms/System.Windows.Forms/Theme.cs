@@ -548,52 +548,45 @@ namespace System.Windows.Forms
 			}
 		}
 
-		private Image GetSizedResourceImage(string name, int size) {
-			
-			Image image = ResPool.GetUIImage (name, size);
+		//
+		// This routine fetches images embedded as assembly resources (not
+		// resgen resources).  It optionally scales the image to fit the
+		// specified size x dimension (it adjusts y automatically to fit that).
+		//
+		private Image GetSizedResourceImage(string name, int width)
+		{
+			Image image = ResPool.GetUIImage (name, width);
 			if (image != null)
 				return image;
 			
 			string	fullname;
 
-			if (size > 0) {
-				// Try name name_sizexsize
-				fullname = String.Format("{0}_{1}x{1}", name, size);
-				image = ResPool.GetUIImage (fullname, size);
-				if (image != null)
-					return image;
-				else {
-					image = (Image)Locale.GetResource(fullname);
-					if (image != null) {
-						ResPool.AddUIImage (image, fullname, size);
-						return image;
-					}
-				}
-
-				// Try name_size
-				fullname = String.Format("{0}_{1}", name, size);
-				image = ResPool.GetUIImage (fullname, size);
-				if (image != null)
-					return image;
-				else {
-					image = (Image)Locale.GetResource(fullname);
-					if (image != null) {
-						ResPool.AddUIImage (image, fullname, size);
-						return image;
-					}
-				}
-				
-				image = (Image)Locale.GetResource(name);
-				if (image != null) {
-					image = new Bitmap (image, new Size (size, size));
-					ResPool.AddUIImage (image, name, size);
+			if (width > 0) {
+				// Try name_width
+				fullname = String.Format("{0}_{1}", name, width);
+				image = ResourceImageLoader.Get (fullname);
+				if (image != null){
+					ResPool.AddUIImage (image, name, width);
 					return image;
 				}
 			}
 
 			// Just try name
-			image = (Image)Locale.GetResource(name);
-			ResPool.AddUIImage (image, name, size);
+			image = ResourceImageLoader.Get (name);
+			if (image == null)
+				return null;
+			
+			ResPool.AddUIImage (image, name, 0);
+			if (image.Width != width){
+				Console.Error.WriteLine ("warning: requesting icon that not been tuned {0}_{1}", name, width);
+				int height = (image.Height * width)/image.Width;
+				Bitmap b = new Bitmap (width, height);
+				Graphics g = Graphics.FromImage (b);
+				g.DrawImage (image, 0, 0, width, height);
+				ResPool.AddUIImage (b, name, width);
+
+				return b;
+			}
 			return image;
 		}
 		
@@ -603,20 +596,30 @@ namespace System.Windows.Forms
 			
 		public virtual Image Images(UIIcon index, int size) {
 			switch (index) {
-				case UIIcon.PlacesRecentDocuments:	return GetSizedResourceImage ("last_open", size);
-				case UIIcon.PlacesDesktop:		return GetSizedResourceImage ("desktop", size);
-				case UIIcon.PlacesPersonal:		return GetSizedResourceImage ("folder_with_paper", size);
-				case UIIcon.PlacesMyComputer:		return GetSizedResourceImage ("monitor-computer", size);
-				case UIIcon.PlacesMyNetwork:		return GetSizedResourceImage ("monitor-planet", size);
+				case UIIcon.PlacesRecentDocuments:
+					return GetSizedResourceImage ("document-open", size);
+				case UIIcon.PlacesDesktop:
+					return GetSizedResourceImage ("user-desktop", size);
+				case UIIcon.PlacesPersonal:
+					return GetSizedResourceImage ("document-open", size);
+				case UIIcon.PlacesMyComputer:
+					return GetSizedResourceImage ("computer", size);
+				case UIIcon.PlacesMyNetwork:
+					return GetSizedResourceImage ("folder-remote", size);
 
 				// Icons for message boxes
-				case UIIcon.MessageBoxError:		return GetSizedResourceImage ("mbox_error.png", size);
-				case UIIcon.MessageBoxInfo:		return GetSizedResourceImage ("mbox_info.png", size);
-				case UIIcon.MessageBoxQuestion:		return GetSizedResourceImage ("mbox_question.png", size);
-				case UIIcon.MessageBoxWarning:		return GetSizedResourceImage ("mbox_warn.png", size);
+				case UIIcon.MessageBoxError:
+					return GetSizedResourceImage ("mbox_error.png", size);
+				case UIIcon.MessageBoxInfo:
+					return GetSizedResourceImage ("mbox_info.png", size);
+				case UIIcon.MessageBoxQuestion:
+					return GetSizedResourceImage ("mbox_question.png", size);
+				case UIIcon.MessageBoxWarning:
+					return GetSizedResourceImage ("mbox_warn.png", size);
 				
 				// misc Icons
-				case UIIcon.NormalFolder:		return GetSizedResourceImage ("folder", size);
+				case UIIcon.NormalFolder:
+					return GetSizedResourceImage ("folder", size);
 
 				default: {
 					throw new ArgumentException("Invalid Icon type requested", "index");

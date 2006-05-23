@@ -118,7 +118,7 @@ namespace System.Windows.Forms {
 		
 		private static string last_dir_when_opened_or_saved = String.Empty;
 		private string start_dir;
-		
+
 		internal FileDialog ()
 		{
 			fileTypeComboBox = new ComboBox ();
@@ -149,10 +149,10 @@ namespace System.Windows.Forms {
 			//imageListTopToolbar
 			imageListTopToolbar.ColorDepth = ColorDepth.Depth32Bit;
 			imageListTopToolbar.ImageSize = new Size (16, 16); // 16, 16
-			imageListTopToolbar.Images.Add ((Image)Locale.GetResource ("back_arrow"));
-			imageListTopToolbar.Images.Add ((Image)Locale.GetResource ("folder_arrow_up"));
-			imageListTopToolbar.Images.Add ((Image)Locale.GetResource ("folder_star"));
-			imageListTopToolbar.Images.Add ((Image)Locale.GetResource ("window"));
+			imageListTopToolbar.Images.Add (ResourceImageLoader.Get ("go-previous"));
+			imageListTopToolbar.Images.Add (ResourceImageLoader.Get ("go-top"));
+			imageListTopToolbar.Images.Add (ResourceImageLoader.Get ("folder-new"));
+			imageListTopToolbar.Images.Add (ResourceImageLoader.Get ("preferences-system-windows"));
 			imageListTopToolbar.TransparentColor = Color.Transparent;
 			
 			// searchLabel
@@ -1454,7 +1454,7 @@ namespace System.Windows.Forms {
 				
 				SuspendLayout ();
 				
-				BackColor = Color.FromArgb (128, 128, 128);
+				//BackColor = Color.FromArgb (128, 128, 128);
 				Size = new Size (85, 336);
 				
 				recentlyusedButton = new PopupButton ();
@@ -1464,40 +1464,40 @@ namespace System.Windows.Forms {
 				networkButton = new PopupButton ();
 				
 				recentlyusedButton.Size = new Size (81, 64);
-				recentlyusedButton.Image = ThemeEngine.Current.Images (UIIcon.PlacesRecentDocuments, 30);
+				recentlyusedButton.Image = ThemeEngine.Current.Images (UIIcon.PlacesRecentDocuments, 32);
 				recentlyusedButton.BackColor = BackColor;
-				recentlyusedButton.ForeColor = Color.White;
+				recentlyusedButton.ForeColor = Color.Black;
 				recentlyusedButton.Location = new Point (2, 2);
 				recentlyusedButton.Text = "Recently\nused";
 				recentlyusedButton.Click += new EventHandler (OnClickButton);
 				
-				desktopButton.Image = ThemeEngine.Current.Images (UIIcon.PlacesDesktop, 30);
+				desktopButton.Image = ThemeEngine.Current.Images (UIIcon.PlacesDesktop, 32);
 				desktopButton.BackColor = BackColor;
-				desktopButton.ForeColor = Color.White;
+				desktopButton.ForeColor = Color.Black;
 				desktopButton.Size = new Size (81, 64);
 				desktopButton.Location = new Point (2, 66);
 				desktopButton.Text = "Desktop";
 				desktopButton.Click += new EventHandler (OnClickButton);
 				
-				personalButton.Image = ThemeEngine.Current.Images (UIIcon.PlacesPersonal, 30);
+				personalButton.Image = ThemeEngine.Current.Images (UIIcon.PlacesPersonal, 32);
 				personalButton.BackColor = BackColor;
-				personalButton.ForeColor = Color.White;
+				personalButton.ForeColor = Color.Black;
 				personalButton.Size = new Size (81, 64);
 				personalButton.Location = new Point (2, 130);
 				personalButton.Text = "Personal";
 				personalButton.Click += new EventHandler (OnClickButton);
 				
-				mycomputerButton.Image = ThemeEngine.Current.Images (UIIcon.PlacesMyComputer, 30);
+				mycomputerButton.Image = ThemeEngine.Current.Images (UIIcon.PlacesMyComputer, 32);
 				mycomputerButton.BackColor = BackColor;
-				mycomputerButton.ForeColor = Color.White;
+				mycomputerButton.ForeColor = Color.Black;
 				mycomputerButton.Size = new Size (81, 64);
 				mycomputerButton.Location = new Point (2, 194);
 				mycomputerButton.Text = "My Computer";
 				mycomputerButton.Click += new EventHandler (OnClickButton);
 				
-				networkButton.Image = ThemeEngine.Current.Images (UIIcon.PlacesMyNetwork, 30);
+				networkButton.Image = ThemeEngine.Current.Images (UIIcon.PlacesMyNetwork, 32);
 				networkButton.BackColor = BackColor;
-				networkButton.ForeColor = Color.White;
+				networkButton.ForeColor = Color.Black;
 				networkButton.Size = new Size (81, 64);
 				networkButton.Location = new Point (2, 258);
 				networkButton.Text = "My Network";

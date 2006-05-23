@@ -43,6 +43,7 @@
 // to get the image itself for a mime type with a specific size
 
 using System;
+using System.Reflection;
 using System.Drawing;
 using System.Collections;
 using System.Collections.Specialized;
@@ -68,6 +69,22 @@ namespace System.Windows.Forms
 		KDE,
 		GNOME
 		// Win, Mac OSX...
+	}
+
+	internal class ResourceImageLoader {
+		static Assembly assembly = typeof (ResourceImageLoader).Assembly;
+		
+		static internal Bitmap Get (string name)
+		{
+			using (Stream stream = assembly.GetManifestResourceStream (name)){
+				if (stream == null){
+					Console.WriteLine ("Failed to read {0}", name);
+					return null;
+				}
+				
+				return new Bitmap (stream);
+			}
+		}
 	}
 	
 	internal class MimeIconEngine
@@ -457,6 +474,7 @@ namespace System.Windows.Forms
 	
 	internal class PlatformDefaultHandler : PlatformMimeIconHandler
 	{
+		
 		public override MimeExtensionHandlerStatus Start( )
 		{
 			MimeIconEngine.AddMimeTypeAndIconName( "unknown/unknown", "paper" );
@@ -467,13 +485,15 @@ namespace System.Windows.Forms
 			MimeIconEngine.AddMimeTypeAndIconName( "recently/recently", "last_open" );
 			MimeIconEngine.AddMimeTypeAndIconName( "workplace/workplace", "monitor-computer" );
 			
-			MimeIconEngine.AddIconByImage( "folder",  (Image)Locale.GetResource( "folder" ) );
-			MimeIconEngine.AddIconByImage( "paper",  (Image)Locale.GetResource( "paper" ) );
-			MimeIconEngine.AddIconByImage( "desktop",  (Image)Locale.GetResource( "desktop" ) );
-			MimeIconEngine.AddIconByImage( "folder_with_paper",  (Image)Locale.GetResource( "folder_with_paper" ) );
-			MimeIconEngine.AddIconByImage( "monitor-planet",  (Image)Locale.GetResource( "monitor-planet" ) );
-			MimeIconEngine.AddIconByImage( "last_open",  (Image)Locale.GetResource( "last_open" ) );
-			MimeIconEngine.AddIconByImage( "monitor-computer",  (Image)Locale.GetResource( "monitor-computer" ) );
+			MimeIconEngine.AddIconByImage( "folder",  ResourceImageLoader.Get ("folder") );
+			MimeIconEngine.AddIconByImage( "paper",  ResourceImageLoader.Get("text-x-generic") );
+			MimeIconEngine.AddIconByImage( "desktop",  ResourceImageLoader.Get( "user-desktop" ) );
+			MimeIconEngine.AddIconByImage( "folder_with_paper",  ResourceImageLoader.Get( "document-open" ) );
+
+			// fix
+			MimeIconEngine.AddIconByImage( "monitor-planet",  ResourceImageLoader.Get( "document-open" ) );
+			MimeIconEngine.AddIconByImage( "last_open",  ResourceImageLoader.Get( "document-open" ) );
+			MimeIconEngine.AddIconByImage( "monitor-computer",  ResourceImageLoader.Get( "document-open" ) );
 			
 			return MimeExtensionHandlerStatus.OK; // return always ok
 		}

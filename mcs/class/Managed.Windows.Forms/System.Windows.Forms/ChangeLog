@@ -1,3 +1,17 @@
+2006-05-23  Miguel de Icaza  <miguel@novell.com>
+
+	* Theme.cs (GetSizedResourceImage): Scale images if the proper
+	size is not found.  
+	
+	* FileDialog.cs: Do not change the background for the side bar as
+	it wont work nicely with the theme, and also reduces the artifacts
+	in rendering the icons (which I want to fix too).
+
+	* MimeIcon.cs (ResourceImageLoader): Load images from assembly
+	resources, not resgen resources. 
+
+	(PlatformDefaultHandler): Pull images using the new API.
+
 2006-05-23  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* Hwnd.cs (Dispose): Remove any pending exposures. XEventQueue holds
