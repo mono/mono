@@ -1,3 +1,11 @@
+2006-05-24  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* ButtonBase.cs: 
+	  - Fixed MouseUp, MouseDown and MouseMove to treat mouseevent.Button 
+	    as a bitfield.
+	  - Fixed MouseMove to no longer switch pressed state unless the left
+	    mouse button is pressed. Atsushi provided the original patch (#78485)
+	  
 2006-05-24  Jackson Harper  <jackson@ximian.com>
 
 	* ScrollBar.cs: New internal methods that allow us to change a

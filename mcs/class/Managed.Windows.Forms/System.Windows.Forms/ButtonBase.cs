@@ -404,7 +404,7 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void OnMouseDown(MouseEventArgs mevent) {
-			if (is_enabled && (mevent.Button == MouseButtons.Left)) {
+			if (is_enabled && ((mevent.Button & MouseButtons.Left) != 0)) {
 				is_pressed = true;
 				this.Capture = true;
 				Redraw();
@@ -436,13 +436,15 @@ namespace System.Windows.Forms {
 			}
 
 			// If the button was pressed and we leave, release the button press and vice versa
-			if (this.Capture && (inside != is_pressed)) {
-				is_pressed = inside;
-				redraw = true;
+			if ((mevent.Button & MouseButtons.Left) != 0) {
+				if (this.Capture && (inside != is_pressed)) {
+					is_pressed = inside;
+					redraw = true;
+				}
 			}
 
 			if (is_entered != inside) {
-				is_entered = inside;
+                        	is_entered = inside;
 				redraw = true;
 			}
 
@@ -454,7 +456,7 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void OnMouseUp(MouseEventArgs mevent) {
-			if (this.Capture && mevent.Button == MouseButtons.Left) {
+			if (this.Capture && ((mevent.Button & MouseButtons.Left) != 0)) {
 				this.Capture = false;
 				if (is_pressed) {
 					is_pressed = false;
