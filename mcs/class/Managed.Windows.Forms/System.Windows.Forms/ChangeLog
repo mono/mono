@@ -1,3 +1,8 @@
+2006-05-24  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* XplatUIX11.cs: Don't blindly cache hwnd.ClientRect, reset it when 
+	  we receive a size change from the WM (Fixes #78503)
+
 2006-05-24  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* XplatUIWin32.cs, XplatUIX11.cs: Refresh when setting the Clip 

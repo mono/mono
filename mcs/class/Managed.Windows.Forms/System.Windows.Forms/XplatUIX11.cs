@@ -1013,7 +1013,7 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-			if (xevent.ConfigureEvent.window == hwnd.whole_window) {
+			if ((xevent.ConfigureEvent.window == hwnd.whole_window) && (xevent.ConfigureEvent.window == xevent.ConfigureEvent.xevent)) {
 				if (!hwnd.reparented) {
 					hwnd.x = xevent.ConfigureEvent.x;
 					hwnd.y = xevent.ConfigureEvent.y;
@@ -1046,6 +1046,7 @@ namespace System.Windows.Forms {
 				}
 				hwnd.width = xevent.ConfigureEvent.width;
 				hwnd.height = xevent.ConfigureEvent.height;
+				hwnd.ClientRect = Rectangle.Empty;
 
 				if (!hwnd.configure_pending) {
 					hwnd.Queue.Enqueue(xevent);
@@ -3476,7 +3477,6 @@ namespace System.Windows.Forms {
 
 		internal override void GetWindowPos(IntPtr handle, bool is_toplevel, out int x, out int y, out int width, out int height, out int client_width, out int client_height) {
 			Hwnd		hwnd;
-			Rectangle	rect;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
@@ -3487,14 +3487,11 @@ namespace System.Windows.Forms {
 				height = hwnd.height;
 
 				if (hwnd.ClientRect.IsEmpty) {
-					rect = Hwnd.GetClientRectangle(hwnd.border_style, hwnd.menu, hwnd.title_style, hwnd.caption_height, hwnd.tool_caption_height, width, height);
-					hwnd.ClientRect = rect;
-				} else {
-					rect = hwnd.ClientRect;
+					PerformNCCalc(hwnd);
 				}
 
-				client_width = rect.Width;
-				client_height = rect.Height;
+				client_width = hwnd.ClientRect.Width;
+				client_height = hwnd.ClientRect.Height;
 
 				return;
 			}
@@ -4258,7 +4255,6 @@ namespace System.Windows.Forms {
 
 		internal override void SetWindowPos(IntPtr handle, int x, int y, int width, int height) {
 			Hwnd		hwnd;
-			Rectangle	client_rect;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
@@ -4275,9 +4271,6 @@ namespace System.Windows.Forms {
 				UnmapWindow(hwnd, WindowType.Whole);
 			}
 
-			PerformNCCalc(hwnd);
-			client_rect = hwnd.ClientRect;
-
 			// Save a server roundtrip (and prevent a feedback loop)
 			if ((hwnd.x == x) && (hwnd.y == y) && 
 				(hwnd.width == width) && (hwnd.height == height)) {
@@ -4291,12 +4284,8 @@ namespace System.Windows.Forms {
 				}
 
 				lock (XlibLock) {
-					if ((client_rect.Width < 1) || (client_rect.Height < 1)) {
-						XMoveResizeWindow(DisplayHandle, hwnd.client_window, -5, -5, 1, 1);	// Hide the window
-					} else {
-						XMoveResizeWindow(DisplayHandle, hwnd.client_window, client_rect.X, client_rect.Y, client_rect.Width, client_rect.Height);
-					}
 					XMoveResizeWindow(DisplayHandle, hwnd.whole_window, x, y, width, height);
+					PerformNCCalc(hwnd);
 				}
 			}
 
