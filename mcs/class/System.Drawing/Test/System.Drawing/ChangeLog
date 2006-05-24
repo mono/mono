@@ -1,3 +1,9 @@
+2006-05-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestImageConverter.cs: Adjust test cases as there is an additional
+	properties under 2.0.
+	* TestSizeF.cs: Under 2.0 SizeF.Empty != SizeF(0,0)
+
 2006-05-24  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* PenTest.cs: Fix different exception being thrown in 1.x and 2.0.

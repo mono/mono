@@ -449,29 +449,33 @@ namespace MonoTests.System.Drawing
 #endif
 		public void TestGetProperties ()
 		{
+#if NET_2_0
+			int basecount = 1;
+#else
+			int basecount = 0;
+#endif
 			PropertyDescriptorCollection propsColl;
 
 			propsColl = imgConv.GetProperties (null, image, null);
-			Assert.AreEqual (13, propsColl.Count, "GP1#1");
+			Assert.AreEqual (13 + basecount, propsColl.Count, "GP1#1");
 			
 			propsColl = imgConv.GetProperties (null, image);
-			Assert.AreEqual (6, propsColl.Count, "GP1#2");
+			Assert.AreEqual (6 + basecount, propsColl.Count, "GP1#2");
 
 			propsColl = imgConv.GetProperties (image);
-			Assert.AreEqual (6, propsColl.Count, "GP1#3");
+			Assert.AreEqual (6 + basecount, propsColl.Count, "GP1#3");
 
 			propsColl = TypeDescriptor.GetProperties (typeof (Image));
-			Assert.AreEqual (13, propsColl.Count, "GP1#4");
+			Assert.AreEqual (13 + basecount, propsColl.Count, "GP1#4");
 			
 			propsColl = imgConvFrmTD.GetProperties (null, image, null);
-			Assert.AreEqual (13, propsColl.Count, "GP1#1A");
+			Assert.AreEqual (13 + basecount, propsColl.Count, "GP1#1A");
 			
 			propsColl = imgConvFrmTD.GetProperties (null, image);
-			Assert.AreEqual (6, propsColl.Count, "GP1#2A");
+			Assert.AreEqual (6 + basecount, propsColl.Count, "GP1#2A");
 
 			propsColl = imgConvFrmTD.GetProperties (image);
-			Assert.AreEqual (6, propsColl.Count, "GP1#3A");
-			
+			Assert.AreEqual (6 + basecount, propsColl.Count, "GP1#3A");
 		}
 	}
 }

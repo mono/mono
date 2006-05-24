@@ -168,7 +168,12 @@ namespace MonoTests.System.Drawing
 		public void GetHashCodeTest ()
 		{
 			Assert.AreEqual (sz11_0.GetHashCode (), new SizeF (1.1f, 0).GetHashCode (), "GHC#1");
+#if NET_2_0
+			Assert.AreEqual (0, Size.Empty.GetHashCode (), "GHC#2a");
+			Assert.IsFalse (new SizeF (0, 0).GetHashCode () == 0, "GHC#2b");
+#else
 			Assert.AreEqual (Size.Empty.GetHashCode (), new SizeF (0, 0).GetHashCode (), "GHC#2");
+#endif
 		}
 
 		[Test]
