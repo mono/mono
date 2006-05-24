@@ -650,7 +650,11 @@ namespace System.Web.UI.WebControls {
 		protected override void LoadViewState (object savedState)
 		{
 			object[] state = (object[]) savedState;
+#if NET_2_0
+			base.LoadViewState (state [8]);
+#else
 			base.LoadViewState (state [0]);
+#endif
 			if (state [1] != null)
 				ItemStyle.LoadViewState (state [1]);
 			if (state [2] != null)

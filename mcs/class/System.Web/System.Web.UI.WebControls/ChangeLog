@@ -1,3 +1,7 @@
+2006-05-24  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* DataList.cs: Fixed LoadViewState method
+
 2006-05-04  Lluis Sanchez  <lluis@novell.com>
 
 	* BoundField.cs: Added missing throw kyword. Patch by Marek Habersack.
