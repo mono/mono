@@ -308,18 +308,22 @@ namespace MonoTests.System.Drawing
 
 			rectInstance = (Rectangle) rconv.CreateInstance (null, ht);
 			Assert.AreEqual (rectneg, rectInstance, "CI#2");
+		}
 
-			// Property names are case-sensitive. It should throw 
-			// NullRefExc if any of the property names does not match
-			ht.Clear ();
-			ht.Add ("x", -10); ht.Add ("Y", -10);
-			ht.Add ("Width", 20); ht.Add ("Height", 30);
-			try {
-				rectInstance = (Rectangle) rconv.CreateInstance (null, ht);
-				Assert.Fail ("CI#3: must throw NullReferenceException");
-			} catch (Exception e) {
-				Assert.IsTrue (e is NullReferenceException, "CI#3");
-			}
+		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (ArgumentException))]
+#else
+		[ExpectedException (typeof (NullReferenceException))]
+#endif
+		public void TestCreateInstance_CaseSensitive ()
+		{
+			Hashtable ht = new Hashtable ();
+			ht.Add ("x", -10);
+			ht.Add ("Y", -10);
+			ht.Add ("Width", 20);
+			ht.Add ("Height", 30);
+			rconv.CreateInstance (null, ht);
 		}
 
 		[Test]

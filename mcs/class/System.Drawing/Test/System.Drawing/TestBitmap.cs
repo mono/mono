@@ -7,10 +7,7 @@
 //	 Jonathan Gilbert <logic@deltaq.org>
 //
 // (C) 2004 Ximian, Inc.  http://www.ximian.com
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -47,15 +44,6 @@ namespace MonoTests.System.Drawing{
 	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 	public class TestBitmap {
 		
-		[TearDown]
-		public void Clean() {}
-		
-		[SetUp]
-		public void GetReady()		
-		{
-		
-		}
-			
 		[Test]
 		public void TestPixels() 
 		{		
@@ -308,6 +296,7 @@ namespace MonoTests.System.Drawing{
 			resulting pixels using MD5
 		*/
 		[Test]
+		[Category ("NotDotNet")] // that doesn't work under MS.NET and Windows (even without the StreamWriter)
 		public void Rotate1bit4bit()
 		{
 			string[] files = {

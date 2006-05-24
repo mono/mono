@@ -30,21 +30,23 @@
 using NUnit.Framework;
 using System;
 using System.Drawing;
+using System.Security.Permissions;
 
 namespace MonoTests.System.Drawing{
 
 	[TestFixture]
+	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 	public class FontNameConverterTest {
 
 		[Test]
 		public void TestConvertFrom ()
 		{
 			FontConverter.FontNameConverter f = new FontConverter.FontNameConverter ();
-			Assert.AreEqual (f.ConvertFrom ("Times"), "Times", "string test");
-			Assert.AreEqual (f.GetStandardValuesSupported (), true, "standard values supported");
-			Assert.AreEqual (f.GetStandardValuesExclusive (), false, "standard values exclusive");
+			// returns "Times" under Linux and "Times New Roman" under Windows
+			Assert.IsTrue ((f.ConvertFrom ("Times") as string).StartsWith ("Times"), "string test");
+			Assert.IsTrue (f.GetStandardValuesSupported (), "standard values supported");
+			Assert.IsFalse (f.GetStandardValuesExclusive (), "standard values exclusive");
 		}
-
 		
 		[ExpectedException (typeof (NotSupportedException))]
 		[Test]
@@ -52,7 +54,6 @@ namespace MonoTests.System.Drawing{
 		{
 			FontConverter.FontNameConverter f = new FontConverter.FontNameConverter ();
 			f.ConvertFrom (null);
-			
 		}
 
 		[ExpectedException (typeof (NotSupportedException))]
@@ -61,7 +62,6 @@ namespace MonoTests.System.Drawing{
 		{
 			FontConverter.FontNameConverter f = new FontConverter.FontNameConverter ();
 			f.ConvertFrom (1);
-			
 		}
 	}
 }

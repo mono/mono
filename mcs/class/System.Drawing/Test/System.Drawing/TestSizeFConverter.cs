@@ -238,27 +238,36 @@ namespace MonoTests.System.Drawing
 			SizeF szInstance;
 
 			Hashtable ht = new Hashtable ();
-			ht.Add ("Width", 10); ht.Add ("Height", 20);
+			ht.Add ("Width", 10.0f); ht.Add ("Height", 20.0f);
 
 			szInstance = (SizeF) szconv.CreateInstance (ht);
 			Assert.AreEqual (sz, szInstance, "CI#1");
 
 			ht.Clear ();
-			ht.Add ("Width", -20); ht.Add ("Height", -30);
+			ht.Add ("Width", -20.0f); ht.Add ("Height", -30.0f);
 
 			szInstance = (SizeF) szconv.CreateInstance (null, ht);
 			Assert.AreEqual (szneg, szInstance, "CI#2");
+		}
 
-			// Property names are case-sensitive. It should throw 
-			// NullRefExc if any of the property names does not match
-			ht.Clear ();
-			ht.Add ("width", 20); ht.Add ("Height", 30);
-			try {
-				szInstance = (SizeF) szconv.CreateInstance (null, ht);
-				Assert.Fail ("CI#3: must throw NullReferenceException");
-			} catch (Exception e) {
-				Assert.IsTrue (e is NullReferenceException, "CI#3");
-			}
+		[Test]
+		[ExpectedException (typeof (InvalidCastException))]
+		public void TestCreateInstance_Int ()
+		{
+			Hashtable ht = new Hashtable ();
+			ht.Add ("Width", 10);
+			ht.Add ("Height", 20);
+			szconv.CreateInstance (null, ht);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NullReferenceException))]
+		public void TestCreateInstance_CaseSensitive ()
+		{
+			Hashtable ht = new Hashtable ();
+			ht.Add ("width", 20);
+			ht.Add ("Height", 30);
+			szconv.CreateInstance (null, ht);
 		}
 
 		[Test]

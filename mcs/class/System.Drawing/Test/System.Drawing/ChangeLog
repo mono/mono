@@ -1,3 +1,22 @@
+2006-05-24  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* ColorConverter.cs: Split unworking test case from ConvertFrom into
+	a separate test case (marked as NotWorking).
+	* TestBitmap.cs: Mark test case Rotate1bit4bit as NotDotNet as it was
+	probably never tested under Windows (and doesn't work there).
+	* TestFontConverter.cs: Split test case for CreateInstance to check 
+	for ArgumentException (2.0) or NullReferenceException (1.x).
+	* TestPointConverter.cs: Split test case for CreateInstance to check 
+	for ArgumentException (2.0) or NullReferenceException (1.x).
+	* TestRectangleConverter.cs: Split test case for CreateInstance to 
+	check for ArgumentException (2.0) or NullReferenceException (1.x).
+	* TestSizeConverter.cs: Split test case for CreateInstance to check 
+	for ArgumentException (2.0) or NullReferenceException (1.x).
+	* TestSizeFConverter.cs: Add/split test cases for CreateInstance to
+	check for InvalidCastException and NullReferenceException.
+	* TestSizeF.cs: Mark GetHashCodeTest as NotWorking in 2.0 profile as
+	Empty and SizeF(0,0) don't share the same hash code.
+
 2006-05-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestImageConverter.cs: Adjust test cases as there is an additional

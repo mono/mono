@@ -252,17 +252,20 @@ namespace MonoTests.System.Drawing
 
 			szInstance = (Size) szconv.CreateInstance (null, ht);
 			Assert.AreEqual (szneg, szInstance, "CI#2");
+		}
 
-			// Property names are case-sensitive. It should throw 
-			// NullRefExc if any of the property names does not match
-			ht.Clear ();
-			ht.Add ("width", 20); ht.Add ("Height", 30);
-			try {
-				szInstance = (Size) szconv.CreateInstance (null, ht);
-				Assert.Fail ("CI#3: must throw NullReferenceException");
-			} catch (Exception e) {
-				Assert.IsTrue (e is NullReferenceException, "CI#3");
-			}
+		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (ArgumentException))]
+#else
+		[ExpectedException (typeof (NullReferenceException))]
+#endif
+		public void TestCreateInstance_CaseSensitive ()
+		{
+			Hashtable ht = new Hashtable ();
+			ht.Add ("width", 20);
+			ht.Add ("Height", 30);
+			szconv.CreateInstance (null, ht);
 		}
 
 		[Test]
