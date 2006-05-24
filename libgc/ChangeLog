@@ -1,3 +1,9 @@
+2006-05-24  Martin Baulig  <martin@ximian.com>
+
+	* doc/debugger-support.txt: Removed; this issue turned out to be
+	something completely different and the patch mentioned in this
+	file is already reverted.
+
 2006-05-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* os_dep.c (GC_unix_get_mem): Add an assert to bail out early if the runtime is
