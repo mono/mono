@@ -1,3 +1,7 @@
+2006-05-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ImageFormat.cs: Fixed ToString method to match MS output.
+
 2006-05-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ColorAdjustType.cs: Removed [Serializable] from 2.0 profile.

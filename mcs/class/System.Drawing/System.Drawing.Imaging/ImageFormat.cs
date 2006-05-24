@@ -8,10 +8,7 @@
 //   Jordi Mas i Hernandez (jordi@ximian.com)
 //
 // (C) 2002-4 Ximian, Inc.  http://www.ximian.com
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,7 +30,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.ComponentModel;
 
 namespace System.Drawing.Imaging {
@@ -80,40 +76,7 @@ namespace System.Drawing.Imaging {
 		
 		public override string ToString() 
 		{			
-			if (this.Equals (Bmp))
-				return "Bmp";			
-				
-			if (this.Equals (Emf))
-				return "Emf";			
-				
-			if (this.Equals (Exif))
-				return "Exif";			
-				
-			if (this.Equals (Gif))
-				return "Gif";			
-				
-			if (this.Equals (Tiff))
-				return "Tiff";			
-				
-			if (this.Equals (Png))
-				return "Png";			
-				
-			if (this.Equals (MemoryBmp))
-				return "MemoryBmp";			
-				
-			if (this.Equals (Icon))
-				return "Icon";			
-				
-			if (this.Equals (Jpeg))
-				return "Jpeg";							
-				
-			if (this.Equals (Wmf))
-				return "Wmf";												
-			
-			// Default			
-			return ("[ImageFormat: " + Guid.ToString () + "]");
-
-
+			return ("[ImageFormat: " + guid.ToString () + "]");
 		}
 
 		// properties
