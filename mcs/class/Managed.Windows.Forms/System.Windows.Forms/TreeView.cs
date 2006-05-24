@@ -1119,12 +1119,23 @@ namespace System.Windows.Forms {
 			if (!RectsIntersect (clip, x, y + 2, ImageList.ImageSize.Width, ImageList.ImageSize.Height))
 				return;
 
-			if (node.ImageIndex > -1 && ImageList != null && node.ImageIndex < ImageList.Images.Count) {
+			if (ImageList == null)
+				return;
+
+			int use_index = -1;
+			if (node.ImageIndex > -1 && node.ImageIndex < ImageList.Images.Count) {
+				use_index = node.ImageIndex;
+			} else if (ImageIndex > -1 && ImageIndex < ImageList.Images.Count) {
+				use_index = ImageIndex;
+			}
+
+			if (use_index == -1 && ImageList.Images.Count > 0) {
+				use_index = 0;
+			}
+
+			if (use_index != -1) {
 				ImageList.Draw (dc, x, y + 2, ImageList.ImageSize.Width, 
-						ImageList.ImageSize.Height, node.ImageIndex);
-			} else if (ImageIndex > -1 && ImageList != null && ImageIndex < ImageList.Images.Count) {
-				ImageList.Draw (dc, x, y + 2, ImageList.ImageSize.Width, 
-						ImageList.ImageSize.Height, ImageIndex);
+						ImageList.ImageSize.Height, use_index);
 			}
 		}
 

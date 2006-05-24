@@ -15,6 +15,9 @@
 	- Set the scrollbar max to 2 less then the max value, this
 	compensates for the max value being one above the node count, and
 	for scrollbars adding one extra "notch".
+	- When drawing image nodes if there is an imagelist we draw the
+	first image in the list if the supplied image index is out of the
+	image list's bounds.
 	
 2006-05-24  Peter Dennis Bartok  <pbartok@novell.com> 
 
