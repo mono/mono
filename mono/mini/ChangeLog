@@ -1,3 +1,18 @@
+2006-05-24  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.c (mono_debugger_init): Create a private,
+	malloc()-based code manager for the notification function and
+	intentionally leak it on exit.  This fixes the crash-on-exit race
+	condition.
+
+	* tramp-amd64.c
+	(mono_debugger_create_notification_function): Added
+	`MonoCodeManager *' argument.
+
+	* tramp-x86.c
+	(mono_debugger_create_notification_function): Added
+	`MonoCodeManager *' argument.
+
 2006-05-23  Massimiliano Mantione  <massi@ximian.com>
 
 	* aliasing.c: Fixed 64 bit issue.
