@@ -61,7 +61,7 @@ namespace System.Windows.Forms {
 			data_member = dataMember;
 			binding_member_info = new BindingMemberInfo (dataMember);
 
-			int sp = data_member.IndexOf ('.');
+			int sp = data_member != null ? data_member.IndexOf ('.') : -1;
 			if (sp != -1) {
 				row_name = data_member.Substring (0, sp);
 				col_name = data_member.Substring (sp + 1, data_member.Length - sp - 1);

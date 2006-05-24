@@ -1,3 +1,8 @@
+2006-05-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Binding.cs : (.ctor)
+	  An obvious NRE fix for BindingTest.CtorNullTest().
+
 2006-05-23  Chris Toshok  <toshok@ximian.com>
 
 	* TextBoxBase.cs (get_Text): don't add a trailing newline, add
