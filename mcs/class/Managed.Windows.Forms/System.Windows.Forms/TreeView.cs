@@ -71,8 +71,11 @@ namespace System.Windows.Forms {
 		private int max_visible_order;
 		private VScrollBar vbar;
 		private HScrollBar hbar;
+		private bool vbar_bounds_set;
+		private bool hbar_bounds_set;
 		internal int skipped_nodes;
 		internal int hbar_offset;
+		
 		
 		private int update_stack;
 		private bool update_needed;
@@ -900,6 +903,7 @@ namespace System.Windows.Forms {
 
 		internal void SetBottom (TreeNode node)
 		{
+/*
 			if (!vbar.Visible)
 				return;
 
@@ -913,8 +917,11 @@ namespace System.Windows.Forms {
 				offset++;
 			}
 
+			int nv = vbar.Value + offset;
+//			Console.WriteLine ("NEW VALUE:   {0}    OFFSET:   {1}     MAXIMUM:   {2}", nv, offset, vbar.Maximum);
 			if (vbar.Value + offset < vbar.Maximum)
 				vbar.Value += offset;
+*/
 		}
 
 		internal void UpdateBelow (TreeNode node)
@@ -925,7 +932,7 @@ namespace System.Windows.Forms {
 			}
 
 			if (node == root_node) {
-				Refresh ();
+				Invalidate ();
 				return;
 			}
 				
@@ -1263,30 +1270,59 @@ namespace System.Windows.Forms {
 				vert = true;
 
 			if (vert) {
+				vbar.SetValues (max_visible_order, ClientRectangle.Height / ItemHeight);
+				/*
 				vbar.Maximum = max_visible_order;
 				vbar.LargeChange = ClientRectangle.Height / ItemHeight;
-				vbar.Bounds = new Rectangle (ClientRectangle.Width - vbar.Width, 0, vbar.Width,
-						Height - (horz ? SystemInformation.VerticalScrollBarWidth : 0));
+				*/
+
+				if (!vbar_bounds_set) {
+					vbar.Bounds = new Rectangle (ClientRectangle.Width - vbar.Width, 0, vbar.Width,
+							Height - (hbar.Visible ? SystemInformation.VerticalScrollBarWidth : 0));
+					vbar_bounds_set = true;
+				}
+
 				vbar.Visible = true;
 			} else {
 				vbar.Visible = false;
+				vbar_bounds_set = false;
 			}
 
 			if (horz) {
+				hbar.SetValues (width + 1, ClientRectangle.Width);
+				/*
 				hbar.LargeChange = ClientRectangle.Width;
 				hbar.Maximum = width + 1;
-				hbar.Bounds = new Rectangle (0, Height - hbar.Height,
-						Width - (vert ? SystemInformation.HorizontalScrollBarHeight : 0), hbar.Height);
+				*/
+
+				if (!hbar_bounds_set) {
+					hbar.Bounds = new Rectangle (0, Height - hbar.Height,
+							Width - (vbar.Visible ? SystemInformation.HorizontalScrollBarHeight : 0),
+							hbar.Height);
+					hbar_bounds_set = true;
+				}
 				hbar.Visible = true;
 			} else {
 				hbar.Visible = false;
+				hbar_bounds_set = false;
 			}
 		}
 
 		private void SizeChangedHandler (object sender, EventArgs e)
 		{
-			if (IsHandleCreated)
+			if (IsHandleCreated) {
 				UpdateScrollBars ();
+
+			}
+			if (vbar.Visible) {
+				vbar.Bounds = new Rectangle (ClientRectangle.Width - vbar.Width, 0, vbar.Width,
+						Height - (hbar.Visible ? SystemInformation.VerticalScrollBarWidth : 0));
+			}
+
+			if (hbar.Visible) {
+				hbar.Bounds = new Rectangle (0, Height - hbar.Height,
+						Width - (vbar.Visible ? SystemInformation.HorizontalScrollBarHeight : 0), hbar.Height);
+			}
 		}
 
 		private void VScrollBarValueChanged (object sender, EventArgs e)

@@ -1,3 +1,16 @@
+2006-05-24  Jackson Harper  <jackson@ximian.com>
+
+	* TreeNodeCollection.cs: Dont't recalculate the visible order on
+	inserted nodes that aren't visible.  This changes the
+	max_visible_order which confuses scrollbar settings.
+	- Use the enumerator to get the prev node instead of duplicating
+	code.
+	* TreeView.cs: Use new method for setting scrollbar values
+	- Don't set the bounds every time the scrollbar is updated
+	- When updating below the root node use an invalidate instead of a
+	refresh to prevent the child controls (scrollbars) from being
+	refreshed. (UpdateBelow still needs to be reworked anyways).
+	
 2006-05-24  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* XplatUIX11.cs: Don't blindly cache hwnd.ClientRect, reset it when 

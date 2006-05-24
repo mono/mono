@@ -132,16 +132,17 @@ namespace System.Windows.Forms {
 			}
 
 			if (tree_view != null) {
-				TreeNode prev = node.PrevNode;
-				if (prev == null)
-					prev = owner;
-				tree_view.RecalculateVisibleOrder (prev);
+				TreeNode prev = GetPrevNode (node);
+
+				if (node.IsVisible)
+					tree_view.RecalculateVisibleOrder (prev);
 				tree_view.UpdateScrollBars ();
 			}
 
 			if (owner != null && tree_view != null && (owner.IsExpanded || owner.IsRoot)) {
-				// XXX: Need to ensure the boxes for the nodes have been created
-				tree_view.UpdateBelow (owner);
+				// tree_view.UpdateBelow (owner);
+				tree_view.UpdateNode (owner);
+				tree_view.UpdateNode (node);
 			} else if (owner != null && tree_view != null) {
 				tree_view.UpdateBelow (owner);
 			}
@@ -277,10 +278,11 @@ namespace System.Windows.Forms {
 
 		private TreeNode GetPrevNode (TreeNode node)
 		{
-			TreeNode prev = node.PrevNode;
-			if (prev == null)
-				prev = owner;
-			return prev;
+			OpenTreeNodeEnumerator one = new OpenTreeNodeEnumerator (node);
+
+			if (one.MovePrevious () && one.MovePrevious ())
+				return one.CurrentNode;
+			return null;
 		}
 
 		int IList.Add (object node)
