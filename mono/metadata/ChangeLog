@@ -1,5 +1,9 @@
 2006-05-24  Martin Baulig  <martin@ximian.com>
 
+	* mono-debug.h (MONO_DEBUGGER_VERSION): Bump to 57.
+
+2006-05-24  Martin Baulig  <martin@ximian.com>
+
 	* mono-debug-debugger.h
 	(mono_debugger_create_notification_function): Added
 	`MonoCodeManager *' argument.
