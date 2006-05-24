@@ -1,4 +1,10 @@
-bin_SCRIPTS = $(scripts_1_0) $(scripts_1_0_umask) $(scripts_2_0) mono-service mono-service2 $(scripts_rpmhelpers)
+bin_SCRIPTS = \
+	$(scripts_1_0)		\
+	$(scripts_1_0_umask)	\
+	$(scripts_2_0)		\
+	$(scripts_service)	\
+	$(scripts_nunit)	\
+	$(scripts_rpmhelpers)
 
 scripts_1_0 = \
 	al			\
@@ -22,7 +28,6 @@ scripts_1_0 = \
 	mono-shlib-cop 		\
 	mono-xmltool		\
 	mozroots		\
-	nunit-console		\
 	permview		\
 	prj2make		\
 	resgen			\
@@ -42,11 +47,12 @@ scripts_2_0 = \
 	gmcs			\
 	ilasm2			\
 	monop2 			\
-	nunit-console2		\
 	resgen2			\
 	wsdl2			\
 	xbuild
 
+scripts_service = mono-service mono-service2
+scripts_nunit = nunit-console nunit-console2
 scripts_rpmhelpers = mono-find-provides mono-find-requires
 
 pkgconfigdir = $(libdir)/pkgconfig
@@ -77,15 +83,19 @@ plat_bindir = $(bindir)
 mono_instdir = $(prefix)/lib/mono
 endif
 
-REWRITE = sed \
+REWRITE_COMMON = sed \
 	-e 's,@''bindir@,$(bindir),g'				\
 	-e 's,@''plat_bindir@,$(plat_bindir),g'			\
 	-e 's,@''mono_instdir@,$(mono_instdir),g'		\
-	-e 's,@''gtkdir@,$(gtkdir),g'				\
-	-e 's,@''mono_interp@,$(mono_interp),g'
+	-e 's,@''gtkdir@,$(gtkdir),g'
+
+REWRITE = $(REWRITE_COMMON) -e 's,@''mono_interp@,$(mono_interp),g'
+REWRITE_DEBUG = $(REWRITE_COMMON) -e 's,@''mono_interp@,$(mono_interp) --debug,g'
 
 REWRITE1 = $(REWRITE) -e 's,@''framework_version@,1.0,g'
 REWRITE2 = $(REWRITE) -e 's,@''framework_version@,2.0,g'
+REWRITE1_DEBUG = $(REWRITE_DEBUG) -e 's,@''framework_version@,1.0,g'
+REWRITE2_DEBUG = $(REWRITE_DEBUG) -e 's,@''framework_version@,2.0,g'
 
 mono-service: mono-service.in Makefile
 	$(REWRITE1) -e 's,@''exe_name@,$@,g' $(srcdir)/mono-service.in > $@.tmp
@@ -93,6 +103,14 @@ mono-service: mono-service.in Makefile
 
 mono-service2: mono-service.in Makefile
 	$(REWRITE2) -e 's,@''exe_name@,$@,g' $(srcdir)/mono-service.in > $@.tmp
+	mv $@.tmp $@
+
+nunit-console: script.in Makefile
+	$(REWRITE1_DEBUG) -e 's,@''exe_name@,nunit-console,g' $(srcdir)/script.in > $@.tmp
+	mv $@.tmp $@
+
+nunit-console2: script.in Makefile
+	$(REWRITE2_DEBUG) -e 's,@''exe_name@,nunit-console,g' $(srcdir)/script.in > $@.tmp
 	mv $@.tmp $@
 
 $(scripts_1_0): script.in Makefile
