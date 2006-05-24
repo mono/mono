@@ -120,7 +120,7 @@ namespace System.Data.OracleClient {
 		}
 
 		[MonoTODO]
-		public OracleCommand GetUpdatetCommand () {
+		public OracleCommand GetUpdateCommand () {
 			throw new NotImplementedException ();
 		}
 

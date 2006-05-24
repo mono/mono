@@ -21,8 +21,6 @@
 				<File RelPath="Mainsoft.Data.Jdbc.Providers.jvm\OracleProvider.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.OracleClient\OracleDataAdapter.cs" SubType="Component" BuildAction="Compile"/>
 				<File RelPath="System.Data.OracleClient\OracleInfoMessageEventHandler.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Data.OracleClient\OraclePermission.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Data.OracleClient\OraclePermissionAttribute.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.OracleClient\OracleRowUpdatedEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.OracleClient\OracleRowUpdatedEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.OracleClient\OracleRowUpdatingEventArgs.cs" SubType="Code" BuildAction="Compile"/>
