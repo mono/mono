@@ -1351,7 +1351,7 @@ namespace System.Windows.Forms {
 				XplatUI.ScrollWindow (Handle, below, 0, amount, false);
 
 			if (show_plus_minus) {
-				int linesx = node.GetLinesX ();
+				//int linesx = node.GetLinesX ();
 				Invalidate (new Rectangle (0, node.GetY (), Width, ItemHeight));
 			}
 		}
