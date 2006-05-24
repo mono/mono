@@ -95,16 +95,11 @@ namespace System.Windows.Forms
 				return false;
 			}
 
-			// Anything with control key pressed is for DataGrid
-			if ((Control.ModifierKeys & Keys.Control) != 0) {
-				return grid.ProcessKeyPreviewInternal(ref m);
-			}
-
 			if (isedit) {
 				switch (key) {
 					case Keys.F2: {
-						this.SelectionStart = this.Text.Length;
-						this.SelectionLength = 0;
+						SelectionStart = Text.Length;
+						SelectionLength = 0;
 						return true;
 					}
 
@@ -132,7 +127,7 @@ namespace System.Windows.Forms
 					}
 
 					case Keys.Left: {
-						if (base.SelectionStart == 0) {
+						if (SelectionStart == 0 && SelectionLength >= Text.Length) {
 							isedit = false;
 							grid.EndEdit (false);
 							grid.ProcessKeyPreviewInternal(ref m);
@@ -143,7 +138,7 @@ namespace System.Windows.Forms
 
 					case Keys.Right: {
 						// Arrow keys go right until we hit the end of the text
-						if ((base.SelectionStart + base.SelectionLength) == base.Text.Length) {
+						if ((SelectionStart + SelectionLength) >= Text.Length) {
 							isedit = false;
 							grid.EndEdit (false);
 							grid.ProcessKeyPreviewInternal(ref m);

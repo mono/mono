@@ -1,3 +1,21 @@
+2006-05-24  Chris Toshok  <toshok@ximian.com>
+
+	* DataGridTextBoxColumn.cs (Commit): only call SetColumnValueAtRow
+	if the value in the cell is different than it was before.  This
+	keeps us from triggering a layout when we move around a datarid
+	with a highlighted cell.
+	(Edit): suspend layout when creating/positining the text box, and
+	resume passing false so we don't ever actually re-layout.
+	(ReleaseHostedControl): same.
+	(EnsureTextBox): reformat slightly, and set WordWrap to false.
+
+	* DataGridTextBox.cs (ProcessKeyMessage): it's not true that all
+	control-key sequences should go to the datagrid - remove that
+	lock.  Also, modify the conditions under which we move between
+	cells when moving the cursor within a cell, and remove the "this"
+	and "base" from field accesses.  We weren't even consistent, given
+	they all were in the base class.
+
 2006-05-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Binding.cs : (.ctor)

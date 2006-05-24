@@ -135,19 +135,23 @@ namespace System.Windows.Forms
 		
 		protected internal override bool Commit (CurrencyManager dataSource, int rowNum)
 		{
-			string text;
-			
-			if (textbox.Text == NullText) {
-				text = string.Empty;
-			} else {
-				text = textbox.Text;
-			}
-			
 			try {
-				SetColumnValueAtRow (dataSource, rowNum, text);
-			}
+				object obj = GetColumnValueAtRow (dataSource, rowNum);
+				string existing_text = GetFormattedString (obj);
+
+				if (existing_text != textbox.Text) {
+					string text;
+
+					if (textbox.Text == NullText) {
+						text = string.Empty;
+					} else {
+						text = textbox.Text;
+					}
 			
-			catch (Exception) {
+					SetColumnValueAtRow (dataSource, rowNum, text);
+				}
+			}
+			catch {
 				string message = "The data entered in column ["+ MappingName +"] has an invalid format.";
 				MessageBox.Show( message);
 			}
@@ -167,6 +171,8 @@ namespace System.Windows.Forms
 		{
 			object obj;
 			
+			grid.SuspendLayout ();
+
 			EnsureTextBox();
 
 			textbox.TextAlign = alignment;
@@ -188,6 +194,7 @@ namespace System.Windows.Forms
 			textbox.Visible = cellIsVisible;
 			textbox.Focus ();
 			textbox.SelectAll ();
+			grid.ResumeLayout (false);
 
 			grid.is_editing = true;
 		}
@@ -286,9 +293,11 @@ namespace System.Windows.Forms
 		protected internal override void ReleaseHostedControl ()
 		{			
 			if (textbox != null) {
+				grid.SuspendLayout ();
 				DataGridTableStyle.DataGrid.Controls.Remove (textbox);
 				textbox.Dispose ();
 				textbox = null;
+				grid.ResumeLayout (false);
 			}
 		}
 
@@ -327,15 +336,17 @@ namespace System.Windows.Forms
 
 		}
 
-		private void EnsureTextBox() {
+		private void EnsureTextBox()
+		{
 			if (textbox == null) {
 				textbox = new DataGridTextBox ();
 				textbox.SetDataGrid (DataGridTableStyle.DataGrid);
 				textbox.Multiline = true;
+				textbox.WordWrap = false;
 				textbox.BorderStyle = BorderStyle.None;
 				textbox.Visible = false;
 
-				DataGridTableStyle.DataGrid.Controls.Add (textbox);
+				grid.Controls.Add (textbox);
 			}			
 		}
 		#endregion Private Instance Methods
