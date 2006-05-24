@@ -690,7 +690,6 @@ namespace System.Drawing.Drawing2D
                 	return GetBounds (matrix, null);
                 }
 
-                [MonoTODO ("GdipGetPathWorldBounds doesn't support pens in libgdiplus (missing GdipWidenPath)")]
                 public RectangleF GetBounds (Matrix matrix, Pen pen)
                 {
                         RectangleF retval;
@@ -891,7 +890,10 @@ namespace System.Drawing.Drawing2D
                 {
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
-
+#if ONLY_1_1
+			if (PointCount == 0)
+				throw new OutOfMemoryException ();
+#endif
                 	IntPtr m = (matrix == null) ? IntPtr.Zero : matrix.nativeMatrix;
 
 			Status s = GDIPlus.GdipWidenPath (nativePath, pen.nativeObject, m, flatness);

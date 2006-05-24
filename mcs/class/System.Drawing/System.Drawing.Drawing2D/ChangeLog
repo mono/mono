@@ -1,3 +1,8 @@
+2006-05-24  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* GraphicsPath.cs: Remove MonoTODO on GetBounds. For 1.x throw an
+	OutOfMemoryException if Widen is called on an empty path.
+
 2006-05-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CombineMode.cs: Removed [Serializable] from 2.0 profile.
