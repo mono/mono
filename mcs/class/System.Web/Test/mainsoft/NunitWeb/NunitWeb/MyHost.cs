@@ -77,6 +77,8 @@ namespace NunitWeb
 			try {
 				Delegate method = (Delegate) CallContext.GetData (CALL_CONTEXT_METHOD);
 				CallContext.FreeNamedDataSlot (CALL_CONTEXT_METHOD);
+				if (method == null)
+					return;
 				Helper.AnyMethodInPage amip = method as Helper.AnyMethodInPage;
 				if (amip != null) {
 					amip (context, page, param);
