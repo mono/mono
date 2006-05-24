@@ -34,8 +34,7 @@ using System.Security.Cryptography;
 using System.Security.Permissions;
 using System.Text;
 
-namespace MonoTests.System.Drawing
-{
+namespace MonoTests.System.Drawing.Imaging {
 
 	[TestFixture]
 	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
@@ -71,17 +70,17 @@ namespace MonoTests.System.Drawing
 		[Test]
 		public void ToStringTest ()
 		{
-			Assert.AreEqual (BmpImageFormat.ToString (), "Bmp", "ToStringTest#1");
-			Assert.AreEqual (EmfImageFormat.ToString (), "Emf", "ToStringTest#2");
-			Assert.AreEqual (ExifImageFormat.ToString (), "Exif", "ToStringTest#3");
-			Assert.AreEqual (GifImageFormat.ToString (), "Gif", "ToStringTest#4");
-			Assert.AreEqual (TiffImageFormat.ToString (), "Tiff", "ToStringTest#5");
-			Assert.AreEqual (PngImageFormat.ToString (), "Png", "ToStringTest#6");
-			Assert.AreEqual (MemoryBmpImageFormat.ToString (), "MemoryBmp", "ToStringTest#7");
-			Assert.AreEqual (IconImageFormat.ToString (), "Icon", "ToStringTest#8");
-			Assert.AreEqual (JpegImageFormat.ToString (), "Jpeg", "ToStringTest#9");
-			Assert.AreEqual (WmfImageFormat.ToString (), "Wmf", "ToStringTest#10");
-			Assert.AreEqual (CustomImageFormat.ToString (), "[ImageFormat: 48749428-316f-496a-ab30-c819a92b3137]", "ToStringTest#11");
+			Assert.AreEqual ("[ImageFormat: b96b3cab-0728-11d3-9d7b-0000f81ef32e]", BmpImageFormat.ToString (),"ToStringTest#1");
+			Assert.AreEqual ("[ImageFormat: b96b3cac-0728-11d3-9d7b-0000f81ef32e]", EmfImageFormat.ToString (), "ToStringTest#2");
+			Assert.AreEqual ("[ImageFormat: b96b3cb2-0728-11d3-9d7b-0000f81ef32e]", ExifImageFormat.ToString (), "ToStringTest#3");
+			Assert.AreEqual ("[ImageFormat: b96b3cb0-0728-11d3-9d7b-0000f81ef32e]", GifImageFormat.ToString (), "ToStringTest#4");
+			Assert.AreEqual ("[ImageFormat: b96b3cb1-0728-11d3-9d7b-0000f81ef32e]", TiffImageFormat.ToString (), "ToStringTest#5");
+			Assert.AreEqual ("[ImageFormat: b96b3caf-0728-11d3-9d7b-0000f81ef32e]", PngImageFormat.ToString (), "ToStringTest#6");
+			Assert.AreEqual ("[ImageFormat: b96b3caa-0728-11d3-9d7b-0000f81ef32e]", MemoryBmpImageFormat.ToString (), "ToStringTest#7");
+			Assert.AreEqual ("[ImageFormat: b96b3cb5-0728-11d3-9d7b-0000f81ef32e]", IconImageFormat.ToString (), "ToStringTest#8");
+			Assert.AreEqual ("[ImageFormat: b96b3cae-0728-11d3-9d7b-0000f81ef32e]", JpegImageFormat.ToString (), "ToStringTest#9");
+			Assert.AreEqual ("[ImageFormat: b96b3cad-0728-11d3-9d7b-0000f81ef32e]", WmfImageFormat.ToString (), "ToStringTest#10");
+			Assert.AreEqual ("[ImageFormat: 48749428-316f-496a-ab30-c819a92b3137]", CustomImageFormat.ToString (), "ToStringTest#11");
 		}
 	}
 }
