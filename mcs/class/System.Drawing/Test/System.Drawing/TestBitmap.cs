@@ -557,5 +557,27 @@ namespace MonoTests.System.Drawing{
 			}
 		}
 #endif		
+		[Test]
+		public void DefaultFormat1 ()
+		{
+			using (Bitmap bmp = new Bitmap (20, 20)) {
+				Assert.AreEqual (ImageFormat.MemoryBmp, bmp.RawFormat);
+			}
+		}
+
+		[Test]
+		public void DefaultFormat2 ()
+		{
+			string filename =  Path.GetTempFileName ();
+			using (Bitmap bmp = new Bitmap (20, 20)) {
+				bmp.Save (filename);
+			}
+
+			using (Bitmap other = new Bitmap (filename)) {
+				Assert.AreEqual (ImageFormat.Png, other.RawFormat);
+			}
+			File.Delete (filename);
+		}
 	}
 }
+
