@@ -483,7 +483,9 @@ namespace System.Windows.Forms {
 					sb = new StringBuilder();
 
 					for (i = 1; i < document.Lines; i++) {
-						sb.Append(document.GetLine(i).text.ToString() + Environment.NewLine);
+						if (i > 1)
+							sb.Append (Environment.NewLine);
+						sb.Append(document.GetLine(i).text.ToString());
 					}
 					sb.Append(document.GetLine(document.Lines).text.ToString());
 					return sb.ToString();
@@ -507,6 +509,7 @@ namespace System.Windows.Forms {
 						this.Lines = lines;
 
 						line = document.GetLine(1);
+
 						if (!Focused) {
 							document.SetSelectionStart(line, 0);
 
@@ -523,6 +526,7 @@ namespace System.Windows.Forms {
 						document.Add(1, CaseAdjust(value), alignment, Font, ThemeEngine.Current.ResPool.GetSolidBrush(ForeColor));
 						CalculateDocument();
 						line = document.GetLine(1);
+
 						if (!Focused) {
 							document.SetSelectionStart(line, 0);
 							document.SetSelectionEnd(line, value.Length);

@@ -1,3 +1,9 @@
+2006-05-23  Chris Toshok  <toshok@ximian.com>
+
+	* TextBoxBase.cs (get_Text): don't add a trailing newline, add
+	them between lines.  This fixes some quirks editing cells in the
+	datagrid.
+
 2006-05-23  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Use begin/end update when doing expand/collapse all
