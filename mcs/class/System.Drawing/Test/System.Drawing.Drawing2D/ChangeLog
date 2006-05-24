@@ -1,3 +1,9 @@
+2006-05-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GraphicsPathTest.cs: Ignore some test cases that aren't implemented 
+	in libgdiplus and have different results in MS 1.x/2.0 (or between
+	different executions, yuck).
+
 2006-05-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PathGradientBrushTest.cs: New. Unit tests (mostly) based on the test

@@ -1555,7 +1555,7 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Ignore ("results aren't always constant and differs from 1.x and 2.0")]
 		public void Warp_NullMatrix ()
 		{
 			PointF[] pts = new PointF[1] { new PointF (0,0) };
@@ -1567,7 +1567,7 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Ignore ("results aren't always constant and differs from 1.x and 2.0")]
 		public void Warp_EmptyMatrix ()
 		{
 			PointF[] pts = new PointF[1] { new PointF (0, 0) };
@@ -1614,7 +1614,7 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Ignore ("results aren't always constant and differs from 1.x and 2.0")]
 		public void Warp_Matrix_NonInvertible ()
 		{
 			Matrix matrix = new Matrix (123, 24, 82, 16, 47, 30);
@@ -1653,7 +1653,7 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Ignore ("results aren't always constant and differs from 1.x and 2.0")]
 		public void Warp_Perspective ()
 		{
 			PointF[] pts = new PointF[1] { new PointF (0, 0) };
@@ -1676,7 +1676,7 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Ignore ("results aren't always constant and differs from 1.x and 2.0")]
 		public void Warp_Flatness_Negative ()
 		{
 			PointF[] pts = new PointF[1] { new PointF (0, 0) };
@@ -1688,7 +1688,7 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Ignore ("results aren't always constant and differs from 1.x and 2.0")]
 		public void Warp_Flatness_OverOne ()
 		{
 			PointF[] pts = new PointF[1] { new PointF (0, 0) };
@@ -2048,6 +2048,9 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		}
 
 		[Test]
+#if ONLY_1_1
+		[ExpectedException (typeof (OutOfMemoryException))]
+#endif
 		public void Widen_NoPoint ()
 		{
 			using (GraphicsPath gp = new GraphicsPath ()) {
@@ -2130,6 +2133,7 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		}
 
 		[Test]
+		[Ignore ("results aren't always constant and differs from 1.x and 2.0")]
 		public void Widen_Pen_Matrix_NonInvertible ()
 		{
 			Matrix matrix = new Matrix (123, 24, 82, 16, 47, 30);
