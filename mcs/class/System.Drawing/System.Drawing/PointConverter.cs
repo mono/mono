@@ -6,8 +6,7 @@
 //   Ravindra (rkumar@novell.com)
 //
 // Copyright (C) 2002 Ximian, Inc. http://www.ximian.com
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,18 +28,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Globalization;
 using System.ComponentModel.Design.Serialization;
 using System.Reflection;
 
-namespace System.Drawing
-{
-	/// <summary>
-	/// Summary description for PointConverter.
-	/// </summary>
+namespace System.Drawing {
+
 	public class PointConverter : TypeConverter
 	{
 		public PointConverter() { }
@@ -113,9 +108,18 @@ namespace System.Drawing
 		public override object CreateInstance (ITypeDescriptorContext context,
 						       IDictionary propertyValues)
 		{
+#if NET_2_0
+			object ox = propertyValues ["X"];
+			object oy = propertyValues ["Y"];
+			if ((ox == null) || (oy == null))
+				throw new ArgumentException ("propertyValues");
+
+			int x = (int) ox;
+			int y = (int) oy;
+#else
 			int x = (int) propertyValues ["X"];
 			int y = (int) propertyValues ["Y"];
-
+#endif
 			return new Point (x, y);
 		}
 

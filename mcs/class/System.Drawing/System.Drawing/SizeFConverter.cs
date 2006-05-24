@@ -104,10 +104,9 @@ namespace System.Drawing
 
 		public override object CreateInstance (ITypeDescriptorContext context, IDictionary propertyValues)
 		{
-			int width = (int) propertyValues ["Width"];
-			int height = (int) propertyValues ["Height"];
-
-			return new SizeF (width, height);
+			float w = (float) propertyValues ["Width"];
+			float h = (float) propertyValues ["Height"];
+			return new SizeF (w, h);
 		}
 
 		public override bool GetCreateInstanceSupported (ITypeDescriptorContext context)

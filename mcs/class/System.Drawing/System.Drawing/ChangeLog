@@ -1,3 +1,16 @@
+2006-05-24  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* PointConverter.cs: Fx 2.0 throws an ArgumentException in 
+	CreateInstance if some values are missing from the dictionary, while
+	1.x throws an NullReferenceException.
+	* RectangleConverter.cs: Fx 2.0 throws an ArgumentException in 
+	CreateInstance if some values are missing from the dictionary, while
+	1.x throws an NullReferenceException.
+	* SizeConverter.cs: Fx 2.0 throws an ArgumentException in 
+	CreateInstance if some values are missing from the dictionary, while
+	1.x throws an NullReferenceException.
+	* SizeFConverter.cs: Fix CreateInstance to use float (not int).
+
 2006-05-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Font.cs: Added a Demand for UnmanagedCode on both ToLogFont methods.
