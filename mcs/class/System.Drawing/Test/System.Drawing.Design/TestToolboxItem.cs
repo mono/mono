@@ -46,15 +46,6 @@ namespace MonoTests.System.Drawing.Design
 			}
 		}
 
-		[TearDown]
-		public void Clean() {}
-
-		[SetUp]
-		public void GetReady()
-		{
-
-		}
-
 		[Test]
 		public void TestProperties  ()
 		{
@@ -102,7 +93,7 @@ namespace MonoTests.System.Drawing.Design
 			item.Company = "OurCompany";
 			Assert.AreEqual ("OurCompany", item.Company, "TNP#1");
 
-			Assert.AreEqual ("DotNET_ComponentType", item.ComponentType, "TNP#2");
+			Assert.AreEqual (".NET Component", item.ComponentType, "TNP#2");
 
 			item.Description = "Description";
 			Assert.AreEqual ("Description", item.Description, "TNP#3");
@@ -112,7 +103,6 @@ namespace MonoTests.System.Drawing.Design
 			
 		}
 #endif
-
 
 	}
 }

@@ -1,3 +1,7 @@
+2006-05-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestToolboxItem.cs: Update ComponentType check to work under MS 2.0.
+
 2005-12-05 Jordi Mas i Hernandez <jordimash@gmail.com>
 
 	* TestToolboxItem.cs: New unit test
