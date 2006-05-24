@@ -1170,7 +1170,11 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
+#if NET_2_0
 		[ExpectedException (typeof (ArgumentNullException))]
+#else
+		[ExpectedException (typeof (NullReferenceException))]
+#endif
 		public void EndContainer_Null ()
 		{
 			Bitmap bitmap = new Bitmap (20, 20);
@@ -1229,13 +1233,68 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-		public void FillRectanglesZeroRects ()
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void FillRectangles_BrushNull_Rectangle ()
 		{
 			using (Bitmap bitmap = new Bitmap (20, 20)) {
-				Graphics g = Graphics.FromImage (bitmap);
-				Brush brush = new SolidBrush (Color.Red);
-				g.FillRectangles (brush, new Rectangle [0]);
-				g.FillRectangles (brush, new RectangleF [0]);
+				using (Graphics g = Graphics.FromImage (bitmap)) {
+					g.FillRectangles (null, new Rectangle[1]);
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void FillRectangles_Rectangle_Null ()
+		{
+			using (Bitmap bitmap = new Bitmap (20, 20)) {
+				using (Graphics g = Graphics.FromImage (bitmap)) {
+					g.FillRectangles (Brushes.Red, (Rectangle[]) null);
+				}
+			}
+		}
+
+		[Test] // see bug #78408
+		[ExpectedException (typeof (ArgumentException))]
+		public void FillRectanglesZeroRectangle ()
+		{
+			using (Bitmap bitmap = new Bitmap (20, 20)) {
+				using (Graphics g = Graphics.FromImage (bitmap)) {
+					g.FillRectangles (Brushes.Red, new Rectangle[0]);
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void FillRectangles_BrushNull_RectangleF ()
+		{
+			using (Bitmap bitmap = new Bitmap (20, 20)) {
+				using (Graphics g = Graphics.FromImage (bitmap)) {
+					g.FillRectangles (null, new RectangleF[1]);
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void FillRectangles_RectangleF_Null ()
+		{
+			using (Bitmap bitmap = new Bitmap (20, 20)) {
+				using (Graphics g = Graphics.FromImage (bitmap)) {
+					g.FillRectangles (Brushes.Red, (RectangleF[])null);
+				}
+			}
+		}
+
+		[Test] // see bug #78408
+		[ExpectedException (typeof (ArgumentException))]
+		public void FillRectanglesZeroRectangleF ()
+		{
+			using (Bitmap bitmap = new Bitmap (20, 20)) {
+				using (Graphics g = Graphics.FromImage (bitmap)) {
+					g.FillRectangles (Brushes.Red, new RectangleF[0]);
+				}
 			}
 		}
 	}

@@ -32,18 +32,18 @@ using NUnit.Framework;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Security;
 using System.Security.Permissions;
 using System.Runtime.InteropServices;
 
 namespace MonoTests.System.Drawing{
 
 	[TestFixture]
-	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 	public class FontTest {
-		
 		
 		// Test basic Font clone, properties and contructor
 		[Test]
+		[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 		public void TestClone()
 		{		
 			Font f = new Font("Arial",12);	
@@ -84,7 +84,24 @@ namespace MonoTests.System.Drawing{
 		}
 #if !TARGET_JVM
 		[Test]
-		public void TestToLogFont() {
+		[Category ("CAS")]
+		[ExpectedException (typeof (SecurityException))]
+		[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
+		public void ToLogFont_DenyUnmanagedCode ()
+		{
+			Font f;
+			LOGFONT	lf;
+
+			lf = new LOGFONT();
+			f = new Font("Arial", 10);
+
+			f.ToLogFont(lf);
+		}
+
+		[Test]
+		[SecurityPermission (SecurityAction.Assert, UnmanagedCode = true)]
+		public void ToLogFont_AssertUnmanagedCode ()
+		{
 			Font f;
 			LOGFONT	lf;
 

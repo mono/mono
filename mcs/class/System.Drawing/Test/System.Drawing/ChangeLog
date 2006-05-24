@@ -1,3 +1,9 @@
+2006-05-24  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* PenTest.cs: Fix different exception being thrown in 1.x and 2.0.
+	* TestFont.cs: Fix tests under Windows (CAS related);
+	* TestGraphics.cs: Fix and add more test cases for FillRectangles.
+
 2006-05-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PenTest.cs: Added a test case where the brush supplied to the .ctor 
