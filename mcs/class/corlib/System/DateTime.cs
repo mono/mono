@@ -1417,7 +1417,33 @@ namespace System
 				throw new FormatException ();
 			return result;
 		}
-		
+
+#if NET_2_0
+		public static bool TryParseExact (string s, string format,
+						  IFormatProvider fp,
+						  DateTimeStyles style,
+						  out DateTime result)
+		{
+			string[] formats;
+
+			formats = new string [1];
+			formats[0] = format;
+
+			return TryParseExact (s, formats, fp, style, out result);
+		}
+
+		public static bool TryParseExact (string s, string[] formats,
+						  IFormatProvider fp,
+						  DateTimeStyles style,
+						  out DateTime result)
+		{
+			DateTimeFormatInfo dfi = DateTimeFormatInfo.GetInstance (fp);
+
+			bool longYear = false;
+			return ParseExact (s, formats, dfi, style, out result, true, ref longYear);
+		}
+#endif
+
 		private static bool ParseExact (string s, string [] formats,
 			DateTimeFormatInfo dfi, DateTimeStyles style, out DateTime ret,
 			bool exact, ref bool longYear)

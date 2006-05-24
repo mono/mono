@@ -1,3 +1,8 @@
+2006-05-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTime.cs :
+	  Implement 2.0 TryParseExact(). Patch by Seo Sanghyeon.
+
 2006-05-17  Kazuki Oikawa  <kazuki@panicode.com>
 
 	* Array.cs : added internal sort method used
