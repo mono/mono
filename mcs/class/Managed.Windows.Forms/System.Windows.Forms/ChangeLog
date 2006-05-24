@@ -1,3 +1,9 @@
+2006-05-24  Jackson Harper  <jackson@ximian.com>
+
+	* ScrollBar.cs: New internal methods that allow us to change a
+	couple values on the scrollbar (the most common case is maximum
+	and large change) without getting multiple invalidates.
+
 2006-05-24  Chris Toshok  <toshok@ximian.com>
 
 	* DataGridTextBoxColumn.cs (Commit): only call SetColumnValueAtRow

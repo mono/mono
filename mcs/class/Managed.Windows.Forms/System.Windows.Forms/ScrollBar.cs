@@ -359,6 +359,47 @@ namespace System.Windows.Forms
 			}
 		}
 
+		internal void SetValues (int maximum, int large_change)
+		{
+			SetValues (-1, maximum, -1, large_change);
+		}
+
+		internal void SetValues (int minimum, int maximum, int small_change, int large_change)
+		{
+			bool update = false;
+
+			if (-1 != minimum && this.minimum != minimum) {
+				this.minimum = minimum;
+
+				if (minimum > this.maximum)
+					this.maximum = minimum;
+				update = true;
+			}
+
+			if (-1 != maximum && this.maximum != maximum) {
+				this.maximum = maximum;
+
+				if (maximum < this.minimum)
+					this.minimum = maximum;
+				update = true;
+			}
+
+			if (-1 != small_change && this.small_change != small_change) {
+				this.small_change = small_change;
+			}
+
+			if (this.large_change != large_change) {
+				this.large_change = large_change;
+				update = true;
+			}
+
+			if (update) {
+				CalcThumbArea ();
+				UpdatePos (Value, true);
+				InvalidateDirty ();
+			}
+		}
+
 		[DefaultValue (0)]
 		[RefreshProperties(RefreshProperties.Repaint)]
 		[MWFDescription("Smallest value for scrollbar"), MWFCategory("Behaviour")]
