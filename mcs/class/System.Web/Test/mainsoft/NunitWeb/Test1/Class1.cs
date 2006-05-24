@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Runtime.Serialization;
 using System.IO;
 using System.Reflection;
+using System.Diagnostics;
 
 namespace Test1
 {
@@ -78,5 +79,33 @@ namespace Test1
 			b.ID = "Yoni";
 			p.Form.Controls.Add (b);
 		}
+
+		[Test]
+		public void TestDefaultRender ()
+		{
+			string str = Helper.Instance.RunInPage (_TestDefaultRender, null);
+			Assert.IsFalse (string.IsNullOrEmpty (str));
+		}
+
+		public static void _TestDefaultRender (HttpContext c, Page p, object param)
+		{
+			LiteralControl lcb = new LiteralControl ("aaa");
+			LiteralControl lce = new LiteralControl ("bbb");
+			Menu menu = new Menu ();
+			p.Form.Controls.Add (lcb);
+			p.Form.Controls.Add (menu);
+			p.Form.Controls.Add (lce);
+		}
+
+		[Test]
+		public void TestSkin ()
+		{
+			NunitWeb.Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (), "Test1.Resources.Default.skin", "App_Themes/Black/Default.skin");
+			NunitWeb.Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (), "Test1.Resources.MyPageWithTheme.aspx", "MyPageWithTheme.aspx");
+			NunitWeb.Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (), "Test1.Resources.MyPageWithTheme.aspx.cs", "MyPageWithTheme.aspx.cs");
+			string res = NunitWeb.Helper.Instance.RunUrl ("MyPageWithTheme.aspx", null, null);
+			Debug.WriteLine (res);			
+		}
+
 	}
 }
