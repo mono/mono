@@ -1174,8 +1174,10 @@ namespace System.Drawing
 
 		public void EndContainer (GraphicsContainer container)
 		{
+#if NET_2_0
 			if (container == null)
 				throw new ArgumentNullException ("container");
+#endif
 			Status status = GDIPlus.GdipEndContainer(nativeObject, container.NativeObject);
 			GDIPlus.CheckStatus (status);
 		}
@@ -1611,8 +1613,8 @@ namespace System.Drawing
 		{
 			if (brush == null)
 				throw new ArgumentNullException ("brush");
-			if (rects.Length == 0)
-				return;
+			if (rects == null)
+				throw new ArgumentNullException ("rects");
 
 			Status status = GDIPlus.GdipFillRectanglesI (nativeObject, brush.nativeObject, rects, rects.Length);
 			GDIPlus.CheckStatus (status);
@@ -1622,9 +1624,9 @@ namespace System.Drawing
 		{
 			if (brush == null)
 				throw new ArgumentNullException ("brush");
-			if (rects.Length == 0)
-				return;
-			
+			if (rects == null)
+				throw new ArgumentNullException ("rects");
+
 			Status status = GDIPlus.GdipFillRectangles (nativeObject, brush.nativeObject, rects, rects.Length);
 			GDIPlus.CheckStatus (status);
 		}

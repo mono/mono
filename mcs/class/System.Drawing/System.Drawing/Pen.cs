@@ -139,9 +139,10 @@ namespace System.Drawing
                         }
 
 			set {
+#if NET_2_0
 				if (value == null)
 					throw new ArgumentNullException ("Brush");
-
+#endif
 				if (isModifiable) {
 					brush = value;
 					Status status = GDIPlus.GdipSetPenBrushFill (nativeObject, value.nativeObject);

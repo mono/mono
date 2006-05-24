@@ -1,3 +1,11 @@
+2006-05-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Font.cs: Added a Demand for UnmanagedCode on both ToLogFont methods.
+	* Graphics.cs: Added checks for null Rectangle[F] arrays in 
+	FillRectangles methods and removed the check for 0-length (MS throws).
+	Let EndContainer mthod throws a NullReferenceException on 1.x profile.
+	* Pen.cs: Let Brush property throws a NullReferenceException on 1.x.
+
 2006-05-24  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* Pen.cs: Clone the supplied brush in the .ctor (as the user may 
