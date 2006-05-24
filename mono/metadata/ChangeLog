@@ -1,5 +1,14 @@
 2006-05-24  Martin Baulig  <martin@ximian.com>
 
+	* mono-debug-debugger.h (MonoDebuggerEvent): Added
+	`MONO_DEBUGGER_EVENT_FINALIZE_MANAGED_CODE'.	
+
+	* mono-debug-debugger.c (mono_debugger_cleanup): Send a
+	`MONO_DEBUGGER_EVENT_FINALIZE_MANAGED_CODE' and then set
+	`mono_debugger_event_handler' to NULL.
+
+2006-05-24  Martin Baulig  <martin@ximian.com>
+
 	* mono-debug.h (MONO_DEBUGGER_VERSION): Bump to 57.
 
 2006-05-24  Martin Baulig  <martin@ximian.com>
