@@ -41,6 +41,7 @@ namespace System.Drawing
 		internal IntPtr nativeObject;
 		internal bool isModifiable = true;
 		internal Brush brush;
+		internal bool must_dispose_brush;
 		internal Color color;
 		private CustomLineCap startCap;
 		private CustomLineCap endCap;
@@ -65,8 +66,10 @@ namespace System.Drawing
 
 			Status status = GDIPlus.GdipCreatePen2 (brush.nativeObject, width, Unit.UnitWorld, out nativeObject);
 			GDIPlus.CheckStatus (status);
-		
-			this.brush = brush;
+	
+			// the user supplied brush can be disposed anytime, don't keep a reference on it
+			this.brush = (Brush) brush.Clone ();
+			must_dispose_brush = true;
 			if (brush is SolidBrush) {
 				int c;
 				status = GDIPlus.GdipGetSolidFillColor (brush.NativeObject, out c);
@@ -120,6 +123,7 @@ namespace System.Drawing
 			// We know that the Color brushes are Solid.
 			//
 			brush = new SolidBrush (cloned_brush);
+			must_dispose_brush = true;
 		}
 
 		public Brush Brush {
@@ -477,7 +481,10 @@ namespace System.Drawing
 			if (disposing == true && isModifiable == false) {
 				throw new ArgumentException ("This Pen object can't be modified.");
 			}
-					
+
+			if (must_dispose_brush && (brush != null)) {
+				brush.Dispose ();
+			}
 			if (nativeObject != IntPtr.Zero) {
 				Status status = GDIPlus.GdipDeletePen (nativeObject);
 				GDIPlus.CheckStatus (status);

@@ -1,3 +1,9 @@
+2006-05-24  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* Pen.cs: Clone the supplied brush in the .ctor (as the user may 
+	dispose of it anytime). Make sure we're disposing our cached brush
+	when disposing the pen.
+
 2006-05-21  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* ContentAlignment.cs: Removed [Serializable] from 2.0 profile.
