@@ -50,6 +50,7 @@ namespace System.Windows.Forms
 		private object nullvalue;
 		private object truevalue;
 		private Hashtable checkboxes_state;
+		CheckState oldState;
 		#endregion	// Local Variables
 
 		#region Constructors
@@ -145,7 +146,7 @@ namespace System.Windows.Forms
 		#region Public Instance Methods
 		protected internal override void Abort (int rowNum)
 		{
-			SetState (rowNum, GetState (null, rowNum) & ~CheckState.Selected);			
+			SetState (rowNum, oldState & ~CheckState.Selected);			
 			grid.Invalidate (grid.GetCurrentCellBounds ());
 		}
 
@@ -165,8 +166,10 @@ namespace System.Windows.Forms
 
 		protected internal override void Edit (CurrencyManager source, int rowNum, Rectangle bounds, bool readOnly, string instantText,  bool cellIsVisible)
 		{
+			oldState = GetState (null, rowNum);
 			SetState (rowNum, GetState (source, rowNum) | CheckState.Selected);
 			grid.Invalidate (grid.GetCurrentCellBounds ());
+			grid.is_editing = true;
 		}
 
 		[MonoTODO]
@@ -344,22 +347,29 @@ namespace System.Windows.Forms
 
 		internal override void OnKeyDown (KeyEventArgs ke, int row, int column)
 		{
-			CheckState state = GetNextState (GetState (null, row));
-
-			if (ke.KeyCode == Keys.Space) {
-				grid.is_changing = true;
-				grid.InvalidateCurrentRowHeader ();
-				checkboxes_state[row] = state;
-				grid.Invalidate (grid.GetCellBounds (row, column));
+			switch (ke.KeyCode) {
+			case Keys.Space:
+				NextState (row, column);
+				break;
+			case Keys.Escape:
+				grid.EndEdit (true);
+				break;
 			}
 		}
 
 		internal override void OnMouseDown (MouseEventArgs e, int row, int column)
 		{
+			NextState (row, column);
+		}
+
+		private void NextState (int row, int column)
+		{
 			CheckState state = GetNextState (GetState (null, row));
 
+			bool refresh_rowheader = grid.is_changing == false;
 			grid.is_changing = true;
-			grid.InvalidateCurrentRowHeader ();			
+			if (refresh_rowheader)
+				grid.InvalidateCurrentRowHeader ();			
 			SetState (row, state);
 			grid.Invalidate (grid.GetCellBounds (row, column));
 		}

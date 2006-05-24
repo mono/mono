@@ -37,6 +37,18 @@
 
 2006-05-24  Chris Toshok  <toshok@ximian.com>
 
+	* DataGridBoolColumn.cs (Abort): revert back to the saved setting.
+	(Edit): save off the original state in oldState, and set
+	grid.is_editing to true.
+	(OnKeyDown): abort editing if escape is pressed.  also, call
+	NextState if space is pressed.
+	(OnMouseDown): call NextState.
+	(NextState): factor out shared code from OnKeyDown and OnMouseDown
+	here.  Also, only invalidate the row header once (on the initial
+	is_changing switch) to save on redraws.
+
+2006-05-24  Chris Toshok  <toshok@ximian.com>
+
 	* DataGridTextBoxColumn.cs (Commit): only call SetColumnValueAtRow
 	if the value in the cell is different than it was before.  This
 	keeps us from triggering a layout when we move around a datarid
