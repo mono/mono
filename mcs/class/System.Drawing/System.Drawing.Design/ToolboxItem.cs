@@ -125,7 +125,7 @@ namespace System.Drawing.Design
 		}
 
 		public virtual string ComponentType {
-			get { return "DotNET_ComponentType"; }
+			get { return ".NET Component"; }
 		}
 
 		public AssemblyName[] DependentAssemblies {
