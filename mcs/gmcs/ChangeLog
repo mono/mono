@@ -1,3 +1,15 @@
+2006-05-24  Raja R Harinath  <rharinath@novell.com>
+
+	* flowanalysis.cs (FlowBranchingToplevel.AddReturnOrigin): Move
+	checking of out parameters to ...
+	(FlowBranchingToplevel.Merge): ... here.
+	(FlowBranchingException.AddBreakOrigin): If 'finally_vector' is
+	set, propagate the origin upward, and only complain if there was
+	no other error.
+	(FlowBranchingException.AddContinueOrigin): Likewise.
+	(FlowBranchingException.AddReturnOrigin): Likewise.
+	(FlowBranchingException.AddGotoOrigin): Likewise.	
+
 2006-05-23  Raja R Harinath  <rharinath@novell.com>
 
 	* flowanalysis.cs (UsageVector.MergeOrigins): If an origin is

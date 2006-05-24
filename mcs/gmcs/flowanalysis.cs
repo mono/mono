@@ -847,6 +847,8 @@ namespace Mono.CSharp
 
 	public class FlowBranchingToplevel : FlowBranchingBlock
 	{
+		UsageVector return_origins;
+
 		public FlowBranchingToplevel (FlowBranching parent, ToplevelBlock stmt)
 			: base (parent, BranchingType.Toplevel, SiblingType.Conditional, stmt, stmt.loc)
 		{
@@ -857,6 +859,8 @@ namespace Mono.CSharp
 		// </summary>
 		void CheckOutParameters (UsageVector vector, Location loc)
 		{
+			if (vector.Reachability.IsUnreachable)
+				return;
 			for (int i = 0; i < param_map.Count; i++) {
 				VariableInfo var = param_map [i];
 
@@ -890,7 +894,10 @@ namespace Mono.CSharp
 
 		public override bool AddReturnOrigin (UsageVector vector, Location loc)
 		{
-			CheckOutParameters (vector, loc);
+			vector = vector.Clone ();
+			vector.Location = loc;
+			vector.Next = return_origins;
+			return_origins = vector;
 			return false;
 		}
 
@@ -918,16 +925,20 @@ namespace Mono.CSharp
 			return false;
 		}
 
+		protected override UsageVector Merge ()
+		{
+			for (UsageVector origin = return_origins; origin != null; origin = origin.Next)
+				CheckOutParameters (origin, origin.Location);
+
+			UsageVector vector = base.Merge ();
+			CheckOutParameters (vector, Block.loc);
+			// Note: we _do_not_ merge in the return origins
+			return vector;
+		}
+
 		public Reachability End ()
 		{
-			UsageVector result = Merge ();
-
-			Report.Debug (4, "MERGE TOP BLOCK", Location, result);
-
-			if (!result.Reachability.AlwaysThrows && !result.Reachability.AlwaysHasBarrier)
-				CheckOutParameters (result, Location);
-
-			return result.Reachability;
+			return Merge ().Reachability;
 		}
 	}
 
@@ -1001,10 +1012,14 @@ namespace Mono.CSharp
 
 		public override bool AddBreakOrigin (UsageVector vector, Location loc)
 		{
+			vector = vector.Clone ();
 			if (finally_vector != null) {
-				Report.Error (157, loc, "Control cannot leave the body of a finally clause");
+				vector.MergeChild (finally_vector, false);
+				int errors = Report.Errors;
+				Parent.AddBreakOrigin (vector, loc);
+				if (errors == Report.Errors)
+					Report.Error (157, loc, "Control cannot leave the body of a finally clause");
 			} else {
-				vector = vector.Clone ();
 				vector.Location = loc;
 				vector.Next = break_origins;
 				break_origins = vector;
@@ -1014,10 +1029,14 @@ namespace Mono.CSharp
 
 		public override bool AddContinueOrigin (UsageVector vector, Location loc)
 		{
+			vector = vector.Clone ();
 			if (finally_vector != null) {
-				Report.Error (157, loc, "Control cannot leave the body of a finally clause");
+				vector.MergeChild (finally_vector, false);
+				int errors = Report.Errors;
+				Parent.AddContinueOrigin (vector, loc);
+				if (errors == Report.Errors)
+					Report.Error (157, loc, "Control cannot leave the body of a finally clause");
 			} else {
-				vector = vector.Clone ();
 				vector.Location = loc;
 				vector.Next = continue_origins;
 				continue_origins = vector;
@@ -1027,10 +1046,14 @@ namespace Mono.CSharp
 
 		public override bool AddReturnOrigin (UsageVector vector, Location loc)
 		{
+			vector = vector.Clone ();
 			if (finally_vector != null) {
-				Report.Error (157, loc, "Control cannot leave the body of a finally clause");
+				vector.MergeChild (finally_vector, false);
+				int errors = Report.Errors;
+				Parent.AddReturnOrigin (vector, loc);
+				if (errors == Report.Errors)
+					Report.Error (157, loc, "Control cannot leave the body of a finally clause");
 			} else {
-				vector = vector.Clone ();
 				vector.Location = loc;
 				vector.Next = return_origins;
 				return_origins = vector;
@@ -1044,10 +1067,16 @@ namespace Mono.CSharp
 			if (s != null)
 				throw new InternalErrorException ("Shouldn't get here");
 
-			if (finally_vector != null)
-				Report.Error (157, goto_stmt.loc, "Control cannot leave the body of a finally clause");
-			else
-				goto_origins = new GotoOrigin (vector.Clone (), goto_stmt, goto_origins);
+			vector = vector.Clone ();
+			if (finally_vector != null) {
+				vector.MergeChild (finally_vector, false);
+				int errors = Report.Errors;
+				Parent.AddGotoOrigin (vector, goto_stmt);
+				if (errors == Report.Errors)
+					Report.Error (157, goto_stmt.loc, "Control cannot leave the body of a finally clause");
+			} else {
+				goto_origins = new GotoOrigin (vector, goto_stmt, goto_origins);
+			}
 			return true;
 		}
 
