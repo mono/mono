@@ -4038,6 +4038,7 @@ namespace System.Windows.Forms {
 			}
 
 			hwnd.UserClip = region;
+			Invalidate(handle, new Rectangle(0, 0, hwnd.Width, hwnd.Height), false);
 		}
 
 		internal override void SetCursor(IntPtr handle, IntPtr cursor) {

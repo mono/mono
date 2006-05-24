@@ -1,3 +1,8 @@
+2006-05-24  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* XplatUIWin32.cs, XplatUIX11.cs: Refresh when setting the Clip 
+	  rectangle (Fixes #78501)
+
 2006-05-24  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* ButtonBase.cs: 
