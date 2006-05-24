@@ -10,6 +10,11 @@
 	- When updating below the root node use an invalidate instead of a
 	refresh to prevent the child controls (scrollbars) from being
 	refreshed. (UpdateBelow still needs to be reworked anyways).
+	- Reenable SetBottom now that visible orders are set correctly,
+	added some debug code incase we ever get bad values there again.
+	- Set the scrollbar max to 2 less then the max value, this
+	compensates for the max value being one above the node count, and
+	for scrollbars adding one extra "notch".
 	
 2006-05-24  Peter Dennis Bartok  <pbartok@novell.com> 
 

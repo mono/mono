@@ -903,7 +903,6 @@ namespace System.Windows.Forms {
 
 		internal void SetBottom (TreeNode node)
 		{
-/*
 			if (!vbar.Visible)
 				return;
 
@@ -918,10 +917,15 @@ namespace System.Windows.Forms {
 			}
 
 			int nv = vbar.Value + offset;
-//			Console.WriteLine ("NEW VALUE:   {0}    OFFSET:   {1}     MAXIMUM:   {2}", nv, offset, vbar.Maximum);
-			if (vbar.Value + offset < vbar.Maximum)
-				vbar.Value += offset;
-*/
+			if (vbar.Value + offset < vbar.Maximum) {
+				vbar.Value = nv;
+			} else {
+#if DEBUG
+				Console.Error.WriteLine ("setting bottom to value greater then maximum ({0}, {1})",
+						nv, vbar.Maximum);
+#endif
+			}
+				
 		}
 
 		internal void UpdateBelow (TreeNode node)
@@ -1270,7 +1274,7 @@ namespace System.Windows.Forms {
 				vert = true;
 
 			if (vert) {
-				vbar.SetValues (max_visible_order, ClientRectangle.Height / ItemHeight);
+				vbar.SetValues (max_visible_order - 2, ViewportRectangle.Height / ItemHeight);
 				/*
 				vbar.Maximum = max_visible_order;
 				vbar.LargeChange = ClientRectangle.Height / ItemHeight;
