@@ -1,3 +1,9 @@
+2006-05-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (emit_ptr_to_object_conv): Implement marshalling of byval arrays
+	with non-blittable elements.
+	(emit_object_to_ptr_conv): Ditto. Fixes #78492.
+
 2006-05-24  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug-debugger.h (MonoDebuggerEvent): Added
