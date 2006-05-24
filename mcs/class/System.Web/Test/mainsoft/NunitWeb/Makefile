@@ -1,4 +1,7 @@
 run-test: Test1.dll
+	mono nunit-console2 Test1.dll -out:res.log
+
+run-test-ondotnet: Test1.dll
 	nunit-console2 Test1.dll -out:res.log
 
 Test1.dll: NunitWeb.dll Test1/Class1.cs Makefile
