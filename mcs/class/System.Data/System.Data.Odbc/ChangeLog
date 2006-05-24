@@ -1,3 +1,12 @@
+2006-05-24  Senganal T <tsenganal@novell.com>
+       
+	* OdbcColumn.cs :
+		- Added IsVariableSizeType : Handle types with variable datasize
+	* OdbcTypeConverter.cs : map LongVarBinary to Image
+	* OdbcDataReader.cs :
+		- GetValue () : Handle Text,Image datatypes differently. Only allocate
+		storage for the data contained and not for MaxLength. Fixes #78234
+
 2006-05-09  Senganal T  <tsenganal@novell.com>
 
 	* OdbcConnection.cs : Implemented ChangeDatabase Method

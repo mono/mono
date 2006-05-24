@@ -236,7 +236,7 @@ namespace System.Data.Odbc
 				OdbcColumn c=new OdbcColumn(colname, (SQL_TYPE) dt);
 				c.AllowDBNull=(Nullable!=0);
 				c.Digits=DecDigits;
-				if (c.IsStringType)
+				if (c.IsVariableSizeType)
 					c.MaxLength=(int)ColSize;
 				cols[ordinal]=c;
 			}
@@ -699,19 +699,39 @@ namespace System.Data.Odbc
 					break;
 				case OdbcType.NText:
 				case OdbcType.NVarChar:
-					bufsize=col.MaxLength*2+1; // Unicode is double byte
-					buffer=new byte[bufsize];
-					ret=libodbc.SQLGetData(hstmt, ColIndex, col.SqlCType, buffer, bufsize, ref outsize);
-					if (outsize!=-1)
-						DataValue=System.Text.Encoding.Unicode.GetString(buffer,0,outsize);
+					bufsize=(col.MaxLength < 127 ? (col.MaxLength*2+1) : 255);
+					buffer=new byte[bufsize];  // According to sqlext.h, use SQL_CHAR for both char and varchar
+					StringBuilder sb = new StringBuilder ();
+					do { 
+						ret=libodbc.SQLGetData(hstmt, ColIndex, col.SqlCType, buffer, bufsize, ref outsize);
+						if (ret == OdbcReturn.Error)
+							break;
+						if (ret != OdbcReturn.NoData && outsize!=-1) {
+							if (outsize < bufsize)
+								sb.Append (System.Text.Encoding.Unicode.GetString(buffer,0,outsize));
+							else
+								sb.Append (System.Text.Encoding.Unicode.GetString(buffer,0,bufsize));
+						}
+					} while (ret != OdbcReturn.NoData);
+					DataValue = sb.ToString ();
 					break;
 				case OdbcType.Text:
 				case OdbcType.VarChar:
-					bufsize=col.MaxLength+1;
+					bufsize=(col.MaxLength < 255 ? (col.MaxLength+1) : 255);
 					buffer=new byte[bufsize];  // According to sqlext.h, use SQL_CHAR for both char and varchar
-					ret=libodbc.SQLGetData(hstmt, ColIndex, col.SqlCType, buffer, bufsize, ref outsize);
-					if (outsize!=-1)
-						DataValue=System.Text.Encoding.Default.GetString(buffer,0,outsize);
+					StringBuilder sb1 = new StringBuilder ();
+					do { 
+						ret=libodbc.SQLGetData(hstmt, ColIndex, col.SqlCType, buffer, bufsize, ref outsize);
+						if (ret == OdbcReturn.Error)
+							break;
+						if (ret != OdbcReturn.NoData && outsize!=-1) {
+							if (outsize < bufsize)
+								sb1.Append (System.Text.Encoding.Default.GetString(buffer,0,outsize));
+							else
+								sb1.Append (System.Text.Encoding.Default.GetString(buffer,0,bufsize));
+						}
+					} while (ret != OdbcReturn.NoData);
+					DataValue = sb1.ToString ();
 					break;
 				case OdbcType.Real:
 					float float_data=0;
@@ -733,9 +753,28 @@ namespace System.Data.Odbc
 						DataValue=new DateTime(ts_data.year,ts_data.month,ts_data.day,ts_data.hour,
 								       ts_data.minute,ts_data.second,Convert.ToInt32(ts_data.fraction));
 					break;
-				case OdbcType.Binary :
+				case OdbcType.VarBinary :
 				case OdbcType.Image :
-					bufsize = col.MaxLength + 1;
+					bufsize= (col.MaxLength < 255 ? col.MaxLength : 255);
+					buffer= new byte [bufsize];
+					ArrayList al = new ArrayList ();
+					do { 
+						ret=libodbc.SQLGetData (hstmt, ColIndex, SQL_C_TYPE.BINARY, buffer, bufsize, ref outsize);
+						if (ret == OdbcReturn.Error)
+							break;
+						if (ret != OdbcReturn.NoData && outsize!=-1) {
+							if (outsize < bufsize) {
+								byte[] tmparr = new byte [outsize];
+								Array.Copy (buffer, 0, tmparr, 0, outsize);
+								al.AddRange (tmparr);
+							} else
+								al.AddRange (buffer);
+						}
+					} while (ret != OdbcReturn.NoData);
+					DataValue = al.ToArray (typeof (byte));
+					break;
+				case OdbcType.Binary :
+					bufsize = col.MaxLength;
 					buffer = new byte [bufsize];
 					long read = GetBytes (ordinal, 0, buffer, 0, bufsize);
 					ret = OdbcReturn.Success;
@@ -752,7 +791,7 @@ namespace System.Data.Odbc
 					break;
 				}
 
-				if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
+				if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo) && (ret!=OdbcReturn.NoData)) 
 					throw new OdbcException(new OdbcError("SQLGetData",OdbcHandleType.Stmt,hstmt));
 
 				if (outsize==-1) // This means SQL_NULL_DATA 

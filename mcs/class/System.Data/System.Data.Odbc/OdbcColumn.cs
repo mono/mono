@@ -145,6 +145,21 @@ namespace System.Data.Odbc
 			}
 		}
 
+		internal bool IsVariableSizeType {
+			get {
+				if (IsStringType)
+					return true;
+				switch (OdbcType) {
+				case OdbcType.Binary :
+				case OdbcType.VarBinary :
+				case OdbcType.Image :
+					return true;
+				default : 
+					return false;
+				}
+			}
+		}
+
                 internal SQL_TYPE SqlType
                 {
                         get {

@@ -133,7 +133,7 @@ namespace System.Data.Odbc
 			case SQL_TYPE.INTERVAL_YEAR_TO_MONTH:
 				return (OdbcTypeMap)  OdbcTypeMap.Maps [OdbcType.DateTime];
 			case SQL_TYPE.LONGVARBINARY:
-				return (OdbcTypeMap)  OdbcTypeMap.Maps [OdbcType.VarBinary];
+				return (OdbcTypeMap)  OdbcTypeMap.Maps [OdbcType.Image];
 			case SQL_TYPE.LONGVARCHAR:
 				return (OdbcTypeMap)  OdbcTypeMap.Maps [OdbcType.Text];
 			case SQL_TYPE.NUMERIC:
