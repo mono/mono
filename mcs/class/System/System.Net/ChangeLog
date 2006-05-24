@@ -1,3 +1,8 @@
+2006-05-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpListener.cs: Fixes race condition in BeginGetContext. Patch by
+	Pawel Sakowski that fixes bug #78365.
+
 2006-05-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServicePointManager.cs : oops, CONFIGURATION_DEP.

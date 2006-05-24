@@ -179,15 +179,17 @@ namespace System.Net {
 				throw new InvalidOperationException ("Please, call Start before using this method.");
 
 			ListenerAsyncResult ares = new ListenerAsyncResult (callback, state);
-			lock (ctx_queue) {
-				HttpListenerContext ctx = GetContextFromQueue ();
-				if (ctx != null) {
-					ares.Complete (ctx, true);
-					return ares;
-				}
-			}
 
+			// lock wait_queue early to avoid race conditions
 			lock (wait_queue) {
+				lock (ctx_queue) {
+					HttpListenerContext ctx = GetContextFromQueue ();
+					if (ctx != null) {
+						ares.Complete (ctx, true);
+						return ares;
+					}
+				}
+
 				wait_queue.Add (ares);
 			}
 
