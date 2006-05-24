@@ -1,5 +1,8 @@
 2006-05-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* assembly.c (mono_assembly_open_full): Fix typo introduced by a previous change.
+	Fixes #78495.
+
 	* marshal.c (emit_ptr_to_object_conv): Implement marshalling of byval arrays
 	with non-blittable elements.
 	(emit_object_to_ptr_conv): Ditto. Fixes #78492.
