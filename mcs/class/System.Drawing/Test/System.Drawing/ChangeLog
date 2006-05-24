@@ -1,3 +1,8 @@
+2006-05-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PenTest.cs: Added a test case where the brush supplied to the .ctor 
+	is disposed before the pen is used. Based on a sample from Paddy joy.
+
 2006-05-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PenTest.cs: New. Unit tests for Pen.
