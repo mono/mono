@@ -914,6 +914,7 @@ namespace System.Windows.Forms
 					continue;
 
 				current_clip = new Region (rect_columnhdr);
+				current_clip.Intersect (columns_area);
 				current_clip.Intersect (clip);
 				g.Clip = current_clip;
 
@@ -1116,6 +1117,7 @@ namespace System.Windows.Forms
 
 				if (clip.IntersectsWith (rect_cell)) {
 					current_clip = new Region (rect_cell);
+					current_clip.Intersect (row_rect);
 					current_clip.Intersect (clip);
 					g.Clip = current_clip;
 
