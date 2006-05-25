@@ -1192,9 +1192,16 @@ namespace System.Windows.Forms {
 
 			previous = Form.ActiveForm;
 
+#if not
+			// Commented out; we instead let the Visible=true inside the runloop create the control
+			// otherwise setting DialogResult inside any of the events that are triggered by the
+			// create will not actually cause the form to not be displayed.
+			// Leaving this comment here in case there was an actual purpose to creating the control
+			// in here.
 			if (!IsHandleCreated) {
 				CreateControl();
 			}
+#endif
 
 			Application.RunLoop(true, new ApplicationContext(this));
 
@@ -1203,7 +1210,10 @@ namespace System.Windows.Forms {
 				XplatUI.Activate(previous.window.Handle);
 			}
 
-			return DialogResult;
+			if (DialogResult != DialogResult.None) {
+				return DialogResult;
+			}
+			return DialogResult.Cancel;
 		}
 
 		public override string ToString() {
@@ -1698,7 +1708,16 @@ namespace System.Windows.Forms {
 						}
 						return;
 					} else {
-						closing = true;
+						CancelEventArgs args = new CancelEventArgs ();
+
+						OnClosing (args);
+						if (!args.Cancel) {
+							OnClosed (EventArgs.Empty);
+							closing = true;
+						} else {
+							DialogResult = DialogResult.None;
+							closing = false;
+						}
 					}
 					return;
 				}

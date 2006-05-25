@@ -1,3 +1,17 @@
+2006-05-25  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Application.cs: Moved setting of is_modal and closing to before
+	  we create the control, to allow the event handlers called as a
+	  result of creation affect closing. Also removed Gonzalo's previous
+	  change to setting DialogResult, the behaviour has been moved to 
+	  Form.ShowDialog()
+	* Form.cs: 
+	  - ShowDialog(): Removed explicit creation of the form, let RunLoop
+	    handle it instead
+	  - ShowDialog(): If no dialog result is set, we need to return Cancel
+	  - WM_CLOSE: Fire Closing/Closed events, and reset dialog result if
+	    the close is cancelled
+
 2006-05-25  Jackson Harper  <jackson@ximian.com>
 
 	* StatusBar.cs: We only need to update the sizes of the other

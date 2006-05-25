@@ -406,12 +406,13 @@ namespace System.Windows.Forms {
 			thread.Context = context;
 
 			if (context.MainForm != null) {
+				context.MainForm.is_modal = Modal;
+				context.MainForm.context = context;
+				context.MainForm.closing = false;
 				context.MainForm.Visible = true;	// Cannot use Show() or scaling gets confused by menus
 				// FIXME - do we need this?
 				//context.MainForm.PerformLayout();
-				context.MainForm.context = context;
 				context.MainForm.Activate();
-				context.MainForm.closing = false;
 			}
 
 			#if DebugRunLoop
@@ -420,11 +421,6 @@ namespace System.Windows.Forms {
 
 			if (Modal) {
 				Control c;
-
-				if (context.MainForm.Modal) {
-					throw new Exception("fixme");
-				}
-				context.MainForm.is_modal = true;
 
 				toplevels = new Queue();
 				control = Control.controls.GetEnumerator();
@@ -500,7 +496,6 @@ namespace System.Windows.Forms {
 					if (!Modal) {
 						XplatUI.PostQuitMessage(0);
 					} else {
-						context.MainForm.DialogResult = DialogResult.Cancel;
 						break;
 					}
 				}
