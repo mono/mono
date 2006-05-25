@@ -44,12 +44,6 @@ using Mainsoft.Data.Jdbc.Providers;
 
 namespace System.Data.OracleClient {
 	public sealed class OracleConnection : AbstractDBConnection, System.ICloneable {
-		#region Fields 
-
-		static readonly IConnectionProvider _connectionProvider;
-
-		#endregion //Fields
-
 		#region Events
 
 		public event OracleInfoMessageEventHandler InfoMessage;
@@ -58,17 +52,6 @@ namespace System.Data.OracleClient {
 		#endregion // Events
 		
 		#region Constructors
-
-		static OracleConnection() {
-			IDictionary providerInfo = (IDictionary)((IList) ConfigurationSettings.GetConfig("Mainsoft.Data.Configuration/OracleClientProvider"))[0];
-			string providerType = (string) providerInfo ["type"];
-			if (providerType == null || providerType.Length == 0)
-				_connectionProvider = new GenericProvider (providerInfo); 
-			else {
-				Type t = Type.GetType (providerType);
-				_connectionProvider = (IConnectionProvider) Activator.CreateInstance (t , new object[] {providerInfo});
-			}
-		}
 
 		public OracleConnection() : this(null) {
 		}
@@ -81,7 +64,12 @@ namespace System.Data.OracleClient {
 		#region Methods
 
 		protected override IConnectionProvider GetConnectionProvider() {
-			return _connectionProvider;
+			IDictionary conProviderDict = ConnectionStringDictionary.Parse(ConnectionString);
+			string provider = (string)conProviderDict["Provider"];
+			if (provider == null)
+				provider = "ORACLECLIENT";
+
+			return GetConnectionProvider("Mainsoft.Data.Configuration/OracleClientProviders", provider);
 		}
 
 		public new OracleTransaction BeginTransaction(IsolationLevel level) {
