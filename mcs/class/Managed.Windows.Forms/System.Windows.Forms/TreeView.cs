@@ -438,7 +438,7 @@ namespace System.Windows.Forms {
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int VisibleCount {
 			get {
-				return ClientRectangle.Height / ItemHeight;
+				return ViewportRectangle.Height / ItemHeight;
 			}
 		}
 
@@ -627,7 +627,7 @@ namespace System.Windows.Forms {
 			case Keys.PageDown:
 				if (selected_node != null) {
 					ne = new OpenTreeNodeEnumerator (selected_node);
-					int move = ViewportRectangle.Height / ItemHeight;
+					int move = VisibleCount;
 					for (int i = 0; i < move && ne.MoveNext (); i++) {
 						
 					}
@@ -637,7 +637,7 @@ namespace System.Windows.Forms {
 			case Keys.PageUp:
 				if (selected_node != null) {
 					ne = new OpenTreeNodeEnumerator (selected_node);
-					int move = ViewportRectangle.Height / ItemHeight;
+					int move = VisibleCount;
 					for (int i = 0; i < move && ne.MovePrevious (); i++)
 					{ }
 					SelectedNode = ne.CurrentNode;
@@ -1293,7 +1293,7 @@ namespace System.Windows.Forms {
 			}
 
 			if (vert) {
-				vbar.SetValues (max_visible_order - 2, ViewportRectangle.Height / ItemHeight);
+				vbar.SetValues (max_visible_order - 2, VisibleCount);
 				/*
 				vbar.Maximum = max_visible_order;
 				vbar.LargeChange = ClientRectangle.Height / ItemHeight;
@@ -1444,8 +1444,15 @@ namespace System.Windows.Forms {
 
 		private void FontChangedHandler (object sender, EventArgs e)
 		{
-			// TODO: I guess we should enumerate every node and invalidate the sizes here :-(
-			//	update_node_bounds = true;
+			InvalidateNodeWidthRecursive (root_node);
+		}
+
+		private void InvalidateNodeWidthRecursive (TreeNode node)
+		{
+			node.InvalidateWidth ();
+			foreach (TreeNode child in node.Nodes) {
+				InvalidateNodeWidthRecursive (child);
+			}
 		}
 
 		private void FocusChangedHandler (object sender, EventArgs e)

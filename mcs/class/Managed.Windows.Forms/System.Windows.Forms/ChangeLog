@@ -25,6 +25,11 @@
 	- Update the selected node if its ImageIndex is changed
 	- Handle null nodes in UpdateNode (mainly so we don't have to
 	check if selected is null when updating it
+	- Fix VisibleCount to use the ViewportRectangle so that scrollbars
+	are factored into the visible count
+	- Use VisibleCount for clarity in the code
+	- When the font is changed we need to recurse through all the
+	nodes and invalidate their sizes
 	
 2006-05-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
