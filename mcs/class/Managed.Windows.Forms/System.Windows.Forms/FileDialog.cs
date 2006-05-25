@@ -149,10 +149,10 @@ namespace System.Windows.Forms {
 			//imageListTopToolbar
 			imageListTopToolbar.ColorDepth = ColorDepth.Depth32Bit;
 			imageListTopToolbar.ImageSize = new Size (16, 16); // 16, 16
-			imageListTopToolbar.Images.Add (ResourceImageLoader.Get ("go-previous"));
-			imageListTopToolbar.Images.Add (ResourceImageLoader.Get ("go-top"));
-			imageListTopToolbar.Images.Add (ResourceImageLoader.Get ("folder-new"));
-			imageListTopToolbar.Images.Add (ResourceImageLoader.Get ("preferences-system-windows"));
+			imageListTopToolbar.Images.Add (ResourceImageLoader.Get ("go-previous.png"));
+			imageListTopToolbar.Images.Add (ResourceImageLoader.Get ("go-top.png"));
+			imageListTopToolbar.Images.Add (ResourceImageLoader.Get ("folder-new.png"));
+			imageListTopToolbar.Images.Add (ResourceImageLoader.Get ("preferences-system-windows.png"));
 			imageListTopToolbar.TransparentColor = Color.Transparent;
 			
 			// searchLabel

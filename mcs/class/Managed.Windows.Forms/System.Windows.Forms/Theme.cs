@@ -563,7 +563,7 @@ namespace System.Windows.Forms
 
 			if (width > 0) {
 				// Try name_width
-				fullname = String.Format("{0}_{1}", name, width);
+				fullname = String.Format("{1}_{0}", name, width);
 				image = ResourceImageLoader.Get (fullname);
 				if (image != null){
 					ResPool.AddUIImage (image, name, width);
@@ -597,15 +597,15 @@ namespace System.Windows.Forms
 		public virtual Image Images(UIIcon index, int size) {
 			switch (index) {
 				case UIIcon.PlacesRecentDocuments:
-					return GetSizedResourceImage ("document-open", size);
+					return GetSizedResourceImage ("document-open.png", size);
 				case UIIcon.PlacesDesktop:
-					return GetSizedResourceImage ("user-desktop", size);
+					return GetSizedResourceImage ("user-desktop.png", size);
 				case UIIcon.PlacesPersonal:
-					return GetSizedResourceImage ("document-open", size);
+					return GetSizedResourceImage ("document-open.png", size);
 				case UIIcon.PlacesMyComputer:
-					return GetSizedResourceImage ("computer", size);
+					return GetSizedResourceImage ("computer.png", size);
 				case UIIcon.PlacesMyNetwork:
-					return GetSizedResourceImage ("folder-remote", size);
+					return GetSizedResourceImage ("folder-remote.png", size);
 
 				// Icons for message boxes
 				case UIIcon.MessageBoxError:
@@ -619,7 +619,7 @@ namespace System.Windows.Forms
 				
 				// misc Icons
 				case UIIcon.NormalFolder:
-					return GetSizedResourceImage ("folder", size);
+					return GetSizedResourceImage ("folder.png", size);
 
 				default: {
 					throw new ArgumentException("Invalid Icon type requested", "index");

@@ -1,3 +1,8 @@
+2006-05-24  Miguel de Icaza  <miguel@novell.com>
+
+	* Changes so that we can use the filename as the resource name,
+	should help compiling from within VisualStudio.
+
 2006-05-23  Miguel de Icaza  <miguel@novell.com>
 
 	* resources/: Add Tango icons in various sizes.

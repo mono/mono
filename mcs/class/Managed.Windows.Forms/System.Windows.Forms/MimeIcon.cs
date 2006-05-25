@@ -485,15 +485,15 @@ namespace System.Windows.Forms
 			MimeIconEngine.AddMimeTypeAndIconName( "recently/recently", "last_open" );
 			MimeIconEngine.AddMimeTypeAndIconName( "workplace/workplace", "monitor-computer" );
 			
-			MimeIconEngine.AddIconByImage( "folder",  ResourceImageLoader.Get ("folder") );
-			MimeIconEngine.AddIconByImage( "paper",  ResourceImageLoader.Get("text-x-generic") );
-			MimeIconEngine.AddIconByImage( "desktop",  ResourceImageLoader.Get( "user-desktop" ) );
-			MimeIconEngine.AddIconByImage( "folder_with_paper",  ResourceImageLoader.Get( "document-open" ) );
+			MimeIconEngine.AddIconByImage( "folder",  ResourceImageLoader.Get ("folder.png") );
+			MimeIconEngine.AddIconByImage( "paper",  ResourceImageLoader.Get("text-x-generic.png") );
+			MimeIconEngine.AddIconByImage( "desktop",  ResourceImageLoader.Get( "user-desktop.png" ) );
+			MimeIconEngine.AddIconByImage( "folder_with_paper",  ResourceImageLoader.Get( "document-open.png" ) );
 
 			// fix
-			MimeIconEngine.AddIconByImage( "monitor-planet",  ResourceImageLoader.Get( "document-open" ) );
-			MimeIconEngine.AddIconByImage( "last_open",  ResourceImageLoader.Get( "document-open" ) );
-			MimeIconEngine.AddIconByImage( "monitor-computer",  ResourceImageLoader.Get( "document-open" ) );
+			MimeIconEngine.AddIconByImage( "monitor-planet",  ResourceImageLoader.Get( "document-open.png" ) );
+			MimeIconEngine.AddIconByImage( "last_open",  ResourceImageLoader.Get( "document-open.png" ) );
+			MimeIconEngine.AddIconByImage( "monitor-computer",  ResourceImageLoader.Get( "document-open.png" ) );
 			
 			return MimeExtensionHandlerStatus.OK; // return always ok
 		}
