@@ -1388,4 +1388,67 @@ namespace MonoTests.System.Drawing
 			Assert.AreEqual (2, region.GetRegionScans (matrix).Length, "2");
 		}
 	}
+
+	[TestFixture]
+	// the test cases in this fixture aren't restricted wrt running unmanaged code
+	public class RegionTestUnmanaged {
+
+		private Bitmap bitmap;
+		private Graphics graphic;
+
+		[TestFixtureSetUp]
+		public void FixtureSetUp ()
+		{
+			bitmap = new Bitmap (10, 10);
+			graphic = Graphics.FromImage (bitmap);
+		}
+
+		[Test]
+		public void GetHrgn_Infinite_MakeEmpty ()
+		{
+			Region r = new Region ();
+			Assert.IsFalse (r.IsEmpty (graphic), "!Empty");
+			Assert.IsTrue (r.IsInfinite (graphic), "Infinite");
+			Assert.AreEqual (IntPtr.Zero, r.GetHrgn (graphic), "Handle==0");
+
+			r.MakeEmpty ();
+			Assert.IsTrue (r.IsEmpty (graphic), "Empty");
+			Assert.IsFalse (r.IsInfinite (graphic), "!Infinite");
+			Assert.IsFalse (r.GetHrgn (graphic) == IntPtr.Zero, "Handle!=0");
+		}
+
+		[Test]
+		public void GetHrgn_Empty_MakeInfinite ()
+		{
+			Region r = new Region (new GraphicsPath ());
+			Assert.IsTrue (r.IsEmpty (graphic), "Empty");
+			Assert.IsFalse (r.IsInfinite (graphic), "!Infinite");
+			Assert.IsFalse (r.GetHrgn (graphic) == IntPtr.Zero, "Handle!=0");
+
+			r.MakeInfinite ();
+			Assert.IsFalse (r.IsEmpty (graphic), "!Empty");
+			Assert.IsTrue (r.IsInfinite (graphic), "Infinite");
+			Assert.AreEqual (IntPtr.Zero, r.GetHrgn (graphic), "Handle==0");
+		}
+
+		[Test]
+		public void GetHrgn_FromHrgn ()
+		{
+			Region r1 = new Region (new GraphicsPath ());
+			IntPtr h1 = r1.GetHrgn (graphic);
+			Assert.IsFalse (h1 == IntPtr.Zero, "Handle_1!=0");
+
+			Region r2 = Region.FromHrgn (h1);
+			IntPtr h2 = r2.GetHrgn (graphic);
+			Assert.IsFalse (h2 == IntPtr.Zero, "Handle_2!=0");
+			Assert.IsFalse (h1 == h2, "Handle_1!=Handle_2");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void FromHrgn_Zero ()
+		{
+			Region.FromHrgn (IntPtr.Zero);
+		}
+	}
 }
