@@ -1,3 +1,11 @@
+2006-05-25  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: When we get focus if there is no selected node make
+	it the top node
+	- Remove some uneeded setup code from Draw.
+	* TreeNodeCollection.cs: If the tree doesn't have a top node when
+	a new node is inserted make the new node the top.
+
 2006-05-25  Chris Toshok  <toshok@ximian.com>
 
 	* DataGrid.cs (EnsureCellVisibility): remove some code to fix a

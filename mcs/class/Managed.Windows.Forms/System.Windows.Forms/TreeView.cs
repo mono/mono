@@ -115,8 +115,8 @@ namespace System.Windows.Forms {
 			MouseMove += new MouseEventHandler(MouseMoveHandler);
 			SizeChanged += new EventHandler (SizeChangedHandler);
 			FontChanged += new EventHandler (FontChangedHandler);
-			LostFocus += new EventHandler (FocusChangedHandler);
-			GotFocus += new EventHandler (FocusChangedHandler);
+			LostFocus += new EventHandler (LostFocusHandler);
+			GotFocus += new EventHandler (GotFocusHandler);
 			MouseWheel += new MouseEventHandler(MouseWheelHandler);
 
 			SetStyle (ControlStyles.UserPaint | ControlStyles.StandardClick, false);
@@ -996,12 +996,6 @@ namespace System.Windows.Forms {
 
 		private void Draw (Rectangle clip, Graphics dc)
 		{
-			if (top_node == null && Nodes.Count > 0)
-				top_node = nodes [0];
-
-			if (selected_node == null && Nodes.Count > 0)
-				SelectedNode = nodes [0];
-			
 			dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), clip);
 
 			Color dash_color = ControlPaint.Dark (BackColor);
@@ -1455,10 +1449,15 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private void FocusChangedHandler (object sender, EventArgs e)
+		private void GotFocusHandler (object sender, EventArgs e)
 		{
-			if (selected_node != null)
-				UpdateNode (selected_node);
+			if (selected_node == null)
+				SelectedNode = top_node;
+		}
+
+		private void LostFocusHandler (object sender, EventArgs e)
+		{
+			UpdateNode (SelectedNode);
 		}
 
 		private void MouseDownHandler (object sender, MouseEventArgs e)
