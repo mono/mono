@@ -1,3 +1,8 @@
+2006-05-25  Konstantin Triger <kostat@mainsoft.com>
+
+	* GenericProvider.cs: backward compatibility: if JDBC direct connection string contains
+		Provider key, map 'User', 'User Id' --> 'user' and 'Password' --> 'password'.
+
 2006-05-15 Boris Kirzner <borisk@mainsoft.com>
 	* OleDbSqlServerProvider.cs: 
 		- added datasource and instance name resolution  for SqlServer 2000

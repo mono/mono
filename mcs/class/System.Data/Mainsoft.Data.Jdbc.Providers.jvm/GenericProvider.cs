@@ -80,6 +80,8 @@ namespace Mainsoft.Data.Jdbc.Providers
 
 			internal java.sql.Connection Connection {
 				get {
+					java.util.Properties properties = new java.util.Properties ();
+
 					string url = (string)_keyMapper["JdbcURL"];
 					if (url == null) {
 						string jdbcUrlPattern = (string)_provider.ProviderInfo [ConfigurationConsts.JdbcUrlPattern];
@@ -91,8 +93,38 @@ namespace Mainsoft.Data.Jdbc.Providers
 						MatchEvaluator evaluator = new MatchEvaluator (ReplaceEvaluator);
 						url = JdbcUrlPatternRegex.Replace (jdbcUrlPattern, evaluator);
 					}
+					else {
+						// hack for backward comatibility:
+						// if the connection string contains 'Provider',
+						// the following mapping will hold:
+						// 'User', 'User Id' --> 'user'
+						// 'Password' --> 'password'
+						if (_keyMapper["Provider"] != null) {
 
-					java.util.Properties properties = new java.util.Properties ();
+							const string USER = "User";
+							const string USERID = "User Id";
+							const string PASSWORD = "Password";
+
+							string user = (string)_keyMapper[USER];
+							if (user != null) {
+								properties.put("user", user);
+								_excludedKeys.Add(USER);
+							}
+							else {
+								user = (string)_keyMapper[USERID];
+								if (user != null) {
+									properties.put("user", user);
+									_excludedKeys.Add(USERID);
+								}
+							}
+
+							string password = (string)_keyMapper[PASSWORD];
+							if (password != null) {
+								properties.put("password", password);
+								_excludedKeys.Add(PASSWORD);
+							}
+						}
+					}
 
 					if (_provider._excludedKeys != null)
 						_excludedKeys.AddRange(_provider._excludedKeys);
