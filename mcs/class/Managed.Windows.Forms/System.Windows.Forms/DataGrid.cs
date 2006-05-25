@@ -1904,16 +1904,10 @@ namespace System.Windows.Forms
 				cell.RowNumber + 1 >= first_visiblerow + visiblerow_count) {
 
 				if (cell.RowNumber + 1 >= first_visiblerow + visiblerow_count) {
-					int old_first_visiblerow = first_visiblerow;
-					first_visiblerow = 1 + cell.RowNumber - visiblerow_count;
-					grid_drawing.UpdateVisibleRowCount ();
-				}else {
-					int old_first_visiblerow = first_visiblerow;
-					first_visiblerow = cell.RowNumber;
-					grid_drawing.UpdateVisibleRowCount ();
+					vert_scrollbar.Value = 1 + cell.RowNumber - visiblerow_count;
+				} else {
+					vert_scrollbar.Value = cell.RowNumber;
 				}
-
-				vert_scrollbar.Value = first_visiblerow;
 			}
 		}
 		

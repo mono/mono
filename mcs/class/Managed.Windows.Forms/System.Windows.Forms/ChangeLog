@@ -1,5 +1,10 @@
 2006-05-25  Chris Toshok  <toshok@ximian.com>
 
+	* DataGrid.cs (EnsureCellVisibility): remove some code to fix a
+	problem with the last commit.
+
+2006-05-25  Chris Toshok  <toshok@ximian.com>
+
 	* DataGridTextBoxColumn.cs (ReleaseHostedControl): turns out we do
 	need the invalidate call here, while scrolling right-to-left via
 	the left arrow key (i.e. moving the editing cell while scrolling).
