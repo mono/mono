@@ -491,7 +491,6 @@ public class Page : TemplateControl, IHttpHandler
 		}
 		if (_theme != null && _theme != "") {
 			_pageTheme = ThemeDirectoryCompiler.GetCompiledInstance ("./App_Themes/" + _theme + "/", _context);
-			ApplyThemeRecursive ();
 		}
 	}
 
@@ -1033,6 +1032,7 @@ public class Page : TemplateControl, IHttpHandler
 		OnPreInit (EventArgs.Empty);
 
 		InitializeTheme ();
+		ApplyMasterPage ();
 #endif
 		Trace.Write ("aspx.page", "Begin Init");
 		InitRecursive (null);
@@ -1041,7 +1041,6 @@ public class Page : TemplateControl, IHttpHandler
 #if NET_2_0
 		OnInitComplete (EventArgs.Empty);
 		
-		ApplyMasterPage ();
 
 		if (_title != null && htmlHeader != null)
 			htmlHeader.Title = _title;

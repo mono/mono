@@ -1,3 +1,9 @@
+2006-05-25  Andrew Skiba  <andrews@mainsoft.com>
+
+	* Page.cs, Control.cs: Fix the order of OnInit invocation of controls
+	created via master page content (see 
+	http://lists.ximian.com/pipermail/mono-devel-list/2006-May/018585.html ).
+
 2006-05-11  Andrew Skiba  <andrews@mainsoft.com>
 
 	* Page.cs, PageTheme.cs: This patch uses LinkedStyleSheets from the

@@ -1253,7 +1253,6 @@ namespace System.Web.UI
 				trace.Write ("control", String.Format ("InitRecursive {0} {1}", _userId, type_name));
 			}
 #endif
-
                         if (HasControls ()) {
 				if ((stateMask & IS_NAMING_CONTAINER) != 0)
 					namingContainer = this;
@@ -1274,6 +1273,8 @@ namespace System.Web.UI
 					c.InitRecursive (namingContainer);	
 				}
 			}
+
+			ApplyTheme ();
 
 			stateMask |= INITING;
 #if NET_2_0
@@ -1395,7 +1396,7 @@ namespace System.Web.UI
 #if NET_2_0
 		internal ControlSkin controlSkin;
 
-                internal void ApplyThemeRecursive ()
+                internal void ApplyTheme ()
                 {
 #if MONO_TRACE
 			TraceContext trace = (Context != null && Context.Trace.IsEnabled) ? Context.Trace : null;
@@ -1405,17 +1406,10 @@ namespace System.Web.UI
 				trace.Write ("control", String.Format ("ApplyThemeRecursive {0} {1}", _userId, type_name));
 			}
 #endif
-			ControlSkin controlSkin = Page.PageTheme.GetControlSkin (GetType(), SkinID);
-			if (controlSkin != null)
-				controlSkin.ApplySkin (this);
-
-                        if (HasControls ()) {
-				int len = _controls.Count;
-				for (int i=0;i<len;i++)
-				{
-					Control c = _controls[i];
-					c.ApplyThemeRecursive ();
-				}
+			if (Page.PageTheme != null) {
+				ControlSkin controlSkin = Page.PageTheme.GetControlSkin (GetType (), SkinID);
+				if (controlSkin != null)
+					controlSkin.ApplySkin (this);
 			}
 
 #if MONO_TRACE
