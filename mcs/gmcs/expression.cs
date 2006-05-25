@@ -2464,7 +2464,9 @@ namespace Mono.CSharp {
 			}
 
 			Type ltype = left.Type, rtype = right.Type;
-			if (ltype.IsValueType && rtype.IsValueType &&
+			if ((left is NullLiteral || ltype.IsValueType) &&
+			    (right is NullLiteral || rtype.IsValueType) &&
+			    !(left is NullLiteral && right is NullLiteral) &&
 			    (TypeManager.IsNullableType (ltype) || TypeManager.IsNullableType (rtype)))
 				return new Nullable.LiftedBinaryOperator (oper, left, right, loc).Resolve (ec);
 
