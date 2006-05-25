@@ -69,7 +69,7 @@ namespace MonoCasTests.System.Drawing.Design {
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void Create ()
 		{
-			new PropertyValueUIItem (new Bitmap (10, 10), PropertyValueUIItemInvoke, null);
+			new PropertyValueUIItem (new Bitmap (10, 10), new PropertyValueUIItemInvokeHandler(PropertyValueUIItemInvoke), null);
 		}
 
 		// we use reflection to call PropertyValueUIItem class as it's protected 

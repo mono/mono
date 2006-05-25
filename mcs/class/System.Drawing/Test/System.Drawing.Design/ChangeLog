@@ -1,3 +1,7 @@
+2006-05-25  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* PropertyValueUIItemCas.cs: Fix compilation using csc 1.x.
+
 2006-05-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestToolboxItem.cs: Update ComponentType check to work under MS 2.0.
