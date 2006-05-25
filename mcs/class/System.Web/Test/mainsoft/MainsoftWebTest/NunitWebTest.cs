@@ -72,8 +72,17 @@ namespace MonoTests.stand_alone.WebHarness
 
 		public static string GetControlFromPageHtml (string str)
 		{
+			if (string.IsNullOrEmpty (str))
+				throw new ArgumentException ("internal error: str is null or empty");
+			int beginPos = str.IndexOf (BEGIN_TAG);
+			int endPos = str.IndexOf (END_TAG);
+			if (beginPos == -1)
+				throw new Exception ("internal error: BEGIN_TAG is missing. Full source: "+str);
+			if (endPos == -1)
+				throw new Exception ("internal error: END_TAG is missing. Full source: "+str);
+				
 			StringBuilder sb = new StringBuilder ();
-			sb.Append (str.Substring (str.IndexOf (BEGIN_TAG) + BEGIN_TAG.Length, str.IndexOf (END_TAG) - str.IndexOf (BEGIN_TAG) - BEGIN_TAG.Length));
+			sb.Append (str.Substring (beginPos + BEGIN_TAG.Length, endPos - beginPos - BEGIN_TAG.Length));
 			return sb.ToString ();
 		}
 
@@ -182,7 +191,7 @@ namespace MonoTests.stand_alone.WebHarness
 				_xmlIgnoreList = new XmlDocument();
 				string xml;
 				using (Stream source = Assembly.GetExecutingAssembly()
-					.GetManifestResourceStream ("HTMLComparer.nunitweb_config.xml")) {
+					.GetManifestResourceStream ("nunitweb_config.xml")) {
 					using (StreamReader sr = new StreamReader (source))
 						xml = sr.ReadToEnd ();
 				}
