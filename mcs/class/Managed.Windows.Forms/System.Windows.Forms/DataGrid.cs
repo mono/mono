@@ -176,8 +176,6 @@ namespace System.Windows.Forms
 		internal bool is_adding;	// Indicates when we are adding a row
 		private Hashtable selected_rows;
 		private int selection_start; // used for range selection
-		private bool ctrl_pressed;
-		private bool shift_pressed;
 		private bool begininit;
 		private CurrencyManager cached_currencymgr;
 		private CurrencyManager cached_currencymgr_events;
@@ -234,8 +232,6 @@ namespace System.Windows.Forms
 			parentrowslabel_style = DataGridParentRowsLabelStyle.Both;
 			selected_rows = new Hashtable ();
 			selection_start = -1;
-			ctrl_pressed = false;
-			shift_pressed = false;
 			preferredrow_height = def_preferredrow_height = FontHeight + 3;
 			cached_currencymgr_events = cached_currencymgr = null;
 			accept_listmgrevents = true;
@@ -247,10 +243,9 @@ namespace System.Windows.Forms
 			CurrentTableStyle = default_style;
 
 			horiz_scrollbar = new ImplicitHScrollBar ();
-			horiz_scrollbar.Scroll += new ScrollEventHandler  (GridHScrolled);
+			horiz_scrollbar.ValueChanged += new EventHandler (GridHValueChanged);
 			vert_scrollbar = new ImplicitVScrollBar ();
-			vert_scrollbar.Scroll += new ScrollEventHandler (GridVScrolled);			
-			KeyUp += new KeyEventHandler (OnKeyUpDG);			
+			vert_scrollbar.ValueChanged += new EventHandler (GridVValueChanged);
 
 			SetStyle (ControlStyles.UserMouse, true);
 
@@ -1132,20 +1127,18 @@ namespace System.Windows.Forms
 			return string.Empty;
 		}
 
-		protected virtual void GridHScrolled (object sender, ScrollEventArgs se)
+		protected virtual void GridHValueChanged (object sender, EventArgs e)
 		{
-			if (se.NewValue == horz_pixeloffset ||
-				se.Type == ScrollEventType.EndScroll) {
+			if (horiz_scrollbar.Value == horz_pixeloffset)
 				return;
-			}
 
-			ScrollToColumnInPixels (se.NewValue);
+			ScrollToColumnInPixels (horiz_scrollbar.Value);
 		}
 
-		protected virtual void GridVScrolled (object sender, ScrollEventArgs se)
+		protected virtual void GridVValueChanged (object sender, EventArgs e)
 		{
 			int old_first_visiblerow = first_visiblerow;
-			first_visiblerow = se.NewValue;
+			first_visiblerow = vert_scrollbar.Value;
 			grid_drawing.UpdateVisibleRowCount ();
 			
 			if (first_visiblerow == old_first_visiblerow) {
@@ -1213,7 +1206,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		protected override void OnBindingContextChanged( EventArgs e)
+		protected override void OnBindingContextChanged (EventArgs e)
 		{
 			base.OnBindingContextChanged (e);
 
@@ -1317,6 +1310,9 @@ namespace System.Windows.Forms
 		{
 			base.OnMouseDown (e);
 
+			bool ctrl_pressed = ((Control.ModifierKeys & Keys.Control) != 0);
+			bool shift_pressed = ((Control.ModifierKeys & Keys.Shift) != 0);
+
 			HitTestInfo testinfo;
 			testinfo = grid_drawing.HitTest (e.X, e.Y);
 
@@ -1331,7 +1327,6 @@ namespace System.Windows.Forms
 				if ((new_cell.Equals (current_cell) == false) || (!is_editing)) {
 					SetCurrentCell (new_cell);
 					EditCell (current_cell);
-
 				} else {
 					CurrentTableStyle.GridColumnStyles[testinfo.Column].OnMouseDown (e, testinfo.Row, testinfo.Column);
 				}
@@ -1413,27 +1408,25 @@ namespace System.Windows.Forms
 		{
 			base.OnMouseWheel (e);
 
-			if (ctrl_pressed == false) { // scroll horizontal
+			bool ctrl_pressed = ((Control.ModifierKeys & Keys.Control) != 0);
+
+			if (ctrl_pressed) { // scroll horizontally
 				if (e.Delta > 0) {
-					if (current_cell.RowNumber > 0) {
-						CurrentCell = new DataGridCell (current_cell.RowNumber - 1, current_cell.ColumnNumber);
-					}
+					horiz_scrollbar.Value = Math.Max (horiz_scrollbar.Minimum,
+									  horiz_scrollbar.Value + horiz_scrollbar.LargeChange);
 				}
 				else {
-					if (current_cell.RowNumber < RowsCount - 1) {
-						CurrentCell = new DataGridCell (current_cell.RowNumber + 1, current_cell.ColumnNumber);					
-					}
+					horiz_scrollbar.Value = Math.Min (horiz_scrollbar.Maximum - horiz_scrollbar.LargeChange + 1,
+									  horiz_scrollbar.Value + horiz_scrollbar.LargeChange);
 				}
 			} else {
 				if (e.Delta > 0) {
-					if (current_cell.ColumnNumber > 0) {
-						CurrentCell = new DataGridCell (current_cell.RowNumber, current_cell.ColumnNumber - 1);
-					}
+					vert_scrollbar.Value = Math.Max (vert_scrollbar.Minimum,
+									 vert_scrollbar.Value + vert_scrollbar.LargeChange);
 				}
 				else {
-					if (current_cell.ColumnNumber < CurrentTableStyle.GridColumnStyles.Count - 1) {
-						CurrentCell = new DataGridCell (current_cell.RowNumber, current_cell.ColumnNumber + 1);					
-					}
+					vert_scrollbar.Value = Math.Min (vert_scrollbar.Maximum - vert_scrollbar.LargeChange + 1,
+									 vert_scrollbar.Value + vert_scrollbar.LargeChange);
 				}
 			}
 		}
@@ -1512,26 +1505,34 @@ namespace System.Windows.Forms
 				return false;
 			}
 
+			bool ctrl_pressed = ((Control.ModifierKeys & Keys.Control) != 0);
+
 			switch (ke.KeyCode) {
-			case Keys.ControlKey:
-				ctrl_pressed = true;
-				break;
-			case Keys.ShiftKey:
-				shift_pressed = true;
-				break;
 			case Keys.Up:
 			{
-				if (current_cell.RowNumber > 0) {
-					CurrentCell = new DataGridCell (current_cell.RowNumber - 1, current_cell.ColumnNumber);
+				if (ctrl_pressed) {
+					CurrentCell = new DataGridCell (0, current_cell.ColumnNumber);
 					EditCell (current_cell);
+				}
+				else {
+					if (current_cell.RowNumber > 0) {
+						CurrentCell = new DataGridCell (current_cell.RowNumber - 1, current_cell.ColumnNumber);
+						EditCell (current_cell);
+					}
 				}
 				break;
 			}
 			case Keys.Down:
 			{
-				if (current_cell.RowNumber < RowsCount - 1) {
-					CurrentCell = new DataGridCell (current_cell.RowNumber + 1, current_cell.ColumnNumber);
+				if (ctrl_pressed) {
+					CurrentCell = new DataGridCell (RowsCount - 1, current_cell.ColumnNumber);
 					EditCell (current_cell);
+				}
+				else {
+					if (current_cell.RowNumber < RowsCount - 1) {
+						CurrentCell = new DataGridCell (current_cell.RowNumber + 1, current_cell.ColumnNumber);
+						EditCell (current_cell);
+					}
 				}
 				break;
 			}
@@ -1572,24 +1573,36 @@ namespace System.Windows.Forms
 			}
 
 			case Keys.Right:
-			{				
-				if (current_cell.ColumnNumber + 1 < CurrentTableStyle.GridColumnStyles.Count) {
-					CurrentCell = new DataGridCell (current_cell.RowNumber, current_cell.ColumnNumber + 1);
+			{
+				if (ctrl_pressed) {
+					CurrentCell = new DataGridCell (current_cell.RowNumber, CurrentTableStyle.GridColumnStyles.Count - 1);
 					EditCell (current_cell);
-				} else if (current_cell.RowNumber + 1 < RowsCount) {
-					CurrentCell = new DataGridCell (current_cell.RowNumber + 1, 0);
-					EditCell (current_cell);
-				}	
+				}
+				else {
+					if (current_cell.ColumnNumber + 1 < CurrentTableStyle.GridColumnStyles.Count) {
+						CurrentCell = new DataGridCell (current_cell.RowNumber, current_cell.ColumnNumber + 1);
+						EditCell (current_cell);
+					} else if (current_cell.RowNumber + 1 < RowsCount) {
+						CurrentCell = new DataGridCell (current_cell.RowNumber + 1, 0);
+						EditCell (current_cell);
+					}
+				}
 				break;
 			}
 			case Keys.Left:
 			{
-				if (current_cell.ColumnNumber > 0) {
-					CurrentCell = new DataGridCell (current_cell.RowNumber, current_cell.ColumnNumber - 1);
+				if (ctrl_pressed) {
+					CurrentCell = new DataGridCell (current_cell.RowNumber, 0);
 					EditCell (current_cell);
-				} else if (current_cell.RowNumber > 0) {
-					CurrentCell = new DataGridCell (current_cell.RowNumber - 1, CurrentTableStyle.GridColumnStyles.Count - 1);
-					EditCell (current_cell);
+				}
+				else {
+					if (current_cell.ColumnNumber > 0) {
+						CurrentCell = new DataGridCell (current_cell.RowNumber, current_cell.ColumnNumber - 1);
+						EditCell (current_cell);
+					} else if (current_cell.RowNumber > 0) {
+						CurrentCell = new DataGridCell (current_cell.RowNumber - 1, CurrentTableStyle.GridColumnStyles.Count - 1);
+						EditCell (current_cell);
+					}
 				}
 				break;
 			}
@@ -1617,14 +1630,26 @@ namespace System.Windows.Forms
 			}
 			case Keys.Home:
 			{
-				CurrentCell = new DataGridCell (current_cell.RowNumber, 0);
-				EditCell (current_cell);
+				if (ctrl_pressed) {
+					CurrentCell = new DataGridCell (0, 0);
+					EditCell (current_cell);
+				}
+				else {
+					CurrentCell = new DataGridCell (current_cell.RowNumber, 0);
+					EditCell (current_cell);
+				}
 				break;
 			}
 			case Keys.End:
 			{
-				CurrentCell = new DataGridCell (current_cell.RowNumber, CurrentTableStyle.GridColumnStyles.Count - 1);
-				EditCell (current_cell);
+				if (ctrl_pressed) {
+					CurrentCell = new DataGridCell (RowsCount - 1, CurrentTableStyle.GridColumnStyles.Count - 1);
+					EditCell (current_cell);
+				}
+				else {
+					CurrentCell = new DataGridCell (current_cell.RowNumber, CurrentTableStyle.GridColumnStyles.Count - 1);
+					EditCell (current_cell);
+				}
 				break;
 			}
 			case Keys.Delete:
@@ -1644,7 +1669,8 @@ namespace System.Windows.Forms
 		}
 
 		// Called from DataGridTextBox
-		internal bool ProcessKeyPreviewInternal(ref Message m) {
+		internal bool ProcessKeyPreviewInternal(ref Message m)
+		{
 			Keys key = (Keys) m.WParam.ToInt32 ();
 			KeyEventArgs ke = new KeyEventArgs (key);
 			if (ProcessGridKey (ke) == true) {
@@ -1864,14 +1890,14 @@ namespace System.Windows.Forms
 				current_cell.RowNumber, shouldAbort);
 		}
 
-		private void EnsureCellVisilibility (DataGridCell cell)
+		private void EnsureCellVisibility (DataGridCell cell)
 		{
 			if (cell.ColumnNumber <= first_visiblecolumn ||
 				cell.ColumnNumber + 1 >= first_visiblecolumn + visiblecolumn_count) {			
 					
-				first_visiblecolumn = grid_drawing.GetFirstColumnForColumnVisilibility (first_visiblecolumn, cell.ColumnNumber);				
+				first_visiblecolumn = grid_drawing.GetFirstColumnForColumnVisilibility (first_visiblecolumn, cell.ColumnNumber);
 				int pixel = grid_drawing.GetColumnStartingPixel (first_visiblecolumn);
-				ScrollToColumnInPixels (pixel);
+				horiz_scrollbar.Value = pixel;
 			}
 
 			if (cell.RowNumber < first_visiblerow ||
@@ -1881,12 +1907,10 @@ namespace System.Windows.Forms
 					int old_first_visiblerow = first_visiblerow;
 					first_visiblerow = 1 + cell.RowNumber - visiblerow_count;
 					grid_drawing.UpdateVisibleRowCount ();
-					ScrollToRow (old_first_visiblerow, first_visiblerow);
 				}else {
 					int old_first_visiblerow = first_visiblerow;
 					first_visiblerow = cell.RowNumber;
 					grid_drawing.UpdateVisibleRowCount ();
-					ScrollToRow (old_first_visiblerow, first_visiblerow);
 				}
 
 				vert_scrollbar.Value = first_visiblerow;
@@ -1958,7 +1982,7 @@ namespace System.Windows.Forms
 					
 			int old_row = current_cell.RowNumber;
 						
-			EnsureCellVisilibility (value);
+			EnsureCellVisibility (value);
 			current_cell = value;					
 			
 			if (current_cell.RowNumber != old_row) {
@@ -2031,20 +2055,6 @@ namespace System.Windows.Forms
 			CalcAreasAndInvalidate ();			
 		}
 
-		private void OnKeyUpDG (object sender, KeyEventArgs e)
-		{
-			switch (e.KeyCode) {
-			case Keys.ControlKey:
-				ctrl_pressed = false;
-				break;
-			case Keys.ShiftKey:
-				shift_pressed = false;
-				break;
-			default:
-				break;
-			}
-		}
-		
 		private void OnListManagerCurrentChanged (object sender, EventArgs e)
 		{			
 			if (accept_listmgrevents == false) {
@@ -2186,6 +2196,7 @@ namespace System.Windows.Forms
 				rows_area.X -= RowHeaderWidth;
 				rows_area.Width += RowHeaderWidth;
 			}
+
 			rows_area.Height = grid_drawing.CellsArea.Height - grid_drawing.CellsArea.Height % RowHeight;
 
 			XplatUI.ScrollWindow (Handle, rows_area, 0, pixels, false);

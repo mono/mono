@@ -1,3 +1,29 @@
+2006-05-25  Chris Toshok  <toshok@ximian.com>
+
+	* DataGridTextBoxColumn.cs (ReleaseHostedControl): turns out we do
+	need the invalidate call here, while scrolling right-to-left via
+	the left arrow key (i.e. moving the editing cell while scrolling).
+
+	* DataGrid.cs (.ctor): remove the initialization of
+	ctrl_pressed/shift_pressed.  We no longer track them using key
+	up/down handlers, but by using Control.ModifierKeys.  Also, switch
+	to using ValueChanged handlers on the scrollbars instead of
+	Scrolled event handlers.  This simplifies a bunch of the scrolling
+	code.
+	(GridHValueChanged): rename from GridHScrolled, and change it to
+	work with the new event args.
+	(GridVValueChanged): same.
+	(OnMouseDown): initialize ctrl_pressed/shift_pressed here.
+	(OnMouseWheel): actually scroll the datagrid.  Don't change the
+	selected cell.
+	(ProcessGridKey): correct all the keyboard navigation stuff I
+	could find.  Ctrl up/down/left/right/home/end work now.
+	(EnsureCellVisibility): correct method name spelling.  Also,
+	simplify this a touch by not explicitly calling the
+	ScrollToRow/ScrollToColumnInPixels methods.  We just set the
+	scrollbar value.
+	(OnKeyUpDG): no need for this method now.
+	
 2006-05-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* LinkLabel.cs: display the OverrideCursor when hovering the label.

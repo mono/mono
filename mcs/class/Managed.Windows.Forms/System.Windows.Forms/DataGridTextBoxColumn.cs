@@ -294,7 +294,8 @@ namespace System.Windows.Forms
 		{			
 			if (textbox != null) {
 				grid.SuspendLayout ();
-				DataGridTableStyle.DataGrid.Controls.Remove (textbox);
+				grid.Controls.Remove (textbox);
+				grid.Invalidate (new Rectangle (textbox.Location, textbox.Size));
 				textbox.Dispose ();
 				textbox = null;
 				grid.ResumeLayout (false);
