@@ -500,6 +500,7 @@ namespace System.Windows.Forms {
 					if (!Modal) {
 						XplatUI.PostQuitMessage(0);
 					} else {
+						context.MainForm.DialogResult = DialogResult.Cancel;
 						break;
 					}
 				}
