@@ -48,22 +48,9 @@ namespace System.Data.SqlClient
 
 		private const int DEFAULT_PACKET_SIZE = 8192;
 
-		static readonly IConnectionProvider _connectionProvider;
-
 		#endregion // Fields
 
 		#region Constructors
-
-		static SqlConnection() {
-			IDictionary providerInfo = (IDictionary)((IList) ConfigurationSettings.GetConfig("Mainsoft.Data.Configuration/SqlClientProvider"))[0];
-			string providerType = (string) providerInfo [ConfigurationConsts.ProviderType];
-			if (providerType == null || providerType.Length == 0)
-				_connectionProvider = new GenericProvider (providerInfo); 
-			else {
-				Type t = Type.GetType (providerType);
-				_connectionProvider = (IConnectionProvider) Activator.CreateInstance (t , new object[] {providerInfo});
-			}
-		}
 
 		public SqlConnection() : this(null)
 		{
@@ -114,7 +101,12 @@ namespace System.Data.SqlClient
 		}
 
 		protected override IConnectionProvider GetConnectionProvider() {
-			return _connectionProvider;
+			IDictionary conProviderDict = ConnectionStringDictionary.Parse(ConnectionString);
+			string provider = (string)conProviderDict["Provider"];
+			if (provider == null)
+				provider = "SQLCLIENT";
+
+			return GetConnectionProvider("Mainsoft.Data.Configuration/SqlClientProviders", provider);
 		}
 
 		#endregion // Properties

@@ -29,7 +29,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
+using System.Globalization;
 using System.Data;
 using System.Data.ProviderBase;
 using System.Data.Configuration;
@@ -360,6 +360,33 @@ namespace System.Data.ProviderBase
 			}
 		}
 		protected abstract IConnectionProvider GetConnectionProvider();
+
+		static protected IConnectionProvider GetConnectionProvider(string sectionMame, string provider) {
+			if (provider == null)
+				throw new ArgumentNullException("provider");
+
+			IList providers = (IList) ConfigurationSettings.GetConfig(sectionMame);
+			if (providers.Count == 0)
+				throw new ArgumentException("Configuration section is empty.", "sectionName");
+
+			for (int i = 0; i < providers.Count; i++) {
+				IDictionary providerInfo = (IDictionary) providers[i];
+					
+				string curProvider = (string)providerInfo[ConfigurationConsts.Name];
+				if (String.Compare(provider, 0, curProvider, 0, provider.Length, true, CultureInfo.InvariantCulture) == 0) {
+					string providerType = (string) providerInfo [ConfigurationConsts.ProviderType];
+					if (providerType == null || providerType.Length == 0)
+						return new GenericProvider (providerInfo); 
+					else {
+						Type t = Type.GetType (providerType);
+						return (IConnectionProvider) Activator.CreateInstance (t , new object[] {providerInfo});
+					}
+				}
+			}
+
+			throw new ArgumentException(
+				String.Format("Unknown provider name '{0}'", provider), "ConnectionString");
+		}
 
 		#endregion // Properties
 

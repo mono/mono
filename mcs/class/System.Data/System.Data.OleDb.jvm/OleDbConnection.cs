@@ -46,11 +46,6 @@ using Mainsoft.Data.Jdbc.Providers;
 namespace System.Data.OleDb
 {
 	public sealed class OleDbConnection : AbstractDBConnection {
-		#region Fields 
-
-		static readonly IList _providers = (IList) ConfigurationSettings.GetConfig("Mainsoft.Data.Configuration/OleDbProviders");
-
-		#endregion //Fields
 
 		#region Events
 
@@ -84,22 +79,11 @@ namespace System.Data.OleDb
 
 		protected override IConnectionProvider GetConnectionProvider() {
 			IDictionary conProviderDict = ConnectionStringDictionary.Parse(ConnectionString);
-			string providerName = (string)conProviderDict["Provider"];
-
-			if (providerName != null)
-			for (int i = 0; i < _providers.Count; i++) {
-				IDictionary providerInfo = (IDictionary) _providers[i];
-					
-				string curProvider = (string)providerInfo["Provider"];
-				if (String.Compare(providerName, 0, curProvider, 0, providerName.Length, true, CultureInfo.InvariantCulture) == 0) {
-					string providerType = (string) providerInfo [ConfigurationConsts.ProviderType];
-					if (providerType == null || providerType.Length == 0)
-						return new GenericProvider (providerInfo); 
-					else {
-						Type t = Type.GetType (providerType);
-						return (IConnectionProvider) Activator.CreateInstance (t , new object[] {providerInfo});
-					}
-				}
+			string jdbcUrl = (string)conProviderDict["JdbcUrl"];
+			if (jdbcUrl == null) {
+				string provider = (string)conProviderDict["Provider"];
+				if (provider != null)
+					return GetConnectionProvider("Mainsoft.Data.Configuration/OleDbProviders", provider);
 			}
 
 			return new GenericProvider (conProviderDict);

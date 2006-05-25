@@ -48,7 +48,7 @@ namespace Mainsoft.Data.Jdbc.Providers
 
 		#region Consts
 
-		public const string Name = "Provider";
+		public const string Name = "id";
 		public const string KeyMapping = "keyMapping";
 		public const string KeyMappingExcludes = "keyExclude";
 		public const string JdbcUrlPattern = "url";
