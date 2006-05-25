@@ -199,7 +199,11 @@ namespace System.Windows.Forms
 		}
 		
 		protected Cursor OverrideCursor {
-			get { return override_cursor;}
+			get {
+				if (override_cursor == null)
+					override_cursor = Cursors.Hand;
+				return override_cursor;
+			}
 			set { override_cursor = value;}
 		}
 
@@ -365,9 +369,8 @@ namespace System.Windows.Forms
 					}
 				}
 			} else {
+				Cursor = OverrideCursor;
 				if (link_behavior == LinkBehavior.HoverUnderline) {
-					Cursor = Cursors.Hand;
-
 					if (link.Hoovered != true) {
 						link.Hoovered = true;
 						changed = true;

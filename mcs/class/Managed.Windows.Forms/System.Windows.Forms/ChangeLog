@@ -1,3 +1,8 @@
+2006-05-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* LinkLabel.cs: display the OverrideCursor when hovering the label.
+	Fixes bug #78392.
+
 2006-05-25  Chris Toshok  <toshok@ximian.com>
 
 	* ThemeWin32Classic.cs: fix datagrid clipping problems caused by
