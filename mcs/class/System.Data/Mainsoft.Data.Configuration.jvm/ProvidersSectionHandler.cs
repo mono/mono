@@ -77,8 +77,28 @@ namespace Mainsoft.Data.Configuration
 				Hashtable col = (Hashtable) handler.Create (parentProvider, null, child);
 				providers.Add(col);
 			}	
-			if (parent != null && parent is ICollection)
-				providers.AddRange((ICollection)parent);
+			if (parent != null && parent is IList) {
+				IList parentList = (IList)parent;
+				for (int i = 0; i < parentList.Count; i++) {
+					Hashtable htParent = (Hashtable)parentList[i];
+					string parentId = (string)htParent["id"];
+					bool overriden = false;
+					for (int y = 0; y < providers.Count; y++) {
+						Hashtable htMe = (Hashtable)providers[y];
+						string myId = (string)htMe["id"];
+						if (String.CompareOrdinal(parentId,myId) == 0) {
+							overriden = true;
+							foreach (object key in htParent.Keys)
+								if (!htMe.ContainsKey(key))
+									htMe[key] = htParent[key];
+							break;
+						}
+					}
+
+					if (!overriden)
+						providers.Add(htParent);
+				}
+			}
 
 			return providers;
 		}
