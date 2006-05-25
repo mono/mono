@@ -1,3 +1,11 @@
+2006-05-25  Miguel de Icaza  <miguel@novell.com>
+
+	* Theme.cs: Use Tangoified messagebox icons. 
+
+	(GetSizedResourceImage): Also cope with width = 0 and do not
+	trigger a warning in that case (0 means "give me your icon from
+	the resouce, no special size needed).
+
 2006-05-25  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* Application.cs: Leave runloop if the the main modal form is 

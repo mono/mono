@@ -577,8 +577,8 @@ namespace System.Windows.Forms
 				return null;
 			
 			ResPool.AddUIImage (image, name, 0);
-			if (image.Width != width){
-				Console.Error.WriteLine ("warning: requesting icon that not been tuned {0}_{1}", name, width);
+			if (image.Width != width && width != 0){
+				Console.Error.WriteLine ("warning: requesting icon that not been tuned {0}_{1} {2}", width, name, image.Width);
 				int height = (image.Height * width)/image.Width;
 				Bitmap b = new Bitmap (width, height);
 				Graphics g = Graphics.FromImage (b);
@@ -609,13 +609,13 @@ namespace System.Windows.Forms
 
 				// Icons for message boxes
 				case UIIcon.MessageBoxError:
-					return GetSizedResourceImage ("mbox_error.png", size);
+					return GetSizedResourceImage ("dialog-error.png", size);
 				case UIIcon.MessageBoxInfo:
-					return GetSizedResourceImage ("mbox_info.png", size);
+					return GetSizedResourceImage ("dialog-information.png", size);
 				case UIIcon.MessageBoxQuestion:
-					return GetSizedResourceImage ("mbox_question.png", size);
+					return GetSizedResourceImage ("dialog-question.png", size);
 				case UIIcon.MessageBoxWarning:
-					return GetSizedResourceImage ("mbox_warn.png", size);
+					return GetSizedResourceImage ("dialog-warning.png", size);
 				
 				// misc Icons
 				case UIIcon.NormalFolder:

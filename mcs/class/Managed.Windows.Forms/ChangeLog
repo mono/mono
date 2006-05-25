@@ -1,3 +1,8 @@
+2006-05-25  Miguel de Icaza  <miguel@novell.com>
+
+	* Add new dialog-*.png Tango icons (dialog-question is from a
+	different theme as Tango is still missing it).
+
 2006-05-24  Miguel de Icaza  <miguel@novell.com>
 
 	* Changes so that we can use the filename as the resource name,

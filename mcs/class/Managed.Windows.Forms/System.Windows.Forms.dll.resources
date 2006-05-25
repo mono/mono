@@ -29,3 +29,7 @@
 -resource:resources/16_user-desktop.png
 -resource:resources/32_user-desktop.png
 -resource:resources/user-desktop.png
+-resource:resources/dialog-error.png
+-resource:resources/dialog-information.png
+-resource:resources/dialog-question3.png
+-resource:resources/dialog-warning.png
