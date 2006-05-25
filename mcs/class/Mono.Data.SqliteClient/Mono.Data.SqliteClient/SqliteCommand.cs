@@ -181,9 +181,12 @@ namespace Mono.Data.SqliteClient
 			for (int i = 1; i <= pcount; i++) 
 			{
 				String name = Sqlite.HeapToString (Sqlite.sqlite3_bind_parameter_name (pStmt, i), Encoding.UTF8);
-				if (name == null) continue;
-				
-				SqliteParameter param = sql_params[name];
+
+				SqliteParameter param = null;
+				if (name != null)
+					param = sql_params[name];
+				else
+					param = sql_params[i-1];
 				
 				if (param.Value == null) {
 					Sqlite.sqlite3_bind_null (pStmt, i);
@@ -345,23 +348,30 @@ namespace Mono.Data.SqliteClient
 			// to go into an infinite loop of some sort when there were no parameters
 			// in the SQL string.  That was too complicated anyway.
 			
-			// Here we search for substrings of the form :wwwww where w is a letter or digit
+			// Here we search for substrings of the form [:?]wwwww where w is a letter or digit
 			// (not sure what a legitimate Sqlite3 identifier is), except those within quotes.
 			
 			char inquote = (char)0;
+			int counter = 0;
 			for (int i = 0; i < text.Length; i++) {
 				char c = text[i];
 				if (c == inquote) {
 					inquote = (char)0;
 				} else if (inquote == (char)0 && (c == '\'' || c == '"')) {
 					inquote = c;
-				} else if (inquote == (char)0 && c == ':') {
+				} else if (inquote == (char)0 && (c == ':' || c == '?')) {
 					int start = i;
 					while (++i < text.Length && char.IsLetterOrDigit(text[i])) { } // scan to end
 					string name = text.Substring(start, i-start);
-					string value = "'" + Convert.ToString(Parameters[name].Value).Replace("'", "''") + "'";
-					text = text.Replace(name, value);
+					SqliteParameter p;
+					if (name.Length > 1)
+						p = Parameters[name];
+					else
+						p = Parameters[counter];
+					string value = "'" + Convert.ToString(p.Value).Replace("'", "''") + "'";
+					text = text.Remove(start, name.Length).Insert(start, value);
 					i += value.Length - name.Length - 1;
+					counter++;
 				}
 			}
 			

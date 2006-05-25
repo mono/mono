@@ -95,6 +95,24 @@ namespace Test.Mono.Data.SqliteClient
 			Console.WriteLine("Insert with ANSI char ü = 1, 4: " + dbcmd.ExecuteNonQuery() + " , " + dbcmd.LastInsertRowID());
 
 			dbcmd.CommandText =
+				"INSERT INTO MONO_TEST  " +
+				"(NID, NDESC, NTIME) " +
+				"VALUES(?,?,?)";
+			dbcmd.Parameters.Clear();
+			IDbDataParameter param1 = dbcmd.CreateParameter();
+			param1.DbType = DbType.DateTime;
+			param1.Value = 5;
+			dbcmd.Parameters.Add(param1);			
+			IDbDataParameter param2 = dbcmd.CreateParameter();
+			param2.Value = "Using unnamed parameters";
+			dbcmd.Parameters.Add(param2);
+			IDbDataParameter param3 = dbcmd.CreateParameter();
+			param3.DbType = DbType.DateTime;
+			param3.Value = DateTime.Parse("2006-05-11 11:45:00");
+			dbcmd.Parameters.Add(param3);
+			Console.WriteLine("Insert with unnamed parameters = 1, 5: " + dbcmd.ExecuteNonQuery() + " , " + dbcmd.LastInsertRowID());
+
+			dbcmd.CommandText =
 				"SELECT * FROM MONO_TEST";
 			SqliteDataReader reader;
 			reader = dbcmd.ExecuteReader();
