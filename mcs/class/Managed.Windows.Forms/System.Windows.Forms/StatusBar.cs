@@ -275,17 +275,12 @@ namespace System.Windows.Forms {
 
 		internal void UpdatePanelContents (StatusBarPanel panel)
 		{
-			if (panel.AutoSize == StatusBarPanelAutoSize.None){
-				Invalidate (new Rectangle (panel.X, 0, panel.Width, bounds.Height), false);
-				return;
-			}
-			
 			if (panel.AutoSize == StatusBarPanelAutoSize.Contents) {
-				Update ();
+				Invalidate ();
 				return;
 			}
 
-			Update ();
+			Invalidate (new Rectangle (panel.X + 2, 2, panel.Width - 4, bounds.Height - 4));
 		}
 
 		internal void Update ()

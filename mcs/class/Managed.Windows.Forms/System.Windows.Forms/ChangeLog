@@ -1,3 +1,10 @@
+2006-05-25  Jackson Harper  <jackson@ximian.com>
+
+	* StatusBar.cs: We only need to update the sizes of the other
+	panels when we have auto size contents.  Also we are only updating
+	the contents of the panel, not the borders, so compensate for the
+	border width (TODO: get this width from the theme somehow).
+
 2006-05-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Application.cs: set the DialogResult to fixed when the main form is
