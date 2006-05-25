@@ -1,3 +1,8 @@
+2006-05-25  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Application.cs: Leave runloop if the the main modal form is 
+	  hidden (fixes #78484)
+
 2006-05-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* BindingContext.cs : reject null datasource in Contains() and

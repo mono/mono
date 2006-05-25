@@ -496,7 +496,7 @@ namespace System.Windows.Forms {
 				}
 
 				// Handle exit, Form might have received WM_CLOSE and set 'closing' in response
-				if ((context.MainForm != null) && context.MainForm.closing) {
+				if ((context.MainForm != null) && (context.MainForm.closing || (Modal && !context.MainForm.Visible))) {
 					if (!Modal) {
 						XplatUI.PostQuitMessage(0);
 					} else {
