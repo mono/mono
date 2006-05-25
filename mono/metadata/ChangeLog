@@ -1,3 +1,11 @@
+2006-05-24  Dick Porter  <dick@ximian.com>
+
+	* threads.c (mono_thread_cleanup): Move the threading cleanup out
+	of mono_thread_manage and back into its own function, so it can be
+	called after the finalizer thread has finished.
+
+	* appdomain.c (mono_runtime_cleanup): Call mono_thread_cleanup
+
 2006-05-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* threads.c (start_wrapper): Fix a missed guint32 tid declaration.
