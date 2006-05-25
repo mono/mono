@@ -1,3 +1,8 @@
+2006-05-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* EncodingInfo.cs, Encoding.cs :
+	  Implemented Encoding.GetEncodings(). It's so hacky!
+
 2006-04-13  Kornél Pál  <kornelpal@gmail.com>
 
 	* Encoding.cs: GetString (byte []): Wrap GetString (byte [], int, int)

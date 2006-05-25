@@ -539,10 +539,41 @@ public abstract class Encoding
 		return e;
 	}
 
-	[MonoTODO]
+	static EncodingInfo [] encoding_infos;
+
+	// FIXME: As everyone would agree, this implementation is so *hacky*
+	// and could be very easily broken. But since there is a test for
+	// this method to make sure that this method always returns
+	// the same number and content of encoding infos, this won't
+	// matter practically.
 	public static EncodingInfo[] GetEncodings ()
 	{
-		throw new NotImplementedException ();
+		if (encoding_infos == null) {
+			int [] codepages = new int [] {
+				37, 437, 500, 708,
+				850, 852, 855, 857, 858, 860, 861, 862, 863, 
+				864, 865, 866, 869, 870, 874, 875,
+				932, 936, 949, 950,
+				1026, 1047, 1140, 1141, 1142, 1143, 1144,
+				1145, 1146, 1147, 1148, 1149,
+				1200, 1201, 1250, 1251, 1252, 1253, 1254,
+				1255, 1256, 1257, 1258,
+				10000, 10079, 12000,
+				20127, 20273, 20277, 20278, 20280, 20284,
+				20285, 20290, 20297, 20420, 20424, 20866,
+				20871, 21025, 21866, 28591, 28592, 28593,
+				28594, 28595, 28596, 28597, 28598, 28599,
+				28605, 38598,
+				50220, 50221, 50222, 51932, 51949, 54936,
+				57002, 57003, 57004, 57005, 57006, 57007,
+				57008, 57009, 57010, 57011,
+				65000, 65001};
+
+			encoding_infos = new EncodingInfo [codepages.Length];
+			for (int i = 0; i < codepages.Length; i++)
+				encoding_infos [i] = new EncodingInfo (codepages [i]);
+		}
+		return encoding_infos;
 	}
 #endif
 

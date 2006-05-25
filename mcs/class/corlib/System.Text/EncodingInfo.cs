@@ -6,7 +6,7 @@
 //
 
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -36,40 +36,40 @@ namespace System.Text
 	public sealed class EncodingInfo
 	{
 		readonly int codepage;
-		readonly string display_name;
-		readonly string name;
+		Encoding encoding;
 
-		internal EncodingInfo (int cp, string displayName, string name)
+		internal EncodingInfo (int cp)
 		{
 			codepage = cp;
-			display_name = displayName;
-			this.name = name;
 		}
 
 		public int CodePage {
 			get { return codepage; }
 		}
 
+		[MonoTODO]
 		public string DisplayName {
-			get { return display_name; }
+			get { return Name; }
 		}
 
 		public string Name {
-			get { return name; }
+			get {
+				if (encoding == null)
+					encoding = GetEncoding ();
+				return encoding.EncodingName;
+			}
 		}
 
 		public override bool Equals (object other)
 		{
 			EncodingInfo ei = other as EncodingInfo;
 			return ei != null &&
-				ei.codepage == codepage &&
-				ei.name == name &&
-				ei.display_name == display_name;
+				ei.codepage == codepage;
 		}
 
 		public override int GetHashCode ()
 		{
-			return codepage + (display_name.GetHashCode () ^ name.GetHashCode ()) << 16;
+			return codepage;
 		}
 
 		public Encoding GetEncoding ()

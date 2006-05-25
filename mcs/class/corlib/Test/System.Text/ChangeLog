@@ -1,3 +1,7 @@
+2006-05-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* EncodingInfoTest.cs : new TestFixture.
+
 2006-04-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ASCIIEncodingTest.cs : added DecoderFallback().
