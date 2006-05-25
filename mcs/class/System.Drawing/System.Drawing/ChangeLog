@@ -1,3 +1,10 @@
+2006-05-25  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* gdipFunctions.cs: Added wrapper methods for GdipGetRegionHRgn and 
+	GdipCreateRegionHrgn functions.
+	* Region.cs: Reimplement GetHrgn and FromHrgn methods using the GDI+
+	calls.
+
 2006-05-24  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* PointConverter.cs: Fx 2.0 throws an ArgumentException in 

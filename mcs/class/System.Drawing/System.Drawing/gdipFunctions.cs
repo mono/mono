@@ -324,7 +324,13 @@ namespace System.Drawing
 		
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipFillRegion(IntPtr graphics, IntPtr brush, IntPtr region);
-		
+
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipGetRegionHRgn (IntPtr region, IntPtr graphics, ref IntPtr hRgn);
+
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipCreateRegionHrgn (IntPtr hRgn, out IntPtr region);
+
 		// Solid brush functions
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipCreateSolidFill (int color, out IntPtr brush);

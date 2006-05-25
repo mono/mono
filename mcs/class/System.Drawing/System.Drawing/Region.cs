@@ -516,21 +516,32 @@ namespace System.Drawing
 		{
 			if (hrgn == IntPtr.Zero)
 				throw new ArgumentException ("hrgn");
-			return new Region (hrgn);
+
+			IntPtr handle;
+			Status status = GDIPlus.GdipCreateRegionHrgn (hrgn, out handle);
+			GDIPlus.CheckStatus (status);
+
+			return new Region (handle);
 		}
 		
 		
-		public IntPtr GetHrgn(Graphics g)
+		public IntPtr GetHrgn (Graphics g)
 		{
-#if false
-			//
 			// Our WindowsForms implementation uses null to avoid
 			// creating a Graphics context when not needed
-			//
+#if false
+			// this is MS behaviour
 			if (g == null)
 				throw new ArgumentNullException ("g");
+#else
+			// this is an hack for MWF (libgdiplus would reject that)
+			if (g == null)
+				return nativeRegion;
 #endif
-			return nativeRegion;
+			IntPtr handle = IntPtr.Zero;
+			Status status = GDIPlus.GdipGetRegionHRgn (nativeRegion, g.NativeObject, ref handle);
+			GDIPlus.CheckStatus (status);
+			return handle;
 		}
 		
 		
