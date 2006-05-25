@@ -1,3 +1,9 @@
+2006-05-25  Jackson Harper  <jackson@ximian.com>
+
+	* TreeViewTest.cs: Add a couple of default properties.  Put in
+	correct namespace.
+	* TabControlTest.cs: Put in correct namespace.
+
 2006-05-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* BindingContextTest.cs : added more tests for Item, Contains()
