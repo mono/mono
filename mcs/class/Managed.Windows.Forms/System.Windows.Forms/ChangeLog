@@ -4,7 +4,14 @@
 	panels when we have auto size contents.  Also we are only updating
 	the contents of the panel, not the borders, so compensate for the
 	border width (TODO: get this width from the theme somehow).
-
+	* TreeView.cs: Scrollable is true by default
+	- Use invalidate instead of refresh where needed
+	- Factor the scrollable value into scrollbar updating
+	- Update the scrollbars if the Scrollable property is altered
+	- Update the selected node if its ImageIndex is changed
+	- Handle null nodes in UpdateNode (mainly so we don't have to
+	check if selected is null when updating it
+	
 2006-05-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Application.cs: set the DialogResult to fixed when the main form is

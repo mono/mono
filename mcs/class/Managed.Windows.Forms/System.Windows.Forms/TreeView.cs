@@ -62,7 +62,7 @@ namespace System.Windows.Forms {
 		
 		private bool checkboxes;
 		private bool label_edit;
-		private bool scrollable;
+		private bool scrollable = true;
 		private bool show_lines = true;
 		private bool show_root_lines = true;
 		private bool show_plus_minus = true;
@@ -75,7 +75,6 @@ namespace System.Windows.Forms {
 		private bool hbar_bounds_set;
 		internal int skipped_nodes;
 		internal int hbar_offset;
-		
 		
 		private int update_stack;
 		private bool update_needed;
@@ -177,7 +176,7 @@ namespace System.Windows.Forms {
 				if (!checkboxes)
 					root_node.CollapseAllUncheck ();
 
-				Refresh ();
+				Invalidate ();
 			}
 		}
 
@@ -192,7 +191,7 @@ namespace System.Windows.Forms {
 				if (value == full_row_select)
 					return;
 				full_row_select = value;
-				Refresh ();
+				Invalidate ();
 			}
 		}
 		[DefaultValue(true)]
@@ -202,7 +201,7 @@ namespace System.Windows.Forms {
 				if (hide_selection == value)
 					return;
 				hide_selection = value;
-				this.Refresh ();
+				Invalidate ();
 			}
 		}
 
@@ -226,7 +225,7 @@ namespace System.Windows.Forms {
 				if (image_index == value)
 					return;
 				image_index = value;
-				Refresh ();
+				Invalidate ();
 			}
 		}
 
@@ -235,7 +234,7 @@ namespace System.Windows.Forms {
 			get { return image_list; }
 			set {
 				image_list = value;
-				Refresh ();
+				Invalidate ();
 			}
 		}
 
@@ -254,7 +253,7 @@ namespace System.Windows.Forms {
 						"'Indent' must be greater than or equal to 0.");
 				}
 				indent = value;
-				Refresh ();
+				Invalidate ();
 			}
 		}
 
@@ -269,7 +268,7 @@ namespace System.Windows.Forms {
 				if (value == item_height)
 					return;
 				item_height = value;
-				Refresh ();
+				Invalidate ();
 			}
 		}
 
@@ -299,6 +298,7 @@ namespace System.Windows.Forms {
 				if (scrollable == value)
 					return;
 				scrollable = value;
+				UpdateScrollBars ();
 			}
 		}
 
@@ -313,6 +313,7 @@ namespace System.Windows.Forms {
 					throw new ArgumentException ("'" + value + "' is not a valid value for 'value'. " +
 						"'value' must be greater than or equal to 0.");
 				}
+				UpdateNode (SelectedNode);
 			}
 		}
 
@@ -379,7 +380,7 @@ namespace System.Windows.Forms {
 				if (show_lines == value)
 					return;
 				show_lines = value;
-				Refresh ();
+				Invalidate ();
 			}
 		}
 
@@ -390,7 +391,7 @@ namespace System.Windows.Forms {
 				if (show_plus_minus == value)
 					return;
 				show_plus_minus = value;
-				Refresh ();
+				Invalidate ();
 			}
 		}
 
@@ -401,7 +402,7 @@ namespace System.Windows.Forms {
 				if (show_root_lines == value)
 					return;
 				show_root_lines = value;
-				Refresh ();
+				Invalidate ();
 			}
 		}
 
@@ -414,7 +415,7 @@ namespace System.Windows.Forms {
 				if (sorted) {
 					Nodes.Sort ();
 					top_node = null;
-					Refresh ();
+					Invalidate ();
 				}
 			}
 		}
@@ -948,13 +949,16 @@ namespace System.Windows.Forms {
 
 		internal void UpdateNode (TreeNode node)
 		{
+			if (node == null)
+				return;
+
 			if (update_stack > 0) {
 				update_needed = true;
 				return;
 			}
 
 			if (node == root_node) {
-				Refresh ();
+				Invalidate ();
 				return;
 			}
 
@@ -1250,39 +1254,43 @@ namespace System.Windows.Forms {
 		{
 			if (update_stack > 0)
 				return;
-			
-			OpenTreeNodeEnumerator walk = new OpenTreeNodeEnumerator (root_node);
-			int height = -1;
-			int width = -1;
+
 			bool vert = false;
 			bool horz = false;
+			int height = -1;
+			int width = -1;
 
-			while (walk.MoveNext ()) {
-				int r = walk.CurrentNode.Bounds.Right;
-				int b = walk.CurrentNode.Bounds.Bottom;
+			if (scrollable) {
+				OpenTreeNodeEnumerator walk = new OpenTreeNodeEnumerator (root_node);
+				
+				
+				while (walk.MoveNext ()) {
+					int r = walk.CurrentNode.Bounds.Right;
+					int b = walk.CurrentNode.Bounds.Bottom;
 
-				if (r > width)
-					width = r;
-				if (b > height)
-					height = b;
-			}
+					if (r > width)
+						width = r;
+					if (b > height)
+						height = b;
+				}
 
-			// Remove scroll adjustments
-			if (nodes.Count > 0)
-				height -= nodes [0].Bounds.Top;
-			width += hbar_offset;
+				// Remove scroll adjustments
+				if (nodes.Count > 0)
+					height -= nodes [0].Bounds.Top;
+				width += hbar_offset;
 
-			if (height > ClientRectangle.Height) {
-				vert = true;
+				if (height > ClientRectangle.Height) {
+					vert = true;
 
-				if (width > ClientRectangle.Width - SystemInformation.VerticalScrollBarWidth)
+					if (width > ClientRectangle.Width - SystemInformation.VerticalScrollBarWidth)
+						horz = true;
+				} else if (width > ClientRectangle.Width) {
 					horz = true;
-			} else if (width > ClientRectangle.Width) {
-				horz = true;
-			}
+				}
 
-			if (!vert && horz && height > ClientRectangle.Height - SystemInformation.HorizontalScrollBarHeight)
-				vert = true;
+				if (!vert && horz && height > ClientRectangle.Height - SystemInformation.HorizontalScrollBarHeight)
+					vert = true;
+			}
 
 			if (vert) {
 				vbar.SetValues (max_visible_order - 2, ViewportRectangle.Height / ItemHeight);
@@ -1541,7 +1549,8 @@ namespace System.Windows.Forms {
 
 			selected_node = focused_node;
 			select_mmove = false;
-			Refresh();
+			Invalidate (focused_node.Bounds);
+			Invalidate (selected_node.Bounds);
 		}
 
 		private void DoubleClickHandler (object sender, MouseEventArgs e) {
