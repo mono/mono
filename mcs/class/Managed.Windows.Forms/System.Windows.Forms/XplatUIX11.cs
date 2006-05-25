@@ -1149,7 +1149,7 @@ namespace System.Windows.Forms {
 			int		pending;
 			Hwnd		hwnd;
 
-			now = DateTime.Now;
+			now = DateTime.UtcNow;
 
 			lock (XlibLock) {
 				pending = XPending (DisplayHandle);
@@ -3766,7 +3766,7 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			CheckTimers(DateTime.Now);
+			CheckTimers(DateTime.UtcNow);
 
 			if (!pending) {
 				return false;

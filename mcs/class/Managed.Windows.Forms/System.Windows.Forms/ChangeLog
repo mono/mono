@@ -5,7 +5,10 @@
 	- Remove some uneeded setup code from Draw.
 	* TreeNodeCollection.cs: If the tree doesn't have a top node when
 	a new node is inserted make the new node the top.
-
+	* XplatUIX11.cs:
+	* Timer.cs: Use Utc time so that no local time zone stuff needs to
+	be used (should be faster).
+	
 2006-05-25  Chris Toshok  <toshok@ximian.com>
 
 	* DataGrid.cs (EnsureCellVisibility): remove some code to fix a
