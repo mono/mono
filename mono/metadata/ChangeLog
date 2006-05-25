@@ -1,3 +1,9 @@
+2006-05-25  Dick Porter  <dick@ximian.com>
+
+	* threads.c (mono_thread_cleanup): Build fix.  Comment out the
+	DeleteCriticalSections until I figure out which one may still be
+	sometimes locked when mono_thread_cleanup is called.
+
 2006-05-24  Dick Porter  <dick@ximian.com>
 
 	* threads.c (mono_thread_cleanup): Move the threading cleanup out
