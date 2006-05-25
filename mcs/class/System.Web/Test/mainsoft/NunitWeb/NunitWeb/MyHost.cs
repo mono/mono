@@ -16,11 +16,8 @@ namespace NunitWeb
 {
 	public class MyHost: MarshalByRefObject
 	{
-		public const string CALL_CONTEXT_METHOD = "MyHostMethod";
-		public const string CALL_CONTEXT_PARAM = "MyHostParam";
-		public const string CALL_CONTEXT_EXCEPTION = "MyHostException";
 		public const string HELPER_INSTANCE_NAME = "mainsoft/NunitWeb/Helper";
-		
+
 		public void Initialize (Helper h)
 		{
 			AppDomain.CurrentDomain.SetData (HELPER_INSTANCE_NAME, h);
@@ -31,27 +28,16 @@ namespace NunitWeb
 
 		public string DoRun (string url, Delegate method, object param)
 		{
-			CallContext.SetData (CALL_CONTEXT_METHOD, method);
-			CallContext.SetData (CALL_CONTEXT_PARAM, param);
-			try {
-				using (StringWriter tw = new StringWriter ()) {
-					SimpleWorkerRequest sr = new SimpleWorkerRequest (
-						url, null, tw);
-					HttpRuntime.ProcessRequest (sr);
-					tw.Close ();
-					string res = tw.ToString ();
-					Exception inner = CallContext.GetData (CALL_CONTEXT_EXCEPTION) as Exception;
-					RethrowException (inner);
-					if (CallContext.GetData (CALL_CONTEXT_METHOD) != null)
-						throw new Exception ("ProcessRequest did not reach RunDelegate");
-										
-					return res;
-				}
-			}
-			finally {
-				CallContext.FreeNamedDataSlot (CALL_CONTEXT_METHOD);
-				CallContext.FreeNamedDataSlot (CALL_CONTEXT_PARAM);
-				CallContext.FreeNamedDataSlot (CALL_CONTEXT_EXCEPTION);
+			using (StringWriter tw = new StringWriter ()) {
+				MyWorkerRequest wr = new MyWorkerRequest (method, param, url, null, tw);
+				HttpRuntime.ProcessRequest (wr);
+				tw.Close ();
+				string res = tw.ToString ();
+				Exception inner = wr.Exception;
+				RethrowException (inner);
+				if (wr.DelegateInvoked)
+					throw new Exception ("ProcessRequest did not reach RunDelegate");
+				return res;
 			}
 		}
 
@@ -73,28 +59,27 @@ namespace NunitWeb
 
 		static public void RunDelegate (HttpContext context, Page page)
 		{
-			object param = CallContext.GetData (MyHost.CALL_CONTEXT_PARAM);
+			MyWorkerRequest wr = (MyWorkerRequest) ((IServiceProvider) context).GetService (
+				typeof (HttpWorkerRequest));
 			try {
-				Delegate method = (Delegate) CallContext.GetData (CALL_CONTEXT_METHOD);
-				CallContext.FreeNamedDataSlot (CALL_CONTEXT_METHOD);
-				if (method == null)
+				if (wr.Method == null)
 					return;
-				Helper.AnyMethodInPage amip = method as Helper.AnyMethodInPage;
+				Helper.AnyMethodInPage amip = wr.Method as Helper.AnyMethodInPage;
 				if (amip != null) {
-					amip (context, page, param);
+					amip (context, page, wr.Param);
 					return;
 				}
 
-				Helper.AnyMethod am = method as Helper.AnyMethod;
+				Helper.AnyMethod am = wr.Method as Helper.AnyMethod;
 				if (am != null) {
-					am (context, param);
+					am (context, wr.Param);
 					return;
 				}
 
 				throw new ArgumentException ("method must be AnyMethod or AnyMethodInPage");
 			}
 			catch (Exception ex) {
-				CallContext.SetData (MyHost.CALL_CONTEXT_EXCEPTION, ex);
+				wr.Exception = ex;
 			}
 		}
 	}

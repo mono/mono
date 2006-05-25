@@ -38,6 +38,7 @@
     <Compile Include="Helper.cs" />
     <Compile Include="MyHandler.cs" />
     <Compile Include="MyHost.cs" />
+    <Compile Include="MyWorkerRequest.cs" />
     <EmbeddedResource Include="Resources\MyPage.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
     </EmbeddedResource>
