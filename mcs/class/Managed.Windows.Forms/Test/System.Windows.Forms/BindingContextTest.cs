@@ -31,6 +31,8 @@ using System.Windows.Forms;
 
 using NUnit.Framework;
 
+using CategoryAttribute = NUnit.Framework.CategoryAttribute;
+
 namespace MonoTests.System.Windows.Forms {
 
 	[TestFixture]
@@ -172,6 +174,17 @@ namespace MonoTests.System.Windows.Forms {
 			ArrayList data_source = new ArrayList ();
 
 			BindingManagerBase a = bc [data_source, "Items"];
+		}
+
+		[Category ("NotWorking")]
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CantCreateChildList2 ()
+		{
+			BindingContext bc = new BindingContext ();
+			ArrayList data_source = new ArrayList ();
+
+			BindingManagerBase a = bc [data_source, "Count"];
 		}
 
 		[Test]
@@ -453,6 +466,42 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.IsFalse (p.Contains (data_source), "CLEARCORE4");
 			Assert.AreEqual (0, ((ICollection) p).Count, "CLEARCORE5");
 			Assert.AreEqual (p.collection_changed, (int) CollectionChangeAction.Refresh, "CLEARCORE6");
+		}
+
+		[Test]
+		public void TestContains ()
+		{
+			BindingContextPoker p = new BindingContextPoker ();
+			object data_source = new object ();
+			p._Add (data_source, new PropertyManager ());
+			Assert.IsTrue (p.Contains (data_source), "#1");
+			Assert.IsFalse (p.Contains ("nonexistent"), "#2");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TestContainsNull ()
+		{
+			BindingContextPoker p = new BindingContextPoker ();
+			p.Contains (null);
+		}
+
+		[Test]
+		public void TestGetEnumerator ()
+		{
+			BindingContextPoker p = new BindingContextPoker ();
+			object data_source = new object ();
+			PropertyManager pm = new PropertyManager ();
+			p._Add (data_source, pm);
+			IEnumerator e = ((IEnumerable) p).GetEnumerator ();
+			Assert.IsNotNull (e, "#1");
+			IDictionaryEnumerator de = e as IDictionaryEnumerator;
+			Assert.IsNotNull (de, "#2");
+			Assert.IsTrue (de.MoveNext (), "#3");
+			// In .NET Key is its internal type.
+			//Assert.AreEqual (data_source, de.Key, "#4");
+			//Assert.AreEqual (pm, de.Value, "#5");
+			Assert.IsFalse (de.MoveNext (), "#6");
 		}
 	}
 }

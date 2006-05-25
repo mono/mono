@@ -67,12 +67,24 @@ namespace System.Windows.Forms {
 			
 			if (table == null) {
 				DataSet dataset = data_source as DataSet;
-				int sp = data_member.IndexOf ('.');
+				string table_name = data_member;
+				int sp = data_member != null ? data_member.IndexOf ('.') : -1;
 				if (sp != -1) {
-					data_member = data_member.Substring (0, sp);
+					table_name = data_member.Substring (0, sp);
+					data_member = data_member.Substring (sp + 1);
 				}
-				if (dataset != null) {
-					table = dataset.Tables [data_member];
+				if (dataset != null && table_name != String.Empty) {
+					table = dataset.Tables [table_name];
+					if (table == null)
+						throw new ArgumentException (String.Format ("Specified data member table {0} does not exist in the data source DataSet", data_member));
+					if (data_member != table_name) {
+						DataColumn col = table.Columns [data_member];
+						DataRelation rel = (col == null ? dataset.Relations [data_member] : null);
+						if (rel == null && col == null)
+							throw new ArgumentException (String.Format ("Specified data member {0} does not exist in the data table {1}", data_member, table_name));
+
+						// FIXME: hmm, in such case what should we do?
+					}
 				}
 			}
 
@@ -84,6 +96,11 @@ namespace System.Windows.Forms {
 				table.ParentRelations.CollectionChanged  += new CollectionChangeEventHandler (MetaDataChangedHandler);
 				table.Constraints.CollectionChanged += new CollectionChangeEventHandler (MetaDataChangedHandler);
 			}
+
+			if (list.Count > 0)
+				listposition = 0;
+			else
+				listposition = -1; // Late binding.
 		}
 
 		public IList List {

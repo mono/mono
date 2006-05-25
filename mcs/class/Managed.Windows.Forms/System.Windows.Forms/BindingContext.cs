@@ -99,7 +99,7 @@ namespace System.Windows.Forms {
 		private DataSourceEntry GetEntry (object data_source, string data_member, bool create)
 		{
 			if (data_source == null)
-				data_source = null_data_source;
+				throw new ArgumentNullException ("data_source");
 				
 			DataSourceEntry ds = managers [data_source] as DataSourceEntry;
 			if (ds == null && create) {

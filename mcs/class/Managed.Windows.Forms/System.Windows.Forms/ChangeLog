@@ -1,3 +1,10 @@
+2006-05-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BindingContext.cs : reject null datasource in Contains() and
+	  Item[].
+	* CurrencyManager.cs : check data_member validity when data_source
+	  is dataset. When it is late binding, the initial position is -1.
+
 2006-05-24  Jackson Harper  <jackson@ximian.com>
 
 	* TreeNodeCollection.cs: Dont't recalculate the visible order on
