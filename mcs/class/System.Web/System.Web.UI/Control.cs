@@ -1274,10 +1274,10 @@ namespace System.Web.UI
 				}
 			}
 
-			ApplyTheme ();
-
 			stateMask |= INITING;
 #if NET_2_0
+			ApplyTheme ();
+			
 			if (Adapter != null)
 				Adapter.OnInit (EventArgs.Empty);
 			else

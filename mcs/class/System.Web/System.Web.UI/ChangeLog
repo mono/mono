@@ -1,5 +1,9 @@
 2006-05-25  Andrew Skiba  <andrews@mainsoft.com>
 
+	* Control.cs: move 2.0 stuff into ifdef NET_2_0
+
+2006-05-25  Andrew Skiba  <andrews@mainsoft.com>
+
 	* Page.cs, Control.cs: Fix the order of OnInit invocation of controls
 	created via master page content (see 
 	http://lists.ximian.com/pipermail/mono-devel-list/2006-May/018585.html ).
