@@ -1,3 +1,20 @@
+2006-05-26  Ankit Jain  <jankit@novell.com>
+	
+	Add support or 2.0 style declarative security attributes.
+	* ILParser.jay (primitive_type): New. Extracted from 'type'.
+	(field_init_primitive): New. Extracted from 'field_init', with all
+	primitive types.
+	(sec_decl | ..): New rule for 2.0 style permissions.
+
+	(permissions):
+	(permission):
+	(permission_members):
+	(permission_member):
+	(perm_mbr_nameval_pair):
+	(prop_or_field): New rules for 2.0 style permissions.
+
+	(AddSecDecl): New.
+
 2006-05-11  Ankit Jain  <jankit@novell.com>
 
 	* ILParser.jay (type |type MODREQ ..): Use CustomModifier.modreq .

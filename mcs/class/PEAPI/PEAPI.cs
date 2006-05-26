@@ -929,6 +929,11 @@ namespace PEAPI {
 			metaData.AddDeclSecurity (new DeclSecurity (element, (ushort) sec_action, data));
 		}
 
+		public void AddDeclSecurity (SecurityAction sec_action, PEAPI.PermissionSet ps, MetaDataElement element)
+		{
+			metaData.AddDeclSecurity (new DeclSecurity_20 (element, (ushort) sec_action, ps));
+		}
+
 		/// <summary>
 		/// Add a managed resource from another assembly.
 		/// </summary>

@@ -257,8 +257,8 @@ namespace Mono.ILASM {
                                 keywords ["modreq"] = new ILToken (Token.K_MODREQ, "modreq");
                                 keywords ["modopt"] = new ILToken (Token.K_MODOPT, "modopt");
                                 keywords ["typedref"] = new ILToken (Token.K_TYPEDREF, "typedref");
-#if NET_2_0 || BOOTSTRAP_NET_2_0
                                 keywords ["property"] = new ILToken (Token.K_PROPERTY, "property");
+#if NET_2_0 || BOOTSTRAP_NET_2_0
                                 keywords ["type"] = new ILToken (Token.K_TYPE, "type");
 #endif
                                 keywords ["refany"] = new ILToken (Token.K_TYPEDREF, "typedref");

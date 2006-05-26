@@ -132,6 +132,14 @@ namespace Mono.ILASM {
                         get { return gen_params; }
                 }
 
+                public DeclSecurity DeclSecurity {
+                        get {
+                                if (decl_sec == null)
+                                        decl_sec = new DeclSecurity ();
+                                return decl_sec;
+                        }
+                }
+
                 public void AddOverride (MethodDef body, BaseTypeRef parent, string name)
                 {
                         if (override_list == null)
@@ -235,22 +243,6 @@ namespace Mono.ILASM {
                                 customattr_list = new ArrayList ();
 
                         customattr_list.Add (customattr);
-                }
-
-                public void AddPermissionSet (PEAPI.SecurityAction sec_action, PermissionSet ps)
-                {
-                        if (decl_sec == null)
-                                decl_sec = new DeclSecurity ();
-
-                        decl_sec.AddPermissionSet (sec_action, ps);
-                }
-
-                public void AddPermission (PEAPI.SecurityAction sec_action, IPermission iper)
-                {
-                        if (decl_sec == null)
-                                decl_sec = new DeclSecurity ();
-
-                        decl_sec.AddPermission (sec_action, iper);
                 }
 
                 public GenericParameter GetGenericParam (string id)

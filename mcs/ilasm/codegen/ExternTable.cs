@@ -11,6 +11,7 @@ using System;
 using System.Collections;
 using System.Reflection;
 using System.Security;
+using System.Globalization;
 
 namespace Mono.ILASM {
 
@@ -144,10 +145,12 @@ namespace Mono.ILASM {
                 private string locale;
                 private byte [] hash;
                 private DeclSecurity decl_sec;
+                private AssemblyName asmb_name;
 
                 public ExternAssembly (string name, AssemblyName asmb_name) : base (name)
                 {
                         this.name = name;
+                        this.asmb_name = asmb_name;
                         major = minor = build = revision = -1;
                 }
 
@@ -156,6 +159,18 @@ namespace Mono.ILASM {
                                 //'name' field should not contain the []
                                 //as its used for resolving
                                 return String.Format ("[{0}]", name); 
+                        }
+                }
+
+                public AssemblyName AssemblyName {
+                        get { return asmb_name; }
+                }
+
+                public DeclSecurity DeclSecurity {
+                        get {
+                                if (decl_sec == null)
+                                        decl_sec = new DeclSecurity ();
+                                return decl_sec;
                         }
                 }
 
@@ -193,43 +208,32 @@ namespace Mono.ILASM {
                         return AssemblyRef;
                 }
                 
-                public void AddPermissionSet (PEAPI.SecurityAction sec_action, PermissionSet ps)
-                {
-                        if (decl_sec == null)
-                                decl_sec = new DeclSecurity ();
-
-                        decl_sec.AddPermissionSet (sec_action, ps);        
-                }
-                
-                public void AddPermission (PEAPI.SecurityAction sec_action, IPermission iper)
-                {
-                        if (decl_sec == null)
-                                decl_sec = new DeclSecurity ();
-
-                        decl_sec.AddPermission (sec_action, iper);
-                }
-
                 public void SetVersion (int major, int minor, int build, int revision)
                 {
                         this.major = major;
                         this.minor = minor;
                         this.build = build;
                         this.revision = revision;
+                        asmb_name.Version = new Version (major, minor, build, revision);
                 }
 
                 public void SetPublicKey (byte [] public_key)
                 {
                         this.public_key = public_key;
+                        asmb_name.SetPublicKey (public_key);
                 }
 
                 public void SetPublicKeyToken (byte [] public_key_token)
                 {
                         this.public_key_token = public_key_token;
+                        asmb_name.SetPublicKey (public_key);
                 }
 
                 public void SetLocale (string locale)
                 {
                         this.locale = locale;
+                        //FIXME: is this correct?
+                        asmb_name.CultureInfo = new CultureInfo (locale);
                 }
 
                 public void SetHash (byte [] hash)
