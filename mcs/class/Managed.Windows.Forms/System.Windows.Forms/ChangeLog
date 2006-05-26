@@ -1,3 +1,9 @@
+2006-05-26  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* LinkLabel.cs (CreateLinkPieces): Use MeasureString to calculate
+	  the sizes of each link section, that will result in sizes that
+	  match DrawString's layout (Fixes #78391)
+
 2006-05-27  Alexander Olk  <alex.olk@googlemail.com>
 
 	* FileDialog.cs: If AddExtension property is true autocomplete the

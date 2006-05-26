@@ -538,24 +538,14 @@ namespace System.Windows.Forms
 			
 			num_pieces = cur_piece;
 
-			CharacterRange[] charRanges = new CharacterRange [num_pieces];
-
-			for (int i = 0; i < num_pieces; i++)
-				charRanges[i] = new CharacterRange (pieces[i].start, pieces[i].end - pieces[i].start);
-
-			Region[] charRegions = new Region [num_pieces];			
-			string_format.SetMeasurableCharacterRanges (charRanges);
-
-			// BUG: This sizes do not match the ones used later when drawing
 			if (link_font == null)
 				CreateLinkFont ();
-			charRegions = DeviceContext.MeasureCharacterRanges (Text, link_font, ClientRectangle, string_format);
-	
-			RectangleF rect;
-			for (int i = 0; i < num_pieces; i++)  {				
-				rect = charRegions[i].GetBounds (DeviceContext);
-				pieces[i].rect = Rectangle.Ceiling (rect);
-				charRegions[i].Dispose ();
+
+			for (int i = 0; i < num_pieces; i++) {
+				SizeF s;
+
+				s = DeviceContext.MeasureString(Text.Substring(pieces[i].start, pieces[i].end - pieces[i].start), link_font, ClientRectangle.Location, string_format);
+				pieces[i].rect = new Rectangle(0, 0, (int)s.Width, (int)s.Height);
 			}
 
 			if (Visible && IsHandleCreated)
