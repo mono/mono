@@ -1,5 +1,9 @@
 2006-05-26  Ankit Jain  <jankit@novell.com>
 	
+	* ILParser.jay: Update to use new Assembly class.
+
+2006-05-26  Ankit Jain  <jankit@novell.com>
+	
 	Add support or 2.0 style declarative security attributes.
 	* ILParser.jay (primitive_type): New. Extracted from 'type'.
 	(field_init_primitive): New. Extracted from 'field_init', with all

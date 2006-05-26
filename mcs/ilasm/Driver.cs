@@ -83,7 +83,7 @@ namespace Mono.ILASM {
 					if ((keyname != null) && !codegen.IsThisAssembly (null)) {
 						LoadKey ();
 						// this overrides any attribute or .publickey directive in the source
-						codegen.SetAssemblyPublicKey (sn.PublicKey);
+						codegen.ThisAssembly.SetPublicKey (sn.PublicKey);
 					}
 
                                         try {
@@ -360,7 +360,7 @@ namespace Mono.ILASM {
 
                         private void Version ()
                         {
-                                string version = Assembly.GetExecutingAssembly ().GetName ().Version.ToString ();
+                                string version = System.Reflection.Assembly.GetExecutingAssembly ().GetName ().Version.ToString ();
                                 Console.WriteLine ("Mono ILasm compiler version {0}", version);
                                 Environment.Exit (0);
                         }

@@ -1,6 +1,7 @@
 Driver.cs
 Report.cs
 AssemblyInfo.cs
+codegen/Assembly.cs
 codegen/PermissionMember.cs
 codegen/PermissionSet.cs
 codegen/Permission.cs

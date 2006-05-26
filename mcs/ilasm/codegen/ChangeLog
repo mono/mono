@@ -1,5 +1,10 @@
 2006-05-26  Ankit Jain  <jankit@novell.com>
 
+	* Assembly.cs: New. Represents a '.assembly {}' (assembly manifest).
+	* CodeGen.cs: Update to use the Assembly class.
+
+2006-05-26  Ankit Jain  <jankit@novell.com>
+
 	* PermissionSet.cs: New.
 	* Permission.cs: New.
 	* PermissionMember.cs: New. Classes for 2.0 metadata format of
