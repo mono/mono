@@ -144,6 +144,27 @@ Wed May 17 18:07:33 CEST 2006 Paolo Molaro <lupus@ximian.com>
 	it is not correct in some cases. Instead, iterate over all bblocks as
 	in the original paper. Fixes --compile-all -O=all System.Xml.dll.
 
+2006-04-28  Miguel de Icaza  <miguel@novell.com>
+
+	* mini.c (mono_jit_compile_method_inner): The proper pattern
+	(which we probably should be switched to use a method that does it
+	all in one pass) is:
+
+		* dup the error, because we need to access its data later
+		* mono_loader_clear_error which clears the TLS value for 
+		  the error
+		* mono_loader_error_to_exception (this is what indirectly
+		  probes the Tls value for errors)
+		* Release the data.
+		* mono_raise_exception.
+
+	I think we should just have a mono_prepare_exception_from_error
+	that resets the value internally.
+
+2006-04-27  Miguel de Icaza  <miguel@novell.com>
+
+	* mini.c: Move the mini_loader_error_to_exception to metadata. 
+	
 2006-04-27  Massimiliano Mantione  <massi@ximian.com>
 
 	* aliasing.c: Fixed bug 78210.
