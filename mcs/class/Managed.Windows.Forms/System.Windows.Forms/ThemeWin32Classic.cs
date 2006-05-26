@@ -106,13 +106,13 @@ namespace System.Windows.Forms
 
 		#region	Internal Methods
 		protected Brush GetControlBackBrush (Color c) {
-			if (c == DefaultControlBackColor)
+			if (c.ToArgb () == DefaultControlBackColor.ToArgb ())
 				return SystemBrushes.Control;
 			return ResPool.GetSolidBrush (c);
 		}
 
 		protected Brush GetControlForeBrush (Color c) {
-			if (c == DefaultControlForeColor)
+			if (c.ToArgb () == DefaultControlForeColor.ToArgb ())
 				return SystemBrushes.ControlText;
 			return ResPool.GetSolidBrush (c);
 		}
@@ -140,7 +140,7 @@ namespace System.Windows.Forms
 		public override void DrawButtonBase(Graphics dc, Rectangle clip_area, ButtonBase button) {
 			
 			// Fill the button with the correct color
-			bool is_ColorControl = button.BackColor == ColorControl ? true : false;
+			bool is_ColorControl = button.BackColor.ToArgb () == ColorControl.ToArgb () ? true : false;
 			dc.FillRectangle (is_ColorControl ? SystemBrushes.Control : ResPool.GetSolidBrush (button.BackColor), button.ClientRectangle);
 			
 			// First, draw the image
@@ -165,7 +165,7 @@ namespace System.Windows.Forms
 			bool check_or_radio = false;
 			bool check_or_radio_checked = false;
 			
-			bool is_ColorControl = button.BackColor == ColorControl ? true : false;
+			bool is_ColorControl = button.BackColor.ToArgb () == ColorControl.ToArgb () ? true : false;
 			
 			CPColor cpcolor = is_ColorControl ? CPColor.Empty : ResPool.GetCPColor (button.BackColor);
 			
@@ -581,7 +581,7 @@ namespace System.Windows.Forms
 
 		protected virtual void CheckBox_DrawCheckBox( Graphics dc, CheckBox checkbox, ButtonState state, Rectangle checkbox_rectangle )
 		{
-			Brush brush = checkbox.BackColor == ColorControl ? SystemBrushes.Control : ResPool.GetSolidBrush (checkbox.BackColor);
+			Brush brush = checkbox.BackColor.ToArgb () == ColorControl.ToArgb () ? SystemBrushes.Control : ResPool.GetSolidBrush (checkbox.BackColor);
 			dc.FillRectangle (brush, checkbox.ClientRectangle);			
 			// render as per normal button
 			if (checkbox.appearance==Appearance.Button) {
@@ -3049,7 +3049,7 @@ namespace System.Windows.Forms
 			int horz_border = 2;
 			int vert_border = 2;
 			
-			bool is_color_control = sb.BackColor == ColorControl;
+			bool is_color_control = sb.BackColor.ToArgb () == ColorControl.ToArgb ();
 
 			Brush brush = is_color_control ? SystemBrushes.Control : ResPool.GetSolidBrush (sb.BackColor);
 			dc.FillRectangle (brush, clip);
@@ -3203,7 +3203,7 @@ namespace System.Windows.Forms
 		public override void DrawTabControl (Graphics dc, Rectangle area, TabControl tab)
 		{
 			// Do we need to fill the back color? It can't be changed...
-			Brush brush = tab.BackColor == DefaultControlBackColor ? SystemBrushes.Control : ResPool.GetSolidBrush (tab.BackColor);
+			Brush brush = tab.BackColor.ToArgb () == DefaultControlBackColor.ToArgb () ? SystemBrushes.Control : ResPool.GetSolidBrush (tab.BackColor);
 			dc.FillRectangle (brush, area);
 			Rectangle panel_rect = GetTabPanelRectExt (tab);
 
@@ -4168,7 +4168,7 @@ namespace System.Windows.Forms
 
 			
 			/* Control Background */
-			if (tb.BackColor == DefaultControlBackColor) {
+			if (tb.BackColor.ToArgb () == DefaultControlBackColor.ToArgb ()) {
 				dc.FillRectangle (SystemBrushes.Control, clip_rectangle);
 			} else {
 				dc.FillRectangle (ResPool.GetSolidBrush (tb.BackColor), clip_rectangle);
@@ -4376,7 +4376,7 @@ namespace System.Windows.Forms
 			Pen		penBottomRight;
 			Pen		penBottomRightInner;
 			Rectangle	rect= new Rectangle (rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
-			bool is_ColorControl = control_color == ColorControl ? true : false;
+			bool is_ColorControl = control_color.ToArgb () == ColorControl.ToArgb () ? true : false;
 			
 			if ((style & Border3DStyle.Adjust) != 0) {
 				rect.Y -= 2;
@@ -4764,7 +4764,7 @@ namespace System.Windows.Forms
 			Color outerColor = foreColor;
 			// adjust focus color according to the flatstyle
 			if (button.FlatStyle == FlatStyle.Popup && !button.is_pressed) {
-				outerColor = (backColor == ColorControl) ? ControlPaint.Dark(ColorControl) : ColorControlText;				
+				outerColor = (backColor.ToArgb () == ColorControl.ToArgb ()) ? ControlPaint.Dark(ColorControl) : ColorControlText;				
 			}
 			
 			// draw the outer rectangle

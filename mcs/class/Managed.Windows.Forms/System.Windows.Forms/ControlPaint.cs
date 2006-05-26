@@ -187,7 +187,7 @@ namespace System.Windows.Forms {
 		}
 
 		public static Color Light(Color baseColor,float per) {
-			if (baseColor == ThemeEngine.Current.ColorControl) {
+			if (baseColor.ToArgb () == ThemeEngine.Current.ColorControl.ToArgb ()) {
 				int r_sub, g_sub, b_sub;
 				Color color;
 
@@ -227,7 +227,7 @@ namespace System.Windows.Forms {
 
 		public static Color Dark(Color baseColor,float per) {	
 
-			if (baseColor == ThemeEngine.Current.ColorControl) {
+			if (baseColor.ToArgb () == ThemeEngine.Current.ColorControl.ToArgb ()) {
 				
 				int r_sub, g_sub, b_sub;
 				Color color;
