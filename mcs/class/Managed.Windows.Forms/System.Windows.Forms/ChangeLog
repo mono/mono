@@ -1,3 +1,10 @@
+2006-05-27  Alexander Olk  <alex.olk@googlemail.com>
+
+	* FileDialog.cs: If AddExtension property is true autocomplete the
+	  extensions in SaveFileDialog correctly. Fixes bug #78453.
+	  Set MyNetwork and MyComputer to "C:\" for windows. This should
+	  fix part 8 of bug #78446 for now.
+
 2006-05-26  Chris Toshok  <toshok@ximian.com>
 
 	* DataGrid.cs (ColumnStartedEditing): fill these in.  for now just

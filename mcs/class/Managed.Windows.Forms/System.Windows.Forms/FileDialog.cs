@@ -835,10 +835,34 @@ namespace System.Windows.Forms {
 				}
 				
 				if (fileDialogType == FileDialogType.SaveFileDialog) {
-					if (addExtension && defaultExt.Length > 0) {
-						if (!currentFileName.EndsWith (defaultExt)) {
-							currentFileName += "." + defaultExt;
+					if (addExtension) {
+						string extension_to_use = "";
+						string filter_exentsion = "";
+						
+						if (fileFilter != null) {
+							FilterStruct filterstruct = (FilterStruct)fileFilter.FilterArrayList [filterIndex - 1];
+							
+							for (int i = 0; i < filterstruct.filters.Count; i++) {
+								string extension = filterstruct.filters [i];
+								
+								if (extension.StartsWith ("*"))
+									extension = extension.Remove (0, 1);
+								
+								if (extension.IndexOf ('*') != -1)
+									continue;
+								
+								filter_exentsion = extension;
+								break;
+							}
 						}
+						
+						if (filter_exentsion != "")
+							extension_to_use = filter_exentsion;
+						else
+						if (defaultExt != "")
+							extension_to_use = "." + defaultExt;
+						
+						currentFileName += extension_to_use;
 					}
 				}
 				
@@ -1541,13 +1565,17 @@ namespace System.Windows.Forms {
 					// on *nix we do not have a special folder MyComputer
 						fileDialog.ChangeDirectory (this, FileDialog.mycomputer_string);
 					else
-						fileDialog.ChangeDirectory (this, ThemeEngine.Current.Places (UIIcon.PlacesMyComputer));
+						fileDialog.ChangeDirectory (this, "C:\\");
+//					else
+//						fileDialog.ChangeDirectory (this, ThemeEngine.Current.Places (UIIcon.PlacesMyComputer));
 				} else
 				if (sender == networkButton) {
 					if ((platform == 4) || (platform == 128))
 						fileDialog.ChangeDirectory (this, FileDialog.network_string);
 					else
-						fileDialog.ChangeDirectory (this, ThemeEngine.Current.Places (UIIcon.PlacesMyNetwork));
+						fileDialog.ChangeDirectory (this, "C:\\");
+//					else
+//						fileDialog.ChangeDirectory (this, ThemeEngine.Current.Places (UIIcon.PlacesMyNetwork));
 				}
 			}
 			
@@ -2479,8 +2507,8 @@ namespace System.Windows.Forms {
 				my_root_tmp = "/";
 			} else {
 				recently_used_tmp = ThemeEngine.Current.Places (UIIcon.PlacesRecentDocuments);
-				my_computer_tmp = ThemeEngine.Current.Places (UIIcon.PlacesMyComputer);
-				my_network_tmp = ThemeEngine.Current.Places (UIIcon.PlacesMyNetwork);
+				my_computer_tmp = "C:\\"; //ThemeEngine.Current.Places (UIIcon.PlacesMyComputer);
+				my_network_tmp = "C:\\"; //ThemeEngine.Current.Places (UIIcon.PlacesMyNetwork);
 			}
 			
 			Items.AddRange (new object        [] {
