@@ -62,9 +62,7 @@ namespace System.Windows.Forms
 				return isedit;
 			}
 			set {
-				if (value != isedit) {
-					isedit = value;
-				}
+				isedit = value;
 			}
 		}
 
@@ -72,9 +70,8 @@ namespace System.Windows.Forms
 
 		#region Public Instance Methods
 		protected override void OnKeyPress (KeyPressEventArgs e)
-		{			
-			grid.is_changing = true;
-			grid.InvalidateCurrentRowHeader ();
+		{
+			grid.ColumnStartedEditing (Bounds);
 			base.OnKeyPress (e);
 		}
 
@@ -90,13 +87,13 @@ namespace System.Windows.Forms
 			// If we decide DataGrid needs to process we call grid.ProcessKeyPreviewInternal and return true
 			// If we want TextBox to handle the key , we return false;
 
-			// We only care about KEYDOWN messages
-			if (m.Msg != (int)Msg.WM_KEYDOWN) {
-				return false;
-			}
+			switch ((Msg)m.Msg) {
+			case Msg.WM_CHAR:
+				return ProcessKeyEventArgs (ref m);
 
-			if (isedit) {
-				switch (key) {
+			case Msg.WM_KEYDOWN:
+				if (isedit) {
+					switch (key) {
 					case Keys.F2: {
 						SelectionStart = Text.Length;
 						SelectionLength = 0;
@@ -157,7 +154,11 @@ namespace System.Windows.Forms
 					default: {
 						return base.ProcessKeyMessage(ref m);
 					}
+					}
 				}
+				break;
+			default:
+				return false;
 			}
 
 			return base.ProcessKeyMessage(ref m);

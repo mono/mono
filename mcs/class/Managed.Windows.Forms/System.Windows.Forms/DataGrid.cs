@@ -171,9 +171,9 @@ namespace System.Windows.Forms
 		internal DataGridDrawing grid_drawing;
 		internal int first_visiblerow;
 		internal int horz_pixeloffset;
-		internal bool is_editing; 	// Current cell is edit mode
+		bool is_adding;			// Indicates when we are adding a row
+		bool is_editing;		// Current cell is edit mode
 		internal bool is_changing;	// Indicates if current cell is been changed (in edit mode)
-		internal bool is_adding;	// Indicates when we are adding a row
 		private Hashtable selected_rows;
 		private int selection_start; // used for range selection
 		private bool begininit;
@@ -243,9 +243,9 @@ namespace System.Windows.Forms
 			CurrentTableStyle = default_style;
 
 			horiz_scrollbar = new ImplicitHScrollBar ();
-			horiz_scrollbar.ValueChanged += new EventHandler (GridHValueChanged);
+			horiz_scrollbar.Scroll += new ScrollEventHandler (GridHScrolled);
 			vert_scrollbar = new ImplicitVScrollBar ();
-			vert_scrollbar.ValueChanged += new EventHandler (GridVValueChanged);
+			vert_scrollbar.Scroll += new ScrollEventHandler (GridVScrolled);
 
 			SetStyle (ControlStyles.UserMouse, true);
 
@@ -1042,12 +1042,23 @@ namespace System.Windows.Forms
 
 		protected internal virtual void ColumnStartedEditing (Control editingControl)
 		{
-
+			bool need_invalidate = is_changing == false;
+			// XXX calculate the row header to invalidate
+			// (using the editingControl's position?)
+			// instead of using InvalidateCurrentRowHeader
+			is_changing = true;
+			if (need_invalidate)
+				InvalidateCurrentRowHeader ();
 		}
 
 		protected internal virtual void ColumnStartedEditing (Rectangle bounds)
 		{
-
+			bool need_invalidate = is_changing == false;
+			// XXX calculate the row header to invalidate
+			// instead of using InvalidateCurrentRowHeader
+			is_changing = true;
+			if (need_invalidate)
+				InvalidateCurrentRowHeader ();
 		}
 
 		protected override AccessibleObject CreateAccessibilityInstance ()
@@ -1127,23 +1138,29 @@ namespace System.Windows.Forms
 			return string.Empty;
 		}
 
-		protected virtual void GridHValueChanged (object sender, EventArgs e)
+		protected virtual void GridHScrolled (object sender, ScrollEventArgs se)
 		{
-			if (horiz_scrollbar.Value == horz_pixeloffset)
+			if (se.NewValue == horz_pixeloffset ||
+			    se.Type == ScrollEventType.EndScroll) {
 				return;
+			}
 
-			ScrollToColumnInPixels (horiz_scrollbar.Value);
+			ScrollToColumnInPixels (se.NewValue);
 		}
 
-		protected virtual void GridVValueChanged (object sender, EventArgs e)
+		protected virtual void GridVScrolled (object sender, ScrollEventArgs se)
 		{
 			int old_first_visiblerow = first_visiblerow;
-			first_visiblerow = vert_scrollbar.Value;
-			grid_drawing.UpdateVisibleRowCount ();
-			
-			if (first_visiblerow == old_first_visiblerow) {
+			first_visiblerow = se.NewValue;
+
+			if (first_visiblerow == old_first_visiblerow)
 				return;
-			}			
+
+			grid_drawing.UpdateVisibleRowCount ();
+
+			if (first_visiblerow == old_first_visiblerow)
+				return;
+			
 			ScrollToRow (old_first_visiblerow, first_visiblerow);
 		}
 
@@ -1409,25 +1426,36 @@ namespace System.Windows.Forms
 			base.OnMouseWheel (e);
 
 			bool ctrl_pressed = ((Control.ModifierKeys & Keys.Control) != 0);
+			int pixels;
 
 			if (ctrl_pressed) { // scroll horizontally
 				if (e.Delta > 0) {
-					horiz_scrollbar.Value = Math.Max (horiz_scrollbar.Minimum,
-									  horiz_scrollbar.Value + horiz_scrollbar.LargeChange);
+					/* left */
+					pixels = Math.Max (horiz_scrollbar.Minimum,
+							   horiz_scrollbar.Value - horiz_scrollbar.LargeChange);
 				}
 				else {
-					horiz_scrollbar.Value = Math.Min (horiz_scrollbar.Maximum - horiz_scrollbar.LargeChange + 1,
-									  horiz_scrollbar.Value + horiz_scrollbar.LargeChange);
+					/* right */
+					pixels = Math.Min (horiz_scrollbar.Maximum - horiz_scrollbar.LargeChange + 1,
+							   horiz_scrollbar.Value + horiz_scrollbar.LargeChange);
 				}
+
+				GridHScrolled (this, new ScrollEventArgs (ScrollEventType.ThumbPosition, pixels));
+				horiz_scrollbar.Value = pixels;
 			} else {
 				if (e.Delta > 0) {
-					vert_scrollbar.Value = Math.Max (vert_scrollbar.Minimum,
-									 vert_scrollbar.Value + vert_scrollbar.LargeChange);
+					/* up */
+					pixels = Math.Max (vert_scrollbar.Minimum,
+							   vert_scrollbar.Value - vert_scrollbar.LargeChange);
 				}
 				else {
-					vert_scrollbar.Value = Math.Min (vert_scrollbar.Maximum - vert_scrollbar.LargeChange + 1,
-									 vert_scrollbar.Value + vert_scrollbar.LargeChange);
+					/* down */
+					pixels = Math.Min (vert_scrollbar.Maximum - vert_scrollbar.LargeChange + 1,
+							   vert_scrollbar.Value + vert_scrollbar.LargeChange);
 				}
+
+				GridVScrolled (this, new ScrollEventArgs (ScrollEventType.ThumbPosition, pixels));
+				vert_scrollbar.Value = pixels;
 			}
 		}
 
@@ -1894,20 +1922,30 @@ namespace System.Windows.Forms
 		{
 			if (cell.ColumnNumber <= first_visiblecolumn ||
 				cell.ColumnNumber + 1 >= first_visiblecolumn + visiblecolumn_count) {			
-					
+
 				first_visiblecolumn = grid_drawing.GetFirstColumnForColumnVisilibility (first_visiblecolumn, cell.ColumnNumber);
-				int pixel = grid_drawing.GetColumnStartingPixel (first_visiblecolumn);
+                                int pixel = grid_drawing.GetColumnStartingPixel (first_visiblecolumn);
+				ScrollToColumnInPixels (pixel);
 				horiz_scrollbar.Value = pixel;
+				Update();
 			}
 
 			if (cell.RowNumber < first_visiblerow ||
-				cell.RowNumber + 1 >= first_visiblerow + visiblerow_count) {
+			    cell.RowNumber + 1 >= first_visiblerow + visiblerow_count) {
 
-				if (cell.RowNumber + 1 >= first_visiblerow + visiblerow_count) {
-					vert_scrollbar.Value = 1 + cell.RowNumber - visiblerow_count;
-				} else {
-					vert_scrollbar.Value = cell.RowNumber;
+                                if (cell.RowNumber + 1 >= first_visiblerow + visiblerow_count) {
+					int old_first_visiblerow = first_visiblerow;
+					first_visiblerow = 1 + cell.RowNumber - visiblerow_count;
+					grid_drawing.UpdateVisibleRowCount ();
+					ScrollToRow (old_first_visiblerow, first_visiblerow);
+				}else {
+					int old_first_visiblerow = first_visiblerow;
+					first_visiblerow = cell.RowNumber;
+					grid_drawing.UpdateVisibleRowCount ();
+					ScrollToRow (old_first_visiblerow, first_visiblerow);
 				}
+
+				vert_scrollbar.Value = first_visiblerow;
 			}
 		}
 		
@@ -2121,6 +2159,8 @@ namespace System.Windows.Forms
 				Invalidate (); // We have just added a new row
 			}
 			
+			is_editing = true;
+
 			CurrentTableStyle.GridColumnStyles[cell.ColumnNumber].Edit (ListManager,
 				cell.RowNumber, GetCellBounds (cell.RowNumber, cell.ColumnNumber),
 				_readonly, string.Empty, true);

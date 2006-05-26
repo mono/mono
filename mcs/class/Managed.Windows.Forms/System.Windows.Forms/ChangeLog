@@ -1,3 +1,39 @@
+2006-05-26  Chris Toshok  <toshok@ximian.com>
+
+	* DataGrid.cs (ColumnStartedEditing): fill these in.  for now just
+	invalidate the current row header if we need to, but presumably
+	we'll invalidate the row corrsponding to the bounds or
+	editingControl.
+	(GridHScrolled): switch back to this method, as it's part of the
+	public api.  *sigh*.
+	(GridVScrolled): same.
+	(OnMouseWheel): hack up something that more or less works.  Call
+	GridHScrolled/GridVScrolled directly, instead of duplicating much
+	of their code here.
+	(EnsureCellVisibility): reinstate a bunch of this code, since we
+	can't just set the scrollbar Value and expect to do all the work
+	in the ValueChanged handler.  Also, Call Update() after scrolling
+	in one direction so the other XplatX11.ScrollWindow call has the
+	proper stuff in the proper places.
+	(EditCell): set is_editing to true before calling .Edit.
+
+	* DataGridTextBox.cs (set_IsInEditOrNavigateMode): just set it,
+	don't bother comparing first.
+	(OnKeyPress): call grid.ColumnStartedEditing before calling
+	base.OnKeyPress.  this will set is_changing and invalidate the row
+	header if necessary.
+	(ProcessKeyMessage): for WM_CHAR messages, call
+	ProcessKeyEventArgs directly.  swallow anything other than WM_CHAR
+	and WM_KEYDOWN.
+	
+	* DataGridBoolColumn.cs (Edit): don't set is_editing to true here.
+	it's done in the DataGrid.
+	(NextState): call grid.ColumnStartedEditing, which takes care of
+	invalidating the row header (and setting is_changing).
+
+	* DataGridTextBoxColumn.cs (Edit): don't set is_editing to true
+	here.  it's done in the DataGrid.
+
 2006-05-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Control.cs: allow changing the cursor when the mouse position is

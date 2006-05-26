@@ -169,7 +169,6 @@ namespace System.Windows.Forms
 			oldState = GetState (null, rowNum);
 			SetState (rowNum, GetState (source, rowNum) | CheckState.Selected);
 			grid.Invalidate (grid.GetCurrentCellBounds ());
-			grid.is_editing = true;
 		}
 
 		[MonoTODO]
@@ -366,10 +365,8 @@ namespace System.Windows.Forms
 		{
 			CheckState state = GetNextState (GetState (null, row));
 
-			bool refresh_rowheader = grid.is_changing == false;
-			grid.is_changing = true;
-			if (refresh_rowheader)
-				grid.InvalidateCurrentRowHeader ();			
+			grid.ColumnStartedEditing (new Rectangle());
+
 			SetState (row, state);
 			grid.Invalidate (grid.GetCellBounds (row, column));
 		}

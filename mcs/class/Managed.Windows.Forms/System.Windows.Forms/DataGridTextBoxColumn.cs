@@ -195,8 +195,6 @@ namespace System.Windows.Forms
 			textbox.Focus ();
 			textbox.SelectAll ();
 			grid.ResumeLayout (false);
-
-			grid.is_editing = true;
 		}
 
 		protected void EndEdit ()
