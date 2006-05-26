@@ -29,23 +29,6 @@ using System.Resources;
 
 namespace System.Windows.Forms {
 
-	internal class _KeyboardLayout {
-		public string Comment;
-		public int CodePage;
-		public uint [][] Key;
-		public short [] Scan;
-		public VirtualKeys [] VKey;
-
-		public _KeyboardLayout (string comment, int code_page, uint [][] key, short [] scan, VirtualKeys [] vkey)
-		{
-			Comment = comment;
-			CodePage = code_page;
-			Key = key;
-			Scan = scan;
-			VKey = vkey;
-		}
-	}
-
 	internal class KeyboardLayouts {
 
 		private KeyboardLayout [] keyboard_layouts;
