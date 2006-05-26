@@ -59,6 +59,7 @@ namespace Microsoft.Build.Utilities
 			}
 		}
 
+		[MonoTODO]
 		public virtual string FormatErrorEvent (BuildErrorEventArgs args)
 		{
 			return String.Format ("{0}({1},{2},{3},{4}): {5} error {6}: {7}",
@@ -66,6 +67,7 @@ namespace Microsoft.Build.Utilities
 				args.Subcategory, args.Code, args.Message);
 		}
 
+		[MonoTODO]
 		public virtual string FormatWarningEvent (BuildWarningEventArgs args)
 		{
 			return String.Format ("{0}({1},{2},{3},{4}): {5} warning {6}: {7}",

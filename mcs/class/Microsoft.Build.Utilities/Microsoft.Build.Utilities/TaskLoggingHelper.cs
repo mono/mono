@@ -119,7 +119,7 @@ namespace Microsoft.Build.Utilities
 			BuildErrorEventArgs beea = new BuildErrorEventArgs (
 				subcategory, errorCode, file, lineNumber,
 				columnNumber, endLineNumber, endColumnNumber,
-				FormatString (message, messageArgs), helpKeywordPrefix /*it's helpKeyword*/,
+				FormatString (message, messageArgs), helpKeyword /*it's helpKeyword*/,
 				null /*it's senderName*/);
 			buildEngine.LogErrorEvent (beea);
 			hasLoggedErrors = true;
@@ -298,7 +298,7 @@ namespace Microsoft.Build.Utilities
 			BuildWarningEventArgs bwea = new BuildWarningEventArgs (
 				subcategory, warningCode, file, lineNumber,
 				columnNumber, endLineNumber, endColumnNumber,
-				FormatString (message, messageArgs), helpKeywordPrefix, null);
+				FormatString (message, messageArgs), helpKeyword, null);
 			buildEngine.LogWarningEvent (bwea);
 		}
 
