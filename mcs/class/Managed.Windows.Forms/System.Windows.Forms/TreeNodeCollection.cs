@@ -134,6 +134,9 @@ namespace System.Windows.Forms {
 			if (tree_view != null) {
 				TreeNode prev = GetPrevNode (node);
 
+				if (tree_view.top_node == null)
+					tree_view.top_node = node;
+
 				if (node.IsVisible)
 					tree_view.RecalculateVisibleOrder (prev);
 				tree_view.UpdateScrollBars ();
