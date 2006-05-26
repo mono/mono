@@ -15,6 +15,9 @@ using System.Reflection;
 using System.Security;
 using System.Security.Permissions;
 
+using MIPermission = Mono.ILASM.Permission;
+using MIPermissionSet = Mono.ILASM.PermissionSet;
+
 namespace Mono.ILASM {
 
 	public class ILParser {
@@ -63,6 +66,22 @@ namespace Mono.ILASM {
 
                         return true;
                 }
+
+		public void AddSecDecl (object perm)
+		{
+			PermPair pp = perm as PermPair;
+
+			if (pp == null) {
+				MIPermissionSet ps_20 = (MIPermissionSet) perm;
+				codegen.AddPermission (ps_20.SecurityAction, ps_20);
+				return;
+			}
+
+			if (!CheckSecurityActionValidity ((System.Security.Permissions.SecurityAction) pp.sec_action, false))
+				Report.Error (String.Format ("Invalid security action : {0}", pp.sec_action));
+
+			codegen.AddPermission (pp.sec_action, pp.perm);
+		}
 
                 public object ClassRefToObject (object class_ref, object val)
                 {
@@ -850,11 +869,7 @@ class_decl		: method_all
 			| data_decl
 			| sec_decl
 			  {
-				PermPair pp = (PermPair) $1;
-				if (!CheckSecurityActionValidity ((System.Security.Permissions.SecurityAction) (short) pp.sec_action, false))
-					Report.Error (String.Format ("Invalid security action : {0}", pp.sec_action));
-
-				codegen.AddPermission (pp.sec_action, pp.perm);
+				AddSecDecl ($1);
 			  }
 			| extsource_spec
 			| customattr_decl
@@ -906,10 +921,6 @@ type			: generic_class_ref
 			| K_OBJECT
                           {
                                 $$ = new PrimitiveTypeRef (PrimitiveType.Object, "System.Object");
-                          }
-			| K_STRING
-                          {
-                                $$ = new PrimitiveTypeRef (PrimitiveType.String, "System.String");
                           }
 			| K_VALUE K_CLASS class_ref
                           {
@@ -985,28 +996,12 @@ type			: generic_class_ref
                           {
                                 $$ = new MethodPointerTypeRef ((CallConv) $2, (BaseTypeRef) $3, (ArrayList) $6);
                           }
-			| K_TYPEDREF
-                          {
-                                $$ = new PrimitiveTypeRef (PrimitiveType.TypedRef,
-                                        "System.TypedReference");
-                          }
-			| K_CHAR
-                          {
-                                $$ = new PrimitiveTypeRef (PrimitiveType.Char, "System.Char");
-                          }
-			| K_WCHAR
-			  {
-				$$ = new PrimitiveTypeRef (PrimitiveType.Char, "System.Char");
-			  }
-			| K_VOID
-                          {
-                                $$ = new PrimitiveTypeRef (PrimitiveType.Void, "System.Void");
-                          }
-			| K_BOOL
-                          {
-                                $$ = new PrimitiveTypeRef (PrimitiveType.Boolean, "System.Boolean");
-                          }
-			| K_INT8
+			| primitive_type
+			;
+
+			;
+
+primitive_type		: K_INT8
                           {
                                 $$ = new PrimitiveTypeRef (PrimitiveType.Int8, "System.SByte");
                           }
@@ -1046,7 +1041,6 @@ type			: generic_class_ref
                           {
                                 $$ = new PrimitiveTypeRef (PrimitiveType.UInt16, "System.UInt16");     
                           }
-
 			| K_UNSIGNED K_INT32
                           {
                                 $$ = new PrimitiveTypeRef (PrimitiveType.UInt32, "System.UInt32");
@@ -1068,7 +1062,6 @@ type			: generic_class_ref
                                 // TODO: Is this the proper full name
                                 $$ = new PrimitiveTypeRef (PrimitiveType.NativeInt, "System.IntPtr");
                           }
-                        
 			| K_NATIVE K_UNSIGNED K_INT
                           {
                                 $$ = new PrimitiveTypeRef (PrimitiveType.NativeUInt, "System.UIntPtr");
@@ -1076,6 +1069,31 @@ type			: generic_class_ref
 			| K_NATIVE K_UINT
                           {
                                 $$ = new PrimitiveTypeRef (PrimitiveType.NativeUInt, "System.UIntPtr");
+                          }
+			| K_TYPEDREF
+                          {
+                                $$ = new PrimitiveTypeRef (PrimitiveType.TypedRef,
+                                        "System.TypedReference");
+                          }
+			| K_CHAR
+                          {
+                                $$ = new PrimitiveTypeRef (PrimitiveType.Char, "System.Char");
+                          }
+			| K_WCHAR
+			  {
+				$$ = new PrimitiveTypeRef (PrimitiveType.Char, "System.Char");
+			  }
+			| K_VOID
+                          {
+                                $$ = new PrimitiveTypeRef (PrimitiveType.Void, "System.Void");
+                          }
+			| K_BOOL
+                          {
+                                $$ = new PrimitiveTypeRef (PrimitiveType.Boolean, "System.Boolean");
+                          }
+			| K_STRING
+                          {
+                                $$ = new PrimitiveTypeRef (PrimitiveType.String, "System.String");
                           }
 			;
 
@@ -1567,7 +1585,7 @@ init_opt		: /* EMPTY */
                           }
 			;
 
-field_init		: K_FLOAT32 OPEN_PARENS float64 CLOSE_PARENS
+field_init_primitive	: K_FLOAT32 OPEN_PARENS float64 CLOSE_PARENS
                           {
                                 $$ = new FloatConst (Convert.ToSingle ($3));
                           }
@@ -1627,6 +1645,9 @@ field_init		: K_FLOAT32 OPEN_PARENS float64 CLOSE_PARENS
                           {
                                 $$ = new BoolConst ((bool) $3);
                           }
+			;
+
+field_init		: field_init_primitive
 			| K_BYTEARRAY bytes_list
                           {
                                 $$ = new ByteArrConst ((byte[]) $2);
@@ -2127,11 +2148,7 @@ method_decl		: D_EMITBYTE int32
 			| instr
 			| sec_decl
 			  {
-				PermPair pp = (PermPair) $1;
-				if (!CheckSecurityActionValidity ((System.Security.Permissions.SecurityAction) (short) pp.sec_action, false))
-					Report.Error (String.Format ("Invalid security action : {0}", pp.sec_action));
-
-				codegen.AddPermission (pp.sec_action, pp.perm);
+				AddSecDecl ($1);
 			  }
 			| extsource_spec
 			| language_decl
@@ -2785,6 +2802,84 @@ sec_decl		: D_PERMISSION sec_action type_spec OPEN_PARENS nameval_pairs CLOSE_PA
 				psa.XML = (string) $3;
 				$$ = new PermPair ((PEAPI.SecurityAction) $2, psa.CreatePermissionSet ());
 			  }
+			| D_PERMISSIONSET sec_action ASSIGN OPEN_BRACE permissions CLOSE_BRACE
+			  {
+#if NET_2_0
+				$$ = new MIPermissionSet ((PEAPI.SecurityAction) $2, (ArrayList) $5);
+#else
+				Report.Error ("Use ilasm2 for 2.0 style declarative security attributes.");
+#endif
+			  }
+			;
+
+permissions		: permission
+			  {
+				ArrayList list = new ArrayList ();
+				list.Add ($1);
+				$$ = list;
+			  }
+			| permissions COMMA permission
+			  {
+				ArrayList list = (ArrayList) $1;
+				list.Add ($3);
+				$$ = list;
+			  }
+			;
+			
+permission		: class_ref ASSIGN OPEN_BRACE permission_members CLOSE_BRACE
+			  {
+				$$ = new MIPermission ((BaseTypeRef) $1, (ArrayList) $4);
+			  }
+			;
+
+permission_members	: permission_member
+			  {
+				  ArrayList list = new ArrayList ();
+				  list.Add ($1);
+				  $$ = list;
+			  }
+			| permission_members permission_member
+			  {
+				  ArrayList list = (ArrayList) $1;
+				  list.Add ($2);
+				  $$ = list;
+			  }
+			;
+
+permission_member	: prop_or_field primitive_type perm_mbr_nameval_pair
+			  {
+				NameValuePair pair = (NameValuePair) $3;
+				$$ = new PermissionMember ((MemberTypes) $1, (BaseTypeRef) $2, pair.Name, pair.Value);
+			  }
+			| prop_or_field K_ENUM class_ref perm_mbr_nameval_pair
+			  {
+				NameValuePair pair = (NameValuePair) $4;
+				$$ = new PermissionMember ((MemberTypes) $1, (BaseTypeRef) $3, pair.Name, pair.Value);
+			  }
+			;
+
+perm_mbr_nameval_pair	: SQSTRING ASSIGN field_init_primitive
+			  {
+				$$ = new NameValuePair ((string) $1, (PEAPI.Constant) $3);
+			  }
+			| SQSTRING ASSIGN K_BYTEARRAY bytes_list
+                          {
+                                $$ = new NameValuePair ((string) $1, new ByteArrConst ((byte[]) $4));
+                          }
+			| SQSTRING ASSIGN K_STRING OPEN_PARENS SQSTRING CLOSE_PARENS
+			  {
+				$$ = new NameValuePair ((string) $1, new StringConst ((string) $5));
+			  }
+			;
+
+prop_or_field		: K_PROPERTY
+			  {
+				$$ = MemberTypes.Property;
+			  }
+			| K_FIELD
+			  {
+				$$ = MemberTypes.Field;
+			  }
 			;
 
 nameval_pairs		: nameval_pair 
@@ -2985,7 +3080,13 @@ assembly_decl		: D_PUBLICKEY ASSIGN bytes_list
 			  }
 			| sec_decl
 			  {
-				PermPair pp = (PermPair) $1;
+				PermPair pp = $1 as PermPair;
+				if (pp == null) {
+					MIPermissionSet ps_20 = (MIPermissionSet) $1;
+					codegen.AddAssemblyPermission (ps_20.SecurityAction, ps_20);
+					break;
+				}
+
 				if (!CheckSecurityActionValidity ((System.Security.Permissions.SecurityAction) (short) pp.sec_action, true))
 					Report.Error (String.Format ("Invalid security action : {0}", pp.sec_action));
 

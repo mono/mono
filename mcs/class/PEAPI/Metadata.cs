@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Collections;
 using System.Text;
+using System.Reflection;
 
 namespace PEAPI {
 
@@ -489,19 +490,17 @@ namespace PEAPI {
 	/// Descriptor for security permissions for a class or a method
 	/// </summary>
 
-	public class DeclSecurity : MetaDataElement {
+	public abstract class BaseDeclSecurity : MetaDataElement {
 
 		ushort action;
 		MetaDataElement parent;
 		uint permissionIx;
-		byte [] byteVal;
 
-		internal DeclSecurity(MetaDataElement paren, ushort act, byte [] val)        
+		internal BaseDeclSecurity(MetaDataElement paren, ushort act)
 		{
 			parent = paren;
 			action = act;
 			tabIx = MDTable.DeclSecurity;
-			byteVal = val;
 		}
 
 		internal override uint SortKey() 
@@ -518,20 +517,171 @@ namespace PEAPI {
 		internal sealed override void BuildTables(MetaData md) 
 		{
 			if (done) return;
+
 			BinaryWriter bw = new BinaryWriter (new MemoryStream ());
-			bw.Write (byteVal);
 			md.AddToTable (MDTable.DeclSecurity, this);
 			MemoryStream str = (MemoryStream)bw.BaseStream;
+			WriteSig (bw);
 			permissionIx = md.AddToBlobHeap(str.ToArray());
 
 			done = true;
 		}
+
+		internal abstract void WriteSig (BinaryWriter bw);
 
 		internal sealed override void Write(FileImage output) 
 		{
 			output.Write(action);
 			output.WriteCodedIndex(CIx.HasDeclSecurity,parent);
 			output.BlobIndex(permissionIx);
+		}
+
+	}
+
+	public class DeclSecurity : BaseDeclSecurity {
+
+		byte [] byteVal;
+
+		internal DeclSecurity(MetaDataElement paren, ushort act, byte [] val)        
+			: base (paren, act)
+		{
+			byteVal = val;
+		}
+
+		internal override void WriteSig (BinaryWriter bw)
+		{
+			bw.Write (byteVal);
+		}
+
+	}
+
+	public class DeclSecurity_20 : BaseDeclSecurity {
+
+		PermissionSet ps;
+
+		internal DeclSecurity_20 (MetaDataElement paren, ushort act, PermissionSet ps)
+			: base (paren, act)
+		{
+                        this.ps = ps;
+		}
+
+		internal override void WriteSig (BinaryWriter bw)
+		{
+			ps.Write (bw);
+		}
+	}
+
+	public class PermissionMember {
+
+		MemberTypes member_type;
+		PEAPI.Type type;
+		string name;
+		object value;
+
+		public PermissionMember (MemberTypes member_type, PEAPI.Type type, string name, object value)
+		{
+			this.member_type = member_type;
+			this.type = type;
+			this.name = name;
+			this.value = value;
+		}
+
+		public void Write (BinaryWriter bw)
+		{
+			byte [] b;
+
+			if (member_type == MemberTypes.Field)
+				bw.Write ((byte) 0x53);
+			else
+				//Property
+				bw.Write ((byte) 0x54);
+
+			if (type is PrimitiveType) {
+				bw.Write (type.GetTypeIndex ());
+			} else {
+				//must be enum
+				bw.Write ((byte) 0x55); //ENUM
+
+				b = Encoding.UTF8.GetBytes (((ClassRef) type).TypeName ());
+				MetaData.CompressNum ((uint) b.Length, (MemoryStream) bw.BaseStream);
+				bw.Write (b);
+			}
+			
+			b = Encoding.UTF8.GetBytes (name);
+			MetaData.CompressNum ((uint) b.Length, (MemoryStream) bw.BaseStream);
+			bw.Write (b);
+
+			((Constant) value).Write (bw);
+		}
+
+	}
+
+	public class Permission
+	{
+		PEAPI.Type type;
+
+		//PermissionMembers
+		ArrayList members;
+		string name;
+
+		public Permission (PEAPI.Type type, string name)
+		{
+			this.type = type;
+			this.name = name;
+		}
+
+		public void AddMember (PEAPI.PermissionMember member)
+		{
+			if (members == null)
+				members = new ArrayList ();
+
+			members.Add (member);
+		}
+
+		public void Write (BinaryWriter bw)
+		{
+			byte [] b = Encoding.UTF8.GetBytes (name);
+			MetaData.CompressNum ((uint) b.Length, (MemoryStream) bw.BaseStream);
+			bw.Write (b);
+
+			BinaryWriter perm_writer = new BinaryWriter (new MemoryStream (), Encoding.Unicode);
+			MemoryStream str = (MemoryStream) perm_writer.BaseStream;
+
+			MetaData.CompressNum ((uint) members.Count, str);//number of params
+			foreach (PermissionMember member in members)
+				member.Write (perm_writer);
+
+			bw.Write ((byte) str.Length); //(optional) parameters length
+			bw.Write (str.ToArray ());
+		}
+	}
+
+	public class PermissionSet 
+	{
+		PEAPI.SecurityAction sec_action;
+		ArrayList permissions;
+		PEAPI.PermissionSet ps;
+
+		public PermissionSet (PEAPI.SecurityAction sec_action)
+		{
+			this.sec_action = sec_action;
+		}
+
+		public void AddPermission (PEAPI.Permission perm)
+		{
+			if (permissions == null)
+				permissions = new ArrayList ();
+
+			permissions.Add (perm);
+		}
+
+		public void Write (BinaryWriter bw)
+		{
+			bw.Write ((byte) 0x2e);
+			MetaData.CompressNum ((uint) permissions.Count, (MemoryStream) bw.BaseStream);
+
+			foreach (Permission perm in permissions)
+				perm.Write (bw);
 		}
 
 	}
@@ -4948,7 +5098,7 @@ namespace PEAPI {
 			cattr_list.Add (cattr);
 		}
 
-		internal void AddDeclSecurity (DeclSecurity decl_sec)
+		internal void AddDeclSecurity (BaseDeclSecurity decl_sec)
 		{
 			if (declsec_list == null)
 				declsec_list = new ArrayList ();
@@ -5235,7 +5385,7 @@ namespace PEAPI {
 			}
 
 			if (declsec_list != null) {
-				foreach (DeclSecurity decl_sec in declsec_list)
+				foreach (BaseDeclSecurity decl_sec in declsec_list)
 					decl_sec.BuildTables (this);
 			}
 

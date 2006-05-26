@@ -18,6 +18,8 @@ using System.Reflection.Emit;
 using System.Text;
 using System.Security;
 
+using SSPermissionSet = System.Security.PermissionSet;
+using MIPermissionSet = Mono.ILASM.PermissionSet;
 
 namespace Mono.ILASM {
 
@@ -462,11 +464,7 @@ namespace Mono.ILASM {
                         if (assembly_declsec == null)
                                 assembly_declsec = new DeclSecurity ();
 
-                        PermissionSet ps = perm as PermissionSet;
-                        if (ps == null)
-                                assembly_declsec.AddPermission (sec_action, (IPermission) perm);
-                        else
-                                assembly_declsec.AddPermissionSet (sec_action, ps);
+                        AddPermission (sec_action, perm, assembly_declsec);
                 }
 
                 public void AddPermission (PEAPI.SecurityAction sec_action, object perm)
@@ -474,11 +472,28 @@ namespace Mono.ILASM {
                         if (CurrentDeclSecurityTarget == null)
                                 return;
 
-                        PermissionSet ps = perm as PermissionSet;
-                        if (ps == null)
-                                CurrentDeclSecurityTarget.DeclSecurity.AddPermission (sec_action, (IPermission) perm);
-                        else
-                                CurrentDeclSecurityTarget.DeclSecurity.AddPermissionSet (sec_action, ps);
+                        AddPermission (sec_action, perm, CurrentDeclSecurityTarget.DeclSecurity);
+                }
+
+                private void AddPermission (PEAPI.SecurityAction sec_action, object perm, DeclSecurity decl_sec)
+                {
+                        SSPermissionSet ps = perm as SSPermissionSet;
+                        if (ps != null) {
+                                decl_sec.AddPermissionSet (sec_action, ps);
+                                return;
+                        }
+
+                        IPermission iper = perm as IPermission;
+                        if (iper != null) {
+                                decl_sec.AddPermission (sec_action, iper);
+                                return;
+                        }
+
+                        MIPermissionSet ps20 = perm as MIPermissionSet;
+                        if (ps20 != null) {
+                                decl_sec.AddPermissionSet (sec_action, ps20);
+                                return;
+                        }
                 }
 
                 public void Write ()

@@ -1,3 +1,18 @@
+2006-05-26  Ankit Jain  <jankit@novell.com>
+
+	* Metadata.cs (DeclSecurity): Rename to .. 
+	(BaseDeclSecurity): .. this.
+	(DeclSecurity): New. Derive from BaseDeclSecurity.
+	(DeclSecurity_20): Likewise. For 2.0 style declaritive security.
+	(PermissionSet): New.
+	(Permission): New.
+	(PermissionMember): New.
+	(MetaData.AddDeclSecurity): Update to use BaseDeclSecurity.
+	(MetaData.BuildMetaData): Likewise.	
+			   
+	* PEAPI.cs (PEFile.AddDeclSecurity): New overload for new PermissionSet
+	class.
+
 2006-05-10  Ankit Jain  <jankit@novell.com>
 
 	* Metadata.cs (NativeType): Add LPStruct and Error.

@@ -1,3 +1,16 @@
+2006-05-26  Ankit Jain  <jankit@novell.com>
+
+	* PermissionSet.cs: New.
+	* Permission.cs: New.
+	* PermissionMember.cs: New. Classes for 2.0 metadata format of
+	declarative security.
+
+	* DeclSecurity.cs (DeclSecurity.AddPermissionSet): New. Overload for new
+	PermissionSet class.
+	(DeclSecurity.AddTo): Add new style PermissionSets also.
+	* CodeGen.cs (CodeGen.AddPermisson): Handle new PermissionSets also.
+	* ExternTable.cs (ExternAssembly.AssemblyName): New.
+
 2006-05-23  Ankit Jain  <jankit@novell.com>
 
 	* DeclSecurity.cs (IDeclSecurityTarget): Remove AddPermission &
