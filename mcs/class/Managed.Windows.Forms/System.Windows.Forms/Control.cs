@@ -1787,7 +1787,7 @@ namespace System.Windows.Forms
 					if (IsHandleCreated) {
 						pt = Cursor.Position;
 
-						if (bounds.Contains(pt)) {
+						if (bounds.Contains(pt) || Capture) {
 							if (GetChildAtPoint(pt) == null) {
 								if (cursor != null) {
 									XplatUI.SetCursor(window.Handle, cursor.handle);

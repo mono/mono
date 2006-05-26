@@ -388,8 +388,12 @@ namespace System.Windows.Forms
 
 		protected override void OnMouseMove (MouseEventArgs e)
 		{
+			if (e.X >= 0 && e.Y >= 0 && e.X < bounds.Width && e.Y < bounds.Height) {
+				UpdateHover (PointInLink (e.X, e.Y));
+			} else if (Capture) {
+				Cursor = Cursors.Default;
+			}
 			base.OnMouseMove (e);
-			UpdateHover(PointInLink (e.X, e.Y));
 		}
 
 		protected override void OnMouseUp (MouseEventArgs e)
@@ -398,10 +402,11 @@ namespace System.Windows.Forms
 
 			base.OnMouseUp (e);
 			this.Capture = false;
-
+			bool onclick = (e.X >= 0 && e.Y >= 0 && e.X < bounds.Width && e.Y < bounds.Height);
 			for (int i = 0; i < num_pieces; i++) {
 				if (pieces[i].link!= null && pieces[i].clicked == true) {
-					OnLinkClicked (new LinkLabelLinkClickedEventArgs (pieces[i].link));					
+					if (onclick)
+						OnLinkClicked (new LinkLabelLinkClickedEventArgs (pieces[i].link));					
 					pieces[i].clicked = false;
 					Invalidate (pieces[i].rect);
 					break;

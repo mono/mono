@@ -1,3 +1,10 @@
+2006-05-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Control.cs: allow changing the cursor when the mouse position is
+	out of bounds but Capture is set.
+	* LinkLabel.cs: handle the case when the mouse button is pressed on the
+	linklabel but released somewhere else.
+
 2006-05-25  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: When we get focus if there is no selected node make
