@@ -1,10 +1,10 @@
 <Combine name="Microsoft.Build.Framework" fileversion="2.0">
   <Configurations active="Debug">
     <Configuration name="Debug" ctype="CombineConfiguration">
-      <Entry configuration="Debug" build="True" name="Microsoft.Build.Framework" />
+      <Entry build="True" name="Microsoft.Build.Framework" configuration="Debug" />
     </Configuration>
     <Configuration name="Release" ctype="CombineConfiguration">
-      <Entry configuration="Debug" build="True" name="Microsoft.Build.Framework" />
+      <Entry build="True" name="Microsoft.Build.Framework" configuration="Debug" />
     </Configuration>
   </Configurations>
   <StartMode startupentry="Microsoft.Build.Framework" single="True">
