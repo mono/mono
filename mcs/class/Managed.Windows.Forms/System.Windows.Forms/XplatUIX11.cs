@@ -3343,7 +3343,7 @@ namespace System.Windows.Forms {
 						Region region = new Region (rect);
 						IntPtr hrgn = region.GetHrgn (null); // Graphics object isn't needed
 						msg.message = Msg.WM_NCPAINT;
-						msg.wParam = hrgn;
+						msg.wParam = hrgn == IntPtr.Zero ? (IntPtr)1 : hrgn;
 						break;
 					}
 					#if DriverDebugExtra
@@ -3486,9 +3486,7 @@ namespace System.Windows.Forms {
 				width = hwnd.width;
 				height = hwnd.height;
 
-				if (hwnd.ClientRect.IsEmpty) {
-					PerformNCCalc(hwnd);
-				}
+				PerformNCCalc(hwnd);
 
 				client_width = hwnd.ClientRect.Width;
 				client_height = hwnd.ClientRect.Height;
