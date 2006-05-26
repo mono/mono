@@ -1,3 +1,13 @@
+2006-05-26  Ankit Jain  <jankit@novell.com>
+
+	Patch from Sebastien Pouliot.
+	* declsec.h: New. 
+	* declsec.c: New. Support for new declarative security attribute
+	metadata format (2.0)
+	* dump.c (dump_table_declsec): Support the new 2.0 format.
+	* main.c (dump_declarative_security): Support the new 2.0 format.
+	* Makefile.am : Add declsec.c & declsec.h .
+
 2006-05-15  Ankit Jain  <jankit@novell.com>
 
 	* dis-cil.c (disassemble_cil): Exception clauses can be unordered,
