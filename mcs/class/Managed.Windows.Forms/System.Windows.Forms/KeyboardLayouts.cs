@@ -34,11 +34,6 @@ namespace System.Windows.Forms {
 		private KeyboardLayout [] keyboard_layouts;
 		public int [][] vkey_table;
 		public short [][] scan_table;
-		
-		public KeyboardLayouts ()
-		{
-			LoadLayouts ();
-		}
 
 		public void LoadLayouts ()
 		{
@@ -51,7 +46,11 @@ namespace System.Windows.Forms {
 		}
 
 		public KeyboardLayout [] Layouts {
-			get { return keyboard_layouts; }
+			get {
+				if (keyboard_layouts == null)
+					LoadLayouts ();
+				return keyboard_layouts;
+			}
 		}
 	}
 

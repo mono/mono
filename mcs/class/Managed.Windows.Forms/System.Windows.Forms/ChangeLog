@@ -10,6 +10,9 @@
 	values, it's faster and it's all we care about (we don't care if
 	the names aren't equal).
 	* KeyboardLayouts.cs: Eliminate some dead code.
+	- Lazy init things
+	* X11Keyboard.cs: Lazy init keyboard detection.
+	- Cleanup access modifiers a little.
 
 2006-05-26  Peter Dennis Bartok  <pbartok@novell.com>
 

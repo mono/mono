@@ -41,28 +41,35 @@ namespace System.Windows.Forms {
 	internal class X11Keyboard {
 
 		private IntPtr display;
-		private IntPtr xim;
+		private IntPtr window;
 		private IntPtr xic;
 		private StringBuilder lookup_buffer;
 		private int min_keycode, max_keycode, keysyms_per_keycode, syms;
 		private int [] keyc2vkey = new int [256];
 		private int [] keyc2scan = new int [256];
 		private byte [] key_state_table = new byte [256];
+		private int lcid;
 		private bool num_state, cap_state;
-		private KeyboardLayout layout;
+		private bool initialized;
 
-		// TODO
 		private int NumLockMask;
 		private int AltGrMask;
-		
+
 		public X11Keyboard (IntPtr display, IntPtr window)
 		{
 			this.display = display;
+			this.window = window;
 			lookup_buffer = new StringBuilder (24);
+		}
+
+		public void EnsureLayoutInitialized ()
+		{
+			if (initialized)
+				return;
 
 			KeyboardLayouts layouts = new KeyboardLayouts ();
-			layout = layouts.Layouts [0];
-			DetectLayout (layouts);
+			KeyboardLayout layout = DetectLayout (layouts);
+			lcid = layout.Lcid;
 			CreateConversionArray (layouts, layout);
 
 			if (!XSupportsLocale ()) {
@@ -73,12 +80,14 @@ namespace System.Windows.Forms {
 				Console.Error.WriteLine ("Could not set X locale modifiers");
 			}
 
-			xim = XOpenIM (display, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
+			IntPtr xim = XOpenIM (display, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
 			if (xim == IntPtr.Zero) {
 				Console.Error.WriteLine ("Could not get XIM");
 			}
 
-			xic = CreateXic (window);
+			xic = CreateXic (window, xim);
+			
+			initialized = true;
 		}
 
 		public Keys ModifierKeys {
@@ -125,6 +134,8 @@ namespace System.Windows.Forms {
 
 		public void KeyEvent (IntPtr hwnd, XEvent xevent, ref MSG msg)
 		{
+			EnsureLayoutInitialized ();
+
 			XKeySym keysym;
 			int ascii_chars;
 
@@ -197,6 +208,8 @@ namespace System.Windows.Forms {
 
 			if (msg.message != Msg.WM_KEYDOWN && msg.message != Msg.WM_SYSKEYDOWN)
 				return res;
+
+			EnsureLayoutInitialized ();
 
 			string buffer;
 			Msg message;
@@ -282,7 +295,7 @@ namespace System.Windows.Forms {
 				if (dead_char != 0) {
 					byte [] bytes = new byte [1];
 					bytes [0] = (byte) dead_char;
-					Encoding encoding = Encoding.GetEncoding (new CultureInfo (layout.Lcid).TextInfo.ANSICodePage);
+					Encoding encoding = Encoding.GetEncoding (new CultureInfo (lcid).TextInfo.ANSICodePage);
 					buffer = new string (encoding.GetChars (bytes));
 					res = -1;
 				}
@@ -407,6 +420,8 @@ namespace System.Windows.Forms {
 
 		public int EventToVkey (XEvent e)
 		{
+			EnsureLayoutInitialized ();
+
 			IntPtr status;
 			XKeySym ks;
 
@@ -423,7 +438,7 @@ namespace System.Windows.Forms {
 			return keyc2vkey [e.KeyEvent.keycode];
 		}
 
-		public void CreateConversionArray (KeyboardLayouts layouts, KeyboardLayout layout)
+		private void CreateConversionArray (KeyboardLayouts layouts, KeyboardLayout layout)
 		{
 			XEvent e2 = new XEvent ();
 			uint keysym = 0;
@@ -482,7 +497,6 @@ namespace System.Windows.Forms {
 							}
 						}
 						if (maxval >= 0) {
-							/// XXX
 							scan = layouts.scan_table [(int) layout.ScanIndex][maxval];
 							vkey = layouts.vkey_table [(int) layout.VKeyIndex][maxval];
 						}
@@ -496,7 +510,7 @@ namespace System.Windows.Forms {
 			
 		}
 
-		public void DetectLayout (KeyboardLayouts layouts)
+		private KeyboardLayout DetectLayout (KeyboardLayouts layouts)
 		{
 			XDisplayKeycodes (display, out min_keycode, out max_keycode);
 			IntPtr ksp = XGetKeyboardMapping (display, (byte) min_keycode,
@@ -592,11 +606,13 @@ namespace System.Windows.Forms {
 			}
 
 			if (layout != null)  {
-                                this.layout = layout;
-				Console.WriteLine (Locale.GetText("Keyboard") + ": " + layout.Name);
+                                return layout;
 			} else {
-				Console.WriteLine (Locale.GetText("Keyboard layout not recognized, using default layout: " + this.layout.Name));
+				Console.WriteLine (Locale.GetText("Keyboard layout not recognized, using default layout: " +
+								   layouts.Layouts [0].Name));
 			}
+
+			return layouts.Layouts [0];
 		}
 
 		// TODO
@@ -639,7 +655,7 @@ namespace System.Windows.Forms {
 			return 0;
 		}
 
-		internal IntPtr CreateXic (IntPtr window)
+		private IntPtr CreateXic (IntPtr window, IntPtr xim)
 		{
 			xic = XCreateIC (xim, 
 				"inputStyle", XIMProperties.XIMPreeditNothing | XIMProperties.XIMStatusNothing,
@@ -738,7 +754,7 @@ namespace System.Windows.Forms {
 		internal extern static int XFreeModifiermap (IntPtr modmap);
 
 
-		public readonly static int [] nonchar_key_vkey = new int []
+		private readonly static int [] nonchar_key_vkey = new int []
 		{
 			/* unused */
 			0, 0, 0, 0, 0, 0, 0, 0,					    /* FF00 */
@@ -788,7 +804,7 @@ namespace System.Windows.Forms {
 			0, 0, 0, 0, 0, 0, 0, (int) VirtualKeys.VK_DELETE			      /* FFF8 */
 		};
 
-		public static readonly int [] nonchar_key_scan = new int []
+		private static readonly int [] nonchar_key_scan = new int []
 		{
 			/* unused */
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,		     /* FF00 */
