@@ -1,5 +1,5 @@
 //
-// MessageTest.cs
+// WarningTest.cs
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
@@ -35,12 +35,12 @@ using NUnit.Framework;
 
 namespace MonoTests.Microsoft.Build.Tasks {
 
-	internal class TestMessageLogger : ILogger {
-		IList messages;
+	internal class TestWarningLogger : ILogger {
+		IList warnings;
 		
-		public TestMessageLogger ()
+		public TestWarningLogger ()
 		{
-			messages = new ArrayList ();
+			warnings = new ArrayList ();
 		}
 	
 		public LoggerVerbosity Verbosity { get { return LoggerVerbosity.Normal; } set { } }
@@ -49,56 +49,61 @@ namespace MonoTests.Microsoft.Build.Tasks {
 		
 		public void Initialize (IEventSource eventSource)
 		{
-			eventSource.MessageRaised += new BuildMessageEventHandler (MessageHandler);
+			eventSource.WarningRaised += new BuildWarningEventHandler (WarningHandler);
 		}
 		
 		public void Shutdown ()
 		{
 		}
 		
-		private void MessageHandler (object sender, BuildMessageEventArgs args)
+		private void WarningHandler (object sender, BuildWarningEventArgs args)
 		{
-			if (args.Message.StartsWith ("Using") == false)
-				messages.Add (args);
+			if (args.Message.StartsWith ("The MSBuild engine") == false)
+				warnings.Add (args);
 		}
 		
-		public int CheckHead (string text, MessageImportance importance)
+		public int CheckHead (string text, string helpKeyword, string code)
 		{
-			BuildMessageEventArgs actual;
+			BuildWarningEventArgs actual;
 		
-			if (messages.Count > 0) {
-				actual = (BuildMessageEventArgs) messages [0];
-				messages.RemoveAt (0);
+			if (warnings.Count > 0) {
+				actual = (BuildWarningEventArgs) warnings [0];
+				warnings.RemoveAt (0);
 			} else
 				return 1;
 			
-			if (text == actual.Message && importance == actual.Importance)
+			if (text == actual.Message && helpKeyword == actual.HelpKeyword && code == actual.Code)
 				return 0;
-			else
+			else {
+				Console.WriteLine (actual.Message);
 				return 2;
+			}
 		}
 	}
 
 	[TestFixture]
-	public class MessageTest {
+	public class WarningTest {
 	
 		Engine engine;
 		Project project;
-		TestMessageLogger testLogger;
+		TestWarningLogger testLogger;
 		
 		[Test]
 		public void TestAssignment ()
 		{
-			string importance = "importance";
+			string code = "code";
+			string helpKeyword = "helpKeyword";
 			string text = "text";
 			
-			Message message = new Message ();
+			Warning warning = new Warning ();
 			
-			message.Importance = importance;
-			message.Text = text;
-			
-			Assert.AreEqual (importance, message.Importance, "A1");
-			Assert.AreEqual (text, message.Text, "A2");
+			warning.Code = code;
+			warning.HelpKeyword = helpKeyword;
+			warning.Text = text;
+
+			Assert.AreEqual (code, warning.Code, "#1");
+			Assert.AreEqual (helpKeyword, warning.HelpKeyword, "#2");
+			Assert.AreEqual (text, warning.Text, "#3");
 		}
 		
 		[Test]
@@ -107,35 +112,20 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			string documentString = @"
                                 <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<Target Name='1'>
-						<Message Text='Text' Importance='Low'/>
-						<Message Text='Text' Importance='Normal'/>
-						<Message Text='Text' Importance='High'/>
-						<Message Text='Text' Importance='low'/>
-						<Message Text='Text' Importance='normal'/>
-						<Message Text='Text' Importance='high'/>
-						<Message Text='Text' />
-						<Message Text='Text' Importance='weird_importance'/>
+						<Warning Text='Text' HelpKeyword='HelpKeyword' Code='Code' />
 					</Target>
 				</Project>
 			";
 			
 			engine = new Engine (Consts.BinPath);
-			testLogger = new TestMessageLogger ();
+			testLogger = new TestWarningLogger ();
 			engine.RegisterLogger (testLogger);
 			
 			project = engine.CreateNewProject ();
 			project.LoadXml (documentString);
 			project.Build ("1");
 			
-			Assert.AreEqual (0, testLogger.CheckHead ("Text", MessageImportance.Low), "A1");
-			Assert.AreEqual (0, testLogger.CheckHead ("Text", MessageImportance.Normal), "A2");
-			Assert.AreEqual (0, testLogger.CheckHead ("Text", MessageImportance.High), "A3");
-			Assert.AreEqual (0, testLogger.CheckHead ("Text", MessageImportance.Low), "A4");
-			Assert.AreEqual (0, testLogger.CheckHead ("Text", MessageImportance.Normal), "A5");
-			Assert.AreEqual (0, testLogger.CheckHead ("Text", MessageImportance.High), "A6");
-			Assert.AreEqual (0, testLogger.CheckHead ("Text", MessageImportance.Normal), "A7");
-			Assert.AreEqual (1, testLogger.CheckHead ("Text", MessageImportance.Normal), "A8");
-			
+			Assert.AreEqual (0, testLogger.CheckHead ("Text", "HelpKeyword", "Code"), "A1");
 		}
 	}
 }	

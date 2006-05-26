@@ -1,3 +1,4 @@
 Microsoft.Build.Tasks/Consts.cs
 Microsoft.Build.Tasks/ErrorTest.cs
 Microsoft.Build.Tasks/MessageTest.cs
+Microsoft.Build.Tasks/WarningTest.cs

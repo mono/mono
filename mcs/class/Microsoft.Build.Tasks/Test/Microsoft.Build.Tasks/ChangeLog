@@ -1,3 +1,9 @@
+2006-05-26  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* MessageTest.cs: Corrected.
+	* WarningTest.cs: Added.
+	* ErrorTest.cs: Added new test.
+
 2006-05-22  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* Consts.cs: Moved BinPath here.

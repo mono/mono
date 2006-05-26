@@ -1,15 +1,15 @@
-<Project name="Microsoft.Build.Tasks" fileversion="2.0" language="C#" ctype="DotNetProject">
+<Project name="Microsoft.Build.Tasks" fileversion="2.0" language="C#" clr-version="Net_2_0" ctype="DotNetProject">
   <Configurations active="Debug">
     <Configuration name="Debug" ctype="DotNetProjectConfiguration">
       <Output directory="./bin/Debug" assembly="Microsoft.Build.Tasks" />
       <Build debugmode="True" target="Library" />
-      <Execution runwithwarnings="True" consolepause="True" runtime="MsNet" />
+      <Execution runwithwarnings="True" consolepause="True" runtime="MsNet" clr-version="Net_2_0" />
       <CodeGeneration compiler="Csc" warninglevel="4" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" generatexmldocumentation="False" ctype="CSharpCompilerParameters" />
     </Configuration>
     <Configuration name="Release" ctype="DotNetProjectConfiguration">
       <Output directory="./bin/Release" assembly="Microsoft.Build.Tasks" />
       <Build debugmode="False" target="Library" />
-      <Execution runwithwarnings="True" consolepause="True" runtime="MsNet" />
+      <Execution runwithwarnings="True" consolepause="True" runtime="MsNet" clr-version="Net_2_0" />
       <CodeGeneration compiler="Csc" warninglevel="4" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" generatexmldocumentation="False" ctype="CSharpCompilerParameters" />
     </Configuration>
   </Configurations>
@@ -35,7 +35,6 @@
     <File name="./Microsoft.Build.Tasks/MakeDir.cs" subtype="Code" buildaction="Compile" />
     <File name="./Microsoft.Build.Tasks/ManagedCompiler.cs" subtype="Code" buildaction="Compile" />
     <File name="./Microsoft.Build.Tasks/Message.cs" subtype="Code" buildaction="Compile" />
-    <File name="./Microsoft.Build.Tasks/MonoTODOAttribute.cs" subtype="Code" buildaction="Compile" />
     <File name="./Microsoft.Build.Tasks/MSBuild.cs" subtype="Code" buildaction="Compile" />
     <File name="./Microsoft.Build.Tasks/ReadLinesFromFile.cs" subtype="Code" buildaction="Compile" />
     <File name="./Microsoft.Build.Tasks/RegisterAssembly.cs" subtype="Code" buildaction="Compile" />
@@ -53,11 +52,11 @@
     <File name="./Mono.XBuild.Tasks.GenerateResourceInternal/PoResourceWriter.cs" subtype="Code" buildaction="Compile" />
     <File name="./Mono.XBuild.Tasks.GenerateResourceInternal/TxtResourceReader.cs" subtype="Code" buildaction="Compile" />
     <File name="./Mono.XBuild.Tasks.GenerateResourceInternal/TxtResourceWriter.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Assembly/AssemblyInfo.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Microsoft.Build.Tasks/CombinePath.cs" subtype="Code" buildaction="Compile" />
   </Contents>
   <References>
-    <ProjectReference type="Project" localcopy="True" refto="Microsoft.Build.Framework" />
-    <ProjectReference type="Project" localcopy="True" refto="Microsoft.Build.Utilities" />
-    <ProjectReference type="Gac" localcopy="True" refto="System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-    <ProjectReference type="Gac" localcopy="True" refto="System.Windows.Forms, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+    <ProjectReference type="Gac" localcopy="True" refto="System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+    <ProjectReference type="Gac" localcopy="True" refto="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   </References>
 </Project>

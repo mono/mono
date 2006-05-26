@@ -1,10 +1,10 @@
 <Combine name="Microsoft.Build.Tasks" fileversion="2.0">
   <Configurations active="Debug">
     <Configuration name="Debug" ctype="CombineConfiguration">
-      <Entry configuration="Debug" build="True" name="Microsoft.Build.Tasks" />
+      <Entry build="True" name="Microsoft.Build.Tasks" configuration="Debug" />
     </Configuration>
     <Configuration name="Release" ctype="CombineConfiguration">
-      <Entry configuration="Debug" build="True" name="Microsoft.Build.Tasks" />
+      <Entry build="True" name="Microsoft.Build.Tasks" configuration="Debug" />
     </Configuration>
   </Configurations>
   <StartMode startupentry="Microsoft.Build.Tasks" single="True">
