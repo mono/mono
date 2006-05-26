@@ -40,6 +40,7 @@ namespace Microsoft.Build.Tasks {
 		{
 		}
 
+		[MonoTODO]
 		protected internal override void AddResponseFileCommands (CommandLineBuilderExtension commandLine)
 		{
 			base.AddResponseFileCommands (commandLine);
@@ -61,9 +62,10 @@ namespace Microsoft.Build.Tasks {
 			//warningNotAsErrors
 		}
 
+		[MonoTODO]
 		protected override bool CallHostObjectToExecute ()
 		{
-			return true;
+			throw new NotImplementedException ();
 		}
 
 		protected override string GenerateFullPathToTool ()
@@ -71,6 +73,7 @@ namespace Microsoft.Build.Tasks {
 			return Path.Combine (ToolPath, ToolName);
 		}
 
+		[MonoTODO]
 		protected override HostObjectInitializationStatus InitializeHostObject ()
 		{
 			return HostObjectInitializationStatus.NoActionReturnSuccess;

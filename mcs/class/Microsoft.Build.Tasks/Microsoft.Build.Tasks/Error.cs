@@ -40,7 +40,7 @@ namespace Microsoft.Build.Tasks {
 
 		public override bool Execute ()
 		{
-			this.Log.LogError (null, null, null, BuildEngine.ProjectFileOfTaskNode,
+			this.Log.LogError (null, code, helpKeyword, BuildEngine.ProjectFileOfTaskNode,
 				BuildEngine.LineNumberOfTaskNode, BuildEngine.ColumnNumberOfTaskNode,
 				BuildEngine.LineNumberOfTaskNode, BuildEngine.ColumnNumberOfTaskNode,
 				text, null);

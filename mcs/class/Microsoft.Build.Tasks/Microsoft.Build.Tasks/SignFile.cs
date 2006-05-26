@@ -45,7 +45,7 @@ namespace Microsoft.Build.Tasks {
 		[MonoTODO]
 		public override bool Execute ()
 		{
-			return true;
+			throw new NotImplementedException ();
 		}
 
 		[Required]

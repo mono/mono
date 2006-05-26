@@ -44,21 +44,22 @@ namespace Microsoft.Build.Tasks {
 		{
 			MessageImportance	messageImportance;
 			
+
+			
+			
 			if (importance == null)
 				messageImportance = MessageImportance.Normal;
-			else if (importance == "Low")
+			else if (importance.ToLower () == "low")
 				messageImportance = MessageImportance.Low;
-			else if (importance == "Normal")
+			else if (importance.ToLower () == "normal")
 				messageImportance = MessageImportance.Normal;
-			else if (importance == "High")
+			else if (importance.ToLower () == "high")
 				messageImportance = MessageImportance.High;
 			else {
-				Log.LogError (null, null, null, BuildEngine.ProjectFileOfTaskNode,
-					BuildEngine.LineNumberOfTaskNode, BuildEngine.ColumnNumberOfTaskNode,
-					BuildEngine.LineNumberOfTaskNode, BuildEngine.ColumnNumberOfTaskNode,
-					"Invalid Importance attribute.", null);
 				return false;
 			}
+
+			
 			
 			Log.LogMessage (messageImportance, text, null);
 

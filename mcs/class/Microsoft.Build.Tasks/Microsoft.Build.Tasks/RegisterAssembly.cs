@@ -46,7 +46,7 @@ namespace Microsoft.Build.Tasks {
 
 		public override bool Execute ()
 		{
-			return true;
+			throw new NotImplementedException ();
 		}
 
 		public void ReportEvent (ExporterEventKind kind, int code,

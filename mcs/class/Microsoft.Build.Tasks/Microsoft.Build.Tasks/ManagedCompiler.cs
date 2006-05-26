@@ -28,6 +28,7 @@
 #if NET_2_0
 
 using System;
+using System.Collections;
 using System.IO;
 using System.Text;
 using Microsoft.Build.Framework;
@@ -39,11 +40,13 @@ namespace Microsoft.Build.Tasks {
 		{
 		}
 
+		[MonoTODO]
 		protected internal override void AddCommandLineCommands (
 						 CommandLineBuilderExtension commandLine)
 		{
 		}
 
+		[MonoTODO]
 		protected internal override void AddResponseFileCommands (
 						 CommandLineBuilderExtension commandLine)
 		{
@@ -98,6 +101,7 @@ namespace Microsoft.Build.Tasks {
 			commandLine.AppendSwitchIfNotNull ("/win32res:", Win32Resource);
 		}
 
+		[MonoTODO]
 		protected bool CheckAllReferencesExistOnDisk ()
 		{
 			foreach (ITaskItem item in (ITaskItem[])Bag ["References"]) 
@@ -106,11 +110,13 @@ namespace Microsoft.Build.Tasks {
 			return true;
 		}
 
+		[MonoTODO]
 		protected void CheckHostObjectSupport (string parameterName,
 						       bool resultFromHostObjectSetOperation)
 		{
 		}
 		
+		[MonoTODO]
 		protected override bool HandleTaskExecutionErrors ()
 		{
 			return true;
@@ -120,9 +126,19 @@ namespace Microsoft.Build.Tasks {
 		protected bool ListHasNoDuplicateItems (ITaskItem[] itemList,
 							string parameterName)
 		{
+			Hashtable items = new Hashtable ();
+			
+			foreach (ITaskItem item in itemList) {
+				if (items.Contains (item.ItemSpec))
+					items.Add (item.ItemSpec, null);
+				else
+					return false;
+			}
+			
 			return true;
 		}
 
+		[MonoTODO]
 		protected override bool ValidateParameters ()
 		{
 			return true;

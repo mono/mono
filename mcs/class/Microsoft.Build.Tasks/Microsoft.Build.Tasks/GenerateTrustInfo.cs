@@ -27,6 +27,7 @@
 
 #if NET_2_0
 
+using System;
 using Microsoft.Build.Framework;
 
 namespace Microsoft.Build.Tasks {
@@ -43,7 +44,7 @@ namespace Microsoft.Build.Tasks {
 
 		public override bool Execute ()
 		{
-			return true;
+			throw new NotImplementedException ();
 		}
 
 		public ITaskItem BaseManifest {

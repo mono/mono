@@ -85,9 +85,10 @@ namespace Microsoft.Build.Tasks {
 						Log.LogErrorFromException (new Exception ("Filename of output can not be empty."));
 						return false;
 					}
-					if (CompileResourceFile (sourceFile, outputFile) == false)
+					if (CompileResourceFile (sourceFile, outputFile) == false) {
 						Log.LogErrorFromException (new Exception ("Error during compiling resource file."));
 						return false;
+					}
 					temporaryFilesWritten.Add (outputEnum.Current);
 				}
 			}

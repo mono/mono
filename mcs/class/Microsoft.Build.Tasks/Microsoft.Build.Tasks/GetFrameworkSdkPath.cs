@@ -28,6 +28,7 @@
 #if NET_2_0
 
 using Microsoft.Build.Framework;
+using Mono.XBuild.Utilities;
 
 namespace Microsoft.Build.Tasks {
 	public class GetFrameworkSdkPath : TaskExtension {
@@ -40,7 +41,7 @@ namespace Microsoft.Build.Tasks {
 
 		public override bool Execute ()
 		{
-			path = "/usr/local/bin";
+			path = MonoLocationHelper.GetBinDir ();
 			return true;
 		}
 
