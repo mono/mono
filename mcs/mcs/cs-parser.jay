@@ -1179,6 +1179,11 @@ formal_parameter_list
 		Report.Error (257, (Location) $1, "An __arglist parameter must be the last parameter in a formal parameter list");
 		$$ = null;
 	  }
+	| fixed_parameters COMMA ARGLIST COMMA error 
+	  {
+		Report.Error (257, (Location) $3, "An __arglist parameter must be the last parameter in a formal parameter list");
+		$$ = null;
+	  }
 	| parameter_array 
 	  {
 		$$ = new Parameters (new Parameter[] { (Parameter) $1 } );
