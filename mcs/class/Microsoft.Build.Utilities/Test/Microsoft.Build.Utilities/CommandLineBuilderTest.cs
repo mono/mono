@@ -32,6 +32,21 @@ using NUnit.Framework;
 
 namespace MonoTests.Microsoft.Build.Utilities {
 
+	internal class CLBTester : CommandLineBuilder {
+
+		public new bool IsQuotingRequired (string parameter)
+		{
+			return base.IsQuotingRequired (parameter);
+		}
+
+		public new void VerifyThrowNoEmbeddedDoubleQuotes (string switchName,
+						string parameter)
+		{
+			base.VerifyThrowNoEmbeddedDoubleQuotes (switchName, parameter);
+		}
+	}
+
+
 	[TestFixture]
 	public class CommandLineBuilderTest {
 
@@ -383,6 +398,49 @@ namespace MonoTests.Microsoft.Build.Utilities {
 			clb.AppendSwitchUnquotedIfNotNull ("/switch:", items, ";");
 			
 			Assert.AreEqual ("/switch:a;b", clb.ToString (), "A2");
+		}
+
+		[Test]
+		public void TestIsQuotingRequired ()
+		{
+			CLBTester clbt = new CLBTester ();
+
+			Assert.AreEqual (false, clbt.IsQuotingRequired(""), "A1");
+			Assert.AreEqual (true, clbt.IsQuotingRequired(" "), "A2");
+			Assert.AreEqual (false, clbt.IsQuotingRequired("a"), "A3");
+			Assert.AreEqual (true, clbt.IsQuotingRequired("a a"), "A4");
+			Assert.AreEqual (true, clbt.IsQuotingRequired("\'\'"), "A5");
+			Assert.AreEqual (true, clbt.IsQuotingRequired("\' \'"), "A6");
+			Assert.AreEqual (true, clbt.IsQuotingRequired("\"\""), "A7");
+			Assert.AreEqual (true, clbt.IsQuotingRequired("\" \""), "A8");
+			Assert.AreEqual (true, clbt.IsQuotingRequired("\n\n"), "A9");
+			Assert.AreEqual (true, clbt.IsQuotingRequired("\n \n"), "A10");
+			Assert.AreEqual (true, clbt.IsQuotingRequired("\t\t"), "A11");
+			Assert.AreEqual (true, clbt.IsQuotingRequired("\t \t"), "A12");
+		}
+
+		[Test]
+		public void TestVerifyThrowNoEmbeddedDoubleQuotes1 ()
+		{
+			CLBTester clbt = new CLBTester ();
+
+			clbt.VerifyThrowNoEmbeddedDoubleQuotes (null, null);
+			clbt.VerifyThrowNoEmbeddedDoubleQuotes ("", null);
+			clbt.VerifyThrowNoEmbeddedDoubleQuotes (null, "");
+			clbt.VerifyThrowNoEmbeddedDoubleQuotes (" ", "");
+			clbt.VerifyThrowNoEmbeddedDoubleQuotes ("", " ");
+			clbt.VerifyThrowNoEmbeddedDoubleQuotes ("\"\"", "");
+			clbt.VerifyThrowNoEmbeddedDoubleQuotes ("\'\'", "\'\'");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException),
+			"Illegal quote passed to the command line switch named \"a\". The value was [\"\"].")]
+		public void TestVerifyThrowNoEmbeddedDoubleQuotes2 ()
+		{
+			CLBTester clbt = new CLBTester ();
+
+			clbt.VerifyThrowNoEmbeddedDoubleQuotes ("a", "\"\"");
 		}
 	}
 }

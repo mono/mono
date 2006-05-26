@@ -1,3 +1,8 @@
+2006-05-26  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* CommandLineBuilderTest.cs: Added tests for
+	VerifyThrowNoEmbeddedQuotes () and IsQuotingRequired ().
+
 2006-04-24  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* TaskLoggingHelperTest.cs: Added new tests.
