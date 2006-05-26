@@ -487,9 +487,6 @@ namespace System.Windows.Forms {
 					break;
 				}
 				break;
-
-			default:
-				throw new ArgumentException ("Invalid msg_type " + msg_type);
 			}
 		}
 
