@@ -863,6 +863,7 @@ namespace System.Web {
 			IHttpHandler handler = null;
 			try {
 				handler = GetHandler (context);
+				context.Handler = handler;
 			} catch (FileNotFoundException fnf){
 				if (context.Request.IsLocal)
 					ProcessError (new HttpException (404, String.Format ("File not found {0}", fnf.FileName), fnf));
@@ -1064,7 +1065,6 @@ namespace System.Web {
 			} else {
 				handler = factory.GetHandler (context, verb, url, request.PhysicalPath);
 			}
-			context.Handler = handler;
 
 			return handler;
 		}

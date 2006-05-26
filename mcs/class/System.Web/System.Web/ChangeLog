@@ -1,3 +1,9 @@
+2006-05-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplication.cs: context.Handler does not change for
+	HttpServerUtility.Execute, so moved setting it into the pipeline instead
+	of GetHandler.
+
 2006-05-17  Kazuki Oikawa  <kazuki@panicode.com>
 
 	* HttpUtility.cs: implemented ParseQueryString
