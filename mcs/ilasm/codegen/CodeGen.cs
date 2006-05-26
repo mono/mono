@@ -21,12 +21,13 @@ using System.Security;
 using SSPermissionSet = System.Security.PermissionSet;
 using MIPermissionSet = Mono.ILASM.PermissionSet;
 
+using MIAssembly = Mono.ILASM.Assembly;
+
 namespace Mono.ILASM {
 
         public class CodeGen {
 
                 private PEFile pefile;
-                private string assembly_name;
                 private ExternAssembly current_assemblyref;
                 private ExternModule current_moduleref;
                 private string current_namespace;
@@ -39,15 +40,7 @@ namespace Mono.ILASM {
                 private IDeclSecurityTarget current_declsectarget;
                 private PEAPI.NativeType current_field_native_type;
 
-                private byte [] assembly_public_key;
-                private int assembly_major_version;
-                private int assembly_minor_version;
-                private int assembly_build_version;
-                private int assembly_revision_version;
-                private string assembly_locale;
-                private int assembly_hash_algorithm;
-                private ArrayList assembly_custom_attributes;
-                private DeclSecurity assembly_declsec;
+                private MIAssembly this_assembly;
                         
                 private TypeManager type_manager;
                 private ExternTable extern_table;
@@ -247,10 +240,11 @@ namespace Mono.ILASM {
 
                 public void SetAssemblyName (string name)
                 {
-                        if (assembly_name != null && assembly_name != name)
+                        if (this_assembly != null && this_assembly.Name != name)
                                 Report.Error ("Multiple assembly declarations");
-                        assembly_name = name;
-                        if (assembly_name != "mscorlib")
+
+                        this_assembly = new Assembly (name);
+                        if (name != "mscorlib")
                                 ExternTable.AddCorlib ();
                 }
 
@@ -265,9 +259,13 @@ namespace Mono.ILASM {
                         this.file_ref = file_ref;
                 }
 
+                public MIAssembly ThisAssembly {
+                        get { return this_assembly; }
+                }
+
                 public bool IsThisAssembly (string name)
                 {
-                        return (name == assembly_name);
+                        return (this_assembly != null && name == this_assembly.Name);
                 }
 
                 public Module ThisModule {
@@ -429,44 +427,6 @@ namespace Mono.ILASM {
                         defcont_list.Add (typedef);
                 }
 
-                public void SetAssemblyPublicKey (byte [] public_key)
-                {
-                        assembly_public_key = public_key;
-                }
-
-                public void SetAssemblyVersion (int major, int minor, int build, int revision)
-                {
-                        assembly_major_version = major;
-                        assembly_minor_version = minor;
-                        assembly_build_version = build;
-                        assembly_revision_version = revision;
-                }
-
-                public void SetAssemblyLocale (string locale)
-                {
-                        assembly_locale = locale;
-                }
-
-                public void SetAssemblyHashAlgorithm (int algorithm)
-                {
-                        assembly_hash_algorithm = algorithm;
-                }
-
-                public void AddAssemblyCustomAttribute (CustomAttr attribute)
-                {
-                        if (assembly_custom_attributes == null)
-                                assembly_custom_attributes = new ArrayList ();
-                        assembly_custom_attributes.Add (attribute);
-                }
-
-                public void AddAssemblyPermission (PEAPI.SecurityAction sec_action, object perm)
-                {
-                        if (assembly_declsec == null)
-                                assembly_declsec = new DeclSecurity ();
-
-                        AddPermission (sec_action, perm, assembly_declsec);
-                }
-
                 public void AddPermission (PEAPI.SecurityAction sec_action, object perm)
                 {
                         if (CurrentDeclSecurityTarget == null)
@@ -505,7 +465,7 @@ namespace Mono.ILASM {
                                         this_module = new Module (Path.GetFileName (output_file));
 
                                 out_stream = new FileStream (output_file, FileMode.Create, FileAccess.Write);
-                                pefile = new PEFile (assembly_name, ThisModule.Name, is_dll, assembly_name != null, null, out_stream);
+                                pefile = new PEFile (ThisAssembly != null ? ThisAssembly.Name : null, ThisModule.Name, is_dll, ThisAssembly != null, null, out_stream);
                                 PEAPI.Assembly asmb = pefile.GetThisAssembly ();
 
                                 ThisModule.PeapiModule = pefile.GetThisModule ();
@@ -533,15 +493,9 @@ namespace Mono.ILASM {
                                         typedef.DefineContents (this);
                                 }
 
-                                if (assembly_custom_attributes != null) {
-                                        foreach (CustomAttr cattr in assembly_custom_attributes)
-                                                cattr.AddTo (this, asmb);
-                                }
-
+                                if (ThisAssembly != null)
+                                        ThisAssembly.Resolve (this, pefile.GetThisAssembly ());
                                 ThisModule.Resolve (this, pefile.GetThisModule ());
-
-                                if (assembly_declsec != null)
-                                        assembly_declsec.AddTo (this, asmb);        
 
                                 if (sub_system != -1)
                                         pefile.SetSubSystem ((PEAPI.SubSystem) sub_system);
@@ -549,12 +503,6 @@ namespace Mono.ILASM {
                                         pefile.SetCorFlags (cor_flags);
                                 if (stack_reserve != -1)
                                         pefile.SetStackReserve (stack_reserve);
-
-                                if (asmb != null)
-                                        asmb.AddAssemblyInfo(assembly_major_version,
-                                                        assembly_minor_version, assembly_build_version,
-                                                        assembly_revision_version, assembly_public_key,
-                                                        (uint) assembly_hash_algorithm, assembly_locale);
 
                                 pefile.WritePEFile ();
 

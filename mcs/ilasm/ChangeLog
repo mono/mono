@@ -1,3 +1,13 @@
+2006-05-26  Ankit Jain  <jankit@novell.com>
+
+	* ilasm.exe.sources: Add Assembly.cs
+	* Driver.cs: Update to use the new Assembly class.
+
+2006-05-26  Ankit Jain  <jankit@novell.com>
+
+	* ilasm.exe.sources: Add PermissionMember.cs, PermissionSet.cs &
+	Permission.cs
+
 2006-05-11  Ankit Jain  <jankit@novell.com>
 
 	* Report.cs (Report.Error): Add 2 new overloads.

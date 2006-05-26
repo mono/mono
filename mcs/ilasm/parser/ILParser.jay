@@ -67,7 +67,7 @@ namespace Mono.ILASM {
                         return true;
                 }
 
-		public void AddSecDecl (object perm)
+		public void AddSecDecl (object perm, bool for_assembly)
 		{
 			PermPair pp = perm as PermPair;
 
@@ -77,7 +77,7 @@ namespace Mono.ILASM {
 				return;
 			}
 
-			if (!CheckSecurityActionValidity ((System.Security.Permissions.SecurityAction) pp.sec_action, false))
+			if (!CheckSecurityActionValidity ((System.Security.Permissions.SecurityAction) pp.sec_action, for_assembly))
 				Report.Error (String.Format ("Invalid security action : {0}", pp.sec_action));
 
 			codegen.AddPermission (pp.sec_action, pp.perm);
@@ -869,7 +869,7 @@ class_decl		: method_all
 			| data_decl
 			| sec_decl
 			  {
-				AddSecDecl ($1);
+				AddSecDecl ($1, false);
 			  }
 			| extsource_spec
 			| customattr_decl
@@ -2148,7 +2148,7 @@ method_decl		: D_EMITBYTE int32
 			| instr
 			| sec_decl
 			  {
-				AddSecDecl ($1);
+				AddSecDecl ($1, false);
 			  }
 			| extsource_spec
 			| language_decl
@@ -3038,12 +3038,15 @@ file_entry		: /* EMPTY */
 assembly_all		: assembly_head OPEN_BRACE assembly_decls CLOSE_BRACE
 			  {
 				codegen.CurrentCustomAttrTarget = null;
+				codegen.CurrentDeclSecurityTarget = null;
 			  }
 			;
 
 assembly_head		: D_ASSEMBLY asm_attr slashed_name
                           {
                                 codegen.SetAssemblyName ((string) $3);
+                                codegen.CurrentCustomAttrTarget = codegen.ThisAssembly;
+				codegen.CurrentDeclSecurityTarget = codegen.ThisAssembly;
                           }
 			;
 
@@ -3059,38 +3062,28 @@ assembly_decls		: /* EMPTY */
 
 assembly_decl		: D_PUBLICKEY ASSIGN bytes_list
 			  {
-				codegen.SetAssemblyPublicKey ((byte []) $3);
+				codegen.ThisAssembly.SetPublicKey ((byte []) $3);
 			  }
 			| D_VER int32 COLON int32 COLON int32 COLON int32
 			  {
-				codegen.SetAssemblyVersion ((int) $2, (int) $4, (int) $6, (int) $8);
+				codegen.ThisAssembly.SetVersion ((int) $2, (int) $4, (int) $6, (int) $8);
 			  }
 			| D_LOCALE comp_qstring
 			  {
-				codegen.SetAssemblyLocale ((string) $2);
+				codegen.ThisAssembly.SetLocale ((string) $2);
 			  }
 			| D_LOCALE ASSIGN bytes_list
 			| D_HASH K_ALGORITHM int32
 			  {
-				codegen.SetAssemblyHashAlgorithm ((int) $3);
+				codegen.ThisAssembly.SetHashAlgorithm ((int) $3);
 			  }
 			| customattr_decl
 			  {
-				codegen.AddAssemblyCustomAttribute ((CustomAttr) $1);
+				codegen.ThisAssembly.AddCustomAttribute ((CustomAttr) $1);
 			  }
 			| sec_decl
 			  {
-				PermPair pp = $1 as PermPair;
-				if (pp == null) {
-					MIPermissionSet ps_20 = (MIPermissionSet) $1;
-					codegen.AddAssemblyPermission (ps_20.SecurityAction, ps_20);
-					break;
-				}
-
-				if (!CheckSecurityActionValidity ((System.Security.Permissions.SecurityAction) (short) pp.sec_action, true))
-					Report.Error (String.Format ("Invalid security action : {0}", pp.sec_action));
-
-				codegen.AddAssemblyPermission (pp.sec_action, pp.perm);
+				AddSecDecl ($1, true);
 			  }
 			;
 
