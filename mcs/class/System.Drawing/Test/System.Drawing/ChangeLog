@@ -1,3 +1,8 @@
+2006-05-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestColor.cs: Added test cases for serialization. Currently we can't
+	deserialize Color coming from MS serialization.
+
 2006-05-25  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* TestRegion.cs: Added a new fixture that executes with UnmanagedCode
