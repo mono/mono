@@ -73,27 +73,29 @@ namespace System.Drawing
 			string strFormat = val as string;
 			if (strFormat == null)
 				return base.ConvertFrom (context, culture, val);
-			
-			if (strFormat.Equals (ImageFormat.Bmp.ToString ()))
+
+			switch (strFormat) {
+			case "Bmp":
 				return ImageFormat.Bmp;
-			else if (strFormat.Equals (ImageFormat.Emf.ToString ()))
+			case "Emf":
 				return ImageFormat.Emf;
-			else if (strFormat.Equals (ImageFormat.Exif.ToString ()))
+			case "Exif":
 				return ImageFormat.Exif;
-			else if (strFormat.Equals (ImageFormat.Gif.ToString ()))
+			case "Gif":
 				return ImageFormat.Gif;
-			else if (strFormat.Equals (ImageFormat.Icon.ToString ()))
+			case "Icon":
 				return ImageFormat.Icon;
-			else if (strFormat.Equals (ImageFormat.Jpeg.ToString ()))
+			case "Jpeg":
 				return ImageFormat.Jpeg;
-			else if (strFormat.Equals (ImageFormat.MemoryBmp.ToString ()))
+			case "MemoryBmp":
 				return ImageFormat.MemoryBmp;
-			else if (strFormat.Equals (ImageFormat.Png.ToString ()))
+			case "Png":
 				return ImageFormat.Png;
-			else if (strFormat.Equals (ImageFormat.Tiff.ToString ()))
+			case "Tiff":
 				return ImageFormat.Tiff;
-			else if (strFormat.Equals (ImageFormat.Wmf.ToString ()))
+			case "Wmf":
 				return ImageFormat.Wmf;
+			}
 				
 			return base.ConvertFrom (context, culture, val);
 		}

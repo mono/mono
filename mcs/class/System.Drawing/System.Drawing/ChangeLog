@@ -1,3 +1,9 @@
+2006-05-26  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* ImageFormatConverter.cs: Fixing unit tests for ImageFormat 
+	introduced a regression in the converter (not catched by other unit
+	tests).
+
 2006-05-25  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* gdipFunctions.cs: Added wrapper methods for GdipGetRegionHRgn and 
