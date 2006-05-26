@@ -55,5 +55,37 @@ namespace MonoTests.System.Data.SqlClient
 			param.Value = DBNull.Value;
 			Assert.AreEqual (0, param.Scale, "#4");
 		}
+
+		[Test]
+		public void ParameterType ()
+		{
+			// If Type is not set, then type is inferred from the value
+			// assigned. The Type should inferred everytime Value is assigned
+			// If value is null/DBNull, then the current Type should retained.
+			SqlParameter param = new SqlParameter ();
+			Assert.AreEqual (SqlDbType.NVarChar, param.SqlDbType, "#1");
+			param.Value = DBNull.Value;
+			Assert.AreEqual (SqlDbType.NVarChar, param.SqlDbType, "#2");
+			param.Value = 1;
+			Assert.AreEqual (SqlDbType.Int, param.SqlDbType, "#3");
+			param.Value = DBNull.Value;
+			Assert.AreEqual (SqlDbType.Int, param.SqlDbType, "#4");
+			param.Value = null;
+			Assert.AreEqual (SqlDbType.Int, param.SqlDbType, "#4");
+
+			//If Type is set, then the Type should not inferred from the value 
+			//assigned.
+			SqlParameter param1 = new SqlParameter ();
+			param1.DbType = DbType.String; 
+			Assert.AreEqual (SqlDbType.NVarChar, param1.SqlDbType, "#5");
+			param1.Value = 1;
+			Assert.AreEqual (SqlDbType.NVarChar, param1.SqlDbType, "#6");
+
+			SqlParameter param2 = new SqlParameter ();
+			param2.SqlDbType = SqlDbType.NVarChar;
+			Assert.AreEqual (SqlDbType.NVarChar, param2.SqlDbType, "#7");
+			param2.Value = 1;
+			Assert.AreEqual (SqlDbType.NVarChar, param2.SqlDbType, "#8");
+		}
 	}
 }

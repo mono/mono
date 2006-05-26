@@ -192,7 +192,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-	 DbType DbType {
+	 	DbType DbType {
 			get { return dbType; }
 			set { 
 				SetDbType (value); 
@@ -427,6 +427,9 @@ namespace System.Data.SqlClient {
 		// infer type information.
 		private void InferSqlType (object value)
 		{
+			if (value == null || value == DBNull.Value)
+				return;
+
 			Type type = value.GetType ();
 
 			string exception = String.Format ("The parameter data type of {0} is invalid.", type.Name);
@@ -486,10 +489,8 @@ namespace System.Data.SqlClient {
 				SetSqlDbType (SqlDbType.Money);
 				break;
 			case "System.Object":
-			case "System.DBNull":
-				SetSqlDbType (SqlDbType.Variant); // variant can contain numeric,
-								//string,binary or data and also nul								    //values, so we can later resolve 									// it to correct type.	
-				break;	
+				SetSqlDbType (SqlDbType.Variant); 
+				break;
 			default:
 				throw new ArgumentException (exception);				
 			}

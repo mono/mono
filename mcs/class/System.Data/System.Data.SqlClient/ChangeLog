@@ -1,3 +1,9 @@
+2006-05-26  Senganal T  <tsenganal@novell.com>
+
+	* SqlParameter.cs :
+		- InferSqlType : if value is null or DBNull.Value, retain the
+		current parameter type.
+
 2006-04-18  Senganal T  <tsenganal@novell.com>
 
 	* SqlConnection.cs :

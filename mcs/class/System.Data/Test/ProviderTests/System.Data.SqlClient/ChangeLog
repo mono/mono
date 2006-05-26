@@ -1,3 +1,10 @@
+2006-05-26  Senganal T  <tsenganal@novell.com>
+
+	* SqlParameterTest.cs : Test if Parameter Type is inferred correctly
+	when Value is null or DBNull. Also, if Type is not explicitly set,
+	test if it is inferred from the value of the parameter evertime the
+	value is set.
+	
 2006-04-18  Senganal T  <tsenganal@novell.com>
 
 	* SqlConnectionTest.cs :
