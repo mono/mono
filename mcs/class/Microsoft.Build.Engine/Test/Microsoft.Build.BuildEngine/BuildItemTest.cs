@@ -45,12 +45,12 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
             item = new BuildItem (itemName, itemInclude);
 
-            Assert.AreEqual (item.FinalItemSpec, itemInclude, "A1");
-            Assert.AreEqual (item.Include, itemInclude, "A2");
-            Assert.AreEqual (item.Exclude, String.Empty, "A3");
-            Assert.AreEqual (item.Condition, String.Empty, "A4");
-            Assert.AreEqual (item.IsImported, false, "A5");
-            Assert.AreEqual (item.Name, itemName, "A6");
+            Assert.AreEqual (itemInclude, item.FinalItemSpec, "A1");
+            Assert.AreEqual (itemInclude, item.Include, "A2");
+            Assert.AreEqual (String.Empty, item.Exclude, "A3");
+            Assert.AreEqual (String.Empty, item.Condition, "A4");
+            Assert.AreEqual (false, item.IsImported, "A5");
+            Assert.AreEqual (itemName, item.Name, "A6");
         }
 
         [Test]
@@ -64,16 +64,16 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
             item = new BuildItem (itemName, taskItem);
 
-            Assert.AreEqual (item.FinalItemSpec, itemSpec, "A1");
-            Assert.AreEqual (item.Include, escapedInclude, "A2");
-            Assert.AreEqual (item.Exclude, String.Empty, "A3");
-            Assert.AreEqual (item.Condition, String.Empty, "A4");
-            Assert.AreEqual (item.IsImported, false, "A5");
-            Assert.AreEqual (item.Name, itemName, "A6");
+            Assert.AreEqual (itemSpec, item.FinalItemSpec, "A1");
+            Assert.AreEqual (escapedInclude, item.Include, "A2");
+            Assert.AreEqual (String.Empty, item.Exclude, "A3");
+            Assert.AreEqual (String.Empty, item.Condition, "A4");
+            Assert.AreEqual (false, item.IsImported, "A5");
+            Assert.AreEqual (itemName, item.Name, "A6");
         }
 
         [Test]
-        public void TestCopyCustomMetadataTo ()
+        public void TestCopyCustomMetadataTo1 ()
         {
             BuildItem source, destination;
             string itemName1 = "a";
@@ -89,8 +89,19 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
             source.CopyCustomMetadataTo (destination);
 
-            Assert.AreEqual (destination.GetMetadata (metadataName), metadataValue, "A1");
-            Assert.AreEqual (destination.GetEvaluatedMetadata (metadataName), metadataValue, "A2");
+            Assert.AreEqual (metadataValue, destination.GetMetadata (metadataName), "A1");
+            Assert.AreEqual (metadataValue, destination.GetEvaluatedMetadata (metadataName), "A2");
+        }
+        
+        // NOTE: it's weird that they don't throw ArgumentNullException
+        [Test]
+        [ExpectedException (typeof (NullReferenceException))]
+        public void TestCopyCustomMetadataTo2 ()
+        {
+        	BuildItem item = new BuildItem ("name", "include");
+        	item.SetMetadata ("name", "value");
+        	
+        	item.CopyCustomMetadataTo (null);
         }
 
         [Test]
@@ -102,11 +113,11 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
             item = new BuildItem (itemName, itemInclude);
 
-            Assert.AreEqual (item.HasMetadata (metadataName), false, "A1");
+            Assert.AreEqual (false, item.HasMetadata (metadataName), "A1");
             
             item.SetMetadata (metadataName, "value");
 
-            Assert.AreEqual (item.HasMetadata (metadataName), true, "A2");
+            Assert.AreEqual (true, item.HasMetadata (metadataName), "A2");
         }
 
         [Test]
@@ -119,11 +130,11 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
             item = new BuildItem (itemName, itemInclude);
 
-            Assert.AreEqual (item.GetMetadata (metadataName), String.Empty, "A1");
+            Assert.AreEqual (String.Empty, item.GetMetadata (metadataName), "A1");
 
             item.SetMetadata (metadataName, metadataValue);
 
-            Assert.AreEqual (item.GetMetadata (metadataName), metadataValue, "A2");
+            Assert.AreEqual (metadataValue, item.GetMetadata (metadataName), "A2");
         }
 
         [Test]
@@ -136,11 +147,11 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
             item = new BuildItem (itemName, itemInclude);
 
-            Assert.AreEqual (item.GetEvaluatedMetadata (metadataName), String.Empty, "A1");
+            Assert.AreEqual (String.Empty, item.GetEvaluatedMetadata (metadataName), "A1");
 
             item.SetMetadata (metadataName, metadataValue);
 
-            Assert.AreEqual (item.GetEvaluatedMetadata (metadataName), metadataValue, "A2");
+            Assert.AreEqual (metadataValue, item.GetEvaluatedMetadata (metadataName), "A2");
         }
 
         [Test]
@@ -155,11 +166,11 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
             item.SetMetadata (metadataName, metadataValue);
 
-            Assert.AreEqual (item.HasMetadata (metadataName), true, "A1");
+            Assert.AreEqual (true, item.HasMetadata (metadataName), "A1");
 
             item.RemoveMetadata (metadataName);
 
-            Assert.AreEqual (item.HasMetadata (metadataName), false, "A2");
+            Assert.AreEqual (false, item.HasMetadata (metadataName), "A2");
         }
     }
 }

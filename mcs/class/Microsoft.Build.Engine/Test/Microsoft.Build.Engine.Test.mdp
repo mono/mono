@@ -22,6 +22,7 @@
     <File name="./Microsoft.Build.BuildEngine/EngineTest.cs" subtype="Code" buildaction="Compile" />
     <File name="./Microsoft.Build.BuildEngine/ProjectTest.cs" subtype="Code" buildaction="Compile" />
     <File name="./Microsoft.Build.BuildEngine/BuildItemTest.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Microsoft.Build.BuildEngine/UtilitiesTest.cs" subtype="Code" buildaction="Compile" />
   </Contents>
   <References>
     <ProjectReference type="Gac" localcopy="True" refto="nunit.framework, Version=2.2.0.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77" />

@@ -18,4 +18,8 @@ LIB_MCS_FLAGS = \
 	/r:Microsoft.Build.Framework.dll	\
 	/r:Microsoft.Build.Utilities.dll
 
+TEST_MCS_FLAGS = \
+	/r:Microsoft.Build.Framework.dll	\
+	/r:Microsoft.Build.Utilities.dll
+
 include ../../build/library.make
