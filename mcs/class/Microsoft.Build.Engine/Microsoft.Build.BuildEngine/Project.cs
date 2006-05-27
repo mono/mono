@@ -581,7 +581,7 @@ namespace Microsoft.Build.BuildEngine {
 				throw new ArgumentNullException ("xmlElement");
 			BuildItemGroup big = new BuildItemGroup (xmlElement, this);
 			ItemGroups.Add (big);
-			big.Evaluate ();
+			//big.Evaluate ();
 		}
 		
 		private void AddPropertyGroup (XmlElement xmlElement)
@@ -590,13 +590,16 @@ namespace Microsoft.Build.BuildEngine {
 				throw new ArgumentNullException ("xmlElement");
 			BuildPropertyGroup bpg = new BuildPropertyGroup (xmlElement, this);
 			PropertyGroups.Add (bpg);
-			bpg.Evaluate ();
+			//bpg.Evaluate ();
 		}
 		
 		private void AddChoose (XmlElement xmlElement)
 		{
 			if (xmlElement == null)
 				throw new ArgumentNullException ("xmlElement");
+				
+			BuildChoose bc = new BuildChoose (xmlElement, this);
+			
 		}
 		
 		private static void ValidationCallBack (object sender, ValidationEventArgs e)

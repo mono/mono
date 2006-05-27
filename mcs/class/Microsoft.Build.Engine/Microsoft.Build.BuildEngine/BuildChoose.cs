@@ -34,26 +34,26 @@ using System.Xml;
 namespace Microsoft.Build.BuildEngine {
 	internal class BuildChoose {
 		
-		bool		isImported;
 		BuildWhen	otherwise;
 		Project		project;
+		XmlElement	xmlElement;
 		IList		whens;
 		
-		public BuildChoose (bool imported, Project project)
+		public BuildChoose (XmlElement xmlElement, Project project)
 		{
-			this.isImported = imported;
-			this.project = project; 
+			this.xmlElement = xmlElement;
+			this.project = project;
 			this.whens = new ArrayList ();
 		}
 		
-		public void BindToXml (XmlElement chooseElement)
+		public void Evaluate ()
 		{
 		}
 		
-		public bool IsImported {
-			get { return isImported; }
-			set { isImported = value; }
-		}
+		//public bool IsImported {
+		//	get { return isImported; }
+		//	set { isImported = value; }
+		//}
 		
 		public BuildWhen Otherwise {
 			get { return otherwise; }

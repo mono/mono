@@ -42,18 +42,12 @@ namespace Microsoft.Build.BuildEngine {
 		Project		parentProject;
 		PropertyType	propertyType;
 
-		internal bool FromXml {
-			get {
-				return propertyElement != null;
-			}
-		}
-	
 		private BuildProperty ()
 		{
 		}
 
-		public BuildProperty (string propertyName, string propertyValue):
-			this (propertyName, propertyValue, PropertyType.Normal)
+		public BuildProperty (string propertyName, string propertyValue)
+			: this (propertyName, propertyValue, PropertyType.Normal)
 		{
 		}
 
@@ -86,16 +80,6 @@ namespace Microsoft.Build.BuildEngine {
 			return (BuildProperty) this.MemberwiseClone ();
 		}
 
-		internal void Evaluate ()
-		{
-			if (FromXml) {
-				OldExpression exp = new OldExpression (parentProject);
-				exp.ParseSource (Value);
-				finalValue = (string) exp.ConvertTo (typeof (string));
-				parentProject.EvaluatedProperties.AddProperty (this);
-			}
-		}
-
 		public static explicit operator string (BuildProperty propertyToCast)
 		{
 			if (propertyToCast == null)
@@ -111,6 +95,22 @@ namespace Microsoft.Build.BuildEngine {
 				return Value;
 		}
 
+		internal void Evaluate ()
+		{
+			if (FromXml) {
+				OldExpression exp = new OldExpression (parentProject);
+				exp.ParseSource (Value);
+				finalValue = (string) exp.ConvertTo (typeof (string));
+				parentProject.EvaluatedProperties.AddProperty (this);
+			}
+		}
+
+		private bool FromXml {
+			get {
+				return propertyElement != null;
+			}
+		}
+	
 		public string Condition {
 			get { return propertyElement.GetAttribute ("Condition"); }
 			set { propertyElement.SetAttribute ("Condition", value); }

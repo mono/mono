@@ -28,13 +28,41 @@
 #if NET_2_0
 
 using System;
+using System.Collections;
+using System.Text;
 
 namespace Microsoft.Build.BuildEngine {
 	public static class Utilities {
-		[MonoTODO]
+	
+		static Hashtable charsToEscape;
+	
+		static Utilities ()
+		{
+			charsToEscape = new Hashtable ();
+			
+			charsToEscape.Add ('$', null);
+			charsToEscape.Add ('%', null);
+			charsToEscape.Add ('\'', null);
+			charsToEscape.Add ('(', null);
+			charsToEscape.Add (')', null);
+			charsToEscape.Add ('*', null);
+			charsToEscape.Add (';', null);
+			charsToEscape.Add ('?', null);
+			charsToEscape.Add ('@', null);
+		}
+	
 		public static string Escape (string unescapedExpression)
 		{
-			return null;
+			StringBuilder sb = new StringBuilder ();
+			
+			foreach (char c in unescapedExpression) {
+				if (charsToEscape.Contains (c)) {
+					sb.AppendFormat ("%{0:x2}", (int) c);
+				} else
+					sb.Append (c);
+			}
+			
+			return sb.ToString ();
 		}
 	}
 }

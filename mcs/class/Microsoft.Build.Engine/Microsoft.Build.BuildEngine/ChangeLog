@@ -1,3 +1,11 @@
+2006-05-27  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Utilities.cs: Implemented Escape ().
+	* BuildItem.cs: Added null checks.
+	* BuildPropertyGroup.cs, BuildProperty.cs: Moved FromXml property.
+	* Project.cs: Commented out redundant Evaluate ().
+	* BuildChoose.cs: Minor changes.
+
 2006-05-22  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* Token: Added new few missing tokens.

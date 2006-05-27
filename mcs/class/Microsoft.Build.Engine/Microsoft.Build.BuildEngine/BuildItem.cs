@@ -161,9 +161,13 @@ namespace Microsoft.Build.BuildEngine {
 			RemoveMetadata (metadataName);
 			
 			unevaluatedMetadata.Add (metadataName, metadataValue);
-			OldExpression finalValue = new OldExpression (parentItemGroup.Project);
-			finalValue.ParseSource (metadataValue);
-			evaluatedMetadata.Add (metadataName, (string) finalValue.ConvertTo (typeof (string)));
+				
+			if (parentItemGroup != null && treatMetadataValueAsLiteral == false) {	
+				OldExpression finalValue = new OldExpression (parentItemGroup.Project);
+				finalValue.ParseSource (metadataValue);
+				evaluatedMetadata.Add (metadataName, (string) finalValue.ConvertTo (typeof (string)));
+			} else
+				evaluatedMetadata.Add (metadataName, metadataValue);
 		}
 		
 		private void BindToXml (XmlElement xmlElement)
@@ -267,13 +271,29 @@ namespace Microsoft.Build.BuildEngine {
 		}
 
 		public string Condition {
-			get { return itemElement.GetAttribute ("Condition"); }
-			set { itemElement.SetAttribute ("Condition", value); }
+			get {
+				if (FromXml)
+					return itemElement.GetAttribute ("Condition");
+				else
+					return String.Empty;
+			}
+			set {
+				if (FromXml)
+					itemElement.SetAttribute ("Condition", value);
+			}
 		}
 
 		public string Exclude {
-			get { return itemElement.GetAttribute ("Exclude"); }
-			set { itemElement.SetAttribute ("Exclude", value); }
+			get {
+				if (FromXml)
+					return itemElement.GetAttribute ("Exclude");
+				else
+					return String.Empty;
+			}
+			set {
+				if (FromXml)
+					itemElement.SetAttribute ("Exclude", value);
+			}
 		}
 
 		public string FinalItemSpec {
@@ -281,8 +301,16 @@ namespace Microsoft.Build.BuildEngine {
 		}
 
 		public string Include {
-			get { return itemElement.GetAttribute ("Include"); }
-			set { itemElement.SetAttribute ("Include", value); }
+			get {
+				if (FromXml)
+					return itemElement.GetAttribute ("Include");
+				else
+					return finalItemSpec;
+			}
+			set {
+				if (FromXml)
+					itemElement.SetAttribute ("Include", value);
+			}
 		}
 
 		public bool IsImported {

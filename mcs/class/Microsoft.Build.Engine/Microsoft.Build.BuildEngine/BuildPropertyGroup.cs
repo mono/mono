@@ -44,12 +44,6 @@ namespace Microsoft.Build.BuildEngine {
 		IList			properties;
 		IDictionary		propertiesByName;
 
-		internal bool FromXml {
-			get {
-				return propertyGroup != null;
-			}
-		}
-	
 		public BuildPropertyGroup ()
 			: this (null, null)
 		{
@@ -108,7 +102,7 @@ namespace Microsoft.Build.BuildEngine {
 			if (FromXml) {
 				properties.Add (property);
 			} else {
-				if (propertiesByName.Contains (property.Name) == true) {
+				if (propertiesByName.Contains (property.Name)) {
 					BuildProperty existing = (BuildProperty) propertiesByName [property.Name];
 					if (property.PropertyType <= existing.PropertyType) {
 						propertiesByName.Remove (property.Name);
@@ -131,13 +125,13 @@ namespace Microsoft.Build.BuildEngine {
 
 		public IEnumerator GetEnumerator ()
 		{
-			if (properties != null)
+			if (properties != null) {
 				foreach (BuildProperty bp in properties)
 					yield return bp;
-			else if (propertiesByName != null)
+			} else if (propertiesByName != null) {
 				foreach (DictionaryEntry de in propertiesByName)
 					yield return (BuildProperty) de.Value;
-			else
+			} else
 				throw new Exception ("PropertyGroup is not initialized.");
 		}
 
@@ -210,6 +204,12 @@ namespace Microsoft.Build.BuildEngine {
 		public bool IsImported {
 			get {
 				return isImported;
+			}
+		}
+
+		internal bool FromXml {
+			get {
+				return propertyGroup != null;
 			}
 		}
 
