@@ -1,3 +1,8 @@
+2006-05-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (compute_class_bitmap): Use class->class_size for static fields. Fixes
+	#78518.
+
 2006-05-27  Miguel de Icaza  <miguel@novell.com>
 
 	* class.c (mono_class_from_typeref): handle missing images
