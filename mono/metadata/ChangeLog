@@ -1,5 +1,11 @@
 2006-05-27  Miguel de Icaza  <miguel@novell.com>
 
+	* class.c (mono_class_from_typeref): handle missing images
+	earlier, deals with bug #78418.   Refactor code; 
+
+	Fix a warning introduced in my previous commit (some stale code
+	from before I revisited my patch).
+
 	* class.c (mono_class_create_from_typedef): On failure, remove the
 	class from the MonoImage->class_cache as the class is not
 	initialized;   Fixes the leak pointed out by Paolo.
