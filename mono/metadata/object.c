@@ -476,10 +476,7 @@ compute_class_bitmap (MonoClass *class, gsize *bitmap, int size, int offset, int
 	guint32 pos;
 	int max_size;
 
-	if (static_fields)
-		max_size = class->class_size / sizeof (gpointer);
-	else
-		max_size = class->instance_size / sizeof (gpointer);
+	max_size = class->instance_size / sizeof (gpointer);
 	if (max_size > size) {
 		bitmap = g_malloc0 (sizeof (gsize) * ((max_size) + 1));
 	}
