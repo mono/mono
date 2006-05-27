@@ -1,3 +1,9 @@
+2006-05-27  Miguel de Icaza  <miguel@novell.com>
+
+	* class.c (mono_class_create_from_typedef): On failure, remove the
+	class from the MonoImage->class_cache as the class is not
+	initialized;   Fixes the leak pointed out by Paolo.
+
 2006-05-25  Dick Porter  <dick@ximian.com>
 
 	* threads.c (mono_thread_cleanup): Build fix.  Comment out the
@@ -103,6 +109,16 @@ Tue May 23 12:21:46 CEST 2006 Paolo Molaro <lupus@ximian.com>
 	* marshal.c (emit_marshal_vtype): Add support for UnmanagedType.LPStruct 
 	and blittable types.
 
+2006-05-17  Miguel de Icaza  <miguel@novell.com>
+
+	* class.c (mono_class_get_exception_for_failure): Implement parts
+	of a TODO: if the loader error is set (instead of the class
+	error), we return a Loader exception that can be properly thrown
+	elsewhere.
+
+	This was exposed by some Winforms 2.0 code that I tried to run
+	(Atsushi pointed me to it).
+
 2006-05-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_marshal_emit_native_wrapper): Make the marshalling code more
@@ -145,6 +161,12 @@ Tue May 23 12:21:46 CEST 2006 Paolo Molaro <lupus@ximian.com>
 	* object.c: The FieldGetter and FieldSetter methods require the full
 	name of the class, not only the name. Fixes bug #78277.
 
+2006-05-11  Miguel de Icaza  <miguel@novell.com>
+
+	* loader.c (method_from_memberref): Do not pass the NULL klass to
+	mono_loader_set_error_() methods.  Pass the non-NULL value
+	(class). 
+
 2006-05-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* assembly.c (mono_assembly_load_from_full): Fix a bunch of warnings.
@@ -186,6 +208,15 @@ Tue May 23 12:21:46 CEST 2006 Paolo Molaro <lupus@ximian.com>
 	* marshal.c: Allocate all signatures from mempools.
 
 	* marshal.c: Allocate some more signatures from mempools.
+
+2006-05-09  Miguel de Icaza  <miguel@novell.com>
+
+	* object.c (mono_load_remote_field): The code used to provide a
+	temporary variable for returning results if the user did not
+	provide a result pointer.  But our temporary variable was allocted
+	on the satck.
+
+	Fix calling code to always pass a result area.   Coverity ID 103.
 
 2006-05-06  Zoltan Varga  <vargaz@gmail.com>
 
@@ -281,6 +312,112 @@ Tue May 23 12:21:46 CEST 2006 Paolo Molaro <lupus@ximian.com>
 	* marshal.h: Add BSTR support on Win32
 	* icall.c: Add BSTR icalls
 	* metadata.h: Add BSTR enums
+
+2006-04-28  Miguel de Icaza  <miguel@novell.com>
+
+	Work to catch the crash from #76795 and turn it into an
+	exception.   As I stubbed out pieces of the VisualBasic support,
+	I found a number of places where the code was failing and I added
+	checks to those places. 
+	
+	* metadata.c (do_mono_metadata_parse_generic_class): Make this
+	function return a status code.  If we fail to parse the signature
+	from mono_metadata_parse_generic_inst, return FALSE.
+
+	* loader.c (mono_get_method_from_token): If we fail to load the
+	method (mono_class_get) return NULL.   
+
+	* (method_from_memberref): Return NULL if we are unable to parse
+	the method signature
+
+	(mono_loader_error_prepare_exception): Since we now use the
+	loader_error flag internally to stop processing, and obtaining
+	exceptions that might be thrown will walk this code path the
+	proper way of going from a MonoLoaderError into a
+	MonoException was convoluted.   This new routine encapsulates the
+	process of turning the error into an exception and *clearing* the
+	error afterwards.
+	
+2006-04-27  Miguel de Icaza  <miguel@novell.com>
+
+	Work to catch the crashes from 75075 (cope in Assembly.GetTypes
+	with missing assemblies), and to cope with:
+
+		* Missing fieldref from a non-existing assembly.
+		* Missing methodref from a non-existing assembly.
+
+	The first batch of work to address *some* of the issues from 76661.
+	
+	* object.c (mono_class_create_runtime_vtable): If we fail to
+	initialize the class raise the exception here. 
+
+	* metadata.c (mono_class_get_overrides_full): If any methods fail
+	to load return the failure to the caller.
+
+	* assembly.c: Use REFERENCE_MISSING instead of (gpointer) -1 for
+	flagging assemblies that failed to load.   
+
+	Do not crash if we are unable to load the assembly.
+
+	(mono_assembly_close): Do nothing with REFERENCE_MISSING
+	assemblies. 
+
+	* loader.c (mono_loader_set_error_type_load): Change the
+	convention to always pass unallocated strings, so we make our own
+	copies (I know our own code had duplicated strings before, but
+	this keeps the normal conventions).
+	(method_from_memberref): Call mono_loader_set_error_method_load
+	for all possible failures of loading the class. 
+	Remove assert, turn into a loader error.
+
+	(mono_loader_error_to_exception): Move this routine from mini
+	(mini_loader_error_to_exception) there was no need to have that in
+	mini. 
+
+	* class.c (mono_class_from_typeref): If we were not able to load
+	the assembly with mono_assembly_load_reference, call the
+	mono_loader_set_error_type_load to register the problem.
+
+	(mono_class_setup_fields): If we fail to load the type from
+	mono_metadata_parse_type_full, call mono_class_set_failure and
+	break from the loop.
+
+	If class->exception_type is set, we do not layout the fields as
+	that might crash the runtime, and instead return (from breaking
+	from the previous loop).
+
+	(mono_class_setup_vtable): This now returns a boolean indicating
+	whether the table was properly setup.   The decision is driven by
+	mono_class_get_overrides_full which might run into non-existing
+	methods. 
+	
+	(mono_class_init): Returns TRUE on success or FALSE if there was a
+	problem in loading the type (incorrect assemblies, missing
+	assemblies, methods, etc).
+
+	When we call mono_class_setup_fields we also check for a potential
+	error inside this call (either a class exception or a general
+	loader exception).
+
+	(mono_class_create_from_typedef): If the parent fails to load
+	(calling mono_class_get_full) return NULL.
+	
+	** Important **
+
+	calls to mono_metadata_parse_type_full should be checked
+	everywhere and set the mono_class_set_failure
+	(MONO_EXCEPTION_TYPE_LOAD) if we are not able to get the type.
+
+	The current patch checks the places where my manually constructed
+	tests show the errors are showing up, but we should do it
+	everywhere. 
+
+	** Important2 **
+
+	mono_class_init return values should be tested everywhere, like
+	the previous case this is something that we should audit
+	everywhere and not only on the cases exposed by the tests I
+	created. 
 
 2006-04-26  Miguel de Icaza  <miguel@novell.com>
 
