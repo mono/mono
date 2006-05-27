@@ -45,7 +45,8 @@ namespace Microsoft.Build.Utilities
 	
 		public TaskLoggingHelper (ITask taskInstance)
 		{
-			this.buildEngine = taskInstance.BuildEngine;
+			if (taskInstance != null)
+				this.buildEngine = taskInstance.BuildEngine;
 		}
 
 		[MonoTODO]

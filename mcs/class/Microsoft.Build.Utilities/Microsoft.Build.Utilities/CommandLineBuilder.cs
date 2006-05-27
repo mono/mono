@@ -28,7 +28,9 @@
 #if NET_2_0
 
 using System;
+using System.Collections;
 using System.Text;
+using System.Text.RegularExpressions;
 using Microsoft.Build.Framework;
 
 namespace Microsoft.Build.Utilities
@@ -36,7 +38,21 @@ namespace Microsoft.Build.Utilities
 	public class CommandLineBuilder
 	{
 		StringBuilder commandLine;
+		static Hashtable chars;
 	
+		static CommandLineBuilder ()
+		{
+			chars = new Hashtable ();
+
+			chars.Add (' ', null);
+			chars.Add ('\t', null);
+			chars.Add ('\n', null);
+			chars.Add ('\u000b', null);
+			chars.Add ('\u000c', null);
+			chars.Add ('\'', null);
+			chars.Add ('\"', null);
+		}
+		
 		public CommandLineBuilder ()
 		{
 			commandLine = new StringBuilder ();
@@ -319,7 +335,7 @@ namespace Microsoft.Build.Utilities
 			parameter.Trim ();
 			// FIXME: change this to regex
 			foreach (char c in parameter) {
-				if (c == ' ' || c == '\t' || c == '\u000b' || c == '\u000c')
+				if (chars.Contains (c))
 					return true;
 			}
 			return false;

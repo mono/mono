@@ -1,3 +1,8 @@
+2005-05-27  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* CommandLineBuilder.cs: Corrected IsQuotingRequired ().
+	* TaskLoggingHelper.cs: Added null check.
+
 2006-05-26  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* Logger.cs: Added MonoTODO.
