@@ -1,5 +1,12 @@
 2006-05-27  Zoltan Varga  <vargaz@gmail.com>
 
+	* assembly.c (mono_assembly_open_full): Dont overwrite the status
+	returned by mono_image_open_full ().
+
+	* appdomain.c (ves_icall_System_Reflection_Assembly_LoadFrom): Convert
+	MONO_IMAGE_IMAGE_INVALID into a BadImageFormatException. Fixes
+	#78517.
+
 	* object.c (compute_class_bitmap): Use class->class_size for static fields. Fixes
 	#78518.
 
