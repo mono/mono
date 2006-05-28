@@ -170,7 +170,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void Theme_TestThemeNotExistExeption()
 		{
 			string page =	Helper.Instance.RunInPagePreInit (TestThemeNotExistException);
-			Assert.IsTrue (page.IndexOf("System.Web.HttpException") >= 0, "System.Web.HttpException was expected");
+			Assert.IsTrue (page.IndexOf("System.Web.HttpException") >= 0, "System.Web.HttpException was expected, actual result: "+page);
 		}
 
 		public static  void TestThemeNotExistException (HttpContext c, Page p, object param)
@@ -178,22 +178,30 @@ namespace MonoTests.System.Web.UI.WebControls
 			p.Theme = "NotExistTheme";
 		}
 
-		// Delegate running on Page Load , only before PreInit possible set Theme on running time !
 		[Test]
 		[Category ("NunitWeb")]
-		//Use Assert.Fail to print the actual result
-		//[ExpectedException (typeof (InvalidOperationException))]
-		[Category ("NotWorking")]
 		public void Theme_SetThemeException ()
 		{
-			try {
-				string res=Helper.Instance.RunInPagePreInit (SetThemeExeption);
-				Assert.Fail ("InvalidOperationException was expected. Result: "+res); 
-			}
-			catch (InvalidOperationException e) {
-				//swallow the expected exception
-			}
+			string page=Helper.Instance.RunInPagePreInit (SetThemeExeption);
+			Assert.IsTrue (page.IndexOf("System.Web.HttpException") >= 0, "System.Web.HttpException was expected, actual result: "+page);
 		}
+
+		//// Delegate running on Page Load , only before PreInit possible set Theme on running time !
+		//[Test]
+		//[Category ("NunitWeb")]
+		////Use Assert.Fail to print the actual result
+		////[ExpectedException (typeof (InvalidOperationException))]
+		//[Category ("NotWorking")]
+		//public void Theme_SetThemeException ()
+		//{
+		//        try {
+		//                string res=Helper.Instance.RunInPagePreInit (SetThemeExeption);
+		//                Assert.Fail ("InvalidOperationException was expected. Result: "+res); 
+		//        }
+		//        catch (InvalidOperationException e) {
+		//                //swallow the expected exception
+		//        }
+		//}
 
 		public static void SetThemeExeption (HttpContext c, Page p, object param)
 		{

@@ -90,7 +90,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			string PageRenderHtml = Helper.Instance.RunInPageWithMaster(TestRenderDefault, null);
 			Assert.AreEqual (-1, PageRenderHtml.IndexOf ("Master header text"), "Master#1");
 			
-			if (PageRenderHtml.IndexOf ("Page main text") > 0) {
+			if (PageRenderHtml.IndexOf ("Page main text") < 0) {
 			        Assert.Fail ("Master#2");
 			}
 			
@@ -102,7 +102,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			}
 
 			if (PageRenderHtml.IndexOf ("My master page footer") < 0) {
-			        Assert.Fail ("Master#6");
+			        Assert.Fail ("Master#6, result: "+PageRenderHtml);
 			}
 
 			if (PageRenderHtml.IndexOf ("Master page content text") < 0) {
