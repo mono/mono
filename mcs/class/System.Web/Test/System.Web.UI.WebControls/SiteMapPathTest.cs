@@ -105,6 +105,12 @@ namespace MonoTests.System.Web.UI.WebControls
 			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (), "Web.sitemap", "Web.sitemap");
 #endif
 		}
+		[SetUp]
+		public void SetupTestCase ()
+		{
+			Thread.Sleep (100);
+		}
+			
 		[Test]
 		public void SiteMapPath_DefaultProperties ()
 		{
@@ -231,7 +237,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category ("NotWorking")]  //Must be running after hosting bug resolve
 		public void SiteMapPath_RenderStyles ()
 		{
-			Thread.Sleep (1000);
 			string RenderedPageHtml = Helper.Instance.RunInPage (DoTestStylesRender, null);
 			string RenderedControlHtml = WebTest.GetControlFromPageHtml (RenderedPageHtml);
 			string OriginControlHtml = @"<span><a href=""#ctl01_SkipLink"">
@@ -335,10 +340,8 @@ namespace MonoTests.System.Web.UI.WebControls
 		
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]  //Must be running after hosting bug resolve
 		public void SiteMapPath_SiteMapRootNode ()
 		{
-			Thread.Sleep (1000);
 			NunitWeb.Helper.Instance.RunInPage (SiteMapRootNode,null);
 		}
 		[Test]
@@ -346,7 +349,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category ("NotWorking")]  //Must be running after hosting bug resolve
 		public void SiteMapPath_InitializeItem ()
 		{
-			Thread.Sleep (1000);
 			NunitWeb.Helper.Instance.RunInPage (InitializeItem, null);
 		}
 		[Test]
@@ -354,7 +356,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category ("NotWorking")]  //Must be running after hosting bug resolve
 		public void SiteMapPath_SiteMapChildNode ()
 		{
-			Thread.Sleep (1000);
 			NunitWeb.Helper.Instance.RunInPage (InitializeItem, null);
 		}
 		public static void SiteMapRootNode (HttpContext c, Page p, object param)
@@ -402,11 +403,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void SiteMapPath_Events ()
 		{
-			Thread.Sleep (1000);
 			Helper.Instance.RunInPage (Events, null);
 		}
 

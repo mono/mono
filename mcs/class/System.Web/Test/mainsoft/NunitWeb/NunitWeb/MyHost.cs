@@ -36,7 +36,7 @@ namespace NunitWeb
 				Exception inner = wr.Exception;
 				RethrowException (inner);
 				if (!wr.InitInvoked)
-					throw new Exception ("internal error: ProcessRequest did not reach DelegateInvoker constructor");
+					throw new Exception ("internal error: ProcessRequest did not reach DelegateInvoker constructor; response was: "+res);
 				//FIXME: check that all delegates were invoked
 				return res;
 			}
@@ -50,7 +50,7 @@ namespace NunitWeb
 			Exception outer;
 			try { //Try create a similar exception and keep the inner intact
 				outer = (Exception) Activator.CreateInstance (inner.GetType (),
-					inner.Message, inner);
+					inner.ToString(), inner);
 			}
 			catch { //Failed to create a similar, fallback to the inner, ruining the call stack
 				throw inner;

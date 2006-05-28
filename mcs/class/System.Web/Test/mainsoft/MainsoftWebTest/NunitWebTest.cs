@@ -72,7 +72,7 @@ namespace MonoTests.stand_alone.WebHarness
 
 		public static string GetControlFromPageHtml (string str)
 		{
-			if (string.IsNullOrEmpty (str))
+			if (str == null || str == string.Empty)
 				throw new ArgumentException ("internal error: str is null or empty");
 			int beginPos = str.IndexOf (BEGIN_TAG);
 			int endPos = str.IndexOf (END_TAG);

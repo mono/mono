@@ -1,3 +1,4 @@
+#if NET_2_0
 using System;
 
 namespace NunitWeb
@@ -24,3 +25,4 @@ namespace NunitWeb
 		public object Param;
 	}
 }
+#endif
