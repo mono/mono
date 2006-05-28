@@ -1,5 +1,11 @@
 2006-05-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* MethodInfoTest.cs: No longer derive from (deprecated) Assertion.
+	Number individual asserts. Marked ByrefVtypeInvoke as NotDotNet for
+	NET_1_1 profile, due to bug in MS.NET 1.1.
+
+2006-05-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* MethodInfoTest.cs: GetMethodBody no longer throws ArgumentException
 	for methods that have no IL body. Part of fix for bug #78522.
 

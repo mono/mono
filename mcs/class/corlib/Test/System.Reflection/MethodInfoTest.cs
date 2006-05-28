@@ -40,7 +40,7 @@ using System.Collections.Generic;
 namespace MonoTests.System.Reflection
 {
 	[TestFixture]
-	public class MethodInfoTest : Assertion
+	public class MethodInfoTest
 	{
 		[DllImport ("libfoo", EntryPoint="foo", CharSet=CharSet.Unicode, ExactSpelling=false, PreserveSig=true, SetLastError=true, BestFitMapping=true, ThrowOnUnmappableChar=true)]
 		public static extern void dllImportMethod ();
@@ -62,15 +62,15 @@ namespace MonoTests.System.Reflection
 
 			DllImportAttribute attr = (DllImportAttribute)((t.GetMethod ("dllImportMethod").GetCustomAttributes (typeof (DllImportAttribute), true)) [0]);
 
-			AssertEquals (CallingConvention.Winapi, attr.CallingConvention);
-			AssertEquals ("foo", attr.EntryPoint);
-			AssertEquals ("libfoo", attr.Value);
-			AssertEquals (CharSet.Unicode, attr.CharSet);
-			AssertEquals (false, attr.ExactSpelling);
-			AssertEquals (true, attr.PreserveSig);
-			AssertEquals (true, attr.SetLastError);
-			AssertEquals (true, attr.BestFitMapping);
-			AssertEquals (true, attr.ThrowOnUnmappableChar);
+			Assert.AreEqual (CallingConvention.Winapi, attr.CallingConvention, "#1");
+			Assert.AreEqual ("foo", attr.EntryPoint, "#2");
+			Assert.AreEqual ("libfoo", attr.Value, "#3");
+			Assert.AreEqual (CharSet.Unicode, attr.CharSet, "#4");
+			Assert.AreEqual (false, attr.ExactSpelling, "#5");
+			Assert.AreEqual (true, attr.PreserveSig, "#6");
+			Assert.AreEqual (true, attr.SetLastError, "#7");
+			Assert.AreEqual (true, attr.BestFitMapping, "#8");
+			Assert.AreEqual (true, attr.ThrowOnUnmappableChar, "#9");
 
 			PreserveSigAttribute attr2 = (PreserveSigAttribute)((t.GetMethod ("preserveSigMethod").GetCustomAttributes (true)) [0]);
 
@@ -88,7 +88,7 @@ namespace MonoTests.System.Reflection
 		public void ReturnTypePseudoCustomAttributes () {
 			MethodInfo mi = typeof (MethodInfoTest).GetMethod ("ReturnTypeMarshalAs");
 
-			Assert (mi.ReturnTypeCustomAttributes.GetCustomAttributes (typeof (MarshalAsAttribute), true).Length == 1);
+			Assert.IsTrue (mi.ReturnTypeCustomAttributes.GetCustomAttributes (typeof (MarshalAsAttribute), true).Length == 1);
 		}
 #endif
 
@@ -111,14 +111,14 @@ namespace MonoTests.System.Reflection
 			MethodInfo met = typeof(MethodInfoTest).GetMethod ("ByRefTest");
 			object[] parms = new object[] {1};
 			met.Invoke (null, parms);
-			AssertEquals (2, parms [0]);
+			Assert.AreEqual (2, parms[0]);
 		}
 
 		public static void ByRefTest (ref int a1)
 		{
 			if (a1 == 1)
 				a1 = 2;
-		}	   
+		}
 
 		static int byref_arg;
 
@@ -128,6 +128,9 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
+#if ONLY_1_1
+		[Category ("NotDotNet")] // #A2 fails on MS.NET 1.x
+#endif
 		public void ByrefVtypeInvoke ()
 		{
 			MethodInfo mi = typeof (MethodInfoTest).GetMethod ("ByrefVtype");
@@ -135,14 +138,14 @@ namespace MonoTests.System.Reflection
 			object o = 1;
 			object[] args = new object [] { o };
 			mi.Invoke (null, args);
-			AssertEquals (1, byref_arg);
-			AssertEquals (1, o);
-			AssertEquals (5, args [0]);
+			Assert.AreEqual (1, byref_arg, "#A1");
+			Assert.AreEqual (1, o, "#A2");
+			Assert.AreEqual (5, args[0], "#A3");
 
 			args [0] = null;
 			mi.Invoke (null, args);
-			AssertEquals (0, byref_arg);
-			AssertEquals (5, args [0]);
+			Assert.AreEqual (0, byref_arg, "#B1");
+			Assert.AreEqual (5, args[0], "#B2");
 		}
 
 		public void HeyHey (out string out1, ref string ref1)
@@ -153,7 +156,7 @@ namespace MonoTests.System.Reflection
 		[Test] // bug #76541
 		public void ToStringByRef ()
 		{
-			AssertEquals ("Void HeyHey(System.String ByRef, System.String ByRef)",
+			Assert.AreEqual ("Void HeyHey(System.String ByRef, System.String ByRef)",
 				this.GetType ().GetMethod ("HeyHey").ToString ());
 		}
 
@@ -161,19 +164,19 @@ namespace MonoTests.System.Reflection
 		[Test]
 		public void GetMethodBody_Abstract () {
 			MethodBody mb = typeof (ICloneable).GetMethod ("Clone").GetMethodBody ();
-			AssertNull (mb);
+			Assert.IsNull (mb);
 		}
 
 		[Test]
 		public void GetMethodBody_Runtime () {
 			MethodBody mb = typeof (AsyncCallback).GetMethod ("Invoke").GetMethodBody ();
-			AssertNull (mb);
+			Assert.IsNull (mb);
 		}
 
 		[Test]
 		public void GetMethodBody_Pinvoke () {
 			MethodBody mb = typeof (MethodInfoTest).GetMethod ("dllImportMethod").GetMethodBody ();
-			AssertNull (mb);
+			Assert.IsNull (mb);
 		}
 
 		[Test]
@@ -181,7 +184,7 @@ namespace MonoTests.System.Reflection
 			foreach (MethodInfo mi in typeof (object).GetMethods (BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance))
 				if ((mi.GetMethodImplementationFlags () & MethodImplAttributes.InternalCall) != 0) {
 					MethodBody mb = mi.GetMethodBody ();
-					AssertNull (mb);
+					Assert.IsNull (mb);
 				}
 		}
 
@@ -199,19 +202,19 @@ namespace MonoTests.System.Reflection
 		public void GetMethodBody () {
 			MethodBody mb = typeof (MethodInfoTest).GetMethod ("locals_method").GetMethodBody ();
 
-			Assert (mb.InitLocals);
-			Assert (mb.LocalSignatureMetadataToken > 0);
+			Assert.IsTrue (mb.InitLocals, "#1");
+			Assert.IsTrue (mb.LocalSignatureMetadataToken > 0, "#2");
 
 			IList<LocalVariableInfo> locals = mb.LocalVariables;
 
 			// This might break with different compilers etc.
-			AssertEquals (2, locals.Count);
+			Assert.AreEqual (2, locals.Count, "#3");
 
-			Assert ((locals [0].LocalType == typeof (byte[])) || (locals [1].LocalType == typeof (byte[])));
+			Assert.IsTrue ((locals [0].LocalType == typeof (byte[])) || (locals [1].LocalType == typeof (byte[])), "#4");
 			if (locals [0].LocalType == typeof (byte[]))
-				AssertEquals (false, locals [0].IsPinned);
+				Assert.AreEqual (false, locals [0].IsPinned, "#5");
 			else
-				AssertEquals (false, locals [1].IsPinned);
+				Assert.AreEqual (false, locals [1].IsPinned, "#6");
 		}
 
 		[Test]
@@ -245,8 +248,8 @@ namespace MonoTests.System.Reflection
 		public void NullableTests ()
 		{
 			MethodInfo mi = typeof (MethodInfoTest).GetMethod ("pass_nullable");
-			AssertEquals (102, mi.Invoke (null, new object [] { 102 }));
-			AssertEquals (null, mi.Invoke (null, new object [] { null }));
+			Assert.AreEqual (102, mi.Invoke (null, new object [] { 102 }), "#1");
+			Assert.AreEqual (null, mi.Invoke (null, new object [] { null }), "#2");
 		}
 
 		public static void foo_generic<T> () {
@@ -256,12 +259,12 @@ namespace MonoTests.System.Reflection
 		public void IsGenericMethod ()
 		{
 			MethodInfo mi = typeof (MethodInfoTest).GetMethod ("foo_generic");
-			AssertEquals (true, mi.IsGenericMethod);
+			Assert.AreEqual (true, mi.IsGenericMethod, "#1");
 			MethodInfo mi2 = mi.MakeGenericMethod (new Type[] { typeof (int) });
-			AssertEquals (true, mi2.IsGenericMethod);
+			Assert.AreEqual (true, mi2.IsGenericMethod, "#2");
 
 			MethodInfo mi3 = typeof (GenericHelper<int>).GetMethod ("Test");
-			AssertEquals (false, mi3.IsGenericMethod);
+			Assert.AreEqual (false, mi3.IsGenericMethod, "#3");
 		}
 
 		class GenericHelper<T>
