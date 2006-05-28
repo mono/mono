@@ -62,7 +62,11 @@ namespace NunitWeb
 		{
 			DelegateInvoker di = new DelegateInvoker (context, page);
 			page.LoadComplete += di.OnLoadComplete;
+#if BUG_78521_FIXED
 			page.PreInit += di.OnPreInit;
+#else
+			di.OnPreInit (null, null);
+#endif
 			page.PreLoad += di.OnPreLoad;
 			page.PreRenderComplete += di.OnPreRenderComplete;
 			page.InitComplete += di.OnInitComplete;
