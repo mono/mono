@@ -159,29 +159,30 @@ namespace MonoTests.System.Reflection
 
 #if NET_2_0
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void GetMethodBody_Abstract () {
-			typeof (ICloneable).GetMethod ("Clone").GetMethodBody ();
+			MethodBody mb = typeof (ICloneable).GetMethod ("Clone").GetMethodBody ();
+			AssertNull (mb);
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void GetMethodBody_Runtime () {
-			typeof (AsyncCallback).GetMethod ("Invoke").GetMethodBody ();
+			MethodBody mb = typeof (AsyncCallback).GetMethod ("Invoke").GetMethodBody ();
+			AssertNull (mb);
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void GetMethodBody_Pinvoke () {
-			typeof (MethodInfoTest).GetMethod ("dllImportMethod").GetMethodBody ();
+			MethodBody mb = typeof (MethodInfoTest).GetMethod ("dllImportMethod").GetMethodBody ();
+			AssertNull (mb);
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void GetMethodBody_Icall () {
 			foreach (MethodInfo mi in typeof (object).GetMethods (BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance))
-				if ((mi.GetMethodImplementationFlags () & MethodImplAttributes.InternalCall) != 0)
-					mi.GetMethodBody ();
+				if ((mi.GetMethodImplementationFlags () & MethodImplAttributes.InternalCall) != 0) {
+					MethodBody mb = mi.GetMethodBody ();
+					AssertNull (mb);
+				}
 		}
 
 		public static void locals_method () {

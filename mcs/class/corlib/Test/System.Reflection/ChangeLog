@@ -1,5 +1,10 @@
 2006-05-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* MethodInfoTest.cs: GetMethodBody no longer throws ArgumentException
+	for methods that have no IL body. Part of fix for bug #78522.
+
+2006-05-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* AssemblyTest.cs: Added tests for bug #78517.
 
 2006-05-20  Gert Driesen  <drieseng@users.sourceforge.net>

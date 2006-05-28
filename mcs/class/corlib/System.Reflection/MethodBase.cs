@@ -206,12 +206,8 @@ namespace System.Reflection {
 		internal extern static MethodBody GetMethodBodyInternal (IntPtr handle);
 
 		internal static MethodBody GetMethodBody (IntPtr handle) {
-			MethodBody mb = GetMethodBodyInternal (handle);
-			if (mb == null)
-				throw new ArgumentException ("Only methods with IL bodies are supported.");
-			else
-				return mb;
-		}			
+			return GetMethodBodyInternal (handle);
+		}
 
 		public virtual MethodBody GetMethodBody () {
 			throw new NotSupportedException ();
