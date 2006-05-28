@@ -169,11 +169,11 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category ("NunitWeb")]
 		public void Theme_TestThemeNotExistExeption()
 		{
-			string page =	Helper.Instance.RunInPagePreInit (TestThemeNotExistException);
+			string page =	Helper.Instance.RunInPagePreInit (_ThemeNotExistException);
 			Assert.IsTrue (page.IndexOf("System.Web.HttpException") >= 0, "System.Web.HttpException was expected, actual result: "+page);
 		}
 
-		public static  void TestThemeNotExistException (HttpContext c, Page p, object param)
+		public static  void _ThemeNotExistException (HttpContext c, Page p, object param)
 		{
 			p.Theme = "NotExistTheme";
 		}

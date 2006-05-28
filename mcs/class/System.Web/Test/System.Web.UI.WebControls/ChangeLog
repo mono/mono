@@ -1,3 +1,8 @@
+2006-05-28 Andrew Skiba <andrews@mainsoft.com>
+
+	* ThemeTest.cs, MenuTest.cs, MasterPageTest.cs: rename methods to make
+	nunit quiet
+
 2006-05-21 Yoni Klain <yonik@mainsoft.com>
 
 	* ThemeTest.cs  -  Add new test
