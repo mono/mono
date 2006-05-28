@@ -1,3 +1,10 @@
+2006-05-28  Chris Toshok  <toshok@ximian.com>
+
+	* CurrencyManager.cs (get_Current): after the late binding
+	listposition = -1 fix, we need to guard against it here and return
+	null, otherwise we raise an exception (which is swallowed
+	elsewhere, and breaks datagrid databinding.)
+
 2006-05-26  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* MenuAPI.cs (ProcessMenuKey): We can legally get msg types other

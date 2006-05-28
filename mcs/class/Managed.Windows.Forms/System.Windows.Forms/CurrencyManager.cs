@@ -109,7 +109,7 @@ namespace System.Windows.Forms {
 
 		public override object Current {
 			get {
-				if (list.Count == 0)
+				if (list.Count == 0 || listposition == -1)
 					return null;
 				return list [listposition];
 			}
@@ -315,7 +315,7 @@ namespace System.Windows.Forms {
 
 		private void ListChangedHandler (object sender, ListChangedEventArgs e)
 		{
-			OnItemChanged (new ItemChangedEventArgs (-1));	
+			OnItemChanged (new ItemChangedEventArgs (-1));
 			UpdateIsBinding ();
 		}
 
