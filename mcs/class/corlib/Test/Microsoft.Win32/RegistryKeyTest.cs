@@ -95,6 +95,32 @@ namespace MonoTests.Microsoft.Win32
 			}
 		}
 
+		[Test] // bug #78519
+		public void GetSubKeyNamesTest ()
+		{
+			string subKeyName = Guid.NewGuid ().ToString ();
+
+			RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName);
+			try {
+				// check if key was successfully created
+				Assert.IsNotNull (createdKey, "#1");
+				RegistryKey subKey = createdKey.CreateSubKey ("foo");
+				Assert.IsNotNull (subKey, "#2");
+				Assert.AreEqual (1, createdKey.SubKeyCount, "#3");
+				string[] subKeyNames = createdKey.GetSubKeyNames ();
+				Assert.IsNotNull (subKeyNames, "#4");
+				Assert.AreEqual (1, subKeyNames.Length, "#5");
+				Assert.AreEqual ("foo", subKeyNames[0], "#6");
+				foreach (string name in subKeyNames) {
+					createdKey.DeleteSubKeyTree (name);
+				}
+				Assert.AreEqual (0, createdKey.SubKeyCount, "#7");
+			} finally {
+				// clean-up
+				Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
+			}
+		}
+
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void SetValue_Null ()

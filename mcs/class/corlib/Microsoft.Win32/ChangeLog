@@ -1,3 +1,8 @@
+2006-05-28  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* UnixRegistryApi.cs: GetSubKeyNames returns only names of subkeys,
+	not the qualified name. Fixes bug #78519.
+
 2006-04-20  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* UnixRegistryApi.cs: In KeyHandler.SetValue, immediately convert

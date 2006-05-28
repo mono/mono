@@ -409,7 +409,14 @@ namespace Microsoft.Win32 {
 		public string [] GetSubKeyNames (RegistryKey rkey)
 		{
 			KeyHandler self = KeyHandler.Lookup (rkey);
-			return Directory.GetDirectories (self.Dir);
+			DirectoryInfo selfDir = new DirectoryInfo (self.Dir);
+			DirectoryInfo[] subDirs = selfDir.GetDirectories ();
+			string[] subKeyNames = new string[subDirs.Length];
+			for (int i = 0; i < subDirs.Length; i++) {
+				DirectoryInfo subDir = subDirs[i];
+				subKeyNames[i] = subDir.Name;
+			}
+			return subKeyNames;
 		}
 		
 		public string [] GetValueNames (RegistryKey rkey)
