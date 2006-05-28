@@ -1,5 +1,9 @@
 2006-05-21 Yoni Klain <yonik@mainsoft.com>
 
+	* ThemeTest.cs  -  Add new test
+
+2006-05-21 Yoni Klain <yonik@mainsoft.com>
+
 	* MasterPageTest.cs  -  add attributes for NotWorking tests
 	* MenuTest.cs - sleep time changed
 
