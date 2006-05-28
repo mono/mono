@@ -9,6 +9,18 @@
 #include <errno.h>
 #include <unistd.h>
 
+/* work around a dlopen issue (bug #75390), undefs to avoid warnings with redefinitions */
+#undef PACKAGE_BUGREPORT
+#undef PACKAGE_NAME
+#undef PACKAGE_STRING
+#undef PACKAGE_TARNAME
+#undef PACKAGE_VERSION
+#include "mono/utils/mono-compiler.h"
+
+#ifdef MONO_DEBUGGER_SUPPORTED
+#include "include/libgc-mono-debugger.h"
+#endif
+
 #if DEBUG_THREADS
 
 #ifndef NSIG
@@ -412,7 +424,7 @@ void GC_stop_world()
       /* We should have previously waited for it to become zero. */
 #   endif /* PARALLEL_MARK */
     ++GC_stop_count;
-#ifdef LIBGC_MONO_DEBUGGER_SUPPORTED
+#ifdef MONO_DEBUGGER_SUPPORTED
     if (gc_thread_vtable && gc_thread_vtable->stop_world)
 	gc_thread_vtable->stop_world ();
     else
@@ -483,7 +495,7 @@ static void pthread_start_world()
 
 void GC_start_world()
 {
-#ifdef LIBGC_MONO_DEBUGGER_SUPPORTED
+#ifdef MONO_DEBUGGER_SUPPORTED
     if (gc_thread_vtable && gc_thread_vtable->start_world)
 	gc_thread_vtable->start_world();
     else
@@ -537,7 +549,7 @@ static void pthread_stop_init() {
 /* We hold the allocation lock.	*/
 void GC_stop_init()
 {
-#ifdef LIBGC_MONO_DEBUGGER_SUPPORTED
+#ifdef MONO_DEBUGGER_SUPPORTED
     if (gc_thread_vtable && gc_thread_vtable->initialize)
 	gc_thread_vtable->initialize ();
     else
@@ -545,7 +557,7 @@ void GC_stop_init()
 	pthread_stop_init ();
 }
 
-#ifdef LIBGC_MONO_DEBUGGER_SUPPORTED
+#ifdef MONO_DEBUGGER_SUPPORTED
 
 GCThreadFunctions *gc_thread_vtable = NULL;
 

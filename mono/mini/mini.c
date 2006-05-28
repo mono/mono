@@ -88,7 +88,7 @@ static gpointer mono_jit_find_compiled_method (MonoDomain *domain, MonoMethod *m
 static gpointer mono_create_jit_trampoline_in_domain (MonoDomain *domain, MonoMethod *method);
 
 static void handle_stobj (MonoCompile *cfg, MonoBasicBlock *bblock, MonoInst *dest, MonoInst *src, 
-			  const unsigned char *ip, MonoClass *klass, gboolean to_end, gboolean native);
+			  const unsigned char *ip, MonoClass *klass, gboolean to_end, gboolean native, gboolean write_barrier);
 
 static void dec_foreach (MonoInst *tree, MonoCompile *cfg);
 
@@ -2063,7 +2063,7 @@ mono_add_varcopy_to_end (MonoCompile *cfg, MonoBasicBlock *bb, int src, int dest
 	NEW_TEMPSTORE (cfg, inst, dest, load);
 	if (inst->opcode == CEE_STOBJ) {
 		NEW_TEMPLOADA (cfg, inst, dest);
-		handle_stobj (cfg, bb, inst, load, NULL, inst->klass, TRUE, FALSE);
+		handle_stobj (cfg, bb, inst, load, NULL, inst->klass, TRUE, FALSE, FALSE);
 	} else {
 		inst->cil_code = NULL;
 		mono_add_ins_to_end (bb, inst);
@@ -2185,7 +2185,7 @@ handle_stack_args (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst **sp, int coun
 		NEW_TEMPSTORE (cfg, inst, locals [i]->inst_c0, sp [i]);
 		if (inst->opcode == CEE_STOBJ) {
 			NEW_TEMPLOADA (cfg, inst, locals [i]->inst_c0);
-			handle_stobj (cfg, bb, inst, sp [i], sp [i]->cil_code, inst->klass, TRUE, FALSE);
+			handle_stobj (cfg, bb, inst, sp [i], sp [i]->cil_code, inst->klass, TRUE, FALSE, FALSE);
 		} else {
 			inst->cil_code = sp [i]->cil_code;
 			mono_add_ins_to_end (bb, inst);
@@ -2326,7 +2326,7 @@ handle_loaded_temps (MonoCompile *cfg, MonoBasicBlock *bblock, MonoInst **stack,
 			store->cil_code = ins->cil_code;
 			if (store->opcode == CEE_STOBJ) {
 				NEW_TEMPLOADA (cfg, store, temp->inst_c0);
-				handle_stobj (cfg, bblock, store, ins, ins->cil_code, temp->klass, FALSE, FALSE);
+				handle_stobj (cfg, bblock, store, ins, ins->cil_code, temp->klass, FALSE, FALSE, FALSE);
 			} else
 				MONO_ADD_INS (bblock, store);
 			NEW_TEMPLOAD (cfg, load, temp->inst_c0);
@@ -2861,7 +2861,7 @@ get_memcpy_method (void)
 }
 
 static void
-handle_stobj (MonoCompile *cfg, MonoBasicBlock *bblock, MonoInst *dest, MonoInst *src, const unsigned char *ip, MonoClass *klass, gboolean to_end, gboolean native) {
+handle_stobj (MonoCompile *cfg, MonoBasicBlock *bblock, MonoInst *dest, MonoInst *src, const unsigned char *ip, MonoClass *klass, gboolean to_end, gboolean native, gboolean write_barrier) {
 	MonoInst *iargs [3];
 	int n;
 	guint32 align = 0;
@@ -2878,6 +2878,19 @@ handle_stobj (MonoCompile *cfg, MonoBasicBlock *bblock, MonoInst *dest, MonoInst
 	else
 		n = mono_class_value_size (klass, &align);
 
+#if HAVE_WRITE_BARRIERS
+	/* if native is true there should be no references in the struct */
+	if (write_barrier && klass->has_references && !native) {
+		iargs [0] = dest;
+		iargs [1] = src;
+		NEW_PCONST (cfg, iargs [2], klass);
+
+		mono_emit_jit_icall (cfg, bblock, mono_value_copy, iargs, ip);
+		return;
+	}
+#endif
+
+	/* FIXME: add write barrier handling */
 	if ((cfg->opt & MONO_OPT_INTRINS) && !to_end && n <= sizeof (gpointer) * 5) {
 		MonoInst *inst;
 		if (dest->opcode == OP_LDADDR) {
@@ -3037,7 +3050,7 @@ handle_box (MonoCompile *cfg, MonoBasicBlock *bblock, MonoInst *val, const gucha
 	vstore->inst_right = val;
 
 	if (vstore->opcode == CEE_STOBJ) {
-		handle_stobj (cfg, bblock, add, val, ip, klass, FALSE, FALSE);
+		handle_stobj (cfg, bblock, add, val, ip, klass, FALSE, FALSE, TRUE);
 	} else
 		MONO_ADD_INS (bblock, vstore);
 
@@ -3283,38 +3296,6 @@ mono_find_jit_opcode_emulation (int opcode)
 		return NULL;
 }
 
-static MonoException*
-mini_loader_error_to_exception (MonoLoaderError *error)
-{
-	MonoException *ex = NULL;
-
-	switch (error->kind) {
-	case MONO_LOADER_ERROR_TYPE: {
-		MonoString *class_name = mono_string_new (mono_domain_get (), error->class_name);
-		
-		ex = mono_get_exception_type_load (class_name, error->assembly_name);
-		break;
-	}
-	case MONO_LOADER_ERROR_METHOD:
-	case MONO_LOADER_ERROR_FIELD: {
-		char *class_name;
-		
-		class_name = g_strdup_printf ("%s%s%s", error->klass->name_space, *error->klass->name_space ? "." : "", error->klass->name);
-
-		if (error->kind == MONO_LOADER_ERROR_METHOD)
-			ex = mono_get_exception_missing_method (class_name, error->member_name);
-		else
-			ex = mono_get_exception_missing_field (class_name, error->member_name);
-		g_free (class_name);
-		break;
-	}
-	default:
-		g_assert_not_reached ();
-	}
-
-	return ex;
-}
-
 static MonoInst*
 mini_get_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
 {
@@ -3446,7 +3427,7 @@ mono_save_args (MonoCompile *cfg, MonoBasicBlock *bblock, MonoMethodSignature *s
 			store->cil_code = sp [0]->cil_code;
 			if (store->opcode == CEE_STOBJ) {
 				NEW_TEMPLOADA (cfg, store, temp->inst_c0);
-				handle_stobj (cfg, bblock, store, *sp, sp [0]->cil_code, temp->klass, FALSE, FALSE);
+				handle_stobj (cfg, bblock, store, *sp, sp [0]->cil_code, temp->klass, FALSE, FALSE, FALSE);
 			} else {
 				MONO_ADD_INS (bblock, store);
 			} 
@@ -3454,6 +3435,56 @@ mono_save_args (MonoCompile *cfg, MonoBasicBlock *bblock, MonoMethodSignature *s
 		sp++;
 	}
 }
+#define MONO_INLINE_CALLED_LIMITED_METHODS 1
+#define MONO_INLINE_CALLER_LIMITED_METHODS 1
+
+#if (MONO_INLINE_CALLED_LIMITED_METHODS)
+static char*
+mono_inline_called_method_name_limit = NULL;
+static gboolean check_inline_called_method_name_limit (MonoMethod *called_method) {
+	char *called_method_name = mono_method_full_name (called_method, TRUE);
+	int strncmp_result;
+	
+	if (mono_inline_called_method_name_limit == NULL) {
+		char *limit_string = getenv ("MONO_INLINE_CALLED_METHOD_NAME_LIMIT");
+		if (limit_string != NULL) {
+			mono_inline_called_method_name_limit = limit_string;
+		} else {
+			mono_inline_called_method_name_limit = (char *) "";
+		}
+	}
+	
+	strncmp_result = strncmp (called_method_name, mono_inline_called_method_name_limit, strlen (mono_inline_called_method_name_limit));
+	g_free (called_method_name);
+	
+	//return (strncmp_result <= 0);
+	return (strncmp_result == 0);
+}
+#endif
+
+#if (MONO_INLINE_CALLER_LIMITED_METHODS)
+static char*
+mono_inline_caller_method_name_limit = NULL;
+static gboolean check_inline_caller_method_name_limit (MonoMethod *caller_method) {
+	char *caller_method_name = mono_method_full_name (caller_method, TRUE);
+	int strncmp_result;
+	
+	if (mono_inline_caller_method_name_limit == NULL) {
+		char *limit_string = getenv ("MONO_INLINE_CALLER_METHOD_NAME_LIMIT");
+		if (limit_string != NULL) {
+			mono_inline_caller_method_name_limit = limit_string;
+		} else {
+			mono_inline_caller_method_name_limit = (char *) "";
+		}
+	}
+	
+	strncmp_result = strncmp (caller_method_name, mono_inline_caller_method_name_limit, strlen (mono_inline_caller_method_name_limit));
+	g_free (caller_method_name);
+	
+	//return (strncmp_result <= 0);
+	return (strncmp_result == 0);
+}
+#endif
 
 static int
 inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoBasicBlock *bblock, MonoInst **sp,
@@ -3464,6 +3495,14 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 	MonoBasicBlock *ebblock, *sbblock;
 	int i, costs, new_locals_offset;
 	MonoMethod *prev_inlined_method;
+#if (MONO_INLINE_CALLED_LIMITED_METHODS)
+	if ((! inline_allways) && ! check_inline_called_method_name_limit (cmethod))
+		return 0;
+#endif
+#if (MONO_INLINE_CALLER_LIMITED_METHODS)
+	if ((! inline_allways) && ! check_inline_caller_method_name_limit (cfg->method))
+		return 0;
+#endif
 
 	if (cfg->verbose_level > 2)
 		g_print ("INLINE START %p %s -> %s\n", cmethod,  mono_method_full_name (cfg->method, TRUE), mono_method_full_name (cmethod, TRUE));
@@ -4265,7 +4304,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				UNVERIFIED;
 			if (ins->opcode == CEE_STOBJ) {
 				NEW_LOCLOADA (cfg, ins, n);
-				handle_stobj (cfg, bblock, ins, *sp, ip, ins->klass, FALSE, FALSE);
+				handle_stobj (cfg, bblock, ins, *sp, ip, ins->klass, FALSE, FALSE, FALSE);
 			} else
 				MONO_ADD_INS (bblock, ins);
 			++ip;
@@ -4301,7 +4340,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				UNVERIFIED;
 			if (ins->opcode == CEE_STOBJ) {
 				NEW_ARGLOADA (cfg, ins, ip [1]);
-				handle_stobj (cfg, bblock, ins, *sp, ip, ins->klass, FALSE, FALSE);
+				handle_stobj (cfg, bblock, ins, *sp, ip, ins->klass, FALSE, FALSE, FALSE);
 			} else
 				MONO_ADD_INS (bblock, ins);
 			ip += 2;
@@ -4336,7 +4375,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				UNVERIFIED;
 			if (ins->opcode == CEE_STOBJ) {
 				NEW_LOCLOADA (cfg, ins, ip [1]);
-				handle_stobj (cfg, bblock, ins, *sp, ip, ins->klass, FALSE, FALSE);
+				handle_stobj (cfg, bblock, ins, *sp, ip, ins->klass, FALSE, FALSE, FALSE);
 			} else
 				MONO_ADD_INS (bblock, ins);
 			ip += 2;
@@ -4461,7 +4500,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				store->cil_code = ip;
 				if (store->opcode == CEE_STOBJ) {
 					NEW_TEMPLOADA (cfg, store, temp->inst_c0);
-					handle_stobj (cfg, bblock, store, sp [0], sp [0]->cil_code, store->klass, TRUE, FALSE);
+					handle_stobj (cfg, bblock, store, sp [0], sp [0]->cil_code, store->klass, TRUE, FALSE, FALSE);
 				} else {
 					MONO_ADD_INS (bblock, store);
 				}
@@ -4546,8 +4585,10 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					/* MS.NET seems to silently convert this to a callvirt */
 					virtual = 1;
 
-				if (!cmethod->klass->inited)
-					mono_class_init (cmethod->klass);
+				if (!cmethod->klass->inited){
+					if (!mono_class_init (cmethod->klass))
+						goto load_error;
+				}
 
 				if (mono_method_signature (cmethod)->pinvoke) {
 					MonoMethod *wrapper = mono_marshal_get_native_wrapper (cmethod);
@@ -4677,7 +4718,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					ins->cil_code = ip;
 					if (ins->opcode == CEE_STOBJ) {
 						NEW_ARGLOADA (cfg, ins, i);
-						handle_stobj (cfg, bblock, ins, sp [i], sp [i]->cil_code, ins->klass, FALSE, FALSE);
+						handle_stobj (cfg, bblock, ins, sp [i], sp [i]->cil_code, ins->klass, FALSE, FALSE, FALSE);
 					}
 					else
 						MONO_ADD_INS (bblock, ins);
@@ -4831,7 +4872,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					NEW_INDSTORE (cfg, ins, addr, sp [fsig->param_count], fsig->params [fsig->param_count - 1]);
 					ins->cil_code = ip;
 					if (ins->opcode == CEE_STOBJ) {
-						handle_stobj (cfg, bblock, addr, sp [fsig->param_count], ip, mono_class_from_mono_type (fsig->params [fsig->param_count-1]), FALSE, FALSE);
+						handle_stobj (cfg, bblock, addr, sp [fsig->param_count], ip, mono_class_from_mono_type (fsig->params [fsig->param_count-1]), FALSE, FALSE, TRUE);
 					} else {
 						MONO_ADD_INS (bblock, ins);
 					}
@@ -4883,7 +4924,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					if (store->opcode == CEE_STOBJ) {
 						g_assert_not_reached ();
 						NEW_TEMPLOADA (cfg, store, return_var->inst_c0);
-						handle_stobj (cfg, bblock, store, *sp, sp [0]->cil_code, return_var->klass, FALSE, FALSE);
+						/* FIXME: it is possible some optimization will pass the a heap pointer for the struct address, so we'll need the write barrier */
+						handle_stobj (cfg, bblock, store, *sp, sp [0]->cil_code, return_var->klass, FALSE, FALSE, FALSE);
 					} else
 						MONO_ADD_INS (bblock, store);
 				} 
@@ -4896,7 +4938,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					ins->opcode = mono_type_to_stind (mono_method_signature (method)->ret);
 					if (ins->opcode == CEE_STOBJ) {
 						NEW_RETLOADA (cfg, ins);
-						handle_stobj (cfg, bblock, ins, *sp, ip, ins->klass, FALSE, FALSE);
+						/* FIXME: it is possible some optimization will pass the a heap pointer for the struct address, so we'll need the write barrier */
+						handle_stobj (cfg, bblock, ins, *sp, ip, ins->klass, FALSE, FALSE, FALSE);
 					} else {
 						ins->opcode = OP_SETRET;
 						ins->cil_code = ip;
@@ -5095,6 +5138,16 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		case CEE_STIND_R4:
 		case CEE_STIND_R8:
 			CHECK_STACK (2);
+#if HAVE_WRITE_BARRIERS
+			if (*ip == CEE_STIND_REF && method->wrapper_type != MONO_WRAPPER_WRITE_BARRIER) {
+				/* insert call to write barrier */
+				MonoMethod *write_barrier = mono_marshal_get_write_barrier ();
+				sp -= 2;
+				mono_emit_method_call_spilled (cfg, bblock, write_barrier, mono_method_signature (write_barrier), sp, ip, NULL);
+				ip++;
+				break;
+			}
+#endif
 			MONO_INST_NEW (cfg, ins, *ip);
 			ins->cil_code = ip++;
 			sp -= 2;
@@ -5325,7 +5378,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					ins->cil_code = ip;
 					g_assert (ins->opcode == CEE_STOBJ);
 					NEW_LOCLOADA (cfg, ins, loc_index);
-					handle_stobj (cfg, bblock, ins, *sp, ip, ins->klass, FALSE, FALSE);
+					handle_stobj (cfg, bblock, ins, *sp, ip, ins->klass, FALSE, FALSE, FALSE);
 					ip += 5;
 					ip += stloc_len;
 					break;
@@ -5445,7 +5498,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				goto load_error;
 			fsig = mono_method_get_signature (cmethod, image, token);
 
-			mono_class_init (cmethod->klass);
+			if (!mono_class_init (cmethod->klass))
+				goto load_error;
 
 			if (mono_use_security_manager) {
 				check_linkdemand (cfg, method, cmethod, bblock, ip);
@@ -5879,6 +5933,21 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					} else {
 						mono_emit_method_call_spilled (cfg, bblock, stfld_wrapper, mono_method_signature (stfld_wrapper), iargs, ip, NULL);
 					}
+#if HAVE_WRITE_BARRIERS
+				} else if (mono_type_to_stind (field->type) == CEE_STIND_REF) {
+					/* insert call to write barrier */
+					MonoMethod *write_barrier = mono_marshal_get_write_barrier ();
+					MonoInst *iargs [2];
+					NEW_ICONST (cfg, offset_ins, foffset);
+					MONO_INST_NEW (cfg, ins, OP_PADD);
+					ins->cil_code = ip;
+					ins->inst_left = *sp;
+					ins->inst_right = offset_ins;
+					ins->type = STACK_MP;
+					iargs [0] = ins;
+					iargs [1] = sp [1];
+					mono_emit_method_call_spilled (cfg, bblock, write_barrier, mono_method_signature (write_barrier), iargs, ip, NULL);
+#endif
 				} else {
 					MonoInst *store;
 					NEW_ICONST (cfg, offset_ins, foffset);
@@ -5897,7 +5966,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					ins_flag = 0;
 					if (store->opcode == CEE_STOBJ) {
 						handle_stobj (cfg, bblock, ins, sp [1], ip, 
-							      mono_class_from_mono_type (field->type), FALSE, FALSE);
+							      mono_class_from_mono_type (field->type), FALSE, FALSE, TRUE);
 					} else
 						MONO_ADD_INS (bblock, store);
 				}
@@ -6063,7 +6132,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				ins_flag = 0;
 
 				if (store->opcode == CEE_STOBJ) {
-					handle_stobj (cfg, bblock, ins, sp [0], ip, mono_class_from_mono_type (field->type), FALSE, FALSE);
+					handle_stobj (cfg, bblock, ins, sp [0], ip, mono_class_from_mono_type (field->type), FALSE, FALSE, FALSE);
 				} else
 					MONO_ADD_INS (bblock, store);
 			} else {
@@ -6106,6 +6175,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						NEW_ICONST (cfg, *sp, *((guint32 *)addr));
 						sp++;
 						break;
+#ifndef HAVE_MOVING_COLLECTOR
 					case MONO_TYPE_I:
 					case MONO_TYPE_U:
 					case MONO_TYPE_STRING:
@@ -6119,6 +6189,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						type_to_eval_stack_type (field->type, *sp);
 						sp++;
 						break;
+#endif
 					case MONO_TYPE_I8:
 					case MONO_TYPE_U8:
 						MONO_INST_NEW (cfg, *sp, OP_I8CONST);
@@ -6162,7 +6233,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				goto load_error;
 			n = mono_type_to_stind (&klass->byval_arg);
 			if (n == CEE_STOBJ) {
-				handle_stobj (cfg, bblock, sp [0], sp [1], ip, klass, FALSE, FALSE);
+				handle_stobj (cfg, bblock, sp [0], sp [1], ip, klass, FALSE, FALSE, TRUE);
 			} else {
 				/* FIXME: should check item at sp [1] is compatible with the type of the store. */
 				MonoInst *store;
@@ -6437,7 +6508,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 				n = mono_type_to_stind (&klass->byval_arg);
 				if (n == CEE_STOBJ)
-					handle_stobj (cfg, bblock, load, sp [2], ip, klass, FALSE, FALSE);
+					handle_stobj (cfg, bblock, load, sp [2], ip, klass, FALSE, FALSE, TRUE);
 				else {
 					MONO_INST_NEW (cfg, ins, n);
 					ins->cil_code = ip;
@@ -6861,7 +6932,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				klass = (MonoClass *)mono_method_get_wrapper_data (method, token);
 
 				NEW_RETLOADA (cfg, ins);
-				handle_stobj (cfg, bblock, ins, *sp, ip, klass, FALSE, TRUE);
+				handle_stobj (cfg, bblock, ins, *sp, ip, klass, FALSE, TRUE, FALSE);
 				
 				if (sp != stack_start)
 					UNVERIFIED;
@@ -7075,7 +7146,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					UNVERIFIED;
 				if (ins->opcode == CEE_STOBJ) {
 					NEW_ARGLOADA (cfg, ins, n);
-					handle_stobj (cfg, bblock, ins, *sp, ip, ins->klass, FALSE, FALSE);
+					handle_stobj (cfg, bblock, ins, *sp, ip, ins->klass, FALSE, FALSE, FALSE);
 				} else
 					MONO_ADD_INS (bblock, ins);
 				ip += 4;
@@ -7113,7 +7184,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				ins->cil_code = ip;
 				if (ins->opcode == CEE_STOBJ) {
 					NEW_LOCLOADA (cfg, ins, n);
-					handle_stobj (cfg, bblock, ins, *sp, ip, ins->klass, FALSE, FALSE);
+					handle_stobj (cfg, bblock, ins, *sp, ip, ins->klass, FALSE, FALSE, FALSE);
 				} else
 					MONO_ADD_INS (bblock, ins);
 				ip += 4;
@@ -11274,8 +11345,7 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 
 		mono_destroy_compile (cfg);
 		if (error) {
-			MonoException *ex = mini_loader_error_to_exception (error);
-			mono_loader_clear_error ();
+			MonoException *ex = mono_loader_error_prepare_exception (error);
 			mono_raise_exception (ex);
 		} else {
 			g_assert_not_reached ();
@@ -12180,6 +12250,7 @@ mini_init (const char *filename)
 	register_icall (mono_helper_ldstr, "helper_ldstr", "object ptr int", FALSE);
 	register_icall (mono_helper_ldstr_mscorlib, "helper_ldstr_mscorlib", "object int", FALSE);
 	register_icall (mono_helper_newobj_mscorlib, "helper_newobj_mscorlib", "object int", FALSE);
+	register_icall (mono_value_copy, "mono_value_copy", "void ptr ptr ptr", FALSE);
 #endif
 
 #define JIT_RUNTIME_WORKS

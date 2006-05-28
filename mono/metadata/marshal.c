@@ -230,6 +230,7 @@ mono_marshal_init (void)
 		register_icall (mono_context_set, "mono_context_set", "void object", FALSE);
 		register_icall (mono_upgrade_remote_class_wrapper, "mono_upgrade_remote_class_wrapper", "void object object", FALSE);
 		register_icall (type_from_handle, "type_from_handle", "object ptr", FALSE);
+		register_icall (mono_gc_wbarrier_generic_store, "wb_generic", "void ptr object", FALSE);
 	}
 }
 
@@ -1292,39 +1293,96 @@ emit_ptr_to_object_conv (MonoMethodBuilder *mb, MonoType *type, MonoMarshalConv 
 		mono_mb_emit_byte (mb, CEE_STIND_I1);
 		break;
 	case MONO_MARSHAL_CONV_ARRAY_BYVALARRAY: {
-		MonoClass *eclass = NULL;
+		MonoClass *eklass = NULL;
 		int esize;
 
 		if (type->type == MONO_TYPE_SZARRAY) {
-			eclass = type->data.klass;
+			eklass = type->data.klass;
 		} else {
 			g_assert_not_reached ();
 		}
 
-		if (eclass->valuetype)
-			esize = mono_class_instance_size (eclass) - sizeof (MonoObject);
-		else
-			esize = sizeof (gpointer);
+		esize = mono_class_native_size (eklass, NULL);
 
 		/* create a new array */
 		mono_mb_emit_ldloc (mb, 1);
 		mono_mb_emit_icon (mb, mspec->data.array_data.num_elem);
 		mono_mb_emit_byte (mb, CEE_NEWARR);	
-		mono_mb_emit_i4 (mb, mono_mb_add_data (mb, eclass));
+		mono_mb_emit_i4 (mb, mono_mb_add_data (mb, eklass));
 		mono_mb_emit_byte (mb, CEE_STIND_I);
 
-		// FIXME: This only works if the array is blittable
+		if (eklass->blittable) {
+			/* copy the elements */
+			mono_mb_emit_ldloc (mb, 1);
+			mono_mb_emit_byte (mb, CEE_LDIND_I);
+			mono_mb_emit_icon (mb, G_STRUCT_OFFSET (MonoArray, vector));
+			mono_mb_emit_byte (mb, CEE_ADD);
+			mono_mb_emit_ldloc (mb, 0);
+			mono_mb_emit_icon (mb, mspec->data.array_data.num_elem * esize);
+			mono_mb_emit_byte (mb, CEE_PREFIX1);
+			mono_mb_emit_byte (mb, CEE_CPBLK);			
+		}
+		else {
+			int array_var, src_var, dst_var, index_var;
+			guint32 label2, label3;
 
-		/* copy the elements */
-		mono_mb_emit_ldloc (mb, 1);
-		mono_mb_emit_byte (mb, CEE_LDIND_I);
-		mono_mb_emit_icon (mb, G_STRUCT_OFFSET (MonoArray, vector));
-		mono_mb_emit_byte (mb, CEE_ADD);
-		mono_mb_emit_ldloc (mb, 0);
-		mono_mb_emit_icon (mb, mspec->data.array_data.num_elem * esize);
-		mono_mb_emit_byte (mb, CEE_PREFIX1);
-		mono_mb_emit_byte (mb, CEE_CPBLK);			
+			array_var = mono_mb_add_local (mb, &mono_defaults.object_class->byval_arg);
+			src_var = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
+			dst_var = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
 
+			/* set array_var */
+			mono_mb_emit_ldloc (mb, 1);
+			mono_mb_emit_byte (mb, CEE_LDIND_I);
+			mono_mb_emit_stloc (mb, array_var);
+		
+			/* save the old src pointer */
+			mono_mb_emit_ldloc (mb, 0);
+			mono_mb_emit_stloc (mb, src_var);
+			/* save the old dst pointer */
+			mono_mb_emit_ldloc (mb, 1);
+			mono_mb_emit_stloc (mb, dst_var);
+
+			/* Emit marshalling loop */
+			index_var = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
+			mono_mb_emit_byte (mb, CEE_LDC_I4_0);
+			mono_mb_emit_stloc (mb, index_var);
+
+			/* Loop header */
+			label2 = mb->pos;
+			mono_mb_emit_ldloc (mb, index_var);
+			mono_mb_emit_ldloc (mb, array_var);
+			mono_mb_emit_byte (mb, CEE_LDLEN);
+			mono_mb_emit_byte (mb, CEE_BGE);
+			label3 = mb->pos;
+			mono_mb_emit_i4 (mb, 0);
+
+			/* src is already set */
+
+			/* Set dst */
+			mono_mb_emit_ldloc (mb, array_var);
+			mono_mb_emit_ldloc (mb, index_var);
+			mono_mb_emit_byte (mb, CEE_LDELEMA);
+			mono_mb_emit_i4 (mb, mono_mb_add_data (mb, eklass));
+			mono_mb_emit_stloc (mb, 1);
+
+			/* Do the conversion */
+			emit_struct_conv (mb, eklass, TRUE);
+
+			/* Loop footer */
+			mono_mb_emit_add_to_local (mb, index_var, 1);
+
+			mono_mb_emit_byte (mb, CEE_BR);
+			mono_mb_emit_i4 (mb, label2 - (mb->pos + 4));
+
+			mono_mb_patch_addr (mb, label3, mb->pos - (label3 + 4));
+		
+			/* restore the old src pointer */
+			mono_mb_emit_ldloc (mb, src_var);
+			mono_mb_emit_stloc (mb, 0);
+			/* restore the old dst pointer */
+			mono_mb_emit_ldloc (mb, dst_var);
+			mono_mb_emit_stloc (mb, 1);
+		}
 		break;
 	}
 	case MONO_MARSHAL_CONV_ARRAY_BYVALCHARARRAY: {
@@ -1552,17 +1610,17 @@ emit_object_to_ptr_conv (MonoMethodBuilder *mb, MonoType *type, MonoMarshalConv 
 		break;
 	}
 	case MONO_MARSHAL_CONV_ARRAY_BYVALARRAY: {
-		MonoClass *eclass = NULL;
+		MonoClass *eklass = NULL;
 		int esize;
 
 		if (type->type == MONO_TYPE_SZARRAY) {
-			eclass = type->data.klass;
+			eklass = type->data.klass;
 		} else {
 			g_assert_not_reached ();
 		}
 
-		if (eclass->valuetype)
-			esize = mono_class_native_size (eclass, NULL);
+		if (eklass->valuetype)
+			esize = mono_class_native_size (eklass, NULL);
 		else
 			esize = sizeof (gpointer);
 
@@ -1572,18 +1630,79 @@ emit_object_to_ptr_conv (MonoMethodBuilder *mb, MonoType *type, MonoMarshalConv 
 		pos = mb->pos;
 		mono_mb_emit_byte (mb, 0);
 
-		// FIXME: This only works if the array is blittable
+		if (eklass->blittable) {
+			mono_mb_emit_ldloc (mb, 1);
+			mono_mb_emit_ldloc (mb, 0);	
+			mono_mb_emit_byte (mb, CEE_LDIND_I);	
+			mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
+			mono_mb_emit_byte (mb, CEE_MONO_OBJADDR);
+			mono_mb_emit_icon (mb, G_STRUCT_OFFSET (MonoArray, vector));
+			mono_mb_emit_byte (mb, CEE_ADD);
+			mono_mb_emit_icon (mb, mspec->data.array_data.num_elem * esize);
+			mono_mb_emit_byte (mb, CEE_PREFIX1);
+			mono_mb_emit_byte (mb, CEE_CPBLK);			
+		} else {
+			int array_var, src_var, dst_var, index_var;
+			guint32 label2, label3;
 
-		mono_mb_emit_ldloc (mb, 1);
-		mono_mb_emit_ldloc (mb, 0);	
-		mono_mb_emit_byte (mb, CEE_LDIND_I);	
-		mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
-		mono_mb_emit_byte (mb, CEE_MONO_OBJADDR);
-		mono_mb_emit_icon (mb, G_STRUCT_OFFSET (MonoArray, vector));
-		mono_mb_emit_byte (mb, CEE_ADD);
-		mono_mb_emit_icon (mb, mspec->data.array_data.num_elem * esize);
-		mono_mb_emit_byte (mb, CEE_PREFIX1);
-		mono_mb_emit_byte (mb, CEE_CPBLK);			
+			array_var = mono_mb_add_local (mb, &mono_defaults.object_class->byval_arg);
+			src_var = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
+			dst_var = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
+
+			/* set array_var */
+			mono_mb_emit_ldloc (mb, 0);	
+			mono_mb_emit_byte (mb, CEE_LDIND_I);	
+			mono_mb_emit_stloc (mb, array_var);
+
+			/* save the old src pointer */
+			mono_mb_emit_ldloc (mb, 0);
+			mono_mb_emit_stloc (mb, src_var);
+			/* save the old dst pointer */
+			mono_mb_emit_ldloc (mb, 1);
+			mono_mb_emit_stloc (mb, dst_var);
+
+			/* Emit marshalling loop */
+			index_var = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
+			mono_mb_emit_byte (mb, CEE_LDC_I4_0);
+			mono_mb_emit_stloc (mb, index_var);
+
+			/* Loop header */
+			label2 = mb->pos;
+			mono_mb_emit_ldloc (mb, index_var);
+			mono_mb_emit_ldloc (mb, array_var);
+			mono_mb_emit_byte (mb, CEE_LDLEN);
+			mono_mb_emit_byte (mb, CEE_BGE);
+			label3 = mb->pos;
+			mono_mb_emit_i4 (mb, 0);
+
+			/* Set src */
+			mono_mb_emit_ldloc (mb, array_var);
+			mono_mb_emit_ldloc (mb, index_var);
+			mono_mb_emit_byte (mb, CEE_LDELEMA);
+			mono_mb_emit_i4 (mb, mono_mb_add_data (mb, eklass));
+			mono_mb_emit_stloc (mb, 0);
+
+			/* dst is already set */
+
+			/* Do the conversion */
+			emit_struct_conv (mb, eklass, FALSE);
+
+			/* Loop footer */
+			mono_mb_emit_add_to_local (mb, index_var, 1);
+
+			mono_mb_emit_byte (mb, CEE_BR);
+			mono_mb_emit_i4 (mb, label2 - (mb->pos + 4));
+
+			mono_mb_patch_addr (mb, label3, mb->pos - (label3 + 4));
+		
+			/* restore the old src pointer */
+			mono_mb_emit_ldloc (mb, src_var);
+			mono_mb_emit_stloc (mb, 0);
+			/* restore the old dst pointer */
+			mono_mb_emit_ldloc (mb, dst_var);
+			mono_mb_emit_stloc (mb, 1);
+		}
+
 		mono_mb_patch_addr_s (mb, pos, mb->pos - pos - 1);
 		break;
 	}
@@ -3673,7 +3792,7 @@ mono_marshal_get_runtime_invoke (MonoMethod *method)
 	mono_mb_emit_byte (mb, 3);	
 	mono_mb_emit_byte (mb, CEE_LDARG_2);
 	mono_mb_emit_byte (mb, CEE_LDNULL);
-	mono_mb_emit_byte (mb, CEE_STIND_I);
+	mono_mb_emit_byte (mb, CEE_STIND_REF);
 
 	emit_thread_force_interrupt_checkpoint (mb);
 
@@ -3829,7 +3948,7 @@ handle_enum:
 	
 	mono_mb_emit_byte (mb, CEE_LDARG_2);
 	mono_mb_emit_ldloc (mb, 1);
-	mono_mb_emit_byte (mb, CEE_STIND_I);
+	mono_mb_emit_byte (mb, CEE_STIND_REF);
 
 	mono_mb_emit_byte (mb, CEE_LDNULL);
 	mono_mb_emit_stloc (mb, 0);
@@ -7704,6 +7823,46 @@ mono_marshal_get_stelemref ()
 	
 	mono_mb_emit_byte (mb, CEE_RET);
 	ret = mono_mb_create_method (mb, sig, 4);
+	mono_mb_free (mb);
+	return ret;
+}
+
+MonoMethod*
+mono_marshal_get_write_barrier (void)
+{
+	static MonoMethod* ret = NULL;
+	MonoMethodSignature *sig;
+	MonoMethodBuilder *mb;
+	int max_stack = 2;
+
+	if (ret)
+		return ret;
+	
+	mb = mono_mb_new (mono_defaults.object_class, "writebarrier", MONO_WRAPPER_WRITE_BARRIER);
+
+	sig = mono_metadata_signature_alloc (mono_defaults.corlib, 2);
+
+	/* void writebarrier (MonoObject** addr, MonoObject* obj) */
+	sig->ret = &mono_defaults.void_class->byval_arg;
+	sig->params [0] = &mono_defaults.object_class->this_arg;
+	sig->params [1] = &mono_defaults.object_class->byval_arg;
+
+	/* just the store right now: add an hook for the GC to use, maybe something
+	 * that can be used for stelemref as well
+	 * We need a write barrier variant to be used with struct copies as well, though
+	 * there are also other approaches possible, like writing a wrapper specific to
+	 * the struct or to the reference pattern in the struct...
+	 * Depending on the GC, we may want variants that take the object we store to
+	 * when it is available.
+	 */
+	mono_mb_emit_ldarg (mb, 0);
+	mono_mb_emit_ldarg (mb, 1);
+	mono_mb_emit_icall (mb, mono_gc_wbarrier_generic_store);
+	/*mono_mb_emit_byte (mb, CEE_STIND_REF);*/
+
+	mono_mb_emit_byte (mb, CEE_RET);
+
+	ret = mono_mb_create_method (mb, sig, max_stack);
 	mono_mb_free (mb);
 	return ret;
 }

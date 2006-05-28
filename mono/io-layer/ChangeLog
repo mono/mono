@@ -1,3 +1,17 @@
+2006-05-24  Dick Porter  <dick@ximian.com>
+
+	* processes.c (process_set_current): Don't take an extra reference
+	if we have to create our own process handle.  Fixes bug 78241
+	again.
+
+	* threads.c (_wapi_thread_signal_self): Renamed from
+	_wapi_thread_abandon_mutexes, also sets the thread state to
+	signalled and drops a reference.  Called by the runtime when the
+	main thread cleans itself up.
+
+	* handles.c (handle_cleanup): As a last resort, unref every shared
+	handle as the process is now exiting.
+
 2006-05-16  Dick Porter  <dick@ximian.com>
 
 	* processes.c (process_set_termination_details): Unref the handle

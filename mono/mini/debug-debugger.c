@@ -3,6 +3,7 @@
 #include <mono/metadata/threads.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/mono-debug.h>
+#include <mono/metadata/mono-config.h>
 #define _IN_THE_MONO_DEBUGGER
 #include "debug-debugger.h"
 #include <libgc/include/libgc-mono-debugger.h>
@@ -11,7 +12,20 @@
 #include <locale.h>
 #include <string.h>
 
-static MonoMethod *debugger_main_method;
+/*
+ * This file is only compiled on platforms where the debugger is supported - see the conditional
+ * definition of `debugger_sources' in Makefile.am.
+ *
+ * configure.in checks whether we're using the included libgc and disables the debugger if not.
+ */
+
+#if !defined(MONO_DEBUGGER_SUPPORTED)
+#error "Some clown tried to compile debug-debugger.c on an unsupported platform - fix Makefile.am!"
+#elif !defined(USE_INCLUDED_LIBGC)
+#error "Some clown #defined MONO_DEBUGGER_SUPPORTED without USE_INCLUDED_GC - fix configure.in!"
+#endif
+
+static MonoCodeManager *debugger_codeman = NULL;
 
 static guint64 debugger_insert_breakpoint (guint64 method_argument, const gchar *string_argument);
 static guint64 debugger_remove_breakpoint (guint64 breakpoint);
@@ -248,8 +262,6 @@ debugger_get_current_thread (void)
 	return (guint64) (gsize) mono_thread_current ();
 }
 
-#if FIXME_BROKEN_OVER_NIGHT
-
 static void
 debugger_gc_thread_created (pthread_t thread, void *stack_ptr)
 {
@@ -300,18 +312,6 @@ debugger_finalize_threads (void)
 	gc_thread_vtable = NULL;
 }
 
-#else
-
-static void
-debugger_init_threads (void)
-{ }
-
-static void
-debugger_finalize_threads (void)
-{ }
-
-#endif
-
 static void
 debugger_attach (void)
 {
@@ -321,9 +321,7 @@ debugger_attach (void)
 	mono_debugger_notification_function (MONO_DEBUGGER_EVENT_INITIALIZE_MANAGED_CODE, 0, 0);
 
 	debugger_init_threads ();
-#if FIXME_BROKEN_OVER_NIGHT
 	GC_mono_debugger_add_all_threads ();
-#endif
 }
 
 static void
@@ -342,7 +340,12 @@ debugger_initialize (void)
 void
 mono_debugger_init (void)
 {
-	mono_debugger_notification_function = mono_debugger_create_notification_function ();
+	/*
+	 * Use mono_code_manager_new_dynamic() to create a new malloc()-based code manager
+	 * and intentionally leak the memory on exit.
+	 */
+	debugger_codeman = mono_code_manager_new_dynamic ();
+	mono_debugger_notification_function = mono_debugger_create_notification_function (debugger_codeman);
 	mono_debugger_event_handler = debugger_event_handler;
 
 	/*
@@ -400,14 +403,14 @@ mono_debugger_main (MonoDomain *domain, MonoAssembly *assembly, int argc, char *
 {
 	MainThreadArgs main_args;
 	MonoImage *image;
+	MonoMethod *main;
 
 	/*
 	 * Get and compile the main function.
 	 */
 
 	image = mono_assembly_get_image (assembly);
-	debugger_main_method = mono_get_method (
-		image, mono_image_get_entry_point (image), NULL);
+	main = mono_get_method (image, mono_image_get_entry_point (image), NULL);
 
 	/*
 	 * Reload symbol tables.
@@ -420,7 +423,7 @@ mono_debugger_main (MonoDomain *domain, MonoAssembly *assembly, int argc, char *
 	 */
 
 	main_args.domain = domain;
-	main_args.method = debugger_main_method;
+	main_args.method = main;
 	main_args.argc = argc;
 	main_args.argv = argv;
 

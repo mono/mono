@@ -3825,6 +3825,57 @@ mono_save_args (MonoCompile *cfg, MonoMethodSignature *sig, MonoInst **sp, MonoI
 	}
 }
 
+#define MONO_INLINE_CALLED_LIMITED_METHODS 1
+#define MONO_INLINE_CALLER_LIMITED_METHODS 1
+
+#if (MONO_INLINE_CALLED_LIMITED_METHODS)
+static char*
+mono_inline_called_method_name_limit = NULL;
+static gboolean check_inline_called_method_name_limit (MonoMethod *called_method) {
+	char *called_method_name = mono_method_full_name (called_method, TRUE);
+	int strncmp_result;
+	
+	if (mono_inline_called_method_name_limit == NULL) {
+		char *limit_string = getenv ("MONO_INLINE_CALLED_METHOD_NAME_LIMIT");
+		if (limit_string != NULL) {
+			mono_inline_called_method_name_limit = limit_string;
+		} else {
+			mono_inline_called_method_name_limit = (char *) "";
+		}
+	}
+	
+	strncmp_result = strncmp (called_method_name, mono_inline_called_method_name_limit, strlen (mono_inline_called_method_name_limit));
+	g_free (called_method_name);
+	
+	//return (strncmp_result <= 0);
+	return (strncmp_result == 0);
+}
+#endif
+
+#if (MONO_INLINE_CALLER_LIMITED_METHODS)
+static char*
+mono_inline_caller_method_name_limit = NULL;
+static gboolean check_inline_caller_method_name_limit (MonoMethod *caller_method) {
+	char *caller_method_name = mono_method_full_name (caller_method, TRUE);
+	int strncmp_result;
+	
+	if (mono_inline_caller_method_name_limit == NULL) {
+		char *limit_string = getenv ("MONO_INLINE_CALLER_METHOD_NAME_LIMIT");
+		if (limit_string != NULL) {
+			mono_inline_caller_method_name_limit = limit_string;
+		} else {
+			mono_inline_caller_method_name_limit = (char *) "";
+		}
+	}
+	
+	strncmp_result = strncmp (caller_method_name, mono_inline_caller_method_name_limit, strlen (mono_inline_caller_method_name_limit));
+	g_free (caller_method_name);
+	
+	//return (strncmp_result <= 0);
+	return (strncmp_result == 0);
+}
+#endif
+
 static int
 inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **sp,
 		guchar *ip, guint real_offset, GList *dont_inline, gboolean inline_allways)
@@ -3841,6 +3892,15 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 	MonoBasicBlock *prev_cbb;
 	unsigned char* prev_cil_start;
 	guint32 prev_cil_offset_to_bb_len;
+
+#if (MONO_INLINE_CALLED_LIMITED_METHODS)
+	if ((! inline_allways) && ! check_inline_called_method_name_limit (cmethod))
+		return 0;
+#endif
+#if (MONO_INLINE_CALLER_LIMITED_METHODS)
+	if ((! inline_allways) && ! check_inline_caller_method_name_limit (cfg->method))
+		return 0;
+#endif
 
 	if (cfg->verbose_level > 2)
 		printf ("INLINE START %p %s -> %s\n", cmethod,  mono_method_full_name (cfg->method, TRUE), mono_method_full_name (cmethod, TRUE));
@@ -6017,7 +6077,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					virtual = 1;
 
 				if (!cmethod->klass->inited)
-					mono_class_init (cmethod->klass);
+					if (!mono_class_init (cmethod->klass))
+						goto load_error;
 
 				if (mono_method_signature (cmethod)->pinvoke) {
 					MonoMethod *wrapper = mono_marshal_get_native_wrapper (cmethod);
@@ -6943,7 +7004,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				goto load_error;
 			fsig = mono_method_get_signature (cmethod, image, token);
 
-			mono_class_init (cmethod->klass);
+			if (!mono_class_init (cmethod->klass))
+				goto load_error;
 
 			if (mono_use_security_manager) {
 				check_linkdemand (cfg, method, cmethod, ip);
@@ -9906,8 +9968,9 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - sig->ret->byref seems to be set for some calls made from ldfld wrappers when
  *   running generics.exe.
  * - create a helper function for allocating a stack slot, taking into account 
+ * - merge new GC changes in mini.c
  *   MONO_CFG_HAS_SPILLUP.
- * - LAST MERGE: 60838.
+ * - LAST MERGE: 61211.
  */
 
 /*

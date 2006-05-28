@@ -1,3 +1,16 @@
+2006-05-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* *.sh: Fix more verification problems.
+
+	* TestRunner.cs: Use Assembly.EntryPoint instead of searching for a Main method.
+
+2006-05-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* make_store_test.sh make_obj_store_test.sh make_stack_merge_test.sh: Fix
+	more ilasm and verification problems.
+
+	* TestRunner.cs: New file.
+
 2006-05-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* make_store_test.sh make_obj_store_test.sh make_stack_merge_test.sh: Make

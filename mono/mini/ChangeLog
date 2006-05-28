@@ -81,6 +81,50 @@
 
 	* method-to-ir.c (mono_method_check_inlining): Fix warnings.
 
+2006-05-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_output_basic_block): Fix MONO_PROFILE_COVERAGE.
+
+2006-05-25  Massimiliano Mantione  <massi@ximian.com>
+
+	* mini.c: Added "limitator" to inline for debugging.
+
+2006-05-24  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.c (mono_debugger_init): Create a private,
+	malloc()-based code manager for the notification function and
+	intentionally leak it on exit.  This fixes the crash-on-exit race
+	condition.
+
+	* tramp-amd64.c
+	(mono_debugger_create_notification_function): Added
+	`MonoCodeManager *' argument.
+
+	* tramp-x86.c
+	(mono_debugger_create_notification_function): Added
+	`MonoCodeManager *' argument.
+
+2006-05-23  Massimiliano Mantione  <massi@ximian.com>
+
+	* aliasing.c: Fixed 64 bit issue.
+	* driver.c: Enabled inline,consprop,copyprop,treeprop,deadce by
+	default since all known bugs are fixed (one more time!).
+
+Tue May 23 13:47:28 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: write barrier support.
+
+2006-05-23  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.c: Revert Paolo's change.  Add comment and #error
+	check at the top of the file.
+
+Sun May 21 12:22:29 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* debug-debugger.c: fix the build. Again. Hopefully Martin will stop
+	reverting changes without reason and without changelog entries.
+
+>>>>>>> .merge-right.r61211
 2006-05-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-sparc.c (mono_arch_output_basic_block): Add support for large stack offets
@@ -188,6 +232,16 @@ Wed May 17 18:07:33 CEST 2006 Paolo Molaro <lupus@ximian.com>
 	it is not correct in some cases. Instead, iterate over all bblocks as
 	in the original paper. Fixes --compile-all -O=all System.Xml.dll.
 
+2006-04-28  Miguel de Icaza  <miguel@novell.com>
+
+	* mini.c (mono_jit_compile_method_inner): Use
+	mono_prepare_exception_from_error that resets the value
+	internally.
+
+2006-04-27  Miguel de Icaza  <miguel@novell.com>
+
+	* mini.c: Move the mini_loader_error_to_exception to metadata. 
+	
 2006-04-27  Massimiliano Mantione  <massi@ximian.com>
 
 	* aliasing.c: Fixed bug 78210.

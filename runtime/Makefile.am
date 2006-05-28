@@ -6,10 +6,11 @@ tmpinst = _tmpinst
 noinst_SCRIPTS = mono-wrapper monodis-wrapper semdel-wrapper
 
 etctmp = etc
-symlinks = etc/mono/1.0/machine.config etc/mono/2.0/machine.config
+symlinks = etc/mono/1.0/machine.config etc/mono/2.0/machine.config etc/mono/2.0/web.config 
 
 etc/mono/1.0/machine.config: $(top_srcdir)/data/net_1_1/machine.config
 etc/mono/2.0/machine.config: $(top_srcdir)/data/net_2_0/machine.config
+etc/mono/2.0/web.config: $(top_srcdir)/data/net_2_0/web.config
 
 $(symlinks):
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@

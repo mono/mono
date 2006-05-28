@@ -75,7 +75,19 @@ mono_class_from_typeref (MonoImage *image, guint32 type_token)
 		/* a typedef in disguise */
 		return mono_class_from_name (image, nspace, name);
 	case MONO_RESOLTION_SCOPE_MODULEREF:
-		return mono_class_from_name (image->modules [idx - 1], nspace, name);
+		if (image->modules [idx-1])
+			return mono_class_from_name (image->modules [idx - 1], nspace, name);
+		else {
+			char *msg = g_strdup_printf ("%s%s%s", nspace, nspace [0] ? "." : "", name);
+			char *human_name;
+			
+			human_name = mono_stringify_assembly_name (&image->assembly->aname);
+			mono_loader_set_error_type_load (msg, human_name);
+			g_free (msg);
+			g_free (human_name);
+		
+			return NULL;
+		}
 	case MONO_RESOLTION_SCOPE_TYPEREF: {
 		MonoClass *enclosing = mono_class_from_typeref (image, MONO_TOKEN_TYPE_REF | idx);
 		GList *tmp;
@@ -114,8 +126,21 @@ mono_class_from_typeref (MonoImage *image, guint32 type_token)
 	/* If this assert fails, it probably means that you haven't installed an assembly load/search hook */
 	g_assert (references == image->references);
 	g_assert (references [idx - 1]);
-	if (references [idx - 1] == (gpointer)-1)
+
+	/* If the assembly did not load, register this as a type load exception */
+	if (references [idx - 1] == REFERENCE_MISSING){
+		MonoAssemblyName aname;
+		char *msg = g_strdup_printf ("%s%s%s", nspace, nspace [0] ? "." : "", name);
+		char *human_name;
+		
+		mono_assembly_get_assemblyref (image, idx - 1, &aname);
+		human_name = mono_stringify_assembly_name (&aname);
+		mono_loader_set_error_type_load (msg, human_name);
+		g_free (msg);
+		g_free (human_name);
+		
 		return NULL;
+	}
 
 	return mono_class_from_name (references [idx - 1]->image, nspace, name);
 }
@@ -879,7 +904,7 @@ mono_class_setup_fields (MonoClass *class)
 			field->type = mono_metadata_parse_type_full (m, container, MONO_PARSE_FIELD, cols [MONO_FIELD_FLAGS], sig + 1, &sig);
 			if (!field->type) {
 				mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, NULL);
-				continue;
+				break;
 			}
 			if (mono_field_is_deleted (field))
 				continue;
@@ -933,6 +958,8 @@ mono_class_setup_fields (MonoClass *class)
 		class->instance_size = MAX (real_size, class->instance_size);
 	}
 
+	if (class->exception_type)
+		return;
 	mono_class_layout_fields (class);
 }
 
@@ -971,7 +998,11 @@ mono_class_has_references (MonoClass *klass)
 }
 
 /* useful until we keep track of gc-references in corlib etc. */
+#ifdef HAVE_SGEN_GC
+#define IS_GC_REFERENCE(t) FALSE
+#else
 #define IS_GC_REFERENCE(t) ((t)->type == MONO_TYPE_U || (t)->type == MONO_TYPE_I || (t)->type == MONO_TYPE_PTR)
+#endif
 
 /*
  * mono_class_layout_fields:
@@ -1715,6 +1746,7 @@ mono_class_setup_vtable (MonoClass *class)
 	MonoGenericContext *context;
 	guint32 type_token;
 	int onum = 0;
+	gboolean ok = TRUE;
 
 	if (class->vtable)
 		return;
@@ -1741,13 +1773,19 @@ mono_class_setup_vtable (MonoClass *class)
 
 	if (class->image->dynamic)
 		mono_reflection_get_dynamic_overrides (class, &overrides, &onum);
-	else
-		mono_class_get_overrides_full (class->image, type_token, &overrides, &onum, context);
+	else {
+		/* The following call fails if there are missing methods in the type */
+		ok = mono_class_get_overrides_full (class->image, type_token, &overrides, &onum, context);
+	}
 
-	mono_class_setup_vtable_general (class, overrides, onum);
+	if (ok)
+		mono_class_setup_vtable_general (class, overrides, onum);
+		
 	g_free (overrides);
 
 	mono_loader_unlock ();
+
+	return;
 }
 
 /*
@@ -2200,19 +2238,23 @@ g_list_prepend_mempool (GList* l, MonoMemPool* mp, gpointer datum)
  * compute the instance_size, class_size and other infos that cannot be 
  * computed at mono_class_get() time. Also compute a generic vtable and 
  * the method slot numbers. We use this infos later to create a domain
- * specific vtable.  
+ * specific vtable.
+ *
+ * Returns TRUE on success or FALSE if there was a problem in loading
+ * the type (incorrect assemblies, missing assemblies, methods, etc). 
  */
-void
+gboolean
 mono_class_init (MonoClass *class)
 {
 	int i;
 	MonoCachedClassInfo cached_info;
 	gboolean has_cached_info;
-
+	int class_init_ok = TRUE;
+	
 	g_assert (class);
 
 	if (class->inited)
-		return;
+		return TRUE;
 
 	/*g_print ("Init class %s\n", class->name);*/
 
@@ -2222,7 +2264,7 @@ mono_class_init (MonoClass *class)
 	if (class->inited) {
 		mono_loader_unlock ();
 		/* Somebody might have gotten in before us */
-		return;
+		return TRUE;
 	}
 
 	if (class->init_pending) {
@@ -2324,8 +2366,14 @@ mono_class_init (MonoClass *class)
 		class->has_static_refs = cached_info.has_static_refs;
 	}
 	else
-		if (!class->size_inited)
+		if (!class->size_inited){
 			mono_class_setup_fields (class);
+			if (class->exception_type || mono_loader_get_last_error ()){
+				class_init_ok = FALSE;
+				goto leave;
+			}
+		}
+				
 
 	/* initialize method pointers */
 	if (class->rank) {
@@ -2431,13 +2479,16 @@ mono_class_init (MonoClass *class)
 		setup_interface_offsets (class, 0);
 	}
 
+ leave:
 	class->inited = 1;
 	class->init_pending = 0;
-	
+
 	mono_loader_unlock ();
 
 	if (mono_debugger_class_init_func)
 		mono_debugger_class_init_func (class);
+
+	return class_init_ok;
 }
 
 /*
@@ -2793,6 +2844,11 @@ mono_class_create_from_typedef (MonoImage *image, guint32 type_token)
 	if (cols [MONO_TYPEDEF_EXTENDS]) {
 		parent = mono_class_get_full (
 			image, mono_metadata_token_from_dor (cols [MONO_TYPEDEF_EXTENDS]), context);
+		if (parent == NULL){
+			g_hash_table_remove (image->class_cache, GUINT_TO_POINTER (type_token));
+			mono_loader_unlock ();
+			return NULL;
+		}
 	}
 
 	/* do this early so it's available for interfaces in setup_mono_type () */
@@ -5042,8 +5098,19 @@ mono_class_get_exception_for_failure (MonoClass *klass)
 	}
 	case MONO_EXCEPTION_TYPE_LOAD:
 		return mono_exception_from_name (mono_defaults.corlib, "System", "TypeLoadException");
-	/* TODO - handle other class related failures */
-	default:
+
+	default: {
+		MonoLoaderError *error;
+		MonoException *ex;
+		
+		error = mono_loader_get_last_error ();
+		if (error != NULL){
+			ex = mono_loader_error_prepare_exception (error);
+			return ex;
+		}
+		
+		/* TODO - handle other class related failures */
 		return NULL;
+	}
 	}
 }

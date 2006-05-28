@@ -1,3 +1,20 @@
+2006-05-24  Martin Baulig  <martin@ximian.com>
+
+	* doc/debugger-support.txt: Removed; this issue turned out to be
+	something completely different and the patch mentioned in this
+	file is already reverted.
+
+2006-05-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* os_dep.c (GC_unix_get_mem): Add an assert to bail out early if the runtime is
+	run on a machine with smaller page size than HBLKSIZE.
+
+2006-05-19  Martin Baulig  <martin@ximian.com>
+
+	* include/gc.h: Don't include "libgc-mono-debugger.h".
+
+	* pthread_support.c, pthread_stop_world.c: Include it here.
+
 2006-05-17  Martin Baulig  <martin@ximian.com>
 
 	* pthread-support.c, pthread-stop-world.c: Put the debugger stuff
@@ -19,12 +36,9 @@
 	any function in it be NULL; use NULL as the default vtable.
 	(GC_mono_debugger_add_all_threads): New public function.
 
-	* pthread_support.c (GC_new_thread): Use calloc() instead of
-	GC_INTERNAL_MALLOC() to allocate the `GC_thread' structure.
+	* pthread_support.c
 	(GC_delete_thread): Call `gc_thread_vtable->thread_exited()'.
 	(GC_thr_init): Call `gc_thread_vtable->thread_created()'.
-	(GC_start_routine_head): Likewise; use calloc() instead of
-	GC_INTERNAL_MALLOC() to allocate the `start_info'.
 
 2006-04-05  Zoltan Varga  <vargaz@gmail.com>
 

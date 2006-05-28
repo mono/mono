@@ -1744,11 +1744,13 @@ fi
 
 mono_debugger_supported=no
 if test "x$TARGET" = "xAMD64" -o "x$TARGET" = "xX86"; then
-	case "$host" in
-	*-*-*linux*)
-		mono_debugger_supported=yes
-		;;
-	esac
+	if test x$use_included_gc = xyes; then
+		case "$host" in
+		*-*-*linux*)
+			mono_debugger_supported=yes
+			;;
+		esac
+	fi
 fi
 
 AC_MSG_CHECKING(if the Mono Debugger is supported on this platform)
@@ -1887,6 +1889,20 @@ AC_CONFIG_COMMANDS([runtime/etc/mono/2.0/machine.config],
     cd runtime/etc/mono/2.0
     rm -f machine.config
     $LN_S $reldir/data/net_2_0/machine.config machine.config
+    cd $depth
+],[LN_S='$LN_S'])
+
+AC_CONFIG_COMMANDS([runtime/etc/mono/2.0/web.config],
+[   depth=../../../..
+    case $srcdir in
+    [[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
+    .) reldir=$depth ;;
+    *) reldir=$depth/$srcdir ;;
+    esac
+    $ac_aux_dir/install-sh -d runtime/etc/mono/2.0
+    cd runtime/etc/mono/2.0
+    rm -f web.config
+    $LN_S $reldir/data/net_2_0/web.config web.config
     cd $depth
 ],[LN_S='$LN_S'])
 

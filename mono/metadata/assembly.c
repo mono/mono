@@ -847,7 +847,7 @@ mono_assembly_load_reference (MonoImage *image, int index)
 		 * a non loaded reference using the ReflectionOnly api
 		*/
 		if (!reference)
-			reference = (gpointer)-1;
+			reference = REFERENCE_MISSING;
 	} else
 		reference = mono_assembly_load (&aname, image->assembly->basedir, &status);
 
@@ -877,12 +877,19 @@ mono_assembly_load_reference (MonoImage *image, int index)
 	mono_assemblies_lock ();
 	if (reference == NULL) {
 		/* Flag as not found */
-		reference = (gpointer)-1;
+		reference = REFERENCE_MISSING;
 	}	
 
 	if (!image->references [index]) {
-		mono_assembly_addref (reference);
-		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Assembly Ref addref %s %p -> %s %p: %d\n", image->assembly->aname.name, image->assembly, reference->aname.name, reference, reference->ref_count);
+		if (reference != REFERENCE_MISSING){
+			mono_assembly_addref (reference);
+			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Assembly Ref addref %s %p -> %s %p: %d\n",
+				    image->assembly->aname.name, image->assembly, reference->aname.name, reference, reference->ref_count);
+		} else {
+			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Failed to load assembly %s %p\n",
+				    image->assembly->aname.name, image->assembly);
+		}
+		
 		image->references [index] = reference;
 	}
 	mono_assemblies_unlock ();
@@ -1269,12 +1276,13 @@ mono_assembly_open_full (const char *filename, MonoImageOpenStatus *status, gboo
 
 	if (!image) {
 		mono_assemblies_lock ();
-		image = mono_image_open_full (filename, status, refonly);
+		image = mono_image_open_full (fname, status, refonly);
 		mono_assemblies_unlock ();
 	}
 
 	if (!image){
-		*status = MONO_IMAGE_ERROR_ERRNO;
+		if (*status == MONO_IMAGE_OK)
+			*status = MONO_IMAGE_ERROR_ERRNO;
 		g_free (fname);
 		return NULL;
 	}
@@ -2218,6 +2226,9 @@ mono_assembly_close (MonoAssembly *assembly)
 	GSList *tmp;
 	g_return_if_fail (assembly != NULL);
 
+	if (assembly == REFERENCE_MISSING)
+		return;
+	
 	/* Might be 0 already */
 	if (InterlockedDecrement (&assembly->ref_count) > 0)
 		return;

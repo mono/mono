@@ -86,7 +86,7 @@ mono_gc_weak_link_get (void **link_addr)
 }
 
 void*
-mono_gc_make_descr_from_bitmap (unsigned int *bitmap, int numbits)
+mono_gc_make_descr_from_bitmap (gsize *bitmap, int numbits)
 {
 	return NULL;
 }
@@ -101,6 +101,35 @@ void
 mono_gc_free_fixed (void* addr)
 {
 	g_free (addr);
+}
+
+void
+mono_gc_wbarrier_set_field (MonoObject *obj, gpointer field_ptr, MonoObject* value)
+{
+	*(void**)field_ptr = value;
+}
+
+void
+mono_gc_wbarrier_set_arrayref (MonoArray *arr, gpointer slot_ptr, MonoObject* value)
+{
+	*(void**)slot_ptr = value;
+}
+
+void
+mono_gc_wbarrier_arrayref_copy (MonoArray *arr, gpointer slot_ptr, int count)
+{
+	/* no need to do anything */
+}
+
+void
+mono_gc_wbarrier_generic_store (gpointer ptr, MonoObject* value)
+{
+	*(void**)ptr = value;
+}
+
+void
+mono_gc_wbarrier_value_copy (gpointer dest, gpointer src, int count, MonoClass *klass)
+{
 }
 
 #endif
