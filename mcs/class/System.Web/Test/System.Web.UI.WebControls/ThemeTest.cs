@@ -44,7 +44,6 @@ using MyWebControl = System.Web.UI.WebControls;
 using System.Reflection;
 using NUnit.Framework;
 using NunitWeb;
-using MonoTests.stand_alone.WebHarness;
 
 namespace MonoTests.System.Web.UI.WebControls
 {
@@ -55,13 +54,17 @@ namespace MonoTests.System.Web.UI.WebControls
 		[TestFixtureSetUp]
 		public void Set_Up ()
 		{
+#if VISUAL_STUDIO
+			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (), "Test1.Resources.Theme1.skin", "App_Themes/Theme1/Theme1.skin");
+			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (), "Test1.Resources.PageWithStyleSheet.aspx", "PageWithStyleSheet.aspx");
+			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (), "Test1.Resources.PageWithTheme.aspx", "PageWithTheme.aspx");
+			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (), "Test1.Resources.RunTimeSetTheme.aspx", "RunTimeSetTheme.aspx");
+#else
 			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (), "Theme1.skin", "App_Themes/Theme1/Theme1.skin");
 			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (), "PageWithStyleSheet.aspx", "PageWithStyleSheet.aspx");
-			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (), "PageWithStyleSheet.aspx.cs", "PageWithStyleSheet.aspx.cs");
 			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (), "PageWithTheme.aspx", "PageWithTheme.aspx");
-			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (), "PageWithTheme.aspx.cs", "PageWithTheme.aspx.cs");
 			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (), "RunTimeSetTheme.aspx", "RunTimeSetTheme.aspx");
-			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (), "RunTimeSetTheme.aspx.cs", "RunTimeSetTheme.aspx.cs");
+#endif
 		}
 		
 		//Run on page with theme
@@ -71,7 +74,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category ("NotWorking")] 
 		public void Theme_TestLabelTheme ()
 		{
-			Helper.Instance.RunUrl ("PageWithTheme.aspx", RenderLabelTest, null);
+			Helper.Instance.RunUrl ("PageWithTheme.aspx", RenderLabelTest);
 			
 		}
 
@@ -88,7 +91,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category ("NotWorking")] 
 		public void Theme_TestImageTheme ()
 		{
-			Helper.Instance.RunUrl ("PageWithTheme.aspx", RenderImageTest, null);
+			Helper.Instance.RunUrl ("PageWithTheme.aspx", RenderImageTest);
 			
 		}
 
@@ -107,7 +110,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category ("NotWorking")] 
 		public void Theme_TestLabelStyleSheet ()
 		{
-			Helper.Instance.RunUrl ("PageWithStyleSheet.aspx", StyleSheetRenderLabelTest, null);
+			Helper.Instance.RunUrl ("PageWithStyleSheet.aspx", new Helper.AnyMethodInPage(StyleSheetRenderLabelTest), null);
 
 		}
 
@@ -124,7 +127,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category ("NotWorking")] 
 		public void Theme_TestImageStyleSheet ()
 		{
-			Helper.Instance.RunUrl ("PageWithStyleSheet.aspx", StyleSheetRenderImageTest, null);
+			Helper.Instance.RunUrl ("PageWithStyleSheet.aspx", new Helper.AnyMethodInPage (StyleSheetRenderImageTest), null);
 
 		}
 
@@ -141,12 +144,19 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category ("NotWorking")] 
 		public void Theme_TestRuntimeSetTheme ()
 		{
-			Helper.Instance.RunUrl ("RunTimeSetTheme.aspx", RuntimeSetTheme, null);
+			PageDelegates p = new PageDelegates ();
+			p.PreInit = RuntimeSetThemePreInit;
+			p.Load = RuntimeSetThemeLoad;
+			Helper.Instance.RunUrlDelegates ("RunTimeSetTheme.aspx", p);
 		}
 
-		public static void RuntimeSetTheme (HttpContext c, Page p, object param)
+		public static void RuntimeSetThemePreInit (HttpContext c, Page p, object param)
 		{
 			p.Theme = "Theme1";
+		}
+
+		public static void RuntimeSetThemeLoad (HttpContext c, Page p, object param)
+		{
 			Assert.AreEqual (Color.Black, ((MyWebControl.Label) p.FindControl ("Label")).BackColor, "Default Theme#1");
 			Assert.AreEqual (Color.Red, ((MyWebControl.Label) p.FindControl ("LabelRed")).BackColor, "Red Skin Theme#2");
 			Assert.AreEqual (Color.Yellow, ((MyWebControl.Label) p.FindControl ("LabelYellow")).BackColor, "Yellow Skin Theme#3");
@@ -162,14 +172,11 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category ("NotWorking")] 
 		public void Theme_TestThemeNotExistExeption()
 		{
-			string page =	Helper.Instance.RunUrl ("RunTimeSetTheme.aspx", TestThemeNotExistExeption, null);
-			if (page.IndexOf("System.Web.HttpException") < 0)
-			{
-				Assert.Fail ("System.Web.HttpException was expected");
-			}
+			string page =	Helper.Instance.RunInPagePreInit (TestThemeNotExistException);
+			Assert.IsTrue (page.IndexOf("System.Web.HttpException") >= 0, "System.Web.HttpException was expected");
 		}
 
-		public static  void TestThemeNotExistExeption (HttpContext c, Page p, object param)
+		public static  void TestThemeNotExistException (HttpContext c, Page p, object param)
 		{
 			p.Theme = "NotExistTheme";
 		}
@@ -179,9 +186,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category ("NunitWeb")]
 		[Category ("NotWorking")] 
 		[ExpectedException (typeof (InvalidOperationException))]
-		public void Theme_SetThemeExeption ()
+		public void Theme_SetThemeException ()
 		{
-			Helper.Instance.RunUrl ("PageWithTheme.aspx", SetThemeExeption, null);
+			Helper.Instance.RunInPage (SetThemeExeption);
 		}
 
 		public static void SetThemeExeption (HttpContext c, Page p, object param)
