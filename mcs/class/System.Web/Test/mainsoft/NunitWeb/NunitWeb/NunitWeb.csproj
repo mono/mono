@@ -29,18 +29,17 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\MyPageWithMaster.aspx.cs">
-      <SubType>ASPXCodeBehind</SubType>
-    </EmbeddedResource>
     <Compile Include="Helper.cs" />
     <Compile Include="MyHandler.cs" />
     <Compile Include="MyHost.cs" />
     <Compile Include="MyWorkerRequest.cs" />
+    <Compile Include="PageDelegates.cs" />
     <EmbeddedResource Include="Resources\MyPage.aspx.cs">
-      <SubType>ASPXCodeBehind</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -56,7 +55,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\MyPageWithMaster.aspx">
-      <SubType>ASPXCodeBehind</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

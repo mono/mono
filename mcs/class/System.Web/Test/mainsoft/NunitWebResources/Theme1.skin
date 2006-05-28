@@ -1,0 +1,13 @@
+<%--
+Default skin template. The following skins are provided as examples only.
+--%>
+
+<asp:label runat="server" BackColor ="black"></asp:label>
+<asp:label runat="server" skinID="red"    BackColor ="red"></asp:label>
+<asp:label runat="server" skinID="yellow" BackColor ="yellow"></asp:label>
+
+<asp:Image runat="server" ImageUrl="myimageurl" />
+<asp:Image runat="server" SkinID="red" ImageUrl="myredimageurl" />
+<asp:Image runat="server" SkinID="yellow" ImageUrl="myyellowimageurl" />
+
+

@@ -102,7 +102,6 @@ namespace Test1
 		{
 			NunitWeb.Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (), "Test1.Resources.Default.skin", "App_Themes/Black/Default.skin");
 			NunitWeb.Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (), "Test1.Resources.MyPageWithTheme.aspx", "MyPageWithTheme.aspx");
-			NunitWeb.Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (), "Test1.Resources.MyPageWithTheme.aspx.cs", "MyPageWithTheme.aspx.cs");
 			string res = NunitWeb.Helper.Instance.RunUrl ("MyPageWithTheme.aspx", null, null);
 			Debug.WriteLine (res);			
 		}

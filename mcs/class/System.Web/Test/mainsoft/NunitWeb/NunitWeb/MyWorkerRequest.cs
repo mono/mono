@@ -6,16 +6,12 @@ namespace NunitWeb
 {
 	public class MyWorkerRequest: SimpleWorkerRequest
 	{
-		Delegate _method;
-		object _param;
+		PageDelegates _pd;
 		Exception _exception;
-		bool _delegateInvoked;
+		bool _initInvoked;
 
-		public Delegate Method
-		{ get { return _method; } }
-
-		public object Param
-		{ get { return _param; } }
+		public PageDelegates Delegates
+		{ get { return _pd; } }
 
 		public Exception Exception
 		{
@@ -23,18 +19,17 @@ namespace NunitWeb
 			set { _exception = value; }
 		}
 
-		public bool DelegateInvoked
+		public bool InitInvoked
 		{
-			get { return _delegateInvoked; }
-			set { _delegateInvoked = value; }
+			get { return _initInvoked; }
+			set { _initInvoked = value; }
 		}
-
-		public MyWorkerRequest (Delegate method, object param, string page, string query, System.IO.TextWriter output)
+		public MyWorkerRequest (PageDelegates pd, string page, string query, System.IO.TextWriter output)
 			: base (page, query, output)
 		{
-			_method = method;
-			_param = param;
-			_delegateInvoked = false;
+			_pd = pd;
+			_initInvoked = false;
+			//_delegateInvoked = false;
 			_exception = null;
 		}
 	}

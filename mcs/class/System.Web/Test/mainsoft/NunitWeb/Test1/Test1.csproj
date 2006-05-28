@@ -34,9 +34,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
-    <EmbeddedResource Include="Resources\MyPageWithTheme.aspx.cs">
-      <SubType>ASPXCodeBehind</SubType>
-    </EmbeddedResource>
+    <Compile Include="ThemeTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NunitWeb\NunitWeb.csproj">
@@ -46,12 +44,30 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\MyPageWithTheme.aspx">
-      <SubType>ASPXCodeBehind</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Default.skin">
       <SubType>ASPXCodeBehind</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\NunitWebResources\PageWithStyleSheet.aspx">
+      <Link>Resources\PageWithStyleSheet.aspx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\NunitWebResources\PageWithTheme.aspx">
+      <Link>Resources\PageWithTheme.aspx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\NunitWebResources\RunTimeSetTheme.aspx">
+      <Link>Resources\RunTimeSetTheme.aspx</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\NunitWebResources\Theme1.skin">
+      <Link>Resources\Theme1.skin</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\NunitWebResources\Web.sitemap">
+      <Link>Resources\Web.sitemap</Link>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

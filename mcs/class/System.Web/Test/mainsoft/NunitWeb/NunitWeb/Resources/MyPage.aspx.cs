@@ -3,10 +3,11 @@ using System.Web.UI;
 
 public partial class MyPage : System.Web.UI.Page
 {
-	protected void Page_Load (object sender, EventArgs e)
+	public MyPage ()
 	{
-		NunitWeb.MyHost.RunDelegate (Context, this);
+		NunitWeb.MyHost.InitDelegates (Context, this);
 	}
+
 	public override void VerifyRenderingInServerForm (Control c)
 	{
 

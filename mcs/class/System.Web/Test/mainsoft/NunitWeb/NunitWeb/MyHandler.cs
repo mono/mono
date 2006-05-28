@@ -13,7 +13,7 @@ namespace NunitWeb
 
 		public void ProcessRequest (HttpContext context)
 		{
-			MyHost.RunDelegate (context, null);
+			MyHost.RunAnyMethod (context);
 		}
 	}
 }

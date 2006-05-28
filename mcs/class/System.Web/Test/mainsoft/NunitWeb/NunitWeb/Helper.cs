@@ -15,7 +15,7 @@ namespace NunitWeb
 {
 	public class Helper : MarshalByRefObject
 	{
-		public delegate void AnyMethod (HttpContext context, object anyParam);
+		public delegate void AnyMethod (HttpContext context, object param);
 		public delegate void AnyMethodInPage (HttpContext context, Page page, object anyParam);
 
 		static Helper _instance;
@@ -45,14 +45,12 @@ namespace NunitWeb
 			CopyResource (Assembly.GetExecutingAssembly (), "NunitWeb.Resources.MyPage.aspx", "MyPage.aspx");
 			CopyResource (Assembly.GetExecutingAssembly (), "NunitWeb.Resources.MyPage.aspx.cs", "MyPage.aspx.cs");
 			CopyResource (Assembly.GetExecutingAssembly (), "NunitWeb.Resources.MyPageWithMaster.aspx", "MyPageWithMaster.aspx");
-			CopyResource (Assembly.GetExecutingAssembly (), "NunitWeb.Resources.MyPageWithMaster.aspx.cs", "MyPageWithMaster.aspx.cs");
 			CopyResource (Assembly.GetExecutingAssembly (), "NunitWeb.Resources.My.master", "My.master");
 #else
 			CopyResource (Assembly.GetExecutingAssembly (), "Web.config", "Web.config");
 			CopyResource (Assembly.GetExecutingAssembly (), "MyPage.aspx", "MyPage.aspx");
 			CopyResource (Assembly.GetExecutingAssembly (), "MyPage.aspx.cs", "MyPage.aspx.cs");
 			CopyResource (Assembly.GetExecutingAssembly (), "MyPageWithMaster.aspx", "MyPageWithMaster.aspx");
-			CopyResource (Assembly.GetExecutingAssembly (), "MyPageWithMaster.aspx.cs", "MyPageWithMaster.aspx.cs");
 			CopyResource (Assembly.GetExecutingAssembly (), "My.master", "My.master");
 #endif
 
@@ -149,10 +147,41 @@ namespace NunitWeb
 			Directory.Delete (baseDir, true);
 		}
 
-		public string RunUrl (string url, Delegate method, object anyParam)
+		public string RunUrl (string url, AnyMethodInPage method)
+		{
+			return RunUrl (url, method, null);
+		}
+
+		public string RunUrl (string url, AnyMethodInPage method, object anyParam)
+		{
+			PageDelegates pd = new PageDelegates ();
+			pd.Param = anyParam;
+			pd.Load += method;
+			return RunUrlDelegates (url, pd);
+		}
+
+		public string RunUrlPreInit (string url, AnyMethodInPage method)
+		{
+			return RunUrlPreInit (url, method, null);
+		}
+
+		public string RunUrlPreInit (string url, AnyMethodInPage method, object anyParam)
+		{
+			PageDelegates pd = new PageDelegates ();
+			pd.Param = anyParam;
+			pd.PreInit += method;
+			return RunUrlDelegates (url, pd);
+		}
+
+		public string RunDelegates (PageDelegates pd)
+		{
+			return RunUrlDelegates ("MyPage.aspx", pd);
+		}
+
+		public string RunUrlDelegates (string url, PageDelegates pd)
 		{
 			try {
-				return host.DoRun (url, method, anyParam);
+				return host.DoRun (url, pd);
 			}
 			catch (TargetInvocationException e) {
 				if (e.InnerException != null)
@@ -169,7 +198,20 @@ namespace NunitWeb
 
 		public string Run (AnyMethod method, object anyParam)
 		{
-			return RunUrl ("page.fake", method, anyParam);
+			PageDelegates pd = new PageDelegates ();
+			pd.MyHandlerCallback = method;
+			pd.Param = anyParam;
+			return RunUrlDelegates ("page.fake", pd);
+		}
+
+		public string RunInPagePreInit (AnyMethodInPage method)
+		{
+			return RunInPagePreInit (method, null);
+		}
+
+		public string RunInPagePreInit (AnyMethodInPage method, object param)
+		{
+			return RunUrlPreInit ("MyPage.aspx", method, param);
 		}
 
 		public string RunInPage (AnyMethodInPage method)
