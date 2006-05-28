@@ -1,3 +1,7 @@
+2006-05-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* AssemblyTest.cs: Added tests for bug #78517.
+
 2006-05-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* AssemblyTest.cs: Added tests for bugs #78464, #78465 and #78468.

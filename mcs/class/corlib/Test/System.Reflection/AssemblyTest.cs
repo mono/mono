@@ -187,6 +187,59 @@ namespace MonoTests.System.Reflection
 			Assert.IsTrue (fss.Length <= corlib_test.GetFiles (true).Length, "test.GetFiles (true)");
 		}
 
+		[Test] // bug #78517
+#if ONLY_1_1
+		[Category ("NotDotNet")] // MS.NET 1.x throws FileLoadException
+#endif
+		public void LoadFrom_Empty_Assembly ()
+		{
+			string tempFile = Path.GetTempFileName ();
+
+			try {
+				Assembly.LoadFrom (tempFile);
+				Assert.Fail ("#1");
+			} catch (BadImageFormatException ex) {
+				Assert.IsNull (ex.InnerException, "#2");
+			} finally {
+				File.Delete (tempFile);
+			}
+		}
+
+		[Test] // bug #78517
+		public void LoadFrom_Invalid_Assembly ()
+		{
+			string tempFile = Path.GetTempFileName ();
+			using (StreamWriter sw = File.CreateText (tempFile)) {
+				sw.WriteLine ("foo");
+				sw.Close ();
+			}
+
+			try {
+				Assembly.LoadFrom (tempFile);
+				Assert.Fail ("#1");
+			} catch (BadImageFormatException ex) {
+				Assert.IsNull (ex.InnerException, "#2");
+			} finally {
+				File.Delete (tempFile);
+			}
+		}
+
+		[Test]
+		public void LoadFrom_NonExisting_Assembly ()
+		{
+			string tempFile = Path.GetTempFileName ();
+			File.Delete (tempFile);
+
+			try {
+				Assembly.LoadFrom (tempFile);
+				Assert.Fail ("#1");
+			} catch (FileNotFoundException ex) {
+				Assert.IsNull (ex.InnerException, "#2");
+			} finally {
+				File.Delete (tempFile);
+			}
+		}
+
 		[Test]
 		public void LoadWithPartialName ()
 		{
