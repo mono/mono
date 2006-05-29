@@ -1,3 +1,7 @@
+2006-05-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestImageFormat.cs: Added test cases for Equals and GetHashCode.
+
 2006-05-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestImageFormat.cs: Update ToString expected outputs to match MS.

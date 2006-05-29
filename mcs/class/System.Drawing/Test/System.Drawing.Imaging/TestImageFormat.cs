@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005,2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -20,26 +20,23 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Author:
-//
-// 	 Jordi Mas i Hernàndez (jordi@ximian.com)
+// Authors:
+//	Jordi Mas i Hernàndez (jordi@ximian.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
-using NUnit.Framework;
-using System.IO;
-using System.Security.Cryptography;
 using System.Security.Permissions;
-using System.Text;
+using NUnit.Framework;
 
 namespace MonoTests.System.Drawing.Imaging {
 
 	[TestFixture]
 	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
-	public class TestImageFormat
-	{
+	public class TestImageFormat {
+
 		private static ImageFormat BmpImageFormat = new ImageFormat (new Guid ("b96b3cab-0728-11d3-9d7b-0000f81ef32e"));
 		private static ImageFormat EmfImageFormat = new ImageFormat (new Guid ("b96b3cac-0728-11d3-9d7b-0000f81ef32e"));
 		private static ImageFormat ExifImageFormat = new ImageFormat (new Guid ("b96b3cb2-0728-11d3-9d7b-0000f81ef32e"));
@@ -81,6 +78,42 @@ namespace MonoTests.System.Drawing.Imaging {
 			Assert.AreEqual ("[ImageFormat: b96b3cae-0728-11d3-9d7b-0000f81ef32e]", JpegImageFormat.ToString (), "ToStringTest#9");
 			Assert.AreEqual ("[ImageFormat: b96b3cad-0728-11d3-9d7b-0000f81ef32e]", WmfImageFormat.ToString (), "ToStringTest#10");
 			Assert.AreEqual ("[ImageFormat: 48749428-316f-496a-ab30-c819a92b3137]", CustomImageFormat.ToString (), "ToStringTest#11");
+		}
+
+		[Test]
+		public void TestEquals ()
+		{
+			Assert.IsTrue (BmpImageFormat.Equals (BmpImageFormat), "Bmp-Bmp");
+			Assert.IsTrue (EmfImageFormat.Equals (EmfImageFormat), "Emf-Emf");
+			Assert.IsTrue (ExifImageFormat.Equals (ExifImageFormat), "Exif-Exif");
+			Assert.IsTrue (GifImageFormat.Equals (GifImageFormat), "Gif-Gif");
+			Assert.IsTrue (TiffImageFormat.Equals (TiffImageFormat), "Tiff-Tiff");
+			Assert.IsTrue (PngImageFormat.Equals (PngImageFormat), "Png-Png");
+			Assert.IsTrue (MemoryBmpImageFormat.Equals (MemoryBmpImageFormat), "MemoryBmp-MemoryBmp");
+			Assert.IsTrue (IconImageFormat.Equals (IconImageFormat), "Icon-Icon");
+			Assert.IsTrue (JpegImageFormat.Equals (JpegImageFormat), "Jpeg-Jpeg");
+			Assert.IsTrue (WmfImageFormat.Equals (WmfImageFormat), "Wmf-Wmf");
+			Assert.IsTrue (CustomImageFormat.Equals (CustomImageFormat), "Custom-Custom");
+
+			Assert.IsFalse (BmpImageFormat.Equals (EmfImageFormat), "Bmp-Emf");
+			Assert.IsFalse (BmpImageFormat.Equals ("Bmp"), "Bmp-String-1");
+			Assert.IsFalse (BmpImageFormat.Equals (BmpImageFormat.ToString ()), "Bmp-String-2");
+		}
+
+		[Test]
+		public void TestGetHashCode ()
+		{
+			Assert.AreEqual (BmpImageFormat.GetHashCode (), BmpImageFormat.Guid.GetHashCode (), "Bmp");
+			Assert.AreEqual (EmfImageFormat.GetHashCode (), EmfImageFormat.Guid.GetHashCode (), "Emf");
+			Assert.AreEqual (ExifImageFormat.GetHashCode (), ExifImageFormat.Guid.GetHashCode (), "Exif");
+			Assert.AreEqual (GifImageFormat.GetHashCode (), GifImageFormat.Guid.GetHashCode (), "Gif");
+			Assert.AreEqual (TiffImageFormat.GetHashCode (), TiffImageFormat.Guid.GetHashCode (), "Tiff");
+			Assert.AreEqual (PngImageFormat.GetHashCode (), PngImageFormat.Guid.GetHashCode (), "Png");
+			Assert.AreEqual (MemoryBmpImageFormat.GetHashCode (), MemoryBmpImageFormat.Guid.GetHashCode (), "MemoryBmp");
+			Assert.AreEqual (IconImageFormat.GetHashCode (), IconImageFormat.Guid.GetHashCode (), "Icon");
+			Assert.AreEqual (JpegImageFormat.GetHashCode (), JpegImageFormat.Guid.GetHashCode (), "Jpeg");
+			Assert.AreEqual (WmfImageFormat.GetHashCode (), WmfImageFormat.Guid.GetHashCode (), "Wmf");
+			Assert.AreEqual (CustomImageFormat.GetHashCode (), CustomImageFormat.Guid.GetHashCode (), "Custom");
 		}
 	}
 }
