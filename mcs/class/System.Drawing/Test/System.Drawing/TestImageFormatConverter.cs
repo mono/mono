@@ -4,9 +4,7 @@
 // Author:
 //	Sanjay Gupta (gsanjay@novell.com)
 //
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,15 +26,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
 using NUnit.Framework;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Collections;
 using System.ComponentModel;
 using System.Globalization;
-using System.IO;
 using System.Security.Permissions;
 
 namespace MonoTests.System.Drawing
@@ -49,9 +44,6 @@ namespace MonoTests.System.Drawing
 		ImageFormatConverter imgFmtConv;
 		ImageFormatConverter imgFmtConvFrmTD;
 		String imageFmtStr;
-
-		[TearDown]
-		public void TearDown () {}
 
 		[SetUp]
 		public void SetUp ()		
@@ -203,6 +195,34 @@ namespace MonoTests.System.Drawing
 			} catch (Exception e) {
 				Assert.IsTrue (e is NotSupportedException, "CF#6A");
 			}
+		}
+
+		private ImageFormat ShortName (string s)
+		{
+			return (ImageFormat) imgFmtConvFrmTD.ConvertFrom (null, CultureInfo.InvariantCulture, s);
+		}
+
+		[Test]
+		public void ConvertFrom_ShortName ()
+		{
+			Assert.AreEqual (ImageFormat.Bmp, ShortName ("Bmp"), "Bmp");
+			Assert.AreEqual (ImageFormat.Emf, ShortName ("Emf"), "Emf");
+			Assert.AreEqual (ImageFormat.Exif, ShortName ("Exif"), "Exif");
+			Assert.AreEqual (ImageFormat.Gif, ShortName ("Gif"), "Gif");
+			Assert.AreEqual (ImageFormat.Tiff, ShortName ("Tiff"), "Tiff");
+			Assert.AreEqual (ImageFormat.Png, ShortName ("Png"), "Png");
+			Assert.AreEqual (ImageFormat.MemoryBmp, ShortName ("MemoryBmp"), "MemoryBmp");
+			Assert.AreEqual (ImageFormat.Icon, ShortName ("Icon"), "Icon");
+			Assert.AreEqual (ImageFormat.Jpeg, ShortName ("Jpeg"), "Jpeg");
+			Assert.AreEqual (ImageFormat.Wmf, ShortName ("Wmf"), "Wmf");
+		}
+
+		[Test]
+		public void ConvertFrom_LongName ()
+		{
+			Assert.AreEqual (ImageFormat.Bmp, (ImageFormat) imgFmtConvFrmTD.ConvertFrom (null,
+								CultureInfo.InvariantCulture,
+								ImageFormat.Bmp.ToString ()), "CF#1A");
 		}
 
 		[Test]
