@@ -1,3 +1,33 @@
+2006-05-29  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.h
+	(MonoDebugMethodInfo): Make the typedef public.
+	(MonoDebugSourceLocation): New public struct.
+
+	* mono-debug.c
+	(mono_debug_source_location_from_address): Removed.
+	(mono_debug_source_location_from_il_offset): Removed.
+	(mono_debug_il_offset_from_address): Removed.
+	(mono_debug_address_from_il_offset): Removed.
+	(mono_debug_lookup_method): New public function.
+	(mono_debug_lookup_source_location): New public function; replaces
+	the old mono_debug_source_location_from_*() functions; see the
+	inline documentation.
+	(mono_debug_free_source_location): New public function.
+	(mono_debug_print_stack_frame): New public function; see the
+	inline documentation.
+
+	* debug-mono-symfile.c
+	(mono_debug_find_source_location): Renamed into
+	mono_debug_symfile_lookup_location(); only take a
+	`MonoDebugMethodInfo *' and an `offset' argument; added inline
+	documentation.
+	(mono_debug_find_method): Renamed into
+	mono_debug_symfile_lookup_method().
+
+	* debug-helpers.c (mono_method_full_name): Use `.' instead of `:'
+	to separate the class name from the method name.
+
 2006-05-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* assembly.c (mono_assembly_open_full): Dont overwrite the status
