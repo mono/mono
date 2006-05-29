@@ -1231,6 +1231,10 @@ extern void
 mono_perform_ssapre (MonoCompile *cfg);
 extern void
 mono_local_cprop (MonoCompile *cfg);
+extern void
+mono_local_cprop2 (MonoCompile *cfg);
+extern void
+mono_local_deadce (MonoCompile *cfg);
 
 /* CAS - stack walk */
 MonoSecurityFrame* ves_icall_System_Security_SecurityFrame_GetSecurityFrame (gint32 skip);

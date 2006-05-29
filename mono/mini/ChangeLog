@@ -1,3 +1,7 @@
+2006-05-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c local-propagation.c: Move local cprop/copyprop/deadce to local-propagation.c.
+
 2006-05-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* linear-scan.c (mono_linear_scan2): Avoid negative 'gains'.
