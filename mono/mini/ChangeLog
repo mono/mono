@@ -1,3 +1,21 @@
+2006-05-29  Martin Baulig  <martin@ximian.com>
+
+	* mini-exceptions.c (mono_find_jit_info): When computing the
+	native offset, check whether we're actually inside the method's
+	code; call mono_debug_print_stack_frame() to format the frame.
+	(ves_icall_System_Exception_get_trace): Call
+	mono_debug_print_stack_frame() to format the stack frame.
+	(ves_icall_get_trace): Update to the new debugging API.
+	(mono_jit_walk_stack_from_ctx): Likewise.
+	(ves_icall_get_frame_info): Likewise.
+
+	* mini.c (get_method_from_ip): Use the new debugging API.
+	(mono_print_method_from_ip): Likewise.
+
+	* exceptions-ppc.c
+	(mono_jit_walk_stack): Use the new debugging API.
+	(ves_icall_get_frame_info): Likewise.	
+
 2006-05-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c (mono_arch_output_basic_block): Fix MONO_PROFILE_COVERAGE.
