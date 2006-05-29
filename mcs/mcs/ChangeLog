@@ -1,3 +1,9 @@
+2006-05-29  Raja R Harinath  <rharinath@novell.com>
+
+	Fix cs0231-[34].cs.
+	* cs-parser.jay (formal_parameter_list): Extend the pattern below
+	to param arguments too.
+
 2006-05-26  Miguel de Icaza  <miguel@novell.com>
 
 	* cs-parser.jay: Catch another parsing form for arglist being

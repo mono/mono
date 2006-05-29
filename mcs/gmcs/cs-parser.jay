@@ -1242,6 +1242,12 @@ formal_parameter_list
 			Report.Error (231, ((Parameter) $1).Location, "A params parameter must be the last parameter in a formal parameter list");
 		$$ = null;
 	  }
+	| fixed_parameters COMMA parameter_array COMMA error
+	  {
+		if ($3 != null)
+			Report.Error (231, ((Parameter) $3).Location, "A params parameter must be the last parameter in a formal parameter list");
+		$$ = null;
+	  }
 	| ARGLIST COMMA error
 	  {
 		Report.Error (257, (Location) $1, "An __arglist parameter must be the last parameter in a formal parameter list");
