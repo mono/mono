@@ -121,7 +121,7 @@ t    this.debug = (yydebug.yyDebug)yyd;
 .      @throws yyException on irrecoverable parse error.
 .    */
 .  internal Object yyparse (yyParser.yyInput yyLex)
-.				{
+.  {
 .    if (yyMax <= 0) yyMax = 256;			// initial size
 .    int yyState = 0;                                   // state stack ptr
 .    int [] yyStates = new int[yyMax];	                // state stack 
@@ -132,12 +132,7 @@ t    this.debug = (yydebug.yyDebug)yyd;
 .
  local		## %{ ... %} after the first %%
 
-.    int yyTop = 0;
-.    goto skip;
-.    yyLoop:
-.    yyTop++;
-.    skip:
-.    for (;; ++ yyTop) {
+.    /*yyLoop:*/ for (int yyTop = 0;; ++ yyTop) {
 .      if (yyTop >= yyStates.Length) {			// dynamically increase
 .        int[] i = new int[yyStates.Length+yyMax];
 .        yyStates.CopyTo (i, 0);
@@ -150,7 +145,7 @@ t    this.debug = (yydebug.yyDebug)yyd;
 .      yyVals[yyTop] = yyVal;
 t      if (debug != null) debug.push(yyState, yyVal);
 .
-.      yyDiscarded: for (;;) {	// discarding a token does not change stack
+.      /*yyDiscarded:*/ for (;;) {	// discarding a token does not change stack
 .        int yyN;
 .        if ((yyN = yyDefRed[yyState]) == 0) {	// else [default] reduce (yyN)
 .          if (yyToken < 0) {
@@ -167,7 +162,7 @@ t              debug.shift(yyState, yyTable[yyN], yyErrorFlag-1);
 .            yyVal = yyLex.value();
 .            yyToken = -1;
 .            if (yyErrorFlag > 0) -- yyErrorFlag;
-.            goto yyLoop;
+.            goto continue_yyLoop;
 .          }
 .          if ((yyN = yyRindex[yyState]) != 0 && (yyN += yyToken) >= 0
 .              && yyN < yyTable.Length && yyCheck[yyN] == yyToken)
@@ -189,7 +184,7 @@ t                  if (debug != null)
 t                    debug.shift(yyStates[yyTop], yyTable[yyN], 3);
 .                  yyState = yyTable[yyN];
 .                  yyVal = yyLex.value();
-.                  goto yyLoop;
+.                  goto continue_yyLoop;
 .                }
 t                if (debug != null) debug.pop(yyStates[yyTop]);
 .              } while (-- yyTop >= 0);
@@ -205,7 +200,7 @@ t              if (debug != null)
 t                debug.discard(yyState, yyToken, yyname(yyToken),
 t  							yyLex.value());
 .              yyToken = -1;
-.              goto yyDiscarded;		// leave stack alone
+.              goto continue_yyDiscarded;		// leave stack alone
 .            }
 .        }
 .        int yyV = yyTop + 1-yyLen[yyN];
@@ -233,7 +228,7 @@ t               debug.lex(yyState, yyToken,yyname(yyToken), yyLex.value());
 t            if (debug != null) debug.accept(yyVal);
 .            return yyVal;
 .          }
-.          goto yyLoop;
+.          goto continue_yyLoop;
 .        }
 .        if (((yyN = yyGindex[yyM]) != 0) && ((yyN += yyState) >= 0)
 .            && (yyN < yyTable.Length) && (yyCheck[yyN] == yyState))
@@ -241,8 +236,10 @@ t            if (debug != null) debug.accept(yyVal);
 .        else
 .          yyState = yyDgoto[yyM];
 t        if (debug != null) debug.shift(yyStates[yyTop], yyState);
-.	 goto yyLoop;
+.	 goto continue_yyLoop;
+.      continue_yyDiscarded: continue;	// implements the named-loop continue: 'continue yyDiscarded'
 .      }
+.    continue_yyLoop: continue;		// implements the named-loop continue: 'continue yyLoop'
 .    }
 .  }
 .
