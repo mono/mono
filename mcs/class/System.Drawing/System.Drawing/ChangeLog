@@ -1,3 +1,8 @@
+2006-05-29  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* ImageFormatConverter.cs: Changed ConvertFrom to work with both short
+	(e.g. Bmp) and long (e.g. guid) names.
+
 2006-05-26  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* ImageFormatConverter.cs: Fixing unit tests for ImageFormat 

@@ -69,34 +69,60 @@ namespace System.Drawing
 		}
 		
 		public override object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, object val)
-		{			
-			string strFormat = val as string;
-			if (strFormat == null)
+		{
+			// we must be able to convert from short names and long names
+			string strFormat = (val as string);
+			if (strFormat == null) {
+				// case #1, this is not a string
 				return base.ConvertFrom (context, culture, val);
-
-			switch (strFormat) {
-			case "Bmp":
-				return ImageFormat.Bmp;
-			case "Emf":
-				return ImageFormat.Emf;
-			case "Exif":
-				return ImageFormat.Exif;
-			case "Gif":
-				return ImageFormat.Gif;
-			case "Icon":
-				return ImageFormat.Icon;
-			case "Jpeg":
-				return ImageFormat.Jpeg;
-			case "MemoryBmp":
-				return ImageFormat.MemoryBmp;
-			case "Png":
-				return ImageFormat.Png;
-			case "Tiff":
-				return ImageFormat.Tiff;
-			case "Wmf":
-				return ImageFormat.Wmf;
+			} else if (strFormat [0] == '[') {
+				// case #2, this is probably a long format (guid)
+				if (strFormat.Equals (ImageFormat.Bmp.ToString ()))
+					return ImageFormat.Bmp;
+				else if (strFormat.Equals (ImageFormat.Emf.ToString ()))
+					return ImageFormat.Emf;
+				else if (strFormat.Equals (ImageFormat.Exif.ToString ()))
+					return ImageFormat.Exif;
+				else if (strFormat.Equals (ImageFormat.Gif.ToString ()))
+					return ImageFormat.Gif;
+				else if (strFormat.Equals (ImageFormat.Icon.ToString ()))
+					return ImageFormat.Icon;
+				else if (strFormat.Equals (ImageFormat.Jpeg.ToString ()))
+					return ImageFormat.Jpeg;
+				else if (strFormat.Equals (ImageFormat.MemoryBmp.ToString ()))
+					return ImageFormat.MemoryBmp;
+				else if (strFormat.Equals (ImageFormat.Png.ToString ()))
+					return ImageFormat.Png;
+				else if (strFormat.Equals (ImageFormat.Tiff.ToString ()))
+					return ImageFormat.Tiff;
+				else if (strFormat.Equals (ImageFormat.Wmf.ToString ()))
+					return ImageFormat.Wmf;
+			} else {
+				// case #3, this is probably a short format
+				switch (strFormat) {
+				case "Bmp":
+					return ImageFormat.Bmp;
+				case "Emf":
+					return ImageFormat.Emf;
+				case "Exif":
+					return ImageFormat.Exif;
+				case "Gif":
+					return ImageFormat.Gif;
+				case "Icon":
+					return ImageFormat.Icon;
+				case "Jpeg":
+					return ImageFormat.Jpeg;
+				case "MemoryBmp":
+					return ImageFormat.MemoryBmp;
+				case "Png":
+					return ImageFormat.Png;
+				case "Tiff":
+					return ImageFormat.Tiff;
+				case "Wmf":
+					return ImageFormat.Wmf;
+				}
 			}
-				
+			// last case, this is an unknown string
 			return base.ConvertFrom (context, culture, val);
 		}
 
