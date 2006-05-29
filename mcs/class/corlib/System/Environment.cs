@@ -197,7 +197,7 @@ namespace System {
 		public static string StackTrace {
 			[EnvironmentPermission (SecurityAction.Demand, Unrestricted=true)]
 			get {
-				System.Diagnostics.StackTrace trace = new System.Diagnostics.StackTrace (1);
+				System.Diagnostics.StackTrace trace = new System.Diagnostics.StackTrace (1, true);
 				return trace.ToString ();
 			}
 		}

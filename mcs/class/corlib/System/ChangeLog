@@ -1,3 +1,14 @@
+2006-05-29  Martin Baulig  <martin@ximian.com>
+
+	* Exception.cs
+	(Exception.StackTrace): Use the new stack trace format which is
+	very similar to the one of MS.NET - method name goes first,
+	file / line number last and in the method name, we separate class
+	and method name by `.'.
+
+	* Environment.cs
+	(Environment.StackTrace): Enable line-number information.
+
 2006-05-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTime.cs :

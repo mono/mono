@@ -159,13 +159,13 @@ namespace System
 
 					StringBuilder sb = new StringBuilder ();
 
-					string newline = String.Format ("{0}{1} ", Environment.NewLine, Locale.GetText ("in"));
+					string newline = String.Format ("{0}  {1} ", Environment.NewLine, Locale.GetText ("at"));
 					string unknown = Locale.GetText ("<unknown method>");
 
 					for (int i = 0; i < st.FrameCount; i++) {
 						StackFrame frame = st.GetFrame (i);
 						if (i == 0)
-							sb.AppendFormat ("{0} ", Locale.GetText ("in"));
+							sb.AppendFormat ("  {0} ", Locale.GetText ("at"));
 						else
 							sb.Append (newline);
 
@@ -176,16 +176,17 @@ namespace System
 							else
 								sb.AppendFormat ("<0x{0:x5}> {1}", frame.GetNativeOffset (), unknown);
 						} else {
+							sb.Append (GetFullNameForStackTrace (frame.GetMethod ()));
+
 							if (frame.GetILOffset () == -1)
-								sb.AppendFormat ("<0x{0:x5}> ", frame.GetNativeOffset ());
+								sb.AppendFormat (" <0x{0:x5}> ", frame.GetNativeOffset ());
 							else
-								sb.AppendFormat ("[0x{0:x5}] ", frame.GetILOffset ());
+								sb.AppendFormat (" [0x{0:x5}] ", frame.GetILOffset ());
+
 							string fileName = frame.GetFileName ();
 							if (fileName != null)
-								sb.AppendFormat ("(at {0}:{1}) ", fileName, frame.GetFileLineNumber ());
-
-							sb.Append (GetFullNameForStackTrace (frame.GetMethod ()));
-						}
+								sb.AppendFormat ("in {0}:{1} ", fileName, frame.GetFileLineNumber ());
+							}
 					}
 					stack_trace = sb.ToString ();
 				}
@@ -326,7 +327,7 @@ namespace System
 				generic += "]";
 			}
 #endif
-			return mi.DeclaringType.ToString () + ":" + mi.Name + generic + " (" + parms + ")";
+			return mi.DeclaringType.ToString () + "." + mi.Name + generic + " (" + parms + ")";
 		}				
 	}
 }
