@@ -1830,12 +1830,18 @@ namespace System
 			if (newLength > length)
 				throw new ArgumentOutOfRangeException ("newLength", "newLength as to be <= length");
 
-			length = newLength;
-
 			// zero terminate, we can pass string objects directly via pinvoke
+			// we also zero the rest of the string, since the new GC needs to be
+			// able to handle the changing size (it will skip the 0 bytes).
 			fixed (char * pStr = &start_char) {
-				pStr [length] = '\0';
+				char *p = pStr + newLength;
+				char *end = pStr + length;
+				while (p < end) {
+					p [0] = '\0';
+					p++;
+				}
 			}
+			length = newLength;
 		}
 
 #if NET_2_0
