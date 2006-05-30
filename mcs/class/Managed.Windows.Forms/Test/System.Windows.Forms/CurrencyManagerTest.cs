@@ -579,6 +579,36 @@ namespace MonoTests.System.Windows.Forms {
 
 			cm.CancelCurrentEdit ();
 		}
+
+		[Test]
+		public void CheckPositionOfRelatedSibling1 ()
+		{
+			DataSet data_source = CreateRelatedDataSet ();
+			BindingContext bc = new BindingContext ();
+			CurrencyManager cm = bc [data_source, "Table1.Relation"] as CurrencyManager;
+			CurrencyManager scm = bc [data_source, "Table1"] as CurrencyManager;
+
+			cm.Position++;
+			cm.Position++;
+
+			// position is not updated
+			Assert.AreEqual (0, scm.Position, "#8");
+		}
+
+		[Test]
+		public void CheckPositionOfRelatedSibling2 ()
+		{
+			DataSet data_source = CreateRelatedDataSet ();
+			BindingContext bc = new BindingContext ();
+			CurrencyManager cm = bc [data_source, "Table1.Relation"] as CurrencyManager;
+			CurrencyManager scm = bc [data_source, "Table1"] as CurrencyManager;
+
+			Assert.AreEqual (0, cm.Position, "#1");
+
+			scm.Position++;
+
+			Assert.AreEqual (0, cm.Position, "#2");
+		}
 	}
 }
 
