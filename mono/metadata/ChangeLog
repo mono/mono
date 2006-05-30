@@ -1,3 +1,9 @@
+2006-05-30  Martin Baulig  <martin@ximian.com>
+
+	* debug-mono-symfile.c
+	(mono_debug_symfile_lookup_location): Fix the algorithm:
+	when looking up B which is between A and C, return A not C.
+
 2006-05-29  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.h
