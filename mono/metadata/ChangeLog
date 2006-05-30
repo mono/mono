@@ -1,3 +1,9 @@
+2006-05-30  Miguel de Icaza  <miguel@novell.com>
+
+	* loader.c (method_from_memberref): Fix argument value for
+	mono_loader_set_error_method_load (I was passing the MonoClass
+	instead of the class name char *).
+
 2006-05-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c: Use mono_mb_emit_stloc in more places. Use CEE_LDIND_REF and
