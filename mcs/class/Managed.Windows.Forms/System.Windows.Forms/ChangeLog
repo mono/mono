@@ -1,3 +1,15 @@
+2006-05-30  Jackson Harper  <jackson@ximian.com>
+
+	* BindingContext.cs: Create the currency manager tables here.
+	This allows us to more easily create null tables (when bad data
+	members are used), and more easily create related currency
+	managers.
+	* CurrencyManager.cs: All the table creation stuff is done by the
+	binding context now.
+	- Current should throw an exception if listposition is -1.
+	- CancelCurrentEdit/EndCurrentEdit, do nothing if the list hasn't
+	been bound yet.
+
 2006-05-30  Mike Kestner  <mkestner@novell.com>
 
 	* ListView.cs: allow reexpansion of zero-width column headers.
