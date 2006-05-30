@@ -209,6 +209,8 @@ namespace System.Net.Sockets
 		protected
 #if NET_2_0
 		override
+#else
+		virtual
 #endif
 		void Dispose (bool disposing)
 		{
