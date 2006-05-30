@@ -1,3 +1,7 @@
+2006-05-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ImageFormat.cs: Avoid double-cast in Equals method.
+
 2006-05-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ImageFormat.cs: Fixed ToString method to match MS output.

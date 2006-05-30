@@ -58,13 +58,13 @@ namespace System.Drawing.Imaging {
 		
 
 		// methods
-		public override bool Equals(object o) {
-			
-			if (o is ImageFormat)
-				if ( ((ImageFormat)o).Guid.Equals(this.Guid))
-					return true;
-			return false;
+		public override bool Equals (object o)
+		{
+			ImageFormat f = (o as ImageFormat);
+			if (f == null)
+				return false;
 
+			return f.Guid.Equals (guid);
 		}
 
 		
