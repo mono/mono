@@ -59,7 +59,7 @@ namespace System
 		}
 
 
-		protected override object DynamicInvokeImpl (object[] args)
+		protected sealed override object DynamicInvokeImpl (object[] args)
 		{
 			if (prev != null)
 				prev.DynamicInvokeImpl (args);
@@ -71,7 +71,7 @@ namespace System
 		//   Equals: two multicast delegates are equal if their base is equal
 		//   and their invocations list is equal.
 		// </remarks>
-		public override bool Equals (object o)
+		public sealed override bool Equals (object o)
 		{
 			if (!base.Equals (o))
 				return false;
@@ -91,7 +91,7 @@ namespace System
 		//
 		// FIXME: This could use some improvements.
 		//
-		public override int GetHashCode ()
+		public sealed override int GetHashCode ()
 		{
 			return base.GetHashCode ();
 		}
@@ -100,7 +100,7 @@ namespace System
 		//   Return, in order of invocation, the invocation list
 		//   of a MulticastDelegate
 		// </summary>
-		public override Delegate[] GetInvocationList ()
+		public sealed override Delegate[] GetInvocationList ()
 		{
 			MulticastDelegate d;
 			d = (MulticastDelegate) this.Clone ();
@@ -131,7 +131,7 @@ namespace System
 		//   thing should have better been a simple System.Delegate class.
 		//   Compiler generated delegates are always MulticastDelegates.
 		// </summary>
-		protected override Delegate CombineImpl (Delegate follow)
+		protected sealed override Delegate CombineImpl (Delegate follow)
 		{
 			MulticastDelegate combined, orig, clone;
 
@@ -218,7 +218,7 @@ namespace System
 			return null;
 		}
 
-		protected override Delegate RemoveImpl (Delegate value)
+		protected sealed override Delegate RemoveImpl (Delegate value)
 		{
 			if (value == null)
 				return this;

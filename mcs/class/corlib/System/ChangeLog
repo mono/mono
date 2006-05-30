@@ -1,5 +1,10 @@
+2006-05-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
-Mon May 29 18:49:47 CEST 2006 Paolo Molaro <lupus@ximian.com>
+	* Char.cs: Removed duplicate (explicit) interface implementation.
+	* String.cs: Removed duplicate (explicit) interface implemenation.
+	* MulticastDelegate.cs: Fixed API mismatches.
+
+2006-05-29 Paolo Molaro <lupus@ximian.com>
 
 	* String.cs: make sure that the chars truncated by a stringbuilder
 	are zeroed.

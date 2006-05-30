@@ -636,11 +636,6 @@ namespace System
 			throw new InvalidCastException();
 		}
 		
-		string IConvertible.ToString (IFormatProvider provider)
-		{
-			return ToString(provider);
-		}
-
 		ushort IConvertible.ToUInt16 (IFormatProvider provider)
 		{
 			return System.Convert.ToUInt16(m_value);

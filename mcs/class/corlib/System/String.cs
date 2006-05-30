@@ -1681,11 +1681,6 @@ namespace System
 			return Convert.ToSingle (this, provider);
 		}
 
-		string IConvertible.ToString (IFormatProvider format)
-		{
-			return this;
-		}
-
 		object IConvertible.ToType (Type conversionType, IFormatProvider provider)
 		{
 			return Convert.ToType (this, conversionType,  provider);
@@ -1704,11 +1699,6 @@ namespace System
 		ulong IConvertible.ToUInt64 (IFormatProvider provider)
 		{
 			return Convert.ToUInt64 (this, provider);
-		}
-
-		TypeCode IConvertible.GetTypeCode ()
-		{
-			return TypeCode.String;
 		}
 
 		public int Length {
