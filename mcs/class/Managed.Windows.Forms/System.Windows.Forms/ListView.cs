@@ -1983,6 +1983,8 @@ namespace System.Windows.Forms
 					zone.X = zone.Right - 5;
 					zone.Width = 10;
 					if (zone.Contains (pt)) {
+						if (i < owner.Columns.Count - 1 && owner.Columns [i + 1].Width == 0)
+							i++;
 						resize_column = owner.Columns [i];
 						break;
 					}

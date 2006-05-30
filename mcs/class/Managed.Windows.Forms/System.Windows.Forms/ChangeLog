@@ -1,3 +1,8 @@
+2006-05-30  Mike Kestner  <mkestner@novell.com>
+
+	* ListView.cs: allow reexpansion of zero-width column headers.
+	Fixes #78528.
+
 2006-05-28  Chris Toshok  <toshok@ximian.com>
 
 	* CurrencyManager.cs (get_Current): after the late binding
