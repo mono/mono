@@ -48,10 +48,15 @@ namespace System.Drawing
 		private string  systemFontName;
 		private float _size;
 
-		private void CreateFont(string familyName, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical) {
-                        Status		status;                  
-                        FontFamily	family;                      
+		private const byte DefaultCharSet = 1;
 
+		private void CreateFont (string familyName, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)
+		{
+#if ONLY_1_1
+			if (familyName == null)
+				throw new ArgumentNullException ("familyName");
+#endif
+                        FontFamily family;
 			// NOTE: If family name is null, empty or invalid,
 			// MS creates Microsoft Sans Serif font.
 			try {
@@ -62,7 +67,7 @@ namespace System.Drawing
 			}
 
 			setProperties (family, emSize, style, unit, charSet, isVertical);           
-			status = GDIPlus.GdipCreateFont (family.NativeObject, emSize,  style, unit, out fontObject);
+			Status status = GDIPlus.GdipCreateFont (family.NativeObject, emSize,  style, unit, out fontObject);
 			GDIPlus.CheckStatus (status);
 		}
 
@@ -78,7 +83,7 @@ namespace System.Drawing
 			style = (FontStyle)info.GetValue("Style", typeof(FontStyle));
 			unit = (GraphicsUnit)info.GetValue("Unit", typeof(GraphicsUnit));
  
-			CreateFont(name, size, style, unit, (byte)0, false);
+			CreateFont(name, size, style, unit, DefaultCharSet, false);
 		}
 
 		void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
@@ -97,9 +102,11 @@ namespace System.Drawing
 		public void Dispose ()
 		{
 			if (fontObject != IntPtr.Zero) {
-				GDIPlus.CheckStatus (GDIPlus.GdipDeleteFont (fontObject));
+				Status status = GDIPlus.GdipDeleteFont (fontObject);
 				fontObject = IntPtr.Zero;
 				GC.SuppressFinalize (this);
+				// check the status code (throw) at the last step
+				GDIPlus.CheckStatus (status);
 			}
 		}
 
@@ -247,14 +254,11 @@ namespace System.Drawing
 
 		public IntPtr ToHfont ()
 		{
+			if (fontObject == IntPtr.Zero)
+				throw new ArgumentException (Locale.GetText ("Object has been disposed."));
+
 			IntPtr Hfont;
 			OperatingSystem	osInfo = Environment.OSVersion;
-
-			// Sanity. Should we throw an exception?
-			if (fontObject == IntPtr.Zero) {
-				return IntPtr.Zero;
-			}
-
 			if ((int) osInfo.Platform == 128 || (int) osInfo.Platform == 4) {
 				return fontObject;
 			} else {
@@ -290,27 +294,27 @@ namespace System.Drawing
 		}
 
 		public Font (FontFamily family, float emSize,  GraphicsUnit unit)
-			: this (family, emSize, FontStyle.Regular, unit, (byte)0, false)
+			: this (family, emSize, FontStyle.Regular, unit, DefaultCharSet, false)
 		{
 		}
 
 		public Font (string familyName, float emSize,  GraphicsUnit unit)
-			: this (new FontFamily (familyName), emSize, FontStyle.Regular, unit, (byte)0, false)
+			: this (new FontFamily (familyName), emSize, FontStyle.Regular, unit, DefaultCharSet, false)
 		{
 		}
 
 		public Font (FontFamily family, float emSize)
-			: this (family, emSize, FontStyle.Regular, GraphicsUnit.Point, (byte)0, false)
+			: this (family, emSize, FontStyle.Regular, GraphicsUnit.Point, DefaultCharSet, false)
 		{
 		}
 
 		public Font (FontFamily family, float emSize, FontStyle style)
-			: this (family, emSize, style, GraphicsUnit.Point, (byte)0, false)
+			: this (family, emSize, style, GraphicsUnit.Point, DefaultCharSet, false)
 		{
 		}
 
 		public Font (FontFamily family, float emSize, FontStyle style, GraphicsUnit unit)
-			: this (family, emSize, style, unit, (byte)0, false)
+			: this (family, emSize, style, unit, DefaultCharSet, false)
 		{
 		}
 
@@ -322,7 +326,9 @@ namespace System.Drawing
 		public Font (FontFamily family, float emSize, FontStyle style,
 				GraphicsUnit unit, byte charSet, bool isVertical)
 		{
-			// MS does not accept null family
+			if (family == null)
+				throw new ArgumentNullException ("family");
+
 			Status status;
 			setProperties (family, emSize, style, unit, charSet, isVertical);		
 			status = GDIPlus.GdipCreateFont (family.NativeObject, emSize,  style,   unit,  out fontObject);
@@ -330,17 +336,17 @@ namespace System.Drawing
 		}
 
 		public Font (string familyName, float emSize)
-			: this (familyName, emSize, FontStyle.Regular, GraphicsUnit.Point, (byte)0, false)
+			: this (familyName, emSize, FontStyle.Regular, GraphicsUnit.Point, DefaultCharSet, false)
 		{
 		}
 
 		public Font (string familyName, float emSize, FontStyle style)
-			: this (familyName, emSize, style, GraphicsUnit.Point, (byte)0, false)
+			: this (familyName, emSize, style, GraphicsUnit.Point, DefaultCharSet, false)
 		{
 		}
 
 		public Font (string familyName, float emSize, FontStyle style, GraphicsUnit unit)
-			: this (familyName, emSize, style, unit, (byte)0, false)
+			: this (familyName, emSize, style, unit, DefaultCharSet, false)
 		{
 		}
 
@@ -362,10 +368,7 @@ namespace System.Drawing
 
 		internal IntPtr NativeObject {            
 			get {
-					return fontObject;
-			}
-			set {
-					fontObject = value;
+				return fontObject;
 			}
 		}
 
@@ -543,7 +546,8 @@ namespace System.Drawing
 		{
 			IntPtr newObject;
 			LOGFONT o = (LOGFONT)lf;
-			GDIPlus.GdipCreateFontFromLogfont (hdc, ref o, out newObject);
+			Status status = GDIPlus.GdipCreateFontFromLogfont (hdc, ref o, out newObject);
+			GDIPlus.CheckStatus (status);
 			return new Font (newObject, "Microsoft Sans Serif", FontStyle.Regular, 10);
 		}
 
@@ -642,15 +646,16 @@ namespace System.Drawing
 		public float GetHeight (Graphics graphics)
 		{
 			float size;
-			
-			GDIPlus.GdipGetFontHeight (fontObject, graphics.NativeObject, out size);
+			Status status = GDIPlus.GdipGetFontHeight (fontObject, graphics.NativeObject, out size);
+			GDIPlus.CheckStatus (status);
 			return size;
 		}
 
 		public float GetHeight (float dpi)
 		{
 			float size;
-			GDIPlus.GdipGetFontHeightGivenDPI (fontObject, dpi, out size);
+			Status status = GDIPlus.GdipGetFontHeightGivenDPI (fontObject, dpi, out size);
+			GDIPlus.CheckStatus (status);
 			return size;
 		}
 

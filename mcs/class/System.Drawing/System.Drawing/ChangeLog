@@ -1,3 +1,15 @@
+2006-05-30  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* Font.cs: Change default charset to 1. Ensure we always call the
+	CheckStatus method after calling GDI+. Added null checks to match MS
+	exception handling.
+	* FontFamily.cs: Avoid double-cast in Equals. Fixed Equals not compare
+	pointers but names. Simplify the Generic* static properties by reusing
+	the .ctor code. Fixed ToString to match MS output. Removed 
+	GetStyleCheck as it failed when multiple styles were provided (flags).
+	* gdipFunctions.cs: Convert Status.FontFamilyNotFound to an 
+	ArgumentException.
+
 2006-05-29  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* ImageFormatConverter.cs: Changed ConvertFrom to work with both short

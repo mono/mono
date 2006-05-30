@@ -204,6 +204,9 @@ namespace System.Drawing
 				case Status.WrongState:
 					throw new ArgumentException ("Properties not set properly.");
 
+				case Status.FontFamilyNotFound:
+					throw new ArgumentException ("FontFamily wasn't found.");
+
 				default:
 					throw new Exception ("Unknown Error.");
 			}
