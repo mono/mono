@@ -31,7 +31,7 @@
 using NUnit.Framework;
 using System;
 using System.Drawing;
-using System.Drawing.Imaging;
+using System.Drawing.Text;
 using System.Security;
 using System.Security.Permissions;
 using System.Runtime.InteropServices;
@@ -40,7 +40,17 @@ namespace MonoTests.System.Drawing{
 
 	[TestFixture]
 	public class FontTest {
-		
+
+		private string name;
+
+		[TestFixtureSetUp]
+		public void FixtureSetUp ()
+		{
+			using (FontFamily ff = new FontFamily (GenericFontFamilies.Monospace)) {
+				name = ff.Name;
+			}
+		}
+
 		// Test basic Font clone, properties and contructor
 		[Test]
 		[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
@@ -115,5 +125,268 @@ namespace MonoTests.System.Drawing{
 			Assert.AreEqual (f.Name, lf.lfFaceName, "lfFaceName");
 		}
 #endif
+		[Test]
+#if ONLY_1_1
+		[ExpectedException (typeof (ArgumentNullException))]
+#endif
+		public void Font_StringNull_Float ()
+		{
+			string family = null;
+			Font f = new Font (family, 12.5f);
+			Assert.AreEqual (FontFamily.GenericSansSerif, f.FontFamily, "FontFamily");
+			Assert.AreEqual (f.Name, f.FontFamily.Name, "Name");
+			Assert.AreEqual (12.5f, f.Size, "Size");
+			Assert.AreEqual (12.5f, f.SizeInPoints, "SizeInPoints");
+			Assert.AreEqual (GraphicsUnit.Point, f.Unit, "Unit");
+		}
+
+		[Test]
+		public void Font_String_Float ()
+		{
+			Font f = new Font (name, 12.5f);
+			Assert.AreEqual (FontFamily.GenericMonospace, f.FontFamily, "FontFamily");
+			Assert.IsFalse (f.Bold, "Bold");
+			Assert.AreEqual (1, f.GdiCharSet, "GdiCharSet");
+			Assert.IsFalse (f.GdiVerticalFont, "GdiVerticalFont");
+			Assert.IsTrue (f.Height > 0, "Height");
+			Assert.IsFalse (f.Italic, "Italic");
+			Assert.AreEqual (f.Name, f.FontFamily.Name, "Name");
+			Assert.AreEqual (12.5f, f.Size, "Size");
+			Assert.AreEqual (12.5f, f.SizeInPoints, "SizeInPoints");
+			Assert.IsFalse (f.Strikeout, "Strikeout");
+			Assert.IsFalse (f.Underline, "Underline");
+			Assert.AreEqual (GraphicsUnit.Point, f.Unit, "Unit");
+		}
+
+		[Test]
+		public void Font_String_Float_FontStyle ()
+		{
+			Font f = new Font (name, 12.5f, FontStyle.Bold);
+			Assert.AreEqual (FontFamily.GenericMonospace, f.FontFamily, "FontFamily");
+			Assert.IsTrue (f.Bold, "Bold");
+			Assert.AreEqual (1, f.GdiCharSet, "GdiCharSet");
+			Assert.IsFalse (f.GdiVerticalFont, "GdiVerticalFont");
+			Assert.IsTrue (f.Height > 0, "Height");
+			Assert.IsFalse (f.Italic, "Italic");
+			Assert.AreEqual (f.Name, f.FontFamily.Name, "Name");
+			Assert.AreEqual (12.5f, f.Size, "Size");
+			Assert.AreEqual (12.5f, f.SizeInPoints, "SizeInPoints");
+			Assert.IsFalse (f.Strikeout, "Strikeout");
+			Assert.IsFalse (f.Underline, "Underline");
+			Assert.AreEqual (GraphicsUnit.Point, f.Unit, "Unit");
+		}
+
+		[Test]
+		public void Font_String_Float_FontStyle_GraphicsUnit ()
+		{
+			Font f = new Font (name, 12.5f, FontStyle.Italic, GraphicsUnit.Pixel);
+			Assert.IsFalse (f.Bold, "Bold");
+			Assert.AreEqual (1, f.GdiCharSet, "GdiCharSet");
+			Assert.IsFalse (f.GdiVerticalFont, "GdiVerticalFont");
+			Assert.IsTrue (f.Height > 0, "Height");
+			Assert.IsTrue (f.Italic, "Italic");
+			Assert.AreEqual (FontFamily.GenericMonospace, f.FontFamily, "FontFamily");
+			Assert.AreEqual (f.Name, f.FontFamily.Name, "Name");
+			Assert.AreEqual (12.5f, f.Size, "Size");
+			Assert.AreEqual (9.375f, f.SizeInPoints, "SizeInPoints");
+			Assert.IsFalse (f.Strikeout, "Strikeout");
+			Assert.IsFalse (f.Underline, "Underline");
+			Assert.AreEqual (GraphicsUnit.Pixel, f.Unit, "Unit");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Font_String_Float_FontStyle_GraphicsUnit_Display ()
+		{
+			new Font (name, 12.5f, FontStyle.Italic, GraphicsUnit.Display);
+		}
+
+		[Test]
+		public void Font_String_Float_FontStyle_GraphicsUnit_Byte ()
+		{
+			Font f = new Font (name, 12.5f, FontStyle.Strikeout, GraphicsUnit.Inch, Byte.MaxValue);
+			Assert.IsFalse (f.Bold, "Bold");
+			Assert.AreEqual (Byte.MaxValue, f.GdiCharSet, "GdiCharSet");
+			Assert.IsFalse (f.GdiVerticalFont, "GdiVerticalFont");
+			Assert.IsTrue (f.Height > 0, "Height");
+			Assert.IsFalse (f.Italic, "Italic");
+			Assert.AreEqual (FontFamily.GenericMonospace, f.FontFamily, "FontFamily");
+			Assert.AreEqual (f.Name, f.FontFamily.Name, "Name");
+			Assert.AreEqual (12.5f, f.Size, "Size");
+			Assert.AreEqual (900f, f.SizeInPoints, "SizeInPoints");
+			Assert.IsTrue (f.Strikeout, "Strikeout");
+			Assert.IsFalse (f.Underline, "Underline");
+			Assert.AreEqual (GraphicsUnit.Inch, f.Unit, "Unit");
+		}
+
+		[Test]
+		public void Font_String_Float_FontStyle_GraphicsUnit_Byte_Bool ()
+		{
+			Font f = new Font (name, 12.5f, FontStyle.Underline, GraphicsUnit.Document, Byte.MinValue, true);
+			Assert.IsFalse (f.Bold, "Bold");
+			Assert.AreEqual (Byte.MinValue, f.GdiCharSet, "GdiCharSet");
+			Assert.IsTrue (f.GdiVerticalFont, "GdiVerticalFont");
+			Assert.IsTrue (f.Height > 0, "Height");
+			Assert.IsFalse (f.Italic, "Italic");
+			Assert.AreEqual (FontFamily.GenericMonospace, f.FontFamily, "FontFamily");
+			Assert.AreEqual (f.Name, f.FontFamily.Name, "Name");
+			Assert.AreEqual (12.5f, f.Size, "Size");
+			Assert.AreEqual (3f, f.SizeInPoints, "SizeInPoints");
+			Assert.IsFalse (f.Strikeout, "Strikeout");
+			Assert.IsTrue (f.Underline, "Underline");
+			Assert.AreEqual (GraphicsUnit.Document, f.Unit, "Unit");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Font_FontFamilyNull_Float ()
+		{
+			FontFamily ff = null;
+			new Font (ff, 12.5f);
+		}
+
+		[Test]
+		public void Font_FontFamily_Float ()
+		{
+			Font f = new Font (FontFamily.GenericMonospace, 12.5f);
+			Assert.AreEqual (FontFamily.GenericMonospace, f.FontFamily, "FontFamily");
+			Assert.IsFalse (f.Bold, "Bold");
+			Assert.AreEqual (1, f.GdiCharSet, "GdiCharSet");
+			Assert.IsFalse (f.GdiVerticalFont, "GdiVerticalFont");
+			Assert.IsTrue (f.Height > 0, "Height");
+			Assert.IsFalse (f.Italic, "Italic");
+			Assert.AreEqual (f.Name, f.FontFamily.Name, "Name");
+			Assert.AreEqual (12.5f, f.Size, "Size");
+			Assert.AreEqual (12.5f, f.SizeInPoints, "SizeInPoints");
+			Assert.IsFalse (f.Strikeout, "Strikeout");
+			Assert.IsFalse (f.Underline, "Underline");
+			Assert.AreEqual (GraphicsUnit.Point, f.Unit, "Unit");
+		}
+
+		[Test]
+		public void Font_FontFamily_Float_FontStyle ()
+		{
+			Font f = new Font (FontFamily.GenericMonospace, 12.5f, FontStyle.Bold);
+			Assert.AreEqual (FontFamily.GenericMonospace, f.FontFamily, "FontFamily");
+			Assert.IsTrue (f.Bold, "Bold");
+			Assert.AreEqual (1, f.GdiCharSet, "GdiCharSet");
+			Assert.IsFalse (f.GdiVerticalFont, "GdiVerticalFont");
+			Assert.IsTrue (f.Height > 0, "Height");
+			Assert.IsFalse (f.Italic, "Italic");
+			Assert.AreEqual (f.Name, f.FontFamily.Name, "Name");
+			Assert.AreEqual (12.5f, f.Size, "Size");
+			Assert.AreEqual (12.5f, f.SizeInPoints, "SizeInPoints");
+			Assert.IsFalse (f.Strikeout, "Strikeout");
+			Assert.IsFalse (f.Underline, "Underline");
+			Assert.AreEqual (GraphicsUnit.Point, f.Unit, "Unit");
+		}
+
+		[Test]
+		public void Font_FontFamily_Float_FontStyle_GraphicsUnit ()
+		{
+			Font f = new Font (FontFamily.GenericMonospace, 12.5f, FontStyle.Italic, GraphicsUnit.Millimeter);
+			Assert.IsFalse (f.Bold, "Bold");
+			Assert.AreEqual (1, f.GdiCharSet, "GdiCharSet");
+			Assert.IsFalse (f.GdiVerticalFont, "GdiVerticalFont");
+			Assert.IsTrue (f.Height > 0, "Height");
+			Assert.IsTrue (f.Italic, "Italic");
+			Assert.AreEqual (FontFamily.GenericMonospace, f.FontFamily, "FontFamily");
+			Assert.AreEqual (f.Name, f.FontFamily.Name, "Name");
+			Assert.AreEqual (12.5f, f.Size, "Size");
+			Assert.AreEqual (35.43307f, f.SizeInPoints, "SizeInPoints");
+			Assert.IsFalse (f.Strikeout, "Strikeout");
+			Assert.IsFalse (f.Underline, "Underline");
+			Assert.AreEqual (GraphicsUnit.Millimeter, f.Unit, "Unit");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Font_FontFamily_Float_FontStyle_GraphicsUnit_Display ()
+		{
+			new Font (FontFamily.GenericMonospace, 12.5f, FontStyle.Italic, GraphicsUnit.Display);
+		}
+
+		[Test]
+		public void Font_FontFamily_Float_FontStyle_GraphicsUnit_Byte ()
+		{
+			Font f = new Font (FontFamily.GenericMonospace, 12.5f, FontStyle.Strikeout, GraphicsUnit.Inch, Byte.MaxValue);
+			Assert.IsFalse (f.Bold, "Bold");
+			Assert.AreEqual (Byte.MaxValue, f.GdiCharSet, "GdiCharSet");
+			Assert.IsFalse (f.GdiVerticalFont, "GdiVerticalFont");
+			Assert.IsTrue (f.Height > 0, "Height");
+			Assert.IsFalse (f.Italic, "Italic");
+			Assert.AreEqual (FontFamily.GenericMonospace, f.FontFamily, "FontFamily");
+			Assert.AreEqual (f.Name, f.FontFamily.Name, "Name");
+			Assert.AreEqual (12.5f, f.Size, "Size");
+			Assert.AreEqual (900f, f.SizeInPoints, "SizeInPoints");
+			Assert.IsTrue (f.Strikeout, "Strikeout");
+			Assert.IsFalse (f.Underline, "Underline");
+			Assert.AreEqual (GraphicsUnit.Inch, f.Unit, "Unit");
+		}
+
+		[Test]
+		public void Font_FontFamily_Float_FontStyle_GraphicsUnit_Byte_Bool ()
+		{
+			Font f = new Font (FontFamily.GenericMonospace, 12.5f, FontStyle.Underline, GraphicsUnit.Document, Byte.MinValue, true);
+			Assert.IsFalse (f.Bold, "Bold");
+			Assert.AreEqual (Byte.MinValue, f.GdiCharSet, "GdiCharSet");
+			Assert.IsTrue (f.GdiVerticalFont, "GdiVerticalFont");
+			Assert.IsTrue (f.Height > 0, "Height");
+			Assert.IsFalse (f.Italic, "Italic");
+			Assert.AreEqual (FontFamily.GenericMonospace, f.FontFamily, "FontFamily");
+			Assert.AreEqual (f.Name, f.FontFamily.Name, "Name");
+			Assert.AreEqual (12.5f, f.Size, "Size");
+			Assert.AreEqual (3f, f.SizeInPoints, "SizeInPoints");
+			Assert.IsFalse (f.Strikeout, "Strikeout");
+			Assert.IsTrue (f.Underline, "Underline");
+			Assert.AreEqual (GraphicsUnit.Document, f.Unit, "Unit");
+		}
+
+		[Test]
+		public void Dispose_Double ()
+		{
+			Font f = new Font (name, 12.5f);
+			f.Dispose ();
+			f.Dispose ();
+		}
+
+		[Test]
+		public void Dispose_UseAfter_Works ()
+		{
+			Font f = new Font (name, 12.5f);
+			string fname = f.Name;
+			f.Dispose ();
+			// most properties don't throw, everything seems to be cached
+			Assert.AreEqual (fname, f.Name, "Name");
+			Assert.AreEqual (12.5f, f.Size, "Size");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Dispose_Height ()
+		{
+			Font f = new Font (name, 12.5f);
+			f.Dispose ();
+			Assert.AreEqual (0, f.Height, "Name");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Dispose_ToLogFont ()
+		{
+			Font f = new Font (name, 12.5f);
+			f.Dispose ();
+			LOGFONT	lf = new LOGFONT();
+			f.ToLogFont (lf);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Dispose_ToHFont ()
+		{
+			Font f = new Font (name, 12.5f);
+			f.Dispose ();
+			f.ToHfont ();
+		}
 	}
 }

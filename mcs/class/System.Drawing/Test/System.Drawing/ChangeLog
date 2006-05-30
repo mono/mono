@@ -1,3 +1,8 @@
+2006-05-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* FontFamilyTest.cs: New. Unit tests for FontFamily.
+	* TestFont.cs: Added more test cases to Font.
+
 2006-05-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestImageFormatConverter.cs: Added test cases for all well known
