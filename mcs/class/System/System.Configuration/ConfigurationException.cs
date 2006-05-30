@@ -132,17 +132,29 @@ namespace System.Configuration
 		//
 		// Properties
 		//
-		public virtual string BareMessage
+		public
+#if NET_2_0
+		virtual
+#endif
+		string BareMessage
 		{
 			get  { return bareMessage; }
 		}
 
-		public virtual string Filename
+		public
+#if NET_2_0
+		virtual
+#endif
+		string Filename
 		{
 			get { return filename; }
 		}
-		
-		public virtual int Line
+
+		public	
+#if NET_2_0
+		virtual
+#endif
+		int Line
 		{
 			get { return line; }
 		}

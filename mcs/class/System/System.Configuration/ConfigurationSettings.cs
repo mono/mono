@@ -57,6 +57,9 @@ namespace System.Configuration
 		{
 		}
 
+#if NET_2_0
+		[Obsolete ("This method is obsolete, it has been replaced by System.Configuration!System.Configuration.ConfigurationManager.GetSection")]
+#endif
 		public static object GetConfig (string sectionName)
 		{
 			return config.GetConfig (sectionName);
