@@ -6,7 +6,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2001 Nick Drochak, All rights reserved.
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -48,7 +48,11 @@ namespace System.Security.Policy {
 		ArrayList m_children = new ArrayList();
 		PolicyLevel m_level;
 
+#if NET_2_0
+		protected CodeGroup (IMembershipCondition membershipCondition, PolicyStatement policy)
+#else
 		public CodeGroup (IMembershipCondition membershipCondition, PolicyStatement policy)
+#endif
 		{
 			if (null == membershipCondition)
 				throw new ArgumentNullException ("membershipCondition");
