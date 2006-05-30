@@ -39,62 +39,25 @@ namespace System.Windows.Forms {
 		private IList list;
 		private bool binding_suspended;
 
-		internal CurrencyManager (object data_source, string data_member)
+		internal CurrencyManager (IList data_source)
 		{
-			if (data_source is IList) {
-				list = (IList) data_source;
-			} else if (data_source is IListSource) {
-				list = ((IListSource) data_source).GetList ();
-			} else {
-				throw new Exception ("Attempted to create currency manager " +
-					"from invalid type: " + data_source.GetType ());
-			}
+			list = data_source;
 
 			if (data_source as ArrayList != null) {
-				finalType = ((ArrayList)data_source).GetType ();
+				finalType = ((ArrayList) data_source).GetType ();
+			} else if (data_source as Array != null) {
+				finalType = ((Array) data_source).GetType ();
 			} else {
-				if (data_source as Array != null) {
-					finalType = ((Array) data_source).GetType ();
-				} else {
-					finalType = null;
-				}
+				finalType = null;
 			}
 
-			DataTable table = data_source as DataTable;
-			if (table == null && data_source is DataView)
-				table = ((DataView) data_source).Table;
-
-			
-			if (table == null) {
-				DataSet dataset = data_source as DataSet;
-				string table_name = data_member;
-				int sp = data_member != null ? data_member.IndexOf ('.') : -1;
-				if (sp != -1) {
-					table_name = data_member.Substring (0, sp);
-					data_member = data_member.Substring (sp + 1);
-				}
-				if (dataset != null && table_name != String.Empty) {
-					table = dataset.Tables [table_name];
-					if (table == null)
-						throw new ArgumentException (String.Format ("Specified data member table {0} does not exist in the data source DataSet", data_member));
-					if (data_member != table_name) {
-						DataColumn col = table.Columns [data_member];
-						DataRelation rel = (col == null ? dataset.Relations [data_member] : null);
-						if (rel == null && col == null)
-							throw new ArgumentException (String.Format ("Specified data member {0} does not exist in the data table {1}", data_member, table_name));
-
-						// FIXME: hmm, in such case what should we do?
-					}
-				}
-			}
-
-			if (table != null) {
-				list = new DataView (table);
-				((DataView) list).ListChanged += new ListChangedEventHandler (ListChangedHandler);
-				table.Columns.CollectionChanged  += new CollectionChangeEventHandler (MetaDataChangedHandler);
-				table.ChildRelations.CollectionChanged  += new CollectionChangeEventHandler (MetaDataChangedHandler);
-				table.ParentRelations.CollectionChanged  += new CollectionChangeEventHandler (MetaDataChangedHandler);
-				table.Constraints.CollectionChanged += new CollectionChangeEventHandler (MetaDataChangedHandler);
+			DataView view = list as DataView;
+			if (view != null) {
+				view.ListChanged += new ListChangedEventHandler (ListChangedHandler);
+				view.Table.Columns.CollectionChanged  += new CollectionChangeEventHandler (MetaDataChangedHandler);
+				view.Table.ChildRelations.CollectionChanged  += new CollectionChangeEventHandler (MetaDataChangedHandler);
+				view.Table.ParentRelations.CollectionChanged  += new CollectionChangeEventHandler (MetaDataChangedHandler);
+				view.Table.Constraints.CollectionChanged += new CollectionChangeEventHandler (MetaDataChangedHandler);
 			}
 
 			if (list.Count > 0)
@@ -109,8 +72,8 @@ namespace System.Windows.Forms {
 
 		public override object Current {
 			get {
-				if (list.Count == 0 || listposition == -1)
-					return null;
+				if (listposition == -1 || listposition >= list.Count)
+					throw new IndexOutOfRangeException ("list position");
 				return list [listposition];
 			}
 		}
@@ -217,6 +180,9 @@ namespace System.Windows.Forms {
 
 		public override void CancelCurrentEdit ()
 		{
+			if (listposition == -1)
+				return;
+
 			IEditableObject editable = Current as IEditableObject;
 
 			if (editable == null)
@@ -227,6 +193,9 @@ namespace System.Windows.Forms {
 		
 		public override void EndCurrentEdit ()
 		{
+			if (listposition == -1)
+				return;
+
 			IEditableObject editable = Current as IEditableObject;
 
 			if (editable == null)
@@ -315,6 +284,10 @@ namespace System.Windows.Forms {
 
 		private void ListChangedHandler (object sender, ListChangedEventArgs e)
 		{
+			// Start a latebound list
+			if (listposition == -1)
+				listposition = 0;
+
 			OnItemChanged (new ItemChangedEventArgs (-1));
 			UpdateIsBinding ();
 		}

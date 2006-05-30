@@ -24,6 +24,7 @@
 //	Jackson Harper	jackson@ximian.com
 
 
+using System.Data;
 using System.Collections;
 using System.Globalization;
 using System.ComponentModel;
@@ -57,6 +58,9 @@ namespace System.Windows.Forms {
 				if (res != null)
 					return res;
 				res = CreateBindingManager (source, member);
+				Console.WriteLine ("CREATED BINDING MANAGER:   {0}", res);
+				if (res == null)
+					return null;
 				members [member] = res;
 				return res;
 			}
@@ -116,11 +120,69 @@ namespace System.Windows.Forms {
 			if (data_source is IList || 
 				data_source is IListSource ||
 				data_source is IBindingList) {
-				CurrencyManager res = new CurrencyManager (data_source, data_member);
-				return res;
+				return CreateCurrencyManager (data_source, data_member);
 			}
 
 			return new PropertyManager (data_source, data_member);
+		}
+
+		private static CurrencyManager CreateCurrencyManager (object data_source, string data_member)
+		{
+			IList list = null;
+
+			if (data_source is IList) {
+				list = (IList) data_source;
+			} else if (data_source is IListSource) {
+				list = ((IListSource) data_source).GetList ();
+			} else {
+				throw new Exception ("Attempted to create currency manager " +
+					"from invalid type: " + data_source.GetType ());
+			}
+
+			DataTable table = data_source as DataTable;
+			if (table == null && data_source is DataView)
+				table = ((DataView) data_source).Table;
+
+			DataSet dataset = data_source as DataSet;
+			if (table == null && dataset != null) {
+				string table_name = data_member;
+				int sp = data_member != null ? data_member.IndexOf ('.') : -1;
+				if (sp != -1) {
+					table_name = data_member.Substring (0, sp);
+					data_member = data_member.Substring (sp + 1);
+				}
+				if (dataset != null && table_name != String.Empty) {
+					Console.WriteLine ("TABLE NAME:  {0}   data member:   {1}", table_name, data_member);
+					table = dataset.Tables [table_name];
+					if (table == null)
+						throw new ArgumentException (String.Format ("Specified data member table {0} does not exist in the data source DataSet", data_member));
+					if (data_member != table_name) {
+						/*
+						Console.WriteLine ("CHECKING FOR COLUMN:   {0}", data_member);
+						DataColumn col = table.Columns [data_member];
+						DataRelation rel = (col == null ? dataset.Relations [data_member] : null);
+						Console.WriteLine ("COLUMN:   {0}    RELATION:  {1}", col, rel);
+						if (rel == null && col == null)
+							throw new ArgumentException (String.Format ("Specified data member {0} does not exist in the data table {1}", data_member, table_name));
+
+						// FIXME: hmm, in such case what should we do?
+						*/
+						table = null;
+						list = null;
+					}
+				}
+			}
+
+			Console.WriteLine ("DATA TABLE:   {0}", table);
+			
+			if (table != null) {
+				Console.WriteLine ("CREATING VIEW ON:  {0}", table.TableName);
+				list = new DataView (table);
+			}
+
+			if (list == null)
+				return null;
+			return new CurrencyManager (list);
 		}
 
 		#region Public Instance Methods
