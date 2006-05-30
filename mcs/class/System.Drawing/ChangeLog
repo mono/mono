@@ -1,3 +1,7 @@
+2006-05-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* System.Drawing_test.dll.sources: Added unit tests for FontFamily.
+
 2006-05-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* System.Drawing_test.dll.sources: Added unit tests for Pen.
