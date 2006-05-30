@@ -52,7 +52,11 @@ IMAGES_RESOURCES = \
 	resources/text-x-generic.png		\
 	resources/16_user-desktop.png		\
 	resources/32_user-desktop.png		\
-	resources/user-desktop.png
+	resources/user-desktop.png		\
+	resources/dialog-error.png		\
+	resources/dialog-information.png	\
+	resources/dialog-question3.png		\
+	resources/dialog-warning.png
 
 EXTRA_DISTFILES = \
 	README System.Windows.Forms.dll.resources \

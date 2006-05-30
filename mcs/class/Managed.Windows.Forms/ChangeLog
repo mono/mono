@@ -1,5 +1,9 @@
 2006-05-30  Wade Berrier <wberrier@novell.com>
 
+	* Makefile: oops, add some more missing resources.
+
+2006-05-30  Wade Berrier <wberrier@novell.com>
+
 	* Makefile: fix resource filenames to fix make dist
 
 2006-05-25  Miguel de Icaza  <miguel@novell.com>
