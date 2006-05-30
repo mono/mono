@@ -5,7 +5,7 @@
 //   Duco Fijma (duco@lorentz.xs4all.nl)
 //
 //   (C) 2002 Duco Fijma
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,8 +35,12 @@ namespace System.Security.Cryptography {
 	[ComVisible (true)]
 #endif
 	public abstract class RandomNumberGenerator {
-	
+
+#if NET_2_0
+		protected RandomNumberGenerator ()
+#else
 		public RandomNumberGenerator ()
+#endif
 		{
 		}
 

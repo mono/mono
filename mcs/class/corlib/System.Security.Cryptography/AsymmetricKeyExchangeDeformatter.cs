@@ -4,7 +4,7 @@
 // Authors:
 //   Thomas Neidhart (tome@sbox.tugraz.at)
 //
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -34,8 +34,12 @@ namespace System.Security.Cryptography {
 	[ComVisible (true)]
 #endif
 	public abstract class AsymmetricKeyExchangeDeformatter {
-		
-		public AsymmetricKeyExchangeDeformatter () 
+
+#if NET_2_0
+		protected AsymmetricKeyExchangeDeformatter ()
+#else
+		public AsymmetricKeyExchangeDeformatter ()
+#endif
 		{
 		}
 		
@@ -49,4 +53,3 @@ namespace System.Security.Cryptography {
 		public abstract void SetKey (AsymmetricAlgorithm key);
 	}
 }
-

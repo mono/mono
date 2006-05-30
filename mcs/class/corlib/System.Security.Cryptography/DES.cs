@@ -6,7 +6,7 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // Portions (C) 2002 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -44,7 +44,11 @@ public abstract class DES : SymmetricAlgorithm {
 
 	private const int keySizeByte = 8;
 
+#if NET_2_0
+	protected DES ()
+#else
 	public DES ()
+#endif
 	{
 		KeySizeValue = 64; 
 		BlockSizeValue = 64; 

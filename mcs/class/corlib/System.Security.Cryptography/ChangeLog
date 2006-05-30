@@ -1,3 +1,23 @@
+2006-05-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AsymmetricKeyExchangeDeformatter.cs: Under 2.0 the ctor is 
+	protected.
+	* AsymmetricKeyExchangeFormatter.cs: Under 2.0 the ctor is protected.
+	* AsymmetricSignatureDeformatter.cs: Under 2.0 the ctor is protected.
+	* AsymmetricSignatureFormatter.cs: Under 2.0 the ctor is protected.
+	* DES.cs: Under 2.0 the ctor is protected.
+	* HashAlgorithm.cs: Under 2.0 the HashValue field is protected 
+	internal.
+	* RandomNumberGenerator.cs: Under 2.0 the ctor is protected.
+	* RC2.cs: Under 2.0 the ctor is protected.
+	* Rijndael.cs: Under 2.0 the ctor is protected.
+	* RSA.cs: Under 2.0 the ctor is protected.
+	* SHA256.cs: Under 2.0 the ctor is protected.
+	* SHA384.cs: Under 2.0 the ctor is protected.
+	* SHA512.cs: Under 2.0 the ctor is protected.
+	* SymmetricAlgorithm.cs: Under 2.0 the ctor is protected.
+	* TripleDES.cs: Under 2.0 the ctor is protected.
+
 2006-02-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* CryptoStream.cs: Add 'override' keyword to Dispose (bool) method in 2.0.
