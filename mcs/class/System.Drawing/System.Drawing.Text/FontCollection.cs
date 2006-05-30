@@ -58,7 +58,7 @@ namespace System.Drawing.Text {
 		{
 			get { 
 				int found;
-				int returned;
+				int returned = 0;
 				Status status;
 				FontFamily[] families;
 				IntPtr[] result;
@@ -69,9 +69,11 @@ namespace System.Drawing.Text {
 				
 				status = GDIPlus.GdipGetFontCollectionFamilyCount (nativeFontCollection, out found);
 				GDIPlus.CheckStatus (status);
-				
+				if (found == 0)
+					return new FontFamily [0];
+
 				result = new IntPtr[found];
-				status = GDIPlus.GdipGetFontCollectionFamilyList(nativeFontCollection, found, result, out returned);
+				status = GDIPlus.GdipGetFontCollectionFamilyList (nativeFontCollection, found, result, out returned);
 				   
 				families = new FontFamily [returned];
 				for ( int i = 0; i < returned ; i++) {
