@@ -29,8 +29,12 @@ namespace System.Text
 {
 
 using System;
+using System.Runtime.InteropServices;
 
 [Serializable]
+#if NET_2_0
+[ComVisible (true)]
+#endif
 [MonoTODO ("Fix serialization compatibility with MS.NET")]
 public class UnicodeEncoding : Encoding
 {
@@ -78,6 +82,14 @@ public class UnicodeEncoding : Encoding
 		windows_code_page = UNICODE_CODE_PAGE;
 	}
 
+#if NET_2_0
+	[MonoTODO ("Implement throwOnInvalidBytes")]
+	public UnicodeEncoding (bool bigEndian, bool byteOrderMark, bool throwOnInvalidBytes)
+		: this (bigEndian, byteOrderMark)
+	{
+	}
+#endif
+
 	// Get the number of bytes needed to encode a character buffer.
 	public override int GetByteCount (char[] chars, int index, int count)
 	{
@@ -103,6 +115,7 @@ public class UnicodeEncoding : Encoding
 
 #if NET_2_0
 	[CLSCompliantAttribute (false)]
+	[ComVisible (false)]
 	public unsafe override int GetByteCount (char* chars, int count)
 	{
 		if (chars == null)
@@ -195,6 +208,7 @@ public class UnicodeEncoding : Encoding
 
 #if NET_2_0
 	[CLSCompliantAttribute (false)]
+	[ComVisible (false)]
 	public unsafe override int GetBytes (char* chars, int charCount,
 										byte* bytes, int byteCount)
 	{
@@ -240,6 +254,7 @@ public class UnicodeEncoding : Encoding
 
 #if NET_2_0
 	[CLSCompliantAttribute (false)]
+	[ComVisible (false)]
 	public unsafe override int GetCharCount (byte* bytes, int count)
 	{
 		if (bytes == null)
@@ -285,6 +300,7 @@ public class UnicodeEncoding : Encoding
 
 #if NET_2_0
 	[CLSCompliantAttribute (false)]
+	[ComVisible (false)]
 	public unsafe override int GetChars (byte* bytes, int byteCount,
 										char* chars, int charCount)
 	{
@@ -299,9 +315,9 @@ public class UnicodeEncoding : Encoding
 
 		return GetCharsInternal (bytes, byteCount, chars, charCount);
 	}
-#endif
 
 	// Decode a buffer of bytes into a string.
+	[ComVisible (false)]
 	public unsafe override String GetString (byte [] bytes, int index, int count)
 	{
 		if (bytes == null)
@@ -324,6 +340,7 @@ public class UnicodeEncoding : Encoding
 
 		return s;
 	}
+#endif
 
 	private unsafe int GetCharsInternal (byte* bytes, int byteCount,
 										char* chars, int charCount)

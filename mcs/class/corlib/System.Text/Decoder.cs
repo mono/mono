@@ -29,6 +29,9 @@ using System;
 using System.Runtime.InteropServices;
 
 [Serializable]
+#if NET_2_0
+[ComVisible (true)]
+#endif
 public abstract class Decoder
 {
 
@@ -39,6 +42,7 @@ public abstract class Decoder
 	DecoderFallback fallback = new DecoderReplacementFallback ();
 	DecoderFallbackBuffer fallback_buffer;
 
+	[ComVisible (false)]
 	public DecoderFallback Fallback {
 		get { return fallback; }
 		set {
@@ -49,6 +53,7 @@ public abstract class Decoder
 		}
 	}
 
+	[ComVisible (false)]
 	public DecoderFallbackBuffer FallbackBuffer {
 		get {
 			if (fallback_buffer == null)
@@ -66,6 +71,7 @@ public abstract class Decoder
 								 char[] chars, int charIndex);
 
 #if NET_2_0
+	[ComVisible (false)]
 	public virtual int GetCharCount (byte [] bytes, int index, int count, bool flush)
 	{
 		if (flush)
@@ -74,6 +80,7 @@ public abstract class Decoder
 	}
 
 	[CLSCompliant (false)]
+	[ComVisible (false)]
 	public unsafe virtual int GetCharCount (byte* bytes, int count, bool flush)
 	{
 		if (bytes == null)
@@ -99,6 +106,7 @@ public abstract class Decoder
 	}
 
 	[CLSCompliant (false)]
+	[ComVisible (false)]
 	public unsafe virtual int GetChars (byte* bytes, int byteCount,
 		char* chars, int charCount, bool flush)
 	{
@@ -111,6 +119,7 @@ public abstract class Decoder
 		return GetChars (barr, 0, byteCount, carr, 0, flush);
 	}
 
+	[ComVisible (false)]
 	public virtual void Reset ()
 	{
 		if (fallback_buffer != null)
@@ -118,6 +127,7 @@ public abstract class Decoder
 	}
 
 	[CLSCompliant (false)]
+	[ComVisible (false)]
 	public unsafe virtual void Convert (
 		byte* bytes, int byteCount,
 		char* chars, int charCount, bool flush,
@@ -137,6 +147,7 @@ public abstract class Decoder
 		charsUsed = GetChars (bytes, bytesUsed, chars, charCount, flush);
 	}
 
+	[ComVisible (false)]
 	public virtual void Convert (
 		byte [] bytes, int byteIndex, int byteCount,
 		char [] chars, int charIndex, int charCount, bool flush,

@@ -38,10 +38,14 @@
 //
 using System.Runtime.Serialization;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace System.Text {
 	
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	[MonoTODO ("Fix serialization compatibility with MS.NET")]
 	public sealed class StringBuilder
 #if NET_2_0
@@ -476,11 +480,13 @@ namespace System.Text {
 		}
 
 #if NET_2_0
+		[ComVisible (false)]
 		public StringBuilder AppendLine ()
 		{
 			return Append (System.Environment.NewLine);
 		}
 
+		[ComVisible (false)]
 		public StringBuilder AppendLine (string value)
 		{
 			return Append (value).Append (System.Environment.NewLine);
@@ -683,6 +689,7 @@ namespace System.Text {
 		}
 
 #if NET_2_0
+		[ComVisible (false)]
 		public void CopyTo (int sourceIndex, char [] destination, int destinationIndex, int count)
 		{
 			if (destination == null)

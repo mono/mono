@@ -1,3 +1,22 @@
+2006-05-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ASCIIEncoding.cs: Marked class ComVisible (true) on 2.0 profile.
+	Marked 2.0-only members as ComVisible (false).
+	* Decoder.cs: Marked class ComVisible (true) on 2.0 profile. Marked
+	2.0-only members as ComVisible (false).
+	* Encoder.cs: Marked class ComVisible (true) on 2.0 profile. Marked
+	2.0-only members as ComVisible (false).
+	* Encoding.cs: Marked class ComVisible (true) on 2.0 profile. Marked
+	2.0-only members as ComVisible (false).
+	* NormalizationForm.cs: Marked ComVisible (true).
+	* StringBuilder.cs: Marked class ComVisible (true) on 2.0 profile. 
+	Marked 2.0-only methods as ComVisible (false).
+	* UnicodeEncoding.cs: GetString (byte[], int, int) is only available
+	in 2.0 profile. Marked 2.0-only methods ComVisible (false). Added
+	missing ctor in 2.0 profile, and marked in MonoTODO.
+	* UTF7Encoding.cs: Marked class ComVisible (true) on 2.0 profile.
+	* UTF8Encoding.cs: Marked 2.0-only methods as ComVisible (false).
+
 2006-05-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* EncodingInfo.cs, Encoding.cs :

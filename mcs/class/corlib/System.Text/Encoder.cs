@@ -29,6 +29,9 @@ using System;
 using System.Runtime.InteropServices;
 
 [Serializable]
+#if NET_2_0
+[ComVisible (true)]
+#endif
 public abstract class Encoder
 {
 
@@ -39,6 +42,7 @@ public abstract class Encoder
 	EncoderFallback fallback = new EncoderReplacementFallback ();
 	EncoderFallbackBuffer fallback_buffer;
 
+	[ComVisible (false)]
 	public EncoderFallback Fallback {
 		get { return fallback; }
 		set {
@@ -49,6 +53,7 @@ public abstract class Encoder
 		}
 	}
 
+	[ComVisible (false)]
 	public EncoderFallbackBuffer FallbackBuffer {
 		get {
 			if (fallback_buffer == null)
@@ -68,6 +73,7 @@ public abstract class Encoder
 
 #if NET_2_0
 	[CLSCompliant (false)]
+	[ComVisible (false)]
 	public unsafe virtual int GetByteCount (char* chars, int charCount, bool flush)
 	{
 		if (chars == null)
@@ -81,6 +87,7 @@ public abstract class Encoder
 	}
 
 	[CLSCompliant (false)]
+	[ComVisible (false)]
 	public unsafe virtual int GetBytes (char* chars, int charCount,
 		byte* bytes, int byteCount, bool flush)
 	{
@@ -93,6 +100,7 @@ public abstract class Encoder
 		return GetBytes (carr, 0, charCount, barr, 0, flush);
 	}
 
+	[ComVisible (false)]
 	public virtual void Reset ()
 	{
 		if (fallback_buffer != null)
@@ -100,6 +108,7 @@ public abstract class Encoder
 	}
 
 	[CLSCompliant (false)]
+	[ComVisible (false)]
 	public unsafe virtual void Convert (
 		char* chars, int charCount,
 		byte* bytes, int byteCount, bool flush,
@@ -119,6 +128,7 @@ public abstract class Encoder
 		bytesUsed = GetBytes (chars, charsUsed, bytes, byteCount, flush);
 	}
 
+	[ComVisible (false)]
 	public virtual void Convert (
 		char [] chars, int charIndex, int charCount,
 		byte [] bytes, int byteIndex, int byteCount, bool flush,

@@ -28,8 +28,12 @@ namespace System.Text
 {
 
 using System;
+using System.Runtime.InteropServices;
 
 [Serializable]
+#if NET_2_0
+[ComVisible (true)]
+#endif
 [MonoTODO ("Fix serialization compatibility with MS.NET")]
 #if ECMA_COMPAT
 internal

@@ -28,8 +28,12 @@ namespace System.Text
 {
 
 using System;
+using System.Runtime.InteropServices;
 
 [Serializable]
+#if NET_2_0
+[ComVisible (true)]
+#endif
 [MonoTODO ("Fix serialization compatibility with MS.NET")]
 public class ASCIIEncoding : Encoding
 {
@@ -45,6 +49,7 @@ public class ASCIIEncoding : Encoding
 	}
 
 #if NET_2_0
+	[ComVisible (false)]
 	public override bool IsSingleByte {
 		get { return true; }
 	}
@@ -313,6 +318,7 @@ public class ASCIIEncoding : Encoding
 
 #if NET_2_0
 	[CLSCompliantAttribute (false)]
+	[ComVisible (false)]
 	public unsafe override int GetBytes (char *chars, int charCount, byte *bytes, int byteCount)
 	{
 		if (chars == null)
@@ -335,6 +341,7 @@ public class ASCIIEncoding : Encoding
 	}
 
 	[CLSCompliantAttribute(false)]
+	[ComVisible (false)]
 	public unsafe override int GetChars (byte *bytes, int byteCount, char *chars, int charCount)
 	{
 		if (bytes == null)
@@ -357,12 +364,14 @@ public class ASCIIEncoding : Encoding
 	}
 
 	[CLSCompliantAttribute(false)]
+	[ComVisible (false)]
 	public unsafe override int GetCharCount (byte *bytes, int count)
 	{
 		return count;
 	}
 
 	[CLSCompliantAttribute(false)]
+	[ComVisible (false)]
 	public unsafe override int GetByteCount (char *chars, int count)
 	{
 		return count;
@@ -387,12 +396,14 @@ public class ASCIIEncoding : Encoding
 
 #if NET_2_0
 	[MonoTODO ("we have simple override to match method signature.")]
+	[ComVisible (false)]
 	public override Decoder GetDecoder ()
 	{
 		return base.GetDecoder ();
 	}
 
 	[MonoTODO ("we have simple override to match method signature.")]
+	[ComVisible (false)]
 	public override Encoder GetEncoder ()
 	{
 		return base.GetEncoder ();

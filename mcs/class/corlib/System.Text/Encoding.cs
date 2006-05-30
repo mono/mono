@@ -35,6 +35,9 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 [Serializable]
+#if NET_2_0
+[ComVisible (true)]
+#endif
 public abstract class Encoding
 #if NET_2_0
 	: ICloneable
@@ -99,6 +102,7 @@ public abstract class Encoding
 		get { return is_readonly; }
 	}
 
+	[ComVisible (false)]
 	public virtual bool IsSingleByte {
 		get { return false; }
 	}
@@ -501,7 +505,7 @@ public abstract class Encoding
 #if !ECMA_COMPAT
 
 #if NET_2_0
-
+	[ComVisible (false)]
 	public virtual object Clone ()
 	{
 		Encoding e = (Encoding) MemberwiseClone ();
@@ -1056,6 +1060,7 @@ public abstract class Encoding
 
 #if NET_2_0
 	[CLSCompliantAttribute(false)]
+	[ComVisible (false)]
 	public unsafe virtual int GetByteCount (char *chars, int count)
 	{
 		if (chars == null)
@@ -1071,6 +1076,7 @@ public abstract class Encoding
 	}
 
 	[CLSCompliantAttribute(false)]
+	[ComVisible (false)]
 	public unsafe virtual int GetCharCount (byte *bytes, int count)
 	{
 		if (bytes == null)
@@ -1085,6 +1091,7 @@ public abstract class Encoding
 	}
 
 	[CLSCompliantAttribute(false)]
+	[ComVisible (false)]
 	public unsafe virtual int GetChars (byte *bytes, int byteCount, char *chars, int charCount)
 	{
 		if (bytes == null)
@@ -1111,6 +1118,7 @@ public abstract class Encoding
 	}
 
 	[CLSCompliantAttribute(false)]
+	[ComVisible (false)]
 	public unsafe virtual int GetBytes (char *chars, int charCount, byte *bytes, int byteCount)
 	{
 		if (bytes == null)

@@ -1074,6 +1074,7 @@ Char.IsLetterOrDigit (pair);
 	}
 
 	[MonoTODO]
+	[ComVisible (false)]
 	public override string GetString (byte [] bytes, int index, int count)
 	{
 		// hmm, does this override make any sense?
