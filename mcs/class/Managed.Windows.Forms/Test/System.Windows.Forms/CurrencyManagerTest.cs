@@ -559,7 +559,26 @@ namespace MonoTests.System.Windows.Forms {
 
 			return dataset;
 		}
+
+		[Test]
+		public void EndUninitializedEdit ()
+		{
+			ArrayList list = new ArrayList ();
+			BindingContext bc = new BindingContext ();
+			CurrencyManager cm = bc [list] as CurrencyManager;
+
+			cm.EndCurrentEdit ();
+		}
+
+		[Test]
+		public void CancelUninitializedEdit ()
+		{
+			ArrayList list = new ArrayList ();
+			BindingContext bc = new BindingContext ();
+			CurrencyManager cm = bc [list] as CurrencyManager;
+
+			cm.CancelCurrentEdit ();
+		}
 	}
 }
-
 
