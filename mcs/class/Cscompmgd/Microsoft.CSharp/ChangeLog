@@ -1,4 +1,8 @@
-2005-04-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+2006-05-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ErrorLevel.cs: Removed extra Serializable attribute in 2.0 profile.
+
+2005-04-20  Gonzalo Paniagua Javier  <gonzalo@ximian.com>
 
 	* Compiler.cs: redirect standard error. Patch by Toby Miller that fixes
 	bug #74067.
