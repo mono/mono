@@ -43,7 +43,7 @@ namespace System.Text.RegularExpressions
 			list = new Capture [n];
 		}
 
-		public virtual int Count {
+		public int Count {
 			get { return list.Length; }
 		}
 
@@ -51,7 +51,7 @@ namespace System.Text.RegularExpressions
 			get { return true; }
 		}
 
-		public virtual bool IsSynchronized {
+		public bool IsSynchronized {
 			get { return false; }
 		}
 
@@ -68,16 +68,16 @@ namespace System.Text.RegularExpressions
 			list [i] = cap;
 		}
 
-		public virtual object SyncRoot {
+		public object SyncRoot {
 			get { return list; }
 		}
 
-		public virtual void CopyTo (Array array, int index)
+		public void CopyTo (Array array, int index)
 		{
 			list.CopyTo (array, index);
 		}
 
-		public virtual IEnumerator GetEnumerator ()
+		public IEnumerator GetEnumerator ()
 		{
 			return list.GetEnumerator ();
 		}

@@ -49,7 +49,7 @@ namespace System.Text.RegularExpressions
 			list = new ArrayList ();
 		}
 
-		public virtual int Count {
+		public int Count {
 			get { return FullList.Count; }
 		}
 
@@ -57,7 +57,7 @@ namespace System.Text.RegularExpressions
 			get { return true; }
 		}
 
-		public virtual bool IsSynchronized {
+		public bool IsSynchronized {
 			get { return false; }
 		}
 
@@ -70,16 +70,16 @@ namespace System.Text.RegularExpressions
 			}
 		}
 
-		public virtual object SyncRoot {
+		public object SyncRoot {
 			get { return list; }
 		}
 
-		public virtual void CopyTo (Array array, int index)
+		public void CopyTo (Array array, int index)
 		{
 			FullList.CopyTo (array, index);
 		}
 
-		public virtual IEnumerator GetEnumerator ()
+		public IEnumerator GetEnumerator ()
 		{
 			// If !current.Success, the list is fully populated.  So, just use it.
 			return current.Success ? new Enumerator (this) : list.GetEnumerator ();

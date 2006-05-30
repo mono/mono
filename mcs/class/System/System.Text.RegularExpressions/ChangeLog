@@ -1,3 +1,9 @@
+2006-05-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CaptureCollection.cs: Removed virtual keyword to fix API mismatches.
+	* MatchCollection.cs: Removed virtual keyword to fix API mismatches.
+	* GroupCollection.cs: Removed virtual keyword to fix API mismatches.
+
 2006-05-08  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #78278
