@@ -1,5 +1,11 @@
 2006-05-30  Martin Baulig  <martin@ximian.com>
 
+	* mono-debug.c (mono_debug_print_stack_frame): Reverted the
+	mono_method_full_name() change and replace the ':' with a '.'
+	here.
+
+2006-05-30  Martin Baulig  <martin@ximian.com>
+
 	* debug-mono-symfile.c
 	(mono_debug_symfile_lookup_location): Fix the algorithm:
 	when looking up B which is between A and C, return A not C.
@@ -30,9 +36,6 @@
 	documentation.
 	(mono_debug_find_method): Renamed into
 	mono_debug_symfile_lookup_method().
-
-	* debug-helpers.c (mono_method_full_name): Use `.' instead of `:'
-	to separate the class name from the method name.
 
 2006-05-27  Zoltan Varga  <vargaz@gmail.com>
 
