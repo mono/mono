@@ -1,3 +1,11 @@
+2006-05-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CodeAccessSecurityAttribute.cs: Under 2.0 the ctor is protected.
+	* IsolatedStoragePermissionAttribute.cs: Under 2.0 the ctor is 
+	protected.
+	* IsolatedStoragePermission.cs: Under 2.0 the ctor is protected.
+	* SecurityAttribute.cs: Under 2.0 the ctor is protected.
+
 2006-04-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* FileIOPermission.cs: Ensure the "bad" path characters match the OS

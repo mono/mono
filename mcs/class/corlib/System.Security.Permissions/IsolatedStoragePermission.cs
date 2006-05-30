@@ -6,7 +6,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Ximian, Inc.			http://www.ximian.com
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -48,7 +48,11 @@ namespace System.Security.Permissions {
 		internal bool m_permanentData;
 		internal IsolatedStorageContainment m_allowed;
 
+#if NET_2_0
+		protected IsolatedStoragePermission (PermissionState state)
+#else
 		public IsolatedStoragePermission (PermissionState state)
+#endif
 		{
 			if (CheckPermissionState (state, true) == PermissionState.Unrestricted) {
 				UsageAllowed = IsolatedStorageContainment.UnrestrictedIsolatedStorage;

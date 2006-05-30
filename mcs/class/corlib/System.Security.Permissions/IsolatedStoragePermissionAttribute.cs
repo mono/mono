@@ -5,7 +5,7 @@
 //   Dan Lewis (dihlewis@yahoo.co.uk)
 //
 // (C) 2002
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -39,8 +39,12 @@ namespace System.Security.Permissions {
 		AttributeTargets.Method, AllowMultiple=true, Inherited=false)]
 	[Serializable]
 	public abstract class IsolatedStoragePermissionAttribute : CodeAccessSecurityAttribute {
-		
-		public IsolatedStoragePermissionAttribute (SecurityAction action) 
+
+#if NET_2_0
+		protected IsolatedStoragePermissionAttribute (SecurityAction action)
+#else
+		public IsolatedStoragePermissionAttribute (SecurityAction action)
+#endif
 			: base (action)
 		{
 		}

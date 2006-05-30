@@ -5,7 +5,7 @@
 // Created:        2002-01-06 
 //
 // Copyright (C) 2001 Nick Drochak, All Rights Reserved
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -46,7 +46,11 @@ namespace System.Security.Permissions {
 	[Serializable]
 	public abstract class CodeAccessSecurityAttribute : SecurityAttribute {
 
+#if NET_2_0
+		protected CodeAccessSecurityAttribute (SecurityAction action) 
+#else
 		public CodeAccessSecurityAttribute (SecurityAction action) 
+#endif
 			: base (action)
 		{
 		}
