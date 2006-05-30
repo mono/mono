@@ -34,24 +34,24 @@ RESOURCES = $(RESX_RESOURCES) $(CUR_RESOURCES)
 PREBUILT = $(RESX_RESOURCES:=.prebuilt)
 
 IMAGES_RESOURCES = \
-	resources/computer_16.png		\
-	resources/computer_32.png		\
+	resources/16_computer.png		\
+	resources/32_computer.png		\
 	resources/computer.png			\
-	resources/document-open_16.png		\
-	resources/document-open_32.png		\
+	resources/16_document-open.png		\
+	resources/32_document-open.png		\
 	resources/document-open.png		\
-	resources/folder_16.png			\
+	resources/16_folder.png			\
 	resources/folder-new.png		\
 	resources/folder.png			\
-	resources/folder-remote_16.png		\
-	resources/folder-remote_32.png		\
+	resources/16_folder-remote.png		\
+	resources/32_folder-remote.png		\
 	resources/folder-remote.png		\
 	resources/go-previous.png		\
 	resources/go-top.png			\
 	resources/preferences-system-windows.png\
 	resources/text-x-generic.png		\
-	resources/user-desktop_16.png		\
-	resources/user-desktop_32.png		\
+	resources/16_user-desktop.png		\
+	resources/32_user-desktop.png		\
 	resources/user-desktop.png
 
 EXTRA_DISTFILES = \
