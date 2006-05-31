@@ -1,3 +1,9 @@
+2006-05-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SerializationCodeGenerator.cs,
+	  XmlSerializerReaderInterpreter.cs : handle CDATA section as text
+	  node. Fixed bug #78536.
+
 2006-05-15  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XmlCodeExporter.cs: Added bool argument to GenerateClass and 

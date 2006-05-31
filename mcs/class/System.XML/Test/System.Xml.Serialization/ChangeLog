@@ -1,3 +1,7 @@
+2006-05-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSerializerTests.cs : added tailored version of bug #78536 test.
+
 2006-05-15  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XmlCodeExporterTests.cs: Added tests for arrays. Fixed usage of

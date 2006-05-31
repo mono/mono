@@ -1910,7 +1910,7 @@ namespace System.Xml.Serialization
 					
 					if (map.XmlTextCollector != null)
 					{
-						WriteLine ("else if (Reader.NodeType == System.Xml.XmlNodeType.Text)");
+						WriteLine ("else if (Reader.NodeType == System.Xml.XmlNodeType.Text || Reader.NodeType == System.Xml.XmlNodeType.CDATA)");
 						WriteLineInd ("{");
 		
 						if (map.XmlTextCollector is XmlTypeMapMemberExpandable)

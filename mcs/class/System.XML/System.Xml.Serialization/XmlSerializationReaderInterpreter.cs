@@ -460,7 +460,7 @@ namespace System.Xml.Serialization
 					else 
 						ProcessUnknownElement(ob);
 				}
-				else if (Reader.NodeType == System.Xml.XmlNodeType.Text && map.XmlTextCollector != null)
+				else if ((Reader.NodeType == System.Xml.XmlNodeType.Text || Reader.NodeType == System.Xml.XmlNodeType.CDATA) && map.XmlTextCollector != null)
 				{
 					if (map.XmlTextCollector is XmlTypeMapMemberExpandable)
 					{

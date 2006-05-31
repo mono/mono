@@ -1480,6 +1480,38 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (Infoset (res), WriterText);
 		}
 
+		// bug #78536
+		[Test]
+		public void CDataTextNodes ()
+		{
+			XmlSerializer ser = new XmlSerializer (typeof (CDataTextNodesType));
+			ser.UnknownNode += new XmlNodeEventHandler(CDataTextNodes_BadNode);
+			string xml = @"<CDataTextNodesType>
+  <foo><![CDATA[
+(?<filename>^([A-Z]:)?[^\(]+)\((?<line>\d+),(?<column>\d+)\):
+\s((?<warning>warning)|(?<error>error))\s[^:]+:(?<message>.+$)|
+(?<error>(fatal\s)?error)[^:]+:(?<message>.+$)
+	]]></foo>
+</CDataTextNodesType>";
+			ser.Deserialize (new XmlTextReader (xml, XmlNodeType.Document, null));
+		}
+
+		public class CDataTextNodesType
+		{
+			public CDataTextNodesInternal foo;
+		}
+
+		public class CDataTextNodesInternal
+		{
+			[XmlText]
+			public string Value;
+		}
+
+		void CDataTextNodes_BadNode (object s, XmlNodeEventArgs e)
+		{
+			Assert.Fail ();
+		}
+
 		// Helper methods
 				
 		public static string Infoset (string sx)
