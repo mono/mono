@@ -2,6 +2,11 @@
 
 	* BindingManagerBase.cs: Remove somedebug code that creeped into
 	SVN.
+	* TreeNode.cs: We get the indent level dynamically right now, so
+	don't track it as a member.
+	* TreeNodeCollection.cs: Make sure all nodes added to the list
+	have parents, treeviews/topnodes setup properly.
+	- Don't attempt to track indent level.
 
 2006-05-30  Jackson Harper  <jackson@ximian.com>
 

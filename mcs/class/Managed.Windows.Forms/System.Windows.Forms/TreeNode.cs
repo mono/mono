@@ -44,7 +44,6 @@ namespace System.Windows.Forms {
 		internal TreeViewAction check_reason = TreeViewAction.Unknown;
 
 		internal int visible_order;
-		internal int indent_level;
 		internal int width = -1;
 		
 		private bool is_expanded = false;
@@ -204,7 +203,7 @@ namespace System.Windows.Forms {
 		{
 			if (TreeView == null)
 				return 0;
-			indent_level = IndentLevel;
+			int indent_level = IndentLevel;
 			int roots = (TreeView.ShowRootLines ? 1 : 0);
 			int cb = (TreeView.CheckBoxes ? 19 : 0);
 			int imgs = (TreeView.ImageList != null ?  TreeView.ImageList.ImageSize.Width + 3 : 0);

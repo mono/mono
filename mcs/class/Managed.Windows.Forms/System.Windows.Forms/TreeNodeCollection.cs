@@ -81,7 +81,7 @@ namespace System.Windows.Forms {
 				if (index < 0 || index >= Count)
 					throw new ArgumentOutOfRangeException ("index");
 				TreeNode node = (TreeNode) value;
-				node.parent = owner;
+				SetupNode (node);
 				nodes [index] = node;
 			}
 		}
@@ -95,7 +95,7 @@ namespace System.Windows.Forms {
 			set {
 				if (index < 0 || index >= Count)
 					throw new ArgumentOutOfRangeException ("index");
-				value.parent = owner;
+				SetupNode (value);
 				nodes [index] = value;
 			}
 		}
@@ -112,43 +112,19 @@ namespace System.Windows.Forms {
 			if (node == null)
 				throw new ArgumentNullException("node");
 
-			// Remove it from any old parents
-			node.Remove ();
-
 			int res;
 			TreeView tree_view = null;
-			if (owner != null) {
-				tree_view = owner.TreeView;
-				node.indent_level = owner.indent_level + 1;
-			}
+
 			if (tree_view != null && tree_view.Sorted) {
 				res = AddSorted (node);
 			} else {
-				node.parent = owner;
 				if (count >= nodes.Length)
 					Grow ();
 				nodes [count++] = node;
 				res = count;
 			}
 
-			if (tree_view != null) {
-				TreeNode prev = GetPrevNode (node);
-
-				if (tree_view.top_node == null)
-					tree_view.top_node = node;
-
-				if (node.IsVisible)
-					tree_view.RecalculateVisibleOrder (prev);
-				tree_view.UpdateScrollBars ();
-			}
-
-			if (owner != null && tree_view != null && (owner.IsExpanded || owner.IsRoot)) {
-				// tree_view.UpdateBelow (owner);
-				tree_view.UpdateNode (owner);
-				tree_view.UpdateNode (node);
-			} else if (owner != null && tree_view != null) {
-				tree_view.UpdateBelow (owner);
-			}
+			SetupNode (node);
 
 			return res;
 		}
@@ -204,14 +180,14 @@ namespace System.Windows.Forms {
 
 		public virtual void Insert (int index, TreeNode node)
 		{
-			node.parent = owner;
-
 			if (count >= nodes.Length)
 				Grow ();
 
 			Array.Copy (nodes, index, nodes, index + 1, count - index);
 			nodes [index] = node;
 			count++;
+
+			SetupNode (node);
 		}
 
 		public void Remove (TreeNode node)
@@ -288,6 +264,37 @@ namespace System.Windows.Forms {
 			return null;
 		}
 
+		private void SetupNode (TreeNode node)
+		{
+			// Remove it from any old parents
+			node.Remove ();
+
+			node.parent = owner;
+
+			TreeView tree_view = null;
+			if (owner != null)
+				tree_view = owner.TreeView;
+
+			if (tree_view != null) {
+				TreeNode prev = GetPrevNode (node);
+
+				if (tree_view.top_node == null)
+					tree_view.top_node = node;
+
+				if (node.IsVisible)
+					tree_view.RecalculateVisibleOrder (prev);
+				tree_view.UpdateScrollBars ();
+			}
+
+			if (owner != null && tree_view != null && (owner.IsExpanded || owner.IsRoot)) {
+				// tree_view.UpdateBelow (owner);
+				tree_view.UpdateNode (owner);
+				tree_view.UpdateNode (node);
+			} else if (owner != null && tree_view != null) {
+				tree_view.UpdateBelow (owner);
+			}
+		}
+
 		int IList.Add (object node)
 		{
 			return Add ((TreeNode) node);
@@ -341,7 +348,6 @@ namespace System.Windows.Forms {
 			count++;
 			nodes [pos] = node;
 
-			node.parent = owner;
 			return count;
 		}
 
