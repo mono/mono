@@ -87,22 +87,6 @@ namespace System.Data.OracleClient {
 			set { this [index] = (OracleParameter) value; }
 		}
 
-		bool IList.IsFixedSize {
-			get { return IsFixedSize; }
-		}
-
-		bool IList.IsReadOnly {
-			get { return IsReadOnly; }
-		}
-
-		bool ICollection.IsSynchronized {
-			get { return IsSynchronized; }
-		}
-
-		object ICollection.SyncRoot {
-			get { return SyncRoot; }
-		}
-
 		public OracleParameter this [int index] {
 			get { return (OracleParameter) list [index]; }
 			set { list [index] = value; }

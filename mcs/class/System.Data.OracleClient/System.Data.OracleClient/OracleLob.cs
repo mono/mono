@@ -21,7 +21,7 @@ using System.IO;
 using System.Text;
 
 namespace System.Data.OracleClient {
-	public sealed class OracleLob : Stream, ICloneable, INullable
+	public sealed class OracleLob : Stream, ICloneable, IDisposable, INullable
 	{
 		#region Fields
 

@@ -19,7 +19,7 @@ using System.IO;
 using System.Data.SqlTypes;
 
 namespace System.Data.OracleClient {
-	public sealed class OracleBFile : Stream, ICloneable, INullable
+	public sealed class OracleBFile : Stream, ICloneable, IDisposable, INullable
 	{
 		#region Fields
 

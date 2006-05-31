@@ -1,3 +1,19 @@
+2006-05-31  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* OracleLob.cs: Explicitly implement IDisposable interface. Fixes
+	API signature warning for Dispose () method.
+	* OracleParameterCollection.cs: Removed explicit interface implemenation
+	of IList.IsFixedSize, IList.IsReadOnbly, IList.IsSynchronized and
+	IList.SyncRoot. Fixes API signature mismatches.
+	* OracleBFile.cs: Explicit implemenat IDisposable interface. Fixed
+	API signature warning for Dispose () method.
+	* OracleCommand.cs: Fixed line endings.
+	* OracleConnection.cs: Removed destructor, as the destructor in 
+	System.ComponentModel.Component already calls the Dispose (bool) method.
+	* OracleDataReader.cs: Fixed line endings.
+	* OracleDateTime.cs: Fixed line endings.
+	* OracleParameter.cs: Fixed line endings.
+
 2006-02-27  Konstantin Triger <kostat@mainsoft.com>
 
 	* OracleDataAdapter.cs: Do not throw ArgumentException when null is passed.
