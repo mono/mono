@@ -42,6 +42,7 @@ public class AsyncResult : IAsyncResult, IMessageSink {
 	WaitHandle handle;
 	object async_delegate;
 	IntPtr data;
+	object object_data;
 	bool sync_completed;
 	bool completed;
 	bool endinvoke_called;

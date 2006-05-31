@@ -1,5 +1,7 @@
 2006-05-31  Zoltan Varga  <vargaz@gmail.com>
 
+	* AsyncResult.cs: Add an 'object_data' field which has GC tracking.
+	
 	* AsyncResult.cs: Revert the last change.
 	
 	* AsyncResult.cs: Make 'data' field an object to allow GC tracking.
