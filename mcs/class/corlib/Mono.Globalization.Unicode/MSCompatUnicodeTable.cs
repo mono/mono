@@ -139,7 +139,9 @@ namespace Mono.Globalization.Unicode
 		static readonly byte* level2;
 		static readonly byte* level3;
 //		static readonly ushort* widthCompat;
+#if USE_C_HEADER
 		static readonly char* tailoring;
+#endif
 		static byte* cjkCHScategory;
 		static byte* cjkCHTcategory;
 		static byte* cjkJAcategory;
@@ -160,7 +162,7 @@ namespace Mono.Globalization.Unicode
 			return null;
 		}
 
-		public static void BuildTailoringTables (CultureInfo culture,
+		unsafe public static void BuildTailoringTables (CultureInfo culture,
 			TailoringInfo t,
 			ref Contraction [] contractions,
 			ref Level2Map [] diacriticals)
@@ -168,52 +170,53 @@ namespace Mono.Globalization.Unicode
 			// collect tailoring entries.
 			ArrayList cmaps = new ArrayList ();
 			ArrayList dmaps = new ArrayList ();
-			char* tarr = tailoring;
-			int idx = t.TailoringIndex;
-			int end = idx + t.TailoringCount;
-			while (idx < end) {
-				int ss = idx + 1;
-				char [] src = null;
-				switch (tarr [idx]) {
-				case '\x1': // SortKeyMap
-					idx++;
-					while (tarr [ss] != 0)
+			fixed (char* tarr = tailoringArr){
+				int idx = t.TailoringIndex;
+				int end = idx + t.TailoringCount;
+				while (idx < end) {
+					int ss = idx + 1;
+					char [] src = null;
+					switch (tarr [idx]) {
+					case '\x1': // SortKeyMap
+						idx++;
+						while (tarr [ss] != 0)
+							ss++;
+						src = new char [ss - idx];
+						//					Array.Copy (tarr, idx, src, 0, ss - idx);
+						Marshal.Copy ((IntPtr) (tarr + idx), src, 0, ss - idx);
+						byte [] sortkey = new byte [4];
+						for (int i = 0; i < 4; i++)
+							sortkey [i] = (byte) tarr [ss + 1 + i];
+						cmaps.Add (new Contraction (
+									    src, null, sortkey));
+						// it ends with 0
+						idx = ss + 6;
+						break;
+					case '\x2': // DiacriticalMap
+						dmaps.Add (new Level2Map (
+									  (byte) tarr [idx + 1],
+									  (byte) tarr [idx + 2]));
+						idx += 3;
+						break;
+					case '\x3': // ReplacementMap
+						idx++;
+						while (tarr [ss] != 0)
+							ss++;
+						src = new char [ss - idx];
+						//					Array.Copy (tarr, idx, src, 0, ss - idx);
+						Marshal.Copy ((IntPtr) (tarr + idx), src, 0, ss - idx);
 						ss++;
-					src = new char [ss - idx];
-//					Array.Copy (tarr, idx, src, 0, ss - idx);
-					Marshal.Copy ((IntPtr) (tarr + idx), src, 0, ss - idx);
-					byte [] sortkey = new byte [4];
-					for (int i = 0; i < 4; i++)
-						sortkey [i] = (byte) tarr [ss + 1 + i];
-					cmaps.Add (new Contraction (
-						src, null, sortkey));
-					// it ends with 0
-					idx = ss + 6;
-					break;
-				case '\x2': // DiacriticalMap
-					dmaps.Add (new Level2Map (
-						(byte) tarr [idx + 1],
-						(byte) tarr [idx + 2]));
-					idx += 3;
-					break;
-				case '\x3': // ReplacementMap
-					idx++;
-					while (tarr [ss] != 0)
-						ss++;
-					src = new char [ss - idx];
-//					Array.Copy (tarr, idx, src, 0, ss - idx);
-					Marshal.Copy ((IntPtr) (tarr + idx), src, 0, ss - idx);
-					ss++;
-					int l = ss;
-					while (tarr [l] != 0)
-						l++;
-					string r = new string (tarr, ss, l - ss);
-					cmaps.Add (new Contraction (
-						src, r, null));
-					idx = l + 1;
-					break;
-				default:
-					throw new NotImplementedException (String.Format ("Mono INTERNAL ERROR (Should not happen): Collation tailoring table is broken for culture {0} ({1}) at 0x{2:X}", culture.LCID, culture.Name, idx));
+						int l = ss;
+						while (tarr [l] != 0)
+							l++;
+						string r = new string (tarr, ss, l - ss);
+						cmaps.Add (new Contraction (
+									    src, r, null));
+						idx = l + 1;
+						break;
+					default:
+						throw new NotImplementedException (String.Format ("Mono INTERNAL ERROR (Should not happen): Collation tailoring table is broken for culture {0} ({1}) at 0x{2:X}", culture.LCID, culture.Name, idx));
+					}
 				}
 			}
 			cmaps.Sort (ContractionComparer.Instance);
@@ -528,6 +531,8 @@ namespace Mono.Globalization.Unicode
 
 		static MSCompatUnicodeTable ()
 		{
+			throw new Exception ("This code should not be used");
+			
 			fixed (byte* tmp = ignorableFlagsArr) {
 				ignorableFlags = tmp;
 			}
@@ -765,9 +770,6 @@ namespace Mono.Globalization.Unicode
 			tailoringArr = new char [count];
 			for (int i = 0; i < count; i++, idx += 2)
 				tailoringArr [i] = (char) (tailor [idx] + (tailor [idx + 1] << 8));
-			fixed (char *tmpCP = tailoringArr) {
-				tailoring = tmpCP;
-			}
 			isReady = true;
 #endif
 		}

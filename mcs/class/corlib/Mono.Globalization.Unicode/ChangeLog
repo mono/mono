@@ -1,3 +1,9 @@
+2006-05-30  Miguel de Icaza  <miguel@novell.com>
+
+	* MSCompatUnicodeTable.cs: Remove the fixed loading and compute it
+	just when we actually consume it.   This only fixes the
+	!USE_C_HEADER case.
+
 2006-04-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* README: removed obsolete info.
