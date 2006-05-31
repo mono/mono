@@ -291,6 +291,16 @@ namespace Mono.ILASM {
                         }
                 }
 
+                private bool IsValueType (string ns, string name)
+                {
+                        return (ns == "System" && name == "ValueType");
+                }
+
+                private bool IsEnumType (string ns, string name)
+                {
+                        return (ns == "System" && name == "Enum");
+                }
+
                 public void Define (CodeGen code_gen)
                 {
                         if (is_defined)
@@ -306,7 +316,6 @@ namespace Mono.ILASM {
 
 				if (vis == PEAPI.TypeAttr.Private || vis == PEAPI.TypeAttr.Public) {
 					/* Nested class, but attr not set accordingly. */
-					//FIXME: 'report' warning here
 					Console.WriteLine ("Warning -- Nested class '{0}' has non-nested visibility, set to such.", NestedFullName);
 					attr = attr ^ vis;
 					attr |= (vis == PEAPI.TypeAttr.Public ? PEAPI.TypeAttr.NestedPublic : PEAPI.TypeAttr.NestedPrivate);
@@ -323,17 +332,14 @@ namespace Mono.ILASM {
                                                         + parent);
                                 }
 
-                                if (parent.PeapiClass.nameSpace != null && 
-                                        parent.PeapiClass.nameSpace.CompareTo ("System") == 0) {
-                                        
-                                        if (parent.PeapiClass.name.CompareTo ("ValueType") == 0)
-                                                is_value_class = true;
-                                        else
-                                        if (parent.PeapiClass.name.CompareTo ("Enum") == 0 )
-                                                is_enum_class = true;          
-                                } 
+                                if (IsValueType (parent.PeapiClass.nameSpace, parent.PeapiClass.name))
+                                        is_value_class = true;
+                                else if (IsEnumType (parent.PeapiClass.nameSpace, parent.PeapiClass.name))
+                                        is_enum_class = true;
 
-                                if (is_value_class && (attr & PEAPI.TypeAttr.Sealed) == 0) {
+                                if (!IsValueType (name_space, name) && !IsEnumType (name_space, name) &&
+                                        is_value_class && (attr & PEAPI.TypeAttr.Sealed) == 0) {
+
                                         Console.WriteLine ("Warning -- Non-sealed value class, made sealed.");
                                         attr |= PEAPI.TypeAttr.Sealed;
                                 }

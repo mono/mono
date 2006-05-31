@@ -1,3 +1,9 @@
+2006-05-31  Ankit Jain  <jankit@novell.com>
+
+	* TypeDef.cs (TypeDef.IsValueType): New.
+	(TypeDef.IsEnumType): New.
+	(TypeDef.Define): Don't seal System.ValueType or System.Enum .
+
 2006-05-26  Ankit Jain  <jankit@novell.com>
 
 	* Assembly.cs: New. Represents a '.assembly {}' (assembly manifest).
