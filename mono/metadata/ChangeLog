@@ -1,3 +1,8 @@
+2006-05-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_setup_fields): Call mono_class_init () for class->parent.
+	Fixes #78539.
+
 2006-05-30  Miguel de Icaza  <miguel@novell.com>
 
 	* loader.c (method_from_memberref): Fix argument value for
