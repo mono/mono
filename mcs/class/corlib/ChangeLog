@@ -1,5 +1,7 @@
 2006-05-31  Zoltan Varga  <vargaz@gmail.com>
 
+	* corlib.dll.sources: Removed System/MonoDummy.cs.
+	
 	* corlib.dll.sources: Add System/MonoAsyncCall.cs.
 
 2006-05-25  Atsushi Enomoto  <atsushi@ximian.com>
