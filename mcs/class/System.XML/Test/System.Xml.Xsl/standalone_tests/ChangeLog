@@ -1,3 +1,7 @@
+2006-05-31  Andrew Skiba <andrews@mainsoft.com>
+
+	* knownFailures.jvm.cs, xslttest.cs: add jvm specific known failures
+
 2006-04-03  Andrew Skiba <andrews@mainsoft.com>
 	
 	* xslt.vmwcsproj, xslt.sln: use project reference for nunit
