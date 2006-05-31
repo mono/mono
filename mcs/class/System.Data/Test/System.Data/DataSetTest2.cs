@@ -726,7 +726,6 @@ namespace MonoTests_System.Data
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void InferXmlSchema_inferingTables5()
 		{
 			//Acroding to the msdn documantaion :

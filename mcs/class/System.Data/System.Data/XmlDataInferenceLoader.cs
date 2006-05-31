@@ -344,6 +344,7 @@ namespace System.Data
 			bool hasChildElements = false;
 			bool hasAttributes = false;
 			bool hasText = false;
+			bool isElementRepeated = false;
 
 			foreach (XmlAttribute attr in el.Attributes) {
 				if (attr.NamespaceURI == XmlConstants.XmlnsNS)
@@ -367,6 +368,8 @@ namespace System.Data
 					continue;
 				default: // text content
 					hasText = true;
+					if (GetElementMappingType (el, ignoredNamespaces, null) == ElementMappingType.Repeated)
+						isElementRepeated = true;
 					break;
 				case XmlNodeType.Element: // child
 					hasChildElements = true;
@@ -394,7 +397,7 @@ namespace System.Data
 
 			// Attributes + !Children + Text = SimpleContent
 			if (table.SimpleContent == null // no need to create
-				&& !hasChildElements && hasText && hasAttributes) {
+				&& !hasChildElements && hasText && (hasAttributes || isElementRepeated)) {
 				GetMappedColumn (table, table.Table.TableName + "_Text", String.Empty, String.Empty, MappingType.SimpleContent);
 			}
 		}

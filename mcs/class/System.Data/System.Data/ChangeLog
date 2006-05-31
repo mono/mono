@@ -1,3 +1,10 @@
+2006-05-31  Senganal T  <tsenganal@novell.com>
+
+	* XmlDataInferenceLoader.cs :
+		- InferTableElement : Repeated element should result in a single
+		inferred table.
+	Patch from Deepak Kr Velachha 
+
 2006-04-21  Senganal T  <tsenganal@novell.com>
 
 	* DataRowCollection.cs :

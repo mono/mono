@@ -1,5 +1,10 @@
 2006-05-31  Senganal T <tsenganal@novell.com>
 
+	* DataSetTest2.cs : Fixed InferXmlSchema_inferingTables5.
+	Patch from Deepak Kr Velachha	
+
+2006-05-31  Senganal T <tsenganal@novell.com>
+
 	* DataSetTest2.cs,DataSetReadXmlSchemaTest.cs,DataSetTest.cs:
 		Cleanup NotWorking testcases
 
