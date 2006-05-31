@@ -1,3 +1,30 @@
+2006-05-31  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* AppDomainHelper.cs: Set eol-style to native.
+	* AssemblyLocator.cs: Set eol-style to native.
+	* ClientRemotingConfig.cs: Set eol-style to native.
+	* ClrObjectFactory.cs: Set eol-style to native.
+	* ComManagedImportUtil.cs: Set eol-style to native.
+	* ComSoapPublishError.cs: Set eol-style to native.
+	* GenerateMetadata.cs: Set eol-style to native.
+	* IClrObjectFactory.cs: Set eol-style to native.
+	* IComManagedImportUtil.cs: Set eol-style to native.
+	* IComSoapIISVRoot.cs: Set eol-style to native.
+	* IComSoapMetadata.cs: Set eol-style to native.
+	* IComSoapPublisher.cs: Set eol-style to native.
+	* IISVirtualRoot.cs: Set eol-style to native.
+	* IServerWebConfig.cs: Set eol-style to native.
+	* ISoapClientImport.cs: Set eol-style to native.
+	* ISoapServerTlb.cs: Set eol-style to native.
+	* ISoapServerVRoot.cs: Set eol-style to native.
+	* ISoapUtility.cs: Set eol-style to native.
+	* Publish.cs: Set eol-style to native.
+	* ServerWebConfig.cs: Set eol-style to native.
+	* SoapClientImport.cs: Set eol-style to native.
+	* SoapServerTlb.cs: Set eol-style to native.
+	* SoapServerVRoot.cs: Set eol-style to native.
+	* SoapUtility.cs: Set eol-style to native.
+
 2004-06-18  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* IComManagedImportUtil.cs: added missing marshalling attributes
