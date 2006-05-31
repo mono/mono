@@ -1,5 +1,7 @@
 2006-05-31  Zoltan Varga  <vargaz@gmail.com>
 
+	* MonoDummy.cs: Removed as it is no longer needed.
+
 	* Environment.cs: Bump corlib version.
 	
 	* Environment.cs: Revert the last change.
