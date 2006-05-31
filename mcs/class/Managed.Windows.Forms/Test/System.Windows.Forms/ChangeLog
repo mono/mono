@@ -1,3 +1,10 @@
+2006-05-31  Peter Dennis Bartok <pbartok@novell.com>
+
+	* LabelTest.cs: 
+	  - Added (still unused) fuzzy compare for events
+	  - Disabled event order tests, they are too strict
+	* ScrollBarTest.cs: Disabled event order tests, are too strict
+
 2006-05-25  Jackson Harper  <jackson@ximian.com>
 
 	* TreeViewTest.cs: Add a couple of default properties.  Put in
