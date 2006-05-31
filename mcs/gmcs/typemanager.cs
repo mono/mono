@@ -1531,6 +1531,9 @@ public partial class TypeManager {
 		if (t == TypeManager.object_type || t == TypeManager.string_type)
 			return false;
 
+		if (t.IsGenericType || t.IsGenericParameter)
+			return false;
+
 		if (IsBuiltinOrEnum (t))
 			return true;
 

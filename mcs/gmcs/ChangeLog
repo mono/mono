@@ -1,3 +1,9 @@
+2006-05-31  Raja R Harinath  <rharinath@novell.com>
+
+	Fix cs0208-[23].cs
+	* typemanager.cs (IsUnmanagedType): Disallow generic types and
+	generic parameters.
+
 2006-05-29  Raja R Harinath  <rharinath@novell.com>
 
 	Fix cs0231-[34].cs.
