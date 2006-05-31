@@ -1,3 +1,15 @@
+2006-05-31  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* ClerkInfo.cs: Fixed line endings. Set eol-style to CRLF.
+	* LogRecordFlags.cs: Fixed line endings. Set eol-style to CRLF.
+	* Clerk.cs: Fixed line endings. Set eol-style to CRLF.
+	* LogRecord.cs: Fixed line endings. Set eol-style to CRLF.
+	* ApplicationCrmEnabledAttribute.cs: Set eol-style to native.
+	* CompensatorOptions.cs: Fixed line endings. Set eol-style to CRLF.
+	* TransactionState.cs: Fixed line endings. Set eol-style to CRLF.
+	* ClerkMonitor.cs: Fixed line endings. Set eol-style to CRLF.
+	* Compensator.cs: Set eol-style to native.
+
 2004-06-18  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* Compensator.cs: fixed return value of CommitRecord method
