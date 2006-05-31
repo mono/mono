@@ -1,3 +1,9 @@
+2006-05-31  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DesignerCollection.cs: Added explicit interface implemenation for
+	ICollection.Count and IEnumerable.GetEnumerator. Fixes corcompare
+	warnings.
+
 2005-10-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DesignerTransaction.cs: Added a call to GC.SuppressFinalize in 

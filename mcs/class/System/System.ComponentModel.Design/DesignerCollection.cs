@@ -49,12 +49,20 @@ namespace System.ComponentModel.Design
 			this.designers = new ArrayList (designers);
 		}
 
+		int ICollection.Count {
+			get { return Count; }
+		}
+
 		public int Count {
 			get { return designers.Count; }
 		}
 
 		public virtual IDesignerHost this [int index] {
 			get { return (IDesignerHost) designers [index]; }
+		}
+
+		IEnumerator IEnumerable.GetEnumerator () {
+			return GetEnumerator ();
 		}
 
 		public IEnumerator GetEnumerator()
