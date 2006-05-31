@@ -1,5 +1,7 @@
 2006-05-31  Zoltan Varga  <vargaz@gmail.com>
 
+	* AsyncResult.cs: Revert the last change.
+	
 	* AsyncResult.cs: Make 'data' field an object to allow GC tracking.
 
 2006-02-06  Lluis Sanchez Gual  <lluis@novell.com>
