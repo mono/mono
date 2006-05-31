@@ -2094,7 +2094,6 @@ namespace MonoTests_System.Data
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ReadXml_Strg()
 		{
 			string sTempFileName = "tmpDataSet_ReadWriteXml_43894.xml"  ;
@@ -2133,7 +2132,6 @@ namespace MonoTests_System.Data
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ReadXml_Strm()
 		{
 			DataSet ds1 = new DataSet();
@@ -2369,7 +2367,6 @@ namespace MonoTests_System.Data
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ReadXml_Strm5()
 		{
 			string xmlData;
@@ -2661,7 +2658,6 @@ namespace MonoTests_System.Data
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ReadXml_ByTextReader()
 		{
 			DataSet ds1 = new DataSet();
@@ -2700,7 +2696,6 @@ namespace MonoTests_System.Data
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ReadXml_ByXmlReader()
 		{
 			DataSet ds1 = new DataSet();

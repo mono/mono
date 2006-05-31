@@ -1620,7 +1620,6 @@ namespace MonoTests.System.Data
 
 		// bug # 68432
 		[Test]
-		[Category ("NotWorking")]
 		public void WriteXmlSchema5 ()
 		{
 			string xmlschema = @"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -1821,7 +1820,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void WriteXmlModeSchema ()
 		{
 			// This is the MS output of WriteXmlSchema().

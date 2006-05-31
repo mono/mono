@@ -456,7 +456,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ReadTest1 ()
 		{
 			DataSet ds = CreateTestSet ();
@@ -603,10 +602,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		// FIXME: we can 1) use different schema to import and/or 2)
-		// fix xml bug(?) thingy.
-		[Category ("NotWorking")]
-		[Category ("InetAccess")]
 		public void TestSampleFileImportSimple ()
 		{
 			DataSet ds = new DataSet ();

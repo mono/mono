@@ -1,3 +1,8 @@
+2006-05-31  Senganal T <tsenganal@novell.com>
+
+	* DataSetTest2.cs,DataSetReadXmlSchemaTest.cs,DataSetTest.cs:
+		Cleanup NotWorking testcases
+
 2006-05-02  Senganal T <tsenganal@novell.com>
 
 	* DataColumnTest2.cs : Test if IsNull (expr1,expr2) is parsed
