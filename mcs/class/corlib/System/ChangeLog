@@ -1,3 +1,9 @@
+2006-05-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* Environment.cs: Bump corlib version.
+
+	* MonoAsyncCall.cs: New file.
+
 2006-05-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Char.cs: Removed duplicate (explicit) interface implementation.
