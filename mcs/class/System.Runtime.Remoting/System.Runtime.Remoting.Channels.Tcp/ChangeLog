@@ -1,3 +1,17 @@
+2006-05-31  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TcpClientChannel.cs: Set eol-style to native.
+	* TcpChannel.cs: Fixed line endings. Set eol-style to native.
+	* TcpServerTransportSink.cs: Fixed line endings. Set eol-style to
+	native.
+	* TcpConnectionPool.cs: Fixed line endings. Set eol-style to CRLF.
+	* TcpClientTransportSinkProvider.cs: Fixed line endings. Set eol-style
+	to native.
+	* TcpMessageIO.cs: Set eol-style to native.
+	* TcpServerChannel.cs: Fixed line endings. Set eol-style to native.
+	* TcpClientTransportSink.cs: Fixed line endings. Set eol-style to
+	native.
+
 2005-11-08  Lluis Sanchez Gual  <lluis@novell.com> 
 
 	* TcpServerChannel.cs: Fix null ref exception.
