@@ -148,7 +148,9 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 		
 #if NET_1_1
 		[MonoTODO ("Interpret this")]
+#if ONLY_1_1
 		[ComVisible(false)]
+#endif
 		public TypeFilterLevel FilterLevel {
 			get {
 				return _filterLevel;

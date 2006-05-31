@@ -1,5 +1,10 @@
 2006-05-31  Gert Driesen <drieseng@users.sourceforge.net>
 
+	* SoapFormatter.cs: Only apply ComVisible attribute to FilterLevel
+	on 1.0 profile.
+
+2006-05-31  Gert Driesen <drieseng@users.sourceforge.net>
+
 	* SoapWriter.cs: Fixed line endings. Set eol-style to CRLF.
 	* SoapReader.cs: Fixed line endings. Set eol-style to CRLF.
 	* SoapFormatter.cs: Fixed line endings. Set eol-style to CRLF.
