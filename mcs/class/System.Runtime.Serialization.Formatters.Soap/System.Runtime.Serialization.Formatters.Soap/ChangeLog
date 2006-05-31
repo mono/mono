@@ -1,3 +1,11 @@
+2006-05-31  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* SoapWriter.cs: Fixed line endings. Set eol-style to CRLF.
+	* SoapReader.cs: Fixed line endings. Set eol-style to CRLF.
+	* SoapFormatter.cs: Fixed line endings. Set eol-style to CRLF.
+	Remove unnecessary dtor.
+	* SoapTypeMapper.cs: Fixed line endings. Set eol-style to native.
+
 2006-04-04  roei erez <roeie@mainsoft.com>
 	
 	*SoapReader.cs: bug 77563 competability with MS.NET in

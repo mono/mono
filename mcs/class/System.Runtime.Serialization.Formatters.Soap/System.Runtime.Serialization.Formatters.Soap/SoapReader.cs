@@ -303,7 +303,8 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			
 			xmlReader.ReadEndElement ();
 		}
-				Header DeserializeHeader ()
+		
+		Header DeserializeHeader ()
 		{
 			Header h = new Header (xmlReader.LocalName, null);
 			h.HeaderNamespace = xmlReader.NamespaceURI;

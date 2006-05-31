@@ -316,7 +316,8 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 
 			_xmlWriter.WriteFullEndElement();
 		}
-				private void SerializeHeader (Header header)
+		
+		private void SerializeHeader (Header header)
 		{
 			string ns = header.HeaderNamespace != null ? header.HeaderNamespace : "http://schemas.microsoft.com/clr/soap"; 
 			_xmlWriter.WriteStartElement ("h4", header.Name, ns);
@@ -419,7 +420,8 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 
 		}
 		
-				private void SerializeISerializableObject(
+		
+		private void SerializeISerializableObject(
 			object currentObject,
 			long currentObjectId,
 			ISerializationSurrogate surrogate)

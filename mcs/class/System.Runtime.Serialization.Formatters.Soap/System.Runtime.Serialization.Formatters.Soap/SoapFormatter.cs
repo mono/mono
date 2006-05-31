@@ -66,10 +66,6 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			_context = context;
 		}
 		
-		~SoapFormatter() {
-		}
-
-	
 		public object Deserialize(Stream serializationStream) {
 			return Deserialize(serializationStream, null);
 		}
