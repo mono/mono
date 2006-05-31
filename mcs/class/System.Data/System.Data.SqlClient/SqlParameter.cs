@@ -234,11 +234,6 @@ namespace System.Data.SqlClient {
 			get { return metaParameter; }
 		}
 
-		string IDataParameter.ParameterName {
-			get { return metaParameter.ParameterName; }
-			set { metaParameter.ParameterName = value; }
-		}
-
 #if ONLY_1_0 || ONLY_1_1
 		[Browsable (false)]
 		[DataSysDescription ("a design-time property used for strongly typed code-generation.")]

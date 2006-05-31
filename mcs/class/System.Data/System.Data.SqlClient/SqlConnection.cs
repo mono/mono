@@ -488,11 +488,6 @@ namespace System.Data.SqlClient {
 			GC.SuppressFinalize (this);
 		}
 
-		~SqlConnection ()
-		{
-			Dispose (false);
-		}
-
 		public 
 #if NET_2_0
 		override

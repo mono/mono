@@ -117,11 +117,6 @@ namespace System.Data.Odbc
 			return _items.GetEnumerator ();
 		}
 
-		IEnumerator IEnumerable.GetEnumerator ()
-		{
-			return GetEnumerator ();
-		}
-
 		#endregion // Methods
 	}
 }

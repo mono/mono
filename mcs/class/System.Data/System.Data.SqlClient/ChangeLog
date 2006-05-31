@@ -1,3 +1,10 @@
+2006-05-31  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SqlConnection.cs: Removed extra destructor, as destructor on 
+	System.ComponentModel.Component already calls Dispose.
+	* SqlParameter.cs: Removed explicit interface implementation of
+	IDataParameter.ParameterName.
+
 2006-05-26  Senganal T  <tsenganal@novell.com>
 
 	* SqlParameter.cs :

@@ -1,3 +1,11 @@
+2006-05-31  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* OleDbErrorCollection.cs: Removed explicit interface implementation
+	of IEnumerable.GetEnumerator ().
+	* OleDbParameterCollection.cs: Removed explicit interface 
+	implementation members that are already implementation by public
+	members.
+
 2006-02-17  Chris Toshok  <toshok@ximian.com>
 
 	* OleDbDataAdapter.cs, OleDbCommand.cs, OleDbParameter.cs,

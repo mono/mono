@@ -833,12 +833,6 @@ namespace System.Data.Odbc
 
 #if ONLY_1_1
 
-                [MonoTODO]
-		IDataReader IDataRecord.GetData (int ordinal)
-		{
-			throw new NotImplementedException ();
-		}
-
 		void IDisposable.Dispose ()
 		{
 			Dispose (true);

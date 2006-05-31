@@ -378,11 +378,6 @@ namespace System.Data.Odbc
 			disposed = true;
 		}
 
-		~OdbcCommand ()
-		{
-			Dispose (false);
-		}
-
 		private IntPtr ReAllocStatment ()
 		{
 			OdbcReturn ret;

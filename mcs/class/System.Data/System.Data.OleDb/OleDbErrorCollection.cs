@@ -113,11 +113,6 @@ namespace System.Data.OleDb
 			return items.GetEnumerator ();
 		}
 
-		IEnumerator IEnumerable.GetEnumerator ()
-		{
-			return GetEnumerator ();
-		}
-
 		#endregion // Methods
 	}
 }

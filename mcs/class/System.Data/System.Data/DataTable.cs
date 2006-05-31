@@ -96,7 +96,7 @@ namespace System.Data {
 		private ArrayList _indexes;
 		private RecordCache _recordCache;
 		private int _defaultValuesRowIndex = -1;
-		protected internal bool initInProgress;
+		protected internal bool fInitInProgress;
 
 		// If CaseSensitive property is changed once it does not anymore follow owner DataSet's 
 		// CaseSensitive property. So when you lost you virginity it's gone for ever
@@ -728,7 +728,11 @@ namespace System.Data {
 		/// on a form or used by another component. The initialization
 		/// occurs at runtime.
 		/// </summary>
-		public virtual void BeginInit () 
+		public 
+#if NET_2_0
+		virtual
+#endif
+		void BeginInit () 
 		{
 			InitInProgress = true;
 		}
@@ -925,15 +929,19 @@ namespace System.Data {
 		/// initialization occurs at runtime.
 		/// </summary>
 		[MonoTODO]
-		public virtual void EndInit () 
+		public
+#if NET_2_0
+		virtual
+#endif
+		void EndInit () 
 		{
 			InitInProgress = false;
 			FinishInit ();
 		}
 
 		internal bool InitInProgress {
-			get { return initInProgress; }
-			set { initInProgress = value; }
+			get { return fInitInProgress; }
+			set { fInitInProgress = value; }
 		}
 
 		internal void FinishInit ()

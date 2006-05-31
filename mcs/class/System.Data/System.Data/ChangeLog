@@ -1,3 +1,8 @@
+2006-05-31  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DataTable.cs: Renamed initInProgress to fInitInProgress. BeginInit
+	and EndInit must only be virtual in 2.0 profile. Set eol-style to CRLF.
+
 2006-05-31  Senganal T  <tsenganal@novell.com>
 
 	* XmlDataInferenceLoader.cs :
