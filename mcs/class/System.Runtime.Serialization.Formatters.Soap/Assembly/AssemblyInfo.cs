@@ -41,12 +41,22 @@ using System.Runtime.InteropServices;
 [assembly: SatelliteContractVersion (Consts.FxVersion)]
 
 #if (ONLY_1_1)
-[assembly: ComCompatibleVersion (1, 0, 3300, 0)]
 [assembly: TypeLibVersion (1, 10)]
 #endif
 
-//[assembly: AssemblyTitle("System.Runtime.Serialization.Formatters.Soap.dll")]
-//[assembly: AssemblyDescription("System.Runtime.Serialization.Formatters.Soap.dll")]
+#if NET_1_1
+[assembly: ComCompatibleVersion (1, 0, 3300, 0)]
+#endif
+
+#if NET_2_0
+[assembly: AssemblyDefaultAlias ("System.Runtime.Serialization.Formatters.Soap.dll")]
+[assembly: AssemblyDescription ("System.Runtime.Serialization.Formatters.Soap.dll")]
+[assembly: AssemblyTitle ("System.Runtime.Serialization.Formatters.Soap.dll")]
+[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
+[assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
+[assembly: ComVisible (true)]
+#endif
+
 //[assembly: AssemblyConfiguration("Development version")]
 //[assembly: AssemblyCompany("MONO development team")]
 //[assembly: AssemblyProduct("MONO CLI")]
