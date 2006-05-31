@@ -178,8 +178,13 @@ namespace System.Windows.Forms
 		private int selection_start; // used for range selection
 		private bool begininit;
 		private CurrencyManager cached_currencymgr;
-		private CurrencyManager cached_currencymgr_events;
 		private bool accept_listmgrevents;
+
+		bool column_resize_active;
+		int resize_column_x;
+		int resize_column_width_delta;
+		int resize_column;
+		
 		#endregion // Local Variables
 
 		#region Public Constructors
@@ -233,7 +238,7 @@ namespace System.Windows.Forms
 			selected_rows = new Hashtable ();
 			selection_start = -1;
 			preferredrow_height = def_preferredrow_height = FontHeight + 3;
-			cached_currencymgr_events = cached_currencymgr = null;
+			cached_currencymgr = null;
 			accept_listmgrevents = true;
 
 			default_style = new DataGridTableStyle (true);
@@ -700,7 +705,6 @@ namespace System.Windows.Forms
 				// If we bind real_datasource object we do not get the events from ListManger
 				// since the object is not the datasource and does not match
 				cached_currencymgr = (CurrencyManager) BindingContext [real_datasource, DataMember];
-				cached_currencymgr_events = (CurrencyManager) BindingContext [real_datasource, DataMember];
 				ConnectListManagerEvents ();
 				return cached_currencymgr;
 			}
@@ -1331,7 +1335,7 @@ namespace System.Windows.Forms
 			bool shift_pressed = ((Control.ModifierKeys & Keys.Shift) != 0);
 
 			HitTestInfo testinfo;
-			testinfo = grid_drawing.HitTest (e.X, e.Y);
+			testinfo = HitTest (e.X, e.Y);
 
 			switch (testinfo.type) {
 			case HitTestType.Cell:
@@ -1400,7 +1404,17 @@ namespace System.Windows.Forms
 				Refresh ();
 				break;
 			}
-			
+
+			case HitTestType.ColumnResize:
+			{
+				resize_column = testinfo.Column;
+				column_resize_active = true;
+				resize_column_x = e.X;
+				resize_column_width_delta = 0;
+				grid_drawing.DrawResizeLine (resize_column_x);
+				break;
+			}
+
 			default:
 				break;
 			}
@@ -1414,11 +1428,47 @@ namespace System.Windows.Forms
 		protected override void OnMouseMove (MouseEventArgs e)
 		{
 			base.OnMouseMove (e);
+
+			if (column_resize_active) {
+				/* erase the old line */
+				grid_drawing.DrawResizeLine (resize_column_x + resize_column_width_delta);
+
+				resize_column_width_delta = e.X - resize_column_x;
+
+				/* draw the new line */
+				grid_drawing.DrawResizeLine (resize_column_x + resize_column_width_delta);
+				return;
+			}
+			else {
+				HitTestInfo testinfo;
+				testinfo = HitTest (e.X, e.Y);
+
+				switch (testinfo.type) {
+				case HitTestType.ColumnResize:
+					Cursor = Cursors.VSplit;
+					break;
+				case HitTestType.RowResize:
+					Cursor = Cursors.HSplit;
+					break;
+				default:
+					Cursor = Cursors.Default;
+					break;
+				}
+			}
 		}
 
 		protected override void OnMouseUp (MouseEventArgs e)
 		{
 			base.OnMouseUp (e);
+
+			if (column_resize_active) {
+				column_resize_active = false;
+				int new_width = CurrentTableStyle.GridColumnStyles[resize_column].Width + resize_column_width_delta;
+				if (new_width < 0)
+					new_width = 0;
+				CurrentTableStyle.GridColumnStyles[resize_column].Width = new_width;
+				Invalidate ();
+			}
 		}
 
 		protected override void OnMouseWheel (MouseEventArgs e)
@@ -1534,8 +1584,18 @@ namespace System.Windows.Forms
 			}
 
 			bool ctrl_pressed = ((Control.ModifierKeys & Keys.Control) != 0);
+			bool alt_pressed = ((Control.ModifierKeys & Keys.Alt) != 0);
 
 			switch (ke.KeyCode) {
+			case Keys.D0:
+			{
+				if (alt_pressed) {
+					if (is_editing) {
+						CurrentTableStyle.GridColumnStyles[current_cell.ColumnNumber].EnterNullValue ();
+					}
+				}
+				break;
+			}
 			case Keys.Up:
 			{
 				if (ctrl_pressed) {
@@ -1902,13 +1962,14 @@ namespace System.Windows.Forms
 		
 		private void ConnectListManagerEvents ()
 		{
-			cached_currencymgr_events.CurrentChanged += new EventHandler (OnListManagerCurrentChanged);			
-			cached_currencymgr_events.ItemChanged += new ItemChangedEventHandler (OnListManagerItemChanged);
+			cached_currencymgr.CurrentChanged += new EventHandler (OnListManagerCurrentChanged);			
+			cached_currencymgr.ItemChanged += new ItemChangedEventHandler (OnListManagerItemChanged);
 		}
 		
 		private void DisconnectListManagerEvents ()
 		{
-			
+			cached_currencymgr.CurrentChanged -= new EventHandler (OnListManagerCurrentChanged);			
+			cached_currencymgr.ItemChanged -= new ItemChangedEventHandler (OnListManagerItemChanged);
 		}
 
 		// EndEdit current editing operation
@@ -2023,8 +2084,8 @@ namespace System.Windows.Forms
 			
 			accept_listmgrevents = false;
 
-			if (cached_currencymgr_events !=  null) {
-				cached_currencymgr_events.Position = current_cell.RowNumber;
+			if (cached_currencymgr !=  null) {
+				cached_currencymgr.Position = current_cell.RowNumber;
 			}
 			accept_listmgrevents = true;
 
@@ -2042,8 +2103,10 @@ namespace System.Windows.Forms
 
 			datamember = member;
 			real_datasource = GetDataSource (datasource, member);
-			DisconnectListManagerEvents ();
-			cached_currencymgr = cached_currencymgr_events = null;
+			if (cached_currencymgr != null) {
+				DisconnectListManagerEvents ();
+				cached_currencymgr = null;
+			}
 			return true;
 		}
 
@@ -2057,8 +2120,10 @@ namespace System.Windows.Forms
 
 			current_cell = new DataGridCell ();
 			datasource = source;
-			DisconnectListManagerEvents ();
-			cached_currencymgr = cached_currencymgr_events = null;
+			if (cached_currencymgr != null) {
+				DisconnectListManagerEvents ();
+				cached_currencymgr = null;
+			}
 			try {
 				real_datasource = GetDataSource (datasource, DataMember);
 			}catch (Exception) {				
@@ -2093,11 +2158,11 @@ namespace System.Windows.Forms
 				return;
 			}
 			
-			CurrentCell = new DataGridCell (cached_currencymgr_events.Position, current_cell.RowNumber);
+			CurrentCell = new DataGridCell (cached_currencymgr.Position, current_cell.RowNumber);
 		}
 		
 		private void OnListManagerItemChanged (object sender, ItemChangedEventArgs e)
-		{				
+		{
 			if (accept_listmgrevents == false) {
 				return;
 			}			

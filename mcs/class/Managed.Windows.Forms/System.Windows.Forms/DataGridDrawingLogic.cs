@@ -71,22 +71,27 @@ namespace System.Windows.Forms
 		}
 
 		// Gets a column from a pixel
-		private int FromPixelToColumn (int pixel)
+		private int FromPixelToColumn (int pixel, out int column_x)
 		{
 			int width = 0;
 			int cnt = grid.CurrentTableStyle.GridColumnStyles.Count;
+			column_x = 0;
 
 			if (cnt == 0)
 				return 0;
 				
-			if (grid.CurrentTableStyle.CurrentRowHeadersVisible)
+			if (grid.CurrentTableStyle.CurrentRowHeadersVisible) {
 				width += rowshdrs_area.X + rowshdrs_area.Width;
+				column_x += rowshdrs_area.X + rowshdrs_area.Width;
+			}
 
 			for (int col = 0; col < cnt; col++) {
 				width += grid.CurrentTableStyle.GridColumnStyles[col].Width;
 
 				if (pixel < width)
 					return col;
+
+				column_x += grid.CurrentTableStyle.GridColumnStyles[col].Width;
 			}
 
 			return cnt - 1;
@@ -411,9 +416,11 @@ namespace System.Windows.Forms
 			
 			int col;
 			int max_pixel = grid.horz_pixeloffset + cells_area.Width;
-			grid.first_visiblecolumn = FromPixelToColumn (grid.horz_pixeloffset);
+			int unused;
 
-			col = FromPixelToColumn (max_pixel);
+			grid.first_visiblecolumn = FromPixelToColumn (grid.horz_pixeloffset, out unused);
+
+			col = FromPixelToColumn (max_pixel, out unused);
 			
 			grid.visiblecolumn_count = 1 + col - grid.first_visiblecolumn;
 			
@@ -449,18 +456,31 @@ namespace System.Windows.Forms
 			
 		}
 
+		const int RESIZE_AREA_SIZE = 5;
+
 		// From Point to Cell
 		public DataGrid.HitTestInfo HitTest (int x, int y)
 		{
 			DataGrid.HitTestInfo hit = new DataGrid.HitTestInfo ();
 
-			// TODO: Add missing ColumnResize and RowResize checks
 			if (columnshdrs_area.Contains (x, y)) {
-				hit.type = DataGrid.HitTestType.ColumnHeader;
-				hit.column = FromPixelToColumn (x + grid.horz_pixeloffset);
+				int offset_x = x + grid.horz_pixeloffset;
+				int column_x;
+				int column_under_mouse = FromPixelToColumn (offset_x, out column_x);
+				
+				if ((column_x + grid.CurrentTableStyle.GridColumnStyles[column_under_mouse].Width - offset_x < RESIZE_AREA_SIZE)
+				    && column_under_mouse < grid.CurrentTableStyle.GridColumnStyles.Count) {
+					hit.type = DataGrid.HitTestType.ColumnResize;
+					hit.column = column_under_mouse;
+				}
+				else {
+					hit.type = DataGrid.HitTestType.ColumnHeader;
+					hit.column = column_under_mouse;
+				}
 				return hit;
 			}
 
+			// TODO: Add missing RowResize checks
 			if (rowshdrs_area.Contains (x, y)) {
 				hit.type = DataGrid.HitTestType.RowHeader;
 				int posy;
@@ -589,6 +609,13 @@ namespace System.Windows.Forms
 			rect_col.Y = cells_area.Y;
 			rect_col.Height = cells_area.Height;
 			grid.Invalidate (rect_col);
+		}
+
+		public void DrawResizeLine (int x)
+		{
+			XplatUI.DrawReversibleRectangle (grid.Handle,
+							 new Rectangle (x, CellsArea.Y, 1, CellsArea.Height),
+							 3);
 		}
 
 		void SetUpHorizontalScrollBar (out int maximum)

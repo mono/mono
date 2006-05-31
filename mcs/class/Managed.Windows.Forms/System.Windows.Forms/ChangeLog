@@ -1,3 +1,31 @@
+2006-05-31  Chris Toshok  <toshok@ximian.com>
+
+	* DataGridDrawingLogic.cs (FromPixelToColumn): modify this to also
+	return (via an out parameter) the starting X of the column.
+	(UpdateVisibleColumn): track change to FromPixelToColumn.
+	(HitTest): add a ColumnResize case here.
+	(DrawResizeLine): new function, probably poorly named.
+
+	* DataGrid.cs (.ctor): get rid of cached_currencymgr_events.  We
+	only need to keep one reference.
+	(set_ListManager): same.
+	(OnMouseDown): call HitTest instead of grid_drawing.HitTest.
+	Also, add support for HitTestType.ColumnResize.
+	(OnMouseMove): add column resize behavior here, and change the
+	cursor to the correct one as we move around the datagrid.
+	(OnMouseUp): terminate the column resize if we're resizing.
+	(ProcessGridKey): from the MS docs, Alt-0 enters the null value
+	for the current cell.
+	(ConnectListManagerEvents): use cached_currencymgr.
+	(DisconnectListManagerEvents): fill this in, using
+	cached_currencymgr.
+	(SetCurrentCell): remove cached_currencymgr_events handling.
+	(SetDataMember): only call DisconnectListManagerEvents if
+	cached_currencymgr is != null.
+	(SetDataSource): same.
+	(OnListManagerCurrentChanged): cached_currencymgr_events ->
+	cached_currencymgr.
+
 2006-05-31  Jackson Harper  <jackson@ximian.com>
 
 	* BindingManagerBase.cs: Remove somedebug code that creeped into
