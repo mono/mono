@@ -1,5 +1,7 @@
 2006-05-31  Zoltan Varga  <vargaz@gmail.com>
 
+	* Environment.cs: Bump corlib version.
+	
 	* Environment.cs: Revert the last change.
 	
 	* Environment.cs: Bump corlib version.
