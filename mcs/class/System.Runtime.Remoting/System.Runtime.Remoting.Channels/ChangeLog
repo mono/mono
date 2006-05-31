@@ -1,3 +1,23 @@
+2006-05-31  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SoapCore.cs: Set eol-style to native.
+	* SoapServerFormatterSinkProvider.cs: Fixed line endings. Set eol-style
+	to CRLF.
+	* ChannelCore.cs: Set eol-style to native.
+	* BinaryServerFormatterSink.cs: Set eol-style to native.
+	* SoapClientFormatterSinkProvider.cs: Fixed line endings. Set eol-style
+	to CRLF. Next and CreateSink should not be virtual.
+	* SoapMessageFormatter.cs: Set eol-style to CRLF.
+	* BinaryClientFormatterSink.cs: Fixed line endings. Set eol-style to
+	native.
+	* BinaryCore.cs: Set eol-style to native.
+	* BinaryServerFormatterSinkProvider.cs: Set eol-style to native.
+	* CommonTransportKeys.cs: Set eol-style to native.
+	* SoapServerFormatterSink.cs: Fixed line endings. Set eol-style to CRLF.
+	* RemotingThreadPool.cs: Fixed line endings. Set eol-style to native.
+	* BinaryClientFormatterSinkProvider.cs: Set eol-style to native.
+	* SoapClientFormatterSink.cs: Fixed line endings. Set eol-style to CRLF.
+
 2006-03-05  Andrew Skiba <andrews@mainsoft.com>
 
 	* SoapMessageFormatter.cs: : exceptions propagating

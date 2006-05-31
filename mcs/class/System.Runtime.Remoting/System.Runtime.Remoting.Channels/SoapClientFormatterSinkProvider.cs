@@ -43,13 +43,13 @@ namespace System.Runtime.Remoting.Channels {
 			_soapCore = new SoapCore (this, properties, allowedProperties);
 		}
 		
-		public virtual IClientChannelSinkProvider Next 
+		public IClientChannelSinkProvider Next 
 		{
 			get { return _nextClientChannelSinkProvider;}
 			set { _nextClientChannelSinkProvider = value;}
 		}
 		
-		public virtual IClientChannelSink CreateSink( IChannelSender channel, 
+		public IClientChannelSink CreateSink( IChannelSender channel, 
 		                                             string url, 
 		                                             object remoteChannelData)
 		{
