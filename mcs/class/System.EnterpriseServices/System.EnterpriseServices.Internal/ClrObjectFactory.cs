@@ -41,28 +41,28 @@ namespace System.EnterpriseServices.Internal
 		}
 
 		[MonoTODO]
-		public virtual object CreateFromAssembly (string AssemblyName, string TypeName, string Mode)
+		public object CreateFromAssembly (string AssemblyName, string TypeName, string Mode)
 		{
 			throw new NotImplementedException ();
 		}
 
 
 		[MonoTODO]
-		public virtual object CreateFromMailbox (string Mailbox, string Mode)
+		public CreateFromMailbox (string Mailbox, string Mode)
 		{
 			throw new NotImplementedException ();
 		}
 
 
 		[MonoTODO]
-		public virtual object CreateFromVroot (string VrootUrl, string Mode)
+		public object CreateFromVroot (string VrootUrl, string Mode)
 		{
 			throw new NotImplementedException ();
 		}
 
 
 		[MonoTODO]
-		public virtual object CreateFromWsdl (string WsdlUrl, string Mode)
+		public object CreateFromWsdl (string WsdlUrl, string Mode)
 		{
 			throw new NotImplementedException ();
 		}

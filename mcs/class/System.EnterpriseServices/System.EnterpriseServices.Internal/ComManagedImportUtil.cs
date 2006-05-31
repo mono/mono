@@ -42,13 +42,13 @@ namespace System.EnterpriseServices.Internal
 		}
 
 		[MonoTODO]
-		public virtual void GetComponentInfo (string assemblyPath, out string numComponents, out string componentInfo)
+		public void GetComponentInfo (string assemblyPath, out string numComponents, out string componentInfo)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual void InstallAssembly (string asmpath, string parname, string appname)
+		public void InstallAssembly (string asmpath, string parname, string appname)
 		{
 			throw new NotImplementedException ();
 		}

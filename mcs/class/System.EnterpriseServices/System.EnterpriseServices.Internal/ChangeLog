@@ -1,5 +1,14 @@
 2006-05-31  Gert Driesen <drieseng@users.sourceforge.net>
 
+	* ComManagedImportUtil.cs: Do not mark instance methods virtual. Fixes
+	API signature mismatches.
+	* ClrObjectFactory.cs: Do not mark methods virtual. Fixes API signature
+	mismatches.
+	* Publish.cs: Do not mark instance methods virtual. Fixes API signature
+	mismatches.
+
+2006-05-31  Gert Driesen <drieseng@users.sourceforge.net>
+
 	* AppDomainHelper.cs: Set eol-style to native.
 	* AssemblyLocator.cs: Set eol-style to native.
 	* ClientRemotingConfig.cs: Set eol-style to native.
