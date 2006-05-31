@@ -1,5 +1,21 @@
 2006-05-31  Zoltan Varga  <vargaz@gmail.com>
 
+	* object-internals.h (MonoAsyncResult): Add an 'object_data' field which has
+	GC tracking.
+	
+	* object.c (mono_async_result_new): Add an additional parameter 'object_data'.
+
+	* marshal.c threadpool.c: Update callers of mono_async_result_new.
+
+	* appdomain.c: Bump corlib version.
+
+2006-05-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c: Use mono_mb_emit_stloc in more places. Use CEE_LDIND_REF and
+	CEE_STIND_REF when working with object references.
+
+2006-05-31  Zoltan Varga  <vargaz@gmail.com>
+
 	* class.c (mono_class_setup_fields): Call mono_class_init () for class->parent.
 	Fixes #78539.
 
