@@ -1,3 +1,97 @@
+2006-05-31  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* AccessChecksLevelOption.cs: Fixed line endings. Set eol-style to CRLF.
+	* ActivationOption.cs: Fixed line endings. Set eol-style to CRLF.
+        * Activity.cs: Fixed line endings. Set eol-style to CRLF.
+        * ApplicationAccessControlAttribute.cs: Set eol-style to native.
+        * ApplicationActivationAttribute.cs: Set eol-style to native.
+        * ApplicationIDAttribute.cs: Set eol-style to native.
+        * ApplicationNameAttribute.cs: Set eol-style to native.
+        * ApplicationQueuingAttribute.cs: Fixed line endings. Set eol-style 
+	to CRLF.
+        * AuthenticationOption.cs: Set eol-style to native.
+        * AutoCompleteAttribute.cs: Fixed line endings. Set eol-style to CRLF.
+        * BindingOption.cs: Fixed line endings. Set eol-style to CRLF.
+        * BOID.cs: Fixed line endings. Set eol-style to CRLF.
+        * BYOT.cs: Fixed line endings. Set eol-style to CRLF.
+        * ComponentAccessControlAttribute.cs: Fixed line endings. Set eol-style
+	to CRLF.
+        * COMTIIntrinsicsAttribute.cs: Fixed line endings. Set eol-style 
+	to CRLF.
+        * ConstructionEnabledAttribute.cs: Fixed line endings. Set eol-style
+	to CRLF.
+        * ContextUtil.cs: Fixed line endings. Set eol-style to CRLF.
+        * DescriptionAttribute.cs: Fixed line endings. Set eol-style to CRLF.
+        * EventClassAttribute.cs: Fixed line endings. Set eol-style to CRLF.
+        * EventTrackingEnabledAttribute.cs: Fixed line endings. Set eol-style
+	to CRLF.
+        * ExceptionClassAttribute.cs: Fixed line endings. Set eol-style to CRLF.
+        * IAsyncErrorNotify.cs: Fixed line endings. Set eol-style to CRLF.
+        * IConfigurationAttribute.cs: Set eol-style to native.
+        * IISIntrinsicsAttribute.cs: Fixed line endings. Set eol-style to CRLF.
+        * ImpersonationLevelOption.cs: Set eol-style to native.
+        * InheritanceOption.cs: Fixed line endings. Set eol-style to CRLF.
+        * InstallationFlags.cs: Set eol-style to native.
+        * InterfaceQueuingAttribute.cs: Fixed line endings. Set eol-style
+	to CRLF.
+        * IPlaybackControl.cs: Fixed line endings. Set eol-style to CRLF.
+        * IProcessInitControl.cs: Fixed line endings. Set eol-style to CRLF.
+        * IProcessInitializer.cs: Set eol-style to native.
+        * IRegistrationHelper.cs: Set eol-style to native.
+        * IRemoteDispatch.cs: Fixed line endings. Set eol-style to CRLF. Set
+	Autocomplete to false for RemoteDispatchNotAutoDone method.
+        * ISecurityCallContext.cs: Fixed line endings. Set eol-style to CRLF.
+        * ISecurityCallersColl.cs: Fixed line endings. Set eol-style to CRLF.
+        * ISecurityIdentityColl.cs: Fixed line endings. Set eol-style to CRLF.
+        * IServiceCall.cs: Fixed line endings. Set eol-style to CRLF.
+        * IServicedComponentInfo.cs: Fixed line endings. Set eol-style to CRLF.
+        * ISharedProperty.cs: Fixed line endings. Set eol-style to CRLF.
+        * ISharedPropertyGroup.cs: Fixed line endings. Set eol-style to CRLF.
+        * ITransaction.cs: Fixed line endings. Set eol-style to CRLF.
+        * JustInTimeActivationAttribute.cs: Fixed line endings. Set eol-style
+	to CRLF.
+        * LoadBalancingSupportedAttribute.cs: Fixed line endings. Set eol-style
+	to CRLF.
+        * MustRunInClientContextAttribute.cs: Fixed line endings. Set eol-style
+	to CRLF.
+        * ObjectPoolingAttribute.cs: Fixed line endings. Set eol-style to CRLF.
+        * PartitionOption.cs: Fixed line endings. Set eol-style to CRLF.
+        * PrivateComponentAttribute.cs: Fixed line endings. Set eol-style
+	to CRLF.
+        * PropertyLockMode.cs: Set eol-style to native.
+        * PropertyReleaseMode.cs: Set eol-style to native.
+        * RegistrationConfig.cs: Fixed line endings. Set eol-style to CRLF.
+        * RegistrationErrorInfo.cs: Fixed line endings. Set eol-style to CRLF.
+        * RegistrationException.cs: Fixed line endings. Set eol-style to CRLF.
+        * RegistrationHelper.cs: Set eol-style to native.
+        * RegistrationHelperTx.cs: Set eol-style to native.
+        * ResourcePool.cs: Fixed line endings. Set eol-style to CRLF.
+        * SecureMethodAttribute.cs: Fixed line endings. Set eol-style to CRLF.
+        * SecurityCallContext.cs: Fixed line endings. Set eol-style to CRLF.
+        * SecurityCallers.cs: Fixed line endings. Set eol-style to CRLF.
+        * SecurityIdentity.cs: Fixed line endings. Set eol-style to CRLF.
+        * SecurityRoleAttribute.cs: Fixed line endings. Set eol-style to CRLF.
+        * ServiceConfig.cs: Fixed line endings. Set eol-style to CRLF.
+        * ServicedComponent.cs: Fixed line endings. Set eol-style to CRLF.
+        * ServicedComponentException.cs: Fixed line endings. Set eol-style
+	to CRLF.
+        * ServiceDomain.cs: Fixed line endings. Set eol-style to CRLF.
+        * SharedProperty.cs: Fixed line endings. Set eol-style to CRLF.
+        * SharedPropertyGroup.cs: Fixed line endings. Set eol-style to CRLF.
+        * SharedPropertyGroupManager.cs: Fixed line endings. Set eol-style
+	to CRLF.
+        * SxsOption.cs: Fixed line endings. Set eol-style to CRLF.
+        * SynchronizationAttribute.cs: Fixed line endings. Set eol-style
+	to CRLF.
+        * SynchronizationOption.cs: Set eol-style to native.
+        * ThreadPoolOption.cs: Fixed line endings. Set eol-style to CRLF.
+        * TransactionAttribute.cs: Fixed line endings. Set eol-style to CRLF.
+        * TransactionIsolationLevel.cs: Set eol-style to native.
+        * TransactionOption.cs: Set eol-style to native.
+        * TransactionStatus.cs: Fixed line endings. Set eol-style to CRLF.
+        * TransactionVote.cs: Set eol-style to native.
+        * XACTTRANSINFO.cs: Fixed line endings. Set eol-style to CRLF.
+
 2004-06-18  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* AuthenticationOption.cs: fixed enum field values to match MS.NET

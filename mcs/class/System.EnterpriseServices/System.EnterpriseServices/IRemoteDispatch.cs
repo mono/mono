@@ -41,7 +41,7 @@ namespace System.EnterpriseServices {
 		[AutoComplete]
 		string RemoteDispatchAutoDone (string s);
 
-		[AutoComplete]
+		[AutoComplete (false)]
 		string RemoteDispatchNotAutoDone (string s);
 
 		#endregion
