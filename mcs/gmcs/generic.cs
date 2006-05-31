@@ -3182,8 +3182,7 @@ namespace Mono.CSharp {
 					left_unwrap.EmitCheck (ec);
 					ig.Emit (OpCodes.Dup);
 					right_unwrap.EmitCheck (ec);
-					ig.Emit (OpCodes.Ceq);
-					ig.Emit (OpCodes.Brfalse, dissimilar_label);
+					ig.Emit (OpCodes.Bne_Un, dissimilar_label);
 
 					ig.Emit (OpCodes.Brtrue, both_have_value_label);
 

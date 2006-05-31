@@ -1,5 +1,8 @@
 2006-05-31  Raja R Harinath  <rharinath@novell.com>
 
+	* generic.cs (Nullable.LiftedBinaryOperator.EmitEquality):
+	Use bne.un instead of ceq+brfalse.
+
 	Fix cs0208-[23].cs
 	* typemanager.cs (IsUnmanagedType): Disallow generic types and
 	generic parameters.
