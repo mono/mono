@@ -32,7 +32,7 @@ using System;
 using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices {
-	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Interface)]
+	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Interface, AllowMultiple=true)]
 	[ComVisible(false)]
 	public sealed class InterfaceQueuingAttribute : Attribute {
 

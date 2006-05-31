@@ -1,5 +1,13 @@
 2006-05-31  Gert Driesen <drieseng@users.sourceforge.net>
 
+	* SecurityRoleAttribute.cs: Set AllowMultiple to true.
+	* InterfaceQueueingAttribute.cs: Set AllowMultiple to true.
+	* ObjectPoolingAttribute.cs: Implement IConfigurationAttribute.
+	* SecureMethodAttribute.cs: Attribute is not valid on assemblies.
+	* BOID.cs: Added MarshalAs attribute to match MS.NET.
+
+2006-05-31  Gert Driesen <drieseng@users.sourceforge.net>
+
 	* AccessChecksLevelOption.cs: Fixed line endings. Set eol-style to CRLF.
 	* ActivationOption.cs: Fixed line endings. Set eol-style to CRLF.
         * Activity.cs: Fixed line endings. Set eol-style to CRLF.

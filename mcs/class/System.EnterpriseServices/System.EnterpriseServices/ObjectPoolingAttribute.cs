@@ -35,7 +35,7 @@ using System.Runtime.InteropServices;
 namespace System.EnterpriseServices {
 	[AttributeUsage (AttributeTargets.Class)]
 	[ComVisible(false)]
-	public sealed class ObjectPoolingAttribute : Attribute {
+	public sealed class ObjectPoolingAttribute : Attribute, IConfigurationAttribute {
 
 		#region Fields
 

@@ -38,6 +38,7 @@ namespace System.EnterpriseServices {
 
 		#region Fields
 
+		[MarshalAs (UnmanagedType.ByValArray, SizeConst = 0x10)]
 		public byte[] rgb;
 
 		#endregion // Fields
