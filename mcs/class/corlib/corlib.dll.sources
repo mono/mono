@@ -167,6 +167,7 @@ System/MidpointRounding.cs
 System/MissingFieldException.cs
 System/MissingMemberException.cs
 System/MissingMethodException.cs
+System/MonoAsyncCall.cs
 System/MonoCustomAttrs.cs
 System/MonoDummy.cs
 System/MonoType.cs
