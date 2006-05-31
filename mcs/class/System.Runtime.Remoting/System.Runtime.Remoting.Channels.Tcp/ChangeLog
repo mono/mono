@@ -1,5 +1,10 @@
 2006-05-31  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* TcpClientChannel.cs: Marked CreateMessageSink virtual.
+	* TcpServerChannel.cs: Marked GetUrlsForUri virtual.
+
+2006-05-31  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* TcpClientChannel.cs: Set eol-style to native.
 	* TcpChannel.cs: Fixed line endings. Set eol-style to native.
 	* TcpServerTransportSink.cs: Fixed line endings. Set eol-style to

@@ -182,7 +182,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			return "tcp://" + host + ":" + port;
 		}
 		
-		public string[] GetUrlsForUri (string uri)
+		public virtual string[] GetUrlsForUri (string uri)
 		{
 			if (!uri.StartsWith ("/")) uri = "/" + uri;
 

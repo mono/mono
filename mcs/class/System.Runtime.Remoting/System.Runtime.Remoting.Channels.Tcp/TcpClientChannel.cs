@@ -102,7 +102,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			}
 		}
 
-		public IMessageSink CreateMessageSink (string url,
+		public virtual IMessageSink CreateMessageSink (string url,
 						       object remoteChannelData,
 						       out string objectURI)
 	    {
