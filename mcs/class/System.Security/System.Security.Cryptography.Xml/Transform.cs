@@ -8,7 +8,7 @@
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) Tim Coleman, 2004
-// Copyright (C) 2004-2005 Novell Inc. (http://www.novell.com)
+// Copyright (C) 2004-2006 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,6 +33,7 @@
 using System.Collections;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Security;
 using System.Security.Policy;
 using System.Xml;
 
@@ -43,14 +44,17 @@ namespace System.Security.Cryptography.Xml {
 		private string algo;
 		private XmlResolver xmlResolver;
 
-		public Transform ()
-		{
-		// FIXME: enable it after CAS implementation
-#if false // NET_1_1
-			xmlResolver = new XmlSecureResolver (new XmlUrlResolver (), (Evidence) new Evidence ());
+#if NET_2_0
+		protected Transform ()
 #else
-			xmlResolver = new XmlUrlResolver ();
+		public Transform ()
 #endif
+		{
+			if (SecurityManager.SecurityEnabled) {
+				xmlResolver = new XmlSecureResolver (new XmlUrlResolver (), (Evidence) new Evidence ());
+			} else {
+				xmlResolver = new XmlUrlResolver ();
+			}
 		}
 
 		#region Properties
