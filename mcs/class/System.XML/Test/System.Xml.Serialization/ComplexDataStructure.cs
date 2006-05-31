@@ -22,7 +22,7 @@ namespace MonoTests.System.XmlSerialization
 	public class ComplexDataStructure: Assertion
 	{
 		[Test]
-		[NUnit.Framework.Category("NotDotNet")]
+		[NUnit.Framework.Category("NotDotNet")] // FDBK50639 
 		public void WriteLiteral ()
 		{
 			Test data = BuildTestObject ();
