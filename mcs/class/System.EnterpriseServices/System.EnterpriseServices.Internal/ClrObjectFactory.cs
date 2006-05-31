@@ -48,7 +48,7 @@ namespace System.EnterpriseServices.Internal
 
 
 		[MonoTODO]
-		public CreateFromMailbox (string Mailbox, string Mode)
+		public object CreateFromMailbox (string Mailbox, string Mode)
 		{
 			throw new NotImplementedException ();
 		}
