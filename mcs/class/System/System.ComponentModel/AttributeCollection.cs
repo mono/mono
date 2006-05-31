@@ -37,7 +37,7 @@ using System.Runtime.InteropServices;
 namespace System.ComponentModel
 {
 	[ComVisible (true)]
-	public class AttributeCollection : ICollection, IEnumerable
+	public class AttributeCollection : ICollection
 	{
 		private ArrayList attrList = new ArrayList ();
 		public static readonly AttributeCollection Empty = new AttributeCollection ((ArrayList)null);
@@ -78,6 +78,10 @@ namespace System.ComponentModel
 		public void CopyTo (Array array, int index)
 		{
 			attrList.CopyTo (array, index);
+		}
+
+		IEnumerator IEnumerable.GetEnumerator () {
+			return GetEnumerator ();
 		}
 
 		public IEnumerator GetEnumerator ()
@@ -132,6 +136,12 @@ namespace System.ComponentModel
 			}
 		}
 		
+		int ICollection.Count {
+			get {
+				return Count;
+			}
+		}
+
 		public int Count {
 			get {
 				return attrList.Count;

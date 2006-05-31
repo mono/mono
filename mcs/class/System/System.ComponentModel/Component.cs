@@ -36,7 +36,6 @@ using System.ComponentModel;
 namespace System.ComponentModel {
 
 	[DesignerCategory ("Component")]
-	[TypeConverter(typeof(ComponentConverter))]
 	public class Component : MarshalByRefObject, IComponent, IDisposable
 	{
 

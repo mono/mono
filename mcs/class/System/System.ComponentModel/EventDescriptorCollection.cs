@@ -64,6 +64,10 @@ namespace System.ComponentModel
 			return eventList.Add (value);
 		}
 
+		void IList.Clear () {
+			Clear ();
+		}
+
 		public void Clear () {
 			eventList.Clear ();
 		}
@@ -81,6 +85,10 @@ namespace System.ComponentModel
 			return null;
 		}
 
+		IEnumerator IEnumerable.GetEnumerator () {
+			return GetEnumerator ();
+		}
+
 		public IEnumerator GetEnumerator () {
 			return eventList.GetEnumerator ();
 		}
@@ -95,6 +103,10 @@ namespace System.ComponentModel
 
 		public void Remove (EventDescriptor value) {
 			eventList.Remove (value);
+		}
+
+		void IList.RemoveAt (int index) {
+			RemoveAt (index);
 		}
 
 		public void RemoveAt (int index) {
@@ -176,6 +188,10 @@ namespace System.ComponentModel
 			return col;
 		}
 		
+		int ICollection.Count {
+			get { return Count; }
+		}
+
 		public int Count {
 			get {
 				return eventList.Count;

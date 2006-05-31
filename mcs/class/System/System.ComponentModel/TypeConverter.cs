@@ -265,9 +265,17 @@ namespace System.ComponentModel
 				this.values = values;
 			}
 
+			void ICollection.CopyTo (Array array, int index) {
+				CopyTo (array, index);
+			}
+
 			public void CopyTo (Array array, int index)
 			{
 				values.CopyTo (array, index);
+			}
+
+			IEnumerator IEnumerable.GetEnumerator () {
+				return GetEnumerator ();
 			}
 
 			public IEnumerator GetEnumerator ()

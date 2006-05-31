@@ -334,6 +334,10 @@ namespace System.ComponentModel
 			}
 		}
 
+		int ICollection.Count {
+			get { return Count; }
+		}
+
 		public int Count
 		{
 			get {

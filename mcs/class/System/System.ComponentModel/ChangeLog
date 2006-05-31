@@ -1,3 +1,16 @@
+2006-05-31  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TypeConverter.cs: Added explicit interface implementation for
+	ICollection.CopyTo and IEnumerable.GetEnumerator. Fixes corcompare
+	warnings.
+	* Component.cs: Remove TypeConverter attribute. Fixes corcompare
+	warning.
+	* AttributeCollection.cs: Added explicit interface implemenation for
+	IEnumerable.GetEnumerator, IList.RemoveAt and ICollection.Count.
+	Fixes corcompare warnings.
+	* PropertyDescriptorCollection.cs: Added explicit interface
+	implemenation for ICollection.Count. Fixes corcompare warning.
+
 2006-05-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TypeDescriptor.cs : GetProperties() does not return indexers.
