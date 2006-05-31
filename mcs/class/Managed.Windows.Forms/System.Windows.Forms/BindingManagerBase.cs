@@ -35,9 +35,6 @@ namespace System.Windows.Forms {
 		private BindingsCollection	bindings;
 		private bool pulling_data;
 
-		private static int count = 0;
-		private int id = count++;
-
 #region Public Constructors
 		public BindingManagerBase() {
 		}
