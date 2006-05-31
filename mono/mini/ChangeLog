@@ -1,5 +1,9 @@
 2006-05-31  Raja R Harinath  <rharinath@novell.com>
 
+	* il2tests.2.il: New file for generics CIL tests.  Add test for
+	#78019.
+	* Makefile.am: Update.
+
 	Fix #78019
 	* mini.c (mono_method_to_ir): Don't apply box+brtrue optimization
 	to nullable types.
