@@ -1,3 +1,9 @@
+2006-06-01  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Control.cs: Don't handle WM_SETFOCUS if the same window already
+	  has focus (works around X11 sending a FocusIn after our SetFocus)
+	* XplatUIX11.cs: Send KILLFOCUS before setting SETFOCUS on new window
+
 2006-06-01  Alexander Olk  <alex.olk@googlemail.com>
 
 	* Mime.cs: Fix for the NET_2_0 build.

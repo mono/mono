@@ -4140,9 +4140,11 @@ namespace System.Windows.Forms
 				}
 
 				case Msg.WM_SETFOCUS: {
-					OnEnter(EventArgs.Empty);
-					this.has_focus = true;
-					OnGotFocus(EventArgs.Empty);
+					if (!has_focus) {
+						OnEnter(EventArgs.Empty);
+						this.has_focus = true;
+						OnGotFocus(EventArgs.Empty);
+					}
 					return;
 				}
 					

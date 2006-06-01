@@ -4090,10 +4090,10 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-			SendMessage(hwnd.client_window, Msg.WM_SETFOCUS, FocusWindow, IntPtr.Zero);
 			if (FocusWindow != IntPtr.Zero) {
 				SendMessage(FocusWindow, Msg.WM_KILLFOCUS, hwnd.client_window, IntPtr.Zero);
 			}
+			SendMessage(hwnd.client_window, Msg.WM_SETFOCUS, FocusWindow, IntPtr.Zero);
 			FocusWindow = hwnd.client_window;
 
 			//XSetInputFocus(DisplayHandle, Hwnd.ObjectFromHandle(handle).client_window, RevertTo.None, IntPtr.Zero);
