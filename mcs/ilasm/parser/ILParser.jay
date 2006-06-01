@@ -2378,6 +2378,9 @@ instr			: INSTR_NONE
                         | INSTR_PARAM id
                           {
                                 int pos = codegen.CurrentMethodDef.GetNamedParamPos ((string) $2);
+                                if (pos < 0)
+                                        Report.Error (String.Format ("Undeclared identifier '{0}'", (string) $2));
+
                                 codegen.CurrentMethodDef.AddInstr (
                                         new IntInstr ((IntOp) $1, pos, tokenizer.Location));
                           }
