@@ -1,5 +1,8 @@
 2006-05-31  Zoltan Varga  <vargaz@gmail.com>
 
+	* threadpool.c: Make ASyncCall a copy of the managed MonoAsyncCall class so
+	it gets GC tracking.
+
 	* object-internals.h (MonoAsyncResult): Add an 'object_data' field which has
 	GC tracking.
 	
