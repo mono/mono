@@ -230,6 +230,9 @@ namespace Mono.ILASM {
                 public int GetNamedParamPos (string name)
                 {
                         int pos = -1;
+                        if (param_list == null)
+                                return -1;
+
                         if (!IsStatic)
                                 pos ++;
                         foreach (ParamDef param in param_list) {

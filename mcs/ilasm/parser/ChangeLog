@@ -1,5 +1,10 @@
 2006-06-01  Ankit Jain  <jankit@novell.com>
 
+	* ILParser.jay (instr | INSTR_PARAM ..): Report error if the param is not
+	found.
+
+2006-06-01  Ankit Jain  <jankit@novell.com>
+
 	* ILParser.jay (method_decl | D_PARAM ..): Param index is zero-based,
 	with zero representing the return value.
 	Update to check CurrentCustomAttrTarget for null before using it.

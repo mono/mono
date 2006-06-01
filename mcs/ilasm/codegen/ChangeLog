@@ -1,5 +1,9 @@
 2006-06-01  Ankit Jain  <jankit@novell.com>
 
+	* MethodDef.cs (GetNamedParamPos): Return -1 if param_list is null.
+
+2006-06-01  Ankit Jain  <jankit@novell.com>
+
 	* MethodDef.cs (MethodDef): Use a ParamDef for return type, instead of a
 	BaseTypeRef.
 	(MethodDef.ctor): Update.
