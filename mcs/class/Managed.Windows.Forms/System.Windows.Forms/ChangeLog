@@ -1,3 +1,10 @@
+2006-06-01  Mike Kestner  <mkestner@novell.com>
+
+	* ListView.cs: revamp the focus management in ListView.  It still
+	causes churn of LostFocus/GotFocus emissions on clicks, but it's
+	better than not handling focus at all.  Will revisit when pdb feels
+	the general focus handling is solid.  Fixes #78526.
+
 2006-06-01  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Set the default border style in the constructor.

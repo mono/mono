@@ -166,6 +166,8 @@ namespace System.Windows.Forms
 			// event handlers
 			base.KeyDown += new KeyEventHandler(ListView_KeyDown);
 			SizeChanged += new EventHandler (ListView_SizeChanged);
+			GotFocus += new EventHandler (FocusChanged);
+			LostFocus += new EventHandler (FocusChanged);
 
 			this.SetStyle (ControlStyles.UserPaint | ControlStyles.StandardClick, false);
 		}
@@ -1250,31 +1252,17 @@ namespace System.Windows.Forms
 			{
 				this.owner = owner;
 				DoubleClick += new EventHandler(ItemsDoubleClick);
-				KeyDown += new KeyEventHandler (ItemsKeyDown);
-				KeyUp += new KeyEventHandler (ItemsKeyUp);
 				MouseDown += new MouseEventHandler(ItemsMouseDown);
 				MouseMove += new MouseEventHandler(ItemsMouseMove);
 				MouseHover += new EventHandler(ItemsMouseHover);
 				MouseUp += new MouseEventHandler(ItemsMouseUp);
 				MouseWheel += new MouseEventHandler(ItemsMouseWheel);
-				GotFocus += new EventHandler (FocusChanged);
-				LostFocus += new EventHandler (FocusChanged);
 			}
 
 			void ItemsDoubleClick (object sender, EventArgs e)
 			{
 				if (owner.activation == ItemActivation.Standard && owner.ItemActivate != null)
 					owner.ItemActivate (this, e);
-			}
-
-			void ItemsKeyDown (object sender, KeyEventArgs args)
-			{
-				owner.OnKeyDown (args);
-			}
-
-			void ItemsKeyUp (object sender, KeyEventArgs args)
-			{
-				owner.OnKeyUp (args);
 			}
 
 			enum BoxSelect {
@@ -1567,20 +1555,21 @@ namespace System.Windows.Forms
 				}
 			}
 
-			void FocusChanged (object o, EventArgs args)
-			{
-				if (owner.Items.Count == 0)
-					return;
-
-				if (owner.FocusedItem == null)
-					owner.SetFocusedItem (owner.Items [0]);
-
-				Invalidate (owner.FocusedItem.Bounds);
-			}
-
 			internal override void OnPaintInternal (PaintEventArgs pe)
 			{
 				ThemeEngine.Current.DrawListViewItems (pe.Graphics, pe.ClipRectangle, owner);
+			}
+
+			protected override void WndProc (ref Message m)
+			{
+				switch ((Msg)m.Msg) {
+				case Msg.WM_SETFOCUS:
+					owner.Focus ();
+					break;
+				default:
+					base.WndProc (ref m);
+					break;
+				}
 			}
 		}
 
@@ -1590,6 +1579,17 @@ namespace System.Windows.Forms
 				return;	
 				
 			CalculateScrollBars ();
+		}
+
+		void FocusChanged (object o, EventArgs args)
+		{
+			if (Items.Count == 0)
+				return;
+
+			if (FocusedItem == null)
+				SetFocusedItem (Items [0]);
+
+			item_control.Invalidate (FocusedItem.Bounds);
 		}
 
 		private void ListView_SizeChanged (object sender, EventArgs e)
@@ -2045,6 +2045,18 @@ namespace System.Windows.Forms
 				else
 					target_x = owner.GetReorderedColumn (drag_to_index).Rect.X - owner.h_marker;
 				theme.DrawListViewHeaderDragDetails (pe.Graphics, owner, drag_column, target_x);
+			}
+
+			protected override void WndProc (ref Message m)
+			{
+				switch ((Msg)m.Msg) {
+				case Msg.WM_SETFOCUS:
+					owner.Focus ();
+					break;
+				default:
+					base.WndProc (ref m);
+					break;
+				}
 			}
 		}
 

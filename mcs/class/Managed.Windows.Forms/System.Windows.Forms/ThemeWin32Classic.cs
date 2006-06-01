@@ -1528,7 +1528,7 @@ namespace System.Windows.Forms
 			if (!control.LabelWrap)
 				format.FormatFlags = StringFormatFlags.NoWrap;
 			
-			if (item.Selected && control.item_control.Focused) {
+			if (item.Selected && control.Focused) {
 				if (control.View == View.Details) {
 					if (control.FullRowSelect) {
 						dc.FillRectangle (SystemBrushes.Highlight, text_rect);
@@ -1553,7 +1553,7 @@ namespace System.Windows.Forms
 				dc.FillRectangle (ResPool.GetSolidBrush (item.BackColor), text_rect);
 
 			if (item.Text != null && item.Text.Length > 0) {
-				if (item.Selected && control.item_control.Focused)
+				if (item.Selected && control.Focused)
 					dc.DrawString (item.Text, item.Font, SystemBrushes.HighlightText, text_rect, format);
 				else
 					dc.DrawString (item.Text, item.Font, this.ResPool.GetSolidBrush
@@ -1616,7 +1616,7 @@ namespace System.Windows.Forms
 				}
 			}
 			
-			if (item.Focused && control.item_control.Focused) {				
+			if (item.Focused && control.Focused) {				
 				Rectangle focus_rect = text_rect;
 				if (control.FullRowSelect && control.View == View.Details) {
 					int width = 0;
