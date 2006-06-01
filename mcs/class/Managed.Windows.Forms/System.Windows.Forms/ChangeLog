@@ -1,3 +1,9 @@
+2006-06-01  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* XplatUIX11.cs (SetFocus): Make sure we can handle re-entrancy due to
+	  SendMessage directly calling window procedures, which in turn might
+	  call SetFocus()
+
 2006-06-01  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Control.cs: Don't handle WM_SETFOCUS if the same window already

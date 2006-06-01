@@ -4083,6 +4083,7 @@ namespace System.Windows.Forms {
 
 		internal override void SetFocus(IntPtr handle) {
 			Hwnd	hwnd;
+			IntPtr	prev_focus_window;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
@@ -4090,11 +4091,13 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-			if (FocusWindow != IntPtr.Zero) {
-				SendMessage(FocusWindow, Msg.WM_KILLFOCUS, hwnd.client_window, IntPtr.Zero);
-			}
-			SendMessage(hwnd.client_window, Msg.WM_SETFOCUS, FocusWindow, IntPtr.Zero);
+			prev_focus_window = FocusWindow;
 			FocusWindow = hwnd.client_window;
+
+			if (prev_focus_window != IntPtr.Zero) {
+				SendMessage(prev_focus_window, Msg.WM_KILLFOCUS, FocusWindow, IntPtr.Zero);
+			}
+			SendMessage(FocusWindow, Msg.WM_SETFOCUS, prev_focus_window, IntPtr.Zero);
 
 			//XSetInputFocus(DisplayHandle, Hwnd.ObjectFromHandle(handle).client_window, RevertTo.None, IntPtr.Zero);
 		}
