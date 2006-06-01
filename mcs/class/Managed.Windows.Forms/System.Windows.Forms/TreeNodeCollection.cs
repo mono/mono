@@ -153,8 +153,10 @@ namespace System.Windows.Forms {
 				tree_view = owner.TreeView;
 				if (owner.IsRoot)
 					tree_view.top_node = null;
-				if (tree_view != null)
+				if (tree_view != null) {
 					tree_view.UpdateBelow (owner);
+					tree_view.RecalculateVisibleOrder (owner);
+				}
 			}
 		}
 
@@ -208,24 +210,30 @@ namespace System.Windows.Forms {
 			TreeNode prev = GetPrevNode (removed);
 			TreeNode new_selected = null;
 			bool visible = removed.IsVisible;
-			
-			Array.Copy (nodes, index + 1, nodes, index, count - index);
-			count--;
-			if (nodes.Length > OrigSize && nodes.Length > (count * 2))
-				Shrink ();
 
                         TreeView tree_view = null;
 			if (owner != null)
 				tree_view = owner.TreeView;
+
 			if (tree_view != null) {
+				tree_view.RecalculateVisibleOrder (prev);
 				if (removed == tree_view.top_node) {
-					OpenTreeNodeEnumerator oe = new OpenTreeNodeEnumerator (removed);
-					if (oe.MoveNext () && oe.MoveNext ()) {
-						tree_view.top_node = oe.CurrentNode;
+
+					if (removed.IsRoot) {
+						tree_view.top_node = null;
 					} else {
-						oe = new OpenTreeNodeEnumerator (removed);
-						oe.MovePrevious ();
-						tree_view.top_node = oe.CurrentNode;
+						OpenTreeNodeEnumerator oe = new OpenTreeNodeEnumerator (removed);
+						if (oe.MovePrevious () && oe.MovePrevious ()) {
+							tree_view.top_node = oe.CurrentNode;
+						} else {
+							removed.is_expanded = false;
+							oe = new OpenTreeNodeEnumerator (removed);
+							if (oe.MoveNext () && oe.MoveNext ()) {
+								tree_view.top_node = oe.CurrentNode;
+							} else {
+								tree_view.top_node = null;
+							}
+						}
 					}
 				}
 				if (removed == tree_view.selected_node) {
@@ -238,8 +246,13 @@ namespace System.Windows.Forms {
 						new_selected = oe.CurrentNode;
 					}
 				}
-				
 			}
+
+			
+			Array.Copy (nodes, index + 1, nodes, index, count - index);
+			count--;
+			if (nodes.Length > OrigSize && nodes.Length > (count * 2))
+				Shrink ();
 
 			if (tree_view != null && new_selected != null) {
 				tree_view.SelectedNode = new_selected;

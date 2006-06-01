@@ -7,6 +7,11 @@
 	- Cap the top on update below in case the node was above the top
 	of the viewport rectangle.
 	- ExpandBelow and Collapse below need to obey Begin/End Update.
+	* TreeNode.cs: Make is_expanded internal so the treenode
+	collection can change it without firing the whole event chain.
+	* TreeNodeCollection.cs: When clearing all the child nodes make
+	sure to recalc the visible order.
+	- Improve algo for remove the top node
 
 2006-06-01  Peter Dennis Bartok  <pbartok@novell.com> 
 

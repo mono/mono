@@ -46,7 +46,7 @@ namespace System.Windows.Forms {
 		internal int visible_order;
 		internal int width = -1;
 		
-		private bool is_expanded = false;
+		internal bool is_expanded = false;
 		private bool check;
 		private bool is_editing;
 		internal OwnerDrawPropertyBag prop_bag;
