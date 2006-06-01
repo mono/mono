@@ -1,6 +1,12 @@
 2006-06-01  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Set the default border style in the constructor.
+	- Move painting to use OnPaintInternal instead of capturing
+	WM_PAINT, this is the correct way of doing things
+	- UpdateBelow shouldn't invalidate the scrollbar area
+	- Cap the top on update below in case the node was above the top
+	of the viewport rectangle.
+	- ExpandBelow and Collapse below need to obey Begin/End Update.
 
 2006-06-01  Peter Dennis Bartok  <pbartok@novell.com> 
 

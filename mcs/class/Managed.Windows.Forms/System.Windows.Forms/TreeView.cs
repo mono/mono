@@ -460,7 +460,8 @@ namespace System.Windows.Forms {
 		#endregion	// Protected Instance Properties
 
 		#region Public Instance Methods
-		public void BeginUpdate () {
+		public void BeginUpdate ()
+		{
 			update_stack++;
 		}
 
@@ -740,14 +741,7 @@ namespace System.Windows.Forms {
 
 		protected override void WndProc(ref Message m) {
 			switch ((Msg) m.Msg) {
-			case Msg.WM_PAINT: {				
-				PaintEventArgs	paint_event;
 
-				paint_event = XplatUI.PaintEventStart (Handle, true);
-				DoPaint (paint_event);
-				XplatUI.PaintEventEnd (Handle, true);
-				return;
-			}
 			case Msg.WM_LBUTTONDBLCLK:
 				int val = m.LParam.ToInt32();
 				DoubleClickHandler (null, new
@@ -938,13 +932,14 @@ namespace System.Windows.Forms {
 			}
 
 			if (node == root_node) {
-				Invalidate ();
+				Invalidate (ViewportRectangle);
 				return;
 			}
 				
 			// We need to update the current node so the plus/minus block gets update too
-			Rectangle invalid = new Rectangle (0, node.Bounds.Top - 1,
-					Width, Height - node.Bounds.Top + 1);
+			int top = Math.Max (node.Bounds.Top - 1, 0);
+			Rectangle invalid = new Rectangle (0, top,
+					Width, Height - top);
 			Invalidate (invalid);
 		}
 
@@ -987,11 +982,8 @@ namespace System.Windows.Forms {
 			Invalidate (new Rectangle (l, node.Bounds.Top, 8, node.Bounds.Height));
 		}
 
-		private void DoPaint (PaintEventArgs pe)
+		internal override void OnPaintInternal (PaintEventArgs pe)
 		{
-			if (Width <= 0 || Height <=  0 || Visible == false)
-				return;
-
 			Draw (pe.ClipRectangle, pe.Graphics);
 		}
 
@@ -1029,7 +1021,6 @@ namespace System.Windows.Forms {
 					*/
 					continue;
 				}
-
 
 				if (current.GetY () > clip.Bottom) {
 					break;
@@ -1396,6 +1387,11 @@ namespace System.Windows.Forms {
 
 		internal void ExpandBelow (TreeNode node, int count_to_next)
 		{
+			if (update_stack > 0) {
+				update_needed = true;
+				return;
+			}
+
 			Rectangle below = new Rectangle (0, node.Bounds.Bottom, ViewportRectangle.Width,
 					ViewportRectangle.Height - node.Bounds.Bottom);
 				
@@ -1412,6 +1408,11 @@ namespace System.Windows.Forms {
 
 		internal void CollapseBelow (TreeNode node, int count_to_next)
 		{
+			if (update_stack > 0) {
+				update_needed = true;
+				return;
+			}
+
 			Rectangle below = new Rectangle (0, node.Bounds.Bottom, ViewportRectangle.Width,
 					ViewportRectangle.Height - node.Bounds.Bottom);
 			int amount = count_to_next * ItemHeight;
