@@ -460,7 +460,7 @@ namespace MonoTests.System.Drawing.Drawing2D
 			gr.DrawString ("Test #37 80Percent", font, br, textStart, top);
 			
 			top += spacing;
-			pen = new Pen (new HatchBrush (HatchStyle.Percent70, fgColor, bgColor), penWidth);
+			pen = new Pen (new HatchBrush (HatchStyle.Percent80, fgColor, bgColor), penWidth);
 			gr.DrawLine (pen, lineStart, top, lineStart + length, top);
 
 			// #38
@@ -468,7 +468,7 @@ namespace MonoTests.System.Drawing.Drawing2D
 			gr.DrawString ("Test #38 90Percent", font, br, textStart, top);
 			
 			top += spacing;
-			pen = new Pen (new HatchBrush (HatchStyle.Percent70, fgColor, bgColor), penWidth);
+			pen = new Pen (new HatchBrush (HatchStyle.Percent90, fgColor, bgColor), penWidth);
 			gr.DrawLine (pen, lineStart, top, lineStart + length, top);
 
 			// #39

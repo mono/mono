@@ -1,3 +1,7 @@
+2006-06-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestHatchBrush.cs: Some were surprisingly similar until...
+
 2006-05-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GraphicsPathTest.cs: Ignore some test cases that aren't implemented 
