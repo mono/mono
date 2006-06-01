@@ -1,3 +1,17 @@
+2006-06-01  Ankit Jain  <jankit@novell.com>
+
+	* PEAPI.cs (PEFile.AddMethod): Add overload for return type as Param
+	instead of PEAPI.Type .
+	* Metadata.cs (MetaDataElement.HasCustomAttr): New. Temporary hack.
+	(Param.HasMarshalInfo): New.
+	(ClassDef.AddMethod): Add overload for return type as Param.
+	(MethodDef.ctor): Change internal .ctor's sig to take Param instead of
+	PEAPI.Type for return type.
+	(MethodDef.retType): Remove.
+	(MethodDef.TypeSig): Update to use ret_param always.
+	(MethodDef.BuildTables): Add ret_param to Param table only if it has
+	marshal info or custom attributes.
+
 2006-05-26  Ankit Jain  <jankit@novell.com>
 
 	* Metadata.cs (DeclSecurity): Rename to .. 

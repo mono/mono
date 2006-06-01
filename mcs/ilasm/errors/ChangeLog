@@ -1,3 +1,7 @@
+2006-06-01  Ankit Jain  <jankit@novell.com>
+
+	* err-cattr.il: New.
+
 2006-05-09  Ankit Jain  <jankit@novell.com>
 
 	* err-dup-label.il: New.

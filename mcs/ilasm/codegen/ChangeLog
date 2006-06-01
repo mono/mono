@@ -1,3 +1,12 @@
+2006-06-01  Ankit Jain  <jankit@novell.com>
+
+	* MethodDef.cs (MethodDef): Use a ParamDef for return type, instead of a
+	BaseTypeRef.
+	(MethodDef.ctor): Update.
+	(MethodDef.AddParamDefaultValue): Remove.
+	(MethodDef.GetParam): Likewise.
+	(MethodDef.Resolve): Update to use ret_param instead of ret_type.
+
 2006-05-31  Ankit Jain  <jankit@novell.com>
 
 	* TypeDef.cs (TypeDef.IsValueType): New.

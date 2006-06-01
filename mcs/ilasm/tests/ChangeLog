@@ -1,3 +1,8 @@
+2006-06-01  Ankit Jain  <jankit@novell.com>
+
+	* test-cattr-1.il: New. Test for custom attributes on return type of
+	a method.
+
 2006-05-26  Ankit Jain  <jankit@novell.com>
 
 	* test-perm_pass-3.il: New. Test for 2.0 style declarative security

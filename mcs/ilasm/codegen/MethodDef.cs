@@ -23,7 +23,7 @@ namespace Mono.ILASM {
                 private string name;
                 private string signature;
                 private Hashtable vararg_sig_table;
-                private BaseTypeRef ret_type;
+                private ParamDef ret_param;
                 private ArrayList param_list;
                 private ArrayList inst_list;
                 private ArrayList customattr_list;
@@ -45,7 +45,6 @@ namespace Mono.ILASM {
                 private string pinvoke_name;
                 private PEAPI.PInvokeAttr pinvoke_attr;
 		private SourceMethod source;
-                private PEAPI.NativeType ret_native_type;
                 private TypeDef type_def;
                 private GenericParameters gen_params;
 
@@ -58,10 +57,10 @@ namespace Mono.ILASM {
                         this.call_conv = call_conv;
                         this.impl_attr = impl_attr;
                         this.name = name;
-                        this.ret_type = ret_type;
                         this.param_list = param_list;
                         this.type_def = type_def;
                         this.gen_params = gen_params;
+                        this.ret_param = new ParamDef (PEAPI.ParamAttr.Default, "", ret_type);
 
                         inst_list = new ArrayList ();
                         label_table = new Hashtable ();
@@ -96,7 +95,7 @@ namespace Mono.ILASM {
                 }
 
                 public BaseTypeRef RetType {
-                        get { return ret_type; }
+                        get { return ret_param.Type; }
                 }
 
                 public PEAPI.CallConv CallConv {
@@ -185,13 +184,6 @@ namespace Mono.ILASM {
                         return gen_params.GetGenericParamNum (id);
                 }
 
-                public void AddParamDefaultValue (int index, PEAPI.Constant defval)
-                {
-                        if (param_list [index] != null) {
-                                ((ParamDef)param_list [index]).AddDefaultValue (defval);
-                        }
-                }
-
                 public void AddCustomAttribute (CustomAttr customattr)
                 {
                         if (customattr_list == null)
@@ -202,7 +194,7 @@ namespace Mono.ILASM {
 
                 public void AddRetTypeMarshalInfo (PEAPI.NativeType native_type)
                 {
-                        this.ret_native_type = native_type;
+                        this.ret_param.AddMarshalInfo (native_type);
                 }
 
                 public void AddLocals (ArrayList local_list)
@@ -249,8 +241,19 @@ namespace Mono.ILASM {
                         return pos;
                 }
 
+                /* index - 0: return type
+                 *         1: params start from this
+                 */
                 public ParamDef GetParam (int index)
                 {
+                        if (index == 0)
+                                return ret_param;
+
+                        if ((param_list == null) || (index < 0) || (index > param_list.Count))
+                                return null;
+
+                        index --; /* param_list has params zero-based */
+
                         if (param_list [index] != null)
                                 return (ParamDef)param_list [index];
                         else
@@ -305,7 +308,7 @@ namespace Mono.ILASM {
 			if (gen_params != null)
 				gen_params.ResolveConstraints (type_params, gen_params);
 			
-			BaseGenericTypeRef gtr = ret_type as BaseGenericTypeRef;
+			BaseGenericTypeRef gtr = RetType as BaseGenericTypeRef;
 			if (gtr != null)
 				gtr.Resolve (type_params, gen_params);
 
@@ -331,19 +334,16 @@ namespace Mono.ILASM {
 
                         PEAPI.Param [] param_array = GenerateParams (code_gen);
                         FixAttributes ();
-                        ret_type.Resolve (code_gen);
+                        ret_param.Define (code_gen);
 
                         if (classdef == null)
                                 methoddef = code_gen.PEFile.AddMethod (meth_attr, impl_attr,
-                                                name, ret_type.PeapiType, param_array);
+                                                name, ret_param.PeapiParam, param_array);
                         else			
                                 methoddef = classdef.AddMethod (meth_attr, impl_attr,
-                                                name, ret_type.PeapiType, param_array);
+                                                name, ret_param.PeapiParam, param_array);
 
                         methoddef.AddCallConv (call_conv);
-
-                        if (ret_native_type != null)
-                                methoddef.AddRetTypeMarshallInfo (ret_native_type);
 
                         is_resolved = true;
 
