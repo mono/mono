@@ -760,9 +760,14 @@ namespace PEAPI {
 		/// <param name="retType">return type</param>
 		/// <param name="pars">method parameters</param>
 		/// <returns>a descriptor for this new "global" method</returns>
+		public MethodDef AddMethod (string name, Param ret_param, Param [] pars) 
+		{
+			return moduleClass.AddMethod (name, ret_param, pars);
+		}
+		
 		public MethodDef AddMethod(string name, Type retType, Param[] pars) 
 		{
-			return moduleClass.AddMethod(name,retType,pars);
+			return AddMethod (name, new Param (ParamAttr.Default, "", retType), pars);
 		}
 
 		/// <summary>
@@ -774,9 +779,14 @@ namespace PEAPI {
 		/// <param name="retType">return type</param>
 		/// <param name="pars">method parameters</param>
 		/// <returns>a descriptor for this new "global" method</returns>
+		public MethodDef AddMethod (MethAttr mAtts, ImplAttr iAtts, string name, Param ret_param, Param [] pars) 
+		{
+			return moduleClass.AddMethod (mAtts, iAtts, name, ret_param, pars);
+		}
+
 		public MethodDef AddMethod(MethAttr mAtts, ImplAttr iAtts, string name, Type retType, Param[] pars) 
 		{
-			return moduleClass.AddMethod(mAtts,iAtts,name,retType,pars);
+			return AddMethod (mAtts, iAtts, name, new Param (ParamAttr.Default, "", retType), pars);
 		}
 
 		public MethodRef AddMethodToTypeSpec (Type item, string name, Type retType, Type[] pars) 
@@ -922,6 +932,7 @@ namespace PEAPI {
 		public void AddCustomAttribute (Method meth, byte [] data, MetaDataElement element)
 		{
 			metaData.AddCustomAttribute (new CustomAttribute (element, meth, data));
+			element.HasCustomAttr = true;
 		}
 
 		public void AddDeclSecurity (SecurityAction sec_action, byte [] data, MetaDataElement element)

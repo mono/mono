@@ -874,7 +874,8 @@ class_decl		: method_all
 			| extsource_spec
 			| customattr_decl
                           {
-                                codegen.CurrentCustomAttrTarget.AddCustomAttribute ((CustomAttr) $1);
+                                if (codegen.CurrentCustomAttrTarget != null)
+                                        codegen.CurrentCustomAttrTarget.AddCustomAttribute ((CustomAttr) $1);
                           }
 			| param_type_decl
 			| D_SIZE int32
@@ -2136,8 +2137,16 @@ method_decl		: D_EMITBYTE int32
 			| scope_block
 			| D_PARAM OPEN_BRACKET int32 CLOSE_BRACKET init_opt
                           {
-                                codegen.CurrentMethodDef.AddParamDefaultValue ((int)$3 - 1, (Constant)$5);
-                                codegen.CurrentCustomAttrTarget = codegen.CurrentMethodDef.GetParam ((int)$3 - 1);
+                                int index = (int) $3;
+                                ParamDef param = codegen.CurrentMethodDef.GetParam (index);
+                                codegen.CurrentCustomAttrTarget = param;
+
+                                if (param == null) {
+                                        Console.Error.WriteLine ("{0} Warning -- invalid param index ({1}) with .param", tokenizer.Location, index);
+                                        break;
+                                }
+                                if ($5 != null)
+                                        param.AddDefaultValue ((Constant) $5);
                           }
 			| param_type_decl
 			| id COLON
@@ -2154,7 +2163,8 @@ method_decl		: D_EMITBYTE int32
 			| language_decl
 			| customattr_decl
                           {
-                                codegen.CurrentCustomAttrTarget.AddCustomAttribute ((CustomAttr) $1);
+                                if (codegen.CurrentCustomAttrTarget != null)
+                                        codegen.CurrentCustomAttrTarget.AddCustomAttribute ((CustomAttr) $1);
                           }
 			| data_decl
 			;
@@ -2669,7 +2679,8 @@ event_decl		: D_ADDON method_ref
                           }
 			| customattr_decl
                           {
-                                codegen.CurrentCustomAttrTarget.AddCustomAttribute ((CustomAttr) $1);
+                                if (codegen.CurrentCustomAttrTarget != null)
+                                        codegen.CurrentCustomAttrTarget.AddCustomAttribute ((CustomAttr) $1);
                           }
 			| extsource_spec
 			| language_decl
@@ -2730,7 +2741,8 @@ prop_decl		: D_SET method_ref
                           }
 			| customattr_decl
                          {
-                               codegen.CurrentCustomAttrTarget.AddCustomAttribute ((CustomAttr) $1);
+                                if (codegen.CurrentCustomAttrTarget != null)
+                                        codegen.CurrentCustomAttrTarget.AddCustomAttribute ((CustomAttr) $1);
                          }
 			| extsource_spec
 			| language_decl
@@ -3141,7 +3153,8 @@ assemblyref_decl	: D_VER int32 COLON int32 COLON int32 COLON int32
                           }
                         | customattr_decl
                           {
-                                codegen.CurrentCustomAttrTarget.AddCustomAttribute ((CustomAttr) $1);
+                                if (codegen.CurrentCustomAttrTarget != null)
+                                        codegen.CurrentCustomAttrTarget.AddCustomAttribute ((CustomAttr) $1);
                           }
 			;
 

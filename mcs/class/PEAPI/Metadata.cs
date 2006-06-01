@@ -242,6 +242,8 @@ namespace PEAPI {
 		protected bool done = false;
 		protected MDTable tabIx;
 		protected bool sortTable = false;
+		//Temporary hack.. 
+		private bool has_custom_attrs = false;
 
 		internal MetaDataElement() { }
 
@@ -252,6 +254,11 @@ namespace PEAPI {
 			set {
 				row = value;
 			}
+		}
+
+		public bool HasCustomAttr {
+			get { return has_custom_attrs; }
+			set { has_custom_attrs = value; }
 		}
 
 		internal virtual uint GetCodedIx(CIx code) { return 0; }
@@ -1328,6 +1335,10 @@ namespace PEAPI {
 			tabIx = MDTable.Param;
 		}
 
+		public bool HasMarshalInfo {
+			get { return marshalInfo != null; }
+		}
+
 		/// <summary>
 		/// Add a default value to this parameter
 		/// </summary>
@@ -1689,8 +1700,13 @@ namespace PEAPI {
 		/// <returns>a descriptor for this new method</returns>
 		public MethodDef AddMethod(string name, Type retType, Param[] pars) 
 		{
+			return AddMethod (name, new Param (ParamAttr.Default, "", retType), pars);
+		}
+
+		public MethodDef AddMethod (string name, Param ret_param, Param [] pars) 
+		{
 			// Console.WriteLine("Adding method " + name + " to class " + this.name);
-			MethodDef meth = new MethodDef(metaData,name,retType, pars);
+			MethodDef meth = new MethodDef(metaData,name, ret_param, pars);
 			methods.Add(meth);
 			return meth;
 		}
@@ -1705,9 +1721,9 @@ namespace PEAPI {
 		/// <param name="pars">parameters</param>
 		/// <returns>a descriptor for this new method</returns>
 		public MethodDef AddMethod(MethAttr mAtts, ImplAttr iAtts, string name, 
-				Type retType, Param[] pars) {
+				Param ret_param, Param [] pars) {
 			// Console.WriteLine("Adding method " + name + " to class " + this.name);
-			MethodDef meth = new MethodDef(metaData,mAtts,iAtts,name,retType,pars);
+			MethodDef meth = new MethodDef (metaData, mAtts, iAtts, name, ret_param, pars);
 			methods.Add(meth);
 			return meth;
 		}
@@ -3800,7 +3816,6 @@ namespace PEAPI {
 		// private static readonly byte LocalSigByte = 0x7;
 		uint parIx = 0, textOffset = 0;
 		private CallConv callConv = CallConv.Default;
-		private Type retType;
 		private int gen_param_count;
 
 		MetaData metaData;
@@ -3817,21 +3832,23 @@ namespace PEAPI {
 		ImplMap pinvokeImpl;
 		Param ret_param;
 
-
-		internal MethodDef(MetaData md, string name, Type retType, Param[] pars) : base (name)
+		internal MethodDef (MetaData md, string name, Param ret_param, Param [] pars)
+			: this (md, 0, 0, name, ret_param, pars)
 		{
-			this.retType = retType;
-			metaData = md;
-			parList = pars;
-			if (parList != null) numPars = parList.Length;
-			tabIx = MDTable.Method;
 		}
 
 		internal MethodDef (MetaData md, MethAttr mAttrSet, ImplAttr iAttrSet, string name, 
-				Type retType, Param [] pars) : this (md, name, retType, pars)
+				Param ret_param, Param [] pars) 
+			: base (name)
 		{
 			methFlags = (ushort)mAttrSet;
 			implFlags = (ushort)iAttrSet;
+			this.ret_param = ret_param;
+			metaData = md;
+			parList = pars;
+			if (parList != null) 
+				numPars = parList.Length;
+			tabIx = MDTable.Method;
 		}
 
 		internal Param[] GetPars() 
@@ -3917,7 +3934,6 @@ namespace PEAPI {
 		/* Add Marshal info for return type */
 		public void AddRetTypeMarshallInfo (NativeType marshallType) 
 		{
-			ret_param = new Param (ParamAttr.HasFieldMarshal, "", retType);
 			ret_param.AddMarshallInfo (marshallType);
 		}
 
@@ -3952,7 +3968,7 @@ namespace PEAPI {
 			for (int i=0; i < numPars; i++) {
 				pars[i] = parList[i].GetParType();
 			}
-			varArgSig = new MethodRef(this,name,retType,pars,true,optPars, 0);
+			varArgSig = new MethodRef (this, name, ret_param.GetParType (), pars, true, optPars, 0);
 
 			if (varArgSigList == null)
 				varArgSigList = new ArrayList ();
@@ -3966,9 +3982,9 @@ namespace PEAPI {
 			if ((callConv & CallConv.Generic) == CallConv.Generic)
 				MetaData.CompressNum ((uint) gen_param_count, sig);
 			MetaData.CompressNum((uint)numPars,sig);
-			if (ret_param != null)
-				ret_param.seqNo = 0;
-			retType.TypeSig(sig);
+
+			ret_param.seqNo = 0;
+			ret_param.TypeSig (sig);
 			for (ushort i=0; i < numPars; i++) {
 				parList[i].seqNo = (ushort)(i+1);
 				parList[i].TypeSig(sig);
@@ -3997,7 +4013,7 @@ namespace PEAPI {
 			nameIx = md.AddToStringsHeap(name);
 			sigIx = GetSigIx(md);
 			parIx = md.TableIndex(MDTable.Param);
-			if (ret_param != null) {
+			if (ret_param.HasMarshalInfo || ret_param.HasCustomAttr) {
 				md.AddToTable(MDTable.Param, ret_param);
 				ret_param.BuildTables(md);
 			}

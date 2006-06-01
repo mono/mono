@@ -1,3 +1,9 @@
+2006-06-01  Ankit Jain  <jankit@novell.com>
+
+	* ILParser.jay (method_decl | D_PARAM ..): Param index is zero-based,
+	with zero representing the return value.
+	Update to check CurrentCustomAttrTarget for null before using it.
+
 2006-05-26  Ankit Jain  <jankit@novell.com>
 	
 	* ILParser.jay: Update to use new Assembly class.
