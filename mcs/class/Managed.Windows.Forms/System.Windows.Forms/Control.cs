@@ -4032,7 +4032,7 @@ namespace System.Windows.Forms
 				}
 
 				case Msg.WM_MOUSEWHEEL: {				
-
+					DefWndProc(ref m);
 					OnMouseWheel (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
 						mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
 						HighOrder(m.WParam.ToInt32())));

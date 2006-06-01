@@ -2507,6 +2507,20 @@ namespace System.Windows.Forms {
 					return IntPtr.Zero;
 				}
 
+				case Msg.WM_MOUSEWHEEL: {
+					Hwnd hwnd;
+
+					hwnd = Hwnd.GetObjectFromWindow(msg.HWnd);
+
+					if ((hwnd != null) && (hwnd.parent != null)) {
+						SendMessage(hwnd.parent.client_window, Msg.WM_MOUSEWHEEL, msg.WParam, msg.LParam);
+						if (msg.Result == IntPtr.Zero) {
+							return IntPtr.Zero;
+						}
+					}
+					return IntPtr.Zero;
+				}
+
 				case Msg.WM_SETCURSOR: {
 					Hwnd	hwnd;
 

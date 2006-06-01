@@ -1,3 +1,9 @@
+2006-06-01  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* XplatUIX11.cs (DefWndProc): WM_MOUSEWHEEL needs to be passed up
+	* Control.cs (WndProc): MS always calls the DefWndProc to pass
+	  up the event
+
 2006-06-01  Mike Kestner  <mkestner@novell.com>
 
 	* ListView.cs: revamp the focus management in ListView.  It still
