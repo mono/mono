@@ -633,6 +633,10 @@ namespace System.Windows.Forms
 			Refresh ();
 		}
 
+		internal bool SizeSpecified {
+			get { return size_specified; }
+		}
+
 		const int text_padding = 3;
 
 		private Size CalcButtonSize ()
