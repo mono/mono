@@ -1,3 +1,12 @@
+2006-06-01  Raja R Harinath  <rharinath@novell.com>
+
+	* flowanalysis.cs (MyBitVector): Simplify representation.
+	(MyBitVector.Clone): Avoid allocating BitArray.
+	(MyBitVector.operator&): Rename from MyBitVector.And and make symmetric.
+	(MyBitVector.operator|): Likewise, with MyBitVector.Or.
+	(*): Update.  Change all references to MyBitVector.And and
+	MyBitVector.Or to &= and |=.
+
 2006-05-29  Raja R Harinath  <rharinath@novell.com>
 
 	Fix cs0231-[34].cs.

@@ -3,6 +3,7 @@
 //
 // Author:
 //   Martin Baulig (martin@ximian.com)
+//   Raja R Harinath (rharinath@novell.com)
 //
 // (C) 2001, 2002, 2003 Ximian, Inc.
 //
@@ -475,12 +476,12 @@ namespace Mono.CSharp
 						      child.Type, child.Reachability.IsUnreachable, unreachable);
 
 					if (!unreachable)
-						MyBitVector.And (ref locals, child.locals);
+						locals &= child.locals;
 
 					// An `out' parameter must be assigned in all branches which do
 					// not always throw an exception.
 					if (!child.Reachability.AlwaysThrows)
-						MyBitVector.And (ref parameters, child.parameters);
+						parameters &= child.parameters;
 
 					Report.Debug (2, "    MERGING SIBLING #2", parameters, locals);
 				}
@@ -516,8 +517,8 @@ namespace Mono.CSharp
 					return child;
 				}
 
-				MyBitVector.Or (ref locals, child.locals);
-				MyBitVector.Or (ref parameters, child.parameters);
+				locals |= child.locals;
+				parameters |= child.parameters;
 
 				if (overwrite)
 					reachability = new_r.Clone ();
@@ -545,8 +546,8 @@ namespace Mono.CSharp
 					Report.Debug (1, "    MERGING BREAK ORIGIN", vector);
 					if (vector.Reachability.IsUnreachable)
 						continue;
-					MyBitVector.And (ref locals, vector.locals);
-					MyBitVector.And (ref parameters, vector.parameters);
+					locals &= vector.locals;
+					parameters &= vector.parameters;
 					reachability.Meet (vector.Reachability);
 				}
 
@@ -1756,49 +1757,48 @@ namespace Mono.CSharp
 	// </summary>
 	public class MyBitVector {
 		public readonly int Count;
-		public MyBitVector InheritsFrom;
 		public static readonly MyBitVector Empty = new MyBitVector ();
 
-		BitArray vector;
+		BitArray vector, shared;
 
 		MyBitVector ()
 		{
-			InheritsFrom = null;
+			vector = null;
+			shared = new BitArray (0, false);
 			Count = 0;
 		}
 
 		public MyBitVector (MyBitVector InheritsFrom, int Count)
 		{
-			if (InheritsFrom != null) {
-				while (InheritsFrom.InheritsFrom != null)
-					InheritsFrom = InheritsFrom.InheritsFrom;				
-				if (InheritsFrom.Count >= Count && InheritsFrom.vector == null)
-					InheritsFrom = null;
-			}
-
-			this.InheritsFrom = InheritsFrom;
+			vector = null;
+			shared = InheritsFrom == null ? null : InheritsFrom.Shared;
 			this.Count = Count;
+		}
+
+		BitArray Shared {
+			get {
+				if (shared == null) {
+					shared = vector;
+					vector = null;
+				}
+				return shared;
+			}
 		}
 
 		// <summary>
 		//   Get/set bit `index' in the bit vector.
 		// </summary>
-		public bool this [int index]
-		{
+		public bool this [int index] {
 			get {
 				if (index >= Count)
 					throw new ArgumentOutOfRangeException ();
 
-				// We're doing a "copy-on-write" strategy here; as long
-				// as nobody writes to the array, we can use our parent's
-				// copy instead of duplicating the vector.
-
 				if (vector != null)
 					return vector [index];
-				if (InheritsFrom == null)
+				if (shared == null)
 					return true;
-				if (index < InheritsFrom.Count)
-					return InheritsFrom [index];
+				if (index < shared.Count)
+					return shared [index];
 				return false;
 			}
 
@@ -1816,7 +1816,7 @@ namespace Mono.CSharp
 		//   Performs an `or' operation on the bit vector.  The `new_vector' may have a
 		//   different size than the current one.
 		// </summary>
-		private void Or (MyBitVector new_vector)
+		private MyBitVector Or (MyBitVector new_vector)
 		{
 			int min = new_vector.Count;
 			if (Count < min)
@@ -1824,13 +1824,15 @@ namespace Mono.CSharp
 
 			for (int i = 0; i < min; i++)
 				this [i] |= new_vector [i];
+
+			return this;
 		}
 
 		// <summary>
 		//   Perfonrms an `and' operation on the bit vector.  The `new_vector' may have
 		//   a different size than the current one.
 		// </summary>
-		private void And (MyBitVector new_vector)
+		private MyBitVector And (MyBitVector new_vector)
 		{
 			int min = new_vector.Count;
 			if (Count < min)
@@ -1841,71 +1843,80 @@ namespace Mono.CSharp
 
 			for (int i = min; i < Count; i++)
 				this [i] = false;
+
+			return this;
 		}
 
-		public static void And (ref MyBitVector target, MyBitVector vector)
+		public static MyBitVector operator & (MyBitVector a, MyBitVector b)
 		{
-			if (vector == null)
-				return;
-			if (target == null)
-				target = vector.Clone ();
+			if (a == null && b == null)
+				return null;
+			if (a == null)
+				return b.Clone ();
+			if (b == null)
+				return a.Clone ();
+			if (a.Count > b.Count)
+				return a.Clone ().And (b);
 			else
-				target.And (vector);
+				return b.Clone ().And (a);					
 		}
 
-		public static void Or (ref MyBitVector target, MyBitVector vector)
+		public static MyBitVector operator | (MyBitVector a, MyBitVector b)
 		{
-			if (target == null)
-				return;
-			if (vector == null)
-				target.SetAll (true);
+			if (a == null && b == null)
+				return null;
+			if (a == null)
+				return new MyBitVector (null, b.Count);
+			if (b == null)
+				return new MyBitVector (null, a.Count);
+			if (a.Count > b.Count)
+				return a.Clone ().Or (b);
 			else
-				target.Or (vector);
+				return b.Clone ().Or (a);
 		}
 
-		// <summary>
-		//   This does a deep copy of the bit vector.
-		// </summary>
 		public MyBitVector Clone ()
 		{
-			if (Count == 0)
-				return Empty;
-			MyBitVector retval = new MyBitVector (this, Count);
-			retval.initialize_vector ();
-			return retval;
+			return Count == 0 ? Empty : new MyBitVector (this, Count);
 		}
 
 		public void SetAll (bool value)
 		{
-			InheritsFrom = value ? null : Empty;
+			// Don't clobber Empty
+			if (Count == 0)
+				return;
+			shared = value ? null : Empty.Shared;
 			vector = null;
 		}
 
 		void initialize_vector ()
 		{
-			if (InheritsFrom == null) {
+			if (shared == null) {
 				vector = new BitArray (Count, true);
 				return;
 			}
 
 			vector = new BitArray (Count, false);
 
-			int min = InheritsFrom.Count;
+			int min = shared.Count;
 			if (min > Count)
 				min = Count;
 
 			for (int i = 0; i < min; i++)
-				vector [i] = InheritsFrom [i];
+				vector [i] = shared [i];
 
-			InheritsFrom = null;
+			shared = null;
 		}
 
 		StringBuilder Dump (StringBuilder sb)
 		{
-			if (vector == null)
-				return InheritsFrom == null ? sb.Append ("/") : InheritsFrom.Dump (sb.Append ("="));
-			for (int i = 0; i < Count; i++)
-				sb.Append (this [i] ? "1" : "0");
+			BitArray dump = vector == null ? shared : vector;
+			if (dump == null)
+				return sb.Append ("/");
+			if (dump == shared)
+				sb.Append ("=");
+			for (int i = 0; i < dump.Count; i++)
+				sb.Append (dump [i] ? "1" : "0");
 			return sb;
 		}
 
