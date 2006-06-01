@@ -1,3 +1,9 @@
+2006-06-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RandomNumberGeneratorTest.cs: Don't forget the last run in Runs. 
+	Track both 0 and 1 runs. Changed runs ranges to match FIPS140-2 Change
+	Notice #1 (fixes bug #78560). Updated test cases to NUnit 2.2 format.
+
 2005-12-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RijndaelTest.cs: Add test cases for cycling key sizes and block 

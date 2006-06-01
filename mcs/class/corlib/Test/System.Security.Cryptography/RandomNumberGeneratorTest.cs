@@ -2,9 +2,10 @@
 // RandomNumberGeneratorTest.cs - NUnit Test Cases for RNG
 //
 // Author:
-//		Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
 
 using NUnit.Framework;
@@ -25,23 +26,26 @@ namespace MonoTests.System.Security.Cryptography {
 //	not implemented
 //	http://www.ietf.org/rfc/rfc1750.txt
 
-public class RandomNumberGeneratorTest : TestCase {
-	protected RandomNumberGenerator rng;
+[TestFixture]
+public class RandomNumberGeneratorTest {
 
-	protected override void SetUp () 
+	private string name;
+	private byte[] sample;
+
+	[TestFixtureSetUp]
+	public void SetUp () 
 	{
-		rng = RandomNumberGenerator.Create();
-	}
-
-	protected override void TearDown () {}
-
-	public void AssertEquals (string msg, byte[] array1, byte[] array2) 
-	{
-		AllTests.AssertEquals (msg, array1, array2);
+		// all tests should be done on the same random sample
+		RandomNumberGenerator rng = RandomNumberGenerator.Create ();
+		name = rng.ToString ();
+		// 20,000 bits
+		sample = new byte[2500];
+		rng.GetBytes (sample);
 	}
 
 	// count the number of 1
-	protected void Monobit (string rngName, byte[] sample) 
+	[Test]
+	public void Monobit () 
 	{
 		int x = 0;
 		for (int i=0; i < sample.Length; i++) {
@@ -53,11 +57,13 @@ public class RandomNumberGeneratorTest : TestCase {
 				b >>= 1;
 			}
 		}
-		Assert (rngName + " Monobit x=" + x, ((9725 < x) && (x < 10275)));
+		Assert.IsTrue ((9725  < x), String.Format ("{0} Monobit x={1} > 9725",  name, x));
+		Assert.IsTrue ((x < 10275), String.Format ("{0} Monobit x={1} < 10275", name, x));
 	}
 
 	// 16 patterns (nibbles)
-	protected void Poker (string rngName, byte[] sample) 
+	[Test]
+	public void Poker () 
 	{
 		int[] pattern = new int[16];
 		for (int i = 0; i < sample.Length; i++) {
@@ -72,13 +78,15 @@ public class RandomNumberGeneratorTest : TestCase {
 		for (int i = 0; i < 16; i++)
 			result += (pattern[i] * pattern[i]);
 		result = ((16 * result) / 5000) - 5000;
-		Assert (rngName + " Poker: " + result, ((result > 2.16) && (result < 46.17)));
+
+		Assert.IsTrue (((result > 2.16) && (result < 46.17)), name + " Poker: " + result);
 	}
 
 	// runs of 1 (or 0)
-	protected void Runs (string rngName, byte[] sample) 
+	[Test]
+	public void Runs () 
 	{
-		int[] runs = new int[6];
+		int[,] runs = new int[6,2];
 		int x = 0;
 		bool one = false;
 		bool zero = false;
@@ -91,7 +99,7 @@ public class RandomNumberGeneratorTest : TestCase {
 						zero = false;
 						int p = Math.Min (x, 6) - 1;
 						if (p >= 0)
-							runs[p]++;
+							runs[p,0]++;
 						x = 0;
 					}
 				}
@@ -99,9 +107,9 @@ public class RandomNumberGeneratorTest : TestCase {
 					if (!zero) {
 						one = false;
 						zero = true;
-						/*int p = Math.Min (x, 6) - 1;
+						int p = Math.Min (x, 6) - 1;
 						if (p >= 0)
-							runs[p]++;*/
+							runs[p,1]++;
 						x = 0;
 					}
 				}
@@ -110,16 +118,32 @@ public class RandomNumberGeneratorTest : TestCase {
 				b >>= 1;
 			}
 		}
-		Assert (rngName + " Runs length=1: " + runs[0], ((runs[0] >= 2343) && (runs[0] <= 2657)));
-		Assert (rngName + " Runs length=2: " + runs[1], ((runs[1] >= 1135) && (runs[1] <= 1365)));
-		Assert (rngName + " Runs length=3: " + runs[2], ((runs[2] >=  542) && (runs[2] <= 708)));
-		Assert (rngName + " Runs length=4: " + runs[3], ((runs[3] >=  251) && (runs[3] <= 373)));
-		Assert (rngName + " Runs length=5: " + runs[4], ((runs[4] >=  111) && (runs[4] <= 201)));
-		Assert (rngName + " Runs length=6+ " + runs[5], ((runs[5] >=  111) && (runs[5] <= 201)));
+		// don't forget the ast run
+		if (x > 0) {
+			int p = Math.Min (x, 6) - 1;
+			if (p >= 0)
+				runs [p, zero ? 0 : 1]++;
+		}
+		// Updated ranges as per FIPS140-2 Change Notice #1
+		// check for runs of zeros
+		Assert.IsTrue (((runs[0,0] >= 2315) && (runs[0,0] <= 2685)), name + " 0-Runs length=1: " + runs[0,0]);
+		Assert.IsTrue (((runs[1,0] >= 1114) && (runs[1,0] <= 1386)), name + " 0-Runs length=2: " + runs[1,0]);
+		Assert.IsTrue (((runs[2,0] >=  527) && (runs[2,0] <=  723)), name + " 0-Runs length=3: " + runs[2,0]);
+		Assert.IsTrue (((runs[3,0] >=  240) && (runs[3,0] <=  384)), name + " 0-Runs length=4: " + runs[3,0]);
+		Assert.IsTrue (((runs[4,0] >=  103) && (runs[4,0] <=  209)), name + " 0-Runs length=5: " + runs[4,0]);
+		Assert.IsTrue (((runs[5,0] >=  103) && (runs[5,0] <=  209)), name + " 0-Runs length=6+ " + runs[5,0]);
+		// check for runs of ones
+		Assert.IsTrue (((runs[0,1] >= 2315) && (runs[0,1] <= 2685)), name + " 1-Runs length=1: " + runs[0,1]);
+		Assert.IsTrue (((runs[1,1] >= 1114) && (runs[1,1] <= 1386)), name + " 1-Runs length=2: " + runs[1,1]);
+		Assert.IsTrue (((runs[2,1] >=  527) && (runs[2,1] <=  723)), name + " 1-Runs length=3: " + runs[2,1]);
+		Assert.IsTrue (((runs[3,1] >=  240) && (runs[3,1] <=  384)), name + " 1-Runs length=4: " + runs[3,1]);
+		Assert.IsTrue (((runs[4,1] >=  103) && (runs[4,1] <=  209)), name + " 1-Runs length=5: " + runs[4,1]);
+		Assert.IsTrue (((runs[5,1] >=  103) && (runs[5,1] <=  209)), name + " 1-Runs length=6+ " + runs[5,1]);
 	}
 
 	// no long runs of 26 or more (0 or 1)
-	protected void LongRuns (string rngName, byte[] sample) 
+	[Test]
+	public void LongRuns () 
 	{
 		int longestRun = 0;
 		int currentRun = 0;
@@ -150,21 +174,7 @@ public class RandomNumberGeneratorTest : TestCase {
 				b >>= 1;
 			}
 		}
-		Assert (rngName + " Long Runs max = " + longestRun, (longestRun < 26));
-	}
-
-	// all tests should be done on the same random sample
-	public void TestFIPS140() 
-	{
-		string name = rng.ToString();
-		// 20,000 bits
-		byte[] sample = new byte[2500];
-		rng.GetBytes (sample);
-
-		Monobit (name, sample);
-		Poker (name, sample);
-		Runs (name, sample);
-		LongRuns (name, sample);
+		Assert.IsTrue ((longestRun < 26), name + " Long Runs max = " + longestRun);
 	}
 }
 
