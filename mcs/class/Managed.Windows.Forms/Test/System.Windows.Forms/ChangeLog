@@ -1,3 +1,9 @@
+2006-06-01  Chris Toshok  <toshok@ximian.com>
+
+	* CurrencyManagerTest.cs: add a few tests to see what events are
+	being emitted in which order from AddNew, CancelCurrentEdit and
+	EndCurrentEdit.
+
 2006-05-31  Peter Dennis Bartok <pbartok@novell.com>
 
 	* LabelTest.cs: 

@@ -609,6 +609,135 @@ namespace MonoTests.System.Windows.Forms {
 
 			Assert.AreEqual (0, cm.Position, "#2");
 		}
+
+		int event_num;
+		int current_changed;
+		int position_changed;
+		int item_changed;
+		ItemChangedEventArgs item_changed_args;
+
+		void CurrentChanged (object sender, EventArgs args) { current_changed = ++event_num; }
+		void PositionChanged (object sender, EventArgs args) { position_changed = ++event_num; }
+		void ItemChanged (object sender, ItemChangedEventArgs args) { item_changed = ++event_num; item_changed_args = args; }
+
+		[Test]
+		public void AddNew ()
+		{
+			DataSet data_source = CreateRelatedDataSet ();
+			BindingContext bc = new BindingContext ();
+			CurrencyManager cm = bc [data_source, "Table1"] as CurrencyManager;
+
+			event_num = current_changed = position_changed = -1;
+			cm.CurrentChanged += new EventHandler (CurrentChanged);
+			cm.PositionChanged += new EventHandler (PositionChanged);
+			cm.ItemChanged += new ItemChangedEventHandler (ItemChanged);
+
+			Assert.AreEqual (0, cm.Position, "AddNew1");
+			Assert.AreEqual (10, cm.Count, "AddNew2");
+
+			cm.AddNew ();
+
+			Assert.AreEqual (10, cm.Position, "AddNew3");
+			Assert.AreEqual (11, cm.Count, "AddNew4");
+
+			Assert.AreEqual (0, item_changed, "AddNew5");
+			Assert.AreEqual (-1, item_changed_args.Index, "AddNew6");
+			Assert.AreEqual (1, current_changed, "AddNew7");
+			Assert.AreEqual (2, position_changed, "AddNew8");
+
+			cm.CurrentChanged -= new EventHandler (CurrentChanged);
+			cm.PositionChanged -= new EventHandler (PositionChanged);
+		}
+
+		[Test]
+		public void CancelAddNew ()
+		{
+			DataSet data_source = CreateRelatedDataSet ();
+			BindingContext bc = new BindingContext ();
+			CurrencyManager cm = bc [data_source, "Table1"] as CurrencyManager;
+
+			event_num = current_changed = position_changed = -1;
+			cm.CurrentChanged += new EventHandler (CurrentChanged);
+			cm.PositionChanged += new EventHandler (PositionChanged);
+			cm.ItemChanged += new ItemChangedEventHandler (ItemChanged);
+
+			Assert.AreEqual (0, cm.Position, "CancelAddNew1");
+			Assert.AreEqual (10, cm.Count, "CancelAddNew2");
+
+			cm.AddNew ();
+
+			Assert.AreEqual (0, item_changed, "CancelAddNew3");
+			Assert.AreEqual (-1, item_changed_args.Index, "CancelAddNew4");
+			Assert.AreEqual (1, current_changed, "CancelAddNew5");
+			Assert.AreEqual (2, position_changed, "CancelAddNew6");
+
+			cm.CancelCurrentEdit ();
+
+			Assert.AreEqual (6, item_changed, "CancelAddNew7");
+			Assert.AreEqual (3, current_changed, "CancelAddNew8");
+			Assert.AreEqual (4, position_changed, "CancelAddNew9");
+
+			Assert.AreEqual (9, cm.Position, "CancelAddNew10");
+			Assert.AreEqual (10, cm.Count, "CancelAddNew11");
+
+			cm.CurrentChanged -= new EventHandler (CurrentChanged);
+			cm.PositionChanged -= new EventHandler (PositionChanged);
+		}
+
+		[Test]
+		public void EndAddNew ()
+		{
+			DataSet data_source = CreateRelatedDataSet ();
+			BindingContext bc = new BindingContext ();
+			CurrencyManager cm = bc [data_source, "Table1"] as CurrencyManager;
+
+			event_num = current_changed = position_changed = -1;
+			cm.CurrentChanged += new EventHandler (CurrentChanged);
+			cm.PositionChanged += new EventHandler (PositionChanged);
+			cm.ItemChanged += new ItemChangedEventHandler (ItemChanged);
+
+			Assert.AreEqual (0, cm.Position, "EndAddNew1");
+			Assert.AreEqual (10, cm.Count, "EndAddNew2");
+
+			cm.AddNew ();
+
+			Assert.AreEqual (0, item_changed, "EndAddNew3");
+			Assert.AreEqual (-1, item_changed_args.Index, "EndAddNew4");
+			Assert.AreEqual (1, current_changed, "EndAddNew5");
+			Assert.AreEqual (2, position_changed, "EndAddNew6");
+
+			cm.EndCurrentEdit ();
+
+			Assert.AreEqual (3, item_changed, "EndAddNew7");
+			Assert.AreEqual (-1, item_changed_args.Index, "EndAddNew8");
+			Assert.AreEqual (1, current_changed, "EndAddNew9");
+			Assert.AreEqual (2, position_changed, "EndAddNew10");
+
+			Assert.AreEqual (10, cm.Position, "EndAddNew11");
+			Assert.AreEqual (11, cm.Count, "EndAddNew12");
+
+			cm.CurrentChanged -= new EventHandler (CurrentChanged);
+			cm.PositionChanged -= new EventHandler (PositionChanged);
+		}
+
+		[Test]
+		public void AddNew2 ()
+		{
+			DataSet data_source = CreateRelatedDataSet ();
+			BindingContext bc = new BindingContext ();
+			CurrencyManager cm = bc [data_source, "Table1"] as CurrencyManager;
+
+			Assert.AreEqual (0, cm.Position, "AddNew1");
+			Assert.AreEqual (10, cm.Count, "AddNew2");
+
+			cm.AddNew ();
+
+			// this does an implicit EndCurrentEdit
+			cm.AddNew ();
+
+			Assert.AreEqual (11, cm.Position, "AddNew3");
+			Assert.AreEqual (12, cm.Count, "AddNew4");
+		}
 	}
 }
 
