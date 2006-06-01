@@ -157,16 +157,6 @@ namespace System {
 			return value.Value;
 		}
 
-		public static bool operator == (Nullable<T> left, Nullable<T> right)
-		{
-			return left.Equals (right);
-		}
-
-		public static bool operator != (Nullable<T> left, Nullable<T> right)
-		{
-			return !left.Equals (right);
-		}
-
 		// These are called by the JIT
 		// Ironicly, the C#  code is the same for these two,
 		// however, on the inside they do somewhat different things
