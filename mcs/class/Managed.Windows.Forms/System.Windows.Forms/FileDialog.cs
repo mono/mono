@@ -685,6 +685,9 @@ namespace System.Windows.Forms {
 		
 		private void SelectFilter ()
 		{
+			if (FilterIndex > mwfFileView.FilterArrayList.Count)
+				return;
+
 			do_not_call_OnSelectedIndexChangedFileTypeComboBox = true;
 			fileTypeComboBox.BeginUpdate ();
 			fileTypeComboBox.SelectedIndex = FilterIndex - 1;

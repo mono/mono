@@ -1,5 +1,10 @@
 2006-06-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* FileDialog.cs: fix crash when running SharpChess, which sets the
+	FilterIndex to 2 with only one Filter.
+
+2006-06-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* ToolBar.cs: add SizeSpecified property.
 	* ToolBarButton.cs: when the ButtonSize is calculated by the container,
 	try to figure out our real size, otherwise fallback to what the
