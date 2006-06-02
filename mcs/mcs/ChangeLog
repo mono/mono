@@ -1,3 +1,15 @@
+2006-06-02  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #78079
+	* expression.cs (Binary.DoNumericPromotions): Remove and rewrite.
+	(Binary.OverloadResolve_PredefinedIntegral): New.
+	(Binary.OverloadResolve_PredefinedFloating): New.
+	(Binary.OverloadResolve_PredefinedString): New.
+	(Binary.ResolveOperator): Use those instead of DoNumericPromotions.
+	Follow the standard more closely, and treat numeric promotions in
+	terms of overload resolution.
+	(Binary.CheckShiftArguments): Simplify.
+
 2006-06-01  Raja R Harinath  <rharinath@novell.com>
 
 	* flowanalysis.cs (MyBitVector): Simplify representation.
