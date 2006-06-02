@@ -1,3 +1,7 @@
+2006-06-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* BinaryReader.cs: use BlockCopyInternal.
+
 2006-05-01  Daniel Drake  <dsd@gentoo.org>
 
 	* Directory.cs: Return false (as documented) on ERROR_ACCESS_DENIED in

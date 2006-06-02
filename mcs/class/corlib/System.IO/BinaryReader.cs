@@ -318,7 +318,7 @@ namespace System.IO {
 				
 			if (pos!=count) {
 				byte[] new_buffer=new byte[pos];
-				Buffer.BlockCopy (buf, 0, new_buffer, 0, pos);
+				Buffer.BlockCopyInternal (buf, 0, new_buffer, 0, pos);
 				return(new_buffer);
 			}
 			
@@ -542,7 +542,7 @@ namespace System.IO {
 		{
 			if(m_buffer.Length <= length) {
 				byte[] new_buffer=new byte[length];
-				Buffer.BlockCopy (m_buffer, 0, new_buffer, 0, m_buffer.Length);
+				Buffer.BlockCopyInternal (m_buffer, 0, new_buffer, 0, m_buffer.Length);
 				m_buffer=new_buffer;
 			}
 		}
