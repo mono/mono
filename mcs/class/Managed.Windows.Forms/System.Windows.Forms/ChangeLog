@@ -1,3 +1,8 @@
+2006-06-01  Mike Kestner  <mkestner@novell.com>
+
+	* ScrollBar.cs: remove Capture setting/clearing, as it happens
+	automatically in the Control.WndProc.
+
 2006-06-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FileDialog.cs: fix crash when running SharpChess, which sets the

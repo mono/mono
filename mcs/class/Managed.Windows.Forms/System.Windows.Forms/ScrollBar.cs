@@ -904,7 +904,6 @@ namespace System.Windows.Forms
 
     			if (firstbutton_state != ButtonState.Inactive && first_arrow_area.Contains (e.X, e.Y)) {
 				SendWMScroll(ScrollBarCommands.SB_LINEUP);
-				this.Capture = true;
 				firstbutton_state = ButtonState.Pushed;
 				firstbutton_pressed = true;
 				Invalidate (first_arrow_area);
@@ -917,7 +916,6 @@ namespace System.Windows.Forms
 
 			if (secondbutton_state != ButtonState.Inactive && second_arrow_area.Contains (e.X, e.Y)) {
 				SendWMScroll(ScrollBarCommands.SB_LINEDOWN);
-				this.Capture = true;
 				secondbutton_state = ButtonState.Pushed;
 				secondbutton_pressed = true;
 				Invalidate (second_arrow_area);
@@ -930,7 +928,6 @@ namespace System.Windows.Forms
 
 			if (thumb_size > 0 && thumb_pos.Contains (e.X, e.Y)) {
 				thumb_pressed = true;
-				this.Capture = true;
 				SendWMScroll(ScrollBarCommands.SB_THUMBTRACK);
 				if (vert) {
 					thumbclick_offset = e.Y - thumb_pos.Y;
@@ -1005,7 +1002,6 @@ namespace System.Windows.Forms
 				DirtyThumbArea ();
     				thumb_moving = ThumbMoving.None;
     			}
-			this.Capture = false;
 
 			if (firstbutton_pressed) {
 				firstbutton_state = ButtonState.Normal;
