@@ -1,3 +1,8 @@
+2006-06-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebProxy.cs: (IsBypassed) 'loopback', 'localhost' and any address
+	that starts with 127 are special.
+
 2006-05-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpListener.cs: Fixes race condition in BeginGetContext. Patch by

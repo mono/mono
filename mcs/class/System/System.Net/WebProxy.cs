@@ -29,6 +29,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
 
@@ -150,8 +151,23 @@ namespace System.Net
 			if (bypassOnLocal && host.IsLoopback)
 				return true;
 
-			if (bypassOnLocal && host.Host.IndexOf ('.') == -1)
+			string server = host.Host;
+			if (bypassOnLocal && server.IndexOf ('.') == -1)
 				return true;
+
+			// LAMESPEC
+			if (!bypassOnLocal) {
+				if (String.Compare (server, "localhost", true, CultureInfo.InvariantCulture) == 0)
+					return true;
+				if (String.Compare (server, "loopback", true, CultureInfo.InvariantCulture) == 0)
+					return true;
+
+				try {
+					IPAddress addr = IPAddress.Parse (server);
+					if (IPAddress.IsLoopback (addr))
+						return true;
+				} catch {}
+			}
 
 			try {				
 				string hostStr = host.Scheme + "://" + host.Authority;				
