@@ -1,3 +1,11 @@
+2006-06-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Color.cs: when deserializing from an MS generated stream, the value
+	for known colors was 0. These changes make our Color handle that case.
+	We won't serialize the name for known colors either, but the value will
+	be there, so we only check for a 0 value on a known color once.
+	Fixes bug #78265.
+
 2006-05-30  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* Font.cs: Change default charset to 1. Ensure we always call the

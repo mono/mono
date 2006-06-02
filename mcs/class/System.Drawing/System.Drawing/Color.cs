@@ -58,18 +58,18 @@ namespace System.Drawing
 		private static Hashtable systemColors;
 		static Color [] knownColors;
 		
-		// Private transparancy (A) and R,G,B fields.
+		// Private transparency (A) and R,G,B fields.
 		private long value;
 		private static string creatingColorNames = "creatingColorNames";
 
-		// The specs also indicate that all three of these propities are true
+		// The specs also indicate that all three of these properties are true
 		// if created with FromKnownColor or FromNamedColor, false otherwise (FromARGB).
 		// Per Microsoft and ECMA specs these varibles are set by which constructor is used, not by their values.
 		[Flags]
 		enum ColorType : short {
 			Empty=0,
-			ARGB=1,
-			Known=2,
+			Known=1,
+			ARGB=2,
 			Named=4,
 			System=8
 		}
@@ -88,8 +88,15 @@ namespace System.Drawing
 
 		public string Name {
 			get{
-				if (name == null || name == String.Empty)
+				if (name == null) {
+					if (IsNamedColor) { // Can happen with stuff deserialized from MS
+						FillColorNames ();
+						object o = knownColors [knownColor];
+						if (o != null)
+							return ((Color) o).name;
+					}
 					return String.Format ("{0:x}", ToArgb ());
+				}
 				return name;
 			}
 		}
@@ -123,8 +130,7 @@ namespace System.Drawing
 			CheckARGBValues (alpha, red, green, blue);
 			Color color = new Color ();
 			color.state = (short) ColorType.ARGB;
-			color.value = (alpha << 24) + (red << 16) + (green << 8) + blue;
-			color.name = String.Empty;
+			color.value = ((uint) alpha << 24) + (red << 16) + (green << 8) + blue;
 			return color;
 		}
 
@@ -414,6 +420,15 @@ namespace System.Drawing
 		public byte A
 		{
 			get {
+				// Optimization for known colors that were deserialized
+				// from an MS serialized stream.  
+				if (value == 0 && IsKnownColor) {
+					FillColorNames ();
+					object o = knownColors [knownColor];
+					if (o != null) {
+						value = ((Color) o).ToArgb ();
+					}
+				}
 				return (byte) ((value >> 24 & 0x0ff));
 			}
 		}
@@ -429,6 +444,15 @@ namespace System.Drawing
 		public byte R
 		{
 			get {
+				// Optimization for known colors that were deserialized
+				// from an MS serialized stream.  
+				if (value == 0 && IsKnownColor) {
+					FillColorNames ();
+					object o = knownColors [knownColor];
+					if (o != null) {
+						value = ((Color) o).ToArgb ();
+					}
+				}
 				return (byte) ((value >> 16 & 0x0ff));
 			}
 		}
@@ -444,6 +468,15 @@ namespace System.Drawing
 		public byte G
 		{
 			get {
+				// Optimization for known colors that were deserialized
+				// from an MS serialized stream.  
+				if (value == 0 && IsKnownColor) {
+					FillColorNames ();
+					object o = knownColors [knownColor];
+					if (o != null) {
+						value = ((Color) o).ToArgb ();
+					}
+				}
 				return (byte) ((value >> 8 & 0x0ff));
 			}
 		}
@@ -459,6 +492,15 @@ namespace System.Drawing
 		public byte B
 		{
 			get {
+				// Optimization for known colors that were deserialized
+				// from an MS serialized stream.  
+				if (value == 0 && IsKnownColor) {
+					FillColorNames ();
+					object o = knownColors [knownColor];
+					if (o != null) {
+						value = ((Color) o).ToArgb ();
+					}
+				}
 				return (byte) (value & 0x0ff);
 			}
 		}
@@ -522,8 +564,9 @@ namespace System.Drawing
 			if (IsEmpty)
 				return "Color [Empty]";
 
-			if (name != "")
-				return "Color [" + name + "]";
+			// Use the property here, not the field.
+			if (IsNamedColor)
+				return "Color [" + Name + "]";
 
 			return String.Format ("Color [A={0}, R={1}, G={2}, B={3}]", A, R, G, B);
 		}
