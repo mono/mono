@@ -1,5 +1,9 @@
 2006-06-02  Ankit Jain  <jankit@novell.com>
 
+	* get.c (dis_stringify_method_signature_full): Fix two memory leaks.
+
+2006-06-02  Ankit Jain  <jankit@novell.com>
+
 	* main.c (dis_method_list): Print only the method name in "{ // end
 	of.."
 
