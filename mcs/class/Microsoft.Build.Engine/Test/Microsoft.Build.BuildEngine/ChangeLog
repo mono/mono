@@ -1,3 +1,9 @@
+2006-06-02  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* BuildPropertyTest.cs: Added.
+	* BuildPropertyGroupTest.cs: Added.
+	* BuildPropertyGroupCollectionTest.cs: Added.
+
 2006-05-27  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* BuildItemTest.cs: Swapped expected with actual results.
