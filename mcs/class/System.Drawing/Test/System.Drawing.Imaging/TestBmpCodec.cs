@@ -39,7 +39,7 @@ using System.Security.Cryptography;
 using System.Security.Permissions;
 using System.Text;
 
-namespace MonoTests.System.Drawing
+namespace MonoTests.System.Drawing.Imaging
 {
 
 	[TestFixture]
