@@ -946,15 +946,6 @@ namespace System.Windows.Forms
 
 			parent = control.parent;
 
-			if (((control.control_style & ControlStyles.Selectable) !=0)  && (parent != null)) {
-				while (parent != null) {
-					if (!parent.Visible || !parent.is_enabled) {
-						return false;
-					}
-					parent = parent.parent;
-				}
-			}
-
 			control.is_selected = true;
 
 			container = GetContainerControl();
@@ -3545,40 +3536,12 @@ namespace System.Windows.Forms
 		}
 
 		protected virtual void Select(bool directed, bool forward) {
-			int	index;
-			bool	result;
+			IContainerControl	container;
 
-			if (!directed) {
-				// Select this control
-				Select(this);
-				return;
+			container = GetContainerControl();
+			if (container != null) {
+				container.ActiveControl = this;
 			}
-
-			if (parent == null) {
-				return;
-			}
-
-			// FIXME - this thing is doing the wrong stuff, needs to be similar to SelectNextControl
-
-			index = parent.child_controls.IndexOf(this);
-			result = false;
-
-			do {
-				if (forward) {
-					if ((index+1) < parent.child_controls.Count) {
-						index++;
-					} else {
-						index = 0;
-					}
-				} else {
-					if (index>0) {
-						index++;
-					} else {
-						index = parent.child_controls.Count-1;
-					}
-				}
-				result = Select(parent.child_controls[index]);
-			} while (!result && parent.child_controls[index] != this);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]

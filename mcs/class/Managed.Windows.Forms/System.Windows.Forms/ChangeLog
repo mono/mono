@@ -1,3 +1,15 @@
+2006-06-02  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Control.cs 
+	  - Select: Implemented to just use activate. Seems to match MS 
+	    behaviour closest. Documented to only do actual control walking 
+	    based on it's parameters if in a container control so I moved 
+	    the code there.
+	  - Removed selection check logic from our internal Select() method
+	* ContainerControl.cs:
+	  - Select: Moved selection logic from Control here, since MS documents
+	    that containers obey the bool arguments. No longer calling base
+
 2006-06-02  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: If the selected node isn't changed when we get

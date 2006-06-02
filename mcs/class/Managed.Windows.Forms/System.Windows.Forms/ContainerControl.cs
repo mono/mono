@@ -323,7 +323,41 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void Select(bool directed, bool forward) {
-			base.Select(directed, forward);
+
+			int	index;
+			bool	result;
+
+			if (!directed) {
+				// Select this control
+				Select(this);
+				return;
+			}
+
+			if (parent == null) {
+				return;
+			}
+
+			// FIXME - this thing is doing the wrong stuff, needs to be similar to SelectNextControl
+
+			index = parent.child_controls.IndexOf(this);
+			result = false;
+
+			do {
+				if (forward) {
+					if ((index+1) < parent.child_controls.Count) {
+						index++;
+					} else {
+						index = 0;
+					}
+				} else {
+					if (index>0) {
+						index++;
+					} else {
+						index = parent.child_controls.Count-1;
+					}
+				}
+				result = Select(parent.child_controls[index]);
+			} while (!result && parent.child_controls[index] != this);
 		}
 
 		protected virtual void UpdateDefaultButton() {
@@ -335,10 +369,12 @@ namespace System.Windows.Forms {
 			base.WndProc(ref m);
 		}
 		#endregion	// Protected Instance Methods
-		
+
+		#region Internal Methods
 		internal virtual void CheckAcceptButton()
 		{
 			// do nothing here, only called if it is a Form
 		}
+		#endregion	// Internal Methods
 	}
 }
