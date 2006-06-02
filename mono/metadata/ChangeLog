@@ -1,3 +1,9 @@
+2006-06-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_emit_native_wrapper): Call GetLastError () early and without a wrapper to
+	avoid clobbering its value.
+	(mono_string_to_lpstr): Fix a warning on windows.
+
 2006-05-31  Zoltan Varga  <vargaz@gmail.com>
 
 	* threadpool.c: Make ASyncCall a copy of the managed MonoAsyncCall class so
