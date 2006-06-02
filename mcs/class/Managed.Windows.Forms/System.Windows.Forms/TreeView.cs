@@ -1455,6 +1455,8 @@ namespace System.Windows.Forms {
 		{
 			if (selected_node == null)
 				SelectedNode = top_node;
+			else
+				UpdateNode (selected_node);
 		}
 
 		private void LostFocusHandler (object sender, EventArgs e)

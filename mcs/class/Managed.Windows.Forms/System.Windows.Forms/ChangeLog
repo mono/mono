@@ -1,3 +1,9 @@
+2006-06-02  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: If the selected node isn't changed when we get
+	focus update the previously selected node so that we see the
+	selection box.
+
 2006-06-02  Mike Kestner  <mkestner@novell.com>
 
 	* ComboBox.cs: restructure grab and general mouse event handling.
