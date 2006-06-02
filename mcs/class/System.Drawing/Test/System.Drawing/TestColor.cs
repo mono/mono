@@ -1173,7 +1173,6 @@ namespace MonoTests.System.Drawing {
 			0x01, 0x00, 0x0B };
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Deserialize ()
 		{
 			BinaryFormatter bf = new BinaryFormatter ();
@@ -1181,6 +1180,57 @@ namespace MonoTests.System.Drawing {
 			Color color = (Color) bf.Deserialize (ms);
 			CheckRed ("deserialized", color);
 		}
+
+		static byte [] color_blue = {
+			0,1,0,0,0,255,255,255,255,1,0,0,0,0,0,0,0,12,2,0,0,0,81,83,121,115,116,101,109,46,68,114,97,119,105,
+			110,103,44,32,86,101,114,115,105,111,110,61,50,46,48,46,48,46,48,44,32,67,117,108,116,117,114,101,
+			61,110,101,117,116,114,97,108,44,32,80,117,98,108,105,99,75,101,121,84,111,107,101,110,61,98,48,51,
+			102,53,102,55,102,49,49,100,53,48,97,51,97,5,1,0,0,0,20,83,121,115,116,101,109,46,68,114,97,119,105,
+			110,103,46,67,111,108,111,114,4,0,0,0,4,110,97,109,101,5,118,97,108,117,101,10,107,110,111,119,110,
+			67,111,108,111,114,5,115,116,97,116,101,1,0,0,0,9,7,7,2,0,0,0,10,0,0,0,0,0,0,0,0,37,0,1,0,11 };
+
+		[Test]
+		public void Deserialize2 ()
+		{
+			BinaryFormatter bf = new BinaryFormatter ();
+			MemoryStream ms = new MemoryStream (color_blue);
+			Color color = (Color) bf.Deserialize (ms);
+			AssertEquals ("A", 255, color.A);
+			AssertEquals ("R", 0, color.R);
+			AssertEquals ("G", 0, color.G);
+			AssertEquals ("B", 255, color.B);
+			AssertEquals ("Name", "Blue", color.Name);
+			Assert ("IsEmpty", !color.IsEmpty);
+			Assert ("IsKnownColor", color.IsKnownColor);
+			Assert ("IsNamedColor", color.IsNamedColor);
+			Assert ("IsSystemColor", !color.IsSystemColor);
+		}
+
+		static byte [] color_blue_fromargb = {
+			0,1,0,0,0,255,255,255,255,1,0,0,0,0,0,0,0,12,2,0,0,0,81,83,121,115,116,101,109,46,68,114,97,119,105,
+			110,103,44,32,86,101,114,115,105,111,110,61,50,46,48,46,48,46,48,44,32,67,117,108,116,117,114,101,
+			61,110,101,117,116,114,97,108,44,32,80,117,98,108,105,99,75,101,121,84,111,107,101,110,61,98,48,51,
+			102,53,102,55,102,49,49,100,53,48,97,51,97,5,1,0,0,0,20,83,121,115,116,101,109,46,68,114,97,119,105,
+			110,103,46,67,111,108,111,114,4,0,0,0,4,110,97,109,101,5,118,97,108,117,101,10,107,110,111,119,110,
+			67,111,108,111,114,5,115,116,97,116,101,1,0,0,0,9,7,7,2,0,0,0,10,255,0,0,255,0,0,0,0,0,0,2,0,11};
+
+		[Test]
+		public void Deserialize3 ()
+		{
+			BinaryFormatter bf = new BinaryFormatter ();
+			MemoryStream ms = new MemoryStream (color_blue_fromargb);
+			Color color = (Color) bf.Deserialize (ms);
+			AssertEquals ("A", 255, color.A);
+			AssertEquals ("R", 0, color.R);
+			AssertEquals ("G", 0, color.G);
+			AssertEquals ("B", 255, color.B);
+			AssertEquals ("Name", "ff0000ff", color.Name);
+			Assert ("IsEmpty", !color.IsEmpty);
+			Assert ("IsKnownColor", !color.IsKnownColor);
+			Assert ("IsNamedColor", !color.IsNamedColor);
+			Assert ("IsSystemColor", !color.IsSystemColor);
+		}
+
 	}
 }
 
