@@ -1,3 +1,13 @@
+2006-06-02  Miguel de Icaza  <miguel@novell.com>
+
+	* tramp-sparc.c, tramp-ppc.c, tramp-s390.c, tramp-s390x.c,
+	tramp-arm.c, tramp-ia64.c
+	(mono_debugger_create_notification_function): Update signature to
+	new signature and use new protocol for creating the notification
+	function.  
+
+	Should fix the build.
+
 2006-06-02  Geoff Norton  <gnorton@customerdna.com>
 
 	* exceptions-ppc.c (mono_jit_walk_stack)
