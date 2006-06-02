@@ -53,7 +53,6 @@ namespace System.Windows.Forms
 		private int maxdrop_items = 8;			
 		private bool integral_height = true;
 		private bool sorted;
-		private bool clicked;		
 		private int max_length;
 		private ComboListBox listbox_ctrl;		
 		private TextBox textbox_ctrl;
@@ -232,6 +231,9 @@ namespace System.Windows.Forms
 					textbox_ctrl.KeyDown += new KeyEventHandler (OnKeyDownCB);
 					textbox_ctrl.GotFocus += new EventHandler(textbox_ctrl_GotFocus);
 					textbox_ctrl.LostFocus += new EventHandler(textbox_ctrl_LostFocus);
+					textbox_ctrl.MouseDown += new MouseEventHandler(textbox_ctrl_MouseDown);
+					textbox_ctrl.MouseMove += new MouseEventHandler(textbox_ctrl_MouseMove);
+					textbox_ctrl.MouseUp += new MouseEventHandler(textbox_ctrl_MouseUp);
 
 					if (IsHandleCreated == true) {
 						Controls.AddImplicit (textbox_ctrl);
@@ -886,13 +888,26 @@ namespace System.Windows.Forms
 
 		protected override void WndProc (ref Message m)
 		{
+			switch ((Msg) m.Msg) {
+			case Msg.WM_MOUSE_LEAVE:
+				Point location = PointToClient (Control.MousePosition);
+				if (ClientRectangle.Contains (location))
+					return;
+				break;
+			default:
+				break;
+			}
 			base.WndProc (ref m);
-
 		}
 
 		#endregion Public Methods
 
 		#region Private Methods
+
+		internal override bool InternalCapture {
+			get { return Capture; }
+			set {}
+		}
 
 		private void textbox_ctrl_KeyPress(object sender, KeyPressEventArgs e) 
 		{
@@ -907,6 +922,21 @@ namespace System.Windows.Forms
 		private void textbox_ctrl_LostFocus(object sender, EventArgs e )
 		{
 			OnLostFocus(e);
+		}
+		
+		private void textbox_ctrl_MouseDown(object sender, MouseEventArgs e )
+		{
+			OnMouseDown(e);
+		}
+		
+		private void textbox_ctrl_MouseMove(object sender, MouseEventArgs e )
+		{
+			OnMouseMove(e);
+		}
+		
+		private void textbox_ctrl_MouseUp(object sender, MouseEventArgs e )
+		{
+			OnMouseUp(e);
 		}
 		
 		void Layout ()
@@ -1028,7 +1058,6 @@ namespace System.Windows.Forms
 			button_state = ButtonState.Normal;
 			Invalidate (button_area);
 			dropped_down = false;
-			clicked = false;			
 		}
 		
 		private int FindStringCaseInsensitive (string search)
@@ -1075,34 +1104,39 @@ namespace System.Windows.Forms
 		
 		void OnMouseDownCB (object sender, MouseEventArgs e)
     		{    			
-			if (button_area.Contains (e.X, e.Y)) {
-				if (clicked == false) {
-	    				clicked = true;
-	    				DropDownListBox ();	    				
-	    			} else {
-	    				listbox_ctrl.Hide ();
-	    				DropDownListBoxFinished ();
-	    			}
+			Rectangle area;
+			if (DropDownStyle == ComboBoxStyle.DropDownList)
+				area = ClientRectangle;
+			else
+				area = button_area;
 
+			if (area.Contains (e.X, e.Y)) {
+	    			DropDownListBox ();	    				
 	    			Invalidate (button_area);
+				Update ();
     			}
+			Capture = true;
     		}
 
     		void OnMouseMoveCB (object sender, MouseEventArgs e)
     		{    			
-    			/* When there are no items, act as a regular button */
-    			if (clicked == true && Items.Count == 0 &&
-    				 button_area.Contains (e.X, e.Y) == false) {
-    				DropDownListBoxFinished ();
-    			}
+			if (DropDownStyle == ComboBoxStyle.Simple)
+				return;
+
+			if (listbox_ctrl != null && listbox_ctrl.Visible) {
+				Point location = listbox_ctrl.PointToClient (Control.MousePosition);
+				if (listbox_ctrl.ClientRectangle.Contains (location))
+					listbox_ctrl.Capture = true;
+			}
     		}
 
     		void OnMouseUpCB (object sender, MouseEventArgs e)
     		{
-    			/* Click on button*/
-    			if (clicked == true && button_area.Contains (e.X, e.Y)) {    				
-    				DropDownListBoxFinished ();
-    			}
+			Capture = false;
+			OnClick (EventArgs.Empty);
+
+			if (dropped_down)
+				listbox_ctrl.Capture = true;
     		}
 
 		internal override void OnPaintInternal (PaintEventArgs pevent)
@@ -1368,21 +1402,46 @@ namespace System.Windows.Forms
 				{					
 				}
 				
-				public void FireMouseDown (MouseEventArgs e) 
+				internal override bool InternalCapture {
+					get { return Capture; }
+					set { }
+				}
+
+				public bool FireMouseDown (MouseEventArgs e) 
 				{
-					OnMouseDown (e);
+					if (Visible) {
+						e = TranslateEvent (e);
+						if (ClientRectangle.Contains (e.X, e.Y)) {
+							OnMouseDown (e);
+							return true;
+						}
+					}
+					return false;
 				}	
 				
 				public void FireMouseUp (MouseEventArgs e) 
 				{
-					OnMouseUp (e);
+					if (Visible) {
+						e = TranslateEvent (e);
+						if (ClientRectangle.Contains (e.X, e.Y))
+							OnMouseUp (e);
+					}
 				}
 				
 				public void FireMouseMove (MouseEventArgs e) 
 				{
-					OnMouseMove (e);
+					if (Visible) {
+						e = TranslateEvent (e);
+						if (ClientRectangle.Contains (e.X, e.Y))
+							OnMouseMove (e);
+					}
 				}			
 				
+				MouseEventArgs TranslateEvent (MouseEventArgs e)
+				{
+					Point loc = PointToClient (Control.MousePosition);
+		    			return new MouseEventArgs (e.Button, e.Clicks, loc.X, loc.Y, e.Delta);
+				}
 			}
 
 			public ComboListBox (ComboBox owner)
@@ -1397,7 +1456,7 @@ namespace System.Windows.Forms
 				MouseMove += new MouseEventHandler (OnMouseMovePUW);				
 				KeyDown += new KeyEventHandler (OnKeyDownPUW);
 				SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
-				SetStyle (ControlStyles.ResizeRedraw | ControlStyles.Opaque, true);				
+				SetStyle (ControlStyles.ResizeRedraw | ControlStyles.Opaque, true);
 
 				if (owner.DropDownStyle == ComboBoxStyle.Simple)
 					InternalBorderStyle = BorderStyle.Fixed3D;
@@ -1721,48 +1780,30 @@ namespace System.Windows.Forms
 			
 			private void OnMouseDownPUW (object sender, MouseEventArgs e)
 	    		{
-	    			Rectangle scrollbar_screenrect;
-	    			Point mouse_screen, scrollbar_screen;
-	    			mouse_screen = PointToScreen (new Point (e.X, e.Y));
-	    				
-    				/* Click on an element ? */    				
 	    			int index = IndexFromPointDisplayRectangle (e.X, e.Y);
-    				if (index != -1) {    					
+
+    				if (index == -1) {    					
+					if (vscrollbar_ctrl == null || !vscrollbar_ctrl.FireMouseDown (e))
+		    				HideWindow ();
+				} else {
 					owner.OnSelectionChangeCommitted (new EventArgs ());
 					owner.SelectedIndex = index;
 					HighlightedIndex = index;
 					HideWindow ();
-					return;
 				}
 				
 				if (owner.DropDownStyle == ComboBoxStyle.Simple) {
+					owner.OnMouseDown (e);
 					owner.textbox_ctrl.Focus ();
-					return;
 				}
-								
-				/* Reroute event to scrollbar */				
-				if (vscrollbar_ctrl != null && vscrollbar_ctrl.Visible == true) {
-		    			scrollbar_screenrect = vscrollbar_ctrl.ClientRectangle;
-		    			scrollbar_screen = PointToScreen (vscrollbar_ctrl.Location);
-		    			scrollbar_screenrect.X = scrollbar_screen.X;
-		    			scrollbar_screenrect.Y = scrollbar_screen.Y;
-		    			
-		    			if (scrollbar_screenrect.Contains (mouse_screen)){	    				
-		    				Point pnt_client = vscrollbar_ctrl.PointToClient (mouse_screen);	    				
-		    				vscrollbar_ctrl.FireMouseDown (new MouseEventArgs (e.Button, e.Clicks,
-		    					pnt_client.X, pnt_client.Y, e.Delta));	    					
-		    			} else	{ /* Click in a non-client area*/
-		    				HideWindow ();	    			
-		    			}	    			
-		    		} else	{ /* Click in a non-client area*/
-		    			HideWindow ();
-		    		}
 			}
 
 			private void OnMouseMovePUW (object sender, MouseEventArgs e)
 			{
-				if (owner.DropDownStyle == ComboBoxStyle.Simple)
+				if (owner.DropDownStyle == ComboBoxStyle.Simple) {
+					owner.OnMouseMove (e);
 					return;
+				}
 						
 				Point pt = PointToClient (Control.MousePosition);
 				int index = IndexFromPointDisplayRectangle (pt.X, pt.Y);
@@ -1772,52 +1813,19 @@ namespace System.Windows.Forms
 					return;
 				}
 				
-				if (owner.DropDownStyle == ComboBoxStyle.Simple)
-					return;		
-				
-				/* Reroute event to scrollbar */
-				if (vscrollbar_ctrl != null && vscrollbar_ctrl.Visible == true) {	
-					Rectangle scrollbar_screenrect;
-		    			Point mouse_screen, scrollbar_screen;
-		    			mouse_screen = PointToScreen (new Point (e.X, e.Y));
-		    			
-		    			scrollbar_screenrect = vscrollbar_ctrl.ClientRectangle;
-		    			scrollbar_screen = PointToScreen (vscrollbar_ctrl.Location);
-		    			scrollbar_screenrect.X = scrollbar_screen.X;
-		    			scrollbar_screenrect.Y = scrollbar_screen.Y;
-		    			
-		    			if (scrollbar_screenrect.Contains (mouse_screen)) {
-		    				Point pnt_client = vscrollbar_ctrl.PointToClient (mouse_screen);
-
-		    				vscrollbar_ctrl.FireMouseMove (new MouseEventArgs (e.Button, e.Clicks,
-		    					pnt_client.X, pnt_client.Y, e.Delta));
-		    			}
-		    		}	    			
+				if (vscrollbar_ctrl != null)
+					vscrollbar_ctrl.FireMouseMove (e);
 			}
 			
 			private void OnMouseUpPUW (object sender, MouseEventArgs e)
 			{
-				if (owner.DropDownStyle == ComboBoxStyle.Simple)
+				if (owner.DropDownStyle == ComboBoxStyle.Simple) {
+					owner.OnMouseUp (e);
 					return;					
+				}
 
-				/* Reroute event to scrollbar */	
-				Rectangle scrollbar_screenrect;
-	    			Point mouse_screen, scrollbar_screen;
-	    			mouse_screen = PointToScreen (new Point (e.X, e.Y));
-	    			
-	    			if (vscrollbar_ctrl != null && vscrollbar_ctrl.Visible == true) {	
-		    			scrollbar_screenrect = vscrollbar_ctrl.ClientRectangle;
-		    			scrollbar_screen = PointToScreen (vscrollbar_ctrl.Location);
-		    			scrollbar_screenrect.X = scrollbar_screen.X;
-		    			scrollbar_screenrect.Y = scrollbar_screen.Y;
-		    			
-		    			if (scrollbar_screenrect.Contains (mouse_screen)){	    				
-		    				Point pnt_client = vscrollbar_ctrl.PointToClient (mouse_screen);	    				
-		    				
-		    				vscrollbar_ctrl.FireMouseUp (new MouseEventArgs (e.Button, e.Clicks,
-		    					pnt_client.X, pnt_client.Y, e.Delta));
-		    			}
-		    		}
+	    			if (vscrollbar_ctrl != null)
+		    			vscrollbar_ctrl.FireMouseUp (e);
 			}
 
 			internal override void OnPaintInternal (PaintEventArgs pevent)
@@ -1835,16 +1843,8 @@ namespace System.Windows.Forms
 				CalcListBoxArea ();				
 				Show ();
 
-				if (owner.DropDownStyle != ComboBoxStyle.Simple) {
-					Capture = true;
-				}
-				
 				Refresh ();
-
-				if (owner.DropDown != null) {
-					owner.DropDown (owner, EventArgs.Empty);
-				}
-				
+				owner.OnDropDown (EventArgs.Empty);
 				return true;
 			}
 			

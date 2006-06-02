@@ -1,4 +1,12 @@
-2006-06-01  Mike Kestner  <mkestner@novell.com>
+2006-06-02  Mike Kestner  <mkestner@novell.com>
+
+	* ComboBox.cs: restructure grab and general mouse event handling.
+	Make the composite control raise mouse events like it was a single
+	control for leaves/enters/motion/up/down events.  fix dropdown list
+	coordinate mangling and refactor it into the scrollbar subclass to
+	reduce code duplication.  Fixes #78282 #78361 and #78457.
+
+2006-06-02  Mike Kestner  <mkestner@novell.com>
 
 	* ScrollBar.cs: remove Capture setting/clearing, as it happens
 	automatically in the Control.WndProc.
