@@ -43,6 +43,7 @@ namespace Microsoft.Build.BuildEngine {
 		XmlElement	itemElement;
 		string		finalItemSpec;
 		bool		isImported;
+		string		itemInclude;
 		string		name;
 		BuildItemGroup	parentItemGroup;
 		string		recursiveDir;
@@ -57,6 +58,7 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			this.name = itemName;
 			this.finalItemSpec = taskItem.ItemSpec;
+			this.itemInclude = Utilities.Escape (taskItem.ItemSpec);
 			this.evaluatedMetadata = (Hashtable) taskItem.CloneCustomMetadata ();
 			this.unevaluatedMetadata = (Hashtable) taskItem.CloneCustomMetadata ();
 		}
@@ -304,6 +306,8 @@ namespace Microsoft.Build.BuildEngine {
 			get {
 				if (FromXml)
 					return itemElement.GetAttribute ("Include");
+				else if (itemInclude != null)
+					return itemInclude;
 				else
 					return finalItemSpec;
 			}

@@ -49,6 +49,12 @@ namespace Microsoft.Build.BuildEngine {
 		public BuildProperty (string propertyName, string propertyValue)
 			: this (propertyName, propertyValue, PropertyType.Normal)
 		{
+			if (propertyName == null)
+				throw new ArgumentNullException (null,
+					"Parameter \"propertyName\" cannot be null.");
+			if (propertyValue == null)
+				throw new ArgumentNullException (null,
+					"Parameter \"propertyValue\" cannot be null.");
 		}
 
 		internal BuildProperty (string propertyName,
@@ -77,7 +83,17 @@ namespace Microsoft.Build.BuildEngine {
 		[MonoTODO]
 		public BuildProperty Clone (bool deepClone)
 		{
-			return (BuildProperty) this.MemberwiseClone ();
+			if (deepClone) {
+				if (FromXml == false) {
+					return (BuildProperty) this.MemberwiseClone ();
+				} else {
+					throw new NotImplementedException ();
+				}
+			} else {
+				if (FromXml == false)
+					throw new InvalidOperationException ("A shallow clone of this object cannot be created.");
+				throw new NotImplementedException ();
+			}
 		}
 
 		public static explicit operator string (BuildProperty propertyToCast)
@@ -112,8 +128,16 @@ namespace Microsoft.Build.BuildEngine {
 		}
 	
 		public string Condition {
-			get { return propertyElement.GetAttribute ("Condition"); }
-			set { propertyElement.SetAttribute ("Condition", value); }
+			get {
+				if (FromXml)
+					return propertyElement.GetAttribute ("Condition");
+				else
+					return String.Empty;
+			}
+			set {
+				if (FromXml)
+					propertyElement.SetAttribute ("Condition", value);
+			}
 		}
 
 		public string FinalValue {

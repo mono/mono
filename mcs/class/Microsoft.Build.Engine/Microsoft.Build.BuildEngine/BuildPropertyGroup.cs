@@ -114,10 +114,12 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 		
+		[MonoTODO]
 		public void Clear ()
 		{
 		}
 
+		[MonoTODO]
 		public BuildPropertyGroup Clone (bool deepClone)
 		{
 			return null;
@@ -213,8 +215,11 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 
-		public BuildProperty this[string propertyName] {
+		public BuildProperty this [string propertyName] {
 			get {
+				if (FromXml)
+					throw new InvalidOperationException ("Properties in persisted property groups cannot be accessed by name.");
+				
 				if (propertiesByName.Contains (propertyName)) {
 					return (BuildProperty) propertiesByName [propertyName];
 				} else {
