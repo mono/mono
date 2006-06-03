@@ -1,3 +1,7 @@
+2006-06-03 John Luke <john.luke@gmail.com>
+
+	* Path.cs: fix typo in [Obsolete] message
+	
 2006-06-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* BinaryReader.cs: use BlockCopyInternal.

@@ -52,7 +52,7 @@ namespace System.IO {
 	[ComVisible (true)]
 	public static class Path {
 
-		[Obsolete ("see GetInvalidPathChars and GetInvalidfileNameChars methods.")]
+		[Obsolete ("see GetInvalidPathChars and GetInvalidFileNameChars methods.")]
 		public static readonly char[] InvalidPathChars;
 #else
 	public sealed class Path {
