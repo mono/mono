@@ -1,3 +1,8 @@
+2006-06-03  John Luke  <john.luke@gmail.com> 
+
+	* X11DesktopColors.cs: dllimport the exact gtk and gdk versions
+	so the colors work without dev packages
+	
 2006-06-02  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* Control.cs 

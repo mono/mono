@@ -128,7 +128,7 @@ namespace System.Windows.Forms {
 					}
 
 					catch (DllNotFoundException) {
-						Console.WriteLine("Gtk not found (missing LD_LIBRARY_PATH to libgtk-x11-2.0.so?), using built-in colorscheme");
+						Console.WriteLine("Gtk not found (missing LD_LIBRARY_PATH to libgtk-x11-2.0.so.0?), using built-in colorscheme");
 					}
 
 					catch {
@@ -263,28 +263,31 @@ namespace System.Windows.Forms {
 		#endregion	// Methods
 
 		#region	DllImports
-		[DllImport("libgtk-x11-2.0.so")]
+		const string libgdk = "libgdk-x11-2.0.so.0";
+		const string libgtk = "libgtk-x11-2.0.so.0";
+		
+		[DllImport(libgtk)]
 		static extern bool gtk_init_check (out int argc, string argv);
 
-		[DllImport("libgdk-x11-2.0.so")]
+		[DllImport(libgdk)]
 		internal static extern IntPtr gdk_display_manager_get ();
 
-		[DllImport("libgdk-x11-2.0.so")]
+		[DllImport(libgdk)]
 		internal static extern IntPtr gdk_display_manager_get_default_display (IntPtr display_manager);
 
-		[DllImport("libgtk-x11-2.0.so")]
+		[DllImport(libgtk)]
 		static extern IntPtr gtk_invisible_new ();
 
-		[DllImport("libgtk-x11-2.0.so")]
+		[DllImport(libgtk)]
 		static extern IntPtr gtk_menu_new ();
 
-		[DllImport("libgtk-x11-2.0.so")]
+		[DllImport(libgtk)]
 		static extern IntPtr gtk_menu_item_new_with_label (string label);
 
-		[DllImport("libgtk-x11-2.0.so")]
+		[DllImport(libgtk)]
 		static extern void gtk_widget_ensure_style (IntPtr raw);
 
-		[DllImport("libgtk-x11-2.0.so")]
+		[DllImport(libgtk)]
 		static extern IntPtr gtk_widget_get_style (IntPtr raw);
 		#endregion	// DllImports
 	}
