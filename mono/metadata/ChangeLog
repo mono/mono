@@ -1,3 +1,15 @@
+2006-06-03  Miguel de Icaza  <miguel@novell.com>
+
+	* debug-mono-symfile.c: Revert Martin's previous patch which broke
+	stack trace line information:
+
+	(Martin) (mono_debug_symfile_lookup_location): Fix the algorithm:
+	(Martin) when looking up B which is between A and C, return A not C.
+
+	Bug is #78573.
+
+	Thanks to Alexander Olk for tracking this down.
+
 2006-06-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_marshal_set_last_error_windows): Fix build.
