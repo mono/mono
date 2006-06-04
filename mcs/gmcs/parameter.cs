@@ -258,6 +258,23 @@ namespace Mono.CSharp {
 			// TypeManager.default_parameter_value_attribute_type is null if !NET_2_0
 			if (a.Type == TypeManager.default_parameter_value_attribute_type) {
 				object val = a.GetParameterDefaultValue ();
+				if (val != null) {
+					Type t = val.GetType ();
+					if (t.IsArray || TypeManager.IsSubclassOf (t, TypeManager.type_type)) {
+						if (parameter_type == TypeManager.object_type) {
+							if (!t.IsArray)
+								t = TypeManager.type_type;
+
+							Report.Error (1910, a.Location, "Argument of type `{0}' is not applicable for the DefaultValue attribute",
+								TypeManager.CSharpName (t));
+						} else {
+							Report.Error (1909, a.Location, "The DefaultValue attribute is not applicable on parameters of type `{0}'",
+								TypeManager.CSharpName (parameter_type)); ;
+						}
+						return;
+					}
+				}
+
 				if (parameter_type == TypeManager.object_type ||
 				    (val == null && !TypeManager.IsValueType (parameter_type)) ||
 				    (val != null && TypeManager.TypeToCoreType (val.GetType ()) == parameter_type))
