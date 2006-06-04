@@ -1,3 +1,7 @@
+2006-06-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* InterlockedTest.cs: Fix Interlocked.Add tests.
+
 2006-04-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TimerTest.cs: Added test for bug #78208. Marked individual tests

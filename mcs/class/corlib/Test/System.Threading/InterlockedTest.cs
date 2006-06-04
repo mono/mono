@@ -229,7 +229,7 @@ namespace MonoTests.System.Threading
 		public void TestAdd_Int32 ()
 		{
 			int32 = int32_1;
-			Assert.AreEqual(int32_1, Interlocked.Add(ref int32, int32_2));
+			Assert.AreEqual(int32_1 + int32_2, Interlocked.Add(ref int32, int32_2));
 			Assert.AreEqual(int32_1 + int32_2, int32);
 		}
 		
@@ -237,7 +237,7 @@ namespace MonoTests.System.Threading
 		public void TestAdd_Int64 ()
 		{
 			int64 = int64_1;
-			Assert.AreEqual(int64_1, Interlocked.Add(ref int64, int64_2));
+			Assert.AreEqual(int64_1 + int64_2, Interlocked.Add(ref int64, int64_2));
 			Assert.AreEqual(int64_1 + int64_2, int64);
 		}
 
