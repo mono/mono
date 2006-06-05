@@ -1,3 +1,8 @@
+2006-06-05  Mike Kestner  <mkestner@novell.com>
+
+	* ListView.cs : fix NRE crasher when focuseditem is cleared by
+	collection changes by resetting it to Items[0].  Fixes #78587.
+
 2006-06-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* MessageBox.cs: if the height of the text is larger than the icon_size,

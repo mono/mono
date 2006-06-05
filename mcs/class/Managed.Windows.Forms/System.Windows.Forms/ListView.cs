@@ -1130,7 +1130,7 @@ namespace System.Windows.Forms
 				return item_matrix [row - 1, col].Index;
 
 			case Keys.Down:
-				if (row == (rows - 1))
+				if (row == (rows - 1) || row == Items.Count - 1)
 					return -1;
 				while (item_matrix [row + 1, col] == null)
 				       col--;	
@@ -1203,6 +1203,9 @@ namespace System.Windows.Forms
 
 			int index = -1;
 			ke.Handled = true;
+
+			if (FocusedItem == null)
+				SetFocusedItem (Items [0]);
 
 			switch (ke.KeyCode) {
 
