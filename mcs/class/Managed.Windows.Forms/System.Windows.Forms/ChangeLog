@@ -10,6 +10,9 @@
 	area.  When drawing a node it draws its parent node lines if
 	needed.
 	- Adjust the clip area to the viewport rectangle
+	- Fix Left/Right key handling to match MS. (It expand/collapses
+	and moves to parents/first child but does not move selection to
+	sibling nodes).
 
 2006-06-03  John Luke  <john.luke@gmail.com> 
 

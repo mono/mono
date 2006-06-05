@@ -580,9 +580,9 @@ namespace System.Windows.Forms {
 					if (selected_node.IsExpanded)
 						selected_node.Collapse ();
 					else {
-						ne = new OpenTreeNodeEnumerator (selected_node);
-						if (ne.MovePrevious () && ne.MovePrevious ())
-							SelectedNode = ne.CurrentNode;
+						TreeNode parent = selected_node.Parent;
+						if (parent != null)
+							SelectedNode = parent;
 					}
 				}
 				break;
@@ -591,9 +591,9 @@ namespace System.Windows.Forms {
 					if (!selected_node.IsExpanded)
 						selected_node.Expand ();
 					else {
-						ne = new OpenTreeNodeEnumerator (selected_node);
-						if (ne.MoveNext () && ne.MoveNext ())
-							SelectedNode = ne.CurrentNode;
+						TreeNode child = selected_node.FirstNode;
+						if (child != null)
+							SelectedNode = child;
 					}
 				}
 				break;
