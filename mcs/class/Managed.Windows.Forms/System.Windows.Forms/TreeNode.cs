@@ -660,10 +660,17 @@ namespace System.Windows.Forms {
 
 		private int CountToNext ()
 		{
-			TreeNode next = NextNode;
+			bool expanded = is_expanded;
+			is_expanded = false;
 			OpenTreeNodeEnumerator walk = new OpenTreeNodeEnumerator (this);
 
-			walk.MoveNext ();  // Step past start node
+			TreeNode next= null;
+			if (walk.MoveNext () && walk.MoveNext ())
+				next = walk.CurrentNode;
+
+			is_expanded = expanded;
+			walk.Reset ();
+			walk.MoveNext ();
 
 			int count = 0;
 			while (walk.MoveNext () && walk.CurrentNode != next)

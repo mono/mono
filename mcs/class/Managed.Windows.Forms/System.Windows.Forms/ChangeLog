@@ -1,3 +1,9 @@
+2006-06-05  Jackson Harper  <jackson@ximian.com>
+
+	* TreeNode.cs: Compute the next node for expanding/collapsing
+	correctly. We now factor in nodes without a NextNode
+	correctly. (Fixes somes cases in nunit-gui).
+	
 2006-06-05  Chris Toshok  <toshok@ximian.com>
 
 	* DataGrid.cs: rename cached_currencymgr to list_manager.
