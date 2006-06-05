@@ -978,9 +978,19 @@ namespace System.Web {
 				return new NameValueCollection ();
 			if (query[0] == '?')
 				query = query.Substring (1);
+				
+			NameValueCollection result = new NameValueCollection ();
+			ParseQueryString (query, encoding, result);
+			return result;
+		} 				
+#endif
+
+		internal static void ParseQueryString (string query, Encoding encoding, NameValueCollection result)
+		{
+			if (query.Length == 0)
+				return;
 
 			int namePos = 0;
-			NameValueCollection collection = new NameValueCollection ();
 			while (namePos <= query.Length) {
 				int valuePos = -1, valueEnd = -1;
 				for (int q = namePos; q < query.Length; q++) {
@@ -997,7 +1007,7 @@ namespace System.Web {
 					name = null;
 					valuePos = namePos;
 				} else {
-					name = System.Web.HttpUtility.UrlDecode (query.Substring (namePos, valuePos - namePos - 1), encoding);
+					name = UrlDecode (query.Substring (namePos, valuePos - namePos - 1), encoding);
 				}
 				if (valueEnd < 0) {
 					namePos = -1;
@@ -1005,14 +1015,12 @@ namespace System.Web {
 				} else {
 					namePos = valueEnd + 1;
 				}
-				value = System.Web.HttpUtility.UrlDecode (query.Substring (valuePos, valueEnd - valuePos), encoding);
+				value = UrlDecode (query.Substring (valuePos, valueEnd - valuePos), encoding);
 
-				collection.Add (name, value);
+				result.Add (name, value);
 				if (namePos == -1) break;
 			}
-			return collection;
 		}
-#endif
 		#endregion // Methods
 	}
 }

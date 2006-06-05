@@ -51,8 +51,9 @@ namespace System.Web {
 		WebROCollection query_string_nvc;
 
 		//
-		string filename, query_string;
-		UriBuilder uri_builder;
+		string filename;
+		string orig_url = null;
+		UriBuilder url_components;
 
 		string client_target;
 
@@ -97,28 +98,38 @@ namespace System.Web {
 			
 			this.filename = filename;
 
-			uri_builder = new UriBuilder (url);
-			query_string = queryString;
+			orig_url = url;
+			url_components = new UriBuilder (url);
+			url_components.Query = queryString;
+			
+			query_string_nvc = new WebROCollection ();					
+			HttpUtility.ParseQueryString (queryString, Encoding.Default, query_string_nvc);
+			query_string_nvc.Protect ();
 		}
 
-		void InitUriBuilder ()
-		{
-			uri_builder = new UriBuilder ();
-			uri_builder.Scheme = worker_request.GetProtocol ();
-			uri_builder.Host = worker_request.GetServerName ();
-			int port = worker_request.GetLocalPort ();
-			uri_builder.Port = port;
-			uri_builder.Path = worker_request.GetUriPath ();
-			if (query_string != null && query_string != "")
-				uri_builder.Query = query_string;
+		UriBuilder UrlComponents {
+			get {
+				if (url_components == null) {
+					url_components = new UriBuilder ();
+					url_components.Scheme = worker_request.GetProtocol ();
+					url_components.Host = worker_request.GetServerName ();
+					url_components.Port = worker_request.GetLocalPort ();
+					url_components.Path = worker_request.GetUriPath ();
+					
+					byte[] queryStringRaw = worker_request.GetQueryStringRawBytes();
+					if(queryStringRaw != null)
+						url_components.Query = ContentEncoding.GetString(queryStringRaw);
+					else
+						url_components.Query = worker_request.GetQueryString();
+				}
+				return url_components;
+			}
 		}
 		
 		internal HttpRequest (HttpWorkerRequest worker_request, HttpContext context)
 		{
 			this.worker_request = worker_request;
 			this.context = context;
-			if (worker_request != null)
-				query_string = worker_request.GetQueryString ();
 		}
 
 		string [] SplitHeader (int header_index)
@@ -878,10 +889,7 @@ namespace System.Web {
 
 		public string Path {
 			get {
-				if (uri_builder == null)
-					InitUriBuilder ();
-				
-				return uri_builder.Path;
+				return UrlComponents.Path;
 			}
 		}
 
@@ -944,27 +952,13 @@ namespace System.Web {
 		public NameValueCollection QueryString {
 			get {
 				if (query_string_nvc == null){
-					query_string_nvc = new WebROCollection ();
+					string q = UrlComponents.Query;
+					if (q.Length != 0)
+						q = q.Remove(0, 1);
 
-					if (uri_builder == null)
-						InitUriBuilder ();
-					
-					string q = query_string;
-					if (q != null && q != ""){
-						string [] components = q.Split ('&');
-						foreach (string kv in components){
-							int pos = kv.IndexOf ('=');
-							if (pos == -1){
-								query_string_nvc.Add (null, HttpUtility.UrlDecode (kv));
-							} else {
-								string key = HttpUtility.UrlDecode (kv.Substring (0, pos));
-								string val = HttpUtility.UrlDecode (kv.Substring (pos+1));
-								
-								query_string_nvc.Add (key, val);
-							}
-						}
-					}
-					query_string_nvc.Protect ();
+					query_string_nvc = new WebROCollection ();					
+					HttpUtility.ParseQueryString (q, ContentEncoding, query_string_nvc);
+					query_string_nvc.Protect();
 				}
 				
 				if (validate_query_string && !checked_query_string) {
@@ -980,12 +974,8 @@ namespace System.Web {
 			get {
 				if (worker_request != null)
 					return worker_request.GetRawUrl ();
-				else {
-					if (query_string != null && query_string != "")
-						return uri_builder.Path + "?" + query_string;
-					else
-						return uri_builder.Path;
-				}
+				else
+					return UrlComponents.Path + UrlComponents.Query;
 			}
 		}
 
@@ -1029,14 +1019,14 @@ namespace System.Web {
 
 		public Uri Url {
 			get {
-				if (uri_builder == null)
-					InitUriBuilder ();
-				
 				if (cached_url == null) {
-					UriBuilder builder = new UriBuilder (uri_builder.Uri);
-					cached_url = builder.Uri;
+					if (orig_url == null)
+						cached_url = UrlComponents.Uri;
+					else
+						cached_url = new Uri (orig_url); 
 				}
-				return cached_url;
+
+				return cached_url;			
 			}
 		}
 
@@ -1185,12 +1175,9 @@ namespace System.Web {
 				string path = "/";
 				if (worker_request != null) {
 					version = worker_request.GetHttpVersion ();
-					InitUriBuilder ();
-					path = uri_builder.Path;
+					path = UrlComponents.Path;
 				}
-				string qs = null;
-				if (query_string != null && query_string != "")
-					qs = "?" + query_string;
+				string qs = UrlComponents.Query;
 
 				sb.AppendFormat ("{0} {1}{2} {3}\r\n", HttpMethod, path, qs, version);
 				NameValueCollection coll = Headers;
@@ -1261,19 +1248,17 @@ namespace System.Web {
 			file_path = path;
 		}
 
-                internal void SetCurrentExePath (string path)
-                {
+		internal void SetCurrentExePath (string path)
+		{
 			cached_url = null;
 			current_exe_path = path;
 			file_path = path;
-			if (uri_builder == null)
-				InitUriBuilder ();
-			uri_builder.Path = path;
+			UrlComponents.Path = path;
 			// recreated on demand
 			root_virtual_dir = null;
 			base_virtual_dir = null;
 			physical_path = null;
-                }
+		}
 
 		internal void SetPathInfo (string pi)
 		{
@@ -1293,20 +1278,13 @@ namespace System.Web {
 		// Notice: there is nothing raw about this querystring.
 		internal string QueryStringRaw {
 			get {
-				if (uri_builder == null)
-					InitUriBuilder ();
-				
-				return query_string;
+				return UrlComponents.Query;
 			}
 
 			set {
-				if (uri_builder == null)
-					InitUriBuilder ();
-
-				query_string = value;
+				UrlComponents.Query = value;
+				cached_url = null;
 				query_string_nvc = null;
-				if (uri_builder != null)
-					uri_builder.Query = value;
 			}
 		}
 

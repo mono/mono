@@ -1,3 +1,18 @@
+2006-06-05 Juraj Skripsky <js@hotfeet.ch>
+
+	* HttpRequest.cs: simplify code around uri_builder (and rename 
+	to url_components). Move storage of query_string into 
+	uri_builder.Query and initialize it lazily using 
+	worker_request.GetQueryStringRawBytes() or GetQueryString().
+	(QueryString): Use HttpUtility.ParseQueryString instead of 
+	duplicating its functionality.
+
+2006-06-05 Juraj Skripsky <js@hotfeet.ch>
+
+	* HttpUtility.cs (ParseQueryString): move core of
+	ParseQueryString into internal method to make it available to 
+	HttpRequest.
+
 2006-06-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplication.cs: assign the context when run from a thread not in

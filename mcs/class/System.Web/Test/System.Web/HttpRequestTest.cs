@@ -129,7 +129,18 @@ namespace MonoTests.System.Web {
 			HttpRequest r = new HttpRequest ("file", url, qs);
 			string s = r.PhysicalApplicationPath;
 		}
+	
+		[Test]
+		public void Test_QueryStringDecoding()
+		{
+			string url = "http://www.gnome.org/";
+			string qs = "umlaut=" + HttpUtility.UrlEncode("\u00e4", Encoding.Default);
+
+			HttpRequest r = new HttpRequest ("file", url, qs);
+			Assert.AreEqual("\u00e4", r.QueryString["umlaut"]);
+		}	
 	}
+	
 
 	[TestFixture]
 	public class Test_HttpFakeRequest {
