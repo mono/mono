@@ -166,7 +166,8 @@ namespace System.Windows.Forms
 					} else {
 						textleft_up = new Point (icon_image.Width + space_image_text + space_border, 2 + space_border);
 					}
-					tsize.Height = icon_image.Height;
+					if (tsize.Height < icon_image.Height)
+						tsize.Height = icon_image.Height;
 				} else {
 					tsize.Width += space_border * 2;
 					textleft_up = new Point (space_border + 12, space_border + 12);
