@@ -63,21 +63,35 @@ namespace System.Query
                         return counter;
                 }
                 
+                #endregion
+                
+                #region LongCount
+                
                 [System.Runtime.CompilerServices.Extension]
-                public static int Count<T> (
+                public static long LongCount<T> (
+                        IEnumerable<T> source)
+                {
+                        if (source == null)
+                                throw new ArgumentNullException ();
+                        
+                        long counter = 0;
+                        foreach (T element in source)
+                                counter++;
+                        return counter;
+                }
+                
+                [System.Runtime.CompilerServices.Extension]
+                public static long LongCount<T> (
                         IEnumerable<T> source,
-                        Func<T, int, bool> selector)
+                        Func<T, bool> selector)
                 {
                         if (source == null || selector == null)
                                 throw new ArgumentNullException ();
                         
-                        int counter = 0;
-                        int elementIndex = 0;
-                        foreach (T element in source) {
-                                if (selector (element, elementIndex))
+                        long counter = 0;
+                        foreach (T element in source)
+                                if (selector(element))
                                         counter++;
-                                elementIndex++;
-                        }
                         
                         return counter;
                 }
@@ -354,7 +368,7 @@ namespace System.Query
                         }
                         
                         if (counter == 0)
-                                throw new EmptySequenceException ();
+                                throw new InvalidOperationException ();
                         else
                                 return minimum;
                 }
@@ -394,7 +408,7 @@ namespace System.Query
                         }
                         
                         if (counter == 0)
-                                throw new EmptySequenceException ();
+                                throw new InvalidOperationException ();
                         else
                                 return minimum;
                 }
@@ -434,7 +448,7 @@ namespace System.Query
                         }
                         
                         if (counter == 0)
-                                throw new EmptySequenceException ();
+                                throw new InvalidOperationException ();
                         else
                                 return minimum;
                 }
@@ -474,7 +488,7 @@ namespace System.Query
                         }
                         
                         if (counter == 0)
-                                throw new EmptySequenceException ();
+                                throw new InvalidOperationException ();
                         else
                                 return minimum;
                 }
@@ -529,7 +543,7 @@ namespace System.Query
                         }
                         
                         if (counter == 0)
-                                throw new EmptySequenceException ();
+                                throw new InvalidOperationException ();
                         else
                                 return minimum;
                 }
@@ -552,7 +566,7 @@ namespace System.Query
                         }
                         
                         if (counter == 0)
-                                throw new EmptySequenceException ();
+                                throw new InvalidOperationException ();
                         else
                                 return minimum;
                 }
@@ -596,7 +610,7 @@ namespace System.Query
                         }
                         
                         if (counter == 0)
-                                throw new EmptySequenceException ();
+                                throw new InvalidOperationException ();
                         else
                                 return minimum;
                 }
@@ -641,7 +655,7 @@ namespace System.Query
                         }
                         
                         if (counter == 0)
-                                throw new EmptySequenceException ();
+                                throw new InvalidOperationException ();
                         else
                                 return minimum;
                 }
@@ -685,7 +699,7 @@ namespace System.Query
                         }
                         
                         if (counter == 0)
-                                throw new EmptySequenceException ();
+                                throw new InvalidOperationException ();
                         else
                                 return minimum;
                 }
@@ -744,7 +758,7 @@ namespace System.Query
                         }
                         
                         if (counter == 0)
-                                throw new EmptySequenceException ();
+                                throw new InvalidOperationException ();
                         else
                                 return minimum;
                 }
@@ -769,7 +783,7 @@ namespace System.Query
                         }
                         
                         if (counter == 0)
-                                throw new EmptySequenceException ();
+                                throw new InvalidOperationException ();
                         else
                                 return maximum;
                 }
@@ -809,7 +823,7 @@ namespace System.Query
                         }
                         
                         if (counter == 0)
-                                throw new EmptySequenceException ();
+                                throw new InvalidOperationException ();
                         else
                                 return maximum;
                 }
@@ -849,7 +863,7 @@ namespace System.Query
                         }
                         
                         if (counter == 0)
-                                throw new EmptySequenceException ();
+                                throw new InvalidOperationException ();
                         else
                                 return maximum;
                 }
@@ -889,7 +903,7 @@ namespace System.Query
                         }
                         
                         if (counter == 0)
-                                throw new EmptySequenceException ();
+                                throw new InvalidOperationException ();
                         else
                                 return maximum;
                 }
@@ -944,7 +958,7 @@ namespace System.Query
                         }
                         
                         if (counter == 0)
-                                throw new EmptySequenceException ();
+                                throw new InvalidOperationException ();
                         else
                                 return maximum;
                 }
@@ -968,7 +982,7 @@ namespace System.Query
                         }
                         
                         if (counter == 0)
-                                throw new EmptySequenceException ();
+                                throw new InvalidOperationException ();
                         else
                                 return maximum;
                 }
@@ -1012,7 +1026,7 @@ namespace System.Query
                         }
                         
                         if (counter == 0)
-                                throw new EmptySequenceException ();
+                                throw new InvalidOperationException ();
                         else
                                 return maximum;
                 }
@@ -1056,7 +1070,7 @@ namespace System.Query
                         }
                         
                         if (counter == 0)
-                                throw new EmptySequenceException ();
+                                throw new InvalidOperationException ();
                         else
                                 return maximum;
                 }
@@ -1100,7 +1114,7 @@ namespace System.Query
                         }
                         
                         if (counter == 0)
-                                throw new EmptySequenceException ();
+                                throw new InvalidOperationException ();
                         else
                                 return maximum;
                 }
@@ -1160,7 +1174,7 @@ namespace System.Query
                         }
                         
                         if (counter == 0)
-                                throw new EmptySequenceException ();
+                                throw new InvalidOperationException ();
                         else
                                 return maximum;
                 }
@@ -1184,7 +1198,7 @@ namespace System.Query
                         }
                         
                         if (counter == 0)
-                                throw new EmptySequenceException ();
+                                throw new InvalidOperationException ();
                         else
                                 return (double)sum / (double)counter;
                 }
@@ -1224,7 +1238,7 @@ namespace System.Query
                         }
                         
                         if (counter == 0)
-                                throw new EmptySequenceException ();
+                                throw new InvalidOperationException ();
                         else
                                 return (double)sum / (double)counter;
                 }
@@ -1264,7 +1278,7 @@ namespace System.Query
                         }
                         
                         if (counter == 0)
-                                throw new EmptySequenceException ();
+                                throw new InvalidOperationException ();
                         else
                                 return sum / counter;
                 }
@@ -1304,7 +1318,7 @@ namespace System.Query
                         }
                         
                         if (counter == 0)
-                                throw new EmptySequenceException ();
+                                throw new InvalidOperationException ();
                         else
                                 return sum / counter;
                 }
@@ -1345,7 +1359,7 @@ namespace System.Query
                         }
                         
                         if (counter == 0)
-                                throw new EmptySequenceException ();
+                                throw new InvalidOperationException ();
                         else
                                 return (double)sum / (double)counter;
                 }
@@ -1388,7 +1402,7 @@ namespace System.Query
                         }
                         
                         if (counter == 0)
-                                throw new EmptySequenceException();
+                                throw new InvalidOperationException();
                         else
                                 return (double)sum / (double)counter;
                 }
@@ -1431,7 +1445,7 @@ namespace System.Query
                         }
                         
                         if (counter == 0)
-                                throw new EmptySequenceException ();
+                                throw new InvalidOperationException ();
                         else
                                 return sum / counter;
                 }
@@ -1474,7 +1488,7 @@ namespace System.Query
                         }
                         
                         if (counter == 0)
-                                throw new EmptySequenceException ();
+                                throw new InvalidOperationException ();
                         else
                                 return sum / counter;
                 }
@@ -1505,8 +1519,31 @@ namespace System.Query
                 
                 #region Fold
                 
+                [Obsolete ("Use Aggregate instead")]
                 [System.Runtime.CompilerServices.Extension]
                 public static T Fold<T> (
+                        IEnumerable<T> source,
+                        Func<T, T, T> func)
+                {
+                        return Fold<T> (source, func);
+                }
+                
+                [Obsolete ("Use Aggregate instead")]
+                [System.Runtime.CompilerServices.Extension]
+                public static U Fold<T, U> (
+                        IEnumerable<T> source,
+                        U seed,
+                        Func<U, T, U> func)
+                {
+                        return Fold<T, U> (source, seed, func);
+                }
+                
+                #endregion
+                
+                #region Aggregate
+                
+                [System.Runtime.CompilerServices.Extension]
+                public static T Aggregate<T> (
                         IEnumerable<T> source,
                         Func<T, T, T> func)
                 {
@@ -1524,13 +1561,13 @@ namespace System.Query
                         }
                         
                         if (counter == 0)
-                                throw new EmptySequenceException ();
+                                throw new InvalidOperationException ();
                         else
                                 return folded;
                 }
                 
                 [System.Runtime.CompilerServices.Extension]
-                public static U Fold<T, U> (
+                public static U Aggregate<T, U> (
                         IEnumerable<T> source,
                         U seed,
                         Func<U, T, U> func)
@@ -1611,10 +1648,19 @@ namespace System.Query
                         IEnumerable<T> source,
                         Func<T, K> keySelector)
                 {
+                        return ToDictionary<T, K> (source, keySelector, null);
+                }
+                
+                [System.Runtime.CompilerServices.Extension]
+                public static Dictionary<K, T> ToDictionary<T, K> (
+                        IEnumerable<T> source,
+                        Func<T, K> keySelector,
+                        IEqualityComparer<K> comparer)
+                {
                         if (source == null || keySelector == null)
                                 throw new ArgumentNullException ();
                         
-                        Dictionary<K, T> dictionary = new Dictionary<K, T> ();
+                        Dictionary<K, T> dictionary = new Dictionary<K, T> (comparer ?? EqualityComparer<K>.Default);
                         foreach (T element in source) {
                                 K key = keySelector (element);
                                 if (key == null)
@@ -1626,17 +1672,27 @@ namespace System.Query
                         }
                         return dictionary;
                 }
-                
+
                 [System.Runtime.CompilerServices.Extension]
                 public static Dictionary<K, E> ToDictionary<T, K, E> (
                         IEnumerable<T> source,
                         Func<T, K> keySelector,
                         Func<T, E> elementSelector)
                 {
+                        return ToDictionary<T, K, E> (source, keySelector, elementSelector, null);
+                }
+                                
+                [System.Runtime.CompilerServices.Extension]
+                public static Dictionary<K, E> ToDictionary<T, K, E> (
+                        IEnumerable<T> source,
+                        Func<T, K> keySelector,
+                        Func<T, E> elementSelector,
+                        IEqualityComparer<K> comparer)
+                {
                         if (source == null || keySelector == null || elementSelector == null)
                                 throw new ArgumentNullException ();
                         
-                        Dictionary<K, E> dictionary = new Dictionary<K, E>();
+                        Dictionary<K, E> dictionary = new Dictionary<K, E>(comparer ?? EqualityComparer<K>.Default);
                         foreach (T element in source)
                         {
                                 K key = keySelector (element);
@@ -1648,6 +1704,71 @@ namespace System.Query
                                         dictionary.Add(key, elementSelector (element));
                         }
                         return dictionary;
+                }
+                
+                #endregion
+                
+                #region ToLookup
+                
+                [System.Runtime.CompilerServices.Extension]
+                public static Lookup<K, T> ToLookup<T, K> (
+                        IEnumerable<T> source,
+                        Func<T, K> keySelector)
+                {
+                        return ToLookup<T, K> (source, keySelector, null);
+                }
+                
+                [System.Runtime.CompilerServices.Extension]
+                public static Lookup<K, T> ToLookup<T, K> (
+                        IEnumerable<T> source,
+                        Func<T, K> keySelector,
+                        IEqualityComparer<K> comparer)
+                {
+                        if (source == null || keySelector == null)
+                                throw new ArgumentNullException ();
+                        
+                        Dictionary<K, List<T>> dictionary = new Dictionary<K, List<T>> (comparer ?? EqualityComparer<K>.Default);
+                        foreach (T element in source) {
+                                K key = keySelector (element);
+                                if (key == null)
+                                        throw new ArgumentNullException ();
+                                if (!dictionary.ContainsKey (key))
+                                        dictionary.Add (key, new List<T> ());
+                                dictionary[key].Add (element);
+                        }
+                        return new Lookup<K, T> (dictionary);
+                }
+
+                [System.Runtime.CompilerServices.Extension]
+                public static Lookup<K, E> ToLookup<T, K, E> (
+                        IEnumerable<T> source,
+                        Func<T, K> keySelector,
+                        Func<T, E> elementSelector)
+                {
+                        return ToLookup<T, K, E> (source, keySelector, elementSelector, null);
+                }
+                                
+                [System.Runtime.CompilerServices.Extension]
+                public static Lookup<K, E> ToLookup<T, K, E> (
+                        IEnumerable<T> source,
+                        Func<T, K> keySelector,
+                        Func<T, E> elementSelector,
+                        IEqualityComparer<K> comparer)
+                {
+                        if (source == null || keySelector == null || elementSelector == null)
+                                throw new ArgumentNullException ();
+                        
+                        Dictionary<K, List<E>> dictionary = new Dictionary<K, List<E>>(comparer ?? EqualityComparer<K>.Default);
+                        foreach (T element in source)
+                        {
+                                K key = keySelector (element);
+                                if (key == null)
+                                        throw new ArgumentNullException ();
+                                if (!dictionary.ContainsKey (key))
+                                        dictionary.Add (key, new List<E> ());
+                                dictionary[key].Add (elementSelector (element));
+                        }
+                        return new Lookup<K, E> (dictionary);
                 }
                 
                 #endregion
@@ -1667,6 +1788,21 @@ namespace System.Query
                 }
                 
                 #endregion
+                
+                #region Cast
+                
+                [System.Runtime.CompilerServices.Extension]
+                public static IEnumerable<T> Cast<T> (
+                        System.Collections.IEnumerable source)
+                {
+                        if (source == null)
+                                throw new ArgumentNullException ();
+                        
+                        foreach (object element in source)
+                                yield return (T)element;
+                }
+                
+                #endregion
 
                 #region First
                 
@@ -1680,7 +1816,7 @@ namespace System.Query
                         foreach (T element in source)
                                 return element;
                         
-                        throw new EmptySequenceException();
+                        throw new InvalidOperationException ();
                 }
                 
                 [System.Runtime.CompilerServices.Extension]
@@ -1696,25 +1832,7 @@ namespace System.Query
                                         return element;
                         }
                         
-                        throw new EmptySequenceException ();
-                }
-                
-                [System.Runtime.CompilerServices.Extension]
-                public static T First<T> (
-                        IEnumerable<T> source,
-                        Func<T, int, bool> predicate)
-                {
-                        if (source == null || predicate == null)
-                                throw new ArgumentNullException ();
-                        
-                        int counter = 0;
-                        foreach (T element in source) {
-                                if (predicate(element, counter))
-                                        return element;
-                                counter++;
-                        }
-                        
-                        throw new EmptySequenceException ();
+                        throw new InvalidOperationException ();
                 }
                 
                 #endregion
@@ -1750,22 +1868,184 @@ namespace System.Query
                         return default (T);
                 }
                 
+                #endregion
+                
+                #region Last
+                
                 [System.Runtime.CompilerServices.Extension]
-                public static T FirstOrDefault<T> (
+                public static T Last<T> (
+                        IEnumerable<T> source)
+                {
+                        if (source == null)
+                                throw new ArgumentNullException ();
+                        
+                        bool noElements = true;
+                        T lastElement = default (T);
+                        foreach (T element in source)
+                        {
+                                if (noElements) noElements = false;
+                                lastElement = element;
+                        }
+                        
+                        if (!noElements)
+                                return lastElement;
+                        else
+                                throw new InvalidOperationException();
+                }
+                
+                [System.Runtime.CompilerServices.Extension]
+                public static T Last<T> (
                         IEnumerable<T> source,
-                        Func<T, int, bool> predicate)
+                        Func<T, bool> predicate)
                 {
                         if (source == null || predicate == null)
                                 throw new ArgumentNullException ();
                         
-                        int counter = 0;
+                        bool noElements = true;
+                        T lastElement = default (T);
                         foreach (T element in source) {
-                                if (predicate(element, counter))
-                                        return element;
-                                counter++;
+                                if (predicate (element))
+                                {
+                                        if (noElements) noElements = false;
+                                        lastElement = element;
+                                }
                         }
                         
-                        return default (T);
+                        if (!noElements)
+                                return lastElement;
+                        else
+                                throw new InvalidOperationException ();
+                }
+                
+                #endregion
+                
+                #region LastOrDefault
+                
+                [System.Runtime.CompilerServices.Extension]
+                public static T LastOrDefault<T> (
+                        IEnumerable<T> source)
+                {
+                        if (source == null)
+                                throw new ArgumentNullException ();
+                        
+                        T lastElement = default (T);
+                        foreach (T element in source)
+                                lastElement = element;
+                        
+                        return lastElement;
+                }
+                
+                [System.Runtime.CompilerServices.Extension]
+                public static T LastOrDefault<T> (
+                        IEnumerable<T> source,
+                        Func<T, bool> predicate)
+                {
+                        if (source == null || predicate == null)
+                                throw new ArgumentNullException ();
+                        
+                        T lastElement = default (T);
+                        foreach (T element in source) {
+                                if (predicate (element))
+                                        lastElement = element;
+                        }
+                        
+                        return lastElement;
+                }
+                
+                #endregion
+                
+                #region Single
+                
+                [System.Runtime.CompilerServices.Extension]
+                public static T Single<T> (
+                        IEnumerable<T> source)
+                {
+                        if (source == null)
+                                throw new ArgumentNullException ();
+                        
+                        bool otherElement = false;
+                        T singleElement = default (T);
+                        foreach (T element in source)
+                        {
+                                if (otherElement) throw new InvalidOperationException ();
+                                if (!otherElement) otherElement = true;
+                                singleElement = element;
+                        }
+                        
+                        if (otherElement)
+                                return singleElement;
+                        else
+                                throw new InvalidOperationException();
+                }
+                
+                [System.Runtime.CompilerServices.Extension]
+                public static T Single<T> (
+                        IEnumerable<T> source,
+                        Func<T, bool> predicate)
+                {
+                        if (source == null || predicate == null)
+                                throw new ArgumentNullException ();
+                        
+                        bool otherElement = false;
+                        T singleElement = default (T);
+                        foreach (T element in source) {
+                                if (predicate (element))
+                                {
+                                        if (otherElement) throw new InvalidOperationException ();
+                                        if (!otherElement) otherElement = true;
+                                        singleElement = element;
+                                }
+                        }
+                        
+                        if (otherElement)
+                                return singleElement;
+                        else
+                                throw new InvalidOperationException ();
+                }
+                
+                #endregion
+                
+                #region SingleOrDefault
+                
+                [System.Runtime.CompilerServices.Extension]
+                public static T SingleOrDefault<T> (
+                        IEnumerable<T> source)
+                {
+                        if (source == null)
+                                throw new ArgumentNullException ();
+                        
+                        bool otherElement = false;
+                        T singleElement = default (T);
+                        foreach (T element in source)
+                        {
+                                if (otherElement) throw new InvalidOperationException ();
+                                if (!otherElement) otherElement = true;
+                                singleElement = element;
+                        }
+                        
+                        return singleElement;
+                }
+                
+                [System.Runtime.CompilerServices.Extension]
+                public static T SingleOrDefault<T> (
+                        IEnumerable<T> source,
+                        Func<T, bool> predicate)
+                {
+                        if (source == null || predicate == null)
+                                throw new ArgumentNullException ();
+                        
+                        bool otherElement = false;
+                        T singleElement = default (T);
+                        foreach (T element in source) {
+                                if (predicate (element))
+                                {
+                                        if (otherElement) throw new InvalidOperationException ();
+                                        if (!otherElement) otherElement = true;
+                                        singleElement = element;
+                                }
+                        }
+                        
+                        return singleElement;
                 }
                 
                 #endregion
@@ -1793,6 +2073,79 @@ namespace System.Query
                                 }
                                 throw new ArgumentOutOfRangeException();
                         }
+                }
+                
+                #endregion
+                
+                #region ElementAtOrDefault
+                
+                [System.Runtime.CompilerServices.Extension]
+                public static T ElementAtOrDefault<T> (
+                        IEnumerable<T> source,
+                        int index)
+                {
+                        if (source == null)
+                                throw new ArgumentNullException ();
+                        if (index < 0)
+                                return default(T);
+                        
+                        if (source is IList<T>)
+                        {
+                                if (((IList<T>)source).Count >= index)
+                                        return default(T);
+                                else
+                                        return ((IList<T>)source)[index];
+                        }
+                        else {
+                                int counter = 0;
+                                foreach (T element in source) {
+                                        if (counter == index)
+                                                return element;
+                                        counter++;
+                                }
+                                return default (T);
+                        }
+                }
+                
+                #endregion
+                
+                #region DefaultIfEmpty
+                
+                [System.Runtime.CompilerServices.Extension]
+                public static IEnumerable<T> DefaultIfEmpty<T> (
+                        IEnumerable<T> source)
+                {
+                        if (source == null)
+                                throw new ArgumentNullException ();
+                        
+                        bool noYield = true;
+                        foreach (T item in source)
+                        {
+                                noYield = false;
+                                yield return item;
+                        }
+                        
+                        if (noYield)
+                                yield return default (T);
+                }
+                
+                [System.Runtime.CompilerServices.Extension]
+                public static IEnumerable<T> DefaultIfEmpty<T> (
+                        IEnumerable<T> source,
+                        T defaultValue)
+                {
+                        if (source == null)
+                                throw new ArgumentNullException ();
+                        
+                        bool noYield = true;
+                        foreach (T item in source)
+                        {
+                                noYield = false;
+                                yield return item;
+                        }
+                        
+                        if (noYield)
+                                yield return defaultValue;
                 }
                 
                 #endregion
@@ -1853,6 +2206,16 @@ namespace System.Query
                 
                 #endregion
 
+                #region Empty
+                
+                [System.Runtime.CompilerServices.Extension]
+                public static IEnumerable<T> Empty<T> ()
+                {
+                        return new List<T> ();
+                }
+                
+                #endregion
+                
                 /** A NOTE ON IMPLEMENTATION REGARDING NULL KEYS
                  * 
                  *  GroupBy specification states that null-key values
@@ -1879,66 +2242,29 @@ namespace System.Query
                 private static List<T> ContainsGroup<K, T>(
                         Dictionary<K, List<T>> items, K key, IEqualityComparer<K> comparer)
                 {
+                        IEqualityComparer<K> comparerInUse = (comparer ?? EqualityComparer<K>.Default);
                         foreach (KeyValuePair<K, List<T>> value in items) {
-                                if (comparer.Equals(value.Key, key))
+                                if (comparerInUse.Equals(value.Key, key))
                                     return value.Value;
                         }
                         return null;
                 }
                 
                 [System.Runtime.CompilerServices.Extension]
-                public static IEnumerable<Grouping<K, T>> GroupBy<T, K> (
+                public static IEnumerable<IGrouping<K, T>> GroupBy<T, K> (
                         IEnumerable<T> source,
                         Func<T, K> keySelector)
                 {
-                        if (source == null || keySelector == null)
-                                throw new ArgumentNullException ();
-                        
-                        Dictionary<K, List<T>> groups = new Dictionary<K, List<T>> ();
-                        List<T> nullList = new List<T> ();
-                        int counter = 0;
-                        int nullCounter = -1;
-                        
-                        foreach (T element in source) {
-                                K key = keySelector (element);
-                                if (key == null) {
-                                        nullList.Add (element);
-                                        if (nullCounter == -1) {
-                                                nullCounter = counter;
-                                                counter++;
-                                        }
-                                }
-                                else {
-                                        List<T> group = ContainsGroup<K, T> (groups, key, EqualityComparer<K>.Default);
-                                        if (group == null) {
-                                                group = new List<T> ();
-                                                groups.Add (key, group);
-                                                counter++;
-                                        }
-                                        group.Add (element);
-                                }
-                        }
-                        
-                        counter = 0;
-                        foreach (KeyValuePair<K, List<T>> group in groups) {
-                                if (counter == nullCounter) {
-                                        Grouping<K, T> nullGroup = new Grouping<K, T> (default (K), nullList);
-                                        yield return nullGroup;
-                                        counter++;
-                                }
-                                Grouping<K, T> grouping = new Grouping<K, T> (group.Key, group.Value);
-                                yield return grouping;
-                                counter++;
-                        }
+                        return GroupBy<T, K> (source, keySelector, null);
                 }
                 
                 [System.Runtime.CompilerServices.Extension]
-                public static IEnumerable<Grouping<K, T>> GroupBy<T, K> (
+                public static IEnumerable<IGrouping<K, T>> GroupBy<T, K> (
                         IEnumerable<T> source,
                         Func<T, K> keySelector,
                         IEqualityComparer<K> comparer)
                 {
-                        if (source == null || keySelector == null || comparer == null)
+                        if (source == null || keySelector == null)
                                 throw new ArgumentNullException ();
                         
                         Dictionary<K, List<T>> groups = new Dictionary<K, List<T>> ();
@@ -1980,61 +2306,22 @@ namespace System.Query
                 }
                 
                 [System.Runtime.CompilerServices.Extension]
-                public static IEnumerable<Grouping<K, E>> GroupBy<T, K, E> (
+                public static IEnumerable<IGrouping<K, E>> GroupBy<T, K, E> (
                         IEnumerable<T> source,
                         Func<T, K> keySelector,
                         Func<T, E> elementSelector)
                 {
-                        if (source == null || keySelector == null || elementSelector == null)
-                                throw new ArgumentNullException ();
-                        
-                        Dictionary<K, List<E>> groups = new Dictionary<K, List<E>> ();
-                        List<E> nullList = new List<E> ();
-                        int counter = 0;
-                        int nullCounter = -1;
-
-                        foreach (T item in source) {
-                                K key = keySelector (item);
-                                E element = elementSelector (item);
-                                if (key == null) {
-                                        nullList.Add (element);
-                                        if (nullCounter == -1) {
-                                                nullCounter = counter;
-                                                counter++;
-                                        }
-                                }
-                                else {
-                                        List<E> group = ContainsGroup<K, E> (groups, key, EqualityComparer<K>.Default);
-                                        if (group == null) {
-                                                group = new List<E> ();
-                                                groups.Add (key, group);
-                                                counter++;
-                                        }
-                                        group.Add (element);
-                                }
-                        }
-                        
-                        counter = 0;
-                        foreach (KeyValuePair<K, List<E>> group in groups) {
-                                if (counter == nullCounter) {
-                                        Grouping<K, E> nullGroup = new Grouping<K, E> (default (K), nullList);
-                                        yield return nullGroup;
-                                        counter++;
-                                }
-                                Grouping<K, E> grouping = new Grouping<K, E> (group.Key, group.Value);
-                                yield return grouping;
-                                counter++;
-                        }
+                        return GroupBy<T, K, E> (source, keySelector, elementSelector);
                 }
                 
                 [System.Runtime.CompilerServices.Extension]
-                public static IEnumerable<Grouping<K, E>> GroupBy<T, K, E> (
+                public static IEnumerable<IGrouping<K, E>> GroupBy<T, K, E> (
                         IEnumerable<T> source,
                         Func<T, K> keySelector,
                         Func<T, E> elementSelector,
                         IEqualityComparer<K> comparer)
                 {
-                        if (source == null || keySelector == null || comparer == null || elementSelector == null)
+                        if (source == null || keySelector == null || elementSelector == null)
                                 throw new ArgumentNullException ();
                         
                         Dictionary<K, List<E>> groups = new Dictionary<K, List<E>> ();
@@ -2084,14 +2371,8 @@ namespace System.Query
                 public static OrderedSequence<T> OrderBy<T, K> (
                         IEnumerable<T> source,
                         Func<T, K> keySelector)
-                where
-                        K : IComparable<K>
                 {
-                        if (source == null || keySelector == null)
-                                throw new ArgumentNullException ();
-                        
-                        return new InternalOrderedSequence<T, K> (
-                                source, keySelector, null, false, null);
+                        return OrderBy<T, K> (source, keySelector, null);
                 }
                 
                 [System.Runtime.CompilerServices.Extension]
@@ -2100,11 +2381,11 @@ namespace System.Query
                         Func<T, K> keySelector,
                         IComparer<K> comparer)
                 {
-                        if (source == null || keySelector == null || comparer == null)
+                        if (source == null || keySelector == null)
                                 throw new ArgumentNullException ();
                         
                         return new InternalOrderedSequence<T, K> (
-                                source, keySelector, comparer, false, null);
+                                source, keySelector, (comparer ?? Comparer<K>.Default), false, null);
                 }
                 
                 #endregion
@@ -2115,14 +2396,8 @@ namespace System.Query
                 public static OrderedSequence<T> OrderByDescending<T, K> (
                         IEnumerable<T> source,
                         Func<T, K> keySelector)
-                where
-                        K : IComparable<K>
                 {
-                        if (source == null || keySelector == null)
-                                throw new ArgumentNullException ();
-                        
-                        return new InternalOrderedSequence<T, K> (
-                                source, keySelector, null, true, null);
+                        return OrderByDescending<T, K> (source, keySelector, null);
                 }
                 
                 [System.Runtime.CompilerServices.Extension]
@@ -2131,11 +2406,11 @@ namespace System.Query
                         Func<T, K> keySelector,
                         IComparer<K> comparer)
                 {
-                        if (source == null || keySelector == null || comparer == null)
+                        if (source == null || keySelector == null)
                                 throw new ArgumentNullException ();
                         
                         return new InternalOrderedSequence<T, K> (
-                                source, keySelector, comparer, true, null);
+                                source, keySelector, (comparer ?? Comparer<K>.Default), true, null);
                 }
                 
                 #endregion
@@ -2146,14 +2421,8 @@ namespace System.Query
                 public static OrderedSequence<T> ThenBy<T, K> (
                         OrderedSequence<T> source,
                         Func<T, K> keySelector)
-                where
-                        K : IComparable<K>
                 {
-                        if (source == null || keySelector == null)
-                                throw new ArgumentNullException ();
-                        
-                        return new InternalOrderedSequence<T, K> (
-                                source, keySelector, null, false, source);
+                        return ThenBy<T, K> (source, keySelector, null);
                 }
                 
                 [System.Runtime.CompilerServices.Extension]
@@ -2162,11 +2431,11 @@ namespace System.Query
                         Func<T, K> keySelector,
                         IComparer<K> comparer)
                 {
-                        if (source == null || keySelector == null || comparer == null)
+                        if (source == null || keySelector == null)
                                 throw new ArgumentNullException ();
                         
                         return new InternalOrderedSequence<T, K> (
-                                source, keySelector, comparer, false, source);
+                                source, keySelector, (comparer ?? Comparer<K>.Default), false, source);
                 }
                 
                 #endregion
@@ -2177,14 +2446,8 @@ namespace System.Query
                 public static OrderedSequence<T> ThenByDescending<T, K> (
                         OrderedSequence<T> source,
                         Func<T, K> keySelector)
-                where
-                        K : IComparable<K>
                 {
-                        if (source == null || keySelector == null)
-                                throw new ArgumentNullException ();
-                        
-                        return new InternalOrderedSequence<T, K> (
-                                source, keySelector, null, true, source);
+                        return ThenByDescending<T, K> (source, keySelector, null);
                 }
                 
                 [System.Runtime.CompilerServices.Extension]
@@ -2193,11 +2456,11 @@ namespace System.Query
                         Func<T, K> keySelector,
                         IComparer<K> comparer)
                 {
-                        if (source == null || keySelector == null || comparer == null)
+                        if (source == null || keySelector == null)
                                 throw new ArgumentNullException ();
                         
                         return new InternalOrderedSequence<T, K> (
-                                source, keySelector, comparer, true, source);
+                                source, keySelector, (comparer ?? Comparer<K>.Default), true, source);
                 }
                 
                 #endregion
@@ -2450,23 +2713,6 @@ namespace System.Query
                         return false;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static bool Any<T> (
-                        IEnumerable<T> source,
-                        Func<T, int, bool> predicate)
-                {
-                        if (source == null || predicate == null)
-                                throw new ArgumentNullException ();
-                        
-                        int counter = 0;
-                        foreach (T element in source) {
-                                if (predicate(element, counter))
-                                        return true;
-                                counter++;
-                        }
-                        return false;
-                }
-                
                 #endregion
                 
                 #region All
@@ -2485,21 +2731,25 @@ namespace System.Query
                         return true;
                 }
                 
+                #endregion
+                
+                #region Contains
+                
                 [System.Runtime.CompilerServices.Extension]
-                public static bool All<T> (
+                public static bool Contains<T> (
                         IEnumerable<T> source,
-                        Func<T, int, bool> predicate)
+                        T value)
                 {
-                        if (source == null || predicate == null)
-                                throw new ArgumentNullException ();
-                        
-                        int counter = 0;
-                        foreach (T element in source) {
-                                if (!predicate(element, counter))
-                                        return false;
-                                counter++;
+                        if (source is ICollection<T>) {
+                                ICollection<T> collection = (ICollection<T>)source;
+                                return collection.Contains(value);
                         }
-                        return true;
+                        else {
+                                foreach (T element in source)
+                                        if (Equals(element, value))
+                                                return true;
+                                return false;
+                        }
                 }
                 
                 #endregion
@@ -2635,6 +2885,75 @@ namespace System.Query
                 }
                 
                 #endregion
+                
+                # region Join
+                
+                [System.Runtime.CompilerServices.Extension]
+                public static IEnumerable<V> Join<T, U, K, V> (
+                        IEnumerable<T> outer,
+                        IEnumerable<U> inner,
+                        Func<T, K> outerKeySelector,
+                        Func<U, K> innerKeySelector,
+                        Func<T, U, V> resultSelector)
+                {
+                        if (outer == null || inner == null || outerKeySelector == null || 
+                                innerKeySelector == null || resultSelector == null)
+                                throw new ArgumentNullException ();
+                        
+                        Dictionary<K, List<U>> innerKeys = new Dictionary<K, List<U>> ();
+                        foreach (U element in inner)
+                        {
+                                K innerKey = innerKeySelector (element);
+                                if (!innerKeys.ContainsKey (innerKey))
+                                        innerKeys.Add (innerKey, new List<U> ());
+                                innerKeys[innerKey].Add (element);
+                        }
+                        
+                        foreach (T element in outer)
+                        {
+                                K outerKey = outerKeySelector (element);
+                                if (innerKeys.ContainsKey (outerKey))
+                                {
+                                        foreach (U innerElement in innerKeys [outerKey])
+                                                yield return resultSelector (element, innerElement);
+                                }
+                        }
+                }
+                
+                # endregion
+                
+                # region GroupJoin
+                
+                [System.Runtime.CompilerServices.Extension]
+                public static IEnumerable<V> GroupJoin<T, U, K, V> (
+                        IEnumerable<T> outer,
+                        IEnumerable<U> inner,
+                        Func<T, K> outerKeySelector,
+                        Func<U, K> innerKeySelector,
+                        Func<T, IEnumerable<U>, V> resultSelector)
+                {
+                        if (outer == null || inner == null || outerKeySelector == null || 
+                                innerKeySelector == null || resultSelector == null)
+                                throw new ArgumentNullException ();
+                        
+                        Dictionary<K, List<U>> innerKeys = new Dictionary<K, List<U>> ();
+                        foreach (U element in inner)
+                        {
+                                K innerKey = innerKeySelector (element);
+                                if (!innerKeys.ContainsKey (innerKey))
+                                        innerKeys.Add (innerKey, new List<U> ());
+                                innerKeys[innerKey].Add (element);
+                        }
+                        
+                        foreach (T element in outer)
+                        {
+                                K outerKey = outerKeySelector (element);
+                                if (innerKeys.ContainsKey (outerKey))
+                                        yield return resultSelector (element, innerKeys [outerKey]);
+                        }
+                }
+                
+                # endregion
 
                 // This methods are not included in the
                 // .NET Standard Query Operators Specification,
@@ -2655,27 +2974,6 @@ namespace System.Query
                         else
                                 return ((first.Equals (second) ||
                                          first.GetHashCode () == second.GetHashCode ()));
-                }
-                
-                #endregion
-                
-                #region Contains
-                
-                [System.Runtime.CompilerServices.Extension]
-                public static bool Contains<T> (
-                        IEnumerable<T> source,
-                        T value)
-                {
-                        if (source is ICollection<T>) {
-                                ICollection<T> collection = (ICollection<T>)source;
-                                return collection.Contains(value);
-                        }
-                        else {
-                                foreach (T element in source)
-                                        if (Equals(element, value))
-                                                return true;
-                                return false;
-                        }
                 }
                 
                 #endregion

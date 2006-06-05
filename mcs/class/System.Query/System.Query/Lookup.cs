@@ -26,30 +26,34 @@ using System.Collections.Generic;
 
 namespace System.Query
 {
-        public class Grouping<K, T> : IGrouping<K, T>
+        public class Lookup<K, T> : IEnumerable<IGrouping<K, T>>
         {
-                K key;
-                IEnumerable<T> group;
+                Dictionary<K, IGrouping<K, T>> groups;
                 
-                public Grouping (K key, IEnumerable<T> group)
+                internal Lookup (Dictionary<K, List<T>> groups)
                 {
-                        this.group = group;
-                        this.key = key;
+                        this.groups = new Dictionary<K, IGrouping<K, T>> ();
+                        foreach (KeyValuePair<K, List<T>> group in groups)
+                                this.groups.Add (group.Key, new Grouping<K, T>(group.Key, group.Value));
                 }
                 
-                public K Key {
-                        get { return key; }
-                        set { key = value; }
+                public int Count {
+                        get { return groups.Count; }
                 }
                 
-                public IEnumerator<T> GetEnumerator ()
+                public bool Contains (K key)
                 {
-                        return group.GetEnumerator ();
+                        return groups.ContainsKey (key);
+                }
+                
+                public IEnumerator<IGrouping<K, T>> GetEnumerator ()
+                {
+                        return groups.Values.GetEnumerator ();
                 }
                 
                 IEnumerator IEnumerable.GetEnumerator ()
                 {
-                        return group.GetEnumerator ();
+                        return groups.Values.GetEnumerator ();
                 }
         }
 }

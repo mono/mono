@@ -21,13 +21,12 @@
 //
 
 using System;
+using System.Collections.Generic;
 
 namespace System.Query
 {
-        public class EmptySequenceException : Exception
+        public interface IGrouping<K, T> : IEnumerable<T>
         {
-                public EmptySequenceException ()
-                {
-                }
+                K Key { get; }
         }
 }

@@ -24,9 +24,9 @@ using System;
 
 namespace System.Query
 {
-        public delegate T Func<T> ();
-        public delegate T Func<A0, T> (A0 arg0);
-        public delegate T Func<A0, A1, T> (A0 arg0, A1 arg1);
-        public delegate T Func<A0, A1, A2, T> (A0 arg0, A1 arg1, A2 arg2);
-        public delegate T Func<A0, A1, A2, A3, T> (A0 arg0, A1 arg1, A2 arg2, A3 arg3);
+        public delegate TR Func<TR> ();
+        public delegate TR Func<T0, TR> (T0 a0);
+        public delegate TR Func<T0, T1, TR> (T0 a0, T1 a1);
+        public delegate TR Func<T0, T1, T2, TR> (T0 a0, T1 a1, T2 a2);
+        public delegate TR Func<T0, T1, T2, T3, TR> (T0 a0, T1 a1, T2 a2, T3 a3);
 }

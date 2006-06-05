@@ -1,8 +1,9 @@
 ./Assembly/AssemblyInfo.cs
 ./System.Runtime.CompilerServices/ExtensionAttribute.cs
-./System.Query/EmptySequenceException.cs
 ./System.Query/Funcs.cs
+./System.Query/IGrouping.cs
 ./System.Query/Grouping.cs
+./System.Query/Lookup.cs
 ./System.Query/OrderedSequence.cs
 ./System.Query/InternalOrderedSequence.cs
 ./System.Query/Sequence.cs
