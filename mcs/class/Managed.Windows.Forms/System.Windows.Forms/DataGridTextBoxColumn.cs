@@ -164,7 +164,7 @@ namespace System.Windows.Forms
 		[MonoTODO]
 		protected internal override void ConcedeFocus ()
 		{
-
+			HideEditBox ();
 		}
 
 		protected internal override void Edit (CurrencyManager source, int rowNum,  Rectangle bounds,  bool _ro, string instantText, bool cellIsVisible)
@@ -229,7 +229,11 @@ namespace System.Windows.Forms
 		[MonoTODO]
 		protected void HideEditBox ()
 		{
-
+			if (textbox != null) {
+				grid.SuspendLayout ();
+				textbox.Visible = false;
+				grid.ResumeLayout (false);
+			}
 		}
 
 		protected internal override void Paint (Graphics g, Rectangle bounds, CurrencyManager source, int rowNum)

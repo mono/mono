@@ -134,20 +134,14 @@ namespace System.Windows.Forms
 		#endregion	// Local Variables
 
 		#region Constructors
-		public DataGridColumnStyle ()
+		public DataGridColumnStyle () : this (null)
 		{
-			CommmonConstructor ();
-			property_descriptor = null;
 		}
 
 		public DataGridColumnStyle (PropertyDescriptor prop)
 		{
-			CommmonConstructor ();
 			property_descriptor = prop;
-		}
 
-		private void CommmonConstructor ()
-		{
 			fontheight = -1;
 			table_style = null;
 			header_text = string.Empty;

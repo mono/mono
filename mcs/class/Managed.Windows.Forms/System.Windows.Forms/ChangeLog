@@ -1,3 +1,48 @@
+2006-06-05  Chris Toshok  <toshok@ximian.com>
+
+	* DataGrid.cs: rename cached_currencymgr to list_manager.
+	(set_CurrentCell): move SetCurrentCell code here, and clean it up
+	some.
+	(CurrentRow, CurrentColumn): single accessors so we can make the
+	cursor movement code a lot easier to understand.
+	(CurrentRowIndex): implement this in terms of CurrentRow.
+	(BeginEdit): clean this up a bit.
+	(CancelEditing): sort out the is_editing/is_changing/is_adding
+	stuff a little.
+	(EndEdit): minor changes.
+	(OnKeyDown): add a comment about a (most likely) unnecessary
+	check.
+	(OnMouseDown): cancel editing when we click on a row header.  And
+	use the CurrentRow setter, not CurrentCell.
+	(ProcessDialogKey): directly call ProcessGridKey.
+	(UpdateSelectionAfterCursorMove): factor out this common block of
+	code (it's used everywhere that we move the cursor by updating row
+	or column).
+	(ProcessGridKey): pretty substantial overhaul.  Use the
+	CurrentRow/CurrentColumn properties to make the code a lot more
+	readable.  Only use the CurrentCell property when we have to
+	modify both row and column at once.  Tab behavior is still broken,
+	and Delete is untested.
+	(Select): if we have no selected rows, set selection_start to
+	@row.
+	(EditCurrentCell): rename EditCell this.  It was only ever invoked
+	with CurrentCell as the arg, so drop the arg and rename it.
+
+	* DataGridColumnStyle.cs: clean up the constructors a little, and
+	drop CommonConstructor().
+
+	* DataGridTextBox.cs (.ctor): set accepts_return to true so we
+	actually get notified when the user hits it.
+	(ProcessKeyMessage): *substantially* simplify this method.
+	There's no reason (that I can see) for the textbox to be making
+	calls into the datagrid at all.  Remove all of them but the ones
+	for Enter handling.  those will take some more work.
+
+	* DataGridTextBoxColumn.cs (ConcedeFocus): implement this by
+	calling HideEditBox.
+	(HideEditBox): if we have an active textbox, render it invisible
+	without causing a re-layout of the datagrid.
+
 2006-06-05  Mike Kestner  <mkestner@novell.com>
 
 	* ListView.cs : fix NRE crasher when focuseditem is cleared by

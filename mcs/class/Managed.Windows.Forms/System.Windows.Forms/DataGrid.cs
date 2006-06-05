@@ -177,7 +177,7 @@ namespace System.Windows.Forms
 		private Hashtable selected_rows;
 		private int selection_start; // used for range selection
 		private bool begininit;
-		private CurrencyManager cached_currencymgr;
+		private CurrencyManager list_manager;
 		private bool accept_listmgrevents;
 
 		bool column_resize_active;
@@ -238,7 +238,7 @@ namespace System.Windows.Forms
 			selected_rows = new Hashtable ();
 			selection_start = -1;
 			preferredrow_height = def_preferredrow_height = FontHeight + 3;
-			cached_currencymgr = null;
+			list_manager = null;
 			accept_listmgrevents = true;
 
 			default_style = new DataGridTableStyle (true);
@@ -447,16 +447,59 @@ namespace System.Windows.Forms
 			}
 
 			set {
+				if (current_cell.Equals (value))
+					return;
+
+				bool was_editing = is_editing;
+
+				if (was_editing)
+					CancelEditing ();
+
+				accept_listmgrevents = false;
+				//Console.WriteLine ("set_CurrentCell, {0}x{1}, RowsCount = {2}, from {3}", value.RowNumber, value.ColumnNumber, RowsCount, Environment.StackTrace);
 				if (value.RowNumber >= RowsCount) {
-					value.RowNumber = RowsCount == 0 ? 0 : RowsCount - 1;
+					//Console.WriteLine ("+ calling AddNew", value.RowNumber, RowsCount);
+					ListManager.AddNew ();
+					is_adding = true;
+					value.RowNumber = RowsCount - 1;
 				}
-					
+
 				if (value.ColumnNumber >= CurrentTableStyle.GridColumnStyles.Count) {
 					value.ColumnNumber = CurrentTableStyle.GridColumnStyles.Count == 0 ? 0: CurrentTableStyle.GridColumnStyles.Count - 1;
 				}
 					
-				SetCurrentCell (value);
+				int old_row = current_cell.RowNumber;
+						
+				EnsureCellVisibility (value);
+				current_cell = value;					
+			
+				if (current_cell.RowNumber != old_row) {
+					grid_drawing.InvalidateRowHeader (old_row);
+				}
+			
+				if (list_manager !=  null) {
+					list_manager.Position = current_cell.RowNumber;
+				}
+
+				if (current_cell.RowNumber != old_row) {
+					InvalidateCurrentRowHeader ();
+				}
+				accept_listmgrevents = true;
+				OnCurrentCellChanged (EventArgs.Empty);
+
+				if (was_editing)
+					EditCurrentCell ();
 			}
+		}
+
+		int CurrentRow {
+			get { return current_cell.RowNumber; }
+			set { CurrentCell = new DataGridCell (value, current_cell.ColumnNumber); }
+		}
+
+		int CurrentColumn {
+			get { return current_cell.ColumnNumber; }
+			set { CurrentCell = new DataGridCell (current_cell.RowNumber, value); }
 		}
 
 		[Browsable(false)]
@@ -467,14 +510,10 @@ namespace System.Windows.Forms
 					return -1;
 				}
 				
-				return current_cell.RowNumber;
+				return CurrentRow;
 			}
 
-			set {
-				if (current_cell.RowNumber != value) {
-					CurrentCell = new DataGridCell (value, current_cell.ColumnNumber);
-				}
-			}
+			set { CurrentRow = value; }
 		}
 
 		[Browsable(false)]
@@ -698,15 +737,18 @@ namespace System.Windows.Forms
 					return null;
 				}
 
-				if (cached_currencymgr != null) {
-					return cached_currencymgr;
+				if (list_manager != null) {
+					return list_manager;
 				}
 
 				// If we bind real_datasource object we do not get the events from ListManger
 				// since the object is not the datasource and does not match
-				cached_currencymgr = (CurrencyManager) BindingContext [real_datasource, DataMember];
-				ConnectListManagerEvents ();
-				return cached_currencymgr;
+				list_manager = (CurrencyManager) BindingContext [real_datasource, DataMember];
+
+				if (list_manager != null)
+					ConnectListManagerEvents ();
+
+				return list_manager;
 			}
 
 			set {
@@ -1004,11 +1046,10 @@ namespace System.Windows.Forms
 			if (column < 0)
 				return false;
 
-			DataGridCell new_cell = new DataGridCell (rowNumber, column);
+			CurrentCell = new DataGridCell (rowNumber, column);
 
-			SetCurrentCell (new_cell);
-
-			EditCell (new_cell);
+			/* force editing of CurrentCell if we aren't already editing */
+			EditCurrentCell ();
 
 			return true;
 		}
@@ -1020,22 +1061,24 @@ namespace System.Windows.Forms
 
 		protected virtual void CancelEditing ()
 		{
-			if (!is_editing && !is_adding && !is_changing)
+			if (!is_editing)
 				return;
 
-			if (current_cell.ColumnNumber < CurrentTableStyle.GridColumnStyles.Count) {
-				CurrentTableStyle.GridColumnStyles[current_cell.ColumnNumber].Abort (current_cell.RowNumber);
+			if (is_changing) {
+				if (current_cell.ColumnNumber < CurrentTableStyle.GridColumnStyles.Count)
+					CurrentTableStyle.GridColumnStyles[current_cell.ColumnNumber].Abort (current_cell.RowNumber);
 			}
-			
+
+
+			CurrentTableStyle.GridColumnStyles[current_cell.ColumnNumber].ConcedeFocus ();
 			if (is_adding) {
-				ListManager.RemoveAt (RowsCount - 1);
+				ListManager.CancelCurrentEdit ();
+				is_adding = false;
 			}
 
-			is_adding = false;
 			is_editing = false;
-			is_changing = false;
 
-			InvalidateCurrentRowHeader ();
+			//Invalidate ();
 		}
 
 		[MonoTODO]
@@ -1087,10 +1130,10 @@ namespace System.Windows.Forms
 
 		public bool EndEdit (DataGridColumnStyle gridColumn, int rowNumber, bool shouldAbort)
 		{	
-			if (!is_adding && !is_editing && !is_changing)
+			if (!is_editing && !is_changing)
 				return true;
 
-			if (is_adding == true) {				
+			if (is_adding) {
 				if (shouldAbort) {
 					ListManager.CancelCurrentEdit ();
 				} else {
@@ -1098,13 +1141,12 @@ namespace System.Windows.Forms
 					CalcAreasAndInvalidate ();
 				}
 				is_adding = false;
-			} 
-
-			if (shouldAbort || gridColumn.ParentReadOnly ==true) {
-				gridColumn.Abort (rowNumber);
-			} else {
-				gridColumn.Commit (ListManager, rowNumber);
 			}
+
+			if (shouldAbort || gridColumn.ParentReadOnly)
+				gridColumn.Abort (rowNumber);
+			else
+				gridColumn.Commit (ListManager, rowNumber);
 
 			is_editing = false;
 			is_changing = false;
@@ -1305,6 +1347,9 @@ namespace System.Windows.Forms
 				ke.Handled = true;
 			}
 
+			/* TODO: we probably don't need this check,
+			 * since current_cell wouldn't have been set
+			 * to something invalid */
 			if (CurrentTableStyle.GridColumnStyles.Count > 0) {
 				CurrentTableStyle.GridColumnStyles[current_cell.ColumnNumber].OnKeyDown
 					(ke, current_cell.RowNumber, current_cell.ColumnNumber);
@@ -1346,8 +1391,8 @@ namespace System.Windows.Forms
 				DataGridCell new_cell = new DataGridCell (testinfo.Row, testinfo.Column);
 
 				if ((new_cell.Equals (current_cell) == false) || (!is_editing)) {
-					SetCurrentCell (new_cell);
-					EditCell (current_cell);
+					CurrentCell = new_cell;
+					EditCurrentCell ();
 				} else {
 					CurrentTableStyle.GridColumnStyles[testinfo.Column].OnMouseDown (e, testinfo.Row, testinfo.Column);
 				}
@@ -1367,7 +1412,8 @@ namespace System.Windows.Forms
 					Select (testinfo.Row);
 				}
 
-				CurrentCell = new DataGridCell (testinfo.Row, current_cell.ColumnNumber);
+				CancelEditing ();
+				CurrentRow = testinfo.Row;
 				OnRowHeaderClick (EventArgs.Empty);
 				break;
 			}
@@ -1574,7 +1620,20 @@ namespace System.Windows.Forms
 
 		protected override bool ProcessDialogKey (Keys keyData)
 		{
-			return base.ProcessDialogKey (keyData);
+			return ProcessGridKey (new KeyEventArgs (keyData));
+		}
+
+		void UpdateSelectionAfterCursorMove (bool extend_selection)
+		{
+			if (extend_selection) {
+				CancelEditing ();
+				ShiftSelection (CurrentRow);
+			}
+			else {
+				ResetSelection ();
+				if (!is_editing)
+					EditCurrentCell ();
+			}
 		}
 
 		protected bool ProcessGridKey (KeyEventArgs ke)
@@ -1583,177 +1642,144 @@ namespace System.Windows.Forms
 				return false;
 			}
 
-			bool ctrl_pressed = ((Control.ModifierKeys & Keys.Control) != 0);
-			bool alt_pressed = ((Control.ModifierKeys & Keys.Alt) != 0);
+			bool ctrl_pressed = ((ke.Modifiers & Keys.Control) != 0);
+			bool alt_pressed = ((ke.Modifiers & Keys.Alt) != 0);
+			bool shift_pressed = ((ke.Modifiers & Keys.Shift) != 0);
 
 			switch (ke.KeyCode) {
+			case Keys.Escape:
+				CancelEditing ();
+				break;
+				
 			case Keys.D0:
-			{
 				if (alt_pressed) {
-					if (is_editing) {
-						CurrentTableStyle.GridColumnStyles[current_cell.ColumnNumber].EnterNullValue ();
-					}
+					if (is_editing)
+						CurrentTableStyle.GridColumnStyles[CurrentColumn].EnterNullValue ();
 				}
-				break;
-			}
-			case Keys.Up:
-			{
-				if (ctrl_pressed) {
-					CurrentCell = new DataGridCell (0, current_cell.ColumnNumber);
-					EditCell (current_cell);
-				}
-				else {
-					if (current_cell.RowNumber > 0) {
-						CurrentCell = new DataGridCell (current_cell.RowNumber - 1, current_cell.ColumnNumber);
-						EditCell (current_cell);
-					}
-				}
-				break;
-			}
-			case Keys.Down:
-			{
-				if (ctrl_pressed) {
-					CurrentCell = new DataGridCell (RowsCount - 1, current_cell.ColumnNumber);
-					EditCell (current_cell);
-				}
-				else {
-					if (current_cell.RowNumber < RowsCount - 1) {
-						CurrentCell = new DataGridCell (current_cell.RowNumber + 1, current_cell.ColumnNumber);
-						EditCell (current_cell);
-					}
-				}
-				break;
-			}
+				return true;
 
-			case Keys.Enter: {
-				if (current_cell.RowNumber + 1 == RowsCount) {
-					DataGridCell new_cell = new DataGridCell (current_cell.RowNumber + 1, current_cell.ColumnNumber);
+			case Keys.Enter:
+				CurrentRow ++;
+				if (!is_editing)
+					EditCurrentCell ();
+				return true;
 
-					SetCurrentCell (new_cell);
-					EditCell (current_cell);
-				}
-				break;
-			}
+			case Keys.Tab:
+				if (CurrentColumn < CurrentTableStyle.GridColumnStyles.Count - 1)
+					CurrentColumn ++;
+				else if ((CurrentRow <= RowsCount - 1) && (CurrentColumn == CurrentTableStyle.GridColumnStyles.Count - 1))
+					CurrentCell = new DataGridCell (CurrentRow + 1, 0);
 
-			case Keys.Tab: {
-				if (current_cell.ColumnNumber + 1 < CurrentTableStyle.GridColumnStyles.Count) {
-					CurrentCell = new DataGridCell (current_cell.RowNumber, current_cell.ColumnNumber + 1);
-					EditCell (current_cell);
-				} else if (current_cell.RowNumber + 1 < RowsCount) {
-					CurrentCell = new DataGridCell (current_cell.RowNumber + 1, 0);
-					EditCell (current_cell);
-				} else if ((current_cell.RowNumber + 1 == RowsCount) && (current_cell.ColumnNumber + 1 == CurrentTableStyle.GridColumnStyles.Count)) {
-					int	new_row;
-					int	new_col;
+				UpdateSelectionAfterCursorMove (false);
 
-					new_row = current_cell.RowNumber;
-					new_col = current_cell.ColumnNumber + 1;
-					if (new_col >= CurrentTableStyle.GridColumnStyles.Count) {
-						new_row++;
-						new_col = 0;
-					}
-					DataGridCell new_cell = new DataGridCell (new_row, new_col);
-
-					SetCurrentCell (new_cell);
-					EditCell (current_cell);
-				}
-				break;
-			}
+				return true;
 
 			case Keys.Right:
-			{
 				if (ctrl_pressed) {
-					CurrentCell = new DataGridCell (current_cell.RowNumber, CurrentTableStyle.GridColumnStyles.Count - 1);
-					EditCell (current_cell);
+					CurrentColumn = CurrentTableStyle.GridColumnStyles.Count - 1;
 				}
 				else {
-					if (current_cell.ColumnNumber + 1 < CurrentTableStyle.GridColumnStyles.Count) {
-						CurrentCell = new DataGridCell (current_cell.RowNumber, current_cell.ColumnNumber + 1);
-						EditCell (current_cell);
-					} else if (current_cell.RowNumber + 1 < RowsCount) {
-						CurrentCell = new DataGridCell (current_cell.RowNumber + 1, 0);
-						EditCell (current_cell);
+					if (CurrentColumn < CurrentTableStyle.GridColumnStyles.Count - 1) {
+						CurrentColumn ++;
+					} else if (CurrentRow < RowsCount - 1
+						   || (CurrentRow == RowsCount - 1
+						       && !is_adding)) {
+						CurrentCell = new DataGridCell (CurrentRow + 1, 0);
 					}
 				}
-				break;
-			}
+
+				UpdateSelectionAfterCursorMove (false);
+
+				return true;
+
 			case Keys.Left:
-			{
 				if (ctrl_pressed) {
-					CurrentCell = new DataGridCell (current_cell.RowNumber, 0);
-					EditCell (current_cell);
+					CurrentColumn = 0;
 				}
 				else {
-					if (current_cell.ColumnNumber > 0) {
-						CurrentCell = new DataGridCell (current_cell.RowNumber, current_cell.ColumnNumber - 1);
-						EditCell (current_cell);
-					} else if (current_cell.RowNumber > 0) {
-						CurrentCell = new DataGridCell (current_cell.RowNumber - 1, CurrentTableStyle.GridColumnStyles.Count - 1);
-						EditCell (current_cell);
-					}
+					if (current_cell.ColumnNumber > 0)
+						CurrentColumn --;
+					else if (CurrentRow > 0)
+						CurrentCell = new DataGridCell (CurrentRow - 1, CurrentTableStyle.GridColumnStyles.Count - 1);
 				}
-				break;
-			}
+
+				UpdateSelectionAfterCursorMove (false);
+
+				return true;
+
+			case Keys.Up:
+				if (ctrl_pressed)
+					CurrentRow = 0;
+				else if (CurrentRow > 0)
+					CurrentRow --;
+
+				UpdateSelectionAfterCursorMove (shift_pressed);
+
+				return true;
+
+			case Keys.Down:
+				if (ctrl_pressed)
+					CurrentRow = RowsCount - 1;
+				else if (CurrentRow < RowsCount - 1)
+					CurrentRow ++;
+				else if (CurrentRow == RowsCount - 1 && !is_adding && !shift_pressed)
+					CurrentRow ++;
+
+				UpdateSelectionAfterCursorMove (shift_pressed);
+
+				return true;
+
 			case Keys.PageUp:
-			{
-				if (current_cell.RowNumber > grid_drawing.VLargeChange) {
-					CurrentCell = new DataGridCell (current_cell.RowNumber - grid_drawing.VLargeChange, current_cell.ColumnNumber);
-				} else {
-					CurrentCell = new DataGridCell (0, current_cell.ColumnNumber);
-				}
+				if (CurrentRow > grid_drawing.VLargeChange)
+					CurrentRow -= grid_drawing.VLargeChange;
+				else
+					CurrentRow = 0;
 
-				EditCell (current_cell);
-				break;
-			}
+				UpdateSelectionAfterCursorMove (shift_pressed);
+
+				return true;
+
 			case Keys.PageDown:
-			{
-				if (current_cell.RowNumber + grid_drawing.VLargeChange < RowsCount) {
-					CurrentCell = new DataGridCell (current_cell.RowNumber + grid_drawing.VLargeChange, current_cell.ColumnNumber);
-				} else {
-					CurrentCell = new DataGridCell (RowsCount - 1, current_cell.ColumnNumber);
-				}
+				if (CurrentRow < RowsCount - grid_drawing.VLargeChange)
+					CurrentRow += grid_drawing.VLargeChange;
+				else
+					CurrentRow = RowsCount - 1;
 
-				EditCell (current_cell);
-				break;
-			}
+				UpdateSelectionAfterCursorMove (shift_pressed);
+
+				return true;
+
 			case Keys.Home:
-			{
-				if (ctrl_pressed) {
+				if (ctrl_pressed)
 					CurrentCell = new DataGridCell (0, 0);
-					EditCell (current_cell);
-				}
-				else {
-					CurrentCell = new DataGridCell (current_cell.RowNumber, 0);
-					EditCell (current_cell);
-				}
-				break;
-			}
+				else
+					CurrentColumn = 0;
+
+				UpdateSelectionAfterCursorMove (ctrl_pressed && shift_pressed);
+
+				return true;
+
 			case Keys.End:
-			{
-				if (ctrl_pressed) {
+				if (ctrl_pressed)
 					CurrentCell = new DataGridCell (RowsCount - 1, CurrentTableStyle.GridColumnStyles.Count - 1);
-					EditCell (current_cell);
-				}
-				else {
-					CurrentCell = new DataGridCell (current_cell.RowNumber, CurrentTableStyle.GridColumnStyles.Count - 1);
-					EditCell (current_cell);
-				}
-				break;
-			}
+				else
+					CurrentColumn = CurrentTableStyle.GridColumnStyles.Count - 1;
+
+				UpdateSelectionAfterCursorMove (ctrl_pressed && shift_pressed);
+
+				return true;
+
 			case Keys.Delete:
-			{				
 				foreach (int row in selected_rows.Keys) {
 					ListManager.RemoveAt (row);						
 				}
 				selected_rows.Clear ();
 				CalcAreasAndInvalidate ();
-				break;					
-			}
-			default:
-				return false; // message not processed
+
+				return true;
 			}
 
-			return true; // message processed
+			return false; // message not processed
 		}
 
 		// Called from DataGridTextBox
@@ -1852,6 +1878,9 @@ namespace System.Windows.Forms
 
 		public void Select (int row)
 		{
+			if (selected_rows.Count == 0)
+				selection_start = row;
+
 			if (selected_rows[row] == null) {
 				selected_rows.Add (row, true);
 			} else {
@@ -1962,21 +1991,21 @@ namespace System.Windows.Forms
 		
 		private void ConnectListManagerEvents ()
 		{
-			cached_currencymgr.CurrentChanged += new EventHandler (OnListManagerCurrentChanged);			
-			cached_currencymgr.ItemChanged += new ItemChangedEventHandler (OnListManagerItemChanged);
+			list_manager.CurrentChanged += new EventHandler (OnListManagerCurrentChanged);			
+			list_manager.ItemChanged += new ItemChangedEventHandler (OnListManagerItemChanged);
 		}
 		
 		private void DisconnectListManagerEvents ()
 		{
-			cached_currencymgr.CurrentChanged -= new EventHandler (OnListManagerCurrentChanged);			
-			cached_currencymgr.ItemChanged -= new ItemChangedEventHandler (OnListManagerItemChanged);
+			list_manager.CurrentChanged -= new EventHandler (OnListManagerCurrentChanged);			
+			list_manager.ItemChanged -= new ItemChangedEventHandler (OnListManagerItemChanged);
 		}
 
 		// EndEdit current editing operation
 		internal virtual bool EndEdit (bool shouldAbort)
 		{
 			return EndEdit (CurrentTableStyle.GridColumnStyles[current_cell.ColumnNumber],
-				current_cell.RowNumber, shouldAbort);
+				CurrentRow, shouldAbort);
 		}
 
 		private void EnsureCellVisibility (DataGridCell cell)
@@ -2063,38 +2092,9 @@ namespace System.Windows.Forms
 
 		internal void InvalidateCurrentRowHeader ()
 		{
-			grid_drawing.InvalidateRowHeader (current_cell.RowNumber);
+			grid_drawing.InvalidateRowHeader (CurrentRow);
 		}
 		
-		private void SetCurrentCell (DataGridCell value)
-		{		
-			if (current_cell.Equals (value))
-				return;
-				
-			CancelEditing ();
-					
-			int old_row = current_cell.RowNumber;
-						
-			EnsureCellVisibility (value);
-			current_cell = value;					
-			
-			if (current_cell.RowNumber != old_row) {
-				grid_drawing.InvalidateRowHeader (old_row);
-			}
-			
-			accept_listmgrevents = false;
-
-			if (cached_currencymgr !=  null) {
-				cached_currencymgr.Position = current_cell.RowNumber;
-			}
-			accept_listmgrevents = true;
-
-			if (current_cell.RowNumber != old_row) {
-				InvalidateCurrentRowHeader ();
-			}
-			OnCurrentCellChanged (EventArgs.Empty);
-		}
-
 		private bool SetDataMember (string member)
 		{			
 			if (member == datamember) {
@@ -2103,9 +2103,9 @@ namespace System.Windows.Forms
 
 			datamember = member;
 			real_datasource = GetDataSource (datasource, member);
-			if (cached_currencymgr != null) {
+			if (list_manager != null) {
 				DisconnectListManagerEvents ();
-				cached_currencymgr = null;
+				list_manager = null;
 			}
 			return true;
 		}
@@ -2120,9 +2120,9 @@ namespace System.Windows.Forms
 
 			current_cell = new DataGridCell ();
 			datasource = source;
-			if (cached_currencymgr != null) {
+			if (list_manager != null) {
 				DisconnectListManagerEvents ();
-				cached_currencymgr = null;
+				list_manager = null;
 			}
 			try {
 				real_datasource = GetDataSource (datasource, DataMember);
@@ -2154,21 +2154,19 @@ namespace System.Windows.Forms
 
 		private void OnListManagerCurrentChanged (object sender, EventArgs e)
 		{			
-			if (accept_listmgrevents == false) {
+			if (accept_listmgrevents == false)
 				return;
-			}
-			
-			CurrentCell = new DataGridCell (cached_currencymgr.Position, current_cell.RowNumber);
+
+			CurrentRow = list_manager.Position;
 		}
 		
 		private void OnListManagerItemChanged (object sender, ItemChangedEventArgs e)
 		{
-			if (accept_listmgrevents == false) {
+			if (accept_listmgrevents == false)
 				return;
-			}			
-			if (e.Index == -1) {				
+
+			if (e.Index == -1)
 				CalcAreasAndInvalidate ();
-			}
 		}
 		
 		private void OnTableStylesCollectionChanged (object sender, CollectionChangeEventArgs e)
@@ -2212,22 +2210,12 @@ namespace System.Windows.Forms
 			CalcAreasAndInvalidate ();
 		}
 
-		private void EditCell (DataGridCell cell)
+		private void EditCurrentCell ()
 		{
-			ResetSelection (); // Invalidates selected rows
-			is_editing = false;
-			is_changing = false;
-			
-			if (ShowEditRow && is_adding == false && cell.RowNumber >= RowsCount) {
-				ListManager.AddNew ();
-				is_adding = true;
-				Invalidate (); // We have just added a new row
-			}
-			
 			is_editing = true;
 
-			CurrentTableStyle.GridColumnStyles[cell.ColumnNumber].Edit (ListManager,
-				cell.RowNumber, GetCellBounds (cell.RowNumber, cell.ColumnNumber),
+			CurrentTableStyle.GridColumnStyles[current_cell.ColumnNumber].Edit (ListManager,
+				current_cell.RowNumber, GetCellBounds (current_cell.RowNumber, current_cell.ColumnNumber),
 				_readonly, string.Empty, true);
 		}
 

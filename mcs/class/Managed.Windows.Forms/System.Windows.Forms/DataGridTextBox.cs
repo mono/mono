@@ -50,6 +50,7 @@ namespace System.Windows.Forms
 			isedit = true;
 			grid = null;
 			accepts_tab = true;
+			accepts_return = true;
 
 			SetStyle (ControlStyles.UserPaint | ControlStyles.StandardClick | ControlStyles.StandardDoubleClick, false);
 			SetStyle (ControlStyles.FixedHeight, true);
@@ -92,69 +93,28 @@ namespace System.Windows.Forms
 				return ProcessKeyEventArgs (ref m);
 
 			case Msg.WM_KEYDOWN:
-				if (isedit) {
-					switch (key) {
-					case Keys.F2: {
-						SelectionStart = Text.Length;
-						SelectionLength = 0;
-						return true;
-					}
+				switch (key) {
+				case Keys.F2:
+					SelectionStart = Text.Length;
+					SelectionLength = 0;
+					return true;
 
-					case Keys.Up:
-					case Keys.Down:
-					case Keys.PageDown:
-					case Keys.PageUp: {
-						isedit = false;
-						grid.EndEdit(false);
-						grid.ProcessKeyPreviewInternal(ref m);
-						return true;
-					}
+				case Keys.Enter:
+					isedit = false;
+					grid.EndEdit (false);
+					grid.ProcessKeyPreviewInternal(ref m);
+					return true;
 
-					case Keys.Escape: {
-						isedit = false;
-						grid.EndEdit (true);
-						return true;
-					}
-
-					case Keys.Enter: {
-						isedit = false;
-						grid.EndEdit (false);
-						grid.ProcessKeyPreviewInternal(ref m);
-						return true;
-					}
-
-					case Keys.Left: {
-						if (SelectionStart == 0 && SelectionLength >= Text.Length) {
-							isedit = false;
-							grid.EndEdit (false);
-							grid.ProcessKeyPreviewInternal(ref m);
-							return true;
-						}
+				case Keys.Left:
+					if (SelectionStart > 0)
 						return false;
-					}
+					break;
 
-					case Keys.Right: {
-						// Arrow keys go right until we hit the end of the text
-						if ((SelectionStart + SelectionLength) >= Text.Length) {
-							isedit = false;
-							grid.EndEdit (false);
-							grid.ProcessKeyPreviewInternal(ref m);
-							return true;
-						}
+				case Keys.Right:
+					// Arrow keys go right until we hit the end of the text
+					if ((SelectionStart + SelectionLength) < Text.Length)
 						return false;
-					}
-
-					case Keys.Tab: {
-						isedit = false;
-						grid.EndEdit(false);
-						grid.ProcessKeyPreviewInternal(ref m);
-						return true;
-					}
-
-					default: {
-						return base.ProcessKeyMessage(ref m);
-					}
-					}
+					break;
 				}
 				break;
 			default:
