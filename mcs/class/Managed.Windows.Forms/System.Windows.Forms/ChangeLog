@@ -13,6 +13,7 @@
 	- Fix Left/Right key handling to match MS. (It expand/collapses
 	and moves to parents/first child but does not move selection to
 	sibling nodes).
+	* TreeNode.cs: We can't expand/collapse nodes with no children.
 
 2006-06-03  John Luke  <john.luke@gmail.com> 
 

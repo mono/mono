@@ -601,7 +601,7 @@ namespace System.Windows.Forms {
 
 		private void Expand (bool byInternal)
 		{
-			if (is_expanded)
+			if (is_expanded || nodes.Count < 1)
 				return;
 			bool cancel = false;
 			if (TreeView != null) {
@@ -627,7 +627,7 @@ namespace System.Windows.Forms {
 
 		private void Collapse (bool byInternal)
 		{
-			if (!is_expanded)
+			if (!is_expanded || nodes.Count < 1)
 				return;
 
 			if (IsRoot)
