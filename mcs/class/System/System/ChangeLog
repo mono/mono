@@ -1,3 +1,14 @@
+2006-06-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Uri.cs : revert the previous change as it caused UriTest.
+	  Constructors(#rel2a). ToString() for SourceString should be
+	  enough for lame users.
+
+2006-05-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Uri.cs : sometimes OriginalString was null. Fixed bug #78374.
+	  Actually this property is LAMESPEC. Never use it.
+
 2006-04-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Uri.cs : Patch by pawel.sakowski@mind-breeze.com (bug #77382).

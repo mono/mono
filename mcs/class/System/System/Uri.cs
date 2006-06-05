@@ -183,20 +183,6 @@ namespace System {
 
 #if NET_2_0
 		[Obsolete ("dontEscape is always false")]
-		// LAMESPEC: why on earth there could be OriginalString
-		// for new Uri (Uri, string) ?
-		//
-		// If relativeUri is really relative, then the source
-		// is still null (and there is no direct way to
-		// tell you what is "source" exactly). ToString() is
-		// not usable here since it is canonically unescaped,
-		// and AbsoluteUri as well since it is canonically
-		// escaped (i.e. both are not "raw" strings).
-		//
-		// Having said that it is almost no reasonable use,
-		// so here I leave this implementation lame.
-		// See bug #78374.
-		//
 #endif
 		public Uri (Uri baseUri, string relativeUri, bool dontEscape) 
 		{
@@ -252,7 +238,6 @@ namespace System {
 			this.isOpaquePart = baseUri.isOpaquePart;
 
 			if (relativeUri == String.Empty) {
-				this.source = baseUri.source;
 				this.path = baseUri.path;
 				this.query = baseUri.query;
 				this.fragment = baseUri.fragment;
@@ -290,7 +275,6 @@ namespace System {
 					return;
 				} else {
 					path = relativeUri;
-					source = scheme + ':' + relativeUri;
 					if (!userEscaped)
 						path = EscapeString (path);
 					return;
@@ -305,11 +289,8 @@ namespace System {
 					path = path.Substring (0, pos + 1);
 			}
 
-			if(relativeUri.Length == 0) {
-				// LAMESPEC: lame OriginalString here.
-				source = AbsoluteUri;
+			if(relativeUri.Length == 0)
 				return;
-			}
 	
 			// 6 b)
 			path += relativeUri;
@@ -363,12 +344,9 @@ namespace System {
 						path = path.Remove (pos + 1, path.Length - pos - 1);
 			}
 			
-			// LAMESPEC: lame OriginalString here
-			source = AbsoluteUri;
-			//source = GetLeftPart (UriPartial.Authority) + Path.Combine (baseUri.path, path) + query + fragment;
 			if (!userEscaped)
 				path = EscapeString (path);
-		}
+		}		
 		
 		// Properties
 		
@@ -631,8 +609,13 @@ namespace System {
 			get { return isAbsoluteUri; }
 		}
 
+		// LAMESPEC: source field is supplied in such case that this
+		// property makes sense. For such case that source field is
+		// not supplied (i.e. .ctor(Uri, string), this property
+		// makes no sense. To avoid silly regression it just returns
+		// ToString() value now. See bug #78374.
 		public string OriginalString {
-			get { return source; }
+			get { return source != null ? source : ToString (); }
 		}
 #endif
 
