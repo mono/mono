@@ -997,34 +997,21 @@ namespace System.Windows.Forms {
 			dash = new Pen (dash_color, 1);
 			dash.DashStyle = DashStyle.Dot;
 
+			Rectangle viewport = ViewportRectangle;
+			if (clip.Bottom > viewport.Bottom)
+				clip.Height = viewport.Bottom - clip.Top;
+
 			OpenTreeNodeEnumerator walk = new OpenTreeNodeEnumerator (TopNode);
 			while (walk.MoveNext ()) {
 				TreeNode current = walk.CurrentNode;
 
-				// This is temp to make sure the lines get drawn, with my optimizations
-				// some corner cases aren't getting lines during scrolling
-				if (show_lines)
-					DrawLinesToNext (current, dc, clip, dash, current.GetLinesX (), current.GetY ());
-
-				if (current.GetY () + ItemHeight < clip.Top) {
-					/*
-					// If the next or child node is in the clip we need to draw the line to it
-					TreeNode next = current.NextNode;
-					if (next != null && clip.Top <= next.GetY () + ItemHeight) {
-						DrawLinesToNext (current, dc, clip, dash, current.GetLinesX (), current.GetY ());
-					} else if (current.nodes.Count > 0) {
-						TreeNode child = current.nodes [0];
-						if (clip.Top <= child.GetY () + ItemHeight) {
-							DrawLinesToNext (current, dc, clip, dash, current.GetLinesX (), current.GetY ());
-						}
-					}
-					*/
+				// Haven't gotten to visible nodes yet
+				if (current.GetY () + ItemHeight < clip.Top)
 					continue;
-				}
 
-				if (current.GetY () > clip.Bottom) {
+				// Past the visible nodes
+				if (current.GetY () > clip.Bottom)
 					break;
-				}
 
 				DrawNode (current, dc, clip);
 			}
@@ -1077,7 +1064,30 @@ namespace System.Windows.Forms {
 
 			dc.DrawLine (dash, x - indent + ladjust, middle, x + radjust, middle);
 
-			DrawLinesToNext (node, dc, clip, dash, x, y);
+			if (node.PrevNode != null || node.Parent != null) {
+				ladjust = 9;
+				dc.DrawLine (dash, x - indent + ladjust, node.Bounds.Top,
+						x - indent + ladjust, middle - (show_plus_minus && node.Nodes.Count > 0 ? 4 : 0));
+			}
+
+			if (node.NextNode != null) {
+				ladjust = 9;
+				dc.DrawLine (dash, x - indent + ladjust, middle + (show_plus_minus && node.Nodes.Count > 0 ? 4 : 0),
+						x - indent + ladjust, node.Bounds.Bottom);
+				
+			}
+
+			ladjust = 0;
+			if (show_plus_minus)
+				ladjust = 9;
+			TreeNode parent = node.Parent;
+			while (parent != null) {
+				if (parent.NextNode != null) {
+					int px = parent.GetLinesX () - indent + ladjust;
+					dc.DrawLine (dash, px, node.Bounds.Top, px, node.Bounds.Bottom);
+				}
+				parent = parent.Parent;
+			}
 		}
 
 		private void DrawLinesToNext (TreeNode node, Graphics dc, Rectangle clip, Pen dash, int x, int y)
@@ -1216,13 +1226,11 @@ namespace System.Windows.Forms {
 				DrawSelectionAndFocus (node, dc, r);
 			}
 
-			if ((show_root_lines || node.Parent != null) && show_plus_minus && child_count > 0) {
+			if ((show_root_lines || node.Parent != null) && show_plus_minus && child_count > 0)
 				DrawNodePlusMinus (node, dc, node.GetLinesX () - Indent + 5, middle);
-			}
 
 			if (checkboxes)
 				DrawNodeCheckBox (node, dc, node.GetX () - 19, middle);
-
 
 			if (show_lines)
 				DrawNodeLines (node, dc, clip, dash, node.GetLinesX (), y, middle);

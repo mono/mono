@@ -1,3 +1,11 @@
+2006-06-05  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: Fix line drawing when scrolling.  To do this each
+	node is basically responsible for drawing its entire horizontal
+	area.  When drawing a node it draws its parent node lines if
+	needed.
+	- Adjust the clip area to the viewport rectangle
+
 2006-06-03  John Luke  <john.luke@gmail.com> 
 
 	* X11DesktopColors.cs: dllimport the exact gtk and gdk versions
