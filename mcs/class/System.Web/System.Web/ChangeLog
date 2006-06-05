@@ -1,3 +1,8 @@
+2006-06-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplication.cs: assign the context when run from a thread not in
+	the threadpool. Patch by Andrew Skiba. Fixes bug #78583.
+
 2006-05-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplication.cs: context.Handler does not change for

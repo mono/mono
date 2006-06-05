@@ -1037,6 +1037,7 @@ namespace System.Web {
 				return;
 			}
 
+			HttpContext.Current = Context;
 			PreStart ();
 			pipeline = Pipeline ();
 			Tick ();
