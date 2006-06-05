@@ -6,9 +6,24 @@
 <head id="Head1" runat="server">
 	<title></title>
 </head>
-<body>
-
-		<asp:contentplaceholder id="Main" runat="server" />
+    <body>
+        <asp:contentplaceholder id="Header" runat="server">
+              Master header text
+        </asp:contentplaceholder>
+        
+        <asp:contentplaceholder id="Main" runat="server">
+              Master main text 
+        </asp:contentplaceholder>
+        
+        <asp:contentplaceholder id="Dynamic" runat="server">
+              Master dynamic text
+        </asp:contentplaceholder>
+        
+        <asp:contentplaceholder id="Footer" runat="server">
+		      My master page footer 
+		</asp:contentplaceholder>
+		
+		Master page content text
 	
-</body>
+    </body>
 </html>

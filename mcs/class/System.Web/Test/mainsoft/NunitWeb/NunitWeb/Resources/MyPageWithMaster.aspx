@@ -1,10 +1,12 @@
 <%@ Page Language="C#" MasterPageFile="My.master" AutoEventWireup="true" CodeFile="MyPage.aspx.cs" Inherits="MyPage" %>
 
-<asp:content id="Content1" contentplaceholderid="Main" runat="server">
-    <form id="form1" runat="server" >
+<asp:Content ID="BlankContent" ContentPlaceHolderID="Header" runat="server"/>
 
-    <div>
-    
-    </div>
+<asp:content ID="LiteralContent" ContentPlaceHolderID="Main" runat="server">
+     Page main text
+</asp:content>
+
+<asp:content ID="FormContent" ContentPlaceHolderID="Dynamic" runat="server">
+    <form id="form1" runat="server" >
     </form>
 </asp:content>
