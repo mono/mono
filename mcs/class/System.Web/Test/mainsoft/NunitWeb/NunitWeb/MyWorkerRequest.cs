@@ -20,6 +20,17 @@ namespace NunitWeb
 			set { _exception = value; }
 		}
 
+#if !BUG_78583_FIXED
+		System.Threading.AutoResetEvent done;
+		public System.Threading.AutoResetEvent Done {
+			get {
+				if (done == null)
+					done = new System.Threading.AutoResetEvent (false);
+				return done;
+			}
+		}
+#endif
+
 		public bool InitInvoked
 		{
 			get { return _initInvoked; }

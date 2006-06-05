@@ -11,6 +11,7 @@ using System.Web.Configuration;
 using System.Collections;
 using System.Runtime.Remoting.Messaging;
 using System.Reflection;
+using System.Threading;
 
 namespace NunitWeb
 {
@@ -26,11 +27,25 @@ namespace NunitWeb
 		public AppDomain AppDomain
 		{ get { return AppDomain.CurrentDomain; } }
 
+#if !BUG_78583_FIXED
+		public void CallBack (object state)
+		{
+			MyWorkerRequest wr = (MyWorkerRequest) state;
+			HttpRuntime.ProcessRequest (wr);
+			wr.Done.Set ();
+		}
+#endif
+
 		public string DoRun (string url, PageDelegates pd)
 		{
 			using (StringWriter tw = new StringWriter ()) {
 				MyWorkerRequest wr = new MyWorkerRequest (pd, url, null, tw);
+#if BUG_78583_FIXED
 				HttpRuntime.ProcessRequest (wr);
+#else
+				ThreadPool.QueueUserWorkItem (CallBack, wr);
+				wr.Done.WaitOne ();
+#endif
 				tw.Close ();
 				string res = tw.ToString ();
 				Exception inner = wr.Exception;
