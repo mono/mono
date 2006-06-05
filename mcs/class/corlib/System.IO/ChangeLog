@@ -1,3 +1,7 @@
+2006-05-18  Miguel de Icaza  <miguel@novell.com>
+
+	* Directory.cs (Exists): Ignore INVALID_HANDlE, return false.
+
 2006-06-03 John Luke <john.luke@gmail.com>
 
 	* Path.cs: fix typo in [Obsolete] message
