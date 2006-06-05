@@ -18,6 +18,9 @@
 	- Fix Left/Right key handling to match MS. (It expand/collapses
 	and moves to parents/first child but does not move selection to
 	sibling nodes).
+	- Fix SetTop to work with new bound calculation code
+	- When scrollbars are no longer needed we need to reset scrolling
+	vars and recalculate the visible order so the redraw is correct
 	* TreeNode.cs: We can't expand/collapse nodes with no children.
 
 2006-06-03  John Luke  <john.luke@gmail.com> 

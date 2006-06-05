@@ -888,9 +888,13 @@ namespace System.Windows.Forms {
 			if (!vbar.Visible)
 				return;
 
-			OpenTreeNodeEnumerator walk = new OpenTreeNodeEnumerator (root_node);
-			int offset = 0;
+			TreeNode first = root_node.FirstNode;
 
+			if (first == null)
+				return;  // I don't think its possible for this to happen
+
+			OpenTreeNodeEnumerator walk = new OpenTreeNodeEnumerator (first);
+			int offset = -1;
 			while (walk.CurrentNode != node && walk.MoveNext ())
 				offset++;
 
@@ -1301,6 +1305,9 @@ namespace System.Windows.Forms {
 
 				vbar.Visible = true;
 			} else {
+				skipped_nodes = 0;
+				top_node = root_node.FirstNode;
+				RecalculateVisibleOrder (root_node);
 				vbar.Visible = false;
 				vbar_bounds_set = false;
 			}
@@ -1320,6 +1327,7 @@ namespace System.Windows.Forms {
 				}
 				hbar.Visible = true;
 			} else {
+				hbar_offset = 0;
 				hbar.Visible = false;
 				hbar_bounds_set = false;
 			}
