@@ -1,3 +1,10 @@
+2006-06-04  Miguel de Icaza  <miguel@novell.com>
+
+	* OptionalFieldAttribute.cs, OnSerializedAttribute.cs,
+	OnSerializingAttribute.cs, OnDeserializedAttribute.cs,
+	OnDeserializingAttribute.cs: Added a few attributes for the
+	version tolerant serialization.
+
 2006-01-04  Raja R Harinath  <rharinath@novell.com>
 
 	* ObjectManager.cs (ObjectRecord.IsInstanceReady): Fix regression

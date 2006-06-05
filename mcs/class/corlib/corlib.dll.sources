@@ -968,6 +968,11 @@ System.Runtime.Serialization/ISerializationSurrogate.cs
 System.Runtime.Serialization/ISurrogateSelector.cs
 System.Runtime.Serialization/ObjectIDGenerator.cs
 System.Runtime.Serialization/ObjectManager.cs
+System.Runtime.Serialization/OnDeserializedAttribute.cs
+System.Runtime.Serialization/OnDeserializingAttribute.cs
+System.Runtime.Serialization/OnSerializedAttribute.cs
+System.Runtime.Serialization/OnSerializingAttribute.cs
+System.Runtime.Serialization/OptionalFieldAttribute.cs
 System.Runtime.Serialization/SerializationBinder.cs
 System.Runtime.Serialization/SerializationEntry.cs
 System.Runtime.Serialization/SerializationException.cs
