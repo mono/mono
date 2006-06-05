@@ -686,6 +686,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[TestFixtureTearDown]
 		public void TearDown ()
 		{
+			Thread.Sleep (100);
 		        Helper.Unload ();
 		}
 	
