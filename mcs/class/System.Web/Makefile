@@ -67,8 +67,20 @@ OTHER_RES = $(RESOURCE_FILES_1)
 ifeq (net_2_0, $(PROFILE))
 OTHER_RES += $(RESOURCE_FILES_2)
 OTHER_LIB_MCS_FLAGS = -nowarn:618 -r:System.Configuration.dll
-endif
 
+TEST_RESOURCE_FILES = \
+	Test/mainsoft/NunitWeb/NunitWeb/Resources/My.master \
+	Test/mainsoft/NunitWeb/NunitWeb/Resources/MyPage.aspx \
+	Test/mainsoft/NunitWeb/NunitWeb/Resources/MyPage.aspx.cs \
+	Test/mainsoft/NunitWeb/NunitWeb/Resources/MyPageWithMaster.aspx \
+	Test/mainsoft/NunitWeb/NunitWeb/Resources/Web.config \
+	Test/mainsoft/NunitWebResources/PageWithStyleSheet.aspx \
+	Test/mainsoft/NunitWebResources/PageWithTheme.aspx \
+	Test/mainsoft/NunitWebResources/RunTimeSetTheme.aspx \
+	Test/mainsoft/NunitWebResources/Theme1.skin \
+	Test/mainsoft/NunitWebResources/Web.sitemap \
+	Test/mainsoft/MainsoftWebTest/nunitweb_config.xml 
+endif
 
 LIB_MCS_FLAGS = \
 	-unsafe \
@@ -94,9 +106,9 @@ echo-warning:
 endif
 endif
 
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:219 -nowarn:169
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:219 -nowarn:169 $(TEST_RESOURCE_FILES:%=/resource:%)
 
-EXTRA_DISTFILES = $(RESOURCE_FILES_2) $(RESOURCE_FILES_1)
+EXTRA_DISTFILES = $(RESOURCE_FILES_2) $(RESOURCE_FILES_1) $(TEST_RESOURCE_FILES)
 
 include ../../build/library.make
 
@@ -104,3 +116,22 @@ ifdef WEBSERVICES_DEP_FILE
 LIB_MCS_FLAGS += -define:WEBSERVICES_DEP -r:$(WEBSERVICES_DEP)
 $(the_lib): $(WEBSERVICES_DEP_FILE)
 endif
+
+run-aaa: test
+	$(TEST_RUNTIME) $(TEST_HARNESS) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) \
+	/output:TestResult-$(PROFILE).log /include:aaa /xml:TestResult-$(PROFILE).xml $(test_assemblies) || ok=false; \
+ 	(echo ''; cat TestResult-$(PROFILE).log) | sed '1,/^Tests run: /d'; \
+ 	$$ok
+
+run-nunitweb: test
+	$(TEST_RUNTIME) $(TEST_HARNESS) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) \
+	/output:TestResult-$(PROFILE).log /include:NunitWeb /xml:TestResult-$(PROFILE).xml $(test_assemblies) || ok=false; \
+ 	(echo ''; cat TestResult-$(PROFILE).log) | sed '1,/^Tests run: /d'; \
+ 	$$ok
+
+run-nunitweb-ondotnet: test
+	$(TEST_HARNESS) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) \
+	/output:TestResult-ondotnet-$(PROFILE).log /include:NunitWeb /xml:TestResult-ondotnet-$(PROFILE).xml $(test_assemblies) || ok=false; \
+	(echo ''; cat TestResult-ondotnet-$(PROFILE).log) | sed '1,/^Tests run: /d'; \
+	$$ok
+

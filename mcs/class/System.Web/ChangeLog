@@ -1,3 +1,8 @@
+2006-06-05 Andrew Skiba <andrews@mainsoft.com>
+	
+	* Makefile, System.Web_test.dll.sources: add NunitWeb test framework
+	tests
+
 2006-04-30 Yoni Klain <yonik@mainsoft.com>
 
 	* System.Web_test.dll.sources: add SiteMapDataSourceTest.cs 
