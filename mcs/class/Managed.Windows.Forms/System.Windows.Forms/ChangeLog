@@ -2,6 +2,8 @@
 
 	* Control.cs: Use the property (instead of the field) to get the
 	default cursor so it is	instantiated correctly.
+	* InternalWindowManager.cs: The OS doesn't give us an NCPAINT with
+	resizes so we need to manually repaint the window decorations here.
 
 2006-06-06  Chris Toshok  <toshok@ximian.com>
 

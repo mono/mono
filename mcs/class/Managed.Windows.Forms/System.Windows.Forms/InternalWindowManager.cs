@@ -310,6 +310,10 @@ namespace System.Windows.Forms {
 		private void FormSizeChangedHandler (object sender, EventArgs e)
 		{
 			ThemeEngine.Current.ManagedWindowSetButtonLocations (this);
+
+			PaintEventArgs pe = XplatUI.PaintEventStart (form.Handle, false);
+			ThemeEngine.Current.DrawManagedWindowDecorations (pe.Graphics, pe.ClipRectangle, this);
+			XplatUI.PaintEventEnd (form.Handle, false);
 		}
 
 		private void CreateButtons ()
