@@ -1,3 +1,9 @@
+2006-06-06  Kornél Pál  <kornelpal@gmail.com>
+
+	* UnicodeEncoding.cs: Override GetString (byte [], int, int) in
+	  profile 1.x as well because performance improvement is worth the
+	  signature difference. (Fix regression of r61250.)
+
 2006-05-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ASCIIEncoding.cs: Marked class ComVisible (true) on 2.0 profile.

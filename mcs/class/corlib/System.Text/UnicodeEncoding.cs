@@ -315,6 +315,7 @@ public class UnicodeEncoding : Encoding
 
 		return GetCharsInternal (bytes, byteCount, chars, charCount);
 	}
+#endif
 
 	// Decode a buffer of bytes into a string.
 	[ComVisible (false)]
@@ -340,7 +341,6 @@ public class UnicodeEncoding : Encoding
 
 		return s;
 	}
-#endif
 
 	private unsafe int GetCharsInternal (byte* bytes, int byteCount,
 										char* chars, int charCount)
