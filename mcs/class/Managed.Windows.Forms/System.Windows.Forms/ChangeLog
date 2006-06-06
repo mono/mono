@@ -1,3 +1,8 @@
+2006-06-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Form.cs: when running a modal dialog, ignore WM_CLOSE requests for
+	all other dialogs. Fixes bug #78585.
+
 2006-06-06  Mike Kestner  <mkestner@novell.com>
 
 	* CheckedListBox.cs : apply CheckOnClick behavior to unchecking too.
@@ -19,6 +24,7 @@
 2006-06-06  Mike Kestner  <mkestner@novell.com>
 
 	* CheckedListBox.cs : rebuild check collection on Add.  Fixes #78426.
+
 
 2006-06-06  Jackson Harper  <jackson@ximian.com>
 
