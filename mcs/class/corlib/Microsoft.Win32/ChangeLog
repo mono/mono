@@ -1,3 +1,7 @@
+2006-06-06  Miguel de Icaza  <miguel@novell.com>
+
+	* UnixRegistryApi.cs: Do not crash if there are no values stored.
+	
 2006-03-12  Robert Jordan <robertj@gmx.net>
 
 	* UnixRegistryApi.cs (DeleteValue): Avoid crash, fixes bug #77772
