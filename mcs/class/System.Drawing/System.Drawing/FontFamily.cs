@@ -47,7 +47,6 @@ namespace System.Drawing {
 		internal FontFamily(IntPtr fntfamily)
 		{
 			nativeFontFamily = fntfamily;		
-			refreshName();			
 		}
 		
 		internal void refreshName()
@@ -82,21 +81,16 @@ namespace System.Drawing {
 			switch (genericFamily) {
 				case GenericFontFamilies.SansSerif:
 					status = GDIPlus.GdipGetGenericFontFamilySansSerif (out nativeFontFamily);
-					GDIPlus.CheckStatus (status);
-					refreshName ();
 					break;
 				case GenericFontFamilies.Serif:
 					status = GDIPlus.GdipGetGenericFontFamilySerif (out nativeFontFamily);
-					GDIPlus.CheckStatus (status);
-					refreshName ();
 					break;
 				case GenericFontFamilies.Monospace:
 				default:	// Undocumented default 
 					status = GDIPlus.GdipGetGenericFontFamilyMonospace (out nativeFontFamily);
-					GDIPlus.CheckStatus (status);
-					refreshName ();
 					break;
 			}
+			GDIPlus.CheckStatus (status);
 		}
 		
 		public FontFamily(string familyName) : this (familyName, null)
@@ -108,14 +102,14 @@ namespace System.Drawing {
 			IntPtr handle = (collection == null) ? IntPtr.Zero : collection.nativeFontCollection;
 			Status status = GDIPlus.GdipCreateFontFamilyFromName (familyName, handle, out nativeFontFamily);
 			GDIPlus.CheckStatus (status);
-			
-			refreshName ();
 		}
 		
 		public string Name {
 			get {
 				if (nativeFontFamily == IntPtr.Zero)
 					throw new ArgumentException ("Name", Locale.GetText ("Object was disposed."));
+				if (name == null)
+					refreshName ();
 				return name;
 			}
 		}

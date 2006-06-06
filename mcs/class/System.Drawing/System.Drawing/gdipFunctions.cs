@@ -1302,9 +1302,9 @@ namespace System.Drawing
                 [DllImport ("gdiplus.dll")]                
                 internal static extern Status GdipIsVisiblePathPointI (IntPtr path, int x, int y, IntPtr graphics, out bool result); 
                 [DllImport ("gdiplus.dll")]                
-                internal static extern Status GdipIsOutlineVisiblePathPoint (IntPtr path, float x, float y, IntPtr graphics, out bool result);
+                internal static extern Status GdipIsOutlineVisiblePathPoint (IntPtr path, float x, float y, IntPtr pen, IntPtr graphics, out bool result);
                 [DllImport ("gdiplus.dll")]                
-                internal static extern Status GdipIsOutlineVisiblePathPointI (IntPtr path, int x, int y, IntPtr graphics, out bool result); 
+                internal static extern Status GdipIsOutlineVisiblePathPointI (IntPtr path, int x, int y, IntPtr pen, IntPtr graphics, out bool result); 
 
 		// GraphicsPathIterator
 		[DllImport("gdiplus.dll")]
