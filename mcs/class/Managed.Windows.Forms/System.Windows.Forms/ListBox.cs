@@ -1156,10 +1156,13 @@ namespace System.Windows.Forms
 				else
 					hscrollbar.Value = col;
 			} else {
+				int val = vscrollbar.Value;
 				if (top_index > vscrollbar.Maximum)
 					vscrollbar.Value = vscrollbar.Maximum;
 				else
 					vscrollbar.Value = top_index;
+				Scroll (vscrollbar, vscrollbar.Value - top_index);
+				XplatUI.ScrollWindow (Handle, items_area, 0, ItemHeight * (val - vscrollbar.Value), false);
 			}
 		}
 		
@@ -1217,12 +1220,13 @@ namespace System.Windows.Forms
 
 			case ItemNavigation.Last: {
 
-				if (Items.Count < RowCount) {
+				int rows = items_area.Height / ItemHeight;
+				if (Items.Count < rows) {
 					top_index = 0;
 					selected_index  = Items.Count - 1;
 					UpdateTopItem ();
 				} else {
-					top_index = Items.Count - RowCount;
+					top_index = Items.Count - rows;
 					selected_index  = Items.Count - 1;
 					UpdateTopItem ();
 				}
@@ -1230,29 +1234,40 @@ namespace System.Windows.Forms
 			}
 
 			case ItemNavigation.Next: {
-				if (FocusedItem + 1 < Items.Count) {	
-					int actualHeight = 0;
-					if (draw_mode == DrawMode.OwnerDrawVariable) {
-						for (int i = top_index; i <= FocusedItem + 1; i++)
-							actualHeight += GetItemHeight (i);
-					} else {
-						actualHeight = ((FocusedItem + 1) - top_index + 1) * ItemHeight;
+				if (FocusedItem == Items.Count - 1)
+					return -1;
+
+				int bottom = 0;
+				ArrayList heights = new ArrayList ();
+				if (draw_mode == DrawMode.OwnerDrawVariable) {
+					for (int i = top_index; i <= FocusedItem + 1; i++) {
+						int h = GetItemHeight (i);
+						bottom += h;
+						heights.Add (h);
 					}
-					if (actualHeight >= items_area.Height) {
-						int bal = IntegralHeight ? 0 : (items_area.Height == actualHeight ? 0 : 1);
-						if (FocusedItem + bal >= last_visible_index) {
-							top_index++;
-							UpdateTopItem ();						
-						}
-					}
-					selected_index = FocusedItem + 1;
+				} else {
+					bottom = ((FocusedItem + 1) - top_index + 1) * ItemHeight;
 				}
+
+				if (bottom >= items_area.Height) {
+					int overhang = bottom - items_area.Height;
+
+					int offset = 0;
+					if (draw_mode == DrawMode.OwnerDrawVariable)
+						while (overhang > 0)
+							overhang -= (int) heights [offset];
+					else
+						offset = (int) Math.Ceiling ((float)overhang / (float) ItemHeight);
+					top_index += offset;
+					UpdateTopItem ();						
+				}
+				selected_index = FocusedItem + 1;
 				break;
 			}
 
 			case ItemNavigation.Previous: {
-				if (FocusedItem > 0) {						
-					if (FocusedItem - 1 < top_index) {							
+				if (FocusedItem > 0) {
+					if (FocusedItem - 1 < top_index) {
 						top_index--;
 						UpdateTopItem ();
 					}
@@ -1286,19 +1301,20 @@ namespace System.Windows.Forms
 
 			case ItemNavigation.PreviousPage: {
 					
-				if (FocusedItem - (RowCount - 1) <= 0) {
+				int rows = items_area.Height / ItemHeight;
+				if (FocusedItem - (rows - 1) <= 0) {
 																		
 					top_index = 0;					
 					UpdateTopItem ();					
 					SelectedIndex = 0;					
 				}
 				else { 
-					if (FocusedItem - (RowCount - 1)  < top_index) {
-						top_index = FocusedItem - (RowCount - 1);
+					if (FocusedItem - (rows - 1)  < top_index) {
+						top_index = FocusedItem - (rows - 1);
 						UpdateTopItem ();						
 					}
 					
-					selected_index = FocusedItem - (RowCount - 1);
+					selected_index = FocusedItem - (rows - 1);
 				}
 					
 				break;
@@ -1393,9 +1409,6 @@ namespace System.Windows.Forms
 				
 				if (new_item != -1) {
 					FocusedItem = new_item;
-				}
-				
-				if (new_item != -1) {					
 					if (selection_mode != SelectionMode.MultiSimple && selection_mode != SelectionMode.None) {
 						SelectedItemFromNavigation (new_item);
 					}
@@ -1548,6 +1561,7 @@ namespace System.Windows.Forms
 
 		private void Scroll (ScrollBar scrollbar, int delta)
 		{
+			Console.WriteLine ("scrolling: " + delta);
 			if (delta == 0 || !scrollbar.Visible || !scrollbar.Enabled)
 				return;
 

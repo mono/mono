@@ -1,5 +1,10 @@
 2006-06-06  Mike Kestner  <mkestner@novell.com>
 
+	* ListBox.cs : add ScrollWindow call to UpdateTopItem.  fix
+	Prev/Next/PrevPage/NextPage/Home/End index calculation.  Fixes #78559.
+
+2006-06-06  Mike Kestner  <mkestner@novell.com>
+
 	* CheckedListBox.cs : rebuild check collection on Add.  Fixes #78426.
 
 2006-06-06  Jackson Harper  <jackson@ximian.com>
