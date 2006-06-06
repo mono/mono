@@ -1,3 +1,7 @@
+2006-06-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* Binder.cs: Add support for BindingFlags.ExactBinding. Fixes #78592.
+
 2006-05-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* MethodBase.cs: GetMethodBody should not throw ArgumentException for

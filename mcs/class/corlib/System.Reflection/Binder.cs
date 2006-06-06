@@ -336,6 +336,9 @@ namespace System.Reflection
 						return m;
 				}
 
+				if ((int)(bindingAttr & BindingFlags.ExactBinding) != 0)
+					return null;
+
 				MethodBase result = null;
 				for (i = 0; i < match.Length; ++i) {
 					m = match [i];
