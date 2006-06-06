@@ -1,5 +1,10 @@
 2006-06-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (type_from_stack_type): Disable some changes which do not
+	seem to work.
+
+	* driver.c: Reenable opts.
+
 	* mini.h (MonoStackSlot): New structure to keep track of the verification state
 	of the evaluation stack.
 	
