@@ -308,7 +308,7 @@ namespace System.Windows.Forms
 
 			UpdateCollections ();
 
-    			InvalidateItem (index);
+    			InvalidateCheckbox (index);
 		}
 
 		protected override void WmReflectCommand (ref Message m)
@@ -329,10 +329,12 @@ namespace System.Windows.Forms
 
 		internal override void OnItemClick (int index)
 		{			
-			if (GetItemChecked (index))
-				SetItemCheckState (index, CheckState.Unchecked);
-			else if (CheckOnClick || last_clicked_index == index)
-				SetItemCheckState (index, CheckState.Checked);
+			if (CheckOnClick || last_clicked_index == index) {
+				if (GetItemChecked (index))
+					SetItemCheckState (index, CheckState.Unchecked);
+				else
+					SetItemCheckState (index, CheckState.Checked);
+			}
 			
 			last_clicked_index = index;
 			base.OnItemClick (index);
@@ -342,6 +344,16 @@ namespace System.Windows.Forms
 		{
 			base.CollectionChanged ();
 			UpdateCollections ();
+		}
+
+		private void InvalidateCheckbox (int index)
+		{
+			Rectangle area = GetItemDisplayRectangle (index, TopIndex);
+			area.X += 2;
+			area.Y += (area.Height - 11) / 2;
+			area.Width = 11;
+			area.Height = 11;
+			Invalidate (area);
 		}
 
 		private void UpdateCollections ()

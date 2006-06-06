@@ -1061,7 +1061,7 @@ namespace System.Windows.Forms
 		}
 
 		// Converts a GetItemRectangle to a one that we can display
-		Rectangle GetItemDisplayRectangle (int index, int first_displayble)
+		internal Rectangle GetItemDisplayRectangle (int index, int first_displayble)
 		{
 			Rectangle item_rect;
 			Rectangle first_item_rect = GetItemRectangle (first_displayble);
@@ -1480,8 +1480,10 @@ namespace System.Windows.Forms
 
 			switch (SelectionMode) {
 			case SelectionMode.One:
-				UnSelectItem (SelectedIndex, true);
-				SelectItem (index);
+				if (SelectedIndex != index) {
+					UnSelectItem (SelectedIndex, true);
+					SelectItem (index);
+				}
 				selected_index = index;
 				break;
 
@@ -1561,7 +1563,6 @@ namespace System.Windows.Forms
 
 		private void Scroll (ScrollBar scrollbar, int delta)
 		{
-			Console.WriteLine ("scrolling: " + delta);
 			if (delta == 0 || !scrollbar.Visible || !scrollbar.Enabled)
 				return;
 
@@ -1616,7 +1617,7 @@ namespace System.Windows.Forms
 		// Add an item in the Selection array and marks it visually as selected
 		private void SelectItem (int index)
 		{
-			if (index == -1)
+			if (index == -1 || SelectedIndices.Contains (index))
 				return;
 
     			selection.Add (Items[index]);

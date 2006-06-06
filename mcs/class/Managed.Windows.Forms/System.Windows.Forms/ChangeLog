@@ -1,3 +1,11 @@
+2006-06-06  Mike Kestner  <mkestner@novell.com>
+
+	* CheckedListBox.cs : apply CheckOnClick behavior to unchecking too.
+	Only invalidate checkbox on checkstate changes to avoid flicker.
+	* ListBox.cs : avoid unselect/select when clicking selected item.
+	avoid reselection flicker for already multiselected items.
+	Fixes #78382.
+
 2006-06-06  Jackson Harper  <jackson@ximian.com>
 
 	* MdiWindowManager.cs: When the window is closed do an NCRecalc on
