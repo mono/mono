@@ -1,4 +1,4 @@
-2006-05-30  Massimiliano Mantione  <massi@ximian.com>
+2006-06-06  Massimiliano Mantione  <massi@ximian.com>
 
 	* local-propagation.c: Fixed bug 78549.
 
