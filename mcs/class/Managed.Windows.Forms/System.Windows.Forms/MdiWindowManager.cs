@@ -255,6 +255,8 @@ namespace System.Windows.Forms {
 		protected override void CloseClicked (object sender, EventArgs e)
 		{
 			mdi_container.CloseChildForm (form);
+			if (form.WindowState == FormWindowState.Maximized)
+				XplatUI.RequestNCRecalc (mdi_container.Parent.Handle);
 		}
 
 		/*
@@ -275,8 +277,8 @@ namespace System.Windows.Forms {
 			Size bs = ButtonSize;
 			Point pnt =  XplatUI.GetMenuOrigin (mdi_container.ParentForm.Handle);
 			int bw = ThemeEngine.Current.ManagedWindowBorderWidth (this);
-			
-			close_button.Rectangle = new Rectangle (menu.Width - bw - bs.Width - 2,
+
+			close_button.Rectangle = new Rectangle (form.ClientRectangle.Right - bw - bs.Width - 2,
 					pnt.Y + 2, bs.Width, bs.Height);
 
 			maximize_button.Rectangle = new Rectangle (close_button.Rectangle.Left - 2 - bs.Width,
