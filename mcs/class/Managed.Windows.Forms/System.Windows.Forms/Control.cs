@@ -1786,7 +1786,7 @@ namespace System.Windows.Forms
 									if (parent != null) {
 										XplatUI.SetCursor(window.Handle, parent.Cursor.handle);
 									} else {
-										XplatUI.SetCursor(window.Handle, Cursors.def.handle);
+										XplatUI.SetCursor(window.Handle, Cursors.Default.handle);
 									}
 								}
 							}
