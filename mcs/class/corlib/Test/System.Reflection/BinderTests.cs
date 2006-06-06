@@ -293,6 +293,17 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (3, bug42457_2, "#6");
 		}
 
+		static void MethodWithLongParam(long param)
+		{
+		}
+
+		[Test]
+		public void TestExactBinding ()
+		{
+			Type[] types = new Type[] { typeof(int) };
+			Assert.AreEqual (null, typeof (BinderTest).GetMethod("MethodWithLongParam", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.ExactBinding,  null, types, null));
+		}
+
 		public void Bug42457Method (object thing)
 		{
 			bug42457 = 1;
