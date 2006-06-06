@@ -1,3 +1,9 @@
+2006-06-05  Jonathan Chambers  <jonathan.chambers@ansys.com>
+
+	* domain.c appdomain.c class-internals.h marshal.c: Add support 
+	for VARIANT marshalling on windows and increment corlib version
+	since Variant struct was added.
+
 2006-06-03  Miguel de Icaza  <miguel@novell.com>
 
 	* debug-mono-symfile.c: Revert Martin's previous patch which broke

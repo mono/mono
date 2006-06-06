@@ -1,3 +1,7 @@
+2006-06-05  Jonathan Chambers  <jonathan.chambers@ansys.com>
+
+	* libtest.c cominterop.cs Makefile.am: Add BSTR and VARIANT marshalling tests
+
 2006-06-06  Massimiliano Mantione  <massi@ximian.com>
 
 	* Makefile.am, bug-78311.cs, bug-78549.il: Added tests.
