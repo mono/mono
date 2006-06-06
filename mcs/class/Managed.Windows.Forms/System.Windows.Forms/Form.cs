@@ -1698,6 +1698,11 @@ namespace System.Windows.Forms {
 				}
 
 				case Msg.WM_CLOSE: {
+					Form act = Form.ActiveForm;
+					if (act != null && act != this && act.Modal == true) {
+						return;
+					}
+
 					if (!is_modal) {
 						CancelEventArgs args = new CancelEventArgs ();
 
