@@ -84,7 +84,7 @@ namespace Microsoft.Win32 {
 						return;
 					
 					SecurityElement tree = SecurityElement.FromString (xml);
-					if (tree.Tag == "values"){
+					if (tree.Tag == "values" && tree.Children != null){
 						foreach (SecurityElement value in tree.Children){
 							if (value.Tag == "value"){
 								LoadKey (value);

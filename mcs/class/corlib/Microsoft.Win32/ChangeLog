@@ -1,3 +1,7 @@
+2006-06-06  Miguel de Icaza  <miguel@novell.com>
+
+	* UnixRegistryApi.cs: Do not crash if there are no values stored.
+
 2006-05-28  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* UnixRegistryApi.cs: GetSubKeyNames returns only names of subkeys,
