@@ -28,6 +28,7 @@
 
 using System;
 using System.Collections;
+using System.ComponentModel.Design;
 using System.Drawing;
 using System.Drawing.Design;
 using System.ComponentModel;
@@ -509,7 +510,8 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		}
 
 		private void DropDownButtonClicked (object sender, EventArgs e) {
-			if (property_grid.SelectedGridItem.PropertyDescriptor.GetEditor(typeof(UITypeEditor)) == null) {
+			UITypeEditor editor = property_grid.SelectedGridItem.PropertyDescriptor.GetEditor (typeof (UITypeEditor)) as UITypeEditor;
+			if (editor == null) {
 				dropdown_form.Deactivate +=new EventHandler(dropdown_form_Deactivate);
 				PropertyGridListBox listBox = new PropertyGridListBox();
 				listBox.BorderStyle = BorderStyle.FixedSingle;
@@ -529,17 +531,26 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				dropdown_form.Location = PointToScreen(new Point(SplitterLocation,grid_textbox.Location.Y+row_height));
 				dropdown_form.Width = this.Width - this.SplitterLocation;
 				dropdown_form.Show();
+			} else { // use editor
+				SetPropertyValueFromUITypeEditor (editor);
 			}
-			else { // use editor
-				UITypeEditor editor = (UITypeEditor)property_grid.SelectedGridItem.PropertyDescriptor.GetEditor(typeof(UITypeEditor));
-				System.ComponentModel.Design.ServiceContainer service_container = new System.ComponentModel.Design.ServiceContainer();
-				service_container.AddService(typeof(System.Windows.Forms.Design.IWindowsFormsEditorService), this);
-				SetPropertyValue(editor.EditValue(new ITypeDescriptorContextImpl(this.property_grid), service_container,property_grid.SelectedGridItem.Value));
-			}
+		}
+
+		void SetPropertyValueFromUITypeEditor (UITypeEditor editor)
+		{
+			ServiceContainer service_container = new ServiceContainer ();
+			service_container.AddService (typeof (IWindowsFormsEditorService), this);
+			object value = editor.EditValue (
+				new ITypeDescriptorContextImpl (this.property_grid),
+				service_container,
+				property_grid.SelectedGridItem.Value);
+			SetPropertyValue (value);
 		}
 		
 		private void DialogButtonClicked(object sender, EventArgs e) {
-			dialog_form.Show();
+			UITypeEditor editor = property_grid.SelectedGridItem.PropertyDescriptor.GetEditor (typeof (UITypeEditor)) as UITypeEditor;
+			if (editor != null)
+				SetPropertyValueFromUITypeEditor (editor);
 		}
 
 		private void HandleValueChanged(object sender, EventArgs e) {
