@@ -1,3 +1,17 @@
+2006-06-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.h (MonoStackSlot): New structure to keep track of the verification state
+	of the evaluation stack.
+	
+	* mini.h (MonoBasicBlock): Add a 'stack_state' field to keep track of the
+	evaluation stack trace at entry to the bblock.
+
+	* mini.c (merge_stacks): New function to perform verification of stack merges.
+	Turned off by default.
+
+	* mini.c: Fill up ins->klass for instructions whose type is STACK_OBJ or
+	STACK_MP.
+	
 2006-06-06  Massimiliano Mantione  <massi@ximian.com>
 
 	* local-propagation.c: Fixed bug 78549.
