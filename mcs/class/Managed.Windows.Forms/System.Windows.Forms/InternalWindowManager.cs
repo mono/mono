@@ -341,6 +341,8 @@ namespace System.Windows.Forms {
 			title_buttons [0] = close_button;
 			title_buttons [1] = minimize_button;
 			title_buttons [2] = maximize_button;
+
+			ThemeEngine.Current.ManagedWindowSetButtonLocations (this);
 		}
 
 		protected virtual bool HandleButtonDown (ref Message m)

@@ -4,7 +4,9 @@
 	default cursor so it is	instantiated correctly.
 	* InternalWindowManager.cs: The OS doesn't give us an NCPAINT with
 	resizes so we need to manually repaint the window decorations here.
-
+	- Set the titlebar button locations as soon as they are created,
+	otherwise they are not set correctly on win32.
+	
 2006-06-06  Chris Toshok  <toshok@ximian.com>
 
 	* CurrencyManager.cs (set_Position): call PullData before
