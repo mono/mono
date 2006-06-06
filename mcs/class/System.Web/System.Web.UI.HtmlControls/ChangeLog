@@ -1,3 +1,8 @@
+2006-06-06 Juraj Skripsky <js@hotfeet.ch>
+
+	* HtmlForm.cs (RenderAttributes): Sync with changes to HttpRequest.
+	Fixes bug #78591.
+
 2006-04-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlTextArea.cs: Value is HtmlEncoded/Decoded in 2.0. Fixes

@@ -297,10 +297,7 @@ return true;
 				action = fp_uri.MakeRelative (current_uri);
 			}
 
-			string query = Page.Request.QueryStringRaw;
-			if (query != null && query.Length > 0) {
-				action += "?" + query;
-			}
+			action += Page.Request.QueryStringRaw;
 
 			w.WriteAttribute ("name", Name);
 
