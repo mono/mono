@@ -192,17 +192,7 @@ namespace System.IO
 			}
 
 			MonoIOError error;
-			bool exists;
-			
-			exists = MonoIO.ExistsFile (path, out error);
-			if (error != MonoIOError.ERROR_SUCCESS &&
-			    error != MonoIOError.ERROR_FILE_NOT_FOUND &&
-			    error != MonoIOError.ERROR_PATH_NOT_FOUND &&
-			    error != MonoIOError.ERROR_INVALID_NAME) {
-				throw MonoIO.GetException (path, error);
-			}
-			
-			return(exists);
+			return MonoIO.ExistsFile (path, out error);
 		}
 
 		public static FileAttributes GetAttributes (string path)

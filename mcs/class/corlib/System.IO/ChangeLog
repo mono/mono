@@ -1,3 +1,7 @@
+2006-06-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* File.cs: never throw in Exists.
+
 2006-05-18  Miguel de Icaza  <miguel@novell.com>
 
 	* Directory.cs (Exists): Ignore INVALID_HANDlE, return false.
