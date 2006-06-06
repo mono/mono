@@ -743,9 +743,10 @@ namespace System.Drawing.Drawing2D
 		public bool IsOutlineVisible (int x, int y, Pen pen, Graphics graphics)
 		{
                         bool result;
+                        IntPtr p = (pen == null) ? IntPtr.Zero : pen.nativeObject;
                         IntPtr g = (graphics == null) ? IntPtr.Zero : graphics.nativeObject;
                         
-                	Status s = GDIPlus.GdipIsOutlineVisiblePathPointI (nativePath, x, y, g, out result);
+                	Status s = GDIPlus.GdipIsOutlineVisiblePathPointI (nativePath, x, y, p, g, out result);
                         GDIPlus.CheckStatus (s);
 
                         return result;
@@ -755,9 +756,10 @@ namespace System.Drawing.Drawing2D
 		public bool IsOutlineVisible (float x, float y, Pen pen, Graphics graphics)
 		{
                         bool result;
+                        IntPtr p = (pen == null) ? IntPtr.Zero : pen.nativeObject;
                         IntPtr g = (graphics == null) ? IntPtr.Zero : graphics.nativeObject;
                         
-                	Status s = GDIPlus.GdipIsOutlineVisiblePathPoint (nativePath, x, y, g, out result);
+                	Status s = GDIPlus.GdipIsOutlineVisiblePathPoint (nativePath, x, y, p, g, out result);
                         GDIPlus.CheckStatus (s);
 
                         return result;

@@ -1,3 +1,7 @@
+2006-06-06  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* GraphicsPath.cs: Fix IsOutlineVisible wrt API signature change.
+
 2006-05-24  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* GraphicsPath.cs: Remove MonoTODO on GetBounds. For 1.x throw an
