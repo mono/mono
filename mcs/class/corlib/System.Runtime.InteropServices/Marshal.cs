@@ -317,9 +317,10 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static void GetNativeVariantForObject (object obj, IntPtr pDstNativeVariant) {
-			throw new NotImplementedException ();
+			Variant vt = new Variant();
+			vt.SetValue(obj);
+			Marshal.StructureToPtr(vt, pDstNativeVariant, false);
 		}
 
 		[MonoTODO]
@@ -327,9 +328,9 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static object GetObjectForNativeVariant (IntPtr pSrcNativeVariant) {
-			throw new NotImplementedException ();
+			Variant vt = (Variant)Marshal.PtrToStructure(pSrcNativeVariant, typeof(Variant));
+			return vt.GetValue();
 		}
 
 		[MonoTODO]

@@ -1,3 +1,8 @@
+2006-06-05  Jonathan Chambers  <jonathan.chambers@ansys.com>
+
+	* Variant.cs: Added.
+	* Environment.cs: Incremented corlib version since adding Variant.	
+	
 2006-06-01  Raja R Harinath  <rharinath@novell.com>
 
 	* Nullable.cs (operator==, operator!=): Remove.

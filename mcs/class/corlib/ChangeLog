@@ -1,3 +1,7 @@
+2006-06-5  Jonathan Chambers  <jonathan.chambers@ansys.com>
+
+	* corlib_test.dll.sources : added Variant.cs.
+
 2006-05-31  Zoltan Varga  <vargaz@gmail.com>
 
 	* corlib.dll.sources: Removed System/MonoDummy.cs.

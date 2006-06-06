@@ -235,6 +235,7 @@ System/UnhandledExceptionEventArgs.cs
 System/UnhandledExceptionEventHandler.cs
 System/UnitySerializationHolder.cs
 System/ValueType.cs
+System/Variant.cs
 System/Version.cs
 System/Void.cs
 System/WeakReference.cs
