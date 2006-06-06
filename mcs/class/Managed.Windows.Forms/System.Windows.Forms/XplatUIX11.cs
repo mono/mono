@@ -3009,34 +3009,32 @@ namespace System.Windows.Forms {
 						msg.hwnd = Grab.Hwnd;
 					}
 
-					if (!ClickPending.Pending) {
+					if (ClickPending.Pending && ((((long)xevent.ButtonEvent.time - ClickPending.Time) < DoubleClickInterval) && (msg.wParam == ClickPending.wParam) && (msg.lParam == ClickPending.lParam) && (msg.message == ClickPending.Message))) {
+						// Looks like a genuine double click, clicked twice on the same spot with the same keys
+						switch(xevent.ButtonEvent.button) {
+							case 1: {
+								msg.message = client ? Msg.WM_LBUTTONDBLCLK : Msg.WM_NCLBUTTONDBLCLK;
+								break;
+							}
+
+							case 2: {
+								msg.message = client ? Msg.WM_MBUTTONDBLCLK : Msg.WM_NCMBUTTONDBLCLK;
+								break;
+							}
+
+							case 3: {
+								msg.message = client ? Msg.WM_RBUTTONDBLCLK : Msg.WM_NCRBUTTONDBLCLK;
+								break;
+							}
+						}
+						ClickPending.Pending = false;
+					} else {
 						ClickPending.Pending = true;
 						ClickPending.Hwnd = msg.hwnd;
 						ClickPending.Message = msg.message;
 						ClickPending.wParam = msg.wParam;
 						ClickPending.lParam = msg.lParam;
 						ClickPending.Time = (long)xevent.ButtonEvent.time;
-					} else {
-						if ((((long)xevent.ButtonEvent.time - ClickPending.Time) < DoubleClickInterval) && (msg.wParam == ClickPending.wParam) && (msg.lParam == ClickPending.lParam) && (msg.message == ClickPending.Message)) {
-							// Looks like a genuine double click, clicked twice on the same spot with the same keys
-							switch(xevent.ButtonEvent.button) {
-								case 1: {
-									msg.message = client ? Msg.WM_LBUTTONDBLCLK : Msg.WM_NCLBUTTONDBLCLK;
-									break;
-								}
-
-								case 2: {
-									msg.message = client ? Msg.WM_MBUTTONDBLCLK : Msg.WM_NCMBUTTONDBLCLK;
-									break;
-								}
-
-								case 3: {
-									msg.message = client ? Msg.WM_RBUTTONDBLCLK : Msg.WM_NCRBUTTONDBLCLK;
-									break;
-								}
-							}
-						}
-						ClickPending.Pending = false;
 					}
 
 					break;

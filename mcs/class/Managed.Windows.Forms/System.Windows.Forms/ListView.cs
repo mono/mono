@@ -1391,7 +1391,7 @@ namespace System.Windows.Forms
 
 				Point pt = new Point (me.X, me.Y);
 				foreach (ListViewItem item in owner.items) {
-					if (item.CheckRectReal.Contains (pt)) {
+					if (me.Clicks == 1 && item.CheckRectReal.Contains (pt)) {
 						CheckState curr_state = item.Checked ?  CheckState.Checked : CheckState.Unchecked;
 						item.Checked = !item.Checked;
 

@@ -1528,33 +1528,20 @@ namespace System.Windows.Forms
 			if (!control.LabelWrap)
 				format.FormatFlags = StringFormatFlags.NoWrap;
 			
-			if (item.Selected && control.Focused) {
-				if (control.View == View.Details) {
-					if (control.FullRowSelect) {
-						dc.FillRectangle (SystemBrushes.Highlight, text_rect);
-					}
-					else {
-						Size text_size = Size.Ceiling (dc.MeasureString (item.Text,
-												item.Font));
-						text_rect.Width = text_size.Width;
-						dc.FillRectangle (SystemBrushes.Highlight, text_rect);
-					}
-				}
-				else {
-					/*Size text_size = Size.Ceiling (dc.MeasureString (item.Text,
-					  item.Font));
-					  Point loc = text_rect.Location;
-					  loc.X += (text_rect.Width - text_size.Width) / 2;
-					  text_rect.Width = text_size.Width;*/
-					dc.FillRectangle (SystemBrushes.Highlight, text_rect);
-				}
+			Rectangle highlight_rect = text_rect;
+			if (control.View == View.Details && !control.FullRowSelect) {
+				Size text_size = Size.Ceiling (dc.MeasureString (item.Text, item.Font));
+				highlight_rect.Width = text_size.Width + 4;
 			}
+
+			if (item.Selected && control.Focused)
+				dc.FillRectangle (SystemBrushes.Highlight, highlight_rect);
 			else
 				dc.FillRectangle (ResPool.GetSolidBrush (item.BackColor), text_rect);
 
 			if (item.Text != null && item.Text.Length > 0) {
 				if (item.Selected && control.Focused)
-					dc.DrawString (item.Text, item.Font, SystemBrushes.HighlightText, text_rect, format);
+					dc.DrawString (item.Text, item.Font, SystemBrushes.HighlightText, highlight_rect, format);
 				else
 					dc.DrawString (item.Text, item.Font, this.ResPool.GetSolidBrush
 						       (item.ForeColor), text_rect, format);
@@ -1617,7 +1604,7 @@ namespace System.Windows.Forms
 			}
 			
 			if (item.Focused && control.Focused) {				
-				Rectangle focus_rect = text_rect;
+				Rectangle focus_rect = highlight_rect;
 				if (control.FullRowSelect && control.View == View.Details) {
 					int width = 0;
 					foreach (ColumnHeader col in control.Columns)
