@@ -1,3 +1,10 @@
+2006-06-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FileDialog.cs: disable the up button when in 'Recently Used' or 'My
+	Computer'. Clicking it in the network view goes to 'My Computer'.
+	Added CIFS filesystem type. Display the mount point of filesystems.
+	Avoid duplicate mount points (happens for me with CIFS);
+
 2006-06-06  Jackson Harper  <jackson@ximian.com>
 
 	* InternalWindowManager.cs: Draw the maximized windows buttons

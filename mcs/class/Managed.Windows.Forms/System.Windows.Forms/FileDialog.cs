@@ -953,14 +953,17 @@ namespace System.Windows.Forms {
 		void OnClickSmallButtonToolBar (object sender, ToolBarButtonClickEventArgs e)
 		{
 			if (e.Button == upToolBarButton) {
-				if (currentDirectoryInfo != null && currentDirectoryInfo.Parent != null)
+				if (currentDirectoryInfo != null && currentDirectoryInfo.Parent != null) {
 					ChangeDirectory (null, currentDirectoryInfo.Parent.FullName);
+				} else if (current_special_case == network_string) {
+					ChangeDirectory (null, mycomputer_string);
+				}
 			} else
 			if (e.Button == backToolBarButton) {
 				PopDirectory ();
 			} else
 			if (e.Button == newdirToolBarButton) {
-				
+				// TODO: create directory
 			}
 		}
 		
@@ -1521,7 +1524,7 @@ namespace System.Windows.Forms {
 				mycomputerButton.Location = new Point (2, 194);
 				mycomputerButton.Text = "My Computer";
 				mycomputerButton.Click += new EventHandler (OnClickButton);
-				
+
 				networkButton.Image = ThemeEngine.Current.Images (UIIcon.PlacesMyNetwork, 32);
 				networkButton.BackColor = BackColor;
 				networkButton.ForeColor = Color.Black;
@@ -1546,15 +1549,16 @@ namespace System.Windows.Forms {
 				lastPopupButton = sender as PopupButton;
 				
 				if (sender == recentlyusedButton) {
-					if ((platform == 4) || (platform == 128))
+					if ((platform == 4) || (platform == 128)) {
 					// do NOT change the following line!
 					// FileDialog uses a special handling for recently used files on *nix
 					// recently used files are not stored as links in a directory but
 					// as a xml file called .recently-used in the users home dir
 					// This matches the Freedesktop.org spec which gnome uses
 						fileDialog.ChangeDirectory (this, FileDialog.recently_string);
-					else
+					} else {
 						fileDialog.ChangeDirectory (this, ThemeEngine.Current.Places (UIIcon.PlacesRecentDocuments));
+					}
 				} else
 				if (sender == desktopButton) {
 					fileDialog.ChangeDirectory (this, ThemeEngine.Current.Places (UIIcon.PlacesDesktop));
@@ -1580,6 +1584,7 @@ namespace System.Windows.Forms {
 //					else
 //						fileDialog.ChangeDirectory (this, ThemeEngine.Current.Places (UIIcon.PlacesMyNetwork));
 				}
+				fileDialog.upToolBarButton.Enabled = (sender != recentlyusedButton && sender != mycomputerButton);
 			}
 			
 			public void SetPopupButtonStateByPath (string path)
@@ -1940,7 +1945,7 @@ namespace System.Windows.Forms {
 						
 						fileStruct.fullname = mount.mount_point;
 						
-						string item_name = "HDD (" + mount.fsType + ", " + mount.device_short + ")";
+						string item_name = String.Format ("HDD ({0}, {1}, {2})", mount.mount_point, mount.fsType , mount.device_short);
 						ListViewItem listViewItem = new ListViewItem (item_name);
 						
 						int index = MimeIconEngine.GetIconIndexForMimeType ("harddisk/harddisk");
@@ -2062,8 +2067,7 @@ namespace System.Windows.Forms {
 				
 				fileStruct.fullname = mount.mount_point;
 				
-				string item_name = "Network (" + mount.fsType + ", " + mount.device_short + ")";
-				
+				string item_name = String.Format ("Network ({0}, {1}, {2})", mount.mount_point, mount.fsType , mount.device_short);
 				ListViewItem listViewItem = new ListViewItem (item_name);
 				
 				int index = 0;
@@ -2076,6 +2080,9 @@ namespace System.Windows.Forms {
 					index = MimeIconEngine.GetIconIndexForMimeType ("smb/smb");
 					break;
 				case MasterMount.FsTypes.ncpfs:
+					index = MimeIconEngine.GetIconIndexForMimeType ("network/network");
+					break;
+				case MasterMount.FsTypes.cifs:
 					index = MimeIconEngine.GetIconIndexForMimeType ("network/network");
 					break;
 				default:
@@ -2719,7 +2726,8 @@ namespace System.Windows.Forms {
 			ncpfs,
 			nfs,
 			smbfs,
-			usbfs
+			usbfs,
+			cifs
 		}
 		
 		internal struct Mount {
@@ -2783,9 +2791,12 @@ namespace System.Windows.Forms {
 				StreamReader sr = new StreamReader ("/proc/mounts");
 				
 				string line = sr.ReadLine ();
-				
+				ArrayList lines = new ArrayList ();
 				while (line != null) {
-					ProcessProcMountLine (line);
+					if (lines.IndexOf (line) == -1) { // Avoid duplicates
+						ProcessProcMountLine (line);
+						lines.Add (line);
+					}
 					line = sr.ReadLine ();
 				}
 				
@@ -2823,6 +2834,9 @@ namespace System.Windows.Forms {
 					network_devices.Add (mount);
 				} else if (split [2] == "smbfs") {
 					mount.fsType = FsTypes.smbfs;
+					network_devices.Add (mount);
+				} else if (split [2] == "cifs") {
+					mount.fsType = FsTypes.cifs;
 					network_devices.Add (mount);
 				} else if (split [2] == "ncpfs") {
 					mount.fsType = FsTypes.ncpfs;
