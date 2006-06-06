@@ -1,3 +1,7 @@
+2006-06-06  Mike Kestner  <mkestner@novell.com>
+
+	* CheckedListBox.cs : rebuild check collection on Add.  Fixes #78426.
+
 2006-06-06  Jackson Harper  <jackson@ximian.com>
 
 	* Control.cs: Use the property (instead of the field) to get the
