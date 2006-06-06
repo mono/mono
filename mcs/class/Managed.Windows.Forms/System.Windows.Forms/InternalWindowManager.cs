@@ -234,13 +234,7 @@ namespace System.Windows.Forms {
 				break;
 
 			case Msg.WM_NCPAINT:
-				PaintEventArgs pe;
-				pe = XplatUI.PaintEventStart(m.HWnd, false);
-				ThemeEngine.Current.DrawManagedWindowDecorations (pe.Graphics, pe.ClipRectangle, this);
-//				PaintWindowDecorations (pe);
-				XplatUI.PaintEventEnd(m.HWnd, false);
-
-				
+				PaintDecorations ();
 				return true;
 			}
 			return false;
@@ -311,8 +305,21 @@ namespace System.Windows.Forms {
 		{
 			ThemeEngine.Current.ManagedWindowSetButtonLocations (this);
 
+			PaintDecorations ();
+		}
+
+		private void PaintDecorations ()
+		{
 			PaintEventArgs pe = XplatUI.PaintEventStart (form.Handle, false);
 			ThemeEngine.Current.DrawManagedWindowDecorations (pe.Graphics, pe.ClipRectangle, this);
+
+			if (IsMaximized) {
+				MainMenu menu = form.ActiveMenu;
+				DrawMaximizedButtons (pe, menu);
+				if (menu != null)
+					menu.Draw (pe);
+			}
+
 			XplatUI.PaintEventEnd (form.Handle, false);
 		}
 
