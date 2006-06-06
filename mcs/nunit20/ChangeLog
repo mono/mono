@@ -1,3 +1,7 @@
+2006-06-06  Merav Sudri <meravs@mainsoft.com>
+	* nunit.java.sln - not used build configurations was deleted.
+	* readme: instructions for using nunit.java was added.
+
 2006-05-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* mocks, Makefile : added nunit.mocks.dll due to the request
