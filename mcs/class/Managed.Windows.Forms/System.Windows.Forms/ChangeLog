@@ -3,6 +3,8 @@
 	* TreeNode.cs: Compute the next node for expanding/collapsing
 	correctly. We now factor in nodes without a NextNode
 	correctly. (Fixes somes cases in nunit-gui).
+	* InternalWindowManager.cs: Set the bounds when updating the
+	virtual position of a tool window.
 	
 2006-06-05  Chris Toshok  <toshok@ximian.com>
 

@@ -481,7 +481,7 @@ namespace System.Windows.Forms {
 			int bw = ThemeEngine.Current.ManagedWindowBorderWidth (this);
 			int mw = MinTitleBarSize.Width + (bw * 2);
 			int mh = MinTitleBarSize.Height + (bw * 2);
-			
+
 			if ((sizing_edge & FormPos.Top) != 0) {
 				int height = form.Height - move.Y;
 				if (height <= mh) {
@@ -548,11 +548,7 @@ namespace System.Windows.Forms {
 
 		public int TitleBarHeight {
 			get {
-				if (IsToolWindow)
-					return SystemInformation.ToolWindowCaptionHeight;
-				if (form.FormBorderStyle == FormBorderStyle.None)
-					return 0;
-				return SystemInformation.CaptionHeight;
+				return ThemeEngine.Current.ManagedWindowTitleBarHeight (this);
 			}
 		}
 
@@ -670,7 +666,7 @@ namespace System.Windows.Forms {
 
 		protected virtual void DrawVirtualPosition (Rectangle virtual_position)
 		{
-			form.Location = virtual_position.Location;
+			form.Bounds = virtual_position;
 			start = Cursor.Position;
 		}
 
