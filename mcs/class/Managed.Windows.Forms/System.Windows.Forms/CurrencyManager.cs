@@ -94,6 +94,7 @@ namespace System.Windows.Forms {
 				if (listposition == value)
 					return;
 				listposition = value;
+				PullData ();
 				OnCurrentChanged (EventArgs.Empty);
 				OnPositionChanged (EventArgs.Empty);
 			}
@@ -176,6 +177,11 @@ namespace System.Windows.Forms {
 				throw new NotSupportedException ();
 				
 			(list as IBindingList).AddNew ();
+
+			listposition = list.Count - 1;
+
+			OnCurrentChanged (EventArgs.Empty);
+			OnPositionChanged (EventArgs.Empty);
 		}
 
 		public override void CancelCurrentEdit ()
@@ -217,8 +223,6 @@ namespace System.Windows.Forms {
 
 		protected internal override void OnCurrentChanged (EventArgs e)
 		{
-			PullData ();
-
 			if (onCurrentChangedHandler != null) {
 				onCurrentChangedHandler (this, e);
 			}
@@ -226,17 +230,14 @@ namespace System.Windows.Forms {
 
 		protected virtual void OnItemChanged (ItemChangedEventArgs e)
 		{
-			PushData ();
-
 			if (ItemChanged != null)
 				ItemChanged (this, e);
 		}
 
 		protected virtual void OnPositionChanged (EventArgs e)
 		{
-			if (onPositionChangedHandler == null)
-				return;
-			onPositionChangedHandler (this, e);
+			if (onPositionChangedHandler != null)
+				onPositionChangedHandler (this, e);
 		}
 
 		protected internal override string GetListName (ArrayList accessors)
@@ -288,8 +289,26 @@ namespace System.Windows.Forms {
 			if (listposition == -1)
 				listposition = 0;
 
-			OnItemChanged (new ItemChangedEventArgs (-1));
-			UpdateIsBinding ();
+			switch (e.ListChangedType) {
+			case ListChangedType.ItemDeleted:
+				if (listposition == e.NewIndex) {
+					listposition = e.NewIndex - 1;
+					OnCurrentChanged (EventArgs.Empty);
+					OnPositionChanged (EventArgs.Empty);
+					OnItemChanged (new ItemChangedEventArgs (listposition));
+				}
+					
+				OnItemChanged (new ItemChangedEventArgs (-1));
+				break;
+			case ListChangedType.ItemAdded:
+				OnItemChanged (new ItemChangedEventArgs (-1));
+				break;
+			default:
+				PushData ();
+				OnItemChanged (new ItemChangedEventArgs (-1));
+				UpdateIsBinding ();
+				break;
+			}
 		}
 
 		public event ItemChangedEventHandler ItemChanged;

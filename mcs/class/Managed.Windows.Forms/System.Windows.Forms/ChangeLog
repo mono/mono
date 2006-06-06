@@ -1,3 +1,18 @@
+2006-06-06  Chris Toshok  <toshok@ximian.com>
+
+	* CurrencyManager.cs (set_Position): call PullData before
+	OnCurrentChanged.
+	(AddNew): after calling IBindingList.AddNew, update our
+	listposition, and call OnCurrentChanged/OnPositionChanged (without
+	calling PullData).
+	(OnCurrentChanged): remove the call to PullData from here.
+	(OnItemChanged): remove the call to PushData from here.
+	(OnPositionChanged): change the test from == null to != null to
+	match the other methods.
+	(ListChangedHandler): the grossest part of the patch.  Implement
+	this such that it passes the unit tests in CurrencyManagerTest and
+	the output more or less matches that of MS's implementation.
+ 
 2006-06-06  Mike Kestner  <mkestner@novell.com>
 
 	* ListView.cs : only update check state on single click.
