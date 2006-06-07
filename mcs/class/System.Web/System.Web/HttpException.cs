@@ -175,7 +175,8 @@ namespace System.Web
 
 			builder.AppendFormat ("<h2><font color=\"maroon\"><i>{0}</i></font></h2>\r\n", exc.Title);
 			builder.AppendFormat ("<b>Description: </b>{0}\r\n<p>\r\n", HtmlEncode (exc.Description));
-			builder.AppendFormat ("<b>Error message: </b>{0}\r\n<p>\r\n", HtmlEncode (exc.ErrorMessage));
+			string errorMessage = "<br>" + HtmlEncode (exc.ErrorMessage).Replace ("\n", "<br>");
+			builder.AppendFormat ("<b>Error message: </b>{0}\r\n<p>\r\n", errorMessage);
 
 			if (exc.FileName != null)
 				builder.AppendFormat ("<b>File name: </b> {0}", HtmlEncode (exc.FileName));
