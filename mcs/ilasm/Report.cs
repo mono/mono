@@ -18,6 +18,8 @@ namespace Mono.ILASM {
                 private static int error_count;
                 private static int mark_count;
                 private static bool quiet;
+                /* Current file being processed */
+                private static string file_path;
 
                 static Report ()
                 {
@@ -34,6 +36,11 @@ namespace Mono.ILASM {
 			set { quiet = value; }
 		}
 
+                public static string FilePath {
+                        get { return file_path; }
+                        set { file_path = value; }
+                }
+
                 public static void AssembleFile (string file, string listing,
                                           string target, string output)
                 {
@@ -44,18 +51,28 @@ namespace Mono.ILASM {
 
                 public static void Error (string message)
                 {
-			Error (null, null, message);
+                        Error (null, message);
                 }
 
                 public static void Error (Location location, string message)
                 {
-			Error (null, location, message);
-                }
-                
-                public static void Error (string file_path, Location location, string message)
-                {
                         error_count++;
                         throw new ILAsmException (file_path, location, message);
+                }
+                
+                public static void Warning (string message)
+                {
+                        Warning (null, message);
+                }
+
+                public static void Warning (Location location, string message)
+                {
+                        string location_str = " : ";
+                        if (location != null)
+                                location_str = " (" + location.line + ", " + location.column + ") : ";
+
+                        Console.Error.WriteLine (String.Format ("{0}{1}Warning -- {2}",
+                                (file_path != null ? file_path : ""), location_str, message));
                 }
 
                 public static void Message (string message)
@@ -113,7 +130,7 @@ namespace Mono.ILASM {
 
                 public override string ToString ()
                 {
-                        string location_str = "";
+                        string location_str = " : ";
                         if (location != null)
                                 location_str = " (" + location.line + ", " + location.column + ") : ";
 

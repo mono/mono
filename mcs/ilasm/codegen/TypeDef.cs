@@ -45,6 +45,8 @@ namespace Mono.ILASM {
                 private bool is_value_class;
                 private bool is_enum_class;
 
+                private Location location;
+
                 public TypeDef (PEAPI.TypeAttr attr, string name_space, string name,
                                 BaseClassRef parent, ArrayList impl_list, Location location, GenericParameters gen_params, TypeDef outer)
                 {
@@ -53,6 +55,7 @@ namespace Mono.ILASM {
                         this.impl_list = impl_list;
                         this.gen_params = gen_params;
                         this.outer = outer;
+                        this.location = location;
 
                         field_table = new Hashtable ();
                         field_list = new ArrayList ();
@@ -179,7 +182,7 @@ namespace Mono.ILASM {
                 public void AddFieldDef (FieldDef fielddef)
                 {
                         if (IsInterface && !fielddef.IsStatic) {
-                                Console.WriteLine ("warning -- Non-static field in interface, set to such");
+                                Report.Warning ("Non-static field in interface, set to such");
                                 fielddef.Attributes |= PEAPI.FieldAttr.Static;
                         }
 
@@ -193,12 +196,12 @@ namespace Mono.ILASM {
                 public void AddMethodDef (MethodDef methoddef)
                 {
                         if (IsInterface && !(methoddef.IsVirtual || methoddef.IsAbstract)) {
-                                Console.WriteLine ("warning -- Non-virtual, non-abstract instance method in interface, set to such");
+                                Report.Warning (methoddef.StartLocation, "Non-virtual, non-abstract instance method in interface, set to such");
                                 methoddef.Attributes |= PEAPI.MethAttr.Abstract | PEAPI.MethAttr.Virtual;
                         }
 
                         if (method_table [methoddef.Signature] != null)
-                                Report.Error ("Duplicate method declaration: " + methoddef.Signature);
+                                Report.Error (methoddef.StartLocation, "Duplicate method declaration: " + methoddef.Signature);
 
                         method_table.Add (methoddef.Signature, methoddef);
                 }
@@ -316,7 +319,7 @@ namespace Mono.ILASM {
 
 				if (vis == PEAPI.TypeAttr.Private || vis == PEAPI.TypeAttr.Public) {
 					/* Nested class, but attr not set accordingly. */
-					Console.WriteLine ("Warning -- Nested class '{0}' has non-nested visibility, set to such.", NestedFullName);
+					Report.Warning (location, String.Format ("Nested class '{0}' has non-nested visibility, set to such.", NestedFullName));
 					attr = attr ^ vis;
 					attr |= (vis == PEAPI.TypeAttr.Public ? PEAPI.TypeAttr.NestedPublic : PEAPI.TypeAttr.NestedPrivate);
 				}		
@@ -340,7 +343,7 @@ namespace Mono.ILASM {
                                 if (!IsValueType (name_space, name) && !IsEnumType (name_space, name) &&
                                         is_value_class && (attr & PEAPI.TypeAttr.Sealed) == 0) {
 
-                                        Console.WriteLine ("Warning -- Non-sealed value class, made sealed.");
+                                        Report.Warning (location, "Non-sealed value class, made sealed.");
                                         attr |= PEAPI.TypeAttr.Sealed;
                                 }
 

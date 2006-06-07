@@ -68,8 +68,10 @@ namespace Mono.ILASM {
                                         output_file = CreateOutputFilename ();
                                 try {
                                         codegen = new CodeGen (output_file, target == Target.Dll, debugging_info);
-                                        foreach (string file_path in il_file_list)
+                                        foreach (string file_path in il_file_list) {
+                                                Report.FilePath = file_path;
                                                 ProcessFile (file_path);
+                                        }
                                         if (scan_only)
                                                 return true;
 
@@ -180,9 +182,9 @@ namespace Mono.ILASM {
                                         else
                                                 parser.yyparse (new ScannerAdapter (scanner),  null);
                                 } catch (ILTokenizingException ilte) {
-                                        Report.Error (file_path, ilte.Location, "syntax error at token '" + ilte.Token + "'");
+                                        Report.Error (ilte.Location, "syntax error at token '" + ilte.Token + "'");
                                 } catch (Mono.ILASM.yyParser.yyException ye) {
-                                        Report.Error (file_path, scanner.Reader.Location, ye.Message);
+                                        Report.Error (scanner.Reader.Location, ye.Message);
                                 } catch (ILAsmException ie) {
                                         ie.FilePath = file_path;
                                         ie.Location = scanner.Reader.Location;

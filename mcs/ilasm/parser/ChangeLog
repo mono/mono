@@ -1,3 +1,8 @@
+2006-06-07  Ankit Jain  <jankit@novell.com>
+
+	* ILParser.jay : Update to use Report.Warning instead of
+	Console.Error.WriteLine
+
 2006-06-01  Ankit Jain  <jankit@novell.com>
 
 	* ILParser.jay (instr | INSTR_PARAM ..): Report error if the param is not

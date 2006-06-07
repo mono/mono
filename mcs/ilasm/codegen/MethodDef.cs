@@ -47,6 +47,7 @@ namespace Mono.ILASM {
 		private SourceMethod source;
                 private TypeDef type_def;
                 private GenericParameters gen_params;
+                private Location start;
 
                 public MethodDef (CodeGen codegen, PEAPI.MethAttr meth_attr,
 				  PEAPI.CallConv call_conv, PEAPI.ImplAttr impl_attr,
@@ -61,6 +62,7 @@ namespace Mono.ILASM {
                         this.type_def = type_def;
                         this.gen_params = gen_params;
                         this.ret_param = new ParamDef (PEAPI.ParamAttr.Default, "", ret_type);
+                        this.start = (Location) start.Clone ();
 
                         inst_list = new ArrayList ();
                         label_table = new Hashtable ();
@@ -125,6 +127,10 @@ namespace Mono.ILASM {
 
                 public bool IsAbstract {
                         get { return (meth_attr & PEAPI.MethAttr.Abstract) != 0; }
+                }
+
+                public Location StartLocation {
+                        get { return start; }
                 }
 
                 public DeclSecurity DeclSecurity {

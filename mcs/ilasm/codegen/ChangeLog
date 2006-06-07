@@ -1,3 +1,11 @@
+2006-06-07  Ankit Jain  <jankit@novell.com>
+
+	* TypeDef.cs (TypeDef.AddFieldDef):
+	(TypeDef.Define): Use Report.Warning instead of Console.Error.WriteLine
+	(TypeDef.AddMethodDef): Likewise. Also, use methoddef.Location .
+	* ExternTable.cs (ExternTable.GetTypeRef): Likewise.
+	* MethodDef.cs (MethodDef.StartLocation): New.
+
 2006-06-01  Ankit Jain  <jankit@novell.com>
 
 	* MethodDef.cs (GetNamedParamPos): Return -1 if param_list is null.
