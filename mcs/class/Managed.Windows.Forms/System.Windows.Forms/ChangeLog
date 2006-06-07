@@ -1,3 +1,8 @@
+2006-06-07  Mike Kestner  <mkestner@novell.com>
+
+	* ComboBox.cs : use items to hold highlight/selection so that
+	collection insertions don't require synchronization.
+
 2006-06-07  Jackson Harper  <jackson@ximian.com>
 
 	* InternalWindowManager.cs: Simplify (and FIX) the window sizing

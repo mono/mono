@@ -46,8 +46,7 @@ namespace System.Windows.Forms
 		private DrawMode draw_mode = DrawMode.Normal;
 		private ComboBoxStyle dropdown_style = (ComboBoxStyle)(-1);
 		private int dropdown_width = -1;		
-		private int selected_index = -1;
-		private object selected_item;
+		private object selected_item = null;
 		internal ObjectCollection items = null;
 		private bool suspend_ctrlupdate;
 		private int maxdrop_items = 8;			
@@ -223,8 +222,8 @@ namespace System.Windows.Forms
 	
 				if (dropdown_style != ComboBoxStyle.DropDownList && textbox_ctrl == null) {
 					textbox_ctrl = new FixedSizeTextBox ();
-					if (selected_index != -1)
-						textbox_ctrl.Text = GetItemText (Items [selected_index]);
+					if (selected_item != null)
+						textbox_ctrl.Text = GetItemText (selected_item);
 					textbox_ctrl.BorderStyle = BorderStyle.None;
 					textbox_ctrl.TextChanged += new EventHandler (OnTextChangedEdit);
 					textbox_ctrl.KeyPress += new KeyPressEventHandler(textbox_ctrl_KeyPress);
@@ -388,33 +387,16 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override int SelectedIndex {
-			get { return selected_index; }
+			get { return Items.IndexOf (selected_item); }
 			set {
 				if (value <= -2 || value >= Items.Count)
 					throw new ArgumentOutOfRangeException ("Index of out range");
 
-				if (selected_index == value)
-					return;
+				object item = null;
+				if (value != -1)
+					item = Items [value];
 
-    				selected_index = value;
-    				
-    				if (dropdown_style != ComboBoxStyle.DropDownList) {
-					if (selected_index == -1)
-						SetControlText("");
-					else {
-						SetControlText (GetItemText (Items[selected_index]));
-						SelectAll ();
-					}
-    				}
-    				
-				if (listbox_ctrl != null)
-					listbox_ctrl.HighlightedIndex = value;
-
-    				OnSelectedValueChanged (new EventArgs ());
-    				OnSelectedIndexChanged  (new EventArgs ());
-    				OnSelectedItemChanged (new EventArgs ());
-				if (DropDownStyle == ComboBoxStyle.DropDownList)
-    					Refresh ();
+    				SelectedItem = item;
 			}
 		}
 
@@ -422,22 +404,30 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Bindable(true)]
 		public object SelectedItem {
-			get {
-				if (selected_index !=-1 && Items !=null && Items.Count > 0)
-					return Items[selected_index];
-				else
-					return null;
-			}
+			get { return selected_item; }
 			set {				
-    				int index = Items.IndexOf (value);
-
-				if (index == -1)
-					return;
-					
-				if (selected_index == index)
+				if (selected_item == value)
 					return;
 
-				SelectedIndex = index;
+				selected_item = value;
+    				
+    				if (dropdown_style != ComboBoxStyle.DropDownList) {
+					if (selected_item == null)
+						SetControlText("");
+					else {
+						SetControlText (GetItemText (selected_item));
+						SelectAll ();
+					}
+    				}
+
+    				OnSelectedValueChanged (new EventArgs ());
+    				OnSelectedIndexChanged  (new EventArgs ());
+    				OnSelectedItemChanged (new EventArgs ());
+				if (DropDownStyle == ComboBoxStyle.DropDownList)
+    					Refresh ();
+
+				if (listbox_ctrl != null)
+					listbox_ctrl.HighlightedItem = value;
 			}
 		}
 		
@@ -985,8 +975,8 @@ namespace System.Windows.Forms
 		private void CreateComboListBox ()
 		{			
 			listbox_ctrl = new ComboListBox (this);			
-			if (selected_index != -1)
-				listbox_ctrl.HighlightedIndex = selected_index;
+			if (selected_item != null)
+				listbox_ctrl.HighlightedItem = selected_item;
 		}
 		
 		internal void Draw (Rectangle clip, Graphics dc)
@@ -1016,8 +1006,7 @@ namespace System.Windows.Forms
 				}
 				
 				state |= DrawItemState.ComboBoxEdit;				
-				OnDrawItem (new DrawItemEventArgs (dc, Font, item_rect,
-							selected_index, state, ForeColor, BackColor));
+				OnDrawItem (new DrawItemEventArgs (dc, Font, item_rect, SelectedIndex, state, ForeColor, BackColor));
 			}						
 			
 			if (show_dropdown_button) {
@@ -1159,7 +1148,7 @@ namespace System.Windows.Forms
 
 			if (listbox_ctrl != null) {
 				listbox_ctrl.SetTopItem (item);
-				listbox_ctrl.HighlightedIndex = item;
+				listbox_ctrl.HighlightedItem = Items [item];
 			}
 		}
 		
@@ -1269,7 +1258,7 @@ namespace System.Windows.Forms
 
 			public void Clear ()
 			{
-				owner.selected_index = -1;
+				owner.selected_item = null;
 				object_items.Clear ();
 				owner.UpdatedItems ();
 				owner.Refresh ();
@@ -1328,9 +1317,8 @@ namespace System.Windows.Forms
 				ObjectItems = new_items.ObjectItems;
 				
 				if (sel_item != null) {
-					int idx = IndexOf (sel_item);
-					owner.selected_index = idx;
-					owner.listbox_ctrl.HighlightedIndex = idx;
+					owner.selected_item = sel_item;
+					owner.listbox_ctrl.HighlightedItem = sel_item;
 				}
 												
 				owner.EndUpdate ();	// Calls UpdatedItems
@@ -1602,25 +1590,38 @@ namespace System.Windows.Forms
 					}
 				}
 			}
-			
-			int highlighted_index = -1;
 
 			public int HighlightedIndex {
-				get { return highlighted_index; }
+				get { return owner.Items.IndexOf (highlighted_item); }
+				set { 
+					object item = null;
+					if (value != -1)
+						item = owner.Items [value];
+					HighlightedItem = item; 
+				}
+			}
+
+			object highlighted_item = null;
+
+			public object HighlightedItem {
+				get { return highlighted_item; }
 				set {
-					if (highlighted_index == value)
+					if (highlighted_item == value)
 						return;
 				
-    					if (highlighted_index != -1)    					
-						Invalidate (GetItemDisplayRectangle (highlighted_index, top_item));
-    					highlighted_index = value;
-    					if (highlighted_index != -1)
-						Invalidate (GetItemDisplayRectangle (highlighted_index, top_item));
+					int index = owner.Items.IndexOf (highlighted_item);
+    					if (index != -1)
+						Invalidate (GetItemDisplayRectangle (index, top_item));
+    					highlighted_item = value;
+				       	index = owner.Items.IndexOf (highlighted_item);
+    					if (index != -1)
+						Invalidate (GetItemDisplayRectangle (index, top_item));
 				}
 			}
 			
 			private Rectangle GetItemDisplayRectangle (int index, int top_index)
 			{
+				Console.WriteLine (index + " " + top_index);
 				if (index < 0 || index >= owner.Items.Count)
 					throw new  ArgumentOutOfRangeException ("GetItemRectangle index out of range.");
 
