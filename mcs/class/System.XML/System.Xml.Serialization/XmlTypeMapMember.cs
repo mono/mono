@@ -41,6 +41,7 @@ namespace System.Xml.Serialization
 	{
 		string _name;
 		int _index;
+		int _globalIndex;
 		TypeData _typeData;
 		MemberInfo _member;
 		MemberInfo _specifiedMember;
@@ -127,6 +128,12 @@ namespace System.Xml.Serialization
 		{
 			get { return _index; }
 			set { _index = value; }
+		}
+		
+		public int GlobalIndex
+		{
+			get { return _globalIndex; }
+			set { _globalIndex = value; }
 		}
 		
 		public bool IsOptionalValueType

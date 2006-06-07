@@ -1,3 +1,15 @@
+2006-06-07  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* XmlTypeMapMember.cs: Added GlobalIndex property.
+	* XmlTypeMapping.cs: When adding a member, initialize its GlobalIndex
+	  property.
+	* SerializationCodeGenerator.cs:
+	* XmlSerializationWriterInterpreter.cs:
+	* XmlSerializationReaderInterpreter.cs: Use GlobalIndex instead of
+	  Index to get/set the values from the input array, since some Index
+	  values are shared between attribute and element members. Fixes
+	  bug #78562.
+
 2006-05-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SerializationCodeGenerator.cs,

@@ -1163,14 +1163,14 @@ namespace System.Xml.Serialization
 
 		string GenerateGetMemberValue (XmlTypeMapMember member, string ob, bool isValueList)
 		{
-			if (isValueList) return GetCast (member.TypeData, TypeTranslator.GetTypeData (typeof(object)), ob + "[" + member.Index + "]");
+			if (isValueList) return GetCast (member.TypeData, TypeTranslator.GetTypeData (typeof(object)), ob + "[" + member.GlobalIndex + "]");
 			else return ob + ".@" + member.Name;
 		}
 		
 		string GenerateMemberHasValueCondition (XmlTypeMapMember member, string ob, bool isValueList)
 		{
 			if (isValueList) {
-				return ob + ".Length > " + member.Index;
+				return ob + ".Length > " + member.GlobalIndex;
 			}
 			else if (member.DefaultValue != System.DBNull.Value) {
 				string mem = ob + ".@" + member.Name;
@@ -2013,7 +2013,7 @@ namespace System.Xml.Serialization
 
 		void GenerateSetMemberValue (XmlTypeMapMember member, string ob, string value, bool isValueList)
 		{
-			if (isValueList) WriteLine (ob + "[" + member.Index + "] = " + value + ";");
+			if (isValueList) WriteLine (ob + "[" + member.GlobalIndex + "] = " + value + ";");
 			else {
 				WriteLine (ob + ".@" + member.Name + " = " + value + ";");
 				if (member.IsOptionalValueType)

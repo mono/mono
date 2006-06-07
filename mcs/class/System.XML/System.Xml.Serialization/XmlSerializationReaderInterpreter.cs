@@ -557,7 +557,7 @@ namespace System.Xml.Serialization
 
 		void SetMemberValue (XmlTypeMapMember member, object ob, object value, bool isValueList)
 		{
-			if (isValueList) ((object[])ob)[member.Index] = value;
+			if (isValueList) ((object[])ob)[member.GlobalIndex] = value;
 			else {
 				member.SetValue (ob, value);
 				if (member.IsOptionalValueType)
@@ -578,7 +578,7 @@ namespace System.Xml.Serialization
 
 		object GetMemberValue (XmlTypeMapMember member, object ob, bool isValueList)
 		{
-			if (isValueList) return ((object[])ob)[member.Index];
+			if (isValueList) return ((object[])ob)[member.GlobalIndex];
 			else return member.GetValue (ob);
 		}
 

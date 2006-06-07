@@ -264,14 +264,14 @@ namespace System.Xml.Serialization
 
 		object GetMemberValue (XmlTypeMapMember member, object ob, bool isValueList)
 		{
-			if (isValueList) return ((object[])ob)[member.Index];
+			if (isValueList) return ((object[])ob)[member.GlobalIndex];
 			else return member.GetValue (ob);
 		}
 
 		bool MemberHasValue (XmlTypeMapMember member, object ob, bool isValueList)
 		{
 			if (isValueList) {
-				return member.Index < ((object[])ob).Length;
+				return member.GlobalIndex < ((object[])ob).Length;
 			}
 			else if (member.DefaultValue != System.DBNull.Value) {
 				object val = GetMemberValue (member, ob, isValueList);
