@@ -1189,16 +1189,13 @@ namespace System.Windows.Forms {
 
 			CheckTimers (now);
 
-			if (pending == 0) {
-				lock (XlibLock) {
-					pending = XPending (DisplayHandle);
-				}
-			}
-
-			while (pending > 0) {
+			while (true) {
 				XEvent xevent = new XEvent ();
 
 				lock (XlibLock) {
+					if (XPending (DisplayHandle) == 0)
+						break;
+
 					XNextEvent (DisplayHandle, ref xevent);
 
 					if (xevent.AnyEvent.type == XEventName.KeyPress) {
@@ -1213,7 +1210,6 @@ namespace System.Windows.Forms {
 				if (hwnd == null) {
 					if (xevent.type == XEventName.Expose) {
 					}
-					pending = XPending (DisplayHandle);
 					continue;
 				}
 				switch (xevent.type) {
@@ -1408,10 +1404,6 @@ namespace System.Windows.Forms {
 						}
 						break;
 
-				}
-
-				lock (XlibLock) {
-					pending = XPending (DisplayHandle);
 				}
 			}
 		}
