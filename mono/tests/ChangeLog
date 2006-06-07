@@ -1,3 +1,8 @@
+2006-06-07  Wade Berrier <wberrier@novell.com>
+
+	* Makefile.am: add  test-inline-call-stack-library.cs and test-inline-call-stack.cs
+	to EXTRA_DIST so that tests can be run from a dist tarball
+
 2006-06-05  Jonathan Chambers  <jonathan.chambers@ansys.com>
 
 	* libtest.c cominterop.cs Makefile.am: Add BSTR and VARIANT marshalling tests
