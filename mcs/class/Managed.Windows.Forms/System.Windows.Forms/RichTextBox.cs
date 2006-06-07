@@ -1321,12 +1321,12 @@ namespace System.Windows.Forms {
 				}
 
 				case Minor.EmDash: {
-					Console.Write("—");
+					Console.Write("\u2014");
 					break;
 				}
 
 				case Minor.EnDash: {
-					Console.Write("–");
+					Console.Write("\u2013");
 					break;
 				}
 
@@ -1341,12 +1341,12 @@ namespace System.Windows.Forms {
 				}
 
 				case Minor.LDblQuote: {
-					Console.Write("“");
+					Console.Write("\u201C");
 					break;
 				}
 
 				case Minor.RDblQuote: {
-					Console.Write("”");
+					Console.Write("\u201D");
 					break;
 				}
 

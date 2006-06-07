@@ -1,3 +1,8 @@
+2006-06-07  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* RichTextBox.cs: Replaced embedded ISO8859-1 chars with proper unicode
+	  values
+
 2006-06-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* XplatUIX11.cs: call XPending and XNextEvent inside the same lock()
