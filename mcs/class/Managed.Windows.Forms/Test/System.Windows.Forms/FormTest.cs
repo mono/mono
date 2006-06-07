@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.ComponentModel;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Reflection;
@@ -170,6 +171,23 @@ namespace MonoTests.System.Windows.Forms
 			myform.ShowDialog ();
 			Assert.AreEqual (DialogResult.Cancel, myform.DialogResult, "#47");
 			myform.Dispose ();
+		}
+
+		[Test]
+		public void SetDialogResult ()
+		{
+			Form myform = new Form ();
+			try {
+				myform.DialogResult = (DialogResult) (-1);
+				Assert.Fail ("#48");
+			} catch (InvalidEnumArgumentException) {
+			}
+
+			try {
+				myform.DialogResult = (DialogResult) ((int) DialogResult.No + 1);
+				Assert.Fail ("#49");
+			} catch (InvalidEnumArgumentException) {
+			}
 		}
 	}
 }
