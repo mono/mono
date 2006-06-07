@@ -1,3 +1,8 @@
+2006-06-07  Wade Berrier <wberrier@novell.com>
+
+	* tramp-s390.c: Fix s390 build (add missing pointer declarations 
+	in mono_debugger_create_notification_function)
+
 2006-06-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (NEW_AOTCONST_TOKEN): Fix amd64 build.
