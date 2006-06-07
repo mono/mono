@@ -1,3 +1,8 @@
+2006-06-07  Kornél Pál  <kornelpal@gmail.com>
+
+	* mono-service.cs: Run service using AppDomain.ExecuteAssembly ()
+	  to ensure EntryPoint signature compatibility with the runtime.
+
 2005-12-27  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* mono-service.cs: Use non-obsolete Mono.Posix.dll types.

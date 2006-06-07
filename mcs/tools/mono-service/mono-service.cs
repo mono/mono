@@ -185,7 +185,12 @@ class MonoServiceRunner : MarshalByRefObject
 				error (logname, "Could not load assembly {0}", assembly);
 				return 1;
 			}
-	
+			
+			if (a.EntryPoint == null){
+				error (logname, "Entry point not defined in service");
+				return 1;
+			}
+			
 			// Hook up RunService callback
 			Type cbType = Type.GetType ("System.ServiceProcess.ServiceBase+RunServiceCallback, System.ServiceProcess");
 			if (cbType == null){
@@ -202,16 +207,7 @@ class MonoServiceRunner : MarshalByRefObject
 			
 			// And run its Main. Our RunService handler is invoked from 
 			// ServiceBase.Run.
-			MethodInfo entry = a.EntryPoint;
-			if (entry == null){
-				error (logname, "Entry point not defined in service");
-				return 1;
-			}
-	
-			string [] service_args = new string [0];
-			entry.Invoke (null, service_args);
-			
-			return 0;
+			return AppDomain.CurrentDomain.ExecuteAssembly (assembly, AppDomain.CurrentDomain.Evidence);
 			
 		} catch ( Exception ex ) {
 			for (Exception e = ex; e != null; e = e.InnerException) {
