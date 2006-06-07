@@ -3622,11 +3622,13 @@ namespace System.Windows.Forms {
 		}
 
 		internal override bool IsEnabled(IntPtr handle) {
-			return Hwnd.ObjectFromHandle(handle).Enabled;
+			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
+			return (hwnd != null && hwnd.Enabled);
 		}
 		
 		internal override bool IsVisible(IntPtr handle) {
-			return Hwnd.ObjectFromHandle(handle).visible;
+			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
+			return (hwnd != null && hwnd.visible);
 		}
 
 		internal override void KillTimer(Timer timer) {
