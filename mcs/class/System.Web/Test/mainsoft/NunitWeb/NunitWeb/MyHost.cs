@@ -15,7 +15,7 @@ using System.Threading;
 
 namespace NunitWeb
 {
-	public class MyHost : MarshalByRefObject
+	internal class MyHost : MarshalByRefObject
 	{
 		public const string HELPER_INSTANCE_NAME = "mainsoft/NunitWeb/Helper";
 
@@ -60,30 +60,6 @@ namespace NunitWeb
 			throw outer;
 		}
 
-		static public void InitDelegates (HttpContext context, Page page)
-		{
-			DelegateInvoker di = new DelegateInvoker (context, page);
-			page.LoadComplete += di.OnLoadComplete;
-#if BUG_78521_FIXED
-			page.PreInit += di.OnPreInit;
-#else
-			di.OnPreInit (null, null);
-#endif
-			page.PreLoad += di.OnPreLoad;
-			page.PreRenderComplete += di.OnPreRenderComplete;
-			page.InitComplete += di.OnInitComplete;
-			page.SaveStateComplete += di.OnSaveStateComplete;
-			page.CommitTransaction += di.OnCommitTransaction;
-			page.AbortTransaction += di.OnAbortTransaction;
-			page.Error += di.OnError;
-			page.Disposed += di.OnDisposed;
-			page.DataBinding += di.OnDataBinding;
-			page.Init += di.OnInit;
-			page.Load += di.OnLoad;
-			page.PreRender += di.OnPreRender;
-			page.Unload += di.OnUnload;
-		}
-
 		public class DelegateInvoker
 		{
 			PageDelegates _pd;
@@ -96,6 +72,25 @@ namespace NunitWeb
 				_pd = wr.Delegates;
 				_context = context;
 				_page = page;
+				_page.LoadComplete += OnLoadComplete;
+#if BUG_78521_FIXED
+				_page.PreInit += OnPreInit;
+#else
+				OnPreInit (null, null);
+#endif
+				_page.PreLoad += OnPreLoad;
+				_page.PreRenderComplete += OnPreRenderComplete;
+				_page.InitComplete += OnInitComplete;
+				_page.SaveStateComplete += OnSaveStateComplete;
+				_page.CommitTransaction += OnCommitTransaction;
+				_page.AbortTransaction += OnAbortTransaction;
+				_page.Error += OnError;
+				_page.Disposed += OnDisposed;
+				_page.DataBinding += OnDataBinding;
+				_page.Init += OnInit;
+				_page.Load += OnLoad;
+				_page.PreRender += OnPreRender;
+				_page.Unload += OnUnload;
 			}
 			#region Handlers
 			public void OnLoadComplete (object sender, EventArgs a)

@@ -106,7 +106,7 @@ echo-warning:
 endif
 endif
 
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:219 -nowarn:169 $(TEST_RESOURCE_FILES:%=/resource:%)
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -doc:$(test_lib:.dll=.xml)  -nowarn:219 -nowarn:169 $(TEST_RESOURCE_FILES:%=/resource:%)
 
 EXTRA_DISTFILES = $(RESOURCE_FILES_2) $(RESOURCE_FILES_1) $(TEST_RESOURCE_FILES)
 

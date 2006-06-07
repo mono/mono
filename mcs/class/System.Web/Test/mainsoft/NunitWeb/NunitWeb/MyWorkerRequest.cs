@@ -5,7 +5,7 @@ using System.Web.Hosting;
 
 namespace NunitWeb
 {
-	public class MyWorkerRequest: SimpleWorkerRequest
+	internal class MyWorkerRequest: SimpleWorkerRequest
 	{
 		PageDelegates _pd;
 		Exception _exception;

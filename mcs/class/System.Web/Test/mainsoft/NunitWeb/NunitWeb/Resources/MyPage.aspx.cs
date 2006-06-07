@@ -10,7 +10,7 @@ public partial class MyPage : System.Web.UI.Page
 	protected override void OnPreInit (EventArgs e)
 #endif
 	{
-		NunitWeb.MyHost.InitDelegates (Context, this);
+		NunitWeb.Helper.InitDelegates (Context, this);
 	}
 		
 	public override void VerifyRenderingInServerForm (Control c)
