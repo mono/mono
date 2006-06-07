@@ -1,3 +1,11 @@
+2006-06-07  Jackson Harper  <jackson@ximian.com>
+
+	* InternalWindowManager.cs: Simplify (and FIX) the window sizing
+	routine.  We now always keep the sized edge at the cursor instead
+	of computing movement and adjusting rects.  There is one buglet
+	with this method though when the cursor is moved over area that
+	the window can not expand too (such as the toolbars on the desktop).
+
 2006-06-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* XplatUIX11.cs: (IsEnabled,IsVisible) the window handler can be null

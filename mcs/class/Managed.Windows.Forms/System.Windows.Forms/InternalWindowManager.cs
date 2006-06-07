@@ -52,7 +52,6 @@ namespace System.Windows.Forms {
 		internal State state;
 		private FormPos sizing_edge;
 		internal Rectangle virtual_position;
-		private Rectangle prev_virtual_position;
 
 		public class TitleButton {
 			public Rectangle Rectangle;
@@ -384,6 +383,7 @@ namespace System.Windows.Forms {
 				if ((pos & FormPos.AnyEdge) == 0)
 					return false;
 
+				virtual_position = form.Bounds;
 				state = State.Sizing;
 				sizing_edge = pos;
 				form.Capture = true;
@@ -489,40 +489,37 @@ namespace System.Windows.Forms {
 
 		private void HandleSizing (Message m)
 		{
-			Point move = MouseMove (m);
 			Rectangle pos = virtual_position;
 			int bw = ThemeEngine.Current.ManagedWindowBorderWidth (this);
 			int mw = MinTitleBarSize.Width + (bw * 2);
 			int mh = MinTitleBarSize.Height + (bw * 2);
+			int x = Cursor.Position.X;
+			int y = Cursor.Position.Y;
+
+			PointToClient (ref x, ref y);
 
 			if ((sizing_edge & FormPos.Top) != 0) {
-				int height = form.Height - move.Y;
-				if (height <= mh) {
-					move.Y += height - mh;
-					height = mh;
-				}
-				pos.Y = form.Top + move.Y;
-				pos.Height = height;
+				if (pos.Bottom - y < mh)
+					y = pos.Bottom - mh;
+				pos.Height = pos.Bottom - y;
+				pos.Y = y;
 			} else if ((sizing_edge & FormPos.Bottom) != 0) {
-				int height = form.Height + move.Y;
+				int height = y - pos.Top;
 				if (height <= mh)
-					move.Y -= height - mh;
-				pos.Height = form.Height + move.Y;
+					height = mh;
+				pos.Height = height;
 			}
 
 			if ((sizing_edge & FormPos.Left) != 0) {
-				int width = form.Width - move.X;
-				if (width <= mw) {
-					move.X += width - mw;
-					width = mw;
-				}
-				pos.X = form.Left + move.X;
-				pos.Width = width;
+				if (pos.Right - x < mw)
+					x = pos.Right - mw;
+				pos.Width = pos.Right - x;
+				pos.X = x;
 			} else if ((sizing_edge & FormPos.Right) != 0) {
-				int width = form.Width + move.X;
+				int width = x - form.Left;
 				if (width <= mw)
-					move.X -= width - mw;
-				pos.Width = form.Width + move.X;
+					width = mw;
+				pos.Width = width;
 			}
 
 			UpdateVP (pos);
