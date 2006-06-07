@@ -1,3 +1,14 @@
+2006-06-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* class-internals.h: Add a new kind of loader error LOADER_ERROR_ASSEMBLY plus
+	a function for signalling it.
+
+	* class.c (mono_class_from_typeref): Use the new kind of loader error when
+	a referenced assembly is not found.
+
+	* loader.c (mono_loader_error_prepare_exception): Add support for 
+	LOADER_ERROR_ASSEMBLY. Fix formatting.
+
 2006-06-05  Jonathan Chambers  <jonathan.chambers@ansys.com>
 
 	* domain.c appdomain.c class-internals.h marshal.c: Add support 
