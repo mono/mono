@@ -1250,6 +1250,7 @@ namespace System.Windows.Forms
 			ListViewItem clicked_item;
 			ListViewItem last_clicked_item;
 			bool hover_processed = false;
+			bool checking = false;
 
 			public ItemControl (ListView owner)
 			{
@@ -1384,6 +1385,16 @@ namespace System.Windows.Forms
 				return true;
 			}
 
+			private void ToggleCheckState (ListViewItem item)
+			{
+				CheckState curr_state = item.Checked ?  CheckState.Checked : CheckState.Unchecked;
+				item.Checked = !item.Checked;
+				CheckState new_state = item.Checked ?  CheckState.Checked : CheckState.Unchecked;
+
+				ItemCheckEventArgs ice = new ItemCheckEventArgs (item.Index, curr_state, new_state);
+				owner.OnItemCheck (ice);
+			}
+
 			private void ItemsMouseDown (object sender, MouseEventArgs me)
 			{
 				if (owner.items.Count == 0)
@@ -1392,15 +1403,11 @@ namespace System.Windows.Forms
 				Point pt = new Point (me.X, me.Y);
 				foreach (ListViewItem item in owner.items) {
 					if (me.Clicks == 1 && item.CheckRectReal.Contains (pt)) {
-						CheckState curr_state = item.Checked ?  CheckState.Checked : CheckState.Unchecked;
-						item.Checked = !item.Checked;
-
-						CheckState new_state = item.Checked ?  CheckState.Checked : CheckState.Unchecked;
-
-						// Raise the ItemCheck event
-						ItemCheckEventArgs ice = new ItemCheckEventArgs (item.Index, curr_state, new_state);
-						owner.OnItemCheck (ice);
-						break;
+						checking = true;
+						if (me.Clicks > 1)
+							return;
+						ToggleCheckState (item);
+						return;
 					}
 
 					if (owner.View == View.Details && !owner.FullRowSelect) {
@@ -1430,9 +1437,11 @@ namespace System.Windows.Forms
 
 					// Raise double click if the item was clicked. On MS the
 					// double click is only raised if you double click an item
-					if (me.Clicks > 1 && clicked_item != null)
+					if (me.Clicks > 1) {
 						owner.OnDoubleClick (EventArgs.Empty);
-					else if (me.Clicks == 1 && clicked_item != null)
+						if (owner.CheckBoxes)
+							ToggleCheckState (clicked_item);
+					} else if (me.Clicks == 1)
 						owner.OnClick (EventArgs.Empty);
 				} else {
 					if (owner.MultiSelect) {
@@ -1520,7 +1529,7 @@ namespace System.Windows.Forms
 							break;
 						}
 					}
-				} else if (owner.SelectedItems.Count > 0 && BoxSelectRectangle.Size.IsEmpty) {
+				} else if (!checking && owner.SelectedItems.Count > 0 && BoxSelectRectangle.Size.IsEmpty) {
 					// Need this to clean up background clicks
 					owner.SelectedItems.Clear ();
 					owner.SelectedIndices.list.Clear ();
@@ -1532,6 +1541,7 @@ namespace System.Windows.Forms
 				BoxSelectRectangle = Rectangle.Empty;
 				prev_selection = null;
 				box_select_mode = BoxSelect.None;
+				checking = false;
 			}
 
 			private void ItemsMouseWheel (object sender, MouseEventArgs me)

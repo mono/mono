@@ -1,3 +1,8 @@
+2006-06-07  Mike Kestner  <mkestner@novell.com>
+
+	* ListView.cs : isolated checkbox clicking from the selection logic.
+	Toggle check state on item doubleclicks.  Really fixes #78454 part2.
+
 2006-06-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* Form.cs: Check that the value passed to Form.DialogResult
