@@ -1,3 +1,8 @@
+2006-06-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Form.cs: Check that the value passed to Form.DialogResult
+	is a valid enum value.
+
 2006-06-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FileDialog.cs: disable the up button when in 'Recently Used' or 'My

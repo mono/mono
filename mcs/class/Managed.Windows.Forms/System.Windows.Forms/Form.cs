@@ -330,6 +330,10 @@ namespace System.Windows.Forms {
 			}
 
 			set {
+				if (value < DialogResult.None || value > DialogResult.No)
+					throw new InvalidEnumArgumentException ("value", (int) value, 
+							typeof (DialogResult));
+
 				dialog_result = value;
 				if (is_modal) {
 					closing = true;
