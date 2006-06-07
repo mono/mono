@@ -40,7 +40,7 @@ using System.Runtime.InteropServices;
 [assembly: SatelliteContractVersion (Consts.FxVersion)]
 
 #if NET_2_0
-[assembly: AssemblyFileVersion (Consts.RuntimeVersion)]
+[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
 [assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
 [assembly: Dependency ("System,", LoadHint.Always)]
 #else

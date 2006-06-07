@@ -254,7 +254,7 @@ namespace System {
 		/// </summary>
 		public static Version Version {
 			get {
-				return new Version (Consts.RuntimeVersion);
+				return new Version (Consts.FxFileVersion);
 			}
 		}
 

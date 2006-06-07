@@ -1,3 +1,7 @@
+2006-06-07  Kornél Pál  <kornelpal@gmail.com>
+
+	* AssemblyInfo.cs: Use Consts.FxFileVersion for AssemblyFileVersion.
+
 2006-05-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyInfo.cs: Reduce the errors reported by corcompare.
