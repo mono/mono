@@ -703,63 +703,63 @@ namespace System.Drawing.Drawing2D
                         return retval;
                 }
 
-                [MonoTODO ("GdipIsOutlineVisiblePathPoint[I] isn't implemented in libgdiplus")]
 		public bool IsOutlineVisible (Point point, Pen pen)
 		{
                         return IsOutlineVisible (point.X, point.Y, pen, null);
                 }  		
 		
-                [MonoTODO ("GdipIsOutlineVisiblePathPoint[I] isn't implemented in libgdiplus")]
 		public bool IsOutlineVisible (PointF point, Pen pen)
 		{
                 	return IsOutlineVisible (point.X, point.Y, pen, null);
                 } 
 		
-                [MonoTODO ("GdipIsOutlineVisiblePathPoint[I] isn't implemented in libgdiplus")]
 		public bool IsOutlineVisible (int x, int y, Pen pen)
 		{
                         return IsOutlineVisible (x, y, pen, null);
                 }
 
-                [MonoTODO ("GdipIsOutlineVisiblePathPoint[I] isn't implemented in libgdiplus")]
 		public bool IsOutlineVisible (float x, float y, Pen pen)
 		{
                 	return IsOutlineVisible (x, y, pen, null);
                 }  		
 		
-                [MonoTODO ("GdipIsOutlineVisiblePathPoint[I] isn't implemented in libgdiplus")]
+                [MonoTODO ("Graphics parameter is currently ignored in libgdiplus")]
 		public bool IsOutlineVisible (Point pt, Pen pen, Graphics graphics)
 		{
                 	return IsOutlineVisible (pt.X, pt.Y, pen, graphics);
                 }  		
 		
-                [MonoTODO ("GdipIsOutlineVisiblePathPoint[I] isn't implemented in libgdiplus")]
+                [MonoTODO ("Graphics parameter is currently ignored in libgdiplus")]
 		public bool IsOutlineVisible (PointF pt, Pen pen, Graphics graphics)
 		{
                 	return IsOutlineVisible (pt.X, pt.Y, pen, graphics);
                 }  		
 				
-                [MonoTODO ("GdipIsOutlineVisiblePathPoint[I] isn't implemented in libgdiplus")]
+                [MonoTODO ("Graphics parameter is currently ignored in libgdiplus")]
 		public bool IsOutlineVisible (int x, int y, Pen pen, Graphics graphics)
 		{
+			if (pen == null)
+				throw new ArgumentNullException ("pen");
+
                         bool result;
-                        IntPtr p = (pen == null) ? IntPtr.Zero : pen.nativeObject;
                         IntPtr g = (graphics == null) ? IntPtr.Zero : graphics.nativeObject;
                         
-                	Status s = GDIPlus.GdipIsOutlineVisiblePathPointI (nativePath, x, y, p, g, out result);
+                	Status s = GDIPlus.GdipIsOutlineVisiblePathPointI (nativePath, x, y, pen.nativeObject, g, out result);
                         GDIPlus.CheckStatus (s);
 
                         return result;
                 }  		
 
-                [MonoTODO ("GdipIsOutlineVisiblePathPoint[I] isn't implemented in libgdiplus")]
+                [MonoTODO ("Graphics parameter is currently ignored in libgdiplus")]
 		public bool IsOutlineVisible (float x, float y, Pen pen, Graphics graphics)
 		{
+			if (pen == null)
+				throw new ArgumentNullException ("pen");
+
                         bool result;
-                        IntPtr p = (pen == null) ? IntPtr.Zero : pen.nativeObject;
                         IntPtr g = (graphics == null) ? IntPtr.Zero : graphics.nativeObject;
                         
-                	Status s = GDIPlus.GdipIsOutlineVisiblePathPoint (nativePath, x, y, p, g, out result);
+                	Status s = GDIPlus.GdipIsOutlineVisiblePathPoint (nativePath, x, y, pen.nativeObject, g, out result);
                         GDIPlus.CheckStatus (s);
 
                         return result;

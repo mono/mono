@@ -1,3 +1,9 @@
+2006-06-07  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* GraphicsPath.cs: IsOutlineVisible throws ArgumentNullException
+	if a null pen is supplied. Update/remove some MonoTODO on 
+	IsOutlineVisible methods.
+
 2006-06-06  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* GraphicsPath.cs: Fix IsOutlineVisible wrt API signature change.
