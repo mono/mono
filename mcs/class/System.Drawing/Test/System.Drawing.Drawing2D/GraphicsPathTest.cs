@@ -2191,5 +2191,205 @@ namespace MonoTests.System.Drawing.Drawing2D {
 			Assert.AreEqual (3.10f, bounds.Width, 0.00001f, "1.1.Bounds.Width");
 			Assert.AreEqual (3.10f, bounds.Height, 0.00001f, "1.1.Bounds.Height");
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void IsOutlineVisible_IntNull ()
+		{
+			new GraphicsPath ().IsOutlineVisible (1, 1, null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void IsOutlineVisible_FloatNull ()
+		{
+			new GraphicsPath ().IsOutlineVisible (1.0f, 1.0f, null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void IsOutlineVisible_PointNull ()
+		{
+			new GraphicsPath ().IsOutlineVisible (new Point (), null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void IsOutlineVisible_PointFNull ()
+		{
+			new GraphicsPath ().IsOutlineVisible (new PointF (), null);
+		}
+
+		private void IsOutlineVisible_Line (Graphics graphics)
+		{
+			Pen p2 = new Pen (Color.Red, 3.0f);
+			using (GraphicsPath gp = new GraphicsPath ()) {
+				gp.AddLine (10, 1, 14, 1);
+				Assert.IsTrue (gp.IsOutlineVisible (10, 1, Pens.Red, graphics), "Int1");
+				Assert.IsTrue (gp.IsOutlineVisible (10, 2, p2, graphics), "Int2");
+				Assert.IsFalse (gp.IsOutlineVisible (10, 2, Pens.Red, graphics), "Int3");
+
+				Assert.IsTrue (gp.IsOutlineVisible (11.0f, 1.0f, Pens.Red, graphics), "Float1");
+				Assert.IsTrue (gp.IsOutlineVisible (11.0f, 1.0f, p2, graphics), "Float2");
+				Assert.IsFalse (gp.IsOutlineVisible (11.0f, 2.0f, Pens.Red, graphics), "Float3");
+
+				Point pt = new Point (12, 2);
+				Assert.IsFalse (gp.IsOutlineVisible (pt, Pens.Red, graphics), "Point1");
+				Assert.IsTrue (gp.IsOutlineVisible (pt, p2, graphics), "Point2");
+				pt.Y = 1;
+				Assert.IsTrue (gp.IsOutlineVisible (pt, Pens.Red, graphics), "Point3");
+
+				PointF pf = new PointF (13.0f, 2.0f);
+				Assert.IsFalse (gp.IsOutlineVisible (pf, Pens.Red, graphics), "PointF1");
+				Assert.IsTrue (gp.IsOutlineVisible (pf, p2, graphics), "PointF2");
+				pf.Y = 1;
+				Assert.IsTrue (gp.IsOutlineVisible (pf, Pens.Red, graphics), "PointF3");
+			}
+			p2.Dispose ();
+		}
+
+		[Test]
+		public void IsOutlineVisible_Line_WithoutGraphics ()
+		{
+			IsOutlineVisible_Line (null);
+		}
+
+		[Test]
+		public void IsOutlineVisible_Line_WithGraphics_Inside ()
+		{
+			using (Bitmap bitmap = new Bitmap (20, 20)) {
+				using (Graphics g = Graphics.FromImage (bitmap)) {
+					IsOutlineVisible_Line (g);
+				}
+			}
+		}
+
+		[Test]
+		public void IsOutlineVisible_Line_WithGraphics_Outside ()
+		{
+			using (Bitmap bitmap = new Bitmap (5, 5)) {
+				using (Graphics g = Graphics.FromImage (bitmap)) {
+					IsOutlineVisible_Line (g);
+				}
+				// graphics "seems" ignored as the line is outside the bitmap!
+			}
+		}
+
+		// docs ways the point is in world coordinates and that the graphics transform 
+		// should be applied
+
+		[Test]
+		public void IsOutlineVisible_Line_WithGraphics_Transform ()
+		{
+			using (Bitmap bitmap = new Bitmap (20, 20)) {
+				using (Graphics g = Graphics.FromImage (bitmap)) {
+					g.Transform = new Matrix (2, 0, 0, 2, 50, -50);
+					IsOutlineVisible_Line (g);
+				}
+				// graphics still "seems" ignored (Transform)
+			}
+		}
+
+		[Test]
+		public void IsOutlineVisible_Line_WithGraphics_PageUnit ()
+		{
+			using (Bitmap bitmap = new Bitmap (20, 20)) {
+				using (Graphics g = Graphics.FromImage (bitmap)) {
+					g.PageUnit = GraphicsUnit.Millimeter;
+					IsOutlineVisible_Line (g);
+				}
+				// graphics still "seems" ignored (PageUnit)
+			}
+		}
+
+		[Test]
+		public void IsOutlineVisible_Line_WithGraphics_PageScale ()
+		{
+			using (Bitmap bitmap = new Bitmap (20, 20)) {
+				using (Graphics g = Graphics.FromImage (bitmap)) {
+					g.PageScale = 2.0f;
+					IsOutlineVisible_Line (g);
+				}
+				// graphics still "seems" ignored (PageScale)
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void IsOutlineVisible_Line_WithGraphics ()
+		{
+			using (Bitmap bitmap = new Bitmap (20, 20)) {
+				using (Graphics g = Graphics.FromImage (bitmap)) {
+					g.Transform = new Matrix (2, 0, 0, 2, 50, -50);
+					g.PageUnit = GraphicsUnit.Millimeter;
+					g.PageScale = 2.0f;
+					using (GraphicsPath gp = new GraphicsPath ()) {
+						gp.AddLine (10, 1, 14, 1);
+						Assert.IsFalse (gp.IsOutlineVisible (10, 1, Pens.Red, g), "Int1");
+					}
+				}
+				// graphics ISN'T ignored (Transform+PageUnit+PageScale)
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")] // looks buggy - reported to MS as FDBK50868
+		public void IsOutlineVisible_Line_End ()
+		{
+			// horizontal line
+			using (GraphicsPath gp = new GraphicsPath ()) {
+				gp.AddLine (10, 1, 14, 1);
+				Assert.IsFalse (gp.IsOutlineVisible (14, 1, Pens.Red, null), "Int1h");
+				Assert.IsFalse (gp.IsOutlineVisible (13.5f, 1.0f, Pens.Red, null), "Float1h");
+				Assert.IsTrue (gp.IsOutlineVisible (13.4f, 1.0f, Pens.Red, null), "Float2h");
+				Assert.IsFalse (gp.IsOutlineVisible (new Point (14, 1), Pens.Red, null), "Point1h");
+				Assert.IsFalse (gp.IsOutlineVisible (new PointF (13.5f, 1.0f), Pens.Red, null), "PointF1h");
+				Assert.IsTrue (gp.IsOutlineVisible (new PointF (13.49f, 1.0f), Pens.Red, null), "PointF2h");
+			}
+			// vertical line
+			using (GraphicsPath gp = new GraphicsPath ()) {
+				gp.AddLine (1, 10, 1, 14);
+				Assert.IsFalse (gp.IsOutlineVisible (1, 14, Pens.Red, null), "Int1v");
+				Assert.IsFalse (gp.IsOutlineVisible (1.0f, 13.5f, Pens.Red, null), "Float1v");
+				Assert.IsTrue (gp.IsOutlineVisible (1.0f, 13.4f, Pens.Red, null), "Float2v");
+				Assert.IsFalse (gp.IsOutlineVisible (new Point (1, 14), Pens.Red, null), "Point1v");
+				Assert.IsFalse (gp.IsOutlineVisible (new PointF (1.0f, 13.5f), Pens.Red, null), "PointF1v");
+				Assert.IsTrue (gp.IsOutlineVisible (new PointF (1.0f, 13.49f), Pens.Red, null), "PointF2v");
+			}
+		}
+
+		private void IsOutlineVisible_Rectangle (Graphics graphics)
+		{
+			Pen p2 = new Pen (Color.Red, 3.0f);
+			using (GraphicsPath gp = new GraphicsPath ()) {
+				gp.AddRectangle (new Rectangle (10, 10, 20, 20));
+				Assert.IsTrue (gp.IsOutlineVisible (10, 10, Pens.Red, graphics), "Int1");
+				Assert.IsTrue (gp.IsOutlineVisible (10, 11, p2, graphics), "Int2");
+				Assert.IsFalse (gp.IsOutlineVisible (11, 11, Pens.Red, graphics), "Int3");
+
+				Assert.IsTrue (gp.IsOutlineVisible (11.0f, 10.0f, Pens.Red, graphics), "Float1");
+				Assert.IsTrue (gp.IsOutlineVisible (11.0f, 11.0f, p2, graphics), "Float2");
+				Assert.IsFalse (gp.IsOutlineVisible (11.0f, 11.0f, Pens.Red, graphics), "Float3");
+
+				Point pt = new Point (15, 10);
+				Assert.IsTrue (gp.IsOutlineVisible (pt, Pens.Red, graphics), "Point1");
+				Assert.IsTrue (gp.IsOutlineVisible (pt, p2, graphics), "Point2");
+				pt.Y = 15;
+				Assert.IsFalse (gp.IsOutlineVisible (pt, Pens.Red, graphics), "Point3");
+
+				PointF pf = new PointF (29.0f, 29.0f);
+				Assert.IsFalse (gp.IsOutlineVisible (pf, Pens.Red, graphics), "PointF1");
+				Assert.IsTrue (gp.IsOutlineVisible (pf, p2, graphics), "PointF2");
+				pf.Y = 31.0f;
+				Assert.IsTrue (gp.IsOutlineVisible (pf, p2, graphics), "PointF3");
+			}
+			p2.Dispose ();
+		}
+
+		[Test]
+		public void IsOutlineVisible_Rectangle_WithoutGraphics ()
+		{
+			IsOutlineVisible_Rectangle (null);
+		}
 	}
 }
