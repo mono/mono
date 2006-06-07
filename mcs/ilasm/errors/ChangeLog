@@ -1,5 +1,9 @@
 2006-06-07  Ankit Jain  <jankit@novell.com>
 
+	* err-abstract.il: Make the class abstract.
+
+2006-06-07  Ankit Jain  <jankit@novell.com>
+
 	* err-native.il:
 	* err-pinvoke-a.il:
 	* err-abstract.il:

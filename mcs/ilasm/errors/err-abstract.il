@@ -2,8 +2,8 @@
 
 .namespace MonoTest
 {
-.class private auto autochar beforefieldinit Abc extends
-[mscorlib]System.Object
+.class private auto autochar beforefieldinit abstract Abc 
+	extends [mscorlib]System.Object
 {
   .method assembly hidebysig abstract static void 
           Test() cil managed
