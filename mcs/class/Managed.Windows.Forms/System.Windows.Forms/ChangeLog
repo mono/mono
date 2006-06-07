@@ -1,3 +1,7 @@
+2006-06-07  Wade Berrier <wberrier@novell.com> 
+
+	* RichTextBox.cs: More ISO8859-1 -> unicode
+
 2006-06-07  Mike Kestner  <mkestner@novell.com>
 
 	* ComboBox.cs : use items to hold highlight/selection so that

@@ -1331,12 +1331,12 @@ namespace System.Windows.Forms {
 				}
 
 				case Minor.LQuote: {
-					Console.Write("‘");
+					Console.Write("\u2018");
 					break;
 				}
 
 				case Minor.RQuote: {
-					Console.Write("’");
+					Console.Write("\u2019");
 					break;
 				}
 
