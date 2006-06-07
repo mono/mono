@@ -28,7 +28,7 @@
 .subsystem 0x0003
 .corflags 0x00000001
 
-.class public foo
+.class public abstract foo
 {
   .permissionset assert = {
 	                [mscorlib]System.Security.Permissions.ReflectionPermissionAttribute = {

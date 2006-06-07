@@ -131,6 +131,10 @@ namespace Mono.ILASM {
                         get { return (attr & PEAPI.TypeAttr.Interface) != 0; }
                 }
 
+                public bool IsAbstract {
+                        get { return (attr & PEAPI.TypeAttr.Abstract) != 0; }
+                }
+
                 public GenericParameters TypeParameters {
                         get { return gen_params; }
                 }

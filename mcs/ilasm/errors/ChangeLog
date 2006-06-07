@@ -1,3 +1,11 @@
+2006-06-07  Ankit Jain  <jankit@novell.com>
+
+	* err-native.il:
+	* err-pinvoke-a.il:
+	* err-abstract.il:
+	* err-runtime.il:
+	* err-internalcall.il: New.
+
 2006-06-01  Ankit Jain  <jankit@novell.com>
 
 	* err-ldarg.il: New.

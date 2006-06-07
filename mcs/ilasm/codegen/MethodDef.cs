@@ -457,8 +457,14 @@ namespace Mono.ILASM {
                         if (gen_params != null)
                                 gen_params.Resolve (code_gen, methoddef);
 
-                        if (IsAbstract)
+                        if (IsAbstract) {
+                                if (!type_def.IsAbstract)
+                                        Report.Error (start, String.Format ("Abstract method '{0}' in non-abstract class '{1}'", 
+                                                                Name, type_def.FullName));
+                                if (inst_list.Count > 0)
+                                        Report.Error (start, "Method cannot have body if it is abstract.");
                                 return;
+                        }
 
                         if (entry_point)
                                 methoddef.DeclareEntryPoint ();
@@ -491,8 +497,36 @@ namespace Mono.ILASM {
                                                 (pinvoke_name != null ? pinvoke_name : name), pinvoke_attr);
                         }
 
-                        if (inst_list.Count < 1)
-                                return;
+                        if ((impl_attr & PEAPI.ImplAttr.Runtime) == PEAPI.ImplAttr.Runtime) {
+                                if (inst_list.Count > 0)
+                                        Report.Error (start, String.Format ("Method cannot have body if it is non-IL runtime-supplied, '{0}.{1}'", 
+                                                                type_def.FullName, Name));
+                        } else {
+                                if (((impl_attr & PEAPI.ImplAttr.Native) != 0) ||
+                                        ((impl_attr & PEAPI.ImplAttr.Unmanaged) != 0))
+                                        Report.Error (start, String.Format ("Cannot compile native/unmanaged method, '{0}.{1}'", 
+                                                                type_def.FullName, Name));
+                        }
+
+                        if (inst_list.Count > 0) {
+                                /* Has body */
+                                if ((impl_attr & PEAPI.ImplAttr.InternalCall) != 0)
+                                        Report.Error (start, String.Format ("Method cannot have body if it is an internal call, '{0}.{1}'", 
+                                                                type_def.FullName, Name));
+
+                                if (pinvoke_info)
+                                        Report.Error (start, String.Format ("Method cannot have body if it is pinvoke, '{0}.{1}'",
+                                                                type_def.FullName, Name));
+                        } else {
+                                if (pinvoke_info ||
+                                        ((impl_attr & PEAPI.ImplAttr.Runtime) != 0) ||
+                                        ((impl_attr & PEAPI.ImplAttr.InternalCall) != 0))
+                                        /* No body required */
+                                        return;
+
+                                Report.Warning (start, "Method has no body, 'ret' emitted.");
+                                AddInstr (new SimpInstr (PEAPI.Op.ret, start));
+                        }
 
                         PEAPI.CILInstructions cil = methoddef.CreateCodeBuffer ();
                         /// Create all the labels
