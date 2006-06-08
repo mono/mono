@@ -1,3 +1,7 @@
+2006-06-08  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextWriterTests.cs : added test for bug #78598.
+
 2006-05-09  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlAttributeTests.cs : added NonEmptyPrefixWithEmptyNS().

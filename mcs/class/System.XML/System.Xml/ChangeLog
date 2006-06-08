@@ -1,3 +1,9 @@
+2006-06-08  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextWriter2.cs : if an attribute being written has the same
+	  non-empty namespace URI as current default namespace, its prefix
+	  should be written. Fixed bug #78598.
+
 2006-05-09  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlAttribute.cs : (WriteTo) when the namespace URI is empty,

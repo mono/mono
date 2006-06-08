@@ -871,7 +871,7 @@ namespace Mono.Xml
 			bool mockup = false;
 			if (prefix.Length == 0) {
 				prefix = LookupPrefix (ns);
-				if (prefix != null)
+				if (prefix != null && prefix.Length > 0)
 					return prefix;
 				mockup = true;
 			} else {

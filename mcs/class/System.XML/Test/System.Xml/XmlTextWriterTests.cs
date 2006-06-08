@@ -2207,6 +2207,23 @@ namespace MonoTests.System.Xml
 			w.Formatting = Formatting.Indented;
 		}
 
+		[Test] // bug #78598
+		public void WriteGlobalAttributeInDefaultNS ()
+		{
+			StringWriter sw = new StringWriter ();
+			XmlTextWriter tw = new XmlTextWriter (sw);
+			string ns = "http://schemas.xmlsoap.org/soap/envelope/";
+			tw.WriteStartElement ("Envelope");
+			tw.WriteAttributeString ("xmlns", ns);
+			int start = sw.ToString ().Length;
+			tw.WriteStartElement ("UserInfo");
+			tw.WriteStartAttribute ("actor", ns);
+			tw.WriteEndAttribute ();
+			tw.WriteEndElement ();
+			tw.WriteEndElement ();
+			Assert.IsTrue (sw.ToString ().IndexOf (ns, start) > 0);
+		}
+
 #if NET_2_0
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
