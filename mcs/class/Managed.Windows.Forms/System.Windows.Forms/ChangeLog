@@ -1,3 +1,13 @@
+2006-06-08  Alexander Olk  <alex.olk@googlemail.com>
+
+	* FileDialog.cs:
+	  - Disabled registry support for windows and added better registry
+	    error checking for other systems (need to investigate why it
+	    works perfectly on my system)
+	  - If a folder already exist show an error MessageBox instead of
+	    trying to create an indexed name.
+	  - Fixed a non intentional typo.
+
 2006-06-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FileDialog.cs: (SetFileName) don't crash if CurrentRealFolder is null.

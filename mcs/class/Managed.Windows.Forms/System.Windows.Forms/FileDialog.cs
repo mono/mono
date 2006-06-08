@@ -108,29 +108,40 @@ namespace System.Windows.Forms {
 		private RegistryKey filedialogRegistryKey;
 		private string registryKeyName = @"SOFTWARE\Mono.MWF\FileDialog";
 		
+		private int platform = (int) Environment.OSVersion.Platform;
+		private bool running_windows = false;
+		
 		internal FileDialog ()
 		{
 			vfs = new MWFVFS ();
+			
+			if ((platform != 4) && (platform != 128))
+				running_windows = true;
 			
 			Size formRegistrySize = Size.Empty;
 			Point formRegistryLocation = Point.Empty;
 			string[] registryFileNames = null;
 			
-			rootRegistryKey = Microsoft.Win32.Registry.CurrentUser;
-			filedialogRegistryKey = rootRegistryKey.OpenSubKey (registryKeyName);
-			
-			if (filedialogRegistryKey != null) {
-				int formWidth = (int)filedialogRegistryKey.GetValue ("Width");
-				int formHeight = (int)filedialogRegistryKey.GetValue ("Height");
+			if (!running_windows) {
+				rootRegistryKey = Microsoft.Win32.Registry.CurrentUser;
+				filedialogRegistryKey = rootRegistryKey.OpenSubKey (registryKeyName);
 				
-				formRegistrySize = new Size (formWidth, formHeight);
-				
-				int formLocationX = (int)filedialogRegistryKey.GetValue ("X");
-				int formLocationY = (int)filedialogRegistryKey.GetValue ("Y");
-				
-				formRegistryLocation = new Point (formLocationX, formLocationY);
-				
-				registryFileNames = (string[])filedialogRegistryKey.GetValue ("FileNames");
+				if (filedialogRegistryKey != null) {
+					object formWidth = filedialogRegistryKey.GetValue ("Width");
+					
+					object formHeight = filedialogRegistryKey.GetValue ("Height");
+					
+					if (formHeight != null && formWidth != null)
+						formRegistrySize = new Size ((int)formWidth, (int)formHeight);
+					
+					object formLocationX = filedialogRegistryKey.GetValue ("X");
+					object formLocationY = filedialogRegistryKey.GetValue ("Y");
+					
+					if (formLocationX != null && formLocationY != null)
+						formRegistryLocation = new Point ((int)formLocationX, (int)formLocationY);
+					
+					registryFileNames = (string[])filedialogRegistryKey.GetValue ("FileNames");
+				}
 			}
 			
 			fileTypeComboBox = new ComboBox ();
@@ -619,7 +630,8 @@ namespace System.Windows.Forms {
 		
 		protected void OnFileOk (CancelEventArgs e)
 		{
-			WriteRegistryValues (e);
+			if (!running_windows)
+				WriteRegistryValues (e);
 			
 			CancelEventHandler fo = (CancelEventHandler) Events [EventFileOk];
 			if (fo != null)
@@ -1049,25 +1061,27 @@ namespace System.Windows.Forms {
 		
 		private void WriteRegistryValues (CancelEventArgs ce)
 		{
-			filedialogRegistryKey = rootRegistryKey.OpenSubKey (registryKeyName);
-			
-			if (filedialogRegistryKey == null)
-				filedialogRegistryKey = rootRegistryKey.CreateSubKey (registryKeyName);
-			
-			filedialogRegistryKey.SetValue ("Width", form.Width);
-			filedialogRegistryKey.SetValue ("Height", form.Height);
-			filedialogRegistryKey.SetValue ("X", form.Location.X);
-			filedialogRegistryKey.SetValue ("Y", form.Location.Y);
-			
-			if (!ce.Cancel) {
-				filedialogRegistryKey.SetValue ("LastFolder", lastFolder);
+			try {
+				filedialogRegistryKey = rootRegistryKey.OpenSubKey (registryKeyName);
 				
-				string[] fileNameCBItems = new string [fileNameComboBox.Items.Count];
+				if (filedialogRegistryKey == null)
+					filedialogRegistryKey = rootRegistryKey.CreateSubKey (registryKeyName);
 				
-				fileNameComboBox.Items.CopyTo (fileNameCBItems, 0);
+				filedialogRegistryKey.SetValue ("Width", form.Width);
+				filedialogRegistryKey.SetValue ("Height", form.Height);
+				filedialogRegistryKey.SetValue ("X", form.Location.X);
+				filedialogRegistryKey.SetValue ("Y", form.Location.Y);
 				
-				filedialogRegistryKey.SetValue ("FileNames", fileNameCBItems);
-			}
+				if (!ce.Cancel) {
+					filedialogRegistryKey.SetValue ("LastFolder", lastFolder);
+					
+					string[] fileNameCBItems = new string [fileNameComboBox.Items.Count];
+					
+					fileNameComboBox.Items.CopyTo (fileNameCBItems, 0);
+					
+					filedialogRegistryKey.SetValue ("FileNames", fileNameCBItems);
+				}
+			} catch (Exception) {}
 		}
 		
 		private void ReadRegistryValues ()
@@ -1075,9 +1089,10 @@ namespace System.Windows.Forms {
 			rootRegistryKey = Microsoft.Win32.Registry.CurrentUser;
 			filedialogRegistryKey = rootRegistryKey.OpenSubKey (registryKeyName);
 			
-			if (filedialogRegistryKey != null) {
-				lastFolder = (string)filedialogRegistryKey.GetValue ("LastFolder");
-			}
+			if (!running_windows)
+				if (filedialogRegistryKey != null) {
+					lastFolder = (string)filedialogRegistryKey.GetValue ("LastFolder");
+				}
 			
 			if (initialDirectory != "")
 				lastFolder = initialDirectory;
@@ -2101,7 +2116,7 @@ namespace System.Windows.Forms {
 			
 			FSEntry fsEntry = new FSEntry ();
 			fsEntry.Attributes = FileAttributes.Directory;
-			fsEntry.FileType = FSEntry.FSEntryType.Directoy;
+			fsEntry.FileType = FSEntry.FSEntryType.Directory;
 			fsEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("inode/directory");
 			fsEntry.LastAccessTime = DateTime.Now;
 			
@@ -2401,7 +2416,7 @@ namespace System.Windows.Forms {
 					
 					string output = String.Empty;
 					
-					if (fsEntry.FileType == FSEntry.FSEntryType.Directoy)
+					if (fsEntry.FileType == FSEntry.FSEntryType.Directory)
 						output = "Directory: " + fsEntry.FullName;
 					else if (fsEntry.FileType == FSEntry.FSEntryType.Device)
 						output = "Device: "+ fsEntry.FullName;
@@ -2513,7 +2528,7 @@ namespace System.Windows.Forms {
 			Text = fsEntry.Name;
 			
 			switch (fsEntry.FileType) {
-				case FSEntry.FSEntryType.Directoy:
+				case FSEntry.FSEntryType.Directory:
 					SubItems.Add ("");
 					SubItems.Add ("Directory");
 					SubItems.Add (fsEntry.LastAccessTime.ToShortDateString () + " " + fsEntry.LastAccessTime.ToShortTimeString ());	
@@ -2642,6 +2657,8 @@ namespace System.Windows.Forms {
 			Text = "New Folder or File";
 			groupBox1.ResumeLayout (false);
 			ResumeLayout (false);
+			
+			newNameTextBox.Select ();
 		}
 		
 		public Image IconPictureBoxImage {
@@ -2725,15 +2742,9 @@ namespace System.Windows.Forms {
 		{
 			try {
 				if (Directory.Exists (new_folder)) {
-					int i = 1;
-					string folder = new_folder + "[" + i + "]";
-					
-					while (Directory.Exists(folder)) {
-						i++;
-						folder = new_folder + "[" + i + "]";
-					}
-					
-					Directory.CreateDirectory (folder);
+					string message = "Folder \"" + new_folder + "\" exists already.";
+					MessageBox.Show (message, new_folder, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					return false;
 				} else
 					Directory.CreateDirectory (new_folder);
 			} catch (Exception) {
@@ -2890,7 +2901,7 @@ namespace System.Windows.Forms {
 			fs.FullName = dirinfo.FullName;
 			fs.Name = dirinfo.Name;
 			fs.MainTopNode = topFolderFSEntry;
-			fs.FileType = FSEntry.FSEntryType.Directoy;
+			fs.FileType = FSEntry.FSEntryType.Directory;
 			fs.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("inode/directory");
 			fs.LastAccessTime = dirinfo.LastAccessTime;
 			
@@ -2956,7 +2967,7 @@ namespace System.Windows.Forms {
 			desktopFSEntry.FullName = MWFVFS.DesktopPrefix;
 			desktopFSEntry.Name = "Desktop";
 			desktopFSEntry.RealName = ThemeEngine.Current.Places (UIIcon.PlacesDesktop);
-			desktopFSEntry.FileType = FSEntry.FSEntryType.Directoy;
+			desktopFSEntry.FileType = FSEntry.FSEntryType.Directory;
 			desktopFSEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("deskop/desktop");
 			desktopFSEntry.LastAccessTime = DateTime.Now;
 			
@@ -2965,7 +2976,7 @@ namespace System.Windows.Forms {
 			recentlyusedFSEntry.Attributes = FileAttributes.Directory;
 			recentlyusedFSEntry.FullName = MWFVFS.RecentlyUsedPrefix;
 			recentlyusedFSEntry.Name = "Recently Used";
-			recentlyusedFSEntry.FileType = FSEntry.FSEntryType.Directoy;
+			recentlyusedFSEntry.FileType = FSEntry.FSEntryType.Directory;
 			recentlyusedFSEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("recently/recently");
 			recentlyusedFSEntry.LastAccessTime = DateTime.Now;
 			
@@ -2976,7 +2987,7 @@ namespace System.Windows.Forms {
 			personalFSEntry.Name = "Personal";
 			personalFSEntry.MainTopNode = GetDesktopFSEntry ();
 			personalFSEntry.RealName = ThemeEngine.Current.Places (UIIcon.PlacesPersonal);
-			personalFSEntry.FileType = FSEntry.FSEntryType.Directoy;
+			personalFSEntry.FileType = FSEntry.FSEntryType.Directory;
 			personalFSEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("directory/home");
 			personalFSEntry.LastAccessTime = DateTime.Now;
 			
@@ -2987,7 +2998,7 @@ namespace System.Windows.Forms {
 			mycomputerpersonalFSEntry.Name = "Personal";
 			mycomputerpersonalFSEntry.MainTopNode = GetMyComputerFSEntry ();
 			mycomputerpersonalFSEntry.RealName = ThemeEngine.Current.Places (UIIcon.PlacesPersonal);
-			mycomputerpersonalFSEntry.FileType = FSEntry.FSEntryType.Directoy;
+			mycomputerpersonalFSEntry.FileType = FSEntry.FSEntryType.Directory;
 			mycomputerpersonalFSEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("directory/home");
 			mycomputerpersonalFSEntry.LastAccessTime = DateTime.Now;
 			
@@ -2997,7 +3008,7 @@ namespace System.Windows.Forms {
 			mycomputerFSEntry.FullName = MWFVFS.MyComputerPrefix;
 			mycomputerFSEntry.Name = "My Computer";
 			mycomputerFSEntry.MainTopNode = GetDesktopFSEntry ();
-			mycomputerFSEntry.FileType = FSEntry.FSEntryType.Directoy;
+			mycomputerFSEntry.FileType = FSEntry.FSEntryType.Directory;
 			mycomputerFSEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("workplace/workplace");
 			mycomputerFSEntry.LastAccessTime = DateTime.Now;
 			
@@ -3007,7 +3018,7 @@ namespace System.Windows.Forms {
 			mynetworkFSEntry.FullName = MWFVFS.MyNetworkPrefix;
 			mynetworkFSEntry.Name = "My Network";
 			mynetworkFSEntry.MainTopNode = GetDesktopFSEntry ();
-			mynetworkFSEntry.FileType = FSEntry.FSEntryType.Directoy;
+			mynetworkFSEntry.FileType = FSEntry.FSEntryType.Directory;
 			mynetworkFSEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("network/network");
 			mynetworkFSEntry.LastAccessTime = DateTime.Now;
 		}
@@ -3348,7 +3359,7 @@ namespace System.Windows.Forms {
 			desktopFSEntry.FullName = MWFVFS.DesktopPrefix;
 			desktopFSEntry.Name = "Desktop";
 			desktopFSEntry.RealName = ThemeEngine.Current.Places (UIIcon.PlacesDesktop);
-			desktopFSEntry.FileType = FSEntry.FSEntryType.Directoy;
+			desktopFSEntry.FileType = FSEntry.FSEntryType.Directory;
 			desktopFSEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("deskop/desktop");
 			desktopFSEntry.LastAccessTime = DateTime.Now;
 			
@@ -3358,7 +3369,7 @@ namespace System.Windows.Forms {
 			recentlyusedFSEntry.FullName = MWFVFS.RecentlyUsedPrefix;
 			recentlyusedFSEntry.RealName = ThemeEngine.Current.Places (UIIcon.PlacesRecentDocuments);
 			recentlyusedFSEntry.Name = "Recently Used";
-			recentlyusedFSEntry.FileType = FSEntry.FSEntryType.Directoy;
+			recentlyusedFSEntry.FileType = FSEntry.FSEntryType.Directory;
 			recentlyusedFSEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("recently/recently");
 			recentlyusedFSEntry.LastAccessTime = DateTime.Now;
 			
@@ -3369,7 +3380,7 @@ namespace System.Windows.Forms {
 			personalFSEntry.Name = "Personal";
 			personalFSEntry.MainTopNode = GetDesktopFSEntry ();
 			personalFSEntry.RealName = ThemeEngine.Current.Places (UIIcon.PlacesPersonal);
-			personalFSEntry.FileType = FSEntry.FSEntryType.Directoy;
+			personalFSEntry.FileType = FSEntry.FSEntryType.Directory;
 			personalFSEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("directory/home");
 			personalFSEntry.LastAccessTime = DateTime.Now;
 			
@@ -3380,7 +3391,7 @@ namespace System.Windows.Forms {
 			mycomputerpersonalFSEntry.Name = "Personal";
 			mycomputerpersonalFSEntry.MainTopNode = GetMyComputerFSEntry ();
 			mycomputerpersonalFSEntry.RealName = ThemeEngine.Current.Places (UIIcon.PlacesPersonal);
-			mycomputerpersonalFSEntry.FileType = FSEntry.FSEntryType.Directoy;
+			mycomputerpersonalFSEntry.FileType = FSEntry.FSEntryType.Directory;
 			mycomputerpersonalFSEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("directory/home");
 			mycomputerpersonalFSEntry.LastAccessTime = DateTime.Now;
 			
@@ -3390,7 +3401,7 @@ namespace System.Windows.Forms {
 			mycomputerFSEntry.FullName = MWFVFS.MyComputerPrefix;
 			mycomputerFSEntry.Name = "My Computer";
 			mycomputerFSEntry.MainTopNode = GetDesktopFSEntry ();
-			mycomputerFSEntry.FileType = FSEntry.FSEntryType.Directoy;
+			mycomputerFSEntry.FileType = FSEntry.FSEntryType.Directory;
 			mycomputerFSEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("workplace/workplace");
 			mycomputerFSEntry.LastAccessTime = DateTime.Now;
 			
@@ -3400,7 +3411,7 @@ namespace System.Windows.Forms {
 			mynetworkFSEntry.FullName = MWFVFS.MyNetworkPrefix;
 			mynetworkFSEntry.Name = "My Network";
 			mynetworkFSEntry.MainTopNode = GetDesktopFSEntry ();
-			mynetworkFSEntry.FileType = FSEntry.FSEntryType.Directoy;
+			mynetworkFSEntry.FileType = FSEntry.FSEntryType.Directory;
 			mynetworkFSEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("network/network");
 			mynetworkFSEntry.LastAccessTime = DateTime.Now;
 		}
@@ -3504,7 +3515,7 @@ namespace System.Windows.Forms {
 			RecentlyUsed,
 			MyComputer,
 			File,
-			Directoy,
+			Directory,
 			Device,
 			RemovableDevice,
 			Network
