@@ -1,3 +1,7 @@
+2006-06-08  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* GraphicsPath.cs: Update/remove some MonoTODO on IsVisible methods.
+
 2006-06-07  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* GraphicsPath.cs: IsOutlineVisible throws ArgumentNullException

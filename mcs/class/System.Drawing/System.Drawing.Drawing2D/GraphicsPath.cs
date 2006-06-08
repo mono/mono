@@ -765,43 +765,39 @@ namespace System.Drawing.Drawing2D
                         return result;
                 }  		
                 
-                [MonoTODO ("GdipIsVisiblePathPoint[I] isn't implemented in libgdiplus")]
                 public bool IsVisible (Point point)
                 {
                 	return IsVisible (point.X, point.Y, null);
                 }  		
                 
-                [MonoTODO ("GdipIsVisiblePathPoint[I] isn't implemented in libgdiplus")]
                 public bool IsVisible (PointF point)
                 {
                 	return IsVisible (point.X, point.Y, null);
                 }  		
                 
-                [MonoTODO ("GdipIsVisiblePathPoint[I] isn't implemented in libgdiplus")]
                 public bool IsVisible (int x, int y)
                 {
                 	return IsVisible (x, y, null);
                 }
 
-                [MonoTODO ("GdipIsVisiblePathPoint[I] isn't implemented in libgdiplus")]
                 public bool IsVisible (float x, float y)
                 {
                 	return IsVisible (x, y, null);
                 }  		                
                 
-                [MonoTODO ("GdipIsVisiblePathPoint[I] isn't implemented in libgdiplus")]
+                [MonoTODO ("Graphics parameter is currently ignored in libgdiplus")]
                 public bool IsVisible (Point pt, Graphics graphics)
                 {
                 	return IsVisible (pt.X, pt.Y, graphics);
                 }  		
                 
-                [MonoTODO ("GdipIsVisiblePathPoint[I] isn't implemented in libgdiplus")]
+                [MonoTODO ("Graphics parameter is currently ignored in libgdiplus")]
                 public bool IsVisible (PointF pt, Graphics graphics)
                 {
                 	return IsVisible (pt.X, pt.Y, graphics);
                 }  		
                                 
-                [MonoTODO ("GdipIsVisiblePathPoint[I] isn't implemented in libgdiplus")]
+                [MonoTODO ("Graphics parameter is currently ignored in libgdiplus")]
                 public bool IsVisible (int x, int y, Graphics graphics)
                 {
                         bool retval;
@@ -815,7 +811,7 @@ namespace System.Drawing.Drawing2D
                         return retval;
                 }  		
                 
-                [MonoTODO ("GdipIsVisiblePathPoint[I] isn't implemented in libgdiplus")]
+                [MonoTODO ("Graphics parameter is currently ignored in libgdiplus")]
                 public bool IsVisible (float x, float y, Graphics graphics)
                 {
                         bool retval;
