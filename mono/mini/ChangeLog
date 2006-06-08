@@ -1,3 +1,8 @@
+2006-06-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_output_basic_block): Fix a wrong reg-reg move 
+	in OP_ATOMIC_EXCHANGE_I4.
+
 2006-05-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-sparc.c (mono_arch_output_basic_block): Add support for large stack offets
