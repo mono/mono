@@ -1,3 +1,7 @@
+2006-06-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* notused.cs, reftype1-4.cs: Fix compiler warnings.
+
 2005-08-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* reftype1.cs: More detailled ouput.
