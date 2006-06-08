@@ -34,14 +34,18 @@ using System.IO;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Xml;
+using Microsoft.Win32;
 
 namespace System.Windows.Forms {
+	#region FileDialog
 	[DefaultProperty ("FileName")]
 	[DefaultEvent ("FileOk")]
-	public abstract class FileDialog : CommonDialog {
+	public abstract class FileDialog : CommonDialog
+	{
 		protected static readonly object EventFileOk = new object ();
 		
-		internal enum FileDialogType {
+		internal enum FileDialogType
+		{
 			OpenFileDialog,
 			SaveFileDialog
 		}
@@ -79,35 +83,15 @@ namespace System.Windows.Forms {
 		private ToolBarButton backToolBarButton;
 		private ComboBox fileTypeComboBox;
 		private ImageList imageListTopToolbar;
-		private ContextMenu contextMenu;
 		private CheckBox readonlyCheckBox;
 		
-		private string currentDirectoryName;
-		private string currentFileName = "";
-		// store current directoryInfo
-		private DirectoryInfo currentDirectoryInfo;
-		// store DirectoryInfo for backButton
-		private Stack directoryStack = new Stack();
-		private MenuItem previousCheckedMenuItem;
 		private bool multiSelect = false;
 		
 		private string restoreDirectoryString = "";
 		
-		private bool show_special_case = false;
-		
-		internal static readonly string recently_string = "[recently/recently]";
-		internal static readonly string network_string = "[network/network]";
-		internal static readonly string mycomputer_string = "[mycomputer/mycomputer]";
-		
-		private string current_special_case;
-		
 		internal FileDialogType fileDialogType;
 		
 		private bool do_not_call_OnSelectedIndexChangedFileTypeComboBox = false;
-		
-		private bool showHiddenFiles = false;
-		
-		//protected bool readOnlyChecked = false;
 		
 		private bool showReadOnly = false;
 		private bool readOnlyChecked = false;
@@ -116,32 +100,59 @@ namespace System.Windows.Forms {
 		
 		internal FileFilter fileFilter;
 		
-		private static string last_dir_when_opened_or_saved = String.Empty;
-		private string start_dir;
-
+		private string lastFolder = "";
+		
+		private MWFVFS vfs;
+		
+		private RegistryKey rootRegistryKey;
+		private RegistryKey filedialogRegistryKey;
+		private string registryKeyName = @"SOFTWARE\Mono.MWF\FileDialog";
+		
 		internal FileDialog ()
 		{
+			vfs = new MWFVFS ();
+			
+			Size formRegistrySize = Size.Empty;
+			Point formRegistryLocation = Point.Empty;
+			string[] registryFileNames = null;
+			
+			rootRegistryKey = Microsoft.Win32.Registry.CurrentUser;
+			filedialogRegistryKey = rootRegistryKey.OpenSubKey (registryKeyName);
+			
+			if (filedialogRegistryKey != null) {
+				int formWidth = (int)filedialogRegistryKey.GetValue ("Width");
+				int formHeight = (int)filedialogRegistryKey.GetValue ("Height");
+				
+				formRegistrySize = new Size (formWidth, formHeight);
+				
+				int formLocationX = (int)filedialogRegistryKey.GetValue ("X");
+				int formLocationY = (int)filedialogRegistryKey.GetValue ("Y");
+				
+				formRegistryLocation = new Point (formLocationX, formLocationY);
+				
+				registryFileNames = (string[])filedialogRegistryKey.GetValue ("FileNames");
+			}
+			
 			fileTypeComboBox = new ComboBox ();
 			backToolBarButton = new ToolBarButton ();
 			newdirToolBarButton = new ToolBarButton ();
 			searchSaveLabel = new Label ();
-			mwfFileView = new MWFFileView ();
+			mwfFileView = new MWFFileView (vfs);
 			fileNameLabel = new Label ();
 			fileNameComboBox = new ComboBox ();
-			dirComboBox = new DirComboBox ();
+			dirComboBox = new DirComboBox (vfs);
 			smallButtonToolBar = new ToolBar ();
 			menueToolBarButton = new ToolBarButton ();
 			fileTypeLabel = new Label ();
 			openSaveButton = new Button ();
 			form.AcceptButton = openSaveButton;
 			helpButton = new Button ();
-			popupButtonPanel = new PopupButtonPanel (this);
+			popupButtonPanel = new PopupButtonPanel ();
 			upToolBarButton = new ToolBarButton ();
 			cancelButton = new Button ();
 			form.CancelButton = cancelButton;
 			imageListTopToolbar = new ImageList ();
 			menueToolBarButtonContextMenu = new ContextMenu ();
-			contextMenu = new ContextMenu ();
 			readonlyCheckBox = new CheckBox ();
 			
 			form.SuspendLayout ();
@@ -172,7 +183,7 @@ namespace System.Windows.Forms {
 			smallButtonToolBar.Anchor = ((AnchorStyles)((AnchorStyles.Top | AnchorStyles.Right)));
 			smallButtonToolBar.Appearance = ToolBarAppearance.Flat;
 			smallButtonToolBar.AutoSize = false;
-			smallButtonToolBar.Buttons.AddRange (new ToolBarButton       [] {
+			smallButtonToolBar.Buttons.AddRange (new ToolBarButton [] {
 								     backToolBarButton,
 								     upToolBarButton,
 								     newdirToolBarButton,
@@ -204,7 +215,8 @@ namespace System.Windows.Forms {
 			mwfFileView.AllowColumnReorder = true;
 			mwfFileView.MultiSelect = false;
 			mwfFileView.TabIndex = 3;
-			mwfFileView.FilterIndex = FilterIndex;
+			mwfFileView.RegisterSender (dirComboBox);
+			mwfFileView.RegisterSender (popupButtonPanel);
 			
 			// fileNameLabel
 			fileNameLabel.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Left)));
@@ -219,7 +231,19 @@ namespace System.Windows.Forms {
 			fileNameComboBox.Location = new Point (195, 330);
 			fileNameComboBox.Size = new Size (245, 21);
 			fileNameComboBox.TabIndex = 4;
+			fileNameComboBox.MaxDropDownItems = 10;
 			fileNameComboBox.Items.Add (" ");
+			
+			if (registryFileNames != null) {
+				fileNameComboBox.Items.Clear ();
+				
+				foreach (string registryFileName in registryFileNames) {
+					if (registryFileName != null)
+						if (registryFileName.Trim ().Length > 0)
+							fileNameComboBox.Items.Add (registryFileName);
+				}
+			}
+			
 			
 			// fileTypeLabel
 			fileTypeLabel.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Left)));
@@ -239,10 +263,12 @@ namespace System.Windows.Forms {
 			backToolBarButton.ImageIndex = 0;
 			backToolBarButton.Enabled = false;
 			backToolBarButton.Style = ToolBarButtonStyle.PushButton;
+			mwfFileView.AddControlToEnableDisableByDirStack (backToolBarButton);
 			
 			// upToolBarButton
 			upToolBarButton.ImageIndex = 1;
 			upToolBarButton.Style = ToolBarButtonStyle.PushButton;
+			mwfFileView.SetFolderUpToolBarButton (upToolBarButton);
 			
 			// newdirToolBarButton
 			newdirToolBarButton.ImageIndex = 2;
@@ -254,29 +280,7 @@ namespace System.Windows.Forms {
 			menueToolBarButton.Style = ToolBarButtonStyle.DropDownButton;
 			
 			// menueToolBarButtonContextMenu
-			MenuItem mi = new MenuItem ("Small Icon", new EventHandler (OnClickMenuToolBarContextMenu));
-			mi.RadioCheck = true;
-			menueToolBarButtonContextMenu.MenuItems.Add (mi);
-			mi = new MenuItem ("Tiles", new EventHandler (OnClickMenuToolBarContextMenu));
-			mi.RadioCheck = true;
-			menueToolBarButtonContextMenu.MenuItems.Add (mi);
-			mi = new MenuItem ("Large Icon", new EventHandler (OnClickMenuToolBarContextMenu));
-			mi.RadioCheck = true;
-			menueToolBarButtonContextMenu.MenuItems.Add (mi);
-			mi = new MenuItem ("List", new EventHandler (OnClickMenuToolBarContextMenu));
-			mi.RadioCheck = true;
-			mi.Checked = true;
-			previousCheckedMenuItem = mi;
-			menueToolBarButtonContextMenu.MenuItems.Add (mi);
-			mi = new MenuItem ("Details", new EventHandler (OnClickMenuToolBarContextMenu));
-			mi.RadioCheck = true;
-			menueToolBarButtonContextMenu.MenuItems.Add (mi);
-			
-			// contextMenu
-			mi = new MenuItem ("Show hidden files", new EventHandler (OnClickContextMenu));
-			mi.Checked = showHiddenFiles;
-			mwfFileView.ShowHiddenFiles = showHiddenFiles;
-			contextMenu.MenuItems.Add (mi);
+			menueToolBarButtonContextMenu.MenuItems.AddRange (mwfFileView.ViewMenuItems);
 			
 			// openSaveButton
 			openSaveButton.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Right)));
@@ -312,14 +316,13 @@ namespace System.Windows.Forms {
 			readonlyCheckBox.TabIndex = 6;
 			readonlyCheckBox.FlatStyle = FlatStyle.System;
 			
-			form.ContextMenu = contextMenu;
-			
 			form.SizeGripStyle = SizeGripStyle.Show;
 			
-			form.Size =  new Size (554, 405); // 384
 			form.MaximizeBox = true;
 			form.FormBorderStyle = FormBorderStyle.Sizable;
 			form.MinimumSize = new Size (554, 405);
+			
+			form.Size =  new Size (554, 405); // 384
 			
 			form.Controls.Add (smallButtonToolBar);
 			form.Controls.Add (cancelButton);
@@ -335,12 +338,13 @@ namespace System.Windows.Forms {
 			
 			form.ResumeLayout (false);
 			
-			currentDirectoryName = Environment.CurrentDirectory;
+			if (formRegistrySize != Size.Empty) {
+				form.Size = formRegistrySize;
+			}
 			
-			currentDirectoryInfo = new DirectoryInfo (currentDirectoryName);
-			
-			if (RestoreDirectory)
-				restoreDirectoryString = currentDirectoryName;
+			if (formRegistryLocation != Point.Empty) {
+				form.Location = formRegistryLocation;
+			}
 			
 			openSaveButton.Click += new EventHandler (OnClickOpenSaveButton);
 			cancelButton.Click += new EventHandler (OnClickCancelButton);
@@ -351,16 +355,13 @@ namespace System.Windows.Forms {
 			fileTypeComboBox.SelectedIndexChanged += new EventHandler (OnSelectedIndexChangedFileTypeComboBox);
 			
 			mwfFileView.SelectedFileChanged += new EventHandler (OnSelectedFileChangedFileView);
-			mwfFileView.DirectoryChanged += new EventHandler (OnDirectoryChangedFileView);
 			mwfFileView.ForceDialogEnd += new EventHandler (OnForceDialogEndFileView);
 			mwfFileView.SelectedFilesChanged += new EventHandler (OnSelectedFilesChangedFileView);
-			mwfFileView.OnDirectoryUp += new EventHandler (OnDirectoryUp);
 			
 			dirComboBox.DirectoryChanged += new EventHandler (OnDirectoryChangedDirComboBox);
+			popupButtonPanel.DirectoryChanged += new EventHandler (OnDirectoryChangedPopupButtonPanel);
 			
 			readonlyCheckBox.CheckedChanged += new EventHandler (OnCheckCheckChanged);
-			
-			start_dir = currentDirectoryName;
 		}
 		
 		[DefaultValue(true)]
@@ -501,9 +502,8 @@ namespace System.Windows.Forms {
 			set {
 				if (Directory.Exists (value)) {
 					initialDirectory = value;
-					start_dir = value;
 					
-					ChangeDirectory (null, initialDirectory);
+					mwfFileView.ChangeDirectory (null, initialDirectory);
 				}
 			}
 		}
@@ -619,6 +619,8 @@ namespace System.Windows.Forms {
 		
 		protected void OnFileOk (CancelEventArgs e)
 		{
+			WriteRegistryValues (e);
+			
 			CancelEventHandler fo = (CancelEventHandler) Events [EventFileOk];
 			if (fo != null)
 				fo (this, e);
@@ -626,12 +628,11 @@ namespace System.Windows.Forms {
 		
 		protected  override bool RunDialog (IntPtr hWndOwner)
 		{
+			ReadRegistryValues ();
+			
 			form.Refresh ();
 			
-			if (last_dir_when_opened_or_saved != String.Empty)
-				ChangeDirectory (null, last_dir_when_opened_or_saved);
-			else
-				ChangeDirectory (null, start_dir);
+			mwfFileView.ChangeDirectory (null, lastFolder);
 			
 			fileNameComboBox.Select ();
 			
@@ -687,15 +688,13 @@ namespace System.Windows.Forms {
 		{
 			if (FilterIndex > mwfFileView.FilterArrayList.Count)
 				return;
-
+			
 			do_not_call_OnSelectedIndexChangedFileTypeComboBox = true;
 			fileTypeComboBox.BeginUpdate ();
 			fileTypeComboBox.SelectedIndex = FilterIndex - 1;
 			fileTypeComboBox.EndUpdate ();
 			
 			mwfFileView.FilterIndex = FilterIndex;
-			
-			mwfFileView.UpdateFileView (currentDirectoryInfo_or_current_special_case);
 		}
 		
 		private bool SetFileName (string fname)
@@ -703,17 +702,16 @@ namespace System.Windows.Forms {
 			bool rooted = Path.IsPathRooted (fname);
 			
 			if (!rooted) {
-				if (File.Exists (Path.Combine (currentDirectoryName, fname))) {
+				if (File.Exists (Path.Combine (mwfFileView.CurrentRealFolder, fname))) {
 					fileNameComboBox.Text = fname;
 					mwfFileView.SetSelectedIndexTo (fname);
 					
 					return true;
-				} else
-					return false;
+				}
 			} else {
 				if (File.Exists (fname)) {
 					fileNameComboBox.Text = Path.GetFileName (fname);
-					ChangeDirectory (null, Path.GetDirectoryName (fname));
+					mwfFileView.ChangeDirectory (null, Path.GetDirectoryName (fname));
 					mwfFileView.SetSelectedIndexTo (fname);
 					
 					return true;
@@ -723,116 +721,94 @@ namespace System.Windows.Forms {
 			return false;
 		}
 		
-		void OnClickContextMenu (object sender, EventArgs e)
-		{
-			MenuItem senderMenuItem = sender as MenuItem;
-			
-			if (senderMenuItem.Index == 0) {
-				senderMenuItem.Checked = !senderMenuItem.Checked;
-				showHiddenFiles = senderMenuItem.Checked;
-				mwfFileView.ShowHiddenFiles = showHiddenFiles;
-				mwfFileView.UpdateFileView (currentDirectoryInfo_or_current_special_case);
-			}
-		}
-		
 		void OnClickOpenSaveButton (object sender, EventArgs e)
 		{
-			if (fileDialogType == FileDialogType.OpenFileDialog){
+			if (fileDialogType == FileDialogType.OpenFileDialog) {
 				ListView.SelectedListViewItemCollection sl = mwfFileView.SelectedItems;
-				if (sl.Count > 0 && sl [0] != null){
-					string path = Path.Combine (currentDirectoryName, mwfFileView.SelectedItems [0].Text);
-					if (Directory.Exists (path)) {
-						ChangeDirectory (null, path);
-						openSaveButton.Select ();
-						return;
+				if (sl.Count > 0 && sl [0] != null) {
+					if (sl.Count == 1) {
+						FileViewListViewItem item = sl [0] as FileViewListViewItem;
+						FSEntry fsEntry = item.FSEntry;
+						
+						if (fsEntry.Attributes == FileAttributes.Directory) {
+							mwfFileView.ChangeDirectory (null, fsEntry.FullName);
+							return;
+						}
+					} else {
+						foreach (FileViewListViewItem item in sl) {
+							FSEntry fsEntry = item.FSEntry;
+							if (fsEntry.Attributes == FileAttributes.Directory) {
+								mwfFileView.ChangeDirectory (null, fsEntry.FullName);
+								return;
+							}
+						}
 					}
 				}
 			}
 			
+			string internalfullfilename = "";
+			
 			if (!multiSelect) {
-				if (!show_special_case) {
-					string fileFromComboBox = fileNameComboBox.Text.Trim ();
-					
-					if (fileFromComboBox.Length > 0) {
-						if (!Path.IsPathRooted (fileFromComboBox))
-							fileFromComboBox = Path.Combine (currentDirectoryName, fileFromComboBox);
-						
-						FileInfo fileInfo = new FileInfo (fileFromComboBox);
-						if (fileInfo.Exists || fileDialogType == FileDialogType.SaveFileDialog)
-							currentFileName = fileFromComboBox;
-						else {
-							DirectoryInfo dirInfo = new DirectoryInfo (fileFromComboBox);
-							if (dirInfo.Exists) {
-								ChangeDirectory (null, dirInfo.FullName);
-								
-								currentFileName = "";
-								
-								fileNameComboBox.Text = " ";
-								return;
-							}								
+				string fileFromComboBox = fileNameComboBox.Text.Trim ();
+				
+				if (fileFromComboBox.Length > 0) {
+					if (!Path.IsPathRooted (fileFromComboBox)) {
+						// on unix currentRealFolder for "Recently used files" is null,
+						// because recently used files don't get saved as links in a directory
+						// recently used files get saved in a xml file
+						if (mwfFileView.CurrentRealFolder != null)
+							fileFromComboBox = Path.Combine (mwfFileView.CurrentRealFolder, fileFromComboBox);
+						else
+						if (mwfFileView.CurrentFSEntry != null) {
+							fileFromComboBox = mwfFileView.CurrentFSEntry.FullName;
 						}
-					} else
-						return;
-				} else {
-					if (currentFileName == null || currentFileName == String.Empty) {
-						currentFileName = fileNameComboBox.Text.Trim ();
-						
-						if (currentFileName.Length > 0) {
-							FileInfo fileInfo = new FileInfo (currentFileName);
-							if (!fileInfo.Exists) {
-								DirectoryInfo dirInfo = new DirectoryInfo (currentFileName);
-								if (dirInfo.Exists) {
-									ChangeDirectory (null, dirInfo.FullName);
-									
-									currentFileName = "";
-									
-									fileNameComboBox.Text = " ";
-									return;
-								}								
-							}
-						} else
-							return;
 					}
 					
-					if (currentDirectoryName == String.Empty)
-						currentDirectoryName = Path.GetDirectoryName (currentFileName);
-				}
+					FileInfo fileInfo = new FileInfo (fileFromComboBox);
+					
+					if (fileInfo.Exists || fileDialogType == FileDialogType.SaveFileDialog) {
+						internalfullfilename = fileFromComboBox;
+					} else {
+						DirectoryInfo dirInfo = new DirectoryInfo (fileFromComboBox);
+						if (dirInfo.Exists) {
+							mwfFileView.ChangeDirectory (null, dirInfo.FullName);
+							
+							fileNameComboBox.Text = " ";
+							return;
+						} else {
+							internalfullfilename = fileFromComboBox;
+						}							
+					}
+				} else
+					return;
 				
 				if (fileDialogType == FileDialogType.OpenFileDialog) {
 					if (checkFileExists) {
-						if (!File.Exists (currentFileName)) {
-							string message = "\"" + currentFileName + "\" doesn't exist. Please verify that you have entered the correct file name.";
+						if (!File.Exists (internalfullfilename)) {
+							string message = "\"" + internalfullfilename + "\" doesn't exist. Please verify that you have entered the correct file name.";
 							MessageBox.Show (message, openSaveButton.Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-							
-							currentFileName = "";
 							
 							return;
 						}
 					}
 				} else {
 					if (overwritePrompt) {
-						if (File.Exists (currentFileName)) {
-							string message = "\"" + currentFileName + "\" exists. Overwrite ?";
+						if (File.Exists (internalfullfilename)) {
+							string message = "\"" + internalfullfilename + "\" exists. Overwrite ?";
 							DialogResult dr = MessageBox.Show (message, openSaveButton.Text, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
 							
-							if (dr == DialogResult.Cancel) {
-								currentFileName = "";
-								
+							if (dr == DialogResult.Cancel)
 								return;
-							}
 						}
 					}
 					
 					if (createPrompt) {
-						if (!File.Exists (currentFileName)) {
-							string message = "\"" + currentFileName + "\" doesn't exist. Create ?";
+						if (!File.Exists (internalfullfilename)) {
+							string message = "\"" + internalfullfilename + "\" doesn't exist. Create ?";
 							DialogResult dr = MessageBox.Show (message, openSaveButton.Text, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
 							
-							if (dr == DialogResult.Cancel) {
-								currentFileName = "";
-								
+							if (dr == DialogResult.Cancel)
 								return;
-							}
 						}
 					}
 				}
@@ -865,62 +841,70 @@ namespace System.Windows.Forms {
 						if (defaultExt != "")
 							extension_to_use = "." + defaultExt;
 						
-						currentFileName += extension_to_use;
+						internalfullfilename += extension_to_use;
 					}
 				}
 				
 				fileNames = new string [1];
 				
-				fileNames [0] = currentFileName;
+				fileNames [0] = internalfullfilename;
 				
-				fileName = currentFileName;
+				fileName = internalfullfilename;
 				
-				WriteRecentlyUsed ();
+				mwfFileView.WriteRecentlyUsed (internalfullfilename);
 			} else // multiSelect = true
 			if (fileDialogType != FileDialogType.SaveFileDialog) {
 				if (mwfFileView.SelectedItems.Count > 0) {
 					// first remove all selected directories
 					ArrayList al = new ArrayList ();
 					
-					foreach (ListViewItem lvi in mwfFileView.SelectedItems) {
-						FileStruct fileStruct = (FileStruct)mwfFileView.FileHashtable [lvi.Text];
+					foreach (FileViewListViewItem lvi in mwfFileView.SelectedItems) {
+						FSEntry fsEntry = lvi.FSEntry;
 						
-						if (fileStruct.attributes != FileAttributes.Directory) {
-							al.Add (fileStruct);
+						if (fsEntry.Attributes != FileAttributes.Directory) {
+							al.Add (fsEntry);
 						}
 					}
 					
-					fileName = ((FileStruct)al [0]).fullname;
+					fileName = ((FSEntry)al [0]).FullName;
 					
 					fileNames = new string [al.Count];
 					
 					for (int i = 0; i < al.Count; i++) {
-						fileNames [i] = ((FileStruct)al [i]).fullname;
+						fileNames [i] = ((FSEntry)al [i]).FullName;
 					}
 				}
 			}
 			
-			if (checkPathExists) {
-				if (!Directory.Exists (currentDirectoryName)) {
-					string message = "\"" + currentDirectoryName + "\" doesn't exist. Please verify that you have entered the correct directory name.";
+			if (checkPathExists && mwfFileView.CurrentRealFolder != null) {
+				if (!Directory.Exists (mwfFileView.CurrentRealFolder)) {
+					string message = "\"" + mwfFileView.CurrentRealFolder + "\" doesn't exist. Please verify that you have entered the correct directory name.";
 					MessageBox.Show (message, openSaveButton.Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 					
 					if (initialDirectory == String.Empty)
-						currentDirectoryName = Environment.CurrentDirectory;
+						mwfFileView.ChangeDirectory (null, lastFolder);
 					else
-						currentDirectoryName = initialDirectory;
+						mwfFileView.ChangeDirectory (null, initialDirectory);
 					
 					return;
 				}
 			}
 			
-			if (restoreDirectory)
-				currentDirectoryName = restoreDirectoryString;
+			if (restoreDirectory) {
+				lastFolder  = restoreDirectoryString;
+			} else {
+				lastFolder = mwfFileView.CurrentFolder;
+			}
 			
-			if (current_special_case != String.Empty)
-				last_dir_when_opened_or_saved = current_special_case;
-			else
-				last_dir_when_opened_or_saved = currentDirectoryName;
+			if (fileNameComboBox.Items.Count > 0) {
+				if (fileNameComboBox.Items.IndexOf (fileName) == -1) {
+					fileNameComboBox.Items.Insert (0, fileName);
+				}
+			} else
+				fileNameComboBox.Items.Add (fileName);
+			
+			if (fileNameComboBox.Items.Count == 11)
+				fileNameComboBox.Items.RemoveAt (10);
 			
 			CancelEventArgs cancelEventArgs = new CancelEventArgs ();
 			
@@ -934,7 +918,7 @@ namespace System.Windows.Forms {
 		void OnClickCancelButton (object sender, EventArgs e)
 		{
 			if (restoreDirectory)
-				currentDirectoryName = restoreDirectoryString;
+				mwfFileView.CurrentFolder = restoreDirectoryString;
 			
 			CancelEventArgs cancelEventArgs = new CancelEventArgs ();
 			
@@ -953,52 +937,14 @@ namespace System.Windows.Forms {
 		void OnClickSmallButtonToolBar (object sender, ToolBarButtonClickEventArgs e)
 		{
 			if (e.Button == upToolBarButton) {
-				if (currentDirectoryInfo != null && currentDirectoryInfo.Parent != null) {
-					ChangeDirectory (null, currentDirectoryInfo.Parent.FullName);
-				} else if (current_special_case == network_string) {
-					ChangeDirectory (null, mycomputer_string);
-				}
+				mwfFileView.OneDirUp ();
 			} else
 			if (e.Button == backToolBarButton) {
-				PopDirectory ();
+				mwfFileView.PopDir ();
 			} else
 			if (e.Button == newdirToolBarButton) {
-				// TODO: create directory
+				mwfFileView.CreateNewFolder ();
 			}
-		}
-		
-		void OnClickMenuToolBarContextMenu (object sender, EventArgs e)
-		{
-			MenuItem senderMenuItem = (MenuItem)sender;
-			
-			previousCheckedMenuItem.Checked = false;
-			senderMenuItem.Checked = true;
-			previousCheckedMenuItem = senderMenuItem;
-			
-			// FIXME...
-			
-			switch (senderMenuItem.Index) {
-			case 0:
-				mwfFileView.View = View.SmallIcon;
-				break;
-			case 1:
-				mwfFileView.View = View.LargeIcon;
-				break;
-			case 2:
-				mwfFileView.View = View.LargeIcon;
-				break;
-			case 3:
-				mwfFileView.View = View.List;
-				break;
-			case 4:
-				mwfFileView.View = View.Details;
-				break;
-			default:
-				break;
-			}
-			
-			
-			mwfFileView.UpdateFileView (currentDirectoryInfo_or_current_special_case);
 		}
 		
 		void OnSelectedIndexChangedFileTypeComboBox (object sender, EventArgs e)
@@ -1011,24 +957,11 @@ namespace System.Windows.Forms {
 			filterIndex = fileTypeComboBox.SelectedIndex + 1;
 			
 			mwfFileView.FilterIndex = filterIndex;
-			
-			mwfFileView.UpdateFileView (currentDirectoryInfo_or_current_special_case);
 		}
 		
 		void OnSelectedFileChangedFileView (object sender, EventArgs e)
 		{
-			fileNameComboBox.Text = mwfFileView.FileName;
-			currentFileName = mwfFileView.FullFileName;
-		}
-		
-		void OnDirectoryChangedFileView (object sender, EventArgs e)
-		{
-			ChangeDirectory (sender, mwfFileView.FullFileName);
-		}
-		
-		void OnForceDialogEndFileView (object sender, EventArgs e)
-		{
-			ForceDialogEnd ();
+			fileNameComboBox.Text = mwfFileView.CurrentFSEntry.Name;
 		}
 		
 		void OnSelectedFilesChangedFileView (object sender, EventArgs e)
@@ -1036,23 +969,24 @@ namespace System.Windows.Forms {
 			fileNameComboBox.Text = mwfFileView.SelectedFilesString;
 		}
 		
+		void OnForceDialogEndFileView (object sender, EventArgs e)
+		{
+			OnClickOpenSaveButton (this, EventArgs.Empty);
+		}
+		
 		void OnDirectoryChangedDirComboBox (object sender, EventArgs e)
 		{
-			ChangeDirectory (sender, dirComboBox.CurrentPath);
+			mwfFileView.ChangeDirectory (sender, dirComboBox.CurrentFolder);
+		}
+		
+		void OnDirectoryChangedPopupButtonPanel (object sender, EventArgs e)
+		{
+			mwfFileView.ChangeDirectory (sender, popupButtonPanel.CurrentFolder);
 		}
 		
 		void OnCheckCheckChanged (object sender, EventArgs e)
 		{
 			ReadOnlyChecked = readonlyCheckBox.Checked;
-		}
-		
-		void OnDirectoryUp (Object sender, EventArgs e)
-		{
-			if (currentDirectoryInfo != null && currentDirectoryInfo.Parent != null) 
-				ChangeDirectory (null, currentDirectoryInfo.Parent.FullName);
-			
-			// make mwfFileView the active control
-			mwfFileView.Select ();
 		}
 		
 		private void UpdateFilters ()
@@ -1074,107 +1008,6 @@ namespace System.Windows.Forms {
 			mwfFileView.FilterArrayList = filters;
 			
 			mwfFileView.FilterIndex = FilterIndex;
-			
-			mwfFileView.UpdateFileView (currentDirectoryInfo_or_current_special_case);
-		}
-		
-		internal void ChangeDirectory (object sender, string path_or_special_case)
-		{
-			show_special_case = false;
-			
-			if (sender != dirComboBox)
-				dirComboBox.CurrentPath = path_or_special_case;
-			
-			if (sender != popupButtonPanel)
-				popupButtonPanel.SetPopupButtonStateByPath (path_or_special_case);
-			
-			if (currentDirectoryInfo != null)
-				PushDirectory (currentDirectoryInfo);
-			else
-				PushDirectory (current_special_case);
-			
-			if (path_or_special_case == recently_string) {
-				currentDirectoryName = String.Empty;
-				
-				currentDirectoryInfo = null;
-				show_special_case = true;
-				
-				current_special_case = recently_string;
-				
-				mwfFileView.UpdateFileView (recently_string);
-				
-			} else if (path_or_special_case == mycomputer_string) {
-				currentDirectoryName = String.Empty;
-				
-				currentDirectoryInfo = null;
-				show_special_case = true;
-				
-				current_special_case = mycomputer_string;
-				
-				mwfFileView.UpdateFileView (mycomputer_string);
-				
-			} else if (path_or_special_case == network_string) {
-				currentDirectoryName = String.Empty;
-				
-				currentDirectoryInfo = null;
-				show_special_case = true;
-				
-				current_special_case = network_string;
-				
-				mwfFileView.UpdateFileView (network_string);
-				
-			} else {
-				currentDirectoryName = path_or_special_case;
-				
-				current_special_case = "";
-				
-				currentDirectoryInfo = new DirectoryInfo (path_or_special_case);
-				
-				mwfFileView.UpdateFileView (currentDirectoryInfo);
-			}
-		}
-		
-		private void ForceDialogEnd ()
-		{
-			OnClickOpenSaveButton (this, EventArgs.Empty);
-		}
-		
-		private void PushDirectory (object directoryInfo_or_string)
-		{
-			directoryStack.Push (directoryInfo_or_string);
-			backToolBarButton.Enabled = (directoryStack.Count > 1);
-		}
-		
-		private void PopDirectory ()
-		{
-			if (directoryStack.Count == 0)
-				return;
-			
-			show_special_case = false;
-			
-			object directoryInfo_or_string = directoryStack.Pop ();
-			
-			if (directoryInfo_or_string is DirectoryInfo) {
-				currentDirectoryInfo = directoryInfo_or_string as DirectoryInfo;
-				
-				currentDirectoryName = currentDirectoryInfo.FullName;
-				
-				current_special_case = String.Empty;
-			} else
-			if (directoryInfo_or_string is string) {
-				currentDirectoryInfo = null;
-				currentDirectoryName = String.Empty;
-				show_special_case = true;
-				current_special_case = directoryInfo_or_string as string;
-			}
-			
-			backToolBarButton.Enabled = (directoryStack.Count > 1);
-			
-			dirComboBox.CurrentPath = currentDirectoryName_or_special_case;
-			
-			popupButtonPanel.SetPopupButtonStateByPath (currentDirectoryName_or_special_case);
-			
-			mwfFileView.UpdateFileView (currentDirectoryInfo_or_current_special_case);
 		}
 		
 		private void ResizeAndRelocateForHelpOrReadOnly ()
@@ -1210,214 +1043,125 @@ namespace System.Windows.Forms {
 			form.ResumeLayout ();
 		}
 		
-		private void WriteRecentlyUsed ()
+		private void WriteRegistryValues (CancelEventArgs ce)
 		{
-			int platform = (int) Environment.OSVersion.Platform;
+			filedialogRegistryKey = rootRegistryKey.OpenSubKey (registryKeyName);
 			
-			// on a *nix platform we use "$HOME/.recently-used" to store our recently used files (GNOME, libegg like)
-			if ((platform == 4) || (platform == 128)) {
-				string personal_folder = ThemeEngine.Current.Places (UIIcon.PlacesPersonal);
-				string recently_used_path = Path.Combine (personal_folder, ".recently-used");
+			if (filedialogRegistryKey == null)
+				filedialogRegistryKey = rootRegistryKey.CreateSubKey (registryKeyName);
+			
+			filedialogRegistryKey.SetValue ("Width", form.Width);
+			filedialogRegistryKey.SetValue ("Height", form.Height);
+			filedialogRegistryKey.SetValue ("X", form.Location.X);
+			filedialogRegistryKey.SetValue ("Y", form.Location.Y);
+			
+			if (!ce.Cancel) {
+				filedialogRegistryKey.SetValue ("LastFolder", lastFolder);
 				
-				if (File.Exists (recently_used_path) && new FileInfo (recently_used_path).Length > 0) {
-					XmlDocument xml_doc = new XmlDocument ();
-					xml_doc.Load (recently_used_path);
-					
-					XmlNode grand_parent_node = xml_doc.SelectSingleNode ("RecentFiles");
-					
-					if (grand_parent_node != null) {
-						// create a new element
-						XmlElement new_recent_item_node = xml_doc.CreateElement ("RecentItem");
-						
-						XmlElement new_child = xml_doc.CreateElement ("URI");
-						UriBuilder ub = new UriBuilder ();
-						ub.Path = currentFileName;
-						ub.Host = null;
-						ub.Scheme = "file";
-						XmlText new_text_child = xml_doc.CreateTextNode (ub.ToString ());
-						new_child.AppendChild (new_text_child);
-						
-						new_recent_item_node.AppendChild (new_child);
-						
-						new_child = xml_doc.CreateElement ("Mime-Type");
-						new_text_child = xml_doc.CreateTextNode (Mime.GetMimeTypeForFile (currentFileName));
-						new_child.AppendChild (new_text_child);
-						
-						new_recent_item_node.AppendChild (new_child);
-						
-						new_child = xml_doc.CreateElement ("Timestamp");
-						long seconds = (long)(DateTime.UtcNow - new DateTime (1970, 1, 1)).TotalSeconds;
-						new_text_child = xml_doc.CreateTextNode (seconds.ToString ());
-						new_child.AppendChild (new_text_child);
-						
-						new_recent_item_node.AppendChild (new_child);
-						
-						new_child = xml_doc.CreateElement ("Groups");
-						
-						new_recent_item_node.AppendChild (new_child);
-						
-						// now search the nodes in grand_parent_node for another instance of the new uri and if found remove it
-						// so that the new node is the first one
-						foreach (XmlNode n in grand_parent_node.ChildNodes) {
-							XmlNode uri_node = n.SelectSingleNode ("URI");
-							if (uri_node != null) {
-								XmlNode uri_node_child = uri_node.FirstChild;
-								if (uri_node_child is XmlText)
-									if (ub.ToString () == ((XmlText)uri_node_child).Data) {
-										grand_parent_node.RemoveChild (n);
-										break;
-									}
-							}
-						}
-						
-						// prepend the new recent item to the grand parent node list
-						grand_parent_node.PrependChild (new_recent_item_node);
-						
-						// limit the # of RecentItems to 10
-						if (grand_parent_node.ChildNodes.Count > 10) {
-							while (grand_parent_node.ChildNodes.Count > 10)
-								grand_parent_node.RemoveChild (grand_parent_node.LastChild);
-						}
-						
-						try {
-							xml_doc.Save (recently_used_path);
-						} catch (Exception) {
-						}
-					}
-				} else {
-					XmlDocument xml_doc = new XmlDocument ();
-					xml_doc.AppendChild (xml_doc.CreateXmlDeclaration ("1.0", "", ""));
-					
-					XmlElement recentFiles_element = xml_doc.CreateElement ("RecentFiles");
-					
-					XmlElement new_recent_item_node = xml_doc.CreateElement ("RecentItem");
-					
-					XmlElement new_child = xml_doc.CreateElement ("URI");
-					UriBuilder ub = new UriBuilder ();
-					ub.Path = currentFileName;
-					ub.Host = null;
-					ub.Scheme = "file";
-					XmlText new_text_child = xml_doc.CreateTextNode (ub.ToString ());
-					new_child.AppendChild (new_text_child);
-					
-					new_recent_item_node.AppendChild (new_child);
-					
-					new_child = xml_doc.CreateElement ("Mime-Type");
-					new_text_child = xml_doc.CreateTextNode (Mime.GetMimeTypeForFile (currentFileName));
-					new_child.AppendChild (new_text_child);
-					
-					new_recent_item_node.AppendChild (new_child);
-					
-					new_child = xml_doc.CreateElement ("Timestamp");
-					long seconds = (long)(DateTime.UtcNow - new DateTime (1970, 1, 1)).TotalSeconds;
-					new_text_child = xml_doc.CreateTextNode (seconds.ToString ());
-					new_child.AppendChild (new_text_child);
-					
-					new_recent_item_node.AppendChild (new_child);
-					
-					new_child = xml_doc.CreateElement ("Groups");
-					
-					new_recent_item_node.AppendChild (new_child);
-					
-					recentFiles_element.AppendChild (new_recent_item_node);
-					
-					xml_doc.AppendChild (recentFiles_element);
-					
-					try {
-						xml_doc.Save (recently_used_path);
-					} catch (Exception) {
-					}
-				}
+				string[] fileNameCBItems = new string [fileNameComboBox.Items.Count];
+				
+				fileNameComboBox.Items.CopyTo (fileNameCBItems, 0);
+				
+				filedialogRegistryKey.SetValue ("FileNames", fileNameCBItems);
 			}
 		}
 		
-		private object currentDirectoryInfo_or_current_special_case {
-			get {
-				if (currentDirectoryInfo != null)
-					return currentDirectoryInfo;
-				else
-					return current_special_case;
+		private void ReadRegistryValues ()
+		{
+			rootRegistryKey = Microsoft.Win32.Registry.CurrentUser;
+			filedialogRegistryKey = rootRegistryKey.OpenSubKey (registryKeyName);
+			
+			if (filedialogRegistryKey != null) {
+				lastFolder = (string)filedialogRegistryKey.GetValue ("LastFolder");
 			}
+			
+			if (initialDirectory != "")
+				lastFolder = initialDirectory;
+			else
+			if (lastFolder == null || lastFolder == "")
+				lastFolder = Environment.CurrentDirectory;
+			
+			if (RestoreDirectory)
+				restoreDirectoryString = lastFolder;
 		}
-		
-		private string currentDirectoryName_or_special_case {
-			get {
-				if (currentDirectoryName != String.Empty)
-					return currentDirectoryName;
-				else
-					return current_special_case;
+	}
+	#endregion
+	
+	#region PopupButtonPanel
+	internal class PopupButtonPanel : Control, IUpdateFolder
+	{
+		#region PopupButton
+		internal class PopupButton : Control
+		{
+			internal enum PopupButtonState
+			{ Normal, Down, Up}
+			
+			private Image image = null;
+			private PopupButtonState popupButtonState = PopupButtonState.Normal;
+			private StringFormat text_format = new StringFormat();
+			private Rectangle text_rect = Rectangle.Empty;
+			
+			public PopupButton ()
+			{
+				text_format.Alignment = StringAlignment.Center;
+				text_format.LineAlignment = StringAlignment.Near;
+				
+				SetStyle (ControlStyles.DoubleBuffer, true);
+				SetStyle (ControlStyles.AllPaintingInWmPaint, true);
+				SetStyle (ControlStyles.UserPaint, true);
+				SetStyle (ControlStyles.Selectable, false);
 			}
-		}
-		
-		internal class PopupButtonPanel : Control {
-			internal class PopupButton : Control {
-				internal enum PopupButtonState { Normal, Down, Up}
-				
-				private Image image = null;
-				private PopupButtonState popupButtonState = PopupButtonState.Normal;
-				private StringFormat text_format = new StringFormat();
-				private Rectangle text_rect = Rectangle.Empty;
-				
-				public PopupButton ()
-				{
-					text_format.Alignment = StringAlignment.Center;
-					text_format.LineAlignment = StringAlignment.Near;
-					
-					SetStyle (ControlStyles.DoubleBuffer, true);
-					SetStyle (ControlStyles.AllPaintingInWmPaint, true);
-					SetStyle (ControlStyles.UserPaint, true);
+			
+			public Image Image {
+				set {
+					image = value;
+					Refresh ();
 				}
 				
-				public Image Image {
-					set {
-						image = value;
-						Refresh ();
-					}
-					
-					get {
-						return image;
-					}
+				get {
+					return image;
+				}
+			}
+			
+			public PopupButtonState ButtonState {
+				set {
+					popupButtonState = value;
+					Refresh ();
 				}
 				
-				public PopupButtonState ButtonState {
-					set {
-						popupButtonState = value;
-						Refresh ();
-					}
-					
-					get {
-						return popupButtonState;
-					}
+				get {
+					return popupButtonState;
+				}
+			}
+			
+			protected override void OnPaint (PaintEventArgs pe)
+			{
+				Draw (pe);
+				
+				base.OnPaint (pe);
+			}
+			
+			private void Draw (PaintEventArgs pe)
+			{
+				Graphics gr = pe.Graphics;
+				
+				gr.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), ClientRectangle);
+				
+				// draw image
+				if (image != null) {
+					int i_x = (ClientSize.Width - image.Width) / 2;
+					int i_y = 4;
+					gr.DrawImage (image, i_x, i_y);
 				}
 				
-				protected override void OnPaint (PaintEventArgs pe)
-				{
-					Draw (pe);
+				if (Text != String.Empty) {
+					if (text_rect == Rectangle.Empty)
+						text_rect = new Rectangle (0, Height - 30, Width, Height - 30); 
 					
-					base.OnPaint (pe);
+					gr.DrawString (Text, Font, ThemeEngine.Current.ResPool.GetSolidBrush (ForeColor), text_rect, text_format);
 				}
 				
-				private void Draw (PaintEventArgs pe)
-				{
-					Graphics gr = pe.Graphics;
-					
-					gr.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), ClientRectangle);
-					
-					// draw image
-					if (image != null) {
-						int i_x = (ClientSize.Width - image.Width) / 2;
-						int i_y = 4;
-						gr.DrawImage (image, i_x, i_y);
-					}
-					
-					if (Text != String.Empty) {
-						if (text_rect == Rectangle.Empty)
-							text_rect = new Rectangle (0, Height - 30, Width, Height - 30); 
-						
-						gr.DrawString (Text, Font, ThemeEngine.Current.ResPool.GetSolidBrush (ForeColor), text_rect, text_format);
-					}
-					
-					switch (popupButtonState) {
+				switch (popupButtonState) {
 					case PopupButtonState.Up:
 						gr.DrawLine (ThemeEngine.Current.ResPool.GetPen (Color.White), 0, 0, ClientSize.Width - 1, 0);
 						gr.DrawLine (ThemeEngine.Current.ResPool.GetPen (Color.White), 0, 0, 0, ClientSize.Height - 1);
@@ -1431,166 +1175,152 @@ namespace System.Windows.Forms {
 						gr.DrawLine (ThemeEngine.Current.ResPool.GetPen (Color.White), ClientSize.Width - 1, 0, ClientSize.Width - 1, ClientSize.Height - 1);
 						gr.DrawLine (ThemeEngine.Current.ResPool.GetPen (Color.White), 0, ClientSize.Height - 1, ClientSize.Width - 1, ClientSize.Height - 1);
 						break;
-					}
-				}
-				
-				protected override void OnMouseEnter (EventArgs e)
-				{
-					if (popupButtonState != PopupButtonState.Down)
-						popupButtonState = PopupButtonState.Up;
-					
-					PopupButtonPanel panel = Parent as PopupButtonPanel;
-					
-					if (panel.focusButton != null && panel.focusButton.ButtonState == PopupButtonState.Up) {
-						panel.focusButton.ButtonState = PopupButtonState.Normal;
-						panel.focusButton = null;
-					}
-					Refresh ();
-					base.OnMouseEnter (e);
-				}
-				
-				protected override void OnMouseLeave (EventArgs e)
-				{
-					if (popupButtonState == PopupButtonState.Up)
-						popupButtonState = PopupButtonState.Normal;
-					Refresh ();
-					base.OnMouseLeave (e);
-				}
-				
-				protected override void OnClick (EventArgs e)
-				{
-					popupButtonState = PopupButtonState.Down;
-					Refresh ();
-					base.OnClick (e);
 				}
 			}
 			
-			private FileDialog fileDialog;
-			
-			private PopupButton recentlyusedButton;
-			private PopupButton desktopButton;
-			private PopupButton personalButton;
-			private PopupButton mycomputerButton;
-			private PopupButton networkButton;
-			
-			private PopupButton lastPopupButton = null;
-			private PopupButton focusButton = null;
-			
-			private int platform = (int) Environment.OSVersion.Platform;
-			
-			public PopupButtonPanel (FileDialog fileDialog)
+			protected override void OnMouseEnter (EventArgs e)
 			{
-				this.fileDialog = fileDialog;
+				if (popupButtonState != PopupButtonState.Down)
+					popupButtonState = PopupButtonState.Up;
 				
-				SuspendLayout ();
+				PopupButtonPanel panel = Parent as PopupButtonPanel;
 				
-				//BackColor = Color.FromArgb (128, 128, 128);
-				Size = new Size (85, 336);
-				
-				recentlyusedButton = new PopupButton ();
-				desktopButton = new PopupButton ();
-				personalButton = new PopupButton ();
-				mycomputerButton = new PopupButton ();
-				networkButton = new PopupButton ();
-				
-				recentlyusedButton.Size = new Size (81, 64);
-				recentlyusedButton.Image = ThemeEngine.Current.Images (UIIcon.PlacesRecentDocuments, 32);
-				recentlyusedButton.BackColor = BackColor;
-				recentlyusedButton.ForeColor = Color.Black;
-				recentlyusedButton.Location = new Point (2, 2);
-				recentlyusedButton.Text = "Recently\nused";
-				recentlyusedButton.Click += new EventHandler (OnClickButton);
-				
-				desktopButton.Image = ThemeEngine.Current.Images (UIIcon.PlacesDesktop, 32);
-				desktopButton.BackColor = BackColor;
-				desktopButton.ForeColor = Color.Black;
-				desktopButton.Size = new Size (81, 64);
-				desktopButton.Location = new Point (2, 66);
-				desktopButton.Text = "Desktop";
-				desktopButton.Click += new EventHandler (OnClickButton);
-				
-				personalButton.Image = ThemeEngine.Current.Images (UIIcon.PlacesPersonal, 32);
-				personalButton.BackColor = BackColor;
-				personalButton.ForeColor = Color.Black;
-				personalButton.Size = new Size (81, 64);
-				personalButton.Location = new Point (2, 130);
-				personalButton.Text = "Personal";
-				personalButton.Click += new EventHandler (OnClickButton);
-				
-				mycomputerButton.Image = ThemeEngine.Current.Images (UIIcon.PlacesMyComputer, 32);
-				mycomputerButton.BackColor = BackColor;
-				mycomputerButton.ForeColor = Color.Black;
-				mycomputerButton.Size = new Size (81, 64);
-				mycomputerButton.Location = new Point (2, 194);
-				mycomputerButton.Text = "My Computer";
-				mycomputerButton.Click += new EventHandler (OnClickButton);
-
-				networkButton.Image = ThemeEngine.Current.Images (UIIcon.PlacesMyNetwork, 32);
-				networkButton.BackColor = BackColor;
-				networkButton.ForeColor = Color.Black;
-				networkButton.Size = new Size (81, 64);
-				networkButton.Location = new Point (2, 258);
-				networkButton.Text = "My Network";
-				networkButton.Click += new EventHandler (OnClickButton);
-				
-				Controls.Add (recentlyusedButton);
-				Controls.Add (desktopButton);
-				Controls.Add (personalButton);
-				Controls.Add (mycomputerButton);
-				Controls.Add (networkButton);
-				
-				ResumeLayout (false);
-			}
-			
-			void OnClickButton (object sender, EventArgs e)
-			{
-				if (lastPopupButton != null && (PopupButton)sender != lastPopupButton)
-					lastPopupButton.ButtonState = PopupButton.PopupButtonState.Normal;
-				lastPopupButton = sender as PopupButton;
-				
-				if (sender == recentlyusedButton) {
-					if ((platform == 4) || (platform == 128)) {
-					// do NOT change the following line!
-					// FileDialog uses a special handling for recently used files on *nix
-					// recently used files are not stored as links in a directory but
-					// as a xml file called .recently-used in the users home dir
-					// This matches the Freedesktop.org spec which gnome uses
-						fileDialog.ChangeDirectory (this, FileDialog.recently_string);
-					} else {
-						fileDialog.ChangeDirectory (this, ThemeEngine.Current.Places (UIIcon.PlacesRecentDocuments));
-					}
-				} else
-				if (sender == desktopButton) {
-					fileDialog.ChangeDirectory (this, ThemeEngine.Current.Places (UIIcon.PlacesDesktop));
-				} else
-				if (sender == personalButton) {
-					fileDialog.ChangeDirectory (this, ThemeEngine.Current.Places (UIIcon.PlacesPersonal));
-				} else
-				if (sender == mycomputerButton) {
-					if ((platform == 4) || (platform == 128))
-					// do NOT change the following line!
-					// on *nix we do not have a special folder MyComputer
-						fileDialog.ChangeDirectory (this, FileDialog.mycomputer_string);
-					else
-						fileDialog.ChangeDirectory (this, "C:\\");
-//					else
-//						fileDialog.ChangeDirectory (this, ThemeEngine.Current.Places (UIIcon.PlacesMyComputer));
-				} else
-				if (sender == networkButton) {
-					if ((platform == 4) || (platform == 128))
-						fileDialog.ChangeDirectory (this, FileDialog.network_string);
-					else
-						fileDialog.ChangeDirectory (this, "C:\\");
-//					else
-//						fileDialog.ChangeDirectory (this, ThemeEngine.Current.Places (UIIcon.PlacesMyNetwork));
+				if (panel.focusButton != null && panel.focusButton.ButtonState == PopupButtonState.Up) {
+					panel.focusButton.ButtonState = PopupButtonState.Normal;
+					panel.focusButton = null;
 				}
-				fileDialog.upToolBarButton.Enabled = (sender != recentlyusedButton && sender != mycomputerButton);
+				Refresh ();
+				base.OnMouseEnter (e);
 			}
 			
-			public void SetPopupButtonStateByPath (string path)
+			protected override void OnMouseLeave (EventArgs e)
 			{
-				if (path == FileDialog.recently_string || 
-				    path == ThemeEngine.Current.Places (UIIcon.PlacesRecentDocuments)) {
+				if (popupButtonState == PopupButtonState.Up)
+					popupButtonState = PopupButtonState.Normal;
+				Refresh ();
+				base.OnMouseLeave (e);
+			}
+			
+			protected override void OnClick (EventArgs e)
+			{
+				popupButtonState = PopupButtonState.Down;
+				Refresh ();
+				base.OnClick (e);
+			}
+		}
+		#endregion
+		
+		private EventHandler on_directory_changed;
+		
+		private PopupButton recentlyusedButton;
+		private PopupButton desktopButton;
+		private PopupButton personalButton;
+		private PopupButton mycomputerButton;
+		private PopupButton networkButton;
+		
+		private PopupButton lastPopupButton = null;
+		private PopupButton focusButton = null;
+		
+		private string currentPath;
+		
+		private int currentFocusIndex;
+		
+		public PopupButtonPanel ()
+		{
+			SuspendLayout ();
+			
+			//BackColor = Color.FromArgb (128, 128, 128);
+			Size = new Size (85, 336);
+			
+			recentlyusedButton = new PopupButton ();
+			desktopButton = new PopupButton ();
+			personalButton = new PopupButton ();
+			mycomputerButton = new PopupButton ();
+			networkButton = new PopupButton ();
+			
+			recentlyusedButton.Size = new Size (81, 64);
+			recentlyusedButton.Image = ThemeEngine.Current.Images (UIIcon.PlacesRecentDocuments, 32);
+			recentlyusedButton.BackColor = BackColor;
+			recentlyusedButton.ForeColor = Color.Black;
+			recentlyusedButton.Location = new Point (2, 2);
+			recentlyusedButton.Text = "Recently\nused";
+			recentlyusedButton.Click += new EventHandler (OnClickButton);
+			
+			desktopButton.Image = ThemeEngine.Current.Images (UIIcon.PlacesDesktop, 32);
+			desktopButton.BackColor = BackColor;
+			desktopButton.ForeColor = Color.Black;
+			desktopButton.Size = new Size (81, 64);
+			desktopButton.Location = new Point (2, 66);
+			desktopButton.Text = "Desktop";
+			desktopButton.Click += new EventHandler (OnClickButton);
+			
+			personalButton.Image = ThemeEngine.Current.Images (UIIcon.PlacesPersonal, 32);
+			personalButton.BackColor = BackColor;
+			personalButton.ForeColor = Color.Black;
+			personalButton.Size = new Size (81, 64);
+			personalButton.Location = new Point (2, 130);
+			personalButton.Text = "Personal";
+			personalButton.Click += new EventHandler (OnClickButton);
+			
+			mycomputerButton.Image = ThemeEngine.Current.Images (UIIcon.PlacesMyComputer, 32);
+			mycomputerButton.BackColor = BackColor;
+			mycomputerButton.ForeColor = Color.Black;
+			mycomputerButton.Size = new Size (81, 64);
+			mycomputerButton.Location = new Point (2, 194);
+			mycomputerButton.Text = "My Computer";
+			mycomputerButton.Click += new EventHandler (OnClickButton);
+			
+			networkButton.Image = ThemeEngine.Current.Images (UIIcon.PlacesMyNetwork, 32);
+			networkButton.BackColor = BackColor;
+			networkButton.ForeColor = Color.Black;
+			networkButton.Size = new Size (81, 64);
+			networkButton.Location = new Point (2, 258);
+			networkButton.Text = "My Network";
+			networkButton.Click += new EventHandler (OnClickButton);
+			
+			Controls.Add (recentlyusedButton);
+			Controls.Add (desktopButton);
+			Controls.Add (personalButton);
+			Controls.Add (mycomputerButton);
+			Controls.Add (networkButton);
+			
+			ResumeLayout (false);
+			
+			KeyDown += new KeyEventHandler (Key_Down);
+			
+			SetStyle (ControlStyles.StandardClick, false);
+		}
+		
+		void OnClickButton (object sender, EventArgs e)
+		{
+			if (lastPopupButton != null && lastPopupButton != sender as PopupButton)
+				lastPopupButton.ButtonState = PopupButton.PopupButtonState.Normal;
+			lastPopupButton = sender as PopupButton;
+			
+			if (sender == recentlyusedButton) {
+				currentPath = MWFVFS.RecentlyUsedPrefix;
+			} else
+			if (sender == desktopButton) {
+				currentPath = MWFVFS.DesktopPrefix;
+			} else
+			if (sender == personalButton) {
+				currentPath = MWFVFS.PersonalPrefix;
+			} else
+			if (sender == mycomputerButton) {
+				currentPath = MWFVFS.MyComputerPrefix;
+			} else
+			if (sender == networkButton) {
+				currentPath = MWFVFS.MyNetworkPrefix;
+			}
+			
+			if (on_directory_changed != null)
+				on_directory_changed (this, EventArgs.Empty);
+		}
+		
+		public string CurrentFolder {
+			set {
+				string currentPath = value;
+				if (currentPath == MWFVFS.RecentlyUsedPrefix) {
 					if (lastPopupButton != recentlyusedButton) {
 						if (lastPopupButton != null)
 							lastPopupButton.ButtonState = PopupButton.PopupButtonState.Normal;
@@ -1598,7 +1328,7 @@ namespace System.Windows.Forms {
 						lastPopupButton = recentlyusedButton;
 					}
 				} else
-				if (path == ThemeEngine.Current.Places (UIIcon.PlacesDesktop)) {
+				if (currentPath == MWFVFS.DesktopPrefix) {
 					if (lastPopupButton != desktopButton) {
 						if (lastPopupButton != null)
 							lastPopupButton.ButtonState = PopupButton.PopupButtonState.Normal;
@@ -1606,7 +1336,7 @@ namespace System.Windows.Forms {
 						lastPopupButton = desktopButton;
 					}
 				} else
-				if (path == ThemeEngine.Current.Places (UIIcon.PlacesPersonal)) {
+				if (currentPath == MWFVFS.PersonalPrefix) {
 					if (lastPopupButton != personalButton) {
 						if (lastPopupButton != null)
 							lastPopupButton.ButtonState = PopupButton.PopupButtonState.Normal;
@@ -1614,8 +1344,7 @@ namespace System.Windows.Forms {
 						lastPopupButton = personalButton;
 					}
 				} else
-				if (path == FileDialog.mycomputer_string || 
-				    path == ThemeEngine.Current.Places (UIIcon.PlacesMyComputer)) {
+				if (currentPath == MWFVFS.MyComputerPrefix) {
 					if (lastPopupButton != mycomputerButton) {
 						if (lastPopupButton != null)
 							lastPopupButton.ButtonState = PopupButton.PopupButtonState.Normal;
@@ -1623,8 +1352,7 @@ namespace System.Windows.Forms {
 						lastPopupButton = mycomputerButton;
 					}
 				} else
-				if (path == FileDialog.network_string || 
-				    path == ThemeEngine.Current.Places (UIIcon.PlacesMyNetwork)) {
+				if (currentPath == MWFVFS.MyNetworkPrefix) {
 					if (lastPopupButton != networkButton) {
 						if (lastPopupButton != null)
 							lastPopupButton.ButtonState = PopupButton.PopupButtonState.Normal;
@@ -1638,32 +1366,401 @@ namespace System.Windows.Forms {
 					}
 				}
 			}
-			
-			protected override void OnPaint (PaintEventArgs e)
-			{
-				ControlPaint.DrawBorder3D (e.Graphics, ClientRectangle, Border3DStyle.Sunken);
-				base.OnPaint (e);
-			}
-			
-			protected override void OnGotFocus (EventArgs e)
-			{
-				if (lastPopupButton != recentlyusedButton) {
-					recentlyusedButton.ButtonState = PopupButton.PopupButtonState.Up;
-					focusButton = recentlyusedButton;
-				}
-				base.OnGotFocus (e);
-			}
-			
-			protected override void OnLostFocus (EventArgs e)
-			{
-				if (focusButton != null && focusButton.ButtonState != PopupButton.PopupButtonState.Down)
-					focusButton.ButtonState = PopupButton.PopupButtonState.Normal;
-				base.OnLostFocus (e);
+			get {
+				return currentPath;
 			}
 		}
+		
+		protected override void OnPaint (PaintEventArgs e)
+		{
+			ControlPaint.DrawBorder3D (e.Graphics, ClientRectangle, Border3DStyle.Sunken);
+			base.OnPaint (e);
+		}
+		
+		protected override void OnGotFocus (EventArgs e)
+		{
+			if (lastPopupButton != recentlyusedButton) {
+				recentlyusedButton.ButtonState = PopupButton.PopupButtonState.Up;
+				focusButton = recentlyusedButton;
+			}
+			currentFocusIndex = 0;
+			
+			base.OnGotFocus (e);
+		}
+		
+		protected override void OnLostFocus (EventArgs e)
+		{
+			if (focusButton != null && focusButton.ButtonState != PopupButton.PopupButtonState.Down)
+				focusButton.ButtonState = PopupButton.PopupButtonState.Normal;
+			base.OnLostFocus (e);
+		}
+		
+		protected override bool IsInputKey (Keys key)
+		{
+			switch (key) {
+				case Keys.Up:
+				case Keys.Down:
+				case Keys.Right:
+				case Keys.Left:
+				case Keys.Enter:
+					return true;
+			}
+			return base.IsInputKey (key);
+		}
+		
+		private void Key_Down (object sender, KeyEventArgs e)
+		{
+			bool update_focus = false;
+			
+			if (e.KeyCode == Keys.Left || e.KeyCode == Keys.Up) {
+				currentFocusIndex --;
+				
+				if (currentFocusIndex < 0)
+					currentFocusIndex = Controls.Count - 1;
+				
+				update_focus = true;
+			} else
+			if (e.KeyCode == Keys.Down || e.KeyCode == Keys.Right) {
+				currentFocusIndex++;
+				
+				if (currentFocusIndex == Controls.Count)
+					currentFocusIndex = 0;
+				
+				update_focus = true;
+			} else
+			if (e.KeyCode == Keys.Enter) {
+				focusButton.ButtonState = PopupButton.PopupButtonState.Down;
+				OnClickButton (focusButton, EventArgs.Empty);
+			}
+			
+			if (update_focus) {
+				PopupButton newfocusButton = Controls [currentFocusIndex] as PopupButton;
+				if (focusButton != null && focusButton.ButtonState != PopupButton.PopupButtonState.Down)
+					focusButton.ButtonState = PopupButton.PopupButtonState.Normal;
+				if (newfocusButton.ButtonState != PopupButton.PopupButtonState.Down)
+					newfocusButton.ButtonState = PopupButton.PopupButtonState.Up;
+				focusButton = newfocusButton;
+			}
+			
+			e.Handled = true;
+		}
+		
+		public event EventHandler DirectoryChanged {
+			add { on_directory_changed += value; }
+			remove { on_directory_changed -= value; }
+		}
 	}
+	#endregion
 	
-	internal struct FilterStruct {
+	#region DirComboBox
+	internal class DirComboBox : ComboBox, IUpdateFolder
+	{
+		#region DirComboBoxItem
+		internal class DirComboBoxItem
+		{
+			private int imageIndex;
+			private string name;
+			private string path;
+			private int xPos;
+			private ImageList imageList;
+			
+			public DirComboBoxItem (ImageList imageList, int imageIndex, string name, string path, int xPos)
+			{
+				this.imageList = imageList;
+				this.imageIndex = imageIndex;
+				this.name = name;
+				this.path = path;
+				this.xPos = xPos;
+			}
+			
+			public int ImageIndex {
+				get {
+					return imageIndex;
+				}
+			}
+			
+			public string Name {
+				get {
+					return name;
+				}
+			}
+			
+			public string Path {
+				get {
+					return path;
+				}
+			}
+			
+			public int XPos {
+				get {
+					return xPos;
+				}
+			}
+			
+			public ImageList ImageList {
+				set {
+					imageList = value;
+				}
+				
+				get {
+					return imageList;
+				}
+			}
+		}
+		#endregion
+		
+		private ImageList imageList = new ImageList();
+		
+		private string currentPath;
+		
+		private EventHandler on_directory_changed;
+		
+		private bool currentpath_internal_change = false;
+		
+		private Stack folderStack = new Stack();
+		
+		private static readonly int indent = 6;
+		
+		private DirComboBoxItem recentlyUsedDirComboboxItem;
+		private DirComboBoxItem desktopDirComboboxItem;
+		private DirComboBoxItem personalDirComboboxItem;
+		private DirComboBoxItem myComputerDirComboboxItem;
+		private DirComboBoxItem networkDirComboboxItem;
+		
+		private ArrayList myComputerItems = new ArrayList ();
+		
+		private DirComboBoxItem mainParentDirComboBoxItem = null;
+		private DirComboBoxItem real_parent = null;
+		
+		private MWFVFS vfs;
+		
+		public DirComboBox (MWFVFS vfs)
+		{
+			SuspendLayout ();
+			
+			DrawMode = DrawMode.OwnerDrawFixed;
+			
+			imageList.ColorDepth = ColorDepth.Depth32Bit;
+			imageList.ImageSize = new Size (16, 16);
+			imageList.Images.Add (ThemeEngine.Current.Images (UIIcon.PlacesRecentDocuments, 16));
+			imageList.Images.Add (ThemeEngine.Current.Images (UIIcon.PlacesDesktop, 16));
+			imageList.Images.Add (ThemeEngine.Current.Images (UIIcon.PlacesPersonal, 16));
+			imageList.Images.Add (ThemeEngine.Current.Images (UIIcon.PlacesMyComputer, 16));
+			imageList.Images.Add (ThemeEngine.Current.Images (UIIcon.PlacesMyNetwork, 16));
+			imageList.Images.Add (ThemeEngine.Current.Images (UIIcon.NormalFolder, 16));
+			imageList.TransparentColor = Color.Transparent;
+			
+			recentlyUsedDirComboboxItem = new DirComboBoxItem (imageList, 0, "Recently used", MWFVFS.RecentlyUsedPrefix, 0);
+			desktopDirComboboxItem = new DirComboBoxItem (imageList, 1, "Desktop", MWFVFS.DesktopPrefix, 0);
+			personalDirComboboxItem = new DirComboBoxItem (imageList, 2, "Personal folder", MWFVFS.PersonalPrefix, indent);
+			myComputerDirComboboxItem = new DirComboBoxItem (imageList, 3, "My Computer", MWFVFS.MyComputerPrefix, indent);
+			networkDirComboboxItem = new DirComboBoxItem (imageList, 4, "My Network", MWFVFS.MyNetworkPrefix, indent);
+			
+			ArrayList al = vfs.GetMyComputerContent ();
+			
+			foreach (FSEntry fsEntry in al) {
+				myComputerItems.Add (new DirComboBoxItem (MimeIconEngine.LargeIcons, fsEntry.IconIndex, fsEntry.Name, fsEntry.FullName, indent * 2));
+			}
+			
+			mainParentDirComboBoxItem = myComputerDirComboboxItem;
+			
+			ResumeLayout (false);
+		}
+		
+		public string CurrentFolder {
+			set {
+				currentPath = value;
+				
+				currentpath_internal_change = true;
+				
+				CreateComboList ();
+			}
+			get {
+				return currentPath;
+			}
+		}
+		
+		private void CreateComboList ()
+		{
+			real_parent = null;
+			DirComboBoxItem selection = null;
+			
+			if (currentPath == MWFVFS.RecentlyUsedPrefix) {
+				mainParentDirComboBoxItem = recentlyUsedDirComboboxItem;
+				selection = recentlyUsedDirComboboxItem;
+			} else
+			if (currentPath == MWFVFS.DesktopPrefix) {
+				selection = desktopDirComboboxItem;
+				mainParentDirComboBoxItem = desktopDirComboboxItem;
+			} else
+			if (currentPath == MWFVFS.PersonalPrefix) {
+				selection = personalDirComboboxItem;
+				mainParentDirComboBoxItem = personalDirComboboxItem;
+			} else
+			if (currentPath == MWFVFS.MyComputerPrefix) {
+				selection = myComputerDirComboboxItem;
+				mainParentDirComboBoxItem = myComputerDirComboboxItem;
+			} else
+			if (currentPath == MWFVFS.MyNetworkPrefix) {
+				selection = networkDirComboboxItem;
+				mainParentDirComboBoxItem = networkDirComboboxItem;
+			} else {
+				foreach (DirComboBoxItem dci in myComputerItems) {
+					if (dci.Path == currentPath) {
+						mainParentDirComboBoxItem = selection = dci;
+						break;
+					}
+				}
+			}
+			
+			BeginUpdate ();
+			
+			Items.Clear ();
+			
+			Items.Add (recentlyUsedDirComboboxItem);
+			Items.Add (desktopDirComboboxItem);
+			Items.Add (personalDirComboboxItem);
+			Items.Add (myComputerDirComboboxItem);
+			Items.AddRange (myComputerItems);
+			Items.Add (networkDirComboboxItem);
+			
+			if (selection == null) {
+				real_parent = CreateFolderStack ();
+			}
+			
+			if (real_parent != null) {
+				int local_indent = 0;
+				
+				if (real_parent == desktopDirComboboxItem)
+					local_indent = 1;
+				else
+				if (real_parent == personalDirComboboxItem || real_parent == networkDirComboboxItem)
+					local_indent = 2;
+				else
+					local_indent = 3;
+				
+				selection = AppendToParent (local_indent, real_parent);
+			}
+			
+			EndUpdate ();
+			
+			if (selection != null)
+				SelectedItem = selection;
+		}
+		
+		private DirComboBoxItem CreateFolderStack ()
+		{
+			folderStack.Clear ();
+			
+			DirectoryInfo di = new DirectoryInfo (currentPath);
+			
+			folderStack.Push (di);
+			
+			while (di.Parent != null) {
+				di = di.Parent;
+				
+				if (mainParentDirComboBoxItem != personalDirComboboxItem && di.FullName == ThemeEngine.Current.Places (UIIcon.PlacesDesktop))
+					return desktopDirComboboxItem;
+				else
+				if (mainParentDirComboBoxItem == personalDirComboboxItem) {
+					if (di.FullName == ThemeEngine.Current.Places (UIIcon.PlacesPersonal))
+						return personalDirComboboxItem;
+				} else
+					foreach (DirComboBoxItem dci in myComputerItems) {
+						if (dci.Path == di.FullName) {
+							return dci;
+						}
+					}
+				
+				
+				folderStack.Push (di);
+			}
+			
+			return null;
+		}
+		
+		private DirComboBoxItem AppendToParent (int nr_indents, DirComboBoxItem parentDirComboBoxItem)
+		{
+			DirComboBoxItem selection = null;
+			
+			int index = Items.IndexOf (parentDirComboBoxItem) + 1;
+			
+			int xPos = indent * nr_indents;
+			
+			while (folderStack.Count != 0) {
+				DirectoryInfo dii = folderStack.Pop () as DirectoryInfo;
+				
+				DirComboBoxItem dci = new DirComboBoxItem (imageList, 5, dii.Name, dii.FullName, xPos);
+				
+				Items.Insert (index, dci);
+				index++;
+				selection = dci;
+				xPos += indent;
+			}
+			
+			return selection;
+		}
+		
+		protected override void OnDrawItem (DrawItemEventArgs e)
+		{
+			if (e.Index == -1)
+				return;
+			
+			DirComboBoxItem dcbi = Items [e.Index] as DirComboBoxItem;
+			
+			Bitmap bmp = new Bitmap (e.Bounds.Width, e.Bounds.Height, e.Graphics);
+			Graphics gr = Graphics.FromImage (bmp);
+			
+			Color backColor = e.BackColor;
+			Color foreColor = e.ForeColor;
+			
+			int xPos = dcbi.XPos;
+			
+			if ((e.State & DrawItemState.ComboBoxEdit) != 0)
+				xPos = 0;
+			else
+			if ((e.State & DrawItemState.Selected) == DrawItemState.Selected) {
+				backColor = ThemeEngine.Current.ColorHighlight;
+				foreColor = ThemeEngine.Current.ColorHighlightText;
+			}
+			
+			gr.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (backColor), new Rectangle (0, 0, bmp.Width, bmp.Height));
+			
+			gr.DrawString (dcbi.Name, e.Font , ThemeEngine.Current.ResPool.GetSolidBrush (foreColor), new Point (24 + xPos, (bmp.Height - e.Font.Height) / 2));
+			gr.DrawImage (dcbi.ImageList.Images [dcbi.ImageIndex], new Rectangle (new Point (xPos + 2, 0), new Size (16, 16)));
+			
+			e.Graphics.DrawImage (bmp, e.Bounds.X, e.Bounds.Y);
+			gr.Dispose ();
+			bmp.Dispose ();
+		}
+		
+		protected override void OnSelectedIndexChanged (EventArgs e)
+		{
+			if (Items.Count > 0) {
+				DirComboBoxItem dcbi = Items [SelectedIndex] as DirComboBoxItem;
+				
+				currentPath = dcbi.Path;
+				// call DirectoryChange event only if the user changes the index with the ComboBox
+				
+				if (!currentpath_internal_change) {
+					if (on_directory_changed != null)
+						on_directory_changed (this, EventArgs.Empty);
+				}
+			}
+			
+			currentpath_internal_change = false;
+		}
+		
+		public event EventHandler DirectoryChanged {
+			add { on_directory_changed += value; }
+			remove { on_directory_changed -= value; }
+		}
+	}
+	#endregion
+	
+	#region FilterStruct
+	internal struct FilterStruct
+	{
 		public string filterName;
 		public StringCollection filters;
 		
@@ -1683,687 +1780,11 @@ namespace System.Windows.Forms {
 			filters.AddRange (split);
 		}
 	}
+	#endregion
 	
-	internal struct FileStruct {
-		public enum FileStructType {
-			File,
-			Directoy,
-			Device,
-			Network
-		}
-		
-		public string fullname;
-		public FileAttributes attributes;
-		public long size;
-		public FileStructType type;
-	}
-	
-	// MWFFileView
-	internal class MWFFileView : ListView {
-		private ArrayList filterArrayList;
-		
-		// store the FileStruct of all files in the current directory
-		private Hashtable fileHashtable = new Hashtable();
-		
-		private bool showHiddenFiles = false;
-		
-		private EventHandler on_selected_file_changed;
-		private EventHandler on_selected_files_changed;
-		private EventHandler on_directory_changed;
-		private EventHandler on_force_dialog_end;
-		private EventHandler on_one_directory_up;
-		
-		private string fileName;
-		private string fullFileName;
-		private string selectedFilesString;
-		
-		private int filterIndex;
-		
-		private ToolTip toolTip;
-		private int oldItemIndexForToolTip = -1;
-		
-		private bool internal_key_up = false;
-		
-		private MasterMount masterMount = new MasterMount ();
-		
-		public MWFFileView ()
-		{
-			SuspendLayout ();
-			
-			toolTip = new ToolTip ();
-			toolTip.InitialDelay = 300;
-			toolTip.ReshowDelay = 0; 
-			
-			LabelWrap = true;
-			
-			SmallImageList = MimeIconEngine.SmallIcons;
-			LargeImageList = MimeIconEngine.LargeIcons;
-			
-			View = View.List;
-			
-			ResumeLayout (false);
-			
-			KeyUp += new KeyEventHandler (MWF_KeyUp);
-		}
-		
-		public ArrayList FilterArrayList {
-			set {
-				filterArrayList = value;
-			}
-			
-			get {
-				return filterArrayList;
-			}
-		}
-		
-		public Hashtable FileHashtable {
-			get {
-				return fileHashtable;
-			}
-		}
-		
-		public bool ShowHiddenFiles {
-			set {
-				showHiddenFiles = value;
-			}
-			
-			get {
-				return showHiddenFiles;
-			}
-		}
-		
-		public string FileName {
-			get {
-				return fileName;
-			}
-		}
-		
-		public string FullFileName {
-			get {
-				return fullFileName;
-			}
-		}
-		
-		public int FilterIndex {
-			set {
-				filterIndex = value;
-			}
-			
-			get {
-				return filterIndex;
-			}
-		}
-		
-		public string SelectedFilesString {
-			set {
-				selectedFilesString = value;
-			}
-			
-			get {
-				return selectedFilesString;
-			}
-		}
-		
-		public void SetSelectedIndexTo (string fname)
-		{
-			foreach (ListViewItem item in Items) {
-				if (item.Text == fname) {
-					BeginUpdate ();
-					SelectedItems.Clear ();
-					item.Selected = true;
-					EndUpdate ();
-					break;
-				}
-			}
-		}
-		
-		private ArrayList GetFileInfoArrayList (DirectoryInfo directoryInfo)
-		{
-			ArrayList arrayList = new ArrayList ();
-			
-			if (filterArrayList != null && filterArrayList.Count != 0) {
-				FilterStruct fs = (FilterStruct)filterArrayList [filterIndex - 1];
-				
-				foreach (string s in fs.filters)
-					arrayList.AddRange (directoryInfo.GetFiles (s));
-			} else
-				arrayList.AddRange (directoryInfo.GetFiles ());
-			
-			return arrayList;
-		}
-		
-		private ArrayList GetFileInfoArrayListByArrayList (ArrayList al)
-		{
-			ArrayList arrayList = new ArrayList ();
-			
-			foreach (string path in al) {
-				if (File.Exists (path)) {
-					FileInfo fi = new FileInfo (path);
-					arrayList.Add (fi);
-				}
-			}
-			
-			return arrayList;
-		}
-		
-		public void UpdateFileView (object directoryInfo_or_string)
-		{
-			if (directoryInfo_or_string is DirectoryInfo)
-				UpdateFileViewByDirectoryInfo (directoryInfo_or_string as DirectoryInfo);
-			else
-				UpdateFileViewByString (directoryInfo_or_string as string);
-			
-			if (Items.Count > 0 && !internal_key_up) {
-				ListViewItem item = Items [0];
-				item.Selected = true;
-			} else
-				internal_key_up = false;
-		}
-		
-		private void UpdateFileViewByDirectoryInfo (DirectoryInfo inputDirectoryInfo) 
-		{
-			DirectoryInfo directoryInfo = inputDirectoryInfo;
-			
-			DirectoryInfo[] directoryInfoArray = directoryInfo.GetDirectories ();
-			
-			ArrayList fileInfoArrayList = GetFileInfoArrayList (directoryInfo);
-			
-			fileHashtable.Clear ();
-			
-			BeginUpdate ();
-			
-			Items.Clear ();
-			SelectedItems.Clear ();
-			
-			foreach (DirectoryInfo directoryInfoi in directoryInfoArray) {
-				if (!ShowHiddenFiles)
-					if (directoryInfoi.Name.StartsWith (".") || directoryInfoi.Attributes == FileAttributes.Hidden)
-						continue;
-				
-				FileStruct fileStruct = new FileStruct ();
-				fileStruct.type = FileStruct.FileStructType.Directoy;
-				
-				fileStruct.fullname = directoryInfoi.FullName;
-				
-				ListViewItem listViewItem = new ListViewItem (directoryInfoi.Name);
-				
-				int index = MimeIconEngine.GetIconIndexForMimeType ("inode/directory");
-				
-				listViewItem.ImageIndex = index;
-				
-				listViewItem.SubItems.Add ("");
-				listViewItem.SubItems.Add ("Directory");
-				listViewItem.SubItems.Add (directoryInfoi.LastAccessTime.ToShortDateString () + " " + directoryInfoi.LastAccessTime.ToShortTimeString ());
-				
-				fileStruct.attributes = FileAttributes.Directory;
-				
-				fileHashtable.Add (directoryInfoi.Name, fileStruct);
-				
-				Items.Add (listViewItem);
-			}
-			
-			foreach (FileInfo fileInfo in fileInfoArrayList) {
-				DoOneFileInfo (fileInfo);
-			}
-			
-			EndUpdate ();
-		}
-		
-		private void UpdateFileViewByString (string kind) 
-		{
-			if (kind == FileDialog.recently_string) {
-				ArrayList fileInfoArrayList = GetFileInfoArrayListByArrayList (GetFreedesktopSpecRecentlyUsed ());
-				
-				fileHashtable.Clear ();
-				
-				BeginUpdate ();
-				
-				Items.Clear ();
-				SelectedItems.Clear ();
-				
-				foreach (FileInfo fileInfo in fileInfoArrayList) {
-					DoOneFileInfo (fileInfo);
-				}
-				
-				EndUpdate ();
-				
-			} else if (kind == FileDialog.mycomputer_string) {
-				
-				if (masterMount.ProcMountAvailable) {
-					masterMount.GetMounts ();
-					
-					fileHashtable.Clear ();
-					
-					BeginUpdate ();
-					
-					Items.Clear ();
-					SelectedItems.Clear ();
-					
-					foreach (MasterMount.Mount mount in masterMount.Block_devices) {
-						FileStruct fileStruct = new FileStruct ();
-						fileStruct.type = FileStruct.FileStructType.Device;
-						
-						fileStruct.fullname = mount.mount_point;
-						
-						string item_name = String.Format ("HDD ({0}, {1}, {2})", mount.mount_point, mount.fsType , mount.device_short);
-						ListViewItem listViewItem = new ListViewItem (item_name);
-						
-						int index = MimeIconEngine.GetIconIndexForMimeType ("harddisk/harddisk");
-						
-						listViewItem.ImageIndex = index;
-						
-						listViewItem.SubItems.Add ("");
-						listViewItem.SubItems.Add ("Harddisk");
-//						listViewItem.SubItems.Add (directoryInfoi.LastAccessTime.ToShortDateString () + " " + directoryInfoi.LastAccessTime.ToShortTimeString ());
-						
-						fileStruct.attributes = FileAttributes.Directory;
-						
-						fileHashtable.Add (item_name, fileStruct);
-						
-						Items.Add (listViewItem);
-					}
-					
-					foreach (MasterMount.Mount mount in masterMount.Removable_devices) {
-						FileStruct fileStruct = new FileStruct ();
-						fileStruct.type = FileStruct.FileStructType.Device;
-						
-						fileStruct.fullname = mount.mount_point;
-						
-						bool is_dvd_cdrom = mount.fsType == MasterMount.FsTypes.usbfs ? false : true;
-						string type_name = is_dvd_cdrom ? "DVD/CD-Rom" : "USB";
-						string mime_type = is_dvd_cdrom ? "cdrom/cdrom" : "removable/removable";
-						
-						string item_name = type_name + " (" + mount.device_short + ")";
-						
-						ListViewItem listViewItem = new ListViewItem (item_name);
-						
-						int index = MimeIconEngine.GetIconIndexForMimeType (mime_type);
-						
-						listViewItem.ImageIndex = index;
-						
-						listViewItem.SubItems.Add ("");
-						listViewItem.SubItems.Add (type_name);
-//						listViewItem.SubItems.Add (directoryInfoi.LastAccessTime.ToShortDateString () + " " + directoryInfoi.LastAccessTime.ToShortTimeString ());
-						
-						fileStruct.attributes = FileAttributes.Directory;
-						
-						fileHashtable.Add (item_name, fileStruct);
-						
-						Items.Add (listViewItem);
-					}
-					
-					ListViewItem listViewItem2 = new ListViewItem ("Desktop");
-					
-					int index2 = MimeIconEngine.GetIconIndexForMimeType ("desktop/desktop");
-					
-					FileStruct fileStruct2 = new FileStruct ();
-					fileStruct2.type = FileStruct.FileStructType.Directoy;
-					
-					fileStruct2.fullname = ThemeEngine.Current.Places (UIIcon.PlacesDesktop);
-					
-					listViewItem2.ImageIndex = index2;
-					
-					listViewItem2.SubItems.Add ("");
-					listViewItem2.SubItems.Add ("Desktop");
-//					listViewItem.SubItems.Add (directoryInfoi.LastAccessTime.ToShortDateString () + " " + directoryInfoi.LastAccessTime.ToShortTimeString ());
-					
-					fileStruct2.attributes = FileAttributes.Directory;
-					
-					fileHashtable.Add ("Desktop", fileStruct2);
-					
-					Items.Add (listViewItem2);
-					
-					
-					listViewItem2 = new ListViewItem ("Personal");
-					
-					index2 = MimeIconEngine.GetIconIndexForMimeType ("directory/home");
-					
-					fileStruct2 = new FileStruct ();
-					fileStruct2.type = FileStruct.FileStructType.Directoy;
-					
-					fileStruct2.fullname = ThemeEngine.Current.Places (UIIcon.PlacesPersonal);
-					
-					listViewItem2.ImageIndex = index2;
-					
-					listViewItem2.SubItems.Add ("");
-					listViewItem2.SubItems.Add ("Personal");
-//					listViewItem.SubItems.Add (directoryInfoi.LastAccessTime.ToShortDateString () + " " + directoryInfoi.LastAccessTime.ToShortTimeString ());
-					
-					fileStruct2.attributes = FileAttributes.Directory;
-					
-					fileHashtable.Add ("Personal", fileStruct2);
-					
-					Items.Add (listViewItem2);
-					
-					AddNetwork ();
-					
-					EndUpdate ();
-				}
-				
-			} else if (kind == FileDialog.network_string) {
-				
-				if (masterMount.ProcMountAvailable) {
-					masterMount.GetMounts ();
-					
-					fileHashtable.Clear ();
-					
-					BeginUpdate ();
-					
-					Items.Clear ();
-					SelectedItems.Clear ();
-					
-					AddNetwork ();
-					
-					EndUpdate ();
-				}
-			}
-		}
-		
-		private void AddNetwork ()
-		{
-			foreach (MasterMount.Mount mount in masterMount.Network_devices) {
-				FileStruct fileStruct = new FileStruct ();
-				fileStruct.type = FileStruct.FileStructType.Network;
-				
-				fileStruct.fullname = mount.mount_point;
-				
-				string item_name = String.Format ("Network ({0}, {1}, {2})", mount.mount_point, mount.fsType , mount.device_short);
-				ListViewItem listViewItem = new ListViewItem (item_name);
-				
-				int index = 0;
-				
-				switch (mount.fsType) {
-				case MasterMount.FsTypes.nfs:
-					index = MimeIconEngine.GetIconIndexForMimeType ("nfs/nfs");
-					break;
-				case MasterMount.FsTypes.smbfs:
-					index = MimeIconEngine.GetIconIndexForMimeType ("smb/smb");
-					break;
-				case MasterMount.FsTypes.ncpfs:
-					index = MimeIconEngine.GetIconIndexForMimeType ("network/network");
-					break;
-				case MasterMount.FsTypes.cifs:
-					index = MimeIconEngine.GetIconIndexForMimeType ("network/network");
-					break;
-				default:
-					break;
-				}
-				
-				listViewItem.ImageIndex = index;
-				
-				listViewItem.SubItems.Add ("");
-				listViewItem.SubItems.Add ("Network");
-//				listViewItem.SubItems.Add (directoryInfoi.LastAccessTime.ToShortDateString () + " " + directoryInfoi.LastAccessTime.ToShortTimeString ());
-				
-				fileStruct.attributes = FileAttributes.Directory;
-				
-				fileHashtable.Add (item_name, fileStruct);
-				
-				Items.Add (listViewItem);
-			}
-		}
-		
-		private void DoOneFileInfo (FileInfo fileInfo) 
-		{
-			if (!ShowHiddenFiles)
-				if (fileInfo.Name.StartsWith (".")  || fileInfo.Attributes == FileAttributes.Hidden)
-					return;
-			
-			FileStruct fileStruct = new FileStruct ();
-			fileStruct.type = FileStruct.FileStructType.File;
-			
-			fileStruct.fullname = fileInfo.FullName;
-			
-			string fileName = fileInfo.Name;
-			
-			if (fileHashtable.ContainsKey (fileName)) {
-				int i = 1;
-				while (fileHashtable.ContainsKey (fileName + "[" + i + "]")) {
-					i++;
-				}
-				fileName += "[" + i + "]";
-			}
-			
-			ListViewItem listViewItem = new ListViewItem (fileName);
-			
-			listViewItem.ImageIndex = MimeIconEngine.GetIconIndexForFile (fileStruct.fullname);
-			
-			long fileLen = 1;
-			try {
-				if (fileInfo.Length > 1024)
-					fileLen = fileInfo.Length / 1024;
-			} catch (Exception) {
-				fileLen = 1;
-			}
-			
-			fileStruct.size = fileLen;
-			
-			listViewItem.SubItems.Add (fileLen.ToString () + " KB");
-			listViewItem.SubItems.Add ("File");
-			listViewItem.SubItems.Add (fileInfo.LastAccessTime.ToShortDateString () + " " + fileInfo.LastAccessTime.ToShortTimeString ());
-			
-			fileStruct.attributes = FileAttributes.Normal;
-			
-			fileHashtable.Add (fileName, fileStruct);
-			
-			Items.Add (listViewItem);
-		}
-		
-		private ArrayList GetFreedesktopSpecRecentlyUsed () 
-		{
-			// check for GNOME and KDE
-			string personal_folder = ThemeEngine.Current.Places (UIIcon.PlacesPersonal);
-			string recently_used_path = Path.Combine (personal_folder, ".recently-used");
-			
-			ArrayList files_al = new ArrayList ();
-			
-			// GNOME
-			if (File.Exists (recently_used_path)) {
-				try {
-					XmlTextReader xtr = new XmlTextReader (recently_used_path);
-					while (xtr.Read ()) {
-						if (xtr.NodeType == XmlNodeType.Element && xtr.Name.ToUpper () == "URI") {
-							xtr.Read ();
-							Uri uri = new Uri (xtr.Value);
-							if (!files_al.Contains (uri.LocalPath))
-								files_al.Add (uri.LocalPath);
-						}
-					}
-					xtr.Close ();
-				} catch (Exception) {
-					
-				}
-			}
-			
-			// KDE
-			string full_kde_recent_document_dir = personal_folder
-				+ "/"
-				+ ".kde/share/apps/RecentDocuments";
-			
-			if (Directory.Exists (full_kde_recent_document_dir)) {
-				string[] files = Directory.GetFiles (full_kde_recent_document_dir, "*.desktop");
-				
-				foreach (string file_name in files) {
-					StreamReader sr = new StreamReader (file_name);
-					
-					string line = sr.ReadLine ();
-					
-					while (line != null) {
-						line = line.Trim ();
-						
-						if (line.StartsWith ("URL=")) {
-							line = line.Replace ("URL=", "");
-							line = line.Replace ("$HOME", personal_folder);
-							
-							Uri uri = new Uri (line);
-							if (!files_al.Contains (uri.LocalPath))
-								files_al.Add (uri.LocalPath);
-							break;
-						}
-						
-						line = sr.ReadLine ();
-					}
-					
-					sr.Close ();
-				}
-			}
-			
-			
-			return files_al;
-		}
-		
-		protected override void OnClick (EventArgs e)
-		{
-			if (!MultiSelect) {
-				if (SelectedItems.Count > 0) {
-					ListViewItem listViewItem = SelectedItems [0];
-					
-					FileStruct fileStruct = (FileStruct)fileHashtable [listViewItem.Text];
-					
-					if (fileStruct.type == FileStruct.FileStructType.File) {
-						fileName = listViewItem.Text;
-						fullFileName = fileStruct.fullname;
-						
-						if (on_selected_file_changed != null)
-							on_selected_file_changed (this, EventArgs.Empty);
-					}
-				}
-			}
-			
-			base.OnClick (e);
-		}
-		
-		protected override void OnDoubleClick (EventArgs e)
-		{
-			if (SelectedItems.Count > 0) {
-				ListViewItem listViewItem = SelectedItems [0];
-				
-				FileStruct fileStruct = (FileStruct)fileHashtable [listViewItem.Text];
-				
-				if (fileStruct.attributes == FileAttributes.Directory) {
-					fullFileName = fileStruct.fullname;
-					
-					if (on_directory_changed != null)
-						on_directory_changed (this, EventArgs.Empty);
-				} else {
-					fileName = listViewItem.Text;
-					fullFileName = fileStruct.fullname;
-					
-					if (on_selected_file_changed != null)
-						on_selected_file_changed (this, EventArgs.Empty);
-					
-					if (on_force_dialog_end != null)
-						on_force_dialog_end (this, EventArgs.Empty);
-					
-					return;
-				}
-			}
-			
-			base.OnDoubleClick (e);
-		}
-		
-		protected override void OnSelectedIndexChanged (EventArgs e)
-		{
-			if (SelectedItems.Count > 0) {
-				selectedFilesString = "";
-				
-				if (SelectedItems.Count == 1) {
-					FileStruct fileStruct = (FileStruct)fileHashtable [SelectedItems [0].Text];
-					
-					if (fileStruct.attributes != FileAttributes.Directory)
-						selectedFilesString = SelectedItems [0].Text;
-				} else {
-					foreach (ListViewItem lvi in SelectedItems) {
-						FileStruct fileStruct = (FileStruct)fileHashtable [lvi.Text];
-						
-						if (fileStruct.attributes != FileAttributes.Directory)
-							selectedFilesString += "\"" + lvi.Text + "\" ";
-					}
-				}
-				
-				if (on_selected_files_changed != null)
-					on_selected_files_changed (this, EventArgs.Empty);
-			}
-			
-			base.OnSelectedIndexChanged (e);
-		}
-		
-		protected override void OnMouseMove (MouseEventArgs e)
-		{
-			ListViewItem item = GetItemAt (e.X, e.Y);
-			
-			if (item != null) {
-				int currentItemIndex = item.Index;
-				
-				if (currentItemIndex != oldItemIndexForToolTip) {
-					oldItemIndexForToolTip = currentItemIndex;
-					
-					if (toolTip != null && toolTip.Active)
-						toolTip.Active = false;
-					
-					object fileStructObject = fileHashtable [item.Text];
-					
-					if (fileStructObject != null) {
-						
-						FileStruct fileStruct = (FileStruct)fileStructObject;
-						
-						string output = String.Empty;
-						
-						if (fileStruct.type == FileStruct.FileStructType.Directoy)
-							output = String.Format ("Directory: {0}\n", fileStruct.fullname);
-						else if (fileStruct.type == FileStruct.FileStructType.Device)
-							output = String.Format ("Device: {0}", fileStruct.fullname);
-						else if (fileStruct.type == FileStruct.FileStructType.Network)
-							output = String.Format ("Network: {0}", fileStruct.fullname);
-						else
-							output = String.Format ("File: {0}", fileStruct.fullname);
-						
-						toolTip.SetToolTip (this, output);	
-						
-						toolTip.Active = true;
-					}
-				}
-			}
-			
-			base.OnMouseMove (e);
-		}
-		
-		private void MWF_KeyUp (object sender, KeyEventArgs e)
-		{
-			if (SelectedItems.Count > 0 && e.KeyCode == Keys.Back)
-				if (on_one_directory_up != null) {
-					internal_key_up = true;
-					on_one_directory_up (this, EventArgs.Empty);
-				}
-		}
-		
-		public event EventHandler SelectedFileChanged {
-			add { on_selected_file_changed += value; }
-			remove { on_selected_file_changed -= value; }
-		}
-		
-		public event EventHandler SelectedFilesChanged {
-			add { on_selected_files_changed += value; }
-			remove { on_selected_files_changed -= value; }
-		}
-		
-		public event EventHandler DirectoryChanged {
-			add { on_directory_changed += value; }
-			remove { on_directory_changed -= value; }
-		}
-		
-		public event EventHandler ForceDialogEnd {
-			add { on_force_dialog_end += value; }
-			remove { on_force_dialog_end -= value; }
-		}
-		
-		public event EventHandler OnDirectoryUp {
-			add { on_one_directory_up += value; }
-			remove { on_one_directory_up -= value; }
-		}
-	}
-	
-	internal class FileFilter {
+	#region FileFilter
+	internal class FileFilter
+	{
 		private ArrayList filterArrayList = new ArrayList();
 		
 		private string filter;
@@ -2422,293 +1843,1865 @@ namespace System.Windows.Forms {
 			}
 		}
 	}
+	#endregion
 	
-	internal class DirComboBox : ComboBox {
-		internal class DirComboBoxItem {
-			private int imageIndex;
-			private string name;
-			private string path;
-			private int xPos;
-			
-			public DirComboBoxItem (int imageIndex, string name, string path, int xPos)
-			{
-				this.imageIndex = imageIndex;
-				this.name = name;
-				this.path = path;
-				this.xPos = xPos;
-			}
-			
-			public int ImageIndex {
-				set {
-					imageIndex = value;
-				}
-				
-				get {
-					return imageIndex;
-				}
-			}
-			
-			public string Name {
-				set {
-					name = value;
-				}
-				
-				get {
-					return name;
-				}
-			}
-			
-			public string Path {
-				set {
-					path = value;
-				}
-				
-				get {
-					return path;
-				}
-			}
-			
-			public int XPos {
-				set {
-					xPos = value;
-				}
-				
-				get {
-					return xPos;
-				}
-			}
-		}
+	#region MWFFileView		
+	// MWFFileView
+	internal class MWFFileView : ListView
+	{
+		private ArrayList filterArrayList;
 		
-		private ImageList imageList = new ImageList();
+		private bool showHiddenFiles = false;
 		
-		private string currentPath;
-		
+		private EventHandler on_selected_file_changed;
+		private EventHandler on_selected_files_changed;
 		private EventHandler on_directory_changed;
+		private EventHandler on_force_dialog_end;
 		
-		private bool currentpath_internal_change = false;
+		private string selectedFilesString;
 		
-		private int platform = (int) Environment.OSVersion.Platform;
-		private string recently_used_tmp;
-		private string my_computer_tmp;
-		private string my_network_tmp;
-		private string my_root_tmp;
-		private Stack dirStack = new Stack();
+		private int filterIndex = 1;
 		
-		public DirComboBox ()
+		private ToolTip toolTip;
+		private int oldItemIndexForToolTip = -1;
+		
+		private ContextMenu contextMenu;
+		
+		private MenuItem menuItemView;
+		private MenuItem menuItemNew;
+		
+		private MenuItem smallIconMenutItem;
+		private MenuItem tilesMenutItem;
+		private MenuItem largeIconMenutItem;
+		private MenuItem listMenutItem;
+		private MenuItem detailsMenutItem;
+		
+		private MenuItem newFolderMenuItem; 
+		private MenuItem showHiddenFilesMenuItem;
+		
+		private int previousCheckedMenuItemIndex;
+		
+		private ArrayList viewMenuItemClones = new ArrayList ();
+		
+		private FSEntry currentFSEntry = null;
+		
+		private string currentFolder;
+		private string currentRealFolder;
+		private string currentTopFolder;
+		private FSEntry currentFolderFSEntry;
+		
+		// store DirectoryInfo for a back button for example
+		private Stack directoryStack = new Stack();
+		
+		// list of controls(components to enable or disable depending on current directoryStack.Count
+		private ArrayList dirStackControlsOrComponents = new ArrayList ();
+		
+		private ToolBarButton folderUpToolBarButton;
+		
+		private ArrayList registered_senders = new ArrayList ();
+		
+		private bool should_push = true;
+		
+		private MWFVFS vfs;
+		
+		private View old_view;
+		
+		private int old_menuitem_index;
+		private bool do_update_view = false;
+		
+		public MWFFileView (MWFVFS vfs)
 		{
+			this.vfs = vfs;
+			
 			SuspendLayout ();
 			
-			DrawMode = DrawMode.OwnerDrawFixed;
+			contextMenu = new ContextMenu ();
 			
-			imageList.ColorDepth = ColorDepth.Depth32Bit;
-			imageList.ImageSize = new Size (16, 16);
-			imageList.Images.Add (ThemeEngine.Current.Images (UIIcon.PlacesRecentDocuments, 16));
-			imageList.Images.Add (ThemeEngine.Current.Images (UIIcon.PlacesDesktop, 16));
-			imageList.Images.Add (ThemeEngine.Current.Images (UIIcon.PlacesPersonal, 16));
-			imageList.Images.Add (ThemeEngine.Current.Images (UIIcon.PlacesMyComputer, 16));
-			imageList.Images.Add (ThemeEngine.Current.Images (UIIcon.PlacesMyNetwork, 16));
-			imageList.Images.Add (ThemeEngine.Current.Images (UIIcon.NormalFolder, 16));
-			imageList.TransparentColor = Color.Transparent;
+			toolTip = new ToolTip ();
+			toolTip.InitialDelay = 300;
+			toolTip.ReshowDelay = 0; 
 			
-			if ((platform == 4) || (platform == 128)) {
-				recently_used_tmp = FileDialog.recently_string;
-				my_computer_tmp = FileDialog.mycomputer_string;
-				my_network_tmp = FileDialog.network_string;
-				my_root_tmp = "/";
-			} else {
-				recently_used_tmp = ThemeEngine.Current.Places (UIIcon.PlacesRecentDocuments);
-				my_computer_tmp = "C:\\"; //ThemeEngine.Current.Places (UIIcon.PlacesMyComputer);
-				my_network_tmp = "C:\\"; //ThemeEngine.Current.Places (UIIcon.PlacesMyNetwork);
-			}
+			// contextMenu
 			
-			Items.AddRange (new object        [] {
-						new DirComboBoxItem (0, "Recently used", recently_used_tmp, 0),
-						new DirComboBoxItem (1, "Desktop", ThemeEngine.Current.Places (UIIcon.PlacesDesktop), 0),
-						new DirComboBoxItem (2, "Personal folder", ThemeEngine.Current.Places (UIIcon.PlacesPersonal), 0),
-						new DirComboBoxItem (3, "My Computer", my_computer_tmp, 0),
-						new DirComboBoxItem (4, "My Network", my_network_tmp, 0)
-					}
-					);
+			// View menu item
+			menuItemView = new MenuItem ("View");
 			
-			if ((platform == 4) || (platform == 128)) {
-				Items.Add(new DirComboBoxItem (5, "/", my_root_tmp, 0));
-			}
+			smallIconMenutItem = new MenuItem ("Small Icon", new EventHandler (OnClickViewMenuSubItem));
+			smallIconMenutItem.RadioCheck = true;
+			menuItemView.MenuItems.Add (smallIconMenutItem);
+			
+			tilesMenutItem = new MenuItem ("Tiles", new EventHandler (OnClickViewMenuSubItem));
+			tilesMenutItem.RadioCheck = true;
+			menuItemView.MenuItems.Add (tilesMenutItem);
+			
+			largeIconMenutItem = new MenuItem ("Large Icon", new EventHandler (OnClickViewMenuSubItem));
+			largeIconMenutItem.RadioCheck = true;
+			menuItemView.MenuItems.Add (largeIconMenutItem);
+			
+			listMenutItem = new MenuItem ("List", new EventHandler (OnClickViewMenuSubItem));
+			listMenutItem.RadioCheck = true;
+			listMenutItem.Checked = true;
+			menuItemView.MenuItems.Add (listMenutItem);
+			previousCheckedMenuItemIndex = listMenutItem.Index;
+			
+			detailsMenutItem = new MenuItem ("Details", new EventHandler (OnClickViewMenuSubItem));
+			detailsMenutItem.RadioCheck = true;
+			menuItemView.MenuItems.Add (detailsMenutItem);
+			
+			contextMenu.MenuItems.Add (menuItemView);
+			
+			contextMenu.MenuItems.Add (new MenuItem ("-"));
+			
+			// New menu item
+			menuItemNew = new MenuItem ("New");
+			
+			newFolderMenuItem = new MenuItem ("New Folder", new EventHandler (OnClickNewFolderMenuItem));
+			menuItemNew.MenuItems.Add (newFolderMenuItem);
+			
+			contextMenu.MenuItems.Add (menuItemNew);
+			
+			contextMenu.MenuItems.Add (new MenuItem ("-"));
+			
+			// Show hidden files menu item
+			showHiddenFilesMenuItem = new MenuItem ("Show hidden files", new EventHandler (OnClickContextMenu));
+			showHiddenFilesMenuItem.Checked = showHiddenFiles;
+			contextMenu.MenuItems.Add (showHiddenFilesMenuItem);
+			
+			LabelWrap = true;
+			
+			SmallImageList = MimeIconEngine.SmallIcons;
+			LargeImageList = MimeIconEngine.LargeIcons;
+			
+			View = old_view = View.List;
+			LabelEdit = true;
+			
+			ContextMenu = contextMenu;
 			
 			ResumeLayout (false);
+			
+//			currentFolder = Environment.CurrentDirectory;
+			
+			KeyDown += new KeyEventHandler (MWF_KeyDown);
 		}
 		
-		public string CurrentPath {
-			set {
-				currentPath = value;
-				
-				currentpath_internal_change = true;
-				
-				CreateComboList ();
-			}
+		public string CurrentFolder {
 			get {
-				return currentPath;
+				return currentFolder;
+			}
+			set {
+				currentFolder = value;
 			}
 		}
 		
-		private void CreateComboList ()
+		public string CurrentRealFolder {
+			get {
+				return currentRealFolder;
+			}
+		}
+		
+		public FSEntry CurrentFSEntry {
+			get {
+				return currentFSEntry;
+			}
+		}
+		
+		public MenuItem[] ViewMenuItems {
+			get {
+				MenuItem[] menuItemClones = new MenuItem [] {
+					smallIconMenutItem.CloneMenu (),
+					tilesMenutItem.CloneMenu (),
+					largeIconMenutItem.CloneMenu (),
+					listMenutItem.CloneMenu (),
+					detailsMenutItem.CloneMenu ()
+				};
+				
+				viewMenuItemClones.Add (menuItemClones);
+				
+				return menuItemClones;
+			}
+		}
+		
+		public ArrayList FilterArrayList {
+			set {
+				filterArrayList = value;
+			}
+			
+			get {
+				return filterArrayList;
+			}
+		}
+		
+		public bool ShowHiddenFiles {
+			set {
+				showHiddenFiles = value;
+			}
+			
+			get {
+				return showHiddenFiles;
+			}
+		}
+		
+		public int FilterIndex {
+			set {
+				filterIndex = value;
+				if (Visible)
+					UpdateFileView (currentFolder);
+			}
+			
+			get {
+				return filterIndex;
+			}
+		}
+		
+		public string SelectedFilesString {
+			set {
+				selectedFilesString = value;
+			}
+			
+			get {
+				return selectedFilesString;
+			}
+		}
+		
+		public void PushDir ()
 		{
-			int selection = -1;
-			int child_of = - 1;
+			if (currentFolder != null)
+				directoryStack.Push (currentFolder);
 			
-			if (currentPath == recently_used_tmp)
-				selection = 0;
-			else
-			if (currentPath == ThemeEngine.Current.Places (UIIcon.PlacesDesktop))
-				selection = 1;
-			else
-			if (currentPath == ThemeEngine.Current.Places (UIIcon.PlacesPersonal))
-				selection = 2;
-			else
-			if (currentPath == my_computer_tmp)
-				selection = 3;
-			else
-			if (currentPath == my_network_tmp)
-				selection = 4;
-			else
-			if (currentPath == my_root_tmp)
-				selection = 5;
+			EnableOrDisableDirstackObjects ();
+		}
+		
+		public void PopDir ()
+		{
+			if (directoryStack.Count == 0)
+				return;
 			
-			child_of = CheckChildOf ();
+			string new_folder = directoryStack.Pop () as string;
+			
+			EnableOrDisableDirstackObjects ();
+			
+			should_push = false;
+			
+			ChangeDirectory (null, new_folder);
+		}
+		
+		public void RegisterSender (IUpdateFolder iud)
+		{
+			registered_senders.Add (iud);
+		}
+		
+		public void CreateNewFolder ()
+		{
+			if (currentFolder == MWFVFS.RecentlyUsedPrefix)
+				return;
+			
+			FSEntry fsEntry = new FSEntry ();
+			fsEntry.Attributes = FileAttributes.Directory;
+			fsEntry.FileType = FSEntry.FSEntryType.Directoy;
+			fsEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("inode/directory");
+			fsEntry.LastAccessTime = DateTime.Now;
+			
+			// FIXME: when ListView.LabelEdit is available use it
+//			listViewItem.BeginEdit();
+			
+			TextEntryDialog ted = new TextEntryDialog ();
+			ted.IconPictureBoxImage = MimeIconEngine.LargeIcons.Images.GetImage (fsEntry.IconIndex);
+			ted.FileName = "New Folder";
+			
+			if (ted.ShowDialog () == DialogResult.OK) {
+				string folder = "";
+				if (currentFolderFSEntry.RealName != null)
+					folder = currentFolderFSEntry.RealName;
+				else
+					folder = currentFolder;
+				
+				string new_folder = Path.Combine (folder, ted.FileName);
+				
+				if (vfs.CreateFolder (new_folder)) {
+					fsEntry.FullName = new_folder;
+					fsEntry.Name = ted.FileName;
+					
+					FileViewListViewItem listViewItem = new FileViewListViewItem (fsEntry);
+					
+					BeginUpdate ();
+					Items.Add (listViewItem);
+					EndUpdate ();
+					
+					listViewItem.EnsureVisible ();
+				}
+			}
+		}
+		
+		public void SetSelectedIndexTo (string fname)
+		{
+			foreach (FileViewListViewItem item in Items) {
+				if (item.Text == fname) {
+					BeginUpdate ();
+					SelectedItems.Clear ();
+					item.Selected = true;
+					EndUpdate ();
+					break;
+				}
+			}
+		}
+		
+		public void OneDirUp ()
+		{
+			string parent_folder = vfs.GetParent ();
+			if (parent_folder != null)
+				ChangeDirectory (null, parent_folder);
+		}
+		
+		public void ChangeDirectory (object sender, string folder)
+		{
+			if (folder == MWFVFS.DesktopPrefix || folder == MWFVFS.RecentlyUsedPrefix)
+				folderUpToolBarButton.Enabled = false;
+			else
+				folderUpToolBarButton.Enabled = true;
+			
+			foreach (IUpdateFolder iuf in registered_senders) {
+				iuf.CurrentFolder = folder;
+			}
+			
+			if (should_push)
+				PushDir ();
+			else
+				should_push = true;
+			
+			currentFolderFSEntry = vfs.ChangeDirectory (folder);
+			
+			currentFolder = folder;
+			
+			if (currentFolder.IndexOf ("://") != -1)
+				currentRealFolder = currentFolderFSEntry.RealName;
+			else
+				currentRealFolder = currentFolder;
 			
 			BeginUpdate ();
 			
 			Items.Clear ();
+			SelectedItems.Clear ();
 			
-			Items.Add (new DirComboBoxItem (0, "Recently used", recently_used_tmp, 0));
+			if (folder == MWFVFS.RecentlyUsedPrefix) {
+				old_view = View;
+				View = View.Details;
+				old_menuitem_index = previousCheckedMenuItemIndex;
+				UpdateMenuItems (detailsMenutItem);
+				do_update_view = true;
+			} else
+			if (View != old_view && do_update_view) {
+				UpdateMenuItems (menuItemView.MenuItems [old_menuitem_index]);
+				View = old_view;
+				do_update_view = false;
+			}
+			EndUpdate ();
 			
-			Items.Add (new DirComboBoxItem (1, "Desktop", ThemeEngine.Current.Places (UIIcon.PlacesDesktop), 0));
-			if (child_of == 1)
-				selection = AppendToParent ();
+			UpdateFileView (folder);
+		}
+		
+		public void UpdateFileView (string folder)
+		{
+			ArrayList directoriesArrayList;
+			ArrayList fileArrayList;
 			
-			Items.Add (new DirComboBoxItem (2, "Personal folder", ThemeEngine.Current.Places (UIIcon.PlacesPersonal), 0));
-			if (child_of == 2)
-				selection = AppendToParent ();
+			if (filterArrayList != null && filterArrayList.Count != 0) {
+				FilterStruct fs = (FilterStruct)filterArrayList [filterIndex - 1];
+				
+				vfs.GetFolderContent (fs.filters, out directoriesArrayList, out fileArrayList);
+			} else
+				vfs.GetFolderContent (out directoriesArrayList, out fileArrayList);
 			
-			Items.Add (new DirComboBoxItem (3, "My Computer", my_computer_tmp, 0));
+			BeginUpdate ();
 			
-			Items.Add (new DirComboBoxItem (4, "My Network", my_network_tmp, 0));
+			Items.Clear ();
+			SelectedItems.Clear ();
 			
-			if ((platform == 4) || (platform == 128)) {
-				Items.Add (new DirComboBoxItem (5, "/", my_root_tmp, 0));
-				if (child_of == 15)
-					selection = AppendToParent ();
+			foreach (FSEntry directoryFSEntry in directoriesArrayList) {
+				if (!ShowHiddenFiles)
+					if (directoryFSEntry.Name.StartsWith (".") || directoryFSEntry.Attributes == FileAttributes.Hidden)
+						continue;
+				
+				FileViewListViewItem listViewItem = new FileViewListViewItem (directoryFSEntry);
+				
+				Items.Add (listViewItem);
 			}
 			
-			if (selection != -1)
-				SelectedIndex = selection;
+			StringCollection collection = new StringCollection ();
+			
+			foreach (FSEntry fsEntry in fileArrayList) {
+				
+				// remove duplicates. that can happen when you read recently used files for example
+				if (collection.Contains (fsEntry.Name)) {
+					
+					string fileName = fsEntry.Name;
+					
+					if (collection.Contains (fileName)) {
+						int i = 1;
+						
+						while (collection.Contains (fileName + "[" + i + "]")) {
+							i++;
+						}
+						
+						fileName = fileName + "[" + i + "]";
+					}
+					
+					fsEntry.Name = fileName;
+				}
+				
+				collection.Add (fsEntry.Name);
+				
+				DoOneFSEntry (fsEntry);
+			}
 			
 			EndUpdate ();
 		}
 		
-		private int CheckChildOf ()
+		public void AddControlToEnableDisableByDirStack (object control)
 		{
-			dirStack.Clear ();
+			dirStackControlsOrComponents.Add (control);
+		}
+		
+		public void SetFolderUpToolBarButton (ToolBarButton tb)
+		{
+			folderUpToolBarButton = tb;
+		}
+		
+		public void WriteRecentlyUsed (string fullfilename)
+		{
+			vfs.WriteRecentlyUsedFiles (fullfilename);
+		}
+		
+		private void EnableOrDisableDirstackObjects ()
+		{
+			foreach (object o in dirStackControlsOrComponents) {
+				if (o is Control) {
+					Control c = o as Control;
+					c.Enabled = (directoryStack.Count > 1);
+				} else
+				if (o is ToolBarButton) {
+					ToolBarButton t = o as ToolBarButton;
+					t.Enabled = (directoryStack.Count > 1);
+				}
+			}
+		}
+		
+		private void DoOneFSEntry (FSEntry fsEntry) 
+		{
+			if (!ShowHiddenFiles)
+				if (fsEntry.Name.StartsWith (".")  || fsEntry.Attributes == FileAttributes.Hidden)
+					return;
 			
-			if (currentPath == FileDialog.mycomputer_string ||
-			    currentPath == FileDialog.network_string ||
-			    currentPath == FileDialog.recently_string)
-				return -1;
+			FileViewListViewItem listViewItem = new FileViewListViewItem (fsEntry);
 			
-			DirectoryInfo di = new DirectoryInfo (currentPath);
+			Items.Add (listViewItem);
+		}
+		
+		private void MWF_KeyDown (object sender, KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.Back) {
+				OneDirUp ();
+			}
+		}
+		
+		protected override void OnClick (EventArgs e)
+		{
+			if (!MultiSelect) {
+				if (SelectedItems.Count > 0) {
+					FileViewListViewItem listViewItem = SelectedItems [0] as FileViewListViewItem;
+					
+					FSEntry fsEntry = listViewItem.FSEntry;
+					
+					if (fsEntry.FileType == FSEntry.FSEntryType.File) {
+						currentFSEntry = fsEntry;
+						
+						if (on_selected_file_changed != null)
+							on_selected_file_changed (this, EventArgs.Empty);
+					}
+				}
+			}
 			
-			dirStack.Push (di);
-			
-			while (di.Parent != null) {
-				di = di.Parent;
-				if (di.FullName == ThemeEngine.Current.Places (UIIcon.PlacesDesktop))
-					return 1;
-				else
-				if (di.FullName == ThemeEngine.Current.Places (UIIcon.PlacesPersonal) || di.FullName == "/home")
-					return 2;
-				else
-				if (di.FullName == "/")
-					return 15;
+			base.OnClick (e);
+		}
+		
+		protected override void OnDoubleClick (EventArgs e)
+		{
+			if (SelectedItems.Count > 0) {
+				FileViewListViewItem listViewItem = SelectedItems [0] as FileViewListViewItem;
 				
-				dirStack.Push (di);
+				FSEntry fsEntry = listViewItem.FSEntry;
+				
+				if (fsEntry.Attributes == FileAttributes.Directory) {
+					
+					ChangeDirectory (null, fsEntry.FullName);
+					
+					if (on_directory_changed != null)
+						on_directory_changed (this, EventArgs.Empty);
+				} else {
+					currentFSEntry = fsEntry;
+					
+					if (on_selected_file_changed != null)
+						on_selected_file_changed (this, EventArgs.Empty);
+					
+					if (on_force_dialog_end != null)
+						on_force_dialog_end (this, EventArgs.Empty);
+					
+					return;
+				}
 			}
 			
-			return -1;
-		}
-		
-		private int AppendToParent ()
-		{
-			int xPos = 0;
-			int selection = -1;
-			
-			while (dirStack.Count != 0) {
-				DirectoryInfo dii = dirStack.Pop () as DirectoryInfo;
-				selection = Items.Add (new DirComboBoxItem (5, dii.Name, dii.FullName, xPos + 4));
-				xPos += 4;
-			}
-			
-			return selection;
-		}
-		
-		protected override void OnDrawItem (DrawItemEventArgs e)
-		{
-			if (e.Index == -1)
-				return;
-			
-			Bitmap bmp = new Bitmap (e.Bounds.Width, e.Bounds.Height, e.Graphics);
-			Graphics gr = Graphics.FromImage (bmp);
-			
-			DirComboBoxItem dcbi = Items [e.Index] as DirComboBoxItem;
-			
-			Color backColor = e.BackColor;
-			Color foreColor = e.ForeColor;
-			
-			int xPos = dcbi.XPos;
-			
-			if ((e.State & DrawItemState.ComboBoxEdit) != 0)
-				xPos = 0;
-			else
-			if ((e.State & DrawItemState.Selected) == DrawItemState.Selected) {
-				backColor = ThemeEngine.Current.ColorHighlight;
-				foreColor = ThemeEngine.Current.ColorHighlightText;
-			}
-			
-			gr.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (backColor), new Rectangle (0, 0, bmp.Width, bmp.Height));
-			
-			gr.DrawString (dcbi.Name, e.Font , ThemeEngine.Current.ResPool.GetSolidBrush (foreColor), new Point (24 + xPos, (bmp.Height - e.Font.Height) / 2));
-			gr.DrawImage (imageList.Images [dcbi.ImageIndex], new Rectangle (new Point (xPos + 2, 0), new Size (16, 16)));
-			
-			e.Graphics.DrawImage (bmp, e.Bounds.X, e.Bounds.Y);
-			gr.Dispose ();
-			bmp.Dispose ();
+			base.OnDoubleClick (e);
 		}
 		
 		protected override void OnSelectedIndexChanged (EventArgs e)
 		{
-			if (Items.Count > 0) {
-				DirComboBoxItem dcbi = Items [SelectedIndex] as DirComboBoxItem;
+			if (SelectedItems.Count > 0) {
+				selectedFilesString = "";
 				
-				currentPath = dcbi.Path;
+				if (SelectedItems.Count == 1) {
+					FileViewListViewItem listViewItem = SelectedItems [0] as FileViewListViewItem;
+					
+					FSEntry fsEntry = listViewItem.FSEntry;
+					
+					if (fsEntry.Attributes != FileAttributes.Directory)
+						selectedFilesString = SelectedItems [0].Text;
+				} else {
+					foreach (FileViewListViewItem lvi in SelectedItems) {
+						FSEntry fsEntry = lvi.FSEntry;
+						
+						if (fsEntry.Attributes != FileAttributes.Directory)
+							selectedFilesString = selectedFilesString + "\"" + lvi.Text + " ";
+					}
+				}
 				
-				// call DirectoryChange event only if the user changes the index with the ComboBox
-				if (!currentpath_internal_change) {
-					if (on_directory_changed != null)
-						on_directory_changed (this, EventArgs.Empty);
+				if (on_selected_files_changed != null)
+					on_selected_files_changed (this, EventArgs.Empty);
+			}
+			
+			base.OnSelectedIndexChanged (e);
+		}
+		
+		protected override void OnMouseMove (MouseEventArgs e)
+		{
+			FileViewListViewItem item = GetItemAt (e.X, e.Y) as FileViewListViewItem;
+			
+			if (item != null) {
+				int currentItemIndex = item.Index;
+				
+				if (currentItemIndex != oldItemIndexForToolTip) {
+					oldItemIndexForToolTip = currentItemIndex;
+					
+					if (toolTip != null && toolTip.Active)
+						toolTip.Active = false;
+					
+					FSEntry fsEntry = item.FSEntry;
+					
+					string output = String.Empty;
+					
+					if (fsEntry.FileType == FSEntry.FSEntryType.Directoy)
+						output = "Directory: " + fsEntry.FullName;
+					else if (fsEntry.FileType == FSEntry.FSEntryType.Device)
+						output = "Device: "+ fsEntry.FullName;
+					else if (fsEntry.FileType == FSEntry.FSEntryType.Network)
+						output = "Network: " + fsEntry.FullName;
+					else
+						output = "File: " + fsEntry.FullName;
+					
+					toolTip.SetToolTip (this, output);	
+					
+					toolTip.Active = true;
 				}
 			}
 			
-			currentpath_internal_change = false;
+			base.OnMouseMove (e);
+		}
+		
+		void OnClickContextMenu (object sender, EventArgs e)
+		{
+			MenuItem senderMenuItem = sender as MenuItem;
+			
+			if (senderMenuItem == showHiddenFilesMenuItem) {
+				senderMenuItem.Checked = !senderMenuItem.Checked;
+				showHiddenFiles = senderMenuItem.Checked;
+				UpdateFileView (currentFolder);
+			}
+		}
+		
+		void OnClickViewMenuSubItem (object sender, EventArgs e)
+		{
+			MenuItem senderMenuItem = (MenuItem)sender;
+			
+			UpdateMenuItems (senderMenuItem);
+			
+			// update me
+			
+			switch (senderMenuItem.Index) {
+				case 0:
+					View = View.SmallIcon;
+					break;
+				case 1:
+					View = View.LargeIcon;
+					break;
+				case 2:
+					View = View.LargeIcon;
+					break;
+				case 3:
+					View = View.List;
+					break;
+				case 4:
+					View = View.Details;
+					break;
+				default:
+					break;
+			}
+		}
+		
+		private void UpdateMenuItems (MenuItem senderMenuItem)
+		{
+			menuItemView.MenuItems [previousCheckedMenuItemIndex].Checked = false;
+			menuItemView.MenuItems [senderMenuItem.Index].Checked = true;
+			
+			foreach (MenuItem[] items in viewMenuItemClones) {
+				items [previousCheckedMenuItemIndex].Checked = false;
+				items [senderMenuItem.Index].Checked = true;
+			}
+			
+			previousCheckedMenuItemIndex = senderMenuItem.Index;
+		}
+		
+		void OnClickNewFolderMenuItem (object sender, EventArgs e)
+		{
+			CreateNewFolder ();
+		}
+		
+		public event EventHandler SelectedFileChanged {
+			add { on_selected_file_changed += value; }
+			remove { on_selected_file_changed -= value; }
+		}
+		
+		public event EventHandler SelectedFilesChanged {
+			add { on_selected_files_changed += value; }
+			remove { on_selected_files_changed -= value; }
 		}
 		
 		public event EventHandler DirectoryChanged {
 			add { on_directory_changed += value; }
 			remove { on_directory_changed -= value; }
 		}
+		
+		public event EventHandler ForceDialogEnd {
+			add { on_force_dialog_end += value; }
+			remove { on_force_dialog_end -= value; }
+		}
 	}
+	#endregion
 	
-	// Alexsantas little helper
-	internal class MasterMount {
+	#region FileListViewItem
+	internal class FileViewListViewItem : ListViewItem
+	{
+		private FSEntry fsEntry;
+		
+		public FileViewListViewItem (FSEntry fsEntry)
+		{
+			this.fsEntry = fsEntry;
+			
+			ImageIndex = fsEntry.IconIndex;
+			
+			Text = fsEntry.Name;
+			
+			switch (fsEntry.FileType) {
+				case FSEntry.FSEntryType.Directoy:
+					SubItems.Add ("");
+					SubItems.Add ("Directory");
+					SubItems.Add (fsEntry.LastAccessTime.ToShortDateString () + " " + fsEntry.LastAccessTime.ToShortTimeString ());	
+					break;
+				case FSEntry.FSEntryType.File:
+					long fileLen = 1;
+					try {
+						if (fsEntry.FileSize > 1024)
+							fileLen = fsEntry.FileSize / 1024;
+					} catch (Exception) {
+						fileLen = 1;
+					}
+					
+					SubItems.Add (fileLen.ToString () + " KB");
+					SubItems.Add ("File");
+					SubItems.Add (fsEntry.LastAccessTime.ToShortDateString () + " " + fsEntry.LastAccessTime.ToShortTimeString ());	
+					break;
+				case FSEntry.FSEntryType.Device:
+					SubItems.Add ("");
+					SubItems.Add ("Device");
+					SubItems.Add (fsEntry.LastAccessTime.ToShortDateString () + " " + fsEntry.LastAccessTime.ToShortTimeString ());	
+					break;
+				case FSEntry.FSEntryType.RemovableDevice:
+					SubItems.Add ("");
+					SubItems.Add ("RemovableDevice");
+					SubItems.Add (fsEntry.LastAccessTime.ToShortDateString () + " " + fsEntry.LastAccessTime.ToShortTimeString ());	
+					break;
+				default:
+					break;
+			}
+		}
+		
+		public FSEntry FSEntry {
+			set {
+				fsEntry = value;
+			}
+			
+			get {
+				return fsEntry;
+			}
+		}
+	}
+	#endregion
+	
+	#region IUpdateFolder
+	internal interface IUpdateFolder
+	{
+		string CurrentFolder {get; set;}
+	}
+	#endregion
+	
+	#region TextEntryDialog
+	// FIXME: When ListView.LabelEdit is implemented remove me
+	internal class TextEntryDialog : Form
+	{
+		private Label label1;
+		private Button okButton;
+		private TextBox newNameTextBox;
+		private PictureBox iconPictureBox;
+		private Button cancelButton;
+		private GroupBox groupBox1;
+		
+		public TextEntryDialog ()
+		{
+			groupBox1 = new GroupBox ();
+			cancelButton = new Button ();
+			iconPictureBox = new PictureBox ();
+			newNameTextBox = new TextBox ();
+			okButton = new Button ();
+			label1 = new Label ();
+			groupBox1.SuspendLayout ();
+			SuspendLayout ();
+			
+			// groupBox1
+			groupBox1.Controls.Add (newNameTextBox);
+			groupBox1.Controls.Add (label1);
+			groupBox1.Controls.Add (iconPictureBox);
+			groupBox1.Location = new Point (8, 8);
+			groupBox1.Size = new Size (232, 160);
+			groupBox1.TabIndex = 5;
+			groupBox1.TabStop = false;
+			groupBox1.Text = "New Name";
+			
+			// cancelButton
+			cancelButton.DialogResult = DialogResult.Cancel;
+			cancelButton.Location = new Point (168, 176);
+			cancelButton.TabIndex = 4;
+			cancelButton.Text = "Cancel";
+			
+			// iconPictureBox
+			iconPictureBox.BorderStyle = BorderStyle.Fixed3D;
+			iconPictureBox.Location = new Point (86, 24);
+			iconPictureBox.Size = new Size (60, 60);
+			iconPictureBox.TabIndex = 3;
+			iconPictureBox.TabStop = false;
+			iconPictureBox.SizeMode = PictureBoxSizeMode.CenterImage;
+			
+			// newNameTextBox
+			newNameTextBox.Location = new Point (16, 128);
+			newNameTextBox.Size = new Size (200, 20);
+			newNameTextBox.TabIndex = 5;
+			newNameTextBox.Text = "";
+			
+			// okButton
+			okButton.DialogResult = DialogResult.OK;
+			okButton.Location = new Point (80, 176);
+			okButton.TabIndex = 3;
+			okButton.Text = "OK";
+			
+			// label1
+			label1.Location = new Point (16, 96);
+			label1.Size = new Size (200, 23);
+			label1.TabIndex = 4;
+			label1.Text = "Enter Name:";
+			label1.TextAlign = ContentAlignment.MiddleCenter;
+			
+			// MainForm
+			AcceptButton = okButton;
+			AutoScaleBaseSize = new Size (5, 13);
+			CancelButton = cancelButton;
+			ClientSize = new Size (248, 205);
+			Controls.Add (groupBox1);
+			Controls.Add (cancelButton);
+			Controls.Add (okButton);
+			FormBorderStyle = FormBorderStyle.FixedDialog;
+			Text = "New Folder or File";
+			groupBox1.ResumeLayout (false);
+			ResumeLayout (false);
+		}
+		
+		public Image IconPictureBoxImage {
+			set {
+				iconPictureBox.Image = value;
+			}
+		}
+		
+		public string FileName {
+			get {
+				return newNameTextBox.Text;
+			}
+			set {
+				newNameTextBox.Text = value;
+			}
+		}
+	}
+	#endregion
+	
+	#region MWFVFS	
+	internal class MWFVFS
+	{
+		private FileSystem fileSystem;
+		
+		private int platform = (int) Environment.OSVersion.Platform;
+		
+		public static readonly string DesktopPrefix = "Desktop://";
+		public static readonly string PersonalPrefix = "Personal://";
+		public static readonly string MyComputerPrefix = "MyComputer://";
+		public static readonly string RecentlyUsedPrefix = "RecentlyUsed://";
+		public static readonly string MyNetworkPrefix = "MyNetwork://";
+		public static readonly string MyComputerPersonalPrefix = "MyComputerPersonal://";
+		
+		public static Hashtable MyComputerDevicesPrefix = new Hashtable ();
+		
+		public MWFVFS ()
+		{
+			if ((platform == 4) || (platform == 128)) {
+				fileSystem = new UnixFileSystem ();
+			} else {
+				fileSystem = new WinFileSystem ();
+			}
+		}
+		
+		public FSEntry ChangeDirectory (string folder)
+		{
+			return fileSystem.ChangeDirectory (folder);
+		}
+		
+		public void GetFolderContent (out ArrayList folders_out, out ArrayList files_out)
+		{
+			fileSystem.GetFolderContent (null, out folders_out, out files_out);
+		}
+		
+		public void GetFolderContent (StringCollection filters, out ArrayList folders_out, out ArrayList files_out)
+		{
+			fileSystem.GetFolderContent (filters, out folders_out, out files_out);
+		}
+		
+		public void WriteRecentlyUsedFiles (string filename)
+		{
+			fileSystem.WriteRecentlyUsedFiles (filename);
+		}
+		
+		public ArrayList GetRecentlyUsedFiles ()
+		{
+			return fileSystem.GetRecentlyUsedFiles ();
+		}
+		
+		public ArrayList GetMyComputerContent ()
+		{
+			return fileSystem.GetMyComputerContent ();
+		}
+		
+		public ArrayList GetMyNetworkContent ()
+		{
+			return fileSystem.GetMyNetworkContent ();
+		}
+		
+		public bool CreateFolder (string new_folder)
+		{
+			try {
+				Directory.CreateDirectory (new_folder);
+			} catch (Exception) {
+				return false;
+			}
+			
+			return true;
+		}
+		
+		public string GetParent ()
+		{
+			return fileSystem.GetParent ();
+		}
+	}
+	#endregion
+	
+	#region FileSystem
+	internal abstract class FileSystem
+	{
+		protected string currentTopFolder = "";
+		protected FSEntry currentFolderFSEntry = null;
+		protected FSEntry currentTopFolderFSEntry = null;
+		
+		public FSEntry ChangeDirectory (string folder)
+		{
+			if (folder == MWFVFS.DesktopPrefix) {
+				currentTopFolder = MWFVFS.DesktopPrefix;
+				currentTopFolderFSEntry = currentFolderFSEntry = GetDesktopFSEntry ();
+			} else
+			if (folder == MWFVFS.PersonalPrefix) {
+				currentTopFolder = MWFVFS.PersonalPrefix;
+				currentTopFolderFSEntry = currentFolderFSEntry = GetPersonalFSEntry ();
+			} else
+			if (folder == MWFVFS.MyComputerPersonalPrefix) {
+				currentTopFolder = MWFVFS.MyComputerPersonalPrefix;
+				currentTopFolderFSEntry = currentFolderFSEntry = GetMyComputerPersonalFSEntry ();
+			} else
+			if (folder == MWFVFS.RecentlyUsedPrefix) {
+				currentTopFolder = MWFVFS.RecentlyUsedPrefix;
+				currentTopFolderFSEntry = currentFolderFSEntry = GetRecentlyUsedFSEntry ();
+			} else
+			if (folder == MWFVFS.MyComputerPrefix) {
+				currentTopFolder = MWFVFS.MyComputerPrefix;
+				currentTopFolderFSEntry = currentFolderFSEntry = GetMyComputerFSEntry ();
+			} else
+			if (folder == MWFVFS.MyNetworkPrefix) {
+				currentTopFolder = MWFVFS.MyNetworkPrefix;
+				currentTopFolderFSEntry = currentFolderFSEntry = GetMyNetworkFSEntry ();
+			} else {
+				bool found = false;
+				
+				foreach (DictionaryEntry entry in MWFVFS.MyComputerDevicesPrefix) {
+					FSEntry fsEntry = entry.Value as FSEntry;
+					if (folder == fsEntry.FullName) {
+						currentTopFolder = entry.Key as string;
+						currentTopFolderFSEntry = currentFolderFSEntry = fsEntry;
+						found = true;
+						break;
+					}
+				}
+				
+				if (!found) {
+					currentFolderFSEntry = GetDirectoryFSEntry (new DirectoryInfo (folder), currentTopFolderFSEntry);
+				}
+			}
+			
+			return currentFolderFSEntry;
+		}
+		
+		public string GetParent ()
+		{
+			return currentFolderFSEntry.Parent;
+		}
+		
+		// directories_out and files_out contain FSEntry objects
+		public void GetFolderContent (StringCollection filters, out ArrayList directories_out, out ArrayList files_out)
+		{
+			directories_out = new ArrayList ();
+			files_out = new ArrayList ();
+			
+			if (currentFolderFSEntry.FullName == MWFVFS.DesktopPrefix) {
+				FSEntry personalFSEntry = GetPersonalFSEntry ();
+				
+				directories_out.Add (personalFSEntry);
+				
+				FSEntry myComputerFSEntry = GetMyComputerFSEntry ();
+				
+				directories_out.Add (myComputerFSEntry);
+				
+				FSEntry myNetworkFSEntry = GetMyNetworkFSEntry ();
+				
+				directories_out.Add (myNetworkFSEntry);
+				
+				ArrayList d_out = new ArrayList ();
+				ArrayList f_out = new ArrayList ();
+				GetNormalFolderContent (ThemeEngine.Current.Places (UIIcon.PlacesDesktop), filters, out d_out, out f_out);
+				directories_out.AddRange (d_out);
+				files_out.AddRange (f_out);
+				
+			} else
+			if (currentFolderFSEntry.FullName == MWFVFS.RecentlyUsedPrefix) {
+				files_out = GetRecentlyUsedFiles ();
+			} else
+			if (currentFolderFSEntry.FullName == MWFVFS.MyComputerPrefix) {
+				directories_out.AddRange (GetMyComputerContent ());
+			} else
+			if (currentFolderFSEntry.FullName == MWFVFS.PersonalPrefix || currentFolderFSEntry.FullName == MWFVFS.MyComputerPersonalPrefix) {
+				ArrayList d_out = new ArrayList ();
+				ArrayList f_out = new ArrayList ();
+				GetNormalFolderContent (ThemeEngine.Current.Places (UIIcon.PlacesPersonal), filters, out d_out, out f_out);
+				directories_out.AddRange (d_out);
+				files_out.AddRange (f_out);
+			} else
+			if (currentFolderFSEntry.FullName == MWFVFS.MyNetworkPrefix) {
+				directories_out.AddRange (GetMyNetworkContent ());
+			} else {
+				GetNormalFolderContent (currentFolderFSEntry.FullName, filters, out directories_out, out files_out);
+			}
+		}
+		
+		protected void GetNormalFolderContent (string from_folder, StringCollection filters, out ArrayList directories_out, out ArrayList files_out)
+		{
+			DirectoryInfo dirinfo = new DirectoryInfo (from_folder);
+			
+			directories_out = new ArrayList ();
+			
+			DirectoryInfo[] dirs = dirinfo.GetDirectories ();
+			
+			for (int i = 0; i < dirs.Length; i++) {
+				directories_out.Add (GetDirectoryFSEntry (dirs [i], currentTopFolderFSEntry));
+			}
+			
+			files_out = new ArrayList ();
+			
+			ArrayList files = new ArrayList ();
+			
+			if (filters == null) {
+				files.AddRange (dirinfo.GetFiles ());
+			} else {
+				foreach (string s in filters)
+					files.AddRange (dirinfo.GetFiles (s));
+			}
+			
+			for (int i = 0; i < files.Count; i++) {
+				files_out.Add (GetFileFSEntry (files [i] as FileInfo));
+			}
+		}
+		
+		protected virtual FSEntry GetDirectoryFSEntry (DirectoryInfo dirinfo, FSEntry topFolderFSEntry)
+		{
+			FSEntry fs = new FSEntry ();
+			
+			fs.Attributes = dirinfo.Attributes;
+			fs.FullName = dirinfo.FullName;
+			fs.Name = dirinfo.Name;
+			fs.MainTopNode = topFolderFSEntry;
+			fs.FileType = FSEntry.FSEntryType.Directoy;
+			fs.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("inode/directory");
+			fs.LastAccessTime = dirinfo.LastAccessTime;
+			
+			return fs;
+		}
+		
+		protected virtual FSEntry GetFileFSEntry (FileInfo fileinfo)
+		{
+			FSEntry fs = new FSEntry ();
+			
+			fs.Attributes = fileinfo.Attributes;
+			fs.FullName = fileinfo.FullName;
+			fs.Name = fileinfo.Name;
+			fs.FileType = FSEntry.FSEntryType.File;
+			fs.IconIndex = MimeIconEngine.GetIconIndexForFile (fileinfo.FullName);
+			fs.LastAccessTime = fileinfo.LastAccessTime;
+			// the following catches broken symbolic links
+			if ((int)fs.Attributes != 0)
+				fs.FileSize = fileinfo.Length;
+			
+			return fs;
+		}
+		
+		
+		protected abstract FSEntry GetDesktopFSEntry ();
+		
+		protected abstract FSEntry GetRecentlyUsedFSEntry ();
+		
+		protected abstract FSEntry GetPersonalFSEntry ();
+		
+		protected abstract FSEntry GetMyComputerPersonalFSEntry ();
+		
+		protected abstract FSEntry GetMyComputerFSEntry ();
+		
+		protected abstract FSEntry GetMyNetworkFSEntry ();
+		
+		public abstract void WriteRecentlyUsedFiles (string fileToAdd);
+		
+		public abstract ArrayList GetRecentlyUsedFiles ();
+		
+		public abstract ArrayList GetMyComputerContent ();
+		
+		public abstract ArrayList GetMyNetworkContent ();
+	}
+	#endregion
+	
+	#region UnixFileSystem
+	internal class UnixFileSystem : FileSystem
+	{
+		private MasterMount masterMount = new MasterMount ();
+		private FSEntry desktopFSEntry = null;
+		private FSEntry recentlyusedFSEntry = null;
+		private FSEntry personalFSEntry = null;
+		private FSEntry mycomputerpersonalFSEntry = null;
+		private FSEntry mycomputerFSEntry = null;
+		private FSEntry mynetworkFSEntry = null;
+		
+		public UnixFileSystem ()
+		{
+			desktopFSEntry = new FSEntry ();
+			
+			desktopFSEntry.Attributes = FileAttributes.Directory;
+			desktopFSEntry.FullName = MWFVFS.DesktopPrefix;
+			desktopFSEntry.Name = "Desktop";
+			desktopFSEntry.RealName = ThemeEngine.Current.Places (UIIcon.PlacesDesktop);
+			desktopFSEntry.FileType = FSEntry.FSEntryType.Directoy;
+			desktopFSEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("deskop/desktop");
+			desktopFSEntry.LastAccessTime = DateTime.Now;
+			
+			recentlyusedFSEntry = new FSEntry ();
+			
+			recentlyusedFSEntry.Attributes = FileAttributes.Directory;
+			recentlyusedFSEntry.FullName = MWFVFS.RecentlyUsedPrefix;
+			recentlyusedFSEntry.Name = "Recently Used";
+			recentlyusedFSEntry.FileType = FSEntry.FSEntryType.Directoy;
+			recentlyusedFSEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("recently/recently");
+			recentlyusedFSEntry.LastAccessTime = DateTime.Now;
+			
+			personalFSEntry = new FSEntry ();
+			
+			personalFSEntry.Attributes = FileAttributes.Directory;
+			personalFSEntry.FullName = MWFVFS.PersonalPrefix;
+			personalFSEntry.Name = "Personal";
+			personalFSEntry.MainTopNode = GetDesktopFSEntry ();
+			personalFSEntry.RealName = ThemeEngine.Current.Places (UIIcon.PlacesPersonal);
+			personalFSEntry.FileType = FSEntry.FSEntryType.Directoy;
+			personalFSEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("directory/home");
+			personalFSEntry.LastAccessTime = DateTime.Now;
+			
+			mycomputerpersonalFSEntry = new FSEntry ();
+			
+			mycomputerpersonalFSEntry.Attributes = FileAttributes.Directory;
+			mycomputerpersonalFSEntry.FullName = MWFVFS.MyComputerPersonalPrefix;
+			mycomputerpersonalFSEntry.Name = "Personal";
+			mycomputerpersonalFSEntry.MainTopNode = GetMyComputerFSEntry ();
+			mycomputerpersonalFSEntry.RealName = ThemeEngine.Current.Places (UIIcon.PlacesPersonal);
+			mycomputerpersonalFSEntry.FileType = FSEntry.FSEntryType.Directoy;
+			mycomputerpersonalFSEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("directory/home");
+			mycomputerpersonalFSEntry.LastAccessTime = DateTime.Now;
+			
+			mycomputerFSEntry = new FSEntry ();
+			
+			mycomputerFSEntry.Attributes = FileAttributes.Directory;
+			mycomputerFSEntry.FullName = MWFVFS.MyComputerPrefix;
+			mycomputerFSEntry.Name = "My Computer";
+			mycomputerFSEntry.MainTopNode = GetDesktopFSEntry ();
+			mycomputerFSEntry.FileType = FSEntry.FSEntryType.Directoy;
+			mycomputerFSEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("workplace/workplace");
+			mycomputerFSEntry.LastAccessTime = DateTime.Now;
+			
+			mynetworkFSEntry = new FSEntry ();
+			
+			mynetworkFSEntry.Attributes = FileAttributes.Directory;
+			mynetworkFSEntry.FullName = MWFVFS.MyNetworkPrefix;
+			mynetworkFSEntry.Name = "My Network";
+			mynetworkFSEntry.MainTopNode = GetDesktopFSEntry ();
+			mynetworkFSEntry.FileType = FSEntry.FSEntryType.Directoy;
+			mynetworkFSEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("network/network");
+			mynetworkFSEntry.LastAccessTime = DateTime.Now;
+		}
+		
+		public override void WriteRecentlyUsedFiles (string fileToAdd)
+		{
+			string personal_folder = ThemeEngine.Current.Places (UIIcon.PlacesPersonal);
+			string recently_used_path = Path.Combine (personal_folder, ".recently-used");
+			
+			if (File.Exists (recently_used_path) && new FileInfo (recently_used_path).Length > 0) {
+				XmlDocument xml_doc = new XmlDocument ();
+				xml_doc.Load (recently_used_path);
+				
+				XmlNode grand_parent_node = xml_doc.SelectSingleNode ("RecentFiles");
+				
+				if (grand_parent_node != null) {
+					// create a new element
+					XmlElement new_recent_item_node = xml_doc.CreateElement ("RecentItem");
+					
+					XmlElement new_child = xml_doc.CreateElement ("URI");
+					UriBuilder ub = new UriBuilder ();
+					ub.Path = fileToAdd;
+					ub.Host = null;
+					ub.Scheme = "file";
+					XmlText new_text_child = xml_doc.CreateTextNode (ub.ToString ());
+					new_child.AppendChild (new_text_child);
+					
+					new_recent_item_node.AppendChild (new_child);
+					
+					new_child = xml_doc.CreateElement ("Mime-Type");
+					new_text_child = xml_doc.CreateTextNode (Mime.GetMimeTypeForFile (fileToAdd));
+					new_child.AppendChild (new_text_child);
+					
+					new_recent_item_node.AppendChild (new_child);
+					
+					new_child = xml_doc.CreateElement ("Timestamp");
+					long seconds = (long)(DateTime.UtcNow - new DateTime (1970, 1, 1)).TotalSeconds;
+					new_text_child = xml_doc.CreateTextNode (seconds.ToString ());
+					new_child.AppendChild (new_text_child);
+					
+					new_recent_item_node.AppendChild (new_child);
+					
+					new_child = xml_doc.CreateElement ("Groups");
+					
+					new_recent_item_node.AppendChild (new_child);
+					
+					// now search the nodes in grand_parent_node for another instance of the new uri and if found remove it
+					// so that the new node is the first one
+					foreach (XmlNode n in grand_parent_node.ChildNodes) {
+						XmlNode uri_node = n.SelectSingleNode ("URI");
+						if (uri_node != null) {
+							XmlNode uri_node_child = uri_node.FirstChild;
+							if (uri_node_child is XmlText)
+								if (ub.ToString () == ((XmlText)uri_node_child).Data) {
+									grand_parent_node.RemoveChild (n);
+									break;
+								}
+						}
+					}
+					
+					// prepend the new recent item to the grand parent node list
+					grand_parent_node.PrependChild (new_recent_item_node);
+					
+					// limit the # of RecentItems to 10
+					if (grand_parent_node.ChildNodes.Count > 10) {
+						while (grand_parent_node.ChildNodes.Count > 10)
+							grand_parent_node.RemoveChild (grand_parent_node.LastChild);
+					}
+					
+					try {
+						xml_doc.Save (recently_used_path);
+					} catch (Exception) {
+					}
+				}
+			} else {
+				XmlDocument xml_doc = new XmlDocument ();
+				xml_doc.AppendChild (xml_doc.CreateXmlDeclaration ("1.0", "", ""));
+				
+				XmlElement recentFiles_element = xml_doc.CreateElement ("RecentFiles");
+				
+				XmlElement new_recent_item_node = xml_doc.CreateElement ("RecentItem");
+				
+				XmlElement new_child = xml_doc.CreateElement ("URI");
+				UriBuilder ub = new UriBuilder ();
+				ub.Path = fileToAdd;
+				ub.Host = null;
+				ub.Scheme = "file";
+				XmlText new_text_child = xml_doc.CreateTextNode (ub.ToString ());
+				new_child.AppendChild (new_text_child);
+				
+				new_recent_item_node.AppendChild (new_child);
+				
+				new_child = xml_doc.CreateElement ("Mime-Type");
+				new_text_child = xml_doc.CreateTextNode (Mime.GetMimeTypeForFile (fileToAdd));
+				new_child.AppendChild (new_text_child);
+				
+				new_recent_item_node.AppendChild (new_child);
+				
+				new_child = xml_doc.CreateElement ("Timestamp");
+				long seconds = (long)(DateTime.UtcNow - new DateTime (1970, 1, 1)).TotalSeconds;
+				new_text_child = xml_doc.CreateTextNode (seconds.ToString ());
+				new_child.AppendChild (new_text_child);
+				
+				new_recent_item_node.AppendChild (new_child);
+				
+				new_child = xml_doc.CreateElement ("Groups");
+				
+				new_recent_item_node.AppendChild (new_child);
+				
+				recentFiles_element.AppendChild (new_recent_item_node);
+				
+				xml_doc.AppendChild (recentFiles_element);
+				
+				try {
+					xml_doc.Save (recently_used_path);
+				} catch (Exception) {
+				}
+			}
+		}
+		
+		// return an ArrayList with FSEntry objects
+		public override ArrayList GetRecentlyUsedFiles ()
+		{
+			// check for GNOME and KDE
+			string personal_folder = ThemeEngine.Current.Places (UIIcon.PlacesPersonal);
+			string recently_used_path = Path.Combine (personal_folder, ".recently-used");
+			
+			ArrayList files_al = new ArrayList ();
+			
+			// GNOME
+			if (File.Exists (recently_used_path)) {
+				try {
+					XmlTextReader xtr = new XmlTextReader (recently_used_path);
+					while (xtr.Read ()) {
+						if (xtr.NodeType == XmlNodeType.Element && xtr.Name.ToUpper () == "URI") {
+							xtr.Read ();
+							Uri uri = new Uri (xtr.Value);
+							if (!files_al.Contains (uri.LocalPath))
+								if (File.Exists (uri.LocalPath))
+									files_al.Add (GetFileFSEntry (new FileInfo (uri.LocalPath)));
+						}
+					}
+					xtr.Close ();
+				} catch (Exception) {
+					
+				}
+			}
+			
+			// KDE
+			string full_kde_recent_document_dir = personal_folder + "/.kde/share/apps/RecentDocuments";
+			
+			if (Directory.Exists (full_kde_recent_document_dir)) {
+				string[] files = Directory.GetFiles (full_kde_recent_document_dir, "*.desktop");
+				
+				foreach (string file_name in files) {
+					StreamReader sr = new StreamReader (file_name);
+					
+					string line = sr.ReadLine ();
+					
+					while (line != null) {
+						line = line.Trim ();
+						
+						if (line.StartsWith ("URL=")) {
+							line = line.Replace ("URL=", "");
+							line = line.Replace ("$HOME", personal_folder);
+							
+							Uri uri = new Uri (line);
+							if (!files_al.Contains (uri.LocalPath))
+								if (File.Exists (uri.LocalPath))
+									files_al.Add (GetFileFSEntry (new FileInfo (uri.LocalPath)));
+							break;
+						}
+						
+						line = sr.ReadLine ();
+					}
+					
+					sr.Close ();
+				}
+			}
+			
+			
+			return files_al;
+		}
+		
+		// return an ArrayList with FSEntry objects
+		public override ArrayList GetMyComputerContent ()
+		{
+			ArrayList my_computer_content_arraylist = new ArrayList ();
+			
+			if (masterMount.ProcMountAvailable) {
+				masterMount.GetMounts ();
+				
+				foreach (MasterMount.Mount mount in masterMount.Block_devices) {
+					FSEntry fsEntry = new FSEntry ();
+					fsEntry.FileType = FSEntry.FSEntryType.Device;
+					
+					fsEntry.FullName = mount.mount_point;
+					
+					fsEntry.Name = "HDD (" +  mount.fsType + ", " + mount.device_short + ")";
+					
+					fsEntry.FsType = mount.fsType;
+					fsEntry.DeviceShort = mount.device_short;
+					
+					fsEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("harddisk/harddisk");
+					
+					fsEntry.Attributes = FileAttributes.Directory;
+					
+					fsEntry.MainTopNode = GetMyComputerFSEntry ();
+					
+					my_computer_content_arraylist.Add (fsEntry);
+					
+					if (!MWFVFS.MyComputerDevicesPrefix.Contains (fsEntry.FullName + "://"))
+						MWFVFS.MyComputerDevicesPrefix.Add (fsEntry.FullName + "://", fsEntry);
+				}
+				
+				foreach (MasterMount.Mount mount in masterMount.Removable_devices) {
+					FSEntry fsEntry = new FSEntry ();
+					fsEntry.FileType = FSEntry.FSEntryType.RemovableDevice;
+					
+					fsEntry.FullName = mount.mount_point;
+					
+					bool is_dvd_cdrom = mount.fsType == MasterMount.FsTypes.usbfs ? false : true;
+					string type_name = is_dvd_cdrom ? "DVD/CD-Rom" : "USB";
+					string mime_type = is_dvd_cdrom ? "cdrom/cdrom" : "removable/removable";
+					
+					fsEntry.Name = type_name +" (" + mount.device_short + ")";
+					
+					fsEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType (mime_type);
+					
+					fsEntry.FsType = mount.fsType;
+					fsEntry.DeviceShort = mount.device_short;
+					
+					fsEntry.Attributes = FileAttributes.Directory;
+					
+					fsEntry.MainTopNode = GetMyComputerFSEntry ();
+					
+					my_computer_content_arraylist.Add (fsEntry);
+					
+					string contain_string = fsEntry.FullName + "://";
+					if (!MWFVFS.MyComputerDevicesPrefix.Contains (contain_string))
+						MWFVFS.MyComputerDevicesPrefix.Add (contain_string, fsEntry);
+				}
+			}
+			
+			my_computer_content_arraylist.Add (GetMyComputerPersonalFSEntry ());
+			
+			return my_computer_content_arraylist;
+		}
+		
+		public override ArrayList GetMyNetworkContent ()
+		{
+			ArrayList fsEntries = new ArrayList ();
+			
+			foreach (MasterMount.Mount mount in masterMount.Network_devices) {
+				FSEntry fsEntry = new FSEntry ();
+				fsEntry.FileType = FSEntry.FSEntryType.Network;
+				
+				fsEntry.FullName = mount.mount_point;
+				
+				fsEntry.FsType = mount.fsType;
+				fsEntry.DeviceShort = mount.device_short;
+				
+				fsEntry.Name = "Network (" + mount.fsType + ", " + mount.device_short + ")";
+				
+				switch (mount.fsType) {
+					case MasterMount.FsTypes.nfs:
+						fsEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("nfs/nfs");
+						break;
+					case MasterMount.FsTypes.smbfs:
+						fsEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("smb/smb");
+						break;
+					case MasterMount.FsTypes.ncpfs:
+						fsEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("network/network");
+						break;
+					case MasterMount.FsTypes.cifs:
+						fsEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("network/network");
+						break;
+					default:
+						break;
+				}
+				
+				fsEntry.Attributes = FileAttributes.Directory;
+				
+				fsEntry.MainTopNode = GetMyNetworkFSEntry ();
+				
+				fsEntries.Add (fsEntry);
+			}
+			return fsEntries;
+		}
+		
+		protected override FSEntry GetDesktopFSEntry ()
+		{
+			return desktopFSEntry;
+		}
+		
+		protected override FSEntry GetRecentlyUsedFSEntry ()
+		{
+			return recentlyusedFSEntry;
+		}
+		
+		protected override FSEntry GetPersonalFSEntry ()
+		{
+			return personalFSEntry;
+		}
+		
+		protected override FSEntry GetMyComputerPersonalFSEntry ()
+		{
+			return mycomputerpersonalFSEntry;
+		}
+		
+		protected override FSEntry GetMyComputerFSEntry ()
+		{
+			return mycomputerFSEntry;
+		}
+		
+		protected override FSEntry GetMyNetworkFSEntry ()
+		{
+			return mynetworkFSEntry;
+		}
+	}
+	#endregion
+	
+	#region WinFileSystem
+	internal class WinFileSystem : FileSystem
+	{
+		private FSEntry desktopFSEntry = null;
+		private FSEntry recentlyusedFSEntry = null;
+		private FSEntry personalFSEntry = null;
+		private FSEntry mycomputerpersonalFSEntry = null;
+		private FSEntry mycomputerFSEntry = null;
+		private FSEntry mynetworkFSEntry = null;
+		
+		public WinFileSystem ()
+		{
+			desktopFSEntry = new FSEntry ();
+			
+			desktopFSEntry.Attributes = FileAttributes.Directory;
+			desktopFSEntry.FullName = MWFVFS.DesktopPrefix;
+			desktopFSEntry.Name = "Desktop";
+			desktopFSEntry.RealName = ThemeEngine.Current.Places (UIIcon.PlacesDesktop);
+			desktopFSEntry.FileType = FSEntry.FSEntryType.Directoy;
+			desktopFSEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("deskop/desktop");
+			desktopFSEntry.LastAccessTime = DateTime.Now;
+			
+			recentlyusedFSEntry = new FSEntry ();
+			
+			recentlyusedFSEntry.Attributes = FileAttributes.Directory;
+			recentlyusedFSEntry.FullName = MWFVFS.RecentlyUsedPrefix;
+			recentlyusedFSEntry.RealName = ThemeEngine.Current.Places (UIIcon.PlacesRecentDocuments);
+			recentlyusedFSEntry.Name = "Recently Used";
+			recentlyusedFSEntry.FileType = FSEntry.FSEntryType.Directoy;
+			recentlyusedFSEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("recently/recently");
+			recentlyusedFSEntry.LastAccessTime = DateTime.Now;
+			
+			personalFSEntry = new FSEntry ();
+			
+			personalFSEntry.Attributes = FileAttributes.Directory;
+			personalFSEntry.FullName = MWFVFS.PersonalPrefix;
+			personalFSEntry.Name = "Personal";
+			personalFSEntry.MainTopNode = GetDesktopFSEntry ();
+			personalFSEntry.RealName = ThemeEngine.Current.Places (UIIcon.PlacesPersonal);
+			personalFSEntry.FileType = FSEntry.FSEntryType.Directoy;
+			personalFSEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("directory/home");
+			personalFSEntry.LastAccessTime = DateTime.Now;
+			
+			mycomputerpersonalFSEntry = new FSEntry ();
+			
+			mycomputerpersonalFSEntry.Attributes = FileAttributes.Directory;
+			mycomputerpersonalFSEntry.FullName = MWFVFS.MyComputerPersonalPrefix;
+			mycomputerpersonalFSEntry.Name = "Personal";
+			mycomputerpersonalFSEntry.MainTopNode = GetMyComputerFSEntry ();
+			mycomputerpersonalFSEntry.RealName = ThemeEngine.Current.Places (UIIcon.PlacesPersonal);
+			mycomputerpersonalFSEntry.FileType = FSEntry.FSEntryType.Directoy;
+			mycomputerpersonalFSEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("directory/home");
+			mycomputerpersonalFSEntry.LastAccessTime = DateTime.Now;
+			
+			mycomputerFSEntry = new FSEntry ();
+			
+			mycomputerFSEntry.Attributes = FileAttributes.Directory;
+			mycomputerFSEntry.FullName = MWFVFS.MyComputerPrefix;
+			mycomputerFSEntry.Name = "My Computer";
+			mycomputerFSEntry.MainTopNode = GetDesktopFSEntry ();
+			mycomputerFSEntry.FileType = FSEntry.FSEntryType.Directoy;
+			mycomputerFSEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("workplace/workplace");
+			mycomputerFSEntry.LastAccessTime = DateTime.Now;
+			
+			mynetworkFSEntry = new FSEntry ();
+			
+			mynetworkFSEntry.Attributes = FileAttributes.Directory;
+			mynetworkFSEntry.FullName = MWFVFS.MyNetworkPrefix;
+			mynetworkFSEntry.Name = "My Network";
+			mynetworkFSEntry.MainTopNode = GetDesktopFSEntry ();
+			mynetworkFSEntry.FileType = FSEntry.FSEntryType.Directoy;
+			mynetworkFSEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("network/network");
+			mynetworkFSEntry.LastAccessTime = DateTime.Now;
+		}
+		
+		public override void WriteRecentlyUsedFiles (string fileToAdd)
+		{
+			// TODO: Implement this method
+			// use SHAddToRecentDocs ?
+		}
+		
+		public override ArrayList GetRecentlyUsedFiles ()
+		{
+			ArrayList al = new ArrayList ();
+			
+			DirectoryInfo di = new DirectoryInfo (recentlyusedFSEntry.RealName);
+			
+			FileInfo[] fileinfos = di.GetFiles ();
+			
+			foreach (FileInfo fi in fileinfos) {
+				al.Add (GetFileFSEntry (fi));
+			}
+			
+			return al;
+		}
+		
+		public override ArrayList GetMyComputerContent ()
+		{
+			string[] logical_drives = Directory.GetLogicalDrives ();
+			
+			ArrayList my_computer_content_arraylist = new ArrayList ();
+			
+			foreach (string drive in logical_drives) {
+				FSEntry fsEntry = new FSEntry ();
+				fsEntry.FileType = FSEntry.FSEntryType.Device;
+				
+				fsEntry.FullName = drive;
+				
+				fsEntry.Name = drive;
+				
+				fsEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("harddisk/harddisk");
+				
+				fsEntry.Attributes = FileAttributes.Directory;
+				
+				fsEntry.MainTopNode = GetMyComputerFSEntry ();
+				
+				my_computer_content_arraylist.Add (fsEntry);
+				
+				string contain_string = fsEntry.FullName + "://";
+				if (!MWFVFS.MyComputerDevicesPrefix.Contains (contain_string))
+					MWFVFS.MyComputerDevicesPrefix.Add (contain_string, fsEntry);
+			}
+			
+			my_computer_content_arraylist.Add (GetMyComputerPersonalFSEntry ());
+			
+			return my_computer_content_arraylist;
+		}
+		
+		public override ArrayList GetMyNetworkContent ()
+		{
+			// TODO: Implement this method
+			return new ArrayList ();
+		}
+		protected override FSEntry GetDesktopFSEntry ()
+		{
+			return desktopFSEntry;
+		}
+		
+		protected override FSEntry GetRecentlyUsedFSEntry ()
+		{
+			return recentlyusedFSEntry;
+		}
+		
+		protected override FSEntry GetPersonalFSEntry ()
+		{
+			return personalFSEntry;
+		}
+		
+		protected override FSEntry GetMyComputerPersonalFSEntry ()
+		{
+			return mycomputerpersonalFSEntry;
+		}
+		
+		protected override FSEntry GetMyComputerFSEntry ()
+		{
+			return mycomputerFSEntry;
+		}
+		
+		protected override FSEntry GetMyNetworkFSEntry ()
+		{
+			return mynetworkFSEntry;
+		}
+	}
+	#endregion
+	
+	#region FSEntry
+	internal class FSEntry
+	{
+		public enum FSEntryType
+		{
+			Desktop,
+			RecentlyUsed,
+			MyComputer,
+			File,
+			Directoy,
+			Device,
+			RemovableDevice,
+			Network
+		}
+		
+		private MasterMount.FsTypes fsType;
+		private string device_short;
+		private string fullName;
+		private string name;
+		private string realName = null;
+		private FileAttributes attributes = FileAttributes.Normal;
+		private long fileSize;
+		private FSEntryType fileType;
+		private DateTime lastAccessTime;
+		private FSEntry mainTopNode = null;
+		
+		private int iconIndex;
+		
+		private string parent;
+		
+		public MasterMount.FsTypes FsType {
+			set {
+				fsType = value;
+			}
+			
+			get {
+				return fsType;
+			}
+		}
+		
+		public string DeviceShort {
+			set {
+				device_short = value;
+			}
+			
+			get {
+				return device_short;
+			}
+		}
+		
+		public string FullName {
+			set {
+				fullName = value;
+			}
+			
+			get {
+				return fullName;
+			}
+		}
+		
+		public string Name {
+			set {
+				name = value;
+			}
+			
+			get {
+				return name;
+			}
+		}
+		
+		public string RealName {
+			set {
+				realName = value;
+			}
+			
+			get {
+				return realName;
+			}
+		}
+		
+		public FileAttributes Attributes {
+			set {
+				attributes = value;
+			}
+			
+			get {
+				return attributes;
+			}
+		}
+		
+		public long FileSize {
+			set {
+				fileSize = value;
+			}
+			
+			get {
+				return fileSize;
+			}
+		}
+		
+		public FSEntryType FileType {
+			set {
+				fileType = value;
+			}
+			
+			get {
+				return fileType;
+			}
+		}
+		
+		public DateTime LastAccessTime {
+			set {
+				lastAccessTime = value;
+			}
+			
+			get {
+				return lastAccessTime;
+			}
+		}
+		
+		public int IconIndex {
+			set {
+				iconIndex = value;
+			}
+			
+			get {
+				return iconIndex;
+			}
+		}
+		
+		public FSEntry MainTopNode {
+			set {
+				mainTopNode = value;
+			}
+			
+			get {
+				return mainTopNode;
+			}
+		}
+		
+		public string Parent {
+			set {
+				parent = value;
+			}
+			
+			get {
+				parent = GetParent ();
+				
+				return parent;
+			}
+		}
+		
+		private string GetParent ()
+		{
+			if (fullName == MWFVFS.PersonalPrefix) {
+				return MWFVFS.DesktopPrefix;
+			} else
+			if (fullName == MWFVFS.MyComputerPersonalPrefix) {
+				return MWFVFS.MyComputerPrefix;
+			} else
+			if (fullName == MWFVFS.MyComputerPrefix) {
+				return MWFVFS.DesktopPrefix;
+			} else
+			if (fullName == MWFVFS.MyNetworkPrefix) {
+				return MWFVFS.DesktopPrefix;
+			} else
+			if (fullName == MWFVFS.DesktopPrefix) {
+				return null;
+			} else
+			if (fullName == MWFVFS.RecentlyUsedPrefix) {
+				return null;
+			} else {
+				foreach (DictionaryEntry entry in MWFVFS.MyComputerDevicesPrefix) {
+					FSEntry fsEntry = entry.Value as FSEntry;
+					if (fullName == fsEntry.FullName) {
+						return fsEntry.MainTopNode.FullName;
+					}
+				}
+				
+				DirectoryInfo dirInfo = new DirectoryInfo (fullName);
+				
+				DirectoryInfo dirInfoParent = dirInfo.Parent;
+				
+				if (dirInfoParent != null) {
+					FSEntry fsEntry = MWFVFS.MyComputerDevicesPrefix [dirInfoParent.FullName + "://"] as FSEntry;
+					
+					if (fsEntry != null) {
+						return fsEntry.FullName;
+					}
+					
+					if (mainTopNode != null) {
+						if (dirInfoParent.FullName == ThemeEngine.Current.Places (UIIcon.PlacesDesktop) &&
+						    mainTopNode.FullName == MWFVFS.DesktopPrefix) {
+							return mainTopNode.FullName;
+						} else
+						if (dirInfoParent.FullName == ThemeEngine.Current.Places (UIIcon.PlacesPersonal) &&
+						    mainTopNode.FullName == MWFVFS.PersonalPrefix) {
+							return mainTopNode.FullName;
+						} else
+						if (dirInfoParent.FullName == ThemeEngine.Current.Places (UIIcon.PlacesPersonal) &&
+						    mainTopNode.FullName == MWFVFS.MyComputerPersonalPrefix) {
+							return mainTopNode.FullName;
+						}
+					}
+					
+					return dirInfoParent.FullName;
+				}
+			}
+			
+			return null;
+		}
+	}
+	#endregion
+	
+	#region MasterMount
+	// Alexsantas little *nix helper
+	internal class MasterMount
+	{
 		// add more...
-		internal enum FsTypes {
+		internal enum FsTypes
+		{
+			none,
 			ext2,
 			ext3,
 			hpfs,
@@ -2730,7 +3723,8 @@ namespace System.Windows.Forms {
 			cifs
 		}
 		
-		internal struct Mount {
+		internal struct Mount
+		{
 			public string device_or_filesystem;
 			public string device_short;
 			public string mount_point;
@@ -2791,14 +3785,15 @@ namespace System.Windows.Forms {
 				StreamReader sr = new StreamReader ("/proc/mounts");
 				
 				string line = sr.ReadLine ();
+				
 				ArrayList lines = new ArrayList ();
-				while (line != null) {
+ 				while (line != null) {
 					if (lines.IndexOf (line) == -1) { // Avoid duplicates
 						ProcessProcMountLine (line);
 						lines.Add (line);
 					}
-					line = sr.ReadLine ();
-				}
+ 					line = sr.ReadLine ();
+ 				}
 				
 				sr.Close ();
 				
@@ -2883,12 +3878,13 @@ namespace System.Windows.Forms {
 		
 		public class MountComparer : IComparer
 		{
-			public int Compare(object mount1, object mount2)
+			public int Compare (object mount1, object mount2)
 			{
-				return String.Compare(((Mount)mount1).device_short, ((Mount)mount2).device_short);
+				return String.Compare (((Mount)mount1).device_short, ((Mount)mount2).device_short);
 			}
 		}
 	}
+	#endregion
 }
 
 

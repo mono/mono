@@ -1,5 +1,29 @@
 2006-06-08  Alexander Olk  <alex.olk@googlemail.com>
 
+	* FileDialog.cs: Allmost a complete rewrite.
+	  - added a "virtual" file system that handles the differences
+	    between unix and windows file systems (especially the directory
+	    structure). Moved most of the directory and file handling code
+	    into the vfs.
+	    Added vfs classes: MWFVFS, FileSystem, WinFileSystem,
+	    UnixFileSystem and FSEntry.
+	  - Recently used folder/directory, size, location and used file names
+	    (file name ComboBox) are now stored in the registry and get read
+	    before the dialog shows up (fixes part 6 of bug #78446).
+	  - Creation of new folders/directories is now possible (context menu
+	    or ToolBar). Added TextEntryDialog for this that fills in the gap
+	    until ListView.LabelEdit works.
+	  - Fixed cursor handling (bug #78527) and focus handling for
+	    PopupButtonPanel
+	  - Various "Search in" ComboBox enhancements. The content of the
+	    dropdown listbox now almost matches ms.
+	  - Changed the behaviour when the user switches to SpecialFolder
+	    Recent to show the ListView in View.Details.
+	  - Beside using the ToolBar to change the View property of the
+	    file ListView it is now possible to use the context menu too.
+
+2006-06-08  Alexander Olk  <alex.olk@googlemail.com>
+
 	* ComboBox.cs: Don't create a new ObjectCollection when an item
 	  gets inserted. Just insert the item in the existing object_items
 	  ArrayList.
