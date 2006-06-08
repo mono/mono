@@ -1299,27 +1299,9 @@ namespace System.Windows.Forms
 				if (index < 0 || index > Count)
 					throw new ArgumentOutOfRangeException ("Index of out range");					
 				
-				ObjectCollection new_items = new ObjectCollection (owner);				
-    				object sel_item = owner.SelectedItem;
-    				    								
 				owner.BeginUpdate ();
 				
-				for (int i = 0; i < index; i++) {
-					new_items.AddItem (ObjectItems[i]);
-				}
-
-				new_items.AddItem (item);
-
-				for (int i = index; i < Count; i++){
-					new_items.AddItem (ObjectItems[i]);
-				}				
-
-				ObjectItems = new_items.ObjectItems;
-				
-				if (sel_item != null) {
-					owner.selected_item = sel_item;
-					owner.listbox_ctrl.HighlightedItem = sel_item;
-				}
+				object_items.Insert (index, item);
 												
 				owner.EndUpdate ();	// Calls UpdatedItems
 			}

@@ -1,3 +1,9 @@
+2006-06-08  Alexander Olk  <alex.olk@googlemail.com>
+
+	* ComboBox.cs: Don't create a new ObjectCollection when an item
+	  gets inserted. Just insert the item in the existing object_items
+	  ArrayList.
+
 2006-06-08  Jackson Harper  <jackson@ximian.com>
 
 	* OpenTreeNodeEnumerator.cs: Fix to use the Parent property, so
