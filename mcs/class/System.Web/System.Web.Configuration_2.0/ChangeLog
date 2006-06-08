@@ -1,3 +1,10 @@
+2006-06-08  Chris Toshok  <toshok@ximian.com>
+
+	* WebConfigurationHost.cs (InitForConfiguration): i know this is
+	going to bite me in the ass, but guard against configPath being ==
+	to "/", since this will result in an infinite loop.
+	(MapPath): fix a NRE.
+
 2006-05-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* WebConfigurationManager.cs: recent sys.config.dll changes on

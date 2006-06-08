@@ -171,7 +171,8 @@ namespace System.Web.Configuration
 				else
 					configPath = locationSubPath;
 
-				if (configPath == HttpRuntime.AppDomainAppVirtualPath)
+				if (configPath == HttpRuntime.AppDomainAppVirtualPath
+				    || configPath == "/")
 					i = -1;
 				else
 					i = configPath.LastIndexOf ("/");
@@ -202,7 +203,7 @@ namespace System.Web.Configuration
 			else if (HttpContext.Current != null
 				 && HttpContext.Current.Request != null)
 				return HttpContext.Current.Request.MapPath (virtualPath);
-			else if (virtualPath.StartsWith (HttpRuntime.AppDomainAppVirtualPath)) {
+			else if (HttpRuntime.AppDomainAppVirtualPath != null && virtualPath.StartsWith (HttpRuntime.AppDomainAppVirtualPath)) {
 				if (virtualPath == HttpRuntime.AppDomainAppVirtualPath)
 					return HttpRuntime.AppDomainAppPath;
 				return UrlUtils.Combine (HttpRuntime.AppDomainAppPath, virtualPath.Substring (HttpRuntime.AppDomainAppVirtualPath.Length));
