@@ -1,3 +1,7 @@
+2006-06-07 Wade Berrier <wberrier@novell.com>
+	
+	* Makefile: Make sure mainsoft NunitWeb files are included for make dist
+
 2006-06-05 Andrew Skiba <andrews@mainsoft.com>
 	
 	* Makefile, System.Web_test.dll.sources: add NunitWeb test framework

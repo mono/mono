@@ -64,10 +64,6 @@ RESOURCE_FILES_2 = \
 	System.Web.UI.WebControls/Menu.js
 
 OTHER_RES = $(RESOURCE_FILES_1)
-ifeq (net_2_0, $(PROFILE))
-OTHER_RES += $(RESOURCE_FILES_2)
-OTHER_LIB_MCS_FLAGS = -nowarn:618 -r:System.Configuration.dll
-
 TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWeb/NunitWeb/Resources/My.master \
 	Test/mainsoft/NunitWeb/NunitWeb/Resources/MyPage.aspx \
@@ -80,6 +76,12 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/Theme1.skin \
 	Test/mainsoft/NunitWebResources/Web.sitemap \
 	Test/mainsoft/MainsoftWebTest/nunitweb_config.xml 
+
+NUNIT_RESOURCE_FILES = 
+ifeq (net_2_0, $(PROFILE))
+OTHER_RES += $(RESOURCE_FILES_2)
+OTHER_LIB_MCS_FLAGS = -nowarn:618 -r:System.Configuration.dll
+NUNIT_RESOURCE_FILES = $(TEST_RESOURCE_FILES)
 endif
 
 LIB_MCS_FLAGS = \
@@ -106,7 +108,7 @@ echo-warning:
 endif
 endif
 
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -doc:$(test_lib:.dll=.xml)  -nowarn:219 -nowarn:169 $(TEST_RESOURCE_FILES:%=/resource:%)
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -doc:$(test_lib:.dll=.xml)  -nowarn:219 -nowarn:169 $(NUNIT_RESOURCE_FILES:%=/resource:%)
 
 EXTRA_DISTFILES = $(RESOURCE_FILES_2) $(RESOURCE_FILES_1) $(TEST_RESOURCE_FILES)
 
