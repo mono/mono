@@ -12,7 +12,7 @@ LIB_MCS_FLAGS = \
 	-r:System.Web.dll
 
 ifeq (net_2_0, $(PROFILE))
-LIB_MCS_FLAGS += -r:System.Configuration.dll -d:CONFIGURATION_2_0
+LIB_MCS_FLAGS += -r:System.Configuration.dll
 endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:618

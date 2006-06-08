@@ -1,3 +1,8 @@
+2006-06-08  Chris Toshok  <toshok@ximian.com>
+
+	* Makefile (LIB_MCS_FLAGS): remove the CONFIGURATION_2_0 define.
+	NET_2_0 implies this now.
+
 2006-03-15  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* System.Web.Services.vmwcsproj: fixed links to Consts.cs, Locale.cs

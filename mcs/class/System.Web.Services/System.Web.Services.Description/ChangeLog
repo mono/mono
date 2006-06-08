@@ -1,3 +1,8 @@
+2006-06-08  Chris Toshok  <toshok@ximian.com>
+
+	* ExtensionManager.cs: remove the CONFIGURATION_2_0 from ifdefs.
+	NET_2_0 implies this now.
+
 2006-05-03  Ankit Jain  <jankit@novell.com>
 
 	* wsdl.genxs: Call ReadExtension for all unknown elements.

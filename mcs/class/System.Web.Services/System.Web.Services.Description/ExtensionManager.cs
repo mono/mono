@@ -64,7 +64,7 @@ namespace System.Web.Services.Description
 			RegisterExtensionType (typeof (SoapHeaderBinding));
 //			RegisterExtensionType (typeof (SoapHeaderFaultBinding));
 			RegisterExtensionType (typeof (SoapOperationBinding));
-#if NET_2_0 && CONFIGURATION_2_0
+#if NET_2_0
 			foreach (TypeElement el in WebServicesSection.Instance.ServiceDescriptionFormatExtensionTypes)
 				RegisterExtensionType (el.Type);
 #else
@@ -155,7 +155,7 @@ namespace System.Web.Services.Description
 		
 		public static ArrayList BuildExtensionImporters ()
 		{
-#if NET_2_0 && CONFIGURATION_2_0
+#if NET_2_0
 			return BuildExtensionList (WebServicesSection.Instance.SoapExtensionImporterTypes);
 #else
 			return BuildExtensionList (WSConfig.Instance.ExtensionImporterTypes);
@@ -164,14 +164,14 @@ namespace System.Web.Services.Description
 		
 		public static ArrayList BuildExtensionReflectors ()
 		{
-#if NET_2_0 && CONFIGURATION_2_0
+#if NET_2_0
 			return BuildExtensionList (WebServicesSection.Instance.SoapExtensionReflectorTypes);
 #else
 			return BuildExtensionList (WSConfig.Instance.ExtensionReflectorTypes);
 #endif
 		}
 		
-#if NET_2_0 && CONFIGURATION_2_0
+#if NET_2_0
 		public static ArrayList BuildExtensionList (TypeElementCollection exts)
 #else
 		public static ArrayList BuildExtensionList (ArrayList exts)
@@ -181,7 +181,7 @@ namespace System.Web.Services.Description
 			
 			if (exts != null)
 			{
-#if NET_2_0 && CONFIGURATION_2_0
+#if NET_2_0
 				foreach (TypeElement econf in exts)
 				{
 					extensionTypes.Add (econf);
@@ -205,7 +205,7 @@ namespace System.Web.Services.Description
 			}
 
 			ArrayList extensions = new ArrayList (extensionTypes.Count);
-#if NET_2_0 && CONFIGURATION_2_0
+#if NET_2_0
 			foreach (TypeElement econf in extensionTypes)
 #else
 			foreach (WSExtensionConfig econf in extensionTypes)

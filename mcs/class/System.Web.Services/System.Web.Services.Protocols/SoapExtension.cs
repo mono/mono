@@ -115,14 +115,14 @@ namespace System.Web.Services.Protocols {
 		{
 			globalExtensions = new ArrayList[2];
 			
-#if NET_2_0 && CONFIGURATION_2_0
+#if NET_2_0
 			SoapExtensionTypeElementCollection exts = WebServicesSection.Instance.SoapExtensionTypes;
 #else
 			ArrayList exts = WSConfig.Instance.ExtensionTypes;
 			if (exts == null) return;
 #endif
 
-#if NET_2_0 && CONFIGURATION_2_0
+#if NET_2_0
 			foreach (SoapExtensionTypeElement econf in exts)
 #else
 			foreach (WSExtensionConfig econf in exts)
@@ -132,7 +132,7 @@ namespace System.Web.Services.Protocols {
 				ArrayList destList = globalExtensions [(int) econf.Group];
 				bool added = false;
 				for (int n=0; n<destList.Count && !added; n++)
-#if NET_2_0 && CONFIGURATION_2_0
+#if NET_2_0
 					if (((SoapExtensionTypeElement)destList [n]).Priority > econf.Priority) {
 #else
 					if (((WSExtensionConfig)destList [n]).Priority > econf.Priority) {
@@ -157,7 +157,7 @@ namespace System.Web.Services.Protocols {
 				exts [group] = new SoapExtensionRuntimeConfig [globList.Count];
 				for (int n=0; n<globList.Count; n++)
 				{
-#if NET_2_0 && CONFIGURATION_2_0
+#if NET_2_0
 					SoapExtensionTypeElement econf = (SoapExtensionTypeElement) globList [n];
 #else
 					WSExtensionConfig econf = (WSExtensionConfig) globList [n];

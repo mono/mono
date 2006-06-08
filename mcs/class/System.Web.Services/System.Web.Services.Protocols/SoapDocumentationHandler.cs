@@ -76,7 +76,7 @@ namespace System.Web.Services.Protocols
 			if (key == "wsdl" || key == "schema" || key == "code" || key == "disco")
 				return;
 				
-#if NET_2_0 && CONFIGURATION_2_0
+#if NET_2_0
 			string help = WebServicesSection.Instance.WsdlHelpGenerator.Href;
 			string path = Path.GetDirectoryName (ConfigurationManager.OpenMachineConfiguration().FilePath);
 #else
