@@ -323,7 +323,7 @@ namespace Mono.ILASM {
                         if (assembly_table == null && (asmb_name == "mscorlib" || asmb_name == "corlib")) {
                                 /* AddCorlib if mscorlib is being referenced but
                                    we haven't encountered a ".assembly 'name'" as yet. */
-                                Console.Error.WriteLine ("Warning -- Reference to undeclared extern assembly '{0}', adding.", asmb_name);
+                                Report.Warning (String.Format ("Reference to undeclared extern assembly '{0}', adding.", asmb_name));
                                 AddCorlib ();
                         }
                         if (assembly_table != null)
@@ -333,7 +333,7 @@ namespace Mono.ILASM {
                                 System.Reflection.AssemblyName asmname = new System.Reflection.AssemblyName ();
                                 asmname.Name = asmb_name;
 
-                                Console.Error.WriteLine ("Warning -- Reference to undeclared extern assembly '{0}', adding.", asmb_name);
+                                Report.Warning (String.Format ("Reference to undeclared extern assembly '{0}', adding.", asmb_name));
                                 ext_asmb = AddAssembly (asmb_name, asmname);
                         }
 

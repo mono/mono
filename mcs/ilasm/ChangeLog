@@ -1,3 +1,12 @@
+2006-06-07  Ankit Jain  <jankit@novell.com>
+
+	* Report.cs (Report.FilePath): New, static property.
+	(Report.Error): Remove overload with file_path param.
+	(Report.Warning): New.
+	* Driver.cs (DriverMain.Run): Set Report.FilePath .
+	(DriverMain.ProcessFile): Update use of Report.Error .
+	
+
 2006-05-26  Ankit Jain  <jankit@novell.com>
 
 	* ilasm.exe.sources: Add Assembly.cs

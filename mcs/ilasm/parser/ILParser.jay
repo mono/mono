@@ -60,7 +60,7 @@ namespace Mono.ILASM {
                         if ((action == System.Security.Permissions.SecurityAction.RequestMinimum || 
                                 action == System.Security.Permissions.SecurityAction.RequestOptional || 
                                 action == System.Security.Permissions.SecurityAction.RequestRefuse) && !for_assembly) {
-                                Console.Error.WriteLine (String.Format ("System.Security.Permissions.SecurityAction '{0}' is not valid for this declaration", action));
+                                Report.Warning (String.Format ("System.Security.Permissions.SecurityAction '{0}' is not valid for this declaration", action));
                                 return false;
                         }
 
@@ -2142,7 +2142,7 @@ method_decl		: D_EMITBYTE int32
                                 codegen.CurrentCustomAttrTarget = param;
 
                                 if (param == null) {
-                                        Console.Error.WriteLine ("{0} Warning -- invalid param index ({1}) with .param", tokenizer.Location, index);
+                                        Report.Warning (tokenizer.Location, String.Format ("invalid param index ({0}) with .param", index));
                                         break;
                                 }
                                 if ($5 != null)

@@ -1,3 +1,20 @@
+2006-06-07  Ankit Jain  <jankit@novell.com>
+
+	* TypeDef.cs (TypeDef.IsAbstract): New.
+	* MethodDef.cs (MethodDef.WriteCode): Parent type must also be abstract
+	for an abstract method. Abstract methods cannot have a body.
+	Report errors for body with different implementation attributes like
+	native/runtime/unmanaged etc.
+	If the method has no body, then emit a 'ret'.
+
+2006-06-07  Ankit Jain  <jankit@novell.com>
+
+	* TypeDef.cs (TypeDef.AddFieldDef):
+	(TypeDef.Define): Use Report.Warning instead of Console.Error.WriteLine
+	(TypeDef.AddMethodDef): Likewise. Also, use methoddef.Location .
+	* ExternTable.cs (ExternTable.GetTypeRef): Likewise.
+	* MethodDef.cs (MethodDef.StartLocation): New.
+
 2006-06-01  Ankit Jain  <jankit@novell.com>
 
 	* MethodDef.cs (GetNamedParamPos): Return -1 if param_list is null.
