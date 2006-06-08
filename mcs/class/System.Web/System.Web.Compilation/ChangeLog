@@ -1,3 +1,7 @@
+2006-06-08	Konstantin Triger <kostat@mainsoft.com>
+
+	* ThemeDirectoryCompiler.cs: use physical path instead of virtual path.
+
 2006-04-24  Andrew Skiba  <andrews@mainsoft.com>
 
 	* ThemeDirectoryCompiler.cs: use UrlUtils.Combine to combine pathes

@@ -1,3 +1,8 @@
+2006-06-08	Konstantin Triger <kostat@mainsoft.com>
+
+	* Page.cs: For loading themes, use '~/App_Themes' instead of './App_Themes' to enable theme support
+		for files in sub folders.
+
 2006-05-25  Andrew Skiba  <andrews@mainsoft.com>
 
 	* Control.cs: move 2.0 stuff into ifdef NET_2_0
