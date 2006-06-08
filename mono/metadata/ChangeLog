@@ -1,3 +1,16 @@
+2006-06-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (mono_class_get_throw): Fix a warning.
+	(ves_icall_System_Reflection_Assembly_GetTypes): Allways throw 
+	ReflectionTypeLoadException if needed. Fixes #78606.
+
+	* class.c (mono_class_setup_vtable_general): Handle loader errors a bit better.
+	(mono_class_init): Ditto.
+
+	* loader.c (mono_loader_set_error_assembly_load): Display a separate warning for
+	ref_only exceptions.
+	(mono_loader_clear_error): Make this work even if there is no error.
+
 2006-06-08  Jonathan Chambers  <jonathan.chambers@ansys.com>
 
 	* object-internals.h marshal.c marshal.h icall.c: Implement method 
