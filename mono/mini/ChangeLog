@@ -1,3 +1,7 @@
+2006-06-08  Massimiliano Mantione  <massi@ximian.com>
+
+	* mini.c: Fixed bug 77996, and settled some debugging code.
+
 2006-06-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c (mono_arch_output_basic_block): Fix a wrong reg-reg move 
