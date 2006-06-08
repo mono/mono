@@ -1,3 +1,8 @@
+2006-06-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_output_basic_block): Fix a wrong reg-reg move 
+	in OP_ATOMIC_EXCHANGE_I4.
+
 2006-06-07  Wade Berrier <wberrier@novell.com>
 
 	* tramp-s390.c: Fix s390 build (add missing pointer declarations 
