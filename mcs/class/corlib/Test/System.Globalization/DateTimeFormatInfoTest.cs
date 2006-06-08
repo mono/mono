@@ -48,6 +48,16 @@ namespace MonoTests.System.Globalization {
 			string [] two = dtfi.GetAllDateTimePatterns ();
 			Assert (one != two);
                 }
+
+		[Test]
+		public void Bug78569 ()
+		{
+			DateTime dt = DateTime.Now;
+			CultureInfo ci = new CultureInfo ("en-GB");
+			string s = dt.ToString (ci);
+			DateTime dt2 = DateTime.Parse (s, ci);
+			Assert.AreEqual (dt.Month, dt2.Month);
+		}
         }
 }
 
