@@ -1,3 +1,9 @@
+2006-06-08  Jackson Harper  <jackson@ximian.com>
+
+	* OpenTreeNodeEnumerator.cs: Fix to use the Parent property, so
+	that the treeview and root node checks are done also, this fixes a
+	regression i caused in the unit tests.
+
 2006-06-07  Wade Berrier <wberrier@novell.com> 
 
 	* RichTextBox.cs: More ISO8859-1 -> unicode

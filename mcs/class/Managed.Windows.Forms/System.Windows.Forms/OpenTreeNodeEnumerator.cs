@@ -96,11 +96,10 @@ namespace System.Windows.Forms {
 				return true;
 			}
 
-			if (current.parent == null ||
-					current.parent == current.TreeView.root_node)
+			if (current.Parent == null)
 				return false;
 
-			current = current.parent;
+			current = current.Parent;
 			return true;
 		}
 
