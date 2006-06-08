@@ -1,3 +1,8 @@
+2006-06-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* en.xml, en-US.xml : move US-only date patterns from en.xml to
+	  en-US.xml. Fixed bug #78569.
+
 2005-08-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* fr.xml : fixed long date pattern and dateTimeFormats.
