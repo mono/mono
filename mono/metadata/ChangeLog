@@ -1,3 +1,8 @@
+2006-06-08  Jonathan Chambers  <jonathan.chambers@ansys.com>
+
+	* object-internals.h marshal.c marshal.h icall.c: Implement method 
+	Marshal.GetComSlotForMethodInfo using internal call.
+
 2006-06-08  Martin Baulig  <martin@ximian.com>
 
 	* debug-mono-symfile.c: Put this back and fix it.
