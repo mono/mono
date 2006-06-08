@@ -1,3 +1,7 @@
+2006-06-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FileDialog.cs: (SetFileName) don't crash if CurrentRealFolder is null.
+
 2006-06-08  Alexander Olk  <alex.olk@googlemail.com>
 
 	* FileDialog.cs: When creating a new folder don't crash if the

@@ -702,7 +702,11 @@ namespace System.Windows.Forms {
 			bool rooted = Path.IsPathRooted (fname);
 			
 			if (!rooted) {
-				if (File.Exists (Path.Combine (mwfFileView.CurrentRealFolder, fname))) {
+				string dir = mwfFileView.CurrentRealFolder ;
+				if (dir == null) {
+					dir = Environment.CurrentDirectory;
+				}
+				if (File.Exists (Path.Combine (dir, fname))) {
 					fileNameComboBox.Text = fname;
 					mwfFileView.SetSelectedIndexTo (fname);
 					
