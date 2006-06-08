@@ -162,8 +162,10 @@ namespace PEAPI {
 
 		private uint GetNextSectStart(uint rva, uint tide) 
 		{
-			if (tide < SectionAlignment) return rva + SectionAlignment;
-			return rva + ((tide / SectionAlignment) + 1) * SectionAlignment;
+			uint c = tide / SectionAlignment;
+			if ((tide % SectionAlignment) != 0)
+				c++;
+			return rva + (c * SectionAlignment);
 		}
 
 		private void BuildTextSection() 

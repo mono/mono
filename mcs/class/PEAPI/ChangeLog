@@ -1,3 +1,8 @@
+2006-06-07  Ankit Jain  <jankit@novell.com>
+
+	* PEAPI.cs (PEFile.GetNextSectStart): Handle the case when (tide %
+	SectionAlignment) == 0 . Patch by Carlo Kok. Fixes bug #78182.
+
 2006-06-01  Ankit Jain  <jankit@novell.com>
 
 	* PEAPI.cs (PEFile.AddMethod): Add overload for return type as Param
