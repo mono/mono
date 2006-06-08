@@ -1,3 +1,8 @@
+2006-06-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ClientRecordProtocol.cs: Avoid a NRE when the server request a
+	re-negotiation of the security parameters. Possible fix for #78597.
+
 2006-04-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SslCipherSuite.cs: Enable abbreviated handshakes for SSL3 too.

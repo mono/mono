@@ -78,7 +78,10 @@ namespace Mono.Security.Protocol.Tls
 
 			// Create and process the server message
 			message = this.createServerHandshakeMessage(handshakeType, data);
-			message.Process();
+			if (message != null)
+			{
+				message.Process();
+			}
 
 			// Update the last handshake message
 			this.Context.LastHandshakeMsg = handshakeType;
