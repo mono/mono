@@ -2228,8 +2228,14 @@ namespace System.Windows.Forms {
 				do_update_view = false;
 			}
 			EndUpdate ();
-			
-			UpdateFileView (folder);
+
+			try {
+				UpdateFileView (folder);
+			} catch (Exception e) {
+				if (should_push)
+					PopDir ();
+				MessageBox.Show (e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
 		}
 		
 		public void UpdateFileView (string folder)
@@ -2761,7 +2767,8 @@ namespace System.Windows.Forms {
 					return false;
 				} else
 					Directory.CreateDirectory (new_folder);
-			} catch (Exception) {
+			} catch (Exception e) {
+				MessageBox.Show (e.Message, new_folder, MessageBoxButtons.OK, MessageBoxIcon.Error);
 				return false;
 			}
 			
@@ -2852,8 +2859,8 @@ namespace System.Windows.Forms {
 				
 				directories_out.Add (myNetworkFSEntry);
 				
-				ArrayList d_out = new ArrayList ();
-				ArrayList f_out = new ArrayList ();
+				ArrayList d_out = null;
+				ArrayList f_out = null;
 				GetNormalFolderContent (ThemeEngine.Current.Places (UIIcon.PlacesDesktop), filters, out d_out, out f_out);
 				directories_out.AddRange (d_out);
 				files_out.AddRange (f_out);
@@ -2866,8 +2873,8 @@ namespace System.Windows.Forms {
 				directories_out.AddRange (GetMyComputerContent ());
 			} else
 			if (currentFolderFSEntry.FullName == MWFVFS.PersonalPrefix || currentFolderFSEntry.FullName == MWFVFS.MyComputerPersonalPrefix) {
-				ArrayList d_out = new ArrayList ();
-				ArrayList f_out = new ArrayList ();
+				ArrayList d_out = null;
+				ArrayList f_out = null;
 				GetNormalFolderContent (ThemeEngine.Current.Places (UIIcon.PlacesPersonal), filters, out d_out, out f_out);
 				directories_out.AddRange (d_out);
 				files_out.AddRange (f_out);

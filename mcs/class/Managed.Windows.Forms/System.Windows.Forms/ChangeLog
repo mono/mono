@@ -1,3 +1,8 @@
+2006-06-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FileDialog.cs: handle access errors when trying to create a folder
+	or changing to a directory. No need to initialize out parameters.
+
 2006-06-08  Alexander Olk  <alex.olk@googlemail.com>
 
 	* FileDialog.cs: Append a number when creating a new folder if the
