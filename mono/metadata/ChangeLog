@@ -1,3 +1,7 @@
+2006-06-08  Martin Baulig  <martin@ximian.com>
+
+	* debug-mono-symfile.c: Put this back and fix it.
+
 2006-06-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* class-internals.h: Add a new kind of loader error LOADER_ERROR_ASSEMBLY plus
