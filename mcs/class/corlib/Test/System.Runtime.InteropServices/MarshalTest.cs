@@ -289,6 +289,86 @@ namespace MonoTests.System.Runtime.InteropServices
 			}
 		}
 #endif
+
+		[Test]
+		public void TestGetComSlotForMethodInfo ()
+		{
+			Assert.AreEqual	(7, Marshal.GetComSlotForMethodInfo(typeof(ITestDefault).GetMethod("DoNothing")));
+			Assert.AreEqual	(7, Marshal.GetComSlotForMethodInfo(typeof(ITestDual).GetMethod("DoNothing")));
+			Assert.AreEqual (7, Marshal.GetComSlotForMethodInfo (typeof(ITestDefault).GetMethod ("DoNothing")));
+			Assert.AreEqual (3, Marshal.GetComSlotForMethodInfo (typeof(ITestUnknown).GetMethod ("DoNothing")));
+
+			for (int i = 0; i < 10; i++)
+				Assert.AreEqual (7+i, Marshal.GetComSlotForMethodInfo(typeof(ITestInterface).GetMethod ("Method"+i.ToString())));
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentNullException))]
+		public void TestGetComSlotForMethodInfoNullException()
+		{
+			Marshal.GetComSlotForMethodInfo (null);
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void TestGetComSlotForMethodInfoArgumentException2 ()
+		{
+			Marshal.GetComSlotForMethodInfo (typeof(TestCoClass).GetMethod ("DoNothing"));
+		}
+	}
+
+	[ComImport()]
+	[Guid("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA")]
+	interface ITestDefault
+	{
+		void DoNothing ();
+	}
+
+	[ComImport()]
+	[Guid("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA")]
+	[InterfaceType(ComInterfaceType.InterfaceIsIDispatch)]
+	interface ITestDispatch
+	{
+		void DoNothing ();
+	}
+
+	[ComImport()]
+	[Guid("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA")]
+	[InterfaceType(ComInterfaceType.InterfaceIsDual)]
+	interface ITestDual
+	{
+		void DoNothing ();
+	}
+
+	[ComImport()]
+	[Guid("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA")]
+	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+	interface ITestUnknown
+	{
+		void DoNothing ();
+	}
+
+	[ComImport()]
+	[Guid("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA")]
+	interface ITestInterface
+	{
+		void Method0 ();
+		void Method1 ();
+		void Method2 ();
+		void Method3 ();
+		void Method4 ();
+		void Method5 ();
+		void Method6 ();
+		void Method7 ();
+		void Method8 ();
+		void Method9 ();
+	}
+
+	public class TestCoClass : ITestDispatch
+	{
+		public void DoNothing ()
+		{
+		}
 	}
 }
 

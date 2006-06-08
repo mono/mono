@@ -237,9 +237,18 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public static int GetComSlotForMethodInfo (MemberInfo m) {
-			throw new NotImplementedException ();
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static int GetComSlotForMethodInfoInternal (MemberInfo m);
+
+		public static int GetComSlotForMethodInfo (MemberInfo m)
+		{
+			if (m == null)
+				throw new ArgumentNullException("m", "Value cannot be null.");
+			if (!(m is MethodInfo))
+				throw new ArgumentException("m", "The MemberInfo must be an interface method.");
+			if (!m.DeclaringType.IsInterface)
+				throw new ArgumentException("m", "The MemberInfo must be an interface method.");
+			return GetComSlotForMethodInfoInternal (m);
 		}
 
 		[MonoTODO]
