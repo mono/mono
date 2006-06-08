@@ -1,5 +1,10 @@
 2006-06-08  Alexander Olk  <alex.olk@googlemail.com>
 
+	* FileDialog.cs: When creating a new folder don't crash if the
+	  folder already exists.
+
+2006-06-08  Alexander Olk  <alex.olk@googlemail.com>
+
 	* FileDialog.cs: Allmost a complete rewrite.
 	  - added a "virtual" file system that handles the differences
 	    between unix and windows file systems (especially the directory

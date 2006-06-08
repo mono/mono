@@ -2720,7 +2720,18 @@ namespace System.Windows.Forms {
 		public bool CreateFolder (string new_folder)
 		{
 			try {
-				Directory.CreateDirectory (new_folder);
+				if (Directory.Exists (new_folder)) {
+					int i = 1;
+					string folder = new_folder + "[" + i + "]";
+					
+					while (Directory.Exists(folder)) {
+						i++;
+						folder = new_folder + "[" + i + "]";
+					}
+					
+					Directory.CreateDirectory (folder);
+				} else
+					Directory.CreateDirectory (new_folder);
 			} catch (Exception) {
 				return false;
 			}
