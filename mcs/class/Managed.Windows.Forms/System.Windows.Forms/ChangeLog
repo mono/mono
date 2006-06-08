@@ -1,5 +1,10 @@
 2006-06-08  Alexander Olk  <alex.olk@googlemail.com>
 
+	* FileDialog.cs: Append a number when creating a new folder if the
+	  folder already exists (use parenthesis instead of square brackets)
+
+2006-06-08  Alexander Olk  <alex.olk@googlemail.com>
+
 	* FileDialog.cs:
 	  - Disabled registry support for windows and added better registry
 	    error checking for other systems (need to investigate why it

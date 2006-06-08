@@ -1906,7 +1906,6 @@ namespace System.Windows.Forms {
 		
 		private string currentFolder;
 		private string currentRealFolder;
-		private string currentTopFolder;
 		private FSEntry currentFolderFSEntry;
 		
 		// store DirectoryInfo for a back button for example
@@ -2125,15 +2124,30 @@ namespace System.Windows.Forms {
 			
 			TextEntryDialog ted = new TextEntryDialog ();
 			ted.IconPictureBoxImage = MimeIconEngine.LargeIcons.Images.GetImage (fsEntry.IconIndex);
-			ted.FileName = "New Folder";
+			
+			string folder = "";
+			
+			if (currentFolderFSEntry.RealName != null)
+				folder = currentFolderFSEntry.RealName;
+			else
+				folder = currentFolder;
+			
+			string tmp_filename = "New Folder";
+			
+			if (Directory.Exists (Path.Combine (folder, tmp_filename))) {
+				int i = 1;
+				
+				tmp_filename = tmp_filename + " (" + i + ")";
+				
+				while (Directory.Exists (Path.Combine (folder, tmp_filename))) {
+					i++;
+					tmp_filename = "New Folder" + " (" + i + ")";
+				}
+			}
+			
+			ted.FileName = tmp_filename;
 			
 			if (ted.ShowDialog () == DialogResult.OK) {
-				string folder = "";
-				if (currentFolderFSEntry.RealName != null)
-					folder = currentFolderFSEntry.RealName;
-				else
-					folder = currentFolder;
-				
 				string new_folder = Path.Combine (folder, ted.FileName);
 				
 				if (vfs.CreateFolder (new_folder)) {
@@ -2257,11 +2271,11 @@ namespace System.Windows.Forms {
 					if (collection.Contains (fileName)) {
 						int i = 1;
 						
-						while (collection.Contains (fileName + "[" + i + "]")) {
+						while (collection.Contains (fileName + "(" + i + ")")) {
 							i++;
 						}
 						
-						fileName = fileName + "[" + i + "]";
+						fileName = fileName + "(" + i + ")";
 					}
 					
 					fsEntry.Name = fileName;
@@ -2742,7 +2756,7 @@ namespace System.Windows.Forms {
 		{
 			try {
 				if (Directory.Exists (new_folder)) {
-					string message = "Folder \"" + new_folder + "\" exists already.";
+					string message = "Folder \"" + new_folder + "\" already exists.";
 					MessageBox.Show (message, new_folder, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 					return false;
 				} else
