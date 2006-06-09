@@ -1,3 +1,11 @@
+2006-06-09  Jackson Harper  <jackson@ximian.com>
+
+	* TreeNode.cs:  Recalculate the visible order before doing the
+	Expand/Collapse Below calls, because those calls generate an
+	expose.
+	- Reduce calls to the TreeView property, which is mildly expensive
+	by using a local var.
+
 2006-06-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FileDialog.cs: handle access errors when trying to create a folder

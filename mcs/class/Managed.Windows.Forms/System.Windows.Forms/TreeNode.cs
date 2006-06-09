@@ -603,26 +603,31 @@ namespace System.Windows.Forms {
 		{
 			if (is_expanded || nodes.Count < 1)
 				return;
+
 			bool cancel = false;
-			if (TreeView != null) {
+			TreeView tree_view = TreeView;
+			if (tree_view != null) {
 				TreeViewCancelEventArgs e = new TreeViewCancelEventArgs (this, false, TreeViewAction.Expand);
-				TreeView.OnBeforeExpand (e);
+				tree_view.OnBeforeExpand (e);
 				cancel = e.Cancel;
 			}
 
 			if (!cancel) {
 				is_expanded = true;
 				int count_to_next = CountToNext ();
-				if (TreeView != null)
-					TreeView.OnAfterExpand (new TreeViewEventArgs (this));
-				if (IsVisible && TreeView != null)
-					TreeView.ExpandBelow (this, count_to_next);
+
+				if (tree_view != null) {
+					tree_view.OnAfterExpand (new TreeViewEventArgs (this));
+
+					tree_view.RecalculateVisibleOrder (this);
+					tree_view.UpdateScrollBars ();
+
+					if (IsVisible)
+						tree_view.ExpandBelow (this, count_to_next);
+				}
 			}
 
-			if (TreeView != null) {
-				TreeView.RecalculateVisibleOrder (this);
-				TreeView.UpdateScrollBars ();
-			}
+			
 		}
 
 		private void Collapse (bool byInternal)
@@ -634,9 +639,10 @@ namespace System.Windows.Forms {
 				return;
 
 			bool cancel = false;
-			if (TreeView != null) {
+			TreeView tree_view = TreeView;
+			if (tree_view != null) {
 				TreeViewCancelEventArgs e = new TreeViewCancelEventArgs (this, false, TreeViewAction.Collapse);
-				TreeView.OnBeforeCollapse (e);
+				tree_view.OnBeforeCollapse (e);
 				cancel = e.Cancel;
 			}
 
@@ -644,17 +650,18 @@ namespace System.Windows.Forms {
 				int count_to_next = CountToNext ();
 
 				is_expanded = false;
-				if (TreeView != null)
-					TreeView.OnAfterCollapse (new TreeViewEventArgs (this));
-				if (IsVisible && TreeView != null)
-					TreeView.CollapseBelow (this, count_to_next);
-				if(!byInternal && TreeView != null && HasFocusInChildren ())
-					TreeView.SelectedNode = this;
-			}
 
-			if (TreeView != null) {
-				TreeView.RecalculateVisibleOrder (this);
-				TreeView.UpdateScrollBars ();
+				if (tree_view != null) {
+					tree_view.OnAfterCollapse (new TreeViewEventArgs (this));
+
+					tree_view.RecalculateVisibleOrder (this);
+					tree_view.UpdateScrollBars ();
+
+					if (IsVisible)
+						tree_view.CollapseBelow (this, count_to_next);
+					if(!byInternal && HasFocusInChildren ())
+						tree_view.SelectedNode = this;
+				}
 			}
 		}
 
