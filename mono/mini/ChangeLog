@@ -1,6 +1,12 @@
 2006-06-08  Massimiliano Mantione  <massi@ximian.com>
 
-	* mini.c: Fixed bug 77996, and settled some debugging code.
+	* ssapre-cee-ops.h: Renamed as "simple-cee-ops.h"
+	* simple-cee-ops.h: Was "ssapre-cee-ops.h" (renamed).
+	* ssapre-mini-ops.h: Renamed as "simple-mini-ops.h"
+	* simple-mini-ops.h: Was "ssapre-mini-ops.h" (renamed).
+	* local-propagation.c: In mono_cprop_invalidate_values use a whitelist
+	of opcodes, so that bug 78549 should not happen again.
+	* ssapre.c: Updated to use the renamed files.
 
 2006-06-08  Zoltan Varga  <vargaz@gmail.com>
 
