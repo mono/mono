@@ -67,7 +67,6 @@ namespace System.Windows.Forms {
 				owner.ActiveMdiChild = form;
 
 				form.LocationChanged += new EventHandler (owner.FormLocationChanged);
-				owner.LayoutMdi (MdiLayout.Cascade);
 			}
 
 			public override void Remove(Control value) {
@@ -89,9 +88,6 @@ namespace System.Windows.Forms {
 			BackColor = SystemColors.AppWorkspace;
 			Dock = DockStyle.Fill;
 			SetStyle (ControlStyles.Selectable, false);
-
-			initial_layout_handler = new LayoutEventHandler (InitialLayoutHandler);
-			Layout += initial_layout_handler;
 		}
 		#endregion	// Public Constructors
 
@@ -107,12 +103,6 @@ namespace System.Windows.Forms {
 
 		internal Form ParentForm {
 			get { return (Form) Parent; }
-		}
-
-		private void InitialLayoutHandler (object sender, LayoutEventArgs e)
-		{
-			LayoutMdi (MdiLayout.Cascade);
-			Layout -= initial_layout_handler;
 		}
 
 		protected override Control.ControlCollection CreateControlsInstance ()
@@ -184,6 +174,15 @@ namespace System.Windows.Forms {
 
 		#region Public Instance Methods
 		public void LayoutMdi (MdiLayout value) {
+
+			int max_width = Int32.MaxValue;
+			int max_height = Int32.MaxValue;
+
+			if (Parent != null) {
+				max_width = Parent.Width;
+				max_height = Parent.Height;
+			}
+
 			switch (value) {
 			case MdiLayout.Cascade:
 				int i = 0;
@@ -193,7 +192,7 @@ namespace System.Windows.Forms {
 					int l = 22 * i;
 					int t = 22 * i;
 
-					if (i != 0 && (l + form.Width > Width || t + form.Height > Height)) {
+					if (i != 0 && (l + form.Width > max_width || t + form.Height > max_height)) {
 						i = 0;
 						l = 22 * i;
 						t = 22 * i;

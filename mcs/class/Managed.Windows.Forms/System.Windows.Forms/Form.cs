@@ -1405,6 +1405,10 @@ namespace System.Windows.Forms {
 
 			// Send initial location
 			OnLocationChanged(EventArgs.Empty);
+
+			if (IsMdiContainer) {
+				mdi_container.LayoutMdi (MdiLayout.Cascade);
+			}
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -1468,11 +1472,7 @@ namespace System.Windows.Forms {
 						Top = CreateParams.Y;
 						break;
 				}
-			} else {
-				MdiParent.MdiContainer.LayoutMdi (MdiLayout.Cascade);
-				
 			}
-
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
