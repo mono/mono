@@ -418,7 +418,7 @@ namespace System.Windows.Forms {
 
 			set {
 				if (value && mdi_container == null) {
-					mdi_container = new MdiClient (this);
+					mdi_container = new MdiClient ();
 					Controls.Add(mdi_container);
 				} else if (!value && mdi_container != null) {
 					Controls.Remove(mdi_container);

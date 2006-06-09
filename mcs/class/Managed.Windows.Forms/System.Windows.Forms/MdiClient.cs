@@ -82,13 +82,6 @@ namespace System.Windows.Forms {
 			Dock = DockStyle.Fill;
 			SetStyle (ControlStyles.Selectable, false);
 		}
-
-		internal MdiClient (Form parent)
-		{
-			BackColor = SystemColors.AppWorkspace;
-			Dock = DockStyle.Fill;
-			SetStyle (ControlStyles.Selectable, false);
-		}
 		#endregion	// Public Constructors
 
 		internal override void OnPaintBackgroundInternal (PaintEventArgs pe)

@@ -5,10 +5,13 @@
 	expose.
 	- Reduce calls to the TreeView property, which is mildly expensive
 	by using a local var.
-	* Form.cs: Layout the MDI child windows when creating the parent form.
+	* Form.cs: Layout the MDI child windows when creating the parent
+	form.
+	- Don't use the internal constructor anymore
 	* MdiClient.cs: use the parent form width/height (if available)
 	when laying out the child windows, we do this because the
 	mdiclient isn't docked yet when the initial layout is done.
+	- Don't need an internal constructor anymore.
 
 2006-06-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
