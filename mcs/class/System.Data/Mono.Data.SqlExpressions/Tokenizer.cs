@@ -143,7 +143,7 @@ namespace Mono.Data.SqlExpressions {
 		{
 			if (c == '\\') {
 				if (MoveNext())
-					c = Next();
+					c = Current ();
 				else
 					c = '\0';
 

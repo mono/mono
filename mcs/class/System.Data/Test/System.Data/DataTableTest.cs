@@ -323,6 +323,22 @@ namespace MonoTests.System.Data
 			AssertEquals ("test#07", 1, T.Select ("age = '13'").Length);
 
 		}
+		
+		[Test]
+		public void SelectEscaping () {
+			DataTable dt = new DataTable ();
+			dt.Columns.Add ("SomeCol");
+			dt.Rows.Add (new object [] {"\t"});
+			dt.Rows.Add (new object [] {"\\"});
+			
+			AssertEquals ("test#01", 1, dt.Select (@"SomeCol='\t'").Length);
+			AssertEquals ("test#02", 1, dt.Select (@"SomeCol='\\'").Length);
+			
+			try {
+				dt.Select (@"SomeCol='\x'");
+				Fail("test#03");
+			} catch (SyntaxErrorException) {}
+		}
 
 		[Test]
 		public void SelectOperators ()
