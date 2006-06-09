@@ -2391,5 +2391,44 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		{
 			IsOutlineVisible_Rectangle (null);
 		}
+
+		private void IsVisible_Rectangle (Graphics graphics)
+		{
+			using (GraphicsPath gp = new GraphicsPath ()) {
+				gp.AddRectangle (new Rectangle (10, 10, 20, 20));
+				Assert.IsFalse (gp.IsVisible (9, 9, graphics), "Int0");
+				Assert.IsTrue (gp.IsVisible (10, 10, graphics), "Int1");
+				Assert.IsTrue (gp.IsVisible (20, 20, graphics), "Int2");
+				Assert.IsTrue (gp.IsVisible (29, 29, graphics), "Int3");
+				Assert.IsFalse (gp.IsVisible (30, 29, graphics), "Int4");
+				Assert.IsFalse (gp.IsVisible (29, 30, graphics), "Int5");
+				Assert.IsFalse (gp.IsVisible (30, 30, graphics), "Int6");
+
+				Assert.IsFalse (gp.IsVisible (9.4f, 9.4f, graphics), "Float0");
+				Assert.IsTrue (gp.IsVisible (9.5f, 9.5f, graphics), "Float1");
+				Assert.IsTrue (gp.IsVisible (10f, 10f, graphics), "Float2");
+				Assert.IsTrue (gp.IsVisible (20f, 20f, graphics), "Float3");
+				Assert.IsTrue (gp.IsVisible (29.4f, 29.4f, graphics), "Float4");
+				Assert.IsFalse (gp.IsVisible (29.5f, 29.5f, graphics), "Float5");
+				Assert.IsFalse (gp.IsVisible (29.5f, 29.4f, graphics), "Float6");
+				Assert.IsFalse (gp.IsVisible (29.4f, 29.5f, graphics), "Float7");
+			}
+		}
+
+		[Test]
+		public void IsVisible_Rectangle_WithoutGraphics ()
+		{
+			IsVisible_Rectangle (null);
+		}
+
+		[Test]
+		public void IsVisible_Rectangle_WithGraphics ()
+		{
+			using (Bitmap bitmap = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bitmap)) {
+					IsVisible_Rectangle (g);
+				}
+			}
+		}
 	}
 }

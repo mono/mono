@@ -1,3 +1,7 @@
+2006-06-09  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* GraphicsPathTest.cs: Added test cases for IsVisible methods.
+
 2006-06-07  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* GraphicsPathTest.cs: Added test cases for IsOutlineVisible methods.
