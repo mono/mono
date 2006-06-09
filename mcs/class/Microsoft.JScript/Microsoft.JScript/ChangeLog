@@ -1,3 +1,17 @@
+2006-06-08  Cesar Lopez Nataren  <cesar.nataren@medsphere.com>
+
+	* Added the NPL license (as that's the header the original java
+	files have) header to Token.cs, TokenStream.cs, Parser.cs and
+	Decompiler.cs to avoid confusion. Also, the notice has always been
+	stated in mcs/LICENSE that:
+
+	"The Microsoft.JScript assembly is covered by the
+	MIT X11 and the Mozilla MPL license as it contains
+	ported pieces of code from Rhino, the Mozilla JavaScript
+	implementations" 
+
+	And we include mcs/LICENSE.MPL	
+
 2006-04-18  Cesar Lopez Nataren  <cesar.nataren@medsphere.com>
 
 	* TokenStream.cs: Ciao to_string.
