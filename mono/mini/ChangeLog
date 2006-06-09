@@ -1,3 +1,7 @@
+2006-06-09  Jonathan Chambers  <jonathan.chambers@ansys.com>
+
+	* mini-exceptions.c: Minor fix for building mono in Visual Studio.
+
 2006-06-08  Massimiliano Mantione  <massi@ximian.com>
 
 	* ssapre-cee-ops.h: Renamed as "simple-cee-ops.h"
