@@ -1,3 +1,7 @@
+2006-06-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* interlocked-2.2.cs: Make the return values positive.
+
 2006-06-07  Wade Berrier <wberrier@novell.com>
 
 	* Makefile.am: add  test-inline-call-stack-library.cs and test-inline-call-stack.cs
