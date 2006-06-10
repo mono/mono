@@ -285,7 +285,12 @@ namespace System.Configuration
 					reader.Skip ();
 					continue;
 				}
-				
+
+				if (reader.LocalName == "dllmap") {
+					reader.Skip ();
+					continue;
+				}
+
 				if (reader.LocalName == "location") {
 					if (!root)
 						ThrowException ("<location> elements are only allowed in <configuration> elements.", reader);

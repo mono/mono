@@ -1,3 +1,7 @@
+2006-06-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SectionGroupInfo.cs : skip <dllmap> in configuration.
+
 2006-05-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ConfigurationManager.cs: since ConfigurationSystem is different
