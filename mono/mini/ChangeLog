@@ -1,3 +1,10 @@
+2006-06-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ia64.c (mono_arch_lowering_pass): Remove some code duplication.
+	
+	* mini-ia64.c inssel-ia64.brg: Implement the new net 2.0 Interlocked.Add
+	methods as instrinsics.
+
 2006-06-09  Wade Berrier <wberrier@novell.com>
 
 	* Makefile.am: Fix sources list for svn rename so that make dist succeeds
