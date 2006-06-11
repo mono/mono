@@ -170,6 +170,7 @@ System.Web.UI.WebControls/RoleGroupTest.cs
 System.Web.UI.WebControls/SelectedDatesCollectionTest.cs
 System.Web.UI.WebControls/SqlDataSourceTest.cs
 System.Web.UI.WebControls/SqlDataSourceViewTest.cs
+System.Web.UI.WebControls/ObjectDataSourceViewTest.cs
 System.Web.UI.WebControls/StyleTest.cs
 System.Web.UI.WebControls/TableCellTest.cs
 System.Web.UI.WebControls/TableFooterRowTest.cs

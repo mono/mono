@@ -392,7 +392,7 @@ namespace System.Web.UI.WebControls
 		public string OldValuesParameterFormatString {
 			get {
 				object ret = ViewState ["OldValuesParameterFormatString"];
-				return ret != null ? (string)ret : "original_{0}";
+				return ret != null ? (string)ret : "{0}";
 			}
 			set {
 				ViewState ["OldValuesParameterFormatString"] = value;
