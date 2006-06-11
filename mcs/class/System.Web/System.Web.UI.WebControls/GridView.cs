@@ -1379,7 +1379,13 @@ namespace System.Web.UI.WebControls
 			GridViewCommandEventArgs args = e as GridViewCommandEventArgs;
 			if (args != null) {
 				OnRowCommand (args);
-				ProcessEvent (args.CommandName, args.CommandArgument as string);
+				string param = args.CommandArgument as string;
+				if (param == null || param.Length == 0) {
+					GridViewRow row = args.Row;
+					if (row != null)
+						param = row.RowIndex.ToString();
+				}
+				ProcessEvent (args.CommandName, param);
 			}
 			return base.OnBubbleEvent (source, e);
 		}
