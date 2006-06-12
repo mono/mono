@@ -55,7 +55,7 @@ IMAGES_RESOURCES = \
 	resources/user-desktop.png		\
 	resources/dialog-error.png		\
 	resources/dialog-information.png	\
-	resources/dialog-question3.png		\
+	resources/dialog-question.png		\
 	resources/dialog-warning.png
 
 EXTRA_DISTFILES = \
