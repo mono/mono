@@ -279,7 +279,19 @@ namespace System.Windows.Forms {
 
 		public virtual void PointToClient (ref int x, ref int y)
 		{
-			// toolwindows stay in screencoords
+			// toolwindows stay in screencoords we just have to make sure
+			// they obey the working area
+			Rectangle working = SystemInformation.WorkingArea;
+
+			if (x > working.Right)
+				x = working.Right;
+			if (x < working.Left)
+				x = working.Left;
+
+			if (y < working.Top)
+				y = working.Top;
+			if (y > working.Bottom)
+				y = working.Bottom;
 		}
 
 		public virtual void PointToScreen (ref int x, ref int y)

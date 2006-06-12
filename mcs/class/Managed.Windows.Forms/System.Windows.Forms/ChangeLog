@@ -5,6 +5,9 @@
 	- Expose some extra stuff to base classes
 	- Make sure to end the Capture on an NC Mouse up, so that we can
 	get double clicks properly, and the sizing doens't stick.
+	- When doing PointToClient contain it in the workable desktop
+	area, this prevents windows from changing size when the cursor is
+	pulled outside of the working area while sizing.
 	* MdiWindowManager.cs: When we get a double click maximize the
 	window.
 	- Reset the cursor after handling mode changes.
