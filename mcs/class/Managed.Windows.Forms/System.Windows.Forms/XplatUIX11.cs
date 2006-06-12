@@ -1828,23 +1828,39 @@ namespace System.Windows.Forms {
 				IntPtr			prop = IntPtr.Zero;
 				int			width;
 				int			height;
+				int			current_desktop;
+				int			x;
+				int			y;
 
-				XGetWindowProperty(DisplayHandle, RootWindow, NetAtoms[(int)NA._NET_DESKTOP_GEOMETRY], IntPtr.Zero, new IntPtr (256), false, (IntPtr)Atom.XA_CARDINAL, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
-				if (((long)nitems == 2) && (prop != IntPtr.Zero) && IntPtr.Size == 4) {
-					width = Marshal.ReadIntPtr(prop, 0).ToInt32();
-					height = Marshal.ReadIntPtr(prop, IntPtr.Size).ToInt32();
-
-					XFree(prop);
-					return new Rectangle(0, 0, width, height);
-				} else {
-					XWindowAttributes	attributes=new XWindowAttributes();
-
-					lock (XlibLock) {
-						XGetWindowAttributes(DisplayHandle, XRootWindow(DisplayHandle, 0), ref attributes);
-					}
-
-					return new Rectangle(0, 0, attributes.width, attributes.height);
+				XGetWindowProperty(DisplayHandle, RootWindow, NetAtoms[(int)NA._NET_CURRENT_DESKTOP], IntPtr.Zero, new IntPtr(1), false, (IntPtr)Atom.XA_CARDINAL, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
+				if ((long)nitems < 1) {
+					goto failsafe;
 				}
+
+				current_desktop = Marshal.ReadIntPtr(prop, 0).ToInt32();
+				XFree(prop);
+
+				XGetWindowProperty(DisplayHandle, RootWindow, NetAtoms[(int)NA._NET_WORKAREA], IntPtr.Zero, new IntPtr (256), false, (IntPtr)Atom.XA_CARDINAL, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
+				if ((long)nitems < 4 * current_desktop) {
+					goto failsafe;
+				}
+
+				x = Marshal.ReadIntPtr(prop, IntPtr.Size * 4 * current_desktop).ToInt32();
+				y = Marshal.ReadIntPtr(prop, IntPtr.Size * 4 * current_desktop + IntPtr.Size).ToInt32();
+				width = Marshal.ReadIntPtr(prop, IntPtr.Size * 4 * current_desktop + IntPtr.Size * 2).ToInt32();
+				height = Marshal.ReadIntPtr(prop, IntPtr.Size * 4 * current_desktop + IntPtr.Size * 3).ToInt32();
+				XFree(prop);
+
+				return new Rectangle(x, y, width, height);
+
+			failsafe:
+				XWindowAttributes	attributes=new XWindowAttributes();
+
+				lock (XlibLock) {
+					XGetWindowAttributes(DisplayHandle, XRootWindow(DisplayHandle, 0), ref attributes);
+				}
+
+				return new Rectangle(0, 0, attributes.width, attributes.height);
 			}
 		} 
 		#endregion	// Public properties

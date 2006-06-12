@@ -1,3 +1,10 @@
+2006-06-12  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* XplatUIX11.cs (WorkingArea): Read the actual workarea for the 
+	  current desktop, instead of just assuming a 0, 0 origin. This
+	  is needed for our internal window manager, to know the top
+	  margin of the desktop
+
 2006-06-12  Chris Toshok  <toshok@ximian.com>
 
 	* DataGrid.cs (set_CurrentCell): concede focus as we move around.
