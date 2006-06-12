@@ -481,6 +481,9 @@ namespace System.Windows.Forms
 				}
 #endif
 
+				if (was_editing)
+					CurrentTableStyle.GridColumnStyles[current_cell.ColumnNumber].ConcedeFocus ();
+
 				//Console.WriteLine ("set_CurrentCell, {0}x{1}, RowsCount = {2}, from {3}", value.RowNumber, value.ColumnNumber, RowsCount, Environment.StackTrace);
 				if (need_add) {
 					Console.WriteLine ("+ calling AddNew");
@@ -1084,13 +1087,15 @@ namespace System.Windows.Forms
 			if (!is_editing)
 				return;
 
+			CurrentTableStyle.GridColumnStyles[current_cell.ColumnNumber].ConcedeFocus ();
+
 			if (is_changing) {
 				if (current_cell.ColumnNumber < CurrentTableStyle.GridColumnStyles.Count)
 					CurrentTableStyle.GridColumnStyles[current_cell.ColumnNumber].Abort (current_cell.RowNumber);
+				is_changing = false;
+				grid_drawing.InvalidateRowHeader (current_cell.RowNumber);
 			}
 
-
-			CurrentTableStyle.GridColumnStyles[current_cell.ColumnNumber].ConcedeFocus ();
 			if (is_adding) {
 				ListManager.CancelCurrentEdit ();
 				is_adding = false;
@@ -1800,8 +1805,7 @@ namespace System.Windows.Forms
 			return false; // message not processed
 		}
 
-		// Called from DataGridTextBox
-		internal bool ProcessKeyPreviewInternal(ref Message m)
+		protected override bool ProcessKeyPreview (ref Message m)
 		{
 			if ((Msg)m.Msg == Msg.WM_KEYDOWN) {
 				Keys key = (Keys) m.WParam.ToInt32 ();
@@ -1810,14 +1814,7 @@ namespace System.Windows.Forms
 					return true;
 				}
 			}
-			return false;
-		}
 
-		protected override bool ProcessKeyPreview (ref Message m)
-		{
-			if (ProcessKeyPreviewInternal(ref m)) {
-				return true;
-			}
 			return base.ProcessKeyPreview (ref m);
 		}
 		
@@ -2020,13 +2017,6 @@ namespace System.Windows.Forms
 			list_manager.ItemChanged -= new ItemChangedEventHandler (OnListManagerItemChanged);
 		}
 
-		// EndEdit current editing operation
-		internal virtual bool EndEdit (bool shouldAbort)
-		{
-			return EndEdit (CurrentTableStyle.GridColumnStyles[current_cell.ColumnNumber],
-				CurrentRow, shouldAbort);
-		}
-
 		private void EnsureCellVisibility (DataGridCell cell)
 		{
 			if (cell.ColumnNumber <= first_visiblecolumn ||
@@ -2058,7 +2048,7 @@ namespace System.Windows.Forms
 			}
 		}
 		
-		internal IEnumerable GetDataSource (object source, string member)
+		private IEnumerable GetDataSource (object source, string member)
 		{	
 			if (source is IEnumerable)
 				return (IEnumerable) source;
@@ -2094,7 +2084,7 @@ namespace System.Windows.Forms
 			
 		}
 
-		internal void InvalidateCurrentRowHeader ()
+		private void InvalidateCurrentRowHeader ()
 		{
 			grid_drawing.InvalidateRowHeader (CurrentRow);
 		}

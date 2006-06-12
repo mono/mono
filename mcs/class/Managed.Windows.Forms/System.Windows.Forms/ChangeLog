@@ -1,5 +1,23 @@
 2006-06-12  Chris Toshok  <toshok@ximian.com>
 
+	* DataGrid.cs (set_CurrentCell): concede focus as we move around.
+	we need this to get rid of the selected background in the bool
+	column.
+	(CancelEditing): move the ConcedeFocus call to above the Abort
+	call.  Also, set is_changing to false and invalidate the row
+	header if we were changing before.
+	(ProcessKeyPreviewInternal): remove, since noone outside this
+	class calls it anymore.  Roll the code into ProcessKeyPreview.
+	(EndEdit): remove the internal version.
+	(InvalidateCurrentRowHeader): make private.
+
+	* DataGridBoolColumn.cs: simplify this class a bunch.  remove the
+	Keys.Escape handling (and with it the last call to
+	DataGrid.EndEdit from outside the class.)
+
+
+2006-06-12  Chris Toshok  <toshok@ximian.com>
+
 	* DataGridTextBox.cs (.ctor): isedit defaults to false.
 	(OnKeyPress): set isedit to true.
 	(ProcessKeyMessage): remove Keys.Enter handling from here.  it's
