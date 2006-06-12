@@ -94,7 +94,6 @@ namespace System.Windows.Forms {
 				if (listposition == value)
 					return;
 				listposition = value;
-				PullData ();
 				OnCurrentChanged (EventArgs.Empty);
 				OnPositionChanged (EventArgs.Empty);
 			}

@@ -1,3 +1,24 @@
+2006-06-12  Chris Toshok  <toshok@ximian.com>
+
+	* DataGrid.cs (set_CurrentCell): more work here.  it's still not
+	right.  ugh.
+	(set_DataSource): SetDataSource always returns true, so stop
+	putting it in an if statement.
+	(EndEdit): get rid of some {}'s
+	(ProcessGridKey): return true in case Keys.Escape.
+	(ProcessKeyPreviewInternal): only handle KEYDOWN messages.
+	(ConnectListManagerEvents,DisconnectListManagerEvents): connect to
+	PositionChanged, stopped connecting to CurrentChanged.
+	(GetDataSource): simplify this a bunch.
+	(SetDataSource): change return type from bool to void.
+	(OnListManagerPositionChanged): rename OnListManagerCurrentChanged
+	to this, and make sure we don't set ListManager.Position inside
+	set_CurrentCell.
+	(OnListManagerItemChanged): if we're passed an actual index,
+	redraw that row.
+
+	* CurrencyManager.cs (set_Position): don't call PullData here.
+
 2006-06-09  Jackson Harper  <jackson@ximian.com>
 
 	* TreeNode.cs:  Recalculate the visible order before doing the

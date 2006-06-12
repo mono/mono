@@ -185,6 +185,8 @@ namespace System.Windows.Forms
 		int resize_column_width_delta;
 		int resize_column;
 		
+		bool from_positionchanged_handler;
+
 		#endregion // Local Variables
 
 		#region Public Constructors
@@ -447,39 +449,58 @@ namespace System.Windows.Forms
 			}
 
 			set {
+				int old_row = current_cell.RowNumber;
+
 				if (current_cell.Equals (value))
 					return;
 
 				bool was_editing = is_editing;
+				bool need_add = value.RowNumber >= RowsCount;
 
-				if (was_editing)
-					CancelEditing ();
+				if (need_add)
+					value.RowNumber = RowsCount;
+
 
 				accept_listmgrevents = false;
+
+#if false
+				if (was_editing) {
+					EndEdit (CurrentTableStyle.GridColumnStyles[current_cell.ColumnNumber],
+						 current_cell.RowNumber,
+						 is_adding && !is_changing);
+
+					if (value.RowNumber != old_row) {
+						ListManager.EndCurrentEdit ();
+					}
+				}
+#else
+				if (value.RowNumber != old_row && is_adding && !is_changing) {
+					is_adding = false;
+					ListManager.CancelCurrentEdit ();
+					grid_drawing.UpdateVisibleRowCount ();
+				}
+#endif
+
 				//Console.WriteLine ("set_CurrentCell, {0}x{1}, RowsCount = {2}, from {3}", value.RowNumber, value.ColumnNumber, RowsCount, Environment.StackTrace);
-				if (value.RowNumber >= RowsCount) {
-					//Console.WriteLine ("+ calling AddNew", value.RowNumber, RowsCount);
+				if (need_add) {
+					Console.WriteLine ("+ calling AddNew");
 					ListManager.AddNew ();
 					is_adding = true;
-					value.RowNumber = RowsCount - 1;
 				}
 
 				if (value.ColumnNumber >= CurrentTableStyle.GridColumnStyles.Count) {
 					value.ColumnNumber = CurrentTableStyle.GridColumnStyles.Count == 0 ? 0: CurrentTableStyle.GridColumnStyles.Count - 1;
 				}
 					
-				int old_row = current_cell.RowNumber;
-						
 				EnsureCellVisibility (value);
 				current_cell = value;					
 			
 				if (current_cell.RowNumber != old_row) {
 					grid_drawing.InvalidateRowHeader (old_row);
 				}
-			
-				if (list_manager !=  null) {
+
+				if (!from_positionchanged_handler && !is_adding)
 					list_manager.Position = current_cell.RowNumber;
-				}
 
 				if (current_cell.RowNumber != old_row) {
 					InvalidateCurrentRowHeader ();
@@ -555,9 +576,8 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				if (SetDataSource (value)) {
-					SetNewDataSource ();					
-				}
+				SetDataSource (value);
+				SetNewDataSource ();					
 			}
 		}
 
@@ -1134,12 +1154,10 @@ namespace System.Windows.Forms
 				return true;
 
 			if (is_adding) {
-				if (shouldAbort) {
+				if (shouldAbort)
 					ListManager.CancelCurrentEdit ();
-				} else {
-					ListManager.EndCurrentEdit ();
+				else
 					CalcAreasAndInvalidate ();
-				}
 				is_adding = false;
 			}
 
@@ -1649,7 +1667,7 @@ namespace System.Windows.Forms
 			switch (ke.KeyCode) {
 			case Keys.Escape:
 				CancelEditing ();
-				break;
+				return true;
 				
 			case Keys.D0:
 				if (alt_pressed) {
@@ -1785,10 +1803,12 @@ namespace System.Windows.Forms
 		// Called from DataGridTextBox
 		internal bool ProcessKeyPreviewInternal(ref Message m)
 		{
-			Keys key = (Keys) m.WParam.ToInt32 ();
-			KeyEventArgs ke = new KeyEventArgs (key);
-			if (ProcessGridKey (ke) == true) {
-				return true;
+			if ((Msg)m.Msg == Msg.WM_KEYDOWN) {
+				Keys key = (Keys) m.WParam.ToInt32 ();
+				KeyEventArgs ke = new KeyEventArgs (key);
+				if (ProcessGridKey (ke) == true) {
+					return true;
+				}
 			}
 			return false;
 		}
@@ -1977,7 +1997,6 @@ namespace System.Windows.Forms
 		{
 			selected_rows.Remove (row);
 			grid_drawing.InvalidateRow (row);
-
 		}
 		#endregion	// Public Instance Methods
 
@@ -1991,13 +2010,13 @@ namespace System.Windows.Forms
 		
 		private void ConnectListManagerEvents ()
 		{
-			list_manager.CurrentChanged += new EventHandler (OnListManagerCurrentChanged);			
+			list_manager.PositionChanged += new EventHandler (OnListManagerPositionChanged);
 			list_manager.ItemChanged += new ItemChangedEventHandler (OnListManagerItemChanged);
 		}
 		
 		private void DisconnectListManagerEvents ()
 		{
-			list_manager.CurrentChanged -= new EventHandler (OnListManagerCurrentChanged);			
+			list_manager.PositionChanged -= new EventHandler (OnListManagerPositionChanged);
 			list_manager.ItemChanged -= new ItemChangedEventHandler (OnListManagerItemChanged);
 		}
 
@@ -2041,36 +2060,21 @@ namespace System.Windows.Forms
 		
 		internal IEnumerable GetDataSource (object source, string member)
 		{	
-			IListSource src = (IListSource) source;
-			IList list = src.GetList();
-			IListSource listsource;
-			ITypedList typedlist;
-					
-			if (source is IEnumerable) {
+			if (source is IEnumerable)
 				return (IEnumerable) source;
-			}
 			
-			if(src.ContainsListCollection == false)	{
+			IListSource listsource = source as IListSource;
+			if (listsource == null)
+				return null;
+
+			IList list = listsource.GetList ();
+			if (!listsource.ContainsListCollection)
 				return list;
-			}
 			
-			listsource = (IListSource) source;
 			
-			if (listsource == null) {
+			ITypedList typedlist = list as ITypedList;
+			if (typedlist == null)
 				return null;
-			}
-			
-			list = src.GetList ();
-			
-			if (list == null) {
-				return null;
-			}
-			
-			typedlist = (ITypedList) list;
-				
-			if (typedlist == null) {
-				return null;
-			}			
 
 			PropertyDescriptorCollection col = typedlist.GetItemProperties (new PropertyDescriptor [0]);
 			PropertyDescriptor prop = col.Find (member, true);
@@ -2110,13 +2114,14 @@ namespace System.Windows.Forms
 			return true;
 		}
 
-		private bool SetDataSource (object source)
+		private void SetDataSource (object source)
 		{			
 			if (source != null && source as IListSource != null && source as IList != null) {
 				throw new Exception ("Wrong complex data binding source");
 			}
 
-			CancelEditing ();
+			if (is_editing)
+				CancelEditing ();
 
 			current_cell = new DataGridCell ();
 			datasource = source;
@@ -2131,7 +2136,6 @@ namespace System.Windows.Forms
 			}
 
 			OnDataSourceChanged (EventArgs.Empty);
-			return true;
 		}
 
 		private void SetNewDataSource ()
@@ -2152,14 +2156,16 @@ namespace System.Windows.Forms
 			CalcAreasAndInvalidate ();			
 		}
 
-		private void OnListManagerCurrentChanged (object sender, EventArgs e)
-		{			
+		private void OnListManagerPositionChanged (object sender, EventArgs e)
+		{
 			if (accept_listmgrevents == false)
 				return;
 
+			from_positionchanged_handler = true;
 			CurrentRow = list_manager.Position;
+			from_positionchanged_handler = false;
 		}
-		
+
 		private void OnListManagerItemChanged (object sender, ItemChangedEventArgs e)
 		{
 			if (accept_listmgrevents == false)
@@ -2167,8 +2173,10 @@ namespace System.Windows.Forms
 
 			if (e.Index == -1)
 				CalcAreasAndInvalidate ();
+			else
+				grid_drawing.InvalidateRow (e.Index);
 		}
-		
+
 		private void OnTableStylesCollectionChanged (object sender, CollectionChangeEventArgs e)
 		{
 			if (ListManager == null)
