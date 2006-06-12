@@ -47,7 +47,7 @@ namespace System.Windows.Forms
 		#region Constructors
 		public DataGridTextBox ()
 		{
-			isedit = true;
+			isedit = false;
 			grid = null;
 			accepts_tab = true;
 			accepts_return = true;
@@ -59,12 +59,8 @@ namespace System.Windows.Forms
 
 		#region Public Instance Properties
 		public bool IsInEditOrNavigateMode {
-			get {
-				return isedit;
-			}
-			set {
-				isedit = value;
-			}
+			get { return isedit; }
+			set { isedit = value; }
 		}
 
 		#endregion	// Public Instance Properties
@@ -72,6 +68,7 @@ namespace System.Windows.Forms
 		#region Public Instance Methods
 		protected override void OnKeyPress (KeyPressEventArgs e)
 		{
+			isedit = true;
 			grid.ColumnStartedEditing (Bounds);
 			base.OnKeyPress (e);
 		}
@@ -85,9 +82,6 @@ namespace System.Windows.Forms
 		{
 			Keys key = (Keys) m.WParam.ToInt32 ();
 
-			// If we decide DataGrid needs to process we call grid.ProcessKeyPreviewInternal and return true
-			// If we want TextBox to handle the key , we return false;
-
 			switch ((Msg)m.Msg) {
 			case Msg.WM_CHAR:
 				return ProcessKeyEventArgs (ref m);
@@ -97,12 +91,6 @@ namespace System.Windows.Forms
 				case Keys.F2:
 					SelectionStart = Text.Length;
 					SelectionLength = 0;
-					return true;
-
-				case Keys.Enter:
-					isedit = false;
-					grid.EndEdit (false);
-					grid.ProcessKeyPreviewInternal(ref m);
 					return true;
 
 				case Keys.Left:

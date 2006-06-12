@@ -1,5 +1,10 @@
 2006-06-12  Chris Toshok  <toshok@ximian.com>
 
+	* DataGridTextBox.cs (.ctor): isedit defaults to false.
+	(OnKeyPress): set isedit to true.
+	(ProcessKeyMessage): remove Keys.Enter handling from here.  it's
+	already handled by the grid.
+
 	* DataGrid.cs (set_CurrentCell): more work here.  it's still not
 	right.  ugh.
 	(set_DataSource): SetDataSource always returns true, so stop
