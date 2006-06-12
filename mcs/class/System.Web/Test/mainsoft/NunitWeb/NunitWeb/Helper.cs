@@ -182,6 +182,16 @@ namespace NunitWeb
 		}
 
 		/// <summary>
+		/// Request <paramref name="url"/>.
+		/// </summary>
+		/// <param name="url">The URL of the ASPX page to access.</param>
+		/// <returns>The response contents (usually HTML rendered by the page).</returns>
+		public string RunUrl (string url)
+		{
+			return RunUrl (url, null);
+		}
+
+		/// <summary>
 		/// Request <paramref name="url"/> and run <paramref name="method"/> on the page Load event.
 		/// </summary>
 		/// <param name="url">The URL of the ASPX page to access.</param>
