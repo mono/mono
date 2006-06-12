@@ -582,19 +582,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public Size ButtonSize {
-			get {
-				int height = TitleBarHeight;
-				if (IsToolWindow)
-					return new Size (SystemInformation.ToolWindowCaptionButtonSize.Width - 2,
-							height - 5);
-				if (form.FormBorderStyle == FormBorderStyle.None)
-					return Size.Empty;
-				return new Size (SystemInformation.CaptionButtonSize.Width - 2,
-						height - 5);
-			}
-		}
-
 		protected void UpdateVP (Rectangle r)
 		{
 			UpdateVP (r.X, r.Y, r.Width, r.Height);

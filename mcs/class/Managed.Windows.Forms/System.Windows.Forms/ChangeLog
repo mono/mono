@@ -1,5 +1,19 @@
 2006-06-12  Jackson Harper  <jackson@ximian.com>
 
+	* Theme.cs: Add a method to get the size of a managed window
+	toolbar button.
+	* InternalWindowManager.cs: Remove the ButtonSize property, this
+	should be retrieved from the theme.
+	* MdiWindowManager.cs: Get the button size from the theme
+	* ThemeWin32Classic.cs: Make the method to get the managed window
+	titlebar button size public.
+	- Handle the different button sizes of maximized toolwindows
+	(should match any maximized window).
+	- Get the titlebar height from the theme, not the WM (which gets
+	it from the theme).
+
+2006-06-12  Jackson Harper  <jackson@ximian.com>
+
 	* InternalWindowManager.cs: Handle NC Double Clicks, passing the
 	event down to the mdi window manager.
 	- Expose some extra stuff to base classes

@@ -292,7 +292,7 @@ namespace System.Windows.Forms {
 
 		public override void DrawMaximizedButtons (PaintEventArgs pe, MainMenu menu)
 		{
-			Size bs = ButtonSize;
+			Size bs = ThemeEngine.Current.ManagedWindowButtonSize (this);
 			Point pnt =  XplatUI.GetMenuOrigin (mdi_container.ParentForm.Handle);
 			int bw = ThemeEngine.Current.ManagedWindowBorderWidth (this);
 

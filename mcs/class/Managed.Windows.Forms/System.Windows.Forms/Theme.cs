@@ -888,6 +888,12 @@ namespace System.Windows.Forms
 			return ManagedWindowTitleBarHeight (wm) - 5;
 		}
 
+		public virtual Size ManagedWindowButtonSize (InternalWindowManager wm)
+		{
+			// Just making virtual for now so all the themes still build.
+			return new Size (10, 10);
+		}
+
 		public virtual void ManagedWindowSetButtonLocations (InternalWindowManager wm)
 		{
 			// Just making virtual for now so all the themes still build.

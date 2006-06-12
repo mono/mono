@@ -4318,6 +4318,22 @@ namespace System.Windows.Forms
 			}
 		}
 
+		public override Size ManagedWindowButtonSize (InternalWindowManager wm)
+		{
+			int height = ManagedWindowTitleBarHeight (wm);
+			if (!wm.IsMaximized) {
+				if (wm.IsToolWindow)
+					return new Size (SystemInformation.ToolWindowCaptionButtonSize.Width - 2,
+							height - 5);
+				if (wm.Form.FormBorderStyle == FormBorderStyle.None)
+					return Size.Empty;
+			} else
+				height = SystemInformation.CaptionHeight;
+
+			return new Size (SystemInformation.CaptionButtonSize.Width - 2,
+					height - 5);
+		}
+
 		private void DrawTitleButton (Graphics dc, InternalWindowManager.TitleButton button, Rectangle clip)
 		{
 			if (!button.Rectangle.IntersectsWith (clip))
@@ -4327,18 +4343,6 @@ namespace System.Windows.Forms
 
 			ControlPaint.DrawCaptionButton (dc, button.Rectangle,
 					button.Caption, ButtonState.Normal);
-		}
-
-		private Size ManagedWindowButtonSize (InternalWindowManager wm)
-		{
-			int height = wm.TitleBarHeight;
-			if (wm.IsToolWindow)
-				return new Size (SystemInformation.ToolWindowCaptionButtonSize.Width - 2,
-						height - 5);
-			if (wm.Form.FormBorderStyle == FormBorderStyle.None)
-				return Size.Empty;
-			return new Size (SystemInformation.CaptionButtonSize.Width - 2,
-					height - 5);
 		}
 
 		#region ControlPaint
