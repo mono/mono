@@ -395,7 +395,7 @@ namespace System.Windows.Forms
 			if (Value >= Maximum)
 				return;
 
-			Value = Value + Step;
+			Value = Maximum < Value + Step ? Maximum : Value + Step;
 			Refresh ();	// FIXME - calculate delta and only expose that
 		}
 

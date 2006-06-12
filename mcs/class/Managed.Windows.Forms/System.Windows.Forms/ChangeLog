@@ -1,3 +1,8 @@
+2006-06-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ProgressBar.cs : PerformStep() shouldn't exceed Maximum.
+	  Fixed bug #78609.
+
 2006-06-12  Jackson Harper  <jackson@ximian.com>
 
 	* KeysConverter.cs: Make sure we handle the Ctrl special case
