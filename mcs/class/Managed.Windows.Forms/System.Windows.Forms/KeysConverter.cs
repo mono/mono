@@ -69,7 +69,10 @@ namespace System.Windows.Forms {
 						}
 					}
 				}
-				key |= (Keys)Enum.Parse(typeof(Keys), keys[keys.Length - 1], true);
+				if (keys [keys.Length - 1].Equals ("Ctrl"))
+					key |= Keys.Control;
+				else
+					key |= (Keys)Enum.Parse(typeof(Keys), keys[keys.Length - 1], true);
 				return key;
 			}
 			return base.ConvertFrom (context, culture, value);

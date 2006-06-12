@@ -1,5 +1,10 @@
 2006-06-12  Jackson Harper  <jackson@ximian.com>
 
+	* KeysConverter.cs: Make sure we handle the Ctrl special case
+	if its the only key.
+	
+2006-06-12  Jackson Harper  <jackson@ximian.com>
+
 	* Theme.cs: Add a method to get the size of a managed window
 	toolbar button.
 	* InternalWindowManager.cs: Remove the ButtonSize property, this
