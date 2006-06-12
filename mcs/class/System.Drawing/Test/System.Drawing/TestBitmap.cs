@@ -578,6 +578,19 @@ namespace MonoTests.System.Drawing{
 			}
 			File.Delete (filename);
 		}
+
+		[Test]
+		public void BmpDataStride1 ()
+		{
+			Bitmap bmp = new Bitmap (184, 184, PixelFormat.Format1bppIndexed);
+			BitmapData data = bmp.LockBits (new Rectangle (0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format1bppIndexed);
+			try {
+				Assert.AreEqual (24, data.Stride);
+			} finally {
+				bmp.UnlockBits (data);
+				bmp.Dispose ();
+			}
+		}
 	}
 }
 

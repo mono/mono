@@ -1,3 +1,7 @@
+2006-06-12 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TestBitmap.cs: add test for stride with 1bpp indexed bitmap.
+
 2006-06-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TestColor.cs: added 2 more tests for serialization and enabled one
