@@ -73,7 +73,7 @@ namespace System.Windows.Forms {
 		}
 
 		[Flags]
-		private enum FormPos {
+		public enum FormPos {
 			None,
 
 			TitleBar = 1,
@@ -206,6 +206,10 @@ namespace System.Windows.Forms {
 
 			case Msg.WM_NCLBUTTONDOWN:
 				return HandleNCLButtonDown (ref m);
+
+			case Msg.WM_NCLBUTTONDBLCLK:
+				HandleNCLButtonDblClick (ref m);
+				break;
 
 			case Msg.WM_MOUSE_LEAVE:
 				FormMouseLeave (ref m);
@@ -391,6 +395,10 @@ namespace System.Windows.Forms {
 			}
 
 			return false;
+		}
+
+		protected virtual void HandleNCLButtonDblClick (ref Message m)
+		{
 		}
 
 		protected virtual void HandleTitleBarDown (int x, int y)
@@ -611,6 +619,13 @@ namespace System.Windows.Forms {
 
 		private bool HandleNCLButtonUp (ref Message m)
 		{
+			if (form.Capture) {
+				ClearVirtualPosition ();
+
+				form.Capture = false;
+				state = State.Idle;
+			}
+				
 			int x = Control.LowOrder ((int) m.LParam.ToInt32 ());
 			int y = Control.HighOrder ((int) m.LParam.ToInt32 ());
 
@@ -689,7 +704,7 @@ namespace System.Windows.Forms {
 		{
 		}
 
-		private FormPos FormPosForCoords (int x, int y)
+		protected FormPos FormPosForCoords (int x, int y)
 		{
 			int bw = ThemeEngine.Current.ManagedWindowBorderWidth (this);
 			if (y < TitleBarHeight + bw) {

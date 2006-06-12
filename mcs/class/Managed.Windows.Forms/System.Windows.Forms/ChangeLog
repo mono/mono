@@ -1,3 +1,14 @@
+2006-06-12  Jackson Harper  <jackson@ximian.com>
+
+	* InternalWindowManager.cs: Handle NC Double Clicks, passing the
+	event down to the mdi window manager.
+	- Expose some extra stuff to base classes
+	- Make sure to end the Capture on an NC Mouse up, so that we can
+	get double clicks properly, and the sizing doens't stick.
+	* MdiWindowManager.cs: When we get a double click maximize the
+	window.
+	- Reset the cursor after handling mode changes.
+
 2006-06-12  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* XplatUIX11.cs (WorkingArea): Read the actual workarea for the 

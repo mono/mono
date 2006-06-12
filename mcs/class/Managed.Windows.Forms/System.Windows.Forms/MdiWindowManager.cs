@@ -165,7 +165,8 @@ namespace System.Windows.Forms {
 
 		private void MaximizeItemHandler (object sender, EventArgs e)
 		{
-			form.WindowState = FormWindowState.Maximized;
+			if (form.WindowState != FormWindowState.Maximized)
+				form.WindowState = FormWindowState.Maximized;
 		}
 
 		private void CloseItemHandler (object sender, EventArgs e)
@@ -238,6 +239,7 @@ namespace System.Windows.Forms {
 				break;
 			}
 
+			form.ResetCursor ();
 			XplatUI.RequestNCRecalc (mdi_container.Parent.Handle);
 		}
 
@@ -251,6 +253,22 @@ namespace System.Windows.Forms {
 					pb.Height + TitleBarHeight + bw * 2);
 		}
 
+		protected override void HandleNCLButtonDblClick (ref Message m)
+		{
+			int x = Control.LowOrder ((int) m.LParam.ToInt32 ());
+			int y = Control.HighOrder ((int) m.LParam.ToInt32 ());
+
+			form.PointToClient (ref x, ref y);
+			// Need to adjust because we are in NC land
+			y += TitleBarHeight;
+			FormPos pos = FormPosForCoords (x, y);
+
+			Console.WriteLine ("POS:  {0}", pos);
+			if (pos != FormPos.TitleBar)
+				return;
+
+			form.WindowState = FormWindowState.Maximized;
+		}
 
 		protected override void CloseClicked (object sender, EventArgs e)
 		{
