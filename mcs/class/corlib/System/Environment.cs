@@ -514,7 +514,6 @@ namespace System {
 
                 
 #if NET_2_0
-		[MonoTODO ("Machine and User targets aren't supported")]
 		public static string GetEnvironmentVariable (string variable, EnvironmentVariableTarget target)
 		{
 			switch (target) {
@@ -522,38 +521,64 @@ namespace System {
 				return GetEnvironmentVariable (variable);
 			case EnvironmentVariableTarget.Machine:
 				new EnvironmentPermission (PermissionState.Unrestricted).Demand ();
-				// under Windows this reads the LOCAL_MACHINE registry key for env vars
-				throw new NotImplementedException ();
+				if (!IsRunningOnWindows)
+					return null;
+				using (Microsoft.Win32.RegistryKey env = Microsoft.Win32.Registry.LocalMachine.OpenSubKey (@"SYSTEM\CurrentControlSet\Control\Session Manager\Environment")) {
+					return env.GetValue (variable).ToString ();
+				}
 			case EnvironmentVariableTarget.User:
 				new EnvironmentPermission (PermissionState.Unrestricted).Demand ();
-				// under Windows this reads the CURRENT_USER registry key for env vars
-				throw new NotImplementedException ();
+				if (!IsRunningOnWindows)
+					return null;
+				using (Microsoft.Win32.RegistryKey env = Microsoft.Win32.Registry.CurrentUser.OpenSubKey ("Environment", false)) {
+					return env.GetValue (variable).ToString ();
+				}
 			default:
 				throw new ArgumentException ("target");
 			}
 		}
 
-		[MonoTODO ("Machine and User targets aren't supported")]
 		public static IDictionary GetEnvironmentVariables (EnvironmentVariableTarget target)
 		{
+			IDictionary variables = (IDictionary)new Hashtable ();
 			switch (target) {
 			case EnvironmentVariableTarget.Process:
-				return GetEnvironmentVariables ();
+				variables = GetEnvironmentVariables ();
+				break;
 			case EnvironmentVariableTarget.Machine:
 				new EnvironmentPermission (PermissionState.Unrestricted).Demand ();
-				// under Windows this reads the LOCAL_MACHINE registry key for env vars
-				throw new NotImplementedException ();
+				if (IsRunningOnWindows) {
+					using (Microsoft.Win32.RegistryKey env = Microsoft.Win32.Registry.LocalMachine.OpenSubKey (@"SYSTEM\CurrentControlSet\Control\Session Manager\Environment")) {
+						string[] value_names = env.GetValueNames ();
+						foreach (string value_name in value_names)
+							variables.Add (value_name, env.GetValue (value_name));
+					}
+				}
+				break;
 			case EnvironmentVariableTarget.User:
 				new EnvironmentPermission (PermissionState.Unrestricted).Demand ();
-				// under Windows this reads the CURRENT_USER registry key for env vars
-				throw new NotImplementedException ();
+				if (IsRunningOnWindows) {
+					using (Microsoft.Win32.RegistryKey env = Microsoft.Win32.Registry.CurrentUser.OpenSubKey ("Environment")) {
+						string[] value_names = env.GetValueNames ();
+						foreach (string value_name in value_names)
+							variables.Add (value_name, env.GetValue (value_name));
+					}
+				}
+				break;
 			default:
 				throw new ArgumentException ("target");
 			}
+			return variables;
 		}
 
 		[EnvironmentPermission (SecurityAction.Demand, Unrestricted=true)]
 		public static void SetEnvironmentVariable (string variable, string value)
+		{
+			SetEnvironmentVariable (variable, value, EnvironmentVariableTarget.Process);
+		}
+
+		[EnvironmentPermission (SecurityAction.Demand, Unrestricted = true)]
+		public static void SetEnvironmentVariable (string variable, string value, EnvironmentVariableTarget target)
 		{
 			if (variable == null)
 				throw new ArgumentNullException ("variable");
@@ -561,26 +586,33 @@ namespace System {
 				throw new ArgumentException ("String cannot be of zero length.", "variable");
 			if (variable.IndexOf ('=') != -1)
 				throw new ArgumentException ("Environment variable name cannot contain an equal character.", "variable");
-			if (variable [0] == '\0')
+			if (variable[0] == '\0')
 				throw new ArgumentException ("The first char in the string is the null character.", "variable");
 
-			InternalSetEnvironmentVariable (variable, value);
-		}
-
-		[MonoTODO]
-		[EnvironmentPermission (SecurityAction.Demand, Unrestricted=true)]
-		public static void SetEnvironmentVariable (string variable, string value, EnvironmentVariableTarget target)
-		{
 			switch (target) {
 			case EnvironmentVariableTarget.Process:
 				InternalSetEnvironmentVariable (variable, value);
 				break;
 			case EnvironmentVariableTarget.Machine:
-				// under Windows this reads the LOCAL_MACHINE registry key for env vars
-				throw new NotImplementedException ();
+				if (!IsRunningOnWindows)
+					return;
+				using (Microsoft.Win32.RegistryKey env = Microsoft.Win32.Registry.LocalMachine.OpenSubKey (@"SYSTEM\CurrentControlSet\Control\Session Manager\Environment", true)) {
+					if (value == null || value.Length == 0)
+						env.DeleteValue (variable, false);
+					else
+						env.SetValue (variable, value);
+				}
+				break;
 			case EnvironmentVariableTarget.User:
-				// under Windows this reads the CURRENT_USER registry key for env vars
-				throw new NotImplementedException ();
+				if (!IsRunningOnWindows)
+					return;
+				using (Microsoft.Win32.RegistryKey env = Microsoft.Win32.Registry.CurrentUser.OpenSubKey ("Environment", true)) {
+					if (value == null || value.Length == 0)
+						env.DeleteValue (variable, false);
+					else
+						env.SetValue (variable, value);
+				}
+				break;
 			default:
 				throw new ArgumentException ("target");
 			}
@@ -605,8 +637,8 @@ namespace System {
 		{
 			throw new NotImplementedException ();
 		}
-#endif                
-                
+#endif
+
 		// private methods
 
 		internal static bool IsRunningOnWindows {

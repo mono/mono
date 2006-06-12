@@ -1,3 +1,7 @@
+2006-06-09  Jonathan Chambers  <jonathan.chambers@ansys.com>
+
+	* Environment.cs: Implement Set/GetEnvironmentVariable for User/Machine.	
+
 2006-06-07  Kornél Pál  <kornelpal@gmail.com>
 
 	* Environment.cs: Use Consts.FxFileVersion for Environment.Version
