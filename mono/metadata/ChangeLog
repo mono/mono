@@ -1,5 +1,9 @@
 2006-06-09  Jonathan Chambers  <jonathan.chambers@ansys.com>
 
+	* icall.c: Another fix for building mono in Visual Studio.
+
+2006-06-09  Jonathan Chambers  <jonathan.chambers@ansys.com>
+
 	* marshal.c icall.c: Minor fixes for building mono in Visual Studio.
 	
 2006-06-09  Martin Baulig  <martin@ximian.com>
