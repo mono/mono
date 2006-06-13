@@ -1,3 +1,8 @@
+2006-06-13  Massimiliano Mantione  <massi@ximian.com>
+	* mini.c: Made so that inline is locally disabled if it would
+	trigger a .cctor, because too many apps depend on this behavior
+	(which seems to be also the one of the MS CLR).
+
 2006-06-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c (mono_emit_stack_alloc): Fix initialization of localloc'ed memory.
