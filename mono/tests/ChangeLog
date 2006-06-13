@@ -1,3 +1,9 @@
+2006-06-13  Massimiliano Mantione  <massi@ximian.com>
+	* test-inline-call-stack.cs: Test also that the order in which
+	.cctors are run is essentially the same regardless of the status of
+	"beforefieldinit", because too many apps depend on this behavior
+	(which seems to be also the one of the MS CLR).
+
 2006-06-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* interlocked-2.2.cs: Make the return values positive.
