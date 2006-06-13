@@ -552,6 +552,8 @@ namespace System.Web.UI.WebControls
 			if (rargs.Exception != null && !rargs.ExceptionHandled)
 				throw rargs.Exception;
 
+			OnDataSourceViewChanged (EventArgs.Empty);
+
 			return -1;
 		}
 
@@ -594,6 +596,8 @@ namespace System.Web.UI.WebControls
 			
 			if (rargs.Exception != null && !rargs.ExceptionHandled)
 				throw rargs.Exception;
+
+			OnDataSourceViewChanged (EventArgs.Empty);
 
 			return -1;
 		}
@@ -655,6 +659,8 @@ namespace System.Web.UI.WebControls
 			
 			if (rargs.Exception != null && !rargs.ExceptionHandled)
 				throw rargs.Exception;
+
+			OnDataSourceViewChanged (EventArgs.Empty);
 
 			return -1;
 		}

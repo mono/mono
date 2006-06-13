@@ -1,3 +1,7 @@
+2006-06-13  Konstantin Triger  <kostat@mainsoft.com>
+
+	* ObjectDataSourceView.cs: raise OnDataSourceViewChanged events when data changes.
+
 2006-06-11  Konstantin Triger  <kostat@mainsoft.com>
 
 	* GridView.cs: set the row index from GridRowView if CommandArgument does not contain this information.
