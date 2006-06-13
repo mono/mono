@@ -40,7 +40,8 @@ namespace System.Windows.Forms {
 		private MenuItem icon_menu;
 		private ContextMenu icon_popup_menu;
 		private FormWindowState prev_window_state;
-
+		private PaintEventHandler draw_maximized_buttons;
+		
 		private MdiClient mdi_container;
 		private Rectangle prev_virtual_position;
 
@@ -56,6 +57,7 @@ namespace System.Windows.Forms {
 			prev_window_state = form.window_state;
 			form.GotFocus += new EventHandler (FormGotFocus);
 
+			draw_maximized_buttons = new PaintEventHandler (DrawMaximizedButtons);
 			CreateIconMenus ();
 		}
 
@@ -217,6 +219,8 @@ namespace System.Windows.Forms {
 				prev_window_state = old_state;
 				prev_bounds = form.Bounds;
 				mdi_container.ArrangeIconicWindows ();
+
+				MaximizedMenu.Paint -= draw_maximized_buttons;
 				break;
 			case FormWindowState.Maximized:
 				CreateButtons ();
@@ -225,6 +229,8 @@ namespace System.Windows.Forms {
 				prev_window_state = old_state;
 				prev_bounds = form.Bounds;
 				SizeMaximized ();
+
+				MaximizedMenu.Paint += draw_maximized_buttons;
 				break;
 			case FormWindowState.Normal:
 				CreateButtons ();
@@ -239,6 +245,8 @@ namespace System.Windows.Forms {
 				minimize_button.Caption = CaptionButton.Minimize;
 				prev_window_state = form.WindowState;
 				form.Bounds = prev_bounds;
+
+				MaximizedMenu.Paint -= draw_maximized_buttons;
 				break;
 			}
 
@@ -293,7 +301,7 @@ namespace System.Windows.Forms {
 		}
 		*/
 
-		public override void DrawMaximizedButtons (PaintEventArgs pe, MainMenu menu)
+		public override void DrawMaximizedButtons (object sender, PaintEventArgs pe)
 		{
 			Size bs = ThemeEngine.Current.ManagedWindowButtonSize (this);
 			Point pnt =  XplatUI.GetMenuOrigin (mdi_container.ParentForm.Handle);

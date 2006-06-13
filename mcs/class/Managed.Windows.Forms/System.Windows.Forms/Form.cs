@@ -1795,7 +1795,7 @@ namespace System.Windows.Forms {
 						ActiveMenu.Draw (pe, new Rectangle (pnt.X, pnt.Y, ClientSize.Width, 0));
 
 						if (ActiveMaximizedMdiChild != null) {
-							ActiveMaximizedMdiChild.DrawMaximizedButtons (pe, ActiveMenu);
+							ActiveMaximizedMdiChild.DrawMaximizedButtons (ActiveMenu, pe);
 						}
 
 						XplatUI.PaintEventEnd(Handle, false);

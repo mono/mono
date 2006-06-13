@@ -114,6 +114,9 @@ namespace System.Windows.Forms
 			Height = Rect.Height;
 
 			ThemeEngine.Current.DrawMenuBar (pe.Graphics, this, rect);
+
+			if (Paint != null)
+				Paint (this, pe);
 		}
 		
 		internal void SetForm (Form form)
@@ -147,7 +150,9 @@ namespace System.Windows.Forms
 			MouseEventArgs args = new MouseEventArgs (e.Button, e.Clicks, Control.MousePosition.X, Control.MousePosition.Y, e.Delta);
 			tracker.OnMotion (args);
 		}
-		
+
+		internal event PaintEventHandler Paint;
+
 		#endregion Private Methods
 	}
 }

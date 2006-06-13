@@ -330,7 +330,7 @@ namespace System.Windows.Forms {
 
 			if (IsMaximized) {
 				MainMenu menu = form.ActiveMenu;
-				DrawMaximizedButtons (pe, menu);
+				DrawMaximizedButtons (menu, pe);
 				if (menu != null)
 					menu.Draw (pe);
 			}
@@ -658,9 +658,8 @@ namespace System.Windows.Forms {
 					button.Caption, ButtonState.Normal);
 		}
 
-		public virtual void DrawMaximizedButtons (PaintEventArgs pe, MainMenu menu)
+		public virtual void DrawMaximizedButtons (object sender, PaintEventArgs pe)
 		{
-
 		}
 
 		protected virtual void CloseClicked (object sender, EventArgs e)

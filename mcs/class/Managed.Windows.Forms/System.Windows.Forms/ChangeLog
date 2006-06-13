@@ -1,5 +1,17 @@
 2006-06-13  Jackson Harper  <jackson@ximian.com>
 
+	* MdiWindowManager.cs: Hook up to the maximized menus paint event
+	and redraw the buttons when needed. Unhook when the window is
+	unmaximized.
+	* MainMenu.cs: Add an internal Paint event, the mdi window manager
+	needs this so that it can redraw its buttons when the menu is
+	repainted.
+	* InternalWindowManager.cs:
+	* Form.cs: The method order has changed for DrawMaximizedButtons,
+	so that it can be a PaintEventHandler.
+	
+2006-06-13  Jackson Harper  <jackson@ximian.com>
+
 	* MdiClient.cs: When we close a maximized mdi window, the next mdi
 	window is activated and maximized, even if it wasn't before.
 	- When  a new window is activated repaint the decorations of the
