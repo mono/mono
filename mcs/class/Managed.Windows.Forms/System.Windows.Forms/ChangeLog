@@ -1,3 +1,8 @@
+2006-06-13  Jackson Harper  <jackson@ximian.com>
+
+	* MdiClient.cs:  Only maximize the next child if the current one
+	is maximized.
+
 2006-06-13  Chris Toshok  <toshok@ximian.com>
 
 	* DataGridColumnStyle.cs: Invalidate the column when HeaderText is

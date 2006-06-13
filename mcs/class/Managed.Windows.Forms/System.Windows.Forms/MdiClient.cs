@@ -442,7 +442,8 @@ namespace System.Windows.Forms {
 		{
 			if (Controls.Count > 1) {
 				Form next = (Form) Controls [1];
-				next.WindowState = FormWindowState.Maximized;
+				if (form.WindowState == FormWindowState.Maximized)
+					next.WindowState = FormWindowState.Maximized;
 				ActivateChild (next);
 			}
 
