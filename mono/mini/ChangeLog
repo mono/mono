@@ -1,3 +1,10 @@
+2006-06-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (merge_basic_blocks): Nullify the branch at the end of the first bb.
+	Fixes #78629.
+
+	* iltests.il: Add a test for the above.
+
 2006-06-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (remove_block_if_useless): Do not remove the bblock immediately
