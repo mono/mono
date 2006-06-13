@@ -264,10 +264,7 @@ namespace System.Windows.Forms
 
 		[DefaultValue(true)]
 		public bool AllowNavigation {
-			get {
-				return allow_navigation;
-			}
-
+			get { return allow_navigation; }
 			set {
 				if (allow_navigation != value) {
 					allow_navigation = value;
@@ -278,10 +275,7 @@ namespace System.Windows.Forms
 
 		[DefaultValue(true)]
 		public bool AllowSorting {
-			get {
-				return allow_sorting;
-			}
-
+			get { return allow_sorting; }
 			set {
 				if (allow_sorting != value) {
 					allow_sorting = value;
@@ -290,10 +284,7 @@ namespace System.Windows.Forms
 		}
 
 		public Color AlternatingBackColor  {
-			get {
-				return alternating_backcolor;
-			}
-
+			get { return alternating_backcolor; }
 			set {
 				if (alternating_backcolor != value) {
 					alternating_backcolor = value;
@@ -303,9 +294,7 @@ namespace System.Windows.Forms
 		}
 
 		public override Color BackColor {
-			get {
-				return backColor;
-			}
+			get { return backColor; }
 			set {
 				if (backColor != value) {
 					backColor = value;
@@ -315,9 +304,7 @@ namespace System.Windows.Forms
 		}
 
 		public Color BackgroundColor {
-			get {
-				return background_color;
-			}
+			get { return background_color; }
 			set {
 				 if (background_color != value) {
 					background_color = value;
@@ -330,10 +317,7 @@ namespace System.Windows.Forms
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override Image BackgroundImage {
-			get {
-				return base.BackgroundImage;
-			}
-
+			get { return base.BackgroundImage; }
 			set {
 				base.BackgroundImage = value;
 			}
@@ -351,9 +335,7 @@ namespace System.Windows.Forms
 		}
 
 		public Color CaptionBackColor {
-			get {
-				return caption_backcolor;
-			}
+			get { return caption_backcolor; }
 
 			set {
 				if (caption_backcolor != value) {
@@ -373,7 +355,6 @@ namespace System.Windows.Forms
 
 				return caption_font;
 			}
-
 			set {
 				if (caption_font != null && caption_font.Equals (value)) {
 					return;
@@ -385,10 +366,7 @@ namespace System.Windows.Forms
 		}
 
 		public Color CaptionForeColor {
-			get {
-				return caption_forecolor;
-			}
-
+			get { return caption_forecolor; }
 			set {
 				if (caption_forecolor != value) {
 					caption_forecolor = value;
@@ -400,10 +378,7 @@ namespace System.Windows.Forms
 		[Localizable(true)]
 		[DefaultValue("")]
 		public string CaptionText {
-			get {
-				return caption_text;
-			}
-
+			get { return caption_text; }
 			set {
 				if (caption_text != value) {
 					caption_text = value;
@@ -414,10 +389,7 @@ namespace System.Windows.Forms
 
 		[DefaultValue(true)]
 		public bool CaptionVisible {
-			get {
-				return caption_visible;
-			}
-
+			get { return caption_visible; }
 			set {
 				if (caption_visible != value) {
 					caption_visible = value;
@@ -429,10 +401,7 @@ namespace System.Windows.Forms
 
 		[DefaultValue(true)]
 		public bool ColumnHeadersVisible {
-			get {
-				return columnheaders_visible;
-			}
-
+			get { return columnheaders_visible; }
 			set {
 				if (columnheaders_visible != value) {
 					columnheaders_visible = value;
@@ -444,10 +413,7 @@ namespace System.Windows.Forms
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public DataGridCell CurrentCell {
-			get {
-				return current_cell;
-			}
-
+			get { return current_cell; }
 			set {
 				int old_row = current_cell.RowNumber;
 
@@ -486,7 +452,7 @@ namespace System.Windows.Forms
 
 				//Console.WriteLine ("set_CurrentCell, {0}x{1}, RowsCount = {2}, from {3}", value.RowNumber, value.ColumnNumber, RowsCount, Environment.StackTrace);
 				if (need_add) {
-					Console.WriteLine ("+ calling AddNew");
+					//Console.WriteLine ("+ calling AddNew");
 					ListManager.AddNew ();
 					is_adding = true;
 				}
@@ -536,19 +502,14 @@ namespace System.Windows.Forms
 				
 				return CurrentRow;
 			}
-
 			set { CurrentRow = value; }
 		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override Cursor Cursor {
-			get {
-				return base.Cursor;
-			}
-			set {
-				base.Cursor = value;
-			}
+			get { return base.Cursor; }
+			set { base.Cursor = value; }
 		}
 
 		[DefaultValue(null)]
@@ -558,14 +519,7 @@ namespace System.Windows.Forms
 			set {
 				if (SetDataMember (value)) {					
 					SetDataSource (datasource);
-					if (styles_collection.Contains (value) == true) {
-						CurrentTableStyle = styles_collection[value];
-						current_style.CreateColumnsForTable (true);
-					} else {
-						CurrentTableStyle = default_style;
-						current_style.GridColumnStyles.Clear ();
-						current_style.CreateColumnsForTable (false);
-					}					
+					SetNewDataSource ();
 				}
 			}
 		}
@@ -574,10 +528,7 @@ namespace System.Windows.Forms
 		[RefreshProperties(RefreshProperties.Repaint)]
 		[TypeConverter("System.Windows.Forms.Design.DataSourceConverter, " + Consts.AssemblySystem_Design)]
 		public object DataSource {
-			get {
-				return datasource;
-			}
-
+			get { return datasource; }
 			set {
 				SetDataSource (value);
 				SetNewDataSource ();					
@@ -585,24 +536,17 @@ namespace System.Windows.Forms
 		}
 
 		protected override Size DefaultSize {
-			get {
-				return new Size (130, 80);
-			}
+			get { return new Size (130, 80); }
 		}
 
 		[Browsable(false)]
 		public int FirstVisibleColumn {
-			get {
-				return firstvisible_column;
-			}
+			get { return firstvisible_column; }
 		}
 
 		[DefaultValue(false)]
 		public bool FlatMode {
-			get {
-				return flatmode;
-			}
-
+			get { return flatmode; }
 			set {
 				if (flatmode != value) {
 					flatmode = value;
@@ -613,20 +557,12 @@ namespace System.Windows.Forms
 		}
 
 		public override Color ForeColor {
-			get {
-				return base.ForeColor;
-			}
-
-			set {
-				base.ForeColor = value;
-			}
+			get { return base.ForeColor; }
+			set { base.ForeColor = value; }
 		}
 
 		public Color GridLineColor {
-			get {
-				return gridline_color;
-			}
-
+			get { return gridline_color; }
 			set {
 				if (value == Color.Empty) {
 					throw new ArgumentException ("Color.Empty value is invalid.");
@@ -641,10 +577,7 @@ namespace System.Windows.Forms
 
 		[DefaultValue(DataGridLineStyle.Solid)]
 		public DataGridLineStyle GridLineStyle {
-			get {
-				return gridline_style;
-			}
-
+			get { return gridline_style; }
 			set {
 				if (gridline_style != value) {
 					gridline_style = value;
@@ -654,10 +587,7 @@ namespace System.Windows.Forms
 		}
 
 		public Color HeaderBackColor {
-			get {
-				return header_backcolor;
-			}
-
+			get { return header_backcolor; }
 			set {
 				if (value == Color.Empty) {
 					throw new ArgumentException ("Color.Empty value is invalid.");
@@ -671,10 +601,7 @@ namespace System.Windows.Forms
 		}
 
 		public Font HeaderFont {
-			get {
-				return header_font;
-			}
-
+			get { return header_font; }
 			set {
 				if (header_font != null && !header_font.Equals (value)) {
 					header_font = value;
@@ -684,10 +611,7 @@ namespace System.Windows.Forms
 		}
 
 		public Color HeaderForeColor {
-			get {
-				return header_forecolor;
-			}
-
+			get { return header_forecolor; }
 			set {
 				if (header_forecolor != value) {
 					header_forecolor = value;
@@ -697,37 +621,23 @@ namespace System.Windows.Forms
 		}
 
 		protected ScrollBar HorizScrollBar {
-			get {
-				return horiz_scrollbar;
-			}
+			get { return horiz_scrollbar; }
 		}
 
 		public object this [DataGridCell cell] {
-			get  {
-				return this [cell.RowNumber, cell.ColumnNumber];
-			}
-
-			set {
-				this [cell.RowNumber, cell.ColumnNumber] = value;
-			}
+			get { return this [cell.RowNumber, cell.ColumnNumber]; }
+			set { this [cell.RowNumber, cell.ColumnNumber] = value; }
 		}
 
 		public object this [int rowIndex, int columnIndex] {
-			get  {
-				return CurrentTableStyle.GridColumnStyles[columnIndex].GetColumnValueAtRow (ListManager,
-					rowIndex);
-			}
-
-			set {
-				CurrentTableStyle.GridColumnStyles[columnIndex].SetColumnValueAtRow (ListManager,
-					rowIndex, value);
-			}
+			get { return CurrentTableStyle.GridColumnStyles[columnIndex].GetColumnValueAtRow (ListManager,
+													  rowIndex); }
+			set { CurrentTableStyle.GridColumnStyles[columnIndex].SetColumnValueAtRow (ListManager,
+												   rowIndex, value); }
 		}
 
 		public Color LinkColor {
-			get {
-				return link_color;
-			}
+			get { return link_color; }
 			set {
 				if (link_color != value) {
 					link_color = value;
@@ -740,10 +650,7 @@ namespace System.Windows.Forms
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public Color LinkHoverColor {
-			get {
-				return link_hovercolor;
-			}
-
+			get { return link_hovercolor; }
 			set {
 				if (link_hovercolor != value) {
 					link_hovercolor = value;
@@ -773,17 +680,11 @@ namespace System.Windows.Forms
 
 				return list_manager;
 			}
-
-			set {
-				throw new NotSupportedException ("Operation is not supported.");
-			}
+			set { throw new NotSupportedException ("Operation is not supported."); }
 		}
 
 		public Color ParentRowsBackColor {
-			get {
-				return parentrowsback_color;
-			}
-
+			get { return parentrowsback_color; }
 			set {
 				if (parentrowsback_color != value) {
 					parentrowsback_color = value;
@@ -795,10 +696,7 @@ namespace System.Windows.Forms
 		}
 
 		public Color ParentRowsForeColor {
-			get {
-				return parentrowsfore_color;
-			}
-
+			get { return parentrowsfore_color; }
 			set {
 				if (parentrowsfore_color != value) {
 					parentrowsfore_color = value;
@@ -812,10 +710,7 @@ namespace System.Windows.Forms
 		[DefaultValue(DataGridParentRowsLabelStyle.Both)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public DataGridParentRowsLabelStyle ParentRowsLabelStyle {
-			get {
-				return parentrowslabel_style;
-			}
-
+			get { return parentrowslabel_style; }
 			set {
 				if (parentrowslabel_style != value) {
 					parentrowslabel_style = value;
@@ -830,10 +725,7 @@ namespace System.Windows.Forms
 
 		[DefaultValue(true)]
 		public bool ParentRowsVisible {
-			get {
-				return parentrows_visible;
-			}
-
+			get { return parentrows_visible; }
 			set {
 				if (parentrows_visible != value) {
 					parentrows_visible = value;
@@ -847,10 +739,7 @@ namespace System.Windows.Forms
 		[DefaultValue(75)]
 		[TypeConverter(typeof(DataGridPreferredColumnWidthTypeConverter))]
 		public int PreferredColumnWidth {
-			get {
-				return preferredcolumn_width;
-			}
-
+			get { return preferredcolumn_width; }
 			set {
 				if (value < 0) {
 					throw new ArgumentException ("PreferredColumnWidth is less than 0");
@@ -864,10 +753,7 @@ namespace System.Windows.Forms
 		}
 
 		public int PreferredRowHeight {
-			get {
-				return preferredrow_height;
-			}
-
+			get { return preferredrow_height; }
 			set {
 				if (preferredrow_height != value) {
 					preferredrow_height = value;
@@ -878,10 +764,7 @@ namespace System.Windows.Forms
 
 		[DefaultValue(false)]
 		public bool ReadOnly {
-			get {
-				return _readonly;
-			}
-
+			get { return _readonly; }
 			set {
 				if (_readonly != value) {
 					_readonly = value;
@@ -893,10 +776,7 @@ namespace System.Windows.Forms
 
 		[DefaultValue(true)]
 		public bool RowHeadersVisible {
-			get {
-				return rowheaders_visible;
-			}
-
+			get { return rowheaders_visible; }
 			set {
 				if (rowheaders_visible != value) {
 					rowheaders_visible = value;
@@ -907,10 +787,7 @@ namespace System.Windows.Forms
 
 		[DefaultValue(35)]
 		public int RowHeaderWidth {
-			get {
-				return rowheaders_width;
-			}
-
+			get { return rowheaders_width; }
 			set {
 				if (rowheaders_width != value) {
 					rowheaders_width = value;
@@ -920,10 +797,7 @@ namespace System.Windows.Forms
 		}
 
 		public Color SelectionBackColor {
-			get {
-				return selection_backcolor;
-			}
-
+			get { return selection_backcolor; }
 			set {
 				if (selection_backcolor != value) {
 					selection_backcolor = value;
@@ -933,10 +807,7 @@ namespace System.Windows.Forms
 		}
 
 		public Color SelectionForeColor  {
-			get {
-				return selection_forecolor;
-			}
-
+			get { return selection_forecolor; }
 			set {
 				if (selection_forecolor != value) {
 					selection_forecolor = value;
@@ -946,12 +817,8 @@ namespace System.Windows.Forms
 		}
 
 		public override ISite Site {
-			get {
-				return base.Site;
-			}
-			set {
-				base.Site = value;
-			}
+			get { return base.Site; }
+			set { base.Site = value; }
 		}
 
 		[Localizable(true)]
@@ -965,44 +832,32 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override string Text {
-			get {
-				return base.Text;
-			}
-			set {
-				base.Text = value;
-			}
+			get { return base.Text; }
+			set { base.Text = value; }
 		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected ScrollBar VertScrollBar {
-			get {
-				return vert_scrollbar;
-			}
+			get { return vert_scrollbar; }
 		}
 
 		[Browsable(false)]
 		public int VisibleColumnCount {
-			get {
-				return visiblecolumn_count;
-			}
+			get { return visiblecolumn_count; }
 		}
 
 		// Calculated at DataGridDrawing.CalcRowsHeaders
 		[Browsable(false)]
 		public int VisibleRowCount {
-			get {
-				return visiblerow_count;
-			}
+			get { return visiblerow_count; }
 		}
 
 		#endregion	// Public Instance Properties
 
 		#region Private Instance Properties
 		internal DataGridTableStyle CurrentTableStyle {
-			get {
-				return current_style;
-			}
+			get { return current_style; }
 			set {
 				current_style = value;
 				current_style.DataGrid = this;
@@ -1049,10 +904,8 @@ namespace System.Windows.Forms
 		// It should only be shown if there are relations that
 		// we do not support right now
 		internal bool ShowParentRowsVisible {
-			get {
-				//See parentrows_visible;
-				return false;
-			}
+			//See parentrows_visible;
+			get { return false; }
 		}
 		
 		#endregion Private Instance Properties
@@ -1393,6 +1246,19 @@ namespace System.Windows.Forms
 		protected override void OnLeave (EventArgs e)
 		{
 			base.OnLeave (e);
+
+#if false
+			/* we get an OnLeave call when the
+			 * DataGridTextBox control is focused, so we
+			 * need to ignore that.  If we get an OnLeave
+			 * call when a child control is not receiving
+			 * focus, we need to cancel the current
+			 * edit. */
+			if (is_adding) {
+				ListManager.CancelCurrentEdit ();
+				is_adding = false;
+			}
+#endif
 		}
 
 		protected override void OnMouseDown (MouseEventArgs e)
@@ -2130,17 +1996,17 @@ namespace System.Windows.Forms
 
 		private void SetNewDataSource ()
 		{			
-			if (ListManager != null && TableStyles[ListManager.ListName] == null) {
+			if (TableStyles[ListManager.ListName] == null) {
 				current_style.GridColumnStyles.Clear ();			
 				current_style.CreateColumnsForTable (false);
 			}
 			else {
 				// If the style has been defined by the user, use it
-				if (ListManager != null && CurrentTableStyle.MappingName != ListManager.ListName) {					
+				if (CurrentTableStyle.MappingName != ListManager.ListName) {
 					CurrentTableStyle = styles_collection[ListManager.ListName];
 					current_style.CreateColumnsForTable (true);
 				} else
-					current_style.CreateColumnsForTable (false);				
+					current_style.CreateColumnsForTable (false);
 			}
 			
 			CalcAreasAndInvalidate ();			

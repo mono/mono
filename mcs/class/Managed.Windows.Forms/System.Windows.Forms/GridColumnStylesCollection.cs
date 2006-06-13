@@ -53,9 +53,7 @@ namespace System.Windows.Forms
 		}
 
 		public DataGridColumnStyle this [int index] {
-			get {
-				return (DataGridColumnStyle) items[index];
-			}
+			get { return (DataGridColumnStyle) items[index]; }
 		}
 
 		
@@ -85,7 +83,7 @@ namespace System.Windows.Forms
 		}
 
 		object ICollection.SyncRoot {
-			get { return this;}
+			get { return this; }
 		}
 
 		bool IList.IsFixedSize {
@@ -93,16 +91,12 @@ namespace System.Windows.Forms
 		}
 
 		bool IList.IsReadOnly {
-			get { return false;}
+			get { return false; }
 		}
 
 		object IList.this [int index] {
-			get {
-				return items[index];
-			}
-			set {
-				throw new NotSupportedException ();
-			}
+			get { return items[index]; }
+			set { throw new NotSupportedException (); }
 		}
 
 		#endregion Public Instance Properties
@@ -117,14 +111,22 @@ namespace System.Windows.Forms
 		#region Public Instance Methods
 		public virtual int Add (DataGridColumnStyle column)
 		{
-			int cnt = AddInternal (column);			
-			return cnt;
+			// TODO: MS allows duplicate columns. How they diferenciate between them?
+			if (FromColumnNameToIndex (column.MappingName) != -1) {
+				throw new ArgumentException ("The ColumnStyles collection already has a column with this mapping name");
+			}
+			
+			column.TableStyle = owner;
+			column.SetDataGridInternal (owner.DataGrid);
+			int cnt = items.Add (column);
+			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, column));
+			return cnt;			
 		}
 
 		public void AddRange (DataGridColumnStyle[] columns)
 		{
 			foreach (DataGridColumnStyle mi in columns)
-				AddInternal (mi);			
+				Add (mi);			
 		}
 
 		public void Clear ()
@@ -160,23 +162,22 @@ namespace System.Windows.Forms
 
 		int IList.Add (object value)
 		{
-			return AddInternal ((DataGridColumnStyle)value);			
+			return Add ((DataGridColumnStyle)value);			
 		}
 
 		void IList.Clear ()
 		{
-			items.Clear ();
-			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Refresh , null));
+			Clear ();
 		}
 
 		bool IList.Contains (object value)
 		{
-			return items.Contains (value);
+			return Contains ((DataGridColumnStyle)value);
 		}
 
 		int IList.IndexOf (object value)
 		{
-			return items.IndexOf (value);
+			return IndexOf ((DataGridColumnStyle)value);
 		}
 
 		void IList.Insert (int index, object value)
@@ -186,15 +187,12 @@ namespace System.Windows.Forms
 
 		void IList.Remove (object value)
 		{
-			items.Remove (value);
+			Remove ((DataGridColumnStyle)value);
 		}
 
 		void IList.RemoveAt (int index)
 		{
-			object item = items[index];
-			
-			items.RemoveAt (index);
-			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, item));
+			RemoveAt (index);
 		}
 		
 		public int IndexOf (DataGridColumnStyle element)
@@ -239,19 +237,6 @@ namespace System.Windows.Forms
 		#endregion Events		
 		
 		#region Private Instance Methods
-		private int AddInternal (DataGridColumnStyle column)
-		{				
-			// TODO: MS allows duplicate columns. How they diferenciate between them?
-			if (FromColumnNameToIndex (column.MappingName) != -1) {
-				throw new ArgumentException ("The ColumnStyles collection already has a column with this mapping name");
-			}
-			
-			column.TableStyle = owner;
-			int cnt = items.Add (column);
-			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, column));
-			return cnt;			
-		}
-		
 		private int FromColumnNameToIndex (string columnName)
 		{	
 			for (int i = 0; i < items.Count; i++) {

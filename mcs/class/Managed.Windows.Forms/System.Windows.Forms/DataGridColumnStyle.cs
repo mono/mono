@@ -184,9 +184,7 @@ namespace System.Windows.Forms
 
 		[Browsable(false)]
 		public virtual DataGridTableStyle DataGridTableStyle {
-			get {
-				return table_style;
-			}			
+			get { return table_style; }			
 		}
 		
 		protected int FontHeight {
@@ -221,9 +219,7 @@ namespace System.Windows.Forms
 				if (value != header_text) {
 					header_text = value;
 					
-					if (table_style != null && table_style.DataGrid != null) {
-						table_style.DataGrid.Invalidate ();
-					}
+					Invalidate ();
 
 					if (HeaderTextChanged != null) {
 						HeaderTextChanged (this, EventArgs.Empty);
@@ -452,7 +448,8 @@ namespace System.Windows.Forms
 
 		protected virtual void Invalidate ()
 		{
-			grid.grid_drawing.InvalidateColumn (this);
+			if (grid != null && grid.grid_drawing != null)
+				grid.grid_drawing.InvalidateColumn (this);
 		}
 
 		protected internal abstract void Paint (Graphics g, Rectangle bounds, CurrencyManager source, int rowNum);

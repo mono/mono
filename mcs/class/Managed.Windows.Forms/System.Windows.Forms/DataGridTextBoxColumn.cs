@@ -39,37 +39,38 @@ namespace System.Windows.Forms
 		private string format;
 		private IFormatProvider format_provider = null;
 		private StringFormat string_format =  new StringFormat ();
-		private DataGridTextBox textbox = null;
+		private DataGridTextBox textbox;
 		private static readonly int offset_x = 2;
 		private static readonly int offset_y = 2;
 		#endregion	// Local Variables
 
 		#region Constructors
-		public DataGridTextBoxColumn ()
+		public DataGridTextBoxColumn () : this (null, String.Empty, false)
 		{
-			format = string.Empty;
 		}
 
-		public DataGridTextBoxColumn (PropertyDescriptor prop) : base (prop)
+		public DataGridTextBoxColumn (PropertyDescriptor prop) : this (prop, String.Empty, false)
 		{
-			format = string.Empty;
 		}
 		
-		public DataGridTextBoxColumn (PropertyDescriptor prop,  bool isDefault) : base (prop)
+		public DataGridTextBoxColumn (PropertyDescriptor prop,  bool isDefault) : this (prop, String.Empty, isDefault)
 		{
-			format = string.Empty;
-			is_default = isDefault;
 		}
 
-		public DataGridTextBoxColumn (PropertyDescriptor prop,  string format) : base (prop)
+		public DataGridTextBoxColumn (PropertyDescriptor prop,  string format) : this (prop, format, false)
 		{
-			this.format = format;
 		}
 		
 		public DataGridTextBoxColumn (PropertyDescriptor prop,  string format, bool isDefault) : base (prop)
 		{
-			this.format = format;
+			Format = format;
 			is_default = isDefault;
+
+			textbox = new DataGridTextBox ();
+			textbox.Multiline = true;
+			textbox.WordWrap = false;
+			textbox.BorderStyle = BorderStyle.None;
+			textbox.Visible = false;
 		}
 
 		#endregion
@@ -77,12 +78,11 @@ namespace System.Windows.Forms
 		#region Public Instance Properties
 		[Editor("System.Windows.Forms.Design.DataGridColumnStyleFormatEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
 		public string Format {
-			get {
-				return format;
-			}
+			get { return format; }
 			set {
 				if (value != format) {
 					format = value;
+					Invalidate ();
 				}
 			}
 		}
@@ -90,9 +90,7 @@ namespace System.Windows.Forms
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public IFormatProvider FormatInfo {
-			get {
-				return format_provider;
-			}
+			get { return format_provider; }
 			set {
 				if (value != format_provider) {
 					format_provider = value;
@@ -102,31 +100,21 @@ namespace System.Windows.Forms
 
 		[DefaultValue(null)]
 		public override PropertyDescriptor PropertyDescriptor {
-			set {
-				base.PropertyDescriptor = value;
-			}
+			set { base.PropertyDescriptor = value; }
 		}
 
 		public override bool ReadOnly {
-			get {
-				return base.ReadOnly;
-			}
-			set {
-				base.ReadOnly = value;
-			}
+			get { return base.ReadOnly; }
+			set { base.ReadOnly = value; }
 		}
 		
 		[Browsable(false)]
 		public virtual TextBox TextBox {
-			get {
-				EnsureTextBox();
-				return textbox;
-			}
+			get { return textbox; }
 		}
 		#endregion	// Public Instance Properties
 
 		#region Public Instance Methods
-
 
 		protected internal override void Abort (int rowNum)
 		{
@@ -152,8 +140,6 @@ namespace System.Windows.Forms
 				}
 			}
 			catch {
-				string message = "The data entered in column ["+ MappingName +"] has an invalid format.";
-				MessageBox.Show( message);
 			}
 			
 			
@@ -172,8 +158,6 @@ namespace System.Windows.Forms
 			object obj;
 			
 			grid.SuspendLayout ();
-
-			EnsureTextBox();
 
 			textbox.TextAlign = alignment;
 			
@@ -199,14 +183,12 @@ namespace System.Windows.Forms
 
 		protected void EndEdit ()
 		{
-			ReleaseHostedControl ();
+			HideEditBox ();
 		}
 
 		protected internal override void EnterNullValue ()
 		{
-			if (textbox != null) {
-				textbox.Text = NullText;
-			}
+			textbox.Text = NullText;
 		}
 
 		protected internal override int GetMinimumHeight ()
@@ -229,11 +211,9 @@ namespace System.Windows.Forms
 		[MonoTODO]
 		protected void HideEditBox ()
 		{
-			if (textbox != null) {
-				grid.SuspendLayout ();
-				textbox.Visible = false;
-				grid.ResumeLayout (false);
-			}
+			grid.SuspendLayout ();
+			textbox.Bounds = Rectangle.Empty;
+			grid.ResumeLayout (false);
 		}
 
 		protected internal override void Paint (Graphics g, Rectangle bounds, CurrencyManager source, int rowNum)
@@ -307,6 +287,13 @@ namespace System.Windows.Forms
 		protected override void SetDataGridInColumn (DataGrid value)
 		{
 			base.SetDataGridInColumn (value);
+
+			if (value != null) {
+				textbox.SetDataGrid (grid);			
+				grid.SuspendLayout ();
+				grid.Controls.Add (textbox);
+				grid.ResumeLayout (false);
+			}
 		}
 		
 		protected internal override void UpdateUI (CurrencyManager source, int rowNum, string instantText)
@@ -337,20 +324,6 @@ namespace System.Windows.Forms
 
 			return obj.ToString ();
 
-		}
-
-		private void EnsureTextBox()
-		{
-			if (textbox == null) {
-				textbox = new DataGridTextBox ();
-				textbox.SetDataGrid (DataGridTableStyle.DataGrid);
-				textbox.Multiline = true;
-				textbox.WordWrap = false;
-				textbox.BorderStyle = BorderStyle.None;
-				textbox.Visible = false;
-
-				grid.Controls.Add (textbox);
-			}			
 		}
 		#endregion Private Instance Methods
 	}

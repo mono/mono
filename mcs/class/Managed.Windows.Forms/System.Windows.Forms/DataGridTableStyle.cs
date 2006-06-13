@@ -884,9 +884,6 @@ namespace System.Windows.Forms
 				// The column style is already provided by the user
 				st = column_styles[propcol[i].Name];
 				if (st != null) {
-					st.table_style = this;
-					st.SetDataGridInternal (datagrid);
-					
 					if (st.Width == -1)
 						st.Width = CurrentPreferredColumnWidth;
 

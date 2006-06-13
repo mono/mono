@@ -1,3 +1,38 @@
+2006-06-13  Chris Toshok  <toshok@ximian.com>
+
+	* DataGridColumnStyle.cs: Invalidate the column when HeaderText is
+	modified.  Also, guard against grid or grid_drawing being null in
+	Invalidate.
+
+	* DataGrid.cs: Reformat tons of getters/setters.  In the
+	DataMember setter, just call SetNewDataSource instead of
+	duplicating some of its functionality.  In SetNewDataSource, don't
+	check ListManager for null, since the property getter creates the
+	object if needed.
+
+	* DataGridTableStyle.cs: don't set TableStyle or call
+	SetDataGridInternal on the column here, it's done in
+	GridColumnStylesCollection.Add.
+
+	* GridColumnStylesCollection.cs: fix all the explicit interface
+	implementations to just call our methods.  Nuke AddInternal() and
+	move the body of it to Add().  Also, add a call to
+	column.SetDataGridInternal to Add().
+
+	* DataGridTextBoxColumn.cs (.ctors): call this() instead of
+	base()+duplicate code.  Also, use the Format property instead of
+	format to generate an Invalidate ala MS.  Lastly, create the
+	textbox here, unconditionally.
+	(set_Format): call Invalidate.
+	(get_TextBox): no need to call EnsureTextBox.
+	(Commit): remove the message box.
+	(Edit) remove the call to EnsureTextBox.
+	(EndEdit): call HideEditBox instead of ReleaseHostedControl.
+	(EnterNullValue): no need to check textbox for null.
+	(HideEditBox): no need to check textbox for null.
+	(SetDataGridInColumn): add the textbox to the grid's controls.
+	(EnsureTextBox): nuke.
+	
 2006-06-13  Jackson Harper  <jackson@ximian.com>
 
 	* MdiWindowManager.cs: Hook up to the maximized menus paint event
@@ -24,6 +59,7 @@
 	is changed, this is needed because a toolwindow will not have all
 	three buttons until it is maximized.
 
+>>>>>>> .r61675
 2006-06-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ProgressBar.cs : PerformStep() shouldn't exceed Maximum.
