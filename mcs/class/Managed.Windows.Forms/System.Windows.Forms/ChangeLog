@@ -59,7 +59,6 @@
 	is changed, this is needed because a toolwindow will not have all
 	three buttons until it is maximized.
 
->>>>>>> .r61675
 2006-06-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ProgressBar.cs : PerformStep() shouldn't exceed Maximum.
