@@ -1,10 +1,5 @@
 2006-06-13  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
-	* BaseDataList.cs: added ConnectToDataSource method that called from
-	OnLoad, fixed GetData method
-
-2006-06-13  Vladimir Krasnov  <vladimirk@mainsoft.com>
-
 	* Repeater.cs: fixed ConnectToDataSource method, subscribed to
 	DataSourceViewChanged, looks for a datasource in its parent control
 	fixed GetData method, should not get data if datasource is null

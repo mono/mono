@@ -47,7 +47,6 @@ namespace System.Web.UI.WebControls {
 		private object source;
 #if NET_2_0
 		//private string dataSourceId;
-		IDataSource boundDataSource = null;
 		private bool initialized;
 		private bool requiresDataBinding;
 		private DataSourceSelectArguments selectArguments;
@@ -366,10 +365,20 @@ namespace System.Web.UI.WebControls {
 			if (DataSourceID.Length == 0)
 				return null;
 
-			if (boundDataSource == null)
-				return null;
+			IDataSource ds = null;
 
-			DataSourceView dsv = boundDataSource.GetView (String.Empty);
+			if (NamingContainer != null)
+				ds = (NamingContainer.FindControl (DataSourceID) as IDataSource);
+
+			if (ds == null) {
+				if (Parent != null)
+					ds = (Parent.FindControl (DataSourceID) as IDataSource);
+
+				if (ds == null)
+					throw new HttpException (Locale.GetText ("Coulnd't find a DataSource named '{0}'.", DataSourceID));
+			}
+
+			DataSourceView dsv = ds.GetView (String.Empty);
 			dsv.Select (SelectArguments, new DataSourceViewSelectCallback (SelectCallback));
 			return data;
 		}
@@ -398,9 +407,6 @@ namespace System.Web.UI.WebControls {
 		{
 			if ((Page != null) && !Page.IsPostBack)
 				RequiresDataBinding = true;
-
-			if (IsBoundUsingDataSourceID)
-				ConnectToDataSource ();
 
 			initialized = true;
 			base.OnLoad (e);
@@ -469,22 +475,6 @@ namespace System.Web.UI.WebControls {
 			default:
 				return false;
 			}
-		}
-
-		void ConnectToDataSource ()
-		{
-			if (NamingContainer != null)
-				boundDataSource = (NamingContainer.FindControl (DataSourceID) as IDataSource);
-
-			if (boundDataSource == null) {
-				if (Parent != null)
-					boundDataSource = (Parent.FindControl (DataSourceID) as IDataSource);
-
-				if (boundDataSource == null)
-					throw new HttpException (Locale.GetText ("Coulnd't find a DataSource named '{0}'.", DataSourceID));
-			}
-			DataSourceView dsv = boundDataSource.GetView (String.Empty);
-			dsv.DataSourceViewChanged += new EventHandler (OnDataSourceViewChanged);
 		}
 	}
 }
