@@ -2181,8 +2181,14 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (e is TypeExpr)
-				return e;
+			if (e is TypeExpr) {
+				if (Arguments == null)
+					return e;
+
+				ConstructedType ct = new ConstructedType (
+					(FullNamedExpression) e, Arguments, loc);
+				return ct.ResolveAsTypeStep (ec, false);
+			}
 
 			if (e is MemberExpr) {
 				MemberExpr me = (MemberExpr) e;
