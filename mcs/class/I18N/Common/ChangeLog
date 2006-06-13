@@ -1,3 +1,8 @@
+2006-06-13  Kornél Pál  <kornelpal@gmail.com>
+
+	* ByteEncoding.cs: Use unsafe code in GetString() that results in
+	  significant performance improvement.
+
 2006-01-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MonoEncoding.cs :

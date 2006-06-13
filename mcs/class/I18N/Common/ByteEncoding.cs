@@ -58,6 +58,9 @@ public abstract class ByteEncoding : MonoEncoding
 						   int windowsCodePage)
 			: base(codePage)
 			{
+				if (toChars.Length != byte.MaxValue + 1)
+					throw new ArgumentException("toChars");
+
 				this.toChars = toChars;
 				this.encodingName = encodingName;
 				this.bodyName = bodyName;
@@ -314,7 +317,7 @@ public abstract class ByteEncoding : MonoEncoding
 			}
 
 	// Decode a buffer of bytes into a string.
-	public override String GetString(byte[] bytes, int index, int count)
+	public unsafe override String GetString(byte[] bytes, int index, int count)
 			{
 				if(bytes == null)
 				{
@@ -330,13 +333,22 @@ public abstract class ByteEncoding : MonoEncoding
 					throw new ArgumentOutOfRangeException
 						("count", Strings.GetString("ArgRange_Array"));
 				}
-				StringBuilder s = new StringBuilder();
-				char[] cvt = toChars;
-				while(count-- > 0)
-				{
-					s.Append(cvt[(int)(bytes[index++])]);
-				}
-				return s.ToString();
+
+				if (count == 0)
+					return string.Empty;
+
+				string s = new string ((char) 0, count);
+
+				fixed (byte* bytePtr = bytes)
+					fixed (char* charPtr = s)
+						fixed (char* cvt = toChars) {
+							byte* b = bytePtr + index;
+							char* c = charPtr;
+							while(count-- != 0)
+								*(c++) = cvt[*(b++)];
+						}
+
+				return s;
 			}
 	public override String GetString(byte[] bytes)
 			{
@@ -344,15 +356,8 @@ public abstract class ByteEncoding : MonoEncoding
 				{
 					throw new ArgumentNullException("bytes");
 				}
-				int count = bytes.Length;
-				int posn = 0;
-				StringBuilder s = new StringBuilder();
-				char[] cvt = toChars;
-				while(count-- > 0)
-				{
-					s.Append(cvt[(int)(bytes[posn++])]);
-				}
-				return s.ToString();
+
+				return GetString (bytes, 0, bytes.Length);
 			}
 
 #if !ECMA_COMPAT
