@@ -211,6 +211,7 @@ namespace System.Windows.Forms {
 		{
 			switch (window_state) {
 			case FormWindowState.Minimized:
+				CreateButtons ();
 				maximize_button.Caption = CaptionButton.Maximize;
 				minimize_button.Caption = CaptionButton.Restore;
 				prev_window_state = old_state;
@@ -218,6 +219,7 @@ namespace System.Windows.Forms {
 				mdi_container.ArrangeIconicWindows ();
 				break;
 			case FormWindowState.Maximized:
+				CreateButtons ();
 				maximize_button.Caption = CaptionButton.Restore;
 				minimize_button.Caption = CaptionButton.Minimize;
 				prev_window_state = old_state;
@@ -225,6 +227,7 @@ namespace System.Windows.Forms {
 				SizeMaximized ();
 				break;
 			case FormWindowState.Normal:
+				CreateButtons ();
 				if (prev_window_state == FormWindowState.Maximized) {
 					form.WindowState = FormWindowState.Maximized;
 					break;

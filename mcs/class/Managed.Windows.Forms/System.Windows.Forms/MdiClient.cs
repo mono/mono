@@ -440,6 +440,12 @@ namespace System.Windows.Forms {
 
 		internal void CloseChildForm (Form form)
 		{
+			if (Controls.Count > 1) {
+				Form next = (Form) Controls [1];
+				next.WindowState = FormWindowState.Maximized;
+				ActivateChild (next);
+			}
+
 			Controls.Remove (form);
 			form.Close ();
 		}

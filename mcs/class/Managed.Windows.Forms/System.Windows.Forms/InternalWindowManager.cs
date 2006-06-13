@@ -338,13 +338,21 @@ namespace System.Windows.Forms {
 			XplatUI.PaintEventEnd (form.Handle, false);
 		}
 
-		private void CreateButtons ()
+		protected void CreateButtons ()
 		{
 			switch (form.FormBorderStyle) {
 			case FormBorderStyle.None:
 				close_button = null;
 				minimize_button = null;
 				maximize_button = null;
+				if (IsMaximized)
+					goto case FormBorderStyle.Sizable;
+				break;
+			case FormBorderStyle.FixedToolWindow:
+			case FormBorderStyle.SizableToolWindow:
+				close_button = new TitleButton (CaptionButton.Close, new EventHandler (CloseClicked));
+				if (IsMaximized)
+					goto case FormBorderStyle.Sizable;
 				break;
 			case FormBorderStyle.FixedSingle:
 			case FormBorderStyle.Fixed3D:
@@ -353,10 +361,6 @@ namespace System.Windows.Forms {
 				close_button = new TitleButton (CaptionButton.Close, new EventHandler (CloseClicked));
 				minimize_button = new TitleButton (CaptionButton.Minimize, new EventHandler (MinimizeClicked));
 				maximize_button = new TitleButton (CaptionButton.Maximize, new EventHandler (MaximizeClicked));
-				break;
-			case FormBorderStyle.FixedToolWindow:
-			case FormBorderStyle.SizableToolWindow:
-				close_button = new TitleButton (CaptionButton.Close, new EventHandler (CloseClicked));
 				break;
 			}
 

@@ -1,3 +1,14 @@
+2006-06-13  Jackson Harper  <jackson@ximian.com>
+
+	* MdiClient.cs: When we close a maximized mdi window, the next mdi
+	window is activated and maximized, even if it wasn't before.
+	* InternalWindowManager.cs: Open up CreateButtons to base classes
+	so they can recreate the buttons on state changes.
+	- If a window is maximized give it all three buttons
+	* MdiWindowManager.cs: Create the titlebar buttons when the state
+	is changed, this is needed because a toolwindow will not have all
+	three buttons until it is maximized.
+
 2006-06-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ProgressBar.cs : PerformStep() shouldn't exceed Maximum.
