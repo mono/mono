@@ -45,7 +45,8 @@ namespace System.Web.UI.WebControls {
 	
 		public void Add (DateTime date)
 		{
-			if (Contains (date) == false)
+			date = date.Date;
+			if (!l.Contains (date))
 				l.Add (date);
 		}
 		
@@ -56,7 +57,7 @@ namespace System.Web.UI.WebControls {
 		
 		public bool Contains (DateTime date)
 		{
-			return l.Contains (date);
+			return l.Contains (date.Date);
 		}
 		
 		public void CopyTo (Array array, int index)
@@ -71,11 +72,14 @@ namespace System.Web.UI.WebControls {
 		
 		public void Remove (DateTime date)
 		{
-			l.Remove (date);
+			l.Remove (date.Date);
 		}
 		
 		public void SelectRange (DateTime fromDate, DateTime toDate)
 		{
+			fromDate = fromDate.Date;
+			toDate = toDate.Date;
+			
 			l.Clear ();
 			for (DateTime dt = fromDate; dt <= toDate; dt = dt.AddDays (1))
 				Add (dt);

@@ -924,7 +924,7 @@ namespace System.Web.UI.WebControls {
 					int days =  DateTime.DaysInMonth (DisplayDate.Year, DisplayDate.Month);
 
 					selector.RenderBeginTag (writer);
-					writer.Write (BuildLink ("R" + GetDaysFromZenith (date) + days, SelectMonthText, DayHeaderStyle.ForeColor, true));
+					writer.Write (BuildLink ("R" + GetDaysFromZenith (date) + days, SelectMonthText, DayHeaderStyle.ForeColor, Enabled));
 					selector.RenderEndTag (writer);
 				}
 			}
@@ -1015,7 +1015,7 @@ namespace System.Web.UI.WebControls {
 				style.CopyFrom (otherMonthDayStyle);
 			}
 
-			if (day.IsSelected) {
+			if (day.IsSelected && Enabled) {
 				style.BackColor = Color.Silver;
 				style.ForeColor = Color.White;
 				if (selectedDayStyle != null && !selectedDayStyle.IsEmpty) {
@@ -1026,7 +1026,7 @@ namespace System.Web.UI.WebControls {
 			cell.ApplyStyle (style);
 
 			lit.Text = BuildLink (GetDaysFromZenith (date).ToString (), day.DayNumberText,
-					      cell.ForeColor, day.IsSelectable);
+					      cell.ForeColor, day.IsSelectable && Enabled);
 
 			cell.RenderControl (writer);
 		}
@@ -1063,7 +1063,7 @@ namespace System.Web.UI.WebControls {
 					}
 
 					selectorCell.RenderBeginTag (writer);
-					writer.Write (BuildLink ("R" + GetDaysFromZenith (date) + "07", SelectWeekText, selectorCell.ForeColor, true));
+					writer.Write (BuildLink ("R" + GetDaysFromZenith (date) + "07", SelectWeekText, selectorCell.ForeColor, Enabled));
 					selectorCell.RenderEndTag (writer);
 				}
 
@@ -1163,7 +1163,7 @@ namespace System.Web.UI.WebControls {
 				DateTime date = GetGlobalCalendar().AddMonths (DisplayDate, - 1);
 				date = GetGlobalCalendar().AddDays (date, -DisplayDate.Day + 1);
 				cellNextPrev.RenderBeginTag (writer);
-				writer.Write (BuildLink ("V" + GetDaysFromZenith (date), GetNextPrevFormatText (date, false), cellNextPrev.ForeColor, true));
+				writer.Write (BuildLink ("V" + GetDaysFromZenith (date), GetNextPrevFormatText (date, false), cellNextPrev.ForeColor, Enabled));
 				cellNextPrev.RenderEndTag (writer);
 			}
 
@@ -1191,7 +1191,7 @@ namespace System.Web.UI.WebControls {
 
 				cellNextPrev.HorizontalAlign = HorizontalAlign.Right;
 				cellNextPrev.RenderBeginTag (writer);
-				writer.Write (BuildLink ("V" + GetDaysFromZenith (date), GetNextPrevFormatText (date, true), cellNextPrev.ForeColor, true));
+				writer.Write (BuildLink ("V" + GetDaysFromZenith (date), GetNextPrevFormatText (date, true), cellNextPrev.ForeColor, Enabled));
 				cellNextPrev.RenderEndTag (writer);
 			}
 

@@ -1,3 +1,10 @@
+2006-06-13 Juraj Skripsky <js@hotfeet.ch>
+
+	* Calendar.cs: Make sure WebControls.Enabled is respected.
+	* SelectedDatesCollection.cs: Set time for all DateTime object passed in
+	to 12:00am as MS.NET does the same.
+	Fixes bug #71251.
+
 2006-06-13  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* Repeater.cs: fixed ConnectToDataSource method, subscribed to
