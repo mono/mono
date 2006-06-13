@@ -14,5 +14,3 @@ test-476.cs
 test-anon-27.cs
 test-xml-027.cs
 
-test-408.cs IGNORE	# FIXME: currently broken
-

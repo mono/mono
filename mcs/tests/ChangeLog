@@ -1,7 +1,3 @@
-2006-06-13  Martin Baulig  <martin@ximian.com>
-
-	* known-issuses-mcs, known-issues-gmcs: Disable test-408.cs.
-
 2006-06-02  Raja R Harinath  <rharinath@novell.com>
 
 	* test-520.cs: New test from #78079.
