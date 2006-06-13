@@ -501,6 +501,9 @@ namespace System.Web.UI.WebControls {
 			if (DataSourceID.Length == 0)
 				return null;
 
+			if (boundDataSource == null)
+				return null;
+
 			DataSourceView dsv = boundDataSource.GetView (String.Empty);
 			dsv.Select (SelectArguments, new DataSourceViewSelectCallback (SelectCallback));
 
@@ -548,8 +551,8 @@ namespace System.Web.UI.WebControls {
 		{
 			/* verify that the data source exists and is an IDataSource */
 			object ctrl = null;
-			if (Page != null)
-				ctrl = Page.FindControl (DataSourceID);
+			if (Parent != null)
+				ctrl = Parent.FindControl (DataSourceID);
 
 			if (ctrl == null || !(ctrl is IDataSource)) {
 				string format;
@@ -563,6 +566,7 @@ namespace System.Web.UI.WebControls {
 			}
 
 			boundDataSource = (IDataSource)ctrl;
+			boundDataSource.GetView (String.Empty).DataSourceViewChanged += new EventHandler(OnDataSourceViewChanged);
 		}
 #endif
 	}

@@ -1,3 +1,9 @@
+2006-06-13  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* Repeater.cs: fixed ConnectToDataSource method, subscribed to
+	DataSourceViewChanged, looks for a datasource in its parent control
+	fixed GetData method, should not get data if datasource is null
+
 2006-06-13  Konstantin Triger  <kostat@mainsoft.com>
 
 	* ObjectDataSourceView.cs: raise OnDataSourceViewChanged events when data changes.
