@@ -323,7 +323,7 @@ namespace System.Windows.Forms {
 			PaintDecorations ();
 		}
 
-		private void PaintDecorations ()
+		public void PaintDecorations ()
 		{
 			PaintEventArgs pe = XplatUI.PaintEventStart (form.Handle, false);
 			ThemeEngine.Current.DrawManagedWindowDecorations (pe.Graphics, pe.ClipRectangle, this);
