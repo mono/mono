@@ -249,8 +249,14 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void SelectDateProperty ()
 		{
 			PokerCalendar c = new PokerCalendar ();
-			c.SelectedDate = DateTime.Today;
-			Assert.AreEqual (DateTime.Today, c.SelectedDate, "SelectDateProperty");
+			DateTime now = DateTime.Now;
+			DateTime today = now.Date;
+			
+			c.SelectedDate = today;
+			Assert.AreEqual (today, c.SelectedDate, "SelectDateProperty #1");
+
+			c.SelectedDate = now;
+			Assert.AreEqual (today, c.SelectedDate, "SelectDateProperty #2");
 		}
 
 		[Test]

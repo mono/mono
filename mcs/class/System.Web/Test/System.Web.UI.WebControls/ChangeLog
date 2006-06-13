@@ -1,3 +1,8 @@
+2006-06-13 Juraj Skripsky <js@hotfeet.ch>
+
+	* CalendarTest.cs (SelectDateProperty): Make sure SelectedDate is
+	automatically "rounded" to the same date with time set to 12:00am.
+
 2006-05-28 Andrew Skiba <andrews@mainsoft.com>
 
 	* ThemeTest.cs, MenuTest.cs, MasterPageTest.cs: rename methods to make
