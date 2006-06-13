@@ -1,5 +1,11 @@
 2006-06-13  Zoltan Varga  <vargaz@gmail.com>
 
+	* branch-opts.c (mono_branch_optimize_exception_target): Avoid branches
+	which branch to outer exception clauses since they could skip the
+	inner finally clauses. Fixes #78633.
+
+	* exceptions.cs: Add a test for the above.
+
 	* mini.c (merge_basic_blocks): Nullify the branch at the end of the first bb.
 	Fixes #78629.
 
