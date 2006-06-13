@@ -2,6 +2,9 @@
 
 	* MdiClient.cs: When we close a maximized mdi window, the next mdi
 	window is activated and maximized, even if it wasn't before.
+	- When  a new window is activated repaint the decorations of the
+	old one, so that it no longer has the Active "look" (the blue
+	titlebar).
 	* InternalWindowManager.cs: Open up CreateButtons to base classes
 	so they can recreate the buttons on state changes.
 	- If a window is maximized give it all three buttons

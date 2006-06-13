@@ -464,14 +464,16 @@ namespace System.Windows.Forms {
 
 		internal void ActivateChild (Form form)
 		{
+			if (Controls.Count < 1)
+				return;
+
+			Form current = (Form) Controls [0];
+
 			form.BringToFront ();
 			active = form;
 
-			foreach (Form child in Controls) {
-				if (child == form)
-					continue;
-				// TODO: We need to repaint the decorations here
-			}
+			if (current != form)
+				current.WindowManager.PaintDecorations ();
 		}
 
 		internal int ChildrenCreated {
