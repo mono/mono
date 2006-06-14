@@ -6,4 +6,6 @@ Microsoft.Build.BuildEngine/EngineTest.cs
 Microsoft.Build.BuildEngine/InternalLoggerExceptionTest.cs
 Microsoft.Build.BuildEngine/InvalidProjectFileExceptionTest.cs
 Microsoft.Build.BuildEngine/ProjectTest.cs
+Microsoft.Build.BuildEngine/UsingTaskTest.cs
+Microsoft.Build.BuildEngine/UsingTaskCollectionTest.cs
 Microsoft.Build.BuildEngine/UtilitiesTest.cs

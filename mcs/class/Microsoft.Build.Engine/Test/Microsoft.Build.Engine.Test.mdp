@@ -26,6 +26,8 @@
     <File name="./Microsoft.Build.BuildEngine/BuildPropertyTest.cs" subtype="Code" buildaction="Compile" />
     <File name="./Microsoft.Build.BuildEngine/BuildPropertyGroupTest.cs" subtype="Code" buildaction="Compile" />
     <File name="./Microsoft.Build.BuildEngine/BuildPropertyGroupCollectionTest.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Microsoft.Build.BuildEngine/UsingTaskCollectionTest.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Microsoft.Build.BuildEngine/UsingTaskTest.cs" subtype="Code" buildaction="Compile" />
   </Contents>
   <References>
     <ProjectReference type="Gac" localcopy="True" refto="nunit.framework, Version=2.2.0.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77" />

@@ -1,3 +1,11 @@
+2006-06-14  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* BuildPropertyGroupTest.cs: Added some tests.
+	* UsingTaskCollectionTest.cs: Added very simple test.
+	* UsingTaskTest.cs: Added test that's loading SimpleTask.dll task from
+	Test/resources/. Test/resources/SimpleTask.cs should be compiled
+	before running tests. I need to find out how to add it to Makefile.
+
 2006-06-02  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* BuildPropertyTest.cs: Added.

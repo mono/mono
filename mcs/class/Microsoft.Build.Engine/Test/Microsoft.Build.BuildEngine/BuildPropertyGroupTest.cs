@@ -36,6 +36,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 	[TestFixture]
 	public class BuildPropertyGroupTest {
 		
+		BuildPropertyGroup	bpg;
 		string			binPath;
 		Engine			engine;
 		Project			project;
@@ -47,12 +48,19 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 		
 		[Test]
+		public void TestAssignment ()
+		{
+			bpg = new BuildPropertyGroup ();
+			
+			Assert.AreEqual (0, bpg.Count);
+			Assert.AreEqual (false, bpg.IsImported);
+		}
+		
+		[Test]
 		[ExpectedException (typeof (InvalidOperationException),
 			"Properties in persisted property groups cannot be accessed by name.")]
 		public void TestClone1 ()
 		{
-			BuildPropertyGroup bpg;
-			
                         string documentString = @"
                                 <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
                                 	<PropertyGroup>
@@ -70,6 +78,50 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			en.MoveNext ();
 			bpg = (BuildPropertyGroup) en.Current;
 			Assert.AreEqual ("Value", bpg ["Name"].Value, "A3");
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException),
+			"This method is only valid for persisted <System.Object[]> elements.")]
+		public void TestAddNewProperty1 ()
+		{
+			string name = "name";
+			string value = "value";
+		
+			bpg = new BuildPropertyGroup ();
+			
+			bpg.AddNewProperty (name, value);
+		}
+		
+		[Test]
+		public void TestClear ()
+		{
+			bpg = new BuildPropertyGroup ();
+			
+			bpg.SetProperty ("a", "b");
+			Assert.AreEqual (1, bpg.Count, "A1");
+			bpg.Clear ();
+			Assert.AreEqual (0, bpg.Count, "A2");
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException),
+			"Cannot set a condition on an object not represented by an XML element in the project file.")]
+		public void TestCondition1 ()
+		{
+			string condition = "condition";
+		
+			bpg = new BuildPropertyGroup ();
+		
+			bpg.Condition = condition;
+		}
+
+		[Test]
+		public void TestCondition2 ()
+		{
+			bpg = new BuildPropertyGroup ();
+		
+			Assert.AreEqual (String.Empty, bpg.Condition, "A1");
 		}
 	}
 }

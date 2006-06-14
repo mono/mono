@@ -53,6 +53,24 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			return clone;
 		}
 
+		// Get all items with a specific name, separated by ;
+		private string GetItems (Project proj, string name)
+		{
+			BuildItemGroup big = proj.GetEvaluatedItemsByName (name);
+			string str = String.Empty;
+			if (big == null) {
+				return str;
+			}
+			foreach (BuildItem bi in big) {
+				if (str == String.Empty) {
+					str = bi.FinalItemSpec;
+				} else {
+					str += ";" + bi.FinalItemSpec;
+				}
+			}
+			return str;
+		}
+
 		[Test]
 		[ExpectedException (typeof (InvalidProjectFileException),
 		@"The default XML namespace of the project must be the MSBuild XML namespace." + 
@@ -113,24 +131,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.AreEqual (1, proj.PropertyGroups.Count, "A1");
 			Assert.AreEqual ("debug", proj.GetEvaluatedProperty ("Config"), "A2");
 			Assert.AreEqual ("debug-debug", proj.GetEvaluatedProperty ("ExpProp"), "A3");
-		}
-
-		// Get all items with a specific name, separated by ;
-		private string GetItems (Project proj, string name)
-		{
-			BuildItemGroup big = proj.GetEvaluatedItemsByName (name);
-			string str = String.Empty;
-			if (big == null) {
-				return str;
-			}
-			foreach (BuildItem bi in big) {
-				if (str == String.Empty) {
-					str = bi.FinalItemSpec;
-				} else {
-					str += ";" + bi.FinalItemSpec;
-				}
-			}
-			return str;
 		}
 
 		[Test]
