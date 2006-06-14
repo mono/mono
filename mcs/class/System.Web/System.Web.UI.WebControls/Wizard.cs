@@ -1219,6 +1219,9 @@ namespace System.Web.UI.WebControls
 		
 		protected internal override void Render (HtmlTextWriter writer)
 		{
+			if (multiView.ActiveViewIndex != ActiveStepIndex)
+				CreateControlHierarchy ();
+
 			wizardTable.ApplyStyle (ControlStyle);
 
 			foreach (object[] styleDef in styles)

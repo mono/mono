@@ -1,3 +1,10 @@
+2006-06-14  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* BaseDataList.cs: added ConnectToDataSource method that called from 
+	OnLoad, fixed GetData method
+	* Wizard.cs: fixed bug when called MoveTo after that control hierarchy
+	has been created
+
 2006-06-14  Andrew Skiba <andrews@mainsoft.com>
 
 	* Menu.cs: add CssStyle value to the rendered class attribute
