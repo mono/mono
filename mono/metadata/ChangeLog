@@ -1,3 +1,9 @@
+2006-06-14  Dick Porter  <dick@ximian.com>
+
+	* socket-io.c: 
+	* process.c: Fix a bunch of signed/unsigned warnings from gcc
+	4.1.1
+
 2006-06-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* culture-info-table.h : oops, forgot to make it nsync with r61548.

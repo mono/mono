@@ -1,3 +1,8 @@
+2006-06-14  Dick Porter  <dick@ximian.com>
+
+	* wapihandles.c: Fix a bunch of signed/unsigned warnings from gcc
+	4.1.1
+
 2006-06-13  Massimiliano Mantione  <massi@ximian.com>
 	* mini.c: Made so that inline is locally disabled if it would
 	trigger a .cctor, because too many apps depend on this behavior

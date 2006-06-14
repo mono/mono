@@ -1,3 +1,16 @@
+2006-06-14  Dick Porter  <dick@ximian.com>
+
+	* wait.c: Fix stupid typo shown up by gcc 4.1.1, = not ==
+
+	* handles-private.h: 
+	* shared.c: 
+	* io.c: 
+	* processes.c: 
+	* mono-spinlock.h: 
+	* handles.c: 
+	* collection.c: Fix a bunch of signed/unsigned warnings from gcc
+	4.1.1
+
 2006-06-09 Neale Ferguson <neale@sinenomine.net>
 
 	* atomic.h: Fix atomic operations for s390x (not really broken 
