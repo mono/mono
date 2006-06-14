@@ -1,3 +1,9 @@
+2006-06-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Button.cs: do something in PostBackUrl.
+	* Repeater.cs: when creating the RepeaterItemCollection, initialize
+	'items' if it hasn't been done yet. Fixes bug #78417.
+
 2006-06-14  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* BaseDataList.cs: added ConnectToDataSource method that called from 

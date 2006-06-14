@@ -234,8 +234,12 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		public virtual RepeaterItemCollection Items {
 			get {
-				if (itemscol == null)
+				if (itemscol == null) {
+					if (items == null)
+						items = new ArrayList ();
+
 					itemscol = new RepeaterItemCollection (items);
+				}
 				return itemscol;
 			}
 		}

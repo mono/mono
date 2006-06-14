@@ -285,10 +285,10 @@ namespace System.Web.UI.WebControls {
 		[MonoTODO]
 		public virtual string PostBackUrl {
 			get {
-				throw new NotImplementedException ();
+				return ViewState.GetString ("PostBackUrl", "");
 			}
 			set {
-				throw new NotImplementedException ();
+				ViewState ["PostBackUrl"] = value;
 			}
 		}
 
