@@ -1,3 +1,11 @@
+2006-06-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AuthenticodeBase.cs: Fix destination offset. Note that this works 
+	under MS but not under Mono.
+	* AuthenticodeDeformatter.cs: Report a more useful error if the file
+	hash doesn't match the signed hash.
+	* AuthenticodeFormatter.cs: Implemented support for Timestamp method.
+
 2005-04-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AuthenticodeFormatter.cs: Commented unused private constants to 

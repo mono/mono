@@ -219,13 +219,60 @@ namespace Mono.Security.Authenticode {
 			pkcs7.SignerInfo.UnauthenticatedAttributes.Add (Attribute (countersignature, ts[1][0][4][0]));
 		}
 
-		public bool Sign (string fileName) 
+		private byte[] Timestamp (byte[] signature)
 		{
-			string hashAlgorithm = "MD5";
-			byte[] file = null;
+			ASN1 tsreq = TimestampRequest (signature);
+			WebClient wc = new WebClient ();
+			wc.Headers.Add ("Content-Type", "application/octet-stream");
+			wc.Headers.Add ("Accept", "application/octet-stream");
+			byte[] tsdata = Encoding.ASCII.GetBytes (Convert.ToBase64String (tsreq.GetBytes ()));
+			return wc.UploadData (timestamp.ToString (), tsdata);
+		}
 
+		private byte[] file;
+		private int pe_offset = -1;
+		private int sec_offset = -1;
+		private int sec_size = -1;
+
+		private int PEOffset {
+			get {
+				if (file == null)
+					return -1;
+				if (pe_offset == -1) {
+					int peOffset = BitConverterLE.ToInt32 (file, 60);
+					if (peOffset < file.Length)
+						pe_offset = peOffset;
+				}
+				return pe_offset;
+			}
+		}
+
+		private int SecurityOffset {
+			get {
+				if (file == null)
+					return -1;
+				if (sec_offset == -1) {
+					sec_offset = BitConverterLE.ToInt32 (file, PEOffset + 152);
+				}
+				return sec_offset;
+			}
+		}
+
+		private int SecuritySize {
+			get {
+				if (file == null)
+					return -1;
+				if (sec_size == -1) {
+					sec_size = BitConverterLE.ToInt32 (file, PEOffset + 156);
+				}
+				return sec_size;
+			}
+		}
+
+		private bool Open (string fileName)
+		{
 			using (FileStream fs = new FileStream (fileName, FileMode.Open, FileAccess.Read, FileShare.Read)) {
-				file = new byte [fs.Length];
+				file = new byte[fs.Length];
 				fs.Read (file, 0, file.Length);
 				fs.Close ();
 			}
@@ -234,58 +281,27 @@ namespace Mono.Security.Authenticode {
 			if (BitConverterLE.ToUInt16 (file, 0) != 0x5A4D)
 				return false;
 
-			// find offset of PE header
-			int peOffset = BitConverterLE.ToInt32 (file, 60);
-			if (peOffset > file.Length)
+			// PE Header
+			if (PEOffset == -1)
 				return false;
 
 			// PE - NT header
-			if (BitConverterLE.ToUInt16 (file, peOffset) != 0x4550)
+			if (BitConverterLE.ToUInt16 (file, PEOffset) != 0x4550)
 				return false;
 
 			// IMAGE_DIRECTORY_ENTRY_SECURITY
-			int dirSecurityOffset = BitConverterLE.ToInt32 (file, peOffset + 152);
-			int dirSecuritySize = BitConverterLE.ToInt32 (file, peOffset + 156);
-
-			if (dirSecuritySize > 8) {
-				entry = new byte [dirSecuritySize - 8];
-				Buffer.BlockCopy (file, dirSecurityOffset + 8, entry, 0, entry.Length);
-			}
-			else
+			if (SecuritySize > 8) {
+				entry = new byte[SecuritySize - 8];
+				Buffer.BlockCopy (file, SecurityOffset + 8, entry, 0, entry.Length);
+			} else
 				entry = null;
 
-			HashAlgorithm hash = HashAlgorithm.Create (hashAlgorithm);
-			// 0 to 215 (216) then skip 4 (checksum)
-			int pe = peOffset + 88;
-			hash.TransformBlock (file, 0, pe, file, 0);
-			pe += 4;
-			// 220 to 279 (60) then skip 8 (IMAGE_DIRECTORY_ENTRY_SECURITY)
-			hash.TransformBlock (file, pe, 60, file, pe);
-			pe += 68;
-			// 288 to end of file
-			int n = file.Length - pe;
-			// minus any authenticode signature (with 8 bytes header)
-			if (dirSecurityOffset != 0)
-				n -= (dirSecuritySize);
-			hash.TransformFinalBlock (file, pe, n);
+			return true;
+		}
 
-			//
-			byte[] signature = Header (hash.Hash, hashAlgorithm);
-			if (timestamp != null) {
-				ASN1 tsreq = TimestampRequest (signature);
-				WebClient wc = new WebClient ();
-				wc.Headers.Add ("Content-Type", "application/octet-stream");
-				wc.Headers.Add ("Accept", "application/octet-stream");
-				byte[] tsdata = Encoding.ASCII.GetBytes (Convert.ToBase64String (tsreq.GetBytes ()));
-				byte[] tsres = wc.UploadData (timestamp.ToString (), tsdata);
-				ProcessTimestamp (tsres);
-			}
-			PKCS7.ContentInfo sign = new PKCS7.ContentInfo (signedData);
-			sign.Content.Add (pkcs7.ASN1);
-			authenticode = sign.ASN1;
-
-			byte[] asn = authenticode.GetBytes ();
-#if DEBUG
+		private bool Save (string fileName, byte[] asn)
+		{
+#if !DEBUG
 			using (FileStream fs = File.Open (fileName + ".sig", FileMode.Create, FileAccess.Write)) {
 				fs.Write (asn, 0, asn.Length);
 				fs.Close ();
@@ -295,13 +311,13 @@ namespace Mono.Security.Authenticode {
 			File.Copy (fileName, fileName + ".bak", true);
 
 			using (FileStream fs = File.Open (fileName, FileMode.Create, FileAccess.Write)) {
-				int filesize = (dirSecurityOffset == 0) ? file.Length : dirSecurityOffset;
+				int filesize = (SecurityOffset == 0) ? file.Length : SecurityOffset;
 				// IMAGE_DIRECTORY_ENTRY_SECURITY (offset, size)
 				byte[] data = BitConverterLE.GetBytes (filesize);
-				file [peOffset + 152] = data [0];
-				file [peOffset + 153] = data [1];
-				file [peOffset + 154] = data [2];
-				file [peOffset + 155] = data [3];
+				file[PEOffset + 152] = data[0];
+				file[PEOffset + 153] = data[1];
+				file[PEOffset + 154] = data[2];
+				file[PEOffset + 155] = data[3];
 				int size = asn.Length + 8;
 				// must be a multiple of 8 bytes
 				int addsize = (size % 8);
@@ -309,27 +325,113 @@ namespace Mono.Security.Authenticode {
 					addsize = 8 - addsize;
 				size += addsize;
 				data = BitConverterLE.GetBytes (size);		// header
-				file [peOffset + 156] = data [0];
-				file [peOffset + 157] = data [1];
-				file [peOffset + 158] = data [2];
-				file [peOffset + 159] = data [3];
+				file[PEOffset + 156] = data[0];
+				file[PEOffset + 157] = data[1];
+				file[PEOffset + 158] = data[2];
+				file[PEOffset + 159] = data[3];
 				fs.Write (file, 0, filesize);
 				fs.Write (data, 0, data.Length);		// length (again)
 				data = BitConverterLE.GetBytes (0x00020200);	// magic
 				fs.Write (data, 0, data.Length);
 				fs.Write (asn, 0, asn.Length);
 				// fill up
-				byte[] fillup = new byte [addsize];
+				byte[] fillup = new byte[addsize];
 				fs.Write (fillup, 0, fillup.Length);
 				fs.Close ();
 			}
 			return true;
 		}
 
+		public bool Sign (string fileName) 
+		{
+			try {
+				if (!Open (fileName))
+					return false;
+
+				HashAlgorithm hash = HashAlgorithm.Create (Hash);
+				// 0 to 215 (216) then skip 4 (checksum)
+				int pe = PEOffset + 88;
+				hash.TransformBlock (file, 0, pe, file, 0);
+				pe += 4;
+				// 220 to 279 (60) then skip 8 (IMAGE_DIRECTORY_ENTRY_SECURITY)
+				hash.TransformBlock (file, pe, 60, file, pe);
+				pe += 68;
+				// 288 to end of file
+				int n = file.Length - pe;
+				// minus any authenticode signature (with 8 bytes header)
+				if (SecurityOffset != 0)
+					n -= (SecuritySize);
+				hash.TransformFinalBlock (file, pe, n);
+
+				byte[] signature = Header (hash.Hash, Hash);
+				if (timestamp != null) {
+					byte[] ts = Timestamp (signature);
+					// add timestamp information inside the current pkcs7 SignedData instance
+					// (this is possible because the data isn't yet signed)
+					ProcessTimestamp (ts);
+				}
+
+				PKCS7.ContentInfo sign = new PKCS7.ContentInfo (signedData);
+				sign.Content.Add (pkcs7.ASN1);
+				authenticode = sign.ASN1;
+
+				return Save (fileName, authenticode.GetBytes ());
+			}
+			catch (Exception e) {
+				Console.WriteLine (e);
+			}
+			return false;
+		}
+
 		// in case we just want to timestamp the file
 		public bool Timestamp (string fileName) 
 		{
-			return true;
+			try {
+				AuthenticodeDeformatter def = new AuthenticodeDeformatter (fileName);
+				byte[] signature = def.Signature;
+				if ((signature != null) && Open (fileName)) {
+					PKCS7.ContentInfo ci = new PKCS7.ContentInfo (signature);
+					pkcs7 = new PKCS7.SignedData (ci.Content);
+
+					byte[] response = Timestamp (pkcs7.SignerInfo.Signature);
+					ASN1 ts = new ASN1 (Convert.FromBase64String (Encoding.ASCII.GetString (response)));
+					// insert new certificates and countersignature into the original signature
+					ASN1 asn = new ASN1 (signature);
+					ASN1 content = asn.Element (1, 0xA0);
+					if (content == null)
+						return false;
+
+					ASN1 signedData = content.Element (0, 0x30);
+					if (signedData == null)
+						return false;
+
+					// add the supplied certificates inside our signature
+					ASN1 certificates = signedData.Element (3, 0xA0);
+					if (certificates == null) {
+						certificates = new ASN1 (0xA0);
+						signedData.Add (certificates);
+					}
+					for (int i = 0; i < ts[1][0][3].Count; i++) {
+						certificates.Add (ts[1][0][3][i]);
+					}
+
+					// add an unauthentified attribute to our signature
+					ASN1 signerInfoSet = signedData[signedData.Count - 1];
+					ASN1 signerInfo = signerInfoSet[0];
+					ASN1 unauthenticated = signerInfo[signerInfo.Count - 1];
+					if (unauthenticated.Tag != 0xA1) {
+						unauthenticated = new ASN1 (0xA1);
+						signerInfo.Add (unauthenticated);
+					}
+					unauthenticated.Add (Attribute (countersignature, ts[1][0][4][0]));
+
+					return Save (fileName, asn.GetBytes ());
+				}
+			}
+			catch (Exception e) {
+				Console.WriteLine (e);
+			}
+			return false;
 		}
 	}
 }
