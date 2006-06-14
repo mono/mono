@@ -1,5 +1,10 @@
 2006-06-14  Dick Porter  <dick@ximian.com>
 
+	* processes.c: Don't run the atexit handlers when bailing out
+	of a fork/exec.
+
+2006-06-14  Dick Porter  <dick@ximian.com>
+
 	* wait.c: Fix stupid typo shown up by gcc 4.1.1, = not ==
 
 	* handles-private.h: 
