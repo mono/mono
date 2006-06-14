@@ -1,0 +1,11 @@
+2006-06-14  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* ApplicationIdentity.cs, ProxyStub.cs, OutputMessageCollection.cs,
+	UpdateUnit.cs, DeployManifest.cs, UpdateMode.cs, BaseReference.cs,
+	ManifestReader.cs, AssemblyIdentity.cs, ApplicationManifest.cs,
+	TrustInfo.cs, WindowClass.cs, AssemblyReference.cs, FileReference.cs,
+	AssemblyReferenceType.cs, ManifestWriter.cs, SecurityUtilities.cs,
+	ComClass.cs, OutputMessage.cs, Manifest.cs, AssemblyManifest.cs,
+	OutputMessageType.cs, TypeLib.cs, AssemblyReferenceCollection.cs,
+	FileReferenceCollection.cs: Added stubs.
+
