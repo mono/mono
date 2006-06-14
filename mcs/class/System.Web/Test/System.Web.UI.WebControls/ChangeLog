@@ -1,3 +1,7 @@
+2006-06-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* RepeaterItemCollectionTest.cs: New file.
+
 2006-06-14 Andrew Skiba <andrews@mainsoft.com>
 
 	* MenuTest.cs: add test for CssClass attribute
