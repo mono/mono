@@ -159,10 +159,8 @@ namespace Mono.Security {
 		public virtual byte[] GetBytes () 
 		{
 			byte[] val = null;
-			if (m_aValue != null) {
-				val = m_aValue;
-			}
-			else if (Count > 0) {
+			
+			if (Count > 0) {
 				int esize = 0;
 				ArrayList al = new ArrayList ();
 				foreach (ASN1 a in elist) {
@@ -177,6 +175,8 @@ namespace Mono.Security {
 					Buffer.BlockCopy (item, 0, val, pos, item.Length);
 					pos += item.Length;
 				}
+			} else if (m_aValue != null) {
+				val = m_aValue;
 			}
 
 			byte[] der;
@@ -247,6 +247,9 @@ namespace Mono.Security {
 			// minimum is 2 bytes (tag + length of 0)
 			while (anPos < anLength - 1) {
 				DecodeTLV (asn1, ref anPos, out nTag, out nLength, out aValue);
+				// sometimes we get trailing 0
+				if (nTag == 0)
+					continue;
 
 				ASN1 elm = Add (new ASN1 (nTag, aValue));
 
