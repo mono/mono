@@ -133,7 +133,8 @@ namespace MonoTests.System.Threading {
 		}
 
 		[Test]
-		public void Run ()
+		[Category ("CAS")] // since r60298 the SecurityContext is only captured if the security manager is active
+		public void Run () // see bug #78306 for details
 		{
 			Assert.IsFalse (success, "pre-check");
 			ExecutionContext.Run (ExecutionContext.Capture (), new ContextCallback (Callback), true);
