@@ -35,12 +35,14 @@ namespace Microsoft.Build.BuildEngine {
 	public class UsingTaskCollection : ICollection, IEnumerable {
 	
 		Project		parentProject;
+		object		syncRoot;
 		IList		usingTasks;
 		
 		internal UsingTaskCollection (Project parentProject)
 		{
 			this.parentProject = parentProject;
-			usingTasks = new ArrayList ();
+			this.syncRoot = new Object ();
+			this.usingTasks = new ArrayList ();
 		}
 		
 		internal void Add (UsingTask usingTask)
@@ -57,6 +59,7 @@ namespace Microsoft.Build.BuildEngine {
 		[MonoTODO]
 		public void CopyTo (Array array, int index)
 		{
+			usingTasks.CopyTo (array, index);
 		}
 		
 		[MonoTODO]
@@ -79,7 +82,7 @@ namespace Microsoft.Build.BuildEngine {
 		}
 		
 		public object SyncRoot {
-			get { return this; }
+			get { return syncRoot; }
 		}
 	}
 }

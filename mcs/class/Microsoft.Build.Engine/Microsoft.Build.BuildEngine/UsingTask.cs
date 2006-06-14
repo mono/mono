@@ -34,14 +34,11 @@ using Mono.XBuild.Framework;
 
 namespace Microsoft.Build.BuildEngine {
 	public class UsingTask {
-		XmlElement	usingTaskElement;
-		Project		project;
+	
 		ImportedProject	importedProject;
+		Project		project;
+		XmlElement	usingTaskElement;
 
-		private UsingTask()
-		{
-		}
-		
 		internal UsingTask (XmlElement usingTaskElement, Project project, ImportedProject importedProject)
 		{
 			this.project = project;
@@ -52,32 +49,34 @@ namespace Microsoft.Build.BuildEngine {
 				throw new ArgumentNullException ("project");
 			if (usingTaskElement == null)
 				throw new ArgumentNullException ("usingTaskElement");
-			if (AssemblyName == String.Empty && AssemblyFile == String.Empty)
-				throw new InvalidProjectFileException ("AssemblyName or AssemblyFile attribute must be specified.");
+			if (AssemblyName != null && AssemblyFile != null)
+				throw new InvalidProjectFileException ("A <UsingTask> element must contain either the \"AssemblyName\" attribute or the \"AssemblyFile\" attribute (but not both).  ");
 			if (TaskName == String.Empty)
-				throw new InvalidProjectFileException ("TaskName attribute must be specified.");
+				throw new InvalidProjectFileException ("The required attribute \"TaskName\" is missing from element <UsingTask>.  ");
 		}
 
 		internal void Evaluate ()
 		{
 			AssemblyLoadInfo loadInfo;
 
-			if (AssemblyName != String.Empty) {
+			if (AssemblyName != null) {
 				loadInfo = new AssemblyLoadInfo (AssemblyName, TaskName);
-			} else if (AssemblyFile != String.Empty) {
+			} else if (AssemblyFile != null) {
 				string filename = AssemblyFile;
 				if (Path.IsPathRooted (filename) == false) {
 					string ffn;
 					if (importedProject != null) {
 						ffn = Path.GetDirectoryName (importedProject.FullFileName);
-					} else {
+					} else if (project.FullFileName != String.Empty) {
 						ffn = Path.GetDirectoryName (project.FullFileName);
+					} else {
+						ffn = Environment.CurrentDirectory;
 					}
 					filename = Path.Combine (ffn, filename);
 				}
 				loadInfo = new AssemblyLoadInfo (LoadInfoType.AssemblyFilename, filename, null, null, null, null, TaskName);
 			} else {
-				throw new InvalidProjectFileException ("AssemblyName or AssemblyFile attribute must be specified.");
+				throw new InvalidProjectFileException ("A <UsingTask> element must contain either the \"AssemblyName\" attribute or the \"AssemblyFile\" attribute (but not both).  ");
 			}
 			project.TaskDatabase.RegisterTask (TaskName, loadInfo);
 		}
@@ -87,15 +86,24 @@ namespace Microsoft.Build.BuildEngine {
 		}
 		
 		public string AssemblyFile {
-			get { return usingTaskElement.GetAttribute ("AssemblyFile"); }
+			get {
+				string assemblyFile = usingTaskElement.GetAttribute ("AssemblyFile");
+				return (assemblyFile == String.Empty) ? null : assemblyFile;
+			}
 		}
 		
 		public string AssemblyName {
-			get { return usingTaskElement.GetAttribute ("AssemblyName"); }
+			get {
+				string assemblyName = usingTaskElement.GetAttribute ("AssemblyName");
+				return (assemblyName == String.Empty) ? null : assemblyName;
+			}
 		}
 		
 		public string Condition {
-			get { return usingTaskElement.GetAttribute ("Condition"); }
+			get {
+				string condition = usingTaskElement.GetAttribute ("Condition");
+				return (condition == String.Empty) ? null : condition;
+			}
 		}
 		
 		public string TaskName {

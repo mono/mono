@@ -1,3 +1,9 @@
+2006-06-14  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* UsingTask.cs: Changed properties to return null on empty attribute.
+	* UsingTaskCollection.cs: Added object to SyncRoot.
+	* BuildPropertyGroup.cs: Added NotImplementedException throwing.
+
 2006-06-02  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* BuildItem.cs, BuildProperty.cs, BuildPropertyGroup.cs,

@@ -117,12 +117,13 @@ namespace Microsoft.Build.BuildEngine {
 		[MonoTODO]
 		public void Clear ()
 		{
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public BuildPropertyGroup Clone (bool deepClone)
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		public IEnumerator GetEnumerator ()
@@ -187,7 +188,8 @@ namespace Microsoft.Build.BuildEngine {
 			}
 			set {
 				if (!FromXml)
-					throw new InvalidOperationException ("Can only set condition on xml elements.");
+					throw new InvalidOperationException (
+					"Cannot set a condition on an object not represented by an XML element in the project file.");
 				propertyGroup.SetAttribute ("Condition", value);
 			}
 		}
