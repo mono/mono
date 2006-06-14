@@ -1,3 +1,10 @@
+2006-06-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AuthenticodeBase.cs: Fix destination offset. Note that this works 
+	under MS but not under Mono.
+	* AuthenticodeDeformatter.cs: Report a more useful error if the file
+	hash doesn't match the signed hash.
+
 2005-03-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AuthenticodeDeformatter.cs: Don't hide the SecurityException (e.g. 

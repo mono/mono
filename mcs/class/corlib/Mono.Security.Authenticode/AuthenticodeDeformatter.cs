@@ -210,8 +210,10 @@ namespace Mono.Security.Authenticode {
 			}
 			base.Close ();
 
-			if (!signedHash.CompareValue (hash))
+			if (!signedHash.CompareValue (hash)) {
+				reason = 2;
 				return false;
+			}
 
 			// messageDigest is a hash of spcIndirectDataContext (which includes the file hash)
 			byte[] spcIDC = spc [0].Value;

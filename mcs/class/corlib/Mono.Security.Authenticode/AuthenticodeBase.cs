@@ -182,7 +182,7 @@ namespace Mono.Security.Authenticode {
 			}
 			else {
 				// hash the last part of the first (already in memory) block
-				hash.TransformBlock (fileblock, pe, blockLength - pe, fileblock, 0);
+				hash.TransformBlock (fileblock, pe, blockLength - pe, fileblock, pe);
 
 				// hash by blocks of 4096 bytes
 				long blocks = (n >> 12);
