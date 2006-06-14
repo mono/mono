@@ -98,6 +98,8 @@ namespace System
 			"yyyy-MM-ddTHH:mm:sszzz",
 			"yyyy-MM-ddTHH:mm:ss.fffffff",
 			"yyyy-MM-ddTHH:mm:ss.fffffffzzz",
+			// bug #78618
+			"yyyy-M-d H:m:s.fffffff",
 			// UTC / allow any separator
 			"yyyy/MM/ddTHH:mm:ssZ",
 			"yyyy/M/dZ",
