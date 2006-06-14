@@ -1,3 +1,7 @@
+2006-06-14  Dick Porter  <dick@ximian.com>
+
+	* wait.c: Fix stupid typo shown up by gcc 4.1.1, = not ==
+
 2006-05-24  Dick Porter  <dick@ximian.com>
 
 	* processes.c (process_set_current): Don't take an extra reference
