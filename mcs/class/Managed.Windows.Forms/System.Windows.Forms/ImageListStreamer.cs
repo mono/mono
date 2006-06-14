@@ -208,28 +208,53 @@ namespace System.Windows.Forms {
 			int h = images [0].Height;
 			byte *scan = (byte *) dresult.Scan0.ToPointer ();
 			int stride = dresult.Stride;
+			Bitmap current = null;
 			for (int idx = 0; idx < images.Length; idx++) {
-				Bitmap current = (Bitmap) images [idx];
+				current = (Bitmap) images [idx];
 				// Hack for newly added images.
 				// Probably has to be done somewhere else.
 				Color c1 = current.GetPixel (0, 0);
 				if (c1.A != 0 && c1 == back_color)
 					current.MakeTransparent (back_color);
 				//
-				int basey = (idx / 4) * h;
-				int basex = (idx % 4) * w;
-				for (int y = 0; y < h; y++) {
-					int yidx = (y + basey) * stride;
-					for (int x = 0; x < w; x++) {
-						Color color = current.GetPixel (x, y);
-						if (color.A == 0) {
-							int ptridx = yidx + ((x + basex) >> 3);
-							scan [ptridx] |= (byte) (0x80 >> (x & 7));
-						}
-					}
+			}
+
+			int yidx = 0;
+			int imgidx = 0;
+			int localy = 0;
+			int localx = 0;
+			int factor_y = 0;
+			int factor_x = 0;
+			for (int y = 0; y < main.Height; y++) {
+				if (localy == h) {
+					localy = 0;
+					factor_y += 4;
 				}
+				factor_x = 0;
+				localx = 0;
+				for (int x = 0; x < main.Width; x++) {
+					if (localx == w) {
+						localx = 0;
+						factor_x++;
+					}
+					imgidx = factor_y + factor_x;
+					if (imgidx >= images.Length)
+						break;
+					current = (Bitmap) images [imgidx];
+					Color color = current.GetPixel (localx, localy);
+					if (color.A == 0) {
+						int ptridx = yidx + (x >> 3);
+						scan [ptridx] |= (byte) (0x80 >> (x & 7));
+					}
+					localx++;
+				}
+				if (imgidx >= images.Length)
+					break;
+				yidx += stride;
+				localy++;
 			}
 			result.UnlockBits (dresult);
+
 			return result;
 		}
 
