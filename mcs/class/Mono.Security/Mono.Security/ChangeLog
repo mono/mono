@@ -1,3 +1,8 @@
+2006-06-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ASN1.cs: Switch condition not to use the cached data if there is a
+	collection being used. Skip extra 0 at the end of the byte[] buffer.
+
 2006-01-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ASN1Convert.cs: Fix convertion of integer 0 to ASN.1.
