@@ -40,7 +40,7 @@ namespace System.Web.UI {
 	public sealed class LosFormatter {
 
 		ObjectStateFormatter osf = new ObjectStateFormatter ();
-		bool disable_mac = true;
+		bool enable_mac;
 		HashAlgorithm algo;
 		
 		public LosFormatter ()
@@ -61,12 +61,12 @@ namespace System.Web.UI {
 #endif
 		LosFormatter (bool enableMac, byte[] macKeyModifier)
 		{
-			this.disable_mac = !enableMac;
+			this.enable_mac = enableMac;
 			if (enableMac)
 				algo = new HMACSHA1 (macKeyModifier);
 		}
 
-		void ValidateInput (byte [] data, int offset, int size)
+		int ValidateInput (byte [] data, int offset, int size)
 		{
 			int hash_size = algo.HashSize / 8;
 			if (size != 0 && size < hash_size)
@@ -79,12 +79,13 @@ namespace System.Web.UI {
 				if (hash [i] != data [data_length + i])
 					throw new HttpException ("Unable to validate data.");
 			}
+			return data_length;
 		}
 
 		public object Deserialize (Stream stream)
 		{
-			if (disable_mac)
-				return osf.Deserialize (stream);
+			if (stream == null)
+				throw new ArgumentNullException ("stream");
 
 			byte [] bytes = new byte [stream.Length >= 0 ? stream.Length : 2048];
 			MemoryStream ms = null;
@@ -98,10 +99,8 @@ namespace System.Web.UI {
 					ms.Write (bytes, 0, n);
 			}
 
-			byte [] buffer = ms.GetBuffer ();
-			int length = (int) ms.Length;
-			ValidateInput (buffer, 0, length);
-			return osf.Deserialize (new MemoryStream (buffer, 0, length, false, false));
+			string b64 = Encoding.ASCII.GetString (ms.GetBuffer (), 0, (int) ms.Length);
+			return Deserialize (b64);
 		}
 
 		public object Deserialize (TextReader input)
@@ -114,57 +113,44 @@ namespace System.Web.UI {
 
 		public object Deserialize (string input)
 		{
-			if (disable_mac)
-				return osf.Deserialize (input);
+			if (input == null)
+				return null;
 
-			byte [] input_bytes = Convert.FromBase64String (input);
-			ValidateInput (input_bytes, 0, input_bytes.Length);
-			return osf.Deserialize (new MemoryStream (input_bytes, 0, input_bytes.Length, false, false));
+			byte [] buffer = Convert.FromBase64String (input);
+			int length = buffer.Length;
+			if (enable_mac) {
+				length = ValidateInput (buffer, 0, length);
+			}
+			return osf.Deserialize (new MemoryStream (buffer, 0, length, false, false));
 		}
 
-		void SerializeAndHash (MemoryStream ms, object value)
+		internal string SerializeToBase64 (object value)
 		{
+			MemoryStream ms = new MemoryStream ();
 			osf.Serialize (ms, value);
-			if (ms.Length == 0)
-				return;
-
-			byte [] hash = algo.ComputeHash (ms.GetBuffer (), 0, (int) ms.Length);
-			ms.Write (hash, 0, hash.Length);
+			if (enable_mac && ms.Length > 0) {
+				byte [] hash = algo.ComputeHash (ms.GetBuffer (), 0, (int) ms.Length);
+				ms.Write (hash, 0, hash.Length);
+			}
+			return Convert.ToBase64String (ms.GetBuffer (), 0, (int) ms.Length);
 		}
 
 		public void Serialize (Stream stream, object value)
 		{
-			if (disable_mac) {
-				osf.Serialize (stream, value);
-				return;
-			}
+			if (stream == null)
+				throw new ArgumentNullException ("stream");
 
-			MemoryStream ms = null;
-			if ((stream is MemoryStream) && stream.Position == 0) {
-				// We save allocating a new stream and reading in this case.
-				ms = (MemoryStream) stream;
-			} else {
-				ms = new MemoryStream ();
-			}
-
-			SerializeAndHash (ms, value);
-			if (ms != stream)
-				ms.WriteTo (stream);
+			string b64 = SerializeToBase64 (value);
+			byte [] bytes = Encoding.ASCII.GetBytes (b64);
+			stream.Write (bytes, 0, bytes.Length);
 		}
 
 		public void Serialize (TextWriter output, object value)
 		{
 			if (output == null)
 				throw new ArgumentNullException ("output");
-			
-			if (disable_mac) {
-				output.Write (osf.Serialize (value));
-				return;
-			}
 
-			MemoryStream ms = new MemoryStream ();
-			SerializeAndHash (ms, value);
-			output.Write (Convert.ToBase64String (ms.GetBuffer (), 0, (int) ms.Length));
+			output.Write (SerializeToBase64 (value));
 		}	
 	}
 }

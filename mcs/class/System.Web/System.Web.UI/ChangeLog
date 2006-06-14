@@ -1,7 +1,13 @@
-2006-06-08	Konstantin Triger <kostat@mainsoft.com>
+2006-06-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
-	* Page.cs: For loading themes, use '~/App_Themes' instead of './App_Themes' to enable theme support
-		for files in sub folders.
+	* Page.cs: use the new internal LosFormatter.SerializeToBase64.
+	* LosFormatter.cs: always work on base 64 strings even if the
+	input/output is on a Stream. Fixes bug #78640.
+
+2006-06-08 Konstantin Triger <kostat@mainsoft.com>
+
+	* Page.cs: For loading themes, use '~/App_Themes' instead of
+	'./App_Themes' to enable theme support for files in sub folders.
 
 2006-05-25  Andrew Skiba  <andrews@mainsoft.com>
 

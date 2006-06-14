@@ -875,9 +875,7 @@ public class Page : TemplateControl, IHttpHandler
 			return null;
 
 		LosFormatter fmt = GetFormatter ();
-		MemoryStream ms = new MemoryStream ();
-		fmt.Serialize (ms, _savedViewState);
-		return Convert.ToBase64String (ms.GetBuffer (), 0, (int) ms.Length);
+		return fmt.SerializeToBase64 (_savedViewState);
 	}
 
 	internal object GetSavedViewState ()
