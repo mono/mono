@@ -1,3 +1,9 @@
+2006-06-14  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* AccessibleObject.cs: Remove dependence on Control.is_selected;
+	  instead properly track control states internally (allows us to
+	  remove is_selected from Control)
+
 2006-06-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ImageListStreamer.cs: correctly generate the 1bpp mask for images

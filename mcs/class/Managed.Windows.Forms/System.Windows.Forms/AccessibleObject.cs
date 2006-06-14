@@ -17,10 +17,10 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004-2005 Novell, Inc.
+// Copyright (c) 2004-2006 Novell, Inc.
 //
 // Authors:
-//	Peter Bartok	pbartok@novell.com
+//	Peter Dennis Bartok	pbartok@novell.com
 //
 
 
@@ -40,6 +40,7 @@ namespace System.Windows.Forms {
 		internal string		value;
 		internal Control	owner;
 		internal AccessibleRole	role;
+		internal AccessibleStates	state;
 		internal string		default_action;
 		internal string		description;
 		internal string		help;
@@ -48,14 +49,15 @@ namespace System.Windows.Forms {
 
 		#region Public Constructors
 		public AccessibleObject() {
-			this.owner=null;
-			this.value=null;
-			this.name=null;
-			this.role=AccessibleRole.Default;
-			this.default_action=null;
-			this.description=null;
-			this.help=null;
-			this.keyboard_shortcut=null;
+			this.owner = null;
+			this.value = null;
+			this.name = null;
+			this.role = AccessibleRole.Default;
+			this.default_action = null;
+			this.description = null;
+			this.help = null;
+			this.keyboard_shortcut = null;
+			this.state = AccessibleStates.None;
 		}
 		#endregion	// Public Constructors
 
@@ -123,8 +125,7 @@ namespace System.Windows.Forms {
 
 		public virtual AccessibleStates State {
 			get {
-				AccessibleStates	state=AccessibleStates.None;
-
+#if not
 				if (owner!=null) {
 					if (owner.Focused) {
 						state |= AccessibleStates.Focused;
@@ -134,6 +135,7 @@ namespace System.Windows.Forms {
 						state |= AccessibleStates.Invisible;
 					}
 				}
+#endif
 				return state;
 			}
 		}
@@ -179,13 +181,7 @@ namespace System.Windows.Forms {
 				return owner.AccessibilityObject;
 			}
 
-			result = FindFocusControl(owner);
-
-			if (result != null) {
-				return result.AccessibilityObject;
-			}
-
-			return null;
+			return FindFocusControl(owner);
 		}
 
 		public virtual int GetHelpTopic(out string FileName) {
@@ -198,17 +194,11 @@ namespace System.Windows.Forms {
 		public virtual AccessibleObject GetSelected() {
 			Control result;
 
-			if (owner.is_selected) {
-				return owner.AccessibilityObject;
+			if ((state & AccessibleStates.Selected) != 0) {
+				return this;
 			}
 
-			result = FindSelectedControl(owner);
-
-			if (result != null) {
-				return result.AccessibilityObject;
-			}
-
-			return null;
+			return FindSelectedControl(owner);
 		}
 
 		public virtual AccessibleObject HitTest(int x, int y) {
@@ -333,7 +323,7 @@ namespace System.Windows.Forms {
 
 		public virtual void Select(AccessibleSelection flags) {
 			if ((flags & AccessibleSelection.TakeFocus) != 0){
-				owner.Select(owner);
+				owner.FocusInternal(owner);
 			}
 			return;
 		}
@@ -350,40 +340,45 @@ namespace System.Windows.Forms {
 
 
 		#region Internal Methods
-		internal static Control FindFocusControl(Control parent) {
+		internal static AccessibleObject FindFocusControl(Control parent) {
 			Control	child;
 
-			for (int i=0; i < parent.child_controls.Count; i++) {
-				child=parent.child_controls[i];
-				if (child.has_focus) {
-					return child;
-				}
-				if (child.child_controls.Count>0) {
-					Control result;
+			if (parent != null) {
+				for (int i=0; i < parent.child_controls.Count; i++) {
+					child = parent.child_controls[i];
+					if ((child.AccessibilityObject.state & AccessibleStates.Focused) != 0) {
+						return child.AccessibilityObject;
+					}
 
-					result = FindFocusControl(child);
-					if (result != null) {
-						return result;
+					if (child.child_controls.Count>0) {
+						AccessibleObject result;
+
+						result = FindFocusControl(child);
+						if (result != null) {
+							return result;
+						}
 					}
 				}
 			}
 			return null;
 		}
 
-		internal static Control FindSelectedControl(Control parent) {
+		internal static AccessibleObject FindSelectedControl(Control parent) {
 			Control	child;
 
-			for (int i=0; i < parent.child_controls.Count; i++) {
-				child=parent.child_controls[i];
-				if (child.has_focus) {
-					return child;
-				}
-				if (child.child_controls.Count>0) {
-					Control result;
+			if (parent != null) {
+				for (int i=0; i < parent.child_controls.Count; i++) {
+					child = parent.child_controls[i];
+					if ((child.AccessibilityObject.state & AccessibleStates.Selected) != 0) {
+						return child.AccessibilityObject;
+					}
+					if (child.child_controls.Count>0) {
+						AccessibleObject result;
 
-					result = FindSelectedControl(child);
-					if (result != null) {
-						return result;
+						result = FindSelectedControl(child);
+						if (result != null) {
+							return result;
+						}
 					}
 				}
 			}
