@@ -130,6 +130,7 @@ public class Page : TemplateControl, IHttpHandler
 	string _title;
 	string _theme;
 	string _styleSheetTheme;
+	Hashtable items;
 #endif
 
 	#region Constructor
@@ -355,6 +356,15 @@ public class Page : TemplateControl, IHttpHandler
 			return ValidateCollection (_validators);
 		}
 	}
+#if NET_2_0
+	public IDictionary Items {
+		get {
+			if (items == null)
+				items = new Hashtable ();
+			return items;
+		}
+	}
+#endif
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
 #if NET_2_0

@@ -1,5 +1,9 @@
 2006-06-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Page.cs: add the 2.0 Items property. Fixes bug #78467.
+
+2006-06-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Page.cs: use the new internal LosFormatter.SerializeToBase64.
 	* LosFormatter.cs: always work on base 64 strings even if the
 	input/output is on a Stream. Fixes bug #78640.
