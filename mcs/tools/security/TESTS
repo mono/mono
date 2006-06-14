@@ -1,0 +1,164 @@
+Mono's Security Tools - TESTS
+Last updated: June 13, 2006
+
+* AUTHENTICODE
+
+Here's a short description on how to test any changes in the Authenticode tool
+set. This set includes makecert, cert2spc, signcode and chktrust.
+
+This is a _minimal_ sequence. Each input/output could be tested under Linux 
+and Windows to ensure maximum compatibility.
+
+
+0. Setup
+
+	% cd /mcs/tools/security
+	% make
+	% mono setreg.exe 1 TRUE
+	% cp signcode.exe test.exe
+
+1. Create a test certificate for code-signing
+
+	% mono makecert.exe -n "CN=careful tester" -sv test.pvk test.cer
+
+	Mono MakeCert - version 1.1.15.0
+	X.509 Certificate Builder
+	Copyright 2002, 2003 Motus Technologies. Copyright 2004-2006 Novell. BSD licensed.
+ 
+	Success
+
+2. Convert the test certificate to the SPC format
+
+	% mono cert2spc.exe test.cer test.spc
+
+	Mono Cert2Spc - version 1.1.15.0
+	Transform a set of X.509 certificates and CRLs into an Authenticode(TM) "Software Publisher Certificate"
+	Copyright 2002, 2003 Motus Technologies. Copyright 2004-2006 Novell. BSD licensed.
+ 
+	Success
+
+3. Sign a PE binary (without a timestamp)
+
+	% mono signcode.exe -v test.pvk -spc test.spc test.exe
+
+	Mono SignCode - version 1.1.15.0
+	Sign assemblies and PE files using Authenticode(tm).
+	Copyright 2002, 2003 Motus Technologies. Copyright 2004-2006 Novell. BSD licensed.
+
+	Success
+
+4. Verify the binary from step 3
+
+	% mono chktrust.exe test.exe
+
+	Mono CheckTrust - version 1.1.15.0
+	Verify if an PE executable has a valid Authenticode(tm) signature
+	Copyright 2002, 2003 Motus Technologies. Copyright 2004-2006 Novell. BSD licensed.
+ 
+	WARNING! test.exe is not timestamped!
+	SUCCESS: test.exe signature is valid
+	and can be traced back to a trusted root!
+
+	*** note the warning about the missing timestamp ***
+
+5. Verify the binary from step 3 using MS tools [1]
+
+	a. Using Windows Explorer, right click on the test.exe file and select
+	the "Properties" menu item;
+	b. From the "test.exe Properties" windows select the "Digital 
+	Signatures" tab;
+	c. You should see "careful tester" as the "Name of signer", select it
+	and click on the "Details" button;
+	d. Unless you have created your test certificate with MS tools you 
+	should see an error (white X on a red circle) with a description 
+	saying "The certificate in the signature cannot be verified.";
+	e. You should NOT see any countersignature;
+
+6. Add a timestamp the binary from step 3
+
+	% mono signcode.exe -x -t http://timestamp.verisign.com/scripts/timstamp.dll test.exe
+
+	Mono SignCode - version 1.1.15.0
+	Sign assemblies and PE files using Authenticode(tm).
+	Copyright 2002, 2003 Motus Technologies. Copyright 2004-2006 Novell. BSD licensed.
+ 
+	Success
+
+7. Verify the binary from step 6
+
+	% mono chktrust.exe test.exe
+
+	Mono CheckTrust - version 1.1.15.0
+	Verify if an PE executable has a valid Authenticode(tm) signature
+	Copyright 2002, 2003 Motus Technologies. Copyright 2004-2006 Novell. BSD licensed.
+ 
+	SUCCESS: test.exe signature is valid
+	and can be traced back to a trusted root!
+
+	*** note that there is NO warning this time ***
+
+8. Verify the binary from step 6 on Windows [1]
+
+	a. Follow step 5 from 'a' to 'd'
+	b. This time you should see a countersignature;
+
+9. Sign a PE binary with a timestamp
+
+	% mono signcode.exe -v test.pvk -spc test.spc -t http://timestamp.verisign.com/scripts/timstamp.dll test.exe
+
+	Mono SignCode - version 1.1.15.0
+	Sign assemblies and PE files using Authenticode(tm).
+	Copyright 2002, 2003 Motus Technologies. Copyright 2004-2006 Novell. BSD licensed.
+ 
+	Success
+
+10. Verify the binary from step 9
+
+	% mono chktrust.exe test.exe
+
+	Mono CheckTrust - version 1.1.15.0
+	Verify if an PE executable has a valid Authenticode(tm) signature
+	Copyright 2002, 2003 Motus Technologies. Copyright 2004-2006 Novell. BSD licensed.
+ 
+	SUCCESS: test.exe signature is valid
+	and can be traced back to a trusted root!
+
+11. Verify the binary from step 9 on Windows [1]
+
+	a. Follow step 5 from 'a' to 'd'
+	b. This time you should see a countersignature;
+
+12. Add (another) timestamp the binary from step 9
+
+	% mono signcode.exe -x -t http://timestamp.verisign.com/scripts/timstamp.dll test.exe
+
+	Mono SignCode - version 1.1.15.0
+	Sign assemblies and PE files using Authenticode(tm).
+	Copyright 2002, 2003 Motus Technologies. Copyright 2004-2006 Novell. BSD licensed.
+ 
+	Success
+
+13. Verify the binary from step 12
+
+	Mono CheckTrust - version 1.1.15.0
+	Verify if an PE executable has a valid Authenticode(tm) signature
+	Copyright 2002, 2003 Motus Technologies. Copyright 2004-2006 Novell. BSD licensed.
+ 
+	SUCCESS: test.exe signature is valid
+	and can be traced back to a trusted root!
+
+14. Verify the binary from step 12 on Windows [1]
+
+	a. Follow step 5 from 'a' to 'd'
+	b. This time you should see TWO (2) countersignature, the same one as
+	step 11 and a new one;
+
+15. Clean up
+
+	% rm test.*
+	% mono setreg.exe 1 FALSE
+
+
+[1] this step must be done on Windows using MS Authenticode(r) tools.
+--------------------
+sebastien@ximian.com

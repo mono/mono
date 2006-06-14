@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
+// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
 //
 
 using System;
@@ -106,7 +106,7 @@ namespace Mono.Tools {
 			CspParameters csp = new CspParameters ();
 			string pvkFilename = null;
 			string spcFilename = null;
-			int timestampRetry = 0;
+			int timestampRetry = 1;
 			int timestampDelay = 0;
 			bool sign = true;
 
@@ -116,7 +116,7 @@ namespace Mono.Tools {
 			AuthenticodeFormatter af = new AuthenticodeFormatter ();
 
 			int i = 0;
-			while (i < args.Length) {
+			while (i < args.Length - 1) {
 				switch (args[i++]) {
 					case "-spc":
 						spcFilename = args [i++];
@@ -204,6 +204,10 @@ namespace Mono.Tools {
 					case "-jp":
 						Console.WriteLine ("Unsupported option {0}", args[i-1]);
 						return 1;
+					// other options
+					case "-?":
+						Help ();
+						return 0;
 				}
 			}
 
@@ -229,22 +233,31 @@ namespace Mono.Tools {
 				}
 				af.Certificates.AddRange (certs);
 
-				af.Sign (tbsFilename);
-			}
-/* TODO
-			if (af.TimestampURL != null) {
-				for (int j=0; j < timestampRetry + 1; j++) {
-					if (!af.Timestamp (tbsFilename)) {
-						Thread.Sleep (timestampDelay);
-						continue;
-					}
-					break;
+				if (!af.Sign (tbsFilename)) {
+					Console.WriteLine ("Couldn't sign file '{0}'.", tbsFilename);
+					return 1;
 				}
-			}*/
-			// temp
-			if ((timestampRetry > 0) || (timestampDelay > 0)) {
-				Console.WriteLine ("Timestamp retries and delays aren't implemented.");
+			} else if (af.TimestampUrl != null) {
+				bool ts = false;
+				// only timestamp an already signed file
+				for (int j = 0; j < timestampRetry && !ts; j++) {
+					ts = af.Timestamp (tbsFilename);
+					// wait (unless it's the last try) and retry
+					if (!ts && (j < timestampRetry - 1)) {
+						Console.WriteLine ("Couldn't timestamp file '{0}', will retry in {1} ms", tbsFilename, timestampDelay);
+						Thread.Sleep (timestampDelay);
+					}
+				}
+				if (!ts) {
+					Console.WriteLine ("Couldn't timestamp file '{0}' after {1} retries.", tbsFilename, timestampRetry);
+					return 1;
+				}
+			} else {
+				Help ();
+				return 1;
 			}
+
+			Console.WriteLine ("Success");
 			return 0;
 		}
 	}

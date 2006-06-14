@@ -1,3 +1,11 @@
+2006-06-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyInfo.cs: Update copyright notice.
+	* signcode.cs: Add support for -x (delayed timestamp) to fix bug 
+	#78614. Now the tool is more useful in real-life scenarios.
+	* TESTS: New. Instructions on how to test any changes related to
+	Authenticode.
+
 2006-05-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* sn.cs: Don't throw an exception on invalid assemblies (e.g. 
