@@ -1,3 +1,7 @@
+2006-06-14  Andrew Skiba <andrews@mainsoft.com>
+
+	* Menu.cs: add CssStyle value to the rendered class attribute
+
 2006-06-13 Juraj Skripsky <js@hotfeet.ch>
 
 	* Calendar.cs: Make sure WebControls.Enabled is respected.

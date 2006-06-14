@@ -44,7 +44,8 @@ using MyWebControl = System.Web.UI.WebControls;
 using System.Collections;
 using NunitWeb;
 using MonoTests.stand_alone.WebHarness;
-
+using System.Text.RegularExpressions;
+using System.Reflection;
 
 namespace MonoTests.System.Web.UI.WebControls
 {
@@ -709,6 +710,20 @@ namespace MonoTests.System.Web.UI.WebControls
 			{
 				container.Controls.Add (MyImage);
 			}
+		}
+		[Test]
+		public void MenuClass ()
+		{
+			NunitWeb.Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (),
+					"menuclass.aspx", "menuclass.aspx");
+			string res = NunitWeb.Helper.Instance.RunUrl ("menuclass.aspx", null);
+			string menua_pattern="<table[^>]*class=\"[^\"]*menua[^\"]*\"[^>]*>";
+			Assert.IsTrue (Regex.IsMatch (res, ".*"+menua_pattern+".*",
+				RegexOptions.IgnoreCase|RegexOptions.Singleline),
+				"check that <table class=\"menua\"> is found");
+			Assert.IsFalse (Regex.IsMatch (res, ".*"+menua_pattern+".*"+menua_pattern+".*",
+				RegexOptions.IgnoreCase|RegexOptions.Singleline),
+				"check that <table class=\"menua\"> is found only once");
 		}
 	}
 }

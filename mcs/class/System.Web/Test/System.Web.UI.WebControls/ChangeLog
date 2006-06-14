@@ -1,3 +1,7 @@
+2006-06-14 Andrew Skiba <andrews@mainsoft.com>
+
+	* MenuTest.cs: add test for CssClass attribute
+
 2006-06-13 Juraj Skripsky <js@hotfeet.ch>
 
 	* CalendarTest.cs (SelectDateProperty): Make sure SelectedDate is

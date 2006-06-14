@@ -1,3 +1,7 @@
+2006-06-14 Andrew Skiba <andrews@mainsoft.com>
+
+	* Makefile: add menuclass.aspx test resource file
+
 2006-06-07 Wade Berrier <wberrier@novell.com>
 	
 	* Makefile: Make sure mainsoft NunitWeb files are included for make dist

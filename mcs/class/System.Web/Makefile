@@ -70,6 +70,7 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWeb/NunitWeb/Resources/MyPage.aspx.cs \
 	Test/mainsoft/NunitWeb/NunitWeb/Resources/MyPageWithMaster.aspx \
 	Test/mainsoft/NunitWeb/NunitWeb/Resources/Web.config \
+	Test/mainsoft/NunitWebResources/menuclass.aspx \
 	Test/mainsoft/NunitWebResources/PageWithStyleSheet.aspx \
 	Test/mainsoft/NunitWebResources/PageWithTheme.aspx \
 	Test/mainsoft/NunitWebResources/RunTimeSetTheme.aspx \

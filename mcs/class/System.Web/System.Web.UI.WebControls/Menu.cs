@@ -1141,13 +1141,13 @@ namespace System.Web.UI.WebControls
 			writer.AddAttribute ("cellpadding", "0");
 			writer.AddAttribute ("cellspacing", "0");
 
-			string cls = string.Empty;
+			string cls = menuLevel==0 ? ControlStyle.CssClass : string.Empty;
 			
 			if (!dynamic && staticMenuStyle != null)
-				cls += staticMenuStyle.RegisteredCssClass + " ";
+				cls += " " + staticMenuStyle.RegisteredCssClass;
 				
 			if (levelSubMenuStyles != null && menuLevel < levelSubMenuStyles.Count)
-				cls += levelSubMenuStyles [menuLevel].RegisteredCssClass;
+				cls += " " + levelSubMenuStyles [menuLevel].RegisteredCssClass;
 			
 			if (cls.Length != 0)
 				writer.AddAttribute ("class", cls);
