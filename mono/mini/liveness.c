@@ -650,9 +650,11 @@ mono_analyze_liveness (MonoCompile *cfg)
 	}
 #endif
 
-	optimize_initlocals (cfg);
+	if (cfg->new_ir) {
+		optimize_initlocals (cfg);
 
-	mono_analyze_liveness2 (cfg);
+		mono_analyze_liveness2 (cfg);
+	}
 }
 
 /**

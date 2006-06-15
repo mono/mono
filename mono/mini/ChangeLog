@@ -1,3 +1,9 @@
+2006-06-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* linear-scan.c (compare_by_interval_start_pos_func): Fix sorting of variables.
+
+	* liveness.c (mono_analyze_liveness): Fix an assert when COUNT=0 is used.
+
 2006-05-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c local-propagation.c: Move local cprop/copyprop/deadce to local-propagation.c.

@@ -251,7 +251,7 @@ mono_linear_scan (MonoCompile *cfg, GList *vars, GList *regs, regmask_t *used_ma
 	g_list_free (vars);
 }
 
-static gint 
+static gint
 compare_by_interval_start_pos_func (gconstpointer a, gconstpointer b)
 {
 	MonoMethodVar *v1 = (MonoMethodVar*)a;
@@ -262,6 +262,8 @@ compare_by_interval_start_pos_func (gconstpointer a, gconstpointer b)
 	else
 		if (v1 == v2)
 			return 0;
+		else if (v1->interval->range)
+			return -1;
 		else
 			return 1;
 }
