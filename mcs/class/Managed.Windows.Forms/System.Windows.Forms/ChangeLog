@@ -1,3 +1,10 @@
+2006-06-15  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* TextControl.cs (Undo): Handle non-existent cursor locations in the
+	  undo buffer, these can happen when text was deleted and the cursor
+	  was recorded first. Since we will also have a recorded cursor
+	  after the delete this is not an issue. (Fixes #78651)
+
 2006-06-14  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* AccessibleObject.cs: Remove dependence on Control.is_selected;

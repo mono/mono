@@ -4459,6 +4459,10 @@ namespace System.Windows.Forms {
 
 				case ActionType.CursorMove: {
 					document.caret.line = document.GetLine(action.line_no);
+					if (document.caret.line == null) {
+						break;
+					}
+
 					document.caret.tag = document.caret.line.FindTag(action.pos);
 					document.caret.pos = action.pos;
 					document.caret.height = document.caret.tag.height;
