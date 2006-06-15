@@ -617,37 +617,52 @@ namespace System.Data {
 		internal bool EnforceConstraints {
 			get { return enforceConstraints; }
 			set {
-				if (value != enforceConstraints) {
-					if (value) {
-						// reset indexes since they may be outdated
-						ResetIndexes();
+				if (value == enforceConstraints)
+					return;
 
-						bool violatesConstraints = false;
+				if (value) {
+					// reset indexes since they may be outdated
+					ResetIndexes();
 
-						//FIXME: use index for AllowDBNull
-						for (int i = 0; i < Columns.Count; i++) {
-							DataColumn column = Columns[i];
-							if (!column.AllowDBNull) {
-								for (int j = 0; j < Rows.Count; j++){
-									if (Rows[j].IsNull(column)) {
-										violatesConstraints = true;
-										Rows[j].RowError = String.Format("Column '{0}' does not allow DBNull.Value.", column.ColumnName);
-									}
-								}
-							}
-						}
+					// assert all constraints
+					foreach (Constraint constraint in Constraints)
+						constraint.AssertConstraint();
 
-						if (violatesConstraints)
-							Constraint.ThrowConstraintException();
+					AssertNotNullConstraints ();
 
-						// assert all constraints
-						foreach (Constraint constraint in Constraints) {
-							constraint.AssertConstraint();
-						}
-					}
-					enforceConstraints = value;
+					if (HasErrors)
+						Constraint.ThrowConstraintException ();
 				}
+				enforceConstraints = value;
 			}
+		}
+
+		internal void AssertNotNullConstraints ()
+		{
+			if (_duringDataLoad && !_nullConstraintViolationDuringDataLoad)
+				return;
+
+			bool result = false;
+			String errMsg;
+			for (int j = 0; j < Rows.Count; j++) {
+				if (!Rows [j].HasVersion (DataRowVersion.Default))
+					continue;	
+				errMsg = String.Empty;
+				for (int i = 0; i < Columns.Count; i++) {
+					DataColumn column = Columns[i];
+					if (column.AllowDBNull || !Rows[j].IsNull (column))
+						continue;
+					result = true;
+					errMsg =  String.Format("Column '{0}' does not allow DBNull.Value.",
+							column.ColumnName);
+					Rows [j].SetColumnError (i, errMsg);
+				}
+				// ms.net sets the last ColumnError as RowError
+				if (errMsg != String.Empty)
+					Rows [j].RowError = errMsg;
+			}
+			if (!result)
+				_nullConstraintViolationDuringDataLoad = false;
 		}
 
 		internal bool RowsExist(DataColumn[] columns, DataColumn[] relatedColumns,DataRow row)
@@ -967,21 +982,12 @@ namespace System.Data {
 		public void EndLoadData() 
 		{
 			if (this._duringDataLoad) {
-				if(this._nullConstraintViolationDuringDataLoad) {
-					this._nullConstraintViolationDuringDataLoad = false;
-					throw new ConstraintException ("Failed to enable constraints. One or more rows contain values violating non-null, unique, or foreign-key constraints.");
-				}
-				
-				if (this.dataSet !=null) {
-					//Getting back to previous EnforceConstraint state
+				//Getting back to previous EnforceConstraint state
+				if (this.dataSet != null)
 					this.dataSet.InternalEnforceConstraints(this.dataSetPrevEnforceConstraints,true);
-				}
-				else {
-					//Getting back to the table's previous EnforceConstraint state
+				else
 					this.EnforceConstraints = true;
-				}
 
-				//Returning from loading mode, raising exceptions as usual
 				this._duringDataLoad = false;
 			}
 		}

@@ -217,10 +217,18 @@ namespace System.Data {
 						table.ResetIndexes();
 				}
 
+				// TODO : Need to take care of Error handling and settting of RowErrors 
+				bool constraintViolated = false;
 				foreach (DataTable table in Tables) {
 					foreach (Constraint constraint in table.Constraints)
 						constraint.AssertConstraint();
+					table.AssertNotNullConstraints ();
+					if (!constraintViolated && table.HasErrors)
+						constraintViolated = true;
 				}
+
+				if (constraintViolated)
+					Constraint.ThrowConstraintException ();
 			}
 			enforceConstraints = value;
 		}
@@ -234,7 +242,7 @@ namespace System.Data {
 		{
 			Merge (dataSet, false, MissingSchemaAction.Add);
 		}
-		
+
 		public void Merge (DataTable table)
 		{
 			Merge (table, false, MissingSchemaAction.Add);

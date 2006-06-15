@@ -1,3 +1,30 @@
+2006-06-15  Senganal T  <tsenganal@novell.com>
+
+	* DataSet.cs :
+	- InternalEnforceConstraints : Check if any null constraints 
+		are violated. Throw ConstraintException only after all the errors
+		are filled.
+	* DataTable.cs :
+		- EnforceConstraints : Move away the logic to check for 
+		NullConstraintViolation.
+		- AssertNotNullConstraint : Checks for Null Constraint
+		Violation.
+		- EndLoadData : Do not throw any exceptions here. All the
+		errors have to be found and RowErrors set before throwing the
+		exception.
+	* DataRow.cs :
+		- ImportRecrod : Check the values of the row for any null
+		values.
+		- SetColumnError : If the error for column is already set,
+		do not add a new error but edit the existing error. 
+		- CheckValue : Set the NullConstraintViolation flag if either
+		table is being loaded or if EnforceConstraints is set to
+		false.
+	* Constraint.cs : Do not throw exception when EnforceConstraints is
+	set to false or table is being loaded.
+	* UniqueConstraint.cs : Correct the error message. Set ColumnErrors
+	along with the RowError.
+
 2006-05-31  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DataTable.cs: Renamed initInProgress to fInitInProgress. BeginInit

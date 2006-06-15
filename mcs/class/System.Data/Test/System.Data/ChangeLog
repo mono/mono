@@ -1,3 +1,11 @@
+2006-06-15  Senganal T <tsenganal@novell.com>
+
+	* DataSetTest2.cs : Test the behavior of EnforceConstraints 
+	* DataViewTest_IBindingList.cs : Test to ensure the correct index is 
+	used for comparision
+	* DataRowTest2.cs : Test to ensure the RowErrors and ColumnErrors are
+	filled correctly.
+
 2006-05-31  Senganal T <tsenganal@novell.com>
 
 	* DataSetTest2.cs : Fixed InferXmlSchema_inferingTables5.

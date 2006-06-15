@@ -262,6 +262,43 @@ namespace MonoTests_System.Data
 			Assert.AreEqual(false, ds.EnforceConstraints  , "DS25");
 		}
 
+		[Test]
+		public void EnforceConstraints_CheckPrimaryConstraint ()
+		{
+			DataSet ds = new DataSet();
+			ds.Tables.Add ("table");
+			ds.Tables [0].Columns.Add ("col");
+			ds.Tables [0].PrimaryKey = new DataColumn[] {ds.Tables [0].Columns [0]};
+			ds.EnforceConstraints = false;
+			ds.Tables [0].Rows.Add (new object[] {null});
+			try {
+				ds.EnforceConstraints = true;
+				Assert.Fail ("#1");
+			} catch (ConstraintException e) {
+				Assert.AreEqual ("Failed to enable constraints. One or more rows contain values " + 
+						"violating non-null, unique, or foreign-key constraints.", e.Message, "#2");
+			}
+		}
+
+		[Test]
+		public void EnforceConstraints_NonNullCols ()
+		{
+			DataSet ds = new DataSet();
+			ds.Tables.Add ("table");
+			ds.Tables [0].Columns.Add ("col");
+			ds.Tables [0].Columns [0].AllowDBNull = false;
+
+			ds.EnforceConstraints = false;
+			ds.Tables [0].Rows.Add (new object[] {null});
+			try {
+				ds.EnforceConstraints = true;
+				Assert.Fail ("#1");
+			} catch (ConstraintException e) {
+				Assert.AreEqual ("Failed to enable constraints. One or more rows contain values " + 
+						"violating non-null, unique, or foreign-key constraints.", e.Message, "#2");
+			}
+		}
+
 		[Test] public void GetChanges()
 		{
 			DataSet ds = new DataSet();
@@ -2568,7 +2605,6 @@ namespace MonoTests_System.Data
 			System.IO.StringReader sr = new System.IO.StringReader(a_xmlData) ;
 			System.Xml.XmlTextReader xReader = new System.Xml.XmlTextReader(sr) ;
 			ds.ReadXml (xReader);
-			ds.WriteXml(a_name + System.DateTime.Now.Ticks + ".xml");
 			Assert.AreEqual(a_expected, this.dataSetDescription(ds), "DS337");
 		}
 

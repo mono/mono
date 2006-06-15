@@ -175,7 +175,7 @@ namespace MonoTests.System.Data
 			ib.ListChanged += new ListChangedEventHandler (OnListChanged);
 			try {
 				args = null;
-
+				dv.Sort = "id DESC";
 				PropertyDescriptorCollection pds = ( (ITypedList) dv).GetItemProperties (null);
 				PropertyDescriptor pd = pds.Find ("id", false);
 				int index = ib.Find (pd, 15);
@@ -187,6 +187,31 @@ namespace MonoTests.System.Data
 			} finally {
 				ib.ListChanged -= new ListChangedEventHandler (OnListChanged);
 			}
+		}
+
+		[Test]
+		public void TestIfCorrectIndexIsUsed ()
+		{
+			DataTable table= new DataTable ();
+			table.Columns.Add ("id", typeof (int));
+
+			table.Rows.Add (new object[] {1});
+			table.Rows.Add (new object[] {2});
+			table.Rows.Add (new object[] {3});
+			table.Rows.Add (new object[] {4});
+
+			DataView dv = new DataView(table);
+
+			dv.Sort = "[id] DESC";
+
+			// for the new view, the index thats chosen, shud be different from the the one
+			// created for the older view.
+			dv = new DataView (table);
+			IBindingList ib = (IBindingList) dv;
+			PropertyDescriptorCollection pds = ((ITypedList)dv).GetItemProperties (null);
+			PropertyDescriptor pd = pds.Find ("id", false);
+			int index = ib.Find (pd, 4);
+			Assert.AreEqual (3, index, "#1");
 		}
 	}
 }

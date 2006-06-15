@@ -146,9 +146,15 @@ namespace System.Data {
 		{
 		}
 
-		internal void AssertConstraint() {
-			if (IsConstraintViolated())
-				ThrowConstraintException();
+		internal void AssertConstraint() 
+		{
+			// The order is important.. IsConstraintViolated fills the RowErrors if it detects
+			// a violation
+			if (!IsConstraintViolated())
+				return;
+			if (Table._duringDataLoad || (Table.DataSet != null && !Table.DataSet.EnforceConstraints))
+				return;
+			ThrowConstraintException();
 		}
 
 		internal abstract void AssertConstraint(DataRow row);

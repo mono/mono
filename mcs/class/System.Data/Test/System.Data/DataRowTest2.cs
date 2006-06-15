@@ -1130,6 +1130,8 @@ namespace MonoTests.System.Data
 
 			// error string
 			Assert.AreEqual(sColErr  ,  dr.GetColumnError(0) , "DRW117");
+			dr.SetColumnError (0, "");
+			Assert.AreEqual("",  dr.GetColumnError (0) , "DRW118");
 		}
 
 		[Test] public void SetColumnError_ByColumnNameError()
@@ -1317,6 +1319,41 @@ namespace MonoTests.System.Data
 			ds.Tables[0].BeginLoadData();
 			ds.Tables[0].Rows[0][0] = 10; 
 			ds.Tables[0].EndLoadData(); //Foreign constraint violation
+		}
+
+
+		[Test]
+		public void TestRowErrors ()
+		{
+			DataTable table = new DataTable ();
+			DataColumn col1 = table.Columns.Add ("col1", typeof (int));
+			DataColumn col2 = table.Columns.Add ("col2", typeof (int));
+			DataColumn col3 = table.Columns.Add ("col3", typeof (int));
+
+			col1.AllowDBNull = false;
+			table.Constraints.Add ("uc", new DataColumn[] {col2,col3}, false);
+			table.BeginLoadData ();
+			table.Rows.Add (new object[] {null,1,1});
+			table.Rows.Add (new object[] {1,1,1});
+			try {
+				table.EndLoadData ();
+				Assert.Fail ("#0");
+			} catch (ConstraintException) {}
+			Assert.IsTrue (table.HasErrors, "#1");
+			DataRow[] rows = table.GetErrors ();
+
+			Assert.AreEqual (2, rows.Length, "#2");
+			Assert.AreEqual ("Column 'col1' does not allow DBNull.Value.", table.Rows [0].RowError, "#3");
+			Assert.AreEqual ("Column 'col2, col3' is constrained to be unique.  Value '1, 1' is already present."
+					, table.Rows [1].RowError, "#4");
+
+			Assert.AreEqual (table.Rows [0].RowError, table.Rows [0].GetColumnError (0), "#5");
+			Assert.AreEqual (table.Rows [1].RowError, table.Rows [0].GetColumnError (1), "#6");
+			Assert.AreEqual (table.Rows [1].RowError, table.Rows [0].GetColumnError (2), "#7");
+
+			Assert.AreEqual ("", table.Rows [1].GetColumnError (0), "#8");
+			Assert.AreEqual (table.Rows [1].RowError, table.Rows [1].GetColumnError (1), "#9");
+			Assert.AreEqual (table.Rows [1].RowError, table.Rows [1].GetColumnError (2), "#10");
 		}
 
 		[Test]

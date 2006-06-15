@@ -255,7 +255,7 @@ namespace System.Data.Common
 			}
 			else {
 				for(int i=0; i < columns.Length; i++) {
-					if (Columns[i] != columns[i]) {
+					if (Sort [i] != ListSortDirection.Ascending || Columns[i] != columns[i]) {
 						return false;
 					}
 				}

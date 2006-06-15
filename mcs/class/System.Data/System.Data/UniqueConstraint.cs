@@ -431,17 +431,15 @@ namespace System.Data {
 						values.Add(row[col].ToString());
 					}
 
-					string columnNames = String.Join(",", (string[])columns.ToArray(typeof(string)));
-					string columnValues = String.Join(",", (string[])values.ToArray(typeof(string)));
+					string columnNames = String.Join(", ", (string[])columns.ToArray(typeof(string)));
+					string columnValues = String.Join(", ", (string[])values.ToArray(typeof(string)));
 
-					row.RowError = String.Format("Column(s) '{0}' are constrained to be unique.  Value(s) '{1}' are already present", columnNames, columnValues);
+					row.RowError = String.Format("Column '{0}' is constrained to be unique.  Value '{1}' is already present.", columnNames, columnValues);
+					for (int j=0; j < Columns.Length; ++j)
+						row.SetColumnError (Columns [j], row.RowError);
 				}
-				// FIXME : check the exception to be thrown here
-				// throw new ConstraintException("These columns don't currently have unique values");
-				//throw new ConstraintException ("Failed to enable constraints. One or more rows contain values violating non-null, unique, or foreign-key constraints.");
 				return true;
 			}
-
 			return false;
 		}
 

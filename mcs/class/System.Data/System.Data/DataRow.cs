@@ -471,6 +471,8 @@ namespace System.Data {
 				column.UpdateAutoIncrementValue(column.DataContainer.GetInt64(Proposed));
 			}
 
+			foreach (DataColumn col in Table.Columns)
+				CheckValue (this [col], col);
 		}
 
 		private void CheckValue (object v, DataColumn col) 
@@ -486,11 +488,9 @@ namespace System.Data {
 
 				//Constraint violations during data load is raise in DataTable EndLoad
 				this._nullConstraintViolation = true;
-				if (this.Table._duringDataLoad) {
+				if (this.Table._duringDataLoad || (Table.DataSet != null && !Table.DataSet.EnforceConstraints))
 					this.Table._nullConstraintViolationDuringDataLoad = true;
-				}
 				_nullConstraintMessage = "Column '" + col.ColumnName + "' does not allow nulls.";
-			
 			}
 		}
 
@@ -1365,10 +1365,10 @@ namespace System.Data {
 			if (columnIndex < 0 || columnIndex >= Table.Columns.Count)
 				throw new IndexOutOfRangeException ();
 
-			while(ColumnErrors.Count < columnIndex) {
-				ColumnErrors.Add(null);
-			}
-			ColumnErrors.Add(error);
+			while (columnIndex >= ColumnErrors.Count) 
+				ColumnErrors.Add (null);
+
+			ColumnErrors [columnIndex] = error;
 		}
 
 		/// <summary>
