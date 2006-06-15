@@ -1557,15 +1557,31 @@ namespace System.Data {
 			if (filterExpression == null)
 				filterExpression = String.Empty;
 
-			DataColumn[] columns = _emptyColumnArray;
-			ListSortDirection[] sorts = null;
-			if (sort != null && !sort.Equals(String.Empty))
-				columns = ParseSortString (this, sort, out sorts, false);
-
 			IExpression filter = null;
 			if (filterExpression != String.Empty) {
 				Parser parser = new Parser ();
 				filter = parser.Compile (filterExpression);
+			}
+
+			DataColumn[] columns = _emptyColumnArray;
+			ListSortDirection[] sorts = null;
+			
+			if (sort != null && !sort.Equals(String.Empty))
+				columns = ParseSortString (this, sort, out sorts, false);
+
+			if (Rows.Count == 0)
+				return new DataRow [0];
+
+			//if sort order is not given, sort it in Ascending order of the
+			//columns involved in the filter
+			if (columns.Length ==0 && filter != null) {
+				ArrayList list = new ArrayList ();
+				for (int i=0, j=0; i < Columns.Count; ++i) {
+					if (!filter.DependsOn (Columns [i]))
+						continue;
+					list.Add (Columns [i]);
+				}
+				columns = (DataColumn[])list.ToArray (typeof (DataColumn));
 			}
 
 			Index index = GetIndex(columns, sorts, recordStates, filter, false);
@@ -1577,7 +1593,6 @@ namespace System.Data {
 
 			return dataRows;
 		}
-
 		
 		private void AddIndex (Index index)
 		{

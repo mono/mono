@@ -101,5 +101,11 @@ namespace Mono.Data.SqlExpressions {
 			
 			return false;
 		}
+
+		override public bool EvalBoolean (DataRow row)
+		{
+			return (bool) Eval (row);
+		}
+
 	}
 }

@@ -2253,6 +2253,65 @@ namespace MonoTests_System.Data
 			dt.Select(dt.Columns[0].ColumnName,dt.Columns[0].ColumnName + "1");
 		}
 
+		[Test]
+		public void Select_NonBooleanFilter ()
+		{
+			DataTable table = new DataTable ();
+			table.Columns.Add ("col1", typeof (int));
+			
+			DataRow[] row = table.Select ("col1*10");
+			Assert.AreEqual (0, row.Length, "#1");
+
+			// No exception shud be thrown 
+			// The filter created earlier (if cached), will raise an EvaluateException
+			// and so shouldnt be cached
+			for (int i=0; i < 5; ++i)
+				table.Rows.Add (new object[] {i});
+
+			try {
+				table.Select ("col1*10");
+				Assert.Fail ("#2 Invalid Filter.. Should return a Boolean result");
+			} catch (EvaluateException) {
+			}
+		}
+
+		[Test]
+		public void Select_BoolColumn ()
+		{
+			DataTable table = new DataTable ();
+			table.Columns.Add ("col1", typeof (int));
+			table.Columns.Add ("col2", typeof (bool));
+
+			for (int i=0; i < 5; i++)
+				table.Rows.Add (new object[] {i});
+
+			DataRow[] result;
+			try {
+				result = table.Select ("col1");
+				Assert.Fail ("#1 col1 is not a boolean expression");
+			} catch (EvaluateException) {
+			}
+
+			//col2 is a boolean expression, and a null value translates to
+			//false.
+			result = table.Select ("col2");
+			Assert.AreEqual (0, result.Length);
+		}
+
+		[Test]
+		public void Select_OrderOfRows ()
+		{
+			DataTable table = new DataTable ();
+			table.Columns.Add ("col1", typeof (int));
+			table.Columns.Add ("col2", typeof (int));
+		
+			for (int i=0; i < 10; i++)
+				table.Rows.Add (new object[] {10-i, i});
+			DataRow[] result = table.Select ("col1 > 5");
+
+			Assert.AreEqual (6, result [0][0], "# incorrect sorting order");
+		}
+
 		internal class DataRowsComparer : System.Collections.IComparer
 		{
 			#region Memebers

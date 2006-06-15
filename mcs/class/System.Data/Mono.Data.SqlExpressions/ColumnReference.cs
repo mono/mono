@@ -221,6 +221,19 @@ namespace Mono.Data.SqlExpressions {
 			return Unify (val);
 		}
 
+		public override bool EvalBoolean (DataRow row)
+		{
+			DataColumn col = GetColumn (row);
+			if (col.DataType != typeof (bool))
+				throw new EvaluateException ("Not a Boolean Expression");
+
+			object result  = Eval (row);
+			if (result == null || result == DBNull.Value)
+				return false;
+			else
+				return (bool)result;
+		}
+
 		override public bool DependsOn(DataColumn other)
 		{
 			return refTable == ReferencedTable.Self && columnName == other.ColumnName;

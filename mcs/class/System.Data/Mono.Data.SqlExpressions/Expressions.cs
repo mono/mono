@@ -31,6 +31,7 @@
 //
 
 using System;
+using System.Data.Common;
 using System.Collections;
 using System.Data;
 
@@ -49,7 +50,7 @@ namespace Mono.Data.SqlExpressions {
 
 		public virtual bool EvalBoolean (DataRow row)
 		{
-			return (bool) Eval (row);
+			throw new EvaluateException ("Not a Boolean Expression");
 		}
 
 		public override bool Equals(object obj)
@@ -101,6 +102,11 @@ namespace Mono.Data.SqlExpressions {
 
 		override public bool DependsOn(DataColumn other) {
 			return expr.DependsOn(other);
+		}
+
+		override public bool EvalBoolean (DataRow row)
+		{
+			return (bool) Eval (row);
 		}
 	}
 	

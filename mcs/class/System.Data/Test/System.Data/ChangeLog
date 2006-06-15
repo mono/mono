@@ -1,5 +1,15 @@
 2006-06-15  Senganal T <tsenganal@novell.com>
 
+	* DataTableTest2.cs :
+		- Test if the Sort Order is correct when Sort String is not
+		explicitly set.
+		- Test if EvaluateException is raised if filter is not a
+		boolean expression.
+		- Test if expression is evaluated corrected when the filter 
+		is a boolean column.
+
+2006-06-15  Senganal T <tsenganal@novell.com>
+
 	* DataSetTest2.cs : Test the behavior of EnforceConstraints 
 	* DataViewTest_IBindingList.cs : Test to ensure the correct index is 
 	used for comparision

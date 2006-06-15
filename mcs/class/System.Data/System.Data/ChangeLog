@@ -1,7 +1,13 @@
 2006-06-15  Senganal T  <tsenganal@novell.com>
 
+	* DataTable.cs :
+		- Select : If Sort String is not provided, sort the result
+		DataRows in Ascending Order of the Columns used in the filter
+
+2006-06-15  Senganal T  <tsenganal@novell.com>
+
 	* DataSet.cs :
-	- InternalEnforceConstraints : Check if any null constraints 
+		- InternalEnforceConstraints : Check if any null constraints 
 		are violated. Throw ConstraintException only after all the errors
 		are filled.
 	* DataTable.cs :

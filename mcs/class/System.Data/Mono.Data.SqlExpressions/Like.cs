@@ -96,5 +96,10 @@ namespace Mono.Data.SqlExpressions {
 				
 			return (idx == 0 || openStart) && (idx + pattern.Length == str.Length || openEnd);
 		}
+
+		override public bool EvalBoolean (DataRow row)
+		{
+			return (bool)Eval (row);
+		}
 	}
 }
