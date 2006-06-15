@@ -62,6 +62,7 @@ EXTRA_DISTFILES = \
 	Test/XmlFiles/xsd/datatypesTest.xsd \
 	Test/XmlFiles/xsd/77687.xsd 	\
 	Test/XmlFiles/xsl/91834.xml 	\
+	Test/XmlFiles/xsl/91834.xsl 	\
 	Test/XmlFiles/xsl/91834a.xml	\
 	Test/XmlFiles/xsl/stripspace.xsl \
 	Test/XmlFiles/xsl/stripspace.xml \
