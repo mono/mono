@@ -1,3 +1,10 @@
+2006-06-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HashAlgorithm.cs: Changed the order of BlockCopy + HashCore to
+	HashCore + BlockCopy. Fx 2.0 now allows using a null output buffer
+	(without exception) while previous 1.x versions crashed the runtime
+	(mono won't crash the runtime, so we always do like 2.0).
+
 2006-05-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AsymmetricKeyExchangeDeformatter.cs: Under 2.0 the ctor is 
