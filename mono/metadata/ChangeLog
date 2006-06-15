@@ -1,3 +1,13 @@
+2006-06-14  Miguel de Icaza  <miguel@novell.com>
+
+	* metadata.c (mono_metadata_interfaces_from_typedef_full): Return
+	FALSE on class loading failure instead of returning true.
+
+	* class.c (mono_class_create_from_typedef): It is possible for
+	mono_metadata_interfaces_from_typedef_full to fail if a class is
+	not found, cope with this.
+	
+
 2006-06-14  Dick Porter  <dick@ximian.com>
 
 	* socket-io.c: 
