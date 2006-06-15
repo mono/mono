@@ -142,7 +142,10 @@ namespace System.Security {
 					Thread.CurrentPrincipal = new WindowsPrincipal (new WindowsIdentity (sc.IdentityToken));
 				}
 
-				CompressedStack.Run (securityContext.CompressedStack, callBack, state);
+				// FIXME: is the security manager isn't active then we may not have
+				// a compressed stack (bug #78652)
+				if (securityContext.CompressedStack != null)
+					CompressedStack.Run (securityContext.CompressedStack, callBack, state);
 			}
 			finally {
 				if ((original != null) && (sc.IdentityToken != IntPtr.Zero))

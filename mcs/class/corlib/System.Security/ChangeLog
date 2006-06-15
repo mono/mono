@@ -1,3 +1,9 @@
+2006-06-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SecurityContext.cs: Don't call CompressedStack.Run if we don't have
+	a compressed stack in the context (which can now happen because of 
+	#78652). This should fix MWF bug #78652 (BeginInvoke under 2.0).
+
 2006-04-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SecurityException.cs: Show Evidence correctly (it's a collection) 
