@@ -33,7 +33,7 @@ EXTRA_DISTFILES = \
 	corlib.dll.win32-excludes		\
 	Test/ms_run_test.sh			\
 	Test/resources/MyResources.resources	\
-	Test/resources/MyResources.de.resources	\	
+	Test/resources/MyResources.de.resources	\
 	Test/resources/Empty.resources		\
 	Test/resources/AFile.txt		\
 	$(RESOURCE_FILES)
