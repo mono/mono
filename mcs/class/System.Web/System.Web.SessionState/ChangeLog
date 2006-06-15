@@ -1,3 +1,7 @@
+2006-06-15 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SessionId.cs: make the length of the SessionID 24, as MS.
+
 2006-04-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SessionConfig.cs: Avoid a cast.

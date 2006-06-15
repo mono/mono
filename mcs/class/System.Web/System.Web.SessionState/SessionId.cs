@@ -37,8 +37,8 @@ namespace System.Web.SessionState {
 						   '6', '7', '8', '9', 'A', 'B',
 						   'C', 'D', 'E', 'F' };
 
-		internal const int IdLength = 30;
-		private const int half_len = 15;
+		internal const int IdLength = 24;
+		private const int half_len = IdLength / 2;
 		
 		internal static string Create (RandomNumberGenerator rng)
 		{
@@ -58,7 +58,7 @@ namespace System.Web.SessionState {
 			if (key == null)
 				throw new ArgumentNullException ("key");
 			if (key.Length != half_len)
-				throw new ArgumentException ("key must be 15 bytes long.");
+				throw new ArgumentException (String.Format ("key must be {0} bytes long.", half_len));
 
 			// Just a standard hex conversion
 			char[] res = new char [IdLength];
