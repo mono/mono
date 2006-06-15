@@ -44,6 +44,7 @@ namespace System.Web.Compilation
 		public const int TEXT	    	= 0x0200004;
 		public const int DOUBLEDASH 	= 0x0200005;
 		public const int CLOSING 	= 0x0200006;
+		public const int NOTWELLFORMED 	= 0x0200007;
 	}
 
 	class AspTokenizer
@@ -188,6 +189,8 @@ namespace System.Web.Compilation
 						read_char ();
 						break;
 					}
+				} else if (quoted && c == quoteChar) {
+					return Token.NOTWELLFORMED;
 				}
 
 				sb.Append ((char) c);

@@ -332,6 +332,11 @@ namespace System.Web.Compilation
 
 				id = tokenizer.Value;
 				if (Eat ('=')){
+					if (Eat (Token.NOTWELLFORMED)){
+						OnError ("The server tag is not well formed.");
+						return null;
+					}
+
 					if (Eat (Token.ATTVALUE)){
 						attributes.Add (id, tokenizer.Value);
 					} else if (Eat ('<') && Eat ('%')) {

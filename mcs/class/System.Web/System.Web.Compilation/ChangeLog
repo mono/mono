@@ -1,3 +1,10 @@
+2006-06-15 Juraj Skripsky <js@hotfeet.ch>
+
+	* AspTokenizer.cs (ReadAttValue), AspParser.cs (GetAttributes):
+	Don't allow an attribute value to contain the same quote characters
+	as the ones used for delimiting the value itself. Add a token
+	NOTWELLFORMED to signal that case to AspParser. Fixes bug #78643.
+
 2006-06-08	Konstantin Triger <kostat@mainsoft.com>
 
 	* ThemeDirectoryCompiler.cs: use physical path instead of virtual path.
