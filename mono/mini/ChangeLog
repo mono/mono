@@ -1,3 +1,10 @@
+
+Thu Jun 15 16:52:46 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* tramp-ppc.c: don't use malloc () for trampoline code, sometimes
+	it can end up using non executable memory on ppc64 systems
+	running ppc32 userspace (fix from Johannes Berg).
+
 2006-06-14  Dick Porter  <dick@ximian.com>
 
 	* wapihandles.c: Fix a bunch of signed/unsigned warnings from gcc
