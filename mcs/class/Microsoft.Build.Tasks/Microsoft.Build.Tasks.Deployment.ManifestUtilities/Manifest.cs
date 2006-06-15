@@ -35,7 +35,7 @@ using Microsoft.Build.Framework;
 namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities {
 	
 	[ComVisible (false)]
-	public class Manifest {
+	public abstract class Manifest {
 	
 		AssemblyIdentity		assemblyIdentity;
 		AssemblyReferenceCollection	assemblyReferences;

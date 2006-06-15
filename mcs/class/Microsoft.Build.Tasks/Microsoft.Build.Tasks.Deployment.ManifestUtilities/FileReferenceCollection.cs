@@ -35,7 +35,7 @@ using Microsoft.Build.Framework;
 namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities {
 	
 	[ComVisible (false)]
-	public class FileReferenceCollection : IEnumerable {
+	public sealed class FileReferenceCollection : IEnumerable {
 	
 		[MonoTODO]
 		public FileReference Add (FileReference file)

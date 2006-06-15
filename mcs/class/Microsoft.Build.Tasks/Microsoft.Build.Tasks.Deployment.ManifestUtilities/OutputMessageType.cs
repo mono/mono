@@ -35,9 +35,9 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities {
 	
 	[ComVisible (false)]
 	public enum OutputMessageType {
-		Error,
 		Info,
-		Warning
+		Warning,
+		Error
 	}
 }
 

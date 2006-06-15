@@ -1,3 +1,10 @@
+2006-06-15  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* UpdateUnit.cs, AssemblyReferenceType.cs, OutputMessageType.cs,
+	AssemblyIdentity.cs: Fixed enums order.
+	* DeployManifest.cs, Manifest.cs, FileReferenceCollection.cs: Added
+	missing abstract/sealed.
+
 2006-06-14  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* ApplicationIdentity.cs, ProxyStub.cs, OutputMessageCollection.cs,

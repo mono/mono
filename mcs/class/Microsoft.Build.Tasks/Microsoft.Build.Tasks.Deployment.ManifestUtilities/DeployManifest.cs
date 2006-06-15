@@ -34,7 +34,7 @@ using Microsoft.Build.Framework;
 namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities {
 	
 	[ComVisible (false)]
-	public class DeployManifest : Manifest {
+	public sealed class DeployManifest : Manifest {
 	
 		string			deploymentUrl;
 		bool			disallowUrlActivation;

@@ -231,10 +231,10 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities {
 		
 		[Flags]
 		public enum FullNameFlags {
-			All,
 			Default,
 			ProcessorArchitecture,
-			Type
+			Type,
+			All
 		}
 	}
 }

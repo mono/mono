@@ -34,10 +34,10 @@ using Microsoft.Build.Framework;
 namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities {
 	
 	public enum AssemblyReferenceType {
+		Unspecified,
 		ClickOnceManifest,
 		ManagedAssembly,
-		NativeAssembly,
-		Unspecified
+		NativeAssembly
 	}
 }
 

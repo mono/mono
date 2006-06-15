@@ -35,8 +35,8 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities {
 	
 	[ComVisible (false)]
 	public enum UpdateUnit {
-		Days,
 		Hours,
+		Days,
 		Weeks
 	}
 }
