@@ -175,8 +175,6 @@ namespace System.Windows.Forms {
 		}
 
 		public virtual AccessibleObject GetFocused() {
-			Control result;
-
 			if (owner.has_focus) {
 				return owner.AccessibilityObject;
 			}
@@ -192,8 +190,6 @@ namespace System.Windows.Forms {
 		}
 
 		public virtual AccessibleObject GetSelected() {
-			Control result;
-
 			if ((state & AccessibleStates.Selected) != 0) {
 				return this;
 			}
@@ -323,7 +319,7 @@ namespace System.Windows.Forms {
 
 		public virtual void Select(AccessibleSelection flags) {
 			if ((flags & AccessibleSelection.TakeFocus) != 0){
-				owner.FocusInternal(owner);
+				owner.Focus();
 			}
 			return;
 		}
