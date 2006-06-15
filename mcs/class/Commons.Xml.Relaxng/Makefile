@@ -22,6 +22,8 @@ EXTRA_DISTFILES = \
 	Test/XmlFiles/team.rng	\
 	Test/XmlFiles/relaxng.rng	\
 	Test/XmlFiles/relaxng.rnc	\
+	Test/XmlFiles/atom.rnc		\
+	Test/XmlFiles/nvdl.nvdl		\
 	$(wildcard Test/standalone_tests/*.cs) \
 	$(RESOURCE_FILES)
 
