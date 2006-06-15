@@ -752,7 +752,7 @@ namespace Mono.CSharp {
 					}
 				}
 			}
-			
+
 			if (ImplicitReferenceConversionExists (expr, target_type))
 				return true;
 
@@ -823,6 +823,9 @@ namespace Mono.CSharp {
 
 			if (TypeManager.IsNullableType (expr_type) && TypeManager.IsNullableType (target_type))
 				return true;
+
+			if (TypeManager.IsNullableTypeOf (target_type, expr_type))
+				return true;			
 
 			if (expr_type == TypeManager.anonymous_method_type){
 				if (!TypeManager.IsDelegateType (target_type))
@@ -1163,7 +1166,7 @@ namespace Mono.CSharp {
 
 			if (method == null)
 				return null;
-			
+
 			Type most_specific_source = TypeManager.GetParameterData (method).ParameterType (0);
 
 			//
@@ -1299,6 +1302,9 @@ namespace Mono.CSharp {
 				if (expr_type == TypeManager.null_type && target_type.IsPointer)
 					return new EmptyCast (NullPointer.Null, target_type);
 			}
+
+			if (TypeManager.IsNullableTypeOf (target_type, expr_type))
+				return new Nullable.Wrap (expr, loc).Resolve (ec);
 
 			if (expr_type == TypeManager.anonymous_method_type){
 				if (!TypeManager.IsDelegateType (target_type)){

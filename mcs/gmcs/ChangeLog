@@ -1,3 +1,16 @@
+2006-06-15  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (Operator.Define): Allow an implicit/explicit operator
+	to convert to/from a nullable value of the enclosing type.
+
+	* generic.cs (TypeManager.IsNullableTypeOf): New public method.
+	(Nullable.Unwrap, Nullable.Wrap): Make these classes public.
+
+	* convert.cs
+	(Convert.ImplicitStandardConversionExists): Add support for lifted
+	implicit/explicit conversions.
+	(Convert.ImplicitConversionStandard): Likewise.
+
 2006-06-13  Martin Baulig  <martin@ximian.com>
 
 	* ecore.cs (SimpleName.DoSimpleNameResolve): Check whether we have

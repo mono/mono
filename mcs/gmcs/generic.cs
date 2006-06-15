@@ -2655,6 +2655,14 @@ namespace Mono.CSharp {
 			return generic_nullable_type == DropGenericTypeArguments (t);
 		}
 
+		public static bool IsNullableTypeOf (Type t, Type nullable)
+		{
+			if (!IsNullableType (t))
+				return false;
+
+			return GetTypeArguments (t) [0] == nullable;
+		}
+
 		public static bool IsNullableValueType (Type t)
 		{
 			if (!IsNullableType (t))
@@ -2688,7 +2696,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected class Unwrap : Expression, IMemoryLocation, IAssignMethod
+		public class Unwrap : Expression, IMemoryLocation, IAssignMethod
 		{
 			Expression expr;
 			NullableInfo info;
@@ -2799,7 +2807,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected class Wrap : Expression
+		public class Wrap : Expression
 		{
 			Expression expr;
 			NullableInfo info;

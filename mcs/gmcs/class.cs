@@ -7502,7 +7502,9 @@ namespace Mono.CSharp {
 					return false;
 				}
 				
-				if (first_arg_type != declaring_type && return_type != declaring_type){
+				if ((first_arg_type != declaring_type) && (return_type != declaring_type) &&
+				    !TypeManager.IsNullableTypeOf (first_arg_type, declaring_type) &&
+				    !TypeManager.IsNullableTypeOf (return_type, declaring_type)) {
 					Report.Error (
 						556, Location, 
 						"User-defined conversion must convert to or from the " +
