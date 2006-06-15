@@ -57,6 +57,18 @@ EXTRA_DISTFILES = \
 	Test/Microsoft.Test.csproj	\
 	Test/Mono.Test.csproj		\
 	Test/MonoMicro.Test.csproj	\
+	Test/XmlFiles/76102.xml		\
+	Test/XmlFiles/xsd/multi-schemaLocation.xml \
+	Test/XmlFiles/xsd/datatypesTest.xsd \
+	Test/XmlFiles/xsd/77687.xsd 	\
+	Test/XmlFiles/xsl/91834.xml 	\	
+	Test/XmlFiles/xsl/91834a.xml	\
+	Test/XmlFiles/xsl/stripspace.xsl \
+	Test/XmlFiles/xsl/stripspace.xml \
+	Test/XmlFiles/xsl/current-in-select.xsl \
+	Test/XmlFiles/xsl/current-in-select.xml \
+	Test/XmlFiles/xsl/current-in-select.ref \
+	Test/XmlFiles/xsl/ChangeLog \
 	$(xmlfiles_files:%=Test/XmlFiles/%) \
 	$(nist_dom_files:%=Test/System.Xml/nist_dom/%)
 
