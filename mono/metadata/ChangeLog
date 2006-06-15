@@ -1,5 +1,18 @@
+2006-06-15  Miguel de Icaza  <miguel@novell.com>
+
+	* icall.c (mono_class_get_throw): Revert over-zealous error
+	throwing, the caller for mono_class_get_throw will cope with
+	errors when classes are not properly initialized already.
+
+	The code still copes with loader exceptions though.
+
+	Fixes the regression in reftype1 and reftype3 from the CAS tests.
+	
 2006-06-14  Miguel de Icaza  <miguel@novell.com>
 
+	Fixes the `make run1' version of RuntimeAbort (to be commited,
+	source is in Bugzilla).
+	
 	* metadata.c (mono_metadata_interfaces_from_typedef_full): Return
 	FALSE on class loading failure instead of returning true.
 
