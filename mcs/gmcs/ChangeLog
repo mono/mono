@@ -1,5 +1,16 @@
 2006-06-15  Martin Baulig  <martin@ximian.com>
 
+	* statement.cs
+	(SwitchLabel.ResolveAndReduce): Added `bool allow_nullable'
+	argument; always allow a `null' label if true.
+	(Switch.SwitchGoverningType): Take an `Expression expr' argument.
+	(Switch.TableSwitchEmit, Switch.SimpleSwitchEmit): Check whether
+	we have a `null' label and mark the new `null_target' label;
+	default to the `default' label.
+	(Switch.Resolve): Add support for nullable types.  Fixes #78630.
+
+2006-06-15  Martin Baulig  <martin@ximian.com>
+
 	* class.cs (Operator.Define): Allow an implicit/explicit operator
 	to convert to/from a nullable value of the enclosing type.
 

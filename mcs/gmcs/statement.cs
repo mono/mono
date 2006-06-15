@@ -2346,7 +2346,7 @@ namespace Mono.CSharp {
 		// Resolves the expression, reduces it to a literal if possible
 		// and then converts it to the requested type.
 		//
-		public bool ResolveAndReduce (EmitContext ec, Type required_type)
+		public bool ResolveAndReduce (EmitContext ec, Type required_type, bool allow_nullable)
 		{	
 			Expression e = label.Resolve (ec);
 
@@ -2360,6 +2360,11 @@ namespace Mono.CSharp {
 			}
 
 			if (required_type == TypeManager.string_type && c.GetValue () == null) {
+				converted = NullStringCase;
+				return true;
+			}
+
+			if (allow_nullable && c.GetValue () == null) {
 				converted = NullStringCase;
 				return true;
 			}
@@ -2416,7 +2421,9 @@ namespace Mono.CSharp {
 		// Computed
 		//
 		Label default_target;
+		Label null_target;
 		Expression new_expr;
+		Nullable.Unwrap unwrap;
 		bool is_constant;
 		SwitchSection constant_section;
 		SwitchSection default_section;
@@ -2452,8 +2459,10 @@ namespace Mono.CSharp {
 		// expression that includes any potential conversions to the
 		// integral types or to string.
 		//
-		Expression SwitchGoverningType (EmitContext ec, Type t)
+		Expression SwitchGoverningType (EmitContext ec, Expression expr)
 		{
+			Type t = expr.Type;
+
 			if (t == TypeManager.byte_type ||
 			    t == TypeManager.sbyte_type ||
 			    t == TypeManager.ushort_type ||
@@ -2466,7 +2475,7 @@ namespace Mono.CSharp {
 			    t == TypeManager.string_type ||
 			    t == TypeManager.bool_type ||
 			    t.IsSubclassOf (TypeManager.enum_type))
-				return Expr;
+				return expr;
 
 			if (allowed_types == null){
 				allowed_types = new Type [] {
@@ -2494,7 +2503,7 @@ namespace Mono.CSharp {
 			foreach (Type tt in allowed_types){
 				Expression e;
 				
-				e = Convert.ImplicitUserConversion (ec, Expr, tt, loc);
+				e = Convert.ImplicitUserConversion (ec, expr, tt, loc);
 				if (e == null)
 					continue;
 
@@ -2509,7 +2518,7 @@ namespace Mono.CSharp {
 					Report.ExtraInformation (
 						loc,
 						String.Format ("reason: more than one conversion to an integral type exist for type {0}",
-							       TypeManager.CSharpName (Expr.Type)));
+							       TypeManager.CSharpName (expr.Type)));
 					return null;
 				}
 
@@ -2543,7 +2552,7 @@ namespace Mono.CSharp {
 						continue;
 					}
 
-					if (!sl.ResolveAndReduce (ec, SwitchType)){
+					if (!sl.ResolveAndReduce (ec, SwitchType, unwrap != null)){
 						error = true;
 						continue;
 					}
@@ -2551,11 +2560,10 @@ namespace Mono.CSharp {
 					object key = sl.Converted;
 					try {
 						Elements.Add (key, sl);
+					} catch (ArgumentException) {
+						sl.Erorr_AlreadyOccurs ();
+						error = true;
 					}
-					catch (ArgumentException) {
-						 sl.Erorr_AlreadyOccurs ();
-						 error = true;
-					 }
 				}
 			}
 			return !error;
@@ -2819,16 +2827,27 @@ namespace Mono.CSharp {
 
 			// now emit the code for the sections
 			bool fFoundDefault = false;
+			bool fFoundNull = false;
+			foreach (SwitchSection ss in Sections)
+			{
+				foreach (SwitchLabel sl in ss.Labels)
+					if (sl.Converted == SwitchLabel.NullStringCase)
+						fFoundNull = true;
+			}
+
 			foreach (SwitchSection ss in Sections)
 			{
 				foreach (SwitchLabel sl in ss.Labels)
 				{
 					ig.MarkLabel (sl.GetILLabel (ec));
 					ig.MarkLabel (sl.GetILLabelCode (ec));
-					if (sl.Label == null)
-					{
+					if (sl.Converted == SwitchLabel.NullStringCase)
+						ig.MarkLabel (null_target);
+					else if (sl.Label == null) {
 						ig.MarkLabel (lblDefault);
 						fFoundDefault = true;
+						if (!fFoundNull)
+							ig.MarkLabel (null_target);
 					}
 				}
 				ss.Block.Emit (ec);
@@ -2851,7 +2870,6 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			Label end_of_switch = ig.DefineLabel ();
 			Label next_test = ig.DefineLabel ();
-			Label null_target = ig.DefineLabel ();
 			bool first_test = true;
 			bool pending_goto_end = false;
 			bool null_marked = false;
@@ -2956,7 +2974,16 @@ namespace Mono.CSharp {
 			if (Expr == null)
 				return false;
 
-			new_expr = SwitchGoverningType (ec, Expr.Type);
+			new_expr = SwitchGoverningType (ec, Expr);
+
+			if ((new_expr == null) && TypeManager.IsNullableType (Expr.Type)) {
+				unwrap = new Nullable.Unwrap (Expr, loc).Resolve (ec) as Nullable.Unwrap;
+				if (unwrap == null)
+					return false;
+
+				new_expr = SwitchGoverningType (ec, unwrap);
+			}
+
 			if (new_expr == null){
 				Report.Error (151, loc, "A value of an integral type or string expected for switch");
 				return false;
@@ -2967,6 +2994,10 @@ namespace Mono.CSharp {
 
 			if (!CheckSwitch (ec))
 				return false;
+
+			if (unwrap != null) {
+				Elements.Remove (SwitchLabel.NullStringCase);
+			}
 
 			Switch old_switch = ec.Switch;
 			ec.Switch = this;
@@ -3023,16 +3054,23 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig = ec.ig;
 
+			default_target = ig.DefineLabel ();
+			null_target = ig.DefineLabel ();
+
 			// Store variable for comparission purposes
 			LocalBuilder value;
-			if (!is_constant) {
+			if (unwrap != null) {
 				value = ig.DeclareLocal (SwitchType);
-			new_expr.Emit (ec);
+				unwrap.EmitCheck (ec);
+				ig.Emit (OpCodes.Brfalse, null_target);
+				new_expr.Emit (ec);
+				ig.Emit (OpCodes.Stloc, value);
+			} else if (!is_constant) {
+				value = ig.DeclareLocal (SwitchType);
+				new_expr.Emit (ec);
 				ig.Emit (OpCodes.Stloc, value);
 			} else
 				value = null;
-
-			default_target = ig.DefineLabel ();
 
 			//
 			// Setup the codegen context
