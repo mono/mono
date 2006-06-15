@@ -1,3 +1,24 @@
+2006-06-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HashAlgorithmTest.cs: Added new test cases wrt the output buffer 
+	used in TransformBlock (e.g. bug #78647). Updated existing test case
+	to work under 2.0 final.
+	* HMACMD5Test.cs: Fix SetUp to allow new inherited test cases to work 
+	properly.
+	* HMACRIPEMD160Test.cs: Fix SetUp to allow new inherited test cases to
+	work properly.
+	* HMACSHA1Test.cs: Fix SetUp to allow new inherited test cases to 
+	work properly.
+	* HMACSHA256Test.cs: Fix SetUp to allow new inherited test cases to 
+	work properly.
+	* HMACSHA384Test.cs: New. Basic test cases that, cheaply, inherits 
+	the HashAlgorithm tests.
+	* HMACSHA512Test.cs: New. Basic test cases that, cheaply, inherits 
+	the HashAlgorithm tests.
+	* KeyedHashAlgorithmTest.cs: Ensure we're always using the same key 
+	(required for new, inherited, test cases). Fix ToString to match 
+	KeyedHashAlgorithm (and not an inherited class).
+
 2006-06-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RandomNumberGeneratorTest.cs: Don't forget the last run in Runs. 

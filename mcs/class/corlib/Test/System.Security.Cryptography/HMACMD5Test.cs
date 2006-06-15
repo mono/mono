@@ -2,9 +2,10 @@
 // HMACMD5Test.cs - NUnit Test Cases for HMACMD5
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
 
 #if NET_2_0
@@ -26,6 +27,14 @@ namespace MonoTests.System.Security.Cryptography {
 
 		protected HMACMD5 algo;
 
+		[SetUp]
+		protected override void SetUp () 
+		{
+			algo = new HMACMD5 ();
+			algo.Key = new byte [8];
+			hash = algo;
+		}
+
 		[Test]
 		public void Constructors () 
 		{
@@ -35,17 +44,13 @@ namespace MonoTests.System.Security.Cryptography {
 			byte[] key = new byte [8];
 			algo = new HMACMD5 (key);
 			AssertNotNull ("HMACMD5 (key)", algo);
+		}
 
-			try {
-				algo = new HMACMD5 (null);
-				Fail ("HMACMD5 (null) - Expected NullReferenceException but got none");
-			}
-			catch (NullReferenceException) {
-				// well ArgumentNullException would have been more appropriate
-			}
-			catch (Exception e) {
-				Fail ("HMACMD5 (null) - Expected NullReferenceException but got: " + e.ToString ());
-			}
+		[Test]
+		[ExpectedException (typeof (NullReferenceException))]
+		public void Constructor_Null () 
+		{
+			new HMACMD5 (null);
 		}
 
 		[Test]

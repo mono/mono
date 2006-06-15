@@ -25,6 +25,7 @@ public class KeyedHashAlgorithmTest : HashAlgorithmTest {
 	protected override void SetUp () 
 	{
 		hash = KeyedHashAlgorithm.Create ();
+		(hash as KeyedHashAlgorithm).Key = new byte [8];
 	}
 
 	// Note: These tests will only be valid without a "machine.config" file
@@ -38,7 +39,7 @@ public class KeyedHashAlgorithmTest : HashAlgorithmTest {
 	public override void Create () 
 	{
 		// try the default keyed hash algorithm (created in SetUp)
-		AssertEquals( "KeyedHashAlgorithm.Create()", defaultKeyedHash, hash.ToString());
+		AssertEquals( "KeyedHashAlgorithm.Create()", defaultKeyedHash, KeyedHashAlgorithm.Create ().ToString());
 
 		// try to build all hash algorithms
 		hash = KeyedHashAlgorithm.Create ("HMACSHA1");

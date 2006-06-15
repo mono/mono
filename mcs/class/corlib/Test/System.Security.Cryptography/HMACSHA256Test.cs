@@ -2,9 +2,10 @@
 // HMACSHA256Test.cs - NUnit Test Cases for HMACSHA256
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
 
 #if NET_2_0
@@ -26,6 +27,14 @@ namespace MonoTests.System.Security.Cryptography {
 
 		protected HMACSHA256 algo;
 
+		[SetUp]
+		protected override void SetUp () 
+		{
+			algo = new HMACSHA256 ();
+			algo.Key = new byte [8];
+			hash = algo;
+		}
+
 		[Test]
 		public void Constructors () 
 		{
@@ -35,23 +44,18 @@ namespace MonoTests.System.Security.Cryptography {
 			byte[] key = new byte [8];
 			algo = new HMACSHA256 (key);
 			AssertNotNull ("HMACSHA256 (key)", algo);
+		}
 
-			try {
-				algo = new HMACSHA256 (null);
-				Fail ("HMACSHA256 (null) - Expected NullReferenceException but got none");
-			}
-			catch (NullReferenceException) {
-				// well ArgumentNullException would have been more appropriate
-			}
-			catch (Exception e) {
-				Fail ("HMACSHA256 (null) - Expected NullReferenceException but got: " + e.ToString ());
-			}
+		[Test]
+		[ExpectedException (typeof (NullReferenceException))]
+		public void Constructor_Null () 
+		{
+			new HMACSHA512 (null);
 		}
 
 		[Test]
 		public void Invariants () 
 		{
-			algo = new HMACSHA256 ();
 			AssertEquals ("HMACSHA256.CanReuseTransform", true, algo.CanReuseTransform);
 			AssertEquals ("HMACSHA256.CanTransformMultipleBlocks", true, algo.CanTransformMultipleBlocks);
 			AssertEquals ("HMACSHA256.HashName", "SHA256", algo.HashName);

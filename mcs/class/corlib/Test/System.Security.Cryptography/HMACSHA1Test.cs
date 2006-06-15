@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -44,6 +44,13 @@ namespace MonoTests.System.Security.Cryptography {
 public class HMACSHA1Test : KeyedHashAlgorithmTest {
 
 	protected HMACSHA1 algo;
+
+	[SetUp]
+	protected override void SetUp () 
+	{
+		hash = HMACSHA1.Create ();
+		(hash as KeyedHashAlgorithm).Key = new byte [8];
+	}
 
 	[Test]
 	public void Constructors () 

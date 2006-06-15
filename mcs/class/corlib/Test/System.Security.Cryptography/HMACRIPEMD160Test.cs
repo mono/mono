@@ -6,7 +6,7 @@
 //	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -39,7 +39,7 @@ using System.Text;
 namespace MonoTests.System.Security.Cryptography {
 
 	[TestFixture]
-	public class HMACRIPEMD160Test : Assertion {
+	public class HMACRIPEMD160Test : KeyedHashAlgorithmTest {
 
 		protected HMACRIPEMD160 hmac;
 
@@ -70,9 +70,11 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[SetUp]
-		public void SetUp () 
+		protected override void SetUp () 
 		{
 			hmac = new HMACRIPEMD160 ();
+			hmac.Key = new byte [8];
+			hash = hmac;
 		}
 
 		static byte[] key1 = { 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff, 0x01, 0x23, 0x45, 0x67 };

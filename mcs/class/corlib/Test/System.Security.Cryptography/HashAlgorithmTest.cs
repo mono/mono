@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -272,8 +272,7 @@ public class HashAlgorithmTest : Assertion {
 	}
 
 	[Test]
-	[ExpectedException (typeof (ArgumentNullException))]
-#if ! NET_2_0
+#if ONLY_1_1
 	[Category ("NotDotNet")] // System.ExecutionEngineException on MS runtime (1.1)
 #endif
 	public void TransformBlock_OutputBuffer_Null ()
@@ -356,6 +355,129 @@ public class HashAlgorithmTest : Assertion {
 	{
 		byte[] input = new byte [8];
 		hash.TransformFinalBlock (input, 0, Int32.MaxValue);
+	}
+
+	[Test]
+	[Category ("NotWorking")] // Mono nevers throws an exception (and we're all managed ;-)
+	public void TransformFinalBlock_Twice ()
+	{
+		bool managed = (hash.GetType ().ToString ().IndexOf ("Managed") > 0);
+		bool exception = false;
+		byte[] input = new byte [8];
+		hash.TransformFinalBlock (input, 0, input.Length);
+		try {
+			hash.TransformFinalBlock (input, 0, input.Length);
+		}
+		catch (CryptographicException) {
+			exception = true;
+			if (managed)
+				Fail ("*Managed don't throw CryptographicException");
+		}
+		if (!managed && !exception)
+			Fail ("Expected CryptographicException from non *Managed classes");
+	}
+
+	[Test]
+	[Category ("NotWorking")] // Mono nevers throws an exception (and we're all managed ;-)
+	public void TransformFinalBlock_TransformBlock ()
+	{
+		bool managed = (hash.GetType ().ToString ().IndexOf ("Managed") > 0);
+		bool exception = false;
+		byte[] input = new byte[8];
+		hash.TransformFinalBlock (input, 0, input.Length);
+		try {
+			hash.TransformBlock (input, 0, input.Length, input, 0);
+		}
+		catch (CryptographicException) {
+			exception = true;
+			if (managed)
+				Fail ("*Managed don't throw CryptographicException");
+		}
+		if (!managed && !exception)
+			Fail ("Expected CryptographicException from non *Managed classes");
+	}
+
+	[Test]
+	public void TransformFinalBlock_Twice_Initialize ()
+	{
+		byte[] input = new byte[8];
+		hash.TransformFinalBlock (input, 0, input.Length);
+		hash.Initialize ();
+		hash.TransformFinalBlock (input, 0, input.Length);
+	}
+
+	[Test]
+	public void TransformFinalBlock_ReturnedBuffer ()
+	{
+		byte[] input = new byte[8];
+		byte[] output = hash.TransformFinalBlock (input, 0, input.Length);
+		AssertEquals ("buffer", input, output);
+		output[0] = 1;
+		AssertEquals ("0", 0, input[0]); // output is a copy (not a reference)
+	}
+
+	private byte[] HashBuffer (bool intersect)
+	{
+		byte[] buffer = new byte [256];
+		for (int i = 0; i < buffer.Length; i++)
+			buffer [i] = (byte) i;
+
+		hash.Initialize ();
+		// ok
+		hash.TransformBlock (buffer, 0, 64, buffer, 0);
+		// bad - we rewrite the beginning of the buffer
+		hash.TransformBlock (buffer, 64, 128, buffer, intersect ? 0 : 64);
+		// ok
+		hash.TransformFinalBlock (buffer, 192, 64);
+		return hash.Hash;
+	}
+
+	[Test]
+	public void InputOutputIntersection ()
+	{
+		AssertEquals ("Intersect", HashBuffer (false), HashBuffer (true));
+	}
+
+	[Test]
+	[ExpectedException (typeof (NullReferenceException))]
+	[Category ("NotWorking")] // initialization problem ? fx2.0 only ?
+	public void Hash_AfterInitialize_FirstTime ()
+	{
+		hash.Initialize ();
+		// getting the property throws
+		AssertNull (hash.Hash);
+	}
+
+	[Test]
+	[ExpectedException (typeof (CryptographicUnexpectedOperationException))]
+	public void Hash_AfterInitialize_SecondTime ()
+	{
+		byte[] input = new byte[8];
+		hash.Initialize ();
+		hash.TransformBlock (input, 0, input.Length, input, 0);
+		hash.Initialize ();
+		// getting the property throws
+		AssertNull (hash.Hash);
+	}
+
+	[Test]
+	[ExpectedException (typeof (CryptographicUnexpectedOperationException))]
+	public void Hash_AfterTransformBlock ()
+	{
+		byte[] input = new byte[8];
+		hash.Initialize ();
+		hash.TransformBlock (input, 0, input.Length, input, 0);
+		// getting the property throws
+		AssertNull (hash.Hash);
+	}
+
+	[Test]
+	public void Hash_AfterTransformFinalBlock ()
+	{
+		byte[] input = new byte[8];
+		hash.Initialize ();
+		hash.TransformFinalBlock (input, 0, input.Length);
+		AssertNotNull (hash.Hash);
 	}
 }
 
