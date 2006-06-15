@@ -6,9 +6,7 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
-//
-
+// Copyright (C) 2004, 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -124,7 +122,7 @@ namespace Mono.Security.Cryptography {
 				// 3. transform any other full block in specified buffer
 				int b = (int) ((cb - n) / blockSize);
 				for (int i=0; i < b; i++) {
-					transform.TransformBlock (rgb, n, blockSize, block, 0);
+					transform.TransformBlock (rgb, n + ib, blockSize, block, 0);
 					n += blockSize;
 				}
 	
