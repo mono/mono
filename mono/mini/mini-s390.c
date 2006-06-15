@@ -239,6 +239,7 @@ typedef struct {
 /*                   P r o t o t y p e s                            */
 /*------------------------------------------------------------------*/
 
+static guint8 * emit_memcpy (guint8 *, int, int, int, int, int);
 static void indent (int);
 static guint8 * backUpStackPtr(MonoCompile *, guint8 *, gint);
 static void decodeParm (MonoType *, void *, int);
@@ -335,6 +336,56 @@ mono_arch_fregname (int reg) {
 		return rnames [reg];
 	else
 		return "unknown";
+}
+
+/*========================= End of Function ========================*/
+
+/*------------------------------------------------------------------*/
+/*                                                                  */
+/* Name		- emit_memcpy                                       */
+/*                                                                  */
+/* Function	- Emit code to move from memory-to-memory based on  */
+/*		  the size of the variable. r0 is overwritten.      */
+/*                                                                  */
+/*------------------------------------------------------------------*/
+
+static guint8 *
+emit_memcpy (guint8 *code, int size, int dreg, int doffset, int sreg, int soffset)
+{
+	switch (size) {
+		case 4 :
+			s390_l  (code, s390_r0, 0, sreg, soffset);
+			s390_st (code, s390_r0, 0, dreg, doffset);
+			break;
+
+		case 3 : 
+			s390_icm  (code, s390_r0, 14, sreg, soffset);
+			s390_stcm (code, s390_r0, 14, dreg, doffset);
+			break;
+
+		case 2 : 
+			s390_lh  (code, s390_r0, 0, sreg, soffset);
+			s390_sth (code, s390_r0, 0, dreg, doffset);
+			break;
+
+		case 1 : 
+			s390_ic  (code, s390_r0, 0, sreg, soffset);
+		 	s390_stc (code, s390_r0, 0, dreg, doffset);
+			break;
+	
+		default : 
+			while (size > 0) {
+				int len;
+
+				if (size > 256) 
+					len = 256;
+				else
+					len = size;
+				s390_mvc (code, len, dreg, doffset, sreg, soffset);
+				size -= len;
+			}
+	}
+	return code;
 }
 
 /*========================= End of Function ========================*/
@@ -2684,6 +2735,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 		}
 			break;
+		case OP_X86_TEST_NULL: {
+			s390_ltr (code, ins->sreg1, ins->sreg1);
+		}
+			break;
 		case CEE_BREAK: {
 			mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_ABS, mono_arch_break);
                         s390_brasl (code, s390_r14, 0);
@@ -3929,7 +3984,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			s390_lr  (code, s390_r1, ins->sreg2);
 			s390_l   (code, s390_r0, 0, ins->inst_basereg, ins->inst_offset);
 			s390_a	 (code, s390_r1, 0, ins->inst_basereg, ins->inst_offset);
-			s390_cs  (code, s390_r0, s390_r1, ins->inst_basereg, ins->inst_offset);
+			s390_cs  (code, s390_r0, s390_r0, ins->inst_basereg, ins->inst_offset);
 			s390_jnz (code, -7);
 			s390_lr  (code, ins->dreg, s390_r1);
 		}
@@ -4724,7 +4779,7 @@ mono_arch_emit_this_vret_args (MonoCompile *cfg, MonoCallInst *inst, int this_re
 		this->sreg1 = this_reg;
 		this->dreg  = mono_regstate_next_int (cfg->rs);
 		mono_bblock_add_inst (cfg->cbb, this);
-		mono_call_inst_add_outarg_reg (cfg, inst, this->dreg, this_dreg, FALSE);
+		mono_call_inst_add_outarg_reg (inst, this->dreg, this_dreg, FALSE);
 	}
 
 	if (vt_reg != -1) {
@@ -4734,7 +4789,7 @@ mono_arch_emit_this_vret_args (MonoCompile *cfg, MonoCallInst *inst, int this_re
 		vtarg->sreg1 = vt_reg;
 		vtarg->dreg  = mono_regstate_next_int (cfg->rs);
 		mono_bblock_add_inst (cfg->cbb, vtarg);
-		mono_call_inst_add_outarg_reg (cfg, inst, vtarg->dreg, s390_r2, FALSE);
+		mono_call_inst_add_outarg_reg (inst, vtarg->dreg, s390_r2, FALSE);
 	}
 }
 

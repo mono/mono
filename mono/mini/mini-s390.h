@@ -58,32 +58,32 @@
 	switch (size) {								\
 		case 0: 							\
 			MONO_EMIT_NEW_ICONST(cfg, reg, 0);			\
-			mono_call_inst_add_outarg_reg(s, call, reg, dr, FALSE);	\
+			mono_call_inst_add_outarg_reg (call, reg, dr, FALSE);	\
 		break;								\
 		case 1:								\
 			MONO_EMIT_NEW_LOAD_MEMBASE_OP(cfg, OP_LOADU1_MEMBASE,	\
 				reg, sr, so);					\
-			mono_call_inst_add_outarg_reg(s, call, reg, dr, FALSE);	\
+			mono_call_inst_add_outarg_reg (call, reg, dr, FALSE);	\
 		break;								\
 		case 2:								\
 			MONO_EMIT_NEW_LOAD_MEMBASE_OP(cfg, OP_LOADU2_MEMBASE,	\
 				reg, sr, so);					\
-			mono_call_inst_add_outarg_reg(s, call, reg, dr, FALSE);	\
+			mono_call_inst_add_outarg_reg (call, reg, dr, FALSE);	\
 		break;								\
 		case 4:								\
 			MONO_EMIT_NEW_LOAD_MEMBASE_OP(cfg, OP_LOAD_MEMBASE,	\
 				reg, sr, so);					\
-			mono_call_inst_add_outarg_reg(s, call, reg, dr, FALSE);	\
+			mono_call_inst_add_outarg_reg (call, reg, dr, FALSE);	\
 		break;								\
 		case 8:								\
 			MONO_EMIT_NEW_LOAD_MEMBASE_OP(cfg, OP_LOAD_MEMBASE,	\
 				reg, sr, so);					\
-			mono_call_inst_add_outarg_reg(s, call, reg, dr, FALSE);	\
+			mono_call_inst_add_outarg_reg (call, reg, dr, FALSE);	\
 			dr++; so += sizeof(guint32);				\
 			reg = mono_regstate_next_int (cfg->rs);			\
 			MONO_EMIT_NEW_LOAD_MEMBASE_OP(cfg, OP_LOAD_MEMBASE,	\
 				reg, sr, so);					\
-			mono_call_inst_add_outarg_reg(s, call, reg, dr, FALSE);	\
+			mono_call_inst_add_outarg_reg (call, reg, dr, FALSE);	\
 		break;								\
 	}									\
 } while (0)
@@ -254,7 +254,7 @@ typedef struct
 
 #define MONO_INIT_CONTEXT_FROM_FUNC(ctx,func) do {			\
 		MonoS390StackFrame *sframe;				\
-		__asm__ volatile("lr    %0,15" : "=r" (sframe));	\
+		__asm__ volatile("l     %0,0(15)" : "=r" (sframe));	\
 		MONO_CONTEXT_SET_BP ((ctx), sframe->prev);		\
 		sframe = (MonoS390StackFrame*)sframe->prev;		\
 		MONO_CONTEXT_SET_IP ((ctx), sframe->return_address);	\
