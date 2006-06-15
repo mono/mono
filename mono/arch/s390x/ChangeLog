@@ -1,3 +1,7 @@
+2006-03-13	Neale Ferguson <neale@sinenomine.net>
+
+	* s390x-codegen.h: Fix immediate checks.
+
 2006-01-06	Neale Ferguson <neale@sinenomine.net>
 
 	* s390x-codegen.h: Add lpdbr instruction (OP_ABS).

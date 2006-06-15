@@ -599,7 +599,7 @@ enum_parmtype:
 					printf("%p [%p] ",obj,curParm);
 					if (class == mono_defaults.string_class) {
 						printf("[STRING:%p:%s]", 
-						       *obj, mono_string_to_utf8 (obj));
+						       obj, mono_string_to_utf8 (obj));
 					} else if (class == mono_defaults.int32_class) { 
 						printf("[INT32:%p:%d]", 
 							obj, *(gint32 *)((char *)obj + sizeof (MonoObject)));
@@ -4111,18 +4111,18 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_ATOMIC_ADD_I8: {
 			s390_lgr (code, s390_r1, ins->sreg2);
 			s390_lg  (code, s390_r0, 0, ins->inst_basereg, ins->inst_offset);
-			s390_ag  (code, s390_r1, 0, ins->inst_basereg, ins->inst_offset);
-			s390_csg (code, s390_r0, s390_r0, ins->inst_basereg, ins->inst_offset);
-			s390_jnz (code, -11);
+			s390_agr (code, s390_r1, s390_r0);
+			s390_csg (code, s390_r0, s390_r1, ins->inst_basereg, ins->inst_offset);
+			s390_jnz (code, -10);
 			s390_lgr (code, ins->dreg, s390_r1);
 		}
 			break;	
 		case OP_ATOMIC_ADD_NEW_I8: {
 			s390_lgr (code, s390_r1, ins->sreg2);
 			s390_lg  (code, s390_r0, 0, ins->inst_basereg, ins->inst_offset);
-			s390_ag  (code, s390_r1, 0, ins->inst_basereg, ins->inst_offset);
+			s390_agr (code, s390_r1, s390_r0);
 			s390_csg (code, s390_r0, s390_r1, ins->inst_basereg, ins->inst_offset);
-			s390_jnz (code, -11);
+			s390_jnz (code, -10);
 			s390_lgr (code, ins->dreg, s390_r1);
 		}
 			break;	
@@ -4134,28 +4134,28 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		}
 			break;	
 		case OP_ATOMIC_ADD_I4: {
-			s390_lr  (code, s390_r1, ins->sreg2);
-			s390_l   (code, s390_r0, 0, ins->inst_basereg, ins->inst_offset);
-			s390_a	 (code, s390_r1, 0, ins->inst_basereg, ins->inst_offset);
-			s390_cs  (code, s390_r0, s390_r0, ins->inst_basereg, ins->inst_offset);
-			s390_jnz (code, -7);
-			s390_lr  (code, ins->dreg, s390_r1);
+			s390_lgfr(code, s390_r1, ins->sreg2);
+			s390_lgf (code, s390_r0, 0, ins->inst_basereg, ins->inst_offset);
+			s390_agr (code, s390_r1, s390_r0);
+			s390_cs  (code, s390_r0, s390_r1, ins->inst_basereg, ins->inst_offset);
+			s390_jnz (code, -9);
+			s390_lgfr(code, ins->dreg, s390_r1);
 		}
 			break;	
 		case OP_ATOMIC_ADD_NEW_I4: {
-			s390_lr  (code, s390_r1, ins->sreg2);
-			s390_l   (code, s390_r0, 0, ins->inst_basereg, ins->inst_offset);
-			s390_a	 (code, s390_r1, 0, ins->inst_basereg, ins->inst_offset);
+			s390_lgfr(code, s390_r1, ins->sreg2);
+			s390_lgf (code, s390_r0, 0, ins->inst_basereg, ins->inst_offset);
+			s390_agr (code, s390_r1, s390_r0);
 			s390_cs  (code, s390_r0, s390_r1, ins->inst_basereg, ins->inst_offset);
-			s390_jnz (code, -7);
-			s390_lr  (code, ins->dreg, s390_r1);
+			s390_jnz (code, -9);
+			s390_lgfr(code, ins->dreg, s390_r1);
 		}
 			break;	
 		case OP_ATOMIC_EXCHANGE_I4: {
-			s390_l   (code, s390_r0, 0, ins->inst_basereg, ins->inst_offset);
+			s390_lg  (code, s390_r0, 0, ins->inst_basereg, ins->inst_offset);
 			s390_cs  (code, s390_r0, ins->sreg2, ins->inst_basereg, ins->inst_offset);
 			s390_jnz (code, -4);
-			s390_lr  (code, ins->dreg, s390_r0);
+			s390_lgfr(code, ins->dreg, s390_r0);
 		}
 			break;	
 		case OP_S390_BKCHAIN: {

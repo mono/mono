@@ -1,3 +1,9 @@
+2006-06-14 Neale Ferguson <neale@sinenomine.net>
+
+	* atomic.h: Fix atomic exchange pointer operations for s390x - these
+	were broken as they used 32-bit instructions rather than their 64-bit
+	versions.
+
 2006-06-14  Dick Porter  <dick@ximian.com>
 
 	* processes.c: Don't run the atexit handlers when bailing out
@@ -7,6 +13,11 @@
 
 	* wait.c: Fix stupid typo shown up by gcc 4.1.1, = not ==
 
+2006-06-09 Neale Ferguson <neale@sinenomine.net>
+ 
+ 	* atomic.h: Fix atomic operations for s390x (not really broken 
+ 	but changed to use full 64-bit opcodes).
+	
 2006-05-24  Dick Porter  <dick@ximian.com>
 
 	* processes.c (process_set_current): Don't take an extra reference
