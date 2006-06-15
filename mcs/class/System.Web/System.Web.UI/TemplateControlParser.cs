@@ -128,8 +128,13 @@ namespace System.Web.UI {
 
 				string vpath = UrlUtils.Combine (BaseVirtualDir, src);
 				Type type = null;
+				AddDependency (realpath);
 				try {
-					type = UserControlParser.GetCompiledType (vpath, realpath, Dependencies, Context);
+					ArrayList other_deps = new ArrayList ();
+					type = UserControlParser.GetCompiledType (vpath, realpath, other_deps, Context);
+					foreach (string s in other_deps) {
+						AddDependency (s);
+					}
 				} catch (ParseException pe) {
 					if (this is UserControlParser)
 						throw new ParseException (Location, pe.Message, pe);

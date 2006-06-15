@@ -1,5 +1,10 @@
 2006-06-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* TemplateControlParser.cs: fix compilation caching when more than one
+	@control is compiled from source. Closes bug #78626.
+
+2006-06-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Page.cs: add the 2.0 Items property. Fixes bug #78467.
 
 2006-06-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
