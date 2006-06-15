@@ -1,3 +1,8 @@
+2006-06-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_ftnptr_to_delegate): Avoid allocating signature from mempool
+	and later freeing it. Fixes #78638.
+
 2006-06-15  Miguel de Icaza  <miguel@novell.com>
 
 	* icall.c (mono_class_get_throw): Revert over-zealous error
