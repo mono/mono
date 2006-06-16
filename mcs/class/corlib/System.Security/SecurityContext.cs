@@ -146,6 +146,8 @@ namespace System.Security {
 				// a compressed stack (bug #78652)
 				if (securityContext.CompressedStack != null)
 					CompressedStack.Run (securityContext.CompressedStack, callBack, state);
+				else
+					callBack (state);
 			}
 			finally {
 				if ((original != null) && (sc.IdentityToken != IntPtr.Zero))

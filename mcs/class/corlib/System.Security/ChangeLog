@@ -1,3 +1,8 @@
+2006-06-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SecurityContext.cs: Don't skip the calling callBack if we don't call
+	CompressedStack.Run (#78652).
+
 2006-06-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SecurityContext.cs: Don't call CompressedStack.Run if we don't have
