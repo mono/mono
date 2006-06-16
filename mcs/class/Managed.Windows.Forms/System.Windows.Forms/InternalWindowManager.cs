@@ -345,13 +345,13 @@ namespace System.Windows.Forms {
 				close_button = null;
 				minimize_button = null;
 				maximize_button = null;
-				if (IsMaximized)
+				if (IsMaximized || IsMinimized)
 					goto case FormBorderStyle.Sizable;
 				break;
 			case FormBorderStyle.FixedToolWindow:
 			case FormBorderStyle.SizableToolWindow:
 				close_button = new TitleButton (CaptionButton.Close, new EventHandler (CloseClicked));
-				if (IsMaximized)
+				if (IsMaximized || IsMinimized)
 					goto case FormBorderStyle.Sizable;
 				break;
 			case FormBorderStyle.FixedSingle:
@@ -420,6 +420,7 @@ namespace System.Windows.Forms {
 		protected virtual void HandleTitleBarDown (int x, int y)
 		{
 			foreach (TitleButton button in title_buttons) {
+				Console.WriteLine ("BUTTON RECTANGLE:     {0}", button.Rectangle);
 				if (button != null && button.Rectangle.Contains (x, y)) {
 					button.State = ButtonState.Pushed;
 					return;
@@ -551,6 +552,10 @@ namespace System.Windows.Forms {
 
 		public bool IsMaximized {
 			get { return GetWindowState () == FormWindowState.Maximized; }
+		}
+
+		public bool IsMinimized {
+			get { return GetWindowState () == FormWindowState.Minimized; }
 		}
 
 		public bool IsSizable {

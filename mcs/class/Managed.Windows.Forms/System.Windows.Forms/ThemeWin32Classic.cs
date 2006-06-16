@@ -4210,7 +4210,7 @@ namespace System.Windows.Forms
 
 		public override int ManagedWindowTitleBarHeight (InternalWindowManager wm)
 		{
-			if (wm.IsToolWindow)
+			if (wm.IsToolWindow && !wm.IsMinimized)
 				return SystemInformation.ToolWindowCaptionHeight;
 			if (wm.Form.FormBorderStyle == FormBorderStyle.None)
 				return 0;
@@ -4234,7 +4234,7 @@ namespace System.Windows.Forms
 			int btw = btsize.Width;
 			int bth = btsize.Height;
 
-			if (!wm.IsToolWindow && wm.HasBorders) {
+			if ((!wm.IsToolWindow || wm.IsMinimized) && wm.HasBorders) {
 				if (!wm.IsMaximized) {
 					wm.close_button.Rectangle = new Rectangle (wm.Form.Width - bw - btw - 2,
 							bw + 2, btw, bth);
@@ -4307,7 +4307,7 @@ namespace System.Windows.Forms
 				}
 
 				if (!wm.IsMaximized) {
-					if (!wm.IsToolWindow) {
+					if (!wm.IsToolWindow || wm.IsMinimized) {
 						DrawTitleButton (dc, wm.minimize_button, clip);
 						DrawTitleButton (dc, wm.maximize_button, clip);
 					}
@@ -4321,7 +4321,7 @@ namespace System.Windows.Forms
 		public override Size ManagedWindowButtonSize (InternalWindowManager wm)
 		{
 			int height = ManagedWindowTitleBarHeight (wm);
-			if (!wm.IsMaximized) {
+			if (!wm.IsMaximized && !wm.IsMinimized) {
 				if (wm.IsToolWindow)
 					return new Size (SystemInformation.ToolWindowCaptionButtonSize.Width - 2,
 							height - 5);

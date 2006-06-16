@@ -1,3 +1,12 @@
+2006-06-16  Jackson Harper  <jackson@ximian.com>
+
+	* MdiClient.cs: Instead of just sizing maximized windows when
+	there is a resize we also have to adjust the Y of minimized
+	windows, so they stay pinned to the bottom of the mdi container.
+	* InternalWindowManager.cs:
+	* ThemeWin32Classic.cs: Minimized windows get all three buttons
+	even if they are a tool window.
+	
 2006-06-15  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* TextControl.cs (Undo): Handle non-existent cursor locations in the

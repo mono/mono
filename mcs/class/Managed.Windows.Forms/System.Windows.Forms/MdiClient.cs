@@ -43,6 +43,7 @@ namespace System.Windows.Forms {
 		private int hbar_value;
 		private int vbar_value;
 		private bool lock_sizing;
+		private int prev_bottom;
 		private LayoutEventHandler initial_layout_handler;
 		
 		#endregion	// Local Variables
@@ -121,7 +122,7 @@ namespace System.Windows.Forms {
 
 			// Should probably make this into one loop
 			SizeScrollBars ();
-			SizeMaximized ();
+			ArrangeWindows ();
 		}
 
 		protected override void ScaleCore (float dx, float dy)
@@ -380,15 +381,26 @@ namespace System.Windows.Forms {
 			lock_sizing = false;
 		}
 
-		private void SizeMaximized ()
+		private void ArrangeWindows ()
 		{
+			int change = 0;
+			if (prev_bottom != -1)
+				change = Bottom - prev_bottom;
+
 			foreach (Form child in Controls) {
 				if (!child.Visible)
 					continue;
 				MdiWindowManager wm = (MdiWindowManager) child.WindowManager;
 				if (wm.GetWindowState () == FormWindowState.Maximized)
 					wm.SizeMaximized ();
+
+				if (wm.GetWindowState () == FormWindowState.Minimized) {
+					child.Top += change;
+				}
+					
 			}
+
+			prev_bottom = Bottom;
 		}
 
 		private void FormLocationChanged (object sender, EventArgs e)
