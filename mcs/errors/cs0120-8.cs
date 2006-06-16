@@ -1,4 +1,4 @@
-// cs0120-8.cs: `ArrayList': An object reference is required for the nonstatic field, method or property
+// cs0120-8.cs: `Test.ArrayList': An object reference is required for the nonstatic field, method or property
 // Line: 10
 
 using System.Collections;

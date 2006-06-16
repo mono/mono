@@ -1,4 +1,4 @@
-// cs0120-4.cs: `Y': An object reference is required for the nonstatic field, method or property
+// cs0120-4.cs: `X.Y': An object reference is required for the nonstatic field, method or property
 // Line: 11
 
 using System;
