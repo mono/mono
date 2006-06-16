@@ -1,3 +1,7 @@
+2006-06-16  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (DISTFILES): Distribute *.snk.
+
 2006-06-02  Raja R Harinath  <rharinath@novell.com>
 
 	* test-520.cs: New test from #78079.
