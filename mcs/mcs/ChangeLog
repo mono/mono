@@ -1,3 +1,12 @@
+2006-06-16  Juraj Skripsky  <js@hotfeet.ch>
+
+   * ecore.cs (SimpleName.Error_ObjectRefRequired): Do not truncate the name.
+   Fixed bug #78601.
+   (MemberExpr.EmitInstance): Use GetSignatureForError () to get full name.
+   (FieldExpr.DoResolve): likewise.
+   (PropertyExpr.InstanceResolve): likewise.
+   (EventExpr.InstanceResolve): likewise. 
+
 2006-06-04  Marek Safar  <marek.safar@seznam.cz>
 
 	* parameter.cs (Parameter.ApplyAttributeBuilder): More DefaultValue

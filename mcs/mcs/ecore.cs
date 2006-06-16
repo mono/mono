@@ -1840,14 +1840,10 @@ namespace Mono.CSharp {
 				Report.Error (236, l,
 					"A field initializer cannot reference the nonstatic field, method, or property `{0}'",
 					name);
-			else {
-				if (name.LastIndexOf ('.') > 0)
-					name = name.Substring (name.LastIndexOf ('.') + 1);
-
+			else
 				Report.Error (
 					120, l, "`{0}': An object reference is required for the nonstatic field, method or property",
 					name);
-			}
 		}
 
 		public bool IdenticalNameAndTypeName (EmitContext ec, Expression resolved_to, Location loc)
@@ -2469,7 +2465,7 @@ namespace Mono.CSharp {
 				return;
 
 			if (InstanceExpression == EmptyExpression.Null) {
-				SimpleName.Error_ObjectRefRequired (ec, loc, Name);
+				SimpleName.Error_ObjectRefRequired (ec, loc, GetSignatureForError ());
 				return;
 			}
 				
@@ -2777,7 +2773,7 @@ namespace Mono.CSharp {
 					// This can happen when referencing an instance field using
 					// a fully qualified type expression: TypeName.InstanceField = xxx
 					// 
-					SimpleName.Error_ObjectRefRequired (ec, loc, FieldInfo.Name);
+					SimpleName.Error_ObjectRefRequired (ec, loc, GetSignatureForError ());
 					return null;
 				}
 
@@ -3265,7 +3261,7 @@ namespace Mono.CSharp {
 			}
 
 			if (InstanceExpression == null) {
-				SimpleName.Error_ObjectRefRequired (ec, loc, PropertyInfo.Name);
+				SimpleName.Error_ObjectRefRequired (ec, loc, GetSignatureForError ());
 				return false;
 			}
 
@@ -3598,7 +3594,7 @@ namespace Mono.CSharp {
 			}
 
 			if (InstanceExpression == null) {
-				SimpleName.Error_ObjectRefRequired (ec, loc, EventInfo.Name);
+				SimpleName.Error_ObjectRefRequired (ec, loc, GetSignatureForError ());
 				return false;
 			}
 
