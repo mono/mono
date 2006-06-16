@@ -1,3 +1,9 @@
+2006-06-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoTools.cs: Fix offset in block processor. This fix the HMAC
+	algorithms when large buffer where used (with multiple calls to
+	TransformBlock).
+
 2005-11-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SymmetricTransform.cs: Virtualized some methods (like Dispose). Fix

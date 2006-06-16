@@ -126,7 +126,7 @@ namespace Mono.Security.Cryptography {
 				// 3. transform any other full block in specified buffer
 				int b = (int) ((cb - n) / blockSize);
 				for (int i=0; i < b; i++) {
-					transform.TransformBlock (rgb, n, blockSize, block, 0);
+					transform.TransformBlock (rgb, n + ib, blockSize, block, 0);
 					n += blockSize;
 				}
 	
