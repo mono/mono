@@ -3,6 +3,10 @@
 	* MdiClient.cs: Instead of just sizing maximized windows when
 	there is a resize we also have to adjust the Y of minimized
 	windows, so they stay pinned to the bottom of the mdi container.
+	- Eliminate separate tracking of the active control, we can just
+	get this from the controls collection.
+	- Paint the decorations for the newly activated titlebar so we get
+	a pretty blue bar.
 	* InternalWindowManager.cs:
 	* ThemeWin32Classic.cs: Minimized windows get all three buttons
 	even if they are a tool window.

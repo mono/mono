@@ -36,7 +36,6 @@ namespace System.Windows.Forms {
 	public sealed class MdiClient : Control {
 		#region Local Variables
 		private int mdi_created;
-		private Form active;
 		private HScrollBar hbar;
 		private VScrollBar vbar;
 		private SizeGrip sizegrip;
@@ -483,10 +482,11 @@ namespace System.Windows.Forms {
 			Form current = (Form) Controls [0];
 
 			form.BringToFront ();
-			active = form;
 
-			if (current != form)
+			if (current != form) {
 				current.WindowManager.PaintDecorations ();
+				form.WindowManager.PaintDecorations ();
+			}
 		}
 
 		internal int ChildrenCreated {
@@ -495,8 +495,15 @@ namespace System.Windows.Forms {
 		}
 
 		internal Form ActiveMdiChild {
-			get { return active; }
-			set { active = value; }
+			get {
+				if (Controls.Count < 1)
+					return null;
+				return (Form) Controls [0];
+			}
+			set {
+				ActivateChild (value);
+			}
 		}
 	}
 }
+
