@@ -1,3 +1,9 @@
+2006-06-13  Massimiliano Mantione  <massi@ximian.com>
+	* ssa.c: Fixed bug 78653 for SSA based deadce.
+	* mini.h: added MONO_INST_DEFINITION_HAS_SIDE_EFFECTS flag go
+	MonoInst.flags, used in SSA based deadce.
+	* aliasing.c: Fixed bug 78653 for "fastpath" deadce.
+	* simple-cee-ops.h, simple-mini-ops.h: Fixed bug 78653.
 
 Thu Jun 15 16:52:46 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
