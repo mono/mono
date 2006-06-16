@@ -17,4 +17,6 @@ endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:618
 
+EXTRA_DISTFILES = Test/System.Web.Services.Description/test.wsdl
+
 include ../../build/library.make

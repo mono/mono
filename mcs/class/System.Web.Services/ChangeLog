@@ -1,3 +1,8 @@
+2006-06-16  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (EXTRA_DISTFILES): New.
+	Add Test/System.Web.Services.Description/test.wsdl.
+
 2006-06-08  Chris Toshok  <toshok@ximian.com>
 
 	* Makefile (LIB_MCS_FLAGS): remove the CONFIGURATION_2_0 define.
