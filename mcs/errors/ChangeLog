@@ -1,3 +1,7 @@
+2006-06-16  Raja R Harinath  <rharinath@novell.com>
+
+	* cs0120-9.cs: New test from #78601.
+
 2006-05-23  Raja R Harinath  <rharinath@novell.com>
 
 	* cs0139-3.cs, cs0139-4.cs, cs0139-5.cs, cs0139-6.cs: New
