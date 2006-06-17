@@ -1,3 +1,8 @@
+2006-06-17  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* PoResourceReader.cs, PoResourceWriter.cs, TxtResourceReader.cs,
+	TxtResourceWriter.cs: Copied authors from monoresgen.
+
 2005-09-22  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* PoResourceReader.cs, PoResourceWriter.cs, TxtResourceReader.cs,
