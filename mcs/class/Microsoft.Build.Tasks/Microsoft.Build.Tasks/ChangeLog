@@ -1,3 +1,11 @@
+2006-06-17  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Error.cs: Added null check and changed return value of Execute () to
+	false.
+	* ResolveProjectBase.cs, AssignTargetPath.cs, CallTarget.cs,
+	AspNetCompiler.cs, AssignCulture.cs, AssignProjectConfiguration.cs:
+	Added stubs.
+
 2006-05-26  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* RegisterAssembly.cs, SignFile.cs, GenerateTrustInfo.cs,

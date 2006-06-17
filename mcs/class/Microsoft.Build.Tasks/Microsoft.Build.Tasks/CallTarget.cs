@@ -1,10 +1,10 @@
 //
-// Error.cs: Task that reports an error.
+// CallTarget.cs
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
 //
-// (C) 2005 Marek Sieradzki
+// (C) 2006 Marek Sieradzki
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,40 +27,39 @@
 
 #if NET_2_0
 
+using System;
+using System.IO;
+using Microsoft.Build.Framework;
+
 namespace Microsoft.Build.Tasks {
-	public sealed class Error : TaskExtension {
+	public class CallTarget : TaskExtension {
 	
-		string	code;
-		string	helpKeyword;
-		string	text;
-		
-		public Error ()
+		bool		runEachTargetSeparately;
+		ITaskItem[]	targetOutputs;
+		string[]	targets;
+	
+		public CallTarget ()
 		{
 		}
-
+		
+		[MonoTODO]
 		public override bool Execute ()
 		{
-			if (Log != null)
-				Log.LogError (null, code, helpKeyword, BuildEngine.ProjectFileOfTaskNode,
-					BuildEngine.LineNumberOfTaskNode, BuildEngine.ColumnNumberOfTaskNode,
-					BuildEngine.LineNumberOfTaskNode, BuildEngine.ColumnNumberOfTaskNode,
-					text, null);
 			return false;
 		}
-
-		public string Code {
-			get { return code; }
-			set { code = value; }
+		
+		public bool RunEachTargetSeparately {
+			get { return runEachTargetSeparately; }
+			set { runEachTargetSeparately = value; }
 		}
 		
-		public string HelpKeyword {
-			get { return helpKeyword; }
-			set { helpKeyword = value; }
+		public ITaskItem[] TargetOutputs {
+			get { return targetOutputs; }
 		}
 		
-		public string Text {
-			get { return text; }
-			set { text = value; }
+		public string[] Targets {
+			get { return targets; }
+			set { targets = value; }
 		}
 	}
 }
