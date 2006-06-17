@@ -145,6 +145,13 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			
 			Assert.AreEqual (0, testLogger.CheckHead ("Text", "HelpKeyword", "Code"), "A1");
 		}
+
+		[Test]
+		public void TestExecute1 ()
+		{
+			Error error = new Error ();
+			Assert.AreEqual (false, error.Execute (), "A1");
+		}
 	}
 }
         
