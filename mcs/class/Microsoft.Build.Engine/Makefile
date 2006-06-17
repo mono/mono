@@ -22,4 +22,10 @@ TEST_MCS_FLAGS = \
 	/r:Microsoft.Build.Framework.dll	\
 	/r:Microsoft.Build.Utilities.dll
 
+
+Test/resources/SimpleTask.dll: Test/resources/SimpleTask.cs
+	$(CSCOMPILE) Test/resources/SimpleTask.cs /r:Microsoft.Build.Framework.dll /r:Microsoft.Build.Utilities.dll /target:library
+
+test-local: Test/resources/SimpleTask.dll
+
 include ../../build/library.make
