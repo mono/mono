@@ -74,6 +74,8 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/PageWithStyleSheet.aspx \
 	Test/mainsoft/NunitWebResources/PageWithTheme.aspx \
 	Test/mainsoft/NunitWebResources/RunTimeSetTheme.aspx \
+	Test/mainsoft/NunitWebResources/ReadOnlyPropertyBind.aspx \
+	Test/mainsoft/NunitWebResources/ReadOnlyPropertyControl.ascx \
 	Test/mainsoft/NunitWebResources/Theme1.skin \
 	Test/mainsoft/NunitWebResources/Web.sitemap \
 	Test/mainsoft/MainsoftWebTest/nunitweb_config.xml 

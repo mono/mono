@@ -1,3 +1,8 @@
+2006-06-18 Andrew Skiba <andrews@mainsoft.com>
+
+	* TemplateControlCompiler.cs: check IsWritablePropertyOrField before
+	generating code for assignment statement and DataBind event.
+	
 2006-06-15 Juraj Skripsky <js@hotfeet.ch>
 
 	* AspTokenizer.cs (ReadAttValue), AspParser.cs (GetAttributes):

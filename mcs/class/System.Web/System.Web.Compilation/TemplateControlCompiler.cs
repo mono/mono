@@ -399,7 +399,7 @@ namespace System.Web.Compilation
 		void AddCodeForPropertyOrField (ControlBuilder builder, Type type, string var_name, string att, MemberInfo member, bool isDataBound)
 		{
 			CodeMemberMethod method = builder.method;
-			if (isDataBound) {
+			if (isDataBound && IsWritablePropertyOrField (member)) {
 				string dbMethodName = DataBoundProperty (builder, type, var_name, att);
 				AddEventAssign (method, "DataBinding", typeof (EventHandler), dbMethodName);
 				return;
@@ -476,6 +476,17 @@ namespace System.Web.Compilation
 			return member;
 		}
 
+		static bool IsWritablePropertyOrField (MemberInfo member)
+		{
+			PropertyInfo pi = member as PropertyInfo;
+			if (pi != null)
+				return pi.CanWrite;
+			FieldInfo fi = member as FieldInfo;
+			if (fi != null)
+				return !fi.IsInitOnly;
+			throw new ArgumentException ("Argument must be of PropertyInfo or FieldInfo type", "member");
+		}
+
 		bool ProcessPropertiesAndFields (ControlBuilder builder, MemberInfo member, string id,
 						string attValue, string prefix)
 		{
@@ -486,8 +497,6 @@ namespace System.Web.Compilation
 			Type type;
 			if (isPropertyInfo) {
 				type = ((PropertyInfo) member).PropertyType;
-				if (hyphen == -1 && ((PropertyInfo) member).CanWrite == false)
-					return false;
 			} else {
 				type = ((FieldInfo) member).FieldType;
 			}
@@ -496,7 +505,8 @@ namespace System.Web.Compilation
 #if NET_2_0
 				if (isDataBound) RegisterBindingInfo (builder, member.Name, ref attValue);
 #endif
-				AddCodeForPropertyOrField (builder, type, member.Name, attValue, member, isDataBound);
+				if (IsWritablePropertyOrField (member))
+					AddCodeForPropertyOrField (builder, type, member.Name, attValue, member, isDataBound);
 				return true;
 			}
 			
