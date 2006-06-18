@@ -314,7 +314,7 @@ namespace System.Runtime.Remoting.Proxies
 					else if (par.ParameterType.IsByRef)
 					{
 						object outArg = par.Position < mrm.ArgCount ? mrm.GetArg (par.Position) : null;
-						if (outArg != null && !par.ParameterType.IsInstanceOfType (outArg))
+						if (outArg != null && !par.ParameterType.GetElementType ().IsInstanceOfType (outArg))
 						{
 							throw new InvalidCastException ("Return argument '" + par.Name + "' has an invalid type");
 						}

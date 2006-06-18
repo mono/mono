@@ -1,3 +1,7 @@
+2006-06-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* RealProxy.cs (ProcessResponse): Use t.GetElementType ().IsInstanceOfType () when the type is a byref.
+
 2005-06-22  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* RealProxy.cs: Extract the output arguments from the message's
