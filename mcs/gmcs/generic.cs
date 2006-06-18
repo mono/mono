@@ -2680,7 +2680,7 @@ namespace Mono.CSharp {
 
 	public abstract class Nullable
 	{
-		protected sealed class NullableInfo
+		public sealed class NullableInfo
 		{
 			public readonly Type Type;
 			public readonly Type UnderlyingType;
