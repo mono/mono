@@ -1,3 +1,16 @@
+2006-06-19  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Control.cs:
+	  - set_Enabled: OnEnabledChanged is not called if the inherited state 
+	    of the control is not altered, even though  we might be changing the
+	    internal state of the control (#78458)
+	  - set_Enabled: (Re)Moved the enabling/disabling of the window to 
+	    OnEnabledChanged, to allow easy altering of any child window state
+	  - OnEnabledChanged: Added code to enable/disable driver window state
+	  - OnParentEnabledChanged: Instead of firing the event, call 
+	    OnEnabledChanged, which will fire the event and also a) set driver
+	    window state and pass the enabled state to any grandchildren (#78458)
+
 2006-06-19  Jackson Harper  <jackson@ximian.com>
 
 	* InternalWindowManager.cs: We don't set the cursor explicitly

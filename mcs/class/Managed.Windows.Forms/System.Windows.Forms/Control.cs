@@ -1870,21 +1870,15 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				if (is_enabled == value) {
+				if (Enabled == value) {
+					is_enabled = value;
 					return;
 				}
 
-				if (IsHandleCreated) {
-					if (this is Form) {
-						if (((Form)this).context == null) {
-							XplatUI.EnableWindow(window.Handle, value);
-						}
-					} else {
-						XplatUI.EnableWindow(window.Handle, value);
-					}
-				}
 				is_enabled = value;
-				Refresh();
+
+				// FIXME - we need to switch focus to next control if we're disabling the focused control
+
 				OnEnabledChanged (EventArgs.Empty);				
 			}
 		}
@@ -4233,8 +4227,24 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnEnabledChanged(EventArgs e) {
-			if (EnabledChanged!=null) EnabledChanged(this, e);
-			for (int i=0; i<child_controls.Count; i++) child_controls[i].OnParentEnabledChanged(e);
+			if (IsHandleCreated) {
+				if (this is Form) {
+					if (((Form)this).context == null) {
+						XplatUI.EnableWindow(window.Handle, Enabled);
+					}
+				} else {
+					XplatUI.EnableWindow(window.Handle, Enabled);
+				}
+				Refresh();
+			}
+
+			if (EnabledChanged != null) {
+				EnabledChanged(this, e);
+			}
+
+			for (int i=0; i<child_controls.Count; i++) {
+				child_controls[i].OnParentEnabledChanged(e);
+			}
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -4419,12 +4429,8 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnParentEnabledChanged(EventArgs e) {
-			if (is_enabled != Parent.is_enabled) {
-				is_enabled=Parent.is_enabled;
-				Invalidate();
-				if (EnabledChanged != null) {
-					EnabledChanged(this, e);
-				}
+			if (is_enabled) {
+				OnEnabledChanged(e);
 			}
 		}
 
