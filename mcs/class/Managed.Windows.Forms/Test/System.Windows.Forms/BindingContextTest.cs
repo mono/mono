@@ -289,6 +289,14 @@ namespace MonoTests.System.Windows.Forms {
 			bc.CollectionChanged += new CollectionChangeEventHandler (Dummy);
 		}
 
+		[Test]
+		public void CantSubscribeToCollectionChanged2 ()
+		{
+			BindingContext bc = new BindingContext ();
+
+			bc.CollectionChanged -= new CollectionChangeEventHandler (Dummy);
+		}
+
 		private void Dummy (object sender, CollectionChangeEventArgs e)
 		{
 
@@ -485,6 +493,17 @@ namespace MonoTests.System.Windows.Forms {
 			BindingContextPoker p = new BindingContextPoker ();
 			p.Contains (null);
 		}
+
+		[Test]
+		public void TestContainsNull2 ()
+		{
+			BindingContextPoker p = new BindingContextPoker ();
+			object data_source = new object ();
+			p._Add (data_source, new PropertyManager ());
+			Assert.IsTrue (p.Contains (data_source, null), "#1");
+			Assert.IsFalse (p.Contains ("nonexistent", null), "#2");
+		}
+
 
 		[Test]
 		public void TestGetEnumerator ()
