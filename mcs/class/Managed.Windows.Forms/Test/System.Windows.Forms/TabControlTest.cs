@@ -7,6 +7,7 @@
 // (C) 2005 Novell, Inc. (http://www.novell.com)
 //
 
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -20,6 +21,14 @@ namespace MonoTests.System.Windows.Forms {
 	[TestFixture]
 	public class TabControlTest
 	{
+		private class TabControlPoker : TabControl {
+
+			public bool CheckIsInputKey (Keys key)
+			{
+				return IsInputKey (key);
+			}
+		}
+
 		[Test]
 		[Category ("NotWorking")]
 		public void TabControlPropertyTest ()
@@ -137,6 +146,28 @@ namespace MonoTests.System.Windows.Forms {
 			f.Show ();
 			c.SelectedIndex = 2; // beyond the pages - ignored
 			Assert.AreEqual (0, c.SelectedIndex, "#2");
+		}
+
+		[Test]
+		public void InputKeyTest ()
+		{
+			TabControlPoker p = new TabControlPoker ();
+
+			foreach (Keys key in Enum.GetValues (typeof (Keys))) {
+				switch (key) {
+				case Keys.PageUp:
+				case Keys.PageDown:
+				case Keys.End:
+				case Keys.Home:
+					continue;
+				}
+				Assert.IsFalse (p.CheckIsInputKey (key), "FALSE- " + key);
+			}
+
+			Assert.IsTrue (p.CheckIsInputKey (Keys.PageUp), "TRUE-pageup");
+			Assert.IsTrue (p.CheckIsInputKey (Keys.PageDown), "TRUE-pagedown");
+			Assert.IsTrue (p.CheckIsInputKey (Keys.End), "TRUE-end");
+			Assert.IsTrue (p.CheckIsInputKey (Keys.Home), "TRUE-home");
 		}
 	}
 
