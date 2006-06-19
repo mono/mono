@@ -153,12 +153,12 @@ namespace System.Windows.Forms {
 			case Msg.WM_NCHITTEST:
 				int x = Control.LowOrder ((int) m.LParam.ToInt32 ());
 				int y = Control.HighOrder ((int) m.LParam.ToInt32 ());
-
+				
 				form.PointToClient (ref x, ref y);
-				y += TitleBarHeight;
 
 				FormPos pos = FormPosForCoords (x, y);
 				
+				// Console.WriteLine ("HIT TEST:  {0}  ({1}, {2})", pos, x, y);
 				if (pos == FormPos.TitleBar) {
 					m.Result = new IntPtr ((int) HitTest.HTCAPTION);
 					return true;
@@ -197,9 +197,6 @@ namespace System.Windows.Forms {
 					return false;
 				}
 				return true;
-
-			case Msg.WM_NCMOUSEMOVE:
-				return HandleNCMouseMove (form, ref m);
 
 			case Msg.WM_NCLBUTTONUP:
 				return HandleNCLButtonUp (ref m);
@@ -381,25 +378,24 @@ namespace System.Windows.Forms {
 		{
 			Activate ();
 
-			int x = Control.LowOrder ((int) m.LParam.ToInt32 ());
-			int y = Control.HighOrder ((int) m.LParam.ToInt32 ());
-
 			start = Cursor.Position;
 			virtual_position = form.Bounds;
 
+			int x = Control.LowOrder ((int) m.LParam.ToInt32 ());
+			int y = Control.HighOrder ((int) m.LParam.ToInt32 ());
+			Console.WriteLine ("MOUSE DOWN:   ({0}, {1})", x, y);
+			
 			form.PointToClient (ref x, ref y);
 			// Need to adjust because we are in NC land
-			y += TitleBarHeight;
 			FormPos pos = FormPosForCoords (x, y);
 
+			
 			if (pos == FormPos.TitleBar) {
 				HandleTitleBarDown (x, y);
 				return true;
 			}
 
 			if (IsSizable) {
-				SetCursorForPos (pos);
-			
 				if ((pos & FormPos.AnyEdge) == 0)
 					return false;
 
@@ -461,47 +457,9 @@ namespace System.Windows.Forms {
 			return false;
 		}
 
-		private bool HandleNCMouseMove (Form form, ref Message m)
-		{
-			int x = Control.LowOrder ((int) m.LParam.ToInt32 ());
-			int y = Control.HighOrder ((int) m.LParam.ToInt32 ());
-			
-			if (IsSizable) {
-				form.PointToClient (ref x, ref y);
-				y += TitleBarHeight;
-			}
-
-			return false;
-		}
-
 		private void FormMouseLeave (ref Message m)
 		{
 			form.ResetCursor ();
-		}
-
-		private void SetCursorForPos (FormPos pos)
-		{
-			switch (pos) {
-			case FormPos.TopLeft:
-			case FormPos.BottomRight:
-				form.Cursor = Cursors.SizeNWSE;
-				break;
-			case FormPos.TopRight:
-			case FormPos.BottomLeft:
-				form.Cursor = Cursors.SizeNESW;
-				break;
-			case FormPos.Top:
-			case FormPos.Bottom:
-				form.Cursor = Cursors.SizeNS;
-				break;
-			case FormPos.Left:
-			case FormPos.Right:
-				form.Cursor = Cursors.SizeWE;
-				break;
-			default:
-				form.ResetCursor ();
-				break;
-			}
 		}
 	
 		protected virtual void HandleWindowMove (Message m)
@@ -638,9 +596,6 @@ namespace System.Windows.Forms {
 			int y = Control.HighOrder ((int) m.LParam.ToInt32 ());
 
 			form.PointToClient (ref x, ref y);
-
-			// Need to adjust because we are in NC land
-			y += TitleBarHeight;
 
 			foreach (TitleButton button in title_buttons) {
 				if (button != null && button.Rectangle.Contains (x, y)) {

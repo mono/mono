@@ -1,3 +1,12 @@
+2006-06-19  Jackson Harper  <jackson@ximian.com>
+
+	* InternalWindowManager.cs: We don't set the cursor explicitly
+	thats done via the response to NCHITTESTs.
+	- Don't need to adjust for titlebar heights anymore, the
+	coordinates are coming in the correct coordinates now (see peters
+	last patch).
+
+
 2006-06-19  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* XplatUIX11.cs (GetMessage): WM_NCxBUTTONx messages were wrongly
