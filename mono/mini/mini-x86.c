@@ -1501,6 +1501,26 @@ emit_call (MonoCompile *cfg, guint8 *code, guint32 patch_type, gconstpointer dat
 	return code;
 }
 
+static void
+insert_after_ins (MonoBasicBlock *bb, MonoInst *ins, MonoInst *to_insert)
+{
+	if (ins == NULL) {
+		ins = bb->code;
+		bb->code = to_insert;
+		to_insert->next = ins;
+	}
+	else {
+		to_insert->next = ins->next;
+		ins->next = to_insert;
+	}
+}
+
+#define NEW_INS(cfg,dest,op) do {	\
+		(dest) = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
+		(dest)->opcode = (op);	\
+        insert_after_ins (bb, last_ins, (dest)); \
+	} while (0)
+
 #define INST_IGNORES_CFLAGS(opcode) (!(((opcode) == OP_ADC) || ((opcode) == OP_IADC) || ((opcode) == OP_ADC_IMM) || ((opcode) == OP_IADC_IMM) || ((opcode) == OP_SBB) || ((opcode) == OP_ISBB) || ((opcode) == OP_SBB_IMM) || ((opcode) == OP_ISBB_IMM)))
 
 /*
@@ -1515,8 +1535,13 @@ emit_call (MonoCompile *cfg, guint8 *code, guint32 patch_type, gconstpointer dat
 static void
 peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
 {
-	MonoInst *ins, *last_ins = NULL;
+	MonoInst *ins, *temp, *last_ins = NULL;
 	ins = bb->code;
+
+	if (bb->max_ireg > cfg->rs->next_vireg)
+		cfg->rs->next_vireg = bb->max_ireg;
+	if (bb->max_freg > cfg->rs->next_vfreg)
+		cfg->rs->next_vfreg = bb->max_freg;
 
 	while (ins) {
 		switch (ins->opcode) {
@@ -1540,6 +1565,37 @@ peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
 				ins->inst_imm = -ins->inst_imm;
 			} else if ((ins->inst_imm == 1) && (ins->dreg == ins->sreg1))
 				ins->opcode = OP_X86_DEC_REG;
+			break;
+		case OP_IDIV_IMM:
+		case OP_IREM_IMM:
+		case OP_IDIV_UN_IMM:
+		case OP_IREM_UN_IMM:
+			/* 
+			 * Keep the cases where we could generated optimized code, otherwise convert
+			 * to the non-imm variant.
+			 * FIXME: Do this always, not just when peephole is enabled
+			 */
+			if (mono_is_power_of_two (ins->inst_imm) < 0) {
+				NEW_INS (cfg, temp, OP_ICONST);
+				temp->inst_c0 = ins->inst_imm;
+				temp->dreg = mono_regstate_next_int (cfg->rs);
+				switch (ins->opcode) {
+				case OP_IDIV_IMM:
+					ins->opcode = OP_IDIV;
+					break;
+				case OP_IREM_IMM:
+					ins->opcode = OP_IREM;
+					break;
+				case OP_IDIV_UN_IMM:
+					ins->opcode = OP_IDIV_UN;
+					break;
+				case OP_IREM_UN_IMM:
+					ins->opcode = OP_IREM_UN;
+					break;
+				}
+				ins->sreg2 = temp->dreg;
+				break;
+			}
 			break;
 		case OP_COMPARE_IMM:
 		case OP_ICOMPARE_IMM:
@@ -1720,6 +1776,9 @@ peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
 		ins = ins->next;
 	}
 	bb->last_ins = last_ins;
+
+	bb->max_ireg = cfg->rs->next_vireg;
+	bb->max_freg = cfg->rs->next_vfreg;
 }
 
 static void
@@ -2548,18 +2607,48 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case OP_DIV_IMM:
 		case OP_IDIV_IMM:
+			printf ("A: %d\n", ins->inst_imm);
+			x86_push_imm (code, ins->inst_imm);
+			x86_cdq (code);
+			x86_div_membase (code, X86_ESP, 0, TRUE);	
+			x86_alu_reg_imm (code, X86_ADD, X86_ESP, 4);
+			break;
 		case OP_REM_IMM:
-		case OP_IREM_IMM:
-			if (ins->sreg2 == X86_EDX) {
-				x86_push_imm (code, ins->sreg2);
+		case OP_IREM_IMM: {
+			int power = mono_is_power_of_two (ins->inst_imm);
+
+			/* FIXME: Add div too */
+			/* FIXME: Add tests for these */
+			/* FIXME: mono_arch_is_int_overflow () can't handle the div_imm opcodes */
+
+			/* Based on gcc code */
+			switch (power) {
+			case 3:
+				/* FIXME: Add others */
+				x86_cdq (code);
+				x86_shift_reg_imm (code, X86_SHR, X86_EDX, 32 - power);
+				x86_alu_reg_reg (code, X86_ADD, X86_EAX, X86_EDX);
+				x86_alu_reg_imm (code, X86_ADD, X86_EAX, (1 << power) - 1);
+				x86_alu_reg_reg (code, X86_SUB, X86_EAX, X86_EDX);
+				break;
+			default:
+				x86_push_imm (code, ins->inst_imm);
 				x86_cdq (code);
 				x86_div_membase (code, X86_ESP, 0, TRUE);	
 				x86_alu_reg_imm (code, X86_ADD, X86_ESP, 4);
-			} else {
-				x86_mov_reg_imm (code, ins->sreg2, ins->inst_imm);
-				x86_cdq (code);
-				x86_div_reg (code, ins->sreg2, TRUE);
+				break;
 			}
+			break;
+		}
+		case OP_DIV_UN_IMM:
+		case OP_IDIV_UN_IMM:
+		case OP_REM_UN_IMM:
+		case OP_IREM_UN_IMM:
+			/* FIXME: Optimize this */
+			x86_push_imm (code, ins->inst_imm);
+			x86_alu_reg_reg (code, X86_XOR, X86_EDX, X86_EDX);
+			x86_div_membase (code, X86_ESP, 0, FALSE);	
+			x86_alu_reg_imm (code, X86_ADD, X86_ESP, 4);
 			break;
 		case CEE_OR:
 		case OP_IOR:

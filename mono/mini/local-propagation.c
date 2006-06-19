@@ -1474,6 +1474,25 @@ mono_local_cprop2 (MonoCompile *cfg)
 					spec = INS_INFO (ins->opcode);
 				}
 				break;
+			case OP_IREM_UN_IMM:
+			case OP_IDIV_UN_IMM: {
+				int c = ins->inst_imm;
+				int power2 = mono_is_power_of_two (c);
+
+				if (power2 >= 0) {
+					if (ins->opcode == OP_IREM_UN_IMM) {
+						ins->opcode = OP_IAND_IMM;
+						ins->sreg2 = -1;
+						ins->inst_imm = (1 << power2) - 1;
+					} else if (ins->opcode == OP_IDIV_UN_IMM) {
+						ins->opcode = OP_ISHR_UN_IMM;
+						ins->sreg2 = -1;
+						ins->inst_imm = power2;
+					}
+				}
+				spec = INS_INFO (ins->opcode);
+				break;
+			}
 			}
 			
 			if (spec [MONO_INST_DEST] != ' ') {
@@ -1579,7 +1598,7 @@ mono_local_deadce (MonoCompile *cfg)
 			if ((ins->opcode == OP_MOVE) && get_vreg_to_inst (cfg, ins->dreg)) {
 				if (ins_index + 1 < nins) {
 					MonoInst *def = reverse [ins_index + 1];
-					const char *spec2 = INS_INFO (ins->opcode);
+					const char *spec2 = INS_INFO (def->opcode);
 
 					/* 
 					 * Perform a limited kind of reverse copy propagation, i.e.

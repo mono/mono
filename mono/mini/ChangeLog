@@ -1,3 +1,10 @@
+2006-06-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* local-propagation.c (mono_local_deadce): Fix a typo in reverse copyprop.
+
+	* method-to-ir.c local-propagation.c mini-x86.c cpu-pentium.md cfold.c: Add
+	beginnings of support for DIV/REM_IMM opcodes.
+
 2006-06-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* linear-scan.c (compare_by_interval_start_pos_func): Fix sorting of variables.

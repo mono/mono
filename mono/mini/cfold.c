@@ -470,6 +470,26 @@ mono_constant_fold_ins2 (MonoCompile *cfg, MonoInst *ins, MonoInst *arg1, MonoIn
 			dest->sreg1 = dest->sreg2 = -1;
 		}
 		break;
+	case OP_IDIV_IMM:
+	case OP_IDIV_UN_IMM:
+	case OP_IREM_IMM:
+	case OP_IREM_UN_IMM:
+		if (arg1->opcode == OP_ICONST) {
+			if ((ins->inst_imm == 0) || ((arg1->inst_c0 == G_MININT32) && (ins->inst_imm == -1)))
+				return NULL;
+			ALLOC_DEST (cfg, dest, ins);
+			switch (ins->opcode) {
+				FOLD_BINOPC2_IMM (OP_IDIV_IMM, /, gint32);
+				FOLD_BINOPC2_IMM (OP_IDIV_UN_IMM, /, guint32);
+				FOLD_BINOPC2_IMM (OP_IREM_IMM, %, gint32);
+				FOLD_BINOPC2_IMM (OP_IREM_UN_IMM, %, guint32);
+			default:
+				g_assert_not_reached ();
+			}
+			dest->opcode = OP_ICONST;
+			dest->sreg1 = dest->sreg2 = -1;
+		}
+		break;
 		/* case OP_INEG: */
 	case OP_INOT:
 	case OP_INEG:

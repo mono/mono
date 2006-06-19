@@ -289,10 +289,10 @@ int_mul_imm: dest:i src1:i len:9
 # there is no actual support for division or reminder by immediate
 # we simulate them, though (but we need to change the burg rules 
 # to allocate a symbolic reg for src2)
-int_div_imm: dest:a src1:a src2:i len:15 clob:d
-int_div_un_imm: dest:a src1:a src2:i len:15 clob:d
-int_rem_imm: dest:d src1:a src2:i len:15 clob:a
-int_rem_un_imm: dest:d src1:a src2:i len:15 clob:a
+int_div_imm: dest:a src1:a len:15 clob:d
+int_div_un_imm: dest:a src1:a len:15 clob:d
+int_rem_imm: dest:d src1:a len:15 clob:a
+int_rem_un_imm: dest:d src1:a len:15 clob:a
 int_and_imm: dest:i src1:i len:6 clob:1
 int_or_imm: dest:i src1:i len:6 clob:1
 int_xor_imm: dest:i src1:i len:6 clob:1
