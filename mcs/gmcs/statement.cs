@@ -2977,7 +2977,7 @@ namespace Mono.CSharp {
 			new_expr = SwitchGoverningType (ec, Expr);
 
 			if ((new_expr == null) && TypeManager.IsNullableType (Expr.Type)) {
-				unwrap = new Nullable.Unwrap (Expr, loc).Resolve (ec) as Nullable.Unwrap;
+				unwrap = Nullable.Unwrap.Create (Expr, ec);
 				if (unwrap == null)
 					return false;
 

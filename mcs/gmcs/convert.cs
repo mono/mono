@@ -611,6 +611,17 @@ namespace Mono.CSharp {
 			if (ImplicitStandardConversionExists (expr, target_type))
 				return true;
 
+			if (TypeManager.IsNullableType (expr.Type)) {
+				Expression source = Nullable.Unwrap.Create (expr, ec);
+
+				if (TypeManager.IsNullableType (target_type)) {
+					if (ImplicitStandardConversionExists (source, target_type))
+						return true;
+					if (ImplicitStandardConversionExists (expr, target_type))
+						return true;
+				}
+			}
+
 			return ImplicitUserConversion (ec, expr, target_type, Location.Null) != null;
 		}
 
@@ -1149,10 +1160,6 @@ namespace Mono.CSharp {
 			Type source_type = source.Type;
 			MethodInfo method = null;
 
-			if (TypeManager.IsNullableType (source_type) && TypeManager.IsNullableType (target))
-				return new Nullable.LiftedConversion (
-					source, target, true, look_for_explicit, loc).Resolve (ec);
-
 			object o;
 			DoubleHash hash = look_for_explicit ? explicit_conv : implicit_conv;
 
@@ -1212,6 +1219,21 @@ namespace Mono.CSharp {
 			if (e != null)
 				return e;
 
+			if (TypeManager.IsNullableType (target_type)) {
+				Type target = TypeManager.GetTypeArguments (target_type) [0];
+
+				if (TypeManager.IsNullableType (expr.Type)) {
+					e = new Nullable.LiftedConversion (
+						expr, target_type, false, false, loc).Resolve (ec);
+					if (e != null)
+						return e;
+				} else {
+					e = ImplicitConversion (ec, expr, target, loc);
+					if (e != null)
+						return Nullable.Wrap.Create (e, ec);
+				}
+			}
+
 			e = ImplicitUserConversion (ec, expr, target_type, loc);
 			if (e != null)
 				return e;
@@ -1243,10 +1265,6 @@ namespace Mono.CSharp {
 				if (TypeManager.IsNullableType (target_type))
 					return new Nullable.NullableLiteral (target_type, loc);
 			}
-
-			if (TypeManager.IsNullableType (expr_type) && TypeManager.IsNullableType (target_type))
-				return new Nullable.LiftedConversion (
-					expr, target_type, false, false, loc).Resolve (ec);
 
 			if (expr.eclass == ExprClass.MethodGroup){
 				if (!TypeManager.IsDelegateType (target_type)){
@@ -1304,7 +1322,7 @@ namespace Mono.CSharp {
 			}
 
 			if (TypeManager.IsNullableTypeOf (target_type, expr_type))
-				return new Nullable.Wrap (expr, loc).Resolve (ec);
+				return Nullable.Wrap.Create (expr, ec);
 
 			if (expr_type == TypeManager.anonymous_method_type){
 				if (!TypeManager.IsDelegateType (target_type)){
@@ -1872,10 +1890,6 @@ namespace Mono.CSharp {
 				return ExplicitConversionCore (ec, new EmptyCast (expr, TypeManager.EnumToUnderlying (expr_type)), target_type, loc);
 			}
 
-			if (TypeManager.IsNullableType (expr_type) && TypeManager.IsNullableType (target_type))
-				return new Nullable.LiftedConversion (
-					expr, target_type, false, true, loc).Resolve (ec);
-
 			if (TypeManager.IsEnumType (target_type)){
 				Expression ce = ExplicitConversionCore (ec, expr, TypeManager.EnumToUnderlying (target_type), loc);
 				if (ce != null)
@@ -1967,10 +1981,6 @@ namespace Mono.CSharp {
 			if (ne != null)
 				return ne;
 
-			if (TypeManager.IsNullableType (expr.Type) && TypeManager.IsNullableType (target_type))
-				return new Nullable.LiftedConversion (
-					expr, target_type, false, true, l).Resolve (ec);
-
 			ne = ExplicitNumericConversion (expr, target_type);
 			if (ne != null)
 				return ne;
@@ -1993,7 +2003,30 @@ namespace Mono.CSharp {
 		static public Expression ExplicitConversion (EmitContext ec, Expression expr,
 			Type target_type, Location loc)
 		{
-			Expression e = ExplicitConversionCore (ec, expr, target_type, loc);
+			Expression e;
+			if (TypeManager.IsNullableType (target_type)) {
+				if (TypeManager.IsNullableType (expr.Type)) {
+					e = new Nullable.LiftedConversion (
+						expr, target_type, false, true, loc).Resolve (ec);
+					if (e != null)
+						return e;
+				} else {
+					Type target = TypeManager.GetTypeArguments (target_type) [0];
+
+					e = ExplicitConversionCore (ec, expr, target, loc);
+					if (e != null)
+						return Nullable.Wrap.Create (e, ec);
+				}
+			} else if (TypeManager.IsNullableType (expr.Type)) {
+				Expression source = Nullable.Unwrap.Create (expr, ec);
+				if (source != null) {
+					e = ExplicitConversionCore (ec, source, target_type, loc);
+					if (e != null)
+						return e;
+				}
+			}
+
+			e = ExplicitConversionCore (ec, expr, target_type, loc);
 			if (e != null)
 				return e;
 

@@ -2714,10 +2714,15 @@ namespace Mono.CSharp {
 			LocalTemporary temp;
 			bool has_temp;
 
-			public Unwrap (Expression expr, Location loc)
+			protected Unwrap (Expression expr)
 			{
 				this.expr = expr;
-				this.loc = loc;
+				this.loc = expr.Location;
+			}
+
+			public static Unwrap Create (Expression expr, EmitContext ec)
+			{
+				return new Unwrap (expr).Resolve (ec) as Unwrap;
 			}
 
 			public override Expression DoResolve (EmitContext ec)
@@ -2822,10 +2827,15 @@ namespace Mono.CSharp {
 			Expression expr;
 			NullableInfo info;
 
-			public Wrap (Expression expr, Location loc)
+			protected Wrap (Expression expr)
 			{
 				this.expr = expr;
-				this.loc = loc;
+				this.loc = expr.Location;
+			}
+
+			public static Wrap Create (Expression expr, EmitContext ec)
+			{
+				return new Wrap (expr).Resolve (ec) as Wrap;
 			}
 
 			public override Expression DoResolve (EmitContext ec)
@@ -2902,7 +2912,7 @@ namespace Mono.CSharp {
 				if (expr == null)
 					return null;
 
-				unwrap = (Unwrap) new Unwrap (expr, loc).Resolve (ec);
+				unwrap = Unwrap.Create (expr, ec);
 				if (unwrap == null)
 					return null;
 
@@ -2910,7 +2920,7 @@ namespace Mono.CSharp {
 				if (underlying == null)
 					return null;
 
-				wrap = new Wrap (underlying, loc).Resolve (ec);
+				wrap = Wrap.Create (underlying, ec);
 				if (wrap == null)
 					return null;
 
@@ -3034,15 +3044,13 @@ namespace Mono.CSharp {
 			public override Expression DoResolve (EmitContext ec)
 			{
 				if (TypeManager.IsNullableType (left.Type)) {
-					left_unwrap = new Unwrap (left, loc);
-					left = left_unwrap.Resolve (ec);
+					left = left_unwrap = Unwrap.Create (left, ec);
 					if (left == null)
 						return null;
 				}
 
 				if (TypeManager.IsNullableType (right.Type)) {
-					right_unwrap = new Unwrap (right, loc);
-					right = right_unwrap.Resolve (ec);
+					right = right_unwrap = Unwrap.Create (right, ec);
 					if (right == null)
 						return null;
 				}
@@ -3059,7 +3067,7 @@ namespace Mono.CSharp {
 				if (((Oper == Binary.Operator.BitwiseAnd) || (Oper == Binary.Operator.BitwiseOr)) &&
 				    ((left.Type == TypeManager.bool_type) && (right.Type == TypeManager.bool_type))) {
 					Expression empty = new EmptyExpression (TypeManager.bool_type);
-					bool_wrap = new Wrap (empty, loc).Resolve (ec);
+					bool_wrap = Wrap.Create (empty, ec);
 					null_value = new NullableLiteral (bool_wrap.Type, loc).Resolve (ec);
 
 					type = bool_wrap.Type;
@@ -3088,7 +3096,7 @@ namespace Mono.CSharp {
 					if (underlying == null)
 						return null;
 
-					underlying = new Wrap (underlying, loc).Resolve (ec);
+					underlying = Wrap.Create (underlying, ec);
 					if (underlying == null)
 						return null;
 
@@ -3321,9 +3329,8 @@ namespace Mono.CSharp {
 
 			public override Expression DoResolve (EmitContext ec)
 			{
-				unwrap = new Unwrap (expr, loc);
-				expr = unwrap.Resolve (ec);
-				if (expr == null)
+				unwrap = Unwrap.Create (expr, ec);
+				if (unwrap == null)
 					return null;
 
 				if (unwrap.Type != TypeManager.bool_type)
@@ -3396,7 +3403,7 @@ namespace Mono.CSharp {
 				if (TypeManager.IsNullableType (ltype)) {
 					NullableInfo info = new NullableInfo (ltype);
 
-					unwrap = (Unwrap) new Unwrap (left, loc).Resolve (ec);
+					unwrap = Unwrap.Create (left, ec);
 					if (unwrap == null)
 						return null;
 
@@ -3483,7 +3490,7 @@ namespace Mono.CSharp {
 				if (expr == null)
 					return null;
 
-				unwrap = (Unwrap) new Unwrap (expr, loc).Resolve (ec);
+				unwrap = Unwrap.Create (expr, ec);
 				if (unwrap == null)
 					return null;
 

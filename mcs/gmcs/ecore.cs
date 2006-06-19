@@ -304,11 +304,11 @@ namespace Mono.CSharp {
 
 		public virtual void Error_ValueCannotBeConverted (Location loc, Type target, bool expl)
 		{
-			if (Type.Name == target.Name){
+			if (Type.FullName == target.FullName){
 				Report.ExtraInformation (loc,
 					String.Format (
 					"The type {0} has two conflicting definitions, one comes from {1} and the other from {2}",
-					Type.Name, Type.Assembly.FullName, target.Assembly.FullName));
+					Type.FullName, Type.Assembly.FullName, target.Assembly.FullName));
 							 
 			}
 
