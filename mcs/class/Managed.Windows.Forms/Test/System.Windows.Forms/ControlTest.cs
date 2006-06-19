@@ -814,5 +814,53 @@ namespace MWF.MonoTest
 			c.BackColor = Color.Empty;
 			Assert.AreEqual(Control.DefaultBackColor, c.BackColor, "Setting empty color failed");
 		}
+
+		[Test]
+		public void EnabledTest1() {
+			Control	child;
+			Control	parent;
+			Control	grandma;
+
+			grandma = new Control();
+			parent = new Control();
+			child = new Control();
+
+			grandma.Controls.Add(parent);
+			parent.Controls.Add(child);
+			grandma.Enabled = false;
+			Assert.AreEqual(grandma.Enabled, child.Enabled, "Child did not inherit disabled state");
+		}
+
+		int EnabledCalledCount = 0;
+		private void EnabledTest2EnabledChanged(object sender, EventArgs e) {
+			EnabledCalledCount++;
+		}
+
+		[Test]
+		public void EnabledTest2() {
+			// Check nesting of enabled calls
+			// OnEnabled is not called for disabled child controls
+			Control	child;
+			Control	parent;
+			Control	grandma;
+
+			EnabledCalledCount = 0;
+
+			grandma = new Control();
+			parent = new Control();
+			child = new Control();
+			child.EnabledChanged += new EventHandler(EnabledTest2EnabledChanged);
+
+			grandma.Controls.Add(parent);
+			parent.Controls.Add(child);
+			grandma.Enabled = false;
+
+			Assert.AreEqual(1, EnabledCalledCount, "Child Enabled Event not properly fired");
+			grandma.Enabled = true;
+			Assert.AreEqual(2, EnabledCalledCount, "Child Enabled Event not properly fired");
+			child.Enabled = false;
+			grandma.Enabled = false;
+			Assert.AreEqual(3, EnabledCalledCount, "Child Enabled Event not properly fired");
+		}
 	}
 }
