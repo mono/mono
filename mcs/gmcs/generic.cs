@@ -1648,18 +1648,22 @@ namespace Mono.CSharp {
 				}
 			}
 
-			MethodGroupExpr mg = Expression.MemberLookup (
-				containerType, atype, ".ctor", MemberTypes.Constructor,
-				BindingFlags.Public | BindingFlags.Instance |
-				BindingFlags.DeclaredOnly, loc)
-				as MethodGroupExpr;
+			TypeParameter tparam = TypeManager.LookupTypeParameter (atype);
+			if (tparam != null)
+				return tparam.HasConstructorConstraint;
 
-			if (!atype.IsAbstract && (mg != null) && mg.IsInstance) {
-				foreach (MethodBase mb in mg.Methods) {
-					ParameterData pd = TypeManager.GetParameterData (mb);
-					if (pd.Count == 0)
-						return true;
-				}
+			MemberList list = TypeManager.FindMembers (
+				atype, MemberTypes.Constructor,
+				BindingFlags.Public | BindingFlags.Instance |
+				BindingFlags.DeclaredOnly, null, null);
+
+			if (atype.IsAbstract || (list == null))
+				return false;
+
+			foreach (MethodBase mb in list) {
+				ParameterData pd = TypeManager.GetParameterData (mb);
+				if ((pd.Count == 0) && mb.IsPublic && !mb.IsStatic)
+					return true;
 			}
 
 			return false;

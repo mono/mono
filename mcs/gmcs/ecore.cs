@@ -243,6 +243,18 @@ namespace Mono.CSharp {
 			if (obsolete_attr != null && !ec.IsInObsoleteScope) {
 				AttributeTester.Report_ObsoleteMessage (obsolete_attr, te.GetSignatureForError (), Location);
 			}
+
+			// Constrains don't need to be checked for overrides
+			GenericMethod gm = ec.DeclContainer as GenericMethod;
+			if (gm != null && (gm.ModFlags & Modifiers.OVERRIDE) != 0) {
+				te.loc = loc;
+				return te;
+			}
+
+			ConstructedType ct = te as ConstructedType;
+			if ((ct != null) && !ct.CheckConstraints (ec))
+				return null;
+
 			return te;
 		}
 
@@ -270,17 +282,6 @@ namespace Mono.CSharp {
 				ErrorIsInaccesible (loc, TypeManager.CSharpName (te.Type));
 				return null;
 			}
-
-			// Constrains don't need to be checked for overrides
-			GenericMethod gm = ec.DeclContainer as GenericMethod;
-			if (gm != null && (gm.ModFlags & Modifiers.OVERRIDE) != 0) {
-				te.loc = loc;
-				return te;
-			}
-
-			ConstructedType ct = te as ConstructedType;
-			if ((ct != null) && !ct.CheckConstraints (ec))
-				return null;
 
 			te.loc = loc;
 			return te;

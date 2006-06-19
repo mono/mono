@@ -1,3 +1,15 @@
+2006-06-19  Martin Baulig  <martin@ximian.com>
+
+	Fixed #78380; added gtest-273.cs.
+
+	* ecore.cs
+	(Expression.ResolveAsBaseTerminal): Move the constraint checking
+	into ResolveAsTypeTerminal().
+
+	* generic.cs
+	(ConstraintChecker.HasDefaultConstructor): Use the non-cache based
+	TypeManager.FindMembers() to check for the default ctor.
+
 2006-06-18  Marek Safar  <marek.safar@seznam.cz>
 
 	* generic.cs: Fixed NullableInfo accessibility.
