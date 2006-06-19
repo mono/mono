@@ -1,13 +1,16 @@
 2006-06-19  Martin Baulig  <martin@ximian.com>
 
+	* convert.cs
+	(Convert.ImplicitConversionStandard): Cleanup and correctly
+	implement nullable conversions.
+	(Convert.ImplicitStandardConversionExists): Likewise.
+	(Convert.ExplicitConversion): Likewise.
+
+2006-06-19  Martin Baulig  <martin@ximian.com>
+
 	* generic.cs
 	(Nullable.Wrap.Create, Nullable.Unwrap.Create): New public static
 	methods; make the ctors protected.
-
-	* convert.cs
-	(Convert.ImplicitConversion): Correctly handle nullable conversions.
-	(Convert.ImplicitConversionExists): Likewise.
-	(Convert.ExplicitConversion): Likewise.
 
 2006-06-19  Martin Baulig  <martin@ximian.com>
 

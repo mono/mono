@@ -611,17 +611,6 @@ namespace Mono.CSharp {
 			if (ImplicitStandardConversionExists (expr, target_type))
 				return true;
 
-			if (TypeManager.IsNullableType (expr.Type)) {
-				Expression source = Nullable.Unwrap.Create (expr, ec);
-
-				if (TypeManager.IsNullableType (target_type)) {
-					if (ImplicitStandardConversionExists (source, target_type))
-						return true;
-					if (ImplicitStandardConversionExists (expr, target_type))
-						return true;
-				}
-			}
-
 			return ImplicitUserConversion (ec, expr, target_type, Location.Null) != null;
 		}
 
@@ -639,6 +628,19 @@ namespace Mono.CSharp {
 		public static bool ImplicitStandardConversionExists (Expression expr, Type target_type)
 		{
 			Type expr_type = expr.Type;
+
+			if (TypeManager.IsNullableType (expr_type)) {
+				Type nullable = TypeManager.GetTypeArguments (expr_type) [0];
+				Expression source = new EmptyExpression (nullable);
+
+				if (TypeManager.IsNullableType (target_type)) {
+					if (ImplicitStandardConversionExists (source, target_type))
+						return true;
+					if (ImplicitStandardConversionExists (expr, target_type))
+						return true;
+				}
+			} else if (TypeManager.IsNullableTypeOf (target_type, expr_type))
+				return true;
 
 			if (expr_type == TypeManager.void_type)
 				return false;
@@ -831,12 +833,6 @@ namespace Mono.CSharp {
 
 			if (target_type == TypeManager.void_ptr_type && expr_type.IsPointer)
 				return true;
-
-			if (TypeManager.IsNullableType (expr_type) && TypeManager.IsNullableType (target_type))
-				return true;
-
-			if (TypeManager.IsNullableTypeOf (target_type, expr_type))
-				return true;			
 
 			if (expr_type == TypeManager.anonymous_method_type){
 				if (!TypeManager.IsDelegateType (target_type))
@@ -1219,21 +1215,6 @@ namespace Mono.CSharp {
 			if (e != null)
 				return e;
 
-			if (TypeManager.IsNullableType (target_type)) {
-				Type target = TypeManager.GetTypeArguments (target_type) [0];
-
-				if (TypeManager.IsNullableType (expr.Type)) {
-					e = new Nullable.LiftedConversion (
-						expr, target_type, false, false, loc).Resolve (ec);
-					if (e != null)
-						return e;
-				} else {
-					e = ImplicitConversion (ec, expr, target, loc);
-					if (e != null)
-						return Nullable.Wrap.Create (e, ec);
-				}
-			}
-
 			e = ImplicitUserConversion (ec, expr, target_type, loc);
 			if (e != null)
 				return e;
@@ -1264,6 +1245,21 @@ namespace Mono.CSharp {
 
 				if (TypeManager.IsNullableType (target_type))
 					return new Nullable.NullableLiteral (target_type, loc);
+			}
+
+			if (TypeManager.IsNullableType (target_type)) {
+				Type target = TypeManager.GetTypeArguments (target_type) [0];
+
+				if (TypeManager.IsNullableType (expr.Type)) {
+					e = new Nullable.LiftedConversion (
+						expr, target_type, false, false, loc).Resolve (ec);
+					if (e != null)
+						return e;
+				} else {
+					e = ImplicitConversion (ec, expr, target, loc);
+					if (e != null)
+						return Nullable.Wrap.Create (e, ec);
+				}
 			}
 
 			if (expr.eclass == ExprClass.MethodGroup){
@@ -1320,9 +1316,6 @@ namespace Mono.CSharp {
 				if (expr_type == TypeManager.null_type && target_type.IsPointer)
 					return new EmptyCast (NullPointer.Null, target_type);
 			}
-
-			if (TypeManager.IsNullableTypeOf (target_type, expr_type))
-				return Nullable.Wrap.Create (expr, ec);
 
 			if (expr_type == TypeManager.anonymous_method_type){
 				if (!TypeManager.IsDelegateType (target_type)){
