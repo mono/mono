@@ -158,7 +158,6 @@ namespace System.Windows.Forms {
 
 				FormPos pos = FormPosForCoords (x, y);
 				
-				// Console.WriteLine ("HIT TEST:  {0}  ({1}, {2})", pos, x, y);
 				if (pos == FormPos.TitleBar) {
 					m.Result = new IntPtr ((int) HitTest.HTCAPTION);
 					return true;
