@@ -1,3 +1,12 @@
+2006-06-15  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* TextControl.cs:
+	  - MoveCaret: Implemented PgUp, PgDown, CtrlPgUp and CtrlPgDown
+	  - Undo(): Added replay of cursor move on DeleteChars action; added
+	    calling Undo() again if a recorded cursor move is invalid (to
+	    ensure that some action is performed on Undo)
+	* TextBoxBase.cs (ProcessKey): Added handling of PgUp and PgDown (#78482)
+
 2006-06-16  Jackson Harper  <jackson@ximian.com>
 
 	* MdiClient.cs: Instead of just sizing maximized windows when

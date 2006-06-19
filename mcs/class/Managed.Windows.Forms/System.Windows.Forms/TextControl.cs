@@ -87,6 +87,8 @@ namespace System.Windows.Forms {
 		End,		// Move to the end of the line
 		PgUp,		// Move one page up
 		PgDn,		// Move one page down
+		CtrlPgUp,	// Move caret to the first visible char in the viewport
+		CtrlPgDn,	// Move caret to the last visible char in the viewport
 		CtrlHome,	// Move to the beginning of the document
 		CtrlEnd,	// Move to the end of the document
 		WordBack,	// Move to the beginning of the previous word (or beginning of line)
@@ -1652,10 +1654,116 @@ namespace System.Windows.Forms {
 				}
 
 				case CaretDirection.PgUp: {
+					int	index;
+					int	new_y;
+					Line	line;
+
+					if ((viewport_y - viewport_height) < 0) {
+						// We're just placing the caret at the end of the document, no scrolling needed
+						owner.vscroll.Value = 0;
+						line = GetLine(1);
+						PositionCaret(line, 0);
+						XplatUI.CaretVisible(owner.Handle, true);
+						owner.Invalidate();
+						return;
+					}
+					
+					new_y = caret.line.Y - viewport_height;
+					if (new_y < 0) {
+						line = GetLine(1);
+						PositionCaret(line, 0);
+					} else {
+						line = FindTag((int)caret.line.widths[caret.pos], caret.line.Y - viewport_height, out index, false).line;
+						if (caret.pos > 0) {
+							PositionCaret(line, index);
+						} else {
+							PositionCaret(line, 0);
+						}
+					}
+
+					// Line up to fill line starts
+					new_y = viewport_y - viewport_height;
+					line = FindTag(0, new_y, out index, false).line;
+					if (line != null) {
+						owner.vscroll.Value = line.Y;
+					} else {
+						owner.vscroll.Value = new_y;
+					}
+					XplatUI.CaretVisible(owner.Handle, true);
+					owner.Invalidate();
 					return;
 				}
 
 				case CaretDirection.PgDn: {
+					int	index;
+					int	new_y;
+					Line	line;
+
+					if ((viewport_y + viewport_height) > document_y) {
+						// We're just placing the caret at the end of the document, no scrolling needed
+						owner.vscroll.Value = owner.vscroll.Maximum;
+						line = GetLine(lines);
+						PositionCaret(line, line.Text.Length);
+						XplatUI.CaretVisible(owner.Handle, true);
+						owner.Invalidate();
+						return;
+					}
+					
+					new_y = caret.line.Y + viewport_height;
+					if (new_y > document_y) {
+						line = GetLine(lines);
+						PositionCaret(line, line.text.Length);
+					} else {
+						line = FindTag((int)caret.line.widths[caret.pos], caret.line.Y + viewport_height, out index, false).line;
+						if (caret.pos > 0) {
+							PositionCaret(line, index);
+						} else {
+							PositionCaret(line, 0);
+						}
+					}
+
+					// Line up to fill line starts
+					new_y = viewport_y + viewport_height;
+					line = FindTag(0, new_y, out index, false).line;
+					if (line != null) {
+						if (line.Y > owner.vscroll.Maximum) {
+							owner.vscroll.Value = owner.vscroll.Maximum;
+						} else {
+							owner.vscroll.Value = line.Y;
+						}
+					} else {
+						owner.vscroll.Value = new_y;
+					}
+					XplatUI.CaretVisible(owner.Handle, true);
+					owner.Invalidate();
+					return;
+				}
+
+				case CaretDirection.CtrlPgUp: {
+					PositionCaret(0, viewport_y);
+					if (!owner.IsHandleCreated) {
+						return;
+					}
+					XplatUI.CaretVisible(owner.Handle, true);
+					return;
+				}
+
+				case CaretDirection.CtrlPgDn: {
+					Line	line;
+					LineTag	tag;
+					int	index;
+
+					tag = FindTag(0, viewport_y + viewport_height, out index, false);
+					if (tag.line.line_no > 1) {
+						line = GetLine(tag.line.line_no - 1);
+					} else {
+						line = tag.line;
+					}
+					PositionCaret(line, line.Text.Length);
+					if (!owner.IsHandleCreated) {
+						return;
+					}
+					XplatUI.CaretVisible(owner.Handle, true);
 					return;
 				}
 
@@ -4449,17 +4557,20 @@ namespace System.Windows.Forms {
 			// Do the thing
 			switch(action.type) {
 				case ActionType.InsertChar: {
+					// FIXME - implement me
 					break;
 				}
 
 				case ActionType.DeleteChars: {
 					this.Insert(document.GetLine(action.line_no), action.pos, (Line)action.data);
+					Undo();	// Grab the cursor location
 					break;
 				}
 
 				case ActionType.CursorMove: {
 					document.caret.line = document.GetLine(action.line_no);
 					if (document.caret.line == null) {
+						Undo();
 						break;
 					}
 
@@ -4508,6 +4619,7 @@ namespace System.Windows.Forms {
 			a.pos = start_pos - 1;
 
 			undo_actions.Push(a);
+			RecordCursor();
 		}
 
 		public void RecordCursor() {

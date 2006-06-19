@@ -1012,6 +1012,24 @@ namespace System.Windows.Forms {
 					return false;
 				}
 
+				case Keys.PageUp: {
+					if ((Control.ModifierKeys & Keys.Control) != 0) {
+						document.MoveCaret(CaretDirection.CtrlPgUp);
+					} else {
+						document.MoveCaret(CaretDirection.PgUp);
+					}
+					return true;
+				}
+
+				case Keys.PageDown: {
+					if ((Control.ModifierKeys & Keys.Control) != 0) {
+						document.MoveCaret(CaretDirection.CtrlPgDn);
+					} else {
+						document.MoveCaret(CaretDirection.PgDn);
+					}
+					return true;
+				}
+
 				case Keys.Delete: {
 					if (shift) {
 						Cut();
