@@ -2956,7 +2956,7 @@ namespace System.Windows.Forms {
 								msg.message = Msg.WM_LBUTTONDOWN;
 							} else {
 								msg.message = Msg.WM_NCLBUTTONDOWN;
-								WholeToScreen (msg.hwnd, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
+								ClientToScreen (msg.hwnd, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
 							}
 							// TODO: For WM_NCLBUTTONDOWN wParam specifies a hit-test value not the virtual keys down
 							msg.wParam=GetMousewParam(0);
@@ -2969,7 +2969,7 @@ namespace System.Windows.Forms {
 								msg.message = Msg.WM_MBUTTONDOWN;
 							} else {
 								msg.message = Msg.WM_NCMBUTTONDOWN;
-								WholeToScreen (msg.hwnd, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
+								ClientToScreen (msg.hwnd, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
 							}
 							msg.wParam=GetMousewParam(0);
 							break;
@@ -2981,7 +2981,7 @@ namespace System.Windows.Forms {
 								msg.message = Msg.WM_RBUTTONDOWN;
 							} else {
 								msg.message = Msg.WM_NCRBUTTONDOWN;
-								WholeToScreen (msg.hwnd, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
+								ClientToScreen (msg.hwnd, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
 							}
 							msg.wParam=GetMousewParam(0);
 							break;
@@ -3061,7 +3061,7 @@ namespace System.Windows.Forms {
 								msg.message = Msg.WM_LBUTTONUP;
 							} else {
 								msg.message = Msg.WM_NCLBUTTONUP;
-								WholeToScreen (msg.hwnd, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
+								ClientToScreen (msg.hwnd, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
 							}
 							msg.wParam=GetMousewParam(0);
 							break;
@@ -3073,7 +3073,7 @@ namespace System.Windows.Forms {
 								msg.message = Msg.WM_MBUTTONUP;
 							} else {
 								msg.message = Msg.WM_NCMBUTTONUP;
-								WholeToScreen (msg.hwnd, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
+								ClientToScreen (msg.hwnd, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
 							}
 							msg.wParam=GetMousewParam(0);
 							break;
@@ -3085,7 +3085,7 @@ namespace System.Windows.Forms {
 								msg.message = Msg.WM_RBUTTONUP;
 							} else {
 								msg.message = Msg.WM_NCRBUTTONUP;
-								WholeToScreen (msg.hwnd, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
+								ClientToScreen (msg.hwnd, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
 							}
 							msg.wParam=GetMousewParam(0);
 							break;
