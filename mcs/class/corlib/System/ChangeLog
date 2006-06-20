@@ -1,3 +1,7 @@
+2006-06-20  Jb Evain  <jbevain@gmail.com>
+
+	* Math.cs: implement Math.Truncate.
+
 2006-06-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTime.cs :

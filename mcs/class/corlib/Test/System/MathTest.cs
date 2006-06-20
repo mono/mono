@@ -706,6 +706,44 @@ public class MathTest : Assertion {
 		Assert(Double.MinValue == Math.Round(Double.MinValue));
 	}
 
+#if NET_2_0
+	public void TestDoubleTruncate ()
+	{
+		double a = 1.2D;
+		double b = 2.8D;
+		double c = 0D;
+
+		AssertEquals ("Should truncate to 1", Math.Truncate (a), 1D);
+		AssertEquals ("Should truncate to 2", Math.Truncate (b), 2D);
+
+		AssertEquals ("Should truncate to -1", Math.Truncate (a * -1D), -1D);
+		AssertEquals ("Should truncate to -2", Math.Truncate (b * -1D), -2D);
+
+		AssertEquals ("Should return 0", Math.Truncate (c), 0D);
+
+		Assert (Double.MaxValue == Math.Truncate (Double.MaxValue));
+		Assert (Double.MinValue == Math.Truncate (Double.MinValue));
+	}
+
+	public void TestDecimalTruncate ()
+	{
+		decimal a = 1.2M;
+		decimal b = 2.8M;
+		decimal c = 0M;
+
+		AssertEquals ("Should truncate to 1", Math.Truncate (a), 1M);
+		AssertEquals ("Should truncate to 2", Math.Truncate (b), 2M);
+
+		AssertEquals ("Should truncate to -1", Math.Truncate (a * -1M), -1M);
+		AssertEquals ("Should truncate to -2", Math.Truncate (b * -1M), -2M);
+
+		AssertEquals ("Should return 0", Math.Truncate (c), 0M);
+
+		Assert (Decimal.MaxValue == Math.Truncate (Decimal.MaxValue));
+		Assert (Decimal.MinValue == Math.Truncate (Decimal.MinValue));
+	}
+#endif
+
 	public void TestDoubleRound2() {
 		double a = 3.45D;
 		double b = 3.46D;

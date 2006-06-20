@@ -1,3 +1,7 @@
+2006-06-20  Jb Evain  <jbevain@gmail.com>
+
+	* MathTest.cs: add tests for Math.Truncate.
+
 2006-05-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ArrayTest.cs : test for bug #77277 by Kazuki Oikawa.
