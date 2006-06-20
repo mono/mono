@@ -11,3 +11,6 @@ Default skin template. The following skins are provided as examples only.
 <asp:Image runat="server" SkinID="yellow" ImageUrl="myyellowimageurl" />
 
 
+<%@ Register Src="~/UrlProperty.ascx" TagName="UrlProperty" TagPrefix="UrlProp" %>
+
+<UrlProp:UrlProperty runat="server" Property1="testProp1" UrlProperty2="testProp2" />

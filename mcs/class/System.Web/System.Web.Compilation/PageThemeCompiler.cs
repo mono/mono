@@ -122,6 +122,15 @@ namespace System.Web.Compilation
 			return new CodeArrayCreateExpression (typeof (string), initializers);
 		}
 
+		protected override string HandleUrlProperty (string str, MemberInfo member)
+		{
+			if (str.StartsWith ("~", StringComparison.Ordinal))
+				return str;
+
+			return "~/App_Themes/" + UrlUtils.Combine (
+				System.IO.Path.GetFileName (parser.InputFile), str);
+		}
+
 		void CreateControlSkinMethod (ControlBuilder builder)
 		{
 			EnsureID (builder);

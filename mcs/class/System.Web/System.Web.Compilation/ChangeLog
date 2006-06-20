@@ -1,3 +1,8 @@
+2006-06-20 Andrew Skiba <andrews@mainsoft.com>
+
+	* PageThemeCompiler.cs, TemplateControlCompiler.cs: take care of
+	UrlPropertyAttribute.
+
 2006-06-18 Andrew Skiba <andrews@mainsoft.com>
 
 	* TemplateControlCompiler.cs: check IsWritablePropertyOrField before

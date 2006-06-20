@@ -1,5 +1,9 @@
 2006-06-20 Andrew Skiba <andrews@mainsoft.com>
 
+	* ThemeTest.cs: add new test for UrlPropertyAttribute
+
+2006-06-20 Andrew Skiba <andrews@mainsoft.com>
+
 	* FormViewTest.cs: add new test for CssClass attribute
 
 2006-06-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>

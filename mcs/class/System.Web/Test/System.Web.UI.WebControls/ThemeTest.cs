@@ -59,11 +59,25 @@ namespace MonoTests.System.Web.UI.WebControls
 			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (), "Test1.Resources.PageWithStyleSheet.aspx", "PageWithStyleSheet.aspx");
 			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (), "Test1.Resources.PageWithTheme.aspx", "PageWithTheme.aspx");
 			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (), "Test1.Resources.RunTimeSetTheme.aspx", "RunTimeSetTheme.aspx");
+			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (),
+				"Test1.Resources.UrlProperty.aspx", "UrlProperty.aspx");
+			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (),
+				"Test1.Resources.UrlProperty.ascx", "UrlProperty.ascx");
+			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (),
+				"Test1.Resources.UrlProperty.ascx.cs", "UrlProperty.ascx.cs");
+			
 #else
 			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (), "Theme1.skin", "App_Themes/Theme1/Theme1.skin");
 			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (), "PageWithStyleSheet.aspx", "PageWithStyleSheet.aspx");
 			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (), "PageWithTheme.aspx", "PageWithTheme.aspx");
 			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (), "RunTimeSetTheme.aspx", "RunTimeSetTheme.aspx");
+			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (),
+				"UrlProperty.aspx", "UrlProperty.aspx");
+			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (),
+				"UrlProperty.ascx", "UrlProperty.ascx");
+			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (),
+				"UrlProperty.ascx.cs", "UrlProperty.ascx.cs");
+			
 #endif
 		}
 
@@ -214,6 +228,18 @@ namespace MonoTests.System.Web.UI.WebControls
 			Thread.Sleep (100);
 			Helper.Unload ();
 			Thread.Sleep (100);
+		}
+		
+		[Test]
+		[Category("NunitWeb")]
+		public void UrlPropertyTest ()
+		{
+			string res = Helper.Instance.RunUrl ("UrlProperty.aspx");
+
+			Assert.IsTrue (res.IndexOf ("Property1 = testProp1") != -1,
+				"Property1 should be assigned as is, actual result: "+res);
+			Assert.IsTrue (res.IndexOf ("UrlProperty2 = ~/App_Themes/Theme1/testProp2") != -1,
+				"UrlProperty2 should be assigned including theme subfolder, actual result: "+res);
 		}
 	}
 }

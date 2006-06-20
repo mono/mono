@@ -78,6 +78,9 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/ReadOnlyPropertyBind.aspx \
 	Test/mainsoft/NunitWebResources/ReadOnlyPropertyControl.ascx \
 	Test/mainsoft/NunitWebResources/Theme1.skin \
+	Test/mainsoft/NunitWebResources/UrlProperty.aspx \
+	Test/mainsoft/NunitWebResources/UrlProperty.ascx \
+	Test/mainsoft/NunitWebResources/UrlProperty.ascx.cs \
 	Test/mainsoft/NunitWebResources/Web.sitemap \
 	Test/mainsoft/MainsoftWebTest/nunitweb_config.xml 
 

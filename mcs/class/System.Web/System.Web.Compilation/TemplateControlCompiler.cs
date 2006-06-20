@@ -1232,11 +1232,24 @@ namespace System.Web.Compilation
 			prop.GetStatements.Add (new CodeMethodReturnStatement (new CodePrimitiveExpression (false)));
 			mainClass.Members.Add (prop);
 		}
-		
+
+#if NET_2_0
+		protected virtual string HandleUrlProperty (string str, MemberInfo member)
+		{
+			return str;
+		}
+#endif
+
 		CodeExpression GetExpressionFromString (Type type, string str, MemberInfo member)
 		{
-			if (type == typeof (string))
+			if (type == typeof (string)) {
+#if NET_2_0
+				object[] urlAttr = member.GetCustomAttributes (typeof (UrlPropertyAttribute), true);
+				if (urlAttr.Length != 0)
+					str = HandleUrlProperty (str, member);
+#endif
 				return new CodePrimitiveExpression (str);
+			}
 
 			if (type == typeof (bool)) {
 				if (str == null || str == "" || InvariantCompareNoCase (str, "true"))
