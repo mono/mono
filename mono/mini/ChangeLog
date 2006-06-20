@@ -1,3 +1,7 @@
+2006-06-20  Jb Evain  <jbevain@gmail.com>
+
+	* cpu-g4.md: fix max length of start_handler instruction.
+
 2006-06-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c (mono_arch_output_basic_block): Fix a wrong reg-reg move 
