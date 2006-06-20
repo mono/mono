@@ -27,6 +27,11 @@ namespace MonoTests.System.Windows.Forms {
 			{
 				return IsInputKey (key);
 			}
+
+			protected override void WndProc (ref Message m)
+			{
+				base.WndProc (ref m);
+			}
 		}
 
 		[Test]
@@ -168,6 +173,34 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.IsTrue (p.CheckIsInputKey (Keys.PageDown), "TRUE-pagedown");
 			Assert.IsTrue (p.CheckIsInputKey (Keys.End), "TRUE-end");
 			Assert.IsTrue (p.CheckIsInputKey (Keys.Home), "TRUE-home");
+
+			// Create the handle, things are a little different with
+			// the handle created
+			IntPtr dummy = p.Handle;
+
+			foreach (Keys key in Enum.GetValues (typeof (Keys))) {
+				switch (key) {
+				case Keys.Left:
+				case Keys.Right:
+				case Keys.Up:
+				case Keys.Down:
+				case Keys.PageUp:
+				case Keys.PageDown:
+				case Keys.End:
+				case Keys.Home:
+					continue;
+				}
+				Assert.IsFalse (p.CheckIsInputKey (key), "PH-FALSE- " + key);
+			}
+
+			Assert.IsTrue (p.CheckIsInputKey (Keys.Left), "PH-TRUE-left");
+			Assert.IsTrue (p.CheckIsInputKey (Keys.Right), "PH-TRUE-right");
+			Assert.IsTrue (p.CheckIsInputKey (Keys.Up), "PH-TRUE-up");
+			Assert.IsTrue (p.CheckIsInputKey (Keys.Down), "PH-TRUE-down");
+			Assert.IsTrue (p.CheckIsInputKey (Keys.PageUp), "PH-TRUE-pageup");
+			Assert.IsTrue (p.CheckIsInputKey (Keys.PageDown), "PH-TRUE-pagedown");
+			Assert.IsTrue (p.CheckIsInputKey (Keys.End), "PH-TRUE-end");
+			Assert.IsTrue (p.CheckIsInputKey (Keys.Home), "PH-TRUE-home");
 		}
 	}
 
