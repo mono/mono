@@ -36,43 +36,29 @@ namespace System.Windows.Forms {
 	public class BindingContext : ICollection, IEnumerable {
 
 		private Hashtable managers;
-		private object null_data_source = new object ();
+		private EventHandler onCollectionChangedHandler;
 
-		private class DataSourceEntry {
+		private class HashKey {
+			public object source;
+			public string member;
 
-			private object source;
-			private Hashtable members;
-			// private BindingManagerBase default_manager;
-			
-			public DataSourceEntry (object source)
+			public HashKey (object source, string member)
 			{
 				this.source = source;
-				members = new Hashtable ();
+				this.member = member;
 			}
 
-			public BindingManagerBase AddMember (string member)
+			public override int GetHashCode ()
 			{
-				if (member == null)
-					member = String.Empty;
-				BindingManagerBase res = members [member] as BindingManagerBase;
-				if (res != null)
-					return res;
-				res = CreateBindingManager (source, member);
-				Console.WriteLine ("CREATED BINDING MANAGER:   {0}", res);
-				if (res == null)
-					return null;
-				members [member] = res;
-				return res;
+				return source.GetHashCode() + member.GetHashCode ();
 			}
 
-			public void AddMember (string member, BindingManagerBase manager)
+			public override bool Equals (object o)
 			{
-				members [member] = manager;
-			}
-
-			public bool Contains (string member)
-			{
-				return members.Contains (member);
+				HashKey hk = o as HashKey;
+				if (hk == null)
+					return false;
+				return hk.source == source && hk.member == member;
 			}
 		}
 
@@ -82,107 +68,172 @@ namespace System.Windows.Forms {
 		}
 
 		public bool IsReadOnly {
-			get {
-				return false;
-			}
+			get { return false; }
 		}
 
 		public BindingManagerBase this [object dataSource] {
-			get {
-				return this [dataSource, String.Empty];
-			}
+			get { return this [dataSource, String.Empty]; }
 		}
 
 		public BindingManagerBase this [object data_source, string data_member] {
 			get {
-				DataSourceEntry ds = GetEntry (data_source, data_member, true);
-				return ds.AddMember (data_member);
+				if (data_source == null)
+					throw new ArgumentNullException ("data_source");
+				if (data_member == null)
+					data_member = String.Empty;
+
+				HashKey key = new HashKey (data_source, data_member);
+				BindingManagerBase res = managers [key] as BindingManagerBase;
+
+				if (res != null)
+					return res;
+
+				res = CreateBindingManager (data_source, data_member);
+				Console.WriteLine ("CREATED: {0}", res);
+				if (res == null)
+					return null;
+				managers [key] = res;
+				return res;
 			}
 		}
 
-		private DataSourceEntry GetEntry (object data_source, string data_member, bool create)
+		private BindingManagerBase CreateBindingManager (object data_source, string data_member)
 		{
-			if (data_source == null)
-				throw new ArgumentNullException ("data_source");
-				
-			DataSourceEntry ds = managers [data_source] as DataSourceEntry;
-			if (ds == null && create) {
-				ds = new DataSourceEntry (data_source);
-				managers [data_source] = ds;
-			}
-
-			return ds;
-		}
-
-		private static BindingManagerBase CreateBindingManager (object data_source, 
-			string data_member)
-		{
-			if (data_source is IList || 
-				data_source is IListSource ||
-				data_source is IBindingList) {
-				return CreateCurrencyManager (data_source, data_member);
-			}
-
-			return new PropertyManager (data_source, data_member);
-		}
-
-		private static CurrencyManager CreateCurrencyManager (object data_source, string data_member)
-		{
-			IList list = null;
-
-			if (data_source is IList) {
-				list = (IList) data_source;
-			} else if (data_source is IListSource) {
-				list = ((IListSource) data_source).GetList ();
-			} else {
-				throw new Exception ("Attempted to create currency manager " +
-					"from invalid type: " + data_source.GetType ());
-			}
+#if true
+			/* the following is gross and special cased
+			   and needs to die.  a more proper
+			   implementation would be something like
+			   what's down below in the #else section,
+			   where the recursion over the nagivation
+			   path is at the toplevel.
+			*/
 
 			DataTable table = data_source as DataTable;
 			if (table == null && data_source is DataView)
 				table = ((DataView) data_source).Table;
 
 			DataSet dataset = data_source as DataSet;
-			if (table == null && dataset != null) {
-				string table_name = data_member;
-				int sp = data_member != null ? data_member.IndexOf ('.') : -1;
-				if (sp != -1) {
-					table_name = data_member.Substring (0, sp);
-					data_member = data_member.Substring (sp + 1);
-				}
-				if (dataset != null && table_name != String.Empty) {
-					Console.WriteLine ("TABLE NAME:  {0}   data member:   {1}", table_name, data_member);
-					table = dataset.Tables [table_name];
-					if (table == null)
-						throw new ArgumentException (String.Format ("Specified data member table {0} does not exist in the data source DataSet", data_member));
-					if (data_member != table_name) {
-						/*
-						Console.WriteLine ("CHECKING FOR COLUMN:   {0}", data_member);
-						DataColumn col = table.Columns [data_member];
-						DataRelation rel = (col == null ? dataset.Relations [data_member] : null);
-						Console.WriteLine ("COLUMN:   {0}    RELATION:  {1}", col, rel);
-						if (rel == null && col == null)
-							throw new ArgumentException (String.Format ("Specified data member {0} does not exist in the data table {1}", data_member, table_name));
+			if (table != null) {
+				return new CurrencyManager (new DataView (table));
+			}
+			else if (data_member != "" && dataset != null) {
+				BindingMemberInfo info = new BindingMemberInfo (data_member);
 
-						// FIXME: hmm, in such case what should we do?
-						*/
-						table = null;
-						list = null;
+				if (info.BindingPath == "") {
+					table = dataset.Tables [info.BindingField];
+					if (table == null)
+						throw new ArgumentException (String.Format ("Specified data member table `{0}' does not exist in the data source DataSet", info.BindingField));
+
+					return new CurrencyManager (new DataView (table));
+				}
+				else {
+					Console.WriteLine ("Getting parent_manager for {0}", info.BindingPath);
+					CurrencyManager parent_manager = (CurrencyManager) this[data_source, info.BindingPath];
+
+					table = ((DataView)parent_manager.data_source).Table;
+
+					DataColumn col = table.Columns [info.BindingField];
+					DataRelation rel = dataset.Relations [info.BindingField];
+
+					if (col != null) {
+						Console.WriteLine ("+ creating related property manager for column {0}", info.BindingField);
+						return new RelatedPropertyManager (parent_manager, info.BindingField);
+					}
+					else if (rel != null) {
+						Console.WriteLine ("+ creating related currency manager for relation {0}", info.BindingField);
+						return new RelatedCurrencyManager (parent_manager, rel);
+					}
+					else 
+						throw new ArgumentException (String.Format ("Specified data member {0} does not exist in the data table {1}",
+											    info.BindingField, table.TableName));
+
+				}
+			}
+			else if (data_source is IList) {
+				IList list = (IList)data_source;
+
+				if (data_member == "") {
+					return new CurrencyManager (list);
+				}
+				else {
+					CurrencyManager parent_manager = (CurrencyManager) this[data_source, ""];
+
+					if (parent_manager.Count == 0 ||
+					    TypeDescriptor.GetProperties (parent_manager.GetItem (0)).Find (data_member, true) == null) {
+						throw new ArgumentException ("Cannot create a child list for field {0}", data_member);
+					}
+						
+
+					Console.WriteLine ("creating related property manager for column {0} on an IList source", data_member);
+					return new RelatedPropertyManager (parent_manager, data_member);
+				}
+			} else if (data_source is IListSource) {
+				return new CurrencyManager (((IListSource) data_source).GetList ());
+			}
+			else {
+				/* must be a property */
+				Console.WriteLine ("creating PropertyManager");
+				return new PropertyManager (data_source, data_member);
+			}
+#else
+			if (data_member == "") {
+				if (data_source is DataSet) {
+					return new CurrencyManager (new DataViewManager ((DataSet)data_source));
+				}
+				else if (data_source is DataTable) {
+					return new CurrencyManager (new DataView ((DataTable)data_source));
+				}
+				else if (data_source is DataView) {
+					return new CurrencyManager ((DataView)data_source);
+				}
+				else if (data_source is IListSource) {
+					return new CurrencyManager (((IListSource) data_source).GetList ());
+				}
+				else if (data_source is IList) {
+					return new CurrencyManager ((IList) data_source);
+				}
+				else {
+					return new PropertyManager (data_source, data_member);
+				}
+			}
+			else {
+				int dot = data_member.LastIndexOf ('.');
+				string current_field = dot == -1 ? data_member : data_member.Substring (dot + 1);
+				string parent_path = dot == -1 ? "" : data_member.Substring (0, dot);
+
+				Console.WriteLine ("Getting parent_manager for {0}", parent_path);
+				BindingManagerBase parent_manager = this[data_source, parent_path];
+				CurrencyManager cm = parent_manager as CurrencyManager;
+
+				PropertyDescriptor pd = parent_manager == null ? null : parent_manager.GetItemProperties ().Find (current_field, true);
+
+				if (pd != null) {
+					Console.WriteLine ("parent_manager.GetItemProperties returned property descriptor for {0}", pd.Name);
+					if (cm != null) {
+						if (cm.data_source is DataViewManager)
+							return new RelatedCurrencyManager (cm, );
+						else
+							return new RelatedPropertyManager (cm, current_field);
 					}
 				}
-			}
+				else {
+					/* null property.  extra checks here, for e.g. DataRelations */
+					if (cm != null) {
+						if (cm.data_source is DataViewManager) {
+							DataSet ds = ((DataViewManager)cm.data_source).DataSet;
+							DataRelation rel = ds.Relations [current_field];
 
-			Console.WriteLine ("DATA TABLE:   {0}", table);
-			
-			if (table != null) {
-				Console.WriteLine ("CREATING VIEW ON:  {0}", table.TableName);
-				list = new DataView (table);
-			}
+							if (rel != null) {
+								Console.WriteLine ("+ creating related currency manager for relation {0}", current_field);
+								return new RelatedCurrencyManager (cm, rel);
+							}
+						}
+					}
+				}
 
-			if (list == null)
-				return null;
-			return new CurrencyManager (list);
+				throw new ArgumentException (String.Format ("Cannot create a child list for field {0}", current_field));
+			}
+#endif
 		}
 
 		#region Public Instance Methods
@@ -193,11 +244,13 @@ namespace System.Windows.Forms {
 
 		public bool Contains (object dataSource, string dataMember)
 		{
-			DataSourceEntry ds = GetEntry (dataSource, dataMember, false);
-			if (ds == null)
-				return false;
-			return ds.Contains (dataMember);
+			if (dataSource == null)
+				throw new ArgumentNullException ("dataSource");
+			if (dataMember == null)
+				dataMember = String.Empty;
 
+			HashKey key = new HashKey (dataSource, dataMember);
+			return managers [key] != null;
 		}
 		#endregion	// Public Instance Methods
 
@@ -215,8 +268,9 @@ namespace System.Windows.Forms {
 				throw new ArgumentNullException ("dataSource");
 			if (listManager == null)
 				throw new ArgumentNullException ("listManager");
-			DataSourceEntry ds = GetEntry (dataSource, String.Empty, true);
-			ds.AddMember (String.Empty, listManager);
+
+			HashKey key = new HashKey (dataSource, String.Empty);
+			managers [key] = listManager;
 		}
 
 		protected internal void Clear ()
@@ -230,27 +284,39 @@ namespace System.Windows.Forms {
 			managers.Clear ();
 		}
 
-		protected virtual void OnCollectionChanged(System.ComponentModel.CollectionChangeEventArgs ccevent)
+		protected virtual void OnCollectionChanged (CollectionChangeEventArgs ccevent)
 		{
-			if (CollectionChanged != null) {
-				CollectionChanged (this, ccevent);
+			if (onCollectionChangedHandler != null) {
+				onCollectionChangedHandler (this, ccevent);
 			}
 		}
 
 		protected internal void Remove (object dataSource)
 		{
+			if (dataSource == null)
+				throw new ArgumentNullException ("dataSource");
+
 			RemoveCore (dataSource);
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, dataSource));
 		}
 
 		protected virtual void RemoveCore (object dataSource)
 		{
-			managers.Remove (dataSource);
+			HashKey[] keys = new HashKey [managers.Keys.Count];
+			managers.Keys.CopyTo (keys, 0);
+
+			for (int i = 0; i < keys.Length; i ++) {
+				if (keys[i].source == dataSource)
+					managers.Remove (keys[i]);
+			}
 		}
 		#endregion	// Protected Instance Methods
 
 		#region Events
-		public event CollectionChangeEventHandler CollectionChanged;
+		public event CollectionChangeEventHandler CollectionChanged {
+			add { throw new NotImplementedException (); }
+			remove { /* nothing to do here.. */ }
+		}
 		#endregion	// Events
 
 		#region ICollection Interfaces
@@ -280,9 +346,9 @@ namespace System.Windows.Forms {
 		#endregion	// ICollection Interfaces
 
 		#region IEnumerable Interfaces
-		[MonoTODO]
+		[MonoTODO ("our enumerator is slightly different.  in MS's implementation the Values are WeakReferences to the managers.")]
 		IEnumerator IEnumerable.GetEnumerator() {
-			throw new NotImplementedException();
+			return managers.GetEnumerator ();
 		}
 		#endregion	// IEnumerable Interfaces
 	}

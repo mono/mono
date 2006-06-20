@@ -413,6 +413,8 @@ System.Windows.Forms/QueryContinueDragEventHandler.cs
 System.Windows.Forms/QuestionEventArgs.cs
 System.Windows.Forms/QuestionEventHandler.cs
 System.Windows.Forms/RadioButton.cs
+System.Windows.Forms/RelatedCurrencyManager.cs
+System.Windows.Forms/RelatedPropertyManager.cs
 System.Windows.Forms/RichTextBox.cs
 System.Windows.Forms/RichTextBoxFinds.cs
 System.Windows.Forms/RichTextBoxScrollBars.cs

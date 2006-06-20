@@ -40,8 +40,17 @@ namespace System.Windows.Forms {
 
 		internal PropertyManager (object data_source, string property_name)
 		{
-			this.data_source = data_source;
 			this.property_name = property_name;
+
+			SetDataSource (data_source);
+		}
+
+		internal void SetDataSource (object new_data_source)
+		{
+			if (prop_desc != null)
+				prop_desc.RemoveValueChanged (data_source, new EventHandler (PropertyChangedHandler));
+
+			data_source = new_data_source;
 
 			prop_desc = TypeDescriptor.GetProperties (data_source).Find (property_name, true);
 
@@ -52,7 +61,7 @@ namespace System.Windows.Forms {
 		}
 
 		public override object Current {
-			get { return data_source; }
+			get { return prop_desc == null ? null : prop_desc.GetValue (data_source); }
 		}
 
 		public override int Position {

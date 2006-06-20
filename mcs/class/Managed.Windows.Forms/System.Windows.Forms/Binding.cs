@@ -36,9 +36,6 @@ namespace System.Windows.Forms {
 		private object data_source;
 		private string data_member;
 
-		private string row_name;
-		private string col_name;
-
 		private BindingMemberInfo binding_member_info;
 		private Control control;
 
@@ -60,12 +57,6 @@ namespace System.Windows.Forms {
 			data_source = dataSource;
 			data_member = dataMember;
 			binding_member_info = new BindingMemberInfo (dataMember);
-
-			int sp = data_member != null ? data_member.IndexOf ('.') : -1;
-			if (sp != -1) {
-				row_name = data_member.Substring (0, sp);
-				col_name = data_member.Substring (sp + 1, data_member.Length - sp - 1);
-			}
 		}
 		#endregion	// Public Constructors
 
@@ -152,13 +143,9 @@ namespace System.Windows.Forms {
 			if (control == null || control.BindingContext == null)
 				return;
 
-			string member_name = data_member;
-			if (row_name != null)
-				member_name = row_name;
-
 			Console.WriteLine ("data source  {0}   member name:  {1}",
-					data_source, member_name);
-			manager = control.BindingContext [data_source, member_name];
+					   data_source, data_member);
+			manager = control.BindingContext [data_source, data_member];
 
 			manager.AddBinding (this);
 			manager.PositionChanged += new EventHandler (PositionChangedHandler);
@@ -193,17 +180,14 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			if (row_name != null && col_name != null) {
-				PropertyDescriptor pd = TypeDescriptor.GetProperties (manager.Current).Find (col_name, true);
-				object pulled = pd.GetValue (manager.Current);
-				data = ParseData (pulled, pd.PropertyType);
-			} else if (data_member != null) {
-				PropertyDescriptor pd = TypeDescriptor.GetProperties (manager.Current).Find (data_member, true);
-				object pulled = pd.GetValue (manager.Current);
-				data = ParseData (pulled, pd.PropertyType);
-			} else {
+			PropertyDescriptor pd = TypeDescriptor.GetProperties (manager.Current).Find (binding_member_info.BindingField, true);
+			if (pd == null) {
 				object pulled = manager.Current;
 				data = ParseData (pulled, pulled.GetType ());
+			}
+			else {
+				object pulled = pd.GetValue (manager.Current);
+				data = ParseData (pulled, pd.PropertyType);
 			}
 
 			data = FormatData (data);
@@ -222,10 +206,7 @@ namespace System.Windows.Forms {
 
 		private void SetPropertyValue (object data)
 		{
-			string member_name = data_member;
-			if (col_name != null)
-				member_name = col_name;
-			PropertyDescriptor pd = TypeDescriptor.GetProperties (manager.Current).Find (member_name, true);
+			PropertyDescriptor pd = TypeDescriptor.GetProperties (manager.Current).Find (binding_member_info.BindingField, true);
 			if (pd.IsReadOnly)
 				return;
 			pd.SetValue (manager.Current, data);

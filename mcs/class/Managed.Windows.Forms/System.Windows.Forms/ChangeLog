@@ -1,3 +1,32 @@
+2006-06-20  Chris Toshok  <toshok@ximian.com>
+
+	* BindingContext.cs: rewrite the CreateBindingManager code to
+	handle navigation paths more or less properly.  This could
+	definitely stand some more work, in particular to push the
+	recursion up to the toplevel.  But that relies on fixes in other
+	places (System.Data comes to mind).
+
+	Also, move to a flat hashtable (and encode the twolevel nature of
+	the dictionary into the hash key).  This lets us implement the
+	IEnumerable.GetEnumerator method.
+
+	* RelatedCurrencyManager.cs: new class.  Update our view based on
+	our relation and our parent CurrencyManager's position.
+
+	* CurrencyManager.cs: split out some logic from the ctor into
+	SetView, so it can be called from the new RelatedCurrencyManager
+	subclass.
+
+	* RelatedPropertyManager.cs: new class.  Update our datasource
+	based on the position of our parent CurrencyManager.
+
+	* PropertyManager.cs: split out some logic from the ctor into
+	SetDataSource, so it can be called from the new RelatedDataSource
+	subclass.  Also, make the Current getter return the value
+	of the PropertyDescriptor, not the data_source.
+
+	* Binding.cs: no need to duplicate the string splitting code here.
+
 2006-06-19  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* Control.cs:
