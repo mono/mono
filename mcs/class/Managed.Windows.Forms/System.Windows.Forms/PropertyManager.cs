@@ -134,8 +134,6 @@ namespace System.Windows.Forms {
 
 		protected internal override void OnCurrentChanged (EventArgs e)
 		{
-			PullData ();
-
 			if (onCurrentChangedHandler != null) {
 				onCurrentChangedHandler (this, e);
 			}
@@ -143,6 +141,8 @@ namespace System.Windows.Forms {
 
 		private void PropertyChangedHandler (object sender, EventArgs e)
 		{
+			PushData ();
+
 			OnCurrentChanged (EventArgs.Empty);
 		}
 	}

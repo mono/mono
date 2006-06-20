@@ -230,7 +230,7 @@ namespace System.Windows.Forms {
 
 		public void Refresh ()
 		{
-			PullData ();
+			PushData ();
 		}
 
 		protected void CheckEmpty ()

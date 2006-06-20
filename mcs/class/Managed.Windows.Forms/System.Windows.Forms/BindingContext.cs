@@ -114,7 +114,24 @@ namespace System.Windows.Forms {
 
 			DataSet dataset = data_source as DataSet;
 			if (table != null) {
-				return new CurrencyManager (new DataView (table));
+				if (data_member == "")
+					return new CurrencyManager (new DataView (table));
+				else {
+					BindingMemberInfo info = new BindingMemberInfo (data_member);
+
+					Console.WriteLine ("Getting parent_manager for {0}", info.BindingPath);
+					CurrencyManager parent_manager = (CurrencyManager) this[data_source, info.BindingPath];
+
+					DataColumn col = table.Columns [info.BindingField];
+
+					if (col != null) {
+						Console.WriteLine ("+ creating related property manager for column {0}", info.BindingField);
+						return new RelatedPropertyManager (parent_manager, info.BindingField);
+					}
+						throw new ArgumentException (String.Format ("Specified data member {0} does not exist in the data table {1}",
+											    info.BindingField, table.TableName));
+
+				}
 			}
 			else if (data_member != "" && dataset != null) {
 				BindingMemberInfo info = new BindingMemberInfo (data_member);

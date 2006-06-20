@@ -1,5 +1,21 @@
 2006-06-20  Chris Toshok  <toshok@ximian.com>
 
+	* PropertyManager.cs: the PropertyChangedHandler is invoked when
+	data in the source has changed and we need to update the control,
+	so s/PullData/PushData.
+
+	* CurrencyManager.cs: Refresh is meant to update the control from
+	data in the datasource.  So, s/PullData/PushData.
+
+	* BindingContext.cs: add more ugliness (we weren't handling the
+	case where data_source = DataTable and data_member = column_name).
+
+	* Binding.cs: fix PushData/PullData mixup.  Both are interpreted
+	from the perspective of the datasource.  PullData pulls from the
+	control, PushData pushes to the control.
+
+2006-06-20  Chris Toshok  <toshok@ximian.com>
+
 	* BindingContext.cs: rewrite the CreateBindingManager code to
 	handle navigation paths more or less properly.  This could
 	definitely stand some more work, in particular to push the

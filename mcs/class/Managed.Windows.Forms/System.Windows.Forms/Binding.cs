@@ -154,12 +154,12 @@ namespace System.Windows.Forms {
 
 			is_null_desc = TypeDescriptor.GetProperties (manager.Current).Find (property_name + "IsNull", false);
 
-			PullData ();
+			PushData ();
 		}
 
-		internal void PushData ()
+		internal void PullData ()
 		{
-			if (IsBinding == false)
+			if (IsBinding == false || manager.Current == null)
 				return;
 
 			data = prop_desc.GetValue (control);
@@ -167,7 +167,7 @@ namespace System.Windows.Forms {
 			SetPropertyValue (data);
 		}
 
-		internal void PullData ()
+		internal void PushData ()
 		{
 			if (IsBinding == false || manager.Current == null)
 				return;
@@ -196,7 +196,7 @@ namespace System.Windows.Forms {
 
 		internal void UpdateIsBinding ()
 		{
-			PullData ();
+			PushData ();
 		}
 
 		private void SetControlValue (object data)
@@ -235,17 +235,17 @@ namespace System.Windows.Forms {
 
 		private void PropertyValueChanged (object sender, EventArgs e)
 		{
-			PullData ();
+			PushData ();
 		}
 
 		private void ControlValidatingHandler (object sender, CancelEventArgs e)
 		{
-			PullData ();
+			PushData ();
 		}
 
 		private void PositionChangedHandler (object sender, EventArgs e)
 		{
-			PullData ();
+			PushData ();
 		}
 
 		private object ParseData (object data, Type data_type)
