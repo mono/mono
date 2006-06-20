@@ -1,3 +1,7 @@
+2006-06-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* ProtocolType.cs SocketOptionName.cs: Add missing net 2.0 fields.
+
 2006-05-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* NetworkStream.cs: Marked Dispose (bool) virtual on 1.x profile.

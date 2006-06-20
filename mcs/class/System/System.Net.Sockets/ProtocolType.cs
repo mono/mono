@@ -103,6 +103,18 @@ namespace System.Net.Sockets {
 		/// <summary>
 		/// </summary>
 		Unknown = -1,
+
+#if NET_2_0
+		IPv4 = 4,
+		IPv6RoutingHeader = 43,
+		IPv6FragmentHeader = 44,
+		IPSecEncapsulatingSecurityPayload = 50,
+		IPSecAuthenticationHeader = 51,
+		IcmpV6 = 58,
+		IPv6NoNextHeader = 59,
+		IPv6DestinationOptions = 60,
+		IPv6HopByHopOptions = 0,
+#endif
 	} // ProtocolType
 
 } // System.Net.Sockets
