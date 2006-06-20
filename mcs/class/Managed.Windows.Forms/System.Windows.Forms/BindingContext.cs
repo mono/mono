@@ -197,15 +197,13 @@ namespace System.Windows.Forms {
 				}
 			}
 			else {
-				int dot = data_member.LastIndexOf ('.');
-				string current_field = dot == -1 ? data_member : data_member.Substring (dot + 1);
-				string parent_path = dot == -1 ? "" : data_member.Substring (0, dot);
+				BindingMemberInfo info = new BindingMemberInfo (data_member);
 
-				Console.WriteLine ("Getting parent_manager for {0}", parent_path);
-				BindingManagerBase parent_manager = this[data_source, parent_path];
+				Console.WriteLine ("Getting parent_manager for {0}", info.BindingPath);
+				BindingManagerBase parent_manager = this[data_source, info.BindingPath];
 				CurrencyManager cm = parent_manager as CurrencyManager;
 
-				PropertyDescriptor pd = parent_manager == null ? null : parent_manager.GetItemProperties ().Find (current_field, true);
+				PropertyDescriptor pd = parent_manager == null ? null : parent_manager.GetItemProperties ().Find (info.BindingField, true);
 
 				if (pd != null) {
 					Console.WriteLine ("parent_manager.GetItemProperties returned property descriptor for {0}", pd.Name);
@@ -213,7 +211,7 @@ namespace System.Windows.Forms {
 						if (cm.data_source is DataViewManager)
 							return new RelatedCurrencyManager (cm, );
 						else
-							return new RelatedPropertyManager (cm, current_field);
+							return new RelatedPropertyManager (cm, info.BindingField);
 					}
 				}
 				else {
@@ -221,17 +219,17 @@ namespace System.Windows.Forms {
 					if (cm != null) {
 						if (cm.data_source is DataViewManager) {
 							DataSet ds = ((DataViewManager)cm.data_source).DataSet;
-							DataRelation rel = ds.Relations [current_field];
+							DataRelation rel = ds.Relations [info.BindingField];
 
 							if (rel != null) {
-								Console.WriteLine ("+ creating related currency manager for relation {0}", current_field);
+								Console.WriteLine ("+ creating related currency manager for relation {0}", info.BindingField);
 								return new RelatedCurrencyManager (cm, rel);
 							}
 						}
 					}
 				}
 
-				throw new ArgumentException (String.Format ("Cannot create a child list for field {0}", current_field));
+				throw new ArgumentException (String.Format ("Cannot create a child list for field {0}", info.BindingField));
 			}
 #endif
 		}
