@@ -1,3 +1,7 @@
+2006-06-20  Jb Evain  <jbevain@gmail.com>
+
+	* MathTest.cs: add tests for Math.Truncate.
+
 2006-03-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DoubleTest.cs : added ParseEmptyString().

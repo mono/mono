@@ -421,6 +421,21 @@ namespace System
 				return Round (value, digits);
 			throw new NotImplementedException ();
 		}
+
+		public static double Truncate (double d)
+		{
+			if (d > 0D)
+				return Floor (d);
+			else if (d < 0D)
+				return Ceiling (d);
+			else
+				return d;
+		}
+
+		public static decimal Truncate (decimal d)
+		{
+			return Decimal.Truncate (d);
+		}
 #endif
 
 		public static int Sign (decimal value)
