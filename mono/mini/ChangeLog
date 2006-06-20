@@ -1,4 +1,7 @@
 2006-06-16  Massimiliano Mantione  <massi@ximian.com>
+	* simple-cee-ops.h, simple-mini-ops.h: Fixed bug 78656.
+
+2006-06-16  Massimiliano Mantione  <massi@ximian.com>
 	* ssa.c: Fixed bug 78653 for SSA based deadce.
 	* mini.h: added MONO_INST_DEFINITION_HAS_SIDE_EFFECTS flag go
 	MonoInst.flags, used in SSA based deadce.
