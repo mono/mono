@@ -37,6 +37,10 @@ using System.Globalization;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using NunitWeb;
+using System.Text.RegularExpressions;
+using System.Reflection;
+using System.Threading;
 
 namespace MonoTests.System.Web.UI.WebControls
 {
@@ -160,6 +164,38 @@ namespace MonoTests.System.Web.UI.WebControls
 			f.PageIndex = 1;
 			Assert.AreEqual (16, f.PageCount, "#01");
 		}
+		
+		[TestFixtureTearDown]
+		public void TearDown ()
+		{
+			Thread.Sleep (100);
+		        Helper.Unload ();
+		}
+	
+		//[TestFixtureStartUp]
+		//public void StartUp ()
+		//{
+		//	Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (),
+		//		"FormView.aspx", "FormView.aspx");
+		//}
+
+		[Test]
+		[Category("NunitWeb")]
+		public void FormViewCssClass ()
+		{
+			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (),
+				"FormView.aspx", "FormView.aspx");
+			string res = Helper.Instance.RunUrl ("FormView.aspx");
+			Assert.IsTrue (Regex.IsMatch (
+				res, ".*<table[^>]*class=\"[^\"]*test1[^\"]*\"[^>]*>.*",
+				RegexOptions.IgnoreCase|RegexOptions.Singleline),
+				"check that <table class=\"test1\"> is found. Actual: "+res);
+			Assert.IsFalse (Regex.IsMatch (
+				res, ".*<table[^>]*class=\"\"[^>]*>.*",
+				RegexOptions.IgnoreCase|RegexOptions.Singleline),
+				"check that <table class=\"\"> is not found. Actual: "+res);
+		}
+
 	}
 }
 #endif

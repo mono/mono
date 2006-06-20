@@ -1,3 +1,7 @@
+2006-06-20 Andrew Skiba <andrews@mainsoft.com>
+
+	* FormView.cs: handle CssClass attribute
+
 2006-06-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Button.cs: do something in PostBackUrl.

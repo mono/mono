@@ -1398,6 +1398,8 @@ namespace System.Web.UI.WebControls
 			
 			writer.AddAttribute (HtmlTextWriterAttribute.Cellspacing, "0");
 			writer.AddStyleAttribute (HtmlTextWriterStyle.BorderCollapse, "collapse");
+			if (!string.IsNullOrEmpty (ControlStyle.CssClass))
+				writer.AddAttribute (HtmlTextWriterAttribute.Class, ControlStyle.CssClass);
 			table.RenderBeginTag (writer);
 			
 			foreach (FormViewRow row in table.Rows)
