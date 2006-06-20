@@ -39,10 +39,10 @@ namespace System.Windows.Forms {
 		private IList list;
 		private bool binding_suspended;
 
+		internal object data_source;
+
 		internal CurrencyManager (IList data_source)
 		{
-			list = data_source;
-
 			if (data_source as ArrayList != null) {
 				finalType = ((ArrayList) data_source).GetType ();
 			} else if (data_source as Array != null) {
@@ -51,19 +51,7 @@ namespace System.Windows.Forms {
 				finalType = null;
 			}
 
-			DataView view = list as DataView;
-			if (view != null) {
-				view.ListChanged += new ListChangedEventHandler (ListChangedHandler);
-				view.Table.Columns.CollectionChanged  += new CollectionChangeEventHandler (MetaDataChangedHandler);
-				view.Table.ChildRelations.CollectionChanged  += new CollectionChangeEventHandler (MetaDataChangedHandler);
-				view.Table.ParentRelations.CollectionChanged  += new CollectionChangeEventHandler (MetaDataChangedHandler);
-				view.Table.Constraints.CollectionChanged += new CollectionChangeEventHandler (MetaDataChangedHandler);
-			}
-
-			if (list.Count > 0)
-				listposition = 0;
-			else
-				listposition = -1; // Late binding.
+			SetDataSource (data_source);
 		}
 
 		public IList List {
@@ -109,6 +97,38 @@ namespace System.Windows.Forms {
 					return typed.GetListName (null);
 				}
 			}		
+		}
+
+		internal void SetDataSource (object data_source)
+		{
+			if (this.data_source is IBindingList)
+				((IBindingList)this.data_source).ListChanged -= new ListChangedEventHandler (ListChangedHandler);
+			if (this.data_source is DataView) {
+				DataView dataview = (DataView)this.data_source;
+				dataview.Table.Columns.CollectionChanged  -= new CollectionChangeEventHandler (MetaDataChangedHandler);
+				dataview.Table.ChildRelations.CollectionChanged  -= new CollectionChangeEventHandler (MetaDataChangedHandler);
+				dataview.Table.ParentRelations.CollectionChanged  -= new CollectionChangeEventHandler (MetaDataChangedHandler);
+				dataview.Table.Constraints.CollectionChanged -= new CollectionChangeEventHandler (MetaDataChangedHandler);
+			}
+
+			this.data_source = data_source;
+
+			if (this.data_source is IBindingList)
+				((IBindingList)this.data_source).ListChanged += new ListChangedEventHandler (ListChangedHandler);
+			if (this.data_source is DataView) {
+				DataView dataview = (DataView)this.data_source;
+				dataview.Table.Columns.CollectionChanged  += new CollectionChangeEventHandler (MetaDataChangedHandler);
+				dataview.Table.ChildRelations.CollectionChanged  += new CollectionChangeEventHandler (MetaDataChangedHandler);
+				dataview.Table.ParentRelations.CollectionChanged  += new CollectionChangeEventHandler (MetaDataChangedHandler);
+				dataview.Table.Constraints.CollectionChanged += new CollectionChangeEventHandler (MetaDataChangedHandler);
+			}
+
+			list = data_source as IList;
+
+			if (list.Count > 0)
+				listposition = 0;
+			else
+				listposition = -1; // Late binding.
 		}
 
 		public override PropertyDescriptorCollection GetItemProperties ()
