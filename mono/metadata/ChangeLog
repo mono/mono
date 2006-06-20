@@ -1,3 +1,15 @@
+2006-06-20  Raja R Harinath  <rharinath@novell.com>
+
+	Make 'mono_class_get_full' only inflate TYPESPECs, not TYPEDEFs
+	nor TYPEREFs.
+	* class.c (mono_class_create_from_typespec): Add 'context' argument.
+	Inflate result if necessary.
+	(mono_class_get_full): Remove old version.  Rename from
+	'mono_class_get' and add 'context' argument.  Pass it to
+	..._create_from_typespec.
+	(mono_class_get): New.  Simple wrapper to mono_class_get_full.
+	(mono_ldtoken): Revert change below.
+
 2006-06-20  Martin Baulig  <martin@ximian.com>
 
 	* class.c (mono_ldtoken): Don't pass the generic context to
