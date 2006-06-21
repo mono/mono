@@ -1,3 +1,14 @@
+2006-06-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_op_to_op_imm): Enable div/rem -> div_imm/rem_imm conversion.
+
+	* mini-x86.c cpu-pentium.md: Finish support for div/rem imm.
+
+	* mini-codegen.c (mono_local_regalloc): When emitting a copy to put sreg1 in the
+	proper fixed reg, update ins->sreg1 as well.
+
+	* basic.cs: Add tests.
+	
 2006-06-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* local-propagation.c (mono_local_deadce): Fix a typo in reverse copyprop.

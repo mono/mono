@@ -8857,7 +8857,6 @@ mono_op_to_op_imm (int opcode)
 		return OP_IADD_IMM;
 	case OP_ISUB:
 		return OP_ISUB_IMM;
-		/* FIXME: See the FIXMEs in mini-x86.c
 	case OP_IDIV:
 		return OP_IDIV_IMM;
 	case OP_IDIV_UN:
@@ -8866,7 +8865,6 @@ mono_op_to_op_imm (int opcode)
 		return OP_IREM_IMM;
 	case OP_IREM_UN:
 		return OP_IREM_UN_IMM;
-		*/
 	case OP_IMUL:
 		return OP_IMUL_IMM;
 	case OP_IAND:

@@ -1535,13 +1535,8 @@ insert_after_ins (MonoBasicBlock *bb, MonoInst *ins, MonoInst *to_insert)
 static void
 peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
 {
-	MonoInst *ins, *temp, *last_ins = NULL;
+	MonoInst *ins, *last_ins = NULL;
 	ins = bb->code;
-
-	if (bb->max_ireg > cfg->rs->next_vireg)
-		cfg->rs->next_vireg = bb->max_ireg;
-	if (bb->max_freg > cfg->rs->next_vfreg)
-		cfg->rs->next_vfreg = bb->max_freg;
 
 	while (ins) {
 		switch (ins->opcode) {
@@ -1565,37 +1560,6 @@ peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
 				ins->inst_imm = -ins->inst_imm;
 			} else if ((ins->inst_imm == 1) && (ins->dreg == ins->sreg1))
 				ins->opcode = OP_X86_DEC_REG;
-			break;
-		case OP_IDIV_IMM:
-		case OP_IREM_IMM:
-		case OP_IDIV_UN_IMM:
-		case OP_IREM_UN_IMM:
-			/* 
-			 * Keep the cases where we could generated optimized code, otherwise convert
-			 * to the non-imm variant.
-			 * FIXME: Do this always, not just when peephole is enabled
-			 */
-			if (mono_is_power_of_two (ins->inst_imm) < 0) {
-				NEW_INS (cfg, temp, OP_ICONST);
-				temp->inst_c0 = ins->inst_imm;
-				temp->dreg = mono_regstate_next_int (cfg->rs);
-				switch (ins->opcode) {
-				case OP_IDIV_IMM:
-					ins->opcode = OP_IDIV;
-					break;
-				case OP_IREM_IMM:
-					ins->opcode = OP_IREM;
-					break;
-				case OP_IDIV_UN_IMM:
-					ins->opcode = OP_IDIV_UN;
-					break;
-				case OP_IREM_UN_IMM:
-					ins->opcode = OP_IREM_UN;
-					break;
-				}
-				ins->sreg2 = temp->dreg;
-				break;
-			}
 			break;
 		case OP_COMPARE_IMM:
 		case OP_ICOMPARE_IMM:
@@ -1776,9 +1740,6 @@ peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
 		ins = ins->next;
 	}
 	bb->last_ins = last_ins;
-
-	bb->max_ireg = cfg->rs->next_vireg;
-	bb->max_freg = cfg->rs->next_vfreg;
 }
 
 static void
@@ -2002,6 +1963,72 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 	bb->last_ins = last_ins;
 }
 
+/*
+ * mono_arch_lowering_pass:
+ *
+ *  Converts complex opcodes into simpler ones so that each IR instruction
+ * corresponds to one machine instruction.
+ */
+static void
+mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
+{
+	MonoInst *ins, *temp, *last_ins = NULL;
+	ins = bb->code;
+
+	if (bb->max_ireg > cfg->rs->next_vireg)
+		cfg->rs->next_vireg = bb->max_ireg;
+	if (bb->max_freg > cfg->rs->next_vfreg)
+		cfg->rs->next_vfreg = bb->max_freg;
+
+	/*
+	 * FIXME: Need to add more instructions, but the current machine 
+	 * description can't model some parts of the composite instructions like
+	 * cdq.
+	 */
+	while (ins) {
+		switch (ins->opcode) {
+		case OP_DIV_IMM:
+		case OP_REM_IMM:
+		case OP_IDIV_IMM:
+		case OP_IREM_IMM:
+			/* 
+			 * Keep the cases where we could generated optimized code, otherwise convert
+			 * to the non-imm variant.
+			 */
+			if (mono_is_power_of_two (ins->inst_imm) >= 0)
+				break;
+
+			NEW_INS (cfg, temp, OP_ICONST);
+			temp->inst_c0 = ins->inst_imm;
+			temp->dreg = mono_regstate_next_int (cfg->rs);
+			switch (ins->opcode) {
+			case OP_DIV_IMM:
+				ins->opcode = OP_LDIV;
+				break;
+			case OP_REM_IMM:
+				ins->opcode = OP_LREM;
+				break;
+			case OP_IDIV_IMM:
+				ins->opcode = OP_IDIV;
+				break;
+			case OP_IREM_IMM:
+				ins->opcode = OP_IREM;
+				break;
+			}
+			ins->sreg2 = temp->dreg;
+			break;
+		default:
+			break;
+		}
+		last_ins = ins;
+		ins = ins->next;
+	}
+	bb->last_ins = last_ins;
+
+	bb->max_ireg = cfg->rs->next_vireg;
+	bb->max_freg = cfg->rs->next_vfreg;
+}
+
 static const int 
 branch_cc_table [] = {
 	X86_CC_EQ, X86_CC_GE, X86_CC_GT, X86_CC_LE, X86_CC_LT,
@@ -2027,7 +2054,9 @@ static const char*const * ins_spec = pentium_desc;
 /*#include "cprop.c"*/
 void
 mono_arch_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
-{
+{	
+	mono_arch_lowering_pass (cfg, bb);
+
 	if (cfg->opt & MONO_OPT_PEEPHOLE)
 		peephole_pass_1 (cfg, bb);
 
@@ -2606,37 +2635,60 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 			break;
 		case OP_DIV_IMM:
-		case OP_IDIV_IMM:
-			printf ("A: %d\n", ins->inst_imm);
-			x86_push_imm (code, ins->inst_imm);
-			x86_cdq (code);
-			x86_div_membase (code, X86_ESP, 0, TRUE);	
-			x86_alu_reg_imm (code, X86_ADD, X86_ESP, 4);
+		case OP_IDIV_IMM: {
+			int power = mono_is_power_of_two (ins->inst_imm);
+
+			g_assert (ins->sreg1 == X86_EAX);
+			g_assert (ins->dreg == X86_EAX);
+			g_assert (power >= 0);
+
+			/* Based on http://compilers.iecc.com/comparch/article/93-04-079 */
+			if (power == 1) {
+				x86_alu_reg_imm (code, X86_CMP, X86_EAX, 0x80000000);
+				/* Inc %eax, if divident < 0 */
+				x86_alu_reg_imm (code, X86_SBB, X86_EAX, -1);
+				/* Do right shift */
+				x86_shift_reg_imm (code, X86_SAR, X86_EAX, 1);
+			} else {
+				x86_cdq (code);
+				/* Mask correction */
+				x86_alu_reg_imm (code, X86_AND, X86_EDX, (1 << power) - 1);
+				/* Apply correction if neccesary */
+				x86_alu_reg_reg (code, X86_ADD, X86_EAX, X86_EDX);
+				/* Do right shift */
+				x86_shift_reg_imm (code, X86_SAR, X86_EAX, power);
+			}
 			break;
+		}
 		case OP_REM_IMM:
 		case OP_IREM_IMM: {
 			int power = mono_is_power_of_two (ins->inst_imm);
 
-			/* FIXME: Add div too */
-			/* FIXME: Add tests for these */
-			/* FIXME: mono_arch_is_int_overflow () can't handle the div_imm opcodes */
+			g_assert (ins->sreg1 == X86_EAX);
+			g_assert (ins->dreg == X86_EAX);
+			g_assert (power >= 0);
 
-			/* Based on gcc code */
-			switch (power) {
-			case 3:
-				/* FIXME: Add others */
+			if (power == 1) {
+				/* Based on http://compilers.iecc.com/comparch/article/93-04-079 */
+				x86_cdq (code);
+				x86_alu_reg_imm (code, X86_AND, X86_EAX, 1);
+				/* 
+				 * If the divident is >= 0, this does not nothing. If it is positive, it
+				 * it transforms %eax=0 into %eax=0, and %eax=1 into %eax=-1.
+				 */
+				x86_alu_reg_reg (code, X86_XOR, X86_EAX, X86_EDX);
+				x86_alu_reg_reg (code, X86_SUB, X86_EAX, X86_EDX);
+			} else {
+				/* Based on gcc code */
+
+				/* Add compensation for negative dividents */
 				x86_cdq (code);
 				x86_shift_reg_imm (code, X86_SHR, X86_EDX, 32 - power);
 				x86_alu_reg_reg (code, X86_ADD, X86_EAX, X86_EDX);
-				x86_alu_reg_imm (code, X86_ADD, X86_EAX, (1 << power) - 1);
+				/* Compute remainder */
+				x86_alu_reg_imm (code, X86_AND, X86_EAX, (1 << power) - 1);
+				/* Remove compensation */
 				x86_alu_reg_reg (code, X86_SUB, X86_EAX, X86_EDX);
-				break;
-			default:
-				x86_push_imm (code, ins->inst_imm);
-				x86_cdq (code);
-				x86_div_membase (code, X86_ESP, 0, TRUE);	
-				x86_alu_reg_imm (code, X86_ADD, X86_ESP, 4);
-				break;
 			}
 			break;
 		}
