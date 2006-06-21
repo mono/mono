@@ -392,6 +392,7 @@ namespace System.Data
 					dataTable.Rows.Add(_lastAdded);
 					//OnListChanged(new ListChangedEventArgs(ListChangedType.ItemAdded, Count - 1, -1));
 					_lastAdded = null;
+					UpdateIndex ();
 				}
 				catch(Exception e) {
 					_lastAdded = dr;
