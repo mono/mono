@@ -1,5 +1,9 @@
 2006-06-21  Raja R Harinath  <rharinath@novell.com>
 
+	Fix #78673
+	* class.cs (FieldBase.ResolveInitializer): Stop resolution if
+	FieldBuilder is null.
+
 	Fix #78662
 	* expression.cs (Binary.CheckShiftArguments): Don't overwrite original
 	'left' and 'right' before error-checking.

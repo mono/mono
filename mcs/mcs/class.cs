@@ -5113,6 +5113,8 @@ namespace Mono.CSharp {
 			initializer = initializer.Resolve (ec);
 			if (initializer == null)
 				return null;
+			if (FieldBuilder == null)
+				return null;
 
 			FieldExpr fe = new FieldExpr (FieldBuilder, Location, true);
 			if ((ModFlags & Modifiers.STATIC) == 0) 
