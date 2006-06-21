@@ -1,3 +1,8 @@
+2006-06-21 Konstantin Triger <kostat@mainsoft.com>
+
+	* XmlSiteMapProvider.cs: if the url is relative, make it relative to the
+		context root.
+
 2006-06-07 Juraj Skripsky <js@hotfeet.ch>
 
    * HttpException.cs (GetHtmlizedErrorMessage): Beautify compilation error

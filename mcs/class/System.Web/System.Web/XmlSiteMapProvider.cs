@@ -139,6 +139,11 @@ namespace System.Web
 							rolesList.Add (ss);
 					}
 				}
+
+				if (!string.IsNullOrEmpty (url)) {
+					if (UrlUtils.IsRelativeUrl (url))
+						url = UrlUtils.Combine (HttpRuntime.AppDomainAppVirtualPath, url);
+				}
 				
 				SiteMapNode node = new SiteMapNode (this, url, url, title, description,
 					/*ArrayList.ReadOnly (keywordsList), */ArrayList.ReadOnly (rolesList), null,
