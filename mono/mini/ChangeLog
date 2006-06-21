@@ -1,3 +1,7 @@
+2006-06-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* jit.h: Add G_BEGIN_DECLS/G_END_DECLS.
+
 2006-06-20  Jb Evain  <jbevain@gmail.com>
 
 	* cpu-g4.md: fix max length of start_handler instruction.
