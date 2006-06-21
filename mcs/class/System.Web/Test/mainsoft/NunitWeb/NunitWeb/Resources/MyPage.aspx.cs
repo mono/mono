@@ -10,7 +10,7 @@ public partial class MyPage : System.Web.UI.Page
 	protected override void OnPreInit (EventArgs e)
 #endif
 	{
-		NunitWeb.Helper.InitDelegates (Context, this);
+		MonoTests.SystemWeb.Framework.WebTest.Invoke (this);
 	}
 		
 	public override void VerifyRenderingInServerForm (Control c)

@@ -42,7 +42,7 @@ namespace MonoTests.stand_alone.WebHarness
 		public abstract bool XmlCompare(XmlDocument d1, XmlDocument d2, bool ignoreAlmost);
 	}
 
-	public class WebTest : XmlComparableTest
+	public class HtmlDiff : XmlComparableTest
 	{
 		public const string BEGIN_TAG = "begint";
 		public const string END_TAG = "endt";
@@ -55,7 +55,7 @@ namespace MonoTests.stand_alone.WebHarness
 
 		
 
-		public WebTest()
+		public HtmlDiff()
 		{
 		}
 
@@ -98,7 +98,7 @@ namespace MonoTests.stand_alone.WebHarness
 		public static bool HtmlComparer (string origin, string derived)
 		{
 			XmlDocument or = new XmlDocument ();
-			MonoTests.stand_alone.WebHarness.WebTest helper = new MonoTests.stand_alone.WebHarness.WebTest ();
+			MonoTests.stand_alone.WebHarness.HtmlDiff helper = new MonoTests.stand_alone.WebHarness.HtmlDiff ();
 			or.LoadXml (helper.HtmltoXml (origin));
 			XmlDocument dr = new XmlDocument ();
 			dr.LoadXml (helper.HtmltoXml (derived));

@@ -43,7 +43,7 @@ using System.Threading;
 using MyWebControl = System.Web.UI.WebControls;
 using System.Reflection;
 using NUnit.Framework;
-using NunitWeb;
+using MonoTests.SystemWeb.Framework;
 
 namespace MonoTests.System.Web.UI.WebControls
 {
@@ -55,28 +55,22 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void Set_Up ()
 		{
 #if VISUAL_STUDIO
-			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (), "Test1.Resources.Theme1.skin", "App_Themes/Theme1/Theme1.skin");
-			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (), "Test1.Resources.PageWithStyleSheet.aspx", "PageWithStyleSheet.aspx");
-			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (), "Test1.Resources.PageWithTheme.aspx", "PageWithTheme.aspx");
-			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (), "Test1.Resources.RunTimeSetTheme.aspx", "RunTimeSetTheme.aspx");
-			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (),
-				"Test1.Resources.UrlProperty.aspx", "UrlProperty.aspx");
-			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (),
-				"Test1.Resources.UrlProperty.ascx", "UrlProperty.ascx");
-			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (),
-				"Test1.Resources.UrlProperty.ascx.cs", "UrlProperty.ascx.cs");
+			WebTest.CopyResource (GetType (), "Test1.Resources.Theme1.skin", "App_Themes/Theme1/Theme1.skin");
+			WebTest.CopyResource (GetType (), "Test1.Resources.PageWithStyleSheet.aspx", "PageWithStyleSheet.aspx");
+			WebTest.CopyResource (GetType (), "Test1.Resources.PageWithTheme.aspx", "PageWithTheme.aspx");
+			WebTest.CopyResource (GetType (), "Test1.Resources.RunTimeSetTheme.aspx", "RunTimeSetTheme.aspx");
+			WebTest.CopyResource (GetType (), "Test1.Resources.UrlProperty.aspx", "UrlProperty.aspx");
+			WebTest.CopyResource (GetType (), "Test1.Resources.UrlProperty.ascx", "UrlProperty.ascx");
+			WebTest.CopyResource (GetType (), "Test1.Resources.UrlProperty.ascx.cs", "UrlProperty.ascx.cs");
 			
 #else
-			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (), "Theme1.skin", "App_Themes/Theme1/Theme1.skin");
-			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (), "PageWithStyleSheet.aspx", "PageWithStyleSheet.aspx");
-			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (), "PageWithTheme.aspx", "PageWithTheme.aspx");
-			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (), "RunTimeSetTheme.aspx", "RunTimeSetTheme.aspx");
-			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (),
-				"UrlProperty.aspx", "UrlProperty.aspx");
-			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (),
-				"UrlProperty.ascx", "UrlProperty.ascx");
-			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (),
-				"UrlProperty.ascx.cs", "UrlProperty.ascx.cs");
+			WebTest.CopyResource (GetType (), "Theme1.skin", "App_Themes/Theme1/Theme1.skin");
+			WebTest.CopyResource (GetType (), "PageWithStyleSheet.aspx", "PageWithStyleSheet.aspx");
+			WebTest.CopyResource (GetType (), "PageWithTheme.aspx", "PageWithTheme.aspx");
+			WebTest.CopyResource (GetType (), "RunTimeSetTheme.aspx", "RunTimeSetTheme.aspx");
+			WebTest.CopyResource (GetType (), "UrlProperty.aspx", "UrlProperty.aspx");
+			WebTest.CopyResource (GetType (), "UrlProperty.ascx", "UrlProperty.ascx");
+			WebTest.CopyResource (GetType (), "UrlProperty.ascx.cs", "UrlProperty.ascx.cs");
 			
 #endif
 		}
@@ -94,10 +88,12 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category ("NunitWeb")]
 		public void Theme_TestLabelTheme ()
 		{
-			Helper.Instance.RunUrl ("PageWithTheme.aspx", RenderLabelTest);
+			WebTest t = new WebTest ("PageWithTheme.aspx");
+			t.Invoker = PageInvoker.CreateOnLoad (RenderLabelTest);
+			t.Run ();
 		}
 
-		public static void RenderLabelTest (HttpContext c, Page p, object param)
+		public static void RenderLabelTest (Page p)
 		{
 			Assert.AreEqual (Color.Black,((MyWebControl.Label) p.FindControl ("Label")).BackColor, "Default Theme#1");
 			Assert.AreEqual (Color.Red, ((MyWebControl.Label) p.FindControl ("LabelRed")).BackColor, "Red Skin Theme#2");
@@ -109,10 +105,12 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category ("NunitWeb")]
 		public void Theme_TestImageTheme ()
 		{
-			Helper.Instance.RunUrl ("PageWithTheme.aspx", RenderImageTest);
+			WebTest t = new WebTest ("PageWithTheme.aspx");
+			t.Invoker = PageInvoker.CreateOnLoad (RenderImageTest);
+			t.Run ();
 		}
 
-		public static void RenderImageTest (HttpContext c, Page p, object param)
+		public static void RenderImageTest (Page p)
 		{
 			Assert.IsTrue (((MyWebControl.Image) p.FindControl ("Image")).ImageUrl.IndexOf ("myimageurl") >= 0, "Default Theme#1");
 			Assert.IsTrue (((MyWebControl.Image) p.FindControl ("ImageRed")).ImageUrl.IndexOf ("myredimageurl") >= 0, "RedImage Theme#2");
@@ -126,10 +124,12 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category ("NunitWeb")]
 		public void Theme_TestLabelStyleSheet ()
 		{
-			Helper.Instance.RunUrl ("PageWithStyleSheet.aspx", StyleSheetRenderLabelTest);
+			WebTest t = new WebTest ("PageWithStyleSheet.aspx");
+			t.Invoker = PageInvoker.CreateOnLoad (StyleSheetRenderLabelTest);
+			t.Run ();
 		}
 
-		public static void StyleSheetRenderLabelTest (HttpContext c, Page p, object param)
+		public static void StyleSheetRenderLabelTest (Page p)
 		{
 			Assert.AreEqual (Color.Black, ((MyWebControl.Label) p.FindControl ("Label")).BackColor, "Default Theme#1");
 			Assert.AreEqual (Color.Red, ((MyWebControl.Label) p.FindControl ("LabelRed")).BackColor, "Red Skin Theme#2");
@@ -141,10 +141,12 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category ("NunitWeb")]
 		public void Theme_TestImageStyleSheet ()
 		{
-			Helper.Instance.RunUrl ("PageWithStyleSheet.aspx", StyleSheetRenderImageTest);
+			WebTest t = new WebTest ("PageWithStyleSheet.aspx");
+			t.Invoker = PageInvoker.CreateOnLoad (StyleSheetRenderImageTest);
+			t.Run ();
 		}
 
-		public static void StyleSheetRenderImageTest (HttpContext c, Page p, object param)
+		public static void StyleSheetRenderImageTest (Page p)
 		{
 			Assert.IsTrue (((MyWebControl.Image) p.FindControl ("Image")).ImageUrl.IndexOf ("myimageurl") >= 0, "Default Theme#1");
 			Assert.IsTrue (((MyWebControl.Image) p.FindControl ("ImageRed")).ImageUrl.IndexOf ("myredimageurl") >= 0, "RedImage Theme#2");
@@ -159,15 +161,17 @@ namespace MonoTests.System.Web.UI.WebControls
 			PageDelegates p = new PageDelegates ();
 			p.PreInit = RuntimeSetThemePreInit;
 			p.Load = RuntimeSetThemeLoad;
-			Helper.Instance.RunUrlDelegates ("RunTimeSetTheme.aspx", p);
+			WebTest t = new WebTest ("RunTimeSetTheme.aspx");
+			t.Invoker = new PageInvoker (p);
+			t.Run ();
 		}
 
-		public static void RuntimeSetThemePreInit (HttpContext c, Page p, object param)
+		public static void RuntimeSetThemePreInit (Page p)
 		{
 			p.Theme = "Theme1";
 		}
 
-		public static void RuntimeSetThemeLoad (HttpContext c, Page p, object param)
+		public static void RuntimeSetThemeLoad (Page p)
 		{
 			Assert.AreEqual (Color.Black, ((MyWebControl.Label) p.FindControl ("Label")).BackColor, "Default Theme#1");
 			Assert.AreEqual (Color.Red, ((MyWebControl.Label) p.FindControl ("LabelRed")).BackColor, "Red Skin Theme#2");
@@ -183,11 +187,11 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category ("NunitWeb")]
 		public void Theme_TestThemeNotExistExeption()
 		{
-			string page =	Helper.Instance.RunInPagePreInit (_ThemeNotExistException);
+			string page = new WebTest (PageInvoker.CreateOnPreInit (_ThemeNotExistException)).Run ();
 			Assert.IsTrue (page.IndexOf("System.Web.HttpException") >= 0, "System.Web.HttpException was expected, actual result: "+page);
 		}
 
-		public static  void _ThemeNotExistException (HttpContext c, Page p, object param)
+		public static  void _ThemeNotExistException (Page p)
 		{
 			p.Theme = "NotExistTheme";
 		}
@@ -196,7 +200,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category ("NunitWeb")]
 		public void Theme_SetThemeException ()
 		{
-			string page=Helper.Instance.RunInPagePreInit (SetThemeExeption);
+			string page=new WebTest (PageInvoker.CreateOnPreInit (SetThemeExeption)).Run ();
 			Assert.IsTrue (page.IndexOf("System.Web.HttpException") >= 0, "System.Web.HttpException was expected, actual result: "+page);
 		}
 
@@ -217,7 +221,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		//        }
 		//}
 
-		public static void SetThemeExeption (HttpContext c, Page p, object param)
+		public static void SetThemeExeption (Page p)
 		{
 			p.Theme = "InvalidTheme1";
 		}
@@ -226,7 +230,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void TearDown ()
 		{
 			Thread.Sleep (100);
-			Helper.Unload ();
+			WebTest.Unload ();
 			Thread.Sleep (100);
 		}
 		
@@ -234,7 +238,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category("NunitWeb")]
 		public void UrlPropertyTest ()
 		{
-			string res = Helper.Instance.RunUrl ("UrlProperty.aspx");
+			string res = new WebTest ("UrlProperty.aspx").Run ();
 
 			Assert.IsTrue (res.IndexOf ("Property1 = testProp1") != -1,
 				"Property1 should be assigned as is, actual result: "+res);

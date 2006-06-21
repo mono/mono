@@ -1,10 +1,9 @@
-#if NET_2_0
 using System;
 using System.Web;
 
-namespace NunitWeb
+namespace MonoTests.SystemWeb.Framework
 {
-	class MyHandler : IHttpHandler
+	internal class MyHandler : IHttpHandler
 	{
 		public bool IsReusable
 		{
@@ -13,8 +12,8 @@ namespace NunitWeb
 
 		public void ProcessRequest (HttpContext context)
 		{
-			MyHost.RunAnyMethod (context);
+			WebTest.Invoke (null);
 		}
 	}
 }
-#endif
+

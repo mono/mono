@@ -40,7 +40,7 @@ using System.IO;
 using System.Drawing;
 using MyWebControl = System.Web.UI.WebControls;
 using System.Collections;
-using NunitWeb;
+using MonoTests.SystemWeb.Framework;
 using MonoTests.stand_alone.WebHarness;
 
 
@@ -87,7 +87,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category ("NunitWeb")]
 		public void MasterPage_Render()
 		{
-			string PageRenderHtml = Helper.Instance.RunInPageWithMaster(_RenderDefault, null);
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (_RenderDefault));
+			t.Request.Url = StandardUrl.PAGE_WITH_MASTER;
+			string PageRenderHtml = t.Run ();
 			Assert.AreEqual (-1, PageRenderHtml.IndexOf ("Master header text"), "Master#1");
 			
 			if (PageRenderHtml.IndexOf ("Page main text") < 0) {
@@ -112,7 +114,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 		
 		
-		public static void _RenderDefault (HttpContext c, Page p, object param)
+		public static void _RenderDefault (Page p)
 		{
 			p.Form.Controls.Add(new LiteralControl("Page dynamic text"));
 		}
@@ -131,7 +133,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[TestFixtureTearDown]
 		public void TearDown ()
 		{
-			Helper.Unload ();
+			WebTest.Unload ();
 		}
 	}
 }

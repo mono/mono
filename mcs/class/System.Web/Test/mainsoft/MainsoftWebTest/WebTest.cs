@@ -41,14 +41,14 @@ namespace MonoTests.stand_alone.WebHarness
 		public abstract bool XmlCompare(XmlDocument d1, XmlDocument d2, bool ignoreAlmost);
 	}
 
-	public class WebTest : XmlComparableTest
+	public class HtmlDiff : XmlComparableTest
 	{
 		private string _testsBaseUrl = "";
 		private string _ignoreListFile = "";
 		private XmlDocument _xmlIgnoreList = null;
 		private string _compareStatus = "";
 
-		public WebTest()
+		public HtmlDiff()
 		{
 		}
 

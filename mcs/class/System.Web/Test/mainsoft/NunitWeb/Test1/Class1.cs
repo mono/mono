@@ -29,7 +29,7 @@ namespace Test1
 			Assert.IsFalse (string.IsNullOrEmpty (res));
 		}
 
-		public static void _RenderSiteMapPath (HttpContext c, Page p, object o)
+		public static void _RenderSiteMapPath (Page p)
 		{
 			SiteMapPath smp = new SiteMapPath ();
 			p.Controls.Add (smp);
@@ -43,7 +43,7 @@ namespace Test1
 			Assert.IsFalse (string.IsNullOrEmpty (res));
 		}
 
-		public static void _RenderSiteMapPathProp (HttpContext c, Page p, object o)
+		public static void _RenderSiteMapPathProp (Page p)
 		{
 			SiteMapPath smp = new SiteMapPath ();
 			smp.BackColor = Color.Red;
@@ -58,7 +58,7 @@ namespace Test1
 			Assert.IsFalse (string.IsNullOrEmpty (res));
 		}
 
-		public static void _TestMasterPage (HttpContext c, Page p, object o)
+		public static void _TestMasterPage (Page p)
 		{
 			MasterPage mp = p.Master;
 			Assert.IsNotNull (mp);
@@ -72,7 +72,7 @@ namespace Test1
 			Assert.IsFalse (string.IsNullOrEmpty (res));
 		}
 
-		public static void _TestStyle (HttpContext c, Page p, object param)
+		public static void _TestStyle (Page p)
 		{
 			Button b = new Button ();
 			b.BackColor = Color.Red;
@@ -87,7 +87,7 @@ namespace Test1
 			Assert.IsFalse (string.IsNullOrEmpty (str));
 		}
 
-		public static void _TestDefaultRender (HttpContext c, Page p, object param)
+		public static void _TestDefaultRender (Page p)
 		{
 			LiteralControl lcb = new LiteralControl ("aaa");
 			LiteralControl lce = new LiteralControl ("bbb");

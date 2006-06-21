@@ -1,3 +1,7 @@
+2006-06-21 Andrew Skiba <andrews@mainsoft.com>
+
+	* TemplateControlCompilerTest.cs: NunitWeb refactoring
+
 2006-06-18  Andrew Skiba  <andrews@mainsoft.com>
 
 	* TemplateControlCompilerTest.cs: new test.

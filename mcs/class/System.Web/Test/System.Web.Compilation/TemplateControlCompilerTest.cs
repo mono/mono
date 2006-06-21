@@ -1,6 +1,6 @@
 #if NET_2_0
 
-using NunitWeb;
+using MonoTests.SystemWeb.Framework;
 using NUnit.Framework;
 using System.Web.UI.WebControls;
 using System.Reflection;
@@ -24,17 +24,15 @@ namespace MonoTests.System.Web.Compilation {
 		[NUnit.Framework.Category ("NunitWeb")]
 		public void ReadOnlyPropertyBindTest ()
 		{
-			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (),
-				"ReadOnlyPropertyBind.aspx", "ReadOnlyPropertyBind.aspx");
-			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (),
-				"ReadOnlyPropertyControl.ascx", "ReadOnlyPropertyControl.ascx");
-			Helper.Instance.RunUrl ("ReadOnlyPropertyBind.aspx");
+			WebTest.CopyResource (GetType (), "ReadOnlyPropertyBind.aspx", "ReadOnlyPropertyBind.aspx");
+			WebTest.CopyResource (GetType (), "ReadOnlyPropertyControl.ascx", "ReadOnlyPropertyControl.ascx");
+			new WebTest ("ReadOnlyPropertyBind.aspx").Run ();
 		}
 		[TestFixtureTearDown]
 		public void TearDown ()
 		{
 			Thread.Sleep (100);
-			Helper.Unload ();
+			WebTest.Unload ();
 		}
 	}
 }

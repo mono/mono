@@ -42,7 +42,7 @@ using System.Drawing;
 using System.Threading;
 using MyWebControl = System.Web.UI.WebControls;
 using System.Collections;
-using NunitWeb;
+using MonoTests.SystemWeb.Framework;
 using MonoTests.stand_alone.WebHarness;
 using System.Text.RegularExpressions;
 using System.Reflection;
@@ -393,9 +393,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category ("NotWorking")]  //Must be running after hosting bug resolve	
 		public void Menu_RenderBeginTag ()
 		{
-		        Helper.Instance.RunInPage(_BeginTagRender, null);
+		        new WebTest (PageInvoker.CreateOnLoad (_BeginTagRender)).Run ();
 		}
-		public static void _BeginTagRender(HttpContext c, Page p, object param)
+		public static void _BeginTagRender(Page p)
 		{
 		        PokerMenu pm = new PokerMenu ();
 		        p.Form.Controls.Add (pm);
@@ -410,7 +410,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 
 
-	                WebTest.AssertAreEqual(OriginControlHtml,RenderedControlHtml,"RenderBeginTag");
+	                HtmlDiff.AssertAreEqual(OriginControlHtml,RenderedControlHtml,"RenderBeginTag");
 		}
 
 		[Test]
@@ -418,9 +418,9 @@ namespace MonoTests.System.Web.UI.WebControls
 	        [Category ("NotWorking")]  //Must be running after hosting bug resolve
 		public void Menu_RenderEndTag ()
 		{
-		        Helper.Instance.RunInPage (_EndTagRender, null);
+		        new WebTest (PageInvoker.CreateOnLoad (_EndTagRender)).Run ();
 		}
-		public static void _EndTagRender (HttpContext c, Page p, object param)
+		public static void _EndTagRender (Page p)
 		{
 		        PokerMenu pm = new PokerMenu ();
 		        p.Form.Controls.Add (pm);
@@ -437,7 +437,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		
 
-		        WebTest.AssertAreEqual(OriginControlHtml, RenderedControlHtml,"RenderEndTag");
+		        HtmlDiff.AssertAreEqual(OriginControlHtml, RenderedControlHtml,"RenderEndTag");
 			
 		}
 
@@ -512,19 +512,18 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category ("NotWorking")]  //Must be running after hosting bug resolve
 		public void Menu_DefaultRender ()
 		{
-		        string RenderedPageHtml = Helper.Instance.RunInPage (_DefaultRender, null);
-		        string RenderedControlHtml = WebTest.GetControlFromPageHtml (RenderedPageHtml);
+		        string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (_DefaultRender)).Run ();
+		        string RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
 		        string OriginControlHtml = "";
-		        WebTest.AssertAreEqual(OriginControlHtml, RenderedControlHtml,"RenderDefault");
-			
+		        HtmlDiff.AssertAreEqual(OriginControlHtml, RenderedControlHtml,"RenderDefault");
 		}
 	
 		 // All this methods are delegates for running tests in host assembly. 
 		 
-		public static void _DefaultRender (HttpContext c, Page p, object param)
+		public static void _DefaultRender (Page p)
 		{
-		        LiteralControl lcb = new LiteralControl (WebTest.BEGIN_TAG);
-		        LiteralControl lce = new LiteralControl (WebTest.END_TAG);
+		        LiteralControl lcb = new LiteralControl (HtmlDiff.BEGIN_TAG);
+		        LiteralControl lce = new LiteralControl (HtmlDiff.END_TAG);
 		        Menu menu = new Menu ();
 		        p.Form.Controls.Add (lcb);
 		        p.Form.Controls.Add (menu);
@@ -535,8 +534,8 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category ("NotWorking")]  //Must be running after hosting bug resolve
 		public void Menu_ItemsRender ()
 		{
-		        string RenderedPageHtml = Helper.Instance.RunInPage (_ItemsRender, null);
-		        string RenderedControlHtml = WebTest.GetControlFromPageHtml (RenderedPageHtml);
+		        string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (_ItemsRender)).Run ();
+		        string RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
 		        string OriginControlHtml = @"<a href=""#ctl01_SkipLink""><img alt=""Skip Navigation Links"" src=""/NunitWeb/WebResource.axd?d=gZrz8lvSQfolS1pG07HX9g2&amp;t=632784640484505569"" width=""0"" height=""0"" border=""0"" />
 		                                     </a><table id=""ctl01"" cellpadding=""0"" cellspacing=""0"" border=""0"">
 		                                     <tr onmouseover=""Menu_HoverStatic(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(event)"" id=""ctl01n0"">
@@ -569,13 +568,13 @@ namespace MonoTests.System.Web.UI.WebControls
 		                                     </div>
 		                                     </div><a id=""ctl01_SkipLink""></a>";
 
-		        WebTest.AssertAreEqual(OriginControlHtml, RenderedControlHtml,"Render Items");
+		        HtmlDiff.AssertAreEqual(OriginControlHtml, RenderedControlHtml,"Render Items");
 		}
 
-		public static void _ItemsRender (HttpContext c, Page p, object param)
+		public static void _ItemsRender (Page p)
 		{
-		        LiteralControl lcb = new LiteralControl (WebTest.BEGIN_TAG);
-		        LiteralControl lce = new LiteralControl (WebTest.END_TAG);
+		        LiteralControl lcb = new LiteralControl (HtmlDiff.BEGIN_TAG);
+		        LiteralControl lce = new LiteralControl (HtmlDiff.END_TAG);
 		        Menu menu = new Menu ();
 		        MenuItem R = new MenuItem ("root", "value1");
 		        MenuItem N1 = new MenuItem ("node1", "value2");
@@ -673,9 +672,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category ("NunitWeb")]
 		public void Menu_PreRenderEvent ()
 		{
-		        Helper.Instance.RunInPage (PreRenderEvent, null);
+		        new WebTest (PageInvoker.CreateOnLoad (PreRenderEvent)).Run ();
 		}
-		public void PreRenderEvent (HttpContext c, Page p, object param)
+		public void PreRenderEvent (Page p)
 		{
 		        PokerMenu pm = new PokerMenu ();
 		        p.Controls.Add (pm);
@@ -688,7 +687,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void TearDown ()
 		{
 			Thread.Sleep (100);
-		        Helper.Unload ();
+		        WebTest.Unload ();
 		}
 	
 		// A simple Template class to wrap an image.
@@ -714,9 +713,8 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Test]
 		public void MenuClass ()
 		{
-			NunitWeb.Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (),
-					"menuclass.aspx", "menuclass.aspx");
-			string res = NunitWeb.Helper.Instance.RunUrl ("menuclass.aspx", null);
+			WebTest.CopyResource (GetType (), "menuclass.aspx", "menuclass.aspx");
+			string res = new WebTest ("menuclass.aspx").Run ();
 			string menua_pattern="<table[^>]*class=\"[^\"]*menua[^\"]*\"[^>]*>";
 			Assert.IsTrue (Regex.IsMatch (res, ".*"+menua_pattern+".*",
 				RegexOptions.IgnoreCase|RegexOptions.Singleline),

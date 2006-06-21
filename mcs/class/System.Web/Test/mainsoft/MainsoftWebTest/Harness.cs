@@ -167,7 +167,7 @@ namespace MonoTests.stand_alone.WebHarness
 		static void CreateExpectedResults(string baseUrl)
 		{
 			TestsCatalog tc = new TestsCatalog(_catalogFile, _runExcluded);
-			WebTest wt = new WebTest();
+			HtmlDiff wt = new HtmlDiff();
 			wt.TestsBaseUrl = baseUrl;
 			wt.IgnoreListFile = _ignoreListFile;
 
@@ -201,7 +201,7 @@ namespace MonoTests.stand_alone.WebHarness
 
 		public static bool RunSingleTest(string baseUrl, TestInfo ti)
 		{
-			WebTest wt = new WebTest();
+			HtmlDiff wt = new HtmlDiff();
 			wt.TestsBaseUrl = baseUrl;
 			wt.IgnoreListFile = _ignoreListFile;
 

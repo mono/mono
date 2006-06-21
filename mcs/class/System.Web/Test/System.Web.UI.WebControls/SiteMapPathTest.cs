@@ -45,7 +45,7 @@ using System.Text;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Web.Hosting;
-using NunitWeb;
+using MonoTests.SystemWeb.Framework;
 using System.Reflection;
 using System.Xml;
 using MonoTests.stand_alone.WebHarness;
@@ -100,9 +100,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void Set_Up ()
 		{
 #if DOT_NET 
-			Helper.Instance.CopyResource(Assembly.GetExecutingAssembly (), "MonoTests.System.Web.UI.WebControls.Resources.Web.sitemap","Web.sitemap");
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.Web.sitemap","Web.sitemap");
 #else
-			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (), "Web.sitemap", "Web.sitemap");
+			WebTest.CopyResource (GetType (), "Web.sitemap", "Web.sitemap");
 #endif
 		}
 		[SetUp]
@@ -220,8 +220,8 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category ("NotWorking")]  //Must be running after hosting bug resolve
 		public void SiteMapPath_RenderProperty ()
 		{
-			string RenderedPageHtml = Helper.Instance.RunInPage (DoTestPropertyRender, null);
-			string RenderedControlHtml = WebTest.GetControlFromPageHtml (RenderedPageHtml);
+			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (DoTestPropertyRender)).Run ();
+			string RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
 			string OriginControlHtml = @"<span style=""display:inline-block;""><font color=""Red"">
                                            <a href=""#ctl01_SkipLink"">
                                            <img alt=""Skip Navigation Links""
@@ -230,50 +230,50 @@ namespace MonoTests.System.Web.UI.WebControls
                                            </a><span>node1</span><span>-</span><span>
                                            <a title=""test"" href=""/NunitWeb/MyPageWithMaster.aspx"">root</a></span>
                                            <a id=""ctl01_SkipLink""></a></font></span>";
-			WebTest.AssertAreEqual(OriginControlHtml,RenderedControlHtml,"RenderProperty");
+			HtmlDiff.AssertAreEqual(OriginControlHtml,RenderedControlHtml,"RenderProperty");
 		}
 		[Test]
 		[Category ("NunitWeb")]
 		[Category ("NotWorking")]  //Must be running after hosting bug resolve
 		public void SiteMapPath_RenderStyles ()
 		{
-			string RenderedPageHtml = Helper.Instance.RunInPage (DoTestStylesRender, null);
-			string RenderedControlHtml = WebTest.GetControlFromPageHtml (RenderedPageHtml);
+			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (DoTestStylesRender)).Run ();
+			string RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
 			string OriginControlHtml = @"<span><a href=""#ctl01_SkipLink"">
                                           <img alt=""Skip Navigation Links"" height=""0"" width=""0"" src=""/NunitWeb/WebResource.axd?d=gZrz8lvSQfolS1pG07HX9g2&amp;t=632784640484505569"" border=""0"" />
                                           </a><span><a title=""test"" href=""/NunitWeb/MyPageWithMaster.aspx"">root</a></span>
                                           <span> &gt; </span><span>node1</span>
                                           <a id=""ctl01_SkipLink""></a></span>";
-			WebTest.AssertAreEqual (OriginControlHtml, RenderedControlHtml,"RenderStyles");
+			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml,"RenderStyles");
 		}
 		[Test]
 		[Category ("NunitWeb")]
 		[Category ("NotWorking")]  //Must be running after hosting bug resolve
 		public void SiteMapPath_DefaultRender()
 		{
-			string RenderedPageHtml = Helper.Instance.RunInPage (DoTestDefaultRender, null);
-			string RenderedControlHtml = WebTest.GetControlFromPageHtml (RenderedPageHtml);
+			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (DoTestDefaultRender)).Run ();
+			string RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
 			string OriginControlHtml = @"<span><a href=""#ctl01_SkipLink"">
 						  <img alt=""Skip Navigation Links"" height=""0"" width=""0"" src=""/NunitWeb/WebResource.axd?d=gZrz8lvSQfolS1pG07HX9g2&amp;t=632784640484505569"" border=""0"" /></a>
 						  <span><a title=""test"" href=""/NunitWeb/MyPageWithMaster.aspx"">root</a></span><span> &gt; </span><span>node1</span>
 						  <a id=""ctl01_SkipLink""></a></span>";
-			WebTest.AssertAreEqual (OriginControlHtml, RenderedControlHtml,"RenderDefault");
+			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml,"RenderDefault");
 		}
 
 		/// <summary>
 		/// All this methods are delegates for running tests in host assembly. 
 		/// </summary>
 		
-		public static void DoTestDefaultRender (HttpContext c, Page p, object param)
+		public static void DoTestDefaultRender (Page p)
 		{
-			LiteralControl lcb = new LiteralControl (WebTest.BEGIN_TAG);
-			LiteralControl lce = new LiteralControl (WebTest.END_TAG);
+			LiteralControl lcb = new LiteralControl (HtmlDiff.BEGIN_TAG);
+			LiteralControl lce = new LiteralControl (HtmlDiff.END_TAG);
 			SiteMapPath smp = new SiteMapPath ();
 			p.Form.Controls.Add (lcb);
 			p.Form.Controls.Add (smp);
 			p.Form.Controls.Add (lce);
 		}
-		public static void DoTestPropertyRender (HttpContext c, Page p, object param)
+		public static void DoTestPropertyRender (Page p)
 		{
 			SiteMapPath smp = new SiteMapPath ();
 			smp.BackColor = Color.Red;
@@ -284,13 +284,13 @@ namespace MonoTests.System.Web.UI.WebControls
 			smp.PathDirection = PathDirection.CurrentToRoot;
 			smp.PathSeparator = "-";
 
-			LiteralControl lcb = new LiteralControl (WebTest.BEGIN_TAG);
-			LiteralControl lce = new LiteralControl (WebTest.END_TAG);
+			LiteralControl lcb = new LiteralControl (HtmlDiff.BEGIN_TAG);
+			LiteralControl lce = new LiteralControl (HtmlDiff.END_TAG);
 			p.Form.Controls.Add (lcb);
 			p.Form.Controls.Add (smp);
 			p.Form.Controls.Add (lce);
 		}
-		public static void DoTestStylesRender (HttpContext c, Page p, object param)
+		public static void DoTestStylesRender (Page p)
 		{
 			PokerSiteMapPath smp = new PokerSiteMapPath ();
 			smp.ControlStyle.BackColor = Color.Red;
@@ -298,8 +298,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			smp.NodeStyle.BorderColor = Color.Purple;
 			smp.PathSeparatorStyle.BackColor = Color.RoyalBlue;
 			smp.RootNodeStyle.BackColor = Color.Beige;
-			LiteralControl lcb = new LiteralControl (WebTest.BEGIN_TAG);
-			LiteralControl lce = new LiteralControl (WebTest.END_TAG);
+			LiteralControl lcb = new LiteralControl (HtmlDiff.BEGIN_TAG);
+			LiteralControl lce = new LiteralControl (HtmlDiff.END_TAG);
 			p.Form.Controls.Add (lcb);
 			p.Form.Controls.Add (smp);
 			p.Form.Controls.Add (lce);
@@ -342,28 +342,28 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category ("NunitWeb")]
 		public void SiteMapPath_SiteMapRootNode ()
 		{
-			NunitWeb.Helper.Instance.RunInPage (SiteMapRootNode,null);
+			new WebTest (PageInvoker.CreateOnLoad (SiteMapRootNode)).Run ();
 		}
 		[Test]
 		[Category ("NunitWeb")]
 		[Category ("NotWorking")]  //Must be running after hosting bug resolve
 		public void SiteMapPath_InitializeItem ()
 		{
-			NunitWeb.Helper.Instance.RunInPage (InitializeItem, null);
+			new WebTest (PageInvoker.CreateOnLoad (InitializeItem)).Run ();
 		}
 		[Test]
 		[Category ("NunitWeb")]
 		[Category ("NotWorking")]  //Must be running after hosting bug resolve
 		public void SiteMapPath_SiteMapChildNode ()
 		{
-			NunitWeb.Helper.Instance.RunInPage (InitializeItem, null);
+			new WebTest (PageInvoker.CreateOnLoad (InitializeItem)).Run ();
 		}
-		public static void SiteMapRootNode (HttpContext c, Page p, object param)
+		public static void SiteMapRootNode (Page p)
 		{
 			PokerSiteMapPath smp = new PokerSiteMapPath ();
 			Assert.AreEqual ("root", smp.Provider.RootNode.Title, "RootNode");
 		}
-		public static void InitializeItem (HttpContext c, Page p, object param)
+		public static void InitializeItem (Page p)
 		{
 			PokerSiteMapPath smp = new PokerSiteMapPath ();
 			SiteMapNodeItem I = new SiteMapNodeItem (0, SiteMapNodeItemType.PathSeparator);
@@ -371,7 +371,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			smp.InitilizeItems (I);
 			Assert.AreEqual (Color.Red, I.BorderColor, "InitializeItem");
 		}
-		public static void SiteMapChildNode (HttpContext c, Page p, object param)
+		public static void SiteMapChildNode (Page p)
 		{
 			PokerSiteMapPath smp = new PokerSiteMapPath ();
 			SiteMapNodeCollection myCol = smp.Provider.GetChildNodes (smp.Provider.RootNode);
@@ -406,10 +406,10 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category ("NunitWeb")]
 		public void SiteMapPath_Events ()
 		{
-			Helper.Instance.RunInPage (Events, null);
+			new WebTest (PageInvoker.CreateOnLoad (Events)).Run ();
 		}
 
-		public void Events (HttpContext c, Page p, object param)
+		public void Events (Page p)
 		{
 			PokerSiteMapPath smp = new PokerSiteMapPath ();
 			ResetEvents ();
@@ -453,7 +453,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[TestFixtureTearDown]
 		public void TearDown ()
 		{
-			Helper.Unload ();
+			WebTest.Unload ();
 		}
 		
 		// A simple Template class to wrap an image.

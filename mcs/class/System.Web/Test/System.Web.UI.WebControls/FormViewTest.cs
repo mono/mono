@@ -37,7 +37,7 @@ using System.Globalization;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using NunitWeb;
+using MonoTests.SystemWeb.Framework;
 using System.Text.RegularExpressions;
 using System.Reflection;
 using System.Threading;
@@ -169,23 +169,21 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void TearDown ()
 		{
 			Thread.Sleep (100);
-		        Helper.Unload ();
+		        WebTest.Unload ();
 		}
 	
 		//[TestFixtureStartUp]
 		//public void StartUp ()
 		//{
-		//	Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (),
-		//		"FormView.aspx", "FormView.aspx");
+		//	WebTest.CopyResource (GetType (), "FormView.aspx", "FormView.aspx");
 		//}
 
 		[Test]
 		[Category("NunitWeb")]
 		public void FormViewCssClass ()
 		{
-			Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (),
-				"FormView.aspx", "FormView.aspx");
-			string res = Helper.Instance.RunUrl ("FormView.aspx");
+			WebTest.CopyResource (GetType (), "FormView.aspx", "FormView.aspx");
+			string res = new WebTest ("FormView.aspx").Run ();
 			Assert.IsTrue (Regex.IsMatch (
 				res, ".*<table[^>]*class=\"[^\"]*test1[^\"]*\"[^>]*>.*",
 				RegexOptions.IgnoreCase|RegexOptions.Singleline),

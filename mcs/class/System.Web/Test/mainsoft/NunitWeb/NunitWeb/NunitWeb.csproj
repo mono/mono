@@ -6,7 +6,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{F5AECAA2-C599-419D-853E-391F6AEA70A1}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>NunitWeb</RootNamespace>
+    <RootNamespace>MonoTests.SystemWeb.Framework</RootNamespace>
     <AssemblyName>NunitWeb</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -35,11 +35,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Helper.cs" />
+    <Compile Include="BaseInvoker.cs" />
+    <Compile Include="HandlerInvoker.cs" />
     <Compile Include="MyHandler.cs" />
-    <Compile Include="MyHost.cs" />
-    <Compile Include="MyWorkerRequest.cs" />
+    <Compile Include="BaseWorkerRequest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MyHost.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="PageDelegates.cs" />
+    <Compile Include="PageInvoker.cs" />
+    <Compile Include="SimpleRequest.cs" />
+    <Compile Include="StandardUrl.cs" />
+    <Compile Include="WebTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <EmbeddedResource Include="Resources\MyPage.aspx.cs">
     </EmbeddedResource>
   </ItemGroup>
