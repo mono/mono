@@ -1641,15 +1641,16 @@ namespace Mono.CSharp {
 					
 		Expression CheckShiftArguments (EmitContext ec)
 		{
-			left = Make32or64 (ec, left);
-			right = ForceConversion (ec, right, TypeManager.int32_type);
-			if (left == null || right == null) {
+			Expression new_left = Make32or64 (ec, left);
+			Expression new_right = ForceConversion (ec, right, TypeManager.int32_type);
+			if (new_left == null || new_right == null) {
 				Error_OperatorCannotBeApplied ();
 				return null;
 			}
-			type = left.Type;
+			type = new_left.Type;
 			int shiftmask = (type == TypeManager.int32_type || type == TypeManager.uint32_type) ? 31 : 63;
-			right = new Binary (Binary.Operator.BitwiseAnd, right, new IntConstant (shiftmask, loc)).DoResolve (ec);
+			left = new_left;
+			right = new Binary (Binary.Operator.BitwiseAnd, new_right, new IntConstant (shiftmask, loc)).DoResolve (ec);
 			return this;
 		}
 
