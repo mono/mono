@@ -40,11 +40,10 @@ namespace System.Web.Compilation
 		public const int EOF 		= 0x0200000;
 		public const int IDENTIFIER 	= 0x0200001;
 		public const int DIRECTIVE 	= 0x0200002;
-		public const int ATTVALUE   	= 0x0200003;
+		public const int ATTVALUE	= 0x0200003;
 		public const int TEXT	    	= 0x0200004;
 		public const int DOUBLEDASH 	= 0x0200005;
 		public const int CLOSING 	= 0x0200006;
-		public const int NOTWELLFORMED 	= 0x0200007;
 	}
 
 	class AspTokenizer
@@ -57,6 +56,7 @@ namespace System.Web.Compilation
 		int position;
 		bool inTag;
 		bool expectAttrValue;
+		bool alternatingQuotes;
 		bool hasPutBack;
 		bool verbatim;
 		bool have_value;
@@ -167,6 +167,7 @@ namespace System.Web.Compilation
 			int c;
 			int last = 0;
 			bool inServerTag = false;
+			alternatingQuotes = true;
 			
 			while ((c = sr.Peek ()) != -1) {
 				if (c == '%' && last == '<') {
@@ -190,7 +191,7 @@ namespace System.Web.Compilation
 						break;
 					}
 				} else if (quoted && c == quoteChar) {
-					return Token.NOTWELLFORMED;
+					alternatingQuotes = false;
 				}
 
 				sb.Append ((char) c);
@@ -307,6 +308,10 @@ namespace System.Web.Compilation
 		public bool ExpectAttrValue {
 			get { return expectAttrValue; }
 			set { expectAttrValue = value; }
+		}
+		
+		public bool AlternatingQuotes {
+			get { return alternatingQuotes; }
 		}
 		
 		public int BeginLine {

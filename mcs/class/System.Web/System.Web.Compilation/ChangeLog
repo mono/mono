@@ -1,3 +1,10 @@
+2006-06-21 Juraj Skripsky <js@hotfeet.ch>
+
+	* AspTokenizer.cs (ReadAttValue), AspParser.cs (GetAttributes):
+	MS.NET handles nested quotes differently for server controls and
+	for "normal" controls. Add a property "AlternatingQuotes" to the
+	tokenizer and let the parser decide whether it is well-formed or not.
+ 
 2006-06-20 Andrew Skiba <andrews@mainsoft.com>
 
 	* PageThemeCompiler.cs, TemplateControlCompiler.cs: take care of

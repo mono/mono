@@ -315,6 +315,7 @@ namespace System.Web.Compilation
 			int token;
 			TagAttributes attributes;
 			string id;
+			bool wellFormedForServer = true;
 
 			attributes = new TagAttributes ();
 			while ((token = tokenizer.get_token ()) != Token.EOF){
@@ -332,13 +333,9 @@ namespace System.Web.Compilation
 
 				id = tokenizer.Value;
 				if (Eat ('=')){
-					if (Eat (Token.NOTWELLFORMED)){
-						OnError ("The server tag is not well formed.");
-						return null;
-					}
-
 					if (Eat (Token.ATTVALUE)){
 						attributes.Add (id, tokenizer.Value);
+						wellFormedForServer &= tokenizer.AlternatingQuotes;
 					} else if (Eat ('<') && Eat ('%')) {
 						tokenizer.Verbatim = true;
 						attributes.Add (id, "<%" + 
@@ -355,6 +352,12 @@ namespace System.Web.Compilation
 			}
 
 			tokenizer.put_back ();
+
+			if (attributes.IsRunAtServer () && !wellFormedForServer) {
+				OnError ("The server tag is not well formed.");
+				return null;
+			}
+			
 			return attributes;
 		}
 
