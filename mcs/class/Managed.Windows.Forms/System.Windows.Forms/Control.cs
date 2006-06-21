@@ -1709,13 +1709,18 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool ContainsFocus {
 			get {
-				if (this.Focused) {
-					return true;
-				}
+				IntPtr	focused_window;
 
-				for (int i=0; i < child_controls.Count; i++) {
-					if (child_controls[i].ContainsFocus) {
+				focused_window = XplatUI.GetFocus();
+				if (IsHandleCreated) {
+					if (focused_window == Handle) {
 						return true;
+					}
+
+					for (int i=0; i < child_controls.Count; i++) {
+						if (child_controls[i].ContainsFocus) {
+							return true;
+						}
 					}
 				}
 				return false;

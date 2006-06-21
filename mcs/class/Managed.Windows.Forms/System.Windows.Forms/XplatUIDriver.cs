@@ -237,6 +237,7 @@ namespace System.Windows.Forms {
 		internal abstract void SetCaretPos(IntPtr hwnd, int x, int y);
 		internal abstract void CaretVisible(IntPtr hwnd, bool visible);
 
+		internal abstract IntPtr GetFocus();
 		internal abstract void SetFocus(IntPtr hwnd);
 		internal abstract IntPtr GetActive();
 

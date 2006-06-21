@@ -1868,6 +1868,10 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal override IntPtr GetFocus() {
+			return Win32GetFocus();
+		}
+
 		internal override void SetFocus(IntPtr hwnd) {
 			Win32SetFocus(hwnd);
 		}
@@ -2499,6 +2503,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("user32.dll", EntryPoint="SetFocus", CallingConvention=CallingConvention.StdCall)]
 		internal extern static IntPtr Win32SetFocus(IntPtr hwnd);
+
+		[DllImport ("user32.dll", EntryPoint="GetFocus", CallingConvention=CallingConvention.StdCall)]
+		internal extern static IntPtr Win32GetFocus();
 
 		[DllImport ("user32.dll", EntryPoint="CreateCaret", CallingConvention=CallingConvention.StdCall)]
 		internal extern static bool Win32CreateCaret(IntPtr hwnd, IntPtr hBitmap, int nWidth, int nHeight);

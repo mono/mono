@@ -1,3 +1,11 @@
+2006-06-21  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Control.cs (ContainsFocus): Using new driver method to get focused
+	  window, instead of trying to use internal tracking var, which can
+	  recursion issues (Fixes #78685)
+	* XplatUI.cs, XplatUIDriver.cs, XplatUIX11.cs, XplatUIOSX.cs, 
+	  XplatUIWin32.cs: Added GetFocus method to return focused window
+
 2006-06-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ColorDialog.cs: when the mouse button is pressed inside the color

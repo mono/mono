@@ -490,6 +490,13 @@ namespace System.Windows.Forms {
 			driver.GetDisplaySize(out size);
 		}
 
+		internal static IntPtr GetFocus() {
+			#if DriverDebug
+				Console.WriteLine("GetFocus(): Called, Result:{0}", Window(driver.GetFocus()));
+			#endif
+			return driver.GetFocus();
+		}
+
 		internal static bool GetFontMetrics(Graphics g, Font font, out int ascent, out int descent) {
 			#if DriverDebug
 				Console.WriteLine("GetFontMetrics(): Called");

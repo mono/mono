@@ -1185,6 +1185,11 @@ namespace System.Windows.Forms {
 			x = pt.x;
 			y = pt.y;
 		}
+
+		internal override IntPtr GetFocus() {
+			return FocusWindow;
+		}
+
 		
 		internal override bool GetFontMetrics(Graphics g, Font font, out int ascent, out int descent) {
 			return GetFontMetrics(g.GetHdc(), font.ToHfont(), out ascent, out descent);
