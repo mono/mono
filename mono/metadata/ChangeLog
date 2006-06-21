@@ -1,3 +1,9 @@
+2006-06-21  Martin Baulig  <martin@ximian.com>
+
+	* reflection.c
+	(method_encode_clauses): Don't assert on `ex_info->handlers' here;
+	fixes #76484.
+
 2006-06-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* object.h (mono_array_setref): Cast value to (MonoObject*) to fix warnings.
