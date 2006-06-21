@@ -1,5 +1,12 @@
 2006-06-21  Chris Toshok  <toshok@ximian.com>
 
+	* DataGrid.cs: add in some basic navigation stuff (navigating to a
+	child relation and back, using a stack).  Also, remove
+	GetDataSource and the code that calls it - it's not needed.  Also,
+	track CurrencyManager.ListName's removal.
+
+2006-06-21  Chris Toshok  <toshok@ximian.com>
+
 	* CurrencyManager.cs: push some of the original type checking from
 	BindingContext.CreateBindingManager to here, and remove some of
 	the finalType stuff.  Need more tests to make sure I've got the

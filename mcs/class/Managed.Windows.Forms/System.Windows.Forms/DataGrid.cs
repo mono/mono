@@ -29,6 +29,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Data;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Collections;
@@ -125,7 +126,7 @@ namespace System.Windows.Forms
 		private static readonly Color	def_link_color = ThemeEngine.Current.DataGridLinkColor;
 		internal readonly int def_preferredrow_height;
 
-		private bool allow_navigation;
+		internal bool allow_navigation;
 		private bool allow_sorting;
 		private Color alternating_backcolor;
 		private Color backColor;
@@ -137,7 +138,6 @@ namespace System.Windows.Forms
 		internal bool caption_visible;
 		internal bool columnheaders_visible;
 		private object datasource;
-		private object real_datasource;
 		private string datamember;
 		private int firstvisible_column;
 		private bool flatmode;
@@ -175,6 +175,7 @@ namespace System.Windows.Forms
 		bool is_editing;		// Current cell is edit mode
 		internal bool is_changing;	// Indicates if current cell is been changed (in edit mode)
 		private Hashtable selected_rows;
+		private Hashtable expanded_rows;
 		private int selection_start; // used for range selection
 		private bool begininit;
 		private CurrencyManager list_manager;
@@ -186,6 +187,8 @@ namespace System.Windows.Forms
 		int resize_column;
 		
 		bool from_positionchanged_handler;
+
+		Stack memberHistory;
 
 		#endregion // Local Variables
 
@@ -207,7 +210,6 @@ namespace System.Windows.Forms
 			caption_visible = true;
 			columnheaders_visible = true;
 			datasource = null;
-			real_datasource = null;
 			datamember = string.Empty;
 			firstvisible_column = 0;
 			flatmode = false;
@@ -239,6 +241,7 @@ namespace System.Windows.Forms
 			parentrowslabel_style = DataGridParentRowsLabelStyle.Both;
 			selected_rows = new Hashtable ();
 			selection_start = -1;
+			expanded_rows = new Hashtable ();
 			preferredrow_height = def_preferredrow_height = FontHeight + 3;
 			list_manager = null;
 			accept_listmgrevents = true;
@@ -256,6 +259,7 @@ namespace System.Windows.Forms
 
 			SetStyle (ControlStyles.UserMouse, true);
 
+			memberHistory = new Stack ();
 		}
 
 		#endregion	// Public Constructor
@@ -671,9 +675,7 @@ namespace System.Windows.Forms
 					return list_manager;
 				}
 
-				// If we bind real_datasource object we do not get the events from ListManger
-				// since the object is not the datasource and does not match
-				list_manager = (CurrencyManager) BindingContext [real_datasource, DataMember];
+				list_manager = (CurrencyManager) BindingContext [datasource, DataMember];
 
 				if (list_manager != null)
 					ConnectListManagerEvents ();
@@ -962,7 +964,8 @@ namespace System.Windows.Forms
 		[MonoTODO]
 		public void Collapse (int row)
 		{
-
+			expanded_rows.Remove (row);
+			/* XX need to redraw from @row down */
 		}
 
 		protected internal virtual void ColumnStartedEditing (Control editingControl)
@@ -1037,7 +1040,8 @@ namespace System.Windows.Forms
 
 		public void Expand (int row)
 		{
-
+			expanded_rows[row] = true;
+			/* XX need to redraw from @row down */
 		}
 
 		public Rectangle GetCellBounds (DataGridCell cell)
@@ -1096,10 +1100,9 @@ namespace System.Windows.Forms
 			return grid_drawing.HitTest (x, y);
 		}
 
-		[MonoTODO]
 		public bool IsExpanded (int rowNumber)
 		{
-			return false;
+			return expanded_rows[rowNumber] != null && (bool)expanded_rows[rowNumber] == true;
 		}
 
 		public bool IsSelected (int row)
@@ -1110,13 +1113,21 @@ namespace System.Windows.Forms
 		[MonoTODO]
 		public void NavigateBack ()
 		{
+			if (memberHistory.Count == 0)
+				return;
 
+			DataMember = (string)memberHistory.Pop ();
 		}
 
 		[MonoTODO]
 		public void NavigateTo (int rowNumber, string relationName)
 		{
+			if (allow_navigation == false)
+				return;
+			
+			memberHistory.Push (DataMember);
 
+			DataMember = String.Format ("{0}.{1}", DataMember, relationName);
 		}
 
 		protected virtual void OnAllowNavigationChanged (EventArgs e)
@@ -1304,6 +1315,7 @@ namespace System.Windows.Forms
 				CancelEditing ();
 				CurrentRow = testinfo.Row;
 				OnRowHeaderClick (EventArgs.Empty);
+
 				break;
 			}
 
@@ -1914,59 +1926,24 @@ namespace System.Windows.Forms
 			}
 		}
 		
-		private IEnumerable GetDataSource (object source, string member)
-		{	
-			if (source is IEnumerable)
-				return (IEnumerable) source;
-			
-			IListSource listsource = source as IListSource;
-			if (listsource == null)
-				return null;
-
-			IList list = listsource.GetList ();
-			if (!listsource.ContainsListCollection)
-				return list;
-			
-			
-			ITypedList typedlist = list as ITypedList;
-			if (typedlist == null)
-				return null;
-
-			PropertyDescriptorCollection col = typedlist.GetItemProperties (new PropertyDescriptor [0]);
-			PropertyDescriptor prop = col.Find (member, true);
-								
-			if (prop == null) {
-				if (col.Count > 0) {
-					prop = col[0];
-
-					if (prop == null) {
-						return null;
-					}
-				}
-			}
-			
-			IEnumerable result =  (IEnumerable)(prop.GetValue (list[0]));
-			return result;		
-			
-		}
-
 		private void InvalidateCurrentRowHeader ()
 		{
 			grid_drawing.InvalidateRowHeader (CurrentRow);
 		}
 		
 		private bool SetDataMember (string member)
-		{			
+		{
 			if (member == datamember) {
 				return false;
 			}
 
 			datamember = member;
-			real_datasource = GetDataSource (datasource, member);
+
 			if (list_manager != null) {
 				DisconnectListManagerEvents ();
 				list_manager = null;
 			}
+
 			return true;
 		}
 
@@ -1985,29 +1962,28 @@ namespace System.Windows.Forms
 				DisconnectListManagerEvents ();
 				list_manager = null;
 			}
-			try {
-				real_datasource = GetDataSource (datasource, DataMember);
-			}catch (Exception) {				
-				real_datasource = source;
-			}
 
 			OnDataSourceChanged (EventArgs.Empty);
 		}
 
 		private void SetNewDataSource ()
-		{			
-			if (TableStyles[ListManager.ListName] == null) {
-				current_style.GridColumnStyles.Clear ();			
-				current_style.CreateColumnsForTable (false);
-			}
-			else {
-				// If the style has been defined by the user, use it
-				if (CurrentTableStyle.MappingName != ListManager.ListName) {
-					CurrentTableStyle = styles_collection[ListManager.ListName];
+		{
+			if (ListManager != null) {
+				string list_name = ListManager.GetListName (null);
+				if (TableStyles[list_name] == null) {
+					current_style.GridColumnStyles.Clear ();			
+					current_style.CreateColumnsForTable (false);
+				}
+				else if (CurrentTableStyle.MappingName != list_name) {
+					// If the style has been defined by the user, use it
+					CurrentTableStyle = styles_collection[list_name];
 					current_style.CreateColumnsForTable (true);
-				} else
+				}
+				else
 					current_style.CreateColumnsForTable (false);
 			}
+			else
+				current_style.CreateColumnsForTable (false);
 			
 			CalcAreasAndInvalidate ();			
 		}
@@ -2038,9 +2014,10 @@ namespace System.Windows.Forms
 			if (ListManager == null)
 				return;
 			
+			string list_name = ListManager.GetListName (null);
 			switch (e.Action){
 				case CollectionChangeAction.Add: {
-					if (e.Element != null && String.Compare (ListManager.ListName, ((DataGridTableStyle)e.Element).MappingName, true) == 0) {
+					if (e.Element != null && String.Compare (list_name, ((DataGridTableStyle)e.Element).MappingName, true) == 0) {
 						CurrentTableStyle = (DataGridTableStyle)e.Element;
 						((DataGridTableStyle) e.Element).CreateColumnsForTable (false);
 					}
@@ -2048,7 +2025,7 @@ namespace System.Windows.Forms
 				}
 
 				case CollectionChangeAction.Remove: {
-					if (e.Element != null && String.Compare (ListManager.ListName, ((DataGridTableStyle)e.Element).MappingName, true) == 0) {
+					if (e.Element != null && String.Compare (list_name, ((DataGridTableStyle)e.Element).MappingName, true) == 0) {
 						CurrentTableStyle = default_style;						
 						current_style.GridColumnStyles.Clear ();
 						current_style.CreateColumnsForTable (false);
@@ -2058,7 +2035,7 @@ namespace System.Windows.Forms
 
 				
 				case CollectionChangeAction.Refresh: {
-					if (e.Element != null && String.Compare (ListManager.ListName, ((DataGridTableStyle)e.Element).MappingName, true) == 0) {
+					if (e.Element != null && String.Compare (list_name, ((DataGridTableStyle)e.Element).MappingName, true) == 0) {
 						CurrentTableStyle = (DataGridTableStyle)e.Element;
 						((DataGridTableStyle) e.Element).CreateColumnsForTable (false);
 					} else {
