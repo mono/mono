@@ -1,3 +1,7 @@
+2006-06-21  Martin Baulig  <martin@ximian.com>
+
+	* test-49.cs: Add test case for #77964.
+
 2006-06-16  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (DISTFILES): Distribute *.snk.

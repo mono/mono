@@ -817,11 +817,22 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			c = c.ToType (ec.Switch.SwitchType, loc);
-			if (c == null)
-				return false;
+			Type type = ec.Switch.SwitchType;
+			if (!Convert.ImplicitStandardConversionExists (c, type))
+				Report.Warning (469, 2, loc, "The `goto case' value is not implicitly " +
+						"convertible to type `{0}'", TypeManager.CSharpName (type));
 
+			bool fail = false;
 			object val = c.GetValue ();
+			if ((val != null) && (c.Type != type) && (c.Type != TypeManager.object_type))
+				val = TypeManager.ChangeType (val, type, out fail);
+
+			if (fail) {
+				Report.Error (30, loc, "Cannot convert type `{0}' to `{1}'",
+					      c.GetSignatureForError (), TypeManager.CSharpName (type));
+				return false;
+			}
+
 			if (val == null)
 				val = SwitchLabel.NullStringCase;
 					

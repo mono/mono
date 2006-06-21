@@ -530,6 +530,19 @@ class X {
           break;
         }		
 	}
+
+	static void test_77964()
+	{
+		char c = 'c';
+		switch (c)
+		{
+		case 'A':
+			break;
+
+		case 'a': 
+			goto case 65;
+		}
+	}
 	
 	static int Main ()
 	{
