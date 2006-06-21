@@ -456,6 +456,13 @@ namespace Mono.CSharp {
 					lr.local_info.Used = true;
 				}
 
+				ParameterReference pr = Expr as ParameterReference;
+				if ((pr != null) && (ec.capture_context != null) &&
+				    ec.capture_context.IsParameterCaptured (pr.Name)) {
+					AnonymousMethod.Error_AddressOfCapturedVar (pr.Name, loc);
+					return null;
+				}
+
 				// According to the specs, a variable is considered definitely assigned if you take
 				// its address.
 				if ((variable != null) && (variable.VariableInfo != null)){
@@ -3545,6 +3552,12 @@ namespace Mono.CSharp {
 		public bool IsRef {
 			get {
 				return is_ref;
+			}
+		}
+
+		public string Name {
+			get {
+				return name;
 			}
 		}
 
