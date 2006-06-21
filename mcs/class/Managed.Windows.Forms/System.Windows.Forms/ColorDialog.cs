@@ -196,7 +196,7 @@ namespace System.Windows.Forms {
 			defineColoursButton.Location = new Point (5, 244);
 			defineColoursButton.Size = new Size (210, 22);
 			defineColoursButton.TabIndex = 6;
-			defineColoursButton.Text = Locale.GetText ("Define Colours >>");
+			defineColoursButton.Text = Locale.GetText ("Define Colors >>");
 			// okButton
 			okButton.FlatStyle = FlatStyle.System;
 			okButton.Location = new Point (5, 271);
@@ -222,7 +222,7 @@ namespace System.Windows.Forms {
 			addColoursButton.Location = new Point (227, 271);
 			addColoursButton.Size = new Size (213, 22);
 			addColoursButton.TabIndex = 7;
-			addColoursButton.Text =  Locale.GetText ("Add Colours");
+			addColoursButton.Text =  Locale.GetText ("Add Colors");
 			
 			// baseColorControl
 			baseColorControl.Location = new Point (3, 6);
@@ -1277,7 +1277,7 @@ namespace System.Windows.Forms {
 				baseColorLabel.Location = new Point (2, 0);
 				baseColorLabel.Size = new Size (200, 12);
 				baseColorLabel.TabIndex = 5;
-				baseColorLabel.Text = Locale.GetText ("Base Colours") + ":";
+				baseColorLabel.Text = Locale.GetText ("Base Colors") + ":";
 				// userColorLabel
 				userColorLabel.FlatStyle = FlatStyle.System;
 				userColorLabel.Location = new Point (2, 164);
@@ -1608,6 +1608,7 @@ namespace System.Windows.Forms {
 				}
 				
 				UpdateControls ();
+				XplatUI.GrabWindow (Handle, Handle);
 				
 				base.OnMouseDown (e);
 			}
@@ -1626,6 +1627,7 @@ namespace System.Windows.Forms {
 			
 			protected override void OnMouseUp (MouseEventArgs e)
 			{
+				XplatUI.UngrabWindow (Handle);
 				mouseButtonDown = false;
 				drawCross = true;
 				Invalidate ();

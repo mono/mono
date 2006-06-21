@@ -1,3 +1,10 @@
+2006-06-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ColorDialog.cs: when the mouse button is pressed inside the color
+	matrix, don't let the cursor move out of it until the button is
+	released, which is the behavior on windows. Changed 'colours' by
+	'colors' to use the same word consistently.
+
 2006-06-21  Chris Toshok  <toshok@ximian.com>
 
 	* DataGrid.cs: add in some basic navigation stuff (navigating to a
