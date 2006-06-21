@@ -1,3 +1,9 @@
+2006-06-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HttpWriter.cs: Fix test fixture not to inherit from 
+	AspNetHostingMinimal which limits the test execution when the CAS 
+	category isn't excluded.
+
 2006-06-05 Juraj Skripsky <js@hotfeet.ch>
 
 	* HttpRequestTest.cs: add test case to verify that the correct 

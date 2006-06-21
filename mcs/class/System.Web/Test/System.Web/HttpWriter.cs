@@ -39,7 +39,7 @@ using System.Web.Caching;
 namespace MonoCasTests.System.Web {
 
 	[TestFixture]
-	public class HttpWriterTest : AspNetHostingMinimal {
+	public class HttpWriterTest {
 
 		private HttpWriter writer;
 
@@ -104,10 +104,6 @@ namespace MonoCasTests.System.Web {
 		public void WriteStringInvalidArg3 ()
 		{
 			writer.Write ("hello", 0, 10);
-		}
-		
-		public override Type Type {
-			get { return typeof (HttpWriter); }
 		}
 	}
 }
