@@ -455,6 +455,9 @@ public abstract class Encoding
 #if NET_2_0
 			case UTF32Encoding.UTF32_CODE_PAGE:
 				return UTF32;
+
+			case UTF32Encoding.BIG_UTF32_CODE_PAGE:
+				return BigEndianUTF32;
 #endif
 
 			case UnicodeEncoding.UNICODE_CODE_PAGE:
@@ -562,7 +565,7 @@ public abstract class Encoding
 				1145, 1146, 1147, 1148, 1149,
 				1200, 1201, 1250, 1251, 1252, 1253, 1254,
 				1255, 1256, 1257, 1258,
-				10000, 10079, 12000,
+				10000, 10079, 12000, 12001,
 				20127, 20273, 20277, 20278, 20280, 20284,
 				20285, 20290, 20297, 20420, 20424, 20866,
 				20871, 21025, 21866, 28591, 28592, 28593,
@@ -811,6 +814,7 @@ public abstract class Encoding
 	static volatile Encoding unixConsoleEncoding;
 #if NET_2_0
 	static volatile Encoding utf32Encoding;
+	static volatile Encoding bigEndianUTF32Encoding;
 #endif
 
 	static readonly object lockobj = new object ();
@@ -998,6 +1002,23 @@ public abstract class Encoding
 			}
 
 			return utf32Encoding;
+		}
+	}
+
+	// Get the standard big-endian UTF-32 encoding object.
+	private static Encoding BigEndianUTF32
+	{
+		get {
+			if (bigEndianUTF32Encoding == null) {
+				lock (lockobj) {
+					if (bigEndianUTF32Encoding == null) {
+						bigEndianUTF32Encoding = new UTF32Encoding (true, true);
+						bigEndianUTF32Encoding.is_readonly = true;
+					}
+				}
+			}
+
+			return bigEndianUTF32Encoding;
 		}
 	}
 #endif
