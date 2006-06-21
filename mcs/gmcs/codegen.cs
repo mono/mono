@@ -169,6 +169,9 @@ namespace Mono.CSharp {
 		{
 			try {
 				Assembly.Builder.Save (Basename (name));
+
+				if (SymbolWriter != null)
+					SymbolWriter.WriteSymbolFile ();
 			}
 			catch (COMException) {
 				if ((RootContext.StrongNameKeyFile == null) || (!RootContext.StrongNameDelaySign))
@@ -185,9 +188,6 @@ namespace Mono.CSharp {
 			catch (System.UnauthorizedAccessException ua) {
 				Report.Error (16, "Could not write to file `"+name+"', cause: " + ua.Message);
 			}
-
-			if (SymbolWriter != null)
-				SymbolWriter.WriteSymbolFile ();
 		}
 	}
 

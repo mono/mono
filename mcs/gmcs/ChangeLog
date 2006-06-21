@@ -1,5 +1,10 @@
 2006-06-21  Martin Baulig  <martin@ximian.com>
 
+	* codegen.cs (CodeGen.Save): Moved the symbol file generation into
+	the `try'-block, so we also report CS0016 etc. there.
+
+2006-06-21  Martin Baulig  <martin@ximian.com>
+
 	* ecore.cs (FieldExpr.EmitAssign, FieldExpr.AddressOf): Correctly
 	handle SetAssigned() and SetMemberIsUsed() for generic types;
 	fixes #77545.
