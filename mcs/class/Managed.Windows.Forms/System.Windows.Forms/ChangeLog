@@ -1,3 +1,7 @@
+2006-06-21  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* FileDialog.cs: Fixed taborder to match MS. Fixes #77873 partially.
+
 2006-06-21  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* Control.cs (ContainsFocus): Using new driver method to get focused
