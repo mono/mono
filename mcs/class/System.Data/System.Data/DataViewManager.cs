@@ -109,7 +109,7 @@ namespace System.Data
 		}
 
 		int ICollection.Count {
-			get { return settings.Count; }
+			get { return 1; }
 		}
 
 		bool ICollection.IsSynchronized {

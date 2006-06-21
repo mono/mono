@@ -1,3 +1,11 @@
+2006-06-20  Chris Toshok  <toshok@ximian.com>
+
+	* DataView.cs: the PropertyDescriptorCollection returned by
+	ITyepdList.GetItemProperties should include the child relations of
+	our table, in order to match MS's behavior.
+
+	* DataViewManager.cs: ICollection.Count property is always 1.
+
 2006-06-15  Senganal T  <tsenganal@novell.com>
 
 	* DataTable.cs :

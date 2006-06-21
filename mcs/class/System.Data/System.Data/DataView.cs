@@ -845,20 +845,29 @@ namespace System.Data
 		PropertyDescriptorCollection ITypedList.GetItemProperties (PropertyDescriptor[] listAccessors) 
 		{
 			// FIXME: use listAccessors somehow
-			DataColumnPropertyDescriptor [] descriptors = 
-				new DataColumnPropertyDescriptor [dataTable.Columns.Count];
+			PropertyDescriptor [] descriptors = 
+				new PropertyDescriptor [dataTable.Columns.Count + dataTable.ChildRelations.Count];
 
-			DataColumnPropertyDescriptor descriptor;
-			DataColumn dataColumn;
+			int d = 0;
 			for (int col = 0; col < dataTable.Columns.Count; col ++) {
-				dataColumn = dataTable.Columns[col];
+				DataColumn dataColumn = dataTable.Columns[col];
+				DataColumnPropertyDescriptor descriptor;
+
 				descriptor = new DataColumnPropertyDescriptor(
 					dataColumn.ColumnName, col, null);
 				descriptor.SetComponentType (typeof (System.Data.DataRowView));
 				descriptor.SetPropertyType (dataColumn.DataType);
 				descriptor.SetReadOnly (dataColumn.ReadOnly);
-				descriptors [col] = descriptor;
+				descriptors [d++] = descriptor;
 			}
+			for (int rel = 0; rel < dataTable.ChildRelations.Count; rel ++) {
+				DataRelation dataRelation = dataTable.ChildRelations[rel];
+				DataRelationPropertyDescriptor descriptor;
+
+				descriptor = new DataRelationPropertyDescriptor(dataRelation);
+				descriptors [d++] = descriptor;
+			}
+
 			return new PropertyDescriptorCollection (descriptors);
 		}
 
