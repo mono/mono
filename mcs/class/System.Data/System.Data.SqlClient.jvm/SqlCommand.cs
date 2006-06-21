@@ -36,6 +36,7 @@ using System.Text.RegularExpressions;
 using System.Data;
 using System.Data.Common;
 using System.Data.ProviderBase;
+using System.Xml;
 
 using java.sql;
 
@@ -118,6 +119,10 @@ namespace System.Data.SqlClient
 		#endregion // Properties
 
 		#region Methods
+
+		public XmlReader ExecuteXmlReader() {
+			return SqlXmlTextReader.Create(ExecuteReader(CommandBehavior.SequentialAccess));
+		}
 
 		public new SqlDataReader ExecuteReader()
 		{

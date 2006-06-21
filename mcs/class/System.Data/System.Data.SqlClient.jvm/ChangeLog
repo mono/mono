@@ -1,3 +1,7 @@
+2006-06-21	Konstantin Triger <kostat@mainsoft.com>
+
+	* SqlCommand.cs, SqlXmlTextReader.cs: ExecuteXmlReader() implementation.
+
 2005-12-15 Konstantin Triger <kostat@mainsoft.com>
 
 	* SqlConnection.cs: save StringManager into AppDomain.

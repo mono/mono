@@ -41,7 +41,6 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
-		[Category("NotWorking")]
 		public void run()
 		{
 			if (ConnectedDataProvider.GetDbType() != DataBaseServer.SQLServer) {
@@ -67,7 +66,7 @@ namespace MonoTests.System.Data.SqlClient
 			
 				SqlCommand comm = new SqlCommand(selectStr,con);
 				// ExecuteXmlReader is not supported yet
-				XmlReader xr = null; // = comm.ExecuteXmlReader();
+				XmlReader xr = comm.ExecuteXmlReader();
 
 				StringBuilder sb = new StringBuilder();
 				while(xr.Read()) 
