@@ -618,16 +618,37 @@ typedef struct {
 	MonoInst *inst;
 } MonoVarUsageInfo;
 
-static void
+
+
+
+/*
+ * Returns TRUE if the tree can have side effects.
+ */
+static gboolean
 analyze_dev_use (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *root, MonoInst *inst)
 {
 	MonoMethodVar *info;
 	int i, idx, arity;
+	gboolean has_side_effects;
 
 	if (!inst)
-		return;
+		return FALSE;
 
 	arity = mono_burg_arity [inst->opcode];
+	switch (inst->opcode) {
+#define ANALYZE_DEV_USE_SPECIFIC_OPS 1
+#define OPDEF(a1,a2,a3,a4,a5,a6,a7,a8,a9,a10) case a1:
+#include "simple-cee-ops.h"
+#undef OPDEF
+#define MINI_OP(a1,a2) case a1:
+#include "simple-mini-ops.h"
+#undef MINI_OP
+#undef ANALYZE_DEV_USE_SPECIFIC_OPS
+		has_side_effects = FALSE;
+		break;
+	default:
+		has_side_effects = TRUE;
+	}
 
 	if ((inst->ssa_op == MONO_SSA_STORE) && 
 	    (inst->inst_i0->opcode == OP_LOCAL /*|| inst->inst_i0->opcode == OP_ARG */)) {
@@ -670,11 +691,15 @@ analyze_dev_use (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *root, MonoInst 
 	} else {
 		if (arity) {
 			//if (inst->ssa_op != MONO_SSA_STORE)
-			analyze_dev_use (cfg, bb, root, inst->inst_left);
+			if (analyze_dev_use (cfg, bb, root, inst->inst_left))
+				has_side_effects = TRUE;
 			if (arity > 1)
-				analyze_dev_use (cfg, bb, root, inst->inst_right);
+				if (analyze_dev_use (cfg, bb, root, inst->inst_right))
+					has_side_effects = TRUE;
 		}
 	}
+	
+	return has_side_effects;
 }
 
 static inline void
@@ -689,23 +714,6 @@ record_use (MonoCompile *cfg, MonoInst *var, MonoBasicBlock *bb, MonoInst *ins)
 	ui->inst = ins;
 	info->uses = g_list_prepend_mempool (info->uses, cfg->mempool, ui);
 }	
-
-static void
-mono_ssa_create_def_use (MonoCompile *cfg) 
-{
-	MonoBasicBlock *bb;
-
-	g_assert (!(cfg->comp_done & MONO_COMP_SSA_DEF_USE));
-
-	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
-		MonoInst *inst;
-		for (inst = bb->code; inst; inst = inst->next) {
-			analyze_dev_use (cfg, bb, inst, inst);
-		}
-	}
-
-	cfg->comp_done |= MONO_COMP_SSA_DEF_USE;
-}
 
 /* avoid unnecessary copies of variables:
  * Y <= X; Z = Y; is translated to Z = X;
@@ -760,6 +768,27 @@ mono_ssa_avoid_copies (MonoCompile *cfg)
 			}
 		}
 	}
+}
+
+static void
+mono_ssa_create_def_use (MonoCompile *cfg) 
+{
+	MonoBasicBlock *bb;
+
+	g_assert (!(cfg->comp_done & MONO_COMP_SSA_DEF_USE));
+
+	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
+		MonoInst *inst;
+		for (inst = bb->code; inst; inst = inst->next) {
+			gboolean has_side_effects = analyze_dev_use (cfg, bb, inst, inst);
+			if (has_side_effects && (inst->ssa_op == MONO_SSA_STORE) && 
+					(inst->inst_i0->opcode == OP_LOCAL || inst->inst_i0->opcode == OP_ARG)) {
+				inst->inst_i0->flags |= MONO_INST_DEFINITION_HAS_SIDE_EFFECTS;
+			}
+		}
+	}
+
+	cfg->comp_done |= MONO_COMP_SSA_DEF_USE;
 }
 
 static int
@@ -1199,6 +1228,7 @@ void
 mono_ssa_deadce (MonoCompile *cfg) 
 {
 	int i;
+	GList *work_list;
 
 	g_assert (cfg->comp_done & MONO_COMP_SSA);
 
@@ -1216,6 +1246,42 @@ mono_ssa_deadce (MonoCompile *cfg)
 		mono_ssa_create_def_use (cfg);
 
 	mono_ssa_avoid_copies (cfg);
+
+	work_list = NULL;
+	for (i = 0; i < cfg->num_varinfo; i++) {
+		MonoMethodVar *info = MONO_VARINFO (cfg, i);
+		work_list = g_list_prepend (work_list, info);
+		
+		//if ((info->def != NULL) && (info->def->inst_i1->opcode != OP_PHI)) printf ("SSA DEADCE TOTAL LOCAL\n");
+	}
+
+	while (work_list) {
+		MonoMethodVar *info = (MonoMethodVar *)work_list->data;
+		work_list = g_list_delete_link (work_list, work_list);
+
+		if (!info->uses && info->def && (!(cfg->varinfo [info->idx]->flags & (MONO_INST_DEFINITION_HAS_SIDE_EFFECTS|MONO_INST_VOLATILE|MONO_INST_INDIRECT)))) {
+			MonoInst *i1;
+			//printf ("ELIMINATE %s: ", mono_method_full_name (cfg->method, TRUE)); mono_print_tree (info->def); printf ("\n");
+
+			i1 = info->def->inst_i1;
+			if (i1->opcode == OP_PHI) {
+				int j;
+				for (j = i1->inst_phi_args [0]; j > 0; j--) {
+					MonoMethodVar *u = MONO_VARINFO (cfg, i1->inst_phi_args [j]);
+					add_to_dce_worklist (cfg, info, u, &work_list);
+				}
+			} else if (i1->ssa_op == MONO_SSA_LOAD &&
+				   (i1->inst_i0->opcode == OP_LOCAL || i1->inst_i0->opcode == OP_ARG)) {
+				    MonoMethodVar *u = MONO_VARINFO (cfg, i1->inst_i0->inst_c0);
+					add_to_dce_worklist (cfg, info, u, &work_list);
+			}
+			//if (i1->opcode != OP_PHI) printf ("SSA DEADCE DEAD LOCAL\n");
+
+			info->def->opcode = CEE_NOP;
+			info->def->ssa_op = MONO_SSA_NOP;
+		}
+
+	}
 }
 
 #if 0

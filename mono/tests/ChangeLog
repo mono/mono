@@ -1,3 +1,36 @@
+2006-06-20  Massimiliano Mantione  <massi@ximian.com>
+	* bug-78656.cs. Makefile.am: Added test for bug 78656.
+
+2006-06-16  Massimiliano Mantione  <massi@ximian.com>
+	* bug-78653.cs. Makefile.am: Added test for bug 78653.
+
+2006-06-13  Massimiliano Mantione  <massi@ximian.com>
+	* test-inline-call-stack.cs: Test also that the order in which
+	.cctors are run is essentially the same regardless of the status of
+	"beforefieldinit", because too many apps depend on this behavior
+	(which seems to be also the one of the MS CLR).
+
+2006-06-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* interlocked-2.2.cs: Make the return values positive.
+
+2006-06-07  Wade Berrier <wberrier@novell.com>
+
+	* Makefile.am: add  test-inline-call-stack-library.cs and test-inline-call-stack.cs
+	to EXTRA_DIST so that tests can be run from a dist tarball
+
+2006-06-05  Jonathan Chambers  <jonathan.chambers@ansys.com>
+
+	* libtest.c cominterop.cs Makefile.am: Add BSTR and VARIANT marshalling tests
+
+2006-06-06  Massimiliano Mantione  <massi@ximian.com>
+
+	* Makefile.am, bug-78311.cs, bug-78549.il: Added tests.
+
+2006-06-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* libtest.c pinvoke17.cs: Rename definitions which conflict with win32 API names.
+
 2006-05-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* pinvoke2.cs libtest.c: Add tests for UnamangedType.LPStruct and blittable types.

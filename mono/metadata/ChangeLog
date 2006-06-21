@@ -1,3 +1,210 @@
+2006-06-21  Martin Baulig  <martin@ximian.com>
+
+	* reflection.c
+	(method_encode_clauses): Don't assert on `ex_info->handlers' here;
+	fixes #76484.
+
+2006-06-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.h (mono_array_setref): Cast value to (MonoObject*) to fix warnings.
+
+2006-06-20  Raja R Harinath  <rharinath@novell.com>
+
+	Make 'mono_class_get_full' only inflate TYPESPECs, not TYPEDEFs
+	nor TYPEREFs.
+	* class.c (mono_class_create_from_typespec): Add 'context' argument.
+	Inflate result if necessary.
+	(mono_class_get_full): Remove old version.  Rename from
+	'mono_class_get' and add 'context' argument.  Pass it to
+	..._create_from_typespec.
+	(mono_class_get): New.  Simple wrapper to mono_class_get_full.
+	(mono_ldtoken): Revert change below.
+
+2006-06-20  Martin Baulig  <martin@ximian.com>
+
+	* class.c (mono_ldtoken): Don't pass the generic context to
+	mono_class_get_full() for MONO_TOKEN_TYPE_DEF/REF.  Fixes #78053.
+
+2006-06-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_ftnptr_to_delegate): Avoid allocating signature from mempool
+	and later freeing it. Fixes #78638.
+
+2006-06-15  Miguel de Icaza  <miguel@novell.com>
+
+	* icall.c (mono_class_get_throw): Revert over-zealous error
+	throwing, the caller for mono_class_get_throw will cope with
+	errors when classes are not properly initialized already.
+
+	The code still copes with loader exceptions though.
+
+	Fixes the regression in reftype1 and reftype3 from the CAS tests.
+	
+2006-06-14  Miguel de Icaza  <miguel@novell.com>
+
+	Fixes the `make run1' version of RuntimeAbort (to be commited,
+	source is in Bugzilla).
+	
+	* metadata.c (mono_metadata_interfaces_from_typedef_full): Return
+	FALSE on class loading failure instead of returning true.
+
+	* class.c (mono_class_create_from_typedef): It is possible for
+	mono_metadata_interfaces_from_typedef_full to fail if a class is
+	not found, cope with this.
+	
+
+2006-06-14  Dick Porter  <dick@ximian.com>
+
+	* socket-io.c: 
+	* process.c: Fix a bunch of signed/unsigned warnings from gcc
+	4.1.1
+
+2006-06-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* culture-info-table.h : oops, forgot to make it nsync with r61548.
+
+2006-06-09  Jonathan Chambers  <jonathan.chambers@ansys.com>
+
+	* icall.c: Another fix for building mono in Visual Studio.
+
+2006-06-09  Jonathan Chambers  <jonathan.chambers@ansys.com>
+
+	* marshal.c icall.c: Minor fixes for building mono in Visual Studio.
+	
+2006-06-09  Martin Baulig  <martin@ximian.com>
+
+	* debug-mono-symfile.c: Put this back and really fix it this
+	time. Sorry for all the trouble.
+
+2006-06-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (mono_class_get_throw): Fix a warning.
+	(ves_icall_System_Reflection_Assembly_GetTypes): Allways throw 
+	ReflectionTypeLoadException if needed. Fixes #78606.
+
+	* class.c (mono_class_setup_vtable_general): Handle loader errors a bit better.
+	(mono_class_init): Ditto.
+
+	* loader.c (mono_loader_set_error_assembly_load): Display a separate warning for
+	ref_only exceptions.
+	(mono_loader_clear_error): Make this work even if there is no error.
+
+2006-06-08  Jonathan Chambers  <jonathan.chambers@ansys.com>
+
+	* object-internals.h marshal.c marshal.h icall.c: Implement method 
+	Marshal.GetComSlotForMethodInfo using internal call.
+
+2006-06-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* class-internals.h: Add a new kind of loader error LOADER_ERROR_ASSEMBLY plus
+	a function for signalling it.
+
+	* class.c (mono_class_from_typeref): Use the new kind of loader error when
+	a referenced assembly is not found.
+
+	* loader.c (mono_loader_error_prepare_exception): Add support for 
+	LOADER_ERROR_ASSEMBLY. Fix formatting.
+
+2006-06-05  Jonathan Chambers  <jonathan.chambers@ansys.com>
+
+	* domain.c appdomain.c class-internals.h marshal.c: Add support 
+	for VARIANT marshalling on windows and increment corlib version
+	since Variant struct was added.
+
+2006-06-03  Miguel de Icaza  <miguel@novell.com>
+
+	* debug-mono-symfile.c: Revert Martin's previous patch which broke
+	stack trace line information:
+
+	(Martin) (mono_debug_symfile_lookup_location): Fix the algorithm:
+	(Martin) when looking up B which is between A and C, return A not C.
+
+	Bug is #78573.
+
+	Thanks to Alexander Olk for tracking this down.
+
+2006-06-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_set_last_error_windows): Fix build.
+	
+	* marshal.c (mono_marshal_emit_native_wrapper): Call GetLastError () early and without a wrapper to
+	avoid clobbering its value.
+	(mono_string_to_lpstr): Fix a warning on windows.
+
+2006-05-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* threadpool.c: Make ASyncCall a copy of the managed MonoAsyncCall class so
+	it gets GC tracking.
+
+	* object-internals.h (MonoAsyncResult): Add an 'object_data' field which has
+	GC tracking.
+	
+	* object.c (mono_async_result_new): Add an additional parameter 'object_data'.
+
+	* marshal.c threadpool.c: Update callers of mono_async_result_new.
+
+	* appdomain.c: Bump corlib version.
+
+2006-05-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c: Use mono_mb_emit_stloc in more places. Use CEE_LDIND_REF and
+	CEE_STIND_REF when working with object references.
+
+2006-05-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_setup_fields): Call mono_class_init () for class->parent.
+	Fixes #78539.
+
+2006-05-30  Miguel de Icaza  <miguel@novell.com>
+
+	* loader.c (method_from_memberref): Fix argument value for
+	mono_loader_set_error_method_load (I was passing the MonoClass
+	instead of the class name char *).
+
+2006-05-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c: Use mono_mb_emit_stloc in more places. Use CEE_LDIND_REF and
+	CEE_STIND_REF when working with object references.
+
+2006-05-30  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.c (mono_debug_print_stack_frame): Reverted the
+	mono_method_full_name() change and replace the ':' with a '.'
+	here.
+
+2006-05-30  Martin Baulig  <martin@ximian.com>
+
+	* debug-mono-symfile.c
+	(mono_debug_symfile_lookup_location): Fix the algorithm:
+	when looking up B which is between A and C, return A not C.
+
+2006-05-29  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.h
+	(MonoDebugMethodInfo): Make the typedef public.
+	(MonoDebugSourceLocation): New public struct.
+
+	* mono-debug.c
+	(mono_debug_source_location_from_address): Removed.
+	(mono_debug_source_location_from_il_offset): Removed.
+	(mono_debug_il_offset_from_address): Removed.
+	(mono_debug_address_from_il_offset): Removed.
+	(mono_debug_lookup_method): New public function.
+	(mono_debug_lookup_source_location): New public function; replaces
+	the old mono_debug_source_location_from_*() functions; see the
+	inline documentation.
+	(mono_debug_free_source_location): New public function.
+	(mono_debug_print_stack_frame): New public function; see the
+	inline documentation.
+
+	* debug-mono-symfile.c
+	(mono_debug_find_source_location): Renamed into
+	mono_debug_symfile_lookup_location(); only take a
+	`MonoDebugMethodInfo *' and an `offset' argument; added inline
+	documentation.
+	(mono_debug_find_method): Renamed into
+	mono_debug_symfile_lookup_method().
+
 2006-05-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* assembly.c (mono_assembly_open_full): Dont overwrite the status

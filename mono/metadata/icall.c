@@ -99,14 +99,9 @@ mono_class_get_throw (MonoImage *image, guint32 type_token)
 	MonoLoaderError *error;
 	MonoException *ex;
 	
-	if (class != NULL){
-		if (class->exception_type != NULL){
-			MonoException *exc = mono_class_get_exception_for_failure (class);
-			g_assert (exc);
-			mono_raise_exception (exc);
-		}
+	if (class != NULL)
 		return class;
-	}
+
 	error = mono_loader_get_last_error ();
 	g_assert (error != NULL);
 	
@@ -4532,6 +4527,8 @@ mono_module_get_types (MonoDomain *domain, MonoImage *image, MonoBoolean exporte
 		visibility = attrs & TYPE_ATTRIBUTE_VISIBILITY_MASK;
 		if (!exportedOnly || (visibility == TYPE_ATTRIBUTE_PUBLIC || visibility == TYPE_ATTRIBUTE_NESTED_PUBLIC)) {
 			klass = mono_class_get_throw (image, (i + 1) | MONO_TOKEN_TYPE_DEF);
+			if (mono_loader_get_last_error ())
+				mono_loader_clear_error ();
 			mono_array_setref (res, count, mono_type_get_object (domain, &klass->byval_arg));
 			count++;
 		}
@@ -4547,7 +4544,8 @@ ves_icall_System_Reflection_Assembly_GetTypes (MonoReflectionAssembly *assembly,
 	MonoImage *image = NULL;
 	MonoTableInfo *table = NULL;
 	MonoDomain *domain;
-	int i;
+	GList *list = NULL;
+	int i, len;
 
 	MONO_ARCH_SAVE_REGS;
 
@@ -4632,42 +4630,42 @@ ves_icall_System_Reflection_Assembly_GetTypes (MonoReflectionAssembly *assembly,
 		}
 	}
 
-	if (mono_is_security_manager_active ()) {
-		/* the ReflectionTypeLoadException must have all the types (Types property), 
-		 * NULL replacing types which throws an exception. The LoaderException must
-		 * contains all exceptions for NULL items.
-		 */
+	/* the ReflectionTypeLoadException must have all the types (Types property), 
+	 * NULL replacing types which throws an exception. The LoaderException must
+	 * contain all exceptions for NULL items.
+	 */
 
-		guint32 len = mono_array_length (res);
-		GList *list = NULL;
+	len = mono_array_length (res);
 
-		for (i = 0; i < len; i++) {
-			MonoReflectionType *t = mono_array_get (res, gpointer, i);
-			MonoClass *klass = mono_type_get_class (t->type);
-			if ((klass != NULL) && klass->exception_type) {
-				/* keep the class in the list */
-				list = g_list_append (list, klass);
-				/* and replace Type with NULL */
-				mono_array_setref (res, i, NULL);
-			}
+	for (i = 0; i < len; i++) {
+		MonoReflectionType *t = mono_array_get (res, gpointer, i);
+		MonoClass *klass = mono_type_get_class (t->type);
+		if ((klass != NULL) && klass->exception_type) {
+			/* keep the class in the list */
+			list = g_list_append (list, klass);
+			/* and replace Type with NULL */
+			mono_array_setref (res, i, NULL);
 		}
+	}
 
-		if (list) {
-			GList *tmp = NULL;
-			MonoException *exc = NULL;
-			int length = g_list_length (list);
+	if (list) {
+		GList *tmp = NULL;
+		MonoException *exc = NULL;
+		MonoArray *exl = NULL;
+		int length = g_list_length (list);
 
-			MonoArray *exl = mono_array_new (domain, mono_defaults.exception_class, length);
-			for (i = 0, tmp = list; i < length; i++, tmp = tmp->next) {
-				MonoException *exc = mono_class_get_exception_for_failure (tmp->data);
-				mono_array_setref (exl, i, exc);
-			}
-			g_list_free (list);
-			list = NULL;
+		mono_loader_clear_error ();
 
-			exc = mono_get_exception_reflection_type_load (res, exl);
-			mono_raise_exception (exc);
+		exl = mono_array_new (domain, mono_defaults.exception_class, length);
+		for (i = 0, tmp = list; i < length; i++, tmp = tmp->next) {
+			MonoException *exc = mono_class_get_exception_for_failure (tmp->data);
+			mono_array_setref (exl, i, exc);
 		}
+		g_list_free (list);
+		list = NULL;
+
+		exc = mono_get_exception_reflection_type_load (res, exl);
+		mono_raise_exception (exc);
 	}
 		
 	return res;
@@ -5619,23 +5617,43 @@ ves_icall_System_Environment_GetEnvironmentVariableNames (void)
 static void
 ves_icall_System_Environment_InternalSetEnvironmentVariable (MonoString *name, MonoString *value)
 {
+#ifdef PLATFORM_WIN32
+	gunichar2 *utf16_name, *utf16_value;
+#else
 	gchar *utf8_name, *utf8_value;
+#endif
 
 	MONO_ARCH_SAVE_REGS;
+	
+#ifdef PLATFORM_WIN32
+	utf16_name = mono_string_to_utf16 (name);
+	if ((value == NULL) || (mono_string_length (value) == 0) || (mono_string_chars (value)[0] == 0)) {
+		SetEnvironmentVariable (utf16_name, NULL);
+		g_free (utf16_name);
+		return;
+	}
 
+	utf16_value = mono_string_to_utf16 (value);
+
+	SetEnvironmentVariable (utf16_name, utf16_value);
+
+	g_free (utf16_name);
+	g_free (utf16_value);
+#else
 	utf8_name = mono_string_to_utf8 (name);	/* FIXME: this should be ascii */
 
 	if ((value == NULL) || (mono_string_length (value) == 0) || (mono_string_chars (value)[0] == 0)) {
 		g_unsetenv (utf8_name);
+		g_free (utf8_name);
 		return;
 	}
 
 	utf8_value = mono_string_to_utf8 (value);
-
 	g_setenv (utf8_name, utf8_value, TRUE);
 
 	g_free (utf8_name);
 	g_free (utf8_value);
+#endif
 }
 
 /*
@@ -6979,6 +6997,7 @@ static const IcallEntry marshal_icalls [] = {
 	{"FreeBSTR", ves_icall_System_Runtime_InteropServices_Marshal_FreeBSTR},
 	{"FreeCoTaskMem", ves_icall_System_Runtime_InteropServices_Marshal_FreeCoTaskMem},
 	{"FreeHGlobal", ves_icall_System_Runtime_InteropServices_Marshal_FreeHGlobal},
+	{"GetComSlotForMethodInfoInternal", ves_icall_System_Runtime_InteropServices_Marshal_GetComSlotForMethodInfoInternal},
 	{"GetDelegateForFunctionPointerInternal", ves_icall_System_Runtime_InteropServices_Marshal_GetDelegateForFunctionPointerInternal},
 	{"GetFunctionPointerForDelegateInternal", mono_delegate_to_ftnptr},
 	{"GetLastWin32Error", ves_icall_System_Runtime_InteropServices_Marshal_GetLastWin32Error},

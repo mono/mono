@@ -45,6 +45,10 @@ get_typedef (MonoImage *m, int idx)
 	char *tstring, *result;
         guint32 token;
         
+	if (idx == 1)
+		/* <Module> */
+		return NULL;
+
 	mono_metadata_decode_row (&m->tables [MONO_TABLE_TYPEDEF], idx - 1, cols, MONO_TYPEDEF_SIZE);
 
         ns = mono_metadata_string_heap (m, cols [MONO_TYPEDEF_NAMESPACE]);
@@ -853,7 +857,7 @@ dis_stringify_method_signature_full (MonoImage *m, MonoMethodSignature *method, 
 	guint32 pcols [MONO_PARAM_SIZE];
 	guint32 param_index = 0, next_param_index = 0;
 	gboolean has_param_row;
-	const char *name = "", *method_name = "";
+	const char *method_name = "";
 	int free_method = 0;
 	char *retval, *esname;
 	char *type = NULL;
@@ -903,8 +907,8 @@ dis_stringify_method_signature_full (MonoImage *m, MonoMethodSignature *method, 
 	start = method->hasthis ? 0 : 1;
 	for (i = 0; i < method->param_count + 1; ++i) {
 		marshal_info = NULL;
-		name = "";
 		has_param_row = param_index && param_index < next_param_index;
+		esname = NULL;
 
 		if (method->param_count == 0 && !has_param_row)
 			/* method has zero parameters, and no row for return val in the PARAM table */
@@ -915,7 +919,8 @@ dis_stringify_method_signature_full (MonoImage *m, MonoMethodSignature *method, 
 		
 		if (has_param_row && i == pcols [MONO_PARAM_SEQUENCE]) {
 			if (i)
-				name = mono_metadata_string_heap (m, pcols [MONO_PARAM_NAME]);
+				esname = get_escaped_name (
+						mono_metadata_string_heap (m, pcols [MONO_PARAM_NAME]));
 
 			if (with_marshal_info && (pcols [MONO_PARAM_FLAGS] & PARAM_ATTRIBUTE_HAS_FIELD_MARSHAL)) {
 				const char *tp;
@@ -932,7 +937,8 @@ dis_stringify_method_signature_full (MonoImage *m, MonoMethodSignature *method, 
 			param_index ++;
 		} else {
 			if (i)
-				name = g_strdup_printf ("A_%i", i - start);
+				/* A_[0-9]* does not require escaping */
+				esname = g_strdup_printf ("A_%i", i - start);
 		}
 
 		if (!i)
@@ -943,7 +949,6 @@ dis_stringify_method_signature_full (MonoImage *m, MonoMethodSignature *method, 
 
 		retval = dis_stringify_param (m, method->params [i - 1]);
 
-		esname = get_escaped_name (name);
 		g_string_append_printf (result, "%s%s %s", retval, marshal_info ? marshal_info : "", esname);
 		g_free (retval);
 		g_free (esname);
@@ -962,6 +967,7 @@ dis_stringify_method_signature_full (MonoImage *m, MonoMethodSignature *method, 
 		char *estype = get_escaped_name (type);
 		g_string_sprintfa (result_ret, "%s::", estype);
 		g_free (estype);
+		g_free (type);
 	}
 	esname = get_escaped_name (method_name);
 	g_string_append (result_ret, esname);
@@ -1024,6 +1030,10 @@ get_escaped_class_name (MonoClass *c)
 {
 	char *result, *esname;
 
+	if (c->type_token == mono_metadata_make_token (MONO_TABLE_TYPEDEF, 1))
+		/* <Module> */
+		return NULL;
+
 	if (c->rank || c->byval_arg.type == MONO_TYPE_PTR) 
 		g_assert (0);
 
@@ -1051,6 +1061,10 @@ dis_stringify_object_with_class (MonoImage *m, MonoClass *c, gboolean prefix, gb
 	const char *otype = type->type == MONO_TYPE_VALUETYPE ? "valuetype " : "class " ;
 	char *assemblyref = NULL, *result, *esname, *generic = NULL;
 	
+	if (c->type_token == mono_metadata_make_token (MONO_TABLE_TYPEDEF, 1))
+		/* <Module> */
+		return NULL;
+
 	if (m != c->image) {
 		if (c->image->assembly_name) {
 			/* we cheat */
@@ -1208,6 +1222,10 @@ dis_stringify_type (MonoImage *m, MonoType *type, gboolean is_def)
 
 	if (type->byref)
 		byref = "&";
+	
+	if (!bare)
+		/* bare is NULL, for <Module> */
+		return bare;
 		
 	result = g_strconcat (bare, byref, pinned, mods ? mods : "", NULL);
 
@@ -1498,6 +1516,9 @@ get_escaped_name (const char *name)
 	const char *s;
 	char *ret, *esc;
 
+	if (!name)
+		return NULL;
+
 	g_assert (key_table);
 
 	if (strlen (name) == 0)
@@ -1695,7 +1716,11 @@ get_fieldref_signature (MonoImage *m, int idx, MonoGenericContext *context)
 	type = get_memberref_parent (m, cols [MONO_MEMBERREF_CLASS], context);
 	esname = get_escaped_name (mono_metadata_string_heap (m, cols [MONO_MEMBERREF_NAME]));
 
-        full_sig = g_strdup_printf ("%s %s::%s", sig, type, esname);
+	full_sig = g_strdup_printf ("%s %s%s%s", 
+			sig, 
+			type ? type : "", 
+			type ? "::" : "",
+			esname);
         g_free (sig);
 	g_free (type);
 	g_free (esname);
@@ -1741,8 +1766,11 @@ get_field (MonoImage *m, guint32 token, MonoGenericContext *context)
 	type = get_typedef (m, type_idx);
 	estype = get_escaped_name (type);
 	esname = get_escaped_name (mono_metadata_string_heap (m, cols [MONO_FIELD_NAME]));
-	res = g_strdup_printf ("%s %s::%s",
-			sig, estype, esname);
+	res = g_strdup_printf ("%s %s%s%s",
+			sig, 
+			estype ? estype : "",
+			estype ? "::" : "",
+			esname);
 
 	g_free (type);
 	g_free (sig);
@@ -1837,9 +1865,9 @@ get_method_core (MonoImage *m, guint32 token, gboolean fullsig, MonoGenericConte
 		esname = get_escaped_name (mh->name);
 		sig = dis_stringify_type (m, &mh->klass->byval_arg, TRUE);
 		if (show_tokens)
-			name = g_strdup_printf ("%s/*%08x*/::%s", sig, token, esname);
+			name = g_strdup_printf ("%s/*%08x*/%s%s", sig ? sig : "", token, sig ? "::" : "", esname);
 		else
-			name = g_strdup_printf ("%s::%s", sig, esname);
+			name = g_strdup_printf ("%s%s%s", sig ? sig : "", sig ? "::" : "", esname);
 		g_free (sig);
 		g_free (esname);
 	} else
@@ -1856,10 +1884,14 @@ get_method_core (MonoImage *m, guint32 token, gboolean fullsig, MonoGenericConte
 	case MONO_TOKEN_MEMBER_REF: {
 		mono_metadata_decode_row (&m->tables [MONO_TABLE_MEMBERREF],
 					  idx - 1, member_cols, MONO_MEMBERREF_SIZE);
-		if (!name)
-			name = g_strdup_printf ("%s::%s",
-						get_memberref_parent (m, member_cols [MONO_MEMBERREF_CLASS], context),
+		if (!name) {
+			char *parent = get_memberref_parent (m, member_cols [MONO_MEMBERREF_CLASS], context),
+			name = g_strdup_printf ("%s%s%s",
+						parent ? parent : "", 
+						parent ? "::" : "",
 						mono_metadata_string_heap (m, member_cols [MONO_MEMBERREF_NAME]));
+			g_free (parent);
+		}
 		if (mh) {
 			int arity = 0;
 
@@ -1932,7 +1964,10 @@ get_methoddef (MonoImage *m, guint32 idx)
 	mh = mono_get_method (m, MONO_TOKEN_METHOD_DEF | idx, NULL);
 	if (mh) {
 		sig = dis_stringify_type (m, &mh->klass->byval_arg, FALSE);
-		name = g_strdup_printf ("%s::%s", sig, mh->name);
+		name = g_strdup_printf ("%s%s%s", 
+				sig ? sig : "",
+				sig ? "::" : "",
+				mh->name);
 		g_free (sig);
 	} else
 		name = NULL;

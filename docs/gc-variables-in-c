@@ -93,4 +93,8 @@ the GC memory, to remove the reference, set the variable to NULL.
 
 As we prepare the code for a precise GC, GC_MALLOC () will not be used anymore
 in this way in most cases: we'll have a mechanism to specify exactly where
-references to GC memory is stored.
+references to GC memory is stored. This mechanism is now available with the new GC,
+see usages of mono_gc_alloc_fixed (), mono_gc_register_root () and 
+mono_gc_make_descr_from_bitmap().
+See also docs/precise-gc for additional info.
+

@@ -109,6 +109,183 @@
 
 	* method-to-ir.c (mono_method_check_inlining): Fix warnings.
 
+2006-06-20  Jb Evain  <jbevain@gmail.com>
+
+	* cpu-g4.md: fix max length of start_handler instruction.
+
+2006-06-20  Massimiliano Mantione  <massi@ximian.com>
+	* simple-cee-ops.h, simple-mini-ops.h: Fixed bug 78656.
+
+2006-06-16  Massimiliano Mantione  <massi@ximian.com>
+	* ssa.c: Fixed bug 78653 for SSA based deadce.
+	* mini.h: added MONO_INST_DEFINITION_HAS_SIDE_EFFECTS flag go
+	MonoInst.flags, used in SSA based deadce.
+	* aliasing.c: Fixed bug 78653 for "fastpath" deadce.
+	* simple-cee-ops.h, simple-mini-ops.h: Fixed bug 78653.
+
+Thu Jun 15 16:52:46 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* tramp-ppc.c: don't use malloc () for trampoline code, sometimes
+	it can end up using non executable memory on ppc64 systems
+	running ppc32 userspace (fix from Johannes Berg).
+
+2006-06-14  Dick Porter  <dick@ximian.com>
+
+	* wapihandles.c: Fix a bunch of signed/unsigned warnings from gcc
+	4.1.1
+
+2006-06-13  Massimiliano Mantione  <massi@ximian.com>
+	* mini.c: Made so that inline is locally disabled if it would
+	trigger a .cctor, because too many apps depend on this behavior
+	(which seems to be also the one of the MS CLR).
+
+2006-06-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_emit_stack_alloc): Fix initialization of localloc'ed memory.
+	No idea why this worked before.
+
+	* branch-opts.c (mono_branch_optimize_exception_target): Avoid branches
+	which branch to outer exception clauses since they could skip the
+	inner finally clauses. Fixes #78633.
+
+	* exceptions.cs: Add a test for the above.
+
+	* mini.c (merge_basic_blocks): Nullify the branch at the end of the first bb.
+	Fixes #78629.
+
+	* iltests.il: Add a test for the above.
+
+2006-06-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (remove_block_if_useless): Do not remove the bblock immediately
+	after the end of a try bblock, to prevent asserts in mini_method_compile ().
+
+	* iltests.il: Add a test for the above.
+
+2006-06-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ia64.c (mono_arch_lowering_pass): Remove some code duplication.
+	
+	* mini-ia64.c inssel-ia64.brg: Implement the new net 2.0 Interlocked.Add
+	methods as instrinsics.
+
+2006-06-09  Wade Berrier <wberrier@novell.com>
+
+	* Makefile.am: Fix sources list for svn rename so that make dist succeeds
+	(simple-cee-ops.h ssapre-mini-ops.h)
+
+2006-06-09  Neale Ferguson <neale@sinenomine.net>
+
+	* mini-exceptions.c (ves_icall_get_frame_info): Fix this function on s390/s390x.
+	* mini-s390x.c, mini-s390.c: Correct ATOMIC operations (incorrect register for CS
+	instruction).
+	* mini-s390x.h, mini-s390.h: Simplify MCONTEXT_GET_BP.
+	* cpu-s390x.md: Fix max. length values for a couple of instructions.
+
+2006-06-09  Jonathan Chambers  <jonathan.chambers@ansys.com>
+
+	* mini-exceptions.c: Minor fix for building mono in Visual Studio.
+
+2006-06-08  Massimiliano Mantione  <massi@ximian.com>
+
+	* ssapre-cee-ops.h: Renamed as "simple-cee-ops.h"
+	* simple-cee-ops.h: Was "ssapre-cee-ops.h" (renamed).
+	* ssapre-mini-ops.h: Renamed as "simple-mini-ops.h"
+	* simple-mini-ops.h: Was "ssapre-mini-ops.h" (renamed).
+	* local-propagation.c: In mono_cprop_invalidate_values use a whitelist
+	of opcodes, so that bug 78549 should not happen again.
+	* ssapre.c: Updated to use the renamed files.
+
+2006-06-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_output_basic_block): Fix a wrong reg-reg move 
+	in OP_ATOMIC_EXCHANGE_I4.
+
+2006-06-07  Wade Berrier <wberrier@novell.com>
+
+	* tramp-s390.c: Fix s390 build (add missing pointer declarations 
+	in mono_debugger_create_notification_function)
+
+2006-06-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (NEW_AOTCONST_TOKEN): Fix amd64 build.
+	
+	* mini.c (type_from_stack_type): Disable some changes which do not
+	seem to work.
+
+	* driver.c: Reenable opts.
+
+	* mini.h (MonoStackSlot): New structure to keep track of the verification state
+	of the evaluation stack.
+	
+	* mini.h (MonoBasicBlock): Add a 'stack_state' field to keep track of the
+	evaluation stack trace at entry to the bblock.
+
+	* mini.c (merge_stacks): New function to perform verification of stack merges.
+	Turned off by default.
+
+	* mini.c: Fill up ins->klass for instructions whose type is STACK_OBJ or
+	STACK_MP.
+	
+2006-06-06  Massimiliano Mantione  <massi@ximian.com>
+
+	* local-propagation.c: Fixed bug 78549.
+
+2006-06-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c (ves_icall_get_frame_info): Fix this function on ia64.
+
+2006-06-02  Miguel de Icaza  <miguel@novell.com>
+
+	* tramp-sparc.c, tramp-ppc.c, tramp-s390.c, tramp-s390x.c,
+	tramp-arm.c, tramp-ia64.c
+	(mono_debugger_create_notification_function): Update signature to
+	new signature and use new protocol for creating the notification
+	function.  
+
+	Should fix the build.
+
+2006-06-02  Geoff Norton  <gnorton@customerdna.com>
+
+	* exceptions-ppc.c (mono_jit_walk_stack)
+	(ves_icall_get_frame_info): Fix the build
+
+2006-06-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_set_defaults): Fix the handling of -O=-all.
+
+2006-05-31  Raja R Harinath  <rharinath@novell.com>
+
+	* il2tests.2.il: New file for generics CIL tests.  Add test for
+	#78019.
+	* Makefile.am: Update.
+
+	Fix #78019
+	* mini.c (mono_method_to_ir): Don't apply box+brtrue optimization
+	to nullable types.
+
+2006-05-30  Massimiliano Mantione  <massi@ximian.com>
+
+	* aliasing.c: Fixed bug 78311.
+
+2006-05-29  Martin Baulig  <martin@ximian.com>
+
+	* mini-exceptions.c (mono_find_jit_info): When computing the
+	native offset, check whether we're actually inside the method's
+	code; call mono_debug_print_stack_frame() to format the frame.
+	(ves_icall_System_Exception_get_trace): Call
+	mono_debug_print_stack_frame() to format the stack frame.
+	(ves_icall_get_trace): Update to the new debugging API.
+	(mono_jit_walk_stack_from_ctx): Likewise.
+	(ves_icall_get_frame_info): Likewise.
+
+	* mini.c (get_method_from_ip): Use the new debugging API.
+	(mono_print_method_from_ip): Likewise.
+
+	* exceptions-ppc.c
+	(mono_jit_walk_stack): Use the new debugging API.
+	(ves_icall_get_frame_info): Likewise.	
+
 2006-05-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c (mono_arch_output_basic_block): Fix MONO_PROFILE_COVERAGE.

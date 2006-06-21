@@ -1,3 +1,37 @@
+2006-06-02  Ankit Jain  <jankit@novell.com>
+
+	* get.c (dis_stringify_method_signature_full): Fix two memory leaks.
+
+2006-06-02  Ankit Jain  <jankit@novell.com>
+
+	* main.c (dis_method_list): Print only the method name in "{ // end
+	of.."
+
+2006-06-02  Ankit Jain  <jankit@novell.com>
+
+	* get.c (get_typedef): Return NULL for <Module> type.
+	(get_escaped_class_name): Likewise.
+	(dis_stringify_object_with_class): Likewise.
+
+	(dis_stringify_type): Return NULL if the type name is NULL.
+	(get_escaped_name): Don't try to escape a NULL name.
+
+	(get_fieldref_signature): Type name can be null.
+	(get_field): Likewise.
+	(get_method_core): Likewise.
+	(get_methoddef): Likewise.
+	
+	* main.c (dis_method_list): Print correct message for global methods.
+	(dis_globals): Don't print '<Module>' for global methods/fields.
+
+2006-06-01  Ankit Jain  <jankit@novell.com>
+
+	* declsec.c (dump_declsec_entry20): Fix a warning.
+
+2006-05-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* declsec.c (dump_declsec_entry20): Fix a warning.
+
 2006-05-26  Ankit Jain  <jankit@novell.com>
 
 	Patch from Sebastien Pouliot.

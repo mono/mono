@@ -3,11 +3,20 @@
 		 Miguel de Icaza (miguel@ximian.com),
 		   Paolo Molaro (lupus@ximian.com)
 
+
 	This document describes how to embed the Mono runtime in your
 	application, and how to invoke CIL methods from C, and how to
 	invoke C code from CIL. Both the JIT and interpreter can be
 	embedded in very similar ways so most of what is described
 	here can be used in either case.
+
+* IMPORTANT
+
+	This document is now outdated, see:
+
+		http://www.mono-project.com/Embedding_Mono
+
+        For an up-to-date version of this document
 
 * Embedding the runtime.
 

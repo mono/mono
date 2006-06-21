@@ -130,13 +130,11 @@ mono_class_from_typeref (MonoImage *image, guint32 type_token)
 	/* If the assembly did not load, register this as a type load exception */
 	if (references [idx - 1] == REFERENCE_MISSING){
 		MonoAssemblyName aname;
-		char *msg = g_strdup_printf ("%s%s%s", nspace, nspace [0] ? "." : "", name);
 		char *human_name;
 		
 		mono_assembly_get_assemblyref (image, idx - 1, &aname);
 		human_name = mono_stringify_assembly_name (&aname);
-		mono_loader_set_error_type_load (msg, human_name);
-		g_free (msg);
+		mono_loader_set_error_assembly_load (human_name, image->assembly->ref_only);
 		g_free (human_name);
 		
 		return NULL;
@@ -819,6 +817,8 @@ mono_class_setup_fields (MonoClass *class)
 	class->class_size = 0;
 
 	if (class->parent) {
+		/* For generic instances, class->parent might not have been initialized */
+		mono_class_init (class->parent);
 		if (!class->parent->size_inited)
 			mono_class_setup_fields (class->parent);
 		class->instance_size += class->parent->instance_size;
@@ -2075,10 +2075,21 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 				int j;
 				for (j = 0; j < k->method.count; ++j) {
 					MonoMethod *m1 = k->methods [j];
+					MonoMethodSignature *cmsig, *m1sig;
+
 					if (!(m1->flags & METHOD_ATTRIBUTE_VIRTUAL))
 						continue;
+
+					cmsig = mono_method_signature (cm);
+					m1sig = mono_method_signature (m1);
+
+					if (!cmsig || !m1sig) {
+						mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, NULL);
+						return;
+					}
+
 					if (!strcmp(cm->name, m1->name) && 
-					    mono_metadata_signature_equal (mono_method_signature (cm), mono_method_signature (m1))) {
+					    mono_metadata_signature_equal (cmsig, m1sig)) {
 
 						/* CAS - SecurityAction.InheritanceDemand */
 						if (security_enabled && (m1->flags & METHOD_ATTRIBUTE_HAS_SECURITY)) {
@@ -2439,7 +2450,12 @@ mono_class_init (MonoClass *class)
 	}
 	else {
 		mono_class_setup_vtable (class);
-	
+
+		if (class->exception_type || mono_loader_get_last_error ()){
+			class_init_ok = FALSE;
+			goto leave;
+		}
+
 		class->ghcimpl = 1;
 		if (class->parent) { 
 			MonoMethod *cmethod = class->vtable [ghc_slot];
@@ -2861,7 +2877,11 @@ mono_class_create_from_typedef (MonoImage *image, guint32 type_token)
 	mono_class_setup_mono_type (class);
 
 	if (!class->enumtype) {
-		mono_metadata_interfaces_from_typedef_full (image, type_token, &interfaces, &icount, context);
+		if (!mono_metadata_interfaces_from_typedef_full (
+			    image, type_token, &interfaces, &icount, context)){
+			mono_loader_unlock ();
+			return NULL;
+		}
 
 		class->interfaces = interfaces;
 		class->interface_count = icount;
@@ -3270,11 +3290,20 @@ mono_class_from_mono_type (MonoType *type)
 /**
  * @image: context where the image is created
  * @type_spec:  typespec token
+ * @context: the generic context used to evaluate generic instantiations in
  */
 static MonoClass *
-mono_class_create_from_typespec (MonoImage *image, guint32 type_spec)
+mono_class_create_from_typespec (MonoImage *image, guint32 type_spec, MonoGenericContext *context)
 {
-	return mono_class_from_mono_type (mono_type_create_from_typespec (image, type_spec));
+	MonoType *t = mono_type_create_from_typespec (image, type_spec);
+	if (!t)
+		return NULL;
+	if (context && (context->gclass || context->gmethod)) {
+		MonoType *inflated = inflate_generic_type (t, context);
+		if (inflated)
+			t = inflated;
+	}
+	return mono_class_from_mono_type (t);
 }
 
 /**
@@ -3731,14 +3760,15 @@ mono_assembly_name_from_token (MonoImage *image, guint32 type_token)
 }
 
 /**
- * mono_class_get:
+ * mono_class_get_full:
  * @image: the image where the class resides
  * @type_token: the token for the class
+ * @context: the generic context used to evaluate generic instantiations in
  *
  * Returns: the MonoClass that represents @type_token in @image
  */
 MonoClass *
-mono_class_get (MonoImage *image, guint32 type_token)
+mono_class_get_full (MonoImage *image, guint32 type_token, MonoGenericContext *context)
 {
 	MonoClass *class = NULL;
 
@@ -3753,7 +3783,7 @@ mono_class_get (MonoImage *image, guint32 type_token)
 		class = mono_class_from_typeref (image, type_token);
 		break;
 	case MONO_TOKEN_TYPE_SPEC:
-		class = mono_class_create_from_typespec (image, type_token);
+		class = mono_class_create_from_typespec (image, type_token, context);
 		break;
 	default:
 		g_warning ("unknown token type %x", type_token & 0xff000000);
@@ -3770,19 +3800,9 @@ mono_class_get (MonoImage *image, guint32 type_token)
 }
 
 MonoClass *
-mono_class_get_full (MonoImage *image, guint32 type_token, MonoGenericContext *context)
+mono_class_get (MonoImage *image, guint32 type_token)
 {
-	MonoClass *class = mono_class_get (image, type_token);
-
-	if (!image->dynamic && ((type_token & 0xff000000) == MONO_TOKEN_TYPE_DEF))
-		return class;
-
-	if (class && context && (context->gclass || context->gmethod)) {
-		MonoType *inflated = inflate_generic_type (&class->byval_arg, context);
-		if (inflated)
-			class = mono_class_from_mono_type (inflated);
-	}
-	return class;
+	return mono_class_get_full (image, type_token, NULL);
 }
 
 typedef struct {

@@ -419,7 +419,7 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 		(dest)->dreg = alloc_dreg ((cfg), STACK_PTR);	\
 	} while (0)
 
-#define NEW_AOTCONST_TOKEN(cfg,dest,patch_type,image,token,stack_type) do { \
+#define NEW_AOTCONST_TOKEN(cfg,dest,patch_type,image,token,stack_type,stack_class) do { \
 		MonoInst *group, *got_loc;			\
         MONO_INST_NEW ((cfg), (dest), OP_GOT_ENTRY); \
 		got_loc = mono_get_got_var (cfg);			\
@@ -428,6 +428,7 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 		(dest)->inst_basereg = got_loc->dreg;				\
 		(dest)->inst_p1 = group;				\
 		(dest)->type = (stack_type);				\
+        (dest)->klass = (stack_class);          \
 		(dest)->dreg = alloc_dreg ((cfg), (stack_type));	\
 	} while (0)
 
@@ -441,11 +442,12 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 		(dest)->dreg = alloc_dreg ((cfg), STACK_PTR);	\
     } while (0)
 
-#define NEW_AOTCONST_TOKEN(cfg,dest,patch_type,image,token,stack_type) do {   \
+#define NEW_AOTCONST_TOKEN(cfg,dest,patch_type,image,token,stack_type,stack_class) do {   \
         MONO_INST_NEW ((cfg), (dest), OP_AOTCONST); \
 		(dest)->inst_p0 = mono_jump_info_token_new ((cfg)->mempool, (image), (token));	\
 		(dest)->inst_p1 = (gpointer)(patch_type); \
 		(dest)->type = (stack_type);	\
+        (dest)->klass = (stack_class);          \
 		(dest)->dreg = alloc_dreg ((cfg), (stack_type));	\
     } while (0)
 
@@ -463,15 +465,15 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 
 #define NEW_SFLDACONST(cfg,dest,val) NEW_AOTCONST ((cfg), (dest), MONO_PATCH_INFO_SFLDA, (val))
 
-#define NEW_LDSTRCONST(cfg,dest,image,token) NEW_AOTCONST_TOKEN ((cfg), (dest), MONO_PATCH_INFO_LDSTR, (image), (token), STACK_OBJ)
+#define NEW_LDSTRCONST(cfg,dest,image,token) NEW_AOTCONST_TOKEN ((cfg), (dest), MONO_PATCH_INFO_LDSTR, (image), (token), STACK_OBJ, mono_defaults.string_class)
 
-#define NEW_TYPE_FROM_HANDLE_CONST(cfg,dest,image,token) NEW_AOTCONST_TOKEN ((cfg), (dest), MONO_PATCH_INFO_TYPE_FROM_HANDLE, (image), (token), STACK_OBJ)
+#define NEW_TYPE_FROM_HANDLE_CONST(cfg,dest,image,token) NEW_AOTCONST_TOKEN ((cfg), (dest), MONO_PATCH_INFO_TYPE_FROM_HANDLE, (image), (token), STACK_OBJ, mono_defaults.monotype_class)
 
-#define NEW_LDTOKENCONST(cfg,dest,image,token) NEW_AOTCONST_TOKEN ((cfg), (dest), MONO_PATCH_INFO_LDTOKEN, (image), (token), STACK_PTR)
+#define NEW_LDTOKENCONST(cfg,dest,image,token) NEW_AOTCONST_TOKEN ((cfg), (dest), MONO_PATCH_INFO_LDTOKEN, (image), (token), STACK_PTR, NULL)
 
 #define NEW_DECLSECCONST(cfg,dest,image,entry) do { \
 		if (cfg->compile_aot) { \
-			NEW_AOTCONST_TOKEN (cfg, dest, MONO_PATCH_INFO_DECLSEC, image, (entry).index, STACK_OBJ); \
+			NEW_AOTCONST_TOKEN (cfg, dest, MONO_PATCH_INFO_DECLSEC, image, (entry).index, STACK_OBJ, NULL); \
 		} else { \
 			NEW_PCONST (cfg, args [0], (entry).blob); \
 		} \
@@ -585,7 +587,7 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 
 #define EMIT_NEW_AOTCONST(cfg,dest,patch_type,cons) do { NEW_AOTCONST ((cfg), (dest), (patch_type), (cons)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
-#define EMIT_NEW_AOTCONST_TOKEN(cfg,dest,patch_type,image,token,stack_type) do { NEW_AOTCONST_TOKEN ((cfg), (dest), (patch_type), (image), (token), (stack_type)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
+#define EMIT_NEW_AOTCONST_TOKEN(cfg,dest,patch_type,image,token,stack_type,stack_class) do { NEW_AOTCONST_TOKEN ((cfg), (dest), (patch_type), (image), (token), (stack_type), (stack_class)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
 #define EMIT_NEW_CLASSCONST(cfg,dest,val) EMIT_NEW_AOTCONST ((cfg), (dest), MONO_PATCH_INFO_CLASS, (val))
 
@@ -599,11 +601,11 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 
 #define EMIT_NEW_SFLDACONST(cfg,dest,val) EMIT_NEW_AOTCONST ((cfg), (dest), MONO_PATCH_INFO_SFLDA, (val))
 
-#define EMIT_NEW_LDSTRCONST(cfg,dest,image,token) EMIT_NEW_AOTCONST_TOKEN ((cfg), (dest), MONO_PATCH_INFO_LDSTR, (image), (token), STACK_OBJ)
+#define EMIT_NEW_LDSTRCONST(cfg,dest,image,token) EMIT_NEW_AOTCONST_TOKEN ((cfg), (dest), MONO_PATCH_INFO_LDSTR, (image), (token), STACK_OBJ, mono_defaults.string_class)
 
-#define EMIT_NEW_TYPE_FROM_HANDLE_CONST(cfg,dest,image,token) EMIT_NEW_AOTCONST_TOKEN ((cfg), (dest), MONO_PATCH_INFO_TYPE_FROM_HANDLE, (image), (token), STACK_OBJ)
+#define EMIT_NEW_TYPE_FROM_HANDLE_CONST(cfg,dest,image,token) EMIT_NEW_AOTCONST_TOKEN ((cfg), (dest), MONO_PATCH_INFO_TYPE_FROM_HANDLE, (image), (token), STACK_OBJ, mono_defaults.monotype_class)
 
-#define EMIT_NEW_LDTOKENCONST(cfg,dest,image,token) EMIT_NEW_AOTCONST_TOKEN ((cfg), (dest), MONO_PATCH_INFO_LDTOKEN, (image), (token), STACK_PTR)
+#define EMIT_NEW_LDTOKENCONST(cfg,dest,image,token) EMIT_NEW_AOTCONST_TOKEN ((cfg), (dest), MONO_PATCH_INFO_LDTOKEN, (image), (token), STACK_PTR, NULL)
 
 #define EMIT_NEW_DOMAINCONST(cfg,dest) do { NEW_DOMAINCONST ((cfg), (dest)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
@@ -1668,7 +1670,19 @@ type_from_stack_type (MonoInst *ins) {
 	case STACK_I8: return &mono_defaults.int64_class->byval_arg;
 	case STACK_PTR: return &mono_defaults.int_class->byval_arg;
 	case STACK_R8: return &mono_defaults.double_class->byval_arg;
-	case STACK_MP: return &mono_defaults.int_class->byval_arg;
+	case STACK_MP:
+		/* 
+		 * FIXME: This doesn't work because mono_class_from_mono_type ()
+		 * returns the original klass for a byref type, not a 'byref' class,
+		 * causing the JIT to create variables with the wrong type, for
+		 * example.
+		 */
+		/*
+		if (ins->klass)
+			return &ins->klass->this_arg;
+		else
+		*/
+		return &mono_defaults.object_class->this_arg;
 	case STACK_OBJ: return &mono_defaults.object_class->byval_arg;
 	case STACK_VTYPE: return &ins->klass->byval_arg;
 	default:
@@ -3464,8 +3478,14 @@ mono_method_check_inlining (MonoCompile *cfg, MonoMethod *method)
 	if (!(cfg->opt & MONO_OPT_SHARED)) {
 		vtable = mono_class_vtable (cfg->domain, method->klass);
 		if (method->klass->flags & TYPE_ATTRIBUTE_BEFORE_FIELD_INIT) {
-			if (cfg->run_cctors)
+			if (cfg->run_cctors) {
+				/* This makes so that inline cannot trigger */
+				/* .cctors: too many apps depend on them */
+				/* running with a specific order... */
+				if (! vtable->initialized)
+					return FALSE;
 				mono_runtime_class_init (vtable);
+			}
 		}
 		else if (!vtable->initialized && mono_class_needs_cctor_run (method->klass, NULL))
 			return FALSE;
@@ -3478,7 +3498,6 @@ mono_method_check_inlining (MonoCompile *cfg, MonoMethod *method)
 		if (mono_class_needs_cctor_run (method->klass, NULL) && !((method->klass->flags & TYPE_ATTRIBUTE_BEFORE_FIELD_INIT)))
 			return FALSE;
 	}
-	//if (!MONO_TYPE_IS_VOID (signature->ret)) return FALSE;
 
 	/*
 	 * CAS - do not inline methods with declarative security
@@ -4201,12 +4220,22 @@ mini_get_class (MonoMethod *method, guint32 token, MonoGenericContext *context)
 	return klass;
 }
 
+/*
+ * Returns TRUE if the JIT should abort inlining because "callee"
+ * is influenced by security attributes.
+ */
 static
-void check_linkdemand (MonoCompile *cfg, MonoMethod *caller, MonoMethod *callee, unsigned char *ip)
+gboolean check_linkdemand (MonoCompile *cfg, MonoMethod *caller, MonoMethod *callee, MonoBasicBlock *bblock, unsigned char *ip)
 {
-	guint32 result = mono_declsec_linkdemand (cfg->domain, caller, callee);
+	guint32 result;
+	
+	if ((cfg->method != caller) && mono_method_has_declsec (callee)) {
+		return TRUE;
+	}
+	
+	result = mono_declsec_linkdemand (cfg->domain, caller, callee);
 	if (result == MONO_JIT_SECURITY_OK)
-		return;
+		return FALSE;
 
 	if (result == MONO_JIT_LINKDEMAND_ECMA) {
 		/* Generate code to throw a SecurityException before the actual call/link */
@@ -4225,6 +4254,8 @@ void check_linkdemand (MonoCompile *cfg, MonoMethod *caller, MonoMethod *callee,
 		cfg->exception_type = MONO_EXCEPTION_SECURITY_LINKDEMAND;
 		cfg->exception_data = result;
 	}
+	
+	return FALSE;
 }
 
 static gboolean
@@ -6023,7 +6054,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				goto load_error;
 
 			if (mono_use_security_manager) {
-				check_linkdemand (cfg, method, cmethod, ip);
+				if (check_linkdemand (cfg, method, cmethod, bblock, ip))
+					INLINE_FAILURE;
 			}
 
 			ins->inst_p0 = cmethod;
@@ -6092,7 +6124,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				n = fsig->param_count + fsig->hasthis;
 
 				if (mono_use_security_manager) {
-					check_linkdemand (cfg, method, cmethod, ip);
+					if (check_linkdemand (cfg, method, cmethod, bblock, ip))
+						INLINE_FAILURE;
 				}
 
 				if (cmethod->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL &&
@@ -7008,7 +7041,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				goto load_error;
 
 			if (mono_use_security_manager) {
-				check_linkdemand (cfg, method, cmethod, ip);
+				if (check_linkdemand (cfg, method, cmethod, bblock, ip))
+					INLINE_FAILURE;
 			}
 
 			n = fsig->param_count;
@@ -7255,7 +7289,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			if (target_type_is_incompatible (cfg, &klass->byval_arg, *sp))
 				UNVERIFIED;
 
-			if (ip + 5 < end && ip_in_bb (cfg, bblock, ip + 5) && (ip [5] == CEE_BRTRUE || ip [5] == CEE_BRTRUE_S)) {
+			if (!mono_class_is_nullable (klass) &&
+				ip + 5 < end && ip_in_bb (cfg, bblock, ip + 5) && (ip [5] == CEE_BRTRUE || ip [5] == CEE_BRTRUE_S)) {
 				/*printf ("box-brtrue opt at 0x%04x in %s\n", real_offset, method->name);*/
 				ip += 5;
 				MONO_INST_NEW (cfg, ins, OP_BR);
@@ -7484,8 +7519,14 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 							printf ("class %s.%s needs init call for %s\n", klass->name_space, klass->name, field->name);
 						class_inits = g_slist_prepend (class_inits, vtable);
 					} else {
-						if (cfg->run_cctors)
+						if (cfg->run_cctors) {
+							/* This makes so that inline cannot trigger */
+							/* .cctors: too many apps depend on them */
+							/* running with a specific order... */
+							if (! vtable->initialized)
+								INLINE_FAILURE;
 							mono_runtime_class_init (vtable);
+						}
 					}
 					addr = (char*)vtable->data + field->offset;
 
@@ -8378,7 +8419,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				mono_class_init (cmethod->klass);
 
 				if (mono_use_security_manager) {
-					check_linkdemand (cfg, method, cmethod, ip);
+					if (check_linkdemand (cfg, method, cmethod, bblock, ip))
+						INLINE_FAILURE;
 				}
 
 				EMIT_NEW_METHODCONST (cfg, argconst, cmethod);
@@ -8404,7 +8446,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				mono_class_init (cmethod->klass);
 
 				if (mono_use_security_manager) {
-					check_linkdemand (cfg, method, cmethod, ip);
+					if (check_linkdemand (cfg, method, cmethod, bblock, ip))
+						INLINE_FAILURE;
 				}
 
 				--sp;
@@ -9967,8 +10010,9 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   running generics.exe.
  * - create a helper function for allocating a stack slot, taking into account 
  * - merge new GC changes in mini.c
+ * - merge the stack merge stuff
  *   MONO_CFG_HAS_SPILLUP.
- * - LAST MERGE: 61211.
+ * - LAST MERGE: 61918.
  */
 
 /*

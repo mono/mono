@@ -1,3 +1,12 @@
+2006-06-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile (run-test): Split 'test' target into a 'compile' and 'run-test' target.
+
+	* make_tests.sh: Remove some stack merge tests which are verifiable.
+
+	* make_unary_test.sh *.cil Makefile: Change extension of all static and generated
+	test files to the standard .il.
+
 2006-05-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* *.sh: Fix more verification problems.

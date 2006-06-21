@@ -1,3 +1,10 @@
+
+Thu Jun 15 16:59:36 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* ppc/ppc-codegen.h: reduce noisy build warnings by
+	casting to the more commonly used unsigned char type
+	(from johannes@sipsolutions.net (Johannes Berg)).
+
 2006-05-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* ia64/ia64-codegen.h (ia64_fetchadd8_acq_hint_pred): Fix encoding of this

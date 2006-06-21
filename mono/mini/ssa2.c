@@ -1109,7 +1109,8 @@ visit_inst (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, GList **cvars, 
 					/* Out-of-range, no branch is executed */
 					return;
 				else
-					add_cprop_bb (cfg, table->table [idx], bblist);
+					if (table->table [idx])
+						add_cprop_bb (cfg, table->table [idx], bblist);
 			}
 			else {
 				for (i = 0; i < table->table_size; i++ )

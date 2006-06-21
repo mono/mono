@@ -196,6 +196,9 @@ TEST_CS_SRC=			\
 	bug-46781.cs		\
 	bug-48015.cs		\
 	bug-42136.cs		\
+	bug-78311.cs		\
+	bug-78653.cs		\
+	bug-78656.cs		\
 	interlocked.cs		\
 	cross-domain.cs		\
 	appdomain-exit.cs	\
@@ -213,7 +216,8 @@ TEST_CS_SRC=			\
 	main-returns-background-change.cs	\
 	main-returns.cs	\
 	subthread-exit.cs	\
-	desweak.cs
+	desweak.cs	\
+	cominterop.cs
 
 if X86
 # bug #71274
@@ -245,12 +249,13 @@ TEST_IL_SRC=			\
 	qt-instance.il		\
 	vararg.il			\
 	bug-29859.il		\
+	bug-78549.il		\
 	static-fields-nonconst.il	\
 	reload-at-bb-end.il	\
 	test-enum-indstoreil.il	\
 	even-odd.il
 
-TEST_CS2_SRC = interlocked-2.2.cs
+TEST_CS2_SRC = interlocked-2.2.cs pinvoke-2.2.cs
 TEST_IL2_SRC = find-method.2.il
 
 TESTSI_CS=$(TEST_CS_SRC:.cs=.exe)
@@ -439,6 +444,7 @@ test-type-load: TestDriver.dll
 	$(MCS) -t:library -out:t.dll $(srcdir)/t-missing.cs
 	$(RUNTIME) load-exceptions.exe
 
+EXTRA_DIST += test-inline-call-stack-library.cs test-inline-call-stack.cs
 test-inline-call-stack-library.dll: TestDriver.dll $(srcdir)/test-inline-call-stack-library.cs
 	$(MCS) -t:library -out:test-inline-call-stack-library.dll $(srcdir)/test-inline-call-stack-library.cs
 test-inline-call-stack.exe: TestDriver.dll test-inline-call-stack-library.dll $(srcdir)/test-inline-call-stack.cs

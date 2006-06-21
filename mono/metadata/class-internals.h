@@ -260,9 +260,8 @@ struct _MonoClass {
 	guint delegate        : 1; /* class is a Delegate */
 	guint gc_descr_inited : 1; /* gc_descr is initialized */
 	guint has_cctor       : 1; /* class has a cctor */
-	guint dummy           : 1; /* temporary hack */
-	/* next byte */
 	guint has_references  : 1; /* it has GC-tracked references in the instance */
+	/* next byte */
 	guint has_static_refs : 1; /* it has static fields that are GC-tracked */
 	guint no_special_static_fields : 1; /* has no thread/context static fields */
 
@@ -515,14 +514,17 @@ typedef struct {
 typedef enum {
 	MONO_LOADER_ERROR_TYPE,
 	MONO_LOADER_ERROR_METHOD,
-	MONO_LOADER_ERROR_FIELD
+	MONO_LOADER_ERROR_FIELD,
+	MONO_LOADER_ERROR_ASSEMBLY
 } MonoLoaderErrorKind;
 
 typedef struct {
 	MonoLoaderErrorKind kind;
-	char *class_name, *assembly_name; /* If kind == TYPE */
+	char *class_name; /* If kind == TYPE */
+	char *assembly_name; /* If kind == TYPE or ASSEMBLY */
 	MonoClass *klass; /* If kind != TYPE */
 	const char *member_name; /* If kind != TYPE */
+	gboolean ref_only; /* If kind == ASSEMBLY */
 } MonoLoaderError;
 
 #define mono_class_has_parent(klass,parent) (((klass)->idepth >= (parent)->idepth) && ((klass)->supertypes [(parent)->idepth - 1] == (parent)))
@@ -689,6 +691,7 @@ typedef struct {
 	MonoClass *internals_visible_class;
 	MonoClass *generic_array_class;
 	MonoClass *generic_nullable_class;
+	MonoClass *variant_class;
 } MonoDefaults;
 
 extern MonoDefaults mono_defaults MONO_INTERNAL;
@@ -706,7 +709,7 @@ void
 mono_loader_unlock         (void) MONO_INTERNAL;
 
 void
-mono_loader_set_error_assembly_load (const char *assembly_name) MONO_INTERNAL;
+mono_loader_set_error_assembly_load (const char *assembly_name, gboolean ref_only) MONO_INTERNAL;
 
 void
 mono_loader_set_error_type_load (const char *class_name, const char *assembly_name) MONO_INTERNAL;
