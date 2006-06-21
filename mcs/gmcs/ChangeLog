@@ -1,5 +1,11 @@
 2006-06-21  Martin Baulig  <martin@ximian.com>
 
+	* ecore.cs (FieldExpr.EmitAssign, FieldExpr.AddressOf): Correctly
+	handle SetAssigned() and SetMemberIsUsed() for generic types;
+	fixes #77545.
+
+2006-06-21  Martin Baulig  <martin@ximian.com>
+
 	* delegate.cs
 	(Delegate.VerifyMethod): Allow `params' methods; fixes #78678.
 

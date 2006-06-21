@@ -3341,15 +3341,13 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (FieldInfo is FieldBuilder){
-				FieldBase f = TypeManager.GetField (FieldInfo);
-				if (f != null){
-					if ((f.ModFlags & Modifiers.VOLATILE) != 0)
-						ig.Emit (OpCodes.Volatile);
+			FieldBase f = TypeManager.GetField (FieldInfo);
+			if (f != null){
+				if ((f.ModFlags & Modifiers.VOLATILE) != 0)
+					ig.Emit (OpCodes.Volatile);
 					
-					f.SetAssigned ();
-				}
-			} 
+				f.SetAssigned ();
+			}
 
 			if (is_static)
 				ig.Emit (OpCodes.Stsfld, FieldInfo);
@@ -3368,22 +3366,20 @@ namespace Mono.CSharp {
 		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
 			ILGenerator ig = ec.ig;
-			
-			if (FieldInfo is FieldBuilder){
-				FieldBase f = TypeManager.GetField (FieldInfo);
-				if (f != null){
-					if ((f.ModFlags & Modifiers.VOLATILE) != 0){
-						Report.Warning (420, 1, loc, "`{0}': A volatile fields cannot be passed using a ref or out parameter",
+
+			FieldBase f = TypeManager.GetField (FieldInfo);
+			if (f != null){
+				if ((f.ModFlags & Modifiers.VOLATILE) != 0){
+					Report.Warning (420, 1, loc, "`{0}': A volatile fields cannot be passed using a ref or out parameter",
 							f.GetSignatureForError ());
-						return;
-					}
-					
-					if ((mode & AddressOp.Store) != 0)
-						f.SetAssigned ();
-					if ((mode & AddressOp.Load) != 0)
-						f.SetMemberIsUsed ();
+					return;
 				}
-			} 
+					
+				if ((mode & AddressOp.Store) != 0)
+					f.SetAssigned ();
+				if ((mode & AddressOp.Load) != 0)
+					f.SetMemberIsUsed ();
+			}
 
 			//
 			// Handle initonly fields specially: make a copy and then
