@@ -241,6 +241,24 @@ namespace System.IO
 			return GetFileSystemEntries (path, pattern, FileAttributes.Directory, FileAttributes.Directory);
 		}
 		
+#if NET_2_0
+		public static string [] GetDirectories (string path, string pattern, SearchOption option)
+		{
+			if (option == SearchOption.TopDirectoryOnly)
+				return GetDirectories (path, pattern);
+			ArrayList all = new ArrayList ();
+			GetDirectoriesRecurse (path, pattern, all);
+			return (string []) all.ToArray (typeof (string));
+		}
+		
+		static void GetDirectoriesRecurse (string path, string pattern, ArrayList all)
+		{
+			all.AddRange (GetDirectories (path, pattern));
+			foreach (string dir in GetDirectories (path))
+				GetDirectoriesRecurse (dir, pattern, all);
+		}
+#endif
+
 		public static string GetDirectoryRoot (string path)
 		{
 			return new String(Path.DirectorySeparatorChar,1);
@@ -257,10 +275,20 @@ namespace System.IO
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		public static string[] GetFiles (string path, string searchPattern, SearchOption searchOption)
 		{
-			throw new NotImplementedException ();
+			if (searchOption == SearchOption.TopDirectoryOnly)
+				return GetFiles (path, searchPattern);
+			ArrayList all = new ArrayList ();
+			GetFilesRecurse (path, searchPattern, all);
+			return (string []) all.ToArray (typeof (string));
+		}
+		
+		static void GetFilesRecurse (string path, string pattern, ArrayList all)
+		{
+			all.AddRange (GetFiles (path, pattern));
+			foreach (string dir in GetDirectories (path))
+				GetFilesRecurse (dir, pattern, all);
 		}
 #endif
 
