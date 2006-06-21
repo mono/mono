@@ -89,7 +89,6 @@ namespace System.Windows.Forms {
 					return res;
 
 				res = CreateBindingManager (data_source, data_member);
-				Console.WriteLine ("CREATED: {0}", res);
 				if (res == null)
 					return null;
 				managers [key] = res;
@@ -99,156 +98,33 @@ namespace System.Windows.Forms {
 
 		private BindingManagerBase CreateBindingManager (object data_source, string data_member)
 		{
-#if true
-			/* the following is gross and special cased
-			   and needs to die.  a more proper
-			   implementation would be something like
-			   what's down below in the #else section,
-			   where the recursion over the nagivation
-			   path is at the toplevel.
-			*/
-
-			DataTable table = data_source as DataTable;
-			if (table == null && data_source is DataView)
-				table = ((DataView) data_source).Table;
-
-			DataSet dataset = data_source as DataSet;
-			if (table != null) {
-				if (data_member == "")
-					return new CurrencyManager (new DataView (table));
-				else {
-					BindingMemberInfo info = new BindingMemberInfo (data_member);
-
-					Console.WriteLine ("Getting parent_manager for {0}", info.BindingPath);
-					CurrencyManager parent_manager = (CurrencyManager) this[data_source, info.BindingPath];
-
-					DataColumn col = table.Columns [info.BindingField];
-
-					if (col != null) {
-						Console.WriteLine ("+ creating related property manager for column {0}", info.BindingField);
-						return new RelatedPropertyManager (parent_manager, info.BindingField);
-					}
-						throw new ArgumentException (String.Format ("Specified data member {0} does not exist in the data table {1}",
-											    info.BindingField, table.TableName));
-
-				}
-			}
-			else if (data_member != "" && dataset != null) {
-				BindingMemberInfo info = new BindingMemberInfo (data_member);
-
-				if (info.BindingPath == "") {
-					table = dataset.Tables [info.BindingField];
-					if (table == null)
-						throw new ArgumentException (String.Format ("Specified data member table `{0}' does not exist in the data source DataSet", info.BindingField));
-
-					return new CurrencyManager (new DataView (table));
-				}
-				else {
-					Console.WriteLine ("Getting parent_manager for {0}", info.BindingPath);
-					CurrencyManager parent_manager = (CurrencyManager) this[data_source, info.BindingPath];
-
-					table = ((DataView)parent_manager.data_source).Table;
-
-					DataColumn col = table.Columns [info.BindingField];
-					DataRelation rel = dataset.Relations [info.BindingField];
-
-					if (col != null) {
-						Console.WriteLine ("+ creating related property manager for column {0}", info.BindingField);
-						return new RelatedPropertyManager (parent_manager, info.BindingField);
-					}
-					else if (rel != null) {
-						Console.WriteLine ("+ creating related currency manager for relation {0}", info.BindingField);
-						return new RelatedCurrencyManager (parent_manager, rel);
-					}
-					else 
-						throw new ArgumentException (String.Format ("Specified data member {0} does not exist in the data table {1}",
-											    info.BindingField, table.TableName));
-
-				}
-			}
-			else if (data_source is IList) {
-				IList list = (IList)data_source;
-
-				if (data_member == "") {
-					return new CurrencyManager (list);
-				}
-				else {
-					CurrencyManager parent_manager = (CurrencyManager) this[data_source, ""];
-
-					if (parent_manager.Count == 0 ||
-					    TypeDescriptor.GetProperties (parent_manager.GetItem (0)).Find (data_member, true) == null) {
-						throw new ArgumentException ("Cannot create a child list for field {0}", data_member);
-					}
-						
-
-					Console.WriteLine ("creating related property manager for column {0} on an IList source", data_member);
-					return new RelatedPropertyManager (parent_manager, data_member);
-				}
-			} else if (data_source is IListSource) {
-				return new CurrencyManager (((IListSource) data_source).GetList ());
-			}
-			else {
-				/* must be a property */
-				Console.WriteLine ("creating PropertyManager");
-				return new PropertyManager (data_source, data_member);
-			}
-#else
 			if (data_member == "") {
-				if (data_source is DataSet) {
-					return new CurrencyManager (new DataViewManager ((DataSet)data_source));
-				}
-				else if (data_source is DataTable) {
-					return new CurrencyManager (new DataView ((DataTable)data_source));
-				}
-				else if (data_source is DataView) {
-					return new CurrencyManager ((DataView)data_source);
-				}
-				else if (data_source is IListSource) {
-					return new CurrencyManager (((IListSource) data_source).GetList ());
-				}
-				else if (data_source is IList) {
-					return new CurrencyManager ((IList) data_source);
-				}
-				else {
-					return new PropertyManager (data_source, data_member);
-				}
+				if (IsListType (data_source.GetType ()))
+					return new CurrencyManager (data_source);
+				else
+					return new PropertyManager (data_source);
 			}
 			else {
 				BindingMemberInfo info = new BindingMemberInfo (data_member);
 
-				Console.WriteLine ("Getting parent_manager for {0}", info.BindingPath);
 				BindingManagerBase parent_manager = this[data_source, info.BindingPath];
-				CurrencyManager cm = parent_manager as CurrencyManager;
 
 				PropertyDescriptor pd = parent_manager == null ? null : parent_manager.GetItemProperties ().Find (info.BindingField, true);
 
-				if (pd != null) {
-					Console.WriteLine ("parent_manager.GetItemProperties returned property descriptor for {0}", pd.Name);
-					if (cm != null) {
-						if (cm.data_source is DataViewManager)
-							return new RelatedCurrencyManager (cm, );
-						else
-							return new RelatedPropertyManager (cm, info.BindingField);
-					}
-				}
-				else {
-					/* null property.  extra checks here, for e.g. DataRelations */
-					if (cm != null) {
-						if (cm.data_source is DataViewManager) {
-							DataSet ds = ((DataViewManager)cm.data_source).DataSet;
-							DataRelation rel = ds.Relations [info.BindingField];
+				if (pd == null)
+					throw new ArgumentException (String.Format ("Cannot create a child list for field {0}.", info.BindingField));
 
-							if (rel != null) {
-								Console.WriteLine ("+ creating related currency manager for relation {0}", info.BindingField);
-								return new RelatedCurrencyManager (cm, rel);
-							}
-						}
-					}
-				}
-
-				throw new ArgumentException (String.Format ("Cannot create a child list for field {0}", info.BindingField));
+				if (IsListType (pd.PropertyType))
+					return new RelatedCurrencyManager (parent_manager, pd);
+				else
+					return new RelatedPropertyManager (parent_manager, info.BindingField);
 			}
-#endif
+		}
+
+		bool IsListType (Type t)
+		{
+			return (typeof (IList).IsAssignableFrom (t)
+				|| typeof (IListSource).IsAssignableFrom (t));
 		}
 
 		#region Public Instance Methods
@@ -341,21 +217,15 @@ namespace System.Windows.Forms {
 		}
 
 		int ICollection.Count {
-			get {
-				return managers.Count;
-			}
+			get { return managers.Count; }
 		}
 
 		bool ICollection.IsSynchronized {
-			get {
-				return false;
-			}
+			get { return false; }
 		}
 
 		object ICollection.SyncRoot {
-			get {
-				return null;
-			}
+			get { return null; }
 		}
 
 		#endregion	// ICollection Interfaces

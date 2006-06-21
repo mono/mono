@@ -30,12 +30,17 @@ namespace System.Windows.Forms {
 
 	public class PropertyManager : BindingManagerBase {
 
-		private object data_source;
 		private string property_name;
 		private PropertyDescriptor prop_desc;
 		private bool binding_suspended;
+		private object data_source;
 
 		public PropertyManager() {
+		}
+
+		internal PropertyManager (object data_source)
+		{
+			SetDataSource (data_source);
 		}
 
 		internal PropertyManager (object data_source, string property_name)
@@ -52,16 +57,18 @@ namespace System.Windows.Forms {
 
 			data_source = new_data_source;
 
-			prop_desc = TypeDescriptor.GetProperties (data_source).Find (property_name, true);
+			if (property_name != null) {
+				prop_desc = TypeDescriptor.GetProperties (data_source).Find (property_name, true);
 
-			if (prop_desc == null)
-				return;
+				if (prop_desc == null)
+					return;
 
-			prop_desc.AddValueChanged (data_source, new EventHandler (PropertyChangedHandler));
+				prop_desc.AddValueChanged (data_source, new EventHandler (PropertyChangedHandler));
+			}
 		}
 
 		public override object Current {
-			get { return prop_desc == null ? null : prop_desc.GetValue (data_source); }
+			get { return prop_desc == null ? data_source : prop_desc.GetValue (data_source); }
 		}
 
 		public override int Position {
@@ -134,6 +141,8 @@ namespace System.Windows.Forms {
 
 		protected internal override void OnCurrentChanged (EventArgs e)
 		{
+			PushData ();
+
 			if (onCurrentChangedHandler != null) {
 				onCurrentChangedHandler (this, e);
 			}
@@ -141,8 +150,6 @@ namespace System.Windows.Forms {
 
 		private void PropertyChangedHandler (object sender, EventArgs e)
 		{
-			PushData ();
-
 			OnCurrentChanged (EventArgs.Empty);
 		}
 	}

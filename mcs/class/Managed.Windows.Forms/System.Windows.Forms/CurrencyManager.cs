@@ -33,24 +33,19 @@ namespace System.Windows.Forms {
 	[DefaultMember("Item")]
 	public class CurrencyManager : BindingManagerBase {
 
-		protected Type finalType;
 		protected int listposition;
 
 		private IList list;
 		private bool binding_suspended;
 
-		internal object data_source;
+		private object data_source;
 
-		internal CurrencyManager (IList data_source)
+		internal CurrencyManager ()
 		{
-			if (data_source as ArrayList != null) {
-				finalType = ((ArrayList) data_source).GetType ();
-			} else if (data_source as Array != null) {
-				finalType = ((Array) data_source).GetType ();
-			} else {
-				finalType = null;
-			}
+		}
 
+		internal CurrencyManager (object data_source)
+		{
 			SetDataSource (data_source);
 		}
 
@@ -87,18 +82,6 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		internal string ListName {
-			get {
-				ITypedList typed = list as ITypedList;
-				
-				if (typed == null) {
-					return finalType.Name;
-				} else {
-					return typed.GetListName (null);
-				}
-			}		
-		}
-
 		internal void SetDataSource (object data_source)
 		{
 			if (this.data_source is IBindingList)
@@ -110,6 +93,9 @@ namespace System.Windows.Forms {
 				dataview.Table.ParentRelations.CollectionChanged  -= new CollectionChangeEventHandler (MetaDataChangedHandler);
 				dataview.Table.Constraints.CollectionChanged -= new CollectionChangeEventHandler (MetaDataChangedHandler);
 			}
+
+			if (data_source is IListSource)
+				data_source = ((IListSource)data_source).GetList();
 
 			this.data_source = data_source;
 
@@ -123,7 +109,7 @@ namespace System.Windows.Forms {
 				dataview.Table.Constraints.CollectionChanged += new CollectionChangeEventHandler (MetaDataChangedHandler);
 			}
 
-			list = data_source as IList;
+			list = (IList)data_source;
 
 			if (list.Count > 0)
 				listposition = 0;
@@ -133,18 +119,16 @@ namespace System.Windows.Forms {
 
 		public override PropertyDescriptorCollection GetItemProperties ()
 		{
-			ITypedList typed = list as ITypedList;
-
 			if (list is Array) {
 				Type element = list.GetType ().GetElementType ();
 				return TypeDescriptor.GetProperties (element);
 			}
 
-			if (typed != null) {
-				return typed.GetItemProperties (null);
+			if (list is ITypedList) {
+				return ((ITypedList)list).GetItemProperties (null);
 			}
 
-			PropertyInfo [] props = finalType.GetProperties ();
+			PropertyInfo [] props = data_source.GetType().GetProperties ();
 			for (int i = 0; i < props.Length; i++) {
 				if (props [i].Name == "Item") {
 					Type t = props [i].PropertyType;
@@ -262,11 +246,18 @@ namespace System.Windows.Forms {
 		protected internal override string GetListName (ArrayList accessors)
 		{
 			if (list is ITypedList) {
-				PropertyDescriptor [] pds;
-				pds = new PropertyDescriptor [accessors.Count];
-				accessors.CopyTo (pds, 0);
+				PropertyDescriptor [] pds = null;
+				if (accessors != null) {
+					pds = new PropertyDescriptor [accessors.Count];
+					accessors.CopyTo (pds, 0);
+				}
 				return ((ITypedList) list).GetListName (pds);
 			}
+#if false
+			else if (finalType != null) {
+				return finalType.Name;
+			}
+#endif
 			return String.Empty;
 		}
 

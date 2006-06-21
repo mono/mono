@@ -30,10 +30,10 @@ namespace System.Windows.Forms {
 
 	internal class RelatedPropertyManager : PropertyManager {
 
-		CurrencyManager parent;
+		BindingManagerBase parent;
 
-		public RelatedPropertyManager (CurrencyManager parent, string property_name)
-			: base (parent.GetItem (parent.Position), property_name)
+		public RelatedPropertyManager (BindingManagerBase parent, string property_name)
+			: base (parent.Current, property_name)
 		{
 			this.parent = parent;
 			parent.PositionChanged += new EventHandler (parent_PositionChanged);
@@ -41,7 +41,8 @@ namespace System.Windows.Forms {
 
 		void parent_PositionChanged (object sender, EventArgs args)
 		{
-			SetDataSource (parent.GetItem (parent.Position));
+			Console.WriteLine ("parent_PositionChanged");
+			SetDataSource (parent.Current);
 			OnCurrentChanged (EventArgs.Empty);
 		}
 	}

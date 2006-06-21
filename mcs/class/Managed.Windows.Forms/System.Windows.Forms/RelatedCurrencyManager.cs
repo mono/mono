@@ -33,21 +33,21 @@ namespace System.Windows.Forms {
 	[DefaultMember("Item")]
 	internal class RelatedCurrencyManager : CurrencyManager {
 
-		CurrencyManager parent;
-		DataRelation rel;
+		BindingManagerBase parent;
+		PropertyDescriptor prop_desc;
 
-		public RelatedCurrencyManager (CurrencyManager parent, DataRelation rel)
-			: base (((DataView)parent.data_source)[parent.Position].CreateChildView (rel))
+		public RelatedCurrencyManager (BindingManagerBase parent, PropertyDescriptor prop_desc)
+			: base (prop_desc.GetValue (parent.Current))
 		{
 			this.parent = parent;
-			this.rel = rel;
+			this.prop_desc = prop_desc;
 
 			parent.PositionChanged += new EventHandler (parent_PositionChanged);
 		}
 
 		private void parent_PositionChanged (object sender, EventArgs args)
 		{
-			SetDataSource (((DataView)parent.data_source)[parent.Position].CreateChildView (rel));
+			SetDataSource (prop_desc.GetValue (parent.Current));
 		}
 	}
 }
