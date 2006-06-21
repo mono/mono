@@ -1,3 +1,7 @@
+2006-06-21 Andrew Skiba <andrews@mainsoft.com>
+
+	* FileUploadTest.cs: add new tests for FileUpload control
+
 2006-06-20 Andrew Skiba <andrews@mainsoft.com>
 
 	* ThemeTest.cs: add new test for UrlPropertyAttribute

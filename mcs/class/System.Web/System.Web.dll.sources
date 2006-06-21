@@ -750,6 +750,7 @@ System.Web.UI.WebControls/DetailsViewUpdateEventArgs.cs
 System.Web.UI.WebControls/DetailsViewUpdateEventHandler.cs
 System.Web.UI.WebControls/DropDownList.cs
 System.Web.UI.WebControls/EditCommandColumn.cs
+System.Web.UI.WebControls/FileUpload.cs
 System.Web.UI.WebControls/FirstDayOfWeek.cs
 System.Web.UI.WebControls/FontInfo.cs
 System.Web.UI.WebControls/FontNamesConverter.cs

@@ -134,6 +134,7 @@ System.Web.UI.WebControls/DataListItemTest.cs
 System.Web.UI.WebControls/DataListTest.cs
 System.Web.UI.WebControls/DropDownListTest.cs
 System.Web.UI.WebControls/EditCommandColumnTest.cs
+System.Web.UI.WebControls/FileUploadTest.cs
 System.Web.UI.WebControls/FontInfoTest.cs
 System.Web.UI.WebControls/FontNamesConverterTest.cs
 System.Web.UI.WebControls/FontUnitTest.cs

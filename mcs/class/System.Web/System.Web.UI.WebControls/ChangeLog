@@ -1,3 +1,7 @@
+2006-06-21 Andrew Skiba <andrews@mainsoft.com>
+
+	* FileUpload.cs: added
+
 2006-06-20 Andrew Skiba <andrews@mainsoft.com>
 
 	* FormView.cs: handle CssClass attribute
