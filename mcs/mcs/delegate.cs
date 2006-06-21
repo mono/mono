@@ -354,6 +354,9 @@ namespace Mono.CSharp {
 				Parameter.Modifier invoke_pd_type_mod = invoke_pd.ParameterModifier (i);
 				Parameter.Modifier pd_type_mod = pd.ParameterModifier (i);
 
+				invoke_pd_type_mod &= ~Parameter.Modifier.PARAMS;
+				pd_type_mod &= ~Parameter.Modifier.PARAMS;
+
 				if (invoke_pd_type == pd_type &&
 				    invoke_pd_type_mod == pd_type_mod)
 					continue;

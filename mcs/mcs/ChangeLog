@@ -1,5 +1,10 @@
 2006-06-21  Martin Baulig  <martin@ximian.com>
 
+	* delegate.cs
+	(Delegate.VerifyMethod): Allow `params' methods; fixes #78678.
+
+2006-06-21  Martin Baulig  <martin@ximian.com>
+
 	* expression.cs (Unary.ResolveOperator): In `Operator.AddressOf',
 	also report CS1686 for parameters.
 
