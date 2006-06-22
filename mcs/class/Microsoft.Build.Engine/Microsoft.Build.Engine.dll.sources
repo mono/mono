@@ -18,8 +18,11 @@ Microsoft.Build.BuildEngine/BuildWhen.cs
 Microsoft.Build.BuildEngine/ChangeType.cs
 Microsoft.Build.BuildEngine/ColorResetter.cs
 Microsoft.Build.BuildEngine/ColorSetter.cs
-Microsoft.Build.BuildEngine/ConditionalParser.cs
-Microsoft.Build.BuildEngine/ConditionalTokenizer.cs
+Microsoft.Build.BuildEngine/ConditionAndExpression.cs
+Microsoft.Build.BuildEngine/ConditionExpression.cs
+Microsoft.Build.BuildEngine/ConditionOrExpression.cs
+Microsoft.Build.BuildEngine/ConditionParser.cs
+Microsoft.Build.BuildEngine/ConditionTokenizer.cs
 Microsoft.Build.BuildEngine/ConsoleLogger.cs
 Microsoft.Build.BuildEngine/DirectoryScanner.cs
 Microsoft.Build.BuildEngine/Engine.cs

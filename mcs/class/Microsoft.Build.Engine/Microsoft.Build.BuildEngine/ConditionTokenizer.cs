@@ -1,5 +1,5 @@
 //
-// ConditionalTokenizer.cs
+// ConditionTokenizer.cs
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
@@ -36,19 +36,19 @@ using System.Text;
 
 namespace Microsoft.Build.BuildEngine {
 
-	internal sealed class ConditionalTokenizer {
+	internal sealed class ConditionTokenizer {
 		string	inputString = null;
 		int	position = 0;
 		int	tokenPosition = 0;
 		
 		Token	token;
 		
-		bool	ignoreWhiteSpace;
+		bool	ignoreWhiteSpace = true;
 		
 		static TokenType[] charIndexToTokenType = new TokenType[128];
 		static Hashtable keywordToTokenType = CollectionsUtil.CreateCaseInsensitiveHashtable ();
 
-		static ConditionalTokenizer ()
+		static ConditionTokenizer ()
 		{
 			for (int i = 0; i < 128; i++)
 				charIndexToTokenType [i] = TokenType.Invalid;
@@ -58,7 +58,7 @@ namespace Microsoft.Build.BuildEngine {
 			
 		}
 		
-		public ConditionalTokenizer ()
+		public ConditionTokenizer ()
 		{
 			this.ignoreWhiteSpace = true;
 		}
@@ -185,6 +185,7 @@ namespace Microsoft.Build.BuildEngine {
 			
 			if (ch == '\'') {
 				StringBuilder sb = new StringBuilder ();
+				string temp;
 				
 				sb.Append (ch);
 				ReadChar ();
@@ -198,7 +199,11 @@ namespace Microsoft.Build.BuildEngine {
 						break;
 				}
 				
-				token = new Token (sb.ToString (), TokenType.String);
+				temp = sb.ToString ();
+				
+				// FIXME: test extreme cases
+				token = new Token (temp.Substring (1, temp.Length - 2), TokenType.String);
+				
 				return;
 			}
 			
@@ -215,7 +220,14 @@ namespace Microsoft.Build.BuildEngine {
 						break;
 				}
 				
-				token = new Token (sb.ToString (), TokenType.String);
+				string temp = sb.ToString ();
+				
+				if (temp.ToLower () == "and")
+					token = new Token (temp, TokenType.And);
+				else if (temp.ToLower () == "or")
+					token = new Token (temp, TokenType.Or);
+				else
+					token = new Token (sb.ToString (), TokenType.String);
 				return;
 			}
 			

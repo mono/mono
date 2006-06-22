@@ -1,5 +1,5 @@
 //
-// ConditionalParser.cs
+// ConditionOrExpression.cs
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
@@ -28,16 +28,37 @@
 #if NET_2_0
 
 using System;
-using System.Collections;
-using System.Text;
+using System.Xml;
 
 namespace Microsoft.Build.BuildEngine {
-
-	internal class ConditionalParser {
+	internal class ConditionOrExpression : ConditionExpression {
+	
+		readonly ConditionExpression left;
+		readonly ConditionExpression right;
 		
-		public ConditionalParser ()
+		public ConditionOrExpression (ConditionExpression left, ConditionExpression right)
 		{
+			this.left = left;
+			this.right = right;
 		}
+		
+		public ConditionExpression Left {
+			get { return left; }
+		}
+		
+		public ConditionExpression Right {
+			get { return right; }
+		}
+	
+		public override  bool Evaluate (Project context)
+		{
+			if (left.Evaluate (context))
+				return true;
+			if (right.Evaluate (context))
+				return true;
+			return false;
+		}
+		
 	}
 }
 

@@ -132,7 +132,17 @@ namespace Microsoft.Build.BuildEngine {
 		// FIXME: should do everything from task batching specification, not just run task once
 		public bool BatchBuildTask (BuildTask buildTask)
 		{
-			return buildTask.Execute ();
+			if (buildTask.Condition == String.Empty)
+				return buildTask.Execute ();
+			
+			ConditionExpression ce = ConditionParser.ParseCondition (buildTask.Condition);
+			
+			if (ce.Evaluate (project))
+				return buildTask.Execute ();
+			else
+			// FIXME: skipped, it should be logged
+				return true;
+			
 		}
 	}
 }
