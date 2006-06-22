@@ -52,7 +52,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<UsingTask
-						AssemblyFile='Test/resources/SimpleTask.dll'
+						AssemblyFile='Test/resources/TestTasks.dll'
 						TaskName='SimpleTask'
 					/>
 				</Project>
@@ -74,7 +74,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<UsingTask
-						AssemblyFile='Test/resources/SimpleTask.dll'
+						AssemblyFile='Test/resources/TestTasks.dll'
 						TaskName='SimpleTask'
 					/>
 				</Project>

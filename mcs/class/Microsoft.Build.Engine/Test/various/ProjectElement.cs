@@ -1,10 +1,10 @@
 //
-// ProjectTest.cs:
+// ProjectElement.cs
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
 //
-// (C) 2005 Marek Sieradzki
+// (C) 2006 Marek Sieradzki
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,54 +26,45 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections;
 using System.Xml;
 using Microsoft.Build.BuildEngine;
 using NUnit.Framework;
 
-namespace MonoTests.Microsoft.Build.BuildEngine {
+namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 	[TestFixture]
-	public class ProjectTest {
-
-		[Test]
-		[ExpectedException (typeof (InvalidProjectFileException),
-		@"The default XML namespace of the project must be the MSBuild XML namespace." + 
-		" If the project is authored in the MSBuild 2003 format, please add " +
-		"xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\" to the <Project> element. " +
-		"If the project has been authored in the old 1.0 or 1.2 format, please convert it to MSBuild 2003 format.  ")]
-		public void TestAssignment ()
+	public class ProjectElement {
+		// Clones a project by reloading from original.Xml
+		private Project CloneProject (Project original)
 		{
-			Engine engine;
-			Project project;
-			string documentString =
-				"<Project></Project>";
+			Project clone;
 			
-			engine = new Engine (Consts.BinPath);
-			project = engine.CreateNewProject ();
-			project.LoadXml (documentString);
+			clone = original.ParentEngine.CreateNewProject ();
+			clone.LoadXml (original.Xml);
+
+			return clone;
 		}
 
 		[Test]
-		public void TestBuild1 ()
+		public void TestDefaultTargetsAttribute ()
 		{
 			Engine engine;
-			Project project;
-			IDictionary hashtable = new Hashtable ();
-			
+			Project proj;
+			Project cproj;
 			string documentString = @"
-				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
-					<Target Name='Main'>
-						<Message Text='Text' />
-					</Target>
-				</Project>
+			<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" DefaultTargets=""Build;Compile"">
+			</Project>
 			";
 			
 			engine = new Engine (Consts.BinPath);
-			project = engine.CreateNewProject ();
-			project.LoadXml (documentString);
-			project.Build (new string[] { "Main" }, hashtable);
-			
-			Assert.AreEqual (0, hashtable.Count);
+			proj = engine.CreateNewProject ();
+			Assert.AreEqual (String.Empty, proj.FullFileName, "A1");
+
+			proj.LoadXml (documentString);
+			Assert.AreEqual (String.Empty, proj.FullFileName, "A2");
+			proj.DefaultTargets = "Build";
+			Assert.AreEqual ("Build", proj.DefaultTargets, "A3");
+			cproj = CloneProject (proj);
+			Assert.AreEqual (proj.DefaultTargets, cproj.DefaultTargets, "A4");
 		}
 	}
 }

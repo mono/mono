@@ -1,10 +1,10 @@
 //
-// ProjectTest.cs:
+// DefaultTasks: Test if tasks that are included by default are usable.
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
 //
-// (C) 2005 Marek Sieradzki
+// (C) 2006 Marek Sieradzki
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,54 +26,29 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections;
 using System.Xml;
 using Microsoft.Build.BuildEngine;
 using NUnit.Framework;
 
-namespace MonoTests.Microsoft.Build.BuildEngine {
+namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 	[TestFixture]
-	public class ProjectTest {
-
+	public class DefaultTasks {
 		[Test]
-		[ExpectedException (typeof (InvalidProjectFileException),
-		@"The default XML namespace of the project must be the MSBuild XML namespace." + 
-		" If the project is authored in the MSBuild 2003 format, please add " +
-		"xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\" to the <Project> element. " +
-		"If the project has been authored in the old 1.0 or 1.2 format, please convert it to MSBuild 2003 format.  ")]
-		public void TestAssignment ()
+		public void TestDefaultTasks ()
 		{
-			Engine engine;
-			Project project;
-			string documentString =
-				"<Project></Project>";
-			
-			engine = new Engine (Consts.BinPath);
-			project = engine.CreateNewProject ();
-			project.LoadXml (documentString);
-		}
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
 
-		[Test]
-		public void TestBuild1 ()
-		{
-			Engine engine;
-			Project project;
-			IDictionary hashtable = new Hashtable ();
-			
 			string documentString = @"
-				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<Target Name='Main'>
-						<Message Text='Text' />
+						<Message Text='Message' />
 					</Target>
 				</Project>
 			";
-			
-			engine = new Engine (Consts.BinPath);
-			project = engine.CreateNewProject ();
-			project.LoadXml (documentString);
-			project.Build (new string[] { "Main" }, hashtable);
-			
-			Assert.AreEqual (0, hashtable.Count);
+
+			proj.LoadXml (documentString);
+			proj.Build ("Main");
 		}
 	}
 }

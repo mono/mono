@@ -52,7 +52,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<UsingTask
-						AssemblyFile='Test/resources/SimpleTask.dll'
+						AssemblyFile='Test/resources/TestTasks.dll'
 						TaskName='SimpleTask'
 						Condition='true'
 					/>
@@ -68,7 +68,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			
 			UsingTask ut = (UsingTask) en.Current;
 			
-			Assert.AreEqual ("Test/resources/SimpleTask.dll", ut.AssemblyFile, "A1");
+			Assert.AreEqual ("Test/resources/TestTasks.dll", ut.AssemblyFile, "A1");
 			Assert.IsNull (ut.AssemblyName, "A2");
 			Assert.AreEqual ("true", ut.Condition, "A3");
 			Assert.AreEqual (false, ut.IsImported, "A4");
@@ -81,7 +81,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<UsingTask
-						AssemblyFile='Test/resources/SimpleTask.dll'
+						AssemblyFile='Test/resources/TestTasks.dll'
 						TaskName='SimpleTask'
 					/>
 				</Project>
@@ -96,7 +96,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			
 			UsingTask ut = (UsingTask) en.Current;
 			
-			Assert.AreEqual ("Test/resources/SimpleTask.dll", ut.AssemblyFile, "A1");
+			Assert.AreEqual ("Test/resources/TestTasks.dll", ut.AssemblyFile, "A1");
 			Assert.IsNull (ut.AssemblyName, "A2");
 			Assert.AreEqual (null, ut.Condition, "A3");
 			Assert.AreEqual (false, ut.IsImported, "A4");
@@ -141,7 +141,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<UsingTask
-						AssemblyFile='Test/resources/SimpleTask.dll'
+						AssemblyFile='Test/resources/TestTasks.dll'
 					/>
 				</Project>
 			";

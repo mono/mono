@@ -1,3 +1,9 @@
+2006-06-22  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* UsingTaskCollectionTest.cs, UsingTaskTest.cs: Updated names.
+	* ProjectTest.cs: Moved most of the old tests to various/.
+	* Consts.cs: Added.
+
 2006-06-14  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* BuildPropertyGroupTest.cs: Added some tests.

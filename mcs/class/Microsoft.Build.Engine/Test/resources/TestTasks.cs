@@ -34,3 +34,15 @@ public class SimpleTask : Task {
 		return true;
 	}
 }
+
+public class OutputTestTast : Task {
+	public override bool Execute ()
+	{
+		return true;
+	}
+
+	[Output]
+	public string Property {
+		get { return "some_text"; }
+	}
+}

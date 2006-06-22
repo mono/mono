@@ -24,9 +24,9 @@ TEST_MCS_FLAGS = \
 
 EXTRA_DISTFILES = Test/resources/SimpleTask.cs
 
-Test/resources/SimpleTask.dll: Test/resources/SimpleTask.cs
-	$(CSCOMPILE) Test/resources/SimpleTask.cs /r:Microsoft.Build.Framework.dll /r:Microsoft.Build.Utilities.dll /target:library
+Test/resources/TestTasks.dll: Test/resources/TestTasks.cs
+	$(CSCOMPILE) Test/resources/TestTasks.cs /r:Microsoft.Build.Framework.dll /r:Microsoft.Build.Utilities.dll /target:library
 
-test-local: Test/resources/SimpleTask.dll
+test-local: Test/resources/TestTasks.dll
 
 include ../../build/library.make

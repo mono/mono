@@ -2,6 +2,7 @@ Microsoft.Build.BuildEngine/BuildItemTest.cs
 Microsoft.Build.BuildEngine/BuildPropertyTest.cs
 Microsoft.Build.BuildEngine/BuildPropertyGroupTest.cs
 Microsoft.Build.BuildEngine/BuildPropertyGroupCollectionTest.cs
+Microsoft.Build.BuildEngine/Consts.cs
 Microsoft.Build.BuildEngine/EngineTest.cs
 Microsoft.Build.BuildEngine/InternalLoggerExceptionTest.cs
 Microsoft.Build.BuildEngine/InvalidProjectFileExceptionTest.cs
@@ -9,3 +10,7 @@ Microsoft.Build.BuildEngine/ProjectTest.cs
 Microsoft.Build.BuildEngine/UsingTaskTest.cs
 Microsoft.Build.BuildEngine/UsingTaskCollectionTest.cs
 Microsoft.Build.BuildEngine/UtilitiesTest.cs
+various/DefaultTasks.cs
+various/Items.cs
+various/ProjectElement.cs
+various/Properties.cs
