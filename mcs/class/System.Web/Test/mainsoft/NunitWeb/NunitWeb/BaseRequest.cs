@@ -39,9 +39,14 @@ namespace MonoTests.SystemWeb.Framework
 		public virtual HttpWorkerRequest CreateWorkerRequest ()
 		{
 			StringWriter wr = new StringWriter ();
-			BaseWorkerRequest br = new BaseWorkerRequest (Url, GetQueryString (), wr);
+			BaseWorkerRequest br = CreateBaseWorkerRequest (wr);
 			((IDictionary) br) [GetType ()] = wr;
 			return br;
+		}
+
+		protected virtual BaseWorkerRequest CreateBaseWorkerRequest (StringWriter wr)
+		{
+			return new BaseWorkerRequest (Url, GetQueryString (), wr);
 		}
 
 		protected virtual string GetQueryString ()
@@ -55,7 +60,7 @@ namespace MonoTests.SystemWeb.Framework
 		/// <param name="request">this must be the same request that was returned by
 		/// CreateWorkerRequest</param>
 		/// <returns></returns>
-		public virtual Response GetRequestResult (HttpWorkerRequest request)
+		public virtual Response ExtractResponse (HttpWorkerRequest request)
 		{
 			BaseWorkerRequest br = (BaseWorkerRequest) request;
 			IDictionary d = (IDictionary) br;

@@ -49,7 +49,9 @@
     <Compile Include="XmlComparer.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="almost_config.xml" />
     <Content Include="HtmlAgilityPack\readme.txt" />
+    <EmbeddedResource Include="nunitweb_config.xml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

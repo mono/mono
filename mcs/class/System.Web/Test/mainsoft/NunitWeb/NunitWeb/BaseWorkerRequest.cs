@@ -6,10 +6,10 @@ using System.Collections;
 
 namespace MonoTests.SystemWeb.Framework
 {
-	public class BaseWorkerRequest: SimpleWorkerRequest, IDictionary
+	public class BaseWorkerRequest : SimpleWorkerRequest, IDictionary
 	{
-		public BaseWorkerRequest (string page, string query, TextWriter writer):
-			base (page, query, writer)
+		public BaseWorkerRequest (string page, string query, TextWriter writer)
+			: base (page, query, writer)
 		{
 		}
 

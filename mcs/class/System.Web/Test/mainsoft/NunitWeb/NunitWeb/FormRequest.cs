@@ -9,7 +9,7 @@ using System.Xml;
 namespace MonoTests.SystemWeb.Framework
 {
 	[Serializable]
-	public class FormRequest : BaseRequest
+	public class FormRequest : PostableRequest
 	{
 		public FormRequest (Response response, string formId)
 		{
@@ -43,6 +43,11 @@ namespace MonoTests.SystemWeb.Framework
 			string actionUrl = formNode.Attributes["action"].Value;
 			if (actionUrl != null && actionUrl != string.Empty)
 				base.Url = actionUrl;
+			XmlNode method = formNode.Attributes["method"];
+			if (method != null && "POST" == method.Value)
+				base.IsPost = true;
+			else
+				base.IsPost = false;
 #if USE_CORRECT_FORMID
 
 			foreach (XmlNode inputNode in formNode.SelectNodes ("//html:input", nsmgr))
@@ -71,7 +76,33 @@ namespace MonoTests.SystemWeb.Framework
 			set { throw new Exception ("Must not change Url of FormPostback"); }
 		}
 
+		public override bool IsPost
+		{
+			get { return base.IsPost; }
+			set { throw new Exception ("Must not change IsPost of FormPostback"); }
+		}
+
+		public override string PostContentType
+		{
+			get { return "application/x-www-form-urlencoded"; }
+			set { throw new Exception ("Must not change PostContentType of FormPostback"); }
+		}
+
+		public override byte[] PostData
+		{
+			get { return Encoding.ASCII.GetBytes (GetParameters ()); }
+			set { throw new Exception ("Must not change PostData of FormPostback"); }
+		}
+
 		protected override string GetQueryString ()
+		{
+			if (IsPost)
+				return "";
+			else
+				return GetParameters ();
+		}
+
+		protected string GetParameters ()
 		{
 			StringBuilder query = new StringBuilder ();
 			bool first = true;

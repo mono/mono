@@ -40,7 +40,7 @@ namespace MonoTests.SystemWeb.Framework
 			d[GetType ()] = data;
 
 			HttpRuntime.ProcessRequest (wr);
-			Response res = request.GetRequestResult (wr);
+			Response res = request.ExtractResponse (wr);
 
 			if (data.exception != null)
 				RethrowException (data.exception);

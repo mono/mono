@@ -21,6 +21,8 @@ mainsoft/NunitWeb/NunitWeb/MyHandler.cs
 mainsoft/NunitWeb/NunitWeb/MyHost.cs
 mainsoft/NunitWeb/NunitWeb/PageDelegates.cs
 mainsoft/NunitWeb/NunitWeb/PageInvoker.cs
+mainsoft/NunitWeb/NunitWeb/PostableRequest.cs
+mainsoft/NunitWeb/NunitWeb/PostableWorkerRequest.cs
 mainsoft/NunitWeb/NunitWeb/Response.cs
 mainsoft/NunitWeb/NunitWeb/StandardUrl.cs
 mainsoft/NunitWeb/NunitWeb/WebTest.cs

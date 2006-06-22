@@ -17,7 +17,8 @@
     <DefineConstants>TRACE;DEBUG;NET_2_0;VISUAL_STUDIO</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\NunitWeb.XML</DocumentationFile>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,13 +30,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseInvoker.cs" />
     <Compile Include="BaseRequest.cs" />
-    <Compile Include="FormPostback.cs" />
     <Compile Include="FormRequest.cs" />
     <Compile Include="HandlerInvoker.cs" />
     <Compile Include="MyHandler.cs" />
@@ -47,6 +48,9 @@
     </Compile>
     <Compile Include="PageDelegates.cs" />
     <Compile Include="PageInvoker.cs" />
+    <Compile Include="PostableRequest.cs" />
+    <Compile Include="PostableWorkerRequest.cs" />
+    <Compile Include="Response.cs" />
     <Compile Include="StandardUrl.cs" />
     <Compile Include="WebTest.cs">
       <SubType>Code</SubType>

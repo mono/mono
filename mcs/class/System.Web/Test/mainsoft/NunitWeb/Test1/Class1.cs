@@ -136,7 +136,31 @@ namespace Test1
 		public void PostBack ()
 		{
 			WebTest.CopyResource (GetType (), "Test1.Resources.Postback.aspx", "Postback.aspx");
-			string res = new WebTest ("Postback.aspx").Run ();
+			WebTest t = new WebTest ("Postback.aspx");
+			string res1 = t.Run ();
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Fields["txt1"] = "value";
+			WebTest t1 = new WebTest (fr);
+			string res2 = t1.Run ();
+			FormRequest fr1 = new FormRequest (t1.Response, "form1");
+			fr.Fields["txt1"] = "value1";
+			string res3 = new WebTest (fr).Run ();
+			Assert.IsTrue (res3.IndexOf ("value1") != -1);
+		}
+
+		[Test]
+		public void PostRequest ()
+		{
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (CheckPostRequest));
+			PostableRequest pr = new PostableRequest ();
+			pr.IsPost = true;
+			t.Request = pr;
+			t.Run ();
+		}
+
+		static public void CheckPostRequest (Page p)
+		{
+			Assert.AreEqual ("POST", HttpContext.Current.Request.RequestType);
 		}
 	}
 }
