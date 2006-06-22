@@ -1003,7 +1003,7 @@ namespace Mono.CSharp {
 			TypeExpr [] ifaces = new TypeExpr [count-start];
 			
 			for (i = start, j = 0; i < count; i++, j++){
-				TypeExpr resolved = ((Expression) Bases [i]).ResolveAsTypeTerminal (this, false);
+				TypeExpr resolved = ((Expression) Bases [i]).ResolveAsBaseTerminal (this, false);
 				if (resolved == null) {
 					return null;
 				}
@@ -1237,6 +1237,13 @@ namespace Mono.CSharp {
 
 				foreach (Type itype in ifaces)
  					TypeBuilder.AddInterfaceImplementation (itype);
+
+				foreach (TypeExpr ie in iface_exprs) {
+					ObsoleteAttribute oa = AttributeTester.GetObsoleteAttribute (ie.Type);
+					if ((oa != null) && !IsInObsoleteScope)
+						AttributeTester.Report_ObsoleteMessage (
+							oa, ie.GetSignatureForError (), Location);
+				}
 
 				if (!CheckGenericInterfaces (ifaces)) {
 					return false;
