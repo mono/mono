@@ -1,3 +1,7 @@
+2006-06-22  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* standalone/hello_world: Added hello world type project.
+
 2006-05-22  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* Touch.csproj, Message.csproj, Exec.csproj, WriteLinesToFile.csproj,
