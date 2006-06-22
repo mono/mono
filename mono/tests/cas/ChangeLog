@@ -1,3 +1,8 @@
+2006-06-22  Wade Berrier <wberrier@novell.com>
+
+	* svn:ignore: Ignore Makefile and Makefile.in for this and 
+	each subdir
+
 2006-06-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Makefile.am: Updated Makefile to add the CAS tests to the tarball
