@@ -1,10 +1,10 @@
 //
-// AnyEventArgsTest.cs:
+// BuildEventArgsTest.cs:
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
 //
-// (C) 2005 Marek Sieradzki
+// (C) 2006 Marek Sieradzki
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,40 +25,43 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using System;
+using System.Threading;
 using Microsoft.Build.Framework;
 using NUnit.Framework;
 
 namespace MonoTests.Microsoft.Build.Framework {
+
+	class TestClass : BuildEventArgs {
+		public TestClass (string message, string helpKeyword, string senderName)
+			: base (message, helpKeyword, senderName)
+		{
+		}
+	}
+	
 	[TestFixture]
-	public class BuildErrorEventArgsTest {
+	public class BuildEventArgsTest {
 		[Test]
 		public void AssignmentTest ()
 		{
-			BuildErrorEventArgs beea;
-			string subcategory = "subcategory";
-			string code = "CS0000";
-			string file = "file";
-			int lineNumber = 1;
-			int columnNumber = 2;
-			int endLineNumber = 3;
-			int endColumnNumber = 4;
+			DateTime before, after;
+			
 			string message = "message";
 			string helpKeyword = "helpKeyword";
-			string senderName = "MSBuild";
+			string senderName = "senderName";
 			
-			beea = new BuildErrorEventArgs (subcategory, code, file, lineNumber, columnNumber, endLineNumber,
-				endColumnNumber, message, helpKeyword, senderName);
+			before = DateTime.Now;
 			
-			Assert.AreEqual (subcategory, beea.Subcategory, "Subcategory");
-			Assert.AreEqual (code, beea.Code, "Code");
-			Assert.AreEqual (file, beea.File, "File");
-			Assert.AreEqual (lineNumber, beea.LineNumber, "LineNumber");
-			Assert.AreEqual (columnNumber, beea.ColumnNumber, "ColumnNumber");
-			Assert.AreEqual (endLineNumber, beea.EndLineNumber, "EndLineNumber");
-			Assert.AreEqual (endColumnNumber, beea.EndColumnNumber, "EndColumnNumber");
-			Assert.AreEqual (message, beea.Message, "Message");
-			Assert.AreEqual (helpKeyword, beea.HelpKeyword, "HelpKeyword");
-			Assert.AreEqual (senderName, beea.SenderName, "SenderName");
+			TestClass tc = new TestClass (message, helpKeyword, senderName);
+			
+			after = DateTime.Now;
+			
+			Assert.AreEqual (message, tc.Message, "A1");
+			Assert.AreEqual (helpKeyword, tc.HelpKeyword, "A2");
+			Assert.AreEqual (senderName, tc.SenderName, "A3");
+			Assert.AreEqual (Thread.CurrentThread.GetHashCode (), tc.ThreadId, "A4");
+			Assert.IsTrue (before < tc.Timestamp, "A5");
+			Assert.IsTrue (after > tc.Timestamp, "A6");
 		}
 	}
 }
