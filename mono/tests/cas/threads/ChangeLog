@@ -1,3 +1,9 @@
+2006-06-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Makefile.am: Updated Makefile to add the CAS tests to the tarball
+	and enable them to be more broadly tested;
+	* Makefile: Removed and replaced by Makefile.am
+
 2005-05-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* tpool1-2.cs: New. ThreadPool based tests.
