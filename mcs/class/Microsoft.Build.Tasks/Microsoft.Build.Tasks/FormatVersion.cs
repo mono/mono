@@ -1,5 +1,5 @@
 //
-// CreateItem.cs: Creates build item.
+// FormatVersion.cs
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
@@ -31,36 +31,42 @@ using System;
 using Microsoft.Build.Framework;
 
 namespace Microsoft.Build.Tasks {
-	public class CreateItem : TaskExtension {
+	public sealed class FormatVersion : TaskExtension {
 	
-		string[]	additionalMetadata;
-		ITaskItem[]	exclude;
-		ITaskItem[]	include;
+		string	formatType;
+		string	outputVersion;
+		int	revision;
+		string	version;
 	
-		public CreateItem ()
+		public FormatVersion ()
 		{
 		}
 
 		public override bool Execute ()
 		{
-			throw new NotImplementedException ();
+			return false;
+		}
+		
+		public string FormatType {
+			get { return formatType; }
+			set { formatType = value; }
+		}
+		
+		public string OutputVersion {
+			get { return outputVersion; }
+			set { outputVersion = value; }
+		}
+		
+		public int Revision {
+			get { return revision; }
+			set { revision = value; }
+		}
+		
+		public string Version {
+			get { return version; }
+			set { version = value; }
 		}
 
-		public string[] AdditionalMetadata {
-			get { return additionalMetadata; }
-			set { additionalMetadata = value; }
-		}
-
-		public ITaskItem[] Exclude {
-			get { return exclude; }
-			set { exclude = value; }
-		}
-
-		[Output]
-		public ITaskItem[] Include {
-			get { return include; }
-			set { include = value; }
-		}
 	}
 }
 

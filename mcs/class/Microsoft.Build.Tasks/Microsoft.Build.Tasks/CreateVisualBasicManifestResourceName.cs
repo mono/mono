@@ -1,5 +1,5 @@
 //
-// CreateItem.cs: Creates build item.
+// CreateVisualBasicManifestResourceName.cs
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
@@ -28,38 +28,30 @@
 #if NET_2_0
 
 using System;
+using System.IO;
 using Microsoft.Build.Framework;
 
 namespace Microsoft.Build.Tasks {
-	public class CreateItem : TaskExtension {
-	
-		string[]	additionalMetadata;
-		ITaskItem[]	exclude;
-		ITaskItem[]	include;
-	
-		public CreateItem ()
+	public class CreateVisualBasicManifestResourceName : CreateManifestResourceName {
+		
+		public CreateVisualBasicManifestResourceName ()
 		{
 		}
-
-		public override bool Execute ()
+		
+		[MonoTODO]
+		protected override string CreateManifestName (string fileName,
+							      string linkFileName,
+							      string rootNamespace,
+							      string dependentUponFileName,
+							      Stream binaryStream)
 		{
 			throw new NotImplementedException ();
 		}
-
-		public string[] AdditionalMetadata {
-			get { return additionalMetadata; }
-			set { additionalMetadata = value; }
-		}
-
-		public ITaskItem[] Exclude {
-			get { return exclude; }
-			set { exclude = value; }
-		}
-
-		[Output]
-		public ITaskItem[] Include {
-			get { return include; }
-			set { include = value; }
+		
+		[MonoTODO]
+		protected override bool	IsSourceFile (string fileName)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }

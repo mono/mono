@@ -1,3 +1,13 @@
+2006-06-22  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* FormatUrl.cs, CreateVisualBasicManifestResourceName.cs,
+	GenereateBootstrapper.cs, ExtractedClassName.cs,
+	GenerateManifestBase.cs, FormatVersion.cs,
+	CreateManifestResourceName.cs, CreateCSharpManifestResourceName.cs,
+	GenerateApplicationManifest.cs: Added stubs.
+	* Exec.cs: Removed some assignments.
+	* CreateItem.cs: Formatting.
+
 2006-06-17  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* Error.cs: Added null check and changed return value of Execute () to

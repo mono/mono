@@ -1,5 +1,5 @@
 //
-// CreateItem.cs: Creates build item.
+// CreateManifestResourceName.cs
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
@@ -28,38 +28,55 @@
 #if NET_2_0
 
 using System;
+using System.IO;
 using Microsoft.Build.Framework;
 
 namespace Microsoft.Build.Tasks {
-	public class CreateItem : TaskExtension {
+	public abstract class CreateManifestResourceName : TaskExtension {
 	
-		string[]	additionalMetadata;
-		ITaskItem[]	exclude;
-		ITaskItem[]	include;
-	
-		public CreateItem ()
+		ITaskItem[]	manifestResourceNames;
+		ITaskItem[]	resourceFiles;
+		string		rootNamespace;
+		
+		protected CreateManifestResourceName ()
 		{
 		}
-
+		
+		[MonoTODO]
 		public override bool Execute ()
+		{
+			return false;
+		}
+		
+		[MonoTODO]
+		public static string MakeValidEverettIdentifier (string name)
 		{
 			throw new NotImplementedException ();
 		}
-
-		public string[] AdditionalMetadata {
-			get { return additionalMetadata; }
-			set { additionalMetadata = value; }
+		
+		protected abstract string CreateManifestName (string fileName,
+							      string linkFileName,
+							      string rootNamespace,
+							      string dependentUponFileName,
+							      Stream binaryStream);
+		
+		protected abstract bool	IsSourceFile (string fileName);
+		
+		[MonoTODO]
+		public ITaskItem[] ManifestResourceNames {
+			get { return manifestResourceNames; }
 		}
-
-		public ITaskItem[] Exclude {
-			get { return exclude; }
-			set { exclude = value; }
+		
+		[MonoTODO]
+		public ITaskItem[] ResourceFiles {
+			get { return resourceFiles; }
+			set { resourceFiles = value; }
 		}
-
-		[Output]
-		public ITaskItem[] Include {
-			get { return include; }
-			set { include = value; }
+		
+		[MonoTODO]
+		public string RootNamespace {
+			get { return rootNamespace; }
+			set { rootNamespace = value; }
 		}
 	}
 }

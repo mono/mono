@@ -52,10 +52,7 @@ namespace Microsoft.Build.Tasks {
 		
 		public Exec ()
 		{
-			process = new Process ();
-			//timeout = Int32.MaxValue;
 			ignoreExitCode = false;
-			executionTime = 0;
 		}
 
 		/*public override bool Execute ()

@@ -1,5 +1,5 @@
 //
-// CreateItem.cs: Creates build item.
+// FormatUrl.cs
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
@@ -31,35 +31,29 @@ using System;
 using Microsoft.Build.Framework;
 
 namespace Microsoft.Build.Tasks {
-	public class CreateItem : TaskExtension {
+	public sealed class FormatUrl : TaskExtension {
 	
-		string[]	additionalMetadata;
-		ITaskItem[]	exclude;
-		ITaskItem[]	include;
+		string	inputUrl;
+		string	outputUrl;
 	
-		public CreateItem ()
+		public FormatUrl ()
 		{
 		}
-
+		
+		[MonoTODO]
 		public override bool Execute ()
 		{
-			throw new NotImplementedException ();
+			return false;
 		}
-
-		public string[] AdditionalMetadata {
-			get { return additionalMetadata; }
-			set { additionalMetadata = value; }
+		
+		public string InputUrl {
+			get { return inputUrl; }
+			set { inputUrl = value; }
 		}
-
-		public ITaskItem[] Exclude {
-			get { return exclude; }
-			set { exclude = value; }
-		}
-
-		[Output]
-		public ITaskItem[] Include {
-			get { return include; }
-			set { include = value; }
+		
+		public string OutputUrl {
+			get { return outputUrl; }
+			set { outputUrl = value; }
 		}
 	}
 }

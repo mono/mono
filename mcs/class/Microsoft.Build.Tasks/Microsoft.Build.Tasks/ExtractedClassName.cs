@@ -1,5 +1,5 @@
 //
-// CreateItem.cs: Creates build item.
+// ExtractedClassName.cs
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
@@ -31,35 +31,19 @@ using System;
 using Microsoft.Build.Framework;
 
 namespace Microsoft.Build.Tasks {
-	public class CreateItem : TaskExtension {
+	public struct ExtractClassName {
 	
-		string[]	additionalMetadata;
-		ITaskItem[]	exclude;
-		ITaskItem[]	include;
-	
-		public CreateItem ()
-		{
+		bool	isInsideConditionalBlock;
+		string	name;
+		
+		public bool IsInsideConditionalBlock {
+			get { return isInsideConditionalBlock; }
+			set { isInsideConditionalBlock = value; }
 		}
-
-		public override bool Execute ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		public string[] AdditionalMetadata {
-			get { return additionalMetadata; }
-			set { additionalMetadata = value; }
-		}
-
-		public ITaskItem[] Exclude {
-			get { return exclude; }
-			set { exclude = value; }
-		}
-
-		[Output]
-		public ITaskItem[] Include {
-			get { return include; }
-			set { include = value; }
+		
+		public string Name {
+			get { return name; }
+			set { name = value; }
 		}
 	}
 }
