@@ -86,11 +86,14 @@ namespace Microsoft.Build.Utilities
 				RegexOptions.IgnoreCase);
 		}
 
+		[MonoTODO]
 		protected virtual bool CallHostObjectToExecute ()
 		{
 			return true;
 		}
 
+		[MonoTODO]
+		// FIXME: it should write responseFileCommands to temporary response file
 		protected virtual int ExecuteTool (string pathToTool,
 						   string responseFileCommands,
 						   string commandLineCommands)
@@ -121,6 +124,7 @@ namespace Microsoft.Build.Utilities
 				return false;
 		}
 		
+		[MonoTODO]
 		protected virtual string GetWorkingDirectory ()
 		{
 			return null;
@@ -241,6 +245,7 @@ namespace Microsoft.Build.Utilities
 			}
 		}
 
+		[MonoTODO]
 		protected virtual string GenerateCommandLineCommands ()
 		{
 			return null;
@@ -248,11 +253,13 @@ namespace Microsoft.Build.Utilities
 
 		protected abstract string GenerateFullPathToTool ();
 
+		[MonoTODO]
 		protected virtual string GenerateResponseFileCommands ()
 		{
 			return null;
 		}
 
+		[MonoTODO]
 		protected virtual string GetResponseFileSwitch (string responseFilePath)
 		{
 			return String.Format ("@{0}", responseFilePath);
