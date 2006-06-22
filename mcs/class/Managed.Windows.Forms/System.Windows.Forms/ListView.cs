@@ -966,12 +966,6 @@ namespace System.Windows.Forms
 
 		void LayoutHeader ()
 		{
-			if (header_style == ColumnHeaderStyle.None) {
-				header_control.Visible = false;
-				header_control.Size = Size.Empty;
-				return;
-			}
-
 			int x = 0;
 			for (int i = 0; i < Columns.Count; i++) {
 			       	ColumnHeader col = GetReorderedColumn (i);
@@ -984,9 +978,14 @@ namespace System.Windows.Forms
 			if (x < ClientRectangle.Width)
 				x = ClientRectangle.Width;
 
-			header_control.Width = x;
-			header_control.Height = columns [0].Ht;
-			header_control.Visible = true;
+			if (header_style == ColumnHeaderStyle.None) {
+				header_control.Visible = false;
+				header_control.Size = Size.Empty;
+			} else {
+				header_control.Width = x;
+				header_control.Height = columns [0].Ht;
+				header_control.Visible = true;
+			}
 		}
 
 		void LayoutDetails ()
