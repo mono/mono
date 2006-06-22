@@ -1,3 +1,9 @@
+2006-06-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Makefile.am: Updated Makefile to add the CAS tests to the tarball
+	and enable them to be more broadly tested;
+	* Makefile: Removed and replaced by Makefile.am
+
 2005-06-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* aptc1.cs: Add a RequestRefuse for SkipVerification when RESTRICT is
