@@ -1,6 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.IO;
 
 namespace MonoTests.SystemWeb.Framework
 {
@@ -38,7 +37,7 @@ namespace MonoTests.SystemWeb.Framework
 		{
 		}
 
-		protected override BaseWorkerRequest CreateBaseWorkerRequest (System.IO.StringWriter wr)
+		protected override BaseWorkerRequest CreateBaseWorkerRequest (StringWriter wr)
 		{
 			if (PostData == null || !IsPost)
 				return base.CreateBaseWorkerRequest (wr);
