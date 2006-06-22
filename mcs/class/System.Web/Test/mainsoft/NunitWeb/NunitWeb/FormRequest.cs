@@ -41,7 +41,7 @@ namespace MonoTests.SystemWeb.Framework
 					"' was not found in document: " + response.Body);
 
 			string actionUrl = formNode.Attributes["action"].Value;
-			if (!string.IsNullOrEmpty (actionUrl))
+			if (actionUrl != null && actionUrl != string.Empty)
 				base.Url = actionUrl;
 #if USE_CORRECT_FORMID
 
