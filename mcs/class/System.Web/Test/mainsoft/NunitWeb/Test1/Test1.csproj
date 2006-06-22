@@ -31,10 +31,13 @@
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
-    <Compile Include="ThemeTest.cs" />
+    <Compile Include="..\..\..\System.Web.UI.WebControls\FileUploadTest.cs">
+      <Link>FileUploadTest.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NunitWeb\NunitWeb.csproj">
@@ -69,6 +72,9 @@
     <EmbeddedResource Include="..\..\NunitWebResources\Web.sitemap">
       <Link>Resources\Web.sitemap</Link>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Postback.aspx" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

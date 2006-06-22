@@ -14,7 +14,18 @@ namespace MonoTests.SystemWeb.Framework
 	public class BaseRequest
 	{
 		string _url;
-		public string Url
+
+		public BaseRequest ()
+		{
+		}
+
+		public BaseRequest (string url)
+			: this ()
+		{
+			this._url = url;
+		}
+
+		public virtual string Url
 		{
 			get { return _url; }
 			set { _url = value; }

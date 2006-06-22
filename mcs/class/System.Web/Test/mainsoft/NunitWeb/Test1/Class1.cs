@@ -1,10 +1,10 @@
 using System;
 using System.Text;
 using NUnit.Framework;
+using MonoTests.SystemWeb.Framework;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using NunitWeb;
 using System.Drawing;
 using System.Runtime.Serialization;
 using System.IO;
@@ -18,13 +18,14 @@ namespace Test1
 	{
 		public void TearDownFixture ()
 		{
-			NunitWeb.Helper.Unload ();
+			WebTest.Unload ();
 		}
 
 		[Test]
 		public void RenderSiteMapPath ()
 		{
-			string res = Helper.Instance.RunInPage (_RenderSiteMapPath);
+			PageInvoker pi = PageInvoker.CreateOnLoad (_RenderSiteMapPath);
+			string res = new WebTest (pi).Run ();
 			Console.WriteLine (res);
 			Assert.IsFalse (string.IsNullOrEmpty (res));
 		}
@@ -38,7 +39,8 @@ namespace Test1
 		[Test]
 		public void RenderSiteMapPathProp ()
 		{
-			string res = Helper.Instance.RunInPage (_RenderSiteMapPathProp);
+			PageInvoker pi = PageInvoker.CreateOnLoad (_RenderSiteMapPathProp);
+			string res = new WebTest (pi).Run ();
 			Console.WriteLine (res);
 			Assert.IsFalse (string.IsNullOrEmpty (res));
 		}
@@ -53,7 +55,10 @@ namespace Test1
 		[Test]
 		public void TestMasterPage ()
 		{
-			string res = Helper.Instance.RunInPageWithMaster (_TestMasterPage);
+			PageInvoker pi = PageInvoker.CreateOnLoad (_TestMasterPage);
+			WebTest t = new WebTest (pi);
+			t.Request.Url = StandardUrl.PAGE_WITH_MASTER;
+			string res = t.Run ();
 			Console.WriteLine (res);
 			Assert.IsFalse (string.IsNullOrEmpty (res));
 		}
@@ -67,7 +72,7 @@ namespace Test1
 		[Test]
 		public void TestStyle ()
 		{
-			string res = Helper.Instance.RunInPage(_TestStyle);
+			string res = new WebTest (PageInvoker.CreateOnLoad (_TestStyle)).Run ();
 			Console.WriteLine (res);
 			Assert.IsFalse (string.IsNullOrEmpty (res));
 		}
@@ -83,7 +88,7 @@ namespace Test1
 		[Test]
 		public void TestDefaultRender ()
 		{
-			string str = Helper.Instance.RunInPage (_TestDefaultRender, null);
+			string str = new WebTest (PageInvoker.CreateOnLoad (_TestDefaultRender)).Run ();
 			Assert.IsFalse (string.IsNullOrEmpty (str));
 		}
 
@@ -100,11 +105,38 @@ namespace Test1
 		[Test]
 		public void TestSkin ()
 		{
-			NunitWeb.Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (), "Test1.Resources.Default.skin", "App_Themes/Black/Default.skin");
-			NunitWeb.Helper.Instance.CopyResource (Assembly.GetExecutingAssembly (), "Test1.Resources.MyPageWithTheme.aspx", "MyPageWithTheme.aspx");
-			string res = NunitWeb.Helper.Instance.RunUrl ("MyPageWithTheme.aspx", null, null);
+			Assembly SampleAssembly;
+			// Instantiate a target object.
+			Int32 Integer1 = new Int32 ();
+			Type Type1;
+			// Set the Type instance to the target class type.
+			Type1 = Integer1.GetType ();
+			// Instantiate an Assembly class to the assembly housing the Integer type.  
+			SampleAssembly = Assembly.GetAssembly (Integer1.GetType ());
+			// Display the physical location of the assembly containing the manifest.
+			Console.WriteLine ("Location=" + SampleAssembly.Location);
+
+
+
+			WebTest.CopyResource (GetType (), "Test1.Resources.Default.skin", "App_Themes/Black/Default.skin");
+			WebTest.CopyResource (GetType (), "Test1.Resources.MyPageWithTheme.aspx", "MyPageWithTheme.aspx");
+			string res = new WebTest ("MyPageWithTheme.aspx").Run ();
 			Debug.WriteLine (res);			
 		}
 
+		[Test]
+		public void UnloadTest ()
+		{
+			new WebTest (new PageInvoker (new PageDelegates ())).Run ();
+			WebTest.Unload ();
+			new WebTest (new PageInvoker (new PageDelegates ())).Run ();
+		}
+
+		[Test]
+		public void PostBack ()
+		{
+			WebTest.CopyResource (GetType (), "Test1.Resources.Postback.aspx", "Postback.aspx");
+			string res = new WebTest ("Postback.aspx").Run ();
+		}
 	}
 }

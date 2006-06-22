@@ -29,13 +29,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.configuration" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseInvoker.cs" />
+    <Compile Include="BaseRequest.cs" />
+    <Compile Include="FormPostback.cs" />
+    <Compile Include="FormRequest.cs" />
     <Compile Include="HandlerInvoker.cs" />
     <Compile Include="MyHandler.cs" />
     <Compile Include="BaseWorkerRequest.cs">
@@ -46,7 +47,6 @@
     </Compile>
     <Compile Include="PageDelegates.cs" />
     <Compile Include="PageInvoker.cs" />
-    <Compile Include="SimpleRequest.cs" />
     <Compile Include="StandardUrl.cs" />
     <Compile Include="WebTest.cs">
       <SubType>Code</SubType>
@@ -68,6 +68,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\MyPageWithMaster.aspx">
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\MainsoftWebTest\HtmlCompare.csproj">
+      <Project>{BF64011B-D7DB-4AB8-8EAB-FE0AA1EE74CD}</Project>
+      <Name>HtmlCompare</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
