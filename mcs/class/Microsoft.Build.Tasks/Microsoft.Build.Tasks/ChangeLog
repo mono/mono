@@ -1,5 +1,9 @@
 2006-06-22  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
+	* ManagedCompiler.cs: Change TargetType to return lower case text.
+
+2006-06-22  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
 	* FormatUrl.cs, CreateVisualBasicManifestResourceName.cs,
 	GenereateBootstrapper.cs, ExtractedClassName.cs,
 	GenerateManifestBase.cs, FormatVersion.cs,

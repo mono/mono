@@ -254,8 +254,9 @@ namespace Microsoft.Build.Tasks {
 			get { return Console.Error.Encoding; }
 		}
 
+		// FIXME: hack to get build of hello world working
 		public string TargetType {
-			get { return (string) Bag ["TargetType"]; }
+			get { return ((string) Bag ["TargetType"]).ToLower (); }
 			set { Bag ["TargetType"] = value; }
 		}
 
