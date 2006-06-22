@@ -1,3 +1,7 @@
+2006-06-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c: Remove unused solaris/x86 includes.
+
 2006-06-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* jit.h: Add G_BEGIN_DECLS/G_END_DECLS.
