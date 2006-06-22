@@ -1160,6 +1160,9 @@ namespace System.Windows.Forms {
 
 		public DialogResult ShowDialog(IWin32Window ownerWin32) {
 			Form		previous;
+			Rectangle	area;
+			bool		confined;
+			IntPtr		capture_window;
 
 			owner = null;
 
@@ -1193,6 +1196,12 @@ namespace System.Windows.Forms {
 			// Can't do this, will screw us in the modal loop
 			form_parent_window.Parent = this.owner;
 			#endif
+
+			// Release any captures
+			XplatUI.GrabInfo(out capture_window, out confined, out area);
+			if (capture_window != IntPtr.Zero) {
+				XplatUI.UngrabWindow(capture_window);
+			}
 
 			previous = Form.ActiveForm;
 
