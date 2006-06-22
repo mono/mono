@@ -1,39 +1,24 @@
 using System;
-using System.Xml;
 using System.Collections.Specialized;
+using System.Text;
 using System.Web;
 using System.IO;
-using System.Text;
+using System.Collections;
+using System.Xml;
 
 namespace MonoTests.SystemWeb.Framework
 {
 	[Serializable]
-	public class FormRequest: BaseRequest
+	public class FormRequest : BaseRequest
 	{
-		public FormRequest ()
+		public FormRequest (Response response, string formId)
 		{
-		}
+			fields = new NameValueCollection();
 
-		public FormRequest (string url)
-			:base (url)
-		{
-		}
-
-		[NonSerialized]
-		string lastResult;
-
-		public virtual string GetRequestResult (HttpWorkerRequest request)
-		{
-			lastResult = base.GetRequestResult (request);
-			return lastResult;
-		}
-
-		public FormPostback CreateNext (string formId)
-		{
 			HtmlAgilityPack.HtmlDocument htmlDoc = new HtmlAgilityPack.HtmlDocument ();
-			htmlDoc.LoadHtml (lastResult);
+			htmlDoc.LoadHtml (response.Body);
 
-			StringBuilder tempxml = new StringBuilder (); 
+			StringBuilder tempxml = new StringBuilder ();
 			StringWriter tsw = new StringWriter (tempxml);
 			htmlDoc.OptionOutputAsXml = true;
 			htmlDoc.Save (tsw);
@@ -41,21 +26,65 @@ namespace MonoTests.SystemWeb.Framework
 			XmlDocument doc = new XmlDocument ();
 			doc.LoadXml (tempxml.ToString ());
 
-			XmlNode formNode = doc.SelectSingleNode ("form[@id=" + formId + "]");
+			const string HTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
+
+			XmlNamespaceManager nsmgr = new XmlNamespaceManager (doc.NameTable);
+			nsmgr.AddNamespace ("html", HTML_NAMESPACE);
+
+#if USE_CORRECT_FORMID
+			XmlNode formNode = doc.SelectSingleNode ("//html:form[@name='" + formId + "']", nsmgr);
+#else
+			XmlNode formNode = doc.SelectSingleNode ("//html:form", nsmgr);
+#endif
 			if (formNode == null)
 				throw new ArgumentException ("Form with id='" + formId +
-					"' was not found in document: " + lastResult);
+					"' was not found in document: " + response.Body);
 
-			string targetUrl = formNode.Attributes ["action"].Value;
-			if (targetUrl == null)
-				targetUrl = this.Url;
+			string actionUrl = formNode.Attributes["action"].Value;
+			if (!string.IsNullOrEmpty (actionUrl))
+				base.Url = actionUrl;
+#if USE_CORRECT_FORMID
 
-			NameValueCollection fields = new NameValueCollection ();
-			foreach (XmlNode inputNode in formNode.SelectNodes ("input"))
-				fields.Add (inputNode.Attributes["name"].Value,
-					inputNode.Attributes["value"].Value);
+			foreach (XmlNode inputNode in formNode.SelectNodes ("//html:input", nsmgr))
+#else
+			foreach (XmlNode inputNode in doc.SelectNodes ("//html:input", nsmgr))
+#endif
+			{
+				string name;
+				string value = "";
+				name = inputNode.Attributes["name"].Value;
+				if (inputNode.Attributes["value"] != null)
+					value = inputNode.Attributes["value"].Value;
+				fields.Add (name, value);
+			}
+		}
 
-			return new FormPostback (targetUrl, fields);
+		private NameValueCollection fields;
+		public NameValueCollection Fields
+		{
+			get { return fields; }
+		}
+
+		public override string Url
+		{
+			get { return base.Url; }
+			set { throw new Exception ("Must not change Url of FormPostback"); }
+		}
+
+		protected override string GetQueryString ()
+		{
+			StringBuilder query = new StringBuilder ();
+			bool first = true;
+			foreach (string key in Fields.AllKeys) {
+				if (first)
+					first = false;
+				else
+					query.Append ("&");
+				query.Append (HttpUtility.UrlEncode (key));
+				query.Append ("=");
+				query.Append (HttpUtility.UrlEncode (Fields[key]));
+			}
+			return query.ToString ();
 		}
 	}
 }

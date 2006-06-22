@@ -28,7 +28,7 @@ namespace MonoTests.SystemWeb.Framework
 		public AppDomain AppDomain
 		{ get { return AppDomain.CurrentDomain; } }
 		
-		public string Run (BaseInvoker invoker, BaseRequest request)
+		public Response Run (BaseInvoker invoker, BaseRequest request)
 		{
 			HttpWorkerRequest wr = request.CreateWorkerRequest ();
 			IDictionary d = (IDictionary) wr;
@@ -40,13 +40,13 @@ namespace MonoTests.SystemWeb.Framework
 			d[GetType ()] = data;
 
 			HttpRuntime.ProcessRequest (wr);
-			string res = request.GetRequestResult (wr);
+			Response res = request.GetRequestResult (wr);
 
 			if (data.exception != null)
 				RethrowException (data.exception);
 
 			if (!data.invoked)
-				throw new Exception ("internal error: ProcessRequest did not reach WebTest.Invoke; response was: " + res);
+				throw new Exception ("internal error: ProcessRequest did not reach WebTest.Invoke; response was: " + res.Body);
 
 			return res;
 		}

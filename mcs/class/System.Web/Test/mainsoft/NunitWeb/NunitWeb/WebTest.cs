@@ -7,6 +7,12 @@ namespace MonoTests.SystemWeb.Framework
 {
 	public class WebTest
 	{
+		Response _response;
+		public Response Response
+		{
+			get { return _response; }
+		}
+
 		BaseInvoker _invoker;
 		public BaseInvoker Invoker
 		{
@@ -40,7 +46,8 @@ namespace MonoTests.SystemWeb.Framework
 		{
 			if (Request.Url == null)
 				Request.Url = Invoker.GetDefaultUrl ();
-			return Host.Run (Invoker, Request);
+			_response = Host.Run (Invoker, Request);
+			return _response.Body;
 		}
 
 		public static void Invoke (object param)
