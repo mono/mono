@@ -1,3 +1,9 @@
+2006-06-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Makefile.am: Updated Makefile to add the CAS tests to the tarball
+	and enable them to be more broadly tested;
+	* Makefile: Removed and replaced by Makefile.am
+
 2005-05-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* pinvoke1-3.cs: Fixed RunningOnWindows to run under NET_2_0.
