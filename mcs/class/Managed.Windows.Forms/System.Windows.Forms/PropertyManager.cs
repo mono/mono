@@ -32,8 +32,9 @@ namespace System.Windows.Forms {
 
 		private string property_name;
 		private PropertyDescriptor prop_desc;
-		private bool binding_suspended;
 		private object data_source;
+		private EventDescriptor changed_event;
+		private EventHandler property_value_changed_handler;
 
 		public PropertyManager() {
 		}
@@ -52,8 +53,8 @@ namespace System.Windows.Forms {
 
 		internal void SetDataSource (object new_data_source)
 		{
-			if (prop_desc != null)
-				prop_desc.RemoveValueChanged (data_source, new EventHandler (PropertyChangedHandler));
+			if (changed_event != null)
+				changed_event.RemoveEventHandler (data_source, property_value_changed_handler);
 
 			data_source = new_data_source;
 
@@ -63,8 +64,17 @@ namespace System.Windows.Forms {
 				if (prop_desc == null)
 					return;
 
-				prop_desc.AddValueChanged (data_source, new EventHandler (PropertyChangedHandler));
+				changed_event = TypeDescriptor.GetEvents (data_source).Find (property_name + "Changed", false);
+				if (changed_event != null) {
+					property_value_changed_handler = new EventHandler (PropertyValueChanged);
+					changed_event.AddEventHandler (data_source, property_value_changed_handler);
+				}
 			}
+		}
+
+		void PropertyValueChanged (object sender, EventArgs args)
+		{
+			OnCurrentChanged (args);
 		}
 
 		public override object Current {
@@ -117,16 +127,14 @@ namespace System.Windows.Forms {
 
 		public override void ResumeBinding ()
 		{
-			binding_suspended = false;
 		}
 
 		public override void SuspendBinding ()
 		{
-			binding_suspended = true;
 		}
 
                 internal override bool IsSuspended {
-                        get { return binding_suspended; }
+                        get { return data_source != null; }
                 }
 
 		protected internal override string GetListName (ArrayList list)

@@ -1,3 +1,14 @@
+2006-06-23  Chris Toshok  <toshok@ximian.com>
+
+	* PropertyManager.cs: It appears (according to the unit tests)
+	that PropertyManager doesn't use
+	PropertyDescriptor.AddValueChanged to track propery value changes
+	in its datasource, but uses the same scheme as Binding, where it
+	looks for a <Property>Changed event and binds to it.
+
+	Also, according to the docs, IsSuspended always returns false for
+	a property manager with a non-null datasource.
+
 2006-06-22  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* Form.cs: (ShowDialog): If we're returning a forced cancel we still
