@@ -1,3 +1,8 @@
+2006-06-22  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Form.cs: (ShowDialog): If we're returning a forced cancel we still
+	  need to update the actual DialogResult. (Fixes #78613)
+
 2006-06-22  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Form.cs (ShowDialog): Release any captures before running the

@@ -1226,6 +1226,7 @@ namespace System.Windows.Forms {
 			if (DialogResult != DialogResult.None) {
 				return DialogResult;
 			}
+			DialogResult = DialogResult.Cancel;
 			return DialogResult.Cancel;
 		}
 
