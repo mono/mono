@@ -35,9 +35,9 @@ namespace MonoTests.System.Windows.Forms {
 	[TestFixture]
 	public class PropertyManagerTest {
 
-		class TestClass {
+		class TestClass1 {
 			int prop;
-			public TestClass ()
+			public TestClass1 ()
 			{
 				prop = 0;
 			}
@@ -54,17 +54,55 @@ namespace MonoTests.System.Windows.Forms {
 			public event EventHandler PropertyChanged;
 		}
 
+		class TestClass2 {
+			int prop;
+			public TestClass2 ()
+			{
+				prop = 0;
+			}
+
+			public int Property {
+				get { return prop; }
+				set { prop = value; }
+			}
+		}
+
+		class TestClass3 {
+			int prop;
+			public TestClass3 ()
+			{
+				prop = 0;
+			}
+
+			public int Property {
+				get { return prop; }
+				set {
+					prop = value;
+					if (Changed != null)
+						Changed (this, EventArgs.Empty);
+				}
+			}
+
+			public event EventHandler Changed;
+		}
+
 		bool currentChangedRaised;
+		bool positionChangedRaised;
 
 		void OnCurrentChanged (object sender, EventArgs args)
 		{
 			currentChangedRaised = true;
 		}
 
+		void OnPositionChanged (object sender, EventArgs args)
+		{
+			positionChangedRaised = true;
+		}
+
 		[Test]
 		public void TestEvent ()
 		{
-			TestClass test = new TestClass();
+			TestClass1 test = new TestClass1();
 			BindingContext bc = new BindingContext ();
 
 			BindingManagerBase bm = bc[test, "Property"];
@@ -72,10 +110,80 @@ namespace MonoTests.System.Windows.Forms {
 
 			bm.CurrentChanged += new EventHandler (OnCurrentChanged);
 
-			currentChangedRaised = false;
+			currentChangedRaised = positionChangedRaised = false;
 			test.Property = 5;
 			Assert.IsTrue (currentChangedRaised, "A2");
+			Assert.IsFalse (positionChangedRaised, "A3");
 		}
+
+		[Test]
+		public void TestNoEvent ()
+		{
+			TestClass2 test = new TestClass2();
+			BindingContext bc = new BindingContext ();
+
+			BindingManagerBase bm = bc[test, "Property"];
+			Assert.IsTrue (typeof (PropertyManager).IsAssignableFrom (bm.GetType()), "A1");
+
+			bm.CurrentChanged += new EventHandler (OnCurrentChanged);
+
+			currentChangedRaised = positionChangedRaised = false;
+			test.Property = 5;
+			Assert.IsFalse (currentChangedRaised, "A2");
+			Assert.IsFalse (positionChangedRaised, "A3");
+		}
+
+		[Test]
+		public void TestMemberEvent ()
+		{
+			TestClass1 test = new TestClass1();
+			BindingContext bc = new BindingContext ();
+
+			BindingManagerBase bm = bc[test];
+			Assert.IsTrue (typeof (PropertyManager).IsAssignableFrom (bm.GetType()), "A1");
+
+			bm.CurrentChanged += new EventHandler (OnCurrentChanged);
+
+			currentChangedRaised = positionChangedRaised = false;
+			test.Property = 5;
+			Assert.IsFalse (currentChangedRaised, "A2");
+			Assert.IsFalse (positionChangedRaised, "A3");
+		}
+
+		[Test]
+		public void TestMemberEvent2 ()
+		{
+			TestClass3 test = new TestClass3();
+			BindingContext bc = new BindingContext ();
+
+			BindingManagerBase bm = bc[test];
+			Assert.IsTrue (typeof (PropertyManager).IsAssignableFrom (bm.GetType()), "A1");
+
+			bm.CurrentChanged += new EventHandler (OnCurrentChanged);
+
+			currentChangedRaised = positionChangedRaised = false;
+			test.Property = 5;
+			Assert.IsFalse (currentChangedRaised, "A2");
+			Assert.IsFalse (positionChangedRaised, "A3");
+		}
+
+		[Test]
+		public void TestMemberNoEvent ()
+		{
+			TestClass2 test = new TestClass2();
+			BindingContext bc = new BindingContext ();
+
+			BindingManagerBase bm = bc[test];
+			Assert.IsTrue (typeof (PropertyManager).IsAssignableFrom (bm.GetType()), "A1");
+
+			bm.CurrentChanged += new EventHandler (OnCurrentChanged);
+
+			currentChangedRaised = positionChangedRaised = false;
+			test.Property = 5;
+			Assert.IsFalse (currentChangedRaised, "A2");
+			Assert.IsFalse (positionChangedRaised, "A3");
+		}
+
 	}
 
 }
