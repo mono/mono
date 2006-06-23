@@ -1,5 +1,7 @@
 2006-06-23  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-codegen.c (mono_local_regalloc): Spill fp regs on calls even on x86.
+
 	* mini-x86.c (mono_arch_emit_inst_for_method): Fix Interlocked.Add.
 
 2006-06-21  Zoltan Varga  <vargaz@gmail.com>

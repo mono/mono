@@ -1527,23 +1527,21 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 				}
 			}
 
-			if (!use_fpstack) {
-				clob_mask = MONO_ARCH_CALLEE_FREGS;
-				if ((prev_dreg != -1) && dreg_is_fp (spec))
-					dreg = rassign (cfg, prev_dreg, dreg_is_fp (spec));
-				else
-					dreg = -1;
+			clob_mask = MONO_ARCH_CALLEE_FREGS;
+			if ((prev_dreg != -1) && dreg_is_fp (spec))
+				dreg = rassign (cfg, prev_dreg, dreg_is_fp (spec));
+			else
+				dreg = -1;
 
-				for (j = 0; j < MONO_MAX_FREGS; ++j) {
-					s = regmask (j);
-					if ((clob_mask & s) && !(rs->ffree_mask & s) && (j != ins->sreg1)) {
-						if (j != dreg)
-							get_register_force_spilling (cfg, tmp, ins, rs->fsymbolic [j], TRUE);
-						else if (rs->fsymbolic [j])
-							/* The hreg is assigned to the dreg of this instruction */
-							rs->iassign [rs->fsymbolic [j]] = -1;
-						mono_regstate2_free_float (rs, j);
-					}
+			for (j = 0; j < MONO_MAX_FREGS; ++j) {
+				s = regmask (j);
+				if ((clob_mask & s) && !(rs->ffree_mask & s) && (j != ins->sreg1)) {
+					if (j != dreg)
+						get_register_force_spilling (cfg, tmp, ins, rs->fsymbolic [j], TRUE);
+					else if (rs->fsymbolic [j])
+						/* The hreg is assigned to the dreg of this instruction */
+						rs->iassign [rs->fsymbolic [j]] = -1;
+					mono_regstate2_free_float (rs, j);
 				}
 			}
 		}
