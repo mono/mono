@@ -41,7 +41,6 @@ namespace System.Windows.Forms {
 
 		void parent_PositionChanged (object sender, EventArgs args)
 		{
-			Console.WriteLine ("parent_PositionChanged");
 			SetDataSource (parent.Current);
 			OnCurrentChanged (EventArgs.Empty);
 		}
