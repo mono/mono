@@ -41,6 +41,8 @@ namespace System.Web.Services {
 #if NET_2_0
 		bool emitConformanceClaims;
 		WsiClaims conformanceClaims;
+		
+		WsiProfiles conformsTo;
 #endif
 
 		#endregion // Fields
@@ -101,6 +103,11 @@ namespace System.Web.Services {
 			get { return emitConformanceClaims; }
 			set { emitConformanceClaims = value; }
 		}	
+		
+		public WsiProfiles ConformsTo { 
+			get { return conformsTo; } 
+			set { conformsTo = value; }
+		}
 #endif
 
 
