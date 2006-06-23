@@ -1,5 +1,5 @@
 //
-// Mono.Cairo.CairoSurfaceObject.cs
+// Mono.Cairo.Surface.cs
 //
 // Authors:
 //    Duncan Mak
@@ -37,120 +37,6 @@ using System.Collections;
 
 namespace Cairo {
 
-        public class ImageSurface : Surface
-        {
-		public ImageSurface (Format format, int width, int height)
-		{
-			surface = CairoAPI.cairo_image_surface_create (format, width, height);
-			lock (surfaces.SyncRoot){
-				surfaces [surface] = this;
-			}
-		}
-
-		public ImageSurface (ref byte[] data, Cairo.Format format, int width, int height, int stride)
-		{
-			surface = CairoAPI.cairo_image_surface_create_for_data (data, format, width, height, stride);
-			lock (surfaces.SyncRoot){
-				surfaces [surface] = this;
-			}
-		}
-		
-		public ImageSurface (string filename)
-		{
-			surface = CairoAPI.cairo_image_surface_create_from_png (filename);
-			lock (surfaces.SyncRoot){
-				surfaces [surface] = this;
-			}
-		}
-		
-		public int Width {
-			get { return CairoAPI.cairo_image_surface_get_width (surface); }
-		}
-		
-		public int Height {
-			get { return CairoAPI.cairo_image_surface_get_height (surface); }
-		}
-		
-	}
-
-	#if UNSTABLE
-	public class PdfSurface : Surface
-	{
-		public PdfSurface (string filename, double width, double height)
-		{
-			surface = CairoAPI.cairo_pdf_surface_create (filename, width, height);
-			lock (surfaces.SyncRoot){
-				surfaces [surface] = this;
-			}
-		}
-
-		public void SetDPI (double x_dpi, double y_dpi)
-		{
-			CairoAPI.cairo_pdf_surface_set_dpi (surface, x_dpi, y_dpi);
-		}
-	}
-
-	public class PostscriptSurface : Surface
-	{
-		public PostscriptSurface (string filename, double width, double height)
-		{
-			surface = CairoAPI.cairo_ps_surface_create (filename, width, height);
-			lock (surfaces.SyncRoot){
-				surfaces [surface] = this;
-			}
-		}
-
-		public void SetDPI (double x_dpi, double y_dpi)
-		{
-			CairoAPI.cairo_ps_surface_set_dpi (surface, x_dpi, y_dpi);
-		}
-	}
-	#endif
-
-	public class Win32Surface : Surface
-	{
-		public Win32Surface (IntPtr hdc)
-		{
-			surface = CairoAPI.cairo_win32_surface_create (hdc);
-			lock (surfaces.SyncRoot){
-				surfaces [surface] = this;
-			}
-		}
-	}
-
-	public class XlibSurface : Surface
-	{
-		public XlibSurface (IntPtr display, IntPtr drawable, IntPtr visual, int width, int height)
-		{
-			surface = CairoAPI.cairo_xlib_surface_create (display, drawable, visual, width, height);
-			lock (surfaces.SyncRoot){
-				surfaces [surface] = this;
-			}
-		}
-
-		public XlibSurface (IntPtr ptr, bool own) : base (ptr, own)
-		{
-		}
-
-		public static XlibSurface FromBitmap (IntPtr display, IntPtr bitmap, IntPtr screen, int width, int height)
-		{
-			IntPtr	ptr;
-
-			ptr = CairoAPI.cairo_xlib_surface_create_for_bitmap (display, bitmap, screen, width, height);
-			return new XlibSurface(ptr, true);
-		}
-
-		public void SetDrawable (IntPtr drawable, int width, int height)
-		{
-			CairoAPI.cairo_xlib_surface_set_drawable (surface, drawable, width, height);
-		}
-
-		public void SetSize (int width, int height)
-		{
-			CairoAPI.cairo_xlib_surface_set_size (surface, width, height);
-		}
-	}
-   
 	public class Surface : IDisposable 
         {						
 		protected static Hashtable surfaces = new Hashtable ();

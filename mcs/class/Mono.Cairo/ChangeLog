@@ -1,5 +1,16 @@
 2006-06-23  John Luke  <john.luke@gmail.com>
 
+	* Mono.Cairo/Surface.cs:
+	* Mono.Cairo/ImageSurface.cs:
+	* Mono.Cairo/PDFSurface.cs:
+	* Mono.Cairo/PSSurface.cs:
+	* Mono.Cairo/Win32Surface.cs:
+	* Mono.Cairo/XlibSurface.cs: split the surfaces into
+	their own files, make pdf and ps reflect what will be
+	in the cairo 1.2 api
+
+2006-06-23  John Luke  <john.luke@gmail.com>
+
 	* snippets/*.cs: use Cairo.Context instead of Cairo.Graphics
 	* Samples/*/Makefile: add to ease building of samples
 	
