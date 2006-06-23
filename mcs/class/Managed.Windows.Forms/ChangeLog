@@ -1,3 +1,8 @@
+2006-06-23  Chris Toshok  <toshok@ximian.com>
+
+	* System.Windows.Forms_test.dll.sources: add
+	PropertyManagerTest.cs
+
 2006-06-20  Chris Toshok  <toshok@ximian.com>
 
 	* System.Windows.Forms.dll.sources: add RelatedPropertyManager.cs

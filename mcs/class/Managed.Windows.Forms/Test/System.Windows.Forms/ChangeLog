@@ -1,3 +1,8 @@
+2006-06-23  Chris Toshok  <toshok@ximian.com>
+
+	* PropertyManagerTest.cs: new tests regarding the
+	[Related]PropertyManager class.
+
 2006-06-19  Peter Dennis Bartok <pbartok@novell.com>
 
 	* ControlTest.cs: Added tests for enabled state inheritance
