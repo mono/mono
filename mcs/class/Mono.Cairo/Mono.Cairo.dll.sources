@@ -28,6 +28,9 @@
 ./Mono.Cairo/Status.cs
 ./Mono.Cairo/SubpixelOrder.cs
 ./Mono.Cairo/Surface.cs
+./Mono.Cairo/SurfaceType.cs
+./Mono.Cairo/SvgSurface.cs
+./Mono.Cairo/SvgVersion.cs
 ./Mono.Cairo/TextExtents.cs
 ./Mono.Cairo/Win32Surface.cs
 ./Mono.Cairo/XlibSurface.cs

@@ -1,5 +1,16 @@
 2006-06-23  John Luke  <john.luke@gmail.com>
 
+	#if CAIRO_1_2 changes
+	
+	* Mono.Cairo/Surface.cs: add SetFallbackResolution
+	* Mono.Cairo/CairoAPI.cs: remove old pdf/ps api and
+	add some of the new API
+	* Mono.Cairo/SurfaceType.cs:
+	* Mono.Cairo/SvgSurface.cs:
+	* Mono.Cairo/SvgVersion.cs: add these
+	
+2006-06-23  John Luke  <john.luke@gmail.com>
+
 	* Mono.Cairo/Surface.cs:
 	* Mono.Cairo/ImageSurface.cs:
 	* Mono.Cairo/PDFSurface.cs:

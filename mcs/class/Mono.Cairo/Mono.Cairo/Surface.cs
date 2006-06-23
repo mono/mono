@@ -164,6 +164,13 @@ namespace Cairo {
 			CairoAPI.cairo_surface_destroy (surface);
 		}
 
+#if CAIRO_1_2
+		public void SetFallbackResolution (double x, double y)
+		{
+			CairoAPI.cairo_surface_set_fallback_resolution (surface, x, y);
+		}
+#endif
+
 		public void WriteToPng (string filename)
 		{
 			CairoAPI.cairo_surface_write_to_png (surface, filename);

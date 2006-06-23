@@ -386,7 +386,7 @@ namespace Cairo
 		//internal static extern IntPtr cairo_pdf_surface_create_for_stream (string filename, double width, double height);
 		
 		[DllImport (cairo)]
-		internal static extern void cairo_pdf_surface_set_dpi (IntPtr surface, double x_dpi, double y_dpi);
+		internal static extern void cairo_pdf_surface_set_size (IntPtr surface, double x, double y);
 		
 		// PostscriptSurface
 		[DllImport (cairo)]
@@ -396,7 +396,7 @@ namespace Cairo
 		//internal static extern IntPtr cairo_ps_surface_create_for_stream (string filename, double width, double height);
 		
 		[DllImport (cairo)]
-		internal static extern void cairo_ps_surface_set_dpi (IntPtr surface, double x_dpi, double y_dpi);
+		internal static extern void cairo_ps_surface_set_size (IntPtr surface, double x, double y);
 
 		[DllImport (cairo)]
 		internal static extern IntPtr cairo_quartz_surface_create (IntPtr context, bool flipped, int width, int height);
@@ -558,6 +558,9 @@ namespace Cairo
 		
 		[DllImport (cairo)]
 		internal static extern void cairo_surface_set_device_offset (IntPtr surface, double x, double y);
+
+		[DllImport (cairo)]
+		internal static extern void cairo_surface_set_fallback_resolution (IntPtr surface, double x, double y);
 		
 		[DllImport (cairo)]
 		internal static extern Status cairo_surface_status (IntPtr surface);
@@ -574,8 +577,10 @@ namespace Cairo
 		//[DllImport (cairo)]
 		//internal static extern IntPtr cairo_svg_surface_create_for_stream (double width, double height);
 		
+#if CAIRO_1_2
 		[DllImport (cairo)]
-		internal static extern IntPtr cairo_svg_surface_set_dpi (IntPtr handle, double width, double height);
+		internal static extern IntPtr cairo_svg_surface_restrict_to_version (IntPtr surface, SvgVersion version);
+#endif
 		
 		[DllImport (cairo)]
 		internal static extern void cairo_text_extents (IntPtr cr, string utf8, ref TextExtents extents);
