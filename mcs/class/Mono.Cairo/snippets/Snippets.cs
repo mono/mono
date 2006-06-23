@@ -33,19 +33,19 @@ namespace Cairo.Snippets
 			"xxx_self_intersect"
 		};
 	
-		public static void InvokeSnippet (Snippets snip, string snippet, Graphics cr, double width, double height)
+		public static void InvokeSnippet (Snippets snip, string snippet, Context cr, double width, double height)
 		{
-			MethodInfo m = snip.GetType ().GetMethod(snippet, new Type[] {typeof(Graphics), typeof(double), typeof(double)});
+			MethodInfo m = snip.GetType ().GetMethod(snippet, new Type[] {typeof(Context), typeof(double), typeof(double)});
 			m.Invoke (snip, new Object[] {cr, width, height});
 		}
 
-		public void Normalize (Graphics cr, double width, double height)
+		public void Normalize (Context cr, double width, double height)
 		{
 			cr.Scale (width, height);
 			cr.LineWidth = 0.04;
 		}
 	
-		public void arc(Graphics cr, double width, double height)
+		public void arc(Context cr, double width, double height)
 		{
 			PointD c = new PointD (0.5, 0.5);
 			double radius = 0.4;
@@ -69,7 +69,7 @@ namespace Cairo.Snippets
 			cr.Stroke();
 		}
 	
-		public void arc_negative(Graphics cr, double width, double height)
+		public void arc_negative(Context cr, double width, double height)
 		{
 			PointD c = new PointD(0.5, 0.5);
 			double radius = 0.4;
@@ -93,7 +93,7 @@ namespace Cairo.Snippets
 			cr.Stroke();
 		}
 	
-		public void clip(Graphics cr, double width, double height)
+		public void clip(Context cr, double width, double height)
 		{
 			Normalize (cr, width, height);
 
@@ -111,7 +111,7 @@ namespace Cairo.Snippets
 			cr.Stroke();
 		}
 
-		public void clip_image(Graphics cr, double width, double height)
+		public void clip_image(Context cr, double width, double height)
 		{
 			Normalize (cr, width, height);
 			cr.Arc (0.5, 0.5, 0.3, 0, 2*M_PI);
@@ -130,7 +130,7 @@ namespace Cairo.Snippets
 			image.Destroy ();
 		}
 
-		public void curve_to(Graphics cr, double width, double height)
+		public void curve_to(Context cr, double width, double height)
 		{
 			double x=0.1,  y=0.5;
 			double x1=0.4, y1=0.9, x2=0.6, y2=0.1, x3=0.9, y3=0.5;
@@ -151,7 +151,7 @@ namespace Cairo.Snippets
 			cr.Stroke();
 		}
 
-		public void curve_rectangle(Graphics cr, double width, double height)
+		public void curve_rectangle(Context cr, double width, double height)
 		{
 			// a custom shape, that could be wrapped in a function
 			double x0	   = 0.1,   //< parameters like cairo_rectangle
@@ -211,7 +211,7 @@ namespace Cairo.Snippets
 			cr.Stroke();
 		}
 
-		public void fill_and_stroke(Graphics cr, double width, double height)
+		public void fill_and_stroke(Context cr, double width, double height)
 		{
 			Normalize(cr, width, height);
 
@@ -228,7 +228,7 @@ namespace Cairo.Snippets
 			cr.Stroke();
 		}
 
-		public void fill_and_stroke2(Graphics cr, double width, double height)
+		public void fill_and_stroke2(Context cr, double width, double height)
 		{
 			Normalize (cr, width, height);
 
@@ -251,7 +251,7 @@ namespace Cairo.Snippets
 			cr.Stroke();
 		}
 
-		public void gradient(Graphics cr, double width, double height)
+		public void gradient(Context cr, double width, double height)
 		{
 			Normalize (cr, width, height);
 
@@ -270,7 +270,7 @@ namespace Cairo.Snippets
 			cr.Fill();
 		}
 
-		public void image(Graphics cr, double width, double height)
+		public void image(Context cr, double width, double height)
 		{
 			Normalize (cr, width, height);
 			ImageSurface image = new ImageSurface ("data/romedalen.png");
@@ -287,7 +287,7 @@ namespace Cairo.Snippets
 			image.Destroy ();
 		}
 		
-		public void imagepattern(Graphics cr, double width, double height)
+		public void imagepattern(Context cr, double width, double height)
 		{
 			Normalize (cr, width, height);
 			
@@ -316,7 +316,7 @@ namespace Cairo.Snippets
 			image.Destroy ();
 		}
 		
-		public void path(Graphics cr, double width, double height)
+		public void path(Context cr, double width, double height)
 		{
 			Normalize(cr, width, height);
 			cr.MoveTo(0.5, 0.1);
@@ -327,7 +327,7 @@ namespace Cairo.Snippets
 			cr.Stroke();
 		}
 
-		public void set_line_cap(Graphics cr, double width, double height)
+		public void set_line_cap(Context cr, double width, double height)
 		{
 			Normalize(cr, width, height);
 			cr.LineWidth = 0.12;
@@ -356,7 +356,7 @@ namespace Cairo.Snippets
 			cr.Stroke();
 		}
 
-		public void set_line_join(Graphics cr, double width, double height)
+		public void set_line_join(Context cr, double width, double height)
 		{
 			Normalize(cr, width, height);
 			cr.LineWidth = 0.16;
@@ -379,7 +379,7 @@ namespace Cairo.Snippets
 			cr.Stroke();
 		}
 
-		public void text(Graphics cr, double width, double height)
+		public void text(Context cr, double width, double height)
 		{
 			Normalize (cr, width, height);
 			cr.SelectFontFace("Sans", FontSlant.Normal, FontWeight.Bold);
@@ -404,7 +404,7 @@ namespace Cairo.Snippets
 			cr.Fill();
 		}
 
-		public void text_align_center(Graphics cr, double width, double height)
+		public void text_align_center(Context cr, double width, double height)
 		{
 			Normalize (cr, width, height);
 
@@ -428,7 +428,7 @@ namespace Cairo.Snippets
 			cr.Stroke();
 		}
 	
-		public void text_extents(Graphics cr, double width, double height)
+		public void text_extents(Context cr, double width, double height)
 		{
 			double x=0.1;
 			double y=0.6;
@@ -454,7 +454,7 @@ namespace Cairo.Snippets
 			cr.Stroke();
 		}
 
-		public void xxx_clip_rectangle(Graphics cr, double width, double height)
+		public void xxx_clip_rectangle(Context cr, double width, double height)
 		{
 			Normalize (cr, width, height);
 
@@ -473,7 +473,7 @@ namespace Cairo.Snippets
 			cr.Stroke();
 		}
 
-		public void xxx_dash(Graphics cr, double width, double height)
+		public void xxx_dash(Context cr, double width, double height)
 		{
 			double[] dashes = new double[] {
 				0.20,  // ink
@@ -494,7 +494,7 @@ namespace Cairo.Snippets
 			cr.Stroke();
 		}
 
-		public void xxx_long_lines(Graphics cr, double width, double height)
+		public void xxx_long_lines(Context cr, double width, double height)
 		{
 			Normalize(cr, width, height);
 
@@ -519,7 +519,7 @@ namespace Cairo.Snippets
 			cr.Stroke();
 		}
 
-		public void xxx_multi_segment_caps(Graphics cr, double width, double height)
+		public void xxx_multi_segment_caps(Context cr, double width, double height)
 		{
 			Normalize(cr, width, height);
 
@@ -537,7 +537,7 @@ namespace Cairo.Snippets
 			cr.Stroke();
 		}
 
-		public void xxx_self_intersect(Graphics cr, double width, double height)
+		public void xxx_self_intersect(Context cr, double width, double height)
 		{
 			Normalize(cr, width, height);
 

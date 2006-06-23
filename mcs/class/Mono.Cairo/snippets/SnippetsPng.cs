@@ -18,7 +18,7 @@ namespace Cairo.Snippets
 			{
 				string filename = "./" + snippet + ".png";
 				Surface surface = new ImageSurface(Format.ARGB32, IMAGE_WIDTH, IMAGE_WIDTH);
-				Graphics cr = new Graphics(surface);
+				Context cr = new Context(surface);
 			
 				cr.Save();
 				Snippets.InvokeSnippet(snip, snippet, cr, IMAGE_WIDTH, IMAGE_HEIGHT);

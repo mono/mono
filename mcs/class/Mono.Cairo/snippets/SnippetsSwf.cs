@@ -72,7 +72,7 @@ namespace Cairo.Snippets
 			IntPtr hdc = e.Graphics.GetHdc ();
 			// will only work on win32
 			Win32Surface s = new Win32Surface (hdc);
-			Graphics cr = new Graphics (s);
+			Context cr = new Context (s);
 			Snippets.InvokeSnippet (snips, name, cr, w, h);
 			e.Graphics.ReleaseHdc (hdc);
 		}

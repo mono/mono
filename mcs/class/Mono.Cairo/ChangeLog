@@ -1,3 +1,8 @@
+2006-06-23  John Luke  <john.luke@gmail.com>
+
+	* snippets/*.cs: use Cairo.Context instead of Cairo.Graphics
+	* Samples/*/Makefile: add to ease building of samples
+	
 2006-05-02  Zac Bowling  <zac@zacbowling.com>
 	
 	* Mono.Cairo/Surface.cs: string should be byte[]
