@@ -1,5 +1,5 @@
 //                                                   
-// Mono.Cairo.Pattern.cs
+// Mono.Cairo.Gradient.cs
 //
 // Author: Jordi Mas (jordi@ximian.com)
 //         Hisham Mardam Bey (hisham.mardambey@gmail.com)
@@ -31,54 +31,19 @@ using System;
 
 namespace Cairo {
    
-        public class Pattern
-        {
-                protected IntPtr pattern = IntPtr.Zero;
-		
-                protected Pattern ()
-                {
-                }
-
-		internal Pattern (IntPtr ptr)
-		{			
-			pattern = ptr;
-		}		
-		
-                public Pattern (Surface surface)
-                {
-                        pattern = CairoAPI.cairo_pattern_create_for_surface (surface.Handle);
-                }
-		
-                protected void Reference ()
-                {
-                        CairoAPI.cairo_pattern_reference (pattern);
-                }
-
-                public void Destroy ()
-                {
-                        CairoAPI.cairo_pattern_destroy (pattern);
-                }
-		
-		public Status Status
+	public class Gradient : Pattern
+	{
+		public Status AddColorStop (double offset, Cairo.Color c)
 		{
-			get { return CairoAPI.cairo_pattern_status (pattern); }
+			CairoAPI.cairo_pattern_add_color_stop_rgba (pattern, offset, c.R, c.G, c.B, c.A);
+			return Status;
 		}
-		
-                public Matrix Matrix {
-                        set { 
-				CairoAPI.cairo_pattern_set_matrix (pattern, value);
-			}
 
-                        get {
-				Matrix m = new Matrix ();
-				CairoAPI.cairo_pattern_get_matrix (pattern, m);
-				return m;
-                        }
-                }
-
-                public IntPtr Pointer {
-                        get { return pattern; }
-                }		
-        }
+		public Status AddColorStopRgb (double offset, Cairo.Color c)
+		{
+			CairoAPI.cairo_pattern_add_color_stop_rgb (pattern, offset, c.R, c.G, c.B);
+			return Status;
+		}
+	}
 }
 

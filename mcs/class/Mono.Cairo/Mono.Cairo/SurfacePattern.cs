@@ -31,54 +31,22 @@ using System;
 
 namespace Cairo {
    
-        public class Pattern
-        {
-                protected IntPtr pattern = IntPtr.Zero;
-		
-                protected Pattern ()
-                {
-                }
-
-		internal Pattern (IntPtr ptr)
-		{			
-			pattern = ptr;
-		}		
-		
-                public Pattern (Surface surface)
-                {
-                        pattern = CairoAPI.cairo_pattern_create_for_surface (surface.Handle);
-                }
-		
-                protected void Reference ()
-                {
-                        CairoAPI.cairo_pattern_reference (pattern);
-                }
-
-                public void Destroy ()
-                {
-                        CairoAPI.cairo_pattern_destroy (pattern);
-                }
-		
-		public Status Status
+	public class SurfacePattern : Pattern
+	{
+		public SurfacePattern (Surface surface)
 		{
-			get { return CairoAPI.cairo_pattern_status (pattern); }
+			pattern = CairoAPI.cairo_pattern_create_for_surface (surface.Handle);
 		}
-		
-                public Matrix Matrix {
-                        set { 
-				CairoAPI.cairo_pattern_set_matrix (pattern, value);
-			}
 
-                        get {
-				Matrix m = new Matrix ();
-				CairoAPI.cairo_pattern_get_matrix (pattern, m);
-				return m;
-                        }
-                }
+		public Extend Extend {
+			set { CairoAPI.cairo_pattern_set_extend (pattern, value); }
+			get { return CairoAPI.cairo_pattern_get_extend (pattern); }
+		}
 
-                public IntPtr Pointer {
-                        get { return pattern; }
-                }		
-        }
+		public Filter Filter {
+			set { CairoAPI.cairo_pattern_set_filter (pattern, value); }
+			get { return CairoAPI.cairo_pattern_get_filter (pattern); }
+		}
+	}
 }
 

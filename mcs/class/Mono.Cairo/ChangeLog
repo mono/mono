@@ -1,5 +1,15 @@
 2006-06-23  John Luke  <john.luke@gmail.com>
 
+	* Mono.Cairo/Pattern.cs:
+	* Mono.Cairo/SolidPattern.cs:
+	* Mono.Cairo/SurfacePattern.cs:
+	* Mono.Cairo/Gradient.cs:
+	* Mono.Cairo/LinearGradient.cs:
+	* Mono.Cairo/RadialGradient.cs: split the pattern/gradients
+	into their own files
+	
+2006-06-23  John Luke  <john.luke@gmail.com>
+
 	#if CAIRO_1_2 changes
 	
 	* Mono.Cairo/Surface.cs: add SetFallbackResolution

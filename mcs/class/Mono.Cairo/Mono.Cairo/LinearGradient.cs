@@ -1,5 +1,5 @@
 //                                                   
-// Mono.Cairo.Pattern.cs
+// Mono.Cairo.LinearGradient.cs
 //
 // Author: Jordi Mas (jordi@ximian.com)
 //         Hisham Mardam Bey (hisham.mardambey@gmail.com)
@@ -31,54 +31,12 @@ using System;
 
 namespace Cairo {
    
-        public class Pattern
-        {
-                protected IntPtr pattern = IntPtr.Zero;
-		
-                protected Pattern ()
-                {
-                }
-
-		internal Pattern (IntPtr ptr)
-		{			
-			pattern = ptr;
-		}		
-		
-                public Pattern (Surface surface)
-                {
-                        pattern = CairoAPI.cairo_pattern_create_for_surface (surface.Handle);
-                }
-		
-                protected void Reference ()
-                {
-                        CairoAPI.cairo_pattern_reference (pattern);
-                }
-
-                public void Destroy ()
-                {
-                        CairoAPI.cairo_pattern_destroy (pattern);
-                }
-		
-		public Status Status
+	public class LinearGradient : Gradient
+	{
+		public LinearGradient (double x0, double y0, double x1, double y1)
 		{
-			get { return CairoAPI.cairo_pattern_status (pattern); }
+			pattern = CairoAPI.cairo_pattern_create_linear (x0, y0, x1, y1);
 		}
-		
-                public Matrix Matrix {
-                        set { 
-				CairoAPI.cairo_pattern_set_matrix (pattern, value);
-			}
-
-                        get {
-				Matrix m = new Matrix ();
-				CairoAPI.cairo_pattern_get_matrix (pattern, m);
-				return m;
-                        }
-                }
-
-                public IntPtr Pointer {
-                        get { return pattern; }
-                }		
-        }
+	}
 }
 
