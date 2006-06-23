@@ -4777,7 +4777,7 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 			ins->type = STACK_I4;
 			MONO_ADD_INS (cfg->cbb, ins);
 		} else if (strcmp (cmethod->name, "Add") == 0 && fsig->params [0]->type == MONO_TYPE_I4) {
-			MONO_INST_NEW (cfg, ins, OP_ATOMIC_ADD_I4);
+			MONO_INST_NEW (cfg, ins, OP_ATOMIC_ADD_NEW_I4);
 			ins->dreg = mono_alloc_ireg (cfg);
 			ins->inst_basereg = args [0]->dreg;
 			ins->inst_offset = 0;

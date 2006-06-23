@@ -1,3 +1,7 @@
+2006-06-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-x86.c (mono_arch_emit_inst_for_method): Fix Interlocked.Add.
+
 2006-06-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_op_to_op_imm): Enable div/rem -> div_imm/rem_imm conversion.
