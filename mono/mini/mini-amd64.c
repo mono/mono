@@ -3148,7 +3148,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_BREAK:
 			amd64_breakpoint (code);
 			break;
-		case CEE_NOP:
 		case OP_NOP:
 		case OP_DUMMY_USE:
 		case OP_DUMMY_STORE:

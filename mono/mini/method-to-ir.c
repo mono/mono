@@ -9967,8 +9967,6 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - optimize the loading of the interruption flag in the managed->native wrappers
  * - avoid special handling of OP_NOP in passes
  * - move code inserting instructions into one function/macro.
- * - some tests no longer work with COUNT=0 
- *   -> COUNT=0 ./mono -O=peephole,branch,inline,consprop,copyprop,deadce,linears,intrins,loop,abcrem,ssapre,exception basic-calls.exe
  * - add is_global_vreg () macro
  * - cleanup the code replacement in decompose_long_opts ()
  * - try a coalescing phase after liveness analysis
@@ -10009,9 +10007,9 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - sig->ret->byref seems to be set for some calls made from ldfld wrappers when
  *   running generics.exe.
  * - create a helper function for allocating a stack slot, taking into account 
+ *   MONO_CFG_HAS_SPILLUP.
  * - merge new GC changes in mini.c
  * - merge the stack merge stuff
- *   MONO_CFG_HAS_SPILLUP.
  * - LAST MERGE: 61918.
  */
 

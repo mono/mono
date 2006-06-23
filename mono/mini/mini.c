@@ -3460,7 +3460,7 @@ mini_get_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSigna
 			return ins;
 #endif
 		} else if (strcmp (cmethod->name, ".ctor") == 0) {
- 			MONO_INST_NEW (cfg, ins, CEE_NOP);
+ 			MONO_INST_NEW (cfg, ins, OP_NOP);
 			return ins;
 		} else
 			return NULL;
@@ -3665,7 +3665,7 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 		mono_jit_stats.inlined_methods++;
 
 		/* always add some code to avoid block split failures */
-		MONO_INST_NEW (cfg, ins, CEE_NOP);
+		MONO_INST_NEW (cfg, ins, OP_NOP);
 		MONO_ADD_INS (bblock, ins);
 		ins->cil_code = ip;
 
@@ -4408,7 +4408,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		switch (*ip) {
 		case CEE_NOP:
 		case CEE_BREAK:
-			MONO_INST_NEW (cfg, ins, *ip);
+			MONO_INST_NEW (cfg, ins, *ip == CEE_NOP ? OP_NOP : CEE_BREAK);
 			ins->cil_code = ip++;
 			MONO_ADD_INS (bblock, ins);
 			break;
@@ -5082,7 +5082,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					g_assert (!return_var);
 					CHECK_STACK (1);
 					--sp;
-					MONO_INST_NEW (cfg, ins, CEE_NOP);
+					MONO_INST_NEW (cfg, ins, OP_NOP);
 					ins->opcode = mono_type_to_stind (mono_method_signature (method)->ret);
 					if (ins->opcode == CEE_STOBJ) {
 						NEW_RETLOADA (cfg, ins);
@@ -7800,7 +7800,7 @@ mono_print_tree (MonoInst *tree) {
 	}
 	case OP_RENAME:
 	case OP_RETARG:
-	case CEE_NOP:
+	case OP_NOP:
 	case CEE_JMP:
 	case CEE_BREAK:
 		break;
@@ -9392,7 +9392,6 @@ remove_block_if_useless (MonoCompile *cfg, MonoBasicBlock *bb, MonoBasicBlock *p
 	
 	for (inst = bb->code; inst != NULL; inst = inst->next) {
 		switch (inst->opcode) {
-		case CEE_NOP:
 		case OP_NOP:
 			break;
 		case CEE_BR:
@@ -9676,7 +9675,7 @@ optimize_branches (MonoCompile *cfg)
 		niterations = cfg->num_bblocks * 2;
 	else
 		niterations = 1000;
-
+	
 	do {
 		MonoBasicBlock *previous_bb;
 		changed = FALSE;
@@ -9732,7 +9731,7 @@ optimize_branches (MonoCompile *cfg)
 
 					/* branches to the following block can be removed */
 					if (bb->last_ins && bb->last_ins->opcode == (cfg->new_ir ? OP_BR : CEE_BR)) {
-						bb->last_ins->opcode = cfg->new_ir ? OP_NOP : CEE_NOP;
+						bb->last_ins->opcode = OP_NOP;
 						changed = TRUE;
 						if (cfg->verbose_level > 2)
 							g_print ("br removal triggered %d -> %d\n", bb->block_num, bbn->block_num);
@@ -9976,7 +9975,7 @@ mono_print_code (MonoCompile *cfg, const char* msg)
 			if (!tree)
 				continue;
 			
-			g_print ("CODE BLOCK %d (nesting %d):\n", bb->block_num, bb->nesting);
+			g_print ("%s CODE BLOCK %d (nesting %d):\n", msg, bb->block_num, bb->nesting);
 
 			for (; tree; tree = tree->next) {
 				mono_print_tree (tree);

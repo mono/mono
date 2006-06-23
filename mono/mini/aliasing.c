@@ -943,7 +943,7 @@ mono_aliasing_deadce_on_inst (MonoAliasingInformation *info, MonoInst **possibly
 						printf ("KILLING slot %d at inst ", affected_variable->variable_index);
 						mono_print_tree_nl (inst);
 					}
-					possibly_dead_assignments [affected_variable->variable_index]->opcode = CEE_NOP;
+					possibly_dead_assignments [affected_variable->variable_index]->opcode = OP_NOP;
 					possibly_dead_assignments [affected_variable->variable_index]->ssa_op = MONO_SSA_NOP;
 					possibly_dead_assignments [affected_variable->variable_index] = NULL;
 				}
@@ -1027,7 +1027,7 @@ mono_aliasing_deadce (MonoAliasingInformation *info) {
 				
 				//printf ("FAST DEADCE DEAD LOCAL\n");
 				
-				possibly_dead_assignments [variable_index]->opcode = CEE_NOP;
+				possibly_dead_assignments [variable_index]->opcode = OP_NOP;
 				possibly_dead_assignments [variable_index]->ssa_op = MONO_SSA_NOP;
 			}
 		}

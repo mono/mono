@@ -1121,7 +1121,7 @@ apply_tree_mover (TreeMover *tree_mover, TreeMoverTreeMove *move) {
 	}
 	/* All tests passed, apply move */
 	*(move->use) = move->definition->inst_i1;
-	move->definition->opcode = CEE_NOP;
+	move->definition->opcode = OP_NOP;
 	move->definition->ssa_op = MONO_SSA_NOP;
 
 	/* Then disable moves affected by this move */
@@ -1141,7 +1141,7 @@ apply_tree_mover (TreeMover *tree_mover, TreeMoverTreeMove *move) {
 				printf ("  Consequently, kill dependent definition %d: ", tree_mover_slot_to_index (tree_mover, dependency->defined_slot));
 				mono_print_tree_nl (dependency->dead_definition);
 			}
-			dependency->dead_definition->opcode = CEE_NOP;
+			dependency->dead_definition->opcode = OP_NOP;
 			dependency->dead_definition->ssa_op = MONO_SSA_NOP;
 		}
 	}

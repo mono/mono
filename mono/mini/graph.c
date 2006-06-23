@@ -219,7 +219,7 @@ mono_print_label (FILE *fp, MonoInst *tree) {
 	}
 	case OP_RENAME:
 	case OP_RETARG:
-	case CEE_NOP:
+	case OP_NOP:
 	case CEE_JMP:
 	case CEE_BREAK:
 		break;

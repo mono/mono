@@ -2429,7 +2429,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			ia64_begin_bundle (code);
 			ins->inst_c0 = code.buf - cfg->native_code;
 			break;
-		case CEE_NOP:
 		case OP_NOP:
 		case OP_DUMMY_USE:
 		case OP_DUMMY_STORE:

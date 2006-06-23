@@ -743,7 +743,7 @@ stmt: OP_LABEL {
 	mono_bblock_add_inst (s->cbb, tree);
 }
 
-stmt: CEE_NOP "0" {
+stmt: OP_NOP "0" {
 }
 
 stmt: CEE_BREAK "0" {

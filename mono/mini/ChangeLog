@@ -1,5 +1,9 @@
 2006-06-23  Zoltan Varga  <vargaz@gmail.com>
 
+	* ssa.c: Revert this to the version from HEAD since all the new code is in ssa2.c.
+
+	* *.c: Use OP_NOP everywhere instead of CEE_NOP.
+
 	* mini-codegen.c (mono_local_regalloc): Spill fp regs on calls even on x86.
 
 	* mini-x86.c (mono_arch_emit_inst_for_method): Fix Interlocked.Add.

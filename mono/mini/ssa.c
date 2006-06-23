@@ -20,7 +20,6 @@
 		(dest) = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
 		(dest)->opcode = OP_PHI;	\
 		(dest)->inst_c0 = (val);	\
-        (dest)->dreg = (dest)->sreg1 = (dest)->sreg2 = -1; \
 	} while (0)
 
 #define NEW_ICONST(cfg,dest,val) do {	\
@@ -28,7 +27,6 @@
 		(dest)->opcode = OP_ICONST;	\
 		(dest)->inst_c0 = (val);	\
 		(dest)->type = STACK_I4;	\
-        (dest)->dreg = (dest)->sreg1 = (dest)->sreg2 = -1; \
 	} while (0)
 
 
@@ -91,6 +89,8 @@ unlink_unused_bblocks (MonoCompile *cfg)
  
 	}
 }
+
+
 
 static void
 replace_usage (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *inst, MonoInst **stack)
@@ -266,10 +266,10 @@ mono_ssa_rename_vars (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, MonoIn
 void
 mono_ssa_compute (MonoCompile *cfg)
 {
-	int i, j, idx;
+	int i, idx;
 	MonoBitSet *set;
 	MonoMethodVar *vinfo = g_new0 (MonoMethodVar, cfg->num_varinfo);
-	MonoInst *ins, *store, **stack;
+	MonoInst *inst, *store, **stack;
 
 	g_assert (!(cfg->comp_done & MONO_COMP_SSA));
 
@@ -277,12 +277,11 @@ mono_ssa_compute (MonoCompile *cfg)
 	g_assert (mono_method_get_header (cfg->method)->num_clauses == 0);
 	g_assert (!cfg->disable_ssa);
 
-	if (cfg->verbose_level >= 4)
-		printf ("\nCOMPUTE SSA %s %d (R%d-)\n\n", mono_method_full_name (cfg->method, TRUE), cfg->num_varinfo, cfg->next_vireg);
+	//printf ("COMPUTS SSA %s %d\n", mono_method_full_name (cfg->method, TRUE), cfg->num_varinfo);
 
 #ifdef CREATE_PRUNED_SSA
 	/* we need liveness for pruned SSA */
-	if (!cfg->new_ir && !(cfg->comp_done & MONO_COMP_LIVENESS))
+	if (!(cfg->comp_done & MONO_COMP_LIVENESS))
 		mono_analyze_liveness (cfg);
 #endif
 
@@ -291,14 +290,13 @@ mono_ssa_compute (MonoCompile *cfg)
 	for (i = 0; i < cfg->num_varinfo; ++i) {
 		vinfo [i].def_in = mono_bitset_new (cfg->num_bblocks, 0);
 		vinfo [i].idx = i;
-		/* implicit reference at start */
+		/* implizit reference at start */
 		mono_bitset_set (vinfo [i].def_in, 0);
 	}
-
 	for (i = 0; i < cfg->num_bblocks; ++i) {
-		for (ins = cfg->bblocks [i]->code; ins; ins = ins->next) {
-			if (ins->ssa_op == MONO_SSA_STORE) {
-				idx = ins->inst_i0->inst_c0;
+		for (inst = cfg->bblocks [i]->code; inst; inst = inst->next) {
+			if (inst->ssa_op == MONO_SSA_STORE) {
+				idx = inst->inst_i0->inst_c0;
 				g_assert (idx < cfg->num_varinfo);
 				mono_bitset_set (vinfo [idx].def_in, i);
 			} 
@@ -307,28 +305,7 @@ mono_ssa_compute (MonoCompile *cfg)
 
 	/* insert phi functions */
 	for (i = 0; i < cfg->num_varinfo; ++i) {
-		MonoInst *var = cfg->varinfo [i];
-
-#if SIZEOF_VOID_P == 8
-		if ((var->type != STACK_I4) && (var->type != STACK_PTR) && (var->type != STACK_OBJ) && (var->type != STACK_MP) && (var->type != STACK_I8))
-			continue;
-#else
-		if ((var->type != STACK_I4) && (var->type != STACK_PTR) && (var->type != STACK_OBJ) && (var->type != STACK_MP))
-			continue;
-#endif
-
-		if (var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT))
-			continue;
-
 		set = mono_compile_iterated_dfrontier (cfg, vinfo [i].def_in);
-
-		if (cfg->verbose_level >= 4) {
-			if (mono_bitset_count (set) > 0) {
-				printf ("\tR%d needs PHI functions in ", var->dreg);
-				mono_blockset_print (cfg, set, "", -1);
-			}
-		}
-			
 		mono_bitset_foreach_bit (set, idx, cfg->num_bblocks) {
 			MonoBasicBlock *bb = cfg->bblocks [idx];
 
@@ -342,38 +319,24 @@ mono_ssa_compute (MonoCompile *cfg)
 				continue;
 			}
 
-			/* FIXME: Might need type specific variants */
-			NEW_PHI (cfg, ins, i);
+			NEW_PHI (cfg, inst, i);
 
-			ins->inst_phi_args =  mono_mempool_alloc0 (cfg->mempool, sizeof (int) * (cfg->bblocks [idx]->in_count + 1));
-			ins->inst_phi_args [0] = cfg->bblocks [idx]->in_count;
+			inst->inst_phi_args =  mono_mempool_alloc0 (cfg->mempool, sizeof (int) * (cfg->bblocks [idx]->in_count + 1));
+			inst->inst_phi_args [0] = cfg->bblocks [idx]->in_count;
 
-			/* For debugging */
-			for (j = 0; j < cfg->bblocks [idx]->in_count; ++j)
-				ins->inst_phi_args [j + 1] = -1;
-
-			if (cfg->new_ir) {
-				ins->dreg = cfg->varinfo [i]->dreg;
-
-				ins->next = bb->code;
-				bb->code = ins;
-				if (!bb->last_ins)
-					bb->last_ins = bb->code;
-			} else {
-				store = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));
-				if (!cfg->varinfo [i]->inst_vtype->type)
-					g_assert_not_reached ();
-				store->opcode = mono_type_to_stind (cfg->varinfo [i]->inst_vtype);
-				store->ssa_op = MONO_SSA_STORE;
-				store->inst_i0 = cfg->varinfo [i];
-				store->inst_i1 = ins;
-				store->klass = store->inst_i0->klass;
+			store = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));
+			if (!cfg->varinfo [i]->inst_vtype->type)
+				g_assert_not_reached ();
+			store->opcode = mono_type_to_stind (cfg->varinfo [i]->inst_vtype);
+			store->ssa_op = MONO_SSA_STORE;
+			store->inst_i0 = cfg->varinfo [i];
+			store->inst_i1 = inst;
+			store->klass = store->inst_i0->klass;
 	     
-				store->next = bb->code;
-				bb->code = store;
-				if (!bb->last_ins)
-					bb->last_ins = bb->code;
-			}
+			store->next = bb->code;
+			bb->code = store;
+			if (!bb->last_ins)
+				bb->last_ins = bb->code;
 
 #ifdef DEBUG_SSA
 			printf ("ADD PHI BB%d %s\n", cfg->bblocks [idx]->block_num, mono_method_full_name (cfg->method, TRUE));
@@ -386,6 +349,7 @@ mono_ssa_compute (MonoCompile *cfg)
 		mono_bitset_free (vinfo [i].def_in);
 	g_free (vinfo);
 
+
 	stack = alloca (sizeof (MonoInst *) * cfg->num_varinfo);
 		
 	for (i = 0; i < cfg->num_varinfo; i++)
@@ -393,12 +357,8 @@ mono_ssa_compute (MonoCompile *cfg)
 
 	mono_ssa_rename_vars (cfg, cfg->num_varinfo, cfg->bb_entry, stack);
 
-	if (cfg->verbose_level >= 4)
-		printf ("\nEND COMPUTE SSA.\n\n");
-
 	cfg->comp_done |= MONO_COMP_SSA;
 }
-
 
 #ifndef USE_ORIGINAL_VARS
 static GPtrArray *
@@ -420,7 +380,7 @@ mono_ssa_get_allocatable_vars (MonoCompile *cfg)
 		if (vmv->range.first_use.abs_pos > vmv->range.last_use.abs_pos)
 			continue;
 
-		if (ins->flags & ((MONO_INST_VOLATILE|MONO_INST_INDIRECT)|MONO_INST_INDIRECT) || 
+		if (ins->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT) || 
 		    (ins->opcode != OP_LOCAL && ins->opcode != OP_ARG) || vmv->reg != -1)
 			continue;
 
@@ -487,7 +447,7 @@ mono_ssa_replace_copies (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *inst, c
 	if (inst->ssa_op == MONO_SSA_STORE && inst->inst_i1->ssa_op == MONO_SSA_LOAD &&
 	    inst->inst_i0->inst_c0 == inst->inst_i1->inst_i0->inst_c0) {
 		inst->ssa_op = MONO_SSA_NOP;
-		inst->opcode = CEE_NOP;
+		inst->opcode = OP_NOP;
 	}
 
 }
@@ -532,7 +492,7 @@ mono_ssa_remove (MonoCompile *cfg)
 				}
 
 				/* remove the phi functions */
-				inst->opcode = CEE_NOP;
+				inst->opcode = OP_NOP;
 				inst->ssa_op = MONO_SSA_NOP;
 			} 
 		}
@@ -702,18 +662,6 @@ analyze_dev_use (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *root, MonoInst 
 	return has_side_effects;
 }
 
-static inline void
-record_use (MonoCompile *cfg, MonoInst *var, MonoBasicBlock *bb, MonoInst *ins)
-{
-	MonoMethodVar *info;
-	MonoVarUsageInfo *ui = mono_mempool_alloc (cfg->mempool, sizeof (MonoVarUsageInfo));
-
-	info = MONO_VARINFO (cfg, var->inst_c0);
-	
-	ui->bb = bb;
-	ui->inst = ins;
-	info->uses = g_list_prepend_mempool (info->uses, cfg->mempool, ui);
-}	
 
 /* avoid unnecessary copies of variables:
  * Y <= X; Z = Y; is translated to Z = X;
@@ -747,7 +695,7 @@ mono_ssa_avoid_copies (MonoCompile *cfg)
 														
 						//mono_print_tree (u); printf ("\n");
 							
-						inst->opcode = CEE_NOP;
+						inst->opcode = OP_NOP;
 						inst->ssa_op = MONO_SSA_NOP;
 					}
 				}
@@ -762,7 +710,7 @@ mono_ssa_avoid_copies (MonoCompile *cfg)
 					i2->def = inst;
 					i1->def = NULL;
 					i1->uses = NULL;
-					next->opcode = CEE_NOP;
+					next->opcode = OP_NOP;
 					next->ssa_op = MONO_SSA_NOP;
 				}
 			}
@@ -1272,12 +1220,12 @@ mono_ssa_deadce (MonoCompile *cfg)
 				}
 			} else if (i1->ssa_op == MONO_SSA_LOAD &&
 				   (i1->inst_i0->opcode == OP_LOCAL || i1->inst_i0->opcode == OP_ARG)) {
-				    MonoMethodVar *u = MONO_VARINFO (cfg, i1->inst_i0->inst_c0);
+					MonoMethodVar *u = MONO_VARINFO (cfg, i1->inst_i0->inst_c0);
 					add_to_dce_worklist (cfg, info, u, &work_list);
 			}
 			//if (i1->opcode != OP_PHI) printf ("SSA DEADCE DEAD LOCAL\n");
 
-			info->def->opcode = CEE_NOP;
+			info->def->opcode = OP_NOP;
 			info->def->ssa_op = MONO_SSA_NOP;
 		}
 
