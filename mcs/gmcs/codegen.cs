@@ -1082,6 +1082,7 @@ namespace Mono.CSharp {
 		public Attribute ClsCompliantAttribute;
 
 		ListDictionary declarative_security;
+		MethodInfo add_type_forwarder;
 
 		// Module is here just because of error messages
 		static string[] attribute_targets = new string [] { "assembly", "module" };
@@ -1332,7 +1333,46 @@ namespace Mono.CSharp {
 			}
 
 			if (a.Type == TypeManager.internals_visible_attr_type && !CheckInternalsVisibleAttribute (a))
+				return;
+
+			if (a.Type == TypeManager.type_forwarder_attr_type) {
+				Type t = a.GetArgumentType ();
+				if (t == null || TypeManager.HasElementType (t)) {
+					Report.Error (735, a.Location, "Invalid type specified as an argument for TypeForwardedTo attribute");
 					return;
+				}
+
+				if (TypeManager.LookupDeclSpace (t) != null) {
+					Report.SymbolRelatedToPreviousError (t);
+					Report.Error (729, a.Location, "Cannot forward type `{0}' because it is defined in this assembly",
+						TypeManager.CSharpName (t));
+					return;
+				}
+
+				if (t.IsNested) {
+					Report.Error (730, a.Location, "Cannot forward type `{0}' because it is a nested type",
+						TypeManager.CSharpName (t));
+					return;
+				}
+
+				if (t.IsGenericType) {
+					Report.Error (733, a.Location, "Cannot forward generic type `{0}'", TypeManager.CSharpName (t));
+					return;
+				}
+
+				if (add_type_forwarder == null) {
+					add_type_forwarder = typeof (AssemblyBuilder).GetMethod ("AddTypeForwarder",
+						BindingFlags.NonPublic | BindingFlags.Instance);
+
+					if (add_type_forwarder == null) {
+						Report.RuntimeMissingSupport (a.Location, "TypeForwardedTo attribute");
+						return;
+					}
+				}
+
+				add_type_forwarder.Invoke (Builder, new object[] { t });
+				return;
+			}
 			
 			Builder.SetCustomAttribute (customBuilder);
 		}

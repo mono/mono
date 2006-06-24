@@ -1,5 +1,13 @@
 2006-06-24  Marek Safar  <marek.safar@seznam.cz>
 
+	A fix for #77002, Implemented TypeForwarder support.
+
+	* attribute.cs (Attribute.GetArgumentType): Reads type argument.
+	* expression.cs (TypeOf.TypeArgument): Exposes typeof type.
+	* typemanager.cs (): Add type_forwarder_attr_type.
+
+2006-06-24  Marek Safar  <marek.safar@seznam.cz>
+
 	* report.cs: Add CS0469 warning.
 
 2006-06-21  Martin Baulig  <martin@ximian.com>

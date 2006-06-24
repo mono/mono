@@ -114,6 +114,8 @@ public class TypeManager {
 	static internal Type compiler_generated_attr_type;
 	static internal Type fixed_buffer_attr_type;
 	static internal Type default_charset_type;
+	static internal Type internals_visible_attr_type;
+	static internal Type type_forwarder_attr_type;
 #endif
 
 	// 
@@ -882,7 +884,9 @@ public class TypeManager {
 		compiler_generated_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "CompilerGeneratedAttribute");
 		fixed_buffer_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "FixedBufferAttribute");
 		default_charset_type = CoreLookupType ("System.Runtime.InteropServices", "DefaultCharSetAttribute");
+		internals_visible_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "InternalsVisibleToAttribute");
 		runtime_compatibility_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "RuntimeCompatibilityAttribute");
+		type_forwarder_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "TypeForwardedToAttribute");
 #endif
 		//
 		// When compiling corlib, store the "real" types here.

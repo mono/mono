@@ -6914,6 +6914,14 @@ namespace Mono.CSharp {
 			value = typearg;
 			return true;
 		}
+
+		public Type TypeArgument
+		{
+			get
+			{
+				return typearg;
+			}
+		}
 	}
 
 	/// <summary>

@@ -1327,6 +1327,14 @@ namespace Mono.CSharp {
 				return (e as BoolLiteral).Value;
 			return false;
 		}
+
+		public Type GetArgumentType ()
+		{
+			TypeOf e = GetValue () as TypeOf;
+			if (e == null)
+				return null;
+			return e.TypeArgument;
+		}
 	}
 	
 
