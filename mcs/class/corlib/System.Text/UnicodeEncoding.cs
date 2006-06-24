@@ -346,26 +346,12 @@ public class UnicodeEncoding : Encoding
 										char* chars, int charCount)
 	{
 		int count = byteCount / 2;
-		bool isBigEndian;
-
-		// Determine the byte order in the incoming buffer.
-		if (byteCount >= 2)
-		{
-			if (bytes [0] == (byte) 0xFE && bytes [1] == (byte) 0xFF)
-				isBigEndian = true;
-			else if (bytes [0] == (byte) 0xFF && bytes [1] == (byte) 0xFE)
-				isBigEndian = false;
-			else
-				isBigEndian = bigEndian;
-		} else {
-			isBigEndian = bigEndian;
-		}
 
 		// Validate that we have sufficient space in "chars".
 		if (charCount < count)
 			throw new ArgumentException (_("Arg_InsufficientSpace"));
 
-		CopyChars (bytes, (byte*) chars, byteCount, isBigEndian);
+		CopyChars (bytes, (byte*) chars, byteCount, bigEndian);
 		return count;
 	}
 
@@ -601,7 +587,6 @@ public class UnicodeEncoding : Encoding
 			if (byteCount == 0)
 				return 0;
 
-			bool isBigEndian = bigEndian;
 			int leftOver = leftOverByte;
 			int count;
 
@@ -614,7 +599,7 @@ public class UnicodeEncoding : Encoding
 				throw new ArgumentException (_("Arg_InsufficientSpace"));
 
 			if (leftOver != -1) {
-				if (isBigEndian)
+				if (bigEndian)
 					chars [charIndex] = unchecked ((char) ((leftOver << 8) | (int) bytes [byteIndex]));
 				else
 					chars [charIndex] = unchecked ((char) (((int) bytes [byteIndex] << 8) | leftOver));
@@ -626,7 +611,7 @@ public class UnicodeEncoding : Encoding
 			if ((byteCount & unchecked ((int) 0xFFFFFFFE)) != 0)
 				fixed (byte* bytePtr = bytes)
 					fixed (char* charPtr = chars)
-						CopyChars (bytePtr + byteIndex, (byte*) (charPtr + charIndex), byteCount, isBigEndian);
+						CopyChars (bytePtr + byteIndex, (byte*) (charPtr + charIndex), byteCount, bigEndian);
 
 			if ((byteCount & 1) == 0)
 				leftOverByte = -1;

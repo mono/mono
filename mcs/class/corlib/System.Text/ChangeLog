@@ -1,3 +1,8 @@
+2006-06-24  Kornél Pál  <kornelpal@gmail.com>
+
+	* UnicodeEncoding.cs: Don't detect byte order. Only readers like
+	  StreamReader should detect byte order marks.
+
 2006-06-21  Kornél Pál  <kornelpal@gmail.com>
 
 	* Encoding.cs: Return big-endian UTF-32 in GetEncodings () and
