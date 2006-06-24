@@ -1,3 +1,11 @@
+2006-06-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* interlocked-2.2.cs: Add Interlocked.Read (long) test.
+
+2006-05-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* libtest.c: Fix merge problem.
+
 2006-06-20  Massimiliano Mantione  <massi@ximian.com>
 	* bug-78656.cs. Makefile.am: Added test for bug 78656.
 

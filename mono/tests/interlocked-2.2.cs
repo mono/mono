@@ -44,6 +44,9 @@ public class InterlockTest
 		if (lb != 2)
 			return 8;
 
+		if (Interlocked.Read (ref la) != 2)
+			return 9;
+
 		Console.WriteLine ("done!");
 
 		return 0;
