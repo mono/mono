@@ -775,9 +775,14 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			MemberInfo[] lookup = TypeManager.MemberLookup (queried_type, null, queried_type,
-									AllMemberTypes, AllBindingFlags |
-									BindingFlags.NonPublic, name, null);
+			MemberInfo[] lookup = null;
+			if (queried_type == null) {
+				class_name = "global::";
+			} else {
+				lookup = TypeManager.MemberLookup (queried_type, null, queried_type,
+					AllMemberTypes, AllBindingFlags |
+					BindingFlags.NonPublic, name, null);
+			}
 
 			if (lookup == null) {
 				if (!complain_if_none_found)
