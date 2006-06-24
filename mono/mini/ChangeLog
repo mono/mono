@@ -1,3 +1,9 @@
+2006-06-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_emit_inst_for_method): Fix Interlocked.Add.
+
+	* mini-ops.h: Fix OP_ATOMIC_ADD_NEW_I8.
+
 2006-06-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* ssa.c: Revert this to the version from HEAD since all the new code is in ssa2.c.

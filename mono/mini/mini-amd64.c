@@ -5999,9 +5999,9 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 			guint32 opcode;
 
 			if (fsig->params [0]->type == MONO_TYPE_I4)
-				opcode = OP_ATOMIC_ADD_I4;
+				opcode = OP_ATOMIC_ADD_NEW_I4;
 			else if (fsig->params [0]->type == MONO_TYPE_I8)
-				opcode = OP_ATOMIC_ADD_I8;
+				opcode = OP_ATOMIC_ADD_NEW_I8;
 			else
 				g_assert_not_reached ();
 
