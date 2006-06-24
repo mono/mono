@@ -1,3 +1,7 @@
+2006-04-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* dyn_load.c: Avoid #error "large files are not supported by libelf" errors on solaris/x86.
+
 2006-05-24  Martin Baulig  <martin@ximian.com>
 
 	* doc/debugger-support.txt: Removed; this issue turned out to be

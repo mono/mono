@@ -66,6 +66,11 @@
 
 #include <stdio.h>
 #ifdef SUNOS5DL
+/* Avoid  #error "large files are not supported by libelf" errors */
+#if defined(_ILP32) && (_FILE_OFFSET_BITS != 32)
+#undef _FILE_OFFSET_BITS
+#define _FILE_OFFSET_BITS 32
+#endif
 #   include <sys/elf.h>
 #   include <dlfcn.h>
 #   include <link.h>
