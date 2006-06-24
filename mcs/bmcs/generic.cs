@@ -917,7 +917,7 @@ namespace Mono.CSharp {
 
 		public void Error_CannotUseAsUnmanagedType (Location loc)
 		{
-			Report.Error (-203, loc, "Can not use type parameter as unamanged type");
+			Report.Error (-203, loc, "Can not use type parameter as unmanaged type");
 		}
 	}
 
