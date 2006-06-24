@@ -5087,13 +5087,6 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 			ins->inst_basereg = args [0]->dreg;
 			ins->inst_offset = 0;
 			MONO_ADD_INS (cfg->cbb, ins);
-		} else if (strcmp (cmethod->name, "Read") == 0 && (fsig->params [0]->type == MONO_TYPE_I8)) {
-			/* 64 bit reads are already atomic */
-			MONO_INST_NEW (cfg, ins, OP_LOADI8_MEMBASE);
-			ins->dreg = mono_alloc_preg (cfg);
-			ins->inst_basereg = args [0]->dreg;
-			ins->inst_offset = 0;
-			MONO_ADD_INS (cfg->cbb, ins);
 		}
 	}
 

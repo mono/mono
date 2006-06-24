@@ -6045,11 +6045,6 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 			default:
 				g_assert_not_reached ();
 			}
-		} else if (strcmp (cmethod->name, "Read") == 0 && (fsig->params [0]->type == MONO_TYPE_I8)) {
-			NOT_IMPLEMENTED;
-			/* 64 bit reads are already atomic */
-			MONO_INST_NEW (cfg, ins, CEE_LDIND_I8);
-			ins->inst_i0 = args [0];
 		}
 
 		/* 

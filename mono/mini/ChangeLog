@@ -1,5 +1,9 @@
 2006-06-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-<ARCH>.c (mono_arch_emit_inst_for_method): Move Thread.MemoryBarrier () and
+	Interlocked.Read (long) implementation to mini_emit_inst_for_emit () since it
+	is the same for all platforms.
+	
 	* mini-amd64.c (mono_arch_emit_inst_for_method): Fix Interlocked.Add.
 
 	* mini-ops.h: Fix OP_ATOMIC_ADD_NEW_I8.
