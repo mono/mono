@@ -1,3 +1,7 @@
+2006-06-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* Socket.cs: Add stubs for net 2.0 SendTimeout and ReceiveTimeout properties.
+
 2006-06-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* ProtocolType.cs SocketOptionName.cs: Add missing net 2.0 fields.

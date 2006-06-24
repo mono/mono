@@ -701,6 +701,28 @@ namespace System.Net.Sockets
 			}
 		}
 
+#if NET_2_0
+		[MonoTODO]
+		public int SendTimeout {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		public int ReceiveTimeout {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+#endif
+
 		internal static void CheckProtocolSupport()
 		{
 			if(ipv4Supported == -1) {
