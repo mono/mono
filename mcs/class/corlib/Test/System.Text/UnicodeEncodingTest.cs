@@ -12,9 +12,9 @@ using System.Text;
 
 namespace MonoTests.System.Text
 {
-        [TestFixture]
-        public class UnicodeEncodingTest 
-        {
+    [TestFixture]
+    public class UnicodeEncodingTest 
+    {
                 [Test]
                 public void TestEncodingGetBytes1()
                 {
@@ -182,8 +182,27 @@ namespace MonoTests.System.Text
 			encoding.GetByteCount ("");
 			encoding.GetBytes ("");
 		}
-        }
+
+		[Test]
+		public void ByteOrderMark ()
+		{
+			string littleEndianString = "\ufeff\u0042\u004f\u004d";
+			string bigEndianString = "\ufffe\u4200\u4f00\u4d00";
+			byte [] littleEndianBytes = new byte [] {0xff, 0xfe, 0x42, 0x00, 0x4f, 0x00, 0x4d, 0x00};
+			byte [] bigEndianBytes = new byte [] {0xfe, 0xff, 0x00, 0x42, 0x00, 0x4f, 0x00, 0x4d};
+			UnicodeEncoding encoding;
+			
+			encoding = new UnicodeEncoding (false, true);
+			Assertion.AssertEquals ("BOM #1", encoding.GetBytes (littleEndianString), littleEndianBytes);
+			Assertion.AssertEquals ("BOM #2", encoding.GetBytes (bigEndianString), bigEndianBytes);
+			Assertion.AssertEquals ("BOM #3", encoding.GetString (littleEndianBytes), littleEndianString);
+			Assertion.AssertEquals ("BOM #4", encoding.GetString (bigEndianBytes), bigEndianString);
+
+			encoding = new UnicodeEncoding (true, true);
+			Assertion.AssertEquals ("BOM #5", encoding.GetBytes (littleEndianString), bigEndianBytes);
+			Assertion.AssertEquals ("BOM #6", encoding.GetBytes (bigEndianString), littleEndianBytes);
+			Assertion.AssertEquals ("BOM #7", encoding.GetString (littleEndianBytes), bigEndianString);
+			Assertion.AssertEquals ("BOM #8", encoding.GetString (bigEndianBytes), littleEndianString);
+		}
+	}
 }
-
-
-
