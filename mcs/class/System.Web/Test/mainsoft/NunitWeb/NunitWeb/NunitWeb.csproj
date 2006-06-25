@@ -35,6 +35,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseControl.cs" />
+    <Compile Include="BaseControlCollection.cs" />
     <Compile Include="BaseInvoker.cs" />
     <Compile Include="BaseRequest.cs" />
     <Compile Include="FormRequest.cs" />

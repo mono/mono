@@ -11,10 +11,21 @@ namespace MonoTests.SystemWeb.Framework
 	[Serializable]
 	public class FormRequest : PostableRequest
 	{
+		private BaseControlCollection _controls;
+		public BaseControlCollection Controls
+		{
+			get { return _controls; }
+			set { _controls = value; }
+		}
+
 		public FormRequest (Response response, string formId)
 		{
-			fields = new NameValueCollection();
+			_controls = new BaseControlCollection ();
+			ExtractFormAndHiddenControls (response, formId);
+		}
 
+		private void ExtractFormAndHiddenControls (Response response, string formId)
+		{
 			HtmlAgilityPack.HtmlDocument htmlDoc = new HtmlAgilityPack.HtmlDocument ();
 			htmlDoc.LoadHtml (response.Body);
 
@@ -52,23 +63,22 @@ namespace MonoTests.SystemWeb.Framework
 
 			foreach (XmlNode inputNode in formNode.SelectNodes ("//html:input", nsmgr))
 #else
-			foreach (XmlNode inputNode in doc.SelectNodes ("//html:input", nsmgr))
+			foreach (XmlNode inputNode in doc.SelectNodes ("//html:input[@type='hidden']", nsmgr))
 #endif
-			{
-				string name;
-				string value = "";
-				name = inputNode.Attributes["name"].Value;
+ {
+				BaseControl bc = new BaseControl ();
+				bc.Name = inputNode.Attributes["name"].Value;
+				if (bc.Name == null || bc.Name == string.Empty)
+					continue;
 				if (inputNode.Attributes["value"] != null)
-					value = inputNode.Attributes["value"].Value;
-				fields.Add (name, value);
+					bc.Value = inputNode.Attributes["value"].Value;
+				else
+					bc.Value = "";
+
+				Controls[bc.Name] = bc;
 			}
 		}
 
-		private NameValueCollection fields;
-		public NameValueCollection Fields
-		{
-			get { return fields; }
-		}
 
 		public override string Url
 		{
@@ -88,10 +98,16 @@ namespace MonoTests.SystemWeb.Framework
 			set { throw new Exception ("Must not change PostContentType of FormPostback"); }
 		}
 
-		public override byte[] PostData
+		public override byte[] EntityBody
 		{
-			get { return Encoding.ASCII.GetBytes (GetParameters ()); }
-			set { throw new Exception ("Must not change PostData of FormPostback"); }
+			get
+			{
+				if (IsPost)
+					return Encoding.ASCII.GetBytes (GetUrlencodedDataset ());
+				else
+					return null;
+			}
+			set { throw new Exception ("Must not change EntityBody of FormPostback"); }
 		}
 
 		protected override string GetQueryString ()
@@ -99,21 +115,25 @@ namespace MonoTests.SystemWeb.Framework
 			if (IsPost)
 				return "";
 			else
-				return GetParameters ();
+				return GetUrlencodedDataset ();
 		}
 
-		protected string GetParameters ()
+		private string GetUrlencodedDataset ()
 		{
 			StringBuilder query = new StringBuilder ();
 			bool first = true;
-			foreach (string key in Fields.AllKeys) {
+			foreach (BaseControl ctrl in Controls) {
+				if (!ctrl.IsSuccessful ())
+					continue;
+
 				if (first)
 					first = false;
 				else
 					query.Append ("&");
-				query.Append (HttpUtility.UrlEncode (key));
+
+				query.Append (HttpUtility.UrlEncode (ctrl.Name));
 				query.Append ("=");
-				query.Append (HttpUtility.UrlEncode (Fields[key]));
+				query.Append (HttpUtility.UrlEncode (ctrl.Value));
 			}
 			return query.ToString ();
 		}

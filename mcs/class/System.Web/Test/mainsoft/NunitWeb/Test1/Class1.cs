@@ -139,12 +139,12 @@ namespace Test1
 			WebTest t = new WebTest ("Postback.aspx");
 			string res1 = t.Run ();
 			FormRequest fr = new FormRequest (t.Response, "form1");
-			fr.Fields["txt1"] = "value";
+			fr.Controls["txt1"].Value = "value";
 			WebTest t1 = new WebTest (fr);
 			string res2 = t1.Run ();
 			FormRequest fr1 = new FormRequest (t1.Response, "form1");
-			fr.Fields["txt1"] = "value1";
-			string res3 = new WebTest (fr).Run ();
+			fr1.Controls["txt1"].Value = "value1";
+			string res3 = new WebTest (fr1).Run ();
 			Assert.IsTrue (res3.IndexOf ("value1") != -1);
 		}
 

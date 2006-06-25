@@ -6,24 +6,24 @@ namespace MonoTests.SystemWeb.Framework
 {
 	public class PostableWorkerRequest:BaseWorkerRequest
 	{
-		byte[] postData;
+		byte[] entityBody;
 		string postContentType;
 
 		public override String GetHttpVerbName ()
 		{
-			if (postData == null)
+			if (entityBody == null)
 				return base.GetHttpVerbName ();
 			return "POST";
 		}
 
 		public override string GetKnownRequestHeader (int index)
 		{
-			if (postData == null)
+			if (entityBody == null)
 				return base.GetKnownRequestHeader (index);
 			
 			switch (index) {
 			case HttpWorkerRequest.HeaderContentLength:
-				return postData.Length.ToString ();
+				return entityBody.Length.ToString ();
 			case HttpWorkerRequest.HeaderContentType:
 				return postContentType;
 			default:
@@ -33,15 +33,16 @@ namespace MonoTests.SystemWeb.Framework
 
 		public override byte[] GetPreloadedEntityBody ()
 		{
-			if (postData == null)
+			if (entityBody == null)
 				return base.GetPreloadedEntityBody ();
-			return postData;
+			return entityBody;
 		}
 
-		public PostableWorkerRequest (string page, string query, TextWriter writer, byte[] postData, string postContentType)
+		public PostableWorkerRequest (string page, string query, TextWriter writer,
+			byte[] entityBody, string postContentType)
 			: base (page, query, writer)
 		{
-			this.postData = postData;
+			this.entityBody = entityBody;
 			this.postContentType = postContentType;
 		}
 	}

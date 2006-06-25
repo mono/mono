@@ -12,6 +12,8 @@ mainsoft/MainsoftWebTest/HtmlAgilityPack/ParseReader.cs
 mainsoft/MainsoftWebTest/HtmlAgilityPack/tools.cs
 mainsoft/MainsoftWebTest/NunitWebTest.cs
 mainsoft/MainsoftWebTest/XmlComparer.cs
+mainsoft/NunitWeb/NunitWeb/BaseControl.cs
+mainsoft/NunitWeb/NunitWeb/BaseControlCollection.cs
 mainsoft/NunitWeb/NunitWeb/BaseInvoker.cs
 mainsoft/NunitWeb/NunitWeb/BaseRequest.cs
 mainsoft/NunitWeb/NunitWeb/BaseWorkerRequest.cs

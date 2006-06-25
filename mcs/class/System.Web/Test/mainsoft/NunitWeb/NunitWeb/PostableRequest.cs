@@ -13,11 +13,11 @@ namespace MonoTests.SystemWeb.Framework
 			set { _isPost = value; }
 		}
 
-		byte[] postData;
-		public virtual byte[] PostData
+		byte[] entityBody;
+		public virtual byte[] EntityBody
 		{
-			get { return postData; }
-			set { postData = value; }
+			get { return entityBody; }
+			set { entityBody = value; }
 		}
 
 		string postContentType;
@@ -39,10 +39,10 @@ namespace MonoTests.SystemWeb.Framework
 
 		protected override BaseWorkerRequest CreateBaseWorkerRequest (StringWriter wr)
 		{
-			if (PostData == null || !IsPost)
+			if (EntityBody == null || !IsPost)
 				return base.CreateBaseWorkerRequest (wr);
 			return new PostableWorkerRequest (Url, GetQueryString (),
-				wr, PostData, PostContentType);
+				wr, EntityBody, PostContentType);
 		}
 	}
 }
