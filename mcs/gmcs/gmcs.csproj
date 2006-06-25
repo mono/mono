@@ -15,7 +15,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>.\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NET_2_0, MS_COMPATIBLE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NET_2_0;MS_COMPATIBLE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <UseVSHostingProcess>false</UseVSHostingProcess>
@@ -26,7 +26,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>.\</OutputPath>
-    <DefineConstants>TRACE;NET_2_0, MS_COMPATIBLE</DefineConstants>
+    <DefineConstants>TRACE;NET_2_0;MS_COMPATIBLE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
