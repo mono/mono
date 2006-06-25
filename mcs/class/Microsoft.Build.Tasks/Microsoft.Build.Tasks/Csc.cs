@@ -140,7 +140,7 @@ namespace Microsoft.Build.Tasks {
 		}
 
 		protected override string ToolName {
-			get { return "mcs"; }
+			get { return "gmcs"; }
 		}
 
 		public bool UseHostCompilerIfAvailable {

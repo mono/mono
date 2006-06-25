@@ -31,7 +31,7 @@ using System;
 using Microsoft.Build.Framework;
 
 namespace Microsoft.Build.Tasks {
-	public struct ExtractClassName {
+	public struct ExtractedClassName {
 	
 		bool	isInsideConditionalBlock;
 		string	name;
