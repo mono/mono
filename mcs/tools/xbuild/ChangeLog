@@ -1,3 +1,9 @@
+2006-06-25  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Makefile, xbuild/Microsoft.CSharp.Targets: Renamed to
+	Microsoft.CSharp.targets. On make install it should be linked or
+	copied to another name.
+
 2006-06-22  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* Makefile: Updated.

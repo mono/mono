@@ -2,8 +2,9 @@
 
 	<Target Name="Build">
 		<Csc
-			Sources="@(Compile)"
+			DefineConstants="$(DefineConstants)"
 			References="@(Reference)"
+			Sources="@(Compile)"
 			TargetType="$(OutputType)"
 		/>
 	</Target>
