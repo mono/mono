@@ -177,7 +177,7 @@ namespace Microsoft.Build.BuildEngine {
 				if (condition != null)
 					return condition.Value;
 				else
-					return null;
+					return String.Empty;
 			}
 			set {
 				if (condition != null)

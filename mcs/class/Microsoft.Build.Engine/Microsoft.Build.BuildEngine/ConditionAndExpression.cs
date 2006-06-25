@@ -50,15 +50,41 @@ namespace Microsoft.Build.BuildEngine {
 			get { return right; }
 		}
 	
-		public override  bool Evaluate (Project context)
+		public override  bool BoolEvaluate (Project context)
 		{
-			if (!left.Evaluate (context))
+			if (!left.BoolEvaluate (context))
 				return false;
-			if (!right.Evaluate (context))
+			if (!right.BoolEvaluate (context))
 				return false;
 			return true;
 		}
 		
+		
+		public override float NumberEvaluate (Project context)
+		{
+			throw new NotSupportedException ();
+		}
+		
+		public override string StringEvaluate (Project context)
+		{
+			throw new NotSupportedException ();
+		}
+		
+		// FIXME: check if we really can do it
+		public override bool CanEvaluateToBool (Project context)
+		{
+			return true;
+		}
+		
+		public override bool CanEvaluateToNumber (Project context)
+		{
+			return false;
+		}
+		
+		public override bool CanEvaluateToString (Project context)
+		{
+			return false;
+		}
 	}
 }
 

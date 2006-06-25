@@ -1,5 +1,5 @@
 //
-// ConditionalParser.cs
+// ConditionParser.cs
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
@@ -89,7 +89,59 @@ namespace Microsoft.Build.BuildEngine {
 		
 		private ConditionExpression ParseRelationalExpression ()
 		{
-			return null;
+			ConditionExpression e = ParseFactorExpression ();
+			Token opToken;
+			RelationOperator op;
+			
+			if (tokenizer.IsToken (TokenType.Less) ||
+				tokenizer.IsToken (TokenType.Greater) ||
+				tokenizer.IsToken (TokenType.Equal) ||
+				tokenizer.IsToken (TokenType.NotEqual) ||
+				tokenizer.IsToken (TokenType.LessOrEqual) ||
+				tokenizer.IsToken (TokenType.GreaterOrEqual)) {
+				
+				opToken = tokenizer.Token;
+				tokenizer.GetNextToken ();
+								
+				switch (opToken.Type) {
+				case TokenType.Equal:
+					op = RelationOperator.Equal;
+					break;
+				case TokenType.NotEqual:
+					op = RelationOperator.NotEqual;
+					break;
+				case TokenType.Less:
+					op = RelationOperator.Less;
+					break;
+				case TokenType.LessOrEqual:
+					op = RelationOperator.LessOrEqual;
+					break;
+				case TokenType.Greater:
+					op = RelationOperator.Greater;
+					break;
+				case TokenType.GreaterOrEqual:
+					op = RelationOperator.GreaterOrEqual;
+					break;
+				default:
+					throw new ExpressionParseException (String.Format ("Wrong relation operator {0}", opToken.Value));
+				}
+				
+				e =  new ConditionRelationalExpression ((ConditionExpression) e, ParseFactorExpression (), op);
+			}
+			
+			return e;
+		}
+		
+		// FIXME: parse sub expression in parens, parse TokenType.Not, parse functions
+		private ConditionExpression ParseFactorExpression ()
+		{
+			Token token = tokenizer.Token;
+			tokenizer.GetNextToken ();
+			
+			if (token.Type != TokenType.String && token.Type != TokenType.Number)
+				throw new ExpressionParseException (String.Format ("Unexpected token type {0}.", token.Type));
+			
+			return new ConditionFactorExpression (token);
 		}
 	}
 }

@@ -1,12 +1,10 @@
 //
-// TokenType.cs
+// ConditionNotExpression.cs
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
-//   Jaroslaw Kowalski <jaak@jkowalski.net>
 // 
 // (C) 2006 Marek Sieradzki
-// (C) 2004-2006 Jaroslaw Kowalski
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,61 +27,50 @@
 
 #if NET_2_0
 
+using System;
+using System.Xml;
+
 namespace Microsoft.Build.BuildEngine {
-
-	internal class Token {
+	internal class ConditionNotExpression : ConditionExpression {
 	
-		string		tokenValue;
-		TokenType	tokenType;
-	
-		public Token (string tokenValue, TokenType tokenType)
+		readonly ConditionExpression expression;
+		
+		public ConditionNotExpression (ConditionExpression expression)
 		{
-			this.tokenValue = tokenValue;
-			this.tokenType = tokenType;
+			this.expression = expression;
 		}
 		
-		public string Value {
-			get { return tokenValue; }
+		public override  bool BoolEvaluate (Project context)
+		{
+			return !(expression.BoolEvaluate (context));
 		}
 		
-		public TokenType Type {
-			get { return tokenType; }
-		}
-	}
-	
-	internal enum TokenType {
-		EOF,
-		BOF,
-		Number,
-		String,
-		//Keyword,
-		Punct,
-		WhiteSpace,
-		Item,
-		Property,
-		Metadata,
-		Transform,
-		LiteralSubExpression,
-
-		FirstPunct,
-
-		Less,
-		Greater,
-		LessOrEqual,
-		GreaterOrEqual,
-		Equal,
-		NotEqual,
-		LeftParen,
-		RightParen,
-		Dot,
-		Comma,
-		Not,
-		And,
-		Or,
-		Apostrophe,
 		
-		LastPunct,
-		Invalid,
+		public override float NumberEvaluate (Project context)
+		{
+			throw new NotSupportedException ();
+		}
+		
+		public override string StringEvaluate (Project context)
+		{
+			throw new NotSupportedException ();
+		}
+		
+		// FIXME: check if we really can do it
+		public override bool CanEvaluateToBool (Project context)
+		{
+			return true;
+		}
+		
+		public override bool CanEvaluateToNumber (Project context)
+		{
+			return false;
+		}
+		
+		public override bool CanEvaluateToString (Project context)
+		{
+			return false;
+		}
 	}
 }
 

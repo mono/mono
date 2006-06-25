@@ -1,3 +1,24 @@
+2006-06-25  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Token.cs: Changed names: removed "than".
+	* ConditionRelationalExpression.cs: Added.
+	* ConditionFactorExpression.cs: Added.
+	* BuildItemGroup.cs: Changed Condition property return value to return
+	String.Empty instead of null.
+	* ConditionParser.cs: Added support for parsing relational expressions
+	and factors.
+	* ConditionExpression.cs: Removed Evaluate (). Added 2 sets of
+	abstract functions: BoolEvaluate (), NumberEvaluate () and StringEvaluate ()
+	and CanEvaluateToBool (), CanEvaluateToNumber () and
+	CanEvaluateToString ().
+	* ConditionOrExpression.cs, ConditionAndExpression.cs: Changed
+	appropriately to ConditionExpression base class.
+	* ConditionTokenizer.cs: Added null check and changed names in enums:
+	removed "than".
+	* ConditionNotExpression.cs: Added.
+	* BatchingImpl.cs: Changed to use BoolEvaluate ().
+	* Project.cs: Added checks for condition.
+
 2006-06-22  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* ConditionalTokenizer.cs, ConditionalExpression.cs,

@@ -65,6 +65,9 @@ namespace Microsoft.Build.BuildEngine {
 		
 		public void Tokenize (string s)
 		{
+			if (s == null)
+				throw new ArgumentNullException ("s");
+		
 			this.inputString = s;
 			this.position = 0;
 			this.token = new Token (null, TokenType.BOF);
@@ -246,7 +249,7 @@ namespace Microsoft.Build.BuildEngine {
 			}
 			
 			if (ch == '>' && PeekChar () == (int) '=') {
-				token = new Token (">=", TokenType.GreaterThanOrEqual);
+				token = new Token (">=", TokenType.GreaterOrEqual);
 				ReadChar ();
 				return;
 			}
@@ -299,8 +302,8 @@ namespace Microsoft.Build.BuildEngine {
 		}
 		
 		static CharToTokenType[] charToTokenType = {
-			new CharToTokenType ('<', TokenType.LessThan),
-			new CharToTokenType ('>', TokenType.GreaterThan),
+			new CharToTokenType ('<', TokenType.Less),
+			new CharToTokenType ('>', TokenType.Greater),
 			new CharToTokenType ('=', TokenType.Equal),
 			new CharToTokenType ('(', TokenType.LeftParen),
 			new CharToTokenType (')', TokenType.RightParen),

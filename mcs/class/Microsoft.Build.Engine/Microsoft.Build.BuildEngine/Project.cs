@@ -333,12 +333,26 @@ namespace Microsoft.Build.BuildEngine {
 
 			InitializeProperties ();
 
-			foreach (BuildPropertyGroup bpg in PropertyGroups)
-				bpg.Evaluate ();
+			foreach (BuildPropertyGroup bpg in PropertyGroups) {
+				if (bpg.Condition == String.Empty)
+					bpg.Evaluate ();
+				else {
+					ConditionExpression ce = ConditionParser.ParseCondition (bpg.Condition);
+					if (ce.BoolEvaluate (this))
+						bpg.Evaluate ();
+				}
+			}
 			foreach (Import import in Imports)
 				import.Evaluate ();
-			foreach (BuildItemGroup big in ItemGroups)
-				big.Evaluate ();
+			foreach (BuildItemGroup big in ItemGroups) {
+				if (big.Condition == String.Empty)
+					big.Evaluate ();
+				else {
+					ConditionExpression ce = ConditionParser.ParseCondition (big.Condition);
+					if (ce.BoolEvaluate (this))
+						big.Evaluate ();
+				}
+			}
 			foreach (UsingTask usingTask in UsingTasks)
 				usingTask.Evaluate ();
 		}
@@ -599,6 +613,7 @@ namespace Microsoft.Build.BuildEngine {
 				throw new ArgumentNullException ("xmlElement");
 				
 			BuildChoose bc = new BuildChoose (xmlElement, this);
+			groups.Add (bc);
 			
 		}
 		

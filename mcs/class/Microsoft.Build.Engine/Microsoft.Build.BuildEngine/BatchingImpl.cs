@@ -137,7 +137,7 @@ namespace Microsoft.Build.BuildEngine {
 			
 			ConditionExpression ce = ConditionParser.ParseCondition (buildTask.Condition);
 			
-			if (ce.Evaluate (project))
+			if (ce.BoolEvaluate (project))
 				return buildTask.Execute ();
 			else
 			// FIXME: skipped, it should be logged
