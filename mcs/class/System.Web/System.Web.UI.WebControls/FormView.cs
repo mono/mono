@@ -1159,8 +1159,11 @@ namespace System.Web.UI.WebControls
 			FormViewPageEventArgs args = new FormViewPageEventArgs (newIndex);
 			OnPageIndexChanging (args);
 			if (!args.Cancel) {
+				newIndex = args.NewPageIndex;
+				if (newIndex < 0 || newIndex >= PageCount)
+					return;
 				EndRowEdit ();
-				PageIndex = args.NewPageIndex;
+				PageIndex = newIndex;
 				OnPageIndexChanged (EventArgs.Empty);
 			}
 		}

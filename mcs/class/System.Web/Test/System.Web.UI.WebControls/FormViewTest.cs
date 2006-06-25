@@ -47,6 +47,10 @@ namespace MonoTests.System.Web.UI.WebControls
 	[TestFixture]	
 	public class FormViewTest {	
 		class Poker : FormView {
+
+			bool _onPageIndexChangingCalled = false;
+			bool _onPageIndexChangedCalled = false;
+
 			public Poker () {
 				TrackViewState ();
 			}
@@ -67,6 +71,30 @@ namespace MonoTests.System.Web.UI.WebControls
 			public void DoOnPreRender (EventArgs e)
 			{
 				base.OnPreRender (e);
+			}
+			
+			public bool DoOnBubbleEvent (object source, EventArgs e) {
+				return base.OnBubbleEvent (source, e);
+			}
+			
+			public bool OnPageIndexChangingCalled {
+				set { _onPageIndexChangingCalled = value; }
+				get { return _onPageIndexChangingCalled; }
+			}
+	
+			public bool OnPageIndexChangedCalled {
+				set { _onPageIndexChangedCalled = value; }
+				get { return _onPageIndexChangedCalled; }
+			}
+	
+			protected override void OnPageIndexChanging (FormViewPageEventArgs e) {
+				OnPageIndexChangingCalled = true;
+				base.OnPageIndexChanging (e);
+			}
+	
+			protected override void OnPageIndexChanged (EventArgs e) {
+				OnPageIndexChangedCalled = true;
+				base.OnPageIndexChanged (e);
 			}
 		}
 		
@@ -143,6 +171,29 @@ namespace MonoTests.System.Web.UI.WebControls
 			object cur = f.DataItem;
 			f.PageIndex = 1;
 			Assert.IsTrue (cur != f.DataItem, "#01");
+
+			CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
+			FormViewCommandEventArgs fvargs = new FormViewCommandEventArgs (f, cargs);
+			f.DoOnBubbleEvent (f, fvargs);
+			Assert.IsTrue (f.OnPageIndexChangingCalled, "#02");
+			Assert.IsTrue (f.OnPageIndexChangedCalled, "#03");
+			f.OnPageIndexChangingCalled = false;
+			f.OnPageIndexChangedCalled = false;
+
+			f.DoOnBubbleEvent (f, fvargs);
+			Assert.IsTrue (f.OnPageIndexChangingCalled, "#04");
+			Assert.IsFalse (f.OnPageIndexChangedCalled, "#05");
+			f.OnPageIndexChangingCalled = false;
+			f.OnPageIndexChangedCalled = false;
+
+			f.PageIndex = f.PageCount - 1;
+			cargs = new CommandEventArgs ("Page", "Next");
+			fvargs = new FormViewCommandEventArgs (f, cargs);
+			f.DoOnBubbleEvent (f, fvargs);
+			Assert.IsTrue (f.OnPageIndexChangingCalled, "#06");
+			Assert.IsFalse (f.OnPageIndexChangedCalled, "#07");
+			f.OnPageIndexChangingCalled = false;
+			f.OnPageIndexChangedCalled = false;
 		}
 		
 		[Test]

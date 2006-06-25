@@ -1,3 +1,7 @@
+2006-06-25	Konstantin Triger <kostat@mainsoft.com>
+
+	* FormView.cs: disabling setting out of range FormView.PageIndex.
+
 2006-06-21 Andrew Skiba <andrews@mainsoft.com>
 
 	* FileUpload.cs: added
