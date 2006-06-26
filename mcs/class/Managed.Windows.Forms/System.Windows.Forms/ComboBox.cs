@@ -1066,6 +1066,9 @@ namespace System.Windows.Forms
 
 		private void OnKeyDownCB(object sender, KeyEventArgs e)
 		{
+			if (Items.Count == 0)
+				return;
+
 			switch (e.KeyCode) 
 			{			
 				case Keys.Up:
