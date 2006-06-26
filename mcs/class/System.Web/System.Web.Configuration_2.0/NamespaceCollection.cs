@@ -67,7 +67,7 @@ namespace System.Web.Configuration
 
 		protected override ConfigurationElement CreateNewElement ()
 		{
-			return new NamespaceInfo ("");
+			return new NamespaceInfo (null);
 		}
 
 		protected override object GetElementKey (ConfigurationElement element)

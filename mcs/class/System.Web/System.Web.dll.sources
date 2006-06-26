@@ -156,6 +156,7 @@ System.Web.Configuration_2.0/MachineKeyValidationConverter.cs
 System.Web.Configuration_2.0/MembershipSection.cs
 System.Web.Configuration_2.0/NamespaceCollection.cs
 System.Web.Configuration_2.0/NamespaceInfo.cs
+System.Web.Configuration_2.0/NullableStringValidator.cs
 System.Web.Configuration_2.0/OutputCacheProfile.cs
 System.Web.Configuration_2.0/OutputCacheProfileCollection.cs
 System.Web.Configuration_2.0/OutputCacheSection.cs

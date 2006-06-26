@@ -45,7 +45,7 @@ namespace System.Web.Configuration {
 		internal static TimeSpanSecondsConverter TimeSpanSecondsConverter = new TimeSpanSecondsConverter ();
 		internal static CommaDelimitedStringCollectionConverter CommaDelimitedStringCollectionConverter = new CommaDelimitedStringCollectionConverter();
 		internal static DefaultValidator DefaultValidator = new DefaultValidator ();
-		internal static StringValidator NonEmptyStringValidator = new StringValidator (1);
+		internal static NullableStringValidator NonEmptyStringValidator = new NullableStringValidator (1);
 		internal static PositiveTimeSpanValidator PositiveTimeSpanValidator = new PositiveTimeSpanValidator ();
 		internal static TimeSpanMinutesOrInfiniteConverter TimeSpanMinutesOrInfiniteConverter = new TimeSpanMinutesOrInfiniteConverter ();
 

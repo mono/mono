@@ -1,3 +1,10 @@
+2006-06-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* NullableStringValidator.cs : new internal class that is almost
+	  identical to StringValidator but allows null value.
+	* PropertyHelper.cs : use new NullableStringValidator.
+	* NamespaceCollection.cs : in NamespaceInfo "" is not allowed.
+
 2006-06-08  Chris Toshok  <toshok@ximian.com>
 
 	* WebConfigurationHost.cs (InitForConfiguration): i know this is

@@ -1,3 +1,8 @@
+2006-06-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Web.dll.sources : added NullableStringValidator.cs.
+	* System.Web_test.dll.sources : NullableStringValidatorTest.cs.
+
 2006-06-25 Andrew Skiba <andrews@mainsoft.com>
 
 	* System.Web_test.dll.sources: add BaseControl.cs and

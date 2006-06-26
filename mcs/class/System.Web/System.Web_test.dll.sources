@@ -63,6 +63,7 @@ System.Web.Configuration/DeploymentSectionTest.cs
 System.Web.Configuration/GlobalizationSectionTest.cs
 System.Web.Configuration/HostingEnvironmentSectionTest.cs
 System.Web.Configuration/MachineKeyValidationConverterTest.cs
+System.Web.Configuration/NullableStringValidatorTest.cs
 System.Web.Configuration/ProfilePropertySettingsTest.cs
 System.Web.Configuration/SiteMapSectionTest.cs
 System.Web.Configuration/WebConfigurationManagerTest.cs
