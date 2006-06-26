@@ -70,11 +70,10 @@ namespace System.Drawing
 			// the user supplied brush can be disposed anytime, don't keep a reference on it
 			this.brush = (Brush) brush.Clone ();
 			must_dispose_brush = true;
-			if (brush is SolidBrush) {
-				int c;
-				status = GDIPlus.GdipGetSolidFillColor (brush.NativeObject, out c);
-				GDIPlus.CheckStatus (status);
-				color = Color.FromArgb (c);
+
+			SolidBrush sb = (brush as SolidBrush);
+			if (sb != null) {
+				color = sb.Color;
 			}
 		}
 
@@ -143,22 +142,31 @@ namespace System.Drawing
 				if (value == null)
 					throw new ArgumentNullException ("Brush");
 #endif
-				if (isModifiable) {
-					brush = value;
-					Status status = GDIPlus.GdipSetPenBrushFill (nativeObject, value.nativeObject);
-					GDIPlus.CheckStatus (status);
-
-					if (value is SolidBrush) {
-						color = ((SolidBrush) brush).Color;
-					} else {
-						// other brushes should clear the color property
-						color = Color.Empty;
-					}
-
-					status = GDIPlus.GdipSetPenColor (nativeObject, color.ToArgb ());
-					GDIPlus.CheckStatus (status);
-				} else
+				if (!isModifiable)
 					throw new ArgumentException ("This Pen object can't be modified.");
+
+				// we keep our own cloned brush, so we must dispose it before replacing it
+				if (must_dispose_brush && (brush != null)) {
+					brush.Dispose ();
+				}
+
+				// and this brush must be a clone too (as the original can be disposed anytime)
+				brush = (Brush) value.Clone ();
+				must_dispose_brush = true;
+
+				Status status = GDIPlus.GdipSetPenBrushFill (nativeObject, brush.nativeObject);
+				GDIPlus.CheckStatus (status);
+
+				SolidBrush sb = (value as SolidBrush);
+				if (sb != null) {
+					color = sb.Color;
+				} else {
+					// other brushes should clear the color property
+					color = Color.Empty;
+				}
+
+				status = GDIPlus.GdipSetPenColor (nativeObject, color.ToArgb ());
+				GDIPlus.CheckStatus (status);
 			}
 		}
 

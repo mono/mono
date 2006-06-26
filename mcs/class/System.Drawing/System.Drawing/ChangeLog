@@ -1,3 +1,8 @@
+2006-06-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Pen.cs: Ensure we dispose of an existing brush before replacing it.
+	Avoid double-cast when dealing with SolidBrush.
+
 2006-06-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* gdipFunctions.cs: Fix API signature (missing pen pointer) for 
