@@ -310,9 +310,10 @@ namespace System.Xml
 			settings = PopulateSettings (settings);
 			if (context == null)
 				context = PopulateParserContext (settings, url);
-			return CreateCustomizedTextReader (
-				new XmlTextReader (true, url, GetNodeType (settings), context),
-				settings);
+			XmlTextReader xtr = new XmlTextReader (true, url, GetNodeType (settings), context);
+			XmlReader ret = CreateCustomizedTextReader (xtr, settings);
+			xtr.CloseInput = true;
+			return xtr;
 		}
 
 		public static XmlReader Create (Stream stream, XmlReaderSettings settings, XmlParserContext context)

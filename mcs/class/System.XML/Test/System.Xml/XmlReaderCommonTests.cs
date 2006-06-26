@@ -1520,6 +1520,26 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		// a bit revised version of bug #78706
+		public void CreateFromUrlClose ()
+		{
+			string file = "Test/XmlFiles/78706.xml";
+			try {
+				if (!File.Exists (file))
+					File.Create (file).Close ();
+				XmlReaderSettings s = new XmlReaderSettings ();
+				s.CloseInput = false; // explicitly
+				XmlReader r = XmlReader.Create (file, s);
+				r.Close ();
+				XmlTextWriter w = new XmlTextWriter (file, null);
+				w.Close ();
+			} finally {
+				if (File.Exists (file))
+					File.Delete (file);
+			}
+		}
+
+		[Test]
 		public void ReadToDescendant ()
 		{
 			string xml = @"<root><foo/><bar/><foo> test text <bar><bar></bar></bar></foo></root>";

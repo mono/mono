@@ -1,3 +1,8 @@
+2006-06-26  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlReader.cs : when Create() received string url, it should set 
+	  XmlTextReader2.CloseInput always true. Fixed bug #78706.
+
 2006-06-08  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextWriter2.cs : if an attribute being written has the same
