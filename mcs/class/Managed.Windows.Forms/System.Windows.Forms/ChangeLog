@@ -1,3 +1,7 @@
+2006-06-26  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* ThemeEngine.cs (..ctor): Properly use ToLower() (Fixes #78704)
+
 2006-06-26  Mike Kestner  <mkestner@novell.com>
 
 	* ComboBox.cs: only do Keypress handling in the combo when there  

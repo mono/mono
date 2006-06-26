@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2006 Novell, Inc.
 //
 // Authors:
 //	Jordi Mas i Hernandez, jordi@ximian.com
@@ -39,21 +39,21 @@ namespace System.Windows.Forms
 
 			theme_var = Environment.GetEnvironmentVariable("MONO_THEME");
 
-			if (theme_var == null)
+			if (theme_var == null) {
 				theme_var = "win32";
+			} else {
+				theme_var = theme_var.ToLower ();
+			}
 
-			theme_var.ToLower ();
-
-			if (theme_var == "gtk")
+			if (theme_var == "gtk") {
 				theme = new ThemeGtk ();
-			else
-			if ( theme_var == "nice" )
+			} else if ( theme_var == "nice" ) {
 				theme = new ThemeNice ();
-			else
-			if ( theme_var == "clearlooks" )
+			} else if ( theme_var == "clearlooks" ) {
 				theme = new ThemeClearlooks ();
-			else
+			} else {
 				theme = new ThemeWin32Classic ();
+			}
 		}
 		
 			
