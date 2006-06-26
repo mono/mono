@@ -1,3 +1,7 @@
+2006-06-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Makefile.am: Use mono-wrapper (and not the installed mono).
+
 2006-06-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Makefile.am: Updated Makefile to add the CAS tests to the tarball
