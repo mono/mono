@@ -1,5 +1,7 @@
 2006-06-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* solaris_threads.c: And another one.
+
 	* solaris_pthreads.c: Avoid another solaris/x86 #error.
 
 2006-04-08  Zoltan Varga  <vargaz@gmail.com>
