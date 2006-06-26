@@ -161,7 +161,7 @@ namespace Cairo {
 		
 		public void Destroy()
 		{
-			CairoAPI.cairo_surface_destroy (surface);
+			Dispose (true);
 		}
 
 #if CAIRO_1_2

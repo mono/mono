@@ -52,7 +52,7 @@ namespace Gdk
 		[DllImport("libgdk-x11-2.0.so")]
 		  internal static extern IntPtr gdk_cairo_create (IntPtr raw);
 		
-	        public static Cairo.Graphics CreateDrawable (Gdk.Drawable drawable)
+	        public static Cairo.Context CreateDrawable (Gdk.Drawable drawable)
 		{
 			IntPtr x_drawable = IntPtr.Zero;
 			int x_off = 0, y_off = 0;			
@@ -77,7 +77,7 @@ namespace Gdk
 								   Xvisual,
 								   w, h);
 			
-			Cairo.Graphics g = new Cairo.Graphics (s);
+			Cairo.Context g = new Cairo.Context (s);
 			
 			// this can be safely removed now, just keep it for a bit more
 			//Cairo.Graphics g = new Cairo.Graphics (
