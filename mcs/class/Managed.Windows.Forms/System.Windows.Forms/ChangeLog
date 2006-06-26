@@ -1,3 +1,14 @@
+2006-06-26  Chris Toshok  <toshok@ximian.com>
+
+	* Binding.cs: make this work bi-directionally.  also, clear up
+	other mixups between Push/Pull Data (e.g. we're supposed to pull
+	data when validating).
+
+	* BindingManagerBase.cs: trim some fully qualified collection
+	types.
+
+	* PropertyManager.cs (get_IsSuspended): oops, fix this check.
+
 2006-06-23  Chris Toshok  <toshok@ximian.com>
 
 	* PropertyManager.cs: It appears (according to the unit tests)

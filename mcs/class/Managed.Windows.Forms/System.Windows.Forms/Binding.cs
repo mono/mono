@@ -40,7 +40,7 @@ namespace System.Windows.Forms {
 		private Control control;
 
 		private BindingManagerBase manager;
-		private PropertyDescriptor prop_desc;
+		private PropertyDescriptor control_property;
 		private PropertyDescriptor is_null_desc;
 
 		private EventDescriptor changed_event;
@@ -124,14 +124,14 @@ namespace System.Windows.Forms {
 			if (control == this.control)
 				return;
 
-			prop_desc = TypeDescriptor.GetProperties (control).Find (property_name, true);			
+			control_property = TypeDescriptor.GetProperties (control).Find (property_name, true);			
 			
-			if (prop_desc == null)
+			if (control_property == null)
 				throw new ArgumentException (String.Concat ("Cannot bind to property '", property_name, "' on target control."));
-			if (prop_desc.IsReadOnly)
+			if (control_property.IsReadOnly)
 				throw new ArgumentException (String.Concat ("Cannot bind to property '", property_name, "' because it is read only."));
 				
-			data_type = prop_desc.PropertyType; // Getting the PropertyType is kinda slow and it should never change, so it is cached
+			data_type = control_property.PropertyType; // Getting the PropertyType is kinda slow and it should never change, so it is cached
 			control.Validating += new CancelEventHandler (ControlValidatingHandler);
 
 			this.control = control;
@@ -149,8 +149,7 @@ namespace System.Windows.Forms {
 
 			manager.AddBinding (this);
 			manager.PositionChanged += new EventHandler (PositionChangedHandler);
-
-			WirePropertyValueChangedEvent ();
+			manager.CurrentChanged += new EventHandler (CurrentChangedHandler);
 
 			is_null_desc = TypeDescriptor.GetProperties (manager.Current).Find (property_name + "IsNull", false);
 
@@ -162,8 +161,8 @@ namespace System.Windows.Forms {
 			if (IsBinding == false || manager.Current == null)
 				return;
 
-			data = prop_desc.GetValue (control);
-			data = FormatData (data);
+			data = control_property.GetValue (control);
+			data = ParseData (data, manager.Current.GetType());
 			SetPropertyValue (data);
 		}
 
@@ -182,12 +181,10 @@ namespace System.Windows.Forms {
 
 			PropertyDescriptor pd = TypeDescriptor.GetProperties (manager.Current).Find (binding_member_info.BindingField, true);
 			if (pd == null) {
-				object pulled = manager.Current;
-				data = ParseData (pulled, pulled.GetType ());
+				data = ParseData (manager.Current, manager.Current.GetType ());
 			}
 			else {
-				object pulled = pd.GetValue (manager.Current);
-				data = ParseData (pulled, pd.PropertyType);
+				data = ParseData (pd.GetValue (manager.Current), pd.PropertyType);
 			}
 
 			data = FormatData (data);
@@ -201,46 +198,25 @@ namespace System.Windows.Forms {
 
 		private void SetControlValue (object data)
 		{
-			prop_desc.SetValue (control, data);
+			control_property.SetValue (control, data);
 		}
 
 		private void SetPropertyValue (object data)
 		{
-			PropertyDescriptor pd = TypeDescriptor.GetProperties (manager.Current).Find (binding_member_info.BindingField, true);
+			PropertyDescriptor pd = TypeDescriptor.GetProperties (data_source).Find (binding_member_info.BindingField, true);
 			if (pd.IsReadOnly)
 				return;
-			pd.SetValue (manager.Current, data);
+			pd.SetValue (data_source, data);
 		}
 
-		private void CurrentChangedHandler ()
-		{
-			if (changed_event != null) {
-				changed_event.RemoveEventHandler (event_current, property_value_changed_handler);
-				WirePropertyValueChangedEvent ();
-			}
-		}
-
-		private void WirePropertyValueChangedEvent ()
-		{
-			if (manager.Current == null)
-				return;
-			EventDescriptor changed_event = TypeDescriptor.GetEvents (manager.Current).Find (property_name + "Changed", false);
-			if (changed_event == null)
-				return;
-			property_value_changed_handler = new EventHandler (PropertyValueChanged);
-			changed_event.AddEventHandler (manager.Current, property_value_changed_handler);
-
-			event_current = manager.Current;
-		}
-
-		private void PropertyValueChanged (object sender, EventArgs e)
+		private void CurrentChangedHandler (object sender, EventArgs e)
 		{
 			PushData ();
 		}
 
 		private void ControlValidatingHandler (object sender, CancelEventArgs e)
 		{
-			PushData ();
+			PullData ();
 		}
 
 		private void PositionChangedHandler (object sender, EventArgs e)

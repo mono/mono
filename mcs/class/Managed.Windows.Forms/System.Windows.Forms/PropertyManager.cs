@@ -134,7 +134,7 @@ namespace System.Windows.Forms {
 		}
 
                 internal override bool IsSuspended {
-                        get { return data_source != null; }
+                        get { return data_source == null; }
                 }
 
 		protected internal override string GetListName (ArrayList list)

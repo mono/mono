@@ -90,16 +90,16 @@ namespace System.Windows.Forms {
 
 		#region Protected Instance Methods
 		[MonoTODO]
-		protected internal virtual PropertyDescriptorCollection GetItemProperties(System.Collections.ArrayList dataSources, System.Collections.ArrayList listAccessors) {
+		protected internal virtual PropertyDescriptorCollection GetItemProperties(ArrayList dataSources, ArrayList listAccessors) {
 			throw new NotImplementedException();
 		}
 
 		[MonoTODO]
-		protected virtual PropertyDescriptorCollection GetItemProperties(Type lisType, int offset, System.Collections.ArrayList dataSources, System.Collections.ArrayList listAccessors) {
+		protected virtual PropertyDescriptorCollection GetItemProperties(Type lisType, int offset, ArrayList dataSources, ArrayList listAccessors) {
 			throw new NotImplementedException();
 		}
 
-		protected internal abstract string GetListName (System.Collections.ArrayList listAccessors);
+		protected internal abstract string GetListName (ArrayList listAccessors);
 
 		protected internal abstract void OnCurrentChanged (EventArgs e);
 
