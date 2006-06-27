@@ -1,11 +1,22 @@
 using System;
 using System.Collections;
 using System.Collections.Specialized;
+using System.Runtime.Serialization;
 
 namespace MonoTests.SystemWeb.Framework
 {
+	[Serializable]
 	public sealed class BaseControlCollection : NameObjectCollectionBase 
 	{
+		public BaseControlCollection (SerializationInfo info, StreamingContext context)
+			: base (info, context)
+		{
+		}
+
+		public BaseControlCollection ()
+		{
+		}
+
 		/// <summary>
 		/// Sets or gets the control with the given name. Get is guaranteed
 		/// to return not null value

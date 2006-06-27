@@ -122,7 +122,8 @@ namespace MonoTests.SystemWeb.Framework
 		{
 			StringBuilder query = new StringBuilder ();
 			bool first = true;
-			foreach (BaseControl ctrl in Controls) {
+ 			foreach (string key in Controls.Keys) {
+ 				BaseControl ctrl = Controls[key];
 				if (!ctrl.IsSuccessful ())
 					continue;
 
