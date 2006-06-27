@@ -1,5 +1,10 @@
 2006-06-27  Wade Berrier <wberrier@novell.com>
 
+	* Makefile.am: Remove 'check-local' target so these tests don't get
+	run as part of 'make check' (the runtime tests)
+
+2006-06-27  Wade Berrier <wberrier@novell.com>
+
 	* Makefile.am: Rename 'all' target so tests aren't compiled at build time.
 	Remove 'clean' target so that clean gets propogated to SUBDIRS.
 
