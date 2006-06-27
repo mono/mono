@@ -1,3 +1,17 @@
+2006-06-27  Senganal T  <tsenganal@novell.com>
+
+	* DataSet.cs, DataTable.cs : implement CreateDataReader methods 
+	* InternalDataCollectionBase.cs
+		- ToArray () : helper method
+	* DataTableReader.cs : 
+		- GetSchemaTable : set the schema info correctly
+		- GetProvider*, GetChars, GetBytes, GetValues :
+			Implemented the methods
+		- GetName : return the name of corresponding schema.
+		- ValidateSchemaIntact, OnColumnCollectionChanged, 
+		OnColumnChanged :
+			Listen and raise expception if schema changes
+
 2006-06-21  Chris Toshok  <toshok@ximian.com>
 
 	* DataView.cs: update the index after we successfully add the new

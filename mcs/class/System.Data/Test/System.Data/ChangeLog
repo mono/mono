@@ -1,3 +1,13 @@
+2006-06-27  Senganal T <tsenganal@novell.com>
+
+	* DataTableReaderTest.cs :
+		- Tests for Schema verification.
+		- Test if GetName returns the ColumnName.
+		- Tests for Provider Specific types/values
+		- Tests for GetChars 
+		- Test if Schema changes are caught and appropriate errors
+		are raised.
+		
 2006-06-15  Senganal T <tsenganal@novell.com>
 
 	* DataTableTest2.cs :

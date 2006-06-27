@@ -600,13 +600,13 @@ namespace System.Data {
 		[MonoTODO]
 		public DataTableReader CreateDataReader (DataTable[] dataTables)
 		{
-			throw new NotImplementedException ();
+			return new DataTableReader (dataTables);
 		}
 
 		[MonoTODO]
 		public DataTableReader CreateDataReader ()
 		{
-			throw new NotImplementedException ();
+			return new DataTableReader ((DataTable[])Tables.ToArray (typeof (DataTable)));
 		}
 #endif
 		

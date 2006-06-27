@@ -35,6 +35,8 @@
 
 using System.Collections;
 using System.Data.Common;
+using System.ComponentModel;
+using System.Text.RegularExpressions;
 
 namespace System.Data {
         public sealed class DataTableReader : DbDataReader
@@ -47,6 +49,7 @@ namespace System.Data {
                 bool            _tableCleared = false;
                 bool            _subscribed = false;
                 DataRow         _rowRef;
+		bool 		_schemaChanged = false;
 
                 #region Constructors
                 
@@ -99,10 +102,7 @@ namespace System.Data {
                         get { 
                                 Validate ();
                                 if (index < 0 || index >= FieldCount)
-                                        throw new ArgumentOutOfRangeException (String.Format ("index {0} is not" +
-                                                                                           "in the range",
-                                                                                           index)
-                                                                            );
+                                        throw new ArgumentOutOfRangeException ("index " + index + " is not in the range");
                                 DataRow row = CurrentRow;
                                 if (row.RowState == DataRowState.Deleted)
                                         throw new InvalidOperationException ("Deleted Row's information cannot be accessed!");
@@ -145,7 +145,11 @@ namespace System.Data {
                                 return;
                         CurrentTable.TableCleared += new DataTableClearEventHandler (OnTableCleared);
                         CurrentTable.RowChanged += new DataRowChangeEventHandler (OnRowChanged);
+			CurrentTable.Columns.CollectionChanged += new CollectionChangeEventHandler (OnColumnCollectionChanged);
+			for (int i=0; i < CurrentTable.Columns.Count; ++i)
+				CurrentTable.Columns [i].PropertyChanged += new PropertyChangedEventHandler (OnColumnChanged);
                         _subscribed = true;
+			_schemaChanged = false;
                 }
 
                 private void UnsubscribeEvents ()
@@ -154,7 +158,11 @@ namespace System.Data {
                                 return;
                         CurrentTable.TableCleared -= new DataTableClearEventHandler (OnTableCleared);
                         CurrentTable.RowChanged -= new DataRowChangeEventHandler (OnRowChanged);
+			CurrentTable.Columns.CollectionChanged -= new CollectionChangeEventHandler (OnColumnCollectionChanged);
+			for (int i=0; i < CurrentTable.Columns.Count; ++i)
+				CurrentTable.Columns [i].PropertyChanged -= new PropertyChangedEventHandler (OnColumnChanged);
                         _subscribed = false;
+			_schemaChanged = false;
                 }
                 
                 public override void Close ()
@@ -182,10 +190,16 @@ namespace System.Data {
                         return (byte) GetValue (i);
                 }
 
-                [MonoTODO]
                 public override long GetBytes (int i, long dataIndex, byte[] buffer, int bufferIndex, int length)
                 {
-                        throw new NotImplementedException ();
+			byte[] value = this [i] as byte[];
+			if (value == null)
+				ThrowInvalidCastException (this [i].GetType (), typeof (byte[]));
+			if (buffer == null)
+				return value.Length;
+			int copylen = length > value.Length ? value.Length : length;
+			Array.Copy (value, dataIndex, buffer, bufferIndex, copylen);
+			return copylen;
                 }
                 
                 public override char GetChar (int i)
@@ -193,10 +207,16 @@ namespace System.Data {
                         return (char) GetValue (i);
                 }
 
-                [MonoTODO]
                 public override long GetChars (int i, long dataIndex, char[] buffer, int bufferIndex, int length)
                 {
-                        throw new NotImplementedException ();
+			char[] value = this [i] as char[];
+			if (value == null)
+				ThrowInvalidCastException (this [i].GetType (), typeof (char[]));
+			if (buffer == null)
+				return value.Length;
+			int copylen = length > value.Length ? value.Length : length;
+			Array.Copy (value, dataIndex, buffer, bufferIndex, copylen);
+			return copylen;
                 }
                 
                 public override string GetDataTypeName (int i)
@@ -219,16 +239,14 @@ namespace System.Data {
                         return (double) GetValue (i);
                 }
 
-                [MonoTODO]
                 public override IEnumerator GetEnumerator ()
                 {
-                        throw new NotImplementedException ();
+			return new DbEnumerator (this);
                 }
 
-                [MonoTODO]
                 public override Type GetProviderSpecificFieldType (int i)
                 {
-                        throw new NotImplementedException ();
+			return GetFieldType (i);
                 }
                 
                 public override Type GetFieldType (int i)
@@ -264,29 +282,28 @@ namespace System.Data {
                 
                 public override string GetName (int i)
                 {
-                        return (string) GetValue (i);
+			ValidateClosed ();
+			return CurrentTable.Columns [i].ColumnName;
                 }
                 
                 public override int GetOrdinal (string name)
                 {
-                        ValidateClosed ();
-                        DataColumn column = CurrentTable.Columns [name];
-                        if (column == null)
-                                throw new ArgumentException (String.Format ("Column {0} is not found in the schema",
-                                                                             name));
-                        return column.Ordinal;
+			ValidateClosed ();
+			int index = CurrentTable.Columns.IndexOf (name);
+			if (index == -1)
+				throw new ArgumentException (String.Format ("Column {0} is not found in the schema",
+									name));
+			return index;
                 }
 
-                [MonoTODO]
                 public override object GetProviderSpecificValue (int i)
                 {
-                        throw new NotImplementedException ();
+			return GetValue (i);
                 }
 
-                [MonoTODO]
                 public override int GetProviderSpecificValues (object[] values)
                 {
-                        throw new NotImplementedException ();
+			return GetValues (values);
                 }
                 
                 public override string GetString (int i)
@@ -299,10 +316,16 @@ namespace System.Data {
                         return this [i];
                 }
 
-                [MonoTODO]
                 public override int GetValues (object[] values)
                 {
-                        throw new NotImplementedException ();
+			Validate ();
+			if (CurrentRow.RowState == DataRowState.Deleted)
+				throw new DeletedRowInaccessibleException ("");
+
+			int count = (FieldCount < values.Length ? FieldCount : values.Length);
+			for (int i=0; i < count; ++i)
+				values [i] = CurrentRow [i];
+			return count;
                 }
                 
                 public override bool IsDBNull (int i)
@@ -312,33 +335,88 @@ namespace System.Data {
                 
                 public override DataTable GetSchemaTable ()
                 {
+			ValidateClosed ();
+			ValidateSchemaIntact ();
+
                         if (_schemaTable != null)
                                 return _schemaTable;
-                        
-                        DataTable dt = DbDataReader.GetSchemaTableTemplate ();
-                        foreach (DataColumn column in CurrentTable.Columns) {
-                                DataRow row = dt.NewRow ();
+			
+			DataTable dt = new DataTable ();
+			DataColumn[] cols = new DataColumn [25];
+			dt.Columns.Add ("ColumnName", typeof (string));
+			dt.Columns.Add ("ColumnOrdinal", typeof (int));
+			dt.Columns.Add ("ColumnSize", typeof (int));
+			dt.Columns.Add ("NumericPrecision", typeof (short));
+			dt.Columns.Add ("NumericScale", typeof (short));
+			dt.Columns.Add ("DataType", typeof (Type));
+			dt.Columns.Add ("ProviderType", typeof (int));
+			dt.Columns.Add ("IsLong", typeof (bool));
+			dt.Columns.Add ("AllowDBNull", typeof (bool));
+			dt.Columns.Add ("IsReadOnly", typeof (bool));
+			dt.Columns.Add ("IsRowVersion", typeof (bool));
+			dt.Columns.Add ("IsUnique", typeof (bool));
+			dt.Columns.Add ("IsKey", typeof (bool));
+			dt.Columns.Add ("IsAutoIncrement", typeof (bool));
+			dt.Columns.Add ("BaseCatalogName", typeof (string));
+			dt.Columns.Add ("BaseSchemaName", typeof (string));
+			dt.Columns.Add ("BaseTableName", typeof (string));
+			dt.Columns.Add ("BaseColumnName", typeof (string));
+			dt.Columns.Add ("AutoIncrementSeed", typeof (Int64));
+			dt.Columns.Add ("AutoIncrementStep", typeof (Int64));
+			dt.Columns.Add ("DefaultValue", typeof (object));
+			dt.Columns.Add ("Expression", typeof (string));
+			dt.Columns.Add ("ColumnMapping", typeof (MappingType));
+			dt.Columns.Add ("BaseTableNamespace", typeof (string));
+			dt.Columns.Add ("BaseColumnNamespace", typeof (string));
 
-                                row ["ColumnName"]      = column.ColumnName;
-                                row ["ColumnOrdinal"]   = column.Ordinal;
-                                row ["ColumnSize"]      = column.MaxLength;
-                                row ["NumericPrecision"]= DBNull.Value;
-                                row ["NumericScale"]    = DBNull.Value;
-                                row ["IsUnique"]        = DBNull.Value;
-                                row ["IsKey"]           = DBNull.Value;
-                                row ["DataType"]        = column.DataType;
-                                row ["AllowDBNull"]     = column.AllowDBNull;
-                                row ["IsAliased"]       = DBNull.Value;
-                                row ["IsExpression"]    = DBNull.Value;
-                                row ["IsIdentity"]      = DBNull.Value;
-                                row ["IsAutoIncrement"] = DBNull.Value;
-                                row ["IsRowVersion"]    = DBNull.Value;
-                                row ["IsHidden"]        = DBNull.Value;
-                                row ["IsLong"]          = DBNull.Value;
-                                row ["IsReadOnly"]      = column.ReadOnly;
+			DataRow row;
+			DataColumn col;
+			for (int i=0; i < CurrentTable.Columns.Count; ++i) {
+				row = dt.NewRow ();
+				col = CurrentTable.Columns [i];
+				row ["ColumnName"] = col.ColumnName;
+				row ["BaseColumnName"] = col.ColumnName;
+				row ["ColumnOrdinal"] = col.Ordinal;
+				row ["ColumnSize"] = col.MaxLength;
+				// ms.net doesent set precision and scale even for Decimal values
+				// when are these set ?
+				row ["NumericPrecision"] = DBNull.Value;
+				row ["NumericScale"] = DBNull.Value;
+				row ["DataType"] = col.DataType;
+				row ["ProviderType"] = DBNull.Value; //col.ProviderType;
+				// ms.net doesent set this when datatype is string and maxlength = -1
+				// when is this set ? 
+				row ["IsLong"] = false;
+				row ["AllowDBNull"] = col.AllowDBNull;
+				row ["IsReadOnly"] = col.ReadOnly;
+				row ["IsRowVersion"] = false; //this is always false
+				row ["IsUnique"] = col.Unique;
+				row ["IsKey"] = (Array.IndexOf (CurrentTable.PrimaryKey, col) != -1) ;
+				row ["IsAutoIncrement"]= col.AutoIncrement;
+				row ["AutoIncrementSeed"] = col.AutoIncrementSeed;
+				row ["AutoIncrementStep"] = col.AutoIncrementStep;
+				row ["BaseCatalogName"] = (CurrentTable.DataSet != null ? CurrentTable.DataSet.DataSetName : null);
+				row ["BaseSchemaName"] = DBNull.Value; // this is always null
+				row ["BaseTableName"] = CurrentTable.TableName;
+				row ["DefaultValue"] = col.DefaultValue;
+				// If col expression depends on any external table , then the
+				// Expression value is set to empty string in the schematable.
+				if (col.Expression == "")
+					row ["Expression"] = col.Expression;
+				else {
+					Regex reg = new Regex ("((Parent|Child)( )*[.(])", RegexOptions.IgnoreCase);
+					if (reg.IsMatch (col.Expression, 0))
+						row ["Expression"] = DBNull.Value;
+					else
+						row ["Expression"] = col.Expression;
+				}
 
-                                dt.Rows.Add (row);
-                        }
+				row ["ColumnMapping"] = col.ColumnMapping;
+				row ["BaseTableNamespace"] = CurrentTable.Namespace;
+				row ["BaseColumnNamespace"] = col.Namespace;
+				dt.Rows.Add (row);
+			}
+
                         return _schemaTable = dt;
                 }
 
@@ -349,14 +427,13 @@ namespace System.Data {
                         if (_index >= _tables.Length)
                                 throw new InvalidOperationException ("Invalid attempt to read when " + 
                                                                      "no data is present");
-
                         if (_tableCleared)
                                 throw new RowNotInTableException ("The table is cleared, no rows are " +
                                                                   "accessible");
-                        
 			if (_current == -1)
                                 throw new InvalidOperationException ("DataReader is invalid " + 
                                                                      "for the DataTable");
+			ValidateSchemaIntact ();
                 }
 
                 private void ValidateClosed ()
@@ -365,7 +442,19 @@ namespace System.Data {
                                 throw new InvalidOperationException ("Invalid attempt to read when " + 
                                                                      "the reader is closed");
                 }
-                
+
+		private void ValidateSchemaIntact ()
+		{
+			if (_schemaChanged)
+				throw new InvalidOperationException ("Schema of current DataTable '" + CurrentTable.TableName +
+						"' in DataTableReader has changed, DataTableReader is invalid.");
+		}
+
+		void ThrowInvalidCastException (Type sourceType, Type destType)
+		{
+			throw new InvalidCastException (String.Format ("Unable to cast object of type '{0}' to type '{1}'.", 
+								sourceType, destType));
+		}
                 
                 private bool MoveNext ()
                 {
@@ -410,6 +499,16 @@ namespace System.Data {
                 #endregion // Methods
 
                 #region // Event Handlers
+		
+		private void OnColumnChanged (object sender, PropertyChangedEventArgs args)
+		{
+			_schemaChanged = true;
+		}
+
+		private void OnColumnCollectionChanged (object sender, CollectionChangeEventArgs args) 
+		{
+			_schemaChanged = true;
+		}
 
                 private void OnRowChanged (object src, DataRowChangeEventArgs args)
                 {
@@ -453,7 +552,6 @@ namespace System.Data {
                                         _rowRef = CurrentRow;
                                         return;
                                 }
-                                
                         }
                 }
 

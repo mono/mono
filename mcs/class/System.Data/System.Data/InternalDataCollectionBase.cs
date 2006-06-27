@@ -137,6 +137,11 @@ namespace System.Data
 			return list.GetEnumerator ();
 		}
 
+		internal Array ToArray (Type type)
+		{
+			return list.ToArray (type);
+		}
+
 		#endregion
 	}
 }

@@ -1030,9 +1030,9 @@ namespace System.Data {
 
 #if NET_2_0
 		[MonoTODO]
-		public DataTableReader GetDataReader ()
+		public DataTableReader CreateDataReader ()
 		{
-			throw new NotImplementedException ();
+			return new DataTableReader (this);
 		}
 #endif
 
