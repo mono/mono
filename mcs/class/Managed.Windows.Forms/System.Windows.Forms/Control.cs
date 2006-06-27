@@ -3098,6 +3098,12 @@ namespace System.Windows.Forms
 			ScaleCore(dx, dy);
 		}
 
+#if NET_2_0
+		public void Scale(SizeF factor) {
+			ScaleCore(factor.Width, factor.Height);
+		}
+#endif
+
 		public void Select() {
 			Select(false, false);
 		}
