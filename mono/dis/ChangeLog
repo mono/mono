@@ -1,3 +1,9 @@
+2006-06-27  Ankit Jain  <jankit@novell.com>
+
+	* get.c (get_assemblyref): Escape name.
+	(get_moduleref): Likewise.
+	(get_module): Likewise.
+
 2006-06-02  Ankit Jain  <jankit@novell.com>
 
 	* get.c (dis_stringify_method_signature_full): Fix two memory leaks.
