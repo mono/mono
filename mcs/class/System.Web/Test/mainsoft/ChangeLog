@@ -1,3 +1,7 @@
+2006-27-06 Yoni Klain <yonik@mainsoft.com>
+	
+	* NunitWebTest.cs : Changes for embedded resources
+
 2006-21-05  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* run-test.bat: Added env var TEST_17 for testing 1.7 and 1.8 versions

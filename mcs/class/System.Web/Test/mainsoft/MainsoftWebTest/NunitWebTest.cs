@@ -26,6 +26,9 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
+
+
 using System;
 using System.IO;
 using System.Xml;
@@ -186,21 +189,33 @@ namespace MonoTests.stand_alone.WebHarness
 			XmlNode XmlIgnoreNode;
 			IEnumerator xmlIgnoreEnum;
 
+
 			if (_xmlIgnoreList == null)
 			{
 				_xmlIgnoreList = new XmlDocument();
 				string xml;
-				using (Stream source = Assembly.GetExecutingAssembly()
-					.GetManifestResourceStream ("nunitweb_config.xml")) {
+
+				Stream source = Assembly.GetExecutingAssembly ()
+					.GetManifestResourceStream ("HtmlCompare.nunitweb_config.xml");
+				if (source == null) {
+					source = Assembly.GetExecutingAssembly ()
+					.GetManifestResourceStream ("nunitweb_config.xml");
+				}
+								
+				try {
 					using (StreamReader sr = new StreamReader (source))
 						xml = sr.ReadToEnd ();
 				}
+				finally {
+					source.Dispose ();
+				}
+				
 				_xmlIgnoreList.LoadXml (xml);
 			}
-
 			// Remove by Id or Name
 			// search by tag and if id or name match, remove all attributes
 			// must be the first almost since the following almost delete the id and name
+			
 			xmlIgnoreEnum = _xmlIgnoreList.SelectSingleNode("Almost/RemoveById").GetEnumerator();
 			while (xmlIgnoreEnum.MoveNext())
 			{
