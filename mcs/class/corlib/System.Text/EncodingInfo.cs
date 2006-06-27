@@ -56,7 +56,7 @@ namespace System.Text
 			get {
 				if (encoding == null)
 					encoding = GetEncoding ();
-				return encoding.EncodingName;
+				return encoding.WebName;
 			}
 		}
 
