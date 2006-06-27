@@ -1,3 +1,6 @@
+2006-06-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* gc_wrapper.h: Disable GC_REDIRECT_TO_LOCAL on solaris/x86 as well.
 
 Tue May 23 12:17:51 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
