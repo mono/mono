@@ -1,3 +1,10 @@
+2006-06-27  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Form.cs (ScaleCore): We don't want to scale our form if it's
+	  state is minimized or maximized, but we still need to scale our
+	  child windows. Also, added try/finally block to ensure layout
+	  gets reset (Fixes #78697)
+
 2006-06-27  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Control.cs: Added 2.0 Scale(SizeF) method (Fixes 78700)

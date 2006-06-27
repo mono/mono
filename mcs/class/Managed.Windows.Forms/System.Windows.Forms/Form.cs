@@ -1605,31 +1605,35 @@ namespace System.Windows.Forms {
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void ScaleCore(float dx, float dy) {
-			// We can't scale max or min windows
-			if (WindowState == FormWindowState.Normal) {
-				// We cannot call base since base also adjusts X/Y, but
-				// a form is toplevel and doesn't move
-				Size	size;
-
+			try {
 				SuspendLayout();
 
-				size = ClientSize;
-				if (!GetStyle(ControlStyles.FixedWidth)) {
-					size.Width = (int)(size.Width * dx);
-				}
+				// We can't scale max or min windows
+				if (WindowState == FormWindowState.Normal) {
+					// We cannot call base since base also adjusts X/Y, but
+					// a form is toplevel and doesn't move
+					Size	size;
 
-				if (!GetStyle(ControlStyles.FixedHeight)) {
-					size.Height = (int)(size.Height * dy);
-				}
+					size = ClientSize;
+					if (!GetStyle(ControlStyles.FixedWidth)) {
+						size.Width = (int)(size.Width * dx);
+					}
 
-				ClientSize = size;
+					if (!GetStyle(ControlStyles.FixedHeight)) {
+						size.Height = (int)(size.Height * dy);
+					}
+
+					ClientSize = size;
+				}
 
 				/* Now scale our children */
 				Control [] controls = child_controls.GetAllControls ();
 				for (int i=0; i < controls.Length; i++) {
 					controls[i].Scale(dx, dy);
 				}
-				
+			}
+
+			finally {
 				ResumeLayout();
 			}
 		}
