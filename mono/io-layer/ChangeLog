@@ -1,3 +1,10 @@
+2006-06-23  Dick Porter  <dick@ximian.com>
+
+	* handles.c (handle_cleanup): 
+	* threads.c: Clean up threads properly when we're forcibly
+	removing the handle entries from the shared file in
+	handle_cleanup().  Fixes bug 78241, for real this time.
+
 2006-06-14 Neale Ferguson <neale@sinenomine.net>
 
 	* atomic.h: Fix atomic exchange pointer operations for s390x - these
