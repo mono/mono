@@ -1529,14 +1529,22 @@ namespace System.Windows.Forms {
 				if ((scrollbars & RichTextBoxScrollBars.Horizontal) != 0) {
 					if (((scrollbars & RichTextBoxScrollBars.ForcedHorizontal) != 0) || hscroll.Enabled) {
 						hscroll.Visible = true;
+					} else {
+						hscroll.Visible = false;
 					}
+				} else {
+					hscroll.Visible = false;
 				}
 			}
 
 			if ((scrollbars & RichTextBoxScrollBars.Vertical) != 0) {
 				if (((scrollbars & RichTextBoxScrollBars.ForcedVertical) != 0) || vscroll.Enabled) {
 					vscroll.Visible = true;
+				} else {
+					vscroll.Visible = false;
 				}
+			} else {
+				vscroll.Visible = false;
 			}
 
 			if (hscroll.Visible) {
