@@ -662,6 +662,12 @@ namespace System.Windows.Forms {
 			set {
 				if (minimum_size != value) {
 					minimum_size = value;
+
+					if ((Size.Width < value.Width) || (Size.Height < value.Height)) {
+						Size = new Size(Math.Max(Size.Width, value.Width), Math.Max(Size.Height, value.Height));
+					}
+  
+
 					OnMinimumSizeChanged(EventArgs.Empty);
 					if (IsHandleCreated) {
 						XplatUI.SetWindowMinMax(Handle, maximized_bounds, minimum_size, maximum_size);
@@ -1892,7 +1898,7 @@ namespace System.Windows.Forms {
 							mmi.ptMinTrackSize.y = minimum_size.Height;
 						}
 
-						if (minimum_size != Size.Empty) {
+						if (maximum_size != Size.Empty) {
 							mmi.ptMaxTrackSize.x = maximum_size.Width;
 							mmi.ptMaxTrackSize.y = maximum_size.Height;
 						}
