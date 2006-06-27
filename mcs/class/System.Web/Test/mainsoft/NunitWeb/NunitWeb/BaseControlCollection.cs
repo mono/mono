@@ -4,8 +4,12 @@ using System.Collections.Specialized;
 
 namespace MonoTests.SystemWeb.Framework
 {
-	public class BaseControlCollection : NameObjectCollectionBase 
+	public sealed class BaseControlCollection : NameObjectCollectionBase 
 	{
+		/// <summary>
+		/// Sets or gets the control with the given name. Get is guaranteed
+		/// to return not null value
+		/// </summary>
 		public BaseControl this [string name]
 		{
 			get {return base.BaseGet (name) as BaseControl;}
@@ -17,9 +21,29 @@ namespace MonoTests.SystemWeb.Framework
 			base.BaseRemove (name);
 		}
 
+		/// <summary>
+		/// Add a new control to the collection. If there is control with
+		/// the same name, it will be kept intact.
+		/// </summary>
+		/// <param name="name">The name of a control to be added.</param>
+		public void Add (string name)
+		{
+			BaseControl bc = this[name];
+			if (bc != null)
+				return;
+			bc = new BaseControl ();
+			bc.Name = name;
+			base.BaseAdd (name, bc);
+		}
+
+		/// <summary>
+		/// Add a new control to the collection. If there is control with
+		/// the same name, it will be overwritten.
+		/// </summary>
+		/// <param name="control">New control.</param>
 		public void Add (BaseControl control)
 		{
-			base.BaseAdd (control.Name, control);
+			this [control.Name] = control;
 		}
 
 	}

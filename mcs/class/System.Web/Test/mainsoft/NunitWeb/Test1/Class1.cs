@@ -21,6 +21,7 @@ namespace Test1
 			WebTest.Unload ();
 		}
 
+#if NET_2_0
 		[Test]
 		public void RenderSiteMapPath ()
 		{
@@ -68,13 +69,14 @@ namespace Test1
 			MasterPage mp = p.Master;
 			Assert.IsNotNull (mp);
 		}
-
+#endif
 		[Test]
 		public void TestStyle ()
 		{
-			string res = new WebTest (PageInvoker.CreateOnLoad (_TestStyle)).Run ();
-			Console.WriteLine (res);
-			Assert.IsFalse (string.IsNullOrEmpty (res));
+			string res = new WebTest (PageInvoker.CreateOnLoad (
+				new PageDelegate(_TestStyle))).Run ();
+			Assert.IsNotNull (res);
+			Assert.IsTrue (res != string.Empty);
 		}
 
 		public static void _TestStyle (Page p)
@@ -82,26 +84,29 @@ namespace Test1
 			Button b = new Button ();
 			b.BackColor = Color.Red;
 			b.ID = "Yoni";
-			p.Form.Controls.Add (b);
+			p.Controls.Add (b);
 		}
 
 		[Test]
 		public void TestDefaultRender ()
 		{
-			string str = new WebTest (PageInvoker.CreateOnLoad (_TestDefaultRender)).Run ();
-			Assert.IsFalse (string.IsNullOrEmpty (str));
+			string str = new WebTest (PageInvoker.CreateOnLoad (
+				new PageDelegate(_TestDefaultRender))).Run ();
+			Assert.IsTrue (str!=null && str!=string.Empty);
 		}
 
 		public static void _TestDefaultRender (Page p)
 		{
 			LiteralControl lcb = new LiteralControl ("aaa");
 			LiteralControl lce = new LiteralControl ("bbb");
+			p.Controls.Add (lcb);
+#if NET_2_0
 			Menu menu = new Menu ();
-			p.Form.Controls.Add (lcb);
-			p.Form.Controls.Add (menu);
-			p.Form.Controls.Add (lce);
+			p.Controls.Add (menu);
+#endif
+			p.Controls.Add (lce);
 		}
-
+#if NET_2_0
 		[Test]
 		public void TestSkin ()
 		{
@@ -123,7 +128,7 @@ namespace Test1
 			string res = new WebTest ("MyPageWithTheme.aspx").Run ();
 			Debug.WriteLine (res);			
 		}
-
+#endif
 		[Test]
 		public void UnloadTest ()
 		{
@@ -139,19 +144,18 @@ namespace Test1
 			WebTest t = new WebTest ("Postback.aspx");
 			string res1 = t.Run ();
 			FormRequest fr = new FormRequest (t.Response, "form1");
-			fr.Controls["txt1"].Value = "value";
+			fr.Controls.Add ("txt1");
+			fr.Controls ["txt1"].Value = "value";
+			t.Request = fr;
+			string res2 = t.Run ();
 			WebTest t1 = new WebTest (fr);
-			string res2 = t1.Run ();
-			FormRequest fr1 = new FormRequest (t1.Response, "form1");
-			fr1.Controls["txt1"].Value = "value1";
-			string res3 = new WebTest (fr1).Run ();
-			Assert.IsTrue (res3.IndexOf ("value1") != -1);
 		}
 
 		[Test]
 		public void PostRequest ()
 		{
-			WebTest t = new WebTest (PageInvoker.CreateOnLoad (CheckPostRequest));
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (
+				new PageDelegate (CheckPostRequest)));
 			PostableRequest pr = new PostableRequest ();
 			pr.IsPost = true;
 			t.Request = pr;
