@@ -1,3 +1,22 @@
+2006-06-27  Chris Toshok  <toshok@ximian.com>
+
+	* DataGridTableStyle.cs: clean up the constructors, and build the
+	list of child relations for this table.  I have no idea if this is
+	where we should be doing it (it probably isn't), but since we're
+	already iterating over the properties..
+
+	* DataGrid.cs: add row resizing.  for now we add a DataGridRow
+	struct and array for keeping track of row information, similar to
+	what's shown in a hack on
+	http://www.syncfusion.com/FAQ/WindowsForms/FAQ_c44c.aspx.
+
+	* Theme.cs: be consistent about the naming of DataGrid methods,
+	prefering ColumnWidths and RowHeights over columnsWidths and
+	RowsHeights.
+
+	* ThemeWin32Classic.cs: same, and also add support for variable
+	sized rows (and the +/- expansion icons for related rows).
+
 2006-06-27  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* TextBoxBase.cs: Applied Eno's patch from #78660

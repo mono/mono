@@ -28,6 +28,7 @@
 // NOT COMPLETE
 //
 
+using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.InteropServices;
@@ -79,36 +80,24 @@ namespace System.Windows.Forms
 		private Color				backcolor;
 		private Color				forecolor;
 		private bool				is_default;
+		internal ArrayList                      table_relations;
 		CurrencyManager				manager;
 		#endregion	// Local Variables
 
 		#region Constructors
 		public DataGridTableStyle ()
+			: this (false)
 		{
-			CommonConstructor ();
-			is_default = false;
 		}
 
 		public DataGridTableStyle (bool isDefaultTableStyle)
 		{
-			CommonConstructor ();
 			is_default = isDefaultTableStyle;
-		}
-
-		// TODO: What to do with the CurrencyManager
-		public DataGridTableStyle (CurrencyManager listManager)
-		{
-			CommonConstructor ();
-			is_default = false;
-			manager = listManager;
-		}
-
-		private void CommonConstructor ()
-		{
 			allow_sorting = true;
 			datagrid = null;
 			header_forecolor = def_header_forecolor;
 			mapping_name = string.Empty;
+			table_relations = new ArrayList ();
 			column_styles = new GridColumnStylesCollection (this);
 
 			alternating_backcolor = def_alternating_backcolor;
@@ -128,6 +117,12 @@ namespace System.Windows.Forms
 			rowheaders_width = 35;
 			backcolor = def_backcolor;
 			forecolor = def_forecolor;
+		}
+
+		public DataGridTableStyle (CurrencyManager listManager)
+			: this (false)
+		{
+			manager = listManager;
 		}
 		#endregion
 
@@ -563,6 +558,17 @@ namespace System.Windows.Forms
 			}
 		}
 
+		internal bool HasRelations {
+			get { return table_relations.Count > 0; }
+		}
+
+		internal string[] Relations {
+			get {
+				string[] rel = new string[table_relations.Count];
+				table_relations.CopyTo (rel, 0);
+				return rel;
+			}
+		}
 
 		#endregion Private Instance Properties
 
@@ -869,14 +875,17 @@ namespace System.Windows.Forms
 		// Create column styles for this TableStyle
 		internal void CreateColumnsForTable (bool onlyBind)
 		{
-			CurrencyManager	mgr = null;
+			CurrencyManager	mgr = manager;
 			DataGridColumnStyle st;
-			mgr = datagrid.ListManager;
 
 			if (mgr == null) {
-				return;
+				mgr = datagrid.ListManager;
+
+				if (mgr == null)
+					return;
 			}
 
+			table_relations.Clear ();
 			PropertyDescriptorCollection propcol = mgr.GetItemProperties ();
 
 			for (int i = 0; i < propcol.Count; i++)
@@ -894,11 +903,9 @@ namespace System.Windows.Forms
 					continue;
 				}
 
-
-				// TODO: What to do with relations?
-				if (propcol[i].ComponentType.ToString () == "System.Data.DataTablePropertyDescriptor") {
-					Console.WriteLine ("CreateColumnsForTable::System.Data.DataTablePropertyDescriptor");
-
+				if (typeof (IBindingList).IsAssignableFrom (propcol[i].PropertyType)) {
+					Console.WriteLine ("adding relation {0}", propcol[i].Name);
+					table_relations.Add (propcol[i].Name);
 				} else {
 					st = CreateGridColumn (propcol[i],  true);
 					st.grid = datagrid;

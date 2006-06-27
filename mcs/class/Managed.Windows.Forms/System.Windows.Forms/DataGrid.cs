@@ -36,6 +36,13 @@ using System.Collections;
 
 namespace System.Windows.Forms
 {
+	internal struct DataGridRow {
+		public bool IsSelected;
+		public bool IsExpanded;
+		public int VerticalOffset;
+		public int Height;
+	}
+
 	[DefaultEvent("Navigate")]
 	[DefaultProperty("DataSource")]
 	[Designer("System.Windows.Forms.Design.DataGridDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
@@ -169,7 +176,7 @@ namespace System.Windows.Forms
 		internal HScrollBar horiz_scrollbar;
 		internal VScrollBar vert_scrollbar;
 		internal DataGridDrawing grid_drawing;
-		internal int first_visiblerow;
+		private int first_visiblerow;
 		internal int horz_pixeloffset;
 		bool is_adding;			// Indicates when we are adding a row
 		bool is_editing;		// Current cell is edit mode
@@ -180,12 +187,18 @@ namespace System.Windows.Forms
 		private bool begininit;
 		private CurrencyManager list_manager;
 		private bool accept_listmgrevents;
+		internal DataGridRow[] rows;
 
 		bool column_resize_active;
 		int resize_column_x;
 		int resize_column_width_delta;
 		int resize_column;
 		
+		bool row_resize_active;
+		int resize_row_y;
+		int resize_row_height_delta;
+		int resize_row;
+
 		bool from_positionchanged_handler;
 
 		Stack memberHistory;
@@ -244,6 +257,7 @@ namespace System.Windows.Forms
 			expanded_rows = new Hashtable ();
 			preferredrow_height = def_preferredrow_height = FontHeight + 3;
 			list_manager = null;
+			rows = new DataGridRow[0];
 			accept_listmgrevents = true;
 
 			default_style = new DataGridTableStyle (true);
@@ -534,6 +548,7 @@ namespace System.Windows.Forms
 		public object DataSource {
 			get { return datasource; }
 			set {
+				SetDataMember ("");
 				SetDataSource (value);
 				SetNewDataSource ();					
 			}
@@ -680,6 +695,12 @@ namespace System.Windows.Forms
 				if (list_manager != null)
 					ConnectListManagerEvents ();
 
+				rows = new DataGridRow [list_manager.Count + 1];
+				for (int i = 0; i < rows.Length; i ++) {
+					rows[i].Height = RowHeight;
+					if (i > 0)
+						rows[i].VerticalOffset = rows[i-1].VerticalOffset + rows[i-1].Height;
+				}
 				return list_manager;
 			}
 			set { throw new NotSupportedException ("Operation is not supported."); }
@@ -849,7 +870,7 @@ namespace System.Windows.Forms
 			get { return visiblecolumn_count; }
 		}
 
-		// Calculated at DataGridDrawing.CalcRowsHeaders
+		// Calculated at DataGridDrawing.CalcRowHeaders
 		[Browsable(false)]
 		public int VisibleRowCount {
 			get { return visiblerow_count; }
@@ -964,8 +985,12 @@ namespace System.Windows.Forms
 		[MonoTODO]
 		public void Collapse (int row)
 		{
+			if (!expanded_rows.ContainsKey (row))
+				return;
+
 			expanded_rows.Remove (row);
 			/* XX need to redraw from @row down */
+			CalcAreasAndInvalidate ();			
 		}
 
 		protected internal virtual void ColumnStartedEditing (Control editingControl)
@@ -1040,8 +1065,12 @@ namespace System.Windows.Forms
 
 		public void Expand (int row)
 		{
+			if (expanded_rows.ContainsKey (row))
+				return;
+
 			expanded_rows[row] = true;
 			/* XX need to redraw from @row down */
+			CalcAreasAndInvalidate ();			
 		}
 
 		public Rectangle GetCellBounds (DataGridCell cell)
@@ -1301,11 +1330,28 @@ namespace System.Windows.Forms
 			}
 			case HitTestType.RowHeader:
 			{
-				if (ctrl_pressed == false && shift_pressed == false) {
+				bool expansion_click = false;
+				if (CurrentTableStyle.HasRelations) {
+					if (e.X > grid_drawing.rowhdrs_area.X + grid_drawing.rowhdrs_area.Width / 2) {
+						/* it's in the +/- space */
+						if (IsExpanded (testinfo.Row))
+							Collapse (testinfo.Row);
+						else
+							Expand (testinfo.Row);
+
+						expansion_click = true;
+					}
+				}
+
+				if (!ctrl_pressed &&
+				    !shift_pressed &&
+				    !expansion_click) {
 					ResetSelection (); // Invalidates selected rows
 				}
 
-				if (shift_pressed == true && selection_start != -1) {
+				if ((shift_pressed ||
+				     expansion_click)
+				    && selection_start != -1) {
 					ShiftSelection (testinfo.Row);
 				} else { // ctrl_pressed or single item
 					selection_start = testinfo.Row;
@@ -1358,7 +1404,17 @@ namespace System.Windows.Forms
 				column_resize_active = true;
 				resize_column_x = e.X;
 				resize_column_width_delta = 0;
-				grid_drawing.DrawResizeLine (resize_column_x);
+				grid_drawing.DrawResizeLineVert (resize_column_x);
+				break;
+			}
+
+			case HitTestType.RowResize:
+			{
+				resize_row = testinfo.Row;
+				row_resize_active = true;
+				resize_row_y = e.Y;
+				resize_row_height_delta = 0;
+				grid_drawing.DrawResizeLineHoriz (resize_row_y);
 				break;
 			}
 
@@ -1378,12 +1434,22 @@ namespace System.Windows.Forms
 
 			if (column_resize_active) {
 				/* erase the old line */
-				grid_drawing.DrawResizeLine (resize_column_x + resize_column_width_delta);
+				grid_drawing.DrawResizeLineVert (resize_column_x + resize_column_width_delta);
 
 				resize_column_width_delta = e.X - resize_column_x;
 
 				/* draw the new line */
-				grid_drawing.DrawResizeLine (resize_column_x + resize_column_width_delta);
+				grid_drawing.DrawResizeLineVert (resize_column_x + resize_column_width_delta);
+				return;
+			}
+			else if (row_resize_active) {
+				/* erase the old line */
+				grid_drawing.DrawResizeLineHoriz (resize_row_y + resize_row_height_delta);
+
+				resize_row_height_delta = e.Y - resize_row_y;
+
+				/* draw the new line */
+				grid_drawing.DrawResizeLineHoriz (resize_row_y + resize_row_height_delta);
 				return;
 			}
 			else {
@@ -1415,6 +1481,18 @@ namespace System.Windows.Forms
 					new_width = 0;
 				CurrentTableStyle.GridColumnStyles[resize_column].Width = new_width;
 				Invalidate ();
+			}
+			else if (row_resize_active) {
+				row_resize_active = false;
+
+				if (resize_row_height_delta + rows[resize_row].Height < 0)
+					resize_row_height_delta = -rows[resize_row].Height;
+
+				rows[resize_row].Height = rows[resize_row].Height + resize_row_height_delta;
+				for (int i = resize_row + 1; i < rows.Length; i ++)
+					rows[i].VerticalOffset += resize_row_height_delta;
+
+				CalcAreasAndInvalidate ();
 			}
 		}
 
@@ -1865,7 +1943,6 @@ namespace System.Windows.Forms
 
 		public void SubObjectsSiteChange (bool site)
 		{
-
 		}
 
 		public void UnSelect (int row)
@@ -2101,8 +2178,8 @@ namespace System.Windows.Forms
 			grid_drawing.UpdateVisibleColumn ();
 
 			if (columnheaders_visible == true) {
-				area.Y -= grid_drawing.ColumnsHeadersArea.Height;
-				area.Height += grid_drawing.ColumnsHeadersArea.Height;
+				area.Y -= grid_drawing.ColumnHeadersArea.Height;
+				area.Height += grid_drawing.ColumnHeadersArea.Height;
 			}
 
 			XplatUI.ScrollWindow (Handle, area, pixels, 0, false);
@@ -2110,13 +2187,16 @@ namespace System.Windows.Forms
 
 		private void ScrollToRow (int old_row, int new_row)
 		{
-			int pixels;
+			int pixels = 0;
+			int i;
 
 			if (new_row > old_row) { // Scrolldown
-				pixels = -1 * (new_row - old_row) * RowHeight;
+				for (i = old_row; i < new_row; i ++)
+					pixels -= rows[i].Height;
 			}
 			else {
-				pixels = (old_row - new_row) * RowHeight;
+				for (i = new_row; i < old_row; i ++)
+					pixels += rows[i].Height;
 			}
 
 			Rectangle rows_area = grid_drawing.CellsArea; // Cells area - partial rows space

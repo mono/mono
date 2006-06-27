@@ -41,10 +41,10 @@ namespace System.Windows.Forms
 		// Areas
 		internal Rectangle caption_area;
 		internal Rectangle parent_rows;
-		internal Rectangle columnshdrs_area;	// Used columns header area
-		internal int columnshdrs_maxwidth; 	// Total width (max width) for columns headrs
-		internal Rectangle rowshdrs_area;	// Used Headers rows area
-		internal int rowshdrs_maxheight; 	// Total height for rows (max height)
+		internal Rectangle columnhdrs_area;	// Used columns header area
+		internal int columnhdrs_maxwidth; 	// Total width (max width) for columns headrs
+		internal Rectangle rowhdrs_area;	// Used Headers rows area
+		internal int rowhdrs_maxheight; 	// Total height for rows (max height)
 		internal Rectangle cells_area;
 		internal Font font_newrow = new Font (FontFamily.GenericSansSerif, 16);
 		#endregion // Local Variables
@@ -81,8 +81,8 @@ namespace System.Windows.Forms
 				return 0;
 				
 			if (grid.CurrentTableStyle.CurrentRowHeadersVisible) {
-				width += rowshdrs_area.X + rowshdrs_area.Width;
-				column_x += rowshdrs_area.X + rowshdrs_area.Width;
+				width += rowhdrs_area.X + rowhdrs_area.Width;
+				column_x += rowhdrs_area.X + rowhdrs_area.Width;
 			}
 
 			for (int col = 0; col < cnt; col++) {
@@ -150,8 +150,9 @@ namespace System.Windows.Forms
 			grid.horz_pixeloffset = 0;			
 			CalcCaption ();
 			CalcParentRows ();
-			CalcRowsHeaders (grid.visiblerow_count);
-			CalcColumnsHeader ();
+			UpdateVisibleRowCount ();
+			CalcRowHeaders (grid.visiblerow_count);
+			CalcColumnHeaders ();
 			CalcCellsArea ();
 
 			bool needHoriz = false;
@@ -199,8 +200,8 @@ namespace System.Windows.Forms
 				}
 
 				if (!ShowingColumnHeaders) {
-					if (columnshdrs_area.X + columnshdrs_area.Width > grid.vert_scrollbar.Location.X) {
-						columnshdrs_area.Width -= grid.vert_scrollbar.Width;
+					if (columnhdrs_area.X + columnhdrs_area.Width > grid.vert_scrollbar.Location.X) {
+						columnhdrs_area.Width -= grid.vert_scrollbar.Width;
 					}
 				}
 
@@ -209,9 +210,9 @@ namespace System.Windows.Forms
 			}
 
 			if (needVert) {
-				if (rowshdrs_area.Y + rowshdrs_area.Height > grid.ClientRectangle.Y + grid.ClientRectangle.Height) {
-					rowshdrs_area.Height -= grid.horiz_scrollbar.Height;
-					rowshdrs_maxheight -= grid.horiz_scrollbar.Height;
+				if (rowhdrs_area.Y + rowhdrs_area.Height > grid.ClientRectangle.Y + grid.ClientRectangle.Height) {
+					rowhdrs_area.Height -= grid.horiz_scrollbar.Height;
+					rowhdrs_maxheight -= grid.horiz_scrollbar.Height;
 				}
 
 				grid.vert_scrollbar.Height = vert_scrollbar_height;
@@ -240,8 +241,8 @@ namespace System.Windows.Forms
 
 			//Console.WriteLine ("DataGridDrawing.CalcGridAreas caption_area:{0}", caption_area);
 			//Console.WriteLine ("DataGridDrawing.CalcGridAreas parent_rows:{0}", parent_rows);
-			//Console.WriteLine ("DataGridDrawing.CalcGridAreas rowshdrs_area:{0}", rowshdrs_area);
-			//Console.WriteLine ("DataGridDrawing.CalcGridAreas columnshdrs_area:{0}", columnshdrs_area);
+			//Console.WriteLine ("DataGridDrawing.CalcGridAreas rowhdrs_area:{0}", rowhdrs_area);
+			//Console.WriteLine ("DataGridDrawing.CalcGridAreas columnhdrs_area:{0}", columnhdrs_area);
 			//Console.WriteLine ("DataGridDrawing.CalcGridAreas cells:{0}", cells_area);
 
 			in_calc_grid_areas = false;
@@ -275,58 +276,58 @@ namespace System.Windows.Forms
 			}
 
 			if (ShowingColumnHeaders) {
-				cells_area.Y += columnshdrs_area.Height;
+				cells_area.Y += columnhdrs_area.Height;
 			}
 
-			cells_area.X = grid.ClientRectangle.X + rowshdrs_area.Width;
+			cells_area.X = grid.ClientRectangle.X + rowhdrs_area.Width;
 			cells_area.Width = grid.ClientRectangle.X + grid.ClientRectangle.Width - cells_area.X;
 			cells_area.Height = grid.ClientRectangle.Y + grid.ClientRectangle.Height - cells_area.Y;
 
 			//Console.WriteLine ("DataGridDrawing.CalcCellsArea {0}", cells_area);
 		}
 
-		private void CalcColumnsHeader ()
+		private void CalcColumnHeaders ()
 		{
 			int width_all_cols, max_width_cols;
 			
 			if (!ShowingColumnHeaders) {
-				columnshdrs_area = Rectangle.Empty;				
+				columnhdrs_area = Rectangle.Empty;				
 				return;
 			}
 
 			if (grid.caption_visible) {
-				columnshdrs_area.Y = caption_area.Y + caption_area.Height;
+				columnhdrs_area.Y = caption_area.Y + caption_area.Height;
 			} else {
-				columnshdrs_area.Y = grid.ClientRectangle.Y;
+				columnhdrs_area.Y = grid.ClientRectangle.Y;
 			}
 
 			if (grid.ShowParentRowsVisible) {
-				columnshdrs_area.Y += parent_rows.Height;
+				columnhdrs_area.Y += parent_rows.Height;
 			}
 
-			columnshdrs_area.X = grid.ClientRectangle.X;
-			columnshdrs_area.Height = ColumnsHeaderHeight;
+			columnhdrs_area.X = grid.ClientRectangle.X;
+			columnhdrs_area.Height = ColumnHeadersHeight;
 			width_all_cols = CalcAllColumnsWidth ();
 
 			// TODO: take into account Scrollbars
-			columnshdrs_maxwidth = grid.ClientRectangle.X + grid.ClientRectangle.Width - columnshdrs_area.X;
-			max_width_cols = columnshdrs_maxwidth;
+			columnhdrs_maxwidth = grid.ClientRectangle.X + grid.ClientRectangle.Width - columnhdrs_area.X;
+			max_width_cols = columnhdrs_maxwidth;
 
 			if (grid.CurrentTableStyle.CurrentRowHeadersVisible) {
 				max_width_cols -= grid.RowHeaderWidth;
 			}
 
 			if (width_all_cols > max_width_cols) {
-				columnshdrs_area.Width = columnshdrs_maxwidth;
+				columnhdrs_area.Width = columnhdrs_maxwidth;
 			} else {
-				columnshdrs_area.Width = width_all_cols;
+				columnhdrs_area.Width = width_all_cols;
 
 				if (grid.CurrentTableStyle.CurrentRowHeadersVisible) {
-					columnshdrs_area.Width += grid.RowHeaderWidth;
+					columnhdrs_area.Width += grid.RowHeaderWidth;
 				}
 			}
 
-			//Console.WriteLine ("DataGridDrawing.CalcColumnsHeader {0}", columnshdrs_area);
+			//Console.WriteLine ("DataGridDrawing.CalcColumnHeaders {0}", columnhdrs_area);
 		}
 
 		private void CalcParentRows ()
@@ -350,61 +351,67 @@ namespace System.Windows.Forms
 			//Console.WriteLine ("DataGridDrawing.CalcParentRows {0}", parent_rows);
 		}
 
-		private void CalcRowsHeaders (int visiblerow_count)
+		private void CalcRowHeaders (int visiblerow_count)
 		{
 			if (grid.CurrentTableStyle.CurrentRowHeadersVisible == false) {
-				rowshdrs_area = Rectangle.Empty;
+				rowhdrs_area = Rectangle.Empty;
 				return;
 			}
 
 			if (grid.caption_visible) {
-				rowshdrs_area.Y = caption_area.Y + caption_area.Height;
+				rowhdrs_area.Y = caption_area.Y + caption_area.Height;
 			} else {
-				rowshdrs_area.Y = grid.ClientRectangle.Y;
+				rowhdrs_area.Y = grid.ClientRectangle.Y;
 			}
 
 			if (grid.ShowParentRowsVisible) {
-				rowshdrs_area.Y += parent_rows.Height;
+				rowhdrs_area.Y += parent_rows.Height;
 			}
 
 			if (ShowingColumnHeaders) { // first block is painted by ColumnHeader
-				rowshdrs_area.Y += ColumnsHeaderHeight;
+				rowhdrs_area.Y += ColumnHeadersHeight;
 			}
 
-			rowshdrs_area.X = grid.ClientRectangle.X;
-			rowshdrs_area.Width = grid.RowHeaderWidth;
-			rowshdrs_area.Height = visiblerow_count * grid.RowHeight;
-			rowshdrs_maxheight = grid.ClientRectangle.Height + grid.ClientRectangle.Y - rowshdrs_area.Y;
+			rowhdrs_area.X = grid.ClientRectangle.X;
+			rowhdrs_area.Width = grid.RowHeaderWidth;
+			if (visiblerow_count == 0)
+				rowhdrs_area.Height = 0;
+			else
+				rowhdrs_area.Height = (grid.rows[visiblerow_count + grid.FirstVisibleRow - 1].VerticalOffset - grid.rows[grid.FirstVisibleRow].VerticalOffset
+						       + grid.rows[visiblerow_count + grid.FirstVisibleRow - 1].Height);
+			rowhdrs_maxheight = grid.ClientRectangle.Height + grid.ClientRectangle.Y - rowhdrs_area.Y;
 
-			//Console.WriteLine ("DataGridDrawing.CalcRowsHeaders {0} {1}", rowshdrs_area,
-			//	rowshdrs_maxheight);
+			//Console.WriteLine ("DataGridDrawing.CalcRowHeaders {0} {1}", rowhdrs_area,
+			//	rowhdrs_maxheight);
 		}
 
 		private int GetVisibleRowCount (int visibleHeight)
 		{
-			int rv;
+			//			Console.Write ("GetVisibleRowCount ({0}) - ", visibleHeight);
 			int total_rows = grid.RowsCount;
 			
 			if (grid.ShowEditRow && grid.RowsCount > 0) {
 				total_rows++;
 			}
 
-			int rows_height = (total_rows - grid.first_visiblerow) * grid.RowHeight;
-			int max_rows = visibleHeight / grid.RowHeight;
-						
-			if (max_rows > total_rows) {
-				max_rows = total_rows;
+			int rows_height = 0;
+			int r;
+			for (r = grid.FirstVisibleRow; r < grid.RowsCount; r ++) {
+				//				Console.Write ("{0},", grid.rows[r].Height);
+				if (rows_height + grid.rows[r].Height >= visibleHeight)
+					break;
+				rows_height += grid.rows[r].Height;
 			}
 
-			if (rows_height > cells_area.Height) {
-				rv = max_rows;
-			} else {
-				rv = total_rows;
-			}	
+			/* add in the edit row if it'll fit */
+			if (grid.ShowEditRow && grid.RowsCount > 0 && visibleHeight - rows_height > grid.RowHeight)
+				r ++;
 
-			if (rv + grid.first_visiblerow > total_rows)
-				rv = total_rows - grid.first_visiblerow;
-			return rv;
+			if (r < grid.rows.Length - 1)
+				r ++;
+			//			Console.WriteLine (" rows_height = {0}, returning {1}", rows_height, r - grid.FirstVisibleRow);
+
+			return r - grid.FirstVisibleRow;
 		}
 
 		public void UpdateVisibleColumn ()
@@ -431,44 +438,28 @@ namespace System.Windows.Forms
 
 		public void UpdateVisibleRowCount ()
 		{
-			int max_height = cells_area.Height;
-			int max_rows = max_height / grid.RowHeight;
+			grid.visiblerow_count = GetVisibleRowCount (cells_area.Height);
 
-			int total_rows = grid.RowsCount;
-			
-			if (grid.ShowEditRow && grid.RowsCount > 0) {
-				total_rows++;
-			}
+			CalcRowHeaders (grid.visiblerow_count); // Height depends on num of visible rows
 
-			if (max_rows > total_rows) {
-				max_rows = total_rows;
-			}
-
-			grid.visiblerow_count = GetVisibleRowCount (max_height);
-
-			CalcRowsHeaders (grid.visiblerow_count); // Height depends on num of visible rows		
-
-			if (grid.visiblerow_count < max_rows) {
-				grid.visiblerow_count = max_rows;
-				grid.first_visiblerow = total_rows - max_rows;
-				grid.Invalidate ();
-			}
-			
+			// XXX
+			grid.Invalidate ();
 		}
 
-		const int RESIZE_AREA_SIZE = 5;
+		const int RESIZE_HANDLE_HORIZ_SIZE = 5;
+		const int RESIZE_HANDLE_VERT_SIZE = 3;
 
 		// From Point to Cell
 		public DataGrid.HitTestInfo HitTest (int x, int y)
 		{
 			DataGrid.HitTestInfo hit = new DataGrid.HitTestInfo ();
 
-			if (columnshdrs_area.Contains (x, y)) {
+			if (columnhdrs_area.Contains (x, y)) {
 				int offset_x = x + grid.horz_pixeloffset;
 				int column_x;
 				int column_under_mouse = FromPixelToColumn (offset_x, out column_x);
 				
-				if ((column_x + grid.CurrentTableStyle.GridColumnStyles[column_under_mouse].Width - offset_x < RESIZE_AREA_SIZE)
+				if ((column_x + grid.CurrentTableStyle.GridColumnStyles[column_under_mouse].Width - offset_x < RESIZE_HANDLE_HORIZ_SIZE)
 				    && column_under_mouse < grid.CurrentTableStyle.GridColumnStyles.Count) {
 					hit.type = DataGrid.HitTestType.ColumnResize;
 					hit.column = column_under_mouse;
@@ -480,14 +471,18 @@ namespace System.Windows.Forms
 				return hit;
 			}
 
-			// TODO: Add missing RowResize checks
-			if (rowshdrs_area.Contains (x, y)) {
-				hit.type = DataGrid.HitTestType.RowHeader;
+			if (rowhdrs_area.Contains (x, y)) {
 				int posy;
 				int rcnt = grid.FirstVisibleRow + grid.VisibleRowCount;
 				for (int r = grid.FirstVisibleRow; r < rcnt; r++) {
-					posy = cells_area.Y + ((r - grid.FirstVisibleRow) * grid.RowHeight);
-					if (y <= posy + grid.RowHeight) { // Found row
+					posy = cells_area.Y + grid.rows[r].VerticalOffset - grid.rows[grid.FirstVisibleRow].VerticalOffset;
+					if (y <= posy + grid.rows[r].Height) {
+						if ((posy + grid.rows[r].Height) - y < RESIZE_HANDLE_VERT_SIZE) {
+							hit.type = DataGrid.HitTestType.RowResize;
+						}
+						else {
+							hit.type = DataGrid.HitTestType.RowHeader;
+						}
 						hit.row = r;
 						break;
 					}
@@ -508,9 +503,9 @@ namespace System.Windows.Forms
 			int pos_y, pos_x, width;
 			int rowcnt = grid.FirstVisibleRow + grid.VisibleRowCount;
 			for (int row = grid.FirstVisibleRow; row < rowcnt; row++) {
-				pos_y = cells_area.Y + ((row - grid.FirstVisibleRow) * grid.RowHeight);
 
-				if (y <= pos_y + grid.RowHeight) { // Found row
+				pos_y = cells_area.Y + grid.rows[row].VerticalOffset - grid.rows[grid.FirstVisibleRow].VerticalOffset;
+				if (y <= pos_y + grid.rows[row].Height) {
 					hit.row = row;
 					hit.type = DataGrid.HitTestType.Cell;					
 					int col_pixel;
@@ -540,8 +535,8 @@ namespace System.Windows.Forms
 			int col_pixel;
 
 			bounds.Width = grid.CurrentTableStyle.GridColumnStyles[col].Width;
-			bounds.Height = grid.RowHeight;
-			bounds.Y = cells_area.Y + ((row - grid.FirstVisibleRow) * grid.RowHeight);
+			bounds.Height = grid.rows[row].Height;
+			bounds.Y = cells_area.Y + grid.rows[row].VerticalOffset - grid.rows[grid.FirstVisibleRow].VerticalOffset;
 			col_pixel = GetColumnStartingPixel (col);
 			bounds.X = cells_area.X + col_pixel - grid.horz_pixeloffset;
 			return bounds;
@@ -576,18 +571,18 @@ namespace System.Windows.Forms
 				row_width = cells_area.Width;
 			rect_row.X = cells_area.X;
 			rect_row.Width = row_width;
-			rect_row.Height = grid.RowHeight;
-			rect_row.Y = cells_area.Y + ((row - grid.FirstVisibleRow) * grid.RowHeight);
+			rect_row.Height = grid.rows[row].Height;
+			rect_row.Y = cells_area.Y + grid.rows[row].VerticalOffset - grid.rows[grid.FirstVisibleRow].VerticalOffset;
 			grid.Invalidate (rect_row);
 		}
 
 		public void InvalidateRowHeader (int row)
 		{
 			Rectangle rect_rowhdr = new Rectangle ();
-			rect_rowhdr.X = rowshdrs_area.X;
-			rect_rowhdr.Width = rowshdrs_area.Width;
-			rect_rowhdr.Height = grid.RowHeight;
-			rect_rowhdr.Y = rowshdrs_area.Y + ((row - grid.FirstVisibleRow) * grid.RowHeight);
+			rect_rowhdr.X = rowhdrs_area.X;
+			rect_rowhdr.Width = rowhdrs_area.Width;
+			rect_rowhdr.Height = grid.rows[row].Height;
+			rect_rowhdr.Y = rowhdrs_area.Y + grid.rows[row].VerticalOffset - grid.rows[grid.FirstVisibleRow].VerticalOffset;
 			grid.Invalidate (rect_rowhdr);
 		}	
 
@@ -611,11 +606,18 @@ namespace System.Windows.Forms
 			grid.Invalidate (rect_col);
 		}
 
-		public void DrawResizeLine (int x)
+		public void DrawResizeLineVert (int x)
 		{
 			XplatUI.DrawReversibleRectangle (grid.Handle,
-							 new Rectangle (x, CellsArea.Y, 1, CellsArea.Height),
-							 3);
+							 new Rectangle (x, cells_area.Y, 1, cells_area.Height - 3),
+							 2);
+		}
+
+		public void DrawResizeLineHoriz (int y)
+		{
+			XplatUI.DrawReversibleRectangle (grid.Handle,
+							 new Rectangle (cells_area.X, y, cells_area.Width - 3, 1),
+							 2);
 		}
 
 		void SetUpHorizontalScrollBar (out int maximum)
@@ -668,10 +670,10 @@ namespace System.Windows.Forms
 			}
 		}
 
-		// Returns the ColumnsHeader area excluding the rectangle shared with RowsHeader
-		public Rectangle ColumnsHeadersArea {
+		// Returns the ColumnHeaders area excluding the rectangle shared with RowHeaders
+		public Rectangle ColumnHeadersArea {
 			get {
-				Rectangle columns_area = columnshdrs_area;
+				Rectangle columns_area = columnhdrs_area;
 
 				if (grid.CurrentTableStyle.CurrentRowHeadersVisible) {
 					columns_area.X += grid.RowHeaderWidth;
@@ -685,21 +687,21 @@ namespace System.Windows.Forms
 			get { return grid.columnheaders_visible != false && grid.CurrentTableStyle.GridColumnStyles.Count > 0; }
 		}
 
-		int ColumnsHeaderHeight {
+		int ColumnHeadersHeight {
 			get {
 				return grid.CurrentTableStyle.HeaderFont.Height + 6;
 			}
 		}
 
-		public Rectangle RowsHeadersArea {
+		public Rectangle RowHeadersArea {
 			get {
-				return rowshdrs_area;
+				return rowhdrs_area;
 			}
 		}
 
 		public int VLargeChange {
 			get {
-				return cells_area.Height / grid.RowHeight;
+				return grid.VisibleRowCount;
 			}
 		}
 
