@@ -383,8 +383,11 @@ namespace System {
 					}
 
 					if (c == 'e' || c == 'E'){
-						if ((style & NumberStyles.AllowExponent) == 0)
-							throw new FormatException ("Unknown char: " + c);
+						if ((style & NumberStyles.AllowExponent) == 0) {
+							if (!tryParse)
+								exc = new FormatException ("Unknown char: " + c);
+							return false;
+						}
 						b [didx++] = (byte) c;
 						state = State_ExponentSign;
 						break;

@@ -1,3 +1,7 @@
+2006-06-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DoubleTest.cs : added test for bug #78546.
+
 2006-06-20  Jb Evain  <jbevain@gmail.com>
 
 	* MathTest.cs: add tests for Math.Truncate.

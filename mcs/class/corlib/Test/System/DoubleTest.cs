@@ -504,6 +504,14 @@ namespace MonoTests.System {
 		}
 
 		[Test]
+		public void TryParseBug78546 ()
+		{
+			double value;
+			Assert (!Double.TryParse ("error",
+				NumberStyles.Integer, null, out value));
+		}
+
+		[Test]
 		[ExpectedException (typeof (FormatException))]
 		public void ParseEmptyString ()
 		{

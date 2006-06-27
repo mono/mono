@@ -1,3 +1,8 @@
+2006-06-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Double.cs : don't throw Exception in TryParse() for 'E'.
+	  Fixed bug #78546.
+
 2006-06-20  Jb Evain  <jbevain@gmail.com>
 
 	* Math.cs: implement Math.Truncate.
