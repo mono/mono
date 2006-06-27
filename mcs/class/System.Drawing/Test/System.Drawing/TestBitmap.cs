@@ -112,7 +112,8 @@ namespace MonoTests.System.Drawing{
 			
 			return sRslt;
 		}
-		
+
+		// note: this test fails when saving (for the same reason) on Mono and MS.NET
 		//[Test]
 		public void MakeTransparent() 
 		{
@@ -418,7 +419,8 @@ namespace MonoTests.System.Drawing{
 			firsts, changes them, and then using GetPixel does another check of the changes.
 			The results match the .Net framework
 		*/
-		//[Test]
+		[Test]
+		[Category ("NotWorking")]
 		public void LockBitmap ()
 		{	
 			string hash = "";		

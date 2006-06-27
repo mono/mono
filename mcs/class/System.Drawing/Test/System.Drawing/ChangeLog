@@ -1,3 +1,8 @@
+2006-06-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestBitmap.cs: Reactivate a test case (LockBitmap) as NotWorking and
+	add a comment on a commented one (MakeTransparent ;-)
+
 2006-06-12 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TestBitmap.cs: add test for stride with 1bpp indexed bitmap.
