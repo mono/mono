@@ -1,5 +1,15 @@
 2006-06-27  Chris Toshok  <toshok@ximian.com>
 
+	* ThemeWin32Classic.cs: s/grid.grid_drawing/grid
+
+	* DataGridColumnStyle.cs: same.
+
+	* DataGrid.cs: Roll DataGridDrawingLogic.cs into this file.
+	
+	* DataGridDrawingLogic.cs: nuke.
+
+2006-06-27  Chris Toshok  <toshok@ximian.com>
+
 	* DataGridTableStyle.cs: clean up the constructors, and build the
 	list of child relations for this table.  I have no idea if this is
 	where we should be doing it (it probably isn't), but since we're

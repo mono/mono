@@ -175,7 +175,6 @@ namespace System.Windows.Forms
 		private DataGridTableStyle current_style;
 		internal HScrollBar horiz_scrollbar;
 		internal VScrollBar vert_scrollbar;
-		internal DataGridDrawing grid_drawing;
 		private int first_visiblerow;
 		internal int horz_pixeloffset;
 		bool is_adding;			// Indicates when we are adding a row
@@ -208,7 +207,6 @@ namespace System.Windows.Forms
 		#region Public Constructors
 		public DataGrid ()
 		{
-			grid_drawing = new DataGridDrawing (this);
 			allow_navigation = true;
 			allow_sorting = true;
 			begininit = false;
@@ -306,7 +304,7 @@ namespace System.Windows.Forms
 			set {
 				if (alternating_backcolor != value) {
 					alternating_backcolor = value;
-					grid_drawing.InvalidateCells ();
+					InvalidateCells ();
 				}
 			}
 		}
@@ -316,7 +314,7 @@ namespace System.Windows.Forms
 			set {
 				if (backColor != value) {
 					backColor = value;
-					grid_drawing.InvalidateCells ();
+					InvalidateCells ();
 				}
 			}
 		}
@@ -358,7 +356,7 @@ namespace System.Windows.Forms
 			set {
 				if (caption_backcolor != value) {
 					caption_backcolor = value;
-					grid_drawing.InvalidateCaption ();
+					InvalidateCaption ();
 				}
 			}
 		}
@@ -388,7 +386,7 @@ namespace System.Windows.Forms
 			set {
 				if (caption_forecolor != value) {
 					caption_forecolor = value;
-					grid_drawing.InvalidateCaption ();
+					InvalidateCaption ();
 				}
 			}
 		}
@@ -400,7 +398,7 @@ namespace System.Windows.Forms
 			set {
 				if (caption_text != value) {
 					caption_text = value;
-					grid_drawing.InvalidateCaption ();
+					InvalidateCaption ();
 				}
 			}
 		}
@@ -461,7 +459,7 @@ namespace System.Windows.Forms
 				if (value.RowNumber != old_row && is_adding && !is_changing) {
 					is_adding = false;
 					ListManager.CancelCurrentEdit ();
-					grid_drawing.UpdateVisibleRowCount ();
+					UpdateVisibleRowCount ();
 				}
 #endif
 
@@ -483,7 +481,7 @@ namespace System.Windows.Forms
 				current_cell = value;					
 			
 				if (current_cell.RowNumber != old_row) {
-					grid_drawing.InvalidateRowHeader (old_row);
+					InvalidateRowHeader (old_row);
 				}
 
 				if (!from_positionchanged_handler && !is_adding)
@@ -969,7 +967,7 @@ namespace System.Windows.Forms
 				if (current_cell.ColumnNumber < CurrentTableStyle.GridColumnStyles.Count)
 					CurrentTableStyle.GridColumnStyles[current_cell.ColumnNumber].Abort (current_cell.RowNumber);
 				is_changing = false;
-				grid_drawing.InvalidateRowHeader (current_cell.RowNumber);
+				InvalidateRowHeader (current_cell.RowNumber);
 			}
 
 			if (is_adding) {
@@ -1078,11 +1076,6 @@ namespace System.Windows.Forms
 			return GetCellBounds (cell.RowNumber, cell.ColumnNumber);
 		}
 
-		public Rectangle GetCellBounds (int row, int col)
-		{
-			return grid_drawing.GetCellBounds (row, col);
-		}
-
 		public Rectangle GetCurrentCellBounds ()
 		{
 			return GetCellBounds (current_cell.RowNumber, current_cell.ColumnNumber);
@@ -1111,7 +1104,7 @@ namespace System.Windows.Forms
 			if (first_visiblerow == old_first_visiblerow)
 				return;
 
-			grid_drawing.UpdateVisibleRowCount ();
+			UpdateVisibleRowCount ();
 
 			if (first_visiblerow == old_first_visiblerow)
 				return;
@@ -1122,11 +1115,6 @@ namespace System.Windows.Forms
 		public HitTestInfo HitTest (Point position)
 		{
 			return HitTest (position.X, position.Y);
-		}
-
-		public HitTestInfo HitTest (int x, int y)
-		{
-			return grid_drawing.HitTest (x, y);
 		}
 
 		public bool IsExpanded (int rowNumber)
@@ -1235,7 +1223,7 @@ namespace System.Windows.Forms
 
 		protected override void OnFontChanged (EventArgs e)
 		{
-			grid_drawing.CalcGridAreas ();
+			CalcGridAreas ();
 			base.OnFontChanged (e);
 		}
 
@@ -1247,7 +1235,7 @@ namespace System.Windows.Forms
 		protected override void OnHandleCreated (EventArgs e)
 		{
 			base.OnHandleCreated (e);
-			grid_drawing.CalcGridAreas ();
+			CalcGridAreas ();
 		}
 
 		protected override void OnHandleDestroyed (EventArgs e)
@@ -1332,7 +1320,7 @@ namespace System.Windows.Forms
 			{
 				bool expansion_click = false;
 				if (CurrentTableStyle.HasRelations) {
-					if (e.X > grid_drawing.rowhdrs_area.X + grid_drawing.rowhdrs_area.Width / 2) {
+					if (e.X > rowhdrs_area.X + rowhdrs_area.Width / 2) {
 						/* it's in the +/- space */
 						if (IsExpanded (testinfo.Row))
 							Collapse (testinfo.Row);
@@ -1404,7 +1392,7 @@ namespace System.Windows.Forms
 				column_resize_active = true;
 				resize_column_x = e.X;
 				resize_column_width_delta = 0;
-				grid_drawing.DrawResizeLineVert (resize_column_x);
+				DrawResizeLineVert (resize_column_x);
 				break;
 			}
 
@@ -1414,7 +1402,7 @@ namespace System.Windows.Forms
 				row_resize_active = true;
 				resize_row_y = e.Y;
 				resize_row_height_delta = 0;
-				grid_drawing.DrawResizeLineHoriz (resize_row_y);
+				DrawResizeLineHoriz (resize_row_y);
 				break;
 			}
 
@@ -1434,22 +1422,22 @@ namespace System.Windows.Forms
 
 			if (column_resize_active) {
 				/* erase the old line */
-				grid_drawing.DrawResizeLineVert (resize_column_x + resize_column_width_delta);
+				DrawResizeLineVert (resize_column_x + resize_column_width_delta);
 
 				resize_column_width_delta = e.X - resize_column_x;
 
 				/* draw the new line */
-				grid_drawing.DrawResizeLineVert (resize_column_x + resize_column_width_delta);
+				DrawResizeLineVert (resize_column_x + resize_column_width_delta);
 				return;
 			}
 			else if (row_resize_active) {
 				/* erase the old line */
-				grid_drawing.DrawResizeLineHoriz (resize_row_y + resize_row_height_delta);
+				DrawResizeLineHoriz (resize_row_y + resize_row_height_delta);
 
 				resize_row_height_delta = e.Y - resize_row_y;
 
 				/* draw the new line */
-				grid_drawing.DrawResizeLineHoriz (resize_row_y + resize_row_height_delta);
+				DrawResizeLineHoriz (resize_row_y + resize_row_height_delta);
 				return;
 			}
 			else {
@@ -1709,8 +1697,8 @@ namespace System.Windows.Forms
 				return true;
 
 			case Keys.PageUp:
-				if (CurrentRow > grid_drawing.VLargeChange)
-					CurrentRow -= grid_drawing.VLargeChange;
+				if (CurrentRow > VLargeChange)
+					CurrentRow -= VLargeChange;
 				else
 					CurrentRow = 0;
 
@@ -1719,8 +1707,8 @@ namespace System.Windows.Forms
 				return true;
 
 			case Keys.PageDown:
-				if (CurrentRow < RowsCount - grid_drawing.VLargeChange)
-					CurrentRow += grid_drawing.VLargeChange;
+				if (CurrentRow < RowsCount - VLargeChange)
+					CurrentRow += VLargeChange;
 				else
 					CurrentRow = RowsCount - 1;
 
@@ -1834,8 +1822,8 @@ namespace System.Windows.Forms
 		void InvalidateSelection ()
 		{
 			foreach (int row in selected_rows.Keys) {
-				grid_drawing.InvalidateRow (row);
-				grid_drawing.InvalidateRowHeader (row);
+				InvalidateRow (row);
+				InvalidateRowHeader (row);
 			}
 		}
 
@@ -1860,7 +1848,7 @@ namespace System.Windows.Forms
 				selected_rows[row] = true;
 			}
 
-			grid_drawing.InvalidateRow (row);
+			InvalidateRow (row);
 		}
 
 		public void SetDataBinding (object dataSource, string dataMember)
@@ -1948,7 +1936,7 @@ namespace System.Windows.Forms
 		public void UnSelect (int row)
 		{
 			selected_rows.Remove (row);
-			grid_drawing.InvalidateRow (row);
+			InvalidateRow (row);
 		}
 		#endregion	// Public Instance Methods
 
@@ -1956,7 +1944,7 @@ namespace System.Windows.Forms
 
 		internal void CalcAreasAndInvalidate ()
 		{
-			grid_drawing.CalcGridAreas ();
+			CalcGridAreas ();
 			Invalidate ();
 		}
 		
@@ -1977,8 +1965,8 @@ namespace System.Windows.Forms
 			if (cell.ColumnNumber <= first_visiblecolumn ||
 				cell.ColumnNumber + 1 >= first_visiblecolumn + visiblecolumn_count) {			
 
-				first_visiblecolumn = grid_drawing.GetFirstColumnForColumnVisilibility (first_visiblecolumn, cell.ColumnNumber);
-                                int pixel = grid_drawing.GetColumnStartingPixel (first_visiblecolumn);
+				first_visiblecolumn = GetFirstColumnForColumnVisilibility (first_visiblecolumn, cell.ColumnNumber);
+                                int pixel = GetColumnStartingPixel (first_visiblecolumn);
 				ScrollToColumnInPixels (pixel);
 				horiz_scrollbar.Value = pixel;
 				Update();
@@ -1990,12 +1978,12 @@ namespace System.Windows.Forms
                                 if (cell.RowNumber + 1 >= first_visiblerow + visiblerow_count) {
 					int old_first_visiblerow = first_visiblerow;
 					first_visiblerow = 1 + cell.RowNumber - visiblerow_count;
-					grid_drawing.UpdateVisibleRowCount ();
+					UpdateVisibleRowCount ();
 					ScrollToRow (old_first_visiblerow, first_visiblerow);
 				}else {
 					int old_first_visiblerow = first_visiblerow;
 					first_visiblerow = cell.RowNumber;
-					grid_drawing.UpdateVisibleRowCount ();
+					UpdateVisibleRowCount ();
 					ScrollToRow (old_first_visiblerow, first_visiblerow);
 				}
 
@@ -2005,7 +1993,7 @@ namespace System.Windows.Forms
 		
 		private void InvalidateCurrentRowHeader ()
 		{
-			grid_drawing.InvalidateRowHeader (CurrentRow);
+			InvalidateRowHeader (CurrentRow);
 		}
 		
 		private bool SetDataMember (string member)
@@ -2083,7 +2071,7 @@ namespace System.Windows.Forms
 			if (e.Index == -1)
 				CalcAreasAndInvalidate ();
 			else
-				grid_drawing.InvalidateRow (e.Index);
+				InvalidateRow (e.Index);
 		}
 
 		private void OnTableStylesCollectionChanged (object sender, CollectionChangeEventArgs e)
@@ -2172,14 +2160,14 @@ namespace System.Windows.Forms
 				pixels = horz_pixeloffset - pixel;
 			}
 
-			Rectangle area = grid_drawing.CellsArea;
+			Rectangle area = CellsArea;
 				
 			horz_pixeloffset = pixel;
-			grid_drawing.UpdateVisibleColumn ();
+			UpdateVisibleColumn ();
 
 			if (columnheaders_visible == true) {
-				area.Y -= grid_drawing.ColumnHeadersArea.Height;
-				area.Height += grid_drawing.ColumnHeadersArea.Height;
+				area.Y -= ColumnHeadersArea.Height;
+				area.Height += ColumnHeadersArea.Height;
 			}
 
 			XplatUI.ScrollWindow (Handle, area, pixels, 0, false);
@@ -2199,13 +2187,13 @@ namespace System.Windows.Forms
 					pixels += rows[i].Height;
 			}
 
-			Rectangle rows_area = grid_drawing.CellsArea; // Cells area - partial rows space
+			Rectangle rows_area = CellsArea; // Cells area - partial rows space
 			if (rowheaders_visible) {
 				rows_area.X -= RowHeaderWidth;
 				rows_area.Width += RowHeaderWidth;
 			}
 
-			rows_area.Height = grid_drawing.CellsArea.Height - grid_drawing.CellsArea.Height % RowHeight;
+			rows_area.Height = CellsArea.Height - CellsArea.Height % RowHeight;
 
 			XplatUI.ScrollWindow (Handle, rows_area, 0, pixels, false);
 		}
@@ -2253,5 +2241,678 @@ namespace System.Windows.Forms
 		public event EventHandler ShowParentDetailsButtonClick;
 
 		#endregion	// Events
+
+
+
+
+		#region Code originally in DataGridDrawingLogic.cs
+
+		#region	Local Variables
+
+		// Areas
+		internal Rectangle caption_area;
+		internal Rectangle parent_rows;
+		internal Rectangle columnhdrs_area;	// Used columns header area
+		internal int columnhdrs_maxwidth; 	// Total width (max width) for columns headrs
+		internal Rectangle rowhdrs_area;	// Used Headers rows area
+		internal int rowhdrs_maxheight; 	// Total height for rows (max height)
+		internal Rectangle cells_area;
+		internal Font font_newrow = new Font (FontFamily.GenericSansSerif, 16);
+		#endregion // Local Variables
+
+
+		#region Public Instance Methods
+
+		// Calc the max with of all columns
+		internal int CalcAllColumnsWidth ()
+		{
+			int width = 0;
+			int cnt = CurrentTableStyle.GridColumnStyles.Count;
+
+			for (int col = 0; col < cnt; col++) {
+				width += CurrentTableStyle.GridColumnStyles[col].Width;
+			}
+
+			return width;
+		}
+
+		// Gets a column from a pixel
+		private int FromPixelToColumn (int pixel, out int column_x)
+		{
+			int width = 0;
+			int cnt = CurrentTableStyle.GridColumnStyles.Count;
+			column_x = 0;
+
+			if (cnt == 0)
+				return 0;
+				
+			if (CurrentTableStyle.CurrentRowHeadersVisible) {
+				width += rowhdrs_area.X + rowhdrs_area.Width;
+				column_x += rowhdrs_area.X + rowhdrs_area.Width;
+			}
+
+			for (int col = 0; col < cnt; col++) {
+				width += CurrentTableStyle.GridColumnStyles[col].Width;
+
+				if (pixel < width)
+					return col;
+
+				column_x += CurrentTableStyle.GridColumnStyles[col].Width;
+			}
+
+			return cnt - 1;
+		}
+
+		//
+		internal int GetColumnStartingPixel (int my_col)
+		{
+			int width = 0;
+			int cnt = CurrentTableStyle.GridColumnStyles.Count;
+
+			for (int col = 0; col < cnt; col++) {
+
+				if (my_col == col)
+					return width;
+
+				width += CurrentTableStyle.GridColumnStyles[col].Width;
+			}
+
+			return 0;
+		}
+		
+		// Which column has to be the first visible column to ensure a column visibility
+		internal int GetFirstColumnForColumnVisilibility (int current_first_visiblecolumn, int column)
+		{
+			int new_col = column;
+			int width = 0;
+			
+			if (column > current_first_visiblecolumn) { // Going forward								
+				for (new_col = column; new_col >= 0; new_col--){
+					width += CurrentTableStyle.GridColumnStyles[new_col].Width;
+					
+					if (width >= cells_area.Width)
+						return new_col + 1;
+						//return new_col < CurrentTableStyle.GridColumnStyles.Count ? new_col + 1 : CurrentTableStyle.GridColumnStyles.Count;
+				}
+				return 0;
+			} else {				
+				return  column;
+			}			
+		}
+
+		bool in_calc_grid_areas;
+		internal void CalcGridAreas ()
+		{
+			if (IsHandleCreated == false) // Delay calculations until the handle is created
+				return;
+
+			/* make sure we don't happen to end up in this method again */
+			if (in_calc_grid_areas)
+				return;
+
+			in_calc_grid_areas = true;
+
+			/* Order is important. E.g. row headers max. height depends on caption */
+			horz_pixeloffset = 0;			
+			CalcCaption ();
+			CalcParentRows ();
+			UpdateVisibleRowCount ();
+			CalcRowHeaders (visiblerow_count);
+			CalcColumnHeaders ();
+			CalcCellsArea ();
+
+			bool needHoriz = false;
+			bool needVert = false;
+
+			/* figure out which scrollbars we need, and what the visible areas are */
+			int visible_cells_width = cells_area.Width;
+			int visible_cells_height = cells_area.Height;
+			int width_of_all_columns = CalcAllColumnsWidth ();
+			int allrows = RowsCount;
+			if (ShowEditRow && RowsCount > 0)
+				allrows++;
+
+			/* use a loop to iteratively calculate whether
+			 * we need horiz/vert scrollbars. */
+			for (int i = 0; i < 3; i ++) {
+				if (needVert)
+					visible_cells_width = cells_area.Width - vert_scrollbar.Width;
+				if (needHoriz)
+					visible_cells_height = cells_area.Height - horiz_scrollbar.Height;
+
+				UpdateVisibleRowCount ();
+
+				needHoriz = (width_of_all_columns > visible_cells_width);
+				needVert = (visiblerow_count != allrows);
+			}
+
+			int horiz_scrollbar_width = ClientRectangle.Width;
+			int horiz_scrollbar_maximum = 0;
+			int vert_scrollbar_height = 0;
+			int vert_scrollbar_maximum = 0;
+
+			if (needVert)
+				SetUpVerticalScrollBar (out vert_scrollbar_height, out vert_scrollbar_maximum);
+
+			if (needHoriz)
+				SetUpHorizontalScrollBar (out horiz_scrollbar_maximum);
+
+			cells_area.Width = visible_cells_width;
+			cells_area.Height = visible_cells_height;
+
+			if (needVert && needHoriz) {
+				if (ShowParentRowsVisible) {
+					parent_rows.Width -= vert_scrollbar.Width;
+				}
+
+				if (!ShowingColumnHeaders) {
+					if (columnhdrs_area.X + columnhdrs_area.Width > vert_scrollbar.Location.X) {
+						columnhdrs_area.Width -= vert_scrollbar.Width;
+					}
+				}
+
+				horiz_scrollbar_width -= vert_scrollbar.Width;
+				vert_scrollbar_height -= horiz_scrollbar.Height;
+			}
+
+			if (needVert) {
+				if (rowhdrs_area.Y + rowhdrs_area.Height > ClientRectangle.Y + ClientRectangle.Height) {
+					rowhdrs_area.Height -= horiz_scrollbar.Height;
+					rowhdrs_maxheight -= horiz_scrollbar.Height;
+				}
+
+				vert_scrollbar.Height = vert_scrollbar_height;
+				vert_scrollbar.Maximum = vert_scrollbar_maximum;
+				Controls.Add (vert_scrollbar);
+				vert_scrollbar.Visible = true;
+			}
+			else {
+				Controls.Remove (vert_scrollbar);
+				vert_scrollbar.Visible = false;
+			}
+
+			if (needHoriz) {
+				horiz_scrollbar.Width = horiz_scrollbar_width;
+				horiz_scrollbar.Maximum = horiz_scrollbar_maximum;
+				Controls.Add (horiz_scrollbar);
+				horiz_scrollbar.Visible = true;
+			}
+			else {
+				Controls.Remove (horiz_scrollbar);
+				horiz_scrollbar.Visible = false;
+			}
+
+			UpdateVisibleColumn ();
+			UpdateVisibleRowCount ();
+
+			//Console.WriteLine ("DataGridDrawing.CalcGridAreas caption_area:{0}", caption_area);
+			//Console.WriteLine ("DataGridDrawing.CalcGridAreas parent_rows:{0}", parent_rows);
+			//Console.WriteLine ("DataGridDrawing.CalcGridAreas rowhdrs_area:{0}", rowhdrs_area);
+			//Console.WriteLine ("DataGridDrawing.CalcGridAreas columnhdrs_area:{0}", columnhdrs_area);
+			//Console.WriteLine ("DataGridDrawing.CalcGridAreas cells:{0}", cells_area);
+
+			in_calc_grid_areas = false;
+		}
+
+		private void CalcCaption ()
+		{
+			if (caption_visible == false) {
+				caption_area = Rectangle.Empty;
+				return;
+			}
+
+			caption_area.X = ClientRectangle.X;
+			caption_area.Y = ClientRectangle.Y;
+			caption_area.Width = ClientRectangle.Width;
+			caption_area.Height = CaptionFont.Height + 6;
+
+			//Console.WriteLine ("DataGridDrawing.CalcCaption {0}", caption_area);
+		}
+
+		private void CalcCellsArea ()
+		{
+			if (caption_visible) {
+				cells_area.Y = caption_area.Y + caption_area.Height;
+			} else {
+				cells_area.Y = ClientRectangle.Y;
+			}
+
+			if (ShowParentRowsVisible) {
+				cells_area.Y += parent_rows.Height;
+			}
+
+			if (ShowingColumnHeaders) {
+				cells_area.Y += columnhdrs_area.Height;
+			}
+
+			cells_area.X = ClientRectangle.X + rowhdrs_area.Width;
+			cells_area.Width = ClientRectangle.X + ClientRectangle.Width - cells_area.X;
+			cells_area.Height = ClientRectangle.Y + ClientRectangle.Height - cells_area.Y;
+
+			//Console.WriteLine ("DataGridDrawing.CalcCellsArea {0}", cells_area);
+		}
+
+		private void CalcColumnHeaders ()
+		{
+			int width_all_cols, max_width_cols;
+			
+			if (!ShowingColumnHeaders) {
+				columnhdrs_area = Rectangle.Empty;				
+				return;
+			}
+
+			if (caption_visible) {
+				columnhdrs_area.Y = caption_area.Y + caption_area.Height;
+			} else {
+				columnhdrs_area.Y = ClientRectangle.Y;
+			}
+
+			if (ShowParentRowsVisible) {
+				columnhdrs_area.Y += parent_rows.Height;
+			}
+
+			columnhdrs_area.X = ClientRectangle.X;
+			columnhdrs_area.Height = ColumnHeadersHeight;
+			width_all_cols = CalcAllColumnsWidth ();
+
+			// TODO: take into account Scrollbars
+			columnhdrs_maxwidth = ClientRectangle.X + ClientRectangle.Width - columnhdrs_area.X;
+			max_width_cols = columnhdrs_maxwidth;
+
+			if (CurrentTableStyle.CurrentRowHeadersVisible) {
+				max_width_cols -= RowHeaderWidth;
+			}
+
+			if (width_all_cols > max_width_cols) {
+				columnhdrs_area.Width = columnhdrs_maxwidth;
+			} else {
+				columnhdrs_area.Width = width_all_cols;
+
+				if (CurrentTableStyle.CurrentRowHeadersVisible) {
+					columnhdrs_area.Width += RowHeaderWidth;
+				}
+			}
+
+			//Console.WriteLine ("DataGridDrawing.CalcColumnHeaders {0}", columnhdrs_area);
+		}
+
+		private void CalcParentRows ()
+		{
+			if (ShowParentRowsVisible == false) {
+				parent_rows = Rectangle.Empty;
+				return;
+			}
+
+			if (caption_visible) {
+				parent_rows.Y = caption_area.Y + caption_area.Height;
+
+			} else {
+				parent_rows.Y = ClientRectangle.Y;
+			}
+
+			parent_rows.X = ClientRectangle.X;
+			parent_rows.Width = ClientRectangle.Width;
+			parent_rows.Height = CaptionFont.Height + 3;
+
+			//Console.WriteLine ("DataGridDrawing.CalcParentRows {0}", parent_rows);
+		}
+
+		private void CalcRowHeaders (int visiblerow_count)
+		{
+			if (CurrentTableStyle.CurrentRowHeadersVisible == false) {
+				rowhdrs_area = Rectangle.Empty;
+				return;
+			}
+
+			if (caption_visible) {
+				rowhdrs_area.Y = caption_area.Y + caption_area.Height;
+			} else {
+				rowhdrs_area.Y = ClientRectangle.Y;
+			}
+
+			if (ShowParentRowsVisible) {
+				rowhdrs_area.Y += parent_rows.Height;
+			}
+
+			if (ShowingColumnHeaders) { // first block is painted by ColumnHeader
+				rowhdrs_area.Y += ColumnHeadersHeight;
+			}
+
+			rowhdrs_area.X = ClientRectangle.X;
+			rowhdrs_area.Width = RowHeaderWidth;
+			if (visiblerow_count == 0)
+				rowhdrs_area.Height = 0;
+			else
+				rowhdrs_area.Height = (rows[visiblerow_count + FirstVisibleRow - 1].VerticalOffset - rows[FirstVisibleRow].VerticalOffset
+						       + rows[visiblerow_count + FirstVisibleRow - 1].Height);
+			rowhdrs_maxheight = ClientRectangle.Height + ClientRectangle.Y - rowhdrs_area.Y;
+
+			//Console.WriteLine ("DataGridDrawing.CalcRowHeaders {0} {1}", rowhdrs_area,
+			//	rowhdrs_maxheight);
+		}
+
+		private int GetVisibleRowCount (int visibleHeight)
+		{
+			//			Console.Write ("GetVisibleRowCount ({0}) - ", visibleHeight);
+			int total_rows = RowsCount;
+			
+			if (ShowEditRow && RowsCount > 0) {
+				total_rows++;
+			}
+
+			int rows_height = 0;
+			int r;
+			for (r = FirstVisibleRow; r < RowsCount; r ++) {
+				//				Console.Write ("{0},", rows[r].Height);
+				if (rows_height + rows[r].Height >= visibleHeight)
+					break;
+				rows_height += rows[r].Height;
+			}
+
+			/* add in the edit row if it'll fit */
+			if (ShowEditRow && RowsCount > 0 && visibleHeight - rows_height > RowHeight)
+				r ++;
+
+			if (r < rows.Length - 1)
+				r ++;
+			//			Console.WriteLine (" rows_height = {0}, returning {1}", rows_height, r - FirstVisibleRow);
+
+			return r - FirstVisibleRow;
+		}
+
+		internal void UpdateVisibleColumn ()
+		{
+			if (CurrentTableStyle.GridColumnStyles.Count == 0) {
+				visiblecolumn_count = 0;
+				return;	
+			}
+			
+			int col;
+			int max_pixel = horz_pixeloffset + cells_area.Width;
+			int unused;
+
+			first_visiblecolumn = FromPixelToColumn (horz_pixeloffset, out unused);
+
+			col = FromPixelToColumn (max_pixel, out unused);
+			
+			visiblecolumn_count = 1 + col - first_visiblecolumn;
+			
+			if (first_visiblecolumn + visiblecolumn_count < CurrentTableStyle.GridColumnStyles.Count) { 
+				visiblecolumn_count++; // Partially visible column
+			}
+		}
+
+		internal void UpdateVisibleRowCount ()
+		{
+			visiblerow_count = GetVisibleRowCount (cells_area.Height);
+
+			CalcRowHeaders (visiblerow_count); // Height depends on num of visible rows
+
+			// XXX
+			Invalidate ();
+		}
+
+		const int RESIZE_HANDLE_HORIZ_SIZE = 5;
+		const int RESIZE_HANDLE_VERT_SIZE = 3;
+
+		// From Point to Cell
+		internal HitTestInfo HitTest (int x, int y)
+		{
+			HitTestInfo hit = new HitTestInfo ();
+
+			if (columnhdrs_area.Contains (x, y)) {
+				int offset_x = x + horz_pixeloffset;
+				int column_x;
+				int column_under_mouse = FromPixelToColumn (offset_x, out column_x);
+				
+				if ((column_x + CurrentTableStyle.GridColumnStyles[column_under_mouse].Width - offset_x < RESIZE_HANDLE_HORIZ_SIZE)
+				    && column_under_mouse < CurrentTableStyle.GridColumnStyles.Count) {
+					hit.type = HitTestType.ColumnResize;
+					hit.column = column_under_mouse;
+				}
+				else {
+					hit.type = HitTestType.ColumnHeader;
+					hit.column = column_under_mouse;
+				}
+				return hit;
+			}
+
+			if (rowhdrs_area.Contains (x, y)) {
+				int posy;
+				int rcnt = FirstVisibleRow + VisibleRowCount;
+				for (int r = FirstVisibleRow; r < rcnt; r++) {
+					posy = cells_area.Y + rows[r].VerticalOffset - rows[FirstVisibleRow].VerticalOffset;
+					if (y <= posy + rows[r].Height) {
+						if ((posy + rows[r].Height) - y < RESIZE_HANDLE_VERT_SIZE) {
+							hit.type = HitTestType.RowResize;
+						}
+						else {
+							hit.type = HitTestType.RowHeader;
+						}
+						hit.row = r;
+						break;
+					}
+				}
+				return hit;
+			}
+
+			if (caption_area.Contains (x, y)) {
+				hit.type = HitTestType.Caption;
+				return hit;
+			}
+
+			if (parent_rows.Contains (x, y)) {
+				hit.type = HitTestType.ParentRows;
+				return hit;
+			}
+
+			int pos_y, pos_x, width;
+			int rowcnt = FirstVisibleRow + VisibleRowCount;
+			for (int row = FirstVisibleRow; row < rowcnt; row++) {
+
+				pos_y = cells_area.Y + rows[row].VerticalOffset - rows[FirstVisibleRow].VerticalOffset;
+				if (y <= pos_y + rows[row].Height) {
+					hit.row = row;
+					hit.type = HitTestType.Cell;					
+					int col_pixel;
+					int column_cnt = first_visiblecolumn + visiblecolumn_count;
+					for (int column = first_visiblecolumn; column < column_cnt; column++) {
+
+						col_pixel = GetColumnStartingPixel (column);
+						pos_x = cells_area.X + col_pixel - horz_pixeloffset;
+						width = CurrentTableStyle.GridColumnStyles[column].Width;
+
+						if (x <= pos_x + width) { // Column found
+							hit.column = column;
+							break;
+						}
+					}
+
+					break;
+				}
+			}
+
+			return hit;
+		}
+
+		internal Rectangle GetCellBounds (int row, int col)
+		{
+			Rectangle bounds = new Rectangle ();
+			int col_pixel;
+
+			bounds.Width = CurrentTableStyle.GridColumnStyles[col].Width;
+			bounds.Height = rows[row].Height;
+			bounds.Y = cells_area.Y + rows[row].VerticalOffset - rows[FirstVisibleRow].VerticalOffset;
+			col_pixel = GetColumnStartingPixel (col);
+			bounds.X = cells_area.X + col_pixel - horz_pixeloffset;
+			return bounds;
+		}
+
+		internal void InvalidateCaption ()
+		{
+			if (caption_area.IsEmpty)
+				return;
+
+			Invalidate (caption_area);
+		}
+
+		internal void InvalidateCells ()
+		{
+			if (cells_area.IsEmpty)
+				return;
+
+			Invalidate (cells_area);
+		}
+		
+		internal void InvalidateRow (int row)
+		{
+			if (row < FirstVisibleRow || row > FirstVisibleRow + VisibleRowCount) {
+				return;
+			}
+
+			Rectangle rect_row = new Rectangle ();
+
+			int row_width = CalcAllColumnsWidth ();
+			if (row_width > cells_area.Width)
+				row_width = cells_area.Width;
+			rect_row.X = cells_area.X;
+			rect_row.Width = row_width;
+			rect_row.Height = rows[row].Height;
+			rect_row.Y = cells_area.Y + rows[row].VerticalOffset - rows[FirstVisibleRow].VerticalOffset;
+			Invalidate (rect_row);
+		}
+
+		internal void InvalidateRowHeader (int row)
+		{
+			Rectangle rect_rowhdr = new Rectangle ();
+			rect_rowhdr.X = rowhdrs_area.X;
+			rect_rowhdr.Width = rowhdrs_area.Width;
+			rect_rowhdr.Height = rows[row].Height;
+			rect_rowhdr.Y = rowhdrs_area.Y + rows[row].VerticalOffset - rows[FirstVisibleRow].VerticalOffset;
+			Invalidate (rect_rowhdr);
+		}	
+
+		internal void InvalidateColumn (DataGridColumnStyle column)
+		{
+			Rectangle rect_col = new Rectangle ();
+			int col_pixel;
+			int col = -1;
+
+			col = CurrentTableStyle.GridColumnStyles.IndexOf (column);
+
+			if (col == -1) {
+				return;
+			}
+
+			rect_col.Width = column.Width;
+			col_pixel = GetColumnStartingPixel (col);
+			rect_col.X = cells_area.X + col_pixel - horz_pixeloffset;
+			rect_col.Y = cells_area.Y;
+			rect_col.Height = cells_area.Height;
+			Invalidate (rect_col);
+		}
+
+		internal void DrawResizeLineVert (int x)
+		{
+			XplatUI.DrawReversibleRectangle (Handle,
+							 new Rectangle (x, cells_area.Y, 1, cells_area.Height - 3),
+							 2);
+		}
+
+		internal void DrawResizeLineHoriz (int y)
+		{
+			XplatUI.DrawReversibleRectangle (Handle,
+							 new Rectangle (cells_area.X, y, cells_area.Width - 3, 1),
+							 2);
+		}
+
+		void SetUpHorizontalScrollBar (out int maximum)
+		{
+			maximum = CalcAllColumnsWidth ();
+
+			horiz_scrollbar.Location = new Point (ClientRectangle.X, ClientRectangle.Y +
+				ClientRectangle.Height - horiz_scrollbar.Height);
+
+			horiz_scrollbar.Size = new Size (ClientRectangle.Width,
+				horiz_scrollbar.Height);
+
+			horiz_scrollbar.LargeChange = cells_area.Width;
+		}
+
+
+		void SetUpVerticalScrollBar (out int height, out int maximum)
+		{
+			int y;
+			
+			if (caption_visible) {
+				y = ClientRectangle.Y + caption_area.Height;
+				height = ClientRectangle.Height - caption_area.Height;
+			} else {
+				y = ClientRectangle.Y;
+				height = ClientRectangle.Height;
+			}
+
+			vert_scrollbar.Location = new Point (ClientRectangle.X +
+				ClientRectangle.Width - vert_scrollbar.Width, y);
+
+			vert_scrollbar.Size = new Size (vert_scrollbar.Width,
+				height);
+
+			maximum = RowsCount;
+			
+			if (ShowEditRow && RowsCount > 0) {
+				maximum++;	
+			}
+			
+			vert_scrollbar.LargeChange = VLargeChange;
+		}
+
+		#endregion // Public Instance Methods
+
+		#region Instance Properties
+		internal Rectangle CellsArea {
+			get {
+				return cells_area;
+			}
+		}
+
+		// Returns the ColumnHeaders area excluding the rectangle shared with RowHeaders
+		internal Rectangle ColumnHeadersArea {
+			get {
+				Rectangle columns_area = columnhdrs_area;
+
+				if (CurrentTableStyle.CurrentRowHeadersVisible) {
+					columns_area.X += RowHeaderWidth;
+					columns_area.Width -= RowHeaderWidth;
+				}
+				return columns_area;
+			}
+		}
+
+		bool ShowingColumnHeaders {
+			get { return columnheaders_visible != false && CurrentTableStyle.GridColumnStyles.Count > 0; }
+		}
+
+		int ColumnHeadersHeight {
+			get {
+				return CurrentTableStyle.HeaderFont.Height + 6;
+			}
+		}
+
+		internal Rectangle RowHeadersArea {
+			get {
+				return rowhdrs_area;
+			}
+		}
+
+		internal int VLargeChange {
+			get {
+				return VisibleRowCount;
+			}
+		}
+
+		#endregion Instance Properties
+
+		#endregion // Code originally in DataGridDrawingLogic.cs
 	}
 }

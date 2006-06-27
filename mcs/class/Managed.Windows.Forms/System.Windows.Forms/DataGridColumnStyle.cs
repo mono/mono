@@ -448,8 +448,8 @@ namespace System.Windows.Forms
 
 		protected virtual void Invalidate ()
 		{
-			if (grid != null && grid.grid_drawing != null)
-				grid.grid_drawing.InvalidateColumn (this);
+			if (grid != null)
+				grid.InvalidateColumn (this);
 		}
 
 		protected internal abstract void Paint (Graphics g, Rectangle bounds, CurrencyManager source, int rowNum);

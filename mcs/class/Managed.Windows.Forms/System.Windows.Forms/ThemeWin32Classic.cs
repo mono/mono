@@ -832,14 +832,14 @@ namespace System.Windows.Forms
 		public override void DataGridPaint (PaintEventArgs pe, DataGrid grid)
 		{
 			// Draw parent rows
-			if (pe.ClipRectangle.IntersectsWith (grid.grid_drawing.parent_rows)) {
-				pe.Graphics.FillRectangle (ResPool.GetSolidBrush (grid.ParentRowsBackColor), grid.grid_drawing.parent_rows);
+			if (pe.ClipRectangle.IntersectsWith (grid.parent_rows)) {
+				pe.Graphics.FillRectangle (ResPool.GetSolidBrush (grid.ParentRowsBackColor), grid.parent_rows);
 			}
 
 			DataGridPaintCaption (pe.Graphics, pe.ClipRectangle, grid);
 			DataGridPaintColumnHeaders (pe.Graphics, pe.ClipRectangle, grid);
 			DataGridPaintRowHeaders (pe.Graphics, pe.ClipRectangle, grid);
-			DataGridPaintRows (pe.Graphics, grid.grid_drawing.cells_area, pe.ClipRectangle, grid);
+			DataGridPaintRows (pe.Graphics, grid.cells_area, pe.ClipRectangle, grid);
 
 			// Paint scrollBar corner
 			if (grid.vert_scrollbar.Visible && grid.horiz_scrollbar.Visible) {
@@ -858,24 +858,24 @@ namespace System.Windows.Forms
 		public override void DataGridPaintCaption (Graphics g, Rectangle clip, DataGrid grid)
 		{
 			Rectangle modified_area = clip;
-			modified_area.Intersect (grid.grid_drawing.caption_area);
+			modified_area.Intersect (grid.caption_area);
 
 			g.FillRectangle (ResPool.GetSolidBrush (grid.CaptionBackColor),
 				modified_area);
 
 			g.DrawString (grid.CaptionText, grid.CaptionFont,
 				ResPool.GetSolidBrush (grid.CaptionForeColor),
-				grid.grid_drawing.caption_area);		
+				grid.caption_area);		
 		}
 
 		public override void DataGridPaintColumnHeaders (Graphics g, Rectangle clip, DataGrid grid)
 		{
-			Rectangle columns_area = grid.grid_drawing.columnhdrs_area;
+			Rectangle columns_area = grid.columnhdrs_area;
 
 			if (grid.CurrentTableStyle.CurrentRowHeadersVisible) { // Paint corner shared between row and column header
-				Rectangle rect_bloc = grid.grid_drawing.columnhdrs_area;
+				Rectangle rect_bloc = grid.columnhdrs_area;
 				rect_bloc.Width = grid.RowHeaderWidth;
-				rect_bloc.Height = grid.grid_drawing.columnhdrs_area.Height;
+				rect_bloc.Height = grid.ColumnHeadersArea.Height;
 				if (clip.IntersectsWith (rect_bloc)) {
 					if (grid.visiblecolumn_count > 0) {
 						g.FillRectangle (ResPool.GetSolidBrush (grid.CurrentTableStyle.CurrentHeaderBackColor), rect_bloc);
@@ -890,7 +890,7 @@ namespace System.Windows.Forms
 
 			// Set unused area
 			Rectangle columnhdrs_area_complete = columns_area;
-			columnhdrs_area_complete.Width = grid.grid_drawing.columnhdrs_maxwidth;
+			columnhdrs_area_complete.Width = grid.columnhdrs_maxwidth;
 			
 			if (grid.CurrentTableStyle.CurrentRowHeadersVisible) {
 				columnhdrs_area_complete.Width -= grid.RowHeaderWidth;
@@ -906,7 +906,7 @@ namespace System.Windows.Forms
 			int column_cnt = grid.first_visiblecolumn + grid.visiblecolumn_count;
 			for (int column = grid.first_visiblecolumn; column < column_cnt; column++) {
 				
-				col_pixel = grid.grid_drawing.GetColumnStartingPixel (column);
+				col_pixel = grid.GetColumnStartingPixel (column);
 				rect_columnhdr.X = columns_area.X + col_pixel - grid.horz_pixeloffset;
 				rect_columnhdr.Width = grid.CurrentTableStyle.GridColumnStyles[column].Width;
 
@@ -934,10 +934,10 @@ namespace System.Windows.Forms
 
 		public override void DataGridPaintRowHeaders (Graphics g, Rectangle clip, DataGrid grid)
 		{
-			Rectangle rowhdrs_area_complete = grid.grid_drawing.rowhdrs_area;
-			rowhdrs_area_complete.Height = grid.grid_drawing.rowhdrs_maxheight;
+			Rectangle rowhdrs_area_complete = grid.rowhdrs_area;
+			rowhdrs_area_complete.Height = grid.rowhdrs_maxheight;
 			Rectangle rect_row = new Rectangle ();
-			rect_row.X = grid.grid_drawing.rowhdrs_area.X;			
+			rect_row.X = grid.RowHeadersArea.X;			
 			int rowcnt = grid.FirstVisibleRow + grid.VisibleRowCount;
 			Rectangle not_usedarea = rowhdrs_area_complete;			
 
@@ -945,12 +945,12 @@ namespace System.Windows.Forms
 				rowcnt++;
 			}
 
-			g.SetClip (grid.grid_drawing.rowhdrs_area);
+			g.SetClip (grid.rowhdrs_area);
 			for (int row = grid.FirstVisibleRow; row < rowcnt; row++) {
 
-				rect_row.Width = grid.grid_drawing.rowhdrs_area.Width;
+				rect_row.Width = grid.RowHeadersArea.Width;
 				rect_row.Height = grid.rows[row].Height;
-				rect_row.Y = grid.grid_drawing.rowhdrs_area.Y + grid.rows[row].VerticalOffset - grid.rows[grid.FirstVisibleRow].VerticalOffset;
+				rect_row.Y = grid.RowHeadersArea.Y + grid.rows[row].VerticalOffset - grid.rows[grid.FirstVisibleRow].VerticalOffset;
 
 				if (clip.IntersectsWith (rect_row)) {
 					DataGridPaintRowHeader (g, rect_row, row, grid);					
@@ -958,8 +958,8 @@ namespace System.Windows.Forms
 			}
 			
 			g.ResetClip ();
-			not_usedarea.Height = grid.grid_drawing.rowhdrs_maxheight - grid.grid_drawing.rowhdrs_area.Height;
-			not_usedarea.Y = grid.grid_drawing.rowhdrs_area.Y + grid.grid_drawing.rowhdrs_area.Height;
+			not_usedarea.Height = grid.rowhdrs_maxheight - grid.RowHeadersArea.Height;
+			not_usedarea.Y = grid.RowHeadersArea.Y + grid.RowHeadersArea.Height;
 			g.FillRectangle (ResPool.GetSolidBrush (grid.BackgroundColor), not_usedarea);
 		}
 		
@@ -1013,7 +1013,7 @@ namespace System.Windows.Forms
 
 			if (grid.ShowEditRow && grid.RowsCount > 0 && row == grid.RowsCount  && !(row == grid.CurrentCell.RowNumber && grid.is_changing == true)) {
 				
-				g.DrawString ("*", grid.grid_drawing.font_newrow, ResPool.GetSolidBrush (grid.CurrentTableStyle.CurrentHeaderForeColor),
+				g.DrawString ("*", grid.font_newrow, ResPool.GetSolidBrush (grid.CurrentTableStyle.CurrentHeaderForeColor),
 					bounds);
 				
 			} else {
@@ -1127,7 +1127,7 @@ namespace System.Windows.Forms
 			int column_cnt = grid.first_visiblecolumn + grid.visiblecolumn_count;
 			for (int column = grid.first_visiblecolumn; column < column_cnt; column++) {
 
-				col_pixel = grid.grid_drawing.GetColumnStartingPixel (column);
+				col_pixel = grid.GetColumnStartingPixel (column);
 
 				rect_cell.X = row_rect.X + col_pixel - grid.horz_pixeloffset;
 				rect_cell.Width = grid.CurrentTableStyle.GridColumnStyles[column].Width;
