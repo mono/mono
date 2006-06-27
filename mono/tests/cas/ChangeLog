@@ -1,3 +1,8 @@
+2006-06-27  Wade Berrier <wberrier@novell.com>
+
+	* Makefile.am: Rename 'all' target so tests aren't compiled at build time.
+	Remove 'clean' target so that clean gets propogated to SUBDIRS.
+
 2006-06-22  Wade Berrier <wberrier@novell.com>
 
 	* svn:ignore: Ignore Makefile and Makefile.in for this and 

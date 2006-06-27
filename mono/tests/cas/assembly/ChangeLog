@@ -1,3 +1,9 @@
+2006-06-27  Wade Berrier <wberrier@novell.com>
+
+	* Makefile.am: Use mcs and permview from the mcs tree instead of
+	what's in the path.  Rename targets so tests are not compiled at
+	build time.
+
 2006-06-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Makefile.am: Use mono-wrapper (and not the installed mono).
