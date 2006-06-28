@@ -1,3 +1,8 @@
+2006-06-28  Martin Baulig  <martin@ximian.com>
+
+	* darwin_stop_world.c, pthread_support.c: Committing a patch from
+	Allan Hsu <allan@imeem.com> to fix memory leaks; see bug #78628.
+
 2006-06-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* solaris_threads.c: And another one.
