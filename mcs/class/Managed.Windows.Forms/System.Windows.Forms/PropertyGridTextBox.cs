@@ -59,6 +59,10 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			dropdown_button.Click += new System.EventHandler(dropdown_button_Click);
 
 			textbox.AutoSize = false;
+			// this is to explicitly set bgcolor to avoid
+			// default ReadOnly color (which makes grid item
+			// bgcolor inconsistent).
+			textbox.BackColor = textbox.BackColor;
 			textbox.BorderStyle = BorderStyle.None;
 			textbox.Dock = DockStyle.Fill;
 			textbox.TabIndex = 3;

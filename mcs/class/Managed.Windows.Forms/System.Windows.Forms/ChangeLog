@@ -1,3 +1,10 @@
+2006-06-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* PropertyGrid.cs,
+	  PropertyGridTextBox.cs : explicitly set BackColor to differentiate
+	  item lines from other area (It also makes BackColor consistent and
+	  compatible with .NET). Fixed bug #78564.
+
 2006-06-28  Jonathan Chambers  <jonathan.chambers@ansys.com>
 
 	* PropertyGrid.cs: refresh toolbar when PropertySort is set.

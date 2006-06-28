@@ -1005,7 +1005,12 @@ namespace System.Windows.Forms {
 		// as we can not change the color for BorderStyle.FixedSingle and we need the correct
 		// ClientRectangle so that the ScrollBar doesn't draw over the border we need this class
 		internal class BorderHelperControl : Control {
-			
+
+			public BorderHelperControl ()
+			{
+				BackColor = ThemeEngine.Current.ColorWindow;
+			}
+
 			protected override void OnPaint (PaintEventArgs e)
 			{
 				e.Graphics.DrawRectangle (SystemPens.ControlDark, 0 , 0 , Width - 1, Height - 1);
