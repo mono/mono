@@ -1,3 +1,8 @@
+2006-06-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_string_to_byvalwstr): Fix this completely broken function.
+	Fixes #78722.
+
 2006-06-21  Martin Baulig  <martin@ximian.com>
 
 	* reflection.c
