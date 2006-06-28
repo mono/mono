@@ -1,3 +1,10 @@
+2006-06-28  Senganal T <tsenganal@novell.com>
+
+	* DataSetTest2.cs :  Removed ReadXml_Strm, ReadXml_Strg
+	ReadXml_ByTextReader, ReadXml_ByXmlReader : 
+		Temporarily removed as these are failing, in a different 
+		timezone, due to bug in DateTime.
+
 2006-06-27  Senganal T <tsenganal@novell.com>
 
 	* DataTableReaderTest.cs :
