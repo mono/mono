@@ -425,7 +425,8 @@ namespace System.Windows.Forms {
 				}
 
 				property_sort = value;
-				
+
+				UpdateToolBarButtons();
 				ReflectObjects();
 				property_grid_view.Refresh();
 				
@@ -913,9 +914,6 @@ namespace System.Windows.Forms {
 			else if (e.Button == categorized_toolbarbutton) {
 				this.PropertySort = PropertySort.Categorized;
 			}
-			UpdateToolBarButtons();
-			ReflectObjects();
-			property_grid_view.Refresh();
 		}
 
 		internal void UpdateToolBarButtons () {
