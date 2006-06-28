@@ -371,13 +371,36 @@ namespace MonoTests.System.Drawing{
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void Dispose_ToLogFont ()
 		{
 			Font f = new Font (name, 12.5f);
 			f.Dispose ();
 			LOGFONT	lf = new LOGFONT();
-			f.ToLogFont (lf);
+			Assert.AreEqual (0, lf.lfCharSet, "lfCharSet-0");
+			Assert.IsNull (lf.lfFaceName, "lfFaceName-0");
+			try {
+				f.ToLogFont (lf);
+			}
+			catch (ArgumentException) {
+				// it throws, but it also initialize the LOGFONT to some values
+				Assert.AreEqual (0, lf.lfHeight, "lfHeight");
+				Assert.AreEqual (0, lf.lfWidth, "lfWidth");
+				Assert.AreEqual (0, lf.lfEscapement, "lfEscapement");
+				Assert.AreEqual (0, lf.lfOrientation, "lfOrientation");
+				Assert.AreEqual (0, lf.lfWeight, "lfWeight");
+				Assert.AreEqual (0, lf.lfItalic, "lfItalic");
+				Assert.AreEqual (0, lf.lfUnderline, "lfUnderline");
+				Assert.AreEqual (0, lf.lfStrikeOut, "lfStrikeOut");
+				Assert.AreEqual (1, lf.lfCharSet, "lfCharSet");
+				Assert.AreEqual (0, lf.lfOutPrecision, "lfOutPrecision");
+				Assert.AreEqual (0, lf.lfClipPrecision, "lfClipPrecision");
+				Assert.AreEqual (0, lf.lfQuality, "lfQuality");
+				Assert.AreEqual (0, lf.lfPitchAndFamily, "lfPitchAndFamily");
+				Assert.AreEqual (String.Empty, lf.lfFaceName, "lfFaceName");
+			}
+			catch (Exception e) {
+				Assert.Fail ("Unexpected exception {0}", e);
+			}
 		}
 
 		[Test]
