@@ -59,9 +59,12 @@ namespace MonoTests.SystemWeb.Framework
 		{
 			if (host == null)
 				return;
+#if !TARGET_JVM
 			AppDomain.Unload (Host.AppDomain);
 			AppDomain.CurrentDomain.SetData (HOST_INSTANCE_NAME, null);
+#endif
 			host = null;
+			Directory.Delete (baseDir, true);
 		}
 
 		public WebTest ()
@@ -88,6 +91,8 @@ namespace MonoTests.SystemWeb.Framework
 			Request = request;
 		}
 
+
+#if !TARGET_JVM
 		static void LoadAssemblyRecursive (Assembly ass)
 		{
 			if (ass.GlobalAssemblyCache)
@@ -119,6 +124,7 @@ namespace MonoTests.SystemWeb.Framework
 				return;
 			File.Copy (oldfn, newfn);
 		}
+#endif
 
 		private static void EnsureDirectoryExists (string directory)
 		{
@@ -172,6 +178,7 @@ namespace MonoTests.SystemWeb.Framework
 			baseDir = tmpFile;
 			binDir = Directory.CreateDirectory (Path.Combine (baseDir, "bin")).FullName;
 
+#if !TARGET_JVM
 			foreach (Assembly ass in AppDomain.CurrentDomain.GetAssemblies ())
 				LoadAssemblyRecursive (ass);
 
@@ -179,6 +186,9 @@ namespace MonoTests.SystemWeb.Framework
 				CopyAssembly (ass, binDir);
 
 			MyHost host = (MyHost) ApplicationHost.CreateApplicationHost (typeof (MyHost), VIRTUAL_BASE_DIR, baseDir);
+#else
+			host = new MyHost ();
+#endif
 			AppDomain.CurrentDomain.SetData (HOST_INSTANCE_NAME, host);
 			host.AppDomain.SetData (HOST_INSTANCE_NAME, host);
 			return host;
