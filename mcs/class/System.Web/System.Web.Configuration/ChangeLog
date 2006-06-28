@@ -1,3 +1,7 @@
+2006-06-28 Andrew Skiba <andrews@mainsoft.com>
+
+	* ModulesConfiguration.cs: keep the inner exception
+
 2006-03-19 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpRuntimeConfigurationHandler.cs: removed a bunch of useless stuff

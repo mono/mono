@@ -74,7 +74,7 @@ namespace System.Web.Configuration
 				item_type = Type.GetType (type, true);
 			} catch (Exception e){
 				throw new HttpException (
-					String.Format ("Failed to load module `{0}' from type `{1}'", name, type));
+					String.Format ("Failed to load module `{0}' from type `{1}'", name, type), e);
 			}
 
 			if (!typeof (IHttpModule).IsAssignableFrom (item_type))
