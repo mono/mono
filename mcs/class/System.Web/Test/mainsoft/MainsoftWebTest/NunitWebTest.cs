@@ -207,7 +207,7 @@ namespace MonoTests.stand_alone.WebHarness
 						xml = sr.ReadToEnd ();
 				}
 				finally {
-					source.Dispose ();
+					source.Close ();
 				}
 				
 				_xmlIgnoreList.LoadXml (xml);
