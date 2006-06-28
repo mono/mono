@@ -1,3 +1,7 @@
+2006-06-28  Kornél Pál  <kornelpal@gmail.com>
+
+	* Char.cs: Implemented IsHighSurrogate and IsLowSurrogate methods.
+
 2006-06-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Double.cs : don't throw Exception in TryParse() for 'E'.

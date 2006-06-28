@@ -214,6 +214,24 @@ namespace System
 			return IsDigit (str[index]);
 		}
 
+#if NET_2_0
+		public static bool IsHighSurrogate (char c)
+		{
+			return c >= '\uD800' && c <= '\uDBFF';
+		}
+
+		public static bool IsHighSurrogate (string s, int index)
+		{
+			if (s == null) 
+				throw new ArgumentNullException ("s");
+			
+			if (index < 0 || index >= s.Length)
+				throw new ArgumentOutOfRangeException ("index");
+			
+			return IsHighSurrogate (s [index]);
+		}
+#endif
+
 		public static bool IsLetter (char c)
 		{
 			unsafe {
@@ -291,6 +309,24 @@ namespace System
 			
 			return IsLower (str[index]);
 		}
+
+#if NET_2_0
+		public static bool IsLowSurrogate (char c)
+		{
+			return c >= '\uDC00' && c <= '\uDFFF';
+		}
+
+		public static bool IsLowSurrogate (string s, int index)
+		{
+			if (s == null) 
+				throw new ArgumentNullException ("s");
+			
+			if (index < 0 || index >= s.Length)
+				throw new ArgumentOutOfRangeException ("index");
+			
+			return IsLowSurrogate (s [index]);
+		}
+#endif
 
 		public static bool IsNumber (char c)
 		{
