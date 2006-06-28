@@ -8,10 +8,21 @@ namespace MonoTests.SystemWeb.Framework
 {
 	public class BaseWorkerRequest : SimpleWorkerRequest, IDictionary
 	{
-		public BaseWorkerRequest (string page, string query, TextWriter writer)
+		string _userAgent;
+		public BaseWorkerRequest (string page, string query, TextWriter writer, string userAgent)
 			: base (page, query, writer)
 		{
+			_userAgent = userAgent;
 		}
+
+		public override string GetKnownRequestHeader(int index) {
+			switch (index) {
+			case HttpWorkerRequest.HeaderUserAgent:
+				return _userAgent;
+			}
+			return base.GetKnownRequestHeader (index);
+		}
+
 
 		Hashtable data = new Hashtable ();
 		#region IDictionary Members

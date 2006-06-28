@@ -42,7 +42,7 @@ namespace MonoTests.SystemWeb.Framework
 			if (EntityBody == null || !IsPost)
 				return base.CreateBaseWorkerRequest (wr);
 			return new PostableWorkerRequest (Url, GetQueryString (),
-				wr, EntityBody, PostContentType);
+				wr, UserAgent, EntityBody, PostContentType);
 		}
 	}
 }

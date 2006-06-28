@@ -5,11 +5,6 @@ using System.Collections;
 
 namespace MonoTests.SystemWeb.Framework
 {
-	public enum HttpVerb
-	{
-		Get, Post, Put, Delete
-	}
-
 	[Serializable]
 	public class BaseRequest
 	{
@@ -31,6 +26,13 @@ namespace MonoTests.SystemWeb.Framework
 			set { _url = value; }
 		}
 
+		string _userAgent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.1.4322)";
+		public virtual string UserAgent
+		{
+			get { return _userAgent; }
+			set { _userAgent = value; }
+		}
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -46,7 +48,7 @@ namespace MonoTests.SystemWeb.Framework
 
 		protected virtual BaseWorkerRequest CreateBaseWorkerRequest (StringWriter wr)
 		{
-			return new BaseWorkerRequest (Url, GetQueryString (), wr);
+			return new BaseWorkerRequest (Url, GetQueryString (), wr, UserAgent);
 		}
 
 		protected virtual string GetQueryString ()

@@ -39,8 +39,8 @@ namespace MonoTests.SystemWeb.Framework
 		}
 
 		public PostableWorkerRequest (string page, string query, TextWriter writer,
-			byte[] entityBody, string postContentType)
-			: base (page, query, writer)
+			string userAgent, byte[] entityBody, string postContentType)
+			: base (page, query, writer, userAgent)
 		{
 			this.entityBody = entityBody;
 			this.postContentType = postContentType;
