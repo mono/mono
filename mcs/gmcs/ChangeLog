@@ -1,3 +1,9 @@
+2006-06-28  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #78716
+	* generic.cs (TypeManager.InferParamsTypeArguments): If there are
+	no arguments, return 'false': nothing can be inferred.
+
 2006-06-25  Marek Safar  <marek.safar@seznam.cz>
 
 	A fix for #78690

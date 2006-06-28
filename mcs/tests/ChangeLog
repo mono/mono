@@ -1,3 +1,7 @@
+2006-06-28  Raja R Harinath  <rharinath@novell.com>
+
+	* gtest-279.cs: New test from #78716.
+
 2006-06-21  Martin Baulig  <martin@ximian.com>
 
 	* test-anon-26.cs: Removed - this test case must not compile;

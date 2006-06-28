@@ -2482,31 +2482,25 @@ namespace Mono.CSharp {
 		public static bool InferParamsTypeArguments (EmitContext ec, ArrayList arguments,
 							     ref MethodBase method)
 		{
-			if ((arguments == null) || !TypeManager.IsGenericMethod (method))
+			if (!TypeManager.IsGenericMethod (method))
 				return true;
 
-			int arg_count;
-			
-			if (arguments == null)
-				arg_count = 0;
-			else
-				arg_count = arguments.Count;
-			
-			ParameterData pd = TypeManager.GetParameterData (method);
+			// if there are no arguments, there's no way to infer the type-arguments
+			if (arguments == null || arguments.Count == 0)
+				return false;
 
+			ParameterData pd = TypeManager.GetParameterData (method);
 			int pd_count = pd.Count;
+			int arg_count = arguments.Count;
 
 			if (pd_count == 0)
 				return false;
-			
+
 			if (pd.ParameterModifier (pd_count - 1) != Parameter.Modifier.PARAMS)
 				return false;
-			
+
 			if (pd_count - 1 > arg_count)
 				return false;
-			
-			if (pd_count == 1 && arg_count == 0)
-				return true;
 
 			Type[] method_args = method.GetGenericArguments ();
 			Type[] infered_types = new Type [method_args.Length];
