@@ -315,6 +315,7 @@ namespace System.Windows.Forms
 		{
 			if (help_button == null) {
 				help_button = new Button ();
+				help_button.TabIndex = 60;
 
 				help_button.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Left)));
 				help_button.FlatStyle = FlatStyle.System;
@@ -335,6 +336,21 @@ namespace System.Windows.Forms
 		private void CreateFormControls ()
 		{
 			form.SuspendLayout ();
+
+			GroupBox group_box_prn = new GroupBox ();
+			group_box_prn.Location = new Point (10, 8);
+			group_box_prn.Text = "Printer";
+			group_box_prn.Size = new Size (420, 145);
+
+			GroupBox group_box_range = new GroupBox ();
+			group_box_range.Location = new Point (10, 155);
+			group_box_range.Text = "Print range";
+			group_box_range.Size = new Size (240, 100);
+
+			GroupBox group_box_copies = new GroupBox ();
+			group_box_copies.Location = new Point (265, 155);
+			group_box_copies.Text = "Copies";
+			group_box_copies.Size = new Size (165, 100);
 
 			// Accept button
 			accept_button = new Button ();
@@ -361,129 +377,113 @@ namespace System.Windows.Forms
 			label.AutoSize = true;
 			label.Text = "&Name:";
 			label.Location = new Point (20, 33);
-			form.Controls.Add (label);
+			group_box_prn.Controls.Add (label);
 
 			label = new Label ();
 			label.Text = "Status:";
 			label.AutoSize = true;
 			label.Location = new Point (20, 60);
-			form.Controls.Add (label);
+			group_box_prn.Controls.Add (label);
 
 			label_status = new Label ();
 			label_status.AutoSize = true;
 			label_status.Location = new Point (80, 60);
-			form.Controls.Add (label_status);
+			group_box_prn.Controls.Add (label_status);
 
 			label = new Label ();
 			label.Text = "Type:";
 			label.AutoSize = true;
 			label.Location = new Point (20, 80);
-			form.Controls.Add (label);
+			group_box_prn.Controls.Add (label);
 
 			label_type = new Label ();
 			label_type.AutoSize = true;
 			label_type.Location = new Point (80, 80);
-			form.Controls.Add (label_type);
+			group_box_prn.Controls.Add (label_type);
 
 			label = new Label ();
 			label.Text = "Where:";
 			label.AutoSize = true;
 			label.Location = new Point (20, 100);
-			form.Controls.Add (label);
+			group_box_prn.Controls.Add (label);
 
-			label_where = new Label ();
-			label_where.AutoSize = true;
-			label_where.Location = new Point (80, 100);
-			form.Controls.Add (label_where);
 			label = new Label ();
-
 			label.Text = "Comment:";
 			label.AutoSize = true;
 			label.Location = new Point (20, 120);
-			form.Controls.Add (label);
+			group_box_prn.Controls.Add (label);
 
 			label_comment = new Label ();
 			label_comment.AutoSize = true;
 			label_comment.Location = new Point (80, 120);
-			form.Controls.Add (label_where);
-
-			GroupBox group_box_prn = new GroupBox ();
-			group_box_prn.Location = new Point (10, 8);
-			group_box_prn.Text = "Printer";
-			group_box_prn.Size = new Size (400, 145);
-
-			GroupBox group_box_range = new GroupBox ();
-			group_box_range.Location = new Point (10, 155);
-			group_box_range.Text = "Print range";
-			group_box_range.Size = new Size (220, 100);
 
 			radio_all = new RadioButton ();
-			radio_all.Location = new Point (20, 170);
+			radio_all.TabIndex = 21;
+			radio_all.Location = new Point (20, 20);
 			radio_all.Text = "&All";
 			radio_all.Checked = true;
-			form.Controls.Add (radio_all);
+			group_box_range.Controls.Add (radio_all);
 
 			radio_pages = new RadioButton ();
-			radio_pages.Location = new Point (20, 192);
+			radio_pages.TabIndex = 22;
+			radio_pages.Location = new Point (20, 46);
 			radio_pages.Text = "Pa&ges";
 			radio_pages.Width = 60;
-			form.Controls.Add (radio_pages);
+			group_box_range.Controls.Add (radio_pages);
 
 			radio_sel = new RadioButton ();
-			radio_sel.Location = new Point (20, 215);
+			radio_sel.TabIndex = 23;
+			radio_sel.Location = new Point (20, 72);
 			radio_sel.Text = "&Selection";
-			form.Controls.Add (radio_sel);
+			group_box_range.Controls.Add (radio_sel);
 
 			labelFrom = new Label ();
 			labelFrom.Text = "&from:";
 			labelFrom.AutoSize = true;
-			labelFrom.Location = new Point (80, 198);
-			form.Controls.Add (labelFrom);
+			labelFrom.Location = new Point (80, 50);
+			group_box_range.Controls.Add (labelFrom);
 
 			txtFrom = new TextBox ();
-			txtFrom.Location = new Point (115, 196);
+			txtFrom.TabIndex = 24;
+			txtFrom.Location = new Point (120, 50);
 			txtFrom.Width = 40;
-			form.Controls.Add (txtFrom);
+			group_box_range.Controls.Add (txtFrom);
 
 			labelTo = new Label ();
 			labelTo.Text = "&to:";
 			labelTo.AutoSize = true;
-			labelTo.Location = new Point (160, 198);
-			form.Controls.Add (labelTo);
+			labelTo.Location = new Point (170, 50);
+			group_box_range.Controls.Add (labelTo);
 
 			txtTo = new TextBox ();
-			txtTo.Location = new Point (180, 196);
+			txtTo.TabIndex = 25;
+			txtTo.Location = new Point (190, 50);
 			txtTo.Width = 40;
-			form.Controls.Add (txtTo);
+			group_box_range.Controls.Add (txtTo);
 
 			chkbox_print = new CheckBox ();
 			chkbox_print.Location = new Point (305, 115);
 			chkbox_print.Text = "Print to fil&e";
-			form.Controls.Add (chkbox_print);
 
 			label = new Label ();
 			label.Text = "Number of &copies:";
 			label.AutoSize = true;
-			label.Location = new Point (255, 177);
-			form.Controls.Add (label);
+			label.Location = new Point (20, 20);
+			group_box_copies.Controls.Add (label);
 
 			updown_copies = new NumericUpDown ();
-			updown_copies.Location = new Point (360, 175);
-			form.Controls.Add (updown_copies);
+			updown_copies.TabIndex = 31;
+			updown_copies.Location = new Point (120, 20);
+			group_box_copies.Controls.Add (updown_copies);
 			updown_copies.ValueChanged += new System.EventHandler (OnUpDownValueChanged);
 			updown_copies.Size = new System.Drawing.Size (40, 20);
 
 			chkbox_collate = new CheckBox ();
-			chkbox_collate.Location = new Point (320, 210);
+			chkbox_collate.TabIndex = 32;
+			chkbox_collate.Location = new Point (20, 40);
 			chkbox_collate.Text = "C&ollate";
 			chkbox_collate.Width = 80;
-			form.Controls.Add (chkbox_collate);
-
-			GroupBox group_box_copies = new GroupBox ();
-			group_box_copies.Location = new Point (245, 155);
-			group_box_copies.Text = "Copies";
-			group_box_copies.Size = new Size (165, 100);
-			form.Controls.Add (group_box_copies);
+			group_box_copies.Controls.Add (chkbox_collate);
 
 
 
@@ -500,15 +500,24 @@ namespace System.Windows.Forms
 				if (installed_printers[i] == default_printer_settings.PrinterName)
 					printer_combo.SelectedItem = installed_printers[i];
 			}
+			printer_combo.TabIndex = 11;
+			chkbox_print.TabIndex = 12;
+			group_box_prn.Controls.Add (printer_combo);
+			group_box_prn.Controls.Add (chkbox_print);
 
-			form.Size =  new Size (438, 327); // 384
+			form.Size =  new Size (450, 327); // 384
 			form.FormBorderStyle = FormBorderStyle.FixedDialog;
 			form.MaximizeBox = false;
-			form.Controls.Add (accept_button);
-			form.Controls.Add (cancel_button);
-			form.Controls.Add (printer_combo);
+			group_box_prn.TabIndex = 10;
+			group_box_range.TabIndex = 20;
+			group_box_copies.TabIndex = 30;
+			accept_button.TabIndex = 40;
+			cancel_button.TabIndex = 50;
 			form.Controls.Add (group_box_prn);
 			form.Controls.Add (group_box_range);
+			form.Controls.Add (group_box_copies);
+			form.Controls.Add (accept_button);
+			form.Controls.Add (cancel_button);
 			form.ResumeLayout (false);
 		}
 
