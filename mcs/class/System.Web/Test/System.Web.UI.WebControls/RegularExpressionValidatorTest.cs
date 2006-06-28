@@ -96,6 +96,19 @@ namespace MonoTests.System.Web.UI.WebControls
 
 			box.Text = "9410";
 			Assert.IsFalse (p.DoEvaluateIsValid (), "B2");
+			
+			box.Text = "12345 ";
+			Assert.IsFalse (p.DoEvaluateIsValid (), "B3");
+
+			box.Text = " 12345";
+			Assert.IsFalse (p.DoEvaluateIsValid (), "B4");
+			
+			box.Text = " 12345 ";
+			Assert.IsFalse (p.DoEvaluateIsValid (), "B5");
+			
+			p.ValidationExpression = "^\\d{5}$";
+			box.Text = "12345";
+			Assert.IsTrue (p.DoEvaluateIsValid (), "B6");
 
 			StopValidationTest();
 		}

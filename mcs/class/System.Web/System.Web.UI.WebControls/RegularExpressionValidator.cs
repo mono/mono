@@ -29,6 +29,7 @@
 using System.ComponentModel;
 using System.Web;
 using System.Web.UI.WebControls;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Security.Permissions;
 
@@ -65,7 +66,15 @@ namespace System.Web.UI.WebControls {
 			if (GetControlValidationValue (ControlToValidate).Trim() == "")
 				return true;
 
-			return Regex.IsMatch (GetControlValidationValue(ControlToValidate), ValidationExpression);
+			StringBuilder expr = new StringBuilder(ValidationExpression);
+
+			if (expr.Length == 0 || expr [0] != '^')
+				expr.Insert(0, '^');
+								
+			if (expr [expr.Length - 1] != '$')
+				expr.Append('$');
+				
+			return Regex.IsMatch (GetControlValidationValue(ControlToValidate), expr.ToString ());
 		}
 
 #if NET_2_0

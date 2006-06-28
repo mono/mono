@@ -1,3 +1,8 @@
+2006-06-28 Juraj Skripsky <js@hotfeet.ch>
+
+	* RegularExpressionValidator.cs (EvaluateIsValid): wrap regex to
+	test against with "^...$" if necessary. MS.NET does this too.
+ 
 2006-06-28  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* WizardStepCollection.cs: Fixed Add methods to initialize

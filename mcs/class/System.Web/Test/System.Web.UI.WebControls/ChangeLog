@@ -1,3 +1,8 @@
+2006-06-28 Juraj Skripsky <js@hotfeet.ch>
+
+	* RegularExpressionValidatorTest.cs: check for automatic wrapping of
+	expression with "^...$".
+
 2006-06-28 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* Added WizardTest.cs: Wizard control basic tests
