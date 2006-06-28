@@ -39,6 +39,7 @@ namespace MonoTests.SystemWeb.Framework
 
 		public override void DoInvoke (object param)
 		{
+			base.DoInvoke (param);
 			_page = (Page) param;
 #if BUG_78521_FIXED
 				_page.PreInit += OnPreInit;

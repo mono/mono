@@ -1,3 +1,7 @@
+2006-06-28  Andrew Skiba <andrews@mainsoft.com>
+
+	* System.Web_test.dll.sources: IForeignData.cs for NunitWeb framework
+
 2006-06-28 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* System.Web_test.dll.sources: added WizardTest.cs

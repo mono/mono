@@ -18,6 +18,7 @@ mainsoft/NunitWeb/NunitWeb/BaseInvoker.cs
 mainsoft/NunitWeb/NunitWeb/BaseRequest.cs
 mainsoft/NunitWeb/NunitWeb/BaseWorkerRequest.cs
 mainsoft/NunitWeb/NunitWeb/FormRequest.cs
+mainsoft/NunitWeb/NunitWeb/IForeignData.cs
 mainsoft/NunitWeb/NunitWeb/HandlerInvoker.cs
 mainsoft/NunitWeb/NunitWeb/MyHandler.cs
 mainsoft/NunitWeb/NunitWeb/MyHost.cs

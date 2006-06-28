@@ -5,12 +5,21 @@ using System.Web.Hosting;
 
 namespace MonoTests.SystemWeb.Framework
 {
+	[Serializable]
 	public class WebTest
 	{
+		object _userData;
+		public object UserData
+		{
+			get { return _userData; }
+			set { _userData = value; }
+		}
+
 		Response _response;
 		public Response Response
 		{
 			get { return _response; }
+			set { _response = value; }
 		}
 
 		BaseInvoker _invoker;
@@ -36,8 +45,8 @@ namespace MonoTests.SystemWeb.Framework
 				host = AppDomain.CurrentDomain.GetData (HOST_INSTANCE_NAME) as MyHost;
 				if (host != null)
 					return host;
+				host = new MyHost (); //Fake instance to make EnsureHosting happy
 				host = CreateHosting ();
-				CopyResources ();
 				return host;
 			}
 		}
@@ -46,24 +55,46 @@ namespace MonoTests.SystemWeb.Framework
 		{
 			if (Request.Url == null)
 				Request.Url = Invoker.GetDefaultUrl ();
-			_response = Host.Run (Invoker, Request);
+			WebTest newTestInstance = Host.Run (this);
+			CopyFrom (newTestInstance);
 			return _response.Body;
 		}
 
-		public static void Invoke (object param)
+		private void CopyFrom (WebTest newTestInstance)
 		{
-			Host.Invoke (param);
+			this._invoker = newTestInstance._invoker;
+			this._request = newTestInstance._request;
+			this._response = newTestInstance._response;
+			this._userData = newTestInstance._userData;
+		}
+
+		public static WebTest CurrentTest
+		{
+			get { return MyHost.GetCurrentTest (); }
+		}
+
+		public void Invoke (object param)
+		{
+			try {
+				Invoker.DoInvoke (param);
+			}
+			catch (Exception ex) {
+				Host.RegisterException (ex);
+				throw;
+			}
 		}
 
 		public static void Unload ()
 		{
 			if (host == null)
 				return;
-#if !TARGET_JVM
-			AppDomain.Unload (Host.AppDomain);
-			AppDomain.CurrentDomain.SetData (HOST_INSTANCE_NAME, null);
-#endif
+
+			AppDomain oldDomain = host.AppDomain;
 			host = null;
+#if !TARGET_JVM
+			AppDomain.CurrentDomain.SetData (HOST_INSTANCE_NAME, null);
+			AppDomain.Unload (oldDomain);
+#endif
 			Directory.Delete (baseDir, true);
 		}
 
@@ -185,6 +216,7 @@ namespace MonoTests.SystemWeb.Framework
 			foreach (Assembly ass in AppDomain.CurrentDomain.GetAssemblies ())
 				CopyAssembly (ass, binDir);
 
+			CopyResources ();
 			MyHost host = (MyHost) ApplicationHost.CreateApplicationHost (typeof (MyHost), VIRTUAL_BASE_DIR, baseDir);
 #else
 			host = new MyHost ();

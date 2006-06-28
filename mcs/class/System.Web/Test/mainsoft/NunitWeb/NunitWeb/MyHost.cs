@@ -19,50 +19,28 @@ namespace MonoTests.SystemWeb.Framework
 		#region MyData
 		class MyData
 		{
-			public BaseInvoker invoker;
+			public WebTest currentTest;
 			public Exception exception;
-			public bool invoked;
 		}
 		#endregion
 		
 		public AppDomain AppDomain
 		{ get { return AppDomain.CurrentDomain; } }
 		
-		public Response Run (BaseInvoker invoker, BaseRequest request)
+		public WebTest Run (WebTest t)
 		{
-			HttpWorkerRequest wr = request.CreateWorkerRequest ();
-			IDictionary d = (IDictionary) wr;
-
-			MyData data = new MyData ();
-			data.invoker = invoker;
+			HttpWorkerRequest wr = t.Request.CreateWorkerRequest ();
+			MyData data = GetMyData (wr);
+			data.currentTest = t;
 			data.exception = null;
-			data.invoked = false;
-			d[GetType ()] = data;
 
 			HttpRuntime.ProcessRequest (wr);
-			Response res = request.ExtractResponse (wr);
-
+			t.Response = t.Request.ExtractResponse (wr);
+			
 			if (data.exception != null)
 				RethrowException (data.exception);
 
-			if (!data.invoked)
-				throw new Exception ("internal error: ProcessRequest did not reach WebTest.Invoke; response was: " + res.Body);
-
-			return res;
-		}
-
-		public void Invoke (object param)
-		{
-			HttpWorkerRequest wr = GetMyWorkerRequest (HttpContext.Current);
-			MyData data = (MyData) ((IDictionary) wr)[GetType ()];
-			data.invoked = true;
-			try {
-				 data.invoker.DoInvoke (param);
-			}
-			catch (Exception ex) {
-				data.exception = ex;
-				throw;
-			}
+			return t;
 		}
 
 		private static void RethrowException (Exception inner)
@@ -78,10 +56,37 @@ namespace MonoTests.SystemWeb.Framework
 			throw outer;
 		}
 
-		private static HttpWorkerRequest GetMyWorkerRequest (HttpContext c)
+		private static HttpWorkerRequest GetMyWorkerRequest ()
 		{
-			IServiceProvider isp = (IServiceProvider) c;
+			IServiceProvider isp = HttpContext.Current as IServiceProvider;
+			if (isp == null)
+				return null;
 			return (HttpWorkerRequest) (isp.GetService (typeof (HttpWorkerRequest)));
+		}
+
+		private static MyData GetMyData (HttpWorkerRequest wr)
+		{
+			IForeignData fd = (IForeignData) wr;
+			MyData d = (MyData) fd[typeof (MyHost)];
+			if (d == null) {
+				d = new MyData ();
+				fd[typeof (MyHost)] = d;
+			}
+			return d;
+		}
+
+		public static WebTest GetCurrentTest ()
+		{
+			HttpWorkerRequest hwr = GetMyWorkerRequest ();
+			if (hwr == null)
+				return null;
+			return GetMyData (hwr).currentTest;
+		}
+
+		public void RegisterException (Exception ex)
+		{
+			MyData data = GetMyData (GetMyWorkerRequest());
+			data.exception = ex;
 		}
 	}
 }

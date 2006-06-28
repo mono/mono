@@ -36,13 +36,13 @@ namespace MonoTests.SystemWeb.Framework
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <returns>A new HttpWorkerRequest, which must implement also IDictionary</returns>
+		/// <returns>A new HttpWorkerRequest, which must implement also IForeignData</returns>
 		/// 
 		public virtual HttpWorkerRequest CreateWorkerRequest ()
 		{
 			StringWriter wr = new StringWriter ();
 			BaseWorkerRequest br = CreateBaseWorkerRequest (wr);
-			((IDictionary) br) [GetType ()] = wr;
+			((IForeignData) br) [GetType ()] = wr;
 			return br;
 		}
 
@@ -65,9 +65,9 @@ namespace MonoTests.SystemWeb.Framework
 		public virtual Response ExtractResponse (HttpWorkerRequest request)
 		{
 			BaseWorkerRequest br = (BaseWorkerRequest) request;
-			IDictionary d = (IDictionary) br;
+			IForeignData d = (IForeignData) br;
 			TextWriter wr = (TextWriter) d[GetType ()];
-			d.Remove (GetType ());
+			d[GetType ()] = null;
 			wr.Close ();
 			Response r = new Response ();
 			r.Body = wr.ToString ();

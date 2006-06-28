@@ -16,6 +16,7 @@ namespace MonoTests.SystemWeb.Framework
 
 		public override void DoInvoke (object param)
 		{
+			base.DoInvoke (param);
 			callback ();
 		}
 	}

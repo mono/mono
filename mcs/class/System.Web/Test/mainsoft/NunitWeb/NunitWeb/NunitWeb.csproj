@@ -41,6 +41,7 @@
     <Compile Include="BaseRequest.cs" />
     <Compile Include="FormRequest.cs" />
     <Compile Include="HandlerInvoker.cs" />
+    <Compile Include="IForeignData.cs" />
     <Compile Include="MyHandler.cs" />
     <Compile Include="BaseWorkerRequest.cs">
       <SubType>Code</SubType>
