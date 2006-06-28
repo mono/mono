@@ -1,3 +1,8 @@
+2006-06-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Socket.cs : use ConfigurationManager.GetSection() under NET_2_0.
+	  Also make sure to avoid NRE.
+
 2006-06-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* Socket.cs: Add stubs for net 2.0 SendTimeout and ReceiveTimeout properties.
