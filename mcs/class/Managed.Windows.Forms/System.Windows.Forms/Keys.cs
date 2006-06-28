@@ -216,6 +216,19 @@ namespace System.Windows.Forms {
 		Shift		= 0x00010000,
 		Control		= 0x00020000,
 		Alt		= 0x00040000,
-		Modifiers	= unchecked((int)0xFFFF0000)
+		Modifiers	= unchecked((int)0xFFFF0000),
+#if NET_2_0
+		IMEAccept	= 0x0000001E,
+		Oem1		= 0x000000BA,
+		Oem102		= 0x000000E2,
+		Oem2		= 0x000000BF,
+		Oem3		= 0x000000C0,
+		Oem4		= 0x000000DB,
+		Oem5		= 0x000000DC,
+		Oem6		= 0x000000DD,
+		Oem7		= 0x000000DE,
+		Packet		= 0x000000E7,
+		Sleep		= 0x0000005F
+#endif
 	}
 }

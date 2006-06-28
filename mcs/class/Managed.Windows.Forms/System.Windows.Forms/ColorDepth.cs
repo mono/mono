@@ -27,7 +27,9 @@
 // COMPLETE
 
 namespace System.Windows.Forms {
+#if !NET_2_0
 	[Serializable]
+#endif
 	public enum ColorDepth {
 		Depth4Bit	= 4,
 		Depth8Bit	= 8,

@@ -41,7 +41,6 @@ namespace System.Windows.Forms {
 		WordBreak = 16,
 		SingleLine = 32,
 		ExpandTabs = 64,
-		TabStop = 128,
 		NoClipping = 256,
 		ExternalLeading = 512,
 		NoPrefix = 2048,

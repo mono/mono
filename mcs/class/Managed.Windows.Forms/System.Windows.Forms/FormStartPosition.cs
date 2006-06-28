@@ -28,7 +28,9 @@ using System.Runtime.InteropServices;
 namespace System.Windows.Forms
 {
 	[ComVisible (true)]
+#if !NET_2_0
 	[Serializable]
+#endif
 	public enum FormStartPosition
 	{
 		Manual = 0,

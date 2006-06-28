@@ -28,7 +28,9 @@
 
 namespace System.Windows.Forms
 {
+#if !NET_2_0
 	[Serializable]
+#endif
 	public enum SizeGripStyle
 	{
 		Auto = 0,

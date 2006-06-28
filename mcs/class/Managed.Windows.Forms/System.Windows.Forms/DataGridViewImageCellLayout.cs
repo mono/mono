@@ -29,10 +29,10 @@
 namespace System.Windows.Forms {
 
 	public enum DataGridViewImageCellLayout {
-		Normal,
-		NotSet,
-		Stretch,
-		Zoom
+		NotSet = 0,
+		Normal = 1,
+		Stretch = 2,
+		Zoom = 3
 	}
 
 }

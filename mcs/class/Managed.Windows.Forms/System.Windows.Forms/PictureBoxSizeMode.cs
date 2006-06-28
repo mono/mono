@@ -27,10 +27,13 @@
 namespace System.Windows.Forms {
 
 	public enum PictureBoxSizeMode {
-		Normal,
-		StretchImage,
-		AutoSize,
-		CenterImage
+		Normal = 0,
+		StretchImage = 1,
+		AutoSize = 2,
+		CenterImage = 3,
+#if NET_2_0
+		Zoom = 4
+#endif
 	}
 }
 

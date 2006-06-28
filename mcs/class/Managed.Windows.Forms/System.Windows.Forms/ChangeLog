@@ -1,3 +1,18 @@
+2006-06-28  Jonathan Pobst  <monkey@ipobst.com>
+
+	* AccessibleRole.cs, AccessibleStates.cs, AnchorStyles.cs, 
+	  ArrangeDirection.cs, ArrangeStartingPosition.cs, ColorDepth.cs,
+	  ControlStyles.cs, DataGridViewImageCellLayout.cs, DrawMode.cs,
+	  FormBorderStyle.cs, FormStartPosition.cs, FormWindowState.cs,
+	  GridItemType.cs, HelpNavigator.cs, ImeMode.cs, ItemActivation.cs,
+	  ItemBoundsPortion.cs, Keys.cs, ListViewAlignment.cs, 
+	  PictureBoxSizeMode.cs, PropertySort.cs, SelectionMode.cs,
+	  Shortcut.cs, SizeGripStyle.cs, SortOrder.cs, StructFormat.cs,
+	  TextFormatFlags.cs, ToolBarAppearance.cs, ToolBarButtonStyle.cs,
+	  ToolBarTextAlign.cs, View.cs: 2.0 Changes to existing 1.x
+	  enumerations (FlagsAttribute, SerializableAttribute, added/removed
+	  values)
+
 2006-06-28  Mike Kestner  <mkestner@novell.com>
 
 	* ComboBox.cs: implement scroll wheel support. Fixes #78360.

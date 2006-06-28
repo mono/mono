@@ -27,6 +27,9 @@
 // COMPLETE
 
 namespace System.Windows.Forms {
+#if NET_2_0
+	[Flags]
+#endif
 	public enum ArrangeStartingPosition {
 		BottomLeft	= 0,
 		BottomRight	= 1,

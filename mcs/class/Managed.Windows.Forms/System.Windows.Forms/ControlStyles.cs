@@ -45,6 +45,10 @@ namespace System.Windows.Forms {
 		AllPaintingInWmPaint	= 0x00002000,
 		CacheText		= 0x00004000,
 		EnableNotifyMessage	= 0x00008000,
-		DoubleBuffer		= 0x00010000
+		DoubleBuffer		= 0x00010000,
+#if NET_2_0
+		OptimizedDoubleBuffer	= 0x00020000,
+		UseTextForAccessibility	= 0x00040000
+#endif
 	}
 }

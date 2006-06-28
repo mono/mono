@@ -90,6 +90,12 @@ namespace System.Windows.Forms {
 		WhiteSpace	= 59,
 		PageTabList	= 60,
 		Clock		= 61,
-		Default		= -1
+		Default		= -1,
+#if NET_2_0
+		SplitButton	= 62,
+		IpAddress	= 63,
+		OutlineButton	= 64
+#endif
+
 	}
 }

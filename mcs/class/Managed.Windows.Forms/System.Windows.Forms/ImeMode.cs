@@ -42,6 +42,9 @@ namespace System.Windows.Forms {
 		Alpha		= 8,
 		HangulFull	= 9,
 		Hangul		= 10,
-		Inherit		= -1
+		Inherit		= -1,
+#if NET_2_0
+		Close		= 11
+#endif
 	}
 }
