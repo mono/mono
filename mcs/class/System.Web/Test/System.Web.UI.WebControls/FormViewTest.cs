@@ -98,6 +98,23 @@ namespace MonoTests.System.Web.UI.WebControls
 			}
 		}
 		
+		class Template : ITemplate
+		{
+			bool _instantiated;
+			
+			public bool Instantiated {
+			       get { return _instantiated; }
+			}
+			
+			#region ITemplate Members
+			
+			public void InstantiateIn (Control container) {
+			       _instantiated = true;
+			}
+			
+			#endregion
+		}
+		
 		[Test]
 		public void Defaults ()
 		{
@@ -214,6 +231,35 @@ namespace MonoTests.System.Web.UI.WebControls
 			f.DoOnPreRender (EventArgs.Empty);
 			f.PageIndex = 1;
 			Assert.AreEqual (16, f.PageCount, "#01");
+		}
+		
+		[Test]
+		public void InsertTemplate () {
+			ObjectDataSource ds = new ObjectDataSource ();
+			ds.ID = "ObjectDataSource1";
+			ds.TypeName = "System.Collections.ArrayList";
+			ds.SelectMethod = "ToArray";
+			Page p = new Page ();
+			Poker f = new Poker ();
+			Template itemTemplate = new Template ();
+			Template emptyTemplate = new Template ();
+			Template insertTemplate = new Template ();
+			f.ItemTemplate = itemTemplate;
+			f.EmptyDataTemplate = emptyTemplate;
+			f.InsertItemTemplate = insertTemplate;
+			f.DefaultMode = FormViewMode.Insert;
+			f.Page = p;
+			ds.Page = p;
+			p.Controls.Add (f);
+			p.Controls.Add (ds);
+			f.DataSourceID = "ObjectDataSource1";
+			f.DoConfirmInitState ();
+			f.DoOnPreRender (EventArgs.Empty);
+			
+			f.AllowPaging = true;
+			Assert.IsFalse(itemTemplate.Instantiated, "#01");
+			Assert.IsFalse(emptyTemplate.Instantiated, "#02");
+			Assert.IsTrue(insertTemplate.Instantiated, "#03");
 		}
 		
 		[TestFixtureTearDown]

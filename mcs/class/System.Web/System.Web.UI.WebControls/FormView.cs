@@ -888,7 +888,17 @@ namespace System.Web.UI.WebControls
 					key = new DataKey (new OrderedDictionary (), DataKeyNames);
 				}
 			} else {
-				itemRow = CreateRow (-1, DataControlRowType.EmptyDataRow, DataControlRowState.Normal);
+				switch (CurrentMode) {
+				case FormViewMode.Edit:
+					itemRow = CreateRow (-1, DataControlRowType.DataRow, DataControlRowState.Edit);
+					break;
+				case FormViewMode.Insert:
+					itemRow = CreateRow (-1, DataControlRowType.DataRow, DataControlRowState.Insert);
+					break;
+				default:
+					itemRow = CreateRow (-1, DataControlRowType.EmptyDataRow, DataControlRowState.Normal);
+					break;
+				}
 				table.Rows.Add (itemRow);
 				InitializeRow (itemRow);
 			}
