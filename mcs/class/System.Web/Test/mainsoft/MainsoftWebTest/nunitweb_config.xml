@@ -2,7 +2,7 @@
 	<IgnoreList>
 		<div id="" visible="" name="" onmouseover="" onmouseout="" style="" />"
 		<span id="" visible="" name="" src=""/>
-		<input id="" visible="" name="" __EVENTARGUMENT="" __EVENTTARGET="" __VIEWSTATE="" causesvalidation=""/>
+		<input id="" visible="" name="" __EVENTARGUMENT="" __EVENTTARGET="" __VIEWSTATE="" causesvalidation="" onclick=""/>
 		<table id="" visible="" name=""/>
 		<td id="" visible="" name=""/>
 		<th id="" visible="" name=""/>

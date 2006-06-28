@@ -68,6 +68,7 @@ namespace System.Web.UI.WebControls
 		public void Add (WizardStepBase wizardStep)
 		{
 			if (wizardStep == null) throw new ArgumentNullException ("wizardStep");
+			wizardStep.SetWizard (wizard);
 			list.Add (wizardStep);
 			wizard.UpdateViews ();
 		}
@@ -75,6 +76,7 @@ namespace System.Web.UI.WebControls
 		public void AddAt (int index, WizardStepBase wizardStep)
 		{
 			if (wizardStep == null) throw new ArgumentNullException ("wizardStep");
+			wizardStep.SetWizard (wizard);
 			list.Insert (index, wizardStep);
 			wizard.UpdateViews ();
 		}

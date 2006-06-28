@@ -1,3 +1,7 @@
+2006-06-28  Vladimir Krasnov  <vladimirk@mainsfot.com>
+
+	* nunitweb_config.xml: filtered onclick for input tags
+
 2006-05-21  Yoni Klain <yonik@mainsoft.com>
 
 	* XmlComparer.cs: add 2 variable for test fail asserting information

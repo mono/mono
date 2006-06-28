@@ -1,3 +1,7 @@
+2006-06-28 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* Added WizardTest.cs: Wizard control basic tests
+
 2006-06-25 Yoni Klain <yonik@mainsoft.com>
 
 	* GridViewTest.cs;

@@ -200,6 +200,9 @@ namespace System.Web.UI.WebControls
 	    [ThemeableAttribute (false)]
 		public virtual int ActiveStepIndex {
 			get {
+				if (WizardSteps.Count == 0)
+					return -1;
+
 				return activeStepIndex;
 			}
 			set {
@@ -808,10 +811,10 @@ namespace System.Web.UI.WebControls
 		public WizardStepType GetStepType (WizardStepBase wizardStep, int index)
 		{
 			if (wizardStep.StepType == WizardStepType.Auto) {
-				if (index == 0)
-					return WizardStepType.Start;
-				else if (index == WizardSteps.Count - 1)
+				if (index == WizardSteps.Count - 1)
 					return WizardStepType.Finish;
+				else if (index == 0)
+					return WizardStepType.Start;
 				else
 					return WizardStepType.Step;
 			} else
@@ -852,6 +855,7 @@ namespace System.Web.UI.WebControls
 			wizardTable = new Table ();
 			wizardTable.CellPadding = CellPadding; 
 			wizardTable.CellSpacing = CellSpacing; 
+			wizardTable.ID = this.ID;
 			
 			AddHeaderRow (wizardTable);
 			
@@ -868,13 +872,13 @@ namespace System.Web.UI.WebControls
 			
 			RegisterApplyStyle (viewCell, StepStyle);
 			viewCell.Controls.Add (multiView);
-			
-			viewCell.Height = new Unit ("100%");
 			viewRow.Cells.Add (viewCell);
+			viewRow.Height = new Unit ("100%");
 			wizardTable.Rows.Add (viewRow);
 			
 			TableRow buttonRow = new TableRow ();
 			TableCell buttonCell = new TableCell ();
+			buttonCell.HorizontalAlign = HorizontalAlign.Right;
 			CreateButtonBar (buttonCell);
 			buttonRow.Cells.Add (buttonCell);
 			wizardTable.Rows.Add (buttonRow);
@@ -889,6 +893,7 @@ namespace System.Web.UI.WebControls
 				TableRow row = new TableRow ();
 				
 				TableCell sideBarCell = new TableCell ();
+				sideBarCell.ControlStyle.Height = Unit.Percentage (100);
 				CreateSideBar (sideBarCell);
 				row.Cells.Add (sideBarCell);
 				
@@ -907,6 +912,8 @@ namespace System.Web.UI.WebControls
 		void CreateButtonBar (TableCell buttonBarCell)
 		{
 			Table t = new Table ();
+			t.CellPadding = 5;
+			t.CellSpacing = 5;
 			TableRow row = new TableRow ();
 			RegisterApplyStyle (buttonBarCell, NavigationStyle);
 			
@@ -916,33 +923,33 @@ namespace System.Web.UI.WebControls
 					if (startNavigationTemplate != null) {
 						AddTemplateCell (row, startNavigationTemplate, StartNextButtonID, CancelButtonID);
 					} else {
-						if (DisplayCancelButton)
-							AddButtonCell (row, CreateButton (CancelButtonID, CancelCommandName, CancelButtonType, CancelButtonText, CancelButtonImageUrl, CancelButtonStyle));
 						if (AllowNavigationToStep (ActiveStepIndex + 1))
 							AddButtonCell (row, CreateButton (StartNextButtonID, MoveNextCommandName, StartNextButtonType, StartNextButtonText, StartNextButtonImageUrl, StartNextButtonStyle));
+						if (DisplayCancelButton)
+							AddButtonCell (row, CreateButton (CancelButtonID, CancelCommandName, CancelButtonType, CancelButtonText, CancelButtonImageUrl, CancelButtonStyle));
 					}
 					break;
 				case WizardStepType.Step:
 					if (stepNavigationTemplate != null) {
 						AddTemplateCell (row, stepNavigationTemplate, StepPreviousButtonID, StepNextButtonID, CancelButtonID);
 					} else {
-						if (DisplayCancelButton)
-							AddButtonCell (row, CreateButton (CancelButtonID, CancelCommandName, CancelButtonType, CancelButtonText, CancelButtonImageUrl, CancelButtonStyle));
 						if (AllowNavigationToStep (ActiveStepIndex - 1))
 							AddButtonCell (row, CreateButton (StepPreviousButtonID, MovePreviousCommandName, StepPreviousButtonType, StepPreviousButtonText, StepPreviousButtonImageUrl, StepPreviousButtonStyle));
 						if (AllowNavigationToStep (ActiveStepIndex + 1))
 							AddButtonCell (row, CreateButton (StepNextButtonID, MoveNextCommandName, StepNextButtonType, StepNextButtonText, StepNextButtonImageUrl, StepNextButtonStyle));
+						if (DisplayCancelButton)
+							AddButtonCell (row, CreateButton (CancelButtonID, CancelCommandName, CancelButtonType, CancelButtonText, CancelButtonImageUrl, CancelButtonStyle));
 					}
 					break;
 				case WizardStepType.Finish:
 					if (finishNavigationTemplate != null) {
 						AddTemplateCell (row, finishNavigationTemplate, FinishPreviousButtonID, FinishButtonID, CancelButtonID);
 					} else {
-						if (DisplayCancelButton)
-							AddButtonCell (row, CreateButton (CancelButtonID, CancelCommandName, CancelButtonType, CancelButtonText, CancelButtonImageUrl, CancelButtonStyle));
 						if (AllowNavigationToStep (ActiveStepIndex - 1))
 							AddButtonCell (row, CreateButton (FinishPreviousButtonID, MovePreviousCommandName, FinishPreviousButtonType, FinishPreviousButtonText, FinishPreviousButtonImageUrl, FinishPreviousButtonStyle));
 						AddButtonCell (row, CreateButton (FinishButtonID, MoveCompleteCommandName, FinishCompleteButtonType, FinishCompleteButtonText, FinishCompleteButtonImageUrl, FinishCompleteButtonStyle));
+						if (DisplayCancelButton)
+							AddButtonCell (row, CreateButton (CancelButtonID, CancelCommandName, CancelButtonType, CancelButtonText, CancelButtonImageUrl, CancelButtonStyle));
 					}
 					break;
 			}
@@ -976,6 +983,7 @@ namespace System.Web.UI.WebControls
 		void AddButtonCell (TableRow row, Control control)
 		{
 			TableCell cell = new TableCell ();
+			cell.HorizontalAlign = HorizontalAlign.Right;
 			cell.Controls.Add (control);
 			row.Cells.Add (cell);
 		}
@@ -992,6 +1000,7 @@ namespace System.Web.UI.WebControls
 			} else {
 				stepDatalist = new DataList ();
 				stepDatalist.ID = DataListID;
+				stepDatalist.CellSpacing = 0;
 				sideBarCell.Controls.Add (stepDatalist);
 			}
 

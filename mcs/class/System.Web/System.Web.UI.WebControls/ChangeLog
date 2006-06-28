@@ -1,3 +1,12 @@
+2006-06-28  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* WizardStepCollection.cs: Fixed Add methods to initialize
+	WizardStep.Wizard property
+	* Wizard.cs: Fixed ActiveStepIndex, it should be -1 if there no steps
+	Fixed GetStepType, if only one step present, it should be FinishStep
+	Fixed styles of tables for more accurate rendering, fixed Wizard 
+	buttons order
+
 2006-06-28	Konstantin Triger <kostat@mainsoft.com>
 
 	* FormView.cs: instantiate correct template when the bounding data source is
