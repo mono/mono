@@ -1,3 +1,7 @@
+2006-06-28  Mike Kestner  <mkestner@novell.com>
+
+	* ComboBox.cs: implement scroll wheel support. Fixes #78360.
+
 2006-06-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* PropertyGrid.cs,

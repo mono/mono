@@ -1427,6 +1427,7 @@ namespace System.Windows.Forms
 				MouseDown += new MouseEventHandler (OnMouseDownPUW);
 				MouseUp += new MouseEventHandler (OnMouseUpPUW);
 				MouseMove += new MouseEventHandler (OnMouseMovePUW);				
+				MouseWheel += new MouseEventHandler (OnMouseWheelCLB);				
 				KeyDown += new KeyEventHandler (OnKeyDownPUW);
 				SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 				SetStyle (ControlStyles.ResizeRedraw | ControlStyles.Opaque, true);
@@ -1837,6 +1838,30 @@ namespace System.Windows.Forms
 			public void UpdateLastVisibleItem ()
 			{
 				last_item = LastVisibleItem ();
+			}
+
+			private void Scroll (int delta)
+			{
+				if (delta == 0 || !vscrollbar_ctrl.Visible)
+					return;
+
+				int max = vscrollbar_ctrl.Maximum;//- (page_size) + 1;
+
+				int val = vscrollbar_ctrl.Value + delta;
+				if (val > max)
+					val = max;
+				else if (val < vscrollbar_ctrl.Minimum)
+					val = vscrollbar_ctrl.Minimum;
+				vscrollbar_ctrl.Value = val;
+			}
+
+			private void OnMouseWheelCLB (object sender, MouseEventArgs me)
+			{
+				if (owner.Items.Count == 0)
+					return;
+
+				int lines = me.Delta / 120 * SystemInformation.MouseWheelScrollLines;
+				Scroll (-lines);
 			}
 
 			// Value Changed
