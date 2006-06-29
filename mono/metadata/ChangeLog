@@ -1,3 +1,8 @@
+2006-06-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_System_Reflection_Assembly_GetTypes): Fix support
+	for dynamic assemblies. Fixes #78724.
+
 2006-06-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_string_to_byvalwstr): Fix this completely broken function.
