@@ -1,3 +1,9 @@
+2006-06-29  Raja R Harinath  <rharinath@novell.com>
+
+	* icall.c (ves_icall_MonoMethod_get_base_definition): Return the
+	definition that introduces the virtual function slot.
+	Also fix Coverity #105.
+
 2006-06-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* icall.c (ves_icall_System_Reflection_Assembly_GetTypes): Fix support
