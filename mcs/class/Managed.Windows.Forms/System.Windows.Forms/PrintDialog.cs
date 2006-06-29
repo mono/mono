@@ -439,24 +439,26 @@ namespace System.Windows.Forms
 
 			labelFrom = new Label ();
 			labelFrom.Text = "&from:";
+			labelFrom.TabIndex = 24;
 			labelFrom.AutoSize = true;
 			labelFrom.Location = new Point (80, 50);
 			group_box_range.Controls.Add (labelFrom);
 
 			txtFrom = new TextBox ();
-			txtFrom.TabIndex = 24;
+			txtFrom.TabIndex = 25;
 			txtFrom.Location = new Point (120, 50);
 			txtFrom.Width = 40;
 			group_box_range.Controls.Add (txtFrom);
 
 			labelTo = new Label ();
 			labelTo.Text = "&to:";
+			labelTo.TabIndex = 26;
 			labelTo.AutoSize = true;
 			labelTo.Location = new Point (170, 50);
 			group_box_range.Controls.Add (labelTo);
 
 			txtTo = new TextBox ();
-			txtTo.TabIndex = 25;
+			txtTo.TabIndex = 27;
 			txtTo.Location = new Point (190, 50);
 			txtTo.Width = 40;
 			group_box_range.Controls.Add (txtTo);
