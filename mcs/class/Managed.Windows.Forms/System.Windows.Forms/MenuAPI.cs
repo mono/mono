@@ -530,6 +530,7 @@ namespace System.Windows.Forms {
 						ShowSubPopup (CurrentMenu, item);
 						SelectItem (item, item.MenuItems [0], false);
 						CurrentMenu = item;
+						active = true;
 					}
 					return;
 				}
@@ -636,7 +637,7 @@ namespace System.Windows.Forms {
 				return ProcessMnemonic (msg, keyData);
 			else if ((Msg)msg.Msg == Msg.WM_SYSKEYUP || keynav_state == KeyNavState.Idle)
 				return false;
-			else if (!active)
+			else if (!active && !Navigating)
 				return false;
 
 			switch (keyData) {
