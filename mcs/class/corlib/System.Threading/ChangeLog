@@ -1,3 +1,9 @@
+2006-06-29  Duncan Mak  <duncan@novell.com>
+
+	* WaitHandle.cs (CheckArray): Throw NotSupportedException if the
+	current thread is marked with the STAThreadAttribute. Fixes bug
+	#78455.
+
 2006-05-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ExecutionContext.cs: Don't capture the compressed stack unless the 

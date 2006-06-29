@@ -28,6 +28,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Remoting.Contexts;
 using System.Security.Permissions;
@@ -48,6 +50,12 @@ namespace System.Threading
 			if (length > 64)
 				throw new NotSupportedException ("Too many handles");
 
+			MethodInfo entryPoint = Assembly.GetEntryAssembly ().EntryPoint;
+			if (length > 1 &&
+			    (Thread.CurrentThread.ApartmentState == ApartmentState.STA ||
+			     entryPoint.GetCustomAttributes (typeof (STAThreadAttribute), false).Length == 1))
+				throw new NotSupportedException ("WaitAll for multiple handles is not allowed on an STA thread.");
+			
 			foreach (WaitHandle w in handles) {
 				if (w == null)
 					throw new ArgumentNullException ("waitHandles", "null handle");
