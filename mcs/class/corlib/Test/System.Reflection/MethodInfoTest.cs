@@ -160,6 +160,20 @@ namespace MonoTests.System.Reflection
 				this.GetType ().GetMethod ("HeyHey").ToString ());
 		}
 
+		class GBD_A         { public virtual     void f () {} }
+		class GBD_B : GBD_A { public override    void f () {} }
+		class GBD_C : GBD_B { public override    void f () {} }
+		class GBD_D : GBD_C { public new virtual void f () {} }
+		class GBD_E : GBD_D { public override    void f () {} }
+
+		[Test]
+		public void GetBaseDefinition ()
+		{
+			Assert.AreEqual (typeof (GBD_A), typeof (GBD_C).GetMethod ("f").GetBaseDefinition ().DeclaringType);
+			Assert.AreEqual (typeof (GBD_D), typeof (GBD_D).GetMethod ("f").GetBaseDefinition ().DeclaringType);
+			Assert.AreEqual (typeof (GBD_D), typeof (GBD_E).GetMethod ("f").GetBaseDefinition ().DeclaringType);
+		}
+
 #if NET_2_0
 		[Test]
 		public void GetMethodBody_Abstract () {
