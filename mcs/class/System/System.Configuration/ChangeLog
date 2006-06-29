@@ -1,3 +1,8 @@
+2006-06-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ApplicationSettingsBase.cs : When we use default value, convert it
+	  to proper type. Fixed bug #78654. Patch by Gareth Pearce.
+
 2006-05-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ConfigurationException.cs: BareMessage, Filename and Line properties

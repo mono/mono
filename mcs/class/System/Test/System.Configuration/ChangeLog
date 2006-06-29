@@ -1,3 +1,7 @@
+2006-06-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ApplicationSettingsBaseTest.cs : added test for bug #78654.
+
 2006-05-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* LocalFileSettingsProviderTest.cs : commented some lines in

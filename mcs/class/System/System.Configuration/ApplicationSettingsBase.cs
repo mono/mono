@@ -263,6 +263,9 @@ namespace System.Configuration {
 								}
 								else if (a is DefaultSettingValueAttribute) {
 									defaultValue = ((DefaultSettingValueAttribute)a).Value; /* XXX this is a string.. do we convert? */
+									if (prop.PropertyType != typeof(string)) {
+										defaultValue = TypeDescriptor.GetConverter(prop.PropertyType).ConvertFromString((string)defaultValue);
+									}
 								}
 								else if (a is SettingsSerializeAsAttribute) {
 									serializeAs = ((SettingsSerializeAsAttribute)a).SerializeAs;

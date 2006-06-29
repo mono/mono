@@ -311,6 +311,21 @@ namespace MonoTests.System.Configuration {
 		class Bug78430 : SettingsBase
 		{
 		}
+
+		[Test] // bug #78654
+		public void DefaultSettingValueAs ()
+		{
+			Assert.AreEqual (1, new Bug78654 ().IntSetting);
+		}
+
+		class Bug78654 : ApplicationSettingsBase
+		{
+			[UserScopedSettingAttribute ()]
+			[DefaultSettingValueAttribute ("1")]
+			public int IntSetting {
+				get { return ((int)(this ["IntSetting"])); }
+			}
+		}
 	}
 
 }
