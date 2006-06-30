@@ -3,6 +3,9 @@
 	* InternalWindowManager.cs: Remove some debug code.
 	* Form.cs: When an MdiParent is set to null, the window is
 	"detatched" and becomes a normal window.
+	* MdiClient.cs: Don't bring the new child form to the front until
+	it is activated (setting it as active does this), this makes the
+	previously active forms titlebar get redrawn as inactive.
 
 2006-06-29  Peter Dennis Bartok  <pbartok@novell.com>
 

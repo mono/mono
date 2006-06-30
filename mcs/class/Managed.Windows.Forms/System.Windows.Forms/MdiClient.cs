@@ -61,7 +61,7 @@ namespace System.Windows.Forms {
 					throw new ArgumentException("Form must be MdiChild");
 				}
 				base.Add (value);
-				SetChildIndex (value, 0); // always insert at front
+
 				// newest member is the active one
 				Form form = (Form) value;
 				owner.ActiveMdiChild = form;
