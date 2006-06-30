@@ -336,8 +336,11 @@ namespace System.Reflection
 						return m;
 				}
 
+				/*
+				  Commented out for now since it breaks some gtk# apps
 				if ((int)(bindingAttr & BindingFlags.ExactBinding) != 0)
 					return null;
+				*/
 
 				MethodBase result = null;
 				for (i = 0; i < match.Length; ++i) {
