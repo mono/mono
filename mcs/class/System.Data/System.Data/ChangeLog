@@ -1,4 +1,9 @@
 2006-06-30  Senganal T  <tsenganal@novell.com>
+
+	* DataRow.cs : 
+		- SetAdded, SetModified : new methods in 2.0
+
+2006-06-30  Senganal T  <tsenganal@novell.com>
 	* SerializationFormat.cs, DataSetDateTime.cs, DataTableNewRowEventArgs.cs,
 	DataTableNewRowEventHandler.cs : Added 
 	* SyntaxErrorException.cs EvaluateException.cs StrongTypingException.cs 

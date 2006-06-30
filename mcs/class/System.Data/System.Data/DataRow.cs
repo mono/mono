@@ -336,6 +336,23 @@ namespace System.Data {
 			}
 		}
 
+#if NET_2_0
+		public void SetAdded ()
+		{
+			if (RowState != DataRowState.Unchanged)
+				throw new InvalidOperationException ("SetAdded and SetModified can only be called on DataRows with Unchanged DataRowState.");
+			Original = -1;
+		}
+
+		public void SetModified ()
+		{
+			if (RowState != DataRowState.Unchanged)
+				throw new InvalidOperationException ("SetAdded and SetModified can only be called on DataRows with Unchanged DataRowState.");
+			Current = _table.RecordCache.NewRecord ();
+			_table.RecordCache.CopyRecord (_table, Original, Current);
+		}
+#endif
+
 		/// <summary>
 		/// Gets the DataTable for which this row has a schema.
 		/// </summary>

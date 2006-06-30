@@ -1616,5 +1616,123 @@ namespace MonoTests.System.Data
 				Assert.Fail("DRW147: Wrong exception type. Got:" + exc);
 			}
 		}
+
+#if NET_2_0
+		string SetAddedModified_ErrMsg = "SetAdded and SetModified can only be called on DataRows with Unchanged DataRowState.";
+		[Test]
+		public void SetAdded_test()
+		{
+			DataTable table = new DataTable();
+
+			DataRow row = table.NewRow();
+			try {
+				row.SetAdded();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException e) {
+				Assert.AreEqual (SetAddedModified_ErrMsg, e.Message, "#2");
+			}
+
+			table.Columns.Add("col1", typeof(int));
+			table.Columns.Add("col2", typeof(int));
+			table.Columns.Add("col3", typeof(int));
+
+			row = table.Rows.Add(new object[] { 1, 2, 3 });
+			Assert.AreEqual(DataRowState.Added, row.RowState, "#1");
+			try {
+				row.SetAdded();
+				Assert.Fail ("#2");
+			} catch (InvalidOperationException e) {
+				Assert.AreEqual (SetAddedModified_ErrMsg, e.Message, "#2");
+			}
+			Assert.AreEqual(DataRowState.Added, row.RowState, "#2");
+
+			row.AcceptChanges();
+			row[0] = 10;
+			Assert.AreEqual(DataRowState.Modified, row.RowState, "#5");
+			try {
+				row.SetAdded();
+				Assert.Fail ("#3");
+			} catch (InvalidOperationException e) {
+				Assert.AreEqual (SetAddedModified_ErrMsg, e.Message, "#2");
+			}
+
+			row.AcceptChanges();
+			Assert.AreEqual(DataRowState.Unchanged, row.RowState, "#3");
+			row.SetAdded();
+			Assert.AreEqual(DataRowState.Added, row.RowState, "#4");
+		}
+
+		[Test]
+		public void setAdded_testRollback ()
+		{
+			DataTable table = new DataTable ();
+			table.Columns.Add ("col1", typeof (int));
+			table.Columns.Add ("col2", typeof (int));
+
+			table.Rows.Add (new object[] {1,1});
+			table.AcceptChanges ();
+
+			table.Rows [0].SetAdded ();
+			table.RejectChanges ();
+			Assert.AreEqual (0, table.Rows.Count, "#1");
+		}
+
+		[Test]
+		public void SetModified_test()
+		{
+			DataTable table = new DataTable();
+
+			DataRow row = table.NewRow();
+			try {
+				row.SetModified ();
+			} catch (InvalidOperationException) {}
+
+			table.Columns.Add("col1", typeof(int));
+			table.Columns.Add("col2", typeof(int));
+			table.Columns.Add("col3", typeof(int));
+
+			row = table.Rows.Add(new object[] { 1, 2, 3 });
+			Assert.AreEqual(DataRowState.Added, row.RowState, "#1");
+			try {
+				row.SetModified();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException e) {
+				Assert.AreEqual (SetAddedModified_ErrMsg, e.Message, "#2");
+			}
+
+			row.AcceptChanges();
+			row[0] = 10;
+			Assert.AreEqual(DataRowState.Modified, row.RowState, "#5");
+			try {
+				row.SetModified ();
+				Assert.Fail ("#2");
+			} catch (InvalidOperationException e) {
+				Assert.AreEqual (SetAddedModified_ErrMsg, e.Message, "#2");
+			}
+
+			row.AcceptChanges();
+			Assert.AreEqual(DataRowState.Unchanged, row.RowState, "#3");
+			row.SetModified ();
+			Assert.AreEqual(DataRowState.Modified, row.RowState, "#4");
+		}
+
+		[Test]
+		public void setModified_testRollback()
+		{
+			DataTable table = new DataTable();
+			table.Columns.Add("col1", typeof(int));
+			table.Columns.Add("col2", typeof(int));
+
+			DataRow row = table.Rows.Add(new object[] { 1, 1 });
+			table.AcceptChanges();
+
+			row.SetModified ();
+			Assert.AreEqual(row.RowState, DataRowState.Modified, "#0");
+			Assert.AreEqual(1, row [0, DataRowVersion.Current], "#1");
+			Assert.AreEqual(1, row [0, DataRowVersion.Original], "#2");
+			table.RejectChanges ();
+			Assert.AreEqual(row.RowState, DataRowState.Unchanged, "#3");
+		}
+#endif
 	}
 }
