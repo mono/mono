@@ -17,10 +17,11 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2005 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2005,2006 Novell, Inc. (http://www.novell.com)
 //
-// Author:
+// Authors:
 //	Jordi Mas i Hernandez <jordi@ximian.com>
+//	Chris Toshok <toshok@ximian.com>
 //
 //
 
@@ -35,7 +36,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	class DataGridTableStyleTest
+	public class DataGridTableStyleTest
 	{
 		private bool eventhandled;
 
@@ -73,6 +74,17 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TestAllowSortingChangedEvent_default ()
+		{
+			DataGridTableStyle dg = new DataGridTableStyle (true);
+			eventhandled = false;
+			dg.AllowSortingChanged   += new EventHandler (OnEventHandler);
+			dg.AllowSorting = !dg.AllowSorting;
+			Assert.AreEqual (true, eventhandled, "A2");
+		}
+
+		[Test]
 		public void TestAlternatingBackColorChangedEvent ()
 		{
 			DataGridTableStyle dg = new DataGridTableStyle ();
@@ -82,14 +94,43 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (true, eventhandled, "A1");
 		}
 
-		[Ignore ("Microsoft lunches ForeColor event instead of BackColor")]
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TestAlternatingBackColorChangedEvent_default ()
+		{
+			DataGridTableStyle dg = new DataGridTableStyle (true);
+			eventhandled = false;
+			dg.AlternatingBackColorChanged  += new EventHandler (OnEventHandler);
+			dg.AlternatingBackColor = Color.Red;
+			Assert.AreEqual (true, eventhandled, "A2");
+		}
+
+		// Microsoft lunches ForeColor event instead of BackColor
+		[Test]
 		public void TestBackColorChangedEvent ()
 		{
 			DataGridTableStyle dg = new DataGridTableStyle ();
 			eventhandled = false;
 			dg.BackColorChanged += new EventHandler (OnEventHandler);
 			dg.BackColor = Color.Yellow;
-			Assert.AreEqual (true, eventhandled, "A1");
+			Assert.AreEqual (false, eventhandled, "A1");
+
+			dg = new DataGridTableStyle ();
+			eventhandled = false;
+			dg.ForeColorChanged += new EventHandler (OnEventHandler);
+			dg.BackColor = Color.Yellow;
+			Assert.AreEqual (true, eventhandled, "A2");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TestBackColorChangedEvent_default ()
+		{
+			DataGridTableStyle dg = new DataGridTableStyle (true);
+			eventhandled = false;
+			dg.ForeColorChanged += new EventHandler (OnEventHandler);
+			dg.BackColor = Color.Yellow;
+			Assert.AreEqual (true, eventhandled, "A3");
 		}
 
 		[Test]
@@ -97,15 +138,43 @@ namespace MonoTests.System.Windows.Forms
 		{
 			DataGridTableStyle dg = new DataGridTableStyle ();
 			eventhandled = false;
-			dg.ColumnHeadersVisibleChanged   += new EventHandler (OnEventHandler);
+			dg.ColumnHeadersVisibleChanged += new EventHandler (OnEventHandler);
 			dg.ColumnHeadersVisible = !dg.ColumnHeadersVisible;
 			Assert.AreEqual (true, eventhandled, "A1");
 		}
 
-		[Ignore ("Microsoft lunches  BackColor event instead of ForeColor")]
+		[Test]
+		public void TestColumnHeadersVisibleChangedEvent_default ()
+		{
+			DataGridTableStyle dg = new DataGridTableStyle (true);
+			eventhandled = false;
+			dg.ColumnHeadersVisibleChanged += new EventHandler (OnEventHandler);
+			dg.ColumnHeadersVisible = !dg.ColumnHeadersVisible;
+			Assert.AreEqual (true, eventhandled, "A1");
+		}
+
+		// Microsoft lunches BackColor event instead of ForeColor
+		[Test]
 		public void TestForeColorChangedEvent ()
 		{
 			DataGridTableStyle dg = new DataGridTableStyle ();
+			eventhandled = false;
+			dg.ForeColorChanged  += new EventHandler (OnEventHandler);
+			dg.ForeColor = Color.Red;
+			Assert.AreEqual (false, eventhandled, "A1");
+
+			dg = new DataGridTableStyle ();
+			eventhandled = false;
+			dg.BackColorChanged  += new EventHandler (OnEventHandler);
+			dg.ForeColor = Color.Red;
+			Assert.AreEqual (true, eventhandled, "A2");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TestForeColorChangedEvent_default ()
+		{
+			DataGridTableStyle dg = new DataGridTableStyle (true);
 			eventhandled = false;
 			dg.ForeColorChanged   += new EventHandler (OnEventHandler);
 			dg.ForeColor = Color.Red;
@@ -123,9 +192,31 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TestGridLineColorChangedEvent_default ()
+		{
+			DataGridTableStyle dg = new DataGridTableStyle (true);
+			eventhandled = false;
+			dg.GridLineColorChanged += new EventHandler (OnEventHandler);
+			dg.GridLineColor = Color.Red;
+			Assert.AreEqual (true, eventhandled, "A1");
+		}
+
+		[Test]
 		public void TestGridLineStyleChangedEvent ()
 		{
 			DataGridTableStyle dg = new DataGridTableStyle ();
+			eventhandled = false;
+			dg.GridLineStyleChanged += new EventHandler (OnEventHandler);
+			dg.GridLineStyle = DataGridLineStyle.None;
+			Assert.AreEqual (true, eventhandled, "A1");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TestGridLineStyleChangedEvent_default ()
+		{
+			DataGridTableStyle dg = new DataGridTableStyle (true);
 			eventhandled = false;
 			dg.GridLineStyleChanged += new EventHandler (OnEventHandler);
 			dg.GridLineStyle = DataGridLineStyle.None;
@@ -143,9 +234,31 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TestHeaderBackColorChangedEvent_default ()
+		{
+			DataGridTableStyle dg = new DataGridTableStyle (true);
+			eventhandled = false;
+			dg.HeaderBackColorChanged  += new EventHandler (OnEventHandler);
+			dg.HeaderBackColor = Color.Red;
+			Assert.AreEqual (true, eventhandled, "A1");
+		}
+
+		[Test]
 		public void TestHeaderFontChangedEvent ()
 		{
 			DataGridTableStyle dg = new DataGridTableStyle ();
+			eventhandled = false;
+			dg.HeaderFontChanged += new EventHandler (OnEventHandler);
+			dg.HeaderFont = new Font ("Arial", 20);
+			Assert.AreEqual (true, eventhandled, "A1");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TestHeaderFontChangedEvent_default ()
+		{
+			DataGridTableStyle dg = new DataGridTableStyle (true);
 			eventhandled = false;
 			dg.HeaderFontChanged += new EventHandler (OnEventHandler);
 			dg.HeaderFont = new Font ("Arial", 20);
@@ -163,6 +276,17 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TestHeaderForeColorChangedEvent_default ()
+		{
+			DataGridTableStyle dg = new DataGridTableStyle (true);
+			eventhandled = false;
+			dg.HeaderForeColorChanged += new EventHandler (OnEventHandler);
+			dg.HeaderForeColor = Color.Red;
+			Assert.AreEqual (true, eventhandled, "A1");
+		}
+
+		[Test]
 		public void TestLinkColorChangedEvent ()
 		{
 			DataGridTableStyle dg = new DataGridTableStyle ();
@@ -172,21 +296,53 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (true, eventhandled, "A1");
 		}
 
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TestLinkColorChangedEvent_default ()
+		{
+			DataGridTableStyle dg = new DataGridTableStyle (true);
+			eventhandled = false;
+			dg.LinkColorChanged += new EventHandler (OnEventHandler);
+			dg.LinkColor = Color.Red;
+			Assert.AreEqual (true, eventhandled, "A1");
+		}
 
-		[Ignore ("Microsoft is not firing any event")]
+
+		// Microsoft is not firing any event
+		[Test]
 		public void TestLinkHoverColorChangedEvent ()
 		{
 			DataGridTableStyle dg = new DataGridTableStyle ();
 			eventhandled = false;
 			dg.LinkHoverColorChanged += new EventHandler (OnEventHandler);
 			dg.LinkHoverColor = Color.Red;
-			Assert.AreEqual (true, eventhandled, "A1");
+			Assert.AreEqual (false, eventhandled, "A1");
+		}
+
+		[Test]
+		public void TestLinkHoverColorChangedEvent_default ()
+		{
+			DataGridTableStyle dg = new DataGridTableStyle (true);
+			eventhandled = false;
+			dg.LinkHoverColorChanged += new EventHandler (OnEventHandler);
+			dg.LinkHoverColor = Color.Red;
+			Assert.AreEqual (false, eventhandled, "A1");
 		}
 
 		[Test]
 		public void TestMappingNameChangedEvent ()
 		{
 			DataGridTableStyle dg = new DataGridTableStyle ();
+			eventhandled = false;
+			dg.MappingNameChanged += new EventHandler (OnEventHandler);
+			dg.MappingName = "name1";
+			Assert.AreEqual (true, eventhandled, "A1");
+		}
+
+		[Test]
+		public void TestMappingNameChangedEvent_default ()
+		{
+			DataGridTableStyle dg = new DataGridTableStyle (true);
 			eventhandled = false;
 			dg.MappingNameChanged += new EventHandler (OnEventHandler);
 			dg.MappingName = "name1";
@@ -204,6 +360,17 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TestPreferredColumnWidthChangedEvent_default ()
+		{
+			DataGridTableStyle dg = new DataGridTableStyle (true);
+			eventhandled = false;
+			dg.PreferredColumnWidthChanged += new EventHandler (OnEventHandler);
+			dg.PreferredColumnWidth = dg.PreferredColumnWidth++;
+			Assert.AreEqual (true, eventhandled, "A1");
+		}
+
+		[Test]
 		public void TestPreferredRowHeightChangedEvent ()
 		{
 			DataGridTableStyle dg = new DataGridTableStyle ();
@@ -212,10 +379,32 @@ namespace MonoTests.System.Windows.Forms
 			dg.PreferredRowHeight = dg.PreferredRowHeight++;
 			Assert.AreEqual (true, eventhandled, "A1");
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TestPreferredRowHeightChangedEvent_default ()
+		{
+			DataGridTableStyle dg = new DataGridTableStyle (true);
+			eventhandled = false;
+			dg.PreferredRowHeightChanged += new EventHandler (OnEventHandler);
+			dg.PreferredRowHeight = dg.PreferredRowHeight++;
+			Assert.AreEqual (true, eventhandled, "A1");
+		}
+
 		[Test]
 		public void TestReadOnlyChangedEvent ()
 		{
 			DataGridTableStyle dg = new DataGridTableStyle ();
+			eventhandled = false;
+			dg.ReadOnlyChanged += new EventHandler (OnEventHandler);
+			dg.ReadOnly = !dg.ReadOnly;
+			Assert.AreEqual (true, eventhandled, "A1");
+		}
+
+		[Test]
+		public void TestReadOnlyChangedEvent_default ()
+		{
+			DataGridTableStyle dg = new DataGridTableStyle (true);
 			eventhandled = false;
 			dg.ReadOnlyChanged += new EventHandler (OnEventHandler);
 			dg.ReadOnly = !dg.ReadOnly;
@@ -233,9 +422,29 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void TestRowHeadersVisibleChangedEvent_default ()
+		{
+			DataGridTableStyle dg = new DataGridTableStyle (true);
+			eventhandled = false;
+			dg.RowHeadersVisibleChanged += new EventHandler (OnEventHandler);
+			dg.RowHeadersVisible = !dg.RowHeadersVisible;
+			Assert.AreEqual (true, eventhandled, "A1");
+		}
+
+		[Test]
 		public void TestRowHeaderWidthChangedEvent ()
 		{
 			DataGridTableStyle dg = new DataGridTableStyle ();
+			eventhandled = false;
+			dg.RowHeaderWidthChanged += new EventHandler (OnEventHandler);
+			dg.RowHeaderWidth = dg.RowHeaderWidth++;
+			Assert.AreEqual (true, eventhandled, "A1");
+		}
+
+		[Test]
+		public void TestRowHeaderWidthChangedEvent_default ()
+		{
+			DataGridTableStyle dg = new DataGridTableStyle (true);
 			eventhandled = false;
 			dg.RowHeaderWidthChanged += new EventHandler (OnEventHandler);
 			dg.RowHeaderWidth = dg.RowHeaderWidth++;
@@ -253,9 +462,31 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TestSelectionBackColorChangedEvent_default ()
+		{
+			DataGridTableStyle dg = new DataGridTableStyle (true);
+			eventhandled = false;
+			dg.SelectionBackColorChanged   += new EventHandler (OnEventHandler);
+			dg.SelectionBackColor = Color.Red;
+			Assert.AreEqual (true, eventhandled, "A1");
+		}
+
+		[Test]
 		public void TestSelectionForeColorChangedEvent ()
 		{
 			DataGridTableStyle dg = new DataGridTableStyle ();
+			eventhandled = false;
+			dg.SelectionForeColorChanged  += new EventHandler (OnEventHandler);
+			dg.SelectionForeColor = Color.Red;
+			Assert.AreEqual (true, eventhandled, "A1");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TestSelectionForeColorChangedEvent_default ()
+		{
+			DataGridTableStyle dg = new DataGridTableStyle (true);
 			eventhandled = false;
 			dg.SelectionForeColorChanged  += new EventHandler (OnEventHandler);
 			dg.SelectionForeColor = Color.Red;

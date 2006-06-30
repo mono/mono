@@ -1,3 +1,8 @@
+2006-06-30  Chris Toshok  <toshok@ximian.com>
+
+	* DataGridTableStyleTest.cs: add a bunch of mirrored tests for the
+	default DataGridTableStyle.
+
 2006-06-23  Chris Toshok  <toshok@ximian.com>
 
 	* PropertyManagerTest.cs: new tests regarding the
