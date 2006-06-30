@@ -519,26 +519,29 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				SuspendLayout ();
-
-				// TopLevel = true;
-
-				if (!value.IsMdiContainer)
+				if (value != null && !value.IsMdiContainer)
 					throw new ArgumentException ();
 
 				if (mdi_parent != null) {
 					mdi_parent.MdiContainer.Controls.Remove (this);
 				}
 
-				mdi_parent = value;
-				if (mdi_parent != null) {
+				if (value != null) {
+					mdi_parent = value;
 					window_manager = new MdiWindowManager (this,
 							mdi_parent.MdiContainer);
 					mdi_parent.MdiContainer.Controls.Add (this);
-					UpdateStyles ();
-				}
 
-				ResumeLayout ();
+					UpdateStyles ();
+				} else if (mdi_parent != null) {
+					mdi_parent = null;
+
+					// Create a new window manager
+					window_manager = null;
+					FormBorderStyle = form_border_style;
+
+					RecreateHandle ();
+				}
 			}
 		}
 

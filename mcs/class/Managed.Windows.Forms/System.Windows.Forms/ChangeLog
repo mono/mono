@@ -1,3 +1,9 @@
+2006-06-30  Jackson Harper  <jackson@ximian.com>
+
+	* InternalWindowManager.cs: Remove some debug code.
+	* Form.cs: When an MdiParent is set to null, the window is
+	"detatched" and becomes a normal window.
+
 2006-06-29  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* PrintDialog.cs: Labels need a tab index too, otherwise they overlap

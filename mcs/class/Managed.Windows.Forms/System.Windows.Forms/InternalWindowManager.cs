@@ -415,7 +415,6 @@ namespace System.Windows.Forms {
 		protected virtual void HandleTitleBarDown (int x, int y)
 		{
 			foreach (TitleButton button in title_buttons) {
-				Console.WriteLine ("BUTTON RECTANGLE:     {0}", button.Rectangle);
 				if (button != null && button.Rectangle.Contains (x, y)) {
 					button.State = ButtonState.Pushed;
 					return;
