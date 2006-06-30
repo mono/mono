@@ -38,7 +38,9 @@ namespace System.Data
 	/// the AcceptChanges or RejectChanges method 
 	/// is invoked on a DataTable with a ForeignKeyConstraint.
 	/// </summary>
+#if !NET_2_0
 	[Serializable]
+#endif
 	public enum AcceptRejectRule
 	{		
 		None = 0,

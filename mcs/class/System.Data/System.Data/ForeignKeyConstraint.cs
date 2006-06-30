@@ -162,6 +162,7 @@ namespace System.Data {
 
 #if NET_2_0
 		[MonoTODO]
+		[Browsable (false)]
 		public ForeignKeyConstraint (string constraintName, string parentTableName, string parentTableNamespace, string[] parentColumnNames, string[] childColumnNames, AcceptRejectRule acceptRejectRule, Rule deleteRule, Rule updateRule)
 		{
 			throw new NotImplementedException ();
@@ -263,7 +264,6 @@ namespace System.Data {
 					throw new InvalidConstraintException("Parent column is not type compatible with it's child"
 						+ " column.");
 				}
-					
 			}
 			
 		}

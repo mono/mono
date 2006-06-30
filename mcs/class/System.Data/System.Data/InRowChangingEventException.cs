@@ -47,6 +47,13 @@ namespace System.Data {
 		{
 		}
 
+#if NET_2_0
+		public InRowChangingEventException (string message, Exception inner)
+			: base (message, inner)
+		{
+		}
+#endif
+
 		protected InRowChangingEventException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{

@@ -41,22 +41,22 @@ namespace System.Data {
 	{
 		#region Constructors
 
-		public OperationAbortedException ()
+		internal OperationAbortedException ()
 			: base (Locale.GetText ("An OperationAbortedException has occurred."))
 		{
 		}
 
-		public OperationAbortedException (string s)
+		internal OperationAbortedException (string s)
 			: base (s)
 		{
 		}
 
-		public OperationAbortedException (string s, Exception innerException)
+		internal OperationAbortedException (string s, Exception innerException)
 			: base (s, innerException)
 		{
 		}
 
-		public OperationAbortedException (SerializationInfo info, StreamingContext context)
+		internal OperationAbortedException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 		}

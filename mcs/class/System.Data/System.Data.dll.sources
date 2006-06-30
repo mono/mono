@@ -6,7 +6,6 @@ System.Data/ColumnTypeConverter.cs
 System.Data/CommandBehavior.cs
 System.Data/CommandType.cs
 System.Data/ConnectionState.cs
-System.Data/ConflictOptions.cs
 System.Data/ConflictOption.cs
 System.Data/Constraint.cs
 System.Data/ConstraintCollection.cs
@@ -35,6 +34,7 @@ System.Data/DataRowState.cs
 System.Data/DataRowVersion.cs
 System.Data/DataRowView.cs
 System.Data/DataSet.cs
+System.Data/DataSetDateTime.cs
 System.Data/DataSysDescriptionAttribute.cs
 System.Data/DataTable.cs
 System.Data/DataTableCollection.cs
@@ -43,6 +43,8 @@ System.Data/DataTableClearEventHandler.cs
 System.Data/DataTableTypeConverter.cs
 System.Data/DataTablePropertyDescriptor.cs
 System.Data/DataTableReader.cs
+System.Data/DataTableNewRowEventArgs.cs
+System.Data/DataTableNewRowEventHandler.cs
 System.Data/DataView.cs
 System.Data/DataViewManager.cs
 System.Data/DataViewManagerListItemTypeDescriptor.cs
@@ -50,7 +52,6 @@ System.Data/DataViewRowState.cs
 System.Data/DataViewSetting.cs
 System.Data/DataViewSettingCollection.cs
 System.Data/DBConcurrencyException.cs
-System.Data/DbMetaData.cs
 System.Data/DbType.cs
 System.Data/DefaultValueTypeConverter.cs
 System.Data/DeletedRowInaccessibleException.cs
@@ -58,7 +59,6 @@ System.Data/DuplicateNameException.cs
 System.Data/EvaluateException.cs
 System.Data/FillErrorEventArgs.cs
 System.Data/FillErrorEventHandler.cs
-System.Data/FillOptions.cs
 System.Data/ForeignKeyConstraint.cs
 System.Data/IColumnMapping.cs
 System.Data/IColumnMappingCollection.cs
@@ -97,11 +97,10 @@ System.Data/PropertyAttributes.cs
 System.Data/PropertyCollection.cs
 System.Data/ReadOnlyException.cs
 System.Data/ResDescriptionAttribute.cs
-System.Data/ResultSetOptions.cs
-System.Data/ResultSetSensitivity.cs
 System.Data/RowNotInTableException.cs
 System.Data/Rule.cs
 System.Data/SchemaType.cs
+System.Data/SerializationFormat.cs
 System.Data/SchemaSerializationMode.cs
 System.Data/SqlDbType.cs
 System.Data/StateChangeEventArgs.cs
@@ -115,7 +114,6 @@ System.Data/SyntaxErrorException.cs
 System.Data/TypedDataSetGenerator.cs
 System.Data/TypeDataSetGeneratorException.cs
 System.Data/UniqueConstraint.cs
-System.Data/UpdateOptions.cs
 System.Data/UpdateRowSource.cs
 System.Data/UpdateStatus.cs
 System.Data/VersionNotFoundException.cs

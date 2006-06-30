@@ -259,9 +259,11 @@ namespace System.Data {
 
 		#region Protected methods
 
-		protected internal
+		
 #if !NET_2_0
-		virtual
+		protected internal virtual
+#else
+		internal
 #endif
 		void OnCollectionChanging (CollectionChangeEventArgs Args)
 		{
@@ -269,9 +271,11 @@ namespace System.Data {
 				CollectionChanging (this, Args);
 		}
 
-		protected
+		
 #if !NET_2_0
-		virtual
+		protected virtual
+#else
+		internal
 #endif
 		void OnCollectionChanged (CollectionChangeEventArgs Args)
 		{

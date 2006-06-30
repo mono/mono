@@ -44,7 +44,11 @@ namespace System.Data
 	/// Represents a customized view of a DataRow exposed as a fully featured Windows Forms control.
 	/// </summary>
 	// FIXME: correct exceptions in this[] methods
+#if NET_2_0
+	public class DataRowView : ICustomTypeDescriptor, IEditableObject, IDataErrorInfo, INotifyPropertyChanged
+#else
 	public class DataRowView : ICustomTypeDescriptor, IEditableObject, IDataErrorInfo
+#endif
 	{
 		#region Fields
 
@@ -346,5 +350,21 @@ namespace System.Data
 		}
 
 		#endregion // IDataErrorInfo implementation
+		
+#if NET_2_0
+		#region INotifyPropertyChanged
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		[MonoTODO ("to be tested..")]
+		void OnPropertyChanged (string propertyName)
+		{
+			if (PropertyChanged != null) {
+				PropertyChangedEventArgs args = new PropertyChangedEventArgs (propertyName);
+				PropertyChanged (this, args);
+			}
+		}
+		#endregion
+#endif
 	}
 }

@@ -37,7 +37,9 @@ namespace System.Data
 	/// <summary>
 	/// Specifies the type of a parameter within a query relative to the DataSet.
 	/// </summary>
+#if !NET_2_0
 	[Serializable]
+#endif
 	public enum ParameterDirection
 	{
 		Input = 1,

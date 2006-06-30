@@ -36,7 +36,6 @@ namespace System.Data
 	/// <summary>
 	/// Represents the method that will handle the the TableCleared event.
 	/// </summary>
-	[Serializable]
 	public delegate void DataTableClearEventHandler(object sender, DataTableClearEventArgs e);
 
 }

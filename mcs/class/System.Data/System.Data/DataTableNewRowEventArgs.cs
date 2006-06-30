@@ -1,12 +1,14 @@
 //
-// System.Data.EvaluateException.cs
+// System.Data.DataTableClearEventArgs.cs
 //
-// Author: Duncan Mak  (duncan@ximian.com)
+// Author:
+//   Senganal T <tsenganal@novell.com>
 //
-// (C) Ximian, Inc.
+//
 
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) Authors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -15,10 +17,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -28,33 +30,27 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Globalization;
-using System.Runtime.Serialization;
-
-namespace System.Data {
-	[Serializable]
-	public class EvaluateException : InvalidExpressionException
-	{
-		public EvaluateException ()
-			: base (Locale.GetText ("This expression cannot be evaluated"))
-		{
-		}
-
-		public EvaluateException (string message)
-			: base (message)
-		{
-		}
-
 #if NET_2_0
-		public EvaluateException (string message, Exception inner)
-			: base (message, inner)
-		{
+namespace System.Data
+{
+        public sealed class DataTableNewRowEventArgs : EventArgs
+        {
+                #region Fields
+		private readonly DataRow _row;
+		#endregion //Fields
+
+                #region Constructors
+                public DataTableNewRowEventArgs(DataRow row)
+                {
+                        _row = row;
 		}
-#endif
-		protected EvaluateException (SerializationInfo info, StreamingContext context)
-			: base (info, context)
-		{
+		#endregion // Constructors
+
+                #region Properties
+		public DataRow Row {
+			get { return _row; }
 		}
-	}
+                #endregion // Properties
+        }
 }
+#endif // NET_2_0

@@ -37,7 +37,9 @@ namespace System.Data
 	/// <summary>
 	/// Indicates the action that occurs when a ForeignKeyConstraint is enforced.
 	/// </summary>
+#if !NET_2_0
 	[Serializable]
+#endif
 	public enum Rule
 	{
 		None = 0,

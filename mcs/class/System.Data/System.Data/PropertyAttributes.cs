@@ -39,7 +39,12 @@ namespace System.Data
 	/// This enumeration has a FlagsAttribute that allows a bitwise combination of its member values
 	/// </summary>
 	[Flags]
+#if NET_2_0
+	[Obsolete]
+	[ComponentModel.EditorBrowsable (ComponentModel.EditorBrowsableState.Never)]
+#else
 	[Serializable]
+#endif
 	public enum PropertyAttributes
 	{
 		NotSupported = 0,

@@ -46,7 +46,13 @@ namespace System.Data {
 			: base (message)
 		{
 		}
-
+#if NET_2_0
+		public RowNotInTableException (string message, Exception inner)
+			: base (message, inner)
+		{
+		}
+#endif
+		
 		protected RowNotInTableException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{

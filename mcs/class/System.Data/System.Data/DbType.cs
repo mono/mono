@@ -35,7 +35,9 @@ namespace System.Data
 	/// <summary>
 	/// Gets the data type of a field, a property, or a Parameter object of a .NET data provider.
 	/// </summary>
+#if !NET_2_0
 	[Serializable]
+#endif
 	public enum DbType
 	{
 		AnsiString = 0,
@@ -61,7 +63,9 @@ namespace System.Data
 		UInt64 = 20,
 		VarNumeric = 21,
 		AnsiStringFixedLength = 22,
+#if NET_2_0
+		Xml = 25,
+#endif
 		StringFixedLength = 23
-
 	}
 }

@@ -123,19 +123,26 @@ namespace System.Data
 		/// Copies all the elements in the current InternalDataCollectionBase to a one-
 		/// dimensional Array, starting at the specified InternalDataCollectionBase index.
 		/// </summary>
-		public void CopyTo(Array ar, int index) 
+		public
+#if NET_2_0
+		virtual
+#endif
+		void CopyTo (Array ar, int index)
 		{
-			list.CopyTo (ar, index);
-
-		}
-
-		/// <summary>
-		/// Gets an IEnumerator for the collection.
-		/// </summary>
-		public IEnumerator GetEnumerator() 
-		{
-			return list.GetEnumerator ();
-		}
+  			list.CopyTo (ar, index);
+  		}
+  
+  		/// <summary>
+  		/// Gets an IEnumerator for the collection.
+  		/// </summary>
+		public
+#if NET_2_0
+		virtual
+#endif
+		IEnumerator GetEnumerator () 
+  		{
+  			return list.GetEnumerator ();
+  		}
 
 		internal Array ToArray (Type type)
 		{

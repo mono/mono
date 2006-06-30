@@ -47,6 +47,12 @@ namespace System.Data {
 		{
 		}
 
+#if NET_2_0
+		public InvalidExpressionException (string message, Exception inner)
+			: base (message, inner)
+		{
+		}
+#endif
 		protected InvalidExpressionException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{

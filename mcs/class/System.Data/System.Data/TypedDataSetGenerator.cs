@@ -38,6 +38,9 @@ using System.Text;
 
 namespace System.Data
 {
+#if !NET_1_1
+	[Obsolete ("TypedDataSetGenerator class will be removed in a future release. Please use System.Data.Design.TypedDataSetGenerator in System.Design.dll.")]
+#endif
 	public class TypedDataSetGenerator
 	{
 		public TypedDataSetGenerator ()

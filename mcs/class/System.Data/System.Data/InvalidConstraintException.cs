@@ -47,6 +47,12 @@ namespace System.Data {
 		{
 		}
 
+#if NET_2_0
+		public InvalidConstraintException (string message, Exception inner)
+			: base (message, inner)
+		{
+		}
+#endif
 		protected InvalidConstraintException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{

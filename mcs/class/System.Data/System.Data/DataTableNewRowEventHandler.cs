@@ -1,12 +1,13 @@
 //
-// System.Data.EvaluateException.cs
+// System.Data.DataColumnChangeEventHandler.cs
 //
-// Author: Duncan Mak  (duncan@ximian.com)
+// Author:
+//   Senganal T <tsenganal@novell.com>
 //
-// (C) Ximian, Inc.
-
+//
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) Authors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,33 +29,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Globalization;
-using System.Runtime.Serialization;
-
-namespace System.Data {
-	[Serializable]
-	public class EvaluateException : InvalidExpressionException
-	{
-		public EvaluateException ()
-			: base (Locale.GetText ("This expression cannot be evaluated"))
-		{
-		}
-
-		public EvaluateException (string message)
-			: base (message)
-		{
-		}
-
 #if NET_2_0
-		public EvaluateException (string message, Exception inner)
-			: base (message, inner)
-		{
-		}
-#endif
-		protected EvaluateException (SerializationInfo info, StreamingContext context)
-			: base (info, context)
-		{
-		}
-	}
+namespace System.Data
+{
+	/// <summary>
+	/// Represents the method that will handle the the TableCleared event.
+	/// </summary>
+	public delegate void DataTableNewRowEventHandler(object sender, DataTableNewRowEventArgs e);
 }
+#endif // NET_2_0

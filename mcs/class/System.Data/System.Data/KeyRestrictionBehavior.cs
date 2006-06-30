@@ -30,9 +30,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_1_1
-
 namespace System.Data {
+	[Serializable]
 	public enum KeyRestrictionBehavior
 	{
 		AllowOnly,
@@ -40,4 +39,3 @@ namespace System.Data {
 	}
 }
 
-#endif

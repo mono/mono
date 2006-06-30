@@ -174,12 +174,6 @@ namespace System.Data {
                         _closed = true;
                 }
                 
-                protected override void Dispose (bool disposing)
-                {
-                        if (disposing)
-				Close ();
-                }
-                
                 public override bool GetBoolean (int i)
                 {
                         return (bool) GetValue (i);

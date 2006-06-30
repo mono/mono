@@ -410,9 +410,11 @@ namespace System.Data {
 			}
 		}
 
-		protected
+		
 #if !NET_2_0
-		virtual
+		protected virtual
+#else
+		internal
 #endif
 		void OnCollectionChanged( CollectionChangeEventArgs ccevent) 
 		{

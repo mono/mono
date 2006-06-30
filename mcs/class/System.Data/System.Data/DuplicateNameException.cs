@@ -47,6 +47,13 @@ namespace System.Data {
 		{
 		}
 
+#if NET_2_0
+		public DuplicateNameException (string message, Exception inner)
+			: base (message, inner)
+		{
+		}
+#endif
+
 		protected DuplicateNameException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{

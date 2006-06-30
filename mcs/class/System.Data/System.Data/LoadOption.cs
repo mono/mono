@@ -36,15 +36,9 @@
 namespace System.Data {
 	public enum LoadOption 
 	{
-                OverwriteChanges        = 2,
-                PreserveChanges         = 3,
-                Upsert                  = 1,
-                [Obsolete ("Use OverwriteChanges insted")]
-                OverwriteRow            = 2,
-                [Obsolete ("Use PreserveChanges insted")]
-		PreserveCurrentValues   = 3,
-                [Obsolete ("Use Upsert insted")]
-		UpdateCurrentValues     = 1
+                OverwriteChanges        = 1,
+                PreserveChanges         = 2,
+                Upsert                  = 3
 	}
 }
 

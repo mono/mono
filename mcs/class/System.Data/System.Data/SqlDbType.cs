@@ -37,7 +37,9 @@ namespace System.Data
 	/// <summary>
 	/// Specifies SQL Server data types.
 	/// </summary>
+#if !NET_2_0
 	[Serializable]
+#endif
 	public enum SqlDbType
 	{
 		BigInt = 0,
@@ -63,6 +65,10 @@ namespace System.Data
 		TinyInt = 20,
 		VarBinary = 21,
 		VarChar = 22,
+#if NET_2_0
+		Xml = 25,
+		Udt = 29,
+#endif
 		Variant = 23
 	}
 }

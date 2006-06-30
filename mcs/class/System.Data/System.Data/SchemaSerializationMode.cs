@@ -32,8 +32,8 @@ namespace System.Data {
 
 	public enum SchemaSerializationMode 
 	{
-		ExcludeSchema,
-		IncludeSchema
+		IncludeSchema = 1,
+		ExcludeSchema = 2
 	}
 }
 #endif 

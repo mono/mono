@@ -56,7 +56,7 @@ namespace System.Data {
 		}
 
 #if NET_2_0
-		public DBConcurrencyException (DataRow[] dataRows, string message, Exception inner)
+		public DBConcurrencyException (string message, Exception inner, DataRow[] dataRows)
 			: base (message, inner)
 		{
 		}
@@ -92,9 +92,7 @@ namespace System.Data {
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
-#if NET_2_0
 		[MonoTODO]
 		public void CopyToRows (DataRow[] array, int ArrayIndex)
 		{

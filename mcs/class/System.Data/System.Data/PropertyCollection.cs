@@ -47,8 +47,17 @@ namespace System.Data
 	[Serializable]
 #endif
 	public class PropertyCollection : Hashtable {
-		public PropertyCollection() {
+		public PropertyCollection() 
+		{
 		}
+
+#if NET_2_0
+		protected PropertyCollection(System.Runtime.Serialization.SerializationInfo info,
+					     System.Runtime.Serialization.StreamingContext context)
+			: base (info, context)
+		{
+		}
+#endif
 
 		// the only public methods and properties 
 		// are all inherited from Hashtable

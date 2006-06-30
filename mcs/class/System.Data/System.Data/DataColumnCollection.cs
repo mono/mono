@@ -488,31 +488,30 @@ namespace System.Data {
 		/// Raises the OnCollectionChanged event.
 		/// </summary>
 		/// <param name="ccevent">A CollectionChangeEventArgs that contains the event data.</param>
-		protected
 #if !NET_2_0
-		virtual
+		protected virtual
+#else
+		internal
 #endif
 		void OnCollectionChanged(CollectionChangeEventArgs ccevent)
 		{
 			parentTable.ResetPropertyDescriptorsCache();
 			if (CollectionChanged != null) 
-			{
 				CollectionChanged(this, ccevent);
-			}
 		}
 
 		/// <summary>
 		/// Raises the OnCollectionChanging event.
 		/// </summary>
 		/// <param name="ccevent">A CollectionChangeEventArgs that contains the event data.</param>
-		protected internal
 #if !NET_2_0
-		virtual
+		protected internal virtual
+#else
+		internal
 #endif
 		void OnCollectionChanging(CollectionChangeEventArgs ccevent)
 		{
-			if (CollectionChanged != null) 
-			{
+			if (CollectionChanged != null) {
 				//FIXME: this is not right
 				//CollectionChanged(this, ccevent);
 				throw new NotImplementedException();

@@ -47,6 +47,12 @@ namespace System.Data {
 		{
 		}
 
+#if NET_2_0
+		public DeletedRowInaccessibleException (string message, Exception inner)
+			: base (message, inner)
+		{
+		}
+#endif
 		protected DeletedRowInaccessibleException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{

@@ -51,5 +51,12 @@ namespace System.Data {
 			: base (info, context)
 		{
 		}
+
+#if NET_2_0
+		public VersionNotFoundException (string message, Exception inner)
+			: base (message, inner)
+		{
+		}
+#endif
 	}
 }

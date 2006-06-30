@@ -38,7 +38,9 @@ namespace System.Data
 	/// This enumeration has a FlagsAttribute that allows a bitwise combination of its member values.
 	/// </summary>
 	[Flags]
+#if !NET_2_0
 	[Serializable]
+#endif
 	public enum CommandBehavior
 	{
 		Default = 0,
@@ -47,7 +49,6 @@ namespace System.Data
 		KeyInfo = 4,
 		SingleRow = 8,
 		SequentialAccess = 16,
-		CloseConnection = 32
-		
+		CloseConnection = 32		
 	}
 }

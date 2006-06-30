@@ -63,32 +63,35 @@ namespace System.Data {
 				errorList.Add (info.GetString("KEY_ARRAYVALUES" + i));
 		}
 
+#if NET_2_0
+		public TypedDataSetGeneratorException (String error) : base (error)
+		{
+		}
+		
+		public TypedDataSetGeneratorException (String error, Exception inner) 
+			: base (error, inner)
+		{
+		}
+#endif
 		#endregion //Constructors	
 
-		public ArrayList ErrorList
-                {
-                        get 
-                        {
-                                return errorList;
-                        }
-                                           
+		public ArrayList ErrorList {
+                        get { return errorList; }
 		}
 
 		#region Methods
                                                                                                     
                 public override void GetObjectData (SerializationInfo si, StreamingContext context)
                 {
-            base.GetObjectData (si, context);
+			base.GetObjectData (si, context);
                                                 
 			int count = (errorList != null) ? ErrorList.Count : 0;
-            si.AddValue ("KEY_ARRAYCOUNT", count);
+			si.AddValue ("KEY_ARRAYCOUNT", count);
 
 			for (int i=0; i < count; i++)
 				si.AddValue("KEY_ARRAYVALUES" + i, ErrorList [i]);
-                                                                                                    
                 }
                                                                                                     
                 #endregion // Methods
-
 	}
 }

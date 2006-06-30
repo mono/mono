@@ -1,3 +1,26 @@
+2006-06-30  Senganal T  <tsenganal@novell.com>
+	* SerializationFormat.cs, DataSetDateTime.cs, DataTableNewRowEventArgs.cs,
+	DataTableNewRowEventHandler.cs : Added 
+	* SyntaxErrorException.cs EvaluateException.cs StrongTypingException.cs 
+	IsolationLevel.cs ReadOnlyException.cs DataTableCollection.cs 
+	DataRowState.cs MissingPrimaryKeyException.cs DeletedRowInaccessibleException.cs 
+	DuplicateNameException.cs PropertyAttributes.cs StatementType.cs 
+	VersionNotFoundException.cs FillErrorEventHandler.cs DataRowChangeEventHandler.cs 
+	XmlWriteMode.cs InvalidExpressionException.cs StateChangeEventHandler.cs 
+	DbType.cs DataColumnChangeEventHandler.cs KeyRestrictionBehavior.cs 
+	ConnectionState.cs SchemaType.cs MergeFailedEventHandler.cs SqlDbType.cs 
+	DataRowVersion.cs ForeignKeyConstraint.cs DBConcurrencyException.cs 
+	OperationAbortedException.cs MissingSchemaAction.cs DataTableClearEventHandler.cs 
+	DataRowView.cs DataRowAction.cs ConstraintCollection.cs DataTableReader.cs 
+	LoadOption.cs InvalidConstraintException.cs InternalDataCollectionBase.cs 
+	ParameterDirection.cs AcceptRejectRule.cs UpdateRowSource.cs XmlReadMode.cs 
+	TypedDataSetGenerator.cs RowNotInTableException.cs TypeDataSetGeneratorException.cs
+	InRowChangingEventException.cs  MissingMappingAction.cs NoNullAllowedException.cs 
+	CommandBehavior.cs PropertyCollection.cs CommandType.cs 
+	UpdateStatus.cs ConflictOption.cs DataViewRowState.cs  Rule.cs 
+	DataColumnCollection.cs :
+		2.0 api fixes.
+
 2006-06-27  Senganal T  <tsenganal@novell.com>
 
 	* DataSet.cs, DataTable.cs : implement CreateDataReader methods 
