@@ -702,23 +702,29 @@ namespace System.Net.Sockets
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		public int SendTimeout {
 			get {
-				throw new NotImplementedException ();
+				return (int)GetSocketOption(
+					SocketOptionLevel.Socket,
+					SocketOptionName.SendTimeout);
 			}
 			set {
-				throw new NotImplementedException ();
+				SetSocketOption(
+					SocketOptionLevel.Socket,
+					SocketOptionName.SendTimeout, value);
 			}
 		}
 
-		[MonoTODO]
 		public int ReceiveTimeout {
 			get {
-				throw new NotImplementedException ();
+				return (int)GetSocketOption(
+					SocketOptionLevel.Socket,
+					SocketOptionName.ReceiveTimeout);
 			}
 			set {
-				throw new NotImplementedException ();
+				SetSocketOption(
+					SocketOptionLevel.Socket,
+					SocketOptionName.ReceiveTimeout, value);
 			}
 		}
 #endif

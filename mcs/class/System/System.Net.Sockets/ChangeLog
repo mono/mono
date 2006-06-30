@@ -1,3 +1,9 @@
+2006-06-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Socket.cs: patch from Sanghyeon Seo that implements
+	(Send|Receive)Timeout for 2.0.
+	* MulticastOption.cs: more 2.0 stuff.
+
 2006-06-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Socket.cs : use ConfigurationManager.GetSection() under NET_2_0.
