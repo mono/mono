@@ -1,3 +1,7 @@
+2006-06-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SolidBrushTest.cs: New. Unit tests for SolidBrush.
+
 2006-06-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestFont.cs: Expanded a test case to check for bug #78721 where the
