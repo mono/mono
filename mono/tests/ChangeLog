@@ -1,3 +1,7 @@
+2006-06-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* libtest.c (mono_test_ref_vtype): Remove debug printfs.
+
 2006-06-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal2.cs: Add tests for ByValTStr + Unicode encoding.
