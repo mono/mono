@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -34,34 +34,23 @@ using System.Security.Cryptography;
 using System.Security.Permissions;
 using System.Text;
 
-namespace MonoTests.System.Drawing
-{
+namespace MonoTests.System.Drawing.Imaging {
 
 	[TestFixture]
 	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
-	public class TestImageAttributes
-	{
+	public class ImageAttributesTest {
 
-		[TearDown]
-		public void Clean() {}
-
-		[SetUp]
-		public void GetReady()
-		{
-
-		}
-		
 		private static Color ProcessColorMatrix (Color color, ColorMatrix colorMatrix)
 		{
-			Bitmap bmp = new Bitmap (64, 64);
-			Graphics gr = Graphics.FromImage (bmp);
-			ImageAttributes imageAttr = new ImageAttributes ();
-	
-			bmp.SetPixel (0,0, color);
-	
-			imageAttr.SetColorMatrix (colorMatrix);
-			gr.DrawImage (bmp, new Rectangle (0, 0, 64,64), 0,0, 64,64, GraphicsUnit.Pixel, imageAttr);		
-			return bmp.GetPixel (0,0);
+			using (Bitmap bmp = new Bitmap (64, 64)) {
+				using (Graphics gr = Graphics.FromImage (bmp)) {
+					ImageAttributes imageAttr = new ImageAttributes ();
+					bmp.SetPixel (0,0, color);
+					imageAttr.SetColorMatrix (colorMatrix);
+					gr.DrawImage (bmp, new Rectangle (0, 0, 64, 64), 0, 0, 64, 64, GraphicsUnit.Pixel, imageAttr);		
+					return bmp.GetPixel (0,0);
+				}
+			}
 		}
 
 
@@ -70,7 +59,7 @@ namespace MonoTests.System.Drawing
 #if TARGET_JVM
 		[Category ("NotWorking")]
 #endif
-		public void ColorMatrix ()
+		public void ColorMatrix1 ()
 		{			
 			Color clr_src, clr_rslt;
 			
@@ -86,9 +75,17 @@ namespace MonoTests.System.Drawing
 			clr_rslt = ProcessColorMatrix (clr_src, cm);
 
 			Assert.AreEqual (clr_rslt, Color.FromArgb (255, 251, 20, 50));
+		}
 			
-			
-			cm = new ColorMatrix (new float[][] {
+		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
+		public void ColorMatrix2 ()
+		{			
+			Color clr_src, clr_rslt;
+
+			ColorMatrix cm = new ColorMatrix (new float[][] {
 				new float[] 	{1,	0,	0, 	0, 	0}, //R
 				new float[] 	{0,	1,	0, 	0, 	0}, //G
 				new float[] 	{0,	0,	1.5f, 	0, 	0}, //B
@@ -100,7 +97,5 @@ namespace MonoTests.System.Drawing
 			clr_rslt = ProcessColorMatrix (clr_src, cm);
 			Assert.AreEqual (clr_rslt, Color.FromArgb (255, 100, 40, 165));			 
 		}
-
-		
 	}
 }

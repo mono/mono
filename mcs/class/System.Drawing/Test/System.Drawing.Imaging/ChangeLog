@@ -1,3 +1,8 @@
+2006-06-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestImageAttribute.cs: Fix namespace and split test for easier 
+	search of a memory leak.
+
 2006-05-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestImageFormat.cs: Added test cases for Equals and GetHashCode.
