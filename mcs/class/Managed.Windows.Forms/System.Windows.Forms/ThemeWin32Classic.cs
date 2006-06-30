@@ -151,7 +151,7 @@ namespace System.Windows.Forms
 			ButtonBase_DrawButton(button, dc);
 			
 			// Draw the focus rectangle
-			if ((button.has_focus || button.paint_as_acceptbutton) && button.is_enabled)
+			if ((button.Focused || button.paint_as_acceptbutton) && button.Enabled)
 				ButtonBase_DrawFocus(button, dc);
 			
 			// Now the text
@@ -177,7 +177,7 @@ namespace System.Windows.Forms
 				check_or_radio_checked = ((RadioButton)button).Checked;
 			}
 			
-			if ((button.has_focus || button.paint_as_acceptbutton) && button.is_enabled && !check_or_radio) {
+			if ((button.Focused || button.paint_as_acceptbutton) && button.Enabled && !check_or_radio) {
 				// shrink the rectangle for the normal button drawing inside the focus rectangle
 				borderRectangle = Rectangle.Inflate (button.ClientRectangle, -1, -1);
 			} else {
@@ -210,7 +210,7 @@ namespace System.Windows.Forms
 				
 				Internal_DrawButton (dc, borderRectangle, 3, cpcolor, is_ColorControl, button.BackColor);
 			} else {
-				if ((!button.is_pressed || !button.is_enabled) && !check_or_radio_checked)
+				if ((!button.is_pressed || !button.Enabled) && !check_or_radio_checked)
 					Internal_DrawButton (dc, borderRectangle, 0, cpcolor, is_ColorControl, button.BackColor);
 				else
 					Internal_DrawButton (dc, borderRectangle, 1, cpcolor, is_ColorControl, button.BackColor);
@@ -342,7 +342,7 @@ namespace System.Windows.Forms
 				}
 			}
 			
-			if (button.is_enabled) {
+			if (button.Enabled) {
 				dc.DrawImage(i, image_x, image_y); 
 			}
 			else {
@@ -354,15 +354,20 @@ namespace System.Windows.Forms
 		{
 			Color focus_color = button.ForeColor;
 			
-			if (button.FlatStyle == FlatStyle.Popup)
-				if (!button.is_pressed)
+			int inflate_value = -3;
+			
+			if (!(button is CheckBox) && !(button is RadioButton)) {
+				inflate_value = -4;
+				
+				if (button.FlatStyle == FlatStyle.Popup && !button.is_pressed)
 					focus_color = ControlPaint.Dark(button.BackColor);
+				
+				dc.DrawRectangle (ResPool.GetPen (focus_color), button.ClientRectangle.X, button.ClientRectangle.Y, 
+						  button.ClientRectangle.Width - 1, button.ClientRectangle.Height - 1);
+			}
 			
-			dc.DrawRectangle (ResPool.GetPen (focus_color), button.ClientRectangle.X, button.ClientRectangle.Y, 
-					  button.ClientRectangle.Width - 1, button.ClientRectangle.Height - 1);
-			
-			if (button.has_focus) {
-				Rectangle rect = Rectangle.Inflate (button.ClientRectangle, -4, -4);
+			if (button.Focused) {
+				Rectangle rect = Rectangle.Inflate (button.ClientRectangle, inflate_value, inflate_value);
 				ControlPaint.DrawFocusRectangle (dc, rect);
 			}
 		}
@@ -377,7 +382,7 @@ namespace System.Windows.Forms
 				text_rect.Y++;
 			}
 			
-			if (button.is_enabled) {					
+			if (button.Enabled) {					
 				dc.DrawString(button.text, button.Font, ResPool.GetSolidBrush (button.ForeColor), text_rect, button.text_format);
 			} else {
 				if (button.FlatStyle == FlatStyle.Flat || button.FlatStyle == FlatStyle.Popup) {
@@ -586,6 +591,9 @@ namespace System.Windows.Forms
 			// render as per normal button
 			if (checkbox.appearance==Appearance.Button) {
 				ButtonBase_DrawButton (checkbox, dc);
+				
+				if ((checkbox.Focused) && checkbox.Enabled)
+					ButtonBase_DrawFocus(checkbox, dc);
 			} else {
 				// establish if we are rendering a flat style of some sort
 				if (checkbox.FlatStyle == FlatStyle.Flat || checkbox.FlatStyle == FlatStyle.Popup) {
@@ -604,7 +612,8 @@ namespace System.Windows.Forms
 		
 		protected virtual void CheckBox_DrawFocus( CheckBox checkbox, Graphics dc, Rectangle text_rectangle )
 		{
-			// do nothing here. maybe an other theme needs it
+			if ( checkbox.Focused && checkbox.appearance != Appearance.Button && checkbox.Enabled )
+				DrawInnerFocusRectangle( dc, text_rectangle, checkbox.BackColor );
 		}
 		
 		// renders a checkBox with the Flat and Popup FlatStyle
@@ -792,7 +801,10 @@ namespace System.Windows.Forms
 			else {
 				back_color = e.BackColor;
 				fore_color = e.ForeColor;
-			}			
+			}
+			
+			if (!ctrl.Enabled)
+				fore_color = ColorInactiveCaptionText;
 							
 			e.Graphics.FillRectangle (ResPool.GetSolidBrush (back_color), e.Bounds);
 
@@ -1555,13 +1567,17 @@ namespace System.Windows.Forms
 				dc.FillRectangle (SystemBrushes.Highlight, highlight_rect);
 			else
 				dc.FillRectangle (ResPool.GetSolidBrush (item.BackColor), text_rect);
+			
+			Brush textBrush =
+				!control.Enabled ? SystemBrushes.ControlLight :
+				(item.Selected && control.Focused) ? SystemBrushes.HighlightText :
+				this.ResPool.GetSolidBrush (item.ForeColor);
 
 			if (item.Text != null && item.Text.Length > 0) {
 				if (item.Selected && control.Focused)
-					dc.DrawString (item.Text, item.Font, SystemBrushes.HighlightText, highlight_rect, format);
+					dc.DrawString (item.Text, item.Font, textBrush, highlight_rect, format);
 				else
-					dc.DrawString (item.Text, item.Font, this.ResPool.GetSolidBrush
-						       (item.ForeColor), text_rect, format);
+					dc.DrawString (item.Text, item.Font, textBrush, text_rect, format);
 			}
 
 			if (control.View == View.Details && control.Columns.Count > 0) {
@@ -2755,6 +2771,9 @@ namespace System.Windows.Forms
 			
 			if (radio_button.appearance==Appearance.Button) {
 				ButtonBase_DrawButton (radio_button, dc);
+				
+				if ((radio_button.Focused) && radio_button.Enabled)
+					ButtonBase_DrawFocus(radio_button, dc);
 			} else {
 				// establish if we are rendering a flat style of some sort
 				if (radio_button.FlatStyle == FlatStyle.Flat || radio_button.FlatStyle == FlatStyle.Popup) {
@@ -2773,7 +2792,8 @@ namespace System.Windows.Forms
 		
 		protected virtual void RadioButton_DrawFocus(RadioButton radio_button, Graphics dc, Rectangle text_rectangle)
 		{
-			// do nothing here. maybe an other theme needs it
+			if ( radio_button.Focused && radio_button.appearance != Appearance.Button && radio_button.Enabled )
+				DrawInnerFocusRectangle( dc, text_rectangle, radio_button.BackColor );
 		}
 		
 		// renders a radio button with the Flat and Popup FlatStyle
@@ -4164,7 +4184,9 @@ namespace System.Windows.Forms
 
 			area = tb.ClientRectangle;
 
-			if (tb.thumb_pressed == true) {
+			if (!tb.Enabled) {
+				br_thumb = (Brush) ResPool.GetHatchBrush (HatchStyle.Percent50, ColorControlLightLight, ColorControlLight);
+			} else if (tb.thumb_pressed == true) {
 				br_thumb = (Brush) ResPool.GetHatchBrush (HatchStyle.Percent50, ColorControlLight, ColorControl);
 			} else {
 				br_thumb = SystemBrushes.Control;
@@ -5134,6 +5156,8 @@ namespace System.Windows.Forms
 					
 					arrow [0].X = rect.X + x_middle;
 					arrow [0].Y = rect.Bottom - triangle_height - 1;
+					if (arrow [0].Y > rect.Height)
+						arrow [0].Y = rect.Bottom - 3;
 					
 					if (arrow [0].Y - 1 == rect.Y)
 						arrow [0].Y += 1;
@@ -5177,7 +5201,9 @@ namespace System.Windows.Forms
 					
 					arrow [0].X = rect.X + x_middle;
 					arrow [0].Y = rect.Y + triangle_height;
-					
+					if (arrow [0].Y > rect.Height)
+						arrow [0].Y = 2;
+						
 					if (arrow [0].Y + 1 == rect.Bottom - 1)
 						arrow [0].Y -= 1;
 					

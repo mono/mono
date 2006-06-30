@@ -1,3 +1,9 @@
+2006-06-30  Alexander Olk  <alex.olk@googlemail.com>
+
+	* ThemeWin32Classic.cs: Added RadioButton and CheckBox focus
+	  rectangle. Added some patches from eno from bug #78490 and fixed
+	  the arrow position for small up and down CPDrawScrollButtons.
+
 2006-06-30  Jackson Harper  <jackson@ximian.com>
 
 	* InternalWindowManager.cs: Remove some debug code.
