@@ -617,6 +617,23 @@ namespace System.Globalization
 		// doing any member initialization
 		private CultureInfo () { constructed = true; } 
 
+#if NET_2_0
+		[MonoTODO]
+		public static CultureInfo GetCultureInfo (int culture) {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static CultureInfo GetCultureInfo (string name) {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static CultureInfo GetCultureInfo (string name, string altName) {
+			throw new NotImplementedException ();
+		}
+#endif
+
 		unsafe internal void ConstructCalendars ()
 		{
 			if (calendar_data == null) {

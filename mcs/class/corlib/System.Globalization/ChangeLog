@@ -1,3 +1,7 @@
+2006-06-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* CultureInfo.cs: Add stubs for net 2.0 GetCultureInfo () methods.
+
 2006-03-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HebrewCalrndar.cs : simply use CCHebrewCalendar.last_day_of_month().
