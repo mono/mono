@@ -269,6 +269,7 @@ namespace Mono.CSharp {
 			TypeExpr te = fne as TypeExpr;
 
 			if (!te.CheckAccessLevel (ec.DeclContainer)) {
+				Report.SymbolRelatedToPreviousError (te.Type);
 				ErrorIsInaccesible (loc, TypeManager.CSharpName (te.Type));
 				return null;
 			}
@@ -758,6 +759,7 @@ namespace Mono.CSharp {
 						// then we are in this situation.
 						Error_CannotAccessProtected (loc, m, qualifier_type, container_type);
 					} else {
+						Report.SymbolRelatedToPreviousError (m);
 						ErrorIsInaccesible (loc, TypeManager.GetFullNameSignature (m));
 					}
 				}
@@ -794,6 +796,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
+			Report.SymbolRelatedToPreviousError (lookup [0]);
 			ErrorIsInaccesible (loc, TypeManager.GetFullNameSignature (lookup [0]));
 		}
 
@@ -3348,8 +3351,10 @@ namespace Mono.CSharp {
 					Report.Error (271, loc, "The property or indexer `{0}' cannot be used in this context because the get accessor is inaccessible",
 						TypeManager.CSharpSignature (getter));
 				}
-				else
+				else {
+					Report.SymbolRelatedToPreviousError (getter);
 					ErrorIsInaccesible (loc, TypeManager.CSharpSignature (getter));
+				}
 				return null;
 			}
 			
@@ -3415,8 +3420,10 @@ namespace Mono.CSharp {
 					Report.Error (272, loc, "The property or indexer `{0}' cannot be used in this context because the set accessor is inaccessible",
 						TypeManager.CSharpSignature (setter));
 				}
-				else
+				else {
+					Report.SymbolRelatedToPreviousError (setter);
 					ErrorIsInaccesible (loc, TypeManager.CSharpSignature (setter));
+				}
 				return null;
 			}
 			
@@ -3614,6 +3621,7 @@ namespace Mono.CSharp {
 			if (must_do_cs1540_check && InstanceExpression != EmptyExpression.Null &&
 			    InstanceExpression.Type != ec.ContainerType &&
 			    ec.ContainerType.IsSubclassOf (InstanceExpression.Type)) {
+				Report.SymbolRelatedToPreviousError (EventInfo);
 				ErrorIsInaccesible (loc, TypeManager.CSharpSignature (EventInfo));
 				return false;
 			}
@@ -3631,6 +3639,7 @@ namespace Mono.CSharp {
 			bool must_do_cs1540_check;
 			if (!(IsAccessorAccessible (ec.ContainerType, add_accessor, out must_do_cs1540_check) &&
 			      IsAccessorAccessible (ec.ContainerType, remove_accessor, out must_do_cs1540_check))) {
+				Report.SymbolRelatedToPreviousError (EventInfo);
 				ErrorIsInaccesible (loc, TypeManager.CSharpSignature (EventInfo));
 				return null;
 			}

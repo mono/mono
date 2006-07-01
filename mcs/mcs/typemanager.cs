@@ -1443,6 +1443,9 @@ public class TypeManager {
 		if (type == parent)
 			return false;
 
+		if (type == null)
+			return false;
+
 		type = type.DeclaringType;
 		while (type != null) {
 			if (type == parent)
@@ -2244,7 +2247,7 @@ public class TypeManager {
 					return private_ok || (invocation_type == m.DeclaringType) ||
 						IsNestedChildOf (invocation_type, m.DeclaringType);
 
-				if (invocation_assembly == fi.DeclaringType.Assembly) {
+				if (invocation_assembly == fi.DeclaringType.Assembly || invocation_assembly == null) {
 					if (fa == FieldAttributes.Assembly || fa == FieldAttributes.FamORAssem)
 						return true;
 				} else {

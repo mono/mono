@@ -1,3 +1,12 @@
+2006-07-01  Marek Safar  <marek.safar@seznam.cz>
+
+	A fix for #78738
+	* attribute.cs, class.cs, ecore.cs : Add missing location of related symbol
+	for CS0122 where appropriate.
+	* typemanager.cs (IsNestedChildOf): Type can be null in the case of top
+	level attributes.
+	(Filter): Assembly can be null in the case of top level attributes.
+
 2006-06-25  Marek Safar  <marek.safar@seznam.cz>
 
 	A fix for #78690

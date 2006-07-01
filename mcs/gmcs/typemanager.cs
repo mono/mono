@@ -1636,8 +1636,12 @@ public partial class TypeManager {
 
 	public static bool IsPrivateAccessible (Type type, Type parent)
 	{
+		if (type == null)
+			return false;
+
 		if (type.Equals (parent))
 			return true;
+
 		return DropGenericTypeArguments (type) == DropGenericTypeArguments (parent);
 	}
 
@@ -1684,6 +1688,9 @@ public partial class TypeManager {
 	//
 	public static bool IsNestedChildOf (Type type, Type parent)
 	{
+		if (type == null)
+			return false;
+
 		type = DropGenericTypeArguments (type);
 		parent = DropGenericTypeArguments (parent);
 
@@ -2672,7 +2679,7 @@ public partial class TypeManager {
 						IsPrivateAccessible (invocation_type, m.DeclaringType) ||
 						IsNestedChildOf (invocation_type, m.DeclaringType);
 
-				if (invocation_assembly == fi.DeclaringType.Assembly ||
+				if (invocation_assembly == fi.DeclaringType.Assembly || invocation_assembly == null ||
 						TypeManager.IsFriendAssembly (fi.DeclaringType.Assembly)) {
 					if (fa == FieldAttributes.Assembly || fa == FieldAttributes.FamORAssem)
 						return true;

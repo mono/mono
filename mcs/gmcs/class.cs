@@ -4296,6 +4296,7 @@ namespace Mono.CSharp {
 			}
 
 			if (error) {
+				Report.SymbolRelatedToPreviousError (base_constructor);
 				Expression.ErrorIsInaccesible (loc, TypeManager.CSharpSignature (base_constructor));
 				base_constructor = null;
 				return false;

@@ -519,6 +519,7 @@ namespace Mono.CSharp {
 						Location);
 
 					if (member != null) {
+						Report.SymbolRelatedToPreviousError (member.Type);
 						Expression.ErrorIsInaccesible (Location, member.GetSignatureForError ());
 						return false;
 					}
