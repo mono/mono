@@ -1,3 +1,8 @@
+2006-07-01  John Luke  <john.luke@gmail.com>
+
+	* Mono.Cairo/FontType.cs:
+	* Mono.Cairo/PatternType.cs: add new enums for cairo 1.2
+
 2006-06-25  John Luke  <john.luke@gmail.com>
 
 	* Mono.Cairo/Surface.cs: make Destroy() call Dispose()
