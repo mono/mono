@@ -34,6 +34,10 @@ namespace Cairo {
 
 	public class PdfSurface : Surface
 	{
+		internal PdfSurface (IntPtr handle, bool owns) : base (handle, owns)
+		{
+		}
+
 		public PdfSurface (string filename, double width, double height)
 		{
 			surface = CairoAPI.cairo_pdf_surface_create (filename, width, height);

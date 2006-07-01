@@ -419,6 +419,14 @@ namespace Cairo
 		
 		//[DllImport (cairo)]
 		//internal static extern IntPtr cairo_ps_surface_create_for_stream (string filename, double width, double height);
+		[DllImport (cairo)]
+		internal static extern void cairo_ps_surface_begin_page_setup (IntPtr surface);
+		
+		[DllImport (cairo)]
+		internal static extern void cairo_ps_surface_begin_setup (IntPtr surface);
+		
+		[DllImport (cairo)]
+		internal static extern void cairo_ps_surface_dsc_comment (IntPtr surface, string comment);
 		
 		[DllImport (cairo)]
 		internal static extern void cairo_ps_surface_set_size (IntPtr surface, double x, double y);
@@ -711,7 +719,22 @@ namespace Cairo
 		internal static extern IntPtr cairo_xlib_surface_create_for_bitmap (IntPtr display, IntPtr bitmap, IntPtr screen, int width, int height);
 		
 		[DllImport (cairo)]
+		internal static extern int cairo_xlib_surface_get_depth (IntPtr surface);
+
+		[DllImport (cairo)]
+		internal static extern IntPtr cairo_xlib_surface_get_display (IntPtr surface);
+
+		[DllImport (cairo)]
+		internal static extern IntPtr cairo_xlib_surface_get_drawable (IntPtr surface);
+
+		[DllImport (cairo)]
 		internal static extern int cairo_xlib_surface_get_height (IntPtr surface);
+
+		[DllImport (cairo)]
+		internal static extern IntPtr cairo_xlib_surface_get_screen (IntPtr surface);
+
+		[DllImport (cairo)]
+		internal static extern IntPtr cairo_xlib_surface_get_visual (IntPtr surface);
 
 		[DllImport (cairo)]
 		internal static extern int cairo_xlib_surface_get_width (IntPtr surface);

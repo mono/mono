@@ -34,6 +34,10 @@ namespace Cairo {
 
 	public class SvgSurface : Surface
 	{
+		internal SvgSurface (IntPtr handle, bool owns) : base (handle, owns)
+		{
+		}
+
 		public SvgSurface (string filename, double width, double height)
 		{
 			surface = CairoAPI.cairo_svg_surface_create (filename, width, height);

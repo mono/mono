@@ -1,5 +1,14 @@
 2006-07-01  John Luke  <john.luke@gmail.com>
 
+	* Mono.Cairo/Context.cs:
+	* Mono.Cairo/PdfSurface.cs:
+	* Mono.Cairo/PSSurface.cs:
+	* Mono.Cairo/Cairo.cs:
+	* Mono.Cairo/XlibSurface.cs:
+	* Mono.Cairo/SvgSurface.cs: add some new surface API I missed
+
+2006-07-01  John Luke  <john.luke@gmail.com>
+
 	* Mono.Cairo/Status.cs:
 	* Mono.Cairo/Context.cs:
 	* Mono.Cairo/FontFace.cs:

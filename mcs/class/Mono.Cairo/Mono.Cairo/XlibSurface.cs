@@ -69,8 +69,28 @@ namespace Cairo {
 		}
 
 #if CAIRO_1_2
+		public int Depth {
+			get { return CairoAPI.cairo_xlib_surface_get_depth (surface); }
+		}
+		
+		public IntPtr Display {
+			get { return CairoAPI.cairo_xlib_surface_get_display (surface); }
+		}
+
+		public IntPtr Drawable {
+			get { return CairoAPI.cairo_xlib_surface_get_drawable (surface); }
+		}
+
 		public int Height {
 			get { return CairoAPI.cairo_xlib_surface_get_height (surface); }
+		}
+
+		public IntPtr Screen {
+			get { return CairoAPI.cairo_xlib_surface_get_screen (surface); }
+		}
+
+		public IntPtr Visual {
+			get { return CairoAPI.cairo_xlib_surface_get_visual (surface); }
 		}
 
 		public int Width {

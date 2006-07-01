@@ -586,6 +586,14 @@ namespace Cairo {
 						return new XlibSurface (surface, true);
 					case SurfaceType.Win32:
 						return new Win32Surface (surface, true);
+#if CAIRO_1_2
+					case SurfaceType.Pdf:
+						return new PdfSurface (surface, true);
+					case SurfaceType.PS:
+						return new PSSurface (surface, true);
+					case SurfaceType.Svg:
+						return new SvgSurface (surface, true);
+#endif
 					default:
 						return Surface.LookupExternalSurface (surface);
 				}
