@@ -1,3 +1,8 @@
+2006-07-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AsymmetricSignatureDeformatter.cs: Set the hash algorithm name from
+	the hash instance. Fix for bug #78744 by Diego Mesa Tabares.
+
 2006-06-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HashAlgorithm.cs: Changed the order of BlockCopy + HashCore to
