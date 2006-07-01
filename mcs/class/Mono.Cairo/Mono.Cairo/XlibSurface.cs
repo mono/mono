@@ -67,5 +67,15 @@ namespace Cairo {
 		{
 			CairoAPI.cairo_xlib_surface_set_size (surface, width, height);
 		}
+
+#if CAIRO_1_2
+		public int Height {
+			get { return CairoAPI.cairo_xlib_surface_get_height (surface); }
+		}
+
+		public int Width {
+			get { return CairoAPI.cairo_xlib_surface_get_width (surface); }
+		}
+#endif
 	}
 }

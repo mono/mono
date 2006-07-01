@@ -33,6 +33,15 @@ namespace Cairo {
    
 	public class Gradient : Pattern
 	{
+		protected Gradient (IntPtr handle) : base (handle)
+		{
+		}
+
+		// FIXME: should be protected
+		public Gradient ()
+		{
+		}
+		
 		public Status AddColorStop (double offset, Cairo.Color c)
 		{
 			CairoAPI.cairo_pattern_add_color_stop_rgba (pattern, offset, c.R, c.G, c.B, c.A);

@@ -1,5 +1,23 @@
 2006-07-01  John Luke  <john.luke@gmail.com>
 
+	* Mono.Cairo/Status.cs:
+	* Mono.Cairo/Context.cs:
+	* Mono.Cairo/FontFace.cs:
+	* Mono.Cairo/Surface.cs:
+	* Mono.Cairo/Format.cs:
+	* Mono.Cairo/LinearGradient.cs:
+	* Mono.Cairo/SolidPattern.cs:
+	* Mono.Cairo/Win32Surface.cs:
+	* Mono.Cairo/Pattern.cs:
+	* Mono.Cairo/SurfacePattern.cs:
+	* Mono.Cairo/ImageSurface.cs:
+	* Mono.Cairo/Cairo.cs:
+	* Mono.Cairo/Gradient.cs:
+	* Mono.Cairo/XlibSurface.cs:
+	* Mono.Cairo/RadialGradient.cs: add remaining new API for cairo 1.2
+	
+2006-07-01  John Luke  <john.luke@gmail.com>
+
 	* Mono.Cairo/FontType.cs:
 	* Mono.Cairo/PatternType.cs: add new enums for cairo 1.2
 

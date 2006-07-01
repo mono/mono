@@ -154,6 +154,13 @@ namespace Cairo {
                 }
 
 		public PointD DeviceOffset {
+#if CAIRO_1_2
+			get {
+				double x, y;
+				CairoAPI.cairo_surface_get_device_offset (surface, out x, out y);
+				return new PointD (x, y);
+			}
+#endif
 			set {
 				CairoAPI.cairo_surface_set_device_offset (surface, value.X, value.Y);
 			}
@@ -187,5 +194,14 @@ namespace Cairo {
 			get { return CairoAPI.cairo_surface_status (surface); }
 		}
 
+#if CAIRO_1_2
+		public Content Content {
+			get { return CairoAPI.cairo_surface_get_content (surface); }
+		}
+
+		public SurfaceType SurfaceType {
+			get { return CairoAPI.cairo_surface_get_type (surface); }
+		}
+#endif
         }
 }

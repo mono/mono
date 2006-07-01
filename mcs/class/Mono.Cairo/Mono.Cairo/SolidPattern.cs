@@ -33,6 +33,10 @@ namespace Cairo {
    
 	public class SolidPattern : Pattern
 	{
+		internal SolidPattern (IntPtr handle) : base (handle)
+		{
+		}
+
 		public SolidPattern (Color color, bool solid)
 		{
 			if (solid)

@@ -287,7 +287,7 @@ namespace Cairo {
                 {
                         CairoAPI.cairo_set_dash (state, dashes, dashes.Length, offset);
                 }
-		
+
                 public Pattern Pattern {
                         set {
                                 CairoAPI.cairo_set_source (state, value.Pointer);
@@ -360,6 +360,13 @@ namespace Cairo {
                 {
                         CairoAPI.cairo_new_path (state);
                 }
+
+#if CAIRO_1_2
+		public void NewSubPath ()
+		{
+			CairoAPI.cairo_new_sub_path (state);
+		}
+#endif
         
                 public void MoveTo (PointD p)
                 {
@@ -533,6 +540,58 @@ namespace Cairo {
 		{
 			return CairoAPI.cairo_in_fill (state, x, y);
 		}
+
+#if CAIRO_1_2
+		public Pattern PopGroup ()
+		{
+			IntPtr pattern = CairoAPI.cairo_pop_group (state);
+			PatternType pt = CairoAPI.cairo_pattern_get_type (pattern);
+			switch (pt) {
+				case PatternType.Solid:
+					return new SolidPattern (pattern);
+				case PatternType.Surface:
+					return new SurfacePattern (pattern);
+				case PatternType.Linear:
+					return new LinearGradient (pattern);
+				case PatternType.Radial:
+					return new RadialGradient (pattern);
+				default:
+					return new Pattern (pattern);
+			}
+		}
+
+		public void PopGroupToSource ()
+		{
+			CairoAPI.cairo_pop_group_to_source (state);
+		}
+
+		public void PushGroup ()
+		{
+			CairoAPI.cairo_push_group (state);
+		}
+
+		public void PushGroup (Content content)
+		{
+			CairoAPI.cairo_push_group_with_content (state, content);
+		}
+
+		public Surface GroupTarget {
+			get {
+				IntPtr surface = CairoAPI.cairo_get_group_target (state);
+				SurfaceType st = CairoAPI.cairo_surface_get_type (surface);
+				switch (st) {
+					case SurfaceType.Image:
+						return new ImageSurface (surface, true);
+					case SurfaceType.XLib:
+						return new XlibSurface (surface, true);
+					case SurfaceType.Win32:
+						return new Win32Surface (surface, true);
+					default:
+						return Surface.LookupExternalSurface (surface);
+				}
+			}
+		}
+#endif
 
                 public void Rotate (double angle)
                 {

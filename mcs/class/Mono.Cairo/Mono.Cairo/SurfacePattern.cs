@@ -33,6 +33,10 @@ namespace Cairo {
    
 	public class SurfacePattern : Pattern
 	{
+		internal SurfacePattern (IntPtr handle) : base (handle)
+		{
+		}
+
 		public SurfacePattern (Surface surface)
 		{
 			pattern = CairoAPI.cairo_pattern_create_for_surface (surface.Handle);

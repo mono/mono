@@ -79,6 +79,12 @@ namespace Cairo {
                 public IntPtr Pointer {
                         get { return pattern; }
                 }		
+
+#if CAIRO_1_2
+		public PatternType PatternType {
+			get { return CairoAPI.cairo_pattern_get_type (pattern); }
+		}
+#endif
         }
 }
 

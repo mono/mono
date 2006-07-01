@@ -33,6 +33,10 @@ namespace Cairo {
    
 	public class LinearGradient : Gradient
 	{
+		internal LinearGradient (IntPtr handle) : base (handle)
+		{
+		}
+
 		public LinearGradient (double x0, double y0, double x1, double y1)
 		{
 			pattern = CairoAPI.cairo_pattern_create_linear (x0, y0, x1, y1);

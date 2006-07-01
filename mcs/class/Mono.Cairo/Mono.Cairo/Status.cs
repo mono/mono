@@ -55,6 +55,9 @@ namespace Cairo
 		InvalidFormat,
 		InvalidVisual,
 		FileNotFound,
-		InvalidDash
+		InvalidDash,
+#if CAIRO_1_2
+		InvalidDscComment,
+#endif
 	}
 }

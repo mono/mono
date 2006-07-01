@@ -38,6 +38,10 @@ namespace Cairo {
 
         public class ImageSurface : Surface
         {
+		internal ImageSurface (IntPtr handle, bool owns) : base (handle, owns)
+		{
+		}
+
 		public ImageSurface (Format format, int width, int height)
 		{
 			surface = CairoAPI.cairo_image_surface_create (format, width, height);
@@ -70,5 +74,18 @@ namespace Cairo {
 			get { return CairoAPI.cairo_image_surface_get_height (surface); }
 		}
 		
+#if CAIRO_1_2
+		public byte[] Data {
+			get { return CairoAPI.cairo_image_surface_get_data (surface); }
+		}
+
+		public Format Format {
+			get { return CairoAPI.cairo_image_surface_get_format (surface); }
+		}
+
+		public int Stride {
+			get { return CairoAPI.cairo_image_surface_get_stride (surface); }
+		}
+#endif
 	}
 }

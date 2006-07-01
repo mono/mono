@@ -40,5 +40,8 @@ namespace Cairo
 		A1	= 3,
 		Argb32	= 0,
 		Rgb24	= 1,
+#if CAIRO_1_2
+		Rgb16565 = 4,
+#endif
 	}
 }
