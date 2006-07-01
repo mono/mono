@@ -1,3 +1,9 @@
+2006-07-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RSAPKCS1SignatureDeformatterTest.cs: Added test case where 
+	SetHashAlgorithm isn't called and the hash algorithm name is derived
+	from the hash instance. From bug #78744 by Diego Mesa Tabares.
+
 2006-06-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HashAlgorithmTest.cs: Added new test cases wrt the output buffer 

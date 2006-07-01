@@ -5,12 +5,13 @@
 //	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
+// Copyright (C) 2004-2006 Novell, Inc (http://www.novell.com)
 //
 
 using NUnit.Framework;
 using System;
 using System.Security.Cryptography;
+using System.Text;
 
 namespace MonoTests.System.Security.Cryptography {
 
@@ -296,7 +297,7 @@ namespace MonoTests.System.Security.Cryptography {
 		public void VerifySignatureHashNoKey ()
 		{
 			RSAPKCS1SignatureDeformatter fmt = new RSAPKCS1SignatureDeformatter ();
-			HashAlgorithm hash = hash = SHA1.Create ();
+			HashAlgorithm hash = SHA1.Create ();
 			try {
 				// no key
 				fmt.VerifySignature (hash, shaSignature);
@@ -413,6 +414,20 @@ namespace MonoTests.System.Security.Cryptography {
 			catch (Exception e) {
 				Fail ("VerifySignatureMD5HashBadSignatureLength - Expected CryptographicUnexpectedOperationException but got: " + e.ToString ());
 			}
+		}
+
+		[Test]
+		public void VerifySignatureWithoutCallingSetHashAlgorithm ()
+		{
+			string text = "text to sign";
+			RSA rsa = RSA.Create ();
+			RSAPKCS1SignatureFormatter fmt = new RSAPKCS1SignatureFormatter (rsa);
+			SHA1 hash = SHA1.Create ();
+			hash.ComputeHash (Encoding.UTF8.GetBytes (text));
+			byte[] signature = fmt.CreateSignature (hash);
+
+			RSAPKCS1SignatureDeformatter def = new RSAPKCS1SignatureDeformatter (rsa);
+			Assert ("Signature Ok", def.VerifySignature (hash, signature));
 		}
 	}
 }
