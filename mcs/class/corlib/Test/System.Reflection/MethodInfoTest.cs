@@ -242,6 +242,25 @@ namespace MonoTests.System.Reflection
 			m.Invoke (null, new object [0]);
 		}
 
+		[Test]
+		public void InvokeGenericVtype ()
+		{
+			KeyValuePair<string, uint> kvp = new KeyValuePair<string, uint> ("a", 21);
+			Type type = kvp.GetType ();
+			Type [] arguments = type.GetGenericArguments ();
+			MethodInfo method = typeof (MethodInfoTest).GetMethod ("Go");
+			MethodInfo generic_method = method.MakeGenericMethod (arguments);
+			kvp = (KeyValuePair<string, uint>)generic_method.Invoke (null, new object [] { kvp });
+
+			Assert.AreEqual ("a", kvp.Key);
+			Assert.AreEqual (21, kvp.Value);
+		}
+
+        public static KeyValuePair<T1, T2> Go <T1, T2> (KeyValuePair <T1, T2> kvp)
+        {
+			return kvp;
+        }
+
 		public void MakeGenericMethodArgsMismatchFoo<T> () {}
 
 		[Test]

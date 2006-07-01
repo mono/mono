@@ -1,3 +1,7 @@
+2006-07-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* MethodInfoTest.cs: Add a test for #77888.
+
 2006-06-29  Raja R Harinath  <rharinath@novell.com>
 
 	* MethodInfoTest.cs (GetBaseDefinition): New test for
