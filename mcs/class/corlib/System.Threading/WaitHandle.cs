@@ -50,10 +50,9 @@ namespace System.Threading
 			if (length > 64)
 				throw new NotSupportedException ("Too many handles");
 
-			MethodInfo entryPoint = Assembly.GetEntryAssembly ().EntryPoint;
 			if (length > 1 &&
 			    (Thread.CurrentThread.ApartmentState == ApartmentState.STA ||
-			     entryPoint.GetCustomAttributes (typeof (STAThreadAttribute), false).Length == 1))
+			     Assembly.GetEntryAssembly ().EntryPoint.GetCustomAttributes (typeof (STAThreadAttribute), false).Length == 1))
 				throw new NotSupportedException ("WaitAll for multiple handles is not allowed on an STA thread.");
 			
 			foreach (WaitHandle w in handles) {
