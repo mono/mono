@@ -38,7 +38,6 @@ namespace System.Web.UI.WebControls
 {
 	public sealed class MenuItemCollection: ICollection, IEnumerable, IStateManager
 	{
-		MenuItem[] originalItems;
 		ArrayList items = new ArrayList ();
 		Menu menu;
 		MenuItem parent;
@@ -177,18 +176,17 @@ namespace System.Web.UI.WebControls
 			object[] its = (object[]) state;
 			
 			dirty = (bool)its [0];
-			
-			if (dirty)
+
+			if (dirty) {
 				items.Clear ();
 
-			for (int n=1; n<its.Length; n++) {
-				Pair pair = (Pair) its [n];
-				int oi = (int) pair.First;
-				MenuItem item;
-				if (oi != -1) item = originalItems [oi];
-				else item = new MenuItem ();
-				if (dirty) Add (item);
-				((IStateManager)item).LoadViewState (pair.Second);
+				for (int n = 1; n < its.Length; n++) {
+					MenuItem item = new MenuItem ();
+					Add (item);
+					object ns = its [n];
+					if (ns != null)
+						((IStateManager) item).LoadViewState (ns);
+				}
 			}
 		}
 		
@@ -202,10 +200,11 @@ namespace System.Web.UI.WebControls
 				state [0] = true;
 				for (int n=0; n<items.Count; n++) {
 					MenuItem item = items[n] as MenuItem;
-					int oi = Array.IndexOf (originalItems, item);
 					object ns = ((IStateManager)item).SaveViewState ();
-					if (ns != null) hasData = true;
-					state [n + 1] = new Pair (oi, ns);
+					if (ns != null) {
+						hasData = true;
+						state [n + 1] = ns;
+					}
 				}
 			} else {
 				ArrayList list = new ArrayList ();
@@ -232,11 +231,8 @@ namespace System.Web.UI.WebControls
 		void IStateManager.TrackViewState ()
 		{
 			marked = true;
-			originalItems = new MenuItem [items.Count];
-			for (int n=0; n<items.Count; n++) {
-				originalItems [n] = (MenuItem) items [n];
-				((IStateManager)originalItems [n]).TrackViewState ();
-			}
+			for (int n=0; n<items.Count; n++)
+				((IStateManager) items [n]).TrackViewState ();
 		}
 		
 		bool IStateManager.IsTrackingViewState {

@@ -740,8 +740,8 @@ namespace System.Web.UI.WebControls
 			foreach (object obj in e) {
 				IHierarchyData hdata = e.GetHierarchyData (obj);
 				MenuItem item = new MenuItem ();
-				item.Bind (hdata);
 				Items.Add (item);
+				item.Bind (hdata);
 				OnMenuItemDataBound (new MenuEventArgs (item));
 			}
 		}

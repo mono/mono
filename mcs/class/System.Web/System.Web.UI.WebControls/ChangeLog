@@ -1,3 +1,12 @@
+2006-07-02	Konstantin Triger <kostat@mainsoft.com>
+
+	* MenuItemCollection.cs: save items if the collection is dirty.
+	* MenuItem.cs:
+		During data binding: initialize Text and invoke binding recoursively.
+		Add item to collection before binding to let the state be correctly tracked.
+	* Menu.cs: Add item to collection before binding to let the state be correctly
+		tracked.
+
 2006-06-28 Juraj Skripsky <js@hotfeet.ch>
 
 	* RegularExpressionValidator.cs (EvaluateIsValid): wrap regex to
