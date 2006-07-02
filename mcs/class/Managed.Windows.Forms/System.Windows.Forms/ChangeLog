@@ -1,3 +1,9 @@
+2006-07-02  Alexander Olk  <alex.olk@googlemail.com>
+
+	* FileDialog.cs: Added internal class MWFConfig.
+	  Removed Registry support and replaced it with support for the new
+	  MWFConfig class. See MWFConfig comments for more information.
+
 2006-06-30  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ThemeWin32Classic.cs: Added RadioButton and CheckBox focus

@@ -34,7 +34,6 @@ using System.IO;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Xml;
-using Microsoft.Win32;
 
 namespace System.Windows.Forms {
 	#region FileDialog
@@ -104,45 +103,36 @@ namespace System.Windows.Forms {
 		
 		private MWFVFS vfs;
 		
-		private RegistryKey rootRegistryKey;
-		private RegistryKey filedialogRegistryKey;
-		private string registryKeyName = @"SOFTWARE\Mono.MWF\FileDialog";
-		
-		private int platform = (int) Environment.OSVersion.Platform;
-		private bool running_windows = false;
+		private readonly string filedialog_string = "FileDialog";
+		private readonly string lastfolder_string = "LastFolder";
+		private readonly string width_string = "Width";
+		private readonly string height_string = "Height";
+		private readonly string filenames_string = "FileNames";
+		private readonly string x_string = "X";
+		private readonly string y_string = "Y";
 		
 		internal FileDialog ()
 		{
 			vfs = new MWFVFS ();
 			
-			if ((platform != 4) && (platform != 128))
-				running_windows = true;
+			Size formConfigSize = Size.Empty;
+			Point formConfigLocation = Point.Empty;
+			string[] configFileNames = null;
 			
-			Size formRegistrySize = Size.Empty;
-			Point formRegistryLocation = Point.Empty;
-			string[] registryFileNames = null;
+			object formWidth = MWFConfig.GetValue (filedialog_string, width_string);
 			
-			if (!running_windows) {
-				rootRegistryKey = Microsoft.Win32.Registry.CurrentUser;
-				filedialogRegistryKey = rootRegistryKey.OpenSubKey (registryKeyName);
-				
-				if (filedialogRegistryKey != null) {
-					object formWidth = filedialogRegistryKey.GetValue ("Width");
-					
-					object formHeight = filedialogRegistryKey.GetValue ("Height");
-					
-					if (formHeight != null && formWidth != null)
-						formRegistrySize = new Size ((int)formWidth, (int)formHeight);
-					
-					object formLocationX = filedialogRegistryKey.GetValue ("X");
-					object formLocationY = filedialogRegistryKey.GetValue ("Y");
-					
-					if (formLocationX != null && formLocationY != null)
-						formRegistryLocation = new Point ((int)formLocationX, (int)formLocationY);
-					
-					registryFileNames = (string[])filedialogRegistryKey.GetValue ("FileNames");
-				}
-			}
+			object formHeight = MWFConfig.GetValue (filedialog_string, height_string);
+			
+			if (formHeight != null && formWidth != null)
+				formConfigSize = new Size ((int)formWidth, (int)formHeight);
+			
+			object formLocationX = MWFConfig.GetValue (filedialog_string, x_string);
+			object formLocationY = MWFConfig.GetValue (filedialog_string, y_string);
+			
+			if (formLocationX != null && formLocationY != null)
+				formConfigLocation = new Point ((int)formLocationX, (int)formLocationY);
+			
+			configFileNames = (string[])MWFConfig.GetValue (filedialog_string, filenames_string);
 			
 			fileTypeComboBox = new ComboBox ();
 			backToolBarButton = new ToolBarButton ();
@@ -245,13 +235,13 @@ namespace System.Windows.Forms {
 			fileNameComboBox.MaxDropDownItems = 10;
 			fileNameComboBox.Items.Add (" ");
 			
-			if (registryFileNames != null) {
+			if (configFileNames != null) {
 				fileNameComboBox.Items.Clear ();
 				
-				foreach (string registryFileName in registryFileNames) {
-					if (registryFileName != null)
-						if (registryFileName.Trim ().Length > 0)
-							fileNameComboBox.Items.Add (registryFileName);
+				foreach (string configFileName in configFileNames) {
+					if (configFileName != null)
+						if (configFileName.Trim ().Length > 0)
+							fileNameComboBox.Items.Add (configFileName);
 				}
 			}
 			
@@ -349,12 +339,12 @@ namespace System.Windows.Forms {
 			
 			form.ResumeLayout (false);
 			
-			if (formRegistrySize != Size.Empty) {
-				form.Size = formRegistrySize;
+			if (formConfigSize != Size.Empty) {
+				form.Size = formConfigSize;
 			}
 			
-			if (formRegistryLocation != Point.Empty) {
-				form.Location = formRegistryLocation;
+			if (formConfigLocation != Point.Empty) {
+				form.Location = formConfigLocation;
 			}
 			
 			openSaveButton.Click += new EventHandler (OnClickOpenSaveButton);
@@ -630,8 +620,7 @@ namespace System.Windows.Forms {
 		
 		protected void OnFileOk (CancelEventArgs e)
 		{
-			if (!running_windows)
-				WriteRegistryValues (e);
+			WriteConfigValues (e);
 			
 			CancelEventHandler fo = (CancelEventHandler) Events [EventFileOk];
 			if (fo != null)
@@ -640,7 +629,7 @@ namespace System.Windows.Forms {
 		
 		protected  override bool RunDialog (IntPtr hWndOwner)
 		{
-			ReadRegistryValues ();
+			ReadConfigValues ();
 			
 			form.Refresh ();
 			
@@ -1059,40 +1048,27 @@ namespace System.Windows.Forms {
 			form.ResumeLayout ();
 		}
 		
-		private void WriteRegistryValues (CancelEventArgs ce)
+		private void WriteConfigValues (CancelEventArgs ce)
 		{
-			try {
-				filedialogRegistryKey = rootRegistryKey.OpenSubKey (registryKeyName);
+			MWFConfig.SetValue (filedialog_string, width_string, form.Width);
+			MWFConfig.SetValue (filedialog_string, height_string, form.Height);
+			MWFConfig.SetValue (filedialog_string, x_string, form.Location.X);
+			MWFConfig.SetValue (filedialog_string, y_string, form.Location.Y);
+			
+			if (!ce.Cancel) {
+				MWFConfig.SetValue (filedialog_string, lastfolder_string, lastFolder);
 				
-				if (filedialogRegistryKey == null)
-					filedialogRegistryKey = rootRegistryKey.CreateSubKey (registryKeyName);
+				string[] fileNameCBItems = new string [fileNameComboBox.Items.Count];
 				
-				filedialogRegistryKey.SetValue ("Width", form.Width);
-				filedialogRegistryKey.SetValue ("Height", form.Height);
-				filedialogRegistryKey.SetValue ("X", form.Location.X);
-				filedialogRegistryKey.SetValue ("Y", form.Location.Y);
+				fileNameComboBox.Items.CopyTo (fileNameCBItems, 0);
 				
-				if (!ce.Cancel) {
-					filedialogRegistryKey.SetValue ("LastFolder", lastFolder);
-					
-					string[] fileNameCBItems = new string [fileNameComboBox.Items.Count];
-					
-					fileNameComboBox.Items.CopyTo (fileNameCBItems, 0);
-					
-					filedialogRegistryKey.SetValue ("FileNames", fileNameCBItems);
-				}
-			} catch (Exception) {}
+				MWFConfig.SetValue (filedialog_string, filenames_string, fileNameCBItems);
+			}
 		}
 		
-		private void ReadRegistryValues ()
+		private void ReadConfigValues ()
 		{
-			rootRegistryKey = Microsoft.Win32.Registry.CurrentUser;
-			filedialogRegistryKey = rootRegistryKey.OpenSubKey (registryKeyName);
-			
-			if (!running_windows)
-				if (filedialogRegistryKey != null) {
-					lastFolder = (string)filedialogRegistryKey.GetValue ("LastFolder");
-				}
+			lastFolder = (string)MWFConfig.GetValue (filedialog_string, lastfolder_string);
 			
 			if (initialDirectory != "")
 				lastFolder = initialDirectory;
@@ -3928,6 +3904,501 @@ namespace System.Windows.Forms {
 			public int Compare (object mount1, object mount2)
 			{
 				return String.Compare (((Mount)mount1).device_short, ((Mount)mount2).device_short);
+			}
+		}
+	}
+	#endregion
+		
+	#region MWFConfig
+	// easy to use class to store and read internal MWF config settings.
+	// the config values are stored in the users home dir as a hidden xml file called "mwf_config".
+	// currently supports int, string, byte, color and arrays (including byte arrays)
+	// don't forget, when you read a value you still have to cast this value.
+	//
+	// usage:
+	// MWFConfig.SetValue ("SomeClass", "What", value);
+	// object o = MWFConfig.GetValue ("SomeClass", "What");
+	//
+	// example:
+	// 
+	// string[] configFileNames = (string[])MWFConfig.GetValue ("FileDialog", "FileNames");
+	// MWFConfig.SetValue ("FileDialog", "LastFolder", "/home/user");
+	
+	internal class MWFConfig
+	{
+		private static MWFConfigInstance Instance = new MWFConfigInstance ();
+		
+		private static object lock_object = new object();
+		
+		public static object GetValue (string class_name, string value_name)
+		{
+			lock (lock_object) {
+				return Instance.GetValue (class_name, value_name);
+			}
+		}
+		
+		public static void SetValue (string class_name, string value_name, object value)
+		{
+			lock (lock_object) {
+				Instance.SetValue (class_name, value_name, value);
+			}
+		}
+		
+		public static void Flush ()
+		{
+			lock (lock_object) {
+				Instance.Flush ();
+			}
+		}
+		
+		public static void RemoveClass (string class_name)
+		{
+			lock (lock_object) {
+				Instance.RemoveClass (class_name);
+			}
+		}
+		
+		public static void RemoveClassValue (string class_name, string value_name)
+		{
+			lock (lock_object) {
+				Instance.RemoveClassValue (class_name, value_name);
+			}
+		}
+		
+		public static void RemoveAllClassValues (string class_name)
+		{
+			lock (lock_object) {
+				Instance.RemoveAllClassValues (class_name);
+			}
+		}
+	
+		internal class MWFConfigInstance
+		{
+			private Hashtable classes_hashtable = new Hashtable ();
+			
+			private string path;
+			private string fullFileName;
+			private XmlTextReader xtr;
+			private XmlTextWriter xtw;
+			
+			private static string defaultFileName;
+			
+			private readonly string configName = "MWFConfig";
+			
+			private int platform = (int) Environment.OSVersion.Platform;
+			
+			public MWFConfigInstance ()
+			{
+				if ((platform == 4) || (platform == 128)) {
+					defaultFileName = ".mwf_config";
+				} else {
+					defaultFileName = "mwf_config";
+				}
+				
+				Open (defaultFileName);
+			}
+			
+			// only for testing
+			public MWFConfigInstance (string fileName)
+			{
+				Open (fileName);
+			}
+			
+			~MWFConfigInstance ()
+			{
+				Flush ();
+			}
+			
+			public object GetValue (string class_name, string value_name)
+			{
+				ClassEntry class_entry = classes_hashtable [class_name] as ClassEntry;
+				
+				if (class_entry != null)
+					return class_entry.GetValue (value_name);
+				
+				return null;
+			}
+			
+			public void SetValue (string class_name, string value_name, object value)
+			{
+				ClassEntry class_entry = classes_hashtable [class_name] as ClassEntry;
+				
+				if (class_entry == null) {
+					class_entry = new ClassEntry ();
+					class_entry.ClassName = class_name;
+					classes_hashtable [class_name] = class_entry;
+				}
+				
+				class_entry.SetValue (value_name, value);
+			}
+			
+			private void Open (string fileName)
+			{
+				path = Path.GetDirectoryName (fileName);
+				
+				if (path == null || path == String.Empty) {
+					path = Environment.GetFolderPath (Environment.SpecialFolder.Personal);
+					
+					fullFileName = Path.Combine (path, fileName);
+				} else
+					fullFileName = fileName;
+				
+				try {
+					xtr = new XmlTextReader (fullFileName);
+					
+					ReadConfig ();
+					
+					xtr.Close ();
+				} catch (Exception) {
+				}
+			}
+			
+			public void Flush ()
+			{
+				try {
+					xtw = new XmlTextWriter (fullFileName, null);
+					xtw.Formatting = Formatting.Indented;
+					
+					WriteConfig ();
+					
+					xtw.Close ();
+					
+					if ((platform != 4) && (platform != 128))
+						File.SetAttributes (fullFileName, FileAttributes.Hidden);
+				} catch (Exception) {}
+			}
+			
+			public void RemoveClass (string class_name)
+			{
+				ClassEntry class_entry = classes_hashtable [class_name] as ClassEntry;
+				
+				if (class_entry != null) {
+					class_entry.RemoveAllClassValues ();
+					
+					classes_hashtable.Remove (class_name);
+				}
+			}
+			
+			public void RemoveClassValue (string class_name, string value_name)
+			{
+				ClassEntry class_entry = classes_hashtable [class_name] as ClassEntry;
+				
+				if (class_entry != null) {
+					class_entry.RemoveClassValue (value_name);
+				}
+			}
+			
+			public void RemoveAllClassValues (string class_name)
+			{
+				ClassEntry class_entry = classes_hashtable [class_name] as ClassEntry;
+				
+				if (class_entry != null) {
+					class_entry.RemoveAllClassValues ();
+				}
+			}
+			
+			private void ReadConfig ()
+			{
+				if (!CheckForMWFConfig ())
+					return;
+				
+				while (xtr.Read ()) {
+					switch (xtr.NodeType) {
+						case XmlNodeType.Element:
+							ClassEntry class_entry = classes_hashtable [xtr.Name] as ClassEntry;
+							
+							if (class_entry == null) {
+								class_entry = new ClassEntry ();
+								class_entry.ClassName = xtr.Name;
+								classes_hashtable [xtr.Name] = class_entry;
+							}
+							
+							class_entry.ReadXml (xtr);
+							break;
+					}
+				}
+			}
+			
+			private bool CheckForMWFConfig ()
+			{
+				if (xtr.Read ()) {
+					if (xtr.NodeType == XmlNodeType.Element) {
+						if (xtr.Name == configName)
+							return true;
+					}
+				}
+				
+				return false;
+			}
+			
+			private void WriteConfig ()
+			{
+				if (classes_hashtable.Count == 0)
+					return;
+				
+				xtw.WriteStartElement (configName);
+				foreach (DictionaryEntry entry in classes_hashtable) {
+					ClassEntry class_entry = entry.Value as ClassEntry;
+					
+					class_entry.WriteXml (xtw);
+				}
+				xtw.WriteEndElement ();
+			}
+			
+			internal class ClassEntry
+			{
+				private Hashtable classvalues_hashtable = new Hashtable ();
+				private string className;
+				
+				public string ClassName {
+					set {
+						className = value;
+					}
+					
+					get {
+						return className;
+					}
+				}
+				
+				public void SetValue (string value_name, object value)
+				{
+					ClassValue class_value = classvalues_hashtable [value_name] as ClassValue;
+					
+					if (class_value == null) {
+						class_value = new ClassValue ();
+						class_value.Name = value_name;
+						classvalues_hashtable [value_name] = class_value;
+					}
+					
+					class_value.SetValue (value);
+				}
+				
+				public object GetValue (string value_name)
+				{
+					ClassValue class_value = classvalues_hashtable [value_name] as ClassValue;
+					
+					if (class_value == null) {
+						return null;
+					}
+					
+					return class_value.GetValue ();
+				}
+				
+				public void RemoveAllClassValues ()
+				{
+					classvalues_hashtable.Clear ();
+				}
+				
+				public void RemoveClassValue (string value_name)
+				{
+					ClassValue class_value = classvalues_hashtable [value_name] as ClassValue;
+					
+					if (class_value != null) {
+						classvalues_hashtable.Remove (value_name);
+					}
+				}
+				
+				public void ReadXml (XmlTextReader xtr)
+				{
+					while (xtr.Read ()) {
+						switch (xtr.NodeType) {
+							case XmlNodeType.Element:
+								string name = xtr.GetAttribute ("name");
+								
+								ClassValue class_value = classvalues_hashtable [name] as ClassValue;
+								
+								if (class_value == null) {
+									class_value = new ClassValue ();
+									class_value.Name = name;
+									classvalues_hashtable [name] = class_value;
+								}
+								
+								class_value.ReadXml (xtr);
+								break;
+								
+							case XmlNodeType.EndElement:
+								return;
+						}
+					}
+				}
+				
+				public void WriteXml (XmlTextWriter xtw)
+				{
+					if (classvalues_hashtable.Count == 0)
+						return;
+					
+					xtw.WriteStartElement (className);
+					
+					foreach (DictionaryEntry entry in classvalues_hashtable) {
+						ClassValue class_value = entry.Value as ClassValue;
+						
+						class_value.WriteXml (xtw);
+					}
+					
+					xtw.WriteEndElement ();
+				}
+			}
+			
+			internal class ClassValue
+			{
+				private object value;
+				private string name;
+				
+				public string Name {
+					set {
+						name = value;
+					}
+					
+					get {
+						return name;
+					}
+				}
+				
+				public void SetValue (object value)
+				{
+					this.value = value;
+				}
+				public object GetValue ()
+				{
+					return value;
+				}
+				
+				public void ReadXml (XmlTextReader xtr)
+				{
+					string type;
+					string single_value;
+					
+					type = xtr.GetAttribute ("type");
+					
+					if (type == "byte_array" || type.IndexOf ("-array") == -1) {
+						single_value = xtr.ReadString ();
+						
+						if (type == "string") {
+							value = single_value;
+						} else
+						if (type == "int") {
+							value = Int32.Parse (single_value);
+						} else
+						if (type == "byte") {
+							value = Byte.Parse (single_value);
+						} else
+						if (type == "color") {
+							int color = Int32.Parse (single_value);
+							value = Color.FromArgb (color);
+						} else
+						if (type == "byte-array") {
+							byte[] b_array = Convert.FromBase64String (single_value);
+							value = b_array;
+						}
+					} else {
+						ReadXmlArrayValues (xtr, type);
+					}
+				}
+				
+				private void ReadXmlArrayValues (XmlTextReader xtr, string type)
+				{
+					ArrayList al = new ArrayList ();
+					
+					while (xtr.Read ()) {
+						switch (xtr.NodeType) {
+							case XmlNodeType.Element:
+								string single_value = xtr.ReadString ();
+								
+								if (type == "int-array") {
+									int int_val = Int32.Parse (single_value);
+									al.Add (int_val);
+								} else
+								if (type == "string-array") {
+									string str_val = single_value;
+									al.Add (str_val);
+								}
+								break;
+								
+							case XmlNodeType.EndElement:
+								if (xtr.Name == "value") {
+									if (type == "int-array") {
+										value = al.ToArray (typeof(int));
+									} else
+									if (type == "string-array") {
+										value = al.ToArray (typeof(string));
+									} 
+									return;
+								}
+								break;
+						}
+					}
+				}
+				
+				public void WriteXml (XmlTextWriter xtw)
+				{
+					xtw.WriteStartElement ("value");
+					xtw.WriteAttributeString ("name", name);
+					if (value is Array) {
+						WriteArrayContent (xtw);
+					} else {
+						WriteSingleContent (xtw);
+					}
+					xtw.WriteEndElement ();
+				}
+				
+				private void WriteSingleContent (XmlTextWriter xtw)
+				{
+					string type_string = "";
+					
+					if (value is string)
+						type_string = "string";
+					else
+					if (value is int)
+						type_string = "int";
+					else
+					if (value is byte)
+						type_string = "byte";
+					else
+					if (value is Color)
+						type_string = "color";
+					
+					xtw.WriteAttributeString ("type", type_string);
+					
+					if (value is Color)
+						xtw.WriteString (((Color)value).ToArgb ().ToString ());
+					else
+						xtw.WriteString (value.ToString ());
+				}
+				
+				private void WriteArrayContent (XmlTextWriter xtw)
+				{
+					string type_string = "";
+					string type_name = "";
+					
+					if (value is string[]) {
+						type_string = "string-array";
+						type_name = "string";
+					} else
+					if (value is int[]) {
+						type_string = "int-array";
+						type_name = "int";
+					} else
+					if (value is byte[]) {
+						type_string = "byte-array";
+						type_name = "byte";
+					}
+					
+					xtw.WriteAttributeString ("type", type_string);
+					
+					if (type_string != "byte-array") {
+						Array array = value as Array;
+						
+						foreach (object o in array) {
+							xtw.WriteStartElement (type_name);
+							xtw.WriteString (o.ToString ());
+							xtw.WriteEndElement ();
+						}
+					} else {
+						byte[] b_array = value as byte [];
+						
+						xtw.WriteString (Convert.ToBase64String (b_array, 0, b_array.Length));
+					}
+				}
 			}
 		}
 	}
