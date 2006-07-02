@@ -58,29 +58,39 @@ namespace Mono.Unix {
 			if (path1.IndexOfAny (_InvalidPathChars) != -1)
 				throw new ArgumentException ("Illegal characters in path", "path1");
 
-			int len = path1.Length + 1;
+			int len = path1.Length;
+			int start = -1;
 			for (int i = 0; i < paths.Length; ++i) {
 				if (paths [i] == null)
-					throw new ArgumentNullException ("paths");
+					throw new ArgumentNullException ("paths[" + i + "]");
+				if (paths [i].IndexOfAny (_InvalidPathChars) != -1)
+					throw new ArgumentException ("Illegal characters in path", "paths[" + i + "]");
+				if (IsPathRooted (paths [i])) {
+					len = 0;
+					start = i;
+				}
 				len += paths [i].Length + 1;
 			}
 
 			StringBuilder sb = new StringBuilder (len);
-			sb.Append (path1);
-			for (int i = 0; i < paths.Length; ++i)
+			if (start == -1) {
+				sb.Append (path1);
+				start = 0;
+			}
+			for (int i = start; i < paths.Length; ++i)
 				Combine (sb, paths [i]);
 			return sb.ToString ();
 		}
 
 		private static void Combine (StringBuilder path, string part)
 		{
-			if (part.IndexOfAny (_InvalidPathChars) != -1)
-				throw new ArgumentException ("Illegal characters in path", "path1");
-			char end = path [path.Length-1];
-			if (end != DirectorySeparatorChar && 
-					end != AltDirectorySeparatorChar && 
-					end != VolumeSeparatorChar)
-				path.Append (DirectorySeparatorChar);
+			if (path.Length > 0 && part.Length > 0) {
+				char end = path [path.Length-1];
+				if (end != DirectorySeparatorChar && 
+						end != AltDirectorySeparatorChar && 
+						end != VolumeSeparatorChar)
+					path.Append (DirectorySeparatorChar);
+			}
 			path.Append (part);
 		}
 

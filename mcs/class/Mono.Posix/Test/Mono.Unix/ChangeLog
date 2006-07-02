@@ -1,3 +1,7 @@
+2006-07-02  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* UnixPathTest.cs: Added; test UnixPath.Combine().
+
 2005-12-07  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* UnixMarshalTest.cs: Make test public so that it's actually executed by
