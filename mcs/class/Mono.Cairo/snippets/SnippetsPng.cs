@@ -8,8 +8,6 @@ namespace Cairo.Snippets
 		public static int IMAGE_WIDTH = 256;
 		public static int IMAGE_HEIGHT = 256;
 
-		public static double LINE_WIDTH = 0.04;
-
 		public static void Main(string[] args)
 		{
 			// call the snippets
@@ -22,7 +20,7 @@ namespace Cairo.Snippets
 			
 				cr.Save();
 				Snippets.InvokeSnippet(snip, snippet, cr, IMAGE_WIDTH, IMAGE_HEIGHT);
-    	   	    surface.WriteToPng(filename);
+				surface.WriteToPng(filename);
 				cr.Restore();
 			}
 		}

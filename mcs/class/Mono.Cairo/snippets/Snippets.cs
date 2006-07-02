@@ -6,8 +6,6 @@ namespace Cairo.Snippets
 {
 	public class Snippets
 	{
-		public static readonly double M_PI = Math.PI;
-			
 		public static string[] snippets = {
 			"arc",
 			"arc_negative",
@@ -33,24 +31,25 @@ namespace Cairo.Snippets
 			"xxx_self_intersect"
 		};
 	
-		public static void InvokeSnippet (Snippets snip, string snippet, Context cr, double width, double height)
+		static Type[] types = new Type[] {typeof (Context), typeof (int), typeof (int)};
+		public static void InvokeSnippet (Snippets snip, string snippet, Context cr, int width, int height)
 		{
-			MethodInfo m = snip.GetType ().GetMethod(snippet, new Type[] {typeof(Context), typeof(double), typeof(double)});
+			MethodInfo m = snip.GetType ().GetMethod(snippet, types);
 			m.Invoke (snip, new Object[] {cr, width, height});
 		}
 
-		public void Normalize (Context cr, double width, double height)
+		public void Normalize (Context cr, int width, int height)
 		{
 			cr.Scale (width, height);
 			cr.LineWidth = 0.04;
 		}
 	
-		public void arc(Context cr, double width, double height)
+		public void arc(Context cr, int width, int height)
 		{
 			PointD c = new PointD (0.5, 0.5);
 			double radius = 0.4;
-			double angle1 = 45.0  * (M_PI/180.0);  /* angles are specified */
-			double angle2 = 180.0 * (M_PI/180.0);  /* in radians           */
+			double angle1 = 45.0  * (Math.PI/180.0);  /* angles are specified */
+			double angle2 = 180.0 * (Math.PI/180.0);  /* in radians           */
 
 			Normalize(cr, width, height);
 
@@ -59,7 +58,7 @@ namespace Cairo.Snippets
 
 			// draw helping lines
 			cr.Color = new Color (1, 0.2, 0.2, 0.6);
-			cr.Arc(c.X, c.Y, 0.05, 0, 2*M_PI);
+			cr.Arc(c.X, c.Y, 0.05, 0, 2*Math.PI);
 			cr.Fill();
 			cr.LineWidth = 0.03;
 			cr.Arc(c.X, c.Y, radius, angle1, angle1);
@@ -69,12 +68,12 @@ namespace Cairo.Snippets
 			cr.Stroke();
 		}
 	
-		public void arc_negative(Context cr, double width, double height)
+		public void arc_negative(Context cr, int width, int height)
 		{
 			PointD c = new PointD(0.5, 0.5);
 			double radius = 0.4;
-			double angle1 = 45.0  * (M_PI/180.0);  /* angles are specified */
-			double angle2 = 180.0 * (M_PI/180.0);  /* in radians           */
+			double angle1 = 45.0  * (Math.PI/180.0);  /* angles are specified */
+			double angle2 = 180.0 * (Math.PI/180.0);  /* in radians           */
 
 			Normalize(cr, width, height);
 
@@ -83,7 +82,7 @@ namespace Cairo.Snippets
 
 			// draw helping lines
 			cr.Color = new Color (1, 0.2, 0.2, 0.6);
-			cr.Arc(c.X, c.Y, 0.05, 0, 2*M_PI);
+			cr.Arc(c.X, c.Y, 0.05, 0, 2*Math.PI);
 			cr.Fill();
 			cr.LineWidth = 0.03;
 			cr.Arc(c.X, c.Y, radius, angle1, angle1);
@@ -93,11 +92,11 @@ namespace Cairo.Snippets
 			cr.Stroke();
 		}
 	
-		public void clip(Context cr, double width, double height)
+		public void clip(Context cr, int width, int height)
 		{
 			Normalize (cr, width, height);
 
-			cr.Arc(0.5, 0.5, 0.3, 0, 2 * M_PI);
+			cr.Arc(0.5, 0.5, 0.3, 0, 2 * Math.PI);
 			cr.Clip();
 
 			cr.NewPath();  // current path is not consumed by cairo_clip()
@@ -111,10 +110,10 @@ namespace Cairo.Snippets
 			cr.Stroke();
 		}
 
-		public void clip_image(Context cr, double width, double height)
+		public void clip_image(Context cr, int width, int height)
 		{
 			Normalize (cr, width, height);
-			cr.Arc (0.5, 0.5, 0.3, 0, 2*M_PI);
+			cr.Arc (0.5, 0.5, 0.3, 0, 2*Math.PI);
 			cr.Clip ();
 			cr.NewPath (); // path not consumed by clip()
 
@@ -130,7 +129,7 @@ namespace Cairo.Snippets
 			image.Destroy ();
 		}
 
-		public void curve_to(Context cr, double width, double height)
+		public void curve_to(Context cr, int width, int height)
 		{
 			double x=0.1,  y=0.5;
 			double x1=0.4, y1=0.9, x2=0.6, y2=0.1, x3=0.9, y3=0.5;
@@ -151,7 +150,7 @@ namespace Cairo.Snippets
 			cr.Stroke();
 		}
 
-		public void curve_rectangle(Context cr, double width, double height)
+		public void curve_rectangle(Context cr, int width, int height)
 		{
 			// a custom shape, that could be wrapped in a function
 			double x0	   = 0.1,   //< parameters like cairo_rectangle
@@ -205,13 +204,13 @@ namespace Cairo.Snippets
 			cr.ClosePath();
 
 			// and fill/stroke it
-	    	cr.Color = new Color (0.5, 0.5, 1);
-	    	cr.FillPreserve();
+			cr.Color = new Color (0.5, 0.5, 1);
+			cr.FillPreserve();
 			cr.Color = new Color (0.5, 0, 0, 0.5);
 			cr.Stroke();
 		}
 
-		public void fill_and_stroke(Context cr, double width, double height)
+		public void fill_and_stroke(Context cr, int width, int height)
 		{
 			Normalize(cr, width, height);
 
@@ -228,7 +227,7 @@ namespace Cairo.Snippets
 			cr.Stroke();
 		}
 
-		public void fill_and_stroke2(Context cr, double width, double height)
+		public void fill_and_stroke2(Context cr, int width, int height)
 		{
 			Normalize (cr, width, height);
 
@@ -244,14 +243,14 @@ namespace Cairo.Snippets
 			cr.RelLineTo(-0.2, -0.2);
 			cr.ClosePath();
 
-		    cr.Color = new Color (0, 0, 1);
-		    cr.FillPreserve();
+			cr.Color = new Color (0, 0, 1);
+			cr.FillPreserve();
 			cr.Color = new Color (0, 0, 0);
 
 			cr.Stroke();
 		}
 
-		public void gradient(Context cr, double width, double height)
+		public void gradient(Context cr, int width, int height)
 		{
 			Normalize (cr, width, height);
 
@@ -266,11 +265,11 @@ namespace Cairo.Snippets
 			rg.AddColorStop(0, new Color (1, 1, 1, 1));
 			rg.AddColorStop(1, new Color (0, 0, 0, 1));
 			cr.Source = rg;
-			cr.Arc(0.5, 0.5, 0.3, 0, 2 * M_PI);
+			cr.Arc(0.5, 0.5, 0.3, 0, 2 * Math.PI);
 			cr.Fill();
 		}
 
-		public void image(Context cr, double width, double height)
+		public void image(Context cr, int width, int height)
 		{
 			Normalize (cr, width, height);
 			ImageSurface image = new ImageSurface ("data/romedalen.png");
@@ -278,7 +277,7 @@ namespace Cairo.Snippets
 			int h = image.Height;
 
 			cr.Translate (0.5, 0.5);
-			cr.Rotate (45* M_PI/180);
+			cr.Rotate (45* Math.PI/180);
 			cr.Scale  (1.0/w, 1.0/h);
 			cr.Translate (-0.5*w, -0.5*h);
 
@@ -287,7 +286,7 @@ namespace Cairo.Snippets
 			image.Destroy ();
 		}
 		
-		public void imagepattern(Context cr, double width, double height)
+		public void imagepattern(Context cr, int width, int height)
 		{
 			Normalize (cr, width, height);
 			
@@ -299,7 +298,7 @@ namespace Cairo.Snippets
 			pattern.Extend = Extend.Repeat;
 
 			cr.Translate (0.5, 0.5);
-			cr.Rotate (M_PI / 4);
+			cr.Rotate (Math.PI / 4);
 			cr.Scale (1 / Math.Sqrt (2), 1 / Math.Sqrt (2));
 			cr.Translate (- 0.5, - 0.5);
 
@@ -316,7 +315,7 @@ namespace Cairo.Snippets
 			image.Destroy ();
 		}
 		
-		public void path(Context cr, double width, double height)
+		public void path(Context cr, int width, int height)
 		{
 			Normalize(cr, width, height);
 			cr.MoveTo(0.5, 0.1);
@@ -327,7 +326,7 @@ namespace Cairo.Snippets
 			cr.Stroke();
 		}
 
-		public void set_line_cap(Context cr, double width, double height)
+		public void set_line_cap(Context cr, int width, int height)
 		{
 			Normalize(cr, width, height);
 			cr.LineWidth = 0.12;
@@ -356,7 +355,7 @@ namespace Cairo.Snippets
 			cr.Stroke();
 		}
 
-		public void set_line_join(Context cr, double width, double height)
+		public void set_line_join(Context cr, int width, int height)
 		{
 			Normalize(cr, width, height);
 			cr.LineWidth = 0.16;
@@ -379,7 +378,7 @@ namespace Cairo.Snippets
 			cr.Stroke();
 		}
 
-		public void text(Context cr, double width, double height)
+		public void text(Context cr, int width, int height)
 		{
 			Normalize (cr, width, height);
 			cr.SelectFontFace("Sans", FontSlant.Normal, FontWeight.Bold);
@@ -399,12 +398,12 @@ namespace Cairo.Snippets
 
 			// draw helping lines
 			cr.Color = new Color (1.0, 0.2, 0.2, 0.6);
-			cr.Arc(0.04, 0.53, 0.02, 0, 2*M_PI);
-			cr.Arc(0.27, 0.65, 0.02, 0, 2*M_PI);
+			cr.Arc(0.04, 0.53, 0.02, 0, 2*Math.PI);
+			cr.Arc(0.27, 0.65, 0.02, 0, 2*Math.PI);
 			cr.Fill();
 		}
 
-		public void text_align_center(Context cr, double width, double height)
+		public void text_align_center(Context cr, int width, int height)
 		{
 			Normalize (cr, width, height);
 
@@ -419,7 +418,7 @@ namespace Cairo.Snippets
 
 			// draw helping lines
 			cr.Color = new Color (1, 0.2, 0.2, 0.6);
-			cr.Arc(x, y, 0.05, 0, 2*M_PI);
+			cr.Arc(x, y, 0.05, 0, 2*Math.PI);
 			cr.Fill();
 			cr.MoveTo(0.5, 0);
 			cr.RelLineTo(0, 1);
@@ -428,7 +427,7 @@ namespace Cairo.Snippets
 			cr.Stroke();
 		}
 	
-		public void text_extents(Context cr, double width, double height)
+		public void text_extents(Context cr, int width, int height)
 		{
 			double x=0.1;
 			double y=0.6;
@@ -445,7 +444,7 @@ namespace Cairo.Snippets
 
 			// draw helping lines
 			cr.Color = new Color (1, 0.2, 0.2, 0.6);
-			cr.Arc(x, y, 0.05, 0, 2*M_PI);
+			cr.Arc(x, y, 0.05, 0, 2*Math.PI);
 			cr.Fill();
 			cr.MoveTo(x,y);
 			cr.RelLineTo(0, -extents.Height);
@@ -454,7 +453,7 @@ namespace Cairo.Snippets
 			cr.Stroke();
 		}
 
-		public void xxx_clip_rectangle(Context cr, double width, double height)
+		public void xxx_clip_rectangle(Context cr, int width, int height)
 		{
 			Normalize (cr, width, height);
 
@@ -473,7 +472,7 @@ namespace Cairo.Snippets
 			cr.Stroke();
 		}
 
-		public void xxx_dash(Context cr, double width, double height)
+		public void xxx_dash(Context cr, int width, int height)
 		{
 			double[] dashes = new double[] {
 				0.20,  // ink
@@ -494,7 +493,7 @@ namespace Cairo.Snippets
 			cr.Stroke();
 		}
 
-		public void xxx_long_lines(Context cr, double width, double height)
+		public void xxx_long_lines(Context cr, int width, int height)
 		{
 			Normalize(cr, width, height);
 
@@ -519,7 +518,7 @@ namespace Cairo.Snippets
 			cr.Stroke();
 		}
 
-		public void xxx_multi_segment_caps(Context cr, double width, double height)
+		public void xxx_multi_segment_caps(Context cr, int width, int height)
 		{
 			Normalize(cr, width, height);
 
@@ -537,7 +536,7 @@ namespace Cairo.Snippets
 			cr.Stroke();
 		}
 
-		public void xxx_self_intersect(Context cr, double width, double height)
+		public void xxx_self_intersect(Context cr, int width, int height)
 		{
 			Normalize(cr, width, height);
 

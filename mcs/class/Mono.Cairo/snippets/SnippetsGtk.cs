@@ -55,9 +55,7 @@ namespace Cairo.Snippets
 
 		void OnExposed (object sender, ExposeEventArgs e)
 		{
-			// this is for gtk > 2.7:
-			// Context cr = Gdk.CairoHelper.Create (da.GdkWindow);
-			Context cr = Gdk.Graphics.CreateDrawable (da.GdkWindow);
+			Context cr = Gdk.CairoHelper.Create (da.GdkWindow);
 
 			int w, h;
 			da.GdkWindow.GetSize (out w, out h);
