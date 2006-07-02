@@ -5,6 +5,16 @@ namespace MonoTests.SystemWeb.Framework
 	[Serializable]
 	public class BaseControl
 	{
+		public BaseControl ()
+		{
+		}
+
+		public BaseControl (string name, string value)
+		{
+			_name = name;
+			_value = value;
+		}
+
 		string _name;
 		public virtual string Name
 		{

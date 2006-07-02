@@ -19,5 +19,10 @@ namespace MonoTests.SystemWeb.Framework
 			base.DoInvoke (param);
 			callback ();
 		}
+
+		public override string GetDefaultUrl ()
+		{
+			return "page.fake";
+		}
 	}
 }

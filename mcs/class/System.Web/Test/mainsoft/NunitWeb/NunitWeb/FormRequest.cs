@@ -5,6 +5,7 @@ using System.Web;
 using System.IO;
 using System.Collections;
 using System.Xml;
+using System.Globalization;
 
 namespace MonoTests.SystemWeb.Framework
 {
@@ -55,7 +56,7 @@ namespace MonoTests.SystemWeb.Framework
 			if (actionUrl != null && actionUrl != string.Empty)
 				base.Url = actionUrl;
 			XmlNode method = formNode.Attributes["method"];
-			if (method != null && "POST" == method.Value)
+			if (method != null && "POST" == method.Value.ToUpper(CultureInfo.InvariantCulture))
 				base.IsPost = true;
 			else
 				base.IsPost = false;

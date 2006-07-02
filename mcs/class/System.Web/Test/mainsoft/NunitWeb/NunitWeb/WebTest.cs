@@ -79,9 +79,14 @@ namespace MonoTests.SystemWeb.Framework
 				Invoker.DoInvoke (param);
 			}
 			catch (Exception ex) {
-				Host.RegisterException (ex);
+				RegisterException (ex);
 				throw;
 			}
+		}
+
+		public static void RegisterException (Exception ex)
+		{
+			Host.RegisterException (ex);
 		}
 
 		public static void Unload ()

@@ -129,8 +129,14 @@ namespace MonoTests.SystemWeb.Framework
 
 		void Invoke (PageDelegate callback)
 		{
-			if (callback != null)
-				callback (_page);
+			try {
+				if (callback != null)
+					callback (_page);
+			}
+			catch (Exception e) {
+				WebTest.RegisterException (e);
+				throw;
+			}
 		}
 
 		public override string GetDefaultUrl ()
