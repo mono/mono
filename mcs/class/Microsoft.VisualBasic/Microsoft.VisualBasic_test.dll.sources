@@ -1,6 +1,1 @@
-Microsoft.VisualBasic/CollectionTest.cs
-Microsoft.VisualBasic/ConversionTest.cs
-Microsoft.VisualBasic/DateAndTimeTest.cs
-Microsoft.VisualBasic/FileSystemTest.cs
-Microsoft.VisualBasic/FinancialTest.cs
-Microsoft.VisualBasic/Microsoft.VisualBasic.CompilerServices/UtilsTest.cs
+../../../build/common/Consts.cs

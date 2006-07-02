@@ -1,3 +1,8 @@
+2006-07-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* Microsoft.VisualBasic_test.dll.sources: Remove tests as well, since the 
+	sources were removed. Add a dummy file since the file can't be empty.
+
 2005-11-21  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (bootstrap_profile): New.  Defines the bootstrap
