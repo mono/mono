@@ -136,7 +136,7 @@ namespace MonoTests.SystemWeb.Framework
 				return null;
 			}
 
-			MembershipUser u = new MembershipUser ("FakeProvider", username, "", email, passwordQuestion, "", isApproved, false, DateTime.FromBinary (10000), DateTime.FromBinary (10000), DateTime.FromBinary (10000), DateTime.FromBinary (0), DateTime.FromBinary (0));
+			MembershipUser u = new MembershipUser ("FakeProvider", username, "", email, passwordQuestion, "", isApproved, false, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now);
 			status = MembershipCreateStatus.Success;
 			return u;
 		}
@@ -164,13 +164,13 @@ namespace MonoTests.SystemWeb.Framework
 
 		public override MembershipUser GetUser (string username, bool userIsOnline)
 		{
-			MembershipUser u = new MembershipUser ("", username, "", "", "", "", true, false, DateTime.FromBinary (10000), DateTime.FromBinary (10000), DateTime.FromBinary (10000), DateTime.FromBinary (0), DateTime.FromBinary (0));
+			MembershipUser u = new MembershipUser ("", username, "", "", "", "", true, false, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now);
 			return u;
 		}
 
 		public override MembershipUser GetUser (object providerUserKey, bool userIsOnline)
 		{
-			MembershipUser u = new MembershipUser ("", "", providerUserKey, "", "", "", true, false, DateTime.FromBinary (10000), DateTime.FromBinary (10000), DateTime.FromBinary (10000), DateTime.FromBinary (0), DateTime.FromBinary (0));
+			MembershipUser u = new MembershipUser ("", "", providerUserKey, "", "", "", true, false, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now);
 			return u;
 		}
 
