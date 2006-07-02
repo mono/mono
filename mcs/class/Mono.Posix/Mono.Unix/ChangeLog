@@ -1,5 +1,11 @@
 2006-07-02  Jonathan Pryor  <jonpryor@vt.edu>
 
+	* UnixSymbolicLinkInfo.cs: Oops.  CreateSymbolicLinkTo() should create
+	  FullPath, not OriginalName.  This was fixed in one overload in January,
+	  but I missed an overload. :-/
+
+2006-07-02  Jonathan Pryor  <jonpryor@vt.edu>
+
 	* UnixPath.cs: Follow .NET's System.IO.Path.Combine() behavior, and "reset"
 	  the generated path if any argument beings with a path root --
 	  UnixPath.Combine("/a", "/b") should return "/b", not "/a/b".  Fixes #78580.
