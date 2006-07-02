@@ -1,3 +1,8 @@
+2006-07-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c (mono_handle_native_sigsegv): Prevent infinite loops if
+	this function causes a SIGSEGV.
+
 2006-06-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c: Remove unused solaris/x86 includes.
