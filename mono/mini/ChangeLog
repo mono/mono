@@ -1,5 +1,11 @@
 2006-07-02  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-exceptions.c: Fix handling of unhandled SIGSEGV exceptions on ia64.
+	(ves_icall_System_Security_SecurityFrame_GetSecurityStack): Use MONO_INIT_CONTEXT_FROM_CURRENT.
+	(ves_icall_System_Security_SecurityFrame_GetSecurityFrame): Ditto.
+
+	* mini-ia64.h (MONO_CONTEXT_SET_FUNC): New macro.
+
 	* mini-exceptions.c (mono_handle_native_sigsegv): Prevent infinite loops if
 	this function causes a SIGSEGV.
 
