@@ -1,3 +1,7 @@
+2006-07-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am: Get rid of $(ICU_LIBS).
+
 2006-07-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-exceptions.c: Fix handling of unhandled SIGSEGV exceptions on ia64.
