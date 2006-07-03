@@ -1997,12 +1997,15 @@ namespace Mono.CSharp {
 			Type target_type, Location loc)
 		{
 			Expression e;
+			Type expr_type = expr.Type;
 			if (TypeManager.IsNullableType (target_type)) {
-				if (TypeManager.IsNullableType (expr.Type)) {
+				if (TypeManager.IsNullableType (expr_type)) {
 					e = new Nullable.LiftedConversion (
 						expr, target_type, false, true, loc).Resolve (ec);
 					if (e != null)
 						return e;
+				} else if (expr_type == TypeManager.object_type) {
+					return new UnboxCast (expr, target_type);
 				} else {
 					Type target = TypeManager.GetTypeArguments (target_type) [0];
 
@@ -2010,7 +2013,7 @@ namespace Mono.CSharp {
 					if (e != null)
 						return Nullable.Wrap.Create (e, ec);
 				}
-			} else if (TypeManager.IsNullableType (expr.Type)) {
+			} else if (TypeManager.IsNullableType (expr_type)) {
 				Expression source = Nullable.Unwrap.Create (expr, ec);
 				if (source != null) {
 					e = ExplicitConversionCore (ec, source, target_type, loc);

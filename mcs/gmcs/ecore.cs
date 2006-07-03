@@ -1568,7 +1568,7 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			
 			base.Emit (ec);
-			if (t.IsGenericParameter)
+			if (t.IsGenericParameter || t.IsGenericType && t.IsValueType)
 				ig.Emit (OpCodes.Unbox_Any, t);
 			else {
 				ig.Emit (OpCodes.Unbox, t);
