@@ -1,3 +1,11 @@
+2006-07-03  Kornél Pál  <kornelpal@gmail.com>
+
+	* corlib.dll.sources: Added
+	  System.Globalization/CodePageDataItem.cs
+	  System.Text/CodePageEncoding.cs
+	  System.Text/MLangCodePageEncoding.cs
+	  System.Text/SurrogateEncoder.cs
+
 2006-06-5  Jonathan Chambers  <jonathan.chambers@ansys.com>
 
 	* corlib_test.dll.sources : added Variant.cs.

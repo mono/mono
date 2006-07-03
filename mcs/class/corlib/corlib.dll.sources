@@ -301,6 +301,7 @@ System.Globalization/CalendarAlgorithmType.cs
 System.Globalization/CalendarWeekRule.cs
 System.Globalization/CalendricalCalculations.cs
 System.Globalization/CharUnicodeInfo.cs
+System.Globalization/CodePageDataItem.cs
 System.Globalization/CompareInfo.cs
 System.Globalization/CompareOptions.cs
 System.Globalization/CultureInfo.cs
@@ -1258,6 +1259,7 @@ System.Security.Principal/WindowsIdentity.cs
 System.Security.Principal/WindowsImpersonationContext.cs
 System.Security.Principal/WindowsPrincipal.cs
 System.Text/ASCIIEncoding.cs
+System.Text/CodePageEncoding.cs
 System.Text/Decoder.cs
 System.Text/DecoderExceptionFallback.cs
 System.Text/DecoderExceptionFallbackBuffer.cs
@@ -1277,8 +1279,10 @@ System.Text/EncoderReplacementFallbackBuffer.cs
 System.Text/Encoding.cs
 System.Text/EncodingInfo.cs
 System.Text/Latin1Encoding.cs
+System.Text/MLangCodePageEncoding.cs
 System.Text/NormalizationForm.cs
 System.Text/StringBuilder.cs
+System.Text/SurrogateEncoder.cs
 System.Text/UnicodeEncoding.cs
 System.Text/UTF7Encoding.cs
 System.Text/UTF8Encoding.cs

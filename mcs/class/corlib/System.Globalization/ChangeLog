@@ -1,3 +1,7 @@
+2006-07-03  Kornél Pál  <kornelpal@gmail.com>
+
+	* CodePageDataItem.cs: Added.
+
 2006-06-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* CultureInfo.cs: Add stubs for net 2.0 GetCultureInfo () methods.

@@ -1,3 +1,9 @@
+2006-07-03  Kornél Pál  <kornelpal@gmail.com>
+
+	* CodePageEncoding.cs: Added.
+	* MLangCodePageEncoding.cs: Added.
+	* SurrogateEncoder.cs: Added.
+
 2006-06-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* EncodingInfo.cs : EncodingName is WebName, not EncodingName.
