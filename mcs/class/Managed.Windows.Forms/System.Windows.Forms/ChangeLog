@@ -1,3 +1,10 @@
+2006-07-03  Jackson Harper  <jackson@ximian.com>
+
+	* TabControl.cs:
+	* ThemeWin32Classic.cs: Tabs do not obey normal background color
+	rules, they are always control color regardless of the background
+	color.
+
 2006-07-02  Alexander Olk  <alex.olk@googlemail.com>
 
 	* FileDialog.cs: Added internal class MWFConfig.

@@ -3226,8 +3226,7 @@ namespace System.Windows.Forms
 
 		public override void DrawTabControl (Graphics dc, Rectangle area, TabControl tab)
 		{
-			// Do we need to fill the back color? It can't be changed...
-			Brush brush = tab.BackColor.ToArgb () == DefaultControlBackColor.ToArgb () ? SystemBrushes.Control : ResPool.GetSolidBrush (tab.BackColor);
+			Brush brush = SystemBrushes.Control;
 			dc.FillRectangle (brush, area);
 			Rectangle panel_rect = GetTabPanelRectExt (tab);
 

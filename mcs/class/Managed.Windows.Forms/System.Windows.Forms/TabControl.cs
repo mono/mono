@@ -102,7 +102,7 @@ namespace System.Windows.Forms {
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override Color BackColor {
-			get { return base.BackColor; }
+			get { return ThemeEngine.Current.ColorControl; }
 			set { /* nothing happens on set on MS */ }
 		}
 
