@@ -1,3 +1,10 @@
+2006-07-03	Konstantin Triger <kostat@mainsoft.com>
+
+        * DataBoundControl.cs: implement MarkAsDataBound and consider it while
+        	setting RequiresDataBinding in OnLoad event.
+        * GridView.cs: DataBind rows before other control can access the data.
+        * BoundField.cs: add unique ID to control for postback parameters.
+
 2006-07-03      Konstantin Triger <kostat@mainsoft.com>
 
         * WebControl.cs: fix typo in EnableTheming.

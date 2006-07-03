@@ -174,6 +174,7 @@ namespace System.Web.UI.WebControls {
 			bool editable = (rowState & (DataControlRowState.Edit | DataControlRowState.Insert)) != 0;
 			if (editable && !ReadOnly) {
 				TextBox box = new TextBox ();
+				box.ID = cell.ClientID;
 				cell.Controls.Add (box);
 			}
 		}

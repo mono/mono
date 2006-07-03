@@ -147,7 +147,7 @@ namespace System.Web.UI.WebControls {
 		
 		protected internal override void OnLoad (EventArgs e)
 		{
-			if (IsBoundUsingDataSourceID && (!Page.IsPostBack || !EnableViewState))
+			if (!Page.IsPostBack || (IsViewStateEnabled && !IsDataBound))
 				RequiresDataBinding = true;
 
 			base.OnLoad(e);
@@ -181,12 +181,22 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 		
+		// 
+		// See DataBoundControl.MarkAsDataBound msdn doc for the code example
+		// 
 		protected override void PerformSelect ()
 		{
-			OnDataBinding (EventArgs.Empty);
+			// Call OnDataBinding here if bound to a data source using the
+			// DataSource property (instead of a DataSourceID), because the
+			// databinding statement is evaluated before the call to GetData.       
+			if (!IsBoundUsingDataSourceID)
+				OnDataBinding (EventArgs.Empty);
+
 			DataSourceView view = GetData ();
-			if (view != null)
+			if (view != null) {
 				view.Select (SelectArguments, new DataSourceViewSelectCallback (OnSelect));
+				MarkAsDataBound ();
+			}
 		}
 		
 		void OnSelect (IEnumerable data)
@@ -208,10 +218,19 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		[MonoTODO]
+		bool IsDataBound {
+			get {
+				object dataBound = ViewState ["DataBound"];
+				return dataBound != null ? (bool) dataBound : false;
+			}
+			set {
+				ViewState ["DataBound"] = value;
+			}
+		}
+
 		protected void MarkAsDataBound ()
 		{
-			throw new NotImplementedException ();
+			IsDataBound = true;
 		}
 	}
 }
