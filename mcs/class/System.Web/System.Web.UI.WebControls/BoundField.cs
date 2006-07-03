@@ -130,7 +130,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("HtmlEncode")]
 		public virtual bool HtmlEncode {
-			get { return ViewState.GetBool ("ReadOnly", true); }
+			get { return ViewState.GetBool ("HtmlEncode", true); }
 			set { 
 				ViewState ["HtmlEncode"] = true;
 				OnFieldChanged ();
