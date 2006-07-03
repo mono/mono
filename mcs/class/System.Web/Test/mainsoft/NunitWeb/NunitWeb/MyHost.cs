@@ -66,7 +66,9 @@ namespace MonoTests.SystemWeb.Framework
 
 		private static MyData GetMyData (HttpWorkerRequest wr)
 		{
-			IForeignData fd = (IForeignData) wr;
+			IForeignData fd = wr as IForeignData;
+			if (fd == null)
+				throw new ArgumentException ("Invalid worker request. Probable reason is using WebTest.Invoke from a real web application");
 			MyData d = (MyData) fd[typeof (MyHost)];
 			if (d == null) {
 				d = new MyData ();
