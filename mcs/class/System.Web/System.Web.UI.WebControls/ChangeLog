@@ -1,3 +1,7 @@
+2006-07-03      Konstantin Triger <kostat@mainsoft.com>
+
+        * WebControl.cs: fix typo in EnableTheming.
+
 2006-07-02	Konstantin Triger <kostat@mainsoft.com>
 
 	* MenuItemCollection.cs: save items if the collection is dirty.

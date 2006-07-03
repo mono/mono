@@ -250,7 +250,7 @@ namespace System.Web.UI.WebControls {
 		public virtual new bool EnableTheming
 		{
 			get { return base.EnableTheming; }
-			set { EnableTheming = value; }
+			set { base.EnableTheming = value; }
 		}
 #endif		
 
