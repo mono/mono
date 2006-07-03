@@ -1,5 +1,7 @@
 2006-07-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c: Fix solaris/x86 exception handling.
+
 	* Makefile.am: Get rid of $(ICU_LIBS).
 
 2006-07-02  Zoltan Varga  <vargaz@gmail.com>
