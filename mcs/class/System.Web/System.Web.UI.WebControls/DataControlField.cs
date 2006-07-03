@@ -76,7 +76,7 @@ namespace System.Web.UI.WebControls {
 		{
 			this.sortingEnabled = sortingEnabled;
 			this.control = control;
-			return true;
+			return false;
 		}
 
 		public virtual void InitializeCell (DataControlFieldCell cell,

@@ -167,7 +167,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ImageField_Initialize ()
 		{
 			Control control = new Control ();

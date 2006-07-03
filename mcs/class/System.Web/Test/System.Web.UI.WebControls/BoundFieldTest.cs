@@ -185,7 +185,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void BoundField_Initialize ()
 		{
 			// This method initilize to private fields in a base class DataControlField 

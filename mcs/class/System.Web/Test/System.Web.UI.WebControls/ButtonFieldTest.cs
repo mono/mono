@@ -120,7 +120,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ButtonField_Initialize ()
 		{
 			Control control = new Control ();

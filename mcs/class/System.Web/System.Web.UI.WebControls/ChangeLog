@@ -1,3 +1,7 @@
+2006-07-03  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* DataControlField.cs: fixed Initialize, should always return false
+
 2006-07-03  Lluis Sanchez  <lluis@novell.com>
 
 	* BoundField.cs: Fix setter for HtmlEncode (it was setting always True).

@@ -133,7 +133,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void HyperLinkField_Initialize ()
 		{
 			PokerHyperLinkField field = new PokerHyperLinkField ();

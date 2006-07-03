@@ -163,7 +163,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void DataControlField_Initilize ()
 		{
 			DerivedDataControlField field = new DerivedDataControlField ();
