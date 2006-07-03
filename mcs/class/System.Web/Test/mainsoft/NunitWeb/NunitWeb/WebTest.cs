@@ -42,11 +42,19 @@ namespace MonoTests.SystemWeb.Framework
 			get {
 				if (host != null)
 					return host;
+#if !TARGET_JVM
 				host = AppDomain.CurrentDomain.GetData (HOST_INSTANCE_NAME) as MyHost;
 				if (host != null)
 					return host;
-				host = new MyHost (); //Fake instance to make EnsureHosting happy
-				host = CreateHosting ();
+#endif
+				try {
+					host = new MyHost (); //Fake instance to make EnsureHosting happy
+					host = CreateHosting ();
+				}
+				catch {
+					host = null; //Remove the fake instance if CreateHosting failed
+					throw;
+				}
 				return host;
 			}
 		}
@@ -204,7 +212,9 @@ namespace MonoTests.SystemWeb.Framework
 		private static string baseDir;
 		private static string binDir;
 		const string VIRTUAL_BASE_DIR = "/NunitWeb";
+#if !TARGET_JVM
 		const string HOST_INSTANCE_NAME = "MonoTests/SysWeb/Framework/Host";
+#endif
 
 		private static MyHost CreateHosting ()
 		{
@@ -214,6 +224,7 @@ namespace MonoTests.SystemWeb.Framework
 			baseDir = tmpFile;
 			binDir = Directory.CreateDirectory (Path.Combine (baseDir, "bin")).FullName;
 
+			CopyResources ();
 #if !TARGET_JVM
 			foreach (Assembly ass in AppDomain.CurrentDomain.GetAssemblies ())
 				LoadAssemblyRecursive (ass);
@@ -221,13 +232,14 @@ namespace MonoTests.SystemWeb.Framework
 			foreach (Assembly ass in AppDomain.CurrentDomain.GetAssemblies ())
 				CopyAssembly (ass, binDir);
 
-			CopyResources ();
 			MyHost host = (MyHost) ApplicationHost.CreateApplicationHost (typeof (MyHost), VIRTUAL_BASE_DIR, baseDir);
-#else
-			host = new MyHost ();
-#endif
 			AppDomain.CurrentDomain.SetData (HOST_INSTANCE_NAME, host);
 			host.AppDomain.SetData (HOST_INSTANCE_NAME, host);
+#else
+			host = new MyHost ();
+			AppDomain.CurrentDomain.SetData (".appVPath", VIRTUAL_BASE_DIR);
+			AppDomain.CurrentDomain.SetData (".appPath", baseDir);
+#endif
 			return host;
 		}
 
@@ -249,6 +261,11 @@ namespace MonoTests.SystemWeb.Framework
 			CopyResource (typeof (WebTest),
 				"MonoTests.SystemWeb.Framework.Resources.My.master",
 				"My.master");
+#if TARGET_JVM
+			CopyResource (typeof (WebTest),
+				"MonoTests.SystemWeb.Framework.Resources.AspxParser.params",
+				"AspxParser.params");
+#endif
 #else
 			CopyResource (typeof (WebTest), "Web.config", "Web.config");
 			CopyResource (typeof (WebTest), "MyPage.aspx", "MyPage.aspx");
