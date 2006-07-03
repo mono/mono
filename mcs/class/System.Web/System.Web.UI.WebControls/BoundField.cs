@@ -132,7 +132,7 @@ namespace System.Web.UI.WebControls {
 		public virtual bool HtmlEncode {
 			get { return ViewState.GetBool ("HtmlEncode", true); }
 			set { 
-				ViewState ["HtmlEncode"] = true;
+				ViewState ["HtmlEncode"] = value;
 				OnFieldChanged ();
 			}
 		}
