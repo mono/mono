@@ -1,3 +1,9 @@
+2006-07-04  Kornél Pál  <kornelpal@gmail.com>
+
+	* CodePageEncoding.cs: Added comment on usage.
+	* MLangCodePageEncoding.cs: Added comment on usage.
+	* SurrogateEncoder.cs: Added comment on usage.
+
 2006-07-03  Kornél Pál  <kornelpal@gmail.com>
 
 	* CodePageEncoding.cs: Added.

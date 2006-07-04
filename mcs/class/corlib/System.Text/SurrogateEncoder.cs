@@ -29,6 +29,19 @@
 //
 
 //
+// These proxy classes implement IObjectReference.GetRealObject() that returns
+// an instance of the appropriate Encoding, Encoder or Decoder class.
+// As a result serialized objects of these types will transparently be
+// deserialized to the instances of the above described classes.
+//
+// Use SerializationInfo.SetType() in ISerializable.GetObjectData() method of
+// serializable classes to serialize their instances using a proxy class.
+//
+// All of these proxy classes are non-public so they only have to be
+// serialization compatible with .NET Framework.
+//
+
+//
 // .NET Framework 1.x uses this class for GB18030 encoder and
 // .NET Framework 2.0 can deserialize it using a proxy.
 // This class supports serialization compatibility.
