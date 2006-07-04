@@ -41,7 +41,7 @@ namespace System.Threading
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern bool WaitAll_internal(WaitHandle[] handles, int ms, bool exitContext);
 		
-		static void CheckArray (WaitHandle [] handles)
+		static void CheckArray (WaitHandle [] handles, bool waitAll)
 		{
 			if (handles == null)
 				throw new ArgumentNullException ("waitHandles");
@@ -50,7 +50,7 @@ namespace System.Threading
 			if (length > 64)
 				throw new NotSupportedException ("Too many handles");
 
-			if (length > 1 &&
+			if (waitAll && length > 1 &&
 			    (Thread.CurrentThread.ApartmentState == ApartmentState.STA ||
 			     Assembly.GetEntryAssembly ().EntryPoint.GetCustomAttributes (typeof (STAThreadAttribute), false).Length == 1))
 				throw new NotSupportedException ("WaitAll for multiple handles is not allowed on an STA thread.");
@@ -66,13 +66,13 @@ namespace System.Threading
 		
 		public static bool WaitAll(WaitHandle[] waitHandles)
 		{
-			CheckArray (waitHandles);
+			CheckArray (waitHandles, true);
 			return(WaitAll_internal(waitHandles, Timeout.Infinite, false));
 		}
 
 		public static bool WaitAll(WaitHandle[] waitHandles, int millisecondsTimeout, bool exitContext)
 		{
-			CheckArray (waitHandles);
+			CheckArray (waitHandles, true);
 			try {
 				if (exitContext) SynchronizationAttribute.ExitContext ();
 				return(WaitAll_internal(waitHandles, millisecondsTimeout, false));
@@ -86,7 +86,7 @@ namespace System.Threading
 					   TimeSpan timeout,
 					   bool exitContext)
 		{
-			CheckArray (waitHandles);
+			CheckArray (waitHandles, true);
 			long ms = (long) timeout.TotalMilliseconds;
 			
 			if (ms < -1 || ms > Int32.MaxValue)
@@ -107,7 +107,7 @@ namespace System.Threading
 		// LAMESPEC: Doesn't specify how to signal failures
 		public static int WaitAny(WaitHandle[] waitHandles)
 		{
-			CheckArray (waitHandles);
+			CheckArray (waitHandles, false);
 			return(WaitAny_internal(waitHandles, Timeout.Infinite, false));
 		}
 
@@ -115,7 +115,7 @@ namespace System.Threading
 					  int millisecondsTimeout,
 					  bool exitContext)
 		{
-			CheckArray (waitHandles);
+			CheckArray (waitHandles, false);
 			try {
 				if (exitContext) SynchronizationAttribute.ExitContext ();
 				return(WaitAny_internal(waitHandles, millisecondsTimeout, exitContext));
@@ -128,7 +128,7 @@ namespace System.Threading
 		public static int WaitAny(WaitHandle[] waitHandles,
 					  TimeSpan timeout, bool exitContext)
 		{
-			CheckArray (waitHandles);
+			CheckArray (waitHandles, false);
 			long ms = (long) timeout.TotalMilliseconds;
 			
 			if (ms < -1 || ms > Int32.MaxValue)

@@ -1,3 +1,8 @@
+2006-07-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WaitHandle.cs : CheckArray() is also used in WaitAny(), so added
+	  extra argument to skip STAThread check.
+
 2006-06-30  Duncan Mak  <duncan@novell.com>
 
 	* WaitHandle.cs (CheckArray): Avoid using reflection unless we
