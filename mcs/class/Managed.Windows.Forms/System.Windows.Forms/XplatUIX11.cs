@@ -106,7 +106,7 @@ namespace System.Windows.Forms {
 		private static Socket		wake;			//
 		private static Socket		wake_receive;		//
 		private static byte[]		network_buffer;		//
-
+		private static bool		detectable_key_auto_repeat;
 
 		// Focus tracking
 		private static IntPtr		ActiveWindow;		// Handle of the active window
@@ -180,6 +180,16 @@ namespace System.Windows.Forms {
 			// X11 Initialization
 			SetDisplay(XOpenDisplay(IntPtr.Zero));
 			X11DesktopColors.Initialize();
+
+			
+			// Disable keyboard autorepeat
+			try {
+				XkbSetDetectableAutoRepeat (DisplayHandle, true,  IntPtr.Zero);
+				detectable_key_auto_repeat = true;
+			} catch {
+				Console.Error.WriteLine ("Could not disable keyboard auto repeat, will attempt to disable manually.");
+				detectable_key_auto_repeat = false;
+			}
 
 			// Handle any upcoming errors; we re-set it here, X11DesktopColor stuff might have stolen it (gtk does)
 			ErrorHandler = new XErrorHandler(HandleError);
@@ -1344,8 +1354,21 @@ namespace System.Windows.Forms {
 						break;
 					}
 
+				case XEventName.KeyRelease:
+					if (!detectable_key_auto_repeat && XPending (DisplayHandle) != 0) {
+						XEvent nextevent = new XEvent ();
+
+						XPeekEvent (DisplayHandle, ref nextevent);
+
+						if (nextevent.type == XEventName.KeyPress &&
+						    nextevent.KeyEvent.keycode == xevent.KeyEvent.keycode &&
+						    nextevent.KeyEvent.time == xevent.KeyEvent.time) {
+							continue;
+						}
+					}
+					goto case XEventName.KeyPress;
+					
 					case XEventName.KeyPress:
-					case XEventName.KeyRelease:
 					case XEventName.ButtonPress:
 					case XEventName.ButtonRelease:
 					case XEventName.MotionNotify:
@@ -4872,6 +4895,12 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11", EntryPoint="XFilterEvent")]
 		internal extern static bool XFilterEvent(ref XEvent xevent, IntPtr window);
+
+		[DllImport ("libX11")]
+		internal extern static void XkbSetDetectableAutoRepeat (IntPtr display, bool detectable, IntPtr supported);
+
+		[DllImport ("libX11")]
+		internal extern static void XPeekEvent (IntPtr display, ref XEvent xevent);
 		#endregion
 	}
 }

@@ -1,3 +1,11 @@
+2006-07-04  Jackson Harper  <jackson@ximian.com>
+
+	* XplatUIX11.cs: Enable key auto repeat. If the user doesn't have
+	XKB or key auto repeat, do it manually.  Without key auto repeat,
+	when a key is held down we get key press, key release, key press,
+	key release, ... with auto repeat we get key press, key press, key
+	press ..., and then a release when the key is actually released.
+
 2006-07-03  Jackson Harper  <jackson@ximian.com>
 
 	* TabControl.cs:
