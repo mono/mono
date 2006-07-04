@@ -273,6 +273,9 @@ namespace System.Net
 					}
 				}
 
+				if (uri.Scheme == "https" && !cookie.Secure)
+					continue;
+
 				coll.Add (cookie);
 			}
 			
