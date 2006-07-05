@@ -37,13 +37,13 @@
 // Use SerializationInfo.SetType() in ISerializable.GetObjectData() method of
 // serializable classes to serialize their instances using a proxy class.
 //
-// All of these proxy classes are non-public so they only have to be
+// All of these proxy classes are non-public thus they only have to be
 // serialization compatible with .NET Framework.
 //
 
 //
-// .NET Framework 1.x uses this class for single-byte encodings and
-// .NET Framework 2.0 serializes single byte-encodings using a proxy.
+// .NET Framework 1.x uses this class for internal encodings and
+// .NET Framework 2.0 serializes internal encodings using a proxy.
 // This class supports serialization compatibility.
 //
 
@@ -56,7 +56,7 @@ namespace System.Text
 	internal sealed class CodePageEncoding : ISerializable, IObjectReference
 	{
 		//
-		// .NET Framework 1.x uses this class for single-byte decoders and
+		// .NET Framework 1.x uses this class for internal decoders and
 		// .NET Framework 2.0 can deserialize them using a proxy.
 		// This class supports serialization compatibility.
 		//
@@ -65,6 +65,7 @@ namespace System.Text
 		private sealed class Decoder : ISerializable, IObjectReference
 		{
 			private Encoding encoding;
+			private System.Text.Decoder realObject;
 
 			private Decoder (SerializationInfo info, StreamingContext context)
 			{
@@ -81,7 +82,10 @@ namespace System.Text
 
 			public object GetRealObject (StreamingContext context)
 			{
-				return this.encoding.GetDecoder ();
+				if (this.realObject == null)
+					this.realObject = this.encoding.GetDecoder ();
+
+				return this.realObject;
 			}
 		}
 
@@ -91,6 +95,7 @@ namespace System.Text
 		private EncoderFallback encoderFallback;
 		private DecoderFallback decoderFallback;
 #endif
+		private Encoding realObject;
 
 		private CodePageEncoding (SerializationInfo info, StreamingContext context)
 		{
@@ -117,17 +122,21 @@ namespace System.Text
 
 		public object GetRealObject (StreamingContext context)
 		{
-			Encoding encoding = Encoding.GetEncoding (this.codePage);
+			if (this.realObject == null) {
+				Encoding encoding = Encoding.GetEncoding (this.codePage);
 
 #if NET_2_0
-			if (!this.isReadOnly) {
-				encoding = (Encoding) encoding.Clone ();
-				encoding.EncoderFallback = this.encoderFallback;
-				encoding.DecoderFallback = this.decoderFallback;
-			}
+				if (!this.isReadOnly) {
+					encoding = (Encoding) encoding.Clone ();
+					encoding.EncoderFallback = this.encoderFallback;
+					encoding.DecoderFallback = this.decoderFallback;
+				}
 #endif
 
-			return encoding;
+				this.realObject = encoding;
+			}
+
+			return this.realObject;
 		}
 	}
 }

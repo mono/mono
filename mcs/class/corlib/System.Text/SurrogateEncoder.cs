@@ -37,7 +37,7 @@
 // Use SerializationInfo.SetType() in ISerializable.GetObjectData() method of
 // serializable classes to serialize their instances using a proxy class.
 //
-// All of these proxy classes are non-public so they only have to be
+// All of these proxy classes are non-public thus they only have to be
 // serialization compatible with .NET Framework.
 //
 
@@ -56,6 +56,7 @@ namespace System.Text
 	internal sealed class SurrogateEncoder : ISerializable, IObjectReference
 	{
 		private Encoding encoding;
+		private Encoder realObject;
 
 		private SurrogateEncoder (SerializationInfo info, StreamingContext context)
 		{
@@ -72,7 +73,10 @@ namespace System.Text
 
 		public object GetRealObject (StreamingContext context)
 		{
-			return this.encoding.GetEncoder ();
+			if (this.realObject == null)
+				this.realObject = this.encoding.GetEncoder ();
+
+			return this.realObject;
 		}
 	}
 }

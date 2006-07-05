@@ -1,3 +1,14 @@
+2006-07-05  Kornél Pál  <kornelpal@gmail.com>
+
+	* CodePageEncoding.cs: Return the same real object in subsequent
+	  calls to GetRealObject ().
+	* MLangCodePageEncoding.cs: Return the same real object in
+	  subsequent calls to GetRealObject (). Rename Encoder and Decoder
+	  MLangEncoder and MLangDecoder. These classes are not serializable
+	  in 1.x although MS.NET 2.0 can deserialize them.
+	* SurrogateEncoder.cs: Return the same real object in subsequent
+	  calls to GetRealObject ().
+
 2006-07-04  Kornél Pál  <kornelpal@gmail.com>
 
 	* CodePageEncoding.cs: Added comment on usage.

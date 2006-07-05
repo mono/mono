@@ -37,13 +37,13 @@
 // Use SerializationInfo.SetType() in ISerializable.GetObjectData() method of
 // serializable classes to serialize their instances using a proxy class.
 //
-// All of these proxy classes are non-public so they only have to be
+// All of these proxy classes are non-public thus they only have to be
 // serialization compatible with .NET Framework.
 //
 
 //
-// .NET Framework 1.x uses this class for multi-byte encodings and
-// .NET Framework 2.0 serializes multi-byte encodings using a proxy.
+// .NET Framework 1.x uses this class for internal encodings and
+// .NET Framework 2.0 serializes internal encodings using a proxy.
 // This class supports serialization compatibility.
 //
 
@@ -56,22 +56,25 @@ namespace System.Text
 	internal sealed class MLangCodePageEncoding : ISerializable, IObjectReference
 	{
 		//
-		// .NET Framework 1.x uses this class for multi-byte encoders and
-		// .NET Framework 2.0 can deserialize them using a proxy.
+		// .NET Framework 1.x uses this class for internal encoders.
+		// .NET Framework 2.0 can deserialize them using a proxy although
+		// this class is not serializable in .NET Framework 1.x.
 		// This class supports serialization compatibility.
 		//
 
+#if NET_2_0
 		[Serializable]
-		private sealed class Encoder : ISerializable, IObjectReference
+		private sealed class MLangEncoder : ISerializable, IObjectReference
 		{
 			private Encoding encoding;
+			private Encoder realObject;
 
-			private Encoder (SerializationInfo info, StreamingContext context)
+			private MLangEncoder (SerializationInfo info, StreamingContext context)
 			{
 				if (info == null)
 					throw new ArgumentNullException ("info");
 
-				this.encoding = (Encoding) info.GetValue ("encoding", typeof (Encoding));
+				this.encoding = (Encoding) info.GetValue ("m_encoding", typeof (Encoding));
 			}
 
 			public void GetObjectData (SerializationInfo info, StreamingContext context)
@@ -81,27 +84,42 @@ namespace System.Text
 
 			public object GetRealObject (StreamingContext context)
 			{
-				return this.encoding.GetEncoder ();
+				if (this.realObject == null)
+					this.realObject = this.encoding.GetEncoder ();
+
+				return this.realObject;
 			}
 		}
+#else
+		private sealed class MLangEncoder
+		{
+			private MLangEncoder ()
+			{
+				throw new ArgumentException ("This class cannot be instantiated.");
+			}
+		}
+#endif
 
 		//
-		// .NET Framework 1.x uses this class for multi-byte decoders and
-		// .NET Framework 2.0 can deserialize them using a proxy.
+		// .NET Framework 1.x uses this class for internal decoders.
+		// .NET Framework 2.0 can deserialize them using a proxy although
+		// this class is not serializable in .NET Framework 1.x.
 		// This class supports serialization compatibility.
 		//
 
+#if NET_2_0
 		[Serializable]
-		private sealed class Decoder : ISerializable, IObjectReference
+		private sealed class MLangDecoder : ISerializable, IObjectReference
 		{
 			private Encoding encoding;
+			private Decoder realObject;
 
-			private Decoder (SerializationInfo info, StreamingContext context)
+			private MLangDecoder (SerializationInfo info, StreamingContext context)
 			{
 				if (info == null)
 					throw new ArgumentNullException ("info");
 
-				this.encoding = (Encoding) info.GetValue ("encoding", typeof (Encoding));
+				this.encoding = (Encoding) info.GetValue ("m_encoding", typeof (Encoding));
 			}
 
 			public void GetObjectData (SerializationInfo info, StreamingContext context)
@@ -111,9 +129,21 @@ namespace System.Text
 
 			public object GetRealObject (StreamingContext context)
 			{
-				return this.encoding.GetDecoder ();
+				if (this.realObject == null)
+					this.realObject = this.encoding.GetDecoder ();
+
+				return this.realObject;
 			}
 		}
+#else
+		private sealed class MLangDecoder
+		{
+			private MLangDecoder ()
+			{
+				throw new ArgumentException ("This class cannot be instantiated.");
+			}
+		}
+#endif
 
 		private int codePage;
 #if NET_2_0
@@ -121,6 +151,7 @@ namespace System.Text
 		private EncoderFallback encoderFallback;
 		private DecoderFallback decoderFallback;
 #endif
+		private Encoding realObject;
 
 		private MLangCodePageEncoding (SerializationInfo info, StreamingContext context)
 		{
@@ -147,17 +178,21 @@ namespace System.Text
 
 		public object GetRealObject (StreamingContext context)
 		{
-			Encoding encoding = Encoding.GetEncoding (this.codePage);
+			if (this.realObject == null) {
+				Encoding encoding = Encoding.GetEncoding (this.codePage);
 
 #if NET_2_0
-			if (!this.isReadOnly) {
-				encoding = (Encoding) encoding.Clone ();
-				encoding.EncoderFallback = this.encoderFallback;
-				encoding.DecoderFallback = this.decoderFallback;
-			}
+				if (!this.isReadOnly) {
+					encoding = (Encoding) encoding.Clone ();
+					encoding.EncoderFallback = this.encoderFallback;
+					encoding.DecoderFallback = this.decoderFallback;
+				}
 #endif
 
-			return encoding;
+				this.realObject = encoding;
+			}
+
+			return this.realObject;
 		}
 	}
 }
