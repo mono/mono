@@ -33,6 +33,8 @@ using System.Web;
 using System.Collections.Specialized;
 using NUnit.Framework;
 using System.Diagnostics;
+using MonoTests.SystemWeb.Framework;
+using System.IO;
 
 namespace MonoTests.System.Web {
 
@@ -138,7 +140,37 @@ namespace MonoTests.System.Web {
 
 			HttpRequest r = new HttpRequest ("file", url, qs);
 			Assert.AreEqual("\u00e4", r.QueryString["umlaut"]);
-		}	
+		}
+		[Test]
+		[Category("aaa")]
+		public void Test_MapPath ()
+		{
+			WebTest t = new WebTest (new HandlerInvoker (new HandlerDelegate (
+				MapPathDelegate)));
+			t.Run ();
+		}
+
+		static public void MapPathDelegate ()
+		{
+			HttpRequest r = HttpContext.Current.Request;
+			string appBase = r.PhysicalApplicationPath.TrimEnd (Path.DirectorySeparatorChar);
+			Assert.AreEqual (appBase, r.MapPath ("~"), "test1");
+			Assert.AreEqual (appBase, r.MapPath ("/NunitWeb"), "test1.1");
+			Assert.AreEqual (Path.Combine (appBase, "Web.config"),
+				r.MapPath ("Web.config"), "test2");
+			Assert.AreEqual (Path.Combine (appBase, "Web.config"),
+				r.MapPath ("~/Web.config"), "test3");
+			Assert.AreEqual (Path.Combine (appBase, "Web.config"),
+				r.MapPath ("/NunitWeb/Web.config"), "test4");
+			Assert.AreEqual (Path.Combine (appBase, "Web.config"),
+				r.MapPath ("Web.config", null, false), "test5");
+			Assert.AreEqual (Path.Combine (appBase, "Web.config"),
+				r.MapPath ("Web.config", "", false), "test6");
+			Assert.AreEqual (Path.Combine (appBase, "Web.config"),
+				r.MapPath ("Web.config", "/NunitWeb", false), "test7");
+			Assert.AreEqual (Path.Combine (appBase, "Web.config"),
+				r.MapPath ("/NunitWeb/Web.config", "/NunitWeb", false), "test8");
+		}
 	}
 	
 
@@ -884,6 +916,7 @@ namespace MonoTests.System.Web {
 		{
 			Assert.AreEqual("b\xE1r", context.Request.Form["foo"]);
 		}
+
 	}
 }
 

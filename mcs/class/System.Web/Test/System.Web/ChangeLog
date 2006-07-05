@@ -1,3 +1,7 @@
+2006-07-05  Andrew Skiba <andrews@mainsoft.com>
+
+	* HttpRequestTest: add MapPath tests
+
 2006-06-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HttpWriter.cs: Fix test fixture not to inherit from 
