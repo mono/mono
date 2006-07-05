@@ -1,3 +1,7 @@
+2006-07-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestImage.cs: Add test cases for GetThumbnailImage.
+
 2006-06-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SolidBrushTest.cs: New. Unit tests for SolidBrush.
