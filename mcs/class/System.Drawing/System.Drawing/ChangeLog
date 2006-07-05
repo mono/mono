@@ -1,3 +1,9 @@
+2006-07-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Image.cs: Made GetThumbnailImage throw OutOfMemoryException when
+	image size is invalid (to match MS behaviour), also ensure that the
+	Graphics instance is disposed even if CheckStatus throws an exception.
+
 2006-06-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Pen.cs: Ensure we dispose of an existing brush before replacing it.

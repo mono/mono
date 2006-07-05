@@ -339,23 +339,23 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		return item;
 	}
 	
-	public Image GetThumbnailImage(int thumbWidth, int thumbHeight, Image.GetThumbnailImageAbort callback, IntPtr callbackData)
+	public Image GetThumbnailImage (int thumbWidth, int thumbHeight, Image.GetThumbnailImageAbort callback, IntPtr callbackData)
 	{
-		Status		status;
-		Image		ThumbNail;
-		Graphics	g;
+		if ((thumbWidth <= 0) || (thumbHeight <= 0))
+			throw new OutOfMemoryException ("Invalid thumbnail size");
 
-		ThumbNail=new Bitmap(thumbWidth, thumbHeight);
-		g=Graphics.FromImage(ThumbNail);
-		
-		status = GDIPlus.GdipDrawImageRectRectI(g.nativeObject, nativeObject,
-					0, 0, thumbWidth, thumbHeight,
-					0, 0, this.Width, this.Height,
-					GraphicsUnit.Pixel, IntPtr.Zero, null, IntPtr.Zero);
-                GDIPlus.CheckStatus (status);
-		g.Dispose();
+		Image ThumbNail = new Bitmap (thumbWidth, thumbHeight);
 
-		return(ThumbNail);
+		using (Graphics g = Graphics.FromImage (ThumbNail)) {
+			Status status = GDIPlus.GdipDrawImageRectRectI (g.nativeObject, nativeObject,
+				0, 0, thumbWidth, thumbHeight,
+				0, 0, this.Width, this.Height,
+				GraphicsUnit.Pixel, IntPtr.Zero, null, IntPtr.Zero);
+
+			GDIPlus.CheckStatus (status);
+		}
+
+		return ThumbNail;
 	}
 	
 	
