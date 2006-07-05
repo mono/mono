@@ -676,6 +676,7 @@ System.Web.UI.WebControls/CommandEventArgs.cs
 System.Web.UI.WebControls/CommandEventHandler.cs
 System.Web.UI.WebControls/CommandField.cs
 System.Web.UI.WebControls/CompareValidator.cs
+System.Web.UI.WebControls/CompleteWizardStep.cs
 System.Web.UI.WebControls/CompositeControl.cs
 System.Web.UI.WebControls/CompositeDataBoundControl.cs
 System.Web.UI.WebControls/ContentControlBuilderInternal.cs
@@ -689,6 +690,8 @@ System.Web.UI.WebControls/ControlPropertyNameConverter.cs
 System.Web.UI.WebControls/CookieParameter.cs
 System.Web.UI.WebControls/CreateUserErrorEventArgs.cs
 System.Web.UI.WebControls/CreateUserErrorEventHandler.cs
+System.Web.UI.WebControls/CreateUserWizard.cs
+System.Web.UI.WebControls/CreateUserWizardStep.cs
 System.Web.UI.WebControls/CustomValidator.cs
 System.Web.UI.WebControls/DataBoundControl.cs
 System.Web.UI.WebControls/DataControlButton.cs
@@ -964,6 +967,7 @@ System.Web.UI.WebControls/TableSectionStyle.cs
 System.Web.UI.WebControls/TableStyle.cs
 System.Web.UI.WebControls/TargetConverter.cs
 System.Web.UI.WebControls/TemplateColumn.cs
+System.Web.UI.WebControls/TemplatedWizardStep.cs
 System.Web.UI.WebControls/TemplateField.cs
 System.Web.UI.WebControls/TextAlign.cs
 System.Web.UI.WebControls/TextBoxControlBuilder.cs

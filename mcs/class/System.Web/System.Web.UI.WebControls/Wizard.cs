@@ -791,6 +791,11 @@ namespace System.Web.UI.WebControls
 				throw new NotImplementedException ();
 			}
 		}
+
+		internal virtual ITemplate SideBarItemTemplate
+		{
+			get { return sideBarItemTemplate; }
+		}
 		
 		public ICollection GetHistory ()
 		{
@@ -861,11 +866,15 @@ namespace System.Web.UI.WebControls
 			
 			TableRow viewRow = new TableRow ();
 			TableCell viewCell = new TableCell ();
-			
-			if (multiView == null) {
-				multiView = new MultiView ();
-				foreach (View v in WizardSteps)
+
+			if (multiView == null)
+			{
+				multiView = new MultiView();
+				foreach (View v in WizardSteps) {
+					if (v is TemplatedWizardStep) 
+						InstantiateTemplateStep ((TemplatedWizardStep) v);
 					multiView.Views.Add (v);
+				}
 			}
 			
 			multiView.ActiveViewIndex = activeStepIndex;
@@ -907,6 +916,28 @@ namespace System.Web.UI.WebControls
 			Controls.SetReadonly (false);
 			Controls.Add (wizardTable);
 			Controls.SetReadonly (true);
+		}
+
+		internal virtual void InstantiateTemplateStep(TemplatedWizardStep step)
+		{
+			step.InstantiateInContainer ();
+
+			if (step.CustomNavigationTemplate != null) {
+				WizardStepType stepType = GetStepType (step, ActiveStepIndex);
+				switch (stepType) {
+				case WizardStepType.Start:
+					startNavigationTemplate = step.CustomNavigationTemplate;
+					break;
+
+				case WizardStepType.Step:
+					stepNavigationTemplate = step.CustomNavigationTemplate;
+					break;
+
+				case WizardStepType.Finish:
+					finishNavigationTemplate = step.CustomNavigationTemplate;
+					break;
+				}
+			}
 		}
 		
 		void CreateButtonBar (TableCell buttonBarCell)
@@ -1005,7 +1036,7 @@ namespace System.Web.UI.WebControls
 			}
 
 			stepDatalist.DataSource = WizardSteps;
-			stepDatalist.ItemTemplate = sideBarItemTemplate;
+			stepDatalist.ItemTemplate = SideBarItemTemplate;
 			stepDatalist.DataBind ();
 		}
 		

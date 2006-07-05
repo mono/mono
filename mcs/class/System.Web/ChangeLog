@@ -1,3 +1,9 @@
+2006-07-05  Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* System.Web_test.dll.sources: added CreateUserWizardTest.cs
+	* System.Web.dll.sources: added CompleteWizardStep.cs,
+	CreateUserWizard.cs, CreateUserWizardStep.cs, TemplatedWizardStep.cs
+
 2006-07-05  Andrew Skiba <andrews@mainsoft.com>
 
 	* Makefile: add NunitWeb resources to 1.1 profile

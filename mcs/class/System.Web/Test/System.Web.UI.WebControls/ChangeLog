@@ -1,3 +1,7 @@
+2006-07-05 Vladimir Krasnov <vladimirk@mainsoft.com>
+	
+	* added CreateUserWizardTest.cs
+
 2006-07-03 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* BoundFieldTest.cs, ButtonFieldTest.cs, DataControlFieldTest.cs
