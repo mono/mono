@@ -3074,7 +3074,11 @@ guint32 GetFileAttributes (const gunichar2 *name)
 	}
 
 	result = stat (utf8_name, &buf);
-
+	if (result == -1 && errno == ENOENT) {
+		/* Might be a dangling symlink... */
+		result = lstat (utf8_name, &buf);
+	}
+	
 	if (result != 0) {
 		_wapi_set_last_error_from_errno ();
 		g_free (utf8_name);
@@ -3134,6 +3138,11 @@ gboolean GetFileAttributesEx (const gunichar2 *name, WapiGetFileExInfoLevels lev
 	}
 
 	result = stat (utf8_name, &buf);
+	if (result == -1 && errno == ENOENT) {
+		/* Might be a dangling symlink... */
+		result = lstat (utf8_name, &buf);
+	}
+	
 	g_free (utf8_name);
 
 	if (result != 0) {
