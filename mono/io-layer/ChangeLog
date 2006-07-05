@@ -1,3 +1,8 @@
+2006-07-05  Dick Porter  <dick@ximian.com>
+
+	* io.c (GetFileAttributes, GetFileAttributesEx): Cope with
+	dangling symlinks.  Fixes bug 78664.
+
 2006-06-23  Dick Porter  <dick@ximian.com>
 
 	* handles.c (handle_cleanup): 
