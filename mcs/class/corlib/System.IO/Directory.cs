@@ -101,7 +101,8 @@ namespace System.IO
 				// and having di.Exists return false afterwards.
 				// I hope we don't break anyone's code, as they should be catching
 				// the exception anyway.
-				if (error != MonoIOError.ERROR_ALREADY_EXISTS)
+				if (error != MonoIOError.ERROR_ALREADY_EXISTS &&
+				    error != MonoIOError.ERROR_FILE_EXISTS)
 					throw MonoIO.GetException (path, error);
 			}
 
