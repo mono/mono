@@ -1,3 +1,8 @@
+2006-07-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* process.c: In ves_icall_System_Diagnostics_Process_GetModules_internal 
+	don't leak GPtrArray's pdata has we have no use (nor free) for it.
+
 2006-07-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_marshal_get_runtime_invoke): Fix passing of generic valuetypes.
