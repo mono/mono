@@ -31,6 +31,7 @@
 using System.Collections;
 using System.Configuration;
 using System.Xml;
+using System.Globalization;
 
 namespace System.Web.Configuration
 {
@@ -73,8 +74,13 @@ namespace System.Web.Configuration
 				if (validateStr == null) {
 					validate = true;
 				} else {
+#if NET_2_0
+					validate = "true" == validateStr.ToLower (CultureInfo.InvariantCulture);
+					if (!validate && "false" != validateStr.ToLower (CultureInfo.InvariantCulture))
+#else
 					validate = validateStr == "true";
 					if (!validate && validateStr != "false")
+#endif
 						HandlersUtil.ThrowException (
 								"Invalid value for validate attribute.", child);
 				}
