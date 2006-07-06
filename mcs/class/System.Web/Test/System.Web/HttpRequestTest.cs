@@ -141,8 +141,26 @@ namespace MonoTests.System.Web {
 			HttpRequest r = new HttpRequest ("file", url, qs);
 			Assert.AreEqual("\u00e4", r.QueryString["umlaut"]);
 		}
+
 		[Test]
-		[Category("aaa")]
+		[Category ("NunitWeb")]
+		public void Test_PhysicalApplicationPath ()
+		{
+			WebTest t = new WebTest (new HandlerInvoker (new HandlerDelegate (
+				PhysicalApplicationPathDelegate)));
+			t.Run ();
+		}
+
+		static public void PhysicalApplicationPathDelegate ()
+		{
+			HttpRequest r = HttpContext.Current.Request;
+			string pap = r.PhysicalApplicationPath;
+			Assert.IsTrue (pap.EndsWith (Path.DirectorySeparatorChar.ToString()), "#1");
+			Assert.AreEqual (Path.GetFullPath (pap), pap, "#2");
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
 		public void Test_MapPath ()
 		{
 			WebTest t = new WebTest (new HandlerInvoker (new HandlerDelegate (

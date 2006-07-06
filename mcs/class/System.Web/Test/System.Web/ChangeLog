@@ -1,3 +1,7 @@
+2006-07-06  Andrew Skiba <andrews@mainsoft.com>
+
+	* HttpRequestTest: add a test
+
 2006-07-05  Andrew Skiba <andrews@mainsoft.com>
 
 	* HttpRequestTest: add MapPath tests
