@@ -21,6 +21,7 @@
 //
 // Authors:
 //	Jordi Mas i Hernandez, jordi@ximian.com
+//	Chris Toshok  <toshok@ximian.com>
 //
 // Based on work by:
 //	Daniel Carrera, dcarrera@math.toronto.edu (stubbed out)
@@ -45,35 +46,39 @@ namespace System.Windows.Forms
 		{
 			public string		text;
 			public int		start;
-			public int		end;
+			public int		length;
 			public LinkLabel.Link	link;	// Empty link indicates regular text
-			public Rectangle	rect;
-			public bool		clicked;
-			public bool		focused;
+			public Region           region;
 
-			public Piece ()
+			public Piece (int start, int length, string text, Link link)
 			{
-				start = end = 0;
-				link = null;
-				clicked = false;
-				focused = false;				
+				this.start = start;
+				this.length = length;
+				this.text = text;
+				this.link = link;
 			}
 		}
 
-		private Color active_link;
-		private Color disabled_link;
+		private Color active_link_color;
+		private Color disabled_link_color;
 		private Color link_color;
 		private Color visited_color;
 		private LinkArea link_area;
 		private LinkBehavior link_behavior;
 		private LinkCollection link_collection;
+		internal Link[] sorted_links;
 		private bool link_visited;		
 		private bool link_click;
 		internal Piece[] pieces;
-		internal int num_pieces;
 		internal Font link_font;		
 		private Cursor override_cursor;
 		private DialogResult dialog_result;
+
+		private Link active_link;
+		private Link hovered_link;
+		/* this is an index instead of a Link because we have
+		 * to search through sorted links for the new one */
+		private int focused_index;
 
 		#region Events
 		public event LinkLabelLinkClickedEventHandler LinkClicked;
@@ -86,8 +91,8 @@ namespace System.Windows.Forms
 			link_visited = false;
 			link_click = false;
 			pieces = null;
-			num_pieces = 0;
 			link_font = null;			
+			focused_index = -1;
 
 			ActiveLinkColor = Color.Red;
 			DisabledLinkColor = ThemeEngine.Current.ColorGrayText;
@@ -100,36 +105,36 @@ namespace System.Windows.Forms
 		#region Public Properties
 
 		public Color ActiveLinkColor {
-			get { return active_link;}
+			get { return active_link_color; }
 			set {
-				if (active_link == value)
+				if (active_link_color == value)
 					return;
 
-				active_link = value;
-				Refresh ();
+				active_link_color = value;
+				Invalidate ();
 			}
 		}
 
 		public Color DisabledLinkColor {
 
-			get { return disabled_link;}
+			get { return disabled_link_color; }
 			set {
-				if (disabled_link == value)
+				if (disabled_link_color == value)
 					return;
 
-				disabled_link = value;
-				Refresh ();
+				disabled_link_color = value;
+				Invalidate ();
 			}
 		}
 
 		public Color LinkColor {
-			get { return link_color;}
+			get { return link_color; }
 			set {
 				if (link_color == value)
 					return;
 
 				link_color = value;
-				Refresh ();
+				Invalidate ();
 			}
 		}
 
@@ -140,7 +145,7 @@ namespace System.Windows.Forms
 					return;
 
 				visited_color = value;
-				Refresh ();
+				Invalidate ();
 			}
 		}
 
@@ -157,7 +162,7 @@ namespace System.Windows.Forms
 					Links.Add (value.Start, value.Length);
 
 				link_area = value;
-				Refresh ();
+				Invalidate ();
 			}
 		}
 				
@@ -170,7 +175,7 @@ namespace System.Windows.Forms
 					return;
 
 				link_behavior = value;
-				Refresh ();
+				Invalidate ();
 			}
 		}
 	
@@ -194,7 +199,7 @@ namespace System.Windows.Forms
 					return;
 
 				link_visited = value;
-				Refresh ();
+				Invalidate ();
 			}
 		}
 		
@@ -204,7 +209,7 @@ namespace System.Windows.Forms
 					override_cursor = Cursors.Hand;
 				return override_cursor;
 			}
-			set { override_cursor = value;}
+			set { override_cursor = value; }
 		}
 
 		[RefreshProperties(RefreshProperties.Repaint)]
@@ -229,12 +234,10 @@ namespace System.Windows.Forms
 
 		void IButtonControl.NotifyDefault (bool value)
 		{
-
 		}
 
 		void IButtonControl.PerformClick ()
 		{
-			
 		}
 
 		#region Public Methods
@@ -268,42 +271,35 @@ namespace System.Windows.Forms
 			base.OnGotFocus (e);			
 			
 			// Set focus to the first enabled link piece			
-			for (int i = 0; i < num_pieces; i++) {
-				if (pieces[i].link != null && pieces[i].link.Enabled) {
-					 pieces[i].focused = true;
-					 Invalidate (pieces[i].rect);
-					 break;
+			for (int i = 0; i < sorted_links.Length; i ++) {
+				if (sorted_links[i].Enabled) {
+					sorted_links[i].Focused = true;
+					focused_index = i;
+					break;
 				}
-			}			
+			}
 		}
 
 		protected override void OnKeyDown (KeyEventArgs e)
-		{	
-			base.OnKeyDown(e);		
-			
+		{
+			base.OnKeyDown(e);
+
 			// Set focus to the next link piece
 			if (e.KeyCode == Keys.Tab || e.KeyCode == Keys.Right) {
-				for (int i = 0; i < num_pieces; i++) {
-					if (pieces[i].focused) {
-						pieces[i].focused = false;
-						Invalidate (pieces[i].rect);
-						
-						for (int n = i + 1; n < num_pieces; n++) {
-							if (pieces[n].link != null && pieces[n].link.Enabled) {							
-								pieces[n].focused = true;
-								e.Handled = true;
-								Invalidate (pieces[n].rect);
-								return;
-							}		
-						}
+				if (focused_index != -1) {
+					sorted_links[focused_index].Focused = false;
+					for (int n = focused_index + 1; n < sorted_links.Length; n++) {
+						if (sorted_links[n].Enabled) {
+							sorted_links[n].Focused = true;
+							focused_index = n;
+							e.Handled = true;
+							return;
+						}		
 					}
 				}
-			} else if (e.KeyCode == Keys.Return) {											
-				for (int i = 0; i < num_pieces; i++) {
-					if (pieces[i].focused && pieces[i].link != null) {
-						OnLinkClicked (new LinkLabelLinkClickedEventArgs (pieces[i].link));
-						break;
-					}
+			} else if (e.KeyCode == Keys.Return) {
+				if (focused_index != -1) {
+					OnLinkClicked (new LinkLabelLinkClickedEventArgs (sorted_links[focused_index]));
 				}
 			}
 		}
@@ -319,13 +315,9 @@ namespace System.Windows.Forms
 			base.OnLostFocus (e);			
 			
 			// Clean focus in link pieces
-			for (int i = 0; i < num_pieces; i++) {
-				if (pieces[i].focused) {
-					pieces[i].focused = false;					
-				}
-			}
-			
-			Refresh ();
+			if (focused_index != -1)
+				sorted_links[focused_index].Focused = false;
+			focused_index = -1;
 		}
 
 		protected override void OnMouseDown (MouseEventArgs e)
@@ -335,12 +327,12 @@ namespace System.Windows.Forms
 			base.OnMouseDown (e);
 			this.Capture = true;
 
-			for (int i = 0; i < num_pieces; i++) {
-				if (pieces[i].rect.Contains (e.X, e.Y)) {
-					if (pieces[i].link!= null) {
-						pieces[i].clicked = true;
-						Invalidate (pieces[i].rect);
-					}
+			for (int i = 0; i < sorted_links.Length; i ++) {
+				if (sorted_links[i].Contains (e.X, e.Y) && sorted_links[i].Enabled) {
+					sorted_links[i].Active = true;
+					if (focused_index != -1)
+						sorted_links[focused_index].Focused = false;
+					active_link = sorted_links[i];
 					break;
 				}
 			}
@@ -350,49 +342,39 @@ namespace System.Windows.Forms
 		{
 			if (!Enabled) return;
 			base.OnMouseLeave (e);
-			UpdateHover(null);
+			UpdateHover (null);
 		}
 
-		private bool UpdateHover(Link link) {
-			bool changed;
+		private void UpdateHover (Link link)
+		{
+			if (link == hovered_link)
+				return;
 
-			changed = false;
-			if (link == null) {
-				Cursor = Cursors.Default;
+			if (hovered_link != null)
+				hovered_link.Hovered = false;
 
-				if (link_behavior == LinkBehavior.HoverUnderline) {
-					for (int i = 0; i < Links.Count; i++) {
-						if (Links[i].Hoovered == true) 	{
-							changed = true;
-							Links[i].Hoovered = false;
-						}
-					}
-				}
-			} else {
-				Cursor = OverrideCursor;
-				if (link_behavior == LinkBehavior.HoverUnderline) {
-					if (link.Hoovered != true) {
-						link.Hoovered = true;
-						changed = true;
-					}
-				}
-			}
+			hovered_link = link;
 
-			if (changed == true) {
-				Refresh ();
-			}
-			
+			if (hovered_link != null)
+				hovered_link.Hovered = true;
 
-			return changed;
+			Cursor = (hovered_link != null) ? OverrideCursor : Cursors.Default;
+
+			/* XXX this shouldn't be here.  the
+			 * Link.Invalidate machinery should be enough,
+			 * but it seems the piece regions don't
+			 * contain the area with the underline.  this
+			 * can be seen easily when you click on a link
+			 * and the focus rectangle shows up (it's too
+			 * far up), and also the bottom few pixels of
+			 * a linklabel aren't active when it comes to
+			 * hovering */
+			Invalidate ();
 		}
 
 		protected override void OnMouseMove (MouseEventArgs e)
 		{
-			if (e.X >= 0 && e.Y >= 0 && e.X < bounds.Width && e.Y < bounds.Height) {
-				UpdateHover (PointInLink (e.X, e.Y));
-			} else if (Capture) {
-				Cursor = Cursors.Default;
-			}
+			UpdateHover (PointInLink (e.X, e.Y));
 			base.OnMouseMove (e);
 		}
 
@@ -402,16 +384,17 @@ namespace System.Windows.Forms
 
 			base.OnMouseUp (e);
 			this.Capture = false;
-			bool onclick = (e.X >= 0 && e.Y >= 0 && e.X < bounds.Width && e.Y < bounds.Height);
-			for (int i = 0; i < num_pieces; i++) {
-				if (pieces[i].link!= null && pieces[i].clicked == true) {
-					if (onclick)
-						OnLinkClicked (new LinkLabelLinkClickedEventArgs (pieces[i].link));					
-					pieces[i].clicked = false;
-					Invalidate (pieces[i].rect);
-					break;
-				}
-			}
+
+			if (active_link == null)
+				return;
+
+			Link clicked_link = (PointInLink (e.X, e.Y) == active_link) ? active_link : null;
+
+			active_link.Active = false;
+			active_link = null;
+
+			if (clicked_link != null)
+				OnLinkClicked (new LinkLabelLinkClickedEventArgs (clicked_link));
 		}
 
 		protected override void OnPaint (PaintEventArgs pevent)
@@ -443,10 +426,9 @@ namespace System.Windows.Forms
 		
 		protected Link PointInLink (int x, int y)
 		{
-			for (int i = 0; i < num_pieces; i++) {
-				if (pieces[i].rect.Contains (x,y) && pieces[i].link != null)
-					return pieces[i].link;
-			}
+			for (int i = 0; i < sorted_links.Length; i ++)
+				if (sorted_links[i].Contains (x, y))
+					return sorted_links[i];
 
 			return null;
 		}
@@ -464,6 +446,7 @@ namespace System.Windows.Forms
 		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
 		{
 			base.SetBoundsCore (x, y, width, height, specified);
+			CreateLinkFont ();
 			CreateLinkPieces();
 		}
 
@@ -476,114 +459,136 @@ namespace System.Windows.Forms
 
 		#region Private Methods
 
-		internal void CreateLinkPieces ()
+		private ArrayList CreatePiecesFromText (int start, int len, Link link)
+		{
+			ArrayList rv = new ArrayList ();
+
+			if (start + len > Text.Length)
+				len = Text.Length - start;
+			string t = Text.Substring (start, len);
+
+			int ps = 0;
+			for (int i = 0; i < t.Length; i ++) {
+				if (t[i] == '\n') {
+					if (i != 0) {
+						Piece p = new Piece (start + ps, i + 1, t.Substring (ps, i+1-ps), link);
+						rv.Add (p);
+					}
+					ps = i+1;
+				}
+			}
+			if (ps < t.Length) {
+				Piece p = new Piece (start + ps, t.Length - ps, t.Substring (ps, t.Length-ps), link);
+				rv.Add (p);
+			}
+
+			return rv;
+		}
+
+		private void CreateLinkPieces ()
 		{
 			if (Links.Count == 0 || IsHandleCreated == false || Text.Length == 0)
 				return;
 
-			int cur_piece = 0;
-			num_pieces = 0;
+			if (Links.Count == 1 && Links[0].Start == 0 &&	Links[0].Length == -1)
+				Links[0].Length = Text.Length;
 
-			if (Links.Count == 1 && Links[0].Start == 0 &&	Links[0].Length == -1) {
-				Links[0].Length = Text.Length;				
-			}
+			SortLinks ();
 
-			pieces = new Piece [(Links.Count * 2) + 1];
-			pieces[cur_piece] = new Piece();
-			pieces[cur_piece].start = 0;
+			ArrayList pieces_list = new ArrayList ();
 
-			for (int i = 0; i < Text.Length; i++) { /* Every char on the text*/
-				for (int l = 0; l < Links.Count; l++)	{ /* Every link that we know of*/
-					if (Links[l].Start == i) {
-						if (i > 0) {							
-							/*Push prev. regular text*/
-							pieces[cur_piece].end = i;
-							pieces[cur_piece].text = Text.Substring (pieces[cur_piece].start,
-								pieces[cur_piece].end - pieces[cur_piece].start);
+			int current_end = 0;
 
-							cur_piece++;
+			for (int l = 0; l < sorted_links.Length; l ++) {
+				int new_link_start = sorted_links[l].Start;
 
-							/* New link*/
-							pieces[cur_piece] = new Piece ();							
-						}
-						
-						int end;
-						
-						if (Links[l].Start + Links[l].Length > Text.Length) {
-							end = Text.Length - Links[l].Start;
-						}
-						else {
-							end = Links[l].Length;
-						}						
-						
-						pieces[cur_piece].start = Links[l].Start;
-						pieces[cur_piece].end = Links[l].Start + end;
-						pieces[cur_piece].link = Links[l];
-						
-						pieces[cur_piece].text = Text.Substring (pieces[cur_piece].start, end);
-
-						cur_piece++; /* Push link*/
-						pieces[cur_piece] = new Piece();
-						i+= Links[l].Length;
-						pieces[cur_piece].start = i;
-					}
+				if (new_link_start > current_end) {
+					/* create/push a piece
+					 * containing the text between
+					 * the previous/new link */
+					ArrayList text_pieces = CreatePiecesFromText (current_end, new_link_start - current_end, null);
+					pieces_list.AddRange (text_pieces);
 				}
-			}			
 
-			if (pieces[cur_piece].end == 0 && pieces[cur_piece].start < Text.Length) {
-				pieces[cur_piece].end = Text.Length;
-				pieces[cur_piece].text = Text.Substring (pieces[cur_piece].start, pieces[cur_piece].end - pieces[cur_piece].start);
-				cur_piece++;
+				/* now create a group of pieces for
+				 * the new link (split up by \n's) */
+				ArrayList link_pieces = CreatePiecesFromText (new_link_start, sorted_links[l].Length, sorted_links[l]);
+				pieces_list.AddRange (link_pieces);
+				sorted_links[l].pieces.AddRange (link_pieces);
+
+				current_end = sorted_links[l].Start + sorted_links[l].Length;
 			}
-			
-			num_pieces = cur_piece;
-
-			if (link_font == null)
-				CreateLinkFont ();
-
-			for (int i = 0; i < num_pieces; i++) {
-				SizeF s;
-
-				s = DeviceContext.MeasureString(Text.Substring(pieces[i].start, pieces[i].end - pieces[i].start), link_font, ClientRectangle.Location, string_format);
-				pieces[i].rect = new Rectangle(0, 0, (int)s.Width, (int)s.Height);
+			if (current_end < Text.Length) {
+				ArrayList text_pieces = CreatePiecesFromText (current_end, Text.Length - current_end, null);
+				pieces_list.AddRange (text_pieces);
 			}
+
+			pieces = new Piece[pieces_list.Count];
+			pieces_list.CopyTo (pieces, 0);
+
+			CharacterRange[] ranges = new CharacterRange[pieces.Length];
+
+			for(int i = 0; i < pieces.Length; i++)
+				ranges[i] = new CharacterRange (pieces[i].start, pieces[i].length);
+
+			string_format.FormatFlags = StringFormatFlags.NoClip;
+			string_format.SetMeasurableCharacterRanges (ranges);
+
+			SizeF size = DeviceContext.MeasureString (Text, link_font, ClientRectangle.Location, string_format);
+
+			RectangleF layout_rect = new RectangleF (0.0f, 0.0f, size.Width, size.Height);			
+
+			Region[] regions = DeviceContext.MeasureCharacterRanges (Text,
+										 link_font,
+										 layout_rect,
+										 string_format);
+
+			for (int i = 0; i < pieces.Length; i ++)
+				pieces[i].region = regions[i];
 
 			if (Visible && IsHandleCreated)
 				Refresh ();
+		}
 
+		private void SortLinks ()
+		{
+			if (sorted_links != null)
+				return;
+
+			sorted_links = new Link [Links.Count];
+			((ICollection)Links).CopyTo (sorted_links, 0);
+
+			Array.Sort (sorted_links, new LinkComparer ());
 		}
 
 		/* Check if the links overlap */
-		internal void CheckLinks ()
+		private void CheckLinks ()
 		{
-			for (int i = 0; i < Links.Count; i++) {
-				for (int l = 0; l < Links.Count; l++) {
-					if (i==l) continue;
+			SortLinks ();
 
-					if (((Links[i].Start + Links[i].Length) >= Links[l].Start &&
-						Links[i].Start + Links[i].Length <= Links[l].Start + Links[l].Length) ||
-						(Links[i].Start  >= Links[l].Start &&
-						Links[i].Start  <= Links[l].Start + Links[l].Length))
-						throw new InvalidOperationException ("Overlapping link regions.");
-				}
+			int current_end = 0;
+
+			for (int i = 0; i < sorted_links.Length; i++) {
+				if (sorted_links[i].Start < current_end)
+					throw new InvalidOperationException ("Overlapping link regions.");
+				current_end = sorted_links[i].Start + sorted_links[i].Length;
 			}
 		}
 		
 		internal Font GetPieceFont (Piece piece)
 		{
+			if (piece.link == null)
+				return Font;
+
 			switch (link_behavior) {				
 				case LinkBehavior.AlwaysUnderline:
 				case LinkBehavior.SystemDefault: // Depends on IE configuration
 				{
-					if (piece.link == null) {
-						return Font;
-					} else {
-						return link_font;
-					}
+					return link_font;
 				}				
 				case LinkBehavior.HoverUnderline:
 				{
-					if (piece.link != null && piece.link.Hoovered) {
+					if (piece.link.Hovered) {
 						return link_font;
 					} else {
 						return Font;
@@ -598,22 +603,24 @@ namespace System.Windows.Forms
 		}		
 		
 
-		internal Color GetLinkColor (Piece piece, int i)
+		internal Color GetPieceColor (Piece piece, int i)
 		{
 			Color color;
 
-			if (Enabled == false ||
-				(piece.link != null && piece.link.Enabled == false))
+			if (Enabled == false)
+				return DisabledLinkColor;
+
+			if (piece.link == null)
+				return ForeColor;
+
+			if (!piece.link.Enabled)
 				color = DisabledLinkColor;
+			else if (piece.link.Active)
+				color = ActiveLinkColor;
+			else if ((LinkVisited && i == 0) || piece.link.Visited == true)
+				color = VisitedLinkColor;
 			else
-				if (piece.clicked == true)
-					color = ActiveLinkColor;
-				else
-					if ((LinkVisited == true && i == 0) ||
-						(piece.link != null && piece.link.Visited == true))
-						color = VisitedLinkColor;
-					else
-						color = LinkColor;
+				color = LinkColor;
 
 			return color;
 		}
@@ -624,7 +631,7 @@ namespace System.Windows.Forms
 				link_font.Dispose ();
 				
 			link_font  = new Font (Font.FontFamily, Font.Size, Font.Style | FontStyle.Underline,
-				 Font.Unit);
+					       Font.Unit);
 		}
 
 		#endregion // Private Methods
@@ -640,36 +647,29 @@ namespace System.Windows.Forms
 			private int start;
 			private bool visited;			
 			private LinkLabel owner;
-			private bool hoovered;
-
-			internal Link ()
-			{
-				enabled = true;
-				visited = false;
-				length = start = 0;
-				linkData = null;
-				owner = null;				
-			}
+			private bool hovered;
+			internal ArrayList pieces;
+			private bool focused;
+			private bool active;
 
 			internal Link (LinkLabel owner)
 			{
+				focused = false;
 				enabled = true;
 				visited = false;
 				length = start = 0;
 				linkData = null;
 				this.owner = owner;
+				pieces = new ArrayList ();
 			}
 
 			public bool Enabled {
 				get { return enabled; }
 				set {
-					if (enabled == value)
-						return;
+					if (enabled != value)
+						Invalidate ();
 
 					enabled = value;	
-					
-					if (owner != null)
-						owner.Refresh ();
 				}
 			}
 
@@ -687,8 +687,7 @@ namespace System.Windows.Forms
 					
 					length = value;
 
-					if (owner != null)
-						owner.CreateLinkPieces ();
+					owner.CreateLinkPieces ();
 				}
 			}
 
@@ -705,27 +704,71 @@ namespace System.Windows.Forms
 
 					start = value;
 
-					if (owner != null)
-						owner.CreateLinkPieces ();
+					owner.CreateLinkPieces ();
 				}
 			}
 
 			public bool Visited {
 				get { return visited; }
 				set {
-					if (visited == value)
-						return;
+					if (visited != value)
+						Invalidate ();
 
 					visited = value;
-					
-					if (owner != null)
-						owner.Refresh ();
 				}
 			}
 			
-			internal bool Hoovered {
-				get { return hoovered; }
-				set { hoovered = value; }
+			internal bool Hovered {
+				get { return hovered; }
+				set {
+					if (hovered != value)
+						Invalidate ();
+					hovered = value;
+				}
+			}
+
+			internal bool Focused {
+				get { return focused; }
+				set {
+					if (focused != value)
+						Invalidate ();
+					focused = value;
+				}
+			}
+
+			internal bool Active {
+				get { return active; }
+				set {
+					if (active != value)
+						Invalidate ();
+					active = value;
+				}
+			}
+
+			private void Invalidate ()
+			{
+				foreach (Piece p in pieces)
+					owner.Invalidate (p.region);
+			}
+
+			internal bool Contains (int x, int y)
+			{
+				foreach (Piece p in pieces) {
+					if (p.region.IsVisible (new Point (x,y)))
+						return true;
+				}
+				return false;
+			}
+		}
+
+		class LinkComparer : IComparer
+		{
+			public int Compare (object x, object y)
+			{
+				Link l1 = (Link)x;
+				Link l2 = (Link)y;
+
+				return l1.Start - l2.Start;
 			}
 		}
 
@@ -790,6 +833,7 @@ namespace System.Windows.Forms
 				link.LinkData = o;
 				idx = collection.Add (link);
 
+				owner.sorted_links = null;
 				owner.CheckLinks ();
 				owner.CreateLinkPieces ();
 				return (Link) collection[idx];
@@ -798,10 +842,11 @@ namespace System.Windows.Forms
 			public virtual void Clear ()
 			{
 				collection.Clear();
+				owner.sorted_links = null;
 				owner.CreateLinkPieces ();
 			}
 
-			public bool Contains (LinkLabel.Link link)
+			public bool Contains (Link link)
 			{
 				return collection.Contains (link);
 			}
@@ -811,7 +856,7 @@ namespace System.Windows.Forms
 				return collection.GetEnumerator ();
 			}
 
-			public int IndexOf (LinkLabel.Link link)
+			public int IndexOf (Link link)
 			{
 				return collection.IndexOf (link);
 			}
@@ -819,6 +864,7 @@ namespace System.Windows.Forms
 			public void Remove (LinkLabel.Link value)
 			{
 				collection.Remove (value);
+				owner.sorted_links = null;
 				owner.CreateLinkPieces ();
 			}
 
@@ -828,6 +874,7 @@ namespace System.Windows.Forms
 					throw new ArgumentOutOfRangeException ("Invalid value for array index");
 
 				collection.Remove (collection[index]);
+				owner.sorted_links = null;
 				owner.CreateLinkPieces ();
 			}
 
@@ -856,6 +903,7 @@ namespace System.Windows.Forms
 			int IList.Add (object control)
 			{
 				int idx = collection.Add (control);
+				owner.sorted_links = null;
 				owner.CheckLinks ();
 				owner.CreateLinkPieces ();
 				return idx;
@@ -863,7 +911,7 @@ namespace System.Windows.Forms
 
 			bool IList.Contains (object control)
 			{
-				return collection.Contains (control);
+				return Contains ((Link)control);
 			}
 
 			int IList.IndexOf (object control)
@@ -874,14 +922,14 @@ namespace System.Windows.Forms
 			void IList.Insert (int index, object value)
 			{
 				collection.Insert (index, value);
+				owner.sorted_links = null;
 				owner.CheckLinks ();
 				owner.CreateLinkPieces ();
 			}
 
 			void IList.Remove (object control)
 			{
-				collection.Remove (control);
-				owner.CreateLinkPieces ();
+				Remove ((Link)control);
 			}
 		}
 #if NET_2_0

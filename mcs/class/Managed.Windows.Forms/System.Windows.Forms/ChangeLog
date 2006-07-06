@@ -1,3 +1,15 @@
+2006-07-06  Chris Toshok  <toshok@ximian.com>
+
+	* ThemeWin32Classic.cs: DrawLinkLabel changes to accomodate the
+	new LinkLabel internals.
+
+	* LinkLabel.cs: fairly major rewrite.  get rid of all the loops
+	over pieces looking for active/focused/etc links.  also, deal with
+	runs of text (and links) with embedded \n's in them, and use
+	MeasureCharacterRanges instead of MeasureString to figure out the
+	regions text occupies.  Lastly, do the usual s/Refresh/Invalidate
+	two-step.
+
 2006-07-04  Jackson Harper  <jackson@ximian.com>
 
 	* XplatUIX11.cs: Enable key auto repeat. If the user doesn't have
