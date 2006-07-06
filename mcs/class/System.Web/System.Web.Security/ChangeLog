@@ -1,3 +1,7 @@
+2006-07-06	Konstantin Triger <kostat@mainsoft.com>
+
+        * FormsAuthentication.cs: Ensure initialized, fix url mapping.
+
 2006-05-03  Chris Toshok  <toshok@ximian.com>
 
 	* SqlMembershipProvider.cs (GetAlg): move this here for the time

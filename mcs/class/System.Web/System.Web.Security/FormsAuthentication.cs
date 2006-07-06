@@ -388,9 +388,9 @@ namespace System.Web.Security
 				cookie_domain = config.Domain;
 				cookie_mode = config.Cookieless;
 				cookies_supported = true; /* XXX ? */
-				default_url = config.DefaultUrl;
+				default_url = MapUrl(config.DefaultUrl);
 				enable_crossapp_redirects = config.EnableCrossAppRedirects;
-				login_url = config.LoginUrl;
+				login_url = MapUrl(config.LoginUrl);
 #else
 				HttpContext context = HttpContext.Current;
 				AuthConfig authConfig = context.GetConfig (authConfigPath) as AuthConfig;
@@ -426,6 +426,13 @@ namespace System.Web.Security
 
 				initialized = true;
 			}
+		}
+
+		static string MapUrl (string url) {
+			if (UrlUtils.IsRelativeUrl (url))
+				return UrlUtils.Combine (HttpRuntime.AppDomainAppVirtualPath, url);
+			else
+				return UrlUtils.ResolveVirtualPathFromAppAbsolute (url);
 		}
 
 		public static void RedirectFromLoginPage (string userName, bool createPersistentCookie)
@@ -531,27 +538,27 @@ namespace System.Web.Security
 
 #if NET_2_0
 		public static string CookieDomain {
-			get { return cookie_domain; }
+			get { Initialize (); return cookie_domain; }
 		}
 
 		public static HttpCookieMode CookieMode {
-			get { return cookie_mode; }
+			get { Initialize (); return cookie_mode; }
 		}
 
 		public static bool CookiesSupported {
-			get { return cookies_supported; }
+			get { Initialize (); return cookies_supported; }
 		}
 
 		public static string DefaultUrl {
-			get { return default_url; }
+			get { Initialize (); return default_url; }
 		}
 
 		public static bool EnableCrossAppRedirects {
-			get { return enable_crossapp_redirects; }
+			get { Initialize (); return enable_crossapp_redirects; }
 		}
 
 		public static string LoginUrl {
-			get { return login_url; }
+			get { Initialize (); return login_url; }
 		}
 
 		public static void RedirectToLoginPage ()
