@@ -78,11 +78,7 @@ namespace System.Drawing
 			Status status = GDIPlus.GdipCloneBrush (nativeObject, out clonePtr);
 			GDIPlus.CheckStatus (status);
 	
-			SolidBrush clone = new SolidBrush (clonePtr);
-			clone.color = color;
-			
-			return clone;
-			
+			return new SolidBrush (clonePtr);
 		}
 		
 		protected override void Dispose (bool disposing)

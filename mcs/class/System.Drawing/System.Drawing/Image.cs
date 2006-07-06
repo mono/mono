@@ -758,38 +758,28 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		Dispose (false);
 	}
 
-	private void DisposeResources ()
-	{
-		Status status = GDIPlus.GdipDisposeImage (nativeObject);
-		GDIPlus.CheckStatus (status);		
-	}
-	
 	protected virtual void Dispose (bool disposing)
 	{
 		if (nativeObject != IntPtr.Zero){
-			DisposeResources ();
+			Status status = GDIPlus.GdipDisposeImage (nativeObject);
+			// set nativeObject to null before throwing an exception
 			nativeObject = IntPtr.Zero;
+			GDIPlus.CheckStatus (status);		
 		}
 	}
 	
-	public object Clone()
-	{				
+	public object Clone ()
+	{
+		Bitmap b = (this as Bitmap);
+		if (b == null)
+			throw new NotImplementedException ("This Image instance isn't a Bitmap instance."); 
 
 		IntPtr newimage = IntPtr.Zero;
-		
-		if (!(this is Bitmap)) 
-			throw new NotImplementedException (); 
-		
 		Status status = GDIPlus.GdipCloneImage (NativeObject, out newimage);			
 		GDIPlus.CheckStatus (status);			
 
-		if (this is Bitmap){
-			return new Bitmap (newimage);
-		}
-		
-		throw new NotImplementedException (); 		
+		return new Bitmap (newimage);
 	}
-
 }
 
 }
