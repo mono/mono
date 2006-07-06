@@ -119,40 +119,37 @@ namespace System.Web.UI.WebControls
 		public override void InitializeCell (DataControlFieldCell cell,
 						     DataControlCellType cellType, DataControlRowState rowState, int rowIndex)
 		{
+			base.InitializeCell (cell, cellType, rowState, rowIndex);
 			if (cellType == DataControlCellType.Header) {
 				if (headerTemplate != null && ShowHeader) {
+					cell.Text = String.Empty;
 					headerTemplate.InstantiateIn (cell);
-					return;
 				}
 			} else if (cellType == DataControlCellType.Footer) {
 				if (footerTemplate != null) {
+					cell.Text = String.Empty;
 					footerTemplate.InstantiateIn (cell);
-					return;
 				}
 			} else {
-				if ((rowState & DataControlRowState.Insert) != 0) {
-					if (insertItemTemplate != null) {
-						insertItemTemplate.InstantiateIn (cell);
-						return;
-					}
+				cell.Text = String.Empty;
+				if ((rowState & DataControlRowState.Insert) != 0 &&
+						insertItemTemplate != null) {
+					insertItemTemplate.InstantiateIn (cell);
 				}
-				else if ((rowState & DataControlRowState.Edit) != 0) {
-					if (editItemTemplate != null) {
-						editItemTemplate.InstantiateIn (cell);
-						return;
-					}
+				else if ((rowState & DataControlRowState.Edit) != 0 &&
+						editItemTemplate != null) {
+					editItemTemplate.InstantiateIn (cell);
 				}
-				else if ((rowState & DataControlRowState.Alternate) != 0 && alternatingItemTemplate != null) {
+				else if ((rowState & DataControlRowState.Alternate) != 0 &&
+						alternatingItemTemplate != null) {
 					alternatingItemTemplate.InstantiateIn (cell);
-					return;
 				}
 				else if (itemTemplate != null) {
 					itemTemplate.InstantiateIn (cell);
-					return;
 				}
+				else
+					cell.Text = "&nbsp;";
 			}
-			
-			base.InitializeCell (cell, cellType, rowState, rowIndex);
 		}
 		
 		public override void ExtractValuesFromCell (IOrderedDictionary dictionary,

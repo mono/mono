@@ -90,9 +90,12 @@ namespace System.Web.UI.WebControls {
 					else
 						cell.Controls.Add (new DataControlButton (control, HeaderText, HeaderImageUrl, string.Empty, string.Empty, true));
 				}
+				else
+					cell.Text = "&nbsp;";
 			}
 			else if (cellType == DataControlCellType.Footer) {
-				cell.Text = FooterText;
+				string footerText = FooterText;
+				cell.Text = (footerText.Length > 0) ? footerText : "&nbsp;";
 			}
 		}
 		

@@ -51,38 +51,31 @@ namespace MonoTests.System.Web.UI.WebControls
 	{
 		// View state Stuff
 		public PokerTemplateField ()
-			: base ()
-		{
+			: base () {
 			TrackViewState ();
 		}
 
-		public object SaveState ()
-		{
+		public object SaveState () {
 			return SaveViewState ();
 		}
 
-		public void LoadState (object o)
-		{
+		public void LoadState (object o) {
 			LoadViewState (o);
 		}
 
-		public StateBag StateBag
-		{
+		public StateBag StateBag {
 			get { return base.ViewState; }
 		}
 
-		public Control control ()
-		{
+		public Control control () {
 			return base.Control;
 		}
 
-		public void DoCopyProperties (DataControlField newField)
-		{
+		public void DoCopyProperties (DataControlField newField) {
 			base.CopyProperties (newField);
 		}
 
-		public DataControlField DoCreateField ()
-		{
+		public DataControlField DoCreateField () {
 			return base.CreateField ();
 		}
 	}
@@ -91,8 +84,7 @@ namespace MonoTests.System.Web.UI.WebControls
 	public class TemplateFieldTest
 	{
 		[Test]
-		public void TemplateField_DefaultProperty ()
-		{
+		public void TemplateField_DefaultProperty () {
 			TemplateField field = new TemplateField ();
 			Assert.AreEqual (null, field.AlternatingItemTemplate, "AlternatingItemTemplate");
 			Assert.AreEqual (true, field.ConvertEmptyStringToNull, "ConvertEmptyStringToNull");
@@ -104,20 +96,19 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		public void TemplateField_AssignProperty ()
-		{
-			PokerTemplateField field = new PokerTemplateField();
+		public void TemplateField_AssignProperty () {
+			PokerTemplateField field = new PokerTemplateField ();
 			field.AlternatingItemTemplate = new Ibutton ();
 			Assert.IsNotNull (field.AlternatingItemTemplate, "AlternatingItemTemplateAssigned");
-			Assert.AreEqual (typeof(Ibutton), field.AlternatingItemTemplate.GetType (), "AlternatingItemTemplateType");
+			Assert.AreEqual (typeof (Ibutton), field.AlternatingItemTemplate.GetType (), "AlternatingItemTemplateType");
 			field.ConvertEmptyStringToNull = false;
-		        Assert.AreEqual (false, field.ConvertEmptyStringToNull, "ConvertEmptyStringToNull");
+			Assert.AreEqual (false, field.ConvertEmptyStringToNull, "ConvertEmptyStringToNull");
 			field.EditItemTemplate = new IImage ();
-			Assert.IsNotNull(field.EditItemTemplate, "EditItemTemplateAssigning");
-			Assert.AreEqual (typeof(IImage),field.EditItemTemplate.GetType(),"EditItemTemplateType");
-			field.FooterTemplate = new Ibutton();
+			Assert.IsNotNull (field.EditItemTemplate, "EditItemTemplateAssigning");
+			Assert.AreEqual (typeof (IImage), field.EditItemTemplate.GetType (), "EditItemTemplateType");
+			field.FooterTemplate = new Ibutton ();
 			Assert.IsNotNull (field.FooterTemplate, "FooterTemplateAssigning");
-			Assert.AreEqual (typeof (Ibutton), field.FooterTemplate.GetType(), "FooterTemplateType");
+			Assert.AreEqual (typeof (Ibutton), field.FooterTemplate.GetType (), "FooterTemplateType");
 			field.HeaderTemplate = new IImage ();
 			Assert.IsNotNull (field.HeaderTemplate, "HeaderTemplateAssigning");
 			Assert.AreEqual (typeof (IImage), field.HeaderTemplate.GetType (), "HeaderTemplateType");
@@ -126,60 +117,144 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (typeof (Ibutton), field.InsertItemTemplate.GetType (), "InsertItemTemplateType");
 			field.ItemTemplate = new IImage ();
 			Assert.IsNotNull (field.ItemTemplate, "ItemTemplateAssigning");
-			Assert.AreEqual (typeof(IImage), field.ItemTemplate.GetType(), "ItemTemplateType");
+			Assert.AreEqual (typeof (IImage), field.ItemTemplate.GetType (), "ItemTemplateType");
 		}
 
 		[Test]
-		public void TemplateField_ExtractValuesFromCell ()
-		{
+		public void TemplateField_ExtractValuesFromCell () {
 			TemplateField field = new TemplateField ();
 			OrderedDictionary dictionrary = new OrderedDictionary ();
-			DataControlFieldCell cell = new DataControlFieldCell(null);	
-			field.ExtractValuesFromCell(dictionrary,cell,DataControlRowState.Normal,true);
-			Assert.AreEqual (0, dictionrary.Count,"ExtractValuesFromCellNoTemplates");
+			DataControlFieldCell cell = new DataControlFieldCell (null);
+			field.ExtractValuesFromCell (dictionrary, cell, DataControlRowState.Normal, true);
+			Assert.AreEqual (0, dictionrary.Count, "ExtractValuesFromCellNoTemplates");
 			// This is testing only base functionality and flow with no exceptions
 			// The rest functionality will tested on integration test
 		}
 
 		[Test]
-		[Category ("NotWorking")]
-		public void TemplateField_InitializeCell ()
-		{
+		[ExpectedException(typeof(NullReferenceException))]
+		public void TemplateField_InitializeCell_Null () {
 			PokerTemplateField field = new PokerTemplateField ();
-			DataControlFieldCell cell = new DataControlFieldCell(null);
+			field.InitializeCell (null, DataControlCellType.DataCell, DataControlRowState.Normal, 0);
+		}
+
+		[Test]
+		public void TemplateField_InitializeCell () {
+			PokerTemplateField field = new PokerTemplateField ();
+			DataControlFieldCell cell = new DataControlFieldCell (null);
 			field.InitializeCell (cell, DataControlCellType.DataCell, DataControlRowState.Normal, 0);
 			Assert.AreEqual ("&nbsp;", cell.Text, "InitializeCellEmpty");
 			field.ItemTemplate = new IImage ("test");
 			field.InitializeCell (cell, DataControlCellType.DataCell, DataControlRowState.Normal, 0);
 			Assert.AreEqual ("", cell.Text, "InitializeCellWithItemTemplate");
 			Assert.AreEqual (1, cell.Controls.Count, "InitializeCellWithItemTemplate#1");
-			Assert.AreEqual ("test", ((IImage) cell.Controls[0]).ImageUrl, "InitializeCellWithItemTemplate#2");
-			cell.Controls.Clear ();
-			field.HeaderTemplate = new Ibutton ("test");
-			field.InitializeCell (cell, DataControlCellType.Header, DataControlRowState.Normal, 0);
-			Assert.AreEqual ("", cell.Text, "InitializeCellWithTemplate");
-			Assert.AreEqual (1, cell.Controls.Count, "InitializeCellItemTemplate");
-			Assert.AreEqual ("test", ((Ibutton) cell.Controls[0]).Text, "ItemTemplateProperty");
-			cell.Controls.Clear ();
+			Assert.AreEqual ("test", ((IImage) cell.Controls [0]).ImageUrl, "InitializeCellWithItemTemplate#2");
+		}
+
+		[Test]
+		public void TemplateField_FooterTemplate () {
+			PokerTemplateField field = new PokerTemplateField ();
+			DataControlFieldCell cell = new DataControlFieldCell (null);
+			cell.Text = "text";
+			field.InitializeCell (cell, DataControlCellType.Footer, DataControlRowState.Normal, 0);
+			Assert.AreEqual ("&nbsp;", cell.Text, "#1");
+			Assert.AreEqual (0, cell.Controls.Count, "#2");
 			field.FooterTemplate = new Ibutton ("test");
 			field.InitializeCell (cell, DataControlCellType.Footer, DataControlRowState.Normal, 0);
-			Assert.AreEqual ("", cell.Text, "InitializeCellWithFooterTemplate#1");
-			Assert.AreEqual (1, cell.Controls.Count, "InitializeCellFooterTemplate#2");
-			Assert.AreEqual ("test", ((Ibutton) cell.Controls[0]).Text, "ItemTemplateFooterProperty");
+			Assert.AreEqual ("", cell.Text, "#3");
+			Assert.AreEqual (1, cell.Controls.Count, "#4");
+			Assert.AreEqual ("test", ((Ibutton) cell.Controls [0]).Text, "#5");
+		}
+
+
+		[Test]
+		public void TemplateField_HeaderTemplate () {
+			PokerTemplateField field = new PokerTemplateField ();
+			DataControlFieldCell cell = new DataControlFieldCell (null);
+			cell.Text = "text";
+			field.InitializeCell (cell, DataControlCellType.Header, DataControlRowState.Normal, 0);
+			Assert.AreEqual ("&nbsp;", cell.Text, "#1");
+			Assert.AreEqual (0, cell.Controls.Count, "#2");
+			field.HeaderTemplate = new Ibutton ("test");
+			field.InitializeCell (cell, DataControlCellType.Header, DataControlRowState.Normal, 0);
+			Assert.AreEqual ("", cell.Text, "#3");
+			Assert.AreEqual (1, cell.Controls.Count, "#4");
+			Assert.AreEqual ("test", ((Ibutton) cell.Controls [0]).Text, "#5");
+		}
+
+		[Test]
+		public void TemplateField_EditItemTemplate () {
+			PokerTemplateField field = new PokerTemplateField ();
+			DataControlFieldCell cell = new DataControlFieldCell (null);
+			field.ItemTemplate = new Ibutton ("test");
+			field.InitializeCell (cell, DataControlCellType.DataCell, DataControlRowState.Edit, 0);
+			Assert.AreEqual ("test", ((Ibutton) cell.Controls [0]).Text, "#1");
+			cell = new DataControlFieldCell (null);
+			field.EditItemTemplate = new Ibutton ("edit");
+			field.InitializeCell (cell, DataControlCellType.DataCell, DataControlRowState.Edit, 0);
+			Assert.AreEqual ("edit", ((Ibutton) cell.Controls [0]).Text, "#2");
+			cell = new DataControlFieldCell (null);
+			field.InitializeCell (cell, DataControlCellType.DataCell, DataControlRowState.Alternate, 0);
+			Assert.AreEqual ("test", ((Ibutton) cell.Controls [0]).Text, "#3");
+			cell = new DataControlFieldCell (null);
+			field.ItemTemplate = null;
+			field.InitializeCell (cell, DataControlCellType.DataCell, DataControlRowState.Alternate, 0);
+			Assert.IsTrue (cell.Controls.Count == 0, "#4");
+			Assert.AreEqual ("&nbsp;", cell.Text, "#5");
+		}
+
+		[Test]
+		public void TemplateField_InsertItemTemplate () {
+			PokerTemplateField field = new PokerTemplateField ();
+			DataControlFieldCell cell = new DataControlFieldCell (null);
+			field.ItemTemplate = new Ibutton ("test");
+			field.InitializeCell (cell, DataControlCellType.DataCell, DataControlRowState.Insert, 0);
+			Assert.AreEqual ("test", ((Ibutton) cell.Controls [0]).Text, "#1");
+			cell = new DataControlFieldCell (null);
+			field.InsertItemTemplate = new Ibutton ("insert");
+			field.InitializeCell (cell, DataControlCellType.DataCell, DataControlRowState.Insert, 0);
+			Assert.AreEqual ("insert", ((Ibutton) cell.Controls [0]).Text, "#2");
+			cell = new DataControlFieldCell (null);
+			field.InitializeCell (cell, DataControlCellType.DataCell, DataControlRowState.Alternate, 0);
+			Assert.AreEqual ("test", ((Ibutton) cell.Controls [0]).Text, "#3");
+			cell = new DataControlFieldCell (null);
+			field.ItemTemplate = null;
+			field.InitializeCell (cell, DataControlCellType.DataCell, DataControlRowState.Edit, 0);
+			Assert.IsTrue (cell.Controls.Count == 0, "#4");
+			Assert.AreEqual ("&nbsp;", cell.Text, "#5");
+		}
+
+		[Test]
+		public void TemplateField_AlternatingItemTemplate () {
+			PokerTemplateField field = new PokerTemplateField ();
+			DataControlFieldCell cell = new DataControlFieldCell (null);
+			field.ItemTemplate = new Ibutton ("test");
+			field.InitializeCell (cell, DataControlCellType.DataCell, DataControlRowState.Alternate, 0);
+			Assert.AreEqual ("test", ((Ibutton) cell.Controls [0]).Text, "#1");
+			cell = new DataControlFieldCell (null);
+			field.AlternatingItemTemplate = new Ibutton ("Alternate");
+			field.InitializeCell (cell, DataControlCellType.DataCell, DataControlRowState.Alternate, 0);
+			Assert.AreEqual ("Alternate", ((Ibutton) cell.Controls [0]).Text, "#2");
+			cell = new DataControlFieldCell (null);
+			field.InitializeCell (cell, DataControlCellType.DataCell, DataControlRowState.Insert, 0);
+			Assert.AreEqual ("test", ((Ibutton) cell.Controls [0]).Text, "#3");
+			cell = new DataControlFieldCell (null);
+			field.ItemTemplate = null;
+			field.InitializeCell (cell, DataControlCellType.DataCell, DataControlRowState.Edit, 0);
+			Assert.IsTrue (cell.Controls.Count == 0, "#4");
+			Assert.AreEqual ("&nbsp;", cell.Text, "#5");
 		}
 
 		[Test]
 		[ExpectedException (typeof (NotSupportedException))]
-		public void TemplateField_ValidateSupportsCallbackException ()
-		{
+		public void TemplateField_ValidateSupportsCallbackException () {
 			TemplateField field = new TemplateField ();
 			field.Initialize (false, new Control ());
 			field.ValidateSupportsCallback ();
 		}
 
 		[Test]
-		public void TemplateField_Copy()
-		{
+		public void TemplateField_Copy () {
 			PokerTemplateField field = new PokerTemplateField ();
 			TemplateField copy = new TemplateField ();
 			field.ConvertEmptyStringToNull = true;
@@ -200,8 +275,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		public void TemplateField_CreateField ()
-		{
+		public void TemplateField_CreateField () {
 			PokerTemplateField field = new PokerTemplateField ();
 			DataControlField newfield = field.DoCreateField ();
 			if (!(newfield is TemplateField)) {
@@ -213,18 +287,16 @@ namespace MonoTests.System.Web.UI.WebControls
 		// A simple Template class to wrap an image.
 		public class IImage : Image, ITemplate
 		{
-			public IImage ():base()
-			{
-				
+			public IImage ()
+				: base () {
+
 			}
 			public IImage (string text)
-				: base ()
-			{
+				: base () {
 				this.ImageUrl = text;
 			}
 
-			public void InstantiateIn (Control container)
-			{
+			public void InstantiateIn (Control container) {
 				container.Controls.Add (this);
 			}
 
@@ -232,18 +304,16 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		private class Ibutton : Button, ITemplate
 		{
-			public Ibutton (): base ()
-			{
+			public Ibutton ()
+				: base () {
 			}
 
 			public Ibutton (string text)
-				: base ()
-			{
+				: base () {
 				this.Text = text;
 			}
 
-			void ITemplate.InstantiateIn (Control container)
-			{
+			void ITemplate.InstantiateIn (Control container) {
 				container.Controls.Add (this);
 			}
 		}
