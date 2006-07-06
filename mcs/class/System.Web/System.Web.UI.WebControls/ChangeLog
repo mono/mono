@@ -1,3 +1,7 @@
+2006-07-06	Konstantin Triger <kostat@mainsoft.com>
+
+        * DataControlField.cs,BoundField.cs: bug fixes found by BoundFieldTest.
+
 2006-07-05	Konstantin Triger <kostat@mainsoft.com>
 
         * DataControlField.cs: correct handling empty header/footer text.

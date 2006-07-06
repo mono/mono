@@ -46,16 +46,15 @@ namespace System.Web.UI.WebControls {
 		
 		PropertyDescriptor boundProperty;
 
-		[MonoTODO]
 		[DefaultValueAttribute (false)]
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Behavior")]
 		public virtual bool ApplyFormatInEditMode {
 			get {
-				throw new NotImplementedException ();
+				return ViewState.GetBool ("ApplyFormatInEditMode", false);
 			}
 			set {
-				throw new NotImplementedException ();
+				ViewState ["ApplyFormatInEditMode"] = value;
 			}
 		}
 		
@@ -63,7 +62,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Behavior")]
 		public virtual bool ConvertEmptyStringToNull {
-			get { return ViewState.GetBool ("ConvertEmptyStringToNull", false); }
+			get { return ViewState.GetBool ("ConvertEmptyStringToNull", true); }
 			set {
 				ViewState ["ConvertEmptyStringToNull"] = value;
 				OnFieldChanged ();
@@ -108,7 +107,7 @@ namespace System.Web.UI.WebControls {
 		[DefaultValueAttribute ("")]
 		[WebCategoryAttribute ("Behavior")]
 		public virtual string NullDisplayText {
-			get { return ViewState.GetString ("NullDisplaytext", ""); }
+			get { return ViewState.GetString ("NullDisplayText", ""); }
 			set {
 				ViewState ["NullDisplayText"] = value;
 				OnFieldChanged ();
@@ -209,32 +208,36 @@ namespace System.Web.UI.WebControls {
 		{
 			return GetBoundValue (Control);
 		}
-		
+
 		object GetBoundValue (Control controlContainer)
 		{
+			object dataItem = DataBinder.GetDataItem (controlContainer);
+			if (dataItem == null)
+				throw new HttpException ("A data item was not found in the container. The container must either implement IDataItemContainer, or have a property named DataItem.");
+
 			if (DataField == ThisExpression)
-				return controlContainer.ToString ();
-			else {
-				IDataItemContainer dic = (IDataItemContainer) controlContainer;
-				if (boundProperty == null) {
-					boundProperty = TypeDescriptor.GetProperties (dic.DataItem) [DataField];
-					if (boundProperty == null)
-						throw new InvalidOperationException ("Property '" + DataField + "' not found in object of type " + dic.DataItem.GetType());
-				}
-				return boundProperty.GetValue (dic.DataItem);
-			}
+				return dataItem.ToString ();
+
+			return DataBinder.GetPropertyValue (dataItem, DataField);
 		}
 		
 		protected virtual void OnDataBindField (object sender, EventArgs e)
 		{
-			DataControlFieldCell cell = (DataControlFieldCell) sender;
+			Control cell = (Control) sender;
+			Control controlContainer = cell.BindingContainer;
+			if (!(controlContainer is INamingContainer))
+				throw new HttpException ("A DataControlField must be within an INamingContainer.");
+			object val = GetValue (controlContainer);
+
 			if (cell.Controls.Count > 0) {
 				TextBox box = (TextBox) cell.Controls [0];
-				object val = GetValue (cell.BindingContainer);
-				box.Text = val != null ? val.ToString() : "";
+				if (ApplyFormatInEditMode)
+					box.Text = FormatDataValue (val, SupportsHtmlEncode && HtmlEncode);
+				else
+					box.Text = val != null ? val.ToString() : NullDisplayText;
 			}
 			else
-				cell.Text = FormatDataValue (GetValue (cell.BindingContainer), SupportsHtmlEncode && HtmlEncode);
+				((DataControlFieldCell)cell).Text = FormatDataValue (val, SupportsHtmlEncode && HtmlEncode);
 		}
 		
 		protected override DataControlField CreateField ()

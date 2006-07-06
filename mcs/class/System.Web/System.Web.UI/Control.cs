@@ -183,7 +183,7 @@ namespace System.Web.UI
 		public Control BindingContainer {
 			get {
 				Control container = NamingContainer;
-				if ((container.stateMask & BINDING_CONTAINER) == 0)
+				if (container != null && (container.stateMask & BINDING_CONTAINER) == 0)
 					container = container.BindingContainer;
 				return container;
 			}

@@ -84,14 +84,15 @@ namespace System.Web.UI.WebControls {
 		{
 			if (cellType == DataControlCellType.Header)
 			{
-				if (HeaderText.Length > 0 || HeaderImageUrl.Length > 0) {
-					if (sortingEnabled && SortExpression.Length > 0)
-						cell.Controls.Add (new DataControlButton (control, HeaderText, HeaderImageUrl, DataControlCommands.SortCommandName, SortExpression, true));
-					else
-						cell.Controls.Add (new DataControlButton (control, HeaderText, HeaderImageUrl, string.Empty, string.Empty, true));
+				if (HeaderText.Length > 0 && sortingEnabled && SortExpression.Length > 0)
+					cell.Controls.Add (new DataControlButton (control, HeaderText, HeaderImageUrl, DataControlCommands.SortCommandName, SortExpression, true));
+				else if (HeaderImageUrl.Length > 0) {
+					Image image = new Image ();
+					image.ImageUrl = HeaderImageUrl;
+					cell.Controls.Add (image);
 				}
 				else
-					cell.Text = "&nbsp;";
+					cell.Text = HeaderText.Length > 0 ? HeaderText : "&nbsp;";
 			}
 			else if (cellType == DataControlCellType.Footer) {
 				string footerText = FooterText;

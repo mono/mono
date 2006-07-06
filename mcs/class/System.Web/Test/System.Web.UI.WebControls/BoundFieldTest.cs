@@ -39,7 +39,7 @@ using System.IO;
 using System.Drawing;
 using System.Collections;
 using System.Collections.Specialized;
-using Image = System.Web.UI.WebControls.Image ;
+using Image = System.Web.UI.WebControls.Image;
 using NUnit.Framework;
 using System.Globalization;
 
@@ -51,64 +51,52 @@ namespace MonoTests.System.Web.UI.WebControls
 	{
 		public Button bindbutoon;
 
-		public PokerBoundField ()
-		{
+		public PokerBoundField () {
 			TrackViewState ();
 			bindbutoon = new Button ();
 			bindbutoon.DataBinding += new EventHandler (OnDataBindField);
 		}
 
 
-		public StateBag StateBag
-		{
+		public StateBag StateBag {
 			get { return base.ViewState; }
 		}
 
-		public bool DoSupportsHtmlEncode
-		{
-			get
-			{
+		public bool DoSupportsHtmlEncode {
+			get {
 				return base.SupportsHtmlEncode;
 			}
 		}
 
-		public void DoCopyProperties (DataControlField newField)
-		{
+		public void DoCopyProperties (DataControlField newField) {
 			base.CopyProperties (newField);
 		}
 
-		public DataControlField DoCreateField ()
-		{
+		public DataControlField DoCreateField () {
 			return base.CreateField ();
 		}
 
-		public string DoFormatDataValue (object dataValue, bool encode)
-		{
+		public string DoFormatDataValue (object dataValue, bool encode) {
 			return this.FormatDataValue (dataValue, encode);
 		}
 
-		public object DoGetDesignTimeValue ()
-		{
+		public object DoGetDesignTimeValue () {
 			return base.GetDesignTimeValue ();
 		}
 
-		public object DoGetValue (Control controlContainer)
-		{
+		public object DoGetValue (Control controlContainer) {
 			return base.GetValue (controlContainer);
 		}
 
-		public void DoInitializeDataCell (DataControlFieldCell cell, DataControlRowState rowState)
-		{
+		public void DoInitializeDataCell (DataControlFieldCell cell, DataControlRowState rowState) {
 			base.InitializeDataCell (cell, rowState);
 		}
 
-		public void DoOnDataBindField (object sender, EventArgs e)
-		{
+		public void DoOnDataBindField (object sender, EventArgs e) {
 			base.OnDataBindField (sender, e);
 		}
 
-		public Control GetControl
-		{
+		public Control GetControl {
 			get { return base.Control; }
 		}
 	}
@@ -118,8 +106,7 @@ namespace MonoTests.System.Web.UI.WebControls
 	public class BoundFieldTest
 	{
 		[Test]
-		public void BoundField_DefaultProperty ()
-		{
+		public void BoundField_DefaultProperty () {
 			PokerBoundField bf = new PokerBoundField ();
 			Assert.AreEqual ("!", PokerBoundField.ThisExpression, "StaticThisExpression");
 			Assert.AreEqual ("", bf.DataField, "DataField");
@@ -134,18 +121,14 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
-		public void BoundField_DefaultPropertyNotWorking ()
-		{
+		public void BoundField_DefaultPropertyNotWorking () {
 			PokerBoundField bf = new PokerBoundField ();
 			Assert.AreEqual (false, bf.ApplyFormatInEditMode, "ApplyFormatInEditMode");
 			Assert.AreEqual (true, bf.ConvertEmptyStringToNull, "ConvertEmptyStringToNull");
 		}
 
 		[Test]
-		[Category ("NotWorking")]
-		public void BoundField_AssignProperty ()
-		{
+		public void BoundField_AssignProperty () {
 			PokerBoundField bf = new PokerBoundField ();
 			bf.ConvertEmptyStringToNull = false;
 			Assert.AreEqual (false, bf.ConvertEmptyStringToNull, "ConvertEmptyStringToNull");
@@ -164,29 +147,25 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
-		public void BoundField_AssignPropertyNotWorking ()
-		{
+		public void BoundField_AssignPropertyNotWorking () {
 			PokerBoundField bf = new PokerBoundField ();
 			bf.ApplyFormatInEditMode = true;
 			Assert.AreEqual (true, bf.ApplyFormatInEditMode, "ApplyFormatInEditMode");
 		}
 
 		[Test]
-		public void BoundField_ExtractValuesFromCell ()
-		{
+		public void BoundField_ExtractValuesFromCell () {
 			PokerBoundField bf = new PokerBoundField ();
 			OrderedDictionary dictionary = new OrderedDictionary ();
 			DataControlFieldCell cell = new DataControlFieldCell (null);
 			cell.Text = "test";
 			bf.ExtractValuesFromCell (dictionary, cell, DataControlRowState.Normal, true);
 			Assert.AreEqual (1, dictionary.Count, "ExtractValuesFromCellCount");
-			Assert.AreEqual ("test", dictionary[0].ToString (), "ExtractValuesFromCellValue");
+			Assert.AreEqual ("test", dictionary [0].ToString (), "ExtractValuesFromCellValue");
 		}
 
 		[Test]
-		public void BoundField_Initialize ()
-		{
+		public void BoundField_Initialize () {
 			// This method initilize to private fields in a base class DataControlField 
 			// Always return false
 			PokerBoundField bf = new PokerBoundField ();
@@ -198,46 +177,29 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
-		public void BoundField_InitializeCell ()
-		{
+		public void BoundField_InitializeCell () {
 			PokerBoundField bf = new PokerBoundField ();
 			// Header text
 			DataControlFieldCell cell = new DataControlFieldCell (null);
 			bf.HeaderText = "headertext";
+
 			bf.InitializeCell (cell, DataControlCellType.Header, DataControlRowState.Edit, 1);
 			Assert.AreEqual ("headertext", cell.Text, "InitializeCellHeaderText");
 			// Empty header text
 			bf.HeaderText = "";
 			bf.InitializeCell (cell, DataControlCellType.Header, DataControlRowState.Edit, 1);
 			Assert.AreEqual ("&nbsp;", cell.Text, "InitializeCellEmpty");
+
+			bf.HeaderText = "headertext";
 			// Header image url not empty
 			bf.HeaderImageUrl = "headerurl";
 			bf.InitializeCell (cell, DataControlCellType.Header, DataControlRowState.Edit, 1);
-			if (cell.Controls[0] is Image) {
-				Image image = (Image) cell.Controls[0];
+			if (cell.Controls [0] is Image) {
+				Image image = (Image) cell.Controls [0];
 				Assert.AreEqual ("headerurl", image.ImageUrl, "InitializeCellHeaderImageUrl");
 			}
 			else {
 				Assert.Fail ("Header Image dos not created");
-			}
-
-			// Sorting enable = true , link button must be created
-			cell.Controls.Clear ();
-			bf.HeaderImageUrl = "";
-			bf.SortExpression = "a";
-			bf.HeaderText = "sortbutton";
-			bf.Initialize (true, new Control ());    // _base._sortingenable set to true
-			bf.InitializeCell (cell, DataControlCellType.Header, DataControlRowState.Edit, 1);
-			if (cell.Controls[0] is LinkButton) {
-				LinkButton lb = (LinkButton) cell.Controls[0];
-				Assert.AreEqual ("Sort", lb.CommandName, "InitializeCellHeaderSortButtonCommand");
-				Assert.AreEqual ("a", lb.CommandArgument, "InitializeCellHeaderSortButtonArgument");
-				Assert.AreEqual ("sortbutton", lb.Text, "InitializeCellHeaderSortButtonText");
-
-			}
-			else {
-				Assert.Fail ("Sort button does not created");
 			}
 
 			// Footer empty
@@ -250,16 +212,44 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		public void BoundField_ValidateSupportsCallback ()
-		{
+		public void BoundField_ValidateSupportsCallback () {
 			//This method has been implemented as an empty method    	
+		}
+
+		[Test]
+		public void BoundField_SortExpression () {
+			// Sorting enable = true , link button must be created
+			PokerBoundField bf = new PokerBoundField ();
+			// Header text
+			DataControlFieldCell cell = new DataControlFieldCell (null);
+
+			bf.HeaderImageUrl = "";
+			bf.SortExpression = "a";
+			bf.HeaderText = "sortbutton";
+			bf.Initialize (true, new Control ());    // _base._sortingenable set to true
+			bf.InitializeCell (cell, DataControlCellType.Header, DataControlRowState.Edit, 1);
+			if (cell.Controls [0] is Button) { // mono
+				Button lb = (Button) cell.Controls [0];
+				Assert.AreEqual ("Sort", lb.CommandName, "InitializeCellHeaderSortButtonCommand");
+				Assert.AreEqual ("a", lb.CommandArgument, "InitializeCellHeaderSortButtonArgument");
+				Assert.AreEqual ("sortbutton", lb.Text, "InitializeCellHeaderSortButtonText");
+
+			}
+			else if (cell.Controls [0] is LinkButton) { // .net
+				LinkButton lb = (LinkButton) cell.Controls [0];
+				Assert.AreEqual ("Sort", lb.CommandName, "InitializeCellHeaderSortButtonCommand");
+				Assert.AreEqual ("a", lb.CommandArgument, "InitializeCellHeaderSortButtonArgument");
+				Assert.AreEqual ("sortbutton", lb.Text, "InitializeCellHeaderSortButtonText");
+
+			}
+			else {
+				Assert.Fail ("Sort button does not created");
+			}
 		}
 
 
 		[Test]
-		[Category ("NotWorking")]
-		public void BoundField_CopyProperties ()
-		{
+		public void BoundField_CopyProperties () {
 			PokerBoundField bf = new PokerBoundField ();
 			BoundField copy = new BoundField ();
 			// Look not working property
@@ -282,17 +272,14 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		public void BoundField_CreateField ()
-		{
+		public void BoundField_CreateField () {
 			PokerBoundField bf = new PokerBoundField ();
 			BoundField newfield = (BoundField) bf.DoCreateField ();
 			Assert.IsNotNull (newfield, "CreateField");
 		}
 
 		[Test]
-		[Category ("NotWorking")]
-		public void BoundField_FormatDataValue ()
-		{
+		public void BoundField_FormatDataValue () {
 			string result;
 			PokerBoundField bf = new PokerBoundField ();
 
@@ -313,8 +300,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NotWorking")]
-		public void BoundField_GetDesignTimeValue ()
-		{
+		public void BoundField_GetDesignTimeValue () {
 			string result;
 			PokerBoundField bf = new PokerBoundField ();
 			result = (string) bf.DoGetDesignTimeValue ();
@@ -322,9 +308,16 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
-		public void BoundField_GetValue ()
-		{
+		[ExpectedException(typeof(HttpException), "A data item was not found in the container. The container must either implement IDataItemContainer, or have a property named DataItem.")]
+		public void BoundField_GetValueNull () {
+			PokerBoundField bf = new PokerBoundField ();
+			SimpleSpreadsheetRow ds = new SimpleSpreadsheetRow (0, null);
+			bf.DataField = PokerBoundField.ThisExpression;
+			string result = (string) bf.DoGetValue (ds);
+		}
+
+		[Test]
+		public void BoundField_GetValue () {
 			PokerBoundField bf = new PokerBoundField ();
 			SimpleSpreadsheetRow ds = new SimpleSpreadsheetRow (0, "test");
 			bf.DataField = PokerBoundField.ThisExpression;
@@ -333,8 +326,16 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		public void BoundField_InitializeDataCell ()
-		{
+		public void BoundField_GetValueDataItem () {
+			PokerBoundField bf = new PokerBoundField ();
+			ControlWithDataItem ds = new ControlWithDataItem ("test");
+			bf.DataField = PokerBoundField.ThisExpression;
+			string result = (string) bf.DoGetValue (ds);
+			Assert.AreEqual ("test", result, "GetValueFromIDataItemContainer");
+		}
+
+		[Test]
+		public void BoundField_InitializeDataCell () {
 			PokerBoundField bf = new PokerBoundField ();
 			bf.HeaderText = "headertest";
 			DataControlFieldCell cell = new DataControlFieldCell (null);
@@ -345,22 +346,32 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (HttpException))]
-		public void BoundField_OnDataBindFieldExeption ()
-		{
+		public void BoundField_OnDataBindFieldExeption () {
 			PokerBoundField bf = new PokerBoundField ();
 			bf.bindbutoon.DataBind ();
 
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (HttpException))]
-		public void BoundField_GetValueExeption ()
-		{
+		public void BoundField_GetValueExeption () {
 			PokerBoundField bf = new PokerBoundField ();
 			bf.DoGetValue (null);
+		}
+
+		class ControlWithDataItem : Control
+		{
+			readonly object _data;
+			public ControlWithDataItem (object data) {
+				_data = data;
+			}
+
+			public object DataItem {
+				get {
+					return _data;
+				}
+			}
 		}
 
 		public class SimpleSpreadsheetRow : TableRow, IDataItemContainer
@@ -368,40 +379,31 @@ namespace MonoTests.System.Web.UI.WebControls
 			private object data;
 			private int _itemIndex;
 
-			public SimpleSpreadsheetRow (int itemIndex, object o)
-			{
+			public SimpleSpreadsheetRow (int itemIndex, object o) {
 				data = o;
 				_itemIndex = itemIndex;
 			}
 
-			public virtual object Data
-			{
-				get
-				{
+			public virtual object Data {
+				get {
 					return data;
 				}
 			}
 
-			object IDataItemContainer.DataItem
-			{
-				get
-				{
+			object IDataItemContainer.DataItem {
+				get {
 					return Data;
 				}
 			}
 
-			int IDataItemContainer.DataItemIndex
-			{
-				get
-				{
+			int IDataItemContainer.DataItemIndex {
+				get {
 					return _itemIndex;
 				}
 			}
 
-			int IDataItemContainer.DisplayIndex
-			{
-				get
-				{
+			int IDataItemContainer.DisplayIndex {
+				get {
 					return _itemIndex;
 				}
 			}
