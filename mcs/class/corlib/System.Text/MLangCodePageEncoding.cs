@@ -95,7 +95,6 @@ namespace System.Text
 		{
 			private MLangEncoder ()
 			{
-				throw new ArgumentException ("This class cannot be instantiated.");
 			}
 		}
 #endif
@@ -140,7 +139,6 @@ namespace System.Text
 		{
 			private MLangDecoder ()
 			{
-				throw new ArgumentException ("This class cannot be instantiated.");
 			}
 		}
 #endif

@@ -1,7 +1,8 @@
 2006-07-06  Kornél Pál  <kornelpal@gmail.com>
 
 	* CodePageEncoding.cs: Corrected comments.
-	* MLangCodePageEncoding.cs: Corrected comments.
+	* MLangCodePageEncoding.cs: Corrected comments. Removed unnesessary
+	  ArgumentExceptions in private constructors.
 	* SurrogateEncoder.cs: Corrected comments.
 
 2006-07-05  Kornél Pál  <kornelpal@gmail.com>
