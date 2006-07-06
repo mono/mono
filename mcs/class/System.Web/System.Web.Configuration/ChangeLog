@@ -1,3 +1,8 @@
+2006-07-06 Andrew Skiba <andrews@mainsoft.com>
+
+	* HttpHandlersSectionHandler.cs: validate attribute can have 'true' and
+	'false' case-insensitive in net 2.0
+
 2006-06-28 Andrew Skiba <andrews@mainsoft.com>
 
 	* ModulesConfiguration.cs: keep the inner exception
