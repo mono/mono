@@ -32,7 +32,7 @@
 // These proxy classes implement IObjectReference.GetRealObject() that returns
 // an instance of the appropriate Encoding, Encoder or Decoder class.
 // As a result serialized objects of these types will transparently be
-// deserialized to the instances of the above described classes.
+// deserialized to instances of the above described classes.
 //
 // Use SerializationInfo.SetType() in ISerializable.GetObjectData() method of
 // serializable classes to serialize their instances using a proxy class.
@@ -110,6 +110,7 @@ namespace System.Text
 				this.encoderFallback = (EncoderFallback) info.GetValue ("encoderFallback", typeof (EncoderFallback));
 				this.decoderFallback = (DecoderFallback) info.GetValue ("decoderFallback", typeof (DecoderFallback));
 			} catch (SerializationException) {
+				// .NET Framework 1.x has no fallbacks
 				this.isReadOnly = true;
 			}
 #endif
