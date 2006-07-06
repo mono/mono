@@ -1,3 +1,7 @@
+2006-07-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslCompiledTransform.cs : making stub more complete :|
+
 2006-05-29  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XsltContext.cs: Ctors are public in .NET 1.1. Fixes warnings in 

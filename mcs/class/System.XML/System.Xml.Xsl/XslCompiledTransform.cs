@@ -118,7 +118,7 @@ namespace System.Xml.Xsl
 
 		public void Transform (XmlReader reader, XsltArgumentList args, XmlWriter output)
 		{
-			Transform (new XPathDocument (reader), args, output);
+			Transform (reader, args, output, null);
 		}
 
 		public void Transform (IXPathNavigable input, XsltArgumentList args, TextWriter output)
@@ -138,16 +138,21 @@ namespace System.Xml.Xsl
 
 		public void Transform (IXPathNavigable input, XsltArgumentList args, XmlWriter output)
 		{
-			Transform (input.CreateNavigator (), args, output);
+			Transform (input.CreateNavigator (), args, output, null);
 		}
 
-		void Transform (XPathNavigator input, XsltArgumentList args, XmlWriter output)
+		public void Transform (XmlReader input, XsltArgumentList args, XmlWriter output, XmlResolver resolver)
+		{
+			Transform (new XPathDocument (input).CreateNavigator (), args, output, resolver);
+		}
+
+		void Transform (XPathNavigator input, XsltArgumentList args, XmlWriter output, XmlResolver resolver)
 		{
 			if (s == null)
 				throw new XsltException ("No stylesheet was loaded.", null);
 
 			Outputter outputter = new GenericOutputter (output, s.Outputs, null);
-			new XslTransformProcessor (s).Process (input, outputter, args, null);
+			new XslTransformProcessor (s).Process (input, outputter, args, resolver);
 			output.Flush ();
 		}
 
