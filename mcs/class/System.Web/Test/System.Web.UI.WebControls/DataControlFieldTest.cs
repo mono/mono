@@ -229,7 +229,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void DataControlField_ViewState ()
 		{
 			DerivedDataControlField field = new DerivedDataControlField ();

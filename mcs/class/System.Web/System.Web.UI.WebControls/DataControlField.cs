@@ -140,13 +140,13 @@ namespace System.Web.UI.WebControls {
 			viewState.LoadViewState (states[0]);
 			
 			if (states[1] != null)
-				((IStateManager)controlStyle).LoadViewState (states[1]);
+				((IStateManager)ControlStyle).LoadViewState (states[1]);
 			if (states[2] != null)
-				((IStateManager)footerStyle).LoadViewState (states[2]);
+				((IStateManager)FooterStyle).LoadViewState (states[2]);
 			if (states[3] != null)
-				((IStateManager)headerStyle).LoadViewState (states[3]);
+				((IStateManager)HeaderStyle).LoadViewState (states[3]);
 			if (states[4] != null)
-				((IStateManager)itemStyle).LoadViewState (states[4]);
+				((IStateManager)ItemStyle).LoadViewState (states[4]);
 		}
 
 		protected virtual object SaveViewState()
