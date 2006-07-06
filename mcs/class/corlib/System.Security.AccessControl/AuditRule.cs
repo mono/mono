@@ -1,10 +1,10 @@
 //
-// System.Security.AccessControl.EventWaitHandleRights enum
+// System.Security.AccessControl.AuditRule implementation
 //
 // Author:
 //	Dick Porter  <dick@ximian.com>
 //
-// Copyright (C) 2005, 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,17 +28,48 @@
 
 #if NET_2_0
 
-namespace System.Security.AccessControl {
+using System.Security.Principal;
 
-	[Flags]
-	public enum EventWaitHandleRights {
-		Modify			= 0x000002,
-		Delete			= 0x010000,
-		ReadPermissions		= 0x020000,
-		ChangePermissions	= 0x040000,
-		TakeOwnership		= 0x080000,
-		Synchronize		= 0x100000,
-		FullControl		= 0x1F0003	/* not 0x1F0002 according to corcompare */
+namespace System.Security.AccessControl {
+	public abstract class AuditRule : AuthorizationRule
+	{
+		AuditFlags auditFlags;
+		
+		protected AuditRule ()
+		{
+			/* Give it a 0-param constructor */
+		}
+		
+		protected AuditRule (IdentityReference identity,
+				     int accessMask,
+				     bool isInherited,
+				     InheritanceFlags inheritanceFlags,
+				     PropagationFlags propagationFlags,
+				     AuditFlags auditFlags)
+			: base (identity, accessMask, isInherited,
+				inheritanceFlags, propagationFlags)
+		{
+			if (!(identity is SecurityIdentifier)) {
+				/* FIXME: check auditFlags too */
+				throw new ArgumentException ("identity");
+			}
+			
+			if (accessMask == 0) {
+				/* FIXME: check inheritance and
+				 * propagation flags too
+				 */
+				throw new ArgumentOutOfRangeException ();
+			}
+
+			this.auditFlags = auditFlags;
+		}
+		
+		public AuditFlags AuditFlags
+		{
+			get {
+				return(auditFlags);
+			}
+		}
 	}
 }
 

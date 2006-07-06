@@ -1,10 +1,10 @@
 //
-// System.Security.AccessControl.EventWaitHandleRights enum
+// System.Security.AccessControl.ObjectAuditRule implementation
 //
 // Author:
 //	Dick Porter  <dick@ximian.com>
 //
-// Copyright (C) 2005, 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,17 +28,41 @@
 
 #if NET_2_0
 
-namespace System.Security.AccessControl {
+using System.Security.Principal;
 
-	[Flags]
-	public enum EventWaitHandleRights {
-		Modify			= 0x000002,
-		Delete			= 0x010000,
-		ReadPermissions		= 0x020000,
-		ChangePermissions	= 0x040000,
-		TakeOwnership		= 0x080000,
-		Synchronize		= 0x100000,
-		FullControl		= 0x1F0003	/* not 0x1F0002 according to corcompare */
+namespace System.Security.AccessControl {
+	public abstract class ObjectAuditRule : AuditRule
+	{
+		protected ObjectAuditRule (IdentityReference identity,
+					   int accessMask, bool isInherited,
+					   InheritanceFlags inheritanceFlags,
+					   PropagationFlags propagationFlags,
+					   Guid objectType,
+					   Guid inheritedObjectType,
+					   AuditFlags auditFlags)
+		{
+		}
+
+		public Guid InheritedObjectType
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+		
+		public ObjectAceFlags ObjectFlags
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+		
+		public Guid ObjectType
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+		}
 	}
 }
 

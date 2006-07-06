@@ -1,11 +1,10 @@
 //
-// System.Security.AccessControl.CryptoKeySecurity implementation
+// System.Security.AccessControl.RegistrySecurity implementation
 //
-// Authors:
-//	Sebastien Pouliot  <sebastien@ximian.com>
+// Author:
 //	Dick Porter <dick@ximian.com>
 //
-// Copyright (C) 2005, 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,16 +31,9 @@
 using System.Security.Principal;
 
 namespace System.Security.AccessControl {
-	public sealed class CryptoKeySecurity : NativeObjectSecurity {
-		CommonSecurityDescriptor securityDescriptor;
-		
-		public CryptoKeySecurity ()
+	public sealed class RegistrySecurity : NativeObjectSecurity {
+		public RegistrySecurity ()
 		{
-		}
-
-		public CryptoKeySecurity (CommonSecurityDescriptor securityDescriptor)
-		{
-			this.securityDescriptor = securityDescriptor;
 		}
 		
 		public override Type AccessRightType
@@ -65,67 +57,67 @@ namespace System.Security.AccessControl {
 			}
 		}
 		
-		public override sealed AccessRule AccessRuleFactory (IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AccessControlType type)
+		public override AccessRule AccessRuleFactory (IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AccessControlType type)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		public void AddAccessRule (CryptoKeyAccessRule rule)
+		public void AddAccessRule (RegistryAccessRule rule)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		public void AddAuditRule (CryptoKeyAuditRule rule)
+		public void AddAuditRule (RegistryAuditRule rule)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		public override sealed AuditRule AuditRuleFactory (IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AuditFlags flags)
+		public override AuditRule AuditRuleFactory (IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AuditFlags flags)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		public bool RemoveAccessRule (CryptoKeyAccessRule rule)
+		public bool RemoveAccessRule (RegistryAccessRule rule)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		public void RemoveAccessRuleAll (CryptoKeyAccessRule rule)
+		public void RemoveAccessRuleAll (RegistryAccessRule rule)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		public void RemoveAccessRuleSpecific (CryptoKeyAccessRule rule)
+		public void RemoveAccessRuleSpecific (RegistryAccessRule rule)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		public bool RemoveAuditRule (CryptoKeyAuditRule rule)
+		public bool RemoveAuditRule (RegistryAuditRule rule)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		public void RemoveAuditRuleAll (CryptoKeyAuditRule rule)
+		public void RemoveAuditRuleAll (RegistryAuditRule rule)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		public void RemoveAuditRuleSpecific (CryptoKeyAuditRule rule)
+		public void RemoveAuditRuleSpecific (RegistryAuditRule rule)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		public void ResetAccessRule (CryptoKeyAccessRule rule)
+		public void ResetAccessRule (RegistryAccessRule rule)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		public void SetAccessRule (CryptoKeyAccessRule rule)
+		public void SetAccessRule (RegistryAccessRule rule)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		public void SetAuditRule (CryptoKeyAuditRule rule)
+		public void SetAuditRule (RegistryAuditRule rule)
 		{
 			throw new NotImplementedException ();
 		}

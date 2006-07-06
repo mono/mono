@@ -4,7 +4,7 @@
 // Author:
 //	Dick Porter  <dick@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005, 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,16 +28,86 @@
 
 #if NET_2_0
 
+using System.Runtime.InteropServices;
+
 namespace System.Security.AccessControl {
-
-	[MonoTODO ("required for EventWaitHandleSecurity - implementation is missing")]
 	public abstract class NativeObjectSecurity : CommonObjectSecurity {
-
-		public NativeObjectSecurity ()
+		protected internal delegate Exception ExceptionFromErrorCode (int errorCode, string name, SafeHandle handle, object context);
+		
+		protected NativeObjectSecurity ()
+		{
+			/* Give it a 0-param constructor */
+		}
+		
+		protected NativeObjectSecurity (bool isContainer,
+						ResourceType resourceType)
 		{
 		}
 
-		// TODO
+		protected NativeObjectSecurity (bool isContainer,
+						ResourceType resourceType,
+						ExceptionFromErrorCode exceptionFromErrorCode,
+						object exceptionContext)
+		{
+		}
+		
+		protected NativeObjectSecurity (bool isContainer,
+						ResourceType resourceType,
+						SafeHandle handle,
+						AccessControlSections includeSections)
+		{
+		}
+		
+		protected NativeObjectSecurity (bool isContainer,
+						ResourceType resourceType,
+						string name,
+						AccessControlSections includeSections)
+		{
+		}
+		
+		protected NativeObjectSecurity (bool isContainer,
+						ResourceType resourceType,
+						SafeHandle handle,
+						AccessControlSections includeSections,
+						ExceptionFromErrorCode exceptionFromErrorCode,
+						object exceptionContext)
+		{
+		}
+		
+		protected NativeObjectSecurity (bool isContainer,
+						ResourceType resourceType,
+						string name,
+						AccessControlSections includeSections,
+						ExceptionFromErrorCode exceptionFromErrorCode,
+						object exceptionContext)
+		{
+		}
+		
+		protected override sealed void Persist (SafeHandle handle,
+							AccessControlSections includeSections)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		protected override sealed void Persist (string name,
+							AccessControlSections includeSections)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		protected void Persist (SafeHandle handle,
+					AccessControlSections includeSections,
+					object exceptionContext)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		protected void Persist (string name,
+					AccessControlSections includeSections,
+					object exceptionContext)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }
 

@@ -1,11 +1,10 @@
 //
-// System.Security.AccessControl.CryptoKeySecurity implementation
+// System.Security.AccessControl.FileSystemSecurity implementation
 //
-// Authors:
-//	Sebastien Pouliot  <sebastien@ximian.com>
+// Author:
 //	Dick Porter <dick@ximian.com>
 //
-// Copyright (C) 2005, 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,18 +31,7 @@
 using System.Security.Principal;
 
 namespace System.Security.AccessControl {
-	public sealed class CryptoKeySecurity : NativeObjectSecurity {
-		CommonSecurityDescriptor securityDescriptor;
-		
-		public CryptoKeySecurity ()
-		{
-		}
-
-		public CryptoKeySecurity (CommonSecurityDescriptor securityDescriptor)
-		{
-			this.securityDescriptor = securityDescriptor;
-		}
-		
+	public abstract class FileSystemSecurity : NativeObjectSecurity {
 		public override Type AccessRightType
 		{
 			get {
@@ -70,12 +58,12 @@ namespace System.Security.AccessControl {
 			throw new NotImplementedException ();
 		}
 		
-		public void AddAccessRule (CryptoKeyAccessRule rule)
+		public void AddAccessRule (FileSystemAccessRule rule)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		public void AddAuditRule (CryptoKeyAuditRule rule)
+		public void AddAuditRule (FileSystemAuditRule rule)
 		{
 			throw new NotImplementedException ();
 		}
@@ -85,47 +73,47 @@ namespace System.Security.AccessControl {
 			throw new NotImplementedException ();
 		}
 		
-		public bool RemoveAccessRule (CryptoKeyAccessRule rule)
+		public bool RemoveAccessRule (FileSystemAccessRule rule)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		public void RemoveAccessRuleAll (CryptoKeyAccessRule rule)
+		public void RemoveAccessRuleAll (FileSystemAccessRule rule)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		public void RemoveAccessRuleSpecific (CryptoKeyAccessRule rule)
+		public void RemoveAccessRuleSpecific (FileSystemAccessRule rule)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		public bool RemoveAuditRule (CryptoKeyAuditRule rule)
+		public bool RemoveAuditRule (FileSystemAuditRule rule)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		public void RemoveAuditRuleAll (CryptoKeyAuditRule rule)
+		public void RemoveAuditRuleAll (FileSystemAuditRule rule)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		public void RemoveAuditRuleSpecific (CryptoKeyAuditRule rule)
+		public void RemoveAuditRuleSpecific (FileSystemAuditRule rule)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		public void ResetAccessRule (CryptoKeyAccessRule rule)
+		public void ResetAccessRule (FileSystemAccessRule rule)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		public void SetAccessRule (CryptoKeyAccessRule rule)
+		public void SetAccessRule (FileSystemAccessRule rule)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		public void SetAuditRule (CryptoKeyAuditRule rule)
+		public void SetAuditRule (FileSystemAuditRule rule)
 		{
 			throw new NotImplementedException ();
 		}

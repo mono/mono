@@ -1,10 +1,10 @@
 //
-// System.Security.AccessControl.EventWaitHandleRights enum
+// System.Security.AccessControl.SemaphoreAuditRule implementation
 //
 // Author:
 //	Dick Porter  <dick@ximian.com>
 //
-// Copyright (C) 2005, 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,17 +28,28 @@
 
 #if NET_2_0
 
-namespace System.Security.AccessControl {
+using System.Runtime.InteropServices;
+using System.Security.Principal;
 
-	[Flags]
-	public enum EventWaitHandleRights {
-		Modify			= 0x000002,
-		Delete			= 0x010000,
-		ReadPermissions		= 0x020000,
-		ChangePermissions	= 0x040000,
-		TakeOwnership		= 0x080000,
-		Synchronize		= 0x100000,
-		FullControl		= 0x1F0003	/* not 0x1F0002 according to corcompare */
+namespace System.Security.AccessControl {
+	[ComVisible (false)]
+	public sealed class SemaphoreAuditRule : AuditRule
+	{
+		SemaphoreRights semaphoreRights;
+		
+		public SemaphoreAuditRule (IdentityReference identity,
+					   SemaphoreRights semaphoreRights,
+					   AuditFlags flags)
+		{
+			this.semaphoreRights = semaphoreRights;
+		}
+		
+		public SemaphoreRights SemaphoreRights
+		{
+			get {
+				return(semaphoreRights);
+			}
+		}
 	}
 }
 

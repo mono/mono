@@ -1,10 +1,11 @@
 //
 // System.Security.AccessControl.DirectorySecurity implementation
 //
-// Author:
+// Authors:
 //	Sebastien Pouliot  <sebastien@ximian.com>
+//	Dick Porter <dick@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005, 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,16 +30,16 @@
 #if NET_2_0
 
 namespace System.Security.AccessControl {
-
-	[MonoTODO ("required for System.IO.DirectoryInfo - implementation is missing")]
-	public sealed class DirectorySecurity {
-
+	public sealed class DirectorySecurity : FileSystemSecurity {
 		public DirectorySecurity ()
 		{
 			throw new PlatformNotSupportedException ();
 		}
 
-		// TODO
+		public DirectorySecurity (string name, AccessControlSections includeSections)
+		{
+			throw new PlatformNotSupportedException ();
+		}
 	}
 }
 

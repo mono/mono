@@ -1,10 +1,10 @@
 //
-// System.Security.AccessControl.EventWaitHandleRights enum
+// System.Security.AccessControl.CustomAce implementation
 //
 // Author:
 //	Dick Porter  <dick@ximian.com>
 //
-// Copyright (C) 2005, 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,17 +28,54 @@
 
 #if NET_2_0
 
-namespace System.Security.AccessControl {
+using System.Collections;
 
-	[Flags]
-	public enum EventWaitHandleRights {
-		Modify			= 0x000002,
-		Delete			= 0x010000,
-		ReadPermissions		= 0x020000,
-		ChangePermissions	= 0x040000,
-		TakeOwnership		= 0x080000,
-		Synchronize		= 0x100000,
-		FullControl		= 0x1F0003	/* not 0x1F0002 according to corcompare */
+namespace System.Security.AccessControl {
+	public sealed class CustomAce : GenericAce
+	{
+		public CustomAce (AceType type, AceFlags flags, byte[] opaque)
+		{
+			if (type <= AceType.MaxDefinedAceType) {
+				throw new ArgumentOutOfRangeException ("type");
+			}
+			/* FIXME: check length of opaque >
+			 * MaxOpaqueLength or !multiple of 4
+			 */
+			//AceType = type;
+			//AceFlags = flags;
+		}
+		
+		public static readonly int MaxOpaqueLength;
+		
+		public override int BinaryLength
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+		
+		public int OpaqueLength
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+		
+		public override void GetBinaryForm (byte[] binaryForm,
+						    int offset)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public byte[] GetOpaque ()
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public void SetOpaque (byte[] opaque)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }
 

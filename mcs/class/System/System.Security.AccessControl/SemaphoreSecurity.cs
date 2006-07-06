@@ -1,10 +1,11 @@
 //
 // System.Security.AccessControl.SemaphoreSecurity class
 //
-// Author:
+// Authors:
 //	Sebastien Pouliot  <sebastien@ximian.com>
+//	Dick Porter <dick@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005, 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,15 +30,103 @@
 #if NET_2_0
 
 using System.Runtime.InteropServices;
+using System.Security.Principal;
 
 namespace System.Security.AccessControl {
-
-	[MonoTODO ("incomplete - required for compilation of Semaphore")]
 	[ComVisible (false)]
-	public sealed class SemaphoreSecurity {
-
+	public sealed class SemaphoreSecurity : NativeObjectSecurity {
 		public SemaphoreSecurity ()
 		{
+		}
+
+		public SemaphoreSecurity (string name, AccessControlSections includesections)
+		{
+		}
+		
+		public override Type AccessRightType
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+		
+		public override Type AccessRuleType
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public override Type AuditRuleType
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+		
+		public override AccessRule AccessRuleFactory (IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AccessControlType type)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public void AddAccessRule (SemaphoreAccessRule rule)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public void AddAuditRule (SemaphoreAuditRule rule)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public override AuditRule AuditRuleFactory (IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AuditFlags flags)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public bool RemoveAccessRule (SemaphoreAccessRule rule)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public void RemoveAccessRuleAll (SemaphoreAccessRule rule)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public void RemoveAccessRuleSpecific (SemaphoreAccessRule rule)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public bool RemoveAuditRule (SemaphoreAuditRule rule)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public void RemoveAuditRuleAll (SemaphoreAuditRule rule)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public void RemoveAuditRuleSpecific (SemaphoreAuditRule rule)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public void ResetAccessRule (SemaphoreAccessRule rule)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public void SetAccessRule (SemaphoreAccessRule rule)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public void SetAuditRule (SemaphoreAuditRule rule)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }

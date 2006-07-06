@@ -1,10 +1,10 @@
 //
-// System.Security.AccessControl.EventWaitHandleRights enum
+// System.Security.AccessControl.RegistryRights enum
 //
 // Author:
 //	Dick Porter  <dick@ximian.com>
 //
-// Copyright (C) 2005, 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,14 +31,21 @@
 namespace System.Security.AccessControl {
 
 	[Flags]
-	public enum EventWaitHandleRights {
-		Modify			= 0x000002,
-		Delete			= 0x010000,
-		ReadPermissions		= 0x020000,
-		ChangePermissions	= 0x040000,
-		TakeOwnership		= 0x080000,
-		Synchronize		= 0x100000,
-		FullControl		= 0x1F0003	/* not 0x1F0002 according to corcompare */
+	public enum RegistryRights {
+		QueryValues		= 0x00001,
+		SetValue		= 0x00002,
+		CreateSubKey		= 0x00004,
+		EnumerateSubKeys	= 0x00008,
+		Notify			= 0x00010,
+		CreateLink		= 0x00020,
+		Delete			= 0x10000,
+		ReadPermissions		= 0x20000,
+		WriteKey		= 0x20006,
+		ReadKey			= 0x20019,
+		ExecuteKey		= 0x20019,
+		ChangePermissions	= 0x40000,
+		TakeOwnership		= 0x80000,
+		FullControl		= 0xF003F,
 	}
 }
 

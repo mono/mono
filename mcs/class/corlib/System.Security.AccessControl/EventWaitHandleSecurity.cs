@@ -4,7 +4,7 @@
 // Author:
 //	Dick Porter  <dick@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005, 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,16 +28,100 @@
 
 #if NET_2_0
 
+using System.Security.Principal;
+
 namespace System.Security.AccessControl {
-
-	[MonoTODO ("required for EventWaitHandle - implementation is missing")]
 	public sealed class EventWaitHandleSecurity : NativeObjectSecurity {
-
 		public EventWaitHandleSecurity ()
 		{
+			throw new NotImplementedException ();
 		}
 
-		// TODO
+		public override Type AccessRightType
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+		
+		public override Type AccessRuleType
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+		
+		public override Type AuditRuleType
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+		
+		public override AccessRule AccessRuleFactory (IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AccessControlType type)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public void AddAccessRule (EventWaitHandleAccessRule rule)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public void AddAuditRule (EventWaitHandleAuditRule rule)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public override AuditRule AuditRuleFactory (IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AuditFlags flags)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public bool RemoveAccessRule (EventWaitHandleAccessRule rule)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public void RemoveAccessRuleAll (EventWaitHandleAccessRule rule)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public void RemoveAccessRuleSpecific (EventWaitHandleAccessRule rule)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public bool RemoveAuditRule (EventWaitHandleAuditRule rule)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public void RemoveAuditRuleAll (EventWaitHandleAuditRule rule)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public void RemoveAuditRuleSpecific (EventWaitHandleAuditRule rule)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public void ResetAccessRule (EventWaitHandleAccessRule rule)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public void SetAccessRule (EventWaitHandleAccessRule rule)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public void SetAuditRule (EventWaitHandleAuditRule rule)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }
 

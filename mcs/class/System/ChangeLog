@@ -1,3 +1,9 @@
+2006-07-06  Dick Porter  <dick@ximian.com>
+
+	* System.dll.sources: Added
+	System.Security.AccessControl/SemaphoreAccessRule.cs
+	System.Security.AccessControl/SemaphoreAuditRule.cs
+
 2006-05-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System_test.dll.sources : added ConnectionManagementSectionTest.cs

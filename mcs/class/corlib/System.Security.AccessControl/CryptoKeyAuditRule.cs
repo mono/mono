@@ -1,10 +1,10 @@
 //
-// System.Security.AccessControl.EventWaitHandleRights enum
+// System.Security.AccessControl.CryptoKeyAuditRule implementation
 //
 // Author:
 //	Dick Porter  <dick@ximian.com>
 //
-// Copyright (C) 2005, 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,17 +28,33 @@
 
 #if NET_2_0
 
-namespace System.Security.AccessControl {
+using System.Security.Principal;
 
-	[Flags]
-	public enum EventWaitHandleRights {
-		Modify			= 0x000002,
-		Delete			= 0x010000,
-		ReadPermissions		= 0x020000,
-		ChangePermissions	= 0x040000,
-		TakeOwnership		= 0x080000,
-		Synchronize		= 0x100000,
-		FullControl		= 0x1F0003	/* not 0x1F0002 according to corcompare */
+namespace System.Security.AccessControl {
+	public sealed class CryptoKeyAuditRule : AuditRule
+	{
+		CryptoKeyRights cryptoKeyRights;
+		
+		public CryptoKeyAuditRule (IdentityReference identity,
+					   CryptoKeyRights cryptoKeyRights,
+					   AuditFlags flags)
+		{
+			this.cryptoKeyRights = cryptoKeyRights;
+		}
+		
+		public CryptoKeyAuditRule (string identity,
+					   CryptoKeyRights cryptoKeyRights,
+					   AuditFlags flags)
+		{
+			this.cryptoKeyRights = cryptoKeyRights;
+		}
+		
+		public CryptoKeyRights CryptoKeyRights
+		{
+			get {
+				return(cryptoKeyRights);
+			}
+		}
 	}
 }
 

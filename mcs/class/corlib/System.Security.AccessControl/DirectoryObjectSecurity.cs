@@ -1,10 +1,10 @@
 //
-// System.Security.AccessControl.CommonObjectSecurity implementation
+// System.Security.AccessControl.DirectoryObjectSecurity implementation
 //
 // Author:
 //	Dick Porter  <dick@ximian.com>
 //
-// Copyright (C) 2005, 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,17 +28,26 @@
 
 #if NET_2_0
 
-namespace System.Security.AccessControl {
+using System.Security.Principal;
 
-	[MonoTODO ("required for NativeObjectSecurity - implementation is missing")]
-	public abstract class CommonObjectSecurity : ObjectSecurity {
-		protected CommonObjectSecurity ()
+namespace System.Security.AccessControl {
+	public abstract class DirectoryObjectSecurity : ObjectSecurity {
+		protected DirectoryObjectSecurity ()
 		{
-			/* Give it a 0-param constructor */
+		}
+
+		protected DirectoryObjectSecurity (CommonSecurityDescriptor securityDescriptor)
+		{
+		}
+
+		public virtual AccessRule AccessRuleFactory (IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AccessControlType type, Guid objectType, Guid inheritedObjectType)
+		{
+			throw new NotImplementedException ();
 		}
 		
-		protected CommonObjectSecurity (bool isContainer)
+		public virtual AuditRule AuditRuleFactory (IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AuditFlags flags, Guid objectType, Guid inheritedObjectType)
 		{
+			throw new NotImplementedException ();
 		}
 		
 		public AuthorizationRuleCollection GetAccessRules (bool includeExplicit, bool includeInherited, Type targetType)
@@ -51,12 +60,12 @@ namespace System.Security.AccessControl {
 			throw new NotImplementedException ();
 		}
 		
-		protected void AddAccessRule (AccessRule rule)
+		protected void AddAccessRule (ObjectAccessRule rule)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		protected void AddAuditRule (AuditRule rule)
+		protected void AddAuditRule (ObjectAuditRule rule)
 		{
 			throw new NotImplementedException ();
 		}
@@ -71,47 +80,47 @@ namespace System.Security.AccessControl {
 			throw new NotImplementedException ();
 		}
 		
-		protected bool RemoveAccessRule (AccessRule rule)
+		protected bool RemoveAccessRule (ObjectAccessRule rule)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		protected void RemoveAccessRuleAll (AccessRule rule)
+		protected void RemoveAccessRuleAll (ObjectAccessRule rule)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		protected void RemoveAccessRuleSpecific (AccessRule rule)
+		protected void RemoveAccessRuleSpecific (ObjectAccessRule rule)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		protected bool RemoveAuditRule (AuditRule rule)
+		protected bool RemoveAuditRule (ObjectAuditRule rule)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		protected void RemoveAuditRuleAll (AuditRule rule)
+		protected void RemoveAuditRuleAll (ObjectAuditRule rule)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		protected void RemoveAuditRuleSpecific (AuditRule rule)
+		protected void RemoveAuditRuleSpecific (ObjectAuditRule rule)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		protected void ResetAccessRule (AccessRule rule)
+		protected void ResetAccessRule (ObjectAccessRule rule)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		protected void SetAccessRule (AccessRule rule)
+		protected void SetAccessRule (ObjectAccessRule rule)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		protected void SetAuditRule (AuditRule rule)
+		protected void SetAuditRule (ObjectAuditRule rule)
 		{
 			throw new NotImplementedException ();
 		}
