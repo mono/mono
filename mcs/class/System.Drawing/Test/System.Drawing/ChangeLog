@@ -1,3 +1,9 @@
+2006-07-06  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* GDIPlusTest.cs: New WIP. Unit tests for the GDI+ function calls.
+	* TestImage.cs: Added checks to validate that the thumbnail's callback
+	is never called.
+
 2006-07-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SolidBrushTest.cs: New test case using DrawLine.
