@@ -1,3 +1,9 @@
+2006-07-05	Konstantin Triger <kostat@mainsoft.com>
+
+        * DataControlField.cs: correct handling empty header/footer text.
+        * TemplateField.cs: correct initialization according to
+        	DataControlRowState.
+
 2006-07-05  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* Wizard.cs: added functionality for Templated WizardStep
