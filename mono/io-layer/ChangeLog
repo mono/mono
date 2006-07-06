@@ -1,3 +1,43 @@
+2006-07-06  Dick Porter  <dick@ximian.com>
+
+	* io.c (_wapi_stat_to_file_attributes): Do a better job at
+	figuring out the file attributes
+	(_wapi_set_last_path_error_from_errno): New helper function to
+	turn errno into w32 error codes that handles the differences
+	between file and directory errors
+	(file_setendoffile): Try turning off the extra write used to
+	extend files, because we probably don't need it on any modern
+	platform.  If it is needed though, we also need to lseek the file
+	position back again
+	(CreateFile): Treat character-special devices as a console handle,
+	because they can't be seeked
+	(CopyFile): If fail_if_exists is set, then the destination needs
+	to be opened with O_EXCL
+	(CopyFile): If fail_if_exists is not set and the destination
+	already exists, then we should set the ERROR_ALREADY_EXISTS error
+	even though we return success
+	(stdhandle_create): STD_INPUT_HANDLES cannot be written to
+	(GetStdHandle): Rework without using mono_once, so console handles
+	can be properly closed and reopened.
+	(mono_io_scandir): Only override errno with EACCES when the
+	directory actually exists
+	(FindFirstFile): Set ERROR_FILE_NOT_FOUND when no files are
+	returned
+	(FindClose): Cope with NULL handles
+	(CreateDirectory): When the target already exists, just return an
+	error.  It's the caller's job to figure out what to do.
+	(SetCurrentDirectory): Cope with a NULL path
+	(RemoveDirectory, GetFileAttributes, GetFileAttributesEx,
+	SetFileAttributes, FindFirstFile, DeleteFile, MoveFile, CopyFile,
+	CreateFile): Set path error correctly
+
+	* handles.c (CloseHandle): Kludge to try and cope with passing a
+	NULL handle
+
+	* error.h: Add NO_ERROR as an alternative to ERROR_SUCCESS
+
+	* uglify.h: Added some more typedefs
+
 2006-07-05  Dick Porter  <dick@ximian.com>
 
 	* io.c (GetFileAttributes, GetFileAttributesEx): Cope with
