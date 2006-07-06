@@ -1,3 +1,8 @@
+2006-07-06  Dick Porter  <dick@ximian.com>
+
+	* DirectoryTest.cs: Test creating a directory when a file or
+	directory already exists with the requested name.
+
 2006-05-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* DirectoryTest.cs: Ignore one of the tests which causes nunit to abort on

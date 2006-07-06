@@ -1,3 +1,11 @@
+2006-07-06  Dick Porter  <dick@ximian.com>
+
+	* Directory.cs: When creating a directory treat ERROR_FILE_EXISTS
+	(ie a file already exists with that name) the same as
+	ERROR_ALREADY_EXISTS (ie a directory already exists with that
+	name.)  Keeps bug 50753 fixed when I fix the io-layer
+	CreateDirectory() behaviour.
+
 2006-06-21  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Directory.cs : implemented GetFiles() and GetDirectories() which

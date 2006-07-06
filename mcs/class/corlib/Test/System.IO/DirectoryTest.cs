@@ -102,6 +102,43 @@ public class DirectoryTest : Assertion {
 	}
 
 	[Test]
+	public void CreateDirectoryAlreadyExists ()
+	{
+		string path = TempFolder + DSC + "DirectoryTest.Test.Exists";
+		DeleteDirectory (path);
+		try {
+			DirectoryInfo info1 = Directory.CreateDirectory (path);
+			DirectoryInfo info2 = Directory.CreateDirectory (path);
+
+			AssertEquals ("test#01", true, info2.Exists);
+			AssertEquals ("test#02", true, info2.FullName.EndsWith ("DirectoryTest.Test.Exists"));
+			AssertEquals ("test#03", "DirectoryTest.Test.Exists", info2.Name);
+		} finally {
+			DeleteDirectory (path);		
+		}
+	}
+
+	[Test]
+	public void CreateDirectoryAlreadyExistsAsFile ()
+	{
+		string path = TempFolder + DSC + "DirectoryTest.Test.ExistsAsFile";
+		DeleteDirectory (path);
+		DeleteFile (path);
+		try {
+			FileStream fstream = File.Create (path);
+			fstream.Close();
+
+			DirectoryInfo dinfo = Directory.CreateDirectory (path);
+			AssertEquals ("test#01", false, dinfo.Exists);
+			AssertEquals ("test#02", true, dinfo.FullName.EndsWith ("DirectoryTest.Test.ExistsAsFile"));
+			AssertEquals ("test#03", "DirectoryTest.Test.ExistsAsFile", dinfo.Name);
+		} finally {
+			DeleteDirectory (path);		
+			DeleteFile (path);
+		}
+	}
+
+	[Test]
 	public void Delete ()
 	{
 		string path = TempFolder + DSC + "DirectoryTest.Test.Delete.1";
@@ -1291,6 +1328,12 @@ public class DirectoryTest : Assertion {
 	{
 		if (Directory.Exists (path))
 			Directory.Delete (path, true);		
+	}
+
+	private void DeleteFile (string path)
+	{
+		if (File.Exists (path))
+			File.Delete (path);
 	}
 }
 }
