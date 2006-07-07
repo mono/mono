@@ -255,7 +255,7 @@ namespace System.Net {
 			if (hostNameOrAddress == null)
 				throw new ArgumentNullException ("hostNameOrAddress");
 
-			if (hostNameOrAddress == "0.0.0.0")
+			if (hostNameOrAddress == "0.0.0.0" || hostNameOrAddress == "")
 				hostNameOrAddress = "127.0.0.1";
 			IPAddress addr;
 			if (IPAddress.TryParse (hostNameOrAddress, out addr))
@@ -277,7 +277,19 @@ namespace System.Net {
 			if (hostNameOrAddress == null)
 				throw new ArgumentNullException ("hostNameOrAddress");
 
-			return GetHostEntry (hostNameOrAddress).AddressList;
+			if (hostNameOrAddress == "0.0.0.0" || hostNameOrAddress == "")
+				hostNameOrAddress = "127.0.0.1";
+
+			IPAddress addr;
+			if (IPAddress.TryParse (hostNameOrAddress, out addr))
+			{
+				return new IPAddress[1] { addr };
+			}
+			else
+			{
+			  
+				return GetHostEntry (hostNameOrAddress).AddressList;
+			}
 		}
 #endif
 

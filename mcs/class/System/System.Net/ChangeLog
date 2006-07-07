@@ -1,3 +1,8 @@
+2006-07-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Dns.cs : (GetHostEntry) when passed IP addresses, it does not issue
+	  query to DNS. Patch by Petri Latvala.
+
 2006-07-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CookieContainer.cs: don't send a secure cookie over an insecure
