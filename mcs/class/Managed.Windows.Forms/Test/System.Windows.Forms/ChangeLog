@@ -1,3 +1,7 @@
+2006-07-07  Chris Toshok  <toshok@ximian.com>
+
+	* DataGridTableStyleTest.cs: couple more tests.
+
 2006-07-06  Peter Dennis Bartok <pbartok@novell.com>
 
 	* ControlTest.cs: Added "LinkLabel with link" test
