@@ -128,7 +128,7 @@ namespace System.Configuration {
 		
 		public static Configuration OpenExeConfiguration (string exePath)
 		{
-			return OpenExeConfigurationInternal (ConfigurationUserLevel.None, null, exePath);
+			return OpenExeConfigurationInternal (ConfigurationUserLevel.None, Assembly.GetCallingAssembly (), exePath);
 		}
 
 		[MonoTODO ("userLevel")]

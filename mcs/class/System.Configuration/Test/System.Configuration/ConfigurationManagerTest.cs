@@ -223,8 +223,8 @@ namespace MonoTests.System.Configuration {
 		[Test]
 		public void exePath_UserLevelNone_null ()
 		{
+			SysConfig config = ConfigurationManager.OpenExeConfiguration (null);
 #if false
-			SysConfig config = ConfigurationManager.OpenExeConfiguration(null);
 			Console.WriteLine("null exe application config path: {0}", config.FilePath);	
 
 			FileInfo fi = new FileInfo (config.FilePath);

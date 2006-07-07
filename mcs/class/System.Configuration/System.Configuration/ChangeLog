@@ -1,3 +1,8 @@
+2006-07-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ConfigurationManager.cs : OpenExeConfiguration(null) should still
+	  work. This is required for embedded scenario.
+
 2006-06-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SectionGroupInfo.cs : skip <dllmap> in configuration.
