@@ -1,5 +1,13 @@
 2006-07-07  Chris Toshok  <toshok@ximian.com>
 
+	* LinkLabel.cs (Select): if we chain up to the parent, set
+	focused_index to -1 so we'll search for the first available link
+	the next time the user tabs into us.  Also, if the direction is
+	backward and focused_index == -1, start the search from the last
+	element.
+
+2006-07-07  Chris Toshok  <toshok@ximian.com>
+
 	* LinkLabel.cs (CreatePiecesFromText): if the link's range piece
 	is beyond the end of the text, don't do anything.
 	(CreateLinkPieces): set our ControlStyles.Selectable based on

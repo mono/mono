@@ -444,6 +444,9 @@ namespace System.Windows.Forms
 					}
 				}
 				else {
+					if (focused_index == -1)
+						focused_index = sorted_links.Length;
+
 					for (int n = focused_index - 1; n >= 0; n--) {
 						if (sorted_links[n].Enabled) {
 							sorted_links[n].Focused = true;
@@ -452,6 +455,8 @@ namespace System.Windows.Forms
 						}
 					}
 				}
+
+				focused_index = -1;
 
 				if (parent != null)
 					parent.SelectNextControl (this, forward, false, true, true);
