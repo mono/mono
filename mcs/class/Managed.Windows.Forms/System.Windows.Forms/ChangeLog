@@ -1,3 +1,13 @@
+2006-07-07  Chris Toshok  <toshok@ximian.com>
+
+	* LinkLabel.cs (CreatePiecesFromText): if the link's range piece
+	is beyond the end of the text, don't do anything.
+	(CreateLinkPieces): set our ControlStyles.Selectable based on
+	whether or not we have any links.
+	(Link.Invalidate): use a loop instead of foreach.
+	(Link.set_Start): null out owner.sorted_links so it'll be
+	recreated by CreateLinkPieces.
+
 2006-07-06  Chris Toshok  <toshok@ximian.com>
 
 	* LinkLabel.cs: revert the SetStyle change.

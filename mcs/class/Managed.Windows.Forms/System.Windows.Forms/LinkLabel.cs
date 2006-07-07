@@ -480,6 +480,9 @@ namespace System.Windows.Forms
 
 			if (start + len > Text.Length)
 				len = Text.Length - start;
+			if (len < 0)
+				return rv;
+
 			string t = Text.Substring (start, len);
 
 			int ps = 0;
@@ -502,7 +505,15 @@ namespace System.Windows.Forms
 
 		private void CreateLinkPieces ()
 		{
-			if (Links.Count == 0 || IsHandleCreated == false || Text.Length == 0)
+			if (Links.Count == 0 || Text.Length == 0) {
+				SetStyle (ControlStyles.Selectable, false);
+				return;
+			}
+
+			SetStyle (ControlStyles.Selectable, true);
+
+			/* don't bother doing the rest if our handle hasn't been created */
+			if (!IsHandleCreated)
 				return;
 
 			if (Links.Count == 1 && Links[0].Start == 0 &&	Links[0].Length == -1)
@@ -683,7 +694,7 @@ namespace System.Windows.Forms
 					if (enabled != value)
 						Invalidate ();
 
-					enabled = value;	
+					enabled = value;
 				}
 			}
 
@@ -697,7 +708,7 @@ namespace System.Windows.Forms
 				}
 				set {
 					if (length == value)
-						return;						
+						return;
 					
 					length = value;
 
@@ -718,6 +729,7 @@ namespace System.Windows.Forms
 
 					start = value;
 
+					owner.sorted_links = null;
 					owner.CreateLinkPieces ();
 				}
 			}
@@ -761,8 +773,8 @@ namespace System.Windows.Forms
 
 			private void Invalidate ()
 			{
-				foreach (Piece p in pieces)
-					owner.Invalidate (p.region);
+				for (int i = 0; i < pieces.Count; i ++)
+					owner.Invalidate (((Piece)pieces[i]).region);
 			}
 
 			internal bool Contains (int x, int y)
