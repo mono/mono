@@ -19,6 +19,17 @@ namespace MonoTests.System.Windows.Forms {
 		static Array style_values = Enum.GetValues(typeof(ControlStyles));
 		static string[] style_names = Enum.GetNames(typeof(ControlStyles));
 
+		public void AssertAreEqual(string[] want, string[] got, string name) {
+			if (want.Length == got.Length) {
+				for (int i=0; i < want.Length; i++) {
+					if (want[i] != got[i]) {
+						Console.WriteLine("{0}: Expected {1}, got {2}", name, want[i], got[i]);
+					}
+				}
+			}
+			Assert.AreEqual(want, got, name);
+		}
+
 		public static string[] GetStyles(Control control) {
 			string[] result;
 
@@ -252,7 +263,33 @@ namespace MonoTests.System.Windows.Forms {
 				"DoubleBuffer=True"
 			};
 
+			string[] LinkLabel_link_want = {
+				"ContainerControl=False",
+				"UserPaint=True",
+				"Opaque=True",
+				"ResizeRedraw=True",
+				"FixedWidth=False",
+				"FixedHeight=False",
+				"StandardClick=True",
+				"Selectable=True",
+				"UserMouse=False",
+				"SupportsTransparentBackColor=True",
+				"StandardDoubleClick=True",
+				"AllPaintingInWmPaint=True",
+				"CacheText=False",
+				"EnableNotifyMessage=False",
+				"DoubleBuffer=True"
+			};
+
+
 			Assert.AreEqual(LinkLabel_want, GetStyles(new LinkLabel()), "LinkLabelStyles");
+
+			// Test LinkLabel with a link
+			LinkLabel link = new LinkLabel();
+			link.Text = "Users need not fear making the switch to Linux";
+                        link.Links.Add (6,9, "http://link1");
+			Assert.AreEqual(LinkLabel_link_want, GetStyles(link), "LinkLabelStyles2");
+
 		}
 
 
