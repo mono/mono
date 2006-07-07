@@ -263,7 +263,7 @@ namespace Cairo
 		//internal static extern IntPtr cairo_image_surface_create_from_png_stream  (string filename);
 
 		[DllImport (cairo)]
-		internal static extern byte[] cairo_image_surface_get_data (IntPtr surface);
+		internal static extern IntPtr cairo_image_surface_get_data (IntPtr surface);
 
 		[DllImport (cairo)]
 		internal static extern Format cairo_image_surface_get_format (IntPtr surface);

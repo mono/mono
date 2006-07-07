@@ -33,6 +33,7 @@
 //
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace Cairo {
 
@@ -76,7 +77,13 @@ namespace Cairo {
 		
 #if CAIRO_1_2
 		public byte[] Data {
-			get { return CairoAPI.cairo_image_surface_get_data (surface); }
+			get {
+				IntPtr ptr = CairoAPI.cairo_image_surface_get_data (surface);
+				int length = Height * Stride;
+				byte[] data = new byte[length];
+				Marshal.Copy (ptr, data, 0, length);
+				return data;
+			}
 		}
 
 		public Format Format {
