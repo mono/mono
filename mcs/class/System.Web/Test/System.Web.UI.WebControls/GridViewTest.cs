@@ -45,6 +45,7 @@ using MonoTests.stand_alone.WebHarness;
 using MyWebControl = System.Web.UI.WebControls;
 using System.Data;
 using System.Drawing;
+using System.Threading;
 
 namespace MonoTests.System.Web.UI.WebControls
 {
@@ -298,6 +299,12 @@ namespace MonoTests.System.Web.UI.WebControls
 		public const string STRINGFIELD = "str";
 		ArrayList myds = new ArrayList ();
 		public bool InitilizePager;
+
+		[SetUp]
+		public void SetupTestCase ()
+		{
+			Thread.Sleep (100);
+		}
 
 		[TestFixtureSetUp]
 		public void GridViewInit ()
@@ -1051,7 +1058,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (RenderAllowPaging)).Run ();
 			string RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
 			string OriginControlHtml = @"<div>
-						     <table cellspacing=""0"" rules=""all"" border=""1"">
+						     <table cellspacing=""0"" rules=""all"" border=""1"" style=""border-collapse:collapse;"">
 		                                     <tr>
 			                             <th scope=""col"">Item</th>
 						     </tr><tr>
@@ -1101,7 +1108,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (RenderingBoundField)).Run ();
 			string RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
 			string OriginControlHtml = @"<div>
-							<table cellspacing=""0"" rules=""all"" border=""1"">
+							<table cellspacing=""0"" rules=""all"" border=""1"" style=""border-collapse:collapse;"">
 								<tr>
 									<th scope=""col"">HeaderText</th>
 								</tr><tr>
@@ -1123,7 +1130,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (RenderingCheckBoxField)).Run ();
 			string RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
 			string OriginControlHtml = @"<div>
-							<table cellspacing=""0"" rules=""all"" border=""1"">
+							<table cellspacing=""0"" rules=""all"" border=""1"" style=""border-collapse:collapse;"">
 							<tr>
 								<th scope=""col"">HeaderText</th>
 							</tr><tr>
@@ -1145,18 +1152,18 @@ namespace MonoTests.System.Web.UI.WebControls
 			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (RenderingImageField)).Run ();
 			string RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
 			string OriginControlHtml = @"<div>
-							<table cellspacing=""0"" rules=""all"" border=""1"">
+							<table cellspacing=""0"" rules=""all"" border=""1"" style=""border-collapse:collapse;"">
 								<tr>
 									<th scope=""col"">HeaderText</th>
 								</tr><tr>
-									<td><img src=""1"" alt=""1"" border=""0"" /></td>
+									<td><img src=""1"" alt=""1"" style=""border-width:0px;"" /></td>
 								</tr><tr>
-									<td><img src=""2"" alt=""2"" border=""0"" /></td>
+									<td><img src=""2"" alt=""2"" style=""border-width:0px;"" /></td>
 								</tr><tr>
 									<td>FooterText</td>
 								</tr>
 							</table>
-						     </div>";
+						</div>";
 			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml, "RenderingImageField");
 		}
 
@@ -1167,7 +1174,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (RenderingCommandField)).Run ();
 			string RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
 			string OriginControlHtml = @"<div>
-							<table cellspacing=""0"" rules=""all"" border=""1"">
+							<table cellspacing=""0"" rules=""all"" border=""1"" style=""border-collapse:collapse;"">
 								<tr>
 									<th scope=""col"">HeaderText</th>
 								</tr><tr>
@@ -1189,7 +1196,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (RenderingHyperLinkField)).Run ();
 			string RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
 			string OriginControlHtml = @"<div>
-							<table cellspacing=""0"" rules=""all"" border=""1"">
+							<table cellspacing=""0"" rules=""all"" border=""1"" style=""border-collapse:collapse;"">
 								<tr>
 									<th scope=""col"">HeaderText</th>
 								</tr><tr>
@@ -1211,20 +1218,24 @@ namespace MonoTests.System.Web.UI.WebControls
 			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (RenderingButtonField)).Run ();
 			string RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
 			string OriginControlHtml = @"<div>
-							<table cellspacing=""0"" rules=""all"" border=""1"">
+							<table cellspacing=""0"" rules=""all"" border=""1"" style=""border-collapse:collapse;"">
 								<tr>
 									<th scope=""col"">HeaderText</th><th scope=""col"">HeaderText</th><th scope=""col"">HeaderText</th>
 								</tr><tr>
-									<td><input type=""button"" value=""1"" onclick=""javascript:__doPostBack('ctl01','$0')"" /></td><td><a href=""javascript:__doPostBack('ctl01','$0')"">1</a></td><td><input type=""image"" src="""" alt=""1"" onclick=""javascript:__doPostBack('ctl01','$0')"" border=""0"" /></td>
+									<td><input type=""button"" value=""1"" onclick=""javascript:__doPostBack('ctl01','0')"" /></td><td><a href=""javascript:__doPostBack('ctl01','0')"">1</a></td><td><input type=""image"" src="""" alt=""1"" onclick=""javascript:__doPostBack('ctl01','0')"" style=""border-width:0px;"" /></td>
 								</tr><tr>
-									<td><input type=""button"" value=""2"" onclick=""javascript:__doPostBack('ctl01','$1')"" /></td><td><a href=""javascript:__doPostBack('ctl01','$1')"">2</a></td><td><input type=""image"" src="""" alt=""2"" onclick=""javascript:__doPostBack('ctl01','$1')"" border=""0"" /></td>
+									<td><input type=""button"" value=""2"" onclick=""javascript:__doPostBack('ctl01','1')"" /></td><td><a href=""javascript:__doPostBack('ctl01','1')"">2</a></td><td><input type=""image"" src="""" alt=""2"" onclick=""javascript:__doPostBack('ctl01','1')"" style=""border-width:0px;"" /></td>
 								</tr><tr>
 									<td>FooterText</td><td>FooterText</td><td>FooterText</td>
 								</tr>
 							</table>
-						     </div>";
+						</div>";
 			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml, "RenderingCheckBoxField");
 		}
+
+	
+	
+
 
 		[Test]
 		[Category ("NotWorking")]
@@ -1234,15 +1245,15 @@ namespace MonoTests.System.Web.UI.WebControls
 			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (RenderingTemplateField)).Run ();
 			string RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
 			string OriginControlHtml = @"<div>
-							<table cellspacing=""0"" rules=""all"" border=""1"">
+							<table cellspacing=""0"" rules=""all"" border=""1"" style=""border-collapse:collapse;"">
 								<tr>
-									<th scope=""col""><input name=""ctl01$ctl01$TextBox1"" type=""text"" id=""ctl01_ctl01_TextBox1"" /></th>
+									<th scope=""col""><input name="""" type=""text"" id="""" /></th>
 								</tr><tr>
-									<td><input name=""ctl01$ctl02$TextBox1"" type=""text"" value=""1"" id=""ctl01_ctl02_TextBox1"" /></td>
+									<td><input name="""" type=""text"" value=""1"" id="""" /></td>
 								</tr><tr>
-									<td><input name=""ctl01$ctl03$TextBox1"" type=""text"" value=""2"" id=""ctl01_ctl03_TextBox1"" /></td>
+									<td><input name="""" type=""text"" value=""2"" id="""" /></td>
 								</tr><tr>
-									<td><input name=""ctl01$ctl04$TextBox1"" type=""text"" id=""ctl01_ctl04_TextBox1"" /></td>
+									<td><input name="""" type=""text"" id="""" /></td>
 								</tr>
 							</table>
 						      </div>";
@@ -1250,12 +1261,12 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		
-
 		public static void RenderingTemplateField (Page p)
 		{
 			LiteralControl lcb = new LiteralControl (HtmlDiff.BEGIN_TAG);
 			LiteralControl lce = new LiteralControl (HtmlDiff.END_TAG);
 			GridView grid = new GridView ();
+			grid.ID = "grid";
 			grid.AutoGenerateColumns = false;
 			grid.ShowFooter = true;
 			TemplateField templatefield = new TemplateField ();
@@ -1433,6 +1444,179 @@ namespace MonoTests.System.Web.UI.WebControls
 			grid.DataBind ();
 		}
 
+		///////////////////////////////////////////////////////
+		/////		   GRIDVIEW   POSTBACK           //////
+		///////////////////////////////////////////////////////
+
+		/// <summary>
+		/// Urgent Note!
+		/// All postback event are failed on reason
+		/// System.NotImplementedException: 
+		/// The requested feature is not implemented.
+		/// At System.Web.UI.WebControls.GridView.System.Web.UI.WebControls.IPostBackContainer.GetPostBackOptions (IButtonControl control)
+		/// [0x00000] in C:\cygwin\monobuild\mcs\class\System.Web\System.Web.UI.WebControls\GridView.cs:1891 
+		/// </summary>
+
+		[Test]
+		[Category ("NunitWeb")]
+		[Category ("NotWorking")]
+		public void GridView_PostBackSotring ()
+		{
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (GridView_postback));
+			string pageHTML = t.Run ();
+			Assert.AreEqual (-1, pageHTML.IndexOf ("SortingSuccess"), "BeforeSorting");
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls["__EVENTTARGET"].Value = "mygrid";
+			fr.Controls["__EVENTARGUMENT"].Value = "Sort$Item";
+			t.Request = fr;
+			t.Invoker = PageInvoker.CreateOnLoad (GridView_postback);
+			pageHTML = t.Run ();
+			if (pageHTML.IndexOf ("SortingSuccess") < 0) {
+				Assert.Fail ("SortingFail");
+			}
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		[Category ("NotWorking")]
+		public void GridView_PostBackPaging ()
+		{
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (GridView_postback));
+			string pageHTML = t.Run ();
+			Assert.AreEqual (-1, pageHTML.IndexOf ("PagingSuccess"), "BeforePaging");
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls["__EVENTTARGET"].Value = "mygrid";
+			fr.Controls["__EVENTARGUMENT"].Value = "Page$2";
+			t.Request = fr;
+			t.Invoker = PageInvoker.CreateOnLoad (GridView_postback);
+			pageHTML = t.Run ();
+			if (pageHTML.IndexOf ("PagingSuccess") < 0) {
+				Assert.Fail ("PagingFail");
+			}
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		[Category ("NotWorking")]
+		public void GridView_PostBackDelete ()
+		{
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (GridView_postback));
+			string pageHTML = t.Run ();
+			Assert.AreEqual (-1, pageHTML.IndexOf ("DeleteSuccess"), "BeforeDelete");
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls["__EVENTTARGET"].Value = "mygrid";
+			fr.Controls["__EVENTARGUMENT"].Value = "Delete$0";
+			t.Request = fr;
+			t.Invoker = PageInvoker.CreateOnLoad (GridView_postback);
+			pageHTML = t.Run ();
+			if (pageHTML.IndexOf ("DeleteSuccess") < 0) {
+				Assert.Fail ("DeleteFail");
+			}
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		[Category ("NotWorking")]
+		public void GridView_PostBackEdit ()
+		{
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (GridView_postback));
+			string pageHTML = t.Run ();
+			Assert.AreEqual (-1, pageHTML.IndexOf ("EditSuccess"), "BeforeEdit");
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls["__EVENTTARGET"].Value = "mygrid";
+			fr.Controls["__EVENTARGUMENT"].Value = "Edit$0";
+			t.Request = fr;
+			t.Invoker = PageInvoker.CreateOnLoad (GridView_postback);
+			pageHTML = t.Run ();
+			if (pageHTML.IndexOf ("EditSuccess") < 0) {
+				Assert.Fail ("EditFail");
+			}
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		[Category ("NotWorking")]
+		public void GridView_PostBackSelect ()
+		{
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (GridView_postback));
+			string pageHTML = t.Run ();
+			Assert.AreEqual (-1, pageHTML.IndexOf ("SelectSuccess"), "BeforeSelect");
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls["__EVENTTARGET"].Value = "mygrid";
+			fr.Controls["__EVENTARGUMENT"].Value = "Select$0";
+			t.Request = fr;
+			t.Invoker = PageInvoker.CreateOnLoad (GridView_postback);
+			pageHTML = t.Run ();
+			if (pageHTML.IndexOf ("SelectSuccess") < 0) {
+				Assert.Fail ("SelectFail");
+			}
+		}
+
+		public void GridView_postback (Page p)
+		{
+			PokerGridView b = new PokerGridView ();
+			b.ID = "mygrid";
+			b.PageIndexChanging += new GridViewPageEventHandler (b_PageIndexChanging);
+			b.Sorting += new GridViewSortEventHandler (b_Sorting);
+			b.RowDeleting += new GridViewDeleteEventHandler (b_RowDeleting);
+			b.RowEditing += new GridViewEditEventHandler (b_RowEditing);
+			b.SelectedIndexChanging += new GridViewSelectEventHandler (b_SelectedIndexChanging);
+			ArrayList myds = new ArrayList ();
+			myds.Add ("Norway");
+			myds.Add ("Sweden");
+			myds.Add ("France");
+			myds.Add ("Italy");
+
+			p.Form.Controls.Add (b);
+			b.AllowPaging = true;
+			b.PageSize = 2;
+			b.AllowSorting = true;
+
+			b.AutoGenerateDeleteButton = true;
+			b.AutoGenerateEditButton = true;
+			b.AutoGenerateSelectButton = true;
+
+			b.DataSource = myds;
+			b.DataBind ();
+		}
+
+		public void b_RowEditing (object o, GridViewEditEventArgs e)
+		{
+			((GridView) o).Page.Controls.Add (new LiteralControl ("EditSuccess"));
+			Assert.AreEqual (false, e.Cancel, "EditCancel");
+			Assert.AreEqual (0, e.NewEditIndex, "NewEditIndex");
+		}
+
+		public void b_PageIndexChanging (object o, GridViewPageEventArgs e)
+		{
+			((GridView) o).Page.Controls.Add (new LiteralControl ("PagingSuccess"));
+			Assert.AreEqual(false,e.Cancel,"Cancel");
+		}
+
+		public void b_Sorting (object o, GridViewSortEventArgs e)
+		{
+			((GridView) o).Page.Controls.Add (new LiteralControl ("SortingSuccess"));
+		}
+
+		public void b_RowDeleting (object o, GridViewDeleteEventArgs e)
+		{
+			((GridView) o).Page.Controls.Add (new LiteralControl ("DeleteSuccess"));
+		}
+
+		public void b_SelectedIndexChanging (object o, GridViewSelectEventArgs e)
+		{
+			((GridView) o).Page.Controls.Add (new LiteralControl ("SelectSuccess"));
+		}
 		
 		
 		/// <summary>

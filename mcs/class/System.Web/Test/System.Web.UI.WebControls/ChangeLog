@@ -1,3 +1,12 @@
+2006-07-07 Yoni Klain <yonik@mainsoft.com>
+
+	* added PagerSettingsTest.cs;GridViewRowCollectionTest.cs;
+	ContentTest.cs;GridViewRowTest.cs
+
+2006-07-07 Yoni Klain <yonik@mainsoft.com>
+
+	* GridViewTest.cs, MenuTest.cs added PostBack tests
+
 2006-07-05 Vladimir Krasnov <vladimirk@mainsoft.com>
 	
 	* added CreateUserWizardTest.cs

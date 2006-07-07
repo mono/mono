@@ -123,12 +123,6 @@ namespace MonoTests.System.Web.UI.WebControls
 	[TestFixture]
 	public class MenuTest
 	{	
-		[SetUp]
-		public void SetupTestCase ()
-		{
-			Thread.Sleep (100);
-		}
-
 		[Test]
 		public void Menu_DefaultProperties ()
 		{
@@ -390,7 +384,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 	       	[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]  //Must be running after hosting bug resolve	
+		[Category ("NotWorking")]  
 		public void Menu_RenderBeginTag ()
 		{
 		        new WebTest (PageInvoker.CreateOnLoad (_BeginTagRender)).Run ();
@@ -405,7 +399,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		        string RenderedControlHtml = sw.ToString();
 		        string OriginControlHtml = @"<a href=""#ctl01_SkipLink"">
 		                                     <img alt=""Skip Navigation Links"" src=""/NunitWeb/WebResource.axd?d=gZrz8lvSQfolS1pG07HX9g2&amp;t=632784640484505569"" 
-		                                      width=""0"" height=""0"" style=""border-width:0px;"" />
+		                                      width=""0"" style=""border-width:0px"" height=""0"" style=""border-width:0px;"" />
 		                                     </a><table id=""ctl01"" cellpadding=""0"" cellspacing=""0"" border=""0"">";
 
 
@@ -415,7 +409,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-	        [Category ("NotWorking")]  //Must be running after hosting bug resolve
+	        [Category ("NotWorking")]  
 		public void Menu_RenderEndTag ()
 		{
 		        new WebTest (PageInvoker.CreateOnLoad (_EndTagRender)).Run ();
@@ -431,7 +425,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		        string RenderedControlHtml = sw.ToString ();
 		        string OriginControlHtml = @"<a href=""#ctl01_SkipLink"">
 		                                     <img alt=""Skip Navigation Links"" src=""/NunitWeb/WebResource.axd?d=gZrz8lvSQfolS1pG07HX9g2&amp;t=632784640484505569""
-		                                      width=""0"" height=""0"" style=""border-width:0px;"" />
+		                                      width=""0"" style=""border-width:0px"" height=""0"" style=""border-width:0px;"" />
 		                                     </a><table id=""ctl01"" cellpadding=""0"" cellspacing=""0"" border=""0"">
 		                                     </table><a id=""ctl01_SkipLink""></a>";
 
@@ -509,7 +503,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]  //Must be running after hosting bug resolve
+		[Category ("NotWorking")]  
 		public void Menu_DefaultRender ()
 		{
 		        string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (_DefaultRender)).Run ();
@@ -531,42 +525,43 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 	  	[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]  //Must be running after hosting bug resolve
+		[Category ("NotWorking")]  
 		public void Menu_ItemsRender ()
 		{
 		        string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (_ItemsRender)).Run ();
 		        string RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
-		        string OriginControlHtml = @"<a href=""#ctl01_SkipLink""><img alt=""Skip Navigation Links"" src=""/NunitWeb/WebResource.axd?d=gZrz8lvSQfolS1pG07HX9g2&amp;t=632784640484505569"" width=""0"" height=""0"" border=""0"" />
-		                                     </a><table id=""ctl01"" cellpadding=""0"" cellspacing=""0"" border=""0"">
-		                                     <tr onmouseover=""Menu_HoverStatic(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(event)"" id=""ctl01n0"">
-		                                     <td><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
-		                                     <tr>
-		                                     <td nowrap=""nowrap"" width=""100%""><a href=""javascript:__doPostBack('ctl01','value1')"">root</a></td><td width=""0"">
-		                                     <img src=""/NunitWeb/WebResource.axd?d=jEQEPhExqNH3fus0nmWZ3pFNw-rGIVoBqrGqFcOqB1U1&amp;t=632784640484505569"" alt=""Expand root"" valign=""middle"" /></td>
-		                                     </tr>
-		                                     </table></td>
-		                                     </tr>
-		                                     </table><div id=""ctl01n0Items"" style=""display:none;"">
-		                                     <table border=""0"" cellpadding=""0"" cellspacing=""0"">
-		                                     <tr onmouseover=""Menu_HoverDynamic(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(event)"" id=""ctl01n1"">
-		                                     <td><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
-		                                     <tr>
-		                                     <td nowrap=""nowrap"" width=""100%""><a href=""javascript:__doPostBack('ctl01','value1\\value2')"">node1</a></td>
-		                                     </tr>
-		                                     </table></td>
-		                                     </tr><tr onmouseover=""Menu_HoverDynamic(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(event)"" id=""ctl01n2"">
-		                                     <td><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
-		                                     <tr>
-		                                     <td nowrap=""nowrap"" width=""100%""><a href=""javascript:__doPostBack('ctl01','value1\\value3')"">node2</a></td>
-		                                     </tr>
-		                                     </table></td>
-		                                     </tr>
-		                                     </table><div id=""ctl01n0ItemsUp"" onmouseover=""PopOut_Up(this)"" onmouseout=""PopOut_Stop(this)"" align=""center"" style=""display:none;"">
-		                                     <img src=""/NunitWeb/WebResource.axd?d=Kql4shtTcfCiKn_s1ZX6W6WIJmS2VsB7hDFw8oD-9I01&amp;t=632784640484505569"" alt=""Scroll up"" />
-		                                     </div><div id=""ctl01n0ItemsDn"" onmouseover=""PopOut_Down(this)"" onmouseout=""PopOut_Stop(this)"" align=""center"" style=""display:none;"">
-		                                     <img src=""/NunitWeb/WebResource.axd?d=QxI-WSWnY8jfAZsv_BcOLFGj_CTJTI_bGi0dPzQPCtI1&amp;t=632784640484505569"" alt=""Scroll down"" />
-		                                     </div>
-		                                     </div><a id=""ctl01_SkipLink""></a>";
+			string OriginControlHtml = @"<a href=""#ctl01_SkipLink""><img alt=""Skip Navigation Links"" src=""/NunitWeb/WebResource.axd?d=gZrz8lvSQfolS1pG07HX9g2&amp;t=632784640484505569"" width=""0"" height=""0"" 
+				style=""border-width:0px;"" /></a>
+				<table id=""ctl01"" class=""ctl01_2"" cellpadding=""0"" cellspacing=""0"" border=""0"">
+				<tr onmouseover=""Menu_HoverStatic(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(this)"" id=""ctl01n0"">
+				<td><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
+				<tr>
+				<td style=""white-space:nowrap;width:100%;""><a class=""ctl01_1"" href=""javascript:__doPostBack('ctl01','value1')"">root</a></td><td style=""width:0;"">
+				<img src=""/NunitWeb/WebResource.axd?d=jEQEPhExqNH3fus0nmWZ3pFNw-rGIVoBqrGqFcOqB1U1&amp;t=632784640484505569"" alt=""Expand root"" style=""border-style:none;vertical-align:middle;"" /></td>
+				</tr>
+				</table></td>
+				</tr>
+				</table><div id=""ctl01n0Items"" class=""ctl01_0"">
+				<table border=""0"" cellpadding=""0"" cellspacing=""0"">
+				<tr onmouseover=""Menu_HoverDynamic(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(this)"" id=""ctl01n1"">
+				<td><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
+				<tr>
+				<td style=""white-space:nowrap;width:100%;""><a class=""ctl01_1"" href=""javascript:__doPostBack('ctl01','value1\\value2')"">node1</a></td>
+				</tr>
+				</table></td>
+				</tr><tr onmouseover=""Menu_HoverDynamic(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(this)"" id=""ctl01n2"">
+				<td><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
+				<tr>
+				<td style=""white-space:nowrap;width:100%;""><a class=""ctl01_1"" href=""javascript:__doPostBack('ctl01','value1\\value3')"">node2</a></td>
+				</tr>
+				</table></td>
+				</tr>
+				</table><div class=""ctl01_0"" id=""ctl01n0ItemsUp"" onmouseover=""PopOut_Up(this)"" onmouseout=""PopOut_Stop(this)"" style=""text-align:center;"">
+				<img src=""/NunitWeb/WebResource.axd?d=Kql4shtTcfCiKn_s1ZX6W6WIJmS2VsB7hDFw8oD-9I01&amp;t=632784640484505569"" alt=""Scroll up"" />
+				</div><div class=""ctl01_0"" id=""ctl01n0ItemsDn"" onmouseover=""PopOut_Down(this)"" onmouseout=""PopOut_Stop(this)"" style=""text-align:center;"">
+				<img src=""/NunitWeb/WebResource.axd?d=QxI-WSWnY8jfAZsv_BcOLFGj_CTJTI_bGi0dPzQPCtI1&amp;t=632784640484505569"" alt=""Scroll down"" />
+				</div>
+				</div><a id=""ctl01_SkipLink""></a>";
 
 		        HtmlDiff.AssertAreEqual(OriginControlHtml, RenderedControlHtml,"Render Items");
 		}
@@ -713,7 +708,11 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Test]
 		public void MenuClass ()
 		{
+#if DOT_NET
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.menuclass.aspx", "menuclass.aspx");
+#else
 			WebTest.CopyResource (GetType (), "menuclass.aspx", "menuclass.aspx");
+#endif
 			string res = new WebTest ("menuclass.aspx").Run ();
 			string menua_pattern="<table[^>]*class=\"[^\"]*menua[^\"]*\"[^>]*>";
 			Assert.IsTrue (Regex.IsMatch (res, ".*"+menua_pattern+".*",
@@ -722,6 +721,37 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.IsFalse (Regex.IsMatch (res, ".*"+menua_pattern+".*"+menua_pattern+".*",
 				RegexOptions.IgnoreCase|RegexOptions.Singleline),
 				"check that <table class=\"menua\"> is found only once");
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		[Category ("NotWorking")] 
+		public void Menu_PostBack ()
+		{
+#if DOT_NET
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PostBackMenuTest.aspx", "PostBackMenuTest.aspx");
+#else
+			WebTest.CopyResource (GetType (), "PostBackMenuTest.aspx", "PostBackMenuTest.aspx");
+#endif
+			WebTest t = new WebTest ("PostBackMenuTest.aspx");
+			string str = t.Run ();
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls["__EVENTTARGET"].Value = "Menu1";
+			fr.Controls["__EVENTARGUMENT"].Value = "root\\node2";
+			t.Request = fr;
+			t.Invoker = PageInvoker.CreateOnLoad (_MenuItemsPost);
+			t.Run ();
+		}
+
+		public static void _MenuItemsPost (Page p)
+		{
+			foreach (Control c in p.Form.Controls) {
+				Menu m = c as Menu;
+				if (m != null)
+					Assert.AreEqual ("node2", m.SelectedValue, "MenuItemsPostBack");
+			}
 		}
 	}
 }

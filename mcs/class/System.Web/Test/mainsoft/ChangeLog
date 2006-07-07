@@ -1,3 +1,7 @@
+2006-07-07 Yoni Klain <yonik@mainsoft.com>
+
+	* added PostBackMenuTest.aspx embedded resources for MenuPostBack test
+
 2006-27-06 Yoni Klain <yonik@mainsoft.com>
 	
 	* NunitWebTest.cs : Changes for embedded resources
