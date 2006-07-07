@@ -1,5 +1,9 @@
 2006-07-06  Chris Toshok  <toshok@ximian.com>
 
+	* LinkLabel.cs: revert the SetStyle change.
+
+2006-07-06  Chris Toshok  <toshok@ximian.com>
+
 	* LinkLabel.cs (.ctor): SetStyle Selectable to true.
 	(OnEnableChanged): s/Refresh/Invalidate
 	(OnGotFocus): if we have a focused index already, refocus it (so
@@ -21,7 +25,7 @@
 	links, and call parent.SelectNextControl if we don't have another
 	link to focus in the given direction.
 	(CreateLinkPieces): call Invalidate instead of Refresh.
-
+	
 2006-07-06  Chris Toshok  <toshok@ximian.com>
 
 	* ThemeWin32Classic.cs: DrawLinkLabel changes to accomodate the

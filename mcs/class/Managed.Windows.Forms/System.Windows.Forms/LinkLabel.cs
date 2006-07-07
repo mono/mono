@@ -99,7 +99,7 @@ namespace System.Windows.Forms
 			LinkColor = Color.FromArgb (255, 0, 0, 255);
 			VisitedLinkColor = Color.FromArgb (255, 128, 0, 128);
 			SetStyle (ControlStyles.Opaque, true);
-			SetStyle (ControlStyles.Selectable, true);
+			SetStyle (ControlStyles.Selectable, false);
 		}
 
 		#region Public Properties
