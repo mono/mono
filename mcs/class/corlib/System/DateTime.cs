@@ -445,7 +445,11 @@ namespace System
 		public static DateTime UtcNow 
 		{
 			get {
+#if NET_2_0
+				return new DateTime (GetNow (), DateTimeKind.Utc);
+#else
 				return new DateTime (GetNow ());
+#endif
 			}
 		}
 

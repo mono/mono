@@ -1,3 +1,9 @@
+2006-07-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TimeZone.cs : consider DateTimeKind in ToLocalTime() and 
+	  ToUniversalTime(). Fixed bug #78784. Patch by Thong Nguyen.
+	* DateTime.cs : DateTimeKind for UtcNow should be Utc.
+
 2006-06-28  Kornél Pál  <kornelpal@gmail.com>
 
 	* Char.cs: Implemented IsHighSurrogate and IsLowSurrogate methods.

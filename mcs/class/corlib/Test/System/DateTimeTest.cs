@@ -1463,6 +1463,33 @@ public class DateTimeTest : Assertion
 	{
 		((IConvertible)DateTime.Now).ToType (typeof (ulong), null);
 	}
+
+#if NET_2_0
+	[Test]
+	public void Kind ()
+	{
+		if (DateTime.Now == DateTime.UtcNow)
+			return; // This test does not make sense.
+
+		DateTime utc = DateTime.UtcNow;
+		DateTime now = DateTime.Now;
+		DateTime utctouniv = utc.ToUniversalTime ();
+		DateTime nowtouniv = now.ToUniversalTime ();
+		DateTime utctoloc = utc.ToLocalTime ();
+		DateTime nowtoloc = now.ToLocalTime ();
+
+		AssertEquals ("#1", DateTimeKind.Utc, utc.Kind);
+		AssertEquals ("#2", DateTimeKind.Local, now.Kind);
+		AssertEquals ("#3", DateTimeKind.Utc, utctouniv.Kind);
+		AssertEquals ("#4", DateTimeKind.Utc, nowtouniv.Kind);
+		AssertEquals ("#5", DateTimeKind.Local, utctoloc.Kind);
+		AssertEquals ("#6", DateTimeKind.Local, nowtoloc.Kind);
+		AssertEquals ("#7", utc, utctouniv);
+		AssertEquals ("#8", utc, nowtouniv);
+		AssertEquals ("#9", now, nowtoloc);
+		AssertEquals ("#10", now, utctoloc);
+	}
+#endif
 }
 
 }
