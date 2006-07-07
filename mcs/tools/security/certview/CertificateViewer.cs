@@ -665,14 +665,14 @@ namespace Mono.Tools.CertView {
 				int critical = (xe.Critical ? 4 : 3);
 				string name = xe.Name;
 				object tag = null;
-				if (name == xe.OID)
+				if (name == xe.Oid)
 					tag = monospaceFont;
 				ListViewItem lvi = new ListViewItem (name, critical);
 				lvi.Tag = tag;
 				if (critical == 4)
 					lvi.ForeColor = Color.Red;
 				string exts = xe.ToString ();
-				if (xe.Name == xe.OID)
+				if (xe.Name == xe.Oid)
 					lvi.SubItems.Add (cf.Extension (i, false));
 				else 
 					lvi.SubItems.Add (CertificateFormatter.OneLine (exts));
