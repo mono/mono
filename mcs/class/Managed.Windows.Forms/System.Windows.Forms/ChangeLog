@@ -1,3 +1,11 @@
+2006-07-07  Alexander Olk  <alex.olk@googlemail.com>
+
+	* FileDialog.cs:
+	  - Fixed really nasty bug #78771
+	  - Don't block the whole GUI when reading directories with a lot of
+	    entries. Use an other thread instead and call BeginInvoke to
+	    update the ListView in MWFFileView
+
 2006-07-07  Chris Toshok  <toshok@ximian.com>
 
 	* Control.cs (Dispose): release any Capture when disposing.

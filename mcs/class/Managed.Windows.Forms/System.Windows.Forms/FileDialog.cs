@@ -34,6 +34,7 @@ using System.IO;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Xml;
+using System.Threading;
 
 namespace System.Windows.Forms {
 	#region FileDialog
@@ -256,6 +257,7 @@ namespace System.Windows.Forms {
 			
 			// fileTypeComboBox
 			fileTypeComboBox.Anchor = ((AnchorStyles)(((AnchorStyles.Bottom | AnchorStyles.Left) | AnchorStyles.Right)));
+			fileTypeComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
 			fileTypeComboBox.Location = new Point (195, 356);
 			fileTypeComboBox.Size = new Size (245, 21);
 			fileTypeComboBox.TabIndex = 2;
@@ -1906,6 +1908,7 @@ namespace System.Windows.Forms {
 		public MWFFileView (MWFVFS vfs)
 		{
 			this.vfs = vfs;
+			vfs.RegisterUpdateDelegate (new MWFVFS.UpdateDelegate (RealFileViewUpdate), this);
 			
 			SuspendLayout ();
 			
@@ -2039,7 +2042,7 @@ namespace System.Windows.Forms {
 			set {
 				filterIndex = value;
 				if (Visible)
-					UpdateFileView (currentFolder);
+					UpdateFileView ();
 			}
 			
 			get {
@@ -2206,7 +2209,7 @@ namespace System.Windows.Forms {
 			EndUpdate ();
 
 			try {
-				UpdateFileView (folder);
+				UpdateFileView ();
 			} catch (Exception e) {
 				if (should_push)
 					PopDir ();
@@ -2214,18 +2217,18 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		public void UpdateFileView (string folder)
+		public void UpdateFileView ()
 		{
-			ArrayList directoriesArrayList;
-			ArrayList fileArrayList;
-			
 			if (filterArrayList != null && filterArrayList.Count != 0) {
 				FilterStruct fs = (FilterStruct)filterArrayList [filterIndex - 1];
 				
-				vfs.GetFolderContent (fs.filters, out directoriesArrayList, out fileArrayList);
+				vfs.GetFolderContent (fs.filters);
 			} else
-				vfs.GetFolderContent (out directoriesArrayList, out fileArrayList);
-			
+				vfs.GetFolderContent ();
+		}
+		
+		public void RealFileViewUpdate (ArrayList directoriesArrayList, ArrayList fileArrayList)
+		{
 			BeginUpdate ();
 			
 			Items.Clear ();
@@ -2437,7 +2440,7 @@ namespace System.Windows.Forms {
 			if (senderMenuItem == showHiddenFilesMenuItem) {
 				senderMenuItem.Checked = !senderMenuItem.Checked;
 				showHiddenFiles = senderMenuItem.Checked;
-				UpdateFileView (currentFolder);
+				UpdateFileView ();
 			}
 		}
 		
@@ -2690,6 +2693,15 @@ namespace System.Windows.Forms {
 		
 		public static Hashtable MyComputerDevicesPrefix = new Hashtable ();
 		
+		public delegate void UpdateDelegate (ArrayList folders, ArrayList files);
+		private UpdateDelegate updateDelegate;
+		private Control calling_control;
+		
+		private ThreadStart get_folder_content_thread_start;
+		private Thread worker;
+		private WorkerThread workerThread = null;
+		private StringCollection the_filters;
+		
 		public MWFVFS ()
 		{
 			if ((platform == 4) || (platform == 128)) {
@@ -2704,14 +2716,73 @@ namespace System.Windows.Forms {
 			return fileSystem.ChangeDirectory (folder);
 		}
 		
-		public void GetFolderContent (out ArrayList folders_out, out ArrayList files_out)
+		public void GetFolderContent ()
 		{
-			fileSystem.GetFolderContent (null, out folders_out, out files_out);
+			GetFolderContent (null);
 		}
 		
-		public void GetFolderContent (StringCollection filters, out ArrayList folders_out, out ArrayList files_out)
+		public void GetFolderContent (StringCollection filters)
 		{
-			fileSystem.GetFolderContent (filters, out folders_out, out files_out);
+			the_filters = filters;
+
+			if (workerThread != null) {
+				workerThread.Stop ();
+				workerThread = null;
+			}
+
+			workerThread = new WorkerThread (fileSystem, the_filters, updateDelegate, calling_control);
+			
+			get_folder_content_thread_start = new ThreadStart (workerThread.GetFolderContentThread);
+			worker = new Thread (get_folder_content_thread_start);
+			worker.IsBackground = true;
+			worker.Start();
+		}
+		
+		internal class WorkerThread
+		{
+			private FileSystem fileSystem;
+			private StringCollection the_filters;
+			private UpdateDelegate updateDelegate;
+			private Control calling_control;
+			private readonly object lockobject = new object ();
+			private bool stopped = false;
+			
+			public WorkerThread (FileSystem fileSystem, StringCollection the_filters, UpdateDelegate updateDelegate, Control calling_control)
+			{
+				this.fileSystem = fileSystem;
+				this.the_filters = the_filters;
+				this.updateDelegate = updateDelegate;
+				this.calling_control = calling_control;
+			}
+			
+			public void GetFolderContentThread()
+			{
+				ArrayList folders;
+				ArrayList files;
+				
+				fileSystem.GetFolderContent (the_filters, out folders, out files);
+				
+				if (stopped)
+					return;
+				
+				if (updateDelegate != null) {
+					lock (this) {
+						object[] objectArray = new object[2];
+						
+						objectArray[0] = folders;
+						objectArray[1] = files;
+						
+						calling_control.BeginInvoke (updateDelegate, objectArray);
+					}
+				}
+			}
+			
+			public void Stop ()
+			{
+				lock (lockobject) {
+					stopped = true;
+				}
+			}
 		}
 		
 		public void WriteRecentlyUsedFiles (string filename)
@@ -2754,6 +2825,12 @@ namespace System.Windows.Forms {
 		public string GetParent ()
 		{
 			return fileSystem.GetParent ();
+		}
+		
+		public void RegisterUpdateDelegate(UpdateDelegate updateDelegate, Control control)
+		{
+			this.updateDelegate = updateDelegate;
+			calling_control = control;
 		}
 	}
 	#endregion
