@@ -1,5 +1,29 @@
 2006-07-06  Chris Toshok  <toshok@ximian.com>
 
+	* LinkLabel.cs (.ctor): SetStyle Selectable to true.
+	(OnEnableChanged): s/Refresh/Invalidate
+	(OnGotFocus): if we have a focused index already, refocus it (so
+	if we mouse out/in to the window it'll focus the right link).
+	(OnKeyDown): move the tab handling out of here.
+	(OnLostFocus): don't set focused_index to -1, so we can refocus it
+	when we lose focus.
+	(OnMouseDown): don't Capture here - Control handles it.  Also,
+	focus the active link.
+	(OnMouseUp): don't deal with Capture.
+	(OnPaintBackgroundInternal): remove.
+	(OnTextAlignChanged): CreateLinkPieces before calling the
+	superclass's method.
+	(OnTextChanged): call CreateLinkPieces before calling superclass's
+	method.
+	(ProcessDialogKey): handle Tab here, and call Select(bool,bool) to
+	move around.
+	(Select): implement this, moving the selection between different
+	links, and call parent.SelectNextControl if we don't have another
+	link to focus in the given direction.
+	(CreateLinkPieces): call Invalidate instead of Refresh.
+
+2006-07-06  Chris Toshok  <toshok@ximian.com>
+
 	* ThemeWin32Classic.cs: DrawLinkLabel changes to accomodate the
 	new LinkLabel internals.
 

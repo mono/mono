@@ -98,8 +98,8 @@ namespace System.Windows.Forms
 			DisabledLinkColor = ThemeEngine.Current.ColorGrayText;
 			LinkColor = Color.FromArgb (255, 0, 0, 255);
 			VisitedLinkColor = Color.FromArgb (255, 128, 0, 128);
-			SetStyle (ControlStyles.Selectable, false);
 			SetStyle (ControlStyles.Opaque, true);
+			SetStyle (ControlStyles.Selectable, true);
 		}
 
 		#region Public Properties
@@ -256,7 +256,7 @@ namespace System.Windows.Forms
 		protected override void OnEnabledChanged (EventArgs e)
 		{
 			base.OnEnabledChanged (e);
-			Refresh ();
+			Invalidate ();
 		}
 
 		protected override void OnFontChanged (EventArgs e)
@@ -269,39 +269,29 @@ namespace System.Windows.Forms
 		protected override void OnGotFocus (EventArgs e)
 		{
 			base.OnGotFocus (e);			
-			
-			// Set focus to the first enabled link piece			
-			for (int i = 0; i < sorted_links.Length; i ++) {
-				if (sorted_links[i].Enabled) {
-					sorted_links[i].Focused = true;
-					focused_index = i;
-					break;
+
+			// Set focus to the first enabled link piece
+			if (focused_index == -1) {
+				for (int i = 0; i < sorted_links.Length; i ++) {
+					if (sorted_links[i].Enabled) {
+						focused_index = i;
+						break;
+					}
 				}
 			}
+
+			if (focused_index != -1)
+				sorted_links[focused_index].Focused = true;
 		}
 
 		protected override void OnKeyDown (KeyEventArgs e)
 		{
-			base.OnKeyDown(e);
-
-			// Set focus to the next link piece
-			if (e.KeyCode == Keys.Tab || e.KeyCode == Keys.Right) {
-				if (focused_index != -1) {
-					sorted_links[focused_index].Focused = false;
-					for (int n = focused_index + 1; n < sorted_links.Length; n++) {
-						if (sorted_links[n].Enabled) {
-							sorted_links[n].Focused = true;
-							focused_index = n;
-							e.Handled = true;
-							return;
-						}		
-					}
-				}
-			} else if (e.KeyCode == Keys.Return) {
-				if (focused_index != -1) {
+			if (e.KeyCode == Keys.Return) {
+				if (focused_index != -1)
 					OnLinkClicked (new LinkLabelLinkClickedEventArgs (sorted_links[focused_index]));
-				}
 			}
+
+			base.OnKeyDown(e);
 		}
 
 		protected virtual void OnLinkClicked (LinkLabelLinkClickedEventArgs e)
@@ -317,7 +307,6 @@ namespace System.Windows.Forms
 			// Clean focus in link pieces
 			if (focused_index != -1)
 				sorted_links[focused_index].Focused = false;
-			focused_index = -1;
 		}
 
 		protected override void OnMouseDown (MouseEventArgs e)
@@ -325,7 +314,6 @@ namespace System.Windows.Forms
 			if (!Enabled) return;
 
 			base.OnMouseDown (e);
-			this.Capture = true;
 
 			for (int i = 0; i < sorted_links.Length; i ++) {
 				if (sorted_links[i].Contains (e.X, e.Y) && sorted_links[i].Enabled) {
@@ -333,6 +321,8 @@ namespace System.Windows.Forms
 					if (focused_index != -1)
 						sorted_links[focused_index].Focused = false;
 					active_link = sorted_links[i];
+					focused_index = i;
+					sorted_links[focused_index].Focused = true;
 					break;
 				}
 			}
@@ -383,7 +373,6 @@ namespace System.Windows.Forms
 			if (!Enabled) return;
 
 			base.OnMouseUp (e);
-			this.Capture = false;
 
 			if (active_link == null)
 				return;
@@ -404,10 +393,6 @@ namespace System.Windows.Forms
 			// Do not call base.OnPaint since it's the Label class 
 		}
 
-		internal override void OnPaintBackgroundInternal(PaintEventArgs e) {
-			base.OnPaintBackground (e);
-		}
-
 		protected override void OnPaintBackground (PaintEventArgs e)
 		{
 			base.OnPaintBackground (e);
@@ -415,13 +400,14 @@ namespace System.Windows.Forms
 
 		protected override void OnTextAlignChanged (EventArgs e)
 		{
-			base.OnTextAlignChanged (e);
 			CreateLinkPieces ();			
+			base.OnTextAlignChanged (e);
 		}
 
 		protected override void OnTextChanged (EventArgs e)
 		{
-			base.OnTextChanged (e);			
+			CreateLinkPieces ();
+			base.OnTextChanged (e);
 		}
 		
 		protected Link PointInLink (int x, int y)
@@ -435,12 +421,41 @@ namespace System.Windows.Forms
 
 		protected override bool ProcessDialogKey (Keys keyData)
 		{
+			if ((keyData & Keys.KeyCode) ==  Keys.Tab) {
+				Select (true, (keyData & Keys.Shift) == 0);
+				return true;
+			}
 			return base.ProcessDialogKey (keyData);
 		}
 
 		protected override void Select (bool directed, bool forward)
 		{
-			base.Select (directed, forward);
+			if (directed) {
+				if (focused_index != -1)
+					sorted_links[focused_index].Focused = false;
+
+				if (forward) {
+					for (int n = focused_index + 1; n < sorted_links.Length; n++) {
+						if (sorted_links[n].Enabled) {
+							sorted_links[n].Focused = true;
+							focused_index = n;
+							return;
+						}
+					}
+				}
+				else {
+					for (int n = focused_index - 1; n >= 0; n--) {
+						if (sorted_links[n].Enabled) {
+							sorted_links[n].Focused = true;
+							focused_index = n;
+							return;
+						}
+					}
+				}
+
+				if (parent != null)
+					parent.SelectNextControl (this, forward, false, true, true);
+			}
 		}
 
 		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
@@ -546,8 +561,7 @@ namespace System.Windows.Forms
 			for (int i = 0; i < pieces.Length; i ++)
 				pieces[i].region = regions[i];
 
-			if (Visible && IsHandleCreated)
-				Refresh ();
+			Invalidate ();
 		}
 
 		private void SortLinks ()
