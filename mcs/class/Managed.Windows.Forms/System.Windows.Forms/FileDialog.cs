@@ -1905,6 +1905,8 @@ namespace System.Windows.Forms {
 		private int old_menuitem_index;
 		private bool do_update_view = false;
 		
+		private int platform = (int) Environment.OSVersion.Platform;
+		
 		public MWFFileView (MWFVFS vfs)
 		{
 			this.vfs = vfs;
@@ -1975,8 +1977,6 @@ namespace System.Windows.Forms {
 			ContextMenu = contextMenu;
 			
 			ResumeLayout (false);
-			
-//			currentFolder = Environment.CurrentDirectory;
 			
 			KeyDown += new KeyEventHandler (MWF_KeyDown);
 		}
@@ -2116,11 +2116,19 @@ namespace System.Windows.Forms {
 			if (Directory.Exists (Path.Combine (folder, tmp_filename))) {
 				int i = 1;
 				
-				tmp_filename = tmp_filename + " (" + i + ")";
+				if ((platform == 4) || (platform == 128)) {
+					tmp_filename = tmp_filename + "-" + i;
+				} else {
+					tmp_filename = tmp_filename + " (" + i + ")";
+				}
 				
 				while (Directory.Exists (Path.Combine (folder, tmp_filename))) {
 					i++;
-					tmp_filename = "New Folder" + " (" + i + ")";
+					if ((platform == 4) || (platform == 128)) {
+						tmp_filename = "New Folder" + "-" + i;
+					} else {
+						tmp_filename = "New Folder" + " (" + i + ")";
+					}
 				}
 			}
 			

@@ -1,5 +1,10 @@
 2006-07-07  Alexander Olk  <alex.olk@googlemail.com>
 
+	* FileDialog.cs: Don't use brackets for new folders if they exist
+	  under *nix. Instead use -(number of existing folders +1).
+
+2006-07-07  Alexander Olk  <alex.olk@googlemail.com>
+
 	* FileDialog.cs:
 	  - Fixed really nasty bug #78771
 	  - Don't block the whole GUI when reading directories with a lot of
