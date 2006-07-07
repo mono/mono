@@ -735,6 +735,8 @@ namespace System.Windows.Forms
 
 		protected override void Dispose(bool disposing) {
 			if (disposing) {
+				Capture = false;
+
 				if (dc_mem!=null) {
 					dc_mem.Dispose();
 					dc_mem=null;

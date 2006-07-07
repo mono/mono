@@ -1,5 +1,9 @@
 2006-07-07  Chris Toshok  <toshok@ximian.com>
 
+	* Control.cs (Dispose): release any Capture when disposing.
+
+2006-07-07  Chris Toshok  <toshok@ximian.com>
+
 	* LinkLabel.cs (Select): if we chain up to the parent, set
 	focused_index to -1 so we'll search for the first available link
 	the next time the user tabs into us.  Also, if the direction is
