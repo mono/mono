@@ -87,6 +87,10 @@ When passed, DIR will be set for the MONO_CFG_DIR environment variable
 Compresses the assemblies before embedding. This results in smaller
 executable files, but increases startup time and requires zlib to be
 installed on the target system.
+.SH WINDOWS
+On Windows systems, it it necessary to have  Unix-like toolchain to be
+installed for mkbundle to work.  You can use cygwin's and install gcc,
+gcc-mingw and as packages. 
 .SH ENVIRONMENT VARIABLES
 .TP
 .I "AS"
