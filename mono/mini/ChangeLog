@@ -1,5 +1,10 @@
 2006-07-08  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-exceptions.c (mono_setup_altstack): Fix a memory leak.
+
+	* mini.c: Applied patch from Joachim Ante (joe@otee.dk). Fix some shutdown 
+	leaks.
+
 	* helpers.c (mono_disassemble_code): Avoid using fixed temporary files. Fixes
 	#78775.
 
