@@ -1792,9 +1792,18 @@ namespace Mono.CSharp {
 			if (mb.IsSpecialName) {
 				PropertyInfo pi = PropertyExpr.AccessorTable [mb] as PropertyInfo;
 				if (pi != null) {
-					// FIXME: This is buggy as properties from this assembly are included as well
+					if (TypeManager.LookupDeclSpace (pi.DeclaringType) == null)
+						return GetMemberObsoleteAttribute (pi);
+
 					return null;
-					//return GetMemberObsoleteAttribute (pi);
+				}
+
+				EventInfo ei = EventExpr.AccessorTable [mb] as EventInfo;
+				if (ei != null) {
+					if (TypeManager.LookupDeclSpace (ei.DeclaringType) == null)
+						return GetMemberObsoleteAttribute (ei);
+
+					return null;
 				}
 			}
 

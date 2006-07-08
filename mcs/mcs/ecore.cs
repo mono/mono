@@ -3524,6 +3524,8 @@ namespace Mono.CSharp {
 
 		bool is_static;
 		MethodInfo add_accessor, remove_accessor;
+
+		internal static PtrHashtable AccessorTable = new PtrHashtable (); 
 		
 		public EventExpr (EventInfo ei, Location loc)
 		{
@@ -3533,6 +3535,10 @@ namespace Mono.CSharp {
 
 			add_accessor = TypeManager.GetAddMethod (ei);
 			remove_accessor = TypeManager.GetRemoveMethod (ei);
+			if (add_accessor != null)
+				AccessorTable [add_accessor] = ei;
+			if (remove_accessor != null)
+				AccessorTable [remove_accessor] = ei;
 			
 			if (add_accessor.IsStatic || remove_accessor.IsStatic)
 				is_static = true;
