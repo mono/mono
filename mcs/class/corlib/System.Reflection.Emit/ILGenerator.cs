@@ -705,8 +705,12 @@ namespace System.Reflection.Emit {
 			int token = token_gen.GetToken (method);
 			make_room (6);
 			ll_emit (opcode);
-			if (method.DeclaringType.Module == module)
-				add_token_fixup (method);
+			Type declaringType = method.DeclaringType;
+			// Might be a DynamicMethod with no declaring type
+			if (declaringType != null) {
+				if (declaringType.Module == module)
+					add_token_fixup (method);
+			}
 			emit_int (token);
 			if (method.ReturnType != void_type)
 				cur_stack ++;
@@ -719,8 +723,12 @@ namespace System.Reflection.Emit {
 		{
 			make_room (6);
 			ll_emit (opcode);
-			if (method.DeclaringType.Module == module)
-				add_token_fixup (method);
+			// Might be a DynamicMethod with no declaring type
+			Type declaringType = method.DeclaringType;
+			if (declaringType != null) {
+				if (declaringType.Module == module)
+					add_token_fixup (method);
+			}
 			emit_int (token);
 			if (method.ReturnType != void_type)
 				cur_stack ++;

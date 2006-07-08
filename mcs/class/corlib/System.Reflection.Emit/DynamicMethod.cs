@@ -63,6 +63,7 @@ namespace System.Reflection.Emit {
 		private Delegate deleg;
 		private MonoMethod method;
 		private ParameterBuilder[] pinfo;
+		internal bool creating;
 
 		public DynamicMethod (string name, Type returnType, Type[] parameterTypes, Module m) : this (name, returnType, parameterTypes, m, false) {
 		}
@@ -110,8 +111,28 @@ namespace System.Reflection.Emit {
 
 		private void CreateDynMethod () {
 			if (mhandle.Value == IntPtr.Zero) {
-				if (ilgen != null)
-					ilgen.label_fixup ();
+				if (ilgen == null)
+					throw new InvalidOperationException ("Method '" + name + "' does not have a method body.");
+
+				ilgen.label_fixup ();
+
+				// Have to create all DynamicMethods referenced by this one
+				try {
+					// Used to avoid cycles
+					creating = true;
+					if (refs != null) {
+						for (int i = 0; i < refs.Length; ++i) {
+							if (refs [i] is DynamicMethod) {
+								DynamicMethod m = (DynamicMethod)refs [i];
+								if (!m.creating)
+									m.CreateDynMethod ();
+							}
+						}
+					}
+				} finally {
+					creating = false;
+				}
+
 				create_dynamic_method (this);
 			}
 		}
