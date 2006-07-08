@@ -1,3 +1,8 @@
+2006-07-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* domain.c appdomain.c threads.c monitor.c object.c gc.c: Applied patch from
+	Joachim Ante (joe@otee.dk). Fix some shutdown leaks.
+
 2006-07-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* process.c: In ves_icall_System_Diagnostics_Process_GetModules_internal 
@@ -163,6 +168,12 @@
 	(mono_string_to_lpstr): Fix a warning on windows.
 
 2006-05-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* class-internals.h (MonoClass): Removed obsolete 'dummy' flag.
+
+	* reflection.c loader.c: Removed references to 'dummy' flag.
+
+	* loader.c (mono_loader_error_prepare_exception): Fix a warning.
 
 	* threadpool.c: Make ASyncCall a copy of the managed MonoAsyncCall class so
 	it gets GC tracking.
