@@ -1,3 +1,8 @@
+2006-07-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* helpers.c (mono_disassemble_code): Avoid using fixed temporary files. Fixes
+	#78775.
+
 2006-07-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c: Fix solaris/x86 exception handling.
