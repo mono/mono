@@ -1,5 +1,10 @@
 2006-07-08  Marek Safar  <marek.safar@seznam.cz>
 
+	* expression.cs (Binary.ResolveOperator): Don't crash when null is assigned
+	to an event.
+
+2006-07-08  Marek Safar  <marek.safar@seznam.cz>
+
 	* attribute.cs (AttributeTester.GetMethodObsoleteAttribute): Fixed to look
 	for accessors as well.
 	* ecore.cs (EventExpr): Add AccessorTable.

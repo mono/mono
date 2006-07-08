@@ -1847,8 +1847,8 @@ namespace Mono.CSharp {
 							r = right.Type;
 						}
 					}
-				
-					if (TypeManager.IsDelegateType (r)){
+
+					if (TypeManager.IsDelegateType (r) || right is NullLiteral){
 						MethodInfo method;
 						ArrayList args = new ArrayList (2);
 					
@@ -1861,7 +1861,7 @@ namespace Mono.CSharp {
 						else
 							method = TypeManager.delegate_remove_delegate_delegate;
 						
-						if (l != r) {
+						if (l != r && !(right is NullLiteral)) {
 							Error_OperatorCannotBeApplied ();
 							return null;
 						}

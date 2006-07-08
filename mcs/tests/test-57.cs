@@ -35,6 +35,7 @@ public class Blah {
 	{
 		Button1.Click += new EventHandler (Button1_Click);
 		Button1.Click += new EventHandler (Foo_Click);
+		Button1.Click += null;
 	}
 
 	public void Button1_Click (int i, int j)
