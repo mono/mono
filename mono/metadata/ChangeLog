@@ -1,5 +1,7 @@
 2006-07-08  Zoltan Varga  <vargaz@gmail.com>
 
+	* reflection.c (resolve_object): Add support for DynamicMethod.
+
 	* domain.c appdomain.c threads.c monitor.c object.c gc.c: Applied patch from
 	Joachim Ante (joe@otee.dk). Fix some shutdown leaks.
 
