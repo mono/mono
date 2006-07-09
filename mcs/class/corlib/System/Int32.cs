@@ -144,7 +144,7 @@ namespace System {
 						val = checked (val * 10 + (c - '0') * sign);
 						digits_seen = true;
 					} catch (OverflowException e) {
-						exc = new OverflowException ();
+						exc = e;
 						return false;
 					}
 				} else {
