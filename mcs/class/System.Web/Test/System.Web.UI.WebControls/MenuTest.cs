@@ -725,7 +725,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")] 
 		public void Menu_PostBack ()
 		{
 #if DOT_NET
@@ -741,7 +740,9 @@ namespace MonoTests.System.Web.UI.WebControls
 			fr.Controls["__EVENTTARGET"].Value = "Menu1";
 			fr.Controls["__EVENTARGUMENT"].Value = "root\\node2";
 			t.Request = fr;
-			t.Invoker = PageInvoker.CreateOnLoad (_MenuItemsPost);
+			PageDelegates pd = new PageDelegates ();
+			pd.PreRender = _MenuItemsPost;
+			t.Invoker = new PageInvoker (pd);
 			t.Run ();
 		}
 

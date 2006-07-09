@@ -1,7 +1,10 @@
 2006-07-09 Yoni Klain <yonik@mainsoft.com>
 
-	* ContentTest.cs changes on event test;
+	* MenuTest.cs changes on postback;
 
+2006-07-09 Yoni Klain <yonik@mainsoft.com>
+
+	* ContentTest.cs changes on event test;
 
 2006-07-07 Yoni Klain <yonik@mainsoft.com>
 
