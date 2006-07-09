@@ -367,7 +367,6 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void bug78468 ()
 		{
 			string assemblyFileNameA = Path.Combine (Path.GetTempPath (),

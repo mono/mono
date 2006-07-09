@@ -271,6 +271,9 @@ namespace System.Reflection {
 			if (info.ReferencedAssembly != null)
 				return info.ReferencedAssembly.GetManifestResourceStream (name);
 			if ((info.FileName != null) && (info.ResourceLocation == 0)) {
+				if (fromByteArray)
+					return null;
+
 				string filename = Path.Combine (Path.GetDirectoryName (Location),
 											info.FileName);
 				return new FileStream (filename, FileMode.Open, FileAccess.Read);

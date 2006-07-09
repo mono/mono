@@ -1,3 +1,8 @@
+2006-07-09  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Assembly.cs: When assembly is loaded from byte array, return null
+	for linked resources in GetManifestResourceStream. Fixes bug #78468.
+
 2006-07-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* Binder.cs: Add back the support for BindingFlags.ExactBinding. Fixes #78592.
