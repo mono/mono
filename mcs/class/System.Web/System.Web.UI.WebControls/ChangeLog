@@ -1,5 +1,14 @@
 2006-07-06	Konstantin Triger <kostat@mainsoft.com>
 
+        * GridView.cs: always create Header/Fotter rows, but render only when
+        	ShowHeader/Footer is true. Compute Header/Footer rows from rows
+        	collection.
+        * CheckBoxField.cs: add override to ApplyFormatInEditMode,
+        	add ToolTip and Text to the created CheckBox,
+        	wrap exception thrown in OnDataBindField in httpException.
+
+2006-07-06	Konstantin Triger <kostat@mainsoft.com>
+
         * DataControlField.cs,BoundField.cs: bug fixes found by BoundFieldTest.
 
 2006-07-05	Konstantin Triger <kostat@mainsoft.com>

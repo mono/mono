@@ -186,7 +186,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void CheckBoxField_InitializeDataCell ()
 		{
 			PokerCheckBoxField field = new PokerCheckBoxField ();
@@ -208,7 +207,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void CheckBoxField_OnDataBindField ()
 		{
 			Page page = new Page ();
@@ -227,7 +225,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (HttpException))]
 		public void CheckBoxField_OnDataBindFieldException ()
 		{
@@ -245,7 +242,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException(typeof(NotSupportedException))]
 		public void CheckBoxField_GetApplyFormatInEditModeExeption ()
 		{
@@ -254,7 +250,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (NotSupportedException))]
 		public void CheckBoxField_SetApplyFormatInEditModeExeption ()
 		{

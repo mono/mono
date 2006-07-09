@@ -41,6 +41,14 @@ namespace System.Web.UI.WebControls {
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class CheckBoxField : BoundField
 	{
+		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
+		[BrowsableAttribute (false)]
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+		public override bool ApplyFormatInEditMode {
+			get { throw GetNotSupportedPropException ("ApplyFormatInEditMode"); }
+			set { throw GetNotSupportedPropException ("ApplyFormatInEditMode"); }
+		}
+
 	    [EditorBrowsableAttribute (EditorBrowsableState.Never)]
 	    [BrowsableAttribute (false)]
 	    [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
@@ -94,6 +102,8 @@ namespace System.Web.UI.WebControls {
 			bool editable = (rowState & (DataControlRowState.Edit | DataControlRowState.Insert)) != 0;
 			CheckBox box = new CheckBox ();
 			box.Enabled = editable && !ReadOnly;
+			box.ToolTip = HeaderText;
+			box.Text = Text;
 			cell.Controls.Add (box);
 		}
 		
@@ -106,16 +116,24 @@ namespace System.Web.UI.WebControls {
 		
 		protected override void OnDataBindField (object sender, EventArgs e)
 		{
-			DataControlFieldCell cell = (DataControlFieldCell) sender;
-			CheckBox box = (CheckBox) cell.Controls [0];
-			object val = GetValue (cell.BindingContainer);
-			if (val != null) {
-				box.Checked = (bool)val;
-				if (!box.Visible)
-					box.Visible = true;
+			try {
+				DataControlFieldCell cell = (DataControlFieldCell) sender;
+				CheckBox box = (CheckBox) cell.Controls [0];
+				object val = GetValue (cell.BindingContainer);
+				if (val != null) {
+					box.Checked = (bool) val;
+					if (!box.Visible)
+						box.Visible = true;
+				}
+				else
+					box.Visible = false;
 			}
-			else
-				box.Visible = false;
+			catch (HttpException) {
+				throw;
+			}
+			catch (Exception ex) {
+				throw new HttpException (ex.Message, ex);
+			}
 		}
 		
 		protected override object GetDesignTimeValue ()

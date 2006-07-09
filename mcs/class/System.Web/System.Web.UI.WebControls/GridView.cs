@@ -50,8 +50,6 @@ namespace System.Web.UI.WebControls
 	{
 		Table table;
 		GridViewRowCollection rows;
-		GridViewRow headerRow;
-		GridViewRow footerRow;
 		GridViewRow bottomPagerRow;
 		GridViewRow topPagerRow;
 		
@@ -616,9 +614,21 @@ namespace System.Web.UI.WebControls
 		[BrowsableAttribute (false)]
 		public virtual GridViewRow FooterRow {
 			get {
-				if (footerRow == null)
-					footerRow = CreateRow (0, 0, DataControlRowType.Footer, DataControlRowState.Normal);
-				return footerRow;
+				if (table != null) {
+					for (int index = table.Rows.Count - 1; index >= 0; index--) {
+						GridViewRow row = (GridViewRow) table.Rows [index];
+						switch (row.RowType) {
+						case DataControlRowType.Separator:
+						case DataControlRowType.Pager:
+							continue;
+						case DataControlRowType.Footer:
+							return row;
+						default:
+							break;
+						}
+					}
+				}
+				return null;
 			}
 		}
 	
@@ -655,9 +665,21 @@ namespace System.Web.UI.WebControls
 		[BrowsableAttribute (false)]
 		public virtual GridViewRow HeaderRow {
 			get {
-				if (headerRow == null)
-					headerRow = CreateRow (0, 0, DataControlRowType.Header, DataControlRowState.Normal);
-				return headerRow;
+				if (table != null) {
+					for (int index = 0, total = table.Rows.Count; index < total; index++) {
+						GridViewRow row = (GridViewRow) table.Rows [index];
+						switch (row.RowType) {
+						case DataControlRowType.Separator:
+						case DataControlRowType.Pager:
+							continue;
+						case DataControlRowType.Header:
+							return row;
+						default:
+							break;
+						}
+					}
+				}
+				return null;
 			}
 		}
 	
@@ -1141,11 +1163,9 @@ namespace System.Web.UI.WebControls
 				table.Rows.Add (topPagerRow);
 			}
 
-			if (ShowHeader) {
-				headerRow = CreateRow (0, 0, DataControlRowType.Header, DataControlRowState.Normal);
-				table.Rows.Add (headerRow);
-				InitializeRow (headerRow, fields);
-			}
+			GridViewRow headerRow = CreateRow (0, 0, DataControlRowType.Header, DataControlRowState.Normal);
+			table.Rows.Add (headerRow);
+			InitializeRow (headerRow, fields);
 			
 			foreach (object obj in dataSource) {
 				DataControlRowState rstate = GetRowState (list.Count);
@@ -1173,11 +1193,9 @@ namespace System.Web.UI.WebControls
 			if (list.Count == 0)
 				table.Rows.Add (CreateEmptyrRow (fields.Length));
 
-			if (ShowFooter) {
-				footerRow = CreateRow (0, 0, DataControlRowType.Footer, DataControlRowState.Normal);
-				table.Rows.Add (footerRow);
-				InitializeRow (footerRow, fields);
-			}
+			GridViewRow footerRow = CreateRow (0, 0, DataControlRowType.Footer, DataControlRowState.Normal);
+			table.Rows.Add (footerRow);
+			InitializeRow (footerRow, fields);
 
 			if (showPager && PagerSettings.Position == PagerPosition.Bottom || PagerSettings.Position == PagerPosition.TopAndBottom) {
 				bottomPagerRow = CreatePagerRow (fields.Length, dataSource);
@@ -1840,9 +1858,11 @@ namespace System.Web.UI.WebControls
 			{
 				switch (row.RowType) {
 				case DataControlRowType.Header:
+					if (!ShowHeader) continue;
 					if (headerStyle != null)headerStyle.AddAttributesToRender (writer, row);
 					break;
 				case DataControlRowType.Footer:
+					if (!ShowFooter) continue;
 					if (footerStyle != null) footerStyle.AddAttributesToRender (writer, row);
 					break;
 				case DataControlRowType.Pager:
