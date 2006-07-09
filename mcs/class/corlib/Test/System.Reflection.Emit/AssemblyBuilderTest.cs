@@ -537,6 +537,17 @@ public class AssemblyBuilderTest
 		m = ab2.GetModules ();
 	}
 
+	[Test] // bug #78724
+	public void GetTypes ()
+	{
+		TypeBuilder tb = mb.DefineType ("sometype");
+		tb.CreateType ();
+
+		Type[] types = ab.GetTypes ();
+		Assert.AreEqual (1, types.Length);
+		Assert.AreEqual ("sometype", types[0].Name);
+	}
+
 	[Test]
 	[Category ("NotWorking")]
 	public void AssemblyName_Culture ()

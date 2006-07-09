@@ -1,3 +1,8 @@
+2006-07-09  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* corlib_test.dll.sources: Added DynamicMethodTest.cs from
+	Test/System.Reflection.Emit.
+
 2006-07-06  Dick Porter  <dick@ximian.com>
 
 	* corlib.dll.sources: Added
