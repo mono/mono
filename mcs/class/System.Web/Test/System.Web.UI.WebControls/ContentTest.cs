@@ -119,37 +119,65 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")] 
-		public void Events ()
+		[Category ("NotWorking")]
+		public void Events_DataBinding ()
 		{
 			PokerContent pc = new PokerContent ();
 			pc.DataBinding += new EventHandler (OnDataBindingHandler);
-			pc.Init += new EventHandler (OnInitHandler);
-			pc.Load += new EventHandler (OnLoadHandler);
-			pc.PreRender += new EventHandler (OnPreRenderHendler);
-			pc.Unload += new EventHandler (OnUnLoadHendler);
-			// Unload event
-			Assert.AreEqual (false, OnUnLoad, "BeforeUnLoad");
-			pc.DoOnUnLoad ();
-			Assert.AreEqual (true, OnUnLoad, "AfterUnLoad");
-			// PreRender event
-			Assert.AreEqual (false, OnPreRender, "BeforePreRender");
-			pc.DoOnPreRender ();
-			Assert.AreEqual (true, OnPreRender, "AfterPreRender");
-			// Load event
-			Assert.AreEqual (false, OnLoad, "BeforeLoad");
-			pc.DoOnLoad ();
-			Assert.AreEqual (true, OnLoad, "AfterLoad");
-			// Init event
-			Assert.AreEqual (false, OnInit, "BeforeInit");
-			pc.DoOnInit ();
-			Assert.AreEqual (true, OnInit, "AfterInit");
 			// DataBiding event
 			Assert.AreEqual (false, OnDataBinding, "BeforeDataBinding");
 			pc.DoOnDataBinding ();
 			Assert.AreEqual (true, OnDataBinding, "AfterDataBinding");
 		}
-		
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Events_Init ()
+		{
+			PokerContent pc = new PokerContent ();
+			pc.Init += new EventHandler (OnInitHandler);
+			// Init event
+			Assert.AreEqual (false, OnInit, "BeforeInit");
+			pc.DoOnInit ();
+			Assert.AreEqual (true, OnInit, "AfterInit");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Events_PreRender ()
+		{
+			PokerContent pc = new PokerContent ();
+			pc.PreRender += new EventHandler (OnPreRenderHendler);
+			// PreRender event
+			Assert.AreEqual (false, OnPreRender, "BeforePreRender");
+			pc.DoOnPreRender ();
+			Assert.AreEqual (true, OnPreRender, "AfterPreRender");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Events_Load ()
+		{
+			PokerContent pc = new PokerContent ();
+			pc.Load += new EventHandler (OnLoadHandler);
+			// Load event
+			Assert.AreEqual (false, OnLoad, "BeforeLoad");
+			pc.DoOnLoad ();
+			Assert.AreEqual (true, OnLoad, "AfterLoad");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Events_Unload ()
+		{
+			PokerContent pc = new PokerContent ();
+			pc.Unload += new EventHandler (OnUnLoadHendler);
+			// Unload event
+			Assert.AreEqual (false, OnUnLoad, "BeforeUnLoad");
+			pc.DoOnUnLoad ();
+			Assert.AreEqual (true, OnUnLoad, "AfterUnLoad");
+		}
+			
 		[Test]
 		[Category ("NotWorking")] 
 		[ExpectedException (typeof(NotSupportedException))]
