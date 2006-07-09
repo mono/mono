@@ -1,0 +1,32 @@
+The idea of the framework is as the following. A web application root is created
+in a temp directory. All currently referenced and loaded assemblies are copied
+to the /bin folder. Starting from this point, HttpRuntime.ProcessRequest() is
+able to process any requests, compiling aspx, themes, master pages, etc. if
+necessary.
+
+Few words about the API.
+
+WebTest is the central class of the framework. It's instances are typically
+created in Nunit testcases. WebTest instances carry the information from the
+testcase appdomain into the web application appdomain, and back. The most
+important properties of WebTest are Request and Invoker. The request carries all
+the information, necessary to create an HttpWorkerRequest in the web appdomain.
+The invoker carries all the callbacks which have to be invoked to perform the
+tests in the web appdomain. Here is an example of using the WebTest, Request,
+and Invoker.
+
+[Test]
+public void TestCase1 ()
+{
+	WebTest t = new WebTest ();
+	t.Invoker = PageInvoker.CreateOnLoad (TestCase1OnLoad));
+	t.Request.Url = "MyPage.aspx";
+	string htmlRes = t.Run();
+	//HtmlDiff on htmlRes ...
+}
+
+static public void TestCase1OnLoad (Page p) //invoked in the web appdomain
+{
+	Assert.AreEqual ("White", p.StyleSheetTheme);
+}
+
