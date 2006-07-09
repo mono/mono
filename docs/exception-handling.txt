@@ -247,8 +247,7 @@ several advantages in relation to our current unwinding code:
 - it is MIT licensed
 
 The biggest problem with libuwind is its platform support. ia64 support is
-complete/well tested, while support for other platforms is missing/incomplete. Also,
-development of libunwind seem to have ceased since the author no longer works at HP labs.
+complete/well tested, while support for other platforms is missing/incomplete. 
 
 http://www.hpl.hp.com/research/linux/libunwind/
 
