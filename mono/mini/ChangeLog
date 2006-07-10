@@ -1,3 +1,11 @@
+2006-07-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* inssel-x86.brg: Remove an incorrect vtype rule. Fixes #78776.
+
+2006-06-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* jit.h: Add G_BEGIN_DECLS/G_END_DECLS.
+
 2006-06-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (GET_CONTEXT): Fix solaris/x86 exception handling.
