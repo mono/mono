@@ -1,5 +1,11 @@
 2006-07-10  Jackson Harper  <jackson@ximian.com>
 
+	* TextBoxBase.cs:
+	* ListBox.cs: Match MS's ToString (this makes debugging focus
+	stuff infinitely easier).
+
+2006-07-10  Jackson Harper  <jackson@ximian.com>
+
 	* Control.cs (SelectNextControl): When checking the control's
 	parent use this instead of ctrl.parent so that null can be passed
 	to SelectNextControl. (I have unit tests for this).

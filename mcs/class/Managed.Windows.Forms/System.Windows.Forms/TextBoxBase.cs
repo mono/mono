@@ -682,7 +682,7 @@ namespace System.Windows.Forms {
 		}
 
 		public override string ToString() {
-			return Text;
+			return String.Concat (base.ToString (), ", Text: ", Text);
 		}
 
 		public void Undo() {
