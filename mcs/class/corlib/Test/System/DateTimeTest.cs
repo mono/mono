@@ -1470,9 +1470,15 @@ public class DateTimeTest : Assertion
 	{
 		if (DateTime.Now == DateTime.UtcNow)
 			return; // This test does not make sense.
+		if (TimeZone.CurrentTimeZone.GetUtcOffset (DateTime.UtcNow)
+		    != TimeZone.CurrentTimeZone.GetUtcOffset (DateTime.Now))
+			return; // In this case it does not satisfy the test premises.
+
+		AssertEquals ("#0", DateTimeKind.Local, DateTime.Now.Kind);
 
 		DateTime utc = DateTime.UtcNow;
-		DateTime now = DateTime.Now;
+		DateTime now = new DateTime (utc.Ticks + TimeZone.
+			CurrentTimeZone.GetUtcOffset (utc).Ticks, DateTimeKind.Local);
 		DateTime utctouniv = utc.ToUniversalTime ();
 		DateTime nowtouniv = now.ToUniversalTime ();
 		DateTime utctoloc = utc.ToLocalTime ();
