@@ -1,3 +1,12 @@
+2006-07-10  Chris Toshok  <toshok@ximian.com>
+
+	* DataGridTest.cs: make this class public so it shows up in the
+	list of fixtures (and its tests get run).
+
+	* CurrencyManagerTest.cs: add a test that just spews properties
+	about the currency manager and the datasource, as well as a test
+	for the finalType field.
+
 2006-07-07  Chris Toshok  <toshok@ximian.com>
 
 	* DataGridTableStyleTest.cs: couple more tests.

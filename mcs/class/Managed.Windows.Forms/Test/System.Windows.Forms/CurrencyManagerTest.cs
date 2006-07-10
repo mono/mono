@@ -27,6 +27,7 @@ using System;
 using System.Data;
 using System.Collections;
 using System.ComponentModel;
+using System.Reflection;
 using System.Windows.Forms;
 
 using NUnit.Framework;
@@ -560,7 +561,6 @@ namespace MonoTests.System.Windows.Forms {
 
 			return dataset;
 		}
-
 		[Test]
 		public void EndUninitializedEdit ()
 		{
@@ -636,11 +636,13 @@ namespace MonoTests.System.Windows.Forms {
 
 			Assert.AreEqual (0, cm.Position, "AddNew1");
 			Assert.AreEqual (10, cm.Count, "AddNew2");
+			Assert.AreEqual (cm.Count, cm.List.Count, "AddNew2.5");
 
 			cm.AddNew ();
 
 			Assert.AreEqual (10, cm.Position, "AddNew3");
 			Assert.AreEqual (11, cm.Count, "AddNew4");
+			Assert.AreEqual (cm.Count, cm.List.Count, "AddNew4.5");
 
 			Assert.AreEqual (0, item_changed, "AddNew5");
 			Assert.AreEqual (-1, item_changed_args.Index, "AddNew6");
@@ -668,6 +670,7 @@ namespace MonoTests.System.Windows.Forms {
 
 			Assert.AreEqual (0, cm.Position, "CancelAddNew1");
 			Assert.AreEqual (10, cm.Count, "CancelAddNew2");
+			Assert.AreEqual (cm.Count, cm.List.Count, "AddNew2.5");
 
 			cm.AddNew ();
 
@@ -685,6 +688,7 @@ namespace MonoTests.System.Windows.Forms {
 
 			Assert.AreEqual (9, cm.Position, "CancelAddNew11");
 			Assert.AreEqual (10, cm.Count, "CancelAddNew12");
+			Assert.AreEqual (cm.Count, cm.List.Count, "AddNew12.5");
 
 			cm.CurrentChanged -= new EventHandler (CurrentChanged);
 			cm.PositionChanged -= new EventHandler (PositionChanged);
@@ -872,6 +876,92 @@ namespace MonoTests.System.Windows.Forms {
 			cm.Position = 5;
 			Assert.AreEqual (5, rcm.Count, "count3");
 			Assert.AreEqual (3, list.Count, "listcount3");
+		}
+		
+		[Test]
+		public void TestCurrencyManagerBindings ()
+		{
+			DataSet data_source = CreateRelatedDataSetLarge ();
+			BindingContext bc = new BindingContext ();
+
+			CurrencyManager cm = bc [data_source] as CurrencyManager;
+
+			Console.WriteLine ("cm properties:");
+			foreach (PropertyDescriptor pd in cm.GetItemProperties ())
+				Console.WriteLine (" + {0}", pd.Name);
+			Console.WriteLine ();
+
+			Console.WriteLine ("dataset:");
+			Console.WriteLine ("cm = {0}", cm.GetType());
+			Console.WriteLine ("cm.Count = {0}", cm.Count);
+			cm.Position = 0;
+			Console.WriteLine ("cm.Current = {0}", cm.Current);
+			Console.WriteLine ("cm.Current properties");
+			foreach (PropertyDescriptor pd in ((ICustomTypeDescriptor)cm.Current).GetProperties ())
+				Console.WriteLine (" + {0}", pd.Name);
+			Console.WriteLine ();
+
+			cm = bc [data_source.Tables["Customers"]] as CurrencyManager;
+			Console.WriteLine ("datatable:");
+			Console.WriteLine ("cm = {0}", cm.GetType());
+			Console.WriteLine ("cm.Count = {0}", cm.Count);
+			cm.Position = 0;
+			Console.WriteLine ("cm.Current = {0}", cm.Current);
+			Console.WriteLine ("cm.Current properties");
+			foreach (PropertyDescriptor pd in ((ICustomTypeDescriptor)cm.Current).GetProperties ())
+				Console.WriteLine (" + {0}", pd.Name);
+
+			Console.WriteLine ();
+
+			DataViewManager vm = new DataViewManager (data_source);
+			Console.WriteLine ("vm properties:");
+			foreach (PropertyDescriptor pd in ((ITypedList)vm).GetItemProperties (null))
+				Console.WriteLine (" + {0}", pd.Name);
+			Console.WriteLine ();
+
+		}
+
+		Type GetFinalType (CurrencyManager cm)
+		{
+			FieldInfo fi = cm.GetType().GetField ("finalType", BindingFlags.NonPublic | BindingFlags.Instance);
+
+			return (Type)fi.GetValue (cm);
+		}
+
+		[Test]
+		public void FinalTypeTest ()
+		{
+			BindingContext bc = new BindingContext ();
+			CurrencyManager cm;
+			ArrayList al;
+			DataSet data_source = CreateRelatedDataSetLarge ();
+
+			/* empty arraylist */
+			al = new ArrayList ();
+			cm = bc[al] as CurrencyManager;
+			Assert.AreEqual (typeof (ArrayList), GetFinalType (cm), "A1");
+
+			/* arraylist with a string element*/
+			al = new ArrayList ();
+			al.Add ("hi");
+			cm = bc[al] as CurrencyManager;
+			Assert.AreEqual (typeof (ArrayList), GetFinalType (cm), "A2");
+
+			/* string array */
+			string[] s = new string[1];
+			s[0] = "hi";
+			cm = bc[s] as CurrencyManager;
+			Assert.AreEqual (typeof (string[]), GetFinalType (cm), "A3");
+
+			/* dataview */
+			cm = bc [data_source, "Customers"] as CurrencyManager;
+			Assert.AreEqual (typeof (DataView), GetFinalType (cm), "A4");
+
+			/* relatedview */
+			cm = bc [data_source, "Customers.Customer_Orders"] as CurrencyManager;
+			/* on MS this is a RelatedView, on Mono a RelatedDataView.  both subclass from DataView, so let's check that. */
+			Assert.IsFalse (typeof (DataView) == GetFinalType (cm), "A5");
+			Assert.IsTrue (typeof (DataView).IsAssignableFrom (GetFinalType (cm)), "A6");
 		}
 	}
 }

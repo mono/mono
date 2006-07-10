@@ -52,7 +52,7 @@ namespace MonoTests.System.Windows.Forms
 	}
 
 	[TestFixture]
-	class DataGridTest
+	public class DataGridTest
 	{
 		private bool eventhandled;
 
@@ -311,7 +311,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (dg.SelectionForeColor, dg2.SelectionForeColor, "A1");
 		}
 
-		[Test] public void TestSetDataBinding ()
+		[Test]
+		public void TestSetDataBinding ()
 		{
 			DataGrid dg = new DataGrid ();
 			DataSet ds = new DataSet ("DataSet");
@@ -320,7 +321,6 @@ namespace MonoTests.System.Windows.Forms
 			ds.Tables.Add (dt);
 
 			dg.SetDataBinding (ds, "DataTable");
-			
 		}
 	}
 }
