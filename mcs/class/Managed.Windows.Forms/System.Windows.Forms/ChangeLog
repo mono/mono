@@ -1,3 +1,39 @@
+2006-07-10  Chris Toshok  <toshok@ximian.com>
+
+	* ThemeWin32Classic.cs: implement the new row/header painting
+	approach.  The parent row painting will likely go away and
+	replaced with label controls, but the rest seems to work ok (and
+	efficiently).
+
+	* Theme.cs: change the way we draw datagrid rows.  we don't draw
+	the row headers as a block now.  Instead we draw them in the
+	normal draw-row loop.  Add some calls for drawing parent rows and
+	relation rows.
+
+	* DataGridTableStyle.cs: add tons of ArgumentExceptions if this is
+	a default table style.  Set the defaults from ThemeEngine.Current,
+	not SystemColors.  Fix lots of misc issues with property setters.
+
+	* DataGrid.cs: move loads of style information out of this class
+	as it's being duplicated with DataGridTableStyle.  keep track of a
+	special DataGridTableStyle for the properties we used to mirror
+	here.  Switch all the style properties to access this table style
+	instead of instance fields of this class.  Also add a internal
+	class to represent parent rows (more needs to be stored here, like
+	the selection state from the parent table, as well as the
+	expansion state.)  Also, for datasources with relations, do the
+	right thing for collapse/expand, and add support for the
+	navigation/parent row buttons.
+
+	Lastly, fix the crash in the 1.1.16 build.
+
+	* GridTableStylesCollection.cs: make the explicit interface
+	implementations call the class's methods as opposed to duplicating
+	them.
+
+	* DataGridTextBoxColumn.cs: set the x/y offset of the textfield to
+	0 so the text doesn't jump around when we move the cursor.
+
 2006-07-10  Jackson Harper  <jackson@ximian.com>
 
 	* TextBoxBase.cs:
@@ -10,6 +46,13 @@
 	parent use this instead of ctrl.parent so that null can be passed
 	to SelectNextControl. (I have unit tests for this).
 	- Remove unused var.
+
+2006-07-10  Chris Toshok  <toshok@ximian.com>
+
+	* CurrencyManager.cs: correct one regression, the removal of the
+	finalType field.  Also, add a MonoTODO on CanAddRows, implement
+	Refresh() correctly, and fix some event emission in
+	ListChangedHandler.
 
 2006-07-07  Alexander Olk  <alex.olk@googlemail.com>
 

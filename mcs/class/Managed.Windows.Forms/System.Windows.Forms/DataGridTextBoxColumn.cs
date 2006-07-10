@@ -40,8 +40,8 @@ namespace System.Windows.Forms
 		private IFormatProvider format_provider = null;
 		private StringFormat string_format =  new StringFormat ();
 		private DataGridTextBox textbox;
-		private static readonly int offset_x = 2;
-		private static readonly int offset_y = 2;
+		private static readonly int offset_x = 0;
+		private static readonly int offset_y = 0;
 		#endregion	// Local Variables
 
 		#region Constructors

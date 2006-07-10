@@ -45,17 +45,18 @@ namespace System.Windows.Forms
 		public static DataGridTableStyle DefaultTableStyle = new DataGridTableStyle (true);
 
 		#region	Local Variables
-		private static readonly Color		def_alternating_backcolor = SystemColors.Window;
-		private static readonly Color		def_backcolor = SystemColors.Window;
+		private static readonly Color		def_alternating_backcolor = ThemeEngine.Current.DataGridAlternatingBackColor;
+		private static readonly Color		def_backcolor = ThemeEngine.Current.DataGridBackColor;
 		private static readonly Color		def_forecolor = SystemColors.WindowText;
-		private static readonly Color		def_gridline_color = SystemColors.Control;
-		private static readonly Color		def_header_backcolor = SystemColors.Control;
-		private static readonly Font		def_header_font = null;
-		private static readonly Color		def_header_forecolor = SystemColors.ControlText;
-		private static readonly Color		def_link_color = SystemColors.HotTrack;
-		private static readonly Color		def_link_hovercolor = SystemColors.HotTrack;
-		private static readonly Color		def_selection_backcolor = SystemColors.ActiveCaption;
-		private static readonly Color		def_selection_forecolor = SystemColors.ActiveCaptionText;
+		private static readonly Color		def_gridline_color = ThemeEngine.Current.DataGridGridLineColor;
+		private static readonly Color		def_header_backcolor = ThemeEngine.Current.DataGridHeaderBackColor;
+		private static readonly Font		def_header_font = ThemeEngine.Current.DefaultFont;
+		private static readonly Color		def_header_forecolor = ThemeEngine.Current.DataGridHeaderForeColor;
+		private static readonly Color		def_link_color = ThemeEngine.Current.DataGridLinkColor;
+		private static readonly Color		def_link_hovercolor = ThemeEngine.Current.DataGridLinkHoverColor;
+		private static readonly Color		def_selection_backcolor = ThemeEngine.Current.DataGridSelectionBackColor;
+		private static readonly Color		def_selection_forecolor = ThemeEngine.Current.DataGridSelectionForeColor;
+		private static readonly int		def_preferredrow_height = ThemeEngine.Current.DefaultFont.Height + 3;
 
 		private bool				allow_sorting;
 		private DataGrid			datagrid;
@@ -129,11 +130,11 @@ namespace System.Windows.Forms
 		#region Public Instance Properties
 		[DefaultValue(true)]
 		public bool AllowSorting {
-			get {
-				return allow_sorting;
-			}
-
+			get { return allow_sorting; }
 			set {
+				if (is_default)
+					throw new ArgumentException ("Cannot change the value of this property on the default DataGridTableStyle.");
+
 				if (allow_sorting != value) {
 					allow_sorting = value;
 					OnAllowSortingChanged (EventArgs.Empty);
@@ -146,11 +147,11 @@ namespace System.Windows.Forms
 		}
 
 		public Color AlternatingBackColor {
-			get {
-				return alternating_backcolor;
-			}
-
+			get { return alternating_backcolor; }
 			set {
+				if (is_default)
+					throw new ArgumentException ("Cannot change the value of this property on the default DataGridTableStyle.");
+
 				if (alternating_backcolor != value) {
 					alternating_backcolor = value;
 					OnAlternatingBackColorChanged (EventArgs.Empty);
@@ -163,11 +164,11 @@ namespace System.Windows.Forms
 		}
 
 		public Color BackColor {
-			get {
-				return backcolor;
-			}
-
+			get { return backcolor; }
 			set {
+				if (is_default)
+					throw new ArgumentException ("Cannot change the value of this property on the default DataGridTableStyle.");
+
 				if (backcolor != value) {
 					backcolor = value;
 					OnBackColorChanged (EventArgs.Empty);
@@ -199,23 +200,25 @@ namespace System.Windows.Forms
 
 		[Browsable(false)]
 		public virtual DataGrid DataGrid {
-			get {
-				return datagrid;
-			}
-
+			get { return datagrid; }
 			set {
 				if (datagrid != value) {
 					datagrid = value;
+
+					/* now set the value on all our column styles */
+					for (int i = 0; i < column_styles.Count; i ++) {
+						column_styles[i].SetDataGridInternal (datagrid);
+					}
 				}
 			}
 		}
 
 		public Color ForeColor {
-			get {
-				return forecolor;
-			}
-
+			get { return forecolor; }
 			set {
+				if (is_default)
+					throw new ArgumentException ("Cannot change the value of this property on the default DataGridTableStyle.");
+
 				if (forecolor != value) {
 					forecolor = value;
 					OnForeColorChanged (EventArgs.Empty);
@@ -234,11 +237,11 @@ namespace System.Windows.Forms
 		}
 
 		public Color GridLineColor {
-			get {
-				return gridline_color;
-			}
-
+			get { return gridline_color; }
 			set {
+				if (is_default)
+					throw new ArgumentException ("Cannot change the value of this property on the default DataGridTableStyle.");
+
 				if (gridline_color != value) {
 					gridline_color = value;
 					OnGridLineColorChanged (EventArgs.Empty);
@@ -252,11 +255,11 @@ namespace System.Windows.Forms
 
 		[DefaultValue(DataGridLineStyle.Solid)]
 		public DataGridLineStyle GridLineStyle {
-			get {
-				return gridline_style;
-			}
-
+			get { return gridline_style; }
 			set {
+				if (is_default)
+					throw new ArgumentException ("Cannot change the value of this property on the default DataGridTableStyle.");
+
 				if (gridline_style != value) {
 					gridline_style = value;
 					OnGridLineStyleChanged (EventArgs.Empty);
@@ -269,11 +272,11 @@ namespace System.Windows.Forms
 		}
 
 		public Color HeaderBackColor {
-			get {
-				return header_backcolor;
-			}
-
+			get { return header_backcolor; }
 			set {
+				if (is_default)
+					throw new ArgumentException ("Cannot change the value of this property on the default DataGridTableStyle.");
+
 				if (value == Color.Empty) {
 					throw new ArgumentNullException ("Color.Empty value is invalid.");
 				}
@@ -292,17 +295,14 @@ namespace System.Windows.Forms
 		[AmbientValue(null)]
 		[Localizable(true)]
 		public Font HeaderFont {
-			get {
-				if (header_font != null)
-					return header_font;
-
-				if (datagrid != null)
-					return datagrid.HeaderFont;
-
-				return ThemeEngine.Current.DefaultFont;
-			}
-
+			get { return header_font; }
 			set {
+				if (is_default)
+					throw new ArgumentException ("Cannot change the value of this property on the default DataGridTableStyle.");
+
+				if (value == null)
+					value = def_header_font;
+
 				if (header_font != value) {
 					header_font = value;
 					OnHeaderFontChanged (EventArgs.Empty);
@@ -315,11 +315,10 @@ namespace System.Windows.Forms
 		}
 
 		public Color HeaderForeColor {
-			get {
-				return header_forecolor;
-			}
-
+			get { return header_forecolor; }
 			set {
+				if (is_default)
+					throw new ArgumentException ("Cannot change the value of this property on the default DataGridTableStyle.");
 
 				if (header_forecolor != value) {
 					header_forecolor = value;
@@ -334,11 +333,11 @@ namespace System.Windows.Forms
 		}
 
 		public Color LinkColor {
-			get {
-				return link_color;
-			}
-
+			get { return link_color; }
 			set {
+				if (is_default)
+					throw new ArgumentException ("Cannot change the value of this property on the default DataGridTableStyle.");
+
 				if (link_color != value) {
 					link_color = value;
 
@@ -355,10 +354,7 @@ namespace System.Windows.Forms
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		[Browsable(false)]
 		public Color LinkHoverColor {
-			get {
-				return link_hovercolor;
-			}
-
+			get { return link_hovercolor; }
 			set {
 				if (link_hovercolor != value) {
 					link_hovercolor = value;
@@ -369,11 +365,11 @@ namespace System.Windows.Forms
 
 		[Editor("System.Windows.Forms.Design.DataGridTableStyleMappingNameEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
 		public string MappingName {
-			get {
-				return mapping_name;
-			}
-
+			get { return mapping_name; }
 			set {
+				if (value == null)
+					value = "";
+
 				if (mapping_name != value) {
 					mapping_name = value;
 					OnMappingNameChanged (EventArgs.Empty);
@@ -385,11 +381,11 @@ namespace System.Windows.Forms
 		[TypeConverter(typeof(DataGridPreferredColumnWidthTypeConverter))]
 		[Localizable(true)]
 		public int PreferredColumnWidth {
-			get {
-				return preferredcolumn_width;
-			}
-
+			get { return preferredcolumn_width; }
 			set {
+				if (is_default)
+					throw new ArgumentException ("Cannot change the value of this property on the default DataGridTableStyle.");
+
 				if (value < 0) {
 					throw new ArgumentException ("PreferredColumnWidth is less than 0");
 				}
@@ -403,11 +399,11 @@ namespace System.Windows.Forms
 
 		[Localizable(true)]
 		public int PreferredRowHeight {
-			get {
-				return preferredrow_height;
-			}
-
+			get { return preferredrow_height; }
 			set {
+				if (is_default)
+					throw new ArgumentException ("Cannot change the value of this property on the default DataGridTableStyle.");
+
 				if (preferredrow_height != value) {
 					preferredrow_height = value;
 					OnPreferredRowHeightChanged (EventArgs.Empty);
@@ -417,10 +413,7 @@ namespace System.Windows.Forms
 
 		[DefaultValue(false)]
 		public virtual bool ReadOnly {
-			get {
-				return _readonly;
-			}
-
+			get { return _readonly; }
 			set {
 				if (_readonly != value) {
 					_readonly = value;
@@ -431,10 +424,7 @@ namespace System.Windows.Forms
 
 		[DefaultValue(true)]
 		public bool RowHeadersVisible {
-			get {
-				return rowheaders_visible;
-			}
-
+			get { return rowheaders_visible; }
 			set {
 				if (rowheaders_visible != value) {
 					rowheaders_visible = value;
@@ -446,10 +436,7 @@ namespace System.Windows.Forms
 		[DefaultValue(35)]
 		[Localizable(true)]
 		public int RowHeaderWidth {
-			get {
-				return rowheaders_width;
-			}
-
+			get { return rowheaders_width; }
 			set {
 				if (rowheaders_width != value) {
 					rowheaders_width = value;
@@ -459,11 +446,11 @@ namespace System.Windows.Forms
 		}
 
 		public Color SelectionBackColor {
-			get {
-				return selection_backcolor;
-			}
-
+			get { return selection_backcolor; }
 			set {
+				if (is_default)
+					throw new ArgumentException ("Cannot change the value of this property on the default DataGridTableStyle.");
+
 				if (selection_backcolor != value) {
 					selection_backcolor = value;
 					OnSelectionBackColorChanged (EventArgs.Empty);
@@ -473,11 +460,11 @@ namespace System.Windows.Forms
 
 		[Description("The foreground color for the current data grid row")]
 		public Color SelectionForeColor  {
-			get {
-				return selection_forecolor;
-			}
-
+			get { return selection_forecolor; }
 			set {
+				if (is_default)
+					throw new ArgumentException ("Cannot change the value of this property on the default DataGridTableStyle.");
+
 				if (selection_forecolor != value) {
 					selection_forecolor = value;
 					OnSelectionForeColorChanged (EventArgs.Empty);
@@ -857,7 +844,7 @@ namespace System.Windows.Forms
 
 		protected bool ShouldSerializePreferredRowHeight ()
 		{
-			return (preferredrow_height != datagrid.def_preferredrow_height);
+			return (preferredrow_height != def_preferredrow_height);
 		}
 
 		protected bool ShouldSerializeSelectionBackColor ()
@@ -904,7 +891,6 @@ namespace System.Windows.Forms
 				}
 
 				if (typeof (IBindingList).IsAssignableFrom (propcol[i].PropertyType)) {
-					Console.WriteLine ("adding relation {0}", propcol[i].Name);
 					table_relations.Add (propcol[i].Name);
 				} else {
 					st = CreateGridColumn (propcol[i],  true);

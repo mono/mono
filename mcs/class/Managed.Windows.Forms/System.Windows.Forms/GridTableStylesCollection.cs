@@ -134,21 +134,17 @@ namespace System.Windows.Forms
 
 		int IList.Add (object value)
 		{
-			int cnt = AddInternal ((DataGridTableStyle)value);
-
-			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, null));
-			return cnt;
+			return Add ((DataGridTableStyle)value);
 		}
 
 		void IList.Clear ()
 		{
-			items.Clear ();
-			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Refresh , null));
+			Clear ();
 		}
 
 		bool IList.Contains (object value)
 		{
-			return items.Contains (value);
+			return Contains ((DataGridTableStyle) value);
 		}
 
 		int IList.IndexOf (object value)
@@ -163,15 +159,12 @@ namespace System.Windows.Forms
 
 		void IList.Remove (object value)
 		{
-			items.Remove (value);
-			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, value));
+			Remove ((DataGridTableStyle) value);
 		}
 
 		void IList.RemoveAt (int index)
 		{
-			object item = items[index];
-			items.RemoveAt (index);
-			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, item));
+			RemoveAt (index);
 		}
 
 		protected void OnCollectionChanged (CollectionChangeEventArgs ccevent)
@@ -212,7 +205,7 @@ namespace System.Windows.Forms
 			
 			table.DataGrid = owner;
 			int cnt = items.Add (table);
-			return cnt;			
+			return cnt;
 		}
 		
 		private int FromTableNameToIndex (string tableName)
