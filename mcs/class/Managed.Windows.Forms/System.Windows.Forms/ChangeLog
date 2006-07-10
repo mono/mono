@@ -1,3 +1,10 @@
+2006-07-10  Jackson Harper  <jackson@ximian.com>
+
+	* Control.cs (SelectNextControl): When checking the control's
+	parent use this instead of ctrl.parent so that null can be passed
+	to SelectNextControl. (I have unit tests for this).
+	- Remove unused var.
+
 2006-07-07  Alexander Olk  <alex.olk@googlemail.com>
 
 	* FileDialog.cs: Don't use brackets for new folders if they exist

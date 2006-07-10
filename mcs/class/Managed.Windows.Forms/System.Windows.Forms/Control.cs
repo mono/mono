@@ -939,14 +939,11 @@ namespace System.Windows.Forms
 		}
 
 		internal bool Select(Control control) {
-			Control			parent;
 			IContainerControl	container;
 
 			if (control == null) {
 				return false;
 			}
-
-			parent = control.parent;
 
 			control.is_selected = true;
 
@@ -3124,7 +3121,7 @@ namespace System.Windows.Forms
 					break;
 				}
 
-				if (c.CanSelect && ((c.parent == ctl.parent) || nested) && (c.tab_stop || !tabStopOnly)) {
+				if (c.CanSelect && ((c.parent == this) || nested) && (c.tab_stop || !tabStopOnly)) {
 					Select(c);
 					return true;
 				}
