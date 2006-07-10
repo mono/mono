@@ -198,12 +198,14 @@ namespace System.Web.UI.WebControls {
 			if ((ReadOnly && !includeReadOnly) || cell.Controls.Count == 0) return;
 			
 			bool editable = (rowState & (DataControlRowState.Edit | DataControlRowState.Insert)) != 0;
-			if (editable && !ReadOnly) {
-				TextBox box = cell.Controls [0] as TextBox;
-				dictionary [DataImageUrlField] = box.Text;
-			} else if (includeReadOnly) {
-				Image img = cell.Controls [0] as Image;
-				dictionary [DataImageUrlField] = img.ImageUrl;
+			if (includeReadOnly || editable) {
+				Control control = cell.Controls [0];
+				//TODO: other controls?
+				if (control is Image)
+					dictionary [DataImageUrlField] = ((Image)control).ImageUrl;
+				else
+				if (control is TextBox)
+					dictionary [DataImageUrlField] = ((TextBox) control).Text;
 			}
 		}
 		
@@ -224,7 +226,8 @@ namespace System.Web.UI.WebControls {
 			if (editable && !ReadOnly) {
 				TextBox box = new TextBox ();
 				cell.Controls.Add (box);
-			} else {
+			}
+			else if (DataImageUrlField.Length > 0) {
 				Image img = new Image ();
 				cell.Controls.Add (img);
 			}
@@ -232,8 +235,8 @@ namespace System.Web.UI.WebControls {
 		
 		protected virtual string FormatImageUrlValue (object value)
 		{
-			if (value == null || (value.ToString().Length == 0 && ConvertEmptyStringToNull))
-				return NullImageUrl;
+			if (value == null)
+				return null;
 			else if (DataImageUrlFormatString.Length > 0)
 				return string.Format (DataImageUrlFormatString, value);
 			else
@@ -266,13 +269,15 @@ namespace System.Web.UI.WebControls {
 			if (DesignMode)
 				return GetDesignTimeValue ();
 			else {
+				object dataItem = DataBinder.GetDataItem (controlContainer);
+				if (dataItem == null)
+					throw new HttpException ("A data item was not found in the container. The container must either implement IDataItemContainer, or have a property named DataItem.");
 				if (fieldName == ThisExpression)
-					return controlContainer.ToString ();
+					return dataItem.ToString ();
 				else {
-					IDataItemContainer dic = (IDataItemContainer) controlContainer;
-					if (cachedDescriptor != null) return cachedDescriptor.GetValue (dic.DataItem);
+					if (cachedDescriptor != null) return cachedDescriptor.GetValue (dataItem);
 					PropertyDescriptor prop = GetProperty (controlContainer, fieldName);
-					return prop.GetValue (dic.DataItem);
+					return prop.GetValue (dataItem);
 				}
 			}
 		}
@@ -305,7 +310,10 @@ namespace System.Web.UI.WebControls {
 			}
 			else if (c is Image) {
 				Image img = (Image)c;
-				img.ImageUrl = FormatImageUrlValue (GetValue (cell.BindingContainer, DataImageUrlField, ref imageProperty));
+				string value =  FormatImageUrlValue (GetValue (cell.BindingContainer, DataImageUrlField, ref imageProperty));
+				if (value == null || (ConvertEmptyStringToNull && value.ToString ().Length == 0))
+					value = NullImageUrl;
+				img.ImageUrl = value;
 				img.AlternateText = GetFormattedAlternateText (cell.BindingContainer);
 			}
 		}

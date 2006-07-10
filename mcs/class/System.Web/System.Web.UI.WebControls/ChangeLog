@@ -1,3 +1,7 @@
+2006-07-09 Konstantin Triger <kostat@mainsoft.com>
+
+	* ImageField.cs: fixing .net compliancy.
+
 2006-07-10 Andrew Skiba <andrews@mainsoft.com>
 
 	* SiteMapPath.cs: fix the default PathSeparator value.
