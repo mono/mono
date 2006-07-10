@@ -65,11 +65,13 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			HtmlInputCheckBox c = new HtmlInputCheckBox ();
 			
 			Assert.AreEqual (1, c.Attributes.Count, "Attributes.Count");
-
+			Assert.AreEqual ("checkbox", c.Attributes["type"], "Attributes[\"type\"]");
+			
 			c.Checked = true;
 			Assert.IsTrue (c.Checked, "Checked");
 			
 			Assert.AreEqual (2, c.Attributes.Count, "Attributes.Count after");
+			Assert.AreEqual ("checked", c.Attributes["checked"], "Attributes[\"checked\"]");
 		}
 
 		[Test]
