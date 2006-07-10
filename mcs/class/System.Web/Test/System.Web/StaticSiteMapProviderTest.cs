@@ -34,6 +34,7 @@ using System.Web;
 using System.Collections.Specialized;
 using NUnit.Framework;
 using System.Diagnostics;
+using MonoTests.SystemWeb.Framework;
 
 namespace MonoTests.System.Web {
 	
@@ -87,7 +88,13 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
+		[Category("NunitWeb")]
 		public void AddNode ()
+		{
+			new WebTest (new HandlerInvoker (AddNode_delegate)).Run ();
+		}
+
+		static public void AddNode_delegate ()
 		{
 			StaticPoker poker = new StaticPoker();
 
@@ -99,6 +106,7 @@ namespace MonoTests.System.Web {
 			poker.DoRemoveNode (n);
 			Assert.AreEqual (0, poker.GetChildNodes (poker.RootNode).Count, "A2");
 		}
+		
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
@@ -109,14 +117,26 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
+		[Category("NunitWeb")]
 		public void AddNode2_nullParent ()
+		{
+			new WebTest (new HandlerInvoker (AddNode2_nullParent_delegate)).Run ();
+		}
+		
+		static public void AddNode2_nullParent_delegate ()
 		{
 			StaticPoker poker = new StaticPoker ();
 			poker.DoAddNode (new SiteMapNode (poker, "childKey", "childUrl"), null);
 		}
 
 		[Test]
+		[Category("NunitWeb")]
 		public void AddNode2 ()
+		{
+			new WebTest (new HandlerInvoker (AddNode2_delegate)).Run ();
+		}
+
+		static public void AddNode2_delegate ()
 		{
 			StaticPoker poker = new StaticPoker ();
 			poker.DoAddNode (new SiteMapNode (poker, "childKey", "childUrl"),
