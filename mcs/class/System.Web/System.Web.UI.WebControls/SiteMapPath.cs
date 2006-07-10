@@ -154,7 +154,7 @@ namespace System.Web.UI.WebControls
 		[DefaultValueAttribute (" > ")]
 		[LocalizableAttribute (true)]
 		public virtual string PathSeparator {
-			get { return ViewState.GetString ("PathSeparator", ">"); }
+			get { return ViewState.GetString ("PathSeparator", " > "); }
 			set {
 				ViewState ["PathSeparator"] = value;
 				UpdateControls ();
