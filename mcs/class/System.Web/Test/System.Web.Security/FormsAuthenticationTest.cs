@@ -14,6 +14,7 @@ using System.Web;
 using System.Web.Security;
 
 using NUnit.Framework;
+using MonoTests.SystemWeb.Framework;
 
 namespace MonoTests.System.Web.Security {
 
@@ -21,10 +22,13 @@ namespace MonoTests.System.Web.Security {
 	public class FormsAuthenticationTest {
 
 		[Test]
-#if ONLY_1_1
-		[ExpectedException (typeof (NullReferenceException))]
-#endif
+		[Category("NunitWeb")]
 		public void DefaultValues ()
+		{
+			new WebTest(new HandlerInvoker (DefaultValues_delegate)).Run ();
+		}
+
+		static public void DefaultValues_delegate ()
 		{
 			// MS use ".ASPXAUTH" while Mono use ".MONOAUTH"
 			string str = FormsAuthentication.FormsCookieName;
@@ -43,15 +47,18 @@ namespace MonoTests.System.Web.Security {
 		}
 
 		[Test]
-#if ONLY_1_1
-		[ExpectedException (typeof (NullReferenceException))]
-#endif
+		[Category("NunitWeb")]
 		public void Initialize ()
+		{
+			new WebTest(new HandlerInvoker (Initialize_delegate)).Run ();
+		}
+
+		static public void Initialize_delegate ()
 		{
 			// calling Initialize without an HttpContext
 			FormsAuthentication.Initialize ();
 			// and that doesn't change the default values
-			DefaultValues ();
+			DefaultValues_delegate ();
 		}
 
 		[Test]

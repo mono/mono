@@ -1,3 +1,8 @@
+2006-07-10  Andrew Skiba  <andrews@mainsoft.com>
+
+	* FormsAuthenticationTest.cs: run 2 tests in web context, so they
+	succeed.
+
 2006-05-01  Chris Toshok  <toshok@ximian.com>
 
 	* MembershipTest.cs (GeneratePassword): add test for password
