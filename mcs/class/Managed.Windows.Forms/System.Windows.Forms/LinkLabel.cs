@@ -67,10 +67,10 @@ namespace System.Windows.Forms
 		private LinkBehavior link_behavior;
 		private LinkCollection link_collection;
 		internal Link[] sorted_links;
-		private bool link_visited;		
+		private bool link_visited;
 		private bool link_click;
 		internal Piece[] pieces;
-		internal Font link_font;		
+		internal Font link_font;
 		private Cursor override_cursor;
 		private DialogResult dialog_result;
 
