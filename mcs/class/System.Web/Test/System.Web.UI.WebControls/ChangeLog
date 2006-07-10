@@ -1,3 +1,7 @@
+2006-07-10 Andrew Skiba <andrews@mainsoft.com>
+
+	* SiteMapPathTest.cs: fix expected results for IE user-agent
+
 2006-07-09 Yoni Klain <yonik@mainsoft.com>
 
 	* MenuTest.cs changes on postback;

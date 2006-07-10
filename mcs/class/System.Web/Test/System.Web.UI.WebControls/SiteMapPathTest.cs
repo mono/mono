@@ -217,19 +217,17 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]  //Must be running after hosting bug resolve
 		public void SiteMapPath_RenderProperty ()
 		{
 			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (DoTestPropertyRender)).Run ();
 			string RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
-			string OriginControlHtml = @"<span style=""display:inline-block;""><font color=""Red"">
-                                           <a href=""#ctl01_SkipLink"">
-                                           <img alt=""Skip Navigation Links""
-                                            height=""0"" width=""0"" src=""/NunitWeb/WebResource.axd?d=Zrz8lvSQfolS1pG07HX9g2&amp;t=632784640484505569""
-                                            border=""0"" />
-                                           </a><span>node1</span><span>-</span><span>
-                                           <a title=""test"" href=""/NunitWeb/MyPageWithMaster.aspx"">root</a></span>
-                                           <a id=""ctl01_SkipLink""></a></font></span>";
+			string OriginControlHtml = @"<span style=""background-color:Red;border-color:Red;border-width:3px;border-style:Dashed;color:Red;"">
+			<a href=""#_ctl1_SkipLink"">
+			<img src=""WebResource.axd?a=s&amp;r=transparent.gif&amp;t=632881421043562512""
+			width=""0"" height=""0"" alt=""Skip Navigation Links"" border=""0"" />
+			</a><span><span title=""test"">node1</span></span><span><span>-</span></span><span>
+			<a title=""test"" href=""/NunitWeb/MyPageWithMaster.aspx"">root</a></span>
+			<a id=""_ctl1_SkipLink""></a></span>";
 			HtmlDiff.AssertAreEqual(OriginControlHtml,RenderedControlHtml,"RenderProperty");
 		}
 		[Test]
