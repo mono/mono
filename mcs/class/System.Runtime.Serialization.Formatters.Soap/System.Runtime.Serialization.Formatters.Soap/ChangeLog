@@ -1,3 +1,8 @@
+2006-07-10  Lluis Sanchez Gual <lluis@novell.com>
+
+	* SoapReader.cs: Register strings in the object manager. 
+	  Fixes bug #78696.
+
 2006-05-31  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* SoapFormatter.cs: Only apply ComVisible attribute to FilterLevel

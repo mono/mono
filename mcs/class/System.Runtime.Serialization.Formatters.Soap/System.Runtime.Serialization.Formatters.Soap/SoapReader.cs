@@ -659,7 +659,9 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			if(componentId != 0)
 			{
 				// It's a string
-				return xmlReader.ReadElementString();
+				string str = xmlReader.ReadElementString();
+				objMgr.RegisterObject (str, componentId);
+				return str;
 			}
 			if(componentHref != 0)
 			{
