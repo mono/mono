@@ -103,6 +103,7 @@ namespace System.Web.UI.WebControls {
 			if (dataType == typeof(bool)) {
 				CheckBox box = new CheckBox ();
 				box.Enabled = editable && !ReadOnly;
+				box.ToolTip = HeaderText;
 				cell.Controls.Add (box);
 			} else
 				base.InitializeDataCell (cell, rowState);
