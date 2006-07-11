@@ -1,3 +1,7 @@
+2006-07-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* MethodBuilder.cs (SetCustomAttribute): Fix handling of SpecialNameAttribute.
+
 2006-07-09  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DynamicMethod.cs: Fix check for empty method body, avoids SIGSEV.

@@ -366,6 +366,13 @@ namespace System.Reflection.Emit {
 						ThrowOnUnmappableChar = (bool)value;
 #endif
 				}
+
+				attrs |= MethodAttributes.PinvokeImpl;
+				if (preserveSig)
+					iattrs |= MethodImplAttributes.PreserveSig;
+				return;
+			}
+
 #if NET_2_0
 			if (attrname == "System.Runtime.CompilerServices.SpecialNameAttribute") {
 				attrs |= MethodAttributes.SpecialName;
@@ -373,11 +380,6 @@ namespace System.Reflection.Emit {
 			}
 #endif
 
-				attrs |= MethodAttributes.PinvokeImpl;
-				if (preserveSig)
-					iattrs |= MethodImplAttributes.PreserveSig;
-				return;
-			}
 			if (cattrs != null) {
 				CustomAttributeBuilder[] new_array = new CustomAttributeBuilder [cattrs.Length + 1];
 				cattrs.CopyTo (new_array, 0);
