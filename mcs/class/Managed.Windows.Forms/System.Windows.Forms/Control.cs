@@ -69,7 +69,6 @@ namespace System.Windows.Forms
 		internal bool			is_visible;		// true if control is visible
 		internal bool			is_entered;		// is the mouse inside the control?
 		internal bool			is_enabled;		// true if control is enabled (usable/not grayed out)
-		internal bool			is_selected;		// true if control is selected
 		internal bool			is_accessible;		// true if the control is visible to accessibility applications
 		internal bool			is_captured;		// tracks if the control has captured the mouse
 		internal bool			is_toplevel;		// tracks if the control is a toplevel window
@@ -945,8 +944,6 @@ namespace System.Windows.Forms
 				return false;
 			}
 
-			control.is_selected = true;
-
 			container = GetContainerControl();
 			if (container != null) {
 				container.ActiveControl = control;
@@ -955,6 +952,12 @@ namespace System.Windows.Forms
 				XplatUI.SetFocus(control.window.Handle);
 			}
 			return true;
+		}
+
+		internal void SelectChild (Control control)
+		{
+			if (control.IsHandleCreated)
+				XplatUI.SetFocus (control.window.Handle);
 		}
 
 		internal virtual void DoDefaultAction() {
@@ -1107,6 +1110,16 @@ namespace System.Windows.Forms
 				
 			return buttons;
 
+		}
+
+		internal void FireEnter ()
+		{
+			OnEnter (EventArgs.Empty);
+		}
+
+		internal void FireLeave ()
+		{
+			OnLeave (EventArgs.Empty);
 		}
 
 		internal virtual bool ProcessControlMnemonic(char charCode) {
@@ -3109,7 +3122,7 @@ namespace System.Windows.Forms
 
 		public bool SelectNextControl(Control ctl, bool forward, bool tabStopOnly, bool nested, bool wrap) {
 			Control c;
-				
+
 			c = ctl;
 			do {
 				c = GetNextControl(c, forward);
@@ -3640,7 +3653,7 @@ namespace System.Windows.Forms
 
 				OnVisibleChanged(EventArgs.Empty);
 
-				if (value == false && parent != null) {
+				if (value == false && parent != null && Focused) {
 					Control	container;
 
 					// Need to start at parent, GetContainerControl might return ourselves if we're a container
@@ -3883,7 +3896,7 @@ namespace System.Windows.Forms
 				}
 					
 				case Msg.WM_LBUTTONDOWN: {
-					if (CanSelect && !is_selected) {
+					if (CanSelect) {
 						Select(this);
 					}
 					InternalCapture = true;
@@ -4085,7 +4098,6 @@ namespace System.Windows.Forms
 				}
 
 				case Msg.WM_KILLFOCUS: {
-					OnLeave(EventArgs.Empty);
 					if (CausesValidation) {
 						CancelEventArgs e;
 						e = new CancelEventArgs(false);
@@ -4101,14 +4113,12 @@ namespace System.Windows.Forms
 					}
 
 					this.has_focus = false;
-					this.is_selected = false;
 					OnLostFocus(EventArgs.Empty);
 					return;
 				}
 
 				case Msg.WM_SETFOCUS: {
 					if (!has_focus) {
-						OnEnter(EventArgs.Empty);
 						this.has_focus = true;
 						OnGotFocus(EventArgs.Empty);
 					}
