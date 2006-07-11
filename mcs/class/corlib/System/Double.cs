@@ -197,6 +197,7 @@ namespace System {
 		private const int State_ExponentSign = 4;
 		private const int State_Exponent = 5;
 		private const int State_ConsumeWhiteSpace = 6;
+		private const int State_Exit = 7;
 		
 		public static double Parse (string s, NumberStyles style, IFormatProvider provider)
 		{
@@ -312,6 +313,7 @@ namespace System {
 					sidx = len;
 					continue;
 				}
+
 				switch (state){
 				case State_AllowSign:
 					if ((style & NumberStyles.AllowLeadingSign) != 0){
@@ -442,13 +444,18 @@ namespace System {
 					return false;
 
 				case State_ConsumeWhiteSpace:
-					if (allow_trailing_white && Char.IsWhiteSpace (c))
+					if (allow_trailing_white && Char.IsWhiteSpace (c)) {
+						state = State_Exit;
 						break;
+					}
 					
 					if (!tryParse)
 						exc = new FormatException ("Unknown char");
 					return false;
 				}
+
+				if (state == State_Exit)
+					break;
 			}
 
 			b [didx] = 0;
