@@ -574,12 +574,9 @@ namespace System.Windows.Forms
 
 		protected internal virtual DataGridColumnStyle CreateGridColumn (PropertyDescriptor prop,  bool isDefault)
 		{
-			if (DataGridBoolColumn.CanRenderType (prop.PropertyType)) {
+			if (prop.PropertyType == typeof (bool))
 				return new DataGridBoolColumn (prop, isDefault);
-			}
-
-			if (DataGridTextBoxColumn.CanRenderType (prop.PropertyType)) {
-
+			else {
 				// At least to special cases with formats
 				if (prop.PropertyType.Equals (typeof (DateTime))) {
 					return new DataGridTextBoxColumn (prop, "d", isDefault);
@@ -592,8 +589,6 @@ namespace System.Windows.Forms
 
 				return new DataGridTextBoxColumn (prop, isDefault);
 			}
-
-			throw new NotImplementedException ();
 		}
 
 		protected override void Dispose (bool disposing)

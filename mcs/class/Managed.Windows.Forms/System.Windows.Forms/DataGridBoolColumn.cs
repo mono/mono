@@ -272,11 +272,6 @@ namespace System.Windows.Forms
 		#endregion	// Public Instance Methods
 
 		#region Private Instance Methods
-		internal static bool CanRenderType (Type type)
-		{
-			return (type == typeof (Boolean));
-		}
-
 		private object FromStateToValue (CheckState state)
 		{
 			if ((state & CheckState.Checked) == CheckState.Checked)

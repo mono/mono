@@ -425,7 +425,7 @@ namespace System.Windows.Forms
 
 				if (need_add)
 					value.RowNumber = RowsCount;
-#if false
+#if true
 				if (was_editing) {
 					EndEdit (CurrentTableStyle.GridColumnStyles[current_cell.ColumnNumber],
 						 current_cell.RowNumber,
@@ -959,7 +959,7 @@ namespace System.Windows.Forms
 		}
 
 		public bool EndEdit (DataGridColumnStyle gridColumn, int rowNumber, bool shouldAbort)
-		{	
+		{
 			if (!is_editing && !is_changing)
 				return true;
 
@@ -2340,7 +2340,6 @@ namespace System.Windows.Forms
 		internal Rectangle columnhdrs_area;	// Used columns header area
 		internal int columnhdrs_maxwidth; 	// Total width (max width) for columns headrs
 		internal Rectangle rowhdrs_area;	// Used Headers rows area
-		internal int rowhdrs_maxheight; 	// Total height for rows (max height)
 		internal Rectangle cells_area;
 		#endregion // Local Variables
 
@@ -2440,7 +2439,7 @@ namespace System.Windows.Forms
 			CalcParentRows ();
 			CalcParentButtons ();
 			UpdateVisibleRowCount ();
-			CalcRowHeaders (visiblerow_count);
+			CalcRowHeaders ();
 			width_of_all_columns = CalcAllColumnsWidth ();
 			CalcColumnHeaders ();
 			CalcCellsArea ();
@@ -2501,7 +2500,6 @@ namespace System.Windows.Forms
 			if (needVert) {
 				if (rowhdrs_area.Y + rowhdrs_area.Height > ClientRectangle.Y + ClientRectangle.Height) {
 					rowhdrs_area.Height -= horiz_scrollbar.Height;
-					rowhdrs_maxheight -= horiz_scrollbar.Height;
 				}
 
 				vert_scrollbar.Height = vert_scrollbar_height;
@@ -2641,17 +2639,11 @@ namespace System.Windows.Forms
 
 		}
 
-		void CalcRowHeaders (int visiblerow_count)
+		void CalcRowHeaders ()
 		{
 			rowhdrs_area.X = ClientRectangle.X;
 			rowhdrs_area.Y = columnhdrs_area.Y + columnhdrs_area.Height;
-
-			if (visiblerow_count == 0)
-				rowhdrs_area.Height = 0;
-			else
-				rowhdrs_area.Height = (rows[visiblerow_count + FirstVisibleRow - 1].VerticalOffset - rows[FirstVisibleRow].VerticalOffset
-						       + rows[visiblerow_count + FirstVisibleRow - 1].Height);
-			rowhdrs_maxheight = ClientRectangle.Height + ClientRectangle.Y - rowhdrs_area.Y;
+			rowhdrs_area.Height = ClientRectangle.Height + ClientRectangle.Y - rowhdrs_area.Y;
 
 			if (CurrentTableStyle.CurrentRowHeadersVisible)
 				rowhdrs_area.Width = RowHeaderWidth;
@@ -2705,7 +2697,7 @@ namespace System.Windows.Forms
 		{
 			visiblerow_count = GetVisibleRowCount (cells_area.Height);
 
-			CalcRowHeaders (visiblerow_count); // Height depends on num of visible rows
+			CalcRowHeaders (); // Height depends on num of visible rows
 
 			// XXX
 			Invalidate ();

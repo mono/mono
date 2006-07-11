@@ -1,5 +1,22 @@
 2006-07-10  Chris Toshok  <toshok@ximian.com>
 
+	* DataGridTableStyle.cs: just check if the property type is bool.
+	if it is, use DataGridBoolColumn, otherwise DataGridTextBoxColumn.
+	Don't use CanRenderType.
+
+	* DataGridTextBoxColumn.cs: set the value to DBNull.Value, not "",
+	if our text == NullText.  Remove CanRenderType.
+
+	* DataGridBoolColumn.cs: nuke CanRenderType.
+
+	* DataGrid.cs: reenable some code to end the current edit inside
+	of set_CurrentCell.  This fixes the other 1.1.16 regression.
+	Also, remove rowhdrs_maxheight and just use rowhdrs_area.Height.
+	Also, remove the visible_row_count arg from CalcRowHeaders, since
+	we don't need to worry about the actual height of the area.
+
+2006-07-10  Chris Toshok  <toshok@ximian.com>
+
 	* DataGridTextBoxColumn.cs: if when we Commit we're in navigate
 	mode, just return.
 

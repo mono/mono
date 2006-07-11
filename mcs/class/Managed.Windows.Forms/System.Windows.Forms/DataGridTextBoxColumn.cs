@@ -133,21 +133,16 @@ namespace System.Windows.Forms
 				object obj = GetColumnValueAtRow (dataSource, rowNum);
 				string existing_text = GetFormattedString (obj);
 
-				if (existing_text != box.Text) {
-					string text;
-
-					if (textbox.Text == NullText) {
-						text = string.Empty;
-					} else {
-						text = textbox.Text;
-					}
-			
-					SetColumnValueAtRow (dataSource, rowNum, text);
+				if (existing_text != textbox.Text) {
+					if (textbox.Text == NullText)
+						SetColumnValueAtRow (dataSource, rowNum, DBNull.Value);
+					else
+						SetColumnValueAtRow (dataSource, rowNum, textbox.Text);
 				}
 			}
 			catch {
+				return false;
 			}
-			
 			
 			EndEdit ();			
 			return true;
@@ -311,12 +306,6 @@ namespace System.Windows.Forms
 
 
 		#region Private Instance Methods
-
-		// We use DataGridTextBox to render everything that DataGridBoolColumn does not
-		internal static bool CanRenderType (Type type)
-		{
-			return (type != typeof (Boolean));
-		}
 
 		private string GetFormattedString (object obj)
 		{
