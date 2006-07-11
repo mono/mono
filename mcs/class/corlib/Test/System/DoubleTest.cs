@@ -38,6 +38,11 @@ namespace MonoTests.System {
 			"1e-05",
 			"6363883797383966.2933E-726",
 		};
+
+		private string[] string_values_fail = {
+			"",     // empty
+			"- 1.0" // Inner whitespace
+		};
 		
 		private double[] double_values = {
 			1, .1, 1.1, -12, 44.444432, .000021121,
@@ -202,6 +207,15 @@ namespace MonoTests.System {
 			catch (Exception e) {
 				Assertion.AssertEquals("Should be an OverflowException -", typeof(OverflowException), e.GetType());
 			}		
+
+			for (i = 0; i < string_values_fail.Length; ++i) {
+				try {
+					Double.Parse (string_values_fail [i]);
+					Assertion.Fail ("Parse () should fail on '" + string_values_fail [i]);
+				}
+				catch (FormatException) {
+				}
+			}
 		}
 
 		[Test]
@@ -509,13 +523,6 @@ namespace MonoTests.System {
 			double value;
 			Assert (!Double.TryParse ("error",
 				NumberStyles.Integer, null, out value));
-		}
-
-		[Test]
-		[ExpectedException (typeof (FormatException))]
-		public void ParseEmptyString ()
-		{
-			double.Parse (String.Empty);
 		}
 
 		[Test] // bug #77721

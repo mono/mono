@@ -1,3 +1,7 @@
+2006-07-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* DoubleTest.cs: Add a test for inner whitespace and Parse ().
+
 2006-07-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTimeTest.cs : (Kind) make it work consistently.
