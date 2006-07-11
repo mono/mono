@@ -59,7 +59,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void DataKeyArray_DefaultPropertyNotWorking()
 		{
 			DataKeyArray keyarray = new DataKeyArray (new ArrayList ());

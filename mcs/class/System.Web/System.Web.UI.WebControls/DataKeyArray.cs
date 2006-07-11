@@ -64,7 +64,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		public object SyncRoot {
-			get { return keys.SyncRoot; }
+			get { return this; }
 		}
 
 		public void CopyTo (DataKey[] array, int index)
