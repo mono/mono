@@ -319,6 +319,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (false, eventhandled, "A1");
 		}
 
+		// Microsoft is not firing any event
 		[Test]
 		public void TestLinkHoverColorChangedEvent_default ()
 		{
@@ -497,5 +498,56 @@ namespace MonoTests.System.Windows.Forms
 	        {
 	            	eventhandled = true;
 	        }
+
+		[Test]
+		public void DataGridNull ()
+		{
+			DataGridTableStyle dg = new DataGridTableStyle ();
+			dg.DataGrid = null;
+			Assert.IsNull (dg.DataGrid, "A1");
+		}
+
+		[Test]
+		public void HeaderFontNull ()
+		{
+			DataGridTableStyle dg = new DataGridTableStyle ();
+			Font header_font = dg.HeaderFont;
+			eventhandled = false;
+			dg.HeaderFontChanged += new EventHandler (OnEventHandler);
+			dg.HeaderFont = null;
+			Assert.AreEqual (header_font, dg.HeaderFont, "A1");
+			Assert.IsFalse (eventhandled, "A2");
+		}
+
+		[Test]
+		public void HeaderFontNull2 ()
+		{
+			DataGridTableStyle dg = new DataGridTableStyle ();
+			Font header_font = dg.HeaderFont;
+
+			Font new_font = new Font ("Helvetica", 8.5f, GraphicsUnit.Point);
+
+			dg.HeaderFont = new_font;
+			Assert.AreEqual (new_font, dg.HeaderFont, "A1");
+
+			eventhandled = false;
+			dg.HeaderFontChanged += new EventHandler (OnEventHandler);
+			dg.HeaderFont = null;
+
+			Assert.AreEqual (header_font, dg.HeaderFont, "A2");
+			Assert.IsTrue (eventhandled, "A3");
+		}
+
+		[Test]
+		public void MappingNameNull ()
+		{
+			DataGridTableStyle dg = new DataGridTableStyle ();
+			Assert.AreEqual ("", dg.MappingName, "A1");
+			eventhandled = false;
+			dg.MappingNameChanged  += new EventHandler (OnEventHandler);
+			dg.MappingName = null;
+			Assert.AreEqual ("", dg.MappingName, "A2");
+			Assert.IsFalse (eventhandled, "A3");
+		}
 	}
 }

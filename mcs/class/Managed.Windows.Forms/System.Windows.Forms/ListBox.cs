@@ -939,7 +939,7 @@ namespace System.Windows.Forms
 
 		public override string ToString ()
 		{
-			return base.ToString () + ", Items Count: " + Items.Count;
+			return base.ToString ();
 		}
 
 		protected virtual void WmReflectCommand (ref Message m)

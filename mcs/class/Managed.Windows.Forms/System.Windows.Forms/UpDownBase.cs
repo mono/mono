@@ -251,8 +251,8 @@ namespace System.Windows.Forms
 			txtView.TabIndex = TabIndex;
 
 			SuspendLayout ();
-			Controls.AddImplicit (txtView);
-			Controls.AddImplicit (spnSpinner);
+			Controls.Add (spnSpinner);
+			Controls.Add (txtView);
 			ResumeLayout ();
 
 			this.ActiveControl = txtView;

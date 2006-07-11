@@ -40,8 +40,8 @@ namespace System.Windows.Forms
 		private IFormatProvider format_provider = null;
 		private StringFormat string_format =  new StringFormat ();
 		private DataGridTextBox textbox;
-		private static readonly int offset_x = 2;
-		private static readonly int offset_y = 2;
+		private static readonly int offset_x = 0;
+		private static readonly int offset_y = 0;
 		#endregion	// Local Variables
 
 		#region Constructors
@@ -123,25 +123,26 @@ namespace System.Windows.Forms
 		
 		protected internal override bool Commit (CurrencyManager dataSource, int rowNum)
 		{
+			DataGridTextBox box = (DataGridTextBox)textbox;
+
+			/* Do not write data if not editing. */
+			if (box.IsInEditOrNavigateMode)
+				return true;
+
 			try {
 				object obj = GetColumnValueAtRow (dataSource, rowNum);
 				string existing_text = GetFormattedString (obj);
 
 				if (existing_text != textbox.Text) {
-					string text;
-
-					if (textbox.Text == NullText) {
-						text = string.Empty;
-					} else {
-						text = textbox.Text;
-					}
-			
-					SetColumnValueAtRow (dataSource, rowNum, text);
+					if (textbox.Text == NullText)
+						SetColumnValueAtRow (dataSource, rowNum, DBNull.Value);
+					else
+						SetColumnValueAtRow (dataSource, rowNum, textbox.Text);
 				}
 			}
 			catch {
+				return false;
 			}
-			
 			
 			EndEdit ();			
 			return true;
@@ -305,12 +306,6 @@ namespace System.Windows.Forms
 
 
 		#region Private Instance Methods
-
-		// We use DataGridTextBox to render everything that DataGridBoolColumn does not
-		internal static bool CanRenderType (Type type)
-		{
-			return (type != typeof (Boolean));
-		}
 
 		private string GetFormattedString (object obj)
 		{

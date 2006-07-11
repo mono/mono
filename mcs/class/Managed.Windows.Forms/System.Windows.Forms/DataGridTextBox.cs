@@ -40,14 +40,14 @@ namespace System.Windows.Forms
 	{
 
 		#region	Local Variables
-		private bool isedit;
+		private bool isnavigating;
 		private DataGrid grid;
 		#endregion	// Local Variables
 
 		#region Constructors
 		public DataGridTextBox ()
 		{
-			isedit = false;
+			isnavigating = true;
 			grid = null;
 			accepts_tab = true;
 			accepts_return = true;
@@ -59,8 +59,8 @@ namespace System.Windows.Forms
 
 		#region Public Instance Properties
 		public bool IsInEditOrNavigateMode {
-			get { return isedit; }
-			set { isedit = value; }
+			get { return isnavigating; }
+			set { isnavigating = value; }
 		}
 
 		#endregion	// Public Instance Properties
@@ -68,7 +68,7 @@ namespace System.Windows.Forms
 		#region Public Instance Methods
 		protected override void OnKeyPress (KeyPressEventArgs e)
 		{
-			isedit = true;
+			isnavigating = false;
 			grid.ColumnStartedEditing (Bounds);
 			base.OnKeyPress (e);
 		}

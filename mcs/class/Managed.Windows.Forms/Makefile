@@ -58,11 +58,18 @@ IMAGES_RESOURCES = \
 	resources/dialog-question.png		\
 	resources/dialog-warning.png
 
+TEST_DISTFILES = \
+	M.gif \
+	Test/resources/a.cur \
+	Test/System.Resources/compat_1_1.resx \
+	Test/System.Resources/compat_2_0.resx \
+	Test/System.Windows.Forms/bitmaps/a.png
+
 EXTRA_DISTFILES = \
 	README System.Windows.Forms.dll.resources \
 	$(RESX_RESOURCES:.resources=.resx) $(CUR_RESOURCES) $(PREBUILT) build-csproj \
 	$(IMAGES_RESOURCES) \
-	Test/resources/a.cur
+	$(TEST_DISTFILES)
 
 TEST_MCS_FLAGS = /r:System.Data.dll /r:System.Drawing.dll \
 	-resource:Test/resources/a.cur,a.cur

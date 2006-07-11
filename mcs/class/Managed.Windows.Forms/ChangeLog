@@ -1,3 +1,7 @@
+2006-07-11  Wade Berrier <wberrier@novell.com>
+
+	* Makefile: add some files EXTRA_DISTFILES needed by the tests
+
 2006-06-23  Chris Toshok  <toshok@ximian.com>
 
 	* System.Windows.Forms_test.dll.sources: add

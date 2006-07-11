@@ -1,3 +1,8 @@
+2006-07-11  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Font.cs: Set a default emtpy name so we don't crash if an RTF 
+	  document defines a font but no name for it
+
 2006-04-26  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* RTF.cs: Skip \r and \n characters instead of passing them back up

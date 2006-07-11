@@ -1,3 +1,195 @@
+2006-07-11  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* LinkLabel.cs: Hack to handle Shift-Tabbing to the linklabel. 
+	  Hopefully we will have a better way once all of focus is complete.
+
+2006-07-11  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* ThemeWin32Classic.cs: Commented out some debug code and fixed
+	  a compile error with csc.
+
+2006-07-11  Jackson Harper  <jackson@ximian.com>
+
+	* Control.cs: When hiding a control only select the next control
+	if the current control was focused.
+	- Don't handle enter/leave when setting/killing focus, this is
+	done by the container control.
+	- Remove is_selected, it's not needed anymore.
+	- Add utility methods for selecting a child control, and for
+	firing the Enter/Leave events.
+	* ContainerControl.cs: When a control is activated fire the
+	enter/leave events.
+	- Don't wrap when processing the tab key, so that focus can be
+	moved outside of the container.
+	- Use the correct active control
+
+2006-07-11  Jackson Harper  <jackson@ximian.com>
+
+	* ComboBox.cs: Remove some debug code that was blinding me.
+	* UpDownBase.cs: These controls actually aren't implicit, they are
+	visible to the user.
+
+2006-07-10  Chris Toshok  <toshok@ximian.com>
+
+	* DataGridTableStyle.cs: just check if the property type is bool.
+	if it is, use DataGridBoolColumn, otherwise DataGridTextBoxColumn.
+	Don't use CanRenderType.
+
+	* DataGridTextBoxColumn.cs: set the value to DBNull.Value, not "",
+	if our text == NullText.  Remove CanRenderType.
+
+	* DataGridBoolColumn.cs: nuke CanRenderType.
+
+	* DataGrid.cs: reenable some code to end the current edit inside
+	of set_CurrentCell.  This fixes the other 1.1.16 regression.
+	Also, remove rowhdrs_maxheight and just use rowhdrs_area.Height.
+	Also, remove the visible_row_count arg from CalcRowHeaders, since
+	we don't need to worry about the actual height of the area.
+
+2006-07-10  Chris Toshok  <toshok@ximian.com>
+
+	* DataGridTextBoxColumn.cs: if when we Commit we're in navigate
+	mode, just return.
+
+	* DataGridTextBox.cs: change "isedit" to "isnavigating" to reflect
+	the real sense of the IsInEditOrNavigateMode property (true =
+	navigate, false = edit).  Also, update OnKeyPress to reflect this.
+
+	* DataGridTableStyle.cs (CreateColumnsForTable): even if the
+	column style exists, we still need to set its property descriptor
+	to match up with our list manager.
+
+2006-07-10  Chris Toshok  <toshok@ximian.com>
+
+	* ThemeWin32Classic.cs: implement the new row/header painting
+	approach.  The parent row painting will likely go away and
+	replaced with label controls, but the rest seems to work ok (and
+	efficiently).
+
+	* Theme.cs: change the way we draw datagrid rows.  we don't draw
+	the row headers as a block now.  Instead we draw them in the
+	normal draw-row loop.  Add some calls for drawing parent rows and
+	relation rows.
+
+	* DataGridTableStyle.cs: add tons of ArgumentExceptions if this is
+	a default table style.  Set the defaults from ThemeEngine.Current,
+	not SystemColors.  Fix lots of misc issues with property setters.
+
+	* DataGrid.cs: move loads of style information out of this class
+	as it's being duplicated with DataGridTableStyle.  keep track of a
+	special DataGridTableStyle for the properties we used to mirror
+	here.  Switch all the style properties to access this table style
+	instead of instance fields of this class.  Also add a internal
+	class to represent parent rows (more needs to be stored here, like
+	the selection state from the parent table, as well as the
+	expansion state.)  Also, for datasources with relations, do the
+	right thing for collapse/expand, and add support for the
+	navigation/parent row buttons.
+
+	Lastly, fix the crash in the 1.1.16 build.
+
+	* GridTableStylesCollection.cs: make the explicit interface
+	implementations call the class's methods as opposed to duplicating
+	them.
+
+	* DataGridTextBoxColumn.cs: set the x/y offset of the textfield to
+	0 so the text doesn't jump around when we move the cursor.
+
+2006-07-10  Jackson Harper  <jackson@ximian.com>
+
+	* TextBoxBase.cs:
+	* ListBox.cs: Match MS's ToString (this makes debugging focus
+	stuff infinitely easier).
+
+2006-07-10  Jackson Harper  <jackson@ximian.com>
+
+	* Control.cs (SelectNextControl): When checking the control's
+	parent use this instead of ctrl.parent so that null can be passed
+	to SelectNextControl. (I have unit tests for this).
+	- Remove unused var.
+
+2006-07-10  Chris Toshok  <toshok@ximian.com>
+
+	* CurrencyManager.cs: correct one regression, the removal of the
+	finalType field.  Also, add a MonoTODO on CanAddRows, implement
+	Refresh() correctly, and fix some event emission in
+	ListChangedHandler.
+
+2006-07-07  Alexander Olk  <alex.olk@googlemail.com>
+
+	* FileDialog.cs: Don't use brackets for new folders if they exist
+	  under *nix. Instead use -(number of existing folders +1).
+
+2006-07-07  Alexander Olk  <alex.olk@googlemail.com>
+
+	* FileDialog.cs:
+	  - Fixed really nasty bug #78771
+	  - Don't block the whole GUI when reading directories with a lot of
+	    entries. Use an other thread instead and call BeginInvoke to
+	    update the ListView in MWFFileView
+
+2006-07-07  Chris Toshok  <toshok@ximian.com>
+
+	* Control.cs (Dispose): release any Capture when disposing.
+
+2006-07-07  Chris Toshok  <toshok@ximian.com>
+
+	* LinkLabel.cs (Select): if we chain up to the parent, set
+	focused_index to -1 so we'll search for the first available link
+	the next time the user tabs into us.  Also, if the direction is
+	backward and focused_index == -1, start the search from the last
+	element.
+
+2006-07-07  Chris Toshok  <toshok@ximian.com>
+
+	* LinkLabel.cs (CreatePiecesFromText): if the link's range piece
+	is beyond the end of the text, don't do anything.
+	(CreateLinkPieces): set our ControlStyles.Selectable based on
+	whether or not we have any links.
+	(Link.Invalidate): use a loop instead of foreach.
+	(Link.set_Start): null out owner.sorted_links so it'll be
+	recreated by CreateLinkPieces.
+
+2006-07-06  Chris Toshok  <toshok@ximian.com>
+
+	* LinkLabel.cs: revert the SetStyle change.
+
+2006-07-06  Chris Toshok  <toshok@ximian.com>
+
+	* LinkLabel.cs (.ctor): SetStyle Selectable to true.
+	(OnEnableChanged): s/Refresh/Invalidate
+	(OnGotFocus): if we have a focused index already, refocus it (so
+	if we mouse out/in to the window it'll focus the right link).
+	(OnKeyDown): move the tab handling out of here.
+	(OnLostFocus): don't set focused_index to -1, so we can refocus it
+	when we lose focus.
+	(OnMouseDown): don't Capture here - Control handles it.  Also,
+	focus the active link.
+	(OnMouseUp): don't deal with Capture.
+	(OnPaintBackgroundInternal): remove.
+	(OnTextAlignChanged): CreateLinkPieces before calling the
+	superclass's method.
+	(OnTextChanged): call CreateLinkPieces before calling superclass's
+	method.
+	(ProcessDialogKey): handle Tab here, and call Select(bool,bool) to
+	move around.
+	(Select): implement this, moving the selection between different
+	links, and call parent.SelectNextControl if we don't have another
+	link to focus in the given direction.
+	(CreateLinkPieces): call Invalidate instead of Refresh.
+	
+2006-07-06  Chris Toshok  <toshok@ximian.com>
+
+	* ThemeWin32Classic.cs: DrawLinkLabel changes to accomodate the
+	new LinkLabel internals.
+
+	* LinkLabel.cs: fairly major rewrite.  get rid of all the loops
+	over pieces looking for active/focused/etc links.  also, deal with
+	runs of text (and links) with embedded \n's in them, and use
+	MeasureCharacterRanges instead of MeasureString to figure out the
+	regions text occupies.  Lastly, do the usual s/Refresh/Invalidate
+	two-step.
+
 2006-07-04  Jackson Harper  <jackson@ximian.com>
 
 	* XplatUIX11.cs: Enable key auto repeat. If the user doesn't have

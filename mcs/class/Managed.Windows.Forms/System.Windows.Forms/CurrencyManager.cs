@@ -34,6 +34,7 @@ namespace System.Windows.Forms {
 	public class CurrencyManager : BindingManagerBase {
 
 		protected int listposition;
+		protected Type finalType;
 
 		private IList list;
 		private bool binding_suspended;
@@ -98,6 +99,8 @@ namespace System.Windows.Forms {
 				data_source = ((IListSource)data_source).GetList();
 
 			this.data_source = data_source;
+			if (data_source != null)
+				this.finalType = data_source.GetType();
 
 			if (this.data_source is IBindingList)
 				((IBindingList)this.data_source).ListChanged += new ListChangedEventHandler (ListChangedHandler);
@@ -163,14 +166,16 @@ namespace System.Windows.Forms {
                 internal override bool IsSuspended {
                         get { return binding_suspended; }
                 }
-                
+
+                [MonoTODO ("this needs re-addressing once DataViewManager.AllowNew is implemented")]
                 internal bool CanAddRows {
                 	get {
-				if (list as IBindingList == null) {
-					return false;
+				if (list is IBindingList) {
+					return true;
+					//return ((IBindingList)list).AllowNew;
 				}
-				
-				return true;
+
+				return false;
 			}
 		}
 
@@ -214,7 +219,7 @@ namespace System.Windows.Forms {
 
 		public void Refresh ()
 		{
-			PushData ();
+			ListChangedHandler (null, new ListChangedEventArgs (ListChangedType.Reset, -1));
 		}
 
 		protected void CheckEmpty ()
@@ -253,11 +258,9 @@ namespace System.Windows.Forms {
 				}
 				return ((ITypedList) list).GetListName (pds);
 			}
-#if false
 			else if (finalType != null) {
 				return finalType.Name;
 			}
-#endif
 			return String.Empty;
 		}
 
@@ -305,7 +308,6 @@ namespace System.Windows.Forms {
 					listposition = e.NewIndex - 1;
 					OnCurrentChanged (EventArgs.Empty);
 					OnPositionChanged (EventArgs.Empty);
-					OnItemChanged (new ItemChangedEventArgs (listposition));
 				}
 					
 				OnItemChanged (new ItemChangedEventArgs (-1));

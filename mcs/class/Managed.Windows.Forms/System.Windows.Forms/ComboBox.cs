@@ -1607,7 +1607,6 @@ namespace System.Windows.Forms
 			
 			private Rectangle GetItemDisplayRectangle (int index, int top_index)
 			{
-				Console.WriteLine (index + " " + top_index);
 				if (index < 0 || index >= owner.Items.Count)
 					throw new  ArgumentOutOfRangeException ("GetItemRectangle index out of range.");
 
