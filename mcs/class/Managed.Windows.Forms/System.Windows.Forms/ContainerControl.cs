@@ -80,12 +80,12 @@ namespace System.Windows.Forms {
 				// Fire the enter and leave events if possible
 				Form form = FindForm ();
 				if (form != null) {
+					Control active = form.ActiveControl;
 					Control common_container = GetCommonContainer (form.ActiveControl, value);
 					ArrayList chain = new ArrayList ();
-					Control walk = active_control;
+					Control walk = active;
 
 					// Generate the leave messages	
-					walk = active_control;
 					while (walk != common_container) {
 						walk.FireLeave ();
 						walk = walk.Parent;

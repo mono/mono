@@ -11,6 +11,7 @@
 	enter/leave events.
 	- Don't wrap when processing the tab key, so that focus can be
 	moved outside of the container.
+	- Use the correct active control
 
 2006-07-11  Jackson Harper  <jackson@ximian.com>
 
