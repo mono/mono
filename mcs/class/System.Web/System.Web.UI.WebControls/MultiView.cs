@@ -54,7 +54,7 @@ namespace System.Web.UI.WebControls
 		
 		int viewIndex = -1;
 		int initialIndex = -1;
-		bool initied;
+		bool initied = false;
 		
 		public event EventHandler ActiveViewChanged {
 			add { Events.AddHandler (ActiveViewChangedEvent, value); }
@@ -65,6 +65,8 @@ namespace System.Web.UI.WebControls
 		{
 			if (ob is View)
 				Controls.Add (ob as View);
+			else
+				throw new HttpException ("MultiView cannot have children of type 'Control'.  It can only have children of type View.");
 		}
 		
 		protected override ControlCollection CreateControlCollection ()
@@ -90,8 +92,15 @@ namespace System.Web.UI.WebControls
 		
 		[DefaultValue (-1)]
 		public virtual int ActiveViewIndex {
-			get { return viewIndex; }
-			set {
+			get
+			{
+				if (!initied)
+					return initialIndex;
+
+				return viewIndex;
+			}
+			set 
+			{
 				if (!initied) {
 					initialIndex = value;
 					return;
@@ -176,7 +185,7 @@ namespace System.Web.UI.WebControls
 		void UpdateViewVisibility ()
 		{
 			for (int n=0; n<Views.Count; n++)
-				Views [n].Visible = (n == viewIndex);
+				Views [n].VisibleInternal = (n == viewIndex);
 		}
 		
 		protected internal override void RemovedControl (Control ctl)

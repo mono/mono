@@ -45,6 +45,11 @@ namespace System.Web.UI.WebControls
 	{
 		private static readonly object ActivateEvent = new object();
 		private static readonly object DeactivateEvent = new object();
+
+		public View ()
+		{
+			base.Visible = false;
+		}
 		
 		internal void NotifyActivation (bool activated)
 		{
@@ -75,6 +80,21 @@ namespace System.Web.UI.WebControls
 			if (Events != null) {
 				EventHandler eh = (EventHandler) Events [DeactivateEvent];
 				if (eh != null) eh (this, e);
+			}
+		}
+
+		internal bool VisibleInternal
+		{
+			get { return base.Visible; }
+			set { base.Visible = value; }
+		}
+
+		public override bool Visible
+		{
+			get { return base.Visible; }
+			set
+			{
+				throw new InvalidOperationException ("The Visible property of a View control can only be set by setting the active View of a MultiView.");
 			}
 		}
 	}
