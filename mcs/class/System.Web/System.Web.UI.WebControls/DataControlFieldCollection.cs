@@ -56,7 +56,6 @@ namespace System.Web.UI.WebControls
 		public void Add (DataControlField field)
 		{
 			((IList)this).Add (field);
-			OnInsertField (field);
 		}
 		
 		public bool Contains (DataControlField field)
@@ -77,36 +76,37 @@ namespace System.Web.UI.WebControls
 		public void Insert (int index, DataControlField field)
 		{
 			((IList)this).Insert (index, field);
-			OnInsertField (field);
 		}
 		
 		public void Remove (DataControlField field)
 		{
 			((IList)this).Remove (field);
-			OnRemoveField (field);
 		}
 		
 		public void RemoveAt (int index)
 		{
 			DataControlField field = this [index];
 			((IList)this).RemoveAt (index);
-			OnRemoveField (field);
 		}
 		
 		[Browsable (false)]
 		public DataControlField this [int i] {
 			get { return (DataControlField) ((IList)this) [i]; }
 		}
-		
-		void OnInsertField (DataControlField field)
-		{
+
+		protected override void OnInsertComplete (int index, object value) {
+			DataControlField field = (DataControlField) value;
 			field.FieldChanged += new EventHandler (OnFieldChanged);
 			OnFieldsChanged ();
 		}
-		
-		void OnRemoveField (DataControlField field)
-		{
+
+		protected override void OnRemoveComplete (int index, object value) {
+			DataControlField field = (DataControlField) value;
 			field.FieldChanged -= new EventHandler (OnFieldChanged);
+			OnFieldsChanged ();
+		}
+
+		protected override void OnClearComplete () {
 			OnFieldsChanged ();
 		}
 		

@@ -156,7 +156,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void DataControlFieldCollection_Remove ()
 		{
 			DataControlFieldCollection collection = new DataControlFieldCollection ();
@@ -180,7 +179,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void DataControlFieldCollection_FieldsChangedEvent ()
 		{
 			DataControlFieldCollection collection = new DataControlFieldCollection ();
