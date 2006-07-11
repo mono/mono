@@ -1,3 +1,7 @@
+2006-07-11  Zoltan Varga  <vargaz@gmail.com>
+ 
+	* MethodBuilder.cs (SetCustomAttribute): Fix handling of SpecialNameAttribute.
+	
 2006-07-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* DynamicMethod.cs: Create all other DynamicMethod's referenced by

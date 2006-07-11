@@ -1,3 +1,7 @@
+2006-07-11  Zoltan Varga  <vargaz@gmail.com>
+ 
+	* Double.cs (Parse): Fix handling of inner whitespace.
+	
 2006-06-28  Kornél Pál  <kornelpal@gmail.com>
 
 	* Char.cs: Implemented IsHighSurrogate and IsLowSurrogate methods.
