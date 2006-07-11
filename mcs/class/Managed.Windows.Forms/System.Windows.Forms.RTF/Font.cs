@@ -45,6 +45,7 @@ namespace System.Windows.Forms.RTF {
 		public Font(RTF rtf) {
 			this.rtf = rtf;
 			num = -1;
+			name = String.Empty;
 
 			lock (rtf) {
 				if (rtf.Fonts == null)
