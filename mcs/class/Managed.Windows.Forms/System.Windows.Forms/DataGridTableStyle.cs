@@ -883,6 +883,8 @@ namespace System.Windows.Forms
 					if (st.Width == -1)
 						st.Width = CurrentPreferredColumnWidth;
 
+					st.PropertyDescriptor = propcol[i];
+
 					continue;
 				}
 

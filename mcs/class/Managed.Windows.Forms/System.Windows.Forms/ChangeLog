@@ -1,5 +1,18 @@
 2006-07-10  Chris Toshok  <toshok@ximian.com>
 
+	* DataGridTextBoxColumn.cs: if when we Commit we're in navigate
+	mode, just return.
+
+	* DataGridTextBox.cs: change "isedit" to "isnavigating" to reflect
+	the real sense of the IsInEditOrNavigateMode property (true =
+	navigate, false = edit).  Also, update OnKeyPress to reflect this.
+
+	* DataGridTableStyle.cs (CreateColumnsForTable): even if the
+	column style exists, we still need to set its property descriptor
+	to match up with our list manager.
+
+2006-07-10  Chris Toshok  <toshok@ximian.com>
+
 	* ThemeWin32Classic.cs: implement the new row/header painting
 	approach.  The parent row painting will likely go away and
 	replaced with label controls, but the rest seems to work ok (and

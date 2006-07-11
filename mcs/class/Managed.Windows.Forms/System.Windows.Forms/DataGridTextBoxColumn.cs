@@ -123,11 +123,17 @@ namespace System.Windows.Forms
 		
 		protected internal override bool Commit (CurrencyManager dataSource, int rowNum)
 		{
+			DataGridTextBox box = (DataGridTextBox)textbox;
+
+			/* Do not write data if not editing. */
+			if (box.IsInEditOrNavigateMode)
+				return true;
+
 			try {
 				object obj = GetColumnValueAtRow (dataSource, rowNum);
 				string existing_text = GetFormattedString (obj);
 
-				if (existing_text != textbox.Text) {
+				if (existing_text != box.Text) {
 					string text;
 
 					if (textbox.Text == NullText) {
