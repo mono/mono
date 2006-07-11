@@ -40,12 +40,16 @@ using System.Collections;
 using System.Collections.Specialized;
 using NUnit.Framework;
 using System.Data;
+using MonoTests.stand_alone.WebHarness;
+using MonoTests.SystemWeb.Framework;
+using System.Threading;
 
 
 namespace MonoTests.System.Web.UI.WebControls
 {
 	class PokerImageField : ImageField
 	{
+		
 		// View state Stuff
 		public PokerImageField ()
 			: base ()
@@ -107,6 +111,16 @@ namespace MonoTests.System.Web.UI.WebControls
 	[TestFixture]
 	public class ImageFieldTest
 	{
+		public const string BOOLFIELD = "bool";
+		public const string STRINGFIELD = "str";
+		enum DatatableType { nullDS, stringDS , emptyDS };
+
+		[SetUp]
+		public void SetupTestCase ()
+		{
+			Thread.Sleep (100);
+		}
+
 		[Test]
 		public void ImageField_DefaultProperty ()
 		{
@@ -275,27 +289,201 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual ("Databound", result, "GetDesignTimeValue");
 		}
 
+		
 		[Test]
-		public void ImageField_GetFormattedAlternateTextEmptyDs ()
+		[Category("NunitWeb")]
+		public void ImageField_GetFormattedAlternateText ()
 		{
-			PokerImageField field = new PokerImageField ();
-			field.AlternateText = "test";
-			string result = field.DoGetFormattedAlternateText (new Control());
-			Assert.AreEqual ("test", result, "GetFormattedAlternateText");
+			WebTest t = new WebTest ();
+			PageDelegates pd = new PageDelegates ();
+			pd.PreRender = _ImageFieldInit;
+			t.Invoker = new PageInvoker (pd);
+			
+			string htmlPage = t.Run ();
+			string htmlOrigin = @"<div>
+						<table cellspacing=""0"" rules=""all"" border=""1"" id=""Grid"" style=""border-collapse:collapse;"">
+							<tr>
+								<th scope=""col"">Data</th>
+							</tr><tr>
+								<td><img src=""Item%200"" alt=""Item: Item 0"" style=""border-width:0px;"" /></td>
+							</tr><tr>
+								<td><img src=""Item%201"" alt=""Item: Item 1"" style=""border-width:0px;"" /></td>
+							</tr><tr>
+								<td><img src=""Item%202"" alt=""Item: Item 2"" style=""border-width:0px;"" /></td>
+							</tr><tr>
+								<td><img src=""Item%203"" alt=""Item: Item 3"" style=""border-width:0px;"" /></td>
+							</tr><tr>
+								<td><img src=""Item%204"" alt=""Item: Item 4"" style=""border-width:0px;"" /></td>
+							</tr>
+						</table>
+					</div>";
+			string htmlControl = HtmlDiff.GetControlFromPageHtml (htmlPage);
+			HtmlDiff.AssertAreEqual (htmlOrigin, htmlControl, "GetFormattedAlternateText");
+		}
+
+		public static void _ImageFieldInit (Page p)
+		{
+			// This also tested DataAlternateTextField
+			LiteralControl lcb = new LiteralControl (HtmlDiff.BEGIN_TAG);
+			LiteralControl lce = new LiteralControl (HtmlDiff.END_TAG);
+			GridView grid = new GridView();
+			grid.AutoGenerateColumns = false;
+			grid.ID = "Grid";
+			grid.DataSource = CreateDataSource (DatatableType.stringDS);
+			ImageField field = new ImageField();
+			field.DataImageUrlField = "Field";
+			field.DataAlternateTextField = "Field";
+			field.DataAlternateTextFormatString = "Item: {0}";
+			field.ReadOnly = true;
+			field.HeaderText = "Data" ;
+			grid.Columns.Add (field);
+			p.Form.Controls.Add (lcb);
+			p.Form.Controls.Add (grid);
+			p.Form.Controls.Add (lce);
+			grid.DataBind ();
 		}
 
 		[Test]
-		public void ImageField_GetFormattedAlternateTextWithDs ()
+		[Category ("NunitWeb")]
+		public void ImageField_NullDisplayText ()
 		{
-			// This functionality will be tested integration
-			// Look GridView Integration aspx
+			WebTest t = new WebTest ();
+			PageDelegates pd = new PageDelegates ();
+			pd.PreRender = _ImageFieldNullText;
+			t.Invoker = new PageInvoker (pd);
+
+			string htmlPage = t.Run ();
+			string htmlOrigin = @"<div>
+						<table cellspacing=""0"" rules=""all"" border=""1"" style=""border-collapse:collapse;"">
+							<tr>
+								<th scope=""col"">Data</th><th scope=""col"">Field</th>
+							</tr><tr>
+								<td><span>NullDisplayText</span></td><td>&nbsp;</td>
+							</tr><tr>
+								<td><span>NullDisplayText</span></td><td>&nbsp;</td>
+							</tr><tr>
+								<td><span>NullDisplayText</span></td><td>&nbsp;</td>
+							</tr><tr>
+								<td><span>NullDisplayText</span></td><td>&nbsp;</td>
+							</tr><tr>
+								<td><span>NullDisplayText</span></td><td>&nbsp;</td>
+							</tr>
+						</table>
+					</div>";
+			string htmlControl = HtmlDiff.GetControlFromPageHtml (htmlPage);
+			HtmlDiff.AssertAreEqual (htmlOrigin, htmlControl, "ImageFieldNullText");
+		}
+
+		public static void _ImageFieldNullText (Page p)
+		{
+			LiteralControl lcb = new LiteralControl (HtmlDiff.BEGIN_TAG);
+			LiteralControl lce = new LiteralControl (HtmlDiff.END_TAG);
+			GridView grid = new GridView ();
+			grid.DataSource = CreateDataSource (DatatableType.nullDS);
+			ImageField field = new ImageField ();
+			field.NullDisplayText = "NullDisplayText";
+			field.DataImageUrlField = "Field";
+			field.ReadOnly = true;
+			field.HeaderText = "Data";
+			grid.Columns.Add (field);
+			p.Form.Controls.Add (lcb);
+			p.Form.Controls.Add (grid);
+			p.Form.Controls.Add (lce);
+			grid.DataBind ();
 		}
 
 		[Test]
-		public void ImageField_OnDataBindField ()
+		[Category ("NunitWeb")]
+		public void ImageField_ConvertEmptyStringToNull ()
 		{
-			// This functionality will be tested integration
-			// Look GridView Integration aspx
+			WebTest t = new WebTest ();
+			PageDelegates pd = new PageDelegates ();
+			pd.PreRender = _ConvertEmptyStringToNull;
+			t.Invoker = new PageInvoker (pd);
+			string htmlPage = t.Run ();
+			string htmlOrigin = @"<div>
+						<table cellspacing=""0"" rules=""all"" border=""1"" style=""border-collapse:collapse;"">
+							<tr>
+								<th scope=""col"">Data</th><th scope=""col"">Field</th>
+							</tr><tr>
+								<td><img src="""" style=""border-width:0px;"" /></td><td>&nbsp;</td>
+							</tr><tr>
+								<td><img src="""" style=""border-width:0px;"" /></td><td>&nbsp;</td>
+							</tr><tr>
+								<td><img src="""" style=""border-width:0px;"" /></td><td>&nbsp;</td>
+							</tr><tr>
+								<td><img src="""" style=""border-width:0px;"" /></td><td>&nbsp;</td>
+							</tr><tr>
+								<td><img src="""" style=""border-width:0px;"" /></td><td>&nbsp;</td>
+							</tr>
+						</table>
+					</div>";
+			string htmlControl = HtmlDiff.GetControlFromPageHtml (htmlPage);
+			HtmlDiff.AssertAreEqual (htmlOrigin, htmlControl, "ConvertEmptyStringToNull");
+		}
+
+		public static void _ConvertEmptyStringToNull (Page p)
+		{
+			LiteralControl lcb = new LiteralControl (HtmlDiff.BEGIN_TAG);
+			LiteralControl lce = new LiteralControl (HtmlDiff.END_TAG);
+			GridView grid = new GridView ();
+			grid.DataSource = CreateDataSource (DatatableType.emptyDS);
+			ImageField field = new ImageField ();
+			field.NullDisplayText = "NullDisplayText";
+			field.DataImageUrlField = "Field";
+			field.ConvertEmptyStringToNull = false;
+			field.ReadOnly = true;
+			field.HeaderText = "Data";
+			grid.Columns.Add (field);
+			p.Form.Controls.Add (lcb);
+			p.Form.Controls.Add (grid);
+			p.Form.Controls.Add (lce);
+			grid.DataBind ();
+		}
+
+		[TestFixtureTearDown]
+		public void TearDown ()
+		{
+			WebTest.Unload ();
+		}
+		
+
+		static ICollection CreateDataSource (DatatableType datatype)
+		{
+			DataTable dt = new DataTable ();
+			DataRow dr;
+
+			switch (datatype) 
+			{
+				case DatatableType.stringDS:
+					dt.Columns.Add (new DataColumn ("Field", typeof (string)));
+					for (int i = 0; i < 5; i++) {
+						dr = dt.NewRow ();
+						dr[0] = "Item " + i.ToString ();
+						dt.Rows.Add (dr);
+					}
+					break;
+				case DatatableType.nullDS:
+					dt.Columns.Add (new DataColumn ("Field", typeof (string)));
+					for (int i = 0; i < 5; i++) {
+						dt.Rows.Add (dt.NewRow ());
+					}
+					break;
+				case DatatableType.emptyDS:
+					dt.Columns.Add (new DataColumn ("Field", typeof (string)));
+					for (int i = 0; i < 5; i++) {
+						dr = dt.NewRow ();
+						dr[0] = string.Empty ;
+						dt.Rows.Add (dr);
+					}
+					break;
+				default:
+					throw new ArgumentException ("Wrong data source type");
+
+			}
+			
+			DataView dv = new DataView (dt);
+			return dv;
 		}
 	}
 }

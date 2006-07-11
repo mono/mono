@@ -1,3 +1,7 @@
+2006-07-11 Yoni Klain <yonik@mainsoft.com>
+
+	* ImageFieldTest.cs added new tests;
+
 2006-07-10 Andrew Skiba <andrews@mainsoft.com>
 
 	* SiteMapPathTest.cs: fix expected results for IE user-agent
