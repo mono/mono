@@ -161,27 +161,31 @@ namespace System.Web.UI.WebControls {
 						     DataControlCellType cellType, DataControlRowState rowState, int rowIndex)
 		{
 			base.InitializeCell (cell, cellType, rowState, rowIndex);
-			HyperLink link = new HyperLink ();
-			bool bind = false;
-			
-			if (Target.Length > 0)
-				link.Target = Target;
-			
-			if (DataTextField.Length > 0)
-				bind = true;
-			else
-				link.Text = Text;
-			
-			string[] fields = DataNavigateUrlFields;
-			if (fields.Length > 0)
-				bind = true;
-			else
-				link.NavigateUrl = NavigateUrl;
+			if (cellType == DataControlCellType.DataCell) {
+				HyperLink link = new HyperLink ();
+				bool bind = false;
 
-			if (bind && cellType == DataControlCellType.DataCell && (rowState & DataControlRowState.Insert) == 0)
-				cell.DataBinding += new EventHandler (OnDataBindField);
+				if (Target.Length > 0)
+					link.Target = Target;
 
-			cell.Controls.Add (link);
+				if (DataTextField.Length > 0)
+					bind = true;
+				else
+					link.Text = Text;
+
+				string [] fields = DataNavigateUrlFields;
+				if (fields.Length > 0)
+					bind = true;
+				else
+					link.NavigateUrl = NavigateUrl;
+
+				if (bind && cellType == DataControlCellType.DataCell && (rowState & DataControlRowState.Insert) == 0)
+					cell.DataBinding += new EventHandler (OnDataBindField);
+
+				link.ControlStyle.CopyFrom (ControlStyle);
+
+				cell.Controls.Add (link);
+			}
 		}
 		
 		protected virtual string FormatDataNavigateUrlValue (object[] dataUrlValues)

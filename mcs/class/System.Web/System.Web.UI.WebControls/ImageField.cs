@@ -229,6 +229,7 @@ namespace System.Web.UI.WebControls {
 			}
 			else if (DataImageUrlField.Length > 0) {
 				Image img = new Image ();
+				img.ControlStyle.CopyFrom (ControlStyle);
 				cell.Controls.Add (img);
 			}
 		}
