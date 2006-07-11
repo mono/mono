@@ -1,4 +1,10 @@
 2006-06-30  Senganal T <tsenganal@novell.com>
+	
+	* DataSetTest2.cs : Added tests for DataSet.WriteXmlSchema and 
+	ReadXmlSchema methods to test nested schemas. 
+	Also tests for bug #78810.
+
+2006-06-30  Senganal T <tsenganal@novell.com>
 
 	* DataRowTest2.cs : Added tests for new 2.0 methods in DataRow
 

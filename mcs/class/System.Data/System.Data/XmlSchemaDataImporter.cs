@@ -598,27 +598,32 @@ el.ElementType != schemaAnyType)
 					pcol [i] = ptab.Columns [XmlHelper.Decode (pcolnames [i])];
 
 				DataColumn[] ccol = new DataColumn [ccolnames.Length];
-				for (int i=0; i < ccol.Length; ++i)
+				for (int i=0; i < ccol.Length; ++i) {
 					ccol [i] = ctab.Columns [XmlHelper.Decode (ccolnames [i])];
-
+					if (ccol [i] == null)
+						ccol [i] = CreateChildColumn (pcol [i], ctab);
+				}
 				rel = new DataRelation (name, pcol, ccol, rs.CreateConstraint);
 			} else {
 				DataColumn pcol = ptab.Columns [XmlHelper.Decode (rs.ParentColumnName)];
 				DataColumn ccol = ctab.Columns [XmlHelper.Decode (rs.ChildColumnName)];
-				if (ccol == null) {
-					ccol = new DataColumn ();
-					ccol.ColumnName = pcol.ColumnName;
-					ccol.Namespace = String.Empty; // don't copy
-					ccol.ColumnMapping = MappingType.Hidden;
-					ccol.DataType = pcol.DataType;
-					ctab.Columns.Add (ccol);
-				}
+				if (ccol == null) 
+					ccol = CreateChildColumn (pcol, ctab);
 				rel = new DataRelation (name, pcol, ccol, rs.CreateConstraint);
 			}
 			rel.Nested = rs.IsNested;
 			if (rs.CreateConstraint)
 				rel.ParentTable.PrimaryKey = rel.ParentColumns;
 			return rel;
+		}
+
+		private DataColumn CreateChildColumn (DataColumn parentColumn, DataTable childTable)
+		{
+			DataColumn col = childTable.Columns.Add (parentColumn.ColumnName, 
+								parentColumn.DataType);
+			col.Namespace = String.Empty;
+			col.ColumnMapping = MappingType.Hidden;
+			return col;
 		}
 
 		private void ImportColumnGroupBase (XmlSchemaElement parent, XmlSchemaGroupBase gb)
@@ -739,17 +744,16 @@ el.ElementType != schemaAnyType)
 
 			if (el.Annotation != null)
 				HandleAnnotations (el.Annotation, true);
-			// If xsd:keyref for this table exists, then don't add
+			// If xsd:keyref xsd:key for this table exists, then don't add
 			// relation here manually.
-			else if (!DataSetDefinesPrimaryKey (elName)) {
+			else if (!DataSetDefinesKey (elName)) {
 				AddParentKeyColumn (parent, el, col);
-				DataColumn pkey = currentTable.PrimaryKey;
 
 				RelationStructure rel = new RelationStructure ();
 				rel.ParentTableName = XmlHelper.Decode (parent.QualifiedName.Name);
 				rel.ChildTableName = elName;
-				rel.ParentColumnName = pkey.ColumnName;
-				rel.ChildColumnName = pkey.ColumnName;
+				rel.ParentColumnName = col.ColumnName;
+				rel.ChildColumnName = col.ColumnName;
 				rel.CreateConstraint = true;
 				rel.IsNested = true;
 				relations.Add (rel);
@@ -761,10 +765,10 @@ el.ElementType != schemaAnyType)
 
 		}
 
-		private bool DataSetDefinesPrimaryKey (string name)
+		private bool DataSetDefinesKey (string name)
 		{
 			foreach (ConstraintStructure c in reservedConstraints.Values)
-				if (c.TableName == name && c.IsPrimaryKey)
+				if (c.TableName == name && (c.IsPrimaryKey || c.IsNested))
 					return true;
 			return false;
 		}
@@ -776,8 +780,9 @@ el.ElementType != schemaAnyType)
 
 			// check name identity
 			string name = XmlHelper.Decode (parent.QualifiedName.Name) + "_Id";
-			if (currentTable.ContainsColumn (name))
-				throw new DataException (String.Format ("There is already a column that has the same name: {0}", name));
+			int count = 0;
+			while (currentTable.ContainsColumn (name))
+				name = String.Format ("{0}_{1}", name, count++);
 			// check existing primary key
 			if (currentTable.Table.PrimaryKey.Length > 0)
 				throw new DataException (String.Format ("There is already primary key columns in the table \"{0}\".", currentTable.Table.TableName));
@@ -786,7 +791,6 @@ el.ElementType != schemaAnyType)
 			col.ColumnMapping = MappingType.Hidden;
 			col.Namespace = parent.QualifiedName.Namespace;
 			col.DataType = typeof (int);
-			col.Unique = true;
 			col.AutoIncrement = true;
 			col.AllowDBNull = false;
 

@@ -539,15 +539,15 @@ namespace System.Data
 				if (elements.Count > 0) {
 					w.WriteStartElement ("xs", "sequence",
 						xmlnsxs);
+
 					foreach (DataColumn col in elements)
-						WriteTableTypeParticles (
-							col);
+						WriteTableTypeParticles (col);
+
+					foreach (DataRelation rel in table.ChildRelations)
+						if (rel.Nested)
+							WriteChildRelations (rel);
 					w.WriteEndElement ();
 				}
-
-				foreach (DataRelation rel in table.ChildRelations)
-					if (rel.Nested)
-						WriteChildRelations (rel);
 			}
 
 			w.WriteFullEndElement (); // complexType
@@ -649,17 +649,18 @@ namespace System.Data
 				w.WriteEndAttribute ();
 			} else {
 				w.WriteStartElement ("xs", "element", xmlnsxs);
-				w.WriteStartAttribute ("type", String.Empty);
+				w.WriteStartAttribute ("name", String.Empty);
 				w.WriteQualifiedName (
 					XmlHelper.Encode (rel.ChildTable.TableName),
 					rel.ChildTable.Namespace);
 				w.WriteEndAttribute ();
-				w.WriteEndElement ();
-
-				globalTypeTables.Add (rel.ChildTable);
 				w.WriteAttributeString ("minOccurs", "0");
 				w.WriteAttributeString ("maxOccurs", "unbounded");
+
+				globalTypeTables.Add (rel.ChildTable);
 			}
+			WriteTableType (rel.ChildTable);
+			w.WriteEndElement ();
 		}
 
 		private void WriteTableAttributes (ArrayList atts)

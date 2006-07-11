@@ -3309,5 +3309,43 @@ namespace MonoTests_System.Data
 			//should not throw an exception
 			ds.WriteXmlSchema (sw);
 		}
+
+		[Test]
+		public void ReadWriteXmlSchema_Nested ()
+		{
+			DataSet ds = new DataSet ("dataset");
+			ds.Tables.Add ("table1");
+			ds.Tables.Add ("table2");
+			ds.Tables[0].Columns.Add ("col");
+			ds.Tables[1].Columns.Add ("col");
+			ds.Relations.Add ("rel", ds.Tables [0].Columns [0],ds.Tables [1].Columns [0], true);
+			ds.Relations [0].Nested = true;
+
+			MemoryStream ms = new MemoryStream ();
+			ds.WriteXmlSchema (ms);
+
+			DataSet ds1 = new DataSet ();
+			ds1.ReadXmlSchema (new MemoryStream (ms.GetBuffer ()));
+
+			// no new relation, and <table>_Id columns, should get created when 
+			// Relation.Nested = true
+			Assert.AreEqual (1, ds1.Relations.Count, "#1");
+			Assert.AreEqual (1, ds1.Tables [0].Columns.Count, "#2");
+			Assert.AreEqual (1, ds1.Tables [1].Columns.Count, "#3");
+		}
+
+		[Test]
+		public void ReadXmlSchema_Nested ()
+		{
+			//when Relation.Nested = false, and the schema is nested, create new relations on <table>_Id
+			//columns.
+			DataSet ds = new DataSet ();
+			ds.ReadXmlSchema ("Test/System.Data/schemas/test017.xsd");
+			Assert.AreEqual (2, ds.Relations.Count, "#1");
+			Assert.AreEqual (3, ds.Tables [0].Columns.Count, "#2");
+			Assert.AreEqual (3, ds.Tables [1].Columns.Count, "#3");
+			Assert.AreEqual ("table1_Id_0", ds.Tables [0].Columns [2].ColumnName, "#4");
+			Assert.AreEqual ("table1_Id_0", ds.Tables [0].PrimaryKey [0].ColumnName, "#5");
+		}
 	}
 }

@@ -1,4 +1,28 @@
 2006-06-30  Senganal T  <tsenganal@novell.com>
+	
+	* XmlSchemaWriter.cs :
+		- WriteTableType : If Relation.Nested is true, then nest the 
+		table schemas. Correct the xml to add the table element within
+		the <Sequence> element.
+		- WriteChildRelations : Correct the Xml element name and
+		attributes. Close the attribute correctly.
+
+	* XmlSchemaDataImporter.cs :
+		- GenerateRelationship : When creating the relations, if
+		ParentColumn exists but Corr ChildCol is null, create a child
+		Column with the same name and type as the parent column.
+		- Renamed DataSetDefinesPrimaryKey to DataSetDefinesKey
+		- DataSetDefinesKey : if either xsd:key or xsd:keyref is
+		defined for the dataset, do not manually create the relations.
+		- AddParentKeyColumn : if Columnname already exists, use
+		colname_0 instead of throwing an exception.
+		- FillDataColumnRepeatedSimpleElement : Do not set the Unique
+		value as it creates a constraint by default. The unique value
+		is automatically set when pk is set.
+		- CreateChildColumns : Added. Creates a ChildColumn duplicating 
+		ParentColumn properties.
+
+2006-06-30  Senganal T  <tsenganal@novell.com>
 
 	* DataRow.cs : 
 		- SetAdded, SetModified : new methods in 2.0
