@@ -272,10 +272,23 @@ namespace System.Windows.Forms
 
 			// Set focus to the first enabled link piece
 			if (focused_index == -1) {
-				for (int i = 0; i < sorted_links.Length; i ++) {
-					if (sorted_links[i].Enabled) {
-						focused_index = i;
-						break;
+				if ((Control.ModifierKeys & Keys.Shift) == 0) {
+					for (int i = 0; i < sorted_links.Length; i ++) {
+						if (sorted_links[i].Enabled) {
+							focused_index = i;
+							break;
+						}
+					}
+				} else {
+					if (focused_index == -1)
+						focused_index = sorted_links.Length;
+
+					for (int n = focused_index - 1; n >= 0; n--) {
+						if (sorted_links[n].Enabled) {
+							sorted_links[n].Focused = true;
+							focused_index = n;
+							return;
+						}
 					}
 				}
 			}
