@@ -1,3 +1,7 @@
+2006-07-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (mono_custom_attrs_free): Fix freeing of dynamic cattr info.
+
 2006-07-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c (resolve_object): Add support for DynamicMethod.
