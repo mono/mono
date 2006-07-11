@@ -1147,6 +1147,28 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NotWorking")]
+		public void GridView_RenderingCheckBoxField2 ()
+		{
+			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (RenderingCheckBoxField2)).Run ();
+			string RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
+			string OriginControlHtml = @"<div>
+											<table cellspacing=""0"" rules=""all"" border=""1"" style=""border-collapse:collapse;"">
+												<tr>
+													<th scope=""col"">bool</th><th scope=""col"">str</th>
+												</tr><tr>
+													<td><span disabled=""disabled"" title=""bool""><input id=""ctl01_ctl02_ctl00"" type=""checkbox"" name=""ctl01$ctl02$ctl00"" checked=""checked"" disabled=""disabled"" /></span></td><td>1</td>
+												</tr><tr>
+													<td><span disabled=""disabled"" title=""bool""><input id=""ctl01_ctl03_ctl00"" type=""checkbox"" name=""ctl01$ctl03$ctl00"" disabled=""disabled"" /></span></td><td>2</td>
+												</tr><tr>
+													<td>&nbsp;</td><td>&nbsp;</td>
+												</tr>
+											</table>
+										</div>";
+			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml, "RenderingCheckBoxField2");
+		}
+		
+		[Test]
+		[Category ("NotWorking")]
 		public void GridView_RenderingImageField ()
 		{
 			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (RenderingImageField)).Run ();
@@ -1230,7 +1252,7 @@ namespace MonoTests.System.Web.UI.WebControls
 								</tr>
 							</table>
 						</div>";
-			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml, "RenderingCheckBoxField");
+			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml, "RenderingButtonField");
 		}
 
 	
@@ -1257,7 +1279,7 @@ namespace MonoTests.System.Web.UI.WebControls
 								</tr>
 							</table>
 						      </div>";
-			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml, "RenderingCheckBoxField");
+			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml, "RenderingTemplateField");
 		}
 
 		
@@ -1444,6 +1466,19 @@ namespace MonoTests.System.Web.UI.WebControls
 			grid.DataBind ();
 		}
 
+		public static void RenderingCheckBoxField2 (Page p)
+		{
+			LiteralControl lcb = new LiteralControl (HtmlDiff.BEGIN_TAG);
+			LiteralControl lce = new LiteralControl (HtmlDiff.END_TAG);
+			GridView grid = new GridView ();
+			grid.AutoGenerateColumns = true;
+			grid.ShowFooter = true;
+			p.Form.Controls.Add (lcb);
+			p.Form.Controls.Add (grid);
+			p.Form.Controls.Add (lce);
+			grid.DataSource = GridViewTest.CreateDataSource ();
+			grid.DataBind ();
+		}
 		///////////////////////////////////////////////////////
 		/////		   GRIDVIEW   POSTBACK           //////
 		///////////////////////////////////////////////////////
