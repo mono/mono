@@ -180,7 +180,14 @@ namespace System.Drawing
 					color = value;
 					Status status = GDIPlus.GdipSetPenColor (nativeObject, value.ToArgb ());
 					GDIPlus.CheckStatus (status);
+
+					/* if required clear existing brush */
+					if (must_dispose_brush && (brush != null)) {
+						brush.Dispose ();
+					}
 					brush = new SolidBrush (color);
+					must_dispose_brush = true;
+
 					status = GDIPlus.GdipSetPenBrushFill (nativeObject, brush.nativeObject);
 					GDIPlus.CheckStatus (status);
 				} else
@@ -471,7 +478,7 @@ namespace System.Drawing
                         Status status = GDIPlus.GdipClonePen (nativeObject, out ptr);
 			GDIPlus.CheckStatus (status);
                         Pen p = new Pen (ptr);
-			p.brush = brush;
+			p.brush = null; // don't reference! managed brush will be re-created on demand
 			p.color = color;
 			p.startCap = startCap;
 			p.endCap = endCap;
@@ -493,6 +500,7 @@ namespace System.Drawing
 
 			if (must_dispose_brush && (brush != null)) {
 				brush.Dispose ();
+				brush = null;
 			}
 			if (nativeObject != IntPtr.Zero) {
 				Status status = GDIPlus.GdipDeletePen (nativeObject);

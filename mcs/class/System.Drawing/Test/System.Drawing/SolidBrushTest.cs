@@ -89,5 +89,22 @@ namespace MonoTests.System.Drawing {
 				Assert.AreEqual (0, bmp.GetPixel (9, 9).ToArgb (), "9,9");
 			}
 		}
+
+		[Test]
+		public void DrawLine ()
+		{
+			using (Bitmap bmp = new Bitmap (10, 10)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					SolidBrush sb = new SolidBrush (Color.Red);
+					Pen p = new Pen (sb);
+					g.DrawLine (p, 0, 0, 9, 9);
+					sb.Color = Color.Blue;
+					g.DrawLine (p, 8, 8, 4, 4); // pen is still red
+				}
+				Assert.AreEqual (Color.Red.ToArgb (), bmp.GetPixel (0, 0).ToArgb (), "0,0");
+				Assert.AreEqual (Color.Red.ToArgb (), bmp.GetPixel (8, 8).ToArgb (), "8,8");
+				Assert.AreEqual (Color.Red.ToArgb (), bmp.GetPixel (9, 9).ToArgb (), "9,9"); // include end point
+			}
+		}
 	}
 }

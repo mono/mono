@@ -1,3 +1,13 @@
+2006-07-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Image.cs: Ensure we're setting the nativeObject to NULL before 
+	throwing any exception while disposing (and avoid possible double
+	freeing). Avoid multiple casts in Clone method.
+	* Pen.cs: Ensure the internal pen's brush is always disposed 
+	correctly. Avoid making a reference to the internal brush.
+	* SolidBrush.cs: Avoid setting color when cloning the solid brush
+	as the .ctor(IntPtr) always does this job.
+
 2006-07-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Image.cs: Made GetThumbnailImage throw OutOfMemoryException when

@@ -32,7 +32,6 @@ using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-//using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using NUnit.Framework;
 
@@ -43,6 +42,7 @@ namespace MonoTests.System.Drawing{
 	public class ImageTest {
 
 		private string fname;
+		private bool callback;
 
 		[TestFixtureSetUp]
 		public void FixtureSetup ()
@@ -60,6 +60,12 @@ namespace MonoTests.System.Drawing{
 			}
 		}
 
+		[SetUp]
+		public void SetUp ()
+		{
+			callback = false;
+		}
+
 		[Test]
 		[ExpectedException (typeof (FileNotFoundException))]
 		public void FileDoesNotExists ()
@@ -69,11 +75,13 @@ namespace MonoTests.System.Drawing{
 
 		private bool CallbackTrue ()
 		{
+			callback = true;
 			return true;
 		}
 
 		private bool CallbackFalse ()
 		{
+			callback = true;
 			return false;
 		}
 
@@ -85,6 +93,7 @@ namespace MonoTests.System.Drawing{
 				Image tn = bmp.GetThumbnailImage (10, 5, null, IntPtr.Zero);
 				Assert.AreEqual (5, tn.Height, "Height");
 				Assert.AreEqual (10, tn.Width, "Width");
+				Assert.IsFalse (callback, "Callback called");
 				tn.Save (fname, ImageFormat.Tiff);
 			}
 		}
@@ -115,6 +124,7 @@ namespace MonoTests.System.Drawing{
 				Image tn = bmp.GetThumbnailImage (5, 5, new Image.GetThumbnailImageAbort (CallbackFalse), (IntPtr)Int32.MaxValue);
 				Assert.AreEqual (5, tn.Height, "Height");
 				Assert.AreEqual (5, tn.Width, "Width");
+				Assert.IsFalse (callback, "Callback called");
 				tn.Save (fname, ImageFormat.Tiff);
 			}
 		}
@@ -126,6 +136,7 @@ namespace MonoTests.System.Drawing{
 				Image tn = bmp.GetThumbnailImage (10, 10, new Image.GetThumbnailImageAbort (CallbackFalse), IntPtr.Zero);
 				Assert.AreEqual (10, tn.Height, "Height");
 				Assert.AreEqual (10, tn.Width, "Width");
+				Assert.IsFalse (callback, "Callback called");
 				tn.Save (fname, ImageFormat.Bmp);
 			}
 		}
@@ -137,6 +148,7 @@ namespace MonoTests.System.Drawing{
 				Image tn = bmp.GetThumbnailImage (4, 4, new Image.GetThumbnailImageAbort (CallbackTrue), IntPtr.Zero);
 				Assert.AreEqual (4, tn.Height, "Height");
 				Assert.AreEqual (4, tn.Width, "Width");
+				Assert.IsFalse (callback, "Callback called");
 				tn.Save (fname, ImageFormat.Gif);
 			}
 		}
@@ -148,6 +160,7 @@ namespace MonoTests.System.Drawing{
 				Image tn = bmp.GetThumbnailImage (40, 40, new Image.GetThumbnailImageAbort (CallbackTrue), IntPtr.Zero);
 				Assert.AreEqual (40, tn.Height, "Height");
 				Assert.AreEqual (40, tn.Width, "Width");
+				Assert.IsFalse (callback, "Callback called");
 				tn.Save (fname, ImageFormat.Png);
 			}
 		}
