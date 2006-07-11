@@ -1,3 +1,7 @@
+2006-07-11 Vladimir Krasniov <vladimirk@mainsoft.com>
+
+	* MultiView.cs: removed exception throwing from ActiveViewIndex
+
 2006-07-11 Konstantin Triger <kostat@mainsoft.com>
 
 	* DataControlFieldCollection.cs: added OnClearComplete override;

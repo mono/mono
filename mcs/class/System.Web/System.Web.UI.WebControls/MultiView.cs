@@ -65,8 +65,10 @@ namespace System.Web.UI.WebControls
 		{
 			if (ob is View)
 				Controls.Add (ob as View);
-			else
-				throw new HttpException ("MultiView cannot have children of type 'Control'.  It can only have children of type View.");
+			// LAMESPEC: msdn talks that only View contorls are allowed, for others controls HttpException should be thrown
+			// but actually, aspx praser adds LiteralControl controls.
+			//else
+			//	throw new HttpException ("MultiView cannot have children of type 'Control'.  It can only have children of type View.");
 		}
 		
 		protected override ControlCollection CreateControlCollection ()
