@@ -976,7 +976,7 @@ namespace System.Windows.Forms
 
 		public override void DataGridPaintParentRow (Graphics g, Rectangle bounds, DataGridParentRow row, DataGrid grid)
 		{
-			Console.WriteLine ("drawing parent row {0}", row);
+			//Console.WriteLine ("drawing parent row {0}", row);
 
 			// Background
 			g.FillRectangle (ResPool.GetSolidBrush (grid.ParentRowsBackColor),
@@ -990,12 +990,13 @@ namespace System.Windows.Forms
 
 			string table_name = ((ITypedList)row.view.DataView).GetListName (null) + ": ";
 
-			Rectangle text_rect;
-			text_rect.X = bounds.X + 3; // XXX
-			text_rect.Size = g.MeasureString (table_name, bold_font).ToSize();
-			text_rect.Y = bounds.Y + bounds.Height - text_rect.Height; // XXX
+			Rectangle	text_rect;
+			Size		text_size;
 
-			Console.WriteLine ("drawing text at {0}", text_rect);
+			text_size = g.MeasureString (table_name, bold_font).ToSize();
+			text_rect = new Rectangle(new Point(bounds.X + 3, bounds.Y + bounds.Height - text_size.Height), text_size);
+
+			//Console.WriteLine ("drawing text at {0}", text_rect);
 
 			g.DrawString (table_name,
 				      bold_font, ResPool.GetSolidBrush (grid.ParentRowsForeColor), text_rect, text_format);
@@ -1013,7 +1014,7 @@ namespace System.Windows.Forms
 				text_rect.Size = g.MeasureString (text, grid.Font).ToSize();
 				text_rect.Y = bounds.Y + bounds.Height - text_rect.Height; // XXX
 
-				Console.WriteLine ("drawing text at {0}", text_rect);
+				//Console.WriteLine ("drawing text at {0}", text_rect);
 
 				g.DrawString (text,
 					      grid.Font, ResPool.GetSolidBrush (grid.ParentRowsForeColor), text_rect, text_format);
