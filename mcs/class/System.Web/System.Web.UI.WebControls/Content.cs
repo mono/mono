@@ -40,63 +40,55 @@ namespace System.Web.UI.WebControls
 	[ControlBuilder(typeof(ContentBuilderInternal))]
 	public class Content: Control, INamingContainer
 	{
-		string placeHolderId;
-		
 		[ThemeableAttribute (false)]
 		[DefaultValueAttribute ("")]
 		[WebCategoryAttribute ("Behavior")]
 		[IDReferencePropertyAttribute (typeof(ContentPlaceHolder))]
 		public string ContentPlaceHolderID {
-			get { return placeHolderId; }
-			set { placeHolderId = value; }
+			get { return String.Empty; }
+			set { throw new NotSupportedException (); }
 		}
 
-		static readonly object DataBindingEvent = new object ();
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
 		public new event EventHandler DataBinding {
-			add { Events.AddHandler (DataBindingEvent, value); }
-			remove { Events.RemoveHandler (DataBindingEvent, value); }
+			add { base.DataBinding += value; }
+			remove { base.DataBinding -= value; }
 		}
 
-		static readonly object DisposedEvent = new object ();
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
 		public new event EventHandler Disposed {
-			add { Events.AddHandler (DisposedEvent, value); }
-			remove { Events.RemoveHandler (DisposedEvent, value); }
+			add { base.Disposed += value; }
+			remove { base.Disposed -= value; }
 		}
 
-		static readonly object InitEvent = new object ();
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
 		public new event EventHandler Init {
-			add { Events.AddHandler (InitEvent, value); }
-			remove { Events.RemoveHandler (InitEvent, value); }
+			add { base.Init += value; }
+			remove { base.Init -= value; }
 		}
 
-		static readonly object LoadEvent = new object ();
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
 		public new event EventHandler Load {
-			add { Events.AddHandler (LoadEvent, value); }
-			remove { Events.RemoveHandler (LoadEvent, value); }
+			add { base.Load += value; }
+			remove { base.Load -= value; }
 		}
 
-		static readonly object PreRenderEvent = new object ();
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
 		public new event EventHandler PreRender {
-			add { Events.AddHandler (PreRenderEvent, value); }
-			remove { Events.RemoveHandler (PreRenderEvent, value); }
+			add { base.PreRender += value; }
+			remove { base.PreRender -= value; }
 		}
 
-		static readonly object UnloadEvent = new object ();
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
 		public new event EventHandler Unload {
-			add { Events.AddHandler (UnloadEvent, value); }
-			remove { Events.RemoveHandler (UnloadEvent, value); }
+			add { base.Unload += value; ; }
+			remove { base.Unload -= value; }
 		}
 	}
 }

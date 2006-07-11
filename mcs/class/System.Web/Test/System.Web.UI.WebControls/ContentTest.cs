@@ -81,7 +81,6 @@ namespace MonoTests.System.Web.UI.WebControls
 	public class ContentTest
 	{
 		[Test]
-		[Category ("NotWorking")] 
 		public void Content_DefaultProperty ()
 		{
 			PokerContent pc = new PokerContent();
@@ -119,7 +118,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Events_DataBinding ()
 		{
 			PokerContent pc = new PokerContent ();
@@ -131,7 +129,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Events_Init ()
 		{
 			PokerContent pc = new PokerContent ();
@@ -143,7 +140,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Events_PreRender ()
 		{
 			PokerContent pc = new PokerContent ();
@@ -155,7 +151,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Events_Load ()
 		{
 			PokerContent pc = new PokerContent ();
@@ -167,7 +162,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Events_Unload ()
 		{
 			PokerContent pc = new PokerContent ();
@@ -179,7 +173,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 			
 		[Test]
-		[Category ("NotWorking")] 
 		[ExpectedException (typeof(NotSupportedException))]
 		public void Content_PropertyExeption ()
 		{
