@@ -1,3 +1,7 @@
+2006-07-11  Jackson Harper  <jackson@ximian.com>
+
+	* ComboBox.cs: Remove some debug code that was blinding me.
+
 2006-07-10  Chris Toshok  <toshok@ximian.com>
 
 	* DataGridTableStyle.cs: just check if the property type is bool.
