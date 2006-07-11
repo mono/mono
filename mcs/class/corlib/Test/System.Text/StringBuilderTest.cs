@@ -475,6 +475,17 @@ namespace MonoTests.System.Text {
 		sb.Replace ("ABC", "abcaa", 0, 3);
 		AssertEquals ("#2", "abcaaDE", sb.ToString ());
 	}
+
+	[Test]
+	public void SetLength ()
+	{
+		StringBuilder sb = new StringBuilder ("Text");
+		AssertEquals ("#1", 4, sb.Length);
+		AssertEquals ("#2", "Text", sb.ToString ());
+		sb.Length = 8;
+		AssertEquals ("#3", 8, sb.Length);
+		AssertEquals ("#4", "Text\0\0\0\0", sb.ToString ());
+	}
 }
 
 }

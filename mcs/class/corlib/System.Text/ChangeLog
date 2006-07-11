@@ -1,3 +1,9 @@
+2006-07-11  Kornél Pál  <kornelpal@gmail.com>
+
+	* StringBuilder.cs: Pad the string with NULL characters when setting
+	Length. This is now documented:
+	http://msdn2.microsoft.com/en-us/library/system.text.stringbuilder.length.aspx
+
 2006-07-06  Kornél Pál  <kornelpal@gmail.com>
 
 	* CodePageEncoding.cs: Corrected comments.

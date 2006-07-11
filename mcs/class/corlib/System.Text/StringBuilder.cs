@@ -161,13 +161,8 @@ namespace System.Text {
 					_length = value;
 				} else {
 					// Expand the capacity to the new length and
-					// pad the string with spaces.
-					
-					// LAMESPEC: The spec says to put the spaces on the
-					// left of the string however the MS implementation
-					// puts them on the right.  We'll do that for 
-					// compatibility (!)
-					Append(' ', value - _length);
+					// pad the string with NULL characters.
+					Append('\0', value - _length);
 				}
 			}
 		}
