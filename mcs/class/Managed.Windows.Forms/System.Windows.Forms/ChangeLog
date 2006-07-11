@@ -1,3 +1,8 @@
+2006-07-11  Jackson Harper  <jackson@ximian.com>
+
+	* ContainerControl.cs: Override SETFOCUS in the container control,
+	so that it is not selected on mouse click.
+
 2006-07-11  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* LinkLabel.cs: Hack to handle Shift-Tabbing to the linklabel. 

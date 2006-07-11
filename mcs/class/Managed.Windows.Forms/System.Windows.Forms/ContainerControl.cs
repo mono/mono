@@ -426,13 +426,11 @@ namespace System.Windows.Forms {
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected override void WndProc(ref Message m) {
 			switch ((Msg) m.Msg) {
-/*
 			case Msg.WM_LBUTTONDOWN:
 				OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
 				        mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()),
 					HighOrder ((int) m.LParam.ToInt32 ()), 0));
-					return;
-*/
+				return;
 			case Msg.WM_SETFOCUS:
 				if (active_control == null)
 					SelectNextControl (null, true, true, true, false);
