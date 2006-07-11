@@ -27,6 +27,7 @@
 
 // NOT COMPLETE
 
+using System.Collections;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Drawing;
@@ -67,21 +68,79 @@ namespace System.Windows.Forms {
 					return;
 				}
 
-				active_control = value;
-
+				
 				if (!Contains(value) && this != value) {
 					throw new ArgumentException("Not a child control");
 				}
 
+				if (value == this) {
+					
+				}
+
+				// Fire the enter and leave events if possible
+				Form form = FindForm ();
+				if (form != null) {
+					Control common_container = GetCommonContainer (form.ActiveControl, value);
+					ArrayList chain = new ArrayList ();
+					Control walk = active_control;
+
+					// Generate the leave messages	
+					walk = active_control;
+					while (walk != common_container) {
+						walk.FireLeave ();
+						walk = walk.Parent;
+					}
+
+					walk = value;
+					while (walk != common_container) {
+						chain.Add (walk);
+						walk = walk.Parent;
+					}
+
+					for (int i = chain.Count - 1; i >= 0; i--) {
+						walk = (Control) chain [i];
+						walk.FireEnter ();
+					}
+				}
+
+				active_control = value;
+
+
 				if (this is Form)
 					CheckAcceptButton();
-				
+
 				// Scroll control into view
 				ScrollControlIntoView(active_control);
 
 				// Let the control know it's selected
-				Select(value);
+//				value.is_selected = true;
+//				if (value.IsHandleCreated) {
+//					XplatUI.SetFocus (value.window.Handle);
+//				}
+
+				SelectChild (value);
 			}
+		}
+
+		// Just in a separate method to make debugging a little easier,
+		// should eventually be rolled into ActiveControl setter
+		private Control GetCommonContainer (Control active_control, Control value)
+		{
+			Control new_container = null;
+			Control prev_container = active_control;
+
+			while (prev_container != null) {
+				new_container = value.Parent;
+				while (new_container != null) {
+					if (new_container == prev_container)
+						return new_container;
+					new_container = new_container.Parent;
+				}
+
+				prev_container = prev_container.Parent;
+			}
+
+			return null;
 		}
 
 #if NET_2_0
@@ -319,7 +378,7 @@ namespace System.Windows.Forms {
 		}
 
 		protected virtual bool ProcessTabKey(bool forward) {
-			return SelectNextControl(active_control, forward, true, true, true);
+			return SelectNextControl(active_control, forward, true, true, false);
 		}
 
 		protected override void Select(bool directed, bool forward) {
@@ -366,6 +425,21 @@ namespace System.Windows.Forms {
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected override void WndProc(ref Message m) {
+			switch ((Msg) m.Msg) {
+/*
+			case Msg.WM_LBUTTONDOWN:
+				OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
+				        mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()),
+					HighOrder ((int) m.LParam.ToInt32 ()), 0));
+					return;
+*/
+			case Msg.WM_SETFOCUS:
+				if (active_control == null)
+					SelectNextControl (null, true, true, true, false);
+				break;
+			case Msg.WM_KILLFOCUS:
+				break;
+			}
 			base.WndProc(ref m);
 		}
 		#endregion	// Protected Instance Methods

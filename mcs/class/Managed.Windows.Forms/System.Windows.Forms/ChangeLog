@@ -1,5 +1,19 @@
 2006-07-11  Jackson Harper  <jackson@ximian.com>
 
+	* Control.cs: When hiding a control only select the next control
+	if the current control was focused.
+	- Don't handle enter/leave when setting/killing focus, this is
+	done by the container control.
+	- Remove is_selected, it's not needed anymore.
+	- Add utility methods for selecting a child control, and for
+	firing the Enter/Leave events.
+	* ContainerControl.cs: When a control is activated fire the
+	enter/leave events.
+	- Don't wrap when processing the tab key, so that focus can be
+	moved outside of the container.
+
+2006-07-11  Jackson Harper  <jackson@ximian.com>
+
 	* ComboBox.cs: Remove some debug code that was blinding me.
 	* UpDownBase.cs: These controls actually aren't implicit, they are
 	visible to the user.
