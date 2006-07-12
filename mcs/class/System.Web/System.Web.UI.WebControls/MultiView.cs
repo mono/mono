@@ -54,7 +54,6 @@ namespace System.Web.UI.WebControls
 		
 		int viewIndex = -1;
 		int initialIndex = -1;
-		bool initied = false;
 		
 		public event EventHandler ActiveViewChanged {
 			add { Events.AddHandler (ActiveViewChangedEvent, value); }
@@ -96,14 +95,14 @@ namespace System.Web.UI.WebControls
 		public virtual int ActiveViewIndex {
 			get
 			{
-				if (!initied)
+				if (Controls.Count == 0)
 					return initialIndex;
 
 				return viewIndex;
 			}
 			set 
 			{
-				if (!initied) {
+				if (Controls.Count == 0) {
 					initialIndex = value;
 					return;
 				}
@@ -175,7 +174,6 @@ namespace System.Web.UI.WebControls
 		
 		protected internal override void OnInit (EventArgs e)
 		{
-			initied = true;
 			Page.RegisterRequiresControlState (this);
 			if (initialIndex != -1) {
 				ActiveViewIndex = initialIndex;
@@ -225,7 +223,8 @@ namespace System.Web.UI.WebControls
 		
 		protected internal override void Render (HtmlTextWriter writer)
 		{
-			if (!initied) viewIndex = initialIndex;
+			if ((Controls.Count == 0) && (initialIndex != -1)) 
+				viewIndex = initialIndex;
 			if (viewIndex != -1)
 				GetActiveView ().Render (writer);
 		}
