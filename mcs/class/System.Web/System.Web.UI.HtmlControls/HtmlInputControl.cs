@@ -42,20 +42,12 @@ namespace System.Web.UI.HtmlControls {
 #endif
 	public abstract class HtmlInputControl : HtmlControl {
 
-#if NET_2_0
-		private string inputType;
-#endif
-
 		protected HtmlInputControl (string type)
 			: base ("input")
 		{
 			if (type == null)
 				type = String.Empty;
-#if NET_2_0
-			inputType = type;
-#else
 			Attributes ["type"] = type;
-#endif
 		}
 
 
@@ -73,11 +65,7 @@ namespace System.Web.UI.HtmlControls {
 		[WebSysDescription("")]
 		[WebCategory("Behavior")]
 		public string Type {
-#if NET_2_0
-			get { return inputType; }
-#else
 			get { return Attributes ["type"]; }
-#endif
 		}
 
 		[DefaultValue ("")]
@@ -102,10 +90,6 @@ namespace System.Web.UI.HtmlControls {
 			if (Attributes ["name"] == null) {
 				writer.WriteAttribute ("name", Name);
 			}
-#if NET_2_0
-			Attributes.Remove ("type");
-			writer.WriteAttribute ("type", inputType);
-#endif
 			base.RenderAttributes (writer);
 			writer.Write (" /");
 
