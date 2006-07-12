@@ -1,3 +1,7 @@
+2006-07-12  Jackson Harper  <jackson@ximian.com>
+
+	* Control.cs: Optimze getting all the controls.
+
 2006-07-11  Jackson Harper  <jackson@ximian.com>
 
 	* ContainerControl.cs: Override SETFOCUS in the container control,

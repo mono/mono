@@ -486,14 +486,16 @@ namespace System.Windows.Forms
 				if (all_controls != null)
 					return all_controls;
 
-				if (impl_list == null)
-					return (Control []) list.ToArray (typeof (Control));
+				if (impl_list == null) {
+					all_controls = (Control []) list.ToArray (typeof (Control));
+					return all_controls;
+				}
 				
-				Control [] res = new Control [list.Count + impl_list.Count];
-				impl_list.CopyTo (res);
-				list.CopyTo (res, impl_list.Count);
+				all_controls = new Control [list.Count + impl_list.Count];
+				impl_list.CopyTo (all_controls);
+				list.CopyTo (all_controls, impl_list.Count);
 
-				return res;
+				return all_controls;
 			}
 
 			public override int GetHashCode() {
