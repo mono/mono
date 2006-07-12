@@ -1,3 +1,7 @@
+2006-07-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* MonoMethod.cs (Invoke): Prevent invoking of open generic methods.
+
 2006-07-09  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Assembly.cs: When assembly is loaded from byte array, return null

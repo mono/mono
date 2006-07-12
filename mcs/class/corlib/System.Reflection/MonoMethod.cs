@@ -126,6 +126,11 @@ namespace System.Reflection {
 				SecurityManager.ReflectedLinkDemandInvoke (this);
 			}
 
+#if NET_2_0
+			if (ContainsGenericParameters)
+				throw new InvalidOperationException ("Late bound operations cannot be performed on types or methods for which ContainsGenericParameters is true.");
+#endif
+
 			try {
 				return InternalInvoke (obj, parameters);
 			} catch (InvalidOperationException) {
@@ -294,6 +299,13 @@ namespace System.Reflection {
 		public override extern bool IsGenericMethod {
 			[MethodImplAttribute(MethodImplOptions.InternalCall)]
 			get;
+		}
+
+		[MonoTODO]
+		public override bool ContainsGenericParameters {
+			get {
+				return false;
+			}
 		}
 #endif
 
