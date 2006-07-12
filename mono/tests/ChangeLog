@@ -1,3 +1,7 @@
+2006-07-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am (libtest_la_CFLAGS): Disable a gcc optimization which breaks pinvoke2.exe on windows.
+
 2006-06-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* libtest.c (mono_test_ref_vtype): Remove debug printfs.
