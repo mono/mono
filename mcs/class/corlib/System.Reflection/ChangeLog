@@ -1,5 +1,7 @@
 2006-07-12  Zoltan Varga  <vargaz@gmail.com>
 
+	* MonoMethod.cs (ContainsGenericParameters): Implement.
+	
 	* MonoMethod.cs (Invoke): Prevent invoking of open generic methods.
 
 2006-07-09  Gert Driesen  <drieseng@users.sourceforge.net>

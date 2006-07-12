@@ -301,10 +301,14 @@ namespace System.Reflection {
 			get;
 		}
 
-		[MonoTODO]
 		public override bool ContainsGenericParameters {
 			get {
-				return false;
+				if (IsGenericMethod) {
+					foreach (Type arg in GetGenericArguments ())
+						if (arg.ContainsGenericParameters)
+							return true;
+				}
+				return DeclaringType.ContainsGenericParameters;
 			}
 		}
 #endif
