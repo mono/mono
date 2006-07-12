@@ -266,6 +266,22 @@ namespace System
 				}
 				method_info = m_target.GetType ().GetMethod (method_name, mtypes);
 			}
+
+#if NET_2_0
+			if ((m_target != null) && Method.IsStatic) {
+				// The delegate is bound to m_target
+				if (args != null) {
+					object[] newArgs = new object [args.Length + 1];
+					args.CopyTo (newArgs, 1);
+					newArgs [0] = m_target;
+					args = newArgs;
+				} else {
+					args = new object [] { m_target };
+				}
+				return Method.Invoke (null, args);
+			}
+#endif
+
 			return Method.Invoke (m_target, args);
 		}
 
@@ -291,6 +307,7 @@ namespace System
 
 		public override int GetHashCode ()
 		{
+			// FIXME: Sync with Equals above
 			return (int)method_ptr;
 		}
 

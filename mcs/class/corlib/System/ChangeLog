@@ -1,3 +1,7 @@
+2006-07-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* Delegate.cs (DynamicInvokeImpl): Add support for bound delegates in Net 2.0.
+
 2006-07-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* Double.cs (Parse): Fix handling of inner whitespace.
