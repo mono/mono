@@ -282,7 +282,8 @@ namespace System.Data {
 							LoadBeforeTable (t, reader);
 						else if (loadType == DataRowVersion.Current)
 							LoadCurrentTable (t, reader);
-					}
+					} else
+						reader.Skip ();
 				}
 			}
 			

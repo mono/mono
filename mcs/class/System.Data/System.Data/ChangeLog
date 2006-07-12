@@ -1,4 +1,11 @@
-2006-06-30  Senganal T  <tsenganal@novell.com>
+2006-12-30  Senganal T  <tsenganal@novell.com>
+
+	* XmlDiffLoader.cs : 
+		- LoadColumnChildren : If schema name is missing, skip the
+		element.
+	Thanks to Deepak Kr Velachha for identifying the bug.
+
+2006-11-30  Senganal T  <tsenganal@novell.com>
 	
 	* XmlSchemaWriter.cs :
 		- WriteTableType : If Relation.Nested is true, then nest the 

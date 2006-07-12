@@ -3347,5 +3347,33 @@ namespace MonoTests_System.Data
 			Assert.AreEqual ("table1_Id_0", ds.Tables [0].Columns [2].ColumnName, "#4");
 			Assert.AreEqual ("table1_Id_0", ds.Tables [0].PrimaryKey [0].ColumnName, "#5");
 		}
+
+		[Test]
+		public void ReadXml_Diffgram_MissingSchema ()
+		{
+			DataSet ds = new DataSet ();
+			ds.Tables.Add ("table");
+			ds.Tables [0].Columns.Add ("col1");
+			ds.Tables [0].Columns.Add ("col2");
+
+			ds.Tables [0].Rows.Add (new object[] {"a", "b"});
+			ds.Tables [0].Rows.Add (new object[] {"a", "b"});
+
+			MemoryStream ms = new MemoryStream ();
+			ds.WriteXml (ms, XmlWriteMode.DiffGram);
+
+			DataSet ds1 = new DataSet ();
+			ds1.Tables.Add ("table");
+			ds1.Tables [0].Columns.Add ("col1");
+
+			// When table schema is missing, it shud load up the data
+			// for the existing schema
+			ds1.ReadXml (new MemoryStream (ms.GetBuffer ()), XmlReadMode.DiffGram);
+
+			Assert.AreEqual (2, ds1.Tables [0].Rows.Count, "#1");
+			Assert.AreEqual (1, ds1.Tables [0].Columns.Count, "#2");
+			Assert.AreEqual ("a", ds1.Tables [0].Rows [0][0], "#3");
+			Assert.AreEqual ("a", ds1.Tables [0].Rows [1][0], "#4");
+		}
 	}
 }
