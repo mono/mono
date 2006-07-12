@@ -1166,20 +1166,6 @@ namespace System.Windows.Forms {
 		protected override void WndProc(ref Message m) {
 			switch ((Msg)m.Msg) {
 
-				case Msg.WM_SETFOCUS: {
-					// Set caret
-					document.CaretHasFocus();
-					base.WndProc(ref m);
-					return;
-				}
-
-				case Msg.WM_KILLFOCUS: {
-					// Kill caret
-					document.CaretLostFocus();
-					base.WndProc(ref m);
-					return;
-				}
-
 				case Msg.WM_KEYDOWN: {
 					if (ProcessKeyMessage(ref m) || ProcessKey((Keys)m.WParam.ToInt32() | XplatUI.State.ModifierKeys)) {
 						m.Result = IntPtr.Zero;
@@ -1340,6 +1326,18 @@ namespace System.Windows.Forms {
 					line_no++;
 				}
 			#endif
+		}
+
+		internal override void OnGotFocusInternal (EventArgs e)
+		{
+			document.CaretHasFocus ();
+			base.OnGotFocusInternal (e);
+		}
+
+		internal override void OnLostFocusInternal (EventArgs e)
+		{
+			document.CaretLostFocus ();
+			base.OnLostFocusInternal (e);
 		}
 
 		private void TextBoxBase_MouseDown(object sender, MouseEventArgs e) {

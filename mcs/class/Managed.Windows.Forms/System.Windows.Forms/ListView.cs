@@ -1572,16 +1572,9 @@ namespace System.Windows.Forms
 				ThemeEngine.Current.DrawListViewItems (pe.Graphics, pe.ClipRectangle, owner);
 			}
 
-			protected override void WndProc (ref Message m)
+			internal override void OnGotFocusInternal (EventArgs e)
 			{
-				switch ((Msg)m.Msg) {
-				case Msg.WM_SETFOCUS:
-					owner.Focus ();
-					break;
-				default:
-					base.WndProc (ref m);
-					break;
-				}
+				owner.Focus ();
 			}
 		}
 

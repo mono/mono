@@ -4115,7 +4115,7 @@ namespace System.Windows.Forms
 					}
 
 					this.has_focus = false;
-					OnLostFocus(EventArgs.Empty);
+					OnLostFocusInternal (EventArgs.Empty);
 					return;
 				}
 
@@ -4418,6 +4418,11 @@ namespace System.Windows.Forms
 		internal virtual void OnGotFocusInternal (EventArgs e)
 		{
 			OnGotFocus (e);
+		}
+
+		internal virtual void OnLostFocusInternal (EventArgs e)
+		{
+			OnLostFocus (e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]

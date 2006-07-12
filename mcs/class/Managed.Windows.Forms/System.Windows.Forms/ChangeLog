@@ -1,8 +1,12 @@
 2006-07-12  Jackson Harper  <jackson@ximian.com>
 
+	* TextBoxBase.cs:
+	* ListView.cs: Don't need to override SETFOCUS anymore, we can do
+	this using the internal methods.
 	* Control.cs: Add OnGotFocusInternal.  A new method that allows
 	controls to "override" OnGotFocus and change focus behavior if
 	needed.
+	- Same thing for LostFocus
 
 2006-07-12  Alexander Olk  <alex.olk@googlemail.com>
 
