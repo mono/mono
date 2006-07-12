@@ -9,20 +9,36 @@ using System.Globalization;
 
 namespace MonoTests.SystemWeb.Framework
 {
+	/// <summary>
+	/// This class is used for HTML form postback request.
+	/// </summary>
 	[Serializable]
 	public class FormRequest : PostableRequest
 	{
-		private BaseControlCollection _controls;
-		public BaseControlCollection Controls
-		{
-			get { return _controls; }
-			set { _controls = value; }
-		}
-
+		/// <summary>
+		/// Create <see cref="FormRequest"/> instance from the given
+		/// <paramref name="response">response</paramref> extracting
+		/// form attributes and hidden controls from the form element
+		/// with given id.
+		/// </summary>
+		/// <param name="response">The response to extract values from.</param>
+		/// <param name="formId">The id of the form to use.</param>
+		/// <remarks>Currently, the <paramref name="formId"/> is ignored, and the
+		/// first form is used.</remarks>
 		public FormRequest (Response response, string formId)
 		{
 			_controls = new BaseControlCollection ();
 			ExtractFormAndHiddenControls (response, formId);
+		}
+
+		private BaseControlCollection _controls;
+		/// <summary>
+		/// Get or set the collection of controls, posted back to the server.
+		/// </summary>
+		public BaseControlCollection Controls
+		{
+			get { return _controls; }
+			set { _controls = value; }
 		}
 
 		private void ExtractFormAndHiddenControls (Response response, string formId)
@@ -80,25 +96,43 @@ namespace MonoTests.SystemWeb.Framework
 			}
 		}
 
-
+		/// <summary>
+		/// Get the URL extracted from the form. Unlike the base class, here this
+		/// property should not be changed, otherwise an <see cref="Exception"/>
+		/// is thrown.
+		/// </summary>
+		/// <exception cref="Exception">Thrown when trying to change this property.</exception>
 		public override string Url
 		{
 			get { return base.Url; }
 			set { throw new Exception ("Must not change Url of FormPostback"); }
 		}
 
+		/// <summary>
+		/// Get returns true if the form method was POST, otherwise returns false.
+		/// Unlike the base class, here this property should not be
+		/// changed, otherwise an <see cref="Exception"/> is thrown.
+		/// </summary>
+		/// <exception cref="Exception">Thrown when trying to change this property.</exception>
 		public override bool IsPost
 		{
 			get { return base.IsPost; }
 			set { throw new Exception ("Must not change IsPost of FormPostback"); }
 		}
 
-		public override string PostContentType
+		/// <summary>
+		/// Returns the HTTP content-type header value. Currently hard-coded to return
+		/// <c>application/x-www-form-urlencoded</c>.
+		/// </summary>
+		public override string ContentType
 		{
 			get { return "application/x-www-form-urlencoded"; }
 			set { throw new Exception ("Must not change PostContentType of FormPostback"); }
 		}
 
+		/// <summary>
+		/// Returns the HTTP <c>entity-body</c> header value.
+		/// </summary>
 		public override byte[] EntityBody
 		{
 			get
@@ -111,12 +145,18 @@ namespace MonoTests.SystemWeb.Framework
 			set { throw new Exception ("Must not change EntityBody of FormPostback"); }
 		}
 
-		protected override string GetQueryString ()
+		/// <summary>
+		/// Get the URL encoded query string in format <c><![CDATA[name1=value1&name2=value2]]></c>, etc.
+		/// </summary>
+		protected override string QueryString
 		{
-			if (IsPost)
-				return "";
-			else
-				return GetUrlencodedDataset ();
+			get
+			{
+				if (IsPost)
+					return "";
+				else
+					return GetUrlencodedDataset ();
+			}
 		}
 
 		private string GetUrlencodedDataset ()

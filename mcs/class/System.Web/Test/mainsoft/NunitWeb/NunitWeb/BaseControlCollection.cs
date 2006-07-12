@@ -5,15 +5,28 @@ using System.Runtime.Serialization;
 
 namespace MonoTests.SystemWeb.Framework
 {
+	/// <summary>
+	/// The collection of <seealso cref="BaseControl"/> instances used by <seealso cref="FormRequest"/>.
+	/// </summary>
 	[Serializable]
 	public sealed class BaseControlCollection : NameObjectCollectionBase 
 	{
-		public BaseControlCollection (SerializationInfo info, StreamingContext context)
-			: base (info, context)
+		/// <summary>
+		/// The default constructor. Does nothing.
+		/// </summary>
+		public BaseControlCollection ()
 		{
 		}
 
-		public BaseControlCollection ()
+		/// <summary>
+		/// The constructor is necessary because this class overrides
+		/// <seealso cref="System.Collections.Specialized.NameObjectCollectionBase"/>
+		/// which makes a custom serialization.
+		/// </summary>
+		/// <param name="info">Serialization info.</param>
+		/// <param name="context">Serialization context.</param>
+		public BaseControlCollection (SerializationInfo info, StreamingContext context)
+			: base (info, context)
 		{
 		}
 
@@ -27,6 +40,10 @@ namespace MonoTests.SystemWeb.Framework
 			set {base.BaseSet (name, value);}
 		}
 
+		/// <summary>
+		/// Remove a control from the collection.
+		/// </summary>
+		/// <param name="name">The name of the control to remove.</param>
 		public void Remove (string name)
 		{
 			base.BaseRemove (name);
@@ -56,6 +73,5 @@ namespace MonoTests.SystemWeb.Framework
 		{
 			this [control.Name] = control;
 		}
-
 	}
 }

@@ -4,7 +4,7 @@ using System.Web;
 
 namespace MonoTests.SystemWeb.Framework
 {
-	public class PostableWorkerRequest:BaseWorkerRequest
+	internal class PostableWorkerRequest:BaseWorkerRequest
 	{
 		byte[] entityBody;
 		string postContentType;

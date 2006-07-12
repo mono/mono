@@ -5,10 +5,33 @@ using System.Web.Hosting;
 
 namespace MonoTests.SystemWeb.Framework
 {
+	/// <summary>
+	/// The most important class from user perspective. See <seealso cref="Request"/>,
+	/// <seealso cref="Response"/>, <seealso cref="Invoker"/>, <seealso cref="Run"/> for
+	/// more information.
+	/// </summary>
 	[Serializable]
 	public class WebTest
 	{
 		object _userData;
+		/// <summary>
+		/// Any user-defined data. Must be serializable to pass between appdomains.
+		/// </summary>
+		/// <example>
+		/// [Test]
+		/// public void SampleTest ()
+		/// {
+		///	WebTest t = new WebTest (new HandlerInvoker (MyCallback));
+		///	t.Run ();
+		///	Assert.AreEqual ("Was here", t.UserData.ToString());
+		/// }
+		/// 
+		/// static public void MyCallback ()
+		/// {
+		///	WebTest.CurrentTest.UserData = "Was here";
+		/// }
+		/// </example>
+
 		public object UserData
 		{
 			get { return _userData; }
@@ -16,6 +39,10 @@ namespace MonoTests.SystemWeb.Framework
 		}
 
 		Response _response;
+		/// <summary>
+		/// The result of the last <seealso cref="Run"/>. See <seealso cref="MonoTests.SystemWeb.Framework.Response"/>,
+		/// <seealso cref="FormRequest"/>.
+		/// </summary>
 		public Response Response
 		{
 			get { return _response; }
@@ -23,6 +50,11 @@ namespace MonoTests.SystemWeb.Framework
 		}
 
 		BaseInvoker _invoker;
+		/// <summary>
+		/// Set the invoker, which is executed in the web context by <seealso cref="Invoke"/>
+		/// method. Most commonly used <seealso cref="PageInvoker"/>. See also: <seealso cref="BaseInvoker"/>,
+		/// <seealso cref="HandlerInvoker"/>
+		/// </summary>
 		public BaseInvoker Invoker
 		{
 			get { return _invoker; }
@@ -30,6 +62,11 @@ namespace MonoTests.SystemWeb.Framework
 		}
 
 		BaseRequest _request;
+		/// <summary>
+		/// Contains all the data necessary to create an <seealso cref="System.Web.HttpWorkerRequest"/> in
+		/// the application appdomain. See also <seealso cref="BaseRequest"/>,
+		/// <seealso cref="PostableRequest"/>, <seealso cref="FormRequest"/>.
+		/// </summary>
 		public BaseRequest Request
 		{
 			get { return _request; }
@@ -59,6 +96,11 @@ namespace MonoTests.SystemWeb.Framework
 			}
 		}
 
+		/// <summary>
+		/// Run the request using <seealso cref="Request"/> and <seealso cref="Invoker"/>
+		/// values. Keep the result of the request in <seealso cref="Response"/> property.
+		/// </summary>
+		/// <returns>The body of the HTTP response (<seealso cref="MonoTests.SystemWeb.Framework.Response.Body"/>).</returns>
 		public string Run ()
 		{
 			if (Request.Url == null)
@@ -76,11 +118,21 @@ namespace MonoTests.SystemWeb.Framework
 			this._userData = newTestInstance._userData;
 		}
 
+		/// <summary>
+		/// The instance of the currently running test. Defined only in the web appdomain.
+		/// In different threads this property may have different values.
+		/// </summary>
 		public static WebTest CurrentTest
 		{
 			get { return MyHost.GetCurrentTest (); }
 		}
 
+		/// <summary>
+		/// This method must be called when custom <seealso cref="System.Web.IHttpHandler.ProcessRequest"/> or aspx code behind is used,
+		/// to allow the framework to invoke all user supplied delegates.
+		/// </summary>
+		/// <param name="param">Parameter defined by the <seealso cref="BaseInvoker"/> subclass. For example,
+		/// <seealso cref="PageInvoker"/> expects to receive a <seealso cref="System.Web.UI.Page"/> instance here.</param>
 		public void Invoke (object param)
 		{
 			try {
@@ -92,11 +144,23 @@ namespace MonoTests.SystemWeb.Framework
 			}
 		}
 
+		/// <summary>
+		/// This method is intended for use from <seealso cref="MonoTests.SystemWeb.Framework.BaseInvoker.DoInvoke"/> when
+		/// the invocation causes an exception. In such cases, the exception must be registered
+		/// with this method, and then swallowed. Before returning, <seealso cref="WebTest.Run"/>
+		/// will rethrow this exception. This is done to hide the exception from <seealso cref="System.Web.HttpRuntime"/>,
+		/// which normally swallows the exception and returns 500 ERROR http result.
+		/// </summary>
+		/// <param name="ex">The exception to be registered and rethrown.</param>
 		public static void RegisterException (Exception ex)
 		{
 			Host.RegisterException (ex);
 		}
 
+		/// <summary>
+		/// Unload the web appdomain and delete the temporary application root
+		/// directory.
+		/// </summary>
 		public static void Unload ()
 		{
 			if (host == null)
@@ -111,24 +175,44 @@ namespace MonoTests.SystemWeb.Framework
 			Directory.Delete (baseDir, true);
 		}
 
+		/// <summary>
+		/// Default constructor. Initializes <seealso cref="Invoker"/> with a new
+		/// <seealso cref="BaseInvoker"/> and <seealso cref="Request"/> with an empty
+		/// <seealso cref="BaseRequest"/>.
+		/// </summary>
 		public WebTest ()
 		{
 			Invoker = new BaseInvoker ();
 			Request = new BaseRequest ();
 		}
 
+		/// <summary>
+		/// Same as <seealso cref="WebTest()"/>, and set <seealso cref="MonoTests.SystemWeb.Framework.BaseRequest.Url"/> to
+		/// the specified Url.
+		/// </summary>
+		/// <param name="url">The URL used for the next <seealso cref="Run"/></param>
 		public WebTest (string url)
 			: this ()
 		{
 			Request.Url = url;
 		}
 
+		/// <summary>
+		/// Create a new instance, initializing <seealso cref="Invoker"/> with the given
+		/// value, and the <seealso cref="Request"/> with <seealso cref="BaseRequest"/>.
+		/// </summary>
+		/// <param name="invoker">The invoker used for this test.</param>
 		public WebTest (BaseInvoker invoker)
 			: this ()
 		{
 			Invoker = invoker;
 		}
 
+		/// <summary>
+		/// Create a new instance, initializing <seealso cref="Request"/> with the given
+		/// value, and the <seealso cref="Invoker"/> with <seealso cref="BaseInvoker"/>.
+		/// </summary>
+		/// <param name="request">The request used for this test.</param>
 		public WebTest (BaseRequest request)
 			: this ()
 		{
