@@ -1,3 +1,7 @@
+2006-07-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* MethodInfoTest.cs: Add tests for ContainsGenericParameters ().
+
 2006-07-09  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* AssemblyTest.cs: Enabled test for bug #78468.

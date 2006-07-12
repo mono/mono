@@ -300,6 +300,37 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (false, mi3.IsGenericMethod, "#3");
 		}
 
+		class A<T> {
+
+			public static void Foo<T2> (T2 i) {
+			}
+
+			public static void Bar () {
+			}
+
+			public class B {
+				public static void Baz () {
+				}
+			}
+		}
+
+		[Test]
+		public void ContainsGenericParameters ()
+		{
+			// Non-generic method in open generic type
+			Assert.IsTrue (typeof (A<int>).GetGenericTypeDefinition ().GetMethod ("Bar").ContainsGenericParameters);
+			// open generic method in closed generic type
+			Assert.IsTrue (typeof (A<int>).GetMethod ("Foo").ContainsGenericParameters);
+			// non-generic method in closed generic type
+			Assert.IsFalse (typeof (A<int>).GetMethod ("Bar").ContainsGenericParameters);
+			// closed generic method in closed generic type
+			Assert.IsFalse (typeof (A<int>).GetMethod ("Foo").MakeGenericMethod (new Type [] { typeof (int) }).ContainsGenericParameters);
+			// non-generic method in non-generic nested type of closed generic type
+			Assert.IsFalse (typeof (A<int>.B).GetMethod ("Baz").ContainsGenericParameters);
+			// non-generic method in non-generic nested type of open generic type
+			Assert.IsTrue (typeof (A<int>.B).GetGenericTypeDefinition ().GetMethod ("Baz").ContainsGenericParameters);
+		}
+
 		class GenericHelper<T>
 		{
 			public void Test (T t)
