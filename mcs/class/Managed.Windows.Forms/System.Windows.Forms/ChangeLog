@@ -1,3 +1,9 @@
+2006-07-12  Jackson Harper  <jackson@ximian.com>
+
+	* Control.cs: Add OnGotFocusInternal.  A new method that allows
+	controls to "override" OnGotFocus and change focus behavior if
+	needed.
+
 2006-07-12  Alexander Olk  <alex.olk@googlemail.com>
 
 	* FileDialog.cs: Added GetFoldersOnly to MWFVFS

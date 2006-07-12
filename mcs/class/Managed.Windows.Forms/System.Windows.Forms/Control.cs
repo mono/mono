@@ -4122,7 +4122,7 @@ namespace System.Windows.Forms
 				case Msg.WM_SETFOCUS: {
 					if (!has_focus) {
 						this.has_focus = true;
-						OnGotFocus(EventArgs.Empty);
+						OnGotFocusInternal (EventArgs.Empty);
 					}
 					return;
 				}
@@ -4413,6 +4413,11 @@ namespace System.Windows.Forms
 
 		internal virtual void OnPaintInternal(PaintEventArgs e) {
 			// Override me
+		}
+
+		internal virtual void OnGotFocusInternal (EventArgs e)
+		{
+			OnGotFocus (e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
