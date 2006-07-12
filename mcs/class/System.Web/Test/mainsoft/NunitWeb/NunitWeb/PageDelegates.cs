@@ -6,10 +6,12 @@ namespace MonoTests.SystemWeb.Framework
 {
 	/// <summary>
 	/// Delegates to a user callback invoked during different
-	/// <seealso cref="System.Web.UI.Page"/> lifecycle events and passing the page. Used
-	/// with <seealso cref="PageDelegate"/>.
+	/// <see cref="System.Web.UI.Page"/> lifecycle events and passing the page. Used
+	/// with <see cref="PageDelegate"/>.
 	/// </summary>
 	/// <param name="page"></param>
+	/// <seealso cref="System.Web.UI.Page"/>
+	/// <seealso cref="PageDelegate"/>
 	public delegate void PageDelegate (Page page);
 	/// <summary>
 	/// This structure holds callbacks for all page events, callback for

@@ -6,10 +6,13 @@ using System.Collections;
 namespace MonoTests.SystemWeb.Framework
 {
 	/// <summary>
-	/// The base request container. Provides access to <seealso cref="Url"/> and
-	/// <seealso cref="UserAgent"/> and creates <seealso cref="BaseWorkerRequest"/>
+	/// The base request container. Provides access to <see cref="Url"/> and
+	/// <see cref="UserAgent"/> and creates <see cref="BaseWorkerRequest"/>
 	/// in web appdomain.
 	/// </summary>
+	/// <seealso cref="Url"/>
+	/// <seealso cref="UserAgent"/>
+	/// <seealso cref="BaseWorkerRequest"/>
 	[Serializable]
 	public class BaseRequest
 	{
@@ -24,9 +27,10 @@ namespace MonoTests.SystemWeb.Framework
 
 		/// <summary>
 		/// Creates instance of <see cref="BaseRequest"/> and initializes
-		/// <seealso cref="Url"/> property.
+		/// <see cref="Url"/> property.
 		/// </summary>
-		/// <param name="url">The initial value of <seealso cref="Url"/> property.</param>
+		/// <param name="url">The initial value of <see cref="Url"/> property.</param>
+		/// <seealso cref="Url"/>
 		public BaseRequest (string url)
 			: this ()
 		{
@@ -54,13 +58,17 @@ namespace MonoTests.SystemWeb.Framework
 		}
 
 		/// <summary>
-		/// Create a new <seealso cref="HttpWorkerRequest"/> from data contained in this
+		/// Create a new <see cref="HttpWorkerRequest"/> from data contained in this
 		/// <see cref="BaseRequest"/>. The returned object must also implement
-		/// <seealso cref="IForeignData"/> interface. <see cref="BaseRequest"/> stores
+		/// <see cref="IForeignData"/> interface. <see cref="BaseRequest"/> stores
 		/// the TextWriter in foreign data of the worker request, to use it later in
-		/// <seealso cref="ExtractResponse"/>.
+		/// <see cref="ExtractResponse"/>.
 		/// </summary>
-		/// <returns>A new <seealso cref="HttpWorkerRequest"/>.</returns>
+		/// <returns>A new <see cref="HttpWorkerRequest"/>.</returns>
+		/// <seealso cref="HttpWorkerRequest"/>
+		/// <seealso cref="IForeignData"/>
+		/// <seealso cref="HttpWorkerRequest"/>
+		/// <seealso cref="ExtractResponse"/>
 		public virtual HttpWorkerRequest CreateWorkerRequest ()
 		{
 			StringWriter wr = new StringWriter ();
@@ -71,33 +79,38 @@ namespace MonoTests.SystemWeb.Framework
 
 		/// <summary>
 		/// This function is used by subclasses of <see cref="BaseRequest"/> to create a
-		/// subclass of <seealso cref="BaseWorkerRequest"/>.
+		/// subclass of <see cref="BaseWorkerRequest"/>.
 		/// </summary>
-		/// <param name="wr">TextWriter that must be passed to <seealso cref="BaseWorkerRequest"/>.</param>
-		/// <returns>A new instance of <seealso cref="BaseWorkerRequest"/>, created with
-		/// <seealso cref="Url"/>, <seealso cref="QueryString"/> and
-		/// <seealso cref="UserAgent"/>.</returns>
+		/// <param name="wr">TextWriter that must be passed to <see cref="BaseWorkerRequest"/>.</param>
+		/// <returns>A new instance of <see cref="BaseWorkerRequest"/>, created
+		/// with <see cref="Url"/>, <see cref="QueryString"/> and <see cref="UserAgent"/>.</returns>
+		/// <seealso cref="BaseWorkerRequest"/>
+		/// <seealso cref="UserAgent"/>
+		/// <seealso cref="Url"/>
 		protected virtual BaseWorkerRequest CreateBaseWorkerRequest (TextWriter wr)
 		{
 			return new BaseWorkerRequest (Url, QueryString, wr, UserAgent);
 		}
 
 		/// <summary>
-		/// The query string, passed to the constructor of <seealso cref="BaseWorkerRequest"/>.
+		/// The query string, passed to the constructor of <see cref="BaseWorkerRequest"/>.
 		/// </summary>
+		/// <seealso cref="BaseWorkerRequest"/>
 		protected virtual string QueryString
 		{
 			get { return ""; }
 		}
 
 		/// <summary>
-		/// Extracts the response from the completed <seealso cref="System.Web.HttpWorkerRequest"/>
-		/// and returns a new <seealso cref="Response"/> instance.
+		/// Extracts the response from the completed <see cref="System.Web.HttpWorkerRequest"/>
+		/// and returns a new <see cref="Response"/> instance.
 		/// </summary>
 		/// <param name="request">this must be the same request that was returned by
 		/// CreateWorkerRequest</param>
-		/// <returns>New <seealso cref="Response"/> instance, containing the results of the 
+		/// <returns>New <see cref="Response"/> instance, containing the results of the 
 		/// request.</returns>
+		/// <seealso cref="System.Web.HttpWorkerRequest"/>
+		/// <seealso cref="Response"/>
 		public virtual Response ExtractResponse (HttpWorkerRequest request)
 		{
 			BaseWorkerRequest br = (BaseWorkerRequest) request;

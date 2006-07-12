@@ -6,8 +6,10 @@ using System.Runtime.Serialization;
 namespace MonoTests.SystemWeb.Framework
 {
 	/// <summary>
-	/// The collection of <seealso cref="BaseControl"/> instances used by <seealso cref="FormRequest"/>.
+	/// The collection of <see cref="BaseControl"/> instances used by <see cref="FormRequest"/>.
 	/// </summary>
+	/// <seealso cref="BaseControl"/>
+	/// <seealso cref="FormRequest"/>
 	[Serializable]
 	public sealed class BaseControlCollection : NameObjectCollectionBase 
 	{
@@ -20,11 +22,12 @@ namespace MonoTests.SystemWeb.Framework
 
 		/// <summary>
 		/// The constructor is necessary because this class overrides
-		/// <seealso cref="System.Collections.Specialized.NameObjectCollectionBase"/>
+		/// <see cref="System.Collections.Specialized.NameObjectCollectionBase"/>
 		/// which makes a custom serialization.
 		/// </summary>
 		/// <param name="info">Serialization info.</param>
 		/// <param name="context">Serialization context.</param>
+		/// <seealso cref="System.Collections.Specialized.NameObjectCollectionBase"/>
 		public BaseControlCollection (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{

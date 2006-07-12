@@ -3,17 +3,23 @@ using System;
 namespace MonoTests.SystemWeb.Framework
 {
 	/// <summary>
-	/// Delegates to a ser callback that is used with <seealso cref="HandlerInvoker"/>.
-	/// It is invoked during <seealso cref="System.Web.IHttpHandler.ProcessRequest"/>.
+	/// Delegates to a ser callback that is used with <see cref="HandlerInvoker"/>.
+	/// It is invoked during <see cref="System.Web.IHttpHandler.ProcessRequest"/>.
 	/// </summary>
+	/// <seealso cref="HandlerInvoker"/>
+	/// <seealso cref="System.Web.IHttpHandler.ProcessRequest"/>
 	public delegate void HandlerDelegate ();
 
 	/// <summary>
-	/// This invoker calls a single user delegate of type <seealso cref="HandlerDelegate"/>.
-	/// It's intended to be used with provided <seealso cref="System.Web.IHttpHandler"/> implementation
-	/// to run callbacks in the web context <b>without</b> creating <seealso cref="System.Web.UI.Page"/>.
-	/// This invoker is not widely used in favor of <seealso cref="PageInvoker"/>
+	/// This invoker calls a single user delegate of type <see cref="HandlerDelegate"/>.
+	/// It's intended to be used with provided <see cref="System.Web.IHttpHandler"/> implementation
+	/// to run callbacks in the web context <b>without</b> creating <see cref="System.Web.UI.Page"/>.
+	/// This invoker is not widely used in favor of <see cref="PageInvoker"/>
 	/// </summary>
+	/// <seealso cref="HandlerDelegate"/>
+	/// <seealso cref="System.Web.IHttpHandler"/>
+	/// <seealso cref="System.Web.UI.Page"/>
+	/// <seealso cref="PageInvoker"/>
 	[Serializable]
 	public class HandlerInvoker:BaseInvoker
 	{
@@ -40,10 +46,11 @@ namespace MonoTests.SystemWeb.Framework
 		}
 
 		/// <summary>
-		/// Returns the URL which maps to our <seealso cref="System.Web.IHttpHandler"/>
+		/// Returns the URL which maps to our <see cref="System.Web.IHttpHandler"/>
 		/// implementation
 		/// </summary>
 		/// <returns>The default URL.</returns>
+		/// <seealso cref="System.Web.IHttpHandler"/>
 		public override string GetDefaultUrl ()
 		{
 			return StandardUrl.FAKE_PAGE;

@@ -6,10 +6,14 @@ using System.Web.Hosting;
 namespace MonoTests.SystemWeb.Framework
 {
 	/// <summary>
-	/// The most important class from user perspective. See <seealso cref="Request"/>,
-	/// <seealso cref="Response"/>, <seealso cref="Invoker"/>, <seealso cref="Run"/> for
+	/// The most important class from user perspective. See <see cref="Request"/>,
+	/// <see cref="Response"/>, <see cref="Invoker"/>, <see cref="Run"/> for
 	/// more information.
 	/// </summary>
+	/// <seealso cref="Request"/>
+	/// <seealso cref="Response"/>
+	/// <seealso cref="Invoker"/>
+	/// <seealso cref="Run"/>
 	[Serializable]
 	public class WebTest
 	{
@@ -40,9 +44,12 @@ namespace MonoTests.SystemWeb.Framework
 
 		Response _response;
 		/// <summary>
-		/// The result of the last <seealso cref="Run"/>. See <seealso cref="MonoTests.SystemWeb.Framework.Response"/>,
-		/// <seealso cref="FormRequest"/>.
+		/// The result of the last <see cref="Run"/>. See <see cref="MonoTests.SystemWeb.Framework.Response"/>,
+		/// <see cref="FormRequest"/>.
 		/// </summary>
+		/// <seealso cref="Run"/>
+		/// <seealso cref="MonoTests.SystemWeb.Framework.Response"/>
+		/// <seealso cref="FormRequest"/>
 		public Response Response
 		{
 			get { return _response; }
@@ -51,10 +58,14 @@ namespace MonoTests.SystemWeb.Framework
 
 		BaseInvoker _invoker;
 		/// <summary>
-		/// Set the invoker, which is executed in the web context by <seealso cref="Invoke"/>
-		/// method. Most commonly used <seealso cref="PageInvoker"/>. See also: <seealso cref="BaseInvoker"/>,
-		/// <seealso cref="HandlerInvoker"/>
+		/// Set the invoker, which is executed in the web context by <see cref="Invoke"/>
+		/// method. Most commonly used <see cref="PageInvoker"/>. See also: <see cref="BaseInvoker"/>,
+		/// <see cref="HandlerInvoker"/>
 		/// </summary>
+		/// <seealso cref="Invoke"/>
+		/// <seealso cref="PageInvoker"/>
+		/// <seealso cref="BaseInvoker"/>
+		/// <seealso cref="HandlerInvoker"/>
 		public BaseInvoker Invoker
 		{
 			get { return _invoker; }
@@ -63,10 +74,14 @@ namespace MonoTests.SystemWeb.Framework
 
 		BaseRequest _request;
 		/// <summary>
-		/// Contains all the data necessary to create an <seealso cref="System.Web.HttpWorkerRequest"/> in
-		/// the application appdomain. See also <seealso cref="BaseRequest"/>,
-		/// <seealso cref="PostableRequest"/>, <seealso cref="FormRequest"/>.
+		/// Contains all the data necessary to create an <see cref="System.Web.HttpWorkerRequest"/> in
+		/// the application appdomain. See also <see cref="BaseRequest"/>,
+		/// <see cref="PostableRequest"/>, <see cref="FormRequest"/>.
 		/// </summary>
+		/// <seealso cref="System.Web.HttpWorkerRequest"/>
+		/// <seealso cref="BaseRequest"/>
+		/// <seealso cref="PostableRequest"/>
+		/// <seealso cref="FormRequest"/>
 		public BaseRequest Request
 		{
 			get { return _request; }
@@ -86,7 +101,7 @@ namespace MonoTests.SystemWeb.Framework
 #endif
 				try {
 					host = new MyHost (); //Fake instance to make EnsureHosting happy
-					host = CreateHosting ();
+					host = InitHosting ();
 				}
 				catch {
 					host = null; //Remove the fake instance if CreateHosting failed
@@ -97,10 +112,14 @@ namespace MonoTests.SystemWeb.Framework
 		}
 
 		/// <summary>
-		/// Run the request using <seealso cref="Request"/> and <seealso cref="Invoker"/>
-		/// values. Keep the result of the request in <seealso cref="Response"/> property.
+		/// Run the request using <see cref="Request"/> and <see cref="Invoker"/>
+		/// values. Keep the result of the request in <see cref="Response"/> property.
 		/// </summary>
-		/// <returns>The body of the HTTP response (<seealso cref="MonoTests.SystemWeb.Framework.Response.Body"/>).</returns>
+		/// <returns>The body of the HTTP response (<see cref="MonoTests.SystemWeb.Framework.Response.Body"/>).</returns>
+		/// <seealso cref="Request"/>
+		/// <seealso cref="Invoker"/>
+		/// <seealso cref="Response"/>
+		/// <seealso cref="MonoTests.SystemWeb.Framework.Response.Body"/>
 		public string Run ()
 		{
 			if (Request.Url == null)
@@ -128,11 +147,14 @@ namespace MonoTests.SystemWeb.Framework
 		}
 
 		/// <summary>
-		/// This method must be called when custom <seealso cref="System.Web.IHttpHandler.ProcessRequest"/> or aspx code behind is used,
+		/// This method must be called when custom <see cref="System.Web.IHttpHandler.ProcessRequest"/> or aspx code behind is used,
 		/// to allow the framework to invoke all user supplied delegates.
 		/// </summary>
-		/// <param name="param">Parameter defined by the <seealso cref="BaseInvoker"/> subclass. For example,
-		/// <seealso cref="PageInvoker"/> expects to receive a <seealso cref="System.Web.UI.Page"/> instance here.</param>
+		/// <param name="param">Parameter defined by the <see cref="BaseInvoker"/> subclass. For example,
+		/// <see cref="PageInvoker"/> expects to receive a <see cref="System.Web.UI.Page"/> instance here.</param>
+		/// <seealso cref="System.Web.IHttpHandler.ProcessRequest"/>
+		/// <seealso cref="BaseInvoker"/>
+		/// <seealso cref="PageInvoker"/>
 		public void Invoke (object param)
 		{
 			try {
@@ -145,13 +167,16 @@ namespace MonoTests.SystemWeb.Framework
 		}
 
 		/// <summary>
-		/// This method is intended for use from <seealso cref="MonoTests.SystemWeb.Framework.BaseInvoker.DoInvoke"/> when
+		/// This method is intended for use from <see cref="MonoTests.SystemWeb.Framework.BaseInvoker.DoInvoke"/> when
 		/// the invocation causes an exception. In such cases, the exception must be registered
-		/// with this method, and then swallowed. Before returning, <seealso cref="WebTest.Run"/>
-		/// will rethrow this exception. This is done to hide the exception from <seealso cref="System.Web.HttpRuntime"/>,
+		/// with this method, and then swallowed. Before returning, <see cref="WebTest.Run"/>
+		/// will rethrow this exception. This is done to hide the exception from <see cref="System.Web.HttpRuntime"/>,
 		/// which normally swallows the exception and returns 500 ERROR http result.
 		/// </summary>
 		/// <param name="ex">The exception to be registered and rethrown.</param>
+		/// <seealso cref="MonoTests.SystemWeb.Framework.BaseInvoker.DoInvoke"/>
+		/// <seealso cref="WebTest.Run"/>
+		/// <seealso cref="System.Web.HttpRuntime"/>
 		public static void RegisterException (Exception ex)
 		{
 			Host.RegisterException (ex);
@@ -176,10 +201,14 @@ namespace MonoTests.SystemWeb.Framework
 		}
 
 		/// <summary>
-		/// Default constructor. Initializes <seealso cref="Invoker"/> with a new
-		/// <seealso cref="BaseInvoker"/> and <seealso cref="Request"/> with an empty
-		/// <seealso cref="BaseRequest"/>.
+		/// Default constructor. Initializes <see cref="Invoker"/> with a new
+		/// <see cref="BaseInvoker"/> and <see cref="Request"/> with an empty
+		/// <see cref="BaseRequest"/>.
 		/// </summary>
+		/// <seealso cref="Invoker"/>
+		/// <seealso cref="BaseInvoker"/>
+		/// <seealso cref="Request"/>
+		/// <seealso cref="BaseRequest"/>
 		public WebTest ()
 		{
 			Invoker = new BaseInvoker ();
@@ -187,10 +216,12 @@ namespace MonoTests.SystemWeb.Framework
 		}
 
 		/// <summary>
-		/// Same as <seealso cref="WebTest()"/>, and set <seealso cref="MonoTests.SystemWeb.Framework.BaseRequest.Url"/> to
+		/// Same as <see cref="WebTest()"/>, and set <see cref="MonoTests.SystemWeb.Framework.BaseRequest.Url"/> to
 		/// the specified Url.
 		/// </summary>
-		/// <param name="url">The URL used for the next <seealso cref="Run"/></param>
+		/// <param name="url">The URL used for the next <see cref="Run"/></param>
+		/// <seealso cref="MonoTests.SystemWeb.Framework.BaseRequest.Url"/>
+		/// <seealso cref="Run"/>
 		public WebTest (string url)
 			: this ()
 		{
@@ -198,10 +229,13 @@ namespace MonoTests.SystemWeb.Framework
 		}
 
 		/// <summary>
-		/// Create a new instance, initializing <seealso cref="Invoker"/> with the given
-		/// value, and the <seealso cref="Request"/> with <seealso cref="BaseRequest"/>.
+		/// Create a new instance, initializing <see cref="Invoker"/> with the given
+		/// value, and the <see cref="Request"/> with <see cref="BaseRequest"/>.
 		/// </summary>
 		/// <param name="invoker">The invoker used for this test.</param>
+		/// <seealso cref="Invoker"/>
+		/// <seealso cref="Request"/>
+		/// <seealso cref="BaseRequest"/>
 		public WebTest (BaseInvoker invoker)
 			: this ()
 		{
@@ -209,10 +243,13 @@ namespace MonoTests.SystemWeb.Framework
 		}
 
 		/// <summary>
-		/// Create a new instance, initializing <seealso cref="Request"/> with the given
-		/// value, and the <seealso cref="Invoker"/> with <seealso cref="BaseInvoker"/>.
+		/// Create a new instance, initializing <see cref="Request"/> with the given
+		/// value, and the <see cref="Invoker"/> with <see cref="BaseInvoker"/>.
 		/// </summary>
 		/// <param name="request">The request used for this test.</param>
+		/// <seealso cref="Request"/>
+		/// <seealso cref="Invoker"/>
+		/// <seealso cref="BaseInvoker"/>
 		public WebTest (BaseRequest request)
 			: this ()
 		{
@@ -300,7 +337,7 @@ namespace MonoTests.SystemWeb.Framework
 		const string HOST_INSTANCE_NAME = "MonoTests/SysWeb/Framework/Host";
 #endif
 
-		private static MyHost CreateHosting ()
+		private static MyHost InitHosting ()
 		{
 			string tmpFile = Path.GetTempFileName ();
 			File.Delete (tmpFile);
@@ -309,6 +346,7 @@ namespace MonoTests.SystemWeb.Framework
 			binDir = Directory.CreateDirectory (Path.Combine (baseDir, "bin")).FullName;
 
 			CopyResources ();
+			File.Create (Path.Combine (baseDir, "page.fake"));
 #if !TARGET_JVM
 			foreach (Assembly ass in AppDomain.CurrentDomain.GetAssemblies ())
 				LoadAssemblyRecursive (ass);
@@ -347,8 +385,23 @@ namespace MonoTests.SystemWeb.Framework
 				"My.master");
 #if TARGET_JVM
 			CopyResource (typeof (WebTest),
-				"MonoTests.SystemWeb.Framework.Resources.AspxParser.params",
-				"AspxParser.params");
+				"MonoTests.SystemWeb.Framework.Resources.assemblies.global.asax.xml",
+				"assemblies/global.asax.xml");
+			CopyResource (typeof (WebTest),
+				"MonoTests.SystemWeb.Framework.Resources.assemblies.mypage.aspx.xml",
+				"assemblies/mypage.aspx.xml");
+			CopyResource (typeof (WebTest),
+				"MonoTests.SystemWeb.Framework.Resources.assemblies.hnnefdht.dll.ghres",
+				"assemblies/hnnefdht/dll.ghres");
+			CopyResource (typeof (WebTest),
+				"MonoTests.SystemWeb.Framework.Resources.assemblies.hnnefdht.hnnefdhtAttrib.class",
+				"assemblies/hnnefdht/hnnefdhtAttrib.class");
+//			CopyResource (typeof (WebTest),
+//				"MonoTests.SystemWeb.Framework.Resources.assemblies.hnnefdht.ASP.MyPage_aspx_MyPage_aspxAttrib.class",
+//				"assemblies/hnnefdht/ASP/MyPage_aspx$MyPage_aspxAttrib.class");
+//			CopyResource (typeof (WebTest),
+//				"MonoTests.SystemWeb.Framework.Resources.assemblies.hnnefdht.ASP.MyPage_aspx.class",
+//				"assemblies/hnnefdht/ASP/MyPage_aspx.class");
 #endif
 #else
 			CopyResource (typeof (WebTest), "Web.config", "Web.config");

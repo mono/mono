@@ -9,8 +9,9 @@ namespace MonoTests.SystemWeb.Framework
 	{
 		/// <summary>
 		/// Fake page URL which maps to the custom invoker. Used together with
-		/// <seealso cref="HandlerInvoker"/>
+		/// <see cref="HandlerInvoker"/>
 		/// </summary>
+		/// <seealso cref="HandlerInvoker"/>
 		public const string FAKE_PAGE = "page.fake";
 		/// <summary>
 		/// An empty page for generic usage.

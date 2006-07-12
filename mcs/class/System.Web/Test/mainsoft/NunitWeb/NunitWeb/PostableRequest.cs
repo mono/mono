@@ -4,10 +4,11 @@ using System.IO;
 namespace MonoTests.SystemWeb.Framework
 {
 	/// <summary>
-	/// Adds the postback functionality to <seealso cref="BaseRequest"/>.
+	/// Adds the postback functionality to <see cref="BaseRequest"/>.
 	/// Provides pretty low-level interface. Consider using <seealso cref="FormRequest"/>
 	/// in user code.
 	/// </summary>
+	/// <seealso cref="BaseRequest"/>
 	[Serializable]
 	public class PostableRequest:BaseRequest
 	{
@@ -61,13 +62,17 @@ namespace MonoTests.SystemWeb.Framework
 		}
 
 		/// <summary>
-		/// Create a <seealso cref="PostableWorkerRequest"/> if <seealso cref="IsPost"/>
-		/// is true or <seealso cref="EntityBody"/> is not null. Otherwise, call the
+		/// Create a <see cref="PostableWorkerRequest"/> if <see cref="IsPost"/>
+		/// is true or <see cref="EntityBody"/> is not null. Otherwise, call the
 		/// base method.
 		/// </summary>
 		/// <param name="wr">The text writer that is passed to the
-		/// <seealso cref="BaseWorkerRequest"/> constructor.</param>
-		/// <returns>A new <seealso cref="BaseWorkerRequest"/> instance.</returns>
+		/// <see cref="BaseWorkerRequest"/> constructor.</param>
+		/// <returns>A new <see cref="BaseWorkerRequest"/> instance.</returns>
+		/// <seealso cref="PostableWorkerRequest"/>
+		/// <seealso cref="IsPost"/>
+		/// <seealso cref="EntityBody"/>
+		/// <seealso cref="BaseWorkerRequest"/>
 		protected override BaseWorkerRequest CreateBaseWorkerRequest (TextWriter wr)
 		{
 			if (EntityBody == null || !IsPost)

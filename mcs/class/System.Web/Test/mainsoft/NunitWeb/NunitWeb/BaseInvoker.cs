@@ -6,8 +6,9 @@ namespace MonoTests.SystemWeb.Framework
 	/// Base class for invokers. Can be used on its own when no user callbacks need
 	/// to be executed in the web context. When a user callback need to be called, use
 	/// one of <see cref="BaseInvoker"/> subclasses, the most common is
-	/// <seealso cref="PageInvoker"/>.
+	/// <see cref="PageInvoker"/>.
 	/// </summary>
+	/// <seealso cref="PageInvoker"/>
 	[Serializable]
 	public class BaseInvoker
 	{
@@ -35,9 +36,10 @@ namespace MonoTests.SystemWeb.Framework
 
 		/// <summary>
 		/// Check, if DoInvoke was called or not. If subclasses do not override this
-		/// method, they have to call to <seealso cref="BaseInvoker.DoInvoke"/> to register the
+		/// method, they have to call to <see cref="BaseInvoker.DoInvoke"/> to register the
 		/// invocation.
 		/// </summary>
+		/// <seealso cref="BaseInvoker.DoInvoke"/>
 		public virtual void CheckInvokeDone ()
 		{
 			if (!_invokeDone)

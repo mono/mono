@@ -5,19 +5,24 @@ namespace MonoTests.SystemWeb.Framework
 {
 	/// <summary>
 	/// This class is used to pass and invoke the user callbacks to all possible
-	/// <seealso cref="System.Web.UI.Page"/> lifecycle events. For the most
-	/// used events <seealso cref="System.Web.UI.Control.Init"/> and
-	/// <seealso cref="System.Web.UI.Control.Load"/> there are convenience
-	/// creation methods <seealso cref="CreateOnInit"/> and <seealso cref="CreateOnLoad"/>.
+	/// <see cref="System.Web.UI.Page"/> lifecycle events. For the most
+	/// used events <see cref="System.Web.UI.Control.Init"/> and
+	/// <see cref="System.Web.UI.Control.Load"/> there are convenience
+	/// creation methods <see cref="CreateOnInit"/> and <see cref="CreateOnLoad"/>.
 	/// In .NET 2.0 there same applies to PreInit event.
 	/// </summary>
+	/// <seealso cref="System.Web.UI.Control.Init"/>
+	/// <seealso cref="System.Web.UI.Control.Load"/>
+	/// <seealso cref="CreateOnInit"/>
+	/// <seealso cref="CreateOnLoad"/>
 	[Serializable]
 	public class PageInvoker:BaseInvoker
 	{
 		/// <summary>
 		/// The constructor method.
 		/// </summary>
-		/// <param name="delegates">Value which initializes <seealso cref="Delegates"/> property.</param>
+		/// <param name="delegates">Value which initializes <see cref="Delegates"/> property.</param>
+		/// <seealso cref="Delegates"/>
 		public PageInvoker (PageDelegates delegates)
 		{
 			Delegates = delegates;
@@ -25,8 +30,9 @@ namespace MonoTests.SystemWeb.Framework
 
 		PageDelegates _delegates;
 		/// <summary>
-		/// Set or get the <seealso cref="PageDelegates"/> collection.
+		/// Set or get the <see cref="PageDelegates"/> collection.
 		/// </summary>
+		/// <seealso cref="PageDelegates"/>
 		public PageDelegates Delegates
 		{
 			get { return _delegates; }
@@ -81,11 +87,12 @@ namespace MonoTests.SystemWeb.Framework
 		Page _page;
 
 		/// <summary>
-		/// Add the callbacks contained in <seealso cref="Delegates"/> to
+		/// Add the callbacks contained in <see cref="Delegates"/> to
 		/// the given page's events.
 		/// </summary>
 		/// <param name="parameters">Must contain one parameter of type
-		/// <seealso cref="System.Web.UI.Page"/></param>
+		/// <see cref="System.Web.UI.Page"/></param>
+		/// <seealso cref="Delegates"/>
 		public override void DoInvoke (params object [] parameters)
 		{
 			base.DoInvoke (parameters);

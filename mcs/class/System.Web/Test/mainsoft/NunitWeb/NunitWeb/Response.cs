@@ -4,8 +4,9 @@ namespace MonoTests.SystemWeb.Framework
 {
 	/// <summary>
 	/// Contains the HTTP response data after executing
-	/// <seealso cref="WebTest.Run"/>
+	/// <see cref="WebTest.Run"/>
 	/// </summary>
+	/// <seealso cref="WebTest.Run"/>
 	[Serializable]
 	public class Response
 	{
@@ -16,7 +17,10 @@ namespace MonoTests.SystemWeb.Framework
 		public string Body
 		{
 			get { return _body; }
-			internal set { _body = value; }
+#if NET_2_0
+			internal
+#endif
+			set { _body = value; }
 		}
 	}
 }

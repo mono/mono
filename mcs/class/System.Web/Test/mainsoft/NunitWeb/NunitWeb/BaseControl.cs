@@ -3,8 +3,9 @@ using System;
 namespace MonoTests.SystemWeb.Framework
 {
 	/// <summary>
-	/// This is a container for a control used by <seealso cref="FormRequest"/>.
+	/// This is a container for a control used by <see cref="FormRequest"/>.
 	/// </summary>
+	/// <seealso cref="FormRequest"/>
 	[Serializable]
 	public class BaseControl
 	{
@@ -17,11 +18,13 @@ namespace MonoTests.SystemWeb.Framework
 
 		/// <summary>
 		/// Creates a <see cref="BaseControl"/> instance, initializing the
-		/// <seealso cref="Name"/> and <seealso cref="Value"/> properties with
+		/// <see cref="Name"/> and <see cref="Value"/> properties with
 		/// the given values.
 		/// </summary>
 		/// <param name="name">The name of the control.</param>
 		/// <param name="value">The value of the control.</param>
+		/// <seealso cref="Name"/>
+		/// <seealso cref="Value"/>
 		public BaseControl (string name, string value)
 		{
 			_name = name;
@@ -51,7 +54,7 @@ namespace MonoTests.SystemWeb.Framework
 		/// <summary>
 		/// Returns true, if the control is valid for submission. Override
 		/// to implement different controls validation. See
-		/// <a href="http://www.w3.org/TR/REC-html40/interact/forms.html#successful-controls">http://www.w3.org/TR/REC-html40/interact/forms.html#successful-controls</a>
+		/// <see href="http://www.w3.org/TR/REC-html40/interact/forms.html#successful-controls"/>
 		/// </summary>
 		public virtual bool IsSuccessful () 
 		{
