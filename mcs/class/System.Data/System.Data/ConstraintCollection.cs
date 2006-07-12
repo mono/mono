@@ -386,15 +386,16 @@ namespace System.Data {
 				return;
 				
 			constraint.RemoveFromConstraintCollectionCleanup(this);
+			constraint.ConstraintCollection = null;
 			List.Remove(constraint);
 			OnCollectionChanged( new CollectionChangeEventArgs(CollectionChangeAction.Remove,this));
 		}
 
 		public void Remove(string name) 
 		{
-			//if doesn't exist fail quietly
 			int index = IndexOf(name);
-			if (-1 == index) return;
+			if (-1 == index)
+				throw new ArgumentException ("Constraint '" + name + "' does not belong to this DataTable.");
 
 			Remove(this[index]);
 		}

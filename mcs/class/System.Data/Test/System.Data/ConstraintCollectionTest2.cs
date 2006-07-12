@@ -620,5 +620,26 @@ namespace MonoTests.System.Data
 			dt.Constraints.RemoveAt(2);
 		}
 
+		[Test]
+		public void RemoveTest ()
+		{
+			DataTable table = new DataTable ();
+			table.Columns.Add ("col1");
+			Constraint c = table.Constraints.Add ("c", table.Columns [0], false);
+			try {
+				table.Constraints.Remove ("sdfs");
+				Assert.Fail ("#1");
+			} catch (ArgumentException e) {
+				Assert.AreEqual ("Constraint 'sdfs' does not belong to this DataTable.", 
+						e.Message, "#2");
+			}
+			
+			table.Constraints.Remove (c);
+			Assert.AreEqual (0, table.Constraints.Count, "#3");
+
+			// No exception shud be raised
+			table.Constraints.Add (c);
+			Assert.AreEqual (1, table.Constraints.Count, "#4");
+		}
 	}
 }

@@ -1,10 +1,14 @@
-2006-12-30  Senganal T <tsenganal@novell.com>
+2006-07-12  Senganal T <tsenganal@novell.com>
+
+	* ConstraintCollectionTest2.cs : Test Remove behavior.
+
+2006-07-12  Senganal T <tsenganal@novell.com>
 
 	* DataSetTest2.cs : Added test to check ReadXml of a Diffgram
 	when part/whole of schema is missing on the dataset. Currently if
 	schema is missing we run into an infinite loop.
 
-2006-11-30  Senganal T <tsenganal@novell.com>
+2006-07-11  Senganal T <tsenganal@novell.com>
 	
 	* DataSetTest2.cs : Added tests for DataSet.WriteXmlSchema and 
 	ReadXmlSchema methods to test nested schemas. 

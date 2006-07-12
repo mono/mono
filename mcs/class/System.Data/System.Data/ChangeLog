@@ -1,11 +1,19 @@
-2006-12-30  Senganal T  <tsenganal@novell.com>
+2006-07-12  Senganal T  <tsenganal@novell.com>
+
+	* ConstraintCollection.cs : 
+		- Remove (string): If constraint name is not found, throw exception
+		- Remove (Constraint): Set the ConstraintCollection of the removed
+		Constraint to null.
+	Thanks to Deepak Kr Velachha for reporting the bug.
+
+2006-07-12  Senganal T  <tsenganal@novell.com>
 
 	* XmlDiffLoader.cs : 
 		- LoadColumnChildren : If schema name is missing, skip the
 		element.
 	Thanks to Deepak Kr Velachha for identifying the bug.
 
-2006-11-30  Senganal T  <tsenganal@novell.com>
+2006-07-11  Senganal T  <tsenganal@novell.com>
 	
 	* XmlSchemaWriter.cs :
 		- WriteTableType : If Relation.Nested is true, then nest the 
