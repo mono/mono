@@ -265,7 +265,7 @@ namespace System.Collections.Generic {
 
 			for (int i = 0; i < table.Length; ++i) {
 				for (Slot slot = table [i]; slot != null; slot = slot.Next) {
-					if (cmp.Equals (value, slot.Data.Value))
+					if (cmp.Equals (slot.Data.Value, value))
 						return true;
 				}
 			}
@@ -335,7 +335,9 @@ namespace System.Collections.Generic {
 			index = DoHash (key);
 			Slot prev = null;
 			for (Slot slot = table [index]; slot != null; slot = slot.Next) {
-				if (hcp.Equals (key, slot.Data.Key))
+				// The ordering is important for compatibility with MS and strange
+				// Object.Equals () implementations
+				if (hcp.Equals (slot.Data.Key, key))
 					break;
 				prev = slot;
 			}
