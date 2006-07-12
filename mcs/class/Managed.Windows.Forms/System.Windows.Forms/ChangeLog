@@ -1,3 +1,11 @@
+2006-07-12  Alexander Olk  <alex.olk@googlemail.com>
+
+	* FileDialog.cs: Added GetFoldersOnly to MWFVFS
+	* FolderBrowserDialog.cs: Almost a complete rewrite.
+	  - Better support for Environment.Specialfolders
+	  - Added support for MWFVFS
+	  - Made setting SelectedPath work
+
 2006-07-12  Jackson Harper  <jackson@ximian.com>
 
 	* Control.cs: Optimze getting all the controls.

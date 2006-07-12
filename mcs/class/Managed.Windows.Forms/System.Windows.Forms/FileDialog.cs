@@ -2793,6 +2793,11 @@ namespace System.Windows.Forms {
 			}
 		}
 		
+		public ArrayList GetFoldersOnly ()
+		{
+			return fileSystem.GetFoldersOnly ();
+		}
+		
 		public void WriteRecentlyUsedFiles (string filename)
 		{
 			fileSystem.WriteRecentlyUsedFiles (filename);
@@ -2947,6 +2952,45 @@ namespace System.Windows.Forms {
 			}
 		}
 		
+		public ArrayList GetFoldersOnly ()
+		{
+			ArrayList directories_out = new ArrayList ();
+			
+			if (currentFolderFSEntry.FullName == MWFVFS.DesktopPrefix) {
+				FSEntry personalFSEntry = GetPersonalFSEntry ();
+				
+				directories_out.Add (personalFSEntry);
+				
+				FSEntry myComputerFSEntry = GetMyComputerFSEntry ();
+				
+				directories_out.Add (myComputerFSEntry);
+				
+				FSEntry myNetworkFSEntry = GetMyNetworkFSEntry ();
+				
+				directories_out.Add (myNetworkFSEntry);
+				
+				ArrayList d_out = GetNormalFolders (ThemeEngine.Current.Places (UIIcon.PlacesDesktop));
+				directories_out.AddRange (d_out);
+				
+			} else
+			if (currentFolderFSEntry.FullName == MWFVFS.RecentlyUsedPrefix) {
+				//files_out = GetRecentlyUsedFiles ();
+			} else
+			if (currentFolderFSEntry.FullName == MWFVFS.MyComputerPrefix) {
+				directories_out.AddRange (GetMyComputerContent ());
+			} else
+			if (currentFolderFSEntry.FullName == MWFVFS.PersonalPrefix || currentFolderFSEntry.FullName == MWFVFS.MyComputerPersonalPrefix) {
+				ArrayList d_out = GetNormalFolders (ThemeEngine.Current.Places (UIIcon.PlacesPersonal));
+				directories_out.AddRange (d_out);
+			} else
+			if (currentFolderFSEntry.FullName == MWFVFS.MyNetworkPrefix) {
+				directories_out.AddRange (GetMyNetworkContent ());
+			} else {
+				directories_out = GetNormalFolders (currentFolderFSEntry.FullName);
+			}
+			return directories_out;
+		}
+		
 		protected void GetNormalFolderContent (string from_folder, StringCollection filters, out ArrayList directories_out, out ArrayList files_out)
 		{
 			DirectoryInfo dirinfo = new DirectoryInfo (from_folder);
@@ -2973,6 +3017,21 @@ namespace System.Windows.Forms {
 			for (int i = 0; i < files.Count; i++) {
 				files_out.Add (GetFileFSEntry (files [i] as FileInfo));
 			}
+		}
+		
+		protected ArrayList GetNormalFolders (string from_folder)
+		{
+			DirectoryInfo dirinfo = new DirectoryInfo (from_folder);
+			
+			ArrayList directories_out = new ArrayList ();
+			
+			DirectoryInfo[] dirs = dirinfo.GetDirectories ();
+			
+			for (int i = 0; i < dirs.Length; i++) {
+				directories_out.Add (GetDirectoryFSEntry (dirs [i], currentTopFolderFSEntry));
+			}
+			
+			return directories_out;
 		}
 		
 		protected virtual FSEntry GetDirectoryFSEntry (DirectoryInfo dirinfo, FSEntry topFolderFSEntry)
