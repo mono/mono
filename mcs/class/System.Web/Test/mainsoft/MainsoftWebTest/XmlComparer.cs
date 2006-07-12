@@ -17,8 +17,8 @@ namespace MonoTests.stand_alone.WebHarness
 		bool ignoreWS = true;
 
 		string lastCompare = "";
-		string actual = "";
-		string expected = "";
+		string _actual = "";
+		string _expected = "";
 
 		public XmlComparer (Flags flags, bool ignoreWS) 
 		{
@@ -58,42 +58,42 @@ namespace MonoTests.stand_alone.WebHarness
 			return true;
 		}
 
-		public bool AreEqualNodeList (XmlNodeList lst1, XmlNodeList lst2)
+		public bool AreEqualNodeList (XmlNodeList expected, XmlNodeList actual)
 		{
-			if (lst1.Count != lst2.Count)
+			if (expected.Count != actual.Count)
 				return false;
-			for (int i=0; i<lst1.Count; i++) {
-				if (!AreEqual (lst1[i], lst2[i]))
+			for (int i=0; i<expected.Count; i++) {
+				if (!AreEqual (expected[i], actual[i]))
 					return false;
 			}
 			return true;
 		}
 
-		public bool AreEqual (XmlNode node1, XmlNode node2)
+		public bool AreEqual (XmlNode expected, XmlNode actual)
 		{
-			lastCompare = node1.OuterXml + "\n" + node2.OuterXml;
-			actual = node1.OuterXml;
-			expected = node2.OuterXml;
+			lastCompare = expected.OuterXml + "\n" + actual.OuterXml;
+			_actual = actual.OuterXml;
+			_expected = expected.OuterXml;
 			// skip XmlDeclaration
-			if ((node1.NodeType == XmlNodeType.XmlDeclaration) &&
-				(node2.NodeType == XmlNodeType.XmlDeclaration))
+			if ((expected.NodeType == XmlNodeType.XmlDeclaration) &&
+				(actual.NodeType == XmlNodeType.XmlDeclaration))
 				return true;
-			if (node1.NodeType != node2.NodeType)
+			if (expected.NodeType != actual.NodeType)
 				return false;
-			if (node1.LocalName != node2.LocalName)
+			if (expected.LocalName != actual.LocalName)
 				return false;
-			if (node1.NamespaceURI != node2.NamespaceURI)
+			if (expected.NamespaceURI != actual.NamespaceURI)
 				return false;
-			if (node1.Attributes != null && node2.Attributes != null) {
-				if (!AreEqualAttribs (node1.Attributes, node2.Attributes))
+			if (expected.Attributes != null && actual.Attributes != null) {
+				if (!AreEqualAttribs (expected.Attributes, actual.Attributes))
 					return false;
 			}
 			else //one of nodes has no attrs
-				if (node1.Attributes != null || node2.Attributes != null)
+				if (expected.Attributes != null || actual.Attributes != null)
 					return false;//and another has some
-			if (!node1.HasChildNodes && !node2.HasChildNodes) {
-				string val1 = node1.Value;
-				string val2 = node2.Value;
+			if (!expected.HasChildNodes && !actual.HasChildNodes) {
+				string val1 = expected.Value;
+				string val2 = actual.Value;
 				if (ignoreWS) //ignore white spaces
 				{ 
 					if (val1 != null)
@@ -104,9 +104,9 @@ namespace MonoTests.stand_alone.WebHarness
 				return val1 == val2;
 			}
 			else {//one of nodes has some children
-				if (!node1.HasChildNodes || !node2.HasChildNodes)
+				if (!expected.HasChildNodes || !actual.HasChildNodes)
 					return false;//and another has none
-				return AreEqualNodeList (node1.ChildNodes, node2.ChildNodes);
+				return AreEqualNodeList (expected.ChildNodes, actual.ChildNodes);
 			}
 		}
 
@@ -117,12 +117,12 @@ namespace MonoTests.stand_alone.WebHarness
 
 		public string Actual
 		{
-			get { return actual; }
+			get { return _actual; }
 		}
 
 		public string Expected
 		{
-			get { return expected; }
+			get { return _expected; }
 		}
 	}
 }

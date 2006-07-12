@@ -108,15 +108,15 @@ namespace MonoTests.stand_alone.WebHarness
 			return helper.XmlCompare (or, dr, false);
 		}
 
-		public override bool XmlCompare(XmlDocument d1, XmlDocument d2, bool ignoreAlmost)
+		public override bool XmlCompare(XmlDocument expected, XmlDocument actual, bool ignoreAlmost)
 		{
 			XmlComparer comparer = new XmlComparer();
 			if (ignoreAlmost == false)
 			{
-				DoAlmost(d1);
-				DoAlmost(d2);
+				DoAlmost(expected);
+				DoAlmost(actual);
 			}
-			bool c = comparer.AreEqual(d1, d2);
+			bool c = comparer.AreEqual(expected, actual);
 			_compareStatus = comparer.LastCompare;
 			_compareActual = comparer.Actual;
 			_compareExpect = comparer.Expected;
