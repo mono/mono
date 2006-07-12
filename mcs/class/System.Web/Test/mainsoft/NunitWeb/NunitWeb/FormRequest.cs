@@ -28,7 +28,7 @@ namespace MonoTests.SystemWeb.Framework
 		public FormRequest (Response response, string formId)
 		{
 			_controls = new BaseControlCollection ();
-//			ExtractFormAndHiddenControls (response, formId);
+			ExtractFormAndHiddenControls (response, formId);
 		}
 
 		private BaseControlCollection _controls;
@@ -40,7 +40,7 @@ namespace MonoTests.SystemWeb.Framework
 			get { return _controls; }
 			set { _controls = value; }
 		}
-/*
+
 		private void ExtractFormAndHiddenControls (Response response, string formId)
 		{
 			HtmlAgilityPack.HtmlDocument htmlDoc = new HtmlAgilityPack.HtmlDocument ();
@@ -95,7 +95,7 @@ namespace MonoTests.SystemWeb.Framework
 				Controls[bc.Name] = bc;
 			}
 		}
-*/
+
 		/// <summary>
 		/// Get the URL extracted from the form. Unlike the base class, here this
 		/// property should not be changed, otherwise an <see cref="Exception"/>
