@@ -119,6 +119,7 @@ namespace MonoTests.SystemWeb.Framework
 
 		#region Handlers
 
+#if NET_2_0
 		/// <summary>
 		/// This must be made private as soon as Mono allows using private methods for delegates
 		/// </summary>
@@ -173,6 +174,7 @@ namespace MonoTests.SystemWeb.Framework
 		{
 			Invoke (Delegates.SaveStateComplete);
 		}
+#endif
 		/// <summary>
 		/// This must be made private as soon as Mono allows using private methods for delegates
 		/// </summary>
