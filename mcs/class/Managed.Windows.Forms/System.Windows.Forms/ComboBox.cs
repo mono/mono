@@ -55,7 +55,6 @@ namespace System.Windows.Forms
 		private int max_length;
 		private ComboListBox listbox_ctrl;		
 		private TextBox textbox_ctrl;
-		private bool process_textchanged_event = true;
 		private bool item_height_specified = false;
 		private int item_height;
 		private int requested_height = -1;
@@ -529,7 +528,6 @@ namespace System.Windows.Forms
 				
 				if (index != -1) {
 					SelectedIndex = index;
-					return;					
 				}
 				
 				if (dropdown_style != ComboBoxStyle.DropDownList)
@@ -1175,25 +1173,19 @@ namespace System.Windows.Forms
 		
 		private void OnTextChangedEdit (object sender, EventArgs e)
 		{
-			if (process_textchanged_event == false)
-				return; 
-				
 			int item = FindStringCaseInsensitive (textbox_ctrl.Text);
 			
-			if (item == -1)
-				return;
-
-			if (listbox_ctrl != null) {
+			if (item == -1 && listbox_ctrl != null) {
 				listbox_ctrl.SetTopItem (item);
 				listbox_ctrl.HighlightedIndex = item;
 			}
+
+			base.Text = textbox_ctrl.Text;
 		}
 		
 		internal void SetControlText (string s)
 		{		
-			process_textchanged_event = false; 
     			textbox_ctrl.Text = s;
-    			process_textchanged_event = true;
     		}
 		
 		void UpdateBounds ()
