@@ -498,6 +498,9 @@ namespace System.Windows.Forms {
 		#region Public Instance Methods
 		public void BeginEdit () {
 			is_editing = true;
+			TreeView tv = TreeView;
+			if (tv != null)
+				tv.edit_node = this;
 		}
 
 		public void Collapse () {

@@ -1,6 +1,11 @@
 2006-07-13  Jackson Harper  <jackson@ximian.com>
 
 	* ComboBox.cs: Revert the item->index part of my previous patch.
+	* TreeView.cs: Use LostFocus instead of Leave for detecting when
+	the edit box has lost focus (duh).
+	- Just make the edit box not visible when we get return, that will
+	take the focus, which will call EndEdit
+	* TreeNode.cs When we start editing, notify the treeview.
 
 2006-07-12  Jackson Harper  <jackson@ximian.com>
 
