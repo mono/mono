@@ -82,7 +82,7 @@ namespace System.Web.UI.WebControls {
 					break;
 				
 				case BulletStyle.UpperRoman:
-					writer.AddStyleAttribute (ListStyleType, "lower-roman");
+					writer.AddStyleAttribute (ListStyleType, "upper-roman");
 					isNumeric = true;
 					break;
 
@@ -109,28 +109,30 @@ namespace System.Web.UI.WebControls {
 			base.AddAttributesToRender (writer);
 		}
 
-		[MonoTODO ("new bool prop on ListItem: Enabled")]
 		protected virtual void RenderBulletText (ListItem item, int index, HtmlTextWriter writer)
 		{
 			switch (DisplayMode) {
 				case BulletedListDisplayMode.Text:
-					//if (!item.Enabled) {
-					//	writer.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled");
-					//	writer.RenderBeginTag (HtmlTextWriterTag.Span);
-					//}
+					if (!item.Enabled) {
+						writer.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled");
+						writer.RenderBeginTag (HtmlTextWriterTag.Span);
+					}
+					
 					writer.Write (item.Text);
-					//if (!item.Enabled)
-					//	writer.RenderEndTag ();
+					
+					if (!item.Enabled)
+						writer.RenderEndTag ();
+					
 					break;
 
 				case BulletedListDisplayMode.HyperLink:
-					//if (Enabled && item.Enabled) {
-					//	writer.AddAttribute (HtmlTextWriterAttribute.Href, item.Value);
-					//	if (Target != "")
-					//		writer.AddAttribute(HtmlTextWriterAttribute.Target, this.Target);
-					//	
-					//}
-					//else
+					if (Enabled && item.Enabled) {
+						writer.AddAttribute (HtmlTextWriterAttribute.Href, item.Value);
+						if (Target != "")
+							writer.AddAttribute(HtmlTextWriterAttribute.Target, this.Target);
+						
+					}
+					else
 						writer.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled");
 					
 					writer.RenderBeginTag (HtmlTextWriterTag.A);
@@ -139,10 +141,10 @@ namespace System.Web.UI.WebControls {
 					break;
 
 				case BulletedListDisplayMode.LinkButton:
-					//if (Enabled && item.Enabled)
+					if (Enabled && item.Enabled)
 						writer.AddAttribute (HtmlTextWriterAttribute.Href, Page.ClientScript.GetPostBackClientHyperlink (this, (index.ToString (CultureInfo.InvariantCulture))));
-					//else
-					//	writer.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled");
+					else
+						writer.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled");
 					writer.RenderBeginTag (HtmlTextWriterTag.A);
 					writer.Write (item.Text);
 					writer.RenderEndTag ();
@@ -160,10 +162,9 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		[MonoTODO]
-		protected internal override void Render (HtmlTextWriter w)
+		protected internal override void Render (HtmlTextWriter writer)
 		{
-			throw new NotImplementedException ();
+			base.Render (writer);
 		}
 		
 		void IPostBackEventHandler.RaisePostBackEvent (string eventArgument)
@@ -190,26 +191,21 @@ namespace System.Web.UI.WebControls {
 		[Bindable (false)]
 		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
 		public override int SelectedIndex {
-			get { return base.SelectedIndex; }
+			get { return -1; }
 			set { throw new NotSupportedException (String.Format ("This property is not supported in {0}", GetType ())); }
 		}
 		
 	    [EditorBrowsableAttribute (EditorBrowsableState.Never)]
 		public override ListItem SelectedItem {
-			get { return base.SelectedItem; }
+			get { return null; }
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[Bindable (false)]
-		[MonoTODO]
-		public override string SelectedValue 
+		public override string SelectedValue
 		{
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return string.Empty; }
+			set { throw new NotSupportedException (); }
 		}
 		
 		[DefaultValueAttribute ("")]
@@ -280,15 +276,10 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		[MonoTODO]
 		public override string Text
 		{
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return string.Empty; }
+			set { throw new NotSupportedException (); }
 		}
 		
 		

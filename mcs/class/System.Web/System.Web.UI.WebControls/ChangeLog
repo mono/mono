@@ -1,3 +1,9 @@
+2006-07-13 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* BulletedList.cs: fixed Render, RenderBulletText, various properties
+	* ListItem.cs, ListItemCollection.cs: added Enabled property that is 
+	new in 2.0
+
 2006-07-12 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* MultiView.cs: 'initied' state variable was changed to views count in

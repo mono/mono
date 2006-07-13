@@ -220,43 +220,70 @@ namespace System.Web.UI.WebControls {
 		}
 
 		void IStateManager.LoadViewState(object state) {
-			Pair		pair;
-			int		count;
-			string[]	text;
-			string[]	value;
+			int	count;
+			string[] text;
+			string[] value;
+#if NET_2_0
+			bool [] enabled;
+#endif
 
 			if (state == null) {
 				return;
 			}
+#if NET_2_0
+			Triplet stateObj;
+			stateObj = (Triplet) state;
+#else
+			Pair stateObj;
+			stateObj = (Pair) state;
+#endif
 
-			pair = (Pair)state;
-
-			text = (string[])pair.First;
-			value = (string[])pair.Second;
+			text = (string []) stateObj.First;
+			value = (string []) stateObj.Second;
+#if NET_2_0
+			enabled = (bool []) stateObj.Third;
+#endif
 
 			count = text.Length;
 
 			items = new ArrayList(count);
 			for (int i = 0; i < count; i++) {
+#if NET_2_0
+				items.Add(new ListItem(text[i], value[i], enabled[i]));
+#else
 				items.Add(new ListItem(text[i], value[i]));
+#endif
 			}
 		}
 
 		object IStateManager.SaveViewState() {
-			string[]	text;
-			string[]	value;
-			int		count;
+			int count;
+			string[] text;
+			string[] value;
+#if NET_2_0
+			bool [] enabled;
+#endif
 
 			count = items.Count;
 			text = new string[count];
 			value = new string[count];
+#if NET_2_0
+			enabled = new bool [count];
+#endif
 
 			for (int i = 0; i < count; i++) {
 				text[i] = ((ListItem)items[i]).Text;
 				value[i] = ((ListItem)items[i]).Value;
+#if NET_2_0
+				enabled [i] = ((ListItem) items [i]).Enabled;
+#endif
 			}
 
+#if NET_2_0
+			return new Triplet(text, value, enabled);
+#else
 			return new Pair(text, value);
+#endif
 		}
 
 		void IStateManager.TrackViewState() {

@@ -39,6 +39,12 @@ namespace System.Web.UI.WebControls {
 	[TypeConverter(typeof(System.ComponentModel.ExpandableObjectConverter))]
 	public sealed class ListItem : IAttributeAccessor, IParserAccessor, IStateManager {
 	
+#if NET_2_0
+		public ListItem (string text, string value, bool enabled) : this (text, value)
+		{
+			this.enabled = enabled;
+		}
+#endif
 		public ListItem (string text, string value)
 		{
 			Text = text;
@@ -102,14 +108,15 @@ namespace System.Web.UI.WebControls {
 		
 		internal void LoadViewState (object state)
 		{
-			Triplet t = (Triplet) state;
-			if (!(t.First is bool))
-				text = (string) t.First;
-			if (!(t.Second is bool))
-				value = (string) t.Second;
-			sb = (StateBag) t.Third;
+			object [] states = (object []) state;
+
+			if (states [0] != null) sb = (StateBag) states[0];
+			if (states [1] != null) text = (string) states [1];
+			if (states [2] != null) value = (string) states [2];
+#if NET_2_0
+			if (states [3] != null) enabled = (bool) states [3];
+#endif
 		}
-	
 
 		object IStateManager.SaveViewState () 
 		{
@@ -118,11 +125,18 @@ namespace System.Web.UI.WebControls {
 
 		internal object SaveViewState ()
 		{
-			Triplet t = new Triplet ();
-			t.First = text_dirty ? (object) text : (object) false;
-			t.Second = value_dirty ? (object) value : (object) false;
-			t.Third = sb;
-			return t;
+#if NET_2_0
+			object [] state = new object [4];
+#else
+			object [] state = new object [3];
+#endif
+			state [0] = sb;
+			state [1] = (object) text;
+			state [2] = (object) value;
+#if NET_2_0
+			state [3] = (object) enabled;
+#endif			
+			return state;
 		}
 		
 		void IStateManager.TrackViewState ()
@@ -191,7 +205,6 @@ namespace System.Web.UI.WebControls {
 		
 			set {
 				text = value;
-				text_dirty = tracking;
 			}
 		}
 
@@ -208,27 +221,24 @@ namespace System.Web.UI.WebControls {
 		
 			set {
 				this.value = value;
-				value_dirty = tracking;
 			}
 		}
 
-		
-		internal bool Dirty {
-			get {
-				return value_dirty || text_dirty;
-			}
-			
-			set {
-				value_dirty = text_dirty = value;
-			}
+#if NET_2_0
+		public bool Enabled
+		{
+			get { return enabled; }
+			set { enabled = value; }
 		}
+#endif
 
 		string text;
 		string value;
 		bool selected;
+#if NET_2_0
+		bool enabled = true;
+#endif
 		bool tracking;
-		bool text_dirty;
-		bool value_dirty;
 		StateBag sb;
 		AttributeCollection attrs;
 	}
