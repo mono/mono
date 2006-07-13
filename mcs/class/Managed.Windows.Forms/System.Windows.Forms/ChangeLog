@@ -7,6 +7,7 @@
 	controls to "override" OnGotFocus and change focus behavior if
 	needed.
 	- Same thing for LostFocus
+	* ComboBox.cs: Pass off focus to the text control properly.
 
 2006-07-12  Alexander Olk  <alex.olk@googlemail.com>
 

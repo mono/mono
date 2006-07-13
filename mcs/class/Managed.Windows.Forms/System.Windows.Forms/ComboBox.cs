@@ -730,14 +730,14 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]		
 		protected override void OnGotFocus (EventArgs e) {			
-			has_focus = true;
 			Invalidate ();
+			textbox_ctrl.Focus ();
+			base.OnGotFocus (e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]		
 		protected override void OnLostFocus (EventArgs e) {			
-			has_focus = false;
-			Invalidate ();
+			base.OnLostFocus (e);
 		}		
 
 		protected override void OnHandleCreated (EventArgs e)
