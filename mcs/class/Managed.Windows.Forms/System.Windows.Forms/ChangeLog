@@ -1,7 +1,16 @@
 2006-07-12  Jackson Harper  <jackson@ximian.com>
 
 	* ComboBox.cs: Clear out old items before setting the item list.
-	This prevents databound controls from having their items added twice.
+	This prevents databound controls from having their items added
+	twice.
+	- Switch the combobox to use indices whereever possible instead of
+	using Item's.  This allows usto navigate through lists that have
+	more then one item with the same string value (ie a, b, b, a).
+	- Scroll the listboxes scrollbar when a non visible item is
+	highlighted
+	- Allow keypress to cycle through all the possible values. For
+	example if you have b1, b2, b3 and hold down the B key all the
+	values will be cycled through.
 	
 2006-07-12  Jackson Harper  <jackson@ximian.com>
 

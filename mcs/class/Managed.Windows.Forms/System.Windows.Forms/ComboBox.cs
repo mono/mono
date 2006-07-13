@@ -46,7 +46,7 @@ namespace System.Windows.Forms
 		private DrawMode draw_mode = DrawMode.Normal;
 		private ComboBoxStyle dropdown_style = (ComboBoxStyle)(-1);
 		private int dropdown_width = -1;		
-		private object selected_item = null;
+		private int selected_index = -1;
 		internal ObjectCollection items = null;
 		private bool suspend_ctrlupdate;
 		private int maxdrop_items = 8;			
@@ -222,8 +222,8 @@ namespace System.Windows.Forms
 	
 				if (dropdown_style != ComboBoxStyle.DropDownList && textbox_ctrl == null) {
 					textbox_ctrl = new FixedSizeTextBox ();
-					if (selected_item != null)
-						textbox_ctrl.Text = GetItemText (selected_item);
+					if (SelectedItem != null)
+						textbox_ctrl.Text = GetItemText (SelectedItem);
 					textbox_ctrl.BorderStyle = BorderStyle.None;
 					textbox_ctrl.TextChanged += new EventHandler (OnTextChangedEdit);
 					textbox_ctrl.KeyPress += new KeyPressEventHandler(textbox_ctrl_KeyPress);
@@ -387,35 +387,18 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override int SelectedIndex {
-			get { return Items.IndexOf (selected_item); }
+			get { return selected_index; }
 			set {
 				if (value <= -2 || value >= Items.Count)
 					throw new ArgumentOutOfRangeException ("Index of out range");
 
-				object item = null;
-				if (value != -1)
-					item = Items [value];
-
-    				SelectedItem = item;
-			}
-		}
-
-		[Browsable (false)]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		[Bindable(true)]
-		public object SelectedItem {
-			get { return selected_item; }
-			set {				
-				if (selected_item == value)
-					return;
-
-				selected_item = value;
-    				
+				selected_index = value;
+				
     				if (dropdown_style != ComboBoxStyle.DropDownList) {
-					if (selected_item == null)
-						SetControlText("");
+					if (selected_index == -1)
+						SetControlText (String.Empty);
 					else {
-						SetControlText (GetItemText (selected_item));
+						SetControlText (GetItemText (items [value]));
 						SelectAll ();
 					}
     				}
@@ -423,11 +406,32 @@ namespace System.Windows.Forms
     				OnSelectedValueChanged (new EventArgs ());
     				OnSelectedIndexChanged  (new EventArgs ());
     				OnSelectedItemChanged (new EventArgs ());
+
 				if (DropDownStyle == ComboBoxStyle.DropDownList)
     					Refresh ();
 
 				if (listbox_ctrl != null)
-					listbox_ctrl.HighlightedItem = value;
+					listbox_ctrl.HighlightedIndex = value;
+			}
+		}
+
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Bindable(true)]
+		public object SelectedItem {
+			get {
+				if (selected_index == -1)
+					return null;
+				return items [selected_index];
+			}
+			set {				
+				if (items [selected_index] == value)
+					return;
+
+				if (value == null)
+					SelectedIndex = -1;
+				else
+					SelectedIndex = items.IndexOf (value);
 			}
 		}
 		
@@ -764,6 +768,11 @@ namespace System.Windows.Forms
 
 		protected override void OnKeyPress (KeyPressEventArgs e)
 		{
+			int index= FindStringCaseInsensitive (e.KeyChar.ToString (), SelectedIndex + 1);
+			if (index == -1)
+				return;
+			SelectedIndex = index;
+
 			base.OnKeyPress (e);
 		}
 
@@ -985,8 +994,8 @@ namespace System.Windows.Forms
 		private void CreateComboListBox ()
 		{			
 			listbox_ctrl = new ComboListBox (this);			
-			if (selected_item != null)
-				listbox_ctrl.HighlightedItem = selected_item;
+			if (selected_index != -1)
+				listbox_ctrl.HighlightedIndex = selected_index;
 		}
 		
 		internal void Draw (Rectangle clip, Graphics dc)
@@ -1069,6 +1078,21 @@ namespace System.Windows.Forms
 			{				
 				if (String.Compare (GetItemText (Items[i]), 0, search, 0, search.Length, true) == 0)
 					return i;
+			}
+
+			return -1;
+		}
+
+		internal int FindStringCaseInsensitive (string search, int start_index)
+		{			
+			if (search.Length == 0) {
+				return -1;
+			}
+			
+			for (int i = 0; i < Items.Count; i++) {
+				int index = (i + start_index) % Items.Count;
+				if (String.Compare (GetItemText (Items [index]), 0, search, 0, search.Length, true) == 0)
+					return index;
 			}
 
 			return -1;
@@ -1161,7 +1185,7 @@ namespace System.Windows.Forms
 
 			if (listbox_ctrl != null) {
 				listbox_ctrl.SetTopItem (item);
-				listbox_ctrl.HighlightedItem = Items [item];
+				listbox_ctrl.HighlightedIndex = item;
 			}
 		}
 		
@@ -1271,7 +1295,7 @@ namespace System.Windows.Forms
 
 			public void Clear ()
 			{
-				owner.selected_item = null;
+				owner.selected_index = -1;
 				object_items.Clear ();
 				owner.UpdatedItems ();
 				owner.Refresh ();
@@ -1587,31 +1611,27 @@ namespace System.Windows.Forms
 				}
 			}
 
+			private int highlighted_index = -1;
 			public int HighlightedIndex {
-				get { return owner.Items.IndexOf (highlighted_item); }
-				set { 
-					object item = null;
-					if (value != -1)
-						item = owner.Items [value];
-					HighlightedItem = item; 
-				}
-			}
-
-			object highlighted_item = null;
-
-			public object HighlightedItem {
-				get { return highlighted_item; }
+				get { return highlighted_index; }
 				set {
-					if (highlighted_item == value)
-						return;
-				
-					int index = owner.Items.IndexOf (highlighted_item);
-    					if (index != -1)
-						Invalidate (GetItemDisplayRectangle (index, top_item));
-    					highlighted_item = value;
-				       	index = owner.Items.IndexOf (highlighted_item);
-    					if (index != -1)
-						Invalidate (GetItemDisplayRectangle (index, top_item));
+					if (highlighted_index != -1)
+						Invalidate (GetItemDisplayRectangle (highlighted_index, top_item));
+    					highlighted_index = value;
+					if (value != -1)
+						Invalidate (GetItemDisplayRectangle (highlighted_index, top_item));
+
+					// Scroll if we need to
+					if (vscrollbar_ctrl != null) {
+						int max = (owner.Items.Count <= owner.MaxDropDownItems) ?
+						       owner.Items.Count : owner.MaxDropDownItems;
+
+						if (value > max + vscrollbar_ctrl.Value - 1) {
+							vscrollbar_ctrl.Value += (value - (max + vscrollbar_ctrl.Value - 1));
+						} else if (value < vscrollbar_ctrl.Value) {
+							vscrollbar_ctrl.Value = value;
+						}
+					}
 				}
 			}
 			
@@ -1759,12 +1779,18 @@ namespace System.Windows.Forms
 				case Keys.PageDown:				
 					NavigateItemVisually (ItemNavigation.NextPage);
 					break;
-				
-				default:
-					break;
 				}
 			}
-			
+
+			protected override void OnKeyPress (KeyPressEventArgs e)
+			{
+				int index = owner.FindStringCaseInsensitive (e.KeyChar.ToString (),
+						owner.SelectedIndex + 1);
+				if (index == -1)
+					return;
+				owner.SelectedIndex = index;
+			}
+
 			public void SetTopItem (int item)
 			{
 				if (top_item == item)
