@@ -1,3 +1,8 @@
+2006-07-13  Juraj Skripsky <js@hotfeet.ch>
+
+	* CheckBox.cs (LoadPostData): the value of a disabled checkbox remains
+	unchanged.
+
 2006-07-13 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* BulletedList.cs: fixed Render, RenderBulletText, various properties

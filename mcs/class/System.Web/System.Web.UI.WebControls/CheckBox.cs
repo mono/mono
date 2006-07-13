@@ -474,6 +474,9 @@ namespace System.Web.UI.WebControls {
 #endif
 		bool LoadPostData (string postDataKey, NameValueCollection postCollection)
 		{
+			if (!Enabled)
+				return false;
+
 			string postedValue = postCollection[postDataKey];
 			bool postedBool = ((postedValue != null) &&
 					   (postedValue.Length > 0));
