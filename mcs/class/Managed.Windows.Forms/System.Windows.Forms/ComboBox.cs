@@ -872,7 +872,13 @@ namespace System.Windows.Forms
 
 		protected override void SetItemsCore (IList value)
 		{
-			Items.AddRange (value);
+			BeginUpdate ();
+			try {
+				Items.Clear ();
+				Items.AddRange (value);
+			} finally {
+				EndUpdate ();
+			}
 		}
 
 		public override string ToString ()

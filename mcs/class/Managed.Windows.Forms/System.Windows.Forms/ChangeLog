@@ -1,5 +1,10 @@
 2006-07-12  Jackson Harper  <jackson@ximian.com>
 
+	* ComboBox.cs: Clear out old items before setting the item list.
+	This prevents databound controls from having their items added twice.
+	
+2006-07-12  Jackson Harper  <jackson@ximian.com>
+
 	* TextBoxBase.cs:
 	* ListView.cs: Don't need to override SETFOCUS anymore, we can do
 	this using the internal methods.
