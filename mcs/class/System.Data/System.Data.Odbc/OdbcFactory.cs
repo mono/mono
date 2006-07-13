@@ -33,7 +33,6 @@
 using System;
 using System.Data;
 using System.Data.Common;
-using System.Data.ProviderBase;
 #endregion // Using Directives
 
 namespace System.Data.Odbc 
@@ -72,34 +71,11 @@ namespace System.Data.Odbc
                 
                 #endregion //Constructors
 
-                #region Properties
-                public DbProviderSupportedClasses SupportedClasses { 
-                        get {                                
-                                return (DbProviderSupportedClasses) (
-                                                                     DbProviderSupportedClasses.DbConnection | 
-                                                                     DbProviderSupportedClasses.DbCommand | 
-                                                                     DbProviderSupportedClasses.DbParameter | 
-                                                                     //DbProviderSupportedClasses.DbConnectionStringBuilder | 
-                                                                     DbProviderSupportedClasses.DbCommandBuilder | 
-                                                                     DbProviderSupportedClasses.DbDataAdapter //| 
-                                                                     //DbProviderSupportedClasses.DbDataSourceEnumerator | 
-                                                                     //DbProviderSupportedClasses.CodeAccessPermission
-                                                                     );
-                        }
-                }
-
-		[MonoTODO]
-		public override bool CanCreateDataSourceEnumerator {
-			get { throw new NotImplementedException ();}
-		}               
- 
-                #endregion //Properties
-
                 #region Methods
                 public override DbConnection CreateConnection()
                 {
-                        OdbcConnectionFactory connFactory = OdbcConnectionFactory.GetSingleton (this);
-                        return  new OdbcConnection (connFactory);
+                        //OdbcConnectionFactory connFactory = OdbcConnectionFactory.GetSingleton (this);
+                        return  new OdbcConnection ();
                 }
                 
                 public override DbCommand CreateCommand()

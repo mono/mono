@@ -1,3 +1,10 @@
+2006-07-13  Senganal T  <tsenganal@novell.com>
+
+	* OdbcTransaction.cs OdbcCommand.cs OdbcConnectionFactory.cs 
+	OdbcPermission.cs OdbcDataReader.cs OdbcParameterCollection.cs 
+	OdbcConnection.cs OdbcFactory.cs OdbcParameter.cs :
+		2.0 Api fixes
+
 2006-05-31  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* OdbcErrorCollection.cs: Removed explicit interface implementation 

@@ -43,9 +43,6 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
-#if NET_2_0
-using System.Data.ProviderBase;
-#endif // NET_2_0
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Xml;
@@ -54,7 +51,7 @@ namespace System.Data.SqlClient {
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.SqlCommandDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
 	 [ToolboxItemAttribute ("System.Drawing.Design.ToolboxItem, "+ Consts.AssemblySystem_Drawing)]
 #if NET_2_0
-	public sealed class SqlCommand : DbCommandBase, IDbCommand, ICloneable
+	public sealed class SqlCommand : DbCommand, IDbCommand, ICloneable
 #else
         public sealed class SqlCommand : Component, IDbCommand, ICloneable
 #endif // NET_2_0
@@ -536,11 +533,7 @@ namespace System.Data.SqlClient {
 			preparedStatement = Connection.Tds.Prepare (CommandText, Parameters.MetaParameters);
 		}
 
-		public 
-#if NET_2_0
-                override
-#endif // NET_2_0
-                void ResetCommandTimeout ()
+		public void ResetCommandTimeout ()
 		{
 			commandTimeout = 30;
 		}

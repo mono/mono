@@ -38,7 +38,7 @@ using System.Text;
 namespace System.Data.Common {
 
 	[Obsolete ()]
-	public class DbConnectionString : DbConnectionOptions, ISerializable {
+	internal class DbConnectionString : DbConnectionOptions, ISerializable {
 
 		#region Fields
 

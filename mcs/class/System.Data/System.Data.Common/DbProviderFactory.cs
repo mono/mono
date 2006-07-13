@@ -45,11 +45,6 @@ namespace System.Data.Common {
 		{
 		}
 
-		[MonoTODO]
-		internal DbProviderFactory (DbProviderSupportedClasses supportedClasses)
-		{
-		}
-
 		#endregion // Constructors
 
 		#region Properties

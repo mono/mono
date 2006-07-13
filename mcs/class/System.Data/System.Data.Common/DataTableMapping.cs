@@ -115,7 +115,12 @@ namespace System.Data.Common {
 
 #if NET_2_0
 		[MonoTODO]
-		public DataColumn GetDataColumn (string sourceColumn, Type dataType, DataTable dataTable, MissingMappingAction mappingAction, MissingSchemaAction schemaAction)
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		public DataColumn GetDataColumn (string sourceColumn, 
+						 Type dataType, 
+						 DataTable dataTable, 
+						 MissingMappingAction mappingAction, 
+						 MissingSchemaAction schemaAction)
 		{
 			throw new NotImplementedException ();
 		}

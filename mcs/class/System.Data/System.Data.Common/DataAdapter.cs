@@ -207,8 +207,7 @@ namespace System.Data.Common
 
 		protected virtual DataTableMappingCollection CreateTableMappings ()
 		{
-			tableMappings = new DataTableMappingCollection ();
-			return tableMappings;
+			return new DataTableMappingCollection ();
 		}
 
 		[MonoTODO]
@@ -217,21 +216,18 @@ namespace System.Data.Common
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		protected virtual bool ShouldSerializeTableMappings ()
 		{
-			throw new NotImplementedException ();
+			return true;
 		}
 
 
 #if NET_2_0
-		[MonoTODO]
 		public virtual int Fill (DataSet dataSet)
 		{
-			throw new NotImplementedException ();
+			throw new NotSupportedException ();
 		}
 
-		[MonoTODO]
 		protected virtual int Fill (DataTable dataTable, IDataReader dataReader)
 		{
 			throw new NotImplementedException ();
@@ -261,10 +257,9 @@ namespace System.Data.Common
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public virtual DataTable[] FillSchema (DataSet dataSet, SchemaType schemaType)
 		{
-			throw new NotImplementedException ();
+			throw new NotSupportedException ();
 		}
 
 		[MonoTODO]
@@ -277,7 +272,7 @@ namespace System.Data.Common
 		[MonoTODO]
 		protected bool HasTableMappings ()
 		{
-			throw new NotImplementedException ();
+			return (TableMappings.Count != 0);
 		}
 
 		protected virtual void OnFillError (FillErrorEventArgs value)
@@ -291,21 +286,20 @@ namespace System.Data.Common
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public void ResetFillLoadOption ()
 		{
-			throw new NotImplementedException ();
+			//what else ??
+			FillLoadOption = LoadOption.OverwriteChanges;
 		}
 
-		[MonoTODO]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public virtual bool ShouldSerializeAcceptChangesDuringFill ()
 		{
-			throw new NotImplementedException ();
+			return true;
 		}
 
-		[MonoTODO]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public virtual bool ShouldSerializeFillLoadOption ()
 		{
-			throw new NotImplementedException ();
+			return false;
 		}
 
 		[MonoTODO]

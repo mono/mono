@@ -42,13 +42,10 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlTypes;
-#if NET_2_0
-using System.Data.ProviderBase;
-#endif // NET_2_0
 
 namespace System.Data.SqlClient {
 #if NET_2_0
-	public sealed class SqlDataReader : DbDataReaderBase, IEnumerable, IDataReader, IDisposable, IDataRecord
+	public sealed class SqlDataReader : DbDataReader, IDataReader, IDisposable, IDataRecord
 #else
 	public sealed class SqlDataReader : MarshalByRefObject, IEnumerable, IDataReader, IDisposable, IDataRecord
 #endif // NET_2_0
@@ -74,9 +71,6 @@ namespace System.Data.SqlClient {
 		#region Constructors
 
 		internal SqlDataReader (SqlCommand command) 
-#if NET_2_0
-                        : base (command.CommandBehavior)
-#endif // NET_2_0
 		{
 			readResult = false;
 			haveRead = false;
@@ -158,7 +152,7 @@ namespace System.Data.SqlClient {
 				return readResult;						
 			}
 		}
-	
+
 		#endregion // Properties
 
 		#region Methods
@@ -1015,7 +1009,11 @@ namespace System.Data.SqlClient {
 			GC.SuppressFinalize (this);
 		}
 
-		IEnumerator IEnumerable.GetEnumerator ()
+		public 
+#if NET_2_0
+		override 
+#endif
+		IEnumerator GetEnumerator ()
 		{
 			return new DbEnumerator (this);
 		}
@@ -1097,12 +1095,6 @@ namespace System.Data.SqlClient {
 		}
 		
 #if NET_2_0
-                [MonoTODO]
-                protected override bool IsValidRow 
-                {
-                        get {throw new NotImplementedException ();}
-                }
-
                 [MonoTODO]
                 public override Type GetProviderSpecificFieldType (int position)
                 {

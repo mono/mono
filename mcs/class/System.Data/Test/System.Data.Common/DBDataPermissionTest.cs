@@ -69,12 +69,6 @@ namespace MonoTests.System.Data.Common {
 			: base (permissionAttribute)
 		{
 		}
-#if NET_2_0
-		public NonAbstractDBDataPermission (DbConnectionOptions connectionOptions)
-			: base (connectionOptions)
-		{
-		}
-#endif
 
 		public new void Clear ()
 		{
@@ -191,24 +185,7 @@ namespace MonoTests.System.Data.Common {
 			dbdp = new NonAbstractDBDataPermission (a);
 			Check ("DBDataPermissionAttribute-3", dbdp, true, false, 1);
 		}
-#if NET_2_0
-		[Test]
-//		[ExpectedException (typeof (ArgumentNullException))]
-		public void Constructor_DbConnectionOptions_Null ()
-		{
-			DbConnectionOptions o = null;
-			NonAbstractDBDataPermission dbdp = new NonAbstractDBDataPermission (o);
-			Check ("DbConnectionOptions_Null", dbdp, false, false, 0);
-		}
 
-		[Test]
-		public void Constructor_DbConnectionOptions ()
-		{
-			DbConnectionOptions o = new DbConnectionOptions (defaultConnectString);
-			NonAbstractDBDataPermission dbdp = new NonAbstractDBDataPermission (o);
-			Check ("DbConnectionOptions", dbdp, false, false, 1);
-		}
-#endif
 		[Test]
 #if NET_2_0
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]

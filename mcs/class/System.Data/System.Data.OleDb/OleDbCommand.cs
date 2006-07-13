@@ -38,10 +38,6 @@ using System.Data.Common;
 using System.Collections;
 using System.Runtime.InteropServices;
 
-#if NET_2_0
-using System.Data.ProviderBase;
-#endif
-
 namespace System.Data.OleDb
 {
 	/// <summary>
@@ -51,7 +47,7 @@ namespace System.Data.OleDb
 	[ToolboxItemAttribute ("System.Drawing.Design.ToolboxItem, "+ Consts.AssemblySystem_Drawing)]
 	public sealed class OleDbCommand : 
 #if NET_2_0
-	DbCommandBase
+	DbCommand
 #else
 	Component
 #endif
@@ -117,7 +113,11 @@ namespace System.Data.OleDb
 #endif
                 [EditorAttribute ("Microsoft.VSDesigner.Data.ADO.Design.OleDbCommandTextEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
-		public string CommandText 
+		public 
+#if NET_2_0
+		override
+#endif
+		string CommandText 
 		{
 			get {
 				return commandText;
@@ -131,7 +131,11 @@ namespace System.Data.OleDb
 		[DataSysDescriptionAttribute ("Time to wait for command to execute.")]
 #endif
 		[DefaultValue (30)]
-		public int CommandTimeout {
+		public
+#if NET_2_0
+		override
+#endif
+		int CommandTimeout {
 			get {
 				return timeout;
 			}
@@ -146,7 +150,11 @@ namespace System.Data.OleDb
 		[DataSysDescriptionAttribute ("How to interpret the CommandText.")]
 #endif
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
-		public CommandType CommandType { 
+		public
+#if NET_2_0
+		override
+#endif
+		CommandType CommandType { 
 			get {
 				return commandType;
 			}
@@ -173,7 +181,11 @@ namespace System.Data.OleDb
 		[BrowsableAttribute (false)]
 		[DesignOnlyAttribute (true)]
 		[DefaultValue (true)]
-		public bool DesignTimeVisible { 
+		public
+#if NET_2_0
+		override
+#endif
+		bool DesignTimeVisible { 
 			get {
 				return designTimeVisible;
 			}
@@ -212,7 +224,11 @@ namespace System.Data.OleDb
 #if !NET_2_0
 		[DataSysDescriptionAttribute ("When used by a DataAdapter.Update, how command results are applied to the current DataRow.")]
 #endif
-		public UpdateRowSource UpdatedRowSource { 
+		public
+#if NET_2_0
+		override
+#endif
+		UpdateRowSource UpdatedRowSource { 
 			[MonoTODO]
 			get {
 				throw new NotImplementedException ();
@@ -252,7 +268,11 @@ namespace System.Data.OleDb
 		#region Methods
 
 		[MonoTODO]
-		public void Cancel () 
+		public 
+#if NET_2_0
+		override 
+#endif
+		void Cancel () 
 		{
 			throw new NotImplementedException ();
 		}
@@ -299,8 +319,11 @@ namespace System.Data.OleDb
 
 			//libgda.gda_command_set_transaction 
 		}
-		
-		public int ExecuteNonQuery ()
+		public 
+#if NET_2_0
+		override
+#endif
+		int ExecuteNonQuery ()
 		{
 			if (connection == null)
 				throw new InvalidOperationException ("connection == null");
@@ -370,7 +393,11 @@ namespace System.Data.OleDb
 			return ExecuteReader (behavior);
 		}
 		
-		public object ExecuteScalar ()
+		public
+#if NET_2_0
+		override
+#endif
+		object ExecuteScalar ()
 		{
 			SetupGdaCommand ();
 			OleDbDataReader reader = ExecuteReader ();
@@ -393,7 +420,11 @@ namespace System.Data.OleDb
 		}
 
 		[MonoTODO]
-		public void Prepare ()
+		public 
+#if NET_2_0
+		override
+#endif
+		void Prepare ()
 		{
 			throw new NotImplementedException ();	
 		}

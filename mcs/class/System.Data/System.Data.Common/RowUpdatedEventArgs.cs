@@ -110,6 +110,24 @@ namespace System.Data.Common {
 			get { return tableMapping; }
 		}
 
+#if NET_2_0
+		public int RowCount {
+			get { return 0; }
+		}
+#endif
+		
 		#endregion // Properties
+
+		#region Methods
+#if NET_2_0
+		public void CopyToRows (DataRow[] arr)
+		{
+		}
+
+		public void CopyToRows (DataRow[] arr, int index)
+		{
+		}
+#endif
+		#endregion //Methods
 	}
 }

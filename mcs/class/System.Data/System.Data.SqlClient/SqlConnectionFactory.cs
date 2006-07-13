@@ -31,7 +31,6 @@
 
 using System.Data;
 using System.Data.Common;
-using System.Data.ProviderBase;
 
 namespace System.Data.SqlClient {
 	internal class SqlConnectionFactory : DbConnectionFactory

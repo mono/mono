@@ -37,15 +37,12 @@ using System.Collections;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
-#if NET_2_0
-using System.Data.ProviderBase;
-#endif // NET_2_0
 using System.Text;
 
 namespace System.Data.Odbc
 {
 #if NET_2_0
-        public sealed class OdbcDataReader : DbDataReaderBase
+        public sealed class OdbcDataReader : DbDataReader
 #else
 	public sealed class OdbcDataReader : MarshalByRefObject, IDataReader, IDisposable, IDataRecord, IEnumerable
 #endif
@@ -60,23 +57,16 @@ namespace System.Data.Odbc
 		private int _recordsAffected = -1;
 		bool disposed = false;
 		private DataTable _dataTableSchema;
-#if ONLY_1_1
 		private CommandBehavior behavior;
-#endif // ONLY_1_1
 
 		#endregion
 
 		#region Constructors
 
 		internal OdbcDataReader (OdbcCommand command, CommandBehavior behavior)
-#if NET_2_0
-                        : base (behavior)
-#endif // NET_2_0
 		{
 			this.command = command;
-#if ONLY_1_1
 			this.CommandBehavior=behavior;
-#endif // ONLY_1_1
 			open = true;
 			currentRow = -1;
 			hstmt=command.hStmt;
@@ -98,22 +88,12 @@ namespace System.Data.Odbc
 
 		#region Properties
 
-#if ONLY_1_1
                 private CommandBehavior CommandBehavior 
                 {
                         get { return behavior; }
                         set { value = behavior; }
                 }
-#endif // ONLY_1_1
                 
-#if NET_2_0
-                [MonoTODO]
-                protected override bool IsValidRow 
-                {
-                        get { throw new NotImplementedException (); }
-                }
-#endif // NET_2_0
-
 		public
 #if NET_2_0
                 override
@@ -839,11 +819,19 @@ namespace System.Data.Odbc
 			GC.SuppressFinalize (this);
 		}
 
-                IEnumerator IEnumerable.GetEnumerator ()
+		IEnumerator IEnumerable.GetEnumerator ()
 		{
 			return new DbEnumerator (this);
 		}
 #endif // ONLY_1_1
+
+		
+#if NET_2_0
+                public override IEnumerator GetEnumerator ()
+		{
+			return new DbEnumerator (this);
+		}
+#endif
 
 #if NET_2_0
 		protected override

@@ -99,18 +99,13 @@ namespace System.Data.Odbc
 			}
 		}
 
-#if ONLY_1_1
-		void IDisposable.Dispose() {
+#if !NET_2_0
+		public
+#endif
+		void Dispose() {
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
-#else
-                public override void Dispose ()
-                {
-                        Dispose (true);
-                        GC.SuppressFinalize (this);
-                }
-#endif // ONLY_1_1
 
 
 		#endregion Implementation of IDisposable

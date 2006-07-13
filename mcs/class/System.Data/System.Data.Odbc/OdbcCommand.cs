@@ -34,9 +34,6 @@ using System;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
-#if NET_2_0
-using System.Data.ProviderBase;
-#endif // NET_2_0
 using System.Collections;
 using System.Runtime.InteropServices;
 
@@ -48,19 +45,17 @@ namespace System.Data.Odbc
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.OdbcCommandDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
         [ToolboxItemAttribute ("System.Drawing.Design.ToolboxItem, "+ Consts.AssemblySystem_Drawing)]
 #if NET_2_0
-	public sealed class OdbcCommand : DbCommandBase, ICloneable
+	public sealed class OdbcCommand : DbCommand, ICloneable
 #else
 	public sealed class OdbcCommand : Component, ICloneable, IDbCommand
 #endif //NET_2_0
 	{
 		#region Fields
 
-#if ONLY_1_1
 		string commandText;
 		int timeout;
 		CommandType commandType;
 		UpdateRowSource updateRowSource = UpdateRowSource.Both;
-#endif // ONLY_1_1
 
 		OdbcConnection connection;
 		OdbcTransaction transaction;
@@ -118,66 +113,49 @@ namespace System.Data.Odbc
 		}
 		
 
-#if ONLY_1_1
                 [OdbcCategory ("Data")]
                 [DefaultValue ("")]
                 [OdbcDescriptionAttribute ("Command text to execute")]
                 [EditorAttribute ("Microsoft.VSDesigner.Data.Odbc.Design.OdbcCommandTextEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
                 [RefreshPropertiesAttribute (RefreshProperties.All)]
-		public string CommandText 
+		public 
+#if NET_2_0
+		override
+#endif
+		string CommandText 
 		{
-			get {
-				return commandText;
-			}
+			get { return commandText; }
 			set { 
 				prepared=false;
 				commandText = value;
 			}
 		}
 
-		#else
-                [OdbcCategory ("Data")]
-                [DefaultValue ("")]
-                [OdbcDescriptionAttribute ("Command text to execute")]
-                [EditorAttribute ("Microsoft.VSDesigner.Data.Odbc.Design.OdbcCommandTextEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
-                [RefreshPropertiesAttribute (RefreshProperties.All)]
-		public override string CommandText
-		{
-			get {
-				return base.CommandText;
-			}
-			set {
-				prepared=false;
-				base.CommandText = value;
-			}
-		}
-#endif // ONLY_1_1
-
-#if ONLY_1_1
 		[OdbcDescriptionAttribute ("Time to wait for command to execute")]
                 [DefaultValue (30)]
-		public int CommandTimeout {
-			get {
-				return timeout;
-			}
-			set {
-				timeout = value;
-			}
+		public 
+#if NET_2_0
+		override
+#endif
+		int CommandTimeout {
+			get { return timeout; }
+			set { timeout = value; }
 		}
 
 		[OdbcCategory ("Data")]
                 [DefaultValue ("Text")]
                 [OdbcDescriptionAttribute ("How to interpret the CommandText")]
                 [RefreshPropertiesAttribute (RefreshProperties.All)]
-		public CommandType CommandType { 
-			get {
-				return commandType;
-			}
-			set {
-				commandType = value;
-			}
+		public
+#if NET_2_0
+		override
+#endif
+		CommandType CommandType { 
+			get { return commandType; }
+			set { commandType = value; }
 		}
 
+#if ONLY_1_1
 		[OdbcCategory ("Behavior")]
                 [OdbcDescriptionAttribute ("Connection used by the command")]
                 [DefaultValue (null)]
@@ -201,11 +179,14 @@ namespace System.Data.Odbc
                 
 #endif // NET_2_0
 
-#if  ONLY_1_1
 		[BrowsableAttribute (false)]
                 [DesignOnlyAttribute (true)]
                 [DefaultValue (true)]
-		public bool DesignTimeVisible { 
+		public 
+#if NET_2_0
+		override
+#endif
+		bool DesignTimeVisible { 
 			get {
 				return designTimeVisible;
 			}
@@ -214,7 +195,6 @@ namespace System.Data.Odbc
 			}
 		}
 
-#endif // ONLY_1_1
 
 		[OdbcCategory ("Data")]
                 [OdbcDescriptionAttribute ("The parameters collection")]
@@ -250,12 +230,14 @@ namespace System.Data.Odbc
 			}
 		}
 
-#if ONLY_1_1
-		
 		[OdbcCategory ("Behavior")]
                 [DefaultValue (UpdateRowSource.Both)]
                 [OdbcDescriptionAttribute ("When used by a DataAdapter.Update, how command results are applied to the current DataRow")]
-		public UpdateRowSource UpdatedRowSource { 
+		public 
+#if NET_2_0
+		override
+#endif
+		UpdateRowSource UpdatedRowSource { 
 			[MonoTODO]
 				get {
 					return updateRowSource;
@@ -266,15 +248,6 @@ namespace System.Data.Odbc
 				}
 		}
 
-		IDbConnection IDbCommand.Connection {
-			get {
-				return Connection;
-			}
-			set {
-				Connection = (OdbcConnection) value;
-			}
-		}
-#endif // ONLY_1_1
 #if NET_2_0
                 protected override DbConnection DbConnection 
                 {
@@ -287,6 +260,16 @@ namespace System.Data.Odbc
 #endif // NET_2_0
 
 #if ONLY_1_1
+
+		IDbConnection IDbCommand.Connection {
+			get {
+				return Connection;
+			}
+			set {
+				Connection = (OdbcConnection) value;
+			}
+		}
+
 		IDataParameterCollection IDbCommand.Parameters  {
 			get {
 				return Parameters;
@@ -354,11 +337,7 @@ namespace System.Data.Odbc
 			return CreateParameter ();
 		}
 
-		public OdbcParameter CreateParameter ()
-		{
-			return new OdbcParameter ();
-		}
-		#else
+#else
                 protected override DbParameter CreateDbParameter ()
                 {
                         return CreateParameter ();
@@ -366,7 +345,11 @@ namespace System.Data.Odbc
                 
 #endif // ONLY_1_1
 
-		
+		public new OdbcParameter CreateParameter ()
+		{
+			return new OdbcParameter ();
+		}
+
 		protected override void Dispose (bool disposing)
 		{
 			if (disposed)
@@ -543,8 +526,11 @@ namespace System.Data.Odbc
 		}
 #endif // ONLY_1_1
 
-#if ONLY_1_1
-		public object ExecuteScalar ()
+		public 
+#if NET_2_0
+		override
+#endif
+		object ExecuteScalar ()
 		{
 			object val = null;
 			OdbcDataReader reader=ExecuteReader();
@@ -559,7 +545,6 @@ namespace System.Data.Odbc
 			}
 			return val;
 		}
-#endif // ONLY_1_1
 
 		[MonoTODO]
 		object ICloneable.Clone ()
@@ -567,11 +552,7 @@ namespace System.Data.Odbc
 			throw new NotImplementedException ();	
 		}
 
-		public 
-#if NET_2_0
-                override
-#endif // NET_2_0
-                void ResetCommandTimeout ()
+		public void ResetCommandTimeout ()
 		{
 			CommandTimeout = 30;
 		}

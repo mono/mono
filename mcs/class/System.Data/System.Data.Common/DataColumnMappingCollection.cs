@@ -159,7 +159,8 @@ namespace System.Data.Common {
 		[MonoTODO]
 		public void AddRange (Array values)
 		{
-			throw new NotImplementedException ();
+			for (int i=0; i < values.Length; ++i)
+				Add (values.GetValue (i));
 		}
 #endif
 
@@ -188,8 +189,14 @@ namespace System.Data.Common {
 
 		public void CopyTo (Array array, int index) 
 		{
-		 	(list.ToArray()).CopyTo(array,index);
+		 	list.CopyTo(array,index);
 		}
+#if NET_2_0
+		public void CopyTo (DataColumnMapping[] arr, int index) 
+		{
+		 	list.CopyTo (arr, index);
+		}
+#endif
 
 		public DataColumnMapping GetByDataSetColumn (string value) 
 		{
@@ -285,6 +292,15 @@ namespace System.Data.Common {
 			dataSetColumns[((DataColumnMapping)value).DataSetColumn] = value;
 		}
 
+#if NET_2_0
+		public void Insert (int index, DataColumnMapping mapping) 
+		{
+			list.Insert (index, mapping);
+			sourceColumns[mapping.SourceColumn] = mapping;
+			dataSetColumns[mapping.DataSetColumn] = mapping;
+		}
+#endif
+
 		public void Remove (object value) 
 		{
 			int index = list.IndexOf (value);
@@ -295,6 +311,18 @@ namespace System.Data.Common {
 
 			list.Remove (value);
 		}
+#if NET_2_0
+		public void Remove (DataColumnMapping value) 
+		{
+			int index = list.IndexOf (value);
+      			sourceColumns.Remove (value.SourceColumn);
+			dataSetColumns.Remove (value.DataSetColumn);
+			if (( index < 0 ) || (index >=list.Count))
+                                    throw new ArgumentException("There is no such element in collection.");
+
+			list.Remove (value);
+		}
+#endif
 
 		public void RemoveAt (int index) 
 		{

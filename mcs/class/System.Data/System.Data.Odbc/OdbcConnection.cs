@@ -34,26 +34,20 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
 using System.Runtime.InteropServices;
-#if NET_2_0
-using System.Data.ProviderBase;
-#endif // NET_2_0
 using System.EnterpriseServices;
 
 namespace System.Data.Odbc
 {
 	[DefaultEvent("InfoMessage")]
 #if NET_2_0
-        public sealed class OdbcConnection : DbConnectionBase, ICloneable
+        public sealed class OdbcConnection : DbConnection, ICloneable
 #else
 	public sealed class OdbcConnection : Component, ICloneable, IDbConnection
 #endif //NET_2_0
 	{
 		#region Fields
 
-#if ONLY_1_1
 		string connectionString;
-#endif //ONLY_1_1
-
 		int connectionTimeout;
 		internal OdbcTransaction transaction;
 		IntPtr henv=IntPtr.Zero, hdbc=IntPtr.Zero;
@@ -78,16 +72,6 @@ namespace System.Data.Odbc
                         ConnectionString = connectionString;
                 }
 
-#if NET_2_0
-                internal OdbcConnection (OdbcConnectionFactory factory) 
-                        : base ( (DbConnectionFactory) factory)
-                {
-                        Init (String.Empty);
-                }
-                
-#endif //NET_2_0
-                
-
 		#endregion // Constructors
 
 		#region Properties
@@ -97,14 +81,17 @@ namespace System.Data.Odbc
 			get { return hdbc; }
 		}
 
-#if ONLY_1_1
 		[OdbcCategoryAttribute ("DataCategory_Data")]		
 		[DefaultValue ("")]
 		[OdbcDescriptionAttribute ("Information used to connect to a Data Source")]	
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Odbc.Design.OdbcConnectionStringEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
                 [RecommendedAsConfigurableAttribute (true)]
-		public string ConnectionString {
+		public 
+#if NET_2_0
+		override
+#endif
+		string ConnectionString {
 			get {
 				return connectionString;
 			}
@@ -112,7 +99,6 @@ namespace System.Data.Odbc
 				connectionString = value;
 			}
 		}
-#endif // ONLY_1_1
 		
 		[OdbcDescriptionAttribute ("Current connection timeout value, not settable  in the ConnectionString")]
 		[DefaultValue (15)]	
@@ -218,6 +204,12 @@ namespace System.Data.Odbc
 			return (IDbTransaction) BeginTransaction();
 		}
 #endif // ONLY_1_1
+#if NET_2_0
+		protected override DbTransaction BeginDbTransaction (IsolationLevel level)
+		{
+			return BeginTransaction (level);
+		}
+#endif
 		
 		public
 #if NET_2_0
@@ -258,7 +250,7 @@ namespace System.Data.Odbc
 
 				transaction = null;
 
-                                OnStateChange (ConnectionState.Open, ConnectionState.Closed);
+                                RaiseStateChange (ConnectionState.Open, ConnectionState.Closed);
 			}
 		}
 
@@ -323,6 +315,13 @@ namespace System.Data.Odbc
 		}
 #endif //ONLY_1_1
 
+#if NET_2_0
+		protected override DbCommand CreateDbCommand ()
+		{
+			return CreateCommand ();
+		}
+#endif
+
 		public
 #if NET_2_0
                 override
@@ -385,7 +384,7 @@ namespace System.Data.Odbc
                                                 throw new OdbcException(new OdbcError("SQLDriverConnect",OdbcHandleType.Dbc,hdbc));
                                 }
 
-                                OnStateChange (ConnectionState.Closed, ConnectionState.Open);
+                                RaiseStateChange (ConnectionState.Closed, ConnectionState.Open);
                         } catch (Exception) {
                                 // free handles if any.
                                 FreeHandles ();
@@ -421,11 +420,9 @@ namespace System.Data.Odbc
                 
 
 		[MonoTODO]
-		public
-#if NET_2_0
-                override
-#endif // NET_2_0
-                void EnlistDistributedTransaction ( ITransaction transaction) {
+		public void EnlistDistributedTransaction ( ITransaction transaction) 
+		{
+                
 			throw new NotImplementedException ();
 		}
 
@@ -448,14 +445,15 @@ namespace System.Data.Odbc
                         return System.Text.Encoding.Default.GetString (buffer);
                 }
 
-#if ONLY_1_1
-                private void OnStateChange (ConnectionState from, ConnectionState to)
+                private void RaiseStateChange (ConnectionState from, ConnectionState to)
                 {
+#if ONLY_1_1
                         if (StateChange != null)
                                 StateChange (this, new StateChangeEventArgs (from, to));
+#else
+			base.OnStateChange (new StateChangeEventArgs (from, to));
+#endif
                 }
-#endif // ONLY_1_1
-                
 
 		#endregion
 

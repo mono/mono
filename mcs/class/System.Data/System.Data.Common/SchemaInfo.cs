@@ -33,14 +33,7 @@
 using System;
 
 namespace System.Data.Common {
-#if NET_2_0
-// FIXME: This needs to be cleaned up to be compatible with both versions.
-// Unfortunately, the SchemaInfo class we made is different from the MS
-// version which is now public.
-	public class SchemaInfo
-#else
 	internal class SchemaInfo
-#endif
 	{
 		#region Fields
 

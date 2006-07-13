@@ -73,10 +73,7 @@ namespace System.Data.Common {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
-#endif
 
-
-#if NET_2_0
 		[MonoTODO]
 		IDbCommand IDbDataAdapter.SelectCommand {
 			get { return ((IDbDataAdapter) this).SelectCommand; }
@@ -135,9 +132,9 @@ namespace System.Data.Common {
 
 		[MonoTODO]
 		[DefaultValue (1)]
-		public int UpdateBatchSize {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+		public virtual int UpdateBatchSize {
+			get { return 1; }
+			set { throw new NotSupportedException (); }
 		}
 #else
 		IDbCommand SelectCommand {
@@ -198,15 +195,18 @@ namespace System.Data.Common {
 		}
 #else
 		protected abstract RowUpdatedEventArgs CreateRowUpdatedEvent (DataRow dataRow, IDbCommand command,
-									      StatementType statementType,
-									      DataTableMapping tableMapping);
+									     StatementType statementType,
+									     DataTableMapping tableMapping);
+
 		protected abstract RowUpdatingEventArgs CreateRowUpdatingEvent (DataRow dataRow, IDbCommand command,
-										StatementType statementType,
-										DataTableMapping tableMapping);
+									       StatementType statementType,
+									       DataTableMapping tableMapping);
 
 		protected abstract void OnRowUpdated (RowUpdatedEventArgs value);
 		protected abstract void OnRowUpdating (RowUpdatingEventArgs value);
 #endif
+
+
 		private FillErrorEventArgs CreateFillErrorEvent (DataTable dataTable, object[] values, Exception e)
 		{
 			FillErrorEventArgs args = new FillErrorEventArgs (dataTable, values);
@@ -257,10 +257,12 @@ namespace System.Data.Common {
 		}
 
 #if NET_2_0
-		protected override int Fill (DataTable dataTable, IDataReader dataReader) 
+		[MonoTODO ("This needs to be moved to DataAdapter.For now, just override")]
+		protected override
 #else
-		protected virtual int Fill (DataTable dataTable, IDataReader dataReader) 
+		protected virtual 
 #endif
+		int Fill (DataTable dataTable, IDataReader dataReader) 
 		{
 			if (dataReader.FieldCount == 0) {
 				dataReader.Close ();
@@ -295,14 +297,6 @@ namespace System.Data.Common {
 			return Fill (dataTable, command.ExecuteReader (commandBehavior));
 		}
 
-#if NET_2_0
-		[MonoTODO]
-		public int Fill (int startRecord, int maxRecords, DataTable[] dataTables)
-		{
-			throw new NotImplementedException ();
-		}
-#endif
-
 		public int Fill (DataSet dataSet, int startRecord, int maxRecords, string srcTable) 
 		{
 			return this.Fill (dataSet, startRecord, maxRecords, srcTable, ((IDbDataAdapter) this).SelectCommand, CommandBehavior.Default);
@@ -310,17 +304,26 @@ namespace System.Data.Common {
 
 #if NET_2_0
 		[MonoTODO]
+		public int Fill (int startRecord, int maxRecords, DataTable[] dataTables)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
 		protected virtual int Fill (DataTable[] dataTables, int startRecord, int maxRecords, IDbCommand command, CommandBehavior behavior)
 		{
 			throw new NotImplementedException ();
 		}
 #endif
-
+		
+		
 #if NET_2_0
-		protected override int Fill (DataSet dataSet, string srcTable, IDataReader dataReader, int startRecord, int maxRecords) 
+		[MonoTODO ("This needs to be moved to DataAdapter.For now, just override")]
+		protected override
 #else
-		protected virtual int Fill (DataSet dataSet, string srcTable, IDataReader dataReader, int startRecord, int maxRecords) 
+		protected virtual
 #endif
+		int Fill (DataSet dataSet, string srcTable, IDataReader dataReader, int startRecord, int maxRecords) 
 		{
 			if (dataSet == null)
 				throw new ArgumentNullException ("DataSet");
@@ -598,7 +601,7 @@ namespace System.Data.Common {
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public override IDataParameter[] GetFillParameters () 
 		{
-			IDataParameter[] parameters = new IDataParameter[SelectCommand.Parameters.Count];
+			IDataParameter[] parameters = new IDataParameter [SelectCommand.Parameters.Count];
 			SelectCommand.Parameters.CopyTo (parameters, 0);
 			return parameters;
 		}
@@ -1132,6 +1135,41 @@ namespace System.Data.Common {
 									    sourceTable));
 			return Update (dataTable, tableMapping);
 		}
+		
+#if NET_2_0
+		// All the batch methods, should be implemented, if supported,
+		// by individual providers 
+
+		protected virtual int AddToBatch (IDbCommand cmd)
+		{
+			throw new NotSupportedException ();
+		}
+
+		protected virtual void ClearBatch ()
+		{
+			throw new NotSupportedException ();
+		}
+
+		protected virtual int ExecuteBatch ()
+		{
+			throw new NotSupportedException ();
+		}
+
+		protected virtual IDataParameter GetBatchedParameter (int commandIdentifier, int parameterIdentifer)
+		{
+			throw new NotSupportedException ();
+		}
+
+		protected virtual void InitializeBatching ()
+		{
+			throw new NotSupportedException ();
+		}
+
+		protected virtual void TerminateBatching ()
+		{
+			throw new NotSupportedException ();
+		}
+#endif
 
 #if ONLY_1_0 || ONLY_1_1
 		protected virtual void OnFillError (FillErrorEventArgs value) 

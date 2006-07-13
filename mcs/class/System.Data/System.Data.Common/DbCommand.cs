@@ -44,10 +44,19 @@ namespace System.Data.Common {
 
 		#region Properties
 
+		[DefaultValue ("")]
+		[RefreshProperties (RefreshProperties.All)]
 		public abstract string CommandText { get; set; }
+
 		public abstract int CommandTimeout { get; set; }
+
+		[DefaultValue (CommandType.Text)]
+		[RefreshProperties (RefreshProperties.All)]
 		public abstract CommandType CommandType { get; set; }
 
+		[DefaultValue (null)]
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DbConnection Connection {
 			get { return DbConnection; }
 			set { DbConnection = value; }
@@ -56,6 +65,11 @@ namespace System.Data.Common {
 		protected abstract DbConnection DbConnection { get; set; }
 		protected abstract DbParameterCollection DbParameterCollection { get; }
 		protected abstract DbTransaction DbTransaction { get; set; }
+
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[DefaultValue (true)]
+		[DesignOnly (true)]
 		public abstract bool DesignTimeVisible { get; set; }
 
 		IDbConnection IDbCommand.Connection {
@@ -72,22 +86,21 @@ namespace System.Data.Common {
 			set { Transaction = (DbTransaction) value; }
 		}
 
-#if NET_2_0
-		[MonoTODO]
-		public virtual DbCommandOptionalFeatures OptionalFeatures { 
-			get { throw new NotImplementedException (); }
-		}
-#endif
-
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DbParameterCollection Parameters {
 			get { return DbParameterCollection; }
 		}
 
+		[Browsable (false)]
+		[DefaultValue (null)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DbTransaction Transaction {
 			get { return DbTransaction; }
 			set { DbTransaction = value; }
 		}
 
+		[DefaultValue (UpdateRowSource.Both)]
 		public abstract UpdateRowSource UpdatedRowSource { get; set; }
 
 		#endregion // Properties
@@ -103,20 +116,8 @@ namespace System.Data.Common {
 		}
 
 		protected abstract DbDataReader ExecuteDbDataReader (CommandBehavior behavior);
-
-		[MonoTODO]
-		protected virtual DbDataReader ExecuteDbPageReader (CommandBehavior behavior, int startRecord, int maxRecords)
-		{
-			throw new NotImplementedException ();
-		}
-
 		public abstract int ExecuteNonQuery ();
 		
-                public DbDataReader ExecutePageReader (CommandBehavior behavior, int startRecord, int maxRecords)
-		{
-			return ExecuteDbPageReader (behavior, startRecord, maxRecords);
-		}
-
 		public DbDataReader ExecuteReader ()
 		{
 			return ExecuteDbDataReader (CommandBehavior.Default);

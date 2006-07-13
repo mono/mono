@@ -90,18 +90,6 @@ namespace System.Data.Common {
 			}
 		}
 
-#if NET_2_0
-		[MonoTODO]
-		protected DBDataPermission (DbConnectionOptions connectionOptions)
-			: this (PermissionState.None)
-		{
-			// ignore null (i.e. no ArgumentNullException)
-			if (connectionOptions != null) {
-				throw new NotImplementedException ();
-			}
-		}
-#endif
-
 		protected DBDataPermission (PermissionState state) 
 		{
 			this.state = PermissionHelper.CheckPermissionState (state, true);
@@ -110,8 +98,11 @@ namespace System.Data.Common {
 
 #if NET_2_0
 		[Obsolete ("use DBDataPermission (PermissionState.None)", true)]
+		protected 
+#else
+		public
 #endif
-		public DBDataPermission (PermissionState state, bool allowBlankPassword)
+		DBDataPermission (PermissionState state, bool allowBlankPassword)
 			: this (state)
 		{
 			this.allowBlankPassword = allowBlankPassword;
@@ -130,26 +121,11 @@ namespace System.Data.Common {
 
 		#region Methods
 
-#if NET_2_0
-		public virtual void Add (string connectionString, string restrictions, KeyRestrictionBehavior behavior)
-		{
-			state = PermissionState.None;
-			AddConnectionString (connectionString, restrictions, behavior, null, false);
-		}
-
-		[MonoTODO ("synonyms and useFirstKeyValue aren't supported")]
-		protected virtual void AddConnectionString (string connectionString, string restrictions, 
-			KeyRestrictionBehavior behavior, Hashtable synonyms, bool useFirstKeyValue)
-		{
-			_connections [connectionString] = new object [2] { restrictions, behavior };
-		}
-#elif NET_1_1
 		public virtual void Add (string connectionString, string restrictions, KeyRestrictionBehavior behavior)
 		{
 			state = PermissionState.None;
 			_connections [connectionString] = new object [2] { restrictions, behavior };
 		}
-#endif
 
 		protected void Clear ()
 		{
@@ -268,22 +244,6 @@ namespace System.Data.Common {
 		{
 			return (state == PermissionState.Unrestricted);
 		}
-
-#if NET_2_0
-		[MonoTODO ("DO NOT IMPLEMENT - will be removed")]
-		[Obsolete ("DO NOT IMPLEMENT - will be removed")]
-		protected void SetConnectionString (DbConnectionOptions constr)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO ("DO NOT IMPLEMENT - will be removed")]
-		[Obsolete ("DO NOT IMPLEMENT - will be removed")]
-		public virtual void SetRestriction (string connectionString, string restrictions, KeyRestrictionBehavior behavior)
-		{
-			throw new NotImplementedException ();
-		}
-#endif
 
 		public override SecurityElement ToXml ()
 		{

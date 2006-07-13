@@ -129,20 +129,6 @@ namespace System.Data.ProviderBase {
 			}
 		}
 
-#if NET_2_0
-		public override byte Precision {
-			get { return _precision; }
-			set { _precision = value; }
-
-		}
-
-		public override byte Scale {
-			get { return _scale; }
-			set { _scale = value; }
-
-		}
-#endif
-
 		public override int Size {
 			get { return _size; }
 

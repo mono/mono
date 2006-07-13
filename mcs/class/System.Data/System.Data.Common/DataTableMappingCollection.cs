@@ -187,6 +187,13 @@ namespace System.Data.Common {
 			mappings.CopyTo (array, index);
 		}
 
+#if NET_2_0
+		public void CopyTo (DataTableMapping[] array, int index) 
+		{
+			mappings.CopyTo (array, index);
+		}
+#endif
+
 		public DataTableMapping GetByDataSetTable (string dataSetTable) 
 		{
 			
@@ -264,6 +271,15 @@ namespace System.Data.Common {
                         dataSetTables[((DataTableMapping)value).DataSetTable] = value;
 		}
 
+#if NET_2_0
+		public void Insert (int index, DataTableMapping value) 
+		{
+			mappings.Insert (index, value);
+			sourceTables[value.SourceTable] = value;
+                        dataSetTables[value.DataSetTable] = value;
+		}
+#endif
+
 		ITableMapping ITableMappingCollection.Add (string sourceTableName, string dataSetTableName)
 		{
 			ITableMapping tableMapping = new DataTableMapping (sourceTableName, dataSetTableName);
@@ -282,10 +298,19 @@ namespace System.Data.Common {
                                  throw new InvalidCastException ();
 			int index = mappings.IndexOf (value);
 			if (( index < 0 ) || (index >=mappings.Count))
-                                    throw new ArgumentException("There is no such element in collection.");                                                                                 
-
+                                    throw new ArgumentException("There is no such element in collection.");
 			mappings.Remove ((DataTableMapping) value);
 		}
+
+#if NET_2_0
+		public void Remove (DataTableMapping value) 
+		{
+			int index = mappings.IndexOf (value);
+			if (( index < 0 ) || (index >=mappings.Count))
+                                    throw new ArgumentException("There is no such element in collection."); 
+			mappings.Remove ((DataTableMapping) value);
+		}
+#endif
 
 		public void RemoveAt (int index) 
 		{

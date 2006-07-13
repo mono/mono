@@ -85,14 +85,7 @@ namespace System.Data.Odbc {
 			return new OdbcPermission (this);
 		}
 
-#if NET_2_0
-		[MonoTODO ("unimplemented (and unused in Mono)")]
-		protected override void AddConnectionString (string connectionString, string restrictions, 
-			KeyRestrictionBehavior behavior, Hashtable synonyms, bool useFirstKeyValue)
-		{
-			throw new NotImplementedException ();
-		}
-#else
+#if ONLY_1_1
 		// no more part of Fx 2.0 - useless ? or replaced with AddConnectionString ?
 		public override void Add (string connectionString, string restrictions, KeyRestrictionBehavior behavior)
 		{

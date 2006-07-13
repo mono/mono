@@ -1,3 +1,10 @@
+2006-07-13  Senganal T  <tsenganal@novell.com>
+
+	* SqlClientFactory.cs SqlCommand.cs SqlConnectionFactory.cs 
+	SqlClientPermission.cs SqlParameterCollection.cs SqlDataReader.cs 
+	SqlConnection.cs SqlParameter.cs SqlTransaction.cs :
+		2.0 Api fixes
+
 2006-05-31  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SqlConnection.cs: Removed extra destructor, as destructor on 

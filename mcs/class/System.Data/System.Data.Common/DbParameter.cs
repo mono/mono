@@ -58,9 +58,15 @@ namespace System.Data.Common {
 
 		[DefaultValue ("")]
 		public abstract string ParameterName { get; set; }
-		public abstract byte Precision { get; set; }
-		public abstract byte Scale { get; set; }
 		public abstract int Size { get; set; }
+		byte IDbDataParameter.Precision { 
+			get { return  0; }
+			set {} 
+		}
+		byte IDbDataParameter.Scale { 
+			get { return 0; }
+			set {} 
+		}
 
 		[DefaultValue (null)]
 		[RefreshProperties (RefreshProperties.All)]

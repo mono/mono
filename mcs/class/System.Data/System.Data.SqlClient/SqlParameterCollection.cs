@@ -40,11 +40,6 @@ using System;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
-
-#if NET_2_0
-using System.Data.ProviderBase;
-#endif // NET_2_0
-
 using System.Collections;
 
 namespace System.Data.SqlClient {
@@ -52,7 +47,7 @@ namespace System.Data.SqlClient {
 	[Editor ("Microsoft.VSDesigner.Data.Design.DBParametersEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
 		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 #if NET_2_0
-	public sealed class SqlParameterCollection : DbParameterBaseCollection, IDataParameterCollection, IList, ICollection, IEnumerable
+	public sealed class SqlParameterCollection : DbParameterCollection, IDataParameterCollection, IList, ICollection, IEnumerable
 #else
 	public sealed class SqlParameterCollection : MarshalByRefObject, IDataParameterCollection, IList, ICollection, IEnumerable
 #endif // NET_2_0
@@ -177,22 +172,6 @@ namespace System.Data.SqlClient {
 		{
                         throw new NotImplementedException();
                 }
-		/*public IEnumerator GetEnumerator ()
-		/*public IEnumerator GetEnumerator ()
-			 {
-                        throw new NotImplementedException();
-                }*/
-
-
-		protected override Type ItemType 
-		{ 
-			get {
-				throw new NotImplementedException();
-			}
-
-		 }                                                          
-
-                                                                                                    
 #endif
 		object IList.this [int index] {
 			get { return (SqlParameter) this [index]; }

@@ -32,7 +32,6 @@ namespace System.Data.SqlClient
 {
         using System.Data;
         using System.Data.Common;
-        using System.Data.ProviderBase;
         
         public class SqlClientFactory : DbProviderFactory
         {
@@ -76,9 +75,10 @@ namespace System.Data.SqlClient
 
                 public override DbConnection CreateConnection ()
                 {
-                        DbConnectionFactory connFactory = SqlConnectionFactory.GetSingleton (Instance /* provider factory */);
-                        SqlConnection connection = new SqlConnection (connFactory);
-                        return (DbConnection) connection;
+			throw new InvalidOperationException ();
+                       // DbConnectionFactory connFactory = SqlConnectionFactory.GetSingleton (Instance /* provider factory */);
+                       // SqlConnection connection = new SqlConnection (connFactory);
+                       // return (DbConnection) connection;
                 }
                 
                 public override DbDataAdapter CreateDataAdapter ()
@@ -96,23 +96,6 @@ namespace System.Data.SqlClient
                         return (DbParameter) new SqlParameter ();
                 }
                 
-                public new DbProviderSupportedClasses SupportedClasses
-                {
-                        get
-                        {
-                                return (DbProviderSupportedClasses) (
-                                                                     DbProviderSupportedClasses.DbConnection | 
-                                                                     DbProviderSupportedClasses.DbCommand | 
-                                                                     DbProviderSupportedClasses.DbParameter | 
-                                                                     DbProviderSupportedClasses.DbConnectionStringBuilder | 
-                                                                     DbProviderSupportedClasses.DbCommandBuilder | 
-                                                                     DbProviderSupportedClasses.DbDataAdapter | 
-                                                                     DbProviderSupportedClasses.DbDataSourceEnumerator | 
-                                                                     DbProviderSupportedClasses.CodeAccessPermission
-                                                                     );
-                        }
-                }
-
                 #endregion // public overrides
         }
 }

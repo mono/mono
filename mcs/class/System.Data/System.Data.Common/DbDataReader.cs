@@ -60,7 +60,7 @@ namespace System.Data.Common {
 #if NET_2_0
 		[MonoTODO]
 		public virtual int VisibleFieldCount {
-			get { throw new NotImplementedException ();}
+			get { return FieldCount; }
 		}
 #endif
 		#endregion // Properties
@@ -116,27 +116,27 @@ namespace System.Data.Common {
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public virtual Type GetProviderSpecificFieldType (int i)
 		{
-			throw new NotImplementedException ();
+			return GetFieldType (i);
 		}
 
 		[MonoTODO]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public virtual object GetProviderSpecificValue (int i)
 		{
-			throw new NotImplementedException ();
+			return GetValue (i);
 		}
 
 		[MonoTODO]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public virtual int GetProviderSpecificValues (object[] values)
 		{
-			throw new NotImplementedException ();
+			return GetValues (values);
 		}
 	
 		[MonoTODO]
 		protected virtual DbDataReader GetDbDataReader (int ordinal)
 		{
-			throw new NotImplementedException ();
+			throw new NotSupportedException ();
 		}
 #endif 
 

@@ -119,11 +119,10 @@ namespace System.Data.SqlClient {
 			}
 		}
 
+#if !NET_2_0
 		public 
-#if NET_2_0
-		override
-#endif // NET_2_0
-	 void Dispose ()
+#endif
+		void Dispose ()
 		{
 			Dispose (true);
 			GC.SuppressFinalize (this);

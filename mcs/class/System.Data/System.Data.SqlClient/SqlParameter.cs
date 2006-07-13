@@ -41,9 +41,6 @@ using System;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
-#if NET_2_0
-using System.Data.ProviderBase;
-#endif // NET_2_0
 using System.Data.SqlTypes;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -51,7 +48,7 @@ using System.Text;
 namespace System.Data.SqlClient {
 	[TypeConverterAttribute (typeof (SqlParameterConverter))]
 #if NET_2_0
-	public sealed class SqlParameter : DbParameterBase, IDbDataParameter, IDataParameter, ICloneable
+	public sealed class SqlParameter : DbParameter, IDbDataParameter, IDataParameter, ICloneable
 #else
 	public sealed class SqlParameter : MarshalByRefObject, IDbDataParameter, IDataParameter, ICloneable
 #endif // NET_2_0
@@ -259,11 +256,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 #endif
-		public 
-#if NET_2_0
-		override
-#endif
-	 	int Offset {
+		public int Offset {
 			get { return offset; }
 			set { offset = value; }
 		}
@@ -290,11 +283,7 @@ namespace System.Data.SqlClient {
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 #endif		
-		public 
-#if NET_2_0
-		override
-#endif // NET_2_0
-	 byte Precision {
+		public byte Precision {
 			get { return metaParameter.Precision; }
 			set { metaParameter.Precision = value; }
 		}
@@ -308,11 +297,7 @@ namespace System.Data.SqlClient {
 		[Browsable (false)]
                 [EditorBrowsable (EditorBrowsableState.Never)]
 #endif
-                public 
-#if NET_2_0
-		override
-#endif // NET_2_0
-	 byte Scale {
+                public byte Scale {
 			get { return metaParameter.Scale; }
 			set { metaParameter.Scale = value; }
 		}
@@ -824,12 +809,6 @@ namespace System.Data.SqlClient {
 		}
 
 #if NET_2_0
-                [MonoTODO]
-                public override void CopyTo (DbParameter param)
-                {
-                        throw new NotImplementedException ();
-                }
-                
                 [MonoTODO]
                 public override void ResetDbType ()
                 {

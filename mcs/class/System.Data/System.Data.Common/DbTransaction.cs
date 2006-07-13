@@ -65,7 +65,7 @@ namespace System.Data.Common {
 		public abstract void Commit ();
 		public abstract void Rollback ();
 
-		public virtual void Dispose ()
+		public void Dispose ()
 		{
 			Dispose (true);
 		}

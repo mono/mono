@@ -45,11 +45,6 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
-
-#if NET_2_0
-using System.Data.ProviderBase;
-#endif // NET_2_0
-
 using System.EnterpriseServices;
 using System.Globalization;
 using System.Net;
@@ -60,7 +55,7 @@ using System.Xml;
 namespace System.Data.SqlClient {
 	[DefaultEvent ("InfoMessage")]
 #if NET_2_0
-	public sealed class SqlConnection : DbConnectionBase, IDbConnection, ICloneable	
+	public sealed class SqlConnection : DbConnection, IDbConnection, ICloneable	
 #else
 	public sealed class SqlConnection : Component, IDbConnection, ICloneable	                
 #endif // NET_2_0
@@ -115,14 +110,6 @@ namespace System.Data.SqlClient {
 		{
                         Init (connectionString);
 		}
-
-#if NET_2_0
-                internal SqlConnection (DbConnectionFactory connectionFactory) : base (connectionFactory)
-                {
-                        Init (String.Empty);
-                }
-
-#endif //NET_2_0
 
                 private void Init (string connectionString)
                 {
@@ -454,9 +441,6 @@ namespace System.Data.SqlClient {
 
 		[MonoTODO ("Not sure what this means at present.")]
 		public 
-#if NET_2_0
-		override
-#endif // NET_2_0
                 void EnlistDistributedTransaction (ITransaction transaction)
 		{
 			throw new NotImplementedException ();
@@ -476,6 +460,17 @@ namespace System.Data.SqlClient {
 		{
 			return BeginTransaction (iso);
 		}
+#if NET_2_0
+		protected override DbTransaction BeginDbTransaction (IsolationLevel level)
+		{
+			return (DbTransaction)BeginTransaction (level);
+		}
+
+		protected override DbCommand CreateDbCommand ()
+		{
+			return CreateCommand ();
+		}
+#endif
 
 		IDbCommand IDbConnection.CreateCommand ()
 		{

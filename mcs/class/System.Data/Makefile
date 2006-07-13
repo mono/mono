@@ -11,7 +11,8 @@ system = $(topdir)/class/lib/$(PROFILE)/System.dll
 endif
 
 ifeq (net_2_0, $(PROFILE))
-OTHER_LIB_MCS_FLAGS = -r:System.Configuration.dll
+OTHER_LIB_MCS_FLAGS = -r:System.Configuration.dll \
+			-r:System.Transactions.dll
 endif
 
 LIBRARY = System.Data.dll

@@ -35,27 +35,21 @@ using System;
 using System.Text;
 using System.Data;
 using System.Data.Common;
-
 using System.Runtime.InteropServices;
 using System.Globalization;
-
-#if NET_2_0
-using System.Data.ProviderBase;
-#endif // NET_2_0
 using System.ComponentModel;
 
 namespace System.Data.Odbc
 {
 	[TypeConverterAttribute (typeof (OdbcParameterConverter))]
 #if NET_2_0
-        public sealed class OdbcParameter : DbParameterBase, ICloneable
+        public sealed class OdbcParameter : DbParameter, ICloneable
 #else
-		public sealed class OdbcParameter : MarshalByRefObject, IDbDataParameter, IDataParameter, ICloneable
+	public sealed class OdbcParameter : MarshalByRefObject, IDbDataParameter, IDataParameter, ICloneable
 #endif // NET_2_0
 	{
 		#region Fields
 
-#if ONLY_1_1
 		string name;
 		ParameterDirection direction;
 		bool isNullable;
@@ -65,7 +59,6 @@ namespace System.Data.Odbc
 		byte _precision;
 		byte _scale;
 		object _value;
-#endif // ONLY_1_1
 
 		private OdbcTypeMap _typeMap;
 		private NativeBuffer _nativeBuffer = new NativeBuffer ();
@@ -152,7 +145,7 @@ namespace System.Data.Odbc
 		public 
 #if NET_2_0
                 override 
-#endif // NET_2_0
+#endif
                 DbType DbType {
 			get { return _typeMap.DbType; }
 			set { 
@@ -163,11 +156,14 @@ namespace System.Data.Odbc
 			}
 		}
 		
-#if ONLY_1_1
 		[OdbcCategory ("Data")]
 		[OdbcDescriptionAttribute ("Input, output, or bidirectional parameter")]  
 		[DefaultValue (ParameterDirection.Input)]
-		public ParameterDirection Direction {
+		public 
+#if NET_2_0
+                override 
+#endif
+		ParameterDirection Direction {
 			get { return direction; }
 			set { direction = value; }
 		}
@@ -177,11 +173,14 @@ namespace System.Data.Odbc
                 [DesignOnlyAttribute (true)]
                 [EditorBrowsableAttribute (EditorBrowsableState.Advanced)]
                 [DefaultValue (false)]
-		public bool IsNullable {
+		public 
+#if NET_2_0
+                override 
+#endif
+		bool IsNullable {
 			get { return isNullable; }
 			set { isNullable = value; }
 		}
-#endif // ONLY_1_1
 
 
 		[DefaultValue (OdbcType.NChar)]
@@ -198,10 +197,13 @@ namespace System.Data.Odbc
 			}
 		}
 		
-#if ONLY_1_1
  		[OdbcDescription ("DataParameter_ParameterName")]
                 [DefaultValue ("")]	
-		public string ParameterName {
+		public 
+#if NET_2_0
+                override 
+#endif
+		string ParameterName {
 			get { return name; }
 			set { name = value; }
 		}
@@ -225,7 +227,11 @@ namespace System.Data.Odbc
 		[OdbcDescription ("DbDataParameter_Size")]
                 [OdbcCategory ("DataCategory_Data")]
                 [DefaultValue (0)]
-		public int Size {
+		public 
+#if NET_2_0
+                override 
+#endif
+		int Size {
 			get { return size; }
 			set { size = value; }
 		}
@@ -233,7 +239,11 @@ namespace System.Data.Odbc
 		[OdbcDescription ("DataParameter_SourceColumn")]
                 [OdbcCategory ("DataCategory_Data")]
                 [DefaultValue ("")]
-		public string SourceColumn {
+		public 
+#if NET_2_0
+                override 
+#endif
+		string SourceColumn {
 			get { return sourceColumn; }
 			set { sourceColumn = value; }
 		}
@@ -241,7 +251,11 @@ namespace System.Data.Odbc
                 [OdbcDescription ("DataParameter_SourceVersion")]
                 [OdbcCategory ("DataCategory_Data")]
                 [DefaultValue ("Current")]			
-		public DataRowVersion SourceVersion {
+		public 
+#if NET_2_0
+                override 
+#endif
+		DataRowVersion SourceVersion {
 			get { return sourceVersion; }
 			set { sourceVersion = value; }
 		}
@@ -250,7 +264,11 @@ namespace System.Data.Odbc
                 [OdbcDescription ("DataParameter_Value")]
                 [OdbcCategory ("DataCategory_Data")]
                 [DefaultValue (null)]		
-		public	object Value {
+		public 
+#if NET_2_0
+                override 
+#endif
+		object Value {
 			get { 
 				return _value;
 			}
@@ -258,8 +276,6 @@ namespace System.Data.Odbc
 				_value = value;
 			}
 		}
-
-#endif // ONLY_1_1
 
 		#endregion // Properties
 
@@ -478,42 +494,17 @@ namespace System.Data.Odbc
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		public override bool SourceColumnNullMapping {
 			get {return false;}
 			set {}
 		}
 
-                [MonoTODO]
-                public override void PropertyChanging () 
-                {
-                }
-                
-                [MonoTODO]
-		protected override byte ValuePrecision (object value) 
+		public override void ResetDbType () 
                 {
                         throw new NotImplementedException ();
                 }
+#endif
 
-                [MonoTODO]
-                protected override byte ValueScale (object value)
-                {
-                        throw new NotImplementedException ();
-                }
-
-                [MonoTODO]
-		protected override int ValueSize (object value)
-                {
-                        throw new NotImplementedException ();
-                }
-
-                [MonoTODO]
-                public override void ResetDbType () 
-                {
-                        throw new NotImplementedException ();
-                }
-
-#endif // NET_2_0
 		#endregion
 	}
 }

@@ -34,9 +34,7 @@
 
 using System.ComponentModel;
 using System.Data;
-#if !TARGET_JVM
-using System.EnterpriseServices;
-#endif
+using System.Transactions;
 
 namespace System.Data.Common {
 	public abstract class DbConnection : Component, IDbConnection, IDisposable
@@ -51,12 +49,23 @@ namespace System.Data.Common {
 
 		#region Properties
 
+		[RecommendedAsConfigurable (true)]
+		[RefreshProperties (RefreshProperties.All)]
+		[DefaultValue ("")]
 		public abstract string ConnectionString { get; set; }
-		public abstract int ConnectionTimeout { get; }
+
 		public abstract string Database { get; }
 		public abstract string DataSource { get; }
+		
+		[Browsable (false)]
 		public abstract string ServerVersion { get; }
+		
+		[Browsable (false)]
 		public abstract ConnectionState State { get; }
+
+		public virtual int ConnectionTimeout { 
+			get { return 15; }
+		}
 
 		#endregion // Properties
 
@@ -66,12 +75,12 @@ namespace System.Data.Common {
 
 		public DbTransaction BeginTransaction ()
 		{
-			return BeginDbTransaction(IsolationLevel.ReadCommitted);
+			return BeginDbTransaction (IsolationLevel.Unspecified);
 		}
 
 		public DbTransaction BeginTransaction (IsolationLevel isolationLevel)
 		{
-			return BeginDbTransaction(isolationLevel);
+			return BeginDbTransaction (isolationLevel);
 		}
 
 		public abstract void ChangeDatabase (string databaseName);
@@ -85,35 +94,29 @@ namespace System.Data.Common {
 		protected abstract DbCommand CreateDbCommand ();
 
 #if NET_2_0
-        [MonoTODO]
-        public virtual void EnlistTransaction (ITransaction transaction)
-        {
-			throw new NotImplementedException ();                        
-        }
-
 		[MonoTODO]
-		public virtual void EnlistDistributedTransaction (ITransaction transaction)
+		public virtual void EnlistTransaction (Transaction transaction)
 		{
-			throw new NotImplementedException ();
+			throw new NotSupportedException ();                        
 		}
 #endif
 
 		[MonoTODO]
 		public virtual DataTable GetSchema ()
 		{
-			throw new NotImplementedException ();
+			throw new NotSupportedException ();
 		}
 
 		[MonoTODO]
 		public virtual DataTable GetSchema (string collectionName)
 		{
-			throw new NotImplementedException ();
+			throw new NotSupportedException ();
 		}
 
 		[MonoTODO]
 		public virtual DataTable GetSchema (string collectionName, string[] restrictionValues)
 		{
-			throw new NotImplementedException ();
+			throw new NotSupportedException ();
 		}
 
 		IDbTransaction IDbConnection.BeginTransaction ()
@@ -133,7 +136,15 @@ namespace System.Data.Common {
 		
 		public abstract void Open ();
 
+		protected virtual void OnStateChange (StateChangeEventArgs stateChanged)
+		{
+			if (StateChange != null)
+				StateChange (this, stateChanged);
+		}
+
 		#endregion // Methods
+
+		public virtual event StateChangeEventHandler StateChange;
 
 	}
 }

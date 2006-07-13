@@ -48,18 +48,6 @@ namespace System.Data.Common {
 		
 		#region Constructors
 
-#if NET_2_0
-		[MonoTODO]
-		public DbDataRecord (object[] values, PropertyDescriptorCollection descriptors, FieldNameLookup fieldNameLookup)
-		{
-		}
-
-		[MonoTODO]
-		public DbDataRecord (SchemaInfo[] schemaInfo, object[] values, PropertyDescriptorCollection descriptors, FieldNameLookup fieldNameLookup)
-		{
-		}
-#endif
-
 		internal DbDataRecord (SchemaInfo[] schema, object[] values, FieldNameLookup lookup)
 		{
 			this.schema = schema;
@@ -205,14 +193,6 @@ namespace System.Data.Common {
 			return (string) lookup [i];
 		}
 
-#if NET_2_0
-		[MonoTODO]
-		public virtual object GetObjectRef (int i)
-		{
-			throw new NotImplementedException ();
-		}
-#endif
-
 		public int GetOrdinal (string name)
 		{
 			return lookup.IndexOf (name);
@@ -341,17 +321,6 @@ namespace System.Data.Common {
 		{
 			return GetValue (i) == DBNull.Value;
 		}
-#if NET_2_0
-		public virtual bool IsSetAsDefault (int i)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public void SetSchemaInfo (SchemaInfo[] schemaInfo)
-		{
-			throw new NotImplementedException ();
-		}
-#endif
 
 		#endregion // Methods
 	}

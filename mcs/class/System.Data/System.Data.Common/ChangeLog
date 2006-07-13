@@ -1,3 +1,13 @@
+2006-07-13  Senganal T <tsenganal@novell.com>
+
+	* SchemaInfo.cs DbDataAdapter.cs DbConnectionOptions.cs DbParameter.cs 
+	DbMetaDataColumnNames.cs DbTransaction.cs DataTableMapping.cs DataAdapter.cs 
+	FieldNameLookup.cs DbDataRecord.cs DataColumnMappingCollection.cs DbCommand.cs 
+	DbDataPermission.cs DbProviderFactory.cs DbCommandBuilder.cs DbConnectionString.cs 
+	RowUpdatedEventArgs.cs DbDataReader.cs DbConnectionStringBuilder.cs DbConnection.cs 
+	DataTableMappingCollection.cs :
+		2.0 Api fixes
+
 2006-06-15  Senganal T <tsenganal@novell.com>
 
 	* Key.cs : 

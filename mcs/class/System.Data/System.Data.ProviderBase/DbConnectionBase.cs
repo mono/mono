@@ -31,7 +31,7 @@
 //
 
 #if NET_2_0
-
+using System.Transactions;
 using System.Data.Common;
 using System.EnterpriseServices;
 
@@ -174,13 +174,13 @@ namespace System.Data.ProviderBase {
 		}
 
 		[MonoTODO]
-		public override void EnlistDistributedTransaction (ITransaction transaction)
+		public void EnlistDistributedTransaction (EnterpriseServices.ITransaction transaction)
 		{
 			throw new NotImplementedException ();
 		}
 
                 [MonoTODO]
-                public override void EnlistTransaction (ITransaction transaction)
+                public void EnlistTransaction (Transaction transaction)
                 {
 			throw new NotImplementedException ();                        
                 }

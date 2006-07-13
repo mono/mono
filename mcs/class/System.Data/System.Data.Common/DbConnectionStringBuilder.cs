@@ -234,6 +234,11 @@ namespace System.Data.Common
 			throw new NotImplementedException ();
 		}
 
+		protected internal void ClearPropertyDescriptors ()
+		{
+			throw new NotImplementedException ();
+		}
+
                 public virtual bool Remove (string keyword)
                 {
                         return _dictionary.Remove (keyword);

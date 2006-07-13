@@ -1,3 +1,29 @@
+2006-07-13  Senganal T  <tsenganal@novell.com>
+
+	* System.Data.dll.sources: 
+		- Added to build :
+			System.Data.Common/DbMetaDataColumnNames.cs
+		- Removed from build :
+			System.Data.Common/DbCommandOptionalFeatures.cs
+			System.Data.Common/DbCommandSet.cs
+			System.Data.Common/DbProviderSupportedClasses.cs
+			System.Data.Common/SchemaLocation.cs
+			System.Data.Odbc/OdbcConnectionFactory.cs
+			System.Data.SqlClient/SqlConnectionFactory.cs
+			System.Data.ProviderBase/DbCommandBase.cs
+			System.Data.ProviderBase/DbConnectionBase.cs
+			System.Data.ProviderBase/DbConnectionFactory.cs
+			System.Data.ProviderBase/DbConnectionInternal.cs
+			System.Data.ProviderBase/DbConnectionPoolCounters.cs
+			System.Data.ProviderBase/DbConnectionPoolOptions.cs
+			System.Data.ProviderBase/DbDataReaderBase.cs
+			System.Data.ProviderBase/DbMetaDataFactory.cs
+			System.Data.ProviderBase/DbParameterBase.cs
+			System.Data.ProviderBase/DbParameterCollectionBase.cs
+			System.Data.ProviderBase/DbReferenceCollection.cs
+
+	* Makefile : Add System.Transactions library reference to net_2_0 PROFILE
+
 2006-06-30  Senganal T  <tsenganal@novell.com>
 
 	* System.Data.dll.sources: 

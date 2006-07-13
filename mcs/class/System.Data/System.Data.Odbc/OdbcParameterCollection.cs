@@ -37,16 +37,12 @@ using System.Data;
 using System.ComponentModel;
 using System.Data.Common;
 
-#if NET_2_0
-using System.Data.ProviderBase;
-#endif // NET_2_0
-
 namespace System.Data.Odbc
 {
 	[ListBindable (false)]
         [EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBParametersEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 #if NET_2_0
-        public sealed class OdbcParameterCollection : DbParameterBaseCollection
+        public sealed class OdbcParameterCollection : DbParameterCollection
 #else
 	public sealed class OdbcParameterCollection : MarshalByRefObject,
 		IDataParameterCollection, IList, ICollection, IEnumerable
@@ -54,9 +50,7 @@ namespace System.Data.Odbc
 	{
 		#region Fields
 
-#if ONLY_1_1
 		ArrayList list = new ArrayList ();
-#endif // ONLY_1_1
 
 		#endregion // Fields
 	
@@ -68,10 +62,14 @@ namespace System.Data.Odbc
 		#endregion // Constructors
 	
 		#region Properties
-#if ONLY_1_1		
+
 		[Browsable (false)]
                 [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public int Count {
+		public 
+#if NET_2_0
+		override
+#endif
+		int Count {
 			get { return list.Count; }
 		}
 
@@ -98,51 +96,41 @@ namespace System.Data.Odbc
                         }
 
 		}
-#else
-                [Browsable (false)]
-                [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public new OdbcParameter this[int index] {
-			get { return (OdbcParameter) base[index]; }
-			set { base [index] = value; }
-		}
-
-                [Browsable (false)]
-                [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public new OdbcParameter this[string parameterName] {
-			get {
-                                foreach (OdbcParameter p in this)
-                                        if (p.ParameterName.Equals (parameterName))
-                                                return p;
-                                throw new IndexOutOfRangeException ("The specified name does not exist: " + parameterName);
-                        }
-                        set {
-                                if (!Contains (parameterName))
-                                        throw new IndexOutOfRangeException("The specified name does not exist: " + parameterName);
-                                this [IndexOf (parameterName)] = value;
-                        }
-
-		}
-
-#endif // ONLY_1_1
-
 
 #if ONLY_1_1
 		bool IList.IsFixedSize {
+#else
+		public override bool IsFixedSize {
+#endif
 			get { return false; }
 		}
 		
+#if ONLY_1_1
 		bool IList.IsReadOnly {
+#else
+		public override bool IsReadOnly {
+#endif
 			get { return false; }
 		}
 		
+#if ONLY_1_1	
 		bool ICollection.IsSynchronized {
+#else
+		public override bool IsSynchronized {
+#endif
 			get { return list.IsSynchronized; }
 		}
 
+		
+#if ONLY_1_1
 		object ICollection.SyncRoot {
+#else
+		public override object SyncRoot {
+#endif
 			get { return list.SyncRoot; }
 		}
 		
+#if ONLY_1_1
 		object IList.this[int index] {
 			get { return list[index]; }
 			set { list[index] = value; }
@@ -160,36 +148,29 @@ namespace System.Data.Odbc
 		}
 #endif // ONLY_1_1
 
-#if NET_2_0
-                protected override Type ItemType { get { return typeof (OdbcParameter); } }
-#endif // NET_2_0
-
 		#endregion // Properties
 
 		#region Methods
 
-#if ONLY_1_1
-		public int Add (object value)
+		public 
+#if NET_2_0
+		override
+#endif
+		int Add (object value)
                 {
                          if (!(value is OdbcParameter))
                                 throw new InvalidCastException ("The parameter was not an OdbcParameter.");
                         Add ((OdbcParameter) value);
                         return IndexOf (value);
                 }
-#endif // ONLY_1_1
 
-		
 		public OdbcParameter Add (OdbcParameter parameter)
 		{
 			if (parameter.Container != null)
                                 throw new ArgumentException ("The OdbcParameter specified in the value parameter is already added to this or another OdbcParameterCollection.");
                                                                                                     
                         parameter.Container = this;
-#if ONLY_1_1
                         list.Add (parameter);
-#else
-                        base.Add ((DbParameter) parameter);
-#endif // ONLY_1_1
 	                return parameter;
 		}
 
@@ -223,24 +204,17 @@ namespace System.Data.Odbc
 			}
 		}
 
-#if ONLY_1_1
-		public void Clear()
+		public 
+#if NET_2_0
+		override
+#endif
+		void Clear()
                 {
                         foreach (OdbcParameter p in list)
                                 p.Container = null;
                                                                                                     
                         list.Clear ();
                 }
-#else
-                public override void Clear()
-                {
-                        foreach (OdbcParameter p in this)
-                                p.Container = null;
-                                                                                                    
-                        base.Clear ();
-                }
-
-#endif // ONLY_1_1
 
 		public
 #if NET_2_0
@@ -271,11 +245,7 @@ namespace System.Data.Odbc
 #endif // NET_2_0
                 void CopyTo (Array array, int index)
                 {
-#if ONLY_1_1
                         list.CopyTo (array, index);
-#else
-                        base.CopyTo (array, index);
-#endif //ONLY_1_1
                 }
 
 		public
@@ -284,11 +254,7 @@ namespace System.Data.Odbc
 #endif // NET_2_0
                 IEnumerator GetEnumerator()
                 {
-#if ONLY_1_1
                         return list.GetEnumerator ();
-#else
-                        return base.GetEnumerator ();
-#endif // ONLY_1_1
                 }
 
   		public
@@ -320,11 +286,7 @@ namespace System.Data.Odbc
 #endif // NET_2_0
                 void Insert (int index, object value)
                 {
-#if ONLY_1_1
                         list.Insert (index, value);
-#else
-                        base.Insert (index, value);
-#endif // ONLY_1_1
                 }
                                                                                                     
                 public
@@ -334,12 +296,7 @@ namespace System.Data.Odbc
                 void Remove (object value)
                 {
                         ((OdbcParameter) value).Container = null;
-#if ONLY_1_1
                         list.Remove (value);
-#else
-                        base.Remove (value);
-                        
-#endif // ONLY_1_1
                 }
                                                                                                     
                 public
@@ -349,11 +306,7 @@ namespace System.Data.Odbc
                 void RemoveAt (int index)
                 {
                         this [index].Container = null;
-#if ONLY_1_1
                         list.RemoveAt (index);
-#else
-                        base.RemoveAt (index);
-#endif // ONLY_1_1
                 }
                                                                                                     
                 public
@@ -372,8 +325,27 @@ namespace System.Data.Odbc
 		{
 			throw new NotImplementedException ();
 		}
+
+		[MonoTODO]
+		protected override DbParameter GetParameter (int index)
+		{
+			throw new NotImplementedException ();
+		}
+
 		[MonoTODO]
 		protected override void SetParameter (string name, DbParameter value)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected override void SetParameter (int index, DbParameter value)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public override void AddRange (Array values)
 		{
 			throw new NotImplementedException ();
 		}
