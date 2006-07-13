@@ -1327,22 +1327,10 @@ namespace System.Data {
 		
 		private void WriteTables (XmlWriter writer, XmlWriteMode mode, DataTableCollection tableCollection, DataRowVersion version)
 		{
-			//Write out each table in order, providing it is not
-			//part of another table structure via a nested parent relationship
-			foreach (DataTable table in tableCollection) {
-				bool isTopLevel = true;
-				/*
-				foreach (DataRelation rel in table.ParentRelations) {
-					if (rel.Nested) {
-						isTopLevel = false;
-						break;
-					}
-				}
-				*/
-				if (isTopLevel) {
-					WriteTable ( writer, table, mode, version);
-				}
-			}
+			//WriteTable takes care of skipping a table if it has a 
+			//Nested Parent Relationship
+			foreach (DataTable table in tableCollection)
+				WriteTable ( writer, table, mode, version);
 		}
 
 		private void WriteTable (XmlWriter writer, DataTable table, XmlWriteMode mode, DataRowVersion version)
@@ -1374,30 +1362,18 @@ namespace System.Data {
 			foreach (DataRow row in rows) {
 				if (skipIfNested) {
 					// Skip rows that is a child of any tables.
-					switch (relationCount) {
-					case 0:
-						break;
-					case 1:
-						if (!oneRel.Nested)
-							break;
-						if (row.GetParentRow (oneRel) != null)
+					bool skip = false;
+					for (int i = 0; i < table.ParentRelations.Count; i++) {
+						DataRelation prel = table.ParentRelations [i];
+						if (!prel.Nested)
 							continue;
-						break;
-					case 2:
-						bool skip = false;
-						for (int i = 0; i < table.ParentRelations.Count; i++) {
-							DataRelation prel = table.ParentRelations [i];
-							if (!prel.Nested)
-								continue;
-							if (row.GetParentRow (prel) != null) {
-								skip = true;
-								continue;
-							}
+						if (row.GetParentRow (prel) != null) {
+							skip = true;
+							continue;
 						}
-						if (skip)
-							continue;
-						break;
 					}
+					if (skip)
+						continue;
 				}
 
 				if (!row.HasVersion(version) || 

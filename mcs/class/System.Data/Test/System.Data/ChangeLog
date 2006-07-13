@@ -1,3 +1,7 @@
+2006-07-13  Senganal T <tsenganal@novell.com>
+
+	* DataSetTest2.cs : Test for bug #78842
+
 2006-07-12  Senganal T <tsenganal@novell.com>
 
 	* ConstraintCollectionTest2.cs : Test Remove behavior.

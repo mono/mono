@@ -3375,5 +3375,43 @@ namespace MonoTests_System.Data
 			Assert.AreEqual ("a", ds1.Tables [0].Rows [0][0], "#3");
 			Assert.AreEqual ("a", ds1.Tables [0].Rows [1][0], "#4");
 		}
+
+		[Test]
+		public void WriteXml_Morethan2Relations ()
+		{
+			DataSet ds = new DataSet ();
+			DataTable p1 = ds.Tables.Add ("parent1");
+			DataTable p2 = ds.Tables.Add ("parent2");
+			DataTable p3 = ds.Tables.Add ("parent3");
+			DataTable c1 = ds.Tables.Add ("child");
+
+			c1.Columns.Add ("col1");
+			c1.Columns.Add ("col2");
+			c1.Columns.Add ("col3");
+			c1.Columns.Add ("col4");
+
+			p1.Columns.Add ("col1");
+			p2.Columns.Add ("col1");
+			p3.Columns.Add ("col1");
+
+			ds.Relations.Add ("rel1", p1.Columns [0], c1.Columns [0], false);
+			ds.Relations.Add ("rel2", p2.Columns [0], c1.Columns [1], false);
+			ds.Relations.Add ("rel3", p3.Columns [0], c1.Columns [2], false);
+			ds.Relations [2].Nested = true;
+
+			p1.Rows.Add (new object[] {"p1"});
+			p2.Rows.Add (new object[] {"p2"});
+			p3.Rows.Add (new object[] {"p3"});
+
+			c1.Rows.Add (new object[] {"p1","p2","p3","c1"});
+
+			StringWriter sw = new StringWriter ();
+			XmlTextWriter xw = new XmlTextWriter (sw);
+			ds.WriteXml (xw);
+			string dataset_xml = sw.ToString ();
+			string child_xml = "<child><col1>p1</col1><col2>p2</col2><col3>p3</col3><col4>c1</col4></child>";
+			//the child table data must not be repeated.
+			Assert.AreEqual (dataset_xml.IndexOf (child_xml), dataset_xml.LastIndexOf (child_xml), "#1");
+		}
 	}
 }

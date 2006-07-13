@@ -1,3 +1,11 @@
+2006-07-13  Senganal T  <tsenganal@novell.com>
+
+	* DataSet.cs :
+		- WriteTables : Remove some commented out code
+		- WriteTable : Fix the logic to skip the table data when the
+		table has a nested relation.
+		fixes bug #78842
+
 2006-07-12  Senganal T  <tsenganal@novell.com>
 
 	* ConstraintCollection.cs : 
