@@ -271,9 +271,9 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("SetErrorInfo")]
 		public static int GetHRForException (Exception e) {
-			throw new NotImplementedException ();
+			return e.hresult;
 		}
 
 		[MonoTODO]
