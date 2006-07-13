@@ -1,3 +1,7 @@
+2006-07-13  Jackson Harper  <jackson@ximian.com>
+
+	* ComboBox.cs: Revert the item->index part of my previous patch.
+
 2006-07-12  Jackson Harper  <jackson@ximian.com>
 
 	* ComboBox.cs: Clear out old items before setting the item list.
