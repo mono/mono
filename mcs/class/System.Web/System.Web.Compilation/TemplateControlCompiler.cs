@@ -505,8 +505,10 @@ namespace System.Web.Compilation
 #if NET_2_0
 				if (isDataBound) RegisterBindingInfo (builder, member.Name, ref attValue);
 #endif
-				if (IsWritablePropertyOrField (member))
-					AddCodeForPropertyOrField (builder, type, member.Name, attValue, member, isDataBound);
+				if (!IsWritablePropertyOrField (member))
+					return false;
+
+				AddCodeForPropertyOrField (builder, type, member.Name, attValue, member, isDataBound);
 				return true;
 			}
 			
@@ -643,7 +645,6 @@ namespace System.Web.Compilation
 					continue;
 #endif
 				CreateAssignStatementFromAttribute (builder, id);
-
 			}
 		}
 
