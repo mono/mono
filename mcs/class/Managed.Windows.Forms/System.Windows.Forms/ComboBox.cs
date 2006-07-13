@@ -731,7 +731,11 @@ namespace System.Windows.Forms
 		[EditorBrowsable(EditorBrowsableState.Advanced)]		
 		protected override void OnGotFocus (EventArgs e) {			
 			Invalidate ();
-			textbox_ctrl.Focus ();
+
+			if (dropdown_style == ComboBoxStyle.Simple)
+				listbox_ctrl.Focus ();
+			else if (dropdown_style != ComboBoxStyle.DropDownList && textbox_ctrl != null)
+				textbox_ctrl.Focus ();
 			base.OnGotFocus (e);
 		}
 
