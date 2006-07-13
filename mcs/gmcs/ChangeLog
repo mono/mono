@@ -1,3 +1,8 @@
+2006-07-13  Miguel de Icaza  <miguel@novell.com>
+
+	* statement.cs (Lock): Handle expressions of type
+	TypeManager.null_type specially.  Fixes #78770
+
 2006-07-08  Marek Safar  <marek.safar@seznam.cz>
 
 	* expression.cs (Binary.ResolveOperator): Don't crash when null is assigned

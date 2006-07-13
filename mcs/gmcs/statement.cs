@@ -3180,7 +3180,11 @@ namespace Mono.CSharp {
 				ec.NeedReturnLabel ();
 			}
 
-			temp = new TemporaryVariable (expr.Type, loc);
+			Type t = expr.Type;
+			if (t == TypeManager.null_type)
+				t = TypeManager.object_type;
+			
+			temp = new TemporaryVariable (t, loc);
 			temp.Resolve (ec);
 			
 			return true;
