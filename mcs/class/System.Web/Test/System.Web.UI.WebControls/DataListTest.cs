@@ -989,6 +989,41 @@ namespace MonoTests.System.Web.UI.WebControls {
 			}
 		}
 
+		//Some real templates for testing if proper Template was used
+		class ItemTemplate : ITemplate {
+			public void InstantiateIn (Control container)
+			{
+				Label lbl = new Label();
+				lbl.ID = "itemtmpl";
+				container.Controls.Add(lbl);
+			}
+		}
+
+		class EditItemTemplate : ITemplate {
+			public void InstantiateIn (Control container)
+			{
+				TextBox tb = new TextBox();
+				tb.ID = "eitemtmpl";
+				container.Controls.Add(tb);
+			}
+		}
+
+		[Test]
+		public void ProperTemplateSelectedIndexEqualsEditIndex ()
+		{
+			TestDataList dl = new TestDataList();
+			dl.ItemTemplate = new ItemTemplate();
+			dl.AlternatingItemTemplate = new ItemTemplate();
+			dl.SelectedItemTemplate = new ItemTemplate();
+			dl.EditItemTemplate = new EditItemTemplate();
+			dl.DataSource = GetData(5);
+			dl.SelectedIndex = 0;
+			dl.EditItemIndex = 0;
+			dl.DataBind();
+			object canIGetMyEditItem = dl.Items[dl.EditItemIndex].FindControl("eitemtmpl");
+			Assert.IsTrue(canIGetMyEditItem != null, "ProperTemplateSelectedIndexEqualsEditIndex");
+		}
+
 		[Test]
 		public void NControls3 ()
 		{
