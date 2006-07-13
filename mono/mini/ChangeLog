@@ -1,3 +1,9 @@
+2006-07-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* inssel-long32.brg: Fix long->i4 checked conversion.
+
+	* exceptions.cs: Add a test for the above.
+
 2006-07-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-exceptions.c (mono_setup_altstack): Fix a memory leak.
