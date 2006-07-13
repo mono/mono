@@ -632,10 +632,10 @@ namespace System.Web.UI.WebControls {
 			case ListItemType.SelectedItem:
 			case ListItemType.EditItem:
 				int index = item.ItemIndex;
-				if ((SelectedIndex == index) && (SelectedItemTemplate != null))
-					t = SelectedItemTemplate;
-				else if ((EditItemIndex == index) && (EditItemTemplate != null))
+				if ((EditItemIndex == index) && (EditItemTemplate != null))
 					t = EditItemTemplate;
+				else if ((SelectedIndex == index) && (SelectedItemTemplate != null))
+					t = SelectedItemTemplate;
 				else if (((index & 1) == 0) || (alternatingItemTemplate == null))
 					t = ItemTemplate;
 				else

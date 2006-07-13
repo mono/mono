@@ -1,3 +1,8 @@
+2006-07-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DataList.cs: correctly initialize editable items when there's an
+	EditItemTemplate. Patch by Jarosław Pawlak.
+
 2006-07-13  Juraj Skripsky <js@hotfeet.ch>
 
 	* CheckBox.cs (LoadPostData): the value of a disabled checkbox remains
