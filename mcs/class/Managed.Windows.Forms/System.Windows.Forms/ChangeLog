@@ -1,5 +1,13 @@
 2006-07-13  Jackson Harper  <jackson@ximian.com>
 
+	* TreeView.cs: When an edit is finished make sure that the
+	selected node is visible.
+	- When setting the top/bottom use the scrollbars is_visible, so
+	everything will be set correctly even if the tree isn't visible
+	yet.
+
+2006-07-13  Jackson Harper  <jackson@ximian.com>
+
 	* ComboBox.cs: Revert the item->index part of my previous patch.
 	* TreeView.cs: Use LostFocus instead of Leave for detecting when
 	the edit box has lost focus (duh).
