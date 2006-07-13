@@ -54,7 +54,7 @@ namespace System
 		string stack_trace;
 		string remote_stack_trace;
 		int remote_stack_index;
-		int hresult = unchecked ((int)0x80004005);
+		internal int hresult = unchecked ((int)0x80004005);
 		string source;
 
 		public Exception ()
