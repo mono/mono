@@ -651,18 +651,20 @@ namespace System.Data {
 		[DataSysDescription ("Indicates the index of this column in the Columns collection.")]
 #endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public int Ordinal
-		{
-			get {
-				//value is -1 if not part of a collection
-				return _ordinal;
-			}
+		public int Ordinal {
+			get { return _ordinal; }
+			internal  set { _ordinal = value; }
 		}
 
-		internal void SetOrdinal(int ordinal)
+#if NET_2_0
+		public void SetOrdinal (int ordinal)
 		{
+			if (_ordinal == -1)
+				throw new ArgumentException ("Column must belong to a table.");
+			_table.Columns.MoveColumn (_ordinal, ordinal);
 			_ordinal = ordinal;
 		}
+#endif
 
 		[DataCategory ("Data")]
 #if !NET_2_0

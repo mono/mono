@@ -1,4 +1,14 @@
 2006-07-14  Senganal T  <tsenganal@novell.com>
+	
+	* DataColumn.cs :
+		- SetOrdinal : Implemented
+		- Ordinal : added internal set
+	* DataColumnCollection.cs : 
+		- Add : Set the column ordinals
+		- MoveColumn : Changes the position of column in the
+		collection
+
+2006-07-14  Senganal T  <tsenganal@novell.com>
 
 	* DataTable.cs :
 		- Merge - Implement the merge methods

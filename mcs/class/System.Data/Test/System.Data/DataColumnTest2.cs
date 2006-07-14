@@ -853,6 +853,42 @@ namespace MonoTests.System.Data
 				Assert.Fail("#3");
 			} catch (InvalidOperationException e) {}
 		}
+
+        	[Test]
+        	public void SetOrdinalTest()
+		{
+			DataColumn col = new DataColumn("col", typeof(int));
+			try {
+				col.SetOrdinal(2);
+				Assert.Fail ("#1");
+			} catch (ArgumentException e) { }
+
+			DataTable table = new DataTable();
+			DataColumn col1 = table.Columns.Add ("col1", typeof (int));
+			DataColumn col2 = table.Columns.Add("col2", typeof(int));
+			DataColumn col3 = table.Columns.Add("col3", typeof(int));
+
+			Assert.AreEqual("col1", table.Columns[0].ColumnName, "#2");
+			Assert.AreEqual("col3", table.Columns[2].ColumnName, "#3");
+
+			table.Columns[0].SetOrdinal (2);
+			Assert.AreEqual("col2", table.Columns[0].ColumnName, "#4");
+			Assert.AreEqual("col1", table.Columns[2].ColumnName, "#5");
+
+			Assert.AreEqual(0, col2.Ordinal, "#6");
+			Assert.AreEqual(1, col3.Ordinal, "#7");
+			Assert.AreEqual(2, col1.Ordinal, "#8");
+
+			try {
+				table.Columns[0].SetOrdinal (-1);
+				Assert.Fail ("#9");
+			} catch (ArgumentOutOfRangeException e) { }
+
+			try {
+				table.Columns[0].SetOrdinal (4);
+				Assert.Fail ("#10");
+			} catch (ArgumentOutOfRangeException e) { }
+		}
 #endif
 	}
 }

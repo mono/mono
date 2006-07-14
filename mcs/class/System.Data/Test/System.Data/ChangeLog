@@ -1,5 +1,9 @@
 2006-07-14  Senganal T <tsenganal@novell.com>
 
+	* DataColumnTest2.cs : Test for SetOrdinal 
+
+2006-07-14  Senganal T <tsenganal@novell.com>
+
 	* DataRelationTest2.cs
 	* ForeignKeyConstraintTest2.cs
 	* DataColumnTest2.cs

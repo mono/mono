@@ -237,7 +237,7 @@ namespace System.Data {
 			column.SetTable (parentTable);
 			RegisterName(column.ColumnName, column);
 			int ordinal = base.List.Add(column);
-			column.SetOrdinal (ordinal);
+			column.Ordinal = ordinal;
 		
 			// Check if the Column Expression is ok	
 			if (column.CompiledExpression != null)
@@ -545,7 +545,7 @@ namespace System.Data {
 	
 			//Update the ordinals
 			for( int i = ordinal ; i < this.Count ; i ++ )
-				this[i].SetOrdinal( i );
+				this[i].Ordinal = i;
 
 			if (parentTable != null)
 				parentTable.OnRemoveColumn(column);
@@ -654,5 +654,27 @@ namespace System.Data {
 		public event CollectionChangeEventHandler CollectionChanged;
 
 		#endregion 
+		
+#if NET_2_0
+		internal void MoveColumn (int oldOrdinal, int newOrdinal)
+		{
+			if (newOrdinal == -1 || newOrdinal > this.Count)
+				throw new ArgumentOutOfRangeException ("ordinal", "Ordinal '" + newOrdinal + "' exceeds the maximum number.");
+			if (oldOrdinal == newOrdinal)
+				return;
+			
+			int start = newOrdinal > oldOrdinal ? oldOrdinal : newOrdinal;
+			int end = newOrdinal > oldOrdinal ?  newOrdinal : oldOrdinal;
+			int direction = newOrdinal > oldOrdinal ? 1 : (-1);
+
+			DataColumn currColumn = this [start];
+			for (int i=start; i < end; i+=direction) {
+				List [i] = List [i+direction];
+				((DataColumn)List [i]).Ordinal = i;
+			}
+			List [end] = currColumn;
+			currColumn.Ordinal = end;
+		}
+#endif
 	}
 }
