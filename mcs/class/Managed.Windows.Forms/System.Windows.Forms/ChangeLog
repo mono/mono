@@ -1,3 +1,27 @@
+2006-07-14  Jonathan Pobst  <monkey@ipobst.com>
+
+	MergeAction.cs, PowerLineStatus.cs, PowerState.cs, PreProcessControlState.cs,
+	RichTextBoxLanguageOptions.cs, ScreenOrientation.cs, ScrollOrientation.cs,
+	SearchDirectionHint.cs, SystemParameter.cs, TabControlAction.cs,
+	TableLayoutPanelCellBorderStyle.cs, TextDataFormat.cs, TextImageRelation.cs,
+	ToolStripDropDownCloseReason.cs, ToolStripDropDownDirection.cs,
+	ToolStripGripDisplayStyle.cs, ToolStripGripStyle.cs,
+	ToolStripItemAlignment.cs, ToolStripItemDisplayStyle.cs,
+	ToolStripItemImageScaling.cs, ToolStripItemOverflow.cs,
+	ToolStripItemPlacement.cs, ToolStripLayoutStyle.cs,
+	ToolStripManagerRenderMode.cs, ToolStripRenderMode.cs,
+	ToolStripStatusLabelBorderSides.cs, ToolStripTextDirection.cs,
+	ToolTipIcon.cs, TreeNodeStates.cs, TreeViewDrawMode.cs,
+	TreeViewHitTestLocations.cs, UnhandledExceptionMode.cs, ValidationConstraints.cs,
+	WebBrowserEncryptionLevel.cs, WebBrowserReadyState.cs, WebBrowserRefreshOption.cs,
+	ArrowDirection.cs, AutoCompleteMode.cs, AutoCompleteSource.cs, AutoSizeMode.cs,
+	AutoValidate.cs, BatteryChargeStatus.cs, BindingCompleteContext.cs,
+	BindingCompleteState.cs, CloseReason.cs, ColumnHeaderAutoResizeStyle.cs,
+	ControlUpdateMode.cs, DataSourceUpdateMode.cs, DockingBehavior.cs,
+	FixedPanel.cs, FlowDirection.cs, GetChildAtPointSkip.cs,
+	HtmlElementInsertionOrientation.cs, InsertKeyMode.cs, ListViewHitTestLocations.cs,
+	ListViewItemStates.cs, MaskFormat.cs: Added
+
 2006-07-13  Jonathan Chambers  <joncham@gmail.com>
 
 	* PropertyGridView.cs: Fix keyboard navigation of drop down.
