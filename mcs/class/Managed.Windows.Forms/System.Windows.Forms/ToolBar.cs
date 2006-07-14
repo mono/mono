@@ -150,7 +150,7 @@ namespace System.Windows.Forms
 					return;
 
 				appearance = value;
-				Redraw (false);
+				Redraw (true);
 			}
 		}
 
@@ -231,7 +231,7 @@ namespace System.Windows.Forms
 				return button_size;
 			}
 			set {
-				size_specified = true;
+				size_specified = value != Size.Empty;
 				if (button_size == value)
 					return;
 
@@ -295,7 +295,12 @@ namespace System.Windows.Forms
 		[DefaultValue (null)]
 		public ImageList ImageList {
 			get { return image_list; }
-			set { image_list = value; }
+			set { 
+				if (image_list == value)
+					return;
+				image_list = value;
+				Redraw (true);
+			}
 		}
 
 		[Browsable (false)]
@@ -641,43 +646,72 @@ namespace System.Windows.Forms
 
 		private Size CalcButtonSize ()
 		{
-			string longest_text = buttons [0].Text;
-			for (int i = 1; i < buttons.Count; i++) {
-				if (buttons[i].Text.Length > longest_text.Length)
-					longest_text = buttons[i].Text;
+			if (Buttons.Count == 0)
+				return Size.Empty;
+
+			string longest_text = Buttons [0].Text;
+			for (int i = 1; i < Buttons.Count; i++) {
+				if (Buttons[i].Text.Length > longest_text.Length)
+					longest_text = Buttons[i].Text;
 			}
 
 			Size size = Size.Empty;
 			if (longest_text != null && longest_text.Length > 0) {
-				SizeF sz = this.DeviceContext.MeasureString (longest_text, this.Font);
-				size = new Size ((int) Math.Ceiling (sz.Width) + 2 * text_padding, (int) Math.Ceiling (sz.Height));
+				SizeF sz = DeviceContext.MeasureString (longest_text, Font);
+				if (sz != SizeF.Empty)
+					size = new Size ((int) Math.Ceiling (sz.Width) + 2 * text_padding, (int) Math.Ceiling (sz.Height));
 			}
 
-			if (ImageList != null) {
-				// adjustment for the image grip 
-				int imgWidth = this.ImageSize.Width + 2 * ThemeEngine.Current.ToolBarImageGripWidth; 
-				int imgHeight = this.ImageSize.Height + 2 * ThemeEngine.Current.ToolBarImageGripWidth;
+			Size img_size = ImageList == null ? new Size (16, 16) : ImageSize;
 
-				if (text_alignment == ToolBarTextAlign.Right) {
-					size.Width = imgWidth + size.Width;
-					size.Height = (size.Height > imgHeight) ? size.Height : imgHeight;
-				}
-				else {
-					size.Height = imgHeight + size.Height;
-					size.Width = (size.Width > imgWidth) ? size.Width : imgWidth;
-				}
+			Theme theme = ThemeEngine.Current;
+			int imgWidth = img_size.Width + 2 * theme.ToolBarImageGripWidth; 
+			int imgHeight = img_size.Height + 2 * theme.ToolBarImageGripWidth;
+
+			if (text_alignment == ToolBarTextAlign.Right) {
+				size.Width = imgWidth + size.Width;
+				size.Height = (size.Height > imgHeight) ? size.Height : imgHeight;
+			} else {
+				size.Height = imgHeight + size.Height;
+				size.Width = (size.Width > imgWidth) ? size.Width : imgWidth;
 			}
+
+			size.Width += theme.ToolBarImageGripWidth;
+			size.Height += theme.ToolBarImageGripWidth;
 			return size;
+		}
+
+		// Flat toolbars disregard specified sizes.  Normal toolbars grow the
+		// button size to be at least large enough to show the image.
+		Size AdjustedButtonSize {
+			get {
+				Size size = ButtonSize;
+				if (size_specified) {
+					if (Appearance == ToolBarAppearance.Flat)
+						size = CalcButtonSize ();
+					else {
+						int grip = ThemeEngine.Current.ToolBarImageGripWidth;
+						if (size.Width < ImageSize.Width + 2 * grip )
+							size.Width = ImageSize.Width + 2 * grip;
+						if (size.Height < ImageSize.Height + 2 * grip)
+							size.Height = ImageSize.Height + 2 * grip;
+					}
+				}
+				return size;
+			}
 		}
 
 		void Layout ()
 		{
 			Theme theme = ThemeEngine.Current;
-			int ht = ButtonSize.Height + theme.ToolBarGripWidth;
 			int x = theme.ToolBarGripWidth;
 			int y = theme.ToolBarGripWidth;
 
-			if (Wrappable) {
+			Size button_size = AdjustedButtonSize;
+
+			int ht = button_size.Height + theme.ToolBarGripWidth;
+
+			if (Wrappable && Parent != null) {
 				int separator_index = -1;
 
 				for (int i = 0; i < buttons.Count; i++) {
@@ -687,7 +721,7 @@ namespace System.Windows.Forms
 						continue;
 
 					if (size_specified)
-						button.Layout (ButtonSize);
+						button.Layout (button_size);
 					else
 						button.Layout ();
 
@@ -719,7 +753,7 @@ namespace System.Windows.Forms
 					Height = DefaultSize.Height;
 				foreach (ToolBarButton button in buttons) {
 					if (size_specified)
-						button.Layout (ButtonSize);
+						button.Layout (button_size);
 					else
 						button.Layout ();
 					button.Location = new Point (x, y);

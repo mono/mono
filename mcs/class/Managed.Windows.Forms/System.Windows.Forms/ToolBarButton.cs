@@ -177,7 +177,10 @@ namespace System.Windows.Forms
 					return;
 
 				image_index = value;
-				Invalidate ();
+				if (bounds.Size != CalculateSize ())
+					Parent.Redraw (true);
+				else
+					Invalidate ();
 			}
 		}
 
@@ -315,30 +318,34 @@ namespace System.Windows.Forms
 
 			bounds.Size = size;
 
-			Image image = Image;
-			if (image == null) {
-				text_rect = new Rectangle (Point.Empty, size);
-				image_rect = Rectangle.Empty;
-				return;
-			}
-
+			Size image_size = (Parent.ImageSize == Size.Empty) ? new Size (16, 16) : Parent.ImageSize;
 			int grip = ThemeEngine.Current.ToolBarImageGripWidth;
 
 			if (Parent.TextAlign == ToolBarTextAlign.Underneath) {
-				image_rect = new Rectangle ((size.Width - image.Width) / 2 - grip, 0, image.Width + 2 + grip, image.Height + 2 * grip);
-
-				text_rect = new Rectangle (0, image_rect.Bottom, size.Width, size.Height - image_rect.Height);
+				image_rect = new Rectangle ((bounds.Size.Width - image_size.Width) / 2 - grip, 0, image_size.Width + 2 + grip, image_size.Height + 2 * grip);
+				text_rect = new Rectangle (0, image_rect.Height, bounds.Size.Width, bounds.Size.Height - image_rect.Height);
 			} else {
-				image_rect = new Rectangle (0, 0, image.Width + 2 * grip, image.Height + 2 * grip);
-
-				text_rect = new Rectangle (image_rect.Right, 0, size.Width - image_rect.Width, size.Height);
+				image_rect = new Rectangle (0, 0, image_size.Width + 2 * grip, image_size.Height + 2 * grip);
+				text_rect = new Rectangle (image_rect.Width, 0, bounds.Size.Width - image_rect.Width, bounds.Size.Height);
 			}
 		}
 
 		const int text_padding = 3;
 
+		Size TextSize {
+			get {
+				SizeF sz = Parent.DeviceContext.MeasureString (Text, Parent.Font);
+				if (sz == SizeF.Empty)
+					return Size.Empty;
+				return new Size ((int) Math.Ceiling (sz.Width) + 2 * text_padding, (int) Math.Ceiling (sz.Height));
+			}
+		}
+
 		Size CalculateSize ()
 		{
+			if (Parent == null)
+				return Size.Empty;
+
 			Theme theme = ThemeEngine.Current;
 
 			int ht = Parent.ButtonSize.Height + 2 * theme.ToolBarGripWidth;
@@ -346,17 +353,11 @@ namespace System.Windows.Forms
 			if (Style == ToolBarButtonStyle.Separator)
 				return new Size (theme.ToolBarSeparatorWidth, ht);
 
-			SizeF sz = Parent.DeviceContext.MeasureString (Text, Parent.Font);
-			Size size = new Size ((int) Math.Ceiling (sz.Width) + 2 * text_padding, 
-					      (int) Math.Ceiling (sz.Height));
+			Size size = TextSize;
+			Size image_size = (Parent.ImageSize == Size.Empty) ? new Size (16, 16) : Parent.ImageSize;
 
-			Image image = Image;
-
-			if (image == null)
-				return size;
-
-			int image_width = image.Width + 2 * theme.ToolBarImageGripWidth; 
-			int image_height = image.Height + 2 * theme.ToolBarImageGripWidth; 
+			int image_width = image_size.Width + 2 * theme.ToolBarImageGripWidth; 
+			int image_height = image_size.Height + 2 * theme.ToolBarImageGripWidth; 
 
 			if (Parent.TextAlign == ToolBarTextAlign.Right) {
 				size.Width =  image_width + size.Width;

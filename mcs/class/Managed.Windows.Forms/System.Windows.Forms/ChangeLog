@@ -1,3 +1,19 @@
+2006-07-14  Mike Kestner  <mkestner@novell.com>
+
+	* ToolBarButton.cs:
+	* ToolBar.cs: layout restructuring and redraw enhancements to support
+	formatting changes gracefully, like setting TextAlign, ImageList, 
+	ButtonSize, and Appearance.  Handles explicit button sizing quirks
+	of the MS controls.  Things like flat toolbars ignoring button size
+	but becoming constant sized at the largest button's size.  Normal
+	toolbars with an image set cannot be shrunk smaller than the image,
+	but text can be clipped/ignored.
+	* ThemeWin32Classic.cs: don't draw text if text_rect height or width
+	is zero.  Seems like DrawString should be smart enough to not put
+	anything on screen though. Also trim labels and ellipsize at the char
+	boundary, not word.
+	Fixes #78711 and #78483.
+
 2006-07-14  Alexander Olk  <alex.olk@googlemail.com>
 
 	* FolderBrowserDialog.cs: Disable "New Folder" button and

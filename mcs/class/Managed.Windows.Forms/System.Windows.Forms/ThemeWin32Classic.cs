@@ -3682,7 +3682,7 @@ namespace System.Windows.Forms
 		public  override void DrawToolBar (Graphics dc, Rectangle clip_rectangle, ToolBar control) 
 		{
 			StringFormat format = new StringFormat ();
-			format.Trimming = StringTrimming.EllipsisWord;
+			format.Trimming = StringTrimming.EllipsisCharacter;
 			format.LineAlignment = StringAlignment.Center;
 			if (control.TextAlign == ToolBarTextAlign.Underneath)
 				format.Alignment = StringAlignment.Center;
@@ -3859,10 +3859,14 @@ namespace System.Windows.Forms
 					CPDrawImageDisabled (dc, button.Image, x, y, ColorControl);
 			}
 
+			Rectangle text_rect = button.TextRectangle;
+			if (text_rect.Width <= 0 || text_rect.Height <= 0)
+				return;
+
 			if (button.Enabled)
-				dc.DrawString (button.Text, control.Font, SystemBrushes.ControlText, button.TextRectangle, format);
+				dc.DrawString (button.Text, control.Font, SystemBrushes.ControlText, text_rect, format);
 			else
-				CPDrawStringDisabled (dc, button.Text, control.Font, control.BackColor, button.TextRectangle, format);
+				CPDrawStringDisabled (dc, button.Text, control.Font, control.BackColor, text_rect, format);
 		}
 
 		// Grip width for the ToolBar
