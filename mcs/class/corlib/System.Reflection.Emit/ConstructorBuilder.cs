@@ -211,6 +211,8 @@ namespace System.Reflection.Emit {
 		internal 
 #endif
 		ILGenerator GetILGenerator (int size) {
+			if (ilgen != null)
+				return ilgen;
 			ilgen = new ILGenerator (type.Module, ((ModuleBuilder)type.Module).GetTokenGenerator (), size);
 			return ilgen;
 		}
