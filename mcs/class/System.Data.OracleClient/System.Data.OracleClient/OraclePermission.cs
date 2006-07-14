@@ -46,13 +46,6 @@ namespace System.Data.OracleClient {
 		{
 		}
 
-		[MonoTODO ("overridden for what ? additional validations ???")]
-		protected override void AddConnectionString (string connectionString, string restrictions, 
-			KeyRestrictionBehavior behavior, Hashtable synonyms, bool useFirstKeyValue)
-		{
-			base.AddConnectionString (connectionString, restrictions, behavior, synonyms, useFirstKeyValue);
-		}
-
 		public override IPermission Copy ()
 		{
 			return new OraclePermission (this);

@@ -1,3 +1,7 @@
+2006-07-14  Senganal T  <tsenganal@novell.com>
+
+	* OraclePermission.cs : 2.0 Api fixes.
+
 2006-03-21	Boris Kirzner <borisk@mainsoft.com>
 	* Mainsoft.Data.Jdbc.Providers.jvm: added TARGET_JVM directory
 	* System.Data.OracleClient.vmwcsproj: added OracleProvider.cs
