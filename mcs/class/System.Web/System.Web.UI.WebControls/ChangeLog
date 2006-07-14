@@ -1,3 +1,7 @@
+2006-07-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Button.cs: always render the 'name' attribute. Fixes bug #78746.
+
 2006-07-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DataList.cs: correctly initialize editable items when there's an

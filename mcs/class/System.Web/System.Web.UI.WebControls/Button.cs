@@ -171,12 +171,7 @@ namespace System.Web.UI.WebControls {
 				Page.VerifyRenderingInServerForm (this);
 
 			writer.AddAttribute (HtmlTextWriterAttribute.Type, "submit");
-#if NET_2_0
-			if (ID != null)
-				writer.AddAttribute (HtmlTextWriterAttribute.Name, UniqueID);
-#else
 			writer.AddAttribute (HtmlTextWriterAttribute.Name, UniqueID);
-#endif
 			writer.AddAttribute (HtmlTextWriterAttribute.Value, Text);
 
 			if (CausesValidation && Page != null && Page.AreValidatorsUplevel ()) {
