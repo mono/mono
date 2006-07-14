@@ -1,3 +1,10 @@
+2006-07-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (create_custom_attr): Fix some warnings.
+	(create_custom_attr_data): Ditto.
+	(typebuilder_setup_properties): Save custom attrs for properties in dynamic
+	types. Fixes #78855.
+
 2006-07-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_type_get_name_recurse): Fix the name of 1 dimensional non-szarrays.
