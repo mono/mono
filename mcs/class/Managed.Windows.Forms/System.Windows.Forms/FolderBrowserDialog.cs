@@ -24,10 +24,6 @@
 //
 //
 
-// NOT COMPLETE
-// TODO:
-// - create new folder if NewFolderButton is pressed
-
 using System;
 using System.Drawing;
 using System.ComponentModel;
@@ -52,18 +48,42 @@ namespace System.Windows.Forms {
 		private Button okButton;
 		private FolderBrowserTreeView folderBrowserTreeView;
 		private Button newFolderButton;
+		private ContextMenu folderBrowserTreeViewContextMenu;
 		
 		private string old_selectedPath = "";
+		
+		private readonly string folderbrowserdialog_string = "FolderBrowserDialog";
+		private readonly string width_string = "Width";
+		private readonly string height_string = "Height";
+		private readonly string x_string = "X";
+		private readonly string y_string = "Y";
 		#endregion	// Local Variables
 		
 		#region Public Constructors
 		public FolderBrowserDialog ()
 		{
+			Size formConfigSize = Size.Empty;
+			Point formConfigLocation = Point.Empty;
+			
+			object formWidth = MWFConfig.GetValue (folderbrowserdialog_string, width_string);
+			
+			object formHeight = MWFConfig.GetValue (folderbrowserdialog_string, height_string);
+			
+			if (formHeight != null && formWidth != null)
+				formConfigSize = new Size ((int)formWidth, (int)formHeight);
+			
+			object formLocationX = MWFConfig.GetValue (folderbrowserdialog_string, x_string);
+			object formLocationY = MWFConfig.GetValue (folderbrowserdialog_string, y_string);
+			
+			if (formLocationX != null && formLocationY != null)
+				formConfigLocation = new Point ((int)formLocationX, (int)formLocationY);
+			
 			newFolderButton = new Button ();
 			folderBrowserTreeView = new FolderBrowserTreeView (this);
 			okButton = new Button ();
 			cancelButton = new Button ();
 			descriptionLabel = new Label ();
+			folderBrowserTreeViewContextMenu = new ContextMenu ();
 			
 			form.AcceptButton = okButton;
 			form.CancelButton = cancelButton;
@@ -73,6 +93,8 @@ namespace System.Windows.Forms {
 			form.MinimumSize = new Size (322, 288);
 			form.Text = "Search Folder";
 			form.SizeGripStyle = SizeGripStyle.Show;
+			
+			folderBrowserTreeViewContextMenu.MenuItems.Add("New Folder", new EventHandler (OnClickNewFolderButton));
 			
 			// descriptionLabel
 			descriptionLabel.Anchor = ((AnchorStyles)(((AnchorStyles.Top | AnchorStyles.Left)
@@ -95,6 +117,7 @@ namespace System.Windows.Forms {
 			folderBrowserTreeView.ShowPlusMinus = true;
 			folderBrowserTreeView.HotTracking = true;
 			folderBrowserTreeView.BorderStyle = BorderStyle.Fixed3D;
+			folderBrowserTreeView.ContextMenu = folderBrowserTreeViewContextMenu;
 			//folderBrowserTreeView.Indent = 2;
 			
 			// newFolderButton
@@ -130,6 +153,14 @@ namespace System.Windows.Forms {
 			form.Controls.Add (descriptionLabel);
 			
 			form.ResumeLayout (false);
+			
+			if (formConfigSize != Size.Empty) {
+				form.Size = formConfigSize;
+			}
+			
+			if (formConfigLocation != Point.Empty) {
+				form.Location = formConfigLocation;
+			}
 			
 			okButton.Click += new EventHandler (OnClickOKButton);
 			cancelButton.Click += new EventHandler (OnClickCancelButton);
@@ -230,18 +261,30 @@ namespace System.Windows.Forms {
 		#region Internal Methods
 		void OnClickOKButton (object sender, EventArgs e)
 		{
+			WriteConfigValues ();
+			
 			form.DialogResult = DialogResult.OK;
 		}
 		
 		void OnClickCancelButton (object sender, EventArgs e)
 		{
+			WriteConfigValues ();
+			
 			selectedPath = old_selectedPath;
 			form.DialogResult = DialogResult.Cancel;
 		}
 		
 		void OnClickNewFolderButton (object sender, EventArgs e)
 		{
-			// TODO
+			folderBrowserTreeView.CreateNewFolder ();
+		}
+		
+		private void WriteConfigValues ()
+		{
+			MWFConfig.SetValue (folderbrowserdialog_string, width_string, form.Width);
+			MWFConfig.SetValue (folderbrowserdialog_string, height_string, form.Height);
+			MWFConfig.SetValue (folderbrowserdialog_string, x_string, form.Location.X);
+			MWFConfig.SetValue (folderbrowserdialog_string, y_string, form.Location.Y);
 		}
 		#endregion	// Internal Methods
 		
@@ -259,6 +302,8 @@ namespace System.Windows.Forms {
 			private ImageList imageList = new ImageList ();
 			private Environment.SpecialFolder rootFolder;
 			private bool dont_enable = false;
+			
+			private int platform = (int) Environment.OSVersion.Platform;
 			
 			public FolderBrowserTreeView (FolderBrowserDialog parent_dialog)
 			{
@@ -307,6 +352,82 @@ namespace System.Windows.Forms {
 					if (Check_if_path_is_child_of_RootFolder (value)) {
 						SetSelectedPath (Path.GetFullPath (value));
 					}
+				}
+			}
+			
+			private string parent_real_path;
+			private bool dont_do_onbeforeexpand = false;
+			
+			public void CreateNewFolder ()
+			{
+				FBTreeNode fbnode = SelectedNode as FBTreeNode;
+				
+				if (fbnode == null || fbnode.Parent == null)
+					return;
+				
+				if (fbnode.RealPath == null)
+					return;
+				
+				string tmp_filename = "New Folder";
+				
+				if (Directory.Exists (Path.Combine (fbnode.RealPath, tmp_filename))) {
+					int i = 1;
+					
+					if ((platform == 4) || (platform == 128)) {
+						tmp_filename = tmp_filename + "-" + i;
+					} else {
+						tmp_filename = tmp_filename + " (" + i + ")";
+					}
+					
+					while (Directory.Exists (Path.Combine (fbnode.RealPath, tmp_filename))) {
+						i++;
+						if ((platform == 4) || (platform == 128)) {
+							tmp_filename = "New Folder" + "-" + i;
+						} else {
+							tmp_filename = "New Folder" + " (" + i + ")";
+						}
+					}
+				}
+				
+				parent_real_path = fbnode.RealPath;
+				
+				FBTreeNode new_node = new FBTreeNode (tmp_filename);
+				new_node.ImageIndex = NodeImageIndex(tmp_filename);
+				
+				FillNode (fbnode);
+				dont_do_onbeforeexpand = true;
+				fbnode.Expand ();
+				dont_do_onbeforeexpand = false;
+				
+				fbnode.Nodes.Add (new_node);
+				
+				LabelEdit = true;
+				if (!new_node.IsEditing)
+					new_node.BeginEdit();
+			}
+			
+			protected override void OnAfterLabelEdit (NodeLabelEditEventArgs e)
+			{
+				if (e.Label != null) {
+					if (e.Label.Length > 0) {
+						FBTreeNode fbnode = e.Node as FBTreeNode;
+						
+						fbnode.RealPath = Path.Combine(parent_real_path, e.Label);
+						
+						if (vfs.CreateFolder (fbnode.RealPath)) {
+							SelectedNode = e.Node;
+						} else {
+							SelectedNode = e.Node.Parent;
+							e.Node.Parent.Nodes.Remove(e.Node);
+						}
+						
+						e.Node.EndEdit (false);
+					} else {
+						e.CancelEdit = true;
+						e.Node.BeginEdit();
+					}
+					
+					LabelEdit = false;
 				}
 			}
 			
@@ -508,9 +629,11 @@ namespace System.Windows.Forms {
 			
 			protected internal override void OnBeforeExpand (TreeViewCancelEventArgs e)
 			{
-				if (e.Node == root_node)
-					return;
-				FillNode (e.Node);
+				if (!dont_do_onbeforeexpand) {
+					if (e.Node == root_node)
+						return;
+					FillNode (e.Node);
+				}
 				
 				base.OnBeforeExpand (e);
 			}

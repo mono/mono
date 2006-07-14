@@ -1,3 +1,11 @@
+2006-07-14  Alexander Olk  <alex.olk@googlemail.com>
+
+	* FileDialog.cs: Don't create a new folder in "MyComputer" folder.
+	* FolderBrowserDialog.cs:
+	  - Use MWFConfig to store and read size and position settings
+	  - Added code to create a new folder (button or context menu).
+	    Use TreeView labeledit to change the name of the new folder.
+
 2006-07-14  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Raise the OnAfterLabelEdit event correctly.  Also,

@@ -2089,7 +2089,8 @@ namespace System.Windows.Forms {
 		
 		public void CreateNewFolder ()
 		{
-			if (currentFolder == MWFVFS.RecentlyUsedPrefix)
+			if (currentFolder == MWFVFS.MyComputerPrefix ||
+			    currentFolder == MWFVFS.RecentlyUsedPrefix)
 				return;
 			
 			FSEntry fsEntry = new FSEntry ();
