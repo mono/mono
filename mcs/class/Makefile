@@ -43,6 +43,7 @@ common_dirs := \
 	System.EnterpriseServices	\
 	Mono.C5				\
 	Mono.Data.Tds			\
+	System.Transactions		\
 	System.Data			\
 	Mono.Data			\
 	Mono.GetOptions			\
@@ -89,8 +90,7 @@ net_2_0_dirs := \
 	Microsoft.Build.Framework	\
 	Microsoft.Build.Utilities	\
 	Microsoft.Build.Engine		\
-	Microsoft.Build.Tasks		\
-	System.Transactions
+	Microsoft.Build.Tasks
 
 default_SUBDIRS := $(common_dirs) $(default_dirs)
 net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs)
