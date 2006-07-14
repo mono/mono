@@ -1,3 +1,7 @@
+2006-07-14  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* System.dll.sources: Added System.ComponentModel/MaskedTextResultHint.cs
+
 2006-07-06  Dick Porter  <dick@ximian.com>
 
 	* System.dll.sources: Added

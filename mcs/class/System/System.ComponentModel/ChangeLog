@@ -1,3 +1,7 @@
+2006-07-14  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* MaskedTextResultHint.cs: Added
+
 2006-05-31  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TypeConverter.cs: Added explicit interface implementation for
