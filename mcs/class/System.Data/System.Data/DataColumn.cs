@@ -157,6 +157,39 @@ namespace System.Data {
 			}
 		}
 
+#if NET_2_0
+		DataSetDateTime _datetimeMode = DataSetDateTime.UnspecifiedLocal;
+		[DefaultValue (DataSetDateTime.UnspecifiedLocal)]
+		[RefreshProperties (RefreshProperties.All)]
+		public DataSetDateTime DateTimeMode {
+			get { return _datetimeMode; }
+			set {
+				if (DataType != typeof (DateTime))
+					throw new InvalidOperationException ("The DateTimeMode can be set only on DataColumns of type DateTime.");
+				
+				if (!Enum.IsDefined (typeof (DataSetDateTime), value))
+					throw new InvalidEnumArgumentException ("The DataSetDateTime enumeration value, " + 
+							(int)value + ", is invalid.");
+						
+				if (_datetimeMode == value)
+					return;
+				if (_table == null || _table.Rows.Count == 0) {
+					_datetimeMode = value;
+					return;
+				}
+				if ((_datetimeMode == DataSetDateTime.Unspecified || _datetimeMode == DataSetDateTime.UnspecifiedLocal)
+					&& (value == DataSetDateTime.Unspecified || value == DataSetDateTime.UnspecifiedLocal)) {
+					_datetimeMode = value;
+					return;
+				}
+
+				throw new InvalidOperationException ( String.Format (
+									"Cannot change DateTimeMode from '{0}' to '{1}' " +
+									"once the table has data.",_datetimeMode, value));
+			}
+		}
+#endif
+
 		[DataCategory ("Data")]
 #if !NET_2_0
 		[DataSysDescription ("Indicates whether null values are allowed in this column.")]
@@ -422,6 +455,10 @@ namespace System.Data {
                                         throw new InvalidConstraintException ("Cannot change datatype, " + 
                                                                               "when column is part of a relation");
                                 
+#if NET_2_0
+				if (_dataContainer != null && _dataContainer.Type == typeof (DateTime))
+					_datetimeMode = DataSetDateTime.UnspecifiedLocal;
+#endif
                                 _dataContainer = AbstractDataContainer.CreateInstance(value, this);
 
 				//Check AutoIncrement status, make compatible datatype
@@ -769,6 +806,10 @@ namespace System.Data {
 			//Copy.Site
 			//we do not copy the unique value - it will be copyied when copying the constraints.
 			//Copy.Unique = Column.Unique;
+#if NET_2_0
+			if (DataType == typeof (DateTime))
+				copy.DateTimeMode = _datetimeMode;
+#endif
 			
 			return copy;
 		}
@@ -927,6 +968,26 @@ namespace System.Data {
 			_table = null;
 			if (_compiledExpression != null)
 				_compiledExpression.ResetExpression ();
+		}
+
+		internal bool DataTypeMatches (DataColumn col)
+		{
+			if (DataType != col.DataType)
+				return false;
+#if NET_2_0
+			if (DataType != typeof (DateTime))
+				return true;
+
+			if (DateTimeMode == col.DateTimeMode)
+				return true;
+			
+			if (DateTimeMode == DataSetDateTime.Local || DateTimeMode == DataSetDateTime.Utc)
+				return false;
+
+			if (col.DateTimeMode == DataSetDateTime.Local || col.DateTimeMode == DataSetDateTime.Utc)
+				return false;
+#endif
+			return true;
 		}
 		#endregion // Methods
 	}

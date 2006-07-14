@@ -1,3 +1,12 @@
+2006-07-14  Senganal T <tsenganal@novell.com>
+
+	* DataRelationTest2.cs
+	* ForeignKeyConstraintTest2.cs
+	* DataColumnTest2.cs
+		Tests for DateTimeMode property
+	* DataTableTest2.cs
+		Tests for Merge Methods
+
 2006-07-13  Senganal T <tsenganal@novell.com>
 
 	* DataSetTest2.cs : Test for bug #78842

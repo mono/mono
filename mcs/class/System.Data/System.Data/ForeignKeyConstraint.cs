@@ -257,11 +257,10 @@ namespace System.Data {
 				if (pc == cc)
 					throw new InvalidOperationException("Parent and child columns can't be the same column.");
 
-				if (! pc.DataType.Equals(cc.DataType))
-				{
+				if (!pc.DataTypeMatches (cc)) {
 					//LAMESPEC: spec says throw InvalidConstraintException
 					//		implementation throws InvalidOperationException
-					throw new InvalidConstraintException("Parent column is not type compatible with it's child"
+					throw new InvalidOperationException ("Parent column is not type compatible with it's child"
 						+ " column.");
 				}
 			}

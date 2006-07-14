@@ -1330,19 +1330,19 @@ namespace System.Data {
 		[MonoTODO]
 		public void Merge (DataTable table)
 		{
-			throw new NotImplementedException ();
+			Merge (table, false, MissingSchemaAction.Add);
 		}
 
 		[MonoTODO]
 		public void Merge (DataTable table, bool preserveChanges)
 		{
-			throw new NotImplementedException ();
+			Merge (table, preserveChanges, MissingSchemaAction.Add);
 		}
 
 		[MonoTODO]
 		public void Merge (DataTable table, bool preserveChanges, MissingSchemaAction missingSchemaAction)
 		{
-			throw new NotImplementedException ();
+			MergeManager.Merge (this, table, preserveChanges, missingSchemaAction);
 		}
 #endif
 

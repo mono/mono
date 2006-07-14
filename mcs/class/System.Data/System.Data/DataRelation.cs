@@ -113,8 +113,9 @@ namespace System.Data
 					throw new InvalidConstraintException ();
 
 			for (int i=0; i<ChildColumns.Length; i++)
-				if (!( parentColumns[i].DataType.Equals( childColumns[i].DataType)))
-					throw new InvalidConstraintException();
+				if (!parentColumns[i].DataTypeMatches (childColumns[i]))
+					throw new InvalidConstraintException("Parent Columns and Child Columns don't have " + 
+							"matching column types");
 		}
 
 		[MonoTODO]

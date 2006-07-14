@@ -2311,6 +2311,123 @@ namespace MonoTests_System.Data
 
 			Assert.AreEqual (6, result [0][0], "# incorrect sorting order");
 		}
+#if NET_2_0
+
+		[Test]
+		public void DataTable_Clone ()
+		{
+			DataTable table = new DataTable ();
+			table.Columns.Add ("col1", typeof (DateTime));
+			table.Columns [0].DateTimeMode = DataSetDateTime.Local;
+			DataTable table1 = table.Clone ();
+			Assert.AreEqual (DataSetDateTime.Local, table1.Columns [0].DateTimeMode, "#1");
+
+			//Test any other new prop in 2.0
+		}
+
+		[Test]
+		public void Merge_SchemaTest ()
+		{
+			DataTable table1 = new DataTable ("t1");
+			table1.Columns.Add ("col1", typeof (int));
+
+			DataTable table2 = new DataTable ("t2");
+			table2.Columns.Add ("col2", typeof (int));
+
+			DataTable table3;
+
+			table3 = table1.Clone ();
+			table3.Merge (table2);
+			Assert.AreEqual (2, table3.Columns.Count, "#1");
+			table3 = table1.Clone ();
+			table3.Merge (table2, false, MissingSchemaAction.Ignore);
+			Assert.AreEqual (1, table3.Columns.Count, "#2");
+
+			// source constraints are ignored
+			table2.Constraints.Add ("uc", table2.Columns [0], false);
+			table3 = table1.Clone ();
+			table3.Merge (table2);
+			Assert.AreEqual (0, table3.Constraints.Count, "#3");
+
+			// source PK is merged depending on MissingSchemaAction
+			table2.PrimaryKey = new DataColumn[] {table2.Columns[0]};
+			table3 = table1.Clone ();
+			table3.Merge (table2);
+			Assert.AreEqual (1, table3.Constraints.Count, "#4");
+			table3 = table1.Clone ();
+			table3.Merge (table2, false, MissingSchemaAction.Ignore);
+			Assert.AreEqual (0, table3.Constraints.Count, "#5");
+
+			//FIXME : If both source and target have PK, then 
+			// shud be the exception raised when schema is merged? 
+			// ms.net throws a nullreference exception.
+			// If any data is merged, exception is anyways raised.
+			/*
+			table1.PrimaryKey = new DataColumn[] {table1.Columns[0]};
+			table3 = table1.Clone ();
+			try {
+				table3.Merge(table2);
+				Assert.Fail("#6");
+			} catch (DataException e) {}
+			*/
+
+			table3.Merge (table2,false,MissingSchemaAction.Ignore);
+			table1.PrimaryKey = null;
+
+			// DateTime columns, DataType match only if DateTimeMode matches
+			table1.Columns.Add ("col_datetime", typeof (DateTime));
+			table2.Columns.Add ("col_datetime", typeof (DateTime));
+			table1.Columns ["col_datetime"].DateTimeMode = DataSetDateTime.Local;
+			table2.Columns ["col_datetime"].DateTimeMode = DataSetDateTime.Unspecified;
+
+			table3 = table1.Clone ();
+			try {
+				table3.Merge (table2);
+				Assert.Fail ("#7");
+			} catch (DataException) { }
+
+			table1.Columns ["col_datetime"].DateTimeMode = DataSetDateTime.Unspecified;
+			table2.Columns ["col_datetime"].DateTimeMode = DataSetDateTime.UnspecifiedLocal;
+			table3 = table1.Clone ();
+			table3.Merge (table2);
+			Assert.AreEqual (DataSetDateTime.Unspecified, table3.Columns ["col_datetime"].DateTimeMode, "#9");
+		}
+
+
+		[Test]
+		public void Merge_TestData ()
+		{
+			DataTable t1 = new DataTable ("t1");
+			DataTable t2 = new DataTable ("t2");
+
+			t1.Columns.Add ("c1", typeof (int));
+			t1.Columns.Add ("c2", typeof (int));
+			t2.Columns.Add ("c1", typeof (int));
+			t2.Columns.Add ("c2", typeof (int));
+
+			t1.Rows.Add (new object[] {1, 1});
+			t1.Rows.Add (new object[] {2, 2});
+
+			t2.Rows.Add (new object[] {1, 5});
+			t2.Rows.Add (new object[] {1, 10});
+
+			DataTable t3 = t1.Copy ();
+			// When primary key is not defined, rows are not merged.
+			t3.Merge (t2);
+			Assert.AreEqual (4, t3.Rows.Count, "#1");
+
+			t1.PrimaryKey = new DataColumn[] {t1.Columns[0]};
+			t3 = t1.Copy ();
+			t3.Merge (t2);
+			Assert.AreEqual (2, t3.Rows.Count, "#2");
+			Assert.AreEqual (10, t3.Rows [0][1], "#3");
+
+			t3 = t1.Copy ();
+			t3.Merge (t2, true);
+			Assert.AreEqual (2, t3.Rows.Count, "#4");
+			Assert.AreEqual (1, t3.Rows [0][1], "#5");
+		}
+#endif
 
 		internal class DataRowsComparer : System.Collections.IComparer
 		{

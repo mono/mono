@@ -28,6 +28,7 @@
 
 using NUnit.Framework;
 using System;
+using System.ComponentModel;
 using System.Data;
 using MonoTests.System.Data.Utils;
 
@@ -796,5 +797,62 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (10, ptable.Rows [0][1], "#1");
 			Assert.AreEqual (-1, ptable.Rows [1][1], "#2");
 		}
+
+#if NET_2_0
+		[Test]
+		public void DateTimeMode_DataType ()
+		{
+			DataColumn col = new DataColumn("col", typeof(int));
+			Assert.AreEqual (DataSetDateTime.UnspecifiedLocal, col.DateTimeMode, "#1");
+			try {
+				col.DateTimeMode = DataSetDateTime.Local;
+				Assert.Fail ("#2");
+			} catch (InvalidOperationException e) {}
+
+			col = new DataColumn ("col", typeof (DateTime));
+			col.DateTimeMode = DataSetDateTime.Utc;
+			Assert.AreEqual (DataSetDateTime.Utc, col.DateTimeMode, "#3");
+			col.DataType = typeof (int);
+			Assert.AreEqual (DataSetDateTime.UnspecifiedLocal, col.DateTimeMode, "#4");
+		}
+	
+		[Test]
+		public void DateTimeMode_InvalidValues ()
+		{
+			DataColumn col = new DataColumn("col", typeof(DateTime));
+			try {
+				col.DateTimeMode = (DataSetDateTime)(-1);
+				Assert.Fail("#1");
+			} catch (InvalidEnumArgumentException e) {}
+
+			try {
+				col.DateTimeMode = (DataSetDateTime)5;
+				Assert.Fail("#2");
+			} catch (InvalidEnumArgumentException e) {}
+		}
+
+		[Test]
+		public void DateTimeMode_RowsAdded ()
+		{
+			DataTable table = new DataTable();
+			table.Columns.Add("col", typeof(DateTime));
+			table.Rows.Add(new object[] {DateTime.Now});
+
+			Assert.AreEqual(DataSetDateTime.UnspecifiedLocal, table.Columns[0].DateTimeMode, "#1");
+			// allowed
+			table.Columns[0].DateTimeMode = DataSetDateTime.Unspecified;
+			table.Columns[0].DateTimeMode = DataSetDateTime.UnspecifiedLocal;
+
+			try {
+				table.Columns[0].DateTimeMode = DataSetDateTime.Local;
+				Assert.Fail("#2");
+			} catch (InvalidOperationException e) {}
+
+			try {
+				table.Columns[0].DateTimeMode = DataSetDateTime.Utc;
+				Assert.Fail("#3");
+			} catch (InvalidOperationException e) {}
+		}
+#endif
 	}
 }

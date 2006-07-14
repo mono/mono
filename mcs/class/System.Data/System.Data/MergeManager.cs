@@ -44,7 +44,7 @@ namespace System.Data
 			foreach (DataTable t in sourceSet.Tables)
 				MergeManager.Merge(targetSet, t, preserveChanges, missingSchemaAction);
 
-			AdjustSchema(targetSet,sourceSet,missingSchemaAction);
+			AdjustSchemaRelations (targetSet, sourceSet, missingSchemaAction);
 			targetSet.EnforceConstraints = prevEC;
 		}
 
@@ -72,6 +72,28 @@ namespace System.Data
 				// indexes are still outdated
 				targetTable.ResetIndexes();
 			}
+		}
+
+		internal static void Merge (DataTable targetTable, 
+					    DataTable sourceTable, 
+					    bool preserveChanges, 
+					    MissingSchemaAction missingSchemaAction)
+		{
+			if(targetTable== null)
+				throw new ArgumentNullException("targetTable");
+			if(sourceTable == null)
+				throw new ArgumentNullException("sourceTable");
+
+			bool savedEnforceConstraints = targetTable.EnforceConstraints;
+			targetTable.EnforceConstraints = false;
+
+			if (!AdjustSchema(targetTable, sourceTable, missingSchemaAction))
+				return;
+
+			checkColumnTypes(targetTable, sourceTable); // check that the colums datatype is the same
+			fillData(targetTable, sourceTable, preserveChanges);
+
+			targetTable.EnforceConstraints = savedEnforceConstraints;
 		}
 
 		internal static void Merge(DataSet targetSet, DataRow[] sourceRows, bool preserveChanges, MissingSchemaAction missingSchemaAction)
@@ -149,11 +171,7 @@ namespace System.Data
 			}
 		}
 			
-
-		// adjust the dataset schema according to the missingschemaaction param
-		// (relations).
-		// return false if adjusting fails.
-		private static bool AdjustSchema(DataSet targetSet, DataSet sourceSet, MissingSchemaAction missingSchemaAction)
+		private static bool AdjustSchemaRelations (DataSet targetSet, DataSet sourceSet, MissingSchemaAction missingSchemaAction)
 		{
 			if (missingSchemaAction == MissingSchemaAction.Ignore)
 				return true;
@@ -161,9 +179,9 @@ namespace System.Data
 			foreach(DataTable sourceTable in sourceSet.Tables) {
 
 				DataTable targetTable = targetSet.Tables[sourceTable.TableName];
-				if (targetTable == null) 
+				if (targetTable == null)
 					continue;
-				
+
 				foreach (Constraint constraint in sourceTable.Constraints) {
 
 					Constraint targetConstraint = null;
@@ -178,23 +196,24 @@ namespace System.Data
 					if (uc != null) {
 						if (uc.IsPrimaryKey || uc.ChildConstraint != null)
 							continue;
-						DataColumn[] columns = ResolveColumns (targetSet, uc.Columns);
+						DataColumn[] columns = ResolveColumns (targetTable, uc.Columns);
 						targetConstraint = new UniqueConstraint (constraintName, columns, false);
 					}
 
 					ForeignKeyConstraint fc = constraint as ForeignKeyConstraint;
 					if (fc != null) {
-						DataColumn[] columns = ResolveColumns (targetSet, fc.Columns);
-						DataColumn[] relatedColumns = ResolveColumns (targetSet, fc.RelatedColumns);
+						DataColumn[] columns = ResolveColumns (targetTable, fc.Columns);
+						DataColumn[] relatedColumns = ResolveColumns (targetSet.Tables [fc.RelatedTable.TableName],
+											fc.RelatedColumns);
 						targetConstraint = new ForeignKeyConstraint (constraintName, relatedColumns, columns);
 					}
 
 					bool dupConstraintFound = false;
 					foreach (Constraint cons in targetTable.Constraints) {
-						if (!targetConstraint.Equals (cons))
-							continue;
-						dupConstraintFound = true;
-						break;
+					if (!targetConstraint.Equals (cons))
+						continue;
+					dupConstraintFound = true;
+					break;
 					}
 
 					// If equivalent-constraint already exists, then just do nothing
@@ -214,12 +233,14 @@ namespace System.Data
 				if (targetRelation == null) {
 					if (missingSchemaAction == MissingSchemaAction.Error)
 						throw new ArgumentException ("Target DataSet mising definition for " +
-								 relation.RelationName);
+								relation.RelationName);
 
-					DataColumn[] parentColumns = ResolveColumns (targetSet, relation.ParentColumns);
-					DataColumn[] childColumns = ResolveColumns (targetSet, relation.ChildColumns);
+					DataColumn[] parentColumns = ResolveColumns (targetSet.Tables [relation.ParentTable.TableName],
+							relation.ParentColumns);
+					DataColumn[] childColumns = ResolveColumns (targetSet.Tables [relation.ChildTable.TableName],
+							relation.ChildColumns);
 					targetRelation = targetSet.Relations.Add (relation.RelationName, parentColumns,
-										childColumns, false);
+							childColumns, false);
 					targetRelation.Nested = relation.Nested;
 				} else if (!CompareColumnArrays (relation.ParentColumns, targetRelation.ParentColumns) ||
 						!CompareColumnArrays (relation.ChildColumns, targetRelation.ChildColumns)) {
@@ -231,11 +252,10 @@ namespace System.Data
 			return true;
 		}
 
-		private static DataColumn[] ResolveColumns(DataSet targetSet, DataColumn[] sourceColumns)
+		private static DataColumn[] ResolveColumns(DataTable targetTable, DataColumn[] sourceColumns)
 		{
 			if (sourceColumns != null && sourceColumns.Length > 0) {
 				// lets just assume that all columns are from the Same table
-				DataTable targetTable = targetSet.Tables [sourceColumns[0].Table.TableName];
 				if (targetTable != null) {
 					int i=0;
 					DataColumn[] targetColumns = new DataColumn[sourceColumns.Length];
@@ -274,14 +294,24 @@ namespace System.Data
 				targetSet.Tables.Add(targetTable);
 			}
 
+			AdjustSchema (targetTable, sourceTable, missingSchemaAction);
+
+			newTable = targetTable;
+			return true;
+		}
+
+
+		private static bool AdjustSchema(DataTable targetTable, DataTable sourceTable, MissingSchemaAction missingSchemaAction)
+		{
+			if (missingSchemaAction == MissingSchemaAction.Ignore)
+				return true;
+
 			for (int i = 0; i < sourceTable.Columns.Count; i++) {
 				DataColumn sourceColumn = sourceTable.Columns[i];
 				// if a column from the source table doesn't exists in the target table
 				// we act according to the missingschemaaction param.
 				DataColumn targetColumn = targetTable.Columns [sourceColumn.ColumnName];
 				if(targetColumn == null) {
-					if (missingSchemaAction == MissingSchemaAction.Ignore)
-						continue;
 					if (missingSchemaAction == MissingSchemaAction.Error)
 						throw new DataException ("Target table " + targetTable.TableName +
 								" missing definition for column " + sourceColumn.ColumnName);
@@ -301,7 +331,6 @@ namespace System.Data
 			if (!AdjustPrimaryKeys(targetTable, sourceTable))
 				return false;
 
-			newTable = targetTable;
 			return true;
 		}
 	
@@ -316,7 +345,7 @@ namespace System.Data
 
 			// If targetTable does not have a PrimaryKey, just import the sourceTable PrimaryKey
 			if (targetTable.PrimaryKey.Length == 0) {
-				DataColumn[] targetColumns = ResolveColumns (targetTable.DataSet, sourceTable.PrimaryKey);
+				DataColumn[] targetColumns = ResolveColumns (targetTable, sourceTable.PrimaryKey);
 				targetTable.PrimaryKey = targetColumns;
 				return true;
 			}
@@ -355,10 +384,13 @@ namespace System.Data
 			{
 				DataColumn fromCol = sourceTable.Columns[i];
 				DataColumn toCol = targetTable.Columns[fromCol.ColumnName];
-				if((toCol != null) && (toCol.DataType != fromCol.DataType))
-					throw new DataException("<target>." + fromCol.ColumnName + " and <source>." + 
-							fromCol.ColumnName + " have conflicting properties: DataType " + 
-							" property mismatch.");
+				if (toCol == null)
+					continue;
+				if (toCol.DataTypeMatches (fromCol))
+					continue;
+				throw new DataException("<target>." + fromCol.ColumnName + " and <source>." + 
+						fromCol.ColumnName + " have conflicting properties: DataType " + 
+						" property mismatch.");
 			}
 		}
 
@@ -376,7 +408,8 @@ namespace System.Data
 		private static void RaiseMergeFailedEvent (DataTable targetTable, string errMsg)
 		{
 			MergeFailedEventArgs args = new MergeFailedEventArgs (targetTable, errMsg);
-			targetTable.DataSet.OnMergeFailed (args);
+			if (targetTable.DataSet != null)
+				targetTable.DataSet.OnMergeFailed (args);
 		}
 	}
 }

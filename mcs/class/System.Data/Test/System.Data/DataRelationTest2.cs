@@ -532,5 +532,32 @@ namespace MonoTests.System.Data
 			// RelationName get/set
 			Assert.AreEqual("myRelation", dRel.RelationName , "DR63");
 		}
+
+#if NET_2_0
+		[Test]
+		public void DataRelationTest()
+		{
+			DataSet ds = new DataSet();
+			
+			DataTable t1 = new DataTable("t1");
+			t1.Columns.Add("col", typeof(DateTime));
+
+			DataTable t2 = new DataTable("t2");
+			t2.Columns.Add("col", typeof(DateTime));
+			t2.Columns[0].DateTimeMode = DataSetDateTime.Unspecified;
+
+			ds.Tables.Add(t1);
+			ds.Tables.Add(t2);
+			ds.Relations.Add("rel", t1.Columns[0], t2.Columns[0], false);
+
+			ds.Relations.Clear();
+			t2.Columns[0].DateTimeMode = DataSetDateTime.Local;
+
+			try {
+				ds.Relations.Add("rel", t1.Columns[0], t2.Columns[0], false);
+				Assert.Fail ("#1");
+			} catch (InvalidConstraintException) { }
+		}
+#endif
 	}
 }

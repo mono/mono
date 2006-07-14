@@ -610,5 +610,28 @@ namespace MonoTests_System.Data
 
 			return ds1;
 		}
+#if NET_2_0
+		[Test]
+		public void ForeignConstraint_DateTimeModeTest()
+		{
+			DataTable t1 = new DataTable("t1");
+			t1.Columns.Add("col", typeof(DateTime));
+
+			DataTable t2 = new DataTable("t2");
+			t2.Columns.Add("col", typeof(DateTime));
+			t2.Columns[0].DateTimeMode = DataSetDateTime.Unspecified;
+			
+			// DataColumn type shud match, and no exception shud be raised 
+			t2.Constraints.Add("fk", t1.Columns[0], t2.Columns[0]);
+
+			t2.Constraints.Clear();
+			t2.Columns[0].DateTimeMode = DataSetDateTime.Local;
+			try {
+				// DataColumn type shud not match, and exception shud be raised 
+				t2.Constraints.Add("fk", t1.Columns[0], t2.Columns[0]);
+				Assert.Fail("#1");
+			} catch (InvalidOperationException e) {}
+		}
+#endif
 	}
 }

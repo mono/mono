@@ -1,3 +1,23 @@
+2006-07-14  Senganal T  <tsenganal@novell.com>
+
+	* DataTable.cs :
+		- Merge - Implement the merge methods
+		- Clone - Ensure column's DateTimeMode property is also copied
+	* DataColumn.cs :
+		- DateTimeMode : Implemement
+		- DataTypeMatches : Added. In 2.0 profile, test DateTime
+		property when verifying column types.
+	* DataRelation.cs :
+		- ctr :  For DateTime columns, check DateTimeMode property
+	* ForeignKeyConstraint.cs :
+		- _validateColumns : For DateTime columns, check DateTimeMode
+		property
+	* MergeManager : 
+		- Merge : Added. Overload to merge two tables
+		- ResolveColumns : Change the method to use a table instead of
+		a DataSet
+		- Renamed AdjustSchema to AdjustSchemaRelations
+
 2006-07-13  Senganal T  <tsenganal@novell.com>
 
 	* DataSet.cs :
