@@ -1,5 +1,11 @@
 2006-07-14  Alexander Olk  <alex.olk@googlemail.com>
 
+	* FolderBrowserDialog.cs: Disable "New Folder" button and
+	  "New Folder" contextmenu menuitem if a folder like "My Computer"
+	  is selected.
+
+2006-07-14  Alexander Olk  <alex.olk@googlemail.com>
+
 	* FileDialog.cs: Don't create a new folder in "MyComputer" folder.
 	* FolderBrowserDialog.cs:
 	  - Use MWFConfig to store and read size and position settings

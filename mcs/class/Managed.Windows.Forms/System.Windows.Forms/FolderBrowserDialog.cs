@@ -49,6 +49,7 @@ namespace System.Windows.Forms {
 		private FolderBrowserTreeView folderBrowserTreeView;
 		private Button newFolderButton;
 		private ContextMenu folderBrowserTreeViewContextMenu;
+		private MenuItem newFolderMenuItem;
 		
 		private string old_selectedPath = "";
 		
@@ -93,8 +94,9 @@ namespace System.Windows.Forms {
 			form.MinimumSize = new Size (322, 288);
 			form.Text = "Search Folder";
 			form.SizeGripStyle = SizeGripStyle.Show;
-			
-			folderBrowserTreeViewContextMenu.MenuItems.Add("New Folder", new EventHandler (OnClickNewFolderButton));
+
+			newFolderMenuItem = new MenuItem("New Folder", new EventHandler (OnClickNewFolderButton));
+			folderBrowserTreeViewContextMenu.MenuItems.Add(newFolderMenuItem);
 			
 			// descriptionLabel
 			descriptionLabel.Anchor = ((AnchorStyles)(((AnchorStyles.Top | AnchorStyles.Left)
@@ -617,9 +619,13 @@ namespace System.Windows.Forms {
 				
 				if (fbnode.RealPath == null || fbnode.RealPath.IndexOf ("://") != -1) {
 					parentDialog.okButton.Enabled = false;
+					parentDialog.newFolderButton.Enabled = false;
+					parentDialog.newFolderMenuItem.Enabled = false;
 					dont_enable = true;
 				} else {
 					parentDialog.okButton.Enabled = true;
+					parentDialog.newFolderButton.Enabled = true;
+					parentDialog.newFolderMenuItem.Enabled = true;
 					parentDialog.selectedPath = fbnode.RealPath;
 					dont_enable = false;
 				}
@@ -640,11 +646,16 @@ namespace System.Windows.Forms {
 			
 			protected override void OnMouseUp (MouseEventArgs e)
 			{
-				if (SelectedNode == null)
+				if (SelectedNode == null) {
 					parentDialog.okButton.Enabled = false;
-				else
-				if (!dont_enable)
+					parentDialog.newFolderButton.Enabled = false;
+					parentDialog.newFolderMenuItem.Enabled = false;
+				} else
+				if (!dont_enable) {
 					parentDialog.okButton.Enabled = true;
+					parentDialog.newFolderButton.Enabled = true;
+					parentDialog.newFolderMenuItem.Enabled = true;
+				}
 				
 				base.OnMouseUp (e);
 			}
