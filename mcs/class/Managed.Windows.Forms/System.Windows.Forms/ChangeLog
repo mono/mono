@@ -1,3 +1,8 @@
+2006-07-14  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: Raise the OnAfterLabelEdit event correctly.  Also,
+	when the tree is scrolled we end editing.
+
 2006-07-14  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ThemeWin32Classic.cs: Fixed position of CPDrawScrollButton Up and

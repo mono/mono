@@ -1181,10 +1181,17 @@ namespace System.Windows.Forms {
 
 		private void EndEdit ()
 		{
-			edit_text_box.Visible = false;
-			edit_node.EndEdit (false);
-			UpdateNode (edit_node);
-			edit_node = null;
+			if (edit_text_box != null)
+				edit_text_box.Visible = false;
+
+			if (edit_node != null) {
+				NodeLabelEditEventArgs e = new NodeLabelEditEventArgs (edit_node, edit_text_box.Text);
+				OnAfterLabelEdit (e);
+
+				edit_node.EndEdit (e.CancelEdit);
+				UpdateNode (edit_node);
+				edit_node = null;
+			}
 		}
 
 		internal int GetNodeWidth (TreeNode node)
@@ -1355,6 +1362,8 @@ namespace System.Windows.Forms {
 
 		private void VScrollBarValueChanged (object sender, EventArgs e)
 		{
+			if (edit_node != null)
+				EndEdit ();
 			SetVScrollPos (vbar.Value, null);
 		}
 
@@ -1394,6 +1403,9 @@ namespace System.Windows.Forms {
 
 		private void HScrollBarValueChanged(object sender, EventArgs e)
 		{
+			if (edit_node != null)
+				EndEdit ();
+
 			int old_offset = hbar_offset;
 			hbar_offset = hbar.Value;
 
@@ -1501,13 +1513,9 @@ namespace System.Windows.Forms {
 				TreeNode old_selected = selected_node;
 				SelectedNode = node;
 				if (label_edit && e.Clicks == 1 && selected_node == old_selected) {
+					if (edit_node != null)
+						EndEdit ();
 					node.BeginEdit ();
-					if (edit_node != null) {
-						edit_node.EndEdit (false);
-						UpdateNode (edit_node);
-					}
-					edit_node = node;
-					UpdateNode (edit_node);
 				} else if (selected_node != focused_node) {
 					select_mmove = true;
 				}
