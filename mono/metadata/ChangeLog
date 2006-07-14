@@ -1,3 +1,9 @@
+2006-07-14  Dick Porter  <dick@ximian.com>
+
+	* object.c (mono_type_initialization_cleanup): Fix a race
+	condition by temporarily commenting out the critical section
+	deletion.
+
 2006-07-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c (create_custom_attr): Fix some warnings.
