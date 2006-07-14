@@ -1,3 +1,8 @@
+2006-07-14  Alexander Olk  <alex.olk@googlemail.com>
+
+	* ThemeWin32Classic.cs: Fixed position of CPDrawScrollButton Up and
+	  Down arrows
+
 2006-07-14  Jonathan Pobst  <monkey@ipobst.com> 
 
 	WebBrowserProgressChangedEventHandler.cs, BindingCompleteEventArgs.cs,

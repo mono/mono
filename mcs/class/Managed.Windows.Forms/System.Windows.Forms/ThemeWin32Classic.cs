@@ -5290,6 +5290,7 @@ namespace System.Windows.Forms
 				default:
 				case ScrollButton.Down:
 					int x_middle = (int)Math.Round (rect.Width / 2.0f) - 1;
+					int y_middle = (int)Math.Round (rect.Height / 2.0f) - 1;
 					if (x_middle == 1)
 						x_middle = 2;
 					
@@ -5305,12 +5306,7 @@ namespace System.Windows.Forms
 					}
 					
 					arrow [0].X = rect.X + x_middle;
-					arrow [0].Y = rect.Bottom - triangle_height - 1;
-					if (arrow [0].Y > rect.Height)
-						arrow [0].Y = rect.Bottom - 3;
-					
-					if (arrow [0].Y - 1 == rect.Y)
-						arrow [0].Y += 1;
+					arrow [0].Y = rect.Y + y_middle + triangle_height / 2;
 					
 					arrow [1].X = arrow [0].X + triangle_height - 1;
 					arrow [1].Y = arrow [0].Y - triangle_height + 1;
@@ -5331,14 +5327,16 @@ namespace System.Windows.Forms
 							arrow [2].X += 1;
 						}
 					}
-					
-					
 					break;
 					
 				case ScrollButton.Up:
 					x_middle = (int)Math.Round (rect.Width / 2.0f) - 1;
+					y_middle = (int)Math.Round (rect.Height / 2.0f);
 					if (x_middle == 1)
 						x_middle = 2;
+					
+					if (y_middle == 1)
+						y_middle = 2;
 					
 					if (rect.Height < 8) {
 						triangle_height = 2;
@@ -5350,12 +5348,7 @@ namespace System.Windows.Forms
 					}
 					
 					arrow [0].X = rect.X + x_middle;
-					arrow [0].Y = rect.Y + triangle_height;
-					if (arrow [0].Y > rect.Height)
-						arrow [0].Y = 2;
-						
-					if (arrow [0].Y + 1 == rect.Bottom - 1)
-						arrow [0].Y -= 1;
+					arrow [0].Y = rect.Y + y_middle - triangle_height / 2;
 					
 					arrow [1].X = arrow [0].X + triangle_height - 1;
 					arrow [1].Y = arrow [0].Y + triangle_height - 1;
@@ -5375,11 +5368,10 @@ namespace System.Windows.Forms
 							arrow [2].X += 1;
 						}
 					}
-					
 					break;
 					
 				case ScrollButton.Left:
-					int y_middle = (int)Math.Round (rect.Height / 2.0f) - 1;
+					y_middle = (int)Math.Round (rect.Height / 2.0f) - 1;
 					if (y_middle == 1)
 						y_middle = 2;
 					
