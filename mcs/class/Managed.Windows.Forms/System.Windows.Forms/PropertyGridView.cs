@@ -489,10 +489,27 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		}
 
 		private void listBox_MouseUp(object sender, MouseEventArgs e) {
+			AcceptListBoxSelection (sender);
+		}
+
+		private void listBox_KeyDown(object sender, KeyEventArgs e)
+		{
+			switch (e.KeyData & Keys.KeyCode) {
+			case Keys.Enter:
+				AcceptListBoxSelection (sender);
+				return;
+			case Keys.Escape:
+				dropdown_form_showing = false;
+				dropdown_form.Hide();
+				return;
+			}
+		}
+
+		void AcceptListBoxSelection (object sender) {
 			if (this.property_grid.SelectedGridItem != null) {
 				PropertyDescriptor desc = property_grid.SelectedGridItem.PropertyDescriptor;
 				if (desc != null) {
-					SetPropertyValue(((PropertyGridListBox)sender).SelectedItem);
+					SetPropertyValue(((ListBox)sender).SelectedItem);
 				}
 			}
 			dropdown_form_showing = false;
@@ -513,7 +530,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			UITypeEditor editor = property_grid.SelectedGridItem.PropertyDescriptor.GetEditor (typeof (UITypeEditor)) as UITypeEditor;
 			if (editor == null) {
 				dropdown_form.Deactivate +=new EventHandler(dropdown_form_Deactivate);
-				PropertyGridListBox listBox = new PropertyGridListBox();
+				ListBox listBox = new ListBox();
 				listBox.BorderStyle = BorderStyle.FixedSingle;
 				listBox.Dock = DockStyle.Fill;
 				int selected_index = 0;
@@ -525,11 +542,13 @@ namespace System.Windows.Forms.PropertyGridInternal {
 					i++;
 				}
 				listBox.SelectedIndex = selected_index;
+				listBox.KeyDown += new KeyEventHandler(listBox_KeyDown);
 				listBox.MouseUp+=new MouseEventHandler(listBox_MouseUp);
 				dropdown_form.Controls.Clear();
 				dropdown_form.Controls.Add(listBox);
 				dropdown_form.Location = PointToScreen(new Point(SplitterLocation,grid_textbox.Location.Y+row_height));
 				dropdown_form.Width = this.Width - this.SplitterLocation;
+				dropdown_form.ActiveControl = listBox;
 				dropdown_form.Show();
 			} else { // use editor
 				SetPropertyValueFromUITypeEditor (editor);
@@ -709,41 +728,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
 					return cp;
 				}
 			}
-
-		}
-
-		internal class PropertyGridListBox : ListBox {
-			private bool mouse_down;
-			public PropertyGridListBox() {
-				SetStyle(ControlStyles.DoubleBuffer, true);
-				mouse_down =false;
-			}
-
-			protected override void OnMouseDown(MouseEventArgs e) {
-				mouse_down = true;
-				base.OnMouseDown (e);
-			}
-
-			protected override void OnMouseUp(MouseEventArgs e) {
-				mouse_down = false;
-				base.OnMouseUp (e);
-			}
-
-			protected override void OnMouseMove(MouseEventArgs e) {
-				if (!mouse_down)
-					return;
-				for (int i = 0; i < Items.Count; i++) {
-					if (GetItemRectangle(i).Contains(e.X, e.Y)) {
-						SelectedIndex = i;
-						break;
-					}
-				}
-				base.OnMouseMove (e);
-			}
-
-
-
-
 
 		}
 
