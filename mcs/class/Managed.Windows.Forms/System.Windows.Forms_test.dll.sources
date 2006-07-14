@@ -25,6 +25,7 @@ System.Windows.Forms/DataGridViewCellTest.cs
 System.Windows.Forms/DataGridViewElementTest.cs
 System.Windows.Forms/DataGridViewRowTest.cs
 System.Windows.Forms/DataGridViewTest.cs
+System.Windows.Forms/EventArgsTest.cs
 System.Windows.Forms/GridColumnStylesCollectionTest.cs
 System.Windows.Forms/GridTableStylesCollectionTest.cs
 System.Windows.Forms/GroupBoxTest.cs

@@ -1,3 +1,7 @@
+2006-07-14  Jonathan Pobst  <monkey@ipobst.com>
+
+	* EventArgsTest.cs: Added
+
 2006-07-10  Chris Toshok  <toshok@ximian.com>
 
 	* DataGridTest.cs: make this class public so it shows up in the
