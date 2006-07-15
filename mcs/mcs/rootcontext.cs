@@ -113,10 +113,11 @@ namespace Mono.CSharp {
 			StrongNameDelaySign = false;
 			MainClass = null;
 			Target = Target.Exe;
-		    	TargetExt = ".exe";
+			TargetExt = ".exe";
 			Version = LanguageVersion.Default;
 			Documentation = null;
 			impl_details_class = null;
+			helper_classes = null;
 		}
 		
 		public static bool NeedsEntryPoint {

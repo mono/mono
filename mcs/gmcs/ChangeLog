@@ -1,5 +1,11 @@
 2006-07-15  Marek Safar  <marek.safar@seznam.cz>
 
+	* annonymous.cs (AnonymousMethod.CreateScopeType): Fixed nested type
+	modifiers.
+	* rootcontext.cs (Reset): Add helper_classes.
+
+2006-07-15  Marek Safar  <marek.safar@seznam.cz>
+
 	A fix for #78860
 	* statement.cs (Switch.SimpleSwitchEmit): Handle case null at any position
 	correctly.

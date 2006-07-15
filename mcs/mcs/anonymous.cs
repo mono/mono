@@ -440,9 +440,9 @@ namespace Mono.CSharp {
 			TypeBuilder container = ec.TypeContainer.TypeBuilder;
 			string name = String.Format ("<>AnonHelp<{0}>", scope.id);
 
-			scope.ScopeTypeBuilder = container.DefineNestedType (
-				name, TypeAttributes.AutoLayout | TypeAttributes.Class |
-				TypeAttributes.NestedAssembly, TypeManager.object_type, null);
+			scope.ScopeTypeBuilder = container.DefineNestedType (name,
+				TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit | TypeAttributes.NestedPrivate,
+					 TypeManager.object_type);
 
 			Type [] constructor_types = Type.EmptyTypes;
 			scope.ScopeConstructor = scope.ScopeTypeBuilder.DefineConstructor (
@@ -645,11 +645,6 @@ namespace Mono.CSharp {
 			indent--;
 			Pad ();
 			Console.WriteLine ("END");
-		}
-		
-		public string MakeHelperName ()
-		{
-			return String.Format ("<>AnonHelp<{0}>", id);
 		}
 
 		private string MakeFieldName (string local_name)
