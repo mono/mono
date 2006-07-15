@@ -557,7 +557,7 @@ namespace Mono.Tools {
 			version = asm_info ["version"] as string;
 			version = (version == null ? "*" : version);
 			culture = asm_info ["culture"] as string;
-			culture = (culture == null ? "*" : culture.ToLower (CultureInfo.InvariantCulture));
+			culture = (culture == null ? "*" : (culture == "neutral") ? String.Empty : culture.ToLower (CultureInfo.InvariantCulture));
 			token = asm_info ["publickeytoken"] as string;
 			token = (token == null ? "*" : token.ToLower (CultureInfo.InvariantCulture));
 			
