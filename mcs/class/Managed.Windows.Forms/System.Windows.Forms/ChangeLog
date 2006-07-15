@@ -1,3 +1,9 @@
+2006-07-14  Jackson Harper  <jackson@ximian.com>
+
+	* TreeNode.cs:
+	* TreeView.cs: Make the editing work similar to MSs, firing the
+	events correctly and ending edits correctly.
+
 2006-07-14  Mike Kestner  <mkestner@novell.com>
 
 	* ToolBarButton.cs:

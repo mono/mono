@@ -48,7 +48,6 @@ namespace System.Windows.Forms {
 		
 		internal bool is_expanded = false;
 		private bool check;
-		private bool is_editing;
 		internal OwnerDrawPropertyBag prop_bag;
 
 		private object tag;
@@ -308,7 +307,12 @@ namespace System.Windows.Forms {
 		}
 
 		public bool IsEditing {
-			get { return is_editing; }
+			get {
+				TreeView tv = TreeView;
+				if (tv == null)
+					return false;
+				return tv.edit_node == this;
+			}
 		}
 
 		public bool IsExpanded {
@@ -497,10 +501,9 @@ namespace System.Windows.Forms {
 
 		#region Public Instance Methods
 		public void BeginEdit () {
-			is_editing = true;
 			TreeView tv = TreeView;
 			if (tv != null)
-				tv.edit_node = this;
+				tv.BeginEdit (this);
 		}
 
 		public void Collapse () {
@@ -508,9 +511,9 @@ namespace System.Windows.Forms {
 		}
 
 		public void EndEdit (bool cancel) {
-			is_editing = false;
-			if (!cancel && TreeView != null)
-				Text = TreeView.LabelEditText;
+			TreeView tv = TreeView;
+			if (!cancel && tv != null)
+				tv.EndEdit (this);
 		}
 
 		public void Expand () {

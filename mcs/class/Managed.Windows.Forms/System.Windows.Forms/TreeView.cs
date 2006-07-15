@@ -57,6 +57,7 @@ namespace System.Windows.Forms {
 		private bool hot_tracking;
 		private int indent = 19;
 
+		private NodeLabelEditEventArgs edit_args;
 		private TextBox edit_text_box;
 		internal TreeNode edit_node;
 		
@@ -544,8 +545,8 @@ namespace System.Windows.Forms {
 			return node.prop_bag;
 		}
 
-		protected override bool IsInputKey (Keys key_data) {
-
+		protected override bool IsInputKey (Keys key_data)
+		{
 			if ((key_data & Keys.Alt) == 0) {
 				switch (key_data & Keys.KeyCode) {
 				case Keys.Enter:
@@ -758,14 +759,6 @@ namespace System.Windows.Forms {
 		#endregion	// Protected Instance Methods
 
 		#region	Internal & Private Methods and Properties
-		internal string LabelEditText {
-			get {
-				if (edit_text_box == null)
-					return String.Empty;
-				return edit_text_box.Text;
-			}
-		}
-
 		internal IntPtr CreateNodeHandle ()
 		{
 			return (IntPtr) handle_count++;
@@ -1145,9 +1138,21 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private void DrawEditNode (TreeNode node)
+		private void EditTextBoxKeyDown (object sender, KeyEventArgs e)
 		{
-			SuspendLayout ();
+			if (e.KeyCode == Keys.Return)
+				edit_text_box.Visible = false;
+		}
+
+		private void EditTextBoxLostFocus (object sender, EventArgs e)
+		{
+			EndEdit (edit_node);
+		}
+
+		internal void BeginEdit (TreeNode node)
+		{
+			if (edit_node != null)
+				EndEdit (edit_node);
 
 			if (edit_text_box == null) {
 				edit_text_box = new FixedSizeTextBox ();
@@ -1165,33 +1170,36 @@ namespace System.Windows.Forms {
 			edit_text_box.Focus ();
 			edit_text_box.SelectAll ();
 
-			ResumeLayout ();
+			edit_args = new NodeLabelEditEventArgs (edit_node);
+			OnBeforeLabelEdit (edit_args);
+
+			if (edit_args.CancelEdit)
+				EndEdit (node);
+			
+			edit_node = node;
 		}
 
-		private void EditTextBoxKeyDown (object sender, KeyEventArgs e)
+		internal void EndEdit (TreeNode node)
 		{
-			if (e.KeyCode == Keys.Return)
+			if (edit_text_box != null && edit_text_box.Visible) {
 				edit_text_box.Visible = false;
-		}
-
-		private void EditTextBoxLostFocus (object sender, EventArgs e)
-		{
-			EndEdit ();
-		}
-
-		private void EndEdit ()
-		{
-			if (edit_text_box != null)
-				edit_text_box.Visible = false;
-
-			if (edit_node != null) {
-				NodeLabelEditEventArgs e = new NodeLabelEditEventArgs (edit_node, edit_text_box.Text);
-				OnAfterLabelEdit (e);
-
-				edit_node.EndEdit (e.CancelEdit);
-				UpdateNode (edit_node);
-				edit_node = null;
 			}
+
+			if (edit_node != null && edit_node == node) {
+				OnAfterLabelEdit (edit_args);
+
+				if (!edit_args.CancelEdit) {
+					if (edit_args.Label != null)
+						edit_node.Text = edit_args.Label;
+					else
+						edit_node.Text = edit_text_box.Text;
+				}
+
+			}
+
+			
+			edit_node = null;
+			UpdateNode (node);
 		}
 
 		internal int GetNodeWidth (TreeNode node)
@@ -1252,9 +1260,7 @@ namespace System.Windows.Forms {
 			if (ImageList != null)
                                 DrawNodeImage (node, dc, clip, node.GetImageX (), y);
 
-			if (node.IsEditing)
-				DrawEditNode (node);
-			else
+			if (!node.IsEditing)
 				DrawStaticNode (node, dc);
 		}
 
@@ -1362,8 +1368,8 @@ namespace System.Windows.Forms {
 
 		private void VScrollBarValueChanged (object sender, EventArgs e)
 		{
-			if (edit_node != null)
-				EndEdit ();
+			EndEdit (edit_node);
+
 			SetVScrollPos (vbar.Value, null);
 		}
 
@@ -1403,8 +1409,7 @@ namespace System.Windows.Forms {
 
 		private void HScrollBarValueChanged(object sender, EventArgs e)
 		{
-			if (edit_node != null)
-				EndEdit ();
+			EndEdit (edit_node);
 
 			int old_offset = hbar_offset;
 			hbar_offset = hbar.Value;
@@ -1513,9 +1518,7 @@ namespace System.Windows.Forms {
 				TreeNode old_selected = selected_node;
 				SelectedNode = node;
 				if (label_edit && e.Clicks == 1 && selected_node == old_selected) {
-					if (edit_node != null)
-						EndEdit ();
-					node.BeginEdit ();
+					BeginEdit (node);
 				} else if (selected_node != focused_node) {
 					select_mmove = true;
 				}
