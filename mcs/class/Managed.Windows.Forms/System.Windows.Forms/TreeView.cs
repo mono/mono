@@ -58,7 +58,7 @@ namespace System.Windows.Forms {
 		private int indent = 19;
 
 		private NodeLabelEditEventArgs edit_args;
-		private TextBox edit_text_box;
+		private LabelEditTextBox edit_text_box;
 		internal TreeNode edit_node;
 		
 		private bool checkboxes;
@@ -1138,13 +1138,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private void EditTextBoxKeyDown (object sender, KeyEventArgs e)
-		{
-			if (e.KeyCode == Keys.Return)
-				edit_text_box.Visible = false;
-		}
-
-		private void EditTextBoxLostFocus (object sender, EventArgs e)
+		private void LabelEditFinished (object sender, EventArgs e)
 		{
 			EndEdit (edit_node);
 		}
@@ -1155,11 +1149,10 @@ namespace System.Windows.Forms {
 				EndEdit (edit_node);
 
 			if (edit_text_box == null) {
-				edit_text_box = new FixedSizeTextBox ();
+				edit_text_box = new LabelEditTextBox ();
 				edit_text_box.BorderStyle = BorderStyle.FixedSingle;
-				edit_text_box.KeyUp += new KeyEventHandler (EditTextBoxKeyDown);
-				edit_text_box.LostFocus += new EventHandler (EditTextBoxLostFocus);
-				Controls.AddImplicit (edit_text_box);
+				edit_text_box.EditingFinished += new EventHandler (LabelEditFinished);
+				Controls.Add (edit_text_box);
 			}
 
 			edit_text_box.Bounds = node.Bounds;

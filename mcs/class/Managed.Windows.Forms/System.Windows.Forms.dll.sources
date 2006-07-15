@@ -377,6 +377,7 @@ System.Windows.Forms/KeysConverter.cs
 System.Windows.Forms/Label.cs
 System.Windows.Forms/LabelEditEventArgs.cs
 System.Windows.Forms/LabelEditEventHandler.cs
+System.Windows.Forms/LabelEditTextBox.cs
 System.Windows.Forms/LayoutEngine.cs
 System.Windows.Forms/LayoutEventArgs.cs
 System.Windows.Forms/LayoutEventHandler.cs
