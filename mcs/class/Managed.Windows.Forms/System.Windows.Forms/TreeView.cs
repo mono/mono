@@ -127,7 +127,6 @@ namespace System.Windows.Forms {
 			string_format.LineAlignment = StringAlignment.Center;
 			string_format.Alignment = StringAlignment.Center;
 
-			
 			vbar = new ImplicitVScrollBar ();
 			hbar = new ImplicitHScrollBar ();
 
@@ -135,6 +134,7 @@ namespace System.Windows.Forms {
 			hbar.Visible = false;
 			vbar.ValueChanged += new EventHandler (VScrollBarValueChanged);
 			hbar.ValueChanged += new EventHandler (HScrollBarValueChanged);
+
 			SuspendLayout ();
 			Controls.AddImplicit (vbar);
 			Controls.AddImplicit (hbar);
@@ -532,6 +532,8 @@ namespace System.Windows.Forms {
 		#region Protected Instance Methods
 		protected override void CreateHandle () {
 			base.CreateHandle ();
+
+			UpdateScrollBars ();
 		}
 
 		protected override void Dispose (bool disposing) {
@@ -783,7 +785,6 @@ namespace System.Windows.Forms {
 			return null;
 		}
 
-		// TODO: we shouldn't have to compute this on the fly
 	        internal Rectangle ViewportRectangle {
 			get {
 				Rectangle res = ClientRectangle;
@@ -1270,7 +1271,6 @@ namespace System.Windows.Forms {
 			if (scrollable) {
 				OpenTreeNodeEnumerator walk = new OpenTreeNodeEnumerator (root_node);
 				
-				
 				while (walk.MoveNext ()) {
 					int r = walk.CurrentNode.Bounds.Right;
 					int b = walk.CurrentNode.Bounds.Bottom;
@@ -1308,7 +1308,8 @@ namespace System.Windows.Forms {
 
 				if (!vbar_bounds_set) {
 					vbar.Bounds = new Rectangle (ClientRectangle.Width - vbar.Width, 0, vbar.Width,
-							Height - (hbar.Visible ? SystemInformation.VerticalScrollBarWidth : 0));
+							ClientRectangle.Height -
+							(hbar.Visible ? SystemInformation.VerticalScrollBarWidth : 0));
 					vbar_bounds_set = true;
 				}
 
@@ -1329,8 +1330,9 @@ namespace System.Windows.Forms {
 				*/
 
 				if (!hbar_bounds_set) {
-					hbar.Bounds = new Rectangle (0, Height - hbar.Height,
-							Width - (vbar.Visible ? SystemInformation.HorizontalScrollBarHeight : 0),
+					hbar.Bounds = new Rectangle (0, ClientRectangle.Height - hbar.Height,
+							ClientRectangle.Width - (vbar.Visible ?
+									SystemInformation.HorizontalScrollBarHeight : 0),
 							hbar.Height);
 					hbar_bounds_set = true;
 				}
@@ -1348,14 +1350,15 @@ namespace System.Windows.Forms {
 				UpdateScrollBars ();
 
 			}
+
 			if (vbar.Visible) {
 				vbar.Bounds = new Rectangle (ClientRectangle.Width - vbar.Width, 0, vbar.Width,
-						Height - (hbar.Visible ? SystemInformation.VerticalScrollBarWidth : 0));
+						ClientRectangle.Height - (hbar.Visible ? SystemInformation.VerticalScrollBarWidth : 0));
 			}
 
 			if (hbar.Visible) {
-				hbar.Bounds = new Rectangle (0, Height - hbar.Height,
-						Width - (vbar.Visible ? SystemInformation.HorizontalScrollBarHeight : 0), hbar.Height);
+				hbar.Bounds = new Rectangle (0, ClientRectangle.Height - hbar.Height,
+						ClientRectangle.Width - (vbar.Visible ? SystemInformation.HorizontalScrollBarHeight : 0), hbar.Height);
 			}
 		}
 

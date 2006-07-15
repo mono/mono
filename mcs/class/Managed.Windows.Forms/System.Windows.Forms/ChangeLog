@@ -3,7 +3,9 @@
 	* LabelEditTextBox.cs:
 	* TreeView.cs: Use a new LabelEdit class for node editing, this
 	class automatically 'closes' itself when it gets the enter key or
-	loses focus.	
+	loses focus.
+	- Use the client rectangle when setting the trees scrollbars, so
+	border style is taken into account.
 	
 2006-07-14  Jackson Harper  <jackson@ximian.com>
 
