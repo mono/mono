@@ -2929,7 +2929,7 @@ namespace Mono.CSharp {
 
 						if (lit == SwitchLabel.NullStringCase){
 							null_found = true;
-							if (label_count == 1)
+							if (label + 1 == label_count)
 								ig.Emit (OpCodes.Br, next_test);
 							continue;
 						}

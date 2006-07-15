@@ -544,6 +544,22 @@ class X {
 		}
 	}
 	
+	static bool bug_78860()
+	{
+		string model = "TSP100";
+
+		System.Console.WriteLine("switch on '{0}'", model);
+
+		switch(model) {
+			case "wibble":
+			case null:
+				return false;
+			case "TSP100":
+				return true;
+		}
+		return false;
+	}
+	
 	static int Main ()
 	{
 		byte b;
@@ -673,6 +689,9 @@ class X {
 			return 49;
 		if (tests_default_2 ("Monkey") != 3)
 			return 50;
+		
+		if (!bug_78860 ())
+			return 60;
 		
 		Console.WriteLine ("All tests pass");
 		return 0;
