@@ -469,5 +469,85 @@ namespace MonoTests_System.Data
 
 			ds.Tables.RemoveAt(0); //Parent table
 		}
+
+#if NET_2_0
+		[Test]
+		public void AddTable_DiffNamespaceTest ()
+		{
+			DataSet ds = new DataSet ();
+			ds.Tables.Add ("table", "namespace1");
+			ds.Tables.Add ("table", "namespace2");
+			Assert.AreEqual (2, ds.Tables.Count, "#1");
+
+			try {
+				ds.Tables.Add ("table", "namespace1");
+				Assert.Fail ("#2");
+			} catch (DuplicateNameException e) { }
+
+			ds.Tables.Add ("table");
+			try {
+				ds.Tables.Add ("table", null);
+				Assert.Fail ("#4");
+			} catch (DuplicateNameException e) { }
+		}
+
+		[Test]
+		public void Contains_DiffNamespaceTest ()
+		{
+			DataSet ds = new DataSet ();
+			ds.Tables.Add ("table");
+			Assert.IsTrue (ds.Tables.Contains ("table"), "#1");
+
+			ds.Tables.Add ("table", "namespace1");
+			ds.Tables.Add ("table", "namespace2");
+
+			// Should fail if it cannot be resolved to a single table
+			Assert.IsFalse (ds.Tables.Contains ("table"));
+
+			try {
+				ds.Tables.Contains ("table", null);
+				Assert.Fail ("#2");
+			} catch (ArgumentNullException e) { }
+
+			Assert.IsTrue (ds.Tables.Contains ("table", "namespace1"), "#4");
+			Assert.IsFalse (ds.Tables.Contains ("table", "namespace3"), "#5");
+		}
+
+		[Test]
+		public void IndexOf_DiffNamespaceTest ()
+		{
+			DataSet ds = new DataSet ();
+			ds.Tables.Add ("table");
+			Assert.AreEqual (0, ds.Tables.IndexOf ("table"), "#1");
+			ds.Tables.Add ("table", "namespace1");
+			ds.Tables.Add ("table", "namespace2");
+			Assert.AreEqual (-1, ds.Tables.IndexOf ("table"), "#2");
+			Assert.AreEqual (2, ds.Tables.IndexOf ("table", "namespace2"), "#3");
+			Assert.AreEqual (1, ds.Tables.IndexOf ("table", "namespace1"), "#4");
+		}
+
+		[Test]
+		public void Remove_DiffNamespaceTest ()
+		{
+			DataSet ds = new DataSet ();
+			ds.Tables.Add ("table");
+			ds.Tables.Add ("table", "namespace1");
+			ds.Tables.Add ("table", "namespace2");
+
+			try {
+				ds.Tables.Remove ("table");
+				Assert.Fail ("#1");
+			} catch (ArgumentException e) { }
+
+			ds.Tables.Remove ("table", "namespace2");
+			Assert.AreEqual (2, ds.Tables.Count, "#3");
+			Assert.AreEqual ("namespace1", ds.Tables [1].Namespace, "#4");
+
+			try {
+				ds.Tables.Remove ("table", "namespace2");
+				Assert.Fail ("#5");
+			} catch (ArgumentException e) { }
+		}
+#endif
 	}
 }

@@ -1,3 +1,9 @@
+2006-07-15  Senganal T  <tsenganal@novell.com>
+
+	* DataTableCollection.cs :
+		- Contain,IndexOf,Remove,Add,Indexer : support for table
+		namespace. Remove redundant checks in Remove/Add.
+
 2006-07-14  Senganal T  <tsenganal@novell.com>
 	
 	* DataColumn.cs :

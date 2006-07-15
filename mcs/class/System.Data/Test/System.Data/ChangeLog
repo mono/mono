@@ -1,3 +1,8 @@
+2006-07-15  Senganal T <tsenganal@novell.com>
+
+	* DataTableCollection.cs : Tests for IndexOf, Contains,
+	Add, Remove methods
+
 2006-07-14  Senganal T <tsenganal@novell.com>
 
 	* DataColumnTest2.cs : Test for SetOrdinal 

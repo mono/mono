@@ -84,9 +84,11 @@ namespace System.Data {
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		public DataTable this [string name, string tbNamespace] {
-			get { throw new NotImplementedException (); }
+			get { 
+				int index = IndexOf (name, tbNamespace, true);
+				return index < 0 ? null : (DataTable) List[index];
+			}
 		}
 #endif
 
@@ -134,7 +136,11 @@ namespace System.Data {
 				NameTable (table);
 		    
 			// check if the collection has a table with the same name.
-			int tmp = IndexOf(table.TableName);
+#if !NET_2_0
+			int tmp = IndexOf (table.TableName);
+#else
+			int tmp = IndexOf (table.TableName, table.Namespace);
+#endif
 			// if we found a table with same name we have to check
 			// that it is the same case.
 			// indexof can return a table with different case letters.
@@ -213,6 +219,13 @@ namespace System.Data {
 		{
 			return (-1 != IndexOf (name, false));
 		}
+		
+#if NET_2_0
+		public bool Contains (string name, string tableNamespace) 
+		{
+			return (IndexOf (name, tableNamespace) != -1) ;
+		}
+#endif
 
 		public
 #if !NET_2_0
@@ -232,6 +245,16 @@ namespace System.Data {
 			return IndexOf (name, false);
 		}
 
+#if NET_2_0
+		public int IndexOf (string name, string tableNamespace)
+		{
+			if (tableNamespace == null)
+				throw new ArgumentNullException ("'tableNamespace' argument cannot be null.",
+						"tableNamespace");
+			return IndexOf (name, tableNamespace, false);
+		}
+#endif
+		
 		public void Remove (DataTable table) 
 		{
 			OnCollectionChanging (new CollectionChangeEventArgs (CollectionChangeAction.Remove, table));
@@ -245,10 +268,22 @@ namespace System.Data {
 
 		public void Remove (string name) 
 		{
-			if ( IndexOf (name, false) == -1)
+			int index = IndexOf (name, false);
+			if (index == -1)
 				throw new ArgumentException ("Table " + name + " does not belong to this DataSet"); 
-			Remove (this [name]);
+			RemoveAt (index);
 		}
+
+#if NET_2_0
+		public void Remove (string name, string tableNamespace)
+		{
+			int index = IndexOf (name, tableNamespace, true);
+			if (index == -1)
+				 throw new ArgumentException ("Table " + name + " does not belong to this DataSet");
+
+			RemoveAt (index);
+		}
+#endif
 
 		public void RemoveAt (int index) 
 		{
@@ -286,11 +321,50 @@ namespace System.Data {
 		#endregion
 
 		#region Private methods
+#if NET_2_0
+		private int IndexOf (string name, string ns, bool error)
+		{
+			int index = -1, count = 0, match = -1;
+			do {
+				index = IndexOf (name, error, index+1);
+
+				if (index == -1)
+					break;
+
+				if (ns == null) {
+					if (count > 1)
+						break;
+					count++;
+					match = index;
+				} else if (this [index].Namespace.Equals (ns))
+					return index;
+
+			} while (index != -1 && index < Count);
+			
+			if (count == 1)
+				return match;
+
+			if (count == 0 || !error)
+				return -1;
+
+			throw new ArgumentException ("The given name '" + name + "' matches atleast two names" +
+					"in the collection object with different namespaces");
+		}
+#endif
 
 		private int IndexOf (string name, bool error)
 		{
+#if NET_2_0
+			return IndexOf (name, null, error);
+# else
+			return IndexOf (name, error, 0);
+#endif
+		}
+
+		private int IndexOf (string name, bool error, int start)
+		{
 			int count = 0, match = -1;
-			for (int i = 0; i < List.Count; i++)
+			for (int i = start; i < List.Count; i++)
 			{
 				String name2 = ((DataTable) List[i]).TableName;
 				if (String.Compare (name, name2, false) == 0)
@@ -327,79 +401,55 @@ namespace System.Data {
 		{
 
 			// check if table is null reference
-			if (table == null)
-			{
+			if (table == null) {
 				if(throwException)
 					throw new ArgumentNullException("table");
 				return false;
 			}
 
-			// check if the table doesnot belong to this collection
-			bool tableexists = true;
-			int tmp = IndexOf(table.TableName);
-                        // if we found a table with same name we have to check
-                        // that it is the same case.
-                        // indexof can return a table with different case letters.
-                        if (tmp != -1)
-			{
-				 if(table.TableName != this[tmp].TableName)
-					tableexists = false;
-			}
-			else
-				tableexists = false;
-
-			if (!tableexists)
-			{
-				if(throwException)
-                                        throw new ArgumentException("Table does not exist in collection");
-                                return false;
-
-			}		
-				
-						
 			// check if the table has the same DataSet as this collection.
-			if(table.DataSet != this.dataSet)
-			{
-				if(throwException)
-					throw new ArgumentException("Table " + table.TableName + " does not belong to this DataSet.");
-				return false;
+			if(table.DataSet != this.dataSet) {
+				if(!throwException)
+					return false;
+				throw new ArgumentException("Table " + table.TableName + " does not belong to this DataSet.");
 			}
 			
 			// check the table has a relation attached to it.
-			if (table.ParentRelations.Count > 0 || table.ChildRelations.Count > 0)
-			{
-				if(throwException)
-					throw new ArgumentException("Cannot remove a table that has existing relations. Remove relations first.");
-				return false;
+			if (table.ParentRelations.Count > 0 || table.ChildRelations.Count > 0) {
+				if(!throwException)
+					return false;
+				throw new ArgumentException("Cannot remove a table that has existing relations. Remove relations first.");
 			}
-			
 
 			// now we check if any ForeignKeyConstraint is referncing 'table'.
-			IEnumerator tableEnumerator = this.dataSet.Tables.GetEnumerator();
-			
-			// loop on all tables in dataset
-			while (tableEnumerator.MoveNext())
-			{
-				IEnumerator constraintEnumerator = ((DataTable) tableEnumerator.Current).Constraints.GetEnumerator();
-				// loop on all constrains in the current table
-				while (constraintEnumerator.MoveNext())
-				{
-					Object o = constraintEnumerator.Current;
-					// we only check ForeignKeyConstraint
-					if (o is ForeignKeyConstraint)
-					{
-						ForeignKeyConstraint fc = (ForeignKeyConstraint) o;
-						if(fc.Table == table || fc.RelatedTable == table)
-						{
-							if(throwException)
-								throw new ArgumentException("Cannot remove table " + table.TableName + ", because it referenced in ForeignKeyConstraint " + fc.ConstraintName + ". Remove the constraint first.");
-							return false;
-						}
-					}
+			foreach (Constraint c in table.Constraints) {
+				UniqueConstraint uc = c as UniqueConstraint;
+				if (uc != null) {
+					if (uc.ChildConstraint == null)
+						continue;
+
+					if (!throwException)
+						return false;
+					RaiseForeignKeyReferenceException (table.TableName, uc.ChildConstraint.ConstraintName);
 				}
+
+				ForeignKeyConstraint fc = c as ForeignKeyConstraint;
+				if (fc == null) 
+					continue;
+
+				if (!throwException)
+					return false;
+				RaiseForeignKeyReferenceException (table.TableName, fc.ConstraintName);
 			}
 
 			return true;
+		}
+
+		private void RaiseForeignKeyReferenceException (string table, string constraint)
+		{
+			throw new ArgumentException (String.Format ("Cannot remove table {0}, because it is referenced" +
+								" in ForeignKeyConstraint {1}. Remove the constraint first.",
+								table, constraint));
 		}
 
 		#endregion // Private methods
