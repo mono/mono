@@ -529,6 +529,12 @@ namespace System.Runtime.Remoting
 			RemotingProxy proxy = new RemotingProxy (type, ChannelServices.CrossContextUrl, activationAttributes);
 			return proxy.GetTransparentProxy();
 		}
+
+		internal static object CreateClientProxyForComInterop (Type type)
+		{
+			Mono.Interop.ComInteropProxy proxy = new Mono.Interop.ComInteropProxy (type);
+			return proxy.GetTransparentProxy ();
+		}
 	
 		internal static Identity GetIdentityForUri (string uri)
 		{

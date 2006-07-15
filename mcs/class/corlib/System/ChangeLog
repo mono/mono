@@ -1,3 +1,8 @@
+2006-07-15  Jonathan Chambers  <joncham@gmail.com>
+
+	* __ComObject.cs: Begin implementing COM Interop.
+	* Environment.cs: Increment corlib version.
+	
 2006-07-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* Delegate.cs (DynamicInvokeImpl): Add support for bound delegates in Net 2.0.

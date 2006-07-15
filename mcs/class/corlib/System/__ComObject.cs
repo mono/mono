@@ -4,6 +4,7 @@
 // Authors:
 //   Sebastien Pouliot <sebastien@ximian.com>
 //   Kornél Pál <http://www.kornelpal.hu/>
+//   Jonathan Chambers <joncham@gmail.com>
 //
 // Copyright (C) 2004 Novell (http://www.novell.com)
 // Copyright (C) 2005 Kornél Pál
@@ -30,6 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections;
+using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
+
 namespace System
 {
 	// This is a private class that is used as a generic wrapper class
@@ -45,8 +50,125 @@ namespace System
 
 	internal class __ComObject : MarshalByRefObject
 	{
-		private __ComObject ()
+		#region Sync with object-internals.h
+		IntPtr hash_table;
+		#endregion
+
+		// this is used internally and for the the methods
+		// Marshal.GetComObjectData and Marshal.SetComObjectData
+		Hashtable hashtable;
+
+		[ThreadStatic]
+		static bool coinitialized;
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern void Finalizer ();
+
+		~__ComObject ()
 		{
+			Finalizer ();
 		}
+
+		public __ComObject ()
+		{
+			// call CoInitialize once per thread
+			if (!coinitialized) {
+				CoInitialize (IntPtr.Zero);
+				coinitialized = true;
+			}
+
+			hashtable = new Hashtable ();
+
+			IntPtr ppv;
+			int hr = CoCreateInstance (GetType ().GUID, IntPtr.Zero, 0x1 | 0x4 | 0x10, IID_IUnknown, out ppv);
+			Marshal.ThrowExceptionForHR (hr);
+
+			SetIUnknown (ppv);
+		}
+
+        public __ComObject (IntPtr pItf)
+        {
+            hashtable = new Hashtable ();
+
+            IntPtr ppv;
+            Guid iid = IID_IUnknown;
+			int hr = Marshal.QueryInterface (pItf, ref iid, out ppv);
+			Marshal.ThrowExceptionForHR (hr);
+
+			SetIUnknown (ppv);
+        }
+
+		public Hashtable Hashtable
+		{
+			get
+			{
+				return hashtable;
+			}
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern __ComObject CreateRCW (Type t);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern void SetIUnknown (IntPtr t);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern IntPtr GetIUnknown ();
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern IntPtr FindInterface (Type t);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern void CacheInterface (Type t, IntPtr pItf);
+
+		internal IntPtr GetInterface(Type t)
+		{
+			IntPtr pItf = FindInterface (t);
+			if (pItf != IntPtr.Zero) {
+				return pItf;
+			}
+
+			Guid iid = t.GUID;
+			IntPtr ppv;
+			int hr = Marshal.QueryInterface (GetIUnknown(), ref iid, out ppv);
+			Marshal.ThrowExceptionForHR (hr);
+			CacheInterface (t, ppv);
+			return ppv;
+		}
+
+		internal IntPtr IUnknown
+		{
+			get
+			{
+				return GetIUnknown();
+			}
+		}
+
+		internal static Guid IID_IUnknown
+		{
+			get
+			{
+				return new Guid("00000000-0000-0000-C000-000000000046");
+			}
+		}
+
+		internal static Guid IID_IDispatch
+		{
+			get
+			{
+				return new Guid ("00020400-0000-0000-C000-000000000046");
+			}
+		}
+
+		[DllImport ("ole32.dll", CallingConvention = CallingConvention.StdCall)]
+		static extern int CoInitialize (IntPtr pvReserved);
+
+		[DllImport ("ole32.dll", CallingConvention = CallingConvention.StdCall, ExactSpelling = true, PreserveSig = true)]
+		static extern int CoCreateInstance (
+		   [In, MarshalAs (UnmanagedType.LPStruct)] Guid rclsid,
+		   IntPtr pUnkOuter,
+		   uint dwClsContext,
+		  [In, MarshalAs (UnmanagedType.LPStruct)] Guid riid,
+			out IntPtr pUnk);
 	}
 }

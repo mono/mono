@@ -51,18 +51,20 @@ namespace System.Runtime.Remoting.Proxies
 	}
 	
 	public abstract class RealProxy {
-
+		// other classes visible to the runtime 
+		// derive from this class so keep these locals
+		// in sync with the definition RealProxy 
+		// in object-internals.h
 		#region Sync with object-internals.h
 		Type class_to_proxy;
 		internal Context _targetContext;
 		MarshalByRefObject _server;
 		int _targetDomainId = -1;
 		internal string _targetUri;
-		#endregion
-		
 		internal Identity _objectIdentity;
 		Object _objTP;
 		object _stubData;
+        #endregion
 
 		protected RealProxy ()
 		{

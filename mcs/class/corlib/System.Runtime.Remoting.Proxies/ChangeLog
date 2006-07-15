@@ -1,3 +1,8 @@
+2006-07-15  Jonathan Chambers  <joncham@gmail.com>
+
+	* RealProxy.cs: Indicate that all fields need keep in sync
+	with definition in object-internals.h for COM Interop.
+	
 2006-06-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* RealProxy.cs (ProcessResponse): Use t.GetElementType ().IsInstanceOfType () when the type is a byref.

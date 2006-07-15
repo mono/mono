@@ -3,6 +3,7 @@
 // Sean MacIsaac (macisaac@ximian.com)
 // Paolo Molaro (lupus@ximian.com)
 // Dietmar Maurer (dietmar@ximian.com)
+// Jonathan Chambers (joncham@gmail.com)
 //
 // (C) 2001-2002 Ximian, Inc.
 
@@ -29,6 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using Mono.Interop;
 using System.Runtime.CompilerServices;
 using System;
 using System.Security;
@@ -58,10 +60,8 @@ namespace System.Runtime.InteropServices
 		private Marshal () {}
 #endif
 
-		[MonoTODO]
-		public static int AddRef (IntPtr pUnk) {
-			throw new NotImplementedException ();
-		}
+        [MethodImplAttribute (MethodImplOptions.InternalCall)]
+        public extern static int AddRef (IntPtr pUnk);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static IntPtr AllocCoTaskMem (int cb);
@@ -222,7 +222,13 @@ namespace System.Runtime.InteropServices
 
 		[MonoTODO]
 		public static IntPtr GetComInterfaceForObject (object o, Type T) {
-			throw new NotImplementedException ();
+            __ComObject co = o as __ComObject;
+            if (co == null)
+			    throw new NotSupportedException ("Only RCWs are currently supported");
+
+			IntPtr pUnk = co.GetInterface (T);
+			AddRef (pUnk);
+			return pUnk;
 		}
 
 #if NET_2_0
@@ -232,9 +238,17 @@ namespace System.Runtime.InteropServices
 		}
 #endif
 
-		[MonoTODO]
 		public static object GetComObjectData (object obj, object key) {
-			throw new NotImplementedException ();
+			if (obj == null)
+				throw new ArgumentNullException ("obj");
+			if (key == null)
+				throw new ArgumentNullException ("key");
+
+			__ComObject com_object = obj as __ComObject;
+			if (com_object == null)
+				throw new ArgumentException ("obj is not a COM object", "obj");
+
+			return com_object.Hashtable[key];
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -300,6 +314,13 @@ namespace System.Runtime.InteropServices
 
 		[MonoTODO]
 		public static IntPtr GetIUnknownForObject (object o) {
+			// only handle case of RCW objects for now
+			__ComObject co = o as __ComObject;
+			if (co != null) {
+				IntPtr pUnk = co.IUnknown;
+				AddRef (pUnk);
+				return pUnk;
+			}
 			throw new NotImplementedException ();
 		}
 
@@ -332,9 +353,9 @@ namespace System.Runtime.InteropServices
 			Marshal.StructureToPtr(vt, pDstNativeVariant, false);
 		}
 
-		[MonoTODO]
 		public static object GetObjectForIUnknown (IntPtr pUnk) {
-			throw new NotImplementedException ();
+            ComInteropProxy proxy = new ComInteropProxy (pUnk);
+            return proxy.GetTransparentProxy ();
 		}
 
 		public static object GetObjectForNativeVariant (IntPtr pSrcNativeVariant) {
@@ -357,10 +378,18 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public static object GetTypedObjectForIUnknown (IntPtr pUnk, Type t) {
-			throw new NotImplementedException ();
-		}
+        public static object GetTypedObjectForIUnknown (IntPtr pUnk, Type t)
+        {
+            ComInteropProxy proxy = new ComInteropProxy (pUnk);
+            __ComObject co = (__ComObject)proxy.GetTransparentProxy ();
+            foreach (Type itf in t.GetInterfaces ()) {
+                if ((itf.Attributes & TypeAttributes.Import) == TypeAttributes.Import) {
+                    if (co.GetInterface (itf) == IntPtr.Zero)
+                        return null;
+                }
+            }
+            return co;
+        }
 
 		[MonoTODO]
 		public static Type GetTypeForITypeInfo (IntPtr piTypeInfo) {
@@ -416,9 +445,10 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static bool IsComObject (object o) {
-			throw new NotImplementedException ();
+			Type t = o.GetType ();
+			object[] attrs = t.GetCustomAttributes (typeof (ComImportAttribute), true);
+			return (attrs != null && attrs.Length > 0);
 		}
 
 		[MonoTODO]
@@ -467,10 +497,8 @@ namespace System.Runtime.InteropServices
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static object PtrToStructure (IntPtr ptr, Type structureType);
 
-		[MonoTODO]
-		public static int QueryInterface (IntPtr pUnk, ref Guid iid, out IntPtr ppv) {
-			throw new NotImplementedException ();
-		}
+        [MethodImplAttribute (MethodImplOptions.InternalCall)]
+        public extern static int QueryInterface (IntPtr pUnk, ref Guid iid, out IntPtr ppv);
 
 		public static byte ReadByte (IntPtr ptr) {
 			return ReadByte (ptr, 0);
@@ -570,10 +598,8 @@ namespace System.Runtime.InteropServices
 #if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
-		[MonoTODO]
-		public static int Release (IntPtr pUnk) {
-			throw new NotImplementedException ();
-		}
+        [MethodImplAttribute (MethodImplOptions.InternalCall)]
+        public extern static int Release (IntPtr pUnk);
 
 		[MonoTODO]
 		public static int ReleaseComObject (object o) {
@@ -588,9 +614,18 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static bool SetComObjectData (object obj, object key, object data) {
-			throw new NotImplementedException ();
+			if (obj == null)
+				throw new ArgumentNullException ("obj");
+			if (key == null)
+				throw new ArgumentNullException ("key");
+
+			__ComObject com_object = obj as __ComObject;
+			if (com_object == null)
+				throw new ArgumentException ("obj is not a COM object", "obj");
+
+			com_object.Hashtable[key] = data;
+			return true;
 		}
 
 		public static int SizeOf (object structure) {
@@ -690,9 +725,9 @@ namespace System.Runtime.InteropServices
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static void StructureToPtr (object structure, IntPtr ptr, bool fDeleteOld);
 
-		[MonoTODO]
 		public static void ThrowExceptionForHR (int errorCode) {
-			throw new NotImplementedException ();
+            if (errorCode < 0)
+			    throw new COMException ("", errorCode);
 		}
 
 		[MonoTODO]

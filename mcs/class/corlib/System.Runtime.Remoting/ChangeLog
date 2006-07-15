@@ -1,3 +1,7 @@
+2006-07-15  Jonathan Chambers  <joncham@gmail.com>
+
+	* RemotingServices.cs: Begin implementing COM Interop.
+
 2006-04-27  Robert Jordan  <robertj@gmx.net>
 
 	* RemotingServices.cs (IsObjectOutOfAppDomain, IsObjectOutOfContext):

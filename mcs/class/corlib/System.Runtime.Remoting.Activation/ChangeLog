@@ -1,3 +1,7 @@
+2006-07-15  Jonathan Chambers  <joncham@gmail.com>
+
+	* ActivationServices.cs: Begin implementing COM Interop.
+	
 2004-09-22  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* ActivationServices.cs: In Activate, assign the proxy to the ctor

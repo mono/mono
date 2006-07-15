@@ -1,3 +1,10 @@
+2006-07-15  Jonathan Chambers  <joncham@gmail.com>
+
+	* Marshal.cs: Begin implementing COM Interop. Implemented
+	AddRef, GetComInterfaceForObject, GetComObjectData, GetIUnknownForObject,
+	GetObjectForIUnknown, GetTypedObjectForIUnknown, IsComObject, QueryInterface
+	Release, SetComObjectData, and ThrowExceptionForHR.
+	
 2006-06-07  Jonathan Chambers  <jonathan.chambers@ansys.com>
 
 	* Marshal.cs: Implement GetComSlotForMethodInfo
