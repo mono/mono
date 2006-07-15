@@ -1,3 +1,47 @@
+2006-07-15  Jonathan Chambers  <joncham@gmail.com>
+
+	Begin implementing COM Interop.
+	* appdomain.c: Increment corlib version.
+	* class.c: Set ComImport classes' parent to __ComObject.
+	* loader.c: Mark cominterop methods as such.
+	* domain.c: Add __ComObject class to MonoDefaults structure.
+	* image.c: Add 2 hashtables to the image for COM Interop related methods
+	* metadata.c: Added mono_metadata_type_dup_mp to duplicate a type
+	using the mempool allocator
+	
+	* metadata-internals.h: Add 2 hashtables to the image for COM Interop related methods
+	* metadata.h: Added cominterop field to _MonoMethodSignature struct and
+	declaration for mono_metadata_type_dup_mp.
+	
+	* debug-helpers.c: Added strings for two additional wrapper types
+	* object.c: Create proxy objects for ComImport classes
+	* class-internals.h: Define 2 new method wrapper types, COM Interop remoting target,
+	and added __ComObject class to MonoDefaults structure.
+	
+	* object-internals.h: Finish MonoRealProxy definition, and add definition of
+	MonoComInteropProxy and MonoComObject.
+	
+	* marshal.c: Added support for COM Interop
+	(signature_cominterop): Converts managed signature to corresponding
+	unmanaged COM signature.
+	(cominterop_get_function_pointer): gets unmanaged function pointer via
+	COM object vtable
+	(cominterop_get_com_slot_for_method): returns vtable slot in COM interface of method
+	(cominterop_get_method_interface): returns interface type that method is defined on
+	(mono_mb_emit_cominterop_call): emits native call to function pointer
+	gotten from vtable
+	(cominterop_get_native_wrapper_adjusted): actual wrapper around unmanaged COM call
+	that matches signature of unmanaged function.
+	(cominterop_get_native_wrapper): wrapper around adjusted method call.
+	(cominterop_get_invoke): forwards call from proxy to __ComObject
+	(ves_icall_System_Runtime_InteropServices_Marshal_AddRef): Implements Marshal.AddRef 
+	(ves_icall_System_Runtime_InteropServices_Marshal_QueryInterface): Implements Marshal.QueryInterface 
+	(ves_icall_System_Runtime_InteropServices_Marshal_Release): Implements Marshal.Release 
+	
+	* marshal.h: Added Marshal icall declarations.
+	* icall.c: Added __ComObject icalls. Need to store interfaces in unmanaged code
+	so we can access them in finalizer
+	
 2006-07-14  Dick Porter  <dick@ximian.com>
 
 	* object.c (mono_type_initialization_cleanup): Fix a race
