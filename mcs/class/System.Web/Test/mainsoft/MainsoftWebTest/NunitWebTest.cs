@@ -93,7 +93,7 @@ namespace MonoTests.stand_alone.WebHarness
 		{
 			bool test = HtmlComparer (origin, derived);
 			if (!test) {
-				Assert.AreEqual (_compareActual, _compareExpect, msg);
+				Assert.AreEqual (_compareExpect, _compareActual, msg);
 				       
 			}
 		}
