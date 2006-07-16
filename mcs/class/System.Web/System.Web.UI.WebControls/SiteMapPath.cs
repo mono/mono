@@ -356,7 +356,7 @@ namespace System.Web.UI.WebControls
 						NodeTemplate.InstantiateIn (item);
 					}
 					else {
-						WebControl c = CreateNodeControl (true, item);
+						WebControl c = CreateHyperLink (item);
 						c.ApplyStyle (NodeStyle);
 						c.ApplyStyle (RootNodeStyle);
 						item.Controls.Add (c);
@@ -373,11 +373,15 @@ namespace System.Web.UI.WebControls
 						item.ApplyStyle (NodeStyle);
 						item.ApplyStyle (CurrentNodeStyle);
 						NodeTemplate.InstantiateIn (item);
-					}
-					else {
-						WebControl c = CreateNodeControl (RenderCurrentNodeAsLink, item);
+					} else if (RenderCurrentNodeAsLink) {
+						HyperLink c = CreateHyperLink (item);
 						c.ApplyStyle (NodeStyle);
 						c.ApplyStyle (CurrentNodeStyle);
+						item.Controls.Add (c);
+					} else {
+						Literal c = CreateLiteral (item);
+						item.ApplyStyle (NodeStyle);
+						item.ApplyStyle (CurrentNodeStyle);
 						item.Controls.Add (c);
 					}
 					break;
@@ -388,7 +392,7 @@ namespace System.Web.UI.WebControls
 						NodeTemplate.InstantiateIn (item);
 					}
 					else {
-						WebControl c = CreateNodeControl (true, item);
+						WebControl c = CreateHyperLink (item);
 						c.ApplyStyle (NodeStyle);
 						item.Controls.Add (c);
 					}
@@ -400,32 +404,32 @@ namespace System.Web.UI.WebControls
 						PathSeparatorTemplate.InstantiateIn (item);
 					}
 					else {
-						Label h = new Label ();
+						Literal h = new Literal ();
 						h.Text = PathSeparator;
-						h.ApplyStyle (PathSeparatorStyle);
+						item.ApplyStyle (PathSeparatorStyle);
 						item.Controls.Add (h);
 					}
 					break;
 			}
 		}
 		
-		WebControl CreateNodeControl (bool link, SiteMapNodeItem item)
+		HyperLink CreateHyperLink (SiteMapNodeItem item)
 		{
-			if (link) {
-				HyperLink h = new HyperLink ();
-				h.Text = item.SiteMapNode.Title;
-				h.NavigateUrl = item.SiteMapNode.Url;
-				if (ShowToolTips)
-					h.ToolTip = item.SiteMapNode.Description;
-				return h;
-			}
-			else {
-				Label h = new Label ();
-				h.Text = item.SiteMapNode.Title;
-				if (ShowToolTips)
-					h.ToolTip = item.SiteMapNode.Description;
-				return h;
-			}
+			HyperLink h = new HyperLink ();
+			h.Text = item.SiteMapNode.Title;
+			h.NavigateUrl = item.SiteMapNode.Url;
+			if (ShowToolTips)
+				h.ToolTip = item.SiteMapNode.Description;
+			return h;
+		}
+
+		Literal CreateLiteral (SiteMapNodeItem item)
+		{
+			Literal h = new Literal ();
+			h.Text = item.SiteMapNode.Title;
+			if (ShowToolTips)
+				item.ToolTip = item.SiteMapNode.Description;
+			return h;
 		}
 		
 		protected override void LoadViewState (object savedState)

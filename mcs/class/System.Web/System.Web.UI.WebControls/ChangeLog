@@ -1,3 +1,8 @@
+2006-07-16 Andrew Skiba <andrews@mainsoft.com>
+
+	* SiteMapPath.cs: create Literal instead of Label according to the
+	MSDN and test SiteMapPath_InitializeItem.
+
 2006-07-16 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* Style.cs: BorderStyle should be added if BorderWidth greater than 0
