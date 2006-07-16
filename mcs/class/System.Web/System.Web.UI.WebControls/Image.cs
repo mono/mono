@@ -224,12 +224,15 @@ namespace System.Web.UI.WebControls {
 				writer.AddAttribute (HtmlTextWriterAttribute.Align, "texttop");
 				break;
 			}
-
+#if NET_2_0
+			if (BorderWidth.IsEmpty)
+				writer.AddStyleAttribute (HtmlTextWriterStyle.BorderWidth, "0px");
+#else
 			// if border-with is not specified in style or 
 			// no style is defined - set image to no border
-			if (!ControlStyleCreated || ControlStyle.BorderWidth.IsEmpty) {
+			if (!ControlStyleCreated || ControlStyle.BorderWidth.IsEmpty)
 				writer.AddAttribute (HtmlTextWriterAttribute.Border, "0");
-			}
+#endif
 		}
 
 #if NET_2_0

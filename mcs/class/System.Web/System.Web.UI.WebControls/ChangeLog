@@ -1,3 +1,9 @@
+2006-07-16 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* Style.cs: BorderStyle should be added if BorderWidth greater than 0
+	* Image.cs: in 2.0 there is no border attribute, but border-width
+	style attribute
+
 2006-07-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Button.cs: always render the 'name' attribute. Fixes bug #78746.

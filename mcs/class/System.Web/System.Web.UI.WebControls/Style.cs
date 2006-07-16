@@ -420,7 +420,8 @@ namespace System.Web.UI.WebControls {
 			if ((styles & Styles.BorderWidth) != 0) {
 				u = (Unit)viewstate["BorderWidth"];
 				if (!u.IsEmpty) {
-					have_width = true;
+					if (u.Value > 0)
+						have_width = true;
 					writer.AddStyleAttribute (HtmlTextWriterStyle.BorderWidth, u.ToString());
 				}
 			}
