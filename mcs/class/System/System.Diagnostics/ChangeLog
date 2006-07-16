@@ -1,3 +1,8 @@
+2006-07-16  Andrew Skiba <andrews@mainsoft.com>
+
+	* Process.cs: throw FileNotFoundException earlier; give more
+	diagnostics.
+
 2006-05-16  Dick Porter  <dick@ximian.com>
 
 	* Process.cs: Dispose the handle from a destructor too

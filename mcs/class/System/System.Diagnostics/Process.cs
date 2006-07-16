@@ -866,6 +866,8 @@ namespace System.Diagnostics {
 		private static bool Start_noshell (ProcessStartInfo startInfo,
 						   Process process)
 		{
+			if (Path.IsPathRooted (startInfo.FileName) && !File.Exists (startInfo.FileName))
+				throw new FileNotFoundException  ("Executable not found: " + startInfo.FileName);
 			ProcInfo proc_info=new ProcInfo();
 			IntPtr stdin_rd, stdin_wr;
 			IntPtr stdout_rd, stdout_wr;
@@ -953,7 +955,11 @@ namespace System.Diagnostics {
 					MonoIO.Close (stderr_wr, out error);
 				}
 
-				throw new Win32Exception (-proc_info.pid);
+				throw new Win32Exception (-proc_info.pid, 
+					"ApplicationName='"+startInfo.FileName+
+					"', CommandLine='"+startInfo.Arguments+
+					"', CurrentDirectory='"+startInfo.WorkingDirectory+
+					"', PATH='"+startInfo.EnvironmentVariables["PATH"]+"'");
 			}
 
 			process.process_handle = proc_info.process_handle;

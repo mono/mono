@@ -63,6 +63,14 @@ namespace Mono.CSharp
 						Path.GetDirectoryName (
 							Path.GetDirectoryName (p)),
 						"bin\\mono.exe");
+				if (!File.Exists (windowsMonoPath))
+					windowsMonoPath = Path.Combine (
+						Path.GetDirectoryName (
+							Path.GetDirectoryName (
+								Path.GetDirectoryName (p))),
+						"mono\\mono\\mini\\mono.exe");
+				if (!File.Exists (windowsMonoPath))
+					throw new FileNotFoundException ("Windows mono path not found: " + windowsMonoPath);
 #if NET_2_0
 				windowsMcsPath =
 					Path.Combine (p, "2.0\\gmcs.exe");
@@ -70,6 +78,20 @@ namespace Mono.CSharp
 				windowsMcsPath =
 					Path.Combine (p, "1.0\\mcs.exe");
 #endif
+				if (!File.Exists (windowsMcsPath))
+#if NET_2_0
+					windowsMcsPath = 
+						Path.Combine(
+							Path.GetDirectoryName (p),
+							"lib\\net_2_0\\gmcs.exe");
+#else
+					windowsMcsPath = 
+						Path.Combine(
+							Path.GetDirectoryName (p),
+							"lib\\default\\mcs.exe");
+#endif
+				if (!File.Exists (windowsMcsPath))
+					throw new FileNotFoundException ("Windows mcs path not found: " + windowsMcsPath);
 			}
 		}
 
@@ -148,6 +170,7 @@ namespace Mono.CSharp
 			Process mcs=new Process();
 
 			string mcs_output;
+			string mcs_stdout;
 			string[] mcs_output_lines;
 			// FIXME: these lines had better be platform independent.
 			if (Path.DirectorySeparatorChar == '\\') {
@@ -170,7 +193,7 @@ namespace Mono.CSharp
 				mcs.Start();
 				// If there are a few kB in stdout, we might lock
 				mcs_output=mcs.StandardError.ReadToEnd();
-				mcs.StandardOutput.ReadToEnd ();
+				mcs_stdout=mcs.StandardOutput.ReadToEnd ();
 				mcs.WaitForExit();
 				results.NativeCompilerReturnValue = mcs.ExitCode;
 			} finally {
@@ -189,6 +212,10 @@ namespace Mono.CSharp
 				}
 			}
 			if (loadIt) {
+				if (!File.Exists (options.OutputAssembly)) {
+					throw new Exception ("Compiler failed to produce the assembly. Stderr='"
+						+mcs_output+"', Stdout='"+mcs_stdout+"'");
+				}
 				if (options.GenerateInMemory) {
 					using (FileStream fs = File.OpenRead(options.OutputAssembly)) {
 						byte[] buffer = new byte[fs.Length];
