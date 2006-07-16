@@ -1,3 +1,8 @@
+2006-07-16 Andrew Skiba <andrews@mainsoft.com>
+
+	* SiteMapPathTest.cs: fix expected results for dotnet in 3 tests;
+	add 2 new asserts for InitializeItem
+
 2006-07-16 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* BulletedListTest.cs: removed NotWorking attributes
@@ -29,6 +34,7 @@
 
 	* SiteMapPathTest.cs: fix expected results for IE user-agent
 
+>>>>>>> .r62654
 2006-07-09 Yoni Klain <yonik@mainsoft.com>
 
 	* MenuTest.cs changes on postback;

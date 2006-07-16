@@ -222,13 +222,10 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (DoTestPropertyRender)).Run ();
 			string RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
-			string OriginControlHtml = @"<span style=""background-color:Red;border-color:Red;border-width:3px;border-style:Dashed;color:Red;"">
-			<a href=""#_ctl1_SkipLink"">
-			<img src=""WebResource.axd?a=s&amp;r=transparent.gif&amp;t=632881421043562512""
-			width=""0"" height=""0"" alt=""Skip Navigation Links"" border=""0"" />
-			</a><span><span title=""test"">node1</span></span><span><span>-</span></span><span>
-                                           <a title=""test"" href=""/NunitWeb/MyPageWithMaster.aspx"">root</a></span>
-			<a id=""_ctl1_SkipLink""></a></span>";
+			string OriginControlHtml = @"<span style=""display:inline-block;color:Red;background-color:Red;border-color:Red;border-width:3px;border-style:Dashed;"">
+			<a href=""#ctl01_SkipLink""><img alt=""Skip Navigation Links"" height=""0"" width=""0"" src=""/NunitWeb/WebResource.axd""
+			style=""border-width:0px;"" /></a><span>node1</span><span>-</span><span><a title=""test"" href=""/NunitWeb/MyPageWithMaster.aspx"">root</a>
+			</span><a id=""ctl01_SkipLink""></a></span>";
 			HtmlDiff.AssertAreEqual(OriginControlHtml,RenderedControlHtml,"RenderProperty");
 		}
 		[Test]
@@ -238,11 +235,12 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (DoTestStylesRender)).Run ();
 			string RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
-			string OriginControlHtml = @"<span><a href=""#ctl01_SkipLink"">
-                                          <img alt=""Skip Navigation Links"" height=""0"" width=""0"" src=""/NunitWeb/WebResource.axd?d=gZrz8lvSQfolS1pG07HX9g2&amp;t=632784640484505569"" border=""0"" />
-                                          </a><span><a title=""test"" href=""/NunitWeb/MyPageWithMaster.aspx"">root</a></span>
-                                          <span> &gt; </span><span>node1</span>
-                                          <a id=""ctl01_SkipLink""></a></span>";
+			string OriginControlHtml = @"<span style=""background-color:Red;""><a href=""#ctl01_SkipLink"">
+			<img alt=""Skip Navigation Links"" height=""0"" width=""0"" src=""/NunitWeb/WebResource.axd""
+			style=""border-width:0px;"" /></a><span><a title=""test"" href=""/NunitWeb/MyPageWithMaster.aspx""
+			style=""background-color:Beige;border-color:Purple;"">root</a></span>
+			<span style=""background-color:RoyalBlue;""> &gt; </span><span style=""background-color:Pink;border-color:Purple;"">node1</span>
+			<a id=""ctl01_SkipLink""></a></span>";
 			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml,"RenderStyles");
 		}
 		[Test]
@@ -253,9 +251,9 @@ namespace MonoTests.System.Web.UI.WebControls
 			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (DoTestDefaultRender)).Run ();
 			string RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
 			string OriginControlHtml = @"<span><a href=""#ctl01_SkipLink"">
-						  <img alt=""Skip Navigation Links"" height=""0"" width=""0"" src=""/NunitWeb/WebResource.axd?d=gZrz8lvSQfolS1pG07HX9g2&amp;t=632784640484505569"" border=""0"" /></a>
-						  <span><a title=""test"" href=""/NunitWeb/MyPageWithMaster.aspx"">root</a></span><span> &gt; </span><span>node1</span>
-						  <a id=""ctl01_SkipLink""></a></span>";
+			<img alt=""Skip Navigation Links"" height=""0"" width=""0"" src=""/NunitWeb/WebResource.axd""
+			style=""border-width:0px;"" /></a><span><a title=""test"" href=""/NunitWeb/MyPageWithMaster.aspx"">root</a>
+			</span><span> &gt; </span><span>node1</span><a id=""ctl01_SkipLink""></a></span>";
 			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml,"RenderDefault");
 		}
 
@@ -368,7 +366,9 @@ namespace MonoTests.System.Web.UI.WebControls
 			SiteMapNodeItem I = new SiteMapNodeItem (0, SiteMapNodeItemType.PathSeparator);
 			smp.PathSeparatorStyle.BorderColor = Color.Red;
 			smp.InitilizeItems (I);
-			Assert.AreEqual (Color.Red, I.BorderColor, "InitializeItem");
+			Assert.AreEqual (1, I.Controls.Count, "InitializeItem#1");
+			Assert.AreEqual (typeof (Literal), I.Controls[0].GetType (), "InitializeItem#2");
+			Assert.AreEqual (Color.Red, I.BorderColor, "InitializeItem#3");
 		}
 		public static void SiteMapChildNode (Page p)
 		{
