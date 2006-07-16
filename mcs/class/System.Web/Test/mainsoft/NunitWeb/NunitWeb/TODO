@@ -1,0 +1,17 @@
+CODE
+
+* get rid of PageDelegates, unite it with PageInvoker, or give only a single
+	delegate.
+	
+* replace PageHandlerFactory with custom handler in web.config, to get rid
+	of WebTest.CurrentTest.DoInvoke (this) call from every page
+	constructor.	
+
+DOCUMENTATION
+
+* add the documentation about instrumenting pages to add the test hooks
+	("MonoTests.SystemWeb.Framework.WebTest.CurrentTest.Invoke(this);") and
+	alternative ways of doing it.
+
+* add the tutorial kind of documentation at the namespace and class levels
+
