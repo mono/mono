@@ -1,3 +1,12 @@
+2006-07-16 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* CommandField.cs: fixed InitializeCell, wrong order of command 
+	buttons
+	* ImageField.cs: image field with null src and ConvertEmptyStringToNull
+	should be rendered as label
+	* BoundField.cs: empty null value should be rendered as nbsp
+	* GridViewRowCollection.cs: fixed SyncRoot
+
 2006-07-16 Andrew Skiba <andrews@mainsoft.com>
 
 	* SiteMapPath.cs: create Literal instead of Label according to the

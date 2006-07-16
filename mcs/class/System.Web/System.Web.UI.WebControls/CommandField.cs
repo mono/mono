@@ -301,13 +301,13 @@ namespace System.Web.UI.WebControls {
 						AddSeparator (cell);
 						cell.Controls.Add (CreateButton (DeleteText, DeleteImageUrl, DataControlCommands.DeleteCommandName, index));
 					}
-					if (ShowSelectButton) {
-						AddSeparator (cell);
-						cell.Controls.Add (CreateButton (SelectText, SelectImageUrl, DataControlCommands.SelectCommandName, index));
-					}
 					if (ShowInsertButton) {
 						AddSeparator (cell);
 						cell.Controls.Add (CreateButton (NewText, NewImageUrl, DataControlCommands.NewCommandName, index));
+					}
+					if (ShowSelectButton) {
+						AddSeparator (cell);
+						cell.Controls.Add (CreateButton (SelectText, SelectImageUrl, DataControlCommands.SelectCommandName, index));
 					}
 				}
 			} else

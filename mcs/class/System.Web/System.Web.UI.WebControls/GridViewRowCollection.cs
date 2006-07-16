@@ -68,7 +68,7 @@ namespace System.Web.UI.WebControls
 		}
 		
 		public object SyncRoot {
-			get { return rows.SyncRoot; }
+			get { return this; }
 		}
 		
 		void System.Collections.ICollection.CopyTo (Array array, int index)

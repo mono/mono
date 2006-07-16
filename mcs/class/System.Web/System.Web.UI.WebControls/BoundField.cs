@@ -185,8 +185,14 @@ namespace System.Web.UI.WebControls {
 		protected virtual string FormatDataValue (object value, bool encode)
 		{
 			string res;
-			if (value == null || (value.ToString().Length == 0 && ConvertEmptyStringToNull))
-				res = NullDisplayText;
+			if (value == null || (value.ToString ().Length == 0 && ConvertEmptyStringToNull)) {
+				if (NullDisplayText.Length == 0) {
+					encode = false;
+					res = "&nbsp;";
+				}
+				else
+					res = NullDisplayText;
+			}
 			else if (DataFormatString.Length > 0)
 				res = string.Format (DataFormatString, value);
 			else

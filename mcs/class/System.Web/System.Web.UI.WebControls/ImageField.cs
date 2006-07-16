@@ -312,8 +312,16 @@ namespace System.Web.UI.WebControls {
 			else if (c is Image) {
 				Image img = (Image)c;
 				string value =  FormatImageUrlValue (GetValue (cell.BindingContainer, DataImageUrlField, ref imageProperty));
-				if (value == null || (ConvertEmptyStringToNull && value.ToString ().Length == 0))
-					value = NullImageUrl;
+				if (value == null || (ConvertEmptyStringToNull && value.ToString ().Length == 0)) {
+					if (NullImageUrl == null || NullImageUrl.Length == 0) {
+						c.Visible = false;
+						Label label = new Label ();
+						label.Text = NullDisplayText;
+						cell.Controls.Add (label);
+					}
+					else
+						value = NullImageUrl;
+				}
 				img.ImageUrl = value;
 				img.AlternateText = GetFormattedAlternateText (cell.BindingContainer);
 			}
