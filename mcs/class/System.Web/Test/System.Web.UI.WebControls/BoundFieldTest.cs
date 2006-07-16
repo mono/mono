@@ -42,6 +42,8 @@ using System.Collections.Specialized;
 using Image = System.Web.UI.WebControls.Image;
 using NUnit.Framework;
 using System.Globalization;
+using MonoTests.SystemWeb.Framework;
+using MonoTests.stand_alone.WebHarness;
 
 
 
@@ -102,6 +104,7 @@ namespace MonoTests.System.Web.UI.WebControls
 	}
 
 
+	[Serializable]
 	[TestFixture]
 	public class BoundFieldTest
 	{
@@ -360,6 +363,75 @@ namespace MonoTests.System.Web.UI.WebControls
 			bf.DoGetValue (null);
 		}
 
+		[Test]
+		[Category ("NunitWeb")]
+		public void BoundField_NullValueRender ()
+		{
+			string html = new WebTest (PageInvoker.CreateOnLoad (new PageDelegate (BasicRenderTestInit))).Run ();
+			string orightml = @"<div>
+				<table cellspacing=""0"" rules=""all"" border=""1"" id=""GridView1"" style=""border-collapse:collapse;"">
+					<tr>
+						<th scope=""col"">&nbsp;</th><th scope=""col"">&nbsp;</th>
+					</tr><tr>
+						<td>Norway</td><td>Norway</td>
+					</tr><tr>
+						<td>Sweden</td><td>Sweden</td>
+					</tr><tr>
+						<td>EMPTY</td><td>&nbsp;</td>
+					</tr><tr>
+						<td>Italy</td><td>Italy</td>
+					</tr>
+				</table>
+				</div>";
+			html = HtmlDiff.GetControlFromPageHtml (html);
+			HtmlDiff.AssertAreEqual (orightml, html, "NullValueRender");
+		}
+
+		private void BasicRenderTestInit (Page p)
+		{
+			ArrayList myds = new ArrayList ();
+			myds.Add (new myds_data ("Norway"));
+			myds.Add (new myds_data ("Sweden"));
+			myds.Add (new myds_data (""));
+			myds.Add (new myds_data ("Italy"));
+
+			BoundField bf = new BoundField ();
+			bf.DataField = "Field1";
+			bf.NullDisplayText = "EMPTY";
+
+			BoundField bf2 = new BoundField ();
+			bf2.DataField = "Field1";
+
+			GridView GridView1 = new GridView();
+			GridView1.AutoGenerateColumns = false;
+			GridView1.Columns.Add (bf);
+			GridView1.Columns.Add (bf2);
+			GridView1.DataSource = myds;
+			GridView1.DataBind ();
+
+			LiteralControl lcb = new LiteralControl (HtmlDiff.BEGIN_TAG);
+			LiteralControl lce = new LiteralControl (HtmlDiff.END_TAG);
+
+			p.Form.Controls.Add (lcb);
+			p.Form.Controls.Add (GridView1);
+			p.Form.Controls.Add (lce);
+		}
+
+		class myds_data
+		{
+			string _s = "";
+			public myds_data (string s)
+			{
+				_s = s;
+			}
+
+			public string Field1
+			{
+				get { return _s; }
+			}
+		}
+
+		
 		class ControlWithDataItem : Control
 		{
 			readonly object _data;
