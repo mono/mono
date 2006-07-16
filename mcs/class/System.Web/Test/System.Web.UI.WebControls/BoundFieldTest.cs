@@ -387,7 +387,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			HtmlDiff.AssertAreEqual (orightml, html, "NullValueRender");
 		}
 
-		private void BasicRenderTestInit (Page p)
+		public static void BasicRenderTestInit (Page p)
 		{
 			ArrayList myds = new ArrayList ();
 			myds.Add (new myds_data ("Norway"));
