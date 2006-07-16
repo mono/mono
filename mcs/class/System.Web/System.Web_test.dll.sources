@@ -230,6 +230,9 @@ System.Web.UI.WebControls/ViewTest.cs
 System.Web.UI.WebControls/WebColorConverterTest.cs
 System.Web.UI.WebControls/WebControlTest.cs
 System.Web.UI.WebControls/WizardTest.cs
+System.Web.UI.WebControls/WizardStepBaseTest.cs
+System.Web.UI.WebControls/WizardStepCollectionTest.cs
+System.Web.UI.WebControls/WizardStepTest.cs
 System.Web.UI.WebControls/XmlTest.cs
 System.Web.UI.WebControls/XmlDataSourceTest.cs
 System.Web.UI.WebControls/SiteMapDataSourceTest.cs

@@ -1,3 +1,9 @@
+2006-07-16 Yoni Klain <yonik@mainsoft.com>
+
+	* System.Web_test.dll.sources: add WizardStepBaseTest.cs; WizardStepTest.cs; WizardStepCollectionTest.cs
+	* Makefile: add Test/mainsoft/NunitWebResources/WizardTest.skin
+	resource for WizardStepBase_Theme 
+
 2006-07-09 Yoni Klain <yonik@mainsoft.com>
 
 	* Makefile: add Test/mainsoft/NunitWebResources/PostBackMenuTest.aspx

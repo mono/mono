@@ -83,6 +83,7 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/UrlProperty.ascx \
 	Test/mainsoft/NunitWebResources/UrlProperty.ascx.cs \
 	Test/mainsoft/NunitWebResources/Web.sitemap \
+	Test/mainsoft/NunitWebResources/WizardTest.skin \
 	Test/mainsoft/MainsoftWebTest/nunitweb_config.xml 
 
 NUNIT_RESOURCE_FILES = $(TEST_RESOURCE_FILES)

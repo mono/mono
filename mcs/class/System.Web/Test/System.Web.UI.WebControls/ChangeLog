@@ -1,3 +1,7 @@
+2006-07-16 Yoni Klain <yonik@mainsoft.com>
+
+	* added WizardStepBaseTest.cs; WizardStepTest.cs; WizardStepCollectionTest.cs
+	
 2006-07-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DataListTest.cs: new test for templated items. Patch by Jarosław
