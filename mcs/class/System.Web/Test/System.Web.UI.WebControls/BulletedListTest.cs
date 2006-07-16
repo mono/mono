@@ -107,7 +107,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void BulletedList_DefaultPropertiesNotWorking ()
 		{
 			PokerBulletedList b = new PokerBulletedList ();
@@ -160,7 +159,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")] // NotImplementedException on Mono
 		public void BulletedList_BulletStyle_Render ()
 		{
 			PokerBulletedList b = new PokerBulletedList ();
@@ -190,7 +188,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")] // NotImplementedException on Mono
 		public void BulletedList_HyperLinkDisplayMode_Render ()
 		{
 			PokerBulletedList b = new PokerBulletedList ();
@@ -203,7 +200,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")] // NotImplementedException on Mono
 		public void BulletedList_ButtonLinkDisplayMode_Render ()
 		{
 			PokerBulletedList b = new PokerBulletedList ();
@@ -220,7 +216,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 
 		[Test]
-		[Category ("NotWorking")] // NotImplementedException on Mono
 		public void BulletedList_FirstBulletNumber_Render ()
 		{
 			PokerBulletedList b = new PokerBulletedList ();

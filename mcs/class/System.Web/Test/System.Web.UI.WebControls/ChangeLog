@@ -1,3 +1,7 @@
+2006-07-16 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* BulletedListTest.cs: removed NotWorking attributes
+
 2006-07-16 Yoni Klain <yonik@mainsoft.com>
 
 	* added WizardStepBaseTest.cs; WizardStepTest.cs; WizardStepCollectionTest.cs
