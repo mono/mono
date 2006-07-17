@@ -491,8 +491,16 @@ namespace System.Web.UI.WebControls {
 			if (TabIndex != 0)
 				writer.AddAttribute (HtmlTextWriterAttribute.Tabindex, TabIndex.ToString ());
 
-			if (style != null && !style.IsEmpty)
+			if (style != null && !style.IsEmpty) {
+#if NET_2_0
+				//unbelievable, but see WebControlTest.RenderBeginTag_BorderWidth_xxx
+				if (TagKey == HtmlTextWriterTag.Span)
+					if (style.BorderWidth != Unit.Empty 
+						|| style.BorderStyle != BorderStyle.NotSet)
+						writer.AddStyleAttribute (HtmlTextWriterStyle.Display, "inline-block");
+#endif
 				style.AddAttributesToRender(writer, this);
+			}
 
 			if (attributes != null)
 				foreach(string s in attributes.Keys)

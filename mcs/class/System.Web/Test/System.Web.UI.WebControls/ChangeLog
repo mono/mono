@@ -1,3 +1,7 @@
+2006-07-17 Andrew Skiba <andrews@mainsoft.com>
+
+	* WebControlTest.cs: added tests for display style
+	
 2006-07-17 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* GridViewTest.cs: added new test

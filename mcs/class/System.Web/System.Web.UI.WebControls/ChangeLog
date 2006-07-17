@@ -1,3 +1,8 @@
+2006-07-16 Andrew Skiba <andrews@mainsoft.com>
+
+	* WebControl.cs: fix for AddAttributesToRender - add display
+	style when appropriate
+
 2006-07-16 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* CommandField.cs: fixed InitializeCell, wrong order of command 

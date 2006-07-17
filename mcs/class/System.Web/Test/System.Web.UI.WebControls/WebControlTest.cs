@@ -491,6 +491,32 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
+		public void RenderBeginTag_BorderWidth_span ()
+		{
+			HtmlTextWriter writer = WebControlTest.GetWriter ();
+			WebControl wc = new WebControl (HtmlTextWriterTag.Span);
+			wc.BorderWidth = Unit.Pixel (1);
+			wc.RenderBeginTag (writer);
+			string s = writer.InnerWriter.ToString ();
+#if NET_2_0
+			Assert.AreEqual ("<span style=\"display:inline-block;border-width:1px;border-style:solid;\">", s, "BorderWidth");
+#else
+			Assert.AreEqual ("<span style=\"border-width:1px;border-style:solid;\">", s, "BorderWidth");
+#endif
+		}
+
+		[Test]
+		public void RenderBeginTag_BorderWidth_table ()
+		{
+			HtmlTextWriter writer = WebControlTest.GetWriter ();
+			WebControl wc = new WebControl (HtmlTextWriterTag.Table);
+			wc.BorderWidth = Unit.Pixel (1);
+			wc.RenderBeginTag (writer);
+			string s = writer.InnerWriter.ToString ();
+			Assert.AreEqual ("<table style=\"border-width:1px;border-style:solid;\">\n", s, "BorderWidth");
+		}
+
+		[Test]
 		public void EmptyStringTag ()
 		{
 			WebControlTestClass wc = new WebControlTestClass (String.Empty);
