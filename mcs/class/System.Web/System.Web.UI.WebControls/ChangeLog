@@ -1,3 +1,7 @@
+2006-07-17 Andrew Skiba <andrews@mainsoft.com>
+
+	* SiteMapPath.cs: fixes for SiteMapPathTest.Render_xxx tests.
+
 2006-07-16 Andrew Skiba <andrews@mainsoft.com>
 
 	* WebControl.cs: fix for AddAttributesToRender - add display

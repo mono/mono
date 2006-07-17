@@ -427,8 +427,6 @@ namespace System.Web.UI.WebControls
 		{
 			Literal h = new Literal ();
 			h.Text = item.SiteMapNode.Title;
-			if (ShowToolTips)
-				item.ToolTip = item.SiteMapNode.Description;
 			return h;
 		}
 		
@@ -468,12 +466,11 @@ namespace System.Web.UI.WebControls
 				HtmlAnchor anchor = new HtmlAnchor ();
 				anchor.HRef = "#" + skip_id;
 
-				HtmlImage img = new HtmlImage ();
-				img.Src = Page.ClientScript.GetWebResourceUrl (typeof (SiteMapPath), "transparent.gif");
-				img.Width = 0;
-				img.Height = 0;
-				img.Alt = SkipLinkText;
-				img.Border = 0;
+				Image img = new Image ();
+				img.ImageUrl = Page.ClientScript.GetWebResourceUrl (typeof (SiteMapPath), "transparent.gif");
+				img.Attributes.Add ("height", "0");
+				img.Attributes.Add ("width", "0");
+				img.AlternateText = SkipLinkText;
 
 				anchor.Controls.Add (img);
 
