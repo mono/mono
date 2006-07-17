@@ -55,13 +55,13 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void Set_Up ()
 		{
 #if VISUAL_STUDIO
-			WebTest.CopyResource (GetType (), "Test1.Resources.Theme1.skin", "App_Themes/Theme1/Theme1.skin");
-			WebTest.CopyResource (GetType (), "Test1.Resources.PageWithStyleSheet.aspx", "PageWithStyleSheet.aspx");
-			WebTest.CopyResource (GetType (), "Test1.Resources.PageWithTheme.aspx", "PageWithTheme.aspx");
-			WebTest.CopyResource (GetType (), "Test1.Resources.RunTimeSetTheme.aspx", "RunTimeSetTheme.aspx");
-			WebTest.CopyResource (GetType (), "Test1.Resources.UrlProperty.aspx", "UrlProperty.aspx");
-			WebTest.CopyResource (GetType (), "Test1.Resources.UrlProperty.ascx", "UrlProperty.ascx");
-			WebTest.CopyResource (GetType (), "Test1.Resources.UrlProperty.ascx.cs", "UrlProperty.ascx.cs");
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.Theme1.skin", "App_Themes/Theme1/Theme1.skin");
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PageWithStyleSheet.aspx", "PageWithStyleSheet.aspx");
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PageWithTheme.aspx", "PageWithTheme.aspx");
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.RunTimeSetTheme.aspx", "RunTimeSetTheme.aspx");
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.UrlProperty.aspx", "UrlProperty.aspx");
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.UrlProperty.ascx", "UrlProperty.ascx");
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.UrlProperty.ascx.cs", "UrlProperty.ascx.cs");
 			
 #else
 			WebTest.CopyResource (GetType (), "Theme1.skin", "App_Themes/Theme1/Theme1.skin");
