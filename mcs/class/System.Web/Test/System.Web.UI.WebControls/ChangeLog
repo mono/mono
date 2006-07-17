@@ -1,3 +1,7 @@
+2006-07-17 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* GridViewTest.cs: added new test
+
 2006-07-16 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* BoundFieldTest.cs: added new test

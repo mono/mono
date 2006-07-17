@@ -476,6 +476,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (6, g.Rows.Count, "DataBind");
 		}
 
+		bool rowcreatedchecker;
 		bool deleteitemchecker;
 		bool sortingaction;
 
@@ -496,6 +497,32 @@ namespace MonoTests.System.Web.UI.WebControls
 			deleteitemchecker = true;
 		}
 
+		[Test]
+		[Category ("NotWorking")]
+		public void GridView_RowCreated ()
+		{
+			GridView g = new GridView ();
+			g.RowCreated += new GridViewRowEventHandler (RowCreatedHandler);
+
+			Assert.AreEqual (false, rowcreatedchecker, "RowCreated#1");
+
+			ArrayList myds = new ArrayList ();
+			myds.Add ("Norway");
+			myds.Add ("Sweden");
+			myds.Add ("France");
+			myds.Add ("Italy");
+
+			g.DataSource = myds;
+			g.DataBind ();
+			Assert.AreEqual (true, rowcreatedchecker, "RowCreated#2");
+		}
+
+		protected void RowCreatedHandler (object sender, GridViewRowEventArgs e)
+		{
+			if (e.Row.Cells.Count > 0)
+				rowcreatedchecker = true;
+		}
+		
 		[Test]
 		public void GridView_Sort ()
 		{
