@@ -4,6 +4,11 @@
 
 2006-07-17 Andrew Skiba <andrews@mainsoft.com>
 
+	* CommandFieldTest.cs: added positive flow test for
+	ValidateSupportsCallback
+
+2006-07-17 Andrew Skiba <andrews@mainsoft.com>
+
 	* WebControlTest.cs: added tests for display style
 	
 2006-07-17 Vladimir Krasnov <vladimirk@mainsoft.com>

@@ -1,5 +1,9 @@
 2006-07-17 Andrew Skiba <andrews@mainsoft.com>
 
+	* CommandField.cs: fixed ValidateSupportsCallback
+
+2006-07-17 Andrew Skiba <andrews@mainsoft.com>
+
 	* Image.cs: prepare to use HttpBrowserCapabilities. Does not
 	affect the flow yet.
 

@@ -40,7 +40,6 @@ using System.Drawing;
 using System.Collections;
 using System.Collections.Specialized;
 using NUnit.Framework;
-using System.Data;
 
 namespace MonoTests.System.Web.UI.WebControls
 {
@@ -226,6 +225,16 @@ namespace MonoTests.System.Web.UI.WebControls
 			PokerCommandField field = new PokerCommandField ();
 			field.ShowSelectButton = true;
 			field.Initialize (true, new Control());
+			field.ValidateSupportsCallback ();
+		}
+
+
+		[Test]
+		public void CommandField_ValidateSupportsCallback_pass ()
+		{
+			PokerCommandField field = new PokerCommandField ();
+			field.ShowSelectButton = false;
+			field.Initialize (true, new Control ());
 			field.ValidateSupportsCallback ();
 		}
 	}

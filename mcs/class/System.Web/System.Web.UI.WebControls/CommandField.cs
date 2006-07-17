@@ -362,6 +362,8 @@ namespace System.Web.UI.WebControls {
 		
 		public override void ValidateSupportsCallback ()
 		{
+			if (ShowSelectButton)
+				throw new NotSupportedException ("ShowSelectButton = true");
 		}
 	}
 }
