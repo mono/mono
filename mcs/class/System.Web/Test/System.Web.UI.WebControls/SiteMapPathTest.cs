@@ -31,24 +31,16 @@
 
 using NUnit.Framework;
 using System;
-using System.Drawing;
-using System.IO;
-using System.Globalization;
-using System.Collections;
-using System.Configuration;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Threading;
+using System.Drawing;
+using System.Configuration;
 using MyWebControl = System.Web.UI.WebControls;
-using System.Text;
-using System.Collections.Specialized;
-using System.Diagnostics;
-using System.Web.Hosting;
 using MonoTests.SystemWeb.Framework;
-using System.Reflection;
-using System.Xml;
 using MonoTests.stand_alone.WebHarness;
+
 namespace MonoTests.System.Web.UI.WebControls
 {
 	class PokerSiteMapPath : SiteMapPath
@@ -105,6 +97,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			WebTest.CopyResource (GetType (), "Web.sitemap", "Web.sitemap");
 #endif
 		}
+
 		[SetUp]
 		public void SetupTestCase ()
 		{
@@ -337,30 +330,88 @@ namespace MonoTests.System.Web.UI.WebControls
 		
 		[Test]
 		[Category ("NunitWeb")]
-		public void SiteMapPath_SiteMapRootNode ()
+		public void SiteMapPath_InitializeItemCurrent ()
 		{
-			new WebTest (PageInvoker.CreateOnLoad (SiteMapRootNode)).Run ();
+			new WebTest (PageInvoker.CreateOnLoad (InitializeItemCurrent)).Run ();
 		}
-		[Test]
-		[Category ("NunitWeb")]
-		[Category ("NotWorking")]  
-		public void SiteMapPath_InitializeItem ()
-		{
-			new WebTest (PageInvoker.CreateOnLoad (InitializeItem)).Run ();
-		}
-		[Test]
-		[Category ("NunitWeb")]
-		[Category ("NotWorking")]  
-		public void SiteMapPath_SiteMapChildNode ()
-		{
-			new WebTest (PageInvoker.CreateOnLoad (InitializeItem)).Run ();
-		}
-		public static void SiteMapRootNode (Page p)
+
+		public static void InitializeItemCurrent (Page p)
 		{
 			PokerSiteMapPath smp = new PokerSiteMapPath ();
-			Assert.AreEqual ("root", smp.Provider.RootNode.Title, "RootNode");
+			SiteMapNodeItem I = new SiteMapNodeItem (1, SiteMapNodeItemType.Current);
+			smp.CurrentNodeStyle.BackColor = Color.Red;
+			smp.NodeStyle.BorderColor = Color.Red;
+			smp.DoCreateControlHierarchy ();
+			I.SiteMapNode = smp.Provider.CurrentNode;
+			smp.InitilizeItems (I);
+			
+			Assert.AreEqual (1, I.Controls.Count, "InitializeItem#1");
+			Assert.AreEqual (typeof (Literal), I.Controls[0].GetType (), "InitializeItem#2");
+		        Assert.AreEqual (Color.Red, I.BackColor , "InitializeItem#3");
+			Assert.AreEqual (Color.Red, I.BorderColor, "InitializeItem#4");
+
+			I.Controls.Clear ();
+			smp.RenderCurrentNodeAsLink = true;
+			smp.InitilizeItems (I);
+			
+			Assert.AreEqual (1, I.Controls.Count, "InitializeItem#5");
+			Assert.AreEqual (typeof (HyperLink), I.Controls[0].GetType (), "InitializeItem#6");
+			Assert.AreEqual (Color.Red, I.BackColor, "InitializeItem#7");
+			Assert.AreEqual (Color.Red, I.BorderColor, "InitializeItem#8");
 		}
-		public static void InitializeItem (Page p)
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void SiteMapPath_InitializeItemRoot ()
+		{
+			new WebTest (PageInvoker.CreateOnLoad (InitializeItemRoot)).Run ();
+		}
+
+		public static void InitializeItemRoot (Page p)
+		{
+			PokerSiteMapPath smp = new PokerSiteMapPath ();
+			SiteMapNodeItem I = new SiteMapNodeItem (0, SiteMapNodeItemType.Root);
+			smp.RootNodeStyle.BackColor = Color.Red;
+			smp.NodeStyle.BorderColor = Color.Red;
+			smp.DoCreateControlHierarchy ();
+			I.SiteMapNode = smp.Provider.RootNode;
+			smp.InitilizeItems (I);
+
+			Assert.AreEqual (1, I.Controls.Count, "InitializeItem#1");
+			Assert.AreEqual (typeof (HyperLink), I.Controls[0].GetType (), "InitializeItem#2");
+			Assert.AreEqual (Color.Red, ((HyperLink)I.Controls[0]).ControlStyle.BackColor, "InitializeItem#3");
+			Assert.AreEqual (Color.Red, ((HyperLink)I.Controls[0]).ControlStyle.BorderColor, "InitializeItem#4");
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void SiteMapPath_InitializeItemParent ()
+		{
+			new WebTest (PageInvoker.CreateOnLoad (InitializeItemParent)).Run ();
+		}
+
+		public static void InitializeItemParent (Page p)
+		{
+			PokerSiteMapPath smp = new PokerSiteMapPath ();
+			SiteMapNodeItem I = new SiteMapNodeItem (0, SiteMapNodeItemType.Parent);
+			smp.NodeStyle.BorderColor = Color.Red;
+			smp.DoCreateControlHierarchy ();
+			I.SiteMapNode = smp.Provider.RootNode;
+			smp.InitilizeItems (I);
+
+			Assert.AreEqual (1, I.Controls.Count, "InitializeItem#1");
+			Assert.AreEqual (typeof (HyperLink), I.Controls[0].GetType (), "InitializeItem#2");
+			Assert.AreEqual (Color.Red, ((HyperLink) I.Controls[0]).ControlStyle.BorderColor, "InitializeItem#4");
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void SiteMapPath_InitializeItemPathSeparator ()
+		{
+			new WebTest (PageInvoker.CreateOnLoad (InitializeItemPathSeparator)).Run ();
+		}
+
+		public static void InitializeItemPathSeparator (Page p)
 		{
 			PokerSiteMapPath smp = new PokerSiteMapPath ();
 			SiteMapNodeItem I = new SiteMapNodeItem (0, SiteMapNodeItemType.PathSeparator);
@@ -370,6 +421,58 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (typeof (Literal), I.Controls[0].GetType (), "InitializeItem#2");
 			Assert.AreEqual (Color.Red, I.BorderColor, "InitializeItem#3");
 		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void SiteMapPath_InitializeItemTemplates ()
+		{
+			new WebTest (PageInvoker.CreateOnLoad (InitializeItemTemplates)).Run ();
+		}
+
+		public static void InitializeItemTemplates (Page p)
+		{
+			PokerSiteMapPath smp = new PokerSiteMapPath ();
+			SiteMapNodeItem I = new SiteMapNodeItem (1, SiteMapNodeItemType.Current);
+			smp.CurrentNodeTemplate = new CompiledTemplateBuilder (templatebuilder);
+			smp.CurrentNodeStyle.BackColor = Color.Red;
+			smp.DoCreateControlHierarchy ();
+			I.SiteMapNode = smp.Provider.CurrentNode;
+			smp.InitilizeItems (I);
+
+			Assert.AreEqual (1, I.Controls.Count, "InitializeItem#1");
+			Assert.AreEqual (typeof (TextBox), I.Controls[0].GetType (), "InitializeItem#2");
+			Assert.AreEqual (Color.Red, I.BackColor, "InitializeItem#3");
+		}
+
+		private static void templatebuilder (Control container)
+		{
+			TextBox ctrl;
+			ctrl = new TextBox ();
+			ctrl.ID = "TextBox1";
+			container.Controls.Add (ctrl);
+		}
+		
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void SiteMapPath_SiteMapRootNode ()
+		{
+			new WebTest (PageInvoker.CreateOnLoad (SiteMapRootNode)).Run ();
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		[Category ("NotWorking")]
+		public void SiteMapPath_SiteMapChildNode ()
+		{
+			new WebTest (PageInvoker.CreateOnLoad (InitializeItemPathSeparator)).Run ();
+		}
+		public static void SiteMapRootNode (Page p)
+		{
+			PokerSiteMapPath smp = new PokerSiteMapPath ();
+			Assert.AreEqual ("root", smp.Provider.RootNode.Title, "RootNode");
+		}
+
 		public static void SiteMapChildNode (Page p)
 		{
 			PokerSiteMapPath smp = new PokerSiteMapPath ();

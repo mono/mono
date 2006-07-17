@@ -1,3 +1,7 @@
+2006-07-17 Yoni Klain <yonik@mainsoft.com>
+
+	* SiteMapPathTest.cs: added new test
+
 2006-07-17 Andrew Skiba <andrews@mainsoft.com>
 
 	* WebControlTest.cs: added tests for display style
