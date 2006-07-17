@@ -38,12 +38,16 @@ REQUIRES=$(
 				sub(/Version=/, "", $2);
 				VERSION=$2
 			}
-	
+
 			(START==1) && /^\tName=/ {
 				sub(/Name=/, "", $1);
 				LIBNAME=$1
-	
-				print "mono(" LIBNAME ") = " VERSION
+				# Allow rpm deps to be resolved for 1.0 profile version
+				if (VERSION=="1.0.3300.0")
+					OP=">="
+				else
+					OP="="
+				print "mono(" LIBNAME ") " OP " " VERSION
 				START=0
 			}
 		    ') 2> /dev/null
