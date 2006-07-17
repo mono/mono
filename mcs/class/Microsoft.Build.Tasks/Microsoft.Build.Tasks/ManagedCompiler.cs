@@ -94,7 +94,8 @@ namespace Microsoft.Build.Tasks {
 						commandLine.AppendFileNameIfNotNull (item.ItemSpec);
 				}
 			}
-			commandLine.AppendSwitchIfNotNull ("/target:", TargetType);
+			if (TargetType != null)
+				commandLine.AppendSwitchIfNotNull ("/target:", TargetType);
 			if (TreatWarningsAsErrors)
 				commandLine.AppendSwitch ("/warnaserror");
 			commandLine.AppendSwitchIfNotNull ("/win32icon:", Win32Icon);
@@ -256,7 +257,9 @@ namespace Microsoft.Build.Tasks {
 
 		// FIXME: hack to get build of hello world working
 		public string TargetType {
-			get { return ((string) Bag ["TargetType"]).ToLower (); }
+			get {
+				return  (Bag.Contains ("TargetType")) ? (((string) Bag ["TargetType"]).ToLower ()) : null;
+			}
 			set { Bag ["TargetType"] = value; }
 		}
 

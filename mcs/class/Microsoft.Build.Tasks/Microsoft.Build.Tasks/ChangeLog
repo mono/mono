@@ -1,3 +1,7 @@
+2006-07-17  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* ManagedCompiler.cs: TargetType.Get: added null check.
+
 2006-06-25  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* Csc.cs: Changed ToolName to make it use gmcs.
