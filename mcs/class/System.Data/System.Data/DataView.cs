@@ -35,7 +35,11 @@ namespace System.Data
 	[DefaultEvent ("PositionChanged")]
 	[DefaultProperty ("Table")]
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.DataViewDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
+#if NET_2_0
+	public class DataView : MarshalByValueComponent, IBindingList, IList, ICollection, IEnumerable, ITypedList, ISupportInitialize, IBindingListView
+#else
 	public class DataView : MarshalByValueComponent, IBindingList, IList, ICollection, IEnumerable, ITypedList, ISupportInitialize
+#endif
 	{
 		internal DataTable dataTable = null;
 		string rowFilter = String.Empty;
@@ -313,6 +317,7 @@ namespace System.Data
 					sort = value;
 					//sortedColumns = SortableColumn.ParseSortString (dataTable, value, true);
 				}
+				
 				if (!inEndInit) {
 					UpdateIndex (true);
 					OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, -1, -1));
@@ -330,6 +335,9 @@ namespace System.Data
 		public DataTable Table {
 			get { return dataTable; }
 			set {
+				if (value == dataTable)
+					return;
+
 				if (isInitPhase) {
 					initTable = value;
 					return;
@@ -348,9 +356,8 @@ namespace System.Data
 				if (dataTable != null) {
 					RegisterEventHandlers ();
 					OnListChanged (new ListChangedEventArgs (ListChangedType.PropertyDescriptorChanged, 0, 0));
-					sort = null;
-					rowFilter = null;
-					rowFilterExpr = null;
+					sort = "";
+					rowFilter = "";
 					if (!inEndInit) {
 						UpdateIndex (true);
 						OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, -1, -1));
@@ -453,10 +460,23 @@ namespace System.Data
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		public virtual bool Equals (DataView dv)
 		{
-			throw new NotImplementedException ();
+			if (this == dv)
+				return true;
+			if (!(this.Table == dv.Table && this.Sort == dv.Sort &&
+				this.RowFilter == dv.RowFilter && 
+				this.RowStateFilter == dv.RowStateFilter &&
+				this.AllowEdit == dv.AllowEdit && 
+				this.AllowNew == dv.AllowNew &&
+				this.AllowDelete == dv.AllowDelete &&
+				this.Count == dv.Count))
+				return false;
+
+			for (int i=0; i < Count; ++i)
+				if (!this [i].Equals (dv [i]))
+					return false;
+			return true;
 		}
 #endif
 
@@ -767,19 +787,88 @@ namespace System.Data
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		public DataTable ToTable ()
 		{
-			throw new NotImplementedException ();
+			return this.ToTable (Table.TableName, false, new string[] {});
 		}
 
-		[MonoTODO]
+		public DataTable ToTable (string tableName)
+		{
+			return this.ToTable (tableName, false, new string[] {});
+		}
+		
 		public DataTable ToTable (bool isDistinct, string[] columnNames)
 		{
-			throw new NotImplementedException ();
+			return this.ToTable (Table.TableName, isDistinct, columnNames);
+		}
+		
+		public DataTable ToTable (string tablename, bool isDistinct, string[] columnNames)
+		{
+			if (columnNames == null)
+				throw new ArgumentNullException ("columnNames", "'columnNames' argument cannot be null.");
+
+			DataTable newTable = new DataTable (tablename);
+
+			DataColumn[] columns;
+			ListSortDirection[] sortDirection = null;
+			if (columnNames.Length != 0) {
+				columns = new DataColumn [columnNames.Length];
+				for (int i=0; i < columnNames.Length; ++i)
+					columns [i] = Table.Columns [columnNames [i]];
+
+				if (sortColumns != null) {
+					sortDirection = new ListSortDirection [columnNames.Length];
+					for (int i=0; i < columnNames.Length; ++i) {
+						sortDirection [i] = ListSortDirection.Ascending;
+						for (int j=0; j < sortColumns.Length; ++j) {
+							if (sortColumns [j] != columns [i])
+								continue;
+							sortDirection [i] = sortOrder [j];
+						}
+					}
+				}
+			} else {
+				columns = (DataColumn[]) Table.Columns.ToArray (typeof (DataColumn));
+				sortDirection = sortOrder;
+			}
+
+			ArrayList expressionCols = new ArrayList ();
+			for (int i=0; i < columns.Length; ++i) {
+				DataColumn col = columns [i].Clone ();
+				if (col.Expression != String.Empty) { 
+					col.Expression = "";
+					expressionCols.Add (col);
+				}
+				if (col.ReadOnly)
+					col.ReadOnly = false;
+				newTable.Columns.Add (col);
+			}
+
+			DataRow [] rows;
+			Index index = new Index (new Key(Table, columns, sortDirection, RowStateFilter, rowFilterExpr));
+			if (isDistinct)
+				rows = index.GetDistinctRows ();
+			else
+				rows = index.GetAllRows (); 
+
+			foreach (DataRow row in rows) {
+				DataRow newRow = newTable.NewNotInitializedRow ();
+				newTable.Rows.AddInternal (newRow);
+				newRow.Original = -1;
+				if (row.HasVersion (DataRowVersion.Current))
+					newRow.Current = newTable.RecordCache.CopyRecord (Table, row.Current, -1);
+				else if (row.HasVersion (DataRowVersion.Original))
+					newRow.Current = newTable.RecordCache.CopyRecord (Table, row.Original, -1);
+
+				foreach (DataColumn col in expressionCols)
+					newRow [col] = row [col.ColumnName];
+				newRow.Original = -1;
+			}
+			return newTable;
 		}
 #endif
-		protected void UpdateIndex() {
+		protected void UpdateIndex() 
+		{
 			UpdateIndex(false);
 		}
 
@@ -998,12 +1087,13 @@ namespace System.Data
 		int IBindingList.Find (PropertyDescriptor property, object key) 
 		{
 			DataColumn dc = Table.Columns [property.Name];
-			Index index = Table.FindIndex (new DataColumn [] { dc }, sortOrder, RowStateFilter, FilterExpression);
+			Index index = Table.FindIndex (new DataColumn [] {dc}, sortOrder, RowStateFilter, FilterExpression);
 			if (index == null)
-				index = new Index(new Key (Table, new DataColumn [] { dc }, sortOrder, RowStateFilter, FilterExpression));
+				index = new Index (new Key (Table, new DataColumn [] {dc}, sortOrder, RowStateFilter, FilterExpression));
+			
 			return index.FindIndex (new object [] {key});
 		}
-
+		
 		[MonoTODO]
 		void IBindingList.RemoveIndex (PropertyDescriptor property) 
 		{
@@ -1017,28 +1107,20 @@ namespace System.Data
 		}
 		
 		bool IBindingList.AllowEdit {
-			get {
-				return AllowEdit;
-			}
+			get { return AllowEdit; }
 		}
 
 		bool IBindingList.AllowNew {
-			get {
-				return AllowNew;
-			}
+			get { return AllowNew; }
 		}
 
 		bool IBindingList.AllowRemove {
 			[MonoTODO]
-			get {
-				return AllowDelete;
-			}
+			get { return AllowDelete; }
 		}
 
 		bool IBindingList.IsSorted {
-			get {
-				return Sort != null && Sort != String.Empty;
-			}
+			get { return (Sort != null && Sort != String.Empty); }
 		}
 
 		ListSortDirection IBindingList.SortDirection {
@@ -1053,32 +1135,73 @@ namespace System.Data
 			get {
 				if (sortProperty == null && sortColumns != null && sortColumns.Length > 0) {
 					// return property from Sort String
-					PropertyDescriptorCollection properties = ( (ITypedList) this).GetItemProperties (null);
-					return properties.Find ( sortColumns [0].ColumnName, false);
+					PropertyDescriptorCollection properties = ((ITypedList)this).GetItemProperties (null);
+					return properties.Find (sortColumns [0].ColumnName, false);
 				}
 				return sortProperty;
 			}
 		}
 
 		bool IBindingList.SupportsChangeNotification {
-			get {
-				return true;
-			}
+			get { return true; }
 		}
 
 		bool IBindingList.SupportsSearching {
-			get {
-				return true;
-			}
+			get { return true; }
 		}
 
 		bool IBindingList.SupportsSorting {
+			get { return true; }
+		}
+		
+		#endregion // IBindingList implementation
+
+#if NET_2_0
+		#region IBindingListView implementation
+		string IBindingListView.Filter {
+			get { return ((DataView)this).RowFilter; }
+			set { ((DataView)this).RowFilter = value; }
+		}
+
+		ListSortDescriptionCollection IBindingListView.SortDescriptions {
 			get {
-				return true;
+				ListSortDescriptionCollection col = new ListSortDescriptionCollection ();
+				for (int i=0; i < sortColumns.Length; ++i) {
+					ListSortDescription ldesc = new ListSortDescription (
+										new DataColumnPropertyDescriptor (sortColumns [i]),
+										sortOrder [i]);
+					((IList)col).Add (ldesc);
+				}
+				return col;
 			}
 		}
 
-		#endregion // IBindingList implementation
+		bool IBindingListView.SupportsAdvancedSorting {
+			get { return true; }
+		}
+
+		bool IBindingListView.SupportsFiltering {
+			get { return true; }
+		}	
+
+		[MonoTODO]
+		void IBindingListView.ApplySort (ListSortDescriptionCollection sorts)
+		{
+			StringBuilder sb = new StringBuilder ();
+			foreach (ListSortDescription ldesc in sorts)
+				sb.AppendFormat ("[{0}]{1},", ldesc.PropertyDescriptor.Name,
+					(ldesc.SortDirection == ListSortDirection.Descending ? " DESC" : ""));
+			this.Sort = sb.ToString (0, sb.Length-1);
+		}
+
+		void IBindingListView.RemoveFilter ()
+		{
+			((IBindingListView)this).Filter = "";
+		}
+		
+		#endregion //IBindingViewList implementation
+#endif
+
 		private int IndexOf(DataRow dr)
 		{
 			for (int i=0; i < rowCache.Length; i++)

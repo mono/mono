@@ -58,7 +58,7 @@ namespace MonoTests.System.Data
 		[Test]
 		public void PropertyTest ()
 		{
-			DataView dv = dt.DefaultView;
+			DataView dv = new DataView (dt);
 			IBindingList ib = (IBindingList) dv;
 			Assert.IsTrue (ib.AllowEdit, "#1");
 			Assert.IsTrue (ib.AllowNew, "#2");
@@ -74,7 +74,7 @@ namespace MonoTests.System.Data
 		[Test]
 		public void AddNewTest ()
 		{
-			DataView dv = dt.DefaultView;
+			DataView dv = new DataView (dt);
 			IBindingList ib = (IBindingList) dv;
 			ib.ListChanged += new ListChangedEventHandler (OnListChanged);
 
@@ -112,7 +112,7 @@ namespace MonoTests.System.Data
 		[Test]
 		public void SortTest ()
 		{
-			DataView dv = dt.DefaultView;
+			DataView dv = new DataView (dt);
 			IBindingList ib = (IBindingList) dv;
 			ib.ListChanged += new ListChangedEventHandler (OnListChanged);
 			try {
@@ -169,7 +169,7 @@ namespace MonoTests.System.Data
 		[Test]
 		public void FindTest ()
 		{
-			DataView dv = dt.DefaultView;
+			DataView dv = new DataView (dt);
 
 			IBindingList ib = (IBindingList) dv;
 			ib.ListChanged += new ListChangedEventHandler (OnListChanged);

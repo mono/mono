@@ -1,3 +1,9 @@
+2006-07-17  Senganal T  <tsenganal@novell.com>
+
+	* System.Data.dll.sources:
+		- Added to build :
+			Test/System.Data/DataViewTest_IBindingListView.cs
+	
 2006-07-13  Senganal T  <tsenganal@novell.com>
 
 	* System.Data.dll.sources: 

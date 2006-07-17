@@ -1,3 +1,11 @@
+2006-07-17  Senganal T <tsenganal@novell.com>
+
+	* Index.cs :
+		- GetAllRows : Added. Returns all the rows in the current
+		index.
+		- GetDistinctRows :Added. Returns all the distinct rows (based
+		in Key Columns) in the index.
+		
 2006-07-13  Senganal T <tsenganal@novell.com>
 
 	* SchemaInfo.cs DbDataAdapter.cs DbConnectionOptions.cs DbParameter.cs 

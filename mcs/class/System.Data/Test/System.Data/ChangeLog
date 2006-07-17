@@ -1,3 +1,16 @@
+2006-07-17  Senganal T <tsenganal@novell.com>
+
+	* DataViewTest2.cs :
+		- Tests for ToTable overloads
+		- Test for Equals method
+		- Tests to check for the Sort, RowFilter values when
+		DataView is created and when Table is set.
+	* DataViewTest_IBindingList.cs :
+		- Ensure tests do not depend on the order of
+		execution.
+	* DataViewTest_IBindingListView.cs : New
+		- Tests for IBindingListView interface methods
+
 2006-07-15  Senganal T <tsenganal@novell.com>
 
 	* DataTableCollection.cs : Tests for IndexOf, Contains,

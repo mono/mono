@@ -1102,5 +1102,206 @@ namespace MonoTests_System.Data
 			Assert.AreEqual (-1, evProp.OldIndex, "#11");
 			Assert.AreEqual (ListChangedType.Reset, evProp.lstType, "#12");
 		}
+
+		[Test]
+		public void TestDefaultValues()
+		{
+			DataView view = new DataView();
+			Assert.IsFalse(view.ApplyDefaultSort, "#1");
+			Assert.AreEqual ("", view.Sort, "#2");
+			Assert.AreEqual("", view.RowFilter, "#3");
+			Assert.AreEqual(DataViewRowState.CurrentRows, view.RowStateFilter, "#4");
+			Assert.IsTrue(view.AllowDelete, "#5");
+			Assert.IsTrue(view.AllowEdit, "#6");
+			Assert.IsTrue(view.AllowNew, "#7");
+		}
+		
+		[Test]
+		public void TestTableProperty()
+		{
+			DataTable table = new DataTable("table");
+			DataView view = new DataView();
+			view.Table = table;
+			Assert.AreEqual("", view.Sort, "#1");
+			Assert.AreEqual("", view.RowFilter, "#2");
+			Assert.AreEqual(DataViewRowState.CurrentRows, view.RowStateFilter, "#4");
+		}
+
+#if NET_2_0
+		[Test]
+		public void TestEquals_SameTableDiffViewProp()
+		{
+
+			DataTable table = new DataTable("table");
+			table.Columns.Add("col1", typeof(int));
+			table.Columns.Add("col2", typeof(int));
+			for (int i = 0; i < 5; ++i)
+				table.Rows.Add(new object[] { i, 100 + i });
+
+			DataView view1 = new DataView(table);
+			DataView view2 = new DataView(table);
+
+			object obj2 = (object)view2;
+			Assert.IsFalse(view1.Equals(obj2), "#1");
+
+			Assert.IsTrue(view1.Equals(view1), "#2");
+			Assert.IsTrue(view2.Equals(view1), "#3");
+
+			view1.Sort = "col1 ASC";
+			Assert.IsFalse(view1.Equals(view2), "#4");
+			view2.Sort = "col1 ASC";
+			Assert.IsTrue(view1.Equals(view2), "#5");
+
+			view1.RowFilter = "col1 > 100";
+			Assert.IsFalse(view1.Equals(view2), "#6");
+			view1.RowFilter = "";
+			Assert.IsTrue(view1.Equals(view2), "#7");
+
+			view1.RowStateFilter = DataViewRowState.Added;
+			Assert.IsFalse(view1.Equals(view2), "#8");
+			view1.RowStateFilter = DataViewRowState.CurrentRows;
+			Assert.IsTrue(view1.Equals(view2), "#9");
+
+			view1.AllowDelete = !view2.AllowDelete;
+			Assert.IsFalse(view1.Equals(view2), "#10");
+			view1.AllowDelete = view2.AllowDelete;
+			Assert.IsTrue(view1.Equals(view2), "#11");
+
+			view1.AllowEdit = !view2.AllowEdit;
+			Assert.IsFalse(view1.Equals(view2), "#12");
+			view1.AllowEdit = view2.AllowEdit;
+			Assert.IsTrue(view1.Equals(view2), "#13");
+
+			view1.AllowNew = !view2.AllowNew;
+			Assert.IsFalse(view1.Equals(view2), "#14");
+			view1.AllowNew = view2.AllowNew;
+			Assert.IsTrue(view1.Equals(view2), "#15");
+
+			//ApplyDefaultSort doesnet affect the comparision
+			view1.ApplyDefaultSort = !view2.ApplyDefaultSort;
+			Assert.IsTrue(view1.Equals(view2), "#16");
+
+			DataTable table2 = table.Copy();
+			view1.Table = table2;
+			Assert.IsFalse(view1.Equals(view2), "#17");
+
+			view1.Table = table;
+			//well.. sort is set to null when Table is assigned..
+			view1.Sort = view2.Sort;          
+			Assert.IsTrue(view1.Equals(view2), "#18"); 
+		}
+
+		[Test]
+		public void ToTable_SimpleTest()
+		{
+			DataSet ds = new DataSet();
+			ds.Tables.Add("table");
+			ds.Tables[0].Columns.Add("col1", typeof(int));
+			ds.Tables[0].Columns.Add("col2", typeof(int), "sum(col1)");
+			ds.Tables[0].Columns.Add("col3", typeof(int));
+			ds.Tables[0].Columns[2].AutoIncrement = true;
+
+			ds.Tables[0].Rows.Add(new object[] { 1 });
+			ds.Tables[0].Rows.Add(new object[] { 2 });
+
+			ds.Tables[0].PrimaryKey = new DataColumn[] { ds.Tables[0].Columns[0] };
+			
+			DataView view = new DataView(ds.Tables[0]);
+			DataTable table = view.ToTable();
+			
+			// The rule seems to be : Copy any col property that doesent
+			// involve/depend on other columns..
+			// Constraints and PrimaryKey info not copied over
+			Assert.AreEqual(0, table.PrimaryKey.Length, "#1");
+			Assert.AreEqual(0, table.Constraints.Count, "#2");
+			// AllowDBNull state is maintained by ms.net
+			Assert.IsFalse(table.Columns[0].AllowDBNull, "#3");
+			Assert.IsTrue(table.Columns[2].AllowDBNull, "#4");
+			// Expression is not copied over by ms.net
+			Assert.AreEqual("", table.Columns[1].Expression, "#5");
+			// AutoIncrement state is maintained by ms.net
+			Assert.IsTrue(table.Columns[2].AutoIncrement, "#6");
+			
+			Assert.IsFalse (ds.Tables[0] == table, "#7");
+
+			Assert.AreEqual(ds.Tables [0].TableName, table.TableName, "#8");
+			Assert.AreEqual(ds.Tables [0].Columns.Count, table.Columns.Count, "#9 Col Count");
+			Assert.AreEqual(ds.Tables [0].Rows.Count, table.Rows.Count, "#10");
+			
+			for (int i = 0; i < table.Columns.Count; ++i) {
+				Assert.AreEqual(ds.Tables [0].Columns[i].ColumnName, table.Columns[i].ColumnName, "10_"+i);
+				Assert.AreEqual(ds.Tables [0].Columns[i].DataType, table.Columns[i].DataType, "11_"+i);
+				for (int j = 0; j < table.Rows.Count; ++j)
+					Assert.AreEqual(ds.Tables [0].Rows[j][i], table.Rows[j][i], "#12_"+i+"_"+j);
+			}
+			
+			DataTable table1 = view.ToTable("newtable");
+			Assert.AreEqual("newtable", table1.TableName, "#13");
+		}
+		
+		[Test]
+		public void ToTableTest_DataValidity ()
+		{              
+			DataTable table = new DataTable();
+			table.Columns.Add("col1", typeof(int));
+			table.Columns.Add("col2", typeof(int));
+			table.Columns.Add("col3", typeof(int));
+			
+			for (int i = 0; i < 5; ++i) {
+				table.Rows.Add(new object[] { i, i + 1, i + 2 });
+				table.Rows.Add(new object[] { i, i + 1, i + 2 });
+			}
+			
+			table.AcceptChanges();
+			DataView view = new DataView(table);
+			try {
+				DataTable newTable = view.ToTable (false, null);
+			} catch (ArgumentNullException e) {
+				Assert.AreEqual ("'columnNames' argument cannot be null." + Environment.NewLine + 
+						"Parameter name: columnNames", e.Message, "#1");
+			}
+			DataTable newTable1 = view.ToTable(false, new string[] { });
+			Assert.AreEqual(10, newTable1.Rows.Count, "#3");
+			
+			newTable1 = view.ToTable(true, new string[] {});
+			Assert.AreEqual(3, newTable1.Columns.Count, "#4");
+			Assert.AreEqual(5, newTable1.Rows.Count, "#5");
+			
+			table.Rows.Add(new object[] { 1, 100, 100 });
+
+			newTable1 = view.ToTable(true, new string[] {});
+			Assert.AreEqual(3, newTable1.Columns.Count, "#6");
+			Assert.AreEqual(6, newTable1.Rows.Count, "#7");
+			
+			newTable1 = view.ToTable(true, new string[] {"col1"});
+			Assert.AreEqual(1, newTable1.Columns.Count, "#8");
+			Assert.AreEqual(5, newTable1.Rows.Count, "#9");
+			
+			newTable1 = view.ToTable(true, new string[] { "col2", "col3"});
+			Assert.AreEqual(2, newTable1.Columns.Count, "#10");
+			Assert.AreEqual(6, newTable1.Rows.Count, "#11");
+			
+			for (int i = 0; i < newTable1.Rows.Count; ++i)
+				Assert.AreEqual(DataRowState.Added, newTable1.Rows[i].RowState, "#11");
+
+			view = new DataView (table, "col1>1", "col1 asc, col2 desc", DataViewRowState.Added);
+			Assert.AreEqual (0, view.Count, "#12");
+
+			newTable1 = view.ToTable (false, new string[] {"col1", "col3"});
+			Assert.AreEqual (0, newTable1.Rows.Count, "#13");
+			
+			table.Rows.Add (new object[] {10, 1, 1});
+			table.Rows.Add (new object[] {10, 1, 3});
+			table.Rows.Add (new object[] {10, 1, 2});
+
+			Assert.AreEqual (3, view.Count, "#14");
+			view.Sort = "col1 asc, col2 asc, col3 desc";
+			newTable1 =  view.ToTable (true, new string[] {"col1", "col3"});
+			Assert.AreEqual (3, newTable1.Rows.Count, "#14");
+			Assert.AreEqual (3, newTable1.Rows [0][1], "#15");
+			Assert.AreEqual (2, newTable1.Rows [1][1], "#16");
+			Assert.AreEqual (1, newTable1.Rows [2][1], "#17");
+		}
+#endif
 	}
 }

@@ -158,6 +158,28 @@ namespace System.Data.Common
 			return Array;
 		}
 
+		internal DataRow[] GetAllRows ()
+		{
+			DataRow[] list = new DataRow [Size];
+			for (int i=0; i < Size; ++i)
+				list [i] = Key.Table.RecordCache [Array [i]];
+			return list;
+		}
+
+		internal DataRow[] GetDistinctRows () 
+		{
+			ArrayList list = new ArrayList ();
+			list.Add (Key.Table.RecordCache [Array [0]]);
+			int currRecord = Array [0];
+			for (int i=1; i <  Size; ++i) {
+				if (Key.CompareRecords (currRecord, Array [i]) == 0)
+					continue;
+				list.Add (Key.Table.RecordCache [Array [i]]);
+				currRecord = Array [i];
+			}
+			return (DataRow[])list.ToArray (typeof (DataRow));
+		}
+
 		internal void Reset()
 		{
 			_array = null;
