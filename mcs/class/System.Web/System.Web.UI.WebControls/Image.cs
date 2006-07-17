@@ -225,8 +225,14 @@ namespace System.Web.UI.WebControls {
 				break;
 			}
 #if NET_2_0
+#if BUG_78875_FIXED
+			if (Context.Request.Browser.SupportsCss)
+#endif
 			if (BorderWidth.IsEmpty)
 				writer.AddStyleAttribute (HtmlTextWriterStyle.BorderWidth, "0px");
+#if BUG_78875_FIXED
+			else
+#endif
 #else
 			// if border-with is not specified in style or 
 			// no style is defined - set image to no border
