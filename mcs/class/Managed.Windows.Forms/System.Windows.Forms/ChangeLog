@@ -1,3 +1,9 @@
+2006-07-17  Mike Kestner  <mkestner@novell.com>
+
+	* ToolBar.cs: bandaid for side-effect of previous patch which was
+	discarding explicit heights for non-AutoSize toolbars.  Need to
+	extend my format tester to deal with AutoSize=false. Fixes #78864.
+
 2006-07-15  Jackson Harper  <jackson@ximian.com>
 
 	* LabelEditTextBox.cs:
