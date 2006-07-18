@@ -90,6 +90,8 @@ namespace System.Web.Handlers {
 				return;
 			
 			Stream s = assembly.GetManifestResourceStream (resourceName);
+			if (s == null)
+				return;
 			
 			byte [] buf = new byte [1024];
 			Stream output = context.Response.OutputStream;
