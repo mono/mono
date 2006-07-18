@@ -1,5 +1,11 @@
 2006-07-17  Mike Kestner  <mkestner@novell.com>
 
+	* ListViewItem.cs: restructure Font and subitem Font handling 
+	to hold a specific font and refer back to owner on null.
+	Fixes #78761.
+
+2006-07-17  Mike Kestner  <mkestner@novell.com>
+
 	* ToolBar.cs: bandaid for side-effect of previous patch which was
 	discarding explicit heights for non-AutoSize toolbars.  Need to
 	extend my format tester to deal with AutoSize=false. Fixes #78864.

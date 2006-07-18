@@ -57,6 +57,7 @@ namespace System.Windows.Forms
 		Rectangle item_rect;
 		Rectangle label_rect;
 		ListView owner;
+		Font font;
 		bool selected;
 
 		internal int row;
@@ -108,7 +109,7 @@ namespace System.Windows.Forms
 			this.image_index = imageIndex;
 			ForeColor = foreColor;
 			BackColor = backColor;
-			Font = font;
+			this.font = font;
 		}
 		#endregion	// Public Constructors
 
@@ -183,19 +184,18 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public Font Font {
 			get {
-				if (sub_items.Count > 0)
-					return sub_items[0].Font;
-
-				if (owner != null)
+				if (font != null)
+					return font;
+				else if (owner != null)
 					return owner.Font;
 
 				return ThemeEngine.Current.DefaultFont;
 			}
 			set { 	
-				if (sub_items[0].Font == value)
+				if (font == value)
 					return;
 
-				sub_items[0].Font = value; 
+				font = value; 
 
 				if (owner != null)
 					Layout ();
@@ -629,8 +629,7 @@ namespace System.Windows.Forms
 
 			public ListViewSubItem (ListViewItem owner, string text)
 				: this (owner, text, ThemeEngine.Current.ColorWindowText,
-					ThemeEngine.Current.ColorWindow,
-					ThemeEngine.Current.DefaultFont)
+					ThemeEngine.Current.ColorWindow, null)
 			{
 			}
 
@@ -661,9 +660,11 @@ namespace System.Windows.Forms
 						return font;
 					else if (owner != null)
 						return owner.Font;
-					return font;
+					return ThemeEngine.Current.DefaultFont;
 				}
 				set { 
+					if (font == value)
+						return;
 					font = value; 
 					Invalidate ();
 				    }
