@@ -1859,6 +1859,9 @@ namespace System
 
 		private unsafe String CreateString (sbyte* value)
 		{
+			if (value == null)
+				return String.Empty;
+
 			byte* bytes = (byte*) value;
 			int length = 0;
 
@@ -1867,6 +1870,10 @@ namespace System
 					length++;
 			} catch (NullReferenceException) {
 				throw new ArgumentOutOfRangeException ("value", "Value does not refer to a valid string.");
+#if NET_2_0
+			} catch (AccessViolationException) {
+				throw new ArgumentOutOfRangeException ("value", "Value does not refer to a valid string.");
+#endif
 			}
 
 			return CreateString (value, 0, length, null);
@@ -1886,8 +1893,18 @@ namespace System
 			if (value + startIndex < value)
 				throw new ArgumentOutOfRangeException ("startIndex", "Value, startIndex and length do not refer to a valid string.");
 
-			if (enc == null)
+			bool isDefaultEncoding;
+
+			if (isDefaultEncoding = (enc == null)) {
+				if (value == null)
+#if NET_2_0
+					throw new ArgumentNullException ("value");
+#else
+					return String.Empty;
+#endif
+
 				enc = Encoding.Default;
+			}
 
 			byte [] bytes = new byte [length];
 
@@ -1896,7 +1913,19 @@ namespace System
 					try {
 						memcpy (bytePtr, (byte*) (value + startIndex), length);
 					} catch (NullReferenceException) {
+#if !NET_2_0
+						if (!isDefaultEncoding)
+							throw;
+#endif
+
 						throw new ArgumentOutOfRangeException ("value", "Value, startIndex and length do not refer to a valid string.");
+#if NET_2_0
+					} catch (AccessViolationException) {
+						if (!isDefaultEncoding)
+							throw;
+
+						throw new ArgumentOutOfRangeException ("value", "Value, startIndex and length do not refer to a valid string.");
+#endif
 					}
 
 			// GetString () is called even when length == 0
