@@ -17,13 +17,29 @@ namespace MonoTests.System.Windows.Forms {
 
 		public class ControlPoker : Button {
 
+			internal bool directed_select_called;
+
+			public void _Select (bool directed, bool forward)
+			{
+				Select (directed, forward);
+			}
+
+			protected override void Select (bool directed, bool forward)
+			{
+				directed_select_called = true;
+				base.Select (directed, forward);
+			}
+		}
+
+		private ControlPoker [] flat_controls;
+
+		public class ContainerPoker : ContainerControl {
+
 			public void _Select (bool directed, bool forward)
 			{
 				Select (directed, forward);
 			}
 		}
-
-		private ControlPoker [] flat_controls;
 
 		[SetUp]
 		protected virtual void SetUp ()
@@ -109,6 +125,91 @@ namespace MonoTests.System.Windows.Forms {
 
 			flat_controls [0]._Select (true, true);
 			Assert.AreEqual (flat_controls [0], form.ActiveControl, "A3");
+		}
+
+		[Test]
+		public void EnsureDirectedSelectUsed ()
+		{
+			Form form = new Form ();
+
+			form.Show ();
+			form.Controls.AddRange (flat_controls);
+
+			form.SelectNextControl (null, true, false, false, false);
+			Assert.IsTrue (flat_controls [0].directed_select_called, "A1");
+		}
+
+		[Test]
+		public void ContainerSelectDirectedForward ()
+		{
+			Form form = new Form ();
+			ContainerPoker cp = new ContainerPoker ();
+			
+			form.Show ();
+			form.Controls.Add (cp);
+
+			cp.Controls.AddRange (flat_controls);
+
+			cp._Select (true, true);
+			Assert.IsTrue (flat_controls [0].Focused, "A1");
+			Assert.IsFalse (flat_controls [1].Focused, "A2");
+			Assert.IsFalse (flat_controls [2].Focused, "A3");
+			Assert.AreEqual (flat_controls [0], cp.ActiveControl, "A4");
+			Assert.AreEqual (cp, form.ActiveControl, "A5");
+
+			// Should select the first one again
+			cp._Select (true, true);
+			Assert.IsTrue (flat_controls [0].Focused, "A6");
+			Assert.IsFalse (flat_controls [1].Focused, "A7");
+			Assert.IsFalse (flat_controls [2].Focused, "A8");
+			Assert.AreEqual (flat_controls [0], cp.ActiveControl, "A9");
+			Assert.AreEqual (cp, form.ActiveControl, "A10");
+		}
+
+		[Test]
+		public void ContainerSelectDirectedBackward ()
+		{
+			Form form = new Form ();
+			ContainerPoker cp = new ContainerPoker ();
+			
+			form.Show ();
+			form.Controls.Add (cp);
+
+			cp.Controls.AddRange (flat_controls);
+
+			cp._Select (true, false);
+			Assert.IsFalse (flat_controls [0].Focused, "A1");
+			Assert.IsFalse (flat_controls [1].Focused, "A2");
+			Assert.IsTrue (flat_controls [2].Focused, "A3");
+			Assert.AreEqual (flat_controls [2], cp.ActiveControl, "A4");
+			Assert.AreEqual (cp, form.ActiveControl, "A5");
+
+			// Should select the first one again
+			cp._Select (true, false);
+			Assert.IsFalse (flat_controls [0].Focused, "A6");
+			Assert.IsFalse (flat_controls [1].Focused, "A7");
+			Assert.IsTrue (flat_controls [2].Focused, "A8");
+			Assert.AreEqual (flat_controls [2], cp.ActiveControl, "A9");
+			Assert.AreEqual (cp, form.ActiveControl, "A10");
+		}
+
+		[Test]
+		public void ContainerSelectUndirectedForward ()
+		{
+			Form form = new Form ();
+			ContainerPoker cp = new ContainerPoker ();
+			
+			form.Show ();
+			form.Controls.Add (cp);
+
+			cp.Controls.AddRange (flat_controls);
+
+			cp._Select (false, true);
+			Assert.IsFalse (flat_controls [0].Focused, "A1");
+			Assert.IsFalse (flat_controls [1].Focused, "A2");
+			Assert.IsFalse (flat_controls [2].Focused, "A3");
+			Assert.AreEqual (null, cp.ActiveControl, "A4");
+			Assert.AreEqual (cp, form.ActiveControl, "A5");
 		}
 
 		[Test]
