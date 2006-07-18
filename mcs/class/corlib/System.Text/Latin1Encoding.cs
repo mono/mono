@@ -286,8 +286,19 @@ internal class Latin1Encoding : Encoding
 		if (count == 0)
 		    return String.Empty;
 		unsafe {
-			fixed (byte *ss = &bytes [0]) {
-				return new String ((sbyte*)ss, index, count);
+			fixed (byte* bytePtr = bytes) {
+				string s = string.InternalAllocateStr (count);
+
+				fixed (char* charPtr = s) {
+					byte* currByte = bytePtr + index;
+					byte* lastByte = currByte + count;
+					char* currChar = charPtr;
+
+					while (currByte < lastByte)
+						currChar++ [0] = (char) currByte++ [0];
+				}
+
+				return s;
 			}
 		}
 	}
@@ -296,14 +307,8 @@ internal class Latin1Encoding : Encoding
 		if (bytes == null) {
 			throw new ArgumentNullException ("bytes");
 		}
-		int count = bytes.Length;
-		if (count == 0)
-		    return String.Empty;
-		unsafe {
-			fixed (byte *ss = &bytes [0]) {
-				return new String ((sbyte*)ss, 0, count);
-			}
-		}
+
+		return GetString (bytes, 0, bytes.Length);
 	}
 
 #if !ECMA_COMPAT

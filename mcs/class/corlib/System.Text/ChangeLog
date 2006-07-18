@@ -1,3 +1,10 @@
+2006-07-18  Kornél Pál  <kornelpal@gmail.com>
+
+	* ASCIIEncoding.cs: Fixed GetString () methods to use ASCII rather
+	  than new string (sbyte*, int, int) that uses Encoding.Default.
+	* Latin1Encoding.cs: Fixed GetString () methods to use Latin 1 rather
+	  than new string (sbyte*, int, int) that uses Encoding.Default.
+
 2006-07-11  Kornél Pál  <kornelpal@gmail.com>
 
 	* StringBuilder.cs: Pad the string with NULL characters when setting

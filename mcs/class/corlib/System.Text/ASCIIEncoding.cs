@@ -310,8 +310,26 @@ public class ASCIIEncoding : Encoding
 			return String.Empty;
 		
 		unsafe {
-			fixed (byte *ss = &bytes [0]) {
-				return new String ((sbyte*)ss, index, count);
+			fixed (byte* bytePtr = bytes) {
+				string s = string.InternalAllocateStr (count);
+
+				fixed (char* charPtr = s) {
+					byte* currByte = bytePtr + index;
+					byte* lastByte = currByte + count;
+					char* currChar = charPtr;
+
+					while (currByte < lastByte) {
+#if NET_2_0
+						byte b = currByte++ [0];
+						currChar++ [0] = b <= 0x7F ? (char) b : (char) '?';
+#else
+						// GetString is incompatible with GetChars
+						currChar++ [0] = (char) (currByte++ [0] & 0x7F);
+#endif
+					}
+				}
+
+				return s;
 			}
 		}
 	}
@@ -383,14 +401,8 @@ public class ASCIIEncoding : Encoding
 		if (bytes == null) {
 			throw new ArgumentNullException ("bytes");
 		}
-		int count = bytes.Length;
-		if (count == 0)
-		    return String.Empty;
-		unsafe {
-			fixed (byte *ss = &bytes [0]) {
-				return new String ((sbyte*)ss, 0, count);
-			}
-		}
+
+		return GetString (bytes, 0, bytes.Length);
 	}
 #endif
 
