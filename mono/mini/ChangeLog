@@ -1,3 +1,8 @@
+2006-07-18  Kornél Pál  <kornelpal@gmail.com>
+
+	* declsec.c: Use original security informations for
+	  MONO_WRAPPER_MANAGED_TO_MANAGED.
+
 2006-07-15  Jonathan Chambers  <joncham@gmail.com>
 
 	* mini.c: Allow Com Interop methods/classes and

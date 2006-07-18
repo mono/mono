@@ -1,3 +1,21 @@
+2006-07-18  Kornél Pál  <kornelpal@gmail.com>
+
+	* class-internals.h: Added MONO_WRAPPER_MANAGED_TO_MANAGED wrapper type.
+	* debug-helpers.c: Map MONO_WRAPPER_MANAGED_TO_MANAGED to
+	  "managed-to-managed".
+	* icall.c: Redirect string constructors that take sbyte* to
+	  ves_icall_System_String_ctor_RedirectToCreateString.
+	* marshal.c: Redirect ves_icall_System_String_ctor_RedirectToCreateString
+	  to CreateString () methods with matching signature.
+	* reflection.c: Use original security informations for
+	  MONO_WRAPPER_MANAGED_TO_MANAGED.
+	* security-manager.c: Use original security informations for
+	  MONO_WRAPPER_MANAGED_TO_MANAGED.
+	* string-icalls.c: Added ves_icall_System_String_ctor_RedirectToCreateString
+	  that is a placeholder and only its address should be used.
+	* string-icalls.h: Added ves_icall_System_String_ctor_RedirectToCreateString
+	  that is a placeholder and only its address should be used.
+
 2006-07-15  Jonathan Chambers  <joncham@gmail.com>
 
 	Begin implementing COM Interop.
