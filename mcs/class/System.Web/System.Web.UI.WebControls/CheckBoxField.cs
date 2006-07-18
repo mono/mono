@@ -102,7 +102,8 @@ namespace System.Web.UI.WebControls {
 			bool editable = (rowState & (DataControlRowState.Edit | DataControlRowState.Insert)) != 0;
 			CheckBox box = new CheckBox ();
 			box.Enabled = editable && !ReadOnly;
-			box.ToolTip = HeaderText;
+			if (editable)
+				box.ToolTip = HeaderText;
 			box.Text = Text;
 			cell.Controls.Add (box);
 		}

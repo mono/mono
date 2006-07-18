@@ -1,3 +1,8 @@
+2006-07-17 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* CheckBoxField.cs: fixed InitializeDataCell, tooltip only in edit
+	mode
+
 2006-07-17 Andrew Skiba <andrews@mainsoft.com>
 
 	* CommandField.cs: fixed ValidateSupportsCallback
