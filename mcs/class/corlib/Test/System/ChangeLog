@@ -1,3 +1,10 @@
+2006-07-18  Kornél Pál  <kornelpal@gmail.com>
+
+	* StringTest.cs: Added several tests for constructors that take sbyte*
+	  as an argument. This covers bug #78703 as well. Renamed
+	  TestUnsafeConstructors to TestCharPtrConstructors and removed sbyte*
+	  tests from that test.
+
 2006-07-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* DoubleTest.cs: Add a test for inner whitespace and Parse ().

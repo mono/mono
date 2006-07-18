@@ -1,9 +1,12 @@
 // StringTest.cs - NUnit Test Cases for the System.String class
 //
-// Jeffrey Stedfast <fejj@ximian.com>
-// David Brandt <bucky@keystreams.com>
+// Authors:
+//   Jeffrey Stedfast <fejj@ximian.com>
+//   David Brandt <bucky@keystreams.com>
+//   Kornél Pál <http://www.kornelpal.hu/>
 //
 // (C) Ximian, Inc.  http://www.ximian.com
+// Copyright (C) 2006 Kornél Pál
 //
 
 using NUnit.Framework;
@@ -67,72 +70,158 @@ public class StringTest : Assertion
 		}
 	}
 	
-	[Category("NotDotNet")]
-	public void TestUnsafeConstructors ()
+	public unsafe void TestCharPtrConstructors ()
 	{
-		unsafe {
-			AssertEquals (String.Empty, new String ((sbyte*)null, 0, 10, Encoding.ASCII));
-		}
+		AssertEquals (String.Empty, new String ((char*) null, 0, 0));
+	}
 
-		unsafe {
-			sbyte[] s1 = new sbyte [10];
-			fixed (sbyte* s2 = &s1[0]) {
-				AssertEquals (String.Empty, new String (s2, 0, 0, Encoding.ASCII));
-			}
-		}
+	public unsafe void TestSbytePtrConstructorASCII ()
+	{
+		Encoding encoding = Encoding.ASCII;
+		String s = "ASCII*\0";
+		byte[] bytes = encoding.GetBytes (s);
 
-		unsafe {
-			sbyte[] s1 = new sbyte [10];
-			fixed (sbyte* s2 = &s1[0]) {
-				try {
-					new String (s2, 0, 10, null);
-					Fail ();
-				}
-				catch (ArgumentNullException) {
-				}
-			}
-		}
+		fixed (byte* bytePtr = bytes)
+			AssertEquals (s, new String ((sbyte*) bytePtr, 0, bytes.Length, encoding));
+	}
 
-		unsafe {
-			sbyte[] s1 = new sbyte [10];
-			fixed (sbyte* s2 = &s1[0]) {
-				try {
-					new String (s2, -1, 10, Encoding.ASCII);
-					Fail ();
-				}
-				catch (ArgumentOutOfRangeException) {
-				}
-			}
-		}
+	public unsafe void TestSbytePtrConstructorDefault ()
+	{
+		Encoding encoding = Encoding.Default;
+		byte [] bytes = new byte [256];
+		
+		for (int i = 0; i < 255; i++)
+			bytes [i] = (byte) (i + 1);
+		bytes [255] = (byte) 0;
 
-		unsafe {
-			sbyte[] s1 = new sbyte [10];
-			fixed (sbyte* s2 = &s1[0]) {
-				try {
-					new String (s2, 0, -1, Encoding.ASCII);
-					Fail ();
-				}
-				catch (ArgumentOutOfRangeException) {
-				}
-			}
-		}
+		// Ensure that bytes are valid for Encoding.Default
+		bytes = encoding.GetBytes (encoding.GetChars (bytes));
+		String s = encoding.GetString(bytes);
 
-		unsafe {    
-			String s = "Hello, World!";
-			byte[] bytes = Encoding.ASCII.GetBytes (s);
-			sbyte[] s1 = new sbyte [bytes.Length];
-			for (int i = 0; i < s1.Length; ++i)
-				s1 [i] = (sbyte)bytes [i];
-			fixed (sbyte* s2 = &s1[0]) {
-				string res = new String(s2, 0, s1.Length, Encoding.ASCII);
-				AssertEquals (s, res);
-			}    
-		}    
+		// Ensure null terminated array
+		bytes [bytes.Length - 1] = (byte) 0;
 
-		unsafe {
-			AssertEquals (String.Empty, new String ((sbyte*)null));
-			AssertEquals (String.Empty, new String ((char*)null, 0, 0));
+		fixed (byte* bytePtr = bytes) 
+		{
+			AssertEquals (s.Substring (0, s.Length - 1), new String ((sbyte*) bytePtr));
+			AssertEquals (s, new String ((sbyte*) bytePtr, 0, bytes.Length));
+			AssertEquals (s, new String ((sbyte*) bytePtr, 0, bytes.Length, null));
+			AssertEquals (s, new String ((sbyte*) bytePtr, 0, bytes.Length, encoding));
 		}
+	}
+
+	public unsafe void TestSbytePtrConstructorNull1 ()
+	{
+		AssertEquals (String.Empty, new String ((sbyte*) null));
+	}
+
+#if NET_2_0
+	[ExpectedException (typeof (ArgumentNullException))]
+#endif
+	public unsafe void TestSbytePtrConstructorNull2 ()
+	{
+		AssertEquals (String.Empty, new String ((sbyte*) null, 0, 0));
+	}
+
+#if NET_2_0
+	[ExpectedException (typeof (ArgumentNullException))]
+#endif
+	public unsafe void TestSbytePtrConstructorNull3 ()
+	{
+		AssertEquals (String.Empty, new String ((sbyte*) null, 0, 1));
+	}
+
+#if NET_2_0
+	[ExpectedException (typeof (ArgumentNullException))]
+#endif
+	public unsafe void TestSbytePtrConstructorNull4 ()
+	{
+		AssertEquals (String.Empty, new String ((sbyte*) null, 1, 0));
+	}
+
+#if NET_2_0
+	[ExpectedException (typeof (ArgumentNullException))]
+#endif
+	public unsafe void TestSbytePtrConstructorNull5 ()
+	{
+		AssertEquals (String.Empty, new String ((sbyte*) null, 0, 0, null));
+	}
+
+#if NET_2_0
+	[ExpectedException (typeof (ArgumentNullException))]
+#endif
+	public unsafe void TestSbytePtrConstructorNull6 ()
+	{
+		AssertEquals (String.Empty, new String ((sbyte*) null, 0, 1, null));
+	}
+
+#if NET_2_0
+	[ExpectedException (typeof (ArgumentNullException))]
+#endif
+	public unsafe void TestSbytePtrConstructorNull7 ()
+	{
+		AssertEquals (String.Empty, new String ((sbyte*) null, 1, 0, null));
+	}
+
+	public unsafe void TestSbytePtrConstructorNull8 ()
+	{
+		AssertEquals (String.Empty, new String ((sbyte*) null, 0, 0, Encoding.Default));
+	}
+
+#if NET_2_0
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+#else
+	[ExpectedException (typeof (NullReferenceException))]
+#endif
+	public unsafe void TestSbytePtrConstructorNull9 ()
+	{
+		AssertEquals (String.Empty, new String ((sbyte*) null, 0, 1, Encoding.Default));
+	}
+
+	public unsafe void TestSbytePtrConstructorNull10 ()
+	{
+		AssertEquals (String.Empty, new String ((sbyte*) null, 1, 0, Encoding.Default));
+	}
+
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public unsafe void TestSbytePtrConstructorInvalid1 ()
+	{
+		AssertEquals (String.Empty, new String ((sbyte*) (-1)));
+	}
+
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public unsafe void TestSbytePtrConstructorInvalid2 ()
+	{
+		AssertEquals (String.Empty, new String ((sbyte*) (-1), 0, 1));
+	}
+
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public unsafe void TestSbytePtrConstructorInvalid3 ()
+	{
+		AssertEquals (String.Empty, new String ((sbyte*) (-1), 0, 1, null));
+	}
+
+#if NET_2_0
+	[Ignore ("Runtime throws NullReferenceException instead of AccessViolationException")]
+	[ExpectedException (typeof (AccessViolationException))]
+#else
+	[ExpectedException (typeof (NullReferenceException))]
+#endif
+	public unsafe void TestSbytePtrConstructorInvalid4 ()
+	{
+		AssertEquals (String.Empty, new String ((sbyte*) (-1), 0, 1, Encoding.Default));
+	}
+
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public unsafe void TestSbytePtrConstructorNegative1 ()
+	{
+		AssertEquals (String.Empty, new String ((sbyte*) null, -1, 0, Encoding.Default));
+	}
+
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public unsafe void TestSbytePtrConstructorNegative2 ()
+	{
+		AssertEquals (String.Empty, new String ((sbyte*) null, 0, -1, Encoding.Default));
 	}
 
 	public void TestLength ()
