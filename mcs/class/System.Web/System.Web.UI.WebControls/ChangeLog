@@ -1,5 +1,18 @@
 2006-07-17 Vladimir Krasnov <vladimirk@mainsoft.com>
 
+	* GridView: fixed DataKeyNames property, moved to ControlState
+	fixed PageCount property, initial PageCount ahould be zero
+	fixed SelectedDataKey, should throw exception if not initialized
+	fixed CreateColumns, wrong order of columns
+	fixed CreateControlStyle,
+	fixed InitializePager, no columnspan attrib on only one column
+	fixed LoadControlState, SaveControlState added DataKeyNames
+	fixed Render, RenderGrid should render within div tag
+	implemented GetPostBackOptions
+	* DataControlButton.cs: fixed Render, fixed style for img button
+
+2006-07-17 Vladimir Krasnov <vladimirk@mainsoft.com>
+
 	* CheckBoxField.cs: fixed InitializeDataCell, tooltip only in edit
 	mode
 

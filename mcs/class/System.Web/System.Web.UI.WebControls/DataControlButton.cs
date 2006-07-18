@@ -116,62 +116,60 @@ namespace System.Web.UI.WebControls
 			
 				ControlStyle.AddAttributesToRender (writer);
 				
-				if (ButtonType == ButtonType.Link || ButtonType == ButtonType.Image)
-				{
-					if (ImageUrl.Length > 0) {
-						writer.AddAttribute (HtmlTextWriterAttribute.Type, "image");
-						writer.AddAttribute (HtmlTextWriterAttribute.Src, ResolveUrl (ImageUrl));
-						if (callScript != null)
-							writer.AddAttribute (HtmlTextWriterAttribute.Onclick, callScript);
-						else
-							writer.AddAttribute (HtmlTextWriterAttribute.Onclick, postScript);
-						if (Text.Length > 0)
-							writer.AddAttribute (HtmlTextWriterAttribute.Alt, Text);
-						writer.RenderBeginTag (HtmlTextWriterTag.Input);
-						writer.RenderEndTag ();
-					}
-					else {
-						if (callScript != null) {
-							writer.AddAttribute (HtmlTextWriterAttribute.Onclick, callScript);
-							writer.AddAttribute (HtmlTextWriterAttribute.Href, "javascript:");
-						}
-						else
-							writer.AddAttribute (HtmlTextWriterAttribute.Href, "javascript:" + postScript);
-						writer.RenderBeginTag (HtmlTextWriterTag.A);
-						writer.Write (Text);
-						writer.RenderEndTag ();
-					}
-				}
-				else if (ButtonType == ButtonType.Button)
-				{
+				if (ButtonType == ButtonType.Image) {
+					writer.AddAttribute (HtmlTextWriterAttribute.Type, "image");
+					writer.AddAttribute (HtmlTextWriterAttribute.Src, ResolveUrl (ImageUrl));
 					if (callScript != null)
 						writer.AddAttribute (HtmlTextWriterAttribute.Onclick, callScript);
 					else
 						writer.AddAttribute (HtmlTextWriterAttribute.Onclick, postScript);
-						
+					if (Text.Length > 0)
+						writer.AddAttribute (HtmlTextWriterAttribute.Alt, Text);
+					writer.AddStyleAttribute (HtmlTextWriterStyle.BorderWidth, "0px");
+					writer.RenderBeginTag (HtmlTextWriterTag.Input);
+					writer.RenderEndTag ();
+				}
+				if (ButtonType == ButtonType.Link) {
+					if (callScript != null) {
+						writer.AddAttribute (HtmlTextWriterAttribute.Onclick, callScript);
+						writer.AddAttribute (HtmlTextWriterAttribute.Href, "javascript:");
+					}
+					else
+						writer.AddAttribute (HtmlTextWriterAttribute.Href, "javascript:" + postScript);
+					writer.RenderBeginTag (HtmlTextWriterTag.A);
+					writer.Write (Text);
+					writer.RenderEndTag ();
+				}
+				if (ButtonType == ButtonType.Button) {
+					if (callScript != null)
+						writer.AddAttribute (HtmlTextWriterAttribute.Onclick, callScript);
+					else
+						writer.AddAttribute (HtmlTextWriterAttribute.Onclick, postScript);
+
 					writer.AddAttribute (HtmlTextWriterAttribute.Type, "submit");
 					writer.AddAttribute (HtmlTextWriterAttribute.Name, ClientID);
 					writer.AddAttribute (HtmlTextWriterAttribute.Value, Text);
 					writer.RenderBeginTag (HtmlTextWriterTag.Input);
 					writer.RenderEndTag ();
 				}
-			} else {
+			}
+			else {
 				if (ImageUrl.Length > 0) {
 					ControlStyle.AddAttributesToRender (writer);
 					writer.AddAttribute (HtmlTextWriterAttribute.Src, ResolveUrl (ImageUrl));
 					if (Text.Length > 0)
 						writer.AddAttribute (HtmlTextWriterAttribute.Alt, Text);
+					writer.AddStyleAttribute (HtmlTextWriterStyle.BorderWidth, "0px");
 					writer.RenderBeginTag (HtmlTextWriterTag.Img);
 					writer.RenderEndTag ();
 				}
 				else {
 					if (!ControlStyle.IsEmpty) {
 						ControlStyle.AddAttributesToRender (writer);
-						writer.RenderBeginTag (HtmlTextWriterTag.Span);
-						writer.Write (Text);
-						writer.RenderEndTag ();
-					} else
-						writer.Write (Text);
+					}
+					writer.RenderBeginTag (HtmlTextWriterTag.Span);
+					writer.Write (Text);
+					writer.RenderEndTag ();
 				}
 			}
 		}
