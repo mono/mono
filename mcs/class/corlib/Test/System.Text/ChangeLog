@@ -1,3 +1,7 @@
+2006-07-18  Kornél Pál  <kornelpal@gmail.com>
+
+	* ASCIIEncodingTest.cs: Added TestGetString3 test.
+
 2006-07-11  Kornél Pál  <kornelpal@gmail.com>
 
 	* StringBuilderTest.cs: Added SetLength test.
