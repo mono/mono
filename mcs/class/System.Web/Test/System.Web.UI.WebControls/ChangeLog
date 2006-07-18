@@ -1,3 +1,7 @@
+2006-07-18 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* GridViewTest.cs: removed NotWorking attributes, added tests
+
 2006-07-17 Yoni Klain <yonik@mainsoft.com>
 
 	* SiteMapPathTest.cs: added new test

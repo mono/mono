@@ -368,7 +368,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 
 		[Test]
-		[Category ("NotWorking")]
 		public void GridView_DefaultPropertiesNotWorking ()
 		{
 			PokerGridView g = new PokerGridView ();
@@ -560,25 +559,32 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void GridView_CreateChildControls ()
 		{
 			PokerGridView g = new PokerGridView ();
 			g.DataSource = myds;
 			Assert.AreEqual(6,g.DoCreateChildControls(myds,true),"CreateChildControls#1");
-			Assert.AreEqual(-1,g.DoCreateChildControls(myds,false),"CreateChildControls#2");
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Category ("NotWorking")] 
+		// LAMESPEC: msdn talks about number of row created by this method
+		public void GridView_CreateChildControls_2 ()
+		{
+			PokerGridView g = new PokerGridView ();
+			g.DataSource = myds;
+			Assert.AreEqual (-1, g.DoCreateChildControls (myds, false), "CreateChildControls#2");
+		}
+		
+		[Test]
 		public void GridView_CreateChildTable()
 		{
 			PokerGridView g = new PokerGridView ();
-			Assert.AreEqual ("System.Web.UI.WebControls.ChildTable", g.DoCreateChildTable().ToString (), "CreateChildTable");  
+			Assert.IsNotNull (g.DoCreateChildTable (), "CreateChildTable");  
+			Assert.IsTrue (g.DoCreateChildTable() is Table, "CreateChildTable");  
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void GridView_CreateControlStyle ()
 		{
 			PokerGridView g = new PokerGridView ();
@@ -613,7 +619,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void GridView_InitializePager ()
 		{
 			PokerGridView gv = new PokerGridView ();
@@ -813,22 +818,41 @@ namespace MonoTests.System.Web.UI.WebControls
 		private bool sorted;
 		private bool sorting;
 		private bool unload;
-		
+
 
 		[Test]
 		[Category ("NotWorking")]
+		public void GridView_EventsNotWorking ()
+		{
+			PokerGridView gv = new PokerGridView ();
+
+			Assert.AreEqual (false, gv.dataPropertyChanged, "BeforedataPropertyChanged");
+			gv.DataSource = myds;
+			// not initialized gv
+			Assert.AreEqual (true, gv.dataPropertyChanged, "AfterdataPropertyChanged");
+
+			gv.Init += new EventHandler (gv_Init);
+			gv.Load += new EventHandler (gv_Load);
+			
+			Assert.AreEqual (false, init, "BeforeInit");
+			gv.DoOnInit (new EventArgs ());
+			// page does not exist
+			Assert.AreEqual (true, init, "AfterInit");
+			
+			Assert.AreEqual (false, load, "BeforeLoad");
+			gv.DoOnLoad (new EventArgs ());
+			// page does not exist
+			Assert.AreEqual (true, load, "AfterLoad");
+		}
+
+		[Test]
 		public void GridView_Events ()
 		{
 			PokerGridView gv = new PokerGridView ();
-			
-			Assert.AreEqual (false, gv.dataPropertyChanged, "BeforedataPropertyChanged");
 			gv.DataSource = myds;
-			Assert.AreEqual (true, gv.dataPropertyChanged, "AfterdataPropertyChanged");
 
 			gv.DataBinding += new EventHandler (gv_DataBinding);
 			gv.DataBound += new EventHandler (gv_DataBound);
-			gv.Init += new EventHandler (gv_Init);
-			gv.Load += new EventHandler (gv_Load);
 			gv.PageIndexChanging += new GridViewPageEventHandler (gv_PageIndexChanging);
 			gv.PageIndexChanged += new EventHandler (gv_PageIndexChanged);
 			gv.PreRender += new EventHandler (gv_PreRender);
@@ -854,12 +878,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (false, dataBound, "BeforeDataBound");
 			gv.DoOnDataBound (new EventArgs ());
 			Assert.AreEqual (true, dataBound, "AfterDataBound");
-			Assert.AreEqual (false,init, "BeforeInit");
-			gv.DoOnInit (new EventArgs ());
-			Assert.AreEqual (true, init, "AfterInit");
-			Assert.AreEqual (false, load, "BeforeLoad");
-			gv.DoOnLoad (new EventArgs ());
-			Assert.AreEqual (true, load, "AfterLoad");
 			Assert.AreEqual (false, pageIndexChanged, "BeforepageIndexChanged");
 			gv.DoOnPageIndexChanged (new EventArgs ());
 			Assert.AreEqual (true, pageIndexChanged, "AfterpageIndexChanged");
@@ -1018,7 +1036,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void GridView_State ()
 		{
 			PokerGridView g = new PokerGridView ();
@@ -1040,7 +1057,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void GridView_DefaultsRender ()
 		{
 			PokerGridView b = new PokerGridView ();
@@ -1049,7 +1065,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void GridView_Render ()
 		{
 			PokerGridView b = new PokerGridView ();
@@ -1079,7 +1094,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void GridView_RenderAllowPaging ()
 		{
 			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (RenderAllowPaging)).Run ();
@@ -1129,7 +1143,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		/// </summary>
 
 		[Test]
-		[Category ("NotWorking")]
 		public void GridView_RenderingBoundField ()
 		{
 			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (RenderingBoundField)).Run ();
@@ -1151,7 +1164,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void GridView_RenderingCheckBoxField ()
 		{
 			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (RenderingCheckBoxField)).Run ();
@@ -1173,7 +1185,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void GridView_RenderingCheckBoxField2 ()
 		{
 			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (RenderingCheckBoxField2)).Run ();
@@ -1195,7 +1206,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 		
 		[Test]
-		[Category ("NotWorking")]
 		public void GridView_RenderingImageField ()
 		{
 			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (RenderingImageField)).Run ();
@@ -1217,7 +1227,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void GridView_RenderingCommandField ()
 		{
 			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (RenderingCommandField)).Run ();
@@ -1239,7 +1248,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void GridView_RenderingHyperLinkField ()
 		{
 			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (RenderingHyperLinkField)).Run ();
@@ -1287,7 +1295,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 
 		[Test]
-		[Category ("NotWorking")]
 		public void GridView_RenderingTemplateField ()
 		{
 		        
@@ -1377,12 +1384,14 @@ namespace MonoTests.System.Web.UI.WebControls
 			buttonfieldlink.FooterText = "FooterText";
 			buttonfieldlink.ButtonType = ButtonType.Link;
 			buttonfieldlink.DataTextField = STRINGFIELD;
+			buttonfieldlink.CommandName = "cmd2";
 
 			ButtonField buttonfieldimage = new ButtonField ();
 			buttonfieldimage.HeaderText = "HeaderText";
 			buttonfieldimage.FooterText = "FooterText";
 			buttonfieldimage.ButtonType = ButtonType.Image;
 			buttonfieldimage.DataTextField = STRINGFIELD;
+			buttonfieldimage.CommandName = "cmd3";
 
 			grid.DataSource = GridViewTest.CreateDataSource ();
 			grid.Columns.Add (buttonfield);
@@ -1521,7 +1530,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void GridView_PostBackSotring ()
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (GridView_postback));
@@ -1542,7 +1550,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void GridView_PostBackPaging ()
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (GridView_postback));
@@ -1584,7 +1591,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void GridView_PostBackEdit ()
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (GridView_postback));
@@ -1605,7 +1611,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void GridView_PostBackSelect ()
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (GridView_postback));
@@ -1686,7 +1691,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		/// </summary>
 				
 		[Test]	
-		[Category ("NotWorking")]	
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void GridView_GetDefaultSelectedValue ()
 		{
