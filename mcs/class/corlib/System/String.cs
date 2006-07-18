@@ -1854,6 +1854,55 @@ namespace System
 			}
 		}
 
+		// Certain constructors are redirected to CreateString methods with
+		// matching argument list. The this pointer should not be used.
+
+		private unsafe String CreateString (sbyte* value)
+		{
+			byte* bytes = (byte*) value;
+			int length = 0;
+
+			try {
+				while (bytes++ [0] != 0)
+					length++;
+			} catch (NullReferenceException) {
+				throw new ArgumentOutOfRangeException ("value", "Value does not refer to a valid string.");
+			}
+
+			return CreateString (value, 0, length, null);
+		}
+
+		private unsafe String CreateString (sbyte* value, int startIndex, int length)
+		{
+			return CreateString (value, startIndex, length, null);
+		}
+
+		private unsafe String CreateString (sbyte* value, int startIndex, int length, Encoding enc)
+		{
+			if (length < 0)
+				throw new ArgumentOutOfRangeException ("length", "Non-negative number required.");
+			if (startIndex < 0)
+				throw new ArgumentOutOfRangeException ("startIndex", "Non-negative number required.");
+			if (value + startIndex < value)
+				throw new ArgumentOutOfRangeException ("startIndex", "Value, startIndex and length do not refer to a valid string.");
+
+			if (enc == null)
+				enc = Encoding.Default;
+
+			byte [] bytes = new byte [length];
+
+			if (length != 0)
+				fixed (byte* bytePtr = bytes)
+					try {
+						memcpy (bytePtr, (byte*) (value + startIndex), length);
+					} catch (NullReferenceException) {
+						throw new ArgumentOutOfRangeException ("value", "Value, startIndex and length do not refer to a valid string.");
+					}
+
+			// GetString () is called even when length == 0
+			return enc.GetString (bytes);
+		}
+
 		/* helpers used by the runtime as well as above or eslewhere in corlib */
 		internal static unsafe void memset (byte *dest, int val, int len)
 		{

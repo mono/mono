@@ -1,3 +1,9 @@
+2006-07-18  Kornél Pál  <kornelpal@gmail.com>
+
+	* String.cs: Added CreateString () methods. Constructors with matching
+	  argument list are redirected to these methods that improves
+	  performance as well as fixes bug #78703.
+
 2006-07-15  Jonathan Chambers  <joncham@gmail.com>
 
 	* __ComObject.cs: Begin implementing COM Interop.
