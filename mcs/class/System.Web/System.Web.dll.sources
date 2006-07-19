@@ -746,6 +746,7 @@ System.Web.UI.WebControls/DetailsViewModeEventArgs.cs
 System.Web.UI.WebControls/DetailsViewModeEventHandler.cs
 System.Web.UI.WebControls/DetailsViewPageEventArgs.cs
 System.Web.UI.WebControls/DetailsViewPageEventHandler.cs
+System.Web.UI.WebControls/DetailsViewPagerRow.cs
 System.Web.UI.WebControls/DetailsViewRowCollection.cs
 System.Web.UI.WebControls/DetailsViewRow.cs
 System.Web.UI.WebControls/DetailsViewUpdatedEventArgs.cs
