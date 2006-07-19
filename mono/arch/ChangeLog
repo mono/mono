@@ -1,3 +1,7 @@
+2006-07-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* alpha/alpha-codegen.h alpha/test.c alpha/tramp.c: Applied patch from 
+	Sergey Tikhonov <tsv@solvo.ru>. Updates to alpha support.
 
 Thu Jun 15 16:59:36 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
