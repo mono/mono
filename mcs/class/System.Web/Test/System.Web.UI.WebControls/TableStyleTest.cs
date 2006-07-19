@@ -425,5 +425,25 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual ("http://www.go-mono.com", ts.BackImageUrl, "BackImageUrl");
 		}
 #endif
+		[Test]
+		public void BackImageUrl ()
+		{
+			TableStyle ts = new TableStyle ();
+			ts.BackImageUrl = "test 1.jpg";
+			StringWriter sw = new StringWriter ();
+			sw.NewLine = "\n";
+			HtmlTextWriter htw = new HtmlTextWriter (sw);
+			ts.AddAttributesToRender (htw);
+			htw.RenderBeginTag ("tagName");
+			string res = htw.InnerWriter.ToString ();
+			string expected = "<tagName style=\"background-image:url(";
+#if NET_2_0
+			expected += "test%201.jpg";
+#else
+			expected += "test 1.jpg";
+#endif
+			expected += ");\">\n";
+			Assert.AreEqual (expected, res);
+		}
 	}
 }

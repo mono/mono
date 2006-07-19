@@ -1,4 +1,8 @@
-﻿2006-07-19 Merav Sudri <meravs@mainsoft.com>
+2006-07-19 Andrew Skiba <andrews@mainsoft.com>
+
+	* TableStyleTest.cs: add a test for BackImageUrl rendering
+
+2006-07-19 Merav Sudri <meravs@mainsoft.com>
 
 	* DetailsViewRowTest.cs: added new test
 	* DetailsViewRowCollectionTest.cs: added new test
