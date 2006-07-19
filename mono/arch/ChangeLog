@@ -1,5 +1,7 @@
 2006-07-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* amd64/amd64-codegen.h: Fix amd64_mov_mem_reg.
+
 	* alpha/alpha-codegen.h alpha/test.c alpha/tramp.c: Applied patch from 
 	Sergey Tikhonov <tsv@solvo.ru>. Updates to alpha support.
 
