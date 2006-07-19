@@ -1,3 +1,8 @@
+2006-07-19  Kornél Pál  <kornelpal@gmail.com>
+
+	* StringTest.cs: Added some more TestSbytePtrConstructorNegative tests
+	  and TestSbytePtrConstructorOverflow tests.
+
 2006-07-18  Kornél Pál  <kornelpal@gmail.com>
 
 	* StringTest.cs: Added several tests for constructors that take sbyte*

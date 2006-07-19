@@ -215,13 +215,79 @@ public class StringTest : Assertion
 	[ExpectedException (typeof (ArgumentOutOfRangeException))]
 	public unsafe void TestSbytePtrConstructorNegative1 ()
 	{
-		AssertEquals (String.Empty, new String ((sbyte*) null, -1, 0, Encoding.Default));
+		AssertEquals (String.Empty, new String ((sbyte*) null, -1, 0));
 	}
 
 	[ExpectedException (typeof (ArgumentOutOfRangeException))]
 	public unsafe void TestSbytePtrConstructorNegative2 ()
 	{
+		AssertEquals (String.Empty, new String ((sbyte*) null, 0, -1));
+	}
+
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public unsafe void TestSbytePtrConstructorNegative3 ()
+	{
+		AssertEquals (String.Empty, new String ((sbyte*) null, -1, 0, null));
+	}
+
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public unsafe void TestSbytePtrConstructorNegative4 ()
+	{
+		AssertEquals (String.Empty, new String ((sbyte*) null, 0, -1, null));
+	}
+
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public unsafe void TestSbytePtrConstructorNegative5 ()
+	{
+		AssertEquals (String.Empty, new String ((sbyte*) null, -1, 0, Encoding.Default));
+	}
+
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public unsafe void TestSbytePtrConstructorNegative6 ()
+	{
 		AssertEquals (String.Empty, new String ((sbyte*) null, 0, -1, Encoding.Default));
+	}
+
+	[Ignore ("Blocked by mcs bug 78899")]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public unsafe void TestSbytePtrConstructorOverflow1 ()
+	{
+		AssertEquals (String.Empty, new String ((sbyte*) (-1), 1, 0));
+	}
+
+	[Ignore ("Blocked by mcs bug 78899")]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public unsafe void TestSbytePtrConstructorOverflow2 ()
+	{
+		AssertEquals (String.Empty, new String ((sbyte*) (-1), 1, 1));
+	}
+
+	[Ignore ("Blocked by mcs bug 78899")]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public unsafe void TestSbytePtrConstructorOverflow3 ()
+	{
+		AssertEquals (String.Empty, new String ((sbyte*) (-1), 1, 0, null));
+	}
+
+	[Ignore ("Blocked by mcs bug 78899")]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public unsafe void TestSbytePtrConstructorOverflow4 ()
+	{
+		AssertEquals (String.Empty, new String ((sbyte*) (-1), 1, 1, null));
+	}
+
+	[Ignore ("Blocked by mcs bug 78899")]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public unsafe void TestSbytePtrConstructorOverflow5 ()
+	{
+		AssertEquals (String.Empty, new String ((sbyte*) (-1), 1, 0, Encoding.Default));
+	}
+
+	[Ignore ("Blocked by mcs bug 78899")]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public unsafe void TestSbytePtrConstructorOverflow6 ()
+	{
+		AssertEquals (String.Empty, new String ((sbyte*) (-1), 1, 1, Encoding.Default));
 	}
 
 	public void TestLength ()
