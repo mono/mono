@@ -1,5 +1,12 @@
 ﻿2006-07-19 Merav Sudri <meravs@mainsoft.com>
 
+	* DetailsViewRowTest.cs: added new test
+	* DetailsViewRowCollectionTest.cs: added new test
+	* FormViewRowTest.cs: added new test
+	* FormViewTest.cs: added new test
+
+2006-07-19 Merav Sudri <meravs@mainsoft.com>
+
 	* DetailsViewTest.cs: added new test
 
 2006-07-18 Vladimir Krasnov <vladimirk@mainsoft.com>

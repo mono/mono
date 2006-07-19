@@ -541,7 +541,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		//Public Methods
 
 		[Test]
-		public void FormView_ChangeMode ()
+		public void DetailsView_ChangeMode ()
 		{
 			PokerDetailsView dv = new PokerDetailsView ();
 			Assert.AreEqual (DetailsViewMode.ReadOnly, dv.CurrentMode, "ChangeModeDefault");

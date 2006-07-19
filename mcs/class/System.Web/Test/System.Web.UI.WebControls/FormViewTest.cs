@@ -29,29 +29,39 @@
 //
 
 #if NET_2_0
+
 using NUnit.Framework;
 using System;
+using System.Data;
 using System.IO;
+using System.Drawing;
 using System.Collections;
+using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Globalization;
 using System.Web;
 using System.Web.UI;
+using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 using MonoTests.SystemWeb.Framework;
+using MonoTests.stand_alone.WebHarness;
 using System.Text.RegularExpressions;
 using System.Reflection;
 using System.Threading;
+
 
 namespace MonoTests.System.Web.UI.WebControls
 {
 	[TestFixture]	
 	public class FormViewTest {	
-		class Poker : FormView {
-
+		public class Poker : FormView {
+			public bool isInitializePager=false;
+			public bool ensureDataBound=false;
+			public bool controlHierarchy=false;
 			bool _onPageIndexChangingCalled = false;
 			bool _onPageIndexChangedCalled = false;
-
-			public Poker () {
+			
+			public Poker () {								
 				TrackViewState ();
 			}
 
@@ -61,7 +71,177 @@ namespace MonoTests.System.Web.UI.WebControls
 
 			public void LoadState (object state) {
 				LoadViewState (state);
+				
 			}
+
+			public HtmlTextWriterTag PokerTagKey
+			{
+				get { return base.TagKey; }
+			}
+			
+			public  int DoCreateChildControls (IEnumerable source,bool dataBind)
+			{
+				return CreateChildControls (source, dataBind);
+				
+			}			
+
+			public Style DoCreateControlStyle ()
+			{				
+				return base.CreateControlStyle (); 
+			}
+
+			public DataSourceSelectArguments DoCreateDataSourceSelectArguments ()
+			{
+				return CreateDataSourceSelectArguments ();
+			}
+
+			public FormViewRow DoCreateRow (int itemIndex,DataControlRowType rowType,DataControlRowState rowState)
+			{
+				return CreateRow( itemIndex, rowType,rowState); 
+			}
+
+			public Table DoCreateTable ()
+			{
+				return CreateTable (); 
+			}
+
+			protected override void EnsureDataBound ()
+			{
+				base.EnsureDataBound ();
+				ensureDataBound = true;
+			}
+
+			public void DoExtractRowValues (IOrderedDictionary filedValues, bool includeKeys)
+			{
+				base.ExtractRowValues (filedValues, includeKeys);
+				
+			}
+
+			protected override void InitializePager (FormViewRow row, PagedDataSource pageData)
+			{
+				base.InitializePager (row, pageData);
+				isInitializePager = true;
+			}
+
+			public void DoInitializeRow (FormViewRow row)
+			{
+				InitializeRow (row); 
+			}
+			public void DoLoadControlState (object savedState)
+			{
+				LoadControlState (savedState);  
+			}
+
+			public void DoLoadViewState (object savedState)
+			{
+				LoadViewState (savedState);  
+			}			
+
+			public bool DoOnBubbleEvent (object source, EventArgs e)
+			{
+				return OnBubbleEvent (source, e); 
+			}
+
+			public void DoOnInit (EventArgs e)
+			{
+				OnInit (e); 
+			}
+
+			public void DoOnItemCommand (FormViewCommandEventArgs e)
+			{
+				OnItemCommand (e); 
+			}
+
+			public void DoOnItemCreated (EventArgs e)
+			{
+				OnItemCreated (e); 
+			}
+
+			public void DoOnItemDeleted (FormViewDeletedEventArgs e)
+			{
+				OnItemDeleted (e); 
+			}
+
+			public void DoOnItemDeleting (FormViewDeleteEventArgs e)
+			{
+				OnItemDeleting (e); 
+			}
+
+			public void DoOnItemInserted (FormViewInsertedEventArgs e)
+			{
+				OnItemInserted (e); 
+			}
+
+			public void DoOnItemInserting (FormViewInsertEventArgs e)
+			{
+				OnItemInserting (e);
+			}
+
+			public void DoOnItemUpdated (FormViewUpdatedEventArgs e)
+			{
+				OnItemUpdated (e); 
+			}
+
+			public void DoOnItemUpdating (FormViewUpdateEventArgs e)
+			{
+				OnItemUpdating (e); 
+			}
+
+			public void DoOnModeChanged (EventArgs e )
+			{
+				OnModeChanged (e); 
+			}
+
+			public void DoOnModeChanging (FormViewModeEventArgs  e)
+			{
+				OnModeChanging (e); 
+			}
+
+			public void DoOnPageIndexChanged (EventArgs e)
+			{
+				OnPageIndexChanged (e); 
+			}
+
+			public void DoOnPageIndexChanging (FormViewPageEventArgs e)
+			{
+				OnPageIndexChanging (e); 
+			}
+
+			public void DoPerformDataBinding (IEnumerable data)
+			{
+				PerformDataBinding (data);
+			}
+
+			protected override void PrepareControlHierarchy ()
+			{
+
+				base.PrepareControlHierarchy ();
+				controlHierarchy = true;
+			}
+
+			public void DoRaisePostBackEvent (string eventArgument)
+			{
+				RaisePostBackEvent (eventArgument); 
+			}
+			
+			public string Render ()
+			{
+
+				StringWriter sw = new StringWriter ();
+				HtmlTextWriter tw = new HtmlTextWriter (sw);
+				Render (tw);
+				return sw.ToString ();
+
+			}
+
+
+
+			public object DoSaveControlState ()
+			{
+				return SaveControlState (); 
+			}
+
+
 			
 			public void DoConfirmInitState ()
 			{
@@ -72,10 +252,15 @@ namespace MonoTests.System.Web.UI.WebControls
 			{
 				base.OnPreRender (e);
 			}
-			
-			public bool DoOnBubbleEvent (object source, EventArgs e) {
-				return base.OnBubbleEvent (source, e);
+
+			public void DoOnDataBinding (EventArgs e)
+			{
+				base.OnDataBinding (e); 
 			}
+			public void DoOnDataBound (EventArgs e)
+			{
+				base.OnDataBound (e); 
+			}			
 			
 			public bool OnPageIndexChangingCalled {
 				set { _onPageIndexChangingCalled = value; }
@@ -106,7 +291,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			       get { return _instantiated; }
 			}
 			
-			#region ITemplate Members
+#region ITemplate Members
 			
 			public void InstantiateIn (Control container) {
 			       _instantiated = true;
@@ -115,16 +300,30 @@ namespace MonoTests.System.Web.UI.WebControls
 			#endregion
 		}
 		
+
+		ArrayList myds = new ArrayList ();	
+		[TestFixtureSetUp]
+		public void setup ()
+		{
+			myds.Add ("Item1");
+			myds.Add ("Item2");
+			myds.Add ("Item3");
+			myds.Add ("Item4");
+			myds.Add ("Item5");
+			myds.Add ("Item6");
+			WebTest.CopyResource (GetType (), "FormViewTest1.aspx", "FormViewTest1.aspx");			
+		}
+
 		[Test]
+		[Category ("NotWorking")]
 		public void Defaults ()
 		{
 			Poker p = new Poker ();
-
 			Assert.IsFalse (p.AllowPaging, "A1");
 			Assert.AreEqual ("", p.BackImageUrl, "A2");
 			Assert.IsNull (p.BottomPagerRow, "A3");
 			Assert.AreEqual ("", p.Caption, "A4");
-			Assert.AreEqual (TableCaptionAlign.NotSet, p.CaptionAlign ,"A5");
+			Assert.AreEqual (TableCaptionAlign.NotSet, p.CaptionAlign, "A5");
 			Assert.AreEqual (-1, p.CellPadding, "A6");
 			Assert.AreEqual (0, p.CellSpacing, "A7");
 			Assert.AreEqual (FormViewMode.ReadOnly, p.CurrentMode, "A8");
@@ -135,39 +334,816 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (0, p.DataKey.Values.Count, "A11.1");
 			Assert.IsNull (p.EditItemTemplate, "A12");
 			Assert.IsNotNull (p.EditRowStyle, "A13");
-
 			Assert.IsNotNull (p.EmptyDataRowStyle, "A14");
-
 			Assert.IsNull (p.EmptyDataTemplate, "A15");
 			Assert.AreEqual ("", p.EmptyDataText, "A16");
 			Assert.IsNull (p.FooterRow, "A17");
 			Assert.IsNull (p.FooterTemplate, "A18");
 			Assert.AreEqual ("", p.FooterText, "A19");
 			Assert.IsNotNull (p.FooterStyle, "A20");
-
 			Assert.AreEqual (GridLines.None, p.GridLines, "A21");
 			Assert.IsNull (p.HeaderRow, "A22");
 			Assert.IsNotNull (p.HeaderStyle, "A23");
-
 			Assert.IsNull (p.HeaderTemplate, "A24");
 			Assert.AreEqual ("", p.HeaderText, "A25");
 			Assert.AreEqual (HorizontalAlign.NotSet, p.HorizontalAlign, "A26");
 			Assert.IsNull (p.InsertItemTemplate, "A27");
 			Assert.IsNotNull (p.InsertRowStyle, "A28");
-
 			Assert.IsNull (p.ItemTemplate, "A29");
 			Assert.AreEqual (0, p.PageCount, "A30");
 			Assert.AreEqual (0, p.PageIndex, "A31");
 			Assert.IsNull (p.PagerTemplate, "A32");
 			Assert.IsNull (p.Row, "A33");
 			Assert.IsNotNull (p.RowStyle, "A34");
-
 			Assert.IsNull (p.SelectedValue, "A35");
 			Assert.IsNull (p.TopPagerRow, "A36");
 			Assert.IsNull (p.DataItem, "A37");
 			Assert.AreEqual (0, p.DataItemCount, "A38");
 			Assert.AreEqual (0, p.DataItemIndex, "A39");
 		}
+
+		[Test]
+		public void FormView_AssignToDefaultProperties ()
+		{
+			Poker p = new Poker ();
+			MyTemplate customTemplate = new MyTemplate ();
+			TableItemStyle tableStyle = new TableItemStyle ();			
+			p.AllowPaging = true;
+			Assert.AreEqual (true, p.AllowPaging, "A40");
+			p.BackImageUrl = "image.jpg";
+			Assert.AreEqual ("image.jpg", p.BackImageUrl, "A41");
+			// ToDo: p.BottomPagerRow
+			p.Caption = "Employee Details";
+			Assert.AreEqual ("Employee Details", p.Caption, "A42");
+			p.CaptionAlign = TableCaptionAlign.Bottom;
+			Assert.AreEqual (TableCaptionAlign.Bottom, p.CaptionAlign, "A43");
+			p.CaptionAlign = TableCaptionAlign.Left;
+			Assert.AreEqual (TableCaptionAlign.Left, p.CaptionAlign, "A44");
+			p.CaptionAlign = TableCaptionAlign.NotSet;
+			Assert.AreEqual (TableCaptionAlign.NotSet, p.CaptionAlign, "A45");
+			p.CaptionAlign = TableCaptionAlign.Right;
+			Assert.AreEqual (TableCaptionAlign.Right, p.CaptionAlign, "A46");
+			p.CaptionAlign = TableCaptionAlign.Top;
+			Assert.AreEqual (TableCaptionAlign.Top, p.CaptionAlign, "A47");
+			p.CellPadding = 10;
+			Assert.AreEqual (10, p.CellPadding, "A48");
+			p.CellSpacing = 20;
+			Assert.AreEqual (20, p.CellSpacing, "A49");			
+			Assert.AreEqual (FormViewMode.ReadOnly, p.CurrentMode, "A52");			
+			p.DefaultMode = FormViewMode.Edit;
+			Assert.AreEqual (FormViewMode.Edit, p.DefaultMode, "A53");
+			p.DefaultMode = FormViewMode.Insert;
+			Assert.AreEqual (FormViewMode.Insert, p.DefaultMode, "A54");
+			p.DefaultMode = FormViewMode.ReadOnly;
+			Assert.AreEqual (FormViewMode.ReadOnly, p.DefaultMode, "A55");
+			p.EditRowStyle.BackColor = Color.Red;
+			Assert.AreEqual (Color.Red, p.EditRowStyle.BackColor, "A56");			
+			p.EmptyDataRowStyle.ForeColor = Color.Purple;
+			Assert.AreEqual (Color.Purple, p.EmptyDataRowStyle.ForeColor, "A57");
+			p.EmptyDataTemplate = customTemplate;
+			Assert.AreEqual (customTemplate, p.EmptyDataTemplate, "A58");
+			p.EmptyDataText = "No data";
+			Assert.AreEqual ("No data", p.EmptyDataText, "A59");
+			p.EditItemTemplate = customTemplate;
+			Assert.AreEqual (customTemplate, p.EditItemTemplate, "A60");
+			p.FooterTemplate = customTemplate;
+			Assert.AreEqual (customTemplate, p.FooterTemplate, "A61");
+			p.FooterText = "Test Footer";
+			Assert.AreEqual ("Test Footer", p.FooterText, "A62");
+			p.FooterStyle.BorderStyle = BorderStyle.Double;
+			Assert.AreEqual (BorderStyle.Double, p.FooterStyle.BorderStyle, "A63");
+			p.GridLines = GridLines.Both;
+			Assert.AreEqual (GridLines.Both, p.GridLines, "A64");
+			p.GridLines = GridLines.Horizontal;
+			Assert.AreEqual (GridLines.Horizontal, p.GridLines, "A65");
+			p.GridLines = GridLines.None;
+			Assert.AreEqual (GridLines.None, p.GridLines, "A66");
+			p.GridLines = GridLines.Vertical;
+			Assert.AreEqual (GridLines.Vertical, p.GridLines, "A67");
+			p.HeaderStyle.HorizontalAlign = HorizontalAlign.Left;
+			Assert.AreEqual (HorizontalAlign.Left, p.HeaderStyle.HorizontalAlign, "A68");
+			p.HeaderTemplate = customTemplate;
+			Assert.AreEqual (customTemplate, p.HeaderTemplate, "A69");
+			p.HeaderText = "Test Header";
+			Assert.AreEqual ("Test Header", p.HeaderText, "A70");
+			p.HorizontalAlign = HorizontalAlign.Center;
+			Assert.AreEqual (HorizontalAlign.Center, p.HorizontalAlign, "A71");
+			p.HorizontalAlign = HorizontalAlign.Justify;
+			Assert.AreEqual (HorizontalAlign.Justify, p.HorizontalAlign, "A72");
+			p.HorizontalAlign = HorizontalAlign.Left;
+			Assert.AreEqual (HorizontalAlign.Left, p.HorizontalAlign, "A73");
+			p.HorizontalAlign = HorizontalAlign.NotSet;
+			Assert.AreEqual (HorizontalAlign.NotSet, p.HorizontalAlign, "A74");
+			p.HorizontalAlign = HorizontalAlign.Right;
+			Assert.AreEqual (HorizontalAlign.Right, p.HorizontalAlign, "A75");
+			p.InsertItemTemplate = customTemplate;
+			Assert.AreEqual (customTemplate, p.InsertItemTemplate, "A76");
+			p.InsertRowStyle.BorderStyle = BorderStyle.Outset;
+			Assert.AreEqual (BorderStyle.Outset, p.InsertRowStyle.BorderStyle, "A77");
+			p.ItemTemplate = customTemplate;
+			Assert.AreEqual (customTemplate, p.ItemTemplate, "A78");
+			p.PagerSettings.FirstPageText = "PagerSettings Test";
+			Assert.AreEqual ("PagerSettings Test", p.PagerSettings.FirstPageText, "A79");
+			p.PagerStyle.BorderStyle = BorderStyle.Groove;
+			Assert.AreEqual (BorderStyle.Groove, p.PagerStyle.BorderStyle, "A80");
+			p.PagerTemplate = customTemplate;
+			Assert.AreEqual (customTemplate, p.PagerTemplate, "A81");
+			p.RowStyle.ForeColor = Color.Plum;
+			Assert.AreEqual (Color.Plum, p.RowStyle.ForeColor, "A82");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void FormView_ItemsProperties ()
+		{
+			Poker p = new Poker ();
+			p.AllowPaging = true;
+			p.DataSource = myds;
+			p.DataBind ();
+			//Assert.AreEqual (typeof (FormViewPagerRow), (p.BottomPagerRow).GetType (), "BottomPagerRow1");
+			Assert.AreEqual (0, p.BottomPagerRow.ItemIndex, "BottomPagerRow2");
+			Assert.AreEqual (DataControlRowType.Pager, p.BottomPagerRow.RowType, "BottomPagerRow2");
+			Assert.AreEqual ("Item1", p.DataItem, "DataItem");
+			Assert.AreEqual (6, p.DataItemCount, "DataItemCount");
+			Assert.AreEqual (0, p.DataItemIndex, "DataItemIndex");
+			Assert.AreEqual (0, p.DataItemIndex, "DataItemIndex");
+			string[] str = new string[] { "1", "2", "3", "4", "5", "6" };
+			Assert.AreEqual (typeof (DataKey), p.DataKey.GetType (), "DataKey");
+			p.DataKeyNames = str;
+			Assert.AreEqual (str, p.DataKeyNames, "DataKeyNames");
+			p.ChangeMode (FormViewMode.Edit);
+			Assert.AreEqual (FormViewMode.Edit, p.CurrentMode, "CurrentModeEdit");
+			p.ChangeMode (FormViewMode.Insert);
+			Assert.AreEqual (FormViewMode.Insert, p.CurrentMode, "CurrentModeInsert");
+
+		}
+
+		[Test]
+		public void FormView_DefaultProtectedProperties ()
+		{
+			Poker fv = new Poker ();
+			Assert.AreEqual (HtmlTextWriterTag.Table, fv.PokerTagKey, "TagKey");
+		}
+
+		// Protected methods
+
+		[Test]
+		[Category ("NotWorking")]
+		public void FormView_CreateChildControls ()
+		{
+			Poker fv = new Poker ();			
+			Assert.AreEqual (6, fv.DoCreateChildControls (myds, true), "CreateChildControlFromDS");
+			myds.Add ("item7");
+			Assert.AreEqual (7, fv.DoCreateChildControls (myds, false), "CreateChildControlFromViewState");
+			myds.Remove ("item7");
+
+		}
+
+		[Test]
+		public void FormView_CreateDataSourceSelectArguments ()
+		{
+			//Checks the default DataSourceSelectArgument object returned.
+			Poker fv = new Poker ();
+			DataSourceSelectArguments selectArgs = fv.DoCreateDataSourceSelectArguments ();
+			Assert.AreEqual (0, selectArgs.MaximumRows, "CreateDataSourceSelectArguments1");
+			Assert.AreEqual (false, selectArgs.RetrieveTotalRowCount, "CreateDataSourceSelectArguments2");						
+
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void FormView_CreateControlStyle ()
+		{
+			Poker fv = new Poker ();
+			Style s = fv.DoCreateControlStyle ();
+			Assert.AreEqual (typeof (TableStyle), s.GetType (), "CreateControlStyle1");
+			Assert.AreEqual (GridLines.None, ((TableStyle) s).GridLines, "CreateControlStyle2");
+			Assert.AreEqual ("", ((TableStyle) s).BackImageUrl, "CreateControlStyle3");
+			Assert.AreEqual (0, ((TableStyle) s).CellSpacing, "CreateControlStyle4");
+			Assert.AreEqual (-1, ((TableStyle) s).CellPadding, "CreateControlStyle5");
+
+		}
+
+		[Test]
+		public void FormView_InitializeRow ()
+		{
+			//not implemented
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void FormView_InitializePager ()
+		{
+			Poker fv = new Poker ();
+			Page page = new Page ();
+			page.Controls.Add (fv);
+			fv.AllowPaging = true;
+			fv.DataSource = myds;
+			Assert.AreEqual (false, fv.isInitializePager, "BeforeInitializePager");
+			Assert.AreEqual (0, fv.PageCount, "BeforeInitializePagerPageCount");
+			fv.DataBind ();
+			Assert.AreEqual (true, fv.isInitializePager, "AfterInitializePager");
+			Assert.AreEqual (6, fv.PageCount, "AfterInitializePagerPageCount");
+		}
+		
+		[Test]
+		[Category ("NotWorking")]
+		public void FormView_CreateRow ()
+		{
+			Poker fv = new Poker ();
+			fv.AllowPaging =true;
+			fv.DataSource = myds;
+			fv.DataBind ();
+			FormViewRow row = fv.DoCreateRow (2,DataControlRowType.DataRow ,DataControlRowState.Normal );
+			Assert.AreEqual (2, row.ItemIndex, "CreatedRowItemIndex1");
+			Assert.AreEqual (DataControlRowState.Normal , row.RowState, "CreatedRowState1");
+			Assert.AreEqual (DataControlRowType.DataRow , row.RowType, "CreatedRowType1");			 
+			row = fv.DoCreateRow (4, DataControlRowType.Footer, DataControlRowState.Edit);
+			Assert.AreEqual (4, row.ItemIndex, "CreatedRowItemIndex2");
+			Assert.AreEqual (DataControlRowState.Edit , row.RowState, "CreatedRowState2");
+			Assert.AreEqual (DataControlRowType.Footer , row.RowType, "CreatedRowType2");
+			//FormViewPagerRow pagerRow = (FormViewPagerRow)fv.DoCreateRow (3, DataControlRowType.Pager , DataControlRowState.Insert);
+			//Assert.AreEqual (3, pagerRow.ItemIndex, "CreatedPageRowItemIndex");
+			//Assert.AreEqual (DataControlRowState.Insert, pagerRow.RowState, "CreatedPageRowState");
+			//Assert.AreEqual (DataControlRowType.Pager, pagerRow.RowType, "CreatedPageRowType");			 
+			
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void FormView_CreateTable ()
+		{
+			Poker fv = new Poker ();
+			Table tb = fv.DoCreateTable ();			
+			Assert.AreEqual ("", tb.BackImageUrl , "CreateTable1");
+			Assert.AreEqual (0, tb.Rows.Count, "CreateTable2");
+			fv.DataSource = myds;
+			fv.DataBind ();			
+			fv.ID = "TestFormView";
+			tb = fv.DoCreateTable ();
+			Assert.AreEqual (-1, tb.CellPadding , "CreateTable3");			
+
+		}
+
+		[Test]
+		public void FormView_EnsureDataBound ()
+		{
+			Poker fv = new Poker ();			
+			fv.DataSource = myds;			
+			fv.DoOnPreRender (EventArgs.Empty);
+			Assert.AreEqual (true, fv.ensureDataBound, "EnsureDataBound");
+			
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void FormView_PerformDataBinding ()
+		{
+			Poker fv = new Poker ();
+			Assert.AreEqual (0,fv.DataItemCount, "BeforePerformDataBinding"); 
+			fv.DoPerformDataBinding (myds);
+			Assert.AreEqual (6, fv.DataItemCount, "AfterPerformDataBinding"); 
+		}
+
+		[Test]
+		public void FormView_ExtractRowValues ()
+		{
+			Poker fv=new Poker ();
+			fv.ItemTemplate = new MyTemplate ();
+			fv.DataKeyNames = new string[] { "ID", "FName", "LName" };
+			//IOrderedDictionary dict = (IOrderedDictionary) new OrderedDictionary (0x19);
+			//fv.DoExtractRowValues (dict, true);			
+			//DataTable ds = CreateDataTable ();
+			//fv.DataSource = ds;
+			//fv.DataBind ();
+			//OrderedDictionary fieldsValues = new OrderedDictionary ();
+			//fv.DoExtractRowValues (fieldsValues, true);
+			//Assert.AreEqual (3, fieldsValues.Count, "ExtractRowValues1");
+			//Assert.AreEqual (3, fieldsValues.Keys.Count, "ExtractRowValues2");
+			//Assert.AreEqual (3, fieldsValues.Values.Count, "ExtractRowValues3");
+			//Assert.AreEqual (true, fieldsValues.Contains ("ID"), "ExtractRowValues4");
+			//IDictionaryEnumerator enumerator = fieldsValues.GetEnumerator ();
+			//enumerator.MoveNext ();
+			//Assert.AreEqual ("ID", enumerator.Key, "FieldValue1");
+			//Assert.AreEqual ("1001", enumerator.Value, "FieldValue2");
+			//enumerator.MoveNext ();
+			//Assert.AreEqual ("FName", enumerator.Key, "FieldValue3");
+			//Assert.AreEqual ("Mahesh", enumerator.Value, "FieldValue4");
+			//enumerator.MoveNext ();
+			//Assert.AreEqual ("LName", enumerator.Key, "FieldValue5");
+			//Assert.AreEqual ("Chand", enumerator.Value, "FieldValue6");		
+  
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void FormView_PrepareControlHierarcy ()
+		{
+			Poker fv = new Poker ();
+			fv.controlHierarchy = false;
+			fv.Render ();
+			Assert.AreEqual (0, fv.Controls.Count, "ControlHierarchy1");
+			Assert.AreEqual (true, fv.controlHierarchy, "ControlHierarchy2");
+			fv.AllowPaging = true;
+			fv.DataSource = myds;
+			fv.DataBind ();
+			fv.controlHierarchy = false;
+			fv.Render ();
+			Assert.AreEqual (1, fv.Controls.Count, "ControlHierarchy3");
+			Assert.AreEqual (true, fv.controlHierarchy, "ControlHierarchy4");
+
+
+		}
+
+		//Public Methods
+
+		[Test]
+		public void FormView_ChangeMode ()
+		{
+			Poker fv = new Poker ();
+			Assert.AreEqual (FormViewMode.ReadOnly, fv.CurrentMode, "ChangeModeDefault");
+			fv.ChangeMode (FormViewMode.Insert);
+			Assert.AreEqual (FormViewMode.Insert, fv.CurrentMode, "ChangeModeInsert");
+			fv.ChangeMode (FormViewMode.Edit);
+			Assert.AreEqual (FormViewMode.Edit, fv.CurrentMode, "ChangeModeEdit");
+			fv.ChangeMode (FormViewMode.ReadOnly);
+			Assert.AreEqual (FormViewMode.ReadOnly, fv.CurrentMode, "ChangeModeReadOnly");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void FormView_DataBind ()
+		{
+			Poker fv = new Poker ();
+			fv.AllowPaging = true;
+			fv.DataSource = myds;
+			Assert.AreEqual (0, fv.PageCount, "BeforeDataBind1");
+			Assert.AreEqual (null, fv.DataItem, "BeforeDataBind2");
+			fv.DataBind ();
+			Assert.AreEqual (6, fv.PageCount, "AfterDataBind1");
+			Assert.AreEqual (6, fv.DataItemCount, "AfterDataBind2");
+			Assert.AreEqual ("Item1", fv.DataItem, "AfterDataBind3");
+		}
+
+		private bool isDeleted = false;
+
+		[Test]
+		[Category ("NotWorking")]
+		public void FormView_DeleteItem ()
+		{
+			Poker fv = new Poker ();
+			fv.DataSource = myds;
+			fv.DataBind ();
+			Assert.AreEqual (false, isDeleted, "BeforeDeleteItem");
+			fv.ItemDeleting += new FormViewDeleteEventHandler (fv_DeleteingHandler);
+			fv.DeleteItem ();
+			Assert.AreEqual (true, isDeleted, "BeforeDeleteItem");
+
+		}
+
+		public void fv_DeleteingHandler (Object sender, FormViewDeleteEventArgs e)
+		{
+			isDeleted = true;
+		}
+
+		private bool insertItem = false;
+
+		[Test]
+		[Category ("NotWorking")]
+		public void FormView_InsertItem ()
+		{
+			Poker fv = new Poker ();
+			fv.ChangeMode (FormViewMode.Insert);
+			fv.ItemInserting += new FormViewInsertEventHandler (insert_item);
+			Assert.AreEqual (false, insertItem, "BeforeInsertItem");
+			fv.InsertItem (true);
+			Assert.AreEqual (true, insertItem, "AfterInsertItem");
+
+		}
+
+		public void insert_item (object sender, FormViewInsertEventArgs e)
+		{
+			insertItem = true;
+		}
+
+		private bool updateItem = false;
+		[Test]
+		[Category ("NotWorking")]
+		public void FormView_UpdateItem ()
+		{
+			Poker fv = new Poker ();
+			fv.ChangeMode (FormViewMode.Edit);
+			fv.ItemUpdating += new FormViewUpdateEventHandler (update_item);
+			Assert.AreEqual (false, updateItem, "BeforeUpdateItem");
+			fv.UpdateItem (true);
+			Assert.AreEqual (true, updateItem, "AfterUpdateItem");
+
+		}
+
+		public void update_item (object sender, FormViewUpdateEventArgs e)
+		{
+			updateItem = true;
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void FormView_IsBindableType ()
+		{
+			bool isBindable = false;
+			Poker fv = new Poker ();
+			isBindable = fv.IsBindableType (typeof (Decimal));
+			Assert.AreEqual (true, isBindable, "IsBindableTypeDecimal");
+			isBindable = fv.IsBindableType (typeof (Int32));
+			Assert.AreEqual (true, isBindable, "IsBindableTypeInt32");
+			isBindable = fv.IsBindableType (typeof (String));
+			Assert.AreEqual (true, isBindable, "IsBindableTypeString");
+			isBindable = fv.IsBindableType (typeof (Boolean));
+			Assert.AreEqual (true, isBindable, "IsBindableTypeBoolean");
+			isBindable = fv.IsBindableType (typeof (DateTime));
+			Assert.AreEqual (true, isBindable, "IsBindableTypeDateTime");
+			isBindable = fv.IsBindableType (typeof (Byte));
+			Assert.AreEqual (true, isBindable, "IsBindableTypeByte");
+			isBindable = fv.IsBindableType (typeof (Guid));
+			Assert.AreEqual (true, isBindable, "IsBindableTypeGuid");
+			isBindable = fv.IsBindableType (typeof (MyTemplate));
+			Assert.AreEqual (false, isBindable, "IsBindableTypeMyTemplate");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void FormView_ControlState ()		{
+
+			Poker fv = new Poker ();
+			Poker copy = new Poker ();
+			string[] keys = new String[2];
+			keys[0] = "key1";
+			keys[1] = "key2";
+			fv.DataKeyNames = keys;
+			fv.BackImageUrl = "photo.jpg";			
+			fv.DefaultMode  = FormViewMode.Insert  ;
+			object state = fv.DoSaveControlState ();
+			copy.DoLoadControlState (state);
+			Assert.AreEqual ("key1", copy.DataKeyNames[0], "ControlStateDataKeyValue");
+			Assert.AreEqual ("key2", copy.DataKeyNames[1], "ControlStateDataKeyValue2");			
+			Assert.AreEqual (FormViewMode.Insert, copy.DefaultMode, "ControlStateDefaultMode");
+
+		}
+
+		//ViewState
+		[Test]
+		public void FormView_ViewState ()
+		{
+			Poker fv = new Poker ();
+			Poker copy = new Poker ();
+			fv.AllowPaging = true;
+			fv.HeaderText = "Testing";
+			fv.CssClass = "style.css";
+			object state = fv.SaveState ();
+			copy.LoadState (state);
+			Assert.AreEqual (true, copy.AllowPaging, "ViewStateAllowPaging");
+			Assert.AreEqual ("Testing", copy.HeaderText, "ViewStateHeaderText");
+			Assert.AreEqual ("style.css", copy.CssClass, "ViewStateCssClass");
+		}
+
+		//Events 
+		private bool init;
+		private bool itemCommand;
+		private bool itemCreated;
+		private bool itemDeleted;
+		private bool itemDeleting;
+		private bool itemInserted;
+		private bool itemInserting;
+		private bool itemUpdated;
+		private bool itemUpdating;
+		private bool modeChanged;
+		private bool modeChanging;
+		private bool pageIndexChanged;
+		private bool pageIndexChanging;
+		private int newPageIndex;
+
+		public void ResetEvents ()
+		{
+			init = false;
+			itemCommand = false;
+			itemCreated = false;
+			itemDeleted = false;
+			itemDeleting = false;
+			itemInserted = false;
+			itemInserting = false;
+			itemUpdated = false;
+			itemUpdating = false;
+			modeChanged = false;
+			modeChanging = false;
+			pageIndexChanged = false;
+			pageIndexChanging = false;
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void FormView_BubbleEvent ()
+		{
+			FormViewCommandEventArgs com;
+			Poker fv = new Poker ();
+			Page page = new Page ();
+			Button bt = new Button ();
+			fv.AllowPaging = true;
+			page.Controls.Add (fv);
+			ResetEvents ();
+			fv.ItemCommand += new FormViewCommandEventHandler (fv_ItemCommand);
+			fv.ItemDeleted += new FormViewDeletedEventHandler (fv_ItemDeleted);
+			//Delete
+			fv.ItemDeleting += new FormViewDeleteEventHandler (fv_ItemDeleting);
+			com = new FormViewCommandEventArgs (bt, new CommandEventArgs ("Delete", null));
+			Assert.AreEqual (false, itemDeleting, "BeforeDeleteCommandBubbleEvent");
+			Assert.AreEqual (false, itemCommand, "BeforeDeleteBubbleEvent");
+			fv.DoOnBubbleEvent (bt, com);
+			Assert.AreEqual (true, itemDeleting, "AfterDeleteBubbleEvent");
+			Assert.AreEqual (true, itemCommand, "AfterDeleteCommandBubbleEvent");
+
+
+			//Insert
+			itemCommand = false;
+			fv.ItemInserting += new FormViewInsertEventHandler (fv_ItemInserting);
+			fv.ChangeMode (FormViewMode.Insert);
+			com = new FormViewCommandEventArgs (bt, new CommandEventArgs ("Insert", null));
+			Assert.AreEqual (false, itemCommand, "BeforeInsertCommandBubbleEvent");
+			Assert.AreEqual (false, itemInserting, "BeforeInsertBubbleEvent");
+			fv.DoOnBubbleEvent (bt, com);
+			Assert.AreEqual (true, itemCommand, "AfterInsertCommandBubbleEvent");
+			Assert.AreEqual (true, itemInserting, "AfterInsertBubbleEvent");
+
+
+			//Update
+			itemCommand = false;
+			fv.ItemUpdating += new FormViewUpdateEventHandler (fv_ItemUpdating);
+			fv.ChangeMode (FormViewMode.Edit);
+			com = new FormViewCommandEventArgs (bt, new CommandEventArgs ("Update", null));
+			Assert.AreEqual (false, itemUpdating, "BeforeUpdateEvent");
+			Assert.AreEqual (false, itemCommand, "BeforeUpdateCommandEvent");
+			fv.DoOnBubbleEvent (bt, com);
+			Assert.AreEqual (true, itemCommand, "AfterUpdateCommandBubbleEvent");
+			Assert.AreEqual (true, itemUpdating, "AfterUpdateBubbleEvent");
+
+
+			//Cancel 
+			itemCommand = false;
+			fv.ModeChanging += new FormViewModeEventHandler (fv_ModeChanging);
+			com = new FormViewCommandEventArgs (bt, new CommandEventArgs ("Cancel", null));
+			Assert.AreEqual (false, itemCommand, "BeforeCancelCommandBubbleEvent");
+			Assert.AreEqual (false, modeChanging, "BeforeCancelBubbleEvent");
+			fv.DoOnBubbleEvent (bt, com);
+			Assert.AreEqual (true, itemCommand, "AfterCancelCommandBubbleEvent");
+			Assert.AreEqual (true, modeChanging, "AfterCancelBubbleEvent");
+
+			//Edit
+			itemCommand = false;
+			modeChanging = false;
+			com = new FormViewCommandEventArgs (bt, new CommandEventArgs ("Edit", null));
+			Assert.AreEqual (false, itemCommand, "BeforeEditCommandBubbleEvent");
+			Assert.AreEqual (false, modeChanging, "BeforeEditBubbleEvent");
+			fv.DoOnBubbleEvent (bt, com);
+			Assert.AreEqual (true, itemCommand, "AfterEditCommandBubbleEvent");
+			Assert.AreEqual (true, modeChanging, "AfterEditBubbleEvent");
+
+			//New
+			itemCommand = false;
+			modeChanging = false;
+			com = new FormViewCommandEventArgs (bt, new CommandEventArgs ("New", null));
+			Assert.AreEqual (false, itemCommand, "BeforeNewCommandBubbleEvent");
+			Assert.AreEqual (false, modeChanging, "BeforeNewBubbleEvent");
+			fv.DoOnBubbleEvent (bt, com);
+			Assert.AreEqual (true, itemCommand, "AfterNewCommandBubbleEvent");
+			Assert.AreEqual (true, modeChanging, "AfterNewBubbleEvent");
+
+			//Page Index default
+			itemCommand = false;
+			fv.PageIndexChanging += new FormViewPageEventHandler (fv_PageIndexChanging);
+			com = new FormViewCommandEventArgs (bt, new CommandEventArgs ("Page", null));
+			Assert.AreEqual (false, itemCommand, "BeforePageCommandBubbleEvent");
+			Assert.AreEqual (false, pageIndexChanging, "BeforePageBubbleEvent");
+			fv.DoOnBubbleEvent (bt, com);
+			Assert.AreEqual (true, itemCommand, "AfterPageCommandBubbleEvent");
+			Assert.AreEqual (true, pageIndexChanging, "AfterPageBubbleEvent");
+
+			//Next Page
+			itemCommand = false;
+			pageIndexChanging = false;
+			com = new FormViewCommandEventArgs (bt, new CommandEventArgs ("Page", "Next"));
+			Assert.AreEqual (false, itemCommand, "BeforeNextPageCommandBubbleEvent");
+			Assert.AreEqual (false, pageIndexChanging, "BeforeNextPageBubbleEvent");
+			fv.DoOnBubbleEvent (bt, com);
+			Assert.AreEqual (true, itemCommand, "AfterNextPageCommandBubbleEvent");
+			Assert.AreEqual (true, pageIndexChanging, "AfterNextPageBubbleEvent");
+			Assert.AreEqual (1, newPageIndex, "NextPageIndex");
+
+			//Prev Page
+			itemCommand = false;
+			pageIndexChanging = false;
+			com = new FormViewCommandEventArgs (bt, new CommandEventArgs ("Page", "Prev"));
+			Assert.AreEqual (false, itemCommand, "BeforePrevPageCommandBubbleEvent");
+			Assert.AreEqual (false, pageIndexChanging, "BeforePrevPageBubbleEvent");
+			fv.DoOnBubbleEvent (bt, com);
+			Assert.AreEqual (true, itemCommand, "AfterPrevPageCommandBubbleEvent");
+			Assert.AreEqual (true, pageIndexChanging, "AfterPrevPageBubbleEvent");
+			Assert.AreEqual (-1, newPageIndex, "PrevPageIndex");
+
+			//First Page
+			itemCommand = false;
+			pageIndexChanging = false;
+			com = new FormViewCommandEventArgs (bt, new CommandEventArgs ("Page", "First"));
+			Assert.AreEqual (false, itemCommand, "BeforeFirstPageCommandBubbleEvent");
+			Assert.AreEqual (false, pageIndexChanging, "BeforeFirstPageBubbleEvent");
+			fv.DoOnBubbleEvent (bt, com);
+			Assert.AreEqual (true, itemCommand, "AfterFirstPageCommandBubbleEvent");
+			Assert.AreEqual (true, pageIndexChanging, "AfterFirstPageBubbleEvent");
+			Assert.AreEqual (0, newPageIndex, "FirstPageIndex");
+
+			//Last Page
+			itemCommand = false;
+			pageIndexChanging = false;
+			com = new FormViewCommandEventArgs (bt, new CommandEventArgs ("Page", "Last"));
+			Assert.AreEqual (false, itemCommand, "BeforeLastPageCommandBubbleEvent");
+			Assert.AreEqual (false, pageIndexChanging, "BeforeLastPageBubbleEvent");
+			fv.DoOnBubbleEvent (bt, com);
+			Assert.AreEqual (true, itemCommand, "AfterLastPageCommandBubbleEvent");
+			Assert.AreEqual (true, pageIndexChanging, "AfterLastPageBubbleEvent");
+			Assert.AreEqual (-1, newPageIndex, "FirstPageIndex");
+
+		}
+
+
+		[Test]
+		[Category ("NotWorking")]
+		public void FormView_Events ()
+		{
+			ResetEvents ();
+			Poker fv = new Poker ();
+			fv.Init += new EventHandler (fv_Init);
+			fv.ItemCommand += new FormViewCommandEventHandler (fv_ItemCommand);
+			fv.ItemCreated += new EventHandler (fv_ItemCreated);
+			fv.ItemDeleted += new FormViewDeletedEventHandler (fv_ItemDeleted);
+			fv.ItemDeleting += new FormViewDeleteEventHandler (fv_ItemDeleting);
+			fv.ItemInserted += new FormViewInsertedEventHandler (fv_ItemInserted);
+			fv.ItemInserting += new FormViewInsertEventHandler (fv_ItemInserting);
+			fv.ItemUpdated += new FormViewUpdatedEventHandler (fv_ItemUpdated);
+			fv.ItemUpdating += new FormViewUpdateEventHandler (fv_ItemUpdating);
+			fv.ModeChanged += new EventHandler (fv_ModeChanged);
+			fv.ModeChanging += new FormViewModeEventHandler (fv_ModeChanging);
+			fv.PageIndexChanged += new EventHandler (fv_PageIndexChanged);
+			fv.PageIndexChanging += new FormViewPageEventHandler (fv_PageIndexChanging);
+
+			Assert.AreEqual (false, init, "BeforeInit");
+			fv.DoOnInit (new EventArgs ());
+			Assert.AreEqual (true, init, "AfterInit");
+			Assert.AreEqual (false, itemCommand, "BeforeItemCommandEvent");
+			Button bt = new Button ();
+			fv.DoOnItemCommand (new FormViewCommandEventArgs (bt, new CommandEventArgs ("", null)));
+			Assert.AreEqual (true, itemCommand, "AfterItemCommandEvent");
+			Assert.AreEqual (false, itemCreated, "BeforeItemCreatedEvent");
+			fv.DoOnItemCreated (new EventArgs ());
+			Assert.AreEqual (true, itemCreated, "AfterItemCreatedEvent");
+			Assert.AreEqual (false, itemDeleted, "BeforeItemDeletedEvent");
+			fv.DoOnItemDeleted (new FormViewDeletedEventArgs (3, new Exception ()));
+			Assert.AreEqual (true, itemDeleted, "AfterItemDeletedEvent");
+			Assert.AreEqual (false, itemDeleting, "BeforeItemDeletingEvent");
+			fv.DoOnItemDeleting (new FormViewDeleteEventArgs (1));
+			Assert.AreEqual (true, itemDeleting, "AfterItemDeletingEvent");
+			Assert.AreEqual (false, itemInserted, "BeforeItemInsertedEvent");
+			fv.DoOnItemInserted (new FormViewInsertedEventArgs (2, new Exception ()));
+			Assert.AreEqual (true, itemInserted, "AfterItemInsetedEvent");
+			Assert.AreEqual (false, itemInserting, "BeforeItemInsertingEvent");
+			fv.DoOnItemInserting (new FormViewInsertEventArgs (bt));
+			Assert.AreEqual (true, itemInserting, "AfterItemInsetingEvent");
+			Assert.AreEqual (false, itemUpdated, "BeforeItemUpdatedEvent");
+			fv.DoOnItemUpdated (new FormViewUpdatedEventArgs (1, new Exception ()));
+			Assert.AreEqual (true, itemUpdated, "AfterItemUpdatedEvent");
+			Assert.AreEqual (false, itemUpdating, "BeforeItemUpdatingEvent");
+			fv.DoOnItemUpdating (new FormViewUpdateEventArgs (bt));
+			Assert.AreEqual (true, itemUpdating, "AfterItemUpdatingEvent");
+			Assert.AreEqual (false, modeChanged, "BeforeModeChangedEvent");
+			fv.DoOnModeChanged (new EventArgs ());
+			Assert.AreEqual (true, modeChanged, "AfterModeChangedEvent");
+			Assert.AreEqual (false, modeChanging, "BeforeModeChangingEvent");
+			fv.DoOnModeChanging (new FormViewModeEventArgs (FormViewMode.Edit, true));
+			Assert.AreEqual (true, modeChanging, "AfterModeChangingEvent");
+			Assert.AreEqual (false, pageIndexChanged, "BeforePageIndexChangedEvent");
+			fv.DoOnPageIndexChanged (new EventArgs ());
+			Assert.AreEqual (true, pageIndexChanged, "AfterPageIndexChangedEvent");
+			Assert.AreEqual (false, pageIndexChanging, "BeforePageIndexChangingEvent");
+			fv.DoOnPageIndexChanging (new FormViewPageEventArgs (1));
+			Assert.AreEqual (true, pageIndexChanging, "AfterPageIndexChangingEvent");
+		}
+		private void fv_Init (object sender, EventArgs e)
+		{
+			init = true;
+		}
+
+		private void fv_ItemCommand (object sender, FormViewCommandEventArgs e)
+		{
+			itemCommand = true;
+		}
+
+		private void fv_ItemCreated (object sender, EventArgs e)
+		{
+			itemCreated = true;
+		}
+
+		private void fv_ItemDeleted (object sender, FormViewDeletedEventArgs e)
+		{
+			itemDeleted = true;
+		}
+
+		private void fv_ItemDeleting (object sender, FormViewDeleteEventArgs e)
+		{
+			itemDeleting = true;
+		}
+
+		private void fv_ItemInserted (object sender, FormViewInsertedEventArgs e)
+		{
+			itemInserted = true;
+		}
+
+		private void fv_ItemInserting (object sender, FormViewInsertEventArgs e)
+		{
+			itemInserting = true;
+		}
+
+		private void fv_ItemUpdated (object sender, FormViewUpdatedEventArgs e)
+		{
+			itemUpdated = true;
+		}
+
+		private void fv_ItemUpdating (object sender, FormViewUpdateEventArgs e)
+		{
+			itemUpdating = true;
+		}
+
+		private void fv_ModeChanged (object sender, EventArgs e)
+		{
+			modeChanged = true;
+		}
+
+		private void fv_ModeChanging (object sender, FormViewModeEventArgs e)
+		{
+			modeChanging = true;
+		}
+
+		private void fv_PageIndexChanged (object sender, EventArgs e)
+		{
+			pageIndexChanged = true;
+		}
+		private void fv_PageIndexChanging (object sender, FormViewPageEventArgs e)
+		{
+			pageIndexChanging = true;
+			newPageIndex = e.NewPageIndex;
+		}
+
+		//Exceptions		
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void CellPaddingException ()
+		{
+		       Poker p = new Poker ();
+		        p.CellPadding = -2;
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void CellSpacingException ()
+		{
+			Poker p = new Poker ();
+			p.CellSpacing = -5;
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void PageIndexException ()
+		{
+			Poker p = new Poker ();
+			p.PageIndex = -5;
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (HttpException))]
+		public void InsertItemException ()
+		{
+			Poker p = new Poker ();
+			p.InsertItem (true); 
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (HttpException))]
+		public void UpdateItemException ()
+		{
+			Poker p = new Poker ();
+			p.UpdateItem (true);
+		}
+
 		
 		[Test]
 		public void PageIndex ()
@@ -175,7 +1151,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			ObjectDataSource ds = new ObjectDataSource ();
 			ds.ID = "ObjectDataSource1";
 			ds.TypeName = "System.Guid";
-			ds.SelectMethod = "ToByteArray";
+			ds.SelectMethod = "ToByteArray";			
 			Page p = new Page ();
 			Poker f = new Poker ();
 			f.Page = p;
@@ -189,7 +1165,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			f.PageIndex = 1;
 			Assert.IsTrue (cur != f.DataItem, "#01");
 
-			CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
+CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 			FormViewCommandEventArgs fvargs = new FormViewCommandEventArgs (f, cargs);
 			f.DoOnBubbleEvent (f, fvargs);
 			Assert.IsTrue (f.OnPageIndexChangingCalled, "#02");
@@ -231,7 +1207,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			f.DoOnPreRender (EventArgs.Empty);
 			f.PageIndex = 1;
 			Assert.AreEqual (16, f.PageCount, "#01");
-		}
+		} 
 		
 		[Test]
 		public void InsertTemplate () {
@@ -276,6 +1252,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		//}
 
 		[Test]
+		[Category ("NotWorking")]
 		[Category("NunitWeb")]
 		public void FormViewCssClass ()
 		{
@@ -291,6 +1268,170 @@ namespace MonoTests.System.Web.UI.WebControls
 				"check that <table class=\"\"> is not found. Actual: "+res);
 		}
 
+
+
+
+		[Test]
+		[Category ("NotWorking")]
+		public void FormView_RenderSimpleTemplate()
+		{
+			string RenderedPageHtml = new WebTest ("FormViewTest1.aspx").Run ();			
+			string newHtmlValue = RenderedPageHtml.Substring (RenderedPageHtml.IndexOf ("test1") + 5, RenderedPageHtml.IndexOf ("test2") - RenderedPageHtml.IndexOf ("test1") - 5);  		
+			string origHtmlValue = @" &nbsp;<table cellspacing=""2"" cellpadding=""3"" rules=""all"" border=""1"" id=""FormView1"" style=""background-color:#DEBA84;border-color:#DEBA84;border-width:1px;border-style:None;"">
+						<tr style=""color:#8C4510;background-color:#FFF7E7;"">
+						<td colspan=""2"">
+						 <span id=""FormView1_Label1"">1</span>
+						 </td>
+						</tr><tr align=""center"" style=""color:#8C4510;"">
+						<td colspan=""2""><table border=""0"">
+						<tr>
+						<td><span>1</span></td><td><a href=""javascript:__doPostBack('FormView1','Page$2')"" style=""color:#8C4510;"">2</a></td><td><a href=""javascript:__doPostBack('FormView1','Page$3')"" style=""color:#8C4510;"">3</a></td><td><a href=""javascript:__doPostBack('FormView1','Page$4')"" style=""color:#8C4510;"">4</a></td><td><a href=""javascript:__doPostBack('FormView1','Page$5')"" style=""color:#8C4510;"">5</a></td><td><a href=""javascript:__doPostBack('FormView1','Page$6')"" style=""color:#8C4510;"">6</a></td>
+						</tr>
+						</table></td>
+						</tr>
+						</table>";         
+        
+			HtmlDiff.AssertAreEqual (origHtmlValue, newHtmlValue, "RenderSimpleTemplate");                  
+
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void FormView_RenderFooterAndPager()
+		{
+			string RenderedPageHtml = new WebTest ("FormViewTest1.aspx").Run ();			
+			string newHtmlValue = RenderedPageHtml.Substring (RenderedPageHtml.IndexOf ("test2") + 5, RenderedPageHtml.IndexOf ("test3") - RenderedPageHtml.IndexOf ("test2") - 5);
+			string origHtmlValue = @" <table cellspacing=""0"" cellpadding=""4"" border=""0"" id=""FormView2"" style=""color:#333333;border-collapse:collapse;"">
+						<tr style=""color:#333333;background-color:#F7F6F3;"">
+						<td colspan=""2"">
+						 <span id=""FormView2_Label2"">1</span>
+						 </td>
+						</tr><tr style=""color:White;background-color:#5D7B9D;font-weight:bold;"">
+						<td colspan=""2"">
+						<span id=""FormView2_Label3"">Footer Template Test</span>
+						 </td>
+						</tr><tr align=""center"" style=""color:White;background-color:#284775;"">
+						<td colspan=""2"">
+						<input type=""submit"" name=""FormView2$ctl01$Button1"" value=""Prev Item"" id=""FormView2_ctl01_Button1"" />
+					        <input type=""submit"" name=""FormView2$ctl01$Button2"" value=""Next Item"" id=""FormView2_ctl01_Button2"" />
+						 <input type=""submit"" name=""FormView2$ctl01$Button3"" value=""First Item"" id=""FormView2_ctl01_Button3"" />
+						 <input type=""submit"" name=""FormView2$ctl01$Button4"" value=""Last Item"" id=""FormView2_ctl01_Button4"" />
+						 </td>
+						</tr>
+						</table>    
+						</div>";    
+			HtmlDiff.AssertAreEqual (origHtmlValue, newHtmlValue, "FormView_RenderFooterAndPager");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void FormView_RenderWithHeader()
+		{
+			string RenderedPageHtml = new WebTest ("FormViewTest1.aspx").Run ();
+			string newHtmlValue = RenderedPageHtml.Substring (RenderedPageHtml.IndexOf ("test4") + 5, RenderedPageHtml.IndexOf ("endtest") - RenderedPageHtml.IndexOf ("test4") - 5);
+			string origHtmlValue = @" <table cellspacing=""10"" cellpadding=""3"" align=""Right"" rules=""all"" border=""1"" id=""FormView4"" style=""background-color:White;border-color:#CCCCCC;border-width:1px;border-style:None;"">
+						<tr align=""left"" style=""color:White;background-color:#006699;font-weight:bold;"">
+						<td colspan=""2"">Using Header Text property</td>
+						</tr><tr align=""center"" style=""color:#000066;background-color:Maroon;"">
+						<td colspan=""2"">Using Footer Text property</td>
+						</tr><tr align=""left"" style=""color:#000066;background-color:LightGrey;"">
+						<td colspan=""2"">
+						<a id=""FormView4_ctl01_LinkButton1"" href=""javascript:__doPostBack('FormView4$ctl01$LinkButton1','')"">Next</a>
+						 <a id=""FormView4_ctl01_LinkButton2"" href=""javascript:__doPostBack('FormView4$ctl01$LinkButton2','')"">Prev</a>
+						<span id=""FormView4_ctl01_Label7"">Page Index: 0</span>
+						</td>
+						</tr>
+						</table>"; 			
+			HtmlDiff.AssertAreEqual (origHtmlValue, newHtmlValue, "RenderingDefaultPaging");
+		}
+
+
+		[Test]
+		[Category ("NotWorking")]
+		public void FormView_Render ()
+		{
+			string RenderedPageHtml = new WebTest ("FormViewTest1.aspx").Run ();
+			string newHtmlValue = RenderedPageHtml.Substring (RenderedPageHtml.IndexOf ("test3") + 5, RenderedPageHtml.IndexOf ("test4") - RenderedPageHtml.IndexOf ("test3") - 5);
+			string origHtmlValue = @" <table cellspacing=""0"" cellpadding=""2"" border=""0"" id=""FormView3"" style=""color:Black;background-color:LightGoldenrodYellow;border-color:Tan;border-width:1px;border-style:solid;border-collapse:collapse;"">
+						  <tr align=""center"" valign=""top"" style=""color:#C00000;background-color:Tan;font-weight:bold;"">
+						<td colspan=""2"">
+						<span id=""FormView3_Label5"">Header Template Test</span>
+						</td>
+						</tr><tr>
+						<td colspan=""2"">
+						<span id=""FormView3_Label4"">1</span>
+						</td>
+						</tr><tr align=""right"" style=""color:#FFC0FF;background-color:Tan;"">
+						<td colspan=""2"">
+						<span id=""FormView3_Label6"">FormView Footer</span>
+						</td>
+						</tr><tr align=""center"" style=""color:DarkSlateBlue;background-color:PaleGoldenrod;"">
+						<td colspan=""2""><table border=""0"">
+						<tr>
+						<td><span>1</span></td><td><a href=""javascript:__doPostBack('FormView3','Page$2')"" style=""color:DarkSlateBlue;"">2</a></td><td><a href=""javascript:__doPostBack('FormView3','Page$3')"" style=""color:DarkSlateBlue;"">3</a></td><td><a href=""javascript:__doPostBack('FormView3','Page$4')"" style=""color:DarkSlateBlue;"">4</a></td><td><a href=""javascript:__doPostBack('FormView3','Page$5')"" style=""color:DarkSlateBlue;"">5</a></td><td><a href=""javascript:__doPostBack('FormView3','Page$6')"" style=""color:DarkSlateBlue;"">6</a></td>
+						</tr>
+						</table></td>
+						</tr>
+						</table>";        
+			HtmlDiff.AssertAreEqual (origHtmlValue, newHtmlValue, "RenderingDefaultPaging");
+		}
+		
+
+		//ToDo: Postbacks - Insert, Delete and Edit.
+		
+
+
+	}
+
+	public class TestMyData
+	{
+		static IList<int> str = (IList<int>) new int[] { 1, 2, 3, 4, 5, 6 };
+
+
+		public static IList<int> GetMyList ()
+		{
+			return str;
+		}
+
+		public static int UpdateList (int index,int value)
+		{
+			str[index] = value;
+			return str[index];
+		}
+
+		public static int InsertList (int value)
+		{
+			str.Add (value);
+			return value;
+		}
+
+		public static void DeleteList (int value)
+		{
+			str.Remove (value);
+		}
+
+	}
+
+	public class MyTemplate : ITemplate
+	{
+
+		Label l = new Label ();
+#region ITemplate Members
+
+		public void InstantiateIn (Control container)
+		{
+			container.Controls.Add (l);
+
+		}
+
+		public void SetDataItem (object value)
+		{
+			l.Text = value.ToString ();
+		}
+
+#endregion
 	}
 }
+
+
 #endif

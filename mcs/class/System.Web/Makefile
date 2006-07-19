@@ -89,6 +89,7 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/DetailsViewDataActions.aspx \
 	Test/mainsoft/NunitWebResources/DetailsViewProperties1.aspx \
 	Test/mainsoft/NunitWebResources/Bluehills.jpg \
+	Test/mainsoft/NunitWebResources/FormViewTest1.aspx \
 	Test/mainsoft/MainsoftWebTest/nunitweb_config.xml 
 
 NUNIT_RESOURCE_FILES = $(TEST_RESOURCE_FILES)
