@@ -1764,11 +1764,11 @@ namespace System.Windows.Forms
 
 		internal virtual void CollectionChanged ()
 		{
-			if (!IsHandleCreated || suspend_layout)
-				return;
-
 			if (sorted) 
 				Sort ();				
+
+			if (!IsHandleCreated || suspend_layout)
+				return;
 
 			Layout ();
 
