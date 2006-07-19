@@ -19,6 +19,15 @@ namespace MonoTests.System.Windows.Forms {
 
 			internal bool directed_select_called;
 
+			public ControlPoker ()
+			{
+			}
+
+			public ControlPoker (string text)
+			{
+				Text = text;
+			}
+
 			public void _Select (bool directed, bool forward)
 			{
 				Select (directed, forward);
@@ -29,15 +38,26 @@ namespace MonoTests.System.Windows.Forms {
 				directed_select_called = true;
 				base.Select (directed, forward);
 			}
+
 		}
 
 		private ControlPoker [] flat_controls;
 
 		public class ContainerPoker : ContainerControl {
 
+			public ContainerPoker (string s)
+			{
+				Text = s;
+			}
+
 			public void _Select (bool directed, bool forward)
 			{
 				Select (directed, forward);
+			}
+
+			public override string ToString ()
+			{
+				return String.Concat (GetType (), " ", Text);
 			}
 		}
 
@@ -49,6 +69,9 @@ namespace MonoTests.System.Windows.Forms {
 			flat_controls = new ControlPoker [] {
 				new ControlPoker (), new ControlPoker (), new ControlPoker ()
 			};
+
+			for (int i = 0; i < flat_controls.Length; i++)
+				flat_controls [i].Text = i.ToString ();
 		}
 
 		[Test]
@@ -143,7 +166,7 @@ namespace MonoTests.System.Windows.Forms {
 		public void ContainerSelectDirectedForward ()
 		{
 			Form form = new Form ();
-			ContainerPoker cp = new ContainerPoker ();
+			ContainerPoker cp = new ContainerPoker ("container-a");
 			
 			form.Show ();
 			form.Controls.Add (cp);
@@ -170,7 +193,7 @@ namespace MonoTests.System.Windows.Forms {
 		public void ContainerSelectDirectedBackward ()
 		{
 			Form form = new Form ();
-			ContainerPoker cp = new ContainerPoker ();
+			ContainerPoker cp = new ContainerPoker ("container-a");
 			
 			form.Show ();
 			form.Controls.Add (cp);
@@ -197,7 +220,7 @@ namespace MonoTests.System.Windows.Forms {
 		public void ContainerSelectUndirectedForward ()
 		{
 			Form form = new Form ();
-			ContainerPoker cp = new ContainerPoker ();
+			ContainerPoker cp = new ContainerPoker ("container-a");
 			
 			form.Show ();
 			form.Controls.Add (cp);
@@ -213,11 +236,283 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
-		public void GetNextControl ()
+		public void GetNextControlFromForm ()
 		{
+			Form form = new Form ();
+			ContainerPoker con_a = new ContainerPoker ("container-a");
+			ContainerPoker con_b = new ContainerPoker ("container-b");
+			ContainerPoker con_c = new ContainerPoker ("container-c");
+			ControlPoker [] ctrls_a = new ControlPoker [] {
+				new ControlPoker (), new ControlPoker (), new ControlPoker ()
+			};
+			ControlPoker [] ctrls_b = new ControlPoker [] {
+				new ControlPoker (), new ControlPoker (), new ControlPoker ()
+			};
+			ControlPoker [] ctrls_c = new ControlPoker [] {
+				new ControlPoker (), new ControlPoker (), new ControlPoker ()
+			};
+
+			con_a.Controls.AddRange (ctrls_a);
+			con_b.Controls.AddRange (ctrls_b);
+			con_c.Controls.AddRange (ctrls_c);
 			
+			form.Controls.Add (con_a);
+			form.Controls.Add (con_b);
+			form.Controls.Add (con_c);
+
+			form.Show ();
+
+			// top level movement, 
+			Assert.AreEqual (form.GetNextControl (form, true), con_a, "form-1");
+			Assert.AreEqual (form.GetNextControl (form, false), con_c, "form-2");
+
+			
+			Assert.AreEqual (form.GetNextControl (con_a, true), con_b, "container-1");
+			Assert.AreEqual (form.GetNextControl (con_a, false), null, "container-2");
+			Assert.AreEqual (form.GetNextControl (con_b, true), con_c, "container-3");
+			Assert.AreEqual (form.GetNextControl (con_b, false), con_a, "container-4");
+			Assert.AreEqual (form.GetNextControl (con_c, true), null, "container-5");
+			Assert.AreEqual (form.GetNextControl (con_c, false), con_b, "container-6");
+
+			Assert.AreEqual (form.GetNextControl (ctrls_a [0], true), ctrls_a [1], "ctrls-a-1");
+			Assert.AreEqual (form.GetNextControl (ctrls_a [0], false), con_a, "ctrls-a-2");
+			Assert.AreEqual (form.GetNextControl (ctrls_a [1], true), ctrls_a [2], "ctrls-a-3");
+			Assert.AreEqual (form.GetNextControl (ctrls_a [1], false), ctrls_a [0], "ctrls-a-4");
+			Assert.AreEqual (form.GetNextControl (ctrls_a [2], true), con_b, "ctrls-a-5");
+			Assert.AreEqual (form.GetNextControl (ctrls_a [2], false), ctrls_a [1], "ctrls-a-6");
+
+			Assert.AreEqual (form.GetNextControl (ctrls_b [0], true), ctrls_b [1], "ctrls-b-1");
+			Assert.AreEqual (form.GetNextControl (ctrls_b [0], false), con_b, "ctrls-b-2");
+			Assert.AreEqual (form.GetNextControl (ctrls_b [1], true), ctrls_b [2], "ctrls-b-3");
+			Assert.AreEqual (form.GetNextControl (ctrls_b [1], false), ctrls_b [0], "ctrls-b-4");
+			Assert.AreEqual (form.GetNextControl (ctrls_b [2], true), con_c, "ctrls-b-5");
+			Assert.AreEqual (form.GetNextControl (ctrls_b [2], false), ctrls_b [1], "ctrls-b-6");
+
+			Assert.AreEqual (form.GetNextControl (ctrls_c [0], true), ctrls_c [1], "ctrls-c-1");
+			Assert.AreEqual (form.GetNextControl (ctrls_c [0], false), con_c, "ctrls-c-2");
+			Assert.AreEqual (form.GetNextControl (ctrls_c [1], true), ctrls_c [2], "ctrls-c-3");
+			Assert.AreEqual (form.GetNextControl (ctrls_c [1], false), ctrls_c [0], "ctrls-c-4");
+			Assert.AreEqual (form.GetNextControl (ctrls_c [2], true), null, "ctrls-c-5");
+			Assert.AreEqual (form.GetNextControl (ctrls_c [2], false), ctrls_c [1], "ctrls-c-6");
 		}
 
+		[Test]
+		public void GetNextControlFromContainerA ()
+		{
+			Form form = new Form ();
+			ContainerPoker con_a = new ContainerPoker ("container-a");
+			ContainerPoker con_b = new ContainerPoker ("container-b");
+			ContainerPoker con_c = new ContainerPoker ("container-c");
+			ControlPoker [] ctrls_a = new ControlPoker [] {
+				new ControlPoker ("ctrls-a-0"), new ControlPoker ("ctrls-a-1"), new ControlPoker ("ctrls-a-2")
+			};
+			ControlPoker [] ctrls_b = new ControlPoker [] {
+				new ControlPoker ("ctrls-b-0"), new ControlPoker ("ctrls-b-1"), new ControlPoker ("ctrls-b-2")
+			};
+			ControlPoker [] ctrls_c = new ControlPoker [] {
+				new ControlPoker ("ctrls-c-0"), new ControlPoker ("ctrls-c-1"), new ControlPoker ("ctrls-c-2")
+			};
+
+			con_a.Controls.AddRange (ctrls_a);
+			con_b.Controls.AddRange (ctrls_b);
+			con_c.Controls.AddRange (ctrls_c);
+			
+			form.Controls.Add (con_a);
+			form.Controls.Add (con_b);
+			form.Controls.Add (con_c);
+
+			form.Show ();
+
+			// top level movement, 
+			Assert.AreEqual (con_a.GetNextControl (form, true), ctrls_a [0], "form-1");
+			Assert.AreEqual (con_a.GetNextControl (form, false), ctrls_a [2], "form-2");
+			
+			Assert.AreEqual (con_a.GetNextControl (con_a, true), ctrls_a [0], "container-1");
+			Assert.AreEqual (con_a.GetNextControl (con_a, false), ctrls_a [2], "container-2");
+			Assert.AreEqual (con_a.GetNextControl (con_b, true), ctrls_a [0], "container-3");
+			Assert.AreEqual (con_a.GetNextControl (con_b, false), ctrls_a [2], "container-4");
+			Assert.AreEqual (con_a.GetNextControl (con_c, true), ctrls_a [0], "container-5");
+			Assert.AreEqual (con_a.GetNextControl (con_c, false), ctrls_a [2], "container-6");
+
+			Assert.AreEqual (con_a.GetNextControl (ctrls_a [0], true), ctrls_a [1], "ctrls-a-1");
+			Assert.AreEqual (con_a.GetNextControl (ctrls_a [0], false), null, "ctrls-a-2");
+			Assert.AreEqual (con_a.GetNextControl (ctrls_a [1], true), ctrls_a [2], "ctrls-a-3");
+			Assert.AreEqual (con_a.GetNextControl (ctrls_a [1], false), ctrls_a [0], "ctrls-a-4");
+			Assert.AreEqual (con_a.GetNextControl (ctrls_a [2], true), null, "ctrls-a-5");
+			Assert.AreEqual (con_a.GetNextControl (ctrls_a [2], false), ctrls_a [1], "ctrls-a-6");
+
+			Assert.AreEqual (con_a.GetNextControl (ctrls_b [0], true), ctrls_a [0], "ctrls-b-1");
+			Assert.AreEqual (con_a.GetNextControl (ctrls_b [0], false), ctrls_a [2], "ctrls-b-2");
+			Assert.AreEqual (con_a.GetNextControl (ctrls_b [1], true), ctrls_a [0], "ctrls-b-3");
+			Assert.AreEqual (con_a.GetNextControl (ctrls_b [1], false), ctrls_a [2], "ctrls-b-4");
+			Assert.AreEqual (con_a.GetNextControl (ctrls_b [2], true), ctrls_a [0], "ctrls-b-5");
+			Assert.AreEqual (con_a.GetNextControl (ctrls_b [2], false), ctrls_a [2], "ctrls-b-6");
+
+			Assert.AreEqual (con_a.GetNextControl (ctrls_c [0], true), ctrls_a [0], "ctrls-c-1");
+			Assert.AreEqual (con_a.GetNextControl (ctrls_c [0], false), ctrls_a [2], "ctrls-c-2");
+			Assert.AreEqual (con_a.GetNextControl (ctrls_c [1], true), ctrls_a [0], "ctrls-c-3");
+			Assert.AreEqual (con_a.GetNextControl (ctrls_c [1], false), ctrls_a [2], "ctrls-c-4");
+			Assert.AreEqual (con_a.GetNextControl (ctrls_c [2], true), ctrls_a [0], "ctrls-c-5");
+			Assert.AreEqual (con_a.GetNextControl (ctrls_c [2], false), ctrls_a [2], "ctrls-c-6");
+		}
+
+		[Test]
+		public void GetNextControlFromContainerB ()
+		{
+			Form form = new Form ();
+			ContainerPoker con_a = new ContainerPoker ("container-a");
+			ContainerPoker con_b = new ContainerPoker ("container-b");
+			ContainerPoker con_c = new ContainerPoker ("container-c");
+			ControlPoker [] ctrls_a = new ControlPoker [] {
+				new ControlPoker ("ctrls-a-0"), new ControlPoker ("ctrls-a-1"), new ControlPoker ("ctrls-a-2")
+			};
+			ControlPoker [] ctrls_b = new ControlPoker [] {
+				new ControlPoker ("ctrls-b-0"), new ControlPoker ("ctrls-b-1"), new ControlPoker ("ctrls-b-2")
+			};
+			ControlPoker [] ctrls_c = new ControlPoker [] {
+				new ControlPoker ("ctrls-c-0"), new ControlPoker ("ctrls-c-1"), new ControlPoker ("ctrls-c-2")
+			};
+
+			con_a.Controls.AddRange (ctrls_a);
+			con_b.Controls.AddRange (ctrls_b);
+			con_c.Controls.AddRange (ctrls_c);
+			
+			form.Controls.Add (con_a);
+			form.Controls.Add (con_b);
+			form.Controls.Add (con_c);
+
+			form.Show ();
+
+			// top level movement
+			Assert.AreEqual (con_b.GetNextControl (form, true), ctrls_b [0], "form-1");
+			Assert.AreEqual (con_b.GetNextControl (form, false), ctrls_b [2], "form-2");
+			
+			Assert.AreEqual (con_b.GetNextControl (con_a, true), ctrls_b [0], "container-1");
+			Assert.AreEqual (con_b.GetNextControl (con_a, false), ctrls_b [2], "container-2");
+			Assert.AreEqual (con_b.GetNextControl (con_b, true), ctrls_b [0], "container-3");
+			Assert.AreEqual (con_b.GetNextControl (con_b, false), ctrls_b [2], "container-4");
+			Assert.AreEqual (con_b.GetNextControl (con_c, true), ctrls_b [0], "container-5");
+			Assert.AreEqual (con_b.GetNextControl (con_c, false), ctrls_b [2], "container-6");
+
+			Assert.AreEqual (con_b.GetNextControl (ctrls_a [0], true), ctrls_b [0], "ctrls-a-1");
+			Assert.AreEqual (con_b.GetNextControl (ctrls_a [0], false), ctrls_b [2], "ctrls-a-2");
+			Assert.AreEqual (con_b.GetNextControl (ctrls_a [1], true), ctrls_b [0], "ctrls-a-3");
+			Assert.AreEqual (con_b.GetNextControl (ctrls_a [1], false), ctrls_b [2], "ctrls-a-4");
+			Assert.AreEqual (con_b.GetNextControl (ctrls_a [2], true), ctrls_b [0], "ctrls-a-5");
+			Assert.AreEqual (con_b.GetNextControl (ctrls_a [2], false), ctrls_b [2], "ctrls-a-6");
+
+			Assert.AreEqual (con_b.GetNextControl (ctrls_b [0], true), ctrls_b [1], "ctrls-b-1");
+			Assert.AreEqual (con_b.GetNextControl (ctrls_b [0], false), null, "ctrls-b-2");
+			Assert.AreEqual (con_b.GetNextControl (ctrls_b [1], true), ctrls_b [2], "ctrls-b-3");
+			Assert.AreEqual (con_b.GetNextControl (ctrls_b [1], false), ctrls_b [0], "ctrls-b-4");
+			Assert.AreEqual (con_b.GetNextControl (ctrls_b [2], true), null, "ctrls-b-5");
+			Assert.AreEqual (con_b.GetNextControl (ctrls_b [2], false), ctrls_b [1], "ctrls-b-6");
+
+			Assert.AreEqual (con_b.GetNextControl (ctrls_c [0], true), ctrls_b [0], "ctrls-c-1");
+			Assert.AreEqual (con_b.GetNextControl (ctrls_c [0], false), ctrls_b [2], "ctrls-c-2");
+			Assert.AreEqual (con_b.GetNextControl (ctrls_c [1], true), ctrls_b [0], "ctrls-c-3");
+			Assert.AreEqual (con_b.GetNextControl (ctrls_c [1], false), ctrls_b [2], "ctrls-c-4");
+			Assert.AreEqual (con_b.GetNextControl (ctrls_c [2], true), ctrls_b [0], "ctrls-c-5");
+			Assert.AreEqual (con_b.GetNextControl (ctrls_c [2], false), ctrls_b [2], "ctrls-c-6");
+		}
+
+		[Test]
+		public void GetNextControlFromContainerC ()
+		{
+			Form form = new Form ();
+			ContainerPoker con_a = new ContainerPoker ("container-a");
+			ContainerPoker con_b = new ContainerPoker ("container-b");
+			ContainerPoker con_c = new ContainerPoker ("container-c");
+			ControlPoker [] ctrls_a = new ControlPoker [] {
+				new ControlPoker ("ctrls-a-0"), new ControlPoker ("ctrls-a-1"), new ControlPoker ("ctrls-a-2")
+			};
+			ControlPoker [] ctrls_b = new ControlPoker [] {
+				new ControlPoker ("ctrls-b-0"), new ControlPoker ("ctrls-b-1"), new ControlPoker ("ctrls-b-2")
+			};
+			ControlPoker [] ctrls_c = new ControlPoker [] {
+				new ControlPoker ("ctrls-c-0"), new ControlPoker ("ctrls-c-1"), new ControlPoker ("ctrls-c-2")
+			};
+
+			con_a.Controls.AddRange (ctrls_a);
+			con_b.Controls.AddRange (ctrls_b);
+			con_c.Controls.AddRange (ctrls_c);
+			
+			form.Controls.Add (con_a);
+			form.Controls.Add (con_b);
+			form.Controls.Add (con_c);
+
+			form.Show ();
+
+			// top level movement, 
+			Assert.AreEqual (con_c.GetNextControl (form, true), ctrls_c [0], "form-1");
+			Assert.AreEqual (con_c.GetNextControl (form, false), ctrls_c [2], "form-2");
+			
+			Assert.AreEqual (con_c.GetNextControl (con_a, true), ctrls_c [0], "container-1");
+			Assert.AreEqual (con_c.GetNextControl (con_a, false), ctrls_c [2], "container-2");
+			Assert.AreEqual (con_c.GetNextControl (con_b, true), ctrls_c [0], "container-3");
+			Assert.AreEqual (con_c.GetNextControl (con_b, false), ctrls_c [2], "container-4");
+			Assert.AreEqual (con_c.GetNextControl (con_c, true), ctrls_c [0], "container-5");
+			Assert.AreEqual (con_c.GetNextControl (con_c, false), ctrls_c [2], "container-6");
+
+			Assert.AreEqual (con_c.GetNextControl (ctrls_a [0], true), ctrls_c [0], "ctrls-a-1");
+			Assert.AreEqual (con_c.GetNextControl (ctrls_a [0], false), ctrls_c [2], "ctrls-a-2");
+			Assert.AreEqual (con_c.GetNextControl (ctrls_a [1], true), ctrls_c [0], "ctrls-a-3");
+			Assert.AreEqual (con_c.GetNextControl (ctrls_a [1], false), ctrls_c [2], "ctrls-a-4");
+			Assert.AreEqual (con_c.GetNextControl (ctrls_a [2], true), ctrls_c [0], "ctrls-a-5");
+			Assert.AreEqual (con_c.GetNextControl (ctrls_a [2], false), ctrls_c [2], "ctrls-a-6");
+
+			Assert.AreEqual (con_c.GetNextControl (ctrls_b [0], true), ctrls_c [0], "ctrls-b-1");
+			Assert.AreEqual (con_c.GetNextControl (ctrls_b [0], false), ctrls_c [2], "ctrls-b-2");
+			Assert.AreEqual (con_c.GetNextControl (ctrls_b [1], true), ctrls_c [0], "ctrls-b-3");
+			Assert.AreEqual (con_c.GetNextControl (ctrls_b [1], false), ctrls_c [2], "ctrls-b-4");
+			Assert.AreEqual (con_c.GetNextControl (ctrls_b [2], true), ctrls_c [0], "ctrls-b-5");
+			Assert.AreEqual (con_c.GetNextControl (ctrls_b [2], false), ctrls_c [2], "ctrls-b-6");
+
+			Assert.AreEqual (con_c.GetNextControl (ctrls_c [0], true), ctrls_c [1], "ctrls-c-1");
+			Assert.AreEqual (con_c.GetNextControl (ctrls_c [0], false), null, "ctrls-c-2");
+			Assert.AreEqual (con_c.GetNextControl (ctrls_c [1], true), ctrls_c [2], "ctrls-c-3");
+			Assert.AreEqual (con_c.GetNextControl (ctrls_c [1], false), ctrls_c [0], "ctrls-c-4");
+			Assert.AreEqual (con_c.GetNextControl (ctrls_c [2], true), null, "ctrls-c-5");
+			Assert.AreEqual (con_c.GetNextControl (ctrls_c [2], false), ctrls_c [1], "ctrls-c-6");
+		}
+
+		[Test]
+		public void GetNextControl2FromForm ()
+		{
+			Form form = new Form ();
+			ContainerPoker con_a = new ContainerPoker ("container-a");
+			ContainerPoker con_b = new ContainerPoker ("container-b");
+			ContainerPoker con_c = new ContainerPoker ("container-c");
+			ControlPoker [] ctrls_a = new ControlPoker [] {
+				new ControlPoker ("ctrls-a-0"), new ControlPoker ("ctrls-a-1"), new ControlPoker ("ctrls-a-2")
+			};
+			ControlPoker ctrl_b = new ControlPoker ("ctrl-b");
+			
+			con_a.Controls.AddRange (ctrls_a);
+			
+			form.Controls.Add (con_a);
+			form.Controls.Add (ctrl_b);
+
+			form.Show ();
+
+			// top level movement, 
+			Assert.AreEqual (form.GetNextControl (form, true), con_a, "form-1");
+			Assert.AreEqual (form.GetNextControl (form, false), ctrl_b, "form-2");
+
+			Assert.AreEqual (form.GetNextControl (con_a, true), ctrl_b, "con-a-1");
+			Assert.AreEqual (form.GetNextControl (con_a, false), null, "con-a-2");
+
+			Assert.AreEqual (form.GetNextControl (ctrl_b, true), null, "ctrl-b-1");
+			Assert.AreEqual (form.GetNextControl (ctrl_b, false), con_a, "ctrl-b-2");
+
+			Assert.AreEqual (form.GetNextControl (ctrls_a [0], true), ctrls_a [1], "ctrl-a-1");
+			Assert.AreEqual (form.GetNextControl (ctrls_a [0], false), con_a, "ctrl-a-2");
+			Assert.AreEqual (form.GetNextControl (ctrls_a [1], true), ctrls_a [2], "ctrl-a-1");
+			Assert.AreEqual (form.GetNextControl (ctrls_a [1], false), ctrls_a [0], "ctrl-a-2");
+			Assert.AreEqual (form.GetNextControl (ctrls_a [2], true), ctrl_b, "ctrl-a-1");
+			Assert.AreEqual (form.GetNextControl (ctrls_a [2], false), ctrls_a [1], "ctrl-a-2");
+
+		}
 	}
 
 }
