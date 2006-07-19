@@ -1,5 +1,8 @@
 2006-07-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-x86.c (mono_arch_get_argument_info): Fix a warning.
+	(mono_arch_call_opcode): Ditto.
+
 	* mini.c (mono_method_to_ir): Clear ins_flag at the end of CEE_CALL. Fixes
 	#78826.
 
