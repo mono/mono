@@ -1,5 +1,11 @@
 2006-07-18 Andrew Skiba <andrews@mainsoft.com>
 
+	* DetailsView.cs: throw ArgumentOutOfRangeException for compatibility
+	with .Net; don't throw NotImplemented when base class implementation
+	is available.
+
+2006-07-18 Andrew Skiba <andrews@mainsoft.com>
+
 	* DetailsViewPagerRow.cs: add a stub for this class
 
 2006-07-17 Vladimir Krasnov <vladimirk@mainsoft.com>

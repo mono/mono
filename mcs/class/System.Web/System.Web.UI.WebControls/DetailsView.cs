@@ -422,7 +422,9 @@ namespace System.Web.UI.WebControls
 				return -1;
 			}
 			set {
-				ViewState ["CellPadding"] = value;
+				if (value < -1)
+					throw new ArgumentOutOfRangeException ("< -1");
+				ViewState["CellPadding"] = value;
 				RequireBinding ();
 			}
 		}
@@ -437,6 +439,8 @@ namespace System.Web.UI.WebControls
 				return 0;
 			}
 			set {
+				if (value < -1)
+					throw new ArgumentOutOfRangeException ("< -1");
 				ViewState ["CellSpacing"] = value;
 				RequireBinding ();
 			}
@@ -989,7 +993,7 @@ namespace System.Web.UI.WebControls
 		[MonoTODO]
 		protected override Style CreateControlStyle ()
 		{
-			throw new NotImplementedException ();
+			return base.CreateControlStyle ();
 		}
 		
 		protected override int CreateChildControls (IEnumerable data, bool dataBinding)
@@ -1131,7 +1135,7 @@ namespace System.Web.UI.WebControls
 		[MonoTODO]
 		protected override void EnsureDataBound ()
 		{
-			throw new NotImplementedException ();
+			base.EnsureDataBound ();
 		}
 		
 		DataControlRowState GetRowState (int index)
@@ -1680,7 +1684,7 @@ namespace System.Web.UI.WebControls
 		[MonoTODO]
 		protected override void OnPagePreLoad (object sender, EventArgs e)
 		{
-			throw new NotImplementedException ();
+			base.OnPagePreLoad (sender, e);
 		}
 		
 		protected internal override void OnPreRender (EventArgs e)
