@@ -1,3 +1,7 @@
+﻿2006-07-19 Merav Sudri <meravs@mainsoft.com>
+
+	* DetailsViewTest.cs: added new test
+
 2006-07-18 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* GridViewTest.cs: removed NotWorking attributes, added tests

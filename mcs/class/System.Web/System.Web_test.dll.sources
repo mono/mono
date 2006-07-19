@@ -158,6 +158,7 @@ System.Web.UI.WebControls/DataKeyTest.cs
 System.Web.UI.WebControls/DataListItemCollectionTest.cs
 System.Web.UI.WebControls/DataListItemTest.cs
 System.Web.UI.WebControls/DataListTest.cs
+System.Web.UI.WebControls/DetailsViewTest.cs
 System.Web.UI.WebControls/DropDownListTest.cs
 System.Web.UI.WebControls/EditCommandColumnTest.cs
 System.Web.UI.WebControls/FileUploadTest.cs

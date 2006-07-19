@@ -1,3 +1,13 @@
+﻿2006-07-19 Merav Sudri <meravs@mainsoft.com>
+
+	* System.Web_test.dll.sources: add DetailsViewTest.cs 
+	* Makefile: 
+	add Test/mainsoft/NunitWebResources/FooterTemplateTest.aspx					
+	add Test/mainsoft/NunitWebResources/DetailsViewDataActions.aspx					
+	add Test/mainsoft/NunitWebResources/DetailsViewTemplates.aspx					
+	add Test/mainsoft/NunitWebResources/DetailsViewProperties1.aspx
+							 
+
 2006-07-16 Yoni Klain <yonik@mainsoft.com>
 
 	* System.Web_test.dll.sources: add WizardStepBaseTest.cs; WizardStepTest.cs; WizardStepCollectionTest.cs
