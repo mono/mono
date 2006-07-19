@@ -4,7 +4,6 @@
 // Author:
 //	Merav Sudri (meravs@mainsoft.com)
 //
-
 //
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
@@ -787,8 +786,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			row = dv.DoCreateRow (3, DataControlRowType.EmptyDataRow , DataControlRowState.Selected );
 			Assert.AreEqual (3, row.RowIndex, "rowIndex3");
 			Assert.AreEqual (DataControlRowType.EmptyDataRow , row.RowType, "RowType3");
-			Assert.AreEqual (DataControlRowState.Selected , row.RowState, "RowState3");
-			DetailsViewPagerRow was not implemented.
+			Assert.AreEqual (DataControlRowState.Selected , row.RowState, "RowState3");			
 			DetailsViewPagerRow pagerRow = (DetailsViewPagerRow )dv.DoCreateRow (5, DataControlRowType.Pager , DataControlRowState.Edit );
 			Assert.AreEqual (5, pagerRow.RowIndex, "rowIndex4");
 			Assert.AreEqual (DataControlRowType.Pager, pagerRow.RowType, "RowType4");
