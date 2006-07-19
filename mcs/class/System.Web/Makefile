@@ -84,11 +84,11 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/UrlProperty.ascx.cs \
 	Test/mainsoft/NunitWebResources/Web.sitemap \
 	Test/mainsoft/NunitWebResources/WizardTest.skin \
-	Test/mainsoft/NunitWebResources/FooterTemplateTest.aspx
-	Test/mainsoft/NunitWebResources/DetailsViewTemplates.aspx
-	Test/mainsoft/NunitWebResources/DetailsViewDataActions.aspx
-	Test/mainsoft/NunitWebResources/DetailsViewProperties1.aspx
-	Test/mainsoft/NunitWebResources/Bluehills.jpg
+	Test/mainsoft/NunitWebResources/FooterTemplateTest.aspx \
+	Test/mainsoft/NunitWebResources/DetailsViewTemplates.aspx \
+	Test/mainsoft/NunitWebResources/DetailsViewDataActions.aspx \
+	Test/mainsoft/NunitWebResources/DetailsViewProperties1.aspx \
+	Test/mainsoft/NunitWebResources/Bluehills.jpg \
 	Test/mainsoft/MainsoftWebTest/nunitweb_config.xml 
 
 NUNIT_RESOURCE_FILES = $(TEST_RESOURCE_FILES)
