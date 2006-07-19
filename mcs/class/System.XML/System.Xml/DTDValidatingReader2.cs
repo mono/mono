@@ -396,7 +396,11 @@ namespace Mono.Xml
 			isText = false;
 
 			bool b = ReadContent () || currentTextValue != null;
-			if (!b && this.missingIDReferences.Count > 0) {
+			if (!b &&
+#if NET_2_0
+			    (Settings == null || (Settings.ValidationFlags & XmlSchemaValidationFlags.ProcessIdentityConstraints) == 0) &&
+#endif
+			    this.missingIDReferences.Count > 0) {
 				this.HandleError ("Missing ID reference was found: " +
 					String.Join (",", missingIDReferences.ToArray (typeof (string)) as string []),
 					XmlSeverityType.Error);

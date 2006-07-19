@@ -1,3 +1,9 @@
+2006-07-19  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlReader.cs : In Create(), support validation flags for DTD.
+	* DTDValidatingReader2.cs : when NET_2_0 and ProcessIdentityConstraints
+	  is false, skip ID validation.
+
 2006-06-26  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlReader.cs : when Create() received string url, it should set 

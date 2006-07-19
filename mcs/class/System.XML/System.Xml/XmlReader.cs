@@ -410,8 +410,6 @@ namespace System.Xml
 				xvr.ValidationType = ValidationType.DTD;
 				break;
 			case ValidationType.Schema:
-//				xvr = new XmlValidatingReader (reader);
-//				xvr.ValidationType = ValidationType.Schema;
 				return new XmlSchemaValidatingReader (reader, settings);
 			}
 			if (xvr != null)
@@ -420,12 +418,12 @@ namespace System.Xml
 			// Actually I don't think they are treated in DTD validation though...
 			if ((settings.ValidationFlags & XmlSchemaValidationFlags.ProcessIdentityConstraints) == 0)
 				throw new NotImplementedException ();
-			if ((settings.ValidationFlags & XmlSchemaValidationFlags.ProcessInlineSchema) != 0)
-				throw new NotImplementedException ();
-			if ((settings.ValidationFlags & XmlSchemaValidationFlags.ProcessSchemaLocation) != 0)
-				throw new NotImplementedException ();
-			if ((settings.ValidationFlags & XmlSchemaValidationFlags.ReportValidationWarnings) == 0)
-				throw new NotImplementedException ();
+			//if ((settings.ValidationFlags & XmlSchemaValidationFlags.ProcessInlineSchema) != 0)
+			//	throw new NotImplementedException ();
+			//if ((settings.ValidationFlags & XmlSchemaValidationFlags.ProcessSchemaLocation) != 0)
+			//	throw new NotImplementedException ();
+			//if ((settings.ValidationFlags & XmlSchemaValidationFlags.ReportValidationWarnings) == 0)
+			//	throw new NotImplementedException ();
 
 			return xvr != null ? xvr : reader;
 		}
