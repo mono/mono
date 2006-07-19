@@ -1,3 +1,9 @@
+2006-07-18  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListControl.cs: DisplayMember should never be null,
+	and now we assign String.Empty when null is passed to it (this
+	is the .Net way).
+
 2006-07-17  Mike Kestner  <mkestner@novell.com>
 
 	* ListViewItem.cs: restructure Font and subitem Font handling 

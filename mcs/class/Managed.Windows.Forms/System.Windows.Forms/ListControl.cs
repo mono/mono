@@ -97,6 +97,9 @@ namespace System.Windows.Forms
 				return display_member;				
 			}
 			set {
+				if (value == null)
+					value = String.Empty;
+
 				if (display_member == value) {
 					return;
 				}
