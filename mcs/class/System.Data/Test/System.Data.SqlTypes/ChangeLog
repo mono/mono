@@ -1,3 +1,11 @@
+2006-07-19  Senganal T  <tsenganal@novell.com>
+
+	* SqlDecimalTest.cs :
+		- ArithmeticOperators, ConvertPrecToScale,
+		ArithmeticMethods, LessThanOrEqualOperators :
+			Removed for NotWorking Category and added more tests
+	Thanks to Harish Kumar Singh for the patch
+
 2006-02-03  Senganal T  <tsenganal@novell.com>
 
 	* SqlStringTest.cs : Removed NotWorking attribute for testcases fixed

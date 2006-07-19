@@ -127,6 +127,7 @@ namespace System.Data.SqlTypes
 			this.scale = n.scale;
 			this.value = n.value;
 		}
+
 		public SqlDecimal (int value) : this ((decimal)value) { }
 		public SqlDecimal (long value) : this ((decimal)value) { }
 
@@ -152,7 +153,7 @@ namespace System.Data.SqlTypes
 
 			if (this.ToDouble () > (Math.Pow (10, 38) - 1)  || 
 			    this.ToDouble () < -(Math.Pow (10, 38)))
-				throw new SqlTypeException ("Can't convert to SqlDecimal, Out of range ");
+				throw new OverflowException ("Can't convert to SqlDecimal, Out of range ");
 		}
 
 		#endregion
@@ -241,29 +242,30 @@ namespace System.Data.SqlTypes
 			if (n.IsNull)
 				throw new SqlNullValueException ();
 
-			int [] data;
-			byte newScale;
+			byte scale;
 			if (digits == 0)
 				return n;
 			else if (digits > 0) {
 			        prec = (byte)(prec + digits);
-				decimal d = n.Value;
-				if (digits > 0)
-					for (int i = 0; i < digits; i++)
-						d *= 10;
-				data = Decimal.GetBits (d);
-				data [3] = 0;
-				newScale = (byte) (n.scale + digits);
+				scale = (byte) (n.scale + digits);
+				// use Math.Pow once the Ctr (double) is fixed to  handle
+				// values greater than Decimal.MaxValue
+				// the current code creates too many sqldecimal objects 
+				//n = n * (new SqlDecimal ((double)Math.Pow (10, digits)));
+				for (int i = 0; i < digits; i++)
+					n *= 10;
 			} else {
+				if (n.Scale < Math.Abs (digits))
+					throw new SqlTruncateException ();
+
 				if (fRound)
 					n = Round (n, digits + n.scale);
 				else
 					n = Round (Truncate (n, digits + n.scale), digits + n.scale);
-				data = n.Data;
-				newScale = n.scale;
+				scale = n.scale;
 			}
 
-			return new SqlDecimal (prec, newScale, n.positive, data);
+			return new SqlDecimal (prec, scale, n.positive, n.Data);
 		}
 
 		public static SqlDecimal Ceiling (SqlDecimal n)
@@ -287,9 +289,15 @@ namespace System.Data.SqlTypes
 
 		public static SqlDecimal ConvertToPrecScale (SqlDecimal n, int precision, int scale)
 		{
-//			return new SqlDecimal ((byte)precision, (byte)scale, n.IsPositive, n.Data);
-			// FIXME: precision
-			return AdjustScale (n, scale - n.scale, true);
+			int prec = n.Precision;
+			int sc = n.Scale;
+			n = AdjustScale (n, scale-n.scale, true);
+			if ((n.Scale >= sc) && (precision < n.Precision))
+				throw new SqlTruncateException ();
+			else{
+				prec = precision; 	
+				return new SqlDecimal ((byte)prec, n.scale, n.IsPositive, n.Data);
+			}
 		}
 
 		public static SqlDecimal Divide (SqlDecimal x, SqlDecimal y)
@@ -398,14 +406,9 @@ namespace System.Data.SqlTypes
 
 		public static SqlInt32 Sign (SqlDecimal n)
 		{
-			SqlInt32 result = 0;
-
-			if (n >= new SqlDecimal (0))
-				result = 1;
-			else
-				result = -1;
-
-			return result;
+			if (n.IsNull)
+				return SqlInt32.Null;
+			return (SqlInt32) (n.IsPositive ? 1 : -1);
 		}
 
 		public static SqlDecimal Subtract (SqlDecimal x, SqlDecimal y)
@@ -503,9 +506,6 @@ namespace System.Data.SqlTypes
 				Div128By32 (ref hi, ref lo, 10, ref rest);
 				Result.Insert (0, rest.ToString ());
 			}
-
-			while (Result.Length < this.Precision)
-			        Result.Append ("0");
 
 			while (Result.Length > this.Precision)
 			       Result.Remove (Result.Length - 1, 1);
@@ -1064,44 +1064,46 @@ namespace System.Data.SqlTypes
 
 		public static SqlDecimal operator + (SqlDecimal x, SqlDecimal y)
 		{
-			// if one of them is negative, perform subtraction
-			if (x.IsPositive && !y.IsPositive) return x - y;
-			if (y.IsPositive && !x.IsPositive) return y - x;
-
+			if (x.IsNull || y.IsNull)
+				return SqlDecimal.Null;
+			 //if one of them is negative, perform subtraction
+			if (x.IsPositive && !y.IsPositive){
+				y = new SqlDecimal (y.Precision, y.Scale, !y.IsPositive, y.Data);
+				return (x - y);			
+			}
+			if (!x.IsPositive && y.IsPositive){
+				x = new SqlDecimal (x.Precision, x.Scale, !x.IsPositive, x.Data);
+				return (y - x);
+			}
+			if (!x.IsPositive && !y.IsPositive){
+				x = new SqlDecimal (x.Precision, x.Scale, !x.IsPositive, x.Data);
+				y = new SqlDecimal (y.Precision, y.Scale, !y.IsPositive, y.Data);
+				x = (x + y);
+				return new SqlDecimal (x.Precision, x.Scale, !x.IsPositive, x.Data);
+			}									
 			// adjust the scale to the larger of the two beforehand
 			if (x.scale > y.scale)
-				y = SqlDecimal.AdjustScale (y, x.scale - y.scale, true); // FIXME: should be false (fix it after AdjustScale(,,false) is fixed)
+				y = SqlDecimal.AdjustScale (y, x.scale - y.scale, false); 
 			else if (y.scale > x.scale)
-				x = SqlDecimal.AdjustScale (x, y.scale - x.scale, true); // FIXME: should be false (fix it after AdjustScale(,,false) is fixed)
+				x = SqlDecimal.AdjustScale (x, y.scale - x.scale, false); 
 
-			// set the precision to the greater of the two
-			byte resultPrecision;
-			if (x.Precision > y.Precision)
-				resultPrecision = x.Precision;
-			else
-				resultPrecision = y.Precision;
-				
-			int[] xData = x.Data;
-			int[] yData = y.Data;
-			int[] resultBits = new int[4];
+			byte resultPrecision = (byte)(Math.Max (x.Scale, y.Scale) +
+	 					 Math.Max (x.Precision - x.Scale, y.Precision - y.Scale) + 1);
 
-			ulong res; 
+			if (resultPrecision > MaxPrecision)
+				resultPrecision = MaxPrecision;
+			
+			int [] xData = x.Data; 
+			int [] yData = y.Data;
+			int [] resultBits = new int[4];
 			ulong carry = 0;
-
-			// add one at a time, and carry the results over to the next
-			for (int i = 0; i < 4; i +=1)
-			{
-				carry = 0;
-				res = (ulong)(xData[i]) + (ulong)(yData[i]) + carry;
-				if (res > Int32.MaxValue)
-				{
-					carry = res - Int32.MaxValue;
-					res = Int32.MaxValue;
-				}
-				resultBits [i] = (int)res;
+			ulong res = 0;
+			for (int i = 0; i < 4; i++){
+				res = (ulong)((uint)xData [i]) + (ulong)((uint)yData [i]) + carry;
+				resultBits [i] = (int) (res & (UInt32.MaxValue));
+				carry = res >> 32;
 			}
 
-			// if we have carry left, then throw an exception
 			if (carry > 0)
 				throw new OverflowException ();
 			else
@@ -1110,7 +1112,9 @@ namespace System.Data.SqlTypes
 
 		public static SqlDecimal operator / (SqlDecimal x, SqlDecimal y)
 		{
-			//			return new SqlDecimal (x.Value / y.Value);
+			if (x.IsNull || y.IsNull)
+				return SqlDecimal.Null;
+
      			return DecimalDiv (x, y);
 		}
 
@@ -1119,23 +1123,28 @@ namespace System.Data.SqlTypes
 			if (x.IsNull || y.IsNull) 
 				return SqlBoolean.Null;
 
+			if (x.IsPositive != y.IsPositive)
+				return SqlBoolean.False;
+
 			if (x.Scale > y.Scale)
 				y = SqlDecimal.AdjustScale(y, x.Scale - y.Scale, false);
 			else if (y.Scale > x.Scale)
 				x = SqlDecimal.AdjustScale(y, y.Scale - x.Scale, false);
 
 			for (int i = 0; i < 4; i += 1)
-			{
 				if (x.Data[i] != y.Data[i])
-					return new SqlBoolean (false);
-			}
-			return new SqlBoolean (true);
+					return SqlBoolean.False;
+
+			return SqlBoolean.True;
 		}
 
 		public static SqlBoolean operator > (SqlDecimal x, SqlDecimal y)
 		{
 			if (x.IsNull || y.IsNull) 
 				return SqlBoolean.Null;
+
+			if (x.IsPositive != y.IsPositive)
+				return new SqlBoolean (x.IsPositive);
 
 			if (x.Scale > y.Scale)
 				y = SqlDecimal.AdjustScale(y, x.Scale - y.Scale, false);
@@ -1157,6 +1166,9 @@ namespace System.Data.SqlTypes
 			if (x.IsNull || y.IsNull) 
 				return SqlBoolean.Null;
 
+			if (x.IsPositive != y.IsPositive)
+				return new SqlBoolean (x.IsPositive);
+
 			if (x.Scale > y.Scale)
 				y = SqlDecimal.AdjustScale(y, x.Scale - y.Scale, true);
 			else if (y.Scale > x.Scale)
@@ -1177,6 +1189,9 @@ namespace System.Data.SqlTypes
 			if (x.IsNull || y.IsNull) 
 				return SqlBoolean.Null;
 
+			if (x.IsPositive != y.IsPositive)
+				return SqlBoolean.True;
+
 			if (x.Scale > y.Scale)
 				x = SqlDecimal.AdjustScale(x, y.Scale - x.Scale, true);
 			else if (y.Scale > x.Scale)
@@ -1185,16 +1200,18 @@ namespace System.Data.SqlTypes
 			for (int i = 0; i < 4; i += 1)
 			{
 				if (x.Data[i] != y.Data[i])
-					return new SqlBoolean (true);
+					return SqlBoolean.True;
 			}
-			return new SqlBoolean (false);
+			return SqlBoolean.False;
 		}
 
 		public static SqlBoolean operator < (SqlDecimal x, SqlDecimal y)
 		{
-
 			if (x.IsNull || y.IsNull) 
 				return SqlBoolean.Null;
+
+			if (x.IsPositive != y.IsPositive)
+				return new SqlBoolean (y.IsPositive);
 
 			if (x.Scale > y.Scale)
 				y = SqlDecimal.AdjustScale(y, x.Scale - y.Scale, true);
@@ -1209,13 +1226,15 @@ namespace System.Data.SqlTypes
 				return new SqlBoolean (x.Data[i] < y.Data[i]);
 			}
 			return new SqlBoolean (false);
-
 		}
 
 		public static SqlBoolean operator <= (SqlDecimal x, SqlDecimal y)
 		{
 			if (x.IsNull || y.IsNull) 
 				return SqlBoolean.Null;
+
+			if (x.IsPositive != y.IsPositive)
+				return new SqlBoolean (y.IsPositive);
 
 			if (x.Scale > y.Scale)
 				y = SqlDecimal.AdjustScale(y, x.Scale - y.Scale, true);
@@ -1234,19 +1253,15 @@ namespace System.Data.SqlTypes
 
 		public static SqlDecimal operator * (SqlDecimal x, SqlDecimal y)
 		{
-			// adjust the scale to the smaller of the two beforehand
-			if (x.Scale > y.Scale)
-				x = SqlDecimal.AdjustScale(x, y.Scale - x.Scale, true);
-			else if (y.Scale > x.Scale)
-				y = SqlDecimal.AdjustScale(y, x.Scale - y.Scale, true);
+			if (x.IsNull || y.IsNull)
+				return SqlDecimal.Null;
 
 			// set the precision to the greater of the two
-			byte resultPrecision;
-			if (x.Precision > y.Precision)
-				resultPrecision = x.Precision;
-			else
-				resultPrecision = y.Precision;
-				
+			byte resultPrecision = (byte)(x.Precision + y.Precision + 1);
+			byte resultScale = (byte)(x.Scale + y.Scale);
+			if (resultPrecision > MaxPrecision)
+				resultPrecision = MaxPrecision;
+
 			int[] xData = x.Data;
 			int[] yData = y.Data;
 			int[] resultBits = new int[4];
@@ -1254,45 +1269,86 @@ namespace System.Data.SqlTypes
 			ulong res; 
 			ulong carry = 0;
 
-			// multiply one at a time, and carry the results over to the next
-			for (int i = 0; i < 4; i +=1)
-			{
-				carry = 0;
-				res = (ulong)(xData[i]) * (ulong)(yData[i]) + carry;
-				if (res > Int32.MaxValue)
-				{
-					carry = res - Int32.MaxValue;
-					res = Int32.MaxValue;
-				}
-				resultBits [i] = (int)res;
+			for (int i=0; i<4; ++i) {
+				res = 0;
+				for (int j=i; j<=i; ++j)
+					res += ((ulong)(uint) xData[j]) *  ((ulong)(uint) yData[i-j]);
+				resultBits [i] = (int) ((res + carry) & UInt32.MaxValue);
+				carry = res >> 32;
 			}
-
+			
 			// if we have carry left, then throw an exception
 			if (carry > 0)
 				throw new OverflowException ();
 			else
-				return new SqlDecimal (resultPrecision, x.Scale, (x.IsPositive == y.IsPositive), resultBits);
-				
+				return new SqlDecimal (resultPrecision, resultScale, (x.IsPositive == y.IsPositive), resultBits);
 		}
 
 		public static SqlDecimal operator - (SqlDecimal x, SqlDecimal y)
 		{
-			if (x.IsPositive && !y.IsPositive) return x + y;
-			if (!x.IsPositive && y.IsPositive) return -(x + y);
-			if (!x.IsPositive && !y.IsPositive) return y - x;
+			if (x.IsNull || y.IsNull)
+				return SqlDecimal.Null;
 
-			// otherwise, x is positive and y is positive
-			bool resultPositive = (bool)(x > y);
-			int[] yData = y.Data;
+			if (x.IsPositive && !y.IsPositive){
+				y = new SqlDecimal (y.Precision, y.Scale, !y.IsPositive, y.Data);
+				return x + y;
+			}
+			if (!x.IsPositive && y.IsPositive){
+				x = new SqlDecimal (x.Precision, x.Scale, !x.IsPositive, x.Data);
+				x = (x + y);
+				return new SqlDecimal (x.Precision, x.Scale, false, x.Data);
+			}
+			if (!x.IsPositive && !y.IsPositive){
+				y = new SqlDecimal (y.Precision, y.Scale, !y.IsPositive, y.Data);
+				x = new SqlDecimal(x.Precision, x.Scale, !x.IsPositive, x.Data);
+				return (y - x);
+			}
+			// adjust the scale to the larger of the two beforehand
+			if (x.scale > y.scale)
+				y = SqlDecimal.AdjustScale (y, x.scale - y.scale, false); 
+			else if (y.scale > x.scale)
+				x = SqlDecimal.AdjustScale (x, y.scale - x.scale, false);
 
-			for (int i = 0; i < 4; i += 1) yData[i] = -yData[i];
+			//calculation of the new Precision for the result
+			byte resultPrecision = (byte)(Math.Max (x.Scale, y.Scale) +
+					Math.Max (x.Precision - x.Scale, y.Precision - y.Scale));
 
-			SqlDecimal yInverse = new SqlDecimal (y.Precision, y.Scale, y.IsPositive, yData);
+			int[] op1_Data;
+			int[] op2_Data;
+			if (x >= y) {
+				op1_Data = x.Data;
+				op2_Data = y.Data;
+			} else {
+				op1_Data = y.Data;
+				op2_Data = x.Data;
+			}
 
-			if (resultPositive)
-				return x + yInverse;
+			ulong res = 0;
+			int carry = 0;
+			int[] resultBits = new int[4];
+
+
+			/*
+			 if ((uint)op2_Data [i] > (uint)op1_Data [i]) {
+				 carry = UInt32.MaxValue;
+				 op2_Data [i] = op2_Data [i] >> 1;
+			 } else
+				 carr = 0;
+				res = (uint)carry; +(ulong)((uint)op1_Data [i]) - (ulong)((uint)op2_Data [i]) 
+			*/
+
+			for (int i = 0; i < 4; i += 1) {
+				res = (ulong)((uint)op1_Data [i]) - (ulong)((uint)op2_Data [i]) + (ulong)carry;
+				carry = 0;
+				if ((uint)op2_Data [i] > (uint)op1_Data [i])
+					carry = -1;
+				resultBits [i] = (int)res;
+			}
+
+			if (carry > 0)
+				throw new OverflowException ();
 			else
-				return -(x + yInverse);
+				return new SqlDecimal (resultPrecision, x.Scale, (x>=y).Value, resultBits);
 		}
 
 		public static SqlDecimal operator - (SqlDecimal n)

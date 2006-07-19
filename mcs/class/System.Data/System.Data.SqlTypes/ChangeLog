@@ -1,3 +1,18 @@
+2006-07-19  Senganal T  <tsenganal@novell.com>
+
+	* SqlDecimal.cs :
+		- Ctr : Throw OverflowException is value oveflows
+		- AdjustScale : Support values greater than Decimal.MaxValue.
+		Throw SqlTruncateException if scale cannot be adjusted.
+		- ConvertToPrecScale : Fix the precision
+		- Sign : use IsPositive to check for sign
+		- ToString : Do not append extrs '0'
+		- operator + , -, * : Support values greater than
+		decimal.maxvalue. Fix for infinite loop when '-' is
+		invoked for some cases.
+		- operators >,<,>=.<=,==,!= : Fix operations on negative numbers
+	Thanks to Harish Kumar Singh for the patch
+	
 2006-02-17  Chris Toshok  <toshok@ximian.com>
 
 	* StorageState.cs: correct namespace, and remove "Delayed"
