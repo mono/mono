@@ -1,3 +1,13 @@
+2006-07-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_method_to_ir): Clear ins_flag at the end of CEE_CALL. Fixes
+	#78826.
+
+	* mini.c (mono_patch_info_dup_mp): New helper function.
+	
+	* aot-compiler.c (compile_method): Fix some of the memory allocated during
+	compilation. Fixes #78827.
+
 2006-07-18  Kornél Pál  <kornelpal@gmail.com>
 
 	* declsec.c: Use original security informations for
