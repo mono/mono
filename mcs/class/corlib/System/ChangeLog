@@ -1,3 +1,7 @@
+2006-07-19  Kornél Pál  <kornelpal@gmail.com>
+
+	* String.cs: Improve CreateString () performance when length is zero.
+
 2006-07-18  Kornél Pál  <kornelpal@gmail.com>
 
 	* String.cs: Added CreateString () methods. Constructors with matching

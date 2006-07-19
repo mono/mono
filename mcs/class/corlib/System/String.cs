@@ -1896,12 +1896,14 @@ namespace System
 			bool isDefaultEncoding;
 
 			if (isDefaultEncoding = (enc == null)) {
-				if (value == null)
 #if NET_2_0
+				if (value == null)
 					throw new ArgumentNullException ("value");
+				if (length == 0)
 #else
-					return String.Empty;
+				if (value == null || length == 0)
 #endif
+					return String.Empty;
 
 				enc = Encoding.Default;
 			}
