@@ -1,5 +1,11 @@
 2006-07-19  Mike Kestner  <mkestner@novell.com>
 
+	* ThemeWin32Classic.cs: use parent background color when drawing
+	flat toolbars.  Restructure the conditionals to make sure non-flat
+	non-Divider toolbars are filled too.  Fixes #78837.
+
+2006-07-19  Mike Kestner  <mkestner@novell.com>
+
 	* ListBox.cs: Sort on collection changes even if the handle
 	isn't created yet.  Fixes #78813.
 

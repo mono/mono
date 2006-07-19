@@ -3707,29 +3707,24 @@ namespace System.Windows.Forms
 				if (clip_rectangle.Right == control.Right) {
 					dc.DrawLine (SystemPens.ControlDark, clip_rectangle.Right - 1, 1, clip_rectangle.Right - 1, control.Bottom - 1);
 				}
-			} else if (control.Divider) {
+			} else {
 
-				if (control.Appearance == ToolBarAppearance.Flat &&
-						control.Parent != null && control.Parent.BackgroundImage != null) {
-					using (TextureBrush b = new TextureBrush (control.Parent.BackgroundImage, WrapMode.Tile)) {
-						dc.FillRectangle (b, clip_rectangle);
+				if (control.Appearance == ToolBarAppearance.Flat && control.Parent != null) {
+					if (control.Parent.BackgroundImage != null) {
+						using (TextureBrush b = new TextureBrush (control.Parent.BackgroundImage, WrapMode.Tile))
+							dc.FillRectangle (b, clip_rectangle);
+					} else {
+						dc.FillRectangle (ResPool.GetSolidBrush (control.Parent.BackColor), clip_rectangle);
 					}
 				} else {
 					dc.FillRectangle (SystemBrushes.Control, clip_rectangle);
 				}
 
-				if (clip_rectangle.Y < 2) {
+				if (control.Divider && clip_rectangle.Y < 2) {
 					if (clip_rectangle.Y < 1) {
 						dc.DrawLine (SystemPens.ControlDark, clip_rectangle.X, 0, clip_rectangle.Right, 0);
 					}
 					dc.DrawLine (SystemPens.ControlLightLight, clip_rectangle.X, 1, clip_rectangle.Right, 1);
-				}
-			} else {
-				if (control.Appearance == ToolBarAppearance.Flat &&
-						control.Parent != null && control.Parent.BackgroundImage != null) {
-					using (TextureBrush b = new TextureBrush (control.Parent.BackgroundImage, WrapMode.Tile)) {
-						dc.FillRectangle (b, clip_rectangle);
-					}
 				}
 			}
 
