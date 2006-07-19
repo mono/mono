@@ -1,3 +1,7 @@
+2006-07-18 Andrew Skiba <andrews@mainsoft.com>
+
+	* DetailsViewPagerRow.cs: add a stub for this class
+
 2006-07-17 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* GridView: fixed DataKeyNames property, moved to ControlState
