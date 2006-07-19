@@ -426,6 +426,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 #endif
 		[Test]
+		[Category ("NotWorking")]
 		public void BackImageUrl ()
 		{
 			TableStyle ts = new TableStyle ();

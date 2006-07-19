@@ -1,5 +1,10 @@
 2006-07-19 Andrew Skiba <andrews@mainsoft.com>
 
+	* DetailsViewTest.cs: #if NET_2_0
+	* TableStyleTest.cs: Category ("NotWorking")
+	
+2006-07-19 Andrew Skiba <andrews@mainsoft.com>
+
 	* TableStyleTest.cs: add a test for BackImageUrl rendering
 
 2006-07-19 Merav Sudri <meravs@mainsoft.com>
