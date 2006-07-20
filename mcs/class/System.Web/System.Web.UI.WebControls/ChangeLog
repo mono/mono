@@ -1,5 +1,12 @@
 2006-07-20 Andrew Skiba <andrews@mainsoft.com>
 
+	* DetailsView.cs: many fixes: initialize PageCount with 0; initialize
+	Rows with empty collection; call EnsureChildControls from get Row;
+	NullReference in DeleteItem; fix RenderGrid (ideas from GridView);
+	implemented IPostBackContainer.GetPostBackOptions.
+
+2006-07-20 Andrew Skiba <andrews@mainsoft.com>
+
 	* DetailsView.cs: create HeaderRow and FooterRow even when HeaderText
 	and FooterText are empty, to match .NET. Otherwise we have NullReference
 	when .NET does not.

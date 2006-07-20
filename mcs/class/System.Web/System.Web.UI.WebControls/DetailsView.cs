@@ -108,10 +108,11 @@ namespace System.Web.UI.WebControls
 		// Control state
 		int pageIndex;
 		DetailsViewMode currentMode = DetailsViewMode.ReadOnly; 
-		int pageCount = -1;
+		int pageCount = 0;
 		
 		public DetailsView ()
 		{
+			rows = new DetailsViewRowCollection (new ArrayList ());
 		}
 		
 		public event EventHandler PageIndexChanged {
@@ -758,7 +759,7 @@ namespace System.Web.UI.WebControls
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public virtual int PageCount {
 			get {
-				if (pageCount != -1) return pageCount;
+				if (pageCount != 0) return pageCount;
 				EnsureDataBound ();
 				return pageCount;
 			}
@@ -822,7 +823,7 @@ namespace System.Web.UI.WebControls
 		[BrowsableAttribute (false)]
 		public virtual DetailsViewRowCollection Rows {
 			get {
-				EnsureDataBound ();
+				EnsureChildControls ();
 				return rows;
 			}
 		}
@@ -974,7 +975,7 @@ namespace System.Web.UI.WebControls
 		{
 			if (Initialized) {
 				RequiresDataBinding = true;
-				pageCount = -1;
+				pageCount = 0;
 			}
 		}
 		
@@ -1483,7 +1484,7 @@ namespace System.Web.UI.WebControls
 
 		public virtual void DeleteItem ()
 		{
-			currentEditRowKeys = DataKey.Values;
+			currentEditRowKeys = DataKey == null ? null : DataKey.Values;
 			currentEditNewValues = GetRowValues (true, true);
 			
 			DetailsViewDeleteEventArgs args = new DetailsViewDeleteEventArgs (PageIndex, currentEditRowKeys, currentEditNewValues);
@@ -1723,26 +1724,8 @@ namespace System.Web.UI.WebControls
 		
 		void RenderGrid (HtmlTextWriter writer)
 		{
-			switch (GridLines) {
-			case GridLines.Horizontal:
-				writer.AddAttribute (HtmlTextWriterAttribute.Rules, "rows");
-				writer.AddAttribute (HtmlTextWriterAttribute.Border, "1");
-				break;
-			case GridLines.Vertical:
-				writer.AddAttribute (HtmlTextWriterAttribute.Rules, "cols");
-				writer.AddAttribute (HtmlTextWriterAttribute.Border, "1");
-				break;
-			case GridLines.Both:
-				writer.AddAttribute (HtmlTextWriterAttribute.Rules, "all");
-				writer.AddAttribute (HtmlTextWriterAttribute.Border, "1");
-				break;
-			default:
-				writer.AddAttribute (HtmlTextWriterAttribute.Border, "0");
-				break;
-			}
-			
-			writer.AddAttribute (HtmlTextWriterAttribute.Cellspacing, "0");
-			writer.AddStyleAttribute (HtmlTextWriterStyle.BorderCollapse, "collapse");
+			table.GridLines = GridLines;
+			table.ControlStyle.MergeWith (ControlStyle);
 			table.RenderBeginTag (writer);
 			
 			foreach (DetailsViewRow row in table.Rows)
@@ -1799,7 +1782,8 @@ namespace System.Web.UI.WebControls
 		[MonoTODO]
 		PostBackOptions IPostBackContainer.GetPostBackOptions (IButtonControl control)
 		{
-			throw new NotImplementedException ();
+			PostBackOptions pbo = new PostBackOptions (this, control.CommandName + "$" + control.CommandArgument);
+			return pbo;
 		}
 	}
 }
