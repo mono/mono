@@ -443,6 +443,9 @@ public class Page : TemplateControl, IHttpHandler
 	{
 		get {
 			if (_context == null)
+				_context = HttpContext.Current;
+
+			if (_context == null)
 				throw new HttpException ("Session is not available without context");
 
 			if (_context.Session == null)

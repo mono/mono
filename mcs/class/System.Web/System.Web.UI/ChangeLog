@@ -1,5 +1,10 @@
 2006-07-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Page.cs: when ProcessRequest is not called, get the session from
+	the current context. Fixes bug #78730.
+
+2006-07-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Page.cs: fix IsPostback for AJAX calls to match MS behavior. Patch
 	by Peijen Lin that closes bug #78646.
 
