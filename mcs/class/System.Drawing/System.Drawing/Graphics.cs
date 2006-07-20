@@ -52,6 +52,9 @@ namespace System.Drawing
 		private bool disposed = false;
 		private static float defDpiX = 0;
 		private static float defDpiY = 0;
+#if NET_2_0
+		private IntPtr deviceContextHdc;
+#endif
 
 #if !NET_2_0
 		[ComVisible(false)]
@@ -1771,6 +1774,9 @@ namespace System.Drawing
 		{
 			IntPtr hdc;
 			GDIPlus.CheckStatus (GDIPlus.GdipGetDC (this.nativeObject, out hdc));
+#if NET_2_0
+			deviceContextHdc = hdc;
+#endif
 			return hdc;
 		}
 
@@ -2034,13 +2040,22 @@ namespace System.Drawing
 		{
 			Status status = GDIPlus.GdipReleaseDC (nativeObject, hdc);
 			GDIPlus.CheckStatus (status);
-		}
 #if NET_2_0
-		public void ReleaseHdc()
+			if (hdc == deviceContextHdc)
+				deviceContextHdc = IntPtr.Zero;
+#endif
+		}
+
+#if NET_2_0
+		public void ReleaseHdc ()
 		{
-		      
+			if (deviceContextHdc == IntPtr.Zero)
+				throw new ArgumentException ("Invalid Handle");
+
+			ReleaseHdc (deviceContextHdc);
 		}
 #endif
+
 		[MonoTODO]
 #if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
