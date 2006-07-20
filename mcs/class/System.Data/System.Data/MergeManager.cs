@@ -59,19 +59,11 @@ namespace System.Data
 			targetSet.EnforceConstraints = false;
 
 			DataTable targetTable = null;
-			if (!AdjustSchema(targetSet, sourceTable, missingSchemaAction,ref targetTable)) {
+			if (!AdjustSchema(targetSet, sourceTable, missingSchemaAction,ref targetTable))
 				return;
-			}
-			if (targetTable != null) {
-				checkColumnTypes(targetTable, sourceTable); // check that the colums datatype is the same
+			if (targetTable != null)
 				fillData(targetTable, sourceTable, preserveChanges);
-			}
 			targetSet.EnforceConstraints = savedEnfoceConstraints;
-			
-			if (!targetSet.EnforceConstraints && targetTable != null) {
-				// indexes are still outdated
-				targetTable.ResetIndexes();
-			}
 		}
 
 		internal static void Merge (DataTable targetTable, 
@@ -90,9 +82,7 @@ namespace System.Data
 			if (!AdjustSchema(targetTable, sourceTable, missingSchemaAction))
 				return;
 
-			checkColumnTypes(targetTable, sourceTable); // check that the colums datatype is the same
 			fillData(targetTable, sourceTable, preserveChanges);
-
 			targetTable.EnforceConstraints = savedEnforceConstraints;
 		}
 
@@ -111,23 +101,16 @@ namespace System.Data
 				DataRow row = sourceRows[i];
 				DataTable sourceTable = row.Table;
 				DataTable targetTable = null;
-				if (!AdjustSchema(targetSet, sourceTable, missingSchemaAction,ref targetTable)) {
+				if (!AdjustSchema(targetSet, sourceTable, missingSchemaAction,ref targetTable))
 					return;
-				}
 				if (targetTable != null) {
-					checkColumnTypes(targetTable, row.Table);
 					MergeRow(targetTable, row, preserveChanges);
-					if (!(targetTables.IndexOf(targetTable) >= 0)) {
+					if (!(targetTables.IndexOf(targetTable) >= 0))
 						targetTables.Add(targetTable);
-					}
 				}
 			}
 
 			targetSet.EnforceConstraints = savedEnfoceConstraints;
-
-			foreach(DataTable table in targetTables) {
-				table.ResetIndexes();
-			}
 		}
 
 		// merge a row into a target table.
@@ -330,6 +313,8 @@ namespace System.Data
 
 			if (!AdjustPrimaryKeys(targetTable, sourceTable))
 				return false;
+
+			checkColumnTypes (targetTable, sourceTable);
 
 			return true;
 		}

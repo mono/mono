@@ -1,3 +1,9 @@
+2006-07-20  Senganal T <tsenganal@novell.com>
+
+	* DataSetTest2.cs : Test exception is not raised when 
+	missingschemaaction is set to ignore. 
+	Thanks to Deepak Kr Valechha for the testcase
+
 2006-07-17  Senganal T <tsenganal@novell.com>
 
 	* DataViewTest2.cs :

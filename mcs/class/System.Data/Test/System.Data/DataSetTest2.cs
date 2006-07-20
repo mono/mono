@@ -3413,5 +3413,34 @@ namespace MonoTests_System.Data
 			//the child table data must not be repeated.
 			Assert.AreEqual (dataset_xml.IndexOf (child_xml), dataset_xml.LastIndexOf (child_xml), "#1");
 		}
+
+		[Test]	
+        	public void MergeTest_ColumnTypeMismatch ()
+        	{
+			DataSet dataSet = new DataSet ();
+			dataSet.Tables.Add (new DataTable ());
+			dataSet.Tables [0].Columns.Add (new DataColumn ("id", typeof (int)));
+			dataSet.Tables [0].Columns.Add (new DataColumn ("name", typeof (string)));
+
+			DataSet ds = new DataSet ();
+			ds.Tables.Add (new DataTable ());
+			ds.Tables [0].Columns.Add (new DataColumn ("id", typeof (string)));
+
+			try {
+				ds.Merge (dataSet, true, MissingSchemaAction.Add);
+				Assert.Fail ("#1");
+			} catch (DataException e) {}
+
+			ds = new DataSet ();
+			ds.Tables.Add (new DataTable ());
+			ds.Tables [0].Columns.Add (new DataColumn("id", typeof (string)));
+
+			ds.Merge (dataSet, true, MissingSchemaAction.Ignore);
+
+			Assert.AreEqual ("Table1", ds.Tables [0].TableName, "#2");
+			Assert.AreEqual (1, ds.Tables.Count, "#3");
+			Assert.AreEqual (1, ds.Tables [0].Columns.Count, "#4"); 	
+			Assert.AreEqual (typeof (string), ds.Tables [0].Columns [0].DataType, "#5");
+        	}
 	}
 }
