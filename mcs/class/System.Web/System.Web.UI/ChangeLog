@@ -1,3 +1,8 @@
+2006-07-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Page.cs: fix IsPostback for AJAX calls to match MS behavior. Patch
+	by Peijen Lin that closes bug #78646.
+
 2006-06-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TemplateControlParser.cs: fix compilation caching when more than one

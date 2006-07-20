@@ -667,8 +667,7 @@ public class Page : TemplateControl, IHttpHandler
 			coll = req.QueryString;
 		}
 
-		
-		if (coll == null || coll ["__VIEWSTATE"] == null)
+		if (coll != null && coll ["__VIEWSTATE"] == null && coll ["__EVENTTARGET"] == null)
 			return null;
 
 		return coll;
