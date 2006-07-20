@@ -43,6 +43,14 @@ namespace MonoTests.System.Windows.Forms
 			lc.DisplayMember = null;
 			Assert.AreEqual (String.Empty, lc.DisplayMember, "#1");
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void DataSourceWrongArgumentType ()
+		{
+			ListControlChild lc = new ListControlChild ();
+			lc.DataSource = new object ();
+		}
 	}
 
 	public class ListControlChild : ListControl

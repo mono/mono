@@ -1,3 +1,8 @@
+2006-07-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListControlTest.cs: Added DataSourceWrongArgumentType method
+	to test the exception being thrown.
+
 2006-07-18  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListControlTest.cs: Added.
