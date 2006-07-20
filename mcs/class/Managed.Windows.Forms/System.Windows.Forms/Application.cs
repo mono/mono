@@ -271,9 +271,6 @@ namespace System.Windows.Forms {
 
 				version = Assembly.GetEntryAssembly().GetName().Version.ToString();
 
-				if (version.StartsWith("0.")) {
-					version="1." + version.Substring(2);
-				}
 				return version;
 			}
 		}

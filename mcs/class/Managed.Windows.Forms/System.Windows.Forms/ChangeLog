@@ -1,3 +1,10 @@
+2006-07-20  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Application.cs: Removed code that forces 1.x for the version
+	  number if the version started with 0. Not sure why that code was
+	  there and I couldn't find any bugs that indicated we needed it.
+	  Fixes #78869
+
 2006-07-20  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ThemeWin32Classic.cs: Don't throw a NotImplementedException in
