@@ -223,6 +223,8 @@ namespace System.Web.UI.WebControls {
 
 			if (DataField == ThisExpression)
 				return dataItem.ToString ();
+			else if (DataField == string.Empty)
+				return null;
 
 			return DataBinder.GetPropertyValue (dataItem, DataField);
 		}
