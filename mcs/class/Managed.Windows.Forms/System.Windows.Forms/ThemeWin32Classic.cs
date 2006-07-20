@@ -83,7 +83,8 @@ namespace System.Windows.Forms
 		}
 
 		public override void ResetDefaults() {
-			throw new NotImplementedException("Need to implement ResetDefaults() for Win32 theme");
+			Console.WriteLine("NOT IMPLEMENTED: ResetDefault()");
+			//throw new NotImplementedException("Need to implement ResetDefaults() for Win32 theme");
 		}
 
 		public override bool DoubleBufferingSupported {
@@ -1201,8 +1202,8 @@ namespace System.Windows.Forms
 
 			if (grid.Rows[row].IsExpanded) {
 
-				Region prev_clip = g.Clip;
-				Region current_clip;
+				//Region prev_clip = g.Clip;
+				//Region current_clip;
 				Rectangle rect_cell = row_rect;
 
 				rect_cell.X = row_rect.X + grid.GetColumnStartingPixel (grid.FirstVisibleColumn) - grid.HorizPixelOffset;

@@ -1,3 +1,9 @@
+2006-07-20  Alexander Olk  <alex.olk@googlemail.com>
+
+	* ThemeWin32Classic.cs: Don't throw a NotImplementedException in
+	  ResetDefaults(), just write some output to the console until it's
+	  implemented. Fixes bug #78907 for now. Eliminated two warnings.
+
 2006-07-19  Jonathan Chambers  <joncham@gmail.com>
 
 	* PropertyGridView.cs: set StartPosition of drop down forms
