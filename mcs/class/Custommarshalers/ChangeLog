@@ -1,8 +1,0 @@
-2004-04-26  Sebastien Pouliot  <sebastien@ximian.com>
-
-	* System.Runtime.InteropServices.CustomMarshalers.dll.sources:
-	Added Assembly/AssemblyInfo.cs, Locale.cs and TODO to the build.
-
-2003-03-22  Martin Willemoes Hansen <mwh@sysrq.dk>
-
-	* Stubbed assembly
