@@ -1,3 +1,9 @@
+2006-07-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestImageFormat.cs: Added test cases for well known image format
+	(which returns a human readable name when the ImageFormat comes from
+	the static properties).
+
 2006-06-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestImageAttribute.cs: Fix namespace and split test for easier 

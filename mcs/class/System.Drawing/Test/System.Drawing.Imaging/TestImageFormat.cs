@@ -35,7 +35,7 @@ namespace MonoTests.System.Drawing.Imaging {
 
 	[TestFixture]
 	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
-	public class TestImageFormat {
+	public class ImageFormatTest {
 
 		private static ImageFormat BmpImageFormat = new ImageFormat (new Guid ("b96b3cab-0728-11d3-9d7b-0000f81ef32e"));
 		private static ImageFormat EmfImageFormat = new ImageFormat (new Guid ("b96b3cac-0728-11d3-9d7b-0000f81ef32e"));
@@ -78,6 +78,21 @@ namespace MonoTests.System.Drawing.Imaging {
 			Assert.AreEqual ("[ImageFormat: b96b3cae-0728-11d3-9d7b-0000f81ef32e]", JpegImageFormat.ToString (), "ToStringTest#9");
 			Assert.AreEqual ("[ImageFormat: b96b3cad-0728-11d3-9d7b-0000f81ef32e]", WmfImageFormat.ToString (), "ToStringTest#10");
 			Assert.AreEqual ("[ImageFormat: 48749428-316f-496a-ab30-c819a92b3137]", CustomImageFormat.ToString (), "ToStringTest#11");
+		}
+
+		[Test]
+		public void WellKnown_ToString ()
+		{
+			Assert.AreEqual ("Bmp", ImageFormat.Bmp.ToString (),"ToStringTest#1");
+			Assert.AreEqual ("Emf", ImageFormat.Emf.ToString (), "ToStringTest#2");
+			Assert.AreEqual ("Exif", ImageFormat.Exif.ToString (), "ToStringTest#3");
+			Assert.AreEqual ("Gif", ImageFormat.Gif.ToString (), "ToStringTest#4");
+			Assert.AreEqual ("Tiff", ImageFormat.Tiff.ToString (), "ToStringTest#5");
+			Assert.AreEqual ("Png", ImageFormat.Png.ToString (), "ToStringTest#6");
+			Assert.AreEqual ("MemoryBMP", ImageFormat.MemoryBmp.ToString (), "ToStringTest#7");
+			Assert.AreEqual ("Icon", ImageFormat.Icon.ToString (), "ToStringTest#8");
+			Assert.AreEqual ("Jpeg", ImageFormat.Jpeg.ToString (), "ToStringTest#9");
+			Assert.AreEqual ("Wmf", ImageFormat.Wmf.ToString (), "ToStringTest#10");
 		}
 
 		[Test]
