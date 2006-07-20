@@ -102,13 +102,10 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void PagerSettings_PropertyChanged ()
 		{
 			PagerSettings pager = new PagerSettings ();
-			// Note :  does not contain a definition for 
-			// `PropertyChanged'
-			// pager.PropertyChanged += new EventHandler (pager_PropertyChanged);
+			pager.PropertyChanged += new EventHandler (pager_PropertyChanged);
 			pager.FirstPageImageUrl = "test";
 			eventassert ("FirstPageImageUrl");
 			pager.FirstPageText = "test";
