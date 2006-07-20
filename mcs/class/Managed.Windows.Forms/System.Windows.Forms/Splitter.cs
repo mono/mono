@@ -63,6 +63,7 @@ namespace System.Windows.Forms {
 		private SplitterEventArgs	sevent;			// We cache the object, prevents fragmentation
 		private int			limit_min;		// The max we're allowed to move the splitter left/up
 		private int			limit_max;		// The max we're allowed to move the splitter right/down
+		private int			split_requested;	// If the user requests a position before we have ever laid out the doc
 		#endregion	// Local Variables
 
 		#region Constructors
@@ -76,6 +77,7 @@ namespace System.Windows.Forms {
 			min_extra = 25;
 			min_size = 25;
 			split_position = -1;
+			split_requested = -1;
 			splitter_size = 3;
 			horizontal = false;
 			sevent = new SplitterEventArgs(0, 0, 0, 0);
@@ -278,6 +280,10 @@ namespace System.Windows.Forms {
 
 			set {
 				affected = AffectedControl;
+
+				if (affected == null) {
+					split_requested = value;
+				}
 
 				if (Capture || (affected == null)) {
 					return;
@@ -640,6 +646,10 @@ namespace System.Windows.Forms {
 		private void LayoutSplitter(object sender, LayoutEventArgs e) {
 			affected = AffectedControl;
 			filler = FillerControl;
+			if (split_requested != -1) {
+				SplitPosition = split_requested;
+				split_requested = -1;
+			}
 		}
 
 		private void ReparentSplitter(object sender, EventArgs e) {
