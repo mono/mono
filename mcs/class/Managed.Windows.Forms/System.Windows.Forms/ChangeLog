@@ -1,5 +1,10 @@
 2006-07-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ListBox.cs: Don't call Sort () when setting 
+	the Sorted property to false (avoid an unnecessary sort).
+
+2006-07-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ListControl.cs: DataSource should throw an ArgumentException
 	instead of a normal exception when the argument is not of the 
 	correct type.

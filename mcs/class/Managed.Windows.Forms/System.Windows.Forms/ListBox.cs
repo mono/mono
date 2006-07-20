@@ -491,7 +491,8 @@ namespace System.Windows.Forms
 					return;
 
     				sorted = value;
-    				Sort ();
+    				if (sorted)
+					Sort ();
     			}
 		}
 
