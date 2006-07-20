@@ -82,7 +82,8 @@ common_dirs := \
 	Microsoft.Vsa			\
 	Mono.Cairo                      \
 	IBM.Data.DB2			\
-	Microsoft.JScript
+	Microsoft.JScript		\
+	CustomMarshalers
 
 default_dirs := FirebirdSql.Data.Firebird
 
@@ -103,7 +104,6 @@ SUBDIRS = $(common_dirs) $(default_dirs) $(net_2_0_dirs)
 # I wrote makefiles for them.
 
 BROKEN_SUBDIRS = \
-	Custommarshalers		\
 	Mono.Globalization
 
 DIST_ONLY_SUBDIRS = \
