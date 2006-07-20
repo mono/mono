@@ -622,6 +622,11 @@ namespace System.Windows.Forms {
 				}
 			}
 
+			if (!auto_scroll_min_size.IsEmpty) {
+				width = auto_scroll_min_size.Width;
+				height = auto_scroll_min_size.Height;
+			}
+
 			for (int i = 0; i < num_of_children; i++) {
 				child = child_controls[i];
 
