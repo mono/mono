@@ -1068,17 +1068,15 @@ namespace System.Web.UI.WebControls
 
 			// Main table creation
 			
-			if (HeaderText.Length != 0 || headerTemplate != null) {
-				headerRow = CreateRow (-1, DataControlRowType.Header, DataControlRowState.Normal);
-				DataControlFieldCell cell = new DataControlFieldCell (null);
-				cell.ColumnSpan = 2;
-				if (headerTemplate != null)
-					headerTemplate.InstantiateIn (cell);
-				else
-					cell.Text = HeaderText;
-				headerRow.Cells.Add (cell);
-				table.Rows.Add (headerRow);
-			}
+			headerRow = CreateRow (-1, DataControlRowType.Header, DataControlRowState.Normal);
+			DataControlFieldCell headerCell = new DataControlFieldCell (null);
+			headerCell.ColumnSpan = 2;
+			if (headerTemplate != null)
+				headerTemplate.InstantiateIn (headerCell);
+			else
+				headerCell.Text = HeaderText;
+			headerRow.Cells.Add (headerCell);
+			table.Rows.Add (headerRow);
 			
 			if (showPager && PagerSettings.Position == PagerPosition.Top || PagerSettings.Position == PagerPosition.TopAndBottom) {
 				topPagerRow = CreateRow (-1, DataControlRowType.Pager, DataControlRowState.Normal);
@@ -1114,17 +1112,15 @@ namespace System.Web.UI.WebControls
 				table.Rows.Add (bottomPagerRow);
 			}
 
-			if (FooterText.Length != 0 || footerTemplate != null) {
-				footerRow = CreateRow (-1, DataControlRowType.Footer, DataControlRowState.Normal);
-				DataControlFieldCell cell = new DataControlFieldCell (null);
-				cell.ColumnSpan = 2;
-				if (footerTemplate != null)
-					footerTemplate.InstantiateIn (cell);
-				else
-					cell.Text = FooterText;
-				footerRow.Cells.Add (cell);
-				table.Rows.Add (footerRow);
-			}
+			footerRow = CreateRow (-1, DataControlRowType.Footer, DataControlRowState.Normal);
+			DataControlFieldCell footerCell = new DataControlFieldCell (null);
+			footerCell.ColumnSpan = 2;
+			if (footerTemplate != null)
+				footerTemplate.InstantiateIn (footerCell);
+			else
+				footerCell.Text = FooterText;
+			footerRow.Cells.Add (footerCell);
+			table.Rows.Add (footerRow);
 			
 			if (dataBinding)
 				DataBind (false);

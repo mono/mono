@@ -1,5 +1,11 @@
 2006-07-20 Andrew Skiba <andrews@mainsoft.com>
 
+	* DetailsView.cs: create HeaderRow and FooterRow even when HeaderText
+	and FooterText are empty, to match .NET. Otherwise we have NullReference
+	when .NET does not.
+
+2006-07-20 Andrew Skiba <andrews@mainsoft.com>
+
 	* DetailsView.cs: Render fix.
 
 2006-07-20 Andrew Skiba <andrews@mainsoft.com>
