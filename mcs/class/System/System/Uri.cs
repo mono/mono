@@ -913,7 +913,7 @@ namespace System {
 		}
 
 #if NET_2_0
-		[Obsolete]
+		[Obsolete ("Use MakeRelativeUri(Uri uri) instead.")]
 #endif
 		public string MakeRelative (Uri toUri) 
 		{
