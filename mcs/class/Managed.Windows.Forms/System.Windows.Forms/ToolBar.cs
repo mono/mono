@@ -113,6 +113,8 @@ namespace System.Windows.Forms
 			buttons = new ToolBarButtonCollection (this);
 			dock_style = DockStyle.Top;
 			
+			GotFocus += new EventHandler (FocusChanged);
+			LostFocus += new EventHandler (FocusChanged);
 			MouseDown += new MouseEventHandler (ToolBar_MouseDown);
 			MouseLeave += new EventHandler (ToolBar_MouseLeave);
 			MouseMove += new MouseEventHandler (ToolBar_MouseMove);
@@ -502,9 +504,91 @@ namespace System.Windows.Forms
 			base.WndProc (ref m);
 		}
 
+		internal override bool InternalPreProcessMessage (ref Message msg)
+		{
+			if (msg.Msg == (int)Msg.WM_KEYDOWN) {
+				Keys key_data = (Keys)msg.WParam.ToInt32();
+				if (HandleKeyDown (key_data))
+					return true;
+			} 
+			return base.InternalPreProcessMessage (ref msg);
+		}
+			
 		#endregion Protected Methods
 
 		#region Private Methods
+		private void FocusChanged (object sender, EventArgs args)
+		{
+			if (Appearance != ToolBarAppearance.Flat || Buttons.Count == 0)
+				return;
+
+			ToolBarButton prelit = null;
+			foreach (ToolBarButton b in Buttons)
+				if (b.Hilight) {
+					prelit = b;
+					break;
+				}
+
+			if (Focused && prelit == null)
+				foreach (ToolBarButton btn in Buttons) {
+					if (btn.Enabled) {
+						btn.Hilight = true;
+						break;
+					}
+				}
+			else if (prelit != null)
+				prelit.Hilight = false;
+		}
+
+		private bool HandleKeyDown (Keys key_data)
+		{
+			if (Appearance != ToolBarAppearance.Flat || Buttons.Count == 0)
+				return false;
+
+			switch (key_data) {
+			case Keys.Left:
+			case Keys.Up:
+				HighlightButton (-1);
+				return true;
+			case Keys.Right:
+			case Keys.Down:
+				HighlightButton (1);
+				return true;
+			default:
+				return false;
+			}
+		}
+
+		void HighlightButton (int offset)
+		{
+			ArrayList enabled = new ArrayList ();
+			int count = 0;
+			int start = -1;
+			ToolBarButton curr_button = null;
+			foreach (ToolBarButton btn in Buttons) {
+				if (btn.Hilight) {
+					start = count;
+					curr_button = btn;
+				}
+
+				if (btn.Enabled) {
+					enabled.Add (btn);
+					count++;
+				}
+			}
+
+			int next = (start + offset) % count;
+			if (next < 0)
+				next = count - 1;
+
+			if (next == start)
+				return;
+
+			if (curr_button != null)
+				curr_button.Hilight = false;
+			(enabled [next] as ToolBarButton).Hilight = true;
+		}
+
 		private void ToolBar_MouseDown (object sender, MouseEventArgs me)
 		{
 			if (!Enabled) 

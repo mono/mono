@@ -2996,6 +2996,10 @@ namespace System.Windows.Forms
 		}
 
 		public virtual bool PreProcessMessage(ref Message msg) {
+			return InternalPreProcessMessage (ref msg);
+		}
+
+		internal virtual bool InternalPreProcessMessage (ref Message msg) {
 			Keys key_data;
 
 			if ((msg.Msg == (int)Msg.WM_KEYDOWN) || (msg.Msg == (int)Msg.WM_SYSKEYDOWN)) {

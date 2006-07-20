@@ -1,3 +1,15 @@
+2006-07-20  Mike Kestner  <mkestner@novell.com>
+
+	* Control.cs: add InternalPreProcessMessage to allow us to steal
+	key events before MWF gets its paws on them.  Adapted from a
+	suggestion by eno.
+	* ToolBar.cs: add GotLostFocus handing for flat toolbars, with 
+	up/down/left/right navigation. Override the new internal control
+	method to steal the events since they never make it to WndProc.
+	* ToolBarButton.cs: don't worry about pushed when setting hilight
+	since the drawing code prefers pushed to hilight. Invalidate on 
+	Hilight changes. Fixes #78547 and #78525.
+
 2006-07-20  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* ScrollableControl.cs: Consider AutoScrollMinSize when calculating

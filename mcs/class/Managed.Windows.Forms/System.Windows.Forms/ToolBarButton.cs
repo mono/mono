@@ -70,10 +70,11 @@ namespace System.Windows.Forms
 		internal bool Hilight {
 			get { return hilight; }
 			set {
-				if (! pushed)
-					hilight = value;
-				else
-					hilight = false;	
+				if (hilight == value)
+					return;
+
+				hilight = value;
+				Invalidate ();
 			}
 		}
 
@@ -209,8 +210,6 @@ namespace System.Windows.Forms
 					return;
 
 				pushed = value;
-				if (pushed)
-					hilight = false;
 				Invalidate ();
 			}
 		}
