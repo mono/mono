@@ -575,7 +575,7 @@ namespace System {
 				key = 0;
 			}
 
-			return new ConsoleKeyInfo (c, key, shift, ctrl, alt);
+			return new ConsoleKeyInfo (c, key, shift, alt, ctrl);
 		}
 
 		object GetKeyFromBuffer (bool cooked)

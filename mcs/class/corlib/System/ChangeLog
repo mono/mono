@@ -1,3 +1,8 @@
+2006-07-19  John Luke  <john.luke@gmail.com>
+
+	* TermInfoDriver.cs: switch order of alt and control when
+	calling new ConsoleKeyInfo()
+
 2006-07-19  Kornél Pál  <kornelpal@gmail.com>
 
 	* String.cs: Improve CreateString () performance when length is zero.
