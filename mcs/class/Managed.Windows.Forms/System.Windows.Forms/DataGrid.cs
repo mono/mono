@@ -225,6 +225,9 @@ namespace System.Windows.Forms
 		bool from_positionchanged_handler;
 
 		/* editing state */
+		Control editingControl;
+		bool cursor_in_add_row;
+		bool add_row_changed;
 		bool is_editing;		// Current cell is edit mode
 		bool is_changing;
 
@@ -411,64 +414,79 @@ namespace System.Windows.Forms
 		public DataGridCell CurrentCell {
 			get { return current_cell; }
 			set {
-				if (current_cell.Equals (value))
-					return;
-
 				if (setting_current_cell)
 					return;
 				setting_current_cell = true;
 
-				int old_row = current_cell.RowNumber;
+				if (!IsHandleCreated) {
+					setting_current_cell = false;
+					throw new Exception ("CurrentCell cannot be set at this time.");
+				}
 
-				bool was_editing = is_editing;
-				bool need_add = value.RowNumber >= RowsCount;
+				if (current_cell.Equals (value)) {
+					setting_current_cell = false;
+					return;
+				}
 
-				if (need_add)
+				/* make sure the new cell fits in the correct bounds for [row,column] */
+				if (ReadOnly && value.RowNumber > RowsCount - 1)
+					value.RowNumber = RowsCount - 1;
+				else if (value.RowNumber > RowsCount)
 					value.RowNumber = RowsCount;
-#if true
-				if (was_editing) {
-					EndEdit (CurrentTableStyle.GridColumnStyles[current_cell.ColumnNumber],
-						 current_cell.RowNumber,
-						 IsAdding && !is_changing);
+				if (value.ColumnNumber >= CurrentTableStyle.GridColumnStyles.Count)
+					value.ColumnNumber = CurrentTableStyle.GridColumnStyles.Count == 0 ? 0 : CurrentTableStyle.GridColumnStyles.Count - 1;
 
-					if (value.RowNumber != old_row) {
-						ListManager.EndCurrentEdit ();
+				bool was_changing = is_changing;
+
+				add_row_changed = add_row_changed || was_changing;
+
+				EndEdit ();
+				if (value.RowNumber != current_cell.RowNumber) {
+					if (!from_positionchanged_handler) {
+						try {
+							if (cursor_in_add_row && !add_row_changed)
+								ListManager.CancelCurrentEdit ();
+							else
+								ListManager.EndCurrentEdit ();
+						}
+						catch (Exception e) {
+							DialogResult r = MessageBox.Show (String.Format ("{0} Do you wish to correct the value?", e.Message),
+											  "Error when committing the row to the original data source",
+											  MessageBoxButtons.YesNo);
+							if (r == DialogResult.Yes) {
+								Edit ();
+								return;
+							}
+							else
+								ListManager.CancelCurrentEdit ();
+						}
+					}
+
+					if (value.RowNumber == RowsCount) {
+						cursor_in_add_row = true;
+						add_row_changed = false;
+						AddNewRow ();
+					}
+					else {
+						cursor_in_add_row = false;
 					}
 				}
-#else
-				if (value.RowNumber != old_row && IsAdding && !is_changing) {
-					ListManager.CancelCurrentEdit ();
-					UpdateVisibleRowCount ();
-				}
-#endif
 
-				if (was_editing)
-					CurrentTableStyle.GridColumnStyles[current_cell.ColumnNumber].ConcedeFocus ();
+				int old_row = current_cell.RowNumber;
 
-				//Console.WriteLine ("set_CurrentCell, {0}x{1}, RowsCount = {2}, from {3}", value.RowNumber, value.ColumnNumber, RowsCount, Environment.StackTrace);
-				if (need_add) {
-					//Console.WriteLine ("+ calling AddNew, RowsCount = {0}, rows.Length = {1}", RowsCount, rows.Length);
-					ListManager.AddNew ();
-				}
-
-				if (value.ColumnNumber >= CurrentTableStyle.GridColumnStyles.Count) {
-					value.ColumnNumber = CurrentTableStyle.GridColumnStyles.Count == 0 ? 0: CurrentTableStyle.GridColumnStyles.Count - 1;
-				}
-					
-				EnsureCellVisibility (value);
 				current_cell = value;
-			
-				if (current_cell.RowNumber != old_row) {
-					InvalidateRowHeader (old_row);
-					InvalidateRowHeader (current_cell.RowNumber);
-				}
+
+				EnsureCellVisibility (current_cell);
+
+				InvalidateRowHeader (old_row);
+				InvalidateRowHeader (current_cell.RowNumber);
 
 				list_manager.Position = current_cell.RowNumber;
 
 				OnCurrentCellChanged (EventArgs.Empty);
 
-				if (was_editing)
-					EditCurrentCell ();
+				if (!from_positionchanged_handler)
+					Edit ();
 
 				setting_current_cell = false;
 			}
@@ -600,10 +618,6 @@ namespace System.Windows.Forms
 			get { return horiz_pixeloffset; }
 		}
 
-		internal bool IsAdding {
-			get { return ShowEditRow && list_manager.Position == rows.Length; }
-		}
-
 		internal bool IsChanging {
 			get { return is_changing; }
 		}
@@ -648,12 +662,8 @@ namespace System.Windows.Forms
 				if (list_manager != null)
 					ConnectListManagerEvents ();
 
-				rows = new DataGridRow [RowsCount + 1];
-				for (int i = 0; i < rows.Length; i ++) {
-					rows[i].Height = RowHeight;
-					if (i > 0)
-						rows[i].VerticalOffset = rows[i-1].VerticalOffset + rows[i-1].Height;
-				}
+				RecreateDataGridRows ();
+
 				return list_manager;
 			}
 			set { throw new NotSupportedException ("Operation is not supported."); }
@@ -752,6 +762,7 @@ namespace System.Windows.Forms
 			get { return rows; }
 		}
 
+
 		public Color SelectionBackColor {
 			get { return grid_style.SelectionBackColor; }
 			set { grid_style.SelectionBackColor = value; }
@@ -796,7 +807,6 @@ namespace System.Windows.Forms
 			get { return visiblecolumn_count; }
 		}
 
-		// Calculated at DataGridDrawing.CalcRowHeaders
 		[Browsable(false)]
 		public int VisibleRowCount {
 			get { return visiblerow_count; }
@@ -818,7 +828,7 @@ namespace System.Windows.Forms
 			get { return first_visiblerow; }
 		}
 		
-		internal int RowsCount {
+		private int RowsCount {
 			get { return ListManager != null ? ListManager.Count : 0; }
 		}
 
@@ -848,6 +858,15 @@ namespace System.Windows.Forms
 
 		#region Public Instance Methods
 
+		void AbortEditing ()
+		{
+			if (is_changing) {
+				CurrentTableStyle.GridColumnStyles[current_cell.ColumnNumber].Abort (current_cell.RowNumber);
+				is_changing = false;
+				InvalidateRowHeader (current_cell.RowNumber);
+			}
+		}
+
 		[MonoTODO]
 		public bool BeginEdit (DataGridColumnStyle gridColumn, int rowNumber)
 		{
@@ -861,7 +880,7 @@ namespace System.Windows.Forms
 			CurrentCell = new DataGridCell (rowNumber, column);
 
 			/* force editing of CurrentCell if we aren't already editing */
-			EditCurrentCell ();
+			Edit ();
 
 			return true;
 		}
@@ -873,25 +892,21 @@ namespace System.Windows.Forms
 
 		protected virtual void CancelEditing ()
 		{
-			if (!is_editing)
-				return;
-
 			CurrentTableStyle.GridColumnStyles[current_cell.ColumnNumber].ConcedeFocus ();
 
 			if (is_changing) {
 				if (current_cell.ColumnNumber < CurrentTableStyle.GridColumnStyles.Count)
 					CurrentTableStyle.GridColumnStyles[current_cell.ColumnNumber].Abort (current_cell.RowNumber);
-				is_changing = false;
 				InvalidateRowHeader (current_cell.RowNumber);
 			}
 
-			if (IsAdding) {
+			if (cursor_in_add_row && !is_changing) {
 				ListManager.CancelCurrentEdit ();
 			}
 
+			editingControl = null;
+			is_changing = false;
 			is_editing = false;
-
-			//Invalidate ();
 		}
 
 		[MonoTODO]
@@ -919,13 +934,8 @@ namespace System.Windows.Forms
 
 		protected internal virtual void ColumnStartedEditing (Control editingControl)
 		{
-			bool need_invalidate = is_changing == false;
-			// XXX calculate the row header to invalidate
-			// (using the editingControl's position?)
-			// instead of using CurrentRow
-			is_changing = true;
-			if (need_invalidate)
-				InvalidateRowHeader (CurrentRow);
+			ColumnStartedEditing (editingControl.Bounds);
+			this.editingControl = editingControl;
 		}
 
 		protected internal virtual void ColumnStartedEditing (Rectangle bounds)
@@ -934,6 +944,10 @@ namespace System.Windows.Forms
 			// XXX calculate the row header to invalidate
 			// instead of using CurrentRow
 			is_changing = true;
+
+			if (cursor_in_add_row && need_invalidate)
+				RecreateDataGridRows ();
+
 			if (need_invalidate)
 				InvalidateRowHeader (CurrentRow);
 		}
@@ -960,24 +974,17 @@ namespace System.Windows.Forms
 
 		public bool EndEdit (DataGridColumnStyle gridColumn, int rowNumber, bool shouldAbort)
 		{
-			if (!is_editing && !is_changing)
-				return true;
-
-			if (IsAdding) {
-				if (shouldAbort)
-					ListManager.CancelCurrentEdit ();
-				else
-					CalcAreasAndInvalidate ();
-			}
-
 			if (shouldAbort || gridColumn.ParentReadOnly)
 				gridColumn.Abort (rowNumber);
-			else
+			else {
 				gridColumn.Commit (ListManager, rowNumber);
+				gridColumn.ConcedeFocus ();
+			}
 
+			editingControl = null;
 			is_editing = false;
 			is_changing = false;
-			InvalidateRowHeader (CurrentRow);
+			InvalidateRowHeader (rowNumber);
 			return true;
 		}
 
@@ -1026,7 +1033,6 @@ namespace System.Windows.Forms
 
 			int start = 0;
 			for (i = 0; i < relations.Length; i ++) {
-				//Console.WriteLine ("adding relation link for text '{0}'", relation_link.Text.Substring (start, relations[i].Length));
 				relation_link.Links.Add (start, relations[i].Length + (i < relations.Length - 1 ? 1 : 0), row);
 				start += relations[i].Length + 1;
 			}
@@ -1187,7 +1193,7 @@ namespace System.Windows.Forms
 
 		public bool IsSelected (int row)
 		{
-			return selected_rows[row] != null;
+			return rows[row].IsSelected;
 		}
 
 		[MonoTODO]
@@ -1338,7 +1344,7 @@ namespace System.Windows.Forms
 			 * call when a child control is not receiving
 			 * focus, we need to cancel the current
 			 * edit. */
-			if (IsAdding) {
+			if (cursor_in_add_row) {
 				ListManager.CancelCurrentEdit ();
 			}
 #endif
@@ -1364,7 +1370,7 @@ namespace System.Windows.Forms
 
 				if ((new_cell.Equals (current_cell) == false) || (!is_editing)) {
 					CurrentCell = new_cell;
-					EditCurrentCell ();
+					Edit ();
 				} else {
 					CurrentTableStyle.GridColumnStyles[testinfo.Column].OnMouseDown (e, testinfo.Row, testinfo.Column);
 				}
@@ -1404,7 +1410,6 @@ namespace System.Windows.Forms
 
 				CancelEditing ();
 				CurrentRow = testinfo.Row;
-				//Console.WriteLine ("After setting CurrentRow, list_manager.Position = {0}", list_manager.Position);
 				OnRowHeaderClick (EventArgs.Empty);
 
 				break;
@@ -1648,8 +1653,6 @@ namespace System.Windows.Forms
 			}
 			else {
 				ResetSelection ();
-				if (!is_editing)
-					EditCurrentCell ();
 			}
 		}
 
@@ -1666,7 +1669,11 @@ namespace System.Windows.Forms
 
 			switch (ke.KeyCode) {
 			case Keys.Escape:
-				CancelEditing ();
+				if (is_changing)
+					AbortEditing ();
+				else
+					CancelEditing ();
+				Edit ();
 				return true;
 				
 			case Keys.D0:
@@ -1677,9 +1684,8 @@ namespace System.Windows.Forms
 				return true;
 
 			case Keys.Enter:
-				CurrentRow ++;
-				if (!is_editing)
-					EditCurrentCell ();
+				if (is_changing)
+					CurrentRow ++;
 				return true;
 
 			case Keys.Tab:
@@ -1701,7 +1707,7 @@ namespace System.Windows.Forms
 						CurrentColumn ++;
 					} else if (CurrentRow < RowsCount - 1
 						   || (CurrentRow == RowsCount - 1
-						       && !IsAdding)) {
+						       && !cursor_in_add_row)) {
 						CurrentCell = new DataGridCell (CurrentRow + 1, 0);
 					}
 				}
@@ -1740,7 +1746,9 @@ namespace System.Windows.Forms
 					CurrentRow = RowsCount - 1;
 				else if (CurrentRow < RowsCount - 1)
 					CurrentRow ++;
-				else if (CurrentRow == RowsCount - 1 && !IsAdding && !shift_pressed)
+				else if (CurrentRow == RowsCount - 1 && cursor_in_add_row && (add_row_changed || is_changing))
+					CurrentRow ++;
+				else if (CurrentRow == RowsCount - 1 && !cursor_in_add_row && !shift_pressed)
 					CurrentRow ++;
 
 				UpdateSelectionAfterCursorMove (shift_pressed);
@@ -1873,8 +1881,8 @@ namespace System.Windows.Forms
 		void InvalidateSelection ()
 		{
 			foreach (int row in selected_rows.Keys) {
+				rows[row].IsSelected = false;
 				InvalidateRow (row);
-				InvalidateRowHeader (row);
 			}
 		}
 
@@ -1893,10 +1901,8 @@ namespace System.Windows.Forms
 			if (selected_rows.Count == 0)
 				selection_start = row;
 
-			if (selected_rows[row] == null)
-				selected_rows.Add (row, true);
-			else
-				selected_rows[row] = true;
+			selected_rows[row] = true;
+			rows[row].IsSelected = true;
 
 			InvalidateRow (row);
 		}
@@ -1985,6 +1991,7 @@ namespace System.Windows.Forms
 
 		public void UnSelect (int row)
 		{
+			rows[row].IsSelected = false;
 			selected_rows.Remove (row);
 			InvalidateRow (row);
 		}
@@ -2077,7 +2084,6 @@ namespace System.Windows.Forms
 
 		void DisposeRelationLinks ()
 		{
-			//Console.WriteLine ("Disposing of relation links");
 			SuspendLayout ();
 			for (int i = 0; i < rows.Length; i ++) {
 				if (rows[i].relation_link != null) {
@@ -2115,31 +2121,38 @@ namespace System.Windows.Forms
 
 		private void OnListManagerPositionChanged (object sender, EventArgs e)
 		{
-			//Console.WriteLine ("list manager position = {0}", list_manager.Position);
 			from_positionchanged_handler = true;
 			CurrentRow = list_manager.Position;
 			from_positionchanged_handler = false;
 		}
 
+		void RecreateDataGridRows ()
+		{
+			DataGridRow[] new_rows = new DataGridRow[RowsCount + (ShowEditRow ? 1 : 0)];
+			int start_index = 0;
+			if (rows != null) {
+				start_index = rows.Length;
+				Array.Copy (rows, 0, new_rows, 0, rows.Length < new_rows.Length ? rows.Length : new_rows.Length);
+			}
+
+			for (int i = start_index; i < new_rows.Length; i ++) {
+				new_rows[i] = new DataGridRow ();
+				new_rows[i].Height = RowHeight;
+				if (i > 0)
+					new_rows[i].VerticalOffset = new_rows[i-1].VerticalOffset + new_rows[i-1].Height;
+			}
+
+			rows = new_rows;
+
+			CalcAreasAndInvalidate ();
+		}
+
 		private void OnListManagerItemChanged (object sender, ItemChangedEventArgs e)
 		{
 			if (e.Index == -1) {
-				if (ListManager.Count >= rows.Length) {
-					DataGridRow[] new_rows = new DataGridRow[ListManager.Count + 1];
-					if (ListManager.Count >= rows.Length) {
-						Array.Copy (rows, 0, new_rows, 0, rows.Length);
-						for (int i = rows.Length; i < ListManager.Count + 1; i ++) {
-							new_rows[i].Height = RowHeight;
-							if (i > 0)
-								new_rows[i].VerticalOffset = new_rows[i-1].VerticalOffset + new_rows[i-1].Height;
-						}
-					}
-					else
-						Array.Copy (rows, 0, new_rows, 0, new_rows.Length);
-					rows = new_rows;
-				}
 				ResetSelection ();
-				CalcAreasAndInvalidate ();
+				if (rows == null || RowsCount != rows.Length)
+					RecreateDataGridRows ();
 			}
 			else {
 				InvalidateRow (e.Index);
@@ -2188,13 +2201,27 @@ namespace System.Windows.Forms
 			CalcAreasAndInvalidate ();
 		}
 
-		private void EditCurrentCell ()
+		private void AddNewRow ()
+		{
+			ListManager.EndCurrentEdit ();
+			ListManager.AddNew ();
+		}
+
+		private void Edit ()
 		{
 			is_editing = true;
+			is_changing = false;
 
 			CurrentTableStyle.GridColumnStyles[current_cell.ColumnNumber].Edit (ListManager,
 				current_cell.RowNumber, GetCellBounds (current_cell.RowNumber, current_cell.ColumnNumber),
-				_readonly, string.Empty, true);
+				_readonly, "", true);
+		}
+
+		private void EndEdit ()
+		{
+			EndEdit (CurrentTableStyle.GridColumnStyles[current_cell.ColumnNumber],
+				 current_cell.RowNumber,
+				 false);
 		}
 
 		private void ShiftSelection (int index)
@@ -2240,7 +2267,12 @@ namespace System.Windows.Forms
 				area.Height += ColumnHeadersArea.Height;
 			}
 
+			EndEdit ();
+
 			XplatUI.ScrollWindow (Handle, area, pixels, 0, false);
+
+			Edit ();
+			
 		}
 
 		private void ScrollToRow (int old_row, int new_row)
@@ -2257,6 +2289,11 @@ namespace System.Windows.Forms
 					pixels += rows[i].Height;
 			}
 
+			if (pixels == 0)
+				return;
+
+			EndEdit ();
+
 			Rectangle rows_area = cells_area; // Cells area - partial rows space
 			if (RowHeadersVisible) {
 				rows_area.X -= RowHeaderWidth;
@@ -2267,10 +2304,10 @@ namespace System.Windows.Forms
 
 			/* scroll the window */
 			XplatUI.ScrollWindow (Handle, rows_area, 0, pixels, false);
-			
+
+			SuspendLayout ();
 
 			/* now update the position of all the relation links */
-			SuspendLayout ();
 			for (i = 0; i < rows.Length; i ++) {
 				if (rows[i].relation_link != null) {
 					rows[i].relation_link.Visible = i >= new_row;
@@ -2279,6 +2316,8 @@ namespace System.Windows.Forms
 				}
 			}
 			ResumeLayout (false);
+
+			Edit ();
 		}
 
 		#endregion Private Instance Methods
@@ -2655,15 +2694,11 @@ namespace System.Windows.Forms
 		{
 			int rows_height = 0;
 			int r;
-			for (r = FirstVisibleRow; r < RowsCount; r ++) {
+			for (r = FirstVisibleRow; r < rows.Length; r ++) {
 				if (rows_height + rows[r].Height >= visibleHeight)
 					break;
 				rows_height += rows[r].Height;
 			}
-
-			/* add in the edit row if it'll fit */
-			if (ShowEditRow && RowsCount > 0 && visibleHeight - rows_height > RowHeight)
-				r ++;
 
 			if (r < rows.Length - 1)
 				r ++;

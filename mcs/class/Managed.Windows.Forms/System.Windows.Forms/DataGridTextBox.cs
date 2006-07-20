@@ -50,7 +50,7 @@ namespace System.Windows.Forms
 			isnavigating = true;
 			grid = null;
 			accepts_tab = true;
-			accepts_return = true;
+			accepts_return = false;
 
 			SetStyle (ControlStyles.UserPaint | ControlStyles.StandardClick | ControlStyles.StandardDoubleClick, false);
 			SetStyle (ControlStyles.FixedHeight, true);
@@ -68,8 +68,10 @@ namespace System.Windows.Forms
 		#region Public Instance Methods
 		protected override void OnKeyPress (KeyPressEventArgs e)
 		{
-			isnavigating = false;
-			grid.ColumnStartedEditing (Bounds);
+			if (!ReadOnly) {
+				isnavigating = false;
+				grid.ColumnStartedEditing (Bounds);
+			}
 			base.OnKeyPress (e);
 		}
 
@@ -82,34 +84,47 @@ namespace System.Windows.Forms
 		{
 			Keys key = (Keys) m.WParam.ToInt32 ();
 
+			if (isnavigating && ProcessKeyPreview (ref m))
+				return true;
+
 			switch ((Msg)m.Msg) {
 			case Msg.WM_CHAR:
-				return ProcessKeyEventArgs (ref m);
+				switch (key) {
+				case Keys.Enter:
+					isnavigating = true;
+					return false;
+				default:
+					return ProcessKeyEventArgs (ref m);
+				}
 
 			case Msg.WM_KEYDOWN:
 				switch (key) {
 				case Keys.F2:
 					SelectionStart = Text.Length;
 					SelectionLength = 0;
-					return true;
+					return false;
 
 				case Keys.Left:
-					if (SelectionStart > 0)
-						return false;
-					break;
-
+					if (SelectionStart == 0)
+						return ProcessKeyPreview (ref m);
+					return false;
 				case Keys.Right:
 					// Arrow keys go right until we hit the end of the text
-					if ((SelectionStart + SelectionLength) < Text.Length)
-						return false;
-					break;
+					if (SelectionStart + SelectionLength >= Text.Length) {
+						return ProcessKeyPreview (ref m);
+					}
+					return false;
+				case Keys.Enter:
+					return true;
+				case Keys.Up:
+				case Keys.Down:
+					return ProcessKeyPreview (ref m);
 				}
-				break;
+
+				return ProcessKeyEventArgs(ref m);
 			default:
 				return false;
 			}
-
-			return base.ProcessKeyMessage(ref m);
 		}
 
 		public void SetDataGrid (DataGrid parentGrid)
@@ -119,6 +134,13 @@ namespace System.Windows.Forms
 
 		protected override void WndProc (ref Message m)
 		{
+			switch ((Msg)m.Msg) {
+			case Msg.WM_LBUTTONDOWN:
+			case Msg.WM_LBUTTONDBLCLK:
+				isnavigating = false;
+				break;
+			}
+
 			base.WndProc (ref m);
 		}
 

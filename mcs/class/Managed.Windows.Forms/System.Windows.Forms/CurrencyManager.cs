@@ -30,7 +30,6 @@ using System.Collections;
 using System.ComponentModel;
 
 namespace System.Windows.Forms {
-	[DefaultMember("Item")]
 	public class CurrencyManager : BindingManagerBase {
 
 		protected int listposition;
@@ -40,6 +39,8 @@ namespace System.Windows.Forms {
 		private bool binding_suspended;
 
 		private object data_source;
+
+		bool editing;
 
 		internal CurrencyManager ()
 		{
@@ -77,12 +78,17 @@ namespace System.Windows.Forms {
 					value = list.Count - 1;
 				if (listposition == value)
 					return;
+
+				if (listposition != -1)
+					EndCurrentEdit ();
+
 				listposition = value;
 				OnCurrentChanged (EventArgs.Empty);
 				OnPositionChanged (EventArgs.Empty);
 			}
 		}
-		
+
+		[MonoTODO]
 		internal void SetDataSource (object data_source)
 		{
 			if (this.data_source is IBindingList)
@@ -102,6 +108,7 @@ namespace System.Windows.Forms {
 			if (data_source != null)
 				this.finalType = data_source.GetType();
 
+			listposition = -1;
 			if (this.data_source is IBindingList)
 				((IBindingList)this.data_source).ListChanged += new ListChangedEventHandler (ListChangedHandler);
 			if (this.data_source is DataView) {
@@ -114,10 +121,8 @@ namespace System.Windows.Forms {
 
 			list = (IList)data_source;
 
-			if (list.Count > 0)
-				listposition = 0;
-			else
-				listposition = -1; // Late binding.
+			// XXX this is wrong.  MS invokes OnItemChanged directly, which seems to call PushData.
+			ListChangedHandler (null, new ListChangedEventArgs (ListChangedType.Reset, -1));
 		}
 
 		public override PropertyDescriptorCollection GetItemProperties ()
@@ -183,13 +188,31 @@ namespace System.Windows.Forms {
 		{
 			if (list as IBindingList == null)
 				throw new NotSupportedException ();
-				
+
 			(list as IBindingList).AddNew ();
+
+			EndCurrentEdit ();
 
 			listposition = list.Count - 1;
 
 			OnCurrentChanged (EventArgs.Empty);
 			OnPositionChanged (EventArgs.Empty);
+		}
+
+
+		void BeginEdit ()
+		{
+			IEditableObject editable = Current as IEditableObject;
+
+			if (editable != null) {
+				try {
+					editable.BeginEdit ();
+					editing = true;
+				}
+				catch {
+					/* swallow exceptions in IEditableObject.BeginEdit () */
+				}
+			}
 		}
 
 		public override void CancelCurrentEdit ()
@@ -199,10 +222,11 @@ namespace System.Windows.Forms {
 
 			IEditableObject editable = Current as IEditableObject;
 
-			if (editable == null)
-				return;
-			editable.CancelEdit ();
-			OnItemChanged (new ItemChangedEventArgs (Position));
+			if (editable != null) {
+				editing = false;
+				editable.CancelEdit ();
+				OnItemChanged (new ItemChangedEventArgs (Position));
+			}
 		}
 		
 		public override void EndCurrentEdit ()
@@ -212,9 +236,10 @@ namespace System.Windows.Forms {
 
 			IEditableObject editable = Current as IEditableObject;
 
-			if (editable == null)
-				return;
-			editable.EndEdit ();
+			if (editable != null) {
+				editing = false;
+				editable.EndEdit ();
+			}
 		}
 
 		public void Refresh ()
@@ -231,6 +256,8 @@ namespace System.Windows.Forms {
 
 		protected internal override void OnCurrentChanged (EventArgs e)
 		{
+			BeginEdit ();
+
 			if (onCurrentChangedHandler != null) {
 				onCurrentChangedHandler (this, e);
 			}
@@ -275,12 +302,19 @@ namespace System.Windows.Forms {
 		private void UpdateItem ()
 		{
 			// Probably should be validating or something here
-			EndCurrentEdit ();
+			if (listposition != -1) {
+				EndCurrentEdit ();
+			}
+			else if (list.Count > 0) {
+
+				listposition = 0;
+				
+				BeginEdit ();
+			}
 		}
 		
-		internal object GetItem (int index)
-		{
-			return list [index];
+		internal object this [int index] {
+			get { return list [index]; }
 		}		
 		
 		private PropertyDescriptorCollection GetBrowsableProperties (Type t)
@@ -298,10 +332,6 @@ namespace System.Windows.Forms {
 
 		private void ListChangedHandler (object sender, ListChangedEventArgs e)
 		{
-			// Start a latebound list
-			if (listposition == -1)
-				listposition = 0;
-
 			switch (e.ListChangedType) {
 			case ListChangedType.ItemDeleted:
 				if (listposition == e.NewIndex) {
@@ -313,12 +343,22 @@ namespace System.Windows.Forms {
 				OnItemChanged (new ItemChangedEventArgs (-1));
 				break;
 			case ListChangedType.ItemAdded:
+				if (listposition == -1) {
+					listposition = e.NewIndex - 1;
+					OnCurrentChanged (EventArgs.Empty);
+					OnPositionChanged (EventArgs.Empty);
+				}
+
 				OnItemChanged (new ItemChangedEventArgs (-1));
+				break;
+			case ListChangedType.ItemChanged:
+				if (editing)
+					OnItemChanged (new ItemChangedEventArgs (e.NewIndex));
 				break;
 			default:
 				PushData ();
 				OnItemChanged (new ItemChangedEventArgs (-1));
-				UpdateIsBinding ();
+				//				UpdateIsBinding ();
 				break;
 			}
 		}

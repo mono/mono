@@ -124,7 +124,7 @@ namespace System.Windows.Forms
 					return null;
 				}				
 				
-				object item = data_manager.GetItem (SelectedIndex);
+				object item = data_manager [SelectedIndex];
 				object fil = FilterItemOnProperty (item, ValueMember);
 				return fil;
 			}
@@ -146,7 +146,7 @@ namespace System.Windows.Forms
 					PropertyDescriptor prop = col.Find (ValueMember, true);
 										
 					for (int i = 0; i < data_manager.Count; i++) {
-						 if (prop.GetValue (data_manager.GetItem (i)) == value) {
+						 if (prop.GetValue (data_manager [i]) == value) {
 						 	SelectedIndex = i;
 						 	return;
 						}

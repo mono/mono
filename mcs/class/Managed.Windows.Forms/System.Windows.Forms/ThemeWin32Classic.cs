@@ -952,16 +952,10 @@ namespace System.Windows.Forms
 			
 			Region current_clip;
 			for (int row = 0; row < parentRows.Length; row++) {
-				Console.WriteLine ("row {0}", row);
-
 				rect_row.Y = grid.ParentRowsArea.Y + row * rect_row.Height;
 
-				Console.WriteLine ("rect_row = {0}", rect_row);
-
-				if (clip.IntersectsWith (rect_row) == false) {
-					Console.WriteLine ("doesn't intersect");
+				if (clip.IntersectsWith (rect_row) == false)
 					continue;
-				}
 
 				current_clip = new Region (rect_row);
 				current_clip.Intersect (clip);
@@ -1066,46 +1060,42 @@ namespace System.Windows.Forms
 
 		public override void DataGridPaintRowHeader (Graphics g, Rectangle bounds, int row, DataGrid grid)
 		{
+			bool is_add_row = grid.ShowEditRow && row == grid.Rows.Length - 1;
+			bool is_current_row = row == grid.CurrentCell.RowNumber;
+
 			// Background
 			g.FillRectangle (ResPool.GetSolidBrush (grid.CurrentTableStyle.CurrentHeaderBackColor),
 				bounds);
-				
-			if (grid.ShowEditRow && grid.RowsCount > 0 && row == grid.RowsCount  && !(row == grid.CurrentCell.RowNumber && grid.IsChanging == true)) {
-				
+
+			// Draw arrow
+			if (is_current_row) {
+				if (grid.IsChanging) {
+					g.DrawString ("...", grid.Font,
+						      ResPool.GetSolidBrush (grid.CurrentTableStyle.CurrentHeaderForeColor),
+						      bounds);
+				} else {
+					Rectangle rect = new Rectangle (bounds.X - 2, bounds.Y, 18, 18);
+					DataGridPaintRowHeaderArrow (g, rect, grid);
+				}
+			}
+			else if (is_add_row) {
 				g.DrawString ("*", grid.Font, ResPool.GetSolidBrush (grid.CurrentTableStyle.CurrentHeaderForeColor),
-					bounds);
-				
-			} else {
-				if (grid.FlatMode == false) {
-				
-					// Paint Borders
-					g.DrawLine (ResPool.GetPen (ColorControlLight),
-						    bounds.X, bounds.Y, bounds.X + bounds.Width, bounds.Y);
+					      bounds);
+			}
 
-					g.DrawLine (ResPool.GetPen (ColorControlLight),
-						    bounds.X, bounds.Y + 1, bounds.X, bounds.Y + bounds.Height - 1);
-	
-					g.DrawLine (ResPool.GetPen (ColorControlDark),
-						    bounds.X + bounds.Width - 1, bounds.Y + 1 , bounds.X + bounds.Width - 1, bounds.Y + bounds.Height - 1);
+			if (grid.FlatMode == false && !is_add_row) {
+				// Paint Borders
+				g.DrawLine (ResPool.GetPen (ColorControlLight),
+					    bounds.X, bounds.Y, bounds.X + bounds.Width, bounds.Y);
 
-					g.DrawLine (ResPool.GetPen (ColorControlDark),
-						    bounds.X, bounds.Y + bounds.Height -1, bounds.X + bounds.Width, bounds.Y  + bounds.Height -1);
-				}
+				g.DrawLine (ResPool.GetPen (ColorControlLight),
+					    bounds.X, bounds.Y + 1, bounds.X, bounds.Y + bounds.Height - 1);
 
-				// Draw arrow
-				if (row == grid.CurrentCell.RowNumber) {
-	
-					if (grid.IsChanging == true) {
-						g.DrawString ("...", grid.Font,
-							ResPool.GetSolidBrush (grid.CurrentTableStyle.CurrentHeaderForeColor),
-							bounds);
-	
-					} else {
-						
-						Rectangle rect = new Rectangle (bounds.X - 2, bounds.Y, 18, 18);
-						DataGridPaintRowHeaderArrow (g, rect, grid);
-					}
-				}
+				g.DrawLine (ResPool.GetPen (ColorControlDark),
+					    bounds.X + bounds.Width - 1, bounds.Y + 1 , bounds.X + bounds.Width - 1, bounds.Y + bounds.Height - 1);
+
+				g.DrawLine (ResPool.GetPen (ColorControlDark),
+					    bounds.X, bounds.Y + bounds.Height -1, bounds.X + bounds.Width, bounds.Y  + bounds.Height -1);
 			}
 		}
 		
@@ -1114,43 +1104,39 @@ namespace System.Windows.Forms
 			Rectangle rect_row = new Rectangle ();
 			Rectangle not_usedarea = new Rectangle ();
 
-			int rowcnt = grid.FirstVisibleRow + grid.VisibleRowCount;
+			int rowcnt = grid.VisibleRowCount;
 			
-			if (grid.ShowEditRow && grid.RowsCount > 0) {
-				rowcnt--;
-			}			
+			bool showing_add_row = false;
 
-			if (rowcnt < grid.RowsCount) { // Paint one row more for partial rows
-				rowcnt++;
-			}			
-			
+			if (grid.ListManager.Count < grid.Rows.Length) {
+				/* the table has an add row */
+
+				if (grid.FirstVisibleRow + grid.VisibleRowCount >= grid.Rows.Length) {
+					showing_add_row = true;
+				}
+			}
+
 			rect_row.Width = cells.Width;
-			for (int row = grid.FirstVisibleRow; row < rowcnt; row++) {								
+			for (int r = 0; r < rowcnt; r++) {
+				int row = grid.FirstVisibleRow + r;
 				if (row == grid.Rows.Length - 1)
 					rect_row.Height = grid.Rows[row].Height;
 				else
 					rect_row.Height = grid.Rows[row + 1].VerticalOffset - grid.Rows[row].VerticalOffset;
 				rect_row.Y = cells.Y + grid.Rows[row].VerticalOffset - grid.Rows[grid.FirstVisibleRow].VerticalOffset;
 				if (clip.IntersectsWith (rect_row)) {
-					if (grid.CurrentTableStyle.HasRelations)
+					if (grid.CurrentTableStyle.HasRelations
+					    && !(showing_add_row && row == grid.Rows.Length - 1))
 						DataGridPaintRelationRow (g, row, rect_row, false, clip, grid);
 					else
-						DataGridPaintRow (g, row, rect_row, false, clip, grid);
+						DataGridPaintRow (g, row, rect_row, showing_add_row && row == grid.Rows.Length - 1, clip, grid);
 				}
 			}
 
-			// XXX
-			if (grid.ShowEditRow && grid.RowsCount > 0 && grid.FirstVisibleRow + grid.VisibleRowCount == grid.RowsCount + 1) {
-				rect_row.Y = rect_row.Y + rect_row.Height;
-				rect_row.Height = grid.RowHeight;
-				if (clip.IntersectsWith (rect_row)) {
-					DataGridPaintRow (g, rowcnt, rect_row, true, clip, grid);
-				}
-			}
-
+			// XXX this should be moved elsewhere and turned into 1 g.FillRectangle call, not grid.Rows.Length separate calls
 			not_usedarea.Height = cells.Y + cells.Height - rect_row.Y - rect_row.Height;
 			not_usedarea.Y = rect_row.Y + rect_row.Height;
-			not_usedarea.Width = rect_row.Width = cells.Width + grid.RowHeadersArea.Width;
+			not_usedarea.Width = cells.Width + grid.RowHeadersArea.Width;
 			not_usedarea.X = 0;
 
 			g.FillRectangle (ResPool.GetSolidBrush (grid.BackgroundColor), not_usedarea);

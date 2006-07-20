@@ -1,3 +1,12 @@
+2006-07-20  Chris Toshok  <toshok@ximian.com>
+
+	* DataGrid.cs, CurrencyManager.cs, DataGridColumnStyle.cs,
+	DataGridTextBoxColumn.cs, DataGridTextBox.cs,
+	ThemeWin32Classic.cs, ListControl.cs: After staring at stack
+	traces from within a debug IBindingList datasource
+	(in mono/winforms/datagrid) for *days*, I've finally gotten things
+	to work in a similar fashion.
+
 2006-07-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListBox.cs: Don't call Sort () when setting 
@@ -287,6 +296,11 @@
 	* ComboBox.cs: Remove some debug code that was blinding me.
 	* UpDownBase.cs: These controls actually aren't implicit, they are
 	visible to the user.
+
+2006-07-10  Chris Toshok  <toshok@ximian.com>
+
+	* DataGrid.cs: move back to the is_adding boolean field.  god i
+	hate this is_editing/is_adding/is_changing stuff.
 
 2006-07-10  Chris Toshok  <toshok@ximian.com>
 

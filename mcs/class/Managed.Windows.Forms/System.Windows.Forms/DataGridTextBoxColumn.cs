@@ -123,10 +123,8 @@ namespace System.Windows.Forms
 		
 		protected internal override bool Commit (CurrencyManager dataSource, int rowNum)
 		{
-			DataGridTextBox box = (DataGridTextBox)textbox;
-
 			/* Do not write data if not editing. */
-			if (box.IsInEditOrNavigateMode)
+			if (textbox.IsInEditOrNavigateMode)
 				return true;
 
 			try {
@@ -140,7 +138,8 @@ namespace System.Windows.Forms
 						SetColumnValueAtRow (dataSource, rowNum, textbox.Text);
 				}
 			}
-			catch {
+			catch (Exception e) {
+				Console.WriteLine ("exception!?!?!?! {0}", e);
 				return false;
 			}
 			
@@ -156,8 +155,6 @@ namespace System.Windows.Forms
 
 		protected internal override void Edit (CurrencyManager source, int rowNum,  Rectangle bounds,  bool _ro, string instantText, bool cellIsVisible)
 		{
-			object obj;
-			
 			grid.SuspendLayout ();
 
 			textbox.TextAlign = alignment;
@@ -170,12 +167,21 @@ namespace System.Windows.Forms
 				textbox.ReadOnly = false;
 			}			
 			
+			if (instantText != null && instantText != "") {
+				textbox.Text = instantText;
+			}
+			else {
+				object obj = GetColumnValueAtRow (source, rowNum);
+				if (obj == null)
+					textbox.Text = "";
+				else
+					textbox.Text = GetFormattedString (obj);
+			}
+
 			textbox.Location = new Point (bounds.X + offset_x, bounds.Y + offset_y);
 			textbox.Size = new Size (bounds.Width - offset_x, bounds.Height - offset_y);
 
-			obj = GetColumnValueAtRow (source, rowNum);
-			textbox.Text = GetFormattedString (obj);
-
+			textbox.IsInEditOrNavigateMode = true;
 			textbox.Visible = cellIsVisible;
 			textbox.Focus ();
 			textbox.SelectAll ();
@@ -214,6 +220,8 @@ namespace System.Windows.Forms
 		{
 			grid.SuspendLayout ();
 			textbox.Bounds = Rectangle.Empty;
+			textbox.Visible = false;
+			textbox.IsInEditOrNavigateMode = true;
 			grid.ResumeLayout (false);
 		}
 
@@ -309,9 +317,11 @@ namespace System.Windows.Forms
 
 		private string GetFormattedString (object obj)
 		{
-			if (obj == DBNull.Value) {
+			if (obj == null)
+				return "";
+
+			if (obj == DBNull.Value)
 				return NullText;
-			}
 			
 			if (format != null && obj as IFormattable != null) {
 				return ((IFormattable)obj).ToString (format, format_provider);

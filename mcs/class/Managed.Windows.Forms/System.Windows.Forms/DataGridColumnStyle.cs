@@ -432,7 +432,9 @@ namespace System.Windows.Forms
 		protected internal virtual object GetColumnValueAtRow (CurrencyManager source, int rowNum)
 		{			
 			CheckValidDataSource (source);
-			return property_descriptor.GetValue (source.GetItem (rowNum));
+			if (rowNum >= source.Count)
+				return DBNull.Value;
+			return property_descriptor.GetValue (source [rowNum]);
 		}
 
 		protected internal abstract int GetMinimumHeight ();
@@ -468,7 +470,13 @@ namespace System.Windows.Forms
 		protected internal virtual void SetColumnValueAtRow (CurrencyManager source, int rowNum,  object value)
 		{
 			CheckValidDataSource (source);
-			property_descriptor.SetValue (source.GetItem (rowNum), value);			
+
+			IEditableObject editable = source [rowNum] as IEditableObject;
+
+			if (editable != null) {
+				editable.BeginEdit ();
+				property_descriptor.SetValue (source [rowNum], value);
+			}
 		}
 
 		protected virtual void SetDataGrid (DataGrid value)
