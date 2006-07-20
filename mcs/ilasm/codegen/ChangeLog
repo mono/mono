@@ -1,3 +1,14 @@
+2006-07-20  Ankit Jain  <jankit@novell.com>
+
+	* TypeDef.cs (.ctor): If the type is an interface, then make it
+	abstract.
+	(TypeDef.AddMethodDef): Set an interface method abstract and virtual if
+	it lacks either of the attributes.
+	* MethodDef.cs (MethodDef.FullName): New.
+	(MethodDef.WriteCode): Make global methods, non-abstract and static.
+	Interface cannot have a non-static method with a body.
+	Update error messages to use new FullName property.
+
 2006-06-07  Ankit Jain  <jankit@novell.com>
 
 	* TypeDef.cs (TypeDef.IsAbstract): New.

@@ -141,6 +141,14 @@ namespace Mono.ILASM {
                         }
                 }
 
+                public string FullName { 
+                        get {
+                                if (type_def == null)
+                                        return Name;
+                                return type_def.FullName + "." + Name;
+                        }
+                }
+
                 public BaseTypeRef[] ParamTypeList () {
 
                         if (param_list == null)
@@ -457,13 +465,22 @@ namespace Mono.ILASM {
                         if (gen_params != null)
                                 gen_params.Resolve (code_gen, methoddef);
 
-                        if (IsAbstract) {
-                                if (!type_def.IsAbstract)
-                                        Report.Error (start, String.Format ("Abstract method '{0}' in non-abstract class '{1}'", 
-                                                                Name, type_def.FullName));
-                                if (inst_list.Count > 0)
-                                        Report.Error (start, "Method cannot have body if it is abstract.");
-                                return;
+                        if (type_def == null) {
+                                //Global method
+                                meth_attr &= ~PEAPI.MethAttr.Abstract;
+                                meth_attr |= PEAPI.MethAttr.Static;
+                        } else {
+                                if ((inst_list.Count > 0) && type_def.IsInterface && !IsStatic)
+                                        Report.Error (start, "Method cannot have body if it is non-static declared in an interface");
+                                
+                                if (IsAbstract) {
+                                        if (!type_def.IsAbstract)
+                                                Report.Error (start, String.Format ("Abstract method '{0}' in non-abstract class '{1}'", 
+                                                                        Name, type_def.FullName));
+                                        if (inst_list.Count > 0)
+                                                Report.Error (start, "Method cannot have body if it is abstract.");
+                                        return;
+                                }
                         }
 
                         if (entry_point)
@@ -499,24 +516,24 @@ namespace Mono.ILASM {
 
                         if ((impl_attr & PEAPI.ImplAttr.Runtime) == PEAPI.ImplAttr.Runtime) {
                                 if (inst_list.Count > 0)
-                                        Report.Error (start, String.Format ("Method cannot have body if it is non-IL runtime-supplied, '{0}.{1}'", 
-                                                                type_def.FullName, Name));
+                                        Report.Error (start, String.Format ("Method cannot have body if it is non-IL runtime-supplied, '{0}'", 
+                                                                FullName));
                         } else {
                                 if (((impl_attr & PEAPI.ImplAttr.Native) != 0) ||
                                         ((impl_attr & PEAPI.ImplAttr.Unmanaged) != 0))
-                                        Report.Error (start, String.Format ("Cannot compile native/unmanaged method, '{0}.{1}'", 
-                                                                type_def.FullName, Name));
+                                        Report.Error (start, String.Format ("Cannot compile native/unmanaged method, '{0}'", 
+                                                                FullName));
                         }
 
                         if (inst_list.Count > 0) {
                                 /* Has body */
                                 if ((impl_attr & PEAPI.ImplAttr.InternalCall) != 0)
-                                        Report.Error (start, String.Format ("Method cannot have body if it is an internal call, '{0}.{1}'", 
-                                                                type_def.FullName, Name));
+                                        Report.Error (start, String.Format ("Method cannot have body if it is an internal call, '{0}'", 
+                                                                FullName));
 
                                 if (pinvoke_info)
-                                        Report.Error (start, String.Format ("Method cannot have body if it is pinvoke, '{0}.{1}'",
-                                                                type_def.FullName, Name));
+                                        Report.Error (start, String.Format ("Method cannot have body if it is pinvoke, '{0}'",
+                                                                FullName));
                         } else {
                                 if (pinvoke_info ||
                                         ((impl_attr & PEAPI.ImplAttr.Runtime) != 0) ||

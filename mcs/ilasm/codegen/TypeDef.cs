@@ -85,6 +85,10 @@ namespace Mono.ILASM {
                                 this.name_space = name_space;
                                 this.name = name;
                         }
+
+                        //Fixup attributes
+                        if (IsInterface)
+                                this.attr |= PEAPI.TypeAttr.Abstract;
                 }
 
                 public string Name {
@@ -199,8 +203,8 @@ namespace Mono.ILASM {
 
                 public void AddMethodDef (MethodDef methoddef)
                 {
-                        if (IsInterface && !(methoddef.IsVirtual || methoddef.IsAbstract)) {
-                                Report.Warning (methoddef.StartLocation, "Non-virtual, non-abstract instance method in interface, set to such");
+                        if (IsInterface && !methoddef.IsStatic && (!methoddef.IsVirtual || !methoddef.IsAbstract)) {
+                                Report.Warning (methoddef.StartLocation, "Non-virtual or non-abstract instance method in interface, set to such");
                                 methoddef.Attributes |= PEAPI.MethAttr.Abstract | PEAPI.MethAttr.Virtual;
                         }
 
