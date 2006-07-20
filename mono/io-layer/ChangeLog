@@ -1,3 +1,9 @@
+2006-07-20  Dick Porter  <dick@ximian.com>
+
+	* threads.c (_wapi_thread_set_termination_details): Improve the
+	test for already-disposed thread handles, and hold the lock around
+	the mutex abandoning.
+
 2006-07-17  Dick Porter  <dick@ximian.com>
 
 	* processes.c (CreateProcess): Don't change directory unless a new
