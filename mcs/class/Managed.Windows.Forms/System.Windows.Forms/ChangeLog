@@ -1,5 +1,12 @@
 2006-07-20  Chris Toshok  <toshok@ximian.com>
 
+	* ToolBar.cs: When we redraw a button, for whatever reason,
+	there's no reason to redraw the entire toolbar.  Also, don't call
+	Control.Refresh from within Redraw, as it's much heavier than
+	Invalidate (which is really what we want).
+
+2006-07-20  Chris Toshok  <toshok@ximian.com>
+
 	* DataGrid.cs, CurrencyManager.cs, DataGridColumnStyle.cs,
 	DataGridTextBoxColumn.cs, DataGridTextBox.cs,
 	ThemeWin32Classic.cs, ListControl.cs: After staring at stack

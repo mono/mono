@@ -445,7 +445,6 @@ namespace System.Windows.Forms
 			e.Button.pressed = false;
 
 			Invalidate (e.Button.Rectangle);
-			Redraw (false);
 
 			if (ButtonClick != null)
 				ButtonClick (this, e);
@@ -661,7 +660,6 @@ namespace System.Windows.Forms
 			if (current_button.Hilight) {
 				current_button.Hilight = false;
 				Invalidate (current_button.Rectangle);
-				Redraw (false);
 			}
 			current_button = null;
 		}
@@ -682,7 +680,6 @@ namespace System.Windows.Forms
 						button.inside = button.Rectangle.Contains (loc);
 						button.Hilight = false;
 						Invalidate (button.Rectangle);
-						Redraw (false);
 						break;
 					}
 				}
@@ -694,7 +691,6 @@ namespace System.Windows.Forms
 						return;
 					current_button.Hilight = true;
 					Invalidate (current_button.Rectangle);
-					Redraw (false);
 				}
 				else {
 					foreach (ToolBarButton button in buttons) {
@@ -704,12 +700,10 @@ namespace System.Windows.Forms
 								continue;
 							current_button.Hilight = true;
 							Invalidate (current_button.Rectangle);
-							Redraw (false);
 						}
 						else if (button.Hilight) {
 							button.Hilight = false;
 							Invalidate (button.Rectangle);
-							Redraw (false);
 						}
 					}
 				}
@@ -726,7 +720,7 @@ namespace System.Windows.Forms
 			if (recalculate)
 				Layout ();
 
-			Refresh ();
+			Invalidate ();
 		}
 
 		internal bool SizeSpecified {
