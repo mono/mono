@@ -1,5 +1,10 @@
 2006-07-20  Dick Porter  <dick@ximian.com>
 
+	* file-io.c (ves_icall_System_IO_MonoIO_Seek): Fix signed/unsigned
+	warning.
+
+2006-07-20  Dick Porter  <dick@ximian.com>
+
 	* threads.c (start_wrapper): Do the thread cleanup while we still
 	hold a reference to its object.  Fixes bug 78123.
 
