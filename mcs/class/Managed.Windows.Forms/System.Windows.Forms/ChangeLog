@@ -1,3 +1,9 @@
+2006-07-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListControl.cs: DataSource should throw an ArgumentException
+	instead of a normal exception when the argument is not of the 
+	correct type.
+
 2006-07-20  Mike Kestner  <mkestner@novell.com>
 
 	* Control.cs: add InternalPreProcessMessage to allow us to steal

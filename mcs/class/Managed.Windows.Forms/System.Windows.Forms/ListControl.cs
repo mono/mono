@@ -75,10 +75,9 @@ namespace System.Windows.Forms
 		public object DataSource {
 			get { return data_source; }
 			set {
-				if (!(value is IList || value is IListSource)) {
-					throw new Exception ("Complex DataBinding accepts as a data source " +
+				if (!(value is IList || value is IListSource))
+					throw new ArgumentException ("Complex DataBinding accepts as a data source " +
 							"either an IList or an IListSource");
-				}
 
 				if (data_source == value)
 					return;
