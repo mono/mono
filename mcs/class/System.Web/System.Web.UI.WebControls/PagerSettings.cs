@@ -64,6 +64,7 @@ namespace System.Web.UI.WebControls
 			}
 			set {
 				ViewState ["FirstPageImageUrl"] = value;
+				RaisePropertyChanged ();
 			}
 		}
 	
@@ -78,6 +79,7 @@ namespace System.Web.UI.WebControls
 			}
 			set {
 				ViewState ["FirstPageText"] = value;
+				RaisePropertyChanged ();
 			}
 		}
 	
@@ -94,6 +96,7 @@ namespace System.Web.UI.WebControls
 			}
 			set {
 				ViewState ["LastPageImageUrl"] = value;
+				RaisePropertyChanged ();
 			}
 		}
 	
@@ -108,6 +111,7 @@ namespace System.Web.UI.WebControls
 			}
 			set {
 				ViewState ["LastPageText"] = value;
+				RaisePropertyChanged ();
 			}
 		}
 	
@@ -122,6 +126,7 @@ namespace System.Web.UI.WebControls
 			}
 			set {
 				ViewState ["Mode"] = value;
+				RaisePropertyChanged ();
 			}
 		}
 	
@@ -138,6 +143,7 @@ namespace System.Web.UI.WebControls
 			}
 			set {
 				ViewState ["NextPageImageUrl"] = value;
+				RaisePropertyChanged ();
 			}
 		}
 
@@ -152,6 +158,7 @@ namespace System.Web.UI.WebControls
 			}
 			set {
 				ViewState ["NextPageText"] = value;
+				RaisePropertyChanged ();
 			}
 		}
 	
@@ -166,6 +173,7 @@ namespace System.Web.UI.WebControls
 			}
 			set {
 				ViewState ["PageButtonCount"] = value;
+				RaisePropertyChanged ();
 			}
 		}
 	
@@ -196,6 +204,7 @@ namespace System.Web.UI.WebControls
 			}
 			set {
 				ViewState ["PreviousPageImageUrl"] = value;
+				RaisePropertyChanged ();
 			}
 		}
 	
@@ -210,6 +219,7 @@ namespace System.Web.UI.WebControls
 			}
 			set {
 				ViewState ["PreviousPageText"] = value;
+				RaisePropertyChanged ();
 			}
 		}
 	
@@ -226,7 +236,15 @@ namespace System.Web.UI.WebControls
 				ViewState ["Visible"] = value;
 			}
 		}
-	
+
+		public event EventHandler PropertyChanged;
+
+		void RaisePropertyChanged ()
+		{
+			if (PropertyChanged != null)
+				PropertyChanged (this, EventArgs.Empty);
+		}
+
 		public override string ToString ()
 		{
 			return string.Empty;
