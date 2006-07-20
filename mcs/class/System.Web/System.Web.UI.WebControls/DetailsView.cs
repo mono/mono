@@ -1042,7 +1042,7 @@ namespace System.Web.UI.WebControls
 				
 			ArrayList list = new ArrayList ();
 
-			if (!Page.IsPostBack)
+			if (Page == null || !Page.IsPostBack)
 				currentMode = DefaultMode;
 
 			
