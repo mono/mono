@@ -1,5 +1,9 @@
 2006-07-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* RemoteStateServer.cs: make it inmortal.
+
+2006-07-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* RemoteStateServer.cs: use a Cache instead of a Hashtable so that we
 	get sliding expiration for free.
 	* StateServerItem.cs: expose 'timeout' through a property.

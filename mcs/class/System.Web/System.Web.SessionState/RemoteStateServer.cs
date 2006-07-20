@@ -79,6 +79,11 @@ namespace System.Web.SessionState {
 		{
 			cache.Remove (id);
 		}
+
+		public override object InitializeLifetimeService ()
+		{
+			return null; // just in case...
+		}
 	}
 }
 
