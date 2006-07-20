@@ -1,3 +1,7 @@
+2006-07-20 Andrew Skiba <andrews@mainsoft.com>
+
+	* DetailsViewTest.cs: add a new assert
+
 2006-07-20 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* PagerSettingsTest.cs: fixed PropertyChanged test
