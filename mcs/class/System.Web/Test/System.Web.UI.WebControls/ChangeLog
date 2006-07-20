@@ -1,3 +1,7 @@
+2006-07-20 Yoni Klain <yonik@mainsoft.com>
+
+	* GridViewTest.cs: added new tests
+
 2006-07-19 Andrew Skiba <andrews@mainsoft.com>
 
 	* DetailsViewTest.cs: #if NET_2_0
