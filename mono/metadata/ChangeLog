@@ -1,3 +1,8 @@
+2006-07-20  Dick Porter  <dick@ximian.com>
+
+	* threads.c (start_wrapper): Do the thread cleanup while we still
+	hold a reference to its object.  Fixes bug 78123.
+
 2006-07-18  Kornél Pál  <kornelpal@gmail.com>
 
 	* class-internals.h: Added MONO_WRAPPER_MANAGED_TO_MANAGED wrapper type.
