@@ -471,9 +471,14 @@ namespace PEAPI {
 
 		internal sealed override void BuildTables(MetaData md) 
 		{
+			md.AddToTable(MDTable.CustomAttribute, this);
+			if (byteVal == null) {
+				valIx = 0;
+				return;
+			}
+
 			BinaryWriter bw = new BinaryWriter(new MemoryStream());
 			bw.Write(byteVal);
-			md.AddToTable(MDTable.CustomAttribute, this);
 			MemoryStream str = (MemoryStream)bw.BaseStream;
 			valIx = md.AddToBlobHeap(str.ToArray());
 		}
