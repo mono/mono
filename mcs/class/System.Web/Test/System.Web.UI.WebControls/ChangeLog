@@ -1,5 +1,9 @@
 2006-07-20 Andrew Skiba <andrews@mainsoft.com>
 
+	* DetailsViewTest.cs: more precise lifetime flow check.
+
+2006-07-20 Andrew Skiba <andrews@mainsoft.com>
+
 	* DetailsViewTest.cs: add EnsureChildControls basic test.
 
 2006-07-20 Andrew Skiba <andrews@mainsoft.com>

@@ -56,6 +56,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			public bool isInitializePager = false;
 			public bool controlHierarchy = false;
 			public bool ensureCreateChildControls = false;
+			public bool createChildControls1 = false;
+			public bool createChildControls2 = false;
 			public PokerDetailsView () 
 			{
 			 TrackViewState ();
@@ -224,6 +226,18 @@ namespace MonoTests.System.Web.UI.WebControls
 			{
 				base.EnsureChildControls ();
 				ensureCreateChildControls = true;
+			}
+
+			protected override void CreateChildControls ()
+			{
+				base.CreateChildControls ();
+				createChildControls1 = true;
+			}
+
+			protected override int CreateChildControls (IEnumerable data, bool dataBinding)
+			{
+				return base.CreateChildControls (data, dataBinding);
+				createChildControls2 = true;
 			}
 
 			public void DoConfirmInitState ()
@@ -858,6 +872,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			int i = dv.Rows.Count;
 			Assert.IsTrue (dv.ensureCreateChildControls);
 			Assert.IsFalse (dv.ensureDataBound);
+			Assert.IsFalse (dv.createChildControls1);
+			Assert.IsFalse (dv.createChildControls2);
 		}
 
 		[Test]
