@@ -1,3 +1,7 @@
+2006-07-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestGraphics.cs: Added ReleaseHDC test cases by Jonathan Pobst.
+
 2006-07-06  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* GDIPlusTest.cs: New WIP. Unit tests for the GDI+ function calls.

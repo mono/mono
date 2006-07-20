@@ -1297,5 +1297,41 @@ namespace MonoTests.System.Drawing
 				}
 			}
 		}
+
+#if NET_2_0
+		[Test]
+		public void TestReleaseHdc ()
+		{
+			Bitmap b = new Bitmap (100, 100);
+			Graphics g = Graphics.FromImage (b);
+
+			g.GetHdc ();
+			g.ReleaseHdc ();
+			g.GetHdc ();
+			g.ReleaseHdc ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TestReleaseHdcException ()
+		{
+			Bitmap b = new Bitmap (100, 100);
+			Graphics g = Graphics.FromImage (b);
+
+			g.ReleaseHdc ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TestReleaseHdcException2 ()
+		{
+			Bitmap b = new Bitmap (100, 100);
+			Graphics g = Graphics.FromImage (b);
+
+			g.GetHdc ();
+			g.ReleaseHdc ();
+			g.ReleaseHdc ();
+		}
+#endif
 	}
 }
