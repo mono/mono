@@ -1,3 +1,10 @@
+2006-07-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ImageFormat.cs: Re-fixed ToString method to match MS output when
+	the ImageFormat instance comes from the static properties. Create the
+	default ImageFormat on demand (and avoid creating 10 instances of 
+	ImageFormat in the static ctor).
+
 2006-05-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ImageFormat.cs: Avoid double-cast in Equals method.
