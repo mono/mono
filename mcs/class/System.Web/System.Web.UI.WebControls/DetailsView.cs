@@ -1714,11 +1714,15 @@ namespace System.Web.UI.WebControls
 		{
 			if (EnablePagingCallbacks)
 				base.RenderBeginTag (writer);
+			else
+				writer.RenderBeginTag (HtmlTextWriterTag.Div);
 
 			RenderGrid (writer);
 			
 			if (EnablePagingCallbacks)
 				base.RenderEndTag (writer);
+			else
+				writer.RenderEndTag ();
 		}
 		
 		void RenderGrid (HtmlTextWriter writer)

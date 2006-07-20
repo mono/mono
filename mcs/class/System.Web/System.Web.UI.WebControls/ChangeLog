@@ -1,5 +1,9 @@
 2006-07-20 Andrew Skiba <andrews@mainsoft.com>
 
+	* DetailsView.cs: Render fix.
+
+2006-07-20 Andrew Skiba <andrews@mainsoft.com>
+
 	* BoundField.cs: don't call DataBinder.GetPropertyValue with empty
 	property name.
 
