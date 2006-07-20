@@ -68,6 +68,10 @@ namespace System.Web.SessionState {
 				return true;
 			return false;
 		}
+
+		public int Timeout {
+			get { return timeout; }
+		}
 	}
 }
 

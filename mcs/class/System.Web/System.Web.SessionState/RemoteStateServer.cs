@@ -3,8 +3,9 @@
 //
 // Author(s):
 //  Jackson Harper (jackson@ximian.com)
+//  Gonzalo Paniagua (gonzalo@ximian.com)
 //
-// (C) 2003 Novell, Inc (http://www.novell.com)
+// (C) 2003-2006 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -28,52 +29,55 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
 using System;
-using System.Collections;
+using System.Web.Caching;
 
 namespace System.Web.SessionState {
-
 	internal class RemoteStateServer : MarshalByRefObject {
-		
-		private Hashtable table;
-		
+		Cache cache;
+		//CacheItemRemovedCallback removedCB;
+
 		internal RemoteStateServer ()
 		{
-			table = new Hashtable ();
+			cache = new Cache ();
+			//removedCB = new CacheItemRemovedCallback (OnItemRemoved);
 		}
-		
+
+		/*
+		void OnItemRemoved (string key, object value, CacheItemRemovedReason reason)
+		{
+			Console.WriteLine ("{2} {0} removed. Reason: {1}", key, reason, Datetime.Now);
+		}
+		*/
+
 		internal void Insert (string id, StateServerItem item)
 		{
-			table.Add (id, item);
+			//cache.Insert (id, item, null, Cache.NoAbsoluteExpiration, new TimeSpan (0, item.Timeout, 0), CacheItemPriority.Normal, removedCB);
+			cache.Insert (id, item, null, Cache.NoAbsoluteExpiration, new TimeSpan (0, item.Timeout, 0));
 		}
 
 		internal void Update (string id, byte [] dict_data, byte [] sobjs_data)
 		{
-			StateServerItem item = table [id] as StateServerItem;
-
+			StateServerItem item = cache [id] as StateServerItem;
 			if (item == null)
 				return;
 
 			item.DictionaryData = dict_data;
 			item.StaticObjectsData = sobjs_data;
-			item.Touch ();
 		}
 		
 		internal StateServerItem Get (string id)
 		{
-			StateServerItem item = table [id] as StateServerItem;
-
+			StateServerItem item = cache [id] as StateServerItem;
 			if (item == null || item.IsAbandoned ())
 				return null;
 
-			item.Touch ();
 			return item;
 		}
 
 		internal void Remove (string id)
 		{
-			table.Remove (id);
+			cache.Remove (id);
 		}
 	}
 }

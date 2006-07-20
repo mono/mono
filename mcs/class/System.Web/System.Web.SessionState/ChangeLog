@@ -1,3 +1,9 @@
+2006-07-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* RemoteStateServer.cs: use a Cache instead of a Hashtable so that we
+	get sliding expiration for free.
+	* StateServerItem.cs: expose 'timeout' through a property.
+
 2006-06-15 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SessionId.cs: make the length of the SessionID 24, as MS.
