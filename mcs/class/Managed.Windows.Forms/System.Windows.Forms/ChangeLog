@@ -1,3 +1,8 @@
+2006-07-19  Jonathan Chambers  <joncham@gmail.com>
+
+	* PropertyGridView.cs: set StartPosition of drop down forms
+	so they appear in correct initial spot.  Fixes #78190.
+
 2006-07-19  Mike Kestner  <mkestner@novell.com>
 
 	* ThemeWin32Classic.cs: use parent background color when drawing

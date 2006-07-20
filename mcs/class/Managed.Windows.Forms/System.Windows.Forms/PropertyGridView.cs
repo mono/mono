@@ -76,9 +76,11 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			
 			dropdown_form = new PropertyGridDropDown();
 			dropdown_form.FormBorderStyle = FormBorderStyle.None;
+			dropdown_form.StartPosition = FormStartPosition.Manual;
 			dropdown_form.ShowInTaskbar = false;
-			
-			dialog_form = new Form();
+
+			dialog_form = new Form ();
+			dialog_form.StartPosition = FormStartPosition.Manual;
 			dialog_form.FormBorderStyle = FormBorderStyle.None;
 			dialog_form.ShowInTaskbar = false;
 
