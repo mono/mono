@@ -207,6 +207,13 @@ namespace Mono.CSharp {
 	{
 		TypeContainer host;
 
+		//
+		// The value return by the Compatible call, this ensure that
+		// the code works even if invoked more than once (Resolve called
+		// more than once, due to the way Convert.ImplicitConversion works
+		//
+		Expression anonymous_delegate;
+
 		public AnonymousMethod (TypeContainer host, Parameters parameters, ToplevelBlock container,
 					ToplevelBlock block, Location l)
 			: base (parameters, container, block, l)
@@ -299,6 +306,9 @@ namespace Mono.CSharp {
 		//
 		public Expression Compatible (EmitContext ec, Type delegate_type)
 		{
+			if (anonymous_delegate != null)
+				return anonymous_delegate;
+			
 			//
 			// At this point its the first time we know the return type that is 
 			// needed for the anonymous method.  We create the method here.
@@ -375,9 +385,11 @@ namespace Mono.CSharp {
 			ContainerAnonymousMethod = ec.CurrentAnonymousMethod;
 			ContainingBlock = ec.CurrentBlock;
 
-			if (aec.ResolveTopBlock (ec, Block, Parameters, null, out unreachable))
-				return new AnonymousDelegate (this, delegate_type, loc).Resolve (ec);
-
+			if (aec.ResolveTopBlock (ec, Block, Parameters, null, out unreachable)){
+				anonymous_delegate = new AnonymousDelegate (
+					this, delegate_type, loc).Resolve (ec);
+				return anonymous_delegate;
+			}
 			return null;
 		}
 

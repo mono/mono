@@ -1,3 +1,13 @@
+2006-07-20  Miguel de Icaza  <miguel@novell.com>
+
+	* anonymous.cs: Cache the resolved anonymous delegate, and return
+	this so that the ResolveTopBlock is only triggered once, not
+	twice.
+
+	Currently we trigger ResolvetopBlock twice due to a first pass of
+	argument check compatibility, and a second pass that does the
+	actual resolution.   
+
 2006-07-16  Marek Safar  <marek.safar@seznam.cz>
 
 	A fix for #70506
