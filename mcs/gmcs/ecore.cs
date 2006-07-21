@@ -2123,6 +2123,13 @@ namespace Mono.CSharp {
 			if (current_block != null){
 				LocalInfo vi = current_block.GetLocalInfo (Name);
 				if (vi != null){
+					if (Arguments != null) {
+						Report.Error (307, loc,
+							      "The variable `{0}' cannot be used with type arguments",
+							      Name);
+						return null;
+					}
+
 					LocalVariableReference var = new LocalVariableReference (ec.CurrentBlock, Name, loc);
 					if (right_side != null) {
 						return var.ResolveLValue (ec, right_side, loc);
@@ -2136,6 +2143,13 @@ namespace Mono.CSharp {
 
 				ParameterReference pref = current_block.Toplevel.GetParameterReference (Name, loc);
 				if (pref != null) {
+					if (Arguments != null) {
+						Report.Error (307, loc,
+							      "The variable `{0}' cannot be used with type arguments",
+							      Name);
+						return null;
+					}
+
 					if (right_side != null)
 						return pref.ResolveLValue (ec, right_side, loc);
 					else
