@@ -684,6 +684,10 @@ namespace Cairo
 		[DllImport (cairo)]
 		internal static extern IntPtr cairo_version_string ();
 		
+		// DirectFBSurface
+		[DllImport (cairo)]
+		internal static extern IntPtr cairo_directfb_surface_create (IntPtr dfb, IntPtr surface);
+		
 		// win32 fonts
 		[DllImport (cairo)]
 		internal static extern IntPtr cairo_win32_font_face_create_for_logfontw (IntPtr logfontw);
@@ -703,10 +707,10 @@ namespace Cairo
 		
 		// XcbSurface
 		[DllImport (cairo)]
-		internal static extern IntPtr cairo_xcb_surface_create (IntPtr connection, IntPtr drawable, IntPtr visual, int width, int height);
+		internal static extern IntPtr cairo_xcb_surface_create (IntPtr connection, uint drawable, IntPtr visual, int width, int height);
 		
 		[DllImport (cairo)]
-		internal static extern IntPtr cairo_xcb_surface_create_for_bitmap (IntPtr connection, IntPtr bitmap, int width, int height);
+		internal static extern IntPtr cairo_xcb_surface_create_for_bitmap (IntPtr connection, uint bitmap, IntPtr screen, int width, int height);
 		
 		[DllImport (cairo)]
 		internal static extern void cairo_xcb_surface_set_size (IntPtr surface, int width, int height);

@@ -5,6 +5,7 @@
 ./Mono.Cairo/Cairo.cs
 ./Mono.Cairo/Content.cs
 ./Mono.Cairo/Context.cs
+./Mono.Cairo/DirectFBSurface.cs
 ./Mono.Cairo/Extend.cs
 ./Mono.Cairo/FillRule.cs
 ./Mono.Cairo/Filter.cs
@@ -40,5 +41,6 @@
 ./Mono.Cairo/SvgVersion.cs
 ./Mono.Cairo/TextExtents.cs
 ./Mono.Cairo/Win32Surface.cs
+./Mono.Cairo/XcbSurface.cs
 ./Mono.Cairo/XlibSurface.cs
 
