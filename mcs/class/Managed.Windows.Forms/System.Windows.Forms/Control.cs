@@ -1225,18 +1225,24 @@ namespace System.Windows.Forms
 
 			if (start != null) {
 				found = FindFlatBackward(start.parent, start);
-				if (found == null && start.parent != container) {
-					return start.parent;
+				if (found == null) {
+					if (start.parent != container) {
+						return start.parent;
+					}
+				} else {
+					return found;
 				}
 			}
 			if (found == null) {
 				found = FindFlatBackward(container, start);
 			}
 
-			while ((found != null) && ((found is IContainerControl) || found.GetStyle(ControlStyles.ContainerControl))) {
-				found = FindControlBackward(found, null);
-				if (found != null) {
-					return found;
+			if (container != start) {
+				while ((found != null) && (!found.Contains(start)) && ((found is IContainerControl) || found.GetStyle(ControlStyles.ContainerControl))) {
+					found = FindControlBackward(found, null);
+					if (found != null) {
+						return found;
+					}
 				}
 			}
 
@@ -2738,6 +2744,21 @@ namespace System.Windows.Forms
 			// If we're not a container we don't play
 			if (!(this is IContainerControl) && !this.GetStyle(ControlStyles.ContainerControl)) {
 				return null;
+			}
+
+			// Special cases
+			if (this == ctl) {
+				if (!forward) {
+					return FindFlatBackward(ctl, null);
+				}
+			} else {
+				if ((parent == null) && (ctl is IContainerControl) && ctl.GetStyle(ControlStyles.ContainerControl)) {
+					if (forward) {
+						return FindFlatForward(this, ctl);
+					} else {
+						return FindFlatBackward(this, ctl);
+					}
+				}
 			}
 
 			// If ctl is not contained by this, we start at the first child of this

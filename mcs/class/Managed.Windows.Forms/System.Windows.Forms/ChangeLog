@@ -1,3 +1,8 @@
+2006-07-21  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Control.cs (GetNextControl): Fixes to make all of Jackson's unit 
+	  tests pass and match MS in some strange border cases.
+
 2006-07-21  Chris Toshok  <toshok@ximian.com>
 
 	* ThemeWin32Classic.cs: handle drawing of the relation links and
