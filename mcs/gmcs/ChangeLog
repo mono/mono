@@ -1,3 +1,20 @@
+2006-07-21  Raja R Harinath  <rharinath@novell.com>
+
+	Make comparisons use the same IL irrespective of whether they're
+	in a 'checked' or 'unchecked' context: one of the issues in #78899
+	* codegen.cs (EmitContext.CheckState): Make read-only property.
+	(EmitContext.ConstantCheckState): Likewise.
+	(EmitContext.CheckStateHandle, EmitContext.WithCheckState): New
+	helper that implement a save/restore stack for CheckState
+	values.  This is the only way to change check-state.
+	* ecore.cs (Expression.ExpressionToArrayArgument): Use WithCheckState.
+	* expression.cs (CheckedExpr.DoResolve, CheckedExpr.Emit): Likewise.
+	(CheckedExpr.EmitBranchable): New forwarding method.
+	(UnCheckedExpr): Likewise.
+	* statement.cs (Block.ResolveMeta): Use WithCheckState.
+	(Unchecked.Resolve, Unchecked.DoEmit): Likewise.
+	(Checked.Resolve, checked.DoEmit): Likewise.
+
 2006-07-21  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs (TypeManager.InferType): When inferring an array

@@ -217,17 +217,16 @@ namespace Mono.CSharp {
 		///   The default setting comes from the command line option to generate
 		///   checked or unchecked code plus any source code changes using the
 		///   checked/unchecked statements or expressions.   Contrast this with
-		///   the ConstantCheckState flag.
+		///   the constant_check_state flag.
 		/// </summary>
-		
-		public bool CheckState;
+		bool check_state;
 
 		/// <summary>
 		///   The constant check state is always set to `true' and cant be changed
 		///   from the command line.  The source code can change this setting with
 		///   the `checked' and `unchecked' statements and expressions. 
 		/// </summary>
-		public bool ConstantCheckState;
+		bool constant_check_state;
 
 		/// <summary>
 		///   Whether we are emitting code inside a static or instance method
@@ -395,8 +394,8 @@ namespace Mono.CSharp {
 
 			TypeContainer = parent;
 			this.declSpace = ds;
-			CheckState = RootContext.Checked;
-			ConstantCheckState = true;
+			check_state = RootContext.Checked;
+			constant_check_state = true;
 
 			if ((return_type is TypeBuilder) && return_type.IsGenericTypeDefinition)
 				throw new InternalErrorException ();
@@ -438,6 +437,42 @@ namespace Mono.CSharp {
 			set { declSpace = value; }
 		}
 
+		public bool CheckState {
+			get { return check_state; }
+		}
+
+		public bool ConstantCheckState {
+			get { return constant_check_state; }
+		}
+
+		// utility helper for CheckExpr, UnCheckExpr, Checked and Unchecked statements
+		// it's public so that we can use a struct at the callsite
+		public struct CheckStateHandle : IDisposable
+		{
+			EmitContext ec;
+			bool check, const_check;
+			public CheckStateHandle (EmitContext ec, bool new_check_state, bool new_constant_check_state)
+			{
+				this.ec = ec;
+				check = ec.check_state;
+				const_check = ec.constant_check_state;
+				ec.check_state = new_check_state;
+				ec.constant_check_state = new_constant_check_state;
+			}
+			void IDisposable.Dispose ()
+			{
+				ec.check_state = check;
+				ec.constant_check_state = const_check;
+			}
+		}
+
+		// Temporarily set 'CheckState' and 'ConstantCheckState' to the given values.
+		// Should be used in an 'using' statement
+		public CheckStateHandle WithCheckState (bool check_state, bool constant_check_state)
+		{
+			return new CheckStateHandle (this, check_state, constant_check_state);
+		}
+		
 		public bool IsInObsoleteScope {
 			get { return ResolveContext.IsInObsoleteScope; }
 		}
@@ -447,12 +482,8 @@ namespace Mono.CSharp {
 		}
 
 		public bool IsAnonymousMethodAllowed {
-			get {
-				return isAnonymousMethodAllowed;
-			}
-			set {
-				isAnonymousMethodAllowed = value;
-			}
+			get { return isAnonymousMethodAllowed; }
+			set { isAnonymousMethodAllowed = value; }
 		}
 
 		public FlowBranching CurrentBranching {

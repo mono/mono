@@ -6953,14 +6953,8 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			bool last_check = ec.CheckState;
-			bool last_const_check = ec.ConstantCheckState;
-
-			ec.CheckState = true;
-			ec.ConstantCheckState = true;
-			Expr = Expr.Resolve (ec);
-			ec.CheckState = last_check;
-			ec.ConstantCheckState = last_const_check;
+			using (ec.WithCheckState (true, true))
+				Expr = Expr.Resolve (ec);
 			
 			if (Expr == null)
 				return null;
@@ -6975,16 +6969,15 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			bool last_check = ec.CheckState;
-			bool last_const_check = ec.ConstantCheckState;
-			
-			ec.CheckState = true;
-			ec.ConstantCheckState = true;
-			Expr.Emit (ec);
-			ec.CheckState = last_check;
-			ec.ConstantCheckState = last_const_check;
+			using (ec.WithCheckState (true, true))
+				Expr.Emit (ec);
 		}
-		
+
+		public override void EmitBranchable (EmitContext ec, Label target, bool onTrue)
+		{
+			using (ec.WithCheckState (true, true))
+				Expr.EmitBranchable (ec, target, onTrue);
+		}
 	}
 
 	/// <summary>
@@ -7002,14 +6995,8 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			bool last_check = ec.CheckState;
-			bool last_const_check = ec.ConstantCheckState;
-
-			ec.CheckState = false;
-			ec.ConstantCheckState = false;
-			Expr = Expr.Resolve (ec);
-			ec.CheckState = last_check;
-			ec.ConstantCheckState = last_const_check;
+			using (ec.WithCheckState (false, false))
+				Expr = Expr.Resolve (ec);
 
 			if (Expr == null)
 				return null;
@@ -7024,16 +7011,15 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			bool last_check = ec.CheckState;
-			bool last_const_check = ec.ConstantCheckState;
-			
-			ec.CheckState = false;
-			ec.ConstantCheckState = false;
-			Expr.Emit (ec);
-			ec.CheckState = last_check;
-			ec.ConstantCheckState = last_const_check;
+			using (ec.WithCheckState (false, false))
+				Expr.Emit (ec);
 		}
 		
+		public override void EmitBranchable (EmitContext ec, Label target, bool onTrue)
+		{
+			using (ec.WithCheckState (false, false))
+				Expr.EmitBranchable (ec, target, onTrue);
+		}
 	}
 
 	/// <summary>

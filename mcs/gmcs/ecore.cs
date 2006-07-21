@@ -1098,22 +1098,20 @@ namespace Mono.CSharp {
 		{
 			Expression target;
 			
-			bool old_checked = ec.CheckState;
-			ec.CheckState = true;
-			
-			target = Convert.ImplicitConversion (ec, source, TypeManager.int32_type, loc);
-			if (target == null){
-				target = Convert.ImplicitConversion (ec, source, TypeManager.uint32_type, loc);
-				if (target == null){
+			using (ec.WithCheckState (true, ec.ConstantCheckState)) {
+				target = Convert.ImplicitConversion (ec, source, TypeManager.int32_type, loc);
+				if (target == null)
+					target = Convert.ImplicitConversion (ec, source, TypeManager.uint32_type, loc);
+				if (target == null)
 					target = Convert.ImplicitConversion (ec, source, TypeManager.int64_type, loc);
-					if (target == null){
-						target = Convert.ImplicitConversion (ec, source, TypeManager.uint64_type, loc);
-						if (target == null)
-							source.Error_ValueCannotBeConverted (loc, TypeManager.int32_type, false);
-					}
+				if (target == null)
+					target = Convert.ImplicitConversion (ec, source, TypeManager.uint64_type, loc);
+
+				if (target == null) {
+					source.Error_ValueCannotBeConverted (loc, TypeManager.int32_type, false);
+					return null;
 				}
-			} 
-			ec.CheckState = old_checked;
+			}
 
 			//
 			// Only positive constants are allowed at compile time
