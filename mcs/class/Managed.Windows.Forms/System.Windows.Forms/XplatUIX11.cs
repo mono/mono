@@ -782,15 +782,15 @@ namespace System.Windows.Forms {
 
 				if ((cp.ExStyle & (int)WindowExStyles.WS_EX_TOPMOST) != 0) {
 					atom_count = 0;
-					atoms[atom_count++] = atoms[atom_count++] = NetAtoms[(int)NA._NET_WM_WINDOW_TYPE_DOCK].ToInt32();
+					atoms[atom_count++] = NetAtoms[(int)NA._NET_WM_WINDOW_TYPE_DOCK].ToInt32();
 					XChangeProperty(DisplayHandle, hwnd.whole_window, NetAtoms[(int)NA._NET_WM_WINDOW_TYPE], (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, atom_count);
 				} else if (transient) {
 					atom_count = 0;
 
 					if ((cp.ExStyle & ((int)WindowExStyles.WS_EX_TOOLWINDOW)) != 0) {
-						atoms[atom_count++] = atoms[atom_count++] = NetAtoms[(int)NA._NET_WM_WINDOW_TYPE_DOCK].ToInt32();
+						atoms[atom_count++] = NetAtoms[(int)NA._NET_WM_WINDOW_TYPE_DOCK].ToInt32();
 					} else {
-						atoms[atom_count++] = atoms[atom_count++] = NetAtoms[(int)NA._NET_WM_WINDOW_TYPE_DIALOG].ToInt32();
+						atoms[atom_count++] = NetAtoms[(int)NA._NET_WM_WINDOW_TYPE_DIALOG].ToInt32();
 					}
 					XChangeProperty(DisplayHandle, hwnd.whole_window, NetAtoms[(int)NA._NET_WM_WINDOW_TYPE], (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, atom_count);
 				}
