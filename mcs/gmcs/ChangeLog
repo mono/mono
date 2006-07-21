@@ -1,5 +1,13 @@
 2006-07-21  Martin Baulig  <martin@ximian.com>
 
+	* generic.cs (TypeManager.IsIEnumerable): Renamed into IsIList()
+	and allow IList`1 and all its base interfaces.
+
+	* convert.cs (Convert.ImplicitReferenceConversion): Allow
+	converting from an array-type of T to IList<T>.
+
+2006-07-21  Martin Baulig  <martin@ximian.com>
+
 	* ecore.cs (SimpleName.DoSimpleNameResolve): Added CS0307 check.
 
 2006-07-20  Miguel de Icaza  <miguel@novell.com>

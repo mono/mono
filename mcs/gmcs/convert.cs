@@ -280,8 +280,8 @@ namespace Mono.CSharp {
 			if (expr_type.IsArray && target_type == TypeManager.array_type)
 				return new EmptyCast (expr, target_type);
 
-			// from an array-type of type T to IEnumerable<T>
-			if (expr_type.IsArray && TypeManager.IsIEnumerable (expr_type, target_type))
+			// from an array-type of type T to IList<T>
+			if (expr_type.IsArray && TypeManager.IsIList (expr_type, target_type))
 				return new EmptyCast (expr, target_type);
 
 			// from any delegate type to System.Delegate
@@ -376,8 +376,8 @@ namespace Mono.CSharp {
 			if (expr_type.IsArray && (target_type == TypeManager.array_type))
 				return true;
 
-			// from an array-type of type T to IEnumerable<T>
-			if (expr_type.IsArray && TypeManager.IsIEnumerable (expr_type, target_type))
+			// from an array-type of type T to IList<T>
+			if (expr_type.IsArray && TypeManager.IsIList (expr_type, target_type))
 				return true;
 
 			// from any delegate type to System.Delegate

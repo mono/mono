@@ -1942,6 +1942,8 @@ namespace Mono.CSharp {
 		// A list of core types that the compiler requires or uses
 		//
 		static public Type activator_type;
+		static public Type generic_ilist_type;
+		static public Type generic_icollection_type;
 		static public Type generic_ienumerator_type;
 		static public Type generic_ienumerable_type;
 		static public Type generic_nullable_type;
@@ -1970,6 +1972,10 @@ namespace Mono.CSharp {
 		{
 			activator_type = CoreLookupType ("System", "Activator");
 
+			generic_ilist_type = CoreLookupType (
+				"System.Collections.Generic", "IList", 1);
+			generic_icollection_type = CoreLookupType (
+				"System.Collections.Generic", "ICollection", 1);
 			generic_ienumerator_type = CoreLookupType (
 				"System.Collections.Generic", "IEnumerator", 1);
 			generic_ienumerable_type = CoreLookupType (
@@ -2110,18 +2116,20 @@ namespace Mono.CSharp {
 		}
 
 		//
-		// Whether `array' is an array of T and `enumerator' is `IEnumerable<T>'.
-		// For instance "string[]" -> "IEnumerable<string>".
+		// Whether `array' is an array of T and `list' is `IList<T>'.
+		// For instance "string[]" -> "IList<string>".
 		//
-		public static bool IsIEnumerable (Type array, Type enumerator)
+		public static bool IsIList (Type array, Type list)
 		{
-			if (!array.IsArray || !enumerator.IsGenericType)
+			if (!array.IsArray || !list.IsGenericType)
 				return false;
 
-			if (enumerator.GetGenericTypeDefinition () != generic_ienumerable_type)
+			Type gt = list.GetGenericTypeDefinition ();
+			if ((gt != generic_ilist_type) && (gt != generic_icollection_type) &&
+			    (gt != generic_ienumerable_type))
 				return false;
 
-			Type[] args = GetTypeArguments (enumerator);
+			Type[] args = GetTypeArguments (list);
 			return args [0] == GetElementType (array);
 		}
 
