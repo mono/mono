@@ -2407,9 +2407,13 @@ namespace Mono.CSharp {
 					return InferType (pt.GetElementType (), at.GetElementType (), infered);
 				}
 
-				if (!pt.IsGenericType ||
-				    (pt.GetGenericTypeDefinition () != generic_ienumerable_type))
-				    return false;
+				if (!pt.IsGenericType)
+					return false;
+
+				Type gt = pt.GetGenericTypeDefinition ();
+				if ((gt != generic_ilist_type) && (gt != generic_icollection_type) &&
+				    (gt != generic_ienumerable_type))
+					return false;
 
 				Type[] args = GetTypeArguments (pt);
 				return InferType (args [0], at.GetElementType (), infered);

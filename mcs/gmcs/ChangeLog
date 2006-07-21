@@ -1,5 +1,10 @@
 2006-07-21  Martin Baulig  <martin@ximian.com>
 
+	* generic.cs (TypeManager.InferType): When inferring an array
+	type, also allow IList<T> and ICollection<T>.  Fixes #78900.
+
+2006-07-21  Martin Baulig  <martin@ximian.com>
+
 	* generic.cs (TypeManager.IsIEnumerable): Renamed into IsIList()
 	and allow IList`1 and all its base interfaces.
 
