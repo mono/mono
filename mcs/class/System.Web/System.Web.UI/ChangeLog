@@ -1,3 +1,8 @@
+2006-07-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* PostBackOptions.cs: default to String.Empty for several field values.
+	Patch by Marek Habersack.
+
 2006-07-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Page.cs: when ProcessRequest is not called, get the session from
