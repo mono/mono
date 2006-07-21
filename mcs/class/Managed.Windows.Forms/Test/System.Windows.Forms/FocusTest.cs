@@ -61,6 +61,24 @@ namespace MonoTests.System.Windows.Forms {
 			}
 		}
 
+		public class GroupBoxPoker: GroupBox {
+
+			public GroupBoxPoker (string s)
+			{
+				Text = s;
+			}
+
+			public void _Select (bool directed, bool forward)
+			{
+				Select (directed, forward);
+			}
+
+			public override string ToString ()
+			{
+				return String.Concat (GetType (), " ", Text);
+			}
+		}
+
 		[SetUp]
 		protected virtual void SetUp ()
 		{
@@ -540,7 +558,29 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.AreEqual (flat_controls [0].GetNextControl (flat_controls [2], true), null, "ctrls-0-7");
 			Assert.AreEqual (flat_controls [0].GetNextControl (flat_controls [2], false), null,"ctrls-0-8");
 		}
-		
+
+		[Test]
+		public void GetNextGroupBoxControlFlat ()
+		{
+			Form form = new Form ();
+			GroupBoxPoker gbp = new GroupBoxPoker ("group-box");
+
+			gbp.Controls.AddRange (flat_controls);
+			form.Controls.Add (gbp);
+			form.Show ();
+
+			Assert.AreEqual (form.GetNextControl (null, true), gbp, "form-1");
+			Assert.AreEqual (form.GetNextControl (null, false), flat_controls [2], "form-2");
+
+			Assert.AreEqual (form.GetNextControl (gbp, true), flat_controls [0], "gb-1");
+			Assert.AreEqual (form.GetNextControl (gbp, false), null, "gb-2");
+
+			Assert.AreEqual (gbp.GetNextControl (null, true), flat_controls [0], "gb-3");
+			Assert.AreEqual (gbp.GetNextControl (null, false), flat_controls [2], "gb-4");
+			Assert.AreEqual (gbp.GetNextControl (gbp, true), flat_controls [0], "gb-5");
+			Assert.AreEqual (gbp.GetNextControl (gbp, false), flat_controls [2], "gb-6");
+		}
+
 		[Test]
 		public void GetNextControlComposite ()
 		{
