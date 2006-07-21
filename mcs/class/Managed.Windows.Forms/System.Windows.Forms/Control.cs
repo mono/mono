@@ -125,6 +125,8 @@ namespace System.Windows.Forms
 		internal bool			use_compatible_text_rendering;
 		static internal bool		verify_thread_handle;
 		private Padding			padding;
+		private Size			maximum_size;
+		private Size			minimum_size;
 #endif
 
 		#endregion	// Local Variables
@@ -682,6 +684,8 @@ namespace System.Windows.Forms
 #if NET_2_0
 			use_compatible_text_rendering = Application.use_compatible_text_rendering;
 			padding = new Padding(0);
+			maximum_size = new Size();
+			minimum_size = new Size();
 #endif
 
 			control_style = ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | 
@@ -1514,6 +1518,24 @@ namespace System.Windows.Forms
 			set {
 				Console.Error.WriteLine("Unimplemented: Control::set_AutoSize(bool)");
 				auto_size = value;
+			}
+		}
+
+		public virtual Size MaximumSize {
+			get {
+				return maximum_size;
+			}
+			set {
+				maximum_size = value;
+			}
+		}
+
+		public virtual Size MinimumSize {
+			get {
+				return minimum_size;
+			}
+			set {
+				minimum_size = value;
 			}
 		}
 #endif // NET_2_0

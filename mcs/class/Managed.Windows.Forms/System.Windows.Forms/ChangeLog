@@ -1,3 +1,7 @@
+2006-07-21  Matt Hargett  <matt@use.net>
+
+	* Control.cs: Implemented 2.0 MinimumSize/MaximumSize properties
+
 2006-07-21  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* Control.cs (GetNextControl): Fixes to make all of Jackson's unit 
