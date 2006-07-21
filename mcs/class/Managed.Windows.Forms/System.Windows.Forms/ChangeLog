@@ -1,3 +1,16 @@
+2006-07-21  Chris Toshok  <toshok@ximian.com>
+
+	* ThemeWin32Classic.cs: handle drawing of the relation links and
+	parent row buttons.
+
+	* Theme.cs: change args to DataGridPaintParentRow.
+
+	* DataGrid.cs: Don't use controls for the relation links and
+	parent buttons, so we have to handle all their interactions in
+	MouseMove, MouseDown, MouseUp, etc.  Also, store a lot more stuff
+	when we're navigating through child tables, so we can reinstate
+	selection, expanded state, current cell, etc.
+
 2006-07-20  Chris Toshok  <toshok@ximian.com>
 
 	* ToolBar.cs: When we redraw a button, for whatever reason,

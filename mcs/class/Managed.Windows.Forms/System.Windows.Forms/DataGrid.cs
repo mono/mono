@@ -43,27 +43,14 @@ namespace System.Windows.Forms
 		public bool IsExpanded;
 		public int VerticalOffset {
 			get { return verticalOffset; }
-			set {
-				int delta = value - verticalOffset;
-				if (relation_link != null)
-					relation_link.Location = new Point (relation_link.Location.X,
-									    relation_link.Location.Y + delta);
-				verticalOffset = value;
-			}
+			set { verticalOffset = value; }
 		}
 		public int Height {
 			get { return height; }
-			set {
-				int delta = value - height;
-				if (relation_link != null)
-					relation_link.Location = new Point (relation_link.Location.X,
-									    relation_link.Location.Y + delta);
-
-				height = value;
-			}
+			set { height = value; }
 		}
 		public int RelationHeight;
-		public LinkLabel relation_link;
+		public Rectangle relation_area; /* the Y coordinate of this rectangle is updated as needed */
 
 		int verticalOffset;
 		int height;
@@ -78,6 +65,44 @@ namespace System.Windows.Forms
 		{
 			this.datamember = datamember;
 			this.view = view;
+		}
+	}
+
+	internal class DataGridDataSource
+	{
+		public DataGrid owner;
+		public CurrencyManager list_manager;
+		public DataRowView view;
+		public string data_member;
+		public object data_source;
+		public DataGridCell current;
+
+		public DataGridDataSource (DataGrid owner, CurrencyManager list_manager, object data_source, string data_member, DataRowView view, DataGridCell current)
+		{
+			this.owner = owner;
+			this.list_manager = list_manager;
+			this.view = view;
+			this.data_source = data_source;
+			this.data_member = data_member;
+			this.current = current;
+		}
+
+		DataGridRow[] rows;
+		public DataGridRow[] Rows {
+			get { return rows; }
+			set { rows = value; }
+		}
+
+		Hashtable selected_rows;
+		public Hashtable SelectedRows {
+			get { return selected_rows; }
+			set { selected_rows = value; }
+		}
+
+		int selection_start;
+		public int SelectionStart {
+			get { return selection_start; }
+			set { selection_start = value; }
 		}
 	}
 
@@ -198,8 +223,15 @@ namespace System.Windows.Forms
 		HScrollBar horiz_scrollbar;
 		VScrollBar vert_scrollbar;
 		int horiz_pixeloffset;
-		Button navigate_back_button;
-		Button hide_parent_rows_button;
+
+		internal Bitmap back_button_image;
+		internal Rectangle back_button_rect;
+		internal bool back_button_mouseover;
+		internal bool back_button_active;
+		internal Bitmap parent_rows_button_image;
+		internal Rectangle parent_rows_button_rect;
+		internal bool parent_rows_button_mouseover;
+		internal bool parent_rows_button_active;
 
 		/* databinding */
 		object datasource;
@@ -231,7 +263,7 @@ namespace System.Windows.Forms
 		bool is_editing;		// Current cell is edit mode
 		bool is_changing;
 
-		internal Stack parentRows;
+		internal Stack dataSourceStack;
 
 		#endregion // Local Variables
 
@@ -270,7 +302,10 @@ namespace System.Windows.Forms
 
 			SetStyle (ControlStyles.UserMouse, true);
 
-			parentRows = new Stack ();
+			dataSourceStack = new Stack ();
+
+			back_button_image = ResourceImageLoader.Get ("go-previous.png");
+			parent_rows_button_image = ResourceImageLoader.Get ("go-top.png");
 		}
 
 		#endregion	// Public Constructor
@@ -639,6 +674,10 @@ namespace System.Windows.Forms
 			set { grid_style.LinkColor = value; }
 		}
 
+		internal Font LinkFont {
+			get { return new Font (Font, FontStyle.Underline); }
+		}
+
 		[ComVisible(false)]
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -851,7 +890,7 @@ namespace System.Windows.Forms
 		}
 		
 		internal bool ShowParentRows {
-			get { return ParentRowsVisible && parentRows.Count > 0; }
+			get { return ParentRowsVisible && dataSourceStack.Count > 0; }
 		}
 		
 		#endregion Private Instance Properties
@@ -919,10 +958,6 @@ namespace System.Windows.Forms
 			rows[row].IsExpanded = false;
 			for (int i = 1; i < rows.Length - row; i ++)
 				rows[row + i].VerticalOffset -= rows[row].RelationHeight;
-
-			rows[row].relation_link.Visible = false;
-			rows[row].relation_link.Dispose ();
-			rows[row].relation_link = null;
 
 			rows[row].Height -= rows[row].RelationHeight;
 			rows[row].RelationHeight = 0;
@@ -993,15 +1028,6 @@ namespace System.Windows.Forms
 			initializing = false;
 		}
 
-		void OnRelationLinkClicked (object sender, LinkLabelLinkClickedEventArgs args)
-		{
-			LinkLabel relation_link = (LinkLabel)sender;
-			int row = (int)args.Link.LinkData;
-			string relation = CurrentTableStyle.Relations[relation_link.Links.IndexOf (args.Link)];
-
-			NavigateTo (row, relation);
-		}
-
 		public void Expand (int row)
 		{
 			if (rows[row].IsExpanded)
@@ -1009,48 +1035,30 @@ namespace System.Windows.Forms
 
 			rows[row].IsExpanded = true;
 
-			string[] relations = CurrentTableStyle.Relations;
 			int i;
 
-			LinkLabel relation_link = new LinkLabel ();
-
-			relation_link.BorderStyle = BorderStyle.FixedSingle;
-			relation_link.AutoSize = true;
-			relation_link.LinkClicked += new LinkLabelLinkClickedEventHandler (OnRelationLinkClicked);
-			relation_link.LinkColor = LinkColor;
-			relation_link.ActiveLinkColor = LinkHoverColor;
-
-			StringBuilder relation_text = new StringBuilder ("");
+			string[] relations = CurrentTableStyle.Relations;
+			StringBuilder relation_builder = new StringBuilder ("");
 
 			for (i = 0; i < relations.Length; i ++) {
 				if (i > 0)
-					relation_text.Append ("\n");
+					relation_builder.Append ("\n");
 
-				relation_text.Append (relations[i]);
+				relation_builder.Append (relations[i]);
 			}
+			string relation_text = relation_builder.ToString ();
 
-			relation_link.Text = relation_text.ToString();
+			SizeF measured_area = DeviceContext.MeasureString (relation_text, LinkFont);
 
-			int start = 0;
-			for (i = 0; i < relations.Length; i ++) {
-				relation_link.Links.Add (start, relations[i].Length + (i < relations.Length - 1 ? 1 : 0), row);
-				start += relations[i].Length + 1;
-			}
-
-			SuspendLayout ();
-			Controls.Add (relation_link);
-
-			relation_link.Location = new Point (cells_area.X + 1,
-							    cells_area.Y + rows[row].VerticalOffset - rows[FirstVisibleRow].VerticalOffset + rows[row].Height + 1);
-			relation_link.Height = relation_link.Font.Height * relations.Length + 3;
+			rows[row].relation_area = new Rectangle (cells_area.X + 1,
+								 0, /* updated as needed at the usage sites for relation_area */
+								 (int)measured_area.Width + 4,
+								 Font.Height * relations.Length);
 
 			for (i = 1; i < rows.Length - row; i ++)
-				rows[row + i].VerticalOffset += relation_link.Height + 3;
-			rows[row].Height += relation_link.Height + 3;
-			rows[row].RelationHeight = relation_link.Height + 3;
-
-			rows[row].relation_link = relation_link;
-			ResumeLayout (false);
+				rows[row + i].VerticalOffset += rows[row].relation_area.Height;
+			rows[row].Height += rows[row].relation_area.Height;
+			rows[row].RelationHeight = rows[row].relation_area.Height;
 
 			/* XX need to redraw from @row down */
 			CalcAreasAndInvalidate ();
@@ -1199,11 +1207,22 @@ namespace System.Windows.Forms
 		[MonoTODO]
 		public void NavigateBack ()
 		{
-			if (parentRows.Count == 0)
+			if (dataSourceStack.Count == 0)
 				return;
 
-			DataGridParentRow el = (DataGridParentRow)parentRows.Pop ();
-			DataMember = el.datamember;
+			DataGridDataSource source = (DataGridDataSource)dataSourceStack.Pop ();
+			list_manager = source.list_manager;
+			rows = source.Rows;
+			selected_rows = source.SelectedRows;
+			selection_start = source.SelectionStart;
+			datamember = source.data_member;
+			datasource = source.data_source;
+
+			SetNewDataSource ();
+			OnDataSourceChanged (EventArgs.Empty);
+
+			CurrentCell = source.current;
+			CalcAreasAndInvalidate ();
 		}
 
 		[MonoTODO]
@@ -1211,10 +1230,20 @@ namespace System.Windows.Forms
 		{
 			if (allow_navigation == false)
 				return;
-			
-			parentRows.Push (new DataGridParentRow (DataMember, (DataRowView)list_manager.Current));
+
+			DataGridDataSource previous_source = new DataGridDataSource (this, list_manager, datasource, datamember, (DataRowView)list_manager.Current, CurrentCell);
+			previous_source.Rows = rows;
+			previous_source.SelectedRows = selected_rows;
+			previous_source.SelectionStart = selection_start;
+
+			dataSourceStack.Push (previous_source);
+
+			rows = null;
+			selected_rows = new Hashtable ();
+			selection_start = -1;
 
 			DataMember = String.Format ("{0}.{1}", DataMember, relationName);
+			OnDataSourceChanged (EventArgs.Empty);
 		}
 
 		protected virtual void OnAllowNavigationChanged (EventArgs e)
@@ -1362,10 +1391,20 @@ namespace System.Windows.Forms
 
 			switch (testinfo.Type) {
 			case HitTestType.Cell:
-			{
 				if (testinfo.Row < 0 || testinfo.Column < 0)
 					break;
-					
+
+				if (rows[testinfo.Row].IsExpanded) {
+					Rectangle relation_area = rows[testinfo.Row].relation_area;
+					relation_area.Y = rows[testinfo.Row].VerticalOffset + cells_area.Y + rows[testinfo.Row].Height - rows[testinfo.Row].RelationHeight;
+					if (relation_area.Contains (e.X, e.Y)) {
+						/* the click happened in the relation area, navigate to the new table */
+						int relative = e.Y - relation_area.Y;
+						NavigateTo (testinfo.Row, CurrentTableStyle.Relations[relative / LinkFont.Height]);
+						return;
+					}
+				}
+
 				DataGridCell new_cell = new DataGridCell (testinfo.Row, testinfo.Column);
 
 				if ((new_cell.Equals (current_cell) == false) || (!is_editing)) {
@@ -1376,10 +1415,8 @@ namespace System.Windows.Forms
 				}
 
 				break;
-			}
 
 			case HitTestType.RowHeader:
-			{
 				bool expansion_click = false;
 				if (CurrentTableStyle.HasRelations) {
 					if (e.X > rowhdrs_area.X + rowhdrs_area.Width / 2) {
@@ -1413,10 +1450,8 @@ namespace System.Windows.Forms
 				OnRowHeaderClick (EventArgs.Empty);
 
 				break;
-			}
 
 			case HitTestType.ColumnHeader:
-			{
 				if (CurrentTableStyle.GridColumnStyles.Count == 0)
 					break;
 
@@ -1446,27 +1481,33 @@ namespace System.Windows.Forms
 				list.ApplySort (prop, direction);
 				Refresh ();
 				break;
-			}
 
 			case HitTestType.ColumnResize:
-			{
 				resize_column = testinfo.Column;
 				column_resize_active = true;
 				resize_column_x = e.X;
 				resize_column_width_delta = 0;
 				DrawResizeLineVert (resize_column_x);
 				break;
-			}
 
 			case HitTestType.RowResize:
-			{
 				resize_row = testinfo.Row;
 				row_resize_active = true;
 				resize_row_y = e.Y;
 				resize_row_height_delta = 0;
 				DrawResizeLineHoriz (resize_row_y);
 				break;
-			}
+
+			case HitTestType.Caption:
+				if (back_button_rect.Contains (e.X, e.Y)) {
+					back_button_active = true;
+					Invalidate (back_button_rect);
+				}
+				if (parent_rows_button_rect.Contains (e.X, e.Y)) {
+					parent_rows_button_active = true;
+					Invalidate (parent_rows_button_rect);
+				}
+				break;
 
 			default:
 				break;
@@ -1503,6 +1544,7 @@ namespace System.Windows.Forms
 				return;
 			}
 			else {
+				/* determine the cursor to use */
 				HitTestInfo testinfo;
 				testinfo = HitTest (e.X, e.Y);
 
@@ -1512,6 +1554,40 @@ namespace System.Windows.Forms
 					break;
 				case HitTestType.RowResize:
 					Cursor = Cursors.HSplit;
+					break;
+				case HitTestType.Caption:
+					Cursor = Cursors.Default;
+					if (back_button_rect.Contains (e.X, e.Y)) {
+						if (!back_button_mouseover)
+							Invalidate (back_button_rect);
+						back_button_mouseover = true;
+					}
+					else if (back_button_mouseover) {
+						Invalidate (back_button_rect);
+						back_button_mouseover = false;
+					}
+
+					if (parent_rows_button_rect.Contains (e.X, e.Y)) {
+						if (parent_rows_button_mouseover)
+							Invalidate (parent_rows_button_rect);
+						parent_rows_button_mouseover = true;
+					}
+					else if (parent_rows_button_mouseover) {
+						Invalidate (parent_rows_button_rect);
+						parent_rows_button_mouseover = false;
+					}
+					break;
+				case HitTestType.Cell:
+					if (rows[testinfo.Row].IsExpanded) {
+						Rectangle relation_area = rows[testinfo.Row].relation_area;
+						relation_area.Y = rows[testinfo.Row].VerticalOffset + cells_area.Y + rows[testinfo.Row].Height - rows[testinfo.Row].RelationHeight;
+						if (relation_area.Contains (e.X, e.Y)) {
+							Cursor = Cursors.Hand;
+							break;
+						}
+					}
+
+					Cursor = Cursors.Default;
 					break;
 				default:
 					Cursor = Cursors.Default;
@@ -1543,6 +1619,22 @@ namespace System.Windows.Forms
 					rows[i].VerticalOffset += resize_row_height_delta;
 
 				CalcAreasAndInvalidate ();
+			}
+			else if (back_button_active) {
+				if (back_button_rect.Contains (e.X, e.Y)) {
+					Invalidate (back_button_rect);
+					NavigateBack ();
+					OnBackButtonClicked (this, EventArgs.Empty);
+				}
+				back_button_active = false;
+			}
+			else if (parent_rows_button_active) {
+				if (parent_rows_button_rect.Contains (e.X, e.Y)) {
+					Invalidate (parent_rows_button_rect);
+					ParentRowsVisible = !ParentRowsVisible;
+					OnShowParentDetailsButtonClicked (this, EventArgs.Empty);
+				}
+				parent_rows_button_active = false;
 			}
 		}
 
@@ -2082,23 +2174,8 @@ namespace System.Windows.Forms
 			OnDataSourceChanged (EventArgs.Empty);
 		}
 
-		void DisposeRelationLinks ()
-		{
-			SuspendLayout ();
-			for (int i = 0; i < rows.Length; i ++) {
-				if (rows[i].relation_link != null) {
-					rows[i].relation_link.Visible = false;
-					rows[i].relation_link.Dispose ();
-					rows[i].relation_link = null;
-				}
-			}
-			ResumeLayout (false);
-		}
-
 		private void SetNewDataSource ()
 		{
-			DisposeRelationLinks ();
-
 			if (ListManager != null) {
 				string list_name = ListManager.GetListName (null);
 				if (TableStyles[list_name] == null) {
@@ -2304,18 +2381,6 @@ namespace System.Windows.Forms
 
 			/* scroll the window */
 			XplatUI.ScrollWindow (Handle, rows_area, 0, pixels, false);
-
-			SuspendLayout ();
-
-			/* now update the position of all the relation links */
-			for (i = 0; i < rows.Length; i ++) {
-				if (rows[i].relation_link != null) {
-					rows[i].relation_link.Visible = i >= new_row;
-					rows[i].relation_link.Location = new Point (rows[i].relation_link.Location.X,
-										    rows[i].relation_link.Location.Y + pixels);
-				}
-			}
-			ResumeLayout (false);
 
 			Edit ();
 		}
@@ -2573,8 +2638,12 @@ namespace System.Windows.Forms
 			caption_area.X = ClientRectangle.X;
 			caption_area.Y = ClientRectangle.Y;
 			caption_area.Width = ClientRectangle.Width;
-			if (caption_visible)
-				caption_area.Height = CaptionFont.Height + 6;
+			if (caption_visible) {
+				caption_area.Height = CaptionFont.Height;
+				if (caption_area.Height < back_button_image.Height)
+					caption_area.Height = back_button_image.Height;
+				caption_area.Height += 6;
+			}
 			else
 				caption_area.Height = 0;
 		}
@@ -2622,60 +2691,25 @@ namespace System.Windows.Forms
 			parent_rows.Y = caption_area.Y + caption_area.Height;
 			parent_rows.Width = ClientRectangle.Width;
 			if (ShowParentRows)
-				parent_rows.Height = (CaptionFont.Height + 3) * parentRows.Count;
+				parent_rows.Height = (CaptionFont.Height + 3) * dataSourceStack.Count;
 			else
 				parent_rows.Height = 0;
 		}
 
-		void NavigateBackClicked (object sender, EventArgs args)
-		{
-			NavigateBack ();
-		}
-
-		void HideParentRowsClicked (object sender, EventArgs args)
-		{
-			ParentRowsVisible = !ParentRowsVisible;
-		}
-
 		void CalcParentButtons ()
 		{
-			if (parentRows.Count > 0 && CaptionVisible) {
-				if (navigate_back_button == null) {
-					navigate_back_button = new Button ();
-					navigate_back_button.Text = "<-";
-					navigate_back_button.BackColor = ThemeEngine.Current.DataGridCaptionBackColor;
-					navigate_back_button.ForeColor = ThemeEngine.Current.DataGridCaptionForeColor;
-					navigate_back_button.Location = new Point (ClientRectangle.X + ClientRectangle.Width - 2 * (caption_area.Height - 2) - 8, caption_area.Y + 1);
-					navigate_back_button.Size = new Size (caption_area.Height - 2, caption_area.Height - 2);
-					navigate_back_button.Click += new EventHandler (NavigateBackClicked);
-				}
-
-				if (hide_parent_rows_button == null) {
-					hide_parent_rows_button = new Button ();
-					hide_parent_rows_button.Text = "X";
-					hide_parent_rows_button.BackColor = ThemeEngine.Current.DataGridCaptionBackColor;
-					hide_parent_rows_button.ForeColor = ThemeEngine.Current.DataGridCaptionForeColor;
-					hide_parent_rows_button.Location = new Point (ClientRectangle.X + ClientRectangle.Width - (caption_area.Height - 2) - 4, caption_area.Y + 1);
-					hide_parent_rows_button.Size = new Size (caption_area.Height - 2, caption_area.Height - 2);
-					hide_parent_rows_button.Click += new EventHandler (HideParentRowsClicked);
-				}
-
-				Controls.Add (navigate_back_button);
-				Controls.Add (hide_parent_rows_button);
+			if (dataSourceStack.Count > 0 && CaptionVisible) {
+				back_button_rect = new Rectangle (ClientRectangle.X + ClientRectangle.Width - 2 * (caption_area.Height - 2) - 8,
+								  caption_area.Height / 2 - back_button_image.Height / 2,
+								  back_button_image.Width, back_button_image.Height);
+				parent_rows_button_rect = new Rectangle (ClientRectangle.X + ClientRectangle.Width - (caption_area.Height - 2) - 4,
+									 caption_area.Height / 2 - parent_rows_button_image.Height / 2,
+									 parent_rows_button_image.Width, parent_rows_button_image.Height);
 			}
 			else {
-				SuspendLayout ();
-				if (navigate_back_button != null) {
-					navigate_back_button.Dispose ();
-					navigate_back_button = null;
-				}
-				if (hide_parent_rows_button != null) {
-					hide_parent_rows_button.Dispose ();
-					hide_parent_rows_button = null;
-				}
-				ResumeLayout (false);
+				back_button_rect = parent_rows_button_rect = Rectangle.Empty;
 			}
-
+				
 		}
 
 		void CalcRowHeaders ()

@@ -32,6 +32,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
+using System.Text;
 
 namespace System.Windows.Forms
 {
@@ -862,18 +863,31 @@ namespace System.Windows.Forms
 				}
 			}
 		}
-		
+
 		public override void DataGridPaintCaption (Graphics g, Rectangle clip, DataGrid grid)
 		{
 			Rectangle modified_area = clip;
 			modified_area.Intersect (grid.caption_area);
 
 			g.FillRectangle (ResPool.GetSolidBrush (grid.CaptionBackColor),
-				modified_area);
+					 modified_area);
 
 			g.DrawString (grid.CaptionText, grid.CaptionFont,
-				ResPool.GetSolidBrush (grid.CaptionForeColor),
-				grid.caption_area);
+				      ResPool.GetSolidBrush (grid.CaptionForeColor),
+				      grid.caption_area);
+
+			if (modified_area.IntersectsWith (grid.back_button_rect)) {
+				g.DrawImage (grid.back_button_image, grid.back_button_rect);
+				if (grid.back_button_mouseover) {
+					CPDrawBorder3D (g, grid.back_button_rect, grid.back_button_active ? Border3DStyle.Sunken : Border3DStyle.Raised, all_sides);
+				}
+			}
+			if (modified_area.IntersectsWith (grid.parent_rows_button_rect)) {
+				g.DrawImage (grid.parent_rows_button_image, grid.parent_rows_button_rect);
+				if (grid.parent_rows_button_mouseover) {
+					CPDrawBorder3D (g, grid.parent_rows_button_rect, grid.parent_rows_button_active ? Border3DStyle.Sunken : Border3DStyle.Raised, all_sides);
+				}
+			}
 		}
 
 		public override void DataGridPaintColumnHeaders (Graphics g, Rectangle clip, DataGrid grid)
@@ -948,7 +962,7 @@ namespace System.Windows.Forms
 
 			g.SetClip (grid.ParentRowsArea);
 
-			object[] parentRows = grid.parentRows.ToArray();
+			object[] parentRows = grid.dataSourceStack.ToArray();
 			
 			Region current_clip;
 			for (int row = 0; row < parentRows.Length; row++) {
@@ -961,7 +975,7 @@ namespace System.Windows.Forms
 				current_clip.Intersect (clip);
 				g.Clip = current_clip;
 
-				DataGridPaintParentRow (g, rect_row, (DataGridParentRow)parentRows[parentRows.Length - row - 1], grid);
+				DataGridPaintParentRow (g, rect_row, (DataGridDataSource)parentRows[parentRows.Length - row - 1], grid);
 
 				current_clip.Dispose ();
 			}
@@ -969,7 +983,7 @@ namespace System.Windows.Forms
 			g.ResetClip ();
 		}
 
-		public override void DataGridPaintParentRow (Graphics g, Rectangle bounds, DataGridParentRow row, DataGrid grid)
+		public override void DataGridPaintParentRow (Graphics g, Rectangle bounds, DataGridDataSource row, DataGrid grid)
 		{
 			//Console.WriteLine ("drawing parent row {0}", row);
 
@@ -1187,6 +1201,24 @@ namespace System.Windows.Forms
 			DataGridPaintRowContents (g, row, nested_rect, is_newrow, clip, grid);
 
 			if (grid.Rows[row].IsExpanded) {
+				// XXX we should create this in the
+				// datagrid and cache it for use by
+				// the theme instead of doing it each
+				// time through here
+				string[] relations = grid.CurrentTableStyle.Relations;
+				StringBuilder relation_builder = new StringBuilder ("");
+
+				for (int i = 0; i < relations.Length; i ++) {
+					if (i > 0)
+						relation_builder.Append ("\n");
+
+					relation_builder.Append (relations[i]);
+				}
+				string relation_text = relation_builder.ToString ();
+
+				StringFormat string_format = new StringFormat ();
+				string_format.FormatFlags |= StringFormatFlags.NoWrap;
+
 
 				//Region prev_clip = g.Clip;
 				//Region current_clip;
@@ -1204,7 +1236,11 @@ namespace System.Windows.Forms
 				g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (grid.CurrentTableStyle.BackColor),
 						 rect_cell);
 
-				Rectangle outline = grid.Rows[row].relation_link.Bounds;
+
+				/* draw the line leading from the +/- to the relation area */
+				Rectangle outline = grid.Rows[row].relation_area;
+				outline.Y = rect_cell.Y;
+				outline.Height --;
 
 				g.DrawLine (pen,
 					    icon_bounds.X + icon_bounds.Width / 2, icon_bounds.Y + icon_bounds.Height,
@@ -1213,6 +1249,11 @@ namespace System.Windows.Forms
 				g.DrawLine (pen,
 					    icon_bounds.X + icon_bounds.Width / 2, outline.Y + outline.Height / 2,
 					    outline.X, outline.Y + outline.Height / 2);
+
+				g.DrawRectangle (pen, outline);
+
+				g.DrawString (relation_text, grid.LinkFont, ResPool.GetSolidBrush (grid.LinkColor),
+					      outline, string_format);
 
 				if (row_rect.X + row_rect.Width > rect_cell.X + rect_cell.Width) {
 					Rectangle not_usedarea = new Rectangle ();
