@@ -104,6 +104,10 @@ namespace MWF.MonoTest
 			Assert.AreEqual(Point.Empty, c.Location, "L2");
 
 			// M
+#if NET_2_0
+			Assert.IsTrue(c.MaximumSize.IsEmpty);
+			Assert.IsTrue(c.MinimumSize.IsEmpty);
+#endif
 			Assert.AreEqual(Keys.None, Control.ModifierKeys, "M1");
 			Assert.AreEqual(false, Control.MousePosition.IsEmpty, "M2");
 			Assert.AreEqual(MouseButtons.None, Control.MouseButtons, "M3");

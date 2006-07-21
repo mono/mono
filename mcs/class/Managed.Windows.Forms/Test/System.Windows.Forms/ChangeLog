@@ -1,3 +1,7 @@
+2006-07-21  Matt Hargett (matt@use.net)
+
+	* ControlTest.cs: Added tests for MinimumSize/MaximumSize
+
 2006-07-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListControlTest.cs: Added DataSourceWrongArgumentType method
