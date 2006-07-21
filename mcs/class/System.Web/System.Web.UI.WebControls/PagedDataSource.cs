@@ -36,7 +36,7 @@ namespace System.Web.UI.WebControls {
 	public sealed class PagedDataSource : ICollection, IEnumerable, ITypedList
 	{
 		int page_size, current_page_index, virtual_count;
-		bool allow_paging, allow_custom_paging;
+		bool allow_paging, allow_custom_paging, allow_server_paging;
 		IEnumerable source;
 		
 		public PagedDataSource ()
@@ -46,7 +46,14 @@ namespace System.Web.UI.WebControls {
 
 		public bool AllowCustomPaging {
 			get { return allow_custom_paging; }
-			set { allow_custom_paging = value; }
+			set { 
+				allow_custom_paging = value; 
+#if NET_2_0
+				// AllowCustomPaging and AllowServerPaging are mutually exclusive
+				if (allow_custom_paging)
+					allow_server_paging = false;
+#endif
+			}
 		}
 
 		public bool AllowPaging {
@@ -84,7 +91,11 @@ namespace System.Web.UI.WebControls {
 				if (source == null)
 					return 0;
 				
-				if (IsCustomPagingEnabled)
+				if (IsCustomPagingEnabled 
+#if NET_2_0
+				    || IsServerPagingEnabled
+#endif
+				)
 					return virtual_count;
 
 				if (source is ICollection)
@@ -96,7 +107,11 @@ namespace System.Web.UI.WebControls {
 
 		public int FirstIndexInPage {
 			get {
-				if (!IsPagingEnabled || IsCustomPagingEnabled || source == null)
+				if (!IsPagingEnabled || IsCustomPagingEnabled || 
+#if NET_2_0
+				    IsServerPagingEnabled || 
+#endif
+				    source == null)
 					return 0;
 				
 				return current_page_index * page_size;
@@ -106,6 +121,12 @@ namespace System.Web.UI.WebControls {
 		public bool IsCustomPagingEnabled {
 			get { return IsPagingEnabled && allow_custom_paging; }
 		}
+
+#if NET_2_0
+		public bool IsServerPagingEnabled {
+			get { return IsPagingEnabled && allow_server_paging; }
+		}
+#endif
 
 		public bool IsFirstPage {
 			get { 
@@ -141,10 +162,10 @@ namespace System.Web.UI.WebControls {
 			get {
 				if (source == null)
 					return 0;
-
+				
 				if (!IsPagingEnabled || DataSourceCount == 0 || page_size == 0)
 					return 1;
-
+				
 				return (DataSourceCount + page_size - 1) / page_size;
 			}
 		}
@@ -163,39 +184,16 @@ namespace System.Web.UI.WebControls {
 			set { virtual_count = value; }
 		}
 #if NET_2_0
-		[MonoTODO]
 		public bool AllowServerPaging {
 			get {
-				throw new NotImplementedException ();
+				return allow_server_paging;
 			}
 			set {
-				throw new NotImplementedException ();
+				allow_server_paging = value;
+				// AllowCustomPaging and AllowServerPaging are mutually exclusive
+				if (allow_server_paging)
+					allow_custom_paging = false;
 			}
-		}
-
-		[MonoTODO]
-		public DataSourceSelectArguments DataSourceSelectArguments {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
-		}
-		[MonoTODO]
-		public DataSourceView DataSourceView {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
-		}
-
-		[MonoTODO]
-		public void SetItemCountFromPageIndex (int highestPageIndex)
-		{
-			throw new NotImplementedException ();
 		}
 #endif
 

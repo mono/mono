@@ -160,14 +160,12 @@ namespace System.Web.UI.WebControls {
 #endif
 		[DefaultValue ("")]
 		[Editor ("System.Web.UI.Design.UrlEditor, "  + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-		[MonoTODO]
-		public virtual string PostBackUrl
-		{
+		public virtual string PostBackUrl {
 			get {
-				throw new NotImplementedException ();
+				return ViewState.GetString ("PostBackUrl", String.Empty);
 			}
 			set {
-				throw new NotImplementedException ();
+				ViewState["PostBackUrl"] = value;
 			}
 		}
 
@@ -226,10 +224,11 @@ namespace System.Web.UI.WebControls {
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		protected virtual PostBackOptions GetPostBackOptions ()
 		{
-			throw new NotImplementedException ();
+			return new PostBackOptions(this, PostBackUrl, null, false, true,
+						   false, true, CausesValidation,
+						   ValidationGroup);
 		}
 #endif		
 

@@ -830,11 +830,6 @@ namespace System.Web.UI.WebControls
 					dataSource.AllowServerPaging = true;
 					if (view.CanRetrieveTotalRowCount)
 						dataSource.VirtualCount = SelectArguments.TotalRowCount;
-					else {
-						dataSource.DataSourceView = view;
-						dataSource.DataSourceSelectArguments = SelectArguments;
-						dataSource.SetItemCountFromPageIndex (PageIndex + PagerSettings.PageButtonCount);
-					}
 				}
 			}
 
@@ -1450,10 +1445,10 @@ namespace System.Web.UI.WebControls
 			table.RenderEndTag (writer);
 		}
 
-		[MonoTODO]
 		PostBackOptions IPostBackContainer.GetPostBackOptions (IButtonControl control)
 		{
-			throw new NotImplementedException ();
+			Control ctrl = control as Control;
+			return new PostBackOptions(ctrl);
 		}
 
 	}

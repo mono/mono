@@ -120,10 +120,11 @@ namespace System.Web.UI.WebControls {
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		protected virtual PostBackOptions GetPostBackOptions ()
 		{
-			throw new NotImplementedException ();
+			return new PostBackOptions(this, PostBackUrl, null, false, true,
+						   false, true, CausesValidation,
+						   ValidationGroup);
 		}
 #endif		
 
@@ -289,13 +290,12 @@ namespace System.Web.UI.WebControls {
 		[Themeable (false)]
 		[UrlProperty ("*.aspx")]
 		[DefaultValue ("")]
-		[MonoTODO]
 		public virtual string PostBackUrl {
 			get {
-				throw new NotImplementedException ();
+				return ViewState.GetString ("PostBackUrl", String.Empty);
 			}
 			set {
-				throw new NotImplementedException ();
+				ViewState["PostBackUrl"] = value;
 			}
 		}
 

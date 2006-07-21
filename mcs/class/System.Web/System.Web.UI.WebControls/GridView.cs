@@ -1118,11 +1118,6 @@ namespace System.Web.UI.WebControls
 						dataSource.AllowServerPaging = true;
 						if (view.CanRetrieveTotalRowCount)
 							dataSource.VirtualCount = SelectArguments.TotalRowCount;
-						else {
-							dataSource.DataSourceView = view;
-							dataSource.DataSourceSelectArguments = SelectArguments;
-							dataSource.SetItemCountFromPageIndex (PageIndex + PagerSettings.PageButtonCount);
-						}
 					}
 				}
 				

@@ -1,3 +1,14 @@
+2006-07-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DetailsView.cs:
+	* GridView.cs:
+	* PagedDataSource.cs:
+	* FormView.cs:
+	* ImageButton.cs:
+	* LinkButton.cs: implement GetPostBackOptions for the 2.0 controls that
+	support it. The GridView control will no longer throw an exception when
+	rendered in the paging mode. Patch by Marek Habersack. Fixes bug #78288.
+
 2006-07-20 Andrew Skiba <andrews@mainsoft.com>
 
 	* DetailsView.cs: many fixes: initialize PageCount with 0; initialize
