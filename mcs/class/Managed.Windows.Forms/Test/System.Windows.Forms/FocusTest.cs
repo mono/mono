@@ -265,7 +265,6 @@ namespace MonoTests.System.Windows.Forms {
 			// top level movement, 
 			Assert.AreEqual (form.GetNextControl (form, true), con_a, "form-1");
 			Assert.AreEqual (form.GetNextControl (form, false), con_c, "form-2");
-
 			
 			Assert.AreEqual (form.GetNextControl (con_a, true), con_b, "container-1");
 			Assert.AreEqual (form.GetNextControl (con_a, false), null, "container-2");
@@ -512,6 +511,43 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.AreEqual (form.GetNextControl (ctrls_a [2], true), ctrl_b, "ctrl-a-1");
 			Assert.AreEqual (form.GetNextControl (ctrls_a [2], false), ctrls_a [1], "ctrl-a-2");
 
+		}
+
+		[Test]
+		public void GetNextControlFlat ()
+		{
+			Form form = new Form ();
+
+			form.Controls.AddRange (flat_controls);
+			form.Show ();
+
+			Assert.AreEqual (form.GetNextControl (null, true), flat_controls [0], "form-1");
+			Assert.AreEqual (form.GetNextControl (null, false), flat_controls [2], "form-2");
+			Assert.AreEqual (form.GetNextControl (flat_controls [0], true), flat_controls [1], "form-3");
+			Assert.AreEqual (form.GetNextControl (flat_controls [0], false), flat_controls [2], "form-4");
+			Assert.AreEqual (form.GetNextControl (flat_controls [1], true), flat_controls [2], "form-5");
+			Assert.AreEqual (form.GetNextControl (flat_controls [1], false), flat_controls [0], "form-6");
+			Assert.AreEqual (form.GetNextControl (flat_controls [2], true), flat_controls [0], "form-7");
+			Assert.AreEqual (form.GetNextControl (flat_controls [2], false), flat_controls [1],"form-8");
+
+		}
+		
+		[Test]
+		public void GetNextControlComposite ()
+		{
+			Form form = new Form ();
+			ControlPoker a = new ControlPoker ("a");
+			ControlPoker b = new ControlPoker ("b");
+			ControlPoker c = new ControlPoker ("c");
+
+			form.Controls.Add (a);
+			form.Controls.Add (b);
+			b.Controls.Add (c);
+
+			form.Show ();
+
+			Assert.AreEqual (form.GetNextControl (a, true), b, "form-1");
+			Assert.AreEqual (form.GetNextControl (a, false), null, "form-2");
 		}
 	}
 
