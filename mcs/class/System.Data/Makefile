@@ -67,6 +67,7 @@ EXTRA_DISTFILES = \
 	Test/System.Data/schemas/test014.xsd	\
 	Test/System.Data/schemas/test015.xsd	\
 	Test/System.Data/schemas/test016.xsd	\
+	Test/System.Data/schemas/test017.xsd	\
 	Test/System.Data/schemas/test101.xsd	\
 	Test/System.Data/schemas/test102.xsd	\
 	Test/System.Data/schemas/test103.xsd	\
