@@ -524,12 +524,21 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.AreEqual (form.GetNextControl (null, true), flat_controls [0], "form-1");
 			Assert.AreEqual (form.GetNextControl (null, false), flat_controls [2], "form-2");
 			Assert.AreEqual (form.GetNextControl (flat_controls [0], true), flat_controls [1], "form-3");
-			Assert.AreEqual (form.GetNextControl (flat_controls [0], false), flat_controls [2], "form-4");
+			Assert.AreEqual (form.GetNextControl (flat_controls [0], false), null, "form-4");
 			Assert.AreEqual (form.GetNextControl (flat_controls [1], true), flat_controls [2], "form-5");
 			Assert.AreEqual (form.GetNextControl (flat_controls [1], false), flat_controls [0], "form-6");
-			Assert.AreEqual (form.GetNextControl (flat_controls [2], true), flat_controls [0], "form-7");
+			Assert.AreEqual (form.GetNextControl (flat_controls [2], true), null, "form-7");
 			Assert.AreEqual (form.GetNextControl (flat_controls [2], false), flat_controls [1],"form-8");
 
+			
+			Assert.AreEqual (flat_controls [0].GetNextControl (null, true), null, "ctrls-0-1");
+			Assert.AreEqual (flat_controls [0].GetNextControl (null, false), null, "ctrls-0-2");
+			Assert.AreEqual (flat_controls [0].GetNextControl (flat_controls [0], true), null, "ctrls-0-3");
+			Assert.AreEqual (flat_controls [0].GetNextControl (flat_controls [0], false), null, "ctrls-0-4");
+			Assert.AreEqual (flat_controls [0].GetNextControl (flat_controls [1], true), null, "ctrls-0-5");
+			Assert.AreEqual (flat_controls [0].GetNextControl (flat_controls [1], false), null, "ctrls-0-6");
+			Assert.AreEqual (flat_controls [0].GetNextControl (flat_controls [2], true), null, "ctrls-0-7");
+			Assert.AreEqual (flat_controls [0].GetNextControl (flat_controls [2], false), null,"ctrls-0-8");
 		}
 		
 		[Test]
