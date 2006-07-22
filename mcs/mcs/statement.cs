@@ -1720,39 +1720,38 @@ namespace Mono.CSharp {
 				// Process this block variables
 				//
 				if (variables != null) {
-					using (ec.WithCheckState (ec.CheckState, (flags & Flags.Unchecked) == 0)) {
-						foreach (DictionaryEntry de in variables) {
-							string name = (string) de.Key;
-							LocalInfo vi = (LocalInfo) de.Value;
+					foreach (DictionaryEntry de in variables) {
+						string name = (string) de.Key;
+						LocalInfo vi = (LocalInfo) de.Value;
+						Type variable_type = vi.VariableType;
 
-							if (vi.VariableType == null)
+						if (variable_type == null)
+							continue;
+
+						if (variable_type.IsPointer) {
+							//
+							// Am not really convinced that this test is required (Microsoft does it)
+							// but the fact is that you would not be able to use the pointer variable
+							// *anyways*
+							//
+							if (!TypeManager.VerifyUnManaged (TypeManager.GetElementType (variable_type),
+											  vi.Location))
 								continue;
+						}
 
-							Type variable_type = vi.VariableType;
+						if (constants == null)
+							continue;
 
-							if (variable_type.IsPointer) {
-								//
-								// Am not really convinced that this test is required (Microsoft does it)
-								// but the fact is that you would not be able to use the pointer variable
-								// *anyways*
-								//
-								if (!TypeManager.VerifyUnManaged (TypeManager.GetElementType (variable_type),
-												  vi.Location))
-									continue;
-							}
+						Expression cv = (Expression) constants [name];
+						if (cv == null)
+							continue;
 
-							if (constants == null)
-								continue;
+						// Don't let 'const int Foo = Foo;' succeed.
+						// Removing the name from 'constants' ensures that we get a LocalVariableReference below,
+						// which in turn causes the 'must be constant' error to be triggered.
+						constants.Remove (name);
 
-							Expression cv = (Expression) constants [name];
-							if (cv == null)
-								continue;
-
-							// Don't let 'const int Foo = Foo;' succeed.
-							// Removing the name from 'constants' ensures that we get a LocalVariableReference below,
-							// which in turn causes the 'must be constant' error to be triggered.
-							constants.Remove (name);
-
+						using (ec.WithCheckState (ec.CheckState, (flags & Flags.Unchecked) == 0)) {
 							ec.CurrentBlock = this;
 							Expression e = cv.Resolve (ec);
 							if (e == null)

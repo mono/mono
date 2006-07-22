@@ -1,5 +1,7 @@
 2006-07-22  Raja R Harinath  <harinath@gmail.com>
 
+	* statement.cs (Block.ResolveMeta): Simplify slightly.
+
 	* codegen.cs (EmitContext.Flags): New enum.  Used to represent the
 	multiple boolean fields.  Convert InUnsafe, constant_check_state,
 	check_state to flags.
