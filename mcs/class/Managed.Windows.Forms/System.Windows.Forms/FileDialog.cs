@@ -322,6 +322,7 @@ namespace System.Windows.Forms {
 			form.SizeGripStyle = SizeGripStyle.Show;
 			
 			form.MaximizeBox = true;
+			form.MinimizeBox = true;
 			form.FormBorderStyle = FormBorderStyle.Sizable;
 			form.MinimumSize = new Size (554, 405);
 			
@@ -2307,7 +2308,7 @@ namespace System.Windows.Forms {
 				} else
 				if (o is ToolBarButton) {
 					ToolBarButton t = o as ToolBarButton;
-					t.Enabled = (directoryStack.Count > 1);
+					t.Enabled = (directoryStack.Count > 0);
 				}
 			}
 		}
@@ -3101,8 +3102,17 @@ namespace System.Windows.Forms {
 		private FSEntry mycomputerFSEntry = null;
 		private FSEntry mynetworkFSEntry = null;
 		
+		private string personal_folder;
+		private string recently_used_path;
+		private string full_kde_recent_document_dir;
+		
 		public UnixFileSystem ()
 		{
+			personal_folder = ThemeEngine.Current.Places (UIIcon.PlacesPersonal);
+			recently_used_path = Path.Combine (personal_folder, ".recently-used");
+			
+			full_kde_recent_document_dir = personal_folder + "/.kde/share/apps/RecentDocuments";
+			
 			desktopFSEntry = new FSEntry ();
 			
 			desktopFSEntry.Attributes = FileAttributes.Directory;
@@ -3167,9 +3177,6 @@ namespace System.Windows.Forms {
 		
 		public override void WriteRecentlyUsedFiles (string fileToAdd)
 		{
-			string personal_folder = ThemeEngine.Current.Places (UIIcon.PlacesPersonal);
-			string recently_used_path = Path.Combine (personal_folder, ".recently-used");
-			
 			if (File.Exists (recently_used_path) && new FileInfo (recently_used_path).Length > 0) {
 				XmlDocument xml_doc = new XmlDocument ();
 				xml_doc.Load (recently_used_path);
@@ -3285,8 +3292,6 @@ namespace System.Windows.Forms {
 		public override ArrayList GetRecentlyUsedFiles ()
 		{
 			// check for GNOME and KDE
-			string personal_folder = ThemeEngine.Current.Places (UIIcon.PlacesPersonal);
-			string recently_used_path = Path.Combine (personal_folder, ".recently-used");
 			
 			ArrayList files_al = new ArrayList ();
 			
@@ -3310,8 +3315,6 @@ namespace System.Windows.Forms {
 			}
 			
 			// KDE
-			string full_kde_recent_document_dir = personal_folder + "/.kde/share/apps/RecentDocuments";
-			
 			if (Directory.Exists (full_kde_recent_document_dir)) {
 				string[] files = Directory.GetFiles (full_kde_recent_document_dir, "*.desktop");
 				

@@ -1,3 +1,8 @@
+2006-07-22  Alexander Olk  <alex.olk@googlemail.com>
+
+	* FileDialog.cs: Enable the BackButton when dirstack has one element.
+	  Added some small optimizations.
+
 2006-07-21  Matt Hargett  <matt@use.net>
 
 	* Control.cs: Implemented 2.0 MinimumSize/MaximumSize properties
