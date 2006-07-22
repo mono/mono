@@ -1688,108 +1688,105 @@ namespace Mono.CSharp {
 		/// </remarks>
 		public void ResolveMeta (ToplevelBlock toplevel, EmitContext ec, Parameters ip)
 		{
-			bool old_unsafe = ec.InUnsafe;
-
 			// If some parent block was unsafe, we remain unsafe even if this block
 			// isn't explicitly marked as such.
-			ec.InUnsafe |= Unsafe;
+			using (ec.WithUnsafe (ec.InUnsafe | Unsafe)) {
+				//
+				// Compute the VariableMap's.
+				//
+				// Unfortunately, we don't know the type when adding variables with
+				// AddVariable(), so we need to compute this info here.
+				//
 
-			//
-			// Compute the VariableMap's.
-			//
-			// Unfortunately, we don't know the type when adding variables with
-			// AddVariable(), so we need to compute this info here.
-			//
+				LocalInfo[] locals;
+				if (variables != null) {
+					foreach (LocalInfo li in variables.Values)
+						li.Resolve (ec);
 
-			LocalInfo[] locals;
-			if (variables != null) {
-				foreach (LocalInfo li in variables.Values)
-					li.Resolve (ec);
+					locals = new LocalInfo [variables.Count];
+					variables.Values.CopyTo (locals, 0);
+				} else
+					locals = new LocalInfo [0];
 
-				locals = new LocalInfo [variables.Count];
-				variables.Values.CopyTo (locals, 0);
-			} else
-				locals = new LocalInfo [0];
+				if (Parent != null)
+					local_map = new VariableMap (Parent.LocalMap, locals);
+				else
+					local_map = new VariableMap (locals);
 
-			if (Parent != null)
-				local_map = new VariableMap (Parent.LocalMap, locals);
-			else
-				local_map = new VariableMap (locals);
+				param_map = new VariableMap (ip);
+				flags |= Flags.VariablesInitialized;
 
-			param_map = new VariableMap (ip);
-			flags |= Flags.VariablesInitialized;
+				//
+				// Process this block variables
+				//
+				if (variables != null) {
+					using (ec.WithCheckState (ec.CheckState, (flags & Flags.Unchecked) == 0)) {
+						foreach (DictionaryEntry de in variables) {
+							string name = (string) de.Key;
+							LocalInfo vi = (LocalInfo) de.Value;
 
-			//
-			// Process this block variables
-			//
-			if (variables != null) {
-				using (ec.WithCheckState (ec.CheckState, (flags & Flags.Unchecked) == 0)) {
-					foreach (DictionaryEntry de in variables) {
-						string name = (string) de.Key;
-						LocalInfo vi = (LocalInfo) de.Value;
-						
-						if (vi.VariableType == null)
-							continue;
-
-						Type variable_type = vi.VariableType;
-
-						if (variable_type.IsPointer) {
-							//
-							// Am not really convinced that this test is required (Microsoft does it)
-							// but the fact is that you would not be able to use the pointer variable
-							// *anyways*
-							//
-							if (!TypeManager.VerifyUnManaged (TypeManager.GetElementType (variable_type),
-											  vi.Location))
+							if (vi.VariableType == null)
 								continue;
+
+							Type variable_type = vi.VariableType;
+
+							if (variable_type.IsPointer) {
+								//
+								// Am not really convinced that this test is required (Microsoft does it)
+								// but the fact is that you would not be able to use the pointer variable
+								// *anyways*
+								//
+								if (!TypeManager.VerifyUnManaged (TypeManager.GetElementType (variable_type),
+												  vi.Location))
+									continue;
+							}
+
+							if (constants == null)
+								continue;
+
+							Expression cv = (Expression) constants [name];
+							if (cv == null)
+								continue;
+
+							// Don't let 'const int Foo = Foo;' succeed.
+							// Removing the name from 'constants' ensures that we get a LocalVariableReference below,
+							// which in turn causes the 'must be constant' error to be triggered.
+							constants.Remove (name);
+
+							ec.CurrentBlock = this;
+							Expression e = cv.Resolve (ec);
+							if (e == null)
+								continue;
+
+							Constant ce = e as Constant;
+							if (ce == null) {
+								Const.Error_ExpressionMustBeConstant (variable_type, vi.Location, name);
+								continue;
+							}
+
+							e = ce.ToType (variable_type, vi.Location);
+							if (e == null)
+								continue;
+
+							if (!variable_type.IsValueType && variable_type != TypeManager.string_type && !ce.IsDefaultValue) {
+								Const.Error_ConstantCanBeInitializedWithNullOnly (vi.Location, vi.Name);
+								continue;
+							}
+
+							constants.Add (name, e);
+							vi.IsConstant = true;
 						}
-
-						if (constants == null)
-							continue;
-
-						Expression cv = (Expression) constants [name];
-						if (cv == null)
-							continue;
-
-						// Don't let 'const int Foo = Foo;' succeed.
-						// Removing the name from 'constants' ensures that we get a LocalVariableReference below,
-						// which in turn causes the 'must be constant' error to be triggered.
-						constants.Remove (name);
-
-						ec.CurrentBlock = this;
-						Expression e = cv.Resolve (ec);
-						if (e == null)
-							continue;
-
-						Constant ce = e as Constant;
-						if (ce == null) {
-							Const.Error_ExpressionMustBeConstant (variable_type, vi.Location, name);
-							continue;
-						}
-
-						e = ce.ToType (variable_type, vi.Location);
-						if (e == null)
-							continue;
-
-						if (!variable_type.IsValueType && variable_type != TypeManager.string_type && !ce.IsDefaultValue) {
-							Const.Error_ConstantCanBeInitializedWithNullOnly (vi.Location, vi.Name);
-							continue;
-						}
-
-						constants.Add (name, e);
-						vi.IsConstant = true;
 					}
 				}
-			}
 
-			//
-			// Now, handle the children
-			//
-			if (children != null) {
-				foreach (Block b in children)
-					b.ResolveMeta (toplevel, ec, ip);
+				//
+				// Now, handle the children
+				//
+				if (children != null) {
+					foreach (Block b in children)
+						b.ResolveMeta (toplevel, ec, ip);
+				}
 			}
-			ec.InUnsafe = old_unsafe;
 		}
 
 		//
@@ -3232,23 +3229,14 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
-			bool previous_state = ec.InUnsafe;
-			bool val;
-			
-			ec.InUnsafe = true;
-			val = Block.Resolve (ec);
-			ec.InUnsafe = previous_state;
-
-			return val;
+			using (ec.WithUnsafe (true))
+				return Block.Resolve (ec);
 		}
 		
 		protected override void DoEmit (EmitContext ec)
 		{
-			bool previous_state = ec.InUnsafe;
-			
-			ec.InUnsafe = true;
-			Block.Emit (ec);
-			ec.InUnsafe = previous_state;
+			using (ec.WithUnsafe (true))
+				Block.Emit (ec);
 		}
 	}
 

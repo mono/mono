@@ -205,24 +205,34 @@ namespace Mono.CSharp {
 		public DeclSpace TypeContainer;
 		public ILGenerator   ig;
 
-		/// <summary>
-		///   This variable tracks the `checked' state of the compilation,
-		///   it controls whether we should generate code that does overflow
-		///   checking, or if we generate code that ignores overflows.
-		///
-		///   The default setting comes from the command line option to generate
-		///   checked or unchecked code plus any source code changes using the
-		///   checked/unchecked statements or expressions.   Contrast this with
-		///   the constant_check_state flag.
-		/// </summary>
-		bool check_state;
+		[Flags]
+		internal enum Flags : byte {
+			/// <summary>
+			///   This flag tracks the `checked' state of the compilation,
+			///   it controls whether we should generate code that does overflow
+			///   checking, or if we generate code that ignores overflows.
+			///
+			///   The default setting comes from the command line option to generate
+			///   checked or unchecked code plus any source code changes using the
+			///   checked/unchecked statements or expressions.   Contrast this with
+			///   the ConstantCheckState flag.
+			/// </summary>
+			CheckState = 1 << 0,
 
-		/// <summary>
-		///   The constant check state is always set to `true' and cant be changed
-		///   from the command line.  The source code can change this setting with
-		///   the `checked' and `unchecked' statements and expressions. 
-		/// </summary>
-		bool constant_check_state;
+			/// <summary>
+			///   The constant check state is always set to `true' and cant be changed
+			///   from the command line.  The source code can change this setting with
+			///   the `checked' and `unchecked' statements and expressions. 
+			/// </summary>
+			ConstantCheckState = 1 << 1,
+
+			/// <summary>
+			///  Whether we are inside an unsafe block
+			/// </summary>
+			InUnsafe = 1 << 2
+		}
+
+		Flags flags;
 
 		/// <summary>
 		///   Whether we are emitting code inside a static or instance method
@@ -306,11 +316,6 @@ namespace Mono.CSharp {
 		public bool IsLastStatement;
 
 		/// <summary>
-		///  Whether we are inside an unsafe block
-		/// </summary>
-		public bool InUnsafe;
-
-		/// <summary>
 		///  Whether we are in a `fixed' initialization
 		/// </summary>
 		public bool InFixedInitializer;
@@ -383,8 +388,9 @@ namespace Mono.CSharp {
 
 			TypeContainer = parent;
 			this.declSpace = ds;
-			check_state = RootContext.Checked;
-			constant_check_state = true;
+			if (RootContext.Checked)
+				flags |= Flags.CheckState;
+			flags |= Flags.ConstantCheckState;
 
 			IsStatic = (code_flags & Modifiers.STATIC) != 0;
 			MethodIsStatic = IsStatic;
@@ -394,11 +400,12 @@ namespace Mono.CSharp {
 			CurrentBlock = null;
 			CurrentFile = 0;
 			current_phase = Phase.Created;
-			
+
 			if (parent != null){
 				// Can only be null for the ResolveType contexts.
 				ContainerType = parent.TypeBuilder;
-				InUnsafe = rc.IsInUnsafeScope;
+				if (rc.IsInUnsafeScope)
+					flags |= Flags.InUnsafe;
 			}
 			loc = l;
 
@@ -424,39 +431,49 @@ namespace Mono.CSharp {
 		}
 
 		public bool CheckState {
-			get { return check_state; }
+			get { return (flags & Flags.CheckState) != 0; }
 		}
 
 		public bool ConstantCheckState {
-			get { return constant_check_state; }
+			get { return (flags & Flags.ConstantCheckState) != 0; }
+		}
+
+		public bool InUnsafe {
+			get { return (flags & Flags.InUnsafe) != 0; }
 		}
 
 		// utility helper for CheckExpr, UnCheckExpr, Checked and Unchecked statements
 		// it's public so that we can use a struct at the callsite
-		public struct CheckStateHandle : IDisposable
+		public struct FlagsHandle : IDisposable
 		{
 			EmitContext ec;
-			bool check, const_check;
-			public CheckStateHandle (EmitContext ec, bool new_check_state, bool new_constant_check_state)
+			Flags invmask, oldval;
+			internal FlagsHandle (EmitContext ec, Flags mask, Flags val)
 			{
 				this.ec = ec;
-				check = ec.check_state;
-				const_check = ec.constant_check_state;
-				ec.check_state = new_check_state;
-				ec.constant_check_state = new_constant_check_state;
+				invmask = ~mask;
+				oldval = ec.flags & mask;
+				ec.flags = (ec.flags & invmask) | (val & mask);
 			}
 			void IDisposable.Dispose ()
 			{
-				ec.check_state = check;
-				ec.constant_check_state = const_check;
+				ec.flags = (ec.flags & invmask) | oldval;
 			}
 		}
 
 		// Temporarily set 'CheckState' and 'ConstantCheckState' to the given values.
 		// Should be used in an 'using' statement
-		public CheckStateHandle WithCheckState (bool check_state, bool constant_check_state)
+		public FlagsHandle WithCheckState (bool check_state, bool constant_check_state)
 		{
-			return new CheckStateHandle (this, check_state, constant_check_state);
+			Flags newflags = 0;
+			newflags |= check_state		 ? Flags.CheckState	    : 0;
+			newflags |= constant_check_state ? Flags.ConstantCheckState : 0;
+			return new FlagsHandle (this, Flags.CheckState | Flags.ConstantCheckState, newflags);
+		}
+
+		public FlagsHandle WithUnsafe (bool in_unsafe)
+		{
+			return new FlagsHandle (this, Flags.InUnsafe, in_unsafe ? Flags.InUnsafe : 0);
 		}
 		
 		public bool IsInObsoleteScope {
