@@ -59,8 +59,8 @@ namespace System.Web.UI.WebControls
 		[BrowsableAttribute (false)]
 		public virtual string Name {
 			get {
-				if (Title.Length > 0) return Title;
-				else if (ID.Length > 0) return ID;
+				if (Title != null && Title.Length > 0) return Title;
+				else if (ID != null && ID.Length > 0) return ID;
 				else return null;
 			}
 		}

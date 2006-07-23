@@ -572,11 +572,14 @@ namespace System.Web.UI.WebControls
 		[MonoTODO]
 		public virtual string SkipLinkText 
 		{
-			get {
-				throw new NotImplementedException ();
+			get
+			{
+				object v = ViewState ["SkipLinkText"];
+				return v != null ? (string) v : "Skip Navigation Links.";
 			}
-			set {
-				throw new NotImplementedException ();
+			set
+			{
+				ViewState ["SkipLinkText"] = value;
 			}
 		}
 		
@@ -788,7 +791,7 @@ namespace System.Web.UI.WebControls
 		protected virtual new HtmlTextWriterTag TagKey
 		{
 			get {
-				throw new NotImplementedException ();
+				return HtmlTextWriterTag.Table;
 			}
 		}
 
@@ -895,6 +898,7 @@ namespace System.Web.UI.WebControls
 			if (DisplaySideBar && ActiveStep.StepType != WizardStepType.Complete) {
 				Table contentTable = wizardTable;
 				contentTable.Height = new Unit ("100%");
+				contentTable.Width = new Unit ("100%");
 				
 				wizardTable = new Table ();
 				wizardTable.CellPadding = CellPadding; 
@@ -908,6 +912,7 @@ namespace System.Web.UI.WebControls
 				
 				TableCell contentCell = new TableCell ();
 				contentCell.Controls.Add (contentTable);
+				contentCell.Height = new Unit ("100%");
 				row.Cells.Add (contentCell);
 				
 				wizardTable.Rows.Add (row);
@@ -952,7 +957,8 @@ namespace System.Web.UI.WebControls
 			switch (stepType) {
 				case WizardStepType.Start:
 					if (startNavigationTemplate != null) {
-						AddTemplateCell (row, startNavigationTemplate, StartNextButtonID, CancelButtonID);
+						AddTemplateButtonBar (buttonBarCell, startNavigationTemplate, StartNextButtonID, CancelButtonID);
+						return;
 					} else {
 						if (AllowNavigationToStep (ActiveStepIndex + 1))
 							AddButtonCell (row, CreateButton (StartNextButtonID, MoveNextCommandName, StartNextButtonType, StartNextButtonText, StartNextButtonImageUrl, StartNextButtonStyle));
@@ -962,7 +968,8 @@ namespace System.Web.UI.WebControls
 					break;
 				case WizardStepType.Step:
 					if (stepNavigationTemplate != null) {
-						AddTemplateCell (row, stepNavigationTemplate, StepPreviousButtonID, StepNextButtonID, CancelButtonID);
+						AddTemplateButtonBar (buttonBarCell, stepNavigationTemplate, StepPreviousButtonID, StepNextButtonID, CancelButtonID);
+						return;
 					} else {
 						if (AllowNavigationToStep (ActiveStepIndex - 1))
 							AddButtonCell (row, CreateButton (StepPreviousButtonID, MovePreviousCommandName, StepPreviousButtonType, StepPreviousButtonText, StepPreviousButtonImageUrl, StepPreviousButtonStyle));
@@ -974,7 +981,8 @@ namespace System.Web.UI.WebControls
 					break;
 				case WizardStepType.Finish:
 					if (finishNavigationTemplate != null) {
-						AddTemplateCell (row, finishNavigationTemplate, FinishPreviousButtonID, FinishButtonID, CancelButtonID);
+						AddTemplateButtonBar (buttonBarCell, finishNavigationTemplate, FinishPreviousButtonID, FinishButtonID, CancelButtonID);
+						return;
 					} else {
 						if (AllowNavigationToStep (ActiveStepIndex - 1))
 							AddButtonCell (row, CreateButton (FinishPreviousButtonID, MovePreviousCommandName, FinishPreviousButtonType, FinishPreviousButtonText, FinishPreviousButtonImageUrl, FinishPreviousButtonStyle));
@@ -998,17 +1006,14 @@ namespace System.Web.UI.WebControls
 			return b;
 		}
 		
-		void AddTemplateCell (TableRow row, ITemplate template, params string[] buttonIds)
+		void AddTemplateButtonBar (TableCell cell, ITemplate template, params string[] buttonIds)
 		{
-			TableCell cell = new TableCell ();
 			template.InstantiateIn (cell);
 			
 			foreach (string id in buttonIds) {
 				IButtonControl b = cell.FindControl (id) as IButtonControl;
 				if (b != null) RegisterCommandEvents (b);
 			}
-			
-			row.Cells.Add (cell);
 		}
 		
 		void AddButtonCell (TableRow row, Control control)
@@ -1022,7 +1027,22 @@ namespace System.Web.UI.WebControls
 		void CreateSideBar (TableCell sideBarCell)
 		{
 			RegisterApplyStyle (sideBarCell, SideBarStyle);
-			
+
+			if (SkipLinkText != "") {
+				System.Web.UI.HtmlControls.HtmlAnchor anchor = new System.Web.UI.HtmlControls.HtmlAnchor ();
+				anchor.HRef = "#" + ClientID + "_SkipLink";
+
+				Image img = new Image ();
+				ClientScriptManager csm = new ClientScriptManager (null);
+				img.ImageUrl = csm.GetWebResourceUrl (typeof (SiteMapPath), "transparent.gif");
+				img.Attributes.Add ("height", "0");
+				img.Attributes.Add ("width", "0");
+				img.AlternateText = SkipLinkText;
+
+				anchor.Controls.Add (img);
+				sideBarCell.Controls.Add (anchor);
+			}
+
 			if (sideBarTemplate != null) {
 				sideBarTemplate.InstantiateIn (sideBarCell);
 				stepDatalist = sideBarCell.FindControl (DataListID) as DataList;
@@ -1033,6 +1053,12 @@ namespace System.Web.UI.WebControls
 				stepDatalist.ID = DataListID;
 				stepDatalist.CellSpacing = 0;
 				sideBarCell.Controls.Add (stepDatalist);
+			}
+
+			if (SkipLinkText != "") {
+				System.Web.UI.HtmlControls.HtmlAnchor anchor = new System.Web.UI.HtmlControls.HtmlAnchor ();
+				anchor.ID = "SkipLink";
+				sideBarCell.Controls.Add (anchor);
 			}
 
 			stepDatalist.DataSource = WizardSteps;
@@ -1062,7 +1088,10 @@ namespace System.Web.UI.WebControls
 		
 		protected override Style CreateControlStyle ()
 		{
-			return new TableStyle ();
+			TableStyle style = new TableStyle ();
+			style.CellPadding = 0;
+			style.CellSpacing = 0;
+			return style;
 		}
 
 		[MonoTODO]
@@ -1291,16 +1320,16 @@ namespace System.Web.UI.WebControls
 			{
 				WizardStepBase step = DataBinder.GetDataItem (s) as WizardStepBase;
 				if (step != null) {
-					Control c = (Control)s;
+					DataListItem c = (DataListItem) s;
 					LinkButton b = (LinkButton) c.Controls[0];
 					b.ID = SideBarButtonID;
 					b.CommandName = Wizard.MoveToCommandName;
 					b.CommandArgument = wizard.WizardSteps.IndexOf (step).ToString ();
-					b.Text = step.Title;
+					b.Text = step.Name;
 					if (step.StepType == WizardStepType.Complete)
 						b.Enabled = false;
 					if (step == wizard.ActiveStep)
-						b.Font.Bold = true;
+						c.Font.Bold = true;
 					wizard.RegisterCommandEvents (b);
 				}
 			}

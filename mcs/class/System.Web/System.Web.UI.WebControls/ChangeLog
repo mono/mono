@@ -1,3 +1,10 @@
+2006-07-23 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* Wizard.cs: implemented SkipLinkText, TagKey
+	fixed rendering bugs, fixed templated button bar rendering
+	fixed side bar rendering
+	* WizardStepBase.cs: fixed Name property
+
 2006-07-23 Andrew Skiba <andrews@mainsoft.com>
 
 	* DetailsView.cs: fix the regressions, caused by the previous commit.
