@@ -966,7 +966,11 @@ namespace System.Web.UI.WebControls
 		
 		protected virtual DetailsViewRow CreateRow (int rowIndex, DataControlRowType rowType, DataControlRowState rowState)
 		{
-			DetailsViewRow row = new DetailsViewRow (rowIndex, rowType, rowState);
+			DetailsViewRow row;
+			if (rowType == DataControlRowType.Pager)
+				row = new DetailsViewPagerRow (rowIndex, rowType, rowState);
+			else
+				row = new DetailsViewRow (rowIndex, rowType, rowState);
 			OnItemCreated (EventArgs.Empty);
 			return row;
 		}
