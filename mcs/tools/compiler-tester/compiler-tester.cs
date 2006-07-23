@@ -797,7 +797,7 @@ namespace TestRunner {
 
 			if (wrong_warning.Count > 0) {
 				LogLine ("");
-				LogLine ("List of not corectly defined warnings which should be either defined in compiler as a warning or their test case has redundant `warnaserror' option");
+				LogLine ("List of incorectly defined warnings (they should be either defined in the compiler as a warning or a test-case has redundant `warnaserror' option)");
 				LogLine ("");
 				foreach (DictionaryEntry de in wrong_warning)
 					LogLine ("CS{0:0000} : {1}", de.Key, (bool)de.Value ? "incorrect warning definition" : "missing warning definition");
