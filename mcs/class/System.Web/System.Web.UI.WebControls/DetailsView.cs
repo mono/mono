@@ -989,7 +989,9 @@ namespace System.Web.UI.WebControls
 			table.Caption = Caption;
 			table.CaptionAlign = CaptionAlign;
 			table.CellPadding = CellPadding;
-			table.CellSpacing = CellSpacing;
+			//CellSpacing defaults to 0 and Table.CellSpacing to -1
+			if (CellSpacing != 0)
+				table.CellSpacing = CellSpacing;
 			table.HorizontalAlign = HorizontalAlign;
 			table.BackImageUrl = BackImageUrl;
 			return table;

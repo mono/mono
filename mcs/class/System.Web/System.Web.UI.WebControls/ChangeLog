@@ -1,5 +1,10 @@
 2006-07-23 Andrew Skiba <andrews@mainsoft.com>
 
+	* DetailsView.cs: correct handling the different default values of
+	DetailsView.CellSpacing and Table.CellSpacing.
+
+2006-07-23 Andrew Skiba <andrews@mainsoft.com>
+
 	* DetailsView.cs: create a pager row when needed.
 
 2006-07-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
