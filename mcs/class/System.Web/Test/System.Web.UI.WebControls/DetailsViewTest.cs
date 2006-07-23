@@ -1568,7 +1568,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			ResetEvents ();
 			PokerDetailsView dv = new PokerDetailsView ();
 			Button bt = new Button ();
-			Page pg = new Page ();			
+			Page pg = new Page ();
+			dv.Page = pg;
 			dv.Init += new EventHandler (dv_Init);
 			dv.ItemCommand += new DetailsViewCommandEventHandler (dv_ItemCommand);
 			dv.ItemCreated += new EventHandler (dv_ItemCreated);

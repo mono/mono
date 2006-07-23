@@ -1,3 +1,7 @@
+2006-07-23 Andrew Skiba <andrews@mainsoft.com>
+
+	* DetailsViewTest.cs: fix the test.
+
 2006-07-20 Andrew Skiba <andrews@mainsoft.com>
 
 	* DetailsViewTest.cs: more precise lifetime flow check.
