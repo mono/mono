@@ -1,3 +1,12 @@
+2006-07-23  Raja R Harinath  <harinath@gmail.com>
+
+	* codegen.cs (EmitContext.Flags): Move InCatch, InFinally,
+	DoFlowAnalysis and OmitStructFlowAnalysis here.
+	(ec.With): Rename from WithUnsafe and generalize.
+	(ec.WithCheckState): Remove.  All users can be handled by 'With'.
+	(ec.WithFlowAnalyis): New.
+	* ecore.cs, expression.cs, statement.cs: Update.
+
 2006-07-22  Raja R Harinath  <harinath@gmail.com>
 
 	* statement.cs (Block.ResolveMeta): Simplify slightly.

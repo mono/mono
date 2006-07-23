@@ -3827,20 +3827,17 @@ namespace Mono.CSharp {
 
 		public bool Resolve (EmitContext ec, Location loc)
 		{
-			bool old_do_flow_analysis = ec.DoFlowAnalysis;
-			ec.DoFlowAnalysis = true;
+			using (ec.With (EmitContext.Flags.DoFlowAnalysis, true)) {
+				// Verify that the argument is readable
+				if (ArgType != AType.Out)
+					Expr = Expr.Resolve (ec);
 
-			// Verify that the argument is readable
-			if (ArgType != AType.Out)
-				Expr = Expr.Resolve (ec);
+				// Verify that the argument is writeable
+				if (Expr != null && (ArgType == AType.Out || ArgType == AType.Ref))
+					Expr = Expr.ResolveLValue (ec, EmptyExpression.OutAccess, loc);
 
-			// Verify that the argument is writeable
-			if (Expr != null && (ArgType == AType.Out || ArgType == AType.Ref))
-				Expr = Expr.ResolveLValue (ec, EmptyExpression.OutAccess, loc);
-
-			ec.DoFlowAnalysis = old_do_flow_analysis;
-
-			return Expr != null;
+				return Expr != null;
+			}
 		}
 
 		public void Emit (EmitContext ec)
@@ -6953,7 +6950,7 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			using (ec.WithCheckState (true, true))
+			using (ec.With (EmitContext.Flags.AllCheckStateFlags, true))
 				Expr = Expr.Resolve (ec);
 			
 			if (Expr == null)
@@ -6969,13 +6966,13 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			using (ec.WithCheckState (true, true))
+			using (ec.With (EmitContext.Flags.AllCheckStateFlags, true))
 				Expr.Emit (ec);
 		}
 
 		public override void EmitBranchable (EmitContext ec, Label target, bool onTrue)
 		{
-			using (ec.WithCheckState (true, true))
+			using (ec.With (EmitContext.Flags.AllCheckStateFlags, true))
 				Expr.EmitBranchable (ec, target, onTrue);
 		}
 	}
@@ -6995,7 +6992,7 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			using (ec.WithCheckState (false, false))
+			using (ec.With (EmitContext.Flags.AllCheckStateFlags, false))
 				Expr = Expr.Resolve (ec);
 
 			if (Expr == null)
@@ -7011,13 +7008,13 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			using (ec.WithCheckState (false, false))
+			using (ec.With (EmitContext.Flags.AllCheckStateFlags, false))
 				Expr.Emit (ec);
 		}
 		
 		public override void EmitBranchable (EmitContext ec, Label target, bool onTrue)
 		{
-			using (ec.WithCheckState (false, false))
+			using (ec.With (EmitContext.Flags.AllCheckStateFlags, false))
 				Expr.EmitBranchable (ec, target, onTrue);
 		}
 	}

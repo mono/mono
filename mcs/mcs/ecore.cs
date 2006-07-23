@@ -374,23 +374,22 @@ namespace Mono.CSharp {
 			if ((flags & ResolveFlags.MaskExprClass) == ResolveFlags.Type) 
 				return ResolveAsTypeStep (ec, false);
 
-			bool old_do_flow_analysis = ec.DoFlowAnalysis;
-			bool old_omit_struct_analysis = ec.OmitStructFlowAnalysis;
+			bool do_flow_analysis = ec.DoFlowAnalysis;
+			bool omit_struct_analysis = ec.OmitStructFlowAnalysis;
 			if ((flags & ResolveFlags.DisableFlowAnalysis) != 0)
-				ec.DoFlowAnalysis = false;
+				do_flow_analysis = false;
 			if ((flags & ResolveFlags.DisableStructFlowAnalysis) != 0)
-				ec.OmitStructFlowAnalysis = true;
+				omit_struct_analysis = true;
 
 			Expression e;
-			if (this is SimpleName) {
-				bool intermediate = (flags & ResolveFlags.Intermediate) == ResolveFlags.Intermediate;
-				e = ((SimpleName) this).DoResolve (ec, intermediate);
+			using (ec.WithFlowAnalysis (do_flow_analysis, omit_struct_analysis)) {
+				if (this is SimpleName) {
+					bool intermediate = (flags & ResolveFlags.Intermediate) == ResolveFlags.Intermediate;
+					e = ((SimpleName) this).DoResolve (ec, intermediate);
+				} else {
+					e = DoResolve (ec);
+				}
 			}
-			else 
-				e = DoResolve (ec);
-
-			ec.DoFlowAnalysis = old_do_flow_analysis;
-			ec.OmitStructFlowAnalysis = old_omit_struct_analysis;
 
 			if (e == null)
 				return null;
@@ -1070,7 +1069,7 @@ namespace Mono.CSharp {
 		{
 			Expression target;
 			
-			using (ec.WithCheckState (true, ec.ConstantCheckState)) {
+			using (ec.With (EmitContext.Flags.CheckState, true)) {
 				target = Convert.ImplicitConversion (ec, source, TypeManager.int32_type, loc);
 				if (target == null)
 					target = Convert.ImplicitConversion (ec, source, TypeManager.uint32_type, loc);
@@ -2788,12 +2787,11 @@ namespace Mono.CSharp {
 				// "a.b" is initialized, not whether the whole struct "a" is initialized.
 
 				if (lvalue_instance) {
-					bool old_do_flow_analysis = ec.DoFlowAnalysis;
-					ec.DoFlowAnalysis = false;
-					Expression right_side =
-						out_access ? EmptyExpression.LValueMemberOutAccess : EmptyExpression.LValueMemberAccess;
-					InstanceExpression = InstanceExpression.ResolveLValue (ec, right_side, loc);
-					ec.DoFlowAnalysis = old_do_flow_analysis;
+					using (ec.With (EmitContext.Flags.DoFlowAnalysis, false)) {
+						Expression right_side =
+							out_access ? EmptyExpression.LValueMemberOutAccess : EmptyExpression.LValueMemberAccess;
+						InstanceExpression = InstanceExpression.ResolveLValue (ec, right_side, loc);
+					}
 				} else {
 					ResolveFlags rf = ResolveFlags.VariableOrValue | ResolveFlags.DisableFlowAnalysis;
 					InstanceExpression = InstanceExpression.Resolve (ec, rf);

@@ -1690,7 +1690,7 @@ namespace Mono.CSharp {
 		{
 			// If some parent block was unsafe, we remain unsafe even if this block
 			// isn't explicitly marked as such.
-			using (ec.WithUnsafe (ec.InUnsafe | Unsafe)) {
+			using (ec.With (EmitContext.Flags.InUnsafe, ec.InUnsafe | Unsafe)) {
 				//
 				// Compute the VariableMap's.
 				//
@@ -1751,7 +1751,7 @@ namespace Mono.CSharp {
 						// which in turn causes the 'must be constant' error to be triggered.
 						constants.Remove (name);
 
-						using (ec.WithCheckState (ec.CheckState, (flags & Flags.Unchecked) == 0)) {
+						using (ec.With (EmitContext.Flags.ConstantCheckState, (flags & Flags.Unchecked) == 0)) {
 							ec.CurrentBlock = this;
 							Expression e = cv.Resolve (ec);
 							if (e == null)
@@ -2085,7 +2085,7 @@ namespace Mono.CSharp {
 		//
 		ToplevelBlock container;
 		CaptureContext capture_context;
-		FlowBranching top_level_branching;
+		FlowBranchingToplevel top_level_branching;
 
 		Hashtable capture_contexts;
 		ArrayList children;
@@ -2179,7 +2179,7 @@ namespace Mono.CSharp {
 			get { return capture_context; }
 		}
 
-		public FlowBranching TopLevelBranching {
+		public FlowBranchingToplevel TopLevelBranching {
 			get { return top_level_branching; }
 		}
 
@@ -3221,13 +3221,13 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
-			using (ec.WithCheckState (false, false))
+			using (ec.With (EmitContext.Flags.AllCheckStateFlags, false))
 				return Block.Resolve (ec);
 		}
 		
 		protected override void DoEmit (EmitContext ec)
 		{
-			using (ec.WithCheckState (false, false))
+			using (ec.With (EmitContext.Flags.AllCheckStateFlags, false))
 				Block.Emit (ec);
 		}
 	}
@@ -3243,13 +3243,13 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
-			using (ec.WithCheckState (true, true))
+			using (ec.With (EmitContext.Flags.AllCheckStateFlags, true))
 			        return Block.Resolve (ec);
 		}
 
 		protected override void DoEmit (EmitContext ec)
 		{
-			using (ec.WithCheckState (true, true))
+			using (ec.With (EmitContext.Flags.AllCheckStateFlags, true))
 				Block.Emit (ec);
 		}
 	}
@@ -3265,13 +3265,13 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
-			using (ec.WithUnsafe (true))
+			using (ec.With (EmitContext.Flags.InUnsafe, true))
 				return Block.Resolve (ec);
 		}
 		
 		protected override void DoEmit (EmitContext ec)
 		{
-			using (ec.WithUnsafe (true))
+			using (ec.With (EmitContext.Flags.InUnsafe, true))
 				Block.Emit (ec);
 		}
 	}
@@ -3600,9 +3600,7 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
-			bool was_catch = ec.InCatch;
-			ec.InCatch = true;
-			try {
+			using (ec.With (EmitContext.Flags.InCatch, true)) {
 				if (type_expr != null) {
 					TypeExpr te = type_expr.ResolveAsTypeTerminal (ec, false);
 					if (te == null)
@@ -3626,9 +3624,6 @@ namespace Mono.CSharp {
 					return VarBlock.Resolve (ec);
 
 				return true;
-			}
-			finally {
-				ec.InCatch = was_catch;
 			}
 		}
 	}
@@ -3728,15 +3723,13 @@ namespace Mono.CSharp {
 
 			if (Fini != null) {
 				if (ok)
-					ec.CurrentBranching.CreateSibling (
-						Fini, FlowBranching.SiblingType.Finally);
+					ec.CurrentBranching.CreateSibling (Fini, FlowBranching.SiblingType.Finally);
 
 				Report.Debug (1, "STARTED SIBLING FOR FINALLY", ec.CurrentBranching, vector);
-				bool was_finally = ec.InFinally;
-				ec.InFinally = true;
-				if (!Fini.Resolve (ec))
-					ok = false;
-				ec.InFinally = was_finally;
+				using (ec.With (EmitContext.Flags.InFinally, true)) {
+					if (!Fini.Resolve (ec))
+						ok = false;
+				}
 
 				if (!ec.InIterator)
 					need_exc_block = true;

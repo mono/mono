@@ -206,7 +206,7 @@ namespace Mono.CSharp {
 		public ILGenerator   ig;
 
 		[Flags]
-		internal enum Flags : byte {
+		public enum Flags : byte {
 			/// <summary>
 			///   This flag tracks the `checked' state of the compilation,
 			///   it controls whether we should generate code that does overflow
@@ -226,10 +226,26 @@ namespace Mono.CSharp {
 			/// </summary>
 			ConstantCheckState = 1 << 1,
 
+			AllCheckStateFlags = CheckState | ConstantCheckState,
+
 			/// <summary>
 			///  Whether we are inside an unsafe block
 			/// </summary>
-			InUnsafe = 1 << 2
+			InUnsafe = 1 << 2,
+
+			InCatch = 1 << 3,
+			InFinally = 1 << 4,
+
+			/// <summary>
+			///   Whether control flow analysis is enabled
+			/// </summary>
+			DoFlowAnalysis = 1 << 5,
+
+			/// <summary>
+			///   Whether control flow analysis is disabled on structs
+			///   (only meaningful when DoFlowAnalysis is set)
+			/// </summary>
+			OmitStructFlowAnalysis = 1 << 6
 		}
 
 		Flags flags;
@@ -272,16 +288,6 @@ namespace Mono.CSharp {
 		public bool IsConstructor;
 
 		/// <summary>
-		///   Whether we're control flow analysis enabled
-		/// </summary>
-		public bool DoFlowAnalysis;
-
-		/// <summary>
-		///   Whether we're control flow analysis disabled on struct
-		/// </summary>
-		public bool OmitStructFlowAnalysis;
-
-		/// <summary>
 		///   Keeps track of the Type to LocalBuilder temporary storage created
 		///   to store structures (used to compute the address of the structure
 		///   value on structure method invocations)
@@ -319,9 +325,6 @@ namespace Mono.CSharp {
 		///  Whether we are in a `fixed' initialization
 		/// </summary>
 		public bool InFixedInitializer;
-
-		public bool InCatch;
-		public bool InFinally;
 
 		/// <summary>
 		///  Whether we are inside an anonymous method.
@@ -442,6 +445,22 @@ namespace Mono.CSharp {
 			get { return (flags & Flags.InUnsafe) != 0; }
 		}
 
+		public bool InCatch {
+			get { return (flags & Flags.InCatch) != 0; }
+		}
+
+		public bool InFinally {
+			get { return (flags & Flags.InFinally) != 0; }
+		}
+
+		public bool DoFlowAnalysis {
+			get { return (flags & Flags.DoFlowAnalysis) != 0; }
+		}
+
+		public bool OmitStructFlowAnalysis {
+			get { return (flags & Flags.OmitStructFlowAnalysis) != 0; }
+		}
+
 		// utility helper for CheckExpr, UnCheckExpr, Checked and Unchecked statements
 		// it's public so that we can use a struct at the callsite
 		public struct FlagsHandle : IDisposable
@@ -455,27 +474,26 @@ namespace Mono.CSharp {
 				oldval = ec.flags & mask;
 				ec.flags = (ec.flags & invmask) | (val & mask);
 			}
-			void IDisposable.Dispose ()
+			public void Dispose ()
 			{
 				ec.flags = (ec.flags & invmask) | oldval;
 			}
 		}
 
-		// Temporarily set 'CheckState' and 'ConstantCheckState' to the given values.
-		// Should be used in an 'using' statement
-		public FlagsHandle WithCheckState (bool check_state, bool constant_check_state)
+		// Temporarily set all the given flags to the given value.  Should be used in an 'using' statement
+		public FlagsHandle With (Flags bits, bool enable)
 		{
-			Flags newflags = 0;
-			newflags |= check_state		 ? Flags.CheckState	    : 0;
-			newflags |= constant_check_state ? Flags.ConstantCheckState : 0;
-			return new FlagsHandle (this, Flags.CheckState | Flags.ConstantCheckState, newflags);
+			return new FlagsHandle (this, bits, enable ? bits : 0);
 		}
 
-		public FlagsHandle WithUnsafe (bool in_unsafe)
+		public FlagsHandle WithFlowAnalysis (bool do_flow_analysis, bool omit_struct_analysis)
 		{
-			return new FlagsHandle (this, Flags.InUnsafe, in_unsafe ? Flags.InUnsafe : 0);
+			Flags newflags = 
+				(do_flow_analysis ? Flags.DoFlowAnalysis : 0) |
+				(omit_struct_analysis ? Flags.OmitStructFlowAnalysis : 0);
+			return new FlagsHandle (this, Flags.DoFlowAnalysis | Flags.OmitStructFlowAnalysis, newflags);
 		}
-		
+
 		public bool IsInObsoleteScope {
 			get { return ResolveContext.IsInObsoleteScope; }
 		}
@@ -526,7 +544,7 @@ namespace Mono.CSharp {
 			else
 				type = FlowBranching.BranchingType.Block;
 
-			DoFlowAnalysis = true;
+			flags |= Flags.DoFlowAnalysis;
 
 			current_flow_branching = FlowBranching.CreateBranching (
 				CurrentBranching, type, block, block.StartLocation);
@@ -713,27 +731,24 @@ namespace Mono.CSharp {
 				if (!block.ResolveMeta (this, ip))
 					return false;
 
-				bool old_do_flow_analysis = DoFlowAnalysis;
-				DoFlowAnalysis = true;
+				using (this.With (EmitContext.Flags.DoFlowAnalysis, true)) {
+					FlowBranchingToplevel top_level;
+					if (anonymous_method_host != null)
+						top_level = new FlowBranchingToplevel (anonymous_method_host.CurrentBranching, block);
+					else 
+						top_level = block.TopLevelBranching;
 
-				if (anonymous_method_host != null)
-					current_flow_branching = new FlowBranchingToplevel (anonymous_method_host.CurrentBranching, block);
-				else 
-					current_flow_branching = block.TopLevelBranching;
-
-				if (!block.Resolve (this)) {
+					current_flow_branching = top_level;
+					bool ok = block.Resolve (this);
 					current_flow_branching = null;
-					DoFlowAnalysis = old_do_flow_analysis;
-					return false;
+
+					if (!ok)
+						return false;
+
+					FlowBranching.Reachability reachability = top_level.End ();
+					if (reachability.IsUnreachable)
+						unreachable = true;
 				}
-
-				FlowBranching.Reachability reachability = ((FlowBranchingToplevel) current_flow_branching).End ();
-				current_flow_branching = null;
-
-				DoFlowAnalysis = old_do_flow_analysis;
-
-				if (reachability.IsUnreachable)
-					unreachable = true;
 #if PRODUCTION
 			} catch (Exception e) {
 				Console.WriteLine ("Exception caught by the compiler while compiling:");
