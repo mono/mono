@@ -1040,6 +1040,7 @@ namespace System.Web.UI.WebControls
 			
 			Controls.Clear ();
 			table = CreateTable ();
+			table.CellSpacing = CellSpacing;
 			Controls.Add (table);
 				
 			ArrayList list = new ArrayList ();
