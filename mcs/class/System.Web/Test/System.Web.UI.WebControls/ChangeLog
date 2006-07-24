@@ -1,3 +1,7 @@
+2006-07-24 Andrew Skiba <andrews@mainsoft.com>
+
+	* DetailsViewTest.cs: split a test in two, working and not working.
+
 2006-07-23 Andrew Skiba <andrews@mainsoft.com>
 
 	* DetailsViewTest.cs: fix the test.
