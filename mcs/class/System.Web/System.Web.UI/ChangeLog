@@ -1,3 +1,7 @@
+2006-07-24 Andrew Skiba <andrews@mainsoft.com>
+
+	* DataSourceView.cs: refactor to keep the original exception stack.
+
 2006-07-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* PostBackOptions.cs: default to String.Empty for several field values.

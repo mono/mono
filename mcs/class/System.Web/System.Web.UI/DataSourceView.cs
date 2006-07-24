@@ -55,15 +55,15 @@ namespace System.Web.UI {
 				throw new ArgumentNullException ("callBack");
 
 			int rowAffected = 0;
-			Exception passOn = null;
 			try {
 				rowAffected = ExecuteDelete (keys, values);
-			} catch (Exception e) {
-				passOn = e;
 			}
-
-			if (!callBack (rowAffected, passOn) && passOn != null)
-				throw passOn;
+			catch (Exception e) {
+				if (!callBack (rowAffected, e))
+					throw;
+				return;
+			}
+			callBack (rowAffected, null);
 		}
 
 		protected virtual int ExecuteDelete(IDictionary keys, IDictionary values)
