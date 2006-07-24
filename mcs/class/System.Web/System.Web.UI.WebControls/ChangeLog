@@ -1,5 +1,9 @@
 2006-07-24 Andrew Skiba <andrews@mainsoft.com>
 
+	* DetailsView.cs: create table style in CreateControlStyle.
+
+2006-07-24 Andrew Skiba <andrews@mainsoft.com>
+
 	* DetailsView.cs: don't throw the exception which .Net does not throw.
 
 2006-07-24 Andrew Skiba <andrews@mainsoft.com>

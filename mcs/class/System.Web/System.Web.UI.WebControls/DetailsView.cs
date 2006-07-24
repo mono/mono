@@ -669,12 +669,10 @@ namespace System.Web.UI.WebControls
 		[DefaultValueAttribute (GridLines.Both)]
 		public virtual GridLines GridLines {
 			get {
-				object ob = ViewState ["GridLines"];
-				if (ob != null) return (GridLines) ob;
-				return GridLines.Both;
+				return ((TableStyle)ControlStyle).GridLines;
 			}
 			set {
-				ViewState ["GridLines"] = value;
+				((TableStyle)ControlStyle).GridLines = value;
 			}
 		}
 
@@ -998,11 +996,13 @@ namespace System.Web.UI.WebControls
 			table.BackImageUrl = BackImageUrl;
 			return table;
 		}
-	
-		[MonoTODO]
+
 		protected override Style CreateControlStyle ()
 		{
-			return base.CreateControlStyle ();
+			TableStyle style = new TableStyle (ViewState);
+			style.GridLines = GridLines.Both;
+			style.CellSpacing = 0;
+			return style;
 		}
 		
 		protected override int CreateChildControls (IEnumerable data, bool dataBinding)
@@ -1042,7 +1042,6 @@ namespace System.Web.UI.WebControls
 			
 			Controls.Clear ();
 			table = CreateTable ();
-			table.CellSpacing = CellSpacing;
 			Controls.Add (table);
 				
 			ArrayList list = new ArrayList ();
