@@ -546,7 +546,7 @@ namespace System.Web.UI.WebControls
 			get {
 				object o = ViewState ["ScrollDownText"];
 				if (o != null) return (string) o;
-				return "";
+				return Locale.GetText ("Scroll down");
 			}
 			set {
 				ViewState["ScrollDownText"] = value;
@@ -558,7 +558,7 @@ namespace System.Web.UI.WebControls
 			get {
 				object o = ViewState ["ScrollUpText"];
 				if (o != null) return (string) o;
-				return "";
+				return Locale.GetText ("Scroll up");
 			}
 			set {
 				ViewState["ScrollUpText"] = value;
@@ -568,11 +568,15 @@ namespace System.Web.UI.WebControls
 		[MonoTODO]
 		public string DynamicPopOutImageTextFormatString 
 		{
-			get {
-				throw new NotImplementedException ();
+			get
+			{
+				object o = ViewState ["dpoitf"];
+				if (o != null) return (string) o;
+				return Locale.GetText ("Expand {0}");
 			}
-			set {
-				throw new NotImplementedException ();
+			set
+			{
+				ViewState ["dpoitf"] = value;
 			}
 		}
 		
@@ -594,11 +598,15 @@ namespace System.Web.UI.WebControls
 		[MonoTODO]
 		public string StaticPopOutImageTextFormatString
 		{
-			get {
-				throw new NotImplementedException ();
+			get
+			{
+				object o = ViewState ["spoitf"];
+				if (o != null) return (string) o;
+				return Locale.GetText ("Expand {0}");
 			}
-			set {
-				throw new NotImplementedException ();
+			set
+			{
+				ViewState ["spoitf"] = value;
 			}
 		}
 		
@@ -663,7 +671,7 @@ namespace System.Web.UI.WebControls
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public string SelectedValue {
-			get { return selectedItem != null ? selectedItem.Value : null; }
+			get { return selectedItem != null ? selectedItem.Value : ""; }
 		}
 
 		[MonoTODO]
@@ -674,7 +682,7 @@ namespace System.Web.UI.WebControls
 				object o = ViewState ["SkipLinkText"];
 				if (o != null)
 					return (string) o;
-				return String.Empty;
+				return "Skip Navigation Links";
 			}
 			set {
 				ViewState ["SkipLinkText"] = value;
@@ -1048,7 +1056,8 @@ namespace System.Web.UI.WebControls
 		
 		protected internal override void Render (HtmlTextWriter writer)
 		{
-			base.Render (writer);
+			if (Items.Count > 0)
+				base.Render (writer);
 		}
 		
 		protected override void AddAttributesToRender (HtmlTextWriter writer)
@@ -1058,6 +1067,20 @@ namespace System.Web.UI.WebControls
 		
 		public override void RenderBeginTag (HtmlTextWriter writer)
 		{
+			if (SkipLinkText != "") {
+				System.Web.UI.HtmlControls.HtmlAnchor anchor = new System.Web.UI.HtmlControls.HtmlAnchor ();
+				anchor.HRef = "#" + ClientID + "_SkipLink";
+
+				Image img = new Image ();
+				ClientScriptManager csm = new ClientScriptManager (null);
+				img.ImageUrl = csm.GetWebResourceUrl (typeof (SiteMapPath), "transparent.gif");
+				img.Attributes.Add ("height", "0");
+				img.Attributes.Add ("width", "0");
+				img.AlternateText = SkipLinkText;
+
+				anchor.Controls.Add (img);
+				anchor.Render (writer);
+			}
 			base.RenderBeginTag (writer);
 		}
 		
@@ -1071,6 +1094,12 @@ namespace System.Web.UI.WebControls
 				RenderDynamicMenu (writer, item);
 			}
 			dynamicMenus = null;
+
+			if (SkipLinkText != "") {
+				System.Web.UI.HtmlControls.HtmlAnchor anchor = new System.Web.UI.HtmlControls.HtmlAnchor ();
+				anchor.ID = "SkipLink";
+				anchor.Render (writer);
+			}
 		}
 		
 		protected internal override void RenderContents (HtmlTextWriter writer)
@@ -1140,6 +1169,7 @@ namespace System.Web.UI.WebControls
 		{
 			writer.AddAttribute ("cellpadding", "0");
 			writer.AddAttribute ("cellspacing", "0");
+			writer.AddAttribute ("border", "0");
 
 			string cls = menuLevel==0 ? ControlStyle.CssClass : string.Empty;
 			
