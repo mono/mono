@@ -1069,7 +1069,7 @@ namespace System.Xml.Serialization
 		}
 				
 		[MonoTODO]
-		protected Exception CreateBadDeriveationException (
+		protected Exception CreateBadDerivationException (
 			string xsdDerived, 
 			string nsDerived, 
 			string xsdBase, 

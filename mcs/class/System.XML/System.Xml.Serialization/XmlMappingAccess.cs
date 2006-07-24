@@ -1,10 +1,10 @@
-// 
-// System.Xml.Serialization.SchemaImporter.cs 
+//
+// XmlMappingAccess.cs
 //
 // Author:
-//   Lluis Sanchez Gual (lluis@novell.com)
+//   Atsushi Enomoto
 //
-// Copyright (C) Novell, Inc., 2004
+// Copyright (C) 2006 Atsushi Enomoto
 //
 
 //
@@ -31,21 +31,15 @@
 #if NET_2_0
 
 using System;
-using System.Xml.Serialization.Advanced;
+using System.Xml.Schema;
 
-namespace System.Xml.Serialization 
+namespace System.Xml.Serialization
 {
-	public abstract class SchemaImporter
+	public enum XmlMappingAccess
 	{
-		internal SchemaImporter ()
-		{
-		}
-		
-		[MonoTODO]
-		public SchemaImporterExtensionCollection Extensions
-		{
-			get { throw new NotImplementedException (); }
-		}
+		None,
+		Read,
+		Write
 	}
 }
 

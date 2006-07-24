@@ -87,11 +87,11 @@ namespace System.Xml.Serialization
 		[MonoTODO ("mappings?")]
 		public XmlCodeExporter (CodeNamespace codeNamespace, 
 								CodeCompileUnit codeCompileUnit, 
-								ICodeGenerator codeGen, 
+								CodeDomProvider codeProvider, 
 								CodeGenerationOptions options, 
 								Hashtable mappings)
 		{
-			codeGenerator = new XmlMapCodeGenerator (codeNamespace, codeCompileUnit, codeGen, options, mappings);
+			codeGenerator = new XmlMapCodeGenerator (codeNamespace, codeCompileUnit, codeProvider, options, mappings);
 		}
 #endif
 
@@ -189,8 +189,8 @@ namespace System.Xml.Serialization
 		{
 		}
 
-		public XmlMapCodeGenerator (CodeNamespace codeNamespace, CodeCompileUnit codeCompileUnit, ICodeGenerator codeGen, CodeGenerationOptions options, Hashtable mappings)
-		: base (codeNamespace, codeCompileUnit, codeGen, options, mappings)
+		public XmlMapCodeGenerator (CodeNamespace codeNamespace, CodeCompileUnit codeCompileUnit, CodeDomProvider codeProvider, CodeGenerationOptions options, Hashtable mappings)
+		: base (codeNamespace, codeCompileUnit, codeProvider, options, mappings)
 		{
 		}
 		

@@ -174,10 +174,9 @@ namespace Mono.WebServices
 			bool hasWarnings = false;
 			
 			CodeDomProvider provider = GetProvider();
-			ICodeGenerator generator = provider.CreateGenerator();
 				
 			StringCollection validationWarnings;
-			validationWarnings = ServiceDescriptionImporter.GenerateWebReferences (references, options, style, generator, codeUnit, verbose);
+			validationWarnings = ServiceDescriptionImporter.GenerateWebReferences (references, options, style, provider, codeUnit, verbose);
 			
 			for (int n=0; n<references.Count; n++)
 			{
@@ -249,7 +248,7 @@ namespace Mono.WebServices
 				StreamWriter writer = new StreamWriter(filename);
 				
 				CodeGeneratorOptions compilerOptions = new CodeGeneratorOptions();
-				generator.GenerateCodeFromCompileUnit (codeUnit, writer, compilerOptions);
+				provider.GenerateCodeFromCompileUnit (codeUnit, writer, compilerOptions);
 				writer.Close();
 			}
 			

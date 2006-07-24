@@ -54,7 +54,7 @@ namespace System.Web.Services.Description {
 		
 #if NET_2_0
 		CodeGenerationOptions options;
-		ICodeGenerator codeGenerator;
+		CodeDomProvider codeGenerator;
 		ImportContext context;
 #endif
 
@@ -104,7 +104,7 @@ namespace System.Web.Services.Description {
 		}
 		
 		[System.Runtime.InteropServices.ComVisible(false)]
-		public ICodeGenerator CodeGenerator {
+		public CodeDomProvider CodeGenerator {
 			get { return codeGenerator; }
 			set { codeGenerator = value; }
 		}
@@ -174,7 +174,7 @@ namespace System.Web.Services.Description {
 			WebReferenceCollection webReferences, 
 			CodeGenerationOptions options, 
 			ServiceDescriptionImportStyle style, 
-			ICodeGenerator codeGenerator)
+			CodeDomProvider codeGenerator)
 		{
 			CodeCompileUnit codeCompileUnit = new CodeCompileUnit ();
 			return GenerateWebReferences (webReferences, options, style, codeGenerator, codeCompileUnit, false);
@@ -185,7 +185,7 @@ namespace System.Web.Services.Description {
 			WebReferenceCollection webReferences, 
 			CodeGenerationOptions options, 
 			ServiceDescriptionImportStyle style, 
-			ICodeGenerator codeGenerator, 
+			CodeDomProvider codeGenerator, 
 			CodeCompileUnit codeCompileUnit, 
 			bool verbose)
 		{

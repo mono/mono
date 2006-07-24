@@ -185,7 +185,7 @@ namespace System.Web.Services.Description {
 			get { return descriptionImporter.CodeGenerationOptions; }
 		}
 		
-		internal ICodeGenerator CodeGenerator {
+		internal CodeDomProvider CodeGenerator {
 			get { return descriptionImporter.CodeGenerator; }
 		}
 

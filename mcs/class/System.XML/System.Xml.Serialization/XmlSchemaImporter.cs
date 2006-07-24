@@ -30,6 +30,7 @@
 //
 
 using System.Xml;
+using System.CodeDom.Compiler;
 using System.Xml.Schema;
 using System.Collections;
 
@@ -91,7 +92,7 @@ namespace System.Xml.Serialization
 		
 #if NET_2_0
 		[MonoTODO]
-		public XmlSchemaImporter (XmlSchemas schemas, CodeGenerationOptions options, System.CodeDom.Compiler.ICodeGenerator codeGenerator, ImportContext context)
+		public XmlSchemaImporter (XmlSchemas schemas, CodeGenerationOptions options, CodeDomProvider codeProvider, ImportContext context)
 		{
 			this.schemas = schemas;
 			this.options = options;

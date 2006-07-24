@@ -124,13 +124,13 @@ namespace System.Xml.Serialization
 		
 #if NET_2_0
 		[MonoTODO]
-		public bool IsNullable
+		public string XsdElementName
 		{
 			get { throw new NotImplementedException (); }
 		}
 		
 		[MonoTODO]
-		public string GetTypeName (System.CodeDom.Compiler.ICodeGenerator codeGenerator)
+		public string GenerateTypeName (System.CodeDom.Compiler.CodeDomProvider codeProvider)
 		{
 			throw new NotImplementedException ();
 		}

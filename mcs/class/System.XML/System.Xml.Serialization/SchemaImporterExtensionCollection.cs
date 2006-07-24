@@ -33,7 +33,7 @@
 using System;
 using System.Collections;
 
-namespace System.Xml.Serialization 
+namespace System.Xml.Serialization.Advanced
 {
 	public class SchemaImporterExtensionCollection : CollectionBase
 	{

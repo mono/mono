@@ -1,3 +1,7 @@
+2006-07-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Xml.dll.sources : added XmlMappingAccess.
+
 2006-05-16  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* run-W3C-tests.bat: skip nunit build if already done

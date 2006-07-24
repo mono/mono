@@ -37,7 +37,7 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Xml.Schema;
 
-namespace System.Xml.Serialization 
+namespace System.Xml.Serialization.Advanced
 {
 	public abstract class SchemaImporterExtension
 	{
@@ -51,10 +51,10 @@ namespace System.Xml.Serialization
 			bool mixed, 
 			XmlSchemas schemas, 
 			XmlSchemaImporter importer, 
+			CodeCompileUnit codeCompileUnit, 
 			CodeNamespace codeNamespace, 
-			StringCollection referencedAssemblies, 
 			CodeGenerationOptions options, 
-			ICodeGenerator codeGenerator
+			CodeDomProvider codeProvider
 		)
 		{
 			throw new NotImplementedException ();
@@ -72,10 +72,10 @@ namespace System.Xml.Serialization
 			XmlSchemaObject context, 
 			XmlSchemas schemas, 
 			XmlSchemaImporter importer, 
+			CodeCompileUnit codeCompileUnit, 
 			CodeNamespace codeNamespace, 
-			StringCollection referencedAssemblies, 
 			CodeGenerationOptions options, 
-			ICodeGenerator codeGenerator
+			CodeDomProvider codeProvider
 		)
 		{
 			throw new NotImplementedException ();
@@ -88,10 +88,10 @@ namespace System.Xml.Serialization
 			XmlSchemaObject context, 
 			XmlSchemas schemas, 
 			XmlSchemaImporter importer, 
+			CodeCompileUnit codeCompileUnit, 
 			CodeNamespace codeNamespace, 
-			StringCollection referencedAssemblies, 
 			CodeGenerationOptions options, 
-			ICodeGenerator codeGenerator
+			CodeDomProvider codeProvider
 		)
 		{
 			throw new NotImplementedException ();

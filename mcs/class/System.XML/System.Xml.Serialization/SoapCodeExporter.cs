@@ -80,11 +80,11 @@ namespace System.Xml.Serialization
 		[MonoTODO ("mappings?")]
 		public SoapCodeExporter (CodeNamespace codeNamespace, 
 								CodeCompileUnit codeCompileUnit, 
-								ICodeGenerator codeGen, 
+								CodeDomProvider codeProvider, 
 								CodeGenerationOptions options, 
 								Hashtable mappings)
 		{
-			codeGenerator = new SoapMapCodeGenerator (codeNamespace, codeCompileUnit, codeGen, options, mappings);
+			codeGenerator = new SoapMapCodeGenerator (codeNamespace, codeCompileUnit, codeProvider, options, mappings);
 		}
 
 #endif
@@ -144,8 +144,8 @@ namespace System.Xml.Serialization
 			includeArrayTypes = true;
 		}
 
-		public SoapMapCodeGenerator (CodeNamespace codeNamespace, CodeCompileUnit codeCompileUnit, ICodeGenerator codeGen, CodeGenerationOptions options, Hashtable mappings)
-		: base (codeNamespace, codeCompileUnit, codeGen, options, mappings)
+		public SoapMapCodeGenerator (CodeNamespace codeNamespace, CodeCompileUnit codeCompileUnit, CodeDomProvider codeProvider, CodeGenerationOptions options, Hashtable mappings)
+		: base (codeNamespace, codeCompileUnit, codeProvider, options, mappings)
 		{
 		}
 

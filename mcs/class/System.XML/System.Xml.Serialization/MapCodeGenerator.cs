@@ -48,7 +48,7 @@ namespace System.Xml.Serialization {
 		CodeAttributeDeclarationCollection includeMetadata;
 		XmlTypeMapping exportedAnyType = null;
 		protected bool includeArrayTypes;
-		ICodeGenerator codeGen;
+		CodeDomProvider codeProvider;
 		CodeGenerationOptions options;
 
 		Hashtable exportedMaps = new Hashtable ();
@@ -61,11 +61,11 @@ namespace System.Xml.Serialization {
 			this.options = options;
 		}
 
-		public MapCodeGenerator (CodeNamespace codeNamespace, CodeCompileUnit codeCompileUnit, ICodeGenerator codeGen, CodeGenerationOptions options, Hashtable mappings)
+		public MapCodeGenerator (CodeNamespace codeNamespace, CodeCompileUnit codeCompileUnit, CodeDomProvider codeProvider, CodeGenerationOptions options, Hashtable mappings)
 		{
 			this.codeCompileUnit = codeCompileUnit;
 			this.codeNamespace = codeNamespace;
-			this.codeGen = codeGen;
+			this.codeProvider = codeProvider;
 			this.options = options;
 //			this.mappings = mappings;
 		}
@@ -158,7 +158,7 @@ namespace System.Xml.Serialization {
 			codeClass.Attributes = MemberAttributes.Public;
 
 #if NET_2_0
-			codeClass.IsPartial = CodeGenerator.Supports(GeneratorSupport.PartialTypes);
+			codeClass.IsPartial = CodeProvider.Supports(GeneratorSupport.PartialTypes);
 			AddClassAttributes (codeClass);
 #endif
 
@@ -625,12 +625,12 @@ namespace System.Xml.Serialization {
 		#region Private Properties
 
 #if NET_2_0
-		private ICodeGenerator CodeGenerator {
+		private CodeDomProvider CodeProvider {
 			get {
-				if (codeGen == null) {
-					codeGen = new CSharpCodeProvider ().CreateGenerator ();
+				if (codeProvider == null) {
+					codeProvider = new CSharpCodeProvider ();
 				}
-				return codeGen;
+				return codeProvider;
 			}
 		}
 #endif

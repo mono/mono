@@ -1,3 +1,13 @@
+2006-07-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlMappingAccess.cs : new type in 2.0 RTM.
+	* XmlCodeExporter.cs, SoapCodeExporter.cs,
+	  MapCodeGenerator.cs,
+	  XmlSchemaImporter.cs, SoapSchemaImporter.cs, SchemaImporter.cs,
+	  SchemaImporterExtension.cs, SchemaImporterExtensionCollection.cs,
+	  XmlMemberMapping.cs, XmlSerializationReader.cs :
+	  several 2.0 API fixes from betas to RTM.
+
 2006-06-07  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* XmlTypeMapMember.cs: Added GlobalIndex property.

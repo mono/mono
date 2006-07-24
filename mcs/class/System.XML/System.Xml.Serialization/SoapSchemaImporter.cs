@@ -75,9 +75,9 @@ namespace System.Xml.Serialization
 		}
 		
 		public SoapSchemaImporter (XmlSchemas schemas,CodeGenerationOptions options, 
-									ICodeGenerator codeGenerator, ImportContext context)
+									CodeDomProvider codeProvider, ImportContext context)
 		{
-			_importer = new XmlSchemaImporter (schemas, options, codeGenerator, context);
+			_importer = new XmlSchemaImporter (schemas, options, codeProvider, context);
 			_importer.UseEncodedFormat = true;
 		}
 
