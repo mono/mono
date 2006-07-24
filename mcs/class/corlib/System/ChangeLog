@@ -1,3 +1,7 @@
+2006-07-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Char.cs : implemented utf32 conversion methods thus fixed bug #78856.
+
 2006-07-19  John Luke  <john.luke@gmail.com>
 
 	* TermInfoDriver.cs: switch order of alt and control when

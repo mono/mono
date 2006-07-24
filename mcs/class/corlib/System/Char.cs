@@ -117,9 +117,63 @@ namespace System
 				return -1;
 		}
 
+		public static string ConvertFromUtf32 (int utf32)
+		{
+			if (utf32 < 0 || utf32 > 0x10FFFF)
+				throw new ArgumentOutOfRangeException ("utf32", "The argument must be from 0 to 0x10FFFF.");
+			if (0xD800 <= utf32 && utf32 <= 0xDFFF)
+				throw new ArgumentOutOfRangeException ("utf32", "The argument must not be in surrogate pair range.");
+			if (utf32 < 0x10000)
+				return new string ((char) utf32, 1);
+			utf32 -= 0x10000;
+			return new string (
+				new char [] {(char) ((utf32 >> 10) + 0xD800),
+				(char) (utf32 % 0x0400 + 0xDC00)});
+		}
+
+		public static int ConvertToUtf32 (char highSurrogate, char lowSurrogate)
+		{
+			if (highSurrogate < 0xD800 || 0xDBFF < highSurrogate)
+				throw new ArgumentOutOfRangeException ("highSurrogate");
+			if (lowSurrogate < 0xDC00 || 0xDFFF < lowSurrogate)
+				throw new ArgumentOutOfRangeException ("lowSurrogate");
+
+			return 0x10000 + ((highSurrogate - 0xD800) << 10) + (lowSurrogate - 0xDC00);
+		}
+
+		public static int ConvertToUtf32 (string s, int index)
+		{
+			if (s == null)
+				throw new ArgumentNullException ("s");
+			if (index < 0 || index >= s.Length)
+				throw new ArgumentOutOfRangeException ("index");
+			if (!Char.IsSurrogate (s [index]))
+				return s [index];
+			if (!Char.IsHighSurrogate (s [index])
+			    || index == s.Length - 1
+			    || !Char.IsLowSurrogate (s [index + 1]))
+				throw new ArgumentException (String.Format ("The string contains invalid surrogate pair character at {0}", index));
+			return ConvertToUtf32 (s [index], s [index + 1]);
+		}
+
 		public bool Equals (char value)
 		{
 			return m_value == value;
+		}
+
+		public static bool IsSurrogatePair (char high, char low)
+		{
+			return '\uD800' <= high && high <= '\uDBFF'
+				&& '\uDC00' <= low && low <= '\uDFFF';
+		}
+
+		public static bool IsSurrogatePair (string s, int index)
+		{
+			if (s == null)
+				throw new ArgumentNullException ("s");
+			if (index < 0 || index >= s.Length)
+				throw new ArgumentOutOfRangeException ("index");
+			return index + 1 < s.Length && IsSurrogatePair (s [index], s [index + 1]);
 		}
 #endif
 

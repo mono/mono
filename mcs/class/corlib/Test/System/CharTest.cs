@@ -521,6 +521,49 @@ public class CharTest : TestCase
 		Assert(c1.GetTypeCode().Equals(TypeCode.Char));
 	}
 
+#if NET_2_0
+	public void TestConvertFromUtf32 ()
+	{
+		AssertEquals ("#1", "A", Char.ConvertFromUtf32 (0x41));
+		AssertEquals ("#2", "\uD800\uDC00", Char.ConvertFromUtf32 (0x10000));
+	}
+
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void TestConvertFromUtf32Fail1 ()
+	{
+		Char.ConvertFromUtf32 (-1);
+	}
+
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void TestConvertFromUtf32Fail2 ()
+	{
+		Char.ConvertFromUtf32 (0x110001);
+	}
+
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void TestConvertFromUtf32Fail3 ()
+	{
+		Char.ConvertFromUtf32 (0xD800);
+	}
+
+	public void TestConvertToUtf32 ()
+	{
+		AssertEquals ("#1", 0x10000, Char.ConvertToUtf32 ('\uD800', '\uDC00'));
+		AssertEquals ("#2", 0x10FFFF, Char.ConvertToUtf32 ('\uDBFF', '\uDFFF'));
+	}
+
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void TestConvertToUtf32Fail1 ()
+	{
+		Char.ConvertToUtf32 ('A', '\uDC00');
+	}
+
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void TestConvertUtf32Fail2 ()
+	{
+		Char.ConvertToUtf32 ('\uD800', '\uD800');
+	}
+#endif
 }
 
 }

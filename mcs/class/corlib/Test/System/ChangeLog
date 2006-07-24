@@ -1,3 +1,7 @@
+2006-07-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CharTest.cs : added tests for utf32 conversion methods.
+
 2006-07-19  Kornél Pál  <kornelpal@gmail.com>
 
 	* StringTest.cs: Added some more TestSbytePtrConstructorNegative tests
