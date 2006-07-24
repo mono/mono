@@ -32,7 +32,13 @@ using System;
 
 namespace System.Diagnostics {
 
-	[AttributeUsageAttribute(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Assembly)]	
+	[AttributeUsageAttribute(AttributeTargets.Class |
+				 AttributeTargets.Struct |
+				 AttributeTargets.Enum |
+				 AttributeTargets.Field |
+				 AttributeTargets.Delegate |
+				 AttributeTargets.Property |
+				 AttributeTargets.Assembly, AllowMultiple=true)]	
 #if NET_2_0
 	public sealed class DebuggerDisplayAttribute : Attribute
 #else
