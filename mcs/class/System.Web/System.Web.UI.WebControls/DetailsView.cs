@@ -470,17 +470,16 @@ namespace System.Web.UI.WebControls
 				return currentMode;
 			}
 		}
-	
+
+		DetailsViewMode defaultMode = DetailsViewMode.ReadOnly;
 		[DefaultValueAttribute (DetailsViewMode.ReadOnly)]
 		[WebCategoryAttribute ("Behavior")]
 		public virtual DetailsViewMode DefaultMode {
 			get {
-				object o = ViewState ["DefaultMode"];
-				if (o != null) return (DetailsViewMode) o;
-				return DetailsViewMode.ReadOnly;
+				return defaultMode;
 			}
 			set {
-				ViewState ["DefaultMode"] = value;
+				defaultMode = value;
 				RequireBinding ();
 			}
 		}
@@ -502,6 +501,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		string[] dataKeyNames = null;
+
 		[DefaultValueAttribute (null)]
 		[WebCategoryAttribute ("Data")]
 		[TypeConverter (typeof(StringArrayConverter))]
@@ -509,12 +510,13 @@ namespace System.Web.UI.WebControls
 		public virtual string[] DataKeyNames
 		{
 			get {
-				object o = ViewState ["DataKeyNames"];
-				if (o != null) return (string[]) o;
-				return emptyKeys;
+				if (dataKeyNames == null)
+					return emptyKeys;
+				else
+					return dataKeyNames;
 			}
 			set {
-				ViewState ["DataKeyNames"] = value;
+				dataKeyNames = value;
 				RequireBinding ();
 			}
 		}
@@ -1023,7 +1025,7 @@ namespace System.Web.UI.WebControls
 					}
 				}
 				
-				pageCount = dataSource.PageCount;
+				pageCount = dataSource.DataSourceCount;
 			}
 			else
 			{
@@ -1531,13 +1533,15 @@ namespace System.Web.UI.WebControls
 			pageIndex = (int) state[1];
 			pageCount = (int) state[2];
 			currentMode = (DetailsViewMode) state[3];
+			dataKeyNames = (string[]) state[4];
+			defaultMode = (DetailsViewMode) state[5];
 		}
 		
 		protected internal override object SaveControlState ()
 		{
 			object bstate = base.SaveControlState ();
 			return new object[] {
-				bstate, pageIndex, pageCount, currentMode
+				bstate, pageIndex, pageCount, currentMode, dataKeyNames, defaultMode
 					};
 		}
 		
