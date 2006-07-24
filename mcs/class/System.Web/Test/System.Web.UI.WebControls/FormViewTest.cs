@@ -1377,7 +1377,279 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 		}
 		
 
-		//ToDo: Postbacks - Insert, Delete and Edit.
+		[Test]
+		[Category ("NotWorking")]
+		public void FormView_EditPostback ()
+		{
+			WebTest t = new WebTest ("FormViewInsertEditDelete.aspx");
+			string pageHTML = t.Run ();
+			string newHtml = pageHTML.Substring (pageHTML.IndexOf ("start") + 5, pageHTML.IndexOf ("end") - pageHTML.IndexOf ("start") - 5);
+			string origHtml = @" <div> 
+					&nbsp;
+					<table cellspacing=""0"" border=""0"" id=""FormView1"" style=""border-collapse:collapse;"">
+					<tr>
+					<td colspan=""2"">
+					<span id=""FormView1_ID"">1001</span>&nbsp;
+					 <span id=""FormView1_LName"">Chand</span>                
+					 <span id=""FormView1_FName"">Mahesh</span>&nbsp;
+					<a id=""FormView1_EditButton"" href=""javascript:__doPostBack('FormView1$EditButton','')"">Edit</a>
+					 <a id=""FormView1_NewButton"" href=""javascript:__doPostBack('FormView1$NewButton','')"">New</a>
+					<a id=""FormView1_DeleteButton"" href=""javascript:__doPostBack('FormView1$DeleteButton','')"">Delete</a>
+					</td>
+					</tr><tr>
+					<td colspan=""2""><table border=""0"">
+					<tr>
+					<td><span>1</span></td><td><a href=""javascript:__doPostBack('FormView1','Page$2')"">2</a></td><td><a href=""javascript:__doPostBack('FormView1','Page$3')"">3</a></td>
+					</tr>
+					</table></td>
+					</tr>
+					</table>     
+					 </div>";
+			HtmlDiff.AssertAreEqual (origHtml, newHtml, "BeforeEditPostback");
+
+			//Edit button postback (change to edit mode - buttons "Update" and "Cancel" should appear.
+			
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls["__EVENTTARGET"].Value = "FormView1$EditButton";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+			t.Request = fr;
+			pageHTML = t.Run ();
+			newHtml = pageHTML.Substring (pageHTML.IndexOf ("start") + 5, pageHTML.IndexOf ("end") - pageHTML.IndexOf ("start") - 5);
+			origHtml = @" <div>
+					&nbsp;
+					<table cellspacing=""0"" border=""0"" id=""FormView1"" style=""border-collapse:collapse;"">
+					<tr>
+					<td colspan=""2"">                
+					 Enter First Name:<input name=""FormView1$FNameEdit"" type=""text"" value=""Mahesh"" id=""FormView1_FNameEdit"" /><br />
+					 Enter Last Name:<input name=""FormView1$LNameEdit"" type=""text"" value=""Chand"" id=""FormView1_LNameEdit"" /><br />
+					 <a id=""FormView1_UpdateButton"" href=""javascript:__doPostBack('FormView1$UpdateButton','')"">Update</a>
+					<a id=""FormView1_CancelUpdateButton"" href=""javascript:__doPostBack('FormView1$CancelUpdateButton','')"">Cancel</a>
+					 </td>
+					</tr><tr>
+					<td colspan=""2""><table border=""0"">
+					<tr>
+					<td><span>1</span></td><td><a href=""javascript:__doPostBack('FormView1','Page$2')"">2</a></td><td><a href=""javascript:__doPostBack('FormView1','Page$3')"">3</a></td>
+					</tr>
+					</table></td>
+					</tr>
+					</table>    
+					</div>";
+			HtmlDiff.AssertAreEqual (origHtml, newHtml, "AfterEditPostback");
+
+			//Update record postback                
+			
+			fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls.Add ("FormView1$FNameEdit");
+			fr.Controls.Add ("FormView1$LNameEdit");
+			fr.Controls["__EVENTTARGET"].Value = "FormView1$UpdateButton";
+			fr.Controls["__EVENTARGUMENT"].Value = "";			
+			fr.Controls["FormView1$FNameEdit"].Value = "Merav";
+			fr.Controls["FormView1$LNameEdit"].Value = "Test";			
+			t.Request = fr;
+			pageHTML = t.Run ();
+			newHtml = pageHTML.Substring (pageHTML.IndexOf ("start") + 5, pageHTML.IndexOf ("end") - pageHTML.IndexOf ("start") - 5);
+			origHtml=@"  <div>
+				&nbsp;
+				 <table cellspacing=""0"" border=""0"" id=""FormView1"" style=""border-collapse:collapse;"">
+				<tr>
+				<td colspan=""2"">
+				<span id=""FormView1_ID"">1001</span>&nbsp;
+				 <span id=""FormView1_LName"">Test</span>                
+				<span id=""FormView1_FName"">Merav</span>&nbsp;
+				<a id=""FormView1_EditButton"" href=""javascript:__doPostBack('FormView1$EditButton','')"">Edit</a>
+				<a id=""FormView1_NewButton"" href=""javascript:__doPostBack('FormView1$NewButton','')"">New</a>
+				<a id=""FormView1_DeleteButton"" href=""javascript:__doPostBack('FormView1$DeleteButton','')"">Delete</a>
+				</td>
+				</tr><tr>
+				<td colspan=""2""><table border=""0"">
+				<tr>
+				<td><span>1</span></td><td><a href=""javascript:__doPostBack('FormView1','Page$2')"">2</a></td><td><a href=""javascript:__doPostBack('FormView1','Page$3')"">3</a></td>
+				</tr>
+				</table></td>
+				</tr>
+				</table>     
+				</div>";
+			HtmlDiff.AssertAreEqual (origHtml, newHtml, "AfterUpdatePostback"); 
+  
+			//Postback to return to Edit mode
+			fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls["__EVENTTARGET"].Value = "FormView1$EditButton";
+			fr.Controls["__EVENTARGUMENT"].Value = "";			
+			t.Request = fr;
+			pageHTML = t.Run ();
+			newHtml = pageHTML.Substring (pageHTML.IndexOf ("start") + 5, pageHTML.IndexOf ("end") - pageHTML.IndexOf ("start") - 5);
+			Assert.AreEqual (true, pageHTML.Contains ("Merav"), "EditModePostback1");
+			Assert.AreEqual (true, pageHTML.Contains ("CancelUpdateButton"), "EditModePostback2"); 
+
+			// Cancel edited record postback
+			fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls.Add ("FormView1$FNameEdit");
+			fr.Controls.Add ("FormView1$LNameEdit");
+			fr.Controls["FormView1$FNameEdit"].Value = "EditFirstName";
+			fr.Controls["FormView1$LNameEdit"].Value = "EditLastName";
+			fr.Controls["__EVENTTARGET"].Value = "FormView1$CancelUpdateButton";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+			t.Request = fr;
+			pageHTML = t.Run ();
+			newHtml = pageHTML.Substring (pageHTML.IndexOf ("start") + 5, pageHTML.IndexOf ("end") - pageHTML.IndexOf ("start") - 5);
+			origHtml = @" <div>
+					&nbsp;
+					 <table cellspacing=""0"" border=""0"" id=""FormView1"" style=""border-collapse:collapse;"">
+					<tr>
+					<td colspan=""2"">
+					<span id=""FormView1_ID"">1001</span>&nbsp;
+					<span id=""FormView1_LName"">Test</span>                
+					<span id=""FormView1_FName"">Merav</span>&nbsp;
+					 <a id=""FormView1_EditButton"" href=""javascript:__doPostBack('FormView1$EditButton','')"">Edit</a>
+					<a id=""FormView1_NewButton"" href=""javascript:__doPostBack('FormView1$NewButton','')"">New</a>
+					 <a id=""FormView1_DeleteButton"" href=""javascript:__doPostBack('FormView1$DeleteButton','')"">Delete</a>
+					 </td>
+					</tr><tr>
+					<td colspan=""2""><table border=""0"">
+					<tr>
+					<td><span>1</span></td><td><a href=""javascript:__doPostBack('FormView1','Page$2')"">2</a></td><td><a href=""javascript:__doPostBack('FormView1','Page$3')"">3</a></td>
+					</tr>
+					</table></td>
+					</tr>
+					</table>     
+					</div>";
+			HtmlDiff.AssertAreEqual (origHtml, newHtml, "CancelEditedRecordPostback");   
+			
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void FormView_InsertPostback ()
+		{
+			WebTest t = new WebTest ("FormViewInsertEditDelete.aspx");
+			string pageHTML = t.Run ();
+			Assert.AreEqual (true, pageHTML.Contains ("1001"), "BeforeInsert1");
+			Assert.AreEqual (true, pageHTML.Contains ("Mahesh"), "BeforeInsert2");
+			Assert.AreEqual (true, pageHTML.Contains ("Chand"), "BeforeInsert3");
+			Assert.AreEqual (false, pageHTML.Contains ("Page$4"), "BeforeInsert4");
+			FormRequest fr = new FormRequest (t.Response, "form1"); 
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");			
+			fr.Controls["__EVENTTARGET"].Value = "FormView1$NewButton";
+			fr.Controls["__EVENTARGUMENT"].Value = "";						
+			t.Request = fr;
+			pageHTML = t.Run ();
+			string newHtml = pageHTML.Substring (pageHTML.IndexOf ("start") + 5, pageHTML.IndexOf ("end") - pageHTML.IndexOf ("start") - 5);
+			string origHtml = @" <div>
+			&nbsp;
+			<table cellspacing=""0"" border=""0"" id=""FormView1"" style=""border-collapse:collapse;"">
+			<tr>
+			<td colspan=""2"">
+			Insert ID:
+			 <input name=""FormView1$IDInsert"" type=""text"" id=""FormView1_IDInsert"" /><br />
+			Insert First Name:
+			 <input name=""FormView1$FNameInsert"" type=""text"" id=""FormView1_FNameInsert"" />
+			<br />
+			Insert Last Name:&nbsp;
+			 <input name=""FormView1$LNameInsert"" type=""text"" id=""FormView1_LNameInsert"" />
+			<a id=""FormView1_InsertButton"" href=""javascript:__doPostBack('FormView1$InsertButton','')"">Insert</a>
+			<a id=""FormView1_CancelInsertButton"" href=""javascript:__doPostBack('FormView1$CancelInsertButton','')"">Cancel</a>
+			</td>
+			</tr>
+			</table>   
+			 </div>";
+			HtmlDiff.AssertAreEqual (origHtml, newHtml, "InsertPostback");
+
+			//Insert new record
+
+			fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls.Add ("FormView1$IDInsert");
+			fr.Controls.Add ("FormView1$FNameInsert");
+			fr.Controls.Add ("FormView1$LNameInsert");
+			fr.Controls["FormView1$IDInsert"].Value = "33";
+			fr.Controls["FormView1$FNameInsert"].Value = "InsertFirstName";
+			fr.Controls["FormView1$LNameInsert"].Value ="InsertLastName";
+			fr.Controls["__EVENTTARGET"].Value = "FormView1$InsertButton";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+			t.Request = fr;
+			pageHTML = t.Run ();			
+			Assert.AreEqual (true, pageHTML.Contains ("1001"), "AfterInsert1");
+			Assert.AreEqual (true, pageHTML.Contains ("Mahesh"), "AfterInsert2");
+			Assert.AreEqual (true, pageHTML.Contains ("Chand"), "AfterInsert3");
+			Assert.AreEqual (true, pageHTML.Contains ("Page$4"), "AfterInsert4");
+
+			//Checking that the inserted record appears on page 4.
+
+			fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");			
+			fr.Controls["__EVENTTARGET"].Value = "FormView1";
+			fr.Controls["__EVENTARGUMENT"].Value = "Page$4";
+			t.Request = fr;
+			pageHTML = t.Run ();
+			Assert.AreEqual (true, pageHTML.Contains ("33"), "AfterInsert1");
+			Assert.AreEqual (true, pageHTML.Contains ("InsertLastName"), "AfterInsert2");
+			Assert.AreEqual (true, pageHTML.Contains ("InsertFirstName"), "AfterInsert3");
+			
+		}		
+
+		[Test]
+		[Category ("NotWorking")]
+		public void FormView_DeleteAndEmptyTemplatePostback ()
+		{
+			WebTest t = new WebTest ("FormViewInsertEditDelete.aspx");
+			string pageHTML = t.Run ();
+			//Before Delete
+			Assert.AreEqual (true, pageHTML.Contains ("1001"), "BeforeDelete1");
+			Assert.AreEqual (true, pageHTML.Contains ("Mahesh"), "BeforeDelete2");
+			Assert.AreEqual (true, pageHTML.Contains ("Chand"), "BeforeDelete3");
+			Assert.AreEqual (true, pageHTML.Contains ("Page$3"), "BeforeDelete4");	
+			//Delete First Item
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls["__EVENTTARGET"].Value = "FormView1$DeleteButton";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+			t.Request = fr;
+			pageHTML = t.Run ();			
+			Assert.AreEqual (true, pageHTML.Contains ("1002"), "AfterFirstDelete1");
+			Assert.AreEqual (true, pageHTML.Contains ("Talmadge"), "AfterFirstDelete2");
+			Assert.AreEqual (true, pageHTML.Contains ("Melanie"), "AfterFirstDelete3");
+			Assert.AreEqual (true, pageHTML.Contains ("Page$2"), "AfterFirstDelete4");
+			Assert.AreEqual (false, pageHTML.Contains ("Page$3"), "AfterFirstDelete5");
+
+			//Delete second item
+
+			fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls["__EVENTTARGET"].Value = "FormView1$DeleteButton";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+			t.Request = fr;
+			pageHTML = t.Run ();
+			Assert.AreEqual (true, pageHTML.Contains ("1003"), "AfterSecondDelete1");
+			Assert.AreEqual (true, pageHTML.Contains ("Bansal"), "AfterSecondDelete2");
+			Assert.AreEqual (true, pageHTML.Contains ("Vinay"), "AfterSecondDelete3");
+			Assert.AreEqual (false, pageHTML.Contains ("Page$2"), "AfterSecondDelete4");	
+
+			//Delete last item and checking that the EmptyDataTemplate appears.
+
+			fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls["__EVENTTARGET"].Value = "FormView1$DeleteButton";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+			t.Request = fr;
+			pageHTML = t.Run ();			
+			Assert.AreEqual (true, pageHTML.Contains ("FormView1_Label1"), "EmptyTemplateTest1"); 
+			Assert.AreEqual (true, pageHTML.Contains ("The Database is empty"), "EmptyTemplateTest2");
+		}
+		
 		
 
 

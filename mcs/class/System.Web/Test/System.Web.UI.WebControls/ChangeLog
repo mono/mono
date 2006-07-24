@@ -1,3 +1,7 @@
+﻿2006-07-25 Merav Sudri <meravs@mainsoft.com>
+
+	* FormViewTest.cs: Add three postback tests.
+
 2006-07-24 Andrew Skiba <andrews@mainsoft.com>
 
 	* DetailsViewTest.cs: split a test in two, working and not working.
