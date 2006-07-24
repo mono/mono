@@ -1380,8 +1380,8 @@ namespace System
 				if (tzoffset == -1)
 					tzoffset = 0;
 				if (tzsign == 1)
-					tzoffset = -tzoffset;
-
+					tzoffset = -tzoffset
+;
 				utcoffset = new TimeSpan (tzoffset, tzoffmin, 0);
 			}
 
@@ -1425,6 +1425,28 @@ namespace System
 		}
 
 #if NET_2_0
+		public static bool TryParse (string s, out DateTime result)
+		{
+			try {
+				result = Parse (s);
+			} catch {
+				result = MinValue;
+				return false;
+			}
+			return true;
+		}
+		
+		public static bool TryParse (string s, IFormatProvider provider, DateTimeStyles styles,  DateTime result)
+		{
+			try {
+				result = Parse (s, provider, styles);
+			} catch {
+				result = MinValue;
+				return false;
+			}
+			return true;
+		}
+		
 		public static bool TryParseExact (string s, string format,
 						  IFormatProvider fp,
 						  DateTimeStyles style,

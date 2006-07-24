@@ -247,6 +247,17 @@ namespace System.Runtime.Remoting.Channels
 
 		public static void RegisterChannel (IChannel chnl)
 		{
+			RegisterChannel (chnl, false);
+		}
+
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		static void RegisterChannel (IChannel chnl, bool ensureSecurity)
+		{
+			
 			// Put the channel in the correct place according to its priority.
 			// Since there are not many channels, a linear search is ok.
 
