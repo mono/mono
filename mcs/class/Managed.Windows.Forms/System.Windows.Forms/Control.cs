@@ -3184,7 +3184,7 @@ namespace System.Windows.Forms
 				}
 
 				if (c.CanSelect && ((c.parent == this) || nested) && (c.tab_stop || !tabStopOnly)) {
-					Select(c);
+					c.Select (true, true);
 					return true;
 				}
 			} while (c != ctl);	// If we wrap back to ourselves we stop
@@ -3608,6 +3608,10 @@ namespace System.Windows.Forms
 			if (container != null) {
 				container.ActiveControl = this;
 			}
+
+			if (IsHandleCreated) {
+				XplatUI.SetFocus(window.Handle);
+			}
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -3946,7 +3950,7 @@ namespace System.Windows.Forms
 					
 				case Msg.WM_LBUTTONDOWN: {
 					if (CanSelect) {
-						Select(this);
+						Select (true, true);
 					}
 					InternalCapture = true;
 					OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 

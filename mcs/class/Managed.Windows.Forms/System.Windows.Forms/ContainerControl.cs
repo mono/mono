@@ -68,13 +68,8 @@ namespace System.Windows.Forms {
 					return;
 				}
 
-				
 				if (!Contains(value) && this != value) {
 					throw new ArgumentException("Not a child control");
-				}
-
-				if (value == this) {
-					
 				}
 
 				// Fire the enter and leave events if possible
@@ -105,7 +100,6 @@ namespace System.Windows.Forms {
 
 				active_control = value;
 
-
 				if (this is Form)
 					CheckAcceptButton();
 
@@ -113,12 +107,7 @@ namespace System.Windows.Forms {
 				ScrollControlIntoView(active_control);
 
 				// Let the control know it's selected
-//				value.is_selected = true;
-//				if (value.IsHandleCreated) {
-//					XplatUI.SetFocus (value.window.Handle);
-//				}
-
-				SelectChild (value);
+				SendControlFocus (value);
 			}
 		}
 
@@ -141,6 +130,13 @@ namespace System.Windows.Forms {
 			}
 
 			return null;
+		}
+
+		private void SendControlFocus (Control c)
+		{
+			if (c.IsHandleCreated) {
+				XplatUI.SetFocus (c.window.Handle);
+			}
 		}
 
 #if NET_2_0
@@ -381,42 +377,17 @@ namespace System.Windows.Forms {
 			return SelectNextControl(active_control, forward, true, true, false);
 		}
 
-		protected override void Select(bool directed, bool forward) {
-
-			int	index;
-			bool	result;
-
-			if (!directed) {
-				// Select this control
-				Select(this);
-				return;
+		protected override void Select(bool directed, bool forward)
+		{
+			if (Parent != null) {
+				IContainerControl parent = Parent.GetContainerControl ();
+				if (parent != null) 
+					parent.ActiveControl = this;
 			}
 
-			if (parent == null) {
-				return;
+			if (directed) {
+				SelectNextControl (null, forward, true, true, false);
 			}
-
-			// FIXME - this thing is doing the wrong stuff, needs to be similar to SelectNextControl
-
-			index = parent.child_controls.IndexOf(this);
-			result = false;
-
-			do {
-				if (forward) {
-					if ((index+1) < parent.child_controls.Count) {
-						index++;
-					} else {
-						index = 0;
-					}
-				} else {
-					if (index>0) {
-						index++;
-					} else {
-						index = parent.child_controls.Count-1;
-					}
-				}
-				result = Select(parent.child_controls[index]);
-			} while (!result && parent.child_controls[index] != this);
 		}
 
 		protected virtual void UpdateDefaultButton() {
@@ -431,10 +402,14 @@ namespace System.Windows.Forms {
 				        mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()),
 					HighOrder ((int) m.LParam.ToInt32 ()), 0));
 				return;
+				/*
 			case Msg.WM_SETFOCUS:
-				if (active_control == null)
+				if (active_control != null)
+					Select (active_control);
+				else
 					SelectNextControl (null, true, true, true, false);
 				break;
+				*/
 			case Msg.WM_KILLFOCUS:
 				break;
 			}
