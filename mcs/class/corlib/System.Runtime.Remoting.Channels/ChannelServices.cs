@@ -251,6 +251,7 @@ namespace System.Runtime.Remoting.Channels
 		}
 
 #if NET_2_0
+		[MonoTODO ("Implement ensureSecurity")]
 		public
 #else
 		internal
