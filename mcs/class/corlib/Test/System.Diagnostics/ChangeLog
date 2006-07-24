@@ -1,4 +1,10 @@
-2005-06-12  Gert Driesen <drieseng@users.sourceforge.net>
+2006-07-24  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* StackFrameTest.cs: Spaces to tabs. Marked tests that fail on Mono
+	as NotWorking instead of Ignore. Enabled StackFrameTest2.GetFileName2
+	and StackFrameTest3.GetFileName as tests pass on both Mono and .NET.
+
+2005-06-12  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* StackTraceTest.cs: Mono does not support StraceTrace for
 	thread. Test passes on MS.NET 2.x.
