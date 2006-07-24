@@ -1469,7 +1469,7 @@ namespace System.Web.UI.WebControls
 			OnItemInserting (args);
 			if (!args.Cancel) {
 				DataSourceView view = GetData ();
-				if (view != null)
+				if (view == null)
 					return;
 				view.Insert (currentEditNewValues, new DataSourceViewOperationCallback (InsertCallback));
 			} else
