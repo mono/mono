@@ -50,7 +50,7 @@ namespace Mono.Tools {
 			name = package = root = gacdir = null;
 			bool check_refs = false;
 
-			// Check for silent arg first so we can supress
+			// Check for silent arg first so we can suppress
 			// warnings during command line parsing
 			if (Array.IndexOf (args, "/silent") > -1 || Array.IndexOf (args, "-silent") > -1)
 				silent = true;
@@ -175,7 +175,7 @@ namespace Mono.Tools {
 				break;
 			case Command.UninstallSpecific:
 				if (name == null) {
-					WriteLine ("Opetion " + command_str + " takes 1 argument");
+					WriteLine ("Option " + command_str + " takes 1 argument");
 					return 1;
 				}
 				if (!UninstallSpecific (name, package, gacdir, libdir))

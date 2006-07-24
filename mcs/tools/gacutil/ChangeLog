@@ -1,3 +1,7 @@
+2006-07-24  Alp Toker  <alp@atoker.com>
+
+	* driver.cs: Minor typo fixes in comments and informational output.
+
 2006-04-12  Miguel de Icaza  <miguel@novell.com>
 
 	* driver.cs: Delete the target file before copying over, this will
