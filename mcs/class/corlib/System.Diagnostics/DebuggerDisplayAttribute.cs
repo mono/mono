@@ -39,7 +39,7 @@ namespace System.Diagnostics {
 	internal sealed class DebuggerDisplayAttribute : Attribute
 #endif
 	{
-		string value;
+		string value, type, name;
 		string target_type_name;
 		Type target_type;
 
@@ -69,6 +69,26 @@ namespace System.Diagnostics {
 			}
 			set {
 				target_type_name = value;
+			}
+		}
+
+		public string Type {
+			get {
+				return type;
+			}
+
+			set {
+				type = value;
+			}
+		}
+
+		public string Name {
+			get {
+				return name;
+			}
+
+			set {
+				type = name;
 			}
 		}
 	}

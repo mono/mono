@@ -98,6 +98,12 @@ namespace System.Reflection {
 		{
 			throw new NotSupportedException (this.GetType().ToString ());
 		}
+
+		public virtual ParameterInfo ReturnParameter {
+			get {
+				throw new NotSupportedException ();				
+			}
+		}
 #endif
 	}
 }
