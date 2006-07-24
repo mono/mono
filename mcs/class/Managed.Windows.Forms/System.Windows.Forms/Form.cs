@@ -1787,7 +1787,7 @@ namespace System.Windows.Forms {
 				// Menu drawing
 				case Msg.WM_NCLBUTTONDOWN: {
 					if (native_enabled && ActiveMenu != null) {
-						ActiveMenu.OnMouseDown(this, new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 0));
+						ActiveMenu.OnMouseDown(this, new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), mouse_clicks, Control.MousePosition.X, Control.MousePosition.Y, 0));
 					}
 
 					if (ActiveMaximizedMdiChild != null) {

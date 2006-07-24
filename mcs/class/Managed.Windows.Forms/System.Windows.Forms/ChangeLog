@@ -1,3 +1,9 @@
+2006-07-22  Mike Kestner  <mkestner@novell.com>
+
+	* Form.cs: use Control.MousePosition for NCLBUTTONDOWN in the menu
+	menu handling code so that clicks without a grab work too.
+	[Fixes #78914]
+
 2006-07-22  Alexander Olk  <alex.olk@googlemail.com>
 
 	* FileDialog.cs: Enable the BackButton when dirstack has one element.
