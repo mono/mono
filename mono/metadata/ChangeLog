@@ -1,3 +1,8 @@
+2006-07-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* threadpool.c: Windows also misbehaves on async. connects. Fixes bug
+	#78888.
+
 2006-07-20  Dick Porter  <dick@ximian.com>
 
 	* file-io.c (ves_icall_System_IO_MonoIO_Seek): Fix signed/unsigned
