@@ -1,3 +1,7 @@
+2006-07-24  Miguel de Icaza  <miguel@novell.com>
+
+	* FileShare.cs: Add Delete in 2.0
+
 2006-07-06  Dick Porter  <dick@ximian.com>
 
 	* Directory.cs: When creating a directory treat ERROR_FILE_EXISTS

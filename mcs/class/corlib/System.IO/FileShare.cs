@@ -45,6 +45,9 @@ namespace System.IO {
 		Read = 1,
 		Write = 2,
 		ReadWrite = 3,
+#if NET_2_0
+		Delete = 4,
+#endif
 		Inheritable = 16,
 	} // FileShare
 
