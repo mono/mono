@@ -1,3 +1,9 @@
+2006-07-25 Yoni Klain <yonik@mainsoft.com>
+
+	* added : XMLDataSourceTest.xml;XMLDataSourceTest.xsl;XMLDataSourceTest1.aspx;
+	* XMLDataSourceTest2.aspx;XMLDataSourceTest3.aspx;XMLDataSourceTest4.aspx
+	* embedded resources for XmlDataSourceTest.cs
+
 2006-07-16 Yoni Klain <yonik@mainsoft.com>
 
 	* added WizardTest.skin embedded resources for WizardStepBase test

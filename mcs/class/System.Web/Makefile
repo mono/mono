@@ -91,6 +91,12 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/Bluehills.jpg \
 	Test/mainsoft/NunitWebResources/FormViewTest1.aspx \
 	Test/mainsoft/NunitWebResources/FormViewInsertEditDelete.aspx \
+	Test/mainsoft/NunitWebResources/XMLDataSourceTest.xml \
+	Test/mainsoft/NunitWebResources/XMLDataSourceTest.xsl \
+	Test/mainsoft/NunitWebResources/XMLDataSourceTest1.aspx \
+	Test/mainsoft/NunitWebResources/XMLDataSourceTest2.aspx \
+	Test/mainsoft/NunitWebResources/XMLDataSourceTest3.aspx \
+	Test/mainsoft/NunitWebResources/XMLDataSourceTest4.aspx \
 	Test/mainsoft/MainsoftWebTest/nunitweb_config.xml 
 
 NUNIT_RESOURCE_FILES = $(TEST_RESOURCE_FILES)
