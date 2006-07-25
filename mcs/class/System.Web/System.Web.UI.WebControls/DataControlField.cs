@@ -401,6 +401,13 @@ namespace System.Web.UI.WebControls {
 		}		
 
 		internal event EventHandler FieldChanged;
+
+		public override string ToString ()
+		{
+			if (string.IsNullOrEmpty (HeaderText))
+				return base.ToString ();
+			return HeaderText;
+		}
 	}
 }
 #endif

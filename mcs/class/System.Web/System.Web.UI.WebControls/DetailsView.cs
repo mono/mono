@@ -113,6 +113,7 @@ namespace System.Web.UI.WebControls
 		public DetailsView ()
 		{
 			rows = new DetailsViewRowCollection (new ArrayList ());
+			key = new DataKey (new OrderedDictionary ());
 		}
 		
 		public event EventHandler PageIndexChanged {

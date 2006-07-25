@@ -1,3 +1,9 @@
+2006-07-25 Andrew Skiba <andrews@mainsoft.com>
+
+	* DetailsView.cs: init DataKey property with empty collection.
+	* DataKey.cs: fix unexpected exception bug.
+	* DataControlField.cs: override ToString according to MSDN.
+
 2006-07-24 Andrew Skiba <andrews@mainsoft.com>
 
 	* DetailsView.cs: create table style in CreateControlStyle.

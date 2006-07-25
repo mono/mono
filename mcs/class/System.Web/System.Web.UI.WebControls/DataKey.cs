@@ -62,7 +62,11 @@ namespace System.Web.UI.WebControls
 		}
 		
 		public virtual object Value {
-			get { return keyTable [0]; }
+			get {
+				if (keyTable.Count == 0)
+					return null;
+				return keyTable [0]; 
+			}
 		}
 		
 		public virtual IOrderedDictionary Values {
