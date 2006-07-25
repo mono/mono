@@ -213,22 +213,26 @@ namespace MonoTests.System.Web.UI.WebControls
 			string html = new WebTest (PageInvoker.CreateOnLoad (
 				new PageDelegate (Render_Test))).Run ();
 			string origin = @"<table cellspacing=""0"" cellpadding=""0"" border=""0"" style=""border-collapse:collapse;"">
-					<tr>
-					<td style=""height:100%;""><a href=""#ctl01_SkipLink""><img alt=""Skip Navigation Links."" height=""0"" width=""0"" src=""/NunitWeb/WebResource.axd?d=gZrz8lvSQfolS1pG07HX9g2&amp;t=632784640484505569"" style=""border-width:0px;"" /></a><table id=""ctl01_SideBarContainer_SideBarList"" cellspacing=""0"" border=""0"" style=""border-collapse:collapse;"">
-						<tr>
-							<td style=""font-weight:bold;""><a id=""ctl01_SideBarContainer_SideBarList_ctl00_SideBarButton"" href=""javascript:__doPostBack('ctl01$SideBarContainer$SideBarList$ctl00$SideBarButton','')"">my_title</a></td>
-						</tr>
-					</table><a id=""ctl01_SkipLink""></a></td><td style=""height:100%;""><table cellspacing=""0"" cellpadding=""0"" border=""0"" style=""height:100%;width:100%;border-collapse:collapse;"">
-						<tr style=""height:100%;"">
-							<td>123</td>
-						</tr><tr>
-							<td align=""right""><table cellspacing=""5"" cellpadding=""5"" border=""0"">
 								<tr>
-									<td align=""right""><input type=""submit"" name=""ctl01$StartNavigationTemplateContainerID$StartNextButton"" value=""Next"" id=""ctl01_StartNavigationTemplateContainerID_StartNextButton"" /></td>
+									<td style=""height:100%;""><a href=""#ctl01_SkipLink""><img alt=""Skip Navigation Links."" height=""0"" width=""0"" src=""/NunitWeb/WebResource.axd?d=u9knZDluAzVeq3S7b_Cm7w2&amp;t=632875336762459244"" style=""border-width:0px;"" /></a><table id=""ctl01_SideBarContainer_SideBarList"" cellspacing=""0"" border=""0"" style=""border-collapse:collapse;"">
+										<tr>
+											<td style=""font-weight:bold;""><a id=""ctl01_SideBarContainer_SideBarList_ctl00_SideBarButton"" href=""javascript:__doPostBack('ctl01$SideBarContainer$SideBarList$ctl00$SideBarButton','')"">my_title</a></td>
+										</tr><tr>
+											<td><a id=""ctl01_SideBarContainer_SideBarList_ctl01_SideBarButton"" href=""javascript:__doPostBack('ctl01$SideBarContainer$SideBarList$ctl01$SideBarButton','')"">my_title_2</a></td>
+										</tr>
+									</table><a id=""ctl01_SkipLink""></a></td><td style=""height:100%;""><table cellspacing=""0"" cellpadding=""0"" border=""0"" style=""height:100%;width:100%;border-collapse:collapse;"">
+										<tr style=""height:100%;"">
+											<td>123</td>
+										</tr><tr>
+											<td align=""right""><table cellspacing=""5"" cellpadding=""5"" border=""0"">
+												<tr>
+													<td align=""right""><input type=""submit"" name=""ctl01$StartNavigationTemplateContainerID$StartNextButton"" value=""Next"" id=""ctl01_StartNavigationTemplateContainerID_StartNextButton"" /></td>
+												</tr>
+											</table></td>
+										</tr>
+									</table></td>
 								</tr>
-						</table></td>
-					</tr>
-					</table>";
+							</table>";
 			HtmlDiff.AssertAreEqual (origin, HtmlDiff.GetControlFromPageHtml (html), "BaseRender");
 			if (html.IndexOf ("my_title") < 0) {
 				Assert.Fail ("WizardStepBase title not rendered");
@@ -246,8 +250,15 @@ namespace MonoTests.System.Web.UI.WebControls
 			ws.Title = "my_title";
 			ws.Controls.Add (new LiteralControl ("123"));
 			ws.StepType = WizardStepType.Start;
+
+			PokerWizardStepBase ws2 = new PokerWizardStepBase ();
+			ws2.Title = "my_title_2";
+			ws2.Controls.Add (new LiteralControl ("1234567"));
+			ws2.StepType = WizardStepType.Finish;
+			
 			w.DisplaySideBar = true;
 			w.WizardSteps.Add (ws);
+			w.WizardSteps.Add (ws2);
 			p.Form.Controls.Add (lcb);
 			p.Form.Controls.Add (w);
 			p.Form.Controls.Add (lce);
@@ -401,7 +412,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		public static void read_control (Page p)
 		{
 			ArrayList list = new ArrayList ();
-			recurcive_find (list, typeof (LinkButton), p.FindControl ("Wizard").FindControl ("SideBarContainer"));
+			recurcive_find (list, typeof (LinkButton), p.FindControl ("Wizard"));
 			WebTest.CurrentTest.UserData = list;
 		}
 

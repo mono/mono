@@ -1,4 +1,11 @@
-﻿2006-07-25 Merav Sudri <meravs@mainsoft.com>
+﻿2006-07-25 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* GridViewTest.cs:
+	* ViewTest.cs:
+	* WizardStepBaseTest.cs:
+	* WizardTest.cs: fixed tests
+
+2006-07-25 Merav Sudri <meravs@mainsoft.com>
 
 	* FormViewTest.cs: Add three postback tests.
 

@@ -484,17 +484,17 @@ namespace MonoTests.System.Web.UI.WebControls
 
 			WebTest t = new WebTest (PageInvoker.CreateOnPreInit (_CancelButtonPropertyRendering));
 			string html = t.Run ();
-			string origin = @"<table cellspacing=""0"" cellpadding="" 0"" border=""0"" style=""border-collapse:collapse;"">
-						<tr style=""height:100%;"">
-						<td>Step</td>
-						</tr><tr>
-						<td align=""right""><table cellspacing=""5"" cellpadding=""5"" border=""0"">
-						<tr>
-						<td align=""right""><input type=""submit"" name=""ctl00$StepNavigationTemplateContainerID$StepPreviousButton"" value=""Previous"" id=""ctl00_StepNavigationTemplateContainerID_StepPreviousButton"" /></td><td align=""right""><input type=""submit"" name=""ctl00$StepNavigationTemplateContainerID$StepNextButton"" value=""Next"" id=""ctl00_StepNavigationTemplateContainerID_StepNextButton"" /></td><td align=""right""><input type=""submit"" name=""ctl00$StepNavigationTemplateContainerID$CancelButton"" value=""CancelButtonText"" id=""ctl00_StepNavigationTemplateContainerID_CancelButton"" style=""border-color:Red;"" /></td>
-						</tr>
-						</table></td>
-						</tr>
-						</table>";
+			string origin = @"<table cellspacing=""0"" cellpadding=""0"" border=""0"" style=""border-collapse:collapse;"">
+								<tr style=""height:100%;"">
+									<td>Start</td>
+								</tr><tr>
+									<td align=""right""><table cellspacing=""5"" cellpadding=""5"" border=""0"">
+										<tr>
+											<td align=""right""><input type=""submit"" name=""ctl00$StartNavigationTemplateContainerID$StartNextButton"" value=""Next"" id=""ctl00_StartNavigationTemplateContainerID_StartNextButton"" /></td><td align=""right""><input type=""submit"" name=""ctl00$StartNavigationTemplateContainerID$CancelButton"" value=""CancelButtonText"" id=""ctl00_StartNavigationTemplateContainerID_CancelButton"" style=""border-color:Red;"" /></td>
+										</tr>
+									</table></td>
+								</tr>
+							</table>";
 			HtmlDiff.AssertAreEqual (origin, HtmlDiff.GetControlFromPageHtml (html), "CancelButtonPropertyRendering");
 		}
 
@@ -512,8 +512,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			
 			WizardStep ws1 = new WizardStep ();
 			ws1.ID = "step1";
-			ws1.StepType = WizardStepType.Step;
-			ws1.Controls.Add (new LiteralControl ("Step"));
+			ws1.StepType = WizardStepType.Start;
+			ws1.Controls.Add (new LiteralControl ("Start"));
 
 			WizardStep ws2 = new WizardStep ();
 			ws2.ID = "step2";
@@ -537,16 +537,16 @@ namespace MonoTests.System.Web.UI.WebControls
 			WebTest t = new WebTest (PageInvoker.CreateOnPreInit (_FinishButtonPropertyRendering));
 			string html = t.Run ();
 			string origin = @"<table cellspacing=""0"" cellpadding=""0"" border=""0"" style=""border-collapse:collapse;"">
-						<tr style=""height:100%;"">
-							<td>Finish</td>
-						</tr><tr>
-							<td align=""right""><table cellspacing=""5"" cellpadding=""5"" border=""0"">
-								<tr>
-									<td align=""right""><input type=""image"" name=""ctl00$FinishNavigationTemplateContainerID$FinishPreviousImageButton"" id=""ctl00_FinishNavigationTemplateContainerID_FinishPreviousImageButton"" src=""FinishPreviousButtonImageUrl"" alt=""FinishPreviousButtonText"" style=""background-color:Red;border-width:0px;"" /></td><td align=""right""><a id=""ctl00_FinishNavigationTemplateContainerID_FinishLinkButton"" href=""javascript:__doPostBack('ctl00$FinishNavigationTemplateContainerID$FinishLinkButton','')"" style=""border-color:Red;"">FinishCompleteButtonText</a></td>
+								<tr style=""height:100%;"">
+									<td>Finish</td>
+								</tr><tr>
+									<td align=""right""><table cellspacing=""5"" cellpadding=""5"" border=""0"">
+										<tr>
+											<td align=""right""><input type=""image"" name=""ctl00$FinishNavigationTemplateContainerID$FinishPreviousImageButton"" id=""ctl00_FinishNavigationTemplateContainerID_FinishPreviousImageButton"" src=""http://FinishPreviousButtonImageUrl"" alt=""FinishPreviousButtonText"" style=""background-color:Red;border-width:0px;"" /></td><td align=""right""><a id=""ctl00_FinishNavigationTemplateContainerID_FinishLinkButton"" href=""javascript:__doPostBack('ctl00$FinishNavigationTemplateContainerID$FinishLinkButton','')"" style=""border-color:Red;"">FinishCompleteButtonText</a></td>
+										</tr>
+									</table></td>
 								</tr>
-							</table></td>
-						</tr>
-					</table>";
+							</table>";
 			HtmlDiff.AssertAreEqual (origin, HtmlDiff.GetControlFromPageHtml (html), "CancelButtonPropertyRendering");
 		}
 
@@ -556,14 +556,19 @@ namespace MonoTests.System.Web.UI.WebControls
 			LiteralControl lce = new LiteralControl (HtmlDiff.END_TAG);
 			PokerWizard w = new PokerWizard ();
 			w.FinishCompleteButtonStyle.BorderColor = Color.Red;
-			w.FinishCompleteButtonImageUrl = "FinishCompleteButtonImageUrl";
+			w.FinishCompleteButtonImageUrl = "http://FinishCompleteButtonImageUrl";
 			w.FinishDestinationPageUrl = "FinishDestinationPageUrl";
 			w.FinishCompleteButtonText = "FinishCompleteButtonText";
 			w.FinishCompleteButtonType = ButtonType.Link;
-			w.FinishPreviousButtonImageUrl = "FinishPreviousButtonImageUrl";
+			w.FinishPreviousButtonImageUrl = "http://FinishPreviousButtonImageUrl";
 			w.FinishPreviousButtonStyle.BackColor = Color.Red;
 			w.FinishPreviousButtonText = "FinishPreviousButtonText";
 			w.FinishPreviousButtonType = ButtonType.Image;
+
+			WizardStep ws0 = new WizardStep ();
+			ws0.ID = "step0";
+			ws0.StepType = WizardStepType.Start;
+			ws0.Controls.Add (new LiteralControl ("Finish"));
 			
 			WizardStep ws1 = new WizardStep ();
 			ws1.ID = "step1";
@@ -571,7 +576,9 @@ namespace MonoTests.System.Web.UI.WebControls
 			ws1.Controls.Add (new LiteralControl ("Finish"));
 			
 			w.DisplaySideBar = false;
+			w.WizardSteps.Add (ws0);
 			w.WizardSteps.Add (ws1);
+			w.MoveTo (ws1);
 			p.Controls.Add (lcb);
 			p.Controls.Add (w);
 			p.Controls.Add (lce);
@@ -585,18 +592,18 @@ namespace MonoTests.System.Web.UI.WebControls
 			WebTest t = new WebTest (PageInvoker.CreateOnPreInit (_HeaderRendering));
 			string html = t.Run ();
 			string origin = @"<table cellspacing=""0"" cellpadding=""0"" border=""0"" style=""border-collapse:collapse;"">
-						<tr>
-							<td style=""background-color:Red;""><input name=""ctl00$HeaderContainer$TextBox1"" type=""text"" id=""ctl00_HeaderContainer_TextBox1"" /></td>
-						</tr><tr style=""height:100%;"">
-							<td>Finish</td>
-						</tr><tr>
-							<td align=""right""><table cellspacing=""5"" cellpadding=""5"" border=""0"">
 								<tr>
-									<td align=""right""><input type=""submit"" name=""ctl00$FinishNavigationTemplateContainerID$FinishPreviousButton"" value=""Previous"" id=""ctl00_FinishNavigationTemplateContainerID_FinishPreviousButton"" /></td><td align=""right""><input type=""submit"" name=""ctl00$FinishNavigationTemplateContainerID$FinishButton"" value=""Finish"" id=""ctl00_FinishNavigationTemplateContainerID_FinishButton"" /></td>
+									<td style=""background-color:Red;""><input name=""ctl00$HeaderContainer$TextBox1"" type=""text"" id=""ctl00_HeaderContainer_TextBox1"" /></td>
+								</tr><tr style=""height:100%;"">
+									<td>Finish</td>
+								</tr><tr>
+									<td align=""right""><table cellspacing=""5"" cellpadding=""5"" border=""0"">
+										<tr>
+											<td align=""right""><input type=""submit"" name=""ctl00$FinishNavigationTemplateContainerID$FinishPreviousButton"" value=""Previous"" id=""ctl00_FinishNavigationTemplateContainerID_FinishPreviousButton"" /></td><td align=""right""><input type=""submit"" name=""ctl00$FinishNavigationTemplateContainerID$FinishButton"" value=""Finish"" id=""ctl00_FinishNavigationTemplateContainerID_FinishButton"" /></td>
+										</tr>
+									</table></td>
 								</tr>
-							</table></td>
-						</tr>
-					</table>";
+							</table>";
 			HtmlDiff.AssertAreEqual (origin, HtmlDiff.GetControlFromPageHtml (html), "HeaderRendering");
 		}
 
@@ -608,6 +615,11 @@ namespace MonoTests.System.Web.UI.WebControls
 			w.HeaderStyle.BackColor = Color.Red;
 			w.HeaderTemplate = new CompiledTemplateBuilder (_BuildHeader);
 			w.HeaderText = "test";
+
+			WizardStep ws0 = new WizardStep ();
+			ws0.ID = "step0";
+			ws0.StepType = WizardStepType.Start;
+			ws0.Controls.Add (new LiteralControl ("Start"));
 			
 			WizardStep ws1 = new WizardStep ();
 			ws1.ID = "step1";
@@ -615,7 +627,9 @@ namespace MonoTests.System.Web.UI.WebControls
 			ws1.Controls.Add (new LiteralControl ("Finish"));
 			
 			w.DisplaySideBar = false;
+			w.WizardSteps.Add (ws0);
 			w.WizardSteps.Add (ws1);
+			w.MoveTo (ws1);
 			p.Controls.Add (lcb);
 			p.Controls.Add (w);
 			p.Controls.Add (lce);
@@ -637,24 +651,26 @@ namespace MonoTests.System.Web.UI.WebControls
 			WebTest t = new WebTest (PageInvoker.CreateOnPreInit (_SideBarRendering));
 			string html = t.Run ();
 			string origin = @"<table cellspacing=""0"" cellpadding=""0"" border=""0"" style=""border-collapse:collapse;"">
-						<tr>
-							<td style=""background-color:Red;height:100%;""><a href=""#ctl00_SkipLink""><img alt=""Skip Navigation Links."" height=""0"" width=""0"" src=""/NunitWeb/WebResource.axd?d=gZrz8lvSQfolS1pG07HX9g2&amp;t=632784640484505569"" style=""border-width:0px;"" /></a><table id=""ctl00_SideBarContainer_SideBarList"" cellspacing=""0"" border=""0"" style=""border-collapse:collapse;"">
 								<tr>
-									<td><input type=""button"" name=""ctl00$SideBarContainer$SideBarList$ctl00$SideBarButton"" value=""step1"" onclick=""javascript:__doPostBack('ctl00$SideBarContainer$SideBarList$ctl00$SideBarButton','')"" id=""ctl00_SideBarContainer_SideBarList_ctl00_SideBarButton"" /></td>
-								</tr>
-							</table><a id=""ctl00_SkipLink""></a></td><td style=""height:100%;""><table cellspacing=""0"" cellpadding=""0"" border=""0"" style=""height:100%;width:100%;border-collapse:collapse;"">
-								<tr style=""height:100%;"">
-									<td>Step</td>
-								</tr><tr>
-									<td align=""right""><table cellspacing=""5"" cellpadding=""5"" border=""0"">
+									<td style=""background-color:Red;height:100%;""><a href=""#ctl00_SkipLink""><img alt=""Skip Navigation Links."" height=""0"" width=""0"" src=""/NunitWeb/WebResource.axd?d=u9knZDluAzVeq3S7b_Cm7w2&amp;t=632875336762459244"" style=""border-width:0px;"" /></a><table id=""ctl00_SideBarContainer_SideBarList"" cellspacing=""0"" border=""0"" style=""border-collapse:collapse;"">
 										<tr>
-											<td align=""right""><input type=""submit"" name=""ctl00$StepNavigationTemplateContainerID$StepPreviousButton"" value=""Previous"" id=""ctl00_StepNavigationTemplateContainerID_StepPreviousButton"" /></td><td align=""right""><input type=""submit"" name=""ctl00$StepNavigationTemplateContainerID$StepNextButton"" value=""Next"" id=""ctl00_StepNavigationTemplateContainerID_StepNextButton"" /></td>
+											<td><input type=""button"" name=""ctl00$SideBarContainer$SideBarList$ctl00$SideBarButton"" value=""step1"" onclick=""javascript:__doPostBack('ctl00$SideBarContainer$SideBarList$ctl00$SideBarButton','')"" id=""ctl00_SideBarContainer_SideBarList_ctl00_SideBarButton"" /></td>
+										</tr><tr>
+											<td><input type=""button"" name=""ctl00$SideBarContainer$SideBarList$ctl01$SideBarButton"" value=""step2"" onclick=""javascript:__doPostBack('ctl00$SideBarContainer$SideBarList$ctl01$SideBarButton','')"" id=""ctl00_SideBarContainer_SideBarList_ctl01_SideBarButton"" /></td>
+										</tr>
+									</table><a id=""ctl00_SkipLink""></a></td><td style=""height:100%;""><table cellspacing=""0"" cellpadding=""0"" border=""0"" style=""height:100%;width:100%;border-collapse:collapse;"">
+										<tr style=""height:100%;"">
+											<td>Step 1</td>
+										</tr><tr>
+											<td align=""right""><table cellspacing=""5"" cellpadding=""5"" border=""0"">
+												<tr>
+													<td align=""right""><input type=""submit"" name=""ctl00$StartNavigationTemplateContainerID$StartNextButton"" value=""Next"" id=""ctl00_StartNavigationTemplateContainerID_StartNextButton"" /></td>
+												</tr>
+											</table></td>
 										</tr>
 									</table></td>
 								</tr>
-							</table></td>
-						</tr>
-					</table>";
+							</table>";
 			HtmlDiff.AssertAreEqual (origin, HtmlDiff.GetControlFromPageHtml (html), "SideBarRendering");
 		}
 
@@ -664,20 +680,22 @@ namespace MonoTests.System.Web.UI.WebControls
 			LiteralControl lce = new LiteralControl (HtmlDiff.END_TAG);
 			PokerWizard w = new PokerWizard ();
 			
-			
 			w.SideBarButtonStyle.BackColor = Color.Red;
 			w.SideBarStyle.BackColor = Color.Red;
 			w.SideBarTemplate = new CompiledTemplateBuilder (_SideBarTemplate);
-			
-
 
 			WizardStep ws1 = new WizardStep ();
 			ws1.ID = "step1";
-			ws1.StepType = WizardStepType.Step;
-			ws1.Controls.Add (new LiteralControl ("Step"));
+			ws1.StepType = WizardStepType.Auto;
+			ws1.Controls.Add (new LiteralControl ("Step 1"));
 
+			WizardStep ws2 = new WizardStep ();
+			ws2.ID = "step2";
+			ws2.StepType = WizardStepType.Auto;
+			ws2.Controls.Add (new LiteralControl ("Step 2"));
 
 			w.WizardSteps.Add (ws1);
+			w.WizardSteps.Add (ws2);
 			p.Controls.Add (lcb);
 			p.Controls.Add (w);
 			p.Controls.Add (lce);
@@ -706,24 +724,26 @@ namespace MonoTests.System.Web.UI.WebControls
 			WebTest t = new WebTest (PageInvoker.CreateOnPreInit (_NavigationRendering));
 			string html = t.Run ();
 			string origin = @"<table cellspacing=""0"" cellpadding=""0"" border=""0"" style=""border-collapse:collapse;"">
-						<tr>
-							<td style=""height:100%;""><a href=""#ctl00_SkipLink""><img alt=""Skip Navigation Links."" height=""0"" width=""0"" src=""/NunitWeb/WebResource.axd?d=gZrz8lvSQfolS1pG07HX9g2&amp;t=632784640484505569"" style=""border-width:0px;"" /></a><table id=""ctl00_SideBarContainer_SideBarList"" cellspacing=""0"" border=""0"" style=""border-collapse:collapse;"">
 								<tr>
-									<td style=""font-weight:bold;""><a id=""ctl00_SideBarContainer_SideBarList_ctl00_SideBarButton"" href=""javascript:__doPostBack('ctl00$SideBarContainer$SideBarList$ctl00$SideBarButton','')"">step1</a></td>
-								</tr>
-							</table><a id=""ctl00_SkipLink""></a></td><td style=""height:100%;""><table cellspacing=""0"" cellpadding=""0"" border=""0"" style=""height:100%;width:100%;border-collapse:collapse;"">
-								<tr style=""height:100%;"">
-									<td>Start</td>
-								</tr><tr>
-									<td align=""right"" style=""background-color:Yellow;""><table cellspacing=""5"" cellpadding=""5"" border=""0"">
+									<td style=""height:100%;""><a href=""#ctl00_SkipLink""><img alt=""Skip Navigation Links."" height=""0"" width=""0"" src=""/NunitWeb/WebResource.axd?d=u9knZDluAzVeq3S7b_Cm7w2&amp;t=632875336762459244"" style=""border-width:0px;"" /></a><table id=""ctl00_SideBarContainer_SideBarList"" cellspacing=""0"" border=""0"" style=""border-collapse:collapse;"">
 										<tr>
-											<td align=""right""><input type=""submit"" name=""ctl00$StartNavigationTemplateContainerID$StartNextButton"" value=""Next"" id=""ctl00_StartNavigationTemplateContainerID_StartNextButton"" style=""background-color:Red;"" /></td>
+											<td style=""font-weight:bold;""><a id=""ctl00_SideBarContainer_SideBarList_ctl00_SideBarButton"" href=""javascript:__doPostBack('ctl00$SideBarContainer$SideBarList$ctl00$SideBarButton','')"">step1</a></td>
+										</tr><tr>
+											<td><a id=""ctl00_SideBarContainer_SideBarList_ctl01_SideBarButton"" href=""javascript:__doPostBack('ctl00$SideBarContainer$SideBarList$ctl01$SideBarButton','')"">step2</a></td>
+										</tr>
+									</table><a id=""ctl00_SkipLink""></a></td><td style=""height:100%;""><table cellspacing=""0"" cellpadding=""0"" border=""0"" style=""height:100%;width:100%;border-collapse:collapse;"">
+										<tr style=""height:100%;"">
+											<td>Start</td>
+										</tr><tr>
+											<td align=""right"" style=""background-color:Yellow;""><table cellspacing=""5"" cellpadding=""5"" border=""0"">
+												<tr>
+													<td align=""right""><input type=""submit"" name=""ctl00$StartNavigationTemplateContainerID$StartNextButton"" value=""Next"" id=""ctl00_StartNavigationTemplateContainerID_StartNextButton"" style=""background-color:Red;"" /></td>
+												</tr>
+											</table></td>
 										</tr>
 									</table></td>
 								</tr>
-							</table></td>
-						</tr>
-					</table>";
+							</table>";
 			HtmlDiff.AssertAreEqual (origin, HtmlDiff.GetControlFromPageHtml (html), "NavigationRendering");
 		}
 
@@ -733,15 +753,21 @@ namespace MonoTests.System.Web.UI.WebControls
 			LiteralControl lce = new LiteralControl (HtmlDiff.END_TAG);
 			PokerWizard w = new PokerWizard ();
 			WizardStep ws1 = new WizardStep ();
+			WizardStep ws2 = new WizardStep ();
 			
 			ws1.ID = "step1";
 			ws1.StepType = WizardStepType.Start;
 			ws1.Controls.Add (new LiteralControl ("Start"));
 
+			ws2.ID = "step2";
+			ws2.StepType = WizardStepType.Start;
+			ws2.Controls.Add (new LiteralControl ("Finish"));
+			
 			w.NavigationButtonStyle.BackColor = Color.Red;
 			w.NavigationStyle.BackColor = Color.Yellow;
 			
 			w.WizardSteps.Add (ws1);
+			w.WizardSteps.Add (ws2);
 			p.Controls.Add (lcb);
 			p.Controls.Add (w);
 			p.Controls.Add (lce);
@@ -755,24 +781,26 @@ namespace MonoTests.System.Web.UI.WebControls
 			WebTest t = new WebTest (PageInvoker.CreateOnPreInit (_StartTypeRendering));
 			string html = t.Run ();
 			string origin = @"<table cellspacing=""0"" cellpadding=""0"" border=""0"" style=""border-collapse:collapse;"">
-						<tr>
-							<td style=""height:100%;""><a href=""#ctl00_SkipLink""><img alt=""Skip Navigation Links."" height=""0"" width=""0"" src=""/NunitWeb/WebResource.axd?d=gZrz8lvSQfolS1pG07HX9g2&amp;t=632784640484505569"" style=""border-width:0px;"" /></a><table id=""ctl00_SideBarContainer_SideBarList"" cellspacing=""0"" border=""0"" style=""border-collapse:collapse;"">
 								<tr>
-									<td style=""font-weight:bold;""><a id=""ctl00_SideBarContainer_SideBarList_ctl00_SideBarButton"" href=""javascript:__doPostBack('ctl00$SideBarContainer$SideBarList$ctl00$SideBarButton','')"">step1</a></td>
-								</tr>
-							</table><a id=""ctl00_SkipLink""></a></td><td style=""height:100%;""><table cellspacing=""0"" cellpadding=""0"" border=""0"" style=""height:100%;width:100%;border-collapse:collapse;"">
-								<tr style=""height:100%;"">
-									<td>Start</td>
-								</tr><tr>
-									<td align=""right""><table cellspacing=""5"" cellpadding=""5"" border=""0"">
+									<td style=""height:100%;""><a href=""#ctl00_SkipLink""><img alt=""Skip Navigation Links."" height=""0"" width=""0"" src=""/NunitWeb/WebResource.axd?d=u9knZDluAzVeq3S7b_Cm7w2&amp;t=632875336762459244"" style=""border-width:0px;"" /></a><table id=""ctl00_SideBarContainer_SideBarList"" cellspacing=""0"" border=""0"" style=""border-collapse:collapse;"">
 										<tr>
-											<td align=""right""><input type=""submit"" name=""ctl00$StartNavigationTemplateContainerID$StartNextButton"" value=""StartNextButtonText"" id=""ctl00_StartNavigationTemplateContainerID_StartNextButton"" style=""background-color:Red;"" /></td>
+											<td style=""font-weight:bold;""><a id=""ctl00_SideBarContainer_SideBarList_ctl00_SideBarButton"" href=""javascript:__doPostBack('ctl00$SideBarContainer$SideBarList$ctl00$SideBarButton','')"">step1</a></td>
+										</tr><tr>
+											<td><a id=""ctl00_SideBarContainer_SideBarList_ctl01_SideBarButton"" href=""javascript:__doPostBack('ctl00$SideBarContainer$SideBarList$ctl01$SideBarButton','')"">step2</a></td>
+										</tr>
+									</table><a id=""ctl00_SkipLink""></a></td><td style=""height:100%;""><table cellspacing=""0"" cellpadding=""0"" border=""0"" style=""height:100%;width:100%;border-collapse:collapse;"">
+										<tr style=""height:100%;"">
+											<td>Start</td>
+										</tr><tr>
+											<td align=""right""><table cellspacing=""5"" cellpadding=""5"" border=""0"">
+												<tr>
+													<td align=""right""><input type=""submit"" name=""ctl00$StartNavigationTemplateContainerID$StartNextButton"" value=""StartNextButtonText"" id=""ctl00_StartNavigationTemplateContainerID_StartNextButton"" style=""background-color:Red;"" /></td>
+												</tr>
+											</table></td>
 										</tr>
 									</table></td>
 								</tr>
-							</table></td>
-						</tr>
-					</table>";
+							</table>";
 			HtmlDiff.AssertAreEqual (origin, HtmlDiff.GetControlFromPageHtml (html), "StartTypeRendering");
 		}
 
@@ -782,17 +810,23 @@ namespace MonoTests.System.Web.UI.WebControls
 			LiteralControl lce = new LiteralControl (HtmlDiff.END_TAG);
 			PokerWizard w = new PokerWizard ();
 			WizardStep ws1 = new WizardStep ();
+			WizardStep ws2 = new WizardStep ();
 
 			ws1.ID = "step1";
 			ws1.StepType = WizardStepType.Start;
 			ws1.Controls.Add (new LiteralControl ("Start"));
 
+			ws2.ID = "step2";
+			ws2.StepType = WizardStepType.Finish;
+			ws2.Controls.Add (new LiteralControl ("Finish"));
+			
 			w.StartNextButtonImageUrl = "StartNextButtonImageUrl";
 			w.StartNextButtonStyle.BackColor = Color.Red;
 			w.StartNextButtonText = "StartNextButtonText";
 			w.StartNextButtonType = ButtonType.Button;
 
 			w.WizardSteps.Add (ws1);
+			w.WizardSteps.Add (ws2);
 			p.Controls.Add (lcb);
 			p.Controls.Add (w);
 			p.Controls.Add (lce);
@@ -858,26 +892,28 @@ namespace MonoTests.System.Web.UI.WebControls
 			WebTest t = new WebTest (PageInvoker.CreateOnPreInit (_StepTypeRendering));
 			string html = t.Run ();
 			string origin = @"<table cellspacing=""0"" cellpadding=""0"" border=""0"" style=""border-collapse:collapse;"">
-						<tr>
-							<td style=""height:100%;""><a href=""#ctl00_SkipLink""><img alt=""Skip Navigation Links."" height=""0"" width=""0"" src=""/NunitWeb/WebResource.axd?d=gZrz8lvSQfolS1pG07HX9g2&amp;t=632784640484505569"" style=""border-width:0px;"" /></a><table id=""ctl00_SideBarContainer_SideBarList"" cellspacing=""0"" border=""0"" style=""border-collapse:collapse;"">
 								<tr>
-									<td style=""font-weight:bold;""><a id=""ctl00_SideBarContainer_SideBarList_ctl00_SideBarButton"" href=""javascript:__doPostBack('ctl00$SideBarContainer$SideBarList$ctl00$SideBarButton','')"">step1</a></td>
-								</tr><tr>
-									<td><a id=""ctl00_SideBarContainer_SideBarList_ctl01_SideBarButton"" href=""javascript:__doPostBack('ctl00$SideBarContainer$SideBarList$ctl01$SideBarButton','')"">step2</a></td>
-								</tr>
-							</table><a id=""ctl00_SkipLink""></a></td><td style=""height:100%;""><table cellspacing=""0"" cellpadding=""0"" border=""0"" style=""height:100%;width:100%;border-collapse:collapse;"">
-								<tr style=""height:100%;"">
-									<td style=""background-color:Red;"">Step1</td>
-								</tr><tr>
-									<td align=""right""><table cellspacing=""5"" cellpadding=""5"" border=""0"">
+									<td style=""height:100%;""><a href=""#ctl00_SkipLink""><img alt=""Skip Navigation Links."" height=""0"" width=""0"" src=""/NunitWeb/WebResource.axd?d=u9knZDluAzVeq3S7b_Cm7w2&amp;t=632875336762459244"" style=""border-width:0px;"" /></a><table id=""ctl00_SideBarContainer_SideBarList"" cellspacing=""0"" border=""0"" style=""border-collapse:collapse;"">
 										<tr>
-											<td align=""right""><a id=""ctl00_StepNavigationTemplateContainerID_StepPreviousLinkButton"" href=""javascript:__doPostBack('ctl00$StepNavigationTemplateContainerID$StepPreviousLinkButton','')"" style=""background-color:Red;"">StepPreviousButtonText</a></td><td align=""right""><input type=""image"" name=""ctl00$StepNavigationTemplateContainerID$StepNextImageButton"" id=""ctl00_StepNavigationTemplateContainerID_StepNextImageButton"" src=""StepNextButtonImageUrl"" alt=""StepNextButtonText"" style=""background-color:Red;border-width:0px;"" /></td>
+											<td><a id=""ctl00_SideBarContainer_SideBarList_ctl00_SideBarButton"" href=""javascript:__doPostBack('ctl00$SideBarContainer$SideBarList$ctl00$SideBarButton','')"">step1</a></td>
+										</tr><tr>
+											<td style=""font-weight:bold;""><a id=""ctl00_SideBarContainer_SideBarList_ctl01_SideBarButton"" href=""javascript:__doPostBack('ctl00$SideBarContainer$SideBarList$ctl01$SideBarButton','')"">step2</a></td>
+										</tr><tr>
+											<td><a id=""ctl00_SideBarContainer_SideBarList_ctl02_SideBarButton"" href=""javascript:__doPostBack('ctl00$SideBarContainer$SideBarList$ctl02$SideBarButton','')"">step3</a></td>
+										</tr>
+									</table><a id=""ctl00_SkipLink""></a></td><td style=""height:100%;""><table cellspacing=""0"" cellpadding=""0"" border=""0"" style=""height:100%;width:100%;border-collapse:collapse;"">
+										<tr style=""height:100%;"">
+											<td style=""background-color:Red;"">Step2</td>
+										</tr><tr>
+											<td align=""right""><table cellspacing=""5"" cellpadding=""5"" border=""0"">
+												<tr>
+													<td align=""right""><a id=""ctl00_StepNavigationTemplateContainerID_StepPreviousLinkButton"" href=""javascript:__doPostBack('ctl00$StepNavigationTemplateContainerID$StepPreviousLinkButton','')"" style=""background-color:Red;"">StepPreviousButtonText</a></td><td align=""right""><input type=""image"" name=""ctl00$StepNavigationTemplateContainerID$StepNextImageButton"" id=""ctl00_StepNavigationTemplateContainerID_StepNextImageButton"" src=""http://StepNextButtonImageUrl"" alt=""StepNextButtonText"" style=""background-color:Red;border-width:0px;"" /></td>
+												</tr>
+											</table></td>
 										</tr>
 									</table></td>
 								</tr>
-							</table></td>
-						</tr>
-					</table>";
+							</table>";
 			HtmlDiff.AssertAreEqual (origin, HtmlDiff.GetControlFromPageHtml (html), "StepRendering");
 		}
 
@@ -888,21 +924,25 @@ namespace MonoTests.System.Web.UI.WebControls
 			PokerWizard w = new PokerWizard ();
 			WizardStep ws1 = new WizardStep ();
 			WizardStep ws2 = new WizardStep ();
+			WizardStep ws3 = new WizardStep ();
 
 			ws1.ID = "step1";
-			ws1.StepType = WizardStepType.Step;
+			ws1.StepType = WizardStepType.Start;
 			ws1.Controls.Add (new LiteralControl ("Step1"));
 
 			ws2.ID = "step2";
 			ws2.StepType = WizardStepType.Step;
 			ws2.Controls.Add (new LiteralControl ("Step2"));
 
+			ws3.ID = "step3";
+			ws3.StepType = WizardStepType.Finish;
+			ws3.Controls.Add (new LiteralControl ("Step3"));
 
-			w.StepNextButtonImageUrl = "StepNextButtonImageUrl";
+			w.StepNextButtonImageUrl = "http://StepNextButtonImageUrl";
 			w.StepNextButtonStyle.BackColor = Color.Red;
 			w.StepNextButtonText = "StepNextButtonText";
 			w.StepNextButtonType = ButtonType.Image;
-			w.StepPreviousButtonImageUrl = "StepPreviousButtonImageUrl";
+			w.StepPreviousButtonImageUrl = "http://StepPreviousButtonImageUrl";
 			w.StepPreviousButtonStyle.BackColor = Color.Red;
 			w.StepPreviousButtonText = "StepPreviousButtonText";
 			w.StepPreviousButtonType = ButtonType.Link;
@@ -910,6 +950,9 @@ namespace MonoTests.System.Web.UI.WebControls
 			
 			w.WizardSteps.Add (ws1);
 			w.WizardSteps.Add (ws2);
+			w.WizardSteps.Add (ws3);
+			w.MoveTo (ws2);
+
 			p.Controls.Add (lcb);
 			p.Controls.Add (w);
 			p.Controls.Add (lce);
@@ -1210,6 +1253,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			wizard.WizardSteps.Add (step3);
 			wizard.ActiveStepIndex = 0;
 			wizard.MoveTo (step3);
+			// LAMESPEC: history updated when SaveControlState occured
 			Assert.AreEqual (0, ((ArrayList) wizard.GetHistory ()).Count, "ControlState#1");
 			object o = wizard.PokerSaveControlState ();
 			wizard.PokerLoadControlState (o);
@@ -1236,6 +1280,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			wizard.SideBarStyle.BackColor = Color.Red;
 			wizard.StartNextButtonStyle.BackColor = Color.Red;
 			wizard.StepPreviousButtonStyle.BackColor = Color.Red;
+			wizard.StepNextButtonStyle.BackColor = Color.Red;
 			wizard.StepStyle.BackColor = Color.Red;
 			object state = wizard.SaveState ();
 			copy.LoadState (state);
@@ -1705,7 +1750,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		public static void _readControl (Page p)
 		{
 			ArrayList list = new ArrayList();
-			recurcivefind (list, typeof (LinkButton), p.FindControl ("Wizard").FindControl ("SideBarContainer"));
+			recurcivefind (list, typeof (LinkButton), p.FindControl ("Wizard"));
 			WebTest.CurrentTest.UserData = list;
 		}
 

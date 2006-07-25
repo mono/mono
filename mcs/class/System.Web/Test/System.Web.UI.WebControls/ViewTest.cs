@@ -124,10 +124,11 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			PokerView pv = new PokerView ();
 			Button btn = new Button ();
+			btn.ID = "btn";
 			btn.Text = "MyTestButton";
 			pv.Controls.Add (btn);
 			string my = pv.Render ();
-			Assert.AreEqual (pv.Render (), "<input type=\"submit\" value=\"MyTestButton\" />", "RenderViewStateWithChilds");
+			Assert.AreEqual (@"<input type=""submit"" name=""btn"" value=""MyTestButton"" id=""btn"" />", my, "RenderViewStateWithChilds");
 		}
 
 

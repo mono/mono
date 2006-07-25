@@ -613,7 +613,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			Page page = new Page ();
 			PokerGridView g = new PokerGridView ();
 			page.Controls.Add (g);
-			if (g.doGetCallbackResult () == string.Empty) {
+			string s = g.doGetCallbackResult ();
+			if (s == null || s == string.Empty) {
 				Assert.Fail ("GetCallbackResult");
 			}
 		}
