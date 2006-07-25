@@ -1,3 +1,8 @@
+2006-07-25  Dick Porter  <dick@ximian.com>
+
+	* shared.c (_wapi_shm_file): Remove '/' characters from the uname
+	results.  Fixes bug 78917.
+
 2006-07-20  Dick Porter  <dick@ximian.com>
 
 	* threads.c (_wapi_thread_set_termination_details): Improve the
