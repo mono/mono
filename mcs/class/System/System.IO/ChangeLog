@@ -1,3 +1,11 @@
+2006-07-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FAMWatcher.cs: remove unused method.
+	* InotifyWatcher.cs: new watcher supporting inotify directly, as there
+	are some distros that do not install 'gamin' anymore. This new watcher
+	takes priority over gamin, fam and default.
+	* FileSystemWatcher.cs: support for the new watcher.
+
 2006-04-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FAMWatcher.cs: fix race condition when a directory is created and

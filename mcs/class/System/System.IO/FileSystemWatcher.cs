@@ -129,6 +129,9 @@ namespace System.IO {
 				case 4: // libgamin
 					ok = FAMWatcher.GetInstance (out watcher, true);
 					break;
+				case 5: // inotify
+					ok = InotifyWatcher.GetInstance (out watcher, true);
+					break;
 				}
 
 				if (mode == 0 || !ok)
@@ -496,23 +499,11 @@ namespace System.IO {
 		/* 0 -> not supported	*/
 		/* 1 -> windows		*/
 		/* 2 -> FAM		*/
+		/* 3 -> Kevent		*/
+		/* 4 -> gamin		*/
+		/* 5 -> inotify		*/
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		static extern int InternalSupportsFSW ();
-		
-		/*[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		static extern IntPtr InternalOpenDirectory (string path, IntPtr reserved);
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		static extern IntPtr InternalCloseDirectory (IntPtr handle);
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		static extern bool InternalReadDirectoryChanges (IntPtr handle,
-								 byte [] buffer,
-								 bool includeSubdirectories,
-								 NotifyFilters notifyFilter,
-								 out NativeOverlapped overlap,
-								 OverlappedHandler overlappedCallback);
-
-		*/
 	}
 }
+

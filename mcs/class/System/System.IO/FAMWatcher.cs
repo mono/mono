@@ -142,11 +142,6 @@ namespace System.IO {
 			}
 		}
 
-		static void StartMonitoringDirectory (FAMData data)
-		{
-			StartMonitoringDirectory (data, false);
-		}
-
 		static void StartMonitoringDirectory (FAMData data, bool justcreated)
 		{
 			FAMRequest fr;
