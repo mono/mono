@@ -216,7 +216,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			m.Controls.Add (v);
 			m.SetActiveView (v);
 			string html = m.Render ();
-			Assert.AreEqual (m.Render (), "<input type=\"submit\" name=\"test\" value=\"\" id=\"test\" />", "ButtonRender");			
+			Assert.AreEqual ("<input type=\"submit\" name=\"test\" value=\"\" id=\"test\" />", html, "ButtonRender");			
 		}
 
 		[Test]
@@ -339,7 +339,14 @@ namespace MonoTests.System.Web.UI.WebControls
 			PokerMultiView pmv = new PokerMultiView ();
 			Button b1 = new Button ();
 			pmv.DoAddParsedSubObject (b1);
+		}
 
+		[Test]
+		public void MultiView_AddParsedSubObjectExeption2 ()
+		{
+			PokerMultiView pmv = new PokerMultiView ();
+			LiteralControl l1 = new LiteralControl ("literal");
+			pmv.DoAddParsedSubObject (l1);
 		}
 	}
 }

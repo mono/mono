@@ -1,5 +1,9 @@
 ﻿2006-07-25 Vladimir Krasnov <vladimirk@mainsoft.com>
 
+	* MultiViewTest.cs: added test
+
+2006-07-25 Vladimir Krasnov <vladimirk@mainsoft.com>
+
 	* GridViewTest.cs:
 	* ViewTest.cs:
 	* WizardStepBaseTest.cs:
@@ -101,7 +105,7 @@
 	
 2006-07-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
-	* DataListTest.cs: new test for templated items. Patch by Jarosław
+	* DataListTest.cs: new test for templated items. Patch by Jaros?aw
 	Pawlak.
 
 2006-07-12 Yoni Klain <yonik@mainsoft.com>
