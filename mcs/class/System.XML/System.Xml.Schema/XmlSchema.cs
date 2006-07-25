@@ -357,8 +357,12 @@ namespace System.Xml.Schema
 #endif
 				compilationItems.Add (Items [i]);
 			}
-			if (this == rootSchema)
+			if (this == rootSchema) {
 				handledUris = new Hashtable ();
+				// Add this schema itself.
+				if (SourceUri != null && SourceUri.Length > 0)
+					handledUris.Add (SourceUri, SourceUri);
+			}
 
 			// First, we run into inclusion schemas to collect 
 			// compilation target items into compiledItems.

@@ -1,3 +1,8 @@
+2006-07-25  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchema.cs : mutual schema import was failing because the
+	  compiling schema's SourceUri was not enlisted for nest check.
+
 2006-03-02  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchema.cs : seems like there is XmlSchemaExternal.Schema property

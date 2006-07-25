@@ -170,6 +170,17 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		public void TestSimpleMutualImport ()
+		{
+			XmlReader r = new XmlTextReader ("Test/XmlFiles/xsd/inter-inc-1.xsd");
+			try {
+				XmlSchema.Read (r, null).Compile (null);
+			} finally {
+				r.Close ();
+			}
+		}
+
+		[Test]
 		public void TestQualification ()
 		{
 			XmlSchema schema = XmlSchema.Read (new XmlTextReader ("Test/XmlFiles/xsd/5.xsd"), null);
