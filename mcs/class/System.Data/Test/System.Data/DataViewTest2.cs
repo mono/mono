@@ -594,6 +594,44 @@ namespace MonoTests_System.Data
 			//PropertyDescriptorDeleted 
 		}
 
+                [Test]
+                public void AcceptChanges ()
+                {
+                        evProp = null;
+                        DataTable dt = new DataTable ();
+                        IBindingList list = dt.DefaultView;
+                        list.ListChanged += new ListChangedEventHandler (dv_ListChanged);
+                        dt.Columns.Add ("test", typeof (int));
+                        dt.Rows.Add (new object[] { 10 });
+                        dt.Rows.Add (new object[] { 20 });
+                        // ListChangedType.Reset
+                        dt.AcceptChanges ();
+
+                        Assert.AreEqual(true , evProp != null , "DV166");
+                        // AcceptChanges - should emit ListChangedType.Reset
+                        Assert.AreEqual(ListChangedType.Reset , evProp.lstType , "DV167");
+                }
+
+                [Test]
+                public void ClearTable ()
+                {
+                        evProp = null;
+                        DataTable dt = new DataTable ();
+                        IBindingList list = dt.DefaultView;
+                        list.ListChanged += new ListChangedEventHandler (dv_ListChanged);
+                        dt.Columns.Add ("test", typeof (int));
+                        dt.Rows.Add (new object[] { 10 });
+                        dt.Rows.Add (new object[] { 20 });
+                        // Clears DataTable
+                        dt.Clear ();
+
+                        Assert.AreEqual(true , evProp != null , "DV168");
+                        // Clear DataTable - should emit ListChangedType.Reset
+                        Assert.AreEqual(System.ComponentModel.ListChangedType.Reset , evProp.lstType , "DV169");
+                        // Clear DataTable - should clear view count
+                        Assert.AreEqual(0, dt.DefaultView.Count , "DV169");
+                }
+
 		private void dv_ListChanged(object sender, System.ComponentModel.ListChangedEventArgs e)
 		{
 			evProp = new EventProperties();	

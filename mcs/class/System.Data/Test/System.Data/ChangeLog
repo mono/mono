@@ -1,3 +1,11 @@
+2006-07-25  Nagappan A <anagappan@novell.com>
+
+	* DataViewTest2.cs (AcceptChanges, ClearTable): Test case to
+	verify list changed event on table AcceptChanges and test case to
+	verify data table count is zero on table Clear. Fixes bug
+	78610. Thanks to Itai Bar-Haim <itaibh@gmail.com> for the
+	testcases.
+
 2006-07-20  Senganal T <tsenganal@novell.com>
 
 	* DataSetTest2.cs : Test exception is not raised when 
