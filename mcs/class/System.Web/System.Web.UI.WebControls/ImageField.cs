@@ -300,6 +300,9 @@ namespace System.Web.UI.WebControls {
 		protected virtual void OnDataBindField (object sender, EventArgs e)
 		{
 			DataControlFieldCell cell = (DataControlFieldCell) sender;
+
+			if (cell.Controls.Count == 0)
+				return;
 			
 			if (imageProperty == null)
 				imageProperty = GetProperty (cell.BindingContainer, DataImageUrlField);
