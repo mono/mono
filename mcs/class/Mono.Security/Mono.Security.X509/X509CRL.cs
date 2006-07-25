@@ -168,7 +168,7 @@ namespace Mono.Security.X509 {
 				// CertificateList / TBSCertList / revokedCertificates	SEQUENCE OF SEQUENCE  {
 				entries = new ArrayList ();
 				// this is OPTIONAL so it may not be present if no entries exists
-				if (next.Tag == 0x30) {
+				if ((next != null) && (next.Tag == 0x30)) {
 					ASN1 revokedCertificates = next;
 					for (int i=0; i < revokedCertificates.Count; i++) {
 						entries.Add (new X509CrlEntry (revokedCertificates [i]));

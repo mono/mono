@@ -1,3 +1,9 @@
+2006-07-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509CRL.cs: Fix the case where no entry are present in the CRL (as
+	the structure is optional) *and* when there are no x.509 certificate
+	extensions.
+
 2006-01-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PKCS12.cs: Consider String.Empty as a null password (e.g. don't
