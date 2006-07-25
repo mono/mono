@@ -736,6 +736,7 @@ namespace System.Data {
 				if (myRow.RowState != DataRowState.Detached)
 					i++;
 			}
+			_rows.OnListChanged (this, new ListChangedEventArgs (ListChangedType.Reset, -1, -1));
 		}
 
 		/// <summary>

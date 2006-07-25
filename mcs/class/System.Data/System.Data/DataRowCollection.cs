@@ -332,7 +332,7 @@ namespace System.Data
 			Remove(this[index]);
 		}
 
-		private void OnListChanged (object sender, ListChangedEventArgs args)
+		internal void OnListChanged (object sender, ListChangedEventArgs args)
 		{
 			if (ListChanged != null)
 				ListChanged (sender, args);

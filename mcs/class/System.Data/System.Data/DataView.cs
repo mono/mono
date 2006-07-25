@@ -687,8 +687,11 @@ namespace System.Data
 		
 		private void OnRowCollectionChanged (object sender, ListChangedEventArgs args)
 		{
-			if (args.ListChangedType == ListChangedType.Reset)
+			if (args.ListChangedType == ListChangedType.Reset) {
+				rowCache = new DataRowView [0];
+				UpdateIndex (true);
 				OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, -1, -1 ));
+			}
 		}
 
 		private void UnregisterEventHandlers()
