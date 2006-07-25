@@ -1,3 +1,8 @@
+2006-07-25  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlConvertTest.cs :
+	  Added TimeSpan conversion test for min/max values.
+
 2006-06-26  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlReaderCommonTests.cs : added test for bug #78706.

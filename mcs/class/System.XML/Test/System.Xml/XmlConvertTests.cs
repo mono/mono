@@ -353,7 +353,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		public void ToTimeSpan ()//not done
+		public void ToTimeSpan ()
 		{
 			AssertEquals ("#1", new TimeSpan (0, 0, 0, 0, 1),
 				XmlConvert.ToTimeSpan ("PT0.001S"));
@@ -371,6 +371,14 @@ namespace MonoTests.System.Xml
 			AssertEquals ("#6",
 				TimeSpan.FromTicks (TimeSpan.TicksPerSecond + 1),
 				XmlConvert.ToTimeSpan ("PT1.0000001S"));
+
+			AssertEquals ("#7",
+				TimeSpan.MinValue,
+				XmlConvert.ToTimeSpan ("-P10675199DT2H48M5.4775808S"));
+
+			AssertEquals ("#8",
+				TimeSpan.MaxValue,
+				XmlConvert.ToTimeSpan ("P10675199DT2H48M5.4775807S"));
 		}
 		
 		[Test]

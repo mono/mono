@@ -1,3 +1,8 @@
+2006-07-25  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlConvert.cs : TimeSpan conversion for TimeSpan.MinValue was
+	  failing.
+
 2006-07-19  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlReader.cs : In Create(), support validation flags for DTD.

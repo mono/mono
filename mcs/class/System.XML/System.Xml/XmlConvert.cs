@@ -637,8 +637,10 @@ namespace System.Xml {
 			if (error)
 				throw new ArgumentException ("Invalid format string for duration schema datatype.");
 			TimeSpan ts = new TimeSpan (days, hours, minutes, seconds);
-			ts = ts.Add (TimeSpan.FromTicks (ticks));
-			return minusValue ? -ts : ts;
+			if (minusValue)
+				return TimeSpan.FromTicks (- (ts.Ticks + ticks));
+			else
+				return TimeSpan.FromTicks (ts.Ticks + ticks);
 		}
 
 		[CLSCompliant (false)]
