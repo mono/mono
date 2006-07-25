@@ -189,10 +189,10 @@ namespace System.Web.UI.WebControls
 	    [BrowsableAttribute (false)]
 		public WizardStepBase ActiveStep {
 			get {
-				if (activeStepIndex < -1 || activeStepIndex >= steps.Count)
+				if (ActiveStepIndex < -1 || ActiveStepIndex >= WizardSteps.Count)
 					throw new InvalidOperationException ("ActiveStepIndex has an invalid value.");
-				if (activeStepIndex == -1) return null;
-				return steps [activeStepIndex];
+				if (ActiveStepIndex == -1) return null;
+				return WizardSteps [activeStepIndex];
 			}
 		}
 		
@@ -904,8 +904,8 @@ namespace System.Web.UI.WebControls
 				wizardTable.CellPadding = CellPadding; 
 				wizardTable.CellSpacing = CellSpacing;
 				TableRow row = new TableRow ();
-				
-				TableCell sideBarCell = new TableCell ();
+
+				TableCellNamingContainer sideBarCell = new TableCellNamingContainer ();
 				sideBarCell.ControlStyle.Height = Unit.Percentage (100);
 				CreateSideBar (sideBarCell);
 				row.Cells.Add (sideBarCell);
@@ -1046,12 +1046,13 @@ namespace System.Web.UI.WebControls
 			if (sideBarTemplate != null) {
 				sideBarTemplate.InstantiateIn (sideBarCell);
 				stepDatalist = sideBarCell.FindControl (DataListID) as DataList;
+				stepDatalist.ItemDataBound += new DataListItemEventHandler(StepDatalistItemDataBound);
 				if (stepDatalist == null)
 					throw new InvalidOperationException ("The side bar template must contain a DataList control with id '" + DataListID + "'.");
 			} else {
 				stepDatalist = new DataList ();
 				stepDatalist.ID = DataListID;
-				stepDatalist.CellSpacing = 0;
+				stepDatalist.ItemTemplate = SideBarItemTemplate;
 				sideBarCell.Controls.Add (stepDatalist);
 			}
 
@@ -1061,9 +1062,21 @@ namespace System.Web.UI.WebControls
 				sideBarCell.Controls.Add (anchor);
 			}
 
+			stepDatalist.CellSpacing = 0;
 			stepDatalist.DataSource = WizardSteps;
-			stepDatalist.ItemTemplate = SideBarItemTemplate;
 			stepDatalist.DataBind ();
+		}
+
+		void StepDatalistItemDataBound (object sender, DataListItemEventArgs e)
+		{
+			if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem) {
+				IButtonControl button = (IButtonControl) e.Item.FindControl (SideBarButtonID);
+				WizardStep step = (WizardStep) e.Item.DataItem;
+
+				button.CommandName = Wizard.MoveToCommandName;
+				button.CommandArgument = WizardSteps.IndexOf (step).ToString ();
+				button.Text = step.Name;
+			}
 		}
 		
 		void AddHeaderRow (Table table)
@@ -1298,7 +1311,11 @@ namespace System.Web.UI.WebControls
 			
 			wizardTable.Render (writer);
 		}
-		
+
+		class TableCellNamingContainer : TableCell, INamingContainer
+		{
+		}
+
 		class SideBarButtonTemplate: ITemplate
 		{
 			Wizard wizard;

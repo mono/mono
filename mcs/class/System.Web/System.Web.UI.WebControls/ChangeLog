@@ -1,3 +1,8 @@
+2006-07-25 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* Wizard.cs: fixed ActiveStep property
+	fixed templated side bar
+
 2006-07-25 Andrew Skiba <andrews@mainsoft.com>
 
 	* ImageField.cs: fix null reference bug.
