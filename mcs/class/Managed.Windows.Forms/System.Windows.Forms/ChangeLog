@@ -1,3 +1,22 @@
+2006-07-25  Jackson Harper  <jackson@ximian.com>
+
+	* UpDownBase.cs: Use an internal class for the textbox so that we
+	can control focus.  the updown control should always have focus,
+	if either the text area or the buttons are clicked.
+	- Send the key messages to the textbox, since it never actually
+	has focus
+	- Activate and decativate the textbox caret.
+
+2006-07-24  Jackson Harper  <jackson@ximian.com>
+
+	* Control.cs: Use the directed select when selecting a control,
+	this way the container controls override will get called and the
+	whole ActiveControl chain will get triggered.  TODO: probably need
+	to make sure this gets done everywhere instead of the old
+	Select(Control).
+	* ContainerControl.cs: Implement the directed Select method to
+	find and activate the correct child control.	
+	
 2006-07-22  Mike Kestner  <mkestner@novell.com>
 
 	* Form.cs: use Control.MousePosition for NCLBUTTONDOWN in the menu

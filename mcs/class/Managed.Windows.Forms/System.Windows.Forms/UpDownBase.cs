@@ -223,11 +223,53 @@ namespace System.Windows.Forms
 				compute_rects();
 			}
 			#endregion	// Protected Instance Methods
+
+			
+			internal override void OnGotFocusInternal (EventArgs e)
+			{
+				owner.Select (true, true);
+			}
+
+			internal override void OnLostFocusInternal (EventArgs e)
+			{
+				owner.Select (true, true);
+			}			
 		}
 		#endregion	// UpDownSpinner Sub-class
 
+		internal class UpDownTextBox : TextBox {
+
+			private UpDownBase owner;
+
+			public UpDownTextBox (UpDownBase owner)
+			{
+				this.owner = owner;
+
+				SetStyle (ControlStyles.FixedWidth, false);
+			}
+
+			internal void ActivateCaret (bool active)
+			{
+				if (active)
+					document.CaretHasFocus ();
+				else
+					document.CaretLostFocus ();
+			}
+
+			
+			internal override void OnGotFocusInternal (EventArgs e)
+			{
+				owner.Select (true, true);
+			}
+
+			internal override void OnLostFocusInternal (EventArgs e)
+			{
+				owner.Select (true, true);
+			}			
+		}
+
 		#region Local Variables
-		internal TextBox		txtView;
+		internal UpDownTextBox		txtView;
 		private UpDownSpinner		spnSpinner;
 		private bool			_InterceptArrowKeys = true;
 		private LeftRightAlignment	_UpDownAlign;
@@ -242,7 +284,7 @@ namespace System.Windows.Forms
 
 			spnSpinner = new UpDownSpinner(this);
 
-			txtView = new FixedSizeTextBox(false, true);
+			txtView = new UpDownTextBox (this);
 			txtView.ModifiedChanged += new EventHandler(OnChanged);
 			txtView.AcceptsReturn = true;
 			txtView.AutoSize = false;
@@ -260,13 +302,12 @@ namespace System.Windows.Forms
 			Height = PreferredHeight;
 			base.BackColor = txtView.BackColor;
 
-			GotFocus += new EventHandler (GotFocusHandler);
 			TabIndexChanged += new EventHandler (TabIndexChangedHandler);
 			
 			txtView.MouseWheel += new MouseEventHandler(txtView_MouseWheel);
 			txtView.KeyDown += new KeyEventHandler(OnTextBoxKeyDown);
 			txtView.KeyPress += new KeyPressEventHandler(OnTextBoxKeyPress);
-			txtView.LostFocus += new EventHandler(OnTextBoxLostFocus);
+//			txtView.LostFocus += new EventHandler(OnTextBoxLostFocus);
 			txtView.Resize += new EventHandler(OnTextBoxResize);
 			txtView.TextChanged += new EventHandler(OnTextBoxTextChanged);
 
@@ -307,11 +348,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-		private void GotFocusHandler (object sender, EventArgs e)
-		{
-			txtView.Focus ();
-		}
-
 		private void TabIndexChangedHandler (object sender, EventArgs e)
 		{
 			txtView.TabIndex = TabIndex;
@@ -319,6 +355,18 @@ namespace System.Windows.Forms
 
 		internal override void OnPaintInternal (PaintEventArgs e) {
 			e.Graphics.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(BackColor), ClientRectangle);
+		}
+
+		internal override void OnGotFocusInternal (EventArgs e)
+		{
+			base.OnGotFocusInternal (e);
+			txtView.ActivateCaret (true);
+		}
+
+		internal override void OnLostFocusInternal (EventArgs e)
+		{
+			base.OnLostFocusInternal (e);
+			txtView.ActivateCaret (false);
 		}
 		#endregion	// Private Methods
 
@@ -418,7 +466,7 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public override bool Focused {
 			get {
-				return txtView.Focused;
+				return base.Focused;
 			}
 		}
 
@@ -657,6 +705,14 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void WndProc(ref Message m) {
+
+			switch((Msg) m.Msg) {
+			case Msg.WM_KEYUP:
+			case Msg.WM_KEYDOWN:
+			case Msg.WM_CHAR:
+				XplatUI.SendMessage (txtView.Handle, (Msg) m.Msg, m.WParam, m.LParam);
+				break;
+			}
 			base.WndProc (ref m);
 		}
 		#endregion	// Protected Instance Methods
