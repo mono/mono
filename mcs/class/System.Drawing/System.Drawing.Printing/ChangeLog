@@ -1,3 +1,21 @@
+2006-07-26  Chris Toshok  <toshok@ximian.com>
+
+	* PrinterSettings.cs: expose PrintFileName in the 1.1 case as an
+	internal property, so we can get at it from MWF.
+
+	* PrintingServicesUnix.cs: handle print to file, and also remove
+	the temp file after sending the data to the printer.  fix some
+	dllimports to match the rest of system.drawing.
+
+	* PreviewPrintController.cs: implement this (warning, it'll eat
+	all your memory until we get a real Metafile implementation, as
+	we're storing bitmaps).
+
+	* PrintDocument.cs: shift the graphics context stuff around a bit
+	in Print(), so that the events after OnStartPrint are passed the
+	graphics context the controller created there, and we use the
+	return value of OnStartPage to do all drawing.
+
 2006-05-20 Jordi Mas i Hernandez <jordimash@gmail.com>
 
 	* PrintingServices.cs: GetPrintDialogInfo definition

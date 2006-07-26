@@ -290,7 +290,7 @@ namespace System.Drawing.Printing
 					// TODO: get default paper source for this printer
 					new PaperSource("default", PaperSourceKind.FormSource),
 					// TODO: get default resolution for this printer
-					new PrinterResolution(300, 300, PrinterResolutionKind.Medium)
+					new PrinterResolution(200, 200, PrinterResolutionKind.Medium)
 				);
 			}
 		}
@@ -384,14 +384,16 @@ namespace System.Drawing.Printing
 		{
 			get { throw new NotImplementedException(); }
 		}
-#if NET_2_0		
-		
-		public string PrintFileName
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		string PrintFileName
 		{
 			get { return print_filename; }
 			set { print_filename = value; }
 		}
-#endif		
 		public string PrinterName
 		{
 			get { return printer_name; }

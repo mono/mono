@@ -31,6 +31,7 @@ using System.Drawing.Printing;
 using System.ComponentModel;
 using System.Drawing.Imaging;
 using System.Text;
+using System.IO;
 
 namespace System.Drawing.Printing
 {
@@ -131,6 +132,8 @@ namespace System.Drawing.Printing
 			return true;
 		}
 
+		string tmpfile;
+
 		internal override bool EndDoc (GraphicsPrinter gr)
 		{
 			DOCINFO doc = (DOCINFO) doc_info[gr.Hdc];
@@ -138,7 +141,10 @@ namespace System.Drawing.Printing
 			gr.Graphics.Dispose (); // Dispose object to force surface finish
 			cupsPrintFile (doc.settings.PrinterName, doc.filename, doc.title, 0, IntPtr.Zero);
 			doc_info.Remove (gr.Hdc);
-			//TODO: Delete temporary file created
+			if (tmpfile != null) {
+				try { File.Delete (tmpfile); }
+				catch { }
+			}
 			return true;
 		}
 
@@ -152,11 +158,18 @@ namespace System.Drawing.Printing
 		internal override IntPtr CreateGraphicsContext (PrinterSettings settings)
 		{
 			IntPtr graphics = IntPtr.Zero;
-			StringBuilder name = new StringBuilder (1024);
-            		int length = name.Capacity;
-			cupsTempFile (name, length);
-		
-			GdipGetPostScriptGraphicsContext (name.ToString(),
+			string name;
+			if (!settings.PrintToFile) {
+				StringBuilder sb = new StringBuilder (1024);
+				int length = sb.Capacity;
+				cupsTempFile (sb, length);
+				name = sb.ToString ();
+				tmpfile = name;
+			}
+			else
+				name = settings.PrintFileName;
+
+			GdipGetPostScriptGraphicsContext (name,
 				settings.DefaultPageSettings.PaperSize.Width / 100 * 72,
 				settings.DefaultPageSettings.PaperSize.Height / 100 * 72, 
 				// Harcoded dpy's
@@ -281,10 +294,10 @@ namespace System.Drawing.Printing
 		[DllImport("libcups")]
 		static extern void ppdClose (IntPtr ppd);
 
-		[DllImport("libgdiplus", CharSet=CharSet.Ansi)]
+		[DllImport("gdiplus.dll", CharSet=CharSet.Ansi)]
 		static extern int GdipGetPostScriptGraphicsContext (string filename, int with, int height, double dpix, double dpiy, ref IntPtr graphics);
 
-		[DllImport("libgdiplus")]
+		[DllImport("gdiplus.dll")]
 		static extern int GdipGetPostScriptSavePage (IntPtr graphics);
 
 

@@ -31,56 +31,74 @@
 //
 
 using System;
+using System.Collections;
+using System.Drawing.Imaging;
 
 namespace System.Drawing.Printing
 {
 	public class PreviewPrintController : PrintController
 	{
-		private bool useantialias;
+		bool useantialias;
+		ArrayList pageInfoList;
 
 		public PreviewPrintController()
 		{
 			useantialias = false;
+			pageInfoList = new ArrayList ();
 		}
 #if NET_2_0
-		[MonoTODO]
 		public virtual bool IsPreview { 
-			get { throw new NotImplementedException(); }
+			get { return true; }
 		}
 #endif		
 
 		[MonoTODO]
-		public override void OnEndPage(PrintDocument document, PrintPageEventArgs e){
-			throw new NotImplementedException ();
+		public override void OnEndPage(PrintDocument document, PrintPageEventArgs e)
+		{
 		}
 
 		[MonoTODO]
-		public override void OnStartPrint(PrintDocument document, PrintEventArgs e){
-			throw new NotImplementedException ();
+		public override void OnStartPrint(PrintDocument document, PrintEventArgs e)
+		{
+			/* maybe we should reuse the images, and clear them? */
+			foreach (PreviewPageInfo pi in pageInfoList)
+				pi.Image.Dispose ();
+
+			pageInfoList.Clear ();
 		}
 
 		[MonoTODO]
-		public override void OnEndPrint(PrintDocument document, PrintEventArgs e){
-			throw new NotImplementedException ();
+		public override void OnEndPrint(PrintDocument document, PrintEventArgs e)
+		{
 		}
 
 		[MonoTODO]
-		public override Graphics OnStartPage(PrintDocument document, PrintPageEventArgs e){
-			throw new NotImplementedException ();
+		public override Graphics OnStartPage(PrintDocument document, PrintPageEventArgs e)
+		{
+			Image image = new Bitmap (e.PageSettings.PaperSize.Width * e.PageSettings.PrinterResolution.X / 100,
+						  e.PageSettings.PaperSize.Height * e.PageSettings.PrinterResolution.Y / 100);
+
+			PreviewPageInfo info = new PreviewPageInfo (image, new Size (e.PageSettings.PaperSize.Width,
+										     e.PageSettings.PaperSize.Height));
+			
+			pageInfoList.Add (info);
+
+			Graphics g = Graphics.FromImage (info.Image);
+			g.FillRectangle (new SolidBrush (Color.White), new Rectangle (new Point (0,0), new Size (image.Width, image.Height)));
+
+			return g;
 		}
 		
 		public virtual bool UseAntiAlias {
-			get{
-				return useantialias;
-			}
-			set{
-				useantialias = value;
-			}
+			get{ return useantialias; }
+			set{ useantialias = value; }
 		}
 
-		[MonoTODO]
-		public PreviewPageInfo [] GetPreviewPageInfo(){
-			throw new NotImplementedException ();
+		public PreviewPageInfo [] GetPreviewPageInfo()
+		{
+			PreviewPageInfo [] pi = new PreviewPageInfo[pageInfoList.Count];
+			pageInfoList.CopyTo (pi);
+			return pi;
 		}
 
 	}

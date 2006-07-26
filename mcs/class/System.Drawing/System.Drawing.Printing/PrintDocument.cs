@@ -130,6 +130,11 @@ namespace System.Drawing.Printing
 				
 			Graphics g = null;
 			
+			if (printArgs.GraphicsContext != null) {
+				g = Graphics.FromHdc (printArgs.GraphicsContext.Hdc);
+				printArgs.GraphicsContext.Graphics = g;
+			}
+
 			// while there are more pages
 			PrintPageEventArgs printPageArgs;
 			do
@@ -138,20 +143,16 @@ namespace System.Drawing.Printing
 				this.OnQueryPageSettings(new QueryPageSettingsEventArgs(pageSettings));
 				
 				printPageArgs = new PrintPageEventArgs(
-						null,
+						g,
 						pageSettings.Bounds,
 						new Rectangle(0, 0, pageSettings.PaperSize.Width, pageSettings.PaperSize.Height),
 						pageSettings);
 							
-				if (g == null) {
-					g = Graphics.FromHdc (printArgs.GraphicsContext.Hdc);
-					printArgs.GraphicsContext.Graphics = g;
-				}
-					
 				printPageArgs.GraphicsContext = printArgs.GraphicsContext;
-				PrintController.OnStartPage(this, printPageArgs);
+				Graphics pg = PrintController.OnStartPage(this, printPageArgs);
+
 				// assign Graphics in printPageArgs
-				printPageArgs.SetGraphics(g);				
+				printPageArgs.SetGraphics(pg);
 				
 				if (!printPageArgs.Cancel)
 					this.OnPrintPage(printPageArgs);				
