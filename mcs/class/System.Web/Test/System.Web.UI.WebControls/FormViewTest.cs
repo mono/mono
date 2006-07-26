@@ -311,7 +311,13 @@ namespace MonoTests.System.Web.UI.WebControls
 			myds.Add ("Item4");
 			myds.Add ("Item5");
 			myds.Add ("Item6");
-			WebTest.CopyResource (GetType (), "FormViewTest1.aspx", "FormViewTest1.aspx");			
+#if VISUAL_STUDIO
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.FormViewTest1.aspx",
+				"FormViewTest1.aspx");
+#else
+			WebTest.CopyResource (GetType (), "FormViewTest1.aspx", "FormViewTest1.aspx");
+#endif
+
 		}
 
 		[Test]

@@ -1,5 +1,9 @@
 2006-07-26 Andrew Skiba <andrews@mainsoft.com>
 
+	* FormViewTest.cs: visual studio ifdef.
+
+2006-07-26 Andrew Skiba <andrews@mainsoft.com>
+
 	* DetailsViewRowTest.cs: fix the test (incomplete).
 
 2006-07-26 Andrew Skiba <andrews@mainsoft.com>
