@@ -1,3 +1,7 @@
+2006-07-26 Andrew Skiba <andrews@mainsoft.com>
+
+	* DetailsView.cs: fix IsBindableType in accordance with MSDN and tests.
+
 2006-07-25 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* Wizard.cs: fixed ActiveStep property

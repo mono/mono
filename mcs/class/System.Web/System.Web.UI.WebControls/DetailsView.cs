@@ -887,7 +887,7 @@ namespace System.Web.UI.WebControls
 	
 		public virtual bool IsBindableType (Type type)
 		{
-			return type.IsPrimitive || type == typeof(string) || type == typeof(DateTime) || type == typeof(Guid);
+			return type.IsPrimitive || type == typeof (string) || type == typeof (DateTime) || type == typeof (Guid) || type == typeof (Decimal);
 		}
 		
 		protected override DataSourceSelectArguments CreateDataSourceSelectArguments ()
