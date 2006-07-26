@@ -26,6 +26,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Printing;
+using System.Reflection;
 
 namespace System.Windows.Forms
 {
@@ -57,29 +58,45 @@ namespace System.Windows.Forms
 			if (dialog.DialogResult == DialogResult.Cancel) {
 				e.Cancel = true;
 				dialog.Close();
+				return;
 			}
-			base.OnEndPage (document, e);
+			underlyingController.OnEndPage (document, e);
 		}
 
 		public override void OnEndPrint(PrintDocument document, PrintEventArgs e) {
 			if (dialog.Visible)
 				dialog.Close();
-			base.OnEndPrint (document, e);
+			underlyingController.OnEndPrint (document, e);
 		}
 
 		public override Graphics OnStartPage(PrintDocument document, PrintPageEventArgs e) {
 			if (dialog.DialogResult == DialogResult.Cancel) {
 				e.Cancel = true;
 				dialog.Close();
+				return null;
 			}
 			dialog.LabelText = string.Format("Page {0} of document", ++currentPage);
-			return base.OnStartPage (document, e);
+			return underlyingController.OnStartPage (document, e);
+		}
+
+		void Set_PrinterSettings_PrintFileName (PrinterSettings settings, string filename)
+		{
+			PropertyInfo PrintFileName = typeof (PrinterSettings).GetProperty ("PrintFileName", BindingFlags.NonPublic | BindingFlags.Instance);
+
+			PrintFileName.SetValue (settings, filename, null);
 		}
 
 		public override void OnStartPrint(PrintDocument document, PrintEventArgs e) {
 			currentPage = 0;
 			dialog.Show();
-			base.OnStartPrint (document, e);
+			if (document.PrinterSettings.PrintToFile) {
+				SaveFileDialog d = new SaveFileDialog ();
+				if (d.ShowDialog () != DialogResult.OK)
+					// Windows throws a Win32Exception here.
+					throw new Exception ("The operation was canceled by the user");
+				Set_PrinterSettings_PrintFileName (document.PrinterSettings, d.FileName);
+			}
+			underlyingController.OnStartPrint (document, e);
 		}
 
 		#endregion	// Protected Instance Methods

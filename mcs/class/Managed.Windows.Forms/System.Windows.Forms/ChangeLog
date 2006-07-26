@@ -1,3 +1,27 @@
+2006-07-26  Chris Toshok  <toshok@ximian.com>
+
+	* ThemeWin32Classic.cs: add print preview rendering.  I'm not
+	satisfied with this solution.  If the bitmaps are small, we should
+	just cache them in the PrintPreviewDialog and draw them here.
+	Also, the layout is broken for the 2-up and 3-up cases.
+
+	* Theme.cs: add PrintPReviewControlPaint.
+
+	* PrintPreviewDialog.cs: first pass implementation.
+
+	* PrintPreviewControl.cs: first pass implementation.  No
+	scrollbars yet.
+
+	* PrintDialog.cs: only validate fields if that particular portion
+	of the UI is enabled.  Also, set the document's controller to a
+	PrintControllerWithStatusDialog wrapping the document's print
+	controller.
+
+	* PrintControllerWithStatusDialog.cs: if we're printing to a file,
+	bring up a SaveFileDialog (i hope we don't want to match the
+	behavior of the crappy windows file entry) and set the
+	PrinterSettings.PrintFileName accordingly.
+
 2006-07-26  Jackson Harper  <jackson@ximian.com>
 
 	* ContainerControl.cs: Add a field that disables auto selecting

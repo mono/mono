@@ -40,18 +40,240 @@ namespace System.Windows.Forms {
 	[DesignTimeVisible(true)]
 	[ToolboxItem(true)]
 	public class PrintPreviewDialog : Form {
-		#region Local variables
 		PrintPreviewControl print_preview;
-		#endregion // Local variables
+		MenuItem previous_checked_menu_item;
+		Menu mag_menu;
+		MenuItem auto_zoom_item;
+		NumericUpDown pageUpDown;
+		Size minimum_size;
 
-		#region Public Constructors
-		[MonoTODO("Finish setting up a proper dialog to actually make this thing work")]
-		public PrintPreviewDialog() {
+		public PrintPreviewDialog()
+		{
+			ToolBar toolbar = CreateToolBar ();
+
+			toolbar.Location = new Point (0, 0);
+			toolbar.Dock = DockStyle.Top;
+			Controls.Add (toolbar);
+
+
 			print_preview = new PrintPreviewControl();
+			print_preview.Location = new Point (0, toolbar.Location.Y + toolbar.Size.Height);
+			print_preview.Dock = DockStyle.Fill;
+			Controls.Add (print_preview);
+			print_preview.Show ();
 		}
-		#endregion // Public Constructors
 
-		#region Public Instance Properties
+		ToolBar CreateToolBar ()
+		{
+			ToolBar toolbar = new ToolBar ();
+			ToolBarButton b;
+
+			ImageList image_list = new ImageList ();
+
+			toolbar.ImageList = image_list;
+			toolbar.Appearance = ToolBarAppearance.Flat;
+			toolbar.DropDownArrows = true;
+			toolbar.ButtonClick += new ToolBarButtonClickEventHandler (OnClickToolBarButton);
+
+			image_list.Images.Add (ResourceImageLoader.Get ("32_printer.png"));
+			image_list.Images.Add (ResourceImageLoader.Get ("22_page-magnifier.png"));
+			image_list.Images.Add (ResourceImageLoader.Get ("1-up.png"));
+			image_list.Images.Add (ResourceImageLoader.Get ("2-up.png"));
+			image_list.Images.Add (ResourceImageLoader.Get ("3-up.png"));
+			image_list.Images.Add (ResourceImageLoader.Get ("4-up.png"));
+			image_list.Images.Add (ResourceImageLoader.Get ("6-up.png"));
+
+			/* print button */
+			b = new ToolBarButton ();
+			b.ImageIndex = 0;
+			b.Tag = 0;
+			b.ToolTipText = "Print";
+			toolbar.Buttons.Add (b);
+
+			/* magnify dropdown */
+			b = new ToolBarButton ();
+			b.ImageIndex = 1;
+			b.Tag = 1;
+			b.ToolTipText = "Zoom";
+			toolbar.Buttons.Add (b);
+
+			mag_menu = new ContextMenu ();
+			MenuItem mi;
+
+			mi = mag_menu.MenuItems.Add ("Auto", new EventHandler (OnClickPageMagnifierItem)); mi.RadioCheck = true;
+			mi.Checked = true;
+			previous_checked_menu_item = mi;
+			auto_zoom_item = mi;
+			mi = mag_menu.MenuItems.Add ("500%", new EventHandler (OnClickPageMagnifierItem)); mi.RadioCheck = true;
+			mi = mag_menu.MenuItems.Add ("200%", new EventHandler (OnClickPageMagnifierItem)); mi.RadioCheck = true;
+			mi = mag_menu.MenuItems.Add ("150%", new EventHandler (OnClickPageMagnifierItem)); mi.RadioCheck = true;
+			mi = mag_menu.MenuItems.Add ("100%", new EventHandler (OnClickPageMagnifierItem)); mi.RadioCheck = true;
+			mi = mag_menu.MenuItems.Add ("75%", new EventHandler (OnClickPageMagnifierItem)); mi.RadioCheck = true;
+			mi = mag_menu.MenuItems.Add ("50%", new EventHandler (OnClickPageMagnifierItem)); mi.RadioCheck = true;
+			mi = mag_menu.MenuItems.Add ("25%", new EventHandler (OnClickPageMagnifierItem)); mi.RadioCheck = true;
+			mi = mag_menu.MenuItems.Add ("10%", new EventHandler (OnClickPageMagnifierItem)); mi.RadioCheck = true;
+
+			b.DropDownMenu = mag_menu;
+			b.Style = ToolBarButtonStyle.DropDownButton;
+
+			/* separator */
+			b = new ToolBarButton ();
+			b.Style = ToolBarButtonStyle.Separator;
+			toolbar.Buttons.Add (b);
+
+			/* n-up icons */
+			b = new ToolBarButton ();
+			b.ImageIndex = 2;
+			b.Tag = 2;
+			b.ToolTipText = "One page";
+			toolbar.Buttons.Add (b);
+
+			b = new ToolBarButton ();
+			b.ImageIndex = 3;
+			b.Tag = 3;
+			b.ToolTipText = "Two pages";
+			toolbar.Buttons.Add (b);
+
+			b = new ToolBarButton ();
+			b.ImageIndex = 4;
+			b.Tag = 4;
+			b.ToolTipText = "Three pages";
+			toolbar.Buttons.Add (b);
+
+			b = new ToolBarButton ();
+			b.ImageIndex = 5;
+			b.Tag = 5;
+			b.ToolTipText = "Four pages";
+			toolbar.Buttons.Add (b);
+
+			b = new ToolBarButton ();
+			b.ImageIndex = 6;
+			b.Tag = 6;
+			b.ToolTipText = "Six pages";
+			toolbar.Buttons.Add (b);
+
+			/* separator */
+			b = new ToolBarButton ();
+			b.Style = ToolBarButtonStyle.Separator;
+			toolbar.Buttons.Add (b);
+
+			/* Page label */
+			Label label = new Label ();
+			label.Text = "Page";
+			label.Dock = DockStyle.Right;
+			toolbar.Controls.Add (label);
+
+			/* the page number updown */
+			pageUpDown = new NumericUpDown ();
+			pageUpDown.Dock = DockStyle.Right;
+			pageUpDown.TextAlign = HorizontalAlignment.Right;
+			toolbar.Controls.Add (pageUpDown);
+			pageUpDown.Value = 1;
+			pageUpDown.ValueChanged += new EventHandler (OnPageUpDownValueChanged);
+
+			/* close button */
+			Button close = new Button ();
+			close.FlatStyle = FlatStyle.Popup;
+			close.Text = "Close";
+			toolbar.Controls.Add (close);
+
+			close.Location = new Point (b.Rectangle.X + b.Rectangle.Width, toolbar.Height / 2 - close.Height / 2);
+
+			minimum_size = new Size (close.Location.X + close.Width + label.Width + pageUpDown.Width,
+						 220);
+
+			return toolbar;
+		}
+
+		void OnPageUpDownValueChanged (object sender, EventArgs e)
+		{
+			print_preview.StartPage = (int)pageUpDown.Value;
+		}
+
+		void OnClickToolBarButton (object sender, ToolBarButtonClickEventArgs e)
+		{
+			if (e.Button.Tag == null || !(e.Button.Tag is int))
+				return;
+
+			switch ((int)e.Button.Tag)
+			{
+			case 0:
+				Console.WriteLine ("do print here");
+				break;
+			case 1:
+				OnClickPageMagnifierItem (auto_zoom_item, EventArgs.Empty);
+				break;
+			case 2:
+				print_preview.Rows = 0;
+				print_preview.Columns = 1;
+				break;
+			case 3:
+				print_preview.Rows = 0;
+				print_preview.Columns = 2;
+				break;
+			case 4:
+				print_preview.Rows = 0;
+				print_preview.Columns = 3;
+				break;
+			case 5:
+				print_preview.Rows = 1;
+				print_preview.Columns = 2;
+				break;
+			case 6:
+				print_preview.Rows = 1;
+				print_preview.Columns = 3;
+				break;
+			}
+		}
+
+		void OnClickPageMagnifierItem (object sender, EventArgs e)
+		{
+			MenuItem clicked_item = (MenuItem)sender;
+
+			previous_checked_menu_item.Checked = false;
+
+			switch (clicked_item.Index) {
+			case 0:
+				print_preview.AutoZoom = true;
+				break;
+			case 1:
+				print_preview.AutoZoom = false;
+				print_preview.Zoom = 5.0;
+				break;
+			case 2:
+				print_preview.AutoZoom = false;
+				print_preview.Zoom = 2.0;
+				break;
+			case 3:
+				print_preview.AutoZoom = false;
+				print_preview.Zoom = 1.5;
+				break;
+			case 4:
+				print_preview.AutoZoom = false;
+				print_preview.Zoom = 1.0;
+				break;
+			case 5:
+				print_preview.AutoZoom = false;
+				print_preview.Zoom = 0.75;
+				break;
+			case 6:
+				print_preview.AutoZoom = false;
+				print_preview.Zoom = 0.50;
+				break;
+			case 7:
+				print_preview.AutoZoom = false;
+				print_preview.Zoom = 0.25;
+				break;
+			case 8:
+				print_preview.AutoZoom = false;
+				print_preview.Zoom = 0.10;
+				break;
+			}
+
+			clicked_item.Checked = true;
+			previous_checked_menu_item = clicked_item;
+		}
+
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public IButtonControl AcceptButton {
@@ -299,25 +521,19 @@ namespace System.Windows.Forms {
 		
 		[DefaultValue(null)]
 		public PrintDocument Document {
-			get {
-				return print_preview.Document;
-			}
-
+			get { return print_preview.Document; }
 			set {
 				print_preview.Document = value;
+				pageUpDown.Minimum = print_preview.page_infos.Length > 0 ? 1 : 0;
+				pageUpDown.Maximum = print_preview.page_infos.Length;
 			}
 		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public bool Enabled {
-			get {
-				return base.Enabled;
-			}
-
-			set {
-				base.Enabled = value;
-			}
+			get { return base.Enabled; }
+			set { base.Enabled = value; }
 		}
  
 		[Browsable(false)]
@@ -481,11 +697,11 @@ namespace System.Windows.Forms {
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public Size MinimumSize {
 			get {
-				return base.MinimumSize;
+				return minimum_size;
 			}
 
 			set {
-				base.MinimumSize = value;
+				minimum_size = value;
 			}
 		}
  
@@ -665,9 +881,7 @@ namespace System.Windows.Forms {
 				base.WindowState = value;
 			}
 		}
- 		#endregion // Public Instance Properties
 
-		#region Protected Instance Properties
 		protected override void CreateHandle() {
 			base.CreateHandle ();
 		}
@@ -675,9 +889,7 @@ namespace System.Windows.Forms {
 		protected override void OnClosing(CancelEventArgs e) {
 			base.OnClosing (e);
 		}
-		#endregion // Protected Instance Methods
 
-		#region Events
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public event EventHandler BackColorChanged {
@@ -893,6 +1105,5 @@ namespace System.Windows.Forms {
 				base.VisibleChanged -= value;
 			}
 		}
-		#endregion	// Events
 	}
 }

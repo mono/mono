@@ -784,6 +784,10 @@ namespace System.Windows.Forms
 		public abstract Size PictureBoxDefaultSize{get;}
 		#endregion	// PictureBox
 
+		#region PrintPreviewControl
+		public abstract void PrintPreviewControlPaint (PaintEventArgs pe, PrintPreviewControl preview);
+		#endregion      // PrintPreviewControl
+
 		#region ProgressBar
 		// Drawing
 		public abstract void DrawProgressBar (Graphics dc, Rectangle clip_rectangle, ProgressBar progress_bar);

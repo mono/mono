@@ -37,13 +37,14 @@ namespace System.Windows.Forms {
 	[DefaultPropertyAttribute("Document")]
 	public class PrintPreviewControl : Control {
 		#region Local variables
-		private bool autozoom;
-		private int columns;
-		private PrintDocument document;
-		private int rows;
-		private int startPage;
-		private bool useAntiAlias;
-		private double zoom;
+		bool autozoom;
+		int columns;
+		int rows;
+		int startPage;
+		double zoom;
+		PrintDocument document;
+		internal PreviewPrintController controller;
+		internal PreviewPageInfo[] page_infos;
 		#endregion // Local variables
 
 		#region Public Constructors
@@ -51,7 +52,9 @@ namespace System.Windows.Forms {
 			autozoom = true;
 			columns = 1;
 			rows = 0;
-			startPage = 0;
+			startPage = 1;
+
+			controller = new PreviewPrintController ();
 
 			this.BackColor = SystemColors.AppWorkspace;
 		}
@@ -62,27 +65,56 @@ namespace System.Windows.Forms {
 		[DefaultValue(true)]
 		public bool AutoZoom {
 			get { return autozoom; }
-			set { autozoom = value; }
+			set {
+				if (autozoom != value)
+					Invalidate ();
+				autozoom = value;
+			}
 		}
 		[DefaultValue(1)]
 		public int Columns {
 			get { return columns; }
-			set { columns = value; }
+			set {
+				if (columns != value)
+					Invalidate ();
+				columns = value;
+			}
 		}
 		[DefaultValue(null)]
 		public PrintDocument Document {
 			get { return document; }
-			set { document = value; }
+			set {
+				document = value;
+				document.PrintController = new PrintControllerWithStatusDialog (controller);
+				InvalidatePreview ();
+			}
 		}
 		[DefaultValue(1)]
 		public int Rows {
 			get { return rows; }
-			set { rows = value; }
+			set {
+				if (rows != value)
+					Invalidate ();
+				rows = value;
+			}
 		}
 		[DefaultValue(0)]
 		public int StartPage {
 			get { return startPage; }
-			set { startPage = value; }
+			set {
+				if (value < 1)
+					return;
+				if (document != null && value + (Rows + 1) * Columns > page_infos.Length + 1) {
+					value = page_infos.Length + 1 - (Rows + 1) * Columns;
+					if (value < 1)
+						value = 1;
+				}
+
+				if (startPage != value)
+					Invalidate ();
+				startPage = value;
+				OnStartPageChanged (EventArgs.Empty);
+			}
 		}
 
 		[Bindable(false)]
@@ -90,38 +122,45 @@ namespace System.Windows.Forms {
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public override string Text {
-			get {
-				return base.Text;
-			}
-			set {
-				base.Text = value;
-			}
+			get { return base.Text; }
+			set { base.Text = value; }
 		}
 
 		[DefaultValue(false)]
 		public bool UseAntiAlias {
-			get { return useAntiAlias; }
-			set { useAntiAlias = value; }
+			get { return controller.UseAntiAlias; }
+			set { controller.UseAntiAlias = value; }
 		}
 
 		public double Zoom {
 			get { return zoom; }
-			set { zoom = value; }
+			set {
+				if (zoom < 0.0)
+					throw new ArgumentException ("zoom");
+				if (zoom != value)
+					Invalidate ();
+				zoom = value;
+			}
 		}
 		#endregion // Public Instance Properties
 
 		
 		#region Public Instance Methods
-		public void InvalidatePreview() {
+		public void InvalidatePreview()
+		{
+			document.Print ();
+			page_infos = controller.GetPreviewPageInfo ();
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public override void ResetBackColor() {
+		public override void ResetBackColor()
+		{
 			base.ResetBackColor();
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public override void ResetForeColor() {
+		public override void ResetForeColor()
+		{
 			base.ResetForeColor ();
 		}
 		#endregion // Public Instance Methods
@@ -137,20 +176,27 @@ namespace System.Windows.Forms {
 
 		#region Protected Instance Properties
 
-		protected override void OnPaint(PaintEventArgs e) {
-			base.OnPaint (e);
+		protected override void OnPaint(PaintEventArgs e)
+		{
+			Console.WriteLine ("OnPaint");
+			ThemeEngine.Current.PrintPreviewControlPaint (e, this);
 		}
 
-		protected override void OnResize(EventArgs e) {
+		protected override void OnResize(EventArgs e)
+		{
 			base.OnResize (e);
+			Console.WriteLine ("OnResize");
+			Invalidate ();
 		}
 
-		protected virtual void OnStartPageChanged(EventArgs e) {
+		protected virtual void OnStartPageChanged(EventArgs e)
+		{
 			if (StartPageChanged != null)
 				StartPageChanged(this, e);
 		}
 
-		protected override void WndProc(ref Message m) {
+		protected override void WndProc(ref Message m)
+		{
 			base.WndProc (ref m);
 		}
 

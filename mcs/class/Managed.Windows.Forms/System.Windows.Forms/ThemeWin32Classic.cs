@@ -31,6 +31,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.Drawing.Printing;
 using System.Drawing.Text;
 using System.Text;
 
@@ -2730,6 +2731,71 @@ namespace System.Windows.Forms
 			}
 		}
 		#endregion	// PictureBox
+
+		#region PrintPreviewControl
+		public override void PrintPreviewControlPaint (PaintEventArgs pe, PrintPreviewControl preview)
+		{
+			int padding = 8;
+			PreviewPageInfo[] pis = preview.page_infos;
+
+			int page_x, page_y;
+			int page_width, page_height;
+
+			if (preview.AutoZoom) {
+				int height_available = preview.ClientRectangle.Height - (preview.Rows) * padding - 2 * padding;
+				int width_available = preview.ClientRectangle.Width - (preview.Columns - 1) * padding - 2 * padding;
+
+				if (height_available < width_available) {
+					page_height = height_available / (preview.Rows + 1);
+					page_width = (int)(page_height * (float)pis[0].Image.Width / pis[0].Image.Height);
+				}
+				else {
+					page_width = width_available / preview.Columns;
+					page_height = (int)(page_width * (float)pis[0].Image.Height / pis[0].Image.Width);
+					if (page_height > height_available) {
+						/* yuck.. fall back to the other case in this instance */
+						page_height = height_available / (preview.Rows + 1);
+						page_width = (int)(page_height * (float)pis[0].Image.Width / pis[0].Image.Height);
+					}
+				}
+				Console.WriteLine ("width_available = {0}, height_available = {1}", width_available, height_available);
+				Console.WriteLine ("page_height = {0}, page_width = {1}", page_height, page_width);
+			}
+			else {
+				page_width = (int)(pis[0].Image.Width * preview.Zoom);
+				page_height = (int)(pis[0].Image.Height * preview.Zoom);
+			}
+				
+
+			int width = page_width * preview.Columns + padding * (preview.Columns - 1) + 2 * padding;
+			int height = page_height * (preview.Rows + 1) + padding * preview.Rows + 2 * padding;
+
+			int off_x = preview.ClientRectangle.Width / 2 - width / 2;
+			if (off_x < 0) off_x = 0;
+			int off_y = preview.ClientRectangle.Height / 2 - height / 2;
+			if (off_y < 0) off_y = 0;
+
+			page_y = off_y + padding;
+
+			if (preview.StartPage > 0) {
+				int p = preview.StartPage - 1;
+				for (int py = 0; py < preview.Rows + 1; py ++) {
+					page_x = off_x + padding;
+					for (int px = 0; px < preview.Columns; px ++) {
+						Console.WriteLine ("printing page {0}", p);
+						if (p >= pis.Length)
+							continue;
+						PreviewPageInfo pi = pis[p];
+
+						pe.Graphics.DrawImage (pi.Image, new Rectangle (new Point (page_x, page_y), new Size (page_width, page_height)), 0, 0, pi.Image.Width, pi.Image.Height, GraphicsUnit.Pixel);
+						page_x += padding + page_width;
+						p++;
+					}
+					page_y += padding + page_height;
+				}
+			}
+		}
+		#endregion      // PrintPreviewControl
 
 		#region ProgressBar
 		public override void DrawProgressBar (Graphics dc, Rectangle clip_rect, ProgressBar ctrl) 

@@ -246,41 +246,42 @@ namespace System.Windows.Forms
 
 		private void OnClickOkButton (object sender, EventArgs e)
 		{
-			int from, to;
-
-			try {
-				from = Int32.Parse (txtFrom.Text);
-				to = Int32.Parse (txtTo.Text);
-			}
-
-			catch {
-				MessageBox.Show ("From/To values should be numeric", "Print",
-						MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				return;
-			}
+			int from = -1, to = -1;
 
 			if (allow_some_pages) {
-				if (from > to) {
-					MessageBox.Show ("From value cannot be greater than To value", "Print",
-						MessageBoxButtons.OK, MessageBoxIcon.Warning);
-					return;
-				}
+				if (radio_pages.Checked) {
+					try {
+						from = Int32.Parse (txtFrom.Text);
+						to = Int32.Parse (txtTo.Text);
+					}
+					catch {
+						MessageBox.Show ("From/To values should be numeric", "Print",
+								 MessageBoxButtons.OK, MessageBoxIcon.Warning);
+						return;
+					}
 
-				if (to < current_settings.MinimumPage || to > current_settings.MaximumPage) {
-					MessageBox.Show ("To value is not within the page range\n" +
-						"Enter a number between " + current_settings.MinimumPage +
-						" and " + current_settings.MaximumPage, "Print",
-						MessageBoxButtons.OK, MessageBoxIcon.Warning);
-					return;
-				}
+					if (from > to) {
+						MessageBox.Show ("From value cannot be greater than To value", "Print",
+								 MessageBoxButtons.OK, MessageBoxIcon.Warning);
+						return;
+					}
 
-				if (from < current_settings.MinimumPage || from > current_settings.MaximumPage) {
-					txtTo.Focus ();
-					MessageBox.Show ("From value is not within the page range\n" +
-						"Enter a number between " + current_settings.MinimumPage +
-						" and " + current_settings.MaximumPage, "Print",
-						MessageBoxButtons.OK, MessageBoxIcon.Warning);
-					return;
+					if (to < current_settings.MinimumPage || to > current_settings.MaximumPage) {
+						MessageBox.Show ("To value is not within the page range\n" +
+								 "Enter a number between " + current_settings.MinimumPage +
+								 " and " + current_settings.MaximumPage, "Print",
+								 MessageBoxButtons.OK, MessageBoxIcon.Warning);
+						return;
+					}
+
+					if (from < current_settings.MinimumPage || from > current_settings.MaximumPage) {
+						txtTo.Focus ();
+						MessageBox.Show ("From value is not within the page range\n" +
+								 "Enter a number between " + current_settings.MinimumPage +
+								 " and " + current_settings.MaximumPage, "Print",
+								 MessageBoxButtons.OK, MessageBoxIcon.Warning);
+						return;
+					}
 				}
 			}
 
@@ -297,8 +298,10 @@ namespace System.Windows.Forms
 			}
 
 			current_settings.Copies = (short) updown_copies.Value;
-			current_settings.FromPage = from;
-			current_settings.ToPage = to;
+			if (current_settings.PrintRange == PrintRange.SomePages) {
+				current_settings.FromPage = from;
+				current_settings.ToPage = to;
+			}
 			current_settings.Collate = chkbox_collate.Checked;
 
 			if (allow_print_to_file) {
@@ -309,6 +312,9 @@ namespace System.Windows.Forms
 
 			if (printer_combo.SelectedItem != null)
 				current_settings.PrinterName = (string) printer_combo.SelectedItem;
+
+			document.PrintController = new PrintControllerWithStatusDialog (document.PrintController);
+			document.PrinterSettings = current_settings;
 		}
 
 		private void ShowHelpButton ()
