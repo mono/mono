@@ -1,5 +1,5 @@
 //
-// tree.cs: keeps a tree representation of the generated code
+// roottypes.cs: keeps a tree representation of the generated code
 //
 // Author: Miguel de Icaza (miguel@gnu.org)
 //

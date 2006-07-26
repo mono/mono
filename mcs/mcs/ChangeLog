@@ -1,5 +1,7 @@
 2006-07-26  Raja R Harinath  <rharinath@novell.com>
 
+	* roottypes.cs: Rename from tree.cs.
+
 	Rename RootContext.Tree.Types to RootContext.ToplevelTypes.
 	* tree.cs (Tree, ITreeDump): Remove types.
 	* rootcontext.cs (tree, Tree): Remove fields.

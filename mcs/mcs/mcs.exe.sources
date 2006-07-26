@@ -27,11 +27,11 @@ parameter.cs
 pending.cs
 report.cs
 rootcontext.cs
+roottypes.cs
 statement.cs
 support.cs
 typemanager.cs
 symbolwriter.cs
-tree.cs
 ../class/Mono.CompilerServices.SymbolWriter/MonoSymbolFile.cs
 ../class/Mono.CompilerServices.SymbolWriter/MonoSymbolTable.cs
 ../class/Mono.CompilerServices.SymbolWriter/MonoSymbolWriter.cs
