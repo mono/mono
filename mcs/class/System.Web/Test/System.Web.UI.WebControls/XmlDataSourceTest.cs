@@ -148,7 +148,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ViewState ()
 		{
 			// XXX weird... something odd going on with
@@ -209,7 +208,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void XPath ()
 		{
 			Page page = new Page ();
@@ -234,18 +232,26 @@ namespace MonoTests.System.Web.UI.WebControls
 					    <price>29.95</price>
 					  </book>
 					</bookstore>";
-			DataList list = new DataList ();
-			page.Controls.Add (list);
+			DataList list0 = new DataList ();
+			DataList list1 = new DataList ();
+			DataList list2 = new DataList ();
+			page.Controls.Add (list0);
+			page.Controls.Add (list1);
+			page.Controls.Add (list2);
 			page.Controls.Add (ds);
-			list.DataSourceID = "ds";
-			list.DataBind ();
-			Assert.AreEqual (2, list.Items.Count, "Before XPath elements");
+			list0.DataSourceID = "ds";
+			list0.DataBind ();
+			Assert.AreEqual (2, list0.Items.Count, "Before XPath elements");
+
 			ds.XPath = "/bookstore/book [title='Pride and Prejudice']";
-			list.DataBind ();
-			Assert.AreEqual (1, list.Items.Count, "After XPath elements");
+			list1.DataSourceID = "ds";
+			list1.DataBind ();
+			Assert.AreEqual (1, list1.Items.Count, "After XPath elements");
+
 			ds.XPath = "bookstore/book [@genre='novel']";
-			list.DataBind ();
-			Assert.AreEqual (2, list.Items.Count, "After XPath property");
+			list2.DataSourceID = "ds";
+			list2.DataBind ();
+			Assert.AreEqual (2, list2.Items.Count, "After XPath property");
 		}
 
 		[Test]
@@ -286,13 +292,9 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")] //NotImplementedException
 		public void Transform ()
 		{
-			string origin = @"<form name=""form1"" method=""post"" action=""XMLDataSourceTest1.aspx"" id=""form1"">
-						<div>
-						<input type=""hidden"" name=""__VIEWSTATE"" id=""__VIEWSTATE"" value=""/wEPDwUKLTQyMTUyMDUzNQ9kFgICAw9kFgICAw8WAh4LXyFJdGVtQ291bnQCARYCZg9kFgJmDxUDBTEyMzQ1BFRvZGQEUm93ZWRk9AOJvfc/t+h2W5vJ8AYx34Ds9jA="" />
-						</div><div>
+			string origin = @"<div>
 						<h2>Order</h2><hr>
 						<table>
 						  <tr>
@@ -302,19 +304,16 @@ namespace MonoTests.System.Web.UI.WebControls
 						    <td>Rowe</td>
 						  </tr>
 						</table>
-						<hr></div></form>";
+						<hr></div>";
 			string result = new WebTest ("XMLDataSourceTest1.aspx").Run();
 			HtmlDiff.AssertAreEqual (origin, HtmlDiff.GetControlFromPageHtml(result) , "TransformFail");
 		}
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")] //NotImplementedException
 		public void TransformFile ()
 		{
-			string origin = @"<form name=""form1"" method=""post"" action=""XMLDataSourceTest2.aspx"" id=""form1"">
-					  <div><input type=""hidden"" name=""__VIEWSTATE"" id=""__VIEWSTATE"" value=""/wEPDwUJOTQ2ODg0NTEwD2QWAgIDD2QWAgIDDxYCHgtfIUl0ZW1Db3VudAIBFgJmD2QWAmYPFQMFMTIzNDUEVG9kZARSb3dlZGRK01cIwfYACh3vzGkvlsmei3JplQ=="" /></div>
-					  <div><h2>Order</h2>
+			string origin = @"<div><h2>Order</h2>
 						<hr>
 						<table>
 						  <tr>
@@ -325,20 +324,16 @@ namespace MonoTests.System.Web.UI.WebControls
 						  </tr>
 						</table>
 						<hr>
-					  </div></form>";
+					  </div>";
 			string result = new WebTest ("XMLDataSourceTest2.aspx").Run ();
 			HtmlDiff.AssertAreEqual (origin, HtmlDiff.GetControlFromPageHtml (result), "TransformFileFail");
 		}
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void TransformArgumentList ()
 		{
-			string origin = @"<form name=""form1"" method=""post"" action=""XMLDataSourceTest3.aspx"" id=""form1"">
-					<div>
-					<input type=""hidden"" name=""__VIEWSTATE"" id=""__VIEWSTATE"" value=""/wEPDwUKLTQyMTUyMDUzNQ9kFgICAw9kFgICAw8WAh4LXyFJdGVtQ291bnQCARYCZg9kFgJmDxUDJjEyMzQ1cHVyY2hhc2VkIGJ5OiBNYWluc29mdCBkZXZlbG9wZXJzBFRvZGQEUm93ZWRkrPuQleD/QDM5r+J2jFbRBXLNXkM="" />
-					</div><div>
+			string origin = @"<div>
 					      <h2>Order</h2>
 						<hr>
 						<table>
@@ -350,20 +345,16 @@ namespace MonoTests.System.Web.UI.WebControls
 						  </tr>
 						</table>
 						<hr>
-					</div></form>";
+					</div>";
 			string result = new WebTest ("XMLDataSourceTest3.aspx").Run ();
 			HtmlDiff.AssertAreEqual (origin, HtmlDiff.GetControlFromPageHtml (result), "TransformArgumentListFail");
 		}
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")] // <div> expected
 		public void Save ()
 		{
-			string origin = @"<form name=""form1"" method=""post"" action=""XMLDataSourceTest4.aspx"" id=""form1"">
-						<div>
-						<input type=""hidden"" name=""__VIEWSTATE"" id=""__VIEWSTATE"" value=""/wEPDwUJOTM3NTIxOTgxD2QWAgIDD2QWAgIDDxYCHgtfIUl0ZW1Db3VudAICFgRmD2QWAmYPFQQLVGhpc0lzQVRlc3QAAAUyNC45NWQCAQ9kFgJmDxUEE1RoZSBIYW5kbWFpZCdzIFRhbGUAAAUyOS45NWRkGq6R82J7BSf9/XWMvLgdDdRVqwM="" />
-						</div><div>
+			string origin = @"<div>
 						<h2>BookStore</h2><hr>
 						<table>
 						  <tr>
@@ -383,7 +374,7 @@ namespace MonoTests.System.Web.UI.WebControls
 						    <td></td>
 						    <td>29.95</td>
 						  </tr>
-						</table><hr></div></form>";
+						</table><hr></div>";
 			string result = new WebTest ("XMLDataSourceTest4.aspx").Run ();
 			HtmlDiff.AssertAreEqual (origin, HtmlDiff.GetControlFromPageHtml (result), "TransformArgumentListFail");
 		}

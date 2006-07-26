@@ -35,8 +35,8 @@
 </head>
 
 <body>
-begint
     <form id="form1" runat="server">
+    begint
         <div>
            <asp:XmlDataSource
             runat="server"
@@ -86,7 +86,7 @@ begint
             </ItemTemplate>
         </asp:Repeater>
       </div>
-      </form>
       endt
+      </form>
   </body>
 </html>
