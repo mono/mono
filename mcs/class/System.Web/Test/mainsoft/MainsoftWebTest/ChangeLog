@@ -1,3 +1,7 @@
+2006-07-26  Andrew Skiba <andrews@mainsoft.com>
+
+	* XmlComparer.cs: make expected and actual arguments look like in NUnit.
+
 2006-07-16  Vladimir Krasnov  <vladimirk@mainsfot.com>
 
 	* NunitWebTest.cs: fixed AssertAreEqual, order of actual and expected

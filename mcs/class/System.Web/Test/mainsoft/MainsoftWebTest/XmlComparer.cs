@@ -34,24 +34,26 @@ namespace MonoTests.stand_alone.WebHarness
 		{
 		}
 
-		public bool AreEqualAttribs (XmlAttributeCollection attrs1, XmlAttributeCollection attrs2)
+		public bool AreEqualAttribs (XmlAttributeCollection expected, XmlAttributeCollection actual)
 		{
-			if (attrs1.Count != attrs2.Count)
+			if (expected.Count != actual.Count)
 				return false;
-			for (int i=0; i<attrs1.Count; i++) {
+			for (int i=0; i<expected.Count; i++) {
 				if ((flags & Flags.IgnoreAttribOrder) != 0) {
-					string ln = attrs1[i].LocalName;
-					string ns = attrs1[i].NamespaceURI;
-					string val = attrs1[i].Value;
-					XmlAttribute atr2 = attrs2[ln, ns];
+					string ln = expected[i].LocalName;
+					string ns = expected[i].NamespaceURI;
+					string val = expected[i].Value;
+					_expected = ns+":"+ln+"="+val;
+					XmlAttribute atr2 = actual[ln, ns];
+					_actual = atr2 == null ? "<<missing>>" : ns + ":" + ln + "=" + atr2.Value;
 					if (atr2 == null || atr2.Value.Trim().ToLower() != val.Trim().ToLower())
 						return false;
 				} else {
-					if (attrs1 [i].LocalName != attrs2 [i].LocalName)
+					if (expected [i].LocalName != actual [i].LocalName)
 						return false;
-					if (attrs1 [i].NamespaceURI != attrs2 [i].NamespaceURI)
+					if (expected [i].NamespaceURI != actual [i].NamespaceURI)
 						return false;
-					if (attrs1 [i].Value.Trim().ToLower() != attrs2 [i].Value.Trim().ToLower())
+					if (expected [i].Value.Trim().ToLower() != actual [i].Value.Trim().ToLower())
 						return false;
 				}
 			}
