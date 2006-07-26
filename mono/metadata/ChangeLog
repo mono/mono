@@ -1,3 +1,18 @@
+2006-07-26  Miguel de Icaza  <miguel@novell.com>
+
+	* domain.c: Documentation updates.
+
+	* loader.c (mono_free_method): Do not release the method
+	information if we are being profiled, as profilers will use this
+	information at shut down to present some data to the user.
+
+	This is needed so that the profiler does not crash, as the
+	profiler tends to keep MonoMethods around, and they might become
+	invalid if we free these.
+
+	(mono_get_method_constrained): Return the original CIL stream
+	method as well, so verification can be performed against it.
+
 2006-07-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* filewatcher.[ch]: support for inotify file system watcher.

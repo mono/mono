@@ -1,3 +1,10 @@
+2006-07-13  Miguel de Icaza  <miguel@novell.com>
+
+	* mini.c (mono_method_to_ir): Obtain the original method in the
+	CIL stream and use this to perform validation.
+
+	Fixed: #78816
+
 2006-07-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-x86.c (mono_arch_get_argument_info): Fix a warning.
