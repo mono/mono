@@ -1,5 +1,9 @@
 2006-07-26 Andrew Skiba <andrews@mainsoft.com>
 
+	* DetailsViewRowTest.cs: fix the test (incomplete).
+
+2006-07-26 Andrew Skiba <andrews@mainsoft.com>
+
 	* DetailsViewTest.cs: fix few tests.
 
 2006-07-26 Yoni Klain <yonik@mainsoft.com>

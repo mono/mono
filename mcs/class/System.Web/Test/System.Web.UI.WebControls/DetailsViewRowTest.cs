@@ -112,6 +112,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void DetailsViewRow_BubbleEvent ()
 		{
 			DetailsView dv = new DetailsView ();
+			dv.Page = new Page ();
 			PokerDetailsViewRow row = new PokerDetailsViewRow (2, DataControlRowType.Footer, DataControlRowState.Insert);
 			Button bt = new Button ();
 			dv.Controls.Add (row);
