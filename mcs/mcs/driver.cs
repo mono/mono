@@ -1537,7 +1537,7 @@ namespace Mono.CSharp
 			// not be meaningful when resolving classes from other files.  So, reset it to prevent
 			// silent bugs.
 			//
-			RootContext.Tree.Types.NamespaceEntry = null;
+			RootContext.ToplevelTypes.NamespaceEntry = null;
 
 			//
 			// If we are an exe, require a source file for the entry point
@@ -1741,7 +1741,7 @@ namespace Mono.CSharp
 
 				if (ep == null) {
 					if (RootContext.MainClass != null) {
-						DeclSpace main_cont = RootContext.Tree.Types.GetDefinition (RootContext.MainClass) as DeclSpace;
+						DeclSpace main_cont = RootContext.ToplevelTypes.GetDefinition (RootContext.MainClass) as DeclSpace;
 						if (main_cont == null) {
 							Report.Error (1555, "Could not find `{0}' specified for Main method", RootContext.MainClass); 
 							return false;

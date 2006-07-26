@@ -1106,29 +1106,21 @@ namespace Mono.CSharp {
 		}
 
 		public override IResolveContext ResolveContext {
-			get {
-				return this;
-			}
+			get { return this; }
 		}
 
 		#region IResolveContext Members
 
 		public DeclSpace DeclContainer {
-			get {
-				return RootContext.Tree.Types;
-			}
+			get { return RootContext.ToplevelTypes; }
 		}
 
 		public bool IsInObsoleteScope {
-			get {
-				return false;
-			}
+			get { return false; }
 		}
 
 		public bool IsInUnsafeScope {
-			get {
-				return false;
-			}
+			get { return false; }
 		}
 
 		#endregion

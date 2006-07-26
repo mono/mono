@@ -1379,22 +1379,22 @@ namespace Mono.CSharp {
 
 		void Enter ()
 		{
-			// RootContext.Tree.Types has a single NamespaceEntry which gets overwritten
+			// RootContext.ToplevelTypes has a single NamespaceEntry which gets overwritten
 			// each time a new file is parsed.  However, we need to use the NamespaceEntry
 			// in effect where the attribute was used.  Since code elsewhere cannot assume
 			// that the NamespaceEntry is right, just overwrite it.
 			//
-			// Precondition: RootContext.Tree.Types == null
+			// Precondition: RootContext.ToplevelTypes == null
 
-			if (RootContext.Tree.Types.NamespaceEntry != null)
+			if (RootContext.ToplevelTypes.NamespaceEntry != null)
 				throw new InternalErrorException (Location + " non-null NamespaceEntry");
 
-			RootContext.Tree.Types.NamespaceEntry = ns;
+			RootContext.ToplevelTypes.NamespaceEntry = ns;
 		}
 
 		void Leave ()
 		{
-			RootContext.Tree.Types.NamespaceEntry = null;
+			RootContext.ToplevelTypes.NamespaceEntry = null;
 		}
 
 		protected override TypeExpr ResolveAsTypeTerminal (Expression expr, IResolveContext ec, bool silent)

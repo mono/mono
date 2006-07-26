@@ -17,35 +17,10 @@ using System.IO;
 
 namespace Mono.CSharp
 {
-
-	public interface ITreeDump {
-		int  Dump (Tree tree, StreamWriter output);
-		void ParseOptions (string options);
-	}
-
 	// <summary>
-	//   
 	//   We store here all the toplevel types that we have parsed,
 	//   this is the root of all information we have parsed.
-	// 
 	// </summary>
-	
-	public class Tree {
-		TypeContainer root_types;
-
-		public Tree ()
-		{
-			root_types = new RootTypes ();
-		}
-		
-		//
-		// FIXME: Why are we using Types?
-		//
-                public TypeContainer Types {
-                        get { return root_types; }
-                }
-	}
-
 	public sealed class RootTypes : TypeContainer
 	{
 		public RootTypes ()
@@ -81,6 +56,5 @@ namespace Mono.CSharp
 		{
 			return AddPartial (nextPart, nextPart.Name);
 		}
-
 	}
 }

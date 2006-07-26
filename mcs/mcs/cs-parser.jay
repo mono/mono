@@ -4860,8 +4860,8 @@ public CSharpParser (SeekableStreamReader reader, SourceFile file, ArrayList def
 	current_namespace = new NamespaceEntry (null, file, null);
 	this.name = file.Name;
 	this.file = file;
-	current_container = RootContext.Tree.Types;
-	// TODO: Make RootContext.Tree.Types a PartialContainer.
+	current_container = RootContext.ToplevelTypes;
+	// TODO: Make RootContext.ToplevelTypes a PartialContainer.
 	current_class = current_container;
 	current_container.NamespaceEntry = current_namespace;
 
@@ -4889,7 +4889,7 @@ public void parse ()
 			Console.WriteLine (e);
 	}
 
-	RootContext.Tree.Types.NamespaceEntry = null;
+	RootContext.ToplevelTypes.NamespaceEntry = null;
 }
 
 static void CheckToken (int error, int yyToken, string msg, Location loc)

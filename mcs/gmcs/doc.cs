@@ -1025,7 +1025,7 @@ namespace Mono.CSharp {
 		//
 		public void GenerateDocComment ()
 		{
-			TypeContainer root = RootContext.Tree.Types;
+			TypeContainer root = RootContext.ToplevelTypes;
 			if (root.Interfaces != null)
 				foreach (Interface i in root.Interfaces) 
 					DocUtil.GenerateTypeDocComment (i, null);

@@ -817,7 +817,7 @@ public partial class TypeManager {
 	static Type CoreLookupType (string ns_name, string name)
 	{
 		Namespace ns = RootNamespace.Global.GetNamespace (ns_name, true);
-		FullNamedExpression fne = ns.Lookup (RootContext.Tree.Types, name, Location.Null);
+		FullNamedExpression fne = ns.Lookup (RootContext.ToplevelTypes, name, Location.Null);
 		Type t = fne == null ? null : fne.Type;
 		if (t == null)
 			Report.Error (518, "The predefined type `" + name + "' is not defined or imported");

@@ -29,7 +29,7 @@ namespace Mono.CSharp {
 		//
 		// Contains the parsed tree
 		//
-		static Tree tree;
+		static RootTypes root;
 
 		//
 		// This hashtable contains all of the #definitions across the source code
@@ -103,7 +103,7 @@ namespace Mono.CSharp {
 
 		public static void Reset ()
 		{
-			tree = new Tree ();
+			root = new RootTypes ();
 			type_container_resolve_order = new ArrayList ();
 			EntryPoint = null;
 			WarningLevel = 3;
@@ -123,15 +123,11 @@ namespace Mono.CSharp {
 		}
 
 		public static bool NeedsEntryPoint {
-			get {
-				return RootContext.Target == Target.Exe || RootContext.Target == Target.WinExe;
-			}
+			get { return RootContext.Target == Target.Exe || RootContext.Target == Target.WinExe; }
 		}
 
-		static public Tree Tree {
-			get {
-				return tree;
-			}
+		static public RootTypes ToplevelTypes {
+			get { return root; }
 		}
 
 		public static void RegisterOrder (TypeContainer tc)
@@ -164,8 +160,6 @@ namespace Mono.CSharp {
 			// a set of interfaces, we need to be able to tell
 			// them appart by just using the TypeManager.
 			//
-			TypeContainer root = Tree.Types;
-
 			ArrayList ifaces = root.Interfaces;
 			if (ifaces != null){
 				foreach (TypeContainer i in ifaces) 
@@ -296,8 +290,6 @@ namespace Mono.CSharp {
 		/// </summary>
 		static public void ResolveCore ()
 		{
-			TypeContainer root = Tree.Types;
-
 			TypeManager.object_type = BootstrapCorlib_ResolveClass (root, "System.Object");
 			TypeManager.system_object_expr.Type = TypeManager.object_type;
 			TypeManager.value_type = BootstrapCorlib_ResolveClass (root, "System.ValueType");
@@ -439,8 +431,6 @@ namespace Mono.CSharp {
 		// </remarks>
 		static public void CloseTypes ()
 		{
-			TypeContainer root = Tree.Types;
-			
 			if (root.Enums != null)
 				foreach (Enum en in root.Enums)
 					en.CloseType ();
@@ -452,13 +442,13 @@ namespace Mono.CSharp {
 			// make sure that we define the structs in order as well.
 			//
 			foreach (TypeContainer tc in type_container_resolve_order){
-				if (tc.Kind == Kind.Struct && tc.Parent == tree.Types){
+				if (tc.Kind == Kind.Struct && tc.Parent == root){
 					tc.CloseType ();
 				}
 			}
 
 			foreach (TypeContainer tc in type_container_resolve_order){
-				if (!(tc.Kind == Kind.Struct && tc.Parent == tree.Types))
+				if (!(tc.Kind == Kind.Struct && tc.Parent == root))
 					tc.CloseType ();					
 			}
 			
@@ -479,7 +469,7 @@ namespace Mono.CSharp {
 			
 			type_container_resolve_order = null;
 			helper_classes = null;
-			//tree = null;
+			//root = null;
 			TypeManager.CleanUp ();
 		}
 
@@ -505,8 +495,6 @@ namespace Mono.CSharp {
 		
 		static public void BootCorlib_PopulateCoreTypes ()
 		{
-			TypeContainer root = tree.Types;
-
 			PopulateCoreType (root, "System.Object");
 			PopulateCoreType (root, "System.ValueType");
 			PopulateCoreType (root, "System.Attribute");
@@ -521,8 +509,6 @@ namespace Mono.CSharp {
 		// have been defined through `ResolveTree' 
 		static public void PopulateTypes ()
 		{
-			TypeContainer root = Tree.Types;
-
 			if (type_container_resolve_order != null){
 				foreach (TypeContainer tc in type_container_resolve_order)
 					tc.ResolveType ();
@@ -567,8 +553,6 @@ namespace Mono.CSharp {
 		//
 		static public void DefineTypes ()
 		{
-			TypeContainer root = Tree.Types;
-
 			ArrayList delegates = root.Delegates;
 			if (delegates != null){
 				foreach (Delegate d in delegates)
@@ -599,8 +583,8 @@ namespace Mono.CSharp {
 
 		static public void EmitCode ()
 		{
-			if (Tree.Types.Enums != null) {
-				foreach (Enum e in Tree.Types.Enums)
+			if (root.Enums != null) {
+				foreach (Enum e in root.Enums)
 					e.Emit ();
 			}
 
@@ -615,8 +599,8 @@ namespace Mono.CSharp {
 					tc.VerifyMembers ();
 			}
 			
-			if (Tree.Types.Delegates != null) {
-				foreach (Delegate d in Tree.Types.Delegates)
+			if (root.Delegates != null) {
+				foreach (Delegate d in root.Delegates)
 					d.Emit ();
 			}			
 			//
@@ -627,8 +611,8 @@ namespace Mono.CSharp {
 			if (EmitCodeHook != null)
 				EmitCodeHook ();
 
-			CodeGen.Assembly.Emit (Tree.Types);
-			CodeGen.Module.Emit (Tree.Types);
+			CodeGen.Assembly.Emit (root);
+			CodeGen.Module.Emit (root);
 		}
 		
 		//
