@@ -1,4 +1,8 @@
-﻿2006-07-26 Yoni Klain <yonik@mainsoft.com>
+2006-07-26 Andrew Skiba <andrews@mainsoft.com>
+
+	* DetailsViewTest.cs: fix few tests.
+
+2006-07-26 Yoni Klain <yonik@mainsoft.com>
 
 	* XmlDataSourceTest.cs: Add new tests.
 

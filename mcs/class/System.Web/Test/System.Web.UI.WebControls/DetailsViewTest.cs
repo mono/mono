@@ -282,8 +282,10 @@ namespace MonoTests.System.Web.UI.WebControls
 				controlHierarchy = true;
 			}
 
-			
-
+			public void DoEnsureChildControls ()
+			{
+				base.EnsureChildControls ();
+			}
 		}
 
 		ArrayList myds = new ArrayList ();
@@ -713,6 +715,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void DetailsView_InsertItem ()
 		{
 			PokerDetailsView dv = new PokerDetailsView ();
+			dv.Page = new Page ();
 			dv.ChangeMode (DetailsViewMode.Insert);
 			dv.ItemInserting += new DetailsViewInsertEventHandler (insert_item);
 			Assert.AreEqual (false, insertItem, "BeforeInsertItem");
@@ -734,6 +737,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			PokerDetailsView dv = new PokerDetailsView ();
 			dv.ChangeMode (DetailsViewMode.Edit);
+			dv.Page = new Page ();
 			dv.ItemUpdating += new DetailsViewUpdateEventHandler (update_item);
 			Assert.AreEqual (false, updateItem, "BeforeUpdateItem");
 			dv.UpdateItem (true);
@@ -1011,14 +1015,15 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category ("NotWorking")] 
 		public void DetailsView_PrepareControlHierarchy ()
 		{
-			PokerDetailsView dv = new PokerDetailsView ();			
-			dv.Render ();
-			Assert.AreEqual (0, dv.Controls.Count, "ControlHierarchy1");
-			Assert.AreEqual (true, dv.controlHierarchy, "ControlHierarchy2");
+			PokerDetailsView dv = new PokerDetailsView ();
+			//dv.Render ();
+			//Assert.AreEqual (0, dv.Controls.Count, "ControlHierarchy1");
+			//Assert.AreEqual (true, dv.controlHierarchy, "ControlHierarchy2");
 			dv.controlHierarchy = false;
 			dv.AllowPaging = true;
 			dv.DataSource = myds;
-			dv.DataBind ();			
+			dv.DataBind ();
+			dv.Page = new Page ();
 			dv.Render ();
 			Assert.AreEqual (1, dv.Controls.Count, "ControlHierarchy3");
 			Assert.AreEqual (true, dv.controlHierarchy, "ControlHierarchy4");
@@ -1445,6 +1450,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			ResetEvents ();
 			DetailsViewCommandEventArgs com;
 			PokerDetailsView dv = new PokerDetailsView ();
+			dv.DataSource = TableObject.CreateDataTable ();
 			Page page = new Page ();
 			Button bt = new Button ();
 			dv.AllowPaging = true;
@@ -1817,7 +1823,10 @@ namespace MonoTests.System.Web.UI.WebControls
 		public static DataTable Delete (string ID, string FName, string LName)
 		{
 			DataRow dr = ds.Rows.Find (ID);
+			Assert.IsNotNull (dr);
+			int oldCount = ds.Rows.Count;
 			ds.Rows.Remove (dr);
+			Assert.AreEqual (oldCount - 1, ds.Rows.Count);
 			return ds;
 
 		}
@@ -1842,7 +1851,9 @@ namespace MonoTests.System.Web.UI.WebControls
 			dr["ID"] = ID;
 			dr["FName"] = FName;
 			dr["LName"] = LName;
+			int oldCount = ds.Rows.Count;
 			ds.Rows.Add (dr);
+			Assert.AreEqual (oldCount + 1, ds.Rows.Count);
 			return ds;
 		}
 
