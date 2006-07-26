@@ -1585,7 +1585,10 @@ namespace System.Data {
 				columns = (DataColumn[])list.ToArray (typeof (DataColumn));
 			}
 
-			Index index = GetIndex(columns, sorts, recordStates, filter, false);
+			bool addIndex = true;
+			if (filterExpression != String.Empty)
+				addIndex = false;
+			Index index = GetIndex(columns, sorts, recordStates, filter, false, addIndex);
 
 			int[] records = index.GetAll();
 			DataRow[] dataRows = NewRowArray(index.Size);
@@ -1626,6 +1629,24 @@ namespace System.Data {
 			else if (reset) {
 				// reset existing index only if asked for this
 				index.Reset();
+			}
+			return index;
+		}
+
+		internal Index GetIndex (DataColumn[] columns, ListSortDirection[] sort,
+					 DataViewRowState rowState, IExpression filter,
+					 bool reset, bool addIndex)
+		{
+			Index index = FindIndex(columns,sort,rowState,filter);
+			if (index == null ) {
+				index = new Index(new Key(this,columns,sort,rowState,filter));
+
+				if (addIndex)
+					AddIndex (index);
+			}
+			else if (reset) {
+				// reset existing index only if asked for this
+				index.Reset ();
 			}
 			return index;
 		}
