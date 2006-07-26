@@ -1,3 +1,9 @@
+2006-07-26 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* XmlDataSource.cs: implemented XSLT, removed properties from
+	view state
+	* XmlDataSourceView.cs: fixed default xpath
+
 2006-07-26 Andrew Skiba <andrews@mainsoft.com>
 
 	* DetailsView.cs: fix IsBindableType in accordance with MSDN and tests.

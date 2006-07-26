@@ -55,6 +55,11 @@ namespace System.Web.UI.WebControls {
 //	[WebSysDisplayName ("XML file")]
 	public class XmlDataSource : HierarchicalDataSourceControl, IDataSource, IListSource {
 
+		private string _data = string.Empty;
+		private string _transform = string.Empty;
+		private string _xpath = string.Empty;
+		private string _dataFile = string.Empty;
+		private string _transformFile = string.Empty;
 		
 		event EventHandler IDataSource.DataSourceChanged {
 			add { ((IHierarchicalDataSource)this).DataSourceChanged += value; }
@@ -77,24 +82,41 @@ namespace System.Web.UI.WebControls {
 		XmlDocument xmlDocument;
 		public XmlDocument GetXmlDocument ()
 		{
-			if (xmlDocument == null) {
-				xmlDocument = new XmlDocument ();
-				LoadXmlDocument (xmlDocument);
-			}
+			if (xmlDocument == null)
+				xmlDocument = LoadXmlDocument ();
+				
 			return xmlDocument;
 		}
-		
-		[MonoTODO ("XSLT, schema")]
-		void LoadXmlDocument (XmlDocument document)
+
+		[MonoTODO ("schema")]
+		XmlDocument LoadXmlDocument ()
 		{
-			if (Transform == "" && TransformFile == "") {
-				if (DataFile != "")
-					document.Load (MapPathSecure (DataFile));
-				else
-					document.LoadXml (Data);
-			} else {
-				throw new NotImplementedException ("XSLT transform not implemented");
-			}
+			XmlDocument document = LoadFileOrData (DataFile, Data);
+
+			if (TransformFile == "" && Transform == "")
+				return document;
+
+			XslTransform xslTransform = new XslTransform ();
+			XmlDocument xsl = LoadFileOrData (TransformFile, Transform);
+			xslTransform.Load (xsl);
+
+			OnTransforming (EventArgs.Empty);
+
+			XmlDocument transofrResult = new XmlDocument ();
+			transofrResult.Load (xslTransform.Transform (document, TransformArgumentList));
+
+			return transofrResult;
+		}
+
+		XmlDocument LoadFileOrData (string filename, string data)
+		{
+			XmlDocument document = new XmlDocument ();
+			if (filename != "")
+				document.Load (MapPathSecure (filename));
+			else
+				document.LoadXml (data);
+
+			return document;
 		}
 
 		public void Save ()
@@ -203,13 +225,10 @@ namespace System.Web.UI.WebControls {
 		[EditorAttribute ("System.ComponentModel.Design.MultilineStringEditor," + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 //		[TypeConverter (typeof(MultilineStringConverter))]
 		public virtual string Data {
-			get {
-				string ret = ViewState ["Data"] as string;
-				return ret != null ? ret : "";
-			}
+			get { return _data; }
 			set {
-				if (Data != value) {
-					ViewState ["Data"] = value;
+				if (_data != value) {
+					_data = value;
 					xmlDocument = null;
 					OnDataSourceChanged(EventArgs.Empty);
 				}
@@ -219,13 +238,10 @@ namespace System.Web.UI.WebControls {
 		[DefaultValueAttribute ("")]
 		[EditorAttribute ("System.Web.UI.Design.XmlDataFileEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public virtual string DataFile {
-			get {
-				string ret = ViewState ["DataFile"] as string;
-				return ret != null ? ret : "";
-			}
+			get { return _dataFile; }
 			set {
-				if (DataFile != value) {
-					ViewState ["DataFile"] = value;
+				if (_dataFile != value) {
+					_dataFile = value;
 					xmlDocument = null;
 					OnDataSourceChanged(EventArgs.Empty);
 				}
@@ -245,13 +261,10 @@ namespace System.Web.UI.WebControls {
 		[DefaultValueAttribute ("")]
 //		[TypeConverterAttribute (typeof(System.ComponentModel.MultilineStringConverter))]
 		public virtual string Transform {
-			get {
-				string ret = ViewState ["Transform"] as string;
-				return ret != null ? ret : "";
-			}
+			get { return _transform; }
 			set {
-				if (Transform != value) {
-					ViewState ["Transform"] = value;
+				if (_transform != value) {
+					_transform = value;
 					xmlDocument = null;
 					OnDataSourceChanged(EventArgs.Empty);
 				}
@@ -261,13 +274,10 @@ namespace System.Web.UI.WebControls {
 		[EditorAttribute ("System.Web.UI.Design.XslTransformFileEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[DefaultValueAttribute ("")]
 		public virtual string TransformFile {
-			get {
-				string ret = ViewState ["TransformFile"] as string;
-				return ret != null ? ret : "";
-			}
+			get { return _transformFile; }
 			set {
-				if (TransformFile != value) {
-					ViewState ["TransformFile"] = value;
+				if (_transformFile != value) {
+					_transformFile = value;
 					xmlDocument = null;
 					OnDataSourceChanged(EventArgs.Empty);
 				}
@@ -276,13 +286,10 @@ namespace System.Web.UI.WebControls {
 		
 		[DefaultValueAttribute ("")]
 		public virtual string XPath {
-			get {
-				string ret = ViewState ["XPath"] as string;
-				return ret != null ? ret : "";
-			}
+			get { return _xpath; }
 			set {
-				if (XPath != value) {
-					ViewState ["XPath"] = value;
+				if (_xpath != value) {
+					_xpath = value;
 					OnDataSourceChanged(EventArgs.Empty);
 				}
 			}
