@@ -1,3 +1,10 @@
+2006-07-26  Raja R Harinath  <rharinath@novell.com>
+
+	* tree.cs (Tree.RecordDecl): Remove.
+	(RootTypes.AddToTypeContainer): Record the toplevel type in its
+	namespace here.
+	* class.cs, cs-parser.jay: Remove mention of RecordDecl.
+
 2006-07-23  Raja R Harinath  <harinath@gmail.com>
 
 	* codegen.cs (EmitContext.Flags): Move InCatch, InFinally,

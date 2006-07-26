@@ -37,12 +37,6 @@ namespace Mono.CSharp
 		{
 			root_types = new RootTypes ();
 		}
-
-		public void RecordDecl (Namespace ns, MemberName name, DeclSpace ds)
-		{
-			if (ds.Parent == root_types)
-				ns.AddDeclSpace (name.Basename, ds);
-		}
 		
 		//
 		// FIXME: Why are we using Types?
@@ -77,7 +71,10 @@ namespace Mono.CSharp
 
 		protected override bool AddToTypeContainer (DeclSpace ds)
 		{
-			return AddToContainer (ds, ds.Name);
+			if (!AddToContainer (ds, ds.Name))
+				return false;
+			ds.NamespaceEntry.NS.AddDeclSpace (ds.Basename, ds);
+			return true;
 		}
 
 		public override TypeContainer AddPartial (TypeContainer nextPart)

@@ -530,7 +530,6 @@ namespace Mono.CSharp {
 			if (types == null)
 				types = new ArrayList (2);
 
-			RootContext.Tree.RecordDecl (c.NamespaceEntry.NS, c.MemberName, c);
 			types.Add (c);
 			return true;
 		}
@@ -600,7 +599,7 @@ namespace Mono.CSharp {
 
 			if (delegates == null)
 				delegates = new MemberCoreArrayList ();
-			
+
 			delegates.Add (d);
 		}
 
@@ -678,11 +677,9 @@ namespace Mono.CSharp {
 			if (!AddToTypeContainer (iface))
 				return false;
 
-			if (interfaces == null) {
+			if (interfaces == null)
 				interfaces = new MemberCoreArrayList ();
-			}
 
-			RootContext.Tree.RecordDecl (iface.NamespaceEntry.NS, iface.MemberName, iface);
 			interfaces.Add (iface);
 			return true;
 		}

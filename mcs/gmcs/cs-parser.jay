@@ -2553,7 +2553,6 @@ enum_declaration
 		}
 
 		current_container.AddEnum (e);
-		RootContext.Tree.RecordDecl (current_namespace.NS, name, e);
 		$$ = e;
 
 	  }
@@ -2663,8 +2662,6 @@ delegate_declaration
 		}
 
 		current_container.AddDelegate (del);
-		RootContext.Tree.RecordDecl (current_namespace.NS, name, del);
-
 		current_delegate = del;
 	  }
 	  opt_type_parameter_constraints_clauses
