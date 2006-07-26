@@ -149,11 +149,6 @@ namespace System.Xml.Schema
 			return 0;
 		}
 
-		internal bool IsComplied (Guid compilationId)
-		{
-			return this.CompilationId == compilationId;
-		}
-
 		internal virtual int Validate (ValidationEventHandler h, XmlSchema schema)
 		{
 			return 0;

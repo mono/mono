@@ -65,8 +65,6 @@ namespace System.Xml.Schema
 		private string version;
 
 		// other post schema compilation infoset
-		private Hashtable idCollection;
-		private XmlSchemaObjectTable namedIdentities;
 		private XmlSchemaSet schemas;
 
 		private XmlNameTable nameTable;
@@ -75,7 +73,6 @@ namespace System.Xml.Schema
 
 		// Only compilation-time use
 		private XmlSchemaObjectCollection compilationItems;
-		private Hashtable handledUris;
 
 		// Compiler specific things
 		const string xmlname = "schema";
@@ -95,8 +92,6 @@ namespace System.Xml.Schema
 			groups = new XmlSchemaObjectTable();
 			notations = new XmlSchemaObjectTable();
 			schemaTypes = new XmlSchemaObjectTable();
-			idCollection = new Hashtable ();
-			namedIdentities = new XmlSchemaObjectTable();
 		}
 
 		#region Properties
@@ -235,19 +230,19 @@ namespace System.Xml.Schema
 			get{ return notations; }
 		}
 
-		internal Hashtable IDCollection
-		{
-			get { return idCollection; }
-		}
-
 		internal XmlSchemaObjectTable NamedIdentities
 		{
-			get { return namedIdentities; }
+			get { return schemas.NamedIdentities; }
 		}
 
 		internal XmlSchemaSet Schemas
 		{
 			get { return schemas; }
+		}
+
+		internal Hashtable IDCollection
+		{
+			get { return schemas.IDCollection; }
 		}
 		#endregion
 
@@ -284,29 +279,37 @@ namespace System.Xml.Schema
 		internal void Compile (ValidationEventHandler handler, XmlResolver resolver)
 #endif
 		{
-			Compile (handler, new Stack (), this, null, resolver);
+			XmlSchemaSet xss = new XmlSchemaSet ();
+			xss.ValidationEventHandler += handler;
+			xss.XmlResolver = resolver;
+			xss.Add (this);
+			xss.Compile ();
 		}
 
-		internal void Compile (ValidationEventHandler handler, XmlSchemaSet col, XmlResolver resolver)
+		// It is used by XmlSchemaCollection.Add(),
+		// XmlSchemaSet.Compile() and XmlSchemaSet.Remove().
+		internal void CompileSubset (ValidationEventHandler handler, XmlSchemaSet col, XmlResolver resolver)
 		{
-			Compile (handler, new Stack (), this, col, resolver);
+			col.IDCollection.Clear ();
+			col.NamedIdentities.Clear ();
+			Hashtable handledUris = new Hashtable ();
+			// Add this schema itself.
+			if (SourceUri != null && SourceUri.Length > 0)
+				handledUris.Add (SourceUri, SourceUri);
+
+			DoCompile (handler, handledUris, col, resolver);
+
+			Validate (handler);
+
+			if (errorCount == 0)
+				isCompiled = true;
+			errorCount = 0;
 		}
 
-		private void Compile (ValidationEventHandler handler, Stack schemaLocationStack, XmlSchema rootSchema, XmlSchemaSet col, XmlResolver resolver)
+		void DoCompile (ValidationEventHandler handler, Hashtable handledUris, XmlSchemaSet col, XmlResolver resolver)
 		{
-			if (rootSchema != this) {
-				CompilationId = rootSchema.CompilationId;
-				schemas = rootSchema.schemas;
-			}
-			else {
-				schemas = col;
-				if (schemas == null) {
-					schemas = new XmlSchemaSet ();
-					schemas.CompilationId = Guid.NewGuid ();
-				}
-				CompilationId = schemas.CompilationId;
-				this.idCollection.Clear ();
-			}
+			CompilationId = col.CompilationId;
+			schemas = col;
 			if (!schemas.Contains (this)) // e.g. xs:import
 				schemas.Add (this);
 
@@ -316,7 +319,6 @@ namespace System.Xml.Schema
 			groups.Clear ();
 			notations.Clear ();
 			schemaTypes.Clear ();
-			namedIdentities.Clear ();
 
 			//1. Union and List are not allowed in block default
 			if (BlockDefault != XmlSchemaDerivationMethod.All) {
@@ -333,7 +335,7 @@ namespace System.Xml.Schema
 			}
 
 			//3. id must be of type ID
-			XmlSchemaUtil.CompileID(Id, this, this.IDCollection, handler);
+			XmlSchemaUtil.CompileID(Id, this, col.IDCollection, handler);
 
 			//4. targetNamespace should be of type anyURI or absent
 			if (TargetNamespace != null) {
@@ -357,12 +359,6 @@ namespace System.Xml.Schema
 #endif
 				compilationItems.Add (Items [i]);
 			}
-			if (this == rootSchema) {
-				handledUris = new Hashtable ();
-				// Add this schema itself.
-				if (SourceUri != null && SourceUri.Length > 0)
-					handledUris.Add (SourceUri, SourceUri);
-			}
 
 			// First, we run into inclusion schemas to collect 
 			// compilation target items into compiledItems.
@@ -383,18 +379,10 @@ namespace System.Xml.Schema
 				string url = null;
 				if (resolver != null) {
 					url = GetResolvedUri (resolver, ext.SchemaLocation);
-					if (schemaLocationStack.Contains (url)) {
-						// Just skip nested inclusion. 
-						// The spec is "carefully written"
-						// not to handle it as an error.
-//						error (handler, "Nested inclusion was found: " + url);
-						// must skip this inclusion
-						continue;
-					}
-					if (rootSchema.handledUris.Contains (url))
+					if (handledUris.Contains (url))
 						// This schema is already handled, so simply skip (otherwise, duplicate definition errrors occur.
 						continue;
-					rootSchema.handledUris.Add (url, url);
+					handledUris.Add (url, url);
 					try {
 						stream = resolver.GetEntity (new Uri (url), null, typeof (Stream)) as Stream;
 					} catch (Exception) {
@@ -426,7 +414,6 @@ namespace System.Xml.Schema
 					missedSubComponents = true;
 					continue;
 				} else {
-					schemaLocationStack.Push (url);
 					XmlTextReader xtr = null;
 					try {
 						xtr = new XmlTextReader (url, stream, nameTable);
@@ -461,12 +448,10 @@ namespace System.Xml.Schema
 				}
 
 				// Compile included schema.
-				includedSchema.idCollection = this.IDCollection;
-				includedSchema.Compile (handler, schemaLocationStack, rootSchema, col, resolver);
-				schemaLocationStack.Pop ();
+				includedSchema.DoCompile (handler, handledUris, col, resolver);
 
 				if (import != null)
-					rootSchema.schemas.Add (includedSchema);
+					schemas.Add (includedSchema);
 
 				// Note that we use compiled items. Items
 				// may not exist in Items, since included
@@ -578,13 +563,6 @@ namespace System.Xml.Schema
 						XmlSeverityType.Error);
 				}
 			}
-
-			if (rootSchema == this)
-				Validate(handler);
-
-			if (errorCount == 0)
-				isCompiled = true;
-			errorCount = 0;
 		}
 
 		private string GetResolvedUri (XmlResolver resolver, string relativeUri)

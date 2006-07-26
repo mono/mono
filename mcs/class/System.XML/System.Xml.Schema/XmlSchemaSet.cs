@@ -54,11 +54,12 @@ namespace System.Xml.Schema
 		XmlSchemaObjectTable types;
 //		XmlSchemaObjectTable attributeGroups;
 //		XmlSchemaObjectTable groups;
+		Hashtable idCollection;
+		XmlSchemaObjectTable namedIdentities;
 
 		XmlSchemaCompilationSettings settings =
 			new XmlSchemaCompilationSettings ();
 
-		XmlSchemaCollection col;
 		ValidationEventHandler handler;
 
 		bool isCompiled;
@@ -124,25 +125,27 @@ namespace System.Xml.Schema
 			set { settings = value; }
 		}
 
-		// This is mainly used for event delegating
-		internal XmlSchemaCollection SchemaCollection {
-			get {
-				if (col == null) {
-					lock (this) {
-						col = new XmlSchemaCollection ();
-						foreach (XmlSchema s in schemas)
-							col.Add (s);
-					}
-				}
-				return col;
-			}
-		}
-
 		public XmlResolver XmlResolver {
 			set { xmlResolver = value; }
 #if NET_2_0
 			internal get { return xmlResolver; }
 #endif
+		}
+
+		internal Hashtable IDCollection {
+			get {
+				if (idCollection == null)
+					idCollection = new Hashtable ();
+				return idCollection;
+			}
+		}
+
+		internal XmlSchemaObjectTable NamedIdentities {
+			get {
+				if (namedIdentities == null)
+					namedIdentities = new XmlSchemaObjectTable();
+				return namedIdentities;
+			}
 		}
 
 		public XmlSchema Add (string targetNamespace, string url)
@@ -196,7 +199,7 @@ namespace System.Xml.Schema
 			al.AddRange (schemas);
 			foreach (XmlSchema schema in al) {
 				if (!schema.IsCompiled)
-					schema.Compile (handler, this, xmlResolver);
+					schema.CompileSubset (handler, this, xmlResolver);
 				AddGlobalComponents (schema);
 			}
 			isCompiled = true;
@@ -255,8 +258,6 @@ namespace System.Xml.Schema
 
 		internal void OnValidationError (object o, ValidationEventArgs e)
 		{
-			if (col != null)
-				col.OnValidationError (o, e);
 			if (ValidationEventHandler != null)
 				ValidationEventHandler (o, e);
 			else if (e.Severity == XmlSeverityType.Error)
@@ -275,7 +276,7 @@ namespace System.Xml.Schema
 			// FIXME: I have no idea why Remove() might throw
 			// XmlSchemaException, except for the case it compiles.
 			if (!schema.IsCompiled)
-				schema.Compile (handler, this, xmlResolver);
+				schema.CompileSubset (handler, this, xmlResolver);
 			schemas.Remove (schema);
 			ResetCompile ();
 			return schema;
@@ -320,7 +321,7 @@ namespace System.Xml.Schema
 			ClearGlobalComponents ();
 			foreach (XmlSchema s in al) {
 				if (schema == s)
-					schema.Compile (handler, this, xmlResolver);
+					schema.CompileSubset (handler, this, xmlResolver);
 				if (s.IsCompiled)
 					AddGlobalComponents (schema);
 			}

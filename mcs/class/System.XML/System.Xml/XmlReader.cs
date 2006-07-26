@@ -412,8 +412,6 @@ namespace System.Xml
 			case ValidationType.Schema:
 				return new XmlSchemaValidatingReader (reader, settings);
 			}
-			if (xvr != null)
-				xvr.SetSchemas (settings.Schemas);
 
 			// Actually I don't think they are treated in DTD validation though...
 			if ((settings.ValidationFlags & XmlSchemaValidationFlags.ProcessIdentityConstraints) == 0)

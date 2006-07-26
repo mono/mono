@@ -1,3 +1,13 @@
+2006-07-26  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlReader.cs :
+	  For DTD validator, call to SetSchemas() makes no sense.
+	* XmlValidatingReader.cs : now it internally holds old
+	  XmlSchemaCollection instead of new XmlSchemaSet, to make
+	  XmlSchemaSet.SchemaCollection unneccessary.
+	  Removed SetSchemas() since it is now extraneous because of the
+	  XmlReaderChange above.
+
 2006-07-25  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlConvert.cs : TimeSpan conversion for TimeSpan.MinValue was

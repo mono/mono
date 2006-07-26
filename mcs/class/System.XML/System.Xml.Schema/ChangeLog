@@ -1,3 +1,43 @@
+2006-07-26  Atsushi Enomoto <atsushi@ximian.com>
+
+	Refactoring compilation to make Compile() portable to
+	XmlSchemaSet.Compile() and fix multi-schema bugs (not done yet)
+
+	* XmlSchema.cs : 
+	  Removed "root schema" concept from Compile().
+	  Since nested inclusion does not result in an error, the role of
+	  schemaLocationStack is identical to handledUris, thus removed it.
+	  The handledUris does not have to be a field.
+	  Moved NamedIdentities and IDCollections to XmlSchemaSet.
+	  Renamed a Compile() which is called from XmlSchemaCollection and
+	  XmlSchemaSet as CompileSubset(). Renamed private Compile() as
+	  DoCompile().
+	  public Compile() now internally creates a new XmlSchemaSet and
+	  compiles the set.
+	* XmlSchemaCollection.cs : now it hooks its schemaSet's validation
+	  event handler and thus XmlSchemaSet does not need to check this
+	  collection's event handler by itself.
+	  XmlSchema.Compile() -> XmlSchema.CompileSubset().
+	* XmlSchemaSet.cs :
+	  Removed SchemaCollection which became unneccessary.
+	  Added NamedIdentities and IDCollection.
+	  XmlSchema.Compile() -> XmlSchema.CompileSubset().
+	* XmlSchemaAttributeGroupRef.cs, XmlSchemaXPath.cs
+	  XmlSchemaSimpleTypeList.cs, XmlSchemaComplexContentRestriction.cs,
+	  XmlSchemaGroup.cs, XmlSchemaComplexContentExtension.cs,
+	  XmlSchemaSequence.cs, XmlSchemaSimpleContentRestriction.cs,
+	  XmlSchemaSimpleContentExtension.cs, XmlSchemaAny.cs,
+	  XmlSchemaElement.cs, XmlSchemaNotation.cs, XmlSchemaAll.cs,
+	  XmlSchemaComplexType.cs, XmlSchemaAnnotation.cs,
+	  XmlSchemaAttributeGroup.cs, XmlSchemaSimpleTypeRestriction.cs,
+	  XmlSchemaSimpleContent.cs, XmlSchemaGroupRef.cs,
+	  XmlSchemaChoice.cs, XmlSchemaSimpleType.cs,
+	  XmlSchemaIdentityConstraint.cs, XmlSchemaSimpleTypeUnion.cs,
+	  XmlSchemaAnyAttribute.cs, XmlSchemaComplexContent.cs,
+	  XmlSchemaAttribute.cs, XmlSchemaObject.cs :
+	  removed XmlSchemaObject.IsCompiled(). Check compilation state by
+	  comparing compilation ID directly.
+
 2006-07-25  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchema.cs : mutual schema import was failing because the

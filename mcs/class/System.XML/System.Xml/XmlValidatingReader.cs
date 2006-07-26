@@ -61,7 +61,7 @@ namespace System.Xml
 		bool resolverSpecified;
 		ValidationType validationType;
 		// for 2.0: Now it is obsolete. It is allocated only when it is required
-		XmlSchemaSet schemas;
+		XmlSchemaCollection schemas;
 		DTDValidatingReader dtdReader;
 		IHasXmlSchemaInfo schemaInfo;
 		StringBuilder storedCharacters;
@@ -289,14 +289,9 @@ namespace System.Xml
 		public XmlSchemaCollection Schemas {
 			get {
 				if (schemas == null)
-					schemas = new XmlSchemaSet ();
-				return schemas.SchemaCollection;
+					schemas = new XmlSchemaCollection (NameTable);
+				return schemas;
 			}
-		}
-
-		internal void SetSchemas (XmlSchemaSet schemas)
-		{
-			this.schemas = schemas;
 		}
 
 		public object SchemaType {

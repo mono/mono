@@ -56,6 +56,7 @@ namespace System.Xml.Schema
 		public XmlSchemaCollection (XmlNameTable nameTable)
 			: this (new XmlSchemaSet (nameTable))
 		{
+			schemaSet.ValidationEventHandler += new ValidationEventHandler (OnValidationError);
 		}
 
 		internal XmlSchemaCollection (XmlSchemaSet schemaSet)
@@ -105,7 +106,7 @@ namespace System.Xml.Schema
 #endif
 		{
 			XmlSchema schema = XmlSchema.Read (reader, ValidationEventHandler);
-			schema.Compile (ValidationEventHandler, schemaSet, resolver);
+			schema.CompileSubset (ValidationEventHandler, schemaSet, resolver);
 			lock (schemaSet) {
 				return schemaSet.Add (schema);
 			}
@@ -130,7 +131,7 @@ namespace System.Xml.Schema
 
 			// XmlSchemaCollection.Add() compiles, while XmlSchemaSet.Add() does not
 			if (!schema.IsCompiled)
-				schema.Compile (ValidationEventHandler, schemaSet, resolver);
+				schema.CompileSubset (ValidationEventHandler, schemaSet, resolver);
 			// compilation error -> returns null (and don't add to the collection).
 			if (!schema.IsCompiled)
 				return null;
@@ -206,7 +207,7 @@ namespace System.Xml.Schema
 			get { return this; }
 		}
 
-		internal void OnValidationError (object o, ValidationEventArgs e)
+		void OnValidationError (object o, ValidationEventArgs e)
 		{
 			if (ValidationEventHandler != null)
 				ValidationEventHandler (o, e);
