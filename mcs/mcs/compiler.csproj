@@ -253,6 +253,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "roottypes.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "statement.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -264,11 +269,6 @@
                 />
                 <File
                     RelPath = "symbolwriter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "tree.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
