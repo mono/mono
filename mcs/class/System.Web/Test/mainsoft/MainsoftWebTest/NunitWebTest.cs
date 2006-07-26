@@ -126,7 +126,7 @@ namespace MonoTests.stand_alone.WebHarness
 		public string HtmltoXml(string html)
 		{
 			HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
-			doc.LoadHtml(html);
+			doc.LoadHtml (html.Trim (new char [] { '\r', '\n', ' ' })); // bug in HtmlAgilityPack
 
 			StringBuilder fixedxml = new StringBuilder();
 			StringWriter sw = new StringWriter(fixedxml);

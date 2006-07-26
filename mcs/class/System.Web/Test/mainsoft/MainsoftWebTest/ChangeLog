@@ -1,3 +1,8 @@
+2006-07-26  Vladimir Krasnov  <vladimirk@mainsfot.com>
+	
+	* NunitWebTest.cs: fixed HtmltoXml, removes spaces and crlf before
+	converting
+
 2006-07-26  Andrew Skiba <andrews@mainsoft.com>
 
 	* XmlComparer.cs: make expected and actual arguments look like in NUnit.
