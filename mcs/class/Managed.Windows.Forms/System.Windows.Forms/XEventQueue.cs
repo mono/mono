@@ -92,6 +92,19 @@ namespace System.Windows.Forms {
 			return xqueue.Dequeue ();
 		}
 
+		public XEvent NextIsSame(XEvent xevent) {
+			if (xqueue.Count > 0) {
+				if (xqueue.Peek().AnyEvent.type == xevent.AnyEvent.type) {
+					return Dequeue();
+				}
+			}
+			return xevent;
+		}
+
+		public XEvent Peek() {
+			return xqueue.Peek();
+		}
+
 		public class PaintQueue {
 
 			private ArrayList	hwnds;
@@ -189,6 +202,13 @@ namespace System.Windows.Forms {
 				head = (head + 1) % xevents.Length;
 				size--;
 				return res;
+			}
+
+			public XEvent Peek() {
+				if (size < 1) {
+					throw new Exception ("Attempt to peek at empty queue");
+				}
+				return xevents[head];
 			}
 
 			private void Grow ()

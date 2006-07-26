@@ -1,3 +1,10 @@
+2006-07-26  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* XEventQueue.cs: Added methods for peeking (used for compression
+	  of successive events)
+	* XplatUIX11.cs (GetMessage): We're now compressing consecutive
+	  mouse move events (fixes #78732)
+
 2006-07-25  Jackson Harper  <jackson@ximian.com>
 
 	* UpDownBase.cs: Use an internal class for the textbox so that we

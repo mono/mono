@@ -2959,6 +2959,18 @@ namespace System.Windows.Forms {
 				//Console.WriteLine("Non-Client message, sending to window {0:X}", msg.hwnd.ToInt32());
 			}
 
+			// Compress mouse moves
+			if (xevent.AnyEvent.type == XEventName.MotionNotify) {
+				XEvent peek;
+
+				if (((XEventQueue)queue_id).Count > 0) {
+					peek = (XEvent) ((XEventQueue)queue_id).Peek();
+					if (peek.AnyEvent.type == XEventName.MotionNotify) {
+						goto ProcessNextMessage;
+					}
+				}
+			}
+
 			msg.hwnd = hwnd.Handle;
 
 			//
@@ -4308,6 +4320,10 @@ namespace System.Windows.Forms {
 			Hwnd		hwnd;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
+
+			if (hwnd == null) {
+				return;
+			}
 
 			// X requires a sanity check for width & height; otherwise it dies
 			if (hwnd.zero_sized && width > 0 && height > 0) {
