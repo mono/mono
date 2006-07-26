@@ -48,7 +48,10 @@ IMAGES_RESOURCES = \
 	resources/folder-remote.png		\
 	resources/go-previous.png		\
 	resources/go-top.png			\
+	resources/22_page-magnifier.png		\
 	resources/preferences-system-windows.png\
+	resources/16_printer.png		\
+	resources/32_printer.png		\
 	resources/text-x-generic.png		\
 	resources/16_user-desktop.png		\
 	resources/32_user-desktop.png		\
@@ -56,7 +59,13 @@ IMAGES_RESOURCES = \
 	resources/dialog-error.png		\
 	resources/dialog-information.png	\
 	resources/dialog-question.png		\
-	resources/dialog-warning.png
+	resources/dialog-warning.png		\
+	resources/1-up.png			\
+	resources/2-up.png			\
+	resources/3-up.png			\
+	resources/4-up.png			\
+	resources/6-up.png
+
 
 TEST_DISTFILES = \
 	M.gif \
