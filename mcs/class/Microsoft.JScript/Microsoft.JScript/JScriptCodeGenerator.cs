@@ -1,7 +1,8 @@
 //
-// JScriptCodeGenerator.cs:
+// Microsoft.JScript JScriptCodeGenerator Class implementation
 //
-// Author: 
+// Author:
+//   akiramei (mei@work.email.ne.jp)
 //
 
 //
@@ -25,146 +26,336 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.CodeDom;
-using System.CodeDom.Compiler;
-using System.IO;
-using System.Collections;
+namespace Microsoft.JScript 
+{
+	using System;
+	using System.Text;
+	using System.Collections;
+	using System.IO;
+	using System.Reflection;
+	using System.CodeDom;
+	using System.CodeDom.Compiler;
+	using System.Globalization;
 
-namespace Microsoft.JScript {
-
-	[MonoTODO]
-	sealed class JScriptCodeGenerator : CodeCompiler {
-		// It is used for beautiful "for" syntax -- in the future
-		bool dont_write_semicolon = false;
-
-		[MonoTODO]
-		protected override string CompilerName {
-			get {
-				throw new NotImplementedException ();
-			}
+	internal class JScriptCodeGenerator : System.CodeDom.Compiler.CodeGenerator
+	{
+		bool dont_write_semicolon;
+        
+		public JScriptCodeGenerator ()
+		{
+			dont_write_semicolon = false;
 		}
 
-		protected override string FileExtension {
-			get {
-				return ".js";
-			}
-		}
-
-		protected override string NullToken {
+		protected override string NullToken 
+		{
 			get {
 				return "null";
 			}
 		}
 
-		protected override string CmdArgsFromParameters(CompilerParameters options) {
-			throw new NotImplementedException();
-		}
-
-		protected override string CreateEscapedIdentifier(string name) {
-			if (name == null)
-				throw new NullReferenceException ("Argument identifier is null.");
-
-			return GetSafeName (name);
-		}
-
-		protected override string CreateValidIdentifier(string name) {
-			if (name == null)
-				throw new NullReferenceException ();
-
-			return GetSafeName (name);
-		}
-
-		protected override CompilerResults FromFileBatch(CompilerParameters options, string[] fileNames) {
-			throw new NotImplementedException();
-		}
-
-		protected override void GenerateArgumentReferenceExpression(CodeArgumentReferenceExpression e) {
-			throw new NotImplementedException();
-		}
-
-		protected override void GenerateArrayCreateExpression(CodeArrayCreateExpression e) {
-			throw new NotImplementedException();
-		}
-
-		protected override void GenerateArrayIndexerExpression(CodeArrayIndexerExpression e) {
-			throw new NotImplementedException();
-		}
-
-		protected override void GenerateAssignStatement(CodeAssignStatement e) {
+		protected override void GenerateArrayCreateExpression (CodeArrayCreateExpression expression) 
+		{
 			TextWriter output = Output;
-			GenerateExpression (e.Left);
-			output.Write (" = ");
-			GenerateExpression (e.Right);
-			if (dont_write_semicolon)
-				return;
-			output.WriteLine (';');
-		}
+			output.Write ("new ");
+			CodeExpressionCollection initializers = expression.Initializers;
+			CodeTypeReference createType = expression.CreateType;
 
-		protected override void GenerateAttachEventStatement(CodeAttachEventStatement e) {
-			throw new NotImplementedException();
-		}
+			if (initializers.Count > 0) {
+				OutputType (createType);
 
-		protected override void GenerateAttributeDeclarationsEnd(CodeAttributeDeclarationCollection attributes) {
-			throw new NotImplementedException();
-		}
+				if (expression.CreateType.ArrayRank == 0)
+					output.Write ("[]");
 
-		protected override void GenerateAttributeDeclarationsStart(CodeAttributeDeclarationCollection attributes) {
-			throw new NotImplementedException();
-		}
+				output.Write ('[');
+				++Indent;
+				OutputExpressionList (initializers, true);
+				--Indent;
+				output.Write (']');
+			} else {
+				CodeTypeReference arrayType = createType.ArrayElementType;
 
-		protected override void GenerateBaseReferenceExpression(CodeBaseReferenceExpression e) {
-			throw new NotImplementedException();
-		}
-
-		protected override void GenerateBinaryOperatorExpression(CodeBinaryOperatorExpression e) {
-			throw new NotImplementedException();
-		}
-
-		protected override void GenerateCastExpression(CodeCastExpression e) {
-			throw new NotImplementedException();
-		}
-
-		protected override void GenerateComment(CodeComment e) {
-			TextWriter output = Output;
-			string [] lines = e.Text.Split ('\n');
-			bool first = true;
-			foreach (string line in lines) {
-				if (e.DocComment)
-					output.Write ("///");
-				else
-					output.Write ("//");
-				if (first) {
-					output.Write (' ');
-					first = false;
+				while (arrayType != null) {
+					createType = arrayType;
+					arrayType = arrayType.ArrayElementType;
 				}
-				output.WriteLine (line);
+
+				OutputType (createType);
+				output.Write ('[');
+
+				CodeExpression size = expression.SizeExpression;
+
+				if (size != null)
+					GenerateExpression (size);
+				else
+					output.Write (expression.Size);
+
+				output.Write (']');
 			}
 		}
 
-		protected override void GenerateCompileUnitStart(CodeCompileUnit e) {
-			throw new NotImplementedException();
+		protected override void GenerateBaseReferenceExpression (CodeBaseReferenceExpression expression)
+		{
+			Output.Write ("super");
 		}
 
-		protected override void GenerateConditionStatement(CodeConditionStatement e) {
+		protected override void GenerateCastExpression (CodeCastExpression expression)
+		{
+			OutputType (expression.TargetType);
+			Output.Write ('(');
+			GenerateExpression (expression.Expression);
+			Output.Write (')');
+		}
+
+		protected override void GenerateCompileUnitStart (CodeCompileUnit compileUnit)
+		{
+			GenerateComment (new CodeComment ("------------------------------------------------------------------------------"));
+			GenerateComment (new CodeComment (" <autogenerated>"));
+			GenerateComment (new CodeComment ("	 This code was generated by a tool."));
+			GenerateComment (new CodeComment ("	 Runtime Version: " +  System.Environment.Version));
+			GenerateComment (new CodeComment (""));
+			GenerateComment (new CodeComment ("	 Changes to this file may cause incorrect behavior and will be lost if "));
+			GenerateComment (new CodeComment ("	 the code is regenerated."));
+			GenerateComment (new CodeComment (" </autogenerated>"));
+			GenerateComment (new CodeComment ("------------------------------------------------------------------------------"));
+			Output.WriteLine ();
+		}
+
+		protected override void GenerateCompileUnit (CodeCompileUnit compileUnit)
+		{
+			GenerateCompileUnitStart (compileUnit);
+
+			if (compileUnit.AssemblyCustomAttributes.Count > 0) {
+				OutputAttributes (compileUnit.AssemblyCustomAttributes, "assembly: ", false);
+				Output.WriteLine ("");
+			}
+
+			foreach (CodeNamespace ns in compileUnit.Namespaces)
+				GenerateNamespace (ns);
+
+			GenerateCompileUnitEnd (compileUnit);
+		}
+
+		protected override void GenerateDelegateCreateExpression (CodeDelegateCreateExpression expression)
+		{
+			TextWriter output = Output;
+			CodeExpression targetObject = expression.TargetObject;
+
+			if (targetObject != null) {
+				GenerateExpression (targetObject);
+				Output.Write ('.');
+			}
+			output.Write (GetSafeName (expression.MethodName));
+		}
+
+		protected override void GenerateFieldReferenceExpression (CodeFieldReferenceExpression expression)
+		{
+			CodeExpression targetObject = expression.TargetObject;
+
+			if (targetObject != null) {
+				GenerateExpression (targetObject);
+				Output.Write ('.');
+			}
+
+			Output.Write (GetSafeName (expression.FieldName));
+		}
+
+		protected override void GenerateArgumentReferenceExpression (CodeArgumentReferenceExpression expression)
+		{
+			Output.Write (GetSafeName (expression.ParameterName));
+		}
+
+		protected override void GenerateVariableReferenceExpression (CodeVariableReferenceExpression expression)
+		{
+			Output.Write (GetSafeName (expression.VariableName));
+		}
+
+		protected override void GenerateIndexerExpression (CodeIndexerExpression expression)
+		{
+			GenerateExpression (expression.TargetObject);
+			Output.Write ('(');
+			OutputExpressionList (expression.Indices);
+			Output.Write (')');
+		}
+
+		protected override void GenerateArrayIndexerExpression (CodeArrayIndexerExpression expression)
+		{
+			GenerateExpression (expression.TargetObject);
+			Output.Write ('[');
+			OutputExpressionList (expression.Indices);
+			Output.Write (']');
+		}
+
+		protected override void GenerateSnippetExpression (CodeSnippetExpression expression)
+		{
+			Output.Write (expression.Value);
+		}
+
+		protected override void GenerateMethodInvokeExpression (CodeMethodInvokeExpression expression)
+		{
+			GenerateMethodReferenceExpression (expression.Method);
+			Output.Write ('(');
+			OutputExpressionList (expression.Parameters);
+			Output.Write (')');
+		}
+
+		protected override void GenerateMethodReferenceExpression (CodeMethodReferenceExpression expression)
+		{
+			if (expression.TargetObject != null) {
+				GenerateExpression (expression.TargetObject);
+				Output.Write ('.');
+			}
+			Output.Write (GetSafeName (expression.MethodName));
+		}
+
+		protected override void GenerateEventReferenceExpression (CodeEventReferenceExpression expression)
+		{
+			if (expression.TargetObject != null) {
+				GenerateExpression (expression.TargetObject);
+				Output.Write ('.');
+			}
+			Output.Write (GetSafeName (expression.EventName));
+		}
+
+		protected override void GenerateDelegateInvokeExpression (CodeDelegateInvokeExpression expression)
+		{
+			GenerateExpression (expression.TargetObject);
+			Output.Write ('(');
+			OutputExpressionList (expression.Parameters);
+			Output.Write (')');
+		}
+
+		protected override void GenerateObjectCreateExpression (CodeObjectCreateExpression expression)
+		{
+			Output.Write ("new ");
+			OutputType (expression.CreateType);
+			Output.Write ('(');
+			OutputExpressionList (expression.Parameters);
+			Output.Write (')');
+		}
+
+		protected override void GeneratePropertyReferenceExpression (CodePropertyReferenceExpression expression)
+		{
+			CodeExpression targetObject = expression.TargetObject;
+
+			if (targetObject != null) {
+				GenerateExpression (targetObject);
+				Output.Write ('.');
+			}
+			Output.Write (GetSafeName (expression.PropertyName));
+		}
+
+		protected override void GeneratePropertySetValueReferenceExpression (CodePropertySetValueReferenceExpression expression)
+		{
+			Output.Write ("value");
+		}
+
+		protected override void GenerateThisReferenceExpression (CodeThisReferenceExpression expression)
+		{
+			Output.Write ("this");
+		}
+
+		protected override void GenerateExpressionStatement (CodeExpressionStatement statement)
+		{
+			GenerateExpression (statement.Expression);
+
+			if (!dont_write_semicolon)
+				Output.WriteLine (';');
+		}
+
+		protected override void GenerateIterationStatement (CodeIterationStatement statement) 
+		{
+			TextWriter output = Output;
+
+			dont_write_semicolon = true;
+			output.Write ("for (");
+			GenerateStatement (statement.InitStatement);
+			output.Write ("; ");
+			GenerateExpression (statement.TestExpression);
+			output.Write ("; ");
+			GenerateStatement (statement.IncrementStatement);
+			output.Write (")");
+			dont_write_semicolon = false;
+			OutputStartBrace ();
+			++Indent;
+			GenerateStatements (statement.Statements);
+			--Indent;
+			output.WriteLine ('}');
+		}
+
+		protected override void GenerateThrowExceptionStatement (CodeThrowExceptionStatement statement)
+		{
+			Output.Write ("throw");
+
+			if (statement.ToThrow != null) {
+				Output.Write (' ');
+				GenerateExpression (statement.ToThrow);
+			}
+			Output.WriteLine (';');
+		}
+
+		protected override void GenerateComment (CodeComment comment)
+		{
+			TextWriter output = Output;
+
+			string commentChars = null;
+
+			if (comment.DocComment)
+				commentChars = "///";
+			else
+				commentChars = "//";
+
+			output.Write (commentChars);
+			output.Write (' ');
+			string text = comment.Text;
+
+			for (int i = 0; i < text.Length; i++) {
+				output.Write (text [i]);
+
+				if (text [i] == '\r') {
+					if (i < (text.Length - 1) && text [i + 1] == '\n')
+						continue;
+					output.Write (commentChars);
+				} else if (text [i] == '\n')
+					output.Write (commentChars);
+			}
+			output.WriteLine ();
+		}
+
+		protected override void GenerateMethodReturnStatement (CodeMethodReturnStatement statement)
+		{
+			TextWriter output = Output;
+
+			if (statement.Expression != null) {
+				output.Write ("return ");
+				GenerateExpression (statement.Expression);
+				output.WriteLine (";");
+			} else
+				output.WriteLine ("return;");
+		}
+
+		protected override void GenerateConditionStatement (CodeConditionStatement statement)
+		{
 			TextWriter output = Output;
 			output.Write ("if (");
+			GenerateExpression (statement.Condition);
+			output.Write (")");
+			OutputStartBrace ();
 
-			GenerateExpression (e.Condition);
-
-			output.WriteLine (") {");
 			++Indent;
-			GenerateStatements (e.TrueStatements);
+			GenerateStatements (statement.TrueStatements);
 			--Indent;
 
-			CodeStatementCollection falses = e.FalseStatements;
+			CodeStatementCollection falses = statement.FalseStatements;
 			if (falses.Count > 0) {
 				output.Write ('}');
+
 				if (Options.ElseOnClosing)
 					output.Write (' ');
 				else
 					output.WriteLine ();
-				output.WriteLine ("else {");
+
+				output.Write ("else");
+				OutputStartBrace ();
 				++Indent;
 				GenerateStatements (falses);
 				--Indent;
@@ -172,223 +363,529 @@ namespace Microsoft.JScript {
 			output.WriteLine ('}');
 		}
 
-		protected override void GenerateConstructor(CodeConstructor e, CodeTypeDeclaration c) {
-			throw new NotImplementedException();
-		}
-
-		protected override void GenerateDelegateCreateExpression(CodeDelegateCreateExpression e) {
-			throw new NotImplementedException();
-		}
-
-		protected override void GenerateDelegateInvokeExpression(CodeDelegateInvokeExpression e) {
-			throw new NotImplementedException();
-		}
-
-		protected override void GenerateEntryPointMethod(CodeEntryPointMethod e, CodeTypeDeclaration c) {
-			throw new NotImplementedException();
-		}
-
-		protected override void GenerateEvent(CodeMemberEvent e, CodeTypeDeclaration c) {
-			throw new NotImplementedException();
-		}
-
-		protected override void GenerateEventReferenceExpression(CodeEventReferenceExpression e) {
-			throw new NotImplementedException();
-		}
-
-		protected override void GenerateExpressionStatement(CodeExpressionStatement e) {
-			throw new NotImplementedException();
-		}
-
-		protected override void GenerateField(CodeMemberField e) {
-			throw new NotImplementedException();
-		}
-
-		protected override void GenerateFieldReferenceExpression(CodeFieldReferenceExpression e) {
-			throw new NotImplementedException();
-		}
-
-		protected override void GenerateGotoStatement(CodeGotoStatement e) {
-			throw new NotImplementedException();
-		}
-
-		protected override void GenerateIndexerExpression(CodeIndexerExpression e) {
-			throw new NotImplementedException();
-		}
-
-		protected override void GenerateIterationStatement(CodeIterationStatement e) {
-			throw new NotImplementedException();
-		}
-
-		protected override void GenerateLabeledStatement(CodeLabeledStatement e) {
-			throw new NotImplementedException();
-		}
-
-		protected override void GenerateLinePragmaEnd(CodeLinePragma e) {
-			throw new NotImplementedException();
-		}
-
-		protected override void GenerateLinePragmaStart(CodeLinePragma e) {
-			throw new NotImplementedException();
-		}
-
-		protected override void GenerateMethod(CodeMemberMethod e, CodeTypeDeclaration c) {
-			throw new NotImplementedException();
-		}
-
-		protected override void GenerateMethodInvokeExpression(CodeMethodInvokeExpression e) {
-			throw new NotImplementedException();
-		}
-
-		protected override void GenerateMethodReferenceExpression(CodeMethodReferenceExpression e) {
-			throw new NotImplementedException();
-		}
-
-		protected override void GenerateMethodReturnStatement(CodeMethodReturnStatement e) {
+		protected override void GenerateTryCatchFinallyStatement (CodeTryCatchFinallyStatement statement)
+		{
 			TextWriter output = Output;
+			CodeGeneratorOptions options = Options;
 
-			if (e.Expression != null) {
-				output.Write ("return ");
-				GenerateExpression (e.Expression);
-				output.WriteLine (";");
-			} else
-				output.WriteLine ("return;");
-		}
+			output.Write ("try");
+			OutputStartBrace ();
+			++Indent;
+			GenerateStatements (statement.TryStatements);
+			--Indent;
+			
+			foreach (CodeCatchClause clause in statement.CatchClauses) {
+				output.Write ('}');
 
-		protected override void GenerateNamespace(CodeNamespace e) {
-			GenerateNamespaceStart (e);
-			base.GenerateNamespace (e);
-			GenerateNamespaceEnd (e);
-		}
+				if (options.ElseOnClosing)
+					output.Write (' ');
+				else
+					output.WriteLine ();
 
-		protected override void GenerateNamespaceEnd(CodeNamespace e) {
-			throw new NotImplementedException();
-		}
-
-		protected override void GenerateNamespaceImport(CodeNamespaceImport e) {
-			throw new NotImplementedException();
-		}
-
-		protected override void GenerateNamespaceStart(CodeNamespace e) {
-			throw new NotImplementedException();
-		}
-
-		protected override void GenerateObjectCreateExpression(CodeObjectCreateExpression e) {
-			throw new NotImplementedException();
-		}
-
-		protected override void GenerateParameterDeclarationExpression(CodeParameterDeclarationExpression e) {
-			throw new NotImplementedException();
-		}
-
-		protected override void GeneratePrimitiveExpression(CodePrimitiveExpression e) {
-			throw new NotImplementedException();
-		}
-
-		protected override void GenerateProperty(CodeMemberProperty e, CodeTypeDeclaration c) {
-			throw new NotImplementedException();
-		}
-
-		protected override void GeneratePropertyReferenceExpression(CodePropertyReferenceExpression e) {
-			throw new NotImplementedException();
-		}
-
-		protected override void GeneratePropertySetValueReferenceExpression(CodePropertySetValueReferenceExpression e) {
-			throw new NotImplementedException();
-		}
-
-		protected override void GenerateRemoveEventStatement(CodeRemoveEventStatement e) {
-			throw new NotImplementedException();
-		}
-
-		protected override void GenerateSingleFloatValue(float s) {
-			throw new NotImplementedException();
-		}
-
-		protected override void GenerateSnippetExpression(CodeSnippetExpression e) {
-			throw new NotImplementedException();
-		}
-
-		protected override void GenerateSnippetMember(CodeSnippetTypeMember e) {
-			throw new NotImplementedException();
-		}
-
-		protected override void GenerateSnippetStatement(CodeSnippetStatement e) {
-			throw new NotImplementedException();
-		}
-
-		protected override void GenerateThisReferenceExpression(CodeThisReferenceExpression e) {
-			Output.Write ("this");
-		}
-
-		protected override void GenerateThrowExceptionStatement(CodeThrowExceptionStatement e) {
-			Output.Write ("throw");
-			if (e.ToThrow != null) {
-				Output.Write (' ');
-				GenerateExpression (e.ToThrow);
+				output.Write ("catch (");
+				OutputTypeNamePair (clause.CatchExceptionType, GetSafeName(clause.LocalName));
+				output.Write (")");
+				OutputStartBrace ();
+				++Indent;
+				GenerateStatements (clause.Statements);
+				--Indent;
 			}
-			Output.WriteLine (";");
+
+			CodeStatementCollection finallies = statement.FinallyStatements;
+
+			if (finallies.Count > 0) {
+				output.Write ('}');
+
+				if (options.ElseOnClosing)
+					output.Write (' ');
+				else
+					output.WriteLine ();
+
+				output.Write ("finally");
+				OutputStartBrace ();
+				++Indent;
+				GenerateStatements (finallies);
+				--Indent;
+			}
+			output.WriteLine('}');
 		}
 
-		protected override void GenerateTryCatchFinallyStatement(CodeTryCatchFinallyStatement e) {
-			throw new NotImplementedException();
+		protected override void GenerateAssignStatement (CodeAssignStatement statement)
+		{
+			GenerateExpression (statement.Left);
+			Output.Write (" = ");
+			GenerateExpression (statement.Right);
+
+			if (!dont_write_semicolon)
+				Output.WriteLine (';');
 		}
 
-		protected override void GenerateTypeConstructor(CodeTypeConstructor e) {
-			throw new NotImplementedException();
-		}
-
-		protected override void GenerateTypeEnd(CodeTypeDeclaration e) {
-			throw new NotImplementedException();
-		}
-
-		protected override void GenerateTypeOfExpression(CodeTypeOfExpression e) {
-			throw new NotImplementedException();
-		}
-
-		protected override void GenerateTypeStart(CodeTypeDeclaration e) {
-			throw new NotImplementedException();
-		}
-
-		protected override void GenerateVariableDeclarationStatement(CodeVariableDeclarationStatement e) {
+		protected override void GenerateAttachEventStatement (CodeAttachEventStatement statement)
+		{
 			TextWriter output = Output;
+			GenerateEventReferenceExpression (statement.Event);
+			output.Write (" += ");
+			GenerateExpression (statement.Listener);
+			output.WriteLine (';');
+		}
 
+		protected override void GenerateRemoveEventStatement (CodeRemoveEventStatement statement)
+		{
+			TextWriter output = Output;
+			GenerateEventReferenceExpression (statement.Event);
+			output.Write (" -= ");
+			GenerateExpression (statement.Listener);
+			output.WriteLine (';');
+		}
+
+		protected override void GenerateGotoStatement (CodeGotoStatement statement)
+		{
+			throw new NotSupportedException ("Goto statement is not supported in JScript.");
+		}
+
+		protected override void GenerateLabeledStatement (CodeLabeledStatement statement)
+		{
+			throw new NotSupportedException ("Labeled statement is not supported in JScript.");
+		}
+
+		protected override void GenerateVariableDeclarationStatement (CodeVariableDeclarationStatement statement)
+		{
+			TextWriter output = Output;
 			output.Write ("var ");
-			output.Write (GetSafeName (e.Name));
+			OutputTypeNamePair (statement.Type, GetSafeName (statement.Name));
+			CodeExpression initExpression = statement.InitExpression;
 
-			CodeExpression initExpression = e.InitExpression;
 			if (initExpression != null) {
 				output.Write (" = ");
 				GenerateExpression (initExpression);
 			}
 
+			if (!dont_write_semicolon)
+				output.WriteLine (';');
+		}
+
+		protected override void GenerateLinePragmaStart (CodeLinePragma linePragma)
+		{
+			throw new NotSupportedException ("Line pragma is not supported in JScript.");
+		}
+
+		protected override void GenerateLinePragmaEnd (CodeLinePragma linePragma)
+		{
+			throw new NotSupportedException ("Line pragma is not supported in JScript.");
+		}
+
+		protected override void GenerateEvent (CodeMemberEvent eventRef, CodeTypeDeclaration declaration )
+		{
+			throw new NotSupportedException ("Event is not supported in JScript.");
+		}
+
+		protected override void GenerateField (CodeMemberField field)
+		{
+			if (IsCurrentDelegate || IsCurrentInterface)
+				return;
+
+			TextWriter output = Output;
+			OutputAttributes (field.CustomAttributes, null, false);
+
+			if (IsCurrentEnum)
+				Output.Write (GetSafeName (field.Name));
+			else {
+				MemberAttributes attributes = field.Attributes;
+				OutputMemberAccessModifier (attributes);
+				OutputVTableModifier (attributes);
+				OutputFieldScopeModifier (attributes);
+
+				Output.Write("var ");
+				OutputTypeNamePair (field.Type, GetSafeName (field.Name));
+			}
+
+			CodeExpression initExpression = field.InitExpression;
+
+			if (initExpression != null) {
+				output.Write (" = ");
+				GenerateExpression (initExpression);
+			}
+
+			if (IsCurrentEnum)
+				output.WriteLine (',');
+			else
+				output.WriteLine (';');
+		}
+
+		protected override void GenerateSnippetMember (CodeSnippetTypeMember member)
+		{
+			Output.Write (member.Text);
+		}
+	
+		protected override void GenerateEntryPointMethod (CodeEntryPointMethod method, CodeTypeDeclaration declaration)
+		{
+			Output.Write ("static function Main(");
+			OutputParameters (method.Parameters);
+			Output.Write (')');
+
+			if (method.ReturnType != null) {
+				Output.Write (" : ");                
+				OutputType (method.ReturnType);
+			}
+
+			OutputStartBrace ();
+			Indent++;
+			GenerateStatements (method.Statements);
+			Indent--;
+			Output.WriteLine ("}");
+		}
+
+		protected override void GenerateMethod (CodeMemberMethod method, CodeTypeDeclaration declaration)
+		{
+			if (IsCurrentDelegate || IsCurrentEnum)
+				return;
+
+			TextWriter output = Output;
+			OutputAttributes (method.CustomAttributes, null, false);
+			OutputAttributes (method.ReturnTypeCustomAttributes, "return: ", false);
+			MemberAttributes attributes = method.Attributes;
+
+			if (!IsCurrentInterface) {
+				if (method.PrivateImplementationType == null) {
+					OutputMemberAccessModifier (attributes);
+					OutputVTableModifier (attributes);
+					OutputMemberScopeModifier (attributes);
+				}
+			} else
+				OutputVTableModifier (attributes);
+
+			output.Write("function ");
+
+			CodeTypeReference privateType = method.PrivateImplementationType;
+
+			if (privateType != null) {
+				output.Write (privateType.BaseType);
+				output.Write ('.');
+			}
+			output.Write (GetSafeName (method.Name));
+
+			output.Write ('(');
+			OutputParameters (method.Parameters);
+			output.Write (')');
+
+			if (method.ReturnType != null) {
+				output.Write(" : ");
+				OutputType(method.ReturnType);
+			}
+
+			if ((attributes & MemberAttributes.ScopeMask) == MemberAttributes.Abstract || declaration.IsInterface)
+				output.WriteLine (';');
+			else {
+				OutputStartBrace ();
+				++Indent;
+				GenerateStatements (method.Statements);
+				--Indent;
+				output.WriteLine ('}');
+			}
+		}
+
+		protected override void GenerateProperty (CodeMemberProperty property, CodeTypeDeclaration declaration)
+		{
+ 			if (IsCurrentDelegate || IsCurrentEnum)
+				return;
+
+			TextWriter output = Output;
+			OutputAttributes (property.CustomAttributes, null, false);
+			MemberAttributes attributes = property.Attributes;
+
+			if (!IsCurrentInterface) {
+				if (property.PrivateImplementationType == null) {
+					OutputMemberAccessModifier (attributes);
+					OutputVTableModifier (attributes);
+					OutputMemberScopeModifier (attributes);
+				}
+			} else
+				OutputVTableModifier (attributes);
+
+			if (property.HasGet) {
+				output.Write ("function get ");
+
+				if (!IsCurrentInterface && property.PrivateImplementationType != null) {
+					output.Write (property.PrivateImplementationType.BaseType);
+					output.Write ('.');
+				}
+				output.Write (property.Name);
+				output.Write (" () : " );
+
+				OutputType (property.Type);
+
+				if (declaration.IsInterface)
+					output.WriteLine (';');
+				else {
+					OutputStartBrace ();
+					++Indent;
+
+					GenerateStatements (property.GetStatements);
+
+					--Indent;
+					output.WriteLine ('}');
+				}
+			}
+
+			if (property.HasSet) {
+				output.Write ("function set ");
+				if (!IsCurrentInterface && property.PrivateImplementationType != null) {
+					output.Write (property.PrivateImplementationType.BaseType);
+					output.Write ('.');
+				}
+				output.Write (property.Name);
+				output.Write (" (value : ");
+
+				OutputType (property.Type);
+
+				output.Write (')');
+
+				if (declaration.IsInterface)
+					output.WriteLine (';');
+				else {
+					OutputStartBrace ();
+					++Indent;
+
+					GenerateStatements (property.SetStatements);
+
+					--Indent;
+					output.WriteLine ('}');
+				}
+			}
+		}
+
+		protected override void GenerateConstructor (CodeConstructor constructor, CodeTypeDeclaration declaration)
+		{
+			if (constructor.CustomAttributes.Count > 0)
+				OutputAttributeDeclarations(constructor.CustomAttributes);
+
+			OutputMemberAccessModifier (constructor.Attributes);
+			Output.Write ("function ");
+			Output.Write (CurrentTypeName);
+			Output.Write (" (");
+			OutputParameters (constructor.Parameters);
+			Output.Write (") ");
+			Output.WriteLine ("{");
+			++Indent;
+
+			if (constructor.BaseConstructorArgs.Count > 0) {
+				Output.Write ("super (");
+				bool first = true;
+
+				foreach (CodeExpression ex in constructor.BaseConstructorArgs) {
+					if (!first)
+						Output.Write (", ");
+					first = false;
+					GenerateExpression (ex);
+				}
+				Output.WriteLine (");");
+			}
+			GenerateStatements (constructor.Statements);
+			--Indent;
+			Output.WriteLine ('}');
+		}
+
+		protected override void GenerateTypeConstructor (CodeTypeConstructor constructor)
+		{
+			if (IsCurrentDelegate || IsCurrentEnum || IsCurrentInterface)
+				return;
+
+			Output.Write ("static " + GetSafeName (CurrentTypeName));
+			OutputStartBrace ();
+			Indent++;
+			GenerateStatements (constructor.Statements);
+			Indent--;
+			Output.WriteLine ('}');
+		}
+
+		protected override void GenerateTypeStart (CodeTypeDeclaration declaration)
+		{
+			TextWriter output = Output;
+			OutputAttributes (declaration.CustomAttributes, null, false);
+
+			if (!IsCurrentDelegate) {
+				OutputTypeAttributes (declaration);
+				output.Write (GetSafeName (declaration.Name));
+				IEnumerator enumerator = declaration.BaseTypes.GetEnumerator ();
+
+				if (enumerator.MoveNext ()) {
+					CodeTypeReference type = (CodeTypeReference) enumerator.Current;
+					output.Write (" extends ");
+					OutputType (type);
+
+					while (enumerator.MoveNext ()) {
+						type = (CodeTypeReference) enumerator.Current;
+
+						output.Write (" implements ");
+						OutputType (type);
+					}
+				}
+				OutputStartBrace ();
+				++Indent;
+			} 
+		}
+
+		protected override void GenerateTypeEnd (CodeTypeDeclaration declaration)
+		{
+			if (!IsCurrentDelegate) {
+				--Indent;
+				Output.WriteLine ("}");
+			}
+		}
+
+		protected override void GenerateNamespaceStart (CodeNamespace ns)
+		{
+			TextWriter output = Output;
+			string name = ns.Name;
+
+			if (name != null && name.Length != 0) {
+				output.Write ("package ");
+				output.Write (GetSafeName (name));
+				OutputStartBrace ();
+				++Indent;
+			}
+		}
+
+		protected override void GenerateNamespaceEnd (CodeNamespace ns)
+		{
+			string name = ns.Name;
+			if (name != null && name.Length != 0) {
+				--Indent;
+				Output.WriteLine ("}");
+			}
+		}
+
+		protected override void GenerateNamespaceImport (CodeNamespaceImport import)
+		{
+			TextWriter output = Output;
+			output.Write ("import ");
+			output.Write (GetSafeName (import.Namespace));
 			output.WriteLine (';');
 		}
-
-		protected override void GenerateVariableReferenceExpression(CodeVariableReferenceExpression e) {
-			throw new NotImplementedException();
+	
+		protected override void GenerateAttributeDeclarationsStart (CodeAttributeDeclarationCollection attributes)
+		{
+			Output.Write ('[');
+		}
+		
+		protected override void GenerateAttributeDeclarationsEnd (CodeAttributeDeclarationCollection attributes)
+		{
+			Output.Write (']');
 		}
 
-		protected override string GetTypeOutput(CodeTypeReference typeRef) {
-			throw new NotImplementedException();
+		private void OutputStartBrace ()
+		{
+			if (Options.BracingStyle == "C") {
+				Output.WriteLine ("");
+				Output.WriteLine ("{");
+			} else
+				Output.WriteLine (" {");
 		}
 
-		protected override bool IsValidIdentifier(string value) {
-			if (keywordsTable == null)
-				FillKeywordTable ();
+		private void OutputAttributes (CodeAttributeDeclarationCollection attributes, string prefix, bool inline)
+		{
+			foreach (CodeAttributeDeclaration att in attributes) {
+				GenerateAttributeDeclarationsStart (attributes);
 
-			return !keywordsTable.Contains (value);
+				if (prefix != null)
+					Output.Write (prefix);
+
+				OutputAttributeDeclaration (att);
+				GenerateAttributeDeclarationsEnd (attributes);
+
+				if (inline)
+					Output.Write (" ");
+				else
+					Output.WriteLine ();
+			}
 		}
 
-		protected override void OutputType(CodeTypeReference typeRef) {
-			throw new NotImplementedException();
+		private void OutputAttributeDeclaration (CodeAttributeDeclaration attribute)
+		{
+			Output.Write (attribute.Name.Replace ('+', '.'));
+			Output.Write ('(');
+			IEnumerator enumerator = attribute.Arguments.GetEnumerator ();
+
+			if (enumerator.MoveNext ()) {
+				CodeAttributeArgument argument = (CodeAttributeArgument) enumerator.Current;
+				OutputAttributeArgument (argument);
+
+				while (enumerator.MoveNext ()) {
+					Output.Write (", ");
+					argument = (CodeAttributeArgument) enumerator.Current;
+					OutputAttributeArgument (argument);
+				}
+			}
+			Output.Write (')');
 		}
 
-		protected override void ProcessCompilerOutputLine(CompilerResults results, string line) {
-			throw new NotImplementedException();
+		protected override void OutputType (CodeTypeReference type)
+		{
+			Output.Write (GetTypeOutput (type));
 		}
 
-		[MonoTODO ("Implement missing special characters")]
+		protected override void OutputTypeNamePair(CodeTypeReference typeRef, string name)
+		{
+			Output.Write (name);
+
+			if (typeRef != null) {
+				Output.Write (" : ");
+				OutputType (typeRef);
+			}
+		}
+
+		private void OutputVTableModifier (MemberAttributes attributes)
+		{
+			if ((attributes & MemberAttributes.VTableMask) == MemberAttributes.New)
+				Output.Write ("hide ");
+		}
+
+		protected override void OutputFieldScopeModifier (MemberAttributes attributes)
+		{
+			switch (attributes & MemberAttributes.ScopeMask) {
+			case MemberAttributes.Static:
+				Output.Write ("static ");
+				break;
+
+			case MemberAttributes.Const:
+				Output.Write ("const ");
+				break;
+			}
+		}
+
+		private void OutputTypeAttributes (CodeTypeDeclaration declaration)
+		{
+			TextWriter output = Output;
+			TypeAttributes attributes = declaration.TypeAttributes;
+
+			switch (attributes & TypeAttributes.VisibilityMask) {
+			case TypeAttributes.Public:
+			case TypeAttributes.NestedPublic:
+				output.Write ("public ");
+				break;
+
+			case TypeAttributes.NestedPrivate:
+				output.Write ("private ");
+				break;
+			}
+
+			if (declaration.IsStruct)
+				output.Write ("struct ");
+			else if (declaration.IsEnum)
+				output.Write ("enum ");
+			else {
+				if ((attributes & TypeAttributes.Interface) != 0)
+					output.Write ("interface ");
+				else {
+					if ((attributes & TypeAttributes.Sealed) != 0)
+						output.Write ("final ");
+					if ((attributes & TypeAttributes.Abstract) != 0)
+						output.Write ("abstract ");
+					output.Write ("class ");
+				}
+			}
+		}
+
 		protected override string QuoteSnippetString (string value)
 		{
 			// FIXME: this is weird, but works.
@@ -401,17 +898,220 @@ namespace Microsoft.JScript {
 			return "\"" + output + "\"";
 		}
 
-		protected override bool Supports(GeneratorSupport support) {
-			throw new NotImplementedException();
+		protected override void GeneratePrimitiveExpression(CodePrimitiveExpression e)
+		{
+			if (e.Value is char)
+				this.GenerateCharValue ((char) e.Value);
+			else
+				base.GeneratePrimitiveExpression (e);
 		}
 
-		string GetSafeName (string id)
+		private void GenerateCharValue (char c)
+		{
+			Output.Write ('\'');
+
+			switch (c) {
+			case '\0':
+				Output.Write ("\\0");
+				break;
+
+			case '\t':
+				Output.Write ("\\t");
+				break;
+
+			case '\n':
+				Output.Write ("\\n");
+				break;
+
+			case '\r':
+				Output.Write ("\\r");
+				break;
+
+			case '"':
+				Output.Write ("\\\"");
+				break;
+
+			case '\'':
+				Output.Write ("\\'");
+				break;
+
+			case '\\':
+				Output.Write ("\\\\");
+				break;
+
+			case '\u2028':
+				Output.Write ("\\u");
+				Output.Write (((int) c).ToString (CultureInfo.InvariantCulture));
+				break;
+
+			case '\u2029':
+				Output.Write ("\\u");
+				Output.Write (((int) c).ToString (CultureInfo.InvariantCulture));
+				break;
+
+			default:
+				Output.Write (c);
+				break;
+			}
+			Output.Write ('\'');
+		}
+
+		protected override void GenerateParameterDeclarationExpression (CodeParameterDeclarationExpression e)
+		{
+			OutputAttributes (e.CustomAttributes, null, true);
+			OutputDirection (e.Direction);
+			Output.Write (GetSafeName (e.Name));
+
+			if (e.Type != null) {
+				Output.Write (" : ");
+				OutputType (e.Type);
+			}
+		}
+
+		protected override void GenerateTypeOfExpression (CodeTypeOfExpression e)
+		{
+			Output.Write ("typeof(");
+			OutputType (e.Type);
+			Output.Write (")");
+		}
+
+		/* 
+		 * ICodeGenerator
+		 */
+
+		protected override string CreateEscapedIdentifier (string value)
+		{
+			if (value == null)
+				throw new NullReferenceException ("Argument identifier is null.");
+			return GetSafeName (value);
+		}
+
+		protected override string CreateValidIdentifier (string value)
+		{
+			if (value == null)
+				throw new NullReferenceException ();
+
+			if (keywordsTable == null)
+				FillKeywordTable ();
+
+			if (keywordsTable.Contains (value))
+				return "_" + value;
+			else
+				return value;
+		}
+    
+		protected override string GetTypeOutput (CodeTypeReference type)
+		{
+			string typeOutput = null;
+
+			if (type.ArrayElementType != null)
+				typeOutput = GetTypeOutput (type.ArrayElementType);
+			else
+				typeOutput = DetermineTypeOutput (type);
+
+			int rank = type.ArrayRank;
+
+			if (rank > 0) {
+				typeOutput += '[';
+
+				for (--rank; rank > 0; --rank)
+					typeOutput += ',';
+
+				typeOutput += ']';
+			}
+			return typeOutput;
+		}
+
+		private string DetermineTypeOutput (CodeTypeReference type)
+		{
+			string typeOutput = null;
+			string baseType = type.BaseType;
+
+			switch (baseType.ToLower (System.Globalization.CultureInfo.InvariantCulture)) {
+			case "system.boolean":
+				typeOutput = "boolean";
+				break;
+
+			case "system.byte":
+				typeOutput = "byte";
+				break;
+
+			case "system.char":
+				typeOutput = "char";
+				break;
+
+			case "system.sbyte":
+				typeOutput = "sbyte";
+				break;
+
+			case "system.int16":
+				typeOutput = "short";
+				break;
+
+			case "system.uint16":
+				typeOutput = "ushort";
+				break;
+
+			case "system.int32":
+				typeOutput = "int";
+				break;
+
+			case "system.uint32":
+				typeOutput = "uint";
+				break;
+
+			case "system.int64":
+				typeOutput = "long";
+				break;
+
+			case "system.uint64":
+				typeOutput = "ulong";
+				break;
+
+			case "system.single":
+				typeOutput = "float";
+				break;
+
+			case "system.double":
+				typeOutput = "double";
+				break;
+
+			case "system.decimal":
+				typeOutput = "decimal";
+				break;
+
+			case "system.void":
+				typeOutput = "void";
+				break;
+
+			default:
+				typeOutput = GetSafeName (baseType);
+				typeOutput = typeOutput.Replace ('+', '.');
+				break;
+			}
+			return typeOutput;
+		}
+
+		protected override bool IsValidIdentifier (string identifier)
+		{
+			if (keywordsTable == null)
+				FillKeywordTable ();
+
+			return !keywordsTable.Contains (identifier);
+		}
+
+		protected override bool Supports (GeneratorSupport supports)
+		{
+			return true;
+		}
+
+		private string GetSafeName (string id)
 		{
 			if (keywordsTable == null)
 				FillKeywordTable ();
 
 			if (keywordsTable.Contains (id))
-				return "_" + id;
+				return "@" + id;
 			else
 				return id;
 		}
@@ -419,28 +1119,32 @@ namespace Microsoft.JScript {
 		static void FillKeywordTable ()
 		{
 			keywordsTable = new Hashtable ();
+
 			foreach (string keyword in keywords)
 				keywordsTable.Add (keyword, keyword);
 		}
 
-		static Hashtable keywordsTable;
+		private static Hashtable keywordsTable;
+
 		static string [] keywords = new string [] {
-			"break", "else", "new", "var",
-			"case", "finally", "return", "void",
-			"catch", "for", "switch", "while",
-			"continue", "function", "this", "with",
-			"default", "if", "throw",
-			"delete", "in", "try",
-			"do", "instanceof", "typeof",
+			"break", "case", "catch", "class", "const",
+			"continue", "debugger", "default", "delete", "do",
+			"else", "export", "extends", "false", "finally",
+			"for", "function", "if", "import", "in",
+			"instanceof", "new", "null", "return",
+			"super", "switch", "this", "throw", "true",
+			"try", "typeof", "var", "while", "with",
+			// New keywords
+			"abstract", "boolean", "byte", "char", "decimal",
+			"double", "enum", "final", "float", "get",
+			"implements", "int", "interface", "internal", "long",
+			"package", "private", "protected", "public", "sbyte",
+			"set", "short", "static", "uint", "ulong",
+			"ushort", "void",
 			// Future reserved keywords
-			"abstract", "enum", "int", "short",
-			"boolean", "export", "interface", "static",
-			"byte", "extends", "long", "super",
-			"char", "final", "native", "synchronized",
-			"class", "float", "package", "throws",
-			"const", "goto", "private", "transient",
-			"debugger", "implements", "protected", "volatile",
-			"double", "import", "public"
+			"assert", "ensure", "event", "goto", "invariant",
+			"namespace", "native", "require", "synchronized", "throws",
+			"transient", "use", "volatile"
 		};
 	}
 }

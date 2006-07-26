@@ -1,7 +1,8 @@
 //
-// JScriptCodeProvider.cs:
+// Microsoft.JScript JScriptCodeProvider Class implementation
 //
-// Author: Cesar Octavio Lopez Nataren <cesar@ciencias.unam.mx>
+// Authors:
+//      akiramei (mei@work.email.ne.jp)
 //
 
 //
@@ -25,18 +26,26 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.CodeDom.Compiler;
 
-namespace Microsoft.JScript {
+namespace Microsoft.JScript 
+{
+	using System;
+	using System.CodeDom.Compiler;
+	// using System.Security.Permissions;
+#if NET_2_0
+	using System.CodeDom;
+	using System.IO;
+#endif
 
+	// [PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
+	// [PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
 	public class JScriptCodeProvider : CodeDomProvider
 	{
-		JScriptCodeGenerator code_gen;
+		JScriptCodeCompiler code_compiler;
 
 		public JScriptCodeProvider ()
 		{
-			code_gen = new JScriptCodeGenerator ();
+			code_compiler = new JScriptCodeCompiler ();
 		}
 
 		public override string FileExtension {
@@ -45,14 +54,27 @@ namespace Microsoft.JScript {
 			}
 		}
 
+#if NET_2_0
+		[Obsolete ("Use CodeDomProvider class")]
+#endif
 		public override ICodeCompiler CreateCompiler ()
 		{
-			return code_gen;
+			return code_compiler;
 		}
-		
+
+#if NET_2_0
+		[Obsolete ("Use CodeDomProvider class")]
+#endif
 		public override ICodeGenerator CreateGenerator ()
 		{
-			return code_gen;
-		}		
-	}
+			return code_compiler;
+		}
+
+#if NET_2_0
+		public override void GenerateCodeFromMember (CodeTypeMember member, TextWriter writer, CodeGeneratorOptions options)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+    }
 }

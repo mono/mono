@@ -1,3 +1,8 @@
+2006-07-26  César Octavio López Natarén  <cesar.nataren@gmail.com>
+
+	* JScriptCodeGenerator.cs, JScriptCodeProvider.cs: Use
+	implementation from Akiramei (mei@work.email.ne.jp).
+
 2006-06-08  Cesar Lopez Nataren  <cesar.nataren@medsphere.com>
 
 	* Added the NPL license (as that's the header the original java
