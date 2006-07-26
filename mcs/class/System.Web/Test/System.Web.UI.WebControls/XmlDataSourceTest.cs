@@ -67,6 +67,11 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			 return base.GetHierarchicalView(viewPath);
 		}
+
+		public void DoOnTransforming (EventArgs e)
+		{
+			base.OnTransforming (e);
+		}
 	}
 
 	[TestFixture]
@@ -381,6 +386,24 @@ namespace MonoTests.System.Web.UI.WebControls
 						</table><hr></div></form>";
 			string result = new WebTest ("XMLDataSourceTest4.aspx").Run ();
 			HtmlDiff.AssertAreEqual (origin, HtmlDiff.GetControlFromPageHtml (result), "TransformArgumentListFail");
+		}
+
+		//events test
+		bool checker;
+
+		[Test]
+		public void Events ()
+		{
+			DSPoker p = new DSPoker ();
+			p.Transforming += new EventHandler (p_Transforming);
+			Assert.AreEqual (false, checker, "BeforeTransformingEvent");
+			p.DoOnTransforming (new EventArgs ());
+			Assert.AreEqual (true, checker, "AfterTransformingEvent");
+		}
+
+		void p_Transforming (object sender, EventArgs e)
+		{
+			checker = true;
 		}
 
 		[Test]

@@ -1,4 +1,8 @@
-﻿2006-07-25 Vladimir Krasnov <vladimirk@mainsoft.com>
+﻿2006-07-26 Yoni Klain <yonik@mainsoft.com>
+
+	* XmlDataSourceTest.cs: Add new tests.
+
+2006-07-25 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* MultiViewTest.cs: added test
 
