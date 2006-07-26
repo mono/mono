@@ -1,3 +1,10 @@
+2006-07-26  Jackson Harper  <jackson@ximian.com>
+
+	* ContainerControl.cs: Add a field that disables auto selecting
+	the next control in a container when the container is activated.
+	* UpDownBase.cs: Don't select the text box when the up down is
+	selected.
+
 2006-07-26  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* XEventQueue.cs: Added methods for peeking (used for compression

@@ -37,6 +37,10 @@ namespace System.Windows.Forms {
 		private Control		active_control;
 		private Control		focused_control;
 		private Control		unvalidated_control;
+
+		// This is an internal hack that allows some container controls
+		// to not auto select their child when they are activated
+		internal bool 		auto_select_child = true;
 #if NET_2_0
 		private SizeF		auto_scale_dimensions;
 		private AutoScaleMode	auto_scale_mode;
@@ -381,11 +385,12 @@ namespace System.Windows.Forms {
 		{
 			if (Parent != null) {
 				IContainerControl parent = Parent.GetContainerControl ();
-				if (parent != null) 
+				if (parent != null) {
 					parent.ActiveControl = this;
+				}
 			}
 
-			if (directed) {
+			if (directed && auto_select_child) {
 				SelectNextControl (null, forward, true, true, false);
 			}
 		}

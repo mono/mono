@@ -227,12 +227,12 @@ namespace System.Windows.Forms
 			
 			internal override void OnGotFocusInternal (EventArgs e)
 			{
-				owner.Select (true, true);
+				owner.Select (false, true);
 			}
 
 			internal override void OnLostFocusInternal (EventArgs e)
 			{
-				owner.Select (true, true);
+				owner.Select (false, true);
 			}			
 		}
 		#endregion	// UpDownSpinner Sub-class
@@ -259,12 +259,12 @@ namespace System.Windows.Forms
 			
 			internal override void OnGotFocusInternal (EventArgs e)
 			{
-				owner.Select (true, true);
+				owner.Select (false, true);
 			}
 
 			internal override void OnLostFocusInternal (EventArgs e)
 			{
-				owner.Select (true, true);
+				owner.Select (false, true);
 			}			
 		}
 
@@ -313,6 +313,8 @@ namespace System.Windows.Forms
 
 			txtView.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
 
+			// So the child controls don't get auto selected when the updown is selected
+			auto_select_child = false;
 			SetStyle(ControlStyles.FixedHeight, true);
 
 			UpdateEditText();
