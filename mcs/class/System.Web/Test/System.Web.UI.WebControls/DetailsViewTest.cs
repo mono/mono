@@ -236,8 +236,8 @@ namespace MonoTests.System.Web.UI.WebControls
 
 			protected override int CreateChildControls (IEnumerable data, bool dataBinding)
 			{
-				return base.CreateChildControls (data, dataBinding);
 				createChildControls2 = true;
+				return base.CreateChildControls (data, dataBinding);
 			}
 
 			public void DoConfirmInitState ()
@@ -280,6 +280,11 @@ namespace MonoTests.System.Web.UI.WebControls
 			{
 				base.PrepareControlHierarchy ();
 				controlHierarchy = true;
+			}
+
+			public void DoRaiseCallbackEvent (string eventArgument)
+			{
+				base.RaiseCallbackEvent (eventArgument);
 			}
 
 			public void DoEnsureChildControls ()
@@ -959,7 +964,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			p.Controls.Add (dv);
 			DataTable ds = TableObject.CreateDataTable ();			
 			dv.DataSource = ds;
-			dv.DataBind ();			
+			dv.DataBind ();
+			dv.DoRaiseCallbackEvent ("a|b$c");
 			string callbackResult=@"<table cellspacing=""0"" rules=""all"" border=""1"" style=""border-collapse:collapse;"">
 						<tr>
 						<td>ID</td><td>1001</td>
@@ -969,7 +975,9 @@ namespace MonoTests.System.Web.UI.WebControls
 						<td>LName</td><td>Chand</td>
 						</tr>
 						</table>";
-			HtmlDiff.AssertAreEqual (callbackResult, dv.DoGetCallbackResult().Substring(dv.DoGetCallbackResult().IndexOf ("<table")), "GetCallbackResult");				
+			string cbres = dv.DoGetCallbackResult ();
+			Assert.IsNotNull (cbres);
+			HtmlDiff.AssertAreEqual (callbackResult, cbres.Substring(dv.DoGetCallbackResult().IndexOf ("<table")), "GetCallbackResult");
 				
 		}
 
