@@ -69,7 +69,7 @@ namespace System.Windows.Forms {
 		private bool show_plus_minus = true;
 		private bool hide_selection = true;
 
-		private int max_visible_order;
+		private int max_visible_order = -1;
 		private VScrollBar vbar;
 		private HScrollBar hbar;
 		private bool vbar_bounds_set;
@@ -1300,7 +1300,7 @@ namespace System.Windows.Forms {
 			}
 
 			if (vert) {
-				vbar.SetValues (max_visible_order - 2, VisibleCount);
+				vbar.SetValues (Math.Max (0, max_visible_order - 2), VisibleCount);
 				/*
 				vbar.Maximum = max_visible_order;
 				vbar.LargeChange = ClientRectangle.Height / ItemHeight;
@@ -1347,8 +1347,9 @@ namespace System.Windows.Forms {
 		private void SizeChangedHandler (object sender, EventArgs e)
 		{
 			if (IsHandleCreated) {
+				if (max_visible_order == -1)
+					RecalculateVisibleOrder (root_node);
 				UpdateScrollBars ();
-
 			}
 
 			if (vbar.Visible) {

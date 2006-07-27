@@ -1,3 +1,10 @@
+2006-07-27  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: Make sure the visible order is computed when we
+	attempt to size the scrollbars (for trees that mess with the
+	scrolling when they shouldn't.
+	- Make sure to give the scrollbars valid values.
+
 2006-07-26  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* XplatUIX11.cs: Move motion compression code to where it
