@@ -1,5 +1,17 @@
 2006-07-27  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlSchema.cs : set ValidationEventHandler to XmlSchemaSet only
+	  when the argument event handler is not null.
+	  Validate() is internal to open it to XmlSchemaSet.
+	* XmlSchemaSet.cs : removed extraneous "handler" field and method
+	  "OnValidationError". Now ValidationEventHandler just works since
+	  we don't have to care about XmlSchemaCollection's event (it just
+	  reuses XmlSchemaSet's event now).
+	  Split Compile() process to collect components first, and to
+	  validate next.
+
+2006-07-27  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchema.cs : compiling and validating external components in
 	  prior to direct components in a schema does block my refactoring.
 	  Removed extraneous call to XmlSchemaSet.Add().

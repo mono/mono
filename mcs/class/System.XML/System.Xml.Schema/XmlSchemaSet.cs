@@ -60,8 +60,6 @@ namespace System.Xml.Schema
 		XmlSchemaCompilationSettings settings =
 			new XmlSchemaCompilationSettings ();
 
-		ValidationEventHandler handler;
-
 		bool isCompiled;
 
 		internal Guid CompilationId;
@@ -69,7 +67,6 @@ namespace System.Xml.Schema
 		public XmlSchemaSet ()
 			: this (new NameTable ())
 		{
-			handler = new ValidationEventHandler (this.OnValidationError);
 		}
 
 		public XmlSchemaSet (XmlNameTable nameTable)
@@ -160,7 +157,7 @@ namespace System.Xml.Schema
 
 		public XmlSchema Add (string targetNamespace, XmlReader reader)
 		{
-			XmlSchema schema = XmlSchema.Read (reader, handler);
+			XmlSchema schema = XmlSchema.Read (reader, ValidationEventHandler);
 			if (schema.TargetNamespace == null)
 				schema.TargetNamespace = targetNamespace;
 			else if (targetNamespace != null && schema.TargetNamespace != targetNamespace)
@@ -196,11 +193,16 @@ namespace System.Xml.Schema
 			al.AddRange (schemas);
 			IDCollection.Clear ();
 			NamedIdentities.Clear ();
-			foreach (XmlSchema schema in al) {
+
+			foreach (XmlSchema schema in al)
 				if (!schema.IsCompiled)
-					schema.CompileSubset (handler, this, xmlResolver);
+					schema.CompileSubset (ValidationEventHandler, this, xmlResolver);
+			foreach (XmlSchema schema in al)
+				schema.Validate (ValidationEventHandler);
+
+			foreach (XmlSchema schema in al)
 				AddGlobalComponents (schema);
-			}
+
 			isCompiled = true;
 		}
 
@@ -255,14 +257,6 @@ namespace System.Xml.Schema
 			return ns == null ? "" : ns;
 		}
 
-		internal void OnValidationError (object o, ValidationEventArgs e)
-		{
-			if (ValidationEventHandler != null)
-				ValidationEventHandler (o, e);
-			else if (e.Severity == XmlSeverityType.Error)
-				throw e.Exception;
-		}
-
 		[MonoTODO ("Check exact behavior")]
 		public XmlSchema Remove (XmlSchema schema)
 		{
@@ -275,7 +269,7 @@ namespace System.Xml.Schema
 			// FIXME: I have no idea why Remove() might throw
 			// XmlSchemaException, except for the case it compiles.
 			if (!schema.IsCompiled)
-				schema.CompileSubset (handler, this, xmlResolver);
+				schema.CompileSubset (ValidationEventHandler, this, xmlResolver);
 			schemas.Remove (schema);
 			ResetCompile ();
 			return schema;
@@ -320,7 +314,7 @@ namespace System.Xml.Schema
 			ClearGlobalComponents ();
 			foreach (XmlSchema s in al) {
 				if (schema == s)
-					schema.CompileSubset (handler, this, xmlResolver);
+					schema.CompileSubset (ValidationEventHandler, this, xmlResolver);
 				if (s.IsCompiled)
 					AddGlobalComponents (schema);
 			}

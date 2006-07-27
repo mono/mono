@@ -280,7 +280,8 @@ namespace System.Xml.Schema
 #endif
 		{
 			XmlSchemaSet xss = new XmlSchemaSet ();
-			xss.ValidationEventHandler += handler;
+			if (handler != null)
+				xss.ValidationEventHandler += handler;
 			xss.XmlResolver = resolver;
 			xss.Add (this);
 			xss.Compile ();
@@ -296,8 +297,6 @@ namespace System.Xml.Schema
 				handledUris.Add (SourceUri, SourceUri);
 
 			DoCompile (handler, handledUris, col, resolver);
-
-			Validate (handler);
 		}
 
 		void DoCompile (ValidationEventHandler handler, Hashtable handledUris, XmlSchemaSet col, XmlResolver resolver)
@@ -567,7 +566,7 @@ namespace System.Xml.Schema
 
 		#endregion
 
-		private void Validate (ValidationEventHandler handler)
+		internal void Validate (ValidationEventHandler handler)
 		{
 			ValidationId = CompilationId;
 
