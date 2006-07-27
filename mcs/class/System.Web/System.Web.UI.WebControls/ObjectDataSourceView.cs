@@ -579,7 +579,7 @@ namespace System.Web.UI.WebControls
 			MethodInfo method;
 			
 			if (DataObjectTypeName.Length == 0) {
-				paramValues = MergeParameterValues (DeleteParameters, null, oldDataValues, true);
+				paramValues = MergeParameterValues (DeleteParameters, null, oldDataValues, false);
 				method = GetObjectMethod (DeleteMethod, paramValues);
 			} else {
 				method = ResolveDataObjectMethod (DeleteMethod, oldDataValues, null, out paramValues);
@@ -882,6 +882,15 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
+		/// <summary>
+		/// Merge the current data item fields with view parameter default values
+		/// </summary>
+		/// <param name="viewParams">default parameters</param>
+		/// <param name="values">new parameters for update and insert</param>
+		/// <param name="oldValues">old parameters for update and delete</param>
+		/// <param name="allwaysAddNewValues">true for insert, as current item is
+		/// irrelevant for insert</param>
+		/// <returns>merged values</returns>
 		IOrderedDictionary MergeParameterValues (ParameterCollection viewParams, IDictionary values, IDictionary oldValues, bool allwaysAddNewValues)
 		{
 			OrderedDictionary mergedValues = new OrderedDictionary ();
