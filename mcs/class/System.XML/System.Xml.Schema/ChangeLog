@@ -1,5 +1,17 @@
 2006-07-27  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlSchema.cs, XmlSchemaSimpleTypeList.cs,
+	  XmlSchemaSimpleContentRestriction.cs, XmlSchemaUtil.cs,
+	  XmlSchemaSimpleContentExtension.cs, XmlSchemaElement.cs,
+	  XmlSchemaComplexType.cs, XmlSchemaSimpleTypeRestriction.cs,
+	  XmlSchemaSimpleTypeUnion.cs, XmlSchemaAttribute.cs :
+	  Finally fixed bugs around cross-referencing importing schema 
+	  components (namely, #77489 and #78220) by resolving referenced
+	  components via new internal Find[Element|Attribute|AttributeGroup|
+	  SchemaType] methods in XmlSchema.
+
+2006-07-27  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchema.cs : set ValidationEventHandler to XmlSchemaSet only
 	  when the argument event handler is not null.
 	  Validate() is internal to open it to XmlSchemaSet.

@@ -385,7 +385,7 @@ namespace System.Xml.Schema
 			if (contentModel != null) {
 				BaseSchemaTypeName = contentModel.Content != null ? contentModel.Content.GetBaseTypeName () : XmlQualifiedName.Empty;
 
-				BaseXmlSchemaTypeInternal = schema.SchemaTypes [BaseSchemaTypeName] as XmlSchemaType;
+				BaseXmlSchemaTypeInternal = schema.FindSchemaType(BaseSchemaTypeName);
 			}
 			// Resolve redefine.
 			if (this.isRedefineChild && BaseXmlSchemaType != null && this.QualifiedName == BaseSchemaTypeName) {

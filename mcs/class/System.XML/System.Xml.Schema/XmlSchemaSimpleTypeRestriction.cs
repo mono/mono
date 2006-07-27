@@ -383,7 +383,7 @@ namespace System.Xml.Schema
 
 			XmlSchemaSimpleType type = baseType;
 			if (type == null)
-				type = schema.SchemaTypes [baseTypeName] as XmlSchemaSimpleType;
+				type = schema.FindSchemaType (baseTypeName) as XmlSchemaSimpleType;
 			if (type != null) {
 				if (validate)
 					errorCount += type.Validate (h, schema);

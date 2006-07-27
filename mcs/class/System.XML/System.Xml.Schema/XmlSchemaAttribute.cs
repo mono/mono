@@ -380,7 +380,7 @@ namespace System.Xml.Schema
 			else if (SchemaTypeName != null && SchemaTypeName != XmlQualifiedName.Empty)
 			{
 				// If type is null, then it is missing sub components .
-				XmlSchemaType type = schema.SchemaTypes [SchemaTypeName] as XmlSchemaType;
+				XmlSchemaType type = schema.FindSchemaType (SchemaTypeName);
 				if (type is XmlSchemaComplexType)
 					error(h,"An attribute can't have complexType Content");
 				else if (type != null) {	// simple type
@@ -402,7 +402,7 @@ namespace System.Xml.Schema
 			// Then, fill type information for the type references for the referencing attributes
 			if (RefName != null && RefName != XmlQualifiedName.Empty)
 			{
-				referencedAttribute = schema.Attributes [RefName] as XmlSchemaAttribute;
+				referencedAttribute = schema.FindAttribute (RefName);
 				// If el is null, then it is missing sub components .
 				if (referencedAttribute != null)
 					errorCount += referencedAttribute.Validate (h, schema);

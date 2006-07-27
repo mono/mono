@@ -653,7 +653,7 @@ namespace System.Xml.Schema
 			if (schemaType != null)
 				elementType = schemaType;
 			else if (SchemaTypeName != XmlQualifiedName.Empty) {
-				XmlSchemaType type = schema.SchemaTypes [SchemaTypeName] as XmlSchemaType;
+				XmlSchemaType type = schema.FindSchemaType (SchemaTypeName);
 				if (type != null) {
 					type.Validate (h, schema);
 					elementType = type;

@@ -184,7 +184,7 @@ namespace System.Xml.Schema
 				actualBaseSchemaType = baseType;
 			}
 			else if (baseTypeName != XmlQualifiedName.Empty) {
-				XmlSchemaType st = schema.SchemaTypes [baseTypeName] as XmlSchemaType;
+				XmlSchemaType st = schema.FindSchemaType (baseTypeName);
 				if (st != null) {
 					st.Validate (h, schema);
 					actualBaseSchemaType = st;

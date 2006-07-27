@@ -514,7 +514,7 @@ namespace System.Xml.Schema
 					if (redefined != null && grpRef.RefName == redefined.QualifiedName)
 						grp = redefined;
 					else
-						grp = schema.AttributeGroups [grpRef.RefName] as XmlSchemaAttributeGroup;
+						grp = schema.FindAttributeGroup (grpRef.RefName);
 					// otherwise, it might be missing sub components.
 					if (grp == null) {
 						if (!schema.missedSubComponents)// && schema.Schemas [grpRef.RefName.Namespace] != null)

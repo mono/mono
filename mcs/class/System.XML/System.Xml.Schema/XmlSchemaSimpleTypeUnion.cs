@@ -140,7 +140,7 @@ namespace System.Xml.Schema
 			if (MemberTypes != null) {
 				foreach (XmlQualifiedName memberTypeName in MemberTypes) {
 					object type = null;
-					XmlSchemaType xstype = schema.SchemaTypes [memberTypeName] as XmlSchemaSimpleType;
+					XmlSchemaType xstype = schema.FindSchemaType (memberTypeName) as XmlSchemaSimpleType;
 					if (xstype != null) {
 						errorCount += xstype.Validate (h, schema);
 						type = xstype;

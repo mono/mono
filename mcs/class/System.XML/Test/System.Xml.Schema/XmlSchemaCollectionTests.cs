@@ -79,7 +79,6 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test] // bug #78220
-		[Category ("NotWorking")]
 		public void TestCompile ()
 		{
 			string schemaFragment1 = string.Format (CultureInfo.InvariantCulture,

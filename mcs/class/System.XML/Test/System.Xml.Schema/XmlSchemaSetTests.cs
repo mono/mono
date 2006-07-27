@@ -165,6 +165,34 @@ namespace MonoTests.System.Xml
 			ss.RemoveRecursive (s);
 			Assert.IsTrue (ss.IsCompiled, "#5");
 		}
+
+		[Test] // bug #77489
+		public void CrossSchemaReferences ()
+		{
+			string schema1 = @"<xsd:schema id=""Base.Schema"" elementFormDefault=""qualified"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
+	<xsd:complexType name=""itemBase"" abstract=""true""> 
+		<xsd:attribute name=""id"" type=""xsd:string""
+use=""required""/> 
+		<xsd:attribute name=""type"" type=""xsd:string""
+use=""required""/> 
+	</xsd:complexType> 
+</xsd:schema>";
+
+			string schema2 = @"<xsd:schema id=""Sub.Schema"" elementFormDefault=""qualified"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
+	<xsd:complexType name=""item""> 
+		<xsd:complexContent> 
+			<xsd:extension base=""itemBase""> 
+				<xsd:attribute name=""itemName""
+type=""xsd:string"" use=""required""/> 
+			</xsd:extension> 
+		</xsd:complexContent> 
+	</xsd:complexType> 
+</xsd:schema>";
+			XmlSchemaSet schemas = new XmlSchemaSet ();
+			schemas.Add (XmlSchema.Read (new StringReader (schema1), null));
+			schemas.Add (XmlSchema.Read (new StringReader (schema2), null));
+			schemas.Compile ();
+		}
 	}
 }
 #endif

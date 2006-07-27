@@ -566,6 +566,50 @@ namespace System.Xml.Schema
 
 		#endregion
 
+		internal XmlSchemaAttribute FindAttribute (XmlQualifiedName name)
+		{
+			XmlSchemaAttribute a;
+			foreach (XmlSchema schema in schemas.Schemas ()) {
+				a = schema.Attributes [name] as XmlSchemaAttribute;
+				if (a != null)
+					return a;
+			}
+			return null;
+		}
+
+		internal XmlSchemaAttributeGroup FindAttributeGroup (XmlQualifiedName name)
+		{
+			XmlSchemaAttributeGroup a;
+			foreach (XmlSchema schema in schemas.Schemas ()) {
+				a = schema.AttributeGroups [name] as XmlSchemaAttributeGroup;
+				if (a != null)
+					return a;
+			}
+			return null;
+		}
+
+		internal XmlSchemaElement FindElement (XmlQualifiedName name)
+		{
+			XmlSchemaElement a;
+			foreach (XmlSchema schema in schemas.Schemas ()) {
+				a = schema.Elements [name] as XmlSchemaElement;
+				if (a != null)
+					return a;
+			}
+			return null;
+		}
+
+		internal XmlSchemaType FindSchemaType (XmlQualifiedName name)
+		{
+			XmlSchemaType a;
+			foreach (XmlSchema schema in schemas.Schemas ()) {
+				a = schema.SchemaTypes [name] as XmlSchemaType;
+				if (a != null)
+					return a;
+			}
+			return null;
+		}
+
 		internal void Validate (ValidationEventHandler handler)
 		{
 			ValidationId = CompilationId;

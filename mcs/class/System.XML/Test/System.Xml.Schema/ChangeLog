@@ -1,5 +1,10 @@
 2006-07-27  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlSchemaSetTest.cs : added bug #77489 case.
+	* XmlSchemaCollectionTests.cs : removed NotWorking from #77820 case.
+
+2006-07-27  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlSchemaSetTests.cs : added AddWrongTargetNamespace().
 
 2006-07-25  Atsushi Enomoto  <atsushi@ximian.com>

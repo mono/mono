@@ -128,7 +128,7 @@ namespace System.Xml.Schema
 			// ListItemType
 			XmlSchemaSimpleType type = itemType;
 			if (type == null)
-				type = schema.SchemaTypes [itemTypeName] as XmlSchemaSimpleType;
+				type = schema.FindSchemaType (itemTypeName) as XmlSchemaSimpleType;
 			if (type != null) {
 				errorCount += type.Validate (h, schema);
 				validatedListItemType = type;

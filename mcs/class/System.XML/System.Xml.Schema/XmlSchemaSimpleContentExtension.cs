@@ -149,7 +149,7 @@ namespace System.Xml.Schema
 			if (IsValidated (schema.ValidationId))
 				return errorCount;
 
-			XmlSchemaType st = schema.SchemaTypes [baseTypeName] as XmlSchemaType;
+			XmlSchemaType st = schema.FindSchemaType (baseTypeName);
 			if (st != null) {
 				XmlSchemaComplexType ct = st as XmlSchemaComplexType;
 				if (ct != null && ct.ContentModel is XmlSchemaComplexContent)
