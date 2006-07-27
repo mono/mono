@@ -1,5 +1,9 @@
 2006-07-27 Andrew Skiba <andrews@mainsoft.com>
 
+	* DetailsViewRowCollection.cs: returns this in SyncRoot.
+
+2006-07-27 Andrew Skiba <andrews@mainsoft.com>
+
 	* FormView.cs: throw ArgumentOutOfRange exception on bad CellSpacing
 	and CellPadding.
 
