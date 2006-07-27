@@ -4,6 +4,7 @@
 	controls non selectable, so that a click on them won't do a
 	focus/unfocus cycle.
 	- Don't give focus to the text box when the spinner is selected.
+	* XEventQueue.cs: Peek on both the x11 queue and the lock queue.
 
 2006-07-26  Chris Toshok  <toshok@ximian.com>
 

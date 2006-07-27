@@ -92,16 +92,13 @@ namespace System.Windows.Forms {
 			return xqueue.Dequeue ();
 		}
 
-		public XEvent NextIsSame(XEvent xevent) {
-			if (xqueue.Count > 0) {
-				if (xqueue.Peek().AnyEvent.type == xevent.AnyEvent.type) {
-					return Dequeue();
+		public XEvent Peek()
+		{
+			if (xqueue.Count == 0) {
+				lock (lqueue) {
+					return lqueue.Peek ();
 				}
-			}
-			return xevent;
-		}
-
-		public XEvent Peek() {
+			}				
 			return xqueue.Peek();
 		}
 
