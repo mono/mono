@@ -65,7 +65,6 @@ namespace System.Windows.Forms
 				this.SetStyle(ControlStyles.Opaque, true);
 				this.SetStyle(ControlStyles.ResizeRedraw, true);
 				this.SetStyle(ControlStyles.UserPaint, true);
-				this.SetStyle(ControlStyles.Selectable, false);
 				this.SetStyle(ControlStyles.FixedHeight, true);
 
 				tmrRepeat = new Timer();
@@ -138,8 +137,6 @@ namespace System.Windows.Forms
 
 			#region Protected Instance Methods
 			protected override void OnMouseDown(MouseEventArgs e) {
-				this.Select(owner.txtView);
-
 				if (e.Button != MouseButtons.Left) {
 					return;
 				}
@@ -225,6 +222,11 @@ namespace System.Windows.Forms
 			#endregion	// Protected Instance Methods
 
 			
+			internal void SetSelectable (bool selectable)
+			{
+				SetStyle (ControlStyles.Selectable, selectable);
+			}
+
 			internal override void OnGotFocusInternal (EventArgs e)
 			{
 				owner.Select (false, true);
@@ -233,7 +235,7 @@ namespace System.Windows.Forms
 			internal override void OnLostFocusInternal (EventArgs e)
 			{
 				owner.Select (false, true);
-			}			
+			}
 		}
 		#endregion	// UpDownSpinner Sub-class
 
@@ -246,6 +248,11 @@ namespace System.Windows.Forms
 				this.owner = owner;
 
 				SetStyle (ControlStyles.FixedWidth, false);
+			}
+
+			internal void SetSelectable (bool selectable)
+			{
+				SetStyle (ControlStyles.Selectable, selectable);
 			}
 
 			internal void ActivateCaret (bool active)
@@ -363,12 +370,16 @@ namespace System.Windows.Forms
 		{
 			base.OnGotFocusInternal (e);
 			txtView.ActivateCaret (true);
+			txtView.SetSelectable (false);
+			spnSpinner.SetSelectable (false);
 		}
 
 		internal override void OnLostFocusInternal (EventArgs e)
 		{
 			base.OnLostFocusInternal (e);
 			txtView.ActivateCaret (false);
+			txtView.SetSelectable (true);
+			spnSpinner.SetSelectable (true);
 		}
 		#endregion	// Private Methods
 

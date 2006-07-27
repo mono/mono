@@ -1,3 +1,10 @@
+2006-07-26  Jackson Harper  <jackson@ximian.com>
+
+	* UpDownBase.cs: When the control is selected make the child
+	controls non selectable, so that a click on them won't do a
+	focus/unfocus cycle.
+	- Don't give focus to the text box when the spinner is selected.
+
 2006-07-26  Chris Toshok  <toshok@ximian.com>
 
 	* ThemeWin32Classic.cs: add print preview rendering.  I'm not
