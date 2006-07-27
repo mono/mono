@@ -102,7 +102,7 @@ namespace System.Web.UI.WebControls
 		// Control state
 		int pageIndex;
 		FormViewMode currentMode = FormViewMode.ReadOnly; 
-		int pageCount = -1;
+		int pageCount = 0;
 		
 		public FormView ()
 		{
@@ -644,7 +644,7 @@ namespace System.Web.UI.WebControls
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public virtual int PageCount {
 			get {
-				if (pageCount != -1) return pageCount;
+				if (pageCount != 0) return pageCount;
 				EnsureDataBound ();
 				return pageCount;
 			}
@@ -773,7 +773,7 @@ namespace System.Web.UI.WebControls
 	
 		public virtual bool IsBindableType (Type type)
 		{
-			return type.IsPrimitive || type == typeof(string) || type == typeof(DateTime) || type == typeof(Guid);
+			return type.IsPrimitive || type == typeof (string) || type == typeof (DateTime) || type == typeof (Guid) || type == typeof (Decimal);
 		}
 		
 		protected override DataSourceSelectArguments CreateDataSourceSelectArguments ()
