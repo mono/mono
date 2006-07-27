@@ -1,5 +1,9 @@
 2006-07-27 Andrew Skiba <andrews@mainsoft.com>
 
+	* FormViewTest.cs: fix few tests.
+
+2006-07-27 Andrew Skiba <andrews@mainsoft.com>
+
 	* DetailsViewTest.cs: fix tests.
 
 2006-07-26 Vladimir Krasnov <vladimirk@mainsoft.com>

@@ -497,7 +497,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category ("NotWorking")]
 		public void FormView_CreateChildControls ()
 		{
-			Poker fv = new Poker ();			
+			Poker fv = new Poker ();
+			fv.DataSource = myds;
+			fv.Page = new Page ();
 			Assert.AreEqual (6, fv.DoCreateChildControls (myds, true), "CreateChildControlFromDS");
 			myds.Add ("item7");
 			Assert.AreEqual (7, fv.DoCreateChildControls (myds, false), "CreateChildControlFromViewState");
@@ -683,6 +685,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			Poker fv = new Poker ();
 			fv.AllowPaging = true;
 			fv.DataSource = myds;
+			fv.Page = new Page ();
 			Assert.AreEqual (0, fv.PageCount, "BeforeDataBind1");
 			Assert.AreEqual (null, fv.DataItem, "BeforeDataBind2");
 			fv.DataBind ();
@@ -1248,7 +1251,7 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 		public void TearDown ()
 		{
 			Thread.Sleep (100);
-		        WebTest.Unload ();
+		        //WebTest.Unload ();
 		}
 	
 		//[TestFixtureStartUp]
