@@ -1,5 +1,10 @@
 2006-07-27  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlSchema.cs, XmlSchemaSet.cs : some minor refactoring to make
+	  Compile() simple two phase (i.e. CompileSubset() and Validate()).
+
+2006-07-27  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchemaException.cs : oops, .ctor(string) was only for 2.0.
 
 2006-07-27  Atsushi Enomoto <atsushi@ximian.com>

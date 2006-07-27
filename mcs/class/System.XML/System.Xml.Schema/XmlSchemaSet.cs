@@ -194,6 +194,8 @@ namespace System.Xml.Schema
 			ClearGlobalComponents ();
 			ArrayList al = new ArrayList ();
 			al.AddRange (schemas);
+			IDCollection.Clear ();
+			NamedIdentities.Clear ();
 			foreach (XmlSchema schema in al) {
 				if (!schema.IsCompiled)
 					schema.CompileSubset (handler, this, xmlResolver);

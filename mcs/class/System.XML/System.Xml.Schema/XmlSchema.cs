@@ -290,8 +290,6 @@ namespace System.Xml.Schema
 		// XmlSchemaSet.Compile() and XmlSchemaSet.Remove().
 		internal void CompileSubset (ValidationEventHandler handler, XmlSchemaSet col, XmlResolver resolver)
 		{
-			col.IDCollection.Clear ();
-			col.NamedIdentities.Clear ();
 			Hashtable handledUris = new Hashtable ();
 			// Add this schema itself.
 			if (SourceUri != null && SourceUri.Length > 0)
@@ -300,10 +298,6 @@ namespace System.Xml.Schema
 			DoCompile (handler, handledUris, col, resolver);
 
 			Validate (handler);
-
-			if (errorCount == 0)
-				isCompiled = true;
-			errorCount = 0;
 		}
 
 		void DoCompile (ValidationEventHandler handler, Hashtable handledUris, XmlSchemaSet col, XmlResolver resolver)
@@ -602,6 +596,10 @@ namespace System.Xml.Schema
 				errorCount += grp.Validate (handler, this);
 			foreach (XmlSchemaNotation ntn in Notations.Values)
 				errorCount += ntn.Validate (handler, this);
+
+			if (errorCount == 0)
+				isCompiled = true;
+			errorCount = 0;
 		}
 
 		#region Read
