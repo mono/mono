@@ -444,24 +444,7 @@ namespace System.Xml.Schema
 				// Compile included schema.
 				includedSchema.DoCompile (handler, handledUris, col, resolver);
 
-				if (import != null)
-					schemas.Add (includedSchema);
-
-				// Note that we use compiled items. Items
-				// may not exist in Items, since included
-				// schema also includes another schemas.
-				foreach (DictionaryEntry entry in includedSchema.Attributes)
-					compilationItems.Add ((XmlSchemaObject) entry.Value);
-				foreach (DictionaryEntry entry in includedSchema.Elements)
-					compilationItems.Add ((XmlSchemaObject) entry.Value);
-				foreach (DictionaryEntry entry in includedSchema.SchemaTypes)
-					compilationItems.Add ((XmlSchemaObject) entry.Value);
-				foreach (DictionaryEntry entry in includedSchema.AttributeGroups)
-					compilationItems.Add ((XmlSchemaObject) entry.Value);
-				foreach (DictionaryEntry entry in includedSchema.Groups)
-					compilationItems.Add ((XmlSchemaObject) entry.Value);
-				foreach (DictionaryEntry entry in includedSchema.Notations)
-					compilationItems.Add ((XmlSchemaObject) entry.Value);
+				AddExternalComponentsTo (includedSchema, compilationItems);
 			}
 
 			// Compilation phase.
@@ -566,6 +549,15 @@ namespace System.Xml.Schema
 				baseUri = new Uri (this.SourceUri);
 			Uri abs = resolver.ResolveUri (baseUri, relativeUri);
 			return abs != null ? abs.ToString () : String.Empty;
+		}
+
+		void AddExternalComponentsTo (XmlSchema s, XmlSchemaObjectCollection items)
+		{
+			foreach (XmlSchemaExternal ext in s.Includes)
+				if (ext.Schema != null)
+					AddExternalComponentsTo (ext.Schema, items);
+			foreach (XmlSchemaObject obj in s.Items)
+				items.Add (obj);
 		}
 
 		internal bool IsNamespaceAbsent (string ns)
