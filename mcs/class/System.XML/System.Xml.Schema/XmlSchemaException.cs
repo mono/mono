@@ -51,12 +51,17 @@ namespace System.Xml.Schema
 			: this ("A schema error occured.", null)
 		{
 		}
+#endif
 
-		public XmlSchemaException (string message)
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		XmlSchemaException (string message)
 			: this (message, null)
 		{
 		}
-#endif
 
 		protected XmlSchemaException(SerializationInfo info, StreamingContext context)
 			: base (info, context)

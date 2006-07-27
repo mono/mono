@@ -1,5 +1,9 @@
 2006-07-27  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlSchemaException.cs : oops, .ctor(string) was only for 2.0.
+
+2006-07-27  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchemaCollection.cs :
 	  eliminated call to XmlSchema.CompileSubset(). Now XmlSchemaSet is
 	  the only starter of the compilation.
