@@ -344,6 +344,8 @@ namespace System.Web.UI.WebControls
 				return -1;
 			}
 			set {
+				if (value < -1)
+					throw new ArgumentOutOfRangeException ("< -1");
 				ViewState ["CellPadding"] = value;
 				RequireBinding ();
 			}
@@ -359,7 +361,9 @@ namespace System.Web.UI.WebControls
 				return 0;
 			}
 			set {
-				ViewState ["CellSpacing"] = value;
+				if (value < -1)
+					throw new ArgumentOutOfRangeException ("< -1");
+				ViewState["CellSpacing"] = value;
 				RequireBinding ();
 			}
 		}

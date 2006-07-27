@@ -1,5 +1,10 @@
 2006-07-27 Andrew Skiba <andrews@mainsoft.com>
 
+	* FormView.cs: throw ArgumentOutOfRange exception on bad CellSpacing
+	and CellPadding.
+
+2006-07-27 Andrew Skiba <andrews@mainsoft.com>
+
 	* ObjectDataSource.cs: add doc and fix usage of MergeParameterValues
 
 2006-07-27 Andrew Skiba <andrews@mainsoft.com>
