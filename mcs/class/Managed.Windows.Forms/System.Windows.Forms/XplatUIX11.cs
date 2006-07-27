@@ -1354,24 +1354,35 @@ namespace System.Windows.Forms {
 						break;
 					}
 
-				case XEventName.KeyRelease:
-					if (!detectable_key_auto_repeat && XPending (DisplayHandle) != 0) {
-						XEvent nextevent = new XEvent ();
+					case XEventName.KeyRelease:
+						if (!detectable_key_auto_repeat && XPending (DisplayHandle) != 0) {
+							XEvent nextevent = new XEvent ();
 
-						XPeekEvent (DisplayHandle, ref nextevent);
+							XPeekEvent (DisplayHandle, ref nextevent);
 
-						if (nextevent.type == XEventName.KeyPress &&
-						    nextevent.KeyEvent.keycode == xevent.KeyEvent.keycode &&
-						    nextevent.KeyEvent.time == xevent.KeyEvent.time) {
-							continue;
+							if (nextevent.type == XEventName.KeyPress &&
+							nextevent.KeyEvent.keycode == xevent.KeyEvent.keycode &&
+							nextevent.KeyEvent.time == xevent.KeyEvent.time) {
+								continue;
+							}
 						}
-					}
-					goto case XEventName.KeyPress;
+						goto case XEventName.KeyPress;
 					
+					case XEventName.MotionNotify: {
+						XEvent peek;
+
+						if (hwnd.Queue.Count > 0) {
+							peek = hwnd.Queue.Peek();
+							if (peek.AnyEvent.type == XEventName.MotionNotify) {
+								continue;
+							}
+						}
+						goto case XEventName.KeyPress;
+					}
+
 					case XEventName.KeyPress:
 					case XEventName.ButtonPress:
 					case XEventName.ButtonRelease:
-					case XEventName.MotionNotify:
 					case XEventName.EnterNotify:
 					case XEventName.LeaveNotify:
 					case XEventName.CreateNotify:
@@ -2957,18 +2968,6 @@ namespace System.Windows.Forms {
 			} else {
 				client = false;
 				//Console.WriteLine("Non-Client message, sending to window {0:X}", msg.hwnd.ToInt32());
-			}
-
-			// Compress mouse moves
-			if (xevent.AnyEvent.type == XEventName.MotionNotify) {
-				XEvent peek;
-
-				if (((XEventQueue)queue_id).Count > 0) {
-					peek = (XEvent) ((XEventQueue)queue_id).Peek();
-					if (peek.AnyEvent.type == XEventName.MotionNotify) {
-						goto ProcessNextMessage;
-					}
-				}
 			}
 
 			msg.hwnd = hwnd.Handle;
