@@ -582,6 +582,78 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
+		public void GetNextControlTabIndex ()
+		{
+			Form form = new Form ();
+			ControlPoker [] ctrls = new ControlPoker [5];
+
+			for (int i = 0; i < 5; i++) {
+				ctrls [i] = new ControlPoker ();
+				ctrls [i].TabIndex = i;
+				ctrls [i].Text = "ctrl " + i;
+			}
+
+			form.Controls.AddRange (ctrls);
+			form.Show ();
+
+			Assert.AreEqual (form.GetNextControl (null, true), ctrls [0], "A1");
+			Assert.AreEqual (form.GetNextControl (null, false), ctrls [4], "A2");
+
+			Assert.AreEqual (form.GetNextControl (ctrls [0], true), ctrls [1], "A3");
+			Assert.AreEqual (form.GetNextControl (ctrls [0], false), null, "A4");
+
+			Assert.AreEqual (form.GetNextControl (ctrls [1], true), ctrls [2], "A5");
+			Assert.AreEqual (form.GetNextControl (ctrls [1], false), ctrls [0], "A6");
+
+			Assert.AreEqual (form.GetNextControl (ctrls [2], true), ctrls [3], "A7");
+			Assert.AreEqual (form.GetNextControl (ctrls [2], false), ctrls [1], "A8");
+
+			Assert.AreEqual (form.GetNextControl (ctrls [3], true), ctrls [4], "A9");
+			Assert.AreEqual (form.GetNextControl (ctrls [3], false), ctrls [2], "A10");
+
+			Assert.AreEqual (form.GetNextControl (ctrls [4], true), null, "A11");
+			Assert.AreEqual (form.GetNextControl (ctrls [4], false), ctrls [3], "A12");
+
+		}
+
+		[Test]
+		public void GetNextControlDuplicateTabIndex ()
+		{
+			Form form = new Form ();
+			ControlPoker [] ctrls = new ControlPoker [5];
+
+			for (int i = 0; i < 5; i++) {
+				ctrls [i] = new ControlPoker ();
+				ctrls [i].TabIndex = i;
+				ctrls [i].Text = "ctrl " + i;
+			}
+
+			ctrls [3].TabIndex = 2;
+
+			form.Controls.AddRange (ctrls);
+			form.Show ();
+
+			Assert.AreEqual (form.GetNextControl (null, true), ctrls [0], "A1");
+			Assert.AreEqual (form.GetNextControl (null, false), ctrls [4], "A2");
+
+			Assert.AreEqual (form.GetNextControl (ctrls [0], true), ctrls [1], "A3");
+			Assert.AreEqual (form.GetNextControl (ctrls [0], false), null, "A4");
+
+			Assert.AreEqual (form.GetNextControl (ctrls [1], true), ctrls [2], "A5");
+			Assert.AreEqual (form.GetNextControl (ctrls [1], false), ctrls [0], "A6");
+
+			Assert.AreEqual (form.GetNextControl (ctrls [2], true), ctrls [3], "A7");
+			Assert.AreEqual (form.GetNextControl (ctrls [2], false), ctrls [1], "A8");
+
+			Assert.AreEqual (form.GetNextControl (ctrls [3], true), ctrls [4], "A9");
+			Assert.AreEqual (form.GetNextControl (ctrls [3], false), ctrls [2], "A10");
+
+			Assert.AreEqual (form.GetNextControl (ctrls [4], true), null, "A11");
+			Assert.AreEqual (form.GetNextControl (ctrls [4], false), ctrls [3], "A12");
+
+		}
+
+		[Test]
 		public void GetNextControlComposite ()
 		{
 			Form form = new Form ();
