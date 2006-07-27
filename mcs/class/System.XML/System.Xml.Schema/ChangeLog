@@ -1,3 +1,10 @@
+2006-07-27  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaCollection.cs :
+	  eliminated call to XmlSchema.CompileSubset(). Now XmlSchemaSet is
+	  the only starter of the compilation.
+	* XmlSchemaSet.cs : added targetNamespace check.
+
 2006-07-26  Atsushi Enomoto <atsushi@ximian.com>
 
 	Refactoring compilation to make Compile() portable to

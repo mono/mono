@@ -127,9 +127,7 @@ namespace System.Xml.Schema
 
 		public XmlResolver XmlResolver {
 			set { xmlResolver = value; }
-#if NET_2_0
 			internal get { return xmlResolver; }
-#endif
 		}
 
 		internal Hashtable IDCollection {
@@ -150,7 +148,6 @@ namespace System.Xml.Schema
 
 		public XmlSchema Add (string targetNamespace, string url)
 		{
-			targetNamespace = GetSafeNs (targetNamespace);
 			XmlTextReader r = null;
 			try {
 				r = new XmlTextReader (url, nameTable);
@@ -161,13 +158,13 @@ namespace System.Xml.Schema
 			}
 		}
 
-		[MonoTODO ("It has weird namespace duplication check that is different from Add(XmlSchema).")]
 		public XmlSchema Add (string targetNamespace, XmlReader reader)
 		{
 			XmlSchema schema = XmlSchema.Read (reader, handler);
-			if (targetNamespace != null
-				&& targetNamespace.Length > 0)
+			if (schema.TargetNamespace == null)
 				schema.TargetNamespace = targetNamespace;
+			else if (targetNamespace != null && schema.TargetNamespace != targetNamespace)
+				throw new XmlSchemaException ("The actual targetNamespace in the schema does not match the parameter.");
 			Add (schema);
 			return schema;
 		}

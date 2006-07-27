@@ -106,16 +106,21 @@ namespace System.Xml.Schema
 #endif
 		{
 			XmlSchema schema = XmlSchema.Read (reader, ValidationEventHandler);
-			schema.CompileSubset (ValidationEventHandler, schemaSet, resolver);
-			lock (schemaSet) {
-				return schemaSet.Add (schema);
-			}
+			if (schema.TargetNamespace == null)
+				schema.TargetNamespace = ns;
+			else if (ns != null && schema.TargetNamespace != ns)
+				throw new XmlSchemaException ("The actual targetNamespace in the schema does not match the parameter.");
+
+			return Add (schema);
 		}
 
 		public XmlSchema Add (string ns, string uri)
 		{
-			lock (schemaSet) {
-				return schemaSet.Add (ns, uri);
+			XmlReader reader = new XmlTextReader (uri);
+			try {
+				return Add (ns, reader);
+			} finally {
+				reader.Close ();
 			}
 		}
 
@@ -129,18 +134,19 @@ namespace System.Xml.Schema
 			if (schema == null)
 				throw new ArgumentNullException ("schema");
 
-			// XmlSchemaCollection.Add() compiles, while XmlSchemaSet.Add() does not
-			if (!schema.IsCompiled)
-				schema.CompileSubset (ValidationEventHandler, schemaSet, resolver);
-			// compilation error -> returns null (and don't add to the collection).
-			if (!schema.IsCompiled)
-				return null;
+			XmlSchemaSet xss = new XmlSchemaSet (schemaSet.NameTable);
+			xss.Add (schemaSet);
 
-			lock (schemaSet) {
-				// consider imported schemas.
-				schemaSet.Add (schema.Schemas);
-				return schema;
-			}
+			// FIXME: maybe it requires Reprocess()
+			xss.Add (schema);
+			xss.ValidationEventHandler += ValidationEventHandler;
+			xss.XmlResolver = resolver;
+			xss.Compile ();
+			if (!xss.IsCompiled)
+				return null;
+			// It is set only when the compilation was successful.
+			schemaSet = xss;
+			return schema;
 		}
 
 		public void Add (XmlSchemaCollection schema)
@@ -148,9 +154,18 @@ namespace System.Xml.Schema
 			if (schema == null)
 				throw new ArgumentNullException ("schema");
 
-			lock (schemaSet) {
-				schemaSet.Add (schema.schemaSet);
-			}
+			XmlSchemaSet xss = new XmlSchemaSet (schemaSet.NameTable);
+			xss.Add (schemaSet);
+
+			// FIXME: maybe it requires Reprocess()
+			xss.Add (schema.schemaSet);
+			xss.ValidationEventHandler += ValidationEventHandler;
+			xss.XmlResolver = schemaSet.XmlResolver;
+			xss.Compile ();
+			if (!xss.IsCompiled)
+				return;
+			// It is set only when the compilation was successful.
+			schemaSet = xss;
 		}
 
 		public bool Contains (string ns)

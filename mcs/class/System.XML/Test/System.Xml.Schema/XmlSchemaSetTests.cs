@@ -56,6 +56,18 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		[ExpectedException (typeof (XmlSchemaException))]
+		public void AddWrongTargetNamespace ()
+		{
+			string xsd = @"<xs:schema targetNamespace='urn:foo' xmlns:xs='http://www.w3.org/2001/XMLSchema'><xs:element name='el' type='xs:int' /></xs:schema>";
+			string xml = "<el xmlns='urn:foo'>a</el>";
+			XmlSchemaSet xss = new XmlSchemaSet ();
+			// unlike null, "" is regarded as an explicit
+			// empty namespace indication.
+			xss.Add ("", new XmlTextReader (new StringReader (xsd)));
+		}
+
+		[Test]
 		public void AddSchemaThenReader ()
 		{
 			XmlSchemaSet ss = new XmlSchemaSet ();
