@@ -123,7 +123,7 @@ USAGE: mono xsdtest.exe options target-pattern
 			if (schemaFile.Length > 2)
 				schemaFile = schemaFile.Substring (2);
 			if (verbose)
-				Report (schemaFile, false, "compiling", "");
+				Report (schemaFile, true, "compiling", "");
 			bool isValidSchema = test.SelectSingleNode ("@out_s").InnerText == "1";
 			XmlSchema schema = null;
 			XmlTextReader sxr = null;
@@ -140,12 +140,13 @@ USAGE: mono xsdtest.exe options target-pattern
 				if (reportSuccess)
 					Report (schemaFile, true, "OK", "");
 			} catch (XmlSchemaException ex) {
-				if (isValidSchema) {
+				if (isValidSchema)
 					Report (schemaFile, true, "should succeed", 
 						reportDetails ?
 						ex.ToString () : ex.Message);
-					continue;
-				}
+				else if (reportSuccess)
+					Report (schemaFile, true, "OK", "");
+				continue;
 			} catch (Exception ex) {
 				if (stopOnError)
 					throw;
@@ -202,13 +203,15 @@ USAGE: mono xsdtest.exe options target-pattern
 					xvr.Read ();
 				if (!isValidInstance && !noValidate)
 					Report (instanceFile, false, "should fail", "");
-				if (reportSuccess)
+				else if (reportSuccess)
 					Report (instanceFile, false, "OK", "");
 			} catch (XmlSchemaException ex) {
 				if (isValidInstance)
 					Report (instanceFile, false, "should succeed",
 						reportDetails ?
 						ex.ToString () : ex.Message);
+				else if (reportSuccess)
+					Report (instanceFile, false, "OK", "");
 			} catch (Exception ex) {
 				if (stopOnError)
 					throw;
