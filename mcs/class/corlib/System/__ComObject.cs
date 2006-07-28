@@ -8,6 +8,7 @@
 //
 // Copyright (C) 2004 Novell (http://www.novell.com)
 // Copyright (C) 2005 Kornél Pál
+// Copyright (C) 2006 Jonathan Chambers
 //
 
 //
@@ -31,6 +32,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using Mono.Interop;
 using System.Collections;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
@@ -62,14 +64,19 @@ namespace System
 		static bool coinitialized;
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern void Finalizer ();
+		internal extern void Finalizer ();
 
 		~__ComObject ()
 		{
+			ComInteropProxy.ReleaseComObject (this);
 			Finalizer ();
 		}
 
 		public __ComObject ()
+		{
+		}
+
+		internal __ComObject (Type t)
 		{
 			// call CoInitialize once per thread
 			if (!coinitialized) {
@@ -80,21 +87,19 @@ namespace System
 			hashtable = new Hashtable ();
 
 			IntPtr ppv;
-			int hr = CoCreateInstance (GetType ().GUID, IntPtr.Zero, 0x1 | 0x4 | 0x10, IID_IUnknown, out ppv);
+			int hr = CoCreateInstance (t.GUID, IntPtr.Zero, 0x1 | 0x4 | 0x10, IID_IUnknown, out ppv);
 			Marshal.ThrowExceptionForHR (hr);
 
 			SetIUnknown (ppv);
 		}
 
-        public __ComObject (IntPtr pItf)
-        {
-            hashtable = new Hashtable ();
-
-            IntPtr ppv;
-            Guid iid = IID_IUnknown;
+		internal __ComObject (IntPtr pItf)
+		{
+			hashtable = new Hashtable ();
+			IntPtr ppv;
+			Guid iid = IID_IUnknown;
 			int hr = Marshal.QueryInterface (pItf, ref iid, out ppv);
 			Marshal.ThrowExceptionForHR (hr);
-
 			SetIUnknown (ppv);
         }
 
@@ -123,6 +128,9 @@ namespace System
 
 		internal IntPtr GetInterface(Type t)
 		{
+			// this is needed later and checks to see if we are
+			// a valid RCW
+			IntPtr pUnk = IUnknown;
 			IntPtr pItf = FindInterface (t);
 			if (pItf != IntPtr.Zero) {
 				return pItf;
@@ -130,7 +138,7 @@ namespace System
 
 			Guid iid = t.GUID;
 			IntPtr ppv;
-			int hr = Marshal.QueryInterface (GetIUnknown(), ref iid, out ppv);
+			int hr = Marshal.QueryInterface (pUnk, ref iid, out ppv);
 			Marshal.ThrowExceptionForHR (hr);
 			CacheInterface (t, ppv);
 			return ppv;
@@ -140,7 +148,10 @@ namespace System
 		{
 			get
 			{
-				return GetIUnknown();
+				IntPtr pUnk = GetIUnknown();
+				if (pUnk == IntPtr.Zero)
+					throw new InvalidComObjectException ("COM object that has been separated from its underlying RCW cannot be used.");
+				return pUnk;
 			}
 		}
 
@@ -158,6 +169,25 @@ namespace System
 			{
 				return new Guid ("00020400-0000-0000-C000-000000000046");
 			}
+		}
+
+		public override bool Equals (object obj)
+		{
+			if (obj == null)
+				return false;
+
+			__ComObject co = obj as __ComObject;
+			if ((object)co == null)
+				return false;
+
+			return (IUnknown == co.IUnknown);
+		}
+
+		public override int GetHashCode ()
+		{
+			// not what MS seems to do, 
+			// but IUnknown is identity in COM
+			return IUnknown.ToInt32 ();
 		}
 
 		[DllImport ("ole32.dll", CallingConvention = CallingConvention.StdCall)]

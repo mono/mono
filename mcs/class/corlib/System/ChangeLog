@@ -1,3 +1,7 @@
+2006-07-28  Jonathan Chambers  <joncham@gmail.com>
+
+	* __ComObject.cs: Added support for marshalling objects.
+	
 2006-07-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Char.cs : implemented utf32 conversion methods thus fixed bug #78856.

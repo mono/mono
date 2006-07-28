@@ -153,9 +153,20 @@ namespace System.Runtime.InteropServices
 			copy_from_unmanaged (source, startIndex, destination, length);
 		}
 
-		[MonoTODO]
 		public static object CreateWrapperOfType (object o, Type t) {
-			throw new NotImplementedException ();
+			__ComObject co = o as __ComObject;
+			if (co == null)
+				throw new ArgumentException ("o must derive from __ComObject", "o");
+			if (t == null)
+				throw new ArgumentNullException ("t");
+
+			Type[] itfs = o.GetType ().GetInterfaces ();
+			foreach (Type itf in itfs) {
+				if (itf.IsImport && co.GetInterface (itf) == IntPtr.Zero)
+					throw new InvalidCastException ();
+			}
+
+			return ComInteropProxy.GetProxy (co.IUnknown, t).GetTransparentProxy ();
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -354,7 +365,7 @@ namespace System.Runtime.InteropServices
 		}
 
 		public static object GetObjectForIUnknown (IntPtr pUnk) {
-            ComInteropProxy proxy = new ComInteropProxy (pUnk);
+			ComInteropProxy proxy = ComInteropProxy.GetProxy (pUnk, typeof(__ComObject));
             return proxy.GetTransparentProxy ();
 		}
 
@@ -380,7 +391,7 @@ namespace System.Runtime.InteropServices
 
         public static object GetTypedObjectForIUnknown (IntPtr pUnk, Type t)
         {
-            ComInteropProxy proxy = new ComInteropProxy (pUnk);
+			ComInteropProxy proxy = new ComInteropProxy (pUnk, t);
             __ComObject co = (__ComObject)proxy.GetTransparentProxy ();
             foreach (Type itf in t.GetInterfaces ()) {
                 if ((itf.Attributes & TypeAttributes.Import) == TypeAttributes.Import) {
@@ -601,9 +612,13 @@ namespace System.Runtime.InteropServices
         [MethodImplAttribute (MethodImplOptions.InternalCall)]
         public extern static int Release (IntPtr pUnk);
 
-		[MonoTODO]
 		public static int ReleaseComObject (object o) {
-			throw new NotImplementedException ();
+			if (o == null)
+				throw new ArgumentException ("o");
+			__ComObject co = o as __ComObject;
+			if (co == null)
+				throw new ArgumentException ("o");
+			return ComInteropProxy.ReleaseComObject (co);
 		}
 
 #if NET_2_0

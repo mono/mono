@@ -1,3 +1,7 @@
+2006-07-28  Jonathan Chambers  <joncham@gmail.com>
+
+	* ComInteropProxy.cs: Added support for marshalling objects.
+	
 2006-07-15  Jonathan Chambers  <joncham@gmail.com>
 
 	* ComInteropProxy.cs: Added.

@@ -1,3 +1,7 @@
+2006-07-28  Jonathan Chambers  <joncham@gmail.com>
+
+	* Marshal.cs: Implemented CreateWrapperOfType and ReleaseComObject.
+	
 2006-07-15  Jonathan Chambers  <joncham@gmail.com>
 
 	* Marshal.cs: Begin implementing COM Interop. Implemented

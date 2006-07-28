@@ -4,7 +4,7 @@
 // Authors:
 //   Jonathan Chambers <joncham@gmail.com>
 //
-// Copyright (C) 2006 Novell (http://www.novell.com)
+// Copyright (C) 2006 Jonathan Chambers
 //
 
 //
@@ -29,32 +29,105 @@
 //
 
 using System;
+using System.Collections;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Messaging;
 using System.Runtime.Remoting.Proxies;
+using System.Runtime.InteropServices;
 
 
 namespace Mono.Interop
 {
+	internal struct ComInteropProxyEntry
+	{
+		public int refcount;
+		public WeakReference weakref;
+
+		public ComInteropProxyEntry (int refcount, WeakReference weak)
+		{
+			this.refcount = refcount;
+			this.weakref = weak;
+		}
+	}
+
 	internal class ComInteropProxy : RealProxy, IRemotingTypeInfo
     {
         #region Sync with object-internals.h
 		private __ComObject com_object;
         #endregion
-        private string type_name;
+		private string type_name;
+		static Hashtable iunknown_hashtable;
+
+		static ComInteropProxy ()
+		{
+			iunknown_hashtable = new Hashtable ();
+		}
+
 		public ComInteropProxy (Type t)
 			: base (t)
 		{
-			com_object = __ComObject.CreateRCW (t);
+			com_object = new __ComObject (t);
+			iunknown_hashtable.Add (com_object.IUnknown, new ComInteropProxyEntry (1, new WeakReference(this)));
 		}
 
         internal ComInteropProxy (IntPtr pUnk)
-            : base (typeof (__ComObject))
+            : this (pUnk, typeof (__ComObject))
         {
-            com_object = new __ComObject(pUnk);
-        }
+		}
+
+		internal ComInteropProxy (IntPtr pUnk, Type t)
+			: base (t)
+		{
+			com_object = new __ComObject (pUnk);
+			iunknown_hashtable.Add (com_object.IUnknown, new ComInteropProxyEntry (1, new WeakReference (this)));
+		}
+
+		internal static int ReleaseComObject (__ComObject co)
+		{
+			if (co == null)
+				throw new ArgumentNullException ("co");
+			int refcount = -1;
+			IntPtr pUnk = co.IUnknown;
+			object obj = iunknown_hashtable[pUnk];
+			if (obj != null) {
+				ComInteropProxyEntry entry = (ComInteropProxyEntry)obj;
+				refcount = entry.refcount - 1;
+				if (refcount == 0) {
+					iunknown_hashtable.Remove (pUnk);
+					ComInteropProxy proxy = (ComInteropProxy)entry.weakref.Target;
+					if (proxy != null && proxy.com_object != null)
+						proxy.com_object.Finalizer ();
+				}
+				else {
+					iunknown_hashtable[pUnk] = new ComInteropProxyEntry (refcount, entry.weakref);
+				}
+			}
+			return refcount;
+		}
+
+		internal static ComInteropProxy GetProxy (IntPtr pItf, Type t)
+		{
+			IntPtr ppv;
+			Guid iid = __ComObject.IID_IUnknown;
+			int hr = Marshal.QueryInterface (pItf, ref iid, out ppv);
+			Marshal.ThrowExceptionForHR (hr);
+			object obj = iunknown_hashtable[ppv];
+			if (obj == null) {
+				return new ComInteropProxy (ppv);
+			}
+			else {
+				ComInteropProxyEntry entry = ((ComInteropProxyEntry)obj);
+				WeakReference weak_ref = entry.weakref;
+				object target = weak_ref.Target;
+				if (target == null) {
+					return new ComInteropProxy (ppv);
+				}
+				iunknown_hashtable[ppv] = new ComInteropProxyEntry (entry.refcount + 1, weak_ref);
+				return ((ComInteropProxy)target);
+			}
+		}
 
 		public override IMessage Invoke (IMessage msg)
 		{
