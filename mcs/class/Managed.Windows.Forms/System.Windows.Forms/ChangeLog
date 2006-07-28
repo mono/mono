@@ -1,6 +1,7 @@
 2006-07-28  Jackson Harper  <jackson@ximian.com>
 
 	* TreeNodeCollection.cs: Fix the clear method.
+	- Fix the Shrink also
 
 2006-07-27  Jackson Harper  <jackson@ximian.com>
 

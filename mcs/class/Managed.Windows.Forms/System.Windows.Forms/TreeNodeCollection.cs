@@ -248,7 +248,6 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			
 			Array.Copy (nodes, index + 1, nodes, index, count - index);
 			count--;
 			if (nodes.Length > OrigSize && nodes.Length > (count * 2))
@@ -387,7 +386,7 @@ namespace System.Windows.Forms {
 
 		private void Shrink ()
 		{
-			int len = (count > OrigSize ? count : OrigSize);
+			int len = (count + 1 > OrigSize ? count + 1 : OrigSize);
 			TreeNode [] nn = new TreeNode [len];
 			Array.Copy (nodes, nn, count);
 			nodes = nn;
