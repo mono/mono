@@ -50,6 +50,7 @@ namespace System.Web.UI.WebControls
 	[Designer ("System.Web.UI.Design.WebControls.TreeViewDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public class TreeView: HierarchicalDataBoundControl, IPostBackEventHandler, IPostBackDataHandler, ICallbackEventHandler
 	{
+		bool cssStylesRegistered;
 		Style hoverNodeStyle;
 		TreeNodeStyle leafNodeStyle;
 		TreeNodeStyle nodeStyle;
@@ -930,15 +931,27 @@ namespace System.Web.UI.WebControls
 		protected internal override void OnPreRender (EventArgs e)
 		{
 			base.OnPreRender (e);
+
+			cssStylesRegistered = false;
+			if (Page != null) {
+				if (Enabled)
+					Page.RegisterRequiresPostBack (this);
 			
-			if (Page != null && Enabled)
-				Page.RegisterRequiresPostBack (this);
-			
-			if (EnableClientScript && !Page.ClientScript.IsClientScriptIncludeRegistered (typeof(TreeView), "TreeView.js")) {
-				string url = Page.ClientScript.GetWebResourceUrl (typeof(TreeView), "TreeView.js");
-				Page.ClientScript.RegisterClientScriptInclude (typeof(TreeView), "TreeView.js", url);
+				if (EnableClientScript && !Page.ClientScript.IsClientScriptIncludeRegistered (typeof(TreeView), "TreeView.js")) {
+					string url = Page.ClientScript.GetWebResourceUrl (typeof(TreeView), "TreeView.js");
+					Page.ClientScript.RegisterClientScriptInclude (typeof(TreeView), "TreeView.js", url);
+				}
+
+				if (Page.Header != null) {
+					cssStylesRegistered = true;
+					ControlStyle.Font.Underline = false;
+					Page.Header.StyleSheet.RegisterStyle(ControlStyle, this);
+					if (levelStyles != null)
+						for (int i = 0; i < levelStyles.Count; i++)
+							Page.Header.StyleSheet.RegisterStyle(levelStyles[i], this);
+				}				
 			}
-				
+			
 			string ctree = ClientID + "_data";
 			string script = string.Format ("var {0} = new Object ();\n", ctree);
 			script += string.Format ("{0}.showImage = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (ShowExpandCollapse));
@@ -954,17 +967,20 @@ namespace System.Web.UI.WebControls
 				if (PopulateNodesFromClient)
 					script += string.Format ("{0}.noExpandImage = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (GetNodeImageUrl ("noexpand", imageStyle)));
 			}
-			script += string.Format ("{0}.populateFromClient = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (PopulateNodesFromClient));
-			script += string.Format ("{0}.expandAlt = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (GetNodeImageToolTip (true, null)));
-			script += string.Format ("{0}.collapseAlt = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (GetNodeImageToolTip (false, null)));
-			Page.ClientScript.RegisterStartupScript (typeof(TreeView), this.UniqueID, script, true);
 
-			if (EnableClientScript) {
-				Page.ClientScript.RegisterHiddenField (ClientID + "_ExpandStates", GetExpandStates ());
+			if (Page != null) {
+				script += string.Format ("{0}.populateFromClient = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (PopulateNodesFromClient));
+				script += string.Format ("{0}.expandAlt = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (GetNodeImageToolTip (true, null)));
+				script += string.Format ("{0}.collapseAlt = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (GetNodeImageToolTip (false, null)));
+				Page.ClientScript.RegisterStartupScript (typeof(TreeView), this.UniqueID, script, true);
+
+				if (EnableClientScript) {
+					Page.ClientScript.RegisterHiddenField (ClientID + "_ExpandStates", GetExpandStates ());
 				
-				// Make sure the basic script infrastructure is rendered
-		        Page.ClientScript.GetCallbackEventReference (this, "null", "", "null");
-				Page.ClientScript.GetPostBackClientHyperlink (this, "");
+					// Make sure the basic script infrastructure is rendered
+					Page.ClientScript.GetCallbackEventReference (this, "null", "", "null");
+					Page.ClientScript.GetPostBackClientHyperlink (this, "");
+				}
 			}
 		}
 		
@@ -999,6 +1015,26 @@ namespace System.Web.UI.WebControls
 			return (TreeNodeBinding) bindings [GetBindingKey ("", -1)];
 		}
 		
+		internal void DecorateNode(TreeNode node)
+		{
+			if (node == null)
+				return;
+			
+			if (node.ImageUrl != null && node.ImageUrl.Length > 0)
+				return;
+
+			if (node.IsRootNode && rootNodeStyle != null) {
+				node.ImageUrl = rootNodeStyle.ImageUrl;
+				return;
+			}
+			if (node.IsParentNode && parentNodeStyle != null) {
+				node.ImageUrl = parentNodeStyle.ImageUrl;
+				return;
+			}
+			if (node.IsLeafNode && leafNodeStyle != null)
+				node.ImageUrl = leafNodeStyle.ImageUrl;
+		}
+		
 		protected internal override void RenderContents (HtmlTextWriter writer)
 		{
 			ArrayList levelLines = new ArrayList ();
@@ -1024,6 +1060,8 @@ namespace System.Web.UI.WebControls
 		
  		void RenderNode (HtmlTextWriter writer, TreeNode node, int level, ArrayList levelLines, bool hasPrevious, bool hasNext)
 		{
+			DecorateNode(node);
+			
 			string nodeImage;
 			bool clientExpand = EnableClientScript && Events [TreeNodeCollapsedEvent] == null && Events [TreeNodeExpandedEvent] == null;
 			ImageStyle imageStyle = GetImageStyle ();
@@ -1227,10 +1265,13 @@ namespace System.Web.UI.WebControls
 		{
 			if (nodeStyle != null)
 				nodeStyle.AddAttributesToRender (writer);
-				
-			if (levelStyles != null && level < levelStyles.Count)
-				levelStyles [level].AddAttributesToRender (writer);
-			else {
+
+			if (levelStyles != null && level < levelStyles.Count) {
+				if (cssStylesRegistered)
+					writer.AddAttribute("class", String.Format("{0} {1}", ControlStyle.RegisteredCssClass, levelStyles[level].RegisteredCssClass));
+				else
+					levelStyles [level].AddAttributesToRender (writer);
+			} else {
 				if (rootNodeStyle != null && node.IsRootNode)
 					rootNodeStyle.AddAttributesToRender (writer);
 	
@@ -1251,7 +1292,12 @@ namespace System.Web.UI.WebControls
 				writer.AddAttribute ("href", node.NavigateUrl);
 				if (node.Target != null)
 					writer.AddAttribute ("target", node.Target);
-				writer.AddStyleAttribute ("text-decoration", "none");
+				if (cssStylesRegistered)
+					writer.AddStyleAttribute ("white-space", "nowrap");
+				else {
+					writer.AddStyleAttribute ("text-decoration", "none");
+					writer.AddStyleAttribute ("white-space", "nowrap");
+				}
 				writer.RenderBeginTag (HtmlTextWriterTag.A);
 			}
 			else if (node.SelectAction != TreeNodeSelectAction.None) {
@@ -1259,7 +1305,12 @@ namespace System.Web.UI.WebControls
 					writer.AddAttribute ("href", GetClientExpandEvent (node));
 				else
 					writer.AddAttribute ("href", GetClientEvent (node, "sel"));
-				writer.AddStyleAttribute ("text-decoration", "none");
+				if (cssStylesRegistered)
+					writer.AddStyleAttribute ("white-space", "nowrap");
+				else {
+					writer.AddStyleAttribute ("text-decoration", "none");
+					writer.AddStyleAttribute ("white-space", "nowrap");
+				}
 				writer.RenderBeginTag (HtmlTextWriterTag.A);
 			}
 			else

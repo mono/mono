@@ -1,5 +1,10 @@
 2006-07-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* TreeView.cs: several changes to improve compatibility with MS.
+	Patch by Marek Habersack that fixes bug #77551.
+
+2006-07-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Style.cs: output the text-decoration value even when it is 'none'.
 	Patch by Marek Habersack that fixes bug #78968.
 
