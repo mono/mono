@@ -149,7 +149,7 @@ namespace System.Web.Compilation
 			// _ctrl = ($controlType)(ctrl);
 			//
 			CodeCastExpression castExpr = new CodeCastExpression (builder.ControlType, new CodeVariableReferenceExpression ("ctrl"));
-
+			
 			method.Statements.Add (new CodeVariableDeclarationStatement (builder.ControlType, "__ctrl"));
 			CodeAssignStatement assign = new CodeAssignStatement ();
 			assign.Left = ctrlVar;
@@ -164,12 +164,21 @@ namespace System.Web.Compilation
 						continue;
 
 					ControlBuilder b = (ControlBuilder) o;
-
 					if (b is CollectionBuilder) {
-						/* emit a prop.Clear call before populating the collection */
-						CodePropertyReferenceExpression items = new CodePropertyReferenceExpression (ctrlVar,
-															     "Items");
-						method.Statements.Add (new CodeMethodInvokeExpression (items, "Clear"));
+						PropertyInfo itemsProp = null;
+						
+						try {
+							itemsProp = b.GetType().GetProperty ("Items");
+						} catch (Exception) {}
+						
+						if (itemsProp != null) {
+							/* emit a prop.Clear call before populating the collection */;
+							CodePropertyReferenceExpression prop = new CodePropertyReferenceExpression (ctrlVar,
+																																													b.TagName);
+							CodePropertyReferenceExpression items = new CodePropertyReferenceExpression (prop,
+																																													 "Items");
+							method.Statements.Add (new CodeMethodInvokeExpression (items, "Clear"));
+						}
 					}
 
 					CreateControlTree (b, false, builder.ChildrenAsProperties);

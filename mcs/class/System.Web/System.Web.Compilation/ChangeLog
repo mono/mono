@@ -1,5 +1,11 @@
 2006-07-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* PageThemeCompiler.cs: Don't generate a 'Items.Clear ()' call if
+	the property Items does not exist. Patch by Marek Habersack that fixes
+	bug #78971.
+
+2006-07-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* TemplateControlCompiler.cs: support assigning nullable types.
 	Patch by Marek Habersack that fixes bug #78970.
 
