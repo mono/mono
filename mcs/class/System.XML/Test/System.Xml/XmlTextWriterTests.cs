@@ -2224,6 +2224,22 @@ namespace MonoTests.System.Xml
 			Assert.IsTrue (sw.ToString ().IndexOf (ns, start) > 0);
 		}
 
+		[Test]
+		public void WriteCommentPIAndIndent ()
+		{
+			StringWriter sw = new StringWriter ();
+			XmlTextWriter w = new XmlTextWriter (sw);
+			w.Formatting = Formatting.Indented;
+			w.WriteStartElement ("foo");
+			w.WriteComment ("test");
+			w.WriteProcessingInstruction ("PI", "");
+			w.WriteStartElement ("child");
+			w.WriteEndElement ();
+			w.WriteComment ("test");
+			w.WriteString ("STRING");
+			w.WriteEndElement ();
+			Assert.AreEqual (String.Format (@"<foo>{0}  <!--test-->{0}  <?PI ?>{0}  <child />{0}  <!--test-->STRING</foo>", Environment.NewLine), sw.ToString ());
+		}
 #if NET_2_0
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]

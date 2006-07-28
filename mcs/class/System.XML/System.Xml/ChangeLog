@@ -1,3 +1,12 @@
+2006-07-28  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextWriter2.cs : fixed some indentation bugs: comments and PIs
+	  should not cause indentation override like text, cdata and
+	  whitespaces do.
+	  Fixed some error messages on node kind.
+	* XmlTextWriter.cs, XmlTextWriterOpenElement.cs : removed old code.
+	  (I don't want to remove old great code but it confused mike today.)
+
 2006-07-26  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlReader.cs :

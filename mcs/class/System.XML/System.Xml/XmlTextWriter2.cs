@@ -973,14 +973,17 @@ namespace Mono.Xml
 			if (text == null)
 				throw ArgumentError ("text");
 
-			WriteIndent ();
-
 			if (text.Length > 0 && text [text.Length - 1] == '-')
 				throw ArgumentError ("An input string to WriteComment method must not end with '-'. Escape it with '&#2D;'.");
 			if (StringUtil.IndexOf (text, "--") > 0)
 				throw ArgumentError ("An XML comment cannot end with \"-\".");
 
-			ShiftStateTopLevel ("Comment", false, false);
+			if (state == WriteState.Attribute || state == WriteState.Element)
+				CloseStartElement ();
+
+			WriteIndent ();
+
+			ShiftStateTopLevel ("Comment", false, false, false);
 
 			writer.Write ("<!--");
 			writer.Write (text);
@@ -1003,7 +1006,7 @@ namespace Mono.Xml
 			if (StringUtil.IndexOf (text, "?>") > 0)
 				throw ArgumentError ("Processing instruction cannot contain \"?>\" as its value.");
 
-			ShiftStateTopLevel ("ProcessingInstruction", false, name == "xml");
+			ShiftStateTopLevel ("ProcessingInstruction", false, name == "xml", false);
 
 			writer.Write ("<?");
 			writer.Write (name);
@@ -1027,7 +1030,7 @@ namespace Mono.Xml
 			    XmlChar.IndexOfNonWhitespace (text) >= 0)
 				throw ArgumentError ("WriteWhitespace method accepts only whitespaces.");
 
-			ShiftStateTopLevel ("Whitespace", true, false);
+			ShiftStateTopLevel ("Whitespace", true, false, true);
 
 			writer.Write (text);
 		}
@@ -1036,7 +1039,7 @@ namespace Mono.Xml
 		{
 			if (text == null)
 				text = String.Empty;
-			ShiftStateContent ("Text", false);
+			ShiftStateContent ("CData", false);
 
 			if (StringUtil.IndexOf (text, "]]>") >= 0)
 				throw ArgumentError ("CDATA section must not contain ']]>'.");
@@ -1063,7 +1066,7 @@ namespace Mono.Xml
 
 			// LAMESPEC: It rejects XMLDecl while it allows
 			// DocType which could consist of non well-formed XML.
-			ShiftStateTopLevel ("Raw string", true, true);
+			ShiftStateTopLevel ("Raw string", true, true, true);
 
 			writer.Write (raw);
 		}
@@ -1102,7 +1105,7 @@ namespace Mono.Xml
 			if (!XmlChar.IsName (name))
 				throw ArgumentError ("Argument name must be a valid XML name.");
 
-			ShiftStateContent ("Character", true);
+			ShiftStateContent ("Entity reference", true);
 
 			writer.Write ('&');
 			writer.Write (name);
@@ -1184,7 +1187,7 @@ namespace Mono.Xml
 		{
 			CheckChunkRange (buffer, index, count);
 
-			ShiftStateContent ("Text", false);
+			ShiftStateContent ("BinHex", false);
 
 			XmlConvert.WriteBinHex (buffer, index, count, writer);
 		}
@@ -1193,7 +1196,7 @@ namespace Mono.Xml
 		{
 			CheckChunkRange (buffer, index, count);
 
-			ShiftStateContent ("Text", true);
+			ShiftStateContent ("Chars", true);
 
 			WriteEscapedBuffer (buffer, index, count,
 				state == WriteState.Attribute);
@@ -1203,7 +1206,7 @@ namespace Mono.Xml
 		{
 			CheckChunkRange (buffer, index, count);
 
-			ShiftStateContent ("Text", false);
+			ShiftStateContent ("Raw text", false);
 
 			writer.Write (buffer, index, count);
 		}
@@ -1237,7 +1240,7 @@ namespace Mono.Xml
 			WriteStartDocumentCore (false, false);
 		}
 
-		void ShiftStateTopLevel (string occured, bool allowAttribute, bool dontCheckXmlDecl)
+		void ShiftStateTopLevel (string occured, bool allowAttribute, bool dontCheckXmlDecl, bool isCharacter)
 		{
 			switch (state) {
 #if NET_2_0
@@ -1246,6 +1249,8 @@ namespace Mono.Xml
 			case WriteState.Closed:
 				throw StateError (occured);
 			case WriteState.Start:
+				if (isCharacter)
+					CheckMixedContentState ();
 				if (output_xmldecl && !dontCheckXmlDecl)
 					OutputAutoStartDocument ();
 				state = WriteState.Prolog;
@@ -1255,10 +1260,20 @@ namespace Mono.Xml
 					break;
 				goto case WriteState.Closed;
 			case WriteState.Element:
+				if (isCharacter)
+					CheckMixedContentState ();
 				CloseStartElement ();
+				break;
+			case WriteState.Content:
+				if (isCharacter)
+					CheckMixedContentState ();
 				break;
 			}
 
+		}
+
+		void CheckMixedContentState ()
+		{
 			if (open_count > 0 &&
 			    state != WriteState.Attribute)
 				elements [open_count - 1].HasSimple = true;
@@ -1278,6 +1293,7 @@ namespace Mono.Xml
 					goto case WriteState.Closed;
 				if (output_xmldecl)
 					OutputAutoStartDocument ();
+				CheckMixedContentState ();
 				state = WriteState.Content;
 				break;
 			case WriteState.Attribute:
@@ -1286,14 +1302,12 @@ namespace Mono.Xml
 				goto case WriteState.Closed;
 			case WriteState.Element:
 				CloseStartElement ();
+				CheckMixedContentState ();
 				break;
 			case WriteState.Content:
+				CheckMixedContentState ();
 				break;
 			}
-
-			if (open_count > 0 &&
-			    state != WriteState.Attribute)
-				elements [open_count - 1].HasSimple = true;
 		}
 
 		void WriteEscapedString (string text, bool isAttribute)
