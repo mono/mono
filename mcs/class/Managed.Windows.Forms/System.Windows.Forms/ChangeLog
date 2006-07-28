@@ -1,3 +1,7 @@
+2006-07-28  Jackson Harper  <jackson@ximian.com>
+
+	* TreeNodeCollection.cs: Fix the clear method.
+
 2006-07-27  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Make sure the visible order is computed when we

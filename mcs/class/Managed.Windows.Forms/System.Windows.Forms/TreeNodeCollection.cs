@@ -142,8 +142,8 @@ namespace System.Windows.Forms {
 
 		public virtual void Clear ()
 		{
-			for (int i = 0; i < count; i++)
-				RemoveAt (i, false);
+			while (count > 0)
+				RemoveAt (0, false);
 			
 			Array.Clear (nodes, 0, count);
 			count = 0;
@@ -261,7 +261,7 @@ namespace System.Windows.Forms {
 			TreeNode parent = removed.parent;
 			removed.parent = null;
 
-			if (tree_view != null && visible) {
+			if (update && tree_view != null && visible) {
 				tree_view.RecalculateVisibleOrder (prev);
 				tree_view.UpdateScrollBars ();
 				tree_view.UpdateBelow (parent);
