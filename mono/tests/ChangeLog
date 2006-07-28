@@ -1,3 +1,10 @@
+2006-07-28  Jonathan Chambers  <joncham@gmail.com>
+
+	* cominterop.cs: Added COM Interop object marshalling tests; 
+	enabled on windows only.
+	* libtest.c: Added COM Interop object marshalling tests; 
+	enabled on windows only.
+	
 2006-07-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* libtest.c: Add a newline at the EOF.
