@@ -486,8 +486,8 @@ namespace System.Web.UI.WebControls {
 				if (fontinfo.Underline)
 					s += "underline ";
 
-				if (s != string.Empty)
-					writer.AddStyleAttribute (HtmlTextWriterStyle.TextDecoration, s);
+				s = (s != "") ? s : "none";
+				writer.AddStyleAttribute (HtmlTextWriterStyle.TextDecoration, s);
 			}
 		}
 
@@ -592,10 +592,8 @@ namespace System.Web.UI.WebControls {
 					s += "underline ";
 				}
 
-				if (s != string.Empty) 
-				{
-					attributes.Add (HtmlTextWriterStyle.TextDecoration, s);
-				}
+				s = (s != "") ? s : "none";
+				attributes.Add (HtmlTextWriterStyle.TextDecoration, s);
 			}
 		}
 
