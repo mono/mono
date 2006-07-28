@@ -1,3 +1,17 @@
+2006-07-28  Raja R Harinath  <rharinath@novell.com>
+
+	* class.cs (TypeContainer.AddMemberType): Rename from
+	AddToTypeContainer.
+	(TypeContainer.AddMember): Rename from AddToMemberContainer.
+	(AddTypeContainer): New.  Combine AddClassOrStruct and
+	AddInterface.
+	(AddPartial): Update.  Add 'is_partial' argument.
+	* roottypes.cs: Update to changes.
+	* cs-parser.jay (push_current_class): New helper for handling
+	current_container and current_class.
+	(struct_declaration, interface_declaration, class_declaration):
+	Use it.
+
 2006-07-26  Raja R Harinath  <rharinath@novell.com>
 
 	* roottypes.cs: Rename from tree.cs.

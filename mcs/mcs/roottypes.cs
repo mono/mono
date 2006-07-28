@@ -44,7 +44,7 @@ namespace Mono.CSharp
 			return "";
 		}
 
-		protected override bool AddToTypeContainer (DeclSpace ds)
+		protected override bool AddMemberType (DeclSpace ds)
 		{
 			if (!AddToContainer (ds, ds.Name))
 				return false;
@@ -52,9 +52,9 @@ namespace Mono.CSharp
 			return true;
 		}
 
-		public override TypeContainer AddPartial (TypeContainer nextPart)
+		public override TypeContainer AddPartial (TypeContainer nextPart, bool is_interface)
 		{
-			return AddPartial (nextPart, nextPart.Name);
+			return AddPartial (nextPart, nextPart.Name, is_interface);
 		}
 	}
 }
