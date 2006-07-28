@@ -148,6 +148,9 @@ namespace System.Drawing.Printing
 						new Rectangle(0, 0, pageSettings.PaperSize.Width, pageSettings.PaperSize.Height),
 						pageSettings);
 							
+				// TODO: We should create a graphics context for each page since they can have diferent paper
+				// size, orientation, etc. We use a single graphic for now to keep Cairo using a single PDF file.
+				
 				printPageArgs.GraphicsContext = printArgs.GraphicsContext;
 				Graphics pg = PrintController.OnStartPage(this, printPageArgs);
 
