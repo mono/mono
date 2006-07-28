@@ -101,7 +101,7 @@ namespace System.Drawing.Printing
 				return printersettings;
 			}
 			set{
-				printersettings = value;
+				printersettings = value == null ? new PrinterSettings () : value;
 			}
 		}
 

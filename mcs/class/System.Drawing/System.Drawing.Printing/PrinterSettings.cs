@@ -76,6 +76,7 @@ namespace System.Drawing.Printing
 			printer_resolutions = null;
 			paper_sizes = null;
 			maximum_page = 9999; 	
+			copies = 1;
 		}
 
 		// Public subclasses
@@ -530,7 +531,7 @@ namespace System.Drawing.Printing
 		
 		public override string ToString()
 		{
-			return "Printer [PrinterSettings" + printer_name + " Copies=" + copies +  " Collate=" + collate 
+			return "Printer [PrinterSettings " + printer_name + " Copies=" + copies +  " Collate=" + collate 
 			+ " Duplex=" + can_duplex + " FromPage=" + from_page + " LandscapeAngle=" + landscape_angle 
 			+ " MaximumCopies=" + maximum_copies + " OutputPort=" + " ToPage=" + to_page + "]";
 

@@ -1,3 +1,13 @@
+2006-07-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* PrintDocument.cs: When null is passed to PrinterSettings,
+	it should be set to a new PrinterSettings instance, and should never
+	be null.
+
+	* PrinterSettings.cs: Default value for Copies should be 1. Also
+	add a space in the ToString method, to correctly show the printer
+	info.
+
 2006-07-26  Chris Toshok  <toshok@ximian.com>
 
 	* PrinterSettings.cs: expose PrintFileName in the 1.1 case as an
