@@ -1,0 +1,1479 @@
+Index: report.cs
+===================================================================
+--- report.cs	(revision 63019)
++++ report.cs	(working copy)
+@@ -634,6 +634,10 @@
+ 			: base (message)
+ 		{
+ 		}
++
++		public InternalErrorException (string message, params object[] args)
++			: base (String.Format (message, args))
++		{ }
+ 	}
+ 
+ 	/// <summary>
+Index: generic.cs
+===================================================================
+--- generic.cs	(revision 63019)
++++ generic.cs	(working copy)
+@@ -151,11 +151,14 @@
+ 		}
+ 
+ 		public override string TypeParameter {
+-			get {
+-				return name;
+-			}
++			get { return name; }
+ 		}
+ 
++		public Constraints Clone ()
++		{
++			return new Constraints (name, constraints, loc);
++		}
++
+ 		GenericParameterAttributes attrs;
+ 		TypeExpr class_constraint;
+ 		ArrayList iface_constraints;
+@@ -739,7 +742,7 @@
+ 						TypeManager.CSharpName (mparam), TypeManager.CSharpSignature (mb));
+ 					return false;
+ 				}
+-			} else if (DeclSpace is Iterator) {
++			} else if (DeclSpace is CompilerGeneratedClass) {
+ 				TypeParameter[] tparams = DeclSpace.TypeParameters;
+ 				Type[] types = new Type [tparams.Length];
+ 				for (int i = 0; i < tparams.Length; i++)
+@@ -2622,7 +2625,7 @@
+ 
+ 				Argument a = (Argument) arguments [i];
+ 				if ((a.Expr is NullLiteral) || (a.Expr is MethodGroupExpr) ||
+-				    (a.Expr is AnonymousMethod))
++				    (a.Expr is AnonymousMethodExpression))
+ 					continue;
+ 
+ 				arg_types [i] = a.Type;
+Index: ecore.cs
+===================================================================
+--- ecore.cs	(revision 63019)
++++ ecore.cs	(working copy)
+@@ -4040,9 +4040,9 @@
+ 		{
+ 			ILGenerator ig = ec.ig;
+ 			
+-			if (li.FieldBuilder != null) {
++			if (li.Field != null) {
+ 				ig.Emit (OpCodes.Ldarg_0);
+-				ig.Emit (OpCodes.Ldfld, li.FieldBuilder);
++				ig.Emit (OpCodes.Ldfld, li.Field.FieldBuilder);
+ 			} else {
+ 				ig.Emit (OpCodes.Ldloc, li.LocalBuilder);
+ 			}
+@@ -4052,9 +4052,9 @@
+ 		{
+ 			ILGenerator ig = ec.ig;
+ 			
+-			if (li.FieldBuilder != null) {
++			if (li.Field != null) {
+ 				ig.Emit (OpCodes.Ldarg_0);
+-				ig.Emit (OpCodes.Ldflda, li.FieldBuilder);
++				ig.Emit (OpCodes.Ldflda, li.Field.FieldBuilder);
+ 			} else {
+ 				ig.Emit (OpCodes.Ldloca, li.LocalBuilder);
+ 			}
+@@ -4062,12 +4062,12 @@
+ 		
+ 		public void Store (EmitContext ec, Expression right_side)
+ 		{
+-			if (li.FieldBuilder != null)
++			if (li.Field != null)
+ 				ec.ig.Emit (OpCodes.Ldarg_0);
+ 			
+ 			right_side.Emit (ec);
+-			if (li.FieldBuilder != null) {
+-				ec.ig.Emit (OpCodes.Stfld, li.FieldBuilder);
++			if (li.Field != null) {
++				ec.ig.Emit (OpCodes.Stfld, li.Field.FieldBuilder);
+ 			} else {
+ 				ec.ig.Emit (OpCodes.Stloc, li.LocalBuilder);
+ 			}
+@@ -4075,15 +4075,15 @@
+ 		
+ 		public void EmitThis (EmitContext ec)
+ 		{
+-			if (li.FieldBuilder != null) {
++			if (li.Field != null) {
+ 				ec.ig.Emit (OpCodes.Ldarg_0);
+ 			}
+ 		}
+ 		
+ 		public void EmitStore (ILGenerator ig)
+ 		{
+-			if (li.FieldBuilder != null)
+-				ig.Emit (OpCodes.Stfld, li.FieldBuilder);
++			if (li.Field != null)
++				ig.Emit (OpCodes.Stfld, li.Field.FieldBuilder);
+ 			else
+ 				ig.Emit (OpCodes.Stloc, li.LocalBuilder);
+ 		}
+Index: class.cs
+===================================================================
+--- class.cs	(revision 63019)
++++ class.cs	(working copy)
+@@ -429,8 +429,8 @@
+ 		// Holds the operators
+ 		MemberCoreArrayList operators;
+ 
+-		// Holds the iterators
+-		ArrayList iterators;
++		// Holds the compiler generated classes
++		ArrayList compiler_generated;
+ 
+ 		//
+ 		// Pointers to the default constructor and the default static constructor
+@@ -772,12 +772,12 @@
+ 			operators.Add (op);
+ 		}
+ 
+-		public void AddIterator (Iterator i)
++		public void AddCompilerGeneratedClass (CompilerGeneratedClass c)
+ 		{
+-			if (iterators == null)
+-				iterators = new ArrayList ();
++			if (compiler_generated == null)
++				compiler_generated = new ArrayList ();
+ 
+-			iterators.Add (i);
++			compiler_generated.Add (c);
+ 		}
+ 
+ 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
+@@ -822,9 +822,9 @@
+ 			}
+ 		}
+ 
+-		public ArrayList Iterators {
++		public ArrayList CompilerGenerated {
+ 			get {
+-				return iterators;
++				return compiler_generated;
+ 			}
+ 		}
+ 
+@@ -1202,7 +1202,7 @@
+ 			// Let's do it as soon as possible, since code below can call DefineType() on classes
+ 			// that depend on us to be populated before they are.
+ 			//
+-			if (!(this is Iterator))
++			if (!(this is Iterator) && !(this is CompilerGeneratedClass))
+ 				RootContext.RegisterOrder (this); 
+ 
+ 			if (base_type != null) {
+@@ -1541,16 +1541,11 @@
+ 					part.member_cache = member_cache;
+ 			}
+ #endif
+-			if (iterators != null) {
+-				foreach (Iterator iterator in iterators) {
+-					if (iterator.DefineType () == null)
++			if (compiler_generated != null) {
++				foreach (CompilerGeneratedClass c in compiler_generated) {
++					if (c.DefineType () == null)
+ 						return false;
+ 				}
+-
+-				foreach (Iterator iterator in iterators) {
+-					if (!iterator.DefineMembers ())
+-						return false;
+-				}
+ 			}
+ 
+ 			return true;
+@@ -1564,9 +1559,9 @@
+ 
+ 		public override bool Define ()
+ 		{
+-			if (iterators != null) {
+-				foreach (Iterator iterator in iterators) {
+-					if (!iterator.Define ())
++			if (compiler_generated != null) {
++				foreach (CompilerGeneratedClass c in compiler_generated) {
++					if (!c.Define ())
+ 						return false;
+ 				}
+ 			}
+@@ -2282,9 +2277,9 @@
+ 				if (pending.VerifyPendingMethods ())
+ 					return;
+ 
+-			if (iterators != null)
+-				foreach (Iterator iterator in iterators)
+-					iterator.EmitType ();
++			if (compiler_generated != null)
++				foreach (CompilerGeneratedClass c in compiler_generated)
++					c.EmitType ();
+ 		}
+ 		
+ 		public override void CloseType ()
+@@ -2324,9 +2319,9 @@
+ 				foreach (Delegate d in Delegates)
+ 					d.CloseType ();
+ 
+-			if (Iterators != null)
+-				foreach (Iterator i in Iterators)
+-					i.CloseType ();
++			if (CompilerGenerated != null)
++				foreach (CompilerGeneratedClass c in CompilerGenerated)
++					c.CloseType ();
+ 			
+ 			types = null;
+ 			properties = null;
+@@ -2341,7 +2336,7 @@
+ 			events = null;
+ 			indexers = null;
+ 			operators = null;
+-			iterators = null;
++			compiler_generated = null;
+ 			default_constructor = null;
+ 			default_static_constructor = null;
+ 			type_bases = null;
+Index: decl.cs
+===================================================================
+--- decl.cs	(revision 63019)
++++ decl.cs	(working copy)
+@@ -525,6 +525,7 @@
+ 				caching_flags |= Flags.ClsCompliantAttributeTrue;
+ 				return true;
+ 			}
++
+ 			return false;
+ 		}
+ 
+Index: delegate.cs
+===================================================================
+--- delegate.cs	(revision 63019)
++++ delegate.cs	(working copy)
+@@ -816,8 +816,8 @@
+ 			
+ 			Expression e = a.Expr;
+ 
+-			if (e is AnonymousMethod && RootContext.Version != LanguageVersion.ISO_1)
+-				return ((AnonymousMethod) e).Compatible (ec, type);
++			if (e is AnonymousMethodExpression && RootContext.Version != LanguageVersion.ISO_1)
++				return ((AnonymousMethodExpression) e).Anonymous.Compatible (ec, type);
+ 
+ 			MethodGroupExpr mg = e as MethodGroupExpr;
+ 			if (mg != null)
+Index: iterators.cs
+===================================================================
+--- iterators.cs	(revision 63019)
++++ iterators.cs	(working copy)
+@@ -119,7 +119,7 @@
+ 		}
+ 	}
+ 
+-	public class Iterator : Class {
++	public class Iterator : CompilerGeneratedClass {
+ 		protected ToplevelBlock original_block;
+ 		protected ToplevelBlock block;
+ 
+@@ -164,8 +164,6 @@
+ 			Running
+ 		}
+ 
+-		static int proxy_count;
+-
+ 		public void EmitYieldBreak (ILGenerator ig)
+ 		{
+ 			ig.Emit (OpCodes.Ldarg_0);
+@@ -174,7 +172,7 @@
+ 			ig.Emit (OpCodes.Br, move_next_error);
+ 		}
+ 
+-		public void EmitMoveNext (EmitContext ec)
++		protected void EmitMoveNext (EmitContext ec)
+ 		{
+ 			ILGenerator ig = ec.ig;
+ 
+@@ -336,31 +334,14 @@
+ 			point.Define (ig);
+ 		}
+ 
+-		private static MemberName MakeProxyName (string name, GenericMethod generic, Location loc)
+-		{
+-			int pos = name.LastIndexOf ('.');
+-			if (pos > 0)
+-				name = name.Substring (pos + 1);
+-
+-			string proxy_name = "<" + name + ">__" + (proxy_count++);
+-
+-			if (generic != null) {
+-				TypeArguments args = new TypeArguments (loc);
+-				foreach (TypeParameter tparam in generic.CurrentTypeParameters)
+-					args.Add (new SimpleName (tparam.Name, loc));
+-				return new MemberName (proxy_name, args, loc);
+-			} else
+-				return new MemberName (proxy_name, loc);
+-		}
+-
+ 		//
+ 		// Our constructor
+ 		//
+ 		public Iterator (IMethodData m_container, DeclSpace parent, GenericMethod generic,
+ 				 int modifiers)
+-			: base (parent.NamespaceEntry, parent,
+-				MakeProxyName (m_container.MethodName.Name, generic, m_container.Location),
+-				(modifiers & Modifiers.UNSAFE) | Modifiers.PRIVATE, null)
++			: base (parent, generic,
++				(modifiers & Modifiers.UNSAFE) | Modifiers.PRIVATE,
++				m_container.Location)
+ 		{
+ 			this.orig_method = m_container;
+ 
+@@ -370,17 +351,13 @@
+ 			this.original_block = orig_method.Block;
+ 			this.block = new ToplevelBlock (orig_method.Block, parameters, orig_method.Location);
+ 
+-			if (generic != null) {
+-				ArrayList constraints = new ArrayList ();
+-				foreach (TypeParameter tparam in generic.TypeParameters)
+-					constraints.Add (tparam.Constraints);
+-
+-				SetParameterInfo (constraints);
+-			}
+-
+ 			IsStatic = (modifiers & Modifiers.STATIC) != 0;
+ 		}
+ 
++		public override ConstructorInfo Constructor {
++			get { return ctor.ConstructorBuilder; }
++		}
++
+ 		public AnonymousContainer Host {
+ 			get { return move_next_method; }
+ 		}
+@@ -423,7 +400,7 @@
+ 			else
+ 				this_type = container.TypeBuilder;
+ 
+-			container.AddIterator (this);
++			container.AddCompilerGeneratedClass (this);
+ 
+ 			orig_method.Block = block;
+ 			return true;
+@@ -476,7 +453,7 @@
+ 			else
+ 				ec.ContainerType = ec.TypeContainer.TypeBuilder;
+ 
+-			ec.ig = move_next_method.method.MethodBuilder.GetILGenerator ();
++			// ec.ig = move_next_method.method.MethodBuilder.GetILGenerator ();
+ 
+ 			if (!ctor.Define ())
+ 				return false;
+@@ -493,36 +470,9 @@
+ 
+ 			cc.EmitAnonymousHelperClasses (ec);
+ 
+-			return true;
++			return DefineMembers ();
+ 		}
+ 
+-		TypeExpr InflateType (Type it)
+-		{
+-			if (generic_method == null)
+-				return new TypeExpression (it, Location);
+-
+-			if (it.IsGenericParameter && (it.DeclaringMethod != null)) {
+-				int pos = it.GenericParameterPosition;
+-				it = CurrentTypeParameters [pos].Type;
+-			} else if (it.IsGenericType) {
+-				Type[] args = it.GetGenericArguments ();
+-
+-				TypeArguments inflated = new TypeArguments (Location);
+-				foreach (Type t in args)
+-					inflated.Add (InflateType (t));
+-
+-				return new ConstructedType (it, inflated, Location);
+-			} else if (it.IsArray) {
+-				TypeExpr et_expr = InflateType (it.GetElementType ());
+-				int rank = it.GetArrayRank ();
+-
+-				Type et = et_expr.ResolveAsTypeTerminal (ec, false).Type;
+-				it = et.MakeArrayType (rank);
+-			}
+-
+-			return new TypeExpression (it, Location);
+-		}
+-
+ 		Parameter InflateParameter (Parameter param)
+ 		{
+ 			TypeExpr te = InflateType (param.ParameterType);
+@@ -587,11 +537,6 @@
+ 			else
+ 				current_type = new TypeExpression (TypeBuilder, Location);
+ 
+-			if (IsGeneric) {
+-				foreach (TypeParameter tparam in TypeParameters)
+-					tparam.InflateConstraints (current_type.Type);
+-			}
+-
+ 			parameters = InflateParameters (original_parameters, ec);
+ 			if (!parameters.Resolve (ec)) {
+ 				// TODO:
+@@ -1001,7 +946,7 @@
+ 			Iterator iterator;
+ 
+ 			public MoveNextMethod (Iterator iterator, Location loc)
+-				: base (iterator.parameters, iterator.original_block, loc)
++				: base (iterator, iterator.parameters, iterator.original_block, loc)
+ 			{
+ 				this.iterator = iterator;
+ 			}
+@@ -1010,17 +955,23 @@
+ 			{
+ 				method = new Method (
+ 					iterator, null, TypeManager.system_boolean_expr,
+-					Modifiers.PUBLIC, false, new MemberName ("MoveNext", loc),
++					Modifiers.PUBLIC, false,
++					new MemberName ("MoveNext", Location),
+ 					Parameters.EmptyReadOnlyParameters, null);
+ 
+ 				method.Block = Block;
+ 
+-				MoveNextStatement inline = new MoveNextStatement (iterator, loc);
++				MoveNextStatement inline = new MoveNextStatement (iterator, Location);
+ 				Block.AddStatement (inline);
+ 
+ 				return true;
+ 			}
+ 
++			public override bool Resolve (EmitContext ec)
++			{
++				return true;
++			}
++
+ 			public bool CreateMethod (EmitContext ec)
+ 			{
+ 				return CreateMethodHost (ec);
+@@ -1039,15 +990,14 @@
+ 				get { return true; }
+ 			}
+ 
+-			public override void CreateScopeType (EmitContext ec, ScopeInfo scope)
++			public override CompilerGeneratedClass CreateScopeType (EmitContext ec, ScopeInfo scope)
+ 			{
+-				scope.ScopeTypeBuilder = iterator.TypeBuilder;
+-				scope.ScopeConstructor = iterator.ctor.ConstructorBuilder;
++				return iterator;
+ 			}
+ 
+-			public override void Emit (EmitContext ec)
++			public override string GetSignatureForError ()
+ 			{
+-				throw new InternalErrorException ();
++				return iterator.GetSignatureForError ();
+ 			}
+ 		}
+ 
+Index: cs-parser.jay
+===================================================================
+--- cs-parser.jay	(revision 63019)
++++ cs-parser.jay	(working copy)
+@@ -45,6 +45,8 @@
+ 
+ 		Delegate   current_delegate;
+ 
++		GenericMethod current_generic_method;
++
+ 		/// <summary>
+ 		///   This is used by the unary_expression code to resolve
+ 		///   a name against a parameter.  
+@@ -1074,6 +1076,7 @@
+ 		method.Block = (ToplevelBlock) $3;
+ 		current_container.AddMethod (method);
+ 
++		current_generic_method = null;
+ 		current_local_parameters = null;
+ 		iterator_container = null;
+ 
+@@ -1133,6 +1136,7 @@
+ 				     name, (Parameters) $6, (Attributes) $1);
+ 
+ 		current_local_parameters = (Parameters) $6;
++		current_generic_method = generic;
+ 
+ 		if (RootContext.Documentation != null)
+ 			method.DocComment = Lexer.consume_doc_comment ();
+@@ -1169,6 +1173,7 @@
+ 				     (int) $2, false, name, (Parameters) $6, (Attributes) $1);
+ 
+ 		current_local_parameters = (Parameters) $6;
++		current_generic_method = generic;
+ 
+ 		if (RootContext.Documentation != null)
+ 			method.DocComment = Lexer.consume_doc_comment ();
+@@ -3416,11 +3421,15 @@
+ 			ToplevelBlock anon_block = (ToplevelBlock) $4;
+ 
+ 			anon_block.Parent = current_block;
+-			$$ = new AnonymousMethod (current_container, (Parameters) $2, (ToplevelBlock) top_current_block, 
++			AnonymousMethod am = new AnonymousMethod (
++				current_container, (Parameters) $2, (ToplevelBlock) top_current_block, 
+ 				anon_block, loc);
++
++			$$ = new AnonymousMethodExpression (am);
+ 		}
+-			current_local_parameters = (Parameters) oob_stack.Pop ();
+-		}
++
++		current_local_parameters = (Parameters) oob_stack.Pop ();
++	}
+ 	;
+ 
+ opt_anonymous_method_signature
+@@ -4000,7 +4009,8 @@
+ 	: OPEN_BRACE 
+ 	  {
+ 		if (current_block == null){
+-			current_block = new ToplevelBlock ((ToplevelBlock) top_current_block, current_local_parameters, (Location) $1);
++			current_block = new ToplevelBlock ((ToplevelBlock) top_current_block, current_local_parameters,
++							   current_generic_method, (Location) $1);
+ 			top_current_block = current_block;
+ 		} else {
+ 			current_block = new Block (current_block, (Location) $1, Location.Null);
+Index: convert.cs
+===================================================================
+--- convert.cs	(revision 63019)
++++ convert.cs	(working copy)
+@@ -838,8 +838,8 @@
+ 				if (!TypeManager.IsDelegateType (target_type))
+ 					return false;
+ 
+-				AnonymousMethod am = (AnonymousMethod) expr;
+-				return am.ImplicitStandardConversionExists (target_type);
++				AnonymousMethodExpression ame = (AnonymousMethodExpression) expr;
++				return ame.Anonymous.ImplicitStandardConversionExists (target_type);
+ 			}
+ 
+ 			return false;
+@@ -1325,10 +1325,11 @@
+ 					return null;
+ 				}
+ 
+-				AnonymousMethod am = (AnonymousMethod) expr;
++				AnonymousMethodExpression ame = (AnonymousMethodExpression) expr;
++
+ 				int errors = Report.Errors;
+ 
+-				Expression conv = am.Compatible (ec, target_type);
++				Expression conv = ame.Anonymous.Compatible (ec, target_type);
+ 				if (conv != null)
+ 					return conv;
+ 				
+Index: anonymous.cs
+===================================================================
+--- anonymous.cs	(revision 63019)
++++ anonymous.cs	(working copy)
+@@ -20,10 +20,127 @@
+ 
+ namespace Mono.CSharp {
+ 
+-	public abstract class AnonymousContainer : Expression
++	public abstract class CompilerGeneratedClass : Class
+ 	{
++		GenericMethod generic_method;
++		static int next_index = 0;
++
++		private static MemberName MakeProxyName (GenericMethod generic, Location loc)
++		{
++			string name = String.Format ("<>c__CompilerGenerated{0}", ++next_index);
++			if (generic != null) {
++				TypeArguments args = new TypeArguments (loc);
++				foreach (TypeParameter tparam in generic.CurrentTypeParameters)
++					args.Add (new SimpleName (tparam.Name, loc));
++				return new MemberName (name, args, loc);
++			} else
++				return new MemberName (name, loc);
++		}
++
++		protected CompilerGeneratedClass (DeclSpace parent, GenericMethod generic,
++						  int mod, Location loc)
++			: base (parent.NamespaceEntry, parent,
++				MakeProxyName (generic, loc), mod, null)
++		{
++			this.generic_method = generic;
++
++			if (generic != null) {
++				ArrayList list = new ArrayList ();
++				foreach (TypeParameter tparam in generic.CurrentTypeParameters) {
++					if (tparam.Constraints != null)
++						list.Add (tparam.Constraints.Clone ());
++				}
++				SetParameterInfo (list);
++			}
++		}
++
++		protected override bool DefineNestedTypes ()
++		{
++			RootContext.RegisterCompilerGeneratedType (TypeBuilder);
++			return base.DefineNestedTypes ();
++		}
++
++		public abstract ConstructorInfo Constructor {
++			get;
++		}
++
++		public TypeExpr InflateType (Type it)
++		{
++			if (generic_method == null)
++				return new TypeExpression (it, Location);
++
++			if (it.IsGenericParameter && (it.DeclaringMethod != null)) {
++				int pos = it.GenericParameterPosition;
++				it = CurrentTypeParameters [pos].Type;
++			} else if (it.IsGenericType) {
++				Type[] args = it.GetGenericArguments ();
++
++				TypeArguments inflated = new TypeArguments (Location);
++				foreach (Type t in args)
++					inflated.Add (InflateType (t));
++
++				return new ConstructedType (it, inflated, Location);
++			} else if (it.IsArray) {
++				TypeExpr et_expr = InflateType (it.GetElementType ());
++				int rank = it.GetArrayRank ();
++
++				Type et = et_expr.ResolveAsTypeTerminal (this, false).Type;
++				it = et.MakeArrayType (rank);
++			}
++
++			return new TypeExpression (it, Location);
++		}
++	}
++
++	public class AnonymousMethodExpression : Expression
++	{
++		public readonly AnonymousMethod Anonymous;
++
++		public AnonymousMethodExpression (AnonymousMethod anon)
++		{
++			this.Anonymous = anon;
++			loc = anon.Location;
++		}
++
++		public override string ExprClassName {
++			get {
++				return "anonymous method";
++			}
++		}
++
++		public override Expression DoResolve (EmitContext ec)
++		{
++			//
++			// Set class type, set type
++			//
++
++			eclass = ExprClass.Value;
++
++			//
++			// This hack means `The type is not accessible
++			// anywhere', we depend on special conversion
++			// rules.
++			// 
++			type = TypeManager.anonymous_method_type;
++
++			if (!Anonymous.Resolve (ec))
++				return null;
++
++			return this;
++		}
++
++		public override void Emit (EmitContext ec)
++		{
++			// nothing, as we only exist to not do anything.
++		}
++	}
++
++	public abstract class AnonymousContainer
++	{
+ 		// Used to generate unique method names.
+ 		protected static int anonymous_method_count;
++
++		public readonly TypeContainer Parent;
+ 		    
+ 		// An array list of AnonymousMethodParameter or null
+ 		public Parameters Parameters;
+@@ -43,13 +160,10 @@
+ 		//
+ 		public Method method;
+ 
+-		protected MethodInfo invoke_mb;
+-		
+ 		// The emit context for the anonymous method
+-		public EmitContext aec;
+-		public string[] TypeParameters;
+ 		public Type[] TypeArguments;
+ 		protected bool unreachable;
++		protected readonly Location loc;
+ 
+ 		// The method scope
+ 		ScopeInfo method_scope;
+@@ -70,11 +184,17 @@
+ 		//
+ 		// Points to our container anonymous method if its present
+ 		//
+-		public AnonymousContainer ContainerAnonymousMethod;	
++		public AnonymousContainer ContainerAnonymousMethod;
+ 
+-		protected AnonymousContainer (Parameters parameters, ToplevelBlock container,
+-					      ToplevelBlock block, Location l)
++		public Location Location {
++			get { return loc; }
++		}
++
++		protected AnonymousContainer (TypeContainer host, Parameters parameters,
++					      ToplevelBlock container, ToplevelBlock block,
++					      Location l)
+ 		{
++			Parent = host;
+ 			Parameters = parameters;
+ 			Block = block;
+ 			loc = l;
+@@ -89,30 +209,13 @@
+ 			block.SetHaveAnonymousMethods (l, this);
+ 		}
+ 
+-		protected AnonymousContainer (Parameters parameters, ToplevelBlock container,
+-					      Location l):
+-			this (parameters, container, new ToplevelBlock (container, parameters, l), l)
++		protected AnonymousContainer (TypeContainer host, Parameters parameters,
++					      ToplevelBlock container, Location l)
++			: this (host, parameters, container,
++				new ToplevelBlock (container, parameters, l), l)
+ 		{
+ 		}
+ 
+-		public override Expression DoResolve (EmitContext ec)
+-		{
+-			//
+-			// Set class type, set type
+-			//
+-
+-			eclass = ExprClass.Value;
+-
+-			//
+-			// This hack means `The type is not accessible
+-			// anywhere', we depend on special conversion
+-			// rules.
+-			// 
+-			type = TypeManager.anonymous_method_type;
+-
+-			return this;
+-		}
+-
+ 		public void RegisterScope (ScopeInfo scope)
+ 		{
+ 			if (scopes_used.Contains (scope))
+@@ -194,11 +297,14 @@
+ 				throw new Exception ("Internal error, AnonymousContainer.Scope is being used before its container is computed");
+ 			}
+ 		}
+-		
+-		
++
++		public abstract string GetSignatureForError ();
++
++		public abstract bool Resolve (EmitContext ec);
++
+ 		protected abstract bool CreateMethodHost (EmitContext ec);
+ 
+-		public abstract void CreateScopeType (EmitContext ec, ScopeInfo scope);
++		public abstract CompilerGeneratedClass CreateScopeType (EmitContext ec, ScopeInfo scope);
+ 
+ 		public abstract Iterator Iterator {
+ 			get;
+@@ -212,7 +318,12 @@
+ 	public class AnonymousMethod : AnonymousContainer
+ 	{
+ 		TypeContainer host;
++		MethodInfo invoke_mb;
+ 
++		public EmitContext aec;
++
++		new public string[] TypeParameters;
++
+ 		//
+ 		// The value return by the Compatible call, this ensure that
+ 		// the code works even if invoked more than once (Resolve called
+@@ -220,9 +331,10 @@
+ 		//
+ 		Expression anonymous_delegate;
+ 
+-		public AnonymousMethod (TypeContainer host, Parameters parameters, ToplevelBlock container,
+-					ToplevelBlock block, Location l)
+-			: base (parameters, container, block, l)
++		public AnonymousMethod (TypeContainer host, Parameters parameters,
++					ToplevelBlock container, ToplevelBlock block,
++					Location l)
++			: base (host, parameters, container, block, l)
+ 		{
+ 			this.host = host;
+ 		}
+@@ -235,11 +347,6 @@
+ 			get { return false; }
+ 		}
+ 
+-		public override void Emit (EmitContext ec)
+-		{
+-			// nothing, as we only exist to not do anything.
+-		}
+-
+ 		//
+ 		// Creates the host for the anonymous method
+ 		//
+@@ -247,26 +354,14 @@
+ 		{
+ 			ComputeMethodHost ();
+ 
+-			//
+-			// Crude hack follows: we replace the TypeBuilder during the
+-			// definition to get the method hosted in the right class
+-			//
+-			TypeBuilder current_type = ec.TypeContainer.TypeBuilder;
+-			TypeBuilder type_host = (Scope == null ) ? current_type : Scope.ScopeTypeBuilder;
++			if ((Scope != null) && (Scope.HelperClass == null))
++				throw new InternalErrorException ();
+ 
+-			if (current_type == null)
+-				throw new Exception ("The current_type is null");
+-			
+-			if (type_host == null)
+-				throw new Exception (String.Format ("Type host is null, method_host is {0}", Scope == null ? "null" : "Not null"));
++			DeclSpace ds = (Scope != null) ? Scope.HelperClass : Parent;
+ 
+-			if (current_type != type_host)
+-				method_modifiers = Modifiers.INTERNAL;
+-
+-			if (current_type == type_host && ec.IsStatic){
++			method_modifiers = (Scope != null) ? Modifiers.INTERNAL : Modifiers.PRIVATE;
++			if ((Scope == null) && ec.IsStatic)
+ 				method_modifiers |= Modifiers.STATIC;
+-				current_type = null;
+-			} 
+ 
+ 			string name = "<#AnonymousMethod>" + anonymous_method_count++;
+ 			MemberName member_name;
+@@ -280,8 +375,7 @@
+ 				member_name = new MemberName (name, args, loc);
+ 
+ 				generic_method = new GenericMethod (
+-					ec.DeclContainer.NamespaceEntry,
+-					(TypeContainer) ec.TypeContainer, member_name,
++					ds.NamespaceEntry, ds, member_name,
+ 					new TypeExpression (invoke_mb.ReturnType, loc),
+ 					Parameters);
+ 
+@@ -290,21 +384,12 @@
+ 				member_name = new MemberName (name, loc);
+ 
+ 			method = new Method (
+-				(TypeContainer) ec.TypeContainer, generic_method,
++				ds, generic_method,
+ 				new TypeExpression (invoke_mb.ReturnType, loc),
+ 				method_modifiers, false, member_name, Parameters, null);
+ 			method.Block = Block;
+ 
+-			//
+-			// Swap the TypeBuilder while we define the method, then restore
+-			//
+-			if (current_type != null)
+-				ec.TypeContainer.TypeBuilder = type_host;
+-			bool res = method.Define ();
+-			if (current_type != null)
+-				ec.TypeContainer.TypeBuilder = current_type;
+-
+-			return res;
++			return method.Define ();
+ 		}
+ 
+ 		void Error_ParameterMismatch (Type t)
+@@ -319,7 +404,7 @@
+ 				return true;
+ 
+ 			MethodGroupExpr invoke_mg = Delegate.GetInvokeMethod (host.TypeBuilder, delegate_type, loc);
+-			invoke_mb = (MethodInfo) invoke_mg.Methods [0];
++			MethodInfo invoke_mb = (MethodInfo) invoke_mg.Methods [0];
+ 			ParameterData invoke_pd = TypeManager.GetParameterData (invoke_mb);
+ 
+ 			if (Parameters.Count != invoke_pd.Count)
+@@ -439,27 +524,20 @@
+ 			return null;
+ 		}
+ 
+-		public override Expression DoResolve (EmitContext ec)
++		public override bool Resolve (EmitContext ec)
+ 		{
+ 			if (!ec.IsAnonymousMethodAllowed) {
+-				Report.Error (1706, loc, "Anonymous methods are not allowed in the attribute declaration");
+-				return null;
++				Report.Error (1706, loc,
++					      "Anonymous methods are not allowed in the attribute declaration");
++				return false;
+ 			}
+ 
+-			if (Parameters != null && !Parameters.Resolve (ec)) {
+-				return null;
+-			}
++			if ((Parameters != null) && !Parameters.Resolve (ec))
++				return false;
+ 
+-			return base.DoResolve (ec);
++			return true;
+ 		}
+ 
+-
+-		public override string ExprClassName {
+-			get {
+-				return "anonymous method";
+-			}
+-		}
+-
+ 		public MethodInfo GetMethodBuilder ()
+ 		{
+ 			MethodInfo builder = method.MethodBuilder;
+@@ -497,50 +575,19 @@
+ 			return true;
+ 		}
+ 
+-		public override void CreateScopeType (EmitContext ec, ScopeInfo scope)
++		public override CompilerGeneratedClass CreateScopeType (EmitContext ec, ScopeInfo scope)
+ 		{
+-			TypeBuilder container = ec.TypeContainer.TypeBuilder;
+-			string name = String.Format ("<>AnonHelp<{0}>", scope.id);
++			AnonymousHelper helper = new AnonymousHelper (this);
+ 
+-			scope.ScopeTypeBuilder = container.DefineNestedType (name,
+-				TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit | TypeAttributes.NestedPrivate,
+-					 TypeManager.object_type);
++			if (!helper.Define ())
++				return null;
+ 
+-			Type [] constructor_types = Type.EmptyTypes;
+-			ConstructorBuilder ctor = scope.ScopeTypeBuilder.DefineConstructor (
+-				MethodAttributes.Public | MethodAttributes.HideBySig |
+-				MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
+-				CallingConventions.HasThis, constructor_types);
+-			TypeManager.RegisterMethod (ctor, Parameters.EmptyReadOnlyParameters);
++			if (helper.DefineType () == null)
++				return null;
+ 
+-			ILGenerator cig = ctor.GetILGenerator ();
+-			cig.Emit (OpCodes.Ldarg_0);
+-			cig.Emit (OpCodes.Call, TypeManager.object_ctor);
+-			cig.Emit (OpCodes.Ret);
++			Parent.AddCompilerGeneratedClass (helper);
+ 
+-			if (ec.TypeContainer.IsGeneric) {
+-				TypeParameter[] tparam = ec.TypeContainer.TypeParameters;
+-				string[] names = new string [tparam.Length];
+-				Type[] types = new Type [tparam.Length];
+-
+-				for (int i = 0; i < names.Length; i++) {
+-					names [i] = tparam [i].Name;
+-					types [i] = tparam [i].Type;
+-				}
+-
+-				scope.ScopeTypeBuilder.DefineGenericParameters (names);
+-				scope.ScopeTypeBuilder.GetGenericTypeDefinition ();
+-
+-				scope.ScopeType = scope.ScopeTypeBuilder.MakeGenericType (types);
+-			} else
+-				scope.ScopeType = scope.ScopeTypeBuilder;
+-
+-
+-			if (ec.TypeContainer.IsGeneric)
+-				scope.ScopeConstructor = TypeBuilder.GetConstructor (
+-					scope.ScopeType, ctor);
+-			else
+-				scope.ScopeConstructor = ctor;
++			return helper;
+ 		}
+ 
+ 		public static void Error_AddressOfCapturedVar (string name, Location loc)
+@@ -549,6 +596,30 @@
+ 				"Local variable `{0}' or its members cannot have their address taken and be used inside an anonymous method block",
+ 				name);
+ 		}
++
++		protected class AnonymousHelper : CompilerGeneratedClass
++		{
++			ConstructorInfo ctor;
++
++			public AnonymousHelper (AnonymousMethod anonymous)
++				: base (anonymous.Parent,
++					anonymous.ContainingBlock.Toplevel.GenericMethod,
++					0, anonymous.Location)
++			{ }
++
++			protected override bool DoDefineMembers ()
++			{
++				if (!base.DoDefineMembers ())
++					return false;
++
++				ctor = default_constructor.ConstructorBuilder;
++				return true;
++			}
++
++			public override ConstructorInfo Constructor {
++				get { return ctor; }
++			}
++		}
+ 	}
+ 
+ 	//
+@@ -611,7 +682,7 @@
+ 
+ 	class CapturedParameter {
+ 		public Type Type;
+-		public FieldBuilder FieldBuilder;
++		public Field Field;
+ 		public int Idx;
+ 
+ 		public CapturedParameter (Type type, int idx)
+@@ -643,12 +714,15 @@
+ 		//
+ 		// The types and fields generated
+ 		//
++		public readonly Location loc;
+ 		public TypeBuilder ScopeTypeBuilder;
+ 		public Type ScopeType;
+-		public ConstructorInfo ScopeConstructor;
+-		public FieldBuilder THIS;
+-		public FieldBuilder ParentLink;
++		public TypeExpr ScopeTypeExpr;
++		public Field THIS;
++		public Field ParentLink;
+ 
++		public CompilerGeneratedClass HelperClass;
++
+ 		//
+ 		// Points to the object of type `ScopeTypeBuilder' that
+ 		// holds the data for the scope
+@@ -659,6 +733,7 @@
+ 		{
+ 			CaptureContext = cc;
+ 			ScopeBlock = b;
++			loc = cc.loc;
+ 			id = count++;
+ 
+ 			cc.RegisterCaptureContext ();
+@@ -742,60 +817,67 @@
+ 		{
+ 			// EmitDebug ();
+ 
+-			if (ScopeTypeBuilder != null)
++			if (HelperClass != null)
+ 				return;
+-			
+-			Type container;
+-			if (ec.TypeContainer.CurrentType != null)
+-				container = ec.TypeContainer.CurrentType;
+-			else
+-				container = ec.TypeContainer.TypeBuilder;
+ 
+-			CaptureContext.Host.CreateScopeType (ec, this);
+-			
+-			if (NeedThis)
+-				THIS = ScopeTypeBuilder.DefineField ("<>THIS", container, FieldAttributes.Assembly);
++			HelperClass = CaptureContext.Host.CreateScopeType (ec, this);
++			ScopeTypeBuilder = HelperClass.TypeBuilder;
+ 
++			ScopeType = (HelperClass.CurrentType != null) ?
++				HelperClass.CurrentType : HelperClass.TypeBuilder;
++			ScopeTypeExpr = new TypeExpression (ScopeType, loc);
++
++			if (NeedThis) {
++				Type container;
++				if (ec.TypeContainer.CurrentType != null)
++					container = ec.TypeContainer.CurrentType;
++				else
++					container = ec.TypeContainer.TypeBuilder;
++
++				THIS = new CapturedVariable (this, "<>THIS", container);
++			}
++
+ 			if (ParentScope != null){
+ 				if (ParentScope.ScopeTypeBuilder == null){
+-					throw new Exception (String.Format ("My parent has not been initialized {0} and {1}", ParentScope, this));
++					throw new InternalErrorException (
++						"My parent has not been initialized " +
++						"{0} and {1}", ParentScope, this);
+ 				}
+ 
+ 				if (ParentScope.ScopeTypeBuilder != ScopeTypeBuilder)
+-					ParentLink = ScopeTypeBuilder.DefineField (
+-						"<>parent", ParentScope.ScopeType, FieldAttributes.Assembly);
++					ParentLink = new CapturedVariable (
++						this, "<>parent", ParentScope.ScopeType);
+ 			}
+ 			
+-			if (NeedThis && ParentScope != null)
+-				throw new Exception ("I was not expecting THIS && having a parent");
++			foreach (LocalInfo info in locals) {
++				info.Field = new CapturedVariable (
++					this, MakeFieldName (info.Name), info.VariableType);
++			}
+ 
+-			foreach (LocalInfo info in locals)
+-				info.FieldBuilder = ScopeTypeBuilder.DefineField (
+-					MakeFieldName (info.Name), info.VariableType, FieldAttributes.Assembly);
+-
+ 			if (HostsParameters){
+ 				Hashtable captured_parameters = CaptureContext.captured_parameters;
+ 				
+ 				foreach (DictionaryEntry de in captured_parameters){
+ 					string name = (string) de.Key;
+ 					CapturedParameter cp = (CapturedParameter) de.Value;
+-					FieldBuilder fb;
+-					
+-					fb = ScopeTypeBuilder.DefineField ("<p:" + name + ">", cp.Type, FieldAttributes.Assembly);
+-					cp.FieldBuilder = fb;
++
++					cp.Field = new CapturedVariable (
++						this, "<p:" + name + ">", cp.Type);
+ 				}
+ 			}
+ 
+-			foreach (ScopeInfo si in children){
++			foreach (ScopeInfo si in children) {
+ 				si.EmitScopeType (ec);
+ 			}
+-		}
+ 
+-		public void CloseTypes ()
+-		{
+-			RootContext.RegisterCompilerGeneratedType (ScopeTypeBuilder);
+-			foreach (ScopeInfo si in children)
+-				si.CloseTypes ();
++			if (!(CaptureContext.Host.IsIterator)) {
++				HelperClass.ResolveType ();
++				HelperClass.DefineMembers ();
++			}
++
++			if (NeedThis && ParentScope != null)
++				throw new InternalErrorException (
++					"I was not expecting THIS && having a parent");
+ 		}
+ 
+ 		//
+@@ -808,12 +890,13 @@
+ 			if (inited)
+ 				return;
+ 
+-			if (ScopeConstructor == null)
+-				throw new Exception ("ScopeConstructor is null for" + this.ToString ());
++			if (HelperClass == null)
++				throw new InternalErrorException (
++					"HelperClass is null for " + this.ToString ());
+ 			
+ 			if (!CaptureContext.Host.IsIterator) {
+ 				scope_instance = ig.DeclareLocal (ScopeType);
+-				ig.Emit (OpCodes.Newobj, ScopeConstructor);
++				ig.Emit (OpCodes.Newobj, HelperClass.Constructor);
+ 				ig.Emit (OpCodes.Stloc, scope_instance);
+ 			}
+ 
+@@ -825,7 +908,7 @@
+ 					ig.Emit (OpCodes.Ldloc, scope_instance);
+ 					ig.Emit (OpCodes.Ldarg_0);
+ 				}
+-				ig.Emit (OpCodes.Stfld, THIS);
++				ig.Emit (OpCodes.Stfld, THIS.FieldBuilder);
+ 			}
+ 
+ 			//
+@@ -842,7 +925,7 @@
+ 
+ 					EmitScopeInstance (ig);
+ 					ParameterReference.EmitLdArg (ig, cp.Idx + extra);
+-					ig.Emit (OpCodes.Stfld, cp.FieldBuilder);
++					ig.Emit (OpCodes.Stfld, cp.Field.FieldBuilder);
+ 				}
+ 			}
+ 
+@@ -857,11 +940,11 @@
+ 					if (ParentScope.CaptureContext == CaptureContext){
+ 						EmitScopeInstance (ig);
+ 						ParentScope.EmitScopeInstance (ig);
+-						ig.Emit (OpCodes.Stfld, ParentLink);
++						ig.Emit (OpCodes.Stfld, ParentLink.FieldBuilder);
+ 					} else {
+ 						EmitScopeInstance (ig);
+ 						ig.Emit (OpCodes.Ldarg_0);
+-						ig.Emit (OpCodes.Stfld, ParentLink);
++						ig.Emit (OpCodes.Stfld, ParentLink.FieldBuilder);
+ 					}
+ 				}
+ 			}
+@@ -935,6 +1018,16 @@
+ 
+ 			return sb.ToString ();
+ 		}
++
++		protected class CapturedVariable : Field
++		{
++			public CapturedVariable (ScopeInfo scope, string name, Type type)
++				: base (scope.HelperClass, scope.HelperClass.InflateType (type),
++					Modifiers.INTERNAL, name, null, scope.loc)
++			{
++				scope.HelperClass.AddField (this);
++			}
++		}
+ 	}
+ 
+ 	//
+@@ -1202,13 +1295,6 @@
+ 			} 
+ 		}
+ 
+-		public void CloseAnonymousHelperClasses ()
+-		{
+-			if (roots.Count != 0)
+-				foreach (ScopeInfo root in roots)
+-					root.CloseTypes ();
+-		}
+-
+ 		public void EmitInitScope (EmitContext ec)
+ 		{
+ 			EmitAnonymousHelperClasses (ec);
+@@ -1254,7 +1340,7 @@
+ 
+ 				while (si.ScopeBlock.ID != li.Block.ID){
+ 					if (si.ParentLink != null)
+-						ig.Emit (OpCodes.Ldfld, si.ParentLink);
++						ig.Emit (OpCodes.Ldfld, si.ParentLink.FieldBuilder);
+ 					si = si.ParentScope;
+ 					if (si == null) {
+ 						si = am.Scope;
+@@ -1303,7 +1389,7 @@
+ 
+ 			if (si != null){
+ 				while (si.ParentLink != null) {
+-					ig.Emit (OpCodes.Ldfld, si.ParentLink);
++					ig.Emit (OpCodes.Ldfld, si.ParentLink.FieldBuilder);
+ 					si = si.ParentScope;
+ 				} 
+ 			}
+@@ -1328,11 +1414,11 @@
+ 				// FIXME: implementing this.
+ 				//
+ 			}
+-			ec.ig.Emit (OpCodes.Ldfld, par_info.FieldBuilder);
++			ec.ig.Emit (OpCodes.Ldfld, par_info.Field.FieldBuilder);
+ 
+ 			if (leave_copy){
+ 				ec.ig.Emit (OpCodes.Dup);
+-				temp = new LocalTemporary (par_info.FieldBuilder.FieldType);
++				temp = new LocalTemporary (par_info.Field.MemberType);
+ 				temp.Store (ec);
+ 			}
+ 		}
+@@ -1357,10 +1443,10 @@
+ 			source.Emit (ec);
+ 			if (leave_copy){
+ 				ig.Emit (OpCodes.Dup);
+-				temp = new LocalTemporary (par_info.FieldBuilder.FieldType);
++				temp = new LocalTemporary (par_info.Field.MemberType);
+ 				temp.Store (ec);
+ 			}
+-			ig.Emit (OpCodes.Stfld, par_info.FieldBuilder);
++			ig.Emit (OpCodes.Stfld, par_info.Field.FieldBuilder);
+ 			if (temp != null)
+ 				temp.Emit (ec);
+ 		}
+@@ -1378,7 +1464,7 @@
+ 			}
+ 			EmitParameterInstance (ec, name);
+ 			CapturedParameter par_info = (CapturedParameter) captured_parameters [name];
+-			ec.ig.Emit (OpCodes.Ldflda, par_info.FieldBuilder);
++			ec.ig.Emit (OpCodes.Ldflda, par_info.Field.FieldBuilder);
+ 		}
+ 
+ 		//
+Index: expression.cs
+===================================================================
+--- expression.cs	(revision 63019)
++++ expression.cs	(working copy)
+@@ -3443,7 +3443,7 @@
+ 		{
+ 			ILGenerator ig = ec.ig;
+ 
+-			if (local_info.FieldBuilder == null){
++			if (local_info.Field == null){
+ 				//
+ 				// A local variable on the local CLR stack
+ 				//
+@@ -3455,7 +3455,7 @@
+ 				if (!prepared)
+ 					ec.EmitCapturedVariableInstance (local_info);
+ 				
+-				ig.Emit (OpCodes.Ldfld, local_info.FieldBuilder);
++				ig.Emit (OpCodes.Ldfld, local_info.Field.FieldBuilder);
+ 			}
+ 		}
+ 		
+@@ -3464,7 +3464,7 @@
+ 			Emit (ec);
+ 			if (leave_copy){
+ 				ec.ig.Emit (OpCodes.Dup);
+-				if (local_info.FieldBuilder != null){
++				if (local_info.Field != null){
+ 					temp = new LocalTemporary (Type);
+ 					temp.Store (ec);
+ 				}
+@@ -3476,7 +3476,7 @@
+ 			ILGenerator ig = ec.ig;
+ 			prepared = prepare_for_load;
+ 
+-			if (local_info.FieldBuilder == null){
++			if (local_info.Field == null){
+ 				//
+ 				// A local variable on the local CLR stack
+ 				//
+@@ -3501,7 +3501,7 @@
+ 					temp = new LocalTemporary (Type);
+ 					temp.Store (ec);
+ 				}
+-				ig.Emit (OpCodes.Stfld, local_info.FieldBuilder);
++				ig.Emit (OpCodes.Stfld, local_info.Field.FieldBuilder);
+ 				if (temp != null)
+ 					temp.Emit (ec);
+ 			}
+@@ -3511,7 +3511,7 @@
+ 		{
+ 			ILGenerator ig = ec.ig;
+ 
+-			if (local_info.FieldBuilder == null){
++			if (local_info.Field == null){
+ 				//
+ 				// A local variable on the local CLR stack
+ 				//
+@@ -3521,7 +3521,7 @@
+ 				// A local variable captured by anonymous methods or iterators
+ 				//
+ 				ec.EmitCapturedVariableInstance (local_info);
+-				ig.Emit (OpCodes.Ldflda, local_info.FieldBuilder);
++				ig.Emit (OpCodes.Ldflda, local_info.Field.FieldBuilder);
+ 			}
+ 		}
+ 
+Index: codegen.cs
+===================================================================
+--- codegen.cs	(revision 63019)
++++ codegen.cs	(working copy)
+@@ -829,12 +829,6 @@
+ 					ig.Emit (OpCodes.Ret);
+ 				}
+ 			}
+-
+-			//
+-			// Close pending helper classes if we are the toplevel
+-			//
+-			if (capture_context != null && capture_context.ParentToplevel == null)
+-				capture_context.CloseAnonymousHelperClasses ();
+ 		}
+ 
+ 		/// <summary>
+@@ -1006,12 +1000,12 @@
+ 				ScopeInfo si = CurrentAnonymousMethod.Scope;
+ 				while (si != null){
+ 					if (si.ParentLink != null)
+-						ig.Emit (OpCodes.Ldfld, si.ParentLink);
++						ig.Emit (OpCodes.Ldfld, si.ParentLink.FieldBuilder);
+ 					if (si.THIS != null){
+-						if (need_address && TypeManager.IsValueType (si.THIS.FieldType))
+-							ig.Emit (OpCodes.Ldflda, si.THIS);
++						if (need_address && TypeManager.IsValueType (si.THIS.MemberType))
++							ig.Emit (OpCodes.Ldflda, si.THIS.FieldBuilder);
+ 						else
+-							ig.Emit (OpCodes.Ldfld, si.THIS);
++							ig.Emit (OpCodes.Ldfld, si.THIS.FieldBuilder);
+ 						break;
+ 					}
+ 					si = si.ParentScope;
+Index: statement.cs
+===================================================================
+--- statement.cs	(revision 63019)
++++ statement.cs	(working copy)
+@@ -977,7 +977,7 @@
+ 		//
+ 		//
+ 		public LocalBuilder LocalBuilder;
+-		public FieldBuilder FieldBuilder;
++		public Field Field;
+ 
+ 		public Type VariableType;
+ 		public readonly string Name;
+@@ -1818,9 +1818,8 @@
+ 				}
+ 				foreach (LocalInfo vi in temporary_variables) {
+ 					if (scope != null) {
+-						if (vi.FieldBuilder == null)
+-							vi.FieldBuilder = scope.DefineField (
+-								vi.Name, vi.VariableType, FieldAttributes.Assembly);
++						if (vi.Field == null)
++							throw new InternalErrorException ();
+ 					} else
+ 						vi.LocalBuilder = ig.DeclareLocal (vi.VariableType);
+ 				}
+@@ -2083,6 +2082,7 @@
+ 		// Pointer to the host of this anonymous method, or null
+ 		// if we are the topmost block
+ 		//
++		GenericMethod generic;
+ 		ToplevelBlock container;
+ 		CaptureContext capture_context;
+ 		FlowBranchingToplevel top_level_branching;
+@@ -2120,6 +2120,10 @@
+ 			}
+ 		}
+ 
++		public GenericMethod GenericMethod {
++			get { return generic; }
++		}
++
+ 		public CaptureContext ToplevelBlockCaptureContext {
+ 			get { return capture_context; }
+ 		}
+@@ -2144,6 +2148,13 @@
+ 			this (container, (Flags) 0, parameters, start)
+ 		{
+ 		}
++
++		public ToplevelBlock (ToplevelBlock container, Parameters parameters, GenericMethod generic,
++				      Location start) :
++			this (container, parameters, start)
++		{
++			this.generic = generic;
++		}
+ 		
+ 		public ToplevelBlock (Parameters parameters, Location start) :
+ 			this (null, (Flags) 0, parameters, start)
+@@ -3785,7 +3796,7 @@
+ 						
+ 						ec.EmitCapturedVariableInstance (vi);
+ 						ig.Emit (OpCodes.Ldloc, e);
+-						ig.Emit (OpCodes.Stfld, vi.FieldBuilder);
++						ig.Emit (OpCodes.Stfld, vi.Field.FieldBuilder);
+ 					} else
+ 						ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
+ 				} else
+@@ -4164,7 +4175,7 @@
+ 
+ 			Type var_type = texpr.Type;
+ 
+-			if (expr.eclass == ExprClass.MethodGroup || expr is AnonymousMethod) {
++			if (expr.eclass == ExprClass.MethodGroup || expr is AnonymousMethodExpression) {
+ 				Report.Error (446, expr.Location, "Foreach statement cannot operate on a `{0}'",
+ 					expr.ExprClassName);
+ 				return false;
