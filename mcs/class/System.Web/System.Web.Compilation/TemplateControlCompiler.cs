@@ -1240,9 +1240,20 @@ namespace System.Web.Compilation
 			return str;
 		}
 #endif
-
+    
 		CodeExpression GetExpressionFromString (Type type, string str, MemberInfo member)
-		{
+		{			
+#if NET_2_0
+			Type origType = type;
+			bool wasNullable = false;
+			
+			if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>)) {
+				Type[] types = type.GetGenericArguments();
+				type = types[0]; // we're interested only in the first type here
+				wasNullable = true;
+			}
+#endif
+
 			if (type == typeof (string)) {
 #if NET_2_0
 				object[] urlAttr = member.GetCustomAttributes (typeof (UrlPropertyAttribute), true);
@@ -1257,6 +1268,10 @@ namespace System.Web.Compilation
 					return new CodePrimitiveExpression (true);
 				else if (InvariantCompareNoCase (str, "false"))
 					return new CodePrimitiveExpression (false);
+#if NET_2_0
+				else if (wasNullable && InvariantCompareNoCase(str, "null"))
+					return new CodePrimitiveExpression (null);
+#endif
 				else
 					throw new ParseException (currentLocation,
 							"Value '" + str  + "' is not a valid boolean.");
