@@ -1,3 +1,9 @@
+2006-07-28  Dick Porter  <dick@ximian.com>
+
+	* loader.c (mono_loader_cleanup): mono_loader_cleanup() is racing
+	mono_loader_lock() somewhere, so don't delete the critical section
+	for now.  Found by running and exiting monodevelop.
+
 2006-07-27  Miguel de Icaza  <miguel@novell.com>
 
 	* image.c (load_modules): Use the implmap table to find out which
