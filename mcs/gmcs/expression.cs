@@ -8073,7 +8073,6 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			ArrayList AllGetters = new ArrayList();
 			if (!CommonResolve (ec))
 				return null;
 
@@ -8083,36 +8082,34 @@ namespace Mono.CSharp {
 			//
 			// This is a group of properties, piles of them.  
 
-			bool found_any = false, found_any_getters = false;
-			Type lookup_type = indexer_type;
+			ArrayList AllGetters = null;
 
-			Indexers ilist = Indexers.GetIndexersForType (current_type, lookup_type);
+			Indexers ilist = Indexers.GetIndexersForType (current_type, indexer_type);
 			if (ilist.Properties != null) {
-				found_any = true;
+				AllGetters = new ArrayList(ilist.Properties.Count);
 				foreach (Indexers.Indexer ix in ilist.Properties) {
 					if (ix.Getter != null)
 						AllGetters.Add (ix.Getter);
 				}
 			}
 
-			if (AllGetters.Count > 0) {
-				found_any_getters = true;
-				get = (MethodInfo) Invocation.OverloadResolve (
-					ec, new MethodGroupExpr (AllGetters, loc),
-					arguments, false, loc);
-			}
-
-			if (!found_any) {
+			if (AllGetters == null) {
 				Report.Error (21, loc, "Cannot apply indexing with [] to an expression of type `{0}'",
-					      TypeManager.CSharpName (indexer_type));
+					TypeManager.CSharpName (indexer_type));
 				return null;
 			}
 
-			if (!found_any_getters) {
+			if (AllGetters.Count == 0) {
+				// FIXME: we cannot simply select first one as the error message is missleading when
+				// multiple indexers exist
+				Indexers.Indexer first_indexer = (Indexers.Indexer)ilist.Properties[ilist.Properties.Count - 1];
 				Report.Error (154, loc, "The property or indexer `{0}' cannot be used in this context because it lacks the `get' accessor",
-					      "XXXXXXXX");
+					TypeManager.GetFullNameSignature (first_indexer.PropertyInfo));
 				return null;
 			}
+
+			get = (MethodInfo)Invocation.OverloadResolve (ec, new MethodGroupExpr (AllGetters, loc),
+					arguments, false, loc);
 
 			if (get == null) {
 				Invocation.Error_WrongNumArguments (loc, "this", arguments.Count);
