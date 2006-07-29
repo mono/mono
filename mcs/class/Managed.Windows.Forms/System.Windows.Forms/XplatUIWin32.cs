@@ -1991,20 +1991,22 @@ namespace System.Windows.Forms {
 			style = Win32GetWindowLong(handle, WindowLong.GWL_STYLE);
 			exstyle = Win32GetWindowLong(handle, WindowLong.GWL_EXSTYLE);
 
-			style &= ~(uint)WindowStyles.WS_BORDER;
-			exstyle &= ~(uint)WindowExStyles.WS_EX_CLIENTEDGE;
 
 			switch (border_style) {
 				case FormBorderStyle.None: {
+					style &= ~(uint)WindowStyles.WS_BORDER;
+					exstyle &= ~(uint)WindowExStyles.WS_EX_CLIENTEDGE;
 					break;
 				}
 
 				case FormBorderStyle.FixedSingle: {
 					style |= (uint)WindowStyles.WS_BORDER;
+					exstyle &= ~(uint)WindowExStyles.WS_EX_CLIENTEDGE;
 					break;
 				}
 
 				case FormBorderStyle.Fixed3D: {
+					style &= ~(uint)WindowStyles.WS_BORDER;
 					exstyle |= (uint)WindowExStyles.WS_EX_CLIENTEDGE;
 					break;
 				}
