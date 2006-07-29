@@ -1991,21 +1991,20 @@ namespace System.Windows.Forms {
 			style = Win32GetWindowLong(handle, WindowLong.GWL_STYLE);
 			exstyle = Win32GetWindowLong(handle, WindowLong.GWL_EXSTYLE);
 
+			style &= ~(uint)WindowStyles.WS_BORDER;
+			exstyle &= ~(uint)WindowExStyles.WS_EX_CLIENTEDGE;
+
 			switch (border_style) {
 				case FormBorderStyle.None: {
-					style &= ~(uint)WindowStyles.WS_BORDER;
-					exstyle &= ~(uint)WindowExStyles.WS_EX_CLIENTEDGE;
 					break;
 				}
 
 				case FormBorderStyle.FixedSingle: {
 					style |= (uint)WindowStyles.WS_BORDER;
-					exstyle &= ~(uint)WindowExStyles.WS_EX_CLIENTEDGE;
 					break;
 				}
 
 				case FormBorderStyle.Fixed3D: {
-					style |= (uint)WindowStyles.WS_BORDER;
 					exstyle |= (uint)WindowExStyles.WS_EX_CLIENTEDGE;
 					break;
 				}
@@ -2015,7 +2014,7 @@ namespace System.Windows.Forms {
 			Win32SetWindowLong(handle, WindowLong.GWL_EXSTYLE, exstyle);
 			
 			Win32SetWindowPos(handle, IntPtr.Zero, 0, 0, 0, 0, 
-				SetWindowPosFlags.SWP_FRAMECHANGED | SetWindowPosFlags.SWP_NOMOVE | SetWindowPosFlags.SWP_NOSIZE | SetWindowPosFlags.SWP_NOACTIVATE);
+				SetWindowPosFlags.SWP_FRAMECHANGED | SetWindowPosFlags.SWP_NOMOVE | SetWindowPosFlags.SWP_NOSIZE | SetWindowPosFlags.SWP_NOACTIVATE | SetWindowPosFlags.SWP_NOOWNERZORDER | SetWindowPosFlags.SWP_NOZORDER);
 		}
 
 		internal override void SetMenu(IntPtr handle, Menu menu) {
