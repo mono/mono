@@ -40,7 +40,6 @@ namespace System.Windows.Forms
 	[DefaultProperty("Document")]
 	public sealed class PrintDialog : CommonDialog {
 		PrintDocument document;
-		PrinterSettings printer_settings;
 		bool allow_current_page;
 		bool allow_print_to_file;
 		bool allow_selection;
@@ -83,7 +82,7 @@ namespace System.Windows.Forms
 
 		public override void Reset ()
 		{
-			current_settings = null;
+			current_settings = new PrinterSettings ();
 			AllowPrintToFile = true;
 			AllowSelection = false;
 			AllowSomePages = false;
@@ -157,12 +156,8 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				if (value == null)
-					return;
-
 				document = value;
-				current_settings = value.PrinterSettings;
-				printer_settings  = null;
+				current_settings = value == null ? new PrinterSettings () : value.PrinterSettings;
 			}
 		}
 
@@ -171,11 +166,14 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public PrinterSettings PrinterSettings {
 			get {
-				return printer_settings;
+				return current_settings;
 			}
 
 			set {
-				current_settings = printer_settings = value;
+				if (value != null && value == current_settings)
+					return;
+
+				current_settings = value == null ? new PrinterSettings () : value;
 				document = null;
 			}
 		}
