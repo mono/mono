@@ -904,7 +904,7 @@ namespace System.Web.UI.WebControls
 			}
 				
 			if (showPager && PagerSettings.Position == PagerPosition.Bottom || PagerSettings.Position == PagerPosition.TopAndBottom) {
-				bottomPagerRow = CreateRow (-1, DataControlRowType.Pager, DataControlRowState.Normal);
+				bottomPagerRow = CreateRow (0, DataControlRowType.Pager, DataControlRowState.Normal);
 				InitializePager (bottomPagerRow, dataSource);
 				table.Rows.Add (bottomPagerRow);
 			}
@@ -1255,7 +1255,8 @@ namespace System.Web.UI.WebControls
 			OnItemInserting (args);
 			if (!args.Cancel) {
 				DataSourceView view = GetData ();
-				if (view == null) throw new HttpException ("The DataSourceView associated to data bound control was null");
+				if (view == null) 
+					return;
 				view.Insert (currentEditNewValues, new DataSourceViewOperationCallback (InsertCallback));
 			} else
 				EndRowEdit ();

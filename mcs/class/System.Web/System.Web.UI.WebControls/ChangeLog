@@ -1,5 +1,10 @@
 2006-07-30 Andrew Skiba <andrews@mainsoft.com>
 
+	* FormView.cs: init BottomPagerRow.ItemIndex with 0; gracefully
+	handle null result of GetData().
+
+2006-07-30 Andrew Skiba <andrews@mainsoft.com>
+
 	* FormView.cs: use TableStyle for ControlStyle.
 
 2006-07-30 Andrew Skiba <andrews@mainsoft.com>
