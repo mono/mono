@@ -383,8 +383,6 @@ namespace System.Web.UI.WebControls
 		[WebCategoryAttribute ("Behavior")]
 		public virtual FormViewMode DefaultMode {
 			get {
-				if (defaultMode == null)
-					return FormViewMode.ReadOnly;
 				return defaultMode;
 			}
 			set {
@@ -841,7 +839,7 @@ namespace System.Web.UI.WebControls
 			}
 
 			pageCount = dataSource.DataSourceCount;
-			bool showPager = AllowPaging && (dataSource.Count > 1);
+			bool showPager = AllowPaging && (dataSource.Count > 0);
 			
 			Controls.Clear ();
 			table = CreateTable ();
