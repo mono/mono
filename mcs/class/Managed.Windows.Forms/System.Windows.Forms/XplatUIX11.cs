@@ -2371,7 +2371,8 @@ namespace System.Windows.Forms {
 				}
 
 				case StdCursor.Arrow: {
-					return IntPtr.Zero;
+					shape = CursorFontShape.XC_arrow;
+					break;
 				}
 
 				case StdCursor.Cross: {
@@ -2380,7 +2381,8 @@ namespace System.Windows.Forms {
 				}
 
 				case StdCursor.Default: {
-					return IntPtr.Zero;
+					shape = CursorFontShape.XC_arrow;
+					break;
 				}
 
 				case StdCursor.Hand: {
