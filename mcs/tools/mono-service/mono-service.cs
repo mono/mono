@@ -100,11 +100,15 @@ class MonoServiceRunner : MarshalByRefObject
 		if (lockfile == null)
 			lockfile = String.Format ("/tmp/{0}.lock", Path.GetFileName (assembly));
 
-		int lfp = Syscall.open (lockfile, OpenFlags.O_RDWR|OpenFlags.O_CREAT, 
+		int lfp = Syscall.open (lockfile, OpenFlags.O_RDWR|OpenFlags.O_CREAT|OpenFlags.O_EXCL, 
 			FilePermissions.S_IRUSR|FilePermissions.S_IWUSR|FilePermissions.S_IRGRP);
-	
+
 		if (lfp<0)  {
-			error (logname, "Cannot open lock file.");
+		        // Provide some useful info
+			if (File.Exists (lockfile))
+				error (logname, String.Format ("Log file already exists: {0}", lockfile));
+			else 
+				error (logname, String.Format ("Cannot open/create log file exclusively: {0}", lockfile));
 			return 1;
 		}
 	
