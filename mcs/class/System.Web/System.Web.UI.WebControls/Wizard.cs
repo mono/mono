@@ -1228,6 +1228,7 @@ namespace System.Web.UI.WebControls
 			CommandEventArgs args = e as CommandEventArgs;
 			if (args != null) {
 				ProcessEvent (args.CommandName, args.CommandArgument as string);
+				return true;
 			}
 			return base.OnBubbleEvent (source, e);
 		}
