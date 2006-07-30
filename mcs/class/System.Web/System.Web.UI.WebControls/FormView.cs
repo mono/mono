@@ -538,12 +538,10 @@ namespace System.Web.UI.WebControls
 		[DefaultValueAttribute (GridLines.None)]
 		public virtual GridLines GridLines {
 			get {
-				object ob = ViewState ["GridLines"];
-				if (ob != null) return (GridLines) ob;
-				return GridLines.None;
+				return ((TableStyle) ControlStyle).GridLines;
 			}
 			set {
-				ViewState ["GridLines"] = value;
+				((TableStyle) ControlStyle).GridLines = value;
 			}
 		}
 
@@ -818,10 +816,11 @@ namespace System.Web.UI.WebControls
 			base.EnsureDataBound ();
 		}
 	
-		[MonoTODO]
 		protected override Style CreateControlStyle ()
 		{
-			return base.CreateControlStyle ();
+			TableStyle style = new TableStyle (ViewState);
+			style.CellSpacing = 0;
+			return style;
 		}
 		
 		protected override int CreateChildControls (IEnumerable data, bool dataBinding)
