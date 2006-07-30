@@ -1,3 +1,7 @@
+2006-07-30 Andrew Skiba <andrews@mainsoft.com>
+
+	* FormViewTest.cs: fix few tests.
+
 2006-07-30 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* WizardTest.cs: fixed test, removed NotWorking attributes

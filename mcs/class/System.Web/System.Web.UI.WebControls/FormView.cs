@@ -831,7 +831,7 @@ namespace System.Web.UI.WebControls
 
 			if (dataBinding) {
 				DataSourceView view = GetData ();
-				if (view.CanPage) {
+				if (view != null && view.CanPage) {
 					dataSource.AllowServerPaging = true;
 					if (view.CanRetrieveTotalRowCount)
 						dataSource.VirtualCount = SelectArguments.TotalRowCount;
@@ -932,7 +932,8 @@ namespace System.Web.UI.WebControls
 		protected virtual void InitializePager (FormViewRow row, PagedDataSource dataSource)
 		{
 			TableCell cell = new TableCell ();
-			
+			cell.ColumnSpan = 2;
+
 			if (pagerTemplate != null)
 				pagerTemplate.InstantiateIn (cell);
 			else
@@ -977,6 +978,7 @@ namespace System.Web.UI.WebControls
 				else
 					cell.Text = HeaderText;
 			}
+			cell.ColumnSpan = 2;
 			row.Cells.Add (cell);
 		}
 		
@@ -1416,9 +1418,10 @@ namespace System.Web.UI.WebControls
 			}
 			
 			writer.AddAttribute (HtmlTextWriterAttribute.Cellspacing, "0");
-			writer.AddStyleAttribute (HtmlTextWriterStyle.BorderCollapse, "collapse");
 			if (!string.IsNullOrEmpty (ControlStyle.CssClass))
 				writer.AddAttribute (HtmlTextWriterAttribute.Class, ControlStyle.CssClass);
+
+			table.ControlStyle.MergeWith (ControlStyle);
 			table.RenderBeginTag (writer);
 			
 			foreach (FormViewRow row in table.Rows)

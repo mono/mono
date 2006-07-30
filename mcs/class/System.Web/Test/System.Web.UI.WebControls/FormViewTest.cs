@@ -312,10 +312,16 @@ namespace MonoTests.System.Web.UI.WebControls
 			myds.Add ("Item5");
 			myds.Add ("Item6");
 #if VISUAL_STUDIO
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.FormView.aspx",
+				"FormView.aspx");
 			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.FormViewTest1.aspx",
 				"FormViewTest1.aspx");
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.FormViewInsertEditDelete.aspx",
+				"FormViewInsertEditDelete.aspx");
 #else
+			WebTest.CopyResource (GetType (), "FormView.aspx", "FormView.aspx");
 			WebTest.CopyResource (GetType (), "FormViewTest1.aspx", "FormViewTest1.aspx");
+			WebTest.CopyResource (GetType (), "FormViewInsertEditDelete.aspx", "FormViewInsertEditDelete.aspx");
 #endif
 
 		}
@@ -463,6 +469,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void FormView_ItemsProperties ()
 		{
 			Poker p = new Poker ();
+			p.Page = new Page ();
 			p.AllowPaging = true;
 			p.DataSource = myds;
 			p.DataBind ();
@@ -561,6 +568,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			Poker fv = new Poker ();
 			fv.AllowPaging =true;
 			fv.DataSource = myds;
+			fv.Page = new Page ();
 			fv.DataBind ();
 			FormViewRow row = fv.DoCreateRow (2,DataControlRowType.DataRow ,DataControlRowState.Normal );
 			Assert.AreEqual (2, row.ItemIndex, "CreatedRowItemIndex1");
@@ -582,7 +590,8 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void FormView_CreateTable ()
 		{
 			Poker fv = new Poker ();
-			Table tb = fv.DoCreateTable ();			
+			Table tb = fv.DoCreateTable ();
+			fv.Page = new Page ();
 			Assert.AreEqual ("", tb.BackImageUrl , "CreateTable1");
 			Assert.AreEqual (0, tb.Rows.Count, "CreateTable2");
 			fv.DataSource = myds;
@@ -608,6 +617,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void FormView_PerformDataBinding ()
 		{
 			Poker fv = new Poker ();
+			fv.Page = new Page ();
 			Assert.AreEqual (0,fv.DataItemCount, "BeforePerformDataBinding"); 
 			fv.DoPerformDataBinding (myds);
 			Assert.AreEqual (6, fv.DataItemCount, "AfterPerformDataBinding"); 
@@ -648,6 +658,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void FormView_PrepareControlHierarcy ()
 		{
 			Poker fv = new Poker ();
+			fv.Page = new Page ();
 			fv.controlHierarchy = false;
 			fv.Render ();
 			Assert.AreEqual (0, fv.Controls.Count, "ControlHierarchy1");
@@ -701,6 +712,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void FormView_DeleteItem ()
 		{
 			Poker fv = new Poker ();
+			fv.Page = new Page ();
 			fv.DataSource = myds;
 			fv.DataBind ();
 			Assert.AreEqual (false, isDeleted, "BeforeDeleteItem");
@@ -722,6 +734,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void FormView_InsertItem ()
 		{
 			Poker fv = new Poker ();
+			fv.Page = new Page ();
 			fv.ChangeMode (FormViewMode.Insert);
 			fv.ItemInserting += new FormViewInsertEventHandler (insert_item);
 			Assert.AreEqual (false, insertItem, "BeforeInsertItem");
@@ -792,6 +805,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			fv.DefaultMode  = FormViewMode.Insert  ;
 			object state = fv.DoSaveControlState ();
 			copy.DoLoadControlState (state);
+			Assert.AreEqual (2, copy.DataKeyNames.Length, "DataKeyNames.Length");
 			Assert.AreEqual ("key1", copy.DataKeyNames[0], "ControlStateDataKeyValue");
 			Assert.AreEqual ("key2", copy.DataKeyNames[1], "ControlStateDataKeyValue2");			
 			Assert.AreEqual (FormViewMode.Insert, copy.DefaultMode, "ControlStateDefaultMode");
@@ -856,6 +870,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			Page page = new Page ();
 			Button bt = new Button ();
 			fv.AllowPaging = true;
+			fv.DataSource = myds;
 			page.Controls.Add (fv);
 			ResetEvents ();
 			fv.ItemCommand += new FormViewCommandEventHandler (fv_ItemCommand);
@@ -987,6 +1002,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			ResetEvents ();
 			Poker fv = new Poker ();
+			fv.Page = new Page ();
 			fv.Init += new EventHandler (fv_Init);
 			fv.ItemCommand += new FormViewCommandEventHandler (fv_ItemCommand);
 			fv.ItemCreated += new EventHandler (fv_ItemCreated);
@@ -1265,7 +1281,6 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 		[Category("NunitWeb")]
 		public void FormViewCssClass ()
 		{
-			WebTest.CopyResource (GetType (), "FormView.aspx", "FormView.aspx");
 			string res = new WebTest ("FormView.aspx").Run ();
 			Assert.IsTrue (Regex.IsMatch (
 				res, ".*<table[^>]*class=\"[^\"]*test1[^\"]*\"[^>]*>.*",
@@ -1362,26 +1377,31 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 			string RenderedPageHtml = new WebTest ("FormViewTest1.aspx").Run ();
 			string newHtmlValue = RenderedPageHtml.Substring (RenderedPageHtml.IndexOf ("test3") + 5, RenderedPageHtml.IndexOf ("test4") - RenderedPageHtml.IndexOf ("test3") - 5);
 			string origHtmlValue = @" <table cellspacing=""0"" cellpadding=""2"" border=""0"" id=""FormView3"" style=""color:Black;background-color:LightGoldenrodYellow;border-color:Tan;border-width:1px;border-style:solid;border-collapse:collapse;"">
-						  <tr align=""center"" valign=""top"" style=""color:#C00000;background-color:Tan;font-weight:bold;"">
-						<td colspan=""2"">
-						<span id=""FormView3_Label5"">Header Template Test</span>
-						</td>
-						</tr><tr>
-						<td colspan=""2"">
-						<span id=""FormView3_Label4"">1</span>
-						</td>
-						</tr><tr align=""right"" style=""color:#FFC0FF;background-color:Tan;"">
-						<td colspan=""2"">
-						<span id=""FormView3_Label6"">FormView Footer</span>
-						</td>
-						</tr><tr align=""center"" style=""color:DarkSlateBlue;background-color:PaleGoldenrod;"">
-						<td colspan=""2""><table border=""0"">
-						<tr>
-						<td><span>1</span></td><td><a href=""javascript:__doPostBack('FormView3','Page$2')"" style=""color:DarkSlateBlue;"">2</a></td><td><a href=""javascript:__doPostBack('FormView3','Page$3')"" style=""color:DarkSlateBlue;"">3</a></td><td><a href=""javascript:__doPostBack('FormView3','Page$4')"" style=""color:DarkSlateBlue;"">4</a></td><td><a href=""javascript:__doPostBack('FormView3','Page$5')"" style=""color:DarkSlateBlue;"">5</a></td><td><a href=""javascript:__doPostBack('FormView3','Page$6')"" style=""color:DarkSlateBlue;"">6</a></td>
-						</tr>
-						</table></td>
-						</tr>
-						</table>";        
+				<tr align=""center"" valign=""top"" style=""color:#C00000;background-color:Tan;font-weight:bold;"">
+				<td colspan=""2"">
+				<span id=""FormView3_Label5"">Header Template Test</span>
+				</td>
+				</tr><tr>
+				<td colspan=""2"">
+				<span id=""FormView3_Label4"">1</span>
+				</td>
+				</tr><tr align=""center"" style=""color:DarkSlateBlue;background-color:PaleGoldenrod;"">
+				<td colspan=""2""><table border=""0"">
+				<tr>
+				<td><span>1</span></td><td>
+				<a href=""javascript:__doPostBack('FormView3','Page$2')"" style=""color:DarkSlateBlue;"">2</a></td><td>
+				<a href=""javascript:__doPostBack('FormView3','Page$3')"" style=""color:DarkSlateBlue;"">3</a></td><td>
+				<a href=""javascript:__doPostBack('FormView3','Page$4')"" style=""color:DarkSlateBlue;"">4</a></td><td>
+				<a href=""javascript:__doPostBack('FormView3','Page$5')"" style=""color:DarkSlateBlue;"">5</a></td><td>
+				<a href=""javascript:__doPostBack('FormView3','Page$6')"" style=""color:DarkSlateBlue;"">6</a></td>
+				</tr><tr align=""right"" style=""color:#FFC0FF;background-color:Tan;"">
+				<td colspan=""2"">
+				<span id=""FormView3_Label6"">FormView Footer</span>
+				</td>
+				</tr>
+				</table></td>
+				</tr>
+				</table>";        
 			HtmlDiff.AssertAreEqual (origHtmlValue, newHtmlValue, "RenderingDefaultPaging");
 		}
 		
