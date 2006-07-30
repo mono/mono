@@ -376,21 +376,24 @@ namespace System.Web.UI.WebControls
 				return currentMode;
 			}
 		}
-	
+
+		FormViewMode defaultMode;
+
 		[DefaultValueAttribute (FormViewMode.ReadOnly)]
 		[WebCategoryAttribute ("Behavior")]
 		public virtual FormViewMode DefaultMode {
 			get {
-				object o = ViewState ["DefaultMode"];
-				if (o != null) return (FormViewMode) o;
-				return FormViewMode.ReadOnly;
+				if (defaultMode == null)
+					return FormViewMode.ReadOnly;
+				return defaultMode;
 			}
 			set {
-				ViewState ["DefaultMode"] = value;
+				defaultMode = value;
 				RequireBinding ();
 			}
 		}
-	
+
+		string[] dataKeyNames;
 		[DefaultValueAttribute (null)]
 		[WebCategoryAttribute ("Data")]
 		[TypeConverter (typeof(StringArrayConverter))]
@@ -398,12 +401,12 @@ namespace System.Web.UI.WebControls
 		public virtual string[] DataKeyNames
 		{
 			get {
-				object o = ViewState ["DataKeyNames"];
-				if (o != null) return (string[]) o;
-				return emptyKeys;
+				if (dataKeyNames == null)
+					return emptyKeys;
+				return dataKeyNames;
 			}
 			set {
-				ViewState ["DataKeyNames"] = value;
+				dataKeyNames = value;
 				RequireBinding ();
 			}
 		}
@@ -1321,14 +1324,16 @@ namespace System.Web.UI.WebControls
 			pageIndex = (int) state[1];
 			pageCount = (int) state[2];
 			currentMode = (FormViewMode) state[3];
+			defaultMode = (FormViewMode) state[4];
+			dataKeyNames = (string[]) state[5];
 		}
 		
 		protected internal override object SaveControlState ()
 		{
 			object bstate = base.SaveControlState ();
 			return new object[] {
-				bstate, pageIndex, pageCount, currentMode
-					};
+				bstate, pageIndex, pageCount, currentMode, defaultMode, dataKeyNames
+			};
 		}
 		
 		protected override void TrackViewState()
