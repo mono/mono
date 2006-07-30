@@ -106,6 +106,7 @@ namespace System.Web.UI.WebControls
 		
 		public FormView ()
 		{
+			key = new DataKey (new OrderedDictionary ());
 		}
 		
 		public event EventHandler PageIndexChanged {
@@ -1007,6 +1008,9 @@ namespace System.Web.UI.WebControls
 		
 		protected virtual void ExtractRowValues (IOrderedDictionary fieldValues, bool includeKeys)
 		{
+			if (Row == null)
+				return;
+
 			DataControlRowState rowState = Row.RowState;
 			IBindableTemplate bt;
 			

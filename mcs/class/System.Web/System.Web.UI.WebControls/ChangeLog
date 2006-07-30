@@ -1,3 +1,7 @@
+2006-07-30 Andrew Skiba <andrews@mainsoft.com>
+
+	* FormView.cs: init DataKeys and fix null reference.
+
 2006-07-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TreeView.cs: several changes to improve compatibility with MS.
