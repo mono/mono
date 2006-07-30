@@ -382,7 +382,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Wizard_DefaultPropertyNotWorking ()
 		{
 			PokerWizard wizard = new PokerWizard ();
@@ -478,7 +477,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void Wizard_CancelButtonPropertyRendering ()
 		{
 
@@ -530,7 +528,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void Wizard_FinishButtonPropertyRendering ()
 		{
 
@@ -586,7 +583,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void Wizard_HeaderRendering ()
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnPreInit (_HeaderRendering));
@@ -718,7 +714,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void Wizard_NavigationRendering ()
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnPreInit (_NavigationRendering));
@@ -775,7 +770,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void Wizard_StartTypeRendering ()
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnPreInit (_StartTypeRendering));
@@ -834,7 +828,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void Wizard_StartTemplateRendering ()
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnPreInit (_StartTemplateRendering));
@@ -886,7 +879,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void Wizard_StepTypeRendering ()
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnPreInit (_StepTypeRendering));
@@ -960,7 +952,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void Wizard_StepNavigationTemplateRendering ()
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnPreInit (_StepNavigationTemplate));
@@ -1228,7 +1219,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Wizard_CreateControlStyle ()
 		{
 			PokerWizard wizard = new PokerWizard ();
@@ -1265,7 +1255,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Wizard_ViewState ()
 		{
 			PokerWizard wizard = new PokerWizard ();
@@ -1385,7 +1374,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		/// Bubble Event
 		/// </summary>
 		[Test]
-		[Category ("NotWorking")]
 		public void Wizard_BubbleEvent_CancelEvent ()
 		{
 			PokerWizard wizard = new PokerWizard ();
@@ -1406,7 +1394,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category("NotWorking")]
 		public void Wizard_BubbleEvent_MoveNext ()
 		{
 			PokerWizard wizard = new PokerWizard ();
@@ -1428,7 +1415,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Wizard_BubbleEvent_MovePrevious ()
 		{
 			PokerWizard wizard = new PokerWizard ();
@@ -1449,7 +1435,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Wizard_BubbleEvent_MoveComplete ()
 		{
 			PokerWizard wizard = new PokerWizard ();
@@ -1460,8 +1445,12 @@ namespace MonoTests.System.Web.UI.WebControls
 			WizardStep step2 = new WizardStep ();
 			step2.ID = "step2";
 			step2.StepType = WizardStepType.Finish;
+			WizardStep step3 = new WizardStep ();
+			step3.ID = "step2";
+			step3.StepType = WizardStepType.Complete;
 			wizard.WizardSteps.Add (step1);
 			wizard.WizardSteps.Add (step2);
+			wizard.WizardSteps.Add (step3);
 			wizard.ActiveStepIndex = 1;
 			CommandEventArgs e = new CommandEventArgs (Wizard.MoveCompleteCommandName, null);
 			bool result = wizard.DoBubbleEvent (null, e);
@@ -1470,7 +1459,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Wizard_BubbleEvent_MoveTo ()
 		{
 			PokerWizard wizard = new PokerWizard ();
@@ -1641,7 +1629,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void Wizard_PostBack()
 		{
 			WebTest t = new WebTest ();
@@ -1781,6 +1768,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void Wizard_ActiveStepException1 ()
 		{
