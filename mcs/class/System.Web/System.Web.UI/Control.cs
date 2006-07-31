@@ -1406,7 +1406,7 @@ namespace System.Web.UI
 				trace.Write ("control", String.Format ("ApplyThemeRecursive {0} {1}", _userId, type_name));
 			}
 #endif
-			if (Page.PageTheme != null) {
+			if (Page.PageTheme != null && EnableTheming) {
 				ControlSkin controlSkin = Page.PageTheme.GetControlSkin (GetType (), SkinID);
 				if (controlSkin != null)
 					controlSkin.ApplySkin (this);
@@ -1448,7 +1448,16 @@ namespace System.Web.UI
 		[DefaultValue (true)]
 		public virtual bool EnableTheming
 		{
-			get { return (stateMask & ENABLE_THEMING) != 0; }
+			get
+			{
+				if ((stateMask & ENABLE_THEMING) == 0)
+					return false;
+
+				if (_parent != null)
+					return _parent.EnableTheming;
+
+				return true;
+			}
 			set { SetMask (ENABLE_THEMING, value); }
 		}
 		
