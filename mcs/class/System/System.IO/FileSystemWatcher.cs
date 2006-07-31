@@ -31,10 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Security.Permissions;
 using System.Threading;
 
 namespace System.IO {
@@ -103,6 +103,7 @@ namespace System.IO {
 			InitWatcher ();
 		}
 
+		[EnvironmentPermission (SecurityAction.Assert, Read="MONO_MANAGED_WATCHER")]
 		void InitWatcher ()
 		{
 			lock (lockobj) {
