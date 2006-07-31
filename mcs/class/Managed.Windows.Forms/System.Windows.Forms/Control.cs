@@ -3414,6 +3414,9 @@ namespace System.Windows.Forms
 
 					key_press_event = new KeyPressEventArgs((char)msg.WParam);
 					OnKeyPress(key_press_event);
+#if NET_2_0
+					msg.WParam = (IntPtr)key_press_event.KeyChar;
+#endif
 					return key_press_event.Handled;
 				}
 

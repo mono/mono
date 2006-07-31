@@ -1,3 +1,8 @@
+2006-07-31  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Control.cs (WM_CHAR WndProc): 2.0 profile allows changing the key 
+	  in the event handler (fixes #78912)
+
 2006-07-31  Chris Toshok  <toshok@ximian.com>
 
 	* ThemeWin32Classic.cs: use grid.RowsCount here instead of
