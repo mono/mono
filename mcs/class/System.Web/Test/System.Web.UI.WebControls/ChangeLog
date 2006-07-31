@@ -1,3 +1,10 @@
+2006-07-31 Vladimir Krasnov <vladimirk@mainsoft.com>
+	
+	* WizardStepBaseTest.cs:
+	* MasterPageTest.cs
+	* MenuTest.cs
+	* GridViewTest.cs: removed NotWorking attributes
+
 2006-07-30 Andrew Skiba <andrews@mainsoft.com>
 
 	* FormViewTest.cs: fix few tests.

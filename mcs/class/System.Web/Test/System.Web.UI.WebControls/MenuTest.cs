@@ -170,8 +170,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
-		public void Menu_DefaultPropertiesNotWorking ()
+		public void Menu_DefaultProperties_2 ()
 		{
 			PokerMenu p = new PokerMenu ();
 			Assert.AreEqual ("Skip Navigation Links", p.SkipLinkText, "SkipLinkText");
@@ -333,8 +332,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
-		public void Menu_ChangeDefaultPropertiesNotWorking ()
+		public void Menu_ChangeDefaultProperties_2 ()
 		{
 			PokerMenu p = new PokerMenu ();
 			p.ScrollUpText = "test";
@@ -384,7 +382,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 	       	[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]  
 		public void Menu_RenderBeginTag ()
 		{
 		        new WebTest (PageInvoker.CreateOnLoad (_BeginTagRender)).Run ();
@@ -409,7 +406,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-	        [Category ("NotWorking")]  
+		[Category ("NotWorking")]  
 		public void Menu_RenderEndTag ()
 		{
 		        new WebTest (PageInvoker.CreateOnLoad (_EndTagRender)).Run ();
@@ -503,7 +500,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]  
 		public void Menu_DefaultRender ()
 		{
 		        string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (_DefaultRender)).Run ();

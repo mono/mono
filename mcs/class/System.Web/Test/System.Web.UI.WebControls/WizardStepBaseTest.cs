@@ -99,7 +99,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category("NotWorking")]
 		public void WizardStepBase_DefaultPropertyNotWorking ()
 		{
 			PokerWizardStepBase step = new PokerWizardStepBase ();
@@ -206,7 +205,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void WizardStepBase_RenderTest ()
 		{
 			// This render test include Title property test 
@@ -266,7 +264,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void WizardStepBase_PostBackAllowReturnTest ()
 		{
 			// This test examine the rendering 2 steps and make postbake
@@ -325,7 +322,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void WizardStepBase_Theme ()
 		{
 #if DOT_NET

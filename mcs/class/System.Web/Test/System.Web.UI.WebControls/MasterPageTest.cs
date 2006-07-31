@@ -72,18 +72,23 @@ namespace MonoTests.System.Web.UI.WebControls
 	{
 
 		[Test]
-		[Category ("NotWorking")]
 		public void MasterPage_DefaultProperties ()
 		{
 			PokerMasterPage pmp = new PokerMasterPage ();
 			Assert.AreEqual (null, pmp.Master, "Master Property");
 			Assert.AreEqual (null, pmp.MasterPageFile, "MasterPageFile Property");
-			IDictionary i = pmp.ContentTemplates ();
-			Assert.AreEqual (null,i,"ContentTemplates");
 		}
 
 		[Test]
 		[Category ("NotWorking")]
+		public void MasterPage_DefaultPropertiesNotWorking ()
+		{
+			PokerMasterPage pmp = new PokerMasterPage ();
+			IDictionary i = pmp.ContentTemplates ();
+			Assert.AreEqual (null, i, "ContentTemplates");
+		}
+
+		[Test]
 		[Category ("NunitWeb")]
 		public void MasterPage_Render()
 		{
@@ -120,7 +125,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 	 	[ExpectedException (typeof(HttpException))]
 		public void MasterPage_AddContentTemplate ()
 		{
