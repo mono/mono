@@ -1,10 +1,11 @@
 // 
 // System.ComponentModel.WarningException.cs
 //
-// Author:
-//   Asier Llano Palacios (asierllano@infonegocio.com)
+// Authors:
+//	Asier Llano Palacios (asierllano@infonegocio.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,31 +27,66 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
+using System.Runtime.Serialization;
+using System.Security.Permissions;
 
 namespace System.ComponentModel {
 
+#if NET_2_0
+	[Serializable]
+#endif
 	public class WarningException : SystemException
 	{
 		private string helpUrl;
 		private string helpTopic;
 	
-		public WarningException( string message ) 
-			: base( message ) {
-			helpUrl = null;
-			helpTopic = null;
+		public WarningException (string message)
+			: base (message)
+		{
 		}
 
-		public WarningException( string message, string helpUrl )
-			: base( message ) {
+		public WarningException (string message, string helpUrl)
+			: base (message)
+		{
 			this.helpUrl = helpUrl;
-			this.helpTopic = null;
 		}
 
-		public WarningException( string message, string helpUrl, string helpTopic ) {
+		public WarningException (string message, string helpUrl, string helpTopic)
+			: base (message)
+		{
 			this.helpUrl = helpUrl;
 			this.helpTopic = helpTopic;
 		}
+
+#if NET_2_0
+		public WarningException () 
+			: base (Locale.GetText ("Warning"))
+		{
+		}
+
+		public WarningException (string message, Exception innerException) 
+			: base (message, innerException)
+		{
+		}
+
+		protected WarningException (SerializationInfo info, StreamingContext context)
+			: base (info, context)
+		{
+			helpTopic = info.GetString ("HelpTopic");
+			helpUrl = info.GetString ("HelpUrl");
+		}
+
+		[SecurityPermission (SecurityAction.Demand, SerializationFormatter = true)]
+		public override void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			if (info == null)
+				throw new ArgumentNullException ("info");
+
+			info.AddValue ("HelpTopic", helpTopic);
+			info.AddValue ("HelpUrl", helpUrl);
+			base.GetObjectData (info, context);
+		}
+#endif
 
 		public string HelpTopic {
 			get {
@@ -64,6 +100,4 @@ namespace System.ComponentModel {
 			}
 		}
 	}
-
 }
-

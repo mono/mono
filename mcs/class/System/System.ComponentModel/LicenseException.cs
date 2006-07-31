@@ -7,8 +7,7 @@
 //
 // (C) 2003 Martin Willemoes Hansen
 // (C) 2003 Andreas Nahr
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,8 +29,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace System.ComponentModel
-{
+using System.Runtime.Serialization;
+using System.Security.Permissions;
+
+namespace System.ComponentModel {
+
+#if NET_2_0
+	[Serializable]
+#endif
 	public class LicenseException : SystemException
 	{
 
@@ -62,7 +67,23 @@ namespace System.ComponentModel
 			// LAMESPEC what should we do with instance?
 			this.type = type;
 		}
-		
+#if NET_2_0
+		protected LicenseException (SerializationInfo info, StreamingContext context)
+			: base (info, context)
+		{
+			type = (Type) info.GetValue ("LicensedType", typeof (Type));
+		}
+
+		[SecurityPermission (SecurityAction.Demand, SerializationFormatter = true)]
+		public override void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			if (info == null)
+				throw new ArgumentNullException ("info");
+
+			info.AddValue ("LicensedType", type);
+			base.GetObjectData (info, context);
+		}
+#endif
 		public Type LicensedType {
 			get { return type; }
 		}		

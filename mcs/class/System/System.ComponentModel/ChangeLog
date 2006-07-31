@@ -1,3 +1,16 @@
+2006-07-31  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* InvalidEnumArgumentException.cs: Updated to 2.0.
+	* LicenseException.cs: Updated to 2.0. Add a demand for 
+	SerializationFormatter on GetObjectData method.
+	* TypeDescriptor.cs: Add linkdemand for ReflectionPermission on 
+	CreateEvent and CreateProperties methods. Add linkdemand for 
+	unrestricted on ComNativeDescriptorHandler get/set.
+	* WarningException.cs: Updated to 2.0. Add a demand for 
+	SerializationFormatter on GetObjectData method.
+	* Win32Exception.cs: Add a demand for SerializationFormatter on 
+	GetObjectData method.
+
 2006-07-14  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* MaskedTextResultHint.cs: Added

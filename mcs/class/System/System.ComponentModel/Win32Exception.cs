@@ -90,9 +90,10 @@ namespace System.ComponentModel
 			}
 		}
 
+		[SecurityPermission (SecurityAction.Demand, SerializationFormatter = true)]
 		public override void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
-			if (info==null)
+			if (info == null)
 				throw new ArgumentNullException ("info");
 
 			info.AddValue ("NativeErrorCode", native_error_code);

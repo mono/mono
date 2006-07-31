@@ -30,11 +30,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Collections;
 using System.Reflection;
 using System.Globalization;
 using System.ComponentModel.Design;
+using System.Security.Permissions;
 
 namespace System.ComponentModel
 {
@@ -72,6 +72,7 @@ public sealed class TypeDescriptor
 		return null;
 	}
 
+	[ReflectionPermission (SecurityAction.LinkDemand, TypeInformation = true, MemberAccess = true)]
 	public static EventDescriptor CreateEvent (Type componentType,
 						   string name,
 						   Type type,
@@ -80,6 +81,7 @@ public sealed class TypeDescriptor
 		return new ReflectionEventDescriptor (componentType, name, type, attributes);
 	}
 
+	[ReflectionPermission (SecurityAction.LinkDemand, TypeInformation = true, MemberAccess = true)]
 	public static EventDescriptor CreateEvent (Type componentType,
 						   EventDescriptor oldEventDescriptor,
 						   Attribute [] attributes)
@@ -87,6 +89,7 @@ public sealed class TypeDescriptor
 		return new ReflectionEventDescriptor (componentType, oldEventDescriptor, attributes);
 	}
 
+	[ReflectionPermission (SecurityAction.LinkDemand, TypeInformation = true, MemberAccess = true)]
 	public static PropertyDescriptor CreateProperty (Type componentType,
 							 string name,
 							 Type type,
@@ -95,6 +98,7 @@ public sealed class TypeDescriptor
 		return new ReflectionPropertyDescriptor (componentType, name, type, attributes);
 	}
 
+	[ReflectionPermission (SecurityAction.LinkDemand, TypeInformation = true, MemberAccess = true)]
 	public static PropertyDescriptor CreateProperty (Type componentType,
 							 PropertyDescriptor oldPropertyDescriptor,
 							 Attribute [] attributes)
@@ -516,7 +520,9 @@ public sealed class TypeDescriptor
 	}
 
 	public static IComNativeDescriptorHandler ComNativeDescriptorHandler {
+		[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
 		get { return descriptorHandler; }
+		[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
 		set { descriptorHandler = value; }
 	}
 

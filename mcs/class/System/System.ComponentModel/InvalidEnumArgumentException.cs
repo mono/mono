@@ -7,8 +7,7 @@
 //
 // (C) 2002 Ximian, Inc.		http://www.ximian.com
 // (C) 2003 Andreas Nahr
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,11 +29,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
+using System.Runtime.Serialization;
+using System.Security.Permissions;
 
-namespace System.ComponentModel
-{
+namespace System.ComponentModel {
 
+#if NET_2_0
+	[Serializable]
+#endif
 	public class InvalidEnumArgumentException : ArgumentException
 	{
 
@@ -51,6 +53,16 @@ namespace System.ComponentModel
 			      enumClass.Name, argumentName)
 		{
 		}
+#if NET_2_0
+		public InvalidEnumArgumentException (string message, Exception innerException) 
+			: base (message, innerException)
+		{
+		}
+
+		protected InvalidEnumArgumentException (SerializationInfo info, StreamingContext context)
+			: base (info, context)
+		{
+		}
+#endif
 	}
 }
-
