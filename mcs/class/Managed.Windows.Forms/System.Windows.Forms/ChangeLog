@@ -1,3 +1,8 @@
+2006-07-31  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* XPlatUIWin32.cs: Made ScrollRectEx a bit more flexible, and removed
+	  use of both scroll rect and clip rect, as they do the same.
+
 2006-07-31  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Control.cs (WM_CHAR WndProc): 2.0 profile allows changing the key 
