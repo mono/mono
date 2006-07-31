@@ -42,6 +42,7 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Security.Permissions;
 #if (XML_DEP)
 using System.Xml;
 using System.Xml.XPath;
@@ -225,6 +226,8 @@ namespace System.Configuration
 			factories = new Hashtable ();
 		}
 
+		// SECURITY-FIXME: limit this with an imperative assert for reading the specific file
+		[FileIOPermission (SecurityAction.Assert, Unrestricted = true)]
 		public bool Load (string fileName)
 		{
 			this.fileName = fileName;

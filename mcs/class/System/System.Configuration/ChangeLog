@@ -1,3 +1,11 @@
+2006-07-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ConfigurationSettings.cs: Assert FileIOPermission when loading a 
+	configuration file.
+	* ConfigXmlDocument.cs: Add an imperative demand for PathDiscovery on
+	all (many classes) Filename properties. Ensure we're not using the
+	property (but the member) inside the class itself.
+
 2006-06-29  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ApplicationSettingsBase.cs : When we use default value, convert it

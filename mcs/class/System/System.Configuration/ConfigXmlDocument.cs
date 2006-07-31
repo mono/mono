@@ -5,8 +5,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,14 +27,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.IO;
+using System.Security;
+using System.Security.Permissions;
 
 #if (XML_DEP)
 using System.Xml;
 
 namespace System.Configuration
 {
+	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
 	public sealed class ConfigXmlDocument : XmlDocument, IConfigXmlNode
 	{
 		XmlTextReader reader;
@@ -99,6 +100,9 @@ namespace System.Configuration
 		public string Filename
 		{
 			get {
+				if ((fileName != null) && (fileName.Length > 0) && SecurityManager.SecurityEnabled) {
+					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, fileName).Demand ();
+				}
 				return fileName;
 			}
 		}
@@ -124,13 +128,16 @@ namespace System.Configuration
 						   string namespaceUri)
 				: base (prefix, localName, namespaceUri, document)
 			{
-				fileName = document.Filename;
+				fileName = document.fileName;
 				lineNumber = document.LineNumber;
 			}
 
 			public string Filename
 			{
 				get {
+					if ((fileName != null) && (fileName.Length > 0) && SecurityManager.SecurityEnabled) {
+						new FileIOPermission (FileIOPermissionAccess.PathDiscovery, fileName).Demand ();
+					}
 					return fileName;
 				}
 			}
@@ -151,13 +158,16 @@ namespace System.Configuration
 			public ConfigXmlCDataSection (ConfigXmlDocument document, string data)
 				: base (data, document)
 			{
-				fileName = document.Filename;
+				fileName = document.fileName;
 				lineNumber = document.LineNumber;
 			}
 
 			public string Filename
 			{
 				get {
+					if ((fileName != null) && (fileName.Length > 0) && SecurityManager.SecurityEnabled) {
+						new FileIOPermission (FileIOPermissionAccess.PathDiscovery, fileName).Demand ();
+					}
 					return fileName;
 				}
 			}
@@ -178,13 +188,16 @@ namespace System.Configuration
 			public ConfigXmlComment (ConfigXmlDocument document, string comment)
 				: base (comment, document)
 			{
-				fileName = document.Filename;
+				fileName = document.fileName;
 				lineNumber = document.LineNumber;
 			}
 
 			public string Filename
 			{
 				get {
+					if ((fileName != null) && (fileName.Length > 0) && SecurityManager.SecurityEnabled) {
+						new FileIOPermission (FileIOPermissionAccess.PathDiscovery, fileName).Demand ();
+					}
 					return fileName;
 				}
 			}
@@ -208,13 +221,16 @@ namespace System.Configuration
 						 string namespaceUri)
 				: base (prefix, localName, namespaceUri, document)
 			{
-				fileName = document.Filename;
+				fileName = document.fileName;
 				lineNumber = document.LineNumber;
 			}
 
 			public string Filename
 			{
 				get {
+					if ((fileName != null) && (fileName.Length > 0) && SecurityManager.SecurityEnabled) {
+						new FileIOPermission (FileIOPermissionAccess.PathDiscovery, fileName).Demand ();
+					}
 					return fileName;
 				}
 			}
@@ -235,13 +251,16 @@ namespace System.Configuration
 			public ConfigXmlText (ConfigXmlDocument document, string data)
 				: base (data, document)
 			{
-				fileName = document.Filename;
+				fileName = document.fileName;
 				lineNumber = document.LineNumber;
 			}
 
 			public string Filename
 			{
 				get {
+					if ((fileName != null) && (fileName.Length > 0) && SecurityManager.SecurityEnabled) {
+						new FileIOPermission (FileIOPermissionAccess.PathDiscovery, fileName).Demand ();
+					}
 					return fileName;
 				}
 			}
