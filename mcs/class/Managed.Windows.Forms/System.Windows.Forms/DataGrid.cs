@@ -690,13 +690,13 @@ namespace System.Windows.Forms
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected internal CurrencyManager ListManager {
 			get {
-				if (BindingContext == null || DataSource  == null)
+				if (BindingContext == null || datasource  == null)
 					return null;
 
 				if (list_manager != null)
 					return list_manager;
 
-				list_manager = (CurrencyManager) BindingContext [datasource, DataMember];
+				list_manager = (CurrencyManager) BindingContext [datasource, datamember];
 
 				if (list_manager != null)
 					ConnectListManagerEvents ();
@@ -867,7 +867,7 @@ namespace System.Windows.Forms
 			get { return first_visiblerow; }
 		}
 		
-		private int RowsCount {
+		internal int RowsCount {
 			get { return ListManager != null ? ListManager.Count : 0; }
 		}
 
@@ -1487,6 +1487,7 @@ namespace System.Windows.Forms
 				column_resize_active = true;
 				resize_column_x = e.X;
 				resize_column_width_delta = 0;
+				EndEdit ();
 				DrawResizeLineVert (resize_column_x);
 				break;
 
@@ -1495,6 +1496,7 @@ namespace System.Windows.Forms
 				row_resize_active = true;
 				resize_row_y = e.Y;
 				resize_row_height_delta = 0;
+				EndEdit ();
 				DrawResizeLineHoriz (resize_row_y);
 				break;
 
@@ -1606,6 +1608,7 @@ namespace System.Windows.Forms
 					resize_column_width_delta = -CurrentTableStyle.GridColumnStyles[resize_column].Width;
 				CurrentTableStyle.GridColumnStyles[resize_column].Width += resize_column_width_delta;
 				width_of_all_columns += resize_column_width_delta;
+				Edit ();
 				Invalidate ();
 			}
 			else if (row_resize_active) {
@@ -1618,6 +1621,7 @@ namespace System.Windows.Forms
 				for (int i = resize_row + 1; i < rows.Length; i ++)
 					rows[i].VerticalOffset += resize_row_height_delta;
 
+				Edit ();
 				CalcAreasAndInvalidate ();
 			}
 			else if (back_button_active) {

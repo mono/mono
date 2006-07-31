@@ -1,3 +1,11 @@
+2006-07-31  Chris Toshok  <toshok@ximian.com>
+
+	* DataGrid.cs (get_ListManager): use field instead of property
+	accessors for datasource and datamember.
+	(RowsCount): make internal again.
+	(OnMouseDown): end edits before resizing columns/rows.
+	(OnMouseUp): restart edits after resizing columns/rows.
+
 2006-07-30  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* XplatUIX11.cs: Default cursor cannot be 0 or it will not get set.
