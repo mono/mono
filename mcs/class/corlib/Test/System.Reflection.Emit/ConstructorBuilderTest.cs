@@ -94,11 +94,14 @@ public class ConstructorBuilderTest : Assertion
 	}
 	
 	[Test]
-	public void TestMethodHandle () {
+	[Category ("NotDotNet")]
+	public void TestMethodHandle ()
+	{
 		ConstructorBuilder cb = genClass.DefineConstructor (
 			 0, 0, new Type [0]);
 
 		RuntimeMethodHandle handle = cb.MethodHandle;
+		// the previous line throws a NotSupportedException on MS 1.1 SP1
 	}
 
 	public void TestName () {

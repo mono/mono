@@ -1,3 +1,10 @@
+2006-07-31  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* AssemblyBuilderTest.cs: The GetType_IgnoreCase test case doesn't 
+	work under MS.
+	* ConstructorBuilderTest.cs: The TestMethodHandle test case doesn't
+	work under MS.
+
 2006-07-09  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* AssemblyBuilderTest.cs: Added test for bug #78724.

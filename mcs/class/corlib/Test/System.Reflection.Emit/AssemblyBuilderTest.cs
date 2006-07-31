@@ -665,9 +665,11 @@ public class AssemblyBuilderTest
 	}
 
 	[Test]
+	[Category ("NotDotNet")]
 	public void GetType_IgnoreCase ()
 	{
 		TypeBuilder tb = mb.DefineType ("Foo.Test2", TypeAttributes.Public, typeof (object));
+		// the previous line throws a TypeLoadException under MS 1.1 SP1
 
 		Type t;
 
