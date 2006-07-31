@@ -28,28 +28,32 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Security.Permissions;
 
 namespace System.Diagnostics {
 
 	[ComVisible(true)]
 	[Guid("82840be1-d273-11d2-b94a-00600893b17a")]
+	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
+#if NET_2_0
+	[Obsolete ("use PerformanceCounter")]
+#endif
+	[MonoTODO ("not implemented")]
 	public sealed class PerformanceCounterManager : ICollectData {
 
-		[MonoTODO]
+#if NET_2_0
+		[Obsolete ("use PerformanceCounter")]
+#endif
 		public PerformanceCounterManager ()
 		{
 		}
 
-		[MonoTODO]
 		void ICollectData.CloseData ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		void ICollectData.CollectData (
 			int callIdx,
 			IntPtr valueNamePtr,

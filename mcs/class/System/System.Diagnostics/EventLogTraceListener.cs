@@ -30,14 +30,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
-using System;
 using System.Collections;
-using System.Diagnostics;
+using System.Security.Permissions;
 
 namespace System.Diagnostics 
 {
-
+	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
 	public sealed class EventLogTraceListener : TraceListener 
 	{
 		private EventLog eventLog;

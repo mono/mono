@@ -1,3 +1,18 @@
+2006-07-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* EventLogEntry.cs: Add a linkdemand for unrestricted on class.
+	* EventLogTraceListener.cs: Add a linkdemand for unrestricted on class
+	* FileVersionInfo.cs: Add a linkdemand for unrestricted on class. Add
+	an imperative demand for FileIOPermission.Read on GetVersionInfo 
+	method. Change ToString method to use a StringBuilder.
+	* PerformanceCounterCategory.cs: Add a linkdemand for unrestricted on
+	class.
+	* PerformanceCounterManager.cs: Add a linkdemand for unrestricted on 
+	class. Add [Obsolete] for NET_2_0 profile.
+	* Process.cs: Add a linkdemand and an inheritancedemand for 
+	unrestricted on class.
+	* ProcessStartInfo.cs: Add a linkdemand for unrestricted on class.
+
 2006-07-16  Andrew Skiba <andrews@mainsoft.com>
 
 	* Process.cs: throw FileNotFoundException earlier; give more

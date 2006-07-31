@@ -32,18 +32,21 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.IO;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Security.Permissions;
 using System.Collections;
 using System.Threading;
 
 namespace System.Diagnostics {
+
 	[DefaultEvent ("Exited"), DefaultProperty ("StartInfo")]
 	[Designer ("System.Diagnostics.Design.ProcessDesigner, " + Consts.AssemblySystem_Design)]
+	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
+	[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
 	public class Process : Component 
 	{
 		[StructLayout(LayoutKind.Sequential)]

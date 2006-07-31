@@ -2,11 +2,11 @@
 // System.Diagnostics.FileVersionInfo.cs
 //
 // Authors:
-//   Dick Porter (dick@ximian.com)
+//	Dick Porter (dick@ximian.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Ximian, Inc.
-//
-
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,10 +28,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Runtime.CompilerServices;
+using System.Security;
+using System.Security.Permissions;
+using System.Text;
 
 namespace System.Diagnostics {
+
+	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
 	public sealed class FileVersionInfo {
 		/* There is no public constructor for this class, it
 		 * is initialised by the runtime.  All the private
@@ -66,22 +70,24 @@ namespace System.Diagnostics {
 		private int productbuildpart;
 		private int productprivatepart;
 
-		private FileVersionInfo() {
-			/* This is here just to shut the compiler up */
-			comments=null;
-			companyname=null;
-			filedescription=null;
-			filename=null;
-			fileversion=null;
-			internalname=null;
-			language=null;
-			legalcopyright=null;
-			legaltrademarks=null;
-			originalfilename=null;
-			privatebuild=null;
-			productname=null;
-			productversion=null;
-			specialbuild=null;
+		private FileVersionInfo ()
+		{
+			// no nulls (for unavailable items)
+			comments = String.Empty;
+			companyname = String.Empty;
+			filedescription = String.Empty;
+			filename = String.Empty;
+			fileversion = String.Empty;
+			internalname = String.Empty;
+			language = String.Empty;
+			legalcopyright = String.Empty;
+			legaltrademarks = String.Empty;
+			originalfilename = String.Empty;
+			privatebuild = String.Empty;
+			productname = String.Empty;
+			productversion = String.Empty;
+			specialbuild = String.Empty;
+			// This is here just to shut the compiler up
 			isdebug=false;
 			ispatched=false;
 			isprerelease=false;
@@ -136,7 +142,10 @@ namespace System.Diagnostics {
 
 		public string FileName {
 			get {
-				return(filename);
+				if (SecurityManager.SecurityEnabled) {
+					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, filename).Demand ();
+				}
+				return filename;
 			}
 		}
 
@@ -263,33 +272,38 @@ namespace System.Diagnostics {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void GetVersionInfo_internal(string fileName);
 		
-		public static FileVersionInfo GetVersionInfo(string fileName) {
-			FileVersionInfo fvi=new FileVersionInfo();
+		public static FileVersionInfo GetVersionInfo (string fileName)
+		{
+			if (SecurityManager.SecurityEnabled) {
+				new FileIOPermission (FileIOPermissionAccess.Read, fileName).Demand ();
+			}
 
-			fvi.GetVersionInfo_internal(fileName);
-			
-			return(fvi);
+			FileVersionInfo fvi = new FileVersionInfo ();
+			fvi.GetVersionInfo_internal (fileName);
+			return fvi;
 		}
 		
-		public override string ToString() {
-			string str;
+		public override string ToString ()
+		{
+			StringBuilder sb = new StringBuilder ();
 
-			str="File:             " + filename + "\n";
-			str+="InternalName:     " + internalname + "\n";
-			str+="OriginalFilename: " + originalfilename + "\n";
-			str+="FileVersion:      " + fileversion + "\n";
-			str+="FileDescription:  " + filedescription + "\n";
-			str+="Product:          " + productname + "\n";
-			str+="ProductVersion:   " + productversion + "\n";
-			str+="Debug:            " + isdebug + "\n";
-			str+="Patched:          " + ispatched + "\n";
-			str+="PreRelease:       " + isprerelease + "\n";
-			str+="PrivateBuild:     " + isprivatebuild + "\n";
-			str+="SpecialBuild:     " + isspecialbuild + "\n";
-			str+="Language          " + language + "\n";
-			
-			return(str);
+			// we use the FileName property so we don't skip the security check
+			sb.AppendFormat ("File:             {0}{1}", FileName, Environment.NewLine);
+			// the other informations aren't protected so we can use the members directly
+			sb.AppendFormat ("InternalName:     {0}{1}", internalname, Environment.NewLine);
+			sb.AppendFormat ("OriginalFilename: {0}{1}", originalfilename, Environment.NewLine);
+			sb.AppendFormat ("FileVersion:      {0}{1}", fileversion, Environment.NewLine);
+			sb.AppendFormat ("FileDescription:  {0}{1}", filedescription, Environment.NewLine);
+			sb.AppendFormat ("Product:          {0}{1}", productname, Environment.NewLine);
+			sb.AppendFormat ("ProductVersion:   {0}{1}", productversion, Environment.NewLine);
+			sb.AppendFormat ("Debug:            {0}{1}", isdebug, Environment.NewLine);
+			sb.AppendFormat ("Patched:          {0}{1}", ispatched, Environment.NewLine);
+			sb.AppendFormat ("PreRelease:       {0}{1}", isprerelease, Environment.NewLine);
+			sb.AppendFormat ("PrivateBuild:     {0}{1}", isprivatebuild, Environment.NewLine);
+			sb.AppendFormat ("SpecialBuild:     {0}{1}", isspecialbuild, Environment.NewLine);
+			sb.AppendFormat ("Language          {0}{1}", language, Environment.NewLine);
+
+			return sb.ToString ();
 		}
 	}
 }
-

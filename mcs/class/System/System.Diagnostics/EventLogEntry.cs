@@ -30,16 +30,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Runtime.Serialization;
+using System.Security.Permissions;
 
 namespace System.Diagnostics
 {
 
 	[Serializable]
 	[ToolboxItem (false), DesignTimeVisible (false)]
+	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
 	public sealed class EventLogEntry : Component, ISerializable
 	{
 
@@ -98,6 +98,9 @@ namespace System.Diagnostics
 			get { return data; }
 		}
 
+#if NET_2_0
+		[Obsolete ("Use InstanceId")]
+#endif
 		[MonitoringDescription ("The type of this event entry.")]
 		public EventLogEntryType EntryType {
 			get { return entryType; }

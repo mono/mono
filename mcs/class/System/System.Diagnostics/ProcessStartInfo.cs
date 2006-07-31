@@ -32,10 +32,12 @@
 using System.Collections;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Security.Permissions;
 
 namespace System.Diagnostics 
 {
 	[TypeConverter (typeof (ExpandableObjectConverter))]
+	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
 	public sealed class ProcessStartInfo 
 	{
 
