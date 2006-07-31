@@ -1,5 +1,11 @@
 2006-07-31  Chris Toshok  <toshok@ximian.com>
 
+	* RelatedPropertyManager.cs: Don't always chain up to the parent
+	ctor.  instead, call SetDataSource if the parent's position is !=
+	-1.  Fixes the crash in #78822.
+
+2006-07-31  Chris Toshok  <toshok@ximian.com>
+
 	* DataGrid.cs (get_ListManager): use field instead of property
 	accessors for datasource and datamember.
 	(RowsCount): make internal again.
