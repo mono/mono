@@ -2371,7 +2371,7 @@ namespace System.Windows.Forms {
 				}
 
 				case StdCursor.Arrow: {
-					shape = CursorFontShape.XC_arrow;
+					shape = CursorFontShape.XC_top_left_arrow;
 					break;
 				}
 
@@ -2381,7 +2381,7 @@ namespace System.Windows.Forms {
 				}
 
 				case StdCursor.Default: {
-					shape = CursorFontShape.XC_arrow;
+					shape = CursorFontShape.XC_top_left_arrow;
 					break;
 				}
 
