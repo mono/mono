@@ -160,11 +160,20 @@ namespace System.Security.Cryptography.X509Certificates {
 				Marshal.Copy (cc.pbCertEncoded, data, 0, (int)cc.cbCertEncoded);
 				x509 = new Mono.Security.X509.X509Certificate (data);
 			}
+#if NET_2_0
+			else
+				throw new ArgumentException ("Invalid handle.");
+#endif
 			// IntPtr.Zero results in an "empty" certificate instance
 		}
 	
 		public X509Certificate (System.Security.Cryptography.X509Certificates.X509Certificate cert) 
 		{
+#if NET_2_0
+			if (cert == null)
+				throw new ArgumentNullException ();
+#endif
+
 			if (cert != null) {
 				byte[] data = cert.GetRawCertData ();
 				if (data != null)
@@ -262,7 +271,9 @@ namespace System.Security.Cryptography.X509Certificates {
 						return false;
 				}
 			}
-			return (x509.RawData == null);
+			else
+				return false;
+			return x509 == null || (x509.RawData == null);
 		}
 	
 		// LAMESPEC: This is the equivalent of the "thumbprint" that can be seen

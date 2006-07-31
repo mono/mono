@@ -157,6 +157,9 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		}
 
 		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (ArgumentException))]
+#endif
 		public void ConstructorIntPtrZero ()
 		{
 			X509Certificate spc = new X509Certificate (IntPtr.Zero);

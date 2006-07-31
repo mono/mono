@@ -1,3 +1,11 @@
+2006-07-31  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* X509Certificate.cs :
+	  In 2.0 IntPtr constructor reject IntPtr.Zero as invalid handle.
+	  In 2.0 copy constructor rejects null argument.
+	  Equals() should return false if the argument cert is null.
+	  Also if both x509 and raw data are null it caused NRE.
+
 2005-11-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509ContentType.cs: Removed extra [Serializable] (2.0).

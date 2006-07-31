@@ -1,3 +1,9 @@
+2006-07-31  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* X509CapiTest.cs : ConstructorIntPtrZero() is valid only under 1.x.
+	* X509CertificateTest.cs :
+	  Added tests for equality and null certificate constructor.
+
 2005-09-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509CapiTest.cs: Update the test cases as the 1.x date/time bug 
