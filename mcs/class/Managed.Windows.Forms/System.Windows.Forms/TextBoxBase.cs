@@ -61,6 +61,7 @@ namespace System.Windows.Forms {
 		internal ImplicitVScrollBar	vscroll;
 		internal RichTextBoxScrollBars	scrollbars;
 		internal bool			richtext;
+		internal bool			show_selection;		// set to true to always show selection, even if no focus is set
 		internal int			requested_height;
 		internal int			canvas_width;
 		internal int			canvas_height;
@@ -93,6 +94,7 @@ namespace System.Windows.Forms {
 			read_only = false;
 			word_wrap = true;
 			richtext = false;
+			show_selection = true;
 			document = new Document(this);
 			document.WidthChanged += new EventHandler(document_WidthChanged);
 			document.HeightChanged += new EventHandler(document_HeightChanged);
@@ -1145,9 +1147,11 @@ namespace System.Windows.Forms {
 		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
 			int	sel_start;
 			int	sel_length;
+			int	lines;
 
 			sel_start = SelectionStart;
 			sel_length = SelectionLength;
+			lines = document.selection_start.line.line_no;
 
 			// Make sure we don't get sized bigger than we want to be
 			if (!richtext) {
@@ -1271,6 +1275,20 @@ namespace System.Windows.Forms {
 
 			set {
 				document = value;
+			}
+		}
+
+		internal bool ShowSelection {
+			get {
+				if (show_selection) {
+					return true;
+				}
+
+				return has_focus;
+			}
+
+			set {
+				show_selection = !value;
 			}
 		}
 
