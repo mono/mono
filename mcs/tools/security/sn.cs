@@ -284,15 +284,8 @@ namespace Mono.Tools {
 			}
 		}
 
-		[STAThread]
-		static int Main (string[] args)
+		static int Process (string[] args)
 		{
-			if (args.Length < 1) {
-				Header ();
-				Help (null);
-				return 1;
-			}
-
 			int i = 0;
 			string param = args [i];
 			bool quiet = ((param == "-quiet") || (param == "-q"));
@@ -474,6 +467,28 @@ namespace Mono.Tools {
 					return 1;
 			}
 			return 0;
+		}
+
+		[STAThread]
+		static int Main (string[] args)
+		{
+			try {
+				if (args.Length < 1) {
+					Header ();
+					Help (null);
+				} else {
+					return Process (args);
+				}
+			}
+			catch (IndexOutOfRangeException) {
+				Console.WriteLine ("ERROR: Invalid number of parameters.{0}", Environment.NewLine);
+				Help (null);
+			}
+			catch (Exception e) {
+				Console.WriteLine ("ERROR: Unknown error during processing: {0}", e);
+			}
+
+			return 1;
 		}
 	}
 }

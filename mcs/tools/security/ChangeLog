@@ -1,3 +1,8 @@
+2006-07-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* sn.cs: Catch exceptions, including reporting invalid number of 
+	parameters. Fix bug #78977.
+
 2006-06-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyInfo.cs: Update copyright notice.
