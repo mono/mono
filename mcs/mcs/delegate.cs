@@ -495,14 +495,13 @@ namespace Mono.CSharp {
 		public override MemberList FindMembers (MemberTypes mt, BindingFlags bf,
 							MemberFilter filter, object criteria)
 		{
-			ArrayList members = new ArrayList (2);
-
-			if ((mt & MemberTypes.Constructor) != 0) {
-				if (ConstructorBuilder != null && filter (ConstructorBuilder, criteria))
-					members.Add (ConstructorBuilder);
-			}
+			ArrayList members = new ArrayList ();
 
 			if ((mt & MemberTypes.Method) != 0) {
+				if (ConstructorBuilder != null)
+				if (filter (ConstructorBuilder, criteria))
+					members.Add (ConstructorBuilder);
+
 				if (InvokeBuilder != null)
 				if (filter (InvokeBuilder, criteria))
 					members.Add (InvokeBuilder);
@@ -617,8 +616,8 @@ namespace Mono.CSharp {
 
 		protected bool ResolveConstructorMethod (EmitContext ec)
 		{
-			Expression ml = Expression.MemberLookupFinal(ec, 
-				null, type, ".ctor", MemberTypes.Constructor, AllBindingFlags | BindingFlags.DeclaredOnly, loc);
+			Expression ml = Expression.MemberLookup (
+				ec.ContainerType, type, ".ctor", loc);
 
 			if (!(ml is MethodGroupExpr)) {
 				Report.Error (-100, loc, "Internal error: Could not find delegate constructor!");

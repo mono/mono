@@ -1944,7 +1944,6 @@ namespace Mono.CSharp {
 
 			IMemberContainer current = Container;
 
-			bool do_interface_search = current.IsInterface;
 
 			// `applicable' is a list of all members with the given member name `name'
 			// in the current class and all its base classes.  The list is sorted in
@@ -1960,10 +1959,7 @@ namespace Mono.CSharp {
 				// iteration of this loop if there are no members with the name we're
 				// looking for in the current class).
 				if (entry.Container != current) {
-					if (declared_only)
-						break;
-
-					if (!do_interface_search && DoneSearching (global))
+					if (declared_only || DoneSearching (global))
 						break;
 
 					current = entry.Container;
@@ -1979,25 +1975,8 @@ namespace Mono.CSharp {
 
 				// Apply the filter to it.
 				if (filter (entry.Member, criteria)) {
-					if ((entry.EntryType & EntryType.MaskType) != EntryType.Method) {
+					if ((entry.EntryType & EntryType.MaskType) != EntryType.Method)
 						do_method_search = false;
-					}
-					
-					// Because interfaces support multiple inheritance we have to be sure that
-					// base member is from same interface, so only top level member will be returned
-					if (do_interface_search && global.Count > 0) {
-						bool member_already_exists = false;
-
-						foreach (MemberInfo mi in global) {
-							if (IsInterfaceBaseInterface (TypeManager.GetInterfaces (mi.DeclaringType), entry.Member.DeclaringType)) {
-								member_already_exists = true;
-								break;
-							}
-						}
-						if (member_already_exists)
-							continue;
-					}
-
 					global.Add (entry.Member);
 				}
 			}
@@ -2018,22 +1997,6 @@ namespace Mono.CSharp {
 			MemberInfo [] copy = new MemberInfo [global.Count];
 			global.CopyTo (copy);
 			return copy;
-		}
-
-		/// <summary>
-		/// Returns true if iterface exists in any base interfaces (ifaces)
-		/// </summary>
-		static bool IsInterfaceBaseInterface (Type[] ifaces, Type ifaceToFind)
-		{
-			foreach (Type iface in ifaces) {
-				if (iface == ifaceToFind)
-					return true;
-
-				Type[] base_ifaces = TypeManager.GetInterfaces (iface);
-				if (base_ifaces.Length > 0 && IsInterfaceBaseInterface (base_ifaces, ifaceToFind))
-					return true;
-			}
-			return false;
 		}
 		
 		// find the nested type @name in @this.
