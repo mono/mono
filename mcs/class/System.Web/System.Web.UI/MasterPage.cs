@@ -49,12 +49,16 @@ namespace System.Web.UI
 		Hashtable templates = new Hashtable ();
 		ArrayList placeholders = new ArrayList ();
 
-		string parentMasterPageFile = "";
+		string parentMasterPageFile = null;
 		MasterPage parentMasterPage;
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected internal void AddContentTemplate (string templateName, ITemplate template)
 		{
+			// LAMESPEC: should be ArgumentException
+			if (definedContentTemplates.ContainsKey (templateName))
+				throw new HttpException ("Multiple contents applied to " + templateName);
+
 			definedContentTemplates [templateName] = template;
 		}
 		

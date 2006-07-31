@@ -1,4 +1,8 @@
 2006-07-31  Vladimir Krasnov  <vladimirk@mainsoft.com>
+	
+	* MasterPage.cs: fixed default values, fixed AddContentTemplate
+
+2006-07-31  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* Control.cs: fixed EnableTheming proprty, fixes the bug when skins 
 	are applied even if EnableTheming property was set to false.
