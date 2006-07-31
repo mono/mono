@@ -1,3 +1,21 @@
+2006-07-31  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* TextControl.cs:
+	  - Added new SetSelectionStart/SetSelectionEnd overloads
+	  - Fixed viewport width assignment to be accurate
+	  - Adjusted alignment line shift calculations to allow cursor on right
+	    aligned lines to be always visible at the right border (like MS)
+	* TextBoxBase.cs:
+	  - SetBoundsCore: Re-adjust caret location after resize (Fixes #78323)
+	  - TextBoxBase_SizeChanged: recalculating canvas on size changes
+	  - CalculateScrollBars: Use ViewPort size instead of window size, to
+	    properly consider space occupied by the border and scrollbars 
+	    (Fixes #78661)
+	  - hscroll_ValueChanged, vscroll_ValueChanged: Fixed scroll 
+	    calculations; no longer leaves artifacts
+	  - CaretMoved: Adjusted window scrolling to match MS and fixed several
+	    calculation bugs (Still missing right/center align calculations)
+
 2006-07-31  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* XPlatUIWin32.cs: Made ScrollRectEx a bit more flexible, and removed

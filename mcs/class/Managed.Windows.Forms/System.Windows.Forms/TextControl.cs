@@ -953,7 +953,7 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				viewport_width = value - 2;
+				viewport_width = value;
 			}
 		}
 
@@ -1811,7 +1811,7 @@ namespace System.Windows.Forms {
 			LineTag		tag;		// Current tag being drawn
 			int		start;		// First line to draw
 			int		end;		// Last line to draw
-			StringBuilder	text;	// String representing the current line
+			StringBuilder	text;		// String representing the current line
 			int		line_no;	//
 			Brush		disabled;
 			Brush		hilight;
@@ -1836,6 +1836,15 @@ namespace System.Windows.Forms {
 
 			while (line_no <= end) {
 				line = GetLine(line_no);
+#if not
+if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
+	g.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(owner.BackColor), new Rectangle(clip.Left, line.Y - viewport_y, clip.Width, line.Y - viewport_y + line.Height));
+} else {
+	g.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorControl), new Rectangle(clip.Left, line.Y - viewport_y, clip.Width, line.Y - viewport_y + line.Height));
+}
+#endif
+
+
 				tag = line.tags;
 				if (!calc_pass) {
 					text = line.text;
@@ -3126,6 +3135,15 @@ namespace System.Windows.Forms {
 
 		}
 
+		internal void SetSelectionStart(int character_index) {
+			Line	line;
+			LineTag	tag;
+			int	pos;
+
+			CharIndexToLineTag(character_index, out line, out tag, out pos);
+			SetSelectionStart(line, pos);
+		}
+
 		internal void SetSelectionEnd(Line end, int end_pos) {
 			if ((end.line_no < selection_anchor.line.line_no) || ((end == selection_anchor.line) && (end_pos <= selection_anchor.pos))) {
 				selection_start.line = end;
@@ -3153,6 +3171,15 @@ namespace System.Windows.Forms {
 				selection_visible = true;
 				Invalidate(selection_start.line, selection_start.pos, selection_end.line, selection_end.pos);
 			}
+		}
+
+		internal void SetSelectionEnd(int character_index) {
+			Line	line;
+			LineTag	tag;
+			int	pos;
+
+			CharIndexToLineTag(character_index, out line, out tag, out pos);
+			SetSelectionEnd(line, pos);
 		}
 
 		internal void SetSelection(Line start, int start_pos) {
@@ -3623,7 +3650,7 @@ namespace System.Windows.Forms {
 					if (line.alignment == HorizontalAlignment.Center) {
 						line.align_shift = (viewport_width - (int)line.widths[line.text.Length]) / 2;
 					} else {
-						line.align_shift = viewport_width - (int)line.widths[line.text.Length];
+						line.align_shift = viewport_width - (int)line.widths[line.text.Length] - 1;
 					}
 				}
 
@@ -3711,7 +3738,7 @@ namespace System.Windows.Forms {
 					if (line.alignment == HorizontalAlignment.Center) {
 						line.align_shift = (viewport_width - (int)line.widths[line.text.Length]) / 2;
 					} else {
-						line.align_shift = viewport_width - (int)line.widths[line.text.Length];
+						line.align_shift = viewport_width - (int)line.widths[line.text.Length] - 1;
 					}
 				}
 

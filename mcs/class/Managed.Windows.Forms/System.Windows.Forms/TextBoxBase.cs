@@ -64,8 +64,8 @@ namespace System.Windows.Forms {
 		internal int			requested_height;
 		internal int			canvas_width;
 		internal int			canvas_height;
-		static internal int		track_width = 20;
-		static internal int		track_border = 5;
+		static internal int		track_width = 2;	//
+		static internal int		track_border = 5;	//
 		internal DateTime		click_last;
 		internal CaretSelection		click_mode;
 		internal Bitmap			bmp;
@@ -135,6 +135,8 @@ namespace System.Windows.Forms {
 
 			canvas_width = ClientSize.Width;
 			canvas_height = ClientSize.Height;
+			document.ViewPortWidth = canvas_width;
+			document.ViewPortHeight = canvas_height;
 
 			Cursor = Cursors.IBeam;
 
@@ -457,12 +459,7 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				Line	line;
-				LineTag	tag;
-				int	pos;
-
-				document.CharIndexToLineTag(value, out line, out tag, out pos);
-				document.SetSelectionStart(line, pos);
+				document.SetSelectionStart(value);
 				ScrollToCaret();
 			}
 		}
@@ -1146,6 +1143,12 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
+			int	sel_start;
+			int	sel_length;
+
+			sel_start = SelectionStart;
+			sel_length = SelectionLength;
+
 			// Make sure we don't get sized bigger than we want to be
 			if (!richtext) {
 				if (!multiline) {
@@ -1161,11 +1164,14 @@ namespace System.Windows.Forms {
 
 			TextBoxBase_SizeChanged(this, EventArgs.Empty);
 			CalculateDocument();
+
+			// don't use SelectionStart directly (NRE in Document.Caret)
+			document.SetSelectionStart(sel_start);
+			SelectionLength = sel_length;
 		}
 
 		protected override void WndProc(ref Message m) {
 			switch ((Msg)m.Msg) {
-
 				case Msg.WM_KEYDOWN: {
 					if (ProcessKeyMessage(ref m) || ProcessKey((Keys)m.WParam.ToInt32() | XplatUI.State.ModifierKeys)) {
 						m.Result = IntPtr.Zero;
@@ -1449,14 +1455,27 @@ namespace System.Windows.Forms {
 		}
 
 		private void TextBoxBase_SizeChanged(object sender, EventArgs e) {
-			canvas_width = ClientSize.Width;
-			canvas_height = ClientSize.Height;
+			if (hscroll.Visible) {
+				//vscroll.Maximum += hscroll.Height;
+				canvas_height = ClientSize.Height - hscroll.Height;
+			} else {
+				canvas_height = ClientSize.Height;
+			}
+
+			if (vscroll.Visible) {
+				//hscroll.Maximum += vscroll.Width;
+				canvas_width = ClientSize.Width - vscroll.Width;
+			} else {
+				canvas_width = ClientSize.Width;
+			}
+
+
 			document.ViewPortWidth = canvas_width;
 			document.ViewPortHeight = canvas_height;
 
 			// We always move them, they just might not be displayed
-			hscroll.Bounds = new Rectangle (ClientRectangle.Left, ClientRectangle.Bottom - hscroll.Height, ClientSize.Width - (vscroll.Visible ? SystemInformation.VerticalScrollBarWidth : 0), hscroll.Height);
-			vscroll.Bounds = new Rectangle (ClientRectangle.Right - vscroll.Width, ClientRectangle.Top, vscroll.Width, ClientSize.Height - (hscroll.Visible ? SystemInformation.HorizontalScrollBarHeight : 0));
+			hscroll.Bounds = new Rectangle (ClientRectangle.Left, ClientRectangle.Height - hscroll.Height, ClientSize.Width - (vscroll.Visible ? vscroll.Width : 0), hscroll.Height);
+			vscroll.Bounds = new Rectangle (ClientRectangle.Right - vscroll.Width, ClientRectangle.Top, vscroll.Width, ClientSize.Height - (hscroll.Visible ? hscroll.Height : 0));
 			
 		}
 
@@ -1500,16 +1519,18 @@ namespace System.Windows.Forms {
 		internal void CalculateScrollBars() {
 			// FIXME - need separate calculations for center and right alignment
 			// No scrollbars for a single line
-			if (document.Width >= ClientSize.Width) {
+
+			if (document.Width >= document.ViewPortWidth) {
 				hscroll.Enabled = true;
 				hscroll.Minimum = 0;
-				hscroll.Maximum = document.Width - ClientSize.Width + track_border;
+				hscroll.LargeChange = document.ViewPortWidth;
+				hscroll.Maximum = document.Width;
 			} else {
 				hscroll.Maximum = document.ViewPortWidth;
 				hscroll.Enabled = false;
 			}
 
-			if (document.Height >= ClientSize.Height) {
+			if (document.Height >= document.ViewPortHeight) {
 				vscroll.Enabled = true;
 				vscroll.Minimum = 0;
 				vscroll.Maximum = document.Height - ClientSize.Height + 1;
@@ -1545,16 +1566,6 @@ namespace System.Windows.Forms {
 				vscroll.Visible = false;
 			}
 
-			if (hscroll.Visible) {
-				vscroll.Maximum += hscroll.Height;
-				canvas_height = ClientSize.Height - hscroll.Height;
-			}
-
-			if (vscroll.Visible) {
-				hscroll.Maximum += vscroll.Width * 2;
-				canvas_width = ClientSize.Width - vscroll.Width * 2;
-			}
-
 			TextBoxBase_SizeChanged(this, EventArgs.Empty);
 		}
 
@@ -1567,12 +1578,16 @@ namespace System.Windows.Forms {
 		}
 
 		private void hscroll_ValueChanged(object sender, EventArgs e) {
-			if (vscroll.Visible) {
-				XplatUI.ScrollWindow(this.Handle, new Rectangle(0, 0, ClientSize.Width - vscroll.Width, ClientSize.Height), document.ViewPortX-this.hscroll.Value, 0, false);
-			} else {
-				XplatUI.ScrollWindow(this.Handle, ClientRectangle, document.ViewPortX-this.hscroll.Value, 0, false);
-			}
+			int old_viewport_x;
+
+			old_viewport_x = document.ViewPortX;
 			document.ViewPortX = this.hscroll.Value;
+
+			if (vscroll.Visible) {
+				XplatUI.ScrollWindow(this.Handle, new Rectangle(0, 0, ClientSize.Width - vscroll.Width, ClientSize.Height), old_viewport_x - this.hscroll.Value, 0, false);
+			} else {
+				XplatUI.ScrollWindow(this.Handle, ClientRectangle, old_viewport_x - this.hscroll.Value, 0, false);
+			}
 			document.UpdateCaret();
 
 			if (HScrolled != null) {
@@ -1581,12 +1596,16 @@ namespace System.Windows.Forms {
 		}
 
 		private void vscroll_ValueChanged(object sender, EventArgs e) {
-			if (hscroll.Visible) {
-				XplatUI.ScrollWindow(this.Handle, new Rectangle(0, 0, ClientSize.Width, ClientSize.Height - hscroll.Height), 0, document.ViewPortY-this.vscroll.Value, false);
-			} else {
-				XplatUI.ScrollWindow(this.Handle, ClientRectangle, 0, document.ViewPortY-this.vscroll.Value, false);
-			}
+			int old_viewport_y;
+
+			old_viewport_y = document.ViewPortY;
 			document.ViewPortY = this.vscroll.Value;
+
+			if (hscroll.Visible) {
+				XplatUI.ScrollWindow(this.Handle, new Rectangle(0, 0, ClientSize.Width, ClientSize.Height - hscroll.Height), 0, old_viewport_y - this.vscroll.Value, false);
+			} else {
+				XplatUI.ScrollWindow(this.Handle, ClientRectangle, 0, old_viewport_y - this.vscroll.Value, false);
+			}
 			document.UpdateCaret();
 
 			if (VScrolled != null) {
@@ -1630,40 +1649,45 @@ namespace System.Windows.Forms {
 			pos = document.Caret;
 			//Console.WriteLine("Caret now at {0} (Thumb: {1}x{2}, Canvas: {3}x{4}, Document {5}x{6})", pos, hscroll.Value, vscroll.Value, canvas_width, canvas_height, document.Width, document.Height);
 
+
+			// Horizontal scrolling:
+			// If the caret moves to the left outside the visible area, we jump the document into view, not just one
+			// character, but 1/3 of the width of the document
+			// If the caret moves to the right outside the visible area, we scroll just enough to keep the caret visible
+
 			// Handle horizontal scrolling
 			if (document.CaretLine.alignment == HorizontalAlignment.Left) {
-				if (pos.X < (document.ViewPortX + track_width)) {
+				// Check if we moved out of view to the left
+				if (pos.X < (document.ViewPortX)) {
 					do {
-						if ((hscroll.Value - track_width) >= hscroll.Minimum) {
-							hscroll.Value -= track_width;
+						if ((hscroll.Value - document.ViewPortWidth / 3) >= hscroll.Minimum) {
+							hscroll.Value -= document.ViewPortWidth / 3;
 						} else {
 							hscroll.Value = hscroll.Minimum;
 						}
 					} while (hscroll.Value > pos.X);
 				}
 
-				if ((pos.X > (this.canvas_width + document.ViewPortX - track_width)) && (hscroll.Enabled && (hscroll.Value != hscroll.Maximum))) {
-					do {
-						if ((hscroll.Value + track_width) <= hscroll.Maximum) {
-							hscroll.Value += track_width;
+				// Check if we moved out of view to the right
+				if ((pos.X >= (document.ViewPortWidth + document.ViewPortX)) && (hscroll.Enabled && (hscroll.Value != hscroll.Maximum))) {
+					if ((pos.X - document.ViewPortWidth + 1) <= hscroll.Maximum) {
+						if (pos.X - document.ViewPortWidth >= 0) {
+							hscroll.Value = pos.X - document.ViewPortWidth + 1;
 						} else {
-							hscroll.Value = hscroll.Maximum;
+							hscroll.Value = 0;
 						}
-					} while (pos.X > (hscroll.Value + this.canvas_width));
-				}
-			} else if (document.CaretLine.alignment == HorizontalAlignment.Right) {
-				if (pos.X < document.ViewPortX) {
-					if (pos.X > hscroll.Minimum) {
-						hscroll.Value = pos.X;
 					} else {
-						hscroll.Value = hscroll.Minimum;
+						hscroll.Value = hscroll.Maximum;
 					}
 				}
+			} else if (document.CaretLine.alignment == HorizontalAlignment.Right) {
+//				hscroll.Value = pos.X;
 
-				if ((pos.X > (this.canvas_width + document.ViewPortX)) && (hscroll.Enabled && (hscroll.Value != hscroll.Maximum))) {
-					hscroll.Value = hscroll.Maximum;
-				}
+//				if ((pos.X > (this.canvas_width + document.ViewPortX)) && (hscroll.Enabled && (hscroll.Value != hscroll.Maximum))) {
+//					hscroll.Value = hscroll.Maximum;
+//				}
 			} else {
+				// FIXME - implement center cursor alignment
 			}
 
 			if (!multiline) {
