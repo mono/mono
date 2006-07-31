@@ -1288,7 +1288,12 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				show_selection = !value;
+				if (show_selection == value)
+					return;
+
+				show_selection = value;
+				// Currently InvalidateSelectionArea is commented out so do a full invalidate
+				document.InvalidateSelectionArea();
 			}
 		}
 

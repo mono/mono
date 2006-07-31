@@ -3204,8 +3204,7 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 		}
 
 		internal void InvalidateSelectionArea() {
-			// FIXME - the only place that calls this right now should really calculate the redraw itself; if done this function can go
-			// Invalidate(selection_start.line, selection_start.pos, selection_end.line, selection_end.pos);
+			Invalidate (selection_start.line, selection_start.pos, selection_end.line, selection_end.pos);
 		}
 
 		// Return the current selection, as string
