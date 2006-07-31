@@ -1,3 +1,9 @@
+2006-07-31 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* PagerSettings.cs: Fixed the pager range calculation formula. The old
+	one didn't work with more than 20 pages. Patch by Marek Habersack that
+	closes bug #78328.
+
 2006-07-30 Andrew Skiba <andrews@mainsoft.com>
 
 	* FormView.cs: fixes to make Render more similar to dotnet.

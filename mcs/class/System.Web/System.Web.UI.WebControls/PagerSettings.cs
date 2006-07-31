@@ -291,8 +291,11 @@ namespace System.Web.UI.WebControls
 			}
 			else if (Mode == PagerButtons.Numeric || Mode == PagerButtons.NumericFirstLast)
 			{
-				int first = currentPage / PageButtonCount;
-				int last = first + PageButtonCount;
+				int pbc = PageButtonCount;
+				int cp = currentPage + 1;
+				int pbp = pbc <= cp ? cp / pbc : 0;
+				int first = cp < pbc ? 0 : (cp + (pbp % pbc) - (pbc + pbp)) + 1;
+				int last = first + pbc;
 				if (last >= pageCount) last = pageCount;
 				
 				if (first > 0) {
