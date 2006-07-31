@@ -160,6 +160,8 @@ System.Security.Cryptography/HMACMD5Test.cs
 System.Security.Cryptography/HMACRIPEMD160Test.cs
 System.Security.Cryptography/HMACSHA1Test.cs
 System.Security.Cryptography/HMACSHA256Test.cs
+System.Security.Cryptography/HMACSHA384Test.cs
+System.Security.Cryptography/HMACSHA512Test.cs
 System.Security.Cryptography/KeyedHashAlgorithmTest.cs
 System.Security.Cryptography/MACTripleDESTest.cs
 System.Security.Cryptography/MD5Test.cs

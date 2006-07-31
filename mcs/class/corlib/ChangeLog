@@ -1,3 +1,8 @@
+2005-07-31  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* corlib_test.dll.sources: Added unit tests for HMACSHA384 and
+	HMACSHA512 to the build.
+
 2006-07-15  Jonathan Chambers  <joncham@gmail.com>
 
 	* corlib.dll.sources: Added Mono.Interop/ComInteropProxy.cs
