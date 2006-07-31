@@ -4,6 +4,8 @@
 	entries for __ComObject type in addition to ComImport types.
 	* marshal.c: Added support for marshalling COM RCWs. Fixed warning
 	about hash table.
+	
+	All code is contributed under the MIT/X11 license.
 
 Fri Jul 28 19:04:34 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
