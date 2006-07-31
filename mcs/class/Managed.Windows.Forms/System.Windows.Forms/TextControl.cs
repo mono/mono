@@ -1860,7 +1860,7 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 
 					if (((tag.X + tag.width) > (clip.Left - viewport_x)) || (tag.X < (clip.Right - viewport_x))) {
 						// Check for selection
-						if ((!selection_visible) || (!owner.has_focus) || (line_no < selection_start.line.line_no) || (line_no > selection_end.line.line_no)) {
+						if ((!selection_visible) || (!owner.ShowSelection) || (line_no < selection_start.line.line_no) || (line_no > selection_end.line.line_no)) {
 							// regular drawing, no selection to deal with
 							//g.DrawString(s.Substring(tag.start-1, tag.length), tag.font, tag.color, tag.X + line.align_shift - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
 							if (owner.is_enabled) {

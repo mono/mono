@@ -3,6 +3,8 @@
 	* TextBoxBase.cs: Added internal property ShowSelection to allow controls
 	  that embed TextBox and need selections visible even if textbox is not
 	  focused to enforce that behaviour.
+	* TextControl.cs (Draw): Use ShowSelection instead of has_focus to determine
+	  selection drawing
 
 2006-07-31  Peter Dennis Bartok  <pbartok@novell.com>
 
