@@ -33,7 +33,7 @@ namespace Mono.CSharp
 	public class CSharpParser {
 		NamespaceEntry  current_namespace;
 		TypeContainer   current_container;
-		TypeContainer	current_class;
+		DeclSpace	current_class;
 	
 		IIteratorContainer iterator_container;
 
@@ -766,7 +766,7 @@ struct_declaration
 	  opt_class_base
 	  {
 		if ($7 != null)
-			current_class.Bases = (ArrayList) $7;
+			current_container.AddBasesForPart (current_class, (ArrayList) $7);
 
 		if (RootContext.Documentation != null)
 			current_container.DocComment = Lexer.consume_doc_comment ();
@@ -1467,7 +1467,7 @@ interface_declaration
 	  }
 	  opt_class_base
 	  {
-		current_class.Bases = (ArrayList) $7;
+		current_container.AddBasesForPart (current_class, (ArrayList) $7);
 
 		if (RootContext.Documentation != null) {
 			current_container.DocComment = Lexer.consume_doc_comment ();
@@ -3507,7 +3507,7 @@ class_declaration
 					      "The class System.Object cannot have a base " +
 					      "class or implement an interface.");
 			}
-			current_class.Bases = (ArrayList) $7;
+			current_container.AddBasesForPart (current_class, (ArrayList) $7);
 		}
 
 		if (RootContext.Documentation != null) {
@@ -4662,11 +4662,11 @@ void push_current_class (TypeContainer tc, bool is_interface, object partial_tok
 	current_class = tc;
 }
 
-TypeContainer pop_current_class ()
+DeclSpace pop_current_class ()
 {
-	TypeContainer retval = current_class;
+	DeclSpace retval = current_class;
 
-	current_class = (TypeContainer) current_class.Parent;
+	current_class = current_class.Parent;
 	current_container = current_class.PartialContainer;
 
 	return retval;

@@ -472,7 +472,6 @@ namespace Mono.CSharp {
 
 		public const string DefaultIndexerName = "Item";
 
-		public TypeContainer PartialContainer;
 		ArrayList partial_parts;
 
 		/// <remarks>
@@ -962,6 +961,13 @@ namespace Mono.CSharp {
 				return PartialContainer.GetClsCompliantAttributeValue ();
 
 			return base.GetClsCompliantAttributeValue ();
+		}
+
+		public void AddBasesForPart (DeclSpace part, ArrayList bases)
+		{
+			// FIXME: get rid of partial_parts and store lists of bases of each part here
+			// assumed, not verified: 'part' is in 'partial_parts' 
+			((TypeContainer) part).Bases = bases;
 		}
 
 		TypeExpr[] GetNormalBases (out TypeExpr base_class)
@@ -2999,7 +3005,7 @@ namespace Mono.CSharp {
 				return true;
 
 			// Is null for System.Object while compiling corlib and base interfaces
-			if (ParentContainer.BaseCache == null) {
+			if (Parent.PartialContainer.BaseCache == null) {
 				if ((RootContext.WarningLevel >= 4) && ((ModFlags & Modifiers.NEW) != 0)) {
 					Report.Warning (109, 4, Location, "The member `{0}' does not hide an inherited member. The new keyword is not required", GetSignatureForError ());
 				}
@@ -3043,9 +3049,9 @@ namespace Mono.CSharp {
 				}
 
 				if (Name == "Equals" && Parameters.Count == 1 && ParameterTypes [0] == TypeManager.object_type)
-					ParentContainer.Mark_HasEquals ();
+					Parent.PartialContainer.Mark_HasEquals ();
 				else if (Name == "GetHashCode" && Parameters.Empty)
-					ParentContainer.Mark_HasGetHashCode ();
+					Parent.PartialContainer.Mark_HasGetHashCode ();
 
 				if ((ModFlags & Modifiers.OVERRIDE) != 0) {
 					ObsoleteAttribute oa = AttributeTester.GetMethodObsoleteAttribute (base_method);
@@ -3060,7 +3066,7 @@ namespace Mono.CSharp {
 				return true;
 			}
 
-			MemberInfo conflict_symbol = ParentContainer.FindBaseMemberWithSameName (Name, !(this is Property));
+			MemberInfo conflict_symbol = Parent.PartialContainer.FindBaseMemberWithSameName (Name, !(this is Property));
 			if ((ModFlags & Modifiers.OVERRIDE) != 0) {
 				if (conflict_symbol != null) {
 					Report.SymbolRelatedToPreviousError (conflict_symbol);
@@ -3194,7 +3200,7 @@ namespace Mono.CSharp {
 
 		public bool CheckAbstractAndExtern (bool has_block)
 		{
-			if (ParentContainer.Kind == Kind.Interface)
+			if (Parent.PartialContainer.Kind == Kind.Interface)
 				return true;
 
 			if (has_block) {
@@ -3494,7 +3500,7 @@ namespace Mono.CSharp {
 
 			MethodData = new MethodData (this, ModFlags, flags, this);
 
-			if (!MethodData.Define (ParentContainer))
+			if (!MethodData.Define (Parent.PartialContainer))
 				return false;
 
 			MethodBuilder = MethodData.MethodBuilder;
@@ -3814,7 +3820,7 @@ namespace Mono.CSharp {
 
   		protected override bool CheckForDuplications ()
    		{
-  			ArrayList ar = ParentContainer.Methods;
+  			ArrayList ar = Parent.PartialContainer.Methods;
   			if (ar != null) {
   				int arLen = ar.Count;
    					
@@ -3825,7 +3831,7 @@ namespace Mono.CSharp {
    				}
   			}
 
-			ar = ParentContainer.Properties;
+			ar = Parent.PartialContainer.Properties;
 			if (ar != null) {
 				for (int i = 0; i < ar.Count; ++i) {
 					PropertyBase pb = (PropertyBase) ar [i];
@@ -3834,7 +3840,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			ar = ParentContainer.Indexers;
+			ar = Parent.PartialContainer.Indexers;
 			if (ar != null) {
 				for (int i = 0; i < ar.Count; ++i) {
 					PropertyBase pb = (PropertyBase) ar [i];
@@ -3843,7 +3849,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			ar = ParentContainer.Events;
+			ar = Parent.PartialContainer.Events;
 			if (ar != null) {
 				for (int i = 0; i < ar.Count; ++i) {
 					Event ev = (Event) ar [i];
@@ -3936,7 +3942,7 @@ namespace Mono.CSharp {
 
 		protected override MethodInfo FindOutBaseMethod (ref Type base_ret_type)
 		{
-			MethodInfo mi = (MethodInfo) ParentContainer.BaseCache.FindMemberToOverride (
+			MethodInfo mi = (MethodInfo) Parent.PartialContainer.BaseCache.FindMemberToOverride (
 				Parent.TypeBuilder, Name, ParameterTypes, false);
 
 			if (mi == null)
@@ -3955,7 +3961,7 @@ namespace Mono.CSharp {
 				return false;
 
 			if (ParameterInfo.Count > 0) {
-				ArrayList al = (ArrayList)ParentContainer.MemberCache.Members [Name];
+				ArrayList al = (ArrayList)Parent.PartialContainer.MemberCache.Members [Name];
 				if (al.Count > 1)
 					MemberCache.VerifyClsParameterConflict (al, this, MethodBuilder);
 			}
@@ -4158,7 +4164,7 @@ namespace Mono.CSharp {
 		
  		protected override bool CheckForDuplications ()
   		{
-			ArrayList ar = ParentContainer.InstanceConstructors;
+			ArrayList ar = Parent.PartialContainer.InstanceConstructors;
 			if (ar != null) {
 				int arLen = ar.Count;
 					
@@ -4191,7 +4197,7 @@ namespace Mono.CSharp {
 			if (!CheckForDuplications ())
 				return false;
 
-			if (ParentContainer.Kind == Kind.Struct) {
+			if (Parent.PartialContainer.Kind == Kind.Struct) {
 				if (ParameterTypes.Length == 0) {
 					Report.Error (568, Location, 
 						"Structs cannot contain explicit parameterless constructors");
@@ -4254,7 +4260,7 @@ namespace Mono.CSharp {
 			if ((ModFlags & Modifiers.UNSAFE) != 0)
 				ConstructorBuilder.InitLocals = false;
 
-			if (ParentContainer.IsComImport) {
+			if (Parent.PartialContainer.IsComImport) {
 				if (!IsDefault ()) {
 					Report.Error (669, Location, "`{0}': A class with the ComImport attribute cannot have a user-defined constructor",
 						Parent.GetSignatureForError ());
@@ -4281,7 +4287,7 @@ namespace Mono.CSharp {
 			if (block != null) {
 				// If this is a non-static `struct' constructor and doesn't have any
 				// initializer, it must initialize all of the struct's fields.
-				if ((ParentContainer.Kind == Kind.Struct) &&
+				if ((Parent.PartialContainer.Kind == Kind.Struct) &&
 					((ModFlags & Modifiers.STATIC) == 0) && (Initializer == null))
 					block.AddThisVariable (Parent, Location);
 
@@ -4290,7 +4296,7 @@ namespace Mono.CSharp {
 			}
 
 			if ((ModFlags & Modifiers.STATIC) == 0){
-				if (ParentContainer.Kind == Kind.Class && Initializer == null)
+				if (Parent.PartialContainer.Kind == Kind.Class && Initializer == null)
 					Initializer = new GeneratedBaseInitializer (Location);
 
 
@@ -4313,7 +4319,7 @@ namespace Mono.CSharp {
 			//
 			// Classes can have base initializers and instance field initializers.
 			//
-			if (ParentContainer.Kind == Kind.Class){
+			if (Parent.PartialContainer.Kind == Kind.Class){
 				if ((ModFlags & Modifiers.STATIC) == 0){
 
 					//
@@ -4321,7 +4327,7 @@ namespace Mono.CSharp {
 					// do not emit field initializers, they are initialized in the other constructor
 					//
 					if (!(Initializer != null && Initializer is ConstructorThisInitializer))
-						ParentContainer.EmitFieldInitializers (ec);
+						Parent.PartialContainer.EmitFieldInitializers (ec);
 				}
 			}
 			if (Initializer != null) {
@@ -4329,7 +4335,7 @@ namespace Mono.CSharp {
 			}
 			
 			if ((ModFlags & Modifiers.STATIC) != 0)
-				ParentContainer.EmitFieldInitializers (ec);
+				Parent.PartialContainer.EmitFieldInitializers (ec);
 
 			ec.EmitTopBlock (this, block);
 
@@ -4393,7 +4399,7 @@ namespace Mono.CSharp {
 			get {
 				CallingConventions cc = Parameters.CallingConvention;
 
-				if (ParentContainer.Kind == Kind.Class)
+				if (Parent.PartialContainer.Kind == Kind.Class)
 					if ((ModFlags & Modifiers.STATIC) == 0)
 						cc |= CallingConventions.HasThis;
 
@@ -4498,7 +4504,7 @@ namespace Mono.CSharp {
 			string name = method.MethodName.Name;
 			string method_name = name;
 
-			TypeContainer container = ((TypeContainer) parent).PartialContainer;
+			TypeContainer container = parent.PartialContainer;
 
 			PendingImplementation pending = container.PendingImplementations;
 			if (pending != null){
@@ -4815,10 +4821,6 @@ namespace Mono.CSharp {
 			set { SetMemberName (new MemberName (MemberName.Left, value, Location)); }
 		}
 
-		public TypeContainer ParentContainer {
-			get { return ((TypeContainer) Parent).PartialContainer; }
-		}
-
 		//
 		// The type of this property / indexer / event
 		//
@@ -4866,7 +4868,7 @@ namespace Mono.CSharp {
 
 		protected virtual bool CheckBase ()
 		{
-  			if ((ModFlags & Modifiers.PROTECTED) != 0 && ParentContainer.Kind == Kind.Struct) {
+  			if ((ModFlags & Modifiers.PROTECTED) != 0 && Parent.PartialContainer.Kind == Kind.Struct) {
   				Report.Error (666, Location, "`{0}': new protected member declared in struct", GetSignatureForError ());
   				return false;
    			}
@@ -4896,7 +4898,7 @@ namespace Mono.CSharp {
 					MethodAttributes.NewSlot |
 					MethodAttributes.Virtual;
 			} else {
-				if (!ParentContainer.MethodModifiersValid (this))
+				if (!Parent.PartialContainer.MethodModifiersValid (this))
 					return false;
 
 				flags = Modifiers.MethodAttr (ModFlags);
@@ -4958,7 +4960,7 @@ namespace Mono.CSharp {
 					return false;
 				}
 				
-				if (!ParentContainer.VerifyImplements (this))
+				if (!Parent.PartialContainer.VerifyImplements (this))
 					return false;
 				
 				Modifiers.Check (Modifiers.AllowedExplicitImplFlags, explicit_mod_flags, 0, Location);
@@ -5057,7 +5059,7 @@ namespace Mono.CSharp {
  			if (IsInterface)
  				return true;
  
- 			conflict_symbol = ParentContainer.FindBaseMemberWithSameName (Name, false);
+ 			conflict_symbol = Parent.PartialContainer.FindBaseMemberWithSameName (Name, false);
  			if (conflict_symbol == null) {
  				if ((RootContext.WarningLevel >= 4) && ((ModFlags & Modifiers.NEW) != 0)) {
  					Report.Warning (109, 4, Location, "The member `{0}' does not hide an inherited member. The new keyword is not required", GetSignatureForError ());
@@ -5078,7 +5080,7 @@ namespace Mono.CSharp {
 			set {
 				if (value != null) {
 					this.initializer = value;
-					ParentContainer.RegisterFieldForInitialization (this);
+					Parent.PartialContainer.RegisterFieldForInitialization (this);
 				}
 			}
 		}
@@ -5166,7 +5168,7 @@ namespace Mono.CSharp {
 			{
 				status |= Status.HAS_OFFSET;
 
-				if (!ParentContainer.HasExplicitLayout) {
+				if (!Parent.PartialContainer.HasExplicitLayout) {
 					Report.Error (636, Location, "The FieldOffset attribute can only be placed on members of types marked with the StructLayout(LayoutKind.Explicit)");
 					return;
 				}
@@ -5220,7 +5222,7 @@ namespace Mono.CSharp {
 				OptAttributes.Emit ();
 			}
 
-			if (((status & Status.HAS_OFFSET) == 0) && (ModFlags & Modifiers.STATIC) == 0 && ParentContainer.HasExplicitLayout) {
+			if (((status & Status.HAS_OFFSET) == 0) && (ModFlags & Modifiers.STATIC) == 0 && Parent.PartialContainer.HasExplicitLayout) {
 				Report.Error (625, Location, "`{0}': Instance field types marked with StructLayout(LayoutKind.Explicit) must have a FieldOffset attribute.", GetSignatureForError ());
 			}
 
@@ -5306,7 +5308,7 @@ namespace Mono.CSharp {
 				Report.Warning (-23, 1, Location, "Only private or internal fixed sized buffers are supported by .NET 1.x");
 #endif
 
-			if (ParentContainer.Kind != Kind.Struct) {
+			if (Parent.PartialContainer.Kind != Kind.Struct) {
 				Report.Error (1642, Location, "`{0}': Fixed size buffer fields may only be members of structs",
 					GetSignatureForError ());
 				return false;
@@ -5478,7 +5480,7 @@ namespace Mono.CSharp {
 
 			FieldAttributes fa = Modifiers.FieldAttr (ModFlags);
 
-			if (ParentContainer.Kind == Kind.Struct && 
+			if (Parent.PartialContainer.Kind == Kind.Struct && 
 			    ((fa & FieldAttributes.Static) == 0) &&
 			    MemberType == Parent.TypeBuilder &&
 			    !TypeManager.IsBuiltinType (MemberType)){
@@ -5908,7 +5910,7 @@ namespace Mono.CSharp {
 				if (!method.CheckAbstractAndExtern (block != null))
 					return null;
 
-				TypeContainer container = ((TypeContainer) parent).PartialContainer;
+				TypeContainer container = parent.PartialContainer;
 
 				//
 				// Check for custom access modifier
@@ -6073,7 +6075,7 @@ namespace Mono.CSharp {
 
 		protected override bool CheckForDuplications ()
 		{
-			ArrayList ar = ParentContainer.Indexers;
+			ArrayList ar = Parent.PartialContainer.Indexers;
 			if (ar != null) {
 				int arLen = ar.Count;
 					
@@ -6084,7 +6086,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			ar = ParentContainer.Properties;
+			ar = Parent.PartialContainer.Properties;
 			if (ar != null) {
 				int arLen = ar.Count;
 					
@@ -6101,7 +6103,7 @@ namespace Mono.CSharp {
 		// TODO: rename to Resolve......
  		protected override MethodInfo FindOutBaseMethod (ref Type base_ret_type)
  		{
- 			PropertyInfo base_property = ParentContainer.BaseCache.FindMemberToOverride (
+ 			PropertyInfo base_property = Parent.PartialContainer.BaseCache.FindMemberToOverride (
  				Parent.TypeBuilder, Name, ParameterTypes, true) as PropertyInfo;
   
  			if (base_property == null)
@@ -6945,8 +6947,8 @@ namespace Mono.CSharp {
 					ShortName = base_IndexerName;
 			}
 
-			if (!ParentContainer.AddMember (this) ||
-				!ParentContainer.AddMember (Get) || !ParentContainer.AddMember (Set))
+			if (!Parent.PartialContainer.AddMember (this) ||
+				!Parent.PartialContainer.AddMember (Get) || !Parent.PartialContainer.AddMember (Set))
 				return false;
 
 			if (!CheckBase ())
@@ -7084,7 +7086,7 @@ namespace Mono.CSharp {
 		
 		protected override bool CheckForDuplications ()
 		{
-			ArrayList ar = ParentContainer.Operators;
+			ArrayList ar = Parent.PartialContainer.Operators;
 			if (ar != null) {
 				int arLen = ar.Count;
    					
@@ -7095,7 +7097,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			ar = ParentContainer.Methods;
+			ar = Parent.PartialContainer.Methods;
 			if (ar != null) {
 				int arLen = ar.Count;
    					

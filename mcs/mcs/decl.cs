@@ -520,17 +520,13 @@ namespace Mono.CSharp {
 		}
 
 		public override IResolveContext ResolveContext {
-			get {
-				return this;
-			}
+			get { return this; }
 		}
 
 		#region IResolveContext Members
 
 		public virtual DeclSpace DeclContainer {
-			get {
-				return Parent;
-			}
+			get { return Parent; }
 		}
 
 		public bool IsInObsoleteScope {
@@ -582,13 +578,13 @@ namespace Mono.CSharp {
 		
 		protected Hashtable defined_names;
 
+		public TypeContainer PartialContainer;		
+
 		//
 		// Whether we are Generic
 		//
 		public bool IsGeneric {
-			get {
-				return false;
-			}
+			get { return false; }
 		}
 
 		static string[] attribute_targets = new string [] { "type" };
@@ -600,12 +596,11 @@ namespace Mono.CSharp {
 			NamespaceEntry = ns;
 			Basename = name.Name;
 			defined_names = new Hashtable ();
+			PartialContainer = null;
 		}
 
 		public override DeclSpace DeclContainer {
-			get {
-				return this;
-			}
+			get { return this; }
 		}
 
 		/// <summary>

@@ -1,3 +1,15 @@
+2006-07-31  Raja R Harinath  <rharinath@novell.com>
+
+	* decl.cs (DeclSpace.PartialContainer): Move field from ...
+	* class.cs (TypeContainer.PartialContainer): ... here.
+	(TypeContainer.AddBasesForPart): New helper.
+	(MemberBase.ParentContainer): Remove.  Use Parent.PartialContainer
+	instead.
+	* cs-parser.jay (current_class): Convert to DeclSpace.
+	(struct_declaration, interface_declaration, class_declaration):
+	Use AddBasesForPart instead of .Bases directly.
+	* const.cs, iterators.cs: Update to changes.
+
 2006-07-28  Raja R Harinath  <rharinath@novell.com>
 
 	* class.cs (TypeContainer.AddMemberType): Rename from

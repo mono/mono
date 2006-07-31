@@ -345,7 +345,7 @@ namespace Mono.CSharp {
 		{
 			this.orig_method = m_container;
 
-			this.container = ((TypeContainer) parent).PartialContainer;
+			this.container = parent.PartialContainer;
 			this.parameters = m_container.ParameterInfo;
 			this.original_block = orig_method.Block;
 			this.block = new ToplevelBlock (orig_method.Block, parameters, orig_method.Location);
