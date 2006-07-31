@@ -1123,7 +1123,7 @@ namespace System.Windows.Forms
 			
 			bool showing_add_row = false;
 
-			if (grid.ListManager.Count < grid.Rows.Length) {
+			if (grid.RowsCount < grid.Rows.Length) {
 				/* the table has an add row */
 
 				if (grid.FirstVisibleRow + grid.VisibleRowCount >= grid.Rows.Length) {
