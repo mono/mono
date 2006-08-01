@@ -1,3 +1,7 @@
+2006-08-01 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* BulletedListTest.cs: fixed new line in render tests
+
 2006-07-31 Vladimir Krasnov <vladimirk@mainsoft.com>
 	
 	* WizardStepBaseTest.cs:

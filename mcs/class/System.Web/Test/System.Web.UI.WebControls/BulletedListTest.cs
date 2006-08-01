@@ -63,6 +63,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			StringWriter sw = new StringWriter ();
 			HtmlTextWriter tw = new HtmlTextWriter (sw);
+			tw.NewLine = "\n";
 			Render (tw);
 			return sw.ToString ();
 		}
@@ -163,28 +164,28 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			PokerBulletedList b = new PokerBulletedList ();
 			AddListItems (b);
-			Assert.AreEqual (b.Render (), "<ul>\r\n\t<li>Item1</li><li>Item2</li><li>Item3</li><li>Item4</li><li>Item5</li><li>Item6</li><li>Item7</li><li>Item8</li><li>Item9</li><li>Item10</li>\r\n</ul>", "Render1");
+			Assert.AreEqual (b.Render (), "<ul>\n\t<li>Item1</li><li>Item2</li><li>Item3</li><li>Item4</li><li>Item5</li><li>Item6</li><li>Item7</li><li>Item8</li><li>Item9</li><li>Item10</li>\n</ul>", "Render1");
 			b.BulletStyle = BulletStyle.Square;
-			Assert.AreEqual (b.Render (), "<ul style=\"list-style-type:square;\">\r\n\t<li>Item1</li><li>Item2</li><li>Item3</li><li>Item4</li><li>Item5</li><li>Item6</li><li>Item7</li><li>Item8</li><li>Item9</li><li>Item10</li>\r\n</ul>", "BulletStyle.Square");
+			Assert.AreEqual (b.Render (), "<ul style=\"list-style-type:square;\">\n\t<li>Item1</li><li>Item2</li><li>Item3</li><li>Item4</li><li>Item5</li><li>Item6</li><li>Item7</li><li>Item8</li><li>Item9</li><li>Item10</li>\n</ul>", "BulletStyle.Square");
 			b.BulletStyle = BulletStyle.LowerRoman;
-			Assert.AreEqual (b.Render (), "<ol style=\"list-style-type:lower-roman;\">\r\n\t<li>Item1</li><li>Item2</li><li>Item3</li><li>Item4</li><li>Item5</li><li>Item6</li><li>Item7</li><li>Item8</li><li>Item9</li><li>Item10</li>\r\n</ol>", "BulletStyle.LowerRoman");
+			Assert.AreEqual (b.Render (), "<ol style=\"list-style-type:lower-roman;\">\n\t<li>Item1</li><li>Item2</li><li>Item3</li><li>Item4</li><li>Item5</li><li>Item6</li><li>Item7</li><li>Item8</li><li>Item9</li><li>Item10</li>\n</ol>", "BulletStyle.LowerRoman");
 			b.BulletStyle = BulletStyle.Circle;
-			Assert.AreEqual (b.Render (), "<ul style=\"list-style-type:circle;\">\r\n\t<li>Item1</li><li>Item2</li><li>Item3</li><li>Item4</li><li>Item5</li><li>Item6</li><li>Item7</li><li>Item8</li><li>Item9</li><li>Item10</li>\r\n</ul>", "BulletStyle.Circle");
+			Assert.AreEqual (b.Render (), "<ul style=\"list-style-type:circle;\">\n\t<li>Item1</li><li>Item2</li><li>Item3</li><li>Item4</li><li>Item5</li><li>Item6</li><li>Item7</li><li>Item8</li><li>Item9</li><li>Item10</li>\n</ul>", "BulletStyle.Circle");
 			b.BulletStyle = BulletStyle.Disc;
-			Assert.AreEqual (b.Render (), "<ul style=\"list-style-type:disc;\">\r\n\t<li>Item1</li><li>Item2</li><li>Item3</li><li>Item4</li><li>Item5</li><li>Item6</li><li>Item7</li><li>Item8</li><li>Item9</li><li>Item10</li>\r\n</ul>", "BulletStyle.Disc");
+			Assert.AreEqual (b.Render (), "<ul style=\"list-style-type:disc;\">\n\t<li>Item1</li><li>Item2</li><li>Item3</li><li>Item4</li><li>Item5</li><li>Item6</li><li>Item7</li><li>Item8</li><li>Item9</li><li>Item10</li>\n</ul>", "BulletStyle.Disc");
 			b.BulletStyle = BulletStyle.LowerAlpha;
-			Assert.AreEqual (b.Render (), "<ol style=\"list-style-type:lower-alpha;\">\r\n\t<li>Item1</li><li>Item2</li><li>Item3</li><li>Item4</li><li>Item5</li><li>Item6</li><li>Item7</li><li>Item8</li><li>Item9</li><li>Item10</li>\r\n</ol>", "BulletStyle.LowerAlpha");
+			Assert.AreEqual (b.Render (), "<ol style=\"list-style-type:lower-alpha;\">\n\t<li>Item1</li><li>Item2</li><li>Item3</li><li>Item4</li><li>Item5</li><li>Item6</li><li>Item7</li><li>Item8</li><li>Item9</li><li>Item10</li>\n</ol>", "BulletStyle.LowerAlpha");
 			b.BulletStyle = BulletStyle.Numbered;
-			Assert.AreEqual (b.Render (), "<ol style=\"list-style-type:decimal;\">\r\n\t<li>Item1</li><li>Item2</li><li>Item3</li><li>Item4</li><li>Item5</li><li>Item6</li><li>Item7</li><li>Item8</li><li>Item9</li><li>Item10</li>\r\n</ol>", "BulletStyle.Numbered");
+			Assert.AreEqual (b.Render (), "<ol style=\"list-style-type:decimal;\">\n\t<li>Item1</li><li>Item2</li><li>Item3</li><li>Item4</li><li>Item5</li><li>Item6</li><li>Item7</li><li>Item8</li><li>Item9</li><li>Item10</li>\n</ol>", "BulletStyle.Numbered");
 			b.BulletStyle = BulletStyle.UpperAlpha;
-			Assert.AreEqual (b.Render (), "<ol style=\"list-style-type:upper-alpha;\">\r\n\t<li>Item1</li><li>Item2</li><li>Item3</li><li>Item4</li><li>Item5</li><li>Item6</li><li>Item7</li><li>Item8</li><li>Item9</li><li>Item10</li>\r\n</ol>", "BulletStyle.UpperAlpha");
+			Assert.AreEqual (b.Render (), "<ol style=\"list-style-type:upper-alpha;\">\n\t<li>Item1</li><li>Item2</li><li>Item3</li><li>Item4</li><li>Item5</li><li>Item6</li><li>Item7</li><li>Item8</li><li>Item9</li><li>Item10</li>\n</ol>", "BulletStyle.UpperAlpha");
 			b.BulletStyle = BulletStyle.UpperRoman;
-			Assert.AreEqual (b.Render (), "<ol style=\"list-style-type:upper-roman;\">\r\n\t<li>Item1</li><li>Item2</li><li>Item3</li><li>Item4</li><li>Item5</li><li>Item6</li><li>Item7</li><li>Item8</li><li>Item9</li><li>Item10</li>\r\n</ol>", "BulletStyle.UpperRoman");
+			Assert.AreEqual (b.Render (), "<ol style=\"list-style-type:upper-roman;\">\n\t<li>Item1</li><li>Item2</li><li>Item3</li><li>Item4</li><li>Item5</li><li>Item6</li><li>Item7</li><li>Item8</li><li>Item9</li><li>Item10</li>\n</ol>", "BulletStyle.UpperRoman");
 			b.BulletStyle = BulletStyle.NotSet;
-			Assert.AreEqual (b.Render (), "<ul>\r\n\t<li>Item1</li><li>Item2</li><li>Item3</li><li>Item4</li><li>Item5</li><li>Item6</li><li>Item7</li><li>Item8</li><li>Item9</li><li>Item10</li>\r\n</ul>", "BulletStyle.NotSet");
+			Assert.AreEqual (b.Render (), "<ul>\n\t<li>Item1</li><li>Item2</li><li>Item3</li><li>Item4</li><li>Item5</li><li>Item6</li><li>Item7</li><li>Item8</li><li>Item9</li><li>Item10</li>\n</ul>", "BulletStyle.NotSet");
 			b.BulletStyle = BulletStyle.CustomImage;
 			b.BulletImageUrl = "Images/edit.gif";
-			Assert.AreEqual (b.Render (), "<ul style=\"list-style-image:url(Images/edit.gif);\">\r\n\t<li>Item1</li><li>Item2</li><li>Item3</li><li>Item4</li><li>Item5</li><li>Item6</li><li>Item7</li><li>Item8</li><li>Item9</li><li>Item10</li>\r\n</ul>", "BulletStyle.CustomImage");
+			Assert.AreEqual (b.Render (), "<ul style=\"list-style-image:url(Images/edit.gif);\">\n\t<li>Item1</li><li>Item2</li><li>Item3</li><li>Item4</li><li>Item5</li><li>Item6</li><li>Item7</li><li>Item8</li><li>Item9</li><li>Item10</li>\n</ul>", "BulletStyle.CustomImage");
 		}
 
 		[Test]
@@ -196,7 +197,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			b.Items.Add (item1);
 			b.Items.Add (item2);
 			b.DisplayMode = BulletedListDisplayMode.HyperLink;
-			Assert.AreEqual (b.Render (), "<ul>\r\n\t<li><a href=\"TextFile1.txt\">HyperLink1</a></li><li><a href=\"TextFile2.txt\">HyperLink2</a></li>\r\n</ul>", "BulletedListDisplayMode.HyperLink");			
+			Assert.AreEqual (b.Render (), "<ul>\n\t<li><a href=\"TextFile1.txt\">HyperLink1</a></li><li><a href=\"TextFile2.txt\">HyperLink2</a></li>\n</ul>", "BulletedListDisplayMode.HyperLink");			
 		}
 
 		[Test]
@@ -210,7 +211,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			p.Controls.Add (b);
 			p.EnableEventValidation = false;
 			string html = b.Render ();
-			Assert.AreEqual (b.Render (), "<ul id=\"BulletedListTest\">\r\n\t<li><a href=\"javascript:__doPostBack('BulletedListTest','0')\">Item1</a></li><li><a href=\"javascript:__doPostBack('BulletedListTest','1')\">Item2</a></li><li><a href=\"javascript:__doPostBack('BulletedListTest','2')\">Item3</a></li><li><a href=\"javascript:__doPostBack('BulletedListTest','3')\">Item4</a></li><li><a href=\"javascript:__doPostBack('BulletedListTest','4')\">Item5</a></li><li><a href=\"javascript:__doPostBack('BulletedListTest','5')\">Item6</a></li><li><a href=\"javascript:__doPostBack('BulletedListTest','6')\">Item7</a></li><li><a href=\"javascript:__doPostBack('BulletedListTest','7')\">Item8</a></li><li><a href=\"javascript:__doPostBack('BulletedListTest','8')\">Item9</a></li><li><a href=\"javascript:__doPostBack('BulletedListTest','9')\">Item10</a></li>\r\n</ul>", "BulletedListDisplayMode.LinkButton");
+			Assert.AreEqual (b.Render (), "<ul id=\"BulletedListTest\">\n\t<li><a href=\"javascript:__doPostBack('BulletedListTest','0')\">Item1</a></li><li><a href=\"javascript:__doPostBack('BulletedListTest','1')\">Item2</a></li><li><a href=\"javascript:__doPostBack('BulletedListTest','2')\">Item3</a></li><li><a href=\"javascript:__doPostBack('BulletedListTest','3')\">Item4</a></li><li><a href=\"javascript:__doPostBack('BulletedListTest','4')\">Item5</a></li><li><a href=\"javascript:__doPostBack('BulletedListTest','5')\">Item6</a></li><li><a href=\"javascript:__doPostBack('BulletedListTest','6')\">Item7</a></li><li><a href=\"javascript:__doPostBack('BulletedListTest','7')\">Item8</a></li><li><a href=\"javascript:__doPostBack('BulletedListTest','8')\">Item9</a></li><li><a href=\"javascript:__doPostBack('BulletedListTest','9')\">Item10</a></li>\n</ul>", "BulletedListDisplayMode.LinkButton");
 
 		}
 
@@ -222,11 +223,11 @@ namespace MonoTests.System.Web.UI.WebControls
 			AddListItems (b);
 			b.BulletStyle = BulletStyle.Numbered;
 			b.FirstBulletNumber = 3;
-			Assert.AreEqual (b.Render (), "<ol start=\"3\" style=\"list-style-type:decimal;\">\r\n\t<li>Item1</li><li>Item2</li><li>Item3</li><li>Item4</li><li>Item5</li><li>Item6</li><li>Item7</li><li>Item8</li><li>Item9</li><li>Item10</li>\r\n</ol>", "FirstBulletNumber1");
+			Assert.AreEqual (b.Render (), "<ol start=\"3\" style=\"list-style-type:decimal;\">\n\t<li>Item1</li><li>Item2</li><li>Item3</li><li>Item4</li><li>Item5</li><li>Item6</li><li>Item7</li><li>Item8</li><li>Item9</li><li>Item10</li>\n</ol>", "FirstBulletNumber1");
 			b.FirstBulletNumber = 6;
-			Assert.AreEqual (b.Render (), "<ol start=\"6\" style=\"list-style-type:decimal;\">\r\n\t<li>Item1</li><li>Item2</li><li>Item3</li><li>Item4</li><li>Item5</li><li>Item6</li><li>Item7</li><li>Item8</li><li>Item9</li><li>Item10</li>\r\n</ol>", "FirstBulletNumber2");
+			Assert.AreEqual (b.Render (), "<ol start=\"6\" style=\"list-style-type:decimal;\">\n\t<li>Item1</li><li>Item2</li><li>Item3</li><li>Item4</li><li>Item5</li><li>Item6</li><li>Item7</li><li>Item8</li><li>Item9</li><li>Item10</li>\n</ol>", "FirstBulletNumber2");
 			b.FirstBulletNumber = -2;
-			Assert.AreEqual (b.Render (), "<ol start=\"-2\" style=\"list-style-type:decimal;\">\r\n\t<li>Item1</li><li>Item2</li><li>Item3</li><li>Item4</li><li>Item5</li><li>Item6</li><li>Item7</li><li>Item8</li><li>Item9</li><li>Item10</li>\r\n</ol>", "FirstBulletNumber3");
+			Assert.AreEqual (b.Render (), "<ol start=\"-2\" style=\"list-style-type:decimal;\">\n\t<li>Item1</li><li>Item2</li><li>Item3</li><li>Item4</li><li>Item5</li><li>Item6</li><li>Item7</li><li>Item8</li><li>Item9</li><li>Item10</li>\n</ol>", "FirstBulletNumber3");
 
 		}
 
