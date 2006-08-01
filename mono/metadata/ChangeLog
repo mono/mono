@@ -1,3 +1,10 @@
+2006-08-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* assembly.c (search_loaded): Fix warnings.
+
+	* threadpool.c (mono_thread_pool_finish): Fix warnings.
+	(mono_async_invoke): Ditto.
+
 2006-07-28  Jonathan Chambers  <joncham@gmail.com>
 
 	* object.c (mono_remote_class_vtable): Need to create proxy vtable
