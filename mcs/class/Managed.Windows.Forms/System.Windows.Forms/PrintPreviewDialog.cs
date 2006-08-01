@@ -182,7 +182,16 @@ namespace System.Windows.Forms {
 			minimum_size = new Size (close.Location.X + close.Width + label.Width + pageUpDown.Width,
 						 220);
 
+			close.Click += new EventHandler (CloseButtonClicked);
 			return toolbar;
+		}
+
+		void CloseButtonClicked (object sender, EventArgs e)
+		{
+			CancelEventArgs ce = new CancelEventArgs ();
+			OnClosing (ce);
+			if (!ce.Cancel)
+				Close ();
 		}
 
 		void OnPageUpDownValueChanged (object sender, EventArgs e)
@@ -524,6 +533,7 @@ namespace System.Windows.Forms {
 			get { return print_preview.Document; }
 			set {
 				print_preview.Document = value;
+				print_preview.GeneratePreview ();
 				pageUpDown.Minimum = print_preview.page_infos.Length > 0 ? 1 : 0;
 				pageUpDown.Maximum = print_preview.page_infos.Length;
 			}

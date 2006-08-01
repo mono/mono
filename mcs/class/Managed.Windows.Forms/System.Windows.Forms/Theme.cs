@@ -785,7 +785,9 @@ namespace System.Windows.Forms
 		#endregion	// PictureBox
 
 		#region PrintPreviewControl
-		public abstract void PrintPreviewControlPaint (PaintEventArgs pe, PrintPreviewControl preview);
+		public abstract int PrintPreviewControlPadding{get;}
+		public abstract Size PrintPreviewControlGetPageSize (PrintPreviewControl preview);
+		public abstract void PrintPreviewControlPaint (PaintEventArgs pe, PrintPreviewControl preview, Size page_image_size);
 		#endregion      // PrintPreviewControl
 
 		#region ProgressBar

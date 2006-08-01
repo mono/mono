@@ -2733,65 +2733,81 @@ namespace System.Windows.Forms
 		#endregion	// PictureBox
 
 		#region PrintPreviewControl
-		public override void PrintPreviewControlPaint (PaintEventArgs pe, PrintPreviewControl preview)
-		{
-			int padding = 8;
-			PreviewPageInfo[] pis = preview.page_infos;
+		public override int PrintPreviewControlPadding {
+			get { return 8; }
+		}
 
-			int page_x, page_y;
+		public override Size PrintPreviewControlGetPageSize (PrintPreviewControl preview)
+		{
 			int page_width, page_height;
+			int padding = PrintPreviewControlPadding;
+			PreviewPageInfo[] pis = preview.page_infos;
 
 			if (preview.AutoZoom) {
 				int height_available = preview.ClientRectangle.Height - (preview.Rows) * padding - 2 * padding;
 				int width_available = preview.ClientRectangle.Width - (preview.Columns - 1) * padding - 2 * padding;
 
-				if (height_available < width_available) {
+				float image_ratio = (float)pis[0].Image.Width / pis[0].Image.Height;
+
+				/* try to lay things out using the width to determine the size */
+				page_width = width_available / preview.Columns;
+				page_height = (int)(page_width / image_ratio);
+
+				/* does the height fit? */
+				if (page_height * (preview.Rows + 1) > height_available) {
+					/* no, lay things out via the height */
 					page_height = height_available / (preview.Rows + 1);
-					page_width = (int)(page_height * (float)pis[0].Image.Width / pis[0].Image.Height);
+					page_width = (int)(page_height * image_ratio);
 				}
-				else {
-					page_width = width_available / preview.Columns;
-					page_height = (int)(page_width * (float)pis[0].Image.Height / pis[0].Image.Width);
-					if (page_height > height_available) {
-						/* yuck.. fall back to the other case in this instance */
-						page_height = height_available / (preview.Rows + 1);
-						page_width = (int)(page_height * (float)pis[0].Image.Width / pis[0].Image.Height);
-					}
-				}
-				Console.WriteLine ("width_available = {0}, height_available = {1}", width_available, height_available);
-				Console.WriteLine ("page_height = {0}, page_width = {1}", page_height, page_width);
 			}
 			else {
 				page_width = (int)(pis[0].Image.Width * preview.Zoom);
 				page_height = (int)(pis[0].Image.Height * preview.Zoom);
 			}
-				
 
-			int width = page_width * preview.Columns + padding * (preview.Columns - 1) + 2 * padding;
-			int height = page_height * (preview.Rows + 1) + padding * preview.Rows + 2 * padding;
+			return new Size (page_width, page_height);
+		}
 
-			int off_x = preview.ClientRectangle.Width / 2 - width / 2;
+		public override void PrintPreviewControlPaint (PaintEventArgs pe, PrintPreviewControl preview, Size page_size)
+		{
+			int padding = 8;
+			PreviewPageInfo[] pis = preview.page_infos;
+
+			int page_x, page_y;
+
+			int width = page_size.Width * preview.Columns + padding * (preview.Columns - 1) + 2 * padding;
+			int height = page_size.Height * (preview.Rows + 1) + padding * preview.Rows + 2 * padding;
+
+			Rectangle viewport = preview.ViewPort;
+
+			pe.Graphics.Clip = new Region (viewport);
+
+			/* center things if we can */
+			int off_x = viewport.Width / 2 - width / 2;
 			if (off_x < 0) off_x = 0;
-			int off_y = preview.ClientRectangle.Height / 2 - height / 2;
+			int off_y = viewport.Height / 2 - height / 2;
 			if (off_y < 0) off_y = 0;
 
-			page_y = off_y + padding;
+			page_y = off_y + padding - preview.vbar_value;
 
 			if (preview.StartPage > 0) {
 				int p = preview.StartPage - 1;
 				for (int py = 0; py < preview.Rows + 1; py ++) {
-					page_x = off_x + padding;
+					page_x = off_x + padding - preview.hbar_value;
 					for (int px = 0; px < preview.Columns; px ++) {
-						Console.WriteLine ("printing page {0}", p);
 						if (p >= pis.Length)
 							continue;
-						PreviewPageInfo pi = pis[p];
+						Image image = preview.image_cache[p];
+						if (image == null)
+							image = pis[p].Image;
+						Rectangle dest = new Rectangle (new Point (page_x, page_y), page_size);
 
-						pe.Graphics.DrawImage (pi.Image, new Rectangle (new Point (page_x, page_y), new Size (page_width, page_height)), 0, 0, pi.Image.Width, pi.Image.Height, GraphicsUnit.Pixel);
-						page_x += padding + page_width;
+						pe.Graphics.DrawImage (image, dest, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel);
+
+						page_x += padding + page_size.Width;
 						p++;
 					}
-					page_y += padding + page_height;
+					page_y += padding + page_size.Height;
 				}
 			}
 		}

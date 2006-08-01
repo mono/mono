@@ -42,9 +42,17 @@ namespace System.Windows.Forms {
 		int rows;
 		int startPage;
 		double zoom;
+		int padding = ThemeEngine.Current.PrintPreviewControlPadding;
 		PrintDocument document;
 		internal PreviewPrintController controller;
 		internal PreviewPageInfo[] page_infos;
+		private VScrollBar vbar;
+		private HScrollBar hbar;
+
+		internal Rectangle ViewPort;
+		internal Image[] image_cache;
+		Size image_size;
+
 		#endregion // Local variables
 
 		#region Public Constructors
@@ -54,9 +62,22 @@ namespace System.Windows.Forms {
 			rows = 0;
 			startPage = 1;
 
+			this.BackColor = SystemColors.AppWorkspace;
+
 			controller = new PreviewPrintController ();
 
-			this.BackColor = SystemColors.AppWorkspace;
+			vbar = new ImplicitVScrollBar ();
+			hbar = new ImplicitHScrollBar ();
+
+			vbar.Visible = false;
+			hbar.Visible = false;
+			vbar.ValueChanged += new EventHandler (VScrollBarValueChanged);
+			hbar.ValueChanged += new EventHandler (HScrollBarValueChanged);
+
+			SuspendLayout ();
+			Controls.AddImplicit (vbar);
+			Controls.AddImplicit (hbar);
+			ResumeLayout ();
 		}
 		#endregion // Public Constructors
 
@@ -66,8 +87,10 @@ namespace System.Windows.Forms {
 		public bool AutoZoom {
 			get { return autozoom; }
 			set {
-				if (autozoom != value)
+				if (autozoom != value) {
+					InvalidatePreview ();
 					Invalidate ();
+				}
 				autozoom = value;
 			}
 		}
@@ -75,9 +98,12 @@ namespace System.Windows.Forms {
 		public int Columns {
 			get { return columns; }
 			set {
-				if (columns != value)
+				if (columns != value) {
+					columns = value;
+					if (AutoZoom)
+						InvalidatePreview ();
 					Invalidate ();
-				columns = value;
+				}
 			}
 		}
 		[DefaultValue(null)]
@@ -93,9 +119,12 @@ namespace System.Windows.Forms {
 		public int Rows {
 			get { return rows; }
 			set {
-				if (rows != value)
+				if (rows != value) {
+					rows = value;
+					if (AutoZoom)
+						InvalidatePreview ();
 					Invalidate ();
-				rows = value;
+				}
 			}
 		}
 		[DefaultValue(0)]
@@ -137,8 +166,10 @@ namespace System.Windows.Forms {
 			set {
 				if (zoom < 0.0)
 					throw new ArgumentException ("zoom");
-				if (zoom != value)
+				if (zoom != value) {
+					InvalidatePreview ();
 					Invalidate ();
+				}
 				zoom = value;
 			}
 		}
@@ -146,10 +177,41 @@ namespace System.Windows.Forms {
 
 		
 		#region Public Instance Methods
+		internal void GeneratePreview ()
+		{
+			if (document == null)
+				return;
+
+			if (page_infos == null) {
+				document.Print ();
+				page_infos = controller.GetPreviewPageInfo ();
+			}
+
+			if (image_cache == null) {
+				image_cache = new Image[page_infos.Length];
+
+				if (page_infos.Length > 0) {
+					image_size = ThemeEngine.Current.PrintPreviewControlGetPageSize (this);
+					if (image_size.Width >= 0 && image_size.Width < page_infos[0].Image.Width
+					    && image_size.Height >= 0 && image_size.Height < page_infos[0].Image.Height) {
+
+						for (int i = 0; i < page_infos.Length; i ++) {
+							image_cache[i] = new Bitmap (image_size.Width, image_size.Height);
+							Graphics g = Graphics.FromImage (image_cache[i]);
+							g.DrawImage (page_infos[i].Image, new Rectangle (new Point (0, 0), image_size), 0, 0, page_infos[i].Image.Width, page_infos[i].Image.Height, GraphicsUnit.Pixel);
+							g.Dispose ();
+						}
+					}
+				}
+			}
+
+			UpdateScrollBars();
+		}
+
 		public void InvalidatePreview()
 		{
-			document.Print ();
-			page_infos = controller.GetPreviewPageInfo ();
+			page_infos = null;
+			image_cache = null;
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -178,14 +240,23 @@ namespace System.Windows.Forms {
 
 		protected override void OnPaint(PaintEventArgs e)
 		{
-			Console.WriteLine ("OnPaint");
-			ThemeEngine.Current.PrintPreviewControlPaint (e, this);
+			if (page_infos == null || image_cache == null)
+				GeneratePreview ();
+			ThemeEngine.Current.PrintPreviewControlPaint (e, this, image_size);
 		}
 
 		protected override void OnResize(EventArgs e)
 		{
 			base.OnResize (e);
-			Console.WriteLine ("OnResize");
+			if (AutoZoom) {
+				if (page_infos != null) {
+					Size new_size = ThemeEngine.Current.PrintPreviewControlGetPageSize (this);
+					if (new_size.Width != image_size.Width && new_size.Height != image_size.Height)
+						image_cache = null;
+				}
+			}
+
+			UpdateScrollBars ();
 			Invalidate ();
 		}
 
@@ -209,6 +280,97 @@ namespace System.Windows.Forms {
 		public new event EventHandler TextChanged {
 			add { base.TextChanged += value; }
 			remove { base.TextChanged -= value; }
+		}
+
+		internal int vbar_value;
+		internal int hbar_value;
+
+		private void VScrollBarValueChanged (object sender, EventArgs e)
+		{
+			int pixels;
+
+			if (vbar.Value > vbar_value)
+				pixels = -1 * (vbar.Value - vbar_value);
+			else
+				pixels = vbar_value - vbar.Value;
+
+			vbar_value = vbar.Value;
+			XplatUI.ScrollWindow (Handle, ViewPort, 0, pixels, false);
+		}
+
+
+		private void HScrollBarValueChanged (object sender, EventArgs e)
+		{
+			int pixels;
+
+			if (hbar.Value > hbar_value)
+				pixels = -1 * (hbar.Value - hbar_value);
+			else
+				pixels = hbar_value - hbar.Value;
+
+			hbar_value = hbar.Value;
+			XplatUI.ScrollWindow (Handle, ViewPort, pixels, 0, false);
+		}
+
+		private void UpdateScrollBars ()
+		{
+			ViewPort = ClientRectangle;
+			if (AutoZoom)
+				return;
+
+			int total_width, total_height;
+
+			total_width = image_size.Width * Columns + (Columns + 1) * padding;
+			total_height = image_size.Height * (Rows + 1) + (Rows + 2) * padding;
+
+			bool vert = false;
+			bool horz = false;
+
+			if (total_width > ClientRectangle.Width) {
+				/* we need the hbar */
+				horz = true;
+				ViewPort.Height -= hbar.Height;
+			}
+			if (total_height > ViewPort.Height) {
+				/* we need the vbar */
+				vert = true;
+				ViewPort.Width -= vbar.Width;
+			}
+			if (!horz && total_width > ViewPort.Width) {
+				horz = true;
+				ViewPort.Height -= hbar.Height;
+			}
+
+			SuspendLayout ();
+
+			if (vert) {
+				vbar.SetValues (total_height, ViewPort.Height);
+
+				vbar.Bounds = new Rectangle (ClientRectangle.Width - vbar.Width, 0, vbar.Width,
+							     ClientRectangle.Height -
+							     (horz ? SystemInformation.VerticalScrollBarWidth : 0));
+				vbar.Visible = true;
+				vbar_value = vbar.Value;
+			}
+			else {
+				vbar.Visible = false;
+			}
+
+			if (horz) {
+				hbar.SetValues (total_width, ViewPort.Width);
+
+				hbar.Bounds = new Rectangle (0, ClientRectangle.Height - hbar.Height,
+							     ClientRectangle.Width - (vert ?
+										      SystemInformation.HorizontalScrollBarHeight : 0),
+							     hbar.Height);
+				hbar.Visible = true;
+				hbar_value = hbar.Value;
+			}
+			else {
+				hbar.Visible = false;
+			}
+
+			ResumeLayout (false);
 		}
 	}
 }
