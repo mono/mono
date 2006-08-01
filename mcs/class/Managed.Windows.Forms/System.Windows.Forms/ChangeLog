@@ -1,5 +1,10 @@
 2006-08-01  Chris Toshok  <toshok@ximian.com>
 
+	* PrintPreviewDialog.cs: the CancelEventArgs stuff surrounding the
+	Close() call is handled in Form, not here.
+
+2006-08-01  Chris Toshok  <toshok@ximian.com>
+
 	* Theme.cs, ThemeWin32Classic.cs: fix the PrintPreviewControl
 	layout/rendering.
 

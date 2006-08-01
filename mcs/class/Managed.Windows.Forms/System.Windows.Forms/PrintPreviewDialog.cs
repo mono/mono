@@ -188,10 +188,7 @@ namespace System.Windows.Forms {
 
 		void CloseButtonClicked (object sender, EventArgs e)
 		{
-			CancelEventArgs ce = new CancelEventArgs ();
-			OnClosing (ce);
-			if (!ce.Cancel)
-				Close ();
+			Close ();
 		}
 
 		void OnPageUpDownValueChanged (object sender, EventArgs e)
