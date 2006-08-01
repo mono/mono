@@ -1089,6 +1089,14 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		public void Equals3 ()
+		{
+			Uri uri1 = new Uri ("svn+ssh://atsushi@mono-cvs.ximian.com");
+			Uri uri2 = new Uri ("svn+ssh://anonymous@mono-cvs.ximian.com");
+			Assert (uri1.Equals (uri2));
+		}
+
+		[Test]
 		public void TestEquals2 ()
 		{
 			Uri a = new Uri ("http://www.go-mono.com");

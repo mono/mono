@@ -757,7 +757,6 @@ namespace System {
 		{
 			CultureInfo inv = CultureInfo.InvariantCulture;
 			return ((this.scheme.ToLower (inv) == uri.scheme.ToLower (inv)) &&
-				(this.userinfo.ToLower (inv) == uri.userinfo.ToLower (inv)) &&
 				(this.host.ToLower (inv) == uri.host.ToLower (inv)) &&
 				(this.port == uri.port) &&
 				(this.path == uri.path) &&

@@ -1,3 +1,7 @@
+2006-08-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UriTest.cs : added Equals3(), for bug #78799.
+
 2005-11-25  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* UriBuilderCas.cs: Fixed line endings.
