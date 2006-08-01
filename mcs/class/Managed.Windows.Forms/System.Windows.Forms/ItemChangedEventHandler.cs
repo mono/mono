@@ -29,6 +29,8 @@
 
 namespace System.Windows.Forms
 {
+#if !NET_2_0
 	[Serializable]
+#endif
 	public delegate void ItemChangedEventHandler (object sender, ItemChangedEventArgs e);
 }

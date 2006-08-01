@@ -1,3 +1,13 @@
+2006-08-01  Jonathan Pobst  <monkey@jpobst.com>
+	* ColumnClickEventHandler.cs, DrawItemEventHandler.cs,
+	  ItemChangedEventHandler.cs, ItemCheckEventHandler.cs,
+	  ItemDragEventHandler.cs, LabelEditEventHandler.cs,
+	  LinkClickedEventHandler.cs, LinkLabelLinkClickedEventHandler.cs,
+	  MeasureItemEventHandler.cs, MethodInvoker.cs, PaintEventHandler.cs,
+	  PropertyTabChangedEventHandler.cs, PropertyValueChangedEventHandler.cs,
+	  SelectedGridItemChangedEventHandler.cs, ToolBarButtonClickEventHandler.cs:
+	  Removed [Serializable] for 2.0 Event Handlers.
+
 2006-07-31  Jackson Harper  <jackson@ximian.com>
 
 	* TextBoxBase.cs: Make ShowSelection invalidate when changed.

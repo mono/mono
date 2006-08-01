@@ -27,7 +27,9 @@
 
 namespace System.Windows.Forms 
 {
+#if !NET_2_0
 	[Serializable]
+#endif
 	public delegate void PropertyTabChangedEventHandler(object s, PropertyTabChangedEventArgs e);
 }
 
