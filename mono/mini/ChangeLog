@@ -1,3 +1,7 @@
+2006-08-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* cpu-alpha.md inssel-alpha.brg mini-alpha.h mini-alpha.c exceptions-alpha.c tramp-alpha.c: More alpha port work from Sergey Tikhonov <tsv@solvo.ru>.
+
 2006-07-13  Miguel de Icaza  <miguel@novell.com>
 
 	* mini.c (mono_method_to_ir): Obtain the original method in the
