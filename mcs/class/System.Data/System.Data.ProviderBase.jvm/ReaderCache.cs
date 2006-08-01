@@ -616,8 +616,7 @@ namespace System.Data.ProviderBase
 			if (buffer == null)
 				return _s.Length;
 			int actualLength = ((dataIndex + length) >= _s.Length) ? (_s.Length - (int)dataIndex) : length;
-			for (int i = 0, stringIndex = (int)dataIndex; i < actualLength; i++)
-				buffer[bufferIndex++] = _s[stringIndex++];
+			_s.CopyTo((int)dataIndex, buffer, bufferIndex, actualLength);
 			return actualLength;
 		}
 
