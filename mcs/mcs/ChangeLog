@@ -1,3 +1,10 @@
+2006-08-01  Raja R Harinath  <rharinath@novell.com>
+
+	* decl.cs (DeclSpace.FindNestedType): Remove.
+	(DeclSpace.LookupNestedTypeINHierarchy): Use PartialContainer and
+	LookupTypeContainer to get the container of the nested type.
+	* class.cs (TypeContainer.FindNestedType): Make non-override.
+
 2006-07-31  Raja R Harinath  <rharinath@novell.com>
 
 	* decl.cs (DeclSpace.PartialContainer): Move field from ...

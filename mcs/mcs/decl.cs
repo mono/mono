@@ -882,15 +882,6 @@ namespace Mono.CSharp {
 			return ~ (~ mAccess | pAccess) == 0;
 		}
 
-		//
-		// Return the nested type with name @name.  Ensures that the nested type
-		// is defined if necessary.  Do _not_ use this when you have a MemberCache handy.
-		//
-		public virtual Type FindNestedType (string name)
-		{
-			return null;
-		}
-
 		private Type LookupNestedTypeInHierarchy (string name)
 		{
 			// if the member cache has been created, lets use it.
@@ -904,10 +895,11 @@ namespace Mono.CSharp {
 			     current_type != null && current_type != TypeManager.object_type;
 			     current_type = current_type.BaseType) {
 				if (current_type is TypeBuilder) {
-					DeclSpace decl = this;
-					if (current_type != TypeBuilder)
-						decl = TypeManager.LookupDeclSpace (current_type);
-					t = decl.FindNestedType (name);
+					TypeContainer tc = current_type == TypeBuilder
+						? PartialContainer
+						: TypeManager.LookupTypeContainer (current_type);
+					if (tc != null)
+						t = tc.FindNestedType (name);
 				} else {
 					t = TypeManager.GetNestedType (current_type, name);
 				}
