@@ -2733,7 +2733,7 @@ namespace System.Windows.Forms
 
 		public bool Focus() {
 			if (CanFocus && IsHandleCreated && !has_focus) {
-				XplatUI.SetFocus(window.Handle);
+				Select (true, true);
 			}
 			return has_focus;
 		}
