@@ -1532,12 +1532,8 @@ namespace Mono.CSharp
 			if (tokenize)
 				return true;
 
-			//
-			// This will point to the NamespaceEntry of the last file that was parsed, and may
-			// not be meaningful when resolving classes from other files.  So, reset it to prevent
-			// silent bugs.
-			//
-			RootContext.ToplevelTypes.NamespaceEntry = null;
+			if (RootContext.ToplevelTypes.NamespaceEntry != null)
+				throw new InternalErrorException ("who set it?");
 
 			//
 			// If we are an exe, require a source file for the entry point

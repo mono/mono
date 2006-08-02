@@ -482,8 +482,7 @@ namespace Mono.CSharp {
 				      Attributes attrs, Kind kind)
 			: base (ns, parent, name, attrs)
 		{
-			// FIXME: Remove the second condition -- will require making RootContext.ToplevelTypes partial
-			if (parent != null && parent != RootContext.ToplevelTypes && parent.NamespaceEntry != ns)
+			if (parent != null && parent.NamespaceEntry != ns)
 				throw new InternalErrorException ("A nested type should be in the same NamespaceEntry as its enclosing class");
 
 			this.Kind = kind;

@@ -1069,7 +1069,7 @@ namespace Mono.CSharp {
 			Type t = LookupNestedTypeInHierarchy (name);
 			if (t != null)
 				e = new TypeExpression (t, Location.Null);
-			else if (Parent != null && Parent != RootContext.ToplevelTypes) // FIXME: remove the second condition
+			else if (Parent != null)
 				e = Parent.LookupType (name, loc, ignore_cs0104);
 			else
 				e = NamespaceEntry.LookupNamespaceOrType (this, name, loc, ignore_cs0104);

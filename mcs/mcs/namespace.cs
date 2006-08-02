@@ -429,6 +429,8 @@ namespace Mono.CSharp {
 		public bool DeclarationFound = false;
 		bool UsingFound;
 
+		public readonly DeclSpace SlaveDeclSpace;
+
 		ListDictionary extern_aliases;
 
 		static ArrayList entries = new ArrayList ();
@@ -578,6 +580,7 @@ namespace Mono.CSharp {
 				ns = RootNamespace.Global.GetNamespace (name, true);
 			else
 				ns = RootNamespace.Global;
+			SlaveDeclSpace = new RootDeclSpace (this);
 		}
 
 		private NamespaceEntry (NamespaceEntry parent, SourceFile file, Namespace ns)
@@ -588,6 +591,7 @@ namespace Mono.CSharp {
 			this.ID = -1;
 			this.IsImplicit = true;
 			this.ns = ns;
+			this.SlaveDeclSpace = null;
 		}
 
 		//

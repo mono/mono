@@ -1,3 +1,19 @@
+2006-08-02  Raja R Harinath  <rharinath@novell.com>
+
+	Implement parts of #77403
+	* roottypes.cs (RootDeclSpace): New.  Used to represent the
+	toplevel declaration space.  Each namespace declaration introduces
+	a "partial" root declaretion space.
+	* namespace.cs (NamespaceEntry.SlaveDeclSpace): New.
+	(NamespaceEntry.ctor): Create a SlaveDeclSpace if necessary.
+	* cs-parser.jay (CSharpParser.ctor): Initialize 'current_class'
+	from 'current_namespace.SlaveDeclSpace'.
+	(namespace_declaration): Likewise.
+	* class.cs (TypeContainer.ctor): Remove parent==ToplevelTypes
+	check.  It can't happen now.
+	* decl.cs (DeclSpace.LookupType): Likewise.
+	* driver.cs (MainDriver): Sanity check.
+
 2006-08-01  Raja R Harinath  <rharinath@novell.com>
 
 	* decl.cs (DeclSpace.FindNestedType): Remove.
