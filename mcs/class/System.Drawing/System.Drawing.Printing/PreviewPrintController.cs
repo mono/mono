@@ -86,6 +86,8 @@ namespace System.Drawing.Printing
 			Graphics g = Graphics.FromImage (info.Image);
 			g.FillRectangle (new SolidBrush (Color.White), new Rectangle (new Point (0,0), new Size (image.Width, image.Height)));
 
+			g.ScaleTransform (e.PageSettings.PrinterResolution.X / 100.0f, e.PageSettings.PrinterResolution.Y / 100.0f);
+
 			return g;
 		}
 		

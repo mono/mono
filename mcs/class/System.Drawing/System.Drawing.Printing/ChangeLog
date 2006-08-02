@@ -1,3 +1,9 @@
+2006-08-02  Chris Toshok  <toshok@ximian.com>
+
+	* PreviewPrintController.cs: scale the Graphics context we pass
+	back from OnStartPage such that the preview looks the way the
+	printed output will.
+
 2006-07-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* PrintDocument.cs: When null is passed to PrinterSettings,
