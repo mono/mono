@@ -1145,14 +1145,6 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
-			int	sel_start;
-			int	sel_length;
-			int	lines;
-
-			sel_start = SelectionStart;
-			sel_length = SelectionLength;
-			lines = document.selection_start.line.line_no;
-
 			// Make sure we don't get sized bigger than we want to be
 			if (!richtext) {
 				if (!multiline) {
@@ -1168,10 +1160,6 @@ namespace System.Windows.Forms {
 
 			TextBoxBase_SizeChanged(this, EventArgs.Empty);
 			CalculateDocument();
-
-			// don't use SelectionStart directly (NRE in Document.Caret)
-			document.SetSelectionStart(sel_start);
-			SelectionLength = sel_length;
 		}
 
 		protected override void WndProc(ref Message m) {

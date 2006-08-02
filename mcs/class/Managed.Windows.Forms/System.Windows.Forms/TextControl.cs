@@ -1005,7 +1005,7 @@ namespace System.Windows.Forms {
 
 			total = 1;
 
-			Console.Write("Line {0}, Y: {1} Text {2}", line.line_no, line.Y, line.text != null ? line.text.ToString() : "undefined");
+			Console.Write("Line {0} [# {1}], Y: {1} Text {2}", line.line_no, line.GetHashCode(), line.Y, line.text != null ? line.text.ToString() : "undefined");
 
 			if (line.left == sentinel) {
 				Console.Write(", left = sentinel");
@@ -1460,7 +1460,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal void UpdateCaret() {
-			if (!owner.IsHandleCreated) {
+			if (!owner.IsHandleCreated || caret.tag == null) {
 				return;
 			}
 
@@ -2459,7 +2459,6 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 
 				Console.WriteLine("Post-delete Y of first line: {0}, second line: {1}", check_first.Y, check_second.Y);
 			#endif
-
 		}
 
 		// Split the line at the position into two
@@ -2743,16 +2742,37 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 			if (line3 != line1) {
 				LineTag	tag;
 
+				if (selection_start.line == line3) {
+					selection_start.line = line1;
+				}
+
+				if (selection_end.line == line3) {
+					selection_end.line = line1;
+				}
+
+				if (selection_anchor.line == line3) {
+					selection_anchor.line = line1;
+				}
+
+				if (caret.line == line3) {
+					caret.line = line1;
+				}
+
+
+				line1.alignment = line3.alignment;
 				line1.ascent = line3.ascent;
+				line1.hanging_indent = line3.hanging_indent;
 				line1.height = line3.height;
+				line1.indent = line3.indent;
 				line1.line_no = line3.line_no;
 				line1.recalc = line3.recalc;
+				line1.right_indent = line3.right_indent;
+				line1.soft_break = line3.soft_break;
 				line1.space = line3.space;
 				line1.tags = line3.tags;
 				line1.text = line3.text;
 				line1.widths = line3.widths;
 				line1.Y = line3.Y;
-				line1.soft_break = line3.soft_break;
 
 				tag = line1.tags;
 				while (tag != null) {
@@ -3140,6 +3160,10 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 			LineTag	tag;
 			int	pos;
 
+			if (character_index < 0) {
+				return;
+			}
+
 			CharIndexToLineTag(character_index, out line, out tag, out pos);
 			SetSelectionStart(line, pos);
 		}
@@ -3177,6 +3201,10 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 			Line	line;
 			LineTag	tag;
 			int	pos;
+
+			if (character_index < 0) {
+				return;
+			}
 
 			CharIndexToLineTag(character_index, out line, out tag, out pos);
 			SetSelectionEnd(line, pos);
@@ -3765,7 +3793,7 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 					HeightChanged(this, null);
 				}
 			}
-
+			UpdateCaret();
 			return changed;
 		}
 
