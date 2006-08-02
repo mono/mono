@@ -447,7 +447,7 @@ namespace Mono.CSharp {
 		// We use this to flag using clauses for namespaces that do not
 		// exist.
 		//
-		public class UsingEntry {
+		public class UsingEntry : IResolveContext {
 			public readonly MemberName Name;
 			readonly Expression Expr;
 			readonly NamespaceEntry NamespaceEntry;
@@ -468,11 +468,7 @@ namespace Mono.CSharp {
 				if (resolved != null)
 					return resolved;
 
-				DeclSpace root = RootContext.ToplevelTypes;
-				root.NamespaceEntry = NamespaceEntry;
-				FullNamedExpression fne = Expr.ResolveAsTypeStep (root, false);
-				root.NamespaceEntry = null;
-
+				FullNamedExpression fne = Expr.ResolveAsTypeStep (this, false);
 				if (fne == null) {
 					Error_NamespaceNotFound (Location, Name.ToString ());
 					return null;
@@ -484,6 +480,16 @@ namespace Mono.CSharp {
 						"`{0} is a type not a namespace. A using namespace directive can only be applied to namespaces", Name.ToString ());
 				}
 				return resolved;
+			}
+
+			DeclSpace IResolveContext.DeclContainer {
+				get { return NamespaceEntry.SlaveDeclSpace; }
+			}
+			bool IResolveContext.IsInObsoleteScope {
+				get { return false; }
+			}
+			bool IResolveContext.IsInUnsafeScope {
+				get { return false; }
 			}
 		}
 
@@ -515,8 +521,7 @@ namespace Mono.CSharp {
 			protected abstract FullNamedExpression DoResolve ();
 		}
 
-		public class LocalAliasEntry : AliasEntry
-		{
+		public class LocalAliasEntry : AliasEntry, IResolveContext {
 			public readonly Expression Alias;
 			
 			public LocalAliasEntry (NamespaceEntry entry, string name, MemberName alias, Location loc) :
@@ -527,11 +532,7 @@ namespace Mono.CSharp {
 
 			protected override FullNamedExpression DoResolve ()
 			{
-				DeclSpace root = RootContext.ToplevelTypes;
-				root.NamespaceEntry = NamespaceEntry;
-				resolved = Alias.ResolveAsTypeStep (root, false);
-				root.NamespaceEntry = null;
-
+				resolved = Alias.ResolveAsTypeStep (this, false);
 				if (resolved == null)
 					return null;
 
@@ -547,10 +548,19 @@ namespace Mono.CSharp {
 
 				return resolved;
 			}
+
+			DeclSpace IResolveContext.DeclContainer {
+				get { return NamespaceEntry.SlaveDeclSpace; }
+			}
+			bool IResolveContext.IsInObsoleteScope {
+				get { return false; }
+			}
+			bool IResolveContext.IsInUnsafeScope {
+				get { return false; }
+			}
 		}
 
-		public class ExternAliasEntry : AliasEntry 
-		{
+		public class ExternAliasEntry : AliasEntry {
 			public ExternAliasEntry (NamespaceEntry entry, string name, Location loc) :
 				base (entry, name, loc)
 			{
@@ -583,7 +593,7 @@ namespace Mono.CSharp {
 			SlaveDeclSpace = new RootDeclSpace (this);
 		}
 
-		private NamespaceEntry (NamespaceEntry parent, SourceFile file, Namespace ns)
+		private NamespaceEntry (NamespaceEntry parent, SourceFile file, Namespace ns, bool slave)
 		{
 			this.parent = parent;
 			this.file = file;
@@ -591,7 +601,7 @@ namespace Mono.CSharp {
 			this.ID = -1;
 			this.IsImplicit = true;
 			this.ns = ns;
-			this.SlaveDeclSpace = null;
+			this.SlaveDeclSpace = slave ? new RootDeclSpace (this) : null;
 		}
 
 		//
@@ -608,7 +618,7 @@ namespace Mono.CSharp {
 		NamespaceEntry Doppelganger {
 			get {
 				if (!IsImplicit && doppelganger == null)
-					doppelganger = new NamespaceEntry (ImplicitParent, file, ns);
+					doppelganger = new NamespaceEntry (ImplicitParent, file, ns, true);
 				return doppelganger;
 			}
 		}
@@ -631,7 +641,7 @@ namespace Mono.CSharp {
 				if (implicit_parent == null) {
 					implicit_parent = (parent.NS == ns.Parent)
 						? parent
-						: new NamespaceEntry (parent, file, ns.Parent);
+						: new NamespaceEntry (parent, file, ns.Parent, false);
 				}
 				return implicit_parent;
 			}

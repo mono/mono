@@ -1,5 +1,12 @@
 2006-08-02  Raja R Harinath  <rharinath@novell.com>
 
+	* namespace.cs (NamespaceEntry.Doppelganger): Create slave
+	declspaces for doppelgangers too.
+	(UsingEntry): Implement IResolveContext.
+	(UsingEntry.Resolve): Don't set ToplevelTypes.Namespace.  Use
+	'this' as the resolve context.
+	(LocalAliasEntry): Likewise.
+
 	Implement parts of #77403
 	* roottypes.cs (RootDeclSpace): New.  Used to represent the
 	toplevel declaration space.  Each namespace declaration introduces
