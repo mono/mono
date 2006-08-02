@@ -262,8 +262,9 @@ namespace System.Drawing
 			if ((int) osInfo.Platform == 128 || (int) osInfo.Platform == 4) {
 				return fontObject;
 			} else {
-				LOGFONT lf = new LOGFONT ();
-				ToLogFont(lf);
+				object olf = new LOGFONT ();
+				ToLogFont(olf);
+				LOGFONT lf = (LOGFONT)olf;
 				Hfont = GDIPlus.CreateFontIndirect (ref lf);
 			}
 			return Hfont;
