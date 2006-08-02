@@ -1308,7 +1308,7 @@ namespace Mono.CSharp {
 		protected virtual bool DoDefineMembers ()
 		{
 			if (!IsTopLevel) {
-				MemberInfo conflict_symbol = Parent.MemberCache.FindMemberWithSameName (Basename, false, TypeBuilder);
+				MemberInfo conflict_symbol = Parent.PartialContainer.FindBaseMemberWithSameName (Basename, false);
 				if (conflict_symbol == null) {
 					if ((RootContext.WarningLevel >= 4) && ((ModFlags & Modifiers.NEW) != 0))
 						Report.Warning (109, 4, Location, "The member `{0}' does not hide an inherited member. The new keyword is not required", GetSignatureForError ());
@@ -1383,7 +1383,7 @@ namespace Mono.CSharp {
 
 		public MemberInfo FindBaseMemberWithSameName (string name, bool ignore_methods)
 		{
-			return BaseCache.FindMemberWithSameName (name, ignore_methods, null);
+			return BaseCache == null ? null : BaseCache.FindMemberWithSameName (name, ignore_methods, null);
 		}
 
 		/// <summary>

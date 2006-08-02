@@ -1,5 +1,11 @@
 2006-08-02  Raja R Harinath  <rharinath@novell.com>
 
+	Fix #77963
+	* class.cs (TypeContainer.DoDefineMembers): Use
+	FindBaseMemberWithSameName on Parent, since we're interested in
+	whether we hide inherited members or not.
+	(FindBaseMemberWithSameName): Make slightly more robust.
+
 	Fix the non-generic testcase from #77396
 	* decl.cs (DeclSpace.DeclContainer): Remove override.
 
