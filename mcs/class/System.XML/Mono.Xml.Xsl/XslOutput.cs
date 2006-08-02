@@ -282,13 +282,13 @@ namespace Mono.Xml.Xsl
 				if (stylesheetVersion != "1.0")
 					break;
 
-				IXmlLineInfo li = nav as IXmlLineInfo;
+				IXmlLineInfo xli = nav as IXmlLineInfo;
 				throw new XsltCompileException (new XsltException (
 					"'" + nav.LocalName + "' is an invalid attribute for 'output'" +
 					" element.", (Exception) null),
 					nav.BaseURI,
-					li != null ? li.LineNumber : 0,
-					li != null ? li.LinePosition : 0);
+					xli != null ? xli.LineNumber : 0,
+					xli != null ? xli.LinePosition : 0);
 			}
 		}
 	}

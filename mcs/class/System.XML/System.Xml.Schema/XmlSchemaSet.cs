@@ -124,7 +124,11 @@ namespace System.Xml.Schema
 
 		public XmlResolver XmlResolver {
 			set { xmlResolver = value; }
+#if NET_2_0
 			internal get { return xmlResolver; }
+#else
+			get { return xmlResolver; }
+#endif
 		}
 
 		internal Hashtable IDCollection {
