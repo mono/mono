@@ -1,3 +1,7 @@
+2006-08-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-arch.h Makefile.am mini-ops.h mini-codegen.c: More alpha updates.
+
 2006-08-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* cpu-alpha.md inssel-alpha.brg mini-alpha.h mini-alpha.c exceptions-alpha.c tramp-alpha.c: More alpha port work from Sergey Tikhonov <tsv@solvo.ru>.
