@@ -237,7 +237,11 @@ namespace System.Data {
 			column.SetTable (parentTable);
 			RegisterName(column.ColumnName, column);
 			int ordinal = base.List.Add(column);
+#if NET_2_0
 			column.Ordinal = ordinal;
+#else
+			column.SetOrdinal (ordinal);
+#endif
 		
 			// Check if the Column Expression is ok	
 			if (column.CompiledExpression != null)
@@ -545,7 +549,11 @@ namespace System.Data {
 	
 			//Update the ordinals
 			for( int i = ordinal ; i < this.Count ; i ++ )
+#if NET_2_0
 				this[i].Ordinal = i;
+#else
+				this[i].SetOrdinal(i);
+#endif
 
 			if (parentTable != null)
 				parentTable.OnRemoveColumn(column);

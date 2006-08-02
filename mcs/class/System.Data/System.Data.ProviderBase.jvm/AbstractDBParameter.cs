@@ -38,17 +38,26 @@ using java.sql;
 
 namespace System.Data.ProviderBase
 {
-    public abstract class AbstractDbParameter : DbParameterBase
+    public abstract class AbstractDbParameter : DbParameter, IDbDataParameter, ICloneable
     {
 		#region Fields
 
-		protected byte _precision;
-		protected byte _scale;
+		byte _precision;
+		byte _scale;
 		protected DataRowVersion _sourceVersion;
 		private int _jdbcType;
-		protected bool _isDbTypeSet = false;
-		protected bool _isJdbcTypeSet = false;
+		bool _isDbTypeSet;
+		bool _isJdbcTypeSet;
 		object _convertedValue;
+
+		string _parameterName;
+		ParameterDirection _direction = ParameterDirection.Input;
+		int _size;
+		object _value;
+		bool _isNullable;
+		int _offset;
+		string _sourceColumn;
+		DbParameterCollection _parent = null;
 
 		#endregion // Fields
 
@@ -62,14 +71,89 @@ namespace System.Data.ProviderBase
 		#endregion // Constructors
 
 		#region Properties
+
+		public override ParameterDirection Direction {
+			get { return _direction; }
+			set {
+				if (_direction != value) {
+					switch (value) {
+							case ParameterDirection.Input:
+							case ParameterDirection.Output:
+							case ParameterDirection.InputOutput:
+							case ParameterDirection.ReturnValue:
+							{
+								_direction = value;
+								return;
+							}
+					}
+					throw ExceptionHelper.InvalidParameterDirection (value);
+				}
+			}
+		}
+
+		public override bool IsNullable {
+			get { return _isNullable; }
+			set { _isNullable = value; }
+		}
+
 		
-		public override byte Precision 
+		public virtual int Offset {
+			get { return _offset; }
+			set { _offset = value; }			
+		}
+
+		public override string ParameterName {
+			get {
+				if (_parameterName == null)
+						return String.Empty;
+
+				return _parameterName;
+			}
+			set {
+				if (_parameterName != value) {
+					_parameterName = value;
+				}
+			}
+		}
+
+		public override int Size {
+			get { return _size; }
+
+			set {
+				if (_size != value) {
+					if (value < -1)
+						throw ExceptionHelper.InvalidSizeValue (value);
+
+					_size = value;
+				}
+			}
+		}
+
+		
+		public override string SourceColumn {
+			get { 
+				if (_sourceColumn == null)
+					return String.Empty;
+
+				return _sourceColumn;
+			}
+
+			set	{ _sourceColumn = value; }
+		}
+
+		internal DbParameterCollection Parent
+		{
+			get { return _parent; }
+			set { _parent = value; }
+		}
+		
+		public byte Precision 
 		{ 
 			get { return _precision; }
 			set { _precision = value; } 
 		}
 
-		public override byte Scale 
+		public byte Scale 
 		{ 
 			get { return _scale; }
 			set { _scale = value; } 
@@ -84,14 +168,14 @@ namespace System.Data.ProviderBase
 		protected internal int JdbcType
 		{
 			get { 
-				if (!_isJdbcTypeSet) {
+				if (!IsJdbcTypeSet) {
 					return JdbcTypeFromProviderType();
 				}
 				return _jdbcType; 
 			}
 			set { 
 				_jdbcType = value; 
-				_isJdbcTypeSet = true;
+				IsJdbcTypeSet = true;
 			}
 		}
 		
@@ -106,9 +190,10 @@ namespace System.Data.ProviderBase
 			}
 		}
 
-		internal bool IsDbTypeSet
+		protected internal bool IsDbTypeSet
 		{
 			get { return _isDbTypeSet; }
+			set { _isDbTypeSet = value; }
 		}
 
 		protected internal virtual bool IsSpecial {
@@ -143,10 +228,10 @@ namespace System.Data.ProviderBase
 		}
 
 		public override object Value {
-			get { return base.Value; }
+			get { return _value; }
 			set { 
 				_convertedValue = null;
-				base.Value = value;
+				_value = value;
 			}
 		}
 
@@ -166,13 +251,21 @@ namespace System.Data.ProviderBase
 
 		#region Methods
 
+		public override String ToString()
+        {
+            return ParameterName;
+        }
+
 		protected internal abstract void SetParameterName(ResultSet res);
 
 		protected internal abstract void SetParameterDbType(ResultSet res);
 
 		protected internal abstract void SetSpecialFeatures(ResultSet res);
 		
-		public abstract object Clone();
+		public virtual object Clone()
+		{
+			return MemberwiseClone();
+		}
 
 		protected internal abstract int JdbcTypeFromProviderType();
 
@@ -204,16 +297,6 @@ namespace System.Data.ProviderBase
 			}
 		}
 
-		public override void CopyTo (DbParameter target)
-		{
-			base.CopyTo(target);
-			AbstractDbParameter t = (AbstractDbParameter) target;
-			t._precision = _precision;
-			t._scale = _scale;
-			t._sourceVersion = _sourceVersion;
-			t._jdbcType = _jdbcType;
-		}
-
 		//DbParameter overrides
 
 		public override void ResetDbType() {
@@ -221,6 +304,6 @@ namespace System.Data.ProviderBase
 		}
 
 		#endregion // Methods
-    }
+	}
 }
 

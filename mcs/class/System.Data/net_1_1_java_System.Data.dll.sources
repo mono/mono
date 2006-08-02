@@ -36,6 +36,7 @@ System.Data.OleDb.jvm/OleDbRowUpdatingEventHandler.cs
 System.Data.OleDb.jvm/OleDbSchemaGuid.cs
 System.Data.OleDb.jvm/OleDbTransaction.cs
 System.Data.OleDb.jvm/OleDbType.cs
+System.Data.ProviderBase/DbDataReaderBase.cs
 System.Data.ProviderBase.jvm/AbstractDataReader.cs
 System.Data.ProviderBase.jvm/AbstractDBCommand.cs
 System.Data.ProviderBase.jvm/AbstractDbCommandBuilder.cs

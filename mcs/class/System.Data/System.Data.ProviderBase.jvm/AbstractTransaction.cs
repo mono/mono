@@ -130,11 +130,6 @@ namespace System.Data.ProviderBase
             }
         }
 
-        public override void Dispose()
-        {
-            Rollback();
-        }
-
 		internal AbstractTransaction ActiveTransaction {
 			get {
 				// recoursively return parent transaction when nesting will

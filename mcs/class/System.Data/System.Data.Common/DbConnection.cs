@@ -34,7 +34,9 @@
 
 using System.ComponentModel;
 using System.Data;
+#if NET_2_0
 using System.Transactions;
+#endif
 
 namespace System.Data.Common {
 	public abstract class DbConnection : Component, IDbConnection, IDisposable

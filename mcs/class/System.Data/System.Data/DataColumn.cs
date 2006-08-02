@@ -653,7 +653,9 @@ namespace System.Data {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int Ordinal {
 			get { return _ordinal; }
+#if NET_2_0
 			internal  set { _ordinal = value; }
+#endif
 		}
 
 #if NET_2_0
@@ -662,6 +664,11 @@ namespace System.Data {
 			if (_ordinal == -1)
 				throw new ArgumentException ("Column must belong to a table.");
 			_table.Columns.MoveColumn (_ordinal, ordinal);
+			_ordinal = ordinal;
+		}
+#else
+		internal void SetOrdinal(int ordinal)
+		{
 			_ordinal = ordinal;
 		}
 #endif

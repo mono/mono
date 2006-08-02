@@ -36,11 +36,12 @@ using System.Collections;
 
 namespace System.Data.ProviderBase
 {
-	public abstract class AbstractDbParameterCollection : DbParameterBaseCollection
+	public abstract class AbstractDbParameterCollection : DbParameterCollection
 	{
 		#region Fields
 
-		private AbstractDbCommand _parent;
+		readonly AbstractDbCommand _parent;
+		readonly ArrayList _list = new ArrayList();
 
 		#endregion // Fields
 
@@ -55,45 +56,186 @@ namespace System.Data.ProviderBase
 
 		#region Properties
 
+		public override int Count {
+			get { return _list.Count; }
+		}
+
+		public override bool IsFixedSize {
+			get { return _list.IsFixedSize; }
+		}
+
+		public override bool IsReadOnly {
+			get { return _list.IsReadOnly; }
+		}
+
+		public override bool IsSynchronized {
+			get { return _list.IsSynchronized; }
+		}
+
+		protected abstract Type ItemType { get; }
+
+		public override object SyncRoot {
+			get { return _list.SyncRoot; }
+		}
+
 		#endregion // Properties
 
 		#region Methods
 
-		public override int Add (object value)
-        {
-            OnSchemaChanging();
-			return base.Add(value);
-        }
+		public override int Add (object value) {
+			Validate (-1, value);
+			OnSchemaChanging();
+			((AbstractDbParameter)value).Parent = this;
+			return _list.Add (value);
+		}
 
-		public override void Clear()
-        {
-            OnSchemaChanging();
-			base.Clear();
-        }
+#if NET_2_0
+		public override void AddRange (Array values)
+		{
+			foreach (object value in values)
+				Add (value);
+		}
 
-		public override void Insert(int index, object value)
-        {
-            OnSchemaChanging();
-			base.Insert(index,value);
-        }
+#endif
 
-		public override void Remove(object value)
-        {
-            OnSchemaChanging();
-			base.Remove(value);
-        }
+		public override void Clear () {
+			OnSchemaChanging();
+			if (_list != null && Count != 0) {
+				for (int i = 0; i < _list.Count; i++) {
+					((AbstractDbParameter)_list [i]).Parent = null;
+				}
+				_list.Clear ();
+			}
+		}
 
-		public override void RemoveAt(int index)
-        {
-            OnSchemaChanging();
-			base.RemoveAt(index);
-        }
+		public override bool Contains (object value) {
+			if (IndexOf (value) != -1)
+				return true;
+			else
+				return false;
+		}
 
-		public override void RemoveAt(string parameterName)
-        {
-            OnSchemaChanging();
-			base.RemoveAt(parameterName);
-        }
+		public override bool Contains (string value) {
+			if (IndexOf (value) != -1)
+				return true;
+			else
+				return false;
+		}
+
+		public override void CopyTo (Array array, int index) {
+			_list.CopyTo (array, index);
+		}
+
+		public override IEnumerator GetEnumerator () {
+			return _list.GetEnumerator ();
+		}
+
+		protected override DbParameter GetParameter (int index) {
+			return (DbParameter) _list [index];
+		}
+
+		public override int IndexOf (object value) {
+			ValidateType (value);
+			return _list.IndexOf (value);
+		}
+
+		public override int IndexOf (string parameterName) {
+			if (_list == null)
+				return -1;
+
+			for (int i = 0; i < _list.Count; i++) {
+				string name = ((DbParameter)_list [i]).ParameterName;
+				if (name == parameterName) {
+					return i;
+				}
+			}
+			return -1;
+		}
+
+		public override void Insert (int index, object value) {
+			Validate(-1, (DbParameter)value);
+			OnSchemaChanging();
+			((AbstractDbParameter)value).Parent = this;
+			_list.Insert (index, value);
+		}
+
+		public override void Remove (object value) {
+			ValidateType (value);
+			int index = IndexOf (value);
+			RemoveIndex (index);
+		}
+
+		public override void RemoveAt (int index) {
+			RemoveIndex (index);
+		}
+
+		public override void RemoveAt (string parameterName) {
+			int index = IndexOf (parameterName);
+			RemoveIndex (index);
+		}
+
+		protected override void SetParameter (int index, DbParameter value) {
+			Replace (index, value);
+		}
+
+		void Validate (int index, object value) {
+			ValidateType (value);
+			AbstractDbParameter parameter = (AbstractDbParameter) value;
+
+			if (parameter.Parent != null) {
+				if (parameter.Parent.Equals (this)) {
+					if (IndexOf (parameter) != index)
+						throw ExceptionHelper.CollectionAlreadyContains (ItemType,"ParameterName",parameter.ParameterName,this);                    
+				}
+				else {
+					// FIXME :  The OleDbParameter with ParameterName 'MyParam2' is already contained by another OleDbParameterCollection.
+					throw new ArgumentException ("");
+				}
+			}
+
+			if (parameter.ParameterName == null  || parameter.ParameterName == String.Empty) {
+				int newIndex = 1;
+				string parameterName;
+				
+				do {
+					parameterName = "Parameter" + newIndex;
+					newIndex++;
+				}
+				while(IndexOf (parameterName) != -1);
+
+				parameter.ParameterName = parameterName;
+			}
+		}		
+
+		void ValidateType (object value) {
+			if (value == null)
+				throw ExceptionHelper.CollectionNoNullsAllowed (this,ItemType);
+
+			Type objectType = value.GetType ();
+			Type itemType = ItemType;
+
+			if (itemType.IsInstanceOfType(objectType)) {
+				Type thisType = this.GetType ();
+				string err = String.Format ("The {0} only accepts non-null {1} type objects, not {2} objects.", thisType.Name, itemType.Name, objectType.Name);
+				throw new InvalidCastException (err);
+			}
+		}
+
+		private void RemoveIndex (int index) {
+			OnSchemaChanging();
+			AbstractDbParameter oldItem = (AbstractDbParameter)_list [index];
+			oldItem.Parent = null;
+			_list.RemoveAt (index);
+		}		
+
+		private void Replace (int index, DbParameter value) {
+			Validate (index, value);
+			AbstractDbParameter oldItem = (AbstractDbParameter)this [index];
+			oldItem.Parent = null;
+
+			((AbstractDbParameter)value).Parent = this;
+			_list [index] = value;
+		}
 
 		protected internal void OnSchemaChanging()
         {

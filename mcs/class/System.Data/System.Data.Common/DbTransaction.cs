@@ -72,7 +72,8 @@ namespace System.Data.Common {
 
 		protected virtual void Dispose (bool disposing)
 		{
-			throw new NotImplementedException ();
+			if (disposing)
+				Rollback();
 		}
 
 		#endregion // Methods

@@ -39,7 +39,7 @@ using java.sql;
 
 namespace System.Data.SqlClient
 {
-	public class SqlParameter : AbstractDbParameter, IDbDataParameter, ICloneable
+	public sealed class SqlParameter : AbstractDbParameter
 	{
 		#region Fields
 
@@ -113,7 +113,7 @@ namespace System.Data.SqlClient
 			SourceColumn = sourceColumn;
 			SourceVersion = sourceVersion;
 			if (!dbTypeExplicit) {
-				_isDbTypeSet = false;
+				IsDbTypeSet = false;
 			}
 			Value = value;
 		}
@@ -133,16 +133,10 @@ namespace System.Data.SqlClient
             get { return _sqlDbType; }            
 			set {
                 _sqlDbType = value;
-				_isDbTypeSet = true;
+				IsDbTypeSet = true;
             }
         }                 
-        
-		public override byte Precision
-		{
-			get { return _precision; }
-			set { _precision = value; }
-		}
-        
+
 		public override int Size
 		{
 			get {
@@ -174,7 +168,7 @@ namespace System.Data.SqlClient
 		{
 			get { return base.Value; }
 			set { 
-				if (!_isDbTypeSet && (value != null) && (value != DBNull.Value)) {
+				if (!IsDbTypeSet && (value != null) && (value != DBNull.Value)) {
                     _sqlDbType = SqlConvert.ValueTypeToSqlDbType(value.GetType());
 				}
 				base.Value = value; 
@@ -184,20 +178,6 @@ namespace System.Data.SqlClient
 		#endregion // Properties
 
 		#region Methods
-
-		public override String ToString()
-		{
-			return ParameterName;
-		}
-
-		public override object Clone()
-		{
-            SqlParameter clone = new SqlParameter();
-			CopyTo(clone);
-
-            clone._sqlDbType = _sqlDbType;
-            return clone;
-		}
 
 		protected internal sealed override object ConvertValue(object value)
 		{

@@ -41,12 +41,12 @@ using java.lang;
 
 namespace System.Data.OleDb
 {
-    public sealed class OleDbParameter : AbstractDbParameter, IDbDataParameter, ICloneable
+    public sealed class OleDbParameter : AbstractDbParameter
     {
 
 		#region Fields
 
-        internal OleDbType _oleDbType = OleDbType.VarWChar;
+        private OleDbType _oleDbType = OleDbType.VarWChar;
 		private bool _isOracleRefCursor = false;
 
 		#endregion // Fields
@@ -61,7 +61,7 @@ namespace System.Data.OleDb
 			: this (parameterName, OleDbType.VarWChar, 0, ParameterDirection.Input,
 					false, 0, 0, String.Empty, DataRowVersion.Current, value)
         {
-			_isDbTypeSet = false;
+			IsDbTypeSet = false;
         }
     
         public OleDbParameter(String parameterName, OleDbType dbType)
@@ -122,7 +122,7 @@ namespace System.Data.OleDb
             get { return _oleDbType; }            
 			set {
                 _oleDbType = value;
-				_isDbTypeSet = true;
+				IsDbTypeSet = true;
             }
         }    
     
@@ -130,7 +130,7 @@ namespace System.Data.OleDb
         {
             get { return base.Value; }
             set {
-                if (!_isDbTypeSet && (value != null) && (value != DBNull.Value)) {
+                if (!IsDbTypeSet && (value != null) && (value != DBNull.Value)) {
                     _oleDbType = OleDbConvert.ValueTypeToOleDbType(value.GetType());
 				}
                 base.Value = value;
@@ -154,22 +154,6 @@ namespace System.Data.OleDb
 
 		#region Methods
 
-		public override String ToString()
-        {
-            return ParameterName;
-        }
-    
-        public override object Clone()
-        {
-            OleDbParameter clone = new OleDbParameter();
-			CopyTo(clone);
-
-            clone._oleDbType = _oleDbType;
-			clone._isDbTypeSet = _isDbTypeSet;
-			clone._isOracleRefCursor = _isOracleRefCursor;
-            return clone;
-        }
-
 		protected internal sealed override object ConvertValue(object value)
 		{
 			// can not convert null or DbNull to other types
@@ -185,8 +169,8 @@ namespace System.Data.OleDb
 			object convertedValue  = value;
 
 			// note : if we set user parameter jdbc type inside prepare interbal, the db type is not set
-			if (value is IConvertible && (_isDbTypeSet || IsJdbcTypeSet)) {
-				OleDbType oleDbType = (_isDbTypeSet) ? OleDbType : OleDbConvert.JdbcTypeToOleDbType((int)JdbcType);
+			if (value is IConvertible && (IsDbTypeSet || IsJdbcTypeSet)) {
+				OleDbType oleDbType = (IsDbTypeSet) ? OleDbType : OleDbConvert.JdbcTypeToOleDbType((int)JdbcType);
 				Type to = OleDbConvert.OleDbTypeToValueType(oleDbType);
 				if (!(value is DateTime && to == DbTypes.TypeOfTimespan)) //anyway will go by jdbc type
 					convertedValue = Convert.ChangeType(value,to);

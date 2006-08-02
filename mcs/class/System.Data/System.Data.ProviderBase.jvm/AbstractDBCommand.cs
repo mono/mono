@@ -46,7 +46,7 @@ using java.util.regex;
 
 namespace System.Data.ProviderBase
 {
-	public abstract class AbstractDbCommand : DbCommandBase, ICloneable
+	public abstract class AbstractDbCommand : DbCommand, ICloneable
 	{
 		#region ProcedureColumnCache
 
@@ -101,6 +101,12 @@ namespace System.Data.ProviderBase
 
 		#region Fields
 
+		string _commandText;
+		int _commandTimeout;
+		CommandType _commandType;
+		bool _designTimeVisible;
+		UpdateRowSource _updatedRowSource;
+
 		private DbParameterCollection _parameters;
 		private java.sql.Statement _statement;
 		private AbstractDBConnection _connection;
@@ -128,8 +134,14 @@ namespace System.Data.ProviderBase
 			AbstractTransaction transaction)
 		{
 			_connection = connection;
-			base.CommandText = cmdText;
+			_commandText = cmdText;
 			_transaction = transaction;
+
+			_commandTimeout = 30;
+			_commandType = CommandType.Text;
+			_designTimeVisible = true;
+			_updatedRowSource = UpdateRowSource.Both;
+
 			_isCommandPrepared = false;
 			_explicitPrepare = false;
 			_recordsAffected = -1;
@@ -141,6 +153,26 @@ namespace System.Data.ProviderBase
 		#endregion // Constructors
 
 		#region Properties
+
+		public override int CommandTimeout {
+			get { return _commandTimeout; }
+			set { _commandTimeout = value; }
+		}
+
+		public override CommandType CommandType {
+			get { return _commandType; }
+			set { _commandType = value; }
+		}
+
+		public override bool DesignTimeVisible {
+			get { return _designTimeVisible; }
+			set { _designTimeVisible = value; }
+		}	
+
+		public override UpdateRowSource UpdatedRowSource {
+			get { return _updatedRowSource; }
+			set { _updatedRowSource = value; }
+		}
 
 		protected override DbParameterCollection DbParameterCollection
 		{
@@ -181,10 +213,10 @@ namespace System.Data.ProviderBase
 
 		public override string CommandText
 		{
-			get { return base.CommandText; }
+			get { return _commandText; }
 			set { 
 				if (CommandText == null || String.Compare(CommandText, value,  true) != 0) {
-					base.CommandText = value;
+					_commandText = value;
 					_isCommandPrepared = false;
 					_explicitPrepare = false;
 				}
@@ -276,6 +308,40 @@ namespace System.Data.ProviderBase
 		protected abstract DbParameterCollection CreateParameterCollection(AbstractDbCommand parent);
 
 		protected internal abstract SystemException CreateException(SQLException e);
+
+		public override int ExecuteNonQuery ()
+		{
+			IDataReader reader = null;
+			try {
+				reader = ExecuteReader ();
+			}
+			finally {
+				if (reader != null)
+					reader.Close ();				
+			}
+			return reader.RecordsAffected;
+		}
+
+		public override object ExecuteScalar ()
+		{
+			IDataReader reader = ExecuteReader(CommandBehavior.SingleRow | CommandBehavior.SequentialAccess);
+			
+			try {
+				do {
+					if (reader.FieldCount > 0 && reader.Read ())
+						return reader.GetValue (0);			
+				}
+				while (reader.NextResult ());
+				return null;
+			} finally {
+				reader.Close();
+			}
+		}
+
+		public virtual void ResetCommandTimeout ()
+		{
+			_commandTimeout = 30;
+		}
 
 		public override void Cancel()
 		{

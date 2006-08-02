@@ -242,7 +242,6 @@
 				<File RelPath="System.Data.OleDb.jvm\OleDbTransaction.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.OleDb.jvm\OleDbType.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.ProviderBase\ChangeLog" BuildAction="None"/>
-				<File RelPath="System.Data.ProviderBase\DbCommandBase.cs" SubType="Component" BuildAction="Compile"/>
 				<File RelPath="System.Data.ProviderBase\DbConnectionBase.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.ProviderBase\DbConnectionFactory.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.ProviderBase\DbConnectionInternal.cs" SubType="Code" BuildAction="Compile"/>
@@ -250,8 +249,6 @@
 				<File RelPath="System.Data.ProviderBase\DbConnectionPoolOptions.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.ProviderBase\DbDataReaderBase.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.ProviderBase\DbMetaDataFactory.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Data.ProviderBase\DbParameterBase.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Data.ProviderBase\DbParameterCollectionBase.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.ProviderBase\DbReferenceCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.ProviderBase.jvm\AbstractDataReader.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.ProviderBase.jvm\AbstractDBCommand.cs" SubType="Component" BuildAction="Compile"/>
