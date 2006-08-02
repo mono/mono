@@ -1,3 +1,9 @@
+2006-08-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* X509Certificate2.cs : .ctor(string, string) and .ctor(string,
+	  SecureString) should call proper base constructor method for each.
+	  Implemented IssuerName. Fixed bug #78986.
+
 2006-03-11  Miguel de Icaza  <miguel@novell.com>
 
 	* X509Chain.cs: Flagged member as internal to avoid unused warning.

@@ -43,6 +43,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		private string _name;
 		private string _serial;
 		private PublicKey _publicKey;
+		X500DistinguishedName _issuer_name;
 
 		private MX.X509Certificate _cert;
 
@@ -85,12 +86,14 @@ namespace System.Security.Cryptography.X509Certificates {
 			_cert = new MX.X509Certificate (base.GetRawCertData ());
 		}
 
-		public X509Certificate2 (string fileName, string password) 
+		public X509Certificate2 (string fileName, string password)
+			: base (fileName, password)
 		{
 			_cert = new MX.X509Certificate (base.GetRawCertData ());
 		}
 
-		public X509Certificate2 (string fileName, SecureString password) 
+		public X509Certificate2 (string fileName, SecureString password)
+			: base (fileName, password)
 		{
 			_cert = new MX.X509Certificate (base.GetRawCertData ());
 		}
@@ -140,7 +143,11 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		[MonoTODO]
 		public X500DistinguishedName IssuerName {
-			get { return null; }
+			get {
+				if (_issuer_name == null)
+					_issuer_name = new X500DistinguishedName (Issuer);
+				return _issuer_name;
+			}
 		} 
 
 		public DateTime NotAfter {
