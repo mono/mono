@@ -1,5 +1,16 @@
 2006-08-02  Raja R Harinath  <rharinath@novell.com>
 
+	Fix #77396
+	* codegen.cs (IResolveContext.GenericDeclContainer): New.
+	(EmitContext): Implement new interface requirement.
+	* namespace.cs (UsingEntry, LocalAliasEntry): Likewise.
+	* decl.cs (MemberCore): Likewise.
+	(DeclSpace.GenericDeclContainer): Rename from DeclContainer.
+	* ecore.cs (SimpleName.ResolveAsTypeTerminal): Use
+	ec.GenericDeclContainer to check for generic parameters.
+	(SimpleName.DoSimpleNameResolve): Likewise.
+	* generic.cs (TypeParameter.DeclContainer): Remove override.
+
 	* namespace.cs (NamespaceEntry.Doppelganger): Create slave
 	declspaces for doppelgangers too.
 	(UsingEntry): Implement IResolveContext.

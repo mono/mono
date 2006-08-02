@@ -197,6 +197,14 @@ namespace Mono.CSharp {
 		DeclSpace DeclContainer { get; }
 		bool IsInObsoleteScope { get; }
 		bool IsInUnsafeScope { get; }
+
+		// the declcontainer to lookup for type-parameters.  Should only use LookupGeneric on it.
+		//
+		// FIXME: This is somewhat of a hack.  We don't need a full DeclSpace for this.  We just need the
+		//        current type parameters in scope. IUIC, that will require us to rewrite GenericMethod.
+		//        Maybe we can replace this with a 'LookupGeneric (string)' instead, but we'll have to 
+		//        handle generic method overrides differently
+		DeclSpace GenericDeclContainer { get; }
 	}
 
 	/// <summary>
@@ -445,6 +453,10 @@ namespace Mono.CSharp {
 		public DeclSpace DeclContainer { 
 			get { return declSpace; }
 			set { declSpace = value; }
+		}
+
+		public DeclSpace GenericDeclContainer {
+			get { return DeclContainer; }
 		}
 
 		public bool CheckState {
@@ -1113,6 +1125,10 @@ namespace Mono.CSharp {
 
 		public DeclSpace DeclContainer {
 			get { return RootContext.ToplevelTypes; }
+		}
+
+		public DeclSpace GenericDeclContainer {
+			get { return DeclContainer; }
 		}
 
 		public bool IsInObsoleteScope {

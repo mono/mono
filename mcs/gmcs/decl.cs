@@ -613,8 +613,12 @@ namespace Mono.CSharp {
 
 		#region IResolveContext Members
 
-		public virtual DeclSpace DeclContainer {
+		public DeclSpace DeclContainer {
 			get { return Parent; }
+		}
+
+		public virtual DeclSpace GenericDeclContainer {
+			get { return DeclContainer; }
 		}
 
 		public bool IsInObsoleteScope {
@@ -710,7 +714,7 @@ namespace Mono.CSharp {
 				count_type_params += parent.count_type_params;
 		}
 
-		public override DeclSpace DeclContainer {
+		public override DeclSpace GenericDeclContainer {
 			get { return this; }
 		}
 

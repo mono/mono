@@ -245,7 +245,7 @@ namespace Mono.CSharp {
 			}
 
 			// Constrains don't need to be checked for overrides
-			GenericMethod gm = ec.DeclContainer as GenericMethod;
+			GenericMethod gm = ec.GenericDeclContainer as GenericMethod;
 			if (gm != null && (gm.ModFlags & Modifiers.OVERRIDE) != 0) {
 				te.loc = loc;
 				return te;
@@ -2011,7 +2011,7 @@ namespace Mono.CSharp {
 
 		public override FullNamedExpression ResolveAsTypeStep (IResolveContext ec, bool silent)
 		{
-			FullNamedExpression fne = ec.DeclContainer.LookupGeneric (Name, loc);
+			FullNamedExpression fne = ec.GenericDeclContainer.LookupGeneric (Name, loc);
 			if (fne != null)
 				return fne.ResolveAsTypeStep (ec, silent);
 

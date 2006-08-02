@@ -525,7 +525,7 @@ namespace Mono.CSharp {
 
 		#region IResolveContext Members
 
-		public virtual DeclSpace DeclContainer {
+		public DeclSpace DeclContainer {
 			get { return Parent; }
 		}
 
@@ -597,10 +597,6 @@ namespace Mono.CSharp {
 			Basename = name.Name;
 			defined_names = new Hashtable ();
 			PartialContainer = null;
-		}
-
-		public override DeclSpace DeclContainer {
-			get { return this; }
 		}
 
 		/// <summary>

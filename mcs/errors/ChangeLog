@@ -1,3 +1,7 @@
+2006-08-02  Raja R Harinath  <rharinath@novell.com>
+
+	* cs0246-16.cs, gcs0246-8.cs: New tests from #77396.
+
 2006-06-21  Raja R Harinath  <rharinath@novell.com>
 
 	* cs0019-16.cs: New test from #78662.

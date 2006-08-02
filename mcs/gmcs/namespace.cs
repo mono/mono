@@ -488,6 +488,9 @@ namespace Mono.CSharp {
 			DeclSpace IResolveContext.DeclContainer {
 				get { return NamespaceEntry.SlaveDeclSpace; }
 			}
+			DeclSpace IResolveContext.GenericDeclContainer {
+				get { return NamespaceEntry.SlaveDeclSpace; }
+			}
 			bool IResolveContext.IsInObsoleteScope {
 				get { return false; }
 			}
@@ -553,6 +556,9 @@ namespace Mono.CSharp {
 			}
 
 			DeclSpace IResolveContext.DeclContainer {
+				get { return NamespaceEntry.SlaveDeclSpace; }
+			}
+			DeclSpace IResolveContext.GenericDeclContainer {
 				get { return NamespaceEntry.SlaveDeclSpace; }
 			}
 			bool IResolveContext.IsInObsoleteScope {
