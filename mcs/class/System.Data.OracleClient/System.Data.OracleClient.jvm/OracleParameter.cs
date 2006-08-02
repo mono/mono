@@ -57,7 +57,7 @@ namespace System.Data.OracleClient {
 		public OracleParameter(String parameterName, Object value)
 			: this (parameterName, OracleType.VarChar, 0, ParameterDirection.Input,
 			false, 0, 0, String.Empty, DataRowVersion.Current, value) {
-			_isDbTypeSet = false;
+			IsDbTypeSet = false;
 		}
     
 		public OracleParameter(String parameterName, OracleType dbType)
@@ -112,14 +112,14 @@ namespace System.Data.OracleClient {
 			get { return _oleDbType; }            
 			set {
 				_oleDbType = value;
-				_isDbTypeSet = true;
+				IsDbTypeSet = true;
 			}
 		}    
     
 		public new Object Value {
 			get { return base.Value; }
 			set {
-				if (!_isDbTypeSet && (value != null) && (value != DBNull.Value)) {
+				if (!IsDbTypeSet && (value != null) && (value != DBNull.Value)) {
 					_oleDbType = OracleConvert.ValueTypeToOracleType(value.GetType());
 				}
 				base.Value = value;
@@ -148,15 +148,6 @@ namespace System.Data.OracleClient {
 				return Placeholder;
 			}
 		}
-    
-		public override object Clone() {
-			OracleParameter clone = new OracleParameter();
-			CopyTo(clone);
-
-			clone._oleDbType = _oleDbType;
-			clone._isDbTypeSet = _isDbTypeSet;
-			return clone;
-		}
 
 		protected sealed override object ConvertValue(object value) {
 			// can not convert null or DbNull to other types
@@ -172,8 +163,8 @@ namespace System.Data.OracleClient {
 			object convertedValue  = value;
 
 			// note : if we set user parameter jdbc type inside prepare interbal, the db type is not set
-			if (value is IConvertible && (_isDbTypeSet || IsJdbcTypeSet)) {
-				OracleType oleDbType = (_isDbTypeSet) ? OracleType : OracleConvert.JdbcTypeToOracleType((int)JdbcType);
+			if (value is IConvertible && (IsDbTypeSet || IsJdbcTypeSet)) {
+				OracleType oleDbType = (IsDbTypeSet) ? OracleType : OracleConvert.JdbcTypeToOracleType((int)JdbcType);
 				Type to = OracleConvert.OracleTypeToValueType(oleDbType);
 				if (!(value is DateTime && to == OracleConvert.TypeOfTimespan)) //anyway will go by jdbc type
 					convertedValue = Convert.ChangeType(value,to);
