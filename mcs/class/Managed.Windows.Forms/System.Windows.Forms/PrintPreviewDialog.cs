@@ -45,7 +45,6 @@ namespace System.Windows.Forms {
 		Menu mag_menu;
 		MenuItem auto_zoom_item;
 		NumericUpDown pageUpDown;
-		Size minimum_size;
 
 		public PrintPreviewDialog()
 		{
@@ -160,6 +159,7 @@ namespace System.Windows.Forms {
 			/* Page label */
 			Label label = new Label ();
 			label.Text = "Page";
+			label.TextAlign = ContentAlignment.MiddleCenter;
 			label.Dock = DockStyle.Right;
 			toolbar.Controls.Add (label);
 
@@ -179,8 +179,8 @@ namespace System.Windows.Forms {
 
 			close.Location = new Point (b.Rectangle.X + b.Rectangle.Width, toolbar.Height / 2 - close.Height / 2);
 
-			minimum_size = new Size (close.Location.X + close.Width + label.Width + pageUpDown.Width,
-						 220);
+			MinimumSize = new Size (close.Location.X + close.Width + label.Width + pageUpDown.Width,
+						220);
 
 			close.Click += new EventHandler (CloseButtonClicked);
 			return toolbar;
@@ -703,13 +703,8 @@ namespace System.Windows.Forms {
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public Size MinimumSize {
-			get {
-				return minimum_size;
-			}
-
-			set {
-				minimum_size = value;
-			}
+			get { return base.MinimumSize; }
+			set { base.MinimumSize = value; }
 		}
  
 		[Browsable(false)]
@@ -727,9 +722,7 @@ namespace System.Windows.Forms {
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public PrintPreviewControl PrintPreviewControl {
-			get {
-				return this.print_preview;
-			}
+			get { return print_preview; }
 		}
  
 		[Browsable(false)]
