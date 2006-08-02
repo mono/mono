@@ -46,7 +46,7 @@
 				<File RelPath="System.Drawing\FontStyle.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing\Graphics.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing\GraphicsUnit.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Drawing\Icon.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Drawing\Icon2.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing\IconConverter.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing\Image.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing\ImageAnimator.cs" SubType="Code" BuildAction="Compile"/>
