@@ -670,6 +670,21 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.AreEqual (form.GetNextControl (a, true), b, "form-1");
 			Assert.AreEqual (form.GetNextControl (a, false), null, "form-2");
 		}
+
+		[Test]
+		public void FocusSetsActive ()
+		{
+			Form form = new Form ();
+
+			form.Controls.AddRange (flat_controls);
+			form.Show ();
+
+			Assert.AreEqual (form.ActiveControl, flat_controls [0], "A1");
+
+			flat_controls [1].Focus ();
+
+			Assert.AreEqual (form.ActiveControl, flat_controls [1], "A2");
+		}
 	}
 
 }
