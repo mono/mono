@@ -173,8 +173,7 @@
 				<File RelPath="System.Xml\XmlText.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\XmlTextReader.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\XmlTextReader2.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Xml\XmlTextWriter.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Xml\XmlTextWriterOpenElement.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Xml\XmlTextWriter2.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\XmlTokenizedType.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\XmlUrlResolver.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\XmlValidatingReader.cs" SubType="Code" BuildAction="Compile"/>
@@ -367,7 +366,6 @@
 				<File RelPath="System.Xml.Serialization\XmlTypeMapMemberElement.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml.Serialization\XmlTypeMapMemberNamespaces.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml.Serialization\XmlTypeMapping.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Xml.XPath\.cvsignore" BuildAction="None"/>
 				<File RelPath="System.Xml.XPath\ChangeLog" BuildAction="None"/>
 				<File RelPath="System.Xml.XPath\DefaultContext.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml.XPath\Expression.cs" SubType="Code" BuildAction="Compile"/>
