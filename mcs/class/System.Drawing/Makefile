@@ -18,4 +18,18 @@ endif
 
 include ../../build/library.make
 
-EXTRA_DISTFILES = Test/resources/indexed.png
+EXTRA_DISTFILES = Test/resources/indexed.png	\
+	Test/System.Drawing/bitmaps/1bit.png	\
+	Test/System.Drawing/bitmaps/4bit.png	\
+	Test/System.Drawing/bitmaps/almogaver1bit.bmp	\
+	Test/System.Drawing/bitmaps/almogaver24bits1.bmp	\
+	Test/System.Drawing/bitmaps/almogaver24bits.bmp	\
+	Test/System.Drawing/bitmaps/almogaver32bits.bmp	\
+	Test/System.Drawing/bitmaps/almogaver8bits.bmp	\
+	Test/System.Drawing/bitmaps/almogaver-os2.bmp	\
+	Test/System.Drawing/bitmaps/maketransparent.bmp	\
+	Test/System.Drawing/bitmaps/nature24bits.gif	\
+	Test/System.Drawing/bitmaps/nature24bits.jpg	\
+	Test/System.Drawing/bitmaps/smiley.ico	\
+	Test/System.Drawing/bitmaps/VisualPng1.ico	\
+	Test/System.Drawing/bitmaps/VisualPng.ico

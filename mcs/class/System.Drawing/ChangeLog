@@ -1,3 +1,8 @@
+2006-08-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Makefile: Add the test bitmaps to EXTRA_DISTFILES so monobuild has
+	them available when running the unit tests.
+
 2006-07-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* System.Drawing_test.dll.sources: Added unit tests for direct GDI+ 
