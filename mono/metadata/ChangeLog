@@ -1,5 +1,9 @@
 2006-08-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* filewatcher.c: let Win32Exception get the error value.
+
+2006-08-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* filewatcher.c: translate errno into win32 errors for Win32Exception
 	to know what happened.
 
