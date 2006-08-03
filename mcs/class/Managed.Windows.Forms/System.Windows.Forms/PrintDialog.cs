@@ -226,7 +226,7 @@ namespace System.Windows.Forms
 			}
 
 			updown_copies.Value = current_settings.Copies;
-			chkbox_collate.Enabled = (updown_copies.Value > 0) ? true : false;
+			chkbox_collate.Enabled = (updown_copies.Value > 1) ? true : false;
 
 			if (show_help) {
 				ShowHelpButton ();
@@ -311,8 +311,10 @@ namespace System.Windows.Forms
 			if (printer_combo.SelectedItem != null)
 				current_settings.PrinterName = (string) printer_combo.SelectedItem;
 
-			document.PrintController = new PrintControllerWithStatusDialog (document.PrintController);
-			document.PrinterSettings = current_settings;
+			if (document != null) {
+				document.PrintController = new PrintControllerWithStatusDialog (document.PrintController);
+				document.PrinterSettings = current_settings;
+			}
 		}
 
 		private void ShowHelpButton ()
@@ -334,7 +336,7 @@ namespace System.Windows.Forms
 
 		private void OnUpDownValueChanged (object sender, System.EventArgs e)
 		{
-			chkbox_collate.Enabled = (updown_copies.Value > 0) ? true : false;
+			chkbox_collate.Enabled = (updown_copies.Value > 1) ? true : false;
 		}
 
 		private void CreateFormControls ()
@@ -480,6 +482,7 @@ namespace System.Windows.Forms
 			updown_copies = new NumericUpDown ();
 			updown_copies.TabIndex = 31;
 			updown_copies.Location = new Point (120, 20);
+			updown_copies.Minimum = 1;
 			group_box_copies.Controls.Add (updown_copies);
 			updown_copies.ValueChanged += new System.EventHandler (OnUpDownValueChanged);
 			updown_copies.Size = new System.Drawing.Size (40, 20);

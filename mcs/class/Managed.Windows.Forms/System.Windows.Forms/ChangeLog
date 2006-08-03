@@ -1,3 +1,10 @@
+2006-08-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* PrintDialog.cs: The "Copies" numeric up down must have
+	set the Minimum property to 1; only if the value is bigger
+	than 1, activate "Collate" check box. This is the behaviour of .Net.
+	Also modify the Document elements only if it is not null.
+
 2006-08-03  Jackson Harper  <jackson@ximian.com>
 
 	* TreeNodeCollection.cs: Fix copyto to use the correct nodes
