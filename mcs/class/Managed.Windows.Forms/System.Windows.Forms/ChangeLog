@@ -1,3 +1,8 @@
+2006-08-03  Jonathan Pobst  <monkey@jpobst.com>
+	* ControlUpdateMode.cs, DataSourceUpdateMode.cs,
+	  HelpNavigator.cs, WebBrowserEncryptionLevel.cs:
+	  Fixed various typos.
+
 2006-07-03  Alexander Olk  <alex.olk@googlemail.com>
 
 	* Control.cs: Removing the controls in a ControlCollection with

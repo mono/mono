@@ -32,7 +32,7 @@ namespace System.Windows.Forms
 {
 	public enum ControlUpdateMode
 	{
-		OnPropertyChange = 0,
+		OnPropertyChanged = 0,
 		Never = 1
 	}
 }

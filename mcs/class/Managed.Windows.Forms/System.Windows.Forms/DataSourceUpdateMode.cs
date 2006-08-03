@@ -33,7 +33,7 @@ namespace System.Windows.Forms
 	public enum DataSourceUpdateMode
 	{
 		OnValidation = 0,
-		OnPropertyChange = 1,
+		OnPropertyChanged = 1,
 		Never = 2
 	}
 }

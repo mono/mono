@@ -35,7 +35,7 @@ namespace System.Windows.Forms {
 		AssociateIndex	= -2147483643,
 		KeywordIndex	= -2147483642,
 #if NET_2_0
-		TopicID		= -2147483641
+		TopicId		= -2147483641
 #endif
 	}
 }
