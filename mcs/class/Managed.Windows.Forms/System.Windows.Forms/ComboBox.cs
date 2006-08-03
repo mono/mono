@@ -54,7 +54,7 @@ namespace System.Windows.Forms
 		private bool sorted;
 		private int max_length;
 		private ComboListBox listbox_ctrl;		
-		private TextBox textbox_ctrl;
+		private ComboTextBox textbox_ctrl;
 		private bool process_textchanged_event = true;
 		private bool item_height_specified = false;
 		private int item_height;
@@ -221,18 +221,11 @@ namespace System.Windows.Forms
 				}				
 	
 				if (dropdown_style != ComboBoxStyle.DropDownList && textbox_ctrl == null) {
-					textbox_ctrl = new FixedSizeTextBox ();
+					textbox_ctrl = new ComboTextBox (this);
 					if (selected_item != null)
 						textbox_ctrl.Text = GetItemText (selected_item);
 					textbox_ctrl.BorderStyle = BorderStyle.None;
 					textbox_ctrl.TextChanged += new EventHandler (OnTextChangedEdit);
-					textbox_ctrl.KeyPress += new KeyPressEventHandler(textbox_ctrl_KeyPress);
-					textbox_ctrl.KeyDown += new KeyEventHandler (OnKeyDownCB);
-					textbox_ctrl.GotFocus += new EventHandler(textbox_ctrl_GotFocus);
-					textbox_ctrl.LostFocus += new EventHandler(textbox_ctrl_LostFocus);
-					textbox_ctrl.MouseDown += new MouseEventHandler(textbox_ctrl_MouseDown);
-					textbox_ctrl.MouseMove += new MouseEventHandler(textbox_ctrl_MouseMove);
-					textbox_ctrl.MouseUp += new MouseEventHandler(textbox_ctrl_MouseUp);
 
 					if (IsHandleCreated == true) {
 						Controls.AddImplicit (textbox_ctrl);
@@ -424,7 +417,7 @@ namespace System.Windows.Forms
     				OnSelectedIndexChanged  (new EventArgs ());
     				OnSelectedItemChanged (new EventArgs ());
 				if (DropDownStyle == ComboBoxStyle.DropDownList)
-    					Refresh ();
+    					Invalidate ();
 
 				if (listbox_ctrl != null)
 					listbox_ctrl.HighlightedItem = value;
@@ -641,6 +634,8 @@ namespace System.Windows.Forms
 			switch (keyData) {
 			case Keys.Up:
 			case Keys.Down:
+			case Keys.Left:
+			case Keys.Right:
 			case Keys.PageUp:
 			case Keys.PageDown:			
 				return true;
@@ -730,19 +725,32 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]		
 		protected override void OnGotFocus (EventArgs e) {			
-			Invalidate ();
 
-			if (dropdown_style == ComboBoxStyle.Simple)
-				listbox_ctrl.Focus ();
-			else if (dropdown_style != ComboBoxStyle.DropDownList && textbox_ctrl != null)
-				textbox_ctrl.Focus ();
+			if (textbox_ctrl != null) {
+				textbox_ctrl.SetSelectable (false);
+				textbox_ctrl.ActivateCaret (true);
+				textbox_ctrl.ShowSelection = true;
+				textbox_ctrl.SelectAll ();
+			}
+
 			base.OnGotFocus (e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]		
 		protected override void OnLostFocus (EventArgs e) {			
+
+			if (listbox_ctrl != null && dropped_down) {
+				listbox_ctrl.HideWindow ();
+			}
+
+			if (textbox_ctrl != null) {
+				textbox_ctrl.SetSelectable (true);
+				textbox_ctrl.ActivateCaret (false);
+				textbox_ctrl.ShowSelection = false;
+			}
+
 			base.OnLostFocus (e);
-		}		
+		}
 
 		protected override void OnHandleCreated (EventArgs e)
 		{
@@ -764,6 +772,10 @@ namespace System.Windows.Forms
 
 		protected override void OnKeyPress (KeyPressEventArgs e)
 		{
+			// int index = FindStringCaseInsensitive (e.KeyChar.ToString (), SelectedIndex);
+			//if (index != -1)
+			//	SelectedIndex = index;
+
 			base.OnKeyPress (e);
 		}
 
@@ -828,7 +840,7 @@ namespace System.Windows.Forms
 				
 			if (dropdown_style == ComboBoxStyle.DropDownList)
 				return;
-				
+
 			textbox_ctrl.Select (start, length);
 		}
 
@@ -836,8 +848,11 @@ namespace System.Windows.Forms
 		{
 			if (dropdown_style == ComboBoxStyle.DropDownList)
 				return;
-				
-			textbox_ctrl.SelectAll ();
+
+			if (textbox_ctrl != null) {
+				textbox_ctrl.ShowSelection = true;
+				textbox_ctrl.SelectAll ();
+			}
 		}		
 
 		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
@@ -889,6 +904,16 @@ namespace System.Windows.Forms
 		protected override void WndProc (ref Message m)
 		{
 			switch ((Msg) m.Msg) {
+			case Msg.WM_KEYUP:
+			case Msg.WM_KEYDOWN:
+				Keys keys = (Keys) m.WParam.ToInt32 ();
+				if (keys == Keys.Up || keys == Keys.Down)
+					break;
+				goto case Msg.WM_CHAR;
+			case Msg.WM_CHAR:
+				if (textbox_ctrl != null)
+					XplatUI.SendMessage (textbox_ctrl.Handle, (Msg) m.Msg, m.WParam, m.LParam);
+				break;
 			case Msg.WM_MOUSE_LEAVE:
 				Point location = PointToClient (Control.MousePosition);
 				if (ClientRectangle.Contains (location))
@@ -907,36 +932,6 @@ namespace System.Windows.Forms
 		internal override bool InternalCapture {
 			get { return Capture; }
 			set {}
-		}
-
-		private void textbox_ctrl_KeyPress(object sender, KeyPressEventArgs e) 
-		{
-			OnKeyPress (e);
-		}
-		
-		private void textbox_ctrl_GotFocus(object sender, EventArgs e )
-		{
-			OnGotFocus(e);
-		}
-		
-		private void textbox_ctrl_LostFocus(object sender, EventArgs e )
-		{
-			OnLostFocus(e);
-		}
-		
-		private void textbox_ctrl_MouseDown(object sender, MouseEventArgs e )
-		{
-			OnMouseDown(e);
-		}
-		
-		private void textbox_ctrl_MouseMove(object sender, MouseEventArgs e )
-		{
-			OnMouseMove(e);
-		}
-		
-		private void textbox_ctrl_MouseUp(object sender, MouseEventArgs e )
-		{
-			OnMouseUp(e);
 		}
 		
 		void Layout ()
@@ -1100,7 +1095,7 @@ namespace System.Windows.Forms
 					SelectedIndex = Math.Max(SelectedIndex-1, 0);
 					break;				
 	
-				case Keys.Down:			
+				case Keys.Down:
 					SelectedIndex = Math.Min(SelectedIndex+1, Items.Count-1);
 					break;
 				
@@ -1174,6 +1169,10 @@ namespace System.Windows.Forms
 			if (item == -1)
 				return;
 
+			// TODO:  THIS IS BROKEN-ISH
+			// I don't think we should hilight, and setting the top item does weirdness
+			// when there is no scrollbar
+			
 			if (listbox_ctrl != null) {
 				listbox_ctrl.SetTopItem (item);
 				listbox_ctrl.HighlightedItem = Items [item];
@@ -1184,7 +1183,7 @@ namespace System.Windows.Forms
 		
 		internal void SetControlText (string s)
 		{		
-			process_textchanged_event = false; 
+			process_textchanged_event = false;
     			textbox_ctrl.Text = s;
     			process_textchanged_event = true;
     		}
@@ -1377,6 +1376,39 @@ namespace System.Windows.Forms
 			#endregion Private Methods
 		}
 
+		internal class ComboTextBox : TextBox {
+
+			private ComboBox owner;
+
+			public ComboTextBox (ComboBox owner)
+			{
+				this.owner = owner;
+			}
+
+			internal void SetSelectable (bool selectable)
+			{
+				SetStyle (ControlStyles.Selectable, selectable);
+			}
+
+			internal void ActivateCaret (bool active)
+			{
+				if (active)
+					document.CaretHasFocus ();
+				else
+					document.CaretLostFocus ();
+			}
+
+			internal override void OnGotFocusInternal (EventArgs e)
+			{
+				owner.Select (false, true);
+			}
+
+			internal override void OnLostFocusInternal (EventArgs e)
+			{
+				owner.Select (false, true);
+			}			
+		}
+
 		internal class ComboListBox : Control
 		{
 			private ComboBox owner;			
@@ -1451,11 +1483,8 @@ namespace System.Windows.Forms
 				last_item = 0;
 				page_size = 0;
 
-				MouseDown += new MouseEventHandler (OnMouseDownPUW);
-				MouseUp += new MouseEventHandler (OnMouseUpPUW);
-				MouseMove += new MouseEventHandler (OnMouseMovePUW);				
 				MouseWheel += new MouseEventHandler (OnMouseWheelCLB);				
-				KeyDown += new KeyEventHandler (OnKeyDownPUW);
+
 				SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 				SetStyle (ControlStyles.ResizeRedraw | ControlStyles.Opaque, true);
 
@@ -1479,6 +1508,11 @@ namespace System.Windows.Forms
 				}
 			}
 
+			protected override void Select (bool directed, bool forward)
+			{
+				// Do nothing, we never want to be selected
+			}
+
 			internal override bool InternalCapture {
 				get {
 					return Capture;
@@ -1487,14 +1521,6 @@ namespace System.Windows.Forms
 				set {
 				}
 			}
-
-			protected override void OnLostFocus(EventArgs e) {
-				if (Capture) {
-					HideWindow();
-				}
-				base.OnLostFocus (e);
-			}
-
 
 			int BorderWidth {
 				get {
@@ -1672,11 +1698,6 @@ namespace System.Windows.Forms
 
 				return -1;
 			}
-			
-			protected override bool IsInputKey (Keys keyData)
-			{
-				return owner.IsInputKey (keyData);
-			}
 
 			private int LastVisibleItem ()
 			{
@@ -1692,104 +1713,6 @@ namespace System.Windows.Forms
 				}
 				return i - 1;
 			}
-			
-			private void NavigateItemVisually (ItemNavigation navigation)
-			{
-				int item = -1;
-				
-				switch (navigation) {
-				case ItemNavigation.Next:
-					if (HighlightedIndex + 1 < owner.Items.Count) {
-						if (HighlightedIndex + 1 > last_item) {
-							top_item++;
-							vscrollbar_ctrl.Value = top_item;
-						}
-						item = HighlightedIndex + 1;
-					}
-					break;
-				
-				case ItemNavigation.Previous:
-					if (HighlightedIndex > 0) {						
-						if (HighlightedIndex - 1 < top_item) {							
-							top_item--;
-							vscrollbar_ctrl.Value = top_item;							
-						}
-						item = HighlightedIndex - 1;
-					}					
-					break;
-				
-				case ItemNavigation.NextPage:
-					if (HighlightedIndex + page_size - 1 >= owner.Items.Count) {
-						top_item = owner.Items.Count - page_size;
-						vscrollbar_ctrl.Value = top_item;
-						item = owner.Items.Count - 1;
-					} else {
-						if (HighlightedIndex + page_size - 1  > last_item) {
-							top_item = HighlightedIndex;
-							vscrollbar_ctrl.Value = HighlightedIndex;
-						}
-						item = HighlightedIndex + page_size - 1;
-					}					
-					break;
-				
-				case ItemNavigation.PreviousPage:
-					if (HighlightedIndex - page_size - 1 <= 0) {
-						top_item = 0;
-						vscrollbar_ctrl.Value = top_item;
-						item = 0;			
-					} else {
-						if (HighlightedIndex - page_size - 1  < top_item) {
-							top_item = HighlightedIndex - page_size - 1;
-							vscrollbar_ctrl.Value = top_item;
-						}
-						item = HighlightedIndex - page_size - 1;
-					}
-					break;
-					
-				default:
-					break;
-				}	
-				
-				if (item != -1) {
-					HighlightedIndex = item;
-					owner.OnSelectionChangeCommitted (new EventArgs ());
-					if (owner.DropDownStyle == ComboBoxStyle.Simple)
-						owner.SetControlText (owner.GetItemText (owner.Items[item]));
-				}
-			}
-
-			private void OnKeyDownPUW (object sender, KeyEventArgs e) 			
-			{				
-				switch (e.KeyCode) {			
-				case Keys.Up:
-					NavigateItemVisually (ItemNavigation.Previous);
-					break;				
-	
-				case Keys.Down:				
-					NavigateItemVisually (ItemNavigation.Next);
-					break;
-				
-				case Keys.PageUp:
-					NavigateItemVisually (ItemNavigation.PreviousPage);
-					break;				
-	
-				case Keys.PageDown:				
-					NavigateItemVisually (ItemNavigation.NextPage);
-					break;
-				
-				default:
-					break;
-				}
-			}
-
-			protected override void OnKeyPress (KeyPressEventArgs e)
-			{
-				int index = owner.FindStringCaseInsensitive (e.KeyChar.ToString (),
-						owner.SelectedIndex + 1);
-				if (index == -1)
-					return;
-				owner.SelectedIndex = index;
-			}
 
 			public void SetTopItem (int item)
 			{
@@ -1799,34 +1722,9 @@ namespace System.Windows.Forms
 				UpdateLastVisibleItem ();
 				Refresh ();
 			}			
-			
-			private void OnMouseDownPUW (object sender, MouseEventArgs e)
-	    		{
-	    			int index = IndexFromPointDisplayRectangle (e.X, e.Y);
 
-    				if (index == -1) {    					
-					if (vscrollbar_ctrl == null || !vscrollbar_ctrl.FireMouseDown (e))
-		    				HideWindow ();
-				} else {
-					owner.OnSelectionChangeCommitted (new EventArgs ());
-					owner.SelectedIndex = index;
-					HighlightedIndex = index;
-					HideWindow ();
-				}
-				
-				if (owner.DropDownStyle == ComboBoxStyle.Simple) {
-					owner.OnMouseDown (e);
-					owner.textbox_ctrl.Focus ();
-				}
-			}
-
-			private void OnMouseMovePUW (object sender, MouseEventArgs e)
-			{
-				if (owner.DropDownStyle == ComboBoxStyle.Simple) {
-					owner.OnMouseMove (e);
-					return;
-				}
-						
+			protected override void OnMouseMove (MouseEventArgs e)
+			{						
 				Point pt = PointToClient (Control.MousePosition);
 				int index = IndexFromPointDisplayRectangle (pt.X, pt.Y);
 
@@ -1839,11 +1737,18 @@ namespace System.Windows.Forms
 					vscrollbar_ctrl.FireMouseMove (e);
 			}
 			
-			private void OnMouseUpPUW (object sender, MouseEventArgs e)
+			protected override void OnMouseUp (MouseEventArgs e)
 			{
-				if (owner.DropDownStyle == ComboBoxStyle.Simple) {
-					owner.OnMouseUp (e);
-					return;					
+	    			int index = IndexFromPointDisplayRectangle (e.X, e.Y);
+
+    				if (index == -1) {    					
+					if (vscrollbar_ctrl == null || !vscrollbar_ctrl.FireMouseDown (e))
+		    				HideWindow ();
+				} else {
+					owner.OnSelectionChangeCommitted (new EventArgs ());
+					owner.SelectedIndex = index;
+					HighlightedIndex = index;
+					HideWindow ();
 				}
 
 	    			if (vscrollbar_ctrl != null)

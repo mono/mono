@@ -1,3 +1,11 @@
+2006-08-03  Jackson Harper  <jackson@ximian.com>
+
+	* ComboBox.cs: Cleanup selection and focus with the combobox.
+	This also eliminates some duplicated keyboard code, since now
+	everything is handled by the main class.
+	- Make list selection work on mouse up instead of down, to match
+	MS.
+
 2006-08-02  Jackson Harper  <jackson@ximian.com>
 
 	* Control.cs: Setting focus needs to go through the whole
