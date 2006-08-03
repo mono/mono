@@ -5,21 +5,25 @@
     <namespaces>
       <namespace name="MonoTests.SystemWeb.Framework">
         <para>
-          The idea of the Framework is as the following. A Web application root is created
+          The idea of the Framework is as follows:
+        </para>
+        <para>
+          A Web application root is created
           in a temp directory. All currently referenced and loaded assemblies are copied
           to the /bin folder. Starting from this point, <see cref="HttpRuntime.ProcessRequest()"/> is
-          able to process any requests, compiling ASPX, themes, master pages, etc. if
+          able to process any requests, compiling ASPX, themes, master pages, etc., if
           necessary.
         </para>
         <para>A few words about the API:</para>
         <para>
-          WebTest is the central class of the Framework. It's instances are typically
-          created in NUnit testcases. WebTest instances carry the information from the
-          testcase appdomain into the Web application appdomain, and back. The most
-          important properties of <see cref="WebTest"/> are Request and Invoker. The Request carries all
-          the necessary information used to create an HttpWorkerRequest in the Web appdomain.
+          <see cref="WebTest"/> is the central class of the Framework. Its instances are typically
+          created in NUnit test cases. WebTest instances carry the information from the
+          test case application domain into the Web application domain, and back. The most
+          important properties of WebTest are <see cref="Request"/> and <see cref="Invoker"/>.
+          The Request carries all
+          the necessary information used to create an HttpWorkerRequest in the Web application domain.
           The Invoker carries all the callbacks that have to be invoked to perform the
-          tests in the Web appdomain. Here is an example of using WebTest, Request,
+          tests in the Web application domain. Here is an example of using WebTest, Request,
           and Invoker.
         </para>
         <example>
@@ -61,8 +65,8 @@ static public void TestCase1OnLoad (Page p) //invoked in the web appdomain
         </example>
 
         <para>
-          This will parse the response, and use action URL, GET/POST method and all
-          hidden fields (VIEWSTATE, etc.) You might add more query parameters, like
+          This will parse the response, and use action URL, GET/POST methods and all
+          hidden fields (VIEWSTATE, etc.). You might add more query parameters, like:
         </para>
         <example>
           <code>
@@ -71,7 +75,7 @@ static public void TestCase1OnLoad (Page p) //invoked in the web appdomain
           </code>
         </example>
 
-        <para>3.Then run the second request:</para>
+        <para>3. Then run the second request:</para>
 
         <example>
           <code>
@@ -91,7 +95,7 @@ static public void TestCase1OnLoad (Page p) //invoked in the web appdomain
           </code>
         </example>
 
-        <para>the delegate for the above test might look like:</para>
+        <para>The delegate for the above test may look like:</para>
 
         <example>
           <code>

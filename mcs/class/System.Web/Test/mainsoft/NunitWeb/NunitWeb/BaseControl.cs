@@ -10,7 +10,7 @@ namespace MonoTests.SystemWeb.Framework
 	public class BaseControl
 	{
 		/// <summary>
-		/// Default constructor. Does nothing.
+		/// Default constructor; does nothing.
 		/// </summary>
 		public BaseControl ()
 		{
@@ -52,8 +52,8 @@ namespace MonoTests.SystemWeb.Framework
 		}
 
 		/// <summary>
-		/// Returns true, if the control is valid for submission. Override
-		/// to implement different controls validation. See
+		/// Returns <c>true</c>, if the control is valid for submission. Override this method 
+		/// to implement validation of different controls. See
 		/// <see href="http://www.w3.org/TR/REC-html40/interact/forms.html#successful-controls"/>
 		/// </summary>
 		public virtual bool IsSuccessful () 

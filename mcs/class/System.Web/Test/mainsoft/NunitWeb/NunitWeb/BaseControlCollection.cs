@@ -14,7 +14,7 @@ namespace MonoTests.SystemWeb.Framework
 	public sealed class BaseControlCollection : NameObjectCollectionBase 
 	{
 		/// <summary>
-		/// The default constructor. Does nothing.
+		/// The default constructor; does nothing.
 		/// </summary>
 		public BaseControlCollection ()
 		{
@@ -22,10 +22,10 @@ namespace MonoTests.SystemWeb.Framework
 
 		/// <summary>
 		/// The constructor is necessary because this class overrides
-		/// <see cref="System.Collections.Specialized.NameObjectCollectionBase"/>
+		/// <see cref="System.Collections.Specialized.NameObjectCollectionBase"/>,
 		/// which makes a custom serialization.
 		/// </summary>
-		/// <param name="info">Serialization info.</param>
+		/// <param name="info">Serialization information.</param>
 		/// <param name="context">Serialization context.</param>
 		/// <seealso cref="System.Collections.Specialized.NameObjectCollectionBase"/>
 		public BaseControlCollection (SerializationInfo info, StreamingContext context)
@@ -34,8 +34,8 @@ namespace MonoTests.SystemWeb.Framework
 		}
 
 		/// <summary>
-		/// Sets or gets the control with the given name. Get is guaranteed
-		/// to return not null value
+		/// Sets or gets the control with the given name. The <c>get</c> ??? is guaranteed
+		/// to return a non-null value.
 		/// </summary>
 		public BaseControl this [string name]
 		{
@@ -44,7 +44,7 @@ namespace MonoTests.SystemWeb.Framework
 		}
 
 		/// <summary>
-		/// Remove a control from the collection.
+		/// Removes a control from the collection.
 		/// </summary>
 		/// <param name="name">The name of the control to remove.</param>
 		public void Remove (string name)
@@ -53,7 +53,7 @@ namespace MonoTests.SystemWeb.Framework
 		}
 
 		/// <summary>
-		/// Add a new control to the collection. If there is control with
+		/// Adds a new control to the collection. If there is a control with
 		/// the same name, it will be kept intact.
 		/// </summary>
 		/// <param name="name">The name of a control to be added.</param>
@@ -68,7 +68,7 @@ namespace MonoTests.SystemWeb.Framework
 		}
 
 		/// <summary>
-		/// Add a new control to the collection. If there is control with
+		/// Adds a new control to the collection. If there is control with
 		/// the same name, it will be overwritten.
 		/// </summary>
 		/// <param name="control">New control.</param>

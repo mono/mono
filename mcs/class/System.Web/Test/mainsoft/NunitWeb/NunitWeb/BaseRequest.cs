@@ -2,6 +2,8 @@ using System;
 using System.IO;
 using System.Web;
 using System.Collections;
+using System.Net;
+using System.Collections.Specialized;
 
 namespace MonoTests.SystemWeb.Framework
 {
@@ -77,6 +79,23 @@ namespace MonoTests.SystemWeb.Framework
 			return br;
 		}
 
+		public virtual WebRequest CreateWebRequest (Uri baseUri, NameValueCollection headers)
+		{
+			return CreateHttpWebRequest (baseUri, headers);
+		}
+
+		protected virtual HttpWebRequest CreateHttpWebRequest (Uri baseUri, NameValueCollection headers)
+		{
+			string reqUrl = Url;
+			if (QueryString != null && QueryString != string.Empty)
+				reqUrl += "?" + QueryString;
+			Uri uri = new Uri (baseUri, Url);
+			HttpWebRequest wr = (HttpWebRequest) WebRequest.Create (uri);
+			wr.UserAgent = UserAgent;
+			wr.Headers.Add (headers);
+			return wr;
+		}
+
 		/// <summary>
 		/// This function is used by subclasses of <see cref="BaseRequest"/> to create a
 		/// subclass of <see cref="BaseWorkerRequest"/>.
@@ -120,6 +139,17 @@ namespace MonoTests.SystemWeb.Framework
 			wr.Close ();
 			Response r = new Response ();
 			r.Body = wr.ToString ();
+			return r;
+		}
+
+		public virtual Response ExtractResponse (WebResponse response)
+		{
+			Response r = new Response ();
+			byte [] b = new byte [response.ContentLength];
+			using (Stream s = response.GetResponseStream ()) {
+				StreamReader sr = new StreamReader(s);
+				r.Body = sr.ReadToEnd ();
+			}
 			return r;
 		}
 	}

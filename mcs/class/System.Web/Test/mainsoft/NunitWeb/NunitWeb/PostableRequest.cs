@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using System.Net;
+using System.Collections.Specialized;
 
 namespace MonoTests.SystemWeb.Framework
 {
@@ -80,5 +82,19 @@ namespace MonoTests.SystemWeb.Framework
 			return new PostableWorkerRequest (Url, QueryString,
 				wr, UserAgent, EntityBody, ContentType);
 		}
+
+		public override WebRequest CreateWebRequest(Uri baseUri, NameValueCollection headers) {
+			HttpWebRequest hwr = base.CreateHttpWebRequest (baseUri, headers);
+			if (EntityBody == null || !IsPost)
+				return hwr;
+			hwr.ContentLength = EntityBody.Length;
+			hwr.Method = "POST";
+			hwr.ContentType = ContentType;
+			using (Stream s = hwr.GetRequestStream ()) {
+				s.Write (EntityBody, 0, EntityBody.Length);
+			}
+			return hwr;
+		}
+
 	}
 }

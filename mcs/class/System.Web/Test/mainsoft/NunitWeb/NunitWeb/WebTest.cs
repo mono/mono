@@ -1,3 +1,7 @@
+#if TARGET_JVM_FOR_WEBTEST
+#define TARGET_JVM
+#endif
+
 using System;
 using System.Reflection;
 using System.IO;
@@ -98,15 +102,18 @@ namespace MonoTests.SystemWeb.Framework
 				host = AppDomain.CurrentDomain.GetData (HOST_INSTANCE_NAME) as MyHost;
 				if (host != null)
 					return host;
-#endif
 				try {
 					host = new MyHost (); //Fake instance to make EnsureHosting happy
 					host = InitHosting ();
+
 				}
 				catch {
 					host = null; //Remove the fake instance if CreateHosting failed
 					throw;
 				}
+#else
+				host = new MyHost ();
+#endif
 				return host;
 			}
 		}
@@ -166,6 +173,11 @@ namespace MonoTests.SystemWeb.Framework
 			}
 		}
 
+		public void SendHeaders ()
+		{
+			Host.SendHeaders (this);
+		}
+
 		/// <summary>
 		/// This method is intended for use from <see cref="MonoTests.SystemWeb.Framework.BaseInvoker.DoInvoke"/> when
 		/// the invocation causes an exception. In such cases, the exception must be registered
@@ -188,16 +200,16 @@ namespace MonoTests.SystemWeb.Framework
 		/// </summary>
 		public static void Unload ()
 		{
+#if !TARGET_JVM
 			if (host == null)
 				return;
 
 			AppDomain oldDomain = host.AppDomain;
 			host = null;
-#if !TARGET_JVM
 			AppDomain.CurrentDomain.SetData (HOST_INSTANCE_NAME, null);
 			AppDomain.Unload (oldDomain);
-#endif
 			Directory.Delete (baseDir, true);
+#endif
 		}
 
 		/// <summary>
@@ -311,6 +323,7 @@ namespace MonoTests.SystemWeb.Framework
 		/// <example><code>CopyResource (GetType (), "Default.skin", "App_Themes/Black/Default.skin");</code></example>
 		public static void CopyResource (Type type, string resourceName, string targetUrl)
 		{
+#if !TARGET_JVM
 			EnsureHosting ();
 			EnsureDirectoryExists (Path.Combine (baseDir,
 				Path.GetDirectoryName (targetUrl)));
@@ -323,6 +336,7 @@ namespace MonoTests.SystemWeb.Framework
 					target.Write (array, 0, array.Length);
 				}
 			}
+#endif
 		}
 
 		private static void EnsureHosting ()
@@ -330,12 +344,11 @@ namespace MonoTests.SystemWeb.Framework
 			MyHost h = Host;
 		}
 
+#if !TARGET_JVM
+		const string VIRTUAL_BASE_DIR = "/NunitWeb";
 		private static string baseDir;
 		private static string binDir;
-		const string VIRTUAL_BASE_DIR = "/NunitWeb";
-#if !TARGET_JVM
 		const string HOST_INSTANCE_NAME = "MonoTests/SysWeb/Framework/Host";
-#endif
 
 		private static MyHost InitHosting ()
 		{
@@ -347,7 +360,6 @@ namespace MonoTests.SystemWeb.Framework
 
 			CopyResources ();
 			File.Create (Path.Combine (baseDir, "page.fake"));
-#if !TARGET_JVM
 			foreach (Assembly ass in AppDomain.CurrentDomain.GetAssemblies ())
 				LoadAssemblyRecursive (ass);
 
@@ -357,11 +369,6 @@ namespace MonoTests.SystemWeb.Framework
 			MyHost host = (MyHost) ApplicationHost.CreateApplicationHost (typeof (MyHost), VIRTUAL_BASE_DIR, baseDir);
 			AppDomain.CurrentDomain.SetData (HOST_INSTANCE_NAME, host);
 			host.AppDomain.SetData (HOST_INSTANCE_NAME, host);
-#else
-			host = new MyHost ();
-			AppDomain.CurrentDomain.SetData (".appVPath", VIRTUAL_BASE_DIR);
-			AppDomain.CurrentDomain.SetData (".appPath", baseDir);
-#endif
 			return host;
 		}
 
@@ -383,26 +390,26 @@ namespace MonoTests.SystemWeb.Framework
 			CopyResource (typeof (WebTest),
 				"MonoTests.SystemWeb.Framework.Resources.My.master",
 				"My.master");
-#if TARGET_JVM
-			CopyResource (typeof (WebTest),
-				"MonoTests.SystemWeb.Framework.Resources.assemblies.global.asax.xml",
-				"assemblies/global.asax.xml");
-			CopyResource (typeof (WebTest),
-				"MonoTests.SystemWeb.Framework.Resources.assemblies.mypage.aspx.xml",
-				"assemblies/mypage.aspx.xml");
-			CopyResource (typeof (WebTest),
-				"MonoTests.SystemWeb.Framework.Resources.assemblies.hnnefdht.dll.ghres",
-				"assemblies/hnnefdht/dll.ghres");
-			CopyResource (typeof (WebTest),
-				"MonoTests.SystemWeb.Framework.Resources.assemblies.hnnefdht.hnnefdhtAttrib.class",
-				"assemblies/hnnefdht/hnnefdhtAttrib.class");
-//			CopyResource (typeof (WebTest),
-//				"MonoTests.SystemWeb.Framework.Resources.assemblies.hnnefdht.ASP.MyPage_aspx_MyPage_aspxAttrib.class",
-//				"assemblies/hnnefdht/ASP/MyPage_aspx$MyPage_aspxAttrib.class");
-//			CopyResource (typeof (WebTest),
-//				"MonoTests.SystemWeb.Framework.Resources.assemblies.hnnefdht.ASP.MyPage_aspx.class",
-//				"assemblies/hnnefdht/ASP/MyPage_aspx.class");
-#endif
+//#if TARGET_JVM
+//                        CopyResource (typeof (WebTest),
+//                                "MonoTests.SystemWeb.Framework.Resources.assemblies.global.asax.xml",
+//                                "assemblies/global.asax.xml");
+//                        CopyResource (typeof (WebTest),
+//                                "MonoTests.SystemWeb.Framework.Resources.assemblies.mypage.aspx.xml",
+//                                "assemblies/mypage.aspx.xml");
+//                        CopyResource (typeof (WebTest),
+//                                "MonoTests.SystemWeb.Framework.Resources.assemblies.hnnefdht.dll.ghres",
+//                                "assemblies/hnnefdht/dll.ghres");
+//                        CopyResource (typeof (WebTest),
+//                                "MonoTests.SystemWeb.Framework.Resources.assemblies.hnnefdht.hnnefdhtAttrib.class",
+//                                "assemblies/hnnefdht/hnnefdhtAttrib.class");
+////			CopyResource (typeof (WebTest),
+////				"MonoTests.SystemWeb.Framework.Resources.assemblies.hnnefdht.ASP.MyPage_aspx_MyPage_aspxAttrib.class",
+////				"assemblies/hnnefdht/ASP/MyPage_aspx$MyPage_aspxAttrib.class");
+////			CopyResource (typeof (WebTest),
+////				"MonoTests.SystemWeb.Framework.Resources.assemblies.hnnefdht.ASP.MyPage_aspx.class",
+////				"assemblies/hnnefdht/ASP/MyPage_aspx.class");
+//#endif
 #else
 			CopyResource (typeof (WebTest), "Web.config", "Web.config");
 			CopyResource (typeof (WebTest), "MyPage.aspx", "MyPage.aspx");
@@ -411,5 +418,6 @@ namespace MonoTests.SystemWeb.Framework
 			CopyResource (typeof (WebTest), "My.master", "My.master");
 #endif
 		}
+#endif
 	}
 }

@@ -7,6 +7,11 @@ CODE
 	of WebTest.CurrentTest.DoInvoke (this) call from every page
 	constructor.	
 
+* get rid of CopyResource, find resources dynamically or copy all necessary
+	resources on startup.
+
+* make abstract interface unifying MyHost and WebTestHost
+
 DOCUMENTATION
 
 * add the documentation about instrumenting pages to add the test hooks
