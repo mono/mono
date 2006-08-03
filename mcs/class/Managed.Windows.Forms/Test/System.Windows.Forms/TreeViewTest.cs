@@ -1,5 +1,6 @@
 using System;
 using NUnit.Framework;
+using System.Collections;
 using System.Windows.Forms;
 using System.Drawing;
 
@@ -33,5 +34,23 @@ namespace MonoTests.System.Windows.Forms {
 			f.Show ();
 		}
 
+		[Test]
+		public void NodesCopyToTest ()
+		{
+			TreeView tv = new TreeView();
+			TreeNode one = new TreeNode ("one");
+			TreeNode two = new TreeNode ("two");
+			TreeNode three = new TreeNode ("three");
+
+			tv.Nodes.Add (one);
+			tv.Nodes.Add (two);
+			tv.Nodes.Add (three);
+
+			ArrayList al = new ArrayList (tv.Nodes);
+
+			Assert.AreEqual (al [0], tv.Nodes [0], "A1");
+			Assert.AreEqual (al [1], tv.Nodes [1], "A2");
+			Assert.AreEqual (al [2], tv.Nodes [2], "A3");
+		}
 	}
 }
