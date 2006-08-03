@@ -164,13 +164,11 @@ namespace System.Web.Caching
 				if (DateTime.Now < start)
 					return false;
 
-				if (cache != null) {
-					if (cachekeys != null) {
-						foreach (string key in cachekeys) {
-							if (cache.GetKeyLastChange (key) > start) {
-								hasChanged = true;
-								break;
-							}
+				if (cache != null && cachekeys != null) {
+					foreach (string key in cachekeys) {
+						if (cache.GetKeyLastChange (key) > start) {
+							hasChanged = true;
+							break;
 						}
 					}
 				}

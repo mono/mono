@@ -78,12 +78,19 @@ namespace System.Web.Caching
 				CacheItem it = (CacheItem) cache [key];
 				if (it == null)
 					return null;
-				if (it.SlidingExpiration != NoSlidingExpiration)
+
+				if (it.Dependency != null && it.Dependency.HasChanged) {
+					Remove (it.Key, CacheItemRemovedReason.DependencyChanged);
+					return null;
+				}
+
+				if (it.SlidingExpiration != NoSlidingExpiration) {
 					it.AbsoluteExpiration = DateTime.Now + it.SlidingExpiration;
-				else if (DateTime.Now >= it.AbsoluteExpiration) {
+				} else if (DateTime.Now >= it.AbsoluteExpiration) {
 					Remove (key, CacheItemRemovedReason.Expired);
 					return null;
 				}
+
 				return it.Value;
 			}
 		}
