@@ -1,3 +1,8 @@
+2006-08-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CookieCollection.cs:
+	* CookieContainer.cs: remove expired cookies.
+
 2006-07-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Dns.cs : (GetHostEntry) when passed IP addresses, it does not issue

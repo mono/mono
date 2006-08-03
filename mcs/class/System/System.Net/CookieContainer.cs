@@ -132,15 +132,40 @@ namespace System.Net
 
 		void AddCookie (Cookie cookie)
 		{
-			lock (this) {
-				if (cookies == null)
-					cookies = new CookieCollection ();
+			if (cookies == null)
+				cookies = new CookieCollection ();
 
-				if (count + 1 > capacity)
-					throw new CookieException ("Capacity exceeded");
+			if (count + 1 > capacity)
+				throw new CookieException ("Capacity exceeded");
 
-				cookies.Add (cookie);
-				count = cookies.Count;
+			cookies.Add (cookie);
+			count = cookies.Count;
+			CheckExpiration ();
+
+		}
+
+		// Only needs to be called from AddCookie (Cookie) and GetCookies (Uri)
+		void CheckExpiration ()
+		{
+			if (cookies == null)
+				return;
+
+			ArrayList removed = null;
+			for (int i = cookies.Count - 1; i >= 0; i--) {
+				Cookie cookie = cookies [i];
+				if (cookie.Expired) {
+					if (removed == null)
+						removed = new ArrayList ();
+					removed.Add (i);
+				}
+			}
+
+			if (removed != null) {
+				// We went backwards above, so this works.
+				ArrayList list = cookies.List;
+				foreach (int n in removed) {
+					list.RemoveAt (n);
+				}
 			}
 		}
 
@@ -244,11 +269,12 @@ namespace System.Net
 		{
 			if (uri == null)
 				throw new ArgumentNullException ("uri");
-			
+
+			CheckExpiration ();
 			CookieCollection coll = new CookieCollection ();
 			if (cookies == null)
 				return coll;
-			
+
 			foreach (Cookie cookie in cookies) {
 				string domain = cookie.Domain;
 				string host = uri.Host;
@@ -273,7 +299,7 @@ namespace System.Net
 					}
 				}
 
-				if (uri.Scheme == "https" && !cookie.Secure)
+				if (cookie.Secure && uri.Scheme != "https")
 					continue;
 
 				coll.Add (cookie);

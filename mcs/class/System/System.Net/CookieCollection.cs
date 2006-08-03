@@ -41,6 +41,9 @@ namespace System.Net
 	{
 		ArrayList list = new ArrayList (4);
 
+		internal ArrayList List {
+			get { return list; }
+		}
 		// ICollection
 		public int Count {
 			get { return list.Count; }
@@ -133,7 +136,7 @@ namespace System.Net
 		public Cookie this [string name] {
 			get {
 				foreach (Cookie c in list) {
-					if (0 == String.Compare (c.Name, name, true))
+					if (0 == String.Compare (c.Name, name, true, CultureInfo.InvariantCulture))
 						return c;
 				}
 				return null;
