@@ -582,6 +582,33 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
+		public void GetNextControlFromTabControl ()
+		{
+			Form form = new Form ();
+			TabControl tab = new TabControl ();
+			TabPage page1 = new TabPage ("page one");
+			TabPage page2 = new TabPage ("page two");
+
+			tab.TabPages.Add (page1);
+			tab.TabPages.Add (page2);
+
+			form.Controls.Add (tab);
+			form.Show ();
+
+			Assert.AreEqual (form.GetNextControl (null, true), tab, "form-1");
+			Assert.AreEqual (form.GetNextControl (null, false), page2, "form-2");
+
+			Assert.AreEqual (form.GetNextControl (tab, true), page1, "tab-1");
+			Assert.AreEqual (form.GetNextControl (tab, false), null, "tab-2");
+
+			Assert.AreEqual (form.GetNextControl (page1, true), page2, "page-one-1");
+			Assert.AreEqual (form.GetNextControl (page1, false), tab, "page-one-2");
+
+			Assert.AreEqual (form.GetNextControl (page2, true), null, "page-two-1");
+			Assert.AreEqual (form.GetNextControl (page2, false), page1, "page-two-2");
+		}
+
+		[Test]
 		public void GetNextControlTabIndex ()
 		{
 			Form form = new Form ();
