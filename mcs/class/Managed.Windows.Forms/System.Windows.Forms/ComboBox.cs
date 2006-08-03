@@ -722,8 +722,14 @@ namespace System.Windows.Forms
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]		
-		protected override void OnGotFocus (EventArgs e) {			
-
+		protected override void OnGotFocus (EventArgs e)
+		{
+			if (dropdown_style == ComboBoxStyle.DropDownList) {
+				// We draw DDL styles manually, so they require a
+				// refresh to have their selection drawn
+				Invalidate ();
+			}
+			
 			if (textbox_ctrl != null) {
 				textbox_ctrl.SetSelectable (false);
 				textbox_ctrl.ActivateCaret (true);
@@ -735,7 +741,13 @@ namespace System.Windows.Forms
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]		
-		protected override void OnLostFocus (EventArgs e) {			
+		protected override void OnLostFocus (EventArgs e)
+		{
+			if (dropdown_style == ComboBoxStyle.DropDownList) {
+				// We draw DDL styles manually, so they require a
+				// refresh to have their selection drawn
+				Invalidate ();
+			}
 
 			if (listbox_ctrl != null && dropped_down) {
 				listbox_ctrl.HideWindow ();
@@ -1003,7 +1015,7 @@ namespace System.Windows.Forms
 				item_rect.Width -= (button_area.Width + 2 * border);				
 				item_rect.Height -= 2 * border;				
 								
-				if (has_focus) {
+				if (Focused) {
 					state = DrawItemState.Selected;
 					state |= DrawItemState.Focus;
 				}

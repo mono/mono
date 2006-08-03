@@ -20,6 +20,8 @@
 	* ComboBox.cs: Don't show selection by default.
 	- The SelectAll isn't needed here, since the focus code should do
 	that
+	- DDL style lists to manual selection drawing, so when they
+	get/lose focus they have to invalidate.
 
 2006-08-03  Peter Dennis Bartok  <pbartok@novell.com>
 
