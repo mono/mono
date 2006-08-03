@@ -987,7 +987,7 @@ namespace System.Windows.Forms {
 		Modeless		= 0,
 		ApplicationModal	= 1,
 		SystemModal		= 2,
-		FullApplicationMondal	= 3
+		FullApplicationModal	= 3
 	}
 
 	[Flags]
