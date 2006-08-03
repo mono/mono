@@ -1383,6 +1383,7 @@ namespace System.Windows.Forms
 			public ComboTextBox (ComboBox owner)
 			{
 				this.owner = owner;
+				ShowSelection = false;
 			}
 
 			internal void SetSelectable (bool selectable)
