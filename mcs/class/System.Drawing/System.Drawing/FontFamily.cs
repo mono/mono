@@ -174,11 +174,13 @@ namespace System.Drawing {
 		
 		public void Dispose ()
 		{
-			Status status = GDIPlus.GdipDeleteFontFamily (nativeFontFamily);
-			nativeFontFamily = IntPtr.Zero;
-			GC.SuppressFinalize (this);
-			// check the status code (throw) at the last step
-			GDIPlus.CheckStatus (status);
+			if (nativeFontFamily != IntPtr.Zero) {
+				Status status = GDIPlus.GdipDeleteFontFamily (nativeFontFamily);
+				nativeFontFamily = IntPtr.Zero;
+				GC.SuppressFinalize (this);
+				// check the status code (throw) at the last step
+				GDIPlus.CheckStatus (status);
+			}
 		}		
 		
 		public override bool Equals (object obj)
