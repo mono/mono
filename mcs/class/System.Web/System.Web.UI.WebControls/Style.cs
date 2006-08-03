@@ -456,7 +456,7 @@ namespace System.Web.UI.WebControls {
 					writer.AddStyleAttribute (HtmlTextWriterStyle.Width, u.ToString());
 			}
 
-			if (fontinfo != null) {
+			if (!Font.IsEmpty) {
 				// Fonts are a bit weird
 				if (fontinfo.Name != string.Empty) {
 					s = fontinfo.Names[0];
@@ -547,7 +547,7 @@ namespace System.Web.UI.WebControls {
 					attributes.Add (HtmlTextWriterStyle.Width, u.ToString());
 			}
 
-			if (fontinfo != null) {
+			if (!Font.IsEmpty) {
 				// Fonts are a bit weird
 				if (fontinfo.Name != string.Empty) 
 				{
@@ -767,9 +767,7 @@ namespace System.Web.UI.WebControls {
 			{
 				styles |= Styles.Width;
 			}
-			if (fontinfo != null) {
-				fontinfo.LoadViewState();
-			}
+			Font.LoadViewState();
 
 			LoadViewStateInternal();
 		}
@@ -781,7 +779,7 @@ namespace System.Web.UI.WebControls {
 
 		protected internal virtual object SaveViewState () 
 		{
-			if (styles != Styles.None) 
+			if (styles != Styles.None || !Font.IsEmpty) 
 			{
 				return viewstate.SaveViewState();
 			}
