@@ -48,7 +48,7 @@ namespace System.Windows.Forms {
 		private decimal	maximum;
 		private decimal	minimum;
 		private bool	thousands_separator;
-		private decimal	value;
+		private decimal	dvalue;
 		#endregion	// Local Variables
 
 		#region Public Constructors
@@ -196,8 +196,8 @@ namespace System.Windows.Forms {
 				if (minimum > maximum)
 					minimum = maximum;
 
-				if (value > maximum)
-					value = maximum;
+				if (dvalue > maximum)
+					Value = maximum;
 			}
 		}
 
@@ -213,8 +213,8 @@ namespace System.Windows.Forms {
 				if (maximum < minimum)
 					maximum = minimum;
 
-				if (value < minimum)
-					value = minimum;
+				if (dvalue < minimum)
+					Value = minimum;
 			}
 		}
 
@@ -251,7 +251,7 @@ namespace System.Windows.Forms {
 		[Bindable(true)]
 		public decimal Value {
 			get {
-				return value;
+				return dvalue;
 			}
 
 			set {
@@ -261,7 +261,7 @@ namespace System.Windows.Forms {
 					}
 				}
 
-				this.value = value;
+				dvalue = value;
 				OnValueChanged(EventArgs.Empty);
 				UpdateEditText();
 			} 
@@ -278,7 +278,7 @@ namespace System.Windows.Forms {
 				ParseEditText();
 			}
 
-			Value = Math.Max(minimum, unchecked(value - increment));
+			Value = Math.Max(minimum, unchecked(dvalue - increment));
 		}
 
 		public void EndInit() {
@@ -288,14 +288,14 @@ namespace System.Windows.Forms {
 		}
 
 		public override string ToString() {
-			return string.Format("{0}: value {1} in range [{2}, {3}]", base.ToString(), value, minimum, maximum);
+			return string.Format("{0}: value {1} in range [{2}, {3}]", base.ToString(), dvalue, minimum, maximum);
 		}
 
 		public override void UpButton() {
 			if (UserEdit)
 				ParseEditText();
 
-			Value = Math.Min(maximum, unchecked(value + increment));
+			Value = Math.Min(maximum, unchecked(dvalue + increment));
 		}
 		#endregion	// Public Instance Methods
 
@@ -337,23 +337,23 @@ namespace System.Windows.Forms {
 				string user_edit_text = Text.Replace(",", "").Trim();
 
 				if (!hexadecimal) {
-					value = decimal.Parse(user_edit_text);
+					dvalue = decimal.Parse(user_edit_text);
 				} else {
-					value = 0M;
+					dvalue = 0M;
 
 					for (int i=0; i < user_edit_text.Length; i++) {
 						int hex_digit = Convert.ToInt32(user_edit_text.Substring(i, 1), 16);
 
-						value = unchecked(value * 16M + (decimal)hex_digit);
+						dvalue = unchecked(dvalue * 16M + (decimal)hex_digit);
 					}
 				}
 
-				if (value < minimum) {
-					value = minimum;
+				if (dvalue < minimum) {
+					dvalue = minimum;
 				}
 
-				if (value > maximum) {
-					value = maximum;
+				if (dvalue > maximum) {
+					dvalue = maximum;
 				}
 
 				OnValueChanged(EventArgs.Empty);
@@ -384,14 +384,14 @@ namespace System.Windows.Forms {
 				format_string += decimal_places;
 
 				ChangingText = true;
-				Text = value.ToString(format_string);
+				Text = dvalue.ToString(format_string);
 			}
 			else {
 				// Decimal.ToString doesn't know the "X" formatter, and
 				// converting it to an int is narrowing, so do it
 				// manually...
 
-				int[] bits = decimal.GetBits(value);
+				int[] bits = decimal.GetBits(dvalue);
 
 				bool negative = (bits[3] < 0);
 

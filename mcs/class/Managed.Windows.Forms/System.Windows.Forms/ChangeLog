@@ -1,3 +1,8 @@
+2006-08-03  Alexander Olk  <alex.olk@googlemail.com>
+
+	* NumericUpDown.cs: Setting the Minimum and Maximum is now
+	  handled correctly. Fixes bug #79001.
+
 2006-08-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* PrintDialog.cs: The "Copies" numeric up down must have
@@ -25,7 +30,7 @@
 	  HelpNavigator.cs, WebBrowserEncryptionLevel.cs:
 	  Fixed various typos.
 
-2006-07-03  Alexander Olk  <alex.olk@googlemail.com>
+2006-08-03  Alexander Olk  <alex.olk@googlemail.com>
 
 	* Control.cs: Removing the controls in a ControlCollection with
 	  Clear now hides the controls as expected. Fixes bug #78804. 
