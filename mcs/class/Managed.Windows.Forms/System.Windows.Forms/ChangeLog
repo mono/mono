@@ -1,5 +1,10 @@
 2006-08-03  Jackson Harper  <jackson@ximian.com>
 
+	* TreeNodeCollection.cs: Fix copyto to use the correct nodes
+	length. (We have a larger array then actual node count).
+		
+2006-08-03  Jackson Harper  <jackson@ximian.com>
+
 	* ComboBox.cs: Don't show selection by default.
 
 2006-08-03  Peter Dennis Bartok  <pbartok@novell.com>

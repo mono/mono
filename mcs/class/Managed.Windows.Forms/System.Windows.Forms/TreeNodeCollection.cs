@@ -167,7 +167,7 @@ namespace System.Windows.Forms {
 
 		public void CopyTo (Array dest, int index)
 		{
-			nodes.CopyTo (dest, index);
+			Array.Copy (nodes, index, dest, index, count);
 		}
 
 		public IEnumerator GetEnumerator ()
