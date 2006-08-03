@@ -132,7 +132,7 @@ namespace Mono.Xml.Xsl {
 
 		public void CheckSameAs (XslDecimalFormat other)
 		{
-			if (! this.javaFormat.equals (other.javaFormat))
+			if (! this.javaFormat.Equals (other.javaFormat))
 				throw new XsltCompileException (null, other.baseUri, other.lineNumber, other.linePosition);
 		}
 
