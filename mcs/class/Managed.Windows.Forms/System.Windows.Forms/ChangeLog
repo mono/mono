@@ -6,6 +6,8 @@
 2006-08-03  Jackson Harper  <jackson@ximian.com>
 
 	* ComboBox.cs: Don't show selection by default.
+	- The SelectAll isn't needed here, since the focus code should do
+	that
 
 2006-08-03  Peter Dennis Bartok  <pbartok@novell.com>
 

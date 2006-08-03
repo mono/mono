@@ -407,10 +407,8 @@ namespace System.Windows.Forms
     				if (dropdown_style != ComboBoxStyle.DropDownList) {
 					if (selected_item == null)
 						SetControlText("");
-					else {
+					else
 						SetControlText (GetItemText (selected_item));
-						SelectAll ();
-					}
     				}
 
     				OnSelectedValueChanged (new EventArgs ());
@@ -1115,7 +1113,7 @@ namespace System.Windows.Forms
 		}
 		
 		void OnMouseDownCB (object sender, MouseEventArgs e)
-    		{    			
+    		{
 			Rectangle area;
 			if (DropDownStyle == ComboBoxStyle.DropDownList)
 				area = ClientRectangle;
