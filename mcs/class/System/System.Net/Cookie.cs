@@ -69,7 +69,6 @@ namespace System.Net {
 			name = "";
 			val = "";
 			comment = "";
-			domain = "";
 			port = "";
 		}
 
@@ -229,7 +228,7 @@ namespace System.Net {
 			return c != null &&
 			       String.Compare (this.name, c.name, true, CultureInfo.InvariantCulture) == 0 &&
 			       String.Compare (this.val, c.val, false, CultureInfo.InvariantCulture) == 0 &&
-			       String.Compare (this.path, c.path, false, CultureInfo.InvariantCulture) == 0 &&
+			       String.Compare (this.Path, c.Path, false, CultureInfo.InvariantCulture) == 0 &&
 			       String.Compare (this.domain, c.domain, true, CultureInfo.InvariantCulture) == 0 &&
 			       this.version == c.version;
 		}
@@ -238,7 +237,7 @@ namespace System.Net {
 		{
 			return hash(name.ToLower ().GetHashCode (),
 			            val.GetHashCode (),
-			            path.GetHashCode (),
+			            Path.GetHashCode (),
 			            domain.ToLower ().GetHashCode (),
 			            version);
 		}

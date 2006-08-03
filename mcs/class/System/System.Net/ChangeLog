@@ -1,5 +1,9 @@
 2006-08-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Cookie.cs: avoid nullref in GetHashCode and Equals.
+
+2006-08-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* CookieCollection.cs:
 	* CookieContainer.cs: remove expired cookies.
 
