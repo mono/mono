@@ -1279,6 +1279,9 @@ namespace Mono.CSharp {
 				}
 			}
 
+			if (!IsTopLevel && !Parent.PartialContainer.CheckRecursiveDefinition (this))
+				return false;
+
 			InTransit = null;
 			return true;
 		}

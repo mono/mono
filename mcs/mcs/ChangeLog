@@ -1,3 +1,9 @@
+2006-08-03  Raja R Harinath  <rharinath@novell.com>
+
+	Fix cs0146-3.cs and cs0146-4.cs.
+	* class.cs (TypeManager.CheckRecursiveDefinition): Check that
+	enclosing types don't depend on the current type.
+
 2006-08-02  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #77963
