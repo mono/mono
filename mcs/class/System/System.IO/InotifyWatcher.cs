@@ -243,8 +243,24 @@ namespace System.IO {
 		{
 			InotifyMask mask = GetMaskFromFilters (data.FSW.NotifyFilter);
 			int wd = AddDirectoryWatch (FD, data.Directory, mask);
-			if (wd == -1)
-				throw new Win32Exception ();
+			if (wd == -1) {
+				int error = Marshal.GetLastWin32Error ();
+				if (error == 4) { // Too many open watches
+					string watches = "(unknown)";
+					try {
+						using (StreamReader reader = new StreamReader ("/proc/sys/fs/inotify/max_user_watches")) {
+							watches = reader.ReadLine ();
+						}
+					} catch {}
+
+					string msg = String.Format ("The per-user inotify watches limit of {0} has been reached. " +
+								"If you're experiencing problems with your application, increase that limit " +
+								"in /proc/sys/fs/inotify/max_user_watches.", watches);
+					
+					throw new Win32Exception (error, msg);
+				}
+				throw new Win32Exception (error);
+			}
 
 			FileSystemWatcher fsw = data.FSW;
 			data.Watch = wd;

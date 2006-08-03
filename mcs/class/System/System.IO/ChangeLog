@@ -1,3 +1,7 @@
+2006-08-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* InotifyWatcher.cs: warn about inotify user watches limit.
+
 2005-07-31  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* FileSystemWatcher.cs: Add an EnvironmentPermission assert to read
