@@ -1,3 +1,8 @@
+2006-07-03  Alexander Olk  <alex.olk@googlemail.com>
+
+	* Control.cs: Removing the controls in a ControlCollection with
+	  Clear now hides the controls as expected. Fixes bug #78804. 
+
 2006-08-03  Jackson Harper  <jackson@ximian.com>
 
 	* Control.cs: Revert previous focus patch, it breaks reflector.

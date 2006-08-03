@@ -399,7 +399,7 @@ namespace System.Windows.Forms
 
 				// MS sends remove events in reverse order
 				while (list.Count > 0) {
-					RemoveAt(list.Count - 1);
+					Remove((Control)list[list.Count - 1]);
 				}
 			}
 
@@ -516,6 +516,8 @@ namespace System.Windows.Forms
 				list.Remove(value);
 
 				value.ChangeParent(null);
+				
+				value.Hide ();
 
 				owner.UpdateChildrenZOrder();
 			}
