@@ -1,3 +1,7 @@
+2006-08-03 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* XmlDataSource.cs: implemented caching functionality
+
 2006-07-31 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* PagerSettings.cs: Fixed the pager range calculation formula. The old

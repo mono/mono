@@ -38,6 +38,7 @@ using System.Xml;
 using System.Xml.Xsl;
 using System.ComponentModel;
 using System.IO;
+using System.Web.Caching;
 using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
@@ -60,6 +61,10 @@ namespace System.Web.UI.WebControls {
 		private string _xpath = string.Empty;
 		private string _dataFile = string.Empty;
 		private string _transformFile = string.Empty;
+		private string _cacheKeyDependency = string.Empty;
+		private bool _enableCaching = true;
+		private int _cacheDuration = 0;
+		private DataSourceCacheExpiry _cacheExpirationPolicy = DataSourceCacheExpiry.Absolute;
 		
 		event EventHandler IDataSource.DataSourceChanged {
 			add { ((IHierarchicalDataSource)this).DataSourceChanged += value; }
@@ -82,9 +87,14 @@ namespace System.Web.UI.WebControls {
 		XmlDocument xmlDocument;
 		public XmlDocument GetXmlDocument ()
 		{
-			if (xmlDocument == null)
+			if (xmlDocument == null && EnableCaching)
+				xmlDocument = GetXmlDocumentFromCache ();
+
+			if (xmlDocument == null) {
 				xmlDocument = LoadXmlDocument ();
-				
+				UpdateCache ();
+			}
+
 			return xmlDocument;
 		}
 
@@ -117,6 +127,56 @@ namespace System.Web.UI.WebControls {
 				document.LoadXml (data);
 
 			return document;
+		}
+
+		XmlDocument GetXmlDocumentFromCache ()
+		{
+			if (DataCache != null)
+				return (XmlDocument) DataCache [GetDataKey ()];
+
+			return null;
+		}
+
+		string GetDataKey ()
+		{
+			return TemplateSourceDirectory + "_" + Page.ToString () + "_" + ID;
+		}
+
+		Cache DataCache
+		{
+			get
+			{
+				if (HttpContext.Current != null)
+					return HttpContext.Current.Cache;
+
+				return null;
+			}
+		}
+
+		void UpdateCache ()
+		{
+			if (!EnableCaching)
+				return;
+
+			if (DataCache == null)
+				return;
+
+			if (DataCache [GetDataKey ()] != null)
+				DataCache.Remove (GetDataKey ());
+
+			DateTime absoluteExpiration = Cache.NoAbsoluteExpiration;
+			TimeSpan slidindExpiraion = Cache.NoSlidingExpiration;
+
+			if (CacheDuration > 0) {
+				if (CacheExpirationPolicy == DataSourceCacheExpiry.Absolute)
+					absoluteExpiration = DateTime.Now.AddSeconds (CacheDuration);
+				else
+					slidindExpiraion = new TimeSpan (CacheDuration * 10000);
+			}
+
+			DataCache.Add (GetDataKey (), xmlDocument,
+				new CacheDependency (new string [] { }, new string [] { CacheKeyDependency }),
+				absoluteExpiration, slidindExpiraion, CacheItemPriority.Default, null);
 		}
 
 		public void Save ()
@@ -178,10 +238,10 @@ namespace System.Web.UI.WebControls {
 		[MonoTODO]
 		public virtual int CacheDuration {
 			get {
-				throw new NotImplementedException ();
+				return _cacheDuration;
 			}
 			set {
-				throw new NotImplementedException ();
+				_cacheDuration = value;
 			}
 		}
 
@@ -189,10 +249,10 @@ namespace System.Web.UI.WebControls {
 		[MonoTODO]
 		public virtual DataSourceCacheExpiry CacheExpirationPolicy {
 			get {
-				throw new NotImplementedException ();
+				return _cacheExpirationPolicy;
 			}
 			set {
-				throw new NotImplementedException ();
+				_cacheExpirationPolicy = value;
 			}
 		}
 
@@ -200,10 +260,10 @@ namespace System.Web.UI.WebControls {
 		[MonoTODO]
 		public virtual string CacheKeyDependency {
 			get {
-				throw new NotImplementedException ();
+				return _cacheKeyDependency;
 			}
 			set {
-				throw new NotImplementedException ();
+				_cacheKeyDependency = value;
 			}
 		}
 
@@ -211,10 +271,10 @@ namespace System.Web.UI.WebControls {
 		[MonoTODO]
 		public virtual bool EnableCaching {
 			get {
-				throw new NotImplementedException ();
+				return _enableCaching;
 			}
 			set {
-				throw new NotImplementedException ();
+				_enableCaching = value;
 			}
 		}
 
