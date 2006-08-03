@@ -90,5 +90,10 @@ namespace MonoTests.SystemWeb.Framework
 			MyData data = GetMyData (GetMyWorkerRequest());
 			data.exception = ex;
 		}
+
+		internal void SendHeaders (WebTest webTest)
+		{
+			//nothing to do in this host
+		}
 	}
 }
