@@ -94,7 +94,7 @@ namespace System.Windows.Forms {
 			read_only = false;
 			word_wrap = true;
 			richtext = false;
-			show_selection = true;
+			show_selection = false;
 			document = new Document(this);
 			document.WidthChanged += new EventHandler(document_WidthChanged);
 			document.HeightChanged += new EventHandler(document_HeightChanged);

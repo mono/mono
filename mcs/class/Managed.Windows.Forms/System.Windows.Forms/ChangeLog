@@ -1,3 +1,7 @@
+2006-08-03  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* TextBoxBase.cs: Don't always show all selections by default.
+
 2006-08-03  Jonathan Pobst  <monkey@jpobst.com>
 	* ControlUpdateMode.cs, DataSourceUpdateMode.cs,
 	  HelpNavigator.cs, WebBrowserEncryptionLevel.cs:
