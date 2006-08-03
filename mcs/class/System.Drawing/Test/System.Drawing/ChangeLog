@@ -1,3 +1,7 @@
+2006-08-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestFont.cs: Remove asserts that are system dependant.
+
 2006-07-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestGraphics.cs: Added ReleaseHDC test cases by Jonathan Pobst.

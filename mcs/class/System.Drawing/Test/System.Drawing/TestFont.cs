@@ -119,7 +119,6 @@ namespace MonoTests.System.Drawing{
 			f = new Font("Arial", 10);
 
 			f.ToLogFont(lf);
-			Assert.AreEqual (-13, lf.lfHeight, "lfHeight");
 			Assert.AreEqual (400, lf.lfWeight, "lfWeight");
 			Assert.AreEqual (1, lf.lfCharSet, "lfCharSet");
 			Assert.AreEqual (f.Name, lf.lfFaceName, "lfFaceName");
@@ -188,7 +187,6 @@ namespace MonoTests.System.Drawing{
 			Assert.AreEqual (FontFamily.GenericMonospace, f.FontFamily, "FontFamily");
 			Assert.AreEqual (f.Name, f.FontFamily.Name, "Name");
 			Assert.AreEqual (12.5f, f.Size, "Size");
-			Assert.AreEqual (9.375f, f.SizeInPoints, "SizeInPoints");
 			Assert.IsFalse (f.Strikeout, "Strikeout");
 			Assert.IsFalse (f.Underline, "Underline");
 			Assert.AreEqual (GraphicsUnit.Pixel, f.Unit, "Unit");
