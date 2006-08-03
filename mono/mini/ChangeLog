@@ -1,3 +1,9 @@
+2006-08-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c: Add a bunch of statistics.
+
+	* mini.c (inline_method): Disable inlining in out-of-line bblocks.
+
 2006-08-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-arch.h Makefile.am mini-ops.h mini-codegen.c: More alpha updates.
