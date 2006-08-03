@@ -1,3 +1,7 @@
+2006-08-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* MailAddress.cs: allow the space before '<' to be omitted.
+
 2006-04-26  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* SmtpClient.cs, SmtpStream.cs: Added SMTP over TLS support, 

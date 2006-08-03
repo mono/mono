@@ -74,7 +74,7 @@ namespace System.Web.Mail {
 	    MailAddress addr = new MailAddress();
 	    string address = null;
 	    string nameString = null;
-	    string[] parts = str.Split( new char[] { ' ' } );
+	    string[] parts = str.Split( new char[] { ' ', '<' } );
 	    
 	    // find the address: xxx@xx.xxx
 	    // and put to gether all the parts
