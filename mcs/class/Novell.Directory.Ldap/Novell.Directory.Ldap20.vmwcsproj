@@ -47,8 +47,8 @@
 		<ProjectGuid>{7BA54046-FD05-4209-9508-D6367CDAFBC0}</ProjectGuid>
 		<OutputType>Library</OutputType>
 		<AppDesignerFolder>Properties</AppDesignerFolder>
-		<RootNamespace>Novell.Directory.Ldap20</RootNamespace>
-		<AssemblyName>Novell.Directory.Ldap20</AssemblyName>
+		<RootNamespace>Novell.Directory.Ldap</RootNamespace>
+		<AssemblyName>Novell.Directory.Ldap</AssemblyName>
 		<JDKName>1.5.0_05</JDKName>
 		<GHProjectType>1</GHProjectType>
 		<Version>2.0</Version>
