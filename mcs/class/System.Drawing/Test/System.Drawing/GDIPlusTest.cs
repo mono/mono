@@ -63,6 +63,40 @@ namespace MonoTests.System.Drawing {
 	[TestFixture]
 	public class GDIPlusTest {
 
+		[DllImport ("gdiplus.dll", CharSet=CharSet.Auto)]
+		internal static extern Status GdipCreateFontFamilyFromName (
+			[MarshalAs (UnmanagedType.LPWStr)] string fName, IntPtr collection, out IntPtr fontFamily);
+
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipGetGenericFontFamilySerif (out IntPtr fontFamily);
+
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipDeleteFontFamily (IntPtr fontfamily);
+
+		[Test]
+		public void DeleteFontFamily ()
+		{
+			// invalid image pointer (null)
+			Assert.AreEqual (Status.InvalidParameter, GdipDeleteFontFamily (IntPtr.Zero), "null");
+
+			IntPtr font_family;
+			GdipCreateFontFamilyFromName ("Arial", IntPtr.Zero, out font_family);
+			Assert.AreEqual (Status.Ok, GdipDeleteFontFamily (font_family), "first");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void DeleteFontFamily_DoubleDispose ()
+		{
+			IntPtr font_family;
+			GdipGetGenericFontFamilySerif (out font_family);
+			// first dispose
+			Assert.AreEqual (Status.Ok, GdipDeleteFontFamily (font_family), "first");
+			// second dispose
+			Assert.AreEqual (Status.Ok, GdipDeleteFontFamily (font_family), "second");
+		}
+
+
 		[DllImport ("gdiplus.dll")]
 		internal static extern Status GdipCreateBitmapFromScan0 (int width, int height, int stride, PixelFormat format, IntPtr scan0, out IntPtr bmp);
 
@@ -128,6 +162,19 @@ namespace MonoTests.System.Drawing {
 			finally {
 				GdipDisposeImage (image);
 			}
+		}
+
+		[DllImport ("gdiplus.dll")]
+		static internal extern Status GdipCreateRegionRgnData (byte[] data, int size, out IntPtr region);
+
+		[Test]
+		public void CreateRegionRgnData ()
+		{
+			IntPtr region;
+			Assert.AreEqual (Status.InvalidParameter, GdipCreateRegionRgnData (null, 0, out region));
+
+			byte[] data = new byte[0];
+			Assert.AreEqual (Status.GenericError, GdipCreateRegionRgnData (data, 0, out region));
 		}
 	}
 }

@@ -1,3 +1,8 @@
+2006-08-03  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* GDIPlusTest.cs: More test cases for the GDI+ function calls (which
+	fixes some unit test failures seen with Mono running on Windows).
+
 2006-08-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestFont.cs: Remove asserts that are system dependant.
