@@ -1,5 +1,7 @@
 2006-08-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-x86.c: Fix a warning.
+
 	* aot-compiler.c: Add a bunch of statistics.
 
 	* mini.c (inline_method): Disable inlining in out-of-line bblocks.
