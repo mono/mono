@@ -173,9 +173,8 @@ namespace System.IO
 			MonoIOError error;
 			
 			if (!MonoIO.DeleteFile (path, out error)){
-				Exception e = MonoIO.GetException (path, error);
-				if (! (e is FileNotFoundException))
-					throw e;
+				if (error != MonoIOError.ERROR_FILE_NOT_FOUND)
+					throw MonoIO.GetException (path, error);
 			}
 		}
 
