@@ -379,6 +379,23 @@ namespace System.Web.UI.WebControls {
 		}
 		#endregion	// Protected Instance Properties
 
+		#region Internal Instance Properties
+		internal bool AlwaysRenderTextDecoration
+		{
+			get
+			{
+				if (viewstate["AlwaysRenderTextDecoration"] == null)
+					return false;
+				return (bool)viewstate["AlwaysRenderTextDecoration"];
+			}
+		    
+			set
+			{
+				viewstate["AlwaysRenderTextDecoration"] = value;
+			}
+		}
+		#endregion	// Internal Instance Properties
+		
 		#region Public Instance Methods
 		public void AddAttributesToRender(System.Web.UI.HtmlTextWriter writer) 
 		{
@@ -486,8 +503,9 @@ namespace System.Web.UI.WebControls {
 				if (fontinfo.Underline)
 					s += "underline ";
 
-				s = (s != "") ? s : "none";
-				writer.AddStyleAttribute (HtmlTextWriterStyle.TextDecoration, s);
+				s = (s != "") ? s : AlwaysRenderTextDecoration ? "none" : "";
+				if (s != "")
+					writer.AddStyleAttribute (HtmlTextWriterStyle.TextDecoration, s);
 			}
 		}
 
@@ -592,8 +610,9 @@ namespace System.Web.UI.WebControls {
 					s += "underline ";
 				}
 
-				s = (s != "") ? s : "none";
-				attributes.Add (HtmlTextWriterStyle.TextDecoration, s);
+				s = (s != "") ? s : AlwaysRenderTextDecoration ? "none" : "";
+				if (s != "")
+					attributes.Add (HtmlTextWriterStyle.TextDecoration, s);
 			}
 		}
 

@@ -123,6 +123,17 @@ namespace System.Web.UI.WebControls {
 		}
 
 #if NET_2_0
+		protected internal 
+#else
+		protected
+#endif
+		override void OnPreRender (EventArgs e)
+		{
+			base.OnPreRender (e);
+			ControlStyle.AlwaysRenderTextDecoration = true;
+		}
+		
+#if NET_2_0
 		protected internal
 #else		
 		protected

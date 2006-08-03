@@ -933,6 +933,7 @@ namespace System.Web.UI.WebControls
 			base.OnPreRender (e);
 
 			cssStylesRegistered = false;
+			ControlStyle.AlwaysRenderTextDecoration = true;
 			if (Page != null) {
 				if (Enabled)
 					Page.RegisterRequiresPostBack (this);

@@ -1,3 +1,9 @@
+2006-08-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Style.cs:
+	* Label.cs:
+	* TreeView.cs: Patch by Marek Habersack that fixes bug #78968 take 2.
+
 2006-08-03 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* Style.cs: fixed restoring FontInfo from ViewState
