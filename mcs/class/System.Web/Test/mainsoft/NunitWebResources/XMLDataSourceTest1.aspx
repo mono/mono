@@ -39,7 +39,7 @@
     begint
         <div>
            <asp:XmlDataSource
-            runat="server"
+            runat="server" EnableCaching="false"
             id="XmlDataSource1">
             
             <Transform>

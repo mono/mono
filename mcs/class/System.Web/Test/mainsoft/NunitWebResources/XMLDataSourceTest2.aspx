@@ -40,7 +40,7 @@
         begint<div>
             <asp:XmlDataSource
             runat="server"
-            id="XmlDataSource1"
+            id="XmlDataSource1" EnableCaching="false"
             TransformFile="~/XMLDataSourceTest.xsl">
             </asp:XmlDataSource>
 

@@ -21,7 +21,7 @@
         begint<div>
             <asp:XmlDataSource
             runat="server"
-            id="XmlDataSource1"
+            id="XmlDataSource1" EnableCaching="false"
             DataFile="~/XMLDataSourceTest.xml" />
             
             <asp:Repeater ID="Repeater1"
