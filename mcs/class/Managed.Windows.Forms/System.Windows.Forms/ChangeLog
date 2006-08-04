@@ -1,3 +1,10 @@
+2006-08-04  Jackson Harper  <jackson@ximian.com>
+
+	* Form.cs:
+	* XplatUIX11.cs: Move the toolwindow window manager creation into
+	the X11 driver, this way on win32 we can let windows create/handle
+	the toolwindows.
+
 2006-08-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* PrintDialog.cs: Remove some redundant checks, add some others,

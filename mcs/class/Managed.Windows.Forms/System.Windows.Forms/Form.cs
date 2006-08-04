@@ -65,7 +65,7 @@ namespace System.Windows.Forms {
 		private Form			owner;
 		private Form.ControlCollection	owned_forms;
 		private MdiClient		mdi_container;
-		private InternalWindowManager	window_manager;
+		internal InternalWindowManager	window_manager;
 		private Form			mdi_parent;
 		private bool			key_preview;
 		private MainMenu		menu;
@@ -355,10 +355,6 @@ namespace System.Windows.Forms {
 					if (IsHandleCreated) {
 						XplatUI.SetBorderStyle(window.Handle, form_border_style);
 					}
-
-					if (value == FormBorderStyle.FixedToolWindow ||
-							value == FormBorderStyle.SizableToolWindow)
-						window_manager = new InternalWindowManager (this);
 				} else {
 					window_manager.UpdateBorderStyle (value);
 				}
