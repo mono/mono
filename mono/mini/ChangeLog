@@ -1,3 +1,13 @@
+2006-08-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* jit-icalls.c (mono_helper_compile_generic_method): Unbox vtypes since this is a
+	virtual call. Fixes #79010.
+
+	* mini.c (mono_method_to_ir): Pass an additional out arg to compile_generic_method 
+	and use the result as the this argument in the real call.
+
+	* generics.2.cs: Add a new test for #79010.
+	
 2006-08-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-x86.c: Fix a warning.
