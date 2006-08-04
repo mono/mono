@@ -61,6 +61,17 @@ namespace MonoTests.System.Drawing {
 		ProfileNotFound = 21
 	}
 
+	// copied from Mono's System.Drawing.dll gdiEnums.cs
+	internal enum Unit {
+		UnitWorld = 0,
+		UnitDisplay = 1,
+		UnitPixel = 2,
+		UnitPoint = 3,
+		UnitInch = 4,
+		UnitDocument = 5,
+		UnitMillimeter = 6
+	}
+
 	[TestFixture]
 	public class GDIPlusTest {
 
@@ -255,6 +266,53 @@ namespace MonoTests.System.Drawing {
 			Assert.AreEqual (Status.Ok, GdipDeleteBrush (brush), "GdipDeleteBrush");
 		}
 
+		// Pen
+
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipCreatePen1 (int argb, float width, Unit unit, out IntPtr pen);
+
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipGetPenDashStyle (IntPtr pen, out DashStyle dashStyle);
+
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipSetPenDashStyle (IntPtr pen, DashStyle dashStyle);
+
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipGetPenDashCount (IntPtr pen, out int count);
+
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipGetPenDashArray (IntPtr pen, float[] dash, int count);
+
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipDeletePen (IntPtr pen);
+
+		[Test]
+		public void CreatePen ()
+		{
+			IntPtr pen;
+			Assert.AreEqual (Status.Ok, GdipCreatePen1 (0, 0f, Unit.UnitWorld, out pen), "GdipCreatePen1");
+			Assert.IsTrue (pen != IntPtr.Zero, "pen");
+
+			DashStyle ds;
+			Assert.AreEqual (Status.Ok, GdipGetPenDashStyle (pen, out ds), "GdipGetPenDashStyle");
+			Assert.AreEqual (Status.InvalidParameter, GdipGetPenDashStyle (IntPtr.Zero, out ds), "GdipGetPenDashStyle-null");
+
+			ds = DashStyle.Custom;
+			Assert.AreEqual (Status.Ok, GdipSetPenDashStyle (pen, ds), "GdipSetPenDashStyle");
+			Assert.AreEqual (Status.InvalidParameter, GdipSetPenDashStyle (IntPtr.Zero, ds), "GdipSetPenDashStyle-null");
+
+			int count;
+			Assert.AreEqual (Status.Ok, GdipGetPenDashCount (pen, out count), "GdipGetPenDashCount");
+			Assert.AreEqual (Status.InvalidParameter, GdipGetPenDashCount (IntPtr.Zero, out count), "GdipGetPenDashCount-null");
+			Assert.AreEqual (0, count, "count");
+
+			float[] dash = new float[count];
+			Assert.AreEqual (Status.OutOfMemory, GdipGetPenDashArray (pen, dash, count), "GdipGetPenDashArray");
+			Assert.AreEqual (Status.InvalidParameter, GdipGetPenDashArray (IntPtr.Zero, dash, count), "GdipGetPenDashArray-null");
+
+			Assert.AreEqual (Status.Ok, GdipDeletePen (pen), "GdipDeletePen");
+			Assert.AreEqual (Status.InvalidParameter, GdipDeletePen (IntPtr.Zero), "GdipDeletePen-null");
+		}
 
 		// Region
 
