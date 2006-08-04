@@ -289,7 +289,6 @@ namespace System.Windows.Forms
 			effectsGroupBox.ResumeLayout( false );
 			
 			form.Size = new Size( 430, 318 );
-			form.MinimumSize = new Size( 430, 318 );
 			
 			form.FormBorderStyle = FormBorderStyle.FixedDialog;
 			form.MaximizeBox = false;
