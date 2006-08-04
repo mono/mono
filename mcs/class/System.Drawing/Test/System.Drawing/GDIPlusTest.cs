@@ -112,6 +112,17 @@ namespace MonoTests.System.Drawing {
 			Assert.AreEqual (Status.InvalidParameter, GdipCreateBitmapFromScan0 (-1, 10, 10, PixelFormat.Format32bppArgb, IntPtr.Zero, out bmp), "negative width");
 		}
 
+		// Brush
+
+		[DllImport ("gdiplus.dll")]
+		static internal extern Status GdipDeleteBrush (IntPtr brush);
+
+		[Test]
+		public void DeleteBrush ()
+		{
+			Assert.AreEqual (Status.InvalidParameter, GdipDeleteBrush (IntPtr.Zero), "GdipDeleteBrush");
+		}
+
 		// GraphicsPath
 
 		[DllImport ("gdiplus.dll")]
@@ -203,6 +214,47 @@ namespace MonoTests.System.Drawing {
 				GdipDisposeImage (image);
 			}
 		}
+
+		// PathGradientBrush
+
+		[DllImport ("gdiplus.dll")]
+		static internal extern Status GdipCreatePathGradient (PointF[] points, int count, WrapMode wrapMode, out IntPtr brush);
+
+		[DllImport ("gdiplus.dll")]
+		static internal extern Status GdipGetPathGradientBlendCount (IntPtr brush, out int count);
+
+		[DllImport ("gdiplus.dll")]
+		static internal extern Status GdipGetPathGradientPresetBlend (IntPtr brush, int[] blend, float[] positions, int count);
+
+
+		[Test]
+		public void CreatePathGradient ()
+		{
+			PointF[] points = null;
+			IntPtr brush;
+			Assert.AreEqual (Status.OutOfMemory, GdipCreatePathGradient (points, 0, WrapMode.Clamp, out brush), "null");
+
+			points = new PointF [0];
+			Assert.AreEqual (Status.OutOfMemory, GdipCreatePathGradient (points, 0, WrapMode.Clamp, out brush), "empty");
+
+			points = new PointF[1];
+			Assert.AreEqual (Status.OutOfMemory, GdipCreatePathGradient (points, 1, WrapMode.Clamp, out brush), "one");
+
+			points = new PointF[2] { new PointF (1, 2), new PointF (20, 30) };
+			Assert.AreEqual (Status.Ok, GdipCreatePathGradient (points, 2, WrapMode.Clamp, out brush), "two");
+
+			int count;
+			Assert.AreEqual (Status.Ok, GdipGetPathGradientBlendCount (brush, out count), "GdipGetPathGradientBlendCount");
+			Assert.AreEqual (1, count, "blend count");
+
+			int[] colors = new int[count];
+			float[] positions = new float[count];
+			Assert.AreEqual (Status.InvalidParameter, GdipGetPathGradientPresetBlend (brush, colors, positions, count), "GdipGetPathGradientBlend");
+			// can't call that for 1 count!
+
+			Assert.AreEqual (Status.Ok, GdipDeleteBrush (brush), "GdipDeleteBrush");
+		}
+
 
 		// Region
 
