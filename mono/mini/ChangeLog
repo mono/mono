@@ -1,5 +1,7 @@
 2006-08-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* tramp-amd64.c (mono_arch_patch_callsite): Fix a warning.
+
 	* jit-icalls.c (mono_helper_compile_generic_method): Unbox vtypes since this is a
 	virtual call. Fixes #79010.
 
