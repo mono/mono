@@ -1,3 +1,8 @@
+2006-08-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c aot-runtime.c: Reorganize the file structure in the amd64 case so
+	that most data is now in the .rss/.data section.
+
 2006-08-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c: Correct the computation of the 'direct-calls' statistic.	
