@@ -1,3 +1,7 @@
+2006-08-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Pen.cs: Fix unit tests wrt libgdiplus return value change.
+
 2006-08-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* FontFamily.cs: Fix unit tests wrt libgdiplus return value change.

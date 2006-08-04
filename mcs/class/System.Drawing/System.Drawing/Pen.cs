@@ -299,10 +299,19 @@ namespace System.Drawing
                                 Status status = GDIPlus.GdipGetPenDashCount (nativeObject, out count);
 				GDIPlus.CheckStatus (status);
 
-				float [] pattern = new float [count];
-                                status = GDIPlus.GdipGetPenDashArray (nativeObject, pattern, count);
-				GDIPlus.CheckStatus (status);
-
+				float[] pattern;
+				// don't call GdipGetPenDashArray with a 0 count
+				if (count > 0) {
+					pattern = new float [count];
+	                                status = GDIPlus.GdipGetPenDashArray (nativeObject, pattern, count);
+					GDIPlus.CheckStatus (status);
+				} else if (DashStyle == DashStyle.Custom) {
+					// special case (not handled inside GDI+)
+					pattern = new float [1];
+					pattern[0] = 1.0f;
+				} else {
+					pattern = new float [0];
+				}
                                 return pattern;
                         }
 
