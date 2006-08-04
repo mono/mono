@@ -148,12 +148,17 @@ namespace System.Drawing.Drawing2D
 				GDIPlus.CheckStatus (status);
 
 				PointF [] points = new PointF [count];
-				status = GDIPlus.GdipGetPathPoints (nativePath, points, count); 
-				GDIPlus.CheckStatus (status);		      	
-
 				byte [] types = new byte [count];
-				status = GDIPlus.GdipGetPathTypes (nativePath, types, count);
-				GDIPlus.CheckStatus (status);
+
+				// status would fail if we ask points or types with a 0 count
+				// anyway that would only mean two unrequired unmanaged calls
+				if (count > 0) {
+					status = GDIPlus.GdipGetPathPoints (nativePath, points, count);
+					GDIPlus.CheckStatus (status);
+
+					status = GDIPlus.GdipGetPathTypes (nativePath, types, count);
+					GDIPlus.CheckStatus (status);
+				}
 
 				PathData pdata = new PathData ();
 				pdata.Points = points;
