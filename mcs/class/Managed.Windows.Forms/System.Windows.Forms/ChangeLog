@@ -1,3 +1,9 @@
+2006-08-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* PrintDialog.cs: Remove some redundant checks, add some others,
+	clean some code, and move the focus to the text boxes when the
+	values are incorrect.
+
 2006-08-04  Alexander Olk  <alex.olk@googlemail.com>
 
 	* FontDialog.cs: Remove Form.MinimumSize. It's not needed.

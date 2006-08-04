@@ -214,16 +214,20 @@ namespace System.Windows.Forms
 
 		protected override bool RunDialog (IntPtr hwnd)
 		{
-			if (Document == null && PrinterSettings == null)
-				throw new ArgumentException ("PrintDialog needs a Docouement or PrinterSettings object to display");
-
 			if (allow_some_pages && current_settings.FromPage > current_settings.ToPage)
 				throw new ArgumentException ("FromPage out of range");
 
-			if (allow_some_pages && current_settings != null) {
+			if (allow_some_pages) {
 				txtFrom.Text = current_settings.FromPage.ToString ();
 				txtTo.Text = current_settings.ToPage.ToString ();
 			}
+
+			if (current_settings.PrintRange == PrintRange.SomePages && allow_some_pages)
+				radio_pages.Checked = true;
+			else if (current_settings.PrintRange == PrintRange.Selection && allow_selection)
+				radio_sel.Checked = true;
+			else
+				radio_all.Checked = true;
 
 			updown_copies.Value = current_settings.Copies;
 			chkbox_collate.Enabled = (updown_copies.Value > 1) ? true : false;
@@ -242,58 +246,65 @@ namespace System.Windows.Forms
 			form.DialogResult = DialogResult.Cancel;
 		}
 
+		void ShowErrorMessage (string message, Control control_to_focus)
+		{
+			MessageBox.Show (message, "Print", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+			if (control_to_focus != null)
+				control_to_focus.Focus ();
+		}
+
 		private void OnClickOkButton (object sender, EventArgs e)
 		{
+			if (updown_copies.Text.Length < 1) {
+				ShowErrorMessage ("The 'Copies' value cannot be empty and must be a positive value.", 
+						updown_copies);
+				return;
+			}
+
 			int from = -1, to = -1;
 
-			if (allow_some_pages) {
-				if (radio_pages.Checked) {
-					try {
-						from = Int32.Parse (txtFrom.Text);
-						to = Int32.Parse (txtTo.Text);
-					}
-					catch {
-						MessageBox.Show ("From/To values should be numeric", "Print",
-								 MessageBoxButtons.OK, MessageBoxIcon.Warning);
-						return;
-					}
+			if (allow_some_pages && radio_pages.Checked) {
+				if (txtFrom.Text.Length < 1) {
+					ShowErrorMessage ("The 'From' value cannot be empty and must be a positive value.",
+							txtFrom);
+					return;
+				}
 
-					if (from > to) {
-						MessageBox.Show ("From value cannot be greater than To value", "Print",
-								 MessageBoxButtons.OK, MessageBoxIcon.Warning);
-						return;
-					}
-
-					if (to < current_settings.MinimumPage || to > current_settings.MaximumPage) {
-						MessageBox.Show ("To value is not within the page range\n" +
-								 "Enter a number between " + current_settings.MinimumPage +
-								 " and " + current_settings.MaximumPage, "Print",
-								 MessageBoxButtons.OK, MessageBoxIcon.Warning);
-						return;
-					}
-
-					if (from < current_settings.MinimumPage || from > current_settings.MaximumPage) {
-						txtTo.Focus ();
-						MessageBox.Show ("From value is not within the page range\n" +
-								 "Enter a number between " + current_settings.MinimumPage +
-								 " and " + current_settings.MaximumPage, "Print",
-								 MessageBoxButtons.OK, MessageBoxIcon.Warning);
-						return;
-					}
+				try {
+					from = Int32.Parse (txtFrom.Text);
+					to = Int32.Parse (txtTo.Text);
+				}
+				catch {
+					ShowErrorMessage ("From/To values should be numeric", txtFrom);
+					return;
+				}
+					
+				if (from > to) {
+					ShowErrorMessage ("'From' value cannot be greater than 'To' value.", txtFrom);
+					return;
+				}
+					
+				if (to < current_settings.MinimumPage || to > current_settings.MaximumPage) {
+					ShowErrorMessage ("'To' value is not within the page range\n" +
+							"Enter a number between " + current_settings.MinimumPage +
+							" and " + current_settings.MaximumPage + ".", txtTo);
+					return;
+				}
+					
+				if (from < current_settings.MinimumPage || from > current_settings.MaximumPage) {
+					ShowErrorMessage ("'From' value is not within the page range\n" +
+							"Enter a number between " + current_settings.MinimumPage +
+							" and " + current_settings.MaximumPage + ".", txtFrom);
+					return;
 				}
 			}
-
-			if (radio_all.Checked == true) {
+			
+			if (radio_all.Checked == true)
 				current_settings.PrintRange = PrintRange.AllPages;
-			} else {
-				if (radio_pages.Checked == true) {
-					current_settings.PrintRange = PrintRange.SomePages;
-				} else {
-					if (radio_sel.Checked == true) {
-						current_settings.PrintRange = PrintRange.Selection;
-					}
-				}
-			}
+			else if (radio_pages.Checked == true)
+				current_settings.PrintRange = PrintRange.SomePages;
+			else
+				current_settings.PrintRange = PrintRange.Selection;
 
 			current_settings.Copies = (short) updown_copies.Value;
 			if (current_settings.PrintRange == PrintRange.SomePages) {
@@ -454,6 +465,7 @@ namespace System.Windows.Forms
 			txtFrom.TabIndex = 25;
 			txtFrom.Location = new Point (120, 50);
 			txtFrom.Width = 40;
+			txtFrom.TextChanged += new EventHandler (OnPagesTextChanged);
 			group_box_range.Controls.Add (txtFrom);
 
 			labelTo = new Label ();
@@ -467,6 +479,7 @@ namespace System.Windows.Forms
 			txtTo.TabIndex = 27;
 			txtTo.Location = new Point (190, 50);
 			txtTo.Width = 40;
+			txtTo.TextChanged += new EventHandler (OnPagesTextChanged);
 			group_box_range.Controls.Add (txtTo);
 
 			chkbox_print = new CheckBox ();
@@ -528,6 +541,11 @@ namespace System.Windows.Forms
 			form.Controls.Add (accept_button);
 			form.Controls.Add (cancel_button);
 			form.ResumeLayout (false);
+		}
+
+		void OnPagesTextChanged (object sender, EventArgs args)
+		{
+			radio_pages.Checked = true;
 		}
 
 		private void OnPrinterSelectedIndexChanged (object sender,  System.EventArgs e)
