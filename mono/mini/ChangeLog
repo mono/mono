@@ -1,7 +1,9 @@
 2006-08-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c: Correct the computation of the 'direct-calls' statistic.	
+
 	* aot-compiler.c: Print the number of methods without GOT slots as a statistics.
-	
+
 	* aot-compiler.c aot-runtime.c tramp-amd64.c: Resurrect amd64 AOT support.
 
 	* tramp-amd64.c (mono_arch_patch_callsite): Fix a warning.
