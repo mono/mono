@@ -358,7 +358,10 @@ namespace System.Drawing
 					break;
 				}
 
-				case 24:
+				case 24: {
+					bmp = new Bitmap(bih.biWidth, biHeight, PixelFormat.Format24bppRgb);
+					break;
+				}
 				case 32: {	// 32bpp
 					bmp = new Bitmap(bih.biWidth, biHeight, PixelFormat.Format32bppArgb);
 					break;
@@ -387,7 +390,7 @@ namespace System.Drawing
 			
 			bmp.UnlockBits(bits);
 
-			bmp = new Bitmap(bmp);	// This makes a 32bpp image out of an indexed one
+			bmp = new Bitmap (bmp);// This makes a 32bpp image out of an indexed one
 
 			// Apply the mask to make properly transparent
 			bytesPerLine = (int)((((bih.biWidth) + 31) & ~31) >> 3);
@@ -479,7 +482,7 @@ namespace System.Drawing
 				ide.imageOffset = reader.ReadUInt32 ();
 				iconDir.idEntries [i] = ide;
 				//is this is the best fit??
-				if (!sizeObtained)   
+				if (!sizeObtained)
 					if (ide.height==height && ide.width==width) {
 						this.id = (ushort) i;
 						sizeObtained = true;
@@ -554,15 +557,17 @@ namespace System.Drawing
 				//Determine the XOR array Size
 				int xorSize = numBytesPerLine * iconHeight;
 				iidata.iconXOR = new byte [xorSize];
-				for (int i=0; i<xorSize; i++)
-					iidata.iconXOR[i] = bihReader.ReadByte();		
+				int nread = bihReader.Read (iidata.iconXOR, 0, xorSize);
+				if (nread != xorSize)
+					throw new Exception ("Short file");
 				
 				//Determine the AND array size
 				numBytesPerLine = (int)((((bih.biWidth) + 31) & ~31) >> 3);
 				int andSize = numBytesPerLine * iconHeight;
 				iidata.iconAND = new byte [andSize];
-				for (int i=0; i<andSize; i++)
-					iidata.iconAND[i] = bihReader.ReadByte();
+				nread = bihReader.Read (iidata.iconAND, 0, andSize);
+				if (nread != andSize)
+					throw new Exception ("Short file");
 				
 				imageData [j] = iidata;
 				bihReader.Close();
