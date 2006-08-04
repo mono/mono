@@ -1,5 +1,7 @@
 2006-08-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c aot-runtime.c tramp-amd64.c: Resurrect amd64 AOT support.
+
 	* tramp-amd64.c (mono_arch_patch_callsite): Fix a warning.
 
 	* jit-icalls.c (mono_helper_compile_generic_method): Unbox vtypes since this is a
