@@ -73,7 +73,7 @@ namespace System.Windows.Forms {
 		static volatile XplatUIX11	Instance;
 		private static int		RefCount;
 		private static object		XlibLock;		// Our locking object
-		private static bool		ThemesEnabled;
+		private static bool		themes_enabled;
 
 		// General X11
 		private static IntPtr		DisplayHandle;		// X11 handle to display
@@ -1896,7 +1896,15 @@ namespace System.Windows.Forms {
 
 				return new Rectangle(0, 0, attributes.width, attributes.height);
 			}
-		} 
+		}
+
+		internal override bool ThemesEnabled {
+			get {
+				return XplatUIX11.themes_enabled;
+			}
+		}
+ 
+
 		#endregion	// Public properties
 
 		#region Public Static Methods
@@ -1919,7 +1927,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void EnableThemes() {
-			ThemesEnabled = true;
+			themes_enabled = true;
 		}
 
 

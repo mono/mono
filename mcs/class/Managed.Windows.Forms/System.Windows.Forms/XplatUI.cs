@@ -260,6 +260,14 @@ namespace System.Windows.Forms {
 				return driver.WorkingArea;
 			}
 		}
+
+		public static bool ThemesEnabled {
+			get {
+				return XplatUI.driver.ThemesEnabled;
+			}
+		}
+ 
+
 		#endregion	// Public Static Properties
 
 		#region Events

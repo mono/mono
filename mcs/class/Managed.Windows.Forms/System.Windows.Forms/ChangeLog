@@ -1,3 +1,8 @@
+﻿2006-08-04  Jonathan Pobst <monkey@jpobst.com>
+	* XplatUI.cs, XplatUIDriver.cs, XplatUIOSX.cs, XplatUIWin32.cs,
+	  XplatUIX11.cs: Create property to allow access to existing private
+	  variable "themes_enabled"
+
 2006-08-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ImageListStreamer.cs: generate the MemoryStreams with the exact BMP

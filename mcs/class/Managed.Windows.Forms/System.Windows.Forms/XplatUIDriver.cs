@@ -136,6 +136,8 @@ namespace System.Windows.Forms {
 		internal abstract bool MouseWheelPresent { get; }
 		internal abstract Rectangle VirtualScreen { get; }
 		internal abstract Rectangle WorkingArea { get; }
+		internal abstract bool ThemesEnabled { get; }
+
 		#endregion	// XplatUI Driver Properties
 
                 internal abstract event EventHandler Idle;

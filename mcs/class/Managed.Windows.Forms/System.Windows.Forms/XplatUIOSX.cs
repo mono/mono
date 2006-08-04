@@ -51,7 +51,7 @@ namespace System.Windows.Forms {
 		// General driver variables
 		private static XplatUIOSX Instance;
 		private static int RefCount;
-		private static bool ThemesEnabled;
+		private static bool themes_enabled;
 		private static IntPtr FocusWindow;
 
 		// Mouse 
@@ -759,7 +759,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void EnableThemes() {
-			ThemesEnabled = true;
+			themes_enabled = true;
 		}
 
 		internal override void Activate(IntPtr handle) {
@@ -1847,6 +1847,13 @@ namespace System.Windows.Forms {
 				return new Rectangle ((int)bounds.origin.x, (int)bounds.origin.y, (int)bounds.size.width, (int)bounds.size.height);
 			}
 		}
+		internal override bool ThemesEnabled {
+			get {
+				return XplatUIOSX.themes_enabled;
+			}
+		}
+ 
+
 		#endregion
 		
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]

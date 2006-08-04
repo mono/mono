@@ -1042,6 +1042,14 @@ namespace System.Windows.Forms {
 				//return new Rectangle(0, 0, Win32GetSystemMetrics(SystemMetrics.SM.SM_CXSCREEN), Win32GetSystemMetrics(SystemMetrics.SM_CYSCREEN));
 			}
 		}
+
+		internal override bool ThemesEnabled {
+			get {
+				return XplatUIWin32.themes_enabled;
+			}
+		}
+ 
+
 		#endregion	// Static Properties
 
 		#region Singleton Specific Code
