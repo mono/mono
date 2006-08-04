@@ -1,3 +1,9 @@
+2006-08-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ImageListStreamer.cs: generate the MemoryStreams with the exact BMP
+	file size, as otherwise our class libraries fail using windows. Fixes
+	bug #78759.
+
 2006-08-04  Jackson Harper  <jackson@ximian.com>
 
 	* Form.cs:
@@ -15,6 +21,7 @@
 
 	* FontDialog.cs: Remove Form.MinimumSize. It's not needed.
 
+>>>>>>> .r63372
 2006-08-03  Alexander Olk  <alex.olk@googlemail.com>
 
 	* NumericUpDown.cs: Setting the Minimum and Maximum is now

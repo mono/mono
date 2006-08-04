@@ -85,14 +85,23 @@ namespace System.Windows.Forms {
 				ovls[i] = reader.ReadInt16 ();
 			}
 
+			byte [] decoded_buffer = decoded.GetBuffer ();
 			int bmp_offset = 28;
-			MemoryStream bmpms = new MemoryStream (decoded.GetBuffer (), bmp_offset, (int) decoded.Length - bmp_offset + 1);
+			// FileSize field from the bitmap file header
+			int filesize = decoded_buffer [bmp_offset + 2] + (decoded_buffer [bmp_offset + 3] << 8) +
+					(decoded_buffer [bmp_offset + 4] << 16) + (decoded_buffer [bmp_offset + 5] << 24);
+			// ImageSize field from the info header (can be 0)
+			int imagesize = decoded_buffer [bmp_offset + 34] + (decoded_buffer [bmp_offset + 35] << 8) +
+					(decoded_buffer [bmp_offset + 36] << 16) + (decoded_buffer [bmp_offset + 37] << 24);
+
+			int bmp_length = imagesize + filesize;
+			MemoryStream bmpms = new MemoryStream (decoded_buffer, bmp_offset, bmp_length);
 			Bitmap bmp = null;
 			Bitmap mask = null;
 			bmp = new Bitmap (bmpms);
-			MemoryStream mask_stream = new MemoryStream (decoded.GetBuffer (),
-							((int) bmpms.Position) + bmp_offset,
-							((int) decoded.Length) - (((int) bmpms.Position) + bmp_offset));
+			MemoryStream mask_stream = new MemoryStream (decoded_buffer,
+							bmp_offset + bmp_length,
+							(int) (decoded.Length - bmp_offset - bmp_length));
 
 			if (mask_stream.Length > 0)
 				mask = new Bitmap (mask_stream);
