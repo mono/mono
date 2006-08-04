@@ -1,3 +1,7 @@
+2006-08-04  Atsushi Enomoto <atsushi@ximian.com>
+
+	* 78985.xsd, 78985.xml : test for bug #78985.
+
 2006-07-25  Atsushi Enomoto <atsushi@ximian.com>
 
 	* inter-inc-1.xsd, inter-inc-2.xsd :

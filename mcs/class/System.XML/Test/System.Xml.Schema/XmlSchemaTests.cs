@@ -390,5 +390,21 @@ namespace MonoTests.System.Xml
 			tr.Close ();
 			AssertNotNull (inc.Schema);
 		}
+
+		[Test]
+		// bug #78985 (contains two identical field path "@key" in 
+		// two different keys where one is in scope within another)
+		public void DuplicateKeyFieldAttributePath ()
+		{
+			string schemaFileName = "Test/XmlFiles/xsd/78985.xsd";
+			string xmlFileName = "Test/XmlFiles/xsd/78985.xml";
+			XmlTextReader tr = new XmlTextReader (schemaFileName);
+
+			XmlValidatingReader vr = new XmlValidatingReader (
+				new XmlTextReader (xmlFileName));
+			vr.Schemas.Add (XmlSchema.Read (tr, null));
+			while (!vr.EOF)
+				vr.Read ();
+		}
 	}
 }

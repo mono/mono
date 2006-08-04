@@ -1,3 +1,10 @@
+2006-08-04  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XsdIdentityState.cs : Fixed bug #78985. If there are two identical
+	  field path "@key" in two different keys where one is in scope
+	  within another, it incorrectly matched the attribute whose name
+	  is same but in different element hierarchy (depth).
+
 2006-04-12  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaValidatingReader.cs : don't reject such XmlReader that

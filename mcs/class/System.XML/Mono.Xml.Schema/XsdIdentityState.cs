@@ -105,9 +105,11 @@ namespace Mono.Xml.Schema
 			return true;
 		}
 
-		// if (elementPath) check only elements; else only attributes.
+		// if matchesAttr then check attributes; otherwise check elements.
 		internal XsdIdentityPath Matches (bool matchesAttr, object sender, XmlNameTable nameTable, ArrayList qnameStack, string sourceUri, object schemaType, NSResolver nsResolver, IXmlLineInfo lineInfo, int depth, string attrName, string attrNS, object attrValue)
 		{
+			XsdIdentityPath matchedAttrPath = null;
+
 			for (int i = 0; i < field.Paths.Length; i++) {
 				XsdIdentityPath path = field.Paths [i];
 				bool isAttribute = path.IsAttribute;
@@ -123,14 +125,15 @@ namespace Mono.Xml.Schema
 					}
 					else if (step.Name == attrName && step.Namespace == attrNS)
 						match = true;
-					if (match) {
-						this.FillAttributeFieldValue (sender, nameTable, sourceUri, schemaType, nsResolver, attrValue, lineInfo, depth);
-						if (this.Identity != null)
-							return path;
-					}
+					if (!match)
+						continue;
+					// first -1 is to reduce attr path step, next -1 is to reduce Attribute's depth in XmlReader.
+					if (entry.StartDepth + (path.OrderedSteps.Length - 1) != depth - 1)
+						continue; // matched at different nest level
+					matchedAttrPath = path;
 				}
 				if (FieldFound && (depth > this.FieldFoundDepth && this.FieldFoundPath == path))
-					continue;
+					continue; // don't return; other fields might hit errorneously.
 
 				// Only "." hits.
 				if (path.OrderedSteps.Length == 0) {
@@ -169,7 +172,13 @@ namespace Mono.Xml.Schema
 				if (iter >= 0)	// i.e. did not match against the path.
 					continue;
 
-				return path;
+				if (!matchesAttr)
+					return path;
+			}
+			if (matchedAttrPath != null) {
+				this.FillAttributeFieldValue (sender, nameTable, sourceUri, schemaType, nsResolver, attrValue, lineInfo, depth);
+				if (this.Identity != null)
+					return matchedAttrPath;
 			}
 			return null;
 		}
@@ -177,10 +186,10 @@ namespace Mono.Xml.Schema
 		private void FillAttributeFieldValue (object sender, XmlNameTable nameTable, string sourceUri, object schemaType, NSResolver nsResolver, object identity, IXmlLineInfo lineInfo, int depth)
 		{
 			if (this.FieldFound)
-				throw new ValException ("The key value was already found."
-					+ (this.FieldHasLineInfo ?
-						String.Format (CultureInfo.InvariantCulture, " At line {0}, position {1}.", FieldLineNumber, FieldLinePosition) :
-						""),
+				throw new ValException (String.Format ("The key value was already found as '{0}'{1}.", Identity,
+					(this.FieldHasLineInfo ?
+						String.Format (CultureInfo.InvariantCulture, " at line {0}, position {1}", FieldLineNumber, FieldLinePosition) :
+						"")),
 					sender, sourceUri, entry.OwnerSequence.SourceSchemaIdentity, null);
 			XmlSchemaDatatype dt = schemaType as XmlSchemaDatatype;
 			XmlSchemaSimpleType st = schemaType as XmlSchemaSimpleType;
