@@ -28,6 +28,7 @@
 
 using System;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using NUnit.Framework;
@@ -63,6 +64,8 @@ namespace MonoTests.System.Drawing {
 	[TestFixture]
 	public class GDIPlusTest {
 
+		// FontFamily
+
 		[DllImport ("gdiplus.dll", CharSet=CharSet.Auto)]
 		internal static extern Status GdipCreateFontFamilyFromName (
 			[MarshalAs (UnmanagedType.LPWStr)] string fName, IntPtr collection, out IntPtr fontFamily);
@@ -81,6 +84,7 @@ namespace MonoTests.System.Drawing {
 
 			IntPtr font_family;
 			GdipCreateFontFamilyFromName ("Arial", IntPtr.Zero, out font_family);
+			Assert.IsTrue (font_family != IntPtr.Zero, "GdipCreateFontFamilyFromName");
 			Assert.AreEqual (Status.Ok, GdipDeleteFontFamily (font_family), "first");
 		}
 
@@ -96,6 +100,7 @@ namespace MonoTests.System.Drawing {
 			Assert.AreEqual (Status.Ok, GdipDeleteFontFamily (font_family), "second");
 		}
 
+		// Bitmap
 
 		[DllImport ("gdiplus.dll")]
 		internal static extern Status GdipCreateBitmapFromScan0 (int width, int height, int stride, PixelFormat format, IntPtr scan0, out IntPtr bmp);
@@ -107,6 +112,41 @@ namespace MonoTests.System.Drawing {
 			Assert.AreEqual (Status.InvalidParameter, GdipCreateBitmapFromScan0 (-1, 10, 10, PixelFormat.Format32bppArgb, IntPtr.Zero, out bmp), "negative width");
 		}
 
+		// GraphicsPath
+
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipCreatePath (FillMode brushMode, out IntPtr path);
+
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipGetPointCount (IntPtr path, out int count);
+
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipGetPathPoints (IntPtr path, [Out] PointF[] points, int count);
+
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipGetPathTypes (IntPtr path, [Out] byte[] types, int count);
+
+		[Test]
+		public void GetPointCount_Zero ()
+		{
+			IntPtr path;
+			Assert.AreEqual (Status.Ok, GdipCreatePath (FillMode.Alternate, out path), "GdipCreatePath");
+			Assert.IsTrue (path != IntPtr.Zero, "Handle");
+
+			int count;
+			Assert.AreEqual (Status.Ok, GdipGetPointCount (path, out count), "GdipGetPointCount");
+			Assert.AreEqual (0, count, "Count");
+
+			PointF[] points = new PointF[count];
+			Assert.AreEqual (Status.InvalidParameter, GdipGetPathPoints (path, points, count), "GdipGetPathPoints");
+			// can't get the points if the count is zero!
+
+			byte[] types = new byte[count];
+			Assert.AreEqual (Status.InvalidParameter, GdipGetPathTypes (path, types, count), "GdipGetPathTypes");
+			// can't get the types if the count is zero!
+		}
+
+		// Image
 
 		[DllImport ("gdiplus.dll")]
 		internal static extern Status GdipDisposeImage (IntPtr image);
@@ -163,6 +203,8 @@ namespace MonoTests.System.Drawing {
 				GdipDisposeImage (image);
 			}
 		}
+
+		// Region
 
 		[DllImport ("gdiplus.dll")]
 		static internal extern Status GdipCreateRegionRgnData (byte[] data, int size, out IntPtr region);

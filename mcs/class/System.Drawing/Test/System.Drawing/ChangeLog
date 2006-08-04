@@ -1,3 +1,7 @@
+2006-08-04  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* GDIPlusTest.cs: Some test cases for GraphicsPath related GDI+ calls.
+ 
 2006-08-03  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* GDIPlusTest.cs: More test cases for the GDI+ function calls (which
