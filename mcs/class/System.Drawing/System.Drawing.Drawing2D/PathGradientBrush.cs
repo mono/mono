@@ -168,10 +168,14 @@ namespace System.Drawing.Drawing2D {
 				int count;
 				Status status = GDIPlus.GdipGetPathGradientPresetBlendCount (nativeObject, out count);
 				GDIPlus.CheckStatus (status);
+
 				int [] intcolors = new int [count];
 				float [] positions = new float [count];
-				status = GDIPlus.GdipGetPathGradientPresetBlend (nativeObject, intcolors, positions, count);
-				GDIPlus.CheckStatus (status);
+				// status would fail if we ask points or types with a < 2 count
+				if (count > 1) {
+					status = GDIPlus.GdipGetPathGradientPresetBlend (nativeObject, intcolors, positions, count);
+					GDIPlus.CheckStatus (status);
+				}
 
 				ColorBlend interpolationColors = new ColorBlend ();
 				Color [] colors = new Color [count];
