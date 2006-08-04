@@ -21,7 +21,6 @@
 
 	* FontDialog.cs: Remove Form.MinimumSize. It's not needed.
 
->>>>>>> .r63372
 2006-08-03  Alexander Olk  <alex.olk@googlemail.com>
 
 	* NumericUpDown.cs: Setting the Minimum and Maximum is now
