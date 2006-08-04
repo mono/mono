@@ -85,7 +85,8 @@ namespace System.Runtime.Remoting.Messaging {
 			if (_callContext == null)
 				_callContext = new LogicalCallContext ();
 	
-			_methodBase = MethodBase.GetMethodFromHandle (msg.MethodHandle);
+			_methodBase = msg.GetMethod ();
+			
 			Init();
 
 			if (msg.PropertiesCount > 0)

@@ -1,3 +1,11 @@
+2006-08-04  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* MethodCall.cs, CADMessages.cs: Added missing unmarshalling case
+	  for IntPtr. When getting the method from the CAD message,
+	  check that the same declaring type is loaded in the target domain
+	  from the same assembly. If it is not, get the correct type and
+	  method for the domain.
+
 2006-05-31  Zoltan Varga  <vargaz@gmail.com>
 
 	* AsyncResult.cs: Add an 'object_data' field which has GC tracking.

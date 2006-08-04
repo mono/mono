@@ -33,6 +33,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
@@ -228,6 +229,7 @@ namespace System.Runtime.Remoting.Messaging {
 				case TypeCode.DateTime: return new DateTime (((DateTime)arg).Ticks);
 				default:
 					if (arg is TimeSpan) return new TimeSpan (((TimeSpan)arg).Ticks);
+					if (arg is IntPtr) return (IntPtr) arg;
 					break;
 			}	
 
@@ -280,6 +282,7 @@ namespace System.Runtime.Remoting.Messaging {
 		string _uri;
 		
 		internal RuntimeMethodHandle MethodHandle;
+		internal string FullTypeName;
 		
 		internal string Uri {
 			get {
@@ -298,6 +301,7 @@ namespace System.Runtime.Remoting.Messaging {
 		internal CADMethodCallMessage (IMethodCallMessage callMsg) {
 			_uri = callMsg.Uri;
 			MethodHandle = callMsg.MethodBase.MethodHandle;
+			FullTypeName = callMsg.MethodBase.DeclaringType.AssemblyQualifiedName;
 
 			ArrayList serializeList = null; 
 			
@@ -336,6 +340,29 @@ namespace System.Runtime.Remoting.Messaging {
 			get {
 				return _propertyCount;
 			}
+		}
+		
+		internal MethodBase GetMethod ()
+		{
+			MethodBase methodBase = MethodBase.GetMethodFromHandle (MethodHandle);
+			Type tt = Type.GetType (FullTypeName);
+			
+			if (tt != methodBase.DeclaringType) {
+				// The target domain has loaded the type from a different assembly.
+				// We need to locate the correct type and get the method from it
+				ParameterInfo[] pars = methodBase.GetParameters ();
+				Type[] signature = new Type [pars.Length];
+				for (int n=0; n<pars.Length; n++) {
+					// The parameter types may also be loaded from a different assembly, so we need
+					// to load them again
+					signature [n] = Type.GetType (pars [n].ParameterType.AssemblyQualifiedName, true);
+				}
+				MethodBase mb = tt.GetMethod (methodBase.Name, BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance, null, signature, null);
+				if (mb == null)
+					throw new RemotingException ("Method '" + methodBase.Name + "' not found in type '" + tt + "'");
+				return mb;
+			}
+			return methodBase;
 		}
 	}
 	
