@@ -29,6 +29,7 @@
 #if NET_2_0
 namespace System.Windows.Forms.VisualStyles
 {
+	[Flags]
 	public enum EdgeEffects
 	{
 		None = 0,

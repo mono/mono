@@ -207,6 +207,7 @@ namespace System.Windows.Forms.VisualStyles
 			return retval.ToRectangle ();
 		}
 
+		[System.Security.SuppressUnmanagedCodeSecurity]
 		public Region GetBackgroundRegion (IDeviceContext dc, Rectangle contentBounds)
 		{
 			if (dc == null)

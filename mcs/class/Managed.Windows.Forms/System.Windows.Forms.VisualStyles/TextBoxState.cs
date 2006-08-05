@@ -33,7 +33,7 @@ namespace System.Windows.Forms.VisualStyles
 	{
 		Normal = 1,
 		Hot = 2,
-		Pressed = 3,
+		Selected = 3,
 		Disabled = 4,
 		Readonly = 6,
 		Assist = 7
