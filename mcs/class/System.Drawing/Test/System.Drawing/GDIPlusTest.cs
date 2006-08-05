@@ -72,6 +72,25 @@ namespace MonoTests.System.Drawing {
 		UnitMillimeter = 6
 	}
 
+	[StructLayout (LayoutKind.Sequential, CharSet = CharSet.Auto)]
+	public class LOGFONT {
+		public int lfHeight = 0;
+		public int lfWidth = 0;
+		public int lfEscapement = 0;
+		public int lfOrientation = 0;
+		public int lfWeight = 0;
+		public byte lfItalic = 0;
+		public byte lfUnderline = 0;
+		public byte lfStrikeOut = 0;
+		public byte lfCharSet = 0;
+		public byte lfOutPrecision = 0;
+		public byte lfClipPrecision = 0;
+		public byte lfQuality = 0;
+		public byte lfPitchAndFamily = 0;
+		[MarshalAs (UnmanagedType.ByValTStr, SizeConst = 32)]
+		public string lfFaceName = null;
+	}
+
 	[TestFixture]
 	public class GDIPlusTest {
 
@@ -111,6 +130,58 @@ namespace MonoTests.System.Drawing {
 			Assert.AreEqual (Status.Ok, GdipDeleteFontFamily (font_family), "second");
 		}
 
+		// Font
+
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipCreateFont (IntPtr fontFamily, float emSize, FontStyle style, GraphicsUnit unit, out IntPtr font);
+
+		[DllImport ("gdiplus.dll", CharSet = CharSet.Auto)]
+		internal static extern Status GdipGetLogFont (IntPtr font, IntPtr graphics, [MarshalAs (UnmanagedType.AsAny), Out] object logfontA);
+
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipDeleteFont (IntPtr font);		
+
+		[Test]
+		public void CreateFont ()
+		{
+			IntPtr family;
+			GdipCreateFontFamilyFromName ("Arial", IntPtr.Zero, out family);
+			Assert.IsTrue (family != IntPtr.Zero, "family");
+
+			IntPtr font;
+			Assert.AreEqual (Status.Ok, GdipCreateFont (family, 10f, FontStyle.Regular, GraphicsUnit.Point, out font), "GdipCreateFont");
+			Assert.IsTrue (font != IntPtr.Zero, "font");
+
+			LOGFONT lf = new LOGFONT ();
+			lf.lfCharSet = 1;
+			Assert.AreEqual (Status.InvalidParameter, GdipGetLogFont (font, IntPtr.Zero, (object) lf), "GdipGetLogFont-null-graphics");
+			Assert.AreEqual (0, lf.lfCharSet, "lfCharSet-null-graphics");
+
+			IntPtr image;
+			GdipCreateBitmapFromScan0 (10, 10, 0, PixelFormat.Format32bppArgb, IntPtr.Zero, out image);
+			Assert.IsTrue (image != IntPtr.Zero, "image");
+
+			IntPtr graphics;
+			GdipGetImageGraphicsContext (image, out graphics);
+			Assert.IsTrue (graphics != IntPtr.Zero, "graphics");
+
+			lf.lfCharSet = 1;
+			Assert.AreEqual (Status.InvalidParameter, GdipGetLogFont (IntPtr.Zero, graphics, (object) lf), "GdipGetLogFont-null");
+			Assert.AreEqual (0, lf.lfCharSet, "lfCharSet-null");
+
+			lf.lfCharSet = 1;
+			Assert.AreEqual (Status.Ok, GdipGetLogFont (font, graphics, (object) lf), "GdipGetLogFont");
+			Assert.AreEqual (0, lf.lfCharSet, "lfCharSet");
+			// strangely this is 1 in the managed side
+
+			Assert.AreEqual (Status.Ok, GdipDeleteFont (font), "GdipDeleteFont");
+			Assert.AreEqual (Status.InvalidParameter, GdipDeleteFont (IntPtr.Zero), "GdipDeleteFont-null");
+
+			Assert.AreEqual (Status.Ok, GdipDeleteFontFamily (family), "GdipDeleteFontFamily");
+			Assert.AreEqual (Status.Ok, GdipDisposeImage (image), "GdipDisposeImage");
+			Assert.AreEqual (Status.Ok, GdipDeleteGraphics (graphics), "GdipDeleteGraphics");
+		}
+
 		// Bitmap
 
 		[DllImport ("gdiplus.dll")]
@@ -132,6 +203,33 @@ namespace MonoTests.System.Drawing {
 		public void DeleteBrush ()
 		{
 			Assert.AreEqual (Status.InvalidParameter, GdipDeleteBrush (IntPtr.Zero), "GdipDeleteBrush");
+		}
+
+		// Graphics
+
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipGetImageGraphicsContext (IntPtr image, out IntPtr graphics);
+
+		[DllImport ("gdiplus.dll")]
+		static internal extern Status GdipDeleteGraphics (IntPtr graphics);
+
+		[Test]
+		public void Graphics ()
+		{
+			IntPtr graphics;
+			Assert.AreEqual (Status.InvalidParameter, GdipGetImageGraphicsContext (IntPtr.Zero, out graphics), "GdipGetImageGraphicsContext");
+
+			IntPtr image;
+			GdipCreateBitmapFromScan0 (10, 10, 0, PixelFormat.Format32bppArgb, IntPtr.Zero, out image);
+			Assert.IsTrue (image != IntPtr.Zero, "image");
+
+			Assert.AreEqual (Status.Ok, GdipGetImageGraphicsContext (image, out graphics), "GdipGetImageGraphicsContext");
+			Assert.IsTrue (graphics != IntPtr.Zero, "graphics");
+
+			Assert.AreEqual (Status.Ok, GdipDeleteGraphics (graphics), "GdipDeleteGraphics");
+			Assert.AreEqual (Status.InvalidParameter, GdipDeleteGraphics (IntPtr.Zero), "GdipDeleteGraphics-null");
+
+			Assert.AreEqual (Status.Ok, GdipDisposeImage (image), "GdipDisposeImage");
 		}
 
 		// GraphicsPath
@@ -308,7 +406,8 @@ namespace MonoTests.System.Drawing {
 
 			float[] dash = new float[count];
 			Assert.AreEqual (Status.OutOfMemory, GdipGetPenDashArray (pen, dash, count), "GdipGetPenDashArray");
-			Assert.AreEqual (Status.InvalidParameter, GdipGetPenDashArray (IntPtr.Zero, dash, count), "GdipGetPenDashArray-null");
+			Assert.AreEqual (Status.InvalidParameter, GdipGetPenDashArray (IntPtr.Zero, dash, count), "GdipGetPenDashArray-null-pen");
+			Assert.AreEqual (Status.InvalidParameter, GdipGetPenDashArray (pen, null, count), "GdipGetPenDashArray-null-dash");
 
 			Assert.AreEqual (Status.Ok, GdipDeletePen (pen), "GdipDeletePen");
 			Assert.AreEqual (Status.InvalidParameter, GdipDeletePen (IntPtr.Zero), "GdipDeletePen-null");

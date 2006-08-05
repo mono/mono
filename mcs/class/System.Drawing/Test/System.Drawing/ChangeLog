@@ -1,3 +1,8 @@
+2006-08-05  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* GDIPlusTest.cs: Some test cases for Graphics and Font related GDI+ 
+	functions.
+
 2006-08-04  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* GDIPlusTest.cs: Some test cases for GraphicsPath, PathGradientBrush,
