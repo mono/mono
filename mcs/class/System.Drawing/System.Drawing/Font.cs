@@ -49,6 +49,8 @@ namespace System.Drawing
 		private float _size;
 
 		private const byte DefaultCharSet = 1;
+		private static int CharSetOffset = -1;
+		private static int FaceNameOffset = -1;
 
 		private void CreateFont (string familyName, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)
 		{
@@ -517,11 +519,10 @@ namespace System.Drawing
 
 		public override bool Equals (object obj)
 		{
-			if (! (obj is Font))
+			Font fnt = (obj as Font);
+			if (fnt == null)
 				return false;
-				
-			Font fnt = (Font) obj;			
-			
+
 			if (fnt.FontFamily.Equals (FontFamily) && fnt.Size == Size &&
 			    fnt.Style == Style && fnt.Unit == Unit &&
 			    fnt.GdiCharSet == GdiCharSet && 
@@ -639,8 +640,35 @@ namespace System.Drawing
 				throw new ArgumentNullException ("graphics");
 			}
 
-			if (Marshal.SizeOf(logFont) >= Marshal.SizeOf(typeof(LOGFONT))) {
-				GDIPlus.CheckStatus (GDIPlus.GdipGetLogFont(NativeObject, graphics.NativeObject, logFont));
+			Type lf = typeof (LOGFONT);
+			if (Marshal.SizeOf (logFont) >= Marshal.SizeOf (lf)) {
+				Status status = GDIPlus.GdipGetLogFont (NativeObject, graphics.NativeObject, logFont);
+
+				// lfCharSet is always 1 from S.D. (even on error) but GDI+ returns 0
+				if (CharSetOffset == -1) {
+					CharSetOffset = (int) Marshal.OffsetOf (lf, "lfCharSet");
+					FaceNameOffset = (int) Marshal.OffsetOf (lf, "lfFaceName");
+				}
+
+				// note: Marshal.WriteByte(object,*) methods are unimplemented on Mono
+				GCHandle gch = GCHandle.Alloc (logFont, GCHandleType.Pinned);
+				try {
+					IntPtr ptr = gch.AddrOfPinnedObject ();
+					// if status isn't Ok then everything (except lfCharSet and lfFaceName) 
+					// gets zeroized in managed code
+					if (status != Status.Ok) {
+						byte[] zero = new byte [FaceNameOffset];
+						Marshal.Copy (zero, 0, ptr, FaceNameOffset);
+					}
+					// set lfCharSet to 1 
+					Marshal.WriteByte (ptr, CharSetOffset, 1);
+				}
+				finally {
+					gch.Free ();
+				}
+
+				// now we can throw, if required
+				GDIPlus.CheckStatus (status);
 			}
 		}
 
