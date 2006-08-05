@@ -1,4 +1,7 @@
 ﻿2006-08-04  Jonathan Pobst <monkey@jpobst.com>
+	* Application.cs: Add 2.0 VisualStyles properties.
+
+2006-08-04  Jonathan Pobst <monkey@jpobst.com>
 	* XplatUI.cs, XplatUIDriver.cs, XplatUIOSX.cs, XplatUIWin32.cs,
 	  XplatUIX11.cs: Create property to allow access to existing private
 	  variable "themes_enabled"

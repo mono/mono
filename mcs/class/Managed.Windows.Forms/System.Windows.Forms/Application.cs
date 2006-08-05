@@ -38,6 +38,9 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
+#if NET_2_0
+using System.Windows.Forms.VisualStyles;
+#endif
 
 namespace System.Windows.Forms {
 	public sealed class Application {
@@ -141,6 +144,9 @@ namespace System.Windows.Forms {
 		private static InputLanguage		input_language		= InputLanguage.CurrentInputLanguage;
 		private static string			safe_caption_format	= "{1} - {0} - {2}";
 		private static ArrayList		message_filters		= new ArrayList();
+#if NET_2_0
+		private static VisualStyleState visual_style_state = VisualStyleState.ClientAndNonClientAreasEnabled;
+#endif
 
 		private Application () {
 		}
@@ -306,6 +312,35 @@ namespace System.Windows.Forms {
 				return key;
 			}
 		}
+
+#if NET_2_0
+		public static bool RenderWithVisualStyles {
+		      get {
+				if (VisualStyleInformation.IsSupportedByOS)
+				{
+					if (!VisualStyleInformation.IsEnabledByUser)
+						return false;
+				  
+					if (!XplatUI.ThemesEnabled)
+						return false;
+				  
+					if (Application.VisualStyleState == VisualStyleState.ClientAndNonClientAreasEnabled)
+						return true;
+				  
+					if (Application.VisualStyleState == VisualStyleState.ClientAreaEnabled)
+				  		return true;
+				}
+				
+				return false;
+		      }
+		}
+
+		public static VisualStyleState VisualStyleState {
+			get { return Application.visual_style_state; }
+			set { Application.visual_style_state = value; }
+		}
+#endif
+
 		#endregion
 
 		#region Public Static Methods
