@@ -570,6 +570,19 @@ namespace System
 			return IsWhiteSpace (str[index]);
 		}
 
+#if NET_2_0
+		public static bool TryParse (string s, out char result)
+		{
+			if (s == null || s.Length != 1) {
+				result = (char) 0;
+				return false;
+			}
+
+			result = s [0];
+			return true;
+		}
+#endif
+
 		public static char Parse (string str)
 		{
 			if (str == null) 

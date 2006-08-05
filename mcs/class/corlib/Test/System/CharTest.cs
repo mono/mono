@@ -463,6 +463,26 @@ public class CharTest : TestCase
 		Assert(c1.Equals(Char.Parse(s1)));
 	}	
 
+#if NET_2_0
+	public void TestTryParseValid ()
+	{
+		char c1 = 'a';
+		string s1 = "a";
+		char c2;
+
+		AssertEquals ("TryParse1", true, Char.TryParse (s1, out c2));
+		AssertEquals ("TryParse2", c2, c1);
+	}
+
+	public void TestTryParseInvalid ()
+	{
+		string s = "abc";
+		char c;
+		AssertEquals ("TryParse3", false, Char.TryParse (s, out c));
+		AssertEquals ("TryParse4", '\0', c);
+	}
+#endif
+	
 	public void TestToLower()
 	{
 		char a1 = 'a';

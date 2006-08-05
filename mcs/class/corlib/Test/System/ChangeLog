@@ -1,3 +1,8 @@
+2006-08-05  Duncan Mak  <duncan@novell.com>
+
+	* CharTest.cs (TestTryParseValid, TestTryParseInvalid): Added
+	tests for 2.0 method Char.TryParse.
+
 2006-07-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CharTest.cs : added tests for utf32 conversion methods.

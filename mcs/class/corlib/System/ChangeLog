@@ -1,3 +1,7 @@
+2006-08-05  Duncan Mak  <duncan@novell.com>
+
+	* Char.cs (TryParse): Implemented missing 2.0 method.
+
 2006-07-28  Jonathan Chambers  <joncham@gmail.com>
 
 	* __ComObject.cs: Added support for marshalling objects.
