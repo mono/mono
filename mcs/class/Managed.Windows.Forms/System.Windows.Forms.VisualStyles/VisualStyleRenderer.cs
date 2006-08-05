@@ -468,7 +468,7 @@ namespace System.Windows.Forms.VisualStyles
 
 		public void SetParameters (string className, int part, int state)
 		{
-			if (theme != IntPtr.Zero && theme != null)
+			if (theme != IntPtr.Zero)
 				last_hresult = UXTheme.CloseThemeData (theme);
 
 			if (!IsSupported)
