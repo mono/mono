@@ -1,5 +1,7 @@
 2006-08-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c (init_plt): Remove a redundant make_writable () call.
+
 	* aot-compiler.c aot-runtime.c: Reorganize the file structure in the amd64 case so
 	that most data is now in the .rss/.data section.
 
