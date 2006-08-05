@@ -1,3 +1,9 @@
+2006-08-05  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs (TypeContainer.AddPartial): Add check for partial declarations
+	with different type names.
+	(TypeContainer.UpdateTypeParameterConstraints): Updated an error message.
+
 2006-08-03  Raja R Harinath  <rharinath@novell.com>
 
 	Fix cs0146-3.cs and cs0146-4.cs.

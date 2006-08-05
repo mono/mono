@@ -575,6 +575,21 @@ namespace Mono.CSharp {
 				return tc;
 			}
 
+			if (tc.MemberName.IsGeneric) {
+				TypeParameter[] tc_names = tc.TypeParameters;
+				TypeParameterName[] part_names = nextPart.MemberName.TypeArguments.GetDeclarations ();
+
+				for (int i = 0; i < tc_names.Length; ++i) {
+					if (tc_names[i].Name == part_names[i].Name)
+						continue;
+
+					Report.SymbolRelatedToPreviousError (part_names[i].Location, "");
+					Report.Error (264, tc.Location, "Partial declarations of `{0}' must have the same type parameter names in the same order",
+						tc.GetSignatureForError ());
+					return tc;
+				}
+			}
+
 			if (tc.partial_parts == null)
 				tc.partial_parts = new ArrayList (1);
 
@@ -1302,22 +1317,21 @@ namespace Mono.CSharp {
 
 		bool UpdateTypeParameterConstraints ()
 		{
-			bool ok = true;
-			TypeParameter[] current_params = PartialContainer.CurrentTypeParameters;
-
 			if (constraints == null)
 				return true;
 
+			TypeParameter[] current_params = PartialContainer.CurrentTypeParameters;
 			for (int i = 0; i < current_params.Length; i++) {
 				if (!current_params [i].UpdateConstraints (this, constraints [i])) {
-					Report.Error (265, Location, "Partial declarations of `{0}' have " +
-						      "inconsistent constraints for type parameter `{1}'.",
-						      MemberName.GetTypeName (), current_params [i].Name);
-					ok = false;
+					Report.SymbolRelatedToPreviousError (Location, "");
+					Report.Error (265, PartialContainer.Location,
+						"Partial declarations of `{0}' have inconsistent constraints for type parameter `{1}'",
+						PartialContainer.GetSignatureForError (), current_params [i].Name);
+					return false;
 				}
 			}
 
-			return ok;
+			return true;
 		}
 
 		public bool ResolveType ()
