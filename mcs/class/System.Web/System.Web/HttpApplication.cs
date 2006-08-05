@@ -868,7 +868,7 @@ namespace System.Web {
 				if (context.Request.IsLocal)
 					ProcessError (new HttpException (404, String.Format ("File not found {0}", fnf.FileName), fnf));
 				else
-					ProcessError (new HttpException (404, "File not found", fnf));
+					ProcessError (new HttpException (404, "File not found: " + Path.GetFileName (fnf.FileName)));
 			} catch (DirectoryNotFoundException dnf){
 				ProcessError (new HttpException (404, "Directory not found", dnf));
 			} catch (Exception e) {
