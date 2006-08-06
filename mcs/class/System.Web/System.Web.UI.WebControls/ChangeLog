@@ -1,3 +1,7 @@
+2006-08-03 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* MultiView.cs: fixed: EnableTheming property
+
 2006-08-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Style.cs:

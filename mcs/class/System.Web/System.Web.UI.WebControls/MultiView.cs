@@ -123,15 +123,10 @@ namespace System.Web.UI.WebControls
 		}
 
 		[Browsable (true)]
-		[MonoTODO]
 		public virtual new bool EnableTheming
 		{
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return base.EnableTheming; }
+			set { base.EnableTheming = value; }
 		}
 		
 		[PersistenceMode (PersistenceMode.InnerDefaultProperty)]
