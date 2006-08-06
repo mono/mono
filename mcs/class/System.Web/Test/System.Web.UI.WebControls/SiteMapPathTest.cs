@@ -124,9 +124,8 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 		
 		[Test]
-                [Category ("NotWorking")]
-                public void SiteMapPath_DefaultNotWorkingProperties()
-                {
+		public void SiteMapPath_DefaultNotWorkingProperties()
+		{
 			PokerSiteMapPath p = new PokerSiteMapPath ();
 			Assert.AreEqual (" > ", p.PathSeparator, "PathSeparator");
 		}
@@ -210,7 +209,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]  
 		public void SiteMapPath_RenderProperty ()
 		{
 			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (DoTestPropertyRender)).Run ();
@@ -223,7 +221,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]  
 		public void SiteMapPath_RenderStyles ()
 		{
 			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (DoTestStylesRender)).Run ();
@@ -238,7 +235,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]  
 		public void SiteMapPath_DefaultRender()
 		{
 			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (DoTestDefaultRender)).Run ();
@@ -462,7 +458,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void SiteMapPath_SiteMapChildNode ()
 		{
 			new WebTest (PageInvoker.CreateOnLoad (InitializeItemPathSeparator)).Run ();

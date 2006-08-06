@@ -1,5 +1,14 @@
 2006-08-06 Vladimir Krasnov <vladimirk@mainsoft.com>
 
+	* CommandFieldTest.cs:
+	* GridViewRowCollectionTest.cs:
+	* MultiViewTest.cs:
+	* SiteMapPathTest.cs:
+	* ViewTest.cs: 
+	* XmlDataSourceTest.cs: removed NotWorking attributes
+
+2006-08-06 Vladimir Krasnov <vladimirk@mainsoft.com>
+
 	* ThemeTest.cs: fixed test resource
 
 2006-08-06 Vladimir Krasnov <vladimirk@mainsoft.com>

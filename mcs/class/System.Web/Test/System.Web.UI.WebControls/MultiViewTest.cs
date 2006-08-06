@@ -109,7 +109,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")] // NotImplementedException on Mono
 		public void MultiView_NotWorkingDefaultProperties ()
 		{
 			PokerMultiView pmw = new PokerMultiView ();
@@ -130,7 +129,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 
 		[Test]
-		[Category ("NotWorking")] // ActiveIndex property assigning fails to work in Mono
 		public void MultiView_ActiveIndex ()
 		{
 			PokerMultiView pmv = new PokerMultiView ();
@@ -146,7 +144,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 
 		[Test]
-		[Category ("NotWorking")] // SetActiveView method fails to work in Mono
 		public void MultiView_SetActiveView ()
 		{
 			PokerMultiView pmw = new PokerMultiView ();
@@ -159,7 +156,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")] // This test fails on side effect of set ActiveViewIndex 
 		public void MultiView_RemoveViewControlEvent ()
 		{
 			PokerMultiView pmv = new PokerMultiView ();
@@ -241,7 +237,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")] // This test fails on side effect of set ActiveViewIndex 
 		public void MultiView_ControlState ()
 		{
 			PokerMultiView pmv = new PokerMultiView ();
@@ -288,7 +283,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")] // This test fails on side effect of set ActiveViewIndex 
 		public void MultiView_OnBubbleEvent ()
 		{
 			Page myPage = new Page ();
@@ -319,7 +313,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")] // On setting a wrong index, the ArgumentOutOfRangeException exception must be thrown 
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void MultiView_IndexOutRange ()
 		{

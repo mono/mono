@@ -61,7 +61,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void GridViewRowCollection_DefaultPropertyNotWorking ()
 		{
 			GridViewRowCollection collection = new GridViewRowCollection (new ArrayList ());

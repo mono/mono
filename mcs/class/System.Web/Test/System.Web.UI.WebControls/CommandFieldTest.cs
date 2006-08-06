@@ -218,7 +218,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (NotSupportedException))]
 		public void CommandField_ValidateSupportsCallback ()
 		{

@@ -95,7 +95,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 				
 		[Test]
-		[Category ("NotWorking")] // View visible property bug in Mono: default is true instead of false
 		public void View_NotWorkingDefaultProperties ()
 		{
 			PokerView b = new PokerView ();
@@ -171,7 +170,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}		
 
 		[Test]
-		[Category ("NotWorking")] // On assigninging View visible property, an InvalidOperationException must be thrown: bug in Mono
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void View_Visible_Assign ()
 		{
