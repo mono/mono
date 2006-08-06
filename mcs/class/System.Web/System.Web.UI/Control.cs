@@ -141,9 +141,6 @@ namespace System.Web.UI
 			stateMask = ENABLE_VIEWSTATE | VISIBLE | AUTOID | BINDING_CONTAINER | AUTO_EVENT_WIREUP;
                         if (this is INamingContainer)
 				stateMask |= IS_NAMING_CONTAINER;
-#if NET_2_0
-			stateMask |= ENABLE_THEMING;
-#endif
                 }
 
 #if NET_2_0
@@ -1442,6 +1439,7 @@ namespace System.Web.UI
 #if NET_2_0
 
 		string skinId = string.Empty;
+		bool _enableTheming = true;
 		
 		[Browsable (false)]
 		[Themeable (false)]
@@ -1450,15 +1448,19 @@ namespace System.Web.UI
 		{
 			get
 			{
-				if ((stateMask & ENABLE_THEMING) == 0)
-					return false;
+				if ((stateMask & ENABLE_THEMING) != 0)
+					return _enableTheming;
 
 				if (_parent != null)
 					return _parent.EnableTheming;
 
 				return true;
 			}
-			set { SetMask (ENABLE_THEMING, value); }
+			set 
+			{ 
+				SetMask (ENABLE_THEMING, true);
+				_enableTheming = value;
+			}
 		}
 		
 		[Browsable (false)]
