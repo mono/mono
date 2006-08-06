@@ -71,6 +71,16 @@ namespace System.Drawing {
 				SystemColorsCache[(int)KnownColor.Window] = Color.FromArgbSystem (255, 255, 255, 255, "Window", KnownColor.Window);
 				SystemColorsCache[(int)KnownColor.WindowFrame] = Color.FromArgbSystem (255, 0, 0, 0, "WindowFrame", KnownColor.WindowFrame);
 				SystemColorsCache[(int)KnownColor.WindowText] = Color.FromArgbSystem (255, 0, 0, 0, "WindowText", KnownColor.WindowText);
+
+#if NET_2_0
+				SystemColorsCache [(int) KnownColor.ButtonFace] = Color.FromArgbSystem (255, 192, 192, 192, "ButtonFace", KnownColor.ButtonFace);
+				SystemColorsCache [(int) KnownColor.ButtonHighlight] = Color.FromArgbSystem (255, 255, 255, 255, "ButtonHighlight", KnownColor.ButtonHighlight);
+				SystemColorsCache [(int) KnownColor.ButtonShadow] = Color.FromArgbSystem (255, 128, 128, 128, "ButtonShadow", KnownColor.ButtonShadow);
+				SystemColorsCache [(int) KnownColor.GradientActiveCaption] = Color.FromArgbSystem (255, 16, 132, 208, "GradientActiveCaption", KnownColor.GradientActiveCaption);
+				SystemColorsCache [(int) KnownColor.GradientInactiveCaption] = Color.FromArgbSystem (255, 181, 181, 181, "GradientInactiveCaption", KnownColor.GradientInactiveCaption);
+				SystemColorsCache [(int) KnownColor.MenuBar] = Color.FromArgbSystem (255, 192, 192, 192, "MenuBar", KnownColor.MenuBar);
+				SystemColorsCache [(int) KnownColor.MenuHighlight] = Color.FromArgbSystem (255, 0, 0, 0, "MenuHighlight", KnownColor.MenuHighlight);
+#endif
 			}
 			else {
 				SystemColorsCache[(int)KnownColor.ActiveBorder] = FromNativeColor (awt.SystemColor.activeCaptionBorder, "ActiveBorder", KnownColor.ActiveBorder);
@@ -101,6 +111,16 @@ namespace System.Drawing {
 				SystemColorsCache[(int)KnownColor.Window] = FromNativeColor (awt.SystemColor.window, "Window", KnownColor.Window);
 				SystemColorsCache[(int)KnownColor.WindowFrame] = FromNativeColor (awt.SystemColor.windowBorder, "WindowFrame", KnownColor.WindowFrame);
 				SystemColorsCache[(int)KnownColor.WindowText] = FromNativeColor (awt.SystemColor.windowText, "WindowText", KnownColor.WindowText);
+
+#if NET_2_0
+				SystemColorsCache [(int) KnownColor.ButtonFace] = FromNativeColor (awt.SystemColor.control, "ButtonFace", KnownColor.ButtonFace);
+				SystemColorsCache [(int) KnownColor.ButtonHighlight] = FromNativeColor (awt.SystemColor.controlHighlight, "ButtonHighlight", KnownColor.ButtonHighlight);
+				SystemColorsCache [(int) KnownColor.ButtonShadow] = FromNativeColor (awt.SystemColor.controlShadow, "ButtonShadow", KnownColor.ButtonShadow);
+				SystemColorsCache [(int) KnownColor.GradientActiveCaption] = FromNativeColor (awt.SystemColor.activeCaption, "GradientActiveCaption", KnownColor.GradientActiveCaption);
+				SystemColorsCache [(int) KnownColor.GradientInactiveCaption] = FromNativeColor (awt.SystemColor.inactiveCaption, "GradientInactiveCaption", KnownColor.GradientInactiveCaption);
+				SystemColorsCache [(int) KnownColor.MenuBar] = FromNativeColor (awt.SystemColor.menu, "MenuBar", KnownColor.MenuBar);
+				SystemColorsCache [(int) KnownColor.MenuHighlight] = FromNativeColor (awt.SystemColor.menu, "MenuHighlight", KnownColor.MenuHighlight);
+#endif
 			}
 		}
 
@@ -292,5 +312,57 @@ namespace System.Drawing {
 				return SystemColorsCache[(int)KnownColor.WindowText];
 			}
 		}
+
+#if NET_2_0
+
+		static public Color ButtonFace
+		{	
+			get {
+				return SystemColorsCache [(int) KnownColor.ButtonFace];
+			}
+		}
+
+		static public Color ButtonHighlight
+		{	
+			get {
+				return SystemColorsCache [(int) KnownColor.ButtonHighlight];
+			}
+		}
+
+		static public Color ButtonShadow
+		{	
+			get {
+				return SystemColorsCache [(int) KnownColor.ButtonShadow];
+			}
+		}
+
+		static public Color GradientActiveCaption
+		{	
+			get {
+				return SystemColorsCache [(int) KnownColor.GradientActiveCaption];
+			}
+		}
+
+		static public Color GradientInactiveCaption
+		{	
+			get {
+				return SystemColorsCache [(int) KnownColor.GradientInactiveCaption];
+			}
+		}
+
+		static public Color MenuBar
+		{	
+			get {
+				return SystemColorsCache [(int) KnownColor.MenuBar];
+			}
+		}
+
+		static public Color MenuHighlight
+		{	
+			get {
+				return SystemColorsCache [(int) KnownColor.MenuHighlight];
+			}
+		}
+#endif
 	}
 }

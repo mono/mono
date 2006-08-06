@@ -18,6 +18,10 @@ namespace System.Drawing {
 		private readonly awt.Font _jFont;
 		private readonly byte _charset;
 
+#if NET_2_0
+		private string systemFontName;
+#endif
+
 		#endregion
 
 		internal awt.Font NativeObject {
@@ -114,8 +118,23 @@ namespace System.Drawing {
 			: this(familyName, emSize, style, unit, charSet, false) {
 		}
 		
-		public Font(string familyName, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)			 
-			:this(new FontFamily(familyName), emSize, style, unit, charSet, isVertical) {
+		public Font(string familyName, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)
+			: this (GetFontFamily (familyName), emSize, style, unit, charSet, isVertical) {
+		}
+
+		static FontFamily GetFontFamily (string familyName) {
+#if ONLY_1_1
+			if (familyName == null)
+				throw new ArgumentNullException ("familyName");
+#endif
+			// NOTE: If family name is null, empty or invalid,
+			// MS creates Microsoft Sans Serif font.
+			try {
+				return new FontFamily (familyName);
+			}
+			catch {
+				return FontFamily.GenericSansSerif;
+			}
 		}
 
 		#endregion
@@ -247,6 +266,31 @@ namespace System.Drawing {
 				return _gUnit;
 			}
 		}
+
+#if NET_2_0
+		[Browsable (false)]
+		public bool IsSystemFont {
+			get {
+				if (systemFontName == null)
+					return false;
+
+				return StringComparer.InvariantCulture.Compare (systemFontName, string.Empty) != 0;
+			}
+		}
+
+		[Browsable (false)]
+		public string SystemFontName {
+			get {
+				return systemFontName;
+			}
+		}
+
+		internal string SysFontName {
+			set {
+				systemFontName = value;
+			}
+		}
+#endif
 
 		#endregion
 		
