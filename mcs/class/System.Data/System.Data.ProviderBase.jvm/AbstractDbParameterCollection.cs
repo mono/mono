@@ -134,6 +134,16 @@ namespace System.Data.ProviderBase
 			return (DbParameter) _list [index];
 		}
 
+#if NET_2_0
+		protected override DbParameter GetParameter (string parameterName) {
+			return GetParameter (IndexOf (parameterName));
+		}
+
+		protected override void SetParameter (string parameterName, DbParameter value) {
+			SetParameter (IndexOf (parameterName), value);
+		}
+#endif
+
 		public override int IndexOf (object value) {
 			ValidateType (value);
 			return _list.IndexOf (value);

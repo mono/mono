@@ -40,7 +40,7 @@ using java.sql;
 
 namespace System.Data.ProviderBase
 {
-	public abstract class AbstractDataReader : DbDataReaderBase, ISafeDataRecord {
+	public abstract class AbstractDataReader : DbDataReader, ISafeDataRecord {
 
 		#region Fields
 
@@ -84,11 +84,8 @@ namespace System.Data.ProviderBase
 		#endregion // Fields
 
 		#region Constructors
-
-		protected AbstractDataReader() : base (CommandBehavior.Default) {
-		}
 		
-		public AbstractDataReader(AbstractDbCommand command): base(command.Behavior) {
+		protected AbstractDataReader(AbstractDbCommand command) {
 			_command = command;
 			if (_command.Connection != null) {
 				((AbstractDBConnection)_command.Connection).AddReference(this);
@@ -98,6 +95,10 @@ namespace System.Data.ProviderBase
 		#endregion // Constructors
 
 		#region Properties
+
+		public override int Depth {
+			get { return 0; }
+		}
 
 		public override bool HasRows {
 			get {
@@ -322,6 +323,12 @@ namespace System.Data.ProviderBase
 			_resultsMetaData = null;
 			_readerCache = null;
 			_isClosed = true;
+		}
+
+		public override IEnumerator GetEnumerator ()
+		{
+			bool closeReader = (Behavior & CommandBehavior.CloseConnection) != 0;
+			return new DbEnumerator (this , closeReader);
 		}
 
 		public override bool NextResult()

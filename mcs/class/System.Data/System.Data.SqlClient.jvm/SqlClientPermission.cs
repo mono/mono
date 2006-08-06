@@ -50,30 +50,27 @@ namespace System.Data.SqlClient {
 
 		#region Constructors
 
+#if NET_2_0
+		[ObsoleteAttribute ("SqlClientPermission() has been deprecated.  Use the SqlClientPermission(PermissionState.None) constructor.  http://go.microsoft.com/fwlink/?linkid=14202", true)]
+#endif
 		public SqlClientPermission ()
-			: this (PermissionState.None, false)
 		{
 		}
 
-		public SqlClientPermission (PermissionState state) 
-			: this (state, false)
+		public SqlClientPermission (PermissionState state) : base (state)
 		{
 		}
 
-		public SqlClientPermission (PermissionState state, bool allowBlankPassword) 
+#if NET_2_0
+		[ObsoleteAttribute ("SqlClientPermission(PermissionState state, Boolean allowBlankPassword) has been deprecated.  Use the SqlClientPermission(PermissionState.None) constructor.  http://go.microsoft.com/fwlink/?linkid=14202", true)]
+#endif
+		public SqlClientPermission (PermissionState state, bool allowBlankPassword) : base(state, allowBlankPassword)
 		{
-			AllowBlankPassword = allowBlankPassword;
 		}
 
 		#endregion // Constructors
 
 		#region Methods
-
-		protected override DBDataPermission CreateInstance ()
-		{
-			return (DBDataPermission) new SqlClientPermission ();
-		}
-
 		#endregion // Methods
 	}
 }

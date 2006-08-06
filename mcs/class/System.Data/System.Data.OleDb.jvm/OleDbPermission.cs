@@ -44,22 +44,22 @@ namespace System.Data.OleDb
 	{
 		#region Constructors
 
-		[MonoTODO]
+#if NET_2_0
+		[ObsoleteAttribute ("OleDbPermission() has been deprecated.  Use the OleDbPermission(PermissionState.None) constructor.  http://go.microsoft.com/fwlink/?linkid=14202", true)]
+#endif
 		public OleDbPermission ()
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public OleDbPermission (PermissionState state)
+		public OleDbPermission (PermissionState state) : base(state)
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public OleDbPermission (PermissionState state, bool allowBlankPassword)
+#if NET_2_0
+		[ObsoleteAttribute ("OleDbPermission() has been deprecated.  Use the OleDbPermission(PermissionState.None) constructor.  http://go.microsoft.com/fwlink/?linkid=14202", true)]
+#endif
+		public OleDbPermission (PermissionState state, bool allowBlankPassword) : base(state, allowBlankPassword)
 		{
-			throw new NotImplementedException ();
 		}
 
 		#endregion
