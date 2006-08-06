@@ -34,7 +34,7 @@
 
 using System.ComponentModel;
 using System.Data;
-#if NET_2_0
+#if NET_2_0 && !TARGET_JVM
 using System.Transactions;
 #endif
 
@@ -95,7 +95,7 @@ namespace System.Data.Common {
 
 		protected abstract DbCommand CreateDbCommand ();
 
-#if NET_2_0
+#if NET_2_0 && !TARGET_JVM
 		[MonoTODO]
 		public virtual void EnlistTransaction (Transaction transaction)
 		{
