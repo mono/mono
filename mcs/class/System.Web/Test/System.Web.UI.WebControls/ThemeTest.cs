@@ -56,6 +56,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 #if VISUAL_STUDIO
 			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.Theme1.skin", "App_Themes/Theme1/Theme1.skin");
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.WizardTest.skin", "App_Themes/Theme1/WizardTest.skin");
 			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PageWithStyleSheet.aspx", "PageWithStyleSheet.aspx");
 			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PageWithTheme.aspx", "PageWithTheme.aspx");
 			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.RunTimeSetTheme.aspx", "RunTimeSetTheme.aspx");
@@ -224,6 +225,67 @@ namespace MonoTests.System.Web.UI.WebControls
 		public static void SetThemeExeption (Page p)
 		{
 			p.Theme = "InvalidTheme1";
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void Theme_EnableTheming ()
+		{
+			
+			PageDelegates pd = new PageDelegates ();
+			pd.PreInit = new PageDelegate (SetTheme1);
+			pd.Load = new PageDelegate (Theme1Load);
+			PageInvoker pi = new PageInvoker (pd);
+
+			string page = new WebTest (pi).Run ();
+
+			Assert.IsTrue (page.IndexOf ("testing") < 0, "Theme_EnableTheming");
+		}
+		public static void Theme1Load (Page p)
+		{
+			Table t = new Table ();
+			TableRow tr = new TableRow ();
+			TableCell cell = new TableCell ();
+
+			cell.Controls.Add (new Button ());
+			tr.Cells.Add (cell);
+			t.Rows.Add (tr);
+
+			t.EnableTheming = false;
+			p.Form.Controls.Add (t);
+		}
+		public static void SetTheme1 (Page p)
+		{
+			p.Theme = "Theme1";
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void Theme_EnableThemingChild ()
+		{
+
+			PageDelegates pd = new PageDelegates ();
+			pd.PreInit = new PageDelegate (SetTheme1);
+			pd.Load = new PageDelegate (Theme1ChildLoad);
+			PageInvoker pi = new PageInvoker (pd);
+
+			string page = new WebTest (pi).Run ();
+
+			Assert.IsTrue (page.IndexOf ("testing") > 0, "Theme_EnableThemingChild");
+		}
+		public static void Theme1ChildLoad (Page p)
+		{
+			Table t = new Table ();
+			TableRow tr = new TableRow ();
+			TableCell cell = new TableCell ();
+
+			cell.Controls.Add (new Button ());
+			tr.Cells.Add (cell);
+			t.Rows.Add (tr);
+
+			t.EnableTheming = false;
+			cell.EnableTheming = true;
+			p.Form.Controls.Add (t);
 		}
 
 		[TestFixtureTearDown]
