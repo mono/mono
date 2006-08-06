@@ -1,4 +1,11 @@
 ﻿2006-08-04  Jonathan Pobst <monkey@jpobst.com>
+	* ButtonRenderer.cs, CheckBoxRenderer.cs, ComboBoxRenderer.cs
+	  GroupBoxRenderer.cs, ProfessionalColors.cs, ProfessionalColorTable.cs,
+	  ProgressBarRenderer.cs, RadioButtonRenderer.cs, ScrollBarRenderer.cs,
+	  TabRenderer.cs, TextBoxRenderer.cs, TextRenderer.cs, TrackBarRenderer.cs:
+	  Initial import of new 2.0 classes.
+
+2006-08-04  Jonathan Pobst <monkey@jpobst.com>
 	* Application.cs: Add 2.0 VisualStyles properties.
 
 2006-08-04  Jonathan Pobst <monkey@jpobst.com>
