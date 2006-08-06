@@ -66,6 +66,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			
 #else
 			WebTest.CopyResource (GetType (), "Theme1.skin", "App_Themes/Theme1/Theme1.skin");
+			WebTest.CopyResource (GetType (), "WizardTest.skin", "App_Themes/Theme1/WizardTest.skin");
 			WebTest.CopyResource (GetType (), "PageWithStyleSheet.aspx", "PageWithStyleSheet.aspx");
 			WebTest.CopyResource (GetType (), "PageWithTheme.aspx", "PageWithTheme.aspx");
 			WebTest.CopyResource (GetType (), "RunTimeSetTheme.aspx", "RunTimeSetTheme.aspx");
