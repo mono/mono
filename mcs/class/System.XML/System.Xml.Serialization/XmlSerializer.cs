@@ -505,6 +505,7 @@ namespace System.Xml.Serialization
 			throw new NotImplementedException ();
 		}
 
+#if !TARGET_JVM
 		public static Assembly GenerateSerializer (Type[] types, XmlMapping[] mappings)
 		{
 			return GenerateSerializer (types, mappings, null);
@@ -525,7 +526,8 @@ namespace System.Xml.Serialization
 			
 			return GenerateSerializers (batch, parameters);
 		}
-		
+#endif
+
 		[MonoTODO]
 		[Obsolete]
 		public static Assembly GenerateSerializer (Type[] types, 

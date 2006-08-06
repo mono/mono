@@ -625,7 +625,7 @@ namespace Mono.Xml.XPath
 			XPathNavigator parentNav = Clone ();
 			parentNav.MoveToParent ();
 
-			w.Closed += delegate (XmlWriter w) {
+			w.Closed += delegate (XmlWriter writer) {
 				XmlNode parent = start.ParentNode;
 				XmlNode next;
 				bool loop = true;
