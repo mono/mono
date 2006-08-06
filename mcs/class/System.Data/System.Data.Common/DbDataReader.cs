@@ -80,10 +80,10 @@ namespace System.Data.Common {
 			Dispose (true);	
 		}
 		
-		[MonoTODO]
 		protected virtual void Dispose (bool disposing)
 		{
-			throw new NotImplementedException ();
+			if (disposing)
+				Close ();
 		}
 #if NET_2_0
 		[MonoTODO]

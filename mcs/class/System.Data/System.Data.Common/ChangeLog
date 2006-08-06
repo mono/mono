@@ -1,3 +1,7 @@
+2006-08-06  Konstantin Triger <kostat@mainsoft.com>
+
+	* DbDataReader.cs: DbDataReader.Dipose(bool) - implemented.
+
 2006-07-17  Senganal T <tsenganal@novell.com>
 
 	* Index.cs :
