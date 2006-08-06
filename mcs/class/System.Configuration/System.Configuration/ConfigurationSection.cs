@@ -31,7 +31,9 @@
 using System.Collections;
 using System.Xml;
 using System.IO;
+#if !TARGET_JVM
 using System.Security.Cryptography.Xml;
+#endif
 
 namespace System.Configuration
 {
