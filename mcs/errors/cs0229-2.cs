@@ -1,32 +1,28 @@
-// cs0229.cs: Ambiguity between `IList.Count' and `ICounter.Count (int)'
-// Line: 30
+// cs0229-2.cs: Ambiguity between `IList.Test' and `ICounter.Test'
+// Line: 26
+
 using System;
 
-interface IList {
-	int Count { get; set; }
+delegate void Foo ();
+
+interface IList 
+{
+	event Foo Test;
 }
 
-interface ICounter {
-	void Count (int i);
+interface ICounter 
+{
+	event Foo Test;
 }
 
-interface IListCounter: IList, ICounter {}
+interface IListCounter: IList, ICounter
+{
+}
 
-
-class ListCounter : IListCounter {
-	int IList.Count {
-		get { Console.WriteLine ("int IList.Count.get"); return 1; }
-		set { Console.WriteLine ("int IList.Count.set"); }
-	}
-	
-	void ICounter.Count (int i)
+class Test
+{
+	static void Foo (IListCounter t)
 	{
-		Console.WriteLine ("int ICounter.Count (int i)");
-	}
-	
-	static void Main ()
-	{
-		IListCounter t = new ListCounter ();
-		t.Count = 1;
+		t.Test += null;
 	}
 }
