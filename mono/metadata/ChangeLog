@@ -1,3 +1,9 @@
+2006-08-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* metadata.c (mono_metadata_parse_method_signature_full): Applied patch from 
+	Roberto Costa (roberto.costa@st.com). Handle vararg signatures without SENTINEL
+	bytes. Fixes #78972.
+
 2006-08-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* filewatcher.c: we need to set errno here.
