@@ -2240,6 +2240,19 @@ namespace MonoTests.System.Xml
 			w.WriteEndElement ();
 			Assert.AreEqual (String.Format (@"<foo>{0}  <!--test-->{0}  <?PI ?>{0}  <child />{0}  <!--test-->STRING</foo>", Environment.NewLine), sw.ToString ());
 		}
+
+		[Test]
+		public void WriteBinHexAttribute () // for bug #79019
+		{
+			XmlWriter writer = new XmlTextWriter (TextWriter.Null);
+			writer.WriteStartElement ("test");
+			byte [] buffer1 = new byte [] {200, 155};
+			writer.WriteStartAttribute ("key", "");
+			writer.WriteBinHex (buffer1, 0, buffer1.Length);
+			writer.WriteEndAttribute ();
+			writer.WriteEndElement ();
+		}
+
 #if NET_2_0
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]

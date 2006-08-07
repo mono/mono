@@ -1,3 +1,7 @@
+2006-08-07  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextWriterTests.cs : test for #79019.
+
 2006-07-28  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextWriterTests.cs : added test case for comments, PIs and

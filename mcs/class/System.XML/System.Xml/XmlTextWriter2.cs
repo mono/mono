@@ -1187,7 +1187,7 @@ namespace Mono.Xml
 		{
 			CheckChunkRange (buffer, index, count);
 
-			ShiftStateContent ("BinHex", false);
+			ShiftStateContent ("BinHex", true);
 
 			XmlConvert.WriteBinHex (buffer, index, count, writer);
 		}
