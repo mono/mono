@@ -1,3 +1,9 @@
+2006-08-08  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Assembly.cs: On 2.0 profile, throw FileNotFoundException for
+	linked resources in GetManifestResourceStream when assembly is
+	loaded from byte array.
+
 2006-07-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* MonoMethod.cs (ContainsGenericParameters): Implement.

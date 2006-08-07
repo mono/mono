@@ -410,7 +410,15 @@ namespace MonoTests.System.Reflection
 				Assert.AreEqual ("readme.txt", resInfo.FileName, "#A6");
 				Assert.IsNull (resInfo.ReferencedAssembly, "#A7");
 				Assert.AreEqual ((ResourceLocation) 0, resInfo.ResourceLocation, "#A8");
+#if NET_2_0
+				try {
+					assembly.GetManifestResourceStream ("read");
+					Assert.Fail ("#A9");
+				} catch (FileNotFoundException) {
+				}
+#else
 				Assert.IsNull (assembly.GetManifestResourceStream ("read"), "#A9");
+#endif
 				try {
 					assembly.GetFile ("readme.txt");
 					Assert.Fail ("#A10");

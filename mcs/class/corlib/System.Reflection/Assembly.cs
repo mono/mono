@@ -272,7 +272,11 @@ namespace System.Reflection {
 				return info.ReferencedAssembly.GetManifestResourceStream (name);
 			if ((info.FileName != null) && (info.ResourceLocation == 0)) {
 				if (fromByteArray)
+#if NET_2_0
+					throw new FileNotFoundException (info.FileName);
+#else
 					return null;
+#endif
 
 				string filename = Path.Combine (Path.GetDirectoryName (Location),
 											info.FileName);
