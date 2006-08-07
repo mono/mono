@@ -41,7 +41,16 @@ memory_usage (MonoObject *this, GHashTable *visited)
 			break;
 
 		case MONO_TYPE_SZARRAY:
-			printf ("implement me\n");
+			{
+				int len, i;
+				mono_field_get_value (this, field, &value);
+				len = mono_array_length ((MonoArray *)value);
+				for (i = 0; i < len; i++){
+					MonoObject *item = mono_array_get ((MonoArray *) value, gpointer, i);
+					if (item != NULL)
+						total += memory_usage (item, visited);
+				}
+			}
 			break;
 			
 		case MONO_TYPE_I4:

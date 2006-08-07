@@ -20,4 +20,10 @@ class Demo {
 class DD {
     Demo d = new Demo ();
     object [] o = new object [10];
+    
+    public DD ()
+    {
+	    o [0] = new Demo ();
+	    o [5] = new Demo ();
+    }
 }
