@@ -70,65 +70,94 @@ Index: ecore.cs
 ===================================================================
 --- ecore.cs	(revision 63019)
 +++ ecore.cs	(working copy)
-@@ -4040,9 +4040,9 @@
+@@ -4011,6 +4011,7 @@
+ 	public class TemporaryVariable : Expression, IMemoryLocation
+ 	{
+ 		LocalInfo li;
++		Variable var;
+ 		
+ 		public TemporaryVariable (Type type, Location loc)
  		{
- 			ILGenerator ig = ec.ig;
+@@ -4030,62 +4031,45 @@
+ 				return null;
  			
+ 			AnonymousContainer am = ec.CurrentAnonymousMethod;
+-			if ((am != null) && am.IsIterator)
+-				ec.CaptureVariable (li);
++			if ((am != null) && am.IsIterator) {
++				var = ec.CaptureVariable (li);
++				type = var.Type;
++			}
+ 			
+ 			return this;
+ 		}
++
++		public Variable Variable {
++			get { return var != null ? var : li.Variable; }
++		}
+ 		
+ 		public override void Emit (EmitContext ec)
+ 		{
+-			ILGenerator ig = ec.ig;
+-			
 -			if (li.FieldBuilder != null) {
-+			if (li.Field != null) {
- 				ig.Emit (OpCodes.Ldarg_0);
+-				ig.Emit (OpCodes.Ldarg_0);
 -				ig.Emit (OpCodes.Ldfld, li.FieldBuilder);
-+				ig.Emit (OpCodes.Ldfld, li.Field.FieldBuilder);
- 			} else {
- 				ig.Emit (OpCodes.Ldloc, li.LocalBuilder);
- 			}
-@@ -4052,9 +4052,9 @@
+-			} else {
+-				ig.Emit (OpCodes.Ldloc, li.LocalBuilder);
+-			}
++			Variable.EmitInstance (ec);
++			Variable.Emit (ec);
+ 		}
+ 		
+ 		public void EmitLoadAddress (EmitContext ec)
  		{
- 			ILGenerator ig = ec.ig;
- 			
+-			ILGenerator ig = ec.ig;
+-			
 -			if (li.FieldBuilder != null) {
-+			if (li.Field != null) {
- 				ig.Emit (OpCodes.Ldarg_0);
+-				ig.Emit (OpCodes.Ldarg_0);
 -				ig.Emit (OpCodes.Ldflda, li.FieldBuilder);
-+				ig.Emit (OpCodes.Ldflda, li.Field.FieldBuilder);
- 			} else {
- 				ig.Emit (OpCodes.Ldloca, li.LocalBuilder);
- 			}
-@@ -4062,12 +4062,12 @@
+-			} else {
+-				ig.Emit (OpCodes.Ldloca, li.LocalBuilder);
+-			}
++			Variable.EmitInstance (ec);
++			Variable.EmitAddressOf (ec);
+ 		}
  		
  		public void Store (EmitContext ec, Expression right_side)
  		{
 -			if (li.FieldBuilder != null)
-+			if (li.Field != null)
- 				ec.ig.Emit (OpCodes.Ldarg_0);
- 			
+-				ec.ig.Emit (OpCodes.Ldarg_0);
+-			
++			Variable.EmitInstance (ec);
  			right_side.Emit (ec);
 -			if (li.FieldBuilder != null) {
 -				ec.ig.Emit (OpCodes.Stfld, li.FieldBuilder);
-+			if (li.Field != null) {
-+				ec.ig.Emit (OpCodes.Stfld, li.Field.FieldBuilder);
- 			} else {
- 				ec.ig.Emit (OpCodes.Stloc, li.LocalBuilder);
- 			}
-@@ -4075,15 +4075,15 @@
+-			} else {
+-				ec.ig.Emit (OpCodes.Stloc, li.LocalBuilder);
+-			}
++			Variable.EmitAssign (ec);
+ 		}
  		
  		public void EmitThis (EmitContext ec)
  		{
 -			if (li.FieldBuilder != null) {
-+			if (li.Field != null) {
- 				ec.ig.Emit (OpCodes.Ldarg_0);
- 			}
+-				ec.ig.Emit (OpCodes.Ldarg_0);
+-			}
++			Variable.EmitInstance (ec);
  		}
  		
- 		public void EmitStore (ILGenerator ig)
+-		public void EmitStore (ILGenerator ig)
++		public void EmitStore (EmitContext ec)
  		{
 -			if (li.FieldBuilder != null)
 -				ig.Emit (OpCodes.Stfld, li.FieldBuilder);
-+			if (li.Field != null)
-+				ig.Emit (OpCodes.Stfld, li.Field.FieldBuilder);
- 			else
- 				ig.Emit (OpCodes.Stloc, li.LocalBuilder);
+-			else
+-				ig.Emit (OpCodes.Stloc, li.LocalBuilder);
++			Variable.EmitAssign (ec);
  		}
+ 		
+ 		public void AddressOf (EmitContext ec, AddressOp mode)
 Index: class.cs
 ===================================================================
 --- class.cs	(revision 63019)
@@ -635,8 +664,8 @@ Index: cs-parser.jay
 +
 +		Location loc = (Location) $1;
 +		current_anonymous_method = new AnonymousMethod (
-+			current_anonymous_method, current_container, (Parameters) $2,
-+			(ToplevelBlock) top_current_block, loc);
++			current_anonymous_method, current_generic_method, current_container,
++			(Parameters) $2, (ToplevelBlock) top_current_block, loc);
 +	  }
  	  block
  	  {
@@ -872,10 +901,10 @@ Index: anonymous.cs
  
 -		protected AnonymousContainer (Parameters parameters, ToplevelBlock container,
 -					      ToplevelBlock block, Location l)
-+		protected AnonymousContainer (AnonymousContainer parent, TypeContainer host,
-+					      Parameters parameters, ToplevelBlock container,
-+					      Location l)
-+			: base (parent != null ? parent : host, null, 0, l)
++		protected AnonymousContainer (AnonymousContainer parent, GenericMethod generic,
++					      TypeContainer host, Parameters parameters,
++					      ToplevelBlock container, Location l)
++			: base (parent != null ? parent : host, parent != null ? null : generic, 0, l)
  		{
 +			ContainerAnonymousMethod = parent;
  			Parameters = parameters;
@@ -905,7 +934,7 @@ Index: anonymous.cs
 -			this (parameters, container, new ToplevelBlock (container, parameters, l), l)
 +		protected AnonymousContainer (TypeContainer host, Parameters parameters,
 +					      ToplevelBlock container, Location l)
-+			: this (null, host, parameters, container, l)
++			: this (null, null, host, parameters, container, l)
  		{
 +			Block = new ToplevelBlock (container, parameters, l);
 +			Block.SetHaveAnonymousMethods (l, this);
@@ -1034,10 +1063,10 @@ Index: anonymous.cs
 -		public AnonymousMethod (TypeContainer host, Parameters parameters, ToplevelBlock container,
 -					ToplevelBlock block, Location l)
 -			: base (parameters, container, block, l)
-+		public AnonymousMethod (AnonymousMethod parent, TypeContainer host,
-+					Parameters parameters, ToplevelBlock container,
-+					Location l)
-+			: base (parent, host, parameters, container, l)
++		public AnonymousMethod (AnonymousMethod parent, GenericMethod generic,
++					TypeContainer host, Parameters parameters,
++					ToplevelBlock container, Location l)
++			: base (parent, generic, host, parameters, container, l)
  		{
  			this.host = host;
  		}
@@ -1053,7 +1082,7 @@ Index: anonymous.cs
  		//
  		// Creates the host for the anonymous method
  		//
-@@ -247,30 +423,21 @@
+@@ -247,30 +423,22 @@
  		{
  			ComputeMethodHost ();
  
@@ -1076,9 +1105,9 @@ Index: anonymous.cs
  
 -			if (current_type != type_host)
 -				method_modifiers = Modifiers.INTERNAL;
--
--			if (current_type == type_host && ec.IsStatic){
 +			method_modifiers = (Scope != null) ? Modifiers.INTERNAL : Modifiers.PRIVATE;
+ 
+-			if (current_type == type_host && ec.IsStatic){
 +			if ((Scope == null) && ec.IsStatic)
  				method_modifiers |= Modifiers.STATIC;
 -				current_type = null;
@@ -1093,7 +1122,7 @@ Index: anonymous.cs
  			GenericMethod generic_method = null;
  			if (TypeParameters != null) {
  				TypeArguments args = new TypeArguments (loc);
-@@ -280,8 +447,7 @@
+@@ -280,8 +448,7 @@
  				member_name = new MemberName (name, args, loc);
  
  				generic_method = new GenericMethod (
@@ -1103,7 +1132,7 @@ Index: anonymous.cs
  					new TypeExpression (invoke_mb.ReturnType, loc),
  					Parameters);
  
-@@ -290,21 +456,12 @@
+@@ -290,21 +457,12 @@
  				member_name = new MemberName (name, loc);
  
  			method = new Method (
@@ -1127,7 +1156,7 @@ Index: anonymous.cs
  		}
  
  		void Error_ParameterMismatch (Type t)
-@@ -319,7 +476,7 @@
+@@ -319,7 +477,7 @@
  				return true;
  
  			MethodGroupExpr invoke_mg = Delegate.GetInvokeMethod (host.TypeBuilder, delegate_type, loc);
@@ -1136,7 +1165,7 @@ Index: anonymous.cs
  			ParameterData invoke_pd = TypeManager.GetParameterData (invoke_mb);
  
  			if (Parameters.Count != invoke_pd.Count)
-@@ -340,7 +497,7 @@
+@@ -340,7 +498,7 @@
  		{
  			if (anonymous_delegate != null)
  				return anonymous_delegate;
@@ -1145,7 +1174,7 @@ Index: anonymous.cs
  			//
  			// At this point its the first time we know the return type that is 
  			// needed for the anonymous method.  We create the method here.
-@@ -408,7 +565,7 @@
+@@ -408,7 +566,7 @@
  					}
  				}
  			}
@@ -1154,7 +1183,16 @@ Index: anonymous.cs
  			//
  			// Second: the return type of the delegate must be compatible with 
  			// the anonymous type.   Instead of doing a pass to examine the block
-@@ -439,42 +596,49 @@
+@@ -420,7 +578,7 @@
+ 			//ILGenerator ig = builder.GetILGenerator ();
+ 
+ 			aec = new EmitContext (ec.ResolveContext,
+-				ec.TypeContainer, ec.DeclContainer, loc, null,
++				ec.TypeContainer, this, loc, null,
+ 				invoke_mb.ReturnType,
+ 				/* REVIEW */ (ec.InIterator ? Modifiers.METHOD_YIELDS : 0) |
+ 				(ec.InUnsafe ? Modifiers.UNSAFE : 0) |
+@@ -439,42 +597,36 @@
  			return null;
  		}
  
@@ -1186,34 +1224,24 @@ Index: anonymous.cs
 -			}
 -		}
 -
- 		public MethodInfo GetMethodBuilder ()
+-		public MethodInfo GetMethodBuilder ()
++		public MethodInfo GetMethodBuilder (EmitContext ec)
  		{
  			MethodInfo builder = method.MethodBuilder;
-+			return builder;
-+
-+#if FIXME
- 			if (TypeArguments != null)
- 				return builder.MakeGenericMethod (TypeArguments);
+-			if (TypeArguments != null)
+-				return builder.MakeGenericMethod (TypeArguments);
 -			else
-+#endif
-+
-+			GenericMethod generic = ContainingBlock.Toplevel.GenericMethod;
-+			if (generic != null) {
-+				TypeParameter[] tparams = generic.TypeParameters;
-+				Type[] targs = new Type [tparams.Length];
-+				for (int i = 0 ; i < tparams.Length; i++)
-+					targs [i] = tparams [i].Type;
-+
-+				Type scope_type = builder.DeclaringType.MakeGenericType (targs);
-+
-+				MethodGroupExpr mg = (MethodGroupExpr) Expression.MemberLookup (
-+					scope_type, scope_type, builder.Name, loc);
-+				if (mg == null)
-+					throw new InternalErrorException ();
-+
-+				return (MethodInfo) mg.Methods [0];
-+			} else
++			if (Scope == null)
  				return builder;
++
++			Expression init = Scope.GetScopeInitializer (ec);
++			MethodGroupExpr mg = (MethodGroupExpr) Expression.MemberLookup (
++				ec.ContainerType, init.Type, builder.Name, loc);
++
++			if (mg == null)
++				throw new InternalErrorException ();
++
++			return (MethodInfo) mg.Methods [0];
  		}
  
 -		public override string GetSignatureForError ()
@@ -1225,7 +1253,7 @@ Index: anonymous.cs
  		public bool EmitMethod (EmitContext ec)
  		{
  			if (!CreateMethodHost (ec))
-@@ -497,50 +661,29 @@
+@@ -497,50 +649,29 @@
  			return true;
  		}
  
@@ -1292,7 +1320,7 @@ Index: anonymous.cs
  		}
  
  		public static void Error_AddressOfCapturedVar (string name, Location loc)
-@@ -549,6 +692,30 @@
+@@ -549,6 +680,30 @@
  				"Local variable `{0}' or its members cannot have their address taken and be used inside an anonymous method block",
  				name);
  		}
@@ -1323,7 +1351,7 @@ Index: anonymous.cs
  	}
  
  	//
-@@ -573,54 +740,122 @@
+@@ -573,54 +728,123 @@
  		
  		public override void Emit (EmitContext ec)
  		{
@@ -1350,8 +1378,10 @@ Index: anonymous.cs
 +
  			Expression ml = Expression.MemberLookup (ec.ContainerType, type, ".ctor", loc);
  			constructor_method = ((MethodGroupExpr) ml).Methods [0];
- 			delegate_method = am.GetMethodBuilder ();
-+			Report.Debug (64, "ANONYMOUS DELEGATE #1", constructor_method, delegate_method);
+-			delegate_method = am.GetMethodBuilder ();
++			delegate_method = am.GetMethodBuilder (ec);
++			Report.Debug (64, "ANONYMOUS DELEGATE #1", constructor_method, delegate_method,
++				      delegate_method.GetType ());
  			base.Emit (ec);
  		}
 +	}
@@ -1472,7 +1502,7 @@ Index: anonymous.cs
  	//
  	// Here we cluster all the variables captured on a given scope, we also
  	// keep some extra information that might be required on each scope.
-@@ -629,7 +864,6 @@
+@@ -629,13 +853,11 @@
  		public CaptureContext CaptureContext;
  		public ScopeInfo ParentScope;
  		public Block ScopeBlock;
@@ -1480,7 +1510,13 @@ Index: anonymous.cs
  		public bool HostsParameters = false;
  		
  		// For tracking the number of scopes created.
-@@ -643,22 +877,21 @@
+ 		public int id;
+ 		static int count;
+-		bool inited = false;
+ 		
+ 		ArrayList locals = new ArrayList ();
+ 		ArrayList children = new ArrayList ();
+@@ -643,40 +865,33 @@
  		//
  		// The types and fields generated
  		//
@@ -1512,7 +1548,30 @@ Index: anonymous.cs
  			id = count++;
  
  			cc.RegisterCaptureContext ();
-@@ -719,8 +952,6 @@
+ 		}
+ 
+-		public void AddLocal (LocalInfo li)
++		public Variable AddLocal (LocalInfo local)
+ 		{
+-			if (locals.Contains (li))
+-				return;
++			CapturedLocal cl = new CapturedLocal (this, local);
++			locals.Add (cl);
++			return cl;
++		}
+ 
+-			locals.Add (li);
+-}
+-	
+-		public bool IsCaptured (LocalInfo li)
+-		{
+-			return locals.Contains (li);
+-		}
+-		
+ 		internal void AddChild (ScopeInfo si)
+ 		{
+ 			if (children.Contains (si))
+@@ -719,8 +934,6 @@
  			Pad ();
  			Console.WriteLine ("START");
  			indent++;
@@ -1521,7 +1580,13 @@ Index: anonymous.cs
  			foreach (LocalInfo li in locals){
  				Pad ();
  				Console.WriteLine ("var {0}", MakeFieldName (li.Name));
-@@ -738,64 +969,104 @@
+@@ -733,45 +946,67 @@
+ 			Console.WriteLine ("END");
+ 		}
+ 
+-		private string MakeFieldName (string local_name)
++		protected string MakeFieldName (string local_name)
+ 		{
  			return "<" + id + ":" + local_name + ">";
  		}
  
@@ -1583,30 +1648,28 @@ Index: anonymous.cs
 +						"{0} and {1}", ParentScope, this);
  				}
  
--				if (ParentScope.ScopeTypeBuilder != ScopeTypeBuilder)
+ 				if (ParentScope.ScopeTypeBuilder != ScopeTypeBuilder)
 -					ParentLink = ScopeTypeBuilder.DefineField (
 -						"<>parent", ParentScope.ScopeType, FieldAttributes.Assembly);
-+				if ((ParentScope.CaptureContext.Host == CaptureContext.Host) &&
-+				    (ParentScope.ScopeTypeBuilder != ScopeTypeBuilder))
 +					ParentLink = new CapturedVariable (
 +						this, "<>parent", ParentScope.ScopeType);
  			}
- 			
+-			
 -			if (NeedThis && ParentScope != null)
 -				throw new Exception ("I was not expecting THIS && having a parent");
+ 
+-			foreach (LocalInfo info in locals)
+-				info.FieldBuilder = ScopeTypeBuilder.DefineField (
+-					MakeFieldName (info.Name), info.VariableType, FieldAttributes.Assembly);
++#if FIXME
 +			foreach (LocalInfo info in locals) {
 +				info.Field = new CapturedVariable (
 +					this, MakeFieldName (info.Name), info.VariableType);
 +			}
  
--			foreach (LocalInfo info in locals)
--				info.FieldBuilder = ScopeTypeBuilder.DefineField (
--					MakeFieldName (info.Name), info.VariableType, FieldAttributes.Assembly);
--
-+#if FIXME
  			if (HostsParameters){
  				Hashtable captured_parameters = CaptureContext.captured_parameters;
- 				
+@@ -779,101 +1014,42 @@
  				foreach (DictionaryEntry de in captured_parameters){
  					string name = (string) de.Key;
  					CapturedParameter cp = (CapturedParameter) de.Value;
@@ -1632,12 +1695,6 @@ Index: anonymous.cs
 +			foreach (ScopeInfo si in children) {
  				si.EmitScopeType (ec);
  			}
-+
-+#if FIXME
-+			if (NeedThis && ParentScope != null)
-+				throw new InternalErrorException (
-+					"I was not expecting THIS && having a parent");
-+#endif
  		}
  
 -		public void CloseTypes ()
@@ -1646,82 +1703,81 @@ Index: anonymous.cs
 -			RootContext.RegisterCompilerGeneratedType (ScopeTypeBuilder);
 -			foreach (ScopeInfo si in children)
 -				si.CloseTypes ();
+-		}
+-
+-		//
+-		// Emits the initialization code for the scope
+-		//
+-		public void EmitInitScope (EmitContext ec)
+-		{
+-			ILGenerator ig = ec.ig;
+-
+-			if (inited)
+-				return;
+-
+-			if (ScopeConstructor == null)
+-				throw new Exception ("ScopeConstructor is null for" + this.ToString ());
+-			
+-			if (!CaptureContext.Host.IsIterator) {
+-				scope_instance = ig.DeclareLocal (ScopeType);
+-				ig.Emit (OpCodes.Newobj, ScopeConstructor);
+-				ig.Emit (OpCodes.Stloc, scope_instance);
 +			if (scope_instance == null) {
 +				scope_instance = new ScopeInitializer (this, loc);
 +				if (scope_instance.Resolve (ec) == null)
 +					throw new InternalErrorException ();
-+			}
-+
-+			return scope_instance;
- 		}
- 
- 		//
-@@ -805,15 +1076,19 @@
- 		{
- 			ILGenerator ig = ec.ig;
- 
-+			return;
-+
- 			if (inited)
- 				return;
- 
--			if (ScopeConstructor == null)
--				throw new Exception ("ScopeConstructor is null for" + this.ToString ());
-+			if (HelperClass == null)
-+				throw new InternalErrorException (
-+					"HelperClass is null for " + this.ToString ());
- 			
-+#if FIXME
- 			if (!CaptureContext.Host.IsIterator) {
- 				scope_instance = ig.DeclareLocal (ScopeType);
--				ig.Emit (OpCodes.Newobj, ScopeConstructor);
-+				ig.Emit (OpCodes.Newobj, HelperClass.Constructor);
- 				ig.Emit (OpCodes.Stloc, scope_instance);
  			}
  
-@@ -825,8 +1100,9 @@
- 					ig.Emit (OpCodes.Ldloc, scope_instance);
- 					ig.Emit (OpCodes.Ldarg_0);
- 				}
+-			if (THIS != null){
+-				if (CaptureContext.Host.IsIterator) {
+-					ig.Emit (OpCodes.Ldarg_0);
+-					ig.Emit (OpCodes.Ldarg_1);
+-				} else {
+-					ig.Emit (OpCodes.Ldloc, scope_instance);
+-					ig.Emit (OpCodes.Ldarg_0);
+-				}
 -				ig.Emit (OpCodes.Stfld, THIS);
-+				ig.Emit (OpCodes.Stfld, THIS.FieldBuilder);
- 			}
-+#endif
- 
- 			//
- 			// Copy the parameter values, if any
-@@ -840,9 +1116,9 @@
- 				foreach (DictionaryEntry de in captured_parameters){
- 					CapturedParameter cp = (CapturedParameter) de.Value;
- 
+-			}
+-
+-			//
+-			// Copy the parameter values, if any
+-			//
+-			int extra = ec.IsStatic ? 0 : 1;
+-			if (CaptureContext.Host.IsIterator)
+-				extra++;
+-			if (HostsParameters){
+-				Hashtable captured_parameters = CaptureContext.captured_parameters;
+-				
+-				foreach (DictionaryEntry de in captured_parameters){
+-					CapturedParameter cp = (CapturedParameter) de.Value;
+-
 -					EmitScopeInstance (ig);
-+					EmitScopeInstance (ec);
- 					ParameterReference.EmitLdArg (ig, cp.Idx + extra);
+-					ParameterReference.EmitLdArg (ig, cp.Idx + extra);
 -					ig.Emit (OpCodes.Stfld, cp.FieldBuilder);
-+					ig.Emit (OpCodes.Stfld, cp.Field.FieldBuilder);
- 				}
- 			}
- 
-@@ -855,25 +1131,25 @@
- 					// Only emit initialization in our capturecontext world
- 					//
- 					if (ParentScope.CaptureContext == CaptureContext){
+-				}
+-			}
+-
+-			if (ParentScope != null){
+-				if (!ParentScope.inited)
+-					ParentScope.EmitInitScope (ec);
+-
+-				if (ParentScope.ScopeTypeBuilder != ScopeTypeBuilder) {
+-					//
+-					// Only emit initialization in our capturecontext world
+-					//
+-					if (ParentScope.CaptureContext == CaptureContext){
 -						EmitScopeInstance (ig);
 -						ParentScope.EmitScopeInstance (ig);
 -						ig.Emit (OpCodes.Stfld, ParentLink);
-+						EmitScopeInstance (ec);
-+						ParentScope.EmitScopeInstance (ec);
-+						ig.Emit (OpCodes.Stfld, ParentLink.FieldBuilder);
- 					} else {
+-					} else {
 -						EmitScopeInstance (ig);
-+						EmitScopeInstance (ec);
- 						ig.Emit (OpCodes.Ldarg_0);
+-						ig.Emit (OpCodes.Ldarg_0);
 -						ig.Emit (OpCodes.Stfld, ParentLink);
-+						ig.Emit (OpCodes.Stfld, ParentLink.FieldBuilder);
- 					}
- 				}
- 			}
- 			inited = true;
+-					}
+-				}
+-			}
+-			inited = true;
++			return scope_instance;
  		}
  
 -		public void EmitScopeInstance (ILGenerator ig)
@@ -1736,7 +1792,7 @@ Index: anonymous.cs
  					//
  					// This is needed if someone overwrites the Emit method
  					// of Statement and manually calls Block.Emit without
-@@ -882,16 +1158,9 @@
+@@ -882,16 +1058,9 @@
  					//   ec.EmitScopeInitFromBlock (The_Block);
  					//   The_Block.Emit (ec);
  					// 
@@ -1755,12 +1811,105 @@ Index: anonymous.cs
  			}
  		}
  
-@@ -935,6 +1204,205 @@
+@@ -935,6 +1104,310 @@
  
  			return sb.ToString ();
  		}
 +
-+		protected class ScopeInitializer : ExpressionStatement
++		protected class CapturedLocal : Variable {
++			public readonly ScopeInfo Scope;
++			public readonly LocalInfo Local;
++			public readonly Field Field;
++
++			public FieldExpr FieldInstance;
++
++			public CapturedLocal (ScopeInfo scope, LocalInfo local)
++			{
++				this.Scope = scope;
++				this.Local = local;
++				Field = new CapturedVariable (
++					scope, scope.MakeFieldName (local.Name), local.VariableType);
++			}
++
++			public override Type Type {
++				get { return Field.MemberType; }
++			}
++
++			public override bool NeedsTemporary {
++				get { return true; }
++			}
++
++			public override void EmitInstance (EmitContext ec)
++			{
++				ec.EmitCapturedVariableInstance (Local);
++			}
++
++			public override void Emit (EmitContext ec)
++			{
++				if (ec.capture_context == Scope.CaptureContext)
++					ec.ig.Emit (OpCodes.Ldfld, FieldInstance.FieldInfo);
++				else
++					ec.ig.Emit (OpCodes.Ldfld, Field.FieldBuilder);
++			}
++
++			public override void EmitAssign (EmitContext ec)
++			{
++				if (ec.capture_context == Scope.CaptureContext)
++					ec.ig.Emit (OpCodes.Stfld, FieldInstance.FieldInfo);
++				else
++					ec.ig.Emit (OpCodes.Stfld, Field.FieldBuilder);
++			}
++
++			public override void EmitAddressOf (EmitContext ec)
++			{
++				if (ec.capture_context == Scope.CaptureContext)
++					ec.ig.Emit (OpCodes.Ldflda, FieldInstance.FieldInfo);
++				else
++					ec.ig.Emit (OpCodes.Ldflda, Field.FieldBuilder);
++			}
++		}
++
++#if FIXME
++		protected class CapturedLocalInstance : Variable
++		{
++			public readonly LocalInfo LocalInfo;
++
++			public CapturedLocalInstance (LocalInfo local)
++			{
++				this.LocalInfo = local;
++			}
++
++			public override Type Type {
++				get { return LocalInfo.TheField.Type; }
++			}
++
++			public override bool NeedsTemporary {
++				get { return true; }
++			}
++
++			public override void EmitInstance (EmitContext ec)
++			{
++				ec.EmitCapturedVariableInstance (LocalInfo);
++			}
++
++			public override void Emit (EmitContext ec)
++			{
++				ec.ig.Emit (OpCodes.Ldfld, LocalInfo.TheField.FieldInfo);
++			}
++
++			public override void EmitAssign (EmitContext ec)
++			{
++				ec.ig.Emit (OpCodes.Stfld, LocalInfo.TheField.FieldInfo);
++			}
++
++			public override void EmitAddressOf (EmitContext ec)
++			{
++				ec.ig.Emit (OpCodes.Ldflda, LocalInfo.TheField.FieldInfo);
++			}
++		}
++#endif
++
++		protected sealed class ScopeInitializer : ExpressionStatement
 +		{
 +			ScopeInfo scope;
 +			TypeExpr scope_type;
@@ -1771,7 +1920,7 @@ Index: anonymous.cs
 +			Hashtable captured_params;
 +
 +			FieldExpr parent_field;
-+			Expression parent_init;
++			ExpressionStatement parent_init;
 +
 +			public ScopeInitializer (ScopeInfo scope, Location loc)
 +			{
@@ -1835,7 +1984,6 @@ Index: anonymous.cs
 +				}
 +
 +				if ((Scope.ParentScope != null) &&
-+				    (Scope.ParentScope.CaptureContext.Host == Scope.CaptureContext.Host) &&
 +				    (Scope.ParentScope.ScopeTypeBuilder != Scope.ScopeTypeBuilder)) {
 +					parent_field = (FieldExpr) Expression.MemberLookup (
 +						ec.ContainerType, type, "<>parent", loc);
@@ -1849,6 +1997,16 @@ Index: anonymous.cs
 +					parent_field.InstanceExpression = this;
 +					if (parent_field.ResolveLValue (ec, parent_init, loc) == null)
 +						throw new InternalErrorException ();
++				}
++
++				foreach (CapturedLocal local in Scope.locals) {
++					FieldExpr fe = (FieldExpr) Expression.MemberLookup (
++						ec.ContainerType, type, local.Field.Name, loc);
++					if (fe == null)
++						throw new InternalErrorException ();
++
++					fe.InstanceExpression = this;
++					local.FieldInstance = fe;
 +				}
 +
 +				//
@@ -1889,9 +2047,9 @@ Index: anonymous.cs
 +
 +						ec.ig.Emit (OpCodes.Ldarg_0);
 +
-+						// ec.ig.Emit (OpCodes.Neg);
-+						// ec.ig.Emit (OpCodes.Not);
-+						// ec.ig.Emit (OpCodes.Neg);
++						ec.ig.Emit (OpCodes.Neg);
++						ec.ig.Emit (OpCodes.Not);
++						ec.ig.Emit (OpCodes.Neg);
 +					}
 +				}
 +			}
@@ -1906,7 +2064,7 @@ Index: anonymous.cs
 +				initialized = true;
 +
 +				Report.Debug (64, "EMIT SCOPE INIT", this, id,
-+					      Scope, scope_instance, ec);
++					      Scope, IsIterator, scope_instance, ec);
 +
 +				ec.ig.Emit (OpCodes.Nop);
 +				ec.ig.Emit (OpCodes.Ldc_I4, id);
@@ -1941,9 +2099,12 @@ Index: anonymous.cs
 +				}
 +
 +				if (parent_field != null) {
-+					Report.Debug (64, "EMIT SCOPE INIT PARENT", this, Scope,
++					Report.Debug (64, "EMIT SCOPE INIT PARENT", this, id, Scope,
 +						      Scope.ParentScope, parent_init, parent_field, ec);
-+					parent_field.EmitAssign (ec, parent_init, false, false);
++					parent_init.EmitStatement (ec);
++					scope_instance.Emit (ec);
++					ec.ig.Emit (OpCodes.Ldarg_0);
++					ec.ig.Emit (OpCodes.Stfld, parent_field.FieldInfo);
 +				}
 +			}
 +
@@ -1961,7 +2122,7 @@ Index: anonymous.cs
  	}
  
  	//
-@@ -980,10 +1448,8 @@
+@@ -980,10 +1453,8 @@
  		{
  			cc_id = count++;
  			this.toplevel_owner = toplevel_owner;
@@ -1973,7 +2134,7 @@ Index: anonymous.cs
  		}
  
  		void DoPath (StringBuilder sb, CaptureContext cc)
-@@ -1034,13 +1500,19 @@
+@@ -1034,17 +1505,22 @@
  			ScopeInfo si = (ScopeInfo) scopes [block.ID];
  			if (si != null)
  				return si;
@@ -1985,16 +2146,49 @@ Index: anonymous.cs
  			scopes [block.ID] = si;
  			return si;
  		}
- 		
- 		public void AddLocal (AnonymousContainer am, LocalInfo li)
+-		
+-		public void AddLocal (AnonymousContainer am, LocalInfo li)
++
++		public Variable AddLocal (AnonymousContainer am, LocalInfo li)
  		{
+-			if (li.Block.Toplevel != toplevel_owner){
+-				ParentCaptureContext.AddLocal (am, li);
+-				return;
+-			}
 +			Report.Debug (64, "ADD LOCAL", this, li.Name, loc, li.Block,
 +				      li.Block.Toplevel, toplevel_owner);
 +
- 			if (li.Block.Toplevel != toplevel_owner){
- 				ParentCaptureContext.AddLocal (am, li);
- 				return;
-@@ -1093,27 +1565,32 @@
++			if (li.Block.Toplevel != toplevel_owner)
++				return ParentCaptureContext.AddLocal (am, li);
++
+ 			ScopeInfo scope = GetScopeForBlock (li.Block);
+ 
+ 			//
+@@ -1057,13 +1533,17 @@
+ 			// Adjust the user
+ 			//
+ 			am.RegisterScope (scope);
+-			
+-			if (captured_variables [li] != null)
+-				return;
+-			
++
++			Report.Debug (64, "ADD LOCAL #1", this, li.Name, scope);
++
++			Variable var = (Variable) captured_variables [li];
++			if (var == null) {
++				var = scope.AddLocal (li);
++				captured_variables.Add (li, var);
++			}
++
+ 			have_captured_vars = true;
+-			captured_variables [li] = li;
+-			scope.AddLocal (li);
++			return var;
+ 		}
+ 
+ 		//
+@@ -1093,27 +1573,32 @@
  		//
  		// Records the captured parameter at the appropriate CaptureContext
  		//
@@ -2035,18 +2229,27 @@ Index: anonymous.cs
  		}
  
  		//
-@@ -1164,6 +1641,10 @@
+@@ -1164,13 +1649,13 @@
  			}
  		}
  
+-		public bool IsCaptured (LocalInfo local)
 +		public bool NeedThis {
 +			get { return HaveCapturedFields || referenced_this; }
 +		}
 +
- 		public bool IsCaptured (LocalInfo local)
++		public Variable GetCapturedVariable (LocalInfo local)
  		{
- 			foreach (ScopeInfo si in scopes.Values){
-@@ -1188,45 +1669,36 @@
+-			foreach (ScopeInfo si in scopes.Values){
+-				if (si.IsCaptured (local))
+-					return true;
+-			}
+-			return false;
++			return (Variable) captured_variables [local];
+ 		}
+ 
+ 		//
+@@ -1188,45 +1673,26 @@
  
  		public void EmitAnonymousHelperClasses (EmitContext ec)
  		{
@@ -2072,20 +2275,15 @@ Index: anonymous.cs
  		}
  
 -		public void CloseAnonymousHelperClasses ()
-+#if FIXME
-+		protected void EmitInitScope (EmitContext ec)
- 		{
-+			EmitAnonymousHelperClasses (ec);
- 			if (roots.Count != 0)
- 				foreach (ScopeInfo root in roots)
--					root.CloseTypes ();
-+					root.EmitInitScope (ec);
- 		}
-+#endif
- 
--		public void EmitInitScope (EmitContext ec)
 +		public ExpressionStatement GetScopeInitializerForBlock (EmitContext ec, Block b)
  		{
+-			if (roots.Count != 0)
+-				foreach (ScopeInfo root in roots)
+-					root.CloseTypes ();
+-		}
+-
+-		public void EmitInitScope (EmitContext ec)
+-		{
 -			EmitAnonymousHelperClasses (ec);
 -			if (roots.Count != 0)
 -				foreach (ScopeInfo root in roots)
@@ -2109,8 +2307,13 @@ Index: anonymous.cs
  		}
  		
  		//
-@@ -1241,7 +1713,7 @@
+@@ -1239,12 +1705,18 @@
+ 			ILGenerator ig = ec.ig;
+ 			ScopeInfo si;
  
++			Report.Debug (64, "EMIT CAPTURED VARIABLE INSTANCE", this, li.Name,
++				      am, li.Block.Toplevel, toplevel_owner);
++
  			if (li.Block.Toplevel == toplevel_owner){
  				si = (ScopeInfo) scopes [li.Block.ID];
 -				si.EmitScopeInstance (ig);
@@ -2118,8 +2321,19 @@ Index: anonymous.cs
  				return;
  			}
  
-@@ -1254,13 +1726,14 @@
++			Report.Debug (64, "EMIT CAPTURED VARIABLE INSTANCE #1", this, li.Name,
++				      am, am.IsIterator, li.Block.Toplevel, toplevel_owner, am.Scope);
++
+ 			si = am.Scope;
+ 			ig.Emit (OpCodes.Ldarg_0);
+ 			if (si != null){
+@@ -1252,15 +1724,19 @@
+ 					return;
+ 				}
  
++			Report.Debug (64, "EMIT CAPTURED VARIABLE INSTANCE #2", this, li.Name,
++				      si, si.ParentLink, si.ScopeBlock, li.Block);
++
  				while (si.ScopeBlock.ID != li.Block.ID){
  					if (si.ParentLink != null)
 -						ig.Emit (OpCodes.Ldfld, si.ParentLink);
@@ -2136,7 +2350,7 @@ Index: anonymous.cs
  							si = si.ParentScope;
  						}
  
-@@ -1295,7 +1768,7 @@
+@@ -1295,7 +1771,7 @@
  
  			if (ec.CurrentBlock.Toplevel == toplevel_owner) {
  				si = (ScopeInfo) scopes [toplevel_owner.ID];
@@ -2145,7 +2359,7 @@ Index: anonymous.cs
  			} else {
  				si = ec.CurrentAnonymousMethod.Scope;
  				ig.Emit (OpCodes.Ldarg_0);
-@@ -1303,7 +1776,7 @@
+@@ -1303,7 +1779,7 @@
  
  			if (si != null){
  				while (si.ParentLink != null) {
@@ -2154,7 +2368,7 @@ Index: anonymous.cs
  					si = si.ParentScope;
  				} 
  			}
-@@ -1328,11 +1801,11 @@
+@@ -1328,11 +1804,11 @@
  				// FIXME: implementing this.
  				//
  			}
@@ -2168,7 +2382,7 @@ Index: anonymous.cs
  				temp.Store (ec);
  			}
  		}
-@@ -1357,10 +1830,10 @@
+@@ -1357,10 +1833,10 @@
  			source.Emit (ec);
  			if (leave_copy){
  				ig.Emit (OpCodes.Dup);
@@ -2181,7 +2395,7 @@ Index: anonymous.cs
  			if (temp != null)
  				temp.Emit (ec);
  		}
-@@ -1378,29 +1851,9 @@
+@@ -1378,29 +1854,9 @@
  			}
  			EmitParameterInstance (ec, name);
  			CapturedParameter par_info = (CapturedParameter) captured_parameters [name];
@@ -2212,7 +2426,7 @@ Index: anonymous.cs
  		public void RegisterCaptureContext ()
  		{
  			toplevel_owner.RegisterCaptureContext (this);
-@@ -1474,7 +1927,7 @@
+@@ -1474,7 +1930,7 @@
  			}
  			return parent;
  		}
@@ -2221,7 +2435,7 @@ Index: anonymous.cs
  		//
  		// Links all the scopes
  		//
-@@ -1483,11 +1936,13 @@
+@@ -1483,11 +1939,13 @@
  		{
  			if (linked)
  				return;
@@ -2236,7 +2450,7 @@ Index: anonymous.cs
  			int scope_count = scopes.Keys.Count;
  			ScopeInfo [] scope_list = new ScopeInfo [scope_count];
  			scopes.Values.CopyTo (scope_list, 0);
-@@ -1510,7 +1965,7 @@
+@@ -1510,7 +1968,7 @@
  			if (ParentCaptureContext != null && roots.Count != 0){
  				ScopeInfo one_root = (ScopeInfo) roots [0];
  				bool found = false;
@@ -2249,70 +2463,162 @@ Index: expression.cs
 ===================================================================
 --- expression.cs	(revision 63019)
 +++ expression.cs	(working copy)
-@@ -3443,7 +3443,7 @@
- 		{
- 			ILGenerator ig = ec.ig;
+@@ -3309,6 +3309,7 @@
+ 		bool is_readonly;
+ 		bool prepared;
+ 		LocalTemporary temp;
++		Variable variable;
  
--			if (local_info.FieldBuilder == null){
-+			if (local_info.Field == null){
- 				//
- 				// A local variable on the local CLR stack
- 				//
-@@ -3455,7 +3455,7 @@
- 				if (!prepared)
- 					ec.EmitCapturedVariableInstance (local_info);
- 				
--				ig.Emit (OpCodes.Ldfld, local_info.FieldBuilder);
-+				ig.Emit (OpCodes.Ldfld, local_info.Field.FieldBuilder);
+ 		public LocalVariableReference (Block block, string name, Location l)
+ 		{
+@@ -3363,20 +3364,18 @@
+ 			if (!VerifyAssigned (ec))
+ 				return null;
+ 
+-			if (ec.CurrentAnonymousMethod != null){
+-				//
+-				// If we are referencing a variable from the external block
+-				// flag it for capturing
+-				//
+-				if ((local_info.Block.Toplevel != ec.CurrentBlock.Toplevel) ||
+-				    ec.CurrentAnonymousMethod.IsIterator)
+-				{
+-					if (local_info.AddressTaken){
+-						AnonymousMethod.Error_AddressOfCapturedVar (local_info.Name, loc);
+-						return null;
+-					}
+-					ec.CaptureVariable (local_info);
++			//
++			// If we are referencing a variable from the external block
++			// flag it for capturing
++			//
++			if (ec.MustCaptureVariable (local_info)) {
++				if (local_info.AddressTaken){
++					AnonymousMethod.Error_AddressOfCapturedVar (local_info.Name, loc);
++					return null;
+ 				}
++
++				variable = ec.CaptureVariable (local_info);
++				type = variable.Type;
  			}
+ 
+ 			return this;
+@@ -3439,90 +3438,55 @@
+ 			return Name == lvr.Name && Block == lvr.Block;
+ 		}
+ 
++		public Variable Variable {
++			get { return variable != null ? variable : local_info.Variable; }
++		}
++
+ 		public override void Emit (EmitContext ec)
+ 		{
+-			ILGenerator ig = ec.ig;
+-
+-			if (local_info.FieldBuilder == null){
+-				//
+-				// A local variable on the local CLR stack
+-				//
+-				ig.Emit (OpCodes.Ldloc, local_info.LocalBuilder);
+-			} else {
+-				//
+-				// A local variable captured by anonymous methods.
+-				//
+-				if (!prepared)
+-					ec.EmitCapturedVariableInstance (local_info);
+-				
+-				ig.Emit (OpCodes.Ldfld, local_info.FieldBuilder);
+-			}
++			if (!prepared)
++				Variable.EmitInstance (ec);
++			Variable.Emit (ec);
  		}
  		
-@@ -3464,7 +3464,7 @@
+ 		public void Emit (EmitContext ec, bool leave_copy)
+ 		{
  			Emit (ec);
- 			if (leave_copy){
+-			if (leave_copy){
++			if (leave_copy) {
  				ec.ig.Emit (OpCodes.Dup);
 -				if (local_info.FieldBuilder != null){
-+				if (local_info.Field != null){
++				if (Variable.NeedsTemporary) {
  					temp = new LocalTemporary (Type);
  					temp.Store (ec);
  				}
-@@ -3476,7 +3476,7 @@
+ 			}
+ 		}
+-		
+-		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
++
++		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy,
++					bool prepare_for_load)
+ 		{
  			ILGenerator ig = ec.ig;
  			prepared = prepare_for_load;
  
 -			if (local_info.FieldBuilder == null){
-+			if (local_info.Field == null){
- 				//
- 				// A local variable on the local CLR stack
- 				//
-@@ -3501,7 +3501,7 @@
+-				//
+-				// A local variable on the local CLR stack
+-				//
+-				if (local_info.LocalBuilder == null)
+-					throw new Exception ("This should not happen: both Field and Local are null");
+-
+-				source.Emit (ec);
+-				if (leave_copy)
+-					ec.ig.Emit (OpCodes.Dup);
+-				ig.Emit (OpCodes.Stloc, local_info.LocalBuilder);
+-			} else {
+-				//
+-				// A local variable captured by anonymous methods or itereators.
+-				//
+-				ec.EmitCapturedVariableInstance (local_info);
+-
+-				if (prepare_for_load)
+-					ig.Emit (OpCodes.Dup);
+-				source.Emit (ec);
+-				if (leave_copy){
+-					ig.Emit (OpCodes.Dup);
++			Variable.EmitInstance (ec);
++			if (prepare_for_load)
++				ig.Emit (OpCodes.Dup);
++			source.Emit (ec);
++			if (leave_copy) {
++				ig.Emit (OpCodes.Dup);
++				if (Variable.NeedsTemporary) {
  					temp = new LocalTemporary (Type);
  					temp.Store (ec);
  				}
 -				ig.Emit (OpCodes.Stfld, local_info.FieldBuilder);
-+				ig.Emit (OpCodes.Stfld, local_info.Field.FieldBuilder);
- 				if (temp != null)
- 					temp.Emit (ec);
+-				if (temp != null)
+-					temp.Emit (ec);
  			}
-@@ -3511,7 +3511,7 @@
++			Variable.EmitAssign (ec);
++			if (temp != null)
++				temp.Emit (ec);
+ 		}
+ 		
+ 		public void AddressOf (EmitContext ec, AddressOp mode)
  		{
- 			ILGenerator ig = ec.ig;
- 
+-			ILGenerator ig = ec.ig;
+-
 -			if (local_info.FieldBuilder == null){
-+			if (local_info.Field == null){
- 				//
- 				// A local variable on the local CLR stack
- 				//
-@@ -3521,7 +3521,7 @@
- 				// A local variable captured by anonymous methods or iterators
- 				//
- 				ec.EmitCapturedVariableInstance (local_info);
+-				//
+-				// A local variable on the local CLR stack
+-				//
+-				ig.Emit (OpCodes.Ldloca, local_info.LocalBuilder);
+-			} else {
+-				//
+-				// A local variable captured by anonymous methods or iterators
+-				//
+-				ec.EmitCapturedVariableInstance (local_info);
 -				ig.Emit (OpCodes.Ldflda, local_info.FieldBuilder);
-+				ig.Emit (OpCodes.Ldflda, local_info.Field.FieldBuilder);
- 			}
+-			}
++			Variable.EmitInstance (ec);
++			Variable.EmitAddressOf (ec);
  		}
  
-@@ -3636,15 +3636,6 @@
+ 		public override string ToString ()
+@@ -3636,15 +3600,6 @@
  						par.Name);
  					return false;
  				}
@@ -2328,7 +2634,7 @@ Index: expression.cs
  			}
  
  			return true;
-@@ -3684,6 +3675,9 @@
+@@ -3684,6 +3639,9 @@
  			if (is_out && ec.DoFlowAnalysis && (!ec.OmitStructFlowAnalysis || !vi.TypeInfo.IsStruct) && !IsAssigned (ec, loc))
  				return null;
  
@@ -2338,7 +2644,7 @@ Index: expression.cs
  			return this;
  		}
  
-@@ -3694,6 +3688,9 @@
+@@ -3694,6 +3652,9 @@
  
  			SetAssigned (ec);
  
@@ -2348,7 +2654,7 @@ Index: expression.cs
  			return this;
  		}
  
-@@ -3742,8 +3739,8 @@
+@@ -3742,8 +3703,8 @@
  			ILGenerator ig = ec.ig;
  			int arg_idx = idx;
  
@@ -2359,7 +2665,7 @@ Index: expression.cs
  				return;
  			}
  
-@@ -3777,15 +3774,14 @@
+@@ -3777,15 +3738,14 @@
  		{
  			prepared = prepare_for_load;
  			if (ec.HaveCaptureInfo && ec.IsParameterCaptured (name)){
@@ -2378,7 +2684,7 @@ Index: expression.cs
  			if (!ec.MethodIsStatic)
  				arg_idx++;
  
-@@ -3818,7 +3814,7 @@
+@@ -3818,7 +3778,7 @@
  		public void AddressOf (EmitContext ec, AddressOp mode)
  		{
  			if (ec.HaveCaptureInfo && ec.IsParameterCaptured (name)){
@@ -2404,8 +2710,16 @@ Index: codegen.cs
  		// <summary>
  		//   Starts a new code branching.  This inherits the state of all local
  		//   variables and parameters from the current branching.
-@@ -624,11 +618,6 @@
+@@ -618,17 +612,12 @@
+ 			current_flow_branching = current_flow_branching.Parent;
+ 		}
+ 
+-		public void CaptureVariable (LocalInfo li)
++		public Variable CaptureVariable (LocalInfo li)
+ 		{
+-			capture_context.AddLocal (CurrentAnonymousMethod, li);
  			li.IsCaptured = true;
++			return capture_context.AddLocal (CurrentAnonymousMethod, li);
  		}
  
 -		public void CaptureParameter (string name, Type t, int idx)
@@ -2416,7 +2730,7 @@ Index: codegen.cs
  		public void CaptureThis ()
  		{
  			capture_context.CaptureThis (CurrentAnonymousMethod);
-@@ -664,19 +653,6 @@
+@@ -664,25 +653,14 @@
  		}
  
  		//
@@ -2436,7 +2750,17 @@ Index: codegen.cs
  		// Returns whether the `local' variable has been captured by an anonymous
  		// method
  		//
-@@ -691,6 +667,16 @@
+-		public bool IsCaptured (LocalInfo local)
++		public Variable GetCapturedVariable (LocalInfo local)
+ 		{
+-			return capture_context.IsCaptured (local);
++			if (capture_context != null)
++				return capture_context.GetCapturedVariable (local);
++			return null;
+ 		}
+ 
+ 		public bool IsParameterCaptured (string name)
+@@ -691,6 +669,25 @@
  				return capture_context.IsParameterCaptured (name);
  			return false;
  		}
@@ -2450,10 +2774,19 @@ Index: codegen.cs
 +			else
 +				return !block.Toplevel.IsLocalParameter (name);
 +		}
++
++		public bool MustCaptureVariable (LocalInfo local)
++		{
++			if (CurrentAnonymousMethod == null)
++				return false;
++			if (CurrentAnonymousMethod.IsIterator)
++				return true;
++			return local.Block.Toplevel != CurrentBlock.Toplevel;
++		}
  		
  		public void EmitMeta (ToplevelBlock b)
  		{
-@@ -788,7 +774,9 @@
+@@ -788,7 +785,9 @@
  				}
  			}
  
@@ -2464,7 +2797,7 @@ Index: codegen.cs
  			resolved = true;
  			return true;
  		}
-@@ -829,12 +817,6 @@
+@@ -829,12 +828,6 @@
  					ig.Emit (OpCodes.Ret);
  				}
  			}
@@ -2477,7 +2810,7 @@ Index: codegen.cs
  		}
  
  		/// <summary>
-@@ -1006,12 +988,12 @@
+@@ -1006,12 +999,12 @@
  				ScopeInfo si = CurrentAnonymousMethod.Scope;
  				while (si != null){
  					if (si.ParentLink != null)
@@ -2494,7 +2827,7 @@ Index: codegen.cs
  						break;
  					}
  					si = si.ParentScope;
-@@ -1030,21 +1012,6 @@
+@@ -1030,21 +1023,6 @@
  			
  			capture_context.EmitCapturedVariableInstance (this, li, CurrentAnonymousMethod);
  		}
@@ -2520,16 +2853,142 @@ Index: statement.cs
 ===================================================================
 --- statement.cs	(revision 63019)
 +++ statement.cs	(working copy)
-@@ -977,7 +977,7 @@
- 		//
- 		//
- 		public LocalBuilder LocalBuilder;
--		public FieldBuilder FieldBuilder;
-+		public Field Field;
+@@ -962,23 +962,31 @@
+ 		}
+ 	}
  
++	public abstract class Variable
++	{
++		public abstract Type Type {
++			get;
++		}
++
++		public abstract bool NeedsTemporary {
++			get;
++		}
++
++		public abstract void EmitInstance (EmitContext ec);
++
++		public abstract void Emit (EmitContext ec);
++
++		public abstract void EmitAssign (EmitContext ec);
++
++		public abstract void EmitAddressOf (EmitContext ec);
++	}
++
+ 	//
+ 	// The information about a user-perceived local variable
+ 	//
+ 	public class LocalInfo {
+ 		public Expression Type;
+ 
+-		//
+-		// Most of the time a variable will be stored in a LocalBuilder
+-		//
+-		// But sometimes, it will be stored in a field (variables that have been
+-		// hoisted by iterators or by anonymous methods).  The context of the field will
+-		// be stored in the EmitContext
+-		//
+-		//
+-		public LocalBuilder LocalBuilder;
+-		public FieldBuilder FieldBuilder;
+-
  		public Type VariableType;
  		public readonly string Name;
-@@ -1275,6 +1275,8 @@
+ 		public readonly Location Location;
+@@ -986,6 +994,11 @@
+ 
+ 		public VariableInfo VariableInfo;
+ 
++		Variable var;
++		public Variable Variable {
++			get { return var; }
++		}
++
+ 		[Flags]
+  		enum Flags : byte {
+  			Used = 1,
+@@ -1022,18 +1035,22 @@
+ 			Location = l;
+ 		}
+ 
+-		public void DeclareLocal (ILGenerator ig)
++		public void ResolveVariable (EmitContext ec)
+ 		{
+-			if (Pinned) {
+-				//
+-				// This is needed to compile on both .NET 1.x and .NET 2.x
+-				// the later introduced `DeclareLocal (Type t, bool pinned)'
+-				//
+-				LocalBuilder = TypeManager.DeclareLocalPinned (ig, VariableType);
+-				return;
++			var = ec.GetCapturedVariable (this);
++			if (var == null) {
++				LocalBuilder builder;
++				if (Pinned)
++					//
++					// This is needed to compile on both .NET 1.x and .NET 2.x
++					// the later introduced `DeclareLocal (Type t, bool pinned)'
++					//
++					builder = TypeManager.DeclareLocalPinned (ec.ig, VariableType);
++				else
++					builder = ec.ig.DeclareLocal (VariableType);
++
++				var = new LocalVariable (this, builder);
+ 			}
+-			if (!IsThis && !IsConstant)
+-				LocalBuilder = ig.DeclareLocal (VariableType);
+ 		}
+ 
+ 		public bool IsThisAssigned (EmitContext ec, Location loc)
+@@ -1185,6 +1202,46 @@
+ 				flags = value ? (flags | Flags.IsThis) : (flags & ~Flags.IsThis);
+ 			}
+ 		}
++
++		protected class LocalVariable : Variable
++		{
++			public readonly LocalInfo LocalInfo;
++			LocalBuilder builder;
++
++			public LocalVariable (LocalInfo local, LocalBuilder builder)
++			{
++				this.LocalInfo = local;
++				this.builder = builder;
++			}
++
++			public override Type Type {
++				get { return LocalInfo.VariableType; }
++			}
++
++			public override bool NeedsTemporary {
++				get { return false; }
++			}
++
++			public override void EmitInstance (EmitContext ec)
++			{
++				// Do nothing.
++			}
++
++			public override void Emit (EmitContext ec)
++			{
++				ec.ig.Emit (OpCodes.Ldloc, builder);
++			}
++
++			public override void EmitAssign (EmitContext ec)
++			{
++				ec.ig.Emit (OpCodes.Stloc, builder);
++			}
++
++			public override void EmitAddressOf (EmitContext ec)
++			{
++				ec.ig.Emit (OpCodes.Ldloca, builder);
++			}
++		}
+ 	}
+ 		
+ 	/// <summary>
+@@ -1275,6 +1332,8 @@
  		//
  		Block switch_block;
  
@@ -2538,7 +2997,7 @@ Index: statement.cs
  		protected static int id;
  
  		int this_id;
-@@ -1679,6 +1681,8 @@
+@@ -1679,6 +1738,8 @@
  			}
  		}
  
@@ -2547,31 +3006,62 @@ Index: statement.cs
  		/// <summary>
  		///   Emits the variable declarations and labels.
  		/// </summary>
-@@ -1794,7 +1798,10 @@
+@@ -1793,37 +1854,17 @@
+ 		//
  		public void EmitMeta (EmitContext ec)
  		{
- 			ILGenerator ig = ec.ig;
+-			ILGenerator ig = ec.ig;
 -			
-+
 +			if (ec.capture_context != null)
 +				scope_init = ec.capture_context.GetScopeInitializerForBlock (ec, this);
 +
  			if (variables != null){
- 				bool have_captured_vars = ec.HaveCapturedVariables ();
- 				
-@@ -1818,9 +1825,8 @@
- 				}
- 				foreach (LocalInfo vi in temporary_variables) {
- 					if (scope != null) {
+-				bool have_captured_vars = ec.HaveCapturedVariables ();
+-				
+-				foreach (DictionaryEntry de in variables){
+-					LocalInfo vi = (LocalInfo) de.Value;
+-
+-					if (have_captured_vars && ec.IsCaptured (vi))
+-						continue;
+-
+-					vi.DeclareLocal (ig);
+-				}
++				foreach (LocalInfo vi in variables.Values)
++					vi.ResolveVariable (ec);
+ 			}
+ 
+ 			if (temporary_variables != null) {
+-				AnonymousContainer am = ec.CurrentAnonymousMethod;
+-				TypeBuilder scope = null;
+-				if ((am != null) && am.IsIterator) {
+-					scope = am.Scope.ScopeTypeBuilder;
+-					if (scope == null)
+-						throw new InternalErrorException ();
+-				}
+-				foreach (LocalInfo vi in temporary_variables) {
+-					if (scope != null) {
 -						if (vi.FieldBuilder == null)
 -							vi.FieldBuilder = scope.DefineField (
 -								vi.Name, vi.VariableType, FieldAttributes.Assembly);
-+						if (vi.Field == null)
-+							throw new InternalErrorException ();
- 					} else
- 						vi.LocalBuilder = ig.DeclareLocal (vi.VariableType);
- 				}
-@@ -2039,7 +2045,8 @@
+-					} else
+-						vi.LocalBuilder = ig.DeclareLocal (vi.VariableType);
+-				}
++				foreach (LocalInfo vi in temporary_variables)
++					vi.ResolveVariable (ec);
+ 			}
+ 
+ 			if (children != null){
+@@ -2031,15 +2072,18 @@
+ 						string name = (string) de.Key;
+ 						LocalInfo vi = (LocalInfo) de.Value;
+ 
++#if FIXME
+ 						if (vi.LocalBuilder == null)
+ 							continue;
+ 
+ 						ec.DefineLocalVariable (name, vi.LocalBuilder);
++#endif
+ 					}
  				}
  			}
  			ec.Mark (StartLocation, true);
@@ -2581,7 +3071,7 @@ Index: statement.cs
  			DoEmit (ec);
  			ec.Mark (EndLocation, true); 
  
-@@ -2083,11 +2090,13 @@
+@@ -2083,11 +2127,13 @@
  		// Pointer to the host of this anonymous method, or null
  		// if we are the topmost block
  		//
@@ -2595,7 +3085,7 @@ Index: statement.cs
  		ArrayList children;
  
  		public bool HasVarargs {
-@@ -2110,16 +2119,33 @@
+@@ -2110,16 +2156,33 @@
  			capture_contexts [cc] = cc;
  		}
  
@@ -2634,7 +3124,7 @@ Index: statement.cs
  		public CaptureContext ToplevelBlockCaptureContext {
  			get { return capture_context; }
  		}
-@@ -2144,6 +2170,13 @@
+@@ -2144,6 +2207,13 @@
  			this (container, (Flags) 0, parameters, start)
  		{
  		}
@@ -2648,7 +3138,69 @@ Index: statement.cs
  		
  		public ToplevelBlock (Parameters parameters, Location start) :
  			this (null, (Flags) 0, parameters, start)
-@@ -3772,8 +3805,10 @@
+@@ -3299,7 +3369,7 @@
+ 			}
+ 
+ 			public abstract void Emit (EmitContext ec);
+-			public abstract void EmitExit (ILGenerator ig);
++			public abstract void EmitExit (EmitContext ec);
+ 		}
+ 
+ 		class ExpressionEmitter : Emitter {
+@@ -3313,14 +3383,14 @@
+ 				// Store pointer in pinned location
+ 				//
+ 				converted.Emit (ec);
+-				ec.ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
++				vi.Variable.EmitAssign (ec);
+ 			}
+ 
+-			public override void EmitExit (ILGenerator ig)
++			public override void EmitExit (EmitContext ec)
+ 			{
+-				ig.Emit (OpCodes.Ldc_I4_0);
+-				ig.Emit (OpCodes.Conv_U);
+-				ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
++				ec.ig.Emit (OpCodes.Ldc_I4_0);
++				ec.ig.Emit (OpCodes.Conv_U);
++				vi.Variable.EmitAssign (ec);
+ 			}
+ 		}
+ 
+@@ -3350,13 +3420,13 @@
+ 					return;
+ 
+ 				converted.Emit (ec);
+-				ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
++				vi.Variable.EmitAssign (ec);
+ 			}
+ 
+-			public override void EmitExit(ILGenerator ig)
++			public override void EmitExit (EmitContext ec)
+ 			{
+-				ig.Emit (OpCodes.Ldnull);
+-				ig.Emit (OpCodes.Stloc, pinned_string);
++				ec.ig.Emit (OpCodes.Ldnull);
++				ec.ig.Emit (OpCodes.Stloc, pinned_string);
+ 			}
+ 		}
+ 
+@@ -3554,13 +3624,11 @@
+ 			if (has_ret)
+ 				return;
+ 
+-			ILGenerator ig = ec.ig;
+-
+ 			//
+ 			// Clear the pinned variable
+ 			//
+ 			for (int i = 0; i < data.Length; i++) {
+-				data [i].EmitExit (ig);
++				data [i].EmitExit (ec);
+ 			}
+ 		}
+ 	}
+@@ -3772,22 +3840,24 @@
  				
  				ig.BeginCatchBlock (c.CatchType);
  
@@ -2659,16 +3211,26 @@ Index: statement.cs
  				if (c.Name != null){
  					vi = c.Block.GetLocalInfo (c.Name);
  					if (vi == null)
-@@ -3785,7 +3820,7 @@
- 						
- 						ec.EmitCapturedVariableInstance (vi);
+ 						throw new Exception ("Variable does not exist in this block");
+ 
+-					if (vi.IsCaptured){
++					if (vi.Variable.NeedsTemporary) {
+ 						LocalBuilder e = ig.DeclareLocal (vi.VariableType);
+ 						ig.Emit (OpCodes.Stloc, e);
+-						
+-						ec.EmitCapturedVariableInstance (vi);
++
++						vi.Variable.EmitInstance (ec);
  						ig.Emit (OpCodes.Ldloc, e);
 -						ig.Emit (OpCodes.Stfld, vi.FieldBuilder);
-+						ig.Emit (OpCodes.Stfld, vi.Field.FieldBuilder);
++						vi.Variable.EmitAssign (ec);
  					} else
- 						ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
+-						ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
++						vi.Variable.EmitAssign (ec);
  				} else
-@@ -4164,7 +4199,7 @@
+ 					ig.Emit (OpCodes.Pop);
+ 
+@@ -4164,7 +4234,7 @@
  
  			Type var_type = texpr.Type;
  
@@ -2677,3 +3239,30 @@ Index: statement.cs
  				Report.Error (446, expr.Location, "Foreach statement cannot operate on a `{0}'",
  					expr.ExprClassName);
  				return false;
+@@ -4220,7 +4290,7 @@
+ 			{
+ 				EmitThis (ec);
+ 				ec.ig.Emit (OpCodes.Ldc_I4_0);
+-				EmitStore (ec.ig);
++				EmitStore (ec);
+ 			}
+ 
+ 			public void Increment (EmitContext ec)
+@@ -4229,7 +4299,7 @@
+ 				Emit (ec);
+ 				ec.ig.Emit (OpCodes.Ldc_I4_1);
+ 				ec.ig.Emit (OpCodes.Add);
+-				EmitStore (ec.ig);
++				EmitStore (ec);
+ 			}
+ 		}
+ 
+@@ -4323,7 +4393,7 @@
+ 
+ 					lengths [i].EmitThis (ec);
+ 					((ArrayAccess) access).EmitGetLength (ec, i);
+-					lengths [i].EmitStore (ig);
++					lengths [i].EmitStore (ec);
+ 				}
+ 
+ 				for (int i = 0; i < rank; i++) {
