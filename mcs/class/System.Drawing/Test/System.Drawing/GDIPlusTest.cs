@@ -246,6 +246,9 @@ namespace MonoTests.System.Drawing {
 		[DllImport ("gdiplus.dll")]
 		internal static extern Status GdipGetPathTypes (IntPtr path, [Out] byte[] types, int count);
 
+		[DllImport ("gdiplus.dll")]                
+		internal static extern Status GdipDeletePath (IntPtr path);
+
 		[Test]
 		public void GetPointCount_Zero ()
 		{
@@ -264,6 +267,9 @@ namespace MonoTests.System.Drawing {
 			byte[] types = new byte[count];
 			Assert.AreEqual (Status.InvalidParameter, GdipGetPathTypes (path, types, count), "GdipGetPathTypes");
 			// can't get the types if the count is zero!
+
+			Assert.AreEqual (Status.Ok, GdipDeletePath (path), "GdipDeletePath");
+			Assert.AreEqual (Status.InvalidParameter, GdipDeletePath (IntPtr.Zero), "GdipDeletePath-null");
 		}
 
 		// Image
