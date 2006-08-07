@@ -1,3 +1,7 @@
+2006-08-07  Sebastien Pouliot  <sebatien@ximian.com>
+
+	* loader.c: Fix a typo (CID #233) in the null check.
+
 2006-08-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* appdomain.c (mono_domain_unload): Close the thread handle of the unload thread.
