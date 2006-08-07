@@ -1,3 +1,7 @@
+2006-08-07  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* X509Certificate2Test.cs: Added test for bug #78986.
+
 2006-04-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* X509EnhancedKeyUsageExtensionTest.cs,

@@ -1,3 +1,7 @@
+2006-08-07  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* System_test.dll.sources: Added X509Certificate2Test.cs.
+
 2006-07-14  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* System.dll.sources: Added System.ComponentModel/MaskedTextResultHint.cs
