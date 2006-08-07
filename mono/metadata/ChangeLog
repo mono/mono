@@ -1,5 +1,8 @@
 2006-08-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* appdomain.c (mono_domain_unload): Close the thread handle of the unload thread.
+	Hopefully fixes #78949.
+	
 	* metadata.c (mono_metadata_parse_method_signature_full): Applied patch from 
 	Roberto Costa (roberto.costa@st.com). Handle vararg signatures without SENTINEL
 	bytes. Fixes #78972.
