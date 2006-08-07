@@ -1,3 +1,8 @@
+2006-08-06  Duncan Mak  <duncan@novell.com>
+
+	* NumericUpDown.cs (Value): Don't call OnValueChanged if the value
+	is not changing.
+
 ﻿2006-08-04  Jonathan Pobst <monkey@jpobst.com>
 	* ButtonRenderer.cs, CheckBoxRenderer.cs, ComboBoxRenderer.cs
 	  GroupBoxRenderer.cs, ProfessionalColors.cs, ProfessionalColorTable.cs,

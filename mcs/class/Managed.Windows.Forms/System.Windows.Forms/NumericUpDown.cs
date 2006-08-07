@@ -260,11 +260,12 @@ namespace System.Windows.Forms {
 						throw new ArgumentException("NumericUpDown.Value must be within the specified Minimum and Maximum values", "value");
 					}
 				}
-
-				dvalue = value;
-				OnValueChanged(EventArgs.Empty);
-				UpdateEditText();
-			} 
+				if (value != dvalue) {
+					dvalue = value;
+					OnValueChanged(EventArgs.Empty);
+					UpdateEditText();
+				}
+			}
 		}
 		#endregion	// Public Instance Properties
 
