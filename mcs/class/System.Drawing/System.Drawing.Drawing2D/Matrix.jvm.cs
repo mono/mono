@@ -119,7 +119,7 @@ namespace System.Drawing.Drawing2D
 
 		public Matrix Clone()
 		{
-			return new Matrix ((geom.AffineTransform)NativeObject.clone());
+			return new Matrix ((geom.AffineTransform) NativeObject.MemberwiseClone ());
 		}
                 
         
@@ -139,12 +139,12 @@ namespace System.Drawing.Drawing2D
 			if (m == null) 
 				return false;
 
-			return NativeObject.equals(m.NativeObject);
+			return NativeObject.Equals(m.NativeObject);
 		}
                 
 		public override int GetHashCode ()
 		{
-			return NativeObject.hashCode();
+			return NativeObject.GetHashCode();
 		}
         
 		public void Invert ()

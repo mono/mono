@@ -1,3 +1,7 @@
+2006-08-07  Andrew Skiba <andrews@mainsoft.com>
+
+	* LineLayout.jvm.cs: TARGET_JVM fix
+
 2006-05-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* FontCollection.cs: Avoid calling GdipGetFontCollectionFamilyList 

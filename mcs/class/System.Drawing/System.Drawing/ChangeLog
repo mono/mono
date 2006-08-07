@@ -1,3 +1,7 @@
+2006-08-07  Andrew Skiba <andrews@mainsoft.com>
+
+	* Graphics.jvm.cs, Pen.jvm.cs, Region.jvm.cs: TARGET_JVM fix
+
 2006-08-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Font.cs: Avoid double cast in Equals. Return lfCharSet as 1 in
