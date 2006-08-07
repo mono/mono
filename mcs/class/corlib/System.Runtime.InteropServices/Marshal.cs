@@ -39,6 +39,7 @@ using System.Threading;
 
 #if NET_2_0
 using System.Runtime.ConstrainedExecution;
+using System.Runtime.InteropServices.ComTypes;
 #endif
 
 namespace System.Runtime.InteropServices
@@ -423,6 +424,13 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
+#if NET_2_0
+		[MonoTODO]
+		public static Guid GetTypeLibGuid (ITypeLib typelib) {
+			throw new NotImplementedException ();
+		}
+#endif
+
 		[MonoTODO]
 		public static Guid GetTypeLibGuidForAssembly (Assembly asm) {
 			throw new NotImplementedException ();
@@ -437,6 +445,13 @@ namespace System.Runtime.InteropServices
 		}
 
 #if NET_2_0
+		[MonoTODO]
+		public static int GetTypeLibLcid (ITypeLib typelib) {
+			throw new NotImplementedException ();
+		}
+#endif
+
+#if NET_2_0
 		[Obsolete]
 #endif
 		[MonoTODO]
@@ -445,6 +460,12 @@ namespace System.Runtime.InteropServices
 		}
 
 #if NET_2_0
+		[MonoTODO]
+		public static string GetTypeLibName (ITypeLib typelib)
+		{
+			throw new NotImplementedException ();
+		}
+
 		[MonoTODO]
 		public static void GetTypeLibVersionForAssembly (Assembly inputAssembly, out int majorVersion, out int minorVersion) {
 			throw new NotImplementedException ();

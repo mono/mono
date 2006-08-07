@@ -1,3 +1,8 @@
+2006-08-07  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Marshal.cs: Added stubs for GetTypeLibGuid (ITypeLib), GetTypeLibLcid
+	(ITypeLib), GetTypeLibName (ITypeLib).
+
 2006-07-28  Jonathan Chambers  <joncham@gmail.com>
 
 	* Marshal.cs: Implemented CreateWrapperOfType and ReleaseComObject.
