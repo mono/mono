@@ -1,5 +1,11 @@
 2006-08-07  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* X509Certificate2Test.cs: Removed separate test for bug #78986, as it
+	was blocked by bug #79028. Added tests for bug #79028. Modified
+	code to match Mono Coding Guideliness.
+
+2006-08-07  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* X509Certificate2Test.cs: Added test for bug #78986.
 
 2006-04-25  Atsushi Enomoto  <atsushi@ximian.com>
