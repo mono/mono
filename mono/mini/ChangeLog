@@ -1,3 +1,8 @@
+2006-08-07  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (mono_get_element_address_signature): Use CDECL calling convention on windows. Fixes #78969.
+	(mono_get_array_new_va_signature): Ditto.
+
 2006-08-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-runtime.c: Call init_plt lazily.
