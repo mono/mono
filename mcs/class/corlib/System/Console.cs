@@ -30,6 +30,8 @@
 //
 
 using System.IO;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Text;
 
@@ -43,42 +45,74 @@ namespace System
 #endif
 	class Console
 	{
+		private class WindowsConsole
+		{
+			[DllImport ("kernel32.dll", CharSet=CharSet.Auto, ExactSpelling=true)]
+			private static extern int GetConsoleCP ();
+			[DllImport ("kernel32.dll", CharSet=CharSet.Auto, ExactSpelling=true)]
+			private static extern int GetConsoleOutputCP ();
+
+			[MethodImpl (MethodImplOptions.NoInlining)]
+			public static int GetInputCodePage ()
+			{
+				return GetConsoleCP ();
+			}
+
+			[MethodImpl (MethodImplOptions.NoInlining)]
+			public static int GetOutputCodePage ()
+			{
+				return GetConsoleOutputCP ();
+			}
+		}
+
 		private static TextWriter stdout;
 		private static TextWriter stderr;
 		private static TextReader stdin;
 
 		static Console ()
 		{
-			int code_page = 0;
-			Encoding.InternalCodePage (ref code_page);
-			Encoding encoding;
+#if !NET_2_0
+			Encoding inputEncoding;
+			Encoding outputEncoding;
+#endif
 
 			if (Environment.IsRunningOnWindows) {
 				//
 				// On Windows, follow the Windows tradition
 				//
-				encoding = Encoding.Default;
+				try {
+					inputEncoding = Encoding.GetEncoding (WindowsConsole.GetInputCodePage ());
+					outputEncoding = Encoding.GetEncoding (WindowsConsole.GetOutputCodePage ());
+					// ArgumentException and NotSupportedException can be thrown as well
+				} catch {
+					// FIXME: I18N assemblies are not available when compiling mcs
+					// Use Latin 1 as it is fast and UTF-8 is never used as console code page
+					inputEncoding = outputEncoding = Encoding.GetEncoding (28591);
+				}
 			} else {
 				//
 				// On Unix systems (128), do not output the
 				// UTF-8 ZWNBSP (zero-width non-breaking space).
 				//
+				int code_page = 0;
+				Encoding.InternalCodePage (ref code_page);
+
 				if (code_page != -1 && ((code_page & 0x0fffffff) == 3 // UTF8Encoding.UTF8_CODE_PAGE
 					|| ((code_page & 0x10000000) != 0)))
-					encoding = Encoding.UTF8Unmarked;
+					inputEncoding = outputEncoding = Encoding.UTF8Unmarked;
 				else
-					encoding = Encoding.Default;
+					inputEncoding = outputEncoding = Encoding.Default;
 			}
 
-			stderr = new UnexceptionalStreamWriter (OpenStandardError (0), encoding); 
+			stderr = new UnexceptionalStreamWriter (OpenStandardError (0), outputEncoding); 
 			((StreamWriter)stderr).AutoFlush = true;
 			stderr = TextWriter.Synchronized (stderr, true);
 
-			stdout = new UnexceptionalStreamWriter (OpenStandardOutput (0), encoding);
+			stdout = new UnexceptionalStreamWriter (OpenStandardOutput (0), outputEncoding);
 			((StreamWriter)stdout).AutoFlush = true;
 			stdout = TextWriter.Synchronized (stdout, true);
 
-			stdin  = new UnexceptionalStreamReader (OpenStandardInput (0), encoding);
+			stdin = new UnexceptionalStreamReader (OpenStandardInput (0), inputEncoding);
 			stdin = TextReader.Synchronized (stdin);
 			GC.SuppressFinalize (stdout);
 			GC.SuppressFinalize (stderr);
@@ -443,10 +477,9 @@ namespace System
 #endif
 
 #if NET_2_0
-		// On windows, for en-US the Default is Windows-1252, while input/output is IBM437
-		// We might want to initialize these fields in the ConsoleDriver instead.
-		static Encoding inputEncoding = Encoding.Default;
-		static Encoding outputEncoding = Encoding.Default;
+		// FIXME: Console should use these encodings when changed
+		static Encoding inputEncoding;
+		static Encoding outputEncoding;
 
 		public static Encoding InputEncoding {
 			get { return inputEncoding; }
@@ -603,4 +636,3 @@ namespace System
 #endif
 	}
 }
-
