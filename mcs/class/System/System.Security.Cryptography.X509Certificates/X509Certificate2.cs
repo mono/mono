@@ -246,15 +246,22 @@ namespace System.Security.Cryptography.X509Certificates {
 				// TODO - PKCS12 without password
 			} else {
 				// try PKCS#12
-				MX.PKCS12 pfx = new MX.PKCS12 (rawData, password);
-				if (pfx.Certificates.Count > 0) {
-					_cert = pfx.Certificates [0];
-				} else {
-					_cert = null;
+				try {
+					MX.PKCS12 pfx = new MX.PKCS12 (rawData, password);
+					if (pfx.Certificates.Count > 0) {
+						_cert = pfx.Certificates [0];
+					} else {
+						_cert = null;
+					}
+					if (pfx.Keys.Count > 0) {
+						_cert.RSA = (pfx.Keys [0] as RSA);
+						_cert.DSA = (pfx.Keys [0] as DSA);
+					}
 				}
-				if (pfx.Keys.Count > 0) {
-					_cert.RSA = (pfx.Keys [0] as RSA);
-					_cert.DSA = (pfx.Keys [0] as DSA);
+				catch {
+					// it's possible to supply a (unrequired/unusued) password
+					// fix bug #79028
+					_cert = new Mono.Security.X509.X509Certificate (rawData);
 				}
 			}
 		}
