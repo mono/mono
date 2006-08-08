@@ -299,10 +299,19 @@ namespace System.Web.Configuration {
 
 		static private Web20DefaultConfig config {
 			get {
-				return (Web20DefaultConfig)AppDomain.CurrentDomain.GetData("WebConfigurationManager.config");
+				return (Web20DefaultConfig) AppDomain.CurrentDomain.GetData ("Web20DefaultConfig.config");
 			}
 			set {
-				AppDomain.CurrentDomain.SetData("WebConfigurationManager.config", value);
+				AppDomain.CurrentDomain.SetData ("Web20DefaultConfig.config", value);
+			}
+		}
+
+		static private IInternalConfigSystem configSystem {
+			get {
+				return (IInternalConfigSystem) AppDomain.CurrentDomain.GetData ("IInternalConfigSystem.configSystem");
+			}
+			set {
+				AppDomain.CurrentDomain.SetData ("IInternalConfigSystem.configSystem", value);
 			}
 		}
 #else

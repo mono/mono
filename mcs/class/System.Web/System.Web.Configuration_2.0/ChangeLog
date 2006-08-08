@@ -1,3 +1,14 @@
+2006-08-08  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* WebConfigurationManager.cs: added configSystem property under 
+	TARGET_JVM part
+	* WebConfigurationHost.cs: fixed GetStreamName and OpenStreamForRead
+	for TARGET_JVM
+	* CompilationSection.cs: BuildProviders property removed from
+	TARGET_JVM
+	* SystemWebSectionGroup.cs: Compilation property removed from
+	TARGET_JVM
+
 2006-06-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* NullableStringValidator.cs : new internal class that is almost

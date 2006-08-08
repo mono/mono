@@ -150,10 +150,12 @@ namespace System.Web.Configuration
 			set { base [batchTimeoutProp] = value; }
 		}
 
+#if !TARGET_JVM
 		[ConfigurationProperty ("buildProviders")]
 		public BuildProviderCollection BuildProviders {
 			get { return (BuildProviderCollection) base [buildProvidersProp]; }
 		}
+#endif
 
 		[ConfigurationProperty ("codeSubDirectories")]
 		public CodeSubDirectoriesCollection CodeSubDirectories {

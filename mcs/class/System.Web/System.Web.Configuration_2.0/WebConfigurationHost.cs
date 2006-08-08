@@ -110,14 +110,22 @@ namespace System.Web.Configuration
 		{
 			if (configPath == MachinePath) {
 				if (map == null)
+#if TARGET_JVM
+					return "/machine.config";
+#else
 					return System.Runtime.InteropServices.RuntimeEnvironment.SystemConfigurationFile;
+#endif
 				else
 					return map.MachineConfigFilename;
 			} else if (configPath == MachineWebPath) {
 				string mdir;
 
 				if (map == null)
+#if TARGET_JVM
+					return "/web.config";
+#else
 					mdir = Path.GetDirectoryName (System.Runtime.InteropServices.RuntimeEnvironment.SystemConfigurationFile);
+#endif
 				else
 					mdir = Path.GetDirectoryName (map.MachineConfigFilename);
 
@@ -304,8 +312,20 @@ namespace System.Web.Configuration
 		
 		public virtual Stream OpenStreamForRead (string streamName)
 		{
-			if (!File.Exists (streamName))
+			if (!File.Exists (streamName)) {
+#if TARGET_J2EE
+				if (streamName != null && (streamName.EndsWith ("machine.config") || streamName.EndsWith ("web.config"))) {
+					if (streamName.StartsWith ("/"))
+						streamName = streamName.Substring (1);
+					java.lang.ClassLoader cl = (java.lang.ClassLoader) AppDomain.CurrentDomain.GetData ("GH_ContextClassLoader");
+					if (cl != null) {
+						java.io.InputStream inputStream = cl.getResourceAsStream (streamName);
+						return (Stream) vmw.common.IOUtils.getStream (inputStream);
+					}
+				}
+#endif
 				throw new ConfigurationException ("File '" + streamName + "' not found");
+			}
 				
 			return new FileStream (streamName, FileMode.Open, FileAccess.Read);
 		}
