@@ -1,4 +1,8 @@
-﻿2006-08-08 Igor Zelmanovich <igorz@mainsoft.com>
+﻿2006-08-08  Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* added System.Web.20.vmwcsproj
+
+2006-08-08 Igor Zelmanovich <igorz@mainsoft.com>
 
         * Makefile: add resource resources/MaintainScrollPositionOnPostBack.js
 
@@ -329,7 +333,7 @@
 	* System.Web.dll.sources: add HtmlInputPassword.cs and
 	HtmlInputReset.cs.
 
-2005-08-27  Kornél Pál  <kornelpal@hotmail.com>
+2005-08-27  Korn?l P?l  <kornelpal@hotmail.com>
 
 	* System.Web.dll.sources: Fixed 48519 to 48944 regressions.
 
