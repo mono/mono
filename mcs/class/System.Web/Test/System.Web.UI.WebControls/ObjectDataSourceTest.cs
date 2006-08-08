@@ -31,6 +31,7 @@
 
 using NUnit.Framework;
 using System;
+using System.Threading;
 using System.Data;
 using System.Data.Common;
 using System.IO;
@@ -102,7 +103,14 @@ namespace MonoTests.System.Web.UI.WebControls
 		
 		[TestFixtureSetUp]
 		public void setup ()
-		{			
+		{ 
+			Thread.Sleep (100); 
+		}
+
+		[TestFixtureTearDown]
+		public void TearDown ()
+		{
+			WebTest.Unload ();
 		}
 
 		public static void InitObjectDataSource (ObjectDataSourcePoker ds, string action)
