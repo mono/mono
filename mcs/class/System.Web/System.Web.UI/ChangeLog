@@ -1,4 +1,8 @@
-2006-08-06  Vladimir Krasnov  <vladimirk@mainsoft.com>
+2006-08-08  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* ControlBuilder.jvm.cs: added BuildObject method
+
+2006-08-08  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* ParseChildrenAttribute.cs: fixed ChildControlType property to
 	compliant to .net

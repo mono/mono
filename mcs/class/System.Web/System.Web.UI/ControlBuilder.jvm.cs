@@ -68,5 +68,11 @@ namespace System.Web.UI
 		{
 			return null;
 		}
+#if NET_2_0
+		public virtual object BuildObject ()
+		{
+			return CreateInstance ();
+		}
+#endif
 	}
 }
