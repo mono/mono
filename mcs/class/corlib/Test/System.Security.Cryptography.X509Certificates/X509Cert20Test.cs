@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2005 Novell Inc. (http://www.novell.com)
+// Copyright (C) 2005-2006 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -58,6 +58,13 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			Assert.IsTrue (x1.Equals ((object)x2), "Equals-12-O");
 			Assert.IsTrue (x2.Equals (x1), "Equals-12-X");
 			Assert.IsTrue (x2.Equals ((object)x1), "Equals-12-O");
+		}
+
+		[Test]
+		public void UnrequiredPassword ()
+		{
+			// MS permits to supply an unrequired password for an (unencrypted) DER certificate
+			X509Certificate x1 = new X509Certificate (cert1, "mono");
 		}
 	}
 }
