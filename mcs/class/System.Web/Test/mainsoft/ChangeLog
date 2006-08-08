@@ -1,3 +1,8 @@
+2006-08-08 Yoni Klain <yonik@mainsoft.com>
+
+	* new: WebLogin.config; LoginViewTest1.aspx
+	* WebTest.cs: Change CopyResources type to rewrite if exist
+
 2006-08-03  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* resources fixed XMLDataSourceTest1.aspx, XMLDataSourceTest2.aspx,

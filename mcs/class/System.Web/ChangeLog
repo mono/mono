@@ -1,4 +1,9 @@
-﻿2006-07-25 Yoni Klain <yonik@mainsoft.com>
+﻿2006-08-08 Yoni Klain <yonik@mainsoft.com>
+				 
+	* Makefile: add resources for LoginViewTest
+	* new: WebLogin.config; LoginViewTest1.aspx
+
+2006-07-25 Yoni Klain <yonik@mainsoft.com>
 				 
 	* Makefile: add resources for XmlDataSourceTest
 

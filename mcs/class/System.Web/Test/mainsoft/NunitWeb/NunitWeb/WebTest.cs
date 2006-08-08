@@ -330,7 +330,7 @@ namespace MonoTests.SystemWeb.Framework
 			using (Stream source = type.Assembly.GetManifestResourceStream (resourceName)) {
 				if (source == null)
 					throw new ArgumentException ("resource not found: " + resourceName, "resourceName");
-				using (FileStream target = new FileStream (Path.Combine (baseDir, targetUrl), FileMode.CreateNew)) {
+				using (FileStream target = new FileStream (Path.Combine (baseDir, targetUrl), FileMode.Create)) {
 					byte[] array = new byte[source.Length];
 					source.Read (array, 0, array.Length);
 					target.Write (array, 0, array.Length);
