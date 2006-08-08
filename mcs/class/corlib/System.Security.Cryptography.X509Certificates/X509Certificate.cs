@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -537,11 +537,18 @@ namespace System.Security.Cryptography.X509Certificates {
 				// TODO - PKCS12 without password
 			} else {
 				// try PKCS#12
-				PKCS12 pfx = new PKCS12 (rawData, password);
-				if (pfx.Certificates.Count > 0) {
-					x509 = pfx.Certificates [0];
-				} else {
-					x509 = null;
+				try {
+					PKCS12 pfx = new PKCS12 (rawData, password);
+					if (pfx.Certificates.Count > 0) {
+						x509 = pfx.Certificates [0];
+					} else {
+						x509 = null;
+					}
+				}
+				catch {
+					// it's possible to supply a (unrequired/unusued) password
+					// fix bug #79028
+					x509 = new Mono.Security.X509.X509Certificate (rawData);
 				}
 			}
 		}
