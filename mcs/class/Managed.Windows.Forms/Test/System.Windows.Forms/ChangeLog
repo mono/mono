@@ -1,3 +1,9 @@
+2006-08-08  Chris Toshok  <toshok@ximian.com>
+
+	* GridTableStylesCollectionTest.cs: make this fixture public so
+	it's actually included, and add a test for changing the
+	MappingName of a constituent TableStyle.
+
 2006-07-30  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* PrintDialogTest.cs: Added.

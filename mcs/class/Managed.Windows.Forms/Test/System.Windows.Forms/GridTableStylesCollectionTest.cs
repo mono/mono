@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	class GridTableStylesCollectionTest
+	public class GridTableStylesCollectionTest
 	{
 		private bool eventhandled;
 		private object Element;
@@ -53,6 +53,25 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (sc, sc.SyncRoot, "SyncRoot property");
 			Assert.AreEqual (false, ((IList)sc).IsFixedSize, "IsFixedSize property");
 			Assert.AreEqual (false, sc.IsReadOnly, "IsReadOnly property");
+		}
+
+		[Test]
+		public void TestMappingNameChanged ()
+		{
+			DataGrid grid = new DataGrid ();
+			GridTableStylesCollection sc = grid.TableStyles;
+			sc.CollectionChanged += new CollectionChangeEventHandler (OnCollectionEventHandler);
+
+			// Add single
+			DataGridTableStyle ts = new DataGridTableStyle ();
+			ts.MappingName = "Table1";
+			sc.Add (ts);
+			ResetEventData ();
+			ts.MappingName = "Table2";
+
+			Assert.AreEqual (true, eventhandled, "A1");
+			Assert.AreEqual (null, Element, "A2");
+			Assert.AreEqual (CollectionChangeAction.Refresh, Action, "A3");
 		}
 
 		[Test]
@@ -186,7 +205,7 @@ namespace MonoTests.System.Windows.Forms
 			times++;
 	            	eventhandled = true;
 	            	Element = e.Element;
-			Action = e.Action;			
+			Action = e.Action;
 	        }
 
 	}
