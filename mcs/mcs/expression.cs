@@ -723,8 +723,10 @@ namespace Mono.CSharp {
 			
 			StoreFromPtr (ec.ig, type);
 			
-			if (temporary != null)
+			if (temporary != null) {
 				temporary.Emit (ec);
+				temporary.Release (ec);
+			}
 		}
 		
 		public void AddressOf (EmitContext ec, AddressOp Mode)
@@ -753,9 +755,7 @@ namespace Mono.CSharp {
 		#region IVariable Members
 
 		public VariableInfo VariableInfo {
-			get {
-				return null;
-			}
+			get { return null; }
 		}
 
 		public bool VerifyFixed ()
@@ -794,18 +794,18 @@ namespace Mono.CSharp {
 			PostIncrement  = IsPost,
 			PostDecrement  = IsPost | IsDecrement
 		}
-		
+
 		Mode mode;
 		bool is_expr = false;
 		bool recurse = false;
-		
+
 		Expression expr;
 
 		//
 		// This is expensive for the simplest case.
 		//
 		StaticCallExpr method;
-			
+
 		public UnaryMutator (Mode m, Expression e, Location l)
 		{
 			mode = m;
@@ -818,7 +818,7 @@ namespace Mono.CSharp {
 			return (mode == Mode.PreIncrement || mode == Mode.PostIncrement) ?
 				"++" : "--";
 		}
-		
+
 		/// <summary>
 		///   Returns whether an object of type `t' can be incremented
 		///   or decremented with add/sub (ie, basically whether we can
@@ -990,7 +990,7 @@ namespace Mono.CSharp {
 			}
 			
 		}
-		
+
 		void EmitCode (EmitContext ec, bool is_expr)
 		{
 			recurse = true;
@@ -1006,7 +1006,7 @@ namespace Mono.CSharp {
 			// having to allocate another expression
 			//
 			if (recurse) {
-				((IAssignMethod) expr).Emit (ec, is_expr && (mode == Mode.PostIncrement  || mode == Mode.PostDecrement));
+				((IAssignMethod) expr).Emit (ec, is_expr && (mode == Mode.PostIncrement || mode == Mode.PostDecrement));
 				if (method == null)
 					LoadOneAndEmitOp (ec, expr.Type);
 				else
@@ -1014,10 +1014,10 @@ namespace Mono.CSharp {
 				recurse = false;
 				return;
 			}
-			
+
 			EmitCode (ec, true);
 		}
-		
+
 		public override void EmitStatement (EmitContext ec)
 		{
 			EmitCode (ec, false);
@@ -2980,6 +2980,9 @@ namespace Mono.CSharp {
 			ig.MarkLabel (false_target);
 			op.Emit (ec);
 			ig.MarkLabel (end_target);
+
+			// We release 'left_temp' here since 'op' may refer to it too
+			left_temp.Release (ec);
 		}
 	}
 
@@ -3409,8 +3412,10 @@ namespace Mono.CSharp {
 					temp.Store (ec);
 				}
 				ig.Emit (OpCodes.Stfld, local_info.FieldBuilder);
-				if (temp != null)
+				if (temp != null) {
 					temp.Emit (ec);
+					temp.Release (ec);
+				}
 			}
 		}
 		
@@ -3712,8 +3717,10 @@ namespace Mono.CSharp {
 				
 				StoreFromPtr (ig, type);
 				
-				if (temp != null)
+				if (temp != null) {
 					temp.Emit (ec);
+					temp.Release (ec);
+				}
 			} else {
 				if (arg_idx <= 255)
 					ig.Emit (OpCodes.Starg_S, (byte) arg_idx);
@@ -4900,8 +4907,10 @@ namespace Mono.CSharp {
 				if (this_arg != null)
 					this_arg.Emit (ec);
 				
-				for (int i = 0; i < top; i ++)
+				for (int i = 0; i < top; i ++) {
 					temps [i].Emit (ec);
+					temps [i].Release (ec);
+				}
 			}
 
 			if (pd != null && pd.Count > top &&
@@ -6295,6 +6304,7 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Represents the `this' construct
 	/// </summary>
+
 	public class This : Expression, IAssignMethod, IMemoryLocation, IVariable {
 
 		Block block;
@@ -6398,8 +6408,10 @@ namespace Mono.CSharp {
 
 				ig.Emit (OpCodes.Stobj, type);
 				
-				if (leave_copy)
+				if (leave_copy) {
 					t.Emit (ec);
+					t.Release (ec);
+				}
 			} else {
 				throw new Exception ("how did you get here");
 			}
@@ -7424,8 +7436,10 @@ namespace Mono.CSharp {
 				}
 				StoreFromPtr (ec.ig, t);
 				
-				if (temp != null)
+				if (temp != null) {
 					temp.Emit (ec);
+					temp.Release (ec);
+				}
 				
 				return;
 			}
@@ -7483,8 +7497,10 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Call, set);
 			}
 			
-			if (temp != null)
+			if (temp != null) {
 				temp.Emit (ec);
+				temp.Release (ec);
+			}
 		}
 
 		public void AddressOf (EmitContext ec, AddressOp mode)
@@ -7822,8 +7838,10 @@ namespace Mono.CSharp {
 			
 			Invocation.EmitCall (ec, is_base_indexer, false, instance_expr, set, set_arguments, loc, false, prepared);
 			
-			if (temp != null)
+			if (temp != null) {
 				temp.Emit (ec);
+				temp.Release (ec);
+			}
 		}
 		
 		
