@@ -1,3 +1,7 @@
+2006-08-08  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* added ThemeDirectoryCompiler.jvm.cs
+
 2006-07-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* PageThemeCompiler.cs: Don't generate a 'Items.Clear ()' call if
