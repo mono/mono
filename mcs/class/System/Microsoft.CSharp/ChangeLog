@@ -1,8 +1,14 @@
-2006-07-16 Andrew Skiba <andrews@mainsoft.com>
+2006-08-08  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* CSharpCodeCompiler.cs: Added support for embedded resources, fixes
+	bug #78384. Added support for linked resources. Removed unnecessary
+	null check for options.ReferencedAssemblies.
+
+2006-07-16  Andrew Skiba <andrews@mainsoft.com>
 
 	* CSharpCodeCompiler.cs: find mono.exe in mono/mini; fixes #78731
 
-2006-04-30 Marek Safar <marek.safar@seznam.cz>
+2006-04-30  Marek Safar <marek.safar@seznam.cz>
 
 	* CSharpCodeCompiler.cs: mcs does not like /r:"" syntax; fixes #78038.
 

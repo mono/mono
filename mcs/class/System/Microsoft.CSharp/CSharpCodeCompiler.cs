@@ -261,21 +261,28 @@ namespace Mono.CSharp
 				options.OutputAssembly = GetTempFileNameWithExtension (options.TempFiles, "dll", !options.GenerateInMemory);
 			args.AppendFormat("/out:\"{0}\" ",options.OutputAssembly);
 
-			if (null != options.ReferencedAssemblies)
-			{
-				foreach (string import in options.ReferencedAssemblies) {
-					if (import == null || import.Length == 0)
-						continue;
+			foreach (string import in options.ReferencedAssemblies) {
+				if (import == null || import.Length == 0)
+					continue;
 
-					args.AppendFormat("/r:\"{0}\" ",import);
-				}
+				args.AppendFormat("/r:\"{0}\" ",import);
 			}
 
 			if (options.CompilerOptions != null) {
 				args.Append (options.CompilerOptions);
 				args.Append (" ");
 			}
-			
+
+#if NET_2_0
+			foreach (string embeddedResource in options.EmbeddedResources) {
+				args.AppendFormat("/resource:\"{0}\" ", embeddedResource);
+			}
+
+			foreach (string linkedResource in options.LinkedResources) {
+				args.AppendFormat("/linkresource:\"{0}\" ", linkedResource);
+			}
+#endif
+
 			args.Append (" -- ");
 			foreach (string source in fileNames)
 				args.AppendFormat("\"{0}\" ",source);
