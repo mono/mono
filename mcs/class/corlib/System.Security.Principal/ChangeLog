@@ -1,3 +1,10 @@
+2006-08-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GenericIdentity.cs: Rename fields to match MS for serialization
+	(indirecly required to fix GenericPrincipal serialization). Also 
+	renamed ctor parameters to match fx.
+	* GenericPrincipal.cs: Rename fields to match MS for serialization.
+	Fix bug #79030.
 
 Wed Nov 30 19:09:50 CET 2005 Paolo Molaro <lupus@ximian.com>
 

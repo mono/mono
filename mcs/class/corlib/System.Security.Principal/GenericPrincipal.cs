@@ -6,7 +6,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) Ximian, Inc.  http://www.ximian.com
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -37,34 +37,36 @@ namespace System.Security.Principal {
 	[ComVisible (true)]
 #endif
 	public class GenericPrincipal : IPrincipal {
-		IIdentity identity;
-		string [] roles;
+
+		// field names are serialization compatible with .net
+		private IIdentity m_identity;
+		private string[] m_roles;
 		
 		public GenericPrincipal (IIdentity identity, string [] roles)
 		{
 			if (identity == null)
 				throw new ArgumentNullException ("identity");
 
-			this.identity = identity;
+			m_identity = identity;
 			if (roles != null) {
 				// make our own (unchangeable) copy of the roles
-				this.roles = new string [roles.Length];
+				m_roles = new string [roles.Length];
 				for (int i=0; i < roles.Length; i++)
-					this.roles [i] = roles [i];
+					m_roles [i] = roles [i];
 			}
 		}
 
 		public virtual IIdentity Identity {
-			get { return identity; }
+			get { return m_identity; }
 		}
 
 		public virtual bool IsInRole (string role)
 		{
-			if (roles == null)
+			if (m_roles == null)
 				return false;
 
 			int l = role.Length;
-			foreach (string r in roles) {
+			foreach (string r in m_roles) {
 				if ((r != null) && (l == r.Length)) {
 					if (String.Compare (role, 0, r, 0, l, true) == 0)
 						return true;

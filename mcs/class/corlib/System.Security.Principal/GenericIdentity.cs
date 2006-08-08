@@ -5,7 +5,7 @@
 //   Miguel de Icaza (miguel@ximian.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -36,40 +36,43 @@ namespace System.Security.Principal {
 	[ComVisible (true)]
 #endif
 	public class GenericIdentity : IIdentity {
-		string user_name;
-		string authentication_type;
+
+		// field names are serialization compatible with .net
+		private string m_name;
+		private string m_type;
 		
-		public GenericIdentity (string user_name, string authentication_type)
+		public GenericIdentity (string name, string type)
 		{
-			if (user_name == null)
-				throw new ArgumentNullException ("user_name");
+			if (name == null)
+				throw new ArgumentNullException ("name");
 
-			if (authentication_type == null)
-				throw new ArgumentNullException ("authentication_type");
+			if (type == null)
+				throw new ArgumentNullException ("type");
 
-			this.user_name = user_name;
-			this.authentication_type = authentication_type;
+			m_name = name;
+			m_type = type;
 		}
 
-		public GenericIdentity (string name) : this (name, "")
+		public GenericIdentity (string name)
+			: this (name, String.Empty)
 		{
 		}
 
 		public virtual string AuthenticationType {
 			get {
-				return authentication_type;
+				return m_type;
 			}
 		}
 
 		public virtual string Name {
 			get {
-				return user_name;
+				return m_name;
 			}
 		}
 
 		public virtual bool IsAuthenticated {
 			get {
-				return (user_name != "");
+				return (m_name.Length > 0);
 			}
 		}
 	}
