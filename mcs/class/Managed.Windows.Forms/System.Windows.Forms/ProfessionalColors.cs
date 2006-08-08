@@ -36,6 +36,10 @@ namespace System.Windows.Forms
 	{
 		private static ProfessionalColorTable color_table = new ProfessionalColorTable();
 
+		#region Private Constructor
+		private ProfessionalColors () {}
+		#endregion
+		
 		#region Static Properties
 		public static Color ButtonCheckedGradientBegin { get { return color_table.ButtonCheckedGradientBegin; } }
 		public static Color ButtonCheckedGradientEnd { get { return color_table.ButtonCheckedGradientEnd; } }
@@ -62,9 +66,9 @@ namespace System.Windows.Forms
 		public static Color ImageMarginGradientBegin { get { return color_table.ImageMarginGradientBegin; } }
 		public static Color ImageMarginGradientEnd { get { return color_table.ImageMarginGradientEnd; } }
 		public static Color ImageMarginGradientMiddle { get { return color_table.ImageMarginGradientMiddle; } }
-		public static Color ImageMarginRevealedBegin { get { return color_table.ImageMarginRevealedBegin; } }
-		public static Color ImageMarginRevealedEnd { get { return color_table.ImageMarginRevealedEnd; } }
-		public static Color ImageMarginRevealedMiddle { get { return color_table.ImageMarginRevealedMiddle; } }
+		public static Color ImageMarginRevealedGradientBegin { get { return color_table.ImageMarginRevealedGradientBegin; } }
+		public static Color ImageMarginRevealedGradientEnd { get { return color_table.ImageMarginRevealedGradientEnd; } }
+		public static Color ImageMarginRevealedGradientMiddle { get { return color_table.ImageMarginRevealedGradientMiddle; } }
 		public static Color MenuBorder { get { return color_table.MenuBorder; } }
 		public static Color MenuItemBorder { get { return color_table.MenuItemBorder; } }
 		public static Color MenuItemPressedGradientBegin { get { return color_table.MenuItemPressedGradientBegin; } }

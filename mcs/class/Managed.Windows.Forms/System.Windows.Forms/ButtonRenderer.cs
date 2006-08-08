@@ -36,6 +36,10 @@ namespace System.Windows.Forms
 	{
 		private static bool always_use_visual_styles = false;
 
+		#region Private Constructor
+		private ButtonRenderer () { }
+		#endregion
+
 		#region Public Static Methods
 		public static void DrawButton (Graphics g, Rectangle bounds, PushButtonState state)
 		{

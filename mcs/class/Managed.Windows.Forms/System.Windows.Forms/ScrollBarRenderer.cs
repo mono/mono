@@ -34,6 +34,10 @@ namespace System.Windows.Forms
 {
 	public sealed class ScrollBarRenderer
 	{
+		#region Private Constructor
+		private ScrollBarRenderer () { }
+		#endregion
+
 		#region Public Static Methods
 		public static void DrawArrowButton (Graphics g, Rectangle bounds, ScrollBarArrowButtonState state)
 		{

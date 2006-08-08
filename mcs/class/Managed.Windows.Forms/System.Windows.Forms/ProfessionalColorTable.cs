@@ -62,9 +62,9 @@ namespace System.Windows.Forms
 		private Color image_margin_gradient_begin;
 		private Color image_margin_gradient_end;
 		private Color image_margin_gradient_middle;
-		private Color image_margin_revealed_begin;
-		private Color image_margin_revealed_end;
-		private Color image_margin_revealed_middle;
+		private Color image_margin_revealed_gradient_begin;
+		private Color image_margin_revealed_gradient_end;
+		private Color image_margin_revealed_gradient_middle;
 		private Color menu_border;
 		private Color menu_item_border;
 		private Color menu_item_pressed_gradient_begin;
@@ -103,62 +103,62 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Properties
-		public Color ButtonCheckedGradientBegin { get { return this.button_checked_gradient_begin; } }
-		public Color ButtonCheckedGradientEnd { get { return this.button_checked_gradient_end; } }
-		public Color ButtonCheckedGradientMiddle { get { return this.button_checked_gradient_middle; } }
-		public Color ButtonCheckedHighlight { get { return this.button_checked_highlight; } }
-		public Color ButtonCheckedHighlightBorder { get { return this.button_checked_highlight_border; } }
-		public Color ButtonPressedBorder { get { return this.button_pressed_border; } }
-		public Color ButtonPressedGradientBegin { get { return this.button_pressed_gradient_begin; } }
-		public Color ButtonPressedGradientEnd { get { return this.button_pressed_gradient_end; } }
-		public Color ButtonPressedGradientMiddle { get { return this.button_pressed_gradient_middle; } }
-		public Color ButtonPressedHighlight { get { return this.button_pressed_highlight; } }
-		public Color ButtonPressedHighlightBorder { get { return this.button_pressed_highlight_border; } }
-		public Color ButtonSelectedBorder { get { return this.button_selected_border; } }
-		public Color ButtonSelectedGradientBegin { get { return this.button_selected_gradient_begin; } }
-		public Color ButtonSelectedGradientEnd { get { return this.button_selected_gradient_end; } }
-		public Color ButtonSelectedGradientMiddle { get { return this.button_selected_gradient_middle; } }
-		public Color ButtonSelectedHighlight { get { return this.button_selected_highlight; } }
-		public Color ButtonSelectedHighlightBorder { get { return this.button_selected_highlight_border; } }
-		public Color CheckBackground { get { return this.check_background; } }
-		public Color CheckPressedBackground { get { return this.check_pressed_background; } }
-		public Color CheckSelectedBackground { get { return this.check_selected_background; } }
-		public Color GripDark { get { return this.grip_dark; } }
-		public Color GripLight { get { return this.grip_light; } }
-		public Color ImageMarginGradientBegin { get { return this.image_margin_gradient_begin; } }
-		public Color ImageMarginGradientEnd { get { return this.image_margin_gradient_end; } }
-		public Color ImageMarginGradientMiddle { get { return this.image_margin_gradient_middle; } }
-		public Color ImageMarginRevealedBegin { get { return this.image_margin_revealed_begin; } }
-		public Color ImageMarginRevealedEnd { get { return this.image_margin_revealed_end; } }
-		public Color ImageMarginRevealedMiddle { get { return this.image_margin_revealed_middle; } }
-		public Color MenuBorder { get { return this.menu_border; } }
-		public Color MenuItemBorder { get { return this.menu_item_border; } }
-		public Color MenuItemPressedGradientBegin { get { return this.menu_item_pressed_gradient_begin; } }
-		public Color MenuItemPressedGradientEnd { get { return this.menu_item_pressed_gradient_end; } }
-		public Color MenuItemPressedGradientMiddle { get { return this.menu_item_pressed_gradient_middle; } }
-		public Color MenuItemSelected { get { return this.menu_item_selected; } }
-		public Color MenuItemSelectedGradientBegin { get { return this.menu_item_selected_gradient_begin; } }
-		public Color MenuItemSelectedGradientEnd { get { return this.menu_item_selected_gradient_end; } }
-		public Color MenuStripGradientBegin { get { return this.menu_strip_gradient_begin; } }
-		public Color MenuStripGradientEnd { get { return this.menu_strip_gradient_end; } }
-		public Color OverflowButtonGradientBegin { get { return this.overflow_button_gradient_begin; } }
-		public Color OverflowButtonGradientEnd { get { return this.overflow_button_gradient_end; } }
-		public Color OverflowButtonGradientMiddle { get { return this.overflow_button_gradient_middle; } }
-		public Color RaftingContainerGradientBegin { get { return this.rafting_container_gradient_begin; } }
-		public Color RaftingContainerGradientEnd { get { return this.rafting_container_gradient_end; } }
-		public Color SeparatorDark { get { return this.separator_dark; } }
-		public Color SeparatorLight { get { return this.separator_light; } }
-		public Color StatusStripGradientBegin { get { return this.status_strip_gradient_begin; } }
-		public Color StatusStripGradientEnd { get { return this.status_strip_gradient_end; } }
-		public Color ToolStripBorder { get { return this.tool_strip_border; } }
-		public Color ToolStripContentPanelGradientBegin { get { return this.tool_strip_content_panel_gradient_begin; } }
-		public Color ToolStripContentPanelGradientEnd { get { return this.tool_strip_content_panel_gradient_end; } }
-		public Color ToolStripDropDownBackground { get { return this.tool_strip_drop_down_background; } }
-		public Color ToolStripGradientBegin { get { return this.tool_strip_gradient_begin; } }
-		public Color ToolStripGradientEnd { get { return this.tool_strip_gradient_end; } }
-		public Color ToolStripGradientMiddle { get { return this.tool_strip_gradient_middle; } }
-		public Color ToolStripPanelGradientBegin { get { return this.tool_strip_panel_gradient_begin; } }
-		public Color ToolStripPanelGradientEnd { get { return this.tool_strip_panel_gradient_end; } }
+		public virtual Color ButtonCheckedGradientBegin { get { return this.button_checked_gradient_begin; } }
+		public virtual Color ButtonCheckedGradientEnd { get { return this.button_checked_gradient_end; } }
+		public virtual Color ButtonCheckedGradientMiddle { get { return this.button_checked_gradient_middle; } }
+		public virtual Color ButtonCheckedHighlight { get { return this.button_checked_highlight; } }
+		public virtual Color ButtonCheckedHighlightBorder { get { return this.button_checked_highlight_border; } }
+		public virtual Color ButtonPressedBorder { get { return this.button_pressed_border; } }
+		public virtual Color ButtonPressedGradientBegin { get { return this.button_pressed_gradient_begin; } }
+		public virtual Color ButtonPressedGradientEnd { get { return this.button_pressed_gradient_end; } }
+		public virtual Color ButtonPressedGradientMiddle { get { return this.button_pressed_gradient_middle; } }
+		public virtual Color ButtonPressedHighlight { get { return this.button_pressed_highlight; } }
+		public virtual Color ButtonPressedHighlightBorder { get { return this.button_pressed_highlight_border; } }
+		public virtual Color ButtonSelectedBorder { get { return this.button_selected_border; } }
+		public virtual Color ButtonSelectedGradientBegin { get { return this.button_selected_gradient_begin; } }
+		public virtual Color ButtonSelectedGradientEnd { get { return this.button_selected_gradient_end; } }
+		public virtual Color ButtonSelectedGradientMiddle { get { return this.button_selected_gradient_middle; } }
+		public virtual Color ButtonSelectedHighlight { get { return this.button_selected_highlight; } }
+		public virtual Color ButtonSelectedHighlightBorder { get { return this.button_selected_highlight_border; } }
+		public virtual Color CheckBackground { get { return this.check_background; } }
+		public virtual Color CheckPressedBackground { get { return this.check_pressed_background; } }
+		public virtual Color CheckSelectedBackground { get { return this.check_selected_background; } }
+		public virtual Color GripDark { get { return this.grip_dark; } }
+		public virtual Color GripLight { get { return this.grip_light; } }
+		public virtual Color ImageMarginGradientBegin { get { return this.image_margin_gradient_begin; } }
+		public virtual Color ImageMarginGradientEnd { get { return this.image_margin_gradient_end; } }
+		public virtual Color ImageMarginGradientMiddle { get { return this.image_margin_gradient_middle; } }
+		public virtual Color ImageMarginRevealedGradientBegin { get { return this.image_margin_revealed_gradient_begin; } }
+		public virtual Color ImageMarginRevealedGradientEnd { get { return this.image_margin_revealed_gradient_end; } }
+		public virtual Color ImageMarginRevealedGradientMiddle { get { return this.image_margin_revealed_gradient_middle; } }
+		public virtual Color MenuBorder { get { return this.menu_border; } }
+		public virtual Color MenuItemBorder { get { return this.menu_item_border; } }
+		public virtual Color MenuItemPressedGradientBegin { get { return this.menu_item_pressed_gradient_begin; } }
+		public virtual Color MenuItemPressedGradientEnd { get { return this.menu_item_pressed_gradient_end; } }
+		public virtual Color MenuItemPressedGradientMiddle { get { return this.menu_item_pressed_gradient_middle; } }
+		public virtual Color MenuItemSelected { get { return this.menu_item_selected; } }
+		public virtual Color MenuItemSelectedGradientBegin { get { return this.menu_item_selected_gradient_begin; } }
+		public virtual Color MenuItemSelectedGradientEnd { get { return this.menu_item_selected_gradient_end; } }
+		public virtual Color MenuStripGradientBegin { get { return this.menu_strip_gradient_begin; } }
+		public virtual Color MenuStripGradientEnd { get { return this.menu_strip_gradient_end; } }
+		public virtual Color OverflowButtonGradientBegin { get { return this.overflow_button_gradient_begin; } }
+		public virtual Color OverflowButtonGradientEnd { get { return this.overflow_button_gradient_end; } }
+		public virtual Color OverflowButtonGradientMiddle { get { return this.overflow_button_gradient_middle; } }
+		public virtual Color RaftingContainerGradientBegin { get { return this.rafting_container_gradient_begin; } }
+		public virtual Color RaftingContainerGradientEnd { get { return this.rafting_container_gradient_end; } }
+		public virtual Color SeparatorDark { get { return this.separator_dark; } }
+		public virtual Color SeparatorLight { get { return this.separator_light; } }
+		public virtual Color StatusStripGradientBegin { get { return this.status_strip_gradient_begin; } }
+		public virtual Color StatusStripGradientEnd { get { return this.status_strip_gradient_end; } }
+		public virtual Color ToolStripBorder { get { return this.tool_strip_border; } }
+		public virtual Color ToolStripContentPanelGradientBegin { get { return this.tool_strip_content_panel_gradient_begin; } }
+		public virtual Color ToolStripContentPanelGradientEnd { get { return this.tool_strip_content_panel_gradient_end; } }
+		public virtual Color ToolStripDropDownBackground { get { return this.tool_strip_drop_down_background; } }
+		public virtual Color ToolStripGradientBegin { get { return this.tool_strip_gradient_begin; } }
+		public virtual Color ToolStripGradientEnd { get { return this.tool_strip_gradient_end; } }
+		public virtual Color ToolStripGradientMiddle { get { return this.tool_strip_gradient_middle; } }
+		public virtual Color ToolStripPanelGradientBegin { get { return this.tool_strip_panel_gradient_begin; } }
+		public virtual Color ToolStripPanelGradientEnd { get { return this.tool_strip_panel_gradient_end; } }
 		public bool UseSystemColors {
 			get { return use_system_colors; }
 			set {
@@ -204,9 +204,9 @@ namespace System.Windows.Forms
 					image_margin_gradient_begin = Color.FromArgb (245, 244, 242);
 					image_margin_gradient_end = SystemColors.Control;
 					image_margin_gradient_middle = Color.FromArgb (234, 232, 228);
-					image_margin_revealed_begin = Color.FromArgb (238, 236, 233);
-					image_margin_revealed_end = Color.FromArgb (216, 213, 206);
-					image_margin_revealed_middle = Color.FromArgb (225, 222, 217);
+					image_margin_revealed_gradient_begin = Color.FromArgb (238, 236, 233);
+					image_margin_revealed_gradient_end = Color.FromArgb (216, 213, 206);
+					image_margin_revealed_gradient_middle = Color.FromArgb (225, 222, 217);
 
 					menu_border = Color.FromArgb (102, 102, 102);
 					menu_item_border = SystemColors.Highlight;
@@ -275,9 +275,9 @@ namespace System.Windows.Forms
 					image_margin_gradient_begin = use_system_colors ? Color.FromArgb (251, 250, 246) : Color.FromArgb (227, 239, 255);
 					image_margin_gradient_end = use_system_colors ? SystemColors.Control : Color.FromArgb (123, 164, 224);
 					image_margin_gradient_middle = use_system_colors ? Color.FromArgb (246, 244, 236) : Color.FromArgb (203, 225, 252);
-					image_margin_revealed_begin = use_system_colors ? Color.FromArgb (247, 246, 239) : Color.FromArgb (203, 221, 246);
-					image_margin_revealed_end = use_system_colors ? Color.FromArgb (238, 235, 220) : Color.FromArgb (114, 155, 215);
-					image_margin_revealed_middle = use_system_colors ? Color.FromArgb (242, 240, 228) : Color.FromArgb (161, 197, 249);
+					image_margin_revealed_gradient_begin = use_system_colors ? Color.FromArgb (247, 246, 239) : Color.FromArgb (203, 221, 246);
+					image_margin_revealed_gradient_end = use_system_colors ? Color.FromArgb (238, 235, 220) : Color.FromArgb (114, 155, 215);
+					image_margin_revealed_gradient_middle = use_system_colors ? Color.FromArgb (242, 240, 228) : Color.FromArgb (161, 197, 249);
 
 					menu_border = use_system_colors ? Color.FromArgb (138, 134, 122) : Color.FromArgb (0, 45, 150);
 					menu_item_border = use_system_colors ? SystemColors.Highlight : Color.FromArgb (0, 0, 128);
@@ -348,9 +348,9 @@ namespace System.Windows.Forms
 					image_margin_gradient_begin = use_system_colors ? Color.FromArgb (251, 250, 246) : Color.FromArgb (255, 255, 237);
 					image_margin_gradient_end = use_system_colors ? SystemColors.Control : Color.FromArgb (181, 196, 143);
 					image_margin_gradient_middle = use_system_colors ? Color.FromArgb (246, 244, 236) : Color.FromArgb (206, 220, 167);
-					image_margin_revealed_begin = use_system_colors ? Color.FromArgb (247, 246, 239) : Color.FromArgb (230, 230, 209);
-					image_margin_revealed_end = use_system_colors ? Color.FromArgb (238, 235, 220) : Color.FromArgb (160, 177, 116);
-					image_margin_revealed_middle = use_system_colors ? Color.FromArgb (242, 240, 228) : Color.FromArgb (186, 201, 143);
+					image_margin_revealed_gradient_begin = use_system_colors ? Color.FromArgb (247, 246, 239) : Color.FromArgb (230, 230, 209);
+					image_margin_revealed_gradient_end = use_system_colors ? Color.FromArgb (238, 235, 220) : Color.FromArgb (160, 177, 116);
+					image_margin_revealed_gradient_middle = use_system_colors ? Color.FromArgb (242, 240, 228) : Color.FromArgb (186, 201, 143);
 
 					menu_border = use_system_colors ? Color.FromArgb (138, 134, 122) : Color.FromArgb (117, 141, 94);
 					menu_item_border = use_system_colors ? SystemColors.Highlight : Color.FromArgb (63, 93, 56);
@@ -421,9 +421,9 @@ namespace System.Windows.Forms
 					image_margin_gradient_begin = use_system_colors ? Color.FromArgb (248, 248, 249) : Color.FromArgb (249, 249, 255);
 					image_margin_gradient_end = use_system_colors ? SystemColors.Control : Color.FromArgb (147, 145, 176);
 					image_margin_gradient_middle = use_system_colors ? Color.FromArgb (240, 239, 241) : Color.FromArgb (225, 226, 236);
-					image_margin_revealed_begin = use_system_colors ? Color.FromArgb (243, 242, 244) : Color.FromArgb (215, 215, 226);
-					image_margin_revealed_end = use_system_colors ? Color.FromArgb (227, 226, 230) : Color.FromArgb (118, 116, 151);
-					image_margin_revealed_middle = use_system_colors ? Color.FromArgb (233, 233, 235) : Color.FromArgb (184, 185, 202);
+					image_margin_revealed_gradient_begin = use_system_colors ? Color.FromArgb (243, 242, 244) : Color.FromArgb (215, 215, 226);
+					image_margin_revealed_gradient_end = use_system_colors ? Color.FromArgb (227, 226, 230) : Color.FromArgb (118, 116, 151);
+					image_margin_revealed_gradient_middle = use_system_colors ? Color.FromArgb (233, 233, 235) : Color.FromArgb (184, 185, 202);
 
 					menu_border = use_system_colors ? Color.FromArgb (126, 126, 129) : Color.FromArgb (124, 124, 148);
 					menu_item_border = use_system_colors ? SystemColors.Highlight : Color.FromArgb (75, 75, 111);
@@ -494,9 +494,9 @@ namespace System.Windows.Forms
 					image_margin_gradient_begin = use_system_colors ? Color.FromArgb (250, 250, 251) : Color.FromArgb (252, 252, 252);
 					image_margin_gradient_end = use_system_colors ? SystemColors.Control : Color.FromArgb (235, 233, 237);
 					image_margin_gradient_middle = use_system_colors ? Color.FromArgb (245, 244, 246) : Color.FromArgb (245, 244, 246);
-					image_margin_revealed_begin = use_system_colors ? Color.FromArgb (247, 246, 248) : Color.FromArgb (247, 246, 248);
-					image_margin_revealed_end = use_system_colors ? Color.FromArgb (237, 235, 239) : Color.FromArgb (228, 226, 230);
-					image_margin_revealed_middle = use_system_colors ? Color.FromArgb (241, 240, 242) : Color.FromArgb (241, 240, 242);
+					image_margin_revealed_gradient_begin = use_system_colors ? Color.FromArgb (247, 246, 248) : Color.FromArgb (247, 246, 248);
+					image_margin_revealed_gradient_end = use_system_colors ? Color.FromArgb (237, 235, 239) : Color.FromArgb (228, 226, 230);
+					image_margin_revealed_gradient_middle = use_system_colors ? Color.FromArgb (241, 240, 242) : Color.FromArgb (241, 240, 242);
 
 					menu_border = use_system_colors ? Color.FromArgb (134, 133, 136) : Color.FromArgb (134, 133, 136);
 					menu_item_border = use_system_colors ? SystemColors.Highlight : Color.FromArgb (51, 94, 168);
@@ -567,9 +567,9 @@ namespace System.Windows.Forms
 					image_margin_gradient_begin = Color.FromArgb (252, 252, 252);
 					image_margin_gradient_end = SystemColors.Control;
 					image_margin_gradient_middle = Color.FromArgb (250, 250, 250);
-					image_margin_revealed_begin = Color.FromArgb (251, 251, 251);
-					image_margin_revealed_end = Color.FromArgb (245, 245, 245);
-					image_margin_revealed_middle = Color.FromArgb (247, 247, 247);
+					image_margin_revealed_gradient_begin = Color.FromArgb (251, 251, 251);
+					image_margin_revealed_gradient_end = Color.FromArgb (245, 245, 245);
+					image_margin_revealed_gradient_middle = Color.FromArgb (247, 247, 247);
 
 					menu_border = Color.FromArgb (128, 128, 128);
 					menu_item_border = SystemColors.Highlight;

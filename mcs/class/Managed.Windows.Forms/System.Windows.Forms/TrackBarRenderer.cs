@@ -34,6 +34,10 @@ namespace System.Windows.Forms
 {
 	public sealed class TrackBarRenderer
 	{
+		#region Private Constructor
+		private TrackBarRenderer () { }
+		#endregion
+
 		#region Public Static Methods
 		public static void DrawBottomPointingThumb(Graphics g, Rectangle bounds, TrackBarThumbState state)
 		{

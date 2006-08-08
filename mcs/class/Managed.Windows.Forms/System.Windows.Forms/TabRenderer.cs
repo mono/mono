@@ -34,6 +34,10 @@ namespace System.Windows.Forms
 {
 	public sealed class TabRenderer
 	{
+		#region Private Constructor
+		private TabRenderer () { }
+		#endregion
+
 		#region Public Static Methods
 		public static void DrawTabItem (Graphics g, Rectangle bounds, TabItemState state)
 		{

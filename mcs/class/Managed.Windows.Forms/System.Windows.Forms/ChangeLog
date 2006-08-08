@@ -1,3 +1,10 @@
+﻿2006-08-08  Jonathan Pobst <monkey@jpobst.com>
+	* ButtonRenderer.cs, CheckBoxRenderer.cs, ComboBoxRenderer.cs
+	  GroupBoxRenderer.cs, ProgressBarRenderer.cs, RadioButtonRenderer.cs, 	  	  ScrollBarRenderer.cs, TabRenderer.cs, TextBoxRenderer.cs, 
+	  TrackBarRenderer.cs: Make constructor private.
+	* ProfessionalColors.cs, ProfessionalColorTable.cs: Fix misnamed properties.
+	* ProfessionalColorTable.cs: Make properties virtual.
+
 2006-08-06  Duncan Mak  <duncan@novell.com>
 
 	* NumericUpDown.cs (Value): Don't call OnValueChanged if the value

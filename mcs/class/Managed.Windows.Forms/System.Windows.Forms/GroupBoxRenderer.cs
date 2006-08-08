@@ -35,6 +35,10 @@ namespace System.Windows.Forms
 	public sealed class GroupBoxRenderer
 	{
 		private static bool always_use_visual_styles = false;
+		
+		#region Private Constructor
+		private GroupBoxRenderer () { }
+		#endregion
 
 		#region Public Static Methods
 		public static void DrawGroupBox (Graphics g, Rectangle bounds, GroupBoxState state)

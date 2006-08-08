@@ -34,6 +34,10 @@ namespace System.Windows.Forms
 {
 	public sealed class ComboBoxRenderer
 	{
+		#region Private Constructor
+		private ComboBoxRenderer () { }
+		#endregion
+
 		#region Public Static Methods
 		public static void DrawDropDownButton (Graphics g, Rectangle bounds, ComboBoxState state)
 		{

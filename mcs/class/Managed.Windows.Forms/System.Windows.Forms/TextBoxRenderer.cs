@@ -34,6 +34,10 @@ namespace System.Windows.Forms
 {
 	public sealed class TextBoxRenderer
 	{
+		#region Private Constructor
+		private TextBoxRenderer () { }
+		#endregion
+
 		#region Public Static Methods
 		public static void DrawTextBox (Graphics g, Rectangle bounds, TextBoxState state)
 		{

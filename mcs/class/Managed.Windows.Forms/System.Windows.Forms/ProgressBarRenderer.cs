@@ -34,6 +34,10 @@ namespace System.Windows.Forms
 {
 	public sealed class ProgressBarRenderer
 	{
+		#region Private Constructor
+		private ProgressBarRenderer () { }
+		#endregion
+
 		#region Public Static Methods
 		public static void DrawHorizontalBar (Graphics g, Rectangle bounds)
 		{

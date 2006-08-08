@@ -36,6 +36,10 @@ namespace System.Windows.Forms
 	{
 		private static bool always_use_visual_styles = false;
 
+		#region Private Constructor
+		private CheckBoxRenderer () {}
+		#endregion
+		
 		#region Public Static Methods
 		public static void DrawCheckBox (Graphics g, Point glyphLocation, CheckBoxState state)
 		{
