@@ -57,22 +57,21 @@ namespace System.Windows.Forms
 		public override void OnEndPage(PrintDocument document, PrintPageEventArgs e) {
 			if (dialog.DialogResult == DialogResult.Cancel) {
 				e.Cancel = true;
-				dialog.Close();
+				dialog.Hide();
 				return;
 			}
 			underlyingController.OnEndPage (document, e);
 		}
 
 		public override void OnEndPrint(PrintDocument document, PrintEventArgs e) {
-			if (dialog.Visible)
-				dialog.Close();
+			dialog.Hide();
 			underlyingController.OnEndPrint (document, e);
 		}
 
 		public override Graphics OnStartPage(PrintDocument document, PrintPageEventArgs e) {
 			if (dialog.DialogResult == DialogResult.Cancel) {
 				e.Cancel = true;
-				dialog.Close();
+				dialog.Hide();
 				return null;
 			}
 			dialog.LabelText = string.Format("Page {0} of document", ++currentPage);

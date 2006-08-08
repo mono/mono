@@ -1,3 +1,9 @@
+2006-08-08  Chris Toshok  <toshok@ximian.com>
+
+	* PrintControllerWithStatusDialog.cs: don't .Close() the status
+	dialog, as this causes X errors later on, since we actually
+	destroy the window.  Instead, .Hide() it.
+
 2006-08-08  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* ComboBox.cs: Added focus reflection for popup window
