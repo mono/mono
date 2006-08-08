@@ -1,3 +1,8 @@
+2006-08-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GenericIdentityTest.cs: Added serialization test cases.
+	* GenericPrincipalTest.cs: Added serialization test cases.
+
 2005-08-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GenericPrincipalTest.cs: Roles are case insensitive.
