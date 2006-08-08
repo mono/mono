@@ -35,6 +35,7 @@ using System.IO;
 using System.Collections;
 using System.Web;
 using System.Web.Hosting;
+using System.Web.Configuration;
 
 namespace System.Web.SessionState
 {
@@ -42,11 +43,21 @@ namespace System.Web.SessionState
 	class SessionInProcHandler : ISessionHandler
 	{
 
+#if NET_2_0
+		SessionStateSection config;
+#else
 		SessionConfig config;
+#endif
 
 		public void Dispose () { }
 
-		public void Init (SessionStateModule module, HttpApplication context, SessionConfig config)
+		public void Init (SessionStateModule module, HttpApplication context,
+#if NET_2_0
+			SessionStateSection config
+#else
+			SessionConfig config
+#endif
+)
 		{
 			this.config = config;
 		}
@@ -75,7 +86,11 @@ namespace System.Web.SessionState
 			state = new HttpSessionState (sessionID, // unique identifier
 					new SessionDictionary(), // dictionary
 					HttpApplicationFactory.ApplicationState.SessionObjects,
+#if NET_2_0
+					(int)config.Timeout.TotalMinutes, // XXX is this right?  we lose some precision here, but since the timeout is in minutes *anyway*...
+#else
 					config.Timeout, //lifetime before death.
+#endif
 					true, //new session
 					false, // is cookieless
 					SessionStateMode.J2ee,

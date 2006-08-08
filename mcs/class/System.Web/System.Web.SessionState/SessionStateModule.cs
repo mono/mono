@@ -47,6 +47,29 @@ namespace System.Web.SessionState
 		static object locker = new object ();
 		
 #if TARGET_J2EE		
+#if NET_2_0
+		static private SessionStateSection config {
+			get
+			{
+				return (SessionStateSection) AppDomain.CurrentDomain.GetData ("SessionStateModule.config");
+			}
+			set
+			{
+				AppDomain.CurrentDomain.SetData ("SessionStateModule.config", value);
+			}
+		}
+		static private Type handlerType
+		{
+			get
+			{
+				return (Type) AppDomain.CurrentDomain.GetData ("SessionStateModule.handlerType");
+			}
+			set
+			{
+				AppDomain.CurrentDomain.SetData ("SessionStateModule.handlerType", value);
+			}
+		}
+#else
 		static private SessionConfig config {
 			get {
 				return (SessionConfig)AppDomain.CurrentDomain.GetData("SessionStateModule.config");
@@ -63,6 +86,7 @@ namespace System.Web.SessionState
 				AppDomain.CurrentDomain.SetData("SessionStateModule.handlerType", value);
 			}
 		}
+#endif
 #else
 #if NET_2_0
 		static SessionStateSection config;
