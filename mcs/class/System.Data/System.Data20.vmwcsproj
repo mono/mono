@@ -27,8 +27,8 @@
 		<ProjectGuid>{BD83C476-AEC7-4535-8158-977B04887AF0}</ProjectGuid>
 		<OutputType>Library</OutputType>
 		<AppDesignerFolder>Properties</AppDesignerFolder>
-		<RootNamespace>System.Data20</RootNamespace>
-		<AssemblyName>System.Data20</AssemblyName>
+		<RootNamespace>System.Data</RootNamespace>
+		<AssemblyName>System.Data</AssemblyName>
 		<JDKName>1.5.0_05</JDKName>
 		<GHProjectType>1</GHProjectType>
 		<Version>2.0</Version>
@@ -318,7 +318,6 @@
 		<Compile Include="System.Data\ConstraintCollection.cs"/>
 		<Compile Include="System.Data\ConstraintConverter.cs"/>
 		<Compile Include="System.Data\ConstraintException.cs"/>
-		<Compile Include="System.Data\CustomDataClassGenerator.cs"/>
 		<Compile Include="System.Data\DataCategoryAttribute.cs"/>
 		<Compile Include="System.Data\DataColumn.cs">
 			<SubType>Component</SubType>
@@ -434,7 +433,6 @@
 		<Compile Include="System.Data\StrongTypingException.cs"/>
 		<Compile Include="System.Data\SyntaxErrorException.cs"/>
 		<Compile Include="System.Data\TypeDataSetGeneratorException.cs"/>
-		<Compile Include="System.Data\TypedDataSetGenerator.cs"/>
 		<Compile Include="System.Data\UniqueConstraint.cs"/>
 		<Compile Include="System.Data\UpdateOptions.cs"/>
 		<Compile Include="System.Data\UpdateRowSource.cs"/>
