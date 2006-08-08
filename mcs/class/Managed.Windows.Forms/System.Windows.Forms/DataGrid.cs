@@ -239,7 +239,12 @@ namespace System.Windows.Forms
 		CurrencyManager list_manager;
 		bool _readonly;
 		DataGridRow[] rows;
+
+		/* these fields make BeginInit/EndInit work */
 		bool initializing;
+		bool need_databinding;
+		object new_datasource;
+		string new_datamember;
 
 		/* column resize fields */
 		bool column_resize_active;
@@ -561,9 +566,15 @@ namespace System.Windows.Forms
 		public string DataMember {
 			get { return datamember; }
 			set {
-				if (SetDataMember (value)) {					
-					SetDataSource (datasource);
-					SetNewDataSource ();
+				if (initializing) {
+					need_databinding = true;
+					new_datamember = value;
+				}
+				else {
+					if (SetDataMember (value)) {					
+						SetDataSource (datasource);
+						SetNewDataSource ();
+					}
 				}
 			}
 		}
@@ -574,9 +585,15 @@ namespace System.Windows.Forms
 		public object DataSource {
 			get { return datasource; }
 			set {
-				SetDataMember ("");
-				SetDataSource (value);
-				SetNewDataSource ();					
+				if (initializing) {
+					need_databinding = true;
+					new_datasource = value;
+				}
+				else {
+					SetDataMember ("");
+					SetDataSource (value);
+					SetNewDataSource ();
+				}
 			}
 		}
 
@@ -690,7 +707,7 @@ namespace System.Windows.Forms
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected internal CurrencyManager ListManager {
 			get {
-				if (BindingContext == null || datasource  == null)
+				if (BindingContext == null || datasource == null)
 					return null;
 
 				if (list_manager != null)
@@ -1026,6 +1043,11 @@ namespace System.Windows.Forms
 		public void EndInit ()
 		{
 			initializing = false;
+			if (need_databinding) {
+				SetDataMember (new_datamember);
+				SetDataSource (new_datasource);
+				SetNewDataSource ();
+			}
 		}
 
 		public void Expand (int row)
@@ -2266,17 +2288,22 @@ namespace System.Windows.Forms
 
 				
 				case CollectionChangeAction.Refresh: {
-					if (e.Element != null && String.Compare (list_name, ((DataGridTableStyle)e.Element).MappingName, true) == 0) {
-						CurrentTableStyle = (DataGridTableStyle)e.Element;
-						((DataGridTableStyle) e.Element).CreateColumnsForTable (false);
-					} else {
-						CurrentTableStyle = default_style;
-						current_style.GridColumnStyles.Clear ();
-						current_style.CreateColumnsForTable (false);
+					if (CurrentTableStyle == default_style
+					    || String.Compare (list_name, CurrentTableStyle.MappingName, true) != 0) {
 
+						DataGridTableStyle style = styles_collection [list_name];
+						if (style != null) {
+							CurrentTableStyle = style;
+							current_style.CreateColumnsForTable (false);
+						}
+						else {
+							CurrentTableStyle = default_style;
+							current_style.GridColumnStyles.Clear ();
+							current_style.CreateColumnsForTable (false);
+						}
 					}
-					break;
 
+					break;
 				}
 			}						
 			CalcAreasAndInvalidate ();

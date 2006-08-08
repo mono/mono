@@ -1,5 +1,10 @@
 2006-08-08  Chris Toshok  <toshok@ximian.com>
 
+	* DataGrid.cs: make BeginInit/EndInit actually do what they're
+	supposed to do - delay data binding until the EndInit call.  Also,
+	make the table style collection's CollectionChangeAction.Refresh
+	work properly.
+
 	* GridTableStylesCollection.cs: raise a CollectionChangeEvent
 	(with action = Refresh) when a consituent table's MappingName is
 	changed.
