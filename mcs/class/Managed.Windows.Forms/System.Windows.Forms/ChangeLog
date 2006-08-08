@@ -1,3 +1,9 @@
+2006-08-08  Chris Toshok  <toshok@ximian.com>
+
+	* ToolBarButton.cs: in set_Text, call Parent.Redraw, not
+	Invalidate, since changing the text can change the size of the all
+	toolbar buttons.
+
 2006-08-08  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Form.cs (AddOwnedForm): Still need to add the form to our listif

@@ -257,7 +257,8 @@ namespace System.Windows.Forms
 					return;
 
 				text = value;
-				Invalidate ();
+				if (Parent != null)
+					Parent.Redraw (true);
 			}
 		}
 
