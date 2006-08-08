@@ -83,9 +83,9 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates
 		}
 
 		[Test] // bug #79028
-		[Category ("NotWorking")]
 		public void Ctor_ByteArray_Password ()
 		{
+			// password isn't required but supplied
 			X509Certificate2 cert = new X509Certificate2 (cert_a, "mono");
 			Assert.IsNotNull (cert.RawData, "#1");
 			Assert.AreEqual (cert_a.Length, cert.RawData.Length, "#2");
@@ -96,7 +96,6 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates
 		}
 
 		[Test] // bug #79028
-		[Category ("NotWorking")]
 		public void Ctor_FileName_Password ()
 		{
 			string tempFile = Path.GetTempFileName ();
@@ -106,6 +105,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates
 					fs.Close ();
 				}
 
+				// password isn't required but supplied
 				X509Certificate2 cert = new X509Certificate2 (tempFile, "mono");
 				Assert.IsNotNull (cert.RawData, "#1");
 				Assert.AreEqual (cert_a.Length, cert.RawData.Length, "#2");
