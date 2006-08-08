@@ -1,5 +1,7 @@
 2006-08-08  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ia64.c mini-amd64.c: Fix #79027.
+
 	* mini-sparc.c (mono_arch_call_opcode): Fix the previous patch.
 
 	* mini-sparc.c (mono_arch_call_opcode): Fix #79027.
