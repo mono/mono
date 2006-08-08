@@ -894,58 +894,44 @@ namespace Mono.CSharp {
 		/// </summary>
 		public LocalBuilder GetTemporaryLocal (Type t)
 		{
-			LocalBuilder location = null;
-			
-			if (temporary_storage != null){
+			if (temporary_storage != null) {
 				object o = temporary_storage [t];
-				if (o != null){
-					if (o is ArrayList){
-						ArrayList al = (ArrayList) o;
-						
-						for (int i = 0; i < al.Count; i++){
-							if (al [i] != null){
-								location = (LocalBuilder) al [i];
-								al [i] = null;
-								break;
-							}
-						}
-					} else
-						location = (LocalBuilder) o;
-					if (location != null)
-						return location;
+				if (o != null) {
+					if (o is Stack) {
+						Stack s = (Stack) o;
+						o = s.Count == 0 ? null : s.Pop ();
+					} else {
+						temporary_storage.Remove (t);
+					}
 				}
+				if (o != null)
+					return (LocalBuilder) o;
 			}
-			
 			return ig.DeclareLocal (t);
 		}
 
 		public void FreeTemporaryLocal (LocalBuilder b, Type t)
 		{
-			if (temporary_storage == null){
+			Stack s;
+
+			if (temporary_storage == null) {
 				temporary_storage = new Hashtable ();
 				temporary_storage [t] = b;
 				return;
 			}
 			object o = temporary_storage [t];
-			if (o == null){
+			if (o == null) {
 				temporary_storage [t] = b;
 				return;
 			}
-			if (o is ArrayList){
-				ArrayList al = (ArrayList) o;
-				for (int i = 0; i < al.Count; i++){
-					if (al [i] == null){
-						al [i] = b;
-						return;
-					}
-				}
-				al.Add (b);
-				return;
+			if (o is Stack) {
+				s = (Stack) o;
+			} else {
+				s = new Stack ();
+				s.Push (o);
+				temporary_storage [t] = s;
 			}
-			ArrayList replacement = new ArrayList ();
-			replacement.Add (o);
-			temporary_storage.Remove (t);
-			temporary_storage [t] = replacement;
+			s.Push (b);
 		}
 
 		/// <summary>

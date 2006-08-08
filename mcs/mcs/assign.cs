@@ -211,6 +211,9 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig = ec.ig;
 
+			if (builder == null)
+				throw new InternalErrorException ("Emit without Store, or after Release");
+
 			ig.Emit (OpCodes.Ldloc, builder);
 			// we need to copy from the pointer
 			if (is_address)
