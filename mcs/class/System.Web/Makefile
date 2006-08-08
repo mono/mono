@@ -59,6 +59,7 @@ RESOURCE_FILES_2 = \
 	resources/transparent.gif \
 	resources/callback.js \
 	resources/webform.js \
+	resources/MaintainScrollPositionOnPostBack.js \
 	System.Web.UI.WebControls/GridView.js \
 	System.Web.UI.WebControls/TreeView.js \
 	System.Web.UI.WebControls/Menu.js

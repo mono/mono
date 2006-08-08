@@ -112,6 +112,11 @@ public class Page : TemplateControl, IHttpHandler
 	const string postEventSourceID = "__EVENTTARGET";
 
 #if NET_2_0
+	const string ScrollPositionXID = "__SCROLLPOSITIONX";
+	const string ScrollPositionYID = "__SCROLLPOSITIONY";
+#endif
+
+#if NET_2_0
 	internal const string CallbackArgumentID = "__CALLBACKARGUMENT";
 	internal const string CallbackSourceID = "__CALLBACKTARGET";
 	internal const string PreviousPageID = "__PREVIOUSPAGE";
@@ -131,6 +136,8 @@ public class Page : TemplateControl, IHttpHandler
 	string _theme;
 	string _styleSheetTheme;
 	Hashtable items;
+
+	bool _maintainScrollPositionOnPostBack;
 #endif
 
 	#region Constructor
@@ -377,6 +384,15 @@ public class Page : TemplateControl, IHttpHandler
 #else
 	protected int LCID {
 		set { Thread.CurrentThread.CurrentCulture = new CultureInfo (value); }
+	}
+#endif
+
+#if NET_2_0
+	[Browsable (false)]
+	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+	public bool MaintainScrollPositionOnPostBack {
+		get { return _maintainScrollPositionOnPostBack; }
+		set { _maintainScrollPositionOnPostBack = value; }
 	}
 #endif
 
@@ -815,7 +831,39 @@ public class Page : TemplateControl, IHttpHandler
 	{
 		return Request.MapPath (virtualPath);
 	}
-	
+
+#if NET_2_0
+	protected internal override void Render (HtmlTextWriter writer) {
+		if (MaintainScrollPositionOnPostBack) {
+			RequiresPostBackScript ();
+
+			string scriptUrl = ClientScript.GetWebResourceUrl (typeof (Page), "MaintainScrollPositionOnPostBack.js");
+
+			ClientScript.RegisterClientScriptInclude (typeof (Page), "MaintainScrollPositionOnPostBack.js", scriptUrl);
+
+			ClientScript.RegisterHiddenField (ScrollPositionXID, Request [ScrollPositionXID]);
+			ClientScript.RegisterHiddenField (ScrollPositionYID, Request [ScrollPositionYID]);
+			
+			StringBuilder script = new StringBuilder ();
+			script.AppendLine ("<script type=\"text/javascript\">");
+			script.AppendLine ("<!--");
+			script.AppendLine ("theForm.oldSubmit = theForm.submit");
+			script.AppendLine ("theForm.submit = WebForm_SaveScrollPositionSubmit");
+			script.AppendLine ("theForm.oldOnSubmit = theForm.onsubmit");
+			script.AppendLine ("theForm.onsubmit = WebForm_SaveScrollPositionOnSubmit");
+			if (IsPostBack) {
+				script.AppendLine ("theForm.oldOnLoad = window.onload");
+				script.AppendLine ("window.onload = WebForm_RestoreScrollPosition");
+			}
+			script.AppendLine ("// -->");
+			script.AppendLine ("</script>");
+			
+			ClientScript.RegisterStartupScript (typeof (Page), "MaintainScrollPositionOnPostBackStartup", script.ToString());
+		}
+		base.Render (writer);
+	}
+#endif
+
 	private void RenderPostBackScript (HtmlTextWriter writer, string formUniqueID)
 	{
 		writer.WriteLine ("<input type=\"hidden\" name=\"{0}\" value=\"\" />", postEventSourceID);

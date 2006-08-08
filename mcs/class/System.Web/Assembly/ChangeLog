@@ -1,3 +1,7 @@
+2006-08-08 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* AssemblyInfo.cs: add a WebResource for MaintainScrollPositionOnPostBack.js
+
 2006-03-15  Chris Toshok  <toshok@ximian.com>
 
 	* AssemblyInfo.cs: add a WebResource for transparent.gif.

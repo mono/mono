@@ -1,3 +1,7 @@
+2006-08-08 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Page.cs: implemented MaintainScrollPositionOnPostBack feature
+
 2006-08-06  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* Control.cs: fixed EnableTheming proprty, fixes bug when child 
