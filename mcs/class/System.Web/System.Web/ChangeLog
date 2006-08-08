@@ -1,3 +1,8 @@
+2006-08-08  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* HttpApplication.cs: fixed BeginProcessRequest, TARGET_JVM part
+	merged
+
 2006-08-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplication.cs: don't leak local path names when a file is not

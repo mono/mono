@@ -1101,8 +1101,11 @@ namespace System.Web {
 			done.Reset ();
 			
 			begin_iar = new AsyncRequestState (done, cb, extraData);
-
+#if TARGET_JVM
+			if (true)
+#else
 			if (Thread.CurrentThread.IsThreadPoolThread)
+#endif
 				Start (null);
 			else
 				ThreadPool.QueueUserWorkItem (new WaitCallback (Start), null);
