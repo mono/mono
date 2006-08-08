@@ -1,3 +1,7 @@
+2006-08-08 Merav Sudri <meravs@mainsoft.com>
+
+	* ObjectDataSourceTest.cs: New test was added
+	
 2006-08-08 Yoni Klain <yonik@mainsoft.com>
 
 	* LoginViewTest.cs: added new tests and new resources for tests

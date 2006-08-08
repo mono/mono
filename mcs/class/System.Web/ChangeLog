@@ -1,4 +1,8 @@
-﻿2006-08-08 Yoni Klain <yonik@mainsoft.com>
+﻿2006-08-08 Merav Sudri <meravs@mainsoft.com>
+				 
+	* System.Web_test.dll.sources: ObjectDataSourceTest.cs test was added.
+
+2006-08-08 Yoni Klain <yonik@mainsoft.com>
 				 
 	* Makefile: add resources for LoginViewTest
 	* new: WebLogin.config; LoginViewTest1.aspx
