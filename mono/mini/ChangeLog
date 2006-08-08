@@ -1,3 +1,8 @@
+2006-08-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-x86.c (mono_arch_call_opcode): Handle the case where there are no
+	implicit arguments in a vararg call. Fixes #79027.
+
 2006-08-07  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c (mono_get_element_address_signature): Use CDECL calling convention on windows. Fixes #78969.
