@@ -758,13 +758,12 @@ namespace System.Windows.Forms {
 			client_rect = hwnd.ClientRect;
 			lock (XlibLock) {
 				XChangeProperty(DisplayHandle, hwnd.whole_window, NetAtoms[(int)NA._MOTIF_WM_HINTS], NetAtoms[(int)NA._MOTIF_WM_HINTS], 32, PropertyMode.Replace, ref mwmHints, 5);
-
-				if (((cp.Style & (int)WindowStyles.WS_POPUP) != 0)  && (hwnd.parent != null) && (hwnd.parent.whole_window != IntPtr.Zero)) {
+				if (((cp.Style & (int)WindowStyles.WS_POPUP) != 0) && (hwnd.parent != null) && (hwnd.parent.whole_window != IntPtr.Zero)) {
 					transient = true;
 					XSetTransientForHint(DisplayHandle, hwnd.whole_window, hwnd.parent.whole_window);
 				} else if ((cp.ExStyle & (int)WindowExStyles.WS_EX_APPWINDOW) == 0) {
-					transient = true;
-					XSetTransientForHint(DisplayHandle, hwnd.whole_window, FosterParent);
+//					transient = true;
+//					XSetTransientForHint(DisplayHandle, hwnd.whole_window, FosterParent);
 				}
 				if ((client_rect.Width < 1) || (client_rect.Height < 1)) {
 					XMoveResizeWindow(DisplayHandle, hwnd.client_window, -5, -5, 1, 1);
@@ -780,24 +779,8 @@ namespace System.Windows.Forms {
 				}
 				XChangeProperty(DisplayHandle, hwnd.whole_window, NetAtoms[(int)NA._NET_WM_STATE], (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, atom_count);
 
-				if ((cp.ExStyle & (int)WindowExStyles.WS_EX_TOPMOST) != 0) {
-					atom_count = 0;
-					atoms[atom_count++] = NetAtoms[(int)NA._NET_WM_WINDOW_TYPE_DOCK].ToInt32();
-					XChangeProperty(DisplayHandle, hwnd.whole_window, NetAtoms[(int)NA._NET_WM_WINDOW_TYPE], (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, atom_count);
-				} else if (transient) {
-					atom_count = 0;
-
-					if ((cp.ExStyle & ((int)WindowExStyles.WS_EX_TOOLWINDOW)) != 0) {
-						atoms[atom_count++] = NetAtoms[(int)NA._NET_WM_WINDOW_TYPE_DOCK].ToInt32();
-					} else {
-						atoms[atom_count++] = NetAtoms[(int)NA._NET_WM_WINDOW_TYPE_DIALOG].ToInt32();
-					}
-					XChangeProperty(DisplayHandle, hwnd.whole_window, NetAtoms[(int)NA._NET_WM_WINDOW_TYPE], (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, atom_count);
-				}
-
 				atom_count = 0;
 				IntPtr[] atom_ptrs = new IntPtr[2];
-
 				atom_ptrs[atom_count++] = NetAtoms[(int)NA.WM_DELETE_WINDOW];
 				if ((cp.ExStyle & (int)WindowExStyles.WS_EX_CONTEXTHELP) != 0) {
 					atom_ptrs[atom_count++] = NetAtoms[(int)NA._NET_WM_CONTEXT_HELP];
@@ -2172,7 +2155,7 @@ namespace System.Windows.Forms {
 
 			// If we're a popup without caption we override the WM
 			if ((cp.Style & ((int)WindowStyles.WS_POPUP)) != 0) {
-				if ((cp.Style & (int)WindowStyles.WS_CAPTION) == 0) {
+				if ((cp.Style & (int)WindowStyles.WS_CAPTION) != (int)WindowStyles.WS_CAPTION) {
 					Attributes.override_redirect = true;
 					ValueMask |= SetWindowValuemask.OverrideRedirect;
 				}
@@ -2241,7 +2224,7 @@ namespace System.Windows.Forms {
 			if ((cp.ExStyle & (int)WindowExStyles.WS_EX_TOPMOST) != 0) {
 				XSetTransientForHint (DisplayHandle, hwnd.whole_window, RootWindow);
 			} else if ((cp.ExStyle & (int)WindowExStyles.WS_EX_APPWINDOW) == 0) {
-				XSetTransientForHint (DisplayHandle, hwnd.whole_window, FosterParent);
+//				XSetTransientForHint (DisplayHandle, hwnd.whole_window, FosterParent);
 			}
 
 			SetWMStyles(hwnd, cp);

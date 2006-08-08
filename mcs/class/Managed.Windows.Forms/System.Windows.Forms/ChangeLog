@@ -1,6 +1,24 @@
-﻿2006-08-08  Jonathan Pobst <monkey@jpobst.com>
+2006-08-08  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* ComboBox.cs: Added focus reflection for popup window
+	* XplatUIX11.cs: 
+	  - Removed transient setting for non-app windows for now, not sure it
+	    was needed
+	  - Fixed logic checking if we have captions when deciding 
+	    override_redirect, WS_CAPTION is two bits and a 0 check was not
+	    sufficient
+	  - Removed the WINDOW_TYPE stuff, it was unneeded and making things
+	    complicated
+	* Form.cs: 
+	  - AddOwnedForm: Don't just add the form to the list, call the property
+	    to ensure the driver is informed about the ownership as well
+	  - CreateHandle: Set the TopMost status in the driver if we have an owner
+	* XplatUI.cs: Fixed debug statement
+
+2006-08-08  Jonathan Pobst <monkey@jpobst.com>
 	* ButtonRenderer.cs, CheckBoxRenderer.cs, ComboBoxRenderer.cs
-	  GroupBoxRenderer.cs, ProgressBarRenderer.cs, RadioButtonRenderer.cs, 	  	  ScrollBarRenderer.cs, TabRenderer.cs, TextBoxRenderer.cs, 
+	  GroupBoxRenderer.cs, ProgressBarRenderer.cs, RadioButtonRenderer.cs,
+  	  ScrollBarRenderer.cs, TabRenderer.cs, TextBoxRenderer.cs, 
 	  TrackBarRenderer.cs: Make constructor private.
 	* ProfessionalColors.cs, ProfessionalColorTable.cs: Fix misnamed properties.
 	* ProfessionalColorTable.cs: Make properties virtual.
@@ -10,7 +28,7 @@
 	* NumericUpDown.cs (Value): Don't call OnValueChanged if the value
 	is not changing.
 
-﻿2006-08-04  Jonathan Pobst <monkey@jpobst.com>
+2006-08-04  Jonathan Pobst <monkey@jpobst.com>
 	* ButtonRenderer.cs, CheckBoxRenderer.cs, ComboBoxRenderer.cs
 	  GroupBoxRenderer.cs, ProfessionalColors.cs, ProfessionalColorTable.cs,
 	  ProgressBarRenderer.cs, RadioButtonRenderer.cs, ScrollBarRenderer.cs,

@@ -1132,7 +1132,7 @@ namespace System.Windows.Forms {
 		}
 
 		public void AddOwnedForm(Form ownedForm) {
-			owned_forms.Add(ownedForm);
+			ownedForm.Owner = this;
 		}
 
 		public void Close () {
@@ -1360,6 +1360,19 @@ namespace System.Windows.Forms {
 			if (icon != null) {
 				XplatUI.SetIcon(window.Handle, icon);
 			}
+
+			if ((owner != null) && (owner.IsHandleCreated)) {
+				XplatUI.SetTopmost(window.Handle, owner.window.Handle, true);
+			}
+
+			if (owned_forms.Count > 0) {
+				for (int i = 0; i < owned_forms.Count; i++) {
+					if (owned_forms[i].IsHandleCreated) {
+						XplatUI.SetTopmost(owned_forms[i].window.Handle, window.Handle, true);
+					}
+				}
+			}
+
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]

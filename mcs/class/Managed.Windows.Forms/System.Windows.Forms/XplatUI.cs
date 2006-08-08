@@ -880,7 +880,7 @@ namespace System.Windows.Forms {
 
 		internal static bool SupportsTransparency() {
 			#if DriverDebug
-				Console.WriteLine("SupportsTransparency(): Called, result={1}", driver.SupportsTransparency());
+				Console.WriteLine("SupportsTransparency(): Called, result={0}", driver.SupportsTransparency());
 			#endif
 			return driver.SupportsTransparency();
 		}

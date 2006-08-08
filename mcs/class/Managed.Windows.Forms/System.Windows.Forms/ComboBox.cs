@@ -1775,7 +1775,7 @@ namespace System.Windows.Forms
 			{
 				if (owner.DropDownStyle == ComboBoxStyle.Simple && owner.Items.Count == 0)
 					return false;
-					
+
 				HighlightedIndex = owner.SelectedIndex;
 
 				CalcListBoxArea ();				
@@ -1826,6 +1826,15 @@ namespace System.Windows.Forms
 				Refresh ();
 			}			
 			
+			protected override void WndProc(ref Message m) {
+				if (m.Msg == (int)Msg.WM_SETFOCUS) {
+					if (m.WParam != IntPtr.Zero) {
+						XplatUI.SetFocus(m.WParam);
+					}
+				}
+				base.WndProc (ref m);
+			}
+
 			#endregion Private Methods
 		}
 	}
