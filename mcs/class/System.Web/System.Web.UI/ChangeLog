@@ -1,5 +1,9 @@
 2006-08-08  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
+	* added MasterPageParser.jvm.cs
+
+2006-08-08  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
 	* ControlBuilder.jvm.cs: added BuildObject method
 
 2006-08-08  Vladimir Krasnov  <vladimirk@mainsoft.com>
