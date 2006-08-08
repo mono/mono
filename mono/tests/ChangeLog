@@ -1,3 +1,7 @@
+2006-08-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* vararg.il: Add a test for #79027.
+
 2006-07-28  Jonathan Chambers  <joncham@gmail.com>
 
 	* cominterop.cs: Added COM Interop object marshalling tests; 
