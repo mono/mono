@@ -42,13 +42,12 @@ namespace System.Web.UI.WebControls {
 	[DataBindingHandler("System.Web.UI.Design.TextDataBindingHandler, " + Consts.AssemblySystem_Design)]
 	[DefaultProperty("Text")]
 	[Designer("System.Web.UI.Design.WebControls.LabelDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
+	[ParseChildren (false)]
 #if NET_2_0
 	[ToolboxData("<{0}:Label runat=\"server\" Text=\"Label\"></{0}:Label>")]
-	[ParseChildren(false, ChildControlType = typeof(Control))]
 	[ControlValueProperty ("Text", null)]
 #else	
 	[ToolboxData("<{0}:Label runat=server>Label</{0}:Label>")]
-	[ParseChildren(false)]
 #endif		
 	public class Label : WebControl
 #if NET_2_0

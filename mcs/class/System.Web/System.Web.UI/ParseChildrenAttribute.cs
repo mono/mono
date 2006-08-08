@@ -93,7 +93,6 @@ namespace System.Web.UI {
 #if NET_2_0
 		public Type ChildControlType {
 			get { return childType; }
-			internal set { childType = value; }
 		}
 #endif
 

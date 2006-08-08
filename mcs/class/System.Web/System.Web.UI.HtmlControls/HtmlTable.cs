@@ -36,11 +36,7 @@ namespace System.Web.UI.HtmlControls {
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
-#if NET_2_0
-	[ParseChildren (true, "Rows", ChildControlType = typeof(Control))]
-#else
-	[ParseChildren (true, "Rows")]
-#endif		
+	[ParseChildren (true, "Rows")]	
 	public class HtmlTable : HtmlContainerControl {
 
 		private HtmlTableRowCollection _rows;

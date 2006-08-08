@@ -42,11 +42,9 @@ namespace System.Web.UI.WebControls {
 	[DefaultPropertyAttribute ("DataSource")]
 #endif
 	[Designer("System.Web.UI.Design.WebControls.ListControlDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
+	[ParseChildrenAttribute (true, "Items")]
 #if NET_2_0
 	[ControlValueProperty ("SelectedValue", null)]
-	[ParseChildrenAttribute (true, "Items", ChildControlType = typeof (Control))]
-#else
-	[ParseChildrenAttribute (true, "Items")]
 #endif	
 	public abstract class ListControl :
 #if NET_2_0

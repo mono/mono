@@ -45,12 +45,11 @@ namespace System.Web.UI {
 	[DefaultEvent ("Load"), DesignerCategory ("ASPXCodeBehind")]
 	[ToolboxItem (false)]
 	[Designer ("System.Web.UI.Design.UserControlDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
+	[ParseChildren (true)]
 #if NET_2_0
 	[Designer ("Microsoft.VisualStudio.Web.WebForms.WebFormDesigner, " + Consts.AssemblyMicrosoft_VisualStudio_Web, typeof (IRootDesigner))]
-	[ParseChildren (true, "", ChildControlType = typeof (Control))]
 #else
 	[RootDesignerSerializer ("Microsoft.VSDesigner.WebForms.RootCodeDomSerializer, " + Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design, true)]
-	[ParseChildren (true)]
 #endif
 	public class UserControl : TemplateControl, IAttributeAccessor, IUserControlDesignerAccessor
 #if NET_2_0

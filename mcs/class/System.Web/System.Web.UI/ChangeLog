@@ -1,3 +1,10 @@
+2006-08-06  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* ParseChildrenAttribute.cs: fixed ChildControlType property to
+	compliant to .net
+	* UserControl.cs: fixed ParseChildren attribute to be compliant
+	to .net
+
 2006-08-08 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Page.cs: implemented MaintainScrollPositionOnPostBack feature

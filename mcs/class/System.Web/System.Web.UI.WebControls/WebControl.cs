@@ -34,13 +34,12 @@ namespace System.Web.UI.WebControls {
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
+	[ParseChildren (true)]
 #if NET_2_0
 	[PersistChildrenAttribute (false, false)]
-	[ParseChildrenAttribute (true, ChildControlType = typeof(Control))]
 	[Themeable (true)]
 #else	
 	[PersistChildrenAttribute (false)]
-	[ParseChildrenAttribute (true)]
 #endif		
 	public class WebControl : Control, IAttributeAccessor {
 		Style style;

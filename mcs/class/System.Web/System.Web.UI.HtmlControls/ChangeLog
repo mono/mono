@@ -1,3 +1,9 @@
+2006-08-08  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* HtmlTable.cs:
+	* HtmlTableRow.cs: fixed ParseChildren attribute to be compliant
+	to .net
+
 2006-07-12 Andrew Skiba <andrews@mainsoft.com>
 
 	* HtmlInputControl.cs: remove obsolete #if NET_2_0

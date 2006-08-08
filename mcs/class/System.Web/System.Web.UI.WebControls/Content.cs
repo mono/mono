@@ -37,7 +37,9 @@ namespace System.Web.UI.WebControls
 {
 	[ToolboxItem (false)]
 	[DesignerAttribute ("System.Web.UI.Design.WebControls.ContentDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
+#if !TARGET_JVM
 	[ControlBuilder(typeof(ContentBuilderInternal))]
+#endif
 	public class Content: Control, INamingContainer
 	{
 		[ThemeableAttribute (false)]
