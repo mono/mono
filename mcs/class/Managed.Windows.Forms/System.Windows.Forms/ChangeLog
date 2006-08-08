@@ -1,5 +1,11 @@
 2006-08-08  Chris Toshok  <toshok@ximian.com>
 
+	* GridTableStylesCollection.cs: raise a CollectionChangeEvent
+	(with action = Refresh) when a consituent table's MappingName is
+	changed.
+
+2006-08-08  Chris Toshok  <toshok@ximian.com>
+
 	* ToolBarButton.cs: in set_Text, call Parent.Redraw, not
 	Invalidate, since changing the text can change the size of the all
 	toolbar buttons.

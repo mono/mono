@@ -180,12 +180,18 @@ namespace System.Windows.Forms
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, table));
 		}
 
+		void MappingNameChanged (object sender, EventArgs args)
+		{
+			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Refresh, null));
+		}
+
 		public void RemoveAt (int index)
 		{
-			object item = items[index];
+			DataGridTableStyle style = (DataGridTableStyle)items[index];
 
 			items.RemoveAt (index);
-			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, item));
+			style.MappingNameChanged -= new EventHandler (MappingNameChanged);
+			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, style));
 		}
 
 		#endregion Public Instance Methods
@@ -202,7 +208,8 @@ namespace System.Windows.Forms
 			if (FromTableNameToIndex (table.MappingName) != -1) {
 				throw new ArgumentException ("The TableStyles collection already has a TableStyle with this mapping name");
 			}
-			
+
+			table.MappingNameChanged += new EventHandler (MappingNameChanged);
 			table.DataGrid = owner;
 			int cnt = items.Add (table);
 			return cnt;
