@@ -1132,6 +1132,9 @@ namespace System.Windows.Forms {
 		}
 
 		public void AddOwnedForm(Form ownedForm) {
+			if (!owned_forms.Contains(ownedForm)) {
+				owned_forms.Add(ownedForm);
+			}
 			ownedForm.Owner = this;
 		}
 
