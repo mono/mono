@@ -1,3 +1,14 @@
+2006-08-08  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* TextBoxBase.cs: Don't try moving the caret if we don't have a window
+	  yes (fixes #78806)
+	* TextControl.cs: 
+	  - PositionCaret: Allow positioning of caret but don't call methods 
+	    requiring a handle if the window isn't created yet
+	  - CharIndexToLineTag: Fix ending loop early error. Lines is 1 based
+	  - owner_HandleCreated: Don't position the caret, just update it's 
+	    location. User might have already set a different position
+
 2006-08-08  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* XplatUIWin32.cs: Don't use the desktop as basis for foster-parented

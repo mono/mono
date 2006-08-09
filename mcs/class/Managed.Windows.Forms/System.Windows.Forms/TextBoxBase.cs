@@ -663,7 +663,9 @@ namespace System.Windows.Forms {
 		}
 
 		public void ScrollToCaret() {
-			this.CaretMoved(this, EventArgs.Empty);
+			if (IsHandleCreated) {
+				CaretMoved(this, EventArgs.Empty);
+			}
 		}
 
 		public void Select(int start, int length) {
@@ -692,6 +694,8 @@ namespace System.Windows.Forms {
 		#region Protected Instance Methods
 		protected override void CreateHandle() {
 			base.CreateHandle ();
+			document.AlignCaret();
+			ScrollToCaret();
 		}
 
 		protected override bool IsInputKey(Keys keyData) {

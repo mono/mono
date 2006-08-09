@@ -1384,22 +1384,24 @@ namespace System.Windows.Forms {
 		}
 
 		internal void PositionCaret(Line line, int pos) {
-			if (!owner.IsHandleCreated) {
-				return;
+			if (owner.IsHandleCreated) {
+				undo.RecordCursor();
 			}
-
-			undo.RecordCursor();
 
 			caret.tag = line.FindTag(pos);
 			caret.line = line;
 			caret.pos = pos;
 			caret.height = caret.tag.height;
 
-			if (owner.Focused) {
-				XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] + caret.line.align_shift - viewport_x, caret.line.Y + caret.tag.shift - viewport_y + caret_shift);
+			if (owner.IsHandleCreated) {
+				if (owner.Focused) {
+					XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] + caret.line.align_shift - viewport_x, caret.line.Y + caret.tag.shift - viewport_y + caret_shift);
+				}
+
+				if (CaretMoved != null) CaretMoved(this, EventArgs.Empty);
 			}
 
-			if (CaretMoved != null) CaretMoved(this, EventArgs.Empty);
+
 		}
 
 		internal void PositionCaret(int x, int y) {
@@ -3328,7 +3330,7 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 
 			chars = 0;
 
-			for (i = 1; i < lines; i++) {
+			for (i = 1; i <= lines; i++) {
 				line = GetLine(i);
 
 				start = chars;
@@ -3803,7 +3805,7 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 
 		private void owner_HandleCreated(object sender, EventArgs e) {
 			RecalculateDocument(owner.CreateGraphicsInternal());
-			PositionCaret(0, 0);
+			AlignCaret();
 		}
 
 		private void owner_VisibleChanged(object sender, EventArgs e) {
