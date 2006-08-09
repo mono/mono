@@ -37,6 +37,16 @@ interface ICC : IBB
 {
 }
 
+interface IM1
+{
+    void Add (int arg);
+}
+
+interface IM2 : IM1
+{
+    int Add (int arg, bool now);
+}
+
 class Test
 {
 	static void Main ()
@@ -56,6 +66,11 @@ class Test
 	void Foo3 (ICC c)
 	{
 		c.Count ();
+	}
+    
+	void Foo4 (IM2 im2)
+	{
+		im2.Add (2);
 	}
 
 }
