@@ -50,7 +50,9 @@ namespace NUnit.Console
 	/// </summary>
 	public class ConsoleUi
 	{
+#if !TARGET_JVM
 		[STAThread]
+#endif
 		public static int Main(string[] args)
 		{
 			ConsoleOptions options = new ConsoleOptions(args);

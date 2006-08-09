@@ -1,3 +1,7 @@
+2006-08-09  Andrew Skiba <andrews@mainsoft.com>
+
+	* ConsoleUi.cs: TARGET_JVM ifdef.
+
 2006-06-15  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (EXTRA_DISTFILES): Rename from DISTFILES.
