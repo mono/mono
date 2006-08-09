@@ -1,3 +1,11 @@
+2006-08-08  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* XplatUIWin32.cs: Don't use the desktop as basis for foster-parented
+	  windows. Screws up the returned coordinates for child windows. 
+	  Fixes #78825. I'm hoping this doesn't break something, since the
+	  code was explicitly put in 8 months ago, but no bug was attached.
+	  Menus still seem to work properly.
+
 2006-08-08  Chris Toshok  <toshok@ximian.com>
 
 	* DataGrid.cs: make BeginInit/EndInit actually do what they're

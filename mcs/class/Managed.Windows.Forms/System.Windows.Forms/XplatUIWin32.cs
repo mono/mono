@@ -1318,11 +1318,7 @@ namespace System.Windows.Forms {
 			pt.y=rect.top;
 
 			parent = Win32GetParent(handle);
-			if (parent == FosterParent) {
-				Win32ScreenToClient(IntPtr.Zero, ref pt);
-			} else {
-				Win32ScreenToClient(parent, ref pt);
-			}
+			Win32ScreenToClient(parent, ref pt);
 
 			x = pt.x;
 			y = pt.y;
