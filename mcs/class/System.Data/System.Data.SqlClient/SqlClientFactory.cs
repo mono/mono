@@ -75,10 +75,7 @@ namespace System.Data.SqlClient
 
                 public override DbConnection CreateConnection ()
                 {
-			throw new InvalidOperationException ();
-                       // DbConnectionFactory connFactory = SqlConnectionFactory.GetSingleton (Instance /* provider factory */);
-                       // SqlConnection connection = new SqlConnection (connFactory);
-                       // return (DbConnection) connection;
+                        return (DbConnection) new SqlConnection ();
                 }
                 
                 public override DbDataAdapter CreateDataAdapter ()

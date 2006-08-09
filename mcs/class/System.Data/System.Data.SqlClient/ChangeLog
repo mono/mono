@@ -1,3 +1,7 @@
+2006-09-08  Konstantin Triger <kostat@mainsoft.com>
+
+	* SqlClientFactory.cs: implemented SqlClientFactory.CreateConnection ().
+
 2006-07-13  Senganal T  <tsenganal@novell.com>
 
 	* SqlClientFactory.cs SqlCommand.cs SqlConnectionFactory.cs 
