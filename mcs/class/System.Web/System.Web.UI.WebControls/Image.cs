@@ -174,19 +174,19 @@ namespace System.Web.UI.WebControls {
 			base.AddAttributesToRender (writer);
 #if NET_2_0
 			// src is always present, even if empty, in 2.0
-			writer.AddAttribute (HtmlTextWriterAttribute.Src, ResolveUrl (ImageUrl));
+			writer.AddAttribute (HtmlTextWriterAttribute.Src, ResolveClientUrl (ImageUrl));
 			string s = AlternateText;
 			if ((s.Length > 0) || GenerateEmptyAlternateText)
 				writer.AddAttribute (HtmlTextWriterAttribute.Alt, s);
 			s = DescriptionUrl;
 			if (s.Length > 0)
-				writer.AddAttribute (HtmlTextWriterAttribute.Longdesc, ResolveUrl (s));
+				writer.AddAttribute (HtmlTextWriterAttribute.Longdesc, ResolveClientUrl (s));
 #else
 			// alt is always present, even if empty, in 1.x
 			writer.AddAttribute (HtmlTextWriterAttribute.Alt, AlternateText);
 			string s = ImageUrl;
 			if (s.Length > 0)
-				writer.AddAttribute (HtmlTextWriterAttribute.Src, ResolveUrl (s));
+				writer.AddAttribute (HtmlTextWriterAttribute.Src, ResolveClientUrl (s));
 			// added in Fx 1.1 SP1 but the HtmlTextWriterAttribute wasn't
 			s = DescriptionUrl;
 			if (s.Length > 0)

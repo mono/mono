@@ -118,7 +118,7 @@ namespace System.Web.UI.WebControls
 				
 				if (ButtonType == ButtonType.Image) {
 					writer.AddAttribute (HtmlTextWriterAttribute.Type, "image");
-					writer.AddAttribute (HtmlTextWriterAttribute.Src, ResolveUrl (ImageUrl));
+					writer.AddAttribute (HtmlTextWriterAttribute.Src, ResolveClientUrl (ImageUrl));
 					if (callScript != null)
 						writer.AddAttribute (HtmlTextWriterAttribute.Onclick, callScript);
 					else
@@ -156,7 +156,7 @@ namespace System.Web.UI.WebControls
 			else {
 				if (ImageUrl.Length > 0) {
 					ControlStyle.AddAttributesToRender (writer);
-					writer.AddAttribute (HtmlTextWriterAttribute.Src, ResolveUrl (ImageUrl));
+					writer.AddAttribute (HtmlTextWriterAttribute.Src, ResolveClientUrl (ImageUrl));
 					if (Text.Length > 0)
 						writer.AddAttribute (HtmlTextWriterAttribute.Alt, Text);
 					writer.AddStyleAttribute (HtmlTextWriterStyle.BorderWidth, "0px");

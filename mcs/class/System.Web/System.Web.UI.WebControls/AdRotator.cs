@@ -108,13 +108,13 @@ namespace System.Web.UI.WebControls {
 			base.AddAttributesToRender (w);
 			
 			if (e.NavigateUrl != null)
-				w.AddAttribute (HtmlTextWriterAttribute.Href, ResolveUrl (e.NavigateUrl));
+				w.AddAttribute (HtmlTextWriterAttribute.Href, ResolveClientUrl (e.NavigateUrl));
 			w.AddAttribute (HtmlTextWriterAttribute.Target, Target);
 			
 			w.RenderBeginTag (HtmlTextWriterTag.A);
 
 			if (e.NavigateUrl != null)
-				w.AddAttribute (HtmlTextWriterAttribute.Src, ResolveUrl (e.ImageUrl));
+				w.AddAttribute (HtmlTextWriterAttribute.Src, ResolveClientUrl (e.ImageUrl));
 			
 			w.AddAttribute (HtmlTextWriterAttribute.Alt, e.AlternateText == null ? "" : e.AlternateText);
 			w.AddAttribute (HtmlTextWriterAttribute.Border, "0");

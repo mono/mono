@@ -59,7 +59,7 @@ namespace System.Web.UI.WebControls {
 			// add attributes - only if they're not empty
 			string s = NavigateUrl;
 			if (s.Length > 0)
-				w.AddAttribute (HtmlTextWriterAttribute.Href, ResolveUrl (s));
+				w.AddAttribute (HtmlTextWriterAttribute.Href, ResolveClientUrl (s));
 			s = Target;
 			if (s.Length > 0)
 				w.AddAttribute (HtmlTextWriterAttribute.Target, s);
@@ -103,7 +103,7 @@ namespace System.Web.UI.WebControls {
 			if (HasControls ())
 				base.RenderContents (w);
 			else if (ImageUrl != "") {
-				w.AddAttribute (HtmlTextWriterAttribute.Src, ResolveUrl (ImageUrl));
+				w.AddAttribute (HtmlTextWriterAttribute.Src, ResolveClientUrl (ImageUrl));
 #if NET_2_0
 				string s = Text;
 				if (s.Length > 0)

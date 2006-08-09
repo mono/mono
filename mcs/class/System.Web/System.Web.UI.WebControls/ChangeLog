@@ -1,3 +1,9 @@
+2006-08-09  Robert Jordan  <robertj@gmx.net>
+
+	* DataControlButton.cs, Image.cs, AdRotator.cs, HyperLink.cs:
+	replace ResolveUrl with ResolveClientUrl to match MS.NET's
+	behaviour. Fixes bug #77539.
+
 2006-08-09 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* HierarchicalDataBoundControl.cs: fixed DataBind flow
