@@ -1,3 +1,8 @@
+2006-08-09  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* System.dll.sources: Added EventInstance.cs, OverflowAction.cs,
+	EventSourceCreationData.cs.
+
 2006-08-07  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System_test.dll.sources: Added X509Certificate2Test.cs.

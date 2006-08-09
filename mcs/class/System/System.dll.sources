@@ -431,6 +431,7 @@ System.Diagnostics/DefaultTraceListener.cs
 System.Diagnostics/DiagnosticsConfigurationHandler.cs
 System.Diagnostics/EntryWrittenEventArgs.cs
 System.Diagnostics/EntryWrittenEventHandler.cs
+System.Diagnostics/EventInstance.cs
 System.Diagnostics/EventLog.cs
 System.Diagnostics/EventLogEntryCollection.cs
 System.Diagnostics/EventLogEntry.cs
@@ -443,12 +444,14 @@ System.Diagnostics/EventLogPermission.cs
 System.Diagnostics/EventLogPermissionEntryCollection.cs
 System.Diagnostics/EventLogPermissionEntry.cs
 System.Diagnostics/EventLogTraceListener.cs
+System.Diagnostics/EventSourceCreationData.cs
 System.Diagnostics/FileVersionInfo.cs
 System.Diagnostics/ICollectData.cs
 System.Diagnostics/InstanceDataCollectionCollection.cs
 System.Diagnostics/InstanceDataCollection.cs
 System.Diagnostics/InstanceData.cs
 System.Diagnostics/MonitoringDescriptionAttribute.cs
+System.Diagnostics/OverflowAction.cs
 System.Diagnostics/PerformanceCounterCategory.cs
 System.Diagnostics/PerformanceCounter.cs
 System.Diagnostics/PerformanceCounterInstaller.cs

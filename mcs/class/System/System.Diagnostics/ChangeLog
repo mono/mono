@@ -1,3 +1,9 @@
+2006-08-09  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* EventInstance.cs: Added 2.0 class.
+	* EventSourceCreationData.cs: Added 2.0 class.
+	* OverflowAction.cs: Added 2.0 enum.
+
 2006-07-31  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* EventLogEntry.cs: Add a linkdemand for unrestricted on class.
