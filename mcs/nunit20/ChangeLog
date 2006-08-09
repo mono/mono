@@ -1,3 +1,7 @@
+2006-08-09  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* added NET_2_0 solution files for VS2005
+
 2006-06-06  Merav Sudri <meravs@mainsoft.com>
 	* nunit.java.sln - not used build configurations was deleted.
 	* readme: instructions for using nunit.java was added.
