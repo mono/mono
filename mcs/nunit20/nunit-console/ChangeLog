@@ -1,3 +1,7 @@
+2006-08-09  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* added NET_2_0 projects files for VS2005
+
 2006-08-09  Andrew Skiba <andrews@mainsoft.com>
 
 	* ConsoleUi.cs: TARGET_JVM ifdef.
