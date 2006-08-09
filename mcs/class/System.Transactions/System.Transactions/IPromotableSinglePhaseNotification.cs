@@ -11,11 +11,9 @@
 
 namespace System.Transactions
 {
-	public interface IPromotableSinglePhaseNotification
+	public interface IPromotableSinglePhaseNotification : ITransactionPromoter
 	{
 		void Initialize ();
-
-		Transaction Promote ();
 
 		void Rollback (SinglePhaseEnlistment enlistment);
 
