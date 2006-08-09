@@ -1,3 +1,7 @@
+2006-08-09 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* HierarchicalDataBoundControl.cs: fixed DataBind flow
+
 2006-08-08 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* Content.cs:

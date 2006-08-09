@@ -406,6 +406,7 @@ System.Web.UI.WebControls/FontInfoCas.cs
 System.Web.UI.WebControls/FontNamesConverterCas.cs
 System.Web.UI.WebControls/FontUnitCas.cs
 System.Web.UI.WebControls/FormViewCas.cs
+System.Web.UI.WebControls/HierarchicalDataBoundControlTest.cs
 System.Web.UI.WebControls/HyperLinkCas.cs
 System.Web.UI.WebControls/HyperLinkColumnCas.cs
 System.Web.UI.WebControls/ImageButtonCas.cs

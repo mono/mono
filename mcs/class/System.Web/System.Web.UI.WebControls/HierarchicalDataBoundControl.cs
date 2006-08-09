@@ -110,12 +110,13 @@ namespace System.Web.UI.WebControls
 		
 		protected internal virtual void PerformDataBinding ()
 		{
-			OnDataBinding (EventArgs.Empty);
 		}
 		
 		protected override void PerformSelect ()
 		{
+			OnDataBinding (EventArgs.Empty);
 			PerformDataBinding ();
+			OnDataBound (EventArgs.Empty);
 		}
 		
 		protected override void ValidateDataSource (object dataSource)

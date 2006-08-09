@@ -1,3 +1,7 @@
+2006-08-09 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* HierarchicalDataBoundControlTest.cs: added new tests
+
 2006-08-08 Merav Sudri <meravs@mainsoft.com>
 
 	* ObjectDataSourceTest.cs: SetUp with delay was added to the test.
