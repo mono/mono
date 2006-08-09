@@ -1,3 +1,8 @@
+2006-08-08  Duncan Mak  <duncan@novell.com>
+
+	* ReadOnlyCollectionBase.cs (Count): Mark as virtual in
+	NET_2_0. Fixes #79033.
+
 2006-04-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Comparer.cs : changed internal field from CultureInfo to

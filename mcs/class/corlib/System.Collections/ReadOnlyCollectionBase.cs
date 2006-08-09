@@ -39,24 +39,28 @@ namespace System.Collections {
 	[ComVisible(true)]
 #endif
 	[Serializable]
-	public abstract class ReadOnlyCollectionBase : ICollection,	IEnumerable {
+	public abstract class ReadOnlyCollectionBase : ICollection, IEnumerable {
 
 		// private instance properties
-		private System.Collections.ArrayList list;
+		private ArrayList list;
 		
 		// public instance properties
-		public int Count { get { return InnerList.Count; } }
+		public
+#if NET_2_0
+		virtual
+#endif		
+		int Count { get { return InnerList.Count; } }
 		
 		// Public Instance Methods
-		public System.Collections.IEnumerator GetEnumerator() { return InnerList.GetEnumerator(); }
+		public IEnumerator GetEnumerator() { return InnerList.GetEnumerator(); }
 		
 		// Protected Instance Constructors
 		protected ReadOnlyCollectionBase() {
-			this.list = new System.Collections.ArrayList();
+			this.list = new ArrayList();
 		}
 		
 		// Protected Instance Properties
-		protected System.Collections.ArrayList InnerList {get { return this.list; } }
+		protected ArrayList InnerList {get { return this.list; } }
 		
 		// ICollection methods
 		void ICollection.CopyTo(Array array, int index) {

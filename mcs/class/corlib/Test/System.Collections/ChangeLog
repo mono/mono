@@ -1,3 +1,8 @@
+2006-08-08  Duncan Mak  <duncan@novell.com>
+
+	* ReadOnlyCollectionBaseTest.cs (TestZeroCountOnNew): Add test for
+	overriding Count in NET_2_0 for #79033.
+
 2006-04-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* QueueTest.cs, SortedListTest.cs : many capacity-related tests are
