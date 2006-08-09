@@ -1,3 +1,12 @@
+2006-08-09  Alp Toker  <alp@atoker.com>
+
+	* dis-cil.c:
+	* dis-cil.h:
+	* main.c:
+	* monodis.1:
+	* push-pop.h:
+	* util.c: Typofix 'dissasemble' to 'disassemble'.
+
 2006-06-27  Ankit Jain  <jankit@novell.com>
 
 	* get.c (get_assemblyref): Escape name.
