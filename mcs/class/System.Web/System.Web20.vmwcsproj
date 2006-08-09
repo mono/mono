@@ -110,8 +110,6 @@
 		<Compile Include="System.Web.Configuration\ClientTargetSectionHandler.cs"/>
 		<Compile Include="System.Web.Configuration\CompilationConfiguration.cs"/>
 		<Compile Include="System.Web.Configuration\CompilationConfigurationHandler.cs"/>
-		<Compile Include="System.Web.Configuration\Compiler.cs"/>
-		<Compile Include="System.Web.Configuration\CompilerCollection.cs"/>
 		<Compile Include="System.Web.Configuration\CustomErrorsConfigHandler.cs"/>
 		<Compile Include="System.Web.Configuration\FormsAuthPasswordFormat.cs"/>
 		<Compile Include="System.Web.Configuration\FormsProtectionEnum.cs"/>
@@ -1002,9 +1000,6 @@
 			<SubType>Code</SubType>
 		</Compile>
 		<Compile Include="System.Web\HttpClientCertificate.cs">
-			<SubType>Code</SubType>
-		</Compile>
-		<Compile Include="System.Web\HttpCompileException.cs">
 			<SubType>Code</SubType>
 		</Compile>
 		<Compile Include="System.Web\HttpContext.cs">
