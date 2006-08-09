@@ -1239,6 +1239,7 @@
 		<Reference Include="System.XML"/>
 		<Reference Include="System.Drawing"/>
 		<Reference Include="System.Data"/>
+		<Reference Include="System.Configuration"/>
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="Properties\"/>
