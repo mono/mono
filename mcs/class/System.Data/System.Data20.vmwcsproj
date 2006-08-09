@@ -247,6 +247,8 @@
 		<Compile Include="System.Data.ProviderBase.jvm\ParameterMetadataWrapper.cs"/>
 		<Compile Include="System.Data.ProviderBase.jvm\ReaderCache.cs"/>
 		<Compile Include="System.Data.ProviderBase.jvm\regex.cs"/>
+		<Compile Include="System.Data.SqlClient\SqlClientFactory.cs"/>
+		<Compile Include="System.Data.SqlClient\SqlDataSourceEnumerator.cs"/>
 		<Compile Include="System.Data.SqlClient.jvm\ISqlNotificationReceiver.cs"/>
 		<Compile Include="System.Data.SqlClient.jvm\MetaType.cs"/>
 		<Compile Include="System.Data.SqlClient.jvm\SqlClientPermission.cs"/>
