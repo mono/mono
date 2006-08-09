@@ -1387,6 +1387,20 @@ namespace MonoTests.System.Drawing
 			region = new Region (gp);
 			Assert.AreEqual (2, region.GetRegionScans (matrix).Length, "2");
 		}
+
+		[Test]
+		public void ExcludeFromInfinity ()
+		{
+			Region r = new Region ();
+			Assert.IsTrue (r.IsInfinite (graphic), "before");
+			r.Exclude (new Rectangle (5, 5, 10, 10));
+			Assert.IsFalse (r.IsInfinite (graphic), "after");
+			RectangleF bounds = r.GetBounds (graphic);
+			Assert.AreEqual (-4194304, bounds.X, "X");
+			Assert.AreEqual (-4194304, bounds.Y, "Y");
+			Assert.AreEqual (8388608, bounds.Width, "Width");
+			Assert.AreEqual (8388608, bounds.Height, "Height");
+		}
 	}
 
 	[TestFixture]
