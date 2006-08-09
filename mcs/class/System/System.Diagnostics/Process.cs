@@ -1083,9 +1083,11 @@ namespace System.Diagnostics {
 					return false; // Timed out
 
 				if (ms >= 0) {
-					ms -= (int) (DateTime.UtcNow - start).TotalMilliseconds;
+					DateTime now = DateTime.UtcNow;
+					ms -= (int) (now - start).TotalMilliseconds;
 					if (ms <= 0)
 						return false;
+					start = now;
 				}
 			}
 
