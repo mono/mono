@@ -1129,6 +1129,34 @@ namespace System.Web.UI
 			HttpResponse resp = Context.Response;
 			return resp.ApplyAppPathModifier (UrlUtils.Combine (ts, relativeUrl));
 		}
+
+
+#if NET_2_0		
+		public
+#else
+		internal
+#endif
+		string ResolveClientUrl (string relativeUrl)
+		{
+			if (relativeUrl == null)
+				throw new ArgumentNullException ("relativeUrl");
+
+			if (relativeUrl == "")
+				return "";
+
+			if (relativeUrl [0] == '#')
+				return relativeUrl;
+			
+			string ts = TemplateSourceDirectory;
+			if (ts == "" || !UrlUtils.IsRelativeUrl (relativeUrl))
+				return relativeUrl;
+
+			HttpResponse resp = Context.Response;
+			string absoluteUrl = resp.ApplyAppPathModifier (UrlUtils.Combine (ts, relativeUrl));
+			if (absoluteUrl.StartsWith (ts + "/"))
+				return absoluteUrl.Substring (ts.Length + 1);
+			return absoluteUrl;
+		}
 		
 		internal bool HasRenderMethodDelegate () {
 			return _renderMethodDelegate != null;
@@ -1470,11 +1498,6 @@ namespace System.Web.UI
 		{
 			get { return skinId; }
 			set { skinId = value; }
-		}
-		
-		public string ResolveClientUrl (string url)
-		{
-			throw new NotImplementedException ();               
 		}
 
 		ControlBuilder IControlBuilderAccessor.ControlBuilder { 

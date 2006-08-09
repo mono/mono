@@ -1,3 +1,9 @@
+2006-08-09  Robert Jordan  <robertj@gmx.net>
+
+	* Control.cs: add the 2.0 ResolveClientUrl method.
+	Expose ResolveClientUrl as internal for the 1.1 profile.
+	Fixes bug #77539.
+
 2006-08-08  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* added MasterPageParser.jvm.cs
