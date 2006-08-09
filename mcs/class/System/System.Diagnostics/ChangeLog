@@ -1,3 +1,8 @@
+2006-08-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Process.cs: add support for 2.0 asynchronous reads on stdout and
+	stderr.
+
 2006-08-09  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* EventSourceCreationData.cs: Marked ctor internal, and removed ctor.
