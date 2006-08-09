@@ -47,7 +47,9 @@ namespace System.Web
 		bool building;
 		string file;
 		SiteMapNode root = null;
+#if !TARGET_JVM
 		FileSystemWatcher watcher;
+#endif
 
 		[MonoTODO]
 		protected internal override void AddNode (SiteMapNode node, SiteMapNode parentNode)
@@ -202,6 +204,7 @@ namespace System.Web
 			else
 				file = UrlUtils.ResolvePhysicalPathFromAppAbsolute (file);
 				
+#if !TARGET_JVM
 			if (File.Exists (file)) {
 				watcher = new FileSystemWatcher ();
 				watcher.Path = Path.GetFullPath (Path.GetDirectoryName (file));
@@ -209,6 +212,7 @@ namespace System.Web
 				watcher.Changed += new FileSystemEventHandler (OnFileChanged);
 				watcher.EnableRaisingEvents = true;
 			}
+#endif
 		}
 
 		[MonoTODO]
