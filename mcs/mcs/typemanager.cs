@@ -431,7 +431,7 @@ public class TypeManager {
 
 	public static MemberCache LookupBaseInterfacesCache (Type t)
 	{
-		Type [] ifaces = t.GetInterfaces ();
+		Type [] ifaces = GetInterfaces (t);
 
 		if (ifaces != null && ifaces.Length == 1)
 			return LookupMemberCache (ifaces [0]);
@@ -2426,8 +2426,7 @@ public class TypeManager {
 				if ((list.Length == 2) && (list [1] is FieldInfo))
 					return new MemberInfo [] { list [0] };
 
-				// Oooops
-				return null;
+				return list;
 			}
 
 			//
@@ -2448,20 +2447,13 @@ public class TypeManager {
 				mt &= (MemberTypes.Method | MemberTypes.Constructor);
 			}
 		} while (searching);
-		
-		if (use_first_members_list) {
-			foreach (MemberInfo mi in first_members_list) {
-				if (! (mi is MethodBase)) {
-					method_list = CopyNewMethods (method_list, first_members_list);
-					return (MemberInfo []) method_list.ToArray (typeof (MemberInfo));
-				}
-			}
-			return (MemberInfo []) first_members_list;
-		}
+
+		if (use_first_members_list)
+			return first_members_list;
 
 		if (method_list != null && method_list.Count > 0) {
-                        return (MemberInfo []) method_list.ToArray (typeof (MemberInfo));
-                }
+			return (MemberInfo []) method_list.ToArray (typeof (MemberInfo));
+		}
 		//
 		// This happens if we already used the cache in the first iteration, in this case
 		// the cache already looked in all interfaces.
