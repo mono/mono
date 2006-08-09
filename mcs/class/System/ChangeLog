@@ -1,5 +1,9 @@
 2006-08-09  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* System_test.dll.souces: Added EventSourceCreationDataTest.cs.
+
+2006-08-09  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* System.dll.sources: Added EventInstance.cs, OverflowAction.cs,
 	EventSourceCreationData.cs.
 

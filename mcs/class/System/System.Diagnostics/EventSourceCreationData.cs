@@ -49,28 +49,21 @@ namespace System.Diagnostics
 		{
 		}
 
-		public EventSourceCreationData (string source, string logName, string machineName)
+		internal EventSourceCreationData (string source, string logName, string machineName)
 		{
 			_source = source;
 			_logName = logName;
 			_machineName = machineName;
-		}
-
-		public EventSourceCreationData (string source, string logName, string machineName, string messageResourceFile, string parameterResourceFile, string categoryResourceFile, short categoryCount)
-		{
-			_source = source;
-			_logName = logName;
-			_machineName = machineName;
-			_messageResourceFile = messageResourceFile;
-			_parameterResourceFile = parameterResourceFile;
-			_categoryResourceFile = categoryResourceFile;
-			_categoryCount = categoryCount;
 		}
 
 		public int CategoryCount
 		{
 			get { return _categoryCount; }
-			set { _categoryCount = value; }
+			set {
+				if (value < 0)
+					throw new ArgumentOutOfRangeException ("value");
+				_categoryCount = value;
+			}
 		}
 
 		public string CategoryResourceFile

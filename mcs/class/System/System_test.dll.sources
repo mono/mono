@@ -138,6 +138,7 @@ System.Diagnostics/SwitchesTest.cs
 System.Diagnostics/DiagnosticsConfigurationHandlerTest.cs
 System.Diagnostics/EventLogPermissionAttributeTest.cs
 System.Diagnostics/EventLogPermissionTest.cs
+System.Diagnostics/EventSourceCreationDataTest.cs
 System.Diagnostics/PerformanceCounterPermissionAttributeTest.cs
 System.Diagnostics/PerformanceCounterPermissionTest.cs
 System.IO/FileSystemWatcherTest.cs

@@ -1,3 +1,7 @@
+2006-08-09  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* EventSourceCreationDataTest.cs: new test.
+
 2006-05-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SwitchesTest.cs : Ignore NewSwitch under 2.0 as it fails under
