@@ -1178,45 +1178,132 @@
 		</Compile>
 	</ItemGroup>
 	<ItemGroup>
-		<Content Include="resources\arrow_down.gif"/>
-		<Content Include="resources\arrow_minus.gif"/>
-		<Content Include="resources\arrow_noexpand.gif"/>
-		<Content Include="resources\arrow_plus.gif"/>
-		<Content Include="resources\arrow_up.gif"/>
-		<Content Include="resources\box_empty.gif"/>
-		<Content Include="resources\box_full.gif"/>
-		<Content Include="resources\box_minus.gif"/>
-		<Content Include="resources\box_noexpand.gif"/>
-		<Content Include="resources\box_plus.gif"/>
-		<Content Include="resources\callback.js"/>
-		<Content Include="resources\contact.gif"/>
-		<Content Include="resources\dots.gif"/>
-		<Content Include="resources\dot_empty.gif"/>
-		<Content Include="resources\dot_full.gif"/>
-		<Content Include="resources\inbox.gif"/>
-		<Content Include="resources\star_empty.gif"/>
-		<Content Include="resources\star_full.gif"/>
-		<Content Include="resources\transparent.gif"/>
-		<Content Include="resources\TreeView_dash.gif"/>
-		<Content Include="resources\TreeView_dashminus.gif"/>
-		<Content Include="resources\TreeView_dashplus.gif"/>
-		<Content Include="resources\TreeView_i.gif"/>
-		<Content Include="resources\TreeView_l.gif"/>
-		<Content Include="resources\TreeView_lminus.gif"/>
-		<Content Include="resources\TreeView_lplus.gif"/>
-		<Content Include="resources\TreeView_minus.gif"/>
-		<Content Include="resources\TreeView_noexpand.gif"/>
-		<Content Include="resources\TreeView_plus.gif"/>
-		<Content Include="resources\TreeView_r.gif"/>
-		<Content Include="resources\TreeView_rminus.gif"/>
-		<Content Include="resources\TreeView_rplus.gif"/>
-		<Content Include="resources\TreeView_t.gif"/>
-		<Content Include="resources\TreeView_tminus.gif"/>
-		<Content Include="resources\TreeView_tplus.gif"/>
-		<Content Include="resources\warning.gif"/>
-		<Content Include="resources\webform.js"/>
-		<Content Include="resources\WebUIValidation.js"/>
-		<Content Include="System.Web.UI.WebControls\TreeView.js"/>
+		<EmbeddedResource Include="resources\arrow_down.gif">
+			<LogicalName>arrow_down.gif</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="resources\arrow_minus.gif">
+			<LogicalName>arrow_minus.gif</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="resources\arrow_noexpand.gif">
+			<LogicalName>arrow_noexpand.gif</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="resources\arrow_plus.gif">
+			<LogicalName>arrow_plus.gif</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="resources\arrow_up.gif">
+			<LogicalName>arrow_up.gif</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="resources\box_empty.gif">
+			<LogicalName>box_empty.gif</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="resources\box_full.gif">
+			<LogicalName>box_full.gif</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="resources\box_minus.gif">
+			<LogicalName>box_minus.gif</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="resources\box_noexpand.gif">
+			<LogicalName>box_noexpand.gif</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="resources\box_plus.gif">
+			<LogicalName>box_plus.gif</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="resources\callback.js">
+			<LogicalName>callback.js</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="resources\contact.gif">
+			<LogicalName>contact.gif</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="resources\dot_empty.gif">
+			<LogicalName>dot_empty.gif</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="resources\dot_full.gif">
+			<LogicalName>dot_full.gif</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="resources\dots.gif">
+			<LogicalName>dots.gif</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="resources\inbox.gif">
+			<LogicalName>inbox.gif</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="resources\star_empty.gif">
+			<LogicalName>star_empty.gif</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="resources\star_full.gif">
+			<LogicalName>star_full.gif</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="resources\transparent.gif">
+			<LogicalName>transparent.gif</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="resources\TreeView_dash.gif">
+			<LogicalName>TreeView_dash.gif</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="resources\TreeView_dashminus.gif">
+			<LogicalName>TreeView_dashminus.gif</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="resources\TreeView_dashplus.gif">
+			<LogicalName>TreeView_dashplus.gif</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="resources\TreeView_i.gif">
+			<LogicalName>TreeView_i.gif</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="resources\TreeView_l.gif">
+			<LogicalName>TreeView_l.gif</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="resources\TreeView_lminus.gif">
+			<LogicalName>TreeView_lminus.gif</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="resources\TreeView_lplus.gif">
+			<LogicalName>TreeView_lplus.gif</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="resources\TreeView_minus.gif">
+			<LogicalName>TreeView_minus.gif</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="resources\TreeView_noexpand.gif">
+			<LogicalName>TreeView_noexpand.gif</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="resources\TreeView_plus.gif">
+			<LogicalName>TreeView_plus.gif</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="resources\TreeView_r.gif">
+			<LogicalName>TreeView_r.gif</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="resources\TreeView_rminus.gif">
+			<LogicalName>TreeView_rminus.gif</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="resources\TreeView_rplus.gif">
+			<LogicalName>TreeView_rplus.gif</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="resources\TreeView_t.gif">
+			<LogicalName>TreeView_t.gif</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="resources\TreeView_tminus.gif">
+			<LogicalName>TreeView_tminus.gif</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="resources\TreeView_tplus.gif">
+			<LogicalName>TreeView_tplus.gif</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="resources\warning.gif">
+			<LogicalName>warning.gif</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="resources\webform.js">
+			<LogicalName>webform.js</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="resources\WebUIValidation.js">
+			<LogicalName>WebUIValidation.js</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="resources\MaintainScrollPositionOnPostBack.js">
+			<LogicalName>MaintainScrollPositionOnPostBack.js</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="System.Web.UI.WebControls\GridView.js">
+			<LogicalName>GridView.js</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="System.Web.UI.WebControls\Menu.js">
+			<LogicalName>Menu.js</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="System.Web.UI.WebControls\TreeView.js">
+			<LogicalName>TreeView.js</LogicalName>
+		</EmbeddedResource>
 	</ItemGroup>
 	<ItemGroup>
 		<Reference Include="j2ee">
