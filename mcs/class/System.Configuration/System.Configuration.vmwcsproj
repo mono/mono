@@ -87,6 +87,7 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<Reference Include="rt, Version=0.0.0.0, Culture=neutral">
+			<HintPath>..\lib\rt.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
 		<Reference Include="System"/>
