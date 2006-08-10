@@ -74,7 +74,7 @@ namespace System.Windows.Forms
 					return;
 
 				hilight = value;
-				Invalidate ();
+				InvalidateBorder ();
 			}
 		}
 
@@ -370,6 +370,18 @@ namespace System.Windows.Forms
 			size.Width += theme.ToolBarGripWidth;
 			size.Height += theme.ToolBarGripWidth;
 			return size;
+		}
+
+		internal void InvalidateBorder ()
+		{
+			if (Rectangle == Rectangle.Empty)
+				return;
+
+			/* invalidate the four sides of our border */
+			Parent.Invalidate (new Rectangle (Rectangle.X - 2, Rectangle.Y - 2, Rectangle.Width + 4, 4));
+			Parent.Invalidate (new Rectangle (Rectangle.X - 2, Rectangle.Y - 2, 4, Rectangle.Height + 4));
+			Parent.Invalidate (new Rectangle (Rectangle.X - 2, Rectangle.Y + Rectangle.Height - 2, Rectangle.Width + 4, 4));
+			Parent.Invalidate (new Rectangle (Rectangle.X + Rectangle.Width - 2, Rectangle.Y - 2, 4, Rectangle.Height + 4));
 		}
 
 		void Invalidate ()

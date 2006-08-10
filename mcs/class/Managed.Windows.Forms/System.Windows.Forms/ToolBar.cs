@@ -444,7 +444,7 @@ namespace System.Windows.Forms
 			}
 			e.Button.pressed = false;
 
-			Invalidate (e.Button.Rectangle);
+			e.Button.InvalidateBorder ();
 
 			if (ButtonClick != null)
 				ButtonClick (this, e);
@@ -614,7 +614,7 @@ namespace System.Windows.Forms
 					}
 					button.pressed = true;
 					button.inside = true;
-					Invalidate (button.Rectangle);
+					button.InvalidateBorder ();
 					break;
 				}
 			}
@@ -647,7 +647,7 @@ namespace System.Windows.Forms
 						OnButtonClick (new ToolBarButtonClickEventArgs (button));
 				} else if (button.pressed) {
 					button.pressed = false;
-					Invalidate (button.Rectangle);
+					button.InvalidateBorder ();
 				}
 			}
 		}
@@ -659,7 +659,6 @@ namespace System.Windows.Forms
 
 			if (current_button.Hilight) {
 				current_button.Hilight = false;
-				Invalidate (current_button.Rectangle);
 			}
 			current_button = null;
 		}
@@ -679,7 +678,6 @@ namespace System.Windows.Forms
 					    (button.inside != button.Rectangle.Contains (loc))) {
 						button.inside = button.Rectangle.Contains (loc);
 						button.Hilight = false;
-						Invalidate (button.Rectangle);
 						break;
 					}
 				}
@@ -690,7 +688,6 @@ namespace System.Windows.Forms
 					if (current_button.Hilight || current_button.Pushed)
 						return;
 					current_button.Hilight = true;
-					Invalidate (current_button.Rectangle);
 				}
 				else {
 					foreach (ToolBarButton button in buttons) {
@@ -699,11 +696,9 @@ namespace System.Windows.Forms
 							if (current_button.Hilight || current_button.Pushed)
 								continue;
 							current_button.Hilight = true;
-							Invalidate (current_button.Rectangle);
 						}
 						else if (button.Hilight) {
 							button.Hilight = false;
-							Invalidate (button.Rectangle);
 						}
 					}
 				}

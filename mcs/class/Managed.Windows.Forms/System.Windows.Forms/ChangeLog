@@ -1,3 +1,12 @@
+2006-08-10  Chris Toshok  <toshok@ximian.com>
+
+	* ToolBar.cs, ToolBarButton.cs: fix the redraw-on-highlight
+	flickering in flat mode (and most of the flickering in general) by
+	only invalidating the button border (and not the entire rectangle)
+	when the state changes.  A couple of cases still flicker:
+	ToggleButtons, and the dropdown arrow case when the user mouse
+	ups.
+
 2006-08-10  Alexander Olk  <alex.olk@googlemail.com>
 
 	* X11Keyboard.cs: Fixed handling of the Del key on the cursorblock
