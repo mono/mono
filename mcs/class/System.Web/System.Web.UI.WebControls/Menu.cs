@@ -67,7 +67,10 @@ namespace System.Web.UI.WebControls
 		string selectedItemPath;
 		Hashtable bindings;
 		ArrayList dynamicMenus;
-		
+
+		Hashtable _menuItemControls;
+		bool _requiresChildControlsDataBinding;
+
 		private static readonly object MenuItemClickEvent = new object();
 		private static readonly object MenuItemDataBoundEvent = new object();
 		
@@ -743,14 +746,42 @@ namespace System.Web.UI.WebControls
 		protected internal override void PerformDataBinding ()
 		{
 			base.PerformDataBinding ();
+
+			// Do not attempt to bind data if there is no
+			// data source set.
+			if (!IsBoundUsingDataSourceID && (DataSource == null)) {
+				EnsureChildControlsDataBound ();
+				return;
+			}
+			
 			HierarchicalDataSourceView data = GetData ("");
+
+			if (data == null) {
+				throw new InvalidOperationException ("No view returned by data source control.");
+			}
+			Items.Clear ();
 			IHierarchicalEnumerable e = data.Select ();
-			foreach (object obj in e) {
-				IHierarchyData hdata = e.GetHierarchyData (obj);
+			FillBoundChildrenRecursive (e, Items);			
+			
+			ChildControlsCreated = false;
+
+			EnsureChildControls ();
+			EnsureChildControlsDataBound ();
+		}
+
+		private void FillBoundChildrenRecursive (IHierarchicalEnumerable hEnumerable, MenuItemCollection itemCollection) {
+			foreach (object obj in hEnumerable) {
+				IHierarchyData hdata = hEnumerable.GetHierarchyData (obj);
 				MenuItem item = new MenuItem ();
-				Items.Add (item);
+				itemCollection.Add (item);
 				item.Bind (hdata);
 				OnMenuItemDataBound (new MenuEventArgs (item));
+
+				if (hdata == null || !hdata.HasChildren)
+					continue;
+
+				IHierarchicalEnumerable e = hdata.GetChildren ();
+				FillBoundChildrenRecursive (e, item.ChildItems);
 			}
 		}
 		
@@ -933,12 +964,46 @@ namespace System.Web.UI.WebControls
 		protected internal override void CreateChildControls ()
 		{
 			Controls.Clear ();
-			EnsureDataBound ();
+			// Check for HasChildViewState to avoid unnecessary calls to ClearChildViewState.
+			if (HasChildViewState)
+				ClearChildViewState ();
+			_menuItemControls = new Hashtable ();
+			CreateChildControlsForItems (Items);
+			_requiresChildControlsDataBinding = true;
 		}
-		
+
+		private void CreateChildControlsForItems (MenuItemCollection items ) {
+			foreach (MenuItem item in items) {
+				bool isDynamicItem = IsDynamicItem (item);
+				if (isDynamicItem && dynamicItemTemplate != null) {
+					MenuItemTemplateContainer cter = new MenuItemTemplateContainer (item.Index, item);
+					dynamicItemTemplate.InstantiateIn (cter);
+					_menuItemControls [item] = cter;
+					Controls.Add (cter);
+				}
+				else if (!isDynamicItem && staticItemTemplate != null) {
+					MenuItemTemplateContainer cter = new MenuItemTemplateContainer (item.Index, item);
+					staticItemTemplate.InstantiateIn (cter);
+					_menuItemControls [item] = cter;
+					Controls.Add (cter);
+				}
+				if (item.HasChildData)
+					CreateChildControlsForItems (item.ChildItems);
+			}
+		}
+
 		protected override void EnsureDataBound ()
 		{
 			base.EnsureDataBound ();
+
+			EnsureChildControlsDataBound ();
+		}
+
+		private void EnsureChildControlsDataBound () {
+			if (!_requiresChildControlsDataBinding)
+				return;
+			DataBindChildren ();
+			_requiresChildControlsDataBinding = false;
 		}
 
 		[MonoTODO]
@@ -968,9 +1033,9 @@ namespace System.Web.UI.WebControls
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		protected override void OnDataBinding (EventArgs e)
 		{
+			EnsureChildControls ();
 			base.OnDataBinding (e);
 		}
 		
@@ -1089,9 +1154,11 @@ namespace System.Web.UI.WebControls
 			base.RenderEndTag (writer);
 			
 			// Render dynamic menus outside the main control tag
-			for (int n=0; n<dynamicMenus.Count; n++) {
-				MenuItem item = (MenuItem) dynamicMenus [n];
-				RenderDynamicMenu (writer, item);
+			if (dynamicMenus != null) {
+				for (int n = 0; n < dynamicMenus.Count; n++) {
+					MenuItem item = (MenuItem) dynamicMenus [n];
+					RenderDynamicMenu (writer, item);
+				}
 			}
 			dynamicMenus = null;
 
@@ -1226,12 +1293,16 @@ namespace System.Web.UI.WebControls
 			
 			if (!vertical) writer.RenderEndTag ();	// TR
 		}
-		
+
+		private bool IsDynamicItem (MenuItem item) {
+			return item.Depth + 1 > StaticDisplayLevels;
+		}
+
 		void RenderMenuItem (HtmlTextWriter writer, MenuItem item)
 		{
 			bool displayChildren = (item.Depth + 1 < StaticDisplayLevels + MaximumDynamicDisplayLevels);
 			bool dynamicChildren = displayChildren && (item.Depth + 1 >= StaticDisplayLevels) && item.ChildItems.Count > 0;
-			bool isDynamicItem = item.Depth + 1 > StaticDisplayLevels;
+			bool isDynamicItem = IsDynamicItem (item);
 			bool vertical = (Orientation == Orientation.Vertical) || isDynamicItem;
 
 			if (vertical)
@@ -1393,25 +1464,20 @@ namespace System.Web.UI.WebControls
 				writer.RenderEndTag ();	// TD
 			}
 		}
-		
-		void RenderItemContent (HtmlTextWriter writer, MenuItem item, bool isDynamicItem)
-		{
-			if (isDynamicItem && dynamicItemTemplate != null) {
-				MenuItemTemplateContainer cter = new MenuItemTemplateContainer (item.Index, item);
-				dynamicItemTemplate.InstantiateIn (cter);
-				cter.Render (writer);
-			} else if (!isDynamicItem && staticItemTemplate != null) {
-				MenuItemTemplateContainer cter = new MenuItemTemplateContainer (item.Index, item);
-				staticItemTemplate.InstantiateIn (cter);
-				cter.Render (writer);
-			} else if (isDynamicItem && DynamicItemFormatString.Length > 0) {
+
+		void RenderItemContent (HtmlTextWriter writer, MenuItem item, bool isDynamicItem) {
+			if (_menuItemControls [item] != null) {
+				((Control) _menuItemControls [item]).Render (writer);
+			}
+			else if (isDynamicItem && DynamicItemFormatString.Length > 0) {
 				writer.Write (string.Format (DynamicItemFormatString, item.Text));
-			} else if (!isDynamicItem && StaticItemFormatString.Length > 0) {
+			}
+			else if (!isDynamicItem && StaticItemFormatString.Length > 0) {
 				writer.Write (string.Format (StaticItemFormatString, item.Text));
-			} else {
+			}
+			else {
 				writer.Write (item.Text);
 			}
-			
 		}
 			
 		Unit GetItemSpacing (MenuItem item, bool dynamic)

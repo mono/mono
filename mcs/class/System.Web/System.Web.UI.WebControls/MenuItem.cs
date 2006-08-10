@@ -158,10 +158,7 @@ namespace System.Web.UI.WebControls
 		public MenuItemCollection ChildItems {
 			get {
 				if (items == null) {
-					if (DataBound)
-						FillBoundChildren ();
-					else
-						items = new MenuItemCollection (this);
+					items = new MenuItemCollection (this);
 						
 					if (((IStateManager)this).IsTrackingViewState)
 						((IStateManager)items).TrackViewState();
@@ -537,8 +534,6 @@ namespace System.Web.UI.WebControls
 				Text = navigateUIData.ToString ();
 				NavigateUrl = navigateUIData.NavigateUrl;
 			}
-
-			FillBoundChildren ();
 		}
 		
 		internal void SetDataItem (object item)
@@ -596,22 +591,6 @@ namespace System.Web.UI.WebControls
 				return prop.GetValue (hierarchyData);
 			else
 				return prop.GetValue (dataItem);
-		}
-
-		void FillBoundChildren ()
-		{
-			items = new MenuItemCollection (this);
-			if (((IStateManager) this).IsTrackingViewState)
-				((IStateManager) items).TrackViewState ();
-			if (hierarchyData == null || !hierarchyData.HasChildren) return;
-
-			IHierarchicalEnumerable e = hierarchyData.GetChildren ();
-			foreach (object obj in e) {
-				IHierarchyData hdata = e.GetHierarchyData (obj);
-				MenuItem item = new MenuItem ();
-				items.Add (item);
-				item.Bind (hdata);
-			}
 		}
 	}
 }

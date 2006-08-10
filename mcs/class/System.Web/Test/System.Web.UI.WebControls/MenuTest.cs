@@ -406,7 +406,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]  
 		public void Menu_RenderEndTag ()
 		{
 		        new WebTest (PageInvoker.CreateOnLoad (_EndTagRender)).Run ();
@@ -430,6 +429,140 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		        HtmlDiff.AssertAreEqual(OriginControlHtml, RenderedControlHtml,"RenderEndTag");
 			
+		}
+
+		[Test]
+		public void Menu_DataBind () {
+			Page p = new Page ();
+			Menu m = CreateMenu ();
+			m.DataBinding += new EventHandler (m_DataBinding);
+			m.DataBound += new EventHandler (m_DataBound);
+			p.Controls.Add (m);
+
+			ResetTemplateBoundFlags ();
+			m.DataBind ();
+		}
+
+		static void m_DataBinding (object sender, EventArgs e) {
+			Assert.AreEqual (true, _StaticTemplateCreated, "StaticTemplateCreated");
+			Assert.AreEqual (true, _DynamicTemplateCreated, "DynamicTemplateCreated");
+		}
+		
+		static void m_DataBound (object sender, EventArgs e) {
+			Assert.AreEqual (true, _StaticTemplateBound, "StaticTemplateBound");
+			Assert.AreEqual (true, _DynamicTemplateBound, "DynamicTemplateBound");
+		}
+
+		private static void ResetTemplateBoundFlags() {
+			_StaticTemplateBound = false;
+			_DynamicTemplateBound = false;
+			_StaticTemplateCreated = false;
+			_DynamicTemplateCreated = false;
+		}
+
+		static Menu CreateMenu () {
+			Menu m = new Menu ();
+			MenuItem rootItem = new MenuItem ("RootItem-Text", "RootItem-Value");
+			m.Items.Add (rootItem);
+			rootItem.ChildItems.Add (new MenuItem ("Node1-Text", "Node1-Value"));
+			rootItem.ChildItems.Add (new MenuItem ("Node2-Text", "Node2-Value"));
+			m.StaticItemTemplate = new CompiledTemplateBuilder (_StaticItemTemplate);
+			m.DynamicItemTemplate = new CompiledTemplateBuilder (_DynamicItemTemplate);
+			return m;
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void Menu_DataBindByDataSourceID () {
+			PageDelegates pd = new PageDelegates ();
+			pd.Init = Menu_DataBindByDataSourceID_PageInit;
+			pd.PreRenderComplete = Menu_DataBindByDataSourceID_PagePreRenderComplete;
+			PageInvoker pi = new PageInvoker (pd);
+			new WebTest (pi).Run ();
+		}
+
+		public static void Menu_DataBindByDataSourceID_PageInit (Page p) {
+			XmlDataSource xmlDs = new XmlDataSource ();
+			xmlDs.ID = "XmlDataSource";
+			xmlDs.Data = "<root><node /><node /><node><subnode /><subnode /></node></root>";
+			p.Form.Controls.Add (xmlDs);
+
+			Menu m = new Menu ();
+			m.DataSourceID = "XmlDataSource";
+			m.StaticItemTemplate = new CompiledTemplateBuilder (_StaticItemTemplate);
+			m.DynamicItemTemplate = new CompiledTemplateBuilder (_DynamicItemTemplate);
+			m.MenuItemDataBound += new MenuEventHandler (m_MenuItemDataBound);
+			p.Form.Controls.Add (m);
+
+			ResetTemplateBoundFlags ();
+			_MenuItemBoundCount = 0;
+		}
+
+		public static void m_MenuItemDataBound (object sender, MenuEventArgs e) {
+			_MenuItemBoundCount++;
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void Menu_Templates () {
+			PageDelegates pd = new PageDelegates ();
+			pd.Init = Menu_Templates_PageInit;
+			pd.PreRenderComplete = Menu_Templates_PagePreRenderComplete;
+			PageInvoker pi = new PageInvoker (pd);
+			new WebTest (pi).Run ();
+		}
+
+		public static void Menu_Templates_PageInit (Page p) {
+			Menu m = CreateMenu ();
+			p.Form.Controls.Add (m);
+
+			ResetTemplateBoundFlags ();
+		}
+
+		static bool _StaticTemplateBound;
+		static bool _DynamicTemplateBound;
+
+		static bool _StaticTemplateCreated;
+		static bool _DynamicTemplateCreated;
+
+		static int _MenuItemBoundCount;
+
+		private static void CheckTemplateBoundFlags () {
+			Assert.AreEqual (true, _StaticTemplateCreated, "StaticTemplateCreated");
+			Assert.AreEqual (true, _DynamicTemplateCreated, "DynamicTemplateCreated");
+			Assert.AreEqual (true, _StaticTemplateBound, "StaticTemplateBound");
+			Assert.AreEqual (true, _DynamicTemplateBound, "DynamicTemplateBound");
+		}
+
+		public static void Menu_Templates_PagePreRenderComplete (Page p) {
+			CheckTemplateBoundFlags ();
+		}
+
+		public static void Menu_DataBindByDataSourceID_PagePreRenderComplete (Page p) {
+			CheckTemplateBoundFlags ();
+			Assert.AreEqual (6, _MenuItemBoundCount, "MenuItemBoundCount");
+		}
+
+		private static void _StaticItemTemplate (Control container) {
+			_StaticTemplateCreated = true;
+			Literal l = new Literal ();
+			container.Controls.Add (l);
+			container.DataBinding += new EventHandler (StaticTemplate_DataBinding);
+		}
+
+		static void StaticTemplate_DataBinding (object sender, EventArgs e) {
+			_StaticTemplateBound = true;
+		}
+
+		private static void _DynamicItemTemplate (Control container) {
+			_DynamicTemplateCreated = true;
+			Literal l = new Literal ();
+			container.Controls.Add (l);
+			container.DataBinding += new EventHandler (DynamicTemplate_DataBinding);
+		}
+
+		static void DynamicTemplate_DataBinding (object sender, EventArgs e) {
+			_DynamicTemplateBound = true;
 		}
 
 		[Test]
