@@ -1,3 +1,12 @@
+2006-08-10  Chris Toshok  <toshok@ximian.com>
+
+	* Menu.cs, MainMenu.cs, MenuAPI.cs: get rid of most of the
+	flickering by setting a clip rectangle on the Graphics when we
+	need to redraw just a particular menuitem.  Also, rename "OnClick"
+	to "OnMouseDown" to reflect what it actually is.
+	
+	* Form.cs: track the OnMouseDown change.
+
 2006-08-10  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* CommonDialog.cs: Properly inherit the CreateParams from the form

@@ -222,6 +222,12 @@ namespace System.Windows.Forms
 			return null;
 		}
 
+		internal virtual void InvalidateItem (MenuItem item)
+		{
+			if (Wnd != null)
+				Wnd.Invalidate (item.bounds);
+		}
+
 		public virtual void MergeMenu (Menu menuSrc)
 		{
 			if (menuSrc == this)

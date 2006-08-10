@@ -90,10 +90,15 @@ namespace System.Windows.Forms
 		#region Private Methods
 
 		internal void Draw () {
+			Draw (Rect);
+		}
+
+		internal void Draw (Rectangle clip_rect) {
 			PaintEventArgs pe;
 
 			if (Wnd.IsHandleCreated) {
 				pe = XplatUI.PaintEventStart(Wnd.window.Handle, false);
+				pe.Graphics.Clip = new Region (clip_rect);
 				Draw (pe, Rect);
 				XplatUI.PaintEventEnd(Wnd.window.Handle, false);
 			}
@@ -118,6 +123,11 @@ namespace System.Windows.Forms
 			if (Paint != null)
 				Paint (this, pe);
 		}
+
+		internal override void InvalidateItem (MenuItem item)
+		{
+			Draw (item.bounds);
+		}
 		
 		internal void SetForm (Form form)
 		{
@@ -134,15 +144,13 @@ namespace System.Windows.Forms
 			if (form == null)
 				return;
 
-			Height = 0;
-
-			Draw ();
+			form.Invalidate (Rect);
 		}
 
 		/* Mouse events from the form */
 		internal void OnMouseDown (object window, MouseEventArgs args)
 		{			
-			tracker.OnClick (args);
+			tracker.OnMouseDown (args);
 		}
 		
 		internal void OnMouseMove (object window, MouseEventArgs e)

@@ -84,8 +84,16 @@ namespace System.Windows.Forms {
 				PopUpWindow puw = TopMenu.Wnd as PopUpWindow;
 				puw.HideWindow ();
 			} else {
+#if false
+				MenuItem item = TopMenu.SelectedItem;
+				if (item.IsPopup)
+					HideSubPopups (item);
+
+				Menu menu = item.Parent;
+				menu.InvalidateItem (item);
+#else
 				DeselectItem (TopMenu.SelectedItem);
-				(TopMenu as MainMenu).Draw ();
+#endif
 			}
 			CurrentMenu = TopMenu;
 		}
@@ -116,7 +124,7 @@ namespace System.Windows.Forms {
 			return item;
 		}
 
-		public void OnClick (MouseEventArgs args)
+		public void OnMouseDown (MouseEventArgs args)
 		{
 			if ((args.Button & MouseButtons.Left) == 0)
 				return;
@@ -135,8 +143,7 @@ namespace System.Windows.Forms {
 			if (item.IsPopup) {
 				active = true;
 				grab_control.ActiveTracker = this;
-				if (item.Parent is MainMenu)
-					(item.Parent as MainMenu).Draw ();
+				item.Parent.InvalidateItem (item);
 			} else if (item.Parent is MainMenu)
 				active = false;
 			else
@@ -231,10 +238,7 @@ namespace System.Windows.Forms {
 				HideSubPopups (item);
 
 			Menu menu = item.Parent;
-			if (menu is MainMenu)
-				(menu as MainMenu).Draw ();
-			else if (menu.Wnd != null)
-				menu.Wnd.Invalidate (item.bounds);
+			menu.InvalidateItem (item);
 		}
 
 		void SelectItem (Menu menu, MenuItem item, bool execute)
@@ -246,13 +250,10 @@ namespace System.Windows.Forms {
 				if (CurrentMenu != menu)
 					CurrentMenu = menu;
 				item.Selected = true;
-				if (menu is MainMenu)
-					(menu as MainMenu).Draw ();
-				else
-					menu.Wnd.Invalidate (item.bounds);
+				menu.InvalidateItem (item);
 				item.PerformSelect ();					
 			}
-			
+
 			if (execute)
 				ExecFocusedItem (menu, item);
 		}
@@ -690,9 +691,8 @@ namespace System.Windows.Forms {
 
 		public void ShowWindow ()
 		{
-			Show ();
 			RefreshItems ();
-			Refresh ();
+			Show ();
 		}
 		
 		internal override void OnPaintInternal (PaintEventArgs args)

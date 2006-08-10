@@ -1875,7 +1875,7 @@ namespace System.Windows.Forms {
 
 						args = new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
 							mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 0);
-						active_tracker.OnClick(new MouseEventArgs (args.Button, args.Clicks, Control.MousePosition.X, Control.MousePosition.Y, args.Delta));
+						active_tracker.OnMouseDown(new MouseEventArgs (args.Button, args.Clicks, Control.MousePosition.X, Control.MousePosition.Y, args.Delta));
 						return;
 					}
 					base.WndProc(ref m);
