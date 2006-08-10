@@ -276,6 +276,9 @@ namespace System.Windows.Forms {
 
 			if (vkey == (int) VirtualKeys.VK_DECIMAL)
 				e.KeyEvent.keycode = XKeysymToKeycode (display, (int) KeypadKeys.XK_KP_Decimal);
+			
+			if (vkey == (int) VirtualKeys.VK_SEPARATOR)
+				e.KeyEvent.keycode = XKeysymToKeycode(display, (int) KeypadKeys.XK_KP_Separator);
 
 			if (e.KeyEvent.keycode == 0 && vkey != (int) VirtualKeys.VK_NONAME) {
 				// And I couldn't find the keycode so i returned the vkey and was like whatever
@@ -428,8 +431,9 @@ namespace System.Windows.Forms {
 			LookupString (ref e, 0, out ks, out status);
 			int keysym = (int) ks;
 
-			if ((keysym >= 0xFFAE) && (keysym <= 0xFFB9) && (keysym != 0xFFAF)
-					&& ((e.KeyEvent.state & NumLockMask) !=0)) {
+			if (((e.KeyEvent.state & NumLockMask) != 0) &&
+			    (keysym == (int)KeypadKeys.XK_KP_Separator || keysym == (int)KeypadKeys.XK_KP_Decimal ||
+			    (keysym >= (int)KeypadKeys.XK_KP_0 && keysym <= (int)KeypadKeys.XK_KP_9))) {
 				// Only the Keypad keys 0-9 and . send different keysyms
 				// depending on the NumLock state
 				return nonchar_key_vkey [keysym & 0xFF];

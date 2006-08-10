@@ -1,3 +1,9 @@
+2006-08-10  Alexander Olk  <alex.olk@googlemail.com>
+
+	* X11Keyboard.cs: Fixed handling of the Del key on the cursorblock
+	  for german keyboards. Numlock state shouldn't affect the behaviour
+	  of the Del key. Fixes bug #78291.
+
 2006-08-10  Chris Toshok  <toshok@ximian.com>
 
 	* ListControl.cs: remove the items.Clear line from BindDataItems,
