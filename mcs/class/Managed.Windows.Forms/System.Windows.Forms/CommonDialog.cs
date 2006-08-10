@@ -40,6 +40,11 @@ namespace System.Windows.Forms {
 			#region DialogForm Constructors
 			internal DialogForm(CommonDialog owner) {
 				this.owner = owner;
+				ControlBox = true;
+				MinimizeBox = false;
+				MaximizeBox = false;
+				ShowInTaskbar = false;
+				FormBorderStyle = FormBorderStyle.Sizable;
 			}
 			#endregion DialogForm Constructors
 
@@ -48,16 +53,9 @@ namespace System.Windows.Forms {
 				get {
 					CreateParams	cp;
 
-					ControlBox = true;
-					MinimizeBox = false;
-					MaximizeBox = false;
-
 					cp = base.CreateParams;
 
-					cp.Style = (int)(WindowStyles.WS_POPUP | WindowStyles.WS_CAPTION | WindowStyles.WS_SYSMENU | WindowStyles.WS_CLIPCHILDREN | WindowStyles.WS_CLIPSIBLINGS);
-					if (!is_enabled) {
-						cp.Style |= (int)(WindowStyles.WS_DISABLED);
-					}
+					cp.Style |= (int)(WindowStyles.WS_POPUP | WindowStyles.WS_CAPTION | WindowStyles.WS_SYSMENU);
 
 					return cp;
 				}

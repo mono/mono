@@ -1,3 +1,8 @@
+2006-08-10  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* CommonDialog.cs: Properly inherit the CreateParams from the form
+	  and only change what we need. Fixes #78865
+
 2006-08-10  Chris Toshok  <toshok@ximian.com>
 
 	* ToolBar.cs, ToolBarButton.cs: fix the redraw-on-highlight
@@ -27,12 +32,12 @@
 
 	* ListBox.cs: same.
 
-2006-08-08  Peter Dennis Bartok  <pbartok@novell.com>
+2006-08-09  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* TextControl.cs (Document.ctor): Initialize caret so we don't crash
 	  if no data is in the document when the control is displayed
 
-2006-08-08  Peter Dennis Bartok  <pbartok@novell.com> 
+2006-08-09  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* TextBoxBase.cs: Don't try moving the caret if we don't have a window
 	  yes (fixes #78806)
@@ -43,7 +48,7 @@
 	  - owner_HandleCreated: Don't position the caret, just update it's 
 	    location. User might have already set a different position
 
-2006-08-08  Peter Dennis Bartok  <pbartok@novell.com>
+2006-08-09  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* XplatUIWin32.cs: Don't use the desktop as basis for foster-parented
 	  windows. Screws up the returned coordinates for child windows. 
