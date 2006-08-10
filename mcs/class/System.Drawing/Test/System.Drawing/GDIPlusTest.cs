@@ -250,6 +250,12 @@ namespace MonoTests.System.Drawing {
 		internal static extern Status GdipResetPath (IntPtr path);
 
 		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipAddPathLine (IntPtr path, float x1, float y1, float x2, float y2);
+
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipAddPathLine2 (IntPtr path, PointF[] points, int count);
+
+		[DllImport ("gdiplus.dll")]
 		internal static extern Status GdipWidenPath (IntPtr path, IntPtr pen, IntPtr matrix, float flatness);
 
 		[DllImport ("gdiplus.dll")]                
@@ -279,6 +285,21 @@ namespace MonoTests.System.Drawing {
 			Assert.AreEqual (Status.InvalidParameter, GdipGetPathTypes (path, types, count), "GdipGetPathTypes");
 			// can't get the types if the count is zero!
 
+			PointF[] pts_2f = new PointF[2] { new PointF (2f, 4f), new PointF (10f, 30f) };
+			Assert.AreEqual (Status.InvalidParameter, GdipAddPathLine2 (IntPtr.Zero, pts_2f, pts_2f.Length), "GdipAddPathLine2-null-path");
+			Assert.AreEqual (Status.InvalidParameter, GdipAddPathLine2 (path, null, pts_2f.Length), "GdipAddPathLine2-null-points");
+			Assert.AreEqual (Status.InvalidParameter, GdipAddPathLine2 (path, pts_2f, -1), "GdipAddPathLine2-negative-count");
+			Assert.AreEqual (Status.Ok, GdipAddPathLine2 (path, pts_2f, pts_2f.Length), "GdipAddPathLine2");
+
+			Assert.AreEqual (Status.Ok, GdipGetPointCount (path, out count), "GdipGetPointCount");
+			Assert.AreEqual (2, count, "Count");
+
+			points = new PointF[count];
+			Assert.AreEqual (Status.Ok, GdipGetPathPoints (path, points, count), "GdipGetPathPoints-ok");
+
+			types = new byte[count];
+			Assert.AreEqual (Status.Ok, GdipGetPathTypes (path, types, count), "GdipGetPathTypes-ok");
+
 			Assert.AreEqual (Status.Ok, GdipResetPath (path), "GdipResetPath");
 			Assert.AreEqual (Status.InvalidParameter, GdipResetPath (IntPtr.Zero), "GdipResetPath-null");
 
@@ -302,7 +323,15 @@ namespace MonoTests.System.Drawing {
 			// empty path
 			Assert.AreEqual (Status.OutOfMemory, GdipWidenPath (path, pen, matrix, 1.0f), "GdipWidenPath");
 
-			// todo: add something to the path
+			// add something to the path
+			Assert.AreEqual (Status.InvalidParameter, GdipAddPathLine (IntPtr.Zero, 1, 1, 10, 10), "GdipAddPathLine");
+			Assert.AreEqual (Status.Ok, GdipAddPathLine (path, 1, 1, 10, 10), "GdipAddPathLine");
+
+			int count;
+			Assert.AreEqual (Status.Ok, GdipGetPointCount (path, out count), "GdipGetPointCount");
+			Assert.AreEqual (2, count, "Count");
+
+			Assert.AreEqual (Status.Ok, GdipWidenPath (path, pen, matrix, 1.0f), "GdipWidenPath-2");
 
 			Assert.AreEqual (Status.Ok, GdipDeleteMatrix (matrix), "GdipDeleteMatrix");
 			Assert.AreEqual (Status.Ok, GdipDeletePath (path), "GdipDeletePath");
@@ -392,6 +421,9 @@ namespace MonoTests.System.Drawing {
 		static internal extern Status GdipCreatePathGradient (PointF[] points, int count, WrapMode wrapMode, out IntPtr brush);
 
 		[DllImport ("gdiplus.dll")]
+		static internal extern Status GdipCreatePathGradientFromPath (IntPtr path, out IntPtr brush);
+
+		[DllImport ("gdiplus.dll")]
 		static internal extern Status GdipGetPathGradientBlendCount (IntPtr brush, out int count);
 
 		[DllImport ("gdiplus.dll")]
@@ -413,6 +445,7 @@ namespace MonoTests.System.Drawing {
 
 			points = new PointF[2] { new PointF (1, 2), new PointF (20, 30) };
 			Assert.AreEqual (Status.Ok, GdipCreatePathGradient (points, 2, WrapMode.Clamp, out brush), "two");
+			Assert.IsTrue (brush != IntPtr.Zero, "Handle");
 
 			int count;
 			Assert.AreEqual (Status.Ok, GdipGetPathGradientBlendCount (brush, out count), "GdipGetPathGradientBlendCount");
@@ -424,6 +457,58 @@ namespace MonoTests.System.Drawing {
 			// can't call that for 1 count!
 
 			Assert.AreEqual (Status.Ok, GdipDeleteBrush (brush), "GdipDeleteBrush");
+		}
+
+		[Test]
+		public void CreatePathGradient_FromPath_Line ()
+		{
+			IntPtr path;
+			Assert.AreEqual (Status.Ok, GdipCreatePath (FillMode.Alternate, out path), "GdipCreatePath");
+
+			IntPtr brush;
+			Assert.AreEqual (Status.OutOfMemory, GdipCreatePathGradientFromPath (IntPtr.Zero, out brush), "null");
+			Assert.AreEqual (Status.OutOfMemory, GdipCreatePathGradientFromPath (path, out brush), "empty path");
+
+			Assert.AreEqual (Status.Ok, GdipAddPathLine (path, 1, 1, 10, 10), "GdipAddPathLine");
+
+			Assert.AreEqual (Status.Ok, GdipCreatePathGradientFromPath (path, out brush), "path");
+			Assert.IsTrue (brush != IntPtr.Zero, "Handle");
+
+			int count;
+			Assert.AreEqual (Status.Ok, GdipGetPathGradientBlendCount (brush, out count), "GdipGetPathGradientBlendCount");
+			Assert.AreEqual (1, count, "blend count");
+
+			int[] colors = new int[count];
+			float[] positions = new float[count];
+			Assert.AreEqual (Status.InvalidParameter, GdipGetPathGradientPresetBlend (brush, colors, positions, count), "GdipGetPathGradientBlend");
+
+			Assert.AreEqual (Status.Ok, GdipDeleteBrush (brush), "GdipDeleteBrush");
+			Assert.AreEqual (Status.Ok, GdipDeletePath (path), "GdipDeletePath");
+		}
+
+		[Test]
+		public void CreatePathGradient_FromPath_Lines ()
+		{
+			IntPtr path;
+			Assert.AreEqual (Status.Ok, GdipCreatePath (FillMode.Alternate, out path), "GdipCreatePath");
+
+			PointF[] pts_2f = new PointF[2] { new PointF (2f, 4f), new PointF (10f, 30f) };
+			Assert.AreEqual (Status.Ok, GdipAddPathLine2 (path, pts_2f, pts_2f.Length), "GdipAddPathLine2");
+
+			IntPtr brush;
+			Assert.AreEqual (Status.Ok, GdipCreatePathGradientFromPath (path, out brush), "path");
+			Assert.IsTrue (brush != IntPtr.Zero, "Handle");
+
+			int count;
+			Assert.AreEqual (Status.Ok, GdipGetPathGradientBlendCount (brush, out count), "GdipGetPathGradientBlendCount");
+			Assert.AreEqual (1, count, "blend count");
+
+			int[] colors = new int[count];
+			float[] positions = new float[count];
+			Assert.AreEqual (Status.InvalidParameter, GdipGetPathGradientPresetBlend (brush, colors, positions, count), "GdipGetPathGradientBlend");
+
+			Assert.AreEqual (Status.Ok, GdipDeleteBrush (brush), "GdipDeleteBrush");
+			Assert.AreEqual (Status.Ok, GdipDeletePath (path), "GdipDeletePath");
 		}
 
 		// Pen

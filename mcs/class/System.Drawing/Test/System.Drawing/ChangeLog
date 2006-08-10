@@ -1,3 +1,10 @@
+2006-08-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GDIPlusTest.cs: Add more test cases for GraphicsPath and 
+	PathGradientBrush to fix unit tests under Windows.
+	* RegionNonRectTest.cs: Ignore Region_Ctor_RegionData as it will
+	fail when using MS GDI+ (e.g. Mono on Windows).
+
 2006-08-10  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* GDIPlusTest.cs: Add more test cases for GraphicsPath (Reset and 

@@ -91,7 +91,7 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test]
-		[Category ("NotDotNet")] // MS.NET throws an ExternalException in this case
+		[Ignore ("this fails when using MS GDI+ - with or without Mono")]
 		public void Region_Ctor_RegionData ()
 		{
 			Region region = new Region (new GraphicsPath ());
