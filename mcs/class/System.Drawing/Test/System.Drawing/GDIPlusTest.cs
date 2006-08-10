@@ -246,6 +246,12 @@ namespace MonoTests.System.Drawing {
 		[DllImport ("gdiplus.dll")]
 		internal static extern Status GdipGetPathTypes (IntPtr path, [Out] byte[] types, int count);
 
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipResetPath (IntPtr path);
+
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipWidenPath (IntPtr path, IntPtr pen, IntPtr matrix, float flatness);
+
 		[DllImport ("gdiplus.dll")]                
 		internal static extern Status GdipDeletePath (IntPtr path);
 
@@ -257,19 +263,69 @@ namespace MonoTests.System.Drawing {
 			Assert.IsTrue (path != IntPtr.Zero, "Handle");
 
 			int count;
+			Assert.AreEqual (Status.InvalidParameter, GdipGetPointCount (IntPtr.Zero, out count), "GdipGetPointCount-null");
 			Assert.AreEqual (Status.Ok, GdipGetPointCount (path, out count), "GdipGetPointCount");
 			Assert.AreEqual (0, count, "Count");
 
 			PointF[] points = new PointF[count];
+			Assert.AreEqual (Status.InvalidParameter, GdipGetPathPoints (IntPtr.Zero, points, count), "GdipGetPathPoints-null-1");
+			Assert.AreEqual (Status.InvalidParameter, GdipGetPathPoints (path, null, count), "GdipGetPathPoints-null-2");
 			Assert.AreEqual (Status.InvalidParameter, GdipGetPathPoints (path, points, count), "GdipGetPathPoints");
 			// can't get the points if the count is zero!
 
 			byte[] types = new byte[count];
+			Assert.AreEqual (Status.InvalidParameter, GdipGetPathTypes (IntPtr.Zero, types, count), "GdipGetPathTypes-null-1");
+			Assert.AreEqual (Status.InvalidParameter, GdipGetPathTypes (path, null, count), "GdipGetPathTypes-null-2");
 			Assert.AreEqual (Status.InvalidParameter, GdipGetPathTypes (path, types, count), "GdipGetPathTypes");
 			// can't get the types if the count is zero!
 
+			Assert.AreEqual (Status.Ok, GdipResetPath (path), "GdipResetPath");
+			Assert.AreEqual (Status.InvalidParameter, GdipResetPath (IntPtr.Zero), "GdipResetPath-null");
+
 			Assert.AreEqual (Status.Ok, GdipDeletePath (path), "GdipDeletePath");
 			Assert.AreEqual (Status.InvalidParameter, GdipDeletePath (IntPtr.Zero), "GdipDeletePath-null");
+		}
+
+		[Test]
+		public void Widen ()
+		{
+			IntPtr pen;
+			Assert.AreEqual (Status.Ok, GdipCreatePen1 (0, 0f, Unit.UnitWorld, out pen), "GdipCreatePen1");
+
+			IntPtr path;
+			Assert.AreEqual (Status.Ok, GdipCreatePath (FillMode.Alternate, out path), "GdipCreatePath");
+
+			IntPtr matrix;
+			Assert.AreEqual (Status.Ok, GdipCreateMatrix (out matrix), "GdipCreateMatrix");
+
+			Assert.AreEqual (Status.InvalidParameter, GdipWidenPath (IntPtr.Zero, pen, matrix, 1.0f), "GdipWidenPath-null-path");
+			// empty path
+			Assert.AreEqual (Status.OutOfMemory, GdipWidenPath (path, pen, matrix, 1.0f), "GdipWidenPath");
+
+			// todo: add something to the path
+
+			Assert.AreEqual (Status.Ok, GdipDeleteMatrix (matrix), "GdipDeleteMatrix");
+			Assert.AreEqual (Status.Ok, GdipDeletePath (path), "GdipDeletePath");
+			Assert.AreEqual (Status.Ok, GdipDeletePen (pen), "GdipDeletePen");
+		}
+
+		// Matrix
+
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipCreateMatrix (out IntPtr matrix);
+
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipDeleteMatrix (IntPtr matrix);
+
+		[Test]
+		public void Matrix ()
+		{
+			IntPtr matrix;
+			Assert.AreEqual (Status.Ok, GdipCreateMatrix (out matrix), "GdipCreateMatrix");
+			Assert.IsTrue (matrix != IntPtr.Zero, "Handle");
+
+			Assert.AreEqual (Status.InvalidParameter, GdipDeleteMatrix (IntPtr.Zero), "GdipDeleteMatrix-null");
+			Assert.AreEqual (Status.Ok, GdipDeleteMatrix (matrix), "GdipDeleteMatrix");
 		}
 
 		// Image

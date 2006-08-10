@@ -1,3 +1,8 @@
+2006-08-10  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* GDIPlusTest.cs: Add more test cases for GraphicsPath (Reset and 
+	Widen) and some new tests for Matrix related GDI+ functions.
+
 2006-08-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestRegion.cs: Add test case for excluding a rectangle from an 
