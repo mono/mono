@@ -46,6 +46,8 @@ namespace System.Web.Hosting {
 		string vpath;
 		string phys_path;
 		Dictionary<Type, RegisteredItem> hash;
+		internal ApplicationManager Manager;
+		internal string AppID;
 
 		public BareApplicationHost ()
 		{
@@ -68,6 +70,10 @@ namespace System.Web.Hosting {
 
 		public string PhysicalPath {
 			get { return phys_path; }
+		}
+
+		public AppDomain Domain {
+			get { return AppDomain.CurrentDomain; }
 		}
 
 		public void Shutdown ()
@@ -114,6 +120,7 @@ namespace System.Web.Hosting {
 
 		void OnDomainUnload (object sender, EventArgs args)
 		{
+			Manager.RemoveHost (AppID);
 			ICollection<RegisteredItem> values = hash.Values;
 			RegisteredItem [] objects = new RegisteredItem [hash.Count];
 			values.CopyTo (objects, 0);

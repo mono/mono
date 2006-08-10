@@ -30,11 +30,11 @@
 //
 
 #if NET_2_0
-
 using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Collections;
+using System.Globalization;
 using System.IO;
 using System.Web;
 using System.Web.Hosting;
@@ -45,17 +45,30 @@ namespace System.Web.Compilation {
 		string phys_src_dir;
 		string phys_target_dir;
 		ClientBuildManagerParameter build_params;
+		BareApplicationHost host;
+		ApplicationManager manager;
+		string app_id;
+		string cache_path;
 
 		public ClientBuildManager (string appVirtualDir, string appPhysicalSourceDir)
 		{
+			if (appVirtualDir == null || appVirtualDir == "")
+				throw new ArgumentNullException ("appVirtualDir");
+			if (appPhysicalSourceDir == null || appPhysicalSourceDir == "")
+				throw new ArgumentNullException ("appPhysicalSourceDir");
+
 			virt_dir = appVirtualDir; // TODO: adjust vpath (it allows 'blah' that turns into '/blah', '////blah', '\\blah'...
 			phys_src_dir = appPhysicalSourceDir;
+			manager = ApplicationManager.GetApplicationManager ();
 		}
 
 		public ClientBuildManager (string appVirtualDir, string appPhysicalSourceDir,
 					string appPhysicalTargetDir)
 			: this (appVirtualDir, appPhysicalSourceDir)
 		{
+			if (appPhysicalTargetDir == null || appPhysicalTargetDir == "")
+				throw new ArgumentNullException ("appPhysicalTargetDir");
+
 			phys_target_dir = appPhysicalTargetDir;
 		}
 
@@ -66,37 +79,58 @@ namespace System.Web.Compilation {
 			build_params = parameter;
 		}
 
-		string CreateCodeGenDir ()
-		{
-			return null;
-		/*
-			string appname = null;
-			if (virt_dir == "/") {
-				appname = "root";
-			} else {
-				appname = virt_dir.Subtring (1).Replace ('/', '_');
-			}
+		public event BuildManagerHostUnloadEventHandler AppDomainShutdown;
+		public event EventHandler AppDomainStarted;
+		public event BuildManagerHostUnloadEventHandler AppDomainUnloaded;
 
-			string dynamic_dir = null;
-			string user = Environment.UserName;
-			for (int i = 0; ; i++){
-				string d = Path.Combine (Path.GetTempPath (),
-					String.Format ("{0}-temp-aspnet-{1:x}", user, i));
-			
-				try {
-					Directory.CreateDirectory (d);
-					string stamp = Path.Combine (d, "stamp");
-					Directory.CreateDirectory (stamp);
-					dynamic_dir = d;
-					Directory.Delete (stamp);
-					break;
-				} catch (UnauthorizedAccessException){
-					continue;
-				}
+		BareApplicationHost Host {
+			get {
+				if (host != null)
+					return host;
+
+				int hashcode = virt_dir.GetHashCode ();
+				if (app_id != null)
+					hashcode ^= Int32.Parse (app_id);
+
+				app_id = hashcode.ToString (CultureInfo.InvariantCulture);
+				host = manager.CreateHostWithCheck (app_id, virt_dir, phys_src_dir);
+				cache_path = "";
+				//cache_path = Path.Combine (Path.GetTempPath (),
+					//String.Format ("{0}-temp-aspnet-{1:x}", Environment.UserName, i));
+
+				int hash = virt_dir.GetHashCode () << 5 + phys_src_dir.GetHashCode ();
+				cache_path = Path.Combine (cache_path, hash.ToString (CultureInfo.InvariantCulture));
+				Directory.CreateDirectory (cache_path);
+				OnAppDomainStarted ();
+				return host;
 			}
-			setup.DynamicBase = dynamic_dir;
-			Directory.CreateDirectory (setup.DynamicBase);
-			*/
+		}
+
+		void OnAppDomainStarted ()
+		{
+			if (AppDomainStarted != null)
+				AppDomainStarted (this, EventArgs.Empty);
+		}
+
+		void OnAppDomainShutdown (ApplicationShutdownReason reason)
+		{
+			if (AppDomainShutdown != null) {
+				BuildManagerHostUnloadEventArgs args = new BuildManagerHostUnloadEventArgs (reason);
+				AppDomainShutdown (this, args);
+			}
+		}
+
+		void OnDomainUnload (object sender, EventArgs args)
+		{
+			OnAppDomainUnloaded (0); // FIXME: set a reason?
+		}
+
+		void OnAppDomainUnloaded (ApplicationShutdownReason reason)
+		{
+			if (AppDomainUnloaded != null) {
+				BuildManagerHostUnloadEventArgs args = new BuildManagerHostUnloadEventArgs (reason);
+				AppDomainUnloaded (this, args);
+			}
 		}
 
 		[MonoTODO]
@@ -113,37 +147,64 @@ namespace System.Web.Compilation {
 		[MonoTODO]
 		public void CompileFile (string virtualPath, ClientBuildManagerCallback callback)
 		{
+			// 1. Creates the Host
+			// This creates a .compiled file + an assembly
+			// App_Code reported to be built *before* anything else (with progress callback)
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public IRegisteredObject CreateObject (Type type, bool failIfExists)
 		{
-			throw new NotImplementedException ();
+			return manager.CreateObject (app_id, type, virt_dir, phys_src_dir, failIfExists);
 		}
 
-		[MonoTODO]
 		public string GenerateCode (string virtualPath, string virtualFileString, out IDictionary linePragmasTable)
 		{
-			throw new NotImplementedException ();
+			// This thing generates a .ccu (CodeCompileUnit?) file (reported as TrueType font data by 'file'!)
+			// resultType=7 vs. resultType=3 for assemblies reported in the .compiled file
+			// The virtual path is just added to the dependencies list, but is checked to be an absolute path.
+			// IsHostCreated returns true after calling this method.
+			//
+			// A null file string causes virtualPath to be mapped and read to generate the code
+			//
+
+			if (virtualPath == null || virtualPath == "")
+				throw new ArgumentNullException ("virtualPath");
+
+			CodeCompileUnit unit = null;
+			Type cprovider_type;
+			CompilerParameters parameters;
+			unit = GenerateCodeCompileUnit (virtualPath, virtualFileString, out cprovider_type,
+							out parameters, out linePragmasTable);
+			return null;
 		}
 
 		[MonoTODO]
-		public CodeCompileUnit GenerateCodeCompileUnit (string virtualPath, string virtualFileString, out Type codeDomProviderType, out CompilerParameters compilerParameters, out IDictionary linePragmasTable)
+		public CodeCompileUnit GenerateCodeCompileUnit (string virtualPath,
+								string virtualFileString,
+								out Type codeDomProviderType,
+								out CompilerParameters compilerParameters,
+								out IDictionary linePragmasTable)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public CodeCompileUnit GenerateCodeCompileUnit (string virtualPath, out Type codeDomProviderType, out CompilerParameters compilerParameters, out IDictionary linePragmasTable)
+		public CodeCompileUnit GenerateCodeCompileUnit (string virtualPath,
+								out Type codeDomProviderType,
+								out CompilerParameters compilerParameters,
+								out IDictionary linePragmasTable)
 		{
-			throw new NotImplementedException ();
+			return GenerateCodeCompileUnit (virtualPath, out codeDomProviderType,
+							out compilerParameters, out linePragmasTable);
 		}
 
-		[MonoTODO]
+		static string [] shutdown_directories = new string [] {
+						"bin", "App_GlobalResources", "App_Code",
+						"App_WebReferences", "App_Browsers" };
+
 		public string [] GetAppDomainShutdownDirectories ()
 		{
-			throw new NotImplementedException ();
+			return shutdown_directories;
 		}
 
 		[MonoTODO]
@@ -153,7 +214,10 @@ namespace System.Web.Compilation {
 		}
 
 		[MonoTODO]
-		public void GetCodeDirectoryInformation (string virtualCodeDir, out Type codeDomProviderType, out CompilerParameters compilerParameters, out string generatedFilesDir)
+		public void GetCodeDirectoryInformation (string virtualCodeDir,
+							out Type codeDomProviderType,
+							out CompilerParameters compilerParameters,
+							out string generatedFilesDir)
 		{
 			throw new NotImplementedException ();
 		}
@@ -161,11 +225,15 @@ namespace System.Web.Compilation {
 		[MonoTODO]
 		public Type GetCompiledType (string virtualPath)
 		{
+			// CompileFile + get the type based on .compiled file information
+			// Throws if virtualPath is a special virtual directory (App_Code et al)
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public void GetCompilerParameters (string virtualPath, out Type codeDomProviderType, out CompilerParameters compilerParameters)
+		public void GetCompilerParameters (string virtualPath,
+						out Type codeDomProviderType,
+						out CompilerParameters compilerParameters)
 		{
 			throw new NotImplementedException ();
 		}
@@ -173,24 +241,28 @@ namespace System.Web.Compilation {
 		[MonoTODO]
 		public string GetGeneratedFileVirtualPath (string filePath)
 		{
+			// returns empty string for any vpath. Test with real paths.
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public string GetGeneratedSourceFile (string virtualPath)
 		{
+			// This one takes a directory name /xxx and /xxx/App_Code throw either
+			// a KeyNotFoundException or an InvalidOperationException
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public string[ ] GetTopLevelAssemblyReferences (string virtualPath)
+		public string [] GetTopLevelAssemblyReferences (string virtualPath)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public string[ ] GetVirtualCodeDirectories ()
+		public string [] GetVirtualCodeDirectories ()
 		{
+			// Host is created here when needed. (Unload()+GetVirtualCodeDirectories()+IsHostCreated -> true)
+			//return Host.
 			throw new NotImplementedException ();
 		}
 
@@ -202,6 +274,7 @@ namespace System.Web.Compilation {
 		[MonoTODO]
 		public bool IsCodeAssembly (string assemblyName)
 		{
+			// Trying all the assemblies loaded by FullName and GetName().Name yield false here :-?
 			throw new NotImplementedException ();
 		}
 
@@ -223,39 +296,31 @@ namespace System.Web.Compilation {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public bool Unload ()
 		{
-			throw new NotImplementedException ();
+			if (host != null) {
+				host.Shutdown ();
+				OnAppDomainShutdown (0);
+				host = null;
+			}
+
+			return true; // FIXME: may be we should do this synch. + timeout? Test!
 		}
 
-		[MonoTODO]
 		public string CodeGenDir {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return Host.GetCodeGenDir (); }
 		}
 
-		[MonoTODO]
 		public bool IsHostCreated {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return host != null; }
 		}
 
-		public event BuildManagerHostUnloadEventHandler AppDomainShutdown;
-		public event EventHandler AppDomainStarted;
-		public event BuildManagerHostUnloadEventHandler AppDomainUnloaded;
-
-
-		[MonoTODO]
 		void IDisposable.Dispose ()
 		{
-			throw new NotImplementedException ();
+			Unload ();
 		}
-
 	}
 
 }
-
 #endif
+

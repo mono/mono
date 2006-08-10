@@ -1,3 +1,8 @@
+2006-08-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ClientBuildManager.cs: handle domain shutdown and unload.
+	Implemented some properties. Commented.
+
 2006-08-10  Andrew Skiba  <andrews@mainsoft.com>
 
 	* ThemeDirectoryCompiler.cs: render css path as a virtual path.

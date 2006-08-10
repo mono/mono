@@ -106,10 +106,10 @@ namespace System.Web.Hosting {
 		}
 
 		// Used from ClientBuildManager
-		internal BareApplicationHost CreateOrReuseHost (string appId, string vpath, string ppath)
+		internal BareApplicationHost CreateHostWithCheck (string appId, string vpath, string ppath)
 		{
 			if (id_to_host.ContainsKey (appId))
-				return id_to_host [appId];
+				throw new InvalidOperationException ("Already have a host with the same appId");
 
 			return CreateHost (appId, vpath, ppath);
 		}
@@ -118,8 +118,15 @@ namespace System.Web.Hosting {
 		{
 			BareApplicationHost host;
 			host = (BareApplicationHost) ApplicationHost.CreateApplicationHost (typeof (BareApplicationHost), vpath, ppath);
+			host.Manager = this;
+			host.AppID = appId;
 			id_to_host [appId] = host;
 			return host;
+		}
+
+		internal void RemoveHost (string appId)
+		{
+			id_to_host.Remove (appId);
 		}
 
 		IRegisteredObject CheckIfExists (BareApplicationHost host, Type type, bool failIfExists)
