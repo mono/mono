@@ -893,9 +893,9 @@ namespace System.Drawing.Drawing2D
                 {
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
-#if ONLY_1_1
+#if NET_2_0
 			if (PointCount == 0)
-				throw new OutOfMemoryException ();
+				return;
 #endif
                 	IntPtr m = (matrix == null) ? IntPtr.Zero : matrix.nativeMatrix;
 
