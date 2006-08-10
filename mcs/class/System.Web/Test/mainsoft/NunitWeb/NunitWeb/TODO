@@ -20,3 +20,5 @@ DOCUMENTATION
 
 * add the tutorial kind of documentation at the namespace and class levels
 
+* bug with page event handlers set by += operator: exceptions are not processed
+	correctly.
