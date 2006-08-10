@@ -168,6 +168,9 @@ namespace System.Drawing.Drawing2D {
 				int count;
 				Status status = GDIPlus.GdipGetPathGradientPresetBlendCount (nativeObject, out count);
 				GDIPlus.CheckStatus (status);
+				// if no failure, then the "managed" minimum is 1
+				if (count < 1)
+					count = 1;
 
 				int [] intcolors = new int [count];
 				float [] positions = new float [count];
