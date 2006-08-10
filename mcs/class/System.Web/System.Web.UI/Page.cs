@@ -1809,10 +1809,10 @@ public class Page : TemplateControl, IHttpHandler
 			themes.AddRange (StyleSheetPageTheme.GetStyleSheets ());
 		if (PageTheme != null)
 			themes.AddRange (PageTheme.GetStyleSheets ());
-		
+
 		foreach (string lss in themes) {
 			HtmlLink hl = new HtmlLink ();
-			hl.Href = lss;
+			hl.Href = ResolveUrl (lss);
 			hl.Attributes["type"] = "text/css";
 			hl.Attributes["rel"] = "stylesheet";
 			Header.Controls.Add (hl);

@@ -1,3 +1,7 @@
+2006-08-10  Andrew Skiba  <andrews@mainsoft.com>
+
+	* ThemeDirectoryCompiler.cs: render css path as a virtual path.
+
 2006-08-08  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* added ThemeDirectoryCompiler.jvm.cs
