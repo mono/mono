@@ -1,3 +1,8 @@
+2006-08-10  Dick Porter  <dick@ximian.com>
+
+	* wapihandles.c (mini_wapi_seminfo): More info, to help track down
+	which process is holding semaphores locked.
+
 2006-08-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ia64.c mini-amd64.c: Fix #79027.
