@@ -1857,6 +1857,37 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		public void Indent3 ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.PreserveWhitespace = true;
+			string s;
+
+			doc.LoadXml ("<root><element></element><!-- comment indented --><element>sample <!-- comment non-indented --></element></root>");
+			s = GetIndentedOutput (doc.DocumentElement);
+			Assert.AreEqual (s, String.Format ("<root>{0}  <element>{0}  </element>{0}  <!-- comment indented -->{0}  <element>sample <!-- comment non-indented --></element>{0}</root>", "\n"), "#1");
+
+			doc.LoadXml ("<root> \n<mid> \n<mid>   \n<child attr='value'>sample <nested attr='value' /> string</child>     <child2 attr='value'>sample string</child2>  <empty attr='value'/>\n<a>test</a> \n</mid> <returnValue>  <returnType>System.String</returnType>  </returnValue>  </mid>   </root>");
+			s = GetIndentedOutput (doc.DocumentElement);
+			Assert.AreEqual (s, String.Format ("<root> {0}<mid> {0}<mid>   {0}<child attr='value'>sample <nested attr='value' /> string</child>     <child2 attr='value'>sample string</child2>  <empty attr='value' />{0}<a>test</a> {0}</mid> <returnValue>  <returnType>System.String</returnType>  </returnValue>  </mid>   </root>", "\n"), "#2");
+
+			doc.LoadXml ("<!-- after /MemberType and after /returnValue --><root><MemberType>blah</MemberType>\n  <returnValue><returnType>System.String</returnType></returnValue>\n  <Docs><summary>text</summary><value>text<see cref='ttt' /></value><remarks/></Docs></root>");
+			s = GetIndentedOutput (doc.DocumentElement);
+			Assert.AreEqual (s, String.Format ("<root>{0}  <MemberType>blah</MemberType>{0}  <returnValue><returnType>System.String</returnType></returnValue>{0}  <Docs><summary>text</summary><value>text<see cref='ttt' /></value><remarks /></Docs></root>", "\n"), "#3");
+		}
+
+		string GetIndentedOutput (XmlNode n)
+		{
+			StringWriter sw = new StringWriter ();
+			sw.NewLine = "\n";
+			XmlTextWriter xtw = new XmlTextWriter (sw);
+			xtw.QuoteChar = '\'';
+			xtw.Formatting = Formatting.Indented;
+			n.WriteTo (xtw);
+			return sw.ToString ();
+		}
+
+		[Test]
 		public void CloseTwice ()
 		{
 			StringWriter sw = new StringWriter ();

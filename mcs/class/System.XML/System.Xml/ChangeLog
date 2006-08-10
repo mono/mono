@@ -1,3 +1,8 @@
+2006-08-10  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextWriter2.cs : more indentation fixes. Now I believe it is
+	  almost MS compat, but it won't help poor Mike.
+
 2006-08-07  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextWriter2.cs : WriteBinHex() is allowed at Attribute state.

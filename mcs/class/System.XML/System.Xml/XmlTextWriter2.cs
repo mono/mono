@@ -749,16 +749,20 @@ namespace Mono.Xml
 			CloseStartElementCore ();
 
 			nsmanager.PopScope ();
-			bool doIndent = !elements [open_count - 1].HasSimple;
-			if (open_count > 1)
-				doIndent &= !elements [open_count - 2].HasSimple;
+
+			if (state == WriteState.Element) {
+				if (full)
+					writer.Write ('>');
+				else
+					writer.Write (" />");
+			}
+
+			if (full || state == WriteState.Content)
+				WriteIndentEndElement ();
+
 			XmlNodeInfo info = elements [--open_count];
 
 			if (full || state == WriteState.Content) {
-				if (state == WriteState.Element)
-					writer.Write ('>');
-				if (doIndent && (full || !isEmpty))
-					DoWriteIndent ();
 				writer.Write ("</");
 				if (info.Prefix.Length > 0) {
 					writer.Write (info.Prefix);
@@ -766,8 +770,6 @@ namespace Mono.Xml
 				}
 				writer.Write (info.LocalName);
 				writer.Write ('>');
-			} else {
-				writer.Write (" />");
 			}
 
 			state = WriteState.Content;
@@ -1215,21 +1217,25 @@ namespace Mono.Xml
 
 		void WriteIndent ()
 		{
-			if (!indent || (open_count > 0 &&
-			    elements [open_count - 1].HasSimple))
-				return;
-			if (state != WriteState.Start)
-				writer.Write (newline);
-			for (int i = 0; i < open_count; i++)
-				writer.Write (indent_string);
+			WriteIndentCore (0);
 		}
 
-		void DoWriteIndent ()
+		void WriteIndentEndElement ()
+		{
+			WriteIndentCore (-1);
+		}
+
+		void WriteIndentCore (int nestFix)
 		{
 			if (!indent)
 				return;
-			writer.Write (newline);
-			for (int i = 0; i < open_count; i++)
+			for (int i = open_count - 1; i >= 0; i--)
+				if (elements [i].HasSimple)
+					return;
+
+			if (state != WriteState.Start)
+				writer.Write (newline);
+			for (int i = 0; i < open_count + nestFix; i++)
 				writer.Write (indent_string);
 		}
 
@@ -1274,8 +1280,10 @@ namespace Mono.Xml
 
 		void CheckMixedContentState ()
 		{
-			if (open_count > 0 &&
-			    state != WriteState.Attribute)
+//			if (open_count > 0 &&
+//			    state != WriteState.Attribute)
+//				elements [open_count - 1].HasSimple = true;
+			if (open_count > 0)
 				elements [open_count - 1].HasSimple = true;
 		}
 
