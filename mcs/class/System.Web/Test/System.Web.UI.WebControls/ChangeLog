@@ -1,3 +1,12 @@
+2006-08-010 Hagit Yidov <hagity@mainsoft.com>
+
+	* ImageMapTest.cs: New test was added
+	* HotSpotTest.cs: New test was added
+	* HotSpotCollectionTest.cs: New test was added
+	* CircleHotSpot.cs: New test was added
+	* RectangleHotSpot.cs: New test was added
+	* PolygonHotSpot.cs: New test was added
+
 2006-08-10 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* MenuTest.cs: new tests were added
