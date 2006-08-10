@@ -42,7 +42,7 @@ namespace System.Web.UI.WebControls.WebParts
 		bool				display = true;
 		WebPart				webPartToEdit;
 		WebPartManager		manager;
-		EditorZoneBase		zone;
+//		EditorZoneBase		zone;
 		string				displayTitle;
 		
 
