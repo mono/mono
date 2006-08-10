@@ -47,7 +47,7 @@ namespace System.Web
 		bool building;
 		string file;
 		SiteMapNode root = null;
-#if !TARGET_JVM
+#if !TARGET_JVM // Java platform does not support file notifications
 		FileSystemWatcher watcher;
 #endif
 
@@ -169,8 +169,10 @@ namespace System.Web
 
 		protected virtual void Dispose (bool disposing)
 		{
+#if !TARGET_JVM // Java platform does not support file notifications
 			if (disposing)
 				watcher.Dispose ();
+#endif
 		}
 
 		public void Dispose ()
@@ -203,8 +205,8 @@ namespace System.Web
 				file = Path.Combine(HttpRuntime.AppDomainAppPath, file);
 			else
 				file = UrlUtils.ResolvePhysicalPathFromAppAbsolute (file);
-				
-#if !TARGET_JVM
+
+#if !TARGET_JVM // Java platform does not support file notifications
 			if (File.Exists (file)) {
 				watcher = new FileSystemWatcher ();
 				watcher.Path = Path.GetFullPath (Path.GetDirectoryName (file));
