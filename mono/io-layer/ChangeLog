@@ -1,3 +1,18 @@
+2006-08-10  Dick Porter  <dick@ximian.com>
+
+	* threads.c (_wapi_thread_queue_apc)
+	(_wapi_thread_dispatch_apc_queue): Use a process-local mutex here
+	instead of the cross process semaphore.  We already check that
+	access to the APC queue is within the owning process so there's no
+	need to protect from other processes.  Avoids a global deadlock
+	when a thread is aborted while it holds the handle semaphore
+	locked.
+	(_wapi_thread_apc_pending): Hide an annoying message which can
+	happen if a thread handle has been blown away at process shutdown
+	while it is in an alertable wait.
+
+	Both problems seen while shutting down monodevelop.
+
 2006-07-25  Dick Porter  <dick@ximian.com>
 
 	* shared.c (_wapi_shm_file): Remove '/' characters from the uname
