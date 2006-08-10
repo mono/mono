@@ -801,6 +801,9 @@ namespace System.Windows.Forms {
 			selection_anchor.line = this.document;
 			selection_anchor.pos = 0;
 			selection_anchor.tag = selection_anchor.line.tags;
+			caret.line = this.document;
+			caret.pos = 0;
+			caret.tag = caret.line.tags;
 
 			viewport_x = 0;
 			viewport_y = 0;
