@@ -37,6 +37,7 @@ namespace System.Web.UI.WebControls.WebParts
 		string title;
 		PartChromeState chrome_state;
 		PartChromeType chrome_type;
+		ControlCollection controls;
 
 		internal Part ()
 		{
@@ -84,7 +85,9 @@ namespace System.Web.UI.WebControls.WebParts
 		public virtual new ControlCollection Controls
 		{
 			get {
-				throw new NotImplementedException ();
+				if(controls == null)
+					controls = new ControlCollection(this);
+				return controls;
 			}
 		}
 
@@ -107,8 +110,6 @@ namespace System.Web.UI.WebControls.WebParts
 				title = value;
 			}
 		}
-
 	}
 }
-
 #endif

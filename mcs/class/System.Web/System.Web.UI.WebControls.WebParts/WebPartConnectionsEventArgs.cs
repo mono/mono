@@ -38,7 +38,7 @@ namespace System.Web.UI.WebControls.WebParts
 		private WebPart consumerPart;
 		private ProviderConnectionPoint providerPoint;
 		private ConsumerConnectionPoint consumerPoint;
-		private Connection connection;
+		private WebPartConnection connection;
 		
 		public WebPartConnectionsEventArgs (WebPart providerPart, ProviderConnectionPoint providerPoint, 
 						WebPart consumerPart, ConsumerConnectionPoint consumerPoint) : this (providerPart, 
@@ -46,16 +46,16 @@ namespace System.Web.UI.WebControls.WebParts
 		{}
 		
 		public WebPartConnectionsEventArgs (WebPart providerPart, ProviderConnectionPoint providerPoint, 
-						WebPart consumerPart, ConsumerConnectionPoint consumerPoint, Connection connection)
+						WebPart consumerPart, ConsumerConnectionPoint consumerPoint, WebPartConnection connection)
 		{
 			this.providerPart = providerPart;
 			this.providerPoint = providerPoint;
 			this.consumerPart = consumerPart;
-			this.consumerPart = consumerPoint;
+			this.consumerPoint = consumerPoint;
 			this.connection = connection;
 		}
 		
-		public Connection Connection {
+		public WebPartConnection Connection {
 			get { return connection; }
 		}
 		
@@ -63,7 +63,7 @@ namespace System.Web.UI.WebControls.WebParts
 			get { return consumerPoint; }
 		}
 		
-		public WebPart ConsumerWebPart {
+		public WebPart Consumer {
 			get { return consumerPart; }
 		}
 		
@@ -71,7 +71,7 @@ namespace System.Web.UI.WebControls.WebParts
 			get { return providerPoint; }
 		}
 		
-		public WebPart ProviderWebPart {
+		public WebPart Provider {
 			get { return providerPart; }
 		}
 	}

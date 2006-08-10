@@ -32,19 +32,44 @@
 
 using System.ComponentModel;
 
-namespace System.Web.UI.WebControls.WebParts
-{
-	public abstract class WebPartDisplayMode
-	{
-		protected WebPartDisplayMode ()
-		{}
-	
-		public abstract bool IsEnabled (WebPartManager manager);
-		
-		public abstract bool AllowPageDesign { get; }
-		
-		public abstract string Name { get; }
-	
+namespace System.Web.UI.WebControls.WebParts {
+	public abstract class WebPartDisplayMode {
+		string name;
+		protected WebPartDisplayMode( string name ) {
+			this.name = name;
+		}
+
+		public virtual bool IsEnabled( WebPartManager manager ) {
+			if ( this.RequiresPersonalization )
+				return manager.Personalization.IsModifiable;
+			return true;
+		}
+
+		public virtual bool AssociatedWithToolZone {
+			get {
+				return false;
+			}
+		}
+
+		public virtual bool ShowHiddenWebParts {
+			get {
+				return false;
+			}
+		}
+
+
+		public virtual bool RequiresPersonalization {
+			get {
+				return false;
+			}
+		}
+
+		public virtual bool AllowPageDesign {
+			get { return false; }
+		}
+
+		public virtual string Name { get { return name; } }
+
 	}
 }
 #endif

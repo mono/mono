@@ -1,4 +1,4 @@
-﻿//
+//
 // System.Web.UI.WebControls.WebParts.WebPartVerb.cs
 //
 // Authors:
@@ -48,29 +48,34 @@ namespace System.Web.UI.WebControls.WebParts
 		private string imageUrl = string.Empty;
 		private string text = string.Empty;
 		private bool visible = true;
+		private string id;
+		
+		public string ID {
+			get { return id;}
+		}
 
-		public WebPartVerb (string clientHandler)
-		{
+		public WebPartVerb (string id, string clientHandler) {
+			this.id = id;
 			this.clientClickHandler = clientHandler;
 			stateBag = new StateBag ();
 			stateBag.Add ("clientClickHandler", clientHandler);
-
 		}
 
-		public WebPartVerb (WebPartEventHandler serverHandler)
-		{
-			this.serverClickHandler = serverHandler;
+
+		public WebPartVerb (string id, WebPartEventHandler serverClickHandler) {
+			this.id = id;
+			this.serverClickHandler = serverClickHandler;
 			stateBag = new StateBag ();
-			stateBag.Add ("serverClickHandler", serverHandler);
+			stateBag.Add ("serverClickHandler", serverClickHandler);
 		}
 
-		public WebPartVerb (WebPartEventHandler serverHandler, string clientHandler)
-		{
-			this.serverClickHandler = serverHandler;
-			this.clientClickHandler = clientHandler;
+		public WebPartVerb (string id, WebPartEventHandler serverClickHandler, string clientClickHandler) {
+			this.id = id;
+			this.serverClickHandler = serverClickHandler;
+			this.clientClickHandler = clientClickHandler;
 			stateBag = new StateBag ();
-			stateBag.Add ("serverClickHandler", serverHandler);
-			stateBag.Add ("clientClickHandler", clientHandler);
+			stateBag.Add ("serverClickHandler", serverClickHandler);
+			stateBag.Add ("clientClickHandler", clientClickHandler);
 		}
 
 		[MonoTODO]
@@ -149,7 +154,7 @@ namespace System.Web.UI.WebControls.WebParts
 
 		[WebSysDescriptionAttribute ("Denotes URL of the image to be displayed for the verb"),
 		 EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, System.Design", 
-				"System.Drawing.Design.UITypeEditor, System.Drawing"),
+				"UITypeEditor, System.Drawing"),
 		 LocalizableAttribute (true), NotifyParentPropertyAttribute (true)]
 		//UrlPropertyAttribute, DefaultValueAttribute (String.Empty)
 		public string ImageUrl {

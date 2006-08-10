@@ -1,4 +1,4 @@
-﻿//
+//
 // System.Web.UI.WebControls.WebParts.EditorPart.cs
 //
 // Authors:
@@ -38,7 +38,16 @@ namespace System.Web.UI.WebControls.WebParts
 	[BindableAttribute(false)]
 	[Designer ("System.Web.UI.Design.WebControls.WebParts.EditorPartDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public abstract class EditorPart : Part
-	{
+	{	
+		bool				display = true;
+		WebPart				webPartToEdit;
+		WebPartManager		manager;
+		EditorZoneBase		zone;
+		string				displayTitle;
+		
+
+		protected EditorPart() {}
+
 		public abstract bool ApplyChanges ();
 
 		protected override IDictionary GetDesignModeState ()
@@ -48,12 +57,19 @@ namespace System.Web.UI.WebControls.WebParts
 
 		protected internal override void OnPreRender (EventArgs e)
 		{
-			throw new NotImplementedException ();
+			if(zone ==  null)
+				throw new InvalidOperationException();
+			base.OnPreRender(e);
+			if(!Display)
+				Visible = false;
 		}
 
+		[MonoTODO]
 		protected override void SetDesignModeState (IDictionary data)
 		{
-			throw new NotImplementedException ();
+			EditorZoneBase stateZone = data["Zone"] as EditorZoneBase;
+			if(stateZone != null)
+				zone = stateZone;
 		}
 
 		public abstract void SyncChanges ();
@@ -61,13 +77,15 @@ namespace System.Web.UI.WebControls.WebParts
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual bool Display {
-			get { throw new NotImplementedException (); }
+			get { 
+				return display;
+			}
 		}
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public string DisplayTitle {
-			get { throw new NotImplementedException (); }
+			get { return displayTitle; }
 		}
 
 #if false
@@ -77,7 +95,15 @@ namespace System.Web.UI.WebControls.WebParts
 #endif
 
 		protected WebPart WebPartToEdit {
-			get { throw new NotImplementedException (); }
+			get { return webPartToEdit; }
+		}
+
+		protected WebPartManager WebPartManager {
+			get { return manager; }
+		}
+
+		protected EditorZoneBase Zone { 
+			get { return zone; } 
 		}
 
 #if false

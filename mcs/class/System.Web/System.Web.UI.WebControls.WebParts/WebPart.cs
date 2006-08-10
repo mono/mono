@@ -46,10 +46,17 @@ namespace System.Web.UI.WebControls.WebParts
 		}
 
 
-		WebPartVerbCollection verbs;
+		WebPartVerbCollection verbs = new WebPartVerbCollection();
 		Allow allow;
 		string auth_filter;
 		string catalog_icon_url;
+		WebPartExportMode exportMode = WebPartExportMode.None;
+		string	titleIconImageUrl,	 
+				titleUrl,			
+				helpUrl;
+		bool isStatic, hidden, isClosed, hasSharedData, hasUserData;
+		WebPartHelpMode helpMode = WebPartHelpMode.Navigate;
+		int zoneIndex ;
 
 		protected WebPart ()
 		{
@@ -57,6 +64,14 @@ namespace System.Web.UI.WebControls.WebParts
 			allow = Allow.Close | Allow.Connect | Allow.Edit | Allow.Hide | Allow.Minimize | Allow.ZoneChange;
 			auth_filter = "";
 			catalog_icon_url = "";
+			titleIconImageUrl	= string.Empty;
+			titleUrl		= string.Empty;
+			helpUrl			= string.Empty;
+			isStatic		= false;
+			hasUserData		= false;
+			hasSharedData	= false;
+			hidden = false;
+			isClosed = false;
 		}
 
 #if IWebEditableInterface
@@ -276,10 +291,10 @@ namespace System.Web.UI.WebControls.WebParts
 		public virtual WebPartExportMode ExportMode 
 		{
 			get {
-			throw new NotImplementedException ();
+				return exportMode;
 			}
 			set {
-			throw new NotImplementedException ();
+				exportMode = value;
 			}
 		}
 
@@ -287,7 +302,7 @@ namespace System.Web.UI.WebControls.WebParts
 		public bool HasSharedData 
 		{
 			get {
-			throw new NotImplementedException ();
+				return hasSharedData;
 			}
 		}
 
@@ -295,7 +310,7 @@ namespace System.Web.UI.WebControls.WebParts
 		public bool HasUserData 
 		{
 			get {
-			throw new NotImplementedException ();
+				return hasUserData;
 			}
 		}
 
@@ -314,10 +329,10 @@ namespace System.Web.UI.WebControls.WebParts
 		public virtual WebPartHelpMode HelpMode 
 		{
 			get {
-			throw new NotImplementedException ();
+				return helpMode;
 			}
 			set {
-			throw new NotImplementedException ();
+				helpMode = value;
 			}
 		}
 
@@ -325,10 +340,10 @@ namespace System.Web.UI.WebControls.WebParts
 		public virtual string HelpUrl 
 		{
 			get {
-			throw new NotImplementedException ();
+				return helpUrl;
 			}
 			set {
-			throw new NotImplementedException ();
+				helpUrl = value;
 			}
 		}
 
@@ -336,10 +351,10 @@ namespace System.Web.UI.WebControls.WebParts
 		public virtual bool Hidden 
 		{
 			get {
-			throw new NotImplementedException ();
+				return hidden;
 			}
 			set {
-			throw new NotImplementedException ();
+				hidden = value;
 			}
 		}
 
@@ -357,7 +372,7 @@ namespace System.Web.UI.WebControls.WebParts
 		public bool IsClosed 
 		{
 			get {
-			throw new NotImplementedException ();
+				return isClosed;
 			}
 		}
 
@@ -381,7 +396,7 @@ namespace System.Web.UI.WebControls.WebParts
 		public bool IsStatic 
 		{
 			get {
-			throw new NotImplementedException ();
+				return isStatic;
 			}
 		}
 
@@ -389,7 +404,7 @@ namespace System.Web.UI.WebControls.WebParts
 		public virtual string Subtitle 
 		{
 			get {
-			throw new NotImplementedException ();
+				return string.Empty;
 			}
 		}
 
@@ -408,10 +423,10 @@ namespace System.Web.UI.WebControls.WebParts
 		public virtual string TitleIconImageUrl 
 		{
 			get {
-			throw new NotImplementedException ();
+				return titleIconImageUrl;
 			}
 			set {
-			throw new NotImplementedException ();
+				titleIconImageUrl = value;
 			}
 		}
 
@@ -419,10 +434,10 @@ namespace System.Web.UI.WebControls.WebParts
 		public virtual string TitleUrl 
 		{
 			get {
-			throw new NotImplementedException ();
+				return titleUrl;
 			}
 			set {
-			throw new NotImplementedException ();
+				titleUrl = value;
 			}
 		}
 
@@ -478,7 +493,7 @@ namespace System.Web.UI.WebControls.WebParts
 		public int ZoneIndex 
 		{
 			get {
-			throw new NotImplementedException ();
+				return zoneIndex;
 			}
 		}
 	}

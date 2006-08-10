@@ -53,6 +53,10 @@ namespace System.Web.UI.WebControls.WebParts {
 			this.callBackMethod = callBack;
 		}
 		
+		internal MethodInfo CallbackMethod {
+			get{ return callBackMethod;  }
+		}
+		
 		[MonoTODO]
 		public virtual bool GetEnabled (Control control)
 		{
