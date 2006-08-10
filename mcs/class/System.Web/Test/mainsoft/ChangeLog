@@ -1,3 +1,7 @@
+2006-08-10 Yoni Klain <yonik@mainsoft.com>
+
+	* new resources : CallbackTest1.aspx; CallbackTest2.aspx 
+
 2006-08-08 Yoni Klain <yonik@mainsoft.com>
 
 	* new: WebLogin.config; LoginViewTest1.aspx

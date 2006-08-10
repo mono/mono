@@ -1,3 +1,7 @@
+2006-08-10 Yoni Klain <yonik@mainsoft.com>
+
+	* CallBackTest.cs: New test was added
+
 2006-08-010 Hagit Yidov <hagity@mainsoft.com>
 
 	* ImageMapTest.cs: New test was added
