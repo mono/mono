@@ -1,3 +1,7 @@
+2006-08-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-compiler.h: Fix TLS definitions so libmono can be loaded dynamically as a
+	module. Fixes #78767.
 
 Wed May 17 19:00:15 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
