@@ -1,3 +1,17 @@
+2006-08-10  Chris Toshok  <toshok@ximian.com>
+
+	* ListControl.cs: remove the items.Clear line from BindDataItems,
+	as this is the first thing done by both subclasses in their
+	SetItemsCore overrides.  Also, add a ItemChanged handler, and when
+	passed -1, refresh the list.  This gets databinding working when
+	the datasource is set on the list before the datasource is
+	populated (as in wf-apps/ReportBuilder.)
+
+	* ComboBox.cs: remove the argument to BindDataItems.  This call
+	should really go away, and be initiated by the ListControl code.
+
+	* ListBox.cs: same.
+
 2006-08-08  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* TextControl.cs (Document.ctor): Initialize caret so we don't crash

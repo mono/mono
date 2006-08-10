@@ -303,10 +303,8 @@ namespace System.Windows.Forms
 		
 		#region Private Methods
 
-		internal void BindDataItems (IList items)
+		internal void BindDataItems ()
 		{
-			items.Clear ();
-
 			if (data_manager != null) {
 				SetItemsCore (data_manager.List);
 			}
@@ -325,8 +323,18 @@ namespace System.Windows.Forms
 			
 			data_manager = (CurrencyManager) BindingContext [data_source];
 			data_manager.PositionChanged += new EventHandler (OnPositionChanged);
+			data_manager.ItemChanged += new ItemChangedEventHandler (OnItemChanged);
 		}		
-		
+
+		private void OnItemChanged (object sender, ItemChangedEventArgs e)
+		{
+			/* if the list has changed, tell our subclass to re-bind */
+			if (e.Index == -1)
+				SetItemsCore (data_manager.List);
+			else
+				RefreshItem (e.Index);
+		}
+
 		private void OnPositionChanged (object sender, EventArgs e)
 		{			
 			SelectedIndex = data_manager.Position;

@@ -651,7 +651,7 @@ namespace System.Windows.Forms
 		protected override void OnDataSourceChanged (EventArgs e)
 		{
 			base.OnDataSourceChanged (e);
-			BindDataItems (items);
+			BindDataItems ();
 			
 			if (DataSource == null || DataManager == null) {
 				SelectedIndex = -1;
@@ -668,7 +668,7 @@ namespace System.Windows.Forms
 			if (DataManager == null || !IsHandleCreated)
 			       return;
 
-			BindDataItems (items);
+			BindDataItems ();
 			SelectedIndex = DataManager.Position;
 		}
 
