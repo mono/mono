@@ -1,3 +1,10 @@
+2006-08-09  Dick Porter  <dick@ximian.com>
+
+	* monitor.c (mono_monitor_cleanup): mono_monitor_cleanup() is
+	racing mono_monitor_allocator_lock() somewhere, so don't delete
+	the critical section for now.  Found by running and exiting
+	monodevelop.
+
 2006-08-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (cominterop_get_native_wrapper): Fix a warning.
