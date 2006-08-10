@@ -1,3 +1,8 @@
+2006-08-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* metadata.c (do_mono_metadata_type_equal): Applied patch from Roberto Costa
+	(roberto.costa@st.com). Add support for MONO_TYPE_FNPTR.
+
 2006-08-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* threadpool.c: treat pipes from process asynchronous reads as sockets
