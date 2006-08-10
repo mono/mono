@@ -782,7 +782,7 @@ namespace System.Net.Sockets
 			blocking_thread = Thread.CurrentThread;
 			try {
 				sock = Accept_internal(socket, out error);
-			} catch (ThreadAbortException the) {
+			} catch (ThreadAbortException) {
 				if (disposed) {
 					Thread.ResetAbort ();
 					error = 10004;
@@ -1072,7 +1072,7 @@ namespace System.Net.Sockets
 			blocking_thread = Thread.CurrentThread;
 			try {
 				Connect_internal (socket, serial, out error);
-			} catch (ThreadAbortException the) {
+			} catch (ThreadAbortException) {
 				if (disposed) {
 					Thread.ResetAbort ();
 					error = 10004;
