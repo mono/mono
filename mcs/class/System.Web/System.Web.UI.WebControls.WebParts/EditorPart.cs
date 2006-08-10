@@ -41,8 +41,11 @@ namespace System.Web.UI.WebControls.WebParts
 	{	
 		bool				display = true;
 		WebPart				webPartToEdit;
+#if false
 		WebPartManager		manager;
-//		EditorZoneBase		zone;
+		EditorZoneBase		zone;
+#endif
+		object zone;
 		string				displayTitle;
 		
 
@@ -63,7 +66,7 @@ namespace System.Web.UI.WebControls.WebParts
 			if(!Display)
 				Visible = false;
 		}
-
+#if false
 		[MonoTODO]
 		protected override void SetDesignModeState (IDictionary data)
 		{
@@ -71,7 +74,7 @@ namespace System.Web.UI.WebControls.WebParts
 			if(stateZone != null)
 				zone = stateZone;
 		}
-
+#endif
 		public abstract void SyncChanges ();
 
 		[Browsable (false)]
@@ -96,14 +99,6 @@ namespace System.Web.UI.WebControls.WebParts
 
 		protected WebPart WebPartToEdit {
 			get { return webPartToEdit; }
-		}
-
-		protected WebPartManager WebPartManager {
-			get { return manager; }
-		}
-
-		protected EditorZoneBase Zone { 
-			get { return zone; } 
 		}
 
 #if false
