@@ -1073,6 +1073,12 @@ namespace System.Windows.Forms {
 		{
 			lastFolder = (string)MWFConfig.GetValue (filedialog_string, lastfolder_string);
 			
+			if (lastFolder != null && lastFolder.IndexOf ("://") != -1) {
+				if (!Directory.Exists (lastFolder)) {
+					lastFolder = MWFVFS.DesktopPrefix;
+				}
+			}
+			
 			if (initialDirectory != "")
 				lastFolder = initialDirectory;
 			else

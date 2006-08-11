@@ -1,3 +1,8 @@
+2006-08-11  Alexander Olk  <alex.olk@googlemail.com>
+
+	* FileDialog.cs: If a saved/remembered path doesn't exist
+	  anymore, fall back to "Desktop".
+
 2006-08-11  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Form.cs (CreateParams): Don't use Parent.Handle unless we have a
