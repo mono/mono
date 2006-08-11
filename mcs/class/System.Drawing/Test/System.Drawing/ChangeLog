@@ -1,6 +1,8 @@
-2006-08-11  Sebastien Pouliot  <sebastien@ximian.com>
+2006-08-11  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* GDIPlusTest.cs: Added one more case for GdipGetLogFont.
+	* TestBitmap.cs: Ignore test Rotate1bit4bit as it fails when Mono 
+	executes under Windows (GDI+);
 	* TestFont.cs: Added more test cases for ToLogFont including one that
 	shows that LOGFONT only works properly when it's a class (not a struct)
 

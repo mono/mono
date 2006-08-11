@@ -297,7 +297,7 @@ namespace MonoTests.System.Drawing{
 			resulting pixels using MD5
 		*/
 		[Test]
-		[Category ("NotDotNet")] // that doesn't work under MS.NET and Windows (even without the StreamWriter)
+		[Ignore ("this fails when using MS GDI+ - with or without Mono")]
 		public void Rotate1bit4bit()
 		{
 			string[] files = {
