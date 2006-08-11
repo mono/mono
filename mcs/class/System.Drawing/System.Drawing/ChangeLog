@@ -1,3 +1,8 @@
+2006-08-11  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* Font.cs: Remove the, now unrequired, FaceNameOffset field and
+	use the object size instead of the structure size when copying.
+
 2006-08-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Font.cs: Added more checks to ToLogFont and fixed it's behaviour

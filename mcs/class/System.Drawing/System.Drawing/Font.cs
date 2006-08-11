@@ -50,7 +50,6 @@ namespace System.Drawing
 
 		private const byte DefaultCharSet = 1;
 		private static int CharSetOffset = -1;
-		private static int FaceNameOffset = -1;
 
 		private void CreateFont (string familyName, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)
 		{
@@ -653,8 +652,8 @@ namespace System.Drawing
 
 			// note: there is no exception if 'logFont' isn't big enough
 			Type lf = typeof (LOGFONT);
-			int size = Marshal.SizeOf (lf);
-			if (Marshal.SizeOf (logFont) >= size) {
+			int size = Marshal.SizeOf (logFont);
+			if (size >= Marshal.SizeOf (lf)) {
 				Status status;
 				IntPtr copy = Marshal.AllocHGlobal (size);
 				try {
@@ -672,7 +671,6 @@ namespace System.Drawing
 
 				if (CharSetOffset == -1) {
 					CharSetOffset = (int) Marshal.OffsetOf (lf, "lfCharSet");
-					FaceNameOffset = (int) Marshal.OffsetOf (lf, "lfFaceName");
 				}
 
 				// note: Marshal.WriteByte(object,*) methods are unimplemented on Mono
