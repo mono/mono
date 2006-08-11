@@ -1,3 +1,8 @@
+2006-08-11  Jonathan Chambers  <joncham@gmail.com>
+
+	* class.c (mono_bounded_array_class_get): Fix if statement that caused incorrect
+	type check on multi-dimensional arrays. Fixes #79000.
+
 2006-08-10  Jonathan Chambers  <joncham@gmail.com>
 
 	* class.c (mono_class_setup_parent): setup is_com_object during class initialization.
