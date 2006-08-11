@@ -1,3 +1,9 @@
+2006-08-11  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* UnixRegistryApi.cs: Consider HKLM\SYSTEM\CurrentControlSet\Services\
+	EventLog a wellknown key. Required for new EventLog implementation. 
+	Added RegistryStore property.
+
 2006-06-06  Miguel de Icaza  <miguel@novell.com>
 
 	* UnixRegistryApi.cs: Do not crash if there are no values stored.

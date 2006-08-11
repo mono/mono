@@ -190,11 +190,8 @@ namespace Microsoft.Win32 {
 				case RegistryHive.LocalMachine:
 				case RegistryHive.PerformanceData:
 				case RegistryHive.Users:
-					string d = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.Personal), ".mono/registry");
-					d = Path.Combine (d, x.ToString ());
-					
+					string d = Path.Combine (RegistryStore, x.ToString ());
 					k = new KeyHandler (rkey, d);
-					key_to_handler [rkey] = k;
 					break;
 				default:
 					throw new Exception ("Unknown RegistryHive");
@@ -264,7 +261,7 @@ namespace Microsoft.Win32 {
 		{
 			if (!File.Exists (file) && values.Count == 0)
 				return;
-			
+
 			SecurityElement se = new SecurityElement ("values");
 			
 			foreach (DictionaryEntry de in values){
@@ -304,6 +301,14 @@ namespace Microsoft.Win32 {
 				Console.Error.WriteLine ("When saving {0} got {1}", file, e);
 			}
 		}
+
+		public static string RegistryStore {
+			get {
+				return Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.Personal),
+					".mono/registry");
+			}
+		}
+
 	}
 	
 	internal class UnixRegistryApi : IRegistryApi {
@@ -317,10 +322,13 @@ namespace Microsoft.Win32 {
 
 		static bool IsWellKnownKey (string parentKeyName, string keyname)
 		{
-			// FIXME: Add more keys if needed
-			if (parentKeyName == Registry.CurrentUser.Name ||
-				parentKeyName == Registry.LocalMachine.Name)
-				return (0 == String.Compare ("software", keyname, true, CultureInfo.InvariantCulture));
+			if (string.Compare ("software", keyname, true, CultureInfo.InvariantCulture) == 0)
+				return (parentKeyName == Registry.CurrentUser.Name ||
+					parentKeyName == Registry.LocalMachine.Name);
+
+			// required for event log support
+			if (string.Compare (@"SYSTEM\CurrentControlSet\Services\EventLog", keyname, true, CultureInfo.InvariantCulture) == 0)
+				return (parentKeyName == Registry.LocalMachine.Name);
 
 			return false;
 		}
