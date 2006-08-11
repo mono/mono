@@ -6,7 +6,6 @@
 //
 // (C) 2003 Andreas Nahr
 //
-
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,92 +28,172 @@
 //
 
 using System;
-using System.Diagnostics;
 using System.ComponentModel;
 using System.ComponentModel.Design;
+using System.Diagnostics;
+using System.Globalization;
+
+using Microsoft.Win32;
 
 namespace System.Diagnostics
 {
-
-// FIXME set a symbol for every implementation and include the implementation
-#if (EVENTLOG_WIN32)
-
-	// TODO implement the EventLog for Win32 platforms
-
-#elif (EVENTLOG_GENERIC)
-
-	// TODO implement a generic (XML - based?) Eventlog for non - Win32 platforms
-
-#else
-	// Empty implementation that does not need any specific platform
-	// but should be enough to get applications to run that WRITE to eventlog
-	internal class EventLogImpl
+	internal abstract class EventLogImpl
 	{
-		public EventLogImpl (EventLog coreEventLog)
+		readonly EventLog _coreEventLog;
+
+		protected EventLogImpl (EventLog coreEventLog)
 		{
+			_coreEventLog = coreEventLog;
 		}
 
-		public static event EntryWrittenEventHandler EntryWritten;
+		public event EntryWrittenEventHandler EntryWritten;
 
-		public EventLogEntryCollection Entries {
-			get {return new EventLogEntryCollection ();}
+		protected EventLog CoreEventLog {
+			get { return _coreEventLog; }
+		}
+
+		public int EntryCount {
+			get {
+				if (_coreEventLog.Log == null || _coreEventLog.Log.Length == 0) {
+					throw new ArgumentException ("Log property is not set.");
+				}
+
+				if (!EventLog.Exists (_coreEventLog.Log, _coreEventLog.MachineName)) {
+					throw new InvalidOperationException (string.Format (
+						CultureInfo.InvariantCulture, "The event log '{0}' on "
+						+ " computer '{1}' does not exist.", _coreEventLog.Log,
+						_coreEventLog.MachineName));
+				}
+
+				return GetEntryCount ();
+			}
+		}
+
+		public EventLogEntry this[int index] {
+			get {
+				if (_coreEventLog.Log == null || _coreEventLog.Log.Length == 0) {
+					throw new ArgumentException ("Log property is not set.");
+				}
+
+				if (!EventLog.Exists (_coreEventLog.Log, _coreEventLog.MachineName)) {
+					throw new InvalidOperationException (string.Format (
+						CultureInfo.InvariantCulture, "The event log '{0}' on "
+						+ " computer '{1}' does not exist.", _coreEventLog.Log,
+						_coreEventLog.MachineName));
+				}
+
+				if (index < 0 || index >= EntryCount)
+					throw new ArgumentException ("Index out of range");
+
+				return GetEntry (index);
+			}
 		}
 
 		public string LogDisplayName {
-			get {return "";}
+			get {
+#if NET_2_0
+				// to-do perform valid character checks
+				if (_coreEventLog.Log != null && _coreEventLog.Log.Length == 0) {
+					throw new InvalidOperationException ("Event log names must"
+						+ " consist of printable characters and cannot contain"
+						+ " \\, *, ?, or spaces.");
+				}
+#endif
+				if (_coreEventLog.Log != null) {
+					if (!EventLog.Exists (_coreEventLog.Log, _coreEventLog.MachineName)) {
+						throw new InvalidOperationException (string.Format (
+							CultureInfo.InvariantCulture, "Cannot find Log {0}"
+							+ " on computer {1}.", _coreEventLog.Log,
+							_coreEventLog.MachineName));
+					}
+				}
+
+				return GetLogDisplayName ();
+			}
 		}
 
-		public void BeginInit () {}
+		public abstract void BeginInit ();
 
-		public void Clear () {}
+		public abstract void Clear ();
 
-		public void Close () {}
+		public abstract void Close ();
 
-		public static void CreateEventSource (string source, string logName, string machineName) {}
+		public abstract void Dispose (bool disposing);
 
-		public static void Delete (string logName, string machineName) {}
+		public abstract void EndInit ();
 
-		public static void DeleteEventSource (string source, string machineName) {}
+		public abstract EventLogEntry[] GetEntries ();
 
-		public void Dispose (bool disposing) {}
+		protected abstract int GetEntryCount ();
 
-		public void EndInit () {}
+		protected abstract EventLogEntry GetEntry (int index);
 
-		public static bool Exists (string logName, string machineName)
-		{
-			return false;
-		}
+		protected abstract string GetLogDisplayName ();
 
-		public static EventLog[] GetEventLogs (string machineName)
-		{
-			return new EventLog[0];
-		}
-
-		public static string LogNameFromSourceName (string source, string machineName)
-		{
-			return String.Empty;
-		}
-
-		public static bool SourceExists (string source, string machineName)
-		{
-			return false;
-		}
+		protected abstract void WriteEventLogEntry (EventLogEntry entry);
 
 		public void WriteEntry (string message, EventLogEntryType type, int eventID, short category, byte[] rawData)
 		{
-			WriteEntry ("", message, type, eventID, category, rawData);
-		}
-
-		public static void WriteEntry (string source, string message, EventLogEntryType type, int eventID, short category, byte[] rawData)
-		{
-			EventLogEntry Entry;
-			Entry = new EventLogEntry ("", category, 0, eventID, message, source, 
-				"", "", type, DateTime.Now, DateTime.Now, rawData, null);
+			EventLogEntry entry = new EventLogEntry (string.Empty, category, 0, eventID,
+				_coreEventLog.Source, message, string.Empty, _coreEventLog.MachineName,
+				type, DateTime.Now, DateTime.Now, rawData, new string [] { message }, eventID);
+			WriteEventLogEntry (entry);
 			if (EntryWritten != null)
-				EntryWritten (null, new EntryWrittenEventArgs (Entry));
+				EntryWritten (null, new EntryWrittenEventArgs (entry));
 		}
 	}
 
-#endif
+	// Empty implementation that does not need any specific platform
+	// but should be enough to get applications to run that WRITE to eventlog
+	internal class NullEventLog : EventLogImpl
+	{
+		public NullEventLog (EventLog coreEventLog)
+			: base (coreEventLog)
+		{
+		}
 
+		public override void BeginInit ()
+		{
+		}
+
+		public override void Clear ()
+		{
+		}
+
+		public override void Close ()
+		{
+		}
+
+		public override void Dispose (bool disposing)
+		{
+		}
+
+		public override void EndInit ()
+		{
+		}
+
+		public override EventLogEntry[] GetEntries ()
+		{
+			return new EventLogEntry[0];
+		}
+
+		protected override int GetEntryCount ()
+		{
+			return 0;
+		}
+
+		protected override EventLogEntry GetEntry (int index)
+		{
+			return null;
+		}
+
+		protected override string GetLogDisplayName ()
+		{
+			return CoreEventLog.Log;
+		}
+
+		protected override void WriteEventLogEntry (EventLogEntry entry)
+		{
+		}
+	}
 }

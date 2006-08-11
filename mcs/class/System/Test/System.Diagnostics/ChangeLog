@@ -1,3 +1,9 @@
+2006-08-11  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* EventLogTest.cs: new test, currently not enabled due to UnixRegistry
+	bug which still needs to be tracked, and which would cause temporary
+	registry entries to be left behind by running tests.
+
 2006-08-09  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* EventSourceCreationDataTest.cs: new test.

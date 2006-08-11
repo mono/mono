@@ -37,42 +37,79 @@ namespace System.Diagnostics {
 
 	public class EventLogEntryCollection : ICollection, IEnumerable {
 
-		private ArrayList eventLogs = new ArrayList ();
+		readonly EventLogImpl _impl;
 
-		internal EventLogEntryCollection()
+		internal EventLogEntryCollection(EventLogImpl impl)
 		{
+			_impl = impl;
 		}
 
 		public int Count {
-			get {return eventLogs.Count;}
+			get { return _impl.EntryCount; }
 		}
 
 		public virtual EventLogEntry this [int index] {
-			get {return (EventLogEntry) eventLogs[index];}
+			get { return _impl[index]; }
 		}
 
 		bool ICollection.IsSynchronized {
-			get {return eventLogs.IsSynchronized;}
+			get { return false; }
 		}
 
 		object ICollection.SyncRoot {
-			get {return eventLogs.SyncRoot;}
+			get { return this; }
 		}
 
-		public void CopyTo (EventLogEntry[] eventLogs, int index)
+		public void CopyTo (EventLogEntry[] eventLogEntries, int index)
 		{
-			eventLogs.CopyTo (eventLogs, index);
+			EventLogEntry[] entries = _impl.GetEntries ();
+			Array.Copy (entries, 0, eventLogEntries, index, entries.Length);
 		}
 
 		public IEnumerator GetEnumerator ()
 		{
-			return eventLogs.GetEnumerator ();
+			return new EventLogEntryEnumerator (_impl);
 		}
 
 		void ICollection.CopyTo (Array array, int index)
 		{
-			eventLogs.CopyTo (array, index);
+			EventLogEntry[] entries = _impl.GetEntries ();
+			Array.Copy (entries, 0, array, index, entries.Length);
 		}
-	}
+
+		private class EventLogEntryEnumerator : IEnumerator
+		{
+			internal EventLogEntryEnumerator (EventLogImpl impl)
+			{
+				_impl = impl;
+			}
+
+			object IEnumerator.Current {
+				get { return Current; }
+			}
+
+			public EventLogEntry Current
+			{
+				get { return _currentEntry; }
+			}
+
+			public bool MoveNext ()
+			{
+				_currentIndex++;
+				_currentEntry = _impl[_currentIndex];
+				return _currentEntry != null;
+			}
+
+			public void Reset ()
+			{
+				_currentIndex = - 1;
+				_currentEntry = null;
+			}
+
+			readonly EventLogImpl _impl;
+			int _currentIndex = -1;
+			EventLogEntry _currentEntry;
+		}
+}
 }
 

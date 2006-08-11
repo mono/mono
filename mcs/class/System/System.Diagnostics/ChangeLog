@@ -1,3 +1,25 @@
+2006-08-11  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* EventLogEntry.cs: Added InstanceId property (2.0 only). Moved
+	Obsolete attribute to correct property.
+	* EventSourceCreationData.cs: Updated copyright. For internal ctor,
+	set log name to "Application" if value is null or zero-length string.
+	* EventLogImpl.cs: EventImpl now acts as base class for event log 
+	implemenations. Added NullEventLog implementation, which is not used
+	at the moment.
+	* EventLog.cs: EventLog implementation that uses registry for
+	keeping track of logs and sources to match .NET (and Windows). When
+	running on Windows NT (and higher), event entries are written to
+	the native win32 event log.  Reading event entries is not yet working
+	for Windows. On linux, we use a local file store (based on patch by 
+	Atsushi).
+	* UnixEventLog.cs: Event log implementation for linux which uses a
+	local file store.
+	* Win32EventLog.cs: Event log implementation for Windows NT and 
+	higher which uses the Win32 native event log.
+	* EventLogEntryCollection.cs: Delegate implementation to event log
+	implemenation. Use lazy init for enumerating entries.
+
 2006-08-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Process.cs: reset the 'start' time if we wait for stdout reading to
