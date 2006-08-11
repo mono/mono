@@ -1,3 +1,7 @@
+2006-08-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* gdipFunctions.cs: return -1 when stream.Length throws.
+
 2006-08-11  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* Font.cs: Remove the, now unrequired, FaceNameOffset field and

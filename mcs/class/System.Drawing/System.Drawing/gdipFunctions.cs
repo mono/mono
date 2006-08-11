@@ -1798,7 +1798,11 @@ namespace System.Drawing
 			
 			public long StreamSizeImpl ()
 			{
-				return stream.Length;
+				try {
+					return stream.Length;
+				} catch {
+					return -1;
+				}
 			}
 
 			public StreamSizeDelegate SizeDelegate {
