@@ -954,7 +954,9 @@ namespace System.Windows.Forms {
 
 				if (IsMdiChild) {
 					cp.Style |= (int)(WindowStyles.WS_CHILD | WindowStyles.WS_CAPTION);
-					cp.Parent = Parent.Handle;
+					if (Parent != null) {
+						cp.Parent = Parent.Handle;
+					}
 
 					cp.ExStyle |= (int) (WindowExStyles.WS_EX_WINDOWEDGE | WindowExStyles.WS_EX_MDICHILD);
 

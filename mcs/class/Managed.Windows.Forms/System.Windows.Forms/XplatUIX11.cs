@@ -2135,8 +2135,8 @@ namespace System.Windows.Forms {
 					ParentHandle=RootWindow;
 				} else {
 					// Default position on screen, if window manager doesn't place us somewhere else
-					if (X<1) X = 50;
-					if (Y<1) Y = 50;
+					if (X<0) X = 50;
+					if (Y<0) Y = 50;
 					ParentHandle=RootWindow;
 				}
 			}
@@ -4442,6 +4442,9 @@ namespace System.Windows.Forms {
 		internal override bool SetZOrder(IntPtr handle, IntPtr after_handle, bool top, bool bottom) {
 			Hwnd	hwnd = Hwnd.ObjectFromHandle(handle);
 
+			if (!hwnd.Mapped) {
+				return false;
+			}
 			if (top) {
 				lock (XlibLock) {
 					XRaiseWindow(DisplayHandle, hwnd.whole_window);

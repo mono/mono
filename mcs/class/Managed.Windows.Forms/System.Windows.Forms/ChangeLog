@@ -1,3 +1,12 @@
+2006-08-11  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Form.cs (CreateParams): Don't use Parent.Handle unless we have a
+	  parent. It's apparently legal to not have one
+	* XplatUIX11.cs:
+	  - SetZOrder: Don't try to set Z-Order on an unmapped window
+	  - CreateWindow: 0,0 are legal coordinates for a window. don't move
+	    it unless the coordinates are negative
+
 2006-08-10  Mike Kestner  <mkestner@novell.com>
 
 	* ListControl.cs: allow null for DataSource.  Clear DisplayMember
