@@ -636,15 +636,40 @@ namespace System.Drawing
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public void ToLogFont (object logFont, Graphics graphics)
 		{
-			if (graphics == null) {
+			if (graphics == null)
 				throw new ArgumentNullException ("graphics");
+
+			if (logFont == null) {
+#if NET_2_0
+				throw new AccessViolationException ("logFont");
+#else
+				throw new NullReferenceException ("logFont");
+#endif
 			}
 
-			Type lf = typeof (LOGFONT);
-			if (Marshal.SizeOf (logFont) >= Marshal.SizeOf (lf)) {
-				Status status = GDIPlus.GdipGetLogFont (NativeObject, graphics.NativeObject, logFont);
+			Type st = logFont.GetType ();
+			if (!st.IsLayoutSequential)
+				throw new ArgumentException ("logFont", Locale.GetText ("Layout must be sequential."));
 
-				// lfCharSet is always 1 from S.D. (even on error) but GDI+ returns 0
+			// note: there is no exception if 'logFont' isn't big enough
+			Type lf = typeof (LOGFONT);
+			int size = Marshal.SizeOf (lf);
+			if (Marshal.SizeOf (logFont) >= size) {
+				Status status;
+				IntPtr copy = Marshal.AllocHGlobal (size);
+				try {
+					Marshal.StructureToPtr (logFont, copy, false);
+
+					status = GDIPlus.GdipGetLogFont (NativeObject, graphics.NativeObject, logFont);
+					if (status != Status.Ok) {
+						// reset to original values
+						Marshal.PtrToStructure (copy, logFont);
+					}
+				}
+				finally {
+					Marshal.FreeHGlobal (copy);
+				}
+
 				if (CharSetOffset == -1) {
 					CharSetOffset = (int) Marshal.OffsetOf (lf, "lfCharSet");
 					FaceNameOffset = (int) Marshal.OffsetOf (lf, "lfFaceName");
@@ -654,14 +679,11 @@ namespace System.Drawing
 				GCHandle gch = GCHandle.Alloc (logFont, GCHandleType.Pinned);
 				try {
 					IntPtr ptr = gch.AddrOfPinnedObject ();
-					// if status isn't Ok then everything (except lfCharSet and lfFaceName) 
-					// gets zeroized in managed code
-					if (status != Status.Ok) {
-						byte[] zero = new byte [FaceNameOffset];
-						Marshal.Copy (zero, 0, ptr, FaceNameOffset);
+					// if GDI+ lfCharSet is 0, then we return (S.D.) 1, otherwise the value is unchanged
+					if (Marshal.ReadByte (ptr, CharSetOffset) == 0) {
+						// set lfCharSet to 1 
+						Marshal.WriteByte (ptr, CharSetOffset, 1);
 					}
-					// set lfCharSet to 1 
-					Marshal.WriteByte (ptr, CharSetOffset, 1);
 				}
 				finally {
 					gch.Free ();
