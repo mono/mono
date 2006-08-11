@@ -1,3 +1,9 @@
+2006-08-11  Dick Porter  <dick@ximian.com>
+
+	* processes.c (_wapi_process_reap): Avoid a deadlock by setting
+	process termination details in an outer loop, not the
+	_wapi_search_handle() one.
+
 2006-08-10  Dick Porter  <dick@ximian.com>
 
 	* threads.c (_wapi_thread_queue_apc)
