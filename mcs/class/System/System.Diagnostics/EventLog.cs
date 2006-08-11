@@ -84,11 +84,14 @@ namespace System.Diagnostics
 			this.machineName = machineName;
 			this.logName = logName;
 
+			Impl = new NullEventLog (this);
+			/*
 			if (Win32EventLogEnabled) {
 				Impl = new Win32EventLog (this);
 			} else {
 				Impl = new UnixEventLog (this);
 			}
+			*/
 			Impl.EntryWritten += new EntryWrittenEventHandler (EntryWrittenHandler);
 		}
 

@@ -1,5 +1,9 @@
 2006-08-11  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* EventLog.cs: For now, Use null implementation.
+
+2006-08-11  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* EventLogEntry.cs: Added InstanceId property (2.0 only). Moved
 	Obsolete attribute to correct property.
 	* EventSourceCreationData.cs: Updated copyright. For internal ctor,
