@@ -74,24 +74,44 @@ namespace MonoTests.System.Drawing{
 			Assert.AreEqual (f.Unit, f2.Unit, "Unit");
 		}
 
-		[ StructLayout(LayoutKind.Sequential, CharSet=CharSet.Auto) ]
+		[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Auto)]
 		class LOGFONT {
-			public int lfHeight = 0;
-			public int lfWidth = 0;
-			public int lfEscapement = 0;
-			public int lfOrientation = 0;
-			public int lfWeight = 0;
-			public byte lfItalic = 0;
-			public byte lfUnderline = 0;
-			public byte lfStrikeOut = 0;
-			public byte lfCharSet = 0;
-			public byte lfOutPrecision = 0;
-			public byte lfClipPrecision = 0;
-			public byte lfQuality = 0;
-			public byte lfPitchAndFamily = 0;
+			public int lfHeight;
+			public int lfWidth;
+			public int lfEscapement;
+			public int lfOrientation;
+			public int lfWeight;
+			public byte lfItalic;
+			public byte lfUnderline;
+			public byte lfStrikeOut;
+			public byte lfCharSet;
+			public byte lfOutPrecision;
+			public byte lfClipPrecision;
+			public byte lfQuality;
+			public byte lfPitchAndFamily;
 			[ MarshalAs(UnmanagedType.ByValTStr, SizeConst=32) ]
-			public string lfFaceName = null;
+			public string lfFaceName;
 		}
+
+		[StructLayout (LayoutKind.Sequential, CharSet = CharSet.Auto)]
+		struct LOGFONT_STRUCT {
+			public int lfHeight;
+			public int lfWidth;
+			public int lfEscapement;
+			public int lfOrientation;
+			public int lfWeight;
+			public byte lfItalic;
+			public byte lfUnderline;
+			public byte lfStrikeOut;
+			public byte lfCharSet;
+			public byte lfOutPrecision;
+			public byte lfClipPrecision;
+			public byte lfQuality;
+			public byte lfPitchAndFamily;
+			[MarshalAs (UnmanagedType.ByValTStr, SizeConst = 32)]
+			public string lfFaceName;
+		}
+
 #if !TARGET_JVM
 		[Test]
 		[Category ("CAS")]
@@ -112,16 +132,66 @@ namespace MonoTests.System.Drawing{
 		[SecurityPermission (SecurityAction.Assert, UnmanagedCode = true)]
 		public void ToLogFont_AssertUnmanagedCode ()
 		{
-			Font f;
-			LOGFONT	lf;
+			Font f = new Font("Arial", 10);
+			LOGFONT	lf = new LOGFONT();
 
-			lf = new LOGFONT();
-			f = new Font("Arial", 10);
-
-			f.ToLogFont(lf);
+			f.ToLogFont (lf);
 			Assert.AreEqual (400, lf.lfWeight, "lfWeight");
 			Assert.AreEqual (1, lf.lfCharSet, "lfCharSet");
 			Assert.AreEqual (f.Name, lf.lfFaceName, "lfFaceName");
+
+			LOGFONT_STRUCT lfs = new LOGFONT_STRUCT ();
+			f.ToLogFont (lfs);
+			Assert.AreEqual (0, lfs.lfWeight, "struct-lfWeight");
+			Assert.AreEqual (0, lfs.lfCharSet, "struct-lfCharSet");
+			Assert.AreEqual (0, lfs.lfHeight, "struct-lfHeight");
+			Assert.AreEqual (0, lfs.lfWidth, "struct-lfWidth");
+			Assert.AreEqual (0, lfs.lfEscapement, "struct-lfEscapement");
+			Assert.AreEqual (0, lfs.lfOrientation, "struct-lfOrientation");
+			Assert.AreEqual (0, lfs.lfWeight, "struct-lfWeight");
+			Assert.AreEqual (0, lfs.lfItalic, "struct-lfItalic");
+			Assert.AreEqual (0, lfs.lfUnderline, "struct-lfUnderline");
+			Assert.AreEqual (0, lfs.lfStrikeOut, "struct-lfStrikeOut");
+			Assert.AreEqual (0, lfs.lfCharSet, "struct-lfCharSet");
+			Assert.AreEqual (0, lfs.lfOutPrecision, "struct-lfOutPrecision");
+			Assert.AreEqual (0, lfs.lfClipPrecision, "struct-lfClipPrecision");
+			Assert.AreEqual (0, lfs.lfQuality, "struct-lfQuality");
+			Assert.AreEqual (0, lfs.lfPitchAndFamily, "struct-lfPitchAndFamily");
+			Assert.IsNull (lfs.lfFaceName, "struct-lfFaceName");
+		}
+
+		[Test]
+		[SecurityPermission (SecurityAction.Assert, UnmanagedCode = true)]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ToLogFont_TooSmall ()
+		{
+			Font f = new Font ("Arial", 10);
+			object o = new object ();
+			f.ToLogFont (o);
+			// no PInvoke conversion exists !?!?
+		}
+
+		[Test]
+		[SecurityPermission (SecurityAction.Assert, UnmanagedCode = true)]
+		public void ToLogFont_Int ()
+		{
+			Font f = new Font ("Arial", 10);
+			int i = 1;
+			f.ToLogFont (i);
+			Assert.AreEqual (1, i);
+		}
+
+		[Test]
+		[SecurityPermission (SecurityAction.Assert, UnmanagedCode = true)]
+	#if NET_2_0
+		[ExpectedException (typeof (AccessViolationException))]
+	#else
+		[ExpectedException (typeof (NullReferenceException))]
+	#endif
+		public void ToLogFont_Null ()
+		{
+			Font f = new Font ("Arial", 10);
+			f.ToLogFont (null);
 		}
 #endif
 		[Test]
@@ -369,35 +439,61 @@ namespace MonoTests.System.Drawing{
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentException))]
 		public void Dispose_ToLogFont ()
 		{
 			Font f = new Font (name, 12.5f);
 			f.Dispose ();
 			LOGFONT	lf = new LOGFONT();
-			Assert.AreEqual (0, lf.lfCharSet, "lfCharSet-0");
-			Assert.IsNull (lf.lfFaceName, "lfFaceName-0");
-			try {
-				f.ToLogFont (lf);
-			}
-			catch (ArgumentException) {
-				// it throws, but it also initialize the LOGFONT to some values
-				Assert.AreEqual (0, lf.lfHeight, "lfHeight");
-				Assert.AreEqual (0, lf.lfWidth, "lfWidth");
-				Assert.AreEqual (0, lf.lfEscapement, "lfEscapement");
-				Assert.AreEqual (0, lf.lfOrientation, "lfOrientation");
-				Assert.AreEqual (0, lf.lfWeight, "lfWeight");
-				Assert.AreEqual (0, lf.lfItalic, "lfItalic");
-				Assert.AreEqual (0, lf.lfUnderline, "lfUnderline");
-				Assert.AreEqual (0, lf.lfStrikeOut, "lfStrikeOut");
-				Assert.AreEqual (1, lf.lfCharSet, "lfCharSet");
-				Assert.AreEqual (0, lf.lfOutPrecision, "lfOutPrecision");
-				Assert.AreEqual (0, lf.lfClipPrecision, "lfClipPrecision");
-				Assert.AreEqual (0, lf.lfQuality, "lfQuality");
-				Assert.AreEqual (0, lf.lfPitchAndFamily, "lfPitchAndFamily");
-				Assert.AreEqual (String.Empty, lf.lfFaceName, "lfFaceName");
-			}
-			catch (Exception e) {
-				Assert.Fail ("Unexpected exception {0}", e);
+			f.ToLogFont (lf);
+		}
+
+		[Test]
+		public void Dispose_ToLogFont_LoopCharSet ()
+		{
+			Font f = new Font (name, 12.5f);
+			f.Dispose ();
+			LOGFONT lf = new LOGFONT ();
+
+			for (int i = Byte.MinValue; i < Byte.MaxValue; i++) {
+				byte b = (byte) i;
+				lf.lfHeight = b;
+				lf.lfWidth = b;
+				lf.lfEscapement = b;
+				lf.lfOrientation = b;
+				lf.lfWeight = b;
+				lf.lfItalic = b;
+				lf.lfUnderline = b;
+				lf.lfStrikeOut = b;
+				lf.lfCharSet = b;
+				lf.lfOutPrecision = b;
+				lf.lfClipPrecision = b;
+				lf.lfQuality = b;
+				lf.lfPitchAndFamily = b;
+				lf.lfFaceName = b.ToString ();
+				try {
+					f.ToLogFont (lf);
+				}
+				catch (ArgumentException) {
+					Assert.AreEqual (b, lf.lfHeight, "lfHeight");
+					Assert.AreEqual (b, lf.lfWidth, "lfWidth");
+					Assert.AreEqual (b, lf.lfEscapement, "lfEscapement");
+					Assert.AreEqual (b, lf.lfOrientation, "lfOrientation");
+					Assert.AreEqual (b, lf.lfWeight, "lfWeight");
+					Assert.AreEqual (b, lf.lfItalic, "lfItalic");
+					Assert.AreEqual (b, lf.lfUnderline, "lfUnderline");
+					Assert.AreEqual (b, lf.lfStrikeOut, "lfStrikeOut");
+					// special case for 0
+					Assert.AreEqual ((i == 0) ? (byte)1 : b, lf.lfCharSet, "lfCharSet");
+					Assert.AreEqual (b, lf.lfOutPrecision, "lfOutPrecision");
+					Assert.AreEqual (b, lf.lfClipPrecision, "lfClipPrecision");
+					Assert.AreEqual (b, lf.lfQuality, "lfQuality");
+					Assert.AreEqual (b, lf.lfPitchAndFamily, "lfPitchAndFamily");
+					Assert.AreEqual (b.ToString (), lf.lfFaceName, "lfFaceName");
+				}
+				catch (Exception e) {
+					Assert.Fail ("Unexcepted exception {0} at iteration {1}", e, i);
+				}
 			}
 		}
 

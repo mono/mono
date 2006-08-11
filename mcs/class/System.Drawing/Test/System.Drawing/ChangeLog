@@ -1,3 +1,9 @@
+2006-08-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GDIPlusTest.cs: Added one more case for GdipGetLogFont.
+	* TestFont.cs: Added more test cases for ToLogFont including one that
+	shows that LOGFONT only works properly when it's a class (not a struct)
+
 2006-08-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GDIPlusTest.cs: Add more test cases for GraphicsPath and 

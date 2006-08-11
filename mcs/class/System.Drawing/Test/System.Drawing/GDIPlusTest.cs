@@ -156,6 +156,7 @@ namespace MonoTests.System.Drawing {
 			lf.lfCharSet = 1;
 			Assert.AreEqual (Status.InvalidParameter, GdipGetLogFont (font, IntPtr.Zero, (object) lf), "GdipGetLogFont-null-graphics");
 			Assert.AreEqual (0, lf.lfCharSet, "lfCharSet-null-graphics");
+			// other lf members looks like garbage
 
 			IntPtr image;
 			GdipCreateBitmapFromScan0 (10, 10, 0, PixelFormat.Format32bppArgb, IntPtr.Zero, out image);
@@ -173,6 +174,11 @@ namespace MonoTests.System.Drawing {
 			Assert.AreEqual (Status.Ok, GdipGetLogFont (font, graphics, (object) lf), "GdipGetLogFont");
 			Assert.AreEqual (0, lf.lfCharSet, "lfCharSet");
 			// strangely this is 1 in the managed side
+
+			lf.lfCharSet = 2;
+			Assert.AreEqual (Status.Ok, GdipGetLogFont (font, graphics, (object) lf), "GdipGetLogFont-2");
+			Assert.AreEqual (0, lf.lfCharSet, "lfCharSet");
+			// strangely this is 2 in the managed side
 
 			Assert.AreEqual (Status.Ok, GdipDeleteFont (font), "GdipDeleteFont");
 			Assert.AreEqual (Status.InvalidParameter, GdipDeleteFont (IntPtr.Zero), "GdipDeleteFont-null");
