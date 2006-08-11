@@ -1,3 +1,8 @@
+2006-08-10  Jonathan Chambers  <joncham@gmail.com>
+
+	* mini.c: Don't verify COM proxy invoke calls
+	
+
 2006-08-10  Dick Porter  <dick@ximian.com>
 
 	* wapihandles.c (mini_wapi_seminfo): More info, to help track down
