@@ -1,3 +1,7 @@
+2006-08-09  Jonathan Chambers  <joncham@gmail.com>
+
+	* Marshal.cs: Implement GetIDispatchForObject.
+	
 2006-08-07  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Marshal.cs: Added stubs for GetTypeLibGuid (ITypeLib), GetTypeLibLcid

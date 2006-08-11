@@ -68,8 +68,16 @@ namespace Mono.Interop
 		public ComInteropProxy (Type t)
 			: base (t)
 		{
-			com_object = new __ComObject (t);
-			iunknown_hashtable.Add (com_object.IUnknown, new ComInteropProxyEntry (1, new WeakReference(this)));
+			// object only created here
+			// .ctor is called later
+			com_object = __ComObject.CreateRCW (t);
+		}
+
+		internal void CacheProxy ()
+		{
+			// called from unmanaged code after .ctor is invoked
+			// we need .ctor to create unmanaged object and thus IUnknown property value
+			iunknown_hashtable.Add (com_object.IUnknown, new ComInteropProxyEntry (1, new WeakReference (this)));
 		}
 
         internal ComInteropProxy (IntPtr pUnk)

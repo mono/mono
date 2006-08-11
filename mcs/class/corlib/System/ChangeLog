@@ -1,3 +1,10 @@
+2006-08-10  Jonathan Chambers  <joncham@gmail.com>
+
+	* __ComObject.cs: Added defintion of IDispatch interface, and
+	property. Get CLSID of supertype for creation if class not
+	ComImport attributed (allows for inheritance of RCW).
+	* MonoType.cs: Implement IsCOMObjectImpl.
+
 2006-08-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTime.cs : fixed X509Certificate() case that regressed only

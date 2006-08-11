@@ -74,6 +74,20 @@ namespace System
 
 		public __ComObject ()
 		{
+			// call CoInitialize once per thread
+			if (!coinitialized) {
+				CoInitialize (IntPtr.Zero);
+				coinitialized = true;
+			}
+
+			hashtable = new Hashtable ();
+
+			IntPtr ppv;
+			Type t = GetType ();
+			int hr = CoCreateInstance (GetCLSID (t), IntPtr.Zero, 0x1 | 0x4 | 0x10, IID_IUnknown, out ppv);
+			Marshal.ThrowExceptionForHR (hr);
+
+			SetIUnknown (ppv);
 		}
 
 		internal __ComObject (Type t)
@@ -87,10 +101,25 @@ namespace System
 			hashtable = new Hashtable ();
 
 			IntPtr ppv;
-			int hr = CoCreateInstance (t.GUID, IntPtr.Zero, 0x1 | 0x4 | 0x10, IID_IUnknown, out ppv);
+			int hr = CoCreateInstance (GetCLSID (t), IntPtr.Zero, 0x1 | 0x4 | 0x10, IID_IUnknown, out ppv);
 			Marshal.ThrowExceptionForHR (hr);
 
 			SetIUnknown (ppv);
+		}
+
+		private Guid GetCLSID (Type t)
+		{
+			if (t.IsImport)
+				return t.GUID;
+
+			// look at supertypes
+			Type super = t.BaseType;
+			while (super != typeof (object)) {
+				if (super.IsImport)
+					return super.GUID;
+				super = super.BaseType;
+			}
+			throw new COMException ("Could not find base COM type for type " + t.ToString());
 		}
 
 		internal __ComObject (IntPtr pItf)
@@ -155,6 +184,17 @@ namespace System
 			}
 		}
 
+		internal IntPtr IDispatch
+		{
+			get
+			{
+				IntPtr pUnk = GetInterface (typeof (IDispatchMono));
+				if (pUnk == IntPtr.Zero)
+					throw new InvalidComObjectException ("COM object that has been separated from its underlying RCW cannot be used.");
+				return pUnk;
+			}
+		}
+
 		internal static Guid IID_IUnknown
 		{
 			get
@@ -169,6 +209,11 @@ namespace System
 			{
 				return new Guid ("00020400-0000-0000-C000-000000000046");
 			}
+		}
+
+		[Guid ("00020400-0000-0000-C000-000000000046")]
+		internal interface IDispatchMono
+		{
 		}
 
 		public override bool Equals (object obj)

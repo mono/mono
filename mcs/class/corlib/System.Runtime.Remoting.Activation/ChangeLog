@@ -1,3 +1,7 @@
+2006-08-09  Jonathan Chambers  <joncham@gmail.com>
+
+	* ActivationServices.cs: Check type.IsCOMObject rather than type.IsImport.
+	
 2006-07-15  Jonathan Chambers  <joncham@gmail.com>
 
 	* ActivationServices.cs: Begin implementing COM Interop.

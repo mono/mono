@@ -204,8 +204,9 @@ namespace System.Runtime.Remoting.Activation
 			if (type.IsContextful)
 				return RemotingServices.CreateClientProxyForContextBound (type, null);
 
-            if (type.IsImport)
-                return RemotingServices.CreateClientProxyForComInterop (type);
+			if (type.IsCOMObject) {
+				return RemotingServices.CreateClientProxyForComInterop (type);
+			}
 
 			return null;
 		}

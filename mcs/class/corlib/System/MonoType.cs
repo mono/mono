@@ -290,10 +290,8 @@ namespace System
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		protected extern override bool IsByRefImpl ();
 
-		protected override bool IsCOMObjectImpl ()
-		{
-			return false;
-		}
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		protected extern override bool IsCOMObjectImpl ();
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		protected extern override bool IsPointerImpl ();

@@ -308,7 +308,14 @@ namespace System.Runtime.InteropServices
 		}
 
 		[MonoTODO]
-		public static IntPtr GetIDispatchForObject (object o) {
+		public static IntPtr GetIDispatchForObject (object o)
+		{			// only handle case of RCW objects for now
+			__ComObject co = o as __ComObject;
+			if (co != null) {
+				IntPtr pUnk = co.IDispatch;
+				AddRef (pUnk);
+				return pUnk;
+			}
 			throw new NotImplementedException ();
 		}
 
