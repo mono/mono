@@ -1548,7 +1548,8 @@ namespace System.Windows.Forms {
 			if (document.Height >= document.ViewPortHeight) {
 				vscroll.Enabled = true;
 				vscroll.Minimum = 0;
-				vscroll.Maximum = document.Height - ClientSize.Height + 1;
+				vscroll.LargeChange = document.ViewPortHeight;
+				vscroll.Maximum = document.Height;
 			} else {
 				vscroll.Maximum = document.ViewPortHeight;
 				vscroll.Enabled = false;

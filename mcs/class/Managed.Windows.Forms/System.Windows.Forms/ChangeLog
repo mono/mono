@@ -1,3 +1,8 @@
+2006-08-11  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* TextBoxBase.cs (CalculateScrollbars): Set the proper thumb size
+	  for vertical bars. Fixes the mismatches shown by #78513
+
 2006-08-11  Alexander Olk  <alex.olk@googlemail.com>
 
 	* FileDialog.cs: If a saved/remembered path doesn't exist
