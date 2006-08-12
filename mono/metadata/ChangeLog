@@ -1,5 +1,7 @@
 2006-08-12  Zoltan Varga  <vargaz@gmail.com>
 
+	* marshal.c: Fix non-x86 stdcall warnings.
+	
 	* marshal.c marshal.h: Add some helper functions to emit/patch branches, and use 
 	them everywhere.
 
