@@ -86,7 +86,7 @@ namespace Mono.CSharp {
 			2002, 2023,
 			3005, 3012, 3019, 3021, 3022, 3023, 3026, 3027,
 			// gmcs warnings start here
-			414, 1700
+			402, 414, 1700
 		};
 
 		static Report ()

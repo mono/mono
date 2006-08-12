@@ -1,3 +1,10 @@
+2006-08-12  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs (Method.Define): Issue a warning when generic method looks like
+	an entry point.
+	* decl.cs (MemberCore.GetSignatureForError): Print member type arguments
+	as well.
+
 2006-08-09  Marek Safar  <marek.safar@seznam.cz>
  
 	* anonymous.cs(AnonymousDelegate.Emit): Uses Constructor filter when
