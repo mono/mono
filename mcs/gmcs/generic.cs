@@ -504,6 +504,12 @@ namespace Mono.CSharp {
 			return false;
 		}
 
+		public Location Location {
+			get {
+				return loc;
+			}
+		}
+
 		/// <summary>
 		///   This is used when we're implementing a generic interface method.
 		///   Each method type parameter in implementing method must have the same

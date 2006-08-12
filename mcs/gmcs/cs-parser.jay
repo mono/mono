@@ -3926,8 +3926,16 @@ type_parameter_constraints_clauses
 	  }
 	| type_parameter_constraints_clauses type_parameter_constraints_clause {
 		ArrayList constraints = (ArrayList) $1;
+		Constraints new_constraint = (Constraints)$2;
 
-		constraints.Add ($2);
+		foreach (Constraints c in constraints) {
+			if (new_constraint.TypeParameter == c.TypeParameter) {
+				Report.Error (409, new_constraint.Location, "A constraint clause has already been specified for type parameter `{0}'",
+					new_constraint.TypeParameter);
+			}
+		}
+
+		constraints.Add (new_constraint);
 		$$ = constraints;
 	  }
 	; 
