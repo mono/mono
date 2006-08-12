@@ -44,7 +44,7 @@ namespace Microsoft.Win32
 		public static readonly RegistryKey DynData = new RegistryKey (
 				RegistryHive.DynData, "HKEY_DYN_DATA");
 		public static readonly RegistryKey LocalMachine = new RegistryKey (
-				RegistryHive.LocalMachine, "HKEY_DYN_DATA");
+				RegistryHive.LocalMachine, "HKEY_LOCAL_MACHINE");
 		public static readonly RegistryKey PerformanceData = new RegistryKey (
 				RegistryHive.PerformanceData, "HKEY_PERFORMANCE_DATA");
 		public static readonly RegistryKey Users = new RegistryKey (

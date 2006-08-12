@@ -1,3 +1,7 @@
+2006-08-12  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Registry.cs: Fixed copy/paste bug.
+
 2006-08-11  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* UnixRegistryApi.cs: Consider HKLM\SYSTEM\CurrentControlSet\Services\
