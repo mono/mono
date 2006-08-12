@@ -483,7 +483,7 @@ namespace System.Windows.Forms
 			if (Width <= 0 || Height <= 0 || !Visible)
 				return;
 
-			Redraw (true);
+			Redraw (true, background_image != null);
 		}
 
 		bool height_specified = false;
@@ -712,10 +712,18 @@ namespace System.Windows.Forms
 
 		internal void Redraw (bool recalculate)
 		{
-			if (recalculate)
-				Layout ();
+			Redraw (recalculate, true);
+		}
 
-			Invalidate ();
+		internal void Redraw (bool recalculate, bool force)
+		{
+			bool invalidate = true;
+			if (recalculate) {
+				invalidate = Layout ();
+			}
+
+			if (force || invalidate)
+				Invalidate ();
 		}
 
 		internal bool SizeSpecified {
@@ -781,8 +789,9 @@ namespace System.Windows.Forms
 			}
 		}
 
-		void Layout ()
+		bool Layout ()
 		{
+			bool changed = false;
 			Theme theme = ThemeEngine.Current;
 			int x = theme.ToolBarGripWidth;
 			int y = theme.ToolBarGripWidth;
@@ -800,14 +809,20 @@ namespace System.Windows.Forms
 					if (!button.Visible)
 						continue;
 
-					if (size_specified)
-						button.Layout (button_size);
-					else
-						button.Layout ();
+					if (size_specified) {
+						if (button.Layout (button_size))
+							changed = true;
+					}
+					else {
+						if (button.Layout ())
+							changed = true;
+					}
 
 					bool is_separator = button.Style == ToolBarButtonStyle.Separator;
 
 					if (x + button.Rectangle.Width < Width || is_separator) {
+						if (button.Location.X != x || button.Location.Y != y)
+							changed = true;
 						button.Location = new Point (x, y);
 						x += button.Rectangle.Width;
 						if (is_separator)
@@ -820,6 +835,8 @@ namespace System.Windows.Forms
 					} else {
 						x = theme.ToolBarGripWidth;
 						y += ht; 
+						if (button.Location.X != x || button.Location.Y != y)
+							changed = true;
 						button.Location = new Point (x, y);
 						x += button.Rectangle.Width;
 					}
@@ -832,14 +849,22 @@ namespace System.Windows.Forms
 				else if (!height_specified)
 					Height = DefaultSize.Height;
 				foreach (ToolBarButton button in buttons) {
-					if (size_specified)
-						button.Layout (button_size);
-					else
-						button.Layout ();
+					if (size_specified) {
+						if (button.Layout (button_size))
+							changed = true;
+					}
+					else {
+						if (button.Layout ())
+							changed = true;
+					}
+					if (button.Location.X != x || button.Location.Y != y)
+						changed = true;
 					button.Location = new Point (x, y);
 					x += button.Rectangle.Width;
 				}
 			}
+
+			return changed;
 		}
  		#endregion Private Methods
 

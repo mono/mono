@@ -1,5 +1,20 @@
 2006-08-12  Chris Toshok  <toshok@ximian.com>
 
+	* ToolBarButton.cs: make Layout return a boolean, if something to
+	do with the button's layout changed.
+
+	* ToolBar.cs:
+	- add another parameter to Redraw, @force, which all existing
+	  calls set to true.
+	- make the Layout function return a boolean which is true if the
+	  layout has actually changed.  Redraw now uses this (and @force)
+	  to determine when to invalidate.  At present the only place
+	  where @force can be false is the call from OnResize, when
+	  background_image == null.  So, resizing a toolbar when the
+	  layout doesn't change results in no drawing.
+
+2006-08-12  Chris Toshok  <toshok@ximian.com>
+
 	* ThemeWin32Classic.cs: fix the bottom right corner painting.  had
 	the VScrollBar and HScrollbar reversed.  oops.
 

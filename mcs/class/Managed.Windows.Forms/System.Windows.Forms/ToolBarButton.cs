@@ -113,7 +113,7 @@ namespace System.Windows.Forms
 
 		Rectangle bounds;
 		internal Point Location {
-			//get { return location; }
+			get { return bounds.Location; }
 			set { 
 				if (bounds.Location == value)
 					return;
@@ -296,10 +296,10 @@ namespace System.Windows.Forms
 			this.parent = parent;
 		}
 
-		internal void Layout ()
+		internal bool Layout ()
 		{
 			if (Parent == null || !Visible)
-				return;
+				return false;
 
 			Size psize = Parent.ButtonSize;
 			Size size = psize;
@@ -308,26 +308,38 @@ namespace System.Windows.Forms
 				if (size.Width == 0 || size.Height == 0)
 					size = psize;
 			}
-			Layout (size);
+			return Layout (size);
 		}
 
-		internal void Layout (Size size)
+		internal bool Layout (Size size)
 		{
 			if (Parent == null || !Visible)
-				return;
+				return false;
 
 			bounds.Size = size;
 
 			Size image_size = (Parent.ImageSize == Size.Empty) ? new Size (16, 16) : Parent.ImageSize;
 			int grip = ThemeEngine.Current.ToolBarImageGripWidth;
 
+			Rectangle new_image_rect, new_text_rect;
+			
 			if (Parent.TextAlign == ToolBarTextAlign.Underneath) {
-				image_rect = new Rectangle ((bounds.Size.Width - image_size.Width) / 2 - grip, 0, image_size.Width + 2 + grip, image_size.Height + 2 * grip);
-				text_rect = new Rectangle (0, image_rect.Height, bounds.Size.Width, bounds.Size.Height - image_rect.Height);
+				new_image_rect = new Rectangle ((bounds.Size.Width - image_size.Width) / 2 - grip, 0, image_size.Width + 2 + grip, image_size.Height + 2 * grip);
+				new_text_rect = new Rectangle (0, new_image_rect.Height, bounds.Size.Width, bounds.Size.Height - new_image_rect.Height);
 			} else {
-				image_rect = new Rectangle (0, 0, image_size.Width + 2 * grip, image_size.Height + 2 * grip);
-				text_rect = new Rectangle (image_rect.Width, 0, bounds.Size.Width - image_rect.Width, bounds.Size.Height);
+				new_image_rect = new Rectangle (0, 0, image_size.Width + 2 * grip, image_size.Height + 2 * grip);
+				new_text_rect = new Rectangle (new_image_rect.Width, 0, bounds.Size.Width - new_image_rect.Width, bounds.Size.Height);
 			}
+
+			bool changed = false;
+
+			if (new_image_rect != image_rect || new_text_rect != text_rect)
+				changed = true;
+
+			image_rect = new_image_rect;
+			text_rect = new_text_rect;
+
+			return changed;
 		}
 
 		const int text_padding = 3;
