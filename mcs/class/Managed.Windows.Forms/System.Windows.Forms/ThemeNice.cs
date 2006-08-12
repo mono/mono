@@ -963,6 +963,10 @@ namespace System.Windows.Forms
 		}
 		
 		#region ToolBar
+		public override bool ToolBarInvalidateEntireButton {
+			get { return true; }
+		}
+
 		public  override void DrawToolBar (Graphics dc, Rectangle clip_rectangle, ToolBar control) 
 		{
 			StringFormat format = new StringFormat ();
@@ -1097,6 +1101,7 @@ namespace System.Windows.Forms
 			else
 				CPDrawStringDisabled (dc, button.Text, control.Font, ColorControlLight, button.TextRectangle, format);
 		}
+
 		#endregion	// ToolBar
 		
 //		public override void CPDrawBorder3D (Graphics graphics, Rectangle rectangle, Border3DStyle style, Border3DSide sides) {

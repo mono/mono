@@ -1788,6 +1788,12 @@ namespace System.Windows.Forms {
 			lgbr.Dispose( );
 		}
 		
+		#region ToolBar
+		public override bool ToolBarInvalidateEntireButton {
+			get { return true; }
+		}
+		#endregion // ToolBar
+
 		#region GroupBox
 		public override void DrawGroupBox( Graphics dc,  Rectangle area, GroupBox box ) {
 			StringFormat	text_format;

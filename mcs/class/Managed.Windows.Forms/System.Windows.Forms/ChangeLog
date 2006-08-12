@@ -1,3 +1,19 @@
+2006-08-12  Chris Toshok  <toshok@ximian.com>
+
+	* ToolBarButton.cs: redraw the entire button if the theme tells us
+	to.
+
+	* Theme.cs: add ToolBarInvalidateEntireButton.
+
+	* ThemeWin32Classic.cs: we don't need to redraw the entire toolbar
+	buttons, just the border.
+
+	* ThemeNice.cs: redraw the entire toolbar button since we need to
+	draw the highlight image.
+
+	* ThemeClearlooks.cs: the rounded corners of toolbar buttons mean
+	we need to redraw the entire button (not just the border).
+
 2006-08-11  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* TextBoxBase.cs (CalculateScrollbars): Set the proper thumb size

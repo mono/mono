@@ -4009,6 +4009,11 @@ namespace System.Windows.Forms
 				return new Size (100, 42);
 			}
 		}
+
+		public override bool ToolBarInvalidateEntireButton {
+			get { return false; }
+		}
+
 		#endregion	// ToolBar
 
 		#region ToolTip
