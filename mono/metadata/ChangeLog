@@ -1,3 +1,8 @@
+2006-08-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c marshal.h: Add some helper functions to emit/patch branches, and use 
+	them everywhere.
+
 2006-08-11  Jonathan Chambers  <joncham@gmail.com>
 
 	* class.c (mono_bounded_array_class_get): Fix if statement that caused incorrect
