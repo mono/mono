@@ -1,3 +1,9 @@
+2006-08-12  Duncan Mak  <duncan@novell.com>
+
+	* gdipFunctions.cs (GdipLoadImageFromStream):
+	(GdipSaveImageToStream): Don't include these methods when
+	compiling the unit tests.
+
 2006-08-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* gdipFunctions.cs: return -1 when stream.Length throws.

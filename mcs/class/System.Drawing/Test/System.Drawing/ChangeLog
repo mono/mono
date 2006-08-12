@@ -1,3 +1,9 @@
+2006-08-12  Duncan Mak  <duncan@novell.com>
+
+	* GDIPlusTest.cs: Removed all the local PInvoke methods.
+	(DrawingOperations): New test for various draw and fill operations
+	in Graphics.
+
 2006-08-11  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* GDIPlusTest.cs: Added one more case for GdipGetLogFont.

@@ -1,3 +1,15 @@
+2006-08-12  Duncan Mak  <duncan@novell.com>
+
+	* GDIPlusTest.csproj: New MSBuild project file for building
+	GDIPlusTest on Windows.
+
+	* System.Drawing_test.dll.sources: Add gdipEnums.cs,
+	gdipFunctions.cs and gdipStructs.cs.
+
+	* Makefile (TEST_MCS_FLAGS): Add new #define 'TEST'. This is used
+	to exclude parts of gdipFunctions so that it could be reused as
+	part of the NUnit tests.
+
 2006-08-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Makefile: Add the test bitmaps to EXTRA_DISTFILES so monobuild has

@@ -941,14 +941,15 @@ namespace System.Drawing
 		// Image functions
 		[DllImport("gdiplus.dll", CharSet=CharSet.Auto)]
 		internal static extern Status GdipLoadImageFromFile ( [MarshalAs(UnmanagedType.LPWStr)] string filename, out IntPtr image );
-		
+
+#if !TEST
 		// Stream functions for Win32 (original Win32 ones)
 		[DllImport("gdiplus.dll", ExactSpelling=true, CharSet=CharSet.Unicode)]
 		internal static extern Status GdipLoadImageFromStream([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(ComIStreamMarshaler))] IStream stream, out IntPtr image);
   		
 		[DllImport("gdiplus.dll", ExactSpelling=true, CharSet=CharSet.Unicode)]
 		internal static extern Status GdipSaveImageToStream(HandleRef image, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(ComIStreamMarshaler))] IStream stream, [In()] ref Guid clsidEncoder, HandleRef encoderParams);
-  		
+#endif  		
 				
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipCloneImage(IntPtr image, out IntPtr imageclone);

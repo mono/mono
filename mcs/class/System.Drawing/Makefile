@@ -6,7 +6,7 @@ LIBRARY = System.Drawing.dll
 
 LIB_MCS_FLAGS = /unsafe /r:$(corlib) /r:System.dll /nowarn:649 /nowarn:169
 
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -resource:Test/resources/indexed.png,indexed.png \
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -define:TEST -resource:Test/resources/indexed.png,indexed.png \
 	 /r:System.Drawing.dll -nowarn:0618 -nowarn:219 -nowarn:169 -nowarn:1595
 
 ifeq (net_1_1_java, $(PROFILE))
