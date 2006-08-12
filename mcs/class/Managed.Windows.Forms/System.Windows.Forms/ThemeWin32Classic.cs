@@ -854,8 +854,8 @@ namespace System.Windows.Forms
 			// Paint scrollBar corner
 			if (grid.VScrollBar.Visible && grid.HScrollBar.Visible) {
 
-				Rectangle corner = new Rectangle (grid.ClientRectangle.X + grid.ClientRectangle.Width - grid.HScrollBar.Width,
-								  grid.ClientRectangle.Y + grid.ClientRectangle.Height - grid.VScrollBar.Height,
+				Rectangle corner = new Rectangle (grid.ClientRectangle.X + grid.ClientRectangle.Width - grid.VScrollBar.Width,
+								  grid.ClientRectangle.Y + grid.ClientRectangle.Height - grid.HScrollBar.Height,
 								  grid.VScrollBar.Width, grid.HScrollBar.Height);
 
 				if (pe.ClipRectangle.IntersectsWith (corner)) {

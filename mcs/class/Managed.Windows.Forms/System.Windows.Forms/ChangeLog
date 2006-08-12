@@ -1,5 +1,16 @@
 2006-08-12  Chris Toshok  <toshok@ximian.com>
 
+	* ThemeWin32Classic.cs: fix the bottom right corner painting.  had
+	the VScrollBar and HScrollbar reversed.  oops.
+
+	* DataGrid.cs: fix the logic that assigns sizes to the implicit
+	scrollbars.  we were assigning them twice (once in
+	Calc{Horiz,Vertical}Scrollbar, and once in CalcGridAreas),
+	therefore causing two scrollbar resizes (and redraws?) to happen
+	per grid resize.
+
+2006-08-12  Chris Toshok  <toshok@ximian.com>
+
 	* ToolBarButton.cs: redraw the entire button if the theme tells us
 	to.
 

@@ -2637,7 +2637,9 @@ namespace System.Windows.Forms
 					rowhdrs_area.Height -= horiz_scrollbar.Height;
 				}
 
-				vert_scrollbar.Height = vert_scrollbar_height;
+				vert_scrollbar.Size = new Size (vert_scrollbar.Width,
+								vert_scrollbar_height);
+
 				vert_scrollbar.Maximum = vert_scrollbar_maximum;
 				Controls.Add (vert_scrollbar);
 				vert_scrollbar.Visible = true;
@@ -2648,7 +2650,9 @@ namespace System.Windows.Forms
 			}
 
 			if (needHoriz) {
-				horiz_scrollbar.Width = horiz_scrollbar_width;
+				horiz_scrollbar.Size = new Size (horiz_scrollbar_width,
+								 horiz_scrollbar.Height);
+
 				horiz_scrollbar.Maximum = horiz_scrollbar_maximum;
 				Controls.Add (horiz_scrollbar);
 				horiz_scrollbar.Visible = true;
@@ -2878,9 +2882,6 @@ namespace System.Windows.Forms
 			horiz_scrollbar.Location = new Point (ClientRectangle.X, ClientRectangle.Y +
 				ClientRectangle.Height - horiz_scrollbar.Height);
 
-			horiz_scrollbar.Size = new Size (ClientRectangle.Width,
-				horiz_scrollbar.Height);
-
 			horiz_scrollbar.LargeChange = cells_area.Width;
 		}
 
@@ -2889,19 +2890,11 @@ namespace System.Windows.Forms
 		{
 			int y;
 			
-			if (caption_visible) {
-				y = ClientRectangle.Y + caption_area.Height;
-				height = ClientRectangle.Height - caption_area.Height;
-			} else {
-				y = ClientRectangle.Y;
-				height = ClientRectangle.Height;
-			}
+			y = ClientRectangle.Y + parent_rows.Y + parent_rows.Height;
+			height = ClientRectangle.Height - parent_rows.Y - parent_rows.Height;
 
 			vert_scrollbar.Location = new Point (ClientRectangle.X +
 							     ClientRectangle.Width - vert_scrollbar.Width, y);
-
-			vert_scrollbar.Size = new Size (vert_scrollbar.Width,
-							height);
 
 			maximum = RowsCount;
 			
