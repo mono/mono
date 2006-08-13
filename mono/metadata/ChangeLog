@@ -1,3 +1,11 @@
+2006-08-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* normalization-tables.h : new file for string normalization data.
+	* locales.c, locales.h, icall.c :
+	  added load_normalization_resource() for string normalization,
+	  and icall as well.
+	* Makefile.am : added normalization-tables.h to the sources.
+
 2006-08-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c: Add more helper functions to reduce code duplication and use them
