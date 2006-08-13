@@ -63,6 +63,7 @@ namespace Mono.CSharp
 		///   Hack to help create non-typed array initializer
 		/// </summary>
 		public static Expression current_array_type;
+		Expression pushed_current_array_type;
 
 		/// <summary>
 		///   Used to determine if we are parsing the get/set pair
@@ -3318,34 +3319,21 @@ variable_initializer_list
 	  }
 	;
 
-void_pointer_expression
-	: void_pointer_expression STAR
-	  {
-		$$ = new ComposedCast ((Expression) $1, "*", lexer.Location);
-	  }
-	| VOID STAR
-	  {
-		$$ = new ComposedCast (TypeManager.system_void_expr, "*", lexer.Location);;
-	  }
-	;
-
 typeof_expression
-	: TYPEOF OPEN_PARENS VOID CLOSE_PARENS
-	  {
-		$$ = new TypeOfVoid ((Location) $1);
+	: TYPEOF
+      {
+	  	pushed_current_array_type = current_array_type;
+	  	lexer.TypeOfParsing = true;
 	  }
-	| TYPEOF OPEN_PARENS void_pointer_expression CLOSE_PARENS
+	  OPEN_PARENS type CLOSE_PARENS
 	  {
-		$$ = new TypeOf ((Expression) $3, (Location) $1);
-	  }
-	| TYPEOF OPEN_PARENS
-	  {
-		lexer.TypeOfParsing = true;
-	  }
-	  type CLOSE_PARENS
-	  {
-		lexer.TypeOfParsing = false;
-		$$ = new TypeOf ((Expression) $4, lexer.Location);
+	  	lexer.TypeOfParsing = false;
+		Expression type = (Expression)$4;
+		if (type == TypeManager.system_void_expr)
+			$$ = new TypeOfVoid ((Location) $1);
+		else
+			$$ = new TypeOf (type, (Location) $1);
+		current_array_type = pushed_current_array_type;
 	  }
 	;
 

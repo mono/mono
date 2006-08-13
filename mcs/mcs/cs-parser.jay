@@ -61,6 +61,7 @@ namespace Mono.CSharp
 		///   Hack to help create non-typed array initializer
 		/// </summary>
 		public static Expression current_array_type;
+		Expression pushed_current_array_type;
 
 		/// <summary>
 		///   Used to determine if we are parsing the get/set pair
@@ -3064,13 +3065,18 @@ variable_initializer_list
 	;
 
 typeof_expression
-	: TYPEOF OPEN_PARENS VOID CLOSE_PARENS
-	  {
-		$$ = new TypeOfVoid ((Location) $1);
+	: TYPEOF
+      {
+	  	pushed_current_array_type = current_array_type;
 	  }
-	| TYPEOF OPEN_PARENS type CLOSE_PARENS
+	  OPEN_PARENS type CLOSE_PARENS
 	  {
-		$$ = new TypeOf ((Expression) $3, (Location) $1);
+		Expression type = (Expression)$4;
+		if (type == TypeManager.system_void_expr)
+			$$ = new TypeOfVoid ((Location) $1);
+		else
+			$$ = new TypeOf (type, (Location) $1);
+		current_array_type = pushed_current_array_type;
 	  }
 	;
 
