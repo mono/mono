@@ -1,4 +1,9 @@
-2005-07-31  Sebastien Pouliot  <sebastien@ximian.com> 
+2006-08-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* corlib.dll.sources : added NormalizationTableUtil.cs and
+	  Normalization.cs which are in Mono.Globalization.Unicode.
+
+2006-07-31  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* corlib_test.dll.sources: Added unit tests for HMACSHA384 and
 	HMACSHA512 to the build.

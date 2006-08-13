@@ -16,6 +16,8 @@ Mono.Globalization.Unicode/MSCompatUnicodeTableUtil.cs
 Mono.Globalization.Unicode/SimpleCollator.cs
 Mono.Globalization.Unicode/SortKey.cs
 Mono.Globalization.Unicode/SortKeyBuffer.cs
+Mono.Globalization.Unicode/Normalization.cs
+Mono.Globalization.Unicode/NormalizationTableUtil.cs
 Mono/Runtime.cs
 Mono.Interop/ComInteropProxy.cs
 Mono.Math/BigInteger.cs

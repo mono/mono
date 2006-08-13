@@ -39,6 +39,7 @@ using System.Runtime.CompilerServices;
 using System.Collections.Generic;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
+using Mono.Globalization.Unicode;
 #endif
 
 namespace System
@@ -949,6 +950,44 @@ namespace System
 		public static bool IsNullOrEmpty (String value)
 		{
 			return (value == null) || (value.Length == 0);
+		}
+
+		public string Normalize ()
+		{
+			return Normalize (NormalizationForm.FormC);
+		}
+
+		public string Normalize (NormalizationForm form)
+		{
+			switch (form) {
+			default:
+				return Normalization.Normalize (this, 0);
+			case NormalizationForm.FormD:
+				return Normalization.Normalize (this, 1);
+			case NormalizationForm.FormKC:
+				return Normalization.Normalize (this, 2);
+			case NormalizationForm.FormKD:
+				return Normalization.Normalize (this, 3);
+			}
+		}
+
+		public bool IsNormalized ()
+		{
+			return IsNormalized (NormalizationForm.FormC);
+		}
+
+		public bool IsNormalized (NormalizationForm form)
+		{
+			switch (form) {
+			default:
+				return Normalization.IsNormalized (this, 0);
+			case NormalizationForm.FormD:
+				return Normalization.IsNormalized (this, 1);
+			case NormalizationForm.FormKC:
+				return Normalization.IsNormalized (this, 2);
+			case NormalizationForm.FormKD:
+				return Normalization.IsNormalized (this, 3);
+			}
 		}
 
 		public string Remove (int startIndex)
