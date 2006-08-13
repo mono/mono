@@ -1,4 +1,18 @@
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<PropertyGroup>
+		<Configuration Condition=" '$(Configuration)' == '' ">Debug_Java</Configuration>
+		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+		<ProductVersion>8.0.50727</ProductVersion>
+		<SchemaVersion>2.0</SchemaVersion>
+		<ProjectGuid>{7BA54046-FD05-4209-9508-D6367CDAFBC0}</ProjectGuid>
+		<OutputType>Library</OutputType>
+		<AppDesignerFolder>Properties</AppDesignerFolder>
+		<RootNamespace>Novell.Directory.Ldap</RootNamespace>
+		<AssemblyName>Novell.Directory.Ldap</AssemblyName>
+		<JDKName>1.5.0_05</JDKName>
+		<GHProjectType>1</GHProjectType>
+		<Version>2.0</Version>
+	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java20|AnyCPU' ">
 		<OutputPath>bin\Release_Java20\</OutputPath>
 		<DefineConstants>TRACE;TARGET_JVM;NET_1_1;NET_2_0</DefineConstants>
@@ -38,20 +52,6 @@
 		<Version>2.0</Version>
 		<JDKName>1.5.0_05</JDKName>
 		<TargetPlatform>0</TargetPlatform>
-	</PropertyGroup>
-	<PropertyGroup>
-		<Configuration Condition=" '$(Configuration)' == '' ">Debug_Java</Configuration>
-		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-		<ProductVersion>8.0.50727</ProductVersion>
-		<SchemaVersion>2.0</SchemaVersion>
-		<ProjectGuid>{7BA54046-FD05-4209-9508-D6367CDAFBC0}</ProjectGuid>
-		<OutputType>Library</OutputType>
-		<AppDesignerFolder>Properties</AppDesignerFolder>
-		<RootNamespace>Novell.Directory.Ldap</RootNamespace>
-		<AssemblyName>Novell.Directory.Ldap</AssemblyName>
-		<JDKName>1.5.0_05</JDKName>
-		<GHProjectType>1</GHProjectType>
-		<Version>2.0</Version>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java|AnyCPU' ">
 		<DebugSymbols>true</DebugSymbols>
