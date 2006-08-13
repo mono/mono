@@ -727,6 +727,20 @@ namespace System.Net.Sockets
 					SocketOptionName.ReceiveTimeout, value);
 			}
 		}
+
+		public bool NoDelay {
+			get {
+				return (int)(GetSocketOption (
+					SocketOptionLevel.Tcp,
+					SocketOptionName.NoDelay)) != 0;
+			}
+
+			set {
+				SetSocketOption (
+					SocketOptionLevel.Tcp,
+					SocketOptionName.NoDelay, value ? 1 : 0);
+			}
+		}
 #endif
 
 		internal static void CheckProtocolSupport()
@@ -1741,7 +1755,6 @@ namespace System.Net.Sockets
 
 			return SendTo_nochecks (buffer, 0, size, flags, remote_end);
 		}
-
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static int SendTo_internal(IntPtr sock,
