@@ -118,13 +118,11 @@ discard_buffer (int fd, gboolean input)
 }
 
 gint32
-get_bytes_in_buffer (int fd, gboolean input, gint32 *error)
+get_bytes_in_buffer (int fd, gboolean input)
 {
 	gint32 retval;
 
-	*error = 0;
 	if (ioctl (fd, input ? FIONREAD : TIOCOUTQ, &retval) == -1) {
-		*error = -1;
 		return -1;
 	}
 
