@@ -31,7 +31,7 @@
 #include <mono/utils/mono-uri.h>
 #include <mono/utils/mono-logger.h>
 
-#define MONO_CORLIB_VERSION 53
+#define MONO_CORLIB_VERSION 54
 
 CRITICAL_SECTION mono_delegate_section;
 
@@ -206,6 +206,10 @@ mono_runtime_cleanup (MonoDomain *domain)
 	mono_network_cleanup ();
 
 	mono_marshal_cleanup ();
+
+	mono_type_initialization_cleanup ();
+
+	mono_monitor_cleanup ();
 }
 
 static MonoDomainFunc quit_function = NULL;
@@ -1405,8 +1409,10 @@ mono_domain_unload (MonoDomain *domain)
 		if (mono_thread_has_appdomain_ref (mono_thread_current (), domain) && (mono_thread_interruption_requested ()))
 			/* The unload thread tries to abort us */
 			/* The icall wrapper will execute the abort */
+			CloseHandle (thread_handle);
 			return;
 	}
+	CloseHandle (thread_handle);
 
 	mono_domain_set (caller_domain, FALSE);
 

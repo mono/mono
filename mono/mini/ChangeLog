@@ -129,6 +129,150 @@
 
 	* method-to-ir.c (mono_method_check_inlining): Fix warnings.
 
+=======
+2006-08-10  Jonathan Chambers  <joncham@gmail.com>
+
+	* mini.c: Don't verify COM proxy invoke calls
+	
+
+2006-08-10  Dick Porter  <dick@ximian.com>
+
+	* wapihandles.c (mini_wapi_seminfo): More info, to help track down
+	which process is holding semaphores locked.
+
+2006-08-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ia64.c mini-amd64.c: Fix #79027.
+
+	* mini-sparc.c (mono_arch_call_opcode): Fix the previous patch.
+
+	* mini-sparc.c (mono_arch_call_opcode): Fix #79027.
+
+	* mini-x86.c (mono_arch_call_opcode): Handle the case where there are no
+	implicit arguments in a vararg call. Fixes #79027.
+
+2006-08-07  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (mono_get_element_address_signature): Use CDECL calling convention on windows. Fixes #78969.
+	(mono_get_array_new_va_signature): Ditto.
+
+2006-08-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c: Call init_plt lazily.
+
+	* inssel-long.brg: Fix unsigned long->int conversion.
+
+	* aot-runtime.c (init_plt): Remove a redundant make_writable () call.
+
+	* aot-compiler.c aot-runtime.c: Reorganize the file structure in the amd64 case so
+	that most data is now in the .rss/.data section.
+
+2006-08-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c: Correct the computation of the 'direct-calls' statistic.	
+
+	* aot-compiler.c: Print the number of methods without GOT slots as a statistics.
+
+	* aot-compiler.c aot-runtime.c tramp-amd64.c: Resurrect amd64 AOT support.
+
+	* tramp-amd64.c (mono_arch_patch_callsite): Fix a warning.
+
+	* jit-icalls.c (mono_helper_compile_generic_method): Unbox vtypes since this is a
+	virtual call. Fixes #79010.
+
+	* mini.c (mono_method_to_ir): Pass an additional out arg to compile_generic_method 
+	and use the result as the this argument in the real call.
+
+	* generics.2.cs: Add a new test for #79010.
+	
+2006-08-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-x86.c: Fix a warning.
+
+	* aot-compiler.c: Add a bunch of statistics.
+
+	* mini.c (inline_method): Disable inlining in out-of-line bblocks.
+
+2006-08-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-arch.h Makefile.am mini-ops.h mini-codegen.c: More alpha updates.
+
+2006-08-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* cpu-alpha.md inssel-alpha.brg mini-alpha.h mini-alpha.c exceptions-alpha.c tramp-alpha.c: More alpha port work from Sergey Tikhonov <tsv@solvo.ru>.
+
+2006-07-13  Miguel de Icaza  <miguel@novell.com>
+
+	* mini.c (mono_method_to_ir): Obtain the original method in the
+	CIL stream and use this to perform validation.
+
+	Fixed: #78816
+
+2006-07-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-x86.c (mono_arch_get_argument_info): Fix a warning.
+	(mono_arch_call_opcode): Ditto.
+
+	* mini.c (mono_method_to_ir): Clear ins_flag at the end of CEE_CALL. Fixes
+	#78826.
+
+	* mini.c (mono_patch_info_dup_mp): New helper function.
+	
+	* aot-compiler.c (compile_method): Fix some of the memory allocated during
+	compilation. Fixes #78827.
+
+2006-07-18  Kornél Pál  <kornelpal@gmail.com>
+
+	* declsec.c: Use original security informations for
+	  MONO_WRAPPER_MANAGED_TO_MANAGED.
+
+2006-07-15  Jonathan Chambers  <joncham@gmail.com>
+
+	* mini.c: Allow Com Interop methods/classes and
+	don't verify COM wrapper calls
+	
+
+2006-07-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* inssel-long32.brg: Fix long->i4 checked conversion.
+
+	* exceptions.cs: Add a test for the above.
+
+2006-07-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c (mono_setup_altstack): Fix a memory leak.
+
+	* mini.c: Applied patch from Joachim Ante (joe@otee.dk). Fix some shutdown 
+	leaks.
+
+	* helpers.c (mono_disassemble_code): Avoid using fixed temporary files. Fixes
+	#78775.
+
+2006-07-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c: Fix solaris/x86 exception handling.
+
+	* Makefile.am: Get rid of $(ICU_LIBS).
+
+2006-07-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c: Fix handling of unhandled SIGSEGV exceptions on ia64.
+	(ves_icall_System_Security_SecurityFrame_GetSecurityStack): Use MONO_INIT_CONTEXT_FROM_CURRENT.
+	(ves_icall_System_Security_SecurityFrame_GetSecurityFrame): Ditto.
+
+	* mini-ia64.h (MONO_CONTEXT_SET_FUNC): New macro.
+
+	* mini-exceptions.c (mono_handle_native_sigsegv): Prevent infinite loops if
+	this function causes a SIGSEGV.
+
+2006-06-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c: Remove unused solaris/x86 includes.
+
+2006-06-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* jit.h: Add G_BEGIN_DECLS/G_END_DECLS.
+
 2006-06-20  Jb Evain  <jbevain@gmail.com>
 
 	* cpu-g4.md: fix max length of start_handler instruction.

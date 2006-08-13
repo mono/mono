@@ -119,6 +119,7 @@ static GList *async_io_queue = NULL;
 
 static MonoClass *async_call_klass;
 static MonoClass *socket_async_call_klass;
+static MonoClass *process_async_call_klass;
 
 #define INIT_POLLFD(a, b, c) {(a)->fd = b; (a)->events = c; (a)->revents = 0;}
 enum {
@@ -131,6 +132,7 @@ enum {
 	AIO_OP_SENDTO,
 	AIO_OP_RECV_JUST_CALLBACK,
 	AIO_OP_SEND_JUST_CALLBACK,
+	AIO_OP_READPIPE,
 	AIO_OP_LAST
 };
 
@@ -180,6 +182,7 @@ get_event_from_state (MonoSocketAsyncResult *state)
 	case AIO_OP_RECEIVE:
 	case AIO_OP_RECV_JUST_CALLBACK:
 	case AIO_OP_RECEIVEFROM:
+	case AIO_OP_READPIPE:
 		return MONO_POLLIN;
 	case AIO_OP_SEND:
 	case AIO_OP_SEND_JUST_CALLBACK:
@@ -232,8 +235,6 @@ async_invoke_io_thread (gpointer data)
 		if (state) {
 			InterlockedDecrement (&pending_io_items);
 			ar = state->ares;
-			/* worker threads invokes methods in different domains,
-			 * so we need to set the right domain here */
 			switch (state->operation) {
 			case AIO_OP_RECEIVE:
 				state->total = ICALL_RECV (state);
@@ -243,6 +244,8 @@ async_invoke_io_thread (gpointer data)
 				break;
 			}
 
+			/* worker threads invokes methods in different domains,
+			 * so we need to set the right domain here */
 			domain = ((MonoObject *)ar)->vtable->domain;
 			mono_thread_push_appdomain_ref (domain);
 			if (mono_domain_set (domain, FALSE)) {
@@ -768,9 +771,10 @@ socket_io_add_poll (MonoSocketAsyncResult *state)
 	GSList *list;
 	SocketIOData *data = &socket_io_data;
 
-#if defined(PLATFORM_MACOSX) || defined(PLATFORM_BSD6)
+#if defined(PLATFORM_MACOSX) || defined(PLATFORM_BSD6) || defined(PLATFORM_WIN32)
 	/* select() for connect() does not work well on the Mac. Bug #75436. */
 	/* Bug #77637 for the BSD 6 case */
+	/* Bug #78888 for the Windows case */
 	if (state->operation == AIO_OP_CONNECT && state->blocking == TRUE) {
 		start_io_thread_or_queue (state);
 		return;
@@ -876,7 +880,7 @@ socket_io_filter (MonoObject *target, MonoObject *state)
 
 	if (socket_async_call_klass == NULL) {
 		klass = target->vtable->klass;
-		/* Check if it's SocketAsyncCall in System
+		/* Check if it's SocketAsyncCall in System.Net.Sockets
 		 * FIXME: check the assembly is signed correctly for extra care
 		 */
 		if (klass->name [0] == 'S' && strcmp (klass->name, "SocketAsyncCall") == 0 
@@ -885,10 +889,20 @@ socket_io_filter (MonoObject *target, MonoObject *state)
 			socket_async_call_klass = klass;
 	}
 
+	if (process_async_call_klass == NULL) {
+		klass = target->vtable->klass;
+		/* Check if it's AsyncReadHandler in System.Diagnostics.Process
+		 * FIXME: check the assembly is signed correctly for extra care
+		 */
+		if (klass->name [0] == 'A' && strcmp (klass->name, "AsyncReadHandler") == 0 
+				&& strcmp (mono_image_get_name (klass->image), "System") == 0
+				&& klass->nested_in && strcmp (klass->nested_in->name, "Process") == 0)
+			process_async_call_klass = klass;
+	}
 	/* return both when socket_async_call_klass has not been seen yet and when
 	 * the object is not an instance of the class.
 	 */
-	if (target->vtable->klass != socket_async_call_klass)
+	if (target->vtable->klass != socket_async_call_klass && target->vtable->klass != process_async_call_klass)
 		return FALSE;
 
 	op = sock_res->operation;
@@ -939,8 +953,8 @@ mono_async_invoke (MonoAsyncResult *ares)
 	/* notify listeners */
 	mono_monitor_enter ((MonoObject *) ares);
 	if (ares->handle != NULL) {
-		ac->wait_event = ((MonoWaitHandle *) ares->handle)->handle;
-		SetEvent (ac->wait_event);
+		ac->wait_event = (gsize)((MonoWaitHandle *) ares->handle)->handle;
+		SetEvent ((gpointer)(gsize)ac->wait_event);
 	}
 	mono_monitor_exit ((MonoObject *) ares);
 
@@ -992,7 +1006,7 @@ mono_thread_pool_add (MonoObject *target, MonoMethodMessage *msg, MonoDelegate *
 	/* We'll leak the event if creaated... */
 	ac = g_new0 (ASyncCall, 1);
 #endif
-	ac->wait_event = NULL;
+	ac->wait_event = 0;
 	MONO_OBJECT_SETREF (ac, msg, msg);
 	MONO_OBJECT_SETREF (ac, state, state);
 
@@ -1001,7 +1015,7 @@ mono_thread_pool_add (MonoObject *target, MonoMethodMessage *msg, MonoDelegate *
 		ac->cb_target = async_callback;
 	}
 
-	ares = mono_async_result_new (domain, NULL, ac->state, NULL, ac);
+	ares = mono_async_result_new (domain, NULL, ac->state, NULL, (MonoObject*)ac);
 	MONO_OBJECT_SETREF (ares, async_delegate, target);
 
 	EnterCriticalSection (&ares_lock);
@@ -1063,11 +1077,11 @@ mono_thread_pool_finish (MonoAsyncResult *ares, MonoArray **out_args, MonoObject
 	/* wait until we are really finished */
 	if (!ares->completed) {
 		if (ares->handle == NULL) {
-			ac->wait_event = CreateEvent (NULL, TRUE, FALSE, NULL);
-			MONO_OBJECT_SETREF (ares, handle, (MonoObject *) mono_wait_handle_new (mono_object_domain (ares), ac->wait_event));
+			ac->wait_event = (gsize)CreateEvent (NULL, TRUE, FALSE, NULL);
+			MONO_OBJECT_SETREF (ares, handle, (MonoObject *) mono_wait_handle_new (mono_object_domain (ares), (gpointer)(gsize)ac->wait_event));
 		}
 		mono_monitor_exit ((MonoObject *) ares);
-		WaitForSingleObjectEx (ac->wait_event, INFINITE, TRUE);
+		WaitForSingleObjectEx ((gpointer)(gsize)ac->wait_event, INFINITE, TRUE);
 	} else {
 		mono_monitor_exit ((MonoObject *) ares);
 	}

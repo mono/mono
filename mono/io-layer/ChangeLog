@@ -1,3 +1,92 @@
+2006-08-11  Dick Porter  <dick@ximian.com>
+
+	* processes.c (_wapi_process_reap): Avoid a deadlock by setting
+	process termination details in an outer loop, not the
+	_wapi_search_handle() one.
+
+2006-08-10  Dick Porter  <dick@ximian.com>
+
+	* threads.c (_wapi_thread_queue_apc)
+	(_wapi_thread_dispatch_apc_queue): Use a process-local mutex here
+	instead of the cross process semaphore.  We already check that
+	access to the APC queue is within the owning process so there's no
+	need to protect from other processes.  Avoids a global deadlock
+	when a thread is aborted while it holds the handle semaphore
+	locked.
+	(_wapi_thread_apc_pending): Hide an annoying message which can
+	happen if a thread handle has been blown away at process shutdown
+	while it is in an alertable wait.
+
+	Both problems seen while shutting down monodevelop.
+
+2006-07-25  Dick Porter  <dick@ximian.com>
+
+	* shared.c (_wapi_shm_file): Remove '/' characters from the uname
+	results.  Fixes bug 78917.
+
+2006-07-20  Dick Porter  <dick@ximian.com>
+
+	* threads.c (_wapi_thread_set_termination_details): Improve the
+	test for already-disposed thread handles, and hold the lock around
+	the mutex abandoning.
+
+2006-07-17  Dick Porter  <dick@ximian.com>
+
+	* processes.c (CreateProcess): Don't change directory unless a new
+	one has been specified.  Fixes bug 78751.
+
+2006-07-06  Dick Porter  <dick@ximian.com>
+
+	* io.c (_wapi_stat_to_file_attributes): Do a better job at
+	figuring out the file attributes
+	(_wapi_set_last_path_error_from_errno): New helper function to
+	turn errno into w32 error codes that handles the differences
+	between file and directory errors
+	(file_setendoffile): Try turning off the extra write used to
+	extend files, because we probably don't need it on any modern
+	platform.  If it is needed though, we also need to lseek the file
+	position back again
+	(CreateFile): Treat character-special devices as a console handle,
+	because they can't be seeked
+	(CopyFile): If fail_if_exists is set, then the destination needs
+	to be opened with O_EXCL
+	(CopyFile): If fail_if_exists is not set and the destination
+	already exists, then we should set the ERROR_ALREADY_EXISTS error
+	even though we return success
+	(stdhandle_create): STD_INPUT_HANDLES cannot be written to
+	(GetStdHandle): Rework without using mono_once, so console handles
+	can be properly closed and reopened.
+	(mono_io_scandir): Only override errno with EACCES when the
+	directory actually exists
+	(FindFirstFile): Set ERROR_FILE_NOT_FOUND when no files are
+	returned
+	(FindClose): Cope with NULL handles
+	(CreateDirectory): When the target already exists, just return an
+	error.  It's the caller's job to figure out what to do.
+	(SetCurrentDirectory): Cope with a NULL path
+	(RemoveDirectory, GetFileAttributes, GetFileAttributesEx,
+	SetFileAttributes, FindFirstFile, DeleteFile, MoveFile, CopyFile,
+	CreateFile): Set path error correctly
+
+	* handles.c (CloseHandle): Kludge to try and cope with passing a
+	NULL handle
+
+	* error.h: Add NO_ERROR as an alternative to ERROR_SUCCESS
+
+	* uglify.h: Added some more typedefs
+
+2006-07-05  Dick Porter  <dick@ximian.com>
+
+	* io.c (GetFileAttributes, GetFileAttributesEx): Cope with
+	dangling symlinks.  Fixes bug 78664.
+
+2006-06-23  Dick Porter  <dick@ximian.com>
+
+	* handles.c (handle_cleanup): 
+	* threads.c: Clean up threads properly when we're forcibly
+	removing the handle entries from the shared file in
+	handle_cleanup().  Fixes bug 78241, for real this time.
+
 2006-06-15 Neale Ferguson <neale@sinenomine.net>
 
 	* atomic.h: More tinkering with InterlockedExchange/InterlockedCompareExchange

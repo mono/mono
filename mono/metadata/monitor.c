@@ -84,6 +84,12 @@ mono_monitor_init (void)
 {
 	InitializeCriticalSection (&monitor_mutex);
 }
+ 
+void
+mono_monitor_cleanup (void)
+{
+	/*DeleteCriticalSection (&monitor_mutex);*/
+}
 
 /* LOCKING: this is called with monitor_mutex held */
 static void 
@@ -216,7 +222,7 @@ mono_object_hash (MonoObject* obj)
 	}
 	/*
 	 * while we are inside this function, the GC will keep this object pinned,
-	 * since we are in the unamanged stack. Thanks to this and to the hash
+	 * since we are in the unmanaged stack. Thanks to this and to the hash
 	 * function that depends only on the address, we can ignore the races if
 	 * another thread computes the hash at the same time, because it'll end up
 	 * with the same value.

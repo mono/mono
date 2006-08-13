@@ -1,16 +1,29 @@
-RUNTIME = mono --debug --security
+with_mono_path = MONO_PATH=$(mcs_topdir)/class/lib/default
+with_mono_path2 = MONO_PATH=$(mcs_topdir)/class/lib/net_2_0
+
+RUNTIME = $(with_mono_path) $(top_builddir)/runtime/mono-wrapper --debug --security
+RUNTIME2 = $(with_mono_path2) $(top_builddir)/runtime/mono-wrapper --debug --security
+
 PROFILE = net_1_1
 
 compiler_defines = -d:NET_1_1
 
-ifeq ($(PROFILE), net_2_0)
-CSCOMPILE = gmcs -debug
-compiler_defines += -d:NET_2_0
-else
-CSCOMPILE = mcs -debug
-endif
+# ifeq ($(PROFILE), net_2_0)
+# CSCOMPILE = gmcs -debug
+# compiler_defines += -d:NET_2_0
+# else
+CSCOMPILE = $(RUNTIME) $(mcs_topdir)/class/lib/default/mcs.exe -debug
+SN = $(RUNTIME) $(mcs_topdir)/tools/security/sn.exe
+# endif
 
-all:	icall1.exe icall2.exe icall3.exe icall4.exe icall5.exe icall6.exe \
+EXTRA_DIST = icall1.cs icall2.cs icall3.cs icall4.cs icall5.cs icall6.cs \
+	aptc1.cs aptc2.cs aptclib.cs \
+	pinvoke1.cs pinvoke2.cs pinvoke3.cs pinvoke4.cs \
+	cas1.cs cas2.cs cas3.cs cas6.cs cas7.cs cas8.cs cas9.cs \
+	refcas1.cs refcas2.cs refcas3.cs refcas4.cs refcas5.cs \
+	noncas1.cs noncas2.cs noncas3.cs noncas4.cs
+
+tests:	icall1.exe icall2.exe icall3.exe icall4.exe icall5.exe icall6.exe \
 	aptc1a.exe aptc1b.exe aptc2a.exe aptc2b.exe aptclib.dll \
 	pinvoke1.exe pinvoke2.exe pinvoke3.exe pinvoke4.exe \
 	cas1.exe cas2.exe cas3.exe cas6.exe cas7.exe cas8.exe cas9.exe \
@@ -34,12 +47,12 @@ FULLTRUST_TEST_FILES = icall1 icall2 icall3 icall4 icall6 \
 
 UNHANDLED_TEST_FILES = aptc2b cas2 pinvoke3 
 
-run: all
+run: tests
 	@for i in $(FULLTRUST_TEST_FILES); do	\
 		$(RUNTIME) $$i.exe;	\
 	done;
 
-test: all
+test: tests
 	@failed=0; \
 	passed=0; \
 	for i in $(FULLTRUST_TEST_FILES); do	\
@@ -77,7 +90,7 @@ clean:
 	rm -f *.exe* *.dll* *.snk
 
 aptc.snk:
-	sn -k aptc.snk
+	$(SN) -k aptc.snk
 
 %a.exe: %.cs
 	$(CSCOMPILE) $^ /out:$@ $(compiler_defines)
@@ -86,16 +99,16 @@ aptc.snk:
 	$(CSCOMPILE) $^ /out:$@ /keyfile:ecma.pub /delaysign+ $(compiler_defines)
 
 aptc1b.exe: aptc1.cs aptc.snk
-	$(CSCOMPILE) aptc1.cs /out:$@ /d:RESTRICT $(compiler_defines)
+	$(CSCOMPILE) $< /out:$@ /d:RESTRICT $(compiler_defines)
 
 aptc2a.exe: aptc2.cs aptclib.dll
-	$(CSCOMPILE) aptc2.cs /out:$@ /r:aptclib.dll $(compiler_defines)
+	$(CSCOMPILE) $< /out:$@ /r:aptclib.dll $(compiler_defines)
 
 aptc2b.exe: aptc2.cs aptclib.dll
-	$(CSCOMPILE) aptc2.cs /out:$@ /d:RESTRICT /r:aptclib.dll $(compiler_defines)
+	$(CSCOMPILE) $< /out:$@ /d:RESTRICT /r:aptclib.dll $(compiler_defines)
 
 aptclib.dll: aptclib.cs aptc.snk
-	$(CSCOMPILE) aptclib.cs /out:$@ /target:library /keyfile:aptc.snk $(compiler_defines)
+	$(CSCOMPILE) $< /out:$@ /target:library /keyfile:aptc.snk $(compiler_defines)
 
 %.exe: %.cs
 	$(CSCOMPILE) $^ /out:$@ $(compiler_defines)

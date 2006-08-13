@@ -41,7 +41,7 @@
 #define MPH_ON_BSD
 #endif
 
-#ifdef __GNUC__
+#ifdef HAVE_VISIBILITY_HIDDEN
 #define MPH_INTERNAL __attribute__((visibility("hidden")))
 #else
 #define MPH_INTERNAL

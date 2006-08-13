@@ -700,6 +700,11 @@ void GC_delete_thread(pthread_t id)
     if (gc_thread_vtable && gc_thread_vtable->thread_exited)
 	gc_thread_vtable->thread_exited (id, &p->stop_info.stack_ptr);
 #endif
+	
+#ifdef GC_DARWIN_THREADS
+	mach_port_deallocate(mach_task_self(), p->stop_info.mach_thread);
+#endif
+	
     GC_INTERNAL_FREE(p);
 }
 
@@ -722,6 +727,11 @@ void GC_delete_gc_thread(pthread_t id, GC_thread gc_id)
     } else {
         prev -> next = p -> next;
     }
+	
+#ifdef GC_DARWIN_THREADS
+	mach_port_deallocate(mach_task_self(), p->stop_info.mach_thread);
+#endif
+	
     GC_INTERNAL_FREE(p);
 }
 

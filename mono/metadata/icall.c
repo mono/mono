@@ -1819,6 +1819,15 @@ ves_icall_type_isbyref (MonoReflectionType *type)
 	return type->type->byref;
 }
 
+static MonoBoolean
+ves_icall_type_iscomobject (MonoReflectionType *type)
+{
+	MonoClass *klass = mono_class_from_mono_type (type->type);
+	MONO_ARCH_SAVE_REGS;
+
+	return (klass && klass->is_com_object);
+}
+
 static MonoReflectionModule*
 ves_icall_MonoType_get_Module (MonoReflectionType *type)
 {
@@ -4557,11 +4566,12 @@ ves_icall_System_Reflection_Assembly_GetTypes (MonoReflectionAssembly *assembly,
 			for (i = 0; i < mono_array_length(abuilder->modules); i++) {
 				MonoReflectionModuleBuilder *mb = mono_array_get (abuilder->modules, MonoReflectionModuleBuilder*, i);
 				MonoArray *append = mb->types;
-				if (append && mono_array_length (append) > 0) {
+				/* The types array might not be fully filled up */
+				if (append && mb->num_types > 0) {
 					guint32 len1, len2;
 					MonoArray *new;
 					len1 = res ? mono_array_length (res) : 0;
-					len2 = mono_array_length (append);
+					len2 = mb->num_types;
 					new = mono_array_new (domain, mono_defaults.monotype_class, len1 + len2);
 					if (res)
 						mono_array_memcpy_refs (new, 0, res, 0, len1);
@@ -6047,42 +6057,42 @@ ves_icall_System_Activator_CreateInstanceInternal (MonoReflectionType *type)
 static MonoReflectionMethod *
 ves_icall_MonoMethod_get_base_definition (MonoReflectionMethod *m)
 {
-	MonoClass *klass;
+	MonoClass *klass, *parent;
 	MonoMethod *method = m->method;
 	MonoMethod *result = NULL;
 
 	MONO_ARCH_SAVE_REGS;
+
+	if (method->klass == NULL)
+		return m;
 
 	if (!(method->flags & METHOD_ATTRIBUTE_VIRTUAL) ||
 	    MONO_CLASS_IS_INTERFACE (method->klass) ||
 	    method->flags & METHOD_ATTRIBUTE_NEW_SLOT)
 		return m;
 
-	if (method->klass == NULL || (klass = method->klass->parent) == NULL)
-		return m;
-
+	klass = method->klass;
 	if (klass->generic_class)
 		klass = klass->generic_class->container_class;
 
-	mono_class_setup_vtable (klass);
-	mono_class_setup_vtable (method->klass);
-	while (result == NULL && klass != NULL && (klass->vtable_size > method->slot))
-	{
-		mono_class_setup_vtable (klass);
+	/* At the end of the loop, klass points to the eldest class that has this virtual function slot. */
+	for (parent = klass->parent; parent != NULL; parent = parent->parent) {
+		mono_class_setup_vtable (parent);
+		if (parent->vtable_size <= method->slot)
+			break;
+		klass = parent;
+	}		
 
-		result = klass->vtable [method->slot];
-		if (result == NULL) {
-			MonoMethod* m;
-			gpointer iter = NULL;
-			/* It is an abstract method */
-			while ((m = mono_class_get_methods (klass, &iter))) {
-				if (m->slot == method->slot) {
-					result = m;
-					break;
-				}
-			}
-		}
-		klass = klass->parent;
+	if (klass == method->klass)
+		return m;
+
+	result = klass->vtable [method->slot];
+	if (result == NULL) {
+		/* It is an abstract method */
+		gpointer iter = NULL;
+		while ((result = mono_class_get_methods (klass, &iter)))
+			if (result->slot == method->slot)
+				break;
 	}
 
 	if (result == NULL)
@@ -6644,6 +6654,12 @@ static const IcallEntry famwatcher_icalls [] = {
 	{"InternalFAMNextEvent", ves_icall_System_IO_FAMW_InternalFAMNextEvent}
 };
 
+static const IcallEntry inotifywatcher_icalls [] = {
+	{"AddWatch", ves_icall_System_IO_InotifyWatcher_AddWatch},
+	{"GetInotifyInstance", ves_icall_System_IO_InotifyWatcher_GetInotifyInstance},
+	{"RemoveWatch", ves_icall_System_IO_InotifyWatcher_RemoveWatch}
+};
+
 static const IcallEntry filewatcher_icalls [] = {
 	{"InternalCloseDirectory", ves_icall_System_IO_FSW_CloseDirectory},
 	{"InternalOpenDirectory", ves_icall_System_IO_FSW_OpenDirectory},
@@ -6749,6 +6765,7 @@ static const IcallEntry monotype_icalls [] = {
 	{"GetPropertiesByName", ves_icall_Type_GetPropertiesByName},
 	{"InternalGetEvent", ves_icall_MonoType_GetEvent},
 	{"IsByRefImpl", ves_icall_type_isbyref},
+	{"IsCOMObjectImpl", ves_icall_type_iscomobject},
 	{"IsPointerImpl", ves_icall_type_ispointer},
 	{"IsPrimitiveImpl", ves_icall_type_isprimitive},
 	{"getFullName", ves_icall_System_MonoType_getFullName},
@@ -6991,6 +7008,7 @@ static const IcallEntry gchandle_icalls [] = {
 };
 
 static const IcallEntry marshal_icalls [] = {
+	{"AddRef", ves_icall_System_Runtime_InteropServices_Marshal_AddRef},
 	{"AllocCoTaskMem", ves_icall_System_Runtime_InteropServices_Marshal_AllocCoTaskMem},
 	{"AllocHGlobal", ves_icall_System_Runtime_InteropServices_Marshal_AllocHGlobal},
 	{"DestroyStructure", ves_icall_System_Runtime_InteropServices_Marshal_DestroyStructure},
@@ -7013,12 +7031,14 @@ static const IcallEntry marshal_icalls [] = {
 	{"PtrToStringUni(intptr,int)", ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringUni_len},
 	{"PtrToStructure(intptr,System.Type)", ves_icall_System_Runtime_InteropServices_Marshal_PtrToStructure_type},
 	{"PtrToStructure(intptr,object)", ves_icall_System_Runtime_InteropServices_Marshal_PtrToStructure},
+	{"QueryInterface", ves_icall_System_Runtime_InteropServices_Marshal_QueryInterface},
 	{"ReAllocHGlobal", mono_marshal_realloc},
 	{"ReadByte", ves_icall_System_Runtime_InteropServices_Marshal_ReadByte},
 	{"ReadInt16", ves_icall_System_Runtime_InteropServices_Marshal_ReadInt16},
 	{"ReadInt32", ves_icall_System_Runtime_InteropServices_Marshal_ReadInt32},
 	{"ReadInt64", ves_icall_System_Runtime_InteropServices_Marshal_ReadInt64},
 	{"ReadIntPtr", ves_icall_System_Runtime_InteropServices_Marshal_ReadIntPtr},
+	{"Release", ves_icall_System_Runtime_InteropServices_Marshal_Release},
 	{"SizeOf", ves_icall_System_Runtime_InteropServices_Marshal_SizeOf},
 	{"StringToBSTR", ves_icall_System_Runtime_InteropServices_Marshal_StringToBSTR},
 	{"StringToHGlobalAnsi", ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi},
@@ -7071,9 +7091,9 @@ static const IcallEntry string_icalls [] = {
 	{".ctor(char,int)", ves_icall_System_String_ctor_char_int},
 	{".ctor(char[])", ves_icall_System_String_ctor_chara},
 	{".ctor(char[],int,int)", ves_icall_System_String_ctor_chara_int_int},
-	{".ctor(sbyte*)", ves_icall_System_String_ctor_sbytep},
-	{".ctor(sbyte*,int,int)", ves_icall_System_String_ctor_sbytep_int_int},
-	{".ctor(sbyte*,int,int,System.Text.Encoding)", ves_icall_System_String_ctor_encoding},
+	{".ctor(sbyte*)", ves_icall_System_String_ctor_RedirectToCreateString},
+	{".ctor(sbyte*,int,int)", ves_icall_System_String_ctor_RedirectToCreateString},
+	{".ctor(sbyte*,int,int,System.Text.Encoding)", ves_icall_System_String_ctor_RedirectToCreateString},
 	{"InternalAllocateStr", ves_icall_System_String_InternalAllocateStr},
 	{"InternalCharCopy", ves_icall_System_String_InternalCharCopy},
 	{"InternalCopyTo", ves_icall_System_String_InternalCopyTo},
@@ -7305,6 +7325,15 @@ static const IcallEntry generic_array_icalls [] = {
 	{"GetGenericValueImpl", ves_icall_System_Array_InternalArray_GetGenericValueImpl}
 };
 
+static const IcallEntry comobject_icalls [] = {
+	{"CacheInterface", ves_icall_System_ComObject_CacheInterface},
+	{"CreateRCW", ves_icall_System_ComObject_CreateRCW},
+	{"Finalizer", ves_icall_System_ComObject_Finalizer},
+	{"FindInterface", ves_icall_System_ComObject_FindInterface},
+	{"GetIUnknown", ves_icall_System_ComObject_GetIUnknown},
+	{"SetIUnknown", ves_icall_System_ComObject_SetIUnknown},
+};
+
 /* proto
 static const IcallEntry array_icalls [] = {
 };
@@ -7343,6 +7372,7 @@ static const IcallMap icall_entries [] = {
 	{"System.Globalization.RegionInfo", regioninfo_icalls, G_N_ELEMENTS (regioninfo_icalls)},
 	{"System.IO.FAMWatcher", famwatcher_icalls, G_N_ELEMENTS (famwatcher_icalls)},
 	{"System.IO.FileSystemWatcher", filewatcher_icalls, G_N_ELEMENTS (filewatcher_icalls)},
+	{"System.IO.InotifyWatcher", inotifywatcher_icalls, G_N_ELEMENTS (inotifywatcher_icalls)},
 	{"System.IO.MonoIO", monoio_icalls, G_N_ELEMENTS (monoio_icalls)},
 	{"System.IO.Path", path_icalls, G_N_ELEMENTS (path_icalls)},
 	{"System.Math", math_icalls, G_N_ELEMENTS (math_icalls)},
@@ -7405,7 +7435,8 @@ static const IcallMap icall_entries [] = {
 	{"System.Type", type_icalls, G_N_ELEMENTS (type_icalls)},
 	{"System.TypedReference", typedref_icalls, G_N_ELEMENTS (typedref_icalls)},
 	{"System.ValueType", valuetype_icalls, G_N_ELEMENTS (valuetype_icalls)},
-	{"System.Web.Util.ICalls", web_icalls, G_N_ELEMENTS (web_icalls)}
+	{"System.Web.Util.ICalls", web_icalls, G_N_ELEMENTS (web_icalls)},
+	{"System.__ComObject", comobject_icalls, G_N_ELEMENTS (comobject_icalls)}
 };
 
 static GHashTable *icall_hash = NULL;

@@ -101,7 +101,7 @@ static gboolean process_set_termination_details (gpointer handle, int status)
  * updating process handle info.  This function is called from the
  * collection thread every few seconds.
  */
-static gboolean waitfor_pid (gpointer test, gpointer user_data G_GNUC_UNUSED)
+static gboolean waitfor_pid (gpointer test, gpointer user_data)
 {
 	struct _WapiHandle_process *process;
 	gboolean ok;
@@ -138,20 +138,32 @@ static gboolean waitfor_pid (gpointer test, gpointer user_data G_GNUC_UNUSED)
 	g_message ("%s: Process %d finished", __func__, ret);
 #endif
 
-	process_set_termination_details (test, status);
+	*(int *)user_data = status;
 	
-	/* return FALSE to keep searching */
-	return (FALSE);
+	return (TRUE);
 }
 
 void _wapi_process_reap (void)
 {
+	gpointer proc;
+	int status;
+	
 #ifdef DEBUG
 	g_message ("%s: Reaping child processes", __func__);
 #endif
 
-	_wapi_search_handle (WAPI_HANDLE_PROCESS, waitfor_pid, NULL, NULL,
-			     FALSE);
+	do {
+		proc = _wapi_search_handle (WAPI_HANDLE_PROCESS, waitfor_pid,
+					    &status, NULL, FALSE);
+		if (proc != NULL) {
+#ifdef DEBUG
+			g_message ("%s: process handle %p exit code %d",
+				   __func__, proc, status);
+#endif
+			
+			process_set_termination_details (proc, status);
+		}
+	} while (proc != NULL);
 }
 
 /* Limitations: This can only wait for processes that are our own
@@ -420,8 +432,6 @@ gboolean CreateProcess (const gunichar2 *appname, const gunichar2 *cmdline,
 				dir[i] = '/';
 			}
 		}
-	} else {
-		dir = g_get_current_dir ();
 	}
 	
 
@@ -766,7 +776,7 @@ gboolean CreateProcess (const gunichar2 *appname, const gunichar2 *cmdline,
 
 #ifdef DEBUG
 		g_message ("%s: exec()ing [%s] in dir [%s]", __func__, cmd,
-			   dir);
+			   dir==NULL?".":dir);
 		for (i = 0; argv[i] != NULL; i++) {
 			g_message ("arg %d: [%s]", i, argv[i]);
 		}
@@ -777,7 +787,7 @@ gboolean CreateProcess (const gunichar2 *appname, const gunichar2 *cmdline,
 #endif
 
 		/* set cwd */
-		if (chdir (dir) == -1) {
+		if (dir != NULL && chdir (dir) == -1) {
 			/* set error */
 			_exit (-1);
 		}

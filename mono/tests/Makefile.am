@@ -1,3 +1,5 @@
+SUBDIRS = cas
+
 check-local: test
 
 TEST_PROG = ../interpreter/mint
@@ -196,6 +198,7 @@ TEST_CS_SRC=			\
 	bug-46781.cs		\
 	bug-48015.cs		\
 	bug-42136.cs		\
+	bug-70561.cs		\
 	bug-78311.cs		\
 	bug-78653.cs		\
 	bug-78656.cs		\
@@ -464,6 +467,9 @@ noinst_LTLIBRARIES = libtest.la
 INCLUDES = $(GLIB_CFLAGS)
 
 if PLATFORM_WIN32
+# gcc-3.4.4 emits incorrect code when making indirect calls to stdcall functions using a tail call
+# This shows up when compiling mono_test_marshal_delegate ()
+libtest_la_CFLAGS=-fno-optimize-sibling-calls
 # the exported names created by gcc for stdcall functions are missing the leading _, so MS.NET
 # can't find them. So we use --kill-at to remove the @ suffix as well.
 libtest_la_LDFLAGS=-no-undefined -rpath `pwd` -Wl,--kill-at

@@ -31,8 +31,8 @@ instructions. The JIT compiler will translate them to a call to a helper
 function called 'mono_arch_throw/rethrow_exception'. These helper functions do 
 not exist at compile time, they are created  dynamically at run time by the 
 code in the exceptions-<ARCH>.c files. They perform various stack 
-manipulation magic, then call a helper function usually named throw_exception (), which does further processing in C code, then calls mono_handle_exception ()
-to do the rest.
+manipulation magic, then call a helper function usually named throw_exception (), which 
+does further processing in C code, then calls mono_handle_exception () to do the rest.
 
 Exceptions thrown implicitly from managed code
 ----------------------------------------------
@@ -86,10 +86,10 @@ Synchronous signals in native code
 ----------------------------------
 
 Receiving a signal such as SIGSEGV while in native code means something very
-bad has happened. Despite this, the current runtime code treats such signals
-the same as when they are received while in managed code, ie. it constructs
-a NullPointerException and attempts to handle it. Note that there are two
-kinds of native code which can be the source of the signal:
+bad has happened. Because of this, the runtime will abort after trying to print a
+managed plus a native stack trace. The logic is in the mono_handle_native_sigsegv () 
+function.
+Note that there are two kinds of native code which can be the source of the signal:
 - code inside the runtime
 - code inside a native library loaded by an application, ie. libgtk+
 
@@ -227,14 +227,6 @@ there is a pending exception and throw it if neccesary. Since we already check
 for pending thread interruption, this would have no overhead, allowing us
 to drop the LMF saving/restoring code, or significant parts of it.
 
-3. Signals received while in native code
-----------------------------------------
-
-Receiving a SIGSEGV while in native code should be seen as a catastrophic 
-error, and the runtime should abort the process immediately after trying to
-print some diagnostics. This is how SIGSEGVs are handled in all other 
-production VMs. This is also a requirement for dropping LMF support.
-
 4. libunwind
 ------------
 
@@ -255,7 +247,7 @@ several advantages in relation to our current unwinding code:
 - it is MIT licensed
 
 The biggest problem with libuwind is its platform support. ia64 support is
-complete/well tested, while support for other platforms is missing/incomplete.
+complete/well tested, while support for other platforms is missing/incomplete. 
 
 http://www.hpl.hp.com/research/linux/libunwind/
 

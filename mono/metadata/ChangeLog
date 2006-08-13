@@ -1,3 +1,269 @@
+2006-08-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c: Add more helper functions to reduce code duplication and use them
+	everywhere.
+
+2006-08-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c: Fix non-x86 stdcall warnings.
+	
+	* marshal.c marshal.h: Add some helper functions to emit/patch branches, and use 
+	them everywhere.
+
+2006-08-11  Jonathan Chambers  <joncham@gmail.com>
+
+	* class.c (mono_bounded_array_class_get): Fix if statement that caused incorrect
+	type check on multi-dimensional arrays. Fixes #79000.
+
+2006-08-10  Jonathan Chambers  <joncham@gmail.com>
+
+	* class.c (mono_class_setup_parent): setup is_com_object during class initialization.
+	* object.c (mono_remote_class_vtable/mono_object_new_specific): Changed checks
+	to use is_com_object instead of MONO_CLASS_IS_IMPORT() macro.
+	* class-internals.h: add is_com_object to class structure.
+	* marshal.c: Fixed marshalling for IDispatch and IUnknown, added
+	null checks to COM object marshalling. Fix .ctor call on RCW.
+	* icall.c: Added icall implementation for MonoType.IsCOMObjectImpl.
+	
+	All code is contributed under the MIT/X11 license.
+
+2006-08-09  Dick Porter  <dick@ximian.com>
+
+	* monitor.c (mono_monitor_cleanup): mono_monitor_cleanup() is
+	racing mono_monitor_allocator_lock() somewhere, so don't delete
+	the critical section for now.  Found by running and exiting
+	monodevelop.
+
+2006-08-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (cominterop_get_native_wrapper): Fix a warning.
+	(ves_icall_System_ComObject_FindInterface): Ditto.
+	(ves_icall_System_ComObject_CacheInterface): Ditto.
+
+	* metadata.c (do_mono_metadata_type_equal): Applied patch from Roberto Costa
+	(roberto.costa@st.com). Add support for MONO_TYPE_FNPTR.
+
+2006-08-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* threadpool.c: treat pipes from process asynchronous reads as sockets
+	when reading from them, so we get select/poll or epoll to wait for
+	data.
+
+2006-08-07  Sebastien Pouliot  <sebatien@ximian.com>
+
+	* loader.c: Fix a typo (CID #233) in the null check.
+
+2006-08-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* appdomain.c (mono_domain_unload): Close the thread handle of the unload thread.
+	Hopefully fixes #78949.
+	
+	* metadata.c (mono_metadata_parse_method_signature_full): Applied patch from 
+	Roberto Costa (roberto.costa@st.com). Handle vararg signatures without SENTINEL
+	bytes. Fixes #78972.
+
+2006-08-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* filewatcher.c: we need to set errno here.
+
+2006-08-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* filewatcher.c: let Win32Exception get the error value.
+
+2006-08-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* filewatcher.c: translate errno into win32 errors for Win32Exception
+	to know what happened.
+
+2006-08-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* threadpool.c: Fix more warnings.
+
+	* assembly.c (search_loaded): Fix warnings.
+
+	* threadpool.c (mono_thread_pool_finish): Fix warnings.
+	(mono_async_invoke): Ditto.
+
+2006-07-28  Jonathan Chambers  <joncham@gmail.com>
+
+	* object.c (mono_remote_class_vtable): Need to create proxy vtable
+	entries for __ComObject type in addition to ComImport types.
+	* marshal.c: Added support for marshalling COM RCWs. Fixed warning
+	about hash table.
+	
+	All code is contributed under the MIT/X11 license.
+
+Fri Jul 28 19:04:34 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* image.c: avoid tentative loading of modulerefs that contain
+	no metadata (P/Invoke library names).
+
+2006-07-28  Dick Porter  <dick@ximian.com>
+
+	* loader.c (mono_loader_cleanup): mono_loader_cleanup() is racing
+	mono_loader_lock() somewhere, so don't delete the critical section
+	for now.  Found by running and exiting monodevelop.
+
+2006-07-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* filewatcher.c: define the inotify syscalls when we're building on
+	linux and have sys/syscall.h. The build system might not have support
+	for inotify but the target system might have it.
+
+2006-07-26  Miguel de Icaza  <miguel@novell.com>
+
+	* domain.c: Documentation updates.
+
+	* loader.c (mono_free_method): Do not release the method
+	information if we are being profiled, as profilers will use this
+	information at shut down to present some data to the user.
+
+	This is needed so that the profiler does not crash, as the
+	profiler tends to keep MonoMethods around, and they might become
+	invalid if we free these.
+
+	(mono_get_method_constrained): Return the original CIL stream
+	method as well, so verification can be performed against it.
+
+2006-07-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* filewatcher.[ch]: support for inotify file system watcher.
+	* icall.c: add new internal calls for the inotify file system watcher.
+
+2006-07-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* threadpool.c: Windows also misbehaves on async. connects. Fixes bug
+	#78888.
+
+2006-07-20  Dick Porter  <dick@ximian.com>
+
+	* file-io.c (ves_icall_System_IO_MonoIO_Seek): Fix signed/unsigned
+	warning.
+
+2006-07-20  Dick Porter  <dick@ximian.com>
+
+	* threads.c (start_wrapper): Do the thread cleanup while we still
+	hold a reference to its object.  Fixes bug 78123.
+
+2006-07-18  Kornél Pál  <kornelpal@gmail.com>
+
+	* class-internals.h: Added MONO_WRAPPER_MANAGED_TO_MANAGED wrapper type.
+	* debug-helpers.c: Map MONO_WRAPPER_MANAGED_TO_MANAGED to
+	  "managed-to-managed".
+	* icall.c: Redirect string constructors that take sbyte* to
+	  ves_icall_System_String_ctor_RedirectToCreateString.
+	* marshal.c: Redirect ves_icall_System_String_ctor_RedirectToCreateString
+	  to CreateString () methods with matching signature.
+	* reflection.c: Use original security informations for
+	  MONO_WRAPPER_MANAGED_TO_MANAGED.
+	* security-manager.c: Use original security informations for
+	  MONO_WRAPPER_MANAGED_TO_MANAGED.
+	* string-icalls.c: Added ves_icall_System_String_ctor_RedirectToCreateString
+	  that is a placeholder and only its address should be used.
+	* string-icalls.h: Added ves_icall_System_String_ctor_RedirectToCreateString
+	  that is a placeholder and only its address should be used.
+
+2006-07-15  Jonathan Chambers  <joncham@gmail.com>
+
+	Begin implementing COM Interop.
+	* appdomain.c: Increment corlib version.
+	* class.c: Set ComImport classes' parent to __ComObject.
+	* loader.c: Mark cominterop methods as such.
+	* domain.c: Add __ComObject class to MonoDefaults structure.
+	* image.c: Add 2 hashtables to the image for COM Interop related methods
+	* metadata.c: Added mono_metadata_type_dup_mp to duplicate a type
+	using the mempool allocator
+	
+	* metadata-internals.h: Add 2 hashtables to the image for COM Interop related methods
+	* metadata.h: Added cominterop field to _MonoMethodSignature struct and
+	declaration for mono_metadata_type_dup_mp.
+	
+	* debug-helpers.c: Added strings for two additional wrapper types
+	* object.c: Create proxy objects for ComImport classes
+	* class-internals.h: Define 2 new method wrapper types, COM Interop remoting target,
+	and added __ComObject class to MonoDefaults structure.
+	
+	* object-internals.h: Finish MonoRealProxy definition, and add definition of
+	MonoComInteropProxy and MonoComObject.
+	
+	* marshal.c: Added support for COM Interop
+	(signature_cominterop): Converts managed signature to corresponding
+	unmanaged COM signature.
+	(cominterop_get_function_pointer): gets unmanaged function pointer via
+	COM object vtable
+	(cominterop_get_com_slot_for_method): returns vtable slot in COM interface of method
+	(cominterop_get_method_interface): returns interface type that method is defined on
+	(mono_mb_emit_cominterop_call): emits native call to function pointer
+	gotten from vtable
+	(cominterop_get_native_wrapper_adjusted): actual wrapper around unmanaged COM call
+	that matches signature of unmanaged function.
+	(cominterop_get_native_wrapper): wrapper around adjusted method call.
+	(cominterop_get_invoke): forwards call from proxy to __ComObject
+	(ves_icall_System_Runtime_InteropServices_Marshal_AddRef): Implements Marshal.AddRef 
+	(ves_icall_System_Runtime_InteropServices_Marshal_QueryInterface): Implements Marshal.QueryInterface 
+	(ves_icall_System_Runtime_InteropServices_Marshal_Release): Implements Marshal.Release 
+	
+	* marshal.h: Added Marshal icall declarations.
+	* icall.c: Added __ComObject icalls. Need to store interfaces in unmanaged code
+	so we can access them in finalizer
+	
+2006-07-14  Dick Porter  <dick@ximian.com>
+
+	* object.c (mono_type_initialization_cleanup): Fix a race
+	condition by temporarily commenting out the critical section
+	deletion.
+
+2006-07-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (create_custom_attr): Fix some warnings.
+	(create_custom_attr_data): Ditto.
+	(typebuilder_setup_properties): Save custom attrs for properties in dynamic
+	types. Fixes #78855.
+
+2006-07-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_type_get_name_recurse): Fix the name of 1 dimensional non-szarrays.
+
+	* reflection.c (mono_custom_attrs_free): Fix freeing of dynamic cattr info.
+
+2006-07-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (resolve_object): Add support for DynamicMethod.
+
+	* domain.c appdomain.c threads.c monitor.c object.c gc.c: Applied patch from
+	Joachim Ante (joe@otee.dk). Fix some shutdown leaks.
+
+2006-07-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* process.c: In ves_icall_System_Diagnostics_Process_GetModules_internal 
+	don't leak GPtrArray's pdata has we have no use (nor free) for it.
+
+2006-07-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_get_runtime_invoke): Fix passing of generic valuetypes.
+	Fixes #77888.
+
+2006-06-30  Raja R Harinath  <rharinath@novell.com>
+
+	* icall.c (ves_icall_MonoMethod_get_base_definition): Simplify
+	slightly: remove a shadow local variable.
+
+2006-06-29  Raja R Harinath  <rharinath@novell.com>
+
+	* icall.c (ves_icall_MonoMethod_get_base_definition): Return the
+	definition that introduces the virtual function slot.
+	Also fix Coverity #105.
+
+2006-06-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_System_Reflection_Assembly_GetTypes): Fix support
+	for dynamic assemblies. Fixes #78724.
+
+2006-06-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_string_to_byvalwstr): Fix this completely broken function.
+	Fixes #78722.
+
 2006-06-21  Martin Baulig  <martin@ximian.com>
 
 	* reflection.c
@@ -132,6 +398,12 @@
 	(mono_string_to_lpstr): Fix a warning on windows.
 
 2006-05-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* class-internals.h (MonoClass): Removed obsolete 'dummy' flag.
+
+	* reflection.c loader.c: Removed references to 'dummy' flag.
+
+	* loader.c (mono_loader_error_prepare_exception): Fix a warning.
 
 	* threadpool.c: Make ASyncCall a copy of the managed MonoAsyncCall class so
 	it gets GC tracking.

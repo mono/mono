@@ -7,6 +7,7 @@
 
 #ifdef WIN32
 #include <windows.h>
+#include "initguid.h"
 #endif
 
 #ifdef WIN32
@@ -361,9 +362,7 @@ mono_test_ref_vtype (int a, simplestruct *ss, int b, RefVTypeDelegate func)
 		ss->c = 1;
 		ss->d = "TEST2";
 
-		printf ("A1\n");
 		return func (a, ss, b);
-		printf ("A2\n");
 	}
 
 	return 1;
@@ -2042,4 +2041,129 @@ mono_test_marshal_variant_out_bstr(VARIANT* variant)
 	return 0;
 }
 
+#ifdef _MSC_VER
+#define COM_STDCALL __stdcall
+#else
+#define COM_STDCALL __attribute__((stdcall))
 #endif
+
+typedef struct MonoComObject MonoComObject;
+
+typedef struct
+{
+	int (COM_STDCALL *QueryInterface)(MonoComObject* pUnk, gpointer riid, gpointer* ppv);
+	int (COM_STDCALL *AddRef)(MonoComObject* pUnk);
+	int (COM_STDCALL *Release)(MonoComObject* pUnk);
+	int (COM_STDCALL *Add)(MonoComObject* pUnk, int a, int b, int* c);
+	int (COM_STDCALL *Subtract)(MonoComObject* pUnk, int a, int b, int* c);
+	int (COM_STDCALL *Same)(MonoComObject* pUnk, MonoComObject* *pOut);
+	int (COM_STDCALL *Different)(MonoComObject* pUnk, MonoComObject* *pOut);
+} MonoIUnknown;
+
+struct MonoComObject
+{
+	MonoIUnknown* vtbl;
+	int m_ref;
+};
+
+DEFINE_GUID(IID_IMath, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1);
+DEFINE_GUID(IID_IMonoUnknown, 0, 0, 0, 0xC0, 0, 0, 0, 0, 0, 0, 0x46);
+DEFINE_GUID(IID_IMonoDispatch, 0x00020400, 0, 0, 0xC0, 0, 0, 0, 0, 0, 0, 0x46);
+
+int COM_STDCALL MonoQueryInterface(MonoComObject* pUnk, gpointer riid, gpointer* ppv)
+{
+	*ppv = NULL;
+	if (!memcmp(riid, &IID_IMonoUnknown, sizeof(GUID))) {
+		*ppv = pUnk;
+		return S_OK;
+	}
+	else if (!memcmp(riid, &IID_IMath, sizeof(GUID))) {
+		*ppv = pUnk;
+		return S_OK;
+	}
+	else if (!memcmp(riid, &IID_IMonoDispatch, sizeof(GUID))) {
+		*ppv = pUnk;
+		return S_OK;
+	}
+	return E_NOINTERFACE;
+}
+
+int COM_STDCALL MonoAddRef(MonoComObject* pUnk)
+{
+	return ++(pUnk->m_ref);
+}
+
+int COM_STDCALL MonoRelease(MonoComObject* pUnk)
+{
+	return --(pUnk->m_ref);
+}
+
+int COM_STDCALL Add(MonoComObject* pUnk, int a, int b, int* c)
+{
+	*c = a + b;
+	return 0;
+}
+
+int COM_STDCALL Subtract(MonoComObject* pUnk, int a, int b, int* c)
+{
+	*c = a - b;
+	return 0;
+}
+
+static void create_com_object (MonoComObject** pOut);
+static MonoComObject* same_com_object = NULL;
+
+int COM_STDCALL Same(MonoComObject* pUnk, MonoComObject** pOut)
+{
+	if (!same_com_object)
+		create_com_object (&same_com_object);
+	*pOut = same_com_object;
+	return 0;
+}
+
+int COM_STDCALL Different(MonoComObject* pUnk, MonoComObject** pOut)
+{
+	create_com_object (pOut);
+	return 0;
+}
+
+static void create_com_object (MonoComObject** pOut)
+{
+	*pOut = g_new0 (MonoComObject, 1);
+	(*pOut)->vtbl = g_new0 (MonoIUnknown, 1);
+
+	(*pOut)->m_ref = 1;
+	(*pOut)->vtbl->QueryInterface = MonoQueryInterface;
+	(*pOut)->vtbl->AddRef = MonoAddRef;
+	(*pOut)->vtbl->Release = MonoRelease;
+	(*pOut)->vtbl->Add = Add;
+	(*pOut)->vtbl->Subtract = Subtract;
+	(*pOut)->vtbl->Same = Same;
+	(*pOut)->vtbl->Different = Different;
+}
+
+STDCALL int
+mono_test_marshal_com_object_create(MonoComObject* *pUnk)
+{
+	create_com_object (pUnk);
+
+	return 0;
+}
+
+STDCALL int
+mono_test_marshal_com_object_destroy(MonoComObject *pUnk)
+{
+	int ref = --(pUnk->m_ref);
+	g_free(pUnk->vtbl);
+	g_free(pUnk);
+
+	return ref;
+}
+
+STDCALL int
+mono_test_marshal_com_object_ref_count(MonoComObject *pUnk)
+{
+	return pUnk->m_ref;
+}
+
+#endif //NOT_YET

@@ -1,3 +1,8 @@
+2006-06-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* mph.h (MPH_INTERNAL): Only use this if HAVE_VISIBILITY_HIDDEN is
+	defined since it is not supported on some archs with gcc.
+
 2006-04-28  Wade Berrier <wberrier@novell.com>
 
 	* serial.c: Add sys/filio.h for solaris for FIONREAD

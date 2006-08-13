@@ -19,6 +19,13 @@
 # include "private/gc_priv.h"
 
 # if defined(GC_SOLARIS_PTHREADS)
+
+/* Avoid  #error"Cannot use procfs in the large file compilation environment" */
+#if defined(_ILP32) && (_FILE_OFFSET_BITS != 32)
+#undef _FILE_OFFSET_BITS
+#define _FILE_OFFSET_BITS 32
+#endif
+
 # include <pthread.h>
 # include <thread.h>
 # include <signal.h>

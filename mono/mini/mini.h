@@ -1018,6 +1018,7 @@ guint     mono_type_to_load_membase         (MonoType *type);
 guint     mono_type_to_store_membase        (MonoType *type);
 void      mono_add_patch_info               (MonoCompile *cfg, int ip, MonoJumpInfoType type, gconstpointer target);
 void      mono_remove_patch_info            (MonoCompile *cfg, int ip);
+MonoJumpInfo* mono_patch_info_dup_mp        (MonoMemPool *mp, MonoJumpInfo *patch_info);
 gpointer  mono_resolve_patch_target         (MonoMethod *method, MonoDomain *domain, guint8 *code, MonoJumpInfo *patch_info, gboolean run_cctors);
 MonoLMF** mono_get_lmf_addr                 (void);
 void      mono_jit_thread_attach            (MonoDomain *domain);

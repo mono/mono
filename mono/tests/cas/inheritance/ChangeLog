@@ -1,3 +1,19 @@
+2006-06-27  Wade Berrier <wberrier@novell.com>
+
+	* Makefile.am: Use mcs from the mcs tree instead of
+	what's in the path.  Rename targets so tests are not compiled at
+	build time.
+
+2006-06-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Makefile.am: Use mono-wrapper (and not the installed mono).
+
+2006-06-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Makefile.am: Updated Makefile to add the CAS tests to the tarball
+	and enable them to be more broadly tested;
+	* Makefile: Removed and replaced by Makefile.am
+
 2006-06-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* notused.cs, reftype1-4.cs: Fix compiler warnings.

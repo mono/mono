@@ -1,3 +1,59 @@
+2006-07-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* configure.in: add check for sys/syscall.h. Remove aio_* detection as
+	it has not been used for a while now.
+
+2006-07-19  Wade Berrier <wberrier@novell.com>
+
+	* scripts/mono-find-provides.in: Remove support for only scanning files in the gac.
+	The problem is that mono apps are often broken up into subpackages, and deps can only
+	be resolved if the assemblies are in the gac, even when they sometimes shouldn't be.
+	(See https://bugzilla.novell.com/show_bug.cgi?id=144655)
+
+2006-07-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* configure.in: Applied patch from Sergey Tikhonov <tsv@solvo.ru>. Beginning
+	of alpha support.
+
+2006-07-17  Wade Berrier <wberrier@novell.com>
+
+	* scripts/mono-find-requires.in: Change rpm requires to >= 1.0.3300.0 instead of
+	=, since we don't explicitly provide 1.0.3300.0 versions.
+
+2006-07-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* docs/exception-handling.txt: Update libunwind status since it is not really
+	dead.
+	
+	* docs/exception-handling.txt: Note the changes in the handling of SIGSEGV
+	received while in native code.
+
+2006-07-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* configure.in: Add the contents of LIBS to libmono_ldflags on sol-x86 too.
+
+2006-07-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* configure.in: Add the contents of LIBS to libmono_ldflags instead on solaris.
+
+2006-06-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* configure.in: Add -lsocket -lnsl to libmono_ldflags on solaris to fix the
+	mkbundle tests.
+
+2006-06-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* configure.in: Disable --with-tls=__thread on solaris/x86.
+
+2006-06-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* configure.in: Always pass CPPFLAGS to libgc configure.
+
+2006-06-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* configure.in: Add the Makefile to create in order to run the CAS
+	tests.
+
 2006-06-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* README.vsnet: Make it clear that building Mono under cygwin is a

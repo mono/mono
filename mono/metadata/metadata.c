@@ -27,6 +27,7 @@ static gboolean do_mono_metadata_parse_type (MonoType *type, MonoImage *m, MonoG
 
 static gboolean do_mono_metadata_type_equal (MonoType *t1, MonoType *t2, gboolean signature_only);
 static gboolean mono_metadata_class_equal (MonoClass *c1, MonoClass *c2, gboolean signature_only);
+static gboolean mono_metadata_fnptr_equal (MonoMethodSignature *s1, MonoMethodSignature *s2, gboolean signature_only);
 static gboolean _mono_metadata_generic_class_equal (const MonoGenericClass *g1, const MonoGenericClass *g2,
 						    gboolean signature_only);
 
@@ -1687,6 +1688,8 @@ mono_metadata_parse_method_signature_full (MonoImage *m, MonoGenericContainer *c
 		if (*ptr == MONO_TYPE_SENTINEL) {
 			if (method->call_convention != MONO_CALL_VARARG || def)
 				g_error ("found sentinel for methoddef or no vararg method");
+			if (method->sentinelpos >= 0)
+				g_error ("found sentinel twice in the same signature");
 			method->sentinelpos = i;
 			ptr++;
 		}
@@ -1699,6 +1702,10 @@ mono_metadata_parse_method_signature_full (MonoImage *m, MonoGenericContainer *c
 		if (!is_open)
 			is_open = mono_class_is_open_constructed_type (method->params [i]);
 	}
+
+	/* The sentinel could be missing if the caller does not pass any additional arguments */
+	if (!def && method->call_convention == MONO_CALL_VARARG && method->sentinelpos < 0)
+		method->sentinelpos = method->param_count;
 
 	method->has_type_parameters = is_open;
 
@@ -3322,6 +3329,37 @@ mono_metadata_class_equal (MonoClass *c1, MonoClass *c2, gboolean signature_only
 	return FALSE;
 }
 
+static gboolean
+mono_metadata_fnptr_equal (MonoMethodSignature *s1, MonoMethodSignature *s2, gboolean signature_only)
+{
+	gpointer iter1 = 0, iter2 = 0;
+
+	if (s1 == s2)
+		return TRUE;
+	if (s1->call_convention != s2->call_convention)
+		return FALSE;
+	if (s1->sentinelpos != s2->sentinelpos)
+		return FALSE;
+	if (s1->hasthis != s2->hasthis)
+		return FALSE;
+	if (s1->explicit_this != s2->explicit_this)
+		return FALSE;
+	if (! do_mono_metadata_type_equal (s1->ret, s2->ret, signature_only))
+		return FALSE;
+	if (s1->param_count != s2->param_count)
+		return FALSE;
+
+	while (TRUE) {
+		MonoType *t1 = mono_signature_get_params (s1, &iter1);
+		MonoType *t2 = mono_signature_get_params (s2, &iter2);
+
+		if (t1 == NULL || t2 == NULL)
+			return (t1 == t2);
+		if (! do_mono_metadata_type_equal (t1, t2, signature_only))
+			return FALSE;
+	}
+}
+
 /*
  * mono_metadata_type_equal:
  * @t1: a type
@@ -3375,6 +3413,8 @@ do_mono_metadata_type_equal (MonoType *t1, MonoType *t2, gboolean signature_only
 	case MONO_TYPE_MVAR:
 		return mono_metadata_generic_param_equal (
 			t1->data.generic_param, t2->data.generic_param, signature_only);
+	case MONO_TYPE_FNPTR:
+		return mono_metadata_fnptr_equal (t1->data.method, t2->data.method, signature_only);
 	default:
 		g_error ("implement type compare for %0x!", t1->type);
 		return FALSE;
@@ -3429,6 +3469,31 @@ mono_metadata_signature_equal (MonoMethodSignature *sig1, MonoMethodSignature *s
 	if (!do_mono_metadata_type_equal (sig1->ret, sig2->ret, TRUE))
 		return FALSE;
 	return TRUE;
+}
+
+/**
+ * mono_metadata_type_dup_mp:
+ * @image: image type is defined in
+ * @original: type to duplicate
+ *
+ * Returns: copy of type allocated from mempool.
+ */
+MonoType *
+mono_metadata_type_dup_mp (MonoImage *image, const MonoType *original)
+{
+	MonoType *r = NULL;
+	mono_loader_lock ();
+	r = mono_mempool_alloc0 (image->mempool, sizeof(MonoType));
+	mono_loader_unlock ();
+	*r = *original;
+	/* FIXME: we don't handle these yet because they need to duplicate memory
+	 * but the current routines used are not using the mempools
+	 */
+	if (original->type == MONO_TYPE_PTR || 
+		original->type == MONO_TYPE_ARRAY || 
+		original->type == MONO_TYPE_FNPTR)
+		g_assert_not_reached ();
+	return r;
 }
 
 guint

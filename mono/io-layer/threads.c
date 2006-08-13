@@ -109,21 +109,29 @@ static void _wapi_thread_abandon_mutexes (gpointer handle)
 	}
 }
 
-static void thread_set_termination_details (gpointer handle,
-					    guint32 exitstatus)
+void _wapi_thread_set_termination_details (gpointer handle,
+					   guint32 exitstatus)
 {
 	struct _WapiHandle_thread *thread_handle;
 	gboolean ok;
 	int thr_ret;
 	
+	if (_wapi_handle_issignalled (handle) ||
+	    _wapi_handle_type (handle) == WAPI_HANDLE_UNUSED) {
+		/* We must have already deliberately finished with
+		 * this thread, so don't do any more now
+		 */
+		return;
+	}
+
 #ifdef DEBUG
 	g_message ("%s: Thread %p terminating", __func__, handle);
 #endif
 	
-	_wapi_thread_abandon_mutexes (handle);
-	
 	thr_ret = _wapi_handle_lock_shared_handles ();
 	g_assert (thr_ret == 0);
+	
+	_wapi_thread_abandon_mutexes (handle);
 	
 	ok = _wapi_lookup_handle (handle, WAPI_HANDLE_THREAD,
 				  (gpointer *)&thread_handle);
@@ -163,7 +171,7 @@ void _wapi_thread_signal_self (guint32 exitstatus)
 		return;
 	}
 	
-	thread_set_termination_details (handle, exitstatus);
+	_wapi_thread_set_termination_details (handle, exitstatus);
 }
 
 /* Called by the thread creation code as a thread is finishing up, and
@@ -172,14 +180,7 @@ void _wapi_thread_signal_self (guint32 exitstatus)
 static void thread_exit (guint32 exitstatus, gpointer handle) G_GNUC_NORETURN;
 static void thread_exit (guint32 exitstatus, gpointer handle)
 {
-	if (_wapi_handle_issignalled (handle)) {
-		/* We must have already deliberately finished with
-		 * this thread, so don't do any more now
-		 */
-		pthread_exit (NULL);
-	}
-
-	thread_set_termination_details (handle, exitstatus);
+	_wapi_thread_set_termination_details (handle, exitstatus);
 	
 	/* Call pthread_exit() to call destructors and really exit the
 	 * thread
@@ -193,7 +194,7 @@ static void thread_attached_exit (gpointer handle)
 	 * thread is dead
 	 */
 	
-	thread_set_termination_details (handle, 0);
+	_wapi_thread_set_termination_details (handle, 0);
 }
 
 static void thread_hash_init(void)
@@ -1019,6 +1020,8 @@ void Sleep(guint32 ms)
 	SleepEx(ms, FALSE);
 }
 
+static mono_mutex_t apc_mutex = MONO_MUTEX_INITIALIZER;
+
 gboolean _wapi_thread_cur_apc_pending (void)
 {
 	gpointer thread = _wapi_thread_handle_from_id (pthread_self ());
@@ -1046,12 +1049,16 @@ static void _wapi_thread_queue_apc (struct _WapiHandle_thread *thread,
 	apc->callback = apc_callback;
 	apc->param = param;
 	
-	thr_ret = _wapi_handle_lock_shared_handles ();
+	pthread_cleanup_push ((void(*)(void *))mono_mutex_unlock_in_cleanup,
+			      (void *)&apc_mutex);
+	thr_ret = mono_mutex_lock (&apc_mutex);
 	g_assert (thr_ret == 0);
 	
 	thread->apc_queue = g_slist_append (thread->apc_queue, apc);
 	
-	_wapi_handle_unlock_shared_handles ();
+	thr_ret = mono_mutex_unlock (&apc_mutex);
+	g_assert (thr_ret == 0);
+	pthread_cleanup_pop (0);
 }
 
 gboolean _wapi_thread_apc_pending (gpointer handle)
@@ -1062,8 +1069,16 @@ gboolean _wapi_thread_apc_pending (gpointer handle)
 	ok = _wapi_lookup_handle (handle, WAPI_HANDLE_THREAD,
 				  (gpointer *)&thread);
 	if (ok == FALSE) {
+#ifdef DEBUG
+		/* This might happen at process shutdown, as all
+		 * thread handles are forcibly closed.  If a thread
+		 * still has an alertable wait the final
+		 * _wapi_thread_apc_pending check will probably fail
+		 * to find the handle
+		 */
 		g_warning ("%s: error looking up thread handle %p", __func__,
 			   handle);
+#endif
 		return (FALSE);
 	}
 	
@@ -1094,14 +1109,18 @@ gboolean _wapi_thread_dispatch_apc_queue (gpointer handle)
 		return(FALSE);
 	}
 	
-	thr_ret = _wapi_handle_lock_shared_handles ();
+	pthread_cleanup_push ((void(*)(void *))mono_mutex_unlock_in_cleanup,
+			      (void *)&apc_mutex);
+	thr_ret = mono_mutex_lock (&apc_mutex);
 	g_assert (thr_ret == 0);
 	
 	list = thread->apc_queue;
 	thread->apc_queue = NULL;
 	
-	_wapi_handle_unlock_shared_handles ();
-	
+	thr_ret = mono_mutex_unlock (&apc_mutex);
+	g_assert (thr_ret == 0);
+	pthread_cleanup_pop (0);
+
 	while (list != NULL) {
 		apc = (ApcInfo *)list->data;
 		apc->callback (apc->param);

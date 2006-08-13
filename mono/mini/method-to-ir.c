@@ -14,11 +14,6 @@
 #include <math.h>
 #include <sys/time.h>
 
-#ifdef sun    // Solaris x86
-#include <sys/types.h>
-#include <sys/ucontext.h>
-#endif
-
 #ifdef HAVE_VALGRIND_MEMCHECK_H
 #include <valgrind/memcheck.h>
 #endif
@@ -2692,6 +2687,13 @@ mono_get_element_address_signature (int arity)
 	res->call_convention = MONO_CALL_VARARG;
 #endif
 	res->params [0] = &mono_defaults.array_class->byval_arg; 
+
+#ifdef PLATFORM_WIN32
+	/* 
+	 * The default pinvoke calling convention is STDCALL but we need CDECL.
+	 */
+	res->call_convention = MONO_CALL_C;
+#endif
 	
 	for (i = 1; i <= arity; i++)
 		res->params [i] = &mono_defaults.int_class->byval_arg;
@@ -2726,6 +2728,10 @@ mono_get_array_new_va_signature (int arity)
 #ifdef MONO_ARCH_VARARG_ICALLS
 	/* Only set this only some archs since not all backends can handle varargs+pinvoke */
 	res->call_convention = MONO_CALL_VARARG;
+#endif
+
+#ifdef PLATFORM_WIN32
+	res->call_convention = MONO_CALL_C;
 #endif
 
 	res->params [0] = &mono_defaults.int_class->byval_arg;	
@@ -3397,6 +3403,7 @@ handle_array_new (MonoCompile *cfg, int rank, MonoInst **sp, unsigned char *ip)
 
 	cfg->flags |= MONO_CFG_HAS_VARARGS;
 
+	/* FIXME: This uses info->sig, but it should use the signature of the wrapper */
 	return mono_emit_native_call (cfg, mono_icall_get_wrapper (info), info->sig, sp, ip);
 }
 
@@ -3695,6 +3702,7 @@ mini_emit_ldelema_ins (MonoCompile *cfg, MonoMethod *cmethod, MonoInst **sp, uns
 	}
 
 	cfg->flags |= MONO_CFG_HAS_VARARGS;
+	/* FIXME: This uses info->sig, but it should use the signature of the wrapper */
 	addr = mono_emit_native_call (cfg, mono_icall_get_wrapper (info), info->sig, sp, ip);
 
 	return addr;
@@ -3935,6 +3943,9 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 	if ((! inline_allways) && ! check_inline_caller_method_name_limit (cfg->method))
 		return 0;
 #endif
+
+	if (cfg->cbb->out_of_line && !inline_allways)
+		return 0;
 
 	if (cfg->verbose_level > 2)
 		printf ("INLINE START %p %s -> %s\n", cmethod,  mono_method_full_name (cfg->method, TRUE), mono_method_full_name (cmethod, TRUE));
@@ -5443,8 +5454,11 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 	dont_verify = method->klass->image->assembly->corlib_internal? TRUE: FALSE;
 	dont_verify |= method->wrapper_type == MONO_WRAPPER_XDOMAIN_INVOKE;
 	dont_verify |= method->wrapper_type == MONO_WRAPPER_XDOMAIN_DISPATCH;
+ 	dont_verify |= method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE; /* bug #77896 */
+	dont_verify |= method->wrapper_type == MONO_WRAPPER_COMINTEROP;
+	dont_verify |= method->wrapper_type == MONO_WRAPPER_COMINTEROP_INVOKE;
 
-	/* still some type unsefety issues in marshal wrappers... (unknown is PtrToStructure) */
+	/* still some type unsafety issues in marshal wrappers... (unknown is PtrToStructure) */
 	dont_verify_stloc = method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE;
 	dont_verify_stloc |= method->wrapper_type == MONO_WRAPPER_UNKNOWN;
 	dont_verify_stloc |= method->wrapper_type == MONO_WRAPPER_NATIVE_TO_MANAGED;
@@ -6105,18 +6119,22 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 				n = fsig->param_count + fsig->hasthis;
 			} else {
+				MonoMethod *cil_method;
+				
 				if (method->wrapper_type != MONO_WRAPPER_NONE) {
 					cmethod =  (MonoMethod *)mono_method_get_wrapper_data (method, token);
+					cil_method = cmethod;
 				} else if (constrained_call) {
-					cmethod = mono_get_method_constrained (image, token, constrained_call, generic_context);
+					cmethod = mono_get_method_constrained (image, token, constrained_call, generic_context, &cil_method);
 					cmethod = mono_get_inflated_method (cmethod);
 				} else {
 					cmethod = mini_get_method (method, token, NULL, generic_context);
+					cil_method = cmethod;
 				}
 
 				if (!cmethod)
 					goto load_error;
-				if (!dont_verify && !can_access_method (method, cmethod))
+				if (!dont_verify && !can_access_method (method, cil_method))
 					UNVERIFIED;
 
 				if (!virtual && (cmethod->flags & METHOD_ATTRIBUTE_ABSTRACT))
@@ -6203,8 +6221,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 		 	    !((cmethod->flags & METHOD_ATTRIBUTE_FINAL) && 
 			      cmethod->wrapper_type != MONO_WRAPPER_REMOTING_INVOKE_WITH_CHECK) &&
 			    mono_method_signature (cmethod)->generic_param_count) {
-				MonoInst *this_temp, *store;
-				MonoInst *iargs [3];
+				MonoInst *this_temp, *this_arg_temp, *store;
+				MonoInst *iargs [4];
 
 				g_assert (mono_method_signature (cmethod)->is_inflated);
 
@@ -6214,18 +6232,23 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				this_temp = mono_compile_create_var (cfg, type_from_stack_type (sp [0]), OP_LOCAL);
 				NEW_TEMPSTORE (cfg, store, this_temp->inst_c0, sp [0]);
 				MONO_ADD_INS (bblock, store);
+ 
+				/* FIXME: This should be a managed pointer */
+				this_arg_temp = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL);
 
 				EMIT_NEW_TEMPLOAD (cfg, iargs [0], this_temp->inst_c0);
 				EMIT_NEW_PCONST (cfg, iargs [1], cmethod);
 				EMIT_NEW_PCONST (cfg, iargs [2], ((MonoMethodInflated *) cmethod)->context);
+				EMIT_NEW_TEMPLOADA (cfg, iargs [3], this_arg_temp->inst_c0);
 				addr = mono_emit_jit_icall (cfg, mono_helper_compile_generic_method, iargs, ip);
-				EMIT_NEW_TEMPLOAD (cfg, sp [0], this_temp->inst_c0);
+				EMIT_NEW_TEMPLOAD (cfg, sp [0], this_arg_temp->inst_c0);
 
 				ins = (MonoInst*)mono_emit_calli (cfg, fsig, sp, addr, ip);
 				if (!MONO_TYPE_IS_VOID (fsig->ret))
 					*sp++ = ins;
 
 				ip += 5;
+				ins_flag = 0;
 				break;
 			}
 
@@ -6271,6 +6294,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				}
 
 				ip += 5;
+				ins_flag = 0;
 				break;
 			}
 
@@ -6300,6 +6324,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
  						sp++;
 
 					inline_costs += costs;
+					ins_flag = 0;
 					break;
 				}
 			}
@@ -6340,6 +6365,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					else
 						ip += 5;
 
+					ins_flag = 0;
 					break;
 				}
 			}
@@ -6353,6 +6379,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					*sp++ = ins;
 
 				ip += 5;
+				ins_flag = 0;
 				break;
 			}
 	      				
@@ -6385,6 +6412,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				}
 
 				ip += 5;
+				ins_flag = 0;
 				break;
 			}
 
@@ -6396,6 +6424,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				*sp++ = ins;
 
 			ip += 5;
+			ins_flag = 0;
 			break;
 		}
 		case CEE_RET:
@@ -10025,7 +10054,8 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   MONO_CFG_HAS_SPILLUP.
  * - merge new GC changes in mini.c
  * - merge the stack merge stuff
- * - LAST MERGE: 61918.
+ * - merge the emit_sig_cookie changes on x86, ia64 and sparc.
+ * - LAST MERGE: 63679.
  */
 
 /*

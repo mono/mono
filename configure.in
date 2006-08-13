@@ -6,7 +6,7 @@ AC_CANONICAL_SYSTEM
 m4_ifdef([_A][M_PROG_TAR],[_A][M_SET_OPTION([tar-ustar])])
 
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE(mono,1.1.15)
+AM_INIT_AUTOMAKE(mono,1.1.16)
 AM_MAINTAINER_MODE
 
 AC_PROG_LN_S
@@ -187,8 +187,8 @@ case "$host" in
 		libdl="-ldl"
 		libgc_threads=pthreads
 		;;
-        *-*-hpux*)
-                platform_win32=no
+	*-*-hpux*)
+        platform_win32=no
 		CPPFLAGS="$CPPFLAGS -DGC_HPUX_THREADS -D_HPUX_SOURCE -D_XOPEN_SOURCE_EXTENDED -D_REENTRANT"
 		CFLAGS="$CFLAGS +ESdbgasm"
 		LDFLAGS="$LDFLAGS -z"
@@ -196,13 +196,15 @@ case "$host" in
 		libmono_ldflags="-lpthread"
 		libgc_threads=pthreads
 		need_link_unlink=yes
-                ;;
+		;;
 	*-*-solaris*)
 		platform_win32=no
 		CPPFLAGS="$CPPFLAGS -DGC_SOLARIS_THREADS -DGC_SOLARIS_PTHREADS -D_REENTRANT -D_POSIX_PTHREAD_SEMANTICS -DUSE_MMAP -DUSE_MUNMAP"
 		need_link_unlink=yes
 		libmono_cflags="-D_REENTRANT"
 		libgc_threads=pthreads
+		# This doesn't seem to work on solaris/x86, but the configure test runs
+		with_nptl=no
 		;;
 	*-*-darwin*)
 		platform_win32=no
@@ -283,7 +285,7 @@ fi
 
 AM_CONDITIONAL(NO_VERSION_SCRIPT, test x$no_version_script = xyes)
 
-AC_CHECK_HEADERS(sys/filio.h sys/sockio.h netdb.h utime.h semaphore.h sys/un.h linux/rtc.h)
+AC_CHECK_HEADERS(sys/filio.h sys/sockio.h netdb.h utime.h semaphore.h sys/un.h linux/rtc.h sys/syscall.h)
 
 AC_CHECK_HEADER(zlib.h, [have_zlib=yes], [have_zlib=no])
 
@@ -606,6 +608,11 @@ case "x$gc" in
 
 	xincluded)
 		AC_CONFIG_SUBDIRS(libgc)
+
+		# Pass CPPFLAGS to libgc configure
+		# Maybe we should use a separate variable for this to avoid passing useless and
+		# potentially problematic defines to libgc (like -D_FILE_OFFSET_BITS=64)
+		export CPPFLAGS
 
 		found_boehm=yes
 		gc_headers=yes
@@ -1196,41 +1203,6 @@ if test x$platform_win32 = xno; then
 		AC_MSG_RESULT(no)
 	]) 
 
-	dnl *********************
-	dnl *** Check for AIO ***
-	dnl *********************
-	AC_MSG_CHECKING([for SIGEV_THREAD definition])
-	dnl Some systems (FreeBSD at least) may have aio_read
-	dnl but don't support/define SIGEV_THREAD.
-	AC_TRY_COMPILE([
-	#include <sys/signal.h>
-	],[
-	int x = SIGEV_THREAD;
-	],[
-		ac_cv_c_sigev_thread=yes
-		AC_MSG_RESULT(yes)
-	],[
-		AC_MSG_RESULT(no)
-	])
-
-	if test "$ac_cv_c_sigev_thread" = "yes" ; then
-		AC_CHECK_HEADERS(aio.h sys/aio.h)
-		AC_CHECK_LIB(rt, aio_read, [ LIBS="$LIBS -lrt" ],)
-		SIGVAL_PTR="undefined"
-		if test "$ac_cv_header_aio_h" = "yes" -o "$ac_cv_header_sys_aio_h" = "yes" ; then
-			AC_CHECK_MEMBER(union sigval.sigval_ptr,SIGVAL_PTR="sigval_ptr",, [
-					#include <sys/signal.h>
-					])
-			AC_CHECK_MEMBER(union sigval.sival_ptr,SIGVAL_PTR="sival_ptr",, [
-					#include <sys/signal.h>
-					])
-			if test "$SIGVAL_PTR" = "undefined" ; then
-				AC_MSG_ERROR([Unable to detect field name in 'union sigval'])
-			fi
-		fi
-		AC_DEFINE_UNQUOTED(SIGVAL_PTR,$SIGVAL_PTR,[Pointer field name in 'union sigval'])
-	fi
-
 	dnl **********************************
 	dnl *** epoll			   ***
 	dnl **********************************
@@ -1525,6 +1497,8 @@ case "$host" in
 			# foo.c:6: warning: visibility attribute not supported in this configuration; ignored
 			# ld: fatal: relocation error: R_386_GOTOFF: file /var/tmp//ccxYR96k.o: symbol astruct: relocation must bind locally
 			have_visibility_hidden=no
+
+			libmono_ldflags="$libmono_ldflags $LIBS"
 		esac
 		;;
 	x86_64-*-* | amd64-*-*)
@@ -1558,6 +1532,7 @@ case "$host" in
 		  *)
 			LIBC="libc.so"
 			INTL="libintl.so"
+			libmono_ldflags="$libmono_ldflags $LIBS"
 		esac
 		jit_wanted=true
 		if test x"$GCC" = xyes; then
@@ -1571,9 +1546,8 @@ case "$host" in
        alpha*-*-linux* | alpha*-*-osf*)
 		TARGET=ALPHA;
 		ACCESS_UNALIGNED="no"
-		JIT_SUPPORTED=no
-		INTERP_SUPPORTED=yes
-		interp_wanted=true
+		JIT_SUPPORTED=yes
+		jit_wanted=true
 		arch_target=alpha;
 		case $host_os in
 		  linux*)
@@ -1762,9 +1736,8 @@ AM_CONDITIONAL(MONO_DEBUGGER_SUPPORTED, test x$mono_debugger_supported = xyes)
 
 if test "x$with_tls" = "x__thread"; then
 	AC_DEFINE(HAVE_KW_THREAD)
-   # Pass the information to libgc
+	# Pass the information to libgc
 	CPPFLAGS="$CPPFLAGS -DUSE_COMPILER_TLS"
-	export CPPFLAGS
 	AC_MSG_CHECKING(if the tls_model attribute is supported)
 	AC_TRY_COMPILE([static __thread int foo __attribute__((tls_model("initial-exec")));], [
 		], [
@@ -1936,6 +1909,12 @@ mono/arch/ia64/Makefile
 mono/interpreter/Makefile
 mono/tests/Makefile
 mono/tests/tests-config
+mono/tests/cas/Makefile
+mono/tests/cas/assembly/Makefile
+mono/tests/cas/demand/Makefile
+mono/tests/cas/inheritance/Makefile
+mono/tests/cas/linkdemand/Makefile
+mono/tests/cas/threads/Makefile
 mono/benchmark/Makefile
 mono/monoburg/Makefile
 mono/monograph/Makefile

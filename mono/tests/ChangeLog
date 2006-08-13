@@ -1,3 +1,4 @@
+<<<<<<< .working
 2006-06-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* interlocked-2.2.cs: Add Interlocked.Read (long) test.
@@ -6,6 +7,57 @@
 
 	* libtest.c: Fix merge problem.
 
+=======
+2006-08-09  Jonathan Chambers  <joncham@gmail.com>
+
+	* cominterop.cs: Added COM Interop tests for accessing IUnknown and IDispatch.
+	* libtest.c: Implemented QueryInterface correctly.
+	
+2006-08-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* vararg.il: Add a test for #79027.
+
+2006-07-28  Jonathan Chambers  <joncham@gmail.com>
+
+	* cominterop.cs: Added COM Interop object marshalling tests; 
+	enabled on windows only.
+	* libtest.c: Added COM Interop object marshalling tests; 
+	enabled on windows only.
+	
+2006-07-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* libtest.c: Add a newline at the EOF.
+
+2006-07-15  Jonathan Chambers  <joncham@gmail.com>
+
+	* cominterop.cs: Added COM Interop tests; not enabled yet.
+	* libtest.c: Added COM Interop tests; not enabled yet.
+
+2006-07-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am (libtest_la_CFLAGS): Disable a gcc optimization which breaks pinvoke2.exe on windows.
+
+2006-06-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* libtest.c (mono_test_ref_vtype): Remove debug printfs.
+
+2006-06-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal2.cs: Add tests for ByValTStr + Unicode encoding.
+
+2006-06-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* pinvoke-2.cs: Rename to pinvoke-2.2.cs.
+	
+	* Makefile.am (TEST_CS2_SRC): Add pinvoke-2.2.cs
+
+	* pinvoke-2.2.cs libtest.c: Add Marshal.GetDelegateForFunctionPointer () tests.
+	
+2006-06-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Makefile.am: Add 'cas' to SUBDIRS
+
+>>>>>>> .merge-right.r63679
 2006-06-20  Massimiliano Mantione  <massi@ximian.com>
 	* bug-78656.cs. Makefile.am: Added test for bug 78656.
 

@@ -14,11 +14,6 @@
 #include <math.h>
 #include <sys/time.h>
 
-#ifdef sun    // Solaris x86
-#include <sys/types.h>
-#include <sys/ucontext.h>
-#endif
-
 #ifdef HAVE_VALGRIND_MEMCHECK_H
 #include <valgrind/memcheck.h>
 #endif
@@ -2914,7 +2909,14 @@ mono_get_element_address_signature (int arity)
 	res->call_convention = MONO_CALL_VARARG;
 #endif
 	res->params [0] = &mono_defaults.array_class->byval_arg; 
-	
+
+#ifdef PLATFORM_WIN32
+	/* 
+	 * The default pinvoke calling convention is STDCALL but we need CDECL.
+	 */
+	res->call_convention = MONO_CALL_C;
+#endif
+
 	for (i = 1; i <= arity; i++)
 		res->params [i] = &mono_defaults.int_class->byval_arg;
 
@@ -2948,6 +2950,10 @@ mono_get_array_new_va_signature (int arity)
 #ifdef MONO_ARCH_VARARG_ICALLS
 	/* Only set this only some archs since not all backends can handle varargs+pinvoke */
 	res->call_convention = MONO_CALL_VARARG;
+#endif
+
+#ifdef PLATFORM_WIN32
+	res->call_convention = MONO_CALL_C;
 #endif
 
 	res->params [0] = &mono_defaults.int_class->byval_arg;	
@@ -3196,6 +3202,7 @@ handle_array_new (MonoCompile *cfg, MonoBasicBlock *bblock, int rank, MonoInst *
 
 	cfg->flags |= MONO_CFG_HAS_VARARGS;
 
+	/* FIXME: This uses info->sig, but it should use the signature of the wrapper */
 	return mono_emit_native_call (cfg, bblock, mono_icall_get_wrapper (info), info->sig, sp, ip, TRUE, FALSE);
 }
 
@@ -3398,6 +3405,7 @@ mini_get_ldelema_ins (MonoCompile *cfg, MonoBasicBlock *bblock, MonoMethod *cmet
 		mono_jit_unlock ();
 	}
 
+	/* FIXME: This uses info->sig, but it should use the signature of the wrapper */
 	temp = mono_emit_native_call (cfg, bblock, mono_icall_get_wrapper (info), info->sig, sp, ip, FALSE, FALSE);
 	cfg->flags |= MONO_CFG_HAS_VARARGS;
 
@@ -3623,6 +3631,9 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 	if ((! inline_allways) && ! check_inline_caller_method_name_limit (cfg->method))
 		return 0;
 #endif
+
+	if (bblock->out_of_line && !inline_allways)
+		return 0;
 
 	if (cfg->verbose_level > 2)
 		g_print ("INLINE START %p %s -> %s\n", cmethod,  mono_method_full_name (cfg->method, TRUE), mono_method_full_name (cmethod, TRUE));
@@ -4053,8 +4064,10 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 	dont_verify |= method->wrapper_type == MONO_WRAPPER_XDOMAIN_INVOKE;
 	dont_verify |= method->wrapper_type == MONO_WRAPPER_XDOMAIN_DISPATCH;
 	dont_verify |= method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE; /* bug #77896 */
+	dont_verify |= method->wrapper_type == MONO_WRAPPER_COMINTEROP;
+	dont_verify |= method->wrapper_type == MONO_WRAPPER_COMINTEROP_INVOKE;
 
-	/* still some type unsefety issues in marshal wrappers... (unknown is PtrToStructure) */
+	/* still some type unsafety issues in marshal wrappers... (unknown is PtrToStructure) */
 	dont_verify_stloc = method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE;
 	dont_verify_stloc |= method->wrapper_type == MONO_WRAPPER_UNKNOWN;
 	dont_verify_stloc |= method->wrapper_type == MONO_WRAPPER_NATIVE_TO_MANAGED;
@@ -4713,18 +4726,22 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 				n = fsig->param_count + fsig->hasthis;
 			} else {
+				MonoMethod *cil_method;
+				
 				if (method->wrapper_type != MONO_WRAPPER_NONE) {
 					cmethod =  (MonoMethod *)mono_method_get_wrapper_data (method, token);
+					cil_method = cmethod;
 				} else if (constrained_call) {
-					cmethod = mono_get_method_constrained (image, token, constrained_call, generic_context);
+					cmethod = mono_get_method_constrained (image, token, constrained_call, generic_context, &cil_method);
 					cmethod = mono_get_inflated_method (cmethod);
 				} else {
 					cmethod = mini_get_method (method, token, NULL, generic_context);
+					cil_method = cmethod;
 				}
 
 				if (!cmethod)
 					goto load_error;
-				if (!dont_verify && !can_access_method (method, cmethod))
+				if (!dont_verify && !can_access_method (method, cil_method))
 					UNVERIFIED;
 
 				if (!virtual && (cmethod->flags & METHOD_ATTRIBUTE_ABSTRACT))
@@ -4817,8 +4834,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		 	    !((cmethod->flags & METHOD_ATTRIBUTE_FINAL) && 
 			      cmethod->wrapper_type != MONO_WRAPPER_REMOTING_INVOKE_WITH_CHECK) &&
 			    mono_method_signature (cmethod)->generic_param_count) {
-				MonoInst *this_temp, *store;
-				MonoInst *iargs [3];
+				MonoInst *this_temp, *this_arg_temp, *store;
+				MonoInst *iargs [4];
 
 				g_assert (mono_method_signature (cmethod)->is_inflated);
 				/* Prevent inlining of methods that contain indirect calls */
@@ -4831,13 +4848,18 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				store->cil_code = ip;
 				MONO_ADD_INS (bblock, store);
 
+				/* FIXME: This should be a managed pointer */
+				this_arg_temp = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL);
+				this_arg_temp->cil_code = ip;
+
 				NEW_TEMPLOAD (cfg, iargs [0], this_temp->inst_c0);
 				NEW_PCONST (cfg, iargs [1], cmethod);
 				NEW_PCONST (cfg, iargs [2], ((MonoMethodInflated *) cmethod)->context);
+				NEW_TEMPLOADA (cfg, iargs [3], this_arg_temp->inst_c0);
 				temp = mono_emit_jit_icall (cfg, bblock, mono_helper_compile_generic_method, iargs, ip);
 
 				NEW_TEMPLOAD (cfg, addr, temp);
-				NEW_TEMPLOAD (cfg, sp [0], this_temp->inst_c0);
+				NEW_TEMPLOAD (cfg, sp [0], this_arg_temp->inst_c0);
 
 				if ((temp = mono_emit_calli (cfg, bblock, fsig, sp, addr, ip)) != -1) {
 					NEW_TEMPLOAD (cfg, *sp, temp);
@@ -4845,12 +4867,14 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				}
 
 				ip += 5;
+				ins_flag = 0;
 				break;
 			}
 
 			if ((ins_flag & MONO_INST_TAILCALL) && cmethod && (*ip == CEE_CALL) &&
 				 (mono_metadata_signature_equal (mono_method_signature (method), mono_method_signature (cmethod)))) {
 				int i;
+
 				/* Prevent inlining of methods with tail calls (the call stack would be altered) */
 				INLINE_FAILURE;
 				/* FIXME: This assumes the two methods has the same number and type of arguments */
@@ -4895,6 +4919,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				}
 
 				ip += 5;
+				ins_flag = 0;
 				break;
 			}
 
@@ -4932,6 +4957,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					bblock = ebblock;
 
 					inline_costs += costs;
+					ins_flag = 0;
 					break;
 				}
 			}
@@ -4970,7 +4996,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						ip += 6;
 					else
 						ip += 5;
-
+					ins_flag = 0;
 					break;
 				}
 			}
@@ -5057,6 +5083,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			}
 
 			ip += 5;
+			ins_flag = 0;
 			break;
 		}
 		case CEE_RET:
@@ -9028,6 +9055,36 @@ mono_remove_patch_info (MonoCompile *cfg, int ip)
 	}
 }
 
+/**
+ * mono_patch_info_dup_mp:
+ *
+ * Make a copy of PATCH_INFO, allocating memory from the mempool MP.
+ */
+MonoJumpInfo*
+mono_patch_info_dup_mp (MonoMemPool *mp, MonoJumpInfo *patch_info)
+{
+	MonoJumpInfo *res = mono_mempool_alloc (mp, sizeof (MonoJumpInfo));
+	memcpy (res, patch_info, sizeof (MonoJumpInfo));
+
+	switch (patch_info->type) {
+	case MONO_PATCH_INFO_LDSTR:
+	case MONO_PATCH_INFO_TYPE_FROM_HANDLE:
+	case MONO_PATCH_INFO_LDTOKEN:
+	case MONO_PATCH_INFO_DECLSEC:
+		res->data.token = mono_mempool_alloc (mp, sizeof (MonoJumpInfoToken));
+		memcpy (res->data.token, patch_info->data.token, sizeof (MonoJumpInfoToken));
+		break;
+	case MONO_PATCH_INFO_SWITCH:
+		res->data.table = mono_mempool_alloc (mp, sizeof (MonoJumpInfoBBTable));
+		memcpy (res->data.table, patch_info->data.table, sizeof (MonoJumpInfoBBTable));
+		break;
+	default:
+		break;
+	}
+
+	return res;
+}
+
 gpointer
 mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code, MonoJumpInfo *patch_info, gboolean run_cctors)
 {
@@ -11002,7 +11059,7 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 		MonoMethod *nm;
 		MonoMethodPInvoke* piinfo = (MonoMethodPInvoke *) method;
 
-		if (method->iflags & METHOD_IMPL_ATTRIBUTE_NATIVE)
+		if (method->iflags & METHOD_IMPL_ATTRIBUTE_NATIVE && !MONO_CLASS_IS_IMPORT(method->klass))
 			g_error ("Method '%s' in assembly '%s' contains native code and mono can't run it. The assembly was probably created by Managed C++.\n", mono_method_full_name (method, TRUE), method->klass->image->name);
 
 		if (!piinfo->addr) {
@@ -11325,10 +11382,6 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 #ifdef __sparc
 #define GET_CONTEXT \
     void *ctx = context;
-#elif defined(sun)    // Solaris x86
-#define GET_CONTEXT \
-    ucontext_t *uctx = context; \
-    struct sigcontext *ctx = (struct sigcontext *)&(uctx->uc_mcontext);
 #elif defined (MONO_ARCH_USE_SIGACTION)
 #define GET_CONTEXT \
     void *ctx = context;
@@ -11953,7 +12006,7 @@ mini_init (const char *filename)
 	register_icall (mono_ldftn, "mono_ldftn", "ptr ptr", FALSE);
 	register_icall (mono_ldftn_nosync, "mono_ldftn_nosync", "ptr ptr", FALSE);
 	register_icall (mono_ldvirtfn, "mono_ldvirtfn", "ptr object ptr", FALSE);
-	register_icall (mono_helper_compile_generic_method, "compile_generic_method", "ptr object ptr ptr", FALSE);
+	register_icall (mono_helper_compile_generic_method, "compile_generic_method", "ptr object ptr ptr ptr", FALSE);
 	register_icall (mono_helper_ldstr, "helper_ldstr", "object ptr int", FALSE);
 	register_icall (mono_helper_ldstr_mscorlib, "helper_ldstr_mscorlib", "object int", FALSE);
 	register_icall (mono_helper_newobj_mscorlib, "helper_newobj_mscorlib", "object int", FALSE);
@@ -12070,6 +12123,12 @@ mini_cleanup (MonoDomain *domain)
 	mono_trace_cleanup ();
 
 	mono_counters_dump (-1, stdout);
+
+	TlsFree(mono_jit_tls_id);
+
+	DeleteCriticalSection (&jit_mutex);
+
+	DeleteCriticalSection (&mono_delegate_section);
 }
 
 void

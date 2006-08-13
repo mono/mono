@@ -217,6 +217,8 @@ mono_type_get_name_recurse (MonoType *type, GString *str, gboolean is_recursed,
 		mono_type_get_name_recurse (
 			&type->data.array->eklass->byval_arg, str, FALSE, nested_format);
 		g_string_append_c (str, '[');
+		if (rank == 1)
+			g_string_append_c (str, '*');
 		for (i = 1; i < rank; i++)
 			g_string_append_c (str, ',');
 		g_string_append_c (str, ']');
@@ -2653,7 +2655,13 @@ mono_class_setup_parent (MonoClass *class, MonoClass *parent)
 	}
 
 	if (!MONO_CLASS_IS_INTERFACE (class)) {
+		/* Imported COM Objects always derive from __ComObject. */
+		if (MONO_CLASS_IS_IMPORT (class)) {
+			if (parent == mono_defaults.object_class)
+				parent = mono_defaults.com_object_class;
+		}
 		class->parent = parent;
+
 
 		if (!parent)
 			g_assert_not_reached (); /* FIXME */
@@ -2670,6 +2678,10 @@ mono_class_setup_parent (MonoClass *class, MonoClass *parent)
 		class->marshalbyref = parent->marshalbyref;
 		class->contextbound  = parent->contextbound;
 		class->delegate  = parent->delegate;
+		if (MONO_CLASS_IS_IMPORT (class))
+			class->is_com_object = 1;
+		else
+			class->is_com_object = parent->is_com_object;
 		
 		if (system_namespace) {
 			if (*class->name == 'M' && !strcmp (class->name, "MarshalByRefObject"))
@@ -3342,7 +3354,7 @@ mono_bounded_array_class_get (MonoClass *eclass, guint32 rank, gboolean bounded)
 	if ((rootlist = list = g_hash_table_lookup (image->array_cache, eclass))) {
 		for (; list; list = list->next) {
 			class = list->data;
-			if ((class->rank == rank) && (class->byval_arg.type == (bounded ? MONO_TYPE_ARRAY : MONO_TYPE_SZARRAY))) {
+			if ((class->rank == rank) && (class->byval_arg.type == (((rank > 1) || bounded) ? MONO_TYPE_ARRAY : MONO_TYPE_SZARRAY))) {
 				mono_loader_unlock ();
 				return class;
 			}

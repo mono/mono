@@ -30,6 +30,7 @@ typedef enum {
 	MONO_WRAPPER_RUNTIME_INVOKE,
 	MONO_WRAPPER_NATIVE_TO_MANAGED,
 	MONO_WRAPPER_MANAGED_TO_NATIVE,
+	MONO_WRAPPER_MANAGED_TO_MANAGED,
 	MONO_WRAPPER_REMOTING_INVOKE,
 	MONO_WRAPPER_REMOTING_INVOKE_WITH_CHECK,
 	MONO_WRAPPER_XDOMAIN_INVOKE,
@@ -47,7 +48,9 @@ typedef enum {
 	MONO_WRAPPER_UNBOX,
 	MONO_WRAPPER_LDFLDA,
 	MONO_WRAPPER_WRITE_BARRIER,
-	MONO_WRAPPER_UNKNOWN
+	MONO_WRAPPER_UNKNOWN,
+	MONO_WRAPPER_COMINTEROP_INVOKE,
+	MONO_WRAPPER_COMINTEROP
 } MonoWrapperType;
 
 typedef enum {
@@ -59,7 +62,8 @@ typedef enum {
 
 typedef enum {
 	MONO_REMOTING_TARGET_UNKNOWN,
-	MONO_REMOTING_TARGET_APPDOMAIN
+	MONO_REMOTING_TARGET_APPDOMAIN,
+	MONO_REMOTING_TARGET_COMINTEROP
 } MonoRemotingTarget;
 
 struct _MonoMethod {
@@ -264,6 +268,12 @@ struct _MonoClass {
 	/* next byte */
 	guint has_static_refs : 1; /* it has static fields that are GC-tracked */
 	guint no_special_static_fields : 1; /* has no thread/context static fields */
+	/* directly or indirectly derives from ComImport attributed class.
+	 * this means we need to create a proxy for instances of this class
+	 * for COM Interop. set this flag on loading so all we need is a quick check
+	 * during object creation rather than having to traverse supertypes
+	 */
+	guint is_com_object : 1; 
 
 	guint8     exception_type;	/* MONO_EXCEPTION_* */
 	void*      exception_data;	/* Additional information about the exception */
@@ -692,6 +702,7 @@ typedef struct {
 	MonoClass *generic_array_class;
 	MonoClass *generic_nullable_class;
 	MonoClass *variant_class;
+	MonoClass *com_object_class;
 } MonoDefaults;
 
 extern MonoDefaults mono_defaults MONO_INTERNAL;

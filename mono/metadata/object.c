@@ -173,6 +173,18 @@ mono_type_initialization_init (void)
 	InitializeCriticalSection (&ldstr_section);
 }
 
+void
+mono_type_initialization_cleanup (void)
+{
+#if 0
+	/* This is causing race conditions with
+	 * mono_release_type_locks
+	 */
+	DeleteCriticalSection (&type_initialization_section);
+#endif
+	DeleteCriticalSection (&ldstr_section);
+}
+
 /*
  * mono_runtime_class_init:
  * @vtable: vtable that needs to be initialized
@@ -1261,8 +1273,16 @@ mono_remote_class_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, Mon
 		mono_domain_unlock (domain);
 		return remote_class->xdomain_vtable;
 	}
-	if (remote_class->default_vtable == NULL)
-		remote_class->default_vtable = mono_class_proxy_vtable (domain, remote_class, MONO_REMOTING_TARGET_UNKNOWN);
+	if (remote_class->default_vtable == NULL) {
+		MonoType *type;
+		MonoClass *klass;
+		type = ((MonoReflectionType *)rp->class_to_proxy)->type;
+		klass = mono_class_from_mono_type (type);
+		if ((klass->is_com_object || klass == mono_defaults.com_object_class) && !mono_class_vtable (mono_domain_get (), klass)->remote)
+			remote_class->default_vtable = mono_class_proxy_vtable (domain, remote_class, MONO_REMOTING_TARGET_COMINTEROP);
+		else
+			remote_class->default_vtable = mono_class_proxy_vtable (domain, remote_class, MONO_REMOTING_TARGET_UNKNOWN);
+	}
 	
 	mono_domain_unlock (domain);
 	return remote_class->default_vtable;
@@ -2427,7 +2447,8 @@ mono_object_new_specific (MonoVTable *vtable)
 
 	MONO_ARCH_SAVE_REGS;
 	
-	if (vtable->remote)
+	/* check for is_com_object for COM Interop */
+	if (vtable->remote || vtable->klass->is_com_object)
 	{
 		gpointer pa [1];
 		MonoMethod *im = vtable->domain->create_proxy_for_type_method;

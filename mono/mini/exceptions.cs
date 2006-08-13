@@ -1105,6 +1105,18 @@ class Tests {
 		if (failed)
 			return 10;
 
+		try {
+			ulong ul = UInt64.MaxValue;
+			failed = true;
+			checked {
+				a = (int)ul;
+			}
+		}
+		catch (OverflowException) {
+			failed = false;
+		}
+		if (failed)
+			return 11;
 
 		{
 			int i; 

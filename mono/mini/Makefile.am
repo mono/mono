@@ -17,8 +17,7 @@ libs=	\
 	$(monodir)/mono/utils/libmonoutils.la \
 	$(GMODULE_LIBS)	\
 	$(GLIB_LIBS)	\
-	$(libgc_libs)	\
-	$(ICU_LIBS)
+	$(libgc_libs)
 
 static_libs=	\
 	$(monodir)/mono/metadata/libmonoruntime-static.la	\
@@ -26,8 +25,7 @@ static_libs=	\
 	$(monodir)/mono/utils/libmonoutils.la \
 	$(GMODULE_LIBS)	\
 	$(GLIB_LIBS)	\
-	$(libgc_static_libs) \
-	$(ICU_LIBS)
+	$(libgc_static_libs)
 
 CLASS1=$(mcs_topdir)/class/lib/default
 CLASS2=$(mcs_topdir)/class/lib/net_2_0
@@ -94,8 +92,7 @@ endif
 mono_LDADD = \
 	$(static_libs) \
 	$(GLIB_LIBS)		\
-	$(GMODULE_LIBS) -lm	\
-	$(ICU_LIBS)
+	$(GMODULE_LIBS) -lm
 
 mono_LDFLAGS = \
 	$(static_flags) -export-dynamic $(monobinldflags)
@@ -168,6 +165,14 @@ ia64_sources = \
 	exceptions-ia64.c	\
 	tramp-ia64.c		\
 	mini-codegen.c		\
+	mini-trampolines.c
+
+alpha_sources = \
+	mini-alpha.c	\
+	mini-alpha.h	\
+	exceptions-alpha.c	\
+	tramp-alpha.c	\
+	mini-codegen.c	\
 	mini-trampolines.c
 
 common_sources = \
@@ -307,6 +312,14 @@ arch_BURGSRC = $(srcdir)/inssel-long.brg $(srcdir)/inssel-ia64.brg
 arch_built = cpu-ia64.h
 endif
 
+if ALPHA
+arch_sources = \
+	$(alpha_sources)
+
+arch_BURGSRC = $(srcdir)/inssel-long.brg $(srcdir)/inssel-alpha.brg
+arch_built = cpu-alpha.h
+endif
+
 libmono_la_SOURCES = $(common_sources) $(arch_sources)
 
 nodist_libmono_la_SOURCES = inssel.c inssel.h
@@ -350,6 +363,7 @@ cpu-sparc.h: cpu-sparc.md
 cpu-s390.h: cpu-s390.md
 cpu-s390x.h: cpu-s390x.md
 cpu-ia64.h: cpu-ia64.md
+cpu-alpha.h: cpu-alpha.md
 
 ## Gross hack.  Making 'genmdesc' a host binary takes more effort
 $(arch_built):
@@ -381,6 +395,9 @@ cpu-s390x.h: cpu-s390x.md genmdesc$(EXEEXT)
 
 cpu-ia64.h: cpu-ia64.md genmdesc$(EXEEXT)
 	./genmdesc $(srcdir)/cpu-ia64.md cpu-ia64.h ia64_desc
+
+cpu-alpha.h: cpu-alpha.md genmdesc$(EXEEXT)
+	./genmdesc $(srcdir)/cpu-alpha.md cpu-alpha.h alpha_desc
 
 endif !CROSS_COMPILING
 
@@ -451,4 +468,5 @@ EXTRA_DIST = $(common_BURGSRC) cprop.c TestDriver.cs ldscript ldscript.mono \
 	$(sparc_sources) inssel-sparc.brg cpu-sparc.md \
 	$(s390_sources) inssel-s390.brg cpu-s390.md \
 	$(s390x_sources) inssel-s390x.brg cpu-s390x.md \
-	$(ia64_sources) inssel-ia64.brg cpu-ia64.md
+	$(ia64_sources) inssel-ia64.brg cpu-ia64.md \
+	$(alpha_sources) inssel-alpha.brg cpu-alpha.md
