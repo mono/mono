@@ -244,12 +244,12 @@ namespace System.IO.Ports
 			CheckDisposed ();
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
-			if (offset < 0 || offset >= buffer.Length)
-				throw new ArgumentOutOfRangeException ("offset");
-			if (count < 0 || count > buffer.Length)
-				throw new ArgumentOutOfRangeException ("count");
-			if (count > buffer.Length - offset)
-				throw new ArgumentException ();
+			if (offset < 0 || count < 0)
+				throw new ArgumentOutOfRangeException ("offset or count less than zero.");
+
+			if (buffer.Length - offset < count )
+				throw new ArgumentException ("offset+count",
+							      "The size of the buffer is less than offset + count.");
 
 			int bytes_read;
 
@@ -283,12 +283,13 @@ namespace System.IO.Ports
 			CheckDisposed ();
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
-			if (offset < 0 || offset >= buffer.Length)
-				throw new ArgumentOutOfRangeException ("offset");
-			if (count < 0 || count > buffer.Length)
-				throw new ArgumentOutOfRangeException ("count");
-			if (count > buffer.Length - offset)
-				throw new ArgumentException ("count > buffer.Length - offset");
+
+			if (offset < 0 || count < 0)
+				throw new ArgumentOutOfRangeException ();
+
+			if (buffer.Length - offset < count)
+				throw new ArgumentException ("offset+count",
+							     "The size of the buffer is less than offset + count.");
 
 			int bytes_written = 0;
 

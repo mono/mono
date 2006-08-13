@@ -1,3 +1,19 @@
+2006-08-13  Miguel de Icaza  <miguel@novell.com>
+
+	* SerialPortStream.cs (BytesToRead, BytesToWrite): Implement. 
+
+	* SerialPort.cs (ReadByte): Go directly to the stream, no need to
+	call the wrapper code.
+
+	(ReadChar): implement.
+
+	(ReadLine): implement.
+	
+	Add DefaultValueAttributes to various methods.
+
+	* SerialPortStream.cs, WinSerialStream.cs: Use the same checking
+	we use elsewhere for parameters.
+
 2005-05-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ISerialStream.cs: Add support for break state.

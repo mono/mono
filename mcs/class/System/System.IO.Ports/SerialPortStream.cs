@@ -125,12 +125,12 @@ namespace System.IO.Ports
 			CheckDisposed ();
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
-			if (offset < 0 || offset >= buffer.Length)
-				throw new ArgumentOutOfRangeException ("offset");
-			if (count < 0 || count > buffer.Length)
-				throw new ArgumentOutOfRangeException ("count");
-			if (count > buffer.Length - offset)
-				throw new ArgumentException ("count > buffer.Length - offset");
+			if (offset < 0 || count < 0)
+				throw new ArgumentOutOfRangeException ("offset or count less than zero.");
+
+			if (buffer.Length - offset < count )
+				throw new ArgumentException ("offset+count",
+							      "The size of the buffer is less than offset + count.");
 			
 			return read_serial (fd, buffer, offset, count, read_timeout);
 		}
@@ -153,12 +153,13 @@ namespace System.IO.Ports
 			CheckDisposed ();
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
-			if (offset < 0 || offset >= buffer.Length)
-				throw new ArgumentOutOfRangeException ("offset");
-			if (count < 0 || count > buffer.Length)
-				throw new ArgumentOutOfRangeException ("count");
-			if (count > buffer.Length - offset)
-				throw new ArgumentException ("offset+count > buffer.Length");
+
+			if (offset < 0 || count < 0)
+				throw new ArgumentOutOfRangeException ();
+
+			if (buffer.Length - offset < count)
+				throw new ArgumentException ("offset+count",
+							     "The size of the buffer is less than offset + count.");
 
 			write_serial (fd, buffer, offset, count, write_timeout);
 		}
@@ -206,21 +207,24 @@ namespace System.IO.Ports
 				throw new IOException ();
 		}
 
+		[DllImport("MonoPosixHelper")]
+		static extern int get_bytes_in_buffer (int fd, int input);
+		
 		public int BytesToRead {
 			get {
-				return 0; // Not implemented yet
+				return get_bytes_in_buffer (fd, 1);
 			}
 		}
 
 		public int BytesToWrite {
 			get {
-				return 0; // Not implemented yet
+				return get_bytes_in_buffer (fd, 0);
 			}
 		}
 
 		[DllImport ("MonoPosixHelper")]
 		static extern void discard_buffer (int fd, bool inputBuffer);
-		
+
 		public void DiscardInBuffer ()
 		{
 			discard_buffer (fd, true);

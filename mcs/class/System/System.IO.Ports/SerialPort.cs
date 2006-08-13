@@ -1,8 +1,26 @@
 /* -*- Mode: Csharp; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+//
+//
+// This class has several problems:
+//
+//   * No buffering, the specification requires that there is buffering, this
+//     matters because a few methods expose strings and chars and the reading
+//     is encoding sensitive.   This means that when we do a read of a byte
+//     sequence that can not be turned into a full string by the current encoding
+//     we should keep a buffer with this data, and read from it on the next
+//     iteration.
+//
+//   * Calls to read_serial from the unmanaged C do not check for errors,
+//     like EINTR, that should be retried
+//
+//   * Calls to the encoder that do not consume all bytes because of partial
+//     reads 
+//
 
 #if NET_2_0
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
 using System.Runtime.InteropServices;
@@ -96,6 +114,7 @@ namespace System.IO.Ports
 			}
 		}
 
+		[DefaultValueAttribute (DefaultBaudRate)]
 		public int BaudRate {
 			get {
 				return baud_rate;
@@ -153,6 +172,7 @@ namespace System.IO.Ports
 			}
 		}
 
+		[DefaultValueAttribute(DefaultDataBits)]
 		public int DataBits {
 			get {
 				return data_bits;
@@ -168,6 +188,7 @@ namespace System.IO.Ports
 			}
 		}
 
+		[MonoTODO("Not implemented")]
 		public bool DiscardNull {
 			get {
 				CheckOpen ();
@@ -186,6 +207,7 @@ namespace System.IO.Ports
 			}
 		}
 
+		[DefaultValueAttribute(false)]
 		public bool DtrEnable {
 			get {
 				return dtr_enable;
@@ -212,6 +234,7 @@ namespace System.IO.Ports
 			}
 		}
 
+		[DefaultValueAttribute(Handshake.None)]
 		public Handshake Handshake {
 			get {
 				return handshake;
@@ -233,6 +256,7 @@ namespace System.IO.Ports
 			}
 		}
 
+		[DefaultValueAttribute("\n")]
 		public string NewLine {
 			get {
 				return new_line;
@@ -245,6 +269,7 @@ namespace System.IO.Ports
 			}
 		}
 
+		[DefaultValueAttribute(DefaultParity)]
 		public Parity Parity {
 			get {
 				return parity;
@@ -260,6 +285,7 @@ namespace System.IO.Ports
 			}
 		}
 
+		[MonoTODO("Not implemented")]
 		public byte ParityReplace {
 			get {
 				throw new NotImplementedException ();
@@ -316,6 +342,7 @@ namespace System.IO.Ports
 			}
 		}
 
+		[MonoTODO("Not implemented")]
 		public int ReceivedBytesThreshold {
 			get {
 				throw new NotImplementedException ();
@@ -453,28 +480,32 @@ namespace System.IO.Ports
 			CheckOpen ();
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
-			if (offset < 0 || offset >= buffer.Length)
-				throw new ArgumentOutOfRangeException ("offset");
-			if (count < 0 || count > buffer.Length)
-				throw new ArgumentOutOfRangeException ("count");
-			if (count > buffer.Length - offset)
-				throw new ArgumentException ("count > buffer.Length - offset");
+			if (offset < 0 || count < 0)
+				throw new ArgumentOutOfRangeException ("offset or count less than zero.");
+
+			if (buffer.Length - offset < count )
+				throw new ArgumentException ("offset+count",
+							      "The size of the buffer is less than offset + count.");
 			
 			return stream.Read (buffer, offset, count);
 		}
 
+		[Obsolete("Read of char buffers is currently broken")]
+		[MonoTODO("This is broken")]
 		public int Read (char[] buffer, int offset, int count)
 		{
 			CheckOpen ();
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
-			if (offset < 0 || offset >= buffer.Length)
-				throw new ArgumentOutOfRangeException ("offset");
-			if (count < 0 || count > buffer.Length)
-				throw new ArgumentOutOfRangeException ("count");
-			if (count > buffer.Length - offset)
-				throw new ArgumentException ("count > buffer.Length - offset");
+			if (offset < 0 || count < 0)
+				throw new ArgumentOutOfRangeException ("offset or count less than zero.");
 
+			if (buffer.Length - offset < count )
+				throw new ArgumentException ("offset+count",
+							      "The size of the buffer is less than offset + count.");
+
+			// The following code does not work, we nee to reintroduce a buffer stream somewhere
+			// for this to work;  In addition the code is broken.
 			byte [] bytes = encoding.GetBytes (buffer, offset, count);
 			return stream.Read (bytes, 0, bytes.Length);
 		}
@@ -482,7 +513,7 @@ namespace System.IO.Ports
 		public int ReadByte ()
 		{
 			byte [] buff = new byte [1];
-			if (Read (buff, 0, 1) > 0)
+			if (stream.Read (buff, 0, 1) > 0)
 				return buff [0];
 
 			return -1;
@@ -490,19 +521,46 @@ namespace System.IO.Ports
 
 		public int ReadChar ()
 		{
-			throw new NotImplementedException ();
+			byte [] buffer = new byte [16];
+			int i = 0;
+			
+			do {
+				int b = ReadByte ();
+				if (b == -1)
+					return -1;
+				buffer [i++] = (byte) b;
+				char [] c = encoding.GetChars (buffer, 0, 1);
+				if (c.Length > 0)
+					return (int) c [0];
+			} while (i < buffer.Length);
+
+			return -1;
 		}
 
 		public string ReadExisting ()
 		{
-			throw new NotImplementedException ();
+			int count = BytesToRead;
+			byte [] bytes = new byte [count];
+			
+			int n = stream.Read (bytes, 0, count);
+			return new String (encoding.GetChars (bytes, 0, n));
 		}
 
 		public string ReadLine ()
 		{
-			return ReadTo (new_line);
+			List<byte> bytes_read = new List<byte>();
+			byte [] buff = new byte [1];
+			
+			while (true){
+				int n = stream.Read (buff, 0, 1);
+				if (n == -1 || buff [0] == '\n')
+					break;
+				bytes_read.Add (buff [0]);
+			} 
+			return new String (encoding.GetChars (bytes_read.ToArray ()));
 		}
 
+		[MonoTODO("Not implemented")]
 		public string ReadTo (string value)
 		{
 			CheckOpen ();
@@ -529,12 +587,13 @@ namespace System.IO.Ports
 			CheckOpen ();
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
-			if (offset < 0 || offset >= buffer.Length)
-				throw new ArgumentOutOfRangeException ("offset");
-			if (count < 0 || count > buffer.Length)
-				throw new ArgumentOutOfRangeException ("count");
-			if (count > buffer.Length - offset)
-				throw new ArgumentException ("count > buffer.Length - offset");
+
+			if (offset < 0 || count < 0)
+				throw new ArgumentOutOfRangeException ();
+
+			if (buffer.Length - offset < count)
+				throw new ArgumentException ("offset+count",
+							     "The size of the buffer is less than offset + count.");
 
 			stream.Write (buffer, offset, count);
 		}
