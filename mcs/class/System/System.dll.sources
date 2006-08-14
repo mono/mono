@@ -296,6 +296,7 @@ System.ComponentModel/Int32Converter.cs
 System.ComponentModel/Int64Converter.cs
 System.ComponentModel/InvalidEnumArgumentException.cs
 System.ComponentModel/IRevertibleChangeTracking.cs
+System.ComponentModel/IRaiseItemChangedEvents.cs
 System.ComponentModel/ISite.cs
 System.ComponentModel/ISupportInitialize.cs
 System.ComponentModel/ISynchronizeInvoke.cs

@@ -1,3 +1,7 @@
+2006-08-14  Raja R Harinath  <rharinath@novell.com>
+
+	* IRaiseItemChangedEvents.cs: Add.  Mentioned in #79012.
+
 2006-07-31  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* InvalidEnumArgumentException.cs: Updated to 2.0.
