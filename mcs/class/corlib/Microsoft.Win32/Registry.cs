@@ -41,7 +41,9 @@ namespace Microsoft.Win32
 #endif
 	class Registry
 	{
+#if !NET_2_0
 		private Registry () { }
+#endif
 		public static readonly RegistryKey ClassesRoot = new RegistryKey (
 				RegistryHive.ClassesRoot, "HKEY_CLASSES_ROOT");
 		public static readonly RegistryKey CurrentConfig = new RegistryKey (
