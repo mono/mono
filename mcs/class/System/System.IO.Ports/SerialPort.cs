@@ -528,7 +528,7 @@ namespace System.IO.Ports
 			return stream.Read (bytes, 0, bytes.Length);
 		}
 
-		public int ReadByte ()
+		internal int read_byte ()
 		{
 			byte [] buff = new byte [1];
 			if (stream.Read (buff, 0, 1) > 0)
@@ -536,14 +536,22 @@ namespace System.IO.Ports
 
 			return -1;
 		}
+		
+		public int ReadByte ()
+		{
+			CheckOpen ();
+			return read_byte ();
+		}
 
 		public int ReadChar ()
 		{
+			CheckOpen ();
+			
 			byte [] buffer = new byte [16];
 			int i = 0;
-			
+
 			do {
-				int b = ReadByte ();
+				int b = read_byte ();
 				if (b == -1)
 					return -1;
 				buffer [i++] = (byte) b;
@@ -557,6 +565,8 @@ namespace System.IO.Ports
 
 		public string ReadExisting ()
 		{
+			CheckOpen ();
+			
 			int count = BytesToRead;
 			byte [] bytes = new byte [count];
 			
@@ -566,6 +576,7 @@ namespace System.IO.Ports
 
 		public string ReadLine ()
 		{
+			CheckOpen ();
 			List<byte> bytes_read = new List<byte>();
 			byte [] buff = new byte [1];
 			
@@ -578,7 +589,6 @@ namespace System.IO.Ports
 			return new String (encoding.GetChars (bytes_read.ToArray ()));
 		}
 
-		[MonoTODO("Not implemented")]
 		public string ReadTo (string value)
 		{
 			CheckOpen ();
@@ -587,7 +597,24 @@ namespace System.IO.Ports
 			if (value.Length == 0)
 				throw new ArgumentException ("value");
 
-			throw new NotImplementedException ();
+			// Turn into byte array, so we can compare
+			byte [] byte_value = encoding.GetBytes (value);
+			int current = 0;
+			List<byte> seen = new List<byte> ();
+
+			while (true){
+				int n = read_byte ();
+				if (n == -1)
+					break;
+				seen.Add ((byte)n);
+				if (n == byte_value [current]){
+					current++;
+					if (current == byte_value.Length)
+						return encoding.GetString (seen.ToArray (), 0, seen.Count - byte_value.Length);
+				} else
+					current = 0;
+			}
+			return encoding.GetString (seen.ToArray ());
 		}
 
 		public void Write (string str)
