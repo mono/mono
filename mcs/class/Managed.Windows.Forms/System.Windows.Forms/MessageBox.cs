@@ -96,6 +96,11 @@ namespace System.Windows.Forms
 				msgbox_buttons = buttons;
 				msgbox_default = MessageBoxDefaultButton.Button1;
 
+				if (owner != null) {
+					Owner = Control.FromHandle(owner.Handle).FindForm();
+				} else {
+					Owner = Application.MWFThread.Current.Context.MainForm;
+				}
 				this.Text = caption;
 			}
 
@@ -119,6 +124,7 @@ namespace System.Windows.Forms
 					cp = base.CreateParams;
 
 					cp.Style = (int)(WindowStyles.WS_DLGFRAME | WindowStyles.WS_POPUP | WindowStyles.WS_CLIPCHILDREN | WindowStyles.WS_CLIPSIBLINGS | WindowStyles.WS_CAPTION);
+					cp.ExStyle = (int)(WindowExStyles.WS_EX_TOPMOST);
 					if (!is_enabled) {
 						cp.Style |= (int)(WindowStyles.WS_DISABLED);
 					}

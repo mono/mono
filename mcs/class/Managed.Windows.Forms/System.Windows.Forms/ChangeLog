@@ -1,3 +1,8 @@
+2006-08-14  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* MessageBox.cs: Calculate the owner of a messagebox, also make
+	  it topmost. Fixes #78753
+
 2006-08-14  Chris Toshok  <toshok@ximian.com>
 
 	* XplatUIX11.cs: A couple of fixes so that metacity will let us
