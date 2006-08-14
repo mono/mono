@@ -1,3 +1,7 @@
+2006-08-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* mono.1 : description on MONO_LOCAL_EVENTLOG_PATH.
+
 2006-03-15  Miguel de Icaza  <miguel@novell.com>
 
 	* mono.1: Document MONO_XEXCEPTIONS and MONO_XSYNC, create new

@@ -582,6 +582,13 @@ unix). MONO_GAC_PREFIX should point to the top directory of a prefixed
 install. Or to the directory provided in the gacutil /gacdir command. Example:
 .B /home/username/.mono:/usr/local/mono/
 .TP
+.I "MONO_LOCAL_EVENTLOG_PATH"
+It is required to enable local file based System.Diagnostics.EventLog
+implementation. This variable is used to indicate a local directory to
+store event logs (thus it must be writable by the user who runs
+the runtime). By default, a null implementation is used i.e. EventLog
+classes do nothing.
+.TP
 .I "MONO_MANAGED_WATCHER"
 If set to any value, System.IO.FileSystemWatcher will use the default
 managed implementation (slow). If unset, mono will try to use FAM under
