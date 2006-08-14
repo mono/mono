@@ -455,9 +455,19 @@ namespace System.IO.Ports
 		public static string [] GetPortNames ()
 		{
 			int p = (int) Environment.OSVersion.Platform;
-			if (p == 4 || p == 128) // Are we on Unix?
-				return Directory.GetFiles ("/dev/", "ttyS*");
-
+			
+			// Are we on Unix?
+			if (p == 4 || p == 128){
+				string [] ttys = Directory.GetFiles ("/dev/", "tty*");
+				List<string> serial_ports = new List<string> ();
+				
+				foreach (string dev in ttys){
+					if (dev.StartsWith ("ttyS") || dev.StartsWith ("ttyUSB"))
+						serial_ports.Add (dev);
+						
+				}
+				return serial_ports.ToArray ();
+			}
 			throw new NotImplementedException ("Detection of ports is not implemented for this platform yet.");
 		}
 

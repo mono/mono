@@ -1,5 +1,7 @@
 2006-08-13  Miguel de Icaza  <miguel@novell.com>
 
+	* SerialPort.cs: Also handle ttyUSB for Chris.
+
 	* SerialPortStream.cs (BytesToRead, BytesToWrite): Implement. 
 
 	* SerialPort.cs (ReadByte): Go directly to the stream, no need to
