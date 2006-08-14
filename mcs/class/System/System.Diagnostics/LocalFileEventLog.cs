@@ -47,7 +47,7 @@ namespace System.Diagnostics
 
 		static LocalFileEventLogUtil ()
 		{
-			string env = Environment.GetEnvironmentVariable ("MONO_LOCAL_EVENTLOG_PATH");
+			string env = Environment.GetEnvironmentVariable ("MONO_EVENTLOG_PATH");
 			if (env != null)
 				path = Path.GetFullPath (env);
 		}
