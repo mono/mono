@@ -1,3 +1,13 @@
+2006-08-14  Chris Toshok  <toshok@ximian.com>
+
+	* XplatUIX11.cs: A couple of fixes so that metacity will let us
+	programmatically move windows.  first, set the PPosition hint as
+	well as the USPosition hint.  Second include some code from pdb
+	that sets the window type to NORMAL when we set the transient for
+	hint.  This is because, in the absence of a window type, metacity
+	thinks any window with TransientFor set is a dialog, and refuses
+	to let us move it programmatically.  fascists.
+
 2006-08-14  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* XplatUIX11.cs: When setting normal hints, take into consideration

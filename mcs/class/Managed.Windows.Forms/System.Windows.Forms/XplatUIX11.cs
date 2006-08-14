@@ -686,6 +686,7 @@ namespace System.Windows.Forms {
 			MotifWmHints		mwmHints;
 			MotifFunctions		functions;
 			MotifDecorations	decorations;
+			int[]			atoms;
 			int			atom_count;
 			Rectangle		client_rect;
 			bool			transient;
@@ -696,7 +697,7 @@ namespace System.Windows.Forms {
 			}
 
 			transient = false;
-
+			atoms = new int[8];
 			mwmHints = new MotifWmHints();
 			functions = 0;
 			decorations = 0;
@@ -759,6 +760,9 @@ namespace System.Windows.Forms {
 			lock (XlibLock) {
 				XChangeProperty(DisplayHandle, hwnd.whole_window, NetAtoms[(int)NA._MOTIF_WM_HINTS], NetAtoms[(int)NA._MOTIF_WM_HINTS], 32, PropertyMode.Replace, ref mwmHints, 5);
 				if (((cp.Style & (int)WindowStyles.WS_POPUP) != 0) && (hwnd.parent != null) && (hwnd.parent.whole_window != IntPtr.Zero)) {
+					atoms[0] = NetAtoms[(int)NA._NET_WM_WINDOW_TYPE_NORMAL].ToInt32();
+					XChangeProperty(DisplayHandle, hwnd.whole_window, NetAtoms[(int)NA._NET_WM_WINDOW_TYPE], (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, 1);
+
 					transient = true;
 					XSetTransientForHint(DisplayHandle, hwnd.whole_window, hwnd.parent.whole_window);
 				} else if ((cp.ExStyle & (int)WindowExStyles.WS_EX_APPWINDOW) == 0) {
@@ -771,7 +775,6 @@ namespace System.Windows.Forms {
 					XMoveResizeWindow(DisplayHandle, hwnd.client_window, client_rect.X, client_rect.Y, client_rect.Width, client_rect.Height);
 				}
 
-				int[] atoms = new int[8];
 				atom_count = 0;
 
 				if ((cp.ExStyle & ((int)WindowExStyles.WS_EX_TOOLWINDOW)) != 0) {
@@ -2112,6 +2115,7 @@ namespace System.Windows.Forms {
 			IntPtr			ClientWindow;
 			Rectangle		ClientRect;
 			SetWindowValuemask	ValueMask;
+			int[]			atoms;
 
 
 			hwnd = new Hwnd();
@@ -2206,7 +2210,7 @@ namespace System.Windows.Forms {
 					hints = new XSizeHints();
 					hints.x = X;
 					hints.y = Y;
-					hints.flags = (IntPtr)XSizeHintsFlags.USPosition;
+					hints.flags = (IntPtr)(XSizeHintsFlags.USPosition | XSizeHintsFlags.PPosition);
 					XSetWMNormalHints(DisplayHandle, WholeWindow, ref hints);
 				}
 			}
@@ -2222,6 +2226,10 @@ namespace System.Windows.Forms {
 			}
 
 			if ((cp.ExStyle & (int)WindowExStyles.WS_EX_TOPMOST) != 0) {
+				atoms = new int[2];
+				atoms[0] = NetAtoms[(int)NA._NET_WM_WINDOW_TYPE_NORMAL].ToInt32();
+				XChangeProperty(DisplayHandle, hwnd.whole_window, NetAtoms[(int)NA._NET_WM_WINDOW_TYPE], (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, 1);
+
 				XSetTransientForHint (DisplayHandle, hwnd.whole_window, RootWindow);
 			} else if ((cp.ExStyle & (int)WindowExStyles.WS_EX_APPWINDOW) == 0) {
 //				XSetTransientForHint (DisplayHandle, hwnd.whole_window, FosterParent);
@@ -4230,6 +4238,13 @@ namespace System.Windows.Forms {
 
 			if (enabled) {
 				lock (XlibLock) {
+					int[]	atoms;
+
+					atoms = new int[8];
+
+					atoms[0] = NetAtoms[(int)NA._NET_WM_WINDOW_TYPE_NORMAL].ToInt32();
+					XChangeProperty(DisplayHandle, hwnd.whole_window, NetAtoms[(int)NA._NET_WM_WINDOW_TYPE], (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, 1);
+
 					if (hwnd_owner != null) {
 						XSetTransientForHint(DisplayHandle, hwnd.whole_window, hwnd_owner.whole_window);
 					} else {
