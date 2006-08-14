@@ -1,3 +1,15 @@
+2006-08-13  Miguel de Icaza  <miguel@novell.com>
+
+	* Registry.cs (SetValue, GetValue): implement.
+
+	* UnixRegistryApi.cs (KeyHandler.LoadKey, KeyHandler.Save): Add
+	support for qwords.
+
+	(KeyHandler.Save): Do not save the entries if they have been
+	deleted/dropped.   Fixes a crash.
+
+	(UnixRegistryApi.DeleteKey): bug fix, call ToUnix on the keyname.
+
 2006-08-12  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Registry.cs: Fixed copy/paste bug.

@@ -55,6 +55,7 @@ namespace Microsoft.Win32 {
 		public Hashtable values;
 		string file;
 		bool dirty;
+		bool valid;
 		
 		KeyHandler (RegistryKey rkey, string basedir)
 		{
@@ -118,6 +119,9 @@ namespace Microsoft.Win32 {
 					break;
 				case "string":
 					values [name] = se.Text;
+					break;
+				case "qword":
+					values [name] = Int64.Parse (se.Text);
 					break;
 				case "string-array":
 					ArrayList sa = new ArrayList ();
@@ -206,6 +210,7 @@ namespace Microsoft.Win32 {
 			KeyHandler k = (KeyHandler) key_to_handler [rkey];
 			if (k == null)
 				return;
+			k.valid = false;
 			dir_to_key.Remove (k.Dir);
 			key_to_handler.Remove (rkey);
 		}
@@ -213,8 +218,8 @@ namespace Microsoft.Win32 {
 		public static void Drop (string dir)
 		{
 			if (dir_to_key.Contains (dir)){
-				key_to_handler.Remove (dir_to_key [dir]); 
-				dir_to_key.Remove (dir);
+				RegistryKey rkey = (RegistryKey) dir_to_key [dir];
+				Drop (rkey);
 			}
 		}
 
@@ -259,6 +264,9 @@ namespace Microsoft.Win32 {
 		
 		void Save ()
 		{
+			if (!valid)
+				return;
+			
 			if (!File.Exists (file) && values.Count == 0)
 				return;
 
@@ -274,6 +282,9 @@ namespace Microsoft.Win32 {
 					value.Text = (string) val;
 				} else if (val is int){
 					value.AddAttribute ("type", "int");
+					value.Text = val.ToString ();
+				} else if (val is long){
+					value.AddAttribute ("type", "qword");
 					value.Text = val.ToString ();
 				} else if (val is byte []){
 					value.AddAttribute ("type", "bytearray");
@@ -405,8 +416,8 @@ namespace Microsoft.Win32 {
 		public void DeleteKey (RegistryKey rkey, string keyname, bool throw_if_missing)
 		{
 			KeyHandler self = KeyHandler.Lookup (rkey);
-			string dir = Path.Combine (self.Dir, keyname);
-			
+			string dir = Path.Combine (self.Dir, ToUnix (keyname));
+
 			if (Directory.Exists (dir)){
 				Directory.Delete (dir, true);
 				KeyHandler.Drop (dir);
