@@ -1,3 +1,9 @@
+2006-08-14  Raja R Harinath  <rharinath@novell.com>
+
+	Fix part of #79012
+	* metadata.c (do_mono_metadata_parse_generic_class): Don't SEGV if
+	mono_metadata_parse_type returns NULL.
+
 2006-08-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* normalization-tables.h : new file for string normalization data.
