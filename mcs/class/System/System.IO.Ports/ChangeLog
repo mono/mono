@@ -1,3 +1,8 @@
+2006-08-14  Chris Toshok  <toshok@ximian.com>
+
+	* SerialPort.cs: the paths returned by Directory.GetFiles have the
+	directory at the beginning of the string.
+
 2006-08-13  Miguel de Icaza  <miguel@novell.com>
 
 	* SerialPort.cs (ReadTo): Implemented.
