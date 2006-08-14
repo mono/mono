@@ -35,9 +35,9 @@ namespace Microsoft.Win32
 {
 	public
 #if NET_2_0
-	sealed
+	static
 #else
-	sealed static
+	sealed
 #endif
 	class Registry
 	{
