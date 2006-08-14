@@ -1,3 +1,8 @@
+2006-08-13  Miguel de Icaza  <miguel@novell.com>
+
+	* assign.cs: Catch attempts to assign to a method groups in += and
+	report as 1656
+
 2006-08-13  Marek Safar  <marek.safar@seznam.cz>
 
 	A fix for #79056

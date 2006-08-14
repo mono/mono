@@ -622,6 +622,11 @@ namespace Mono.CSharp {
 			if (target == null)
 				return null;
 
+			if (target is MethodGroupExpr){
+				Report.Error (1656, Location, "Can not assign to {0} because it is a method group",
+					      ((MethodGroupExpr) target).Name);
+				return null;
+			}
 			//
 			// Only now we can decouple the original source/target
 			// into a tree, to guarantee that we do not have side
