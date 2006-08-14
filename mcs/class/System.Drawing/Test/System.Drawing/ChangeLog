@@ -1,3 +1,8 @@
+2006-08-14  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* GDIPlusTest.cs: Re-add LOGONT definition as a class (instead of a
+	struct like it's currently defined inside SD).
+
 2006-08-12  Duncan Mak  <duncan@novell.com>
 
 	* GDIPlusTest.cs: Removed all the local PInvoke methods.
