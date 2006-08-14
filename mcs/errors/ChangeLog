@@ -1,3 +1,7 @@
+2006-08-14  Raja R Harinath  <rharinath@novell.com>
+
+	* gcs0306.cs: New test based on #79067.
+
 2006-08-03  Raja R Harinath  <rharinath@novell.com>
 
 	* cs0146-3.cs, cs0146-4.cs: New tests for bug discovered while

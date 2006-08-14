@@ -1,3 +1,10 @@
+2006-08-14  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #79067
+	* cs-tokenizer.cs (parse_less_than): Allow '*' to appear in a type
+	parameter too.  This only avoids a parse error -- the semantic
+	error is caught elsewhere.
+
 2006-08-13  Miguel de Icaza  <miguel@novell.com>
 
 	* assign.cs: Catch attempts to assign to a method groups in += and
