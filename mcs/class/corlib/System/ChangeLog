@@ -1,3 +1,11 @@
+2006-08-14  Miguel de Icaza  <miguel@novell.com>
+
+	* MonoType.cs: Do the argument testinf for SetField later,
+	otherwise the implicit (and not documented, but already considered
+	side effect of checking SetProperty) did not work.
+
+	Bug fix #79023
+
 2006-08-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* String.cs : Normalize() and IsNormalized() implementation.

@@ -325,8 +325,6 @@ namespace System
 				throw new ArgumentException ("invokeAttr");
 			if ((invokeAttr & BindingFlags.InvokeMethod) != 0 && (invokeAttr & (BindingFlags.SetProperty|BindingFlags.SetField)) != 0)
 				throw new ArgumentException ("invokeAttr");
-			if ((invokeAttr & BindingFlags.SetField) != 0 && ((args == null) || args.Length != 1))
-				throw new ArgumentException ("invokeAttr");
 			if ((namedParameters != null) && ((args == null) || args.Length < namedParameters.Length))
 				throw new ArgumentException ("namedParameters cannot be more than named arguments in number");
 
@@ -386,6 +384,9 @@ namespace System
 				}
 				/* try GetProperty */
 			} else if ((invokeAttr & BindingFlags.SetField) != 0) {
+				if ((args == null) || args.Length != 1)
+					throw new ArgumentException ("invokeAttr");
+
 				FieldInfo f = GetField (name, invokeAttr);
 				if (f != null) {
 					f.SetValue (target, args [0]);
