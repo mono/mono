@@ -2202,6 +2202,8 @@ namespace System.Xml
 #endif
 
 			Expect ("?>");
+
+			curNodePeekIndex = peekCharsIndex; // without this it causes incorrect value start indication.
 		}
 
 		// The reader is positioned on the first character after

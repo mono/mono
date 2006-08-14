@@ -1211,5 +1211,17 @@ namespace MonoTests.System.Xml
 			xtr.Read (); // end of root. skip whitespaces
 			AssertEquals ("#7", XmlNodeType.EndElement, xtr.NodeType);
 		}
+
+		[Test]
+		public void WhitespacesAfterTextDeclaration ()
+		{
+			XmlTextReader xtr = new XmlTextReader (
+				"<?xml version='1.0' encoding='utf-8' ?> <x/>",
+				XmlNodeType.Element,
+				null);
+			xtr.Read ();
+			AssertEquals ("#1", XmlNodeType.Whitespace, xtr.NodeType);
+			AssertEquals ("#2", " ", xtr.Value);
+		}
 	}
 }

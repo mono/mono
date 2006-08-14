@@ -1,3 +1,9 @@
+2006-08-14  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextReader.cs : When a whitespace node comes after a text 
+	  declaration in XML external entity (i.e. .ctor() with
+	  XmlNodeType.Element), it contained extra value character ('<').
+
 2006-08-10  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextWriter2.cs : more indentation fixes. Now I believe it is
