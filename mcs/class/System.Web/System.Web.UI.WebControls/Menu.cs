@@ -761,11 +761,11 @@ namespace System.Web.UI.WebControls
 			}
 			Items.Clear ();
 			IHierarchicalEnumerable e = data.Select ();
-			FillBoundChildrenRecursive (e, Items);			
-			
-			ChildControlsCreated = false;
+			FillBoundChildrenRecursive (e, Items);
 
-			EnsureChildControls ();
+			CreateChildControlsForItems ();
+			ChildControlsCreated = true;
+
 			EnsureChildControlsDataBound ();
 		}
 
@@ -963,6 +963,15 @@ namespace System.Web.UI.WebControls
 		
 		protected internal override void CreateChildControls ()
 		{
+			if (!IsBoundUsingDataSourceID && (DataSource == null)) {
+				CreateChildControlsForItems ();
+			}
+			else {
+				EnsureDataBound ();
+			}
+		}
+
+		private void CreateChildControlsForItems () {
 			Controls.Clear ();
 			// Check for HasChildViewState to avoid unnecessary calls to ClearChildViewState.
 			if (HasChildViewState)
@@ -995,7 +1004,7 @@ namespace System.Web.UI.WebControls
 		protected override void EnsureDataBound ()
 		{
 			base.EnsureDataBound ();
-
+			
 			EnsureChildControlsDataBound ();
 		}
 
@@ -1466,7 +1475,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		void RenderItemContent (HtmlTextWriter writer, MenuItem item, bool isDynamicItem) {
-			if (_menuItemControls [item] != null) {
+			if (_menuItemControls!=null && _menuItemControls [item] != null) {
 				((Control) _menuItemControls [item]).Render (writer);
 			}
 			else if (isDynamicItem && DynamicItemFormatString.Length > 0) {

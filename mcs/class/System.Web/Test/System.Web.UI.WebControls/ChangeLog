@@ -1,3 +1,7 @@
+2006-08-14 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* MenuTest.cs: added test showing that items initialization should occurs only once
+
 2006-08-10 Yoni Klain <yonik@mainsoft.com>
 
 	* CallBackTest.cs: New test was added

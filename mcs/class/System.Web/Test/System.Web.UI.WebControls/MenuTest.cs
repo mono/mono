@@ -487,15 +487,14 @@ namespace MonoTests.System.Web.UI.WebControls
 			xmlDs.Data = "<root><node /><node /><node><subnode /><subnode /></node></root>";
 			p.Form.Controls.Add (xmlDs);
 
-			Menu m = new Menu ();
+			Menu m = CreateMenu ();
 			m.DataSourceID = "XmlDataSource";
-			m.StaticItemTemplate = new CompiledTemplateBuilder (_StaticItemTemplate);
-			m.DynamicItemTemplate = new CompiledTemplateBuilder (_DynamicItemTemplate);
 			m.MenuItemDataBound += new MenuEventHandler (m_MenuItemDataBound);
 			p.Form.Controls.Add (m);
 
 			ResetTemplateBoundFlags ();
 			_MenuItemBoundCount = 0;
+			_MenuItemCreatedCount = 0;
 		}
 
 		public static void m_MenuItemDataBound (object sender, MenuEventArgs e) {
@@ -526,6 +525,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		static bool _DynamicTemplateCreated;
 
 		static int _MenuItemBoundCount;
+		static int _MenuItemCreatedCount;
 
 		private static void CheckTemplateBoundFlags () {
 			Assert.AreEqual (true, _StaticTemplateCreated, "StaticTemplateCreated");
@@ -541,10 +541,12 @@ namespace MonoTests.System.Web.UI.WebControls
 		public static void Menu_DataBindByDataSourceID_PagePreRenderComplete (Page p) {
 			CheckTemplateBoundFlags ();
 			Assert.AreEqual (6, _MenuItemBoundCount, "MenuItemBoundCount");
+			Assert.AreEqual (6, _MenuItemCreatedCount, "MenuItemBoundCount");
 		}
 
 		private static void _StaticItemTemplate (Control container) {
 			_StaticTemplateCreated = true;
+			_MenuItemCreatedCount++;
 			Literal l = new Literal ();
 			container.Controls.Add (l);
 			container.DataBinding += new EventHandler (StaticTemplate_DataBinding);
@@ -556,6 +558,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		private static void _DynamicItemTemplate (Control container) {
 			_DynamicTemplateCreated = true;
+			_MenuItemCreatedCount++;
 			Literal l = new Literal ();
 			container.Controls.Add (l);
 			container.DataBinding += new EventHandler (DynamicTemplate_DataBinding);
